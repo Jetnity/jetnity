@@ -1,0 +1,1 @@
+export function trackEvent(event: string) { console.log(event); }
