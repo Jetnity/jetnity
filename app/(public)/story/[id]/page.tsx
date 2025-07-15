@@ -1,3 +1,5 @@
+// app/(public)/story/[id]/page.tsx
+
 import { createServerComponentClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 import { notFound } from 'next/navigation'
