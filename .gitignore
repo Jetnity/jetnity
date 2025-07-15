@@ -1,0 +1,13 @@
+# Jetnity .gitignore
+node_modules/
+.next/
+dist/
+out/
+.vscode/
+.env.local
+.env
+.DS_Store
+*.log
+*.tsbuildinfo
+.vercel/
+coverage/
