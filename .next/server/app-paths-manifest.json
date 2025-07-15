@@ -1,4 +1,0 @@
-{
-  "/api/copilot/hero-image/route": "app/api/copilot/hero-image/route.js",
-  "/(public)/page": "app/(public)/page.js"
-}
