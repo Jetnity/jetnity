@@ -1,22 +1,29 @@
-# Node & Build
+# Node.js build & cache
 node_modules/
 .next/
 dist/
 out/
-.vercel/
-coverage/
-*.log
 *.tsbuildinfo
+*.log
+coverage/
 
-# Jetnity intern
-jetnity-clean/
+# Vercel (lokal erzeugt, nicht pushen)
+.vercel/
 
-# Systemdateien
-.DS_Store
-
-# Editor
-.vscode/
-
-# Environment
+# Lokale Umgebungen
 .env
 .env.local
+.env.development
+.env.production
+.env.test
+
+# Jetnity intern (lokale Arbeitsverzeichnisse)
+jetnity-clean/
+
+# macOS / Linux / Windows Systemdateien
+.DS_Store
+Thumbs.db
+
+# Editor-Ordner
+.vscode/
+.idea/
