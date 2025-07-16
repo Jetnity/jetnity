@@ -1,6 +1,8 @@
+// lib/intelligence/copilot-pro.server.ts
+
 import { cookies } from 'next/headers'
 import { createServerComponentClient } from '@/lib/supabase/server'
-import type { CopilotSuggestion } from '@/types/copilot'
+import type { CopilotSuggestion } from '@/types/copilot-types'
 
 export async function getCopilotSuggestions(): Promise<CopilotSuggestion[]> {
   const supabase = createServerComponentClient({ cookies: cookies() })
@@ -15,7 +17,7 @@ export async function getCopilotSuggestions(): Promise<CopilotSuggestion[]> {
   if (!data) return []
 
   return data.map((item) => ({
-    type: 'region',
+    type: 'region', // muss exakt mit CopilotSuggestionType übereinstimmen
     title: item.title ?? '',
     subtitle: `Erstellt von ${item.creator_name ?? 'CoPilot Pro'}`,
     link: `/story/${item.id}`,

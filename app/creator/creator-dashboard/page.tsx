@@ -2,7 +2,7 @@ import { createServerComponentClient } from '@/lib/supabase/server'
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import CreatorDashboardWelcome from "@/components/creator/CreatorDashboardWelcome";
+import CreatorDashboardWelcome from "@/components/creator/CreatorDashboardWelcome.server";
 import ContentUploadForm from "@/components/creator/ContentUploadForm";
 import CreatorDashboard from "@/components/creator/CreatorDashboard";
 import SectionHeader from "@/components/ui/SectionHeader";
