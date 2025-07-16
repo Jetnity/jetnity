@@ -1,15 +1,22 @@
-# Jetnity .gitignore
+# Node & Build
 node_modules/
 .next/
 dist/
 out/
-.vscode/
-.env.local
-.env
-.DS_Store
-*.log
-*.tsbuildinfo
 .vercel/
 coverage/
+*.log
+*.tsbuildinfo
+
+# Jetnity intern
 jetnity-clean/
-jetnity-clean/
+
+# Systemdateien
+.DS_Store
+
+# Editor
+.vscode/
+
+# Environment
+.env
+.env.local
