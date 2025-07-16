@@ -1,4 +1,5 @@
 // app/creator/media-studio/page.tsx
+export const dynamic = 'force-dynamic'
 
 import { createServerComponentClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'

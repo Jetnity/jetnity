@@ -1,4 +1,5 @@
 // app/api/copilot/generate/route.ts
+export const dynamic = 'force-dynamic'
 
 import { NextResponse } from 'next/server'
 import { generateCopilotUpload } from '@/lib/intelligence/copilot-upload-generator'
