@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { cookies } from 'next/headers'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import FeedCard from '@/components/feed/FeedCard'
