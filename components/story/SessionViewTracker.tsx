@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 import { incrementSessionView } from '@/lib/supabase/actions'
 import { supabase } from '@/lib/supabase/client'
