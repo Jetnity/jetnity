@@ -1,6 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextRequest, NextResponse } from 'next/server'
-import type { Database } from '@/types/supabase'
+import type { Database } from '@/types/supabase.types'
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
@@ -30,6 +30,7 @@ export async function middleware(req: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  // 🔒 Nur eingeloggte User dürfen den Creator-Dashboard sehen
   const isProtectedPath = req.nextUrl.pathname.startsWith('/creator/creator-dashboard')
 
   if (isProtectedPath && !user) {
@@ -40,6 +41,8 @@ export async function middleware(req: NextRequest) {
   return res
 }
 
+// 🔧 Middleware-Aktivierung nur für diese Routen
 export const config = {
   matcher: ['/creator/creator-dashboard'],
 }
+

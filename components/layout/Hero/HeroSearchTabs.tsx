@@ -1,53 +1,53 @@
 'use client'
 
-import { useState } from 'react'
-import clsx from 'clsx'
+import { cn } from '@/lib/utils'
+import { PlaneTakeoff, Hotel, Car, Activity } from 'lucide-react'
+import { CruiseShipIcon } from '@/components/ui/icons/CruiseShip'
 
-const TABS = ['Flüge', 'Hotels', 'Mietwagen', 'Aktivitäten', 'Kreuzfahrten']
+// Definiere alle erlaubten Such-Modi (Tabs) – inkl. Kreuzfahrten
+export type SearchMode = 'flight' | 'hotel' | 'car' | 'activity' | 'cruise'
 
-export default function HeroSearchTabs() {
-  const [activeTab, setActiveTab] = useState('Flüge')
+const tabs: {
+  label: string
+  value: SearchMode
+  icon: React.ComponentType<{ size?: number; className?: string }>
+}[] = [
+  { label: 'Flüge', value: 'flight', icon: PlaneTakeoff },
+  { label: 'Hotels', value: 'hotel', icon: Hotel },
+  { label: 'Mietwagen', value: 'car', icon: Car },
+  { label: 'Aktivitäten', value: 'activity', icon: Activity },
+  { label: 'Kreuzfahrten', value: 'cruise', icon: CruiseShipIcon },
+]
 
+interface HeroSearchTabsProps {
+  selected: SearchMode
+  onSelect: (value: SearchMode) => void
+}
+
+export default function HeroSearchTabs({ selected, onSelect }: HeroSearchTabsProps) {
   return (
-    <div className="bg-white rounded-xl shadow-lg p-4 w-full max-w-2xl mx-auto">
-      <div className="flex space-x-2 mb-4 overflow-auto">
-        {TABS.map((tab) => (
+    <div className="flex flex-wrap md:flex-nowrap justify-center gap-2">
+      {tabs.map((tab) => {
+        const Icon = tab.icon
+        const isActive = selected === tab.value
+
+        return (
           <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={clsx(
-              'px-4 py-2 rounded-md text-sm font-medium',
-              activeTab === tab
-                ? 'bg-blue-600 text-white'
+            key={tab.value}
+            type="button"
+            onClick={() => onSelect(tab.value)}
+            className={cn(
+              'flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200',
+              isActive
+                ? 'bg-blue-600 text-white shadow-md'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             )}
           >
-            {tab}
+            <Icon size={18} className={isActive ? 'text-white' : 'text-gray-500'} />
+            {tab.label}
           </button>
-        ))}
-      </div>
-
-      {/* Placeholder für dynamische Formelemente */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <input
-          type="text"
-          placeholder="Startort / Abflughafen"
-          className="border p-2 rounded-md"
-        />
-        <input
-          type="date"
-          placeholder="Datum"
-          className="border p-2 rounded-md"
-        />
-        <input
-          type="number"
-          placeholder="Personen"
-          className="border p-2 rounded-md"
-        />
-        <button className="bg-blue-600 text-white rounded-md p-2 hover:bg-blue-700">
-          Suchen
-        </button>
-      </div>
+        )
+      })}
     </div>
   )
 }
