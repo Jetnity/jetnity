@@ -18,7 +18,7 @@ export interface DatePickerProps {
   className?: string
 }
 
-export const DatePicker: React.FC<DatePickerProps> = ({
+const DatePicker: React.FC<DatePickerProps> = ({
   label,
   placeholder = 'Datum wählen',
   selectedDate,
@@ -29,7 +29,6 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 }) => {
   const [open, setOpen] = React.useState(false)
 
-  // Für react-day-picker: Matcher[] oder undefined
   const disabledMatchers = React.useMemo(() => {
     const matchers: any[] = []
     if (minDate) matchers.push({ before: minDate })
@@ -72,4 +71,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   )
 }
 
-export default DatePicker
+DatePicker.displayName = 'DatePicker'
+
+// NUR DAS AM ENDE DER DATEI:
+export { DatePicker }
