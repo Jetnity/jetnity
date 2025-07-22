@@ -10,7 +10,7 @@ import CreatorMediaList from '@/components/creator/CreatorMediaList'
 import type { Tables } from '@/types/supabase'
 
 export default async function MediaStudioPage() {
-  const supabase = createServerComponentClient({ cookies: cookies() })
+  const supabase = createServerComponentClient()
 
   const {
     data: { user },

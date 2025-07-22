@@ -5,7 +5,7 @@ import CreatorDashboardWelcome from './CreatorDashboardWelcome'
 import { redirect } from 'next/navigation'
 
 export default async function CreatorDashboardWelcomeServer() {
-  const supabase = createServerComponentClient({ cookies })
+  const supabase = createServerComponentClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {

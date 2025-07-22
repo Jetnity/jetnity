@@ -6,7 +6,7 @@ import { cookies } from 'next/headers'
 import MediaStudioShell from './MediaStudioShell'
 
 export default async function MediaStudioPage() {
-  const supabase = createServerComponentClient({ cookies })
+  const supabase = createServerComponentClient()
   const {
     data: {
       session, // Supabase-Session mit user.id

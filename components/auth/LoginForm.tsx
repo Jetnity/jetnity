@@ -2,7 +2,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 
 export default function LoginForm() {
@@ -10,7 +9,6 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,11 +22,12 @@ export default function LoginForm() {
 
     if (error) {
       setErrorMsg(error.message);
-    } else {
-      router.push("/creator/creator-dashboard");
+      setLoading(false);
+      return;
     }
 
-    setLoading(false);
+    // WICHTIG: ECHTER Redirect für SSR/Server-Auth!
+    window.location.href = "/creator/creator-dashboard";
   };
 
   return (

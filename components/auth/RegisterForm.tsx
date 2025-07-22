@@ -35,7 +35,7 @@ export default function RegisterForm() {
       setSuccess(true);
       setEmail("");
       setPassword("");
-      router.push("/login"); // oder z. B. /creator-dashboard
+      router.push("/login");
     }
 
     setLoading(false);
@@ -44,10 +44,9 @@ export default function RegisterForm() {
   return (
     <form
       onSubmit={handleRegister}
-      className="max-w-md mx-auto mt-10 bg-white p-6 rounded-md shadow-md space-y-4"
+      className="max-w-md mx-auto bg-white p-6 rounded-md shadow-md space-y-4"
     >
-      <h1 className="text-center text-2xl font-bold">Jetzt kostenlos registrieren</h1>
-
+      {/* Nur evtl. Hinweis, KEINE Überschrift mehr */}
       {success && (
         <p className="text-green-600 text-sm text-center">
           Registrierung erfolgreich! Bitte bestätige deine E-Mail.

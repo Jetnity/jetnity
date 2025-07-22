@@ -9,7 +9,7 @@ import type { Database } from '@/types/supabase'
 type Session = Database['public']['Tables']['creator_sessions']['Row']
 
 export default async function SessionPage({ params }: { params: { id: string } }) {
-  const supabase = createServerComponentClient({ cookies: cookies() })
+  const supabase = createServerComponentClient()
 
   const { data, error } = await supabase
     .from('creator_sessions')

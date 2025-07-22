@@ -409,6 +409,7 @@ export type Database = {
       creator_session_metrics: {
         Row: {
           comments: number | null
+          impact_score: number | null
           impressions: number | null
           session_id: string | null
           views: number | null

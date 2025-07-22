@@ -1,4 +1,4 @@
-import { createServerClient } from '@/lib/supabase/server'
+import { createServerComponentClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 import { generateCopilotUpload } from './copilot-upload-generator'
 
@@ -7,7 +7,7 @@ import { generateCopilotUpload } from './copilot-upload-generator'
  * Wenn nicht, generiert Copilot Pro automatisch einen Upload.
  */
 export async function maybeGenerateCopilotUpload(region: string) {
-  const supabase = createServerClient({ cookies: cookies() })
+  const supabase = createServerComponentClient()
 
   const { data: existing, error } = await supabase
     .from('creator_uploads')

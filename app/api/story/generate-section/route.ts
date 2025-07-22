@@ -14,7 +14,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Fehlende Parameter.' }, { status: 400 })
     }
 
-    const supabase = createServerComponentClient({ cookies: cookies() })
+    const supabase = createServerComponentClient()
 
     const { data: snippets, error: snippetError } = await supabase
       .from('session_snippets')

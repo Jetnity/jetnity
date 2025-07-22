@@ -65,7 +65,7 @@ export default function StoryBuilder({ sessionId }: StoryBuilderProps) {
           <h2 className="text-xl font-semibold">📝 StoryBuilder</h2>
           <div className="flex items-center gap-2">
             <Button
-              variant="secondary"
+              variant="default"
               onClick={() => setShowSnippets((prev) => !prev)}
               disabled={isPending}
             >

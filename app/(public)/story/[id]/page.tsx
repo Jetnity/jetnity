@@ -13,7 +13,7 @@ export default async function PublicStoryPage({
 }: {
   params: { id: string }
 }) {
-  const supabase = createServerComponentClient({ cookies: cookies() })
+  const supabase = createServerComponentClient()
 
   const { data: snippets } = await supabase
     .from('session_snippets')

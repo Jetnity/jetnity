@@ -13,7 +13,7 @@ export async function updateSessionStatus(
   sessionId: SessionId,
   status: SessionStatus
 ) {
-  const supabase = createServerComponentClient({ cookies: cookies() })
+  const supabase = createServerComponentClient()
 
   await supabase
     .from('creator_sessions')
@@ -25,7 +25,7 @@ export async function rateSession(
   sessionId: SessionId,
   story: string
 ) {
-  const supabase = createServerComponentClient({ cookies: cookies() })
+  const supabase = createServerComponentClient()
   const { rating, insights } = await generateStoryInsights(story)
 
   await supabase
@@ -39,7 +39,7 @@ export async function rateSession(
 export async function incrementSessionImpression(
   sessionId: SessionId
 ) {
-  const supabase = createServerComponentClient({ cookies: cookies() })
+  const supabase = createServerComponentClient()
 
   await supabase.rpc('increment_impression', {
     session_id_input: sessionId,
@@ -49,7 +49,7 @@ export async function incrementSessionImpression(
 export async function incrementSessionView(
   sessionId: SessionId
 ) {
-  const supabase = createServerComponentClient({ cookies: cookies() })
+  const supabase = createServerComponentClient()
 
   await supabase.rpc('increment_view', {
     session_id_input: sessionId,
@@ -60,7 +60,7 @@ export async function updateSessionVisibility(
   sessionId: SessionId,
   visibility: SessionVisibility
 ) {
-  const supabase = createServerComponentClient({ cookies: cookies() })
+  const supabase = createServerComponentClient()
 
   await supabase
     .from('creator_sessions')

@@ -1,5 +1,4 @@
-import { createServerComponentClient } from '@/lib/supabase/server'
-import { cookies } from "next/headers";
+import { createServerComponentClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 import CreatorDashboardWelcome from "@/components/creator/CreatorDashboardWelcome.server";
@@ -8,21 +7,17 @@ import CreatorDashboard from "@/components/creator/CreatorDashboard";
 import SectionHeader from "@/components/ui/SectionHeader";
 
 export default async function CreatorDashboardPage() {
-  // Session prüfen (supabase SSR)
-  const supabase = createServerComponentClient({ cookies: cookies() })
+  const supabase = createServerComponentClient();
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (!session) {
+  // Stabilerer Auth-Check (SSR)
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
     redirect("/login");
   }
 
   return (
     <main className="px-4 py-10 max-w-6xl mx-auto space-y-12">
       <CreatorDashboardWelcome />
-
       <section>
         <SectionHeader
           title="Neuen Inhalt hochladen"
@@ -32,7 +27,6 @@ export default async function CreatorDashboardPage() {
           <ContentUploadForm />
         </div>
       </section>
-
       <section>
         <SectionHeader
           title="Deine bisherigen Uploads"

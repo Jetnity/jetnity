@@ -12,7 +12,7 @@ type Session = {
 }
 
 export default async function AdminReviewPage() {
-  const supabase = createServerComponentClient({ cookies: cookies() })
+  const supabase = createServerComponentClient()
 
   const { data } = await supabase
     .from('creator_sessions')

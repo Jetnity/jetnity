@@ -53,7 +53,7 @@ export default function CreatorDashboard() {
         .from('creator_session_metrics')
         .select('*')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
+        .order('impact_score', { ascending: false })
 
       if (metricsError) {
         toast.error('Fehler beim Laden der Session-Metriken')
@@ -121,6 +121,11 @@ export default function CreatorDashboard() {
       return matchSearch && matchRegion && matchMood && matchTag
     })
   }, [uploads, searchTerm, selectedRegion, selectedMood, selectedTag])
+
+  // Impact Score – Max/Avg für Performance Balken und Badge
+  const scores = sessionMetrics.map(m => m.impact_score ?? 0)
+  const maxScore = scores.length > 0 ? Math.max(...scores) : 100 // Fallback für leere Liste
+  const avgScore = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : undefined
 
   if (loading) return <p className="text-center">Lade Inhalte…</p>
 
@@ -197,13 +202,15 @@ export default function CreatorDashboard() {
         )}
       </div>
 
-      {/* Modal für Edit */}
+    {/* Modal für Edit */}
+    {editingUpload && (
       <EditUploadModal
-        upload={editingUpload!}
+        upload={editingUpload}
         isOpen={!!editingUpload}
         onClose={() => setEditingUpload(null)}
         onUpdate={handleUpdateUpload}
       />
+    )}
 
       {/* Session Performance – SessionStatsCard */}
       <div className="space-y-6">
@@ -213,7 +220,12 @@ export default function CreatorDashboard() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {sessionMetrics.map((metrics) => (
-              <SessionStatsCard key={metrics.session_id} metrics={metrics} />
+              <SessionStatsCard
+                key={metrics.session_id}
+                metrics={metrics}
+                maxScore={maxScore}
+                avgScore={avgScore}
+              />
             ))}
           </div>
         )}

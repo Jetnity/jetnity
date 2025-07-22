@@ -5,7 +5,7 @@ import { createServerComponentClient } from '@/lib/supabase/server'
 import type { CopilotSuggestion } from '@/types/copilot-types'
 
 export async function getCopilotSuggestions(): Promise<CopilotSuggestion[]> {
-  const supabase = createServerComponentClient({ cookies: cookies() })
+  const supabase = createServerComponentClient()
 
   const { data } = await supabase
     .from('creator_uploads')

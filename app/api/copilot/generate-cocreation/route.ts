@@ -15,7 +15,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Ungültige oder fehlende Session-ID' }, { status: 400 })
     }
 
-    const supabase = createServerComponentClient({ cookies: cookies() })
+    const supabase = createServerComponentClient()
 
     const { data: snippets, error } = await supabase
       .from('session_snippets')

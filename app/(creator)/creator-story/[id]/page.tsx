@@ -16,7 +16,7 @@ type Snippet = Database['public']['Tables']['session_snippets']['Row']
 type Media = Database['public']['Tables']['session_media']['Row']
 
 export default async function StoryPage({ params }: { params: { id: string } }) {
-  const supabase = createServerComponentClient({ cookies })
+  const supabase = createServerComponentClient()
 
   const {
     data: { user },

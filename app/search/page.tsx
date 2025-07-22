@@ -10,7 +10,7 @@ export default async function SearchPage({
   searchParams: { region?: string }
 }) {
   const region = searchParams.region
-  const supabase = createServerComponentClient({ cookies: cookies() })
+  const supabase = createServerComponentClient()
 
   // ggf. neuen Copilot-Upload generieren
   if (region) {

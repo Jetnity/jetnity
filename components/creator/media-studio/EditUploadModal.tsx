@@ -10,9 +10,10 @@ type Props = {
     title: string;
   };
   onClose: () => void;
+  onUpdate?: (updated: any) => void; // nur falls gebraucht
 };
 
-export default function EditUploadModal({ upload, onClose }: Props) {
+export default function EditUploadModal({ upload, onClose, onUpdate }: Props) {
   const [variant, setVariant] = useState("travel-style");
   const [loading, setLoading] = useState(false);
   const [newImage, setNewImage] = useState("");
