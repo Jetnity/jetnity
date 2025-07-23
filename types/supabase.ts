@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      blog_posts: {
+        Row: {
+          admin_reviewed: boolean
+          ai_generated: boolean
+          content: string
+          cover_image: string | null
+          created_at: string | null
+          creator_id: string | null
+          excerpt: string | null
+          id: string
+          is_featured: boolean
+          likes: number
+          published_at: string | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          status: string
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          views: number
+        }
+        Insert: {
+          admin_reviewed?: boolean
+          ai_generated?: boolean
+          content: string
+          cover_image?: string | null
+          created_at?: string | null
+          creator_id?: string | null
+          excerpt?: string | null
+          id?: string
+          is_featured?: boolean
+          likes?: number
+          published_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          status?: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          views?: number
+        }
+        Update: {
+          admin_reviewed?: boolean
+          ai_generated?: boolean
+          content?: string
+          cover_image?: string | null
+          created_at?: string | null
+          creator_id?: string | null
+          excerpt?: string | null
+          id?: string
+          is_featured?: boolean
+          likes?: number
+          published_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          status?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          views?: number
+        }
+        Relationships: []
+      }
       creator_profiles: {
         Row: {
           created_at: string | null
