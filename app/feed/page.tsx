@@ -35,7 +35,6 @@ export default async function FeedPage() {
               key={session.id}
               id={session.id}
               title={session.title ?? 'Ohne Titel'}
-              userId={session.user_id}
             />
           ))}
         </div>

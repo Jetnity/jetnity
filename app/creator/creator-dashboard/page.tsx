@@ -1,41 +1,74 @@
 import { createServerComponentClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
+import CreatorProfileCard from "@/components/creator/dashboard/CreatorProfileCard";
 import CreatorDashboardWelcome from "@/components/creator/CreatorDashboardWelcome.server";
 import ContentUploadForm from "@/components/creator/ContentUploadForm";
-import CreatorDashboard from "@/components/creator/CreatorDashboard";
+import CreatorMediaGrid from "@/components/creator/dashboard/CreatorMediaGrid";
+import CreatorBlogSection from "@/components/creator/dashboard/CreatorBlogSection";
+import SessionStatsPanel from "@/components/creator/dashboard/SessionStatsPanel";
 import SectionHeader from "@/components/ui/SectionHeader";
 
 export default async function CreatorDashboardPage() {
   const supabase = createServerComponentClient();
-
-  // Stabilerer Auth-Check (SSR)
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    redirect("/login");
-  }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
 
   return (
-    <main className="px-4 py-10 max-w-6xl mx-auto space-y-12">
-      <CreatorDashboardWelcome />
-      <section>
-        <SectionHeader
-          title="Neuen Inhalt hochladen"
-          subtitle="Videos, Bilder oder Guides einfach per Formular einreichen."
-        />
-        <div className="mt-6">
-          <ContentUploadForm />
-        </div>
-      </section>
-      <section>
-        <SectionHeader
-          title="Deine bisherigen Uploads"
-          subtitle="Alle von dir hochgeladenen Inhalte – aktuell und vollständig."
-        />
-        <div className="mt-6">
-          <CreatorDashboard />
-        </div>
-      </section>
+    <main className="max-w-7xl mx-auto px-2 md:px-6 py-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* ---- Sidebar: Creator-Profil ---- */}
+        <aside className="lg:col-span-3 order-2 lg:order-1">
+          <div className="sticky top-8">
+            <CreatorProfileCard />
+          </div>
+        </aside>
+
+        {/* ---- Main Content ---- */}
+        <section className="lg:col-span-6 order-1 lg:order-2 space-y-10">
+          {/* Copilot Welcome Panel */}
+          <CreatorDashboardWelcome />
+
+          {/* Upload Formular */}
+          <div className="mt-8">
+            <SectionHeader
+              title="Neuen Inhalt hochladen"
+              subtitle="Videos, Bilder oder Guides direkt per Upload."
+            />
+            <div className="mt-5">
+              <ContentUploadForm />
+            </div>
+          </div>
+
+          {/* Uploads Grid & Filter */}
+          <div className="mt-8">
+            <SectionHeader
+              title="Deine Uploads & Stories"
+              subtitle="Alle von dir erstellten Inhalte im Überblick."
+            />
+            <CreatorMediaGrid />
+          </div>
+
+          {/* Blog Section */}
+          <div className="mt-8">
+            <SectionHeader
+              title="Blogposts & Stories"
+              subtitle="Verwalte und veröffentliche deine Beiträge."
+            />
+            <CreatorBlogSection />
+          </div>
+        </section>
+
+        {/* ---- Side Panel: Performance / Stats ---- */}
+        <aside className="lg:col-span-3 order-3">
+          <div className="sticky top-8 space-y-10">
+            <SessionStatsPanel />
+            {/* Optional: Weitere Panels wie Copilot-QuickActions */}
+          </div>
+        </aside>
+      </div>
     </main>
   );
 }

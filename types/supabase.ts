@@ -14,6 +14,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      blog_comments: {
+        Row: {
+          blog_id: string | null
+          content: string
+          created_at: string
+          id: string
+          name: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          blog_id?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          name?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          blog_id?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          name?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_comments_blog_id_fkey"
+            columns: ["blog_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_posts: {
         Row: {
           admin_reviewed: boolean
@@ -78,26 +122,64 @@ export type Database = {
           updated_at?: string | null
           views?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "blog_posts_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "creator_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       creator_profiles: {
         Row: {
+          avatar_url: string | null
+          bio: string | null
           created_at: string | null
+          facebook: string | null
           id: string
+          instagram: string | null
+          name: string | null
           role: string | null
+          tiktok: string | null
+          twitter: string | null
           user_id: string | null
+          username: string | null
+          website: string | null
+          youtube: string | null
         }
         Insert: {
+          avatar_url?: string | null
+          bio?: string | null
           created_at?: string | null
+          facebook?: string | null
           id?: string
+          instagram?: string | null
+          name?: string | null
           role?: string | null
+          tiktok?: string | null
+          twitter?: string | null
           user_id?: string | null
+          username?: string | null
+          website?: string | null
+          youtube?: string | null
         }
         Update: {
+          avatar_url?: string | null
+          bio?: string | null
           created_at?: string | null
+          facebook?: string | null
           id?: string
+          instagram?: string | null
+          name?: string | null
           role?: string | null
+          tiktok?: string | null
+          twitter?: string | null
           user_id?: string | null
+          username?: string | null
+          website?: string | null
+          youtube?: string | null
         }
         Relationships: []
       }
