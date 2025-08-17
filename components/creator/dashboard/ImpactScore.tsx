@@ -21,7 +21,6 @@ interface ImpactScoreProps {
 export default function ImpactScore({ value, label = 'Impact Score', avgScore, className }: ImpactScoreProps) {
   const normalized = Math.max(0, Math.min(value, 100))
 
-  // Badge-Variante bestimmen (passend zu deinem Badge-Code)
   let badgeVariant: 'default' | 'success' | 'warning' | 'info' | 'error' = 'default'
   if (normalized >= 90) badgeVariant = 'success'
   else if (normalized >= 70) badgeVariant = 'info'
@@ -51,6 +50,7 @@ export default function ImpactScore({ value, label = 'Impact Score', avgScore, c
           </Tooltip>
         </TooltipProvider>
       </div>
+
       <div className="flex items-center gap-3">
         <Badge variant={badgeVariant} className="min-w-[60px] text-center">
           {Math.round(normalized)}
@@ -58,6 +58,7 @@ export default function ImpactScore({ value, label = 'Impact Score', avgScore, c
         </Badge>
         <Progress value={normalized} className="w-40 h-3" />
       </div>
+
       {typeof avgScore === 'number' && (
         <div className="text-xs text-neutral-500 mt-1">
           Plattform-Schnitt: <span className="font-semibold">{avgScore.toFixed(1)}</span>

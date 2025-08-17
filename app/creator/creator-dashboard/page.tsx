@@ -7,6 +7,7 @@ import ContentUploadForm from '@/components/creator/ContentUploadForm'
 import CreatorMediaGrid from '@/components/creator/dashboard/CreatorMediaGrid'
 import CreatorBlogSection from '@/components/creator/dashboard/CreatorBlogSection'
 import SessionStatsPanel from '@/components/creator/dashboard/SessionStatsPanel'
+import ImpactScorePanel from '@/components/creator/dashboard/ImpactScorePanel'
 import SectionHeader from '@/components/ui/SectionHeader'
 
 export default async function CreatorDashboardPage() {
@@ -15,11 +16,11 @@ export default async function CreatorDashboardPage() {
   if (!user) redirect('/login')
 
   return (
-    <main className="max-w-7xl mx-auto px-3 md:px-6 py-10">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+    <main className="max-w-7xl mx-auto px-2 md:px-6 py-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
         {/* Sidebar: Profil */}
         <aside className="lg:col-span-3 order-2 lg:order-1">
-          <div className="sticky top-6">
+          <div className="sticky top-8">
             <CreatorProfileCard />
           </div>
         </aside>
@@ -28,7 +29,7 @@ export default async function CreatorDashboardPage() {
         <section className="lg:col-span-6 order-1 lg:order-2 space-y-10">
           <CreatorDashboardWelcome />
 
-          <div>
+          <div className="mt-2">
             <SectionHeader
               title="Neuen Inhalt hochladen"
               subtitle="Videos, Bilder oder Guides direkt per Upload."
@@ -38,7 +39,7 @@ export default async function CreatorDashboardPage() {
             </div>
           </div>
 
-          <div>
+          <div className="mt-2">
             <SectionHeader
               title="Deine Uploads & Stories"
               subtitle="Alle von dir erstellten Inhalte im Überblick."
@@ -46,7 +47,7 @@ export default async function CreatorDashboardPage() {
             <CreatorMediaGrid />
           </div>
 
-          <div>
+          <div className="mt-2">
             <SectionHeader
               title="Blogposts & Stories"
               subtitle="Verwalte und veröffentliche deine Beiträge."
@@ -55,10 +56,11 @@ export default async function CreatorDashboardPage() {
           </div>
         </section>
 
-        {/* Right: Stats */}
+        {/* Right Panel */}
         <aside className="lg:col-span-3 order-3">
-          <div className="sticky top-6 space-y-6">
-            <SessionStatsPanel metrics={[]} loading />
+          <div className="sticky top-8 space-y-6">
+            <ImpactScorePanel />
+            <SessionStatsPanel />
           </div>
         </aside>
       </div>
