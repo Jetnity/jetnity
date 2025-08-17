@@ -185,39 +185,61 @@ export type Database = {
       }
       creator_session_metrics: {
         Row: {
-          comments: number | null
+          comments: number
           created_at: string
           impact_score: number
           impressions: number
-          likes: number | null
+          likes: number
           session_id: string
           title: string | null
           user_id: string
-          views: number | null
+          views: number
         }
         Insert: {
-          comments?: number | null
-          created_at?: string
-          impact_score: number
-          impressions?: number
-          likes?: number | null
-          session_id?: string
-          title?: string | null
-          user_id: string
-          views?: number | null
-        }
-        Update: {
-          comments?: number | null
+          comments?: number
           created_at?: string
           impact_score?: number
           impressions?: number
-          likes?: number | null
+          likes?: number
+          session_id?: string
+          title?: string | null
+          user_id: string
+          views?: number
+        }
+        Update: {
+          comments?: number
+          created_at?: string
+          impact_score?: number
+          impressions?: number
+          likes?: number
           session_id?: string
           title?: string | null
           user_id?: string
-          views?: number | null
+          views?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "creator_session_metrics_session_fk"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "creator_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "creator_session_metrics_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "creator_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "csm_session_fk"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "creator_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       creator_sessions: {
         Row: {
@@ -553,6 +575,14 @@ export type Database = {
     Functions: {
       append_email_to_array: {
         Args: { email_to_add: string; id: string }
+        Returns: undefined
+      }
+      csm_increment_impressions: {
+        Args: { p_session_id: string }
+        Returns: undefined
+      }
+      csm_increment_views: {
+        Args: { p_session_id: string }
         Returns: undefined
       }
       increment_impression: {

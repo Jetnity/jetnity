@@ -2,11 +2,12 @@ import SessionStatsCard from './SessionStatsCard'
 import type { Tables } from '@/types/supabase'
 
 type Props = {
-  metrics?: Tables<'creator_session_metrics'>[]  // optional
-  loading?: boolean                              // optional
+  metrics?: Tables<'creator_session_metrics'>[]
+  loading?: boolean
+  hideWhenEmpty?: boolean
 }
 
-export default function SessionStatsPanel({ metrics = [], loading = false }: Props) {
+export default function SessionStatsPanel({ metrics = [], loading = false, hideWhenEmpty = false }: Props) {
   if (loading) {
     return (
       <div className="space-y-3">
@@ -17,8 +18,8 @@ export default function SessionStatsPanel({ metrics = [], loading = false }: Pro
     )
   }
 
-  if (!metrics || metrics.length === 0) {
-    return (
+  if (!metrics.length) {
+    return hideWhenEmpty ? null : (
       <div className="rounded-2xl border bg-white/70 dark:bg-neutral-900 p-5 text-center shadow-sm">
         <div className="text-lg font-semibold">Noch keine Performance-Daten</div>
         <p className="text-sm text-neutral-500 mt-1">
@@ -26,7 +27,7 @@ export default function SessionStatsPanel({ metrics = [], loading = false }: Pro
         </p>
         <a
           href="/creator/media-studio"
-          className="inline-block mt-3 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+          className="inline-flex mt-3 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
         >
           Jetzt Session starten
         </a>
