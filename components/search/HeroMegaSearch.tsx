@@ -41,24 +41,20 @@ export default function HeroMegaSearch() {
     <section
       aria-label="Suche"
       className={cn(
-        'mx-auto w-full max-w-6xl rounded-[28px] border border-white/10 text-white shadow-2xl ring-1 ring-black/5',
-        'bg-[#0c1930]/92 supports-blur:backdrop-blur-xl supports-blur:bg-[#0c1930]/60',
-        'px-3 py-4 sm:px-5 sm:py-5 md:px-7 md:py-6',
+        'mx-auto w-full max-w-7xl xl:max-w-[1320px] rounded-[28px] border border-white/10 text-white shadow-2xl ring-1 ring-black/5',
+        'bg-[#0c1930]/92 supports-blur:backdrop-blur-xl supports-blur:bg-panel',
+        'px-3 py-4 sm:px-5 sm:py-6 md:px-7 md:py-7',
         'pb-[calc(1rem+env(safe-area-inset-bottom))]'
       )}
     >
       {/* Tabs */}
       <div className="relative">
-        {/* fade edges */}
         <div className="pointer-events-none absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-[#0c1930] to-transparent opacity-60 sm:hidden" />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-[#0c1930] to-transparent opacity-60 sm:hidden" />
         <nav
           role="tablist"
           aria-label="Suchkategorien"
-          className={cn(
-            'flex items-center gap-2 overflow-x-auto no-scrollbar snap-x snap-mandatory',
-            'mask-edges sm:mask-none'
-          )}
+          className="flex items-center gap-2 overflow-x-auto no-scrollbar snap-x snap-mandatory mask-edges"
         >
           {TABS.map(({ key, label, icon: Icon }) => {
             const active = key === tab
@@ -70,8 +66,7 @@ export default function HeroMegaSearch() {
                 aria-controls={`panel-${key}`}
                 onClick={() => setTab(key)}
                 className={cn(
-                  'snap-start inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm transition',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c1930]',
+                  'snap-start inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm transition focus-ring',
                   active
                     ? 'border-white/25 bg-white/15 font-semibold'
                     : 'border-white/10 text-white/85 hover:border-white/20 hover:bg-white/10'
@@ -90,12 +85,8 @@ export default function HeroMegaSearch() {
         id={`panel-${tab}`}
         role="tabpanel"
         aria-live="polite"
-        className={cn(
-          'mt-4 rounded-2xl bg-white/6 p-2 sm:p-3',
-          'ring-1 ring-inset ring-white/10'
-        )}
+        className="mt-4 rounded-2xl bg-white/6 p-3 sm:p-4 ring-1 ring-inset ring-white/10"
       >
-        {/* Inhalt */}
         <div className="mt-2">
           {tab === 'flight'   && <FlightSearchForm />}
           {tab === 'hotel'    && <HotelSearchForm />}
