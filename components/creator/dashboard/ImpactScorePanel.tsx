@@ -1,97 +1,94 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import ImpactScore from './ImpactScore'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Tables } from '@/types/supabase'
 
-type Metric = Tables<'creator_session_metrics'>
+type Metric = Pick<Tables<'creator_session_metrics'>, 'impact_score' | 'title' | 'created_at'>
 
 export default function ImpactScorePanel() {
-  const [metrics, setMetrics] = useState<Metric[]>([])
-  const [avgScore, setAvgScore] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
+  const [latest, setLatest] = useState<Metric | null>(null)
+  const [avg, setAvg] = useState<number | undefined>(undefined)
+  const [error, setError] = useState<string | null>(null)
 
-  // 1) Initial laden
   useEffect(() => {
-    let mounted = true
+    let isMounted = true
     ;(async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setLoading(false); return }
+      setLoading(true)
+      setError(null)
 
-      // Eigene Metrics ziehen
-      const { data: rows } = await supabase
+      const { data: auth } = await supabase.auth.getUser()
+      const userId = auth.user?.id
+      if (!userId) {
+        if (isMounted) {
+          setError('Nicht eingeloggt.')
+          setLoading(false)
+        }
+        return
+      }
+
+      const latestQ = supabase
         .from('creator_session_metrics')
-        .select('*')
-        .eq('user_id', user.id)
+        .select('impact_score,title,created_at')
+        .eq('user_id', userId)
         .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle<Metric>()
 
-      if (mounted) setMetrics(rows ?? [])
+      const avgQ = supabase.rpc('platform_avg_impact_score')
 
-      // Plattform-Durchschnitt via RPC
-      const { data: rpc } = await supabase.rpc('platform_avg_impact_score')
-      if (mounted) setAvgScore(typeof rpc === 'number' ? rpc : Number(rpc ?? 0))
+      const [latestRes, avgRes] = await Promise.all([latestQ, avgQ])
 
-      if (mounted) setLoading(false)
+      if (!isMounted) return
+
+      if (latestRes.error) setError(latestRes.error.message)
+      else setLatest(latestRes.data ?? null)
+
+      if (!avgRes.error && typeof avgRes.data === 'number') {
+        setAvg(avgRes.data)
+      }
+
+      setLoading(false)
     })()
-    return () => { mounted = false }
-  }, [])
 
-  // 2) Realtime – Updates direkt einpflegen
-  useEffect(() => {
-    const channel = supabase
-      .channel('realtime:csm')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'creator_session_metrics' }, (payload) => {
-        setMetrics((prev) => {
-          const p = payload as any
-          if (p.eventType === 'INSERT') return [p.new as Metric, ...prev]
-          if (p.eventType === 'UPDATE') return prev.map(x => x.session_id === p.new.session_id ? (p.new as Metric) : x)
-          if (p.eventType === 'DELETE') return prev.filter(x => x.session_id !== p.old.session_id)
-          return prev
-        })
-      })
-      .subscribe()
-    return () => { supabase.removeChannel(channel) }
+    return () => {
+      isMounted = false
+    }
   }, [])
-
-  const latestScore = useMemo(() => metrics[0]?.impact_score ?? null, [metrics])
 
   return (
-    <div className="rounded-2xl border bg-white/70 dark:bg-neutral-900 p-5 shadow-sm">
-      <div className="mb-3">
+    <Card className="bg-white/70 dark:bg-neutral-900 border">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base font-semibold">Impact & Performance</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
         {loading ? (
-          <div className="h-8 w-40 rounded bg-neutral-100 dark:bg-neutral-800 animate-pulse" />
-        ) : (
-          <ImpactScore
-            value={Number(latestScore ?? 0)}
-            avgScore={avgScore ?? undefined}
-            label="Impact Score (neueste Session)"
-          />
-        )}
-      </div>
-
-      {/* Kleine Liste der letzten Sessions */}
-      <div className="mt-4 space-y-2">
-        {loading ? (
-          [...Array(3)].map((_, i) => (
-            <div key={i} className="h-14 rounded bg-neutral-100 dark:bg-neutral-800 animate-pulse" />
-          ))
-        ) : metrics.length === 0 ? (
-          <div className="text-sm text-neutral-500 text-center">
-            Noch keine Daten – starte deine erste Session im Media-Studio.
+          <div className="space-y-3">
+            <div className="h-4 w-40 bg-neutral-100 dark:bg-neutral-800 rounded animate-pulse" />
+            <div className="h-3 w-full bg-neutral-100 dark:bg-neutral-800 rounded animate-pulse" />
           </div>
+        ) : error ? (
+          <p className="text-sm text-red-500">{error}</p>
+        ) : latest ? (
+          <>
+            <ImpactScore
+              value={Number(latest.impact_score ?? 0)}
+              label={latest.title || 'Letzte Session'}
+              avgScore={avg}
+            />
+            <p className="text-xs text-neutral-500">
+              Aktualisiert: {new Date(latest.created_at!).toLocaleString()}
+            </p>
+          </>
         ) : (
-          metrics.slice(0, 5).map(m => (
-            <div key={m.session_id} className="flex items-center justify-between rounded-lg px-3 py-2 hover:bg-neutral-50 dark:hover:bg-neutral-800">
-              <div className="min-w-0">
-                <div className="text-sm font-medium truncate">{m.title || 'Unbenannte Session'}</div>
-                <div className="text-xs text-neutral-500">{new Date(m.created_at!).toLocaleString()}</div>
-              </div>
-              <div className="text-sm font-semibold">{Math.round(Number(m.impact_score))}</div>
-            </div>
-          ))
+          <p className="text-sm text-neutral-500">
+            Noch keine Performance-Daten verfügbar. Starte deine erste Session.
+          </p>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }

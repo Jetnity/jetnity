@@ -11,26 +11,33 @@ import {
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
+type BadgeVariant = 'default' | 'success' | 'warning' | 'info' | 'error'
+
 interface ImpactScoreProps {
-  value: number // 0–100
-  label?: string
-  avgScore?: number
+  value: number         // 0–100
+  label?: string        // Überschrift
+  avgScore?: number     // optional: Plattform-Schnitt
   className?: string
 }
 
-export default function ImpactScore({ value, label = 'Impact Score', avgScore, className }: ImpactScoreProps) {
-  const normalized = Math.max(0, Math.min(value, 100))
+export default function ImpactScore({
+  value,
+  label = 'Impact Score',
+  avgScore,
+  className,
+}: ImpactScoreProps) {
+  const val = Math.max(0, Math.min(100, Number.isFinite(value) ? value : 0))
 
-  let badgeVariant: 'default' | 'success' | 'warning' | 'info' | 'error' = 'default'
-  if (normalized >= 90) badgeVariant = 'success'
-  else if (normalized >= 70) badgeVariant = 'info'
-  else if (normalized >= 50) badgeVariant = 'warning'
+  let badgeVariant: BadgeVariant = 'default'
+  if (val >= 90) badgeVariant = 'success'
+  else if (val >= 70) badgeVariant = 'info'
+  else if (val >= 50) badgeVariant = 'warning'
   else badgeVariant = 'error'
 
   let badgeText = ''
-  if (normalized >= 90) badgeText = 'Top 10%'
-  else if (normalized >= 70) badgeText = 'Trending'
-  else if (normalized < 50) badgeText = 'Optimieren'
+  if (val >= 90) badgeText = 'Top 10%'
+  else if (val >= 70) badgeText = 'Trending'
+  else if (val < 50) badgeText = 'Optimieren'
 
   return (
     <div className={cn('flex flex-col gap-2', className)}>
@@ -43,8 +50,9 @@ export default function ImpactScore({ value, label = 'Impact Score', avgScore, c
             </TooltipTrigger>
             <TooltipContent>
               <span>
-                <b>Impact Score</b>: Bewertet Sichtbarkeit & Engagement deiner Session im Vergleich zum Plattform-Schnitt.
-                Werte über 90 sind exzellent, unter 50 solltest du optimieren.
+                <b>Impact Score</b>: Misst Sichtbarkeit & Engagement deiner Session
+                im Vergleich zum Plattform-Schnitt. Ab 90 exzellent, unter 50
+                bitte optimieren.
               </span>
             </TooltipContent>
           </Tooltip>
@@ -52,16 +60,17 @@ export default function ImpactScore({ value, label = 'Impact Score', avgScore, c
       </div>
 
       <div className="flex items-center gap-3">
-        <Badge variant={badgeVariant} className="min-w-[60px] text-center">
-          {Math.round(normalized)}
+        <Badge variant={badgeVariant} className="min-w-[64px] justify-center">
+          {Math.round(val)}
           {badgeText && <span className="ml-2">{badgeText}</span>}
         </Badge>
-        <Progress value={normalized} className="w-40 h-3" />
+        <Progress value={val} className="w-40 h-3" />
       </div>
 
-      {typeof avgScore === 'number' && (
+      {typeof avgScore === 'number' && Number.isFinite(avgScore) && (
         <div className="text-xs text-neutral-500 mt-1">
-          Plattform-Schnitt: <span className="font-semibold">{avgScore.toFixed(1)}</span>
+          Plattform-Schnitt:{' '}
+          <span className="font-semibold">{avgScore.toFixed(1)}</span>
         </div>
       )}
     </div>
