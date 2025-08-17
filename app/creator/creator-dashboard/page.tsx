@@ -1,38 +1,34 @@
-import { createServerComponentClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import { createServerComponentClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 
-import CreatorProfileCard from "@/components/creator/dashboard/CreatorProfileCard";
-import CreatorDashboardWelcome from "@/components/creator/CreatorDashboardWelcome.server";
-import ContentUploadForm from "@/components/creator/ContentUploadForm";
-import CreatorMediaGrid from "@/components/creator/dashboard/CreatorMediaGrid";
-import CreatorBlogSection from "@/components/creator/dashboard/CreatorBlogSection";
-import SessionStatsPanel from "@/components/creator/dashboard/SessionStatsPanel";
-import SectionHeader from "@/components/ui/SectionHeader";
+import CreatorProfileCard from '@/components/creator/dashboard/CreatorProfileCard'
+import CreatorDashboardWelcome from '@/components/creator/CreatorDashboardWelcome.server'
+import ContentUploadForm from '@/components/creator/ContentUploadForm'
+import CreatorMediaGrid from '@/components/creator/dashboard/CreatorMediaGrid'
+import CreatorBlogSection from '@/components/creator/dashboard/CreatorBlogSection'
+import SessionStatsPanel from '@/components/creator/dashboard/SessionStatsPanel'
+import SectionHeader from '@/components/ui/SectionHeader'
 
 export default async function CreatorDashboardPage() {
-  const supabase = createServerComponentClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const supabase = createServerComponentClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
 
   return (
-    <main className="max-w-7xl mx-auto px-2 md:px-6 py-12">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-        {/* ---- Sidebar: Creator-Profil ---- */}
+    <main className="max-w-7xl mx-auto px-3 md:px-6 py-10">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+        {/* Sidebar: Profil */}
         <aside className="lg:col-span-3 order-2 lg:order-1">
-          <div className="sticky top-8">
+          <div className="sticky top-6">
             <CreatorProfileCard />
           </div>
         </aside>
 
-        {/* ---- Main Content ---- */}
+        {/* Main */}
         <section className="lg:col-span-6 order-1 lg:order-2 space-y-10">
-          {/* Copilot Welcome Panel */}
           <CreatorDashboardWelcome />
 
-          {/* Upload Formular */}
-          <div className="mt-8">
+          <div>
             <SectionHeader
               title="Neuen Inhalt hochladen"
               subtitle="Videos, Bilder oder Guides direkt per Upload."
@@ -42,8 +38,7 @@ export default async function CreatorDashboardPage() {
             </div>
           </div>
 
-          {/* Uploads Grid & Filter */}
-          <div className="mt-8">
+          <div>
             <SectionHeader
               title="Deine Uploads & Stories"
               subtitle="Alle von dir erstellten Inhalte im Überblick."
@@ -51,8 +46,7 @@ export default async function CreatorDashboardPage() {
             <CreatorMediaGrid />
           </div>
 
-          {/* Blog Section */}
-          <div className="mt-8">
+          <div>
             <SectionHeader
               title="Blogposts & Stories"
               subtitle="Verwalte und veröffentliche deine Beiträge."
@@ -61,14 +55,13 @@ export default async function CreatorDashboardPage() {
           </div>
         </section>
 
-        {/* ---- Side Panel: Performance / Stats ---- */}
+        {/* Right: Stats */}
         <aside className="lg:col-span-3 order-3">
-          <div className="sticky top-8 space-y-10">
-            <SessionStatsPanel />
-            {/* Optional: Weitere Panels wie Copilot-QuickActions */}
+          <div className="sticky top-6 space-y-6">
+            <SessionStatsPanel metrics={[]} loading />
           </div>
         </aside>
       </div>
     </main>
-  );
+  )
 }

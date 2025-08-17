@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -567,7 +567,7 @@ export type Database = {
     }
     Functions: {
       append_email_to_array: {
-        Args: { id: string; email_to_add: string }
+        Args: { email_to_add: string; id: string }
         Returns: undefined
       }
       increment_impression: {
