@@ -1,23 +1,21 @@
-// components/search/HeroMegaSearch.tsx
 'use client'
 
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import {
-  Plane, Hotel, Car, Ship, Bus, Train, Route as RouteIcon, Activity as ActivityIcon, // <- NEU
+  Plane, Hotel, Car, Ship, Bus, Train, Route as RouteIcon, Activity as ActivityIcon,
 } from 'lucide-react'
 import { cn as _cn } from '@/lib/utils'
 
-function cnFallback(...a: any[]) { return a.filter(Boolean).join(' ') }
-const cn = typeof _cn === 'function' ? _cn : cnFallback
+const cn = typeof _cn === 'function' ? _cn : (...a: any[]) => a.filter(Boolean).join(' ')
 
-type TabType = 'flight' | 'hotel' | 'car' | 'activity' | 'ferry' | 'bus' | 'train' | 'cruise' | 'combo'
+type TabType =
+  | 'flight' | 'hotel' | 'car' | 'activity' | 'ferry' | 'bus' | 'train' | 'cruise' | 'combo'
 
-// Lazy Imports (Formulare)
 const FlightSearchForm   = dynamic(() => import('./forms/FlightSearchForm'),   { ssr: false })
 const HotelSearchForm    = dynamic(() => import('./forms/HotelSearchForm'),    { ssr: false })
 const CarSearchForm      = dynamic(() => import('./forms/CarSearchForm'),      { ssr: false })
-const ActivitySearchForm = dynamic(() => import('./forms/ActivitySearchForm'), { ssr: false }) // <- NEU
+const ActivitySearchForm = dynamic(() => import('./forms/ActivitySearchForm'), { ssr: false })
 const FerrySearchForm    = dynamic(() => import('./forms/FerrySearchForm'),    { ssr: false })
 const BusSearchForm      = dynamic(() => import('./forms/BusSearchForm'),      { ssr: false })
 const TrainSearchForm    = dynamic(() => import('./forms/TrainSearchForm'),    { ssr: false })
@@ -28,7 +26,7 @@ const TABS: { key: TabType; label: string; icon: React.ElementType }[] = [
   { key: 'flight',   label: 'Flüge',        icon: Plane },
   { key: 'hotel',    label: 'Hotels',       icon: Hotel },
   { key: 'car',      label: 'Mietwagen',    icon: Car },
-  { key: 'activity', label: 'Aktivitäten',  icon: ActivityIcon }, // <- NEU
+  { key: 'activity', label: 'Aktivitäten',  icon: ActivityIcon },
   { key: 'ferry',    label: 'Fähren',       icon: Ship },
   { key: 'bus',      label: 'Bus',          icon: Bus },
   { key: 'train',    label: 'Zug',          icon: Train },
@@ -42,43 +40,73 @@ export default function HeroMegaSearch() {
   return (
     <section
       aria-label="Suche"
-      className="mx-auto w-full max-w-6xl rounded-3xl border border-white/10 bg-[#0c1930] px-5 py-5 text-white shadow-2xl ring-1 ring-black/5 backdrop-blur md:px-7 md:py-6"
+      className={cn(
+        'mx-auto w-full max-w-6xl rounded-[28px] border border-white/10 text-white shadow-2xl ring-1 ring-black/5',
+        'bg-[#0c1930]/92 supports-blur:backdrop-blur-xl supports-blur:bg-[#0c1930]/60',
+        'px-3 py-4 sm:px-5 sm:py-5 md:px-7 md:py-6',
+        'pb-[calc(1rem+env(safe-area-inset-bottom))]'
+      )}
     >
       {/* Tabs */}
-      <nav className="flex flex-wrap items-center gap-2">
-        {TABS.map(({ key, label, icon: Icon }) => {
-          const active = key === tab
-          return (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setTab(key)}
-              className={cn(
-                'inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm transition',
-                active
-                  ? 'border-white/20 bg-white/10 font-semibold'
-                  : 'border-white/10 text-white/80 hover:border-white/20 hover:bg-white/5'
-              )}
-              aria-current={active ? 'page' : undefined}
-            >
-              <Icon className="h-4 w-4" />
-              {label}
-            </button>
-          )
-        })}
-      </nav>
+      <div className="relative">
+        {/* fade edges */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-[#0c1930] to-transparent opacity-60 sm:hidden" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-[#0c1930] to-transparent opacity-60 sm:hidden" />
+        <nav
+          role="tablist"
+          aria-label="Suchkategorien"
+          className={cn(
+            'flex items-center gap-2 overflow-x-auto no-scrollbar snap-x snap-mandatory',
+            'mask-edges sm:mask-none'
+          )}
+        >
+          {TABS.map(({ key, label, icon: Icon }) => {
+            const active = key === tab
+            return (
+              <button
+                key={key}
+                role="tab"
+                aria-selected={active}
+                aria-controls={`panel-${key}`}
+                onClick={() => setTab(key)}
+                className={cn(
+                  'snap-start inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm transition',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c1930]',
+                  active
+                    ? 'border-white/25 bg-white/15 font-semibold'
+                    : 'border-white/10 text-white/85 hover:border-white/20 hover:bg-white/10'
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                {label}
+              </button>
+            )
+          })}
+        </nav>
+      </div>
 
-      {/* Content */}
-      <div className="mt-5">
-        {tab === 'flight'   && <FlightSearchForm />}
-        {tab === 'hotel'    && <HotelSearchForm />}
-        {tab === 'car'      && <CarSearchForm />}
-        {tab === 'activity' && <ActivitySearchForm />}{/* <- NEU */}
-        {tab === 'ferry'    && <FerrySearchForm />}
-        {tab === 'bus'      && <BusSearchForm />}
-        {tab === 'train'    && <TrainSearchForm />}
-        {tab === 'cruise'   && <CruiseSearchForm />}
-        {tab === 'combo'    && <ComboSearchForm />}
+      {/* Panel */}
+      <div
+        id={`panel-${tab}`}
+        role="tabpanel"
+        aria-live="polite"
+        className={cn(
+          'mt-4 rounded-2xl bg-white/6 p-2 sm:p-3',
+          'ring-1 ring-inset ring-white/10'
+        )}
+      >
+        {/* Inhalt */}
+        <div className="mt-2">
+          {tab === 'flight'   && <FlightSearchForm />}
+          {tab === 'hotel'    && <HotelSearchForm />}
+          {tab === 'car'      && <CarSearchForm />}
+          {tab === 'activity' && <ActivitySearchForm />}
+          {tab === 'ferry'    && <FerrySearchForm />}
+          {tab === 'bus'      && <BusSearchForm />}
+          {tab === 'train'    && <TrainSearchForm />}
+          {tab === 'cruise'   && <CruiseSearchForm />}
+          {tab === 'combo'    && <ComboSearchForm />}
+        </div>
       </div>
     </section>
   )
