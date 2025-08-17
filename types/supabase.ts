@@ -188,6 +188,7 @@ export type Database = {
           comments: number | null
           created_at: string
           impact_score: number
+          impressions: number
           likes: number | null
           session_id: string
           title: string | null
@@ -198,6 +199,7 @@ export type Database = {
           comments?: number | null
           created_at?: string
           impact_score: number
+          impressions?: number
           likes?: number | null
           session_id?: string
           title?: string | null
@@ -208,6 +210,7 @@ export type Database = {
           comments?: number | null
           created_at?: string
           impact_score?: number
+          impressions?: number
           likes?: number | null
           session_id?: string
           title?: string | null

@@ -3,57 +3,56 @@
 import { useEffect, useState } from 'react'
 import { incrementSessionView } from '@/lib/supabase/actions'
 import { supabase } from '@/lib/supabase/client'
-import type { Database } from '@/types/supabase'
+import type { Tables } from '@/types/supabase' // <- nutzt deine Tables-Helper
 
-type Metric = Database['public']['Views']['creator_session_metrics']['Row']
-type Session = Database['public']['Tables']['creator_sessions']['Row'] & { rating?: number }
+type MetricRow = Tables<'creator_session_metrics'>
+type SessionRow = Tables<'creator_sessions'>
 
 interface Props {
   sessionId: string
 }
 
 export default function SessionViewTracker({ sessionId }: Props) {
-  const [metrics, setMetrics] = useState<Metric | null>(null)
-  const [session, setSession] = useState<Pick<Session, 'rating'> | null>(null)
+  const [metrics, setMetrics] = useState<MetricRow | null>(null)
+  const [sessionRating, setSessionRating] = useState<number | null>(null)
 
-  // Zähle View wie bisher
+  // 1) View hochzählen (deine bestehende Server Action)
   useEffect(() => {
+    if (!sessionId) return
     incrementSessionView(sessionId)
   }, [sessionId])
 
-  // Lade Metriken + Bewertung
+  // 2) Metriken + Bewertung laden
   useEffect(() => {
+    if (!sessionId) return
     const load = async () => {
       const { data: metric } = await supabase
         .from('creator_session_metrics')
         .select('*')
         .eq('session_id', sessionId)
-        .single()
+        .single<MetricRow>()
 
       const { data: session } = await supabase
         .from('creator_sessions')
         .select('rating')
         .eq('id', sessionId)
-        .single()
+        .single<Pick<SessionRow, 'rating'>>()
 
       setMetrics(metric ?? null)
-      setSession(
-        session && session.rating !== null
-          ? { rating: session.rating }
-          : null
+      setSessionRating(
+        typeof session?.rating === 'number' ? session.rating : null
       )
     }
-
     load()
   }, [sessionId])
 
   if (!metrics) return null
 
-  // Gewichteter Jetnity Impact Score (Beispielgewichtung)
+  // Beispielgewichtung für Jetnity Impact Score
   const impactScore = Math.round(
     (metrics.views || 0) * 0.4 +
-    (metrics.comments || 0) * 1.5 +
-    (session?.rating || 0) * 1.2
+      (metrics.comments || 0) * 1.5 +
+      (sessionRating || 0) * 1.2
   )
 
   return (
@@ -61,13 +60,20 @@ export default function SessionViewTracker({ sessionId }: Props) {
       <h3 className="font-semibold text-base">📊 Jetnity Impact</h3>
 
       <div className="flex flex-wrap gap-4">
-        <span>👁️ Views: <strong>{metrics.views}</strong></span>
-        <span>💬 Kommentare: <strong>{metrics.comments}</strong></span>
-        <span>🧠 Score: <strong>{session?.rating ?? 'n/a'}</strong>/100</span>
+        <span>
+          👁️ Views: <strong>{metrics.views ?? 0}</strong>
+        </span>
+        <span>
+          💬 Kommentare: <strong>{metrics.comments ?? 0}</strong>
+        </span>
+        <span>
+          🧠 Score: <strong>{sessionRating ?? 'n/a'}</strong>/100
+        </span>
       </div>
 
       <p className="text-sm text-gray-500">
-        🚀 Impact Score: <strong className="text-black">{impactScore}</strong>
+        🚀 Impact Score:{' '}
+        <strong className="text-black">{impactScore}</strong>
       </p>
     </div>
   )
