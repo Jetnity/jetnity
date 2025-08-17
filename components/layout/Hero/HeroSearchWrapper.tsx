@@ -1,29 +1,22 @@
+// components/layout/Hero/HeroSearchWrapper.tsx
 'use client'
 
-import { useState } from 'react'
-import { cn } from '@/lib/utils'
-import HeroSearchTabs, { SearchMode } from './HeroSearchTabs'
-import HeroSearchForm from './HeroSearchForm'
+import dynamic from 'next/dynamic'
+
+const HeroMegaSearch = dynamic(() => import('@/components/search/HeroMegaSearch'), {
+  ssr: false,
+  loading: () => (
+    <div className="mx-auto w-full max-w-6xl rounded-3xl border border-white/10 bg-[#0c1930] p-6 text-white/80 shadow-2xl ring-1 ring-black/5">
+      <div className="h-8 w-40 animate-pulse rounded-full bg-white/10" />
+      <div className="mt-4 h-24 animate-pulse rounded-2xl bg-white/10" />
+    </div>
+  ),
+})
 
 export default function HeroSearchWrapper() {
-  // Gemeinsamer State für den aktiven Suchmodus (Tabs + Formular)
-  const [searchMode, setSearchMode] = useState<SearchMode>('flight')
-
   return (
-    <div className="relative z-10 flex flex-col items-center w-full px-4">
-      <div
-        className={cn(
-          'w-full max-w-5xl bg-white/90 backdrop-blur-md shadow-xl rounded-2xl',
-          'flex flex-col md:flex-row items-center md:items-end gap-4 p-6 md:p-8 transition-all duration-300'
-        )}
-      >
-        <div className="w-full md:w-auto">
-          <HeroSearchTabs selected={searchMode} onSelect={setSearchMode} />
-        </div>
-        <div className="flex-1 w-full">
-          <HeroSearchForm searchMode={searchMode} />
-        </div>
-      </div>
+    <div className="relative z-10 w-full px-4">
+      <HeroMegaSearch />
     </div>
   )
 }
