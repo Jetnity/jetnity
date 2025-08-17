@@ -1,37 +1,39 @@
+// components/search/HeroMegaSearch.tsx
 'use client'
 
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import {
-  Plane, Hotel, Car, Ship, Bus, Train, Route as RouteIcon,
+  Plane, Hotel, Car, Ship, Bus, Train, Route as RouteIcon, Activity as ActivityIcon, // <- NEU
 } from 'lucide-react'
 import { cn as _cn } from '@/lib/utils'
 
-// Fallback cn (falls utils nicht vorhanden ist)
 function cnFallback(...a: any[]) { return a.filter(Boolean).join(' ') }
 const cn = typeof _cn === 'function' ? _cn : cnFallback
 
-type TabType = 'flight' | 'hotel' | 'car' | 'ferry' | 'bus' | 'train' | 'cruise' | 'combo'
+type TabType = 'flight' | 'hotel' | 'car' | 'activity' | 'ferry' | 'bus' | 'train' | 'cruise' | 'combo'
 
-/** ⬇️ Lazy load – reduziert JS im Hero massiv */
-const FlightSearchForm = dynamic(() => import('./forms/FlightSearchForm'), { ssr: false })
-const HotelSearchForm  = dynamic(() => import('./forms/HotelSearchForm'),  { ssr: false })
-const CarSearchForm    = dynamic(() => import('./forms/CarSearchForm'),    { ssr: false })
-const FerrySearchForm  = dynamic(() => import('./forms/FerrySearchForm'),  { ssr: false })
-const BusSearchForm    = dynamic(() => import('./forms/BusSearchForm'),    { ssr: false })
-const TrainSearchForm  = dynamic(() => import('./forms/TrainSearchForm'),  { ssr: false })
-const CruiseSearchForm = dynamic(() => import('./forms/CruiseSearchForm'), { ssr: false })
-const ComboSearchForm  = dynamic(() => import('./forms/ComboSearchForm'),  { ssr: false })
+// Lazy Imports (Formulare)
+const FlightSearchForm   = dynamic(() => import('./forms/FlightSearchForm'),   { ssr: false })
+const HotelSearchForm    = dynamic(() => import('./forms/HotelSearchForm'),    { ssr: false })
+const CarSearchForm      = dynamic(() => import('./forms/CarSearchForm'),      { ssr: false })
+const ActivitySearchForm = dynamic(() => import('./forms/ActivitySearchForm'), { ssr: false }) // <- NEU
+const FerrySearchForm    = dynamic(() => import('./forms/FerrySearchForm'),    { ssr: false })
+const BusSearchForm      = dynamic(() => import('./forms/BusSearchForm'),      { ssr: false })
+const TrainSearchForm    = dynamic(() => import('./forms/TrainSearchForm'),    { ssr: false })
+const CruiseSearchForm   = dynamic(() => import('./forms/CruiseSearchForm'),   { ssr: false })
+const ComboSearchForm    = dynamic(() => import('./forms/ComboSearchForm'),    { ssr: false })
 
 const TABS: { key: TabType; label: string; icon: React.ElementType }[] = [
-  { key: 'flight', label: 'Flüge',        icon: Plane },
-  { key: 'hotel',  label: 'Hotels',       icon: Hotel },
-  { key: 'car',    label: 'Mietwagen',    icon: Car },
-  { key: 'ferry',  label: 'Fähren',       icon: Ship },
-  { key: 'bus',    label: 'Bus',          icon: Bus },
-  { key: 'train',  label: 'Zug',          icon: Train },
-  { key: 'cruise', label: 'Kreuzfahrten', icon: Ship },
-  { key: 'combo',  label: 'Kombireisen',  icon: RouteIcon },
+  { key: 'flight',   label: 'Flüge',        icon: Plane },
+  { key: 'hotel',    label: 'Hotels',       icon: Hotel },
+  { key: 'car',      label: 'Mietwagen',    icon: Car },
+  { key: 'activity', label: 'Aktivitäten',  icon: ActivityIcon }, // <- NEU
+  { key: 'ferry',    label: 'Fähren',       icon: Ship },
+  { key: 'bus',      label: 'Bus',          icon: Bus },
+  { key: 'train',    label: 'Zug',          icon: Train },
+  { key: 'cruise',   label: 'Kreuzfahrten', icon: Ship },
+  { key: 'combo',    label: 'Kombireisen',  icon: RouteIcon },
 ]
 
 export default function HeroMegaSearch() {
@@ -68,14 +70,15 @@ export default function HeroMegaSearch() {
 
       {/* Content */}
       <div className="mt-5">
-        {tab === 'flight' && <FlightSearchForm />}
-        {tab === 'hotel'  && <HotelSearchForm />}
-        {tab === 'car'    && <CarSearchForm />}
-        {tab === 'ferry'  && <FerrySearchForm />}
-        {tab === 'bus'    && <BusSearchForm />}
-        {tab === 'train'  && <TrainSearchForm />}
-        {tab === 'cruise' && <CruiseSearchForm />}
-        {tab === 'combo'  && <ComboSearchForm />}
+        {tab === 'flight'   && <FlightSearchForm />}
+        {tab === 'hotel'    && <HotelSearchForm />}
+        {tab === 'car'      && <CarSearchForm />}
+        {tab === 'activity' && <ActivitySearchForm />}{/* <- NEU */}
+        {tab === 'ferry'    && <FerrySearchForm />}
+        {tab === 'bus'      && <BusSearchForm />}
+        {tab === 'train'    && <TrainSearchForm />}
+        {tab === 'cruise'   && <CruiseSearchForm />}
+        {tab === 'combo'    && <ComboSearchForm />}
       </div>
     </section>
   )
