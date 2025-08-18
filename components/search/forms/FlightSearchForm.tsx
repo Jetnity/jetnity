@@ -14,7 +14,6 @@ type Leg = { from: string; to: string; date: string } // UI hält Strings (YYYY-
 
 function strToDate(s: string | null): Date | null {
   if (!s) return null
-  // 00:00 lokal – genügt für Suche/Parametrisierung
   const d = new Date(`${s}T00:00:00`)
   return Number.isNaN(d.getTime()) ? null : d
 }
@@ -85,7 +84,7 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
   function submit(e: React.FormEvent) {
     e.preventDefault()
 
-    // 1) Altes Callback-API bedienen (kompatibel halten)
+    // 1) Legacy-Callback weiter bedienen
     const payload = {
       origin,
       destination,
@@ -103,7 +102,7 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
     }
     onSubmit?.(payload)
 
-    // 2) Zusätzlich saubere URL-Routen (falls kein onSubmit gesetzt ist)
+    // 2) URL pushen, wenn kein Callback gesetzt ist
     if (!onSubmit) {
       const p = new URLSearchParams()
       p.set('trip', tripType)
@@ -133,7 +132,14 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
   /* ------------------------------- UI ------------------------------- */
 
   return (
-    <form onSubmit={submit} className="rounded-2xl bg-white/95 p-4 text-[#0c1930] shadow-inner md:p-5">
+    <form
+      onSubmit={submit}
+      className="
+        rounded-2xl p-4 md:p-5 text-white
+        bg-white/5 ring-1 ring-inset ring-white/10
+        backdrop-blur-xl
+      "
+    >
       {/* TripType */}
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <Segmented<TripType>
@@ -155,7 +161,7 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
               value={origin}
               onChange={(e) => setOrigin(e.target.value)}
               placeholder="Abflughafen oder Stadt"
-              className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
+              className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-white/60"
               aria-label="Abflugort"
             />
           </Field>
@@ -166,7 +172,13 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
               type="button"
               onClick={swap}
               aria-label="Von und Nach tauschen"
-              className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-zinc-200 bg-white p-2 shadow-sm transition hover:bg-zinc-50"
+              className="
+                tap-target focus-ring absolute left-1/2 top-1/2 z-10
+                -translate-x-1/2 -translate-y-1/2
+                rounded-full border border-white/10 bg-white/10 p-2
+                shadow-sm transition hover:bg-white/15
+              "
+              title="Von/Nach tauschen"
             >
               <ArrowRightLeft className="h-4 w-4" />
             </button>
@@ -177,7 +189,7 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
               placeholder="Zielflughafen oder Stadt"
-              className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
+              className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-white/60"
               aria-label="Zielort"
             />
           </Field>
@@ -187,7 +199,7 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
               type="date"
               value={departure}
               onChange={(e) => setDeparture(e.target.value)}
-              className="w-full bg-transparent text-sm outline-none"
+              className="h-11 w-full bg-transparent text-sm outline-none"
             />
           </Field>
           <Field className={cn('md:col-span-3', tripType === 'oneway' && 'opacity-50')} label="Rückflug">
@@ -196,7 +208,7 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
               value={ret}
               onChange={(e) => setRet(e.target.value)}
               disabled={tripType === 'oneway'}
-              className="w-full bg-transparent text-sm outline-none disabled:cursor-not-allowed"
+              className="h-11 w-full bg-transparent text-sm outline-none disabled:cursor-not-allowed"
             />
           </Field>
         </div>
@@ -209,7 +221,7 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
                   value={l.from}
                   onChange={(e) => updateLeg(i, { from: e.target.value })}
                   placeholder="Abflughafen oder Stadt"
-                  className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
+                  className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-white/60"
                 />
               </Field>
               <Field className="md:col-span-4" label="Nach">
@@ -217,7 +229,7 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
                   value={l.to}
                   onChange={(e) => updateLeg(i, { to: e.target.value })}
                   placeholder="Zielflughafen oder Stadt"
-                  className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
+                  className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-white/60"
                 />
               </Field>
               <Field className="md:col-span-3" label="Datum">
@@ -225,14 +237,18 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
                   type="date"
                   value={l.date}
                   onChange={(e) => updateLeg(i, { date: e.target.value })}
-                  className="w-full bg-transparent text-sm outline-none"
+                  className="h-11 w-full bg-transparent text-sm outline-none"
                 />
               </Field>
               <div className="md:col-span-1 flex items-end">
                 <button
                   type="button"
                   onClick={() => removeLeg(i)}
-                  className="inline-flex h-11 w-full items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="
+                    tap-target focus-ring inline-flex w-full items-center justify-center
+                    rounded-xl border border-white/10 bg-white/10 text-white
+                    transition hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-50
+                  "
                   disabled={legs.length <= 2}
                   aria-label={`Strecke ${i + 1} entfernen`}
                 >
@@ -245,7 +261,11 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
             <button
               type="button"
               onClick={addLeg}
-              className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm font-medium text-zinc-800 transition hover:bg-zinc-50"
+              className="
+                tap-target focus-ring inline-flex items-center gap-2
+                rounded-xl border border-white/10 bg-white/10 px-3 text-sm font-medium text-white
+                transition hover:bg-white/15
+              "
             >
               <Plus className="h-4 w-4" /> Strecke hinzufügen
             </button>
@@ -255,7 +275,7 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
 
       {/* Options row */}
       <div className="mt-3 grid grid-cols-1 items-end gap-3 md:grid-cols-12">
-        <div className="flex items-center gap-4 md:col-span-5">
+        <div className="md:col-span-5 flex flex-wrap items-center gap-4">
           <Toggle label="Nur Direktverbindung" checked={directOnly} onCheckedChange={setDirectOnly} />
           <Toggle label="+/− 3 Tage flexibel" checked={flexible} onCheckedChange={setFlexible} />
         </div>
@@ -276,8 +296,10 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
             type="submit"
             disabled={!canSubmit}
             className={cn(
-              'inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#0c1930] px-6 font-semibold text-white transition',
-              'hover:bg-[#102449] active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-50'
+              'tap-target focus-ring inline-flex w-full items-center justify-center rounded-xl',
+              'bg-primary text-primary-foreground font-semibold transition',
+              'hover:brightness-105 active:translate-y-[1px]',
+              'disabled:cursor-not-allowed disabled:opacity-50'
             )}
           >
             Suchen
@@ -300,8 +322,13 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
 function Field({ label, className, children }: { label: string; className?: string; children: React.ReactNode }) {
   return (
     <label className={cn('block', className)}>
-      <span className="mb-1 block text-xs font-medium text-zinc-500">{label}</span>
-      <div className="flex h-11 items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 shadow-sm">
+      <span className="mb-1 block text-xs font-medium text-white/80">{label}</span>
+      <div
+        className="
+          tap-target focus-ring flex items-center gap-2
+          rounded-xl border border-white/10 bg-white/10 px-3
+        "
+      >
         {children}
       </div>
     </label>
@@ -312,7 +339,7 @@ function Segmented<T extends string>({
   value, onChange, options,
 }: { value: T; onChange: (v: T) => void; options: { value: T; label: string }[] }) {
   return (
-    <div className="inline-flex rounded-2xl border border-zinc-200 bg-white p-1 shadow-sm">
+    <div className="inline-flex rounded-2xl border border-white/10 bg-white/10 p-1 text-white">
       {options.map((o) => {
         const active = value === o.value
         return (
@@ -320,8 +347,12 @@ function Segmented<T extends string>({
             key={o.value}
             type="button"
             onClick={() => onChange(o.value)}
-            className={cn('rounded-xl px-3 py-2 text-sm transition',
-              active ? 'bg-zinc-900 font-semibold text-white' : 'text-zinc-700 hover:bg-zinc-100')}
+            className={cn(
+              'rounded-xl px-3 py-2 text-sm transition focus-ring',
+              active
+                ? 'bg-white/20 font-semibold'
+                : 'text-white/85 hover:bg-white/10'
+            )}
           >
             {o.label}
           </button>
@@ -331,22 +362,30 @@ function Segmented<T extends string>({
   )
 }
 
-function Toggle({ label, checked, onCheckedChange }: { label: string; checked: boolean; onCheckedChange: (v: boolean) => void }) {
+function Toggle({
+  label, checked, onCheckedChange,
+}: { label: string; checked: boolean; onCheckedChange: (v: boolean) => void }) {
   return (
-    <label className="inline-flex cursor-pointer select-none items-center gap-2">
+    <label className="inline-flex cursor-pointer select-none items-center gap-2 text-white">
       <span
         role="switch"
         aria-checked={checked}
         tabIndex={0}
         onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onCheckedChange(!checked)}
         onClick={() => onCheckedChange(!checked)}
-        className={cn('relative h-6 w-11 rounded-full border transition',
-          checked ? 'border-emerald-400 bg-emerald-400' : 'border-zinc-300 bg-zinc-200')}
+        className={cn(
+          'focus-ring relative h-6 w-11 rounded-full border transition',
+          checked ? 'border-emerald-400 bg-emerald-400' : 'border-white/20 bg-white/10'
+        )}
       >
-        <span className={cn('absolute top-1/2 -translate-y-1/2 transform rounded-full bg-white transition',
-          checked ? 'right-1 h-4 w-4' : 'left-1 h-4 w-4')} />
+        <span
+          className={cn(
+            'absolute top-1/2 -translate-y-1/2 transform rounded-full bg-white transition',
+            checked ? 'right-1 h-4 w-4' : 'left-1 h-4 w-4'
+          )}
+        />
       </span>
-      <span className="text-sm text-zinc-700">{label}</span>
+      <span className="text-sm text-white/90">{label}</span>
     </label>
   )
 }
@@ -365,7 +404,11 @@ function TravellersCabin({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex h-11 w-full items-center justify-between rounded-xl border border-zinc-200 bg-white px-3 text-left text-sm transition hover:bg-zinc-50"
+        className="
+          tap-target focus-ring flex w-full items-center justify-between
+          rounded-xl border border-white/10 bg-white/10 px-3 text-left text-sm
+          transition hover:bg-white/15
+        "
         aria-haspopup="dialog"
         aria-expanded={open}
       >
@@ -373,11 +416,19 @@ function TravellersCabin({
           <Users2 className="h-4 w-4" />
           <span className="line-clamp-1">{label}</span>
         </div>
-        <ChevronDown className="h-4 w-4 opacity-60" />
+        <ChevronDown className="h-4 w-4 opacity-80" />
       </button>
 
       {open && (
-        <div role="dialog" aria-label="Reisende & Kabine" className="absolute right-0 z-20 mt-2 w-[28rem] max-w-[95vw] rounded-2xl border border-zinc-200 bg-white p-4 shadow-xl">
+        <div
+          role="dialog"
+          aria-label="Reisende & Kabine"
+          className="
+            absolute right-0 z-20 mt-2 w-[28rem] max-w-[95vw]
+            rounded-2xl border border-white/10 bg-[#0c1930]/95 p-4 text-white
+            shadow-xl backdrop-blur-xl
+          "
+        >
           <div className="grid grid-cols-3 gap-3">
             <PaxCounter label="Erwachsene" subtitle="ab 12 J." value={trav.adults} min={1} onChange={(v) => setTrav({ adults: v })} />
             <PaxCounter label="Kinder" subtitle="2–11 J." value={trav.children} onChange={(v) => setTrav({ children: v })} />
@@ -385,7 +436,7 @@ function TravellersCabin({
           </div>
 
           <div className="mt-4">
-            <span className="mb-1 block text-xs font-medium text-zinc-500">Reiseklasse</span>
+            <span className="mb-1 block text-xs font-medium text-white/80">Reiseklasse</span>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               {(['eco', 'premium', 'business', 'first'] as CabinClass[]).map((c) => (
                 <button
@@ -393,10 +444,10 @@ function TravellersCabin({
                   type="button"
                   onClick={() => setCabin(c)}
                   className={cn(
-                    'rounded-xl border px-3 py-2 text-sm capitalize',
+                    'tap-target focus-ring rounded-xl border px-3 py-2 text-sm capitalize',
                     cabin === c
-                      ? 'border-zinc-900 bg-zinc-900 font-semibold text-white'
-                      : 'border-zinc-200 text-zinc-700 hover:bg-zinc-50'
+                      ? 'border-white/20 bg-white/20 font-semibold'
+                      : 'border-white/10 bg-white/10 hover:bg-white/15'
                   )}
                 >
                   {c === 'eco' ? 'Economy' : c === 'premium' ? 'Premium Economy' : c}
@@ -406,7 +457,15 @@ function TravellersCabin({
           </div>
 
           <div className="mt-4 flex justify-end">
-            <button type="button" onClick={() => setOpen(false)} className="inline-flex h-10 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-semibold hover:bg-zinc-50">
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="
+                tap-target focus-ring inline-flex items-center justify-center
+                rounded-xl border border-white/10 bg-white/10 px-4 text-sm font-semibold
+                hover:bg-white/15
+              "
+            >
               Übernehmen
             </button>
           </div>
@@ -420,15 +479,25 @@ function PaxCounter({
   label, subtitle, value, onChange, min = 0, max = 9,
 }: { label: string; subtitle?: string; value: number; onChange: (v: number) => void; min?: number; max?: number }) {
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white p-3">
-      <div className="text-sm font-medium">{label}</div>
-      {subtitle && <div className="text-xs text-zinc-500">{subtitle}</div>}
+    <div className="rounded-xl border border-white/10 bg-white/10 p-3">
+      <div className="text-sm font-medium text-white">{label}</div>
+      {subtitle && <div className="text-xs text-white/70">{subtitle}</div>}
       <div className="mt-2 flex items-center justify-between">
-        <button type="button" onClick={() => onChange(Math.max(min, value - 1))} className="rounded-lg border border-zinc-200 px-2 py-1 hover:bg-zinc-50" aria-label={`${label} verringern`}>
+        <button
+          type="button"
+          onClick={() => onChange(Math.max(min, value - 1))}
+          className="tap-target focus-ring rounded-lg border border-white/10 bg-white/10 px-2 hover:bg-white/15"
+          aria-label={`${label} verringern`}
+        >
           <Minus className="h-4 w-4" />
         </button>
         <div className="w-8 text-center text-sm">{value}</div>
-        <button type="button" onClick={() => onChange(Math.min(max, value + 1))} className="rounded-lg border border-zinc-200 px-2 py-1 hover:bg-zinc-50" aria-label={`${label} erhöhen`}>
+        <button
+          type="button"
+          onClick={() => onChange(Math.min(max, value + 1))}
+          className="tap-target focus-ring rounded-lg border border-white/10 bg-white/10 px-2 hover:bg-white/15"
+          aria-label={`${label} erhöhen`}
+        >
           <Plus className="h-4 w-4" />
         </button>
       </div>
