@@ -50,7 +50,7 @@ export default function CarSearchForm({ onSubmit }: CarSearchFormProps) {
     pickup.trim().length >= 2 &&
     !!start &&
     !!end &&
-    (end.getTime() > start.getTime())
+    end.getTime() > start.getTime()
 
   const dropComputed = sameLoc ? pickup : drop
 
@@ -86,16 +86,23 @@ export default function CarSearchForm({ onSubmit }: CarSearchFormProps) {
   const driverLabel = useMemo(() => `Fahrer: ${age} Jahre`, [age])
 
   return (
-    <form onSubmit={submit} className="rounded-2xl bg-white/95 p-4 text-[#0c1930] shadow-inner md:p-5">
+    <form
+      onSubmit={submit}
+      className="
+        rounded-2xl p-4 md:p-5 text-white
+        bg-white/5 ring-1 ring-inset ring-white/10
+        backdrop-blur-xl
+      "
+    >
       <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
         {/* Abholort */}
         <Field className="md:col-span-5" label="Abholort">
-          <MapPin className="h-4 w-4 opacity-60" />
+          <MapPin className="h-4 w-4 opacity-80" />
           <input
             value={pickup}
             onChange={(e) => setPickup(e.target.value)}
             placeholder="Flughafen oder Stadt"
-            className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
+            className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-white/60"
             aria-label="Abholort"
           />
         </Field>
@@ -111,13 +118,13 @@ export default function CarSearchForm({ onSubmit }: CarSearchFormProps) {
 
         {/* Rückgabeort */}
         <Field className="md:col-span-5" label="Rückgabeort">
-          <MapPin className={cn('h-4 w-4', sameLoc ? 'opacity-30' : 'opacity-60')} />
+          <MapPin className={cn('h-4 w-4', sameLoc ? 'opacity-30' : 'opacity-80')} />
           <input
             value={drop}
             onChange={(e) => setDrop(e.target.value)}
             placeholder={sameLoc ? 'gleich wie Abholort' : 'Flughafen oder Stadt'}
             disabled={sameLoc}
-            className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400 disabled:cursor-not-allowed"
+            className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-white/60 disabled:cursor-not-allowed"
             aria-label="Rückgabeort"
           />
         </Field>
@@ -134,7 +141,7 @@ export default function CarSearchForm({ onSubmit }: CarSearchFormProps) {
                 setDateBack(e.target.value)
               }
             }}
-            className="w-full bg-transparent text-sm outline-none"
+            className="h-11 w-full bg-transparent text-sm outline-none"
           />
         </Field>
         <Field className="md:col-span-2" label="Abholung – Zeit">
@@ -142,7 +149,7 @@ export default function CarSearchForm({ onSubmit }: CarSearchFormProps) {
             type="time"
             value={timeOut}
             onChange={(e) => setTimeOut(e.target.value)}
-            className="w-full bg-transparent text-sm outline-none"
+            className="h-11 w-full bg-transparent text-sm outline-none"
           />
         </Field>
 
@@ -153,7 +160,7 @@ export default function CarSearchForm({ onSubmit }: CarSearchFormProps) {
             value={dateBack}
             min={dateOut || undefined}
             onChange={(e) => setDateBack(e.target.value)}
-            className="w-full bg-transparent text-sm outline-none"
+            className="h-11 w-full bg-transparent text-sm outline-none"
           />
         </Field>
         <Field className="md:col-span-2" label="Rückgabe – Zeit">
@@ -161,7 +168,7 @@ export default function CarSearchForm({ onSubmit }: CarSearchFormProps) {
             type="time"
             value={timeBack}
             onChange={(e) => setTimeBack(e.target.value)}
-            className="w-full bg-transparent text-sm outline-none"
+            className="h-11 w-full bg-transparent text-sm outline-none"
           />
         </Field>
 
@@ -176,8 +183,10 @@ export default function CarSearchForm({ onSubmit }: CarSearchFormProps) {
             type="submit"
             disabled={!canSubmit}
             className={cn(
-              'inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#0c1930] px-6 font-semibold text-white transition',
-              'hover:bg-[#102449] active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-50'
+              'tap-target focus-ring inline-flex w-full items-center justify-center rounded-xl',
+              'bg-primary text-primary-foreground font-semibold transition',
+              'hover:brightness-105 active:translate-y-[1px]',
+              'disabled:cursor-not-allowed disabled:opacity-50'
             )}
           >
             Suchen
@@ -195,8 +204,13 @@ function Field({
 }: { label: string; className?: string; children: React.ReactNode }) {
   return (
     <label className={cn('block', className)}>
-      <span className="mb-1 block text-xs font-medium text-zinc-500">{label}</span>
-      <div className="flex h-11 items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 shadow-sm">
+      <span className="mb-1 block text-xs font-medium text-white/80">{label}</span>
+      <div
+        className="
+          tap-target focus-ring flex items-center gap-2
+          rounded-xl border border-white/10 bg-white/10 px-3
+        "
+      >
         {children}
       </div>
     </label>
@@ -211,10 +225,10 @@ function PillToggle({
       type="button"
       onClick={() => onChange(!checked)}
       className={cn(
-        'inline-flex h-11 items-center justify-center rounded-xl border px-3 text-sm font-medium transition',
+        'tap-target focus-ring inline-flex items-center justify-center rounded-xl border px-3 text-sm font-medium transition',
         checked
-          ? 'border-zinc-800 bg-zinc-900 text-white'
-          : 'border-zinc-300 bg-white text-zinc-800 hover:bg-zinc-50'
+          ? 'border-white/20 bg-white/20 text-white'
+          : 'border-white/10 bg-white/10 text-white/90 hover:bg-white/15'
       )}
       aria-pressed={checked}
     >
@@ -236,19 +250,27 @@ function DriverAge({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex h-11 w-full items-center justify-between rounded-xl border border-zinc-200 bg-white px-3 text-left text-sm transition hover:bg-zinc-50"
+        className="
+          tap-target focus-ring flex w-full items-center justify-between
+          rounded-xl border border-white/10 bg-white/10 px-3 text-left text-sm
+          transition hover:bg-white/15
+        "
         aria-haspopup="dialog"
         aria-expanded={open}
       >
         <span>{label}</span>
-        <ChevronDown className="h-4 w-4 opacity-60" />
+        <ChevronDown className="h-4 w-4 opacity-80" />
       </button>
 
       {open && (
         <div
           role="dialog"
           aria-label="Fahreralter"
-          className="absolute z-20 mt-2 w-[20rem] max-w-[95vw] rounded-2xl border border-zinc-200 bg-white p-4 shadow-xl"
+          className="
+            absolute z-20 mt-2 w-[20rem] max-w-[95vw]
+            rounded-2xl border border-white/10 bg-[#0c1930]/95 p-4 text-white
+            shadow-xl backdrop-blur-xl
+          "
         >
           <div className="flex items-center justify-between gap-3">
             <span className="text-sm font-medium">Alter des Fahrers</span>
@@ -256,7 +278,7 @@ function DriverAge({
               <button
                 type="button"
                 onClick={dec}
-                className="rounded-lg border border-zinc-200 px-2 py-1 hover:bg-zinc-50"
+                className="tap-target focus-ring rounded-lg border border-white/10 bg-white/10 px-2 hover:bg-white/15"
                 aria-label="Weniger"
               >
                 <Minus className="h-4 w-4" />
@@ -265,7 +287,7 @@ function DriverAge({
               <button
                 type="button"
                 onClick={inc}
-                className="rounded-lg border border-zinc-200 px-2 py-1 hover:bg-zinc-50"
+                className="tap-target focus-ring rounded-lg border border-white/10 bg-white/10 px-2 hover:bg-white/15"
                 aria-label="Mehr"
               >
                 <Plus className="h-4 w-4" />
@@ -273,13 +295,19 @@ function DriverAge({
             </div>
           </div>
 
-          <p className="mt-2 text-xs text-zinc-500">Viele Vermieter verlangen ein Mindestalter von 21–25 Jahren.</p>
+          <p className="mt-2 text-xs text-white/70">
+            Viele Vermieter verlangen ein Mindestalter von 21–25 Jahren.
+          </p>
 
           <div className="mt-4 flex justify-end">
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="inline-flex h-10 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-semibold hover:bg-zinc-50"
+              className="
+                tap-target focus-ring inline-flex items-center justify-center
+                rounded-xl border border-white/10 bg-white/10 px-4 text-sm font-semibold
+                hover:bg-white/15
+              "
             >
               Übernehmen
             </button>
