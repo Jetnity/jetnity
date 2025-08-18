@@ -3,7 +3,7 @@
 
 import React, { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Users2, ChevronDown } from 'lucide-react'
+import { Users2, ChevronDown, Plus, Minus } from 'lucide-react'
 import { cn as _cn } from '@/lib/utils'
 
 const cn = typeof _cn === 'function' ? _cn : (...a: any[]) => a.filter(Boolean).join(' ')
@@ -32,7 +32,7 @@ export default function ActivitySearchForm({ onSubmit }: ActivitySearchFormProps
 
   // Basics
   const [dest, setDest] = useState('')
-  const [date, setDate] = useState('') // optional
+  const [date, setDate] = useState('') // optional YYYY-MM-DD
   const [pax, setPax] = useState<Pax>({ adults: 2, children: 0 })
 
   // Filters
@@ -82,7 +82,14 @@ export default function ActivitySearchForm({ onSubmit }: ActivitySearchFormProps
   const CAT_OPTS = ['Stadttour', 'Museum', 'Outdoor', 'Wasser', 'Kulinarik', 'Shows', 'Abenteuer']
 
   return (
-    <form onSubmit={submit} className="rounded-2xl bg-white/95 p-4 text-[#0c1930] shadow-inner md:p-5">
+    <form
+      onSubmit={submit}
+      className="
+        rounded-2xl p-4 md:p-5 text-white
+        bg-white/5 ring-1 ring-inset ring-white/10
+        backdrop-blur-xl
+      "
+    >
       <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
         {/* Ziel */}
         <Field className="md:col-span-6" label="Ziel / Stadt">
@@ -90,7 +97,7 @@ export default function ActivitySearchForm({ onSubmit }: ActivitySearchFormProps
             value={dest}
             onChange={(e) => setDest(e.target.value)}
             placeholder="z. B. Rom, Barcelona, Dubai"
-            className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
+            className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-white/60"
             aria-label="Ziel"
           />
         </Field>
@@ -101,7 +108,7 @@ export default function ActivitySearchForm({ onSubmit }: ActivitySearchFormProps
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full bg-transparent text-sm outline-none"
+            className="h-11 w-full bg-transparent text-sm outline-none"
           />
         </Field>
 
@@ -112,7 +119,7 @@ export default function ActivitySearchForm({ onSubmit }: ActivitySearchFormProps
 
         {/* Kategorien */}
         <div className="md:col-span-8">
-          <span className="mb-1 block text-xs font-medium text-zinc-500">Kategorien (optional)</span>
+          <span className="mb-1 block text-xs font-medium text-white/80">Kategorien (optional)</span>
           <div className="flex flex-wrap gap-2">
             {CAT_OPTS.map((t) => {
               const active = cats.includes(t)
@@ -122,9 +129,12 @@ export default function ActivitySearchForm({ onSubmit }: ActivitySearchFormProps
                   type="button"
                   onClick={() => toggleCat(t)}
                   className={cn(
-                    'rounded-full border px-3 py-1.5 text-sm',
-                    active ? 'border-zinc-900 bg-zinc-900 font-semibold text-white' : 'border-zinc-300 bg-white text-zinc-800 hover:bg-zinc-50'
+                    'tap-target focus-ring rounded-full border px-3 py-1.5 text-sm',
+                    active
+                      ? 'border-white/20 bg-white/20 font-semibold text-white'
+                      : 'border-white/10 bg-white/10 text-white/90 hover:bg-white/15'
                   )}
+                  aria-pressed={active}
                 >
                   {t}
                 </button>
@@ -143,7 +153,7 @@ export default function ActivitySearchForm({ onSubmit }: ActivitySearchFormProps
             value={minRating}
             onChange={(e) => setMinRating(e.target.value === '' ? '' : Number(e.target.value))}
             placeholder="z. B. 4.5"
-            className="w-full bg-transparent text-sm outline-none"
+            className="h-11 w-full bg-transparent text-sm outline-none"
           />
         </Field>
         <Field className="md:col-span-2" label="max. Preis (€)">
@@ -154,7 +164,7 @@ export default function ActivitySearchForm({ onSubmit }: ActivitySearchFormProps
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value === '' ? '' : Number(e.target.value))}
             placeholder="z. B. 80"
-            className="w-full bg-transparent text-sm outline-none"
+            className="h-11 w-full bg-transparent text-sm outline-none"
           />
         </Field>
 
@@ -167,8 +177,10 @@ export default function ActivitySearchForm({ onSubmit }: ActivitySearchFormProps
             type="submit"
             disabled={!canSubmit}
             className={cn(
-              'inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#0c1930] px-6 font-semibold text-white transition',
-              'hover:bg-[#102449] active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-50'
+              'tap-target focus-ring inline-flex w-full items-center justify-center rounded-xl',
+              'bg-primary text-primary-foreground font-semibold transition',
+              'hover:brightness-105 active:translate-y-[1px]',
+              'disabled:cursor-not-allowed disabled:opacity-50'
             )}
           >
             Suchen
@@ -183,24 +195,41 @@ export default function ActivitySearchForm({ onSubmit }: ActivitySearchFormProps
 function Field({ label, className, children }: { label: string; className?: string; children: React.ReactNode }) {
   return (
     <label className={cn('block', className)}>
-      <span className="mb-1 block text-xs font-medium text-zinc-500">{label}</span>
-      <div className="flex h-11 items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 shadow-sm">{children}</div>
+      <span className="mb-1 block text-xs font-medium text-white/80">{label}</span>
+      <div
+        className="
+          tap-target focus-ring flex items-center gap-2
+          rounded-xl border border-white/10 bg-white/10 px-3
+        "
+      >
+        {children}
+      </div>
     </label>
   )
 }
 
 function Toggle({ label, checked, onCheckedChange }: { label: string; checked: boolean; onCheckedChange: (v: boolean) => void }) {
   return (
-    <label className="inline-flex cursor-pointer select-none items-center gap-2">
+    <label className="inline-flex cursor-pointer select-none items-center gap-2 text-white">
       <span
-        role="switch" aria-checked={checked} tabIndex={0}
+        role="switch"
+        aria-checked={checked}
+        tabIndex={0}
         onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onCheckedChange(!checked)}
         onClick={() => onCheckedChange(!checked)}
-        className={cn('relative h-6 w-11 rounded-full border transition', checked ? 'border-emerald-400 bg-emerald-400' : 'border-zinc-300 bg-zinc-200')}
+        className={cn(
+          'focus-ring relative h-6 w-11 rounded-full border transition',
+          checked ? 'border-emerald-400 bg-emerald-400' : 'border-white/20 bg-white/10'
+        )}
       >
-        <span className={cn('absolute top-1/2 -translate-y-1/2 transform rounded-full bg-white transition', checked ? 'right-1 h-4 w-4' : 'left-1 h-4 w-4')} />
+        <span
+          className={cn(
+            'absolute top-1/2 -translate-y-1/2 transform rounded-full bg-white transition',
+            checked ? 'right-1 h-4 w-4' : 'left-1 h-4 w-4'
+          )}
+        />
       </span>
-      <span className="text-sm text-zinc-700">{label}</span>
+      <span className="text-sm text-white/90">{label}</span>
     </label>
   )
 }
@@ -211,24 +240,46 @@ function PaxPicker({ value, onChange, label }: { value: Pax; onChange: (v: Pax) 
   return (
     <div className="relative">
       <button
-        type="button" onClick={() => setOpen((v) => !v)}
-        className="flex h-11 w-full items-center justify-between rounded-xl border border-zinc-200 bg-white px-3 text-left text-sm transition hover:bg-zinc-50"
-        aria-haspopup="dialog" aria-expanded={open}
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="
+          tap-target focus-ring flex w-full items-center justify-between
+          rounded-xl border border-white/10 bg-white/10 px-3 text-left text-sm
+          transition hover:bg-white/15
+        "
+        aria-haspopup="dialog"
+        aria-expanded={open}
       >
         <div className="flex items-center gap-2">
           <Users2 className="h-4 w-4" />
           <span className="line-clamp-1">{label}</span>
         </div>
-        <ChevronDown className="h-4 w-4 opacity-60" />
+        <ChevronDown className="h-4 w-4 opacity-80" />
       </button>
       {open && (
-        <div role="dialog" aria-label="Reisende" className="absolute right-0 z-20 mt-2 w-[24rem] max-w-[95vw] rounded-2xl border border-zinc-200 bg-white p-4 shadow-xl">
+        <div
+          role="dialog"
+          aria-label="Reisende"
+          className="
+            absolute right-0 z-20 mt-2 w-[24rem] max-w-[95vw]
+            rounded-2xl border border-white/10 bg-[#0c1930]/95 p-4 text-white
+            shadow-xl backdrop-blur-xl
+          "
+        >
           <div className="grid grid-cols-2 gap-3">
             <Counter label="Erwachsene" subtitle="ab 12 J." value={value.adults} min={1} onChange={(v) => patch({ adults: v })} />
             <Counter label="Kinder" subtitle="0–11 J." value={value.children} min={0} onChange={(v) => patch({ children: v })} />
           </div>
           <div className="mt-4 flex justify-end">
-            <button type="button" onClick={() => setOpen(false)} className="inline-flex h-10 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-semibold hover:bg-zinc-50">
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="
+                tap-target focus-ring inline-flex h-10 items-center justify-center
+                rounded-xl border border-white/10 bg-white/10 px-4 text-sm font-semibold
+                hover:bg-white/15
+              "
+            >
               Übernehmen
             </button>
           </div>
@@ -240,13 +291,27 @@ function PaxPicker({ value, onChange, label }: { value: Pax; onChange: (v: Pax) 
 
 function Counter({ label, subtitle, value, onChange, min = 0, max = 9 }: { label: string; subtitle?: string; value: number; onChange: (v: number) => void; min?: number; max?: number }) {
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white p-3">
-      <div className="text-sm font-medium">{label}</div>
-      {subtitle && <div className="text-xs text-zinc-500">{subtitle}</div>}
+    <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
+      <div className="text-sm font-medium text-white">{label}</div>
+      {subtitle && <div className="text-xs text-white/70">{subtitle}</div>}
       <div className="mt-2 flex items-center justify-between">
-        <button type="button" onClick={() => onChange(Math.max(min, value - 1))} className="rounded-lg border border-zinc-200 px-2 py-1 hover:bg-zinc-50" aria-label={`${label} verringern`}>−</button>
+        <button
+          type="button"
+          onClick={() => onChange(Math.max(min, value - 1))}
+          className="tap-target focus-ring rounded-lg border border-white/10 bg-white/10 px-2 hover:bg-white/15"
+          aria-label={`${label} verringern`}
+        >
+          <Minus className="h-4 w-4" />
+        </button>
         <div className="w-8 text-center text-sm">{value}</div>
-        <button type="button" onClick={() => onChange(Math.min(max, value + 1))} className="rounded-lg border border-zinc-200 px-2 py-1 hover:bg-zinc-50" aria-label={`${label} erhöhen`}>+</button>
+        <button
+          type="button"
+          onClick={() => onChange(Math.min(max, value + 1))}
+          className="tap-target focus-ring rounded-lg border border-white/10 bg-white/10 px-2 hover:bg-white/15"
+          aria-label={`${label} erhöhen`}
+        >
+          <Plus className="h-4 w-4" />
+        </button>
       </div>
     </div>
   )
