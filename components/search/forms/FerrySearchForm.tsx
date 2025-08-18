@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowRightLeft, Users2, ChevronDown, Plus, Minus } from 'lucide-react'
+import { ArrowRightLeft, Users2, ChevronDown } from 'lucide-react'
 import { cn as _cn } from '@/lib/utils'
 
 /* ---------- helpers ---------- */
@@ -29,15 +29,11 @@ export interface FerrySearchFormProps {
 export default function FerrySearchForm({ onSubmit }: FerrySearchFormProps) {
   const router = useRouter()
 
-  // Basisfelder
   const [from, setFrom] = useState('')
   const [to, setTo] = useState('')
   const [date, setDate] = useState('') // YYYY-MM-DD
 
-  // Passagiere
   const [pax, setPax] = useState<Pax>({ adults: 2, children: 0, infants: 0 })
-
-  // Fahrzeug
   const [vehType, setVehType] = useState<VehicleType>('none')
   const [vehLen, setVehLen] = useState<number | ''>('') // in Metern (optional)
 
@@ -60,16 +56,13 @@ export default function FerrySearchForm({ onSubmit }: FerrySearchFormProps) {
   }, [pax, vehType, vehLen])
 
   const canSubmit = from.trim().length >= 2 && to.trim().length >= 2 && !!date
+  const needsLength = vehType === 'car' || vehType === 'camper' || vehType === 'van'
 
-  function swap() {
-    setFrom(to)
-    setTo(from)
-  }
+  function swap() { setFrom(to); setTo(from) }
 
   function submit(e: React.FormEvent) {
     e.preventDefault()
 
-    // 1) Optionales Callback
     onSubmit?.({
       from,
       to,
@@ -78,89 +71,69 @@ export default function FerrySearchForm({ onSubmit }: FerrySearchFormProps) {
       vehicle: { type: vehType, lengthMeters: vehLen === '' ? null : Number(vehLen) },
     })
 
-    // 2) Fallback: URL-Routing
     if (!onSubmit) {
       const p = new URLSearchParams()
-      p.set('from', from.trim())
-      p.set('to', to.trim())
-      p.set('date', date)
-      p.set('adults', String(pax.adults))
-      p.set('children', String(pax.children))
-      p.set('infants', String(pax.infants))
-      if (vehType !== 'none') {
-        p.set('vehicle', vehType)
-        if (vehLen !== '') p.set('length', String(vehLen))
-      }
+      p.set('from', from.trim()); p.set('to', to.trim()); p.set('date', date)
+      p.set('adults', String(pax.adults)); p.set('children', String(pax.children)); p.set('infants', String(pax.infants))
+      if (vehType !== 'none') { p.set('vehicle', vehType); if (vehLen !== '') p.set('length', String(vehLen)) }
       router.push(`/search/ferry?${p.toString()}`)
     }
   }
 
   return (
-    <form
-      onSubmit={submit}
-      className="
-        rounded-2xl p-4 md:p-5 text-white
-        bg-white/5 ring-1 ring-inset ring-white/10
-        backdrop-blur-xl
-      "
-    >
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
-        {/* Von */}
-        <Field className="md:col-span-5" label="Von">
+    <form onSubmit={submit} className="rounded-2xl bg-white/95 p-4 text-[#0c1930] shadow-inner md:p-5">
+      {/* Top row: Von | Swap | Nach | Datum | Passagiere | Fahrzeug | Suchen */}
+      <div
+        className={cn(
+          'grid grid-cols-1 items-end gap-3',
+          'md:[grid-template-columns:1.2fr_2.5rem_1.2fr_1fr_1.2fr_1.2fr_auto]'
+        )}
+      >
+        <Field className="md:[grid-column:1/2]" label="Von">
           <input
             value={from}
             onChange={(e) => setFrom(e.target.value)}
             placeholder="Hafen / Stadt"
-            className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-white/60"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
             aria-label="Start-Hafen"
           />
         </Field>
 
-        {/* Swap */}
-        <div className="relative md:col-span-2">
+        <div className="relative md:[grid-column:2/3] h-11">
           <button
             type="button"
             onClick={swap}
             aria-label="Von und Nach tauschen"
-            title="Von/Nach tauschen"
-            className="
-              tap-target focus-ring absolute left-1/2 top-1/2 z-10
-              -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10
-              bg-white/10 p-2 shadow-sm transition hover:bg-white/15
-            "
+            className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-zinc-200 bg-white p-2 shadow-sm transition hover:bg-zinc-50"
           >
             <ArrowRightLeft className="h-4 w-4" />
           </button>
         </div>
 
-        {/* Nach */}
-        <Field className="md:col-span-5" label="Nach">
+        <Field className="md:[grid-column:3/4]" label="Nach">
           <input
             value={to}
             onChange={(e) => setTo(e.target.value)}
             placeholder="Hafen / Stadt"
-            className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-white/60"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
             aria-label="Ziel-Hafen"
           />
         </Field>
 
-        {/* Datum */}
-        <Field className="md:col-span-4" label="Datum">
+        <Field className="md:[grid-column:4/5]" label="Datum">
           <input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="h-11 w-full bg-transparent text-sm outline-none"
+            className="w-full bg-transparent text-sm outline-none"
           />
         </Field>
 
-        {/* Passagiere */}
-        <div className="md:col-span-4">
+        <div className="md:[grid-column:5/6]">
           <Passengers value={pax} onChange={setPax} />
         </div>
 
-        {/* Fahrzeug */}
-        <div className="md:col-span-4">
+        <div className="md:[grid-column:6/7]">
           <VehiclePicker
             type={vehType}
             length={vehLen}
@@ -169,24 +142,23 @@ export default function FerrySearchForm({ onSubmit }: FerrySearchFormProps) {
           />
         </div>
 
-        {/* Zusammenfassung + Suche */}
-        <div className="md:col-span-8">
-          <Summary label={paxLabel} />
-        </div>
-        <div className="md:col-span-4">
+        <div className="md:[grid-column:7/8]">
           <button
             type="submit"
             disabled={!canSubmit}
             className={cn(
-              'tap-target focus-ring inline-flex w-full items-center justify-center rounded-xl',
-              'bg-primary text-primary-foreground font-semibold transition',
-              'hover:brightness-105 active:translate-y-[1px]',
-              'disabled:cursor-not-allowed disabled:opacity-50'
+              'inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#0c1930] px-6 font-semibold text-white transition',
+              'hover:bg-[#102449] active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-50'
             )}
           >
             Suchen
           </button>
         </div>
+      </div>
+
+      {/* Summary (kleine Zusammenfassung, falls gewünscht) */}
+      <div className="mt-3">
+        <Summary label={paxLabel} />
       </div>
     </form>
   )
@@ -197,13 +169,8 @@ export default function FerrySearchForm({ onSubmit }: FerrySearchFormProps) {
 function Field({ label, className, children }: { label: string; className?: string; children: React.ReactNode }) {
   return (
     <label className={cn('block', className)}>
-      <span className="mb-1 block text-xs font-medium text-white/80">{label}</span>
-      <div
-        className="
-          tap-target focus-ring flex items-center gap-2
-          rounded-xl border border-white/10 bg-white/10 px-3
-        "
-      >
+      <span className="mb-1 block text-xs font-medium text-zinc-500">{label}</span>
+      <div className="flex h-11 items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 shadow-sm">
         {children}
       </div>
     </label>
@@ -212,20 +179,13 @@ function Field({ label, className, children }: { label: string; className?: stri
 
 function Summary({ label }: { label: string }) {
   return (
-    <div
-      className="
-        tap-target focus-ring flex items-center rounded-xl
-        border border-white/10 bg-white/10 px-3 text-sm text-white
-      "
-    >
+    <div className="flex h-11 items-center rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-700">
       {label}
     </div>
   )
 }
 
-function Passengers({
-  value, onChange,
-}: { value: Pax; onChange: (v: Pax) => void }) {
+function Passengers({ value, onChange }: { value: Pax; onChange: (v: Pax) => void }) {
   const [open, setOpen] = useState(false)
   function patch(p: Partial<Pax>) { onChange({ ...value, ...p }) }
   const total = value.adults + value.children + value.infants
@@ -236,46 +196,25 @@ function Passengers({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="
-          tap-target focus-ring flex w-full items-center justify-between
-          rounded-xl border border-white/10 bg-white/10 px-3 text-left text-sm
-          transition hover:bg-white/15
-        "
-        aria-haspopup="dialog"
-        aria-expanded={open}
+        className="flex h-11 w-full items-center justify-between rounded-xl border border-zinc-200 bg-white px-3 text-left text-sm transition hover:bg-zinc-50"
+        aria-haspopup="dialog" aria-expanded={open}
       >
         <div className="flex items-center gap-2">
           <Users2 className="h-4 w-4" />
           <span className="line-clamp-1">{label}</span>
         </div>
-        <ChevronDown className="h-4 w-4 opacity-80" />
+        <ChevronDown className="h-4 w-4 opacity-60" />
       </button>
 
       {open && (
-        <div
-          role="dialog"
-          aria-label="Passagiere"
-          className="
-            absolute right-0 z-20 mt-2 w-[26rem] max-w-[95vw]
-            rounded-2xl border border-white/10 bg-[#0c1930]/95 p-4 text-white
-            shadow-xl backdrop-blur-xl
-          "
-        >
+        <div role="dialog" aria-label="Passagiere" className="absolute right-0 z-[1001] mt-2 w-[26rem] max-w-[95vw] rounded-2xl border border-zinc-200 bg-white p-4 shadow-xl">
           <div className="grid grid-cols-3 gap-3">
             <Counter label="Erwachsene" subtitle="ab 12 J." value={value.adults} min={1} onChange={(v) => patch({ adults: v })} />
             <Counter label="Kinder" subtitle="2–11 J." value={value.children} onChange={(v) => patch({ children: v })} />
             <Counter label="Babys" subtitle="unter 2 J." value={value.infants} onChange={(v) => patch({ infants: v })} />
           </div>
           <div className="mt-4 flex justify-end">
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="
-                tap-target focus-ring inline-flex h-10 items-center justify-center
-                rounded-xl border border-white/10 bg-white/10 px-4 text-sm font-semibold
-                hover:bg-white/15
-              "
-            >
+            <button type="button" onClick={() => setOpen(false)} className="inline-flex h-10 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-semibold hover:bg-zinc-50">
               Übernehmen
             </button>
           </div>
@@ -297,14 +236,10 @@ function VehiclePicker({
   const label =
     type === 'none'
       ? 'Ohne Fahrzeug'
-      : type === 'car'
-      ? `Auto${length ? ` – ${length} m` : ''}`
-      : type === 'motorcycle'
-      ? 'Motorrad'
-      : type === 'bicycle'
-      ? 'Fahrrad'
-      : type === 'camper'
-      ? `Camper${length ? ` – ${length} m` : ''}`
+      : type === 'car' ? `Auto${length ? ` – ${length} m` : ''}`
+      : type === 'motorcycle' ? 'Motorrad'
+      : type === 'bicycle' ? 'Fahrrad'
+      : type === 'camper' ? `Camper${length ? ` – ${length} m` : ''}`
       : `Van${length ? ` – ${length} m` : ''}`
 
   const needsLength = type === 'car' || type === 'camper' || type === 'van'
@@ -314,27 +249,19 @@ function VehiclePicker({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="
-          tap-target focus-ring flex w-full items-center justify-between
-          rounded-xl border border-white/10 bg-white/10 px-3 text-left text-sm
-          transition hover:bg-white/15
-        "
+        className="flex h-11 w-full items-center justify-between rounded-xl border border-zinc-200 bg-white px-3 text-left text-sm transition hover:bg-zinc-50"
         aria-haspopup="dialog"
         aria-expanded={open}
       >
         <span className="line-clamp-1">{label}</span>
-        <ChevronDown className="h-4 w-4 opacity-80" />
+        <ChevronDown className="h-4 w-4 opacity-60" />
       </button>
 
       {open && (
         <div
           role="dialog"
           aria-label="Fahrzeug"
-          className="
-            absolute right-0 z-20 mt-2 w-[28rem] max-w-[95vw]
-            rounded-2xl border border-white/10 bg-[#0c1930]/95 p-4 text-white
-            shadow-xl backdrop-blur-xl
-          "
+          className="absolute right-0 z-[1001] mt-2 w-[28rem] max-w-[95vw] rounded-2xl border border-zinc-200 bg-white p-4 shadow-xl"
         >
           <div className="grid grid-cols-3 gap-2">
             {(['none', 'car', 'motorcycle', 'bicycle', 'camper', 'van'] as VehicleType[]).map((t) => (
@@ -343,57 +270,34 @@ function VehiclePicker({
                 type="button"
                 onClick={() => onTypeChange(t)}
                 className={cn(
-                  'tap-target focus-ring rounded-xl border px-3 py-2 text-sm capitalize',
-                  type === t
-                    ? 'border-white/20 bg-white/20 font-semibold'
-                    : 'border-white/10 bg-white/10 hover:bg-white/15'
+                  'rounded-xl border px-3 py-2 text-sm capitalize',
+                  type === t ? 'border-zinc-900 bg-zinc-900 font-semibold text-white' : 'border-zinc-200 text-zinc-700 hover:bg-zinc-50'
                 )}
               >
-                {t === 'none'
-                  ? 'Ohne Fahrzeug'
-                  : t === 'car'
-                  ? 'Auto'
-                  : t === 'motorcycle'
-                  ? 'Motorrad'
-                  : t === 'bicycle'
-                  ? 'Fahrrad'
-                  : t === 'camper'
-                  ? 'Camper'
-                  : 'Van'}
+                {t === 'none' ? 'Ohne Fahrzeug' : t === 'car' ? 'Auto' : t === 'motorcycle' ? 'Motorrad' : t === 'bicycle' ? 'Fahrrad' : t === 'camper' ? 'Camper' : 'Van'}
               </button>
             ))}
           </div>
 
           {needsLength && (
             <div className="mt-4">
-              <span className="mb-1 block text-xs font-medium text-white/80">Fahrzeuglänge (Meter)</span>
-              <div className="tap-target focus-ring flex items-center gap-2 rounded-xl border border-white/10 bg-white/10 px-3">
+              <span className="mb-1 block text-xs font-medium text-zinc-500">Fahrzeuglänge (Meter)</span>
+              <div className="flex h-11 items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3">
                 <input
-                  type="number"
-                  min={2}
-                  max={12}
-                  step={0.1}
+                  type="number" min={2} max={12} step={0.1}
                   value={length}
                   onChange={(e) => onLengthChange(e.target.value === '' ? '' : Number(e.target.value))}
                   placeholder="z. B. 4.5"
-                  className="h-11 w-full bg-transparent text-sm outline-none"
+                  className="w-full bg-transparent text-sm outline-none"
                 />
-                <span className="text-sm text-white/80">m</span>
+                <span className="text-sm text-zinc-500">m</span>
               </div>
-              <p className="mt-1 text-xs text-white/70">Viele Reedereien staffeln Preise nach Länge.</p>
+              <p className="mt-1 text-xs text-zinc-500">Viele Reedereien staffeln Preise nach Länge.</p>
             </div>
           )}
 
           <div className="mt-4 flex justify-end">
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="
-                tap-target focus-ring inline-flex h-10 items-center justify-center
-                rounded-xl border border-white/10 bg-white/10 px-4 text-sm font-semibold
-                hover:bg-white/15
-              "
-            >
+            <button type="button" onClick={() => setOpen(false)} className="inline-flex h-10 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-semibold hover:bg-zinc-50">
               Übernehmen
             </button>
           </div>
@@ -403,31 +307,15 @@ function VehiclePicker({
   )
 }
 
-function Counter({
-  label, subtitle, value, onChange, min = 0, max = 9,
-}: { label: string; subtitle?: string; value: number; onChange: (v: number) => void; min?: number; max?: number }) {
+function Counter({ label, subtitle, value, onChange, min = 0, max = 9 }: { label: string; subtitle?: string; value: number; onChange: (v: number) => void; min?: number; max?: number }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
-      <div className="text-sm font-medium text-white">{label}</div>
-      {subtitle && <div className="text-xs text-white/70">{subtitle}</div>}
+    <div className="rounded-xl border border-zinc-200 bg-white p-3">
+      <div className="text-sm font-medium">{label}</div>
+      {subtitle && <div className="text-xs text-zinc-500">{subtitle}</div>}
       <div className="mt-2 flex items-center justify-between">
-        <button
-          type="button"
-          onClick={() => onChange(Math.max(min, value - 1))}
-          className="tap-target focus-ring rounded-lg border border-white/10 bg-white/10 px-2 hover:bg-white/15"
-          aria-label={`${label} verringern`}
-        >
-          <Minus className="h-4 w-4" />
-        </button>
+        <button type="button" onClick={() => onChange(Math.max(min, value - 1))} className="rounded-lg border border-zinc-200 px-2 py-1 hover:bg-zinc-50" aria-label={`${label} verringern`}>−</button>
         <div className="w-8 text-center text-sm">{value}</div>
-        <button
-          type="button"
-          onClick={() => onChange(Math.min(max, value + 1))}
-          className="tap-target focus-ring rounded-lg border border-white/10 bg-white/10 px-2 hover:bg-white/15"
-          aria-label={`${label} erhöhen`}
-        >
-          <Plus className="h-4 w-4" />
-        </button>
+        <button type="button" onClick={() => onChange(Math.min(max, value + 1))} className="rounded-lg border border-zinc-200 px-2 py-1 hover:bg-zinc-50" aria-label={`${label} erhöhen`}>+</button>
       </div>
     </div>
   )

@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Users2, ChevronDown, Plus, Minus } from 'lucide-react'
+import { Users2, ChevronDown } from 'lucide-react'
 import { cn as _cn } from '@/lib/utils'
 
 /* helpers */
@@ -30,16 +30,14 @@ export interface ComboSearchFormProps {
 export default function ComboSearchForm({ onSubmit }: ComboSearchFormProps) {
   const router = useRouter()
 
-  // Basics
   const [dest, setDest] = useState('')
   const [start, setStart] = useState('') // optional
   const [days, setDays] = useState(7)
   const [budget, setBudget] = useState<number | ''>('')
 
-  // Options
   const [pax, setPax] = useState<Pax>({ adults: 2, children: 0 })
   const [flexible, setFlexible] = useState(false)
-  const [themes, setThemes] = useState<string[]>([]) // z. B. Strand, Städtetrip, Natur …
+  const [themes, setThemes] = useState<string[]>([])
 
   const paxLabel = useMemo(() => {
     const total = pax.adults + pax.children
@@ -47,6 +45,7 @@ export default function ComboSearchForm({ onSubmit }: ComboSearchFormProps) {
   }, [pax])
 
   const canSubmit = dest.trim().length >= 2 && days > 1
+  const THEME_OPTS = ['Strand', 'Städtetrip', 'Natur', 'Kultur', 'Wellness', 'Abenteuer']
 
   function toggleTheme(t: string) {
     setThemes((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]))
@@ -67,140 +66,127 @@ export default function ComboSearchForm({ onSubmit }: ComboSearchFormProps) {
 
     if (!onSubmit) {
       const p = new URLSearchParams()
-      p.set('dest', dest.trim())
-      p.set('days', String(days))
-      if (start) p.set('start', start)
-      if (budget !== '') p.set('budget', String(budget))
-      p.set('adults', String(pax.adults))
-      p.set('children', String(pax.children))
-      if (themes.length) p.set('themes', themes.join(','))
-      if (flexible) p.set('flex3', '1')
+      p.set('dest', dest.trim()); p.set('days', String(days))
+      if (start) p.set('start', start); if (budget !== '') p.set('budget', String(budget))
+      p.set('adults', String(pax.adults)); p.set('children', String(pax.children))
+      if (themes.length) p.set('themes', themes.join(',')); if (flexible) p.set('flex3', '1')
       router.push(`/search/combo?${p.toString()}`)
     }
   }
 
-  const THEME_OPTS = ['Strand', 'Städtetrip', 'Natur', 'Kultur', 'Wellness', 'Abenteuer']
-
   return (
-    <form
-      onSubmit={submit}
-      className="
-        rounded-2xl p-4 md:p-5 text-white
-        bg-white/5 ring-1 ring-inset ring-white/10
-        backdrop-blur-xl
-      "
-    >
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
-        <Field className="md:col-span-6" label="Ziel / Region">
+    <form onSubmit={submit} className="rounded-2xl bg-white/95 p-4 text-[#0c1930] shadow-inner md:p-5">
+      {/* Top row: Ziel | Start | Tage | Budget | Pax | Suchen */}
+      <div
+        className={cn(
+          'grid grid-cols-1 items-end gap-3',
+          'md:[grid-template-columns:1.4fr_0.95fr_0.75fr_1fr_1.2fr_auto]'
+        )}
+      >
+        <Field className="md:[grid-column:1/2]" label="Ziel / Region">
           <input
             value={dest}
             onChange={(e) => setDest(e.target.value)}
             placeholder="z. B. Bali, Andalusien, Kalifornien"
-            className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-white/60"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
             aria-label="Reiseziel"
           />
         </Field>
 
-        <Field className="md:col-span-3" label="Startdatum (optional)">
+        <Field className="md:[grid-column:2/3]" label="Startdatum (optional)">
+          <input type="date" value={start} onChange={(e) => setStart(e.target.value)} className="w-full bg-transparent text-sm outline-none" />
+        </Field>
+
+        <Field className="md:[grid-column:3/4]" label="Dauer (Tage)">
           <input
-            type="date"
-            value={start}
-            onChange={(e) => setStart(e.target.value)}
-            className="h-11 w-full bg-transparent text-sm outline-none"
+            type="number" min={2} max={30}
+            value={days} onChange={(e) => setDays(Math.max(2, Number(e.target.value || 2)))}
+            className="w-full bg-transparent text-sm outline-none"
           />
         </Field>
 
-        <Field className="md:col-span-3" label="Dauer (Tage)">
+        <Field className="md:[grid-column:4/5]" label="Budget (optional, €)">
           <input
-            type="number"
-            min={2}
-            max={30}
-            value={days}
-            onChange={(e) => setDays(Math.max(2, Number(e.target.value || 2)))}
-            className="h-11 w-full bg-transparent text-sm outline-none"
-          />
-        </Field>
-
-        <Field className="md:col-span-3" label="Budget (optional, €)">
-          <input
-            type="number"
-            min={0}
-            step={50}
+            type="number" min={0} step={50}
             value={budget}
             onChange={(e) => setBudget(e.target.value === '' ? '' : Number(e.target.value))}
             placeholder="z. B. 1500"
-            className="h-11 w-full bg-transparent text-sm outline-none"
+            className="w-full bg-transparent text-sm outline-none"
           />
         </Field>
 
-        <div className="md:col-span-4">
+        <div className="md:[grid-column:5/6]">
           <PaxPicker value={pax} onChange={setPax} label={paxLabel} />
         </div>
 
-        <div className="md:col-span-5">
-          <ThemeSelect options={THEME_OPTS} selected={themes} onToggle={toggleTheme} />
-        </div>
-
-        <div className="md:col-span-2 flex items-center">
-          <Toggle label="+/− 3 Tage flexibel" checked={flexible} onCheckedChange={setFlexible} />
-        </div>
-
-        <div className="md:col-span-2">
+        <div className="md:[grid-column:6/7]">
           <button
             type="submit"
             disabled={!canSubmit}
             className={cn(
-              'tap-target focus-ring inline-flex w-full items-center justify-center rounded-xl',
-              'bg-primary text-primary-foreground font-semibold transition',
-              'hover:brightness-105 active:translate-y-[1px]',
-              'disabled:cursor-not-allowed disabled:opacity-50'
+              'inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#0c1930] px-6 font-semibold text-white transition',
+              'hover:bg-[#102449] active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-50'
             )}
           >
             Suchen
           </button>
         </div>
       </div>
+
+      {/* Secondary row: Themes + Flex */}
+      <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-12">
+        <div className="md:col-span-8">
+          <span className="mb-1 block text-xs font-medium text-zinc-500">Reisethemen (optional)</span>
+          <div className="flex flex-wrap gap-2">
+            {THEME_OPTS.map((t) => {
+              const active = themes.includes(t)
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => toggleTheme(t)}
+                  className={cn(
+                    'rounded-full border px-3 py-1.5 text-sm',
+                    active ? 'border-zinc-900 bg-zinc-900 font-semibold text-white' : 'border-zinc-300 bg-white text-zinc-800 hover:bg-zinc-50'
+                  )}
+                >
+                  {t}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className="md:col-span-3 flex items-center">
+          <Toggle label="+/− 3 Tage flexibel" checked={flexible} onCheckedChange={setFlexible} />
+        </div>
+      </div>
     </form>
   )
 }
 
-/* UI-Bausteine */
+/* UI-Bausteine (wie gehabt) */
 function Field({ label, className, children }: { label: string; className?: string; children: React.ReactNode }) {
   return (
     <label className={cn('block', className)}>
-      <span className="mb-1 block text-xs font-medium text-white/80">{label}</span>
-      <div
-        className="
-          tap-target focus-ring flex items-center gap-2
-          rounded-xl border border-white/10 bg-white/10 px-3
-        "
-      >
-        {children}
-      </div>
+      <span className="mb-1 block text-xs font-medium text-zinc-500">{label}</span>
+      <div className="flex h-11 items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 shadow-sm">{children}</div>
     </label>
   )
 }
 
 function Toggle({ label, checked, onCheckedChange }: { label: string; checked: boolean; onCheckedChange: (v: boolean) => void }) {
   return (
-    <label className="inline-flex cursor-pointer select-none items-center gap-2 text-white">
+    <label className="inline-flex cursor-pointer select-none items-center gap-2">
       <span
         role="switch" aria-checked={checked} tabIndex={0}
         onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onCheckedChange(!checked)}
         onClick={() => onCheckedChange(!checked)}
-        className={cn(
-          'focus-ring relative h-6 w-11 rounded-full border transition',
-          checked ? 'border-emerald-400 bg-emerald-400' : 'border-white/20 bg-white/10'
-        )}
+        className={cn('relative h-6 w-11 rounded-full border transition', checked ? 'border-emerald-400 bg-emerald-400' : 'border-zinc-300 bg-zinc-200')}
       >
-        <span
-          className={cn(
-            'absolute top-1/2 -translate-y-1/2 transform rounded-full bg-white transition',
-            checked ? 'right-1 h-4 w-4' : 'left-1 h-4 w-4'
-          )}
-        />
+        <span className={cn('absolute top-1/2 -translate-y-1/2 transform rounded-full bg-white transition', checked ? 'right-1 h-4 w-4' : 'left-1 h-4 w-4')} />
       </span>
-      <span className="text-sm text-white/90">{label}</span>
+      <span className="text-sm text-zinc-700">{label}</span>
     </label>
   )
 }
@@ -212,41 +198,23 @@ function PaxPicker({ value, onChange, label }: { value: Pax; onChange: (v: Pax) 
     <div className="relative">
       <button
         type="button" onClick={() => setOpen((v) => !v)}
-        className="
-          tap-target focus-ring flex w-full items-center justify-between
-          rounded-xl border border-white/10 bg-white/10 px-3 text-left text-sm
-          transition hover:bg-white/15
-        "
+        className="flex h-11 w-full items-center justify-between rounded-xl border border-zinc-200 bg-white px-3 text-left text-sm transition hover:bg-zinc-50"
         aria-haspopup="dialog" aria-expanded={open}
       >
         <div className="flex items-center gap-2">
           <Users2 className="h-4 w-4" />
           <span className="line-clamp-1">{label}</span>
         </div>
-        <ChevronDown className="h-4 w-4 opacity-80" />
+        <ChevronDown className="h-4 w-4 opacity-60" />
       </button>
       {open && (
-        <div
-          role="dialog" aria-label="Reisende"
-          className="
-            absolute right-0 z-20 mt-2 w-[24rem] max-w-[95vw]
-            rounded-2xl border border-white/10 bg-[#0c1930]/95 p-4 text-white
-            shadow-xl backdrop-blur-xl
-          "
-        >
+        <div role="dialog" aria-label="Reisende" className="absolute right-0 z-[1001] mt-2 w-[24rem] max-w-[95vw] rounded-2xl border border-zinc-200 bg-white p-4 shadow-xl">
           <div className="grid grid-cols-2 gap-3">
             <Counter label="Erwachsene" subtitle="ab 12 J." value={value.adults} min={1} onChange={(v) => patch({ adults: v })} />
             <Counter label="Kinder" subtitle="0–11 J." value={value.children} min={0} onChange={(v) => patch({ children: v })} />
           </div>
           <div className="mt-4 flex justify-end">
-            <button
-              type="button" onClick={() => setOpen(false)}
-              className="
-                tap-target focus-ring inline-flex h-10 items-center justify-center
-                rounded-xl border border-white/10 bg-white/10 px-4 text-sm font-semibold
-                hover:bg-white/15
-              "
-            >
+            <button type="button" onClick={() => setOpen(false)} className="inline-flex h-10 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-semibold hover:bg-zinc-50">
               Übernehmen
             </button>
           </div>
@@ -256,60 +224,15 @@ function PaxPicker({ value, onChange, label }: { value: Pax; onChange: (v: Pax) 
   )
 }
 
-function ThemeSelect({ options, selected, onToggle }: { options: string[]; selected: string[]; onToggle: (t: string) => void }) {
+function Counter({ label, subtitle, value, onChange, min = 0, max = 9 }: { label: string; subtitle?: string; value: number; onChange: (v: number) => void; min?: number; max?: number }) {
   return (
-    <div>
-      <span className="mb-1 block text-xs font-medium text-white/80">Reisethemen (optional)</span>
-      <div className="flex flex-wrap gap-2">
-        {options.map((t) => {
-          const active = selected.includes(t)
-          return (
-            <button
-              key={t}
-              type="button"
-              onClick={() => onToggle(t)}
-              className={cn(
-                'tap-target focus-ring rounded-full border px-3 py-1.5 text-sm',
-                active
-                  ? 'border-white/20 bg-white/20 font-semibold text-white'
-                  : 'border-white/10 bg-white/10 text-white/90 hover:bg-white/15'
-              )}
-              aria-pressed={active}
-            >
-              {t}
-            </button>
-          )
-        })}
-      </div>
-    </div>
-  )
-}
-
-function Counter({
-  label, subtitle, value, onChange, min = 0, max = 9,
-}: { label: string; subtitle?: string; value: number; onChange: (v: number) => void; min?: number; max?: number }) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
-      <div className="text-sm font-medium text-white">{label}</div>
-      {subtitle && <div className="text-xs text-white/70">{subtitle}</div>}
+    <div className="rounded-xl border border-zinc-200 bg-white p-3">
+      <div className="text-sm font-medium">{label}</div>
+      {subtitle && <div className="text-xs text-zinc-500">{subtitle}</div>}
       <div className="mt-2 flex items-center justify-between">
-        <button
-          type="button"
-          onClick={() => onChange(Math.max(min, value - 1))}
-          className="tap-target focus-ring rounded-lg border border-white/10 bg-white/10 px-2 hover:bg-white/15"
-          aria-label={`${label} verringern`}
-        >
-          <Minus className="h-4 w-4" />
-        </button>
+        <button type="button" onClick={() => onChange(Math.max(min, value - 1))} className="rounded-lg border border-zinc-200 px-2 py-1 hover:bg-zinc-50" aria-label={`${label} verringern`}>−</button>
         <div className="w-8 text-center text-sm">{value}</div>
-        <button
-          type="button"
-          onClick={() => onChange(Math.min(max, value + 1))}
-          className="tap-target focus-ring rounded-lg border border-white/10 bg-white/10 px-2 hover:bg-white/15"
-          aria-label={`${label} erhöhen`}
-        >
-          <Plus className="h-4 w-4" />
-        </button>
+        <button type="button" onClick={() => onChange(Math.min(max, value + 1))} className="rounded-lg border border-zinc-200 px-2 py-1 hover:bg-zinc-50" aria-label={`${label} erhöhen`}>+</button>
       </div>
     </div>
   )

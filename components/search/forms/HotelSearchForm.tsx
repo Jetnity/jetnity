@@ -29,8 +29,8 @@ export default function HotelSearchForm({ onSubmit }: HotelSearchFormProps) {
   const router = useRouter()
 
   const [destination, setDestination] = useState('')
-  const [checkin, setCheckin] = useState('')   // YYYY-MM-DD
-  const [checkout, setCheckout] = useState('') // YYYY-MM-DD
+  const [checkin, setCheckin] = useState('')  // YYYY-MM-DD
+  const [checkout, setCheckout] = useState('')// YYYY-MM-DD
   const [flexible, setFlexible] = useState(false)
   const [occ, setOcc] = useState<Occupancy>({ rooms: 1, adults: 2, children: 0 })
 
@@ -50,7 +50,6 @@ export default function HotelSearchForm({ onSubmit }: HotelSearchFormProps) {
   function submit(e: React.FormEvent) {
     e.preventDefault()
 
-    // 1) Optionales Callback bedienen (kompatibel)
     onSubmit?.({
       destination,
       checkin: strToDate(checkin),
@@ -59,7 +58,6 @@ export default function HotelSearchForm({ onSubmit }: HotelSearchFormProps) {
       flexible,
     })
 
-    // 2) Fallback: URL-Routing
     if (!onSubmit) {
       const p = new URLSearchParams()
       p.set('dest', destination.trim())
@@ -74,29 +72,25 @@ export default function HotelSearchForm({ onSubmit }: HotelSearchFormProps) {
   }
 
   return (
-    <form
-      onSubmit={submit}
-      className="
-        rounded-2xl p-4 md:p-5 text-white
-        bg-white/5 ring-1 ring-inset ring-white/10
-        backdrop-blur-xl
-      "
-    >
-      {/* Fields */}
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
-        {/* Destination */}
-        <Field className="md:col-span-6" label="Ziel / Unterkunft">
+    <form onSubmit={submit} className="rounded-2xl bg-white/95 p-4 text-[#0c1930] shadow-inner md:p-5">
+      {/* Top row: Ziel | Check-in | Check-out | Gäste/Zimmer | Suchen */}
+      <div
+        className={cn(
+          'grid grid-cols-1 items-end gap-3',
+          'md:[grid-template-columns:1.6fr_1.1fr_1.1fr_1.4fr_auto]'
+        )}
+      >
+        <Field label="Ziel / Unterkunft" className="md:[grid-column:1/2]">
           <input
             value={destination}
             onChange={(e) => setDestination(e.target.value)}
             placeholder="Stadt, Region oder Hotel"
-            className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-white/60"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
             aria-label="Ziel oder Unterkunft"
           />
         </Field>
 
-        {/* Dates */}
-        <Field className="md:col-span-3" label="Check-in">
+        <Field label="Check-in" className="md:[grid-column:2/3]">
           <input
             type="date"
             value={checkin}
@@ -106,44 +100,41 @@ export default function HotelSearchForm({ onSubmit }: HotelSearchFormProps) {
                 setCheckout(e.target.value)
               }
             }}
-            className="h-11 w-full bg-transparent text-sm outline-none"
+            className="w-full bg-transparent text-sm outline-none"
           />
         </Field>
-        <Field className="md:col-span-3" label="Check-out">
+
+        <Field label="Check-out" className="md:[grid-column:3/4]">
           <input
             type="date"
             value={checkout}
             onChange={(e) => setCheckout(e.target.value)}
             min={checkin || undefined}
-            className="h-11 w-full bg-transparent text-sm outline-none"
+            className="w-full bg-transparent text-sm outline-none"
           />
         </Field>
 
-        {/* Occupancy popover */}
-        <div className="md:col-span-6">
+        <div className="md:[grid-column:4/5]">
           <OccupancyPicker value={occ} onChange={setOcc} label={occLabel} />
         </div>
 
-        {/* Flexible */}
-        <div className="md:col-span-3 flex items-center">
-          <Toggle label="+/− 3 Tage flexibel" checked={flexible} onCheckedChange={setFlexible} />
-        </div>
-
-        {/* Submit */}
-        <div className="md:col-span-3">
+        <div className="md:[grid-column:5/6]">
           <button
             type="submit"
             disabled={!canSubmit}
             className={cn(
-              'tap-target focus-ring inline-flex w-full items-center justify-center rounded-xl',
-              'bg-primary text-primary-foreground font-semibold transition',
-              'hover:brightness-105 active:translate-y-[1px]',
-              'disabled:cursor-not-allowed disabled:opacity-50'
+              'inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#0c1930] px-6 font-semibold text-white transition',
+              'hover:bg-[#102449] active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-50'
             )}
           >
             Suchen
           </button>
         </div>
+      </div>
+
+      {/* Secondary row: Flex-Option */}
+      <div className="mt-3 flex items-center">
+        <Toggle label="+/− 3 Tage flexibel" checked={flexible} onCheckedChange={setFlexible} />
       </div>
     </form>
   )
@@ -156,13 +147,8 @@ function Field({
 }: { label: string; className?: string; children: React.ReactNode }) {
   return (
     <label className={cn('block', className)}>
-      <span className="mb-1 block text-xs font-medium text-white/80">{label}</span>
-      <div
-        className="
-          tap-target focus-ring flex items-center gap-2
-          rounded-xl border border-white/10 bg-white/10 px-3
-        "
-      >
+      <span className="mb-1 block text-xs font-medium text-zinc-500">{label}</span>
+      <div className="flex h-11 items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 shadow-sm">
         {children}
       </div>
     </label>
@@ -173,26 +159,20 @@ function Toggle({
   label, checked, onCheckedChange,
 }: { label: string; checked: boolean; onCheckedChange: (v: boolean) => void }) {
   return (
-    <label className="inline-flex cursor-pointer select-none items-center gap-2 text-white">
+    <label className="inline-flex cursor-pointer select-none items-center gap-2">
       <span
         role="switch"
         aria-checked={checked}
         tabIndex={0}
         onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onCheckedChange(!checked)}
         onClick={() => onCheckedChange(!checked)}
-        className={cn(
-          'focus-ring relative h-6 w-11 rounded-full border transition',
-          checked ? 'border-emerald-400 bg-emerald-400' : 'border-white/20 bg-white/10'
-        )}
+        className={cn('relative h-6 w-11 rounded-full border transition',
+          checked ? 'border-emerald-400 bg-emerald-400' : 'border-zinc-300 bg-zinc-200')}
       >
-        <span
-          className={cn(
-            'absolute top-1/2 -translate-y-1/2 transform rounded-full bg-white transition',
-            checked ? 'right-1 h-4 w-4' : 'left-1 h-4 w-4'
-          )}
-        />
+        <span className={cn('absolute top-1/2 -translate-y-1/2 transform rounded-full bg-white transition',
+          checked ? 'right-1 h-4 w-4' : 'left-1 h-4 w-4')} />
       </span>
-      <span className="text-sm text-white/90">{label}</span>
+      <span className="text-sm text-zinc-700">{label}</span>
     </label>
   )
 }
@@ -210,11 +190,7 @@ function OccupancyPicker({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="
-          tap-target focus-ring flex w-full items-center justify-between
-          rounded-xl border border-white/10 bg-white/10 px-3 text-left text-sm
-          transition hover:bg-white/15
-        "
+        className="flex h-11 w-full items-center justify-between rounded-xl border border-zinc-200 bg-white px-3 text-left text-sm transition hover:bg-zinc-50"
         aria-haspopup="dialog"
         aria-expanded={open}
       >
@@ -222,19 +198,12 @@ function OccupancyPicker({
           <Users2 className="h-4 w-4" />
           <span className="line-clamp-1">{label}</span>
         </div>
-        <ChevronDown className="h-4 w-4 opacity-80" />
+        <ChevronDown className="h-4 w-4 opacity-60" />
       </button>
 
       {open && (
-        <div
-          role="dialog"
-          aria-label="Gäste & Zimmer"
-          className="
-            absolute right-0 z-20 mt-2 w-[28rem] max-w-[95vw]
-            rounded-2xl border border-white/10 bg-[#0c1930]/95 p-4 text-white
-            shadow-xl backdrop-blur-xl
-          "
-        >
+        <div role="dialog" aria-label="Gäste & Zimmer"
+             className="absolute right-0 z-[1001] mt-2 w-[28rem] max-w-[95vw] rounded-2xl border border-zinc-200 bg-white p-4 shadow-xl">
           <div className="grid grid-cols-3 gap-3">
             <Counter label="Zimmer" value={rooms} min={1} max={9} onChange={(v) => patch({ rooms: v })} />
             <Counter label="Erwachsene" subtitle="ab 18 J." value={adults} min={1} max={9} onChange={(v) => patch({ adults: v })} />
@@ -245,11 +214,7 @@ function OccupancyPicker({
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="
-                tap-target focus-ring inline-flex items-center justify-center
-                rounded-xl border border-white/10 bg-white/10 px-4 text-sm font-semibold
-                hover:bg-white/15
-              "
+              className="inline-flex h-10 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-semibold hover:bg-zinc-50"
             >
               Übernehmen
             </button>
@@ -264,25 +229,17 @@ function Counter({
   label, subtitle, value, onChange, min = 0, max = 9,
 }: { label: string; subtitle?: string; value: number; onChange: (v: number) => void; min?: number; max?: number }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/10 p-3">
-      <div className="text-sm font-medium text-white">{label}</div>
-      {subtitle && <div className="text-xs text-white/70">{subtitle}</div>}
+    <div className="rounded-xl border border-zinc-200 bg-white p-3">
+      <div className="text-sm font-medium">{label}</div>
+      {subtitle && <div className="text-xs text-zinc-500">{subtitle}</div>}
       <div className="mt-2 flex items-center justify-between">
-        <button
-          type="button"
-          onClick={() => onChange(Math.max(min, value - 1))}
-          className="tap-target focus-ring rounded-lg border border-white/10 bg-white/10 px-2 hover:bg-white/15"
-          aria-label={`${label} verringern`}
-        >
+        <button type="button" onClick={() => onChange(Math.max(min, value - 1))}
+                className="rounded-lg border border-zinc-200 px-2 py-1 hover:bg-zinc-50" aria-label={`${label} verringern`}>
           <Minus className="h-4 w-4" />
         </button>
         <div className="w-8 text-center text-sm">{value}</div>
-        <button
-          type="button"
-          onClick={() => onChange(Math.min(max, value + 1))}
-          className="tap-target focus-ring rounded-lg border border-white/10 bg-white/10 px-2 hover:bg-white/15"
-          aria-label={`${label} erhöhen`}
-        >
+        <button type="button" onClick={() => onChange(Math.min(max, value + 1))}
+                className="rounded-lg border border-zinc-200 px-2 py-1 hover:bg-zinc-50" aria-label={`${label} erhöhen`}>
           <Plus className="h-4 w-4" />
         </button>
       </div>

@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronDown, Users2, Plus, Minus } from 'lucide-react'
+import { ChevronDown, Users2 } from 'lucide-react'
 import { cn as _cn } from '@/lib/utils'
 
 /* helpers */
@@ -32,14 +32,12 @@ export interface CruiseSearchFormProps {
 export default function CruiseSearchForm({ onSubmit }: CruiseSearchFormProps) {
   const router = useRouter()
 
-  // Basics
   const [region, setRegion] = useState('')
   const [embark, setEmbark] = useState('')
   const [from, setFrom] = useState('')      // YYYY-MM-DD
   const [nights, setNights] = useState(7)
   const [line, setLine] = useState('')      // optional Reederei
 
-  // Options
   const [pax, setPax] = useState<Pax>({ adults: 2, children: 0 })
   const [cabin, setCabin] = useState<Cabin>('any')
   const [flexible, setFlexible] = useState(false)
@@ -47,15 +45,11 @@ export default function CruiseSearchForm({ onSubmit }: CruiseSearchFormProps) {
   const paxLabel = useMemo(() => {
     const total = pax.adults + pax.children
     const cab =
-      cabin === 'any'
-        ? 'Kabine egal'
-        : cabin === 'interior'
-        ? 'Innenkabine'
-        : cabin === 'oceanview'
-        ? 'Außenkabine'
-        : cabin === 'balcony'
-        ? 'Balkon'
-        : 'Suite'
+      cabin === 'any' ? 'Kabine egal'
+      : cabin === 'interior' ? 'Innenkabine'
+      : cabin === 'oceanview' ? 'Außenkabine'
+      : cabin === 'balcony' ? 'Balkon'
+      : 'Suite'
     return `${total} ${total === 1 ? 'Reisender' : 'Reisende'}, ${cab}`
   }, [pax, cabin])
 
@@ -77,104 +71,91 @@ export default function CruiseSearchForm({ onSubmit }: CruiseSearchFormProps) {
 
     if (!onSubmit) {
       const p = new URLSearchParams()
-      p.set('region', region.trim())
-      if (embark.trim()) p.set('embark', embark.trim())
-      p.set('from', from)
-      p.set('nights', String(nights))
-      p.set('adults', String(pax.adults))
-      p.set('children', String(pax.children))
-      if (cabin !== 'any') p.set('cabin', cabin)
-      if (line.trim()) p.set('line', line.trim())
+      p.set('region', region.trim()); if (embark.trim()) p.set('embark', embark.trim())
+      p.set('from', from); p.set('nights', String(nights))
+      p.set('adults', String(pax.adults)); p.set('children', String(pax.children))
+      if (cabin !== 'any') p.set('cabin', cabin); if (line.trim()) p.set('line', line.trim())
       if (flexible) p.set('flex3', '1')
       router.push(`/search/cruise?${p.toString()}`)
     }
   }
 
   return (
-    <form
-      onSubmit={submit}
-      className="
-        rounded-2xl p-4 md:p-5 text-white
-        bg-white/5 ring-1 ring-inset ring-white/10
-        backdrop-blur-xl
-      "
-    >
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
-        <Field className="md:col-span-5" label="Region / Route">
+    <form onSubmit={submit} className="rounded-2xl bg-white/95 p-4 text-[#0c1930] shadow-inner md:p-5">
+      {/* Top row: Region | Abfahrtshafen | Abreise ab | Nächte | Passagiere | Kabine | Suchen */}
+      <div
+        className={cn(
+          'grid grid-cols-1 items-end gap-3',
+          'md:[grid-template-columns:1.3fr_1.1fr_0.95fr_0.75fr_1.2fr_1.2fr_auto]'
+        )}
+      >
+        <Field className="md:[grid-column:1/2]" label="Region / Route">
           <input
             value={region}
             onChange={(e) => setRegion(e.target.value)}
             placeholder="z. B. Mittelmeer, Karibik, Norwegen"
-            className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-white/60"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
             aria-label="Kreuzfahrt-Region"
           />
         </Field>
 
-        <Field className="md:col-span-4" label="Abfahrtshafen (optional)">
+        <Field className="md:[grid-column:2/3]" label="Abfahrtshafen (optional)">
           <input
             value={embark}
             onChange={(e) => setEmbark(e.target.value)}
             placeholder="z. B. Barcelona, Hamburg"
-            className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-white/60"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
             aria-label="Abfahrtshafen"
           />
         </Field>
 
-        <Field className="md:col-span-3" label="Abreise ab">
+        <Field className="md:[grid-column:3/4]" label="Abreise ab">
+          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="w-full bg-transparent text-sm outline-none" />
+        </Field>
+
+        <Field className="md:[grid-column:4/5]" label="Dauer (Nächte)">
           <input
-            type="date"
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-            className="h-11 w-full bg-transparent text-sm outline-none"
+            type="number" min={1} max={30}
+            value={nights} onChange={(e) => setNights(Math.max(1, Number(e.target.value || 1)))}
+            className="w-full bg-transparent text-sm outline-none"
           />
         </Field>
 
-        <Field className="md:col-span-3" label="Dauer (Nächte)">
-          <input
-            type="number"
-            min={1}
-            max={30}
-            value={nights}
-            onChange={(e) => setNights(Math.max(1, Number(e.target.value || 1)))}
-            className="h-11 w-full bg-transparent text-sm outline-none"
-          />
-        </Field>
-
-        <div className="md:col-span-4">
+        <div className="md:[grid-column:5/6]">
           <Passengers value={pax} onChange={setPax} label={paxLabel} />
         </div>
 
-        <div className="md:col-span-5">
+        <div className="md:[grid-column:6/7]">
           <CabinPicker value={cabin} onChange={setCabin} />
         </div>
 
-        <Field className="md:col-span-4" label="Reederei (optional)">
+        <div className="md:[grid-column:7/8]">
+          <button
+            type="submit"
+            disabled={!canSubmit}
+            className={cn(
+              'inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#0c1930] px-6 font-semibold text-white transition',
+              'hover:bg-[#102449] active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-50'
+            )}
+          >
+            Suchen
+          </button>
+        </div>
+      </div>
+
+      {/* Secondary row: Reederei + Flex */}
+      <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-12">
+        <Field className="md:col-span-5" label="Reederei (optional)">
           <input
             value={line}
             onChange={(e) => setLine(e.target.value)}
             placeholder="z. B. MSC, AIDA, Royal Caribbean"
-            className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-white/60"
-            aria-label="Reederei"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-zinc-400"
           />
         </Field>
 
         <div className="md:col-span-3 flex items-center">
           <Toggle label="+/− 3 Tage flexibel" checked={flexible} onCheckedChange={setFlexible} />
-        </div>
-
-        <div className="md:col-span-2 md:col-start-11">
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className={cn(
-              'tap-target focus-ring inline-flex w-full items-center justify-center rounded-xl',
-              'bg-primary text-primary-foreground font-semibold transition',
-              'hover:brightness-105 active:translate-y-[1px]',
-              'disabled:cursor-not-allowed disabled:opacity-50'
-            )}
-          >
-            Suchen
-          </button>
         </div>
       </div>
     </form>
@@ -185,39 +166,24 @@ export default function CruiseSearchForm({ onSubmit }: CruiseSearchFormProps) {
 function Field({ label, className, children }: { label: string; className?: string; children: React.ReactNode }) {
   return (
     <label className={cn('block', className)}>
-      <span className="mb-1 block text-xs font-medium text-white/80">{label}</span>
-      <div
-        className="
-          tap-target focus-ring flex items-center gap-2
-          rounded-xl border border-white/10 bg-white/10 px-3
-        "
-      >
-        {children}
-      </div>
+      <span className="mb-1 block text-xs font-medium text-zinc-500">{label}</span>
+      <div className="flex h-11 items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 shadow-sm">{children}</div>
     </label>
   )
 }
 
 function Toggle({ label, checked, onCheckedChange }: { label: string; checked: boolean; onCheckedChange: (v: boolean) => void }) {
   return (
-    <label className="inline-flex cursor-pointer select-none items-center gap-2 text-white">
+    <label className="inline-flex cursor-pointer select-none items-center gap-2">
       <span
         role="switch" aria-checked={checked} tabIndex={0}
         onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onCheckedChange(!checked)}
         onClick={() => onCheckedChange(!checked)}
-        className={cn(
-          'focus-ring relative h-6 w-11 rounded-full border transition',
-          checked ? 'border-emerald-400 bg-emerald-400' : 'border-white/20 bg-white/10'
-        )}
+        className={cn('relative h-6 w-11 rounded-full border transition', checked ? 'border-emerald-400 bg-emerald-400' : 'border-zinc-300 bg-zinc-200')}
       >
-        <span
-          className={cn(
-            'absolute top-1/2 -translate-y-1/2 transform rounded-full bg-white transition',
-            checked ? 'right-1 h-4 w-4' : 'left-1 h-4 w-4'
-          )}
-        />
+        <span className={cn('absolute top-1/2 -translate-y-1/2 transform rounded-full bg-white transition', checked ? 'right-1 h-4 w-4' : 'left-1 h-4 w-4')} />
       </span>
-      <span className="text-sm text-white/90">{label}</span>
+      <span className="text-sm text-zinc-700">{label}</span>
     </label>
   )
 }
@@ -229,41 +195,23 @@ function Passengers({ value, onChange, label }: { value: Pax; onChange: (v: Pax)
     <div className="relative">
       <button
         type="button" onClick={() => setOpen((v) => !v)}
-        className="
-          tap-target focus-ring flex w-full items-center justify-between
-          rounded-xl border border-white/10 bg-white/10 px-3 text-left text-sm
-          transition hover:bg-white/15
-        "
+        className="flex h-11 w-full items-center justify-between rounded-xl border border-zinc-200 bg-white px-3 text-left text-sm transition hover:bg-zinc-50"
         aria-haspopup="dialog" aria-expanded={open}
       >
         <div className="flex items-center gap-2">
           <Users2 className="h-4 w-4" />
           <span className="line-clamp-1">{label}</span>
         </div>
-        <ChevronDown className="h-4 w-4 opacity-80" />
+        <ChevronDown className="h-4 w-4 opacity-60" />
       </button>
       {open && (
-        <div
-          role="dialog" aria-label="Passagiere"
-          className="
-            absolute right-0 z-20 mt-2 w-[26rem] max-w-[95vw]
-            rounded-2xl border border-white/10 bg-[#0c1930]/95 p-4 text-white
-            shadow-xl backdrop-blur-xl
-          "
-        >
+        <div role="dialog" aria-label="Passagiere" className="absolute right-0 z-[1001] mt-2 w-[26rem] max-w-[95vw] rounded-2xl border border-zinc-200 bg-white p-4 shadow-xl">
           <div className="grid grid-cols-2 gap-3">
             <Counter label="Erwachsene" subtitle="ab 18 J." value={value.adults} min={1} onChange={(v) => patch({ adults: v })} />
             <Counter label="Kinder" subtitle="0–17 J." value={value.children} min={0} onChange={(v) => patch({ children: v })} />
           </div>
           <div className="mt-4 flex justify-end">
-            <button
-              type="button" onClick={() => setOpen(false)}
-              className="
-                tap-target focus-ring inline-flex h-10 items-center justify-center
-                rounded-xl border border-white/10 bg-white/10 px-4 text-sm font-semibold
-                hover:bg-white/15
-              "
-            >
+            <button type="button" onClick={() => setOpen(false)} className="inline-flex h-10 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-semibold hover:bg-zinc-50">
               Übernehmen
             </button>
           </div>
@@ -276,39 +224,24 @@ function Passengers({ value, onChange, label }: { value: Pax; onChange: (v: Pax)
 function CabinPicker({ value, onChange }: { value: Cabin; onChange: (v: Cabin) => void }) {
   const [open, setOpen] = useState(false)
   const label =
-    value === 'any'
-      ? 'Kabine: egal'
-      : value === 'interior'
-      ? 'Innenkabine'
-      : value === 'oceanview'
-      ? 'Außenkabine'
-      : value === 'balcony'
-      ? 'Balkon'
-      : 'Suite'
+    value === 'any' ? 'Kabine: egal'
+    : value === 'interior' ? 'Innenkabine'
+    : value === 'oceanview' ? 'Außenkabine'
+    : value === 'balcony' ? 'Balkon'
+    : 'Suite'
 
   return (
     <div className="relative">
       <button
         type="button" onClick={() => setOpen((v) => !v)}
-        className="
-          tap-target focus-ring flex w-full items-center justify-between
-          rounded-xl border border-white/10 bg-white/10 px-3 text-left text-sm
-          transition hover:bg-white/15
-        "
+        className="flex h-11 w-full items-center justify-between rounded-xl border border-zinc-200 bg-white px-3 text-left text-sm transition hover:bg-zinc-50"
         aria-haspopup="dialog" aria-expanded={open}
       >
         <span className="line-clamp-1">{label}</span>
-        <ChevronDown className="h-4 w-4 opacity-80" />
+        <ChevronDown className="h-4 w-4 opacity-60" />
       </button>
       {open && (
-        <div
-          role="dialog" aria-label="Kabinenkategorie"
-          className="
-            absolute right-0 z-20 mt-2 w-[28rem] max-w-[95vw]
-            rounded-2xl border border-white/10 bg-[#0c1930]/95 p-4 text-white
-            shadow-xl backdrop-blur-xl
-          "
-        >
+        <div role="dialog" aria-label="Kabinenkategorie" className="absolute right-0 z-[1001] mt-2 w-[28rem] max-w-[95vw] rounded-2xl border border-zinc-200 bg-white p-4 shadow-xl">
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
             {(['any', 'interior', 'oceanview', 'balcony', 'suite'] as Cabin[]).map((c) => (
               <button
@@ -316,10 +249,8 @@ function CabinPicker({ value, onChange }: { value: Cabin; onChange: (v: Cabin) =
                 type="button"
                 onClick={() => onChange(c)}
                 className={cn(
-                  'tap-target focus-ring rounded-xl border px-3 py-2 text-sm',
-                  value === c
-                    ? 'border-white/20 bg-white/20 font-semibold'
-                    : 'border-white/10 bg-white/10 hover:bg-white/15'
+                  'rounded-xl border px-3 py-2 text-sm',
+                  value === c ? 'border-zinc-900 bg-zinc-900 font-semibold text-white' : 'border-zinc-200 text-zinc-700 hover:bg-zinc-50'
                 )}
               >
                 {c === 'any' ? 'egal' : c === 'interior' ? 'Innen' : c === 'oceanview' ? 'Außen' : c === 'balcony' ? 'Balkon' : 'Suite'}
@@ -327,14 +258,7 @@ function CabinPicker({ value, onChange }: { value: Cabin; onChange: (v: Cabin) =
             ))}
           </div>
           <div className="mt-4 flex justify-end">
-            <button
-              type="button" onClick={() => setOpen(false)}
-              className="
-                tap-target focus-ring inline-flex h-10 items-center justify-center
-                rounded-xl border border-white/10 bg-white/10 px-4 text-sm font-semibold
-                hover:bg-white/15
-              "
-            >
+            <button type="button" onClick={() => setOpen(false)} className="inline-flex h-10 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-semibold hover:bg-zinc-50">
               Übernehmen
             </button>
           </div>
@@ -346,27 +270,13 @@ function CabinPicker({ value, onChange }: { value: Cabin; onChange: (v: Cabin) =
 
 function Counter({ label, subtitle, value, onChange, min = 0, max = 9 }: { label: string; subtitle?: string; value: number; onChange: (v: number) => void; min?: number; max?: number }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
-      <div className="text-sm font-medium text-white">{label}</div>
-      {subtitle && <div className="text-xs text-white/70">{subtitle}</div>}
+    <div className="rounded-xl border border-zinc-200 bg-white p-3">
+      <div className="text-sm font-medium">{label}</div>
+      {subtitle && <div className="text-xs text-zinc-500">{subtitle}</div>}
       <div className="mt-2 flex items-center justify-between">
-        <button
-          type="button"
-          onClick={() => onChange(Math.max(min, value - 1))}
-          className="tap-target focus-ring rounded-lg border border-white/10 bg-white/10 px-2 hover:bg-white/15"
-          aria-label={`${label} verringern`}
-        >
-          <Minus className="h-4 w-4" />
-        </button>
+        <button type="button" onClick={() => onChange(Math.max(min, value - 1))} className="rounded-lg border border-zinc-200 px-2 py-1 hover:bg-zinc-50" aria-label={`${label} verringern`}>−</button>
         <div className="w-8 text-center text-sm">{value}</div>
-        <button
-          type="button"
-          onClick={() => onChange(Math.min(max, value + 1))}
-          className="tap-target focus-ring rounded-lg border border-white/10 bg-white/10 px-2 hover:bg-white/15"
-          aria-label={`${label} erhöhen`}
-        >
-          <Plus className="h-4 w-4" />
-        </button>
+        <button type="button" onClick={() => onChange(Math.min(max, value + 1))} className="rounded-lg border border-zinc-200 px-2 py-1 hover:bg-zinc-50" aria-label={`${label} erhöhen`}>+</button>
       </div>
     </div>
   )
