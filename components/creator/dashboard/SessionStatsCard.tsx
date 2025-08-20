@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
+import ContentTypePicker from './ContentTypePicker'
 
 type Metric = Tables<'creator_session_metrics'>
 
@@ -36,6 +37,9 @@ export default function SessionStatsCard({ metric }: { metric: Metric }) {
     ? new Date(metric.created_at).toLocaleDateString()
     : ''
 
+  // Falls die generierten Types die neue Spalte noch nicht kennen, greifen wir defensiv via any
+  const currentType = ((metric as any)?.content_type as string | undefined) ?? 'other'
+
   return (
     <div className="rounded-xl border border-border bg-background/60 p-4">
       <div className="mb-2 flex items-center justify-between gap-3">
@@ -48,7 +52,12 @@ export default function SessionStatsCard({ metric }: { metric: Metric }) {
         </Badge>
       </div>
 
-      <div className="mt-2 flex items-center gap-3">
+      {/* Segment-Editor */}
+      <div className="mb-2">
+        <ContentTypePicker sessionId={metric.session_id} initialType={currentType} />
+      </div>
+
+      <div className="mt-1 flex items-center gap-3">
         <div className="w-full">
           <Progress value={impact} />
         </div>
