@@ -5,13 +5,14 @@ import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import TimeframeTabs from '@/components/creator/dashboard/TimeframeTabs'
+import SegmentFilter from '@/components/creator/analytics/SegmentFilter'
 import MetricsChart, { type MetricsChartPoint } from '@/components/creator/analytics/MetricsChart'
 import { fetchCreatorMetricsTimeseries } from '@/lib/supabase/rpc/creatorMetricsTimeseries'
 
 export default async function AnalyticsPage({
   searchParams,
 }: {
-  searchParams?: { range?: string }
+  searchParams?: { range?: string; type?: string }
 }) {
   const supabase = createServerComponentClient()
   const {
@@ -27,25 +28,30 @@ export default async function AnalyticsPage({
       ? (Number(range) as 30 | 90 | 180)
       : 90
 
+  const rawType = (searchParams?.type ?? 'all').toLowerCase()
+  const allowed = new Set(['all', 'video', 'image', 'guide', 'blog', 'story', 'other'])
+  const type = allowed.has(rawType) ? rawType : 'all'
+  const contentType = type === 'all' ? null : type
+
   // Für Δ: aktuelle + vorherige Periode (2 * days). Für "all" nur groß.
   const effectiveDays = days === 'all' ? 3650 : days
   const all = await fetchCreatorMetricsTimeseries(
     supabase,
-    days === 'all' ? effectiveDays : effectiveDays * 2
+    days === 'all' ? effectiveDays : effectiveDays * 2,
+    contentType
   )
 
   // ISO-Grenze yyyy-mm-dd (lexikografisch vergleichbar)
   const boundaryIso = isoDay(new Date(Date.now() - effectiveDays * 24 * 60 * 60 * 1000))
+  const current = days === 'all' ? all : all.filter(p => p.d >= boundaryIso)
+  const previous = days === 'all' ? [] : all.filter(p => p.d < boundaryIso)
 
-  const current = days === 'all' ? all : all.filter((p) => p.d >= boundaryIso)
-  const previous = days === 'all' ? [] : all.filter((p) => p.d < boundaryIso)
-
-  // Totals (typisiert mit Aggregator)
+  // Totals
   const curT = totals(current)
   const prevT = totals(previous)
 
-  // Chart-Daten (Engagement = Likes+Comments)
-  const chartData: MetricsChartPoint[] = current.map((p) => ({
+  // Chart-Daten
+  const chartData: MetricsChartPoint[] = current.map(p => ({
     date: p.d,
     impressions: p.impressions,
     views: p.views,
@@ -63,9 +69,12 @@ export default async function AnalyticsPage({
       <header className="mb-8 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Analytics</h1>
-          <p className="text-sm text-muted-foreground">Performance über Zeit (täglich aggregiert)</p>
+          <p className="text-sm text-muted-foreground">
+            Performance über Zeit {type !== 'all' ? `· Segment: ${type}` : ''}
+          </p>
         </div>
         <div className="flex items-center gap-3">
+          <SegmentFilter />
           <TimeframeTabs />
           <Link
             href="/creator/creator-dashboard"
@@ -78,38 +87,18 @@ export default async function AnalyticsPage({
 
       {/* KPIs + Δ vs. Vorperiode (nur bei 30/90/180) */}
       <section className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Kpi
-          title="Impressions"
-          value={curT.impressions.toLocaleString()}
-          delta={days === 'all' ? undefined : curT.impressions - prevT.impressions}
-          denom={prevT.impressions}
-        />
-        <Kpi
-          title="Views"
-          value={curT.views.toLocaleString()}
-          delta={days === 'all' ? undefined : curT.views - prevT.views}
-          denom={prevT.views}
-        />
-        <Kpi
-          title="View-Rate"
-          value={`${(viewRate * 100).toFixed(1)}%`}
-          delta={
-            days === 'all'
-              ? undefined
-              : rateDelta(curT.views, prevT.views, curT.impressions, prevT.impressions)
-          }
-          isPercent
-        />
-        <Kpi
-          title="Engagement-Rate"
-          value={`${(engagementRate * 100).toFixed(1)}%`}
-          delta={
-            days === 'all'
-              ? undefined
-              : rateDelta(curT.engagement, prevT.engagement, curT.impressions, prevT.impressions)
-          }
-          isPercent
-        />
+        <Kpi title="Impressions" value={curT.impressions.toLocaleString()}
+             delta={days === 'all' ? undefined : curT.impressions - prevT.impressions}
+             denom={prevT.impressions} />
+        <Kpi title="Views" value={curT.views.toLocaleString()}
+             delta={days === 'all' ? undefined : curT.views - prevT.views}
+             denom={prevT.views} />
+        <Kpi title="View-Rate" value={`${(viewRate * 100).toFixed(1)}%`}
+             delta={days === 'all' ? undefined : rateDelta(curT.views, prevT.views, curT.impressions, prevT.impressions)}
+             isPercent />
+        <Kpi title="Engagement-Rate" value={`${(engagementRate * 100).toFixed(1)}%`}
+             delta={days === 'all' ? undefined : rateDelta(curT.engagement, prevT.engagement, curT.impressions, prevT.impressions)}
+             isPercent />
       </section>
 
       {/* Chart mit Range-Param für Drilldown */}
@@ -119,13 +108,14 @@ export default async function AnalyticsPage({
           <p className="mt-3 text-xs text-muted-foreground">
             Zeitraum: {days === 'all' ? 'Gesamt' : `letzte ${days} Tage`}
             {days !== 'all' && ' · Vergleich zur vorherigen Periode'}
+            {type !== 'all' && ` · Segment: ${type}`}
           </p>
         </section>
       ) : (
         <section className="rounded-2xl border border-border bg-card/60 p-5 backdrop-blur">
           <div className="text-lg font-semibold mb-1">Noch keine Daten</div>
           <p className="text-sm text-muted-foreground">
-            Starte eine Session im Media-Studio, um Analytics zu sehen.
+            Für das gewählte Segment/Zeitraum liegen noch keine Daten vor.
           </p>
           <Link
             href="/creator/media-studio"
@@ -165,7 +155,7 @@ function totals(points: Pt[]): Agg {
   )
 }
 
-// Prozentänderung von Raten: (a/b) vs (c/d) → Δ% (kann undefined sein, wenn Vorperiode 0)
+// Prozentänderung von Raten: (a/b) vs (c/d) → Δ%
 function rateDelta(numCur: number, numPrev: number, denCur: number, denPrev: number) {
   const rPrev = denPrev > 0 ? numPrev / denPrev : 0
   const rCur = denCur > 0 ? numCur / denCur : 0
@@ -182,7 +172,6 @@ function Kpi({
 }: {
   title: string
   value: string
-  /** absoluter Δ-Wert; wenn denom gesetzt → Δ% = delta/denom * 100; bei Raten direkt Prozent via isPercent */
   delta?: number
   denom?: number
   isPercent?: boolean
@@ -191,11 +180,10 @@ function Kpi({
   if (typeof delta === 'number' && typeof denom === 'number') {
     deltaPct = denom > 0 ? (delta / denom) * 100 : undefined
   } else if (typeof delta === 'number' && isPercent) {
-    deltaPct = delta // kommt bereits als Prozent
+    deltaPct = delta
   }
 
-  const sign =
-    typeof deltaPct === 'number' ? (deltaPct > 0 ? '+' : deltaPct < 0 ? '' : '±') : undefined
+  const sign = typeof deltaPct === 'number' ? (deltaPct > 0 ? '+' : deltaPct < 0 ? '' : '±') : undefined
   const color =
     typeof deltaPct !== 'number'
       ? 'text-muted-foreground'
