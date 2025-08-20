@@ -112,10 +112,10 @@ export default async function AnalyticsPage({
         />
       </section>
 
-      {/* Chart */}
+      {/* Chart mit Range-Param für Drilldown */}
       {chartData.length > 0 ? (
         <section className="rounded-2xl border border-border bg-card/60 p-5 backdrop-blur">
-          <MetricsChart data={chartData} />
+          <MetricsChart data={chartData} rangeParam={range} />
           <p className="mt-3 text-xs text-muted-foreground">
             Zeitraum: {days === 'all' ? 'Gesamt' : `letzte ${days} Tage`}
             {days !== 'all' && ' · Vergleich zur vorherigen Periode'}

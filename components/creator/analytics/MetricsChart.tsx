@@ -12,6 +12,7 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { cn } from '@/lib/utils'
+import { useRouter } from 'next/navigation'
 
 export type MetricsChartPoint = {
   date: string
@@ -22,11 +23,18 @@ export type MetricsChartPoint = {
   comments?: number
 }
 
-export default function MetricsChart({ data }: { data: MetricsChartPoint[] }) {
+export default function MetricsChart({
+  data,
+  rangeParam = '90', // '30' | '90' | '180' | 'all'
+}: {
+  data: MetricsChartPoint[]
+  rangeParam?: string
+}) {
   const [showImpressions, setShowImpressions] = React.useState(true)
   const [showViews, setShowViews] = React.useState(true)
   const [showEngagement, setShowEngagement] = React.useState(true)
   const containerRef = React.useRef<HTMLDivElement>(null)
+  const router = useRouter()
 
   const formatter = (value: any) =>
     typeof value === 'number' ? value.toLocaleString() : value
@@ -59,7 +67,6 @@ export default function MetricsChart({ data }: { data: MetricsChartPoint[] }) {
     const svg = containerRef.current?.querySelector('svg.recharts-surface') as SVGSVGElement | null
     if (!svg) return
     const clone = svg.cloneNode(true) as SVGSVGElement
-    // Breite/Höhe setzen (sonst 100%)
     const bbox = svg.getBoundingClientRect()
     clone.setAttribute('width', String(Math.round(bbox.width)))
     clone.setAttribute('height', String(Math.round(bbox.height)))
@@ -85,7 +92,8 @@ export default function MetricsChart({ data }: { data: MetricsChartPoint[] }) {
     clone.setAttribute('height', String(height))
     clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
     const xml = new XMLSerializer().serializeToString(clone)
-    const svg64 = typeof window !== 'undefined' ? window.btoa(unescape(encodeURIComponent(xml))) : ''
+    const svg64 =
+      typeof window !== 'undefined' ? window.btoa(unescape(encodeURIComponent(xml))) : ''
     const img = new Image()
     img.onload = () => {
       const canvas = document.createElement('canvas')
@@ -106,6 +114,15 @@ export default function MetricsChart({ data }: { data: MetricsChartPoint[] }) {
     }
     img.src = 'data:image/svg+xml;base64,' + svg64
   }, [])
+
+  // Drilldown: Klick auf Chartpunkt -> /creator/analytics/day/YYYY-MM-DD?range=...
+  const handleChartClick = (state: any) => {
+    const label: string | undefined =
+      state?.activeLabel ?? state?.activePayload?.[0]?.payload?.date
+    if (!label) return
+    const url = `/creator/analytics/day/${label}?range=${encodeURIComponent(rangeParam)}`
+    router.push(url)
+  }
 
   return (
     <div className="w-full" ref={containerRef}>
@@ -139,7 +156,7 @@ export default function MetricsChart({ data }: { data: MetricsChartPoint[] }) {
       {/* Chart */}
       <div className="h-72 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}>
+          <LineChart data={data} onClick={handleChartClick}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" tick={{ fontSize: 12 }} />
             <YAxis tick={{ fontSize: 12 }} />
