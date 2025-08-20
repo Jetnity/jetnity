@@ -1,5 +1,4 @@
 // app/creator/creator-dashboard/page.tsx
-
 import { createServerComponentClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -11,18 +10,44 @@ import CreatorBlogSection from "@/components/creator/dashboard/CreatorBlogSectio
 import SessionStatsPanel from "@/components/creator/dashboard/SessionStatsPanel";
 import ImpactScorePanel from "@/components/creator/dashboard/ImpactScorePanel";
 import SectionHeader from "@/components/ui/SectionHeader";
+import GoToMediaStudioButton from "@/components/creator/GoToMediaStudioButton";
 
-export default async function CreatorDashboardPage() {
+// ⬇️ Neu: Zeitfenster-Tabs
+import TimeframeTabs from "@/components/creator/dashboard/TimeframeTabs";
+
+export default async function CreatorDashboardPage({
+  searchParams,
+}: {
+  searchParams?: { range?: string }
+}) {
   const supabase = createServerComponentClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
   if (!user) redirect("/login");
 
-  return (
-    <main className="max-w-7xl mx-auto px-2 md:px-6 py-12">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+  // Range aus URL lesen und in Tage umsetzen
+  const range = (searchParams?.range ?? "90").toLowerCase();
+  const days: number | "all" =
+    range === "all"
+      ? "all"
+      : [30, 90, 180].includes(Number(range))
+      ? (Number(range) as 30 | 90 | 180)
+      : 90;
 
+  return (
+    <main className="mx-auto max-w-7xl px-2 md:px-6 py-12">
+      {/* Top-Bar mit Titel + Range-Tabs + Media-Studio CTA */}
+      <div className="mb-8 flex flex-wrap items-center gap-3 justify-between">
+        <h1 className="text-2xl md:text-3xl font-bold">Creator-Dashboard</h1>
+        <div className="flex items-center gap-3">
+          <TimeframeTabs />
+          <GoToMediaStudioButton />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
         {/* ---- Sidebar: Creator-Profil ---- */}
         <aside className="lg:col-span-3 order-2 lg:order-1">
           <div className="sticky top-8">
@@ -67,8 +92,8 @@ export default async function CreatorDashboardPage() {
         {/* ---- Right Panel: Impact + (optional) Stats ---- */}
         <aside className="lg:col-span-3 order-3">
           <div className="sticky top-8 space-y-10">
-            <ImpactScorePanel />
-            {/* zeigt nichts, solange keine Daten vorhanden sind */}
+            {/* Zeitfenster wird ins Panel gereicht */}
+            <ImpactScorePanel days={days} />
             <SessionStatsPanel metrics={[]} hideWhenEmpty />
           </div>
         </aside>
