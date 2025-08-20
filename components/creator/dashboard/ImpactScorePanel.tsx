@@ -7,33 +7,14 @@ import ImpactScore from '@/components/creator/dashboard/ImpactScore'
 import ImpactScoreRealtimeBridge from '@/components/creator/dashboard/ImpactScoreRealtimeBridge'
 import { cn } from '@/lib/utils'
 import type { Tables } from '@/types/supabase'
+import { fetchPlatformAvgImpactScore } from '@/lib/supabase/rpc/platformAvg'
 
 type Metric = Tables<'creator_session_metrics'>
+const PLATFORM_AVG_DAYS = 90
 
 function clamp(n: number) {
   if (!Number.isFinite(n)) return 0
   return Math.max(0, Math.min(100, n))
-}
-
-function calcOverallScore(rows: Metric[]): number {
-  if (!rows.length) return 0
-
-  const hasAnyScore = rows.some(r => Number(r.impact_score ?? 0) > 0)
-  const totals = aggregate(rows)
-
-  if (hasAnyScore) {
-    const weightedSum = rows.reduce((sum, r) => {
-      const s = Number(r.impact_score ?? 0)
-      const w = Math.max(1, r.impressions ?? 0)
-      return sum + s * w
-    }, 0)
-    const weight = rows.reduce((w, r) => w + Math.max(1, r.impressions ?? 0), 0)
-    return clamp(weightedSum / Math.max(1, weight))
-  }
-
-  // Fallback aus Raten
-  const score = (totals.viewRate * 0.6 + totals.engagementRate * 0.4) * 100
-  return clamp(score)
 }
 
 function aggregate(rows: Metric[]) {
@@ -49,9 +30,28 @@ function aggregate(rows: Metric[]) {
     { sessions: 0, impressions: 0, views: 0, likes: 0, comments: 0 }
   )
   const imp = Math.max(1, base.impressions)
-  const viewRate = base.views / imp // 0..1
-  const engagementRate = (base.likes + base.comments) / imp // 0..1
+  const viewRate = base.views / imp
+  const engagementRate = (base.likes + base.comments) / imp
   return { ...base, viewRate, engagementRate }
+}
+
+function calcOverallScore(rows: Metric[]): number {
+  if (!rows.length) return 0
+  const hasAnyScore = rows.some(r => Number(r.impact_score ?? 0) > 0)
+  const totals = aggregate(rows)
+
+  if (hasAnyScore) {
+    const weightedSum = rows.reduce((sum, r) => {
+      const s = Number(r.impact_score ?? 0)
+      const w = Math.max(1, r.impressions ?? 0)
+      return sum + s * w
+    }, 0)
+    const weight = rows.reduce((w, r) => w + Math.max(1, r.impressions ?? 0), 0)
+    return clamp(weightedSum / Math.max(1, weight))
+  }
+
+  const score = (totals.viewRate * 0.6 + totals.engagementRate * 0.4) * 100
+  return clamp(score)
 }
 
 export default async function ImpactScorePanel() {
@@ -82,23 +82,27 @@ export default async function ImpactScorePanel() {
     )
   }
 
-  const { data, error } = await supabase
-    .from('creator_session_metrics')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
-    .limit(300)
+  // Parallel: eigene Metriken + Plattform-Ø (über Helper)
+  const [metricsRes, avgScorePlatform] = await Promise.all([
+    supabase
+      .from('creator_session_metrics')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(300),
+    fetchPlatformAvgImpactScore(supabase, PLATFORM_AVG_DAYS),
+  ])
 
-  const metrics = (data ?? []) as Metric[]
+  const metrics = (metricsRes.data ?? []) as Metric[]
 
-  if (error || metrics.length === 0) {
+  if (metricsRes.error || metrics.length === 0) {
     return (
       <div className="rounded-2xl border border-border bg-card/60 p-5 shadow-sm backdrop-blur">
         <div className="mb-2 text-lg font-semibold">
-          {error ? 'Fehler beim Laden' : 'Noch keine Performance-Daten'}
+          {metricsRes.error ? 'Fehler beim Laden' : 'Noch keine Performance-Daten'}
         </div>
         <p className="text-sm text-muted-foreground">
-          {error
+          {metricsRes.error
             ? 'Deine Impact-Daten konnten nicht geladen werden.'
             : 'Starte deine erste Session, um Impact-Scores zu sehen.'}
         </p>
@@ -109,7 +113,7 @@ export default async function ImpactScorePanel() {
             'border border-primary/30 bg-primary/10 text-primary font-medium hover:bg-primary/15 transition'
           )}
         >
-          {error ? 'Erneut versuchen' : 'Jetzt Session starten'}
+          {metricsRes.error ? 'Erneut versuchen' : 'Jetzt Session starten'}
         </Link>
 
         <ImpactScoreRealtimeBridge userId={user.id} />
@@ -126,7 +130,7 @@ export default async function ImpactScorePanel() {
         <div className="space-y-0.5">
           <h3 className="text-lg font-semibold">Dein Impact</h3>
           <p className="text-sm text-muted-foreground">
-            Überblick über deine Performance (aggregiert).
+            Überblick über deine Performance (aggregiert). Plattform-Schnitt: letzte {PLATFORM_AVG_DAYS} Tage.
           </p>
         </div>
         <Link
@@ -140,8 +144,7 @@ export default async function ImpactScorePanel() {
         </Link>
       </header>
 
-      {/* Score */}
-      <ImpactScore value={score} label="Impact Score (gesamt)" />
+      <ImpactScore value={score} avgScore={clamp(avgScorePlatform)} label="Impact Score (gesamt)" />
 
       {/* KPI Micro-Grid */}
       <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
