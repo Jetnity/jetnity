@@ -26,13 +26,14 @@ export default function MetricsChart({ data }: { data: MetricsChartPoint[] }) {
   const [showImpressions, setShowImpressions] = React.useState(true)
   const [showViews, setShowViews] = React.useState(true)
   const [showEngagement, setShowEngagement] = React.useState(true)
+  const containerRef = React.useRef<HTMLDivElement>(null)
 
   const formatter = (value: any) =>
     typeof value === 'number' ? value.toLocaleString() : value
 
   const downloadCsv = React.useCallback(() => {
     const header = ['date', 'impressions', 'views', 'likes', 'comments', 'engagement']
-    const rows = data.map((d) => [
+    const rows = data.map(d => [
       d.date,
       d.impressions ?? 0,
       d.views ?? 0,
@@ -43,7 +44,7 @@ export default function MetricsChart({ data }: { data: MetricsChartPoint[] }) {
     const csv =
       header.join(',') +
       '\n' +
-      rows.map((r) => r.map((c) => String(c).replace(/,/g, '·')).join(',')).join('\n')
+      rows.map(r => r.map(c => String(c).replace(/,/g, '·')).join(',')).join('\n')
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
@@ -54,28 +55,84 @@ export default function MetricsChart({ data }: { data: MetricsChartPoint[] }) {
     URL.revokeObjectURL(url)
   }, [data])
 
+  const downloadSvg = React.useCallback(() => {
+    const svg = containerRef.current?.querySelector('svg.recharts-surface') as SVGSVGElement | null
+    if (!svg) return
+    const clone = svg.cloneNode(true) as SVGSVGElement
+    // Breite/Höhe setzen (sonst 100%)
+    const bbox = svg.getBoundingClientRect()
+    clone.setAttribute('width', String(Math.round(bbox.width)))
+    clone.setAttribute('height', String(Math.round(bbox.height)))
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    const xml = new XMLSerializer().serializeToString(clone)
+    const blob = new Blob([xml], { type: 'image/svg+xml;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'analytics_chart.svg'
+    a.click()
+    URL.revokeObjectURL(url)
+  }, [])
+
+  const downloadPng = React.useCallback(async () => {
+    const svg = containerRef.current?.querySelector('svg.recharts-surface') as SVGSVGElement | null
+    if (!svg) return
+    const bbox = svg.getBoundingClientRect()
+    const width = Math.round(bbox.width)
+    const height = Math.round(bbox.height)
+    const clone = svg.cloneNode(true) as SVGSVGElement
+    clone.setAttribute('width', String(width))
+    clone.setAttribute('height', String(height))
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    const xml = new XMLSerializer().serializeToString(clone)
+    const svg64 = typeof window !== 'undefined' ? window.btoa(unescape(encodeURIComponent(xml))) : ''
+    const img = new Image()
+    img.onload = () => {
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+      ctx.drawImage(img, 0, 0)
+      canvas.toBlob(blob => {
+        if (!blob) return
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = 'analytics_chart.png'
+        a.click()
+        URL.revokeObjectURL(url)
+      }, 'image/png')
+    }
+    img.src = 'data:image/svg+xml;base64,' + svg64
+  }, [])
+
   return (
-    <div className="w-full">
+    <div className="w-full" ref={containerRef}>
       {/* Toolbar */}
       <div className="mb-3 flex flex-wrap items-center gap-2">
-        <Toggle
-          active={showImpressions}
-          onClick={() => setShowImpressions((v) => !v)}
-          label="Impressions"
-        />
-        <Toggle active={showViews} onClick={() => setShowViews((v) => !v)} label="Views" />
-        <Toggle
-          active={showEngagement}
-          onClick={() => setShowEngagement((v) => !v)}
-          label="Engagement"
-        />
+        <Toggle active={showImpressions} onClick={() => setShowImpressions(v => !v)} label="Impressions" />
+        <Toggle active={showViews} onClick={() => setShowViews(v => !v)} label="Views" />
+        <Toggle active={showEngagement} onClick={() => setShowEngagement(v => !v)} label="Engagement" />
 
         <div className="ml-auto" />
         <button
           onClick={downloadCsv}
           className="inline-flex items-center rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-accent"
         >
-          CSV exportieren
+          CSV
+        </button>
+        <button
+          onClick={downloadSvg}
+          className="inline-flex items-center rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-accent"
+        >
+          SVG
+        </button>
+        <button
+          onClick={downloadPng}
+          className="inline-flex items-center rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-accent"
+        >
+          PNG
         </button>
       </div>
 
@@ -88,15 +145,9 @@ export default function MetricsChart({ data }: { data: MetricsChartPoint[] }) {
             <YAxis tick={{ fontSize: 12 }} />
             <Tooltip formatter={formatter} />
             <Legend />
-            {showImpressions && (
-              <Line type="monotone" dataKey="impressions" dot={false} strokeWidth={2} />
-            )}
-            {showViews && (
-              <Line type="monotone" dataKey="views" dot={false} strokeWidth={2} />
-            )}
-            {showEngagement && (
-              <Line type="monotone" dataKey="engagement" dot={false} strokeWidth={2} />
-            )}
+            {showImpressions && <Line type="monotone" dataKey="impressions" dot={false} strokeWidth={2} />}
+            {showViews && <Line type="monotone" dataKey="views" dot={false} strokeWidth={2} />}
+            {showEngagement && <Line type="monotone" dataKey="engagement" dot={false} strokeWidth={2} />}
           </LineChart>
         </ResponsiveContainer>
       </div>
