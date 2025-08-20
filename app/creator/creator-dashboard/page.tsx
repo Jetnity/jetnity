@@ -1,6 +1,7 @@
 // app/creator/creator-dashboard/page.tsx
 import { createServerComponentClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 import CreatorProfileCard from "@/components/creator/dashboard/CreatorProfileCard";
 import CreatorDashboardWelcome from "@/components/creator/CreatorDashboardWelcome.server";
@@ -11,8 +12,6 @@ import SessionStatsPanel from "@/components/creator/dashboard/SessionStatsPanel"
 import ImpactScorePanel from "@/components/creator/dashboard/ImpactScorePanel";
 import SectionHeader from "@/components/ui/SectionHeader";
 import GoToMediaStudioButton from "@/components/creator/GoToMediaStudioButton";
-
-// ⬇️ Neu: Zeitfenster-Tabs
 import TimeframeTabs from "@/components/creator/dashboard/TimeframeTabs";
 
 export default async function CreatorDashboardPage({
@@ -38,11 +37,17 @@ export default async function CreatorDashboardPage({
 
   return (
     <main className="mx-auto max-w-7xl px-2 md:px-6 py-12">
-      {/* Top-Bar mit Titel + Range-Tabs + Media-Studio CTA */}
+      {/* Top-Bar mit Titel + Range-Tabs + Analytics-Link + Media-Studio CTA */}
       <div className="mb-8 flex flex-wrap items-center gap-3 justify-between">
         <h1 className="text-2xl md:text-3xl font-bold">Creator-Dashboard</h1>
         <div className="flex items-center gap-3">
           <TimeframeTabs />
+          <Link
+            href="/creator/analytics"
+            className="inline-flex h-10 items-center justify-center rounded-lg border border-input px-4 text-sm hover:bg-accent"
+          >
+            Analytics
+          </Link>
           <GoToMediaStudioButton />
         </div>
       </div>
