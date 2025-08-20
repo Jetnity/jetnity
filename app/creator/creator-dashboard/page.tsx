@@ -94,7 +94,7 @@ export default async function CreatorDashboardPage({
           <div className="sticky top-8 space-y-10">
             {/* Zeitfenster wird ins Panel gereicht */}
             <ImpactScorePanel days={days} />
-            <SessionStatsPanel metrics={[]} hideWhenEmpty />
+            <SessionStatsPanel days={days} hideWhenEmpty />
           </div>
         </aside>
       </div>
