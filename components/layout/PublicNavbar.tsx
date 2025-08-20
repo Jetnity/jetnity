@@ -8,49 +8,55 @@ export default function PublicNavbar() {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="fixed top-0 w-full bg-white shadow z-50">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+    <header className="fixed top-0 z-50 w-full bg-white shadow">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         <div className="text-xl font-bold">Jetnity</div>
-        <nav className="space-x-4 text-sm font-medium hidden md:flex items-center">
-          <Link href="#" className="hover:text-blue-600">Flüge</Link>
-          <Link href="#" className="hover:text-blue-600">Hotels</Link>
-          <Link href="#" className="hover:text-blue-600">Mietwagen</Link>
-          <Link href="#" className="hover:text-blue-600">Aktivitäten</Link>
-          <Link href="#" className="hover:text-blue-600">Kreuzfahrten</Link>
+
+        {/* Hauptnavigation (Desktop) */}
+        <nav className="hidden items-center space-x-4 text-sm font-medium md:flex">
           <Link href="#" className="hover:text-blue-600">Reiseideen</Link>
+          <Link href="/blog" className="hover:text-blue-600">Blog</Link>
+
           {/* Creator Login Dropdown */}
           <div className="relative inline-block">
             <button
-              onClick={() => setOpen((v) => !v)}
-              className="ml-4 px-4 py-2 rounded-lg font-semibold text-white bg-black hover:bg-neutral-800 transition-all flex items-center gap-2 shadow"
+              onClick={() => setOpen(v => !v)}
+              className="ml-4 flex items-center gap-2 rounded-lg bg-black px-4 py-2 font-semibold text-white shadow transition-all hover:bg-neutral-800"
               aria-haspopup="true"
               aria-expanded={open}
               type="button"
             >
-              <User className="w-4 h-4" /> Creator Login
+              <User className="h-4 w-4" /> Creator Login
             </button>
+
             {open && (
-              <div className="absolute right-0 mt-2 w-56 bg-white border rounded-xl shadow-xl z-50 py-2">
+              <div
+                className="absolute right-0 z-50 mt-2 w-56 rounded-xl border bg-white py-2 shadow-xl"
+                role="menu"
+              >
                 <Link
                   href="/login"
-                  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-gray-900"
+                  className="flex items-center gap-2 px-4 py-2 text-gray-900 hover:bg-gray-100"
                   onClick={() => setOpen(false)}
+                  role="menuitem"
                 >
-                  <LogIn className="w-4 h-4" /> Anmelden
+                  <LogIn className="h-4 w-4" /> Anmelden
                 </Link>
                 <Link
                   href="/register"
-                  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-gray-900"
+                  className="flex items-center gap-2 px-4 py-2 text-gray-900 hover:bg-gray-100"
                   onClick={() => setOpen(false)}
+                  role="menuitem"
                 >
-                  <UserPlus className="w-4 h-4" /> Registrieren
+                  <UserPlus className="h-4 w-4" /> Registrieren
                 </Link>
                 <Link
                   href="/creator/creator-dashboard"
-                  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-gray-900"
+                  className="flex items-center gap-2 px-4 py-2 text-gray-900 hover:bg-gray-100"
                   onClick={() => setOpen(false)}
+                  role="menuitem"
                 >
-                  <LayoutDashboard className="w-4 h-4" /> Creator Dashboard
+                  <LayoutDashboard className="h-4 w-4" /> Creator Dashboard
                 </Link>
               </div>
             )}

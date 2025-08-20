@@ -10,7 +10,9 @@ html, body {
   scroll-behavior: smooth;
 }
 
-/* Design Tokens */
+/* =======================
+   Design Tokens (shadcn)
+   ======================= */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -33,6 +35,10 @@ html, body {
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
     --radius: 0.75rem;
+
+    /* Jetnity Hero – Palette */
+    --jet-hero: 14 27 46;   /* #0E1B2E */
+    --jet-btn:  17 19 23;   /* #111317 */
   }
 
   body {
@@ -42,26 +48,59 @@ html, body {
 }
 
 /* =======================
-   Jetnity Pro UI Utilities
+   Jetnity Pro UI – Components
+   ======================= */
+@layer components {
+  .glass-elevated {
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.06) inset,
+      0 10px 32px rgb(0 0 0 / 0.30);
+  }
+
+  .panel-wrap {
+    border: 1px solid rgb(255 255 255 / 0.12);
+    background:
+      linear-gradient(180deg,
+        rgb(255 255 255 / 0.07),
+        rgb(255 255 255 / 0.04));
+    border-radius: 1rem;
+    padding: 0.75rem;
+  }
+}
+
+/* =======================
+   Jetnity Pro UI – Utilities
    ======================= */
 @layer utilities {
-  /* Glass/Blur only when supported (fallback bleibt deckend) */
   .supports-blur\:backdrop-blur-xl {
-    @supports (backdrop-filter: blur(16px)) {
-      backdrop-filter: blur(16px);
-    }
-  }
-  .supports-blur\:bg-panel {
-    @supports (backdrop-filter: blur(16px)) {
-      background-color: rgba(12, 25, 48, 0.6); /* #0c1930 @ 60% */
-    }
+    @supports (backdrop-filter: blur(16px)) { backdrop-filter: blur(16px); }
   }
 
-  /* Horizontale Scroller ohne sichtbare Scrollbar (iOS/Android/Desktop) */
+  .bg-hero-panel        { background-color: rgb(var(--jet-hero) / 0.88); }
+  .bg-hero-panel-strong { background-color: rgb(var(--jet-hero) / 0.94); }
+
+  .bg-glass   { background-color: rgb(255 255 255 / 0.10); }
+  .bg-glass-2 { background-color: rgb(255 255 255 / 0.06); }
+  .bd-glass   { border-color:     rgb(255 255 255 / 0.10); }
+  .bd-glass-2 { border-color:     rgb(255 255 255 / 0.25); }
+
+  .label-white     { color: rgb(255 255 255 / 0.80); }
+  .placeholder-w60 { color: rgb(255 255 255 / 0.60); }
+
+  .btn-hero       { background-color: rgb(var(--jet-btn)); color: #fff; }
+  .btn-hero:hover { filter: brightness(1.05); }
+  .btn-hero:active{ transform: translateY(1px); }
+
+  .focus-ring {
+    outline: none !important;
+    box-shadow:
+      0 0 0 2px rgb(255 255 255 / 0.22),
+      0 0 0 4px rgb(255 255 255 / 0.10) !important;
+  }
+  .tap-target { min-height: 44px; height: 44px; }
+
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-  /* Kanten-Fade via CSS-Mask (perfekt für Tab-Leisten) */
   .mask-edges {
     -webkit-mask-image: linear-gradient(
       to right,
@@ -75,20 +114,8 @@ html, body {
     );
   }
 
-  /* Safe-Area Helpers (iPhone Dynamic Island / Home Indicator) */
   .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
-  .p-safe  {
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-top: env(safe-area-inset-top);
-  }
-
-  /* Einheitlicher, hochwertiger Focus-Ring für Buttons/Inputs/Container */
-  .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-[#0c1930]/30 focus:ring-offset-2 focus:ring-offset-white;
-  }
-
-  /* Größere Tap-Targets für Mobile – einfach statt h-11 verwenden */
-  .tap-target { @apply h-12 md:h-11; }
+  .p-safe  { padding-bottom: env(safe-area-inset-bottom); padding-top: env(safe-area-inset-top); }
 }
 
 /* Globales Mobile-/Motion-Polish */
@@ -102,7 +129,72 @@ html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
   }
 }
 
-/* Hinweis:
-   Die früheren .jetnity-* Styles wurden entfernt, damit das neue,
-   komponentenbasierte Styling (Tailwind-Klassen in den TSX-Dateien)
-   nicht überschrieben wird. */
+/* ============================================================================
+   Navy Glass Pro (Hero): frosted, single subtle border, sichtbare Popover
+   ============================================================================ */
+
+/* Farbtoken für den Hero */
+:root { --hero-navy: 12 25 48; } /* #0c1930 */
+
+.hero-glass {
+  position: relative;
+  z-index: 90;                           /* <- Hoch über Folge-Content */
+  overflow: visible;                     /* Popover nicht abschneiden */
+  background-color: rgb(var(--hero-navy) / 0.84);
+  border: 1px solid rgb(255 255 255 / 0.10);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.05) inset,
+    0 12px 40px rgb(0 0 0 / 0.35);
+  margin-bottom: 0.5rem;
+}
+@media (min-width: 768px) {
+  .hero-glass { margin-bottom: 0.75rem; }
+}
+
+/* echtes Frosted-Feeling wenn unterstützt */
+@supports (backdrop-filter: blur(16px)) {
+  .hero-glass {
+    background-color: rgb(var(--hero-navy) / 0.72);
+    backdrop-filter: saturate(1.15) blur(18px);
+  }
+}
+
+/* kleiner, eleganter „Tail“ unter der Suche */
+.hero-glass::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%) translateY(-10px) rotate(45deg);
+  width: 20px;
+  height: 20px;
+  background: inherit;
+  border-left: 1px solid rgb(255 255 255 / 0.10);
+  border-top: 1px solid rgb(255 255 255 / 0.10);
+  box-shadow: 0 10px 24px rgb(0 0 0 / 0.25);
+  border-radius: 3px;
+}
+
+/* Popover/Dialoge im Hero immer sichtbar über Content darunter */
+.hero-glass [role="dialog"] { z-index: 1001 !important; }
+.hero-glass [data-popover],
+.hero-glass .popover       { z-index: 1001 !important; }
+
+/* Gläserne, ruhige Tabs */
+.tab-chip {
+  @apply tap-target focus-ring inline-flex items-center gap-2 rounded-full text-sm transition;
+  padding: 0.35rem 0.75rem;
+  color: rgb(255 255 255 / 0.90);
+  background-color: rgb(255 255 255 / 0.12);
+  border: 1px solid rgb(255 255 255 / 0.14);
+}
+.tab-chip:hover {
+  background-color: rgb(255 255 255 / 0.18);
+  border-color: rgb(255 255 255 / 0.20);
+}
+.tab-chip--active {
+  color: #fff;
+  font-weight: 600;
+  background-color: rgb(255 255 255 / 0.26);
+  border-color: rgb(255 255 255 / 0.30);
+}
