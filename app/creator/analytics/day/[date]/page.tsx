@@ -3,14 +3,21 @@ import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { createServerComponentClient } from '@/lib/supabase/server'
-import type { Tables } from '@/types/supabase'
+import type { Tables, Database } from '@/types/supabase'
 import SessionStatsCard from '@/components/creator/dashboard/SessionStatsCard'
 import ImpactScoreRealtimeBridge from '@/components/creator/dashboard/ImpactScoreRealtimeBridge'
+import BulkContentTypeTagger from '@/components/creator/analytics/BulkContentTypeTagger'
 
 type Metric = Tables<'creator_session_metrics'>
+type ContentTypeEnum = Database['public']['Enums']['creator_content_type']
 
 function isIsoDate(s: string) {
   return /^\d{4}-\d{2}-\d{2}$/.test(s)
+}
+
+const ALLOWED_CT = ['video', 'image', 'guide', 'blog', 'story', 'other'] as const
+function isContentType(x: string): x is ContentTypeEnum {
+  return (ALLOWED_CT as readonly string[]).includes(x)
 }
 
 export default async function AnalyticsDayPage({
@@ -36,10 +43,10 @@ export default async function AnalyticsDayPage({
 
   // Zurück-Link-Parameter (Range + Segment)
   const backRange = (searchParams?.range ?? '90').toLowerCase()
-  const backType = (searchParams?.type ?? 'all').toLowerCase()
+  const backTypeRaw = (searchParams?.type ?? 'all').toLowerCase()
   const backHref = `/creator/analytics?range=${encodeURIComponent(
     backRange
-  )}&type=${encodeURIComponent(backType)}`
+  )}&type=${encodeURIComponent(backTypeRaw)}`
 
   // Query aufbauen (optional nach content_type filtern)
   let q = supabase
@@ -50,11 +57,13 @@ export default async function AnalyticsDayPage({
     .lte('created_at', end)
     .order('created_at', { ascending: false })
 
-  if (backType !== 'all') {
-    q = q.eq('content_type', backType)
+  // Nur filtern, wenn der Typ ein gültiger Enum ist
+  if (isContentType(backTypeRaw)) {
+    q = q.eq('content_type', backTypeRaw as ContentTypeEnum)
   }
 
   const { data: rows, error } = await q
+
   if (error) {
     return (
       <main className="mx-auto w-full max-w-3xl px-4 md:px-8 py-10">
@@ -76,15 +85,14 @@ export default async function AnalyticsDayPage({
 
   const metrics = (rows ?? []) as Metric[]
   const niceDate = new Date(`${date}T00:00:00Z`).toLocaleDateString()
+  const segmentSuffix = isContentType(backTypeRaw) ? ` · Segment: ${backTypeRaw}` : ''
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 md:px-8 py-10">
       <header className="mb-6 flex items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Sessions am {niceDate}</h1>
-          <p className="text-sm text-muted-foreground">
-            Detailansicht nach Tag{backType !== 'all' ? ` · Segment: ${backType}` : ''}
-          </p>
+          <p className="text-sm text-muted-foreground">Detailansicht nach Tag{segmentSuffix}</p>
         </div>
         <Link
           href={backHref}
@@ -94,6 +102,23 @@ export default async function AnalyticsDayPage({
         </Link>
       </header>
 
+      {/* 🔥 Bulk-Tagging Toolbar + Liste */}
+      {metrics.length > 0 && (
+        <div className="mb-6">
+          <BulkContentTypeTagger
+            backHref={backHref}
+            items={metrics.map(m => ({
+              session_id: m.session_id,
+              title: m.title,
+              created_at: m.created_at ?? undefined,
+              // Falls die generierten Types die Spalte noch nicht kennen:
+              content_type: ((m as any)?.content_type as string | undefined) ?? 'other',
+            }))}
+          />
+        </div>
+      )}
+
+      {/* Kartenansicht */}
       {metrics.length > 0 ? (
         <section className="space-y-3">
           {metrics.map((m) => (
@@ -104,8 +129,9 @@ export default async function AnalyticsDayPage({
         <section className="rounded-2xl border border-border bg-card/60 p-5 backdrop-blur">
           <div className="text-lg font-semibold mb-1">Keine Sessions an diesem Tag</div>
           <p className="text-sm text-muted-foreground">
-            Für {niceDate} {backType !== 'all' ? `im Segment „${backType}“ ` : ''}wurden keine Inhalte
-            gefunden.
+            Für {niceDate}{' '}
+            {isContentType(backTypeRaw) ? `im Segment „${backTypeRaw}“ ` : ''}
+            wurden keine Inhalte gefunden.
           </p>
           <div className="mt-4">
             <Link
