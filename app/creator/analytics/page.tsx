@@ -64,8 +64,11 @@ export default async function AnalyticsPage({
   const viewRate = curT.views / imp
   const engagementRate = curT.engagement / imp
 
-  // CSV-Export-Link für Rohdaten (Sessions) mit aktuellen Filtern
-  const csvHref = `/api/creator/analytics/export?range=${encodeURIComponent(
+  // CSV-Links mit aktuellen Filtern
+  const csvHrefSessions = `/api/creator/analytics/export?range=${encodeURIComponent(
+    range
+  )}&type=${encodeURIComponent(type)}`
+  const csvHrefTimeseries = `/api/creator/analytics/timeseries?range=${encodeURIComponent(
     range
   )}&type=${encodeURIComponent(type)}`
 
@@ -78,12 +81,18 @@ export default async function AnalyticsPage({
             Performance über Zeit {type !== 'all' ? `· Segment: ${type}` : ''}
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <SegmentFilter />
           <TimeframeTabs />
-          {/* Rohdaten CSV (Sessions) */}
+          {/* CSV-Exports */}
           <a
-            href={csvHref}
+            href={csvHrefTimeseries}
+            className="inline-flex h-10 items-center justify-center rounded-lg border border-input px-4 text-sm hover:bg-accent"
+          >
+            Timeseries CSV
+          </a>
+          <a
+            href={csvHrefSessions}
             className="inline-flex h-10 items-center justify-center rounded-lg border border-input px-4 text-sm hover:bg-accent"
           >
             Rohdaten CSV
@@ -97,7 +106,7 @@ export default async function AnalyticsPage({
         </div>
       </header>
 
-      {/* KPIs + Δ vs. Vorperiode (nur bei 30/90/180) */}
+      {/* KPIs + Δ vs. Vorperiode */}
       <section className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Kpi
           title="Impressions"
@@ -187,7 +196,6 @@ function totals(points: Pt[]): Agg {
   )
 }
 
-// Prozentänderung von Raten: (a/b) vs (c/d) → Δ%
 function rateDelta(numCur: number, numPrev: number, denCur: number, denPrev: number) {
   const rPrev = denPrev > 0 ? numPrev / denPrev : 0
   const rCur = denCur > 0 ? numCur / denCur : 0
