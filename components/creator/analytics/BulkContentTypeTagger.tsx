@@ -32,7 +32,6 @@ export default function BulkContentTypeTagger({
 }: {
   items: BulkItem[]
   className?: string
-  /** optionaler Link zurück (wird im Erfolgstoast angeboten) */
   backHref?: string
 }) {
   const [selected, setSelected] = useState<Set<string>>(new Set())
@@ -42,13 +41,11 @@ export default function BulkContentTypeTagger({
 
   const allSelected = selected.size > 0 && selected.size === localItems.length
   const anySelected = selected.size > 0
+  const selectedCount = selected.size
 
   const toggleAll = () => {
-    if (allSelected) {
-      setSelected(new Set())
-    } else {
-      setSelected(new Set(localItems.map(i => i.session_id)))
-    }
+    if (allSelected) setSelected(new Set())
+    else setSelected(new Set(localItems.map(i => i.session_id)))
   }
 
   const toggleOne = (id: string) => {
@@ -60,8 +57,6 @@ export default function BulkContentTypeTagger({
     })
   }
 
-  const selectedCount = selected.size
-
   const selectedPreview = useMemo(() => {
     const first = localItems.find(i => selected.has(i.session_id))
     return first?.title ?? null
@@ -72,40 +67,35 @@ export default function BulkContentTypeTagger({
     setSaving(true)
     const ids = Array.from(selected)
 
-    const payload = { content_type: type } as any // Types evtl. noch ohne Spalte
-
-    const { error } = await supabase
-      .from('creator_session_metrics')
-      .update(payload)
-      .in('session_id', ids)
-      .select('session_id')
+    const { data, error } = await supabase.rpc(
+      'set_content_type_bulk' as unknown as never,
+      { p_session_ids: ids, p_type: type } as unknown as never
+    )
 
     setSaving(false)
 
     if (error) {
       toast.error('Massen-Update fehlgeschlagen')
-      console.error('[bulk content_type update]', error)
+      console.error('[set_content_type_bulk]', error)
       return
     }
 
-    // Lokal updaten
+    const updatedIds = (Array.isArray(data) ? data : []).map((r: any) => String(r.session_id))
     setLocalItems(prev =>
-      prev.map(it => (ids.includes(it.session_id) ? { ...it, content_type: type } : it))
+      prev.map(it => (updatedIds.includes(it.session_id) ? { ...it, content_type: type } : it))
     )
     setSelected(new Set())
 
     toast.success(
-      `${selectedCount} Session${selectedCount === 1 ? '' : 's'} als „${type}“ markiert.`,
-      {
-        action: backHref
-          ? {
+      `${updatedIds.length} Session${updatedIds.length === 1 ? '' : 's'} als „${type}“ markiert.`,
+      backHref
+        ? {
+            action: {
               label: 'Zurück',
-              onClick: () => {
-                window.location.assign(backHref!)
-              },
-            }
-          : undefined,
-      }
+              onClick: () => window.location.assign(backHref),
+            },
+          }
+        : undefined
     )
   }
 
@@ -116,9 +106,7 @@ export default function BulkContentTypeTagger({
         <button
           type="button"
           onClick={toggleAll}
-          className={cn(
-            'inline-flex items-center rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-accent'
-          )}
+          className="inline-flex items-center rounded-lg border border-input px-3 py-1.5 text-sm hover:bg-accent"
         >
           {allSelected ? 'Auswahl aufheben' : 'Alle auswählen'}
         </button>

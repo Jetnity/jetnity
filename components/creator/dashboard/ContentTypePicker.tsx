@@ -26,42 +26,45 @@ export default function ContentTypePicker({
   initialType?: string | null
   className?: string
 }) {
-  const allowed = new Set<ContentType>(OPTIONS.map(o => o.value))
-  const initial =
-    allowed.has((initialType as ContentType) ?? 'other')
-      ? ((initialType as ContentType) ?? 'other')
-      : 'other'
+  const allowed = new Set<ContentType>(OPTIONS.map((o) => o.value))
+  const initial = allowed.has((initialType as ContentType) ?? 'other')
+    ? ((initialType as ContentType) ?? 'other')
+    : 'other'
 
   const [value, setValue] = useState<ContentType>(initial)
   const [saving, setSaving] = useState(false)
   const uid = useId()
 
   async function onChange(nextRaw: string) {
-    const next = (nextRaw as ContentType)
+    const next = nextRaw as ContentType
     if (!allowed.has(next) || next === value) return
 
-    // Optimistic UI
     const prev = value
     setValue(next)
     setSaving(true)
 
-    const payload = { content_type: next } as any // <- fix: Types kennen Spalte noch nicht
-
-    const { error } = await supabase
-      .from('creator_session_metrics')
-      .update(payload)
-      .eq('session_id', sessionId)
-      .select('session_id')
-      .single()
+    // RPC aufrufen (Rückgabe lokal typisieren, damit TS nicht 'never' annimmt)
+    type RpcRow = { session_id: string; content_type: ContentType }
+    const res = (await supabase.rpc(
+      'set_content_type' as unknown as never,
+      { p_session_id: sessionId, p_type: next } as unknown as never
+    )) as { data: RpcRow[] | null; error: { message: string } | null }
 
     setSaving(false)
-    if (error) {
+
+    if (res.error) {
       setValue(prev) // rollback
       toast.error('Konnte Segment nicht speichern')
-      console.error('[content_type update] ', error)
-    } else {
-      toast.success('Segment aktualisiert')
+      console.error('[set_content_type]', res.error)
+      return
     }
+
+    const rows = (res.data ?? []) as RpcRow[]
+    if (rows[0]?.content_type) {
+      setValue(rows[0].content_type)
+    }
+
+    toast.success('Segment aktualisiert')
   }
 
   return (
