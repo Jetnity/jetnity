@@ -13,10 +13,11 @@ import { fetchCreatorPostingHeatmap } from '@/lib/supabase/rpc/creatorPostingHea
 import { fetchCreatorImpactPercentile } from '@/lib/supabase/rpc/creatorImpactPercentile'
 import PostingHeatmap from '@/components/creator/analytics/PostingHeatmap'
 import TopContentTable, { type TopItem } from '@/components/creator/analytics/TopContentTable'
+import AutoInsights from '@/components/creator/analytics/AutoInsights'
+import { computeInsights, type TimeseriesPoint } from '@/lib/analytics/insights'
 import type { Database } from '@/types/supabase'
 
 /* ---------- Types & Guards ---------- */
-
 type ContentTypeEnum = Database['public']['Enums']['creator_content_type']
 const CT_VALUES = ['video', 'image', 'guide', 'blog', 'story', 'other'] as const
 function isContentType(x: string): x is ContentTypeEnum {
@@ -24,7 +25,6 @@ function isContentType(x: string): x is ContentTypeEnum {
 }
 
 /* ---------- Small helper component: KPI ---------- */
-
 function Kpi({
   title,
   value,
@@ -72,7 +72,6 @@ function Kpi({
 }
 
 /* ---------- Page ---------- */
-
 export default async function AnalyticsPage({
   searchParams,
 }: {
@@ -136,7 +135,7 @@ export default async function AnalyticsPage({
       ? percentileToBadge(percentile.pct)
       : { label: '—', tone: 'muted' as const }
 
-  // Top Content (serverseitig holen; limit 100)
+  // Top Content (serverseitig; limit 100)
   let q = supabase
     .from('creator_session_metrics')
     .select('session_id,title,created_at,impact_score,impressions,views,likes,comments,content_type')
@@ -149,13 +148,20 @@ export default async function AnalyticsPage({
     q = q.gte('created_at', from)
   }
   if (contentType && isContentType(contentType)) {
-    q = q.eq('content_type', contentType as ContentTypeEnum) // Enum-Guard
+    q = q.eq('content_type', contentType as ContentTypeEnum)
   }
-
   const { data: topRows } = await q
   const topItems: TopItem[] = (Array.isArray(topRows) ? topRows : []) as any
 
-  // CSV-Links mit aktuellen Filtern
+  // Auto-Insights vorbereiten
+  const insights = computeInsights(
+    current as unknown as TimeseriesPoint[],
+    heatmap,
+    topItems,
+    days
+  )
+
+  // CSV-Links
   const csvHrefSessions = `/api/creator/analytics/export?range=${encodeURIComponent(
     range
   )}&type=${encodeURIComponent(type)}`
@@ -173,7 +179,7 @@ export default async function AnalyticsPage({
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          {/* Percentile-Badge */}
+          {/* Badge */}
           <span
             className={`inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-medium ${
               topBadge.tone === 'gold'
@@ -193,7 +199,7 @@ export default async function AnalyticsPage({
 
           <SegmentFilter />
           <TimeframeTabs />
-          {/* CSV-Exports */}
+          {/* CSV */}
           <a
             href={csvHrefTimeseries}
             className="inline-flex h-10 items-center justify-center rounded-lg border border-input px-4 text-sm hover:bg-accent"
@@ -215,41 +221,24 @@ export default async function AnalyticsPage({
         </div>
       </header>
 
-      {/* KPIs + Δ vs. Vorperiode */}
+      {/* KPIs */}
       <section className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Kpi
-          title="Impressions"
-          value={curT.impressions.toLocaleString()}
-          delta={days === 'all' ? undefined : curT.impressions - prevT.impressions}
-          denom={prevT.impressions}
-        />
-        <Kpi
-          title="Views"
-          value={curT.views.toLocaleString()}
-          delta={days === 'all' ? undefined : curT.views - prevT.views}
-          denom={prevT.views}
-        />
-        <Kpi
-          title="View-Rate"
-          value={`${(viewRate * 100).toFixed(1)}%`}
-          delta={
-            days === 'all'
-              ? undefined
-              : rateDelta(curT.views, prevT.views, curT.impressions, prevT.impressions)
-          }
-          isPercent
-        />
-        <Kpi
-          title="Engagement-Rate"
-          value={`${(engagementRate * 100).toFixed(1)}%`}
-          delta={
-            days === 'all'
-              ? undefined
-              : rateDelta(curT.engagement, prevT.engagement, curT.impressions, prevT.impressions)
-          }
-          isPercent
-        />
+        <Kpi title="Impressions" value={curT.impressions.toLocaleString()}
+             delta={days === 'all' ? undefined : curT.impressions - prevT.impressions}
+             denom={prevT.impressions} />
+        <Kpi title="Views" value={curT.views.toLocaleString()}
+             delta={days === 'all' ? undefined : curT.views - prevT.views}
+             denom={prevT.views} />
+        <Kpi title="View-Rate" value={`${(viewRate * 100).toFixed(1)}%`}
+             delta={days === 'all' ? undefined : rateDelta(curT.views, prevT.views, curT.impressions, prevT.impressions)}
+             isPercent />
+        <Kpi title="Engagement-Rate" value={`${(engagementRate * 100).toFixed(1)}%`}
+             delta={days === 'all' ? undefined : rateDelta(curT.engagement, prevT.engagement, curT.impressions, prevT.impressions)}
+             isPercent />
       </section>
+
+      {/* Auto-Insights */}
+      <AutoInsights insights={insights} className="mb-6" />
 
       {/* Chart */}
       {chartData.length > 0 ? (
@@ -273,7 +262,6 @@ export default async function AnalyticsPage({
 }
 
 /* ---------- Helpers ---------- */
-
 function isoDay(d: Date) {
   const y = d.getUTCFullYear()
   const m = String(d.getUTCMonth() + 1).padStart(2, '0')
@@ -307,7 +295,6 @@ function rateDelta(numCur: number, numPrev: number, denCur: number, denPrev: num
 }
 
 function percentileToBadge(pct: number) {
-  // pct = cume_dist 0..1 (höher = besser)
   const perc = Math.round(pct * 100)
   if (perc >= 90) return { label: 'Top 10% Creator', tone: 'gold' as const }
   if (perc >= 70) return { label: 'Top 30% Creator', tone: 'green' as const }
