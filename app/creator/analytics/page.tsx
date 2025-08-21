@@ -33,7 +33,7 @@ export default async function AnalyticsPage({
   const type = allowed.has(rawType) ? rawType : 'all'
   const contentType = type === 'all' ? null : type
 
-  // Für Δ: aktuelle + vorherige Periode (2 * days). Für "all" nur groß.
+  // Für Δ: aktuelle + vorherige Periode (2 * days). Für "all" groß.
   const effectiveDays = days === 'all' ? 3650 : days
   const all = await fetchCreatorMetricsTimeseries(
     supabase,
@@ -43,15 +43,15 @@ export default async function AnalyticsPage({
 
   // ISO-Grenze yyyy-mm-dd (lexikografisch vergleichbar)
   const boundaryIso = isoDay(new Date(Date.now() - effectiveDays * 24 * 60 * 60 * 1000))
-  const current = days === 'all' ? all : all.filter(p => p.d >= boundaryIso)
-  const previous = days === 'all' ? [] : all.filter(p => p.d < boundaryIso)
+  const current = days === 'all' ? all : all.filter((p) => p.d >= boundaryIso)
+  const previous = days === 'all' ? [] : all.filter((p) => p.d < boundaryIso)
 
   // Totals
   const curT = totals(current)
   const prevT = totals(previous)
 
   // Chart-Daten
-  const chartData: MetricsChartPoint[] = current.map(p => ({
+  const chartData: MetricsChartPoint[] = current.map((p) => ({
     date: p.d,
     impressions: p.impressions,
     views: p.views,
@@ -63,6 +63,11 @@ export default async function AnalyticsPage({
   const imp = Math.max(1, curT.impressions)
   const viewRate = curT.views / imp
   const engagementRate = curT.engagement / imp
+
+  // CSV-Export-Link für Rohdaten (Sessions) mit aktuellen Filtern
+  const csvHref = `/api/creator/analytics/export?range=${encodeURIComponent(
+    range
+  )}&type=${encodeURIComponent(type)}`
 
   return (
     <main className="mx-auto w-full max-w-7xl px-4 md:px-8 py-10">
@@ -76,6 +81,13 @@ export default async function AnalyticsPage({
         <div className="flex items-center gap-3">
           <SegmentFilter />
           <TimeframeTabs />
+          {/* Rohdaten CSV (Sessions) */}
+          <a
+            href={csvHref}
+            className="inline-flex h-10 items-center justify-center rounded-lg border border-input px-4 text-sm hover:bg-accent"
+          >
+            Rohdaten CSV
+          </a>
           <Link
             href="/creator/creator-dashboard"
             className="inline-flex h-10 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 px-4 text-sm font-medium text-primary hover:bg-primary/15"
@@ -87,18 +99,38 @@ export default async function AnalyticsPage({
 
       {/* KPIs + Δ vs. Vorperiode (nur bei 30/90/180) */}
       <section className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Kpi title="Impressions" value={curT.impressions.toLocaleString()}
-             delta={days === 'all' ? undefined : curT.impressions - prevT.impressions}
-             denom={prevT.impressions} />
-        <Kpi title="Views" value={curT.views.toLocaleString()}
-             delta={days === 'all' ? undefined : curT.views - prevT.views}
-             denom={prevT.views} />
-        <Kpi title="View-Rate" value={`${(viewRate * 100).toFixed(1)}%`}
-             delta={days === 'all' ? undefined : rateDelta(curT.views, prevT.views, curT.impressions, prevT.impressions)}
-             isPercent />
-        <Kpi title="Engagement-Rate" value={`${(engagementRate * 100).toFixed(1)}%`}
-             delta={days === 'all' ? undefined : rateDelta(curT.engagement, prevT.engagement, curT.impressions, prevT.impressions)}
-             isPercent />
+        <Kpi
+          title="Impressions"
+          value={curT.impressions.toLocaleString()}
+          delta={days === 'all' ? undefined : curT.impressions - prevT.impressions}
+          denom={prevT.impressions}
+        />
+        <Kpi
+          title="Views"
+          value={curT.views.toLocaleString()}
+          delta={days === 'all' ? undefined : curT.views - prevT.views}
+          denom={prevT.views}
+        />
+        <Kpi
+          title="View-Rate"
+          value={`${(viewRate * 100).toFixed(1)}%`}
+          delta={
+            days === 'all'
+              ? undefined
+              : rateDelta(curT.views, prevT.views, curT.impressions, prevT.impressions)
+          }
+          isPercent
+        />
+        <Kpi
+          title="Engagement-Rate"
+          value={`${(engagementRate * 100).toFixed(1)}%`}
+          delta={
+            days === 'all'
+              ? undefined
+              : rateDelta(curT.engagement, prevT.engagement, curT.impressions, prevT.impressions)
+          }
+          isPercent
+        />
       </section>
 
       {/* Chart mit Range-Param für Drilldown */}
@@ -183,7 +215,8 @@ function Kpi({
     deltaPct = delta
   }
 
-  const sign = typeof deltaPct === 'number' ? (deltaPct > 0 ? '+' : deltaPct < 0 ? '' : '±') : undefined
+  const sign =
+    typeof deltaPct === 'number' ? (deltaPct > 0 ? '+' : deltaPct < 0 ? '' : '±') : undefined
   const color =
     typeof deltaPct !== 'number'
       ? 'text-muted-foreground'
