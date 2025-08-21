@@ -132,6 +132,89 @@ export type Database = {
           },
         ]
       }
+      creator_alert_events: {
+        Row: {
+          current_value: number
+          happened_at: string
+          id: string
+          message: string
+          rule_id: string
+          user_id: string
+        }
+        Insert: {
+          current_value: number
+          happened_at?: string
+          id?: string
+          message: string
+          rule_id: string
+          user_id: string
+        }
+        Update: {
+          current_value?: number
+          happened_at?: string
+          id?: string
+          message?: string
+          rule_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "creator_alert_events_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "creator_alert_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      creator_alert_rules: {
+        Row: {
+          comparator: string
+          content_type:
+            | Database["public"]["Enums"]["creator_content_type"]
+            | null
+          created_at: string
+          id: string
+          is_active: boolean
+          metric: string
+          threshold: number
+          title: string | null
+          updated_at: string
+          user_id: string
+          window_days: number
+        }
+        Insert: {
+          comparator: string
+          content_type?:
+            | Database["public"]["Enums"]["creator_content_type"]
+            | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          metric: string
+          threshold: number
+          title?: string | null
+          updated_at?: string
+          user_id: string
+          window_days?: number
+        }
+        Update: {
+          comparator?: string
+          content_type?:
+            | Database["public"]["Enums"]["creator_content_type"]
+            | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          metric?: string
+          threshold?: number
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+          window_days?: number
+        }
+        Relationships: []
+      }
       creator_profiles: {
         Row: {
           avatar_url: string | null
@@ -186,6 +269,7 @@ export type Database = {
       creator_session_metrics: {
         Row: {
           comments: number
+          content_type: Database["public"]["Enums"]["creator_content_type"]
           created_at: string
           impact_score: number
           impressions: number
@@ -197,6 +281,7 @@ export type Database = {
         }
         Insert: {
           comments?: number
+          content_type?: Database["public"]["Enums"]["creator_content_type"]
           created_at?: string
           impact_score?: number
           impressions?: number
@@ -208,6 +293,7 @@ export type Database = {
         }
         Update: {
           comments?: number
+          content_type?: Database["public"]["Enums"]["creator_content_type"]
           created_at?: string
           impact_score?: number
           impressions?: number
@@ -577,6 +663,57 @@ export type Database = {
         Args: { email_to_add: string; id: string }
         Returns: undefined
       }
+      creator_alerts_eval_all: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      creator_alerts_eval_current_user: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      creator_alerts_eval_for: {
+        Args: { _uid: string }
+        Returns: number
+      }
+      creator_impact_percentile: {
+        Args: { _days: number } | { args: Json }
+        Returns: {
+          avg_impact: number
+          pct: number
+        }[]
+      }
+      creator_metrics_timeseries: {
+        Args:
+          | {
+              _content_type?: Database["public"]["Enums"]["creator_content_type"]
+              _days: number
+            }
+          | { args: Json }
+        Returns: {
+          comments: number
+          d: string
+          impressions: number
+          likes: number
+          views: number
+        }[]
+      }
+      creator_posting_heatmap: {
+        Args:
+          | {
+              _content_type?: Database["public"]["Enums"]["creator_content_type"]
+              _days: number
+            }
+          | { args: Json }
+        Returns: {
+          comments: number
+          dow: number
+          hour: number
+          impressions: number
+          likes: number
+          sessions: number
+          views: number
+        }[]
+      }
       csm_increment_impressions: {
         Args: { p_session_id: string }
         Returns: undefined
@@ -599,6 +736,13 @@ export type Database = {
       }
     }
     Enums: {
+      creator_content_type:
+        | "video"
+        | "image"
+        | "guide"
+        | "blog"
+        | "story"
+        | "other"
       session_status: "pending" | "approved" | "rejected"
       visibility_status: "private" | "public"
     }
@@ -728,6 +872,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      creator_content_type: [
+        "video",
+        "image",
+        "guide",
+        "blog",
+        "story",
+        "other",
+      ],
       session_status: ["pending", "approved", "rejected"],
       visibility_status: ["private", "public"],
     },

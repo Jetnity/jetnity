@@ -46,48 +46,78 @@ export default function HeroMegaSearch() {
       aria-label="Suche"
       className={cn(
         'relative z-[80] isolate mx-auto w-full',
-        'max-w-[1280px] 2xl:max-w-[1340px]',
+        'max-w-[1320px] 2xl:max-w-[1400px]',
         'px-3 sm:px-6'
       )}
     >
-      {/* Tabs */}
-      <nav
-        role="tablist"
-        aria-label="Suchkategorien"
-        className="mb-3 flex items-center gap-1.5 overflow-x-auto no-scrollbar mask-edges"
+      {/* Glasiger, gemeinsamer Rahmen (Tabs + Panel) */}
+      <div
+        className={cn(
+          'relative overflow-hidden rounded-3xl border border-white/15 text-white',
+          // deutlich mehr „Glass“: transparenter + Blur
+          'bg-[rgba(14,27,46,0.55)] supports-blur:backdrop-blur-xl',
+          // dezenter Glow/Highlight oben
+          "before:pointer-events-none before:absolute before:inset-0 before:content-[''] before:rounded-3xl",
+          "before:bg-[radial-gradient(120%_60%_at_50%_0%,rgba(255,255,255,0.14),rgba(255,255,255,0)_60%)]",
+          // Tiefe
+          'shadow-[0_10px_30px_rgba(0,0,0,0.35)]'
+        )}
       >
-        {TABS.map(({ key, label, icon: Icon }) => {
-          const active = key === tab
-          return (
-            <button
-              key={key}
-              role="tab"
-              aria-selected={active}
-              aria-controls={`panel-${key}`}
-              onClick={() => setTab(key)}
-              className={cn('tab-chip', active && 'tab-chip--active')}
-            >
-              <Icon className="h-4 w-4" />
-              {label}
-            </button>
-          )
-        })}
-      </nav>
+        {/* Tabs */}
+        <nav
+          role="tablist"
+          aria-label="Suchkategorien"
+          className={cn(
+            'flex flex-wrap items-center justify-center gap-2 md:gap-2.5',
+            'px-4 sm:px-6 pt-3 sm:pt-4 pb-3 border-b border-white/10'
+          )}
+        >
+          {TABS.map(({ key, label, icon: Icon }) => {
+            const active = key === tab
+            return (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                aria-controls={`panel-${key}`}
+                onClick={() => setTab(key)}
+                className={cn(
+                  'whitespace-nowrap inline-flex items-center gap-2 rounded-full border transition-colors',
+                  'px-3 py-1.5 text-[13px] sm:text-sm',
+                  // inaktiv: glasig dunkel
+                  'bg-white/10 border-white/15 text-white/90 hover:bg-white/15 hover:border-white/25',
+                  // aktiv: hell, dunkler Text
+                  active && 'bg-white text-[#0c1930] border-white shadow-md'
+                )}
+              >
+                <Icon className={cn('h-4 w-4', active ? 'text-[#0c1930]' : 'text-white')} />
+                {label}
+              </button>
+            )
+          })}
+        </nav>
 
-      {/* Glassy Navy Panel */}
-      <div className="hero-glass rounded-3xl text-white shadow-2xl">
+        {/* Inneres helles Panel */}
         <div className="p-3 sm:p-5 md:p-6">
-          <div id={`panel-${tab}`} role="tabpanel" aria-live="polite">
-            {tab === 'flight'   && <FlightSearchForm />}
-            {tab === 'hotel'    && <HotelSearchForm />}
-            {tab === 'car'      && <CarSearchForm />}
-            {tab === 'activity' && <ActivitySearchForm />}
-            {tab === 'ferry'    && <FerrySearchForm />}
-            {tab === 'bus'      && <BusSearchForm />}
-            {tab === 'train'    && <TrainSearchForm />}
-            {tab === 'cruise'   && <CruiseSearchForm />}
-            {tab === 'combo'    && <ComboSearchForm />}
-            {tab === 'transfer' && <TransferSearchForm />}
+          <div
+            className={cn(
+              'w-full rounded-2xl bg-white/95 text-[#0c1930]',
+              'shadow-inner ring-1 ring-black/5'
+            )}
+          >
+            <div id={`panel-${tab}`} role="tabpanel" aria-live="polite" className="p-3 sm:p-4 md:p-5">
+              {tab === 'flight'   && <FlightSearchForm />}
+              {tab === 'hotel'    && <HotelSearchForm />}
+              {tab === 'car'      && <CarSearchForm />}
+              {tab === 'activity' && <ActivitySearchForm />}
+              {tab === 'ferry'    && <FerrySearchForm />}
+              {tab === 'bus'      && <BusSearchForm />}
+              {tab === 'train'    && <TrainSearchForm />}
+              {tab === 'cruise'   && <CruiseSearchForm />}
+              {tab === 'combo'    && <ComboSearchForm />}
+              {tab === 'transfer' && <TransferSearchForm />}
+            </div>
           </div>
         </div>
       </div>

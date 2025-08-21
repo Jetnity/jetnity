@@ -1,4 +1,3 @@
-// components/creator/dashboard/ImpactScorePanel.tsx
 // Server Component (keine Hooks, kein 'use client')
 import Link from 'next/link'
 import { cookies } from 'next/headers'
@@ -10,51 +9,13 @@ import type { Tables } from '@/types/supabase'
 import { fetchPlatformAvgImpactScore } from '@/lib/supabase/rpc/platformAvg'
 
 type Metric = Tables<'creator_session_metrics'>
-const PLATFORM_AVG_DAYS = 90
 
-function clamp(n: number) {
-  if (!Number.isFinite(n)) return 0
-  return Math.max(0, Math.min(100, n))
-}
-
-function aggregate(rows: Metric[]) {
-  const base = rows.reduce(
-    (acc, r) => {
-      acc.sessions += 1
-      acc.impressions += r.impressions ?? 0
-      acc.views += r.views ?? 0
-      acc.likes += r.likes ?? 0
-      acc.comments += r.comments ?? 0
-      return acc
-    },
-    { sessions: 0, impressions: 0, views: 0, likes: 0, comments: 0 }
-  )
-  const imp = Math.max(1, base.impressions)
-  const viewRate = base.views / imp
-  const engagementRate = (base.likes + base.comments) / imp
-  return { ...base, viewRate, engagementRate }
-}
-
-function calcOverallScore(rows: Metric[]): number {
-  if (!rows.length) return 0
-  const hasAnyScore = rows.some(r => Number(r.impact_score ?? 0) > 0)
-  const totals = aggregate(rows)
-
-  if (hasAnyScore) {
-    const weightedSum = rows.reduce((sum, r) => {
-      const s = Number(r.impact_score ?? 0)
-      const w = Math.max(1, r.impressions ?? 0)
-      return sum + s * w
-    }, 0)
-    const weight = rows.reduce((w, r) => w + Math.max(1, r.impressions ?? 0), 0)
-    return clamp(weightedSum / Math.max(1, weight))
-  }
-
-  const score = (totals.viewRate * 0.6 + totals.engagementRate * 0.4) * 100
-  return clamp(score)
-}
-
-export default async function ImpactScorePanel() {
+export default async function ImpactScorePanel({
+  days = 90 as number | 'all',
+}: {
+  /** 30 | 90 | 180 | 'all' */
+  days?: number | 'all'
+}) {
   const supabase = createServerComponentClient()
 
   const {
@@ -82,27 +43,36 @@ export default async function ImpactScorePanel() {
     )
   }
 
-  // Parallel: eigene Metriken + Plattform-Ø (über Helper)
-  const [metricsRes, avgScorePlatform] = await Promise.all([
-    supabase
-      .from('creator_session_metrics')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(300),
-    fetchPlatformAvgImpactScore(supabase, PLATFORM_AVG_DAYS),
-  ])
+  // Zeitfenster vorbereiten
+  const now = Date.now()
+  const sinceIso =
+    typeof days === 'number'
+      ? new Date(now - days * 24 * 60 * 60 * 1000).toISOString()
+      : null
+  const effectiveDaysForPlatform = typeof days === 'number' ? days : 3650 // "Gesamt"
 
-  const metrics = (metricsRes.data ?? []) as Metric[]
+  // Eigene Metriken laden (optional nach Zeitfenster gefiltert)
+  let query = supabase
+    .from('creator_session_metrics')
+    .select('*')
+    .eq('user_id', user.id)
 
-  if (metricsRes.error || metrics.length === 0) {
+  if (sinceIso) query = query.gte('created_at', sinceIso)
+
+  const { data: rows, error } = await query
+    .order('created_at', { ascending: false })
+    .limit(300)
+
+  const metrics = (rows ?? []) as Metric[]
+
+  if (error || metrics.length === 0) {
     return (
       <div className="rounded-2xl border border-border bg-card/60 p-5 shadow-sm backdrop-blur">
         <div className="mb-2 text-lg font-semibold">
-          {metricsRes.error ? 'Fehler beim Laden' : 'Noch keine Performance-Daten'}
+          {error ? 'Fehler beim Laden' : 'Noch keine Performance-Daten'}
         </div>
         <p className="text-sm text-muted-foreground">
-          {metricsRes.error
+          {error
             ? 'Deine Impact-Daten konnten nicht geladen werden.'
             : 'Starte deine erste Session, um Impact-Scores zu sehen.'}
         </p>
@@ -113,16 +83,21 @@ export default async function ImpactScorePanel() {
             'border border-primary/30 bg-primary/10 text-primary font-medium hover:bg-primary/15 transition'
           )}
         >
-          {metricsRes.error ? 'Erneut versuchen' : 'Jetzt Session starten'}
+          {error ? 'Erneut versuchen' : 'Jetzt Session starten'}
         </Link>
-
         <ImpactScoreRealtimeBridge userId={user.id} />
       </div>
     )
   }
 
+  // Aggregation + Score
   const totals = aggregate(metrics)
   const score = calcOverallScore(metrics)
+
+  // Plattform-Ø abrufen (SECURITY DEFINER RPC)
+  const avgScorePlatform = clamp(
+    await fetchPlatformAvgImpactScore(supabase, effectiveDaysForPlatform)
+  )
 
   return (
     <section className="rounded-2xl border border-border bg-card/60 p-5 shadow-sm backdrop-blur">
@@ -130,7 +105,9 @@ export default async function ImpactScorePanel() {
         <div className="space-y-0.5">
           <h3 className="text-lg font-semibold">Dein Impact</h3>
           <p className="text-sm text-muted-foreground">
-            Überblick über deine Performance (aggregiert). Plattform-Schnitt: letzte {PLATFORM_AVG_DAYS} Tage.
+            Überblick über deine Performance (aggregiert)
+            {typeof days === 'number' ? ` · Zeitraum: letzte ${days} Tage` : ' · Zeitraum: Gesamt'}
+            .
           </p>
         </div>
         <Link
@@ -144,51 +121,25 @@ export default async function ImpactScorePanel() {
         </Link>
       </header>
 
-      <ImpactScore value={score} avgScore={clamp(avgScorePlatform)} label="Impact Score (gesamt)" />
+      {/* Score inkl. Plattform-Avg (Delta-Badge kommt aus ImpactScore.tsx) */}
+      <ImpactScore value={score} avgScore={avgScorePlatform} label="Impact Score (gesamt)" />
 
       {/* KPI Micro-Grid */}
       <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="rounded-xl border border-border bg-background/60 p-4">
-          <div className="text-xs text-muted-foreground">Sessions</div>
-          <div className="text-2xl font-semibold tabular-nums">{totals.sessions}</div>
-        </div>
-        <div className="rounded-xl border border-border bg-background/60 p-4">
-          <div className="text-xs text-muted-foreground">Impressions</div>
-          <div className="text-2xl font-semibold tabular-nums">
-            {totals.impressions.toLocaleString()}
-          </div>
-        </div>
-        <div className="rounded-xl border border-border bg-background/60 p-4">
-          <div className="text-xs text-muted-foreground">Views</div>
-          <div className="text-2xl font-semibold tabular-nums">
-            {totals.views.toLocaleString()}
-          </div>
-        </div>
-        <div className="rounded-xl border border-border bg-background/60 p-4">
-          <div className="text-xs text-muted-foreground">Engagement</div>
-          <div className="text-2xl font-semibold tabular-nums">
-            {(totals.likes + totals.comments).toLocaleString()}
-          </div>
-          <div className="mt-1 text-xs text-muted-foreground">
-            Likes {totals.likes.toLocaleString()} · Kommentare {totals.comments.toLocaleString()}
-          </div>
-        </div>
+        <KpiCard title="Sessions" value={totals.sessions.toString()} />
+        <KpiCard title="Impressions" value={totals.impressions.toLocaleString()} />
+        <KpiCard title="Views" value={totals.views.toLocaleString()} />
+        <KpiCard
+          title="Engagement"
+          value={(totals.likes + totals.comments).toLocaleString()}
+          sub={`Likes ${totals.likes.toLocaleString()} · Kommentare ${totals.comments.toLocaleString()}`}
+        />
       </div>
 
       {/* Raten */}
       <div className="mt-4 grid grid-cols-2 gap-3 sm:max-w-sm">
-        <div className="rounded-lg border border-border bg-background/60 px-3 py-2">
-          <div className="text-[11px] text-muted-foreground">View-Rate</div>
-          <div className="text-base font-semibold tabular-nums">
-            {(totals.viewRate * 100).toFixed(1)}%
-          </div>
-        </div>
-        <div className="rounded-lg border border-border bg-background/60 px-3 py-2">
-          <div className="text-[11px] text-muted-foreground">Engagement-Rate</div>
-          <div className="text-base font-semibold tabular-nums">
-            {(totals.engagementRate * 100).toFixed(1)}%
-          </div>
-        </div>
+        <KpiPill title="View-Rate" value={`${(totals.viewRate * 100).toFixed(1)}%`} />
+        <KpiPill title="Engagement-Rate" value={`${(totals.engagementRate * 100).toFixed(1)}%`} />
       </div>
 
       <div className="mt-3 text-xs text-muted-foreground">
@@ -198,5 +149,69 @@ export default async function ImpactScorePanel() {
 
       <ImpactScoreRealtimeBridge userId={user.id} />
     </section>
+  )
+}
+
+/* ---------- Helpers ---------- */
+
+function clamp(n: number) {
+  if (!Number.isFinite(n)) return 0
+  return Math.max(0, Math.min(100, n))
+}
+
+function aggregate(rows: Metric[]) {
+  const base = rows.reduce(
+    (acc, r) => {
+      acc.sessions += 1
+      acc.impressions += r.impressions ?? 0
+      acc.views += r.views ?? 0
+      acc.likes += r.likes ?? 0
+      acc.comments += r.comments ?? 0
+      return acc
+    },
+    { sessions: 0, impressions: 0, views: 0, likes: 0, comments: 0 }
+  )
+  const imp = Math.max(1, base.impressions)
+  const viewRate = base.views / imp // 0..1
+  const engagementRate = (base.likes + base.comments) / imp // 0..1
+  return { ...base, viewRate, engagementRate }
+}
+
+function calcOverallScore(rows: Metric[]): number {
+  if (!rows.length) return 0
+
+  const hasAnyScore = rows.some(r => Number(r.impact_score ?? 0) > 0)
+  const totals = aggregate(rows)
+
+  if (hasAnyScore) {
+    const weightedSum = rows.reduce((sum, r) => {
+      const s = Number(r.impact_score ?? 0)
+      const w = Math.max(1, r.impressions ?? 0)
+      return sum + s * w
+    }, 0)
+    const weight = rows.reduce((w, r) => w + Math.max(1, r.impressions ?? 0), 0)
+    return clamp(weightedSum / Math.max(1, weight))
+  }
+
+  const score = (totals.viewRate * 0.6 + totals.engagementRate * 0.4) * 100
+  return clamp(score)
+}
+
+function KpiCard({ title, value, sub }: { title: string; value: string; sub?: string }) {
+  return (
+    <div className="rounded-xl border border-border bg-background/60 p-4">
+      <div className="text-xs text-muted-foreground">{title}</div>
+      <div className="text-2xl font-semibold tabular-nums">{value}</div>
+      {sub && <div className="mt-1 text-xs text-muted-foreground">{sub}</div>}
+    </div>
+  )
+}
+
+function KpiPill({ title, value }: { title: string; value: string }) {
+  return (
+    <div className="rounded-lg border border-border bg-background/60 px-3 py-2">
+      <div className="text-[11px] text-muted-foreground">{title}</div>
+      <div className="text-base font-semibold tabular-nums">{value}</div>
+    </div>
   )
 }

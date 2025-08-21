@@ -1,7 +1,7 @@
+// lib/supabase/rpc/creatorPostingHeatmap.ts
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Database } from '@/types/supabase'
 
-export type HeatCell = {
+export type HeatRow = {
   dow: number
   hour: number
   sessions: number
@@ -12,31 +12,19 @@ export type HeatCell = {
 }
 
 export async function fetchCreatorPostingHeatmap(
-  supabase: SupabaseClient<Database>,
+  supabase: SupabaseClient,
   days: number,
-  contentType?: string | null
-): Promise<HeatCell[]> {
-  const args: any = { days }
-  args._content_type = contentType ?? null
-
-  const { data, error } = await supabase.rpc(
-    'creator_posting_heatmap' as unknown as never,
-    args as unknown as never
-  )
-
+  contentType: string | null
+): Promise<HeatRow[]> {
+  const { data, error } = await supabase.rpc('creator_posting_heatmap' as any, {
+    _days: days,
+    _content_type: contentType,
+  })
   if (error) {
     console.error('[creator_posting_heatmap] RPC error:', error)
     return []
   }
-
-  const rows = Array.isArray(data) ? data : []
-  return rows.map((r: any) => ({
-    dow: Number(r.dow ?? 0),
-    hour: Number(r.hour ?? 0),
-    sessions: Number(r.sessions ?? 0),
-    impressions: Number(r.impressions ?? 0),
-    views: Number(r.views ?? 0),
-    likes: Number(r.likes ?? 0),
-    comments: Number(r.comments ?? 0),
-  }))
+  return (data ?? []) as HeatRow[]
 }
+
+export default fetchCreatorPostingHeatmap

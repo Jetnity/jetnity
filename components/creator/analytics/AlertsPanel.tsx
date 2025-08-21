@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { Plus, Trash2, RefreshCw } from 'lucide-react'
@@ -49,6 +49,8 @@ const SEGMENTS = [
 
 export default function AlertsPanel({ className }: { className?: string }) {
   const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [evaluating, setEvaluating] = useState(false)
   const [rules, setRules] = useState<Rule[]>([])
   const [events, setEvents] = useState<EventRow[]>([])
 
@@ -71,8 +73,17 @@ export default function AlertsPanel({ className }: { className?: string }) {
     }
 
     const [r, e] = await Promise.all([
-      supabase.from('creator_alert_rules').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
-      supabase.from('creator_alert_events').select('*').eq('user_id', user.id).order('happened_at', { ascending: false }).limit(50),
+      supabase
+        .from('creator_alert_rules')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('creator_alert_events')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('happened_at', { ascending: false })
+        .limit(50),
     ])
 
     if (r.error) toast.error('Regeln laden fehlgeschlagen')
@@ -90,17 +101,22 @@ export default function AlertsPanel({ className }: { className?: string }) {
     const seg = form.segment === 'all' ? null : (form.segment as Rule['content_type'])
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
+
+    setSaving(true)
     const { error } = await supabase.from('creator_alert_rules').insert({
       user_id: user.id,
       title: form.title || null,
       metric: form.metric,
       comparator: form.comparator,
-      threshold: Number(form.threshold),
-      window_days: Number(form.window_days),
+      threshold: Number.isFinite(form.threshold) ? Number(form.threshold) : 0,
+      window_days: Math.max(1, Number(form.window_days) || 1),
       content_type: seg,
       is_active: true,
     } as any)
+    setSaving(false)
+
     if (error) {
+      console.error('[addRule] supabase error', error)
       toast.error('Regel konnte nicht angelegt werden')
     } else {
       toast.success('Regel gespeichert')
@@ -111,25 +127,40 @@ export default function AlertsPanel({ className }: { className?: string }) {
 
   async function delRule(id: string) {
     const { error } = await supabase.from('creator_alert_rules').delete().eq('id', id)
-    if (error) toast.error('Löschen fehlgeschlagen')
-    else {
+    if (error) {
+      console.error('[delRule] supabase error', error)
+      toast.error('Löschen fehlgeschlagen')
+    } else {
       toast.success('Regel gelöscht')
       setRules((r) => r.filter((x) => x.id !== id))
     }
   }
 
   async function toggleActive(rule: Rule) {
-    const { error } = await supabase.from('creator_alert_rules').update({ is_active: !rule.is_active }).eq('id', rule.id)
-    if (error) toast.error('Aktualisierung fehlgeschlagen')
-    else setRules((r) => r.map((x) => (x.id === rule.id ? { ...x, is_active: !x.is_active } : x)))
+    const { error } = await supabase
+      .from('creator_alert_rules')
+      .update({ is_active: !rule.is_active } as any)
+      .eq('id', rule.id)
+    if (error) {
+      console.error('[toggleActive] supabase error', error)
+      toast.error('Aktualisierung fehlgeschlagen')
+    } else {
+      setRules((r) => r.map((x) => (x.id === rule.id ? { ...x, is_active: !x.is_active } : x)))
+    }
   }
 
+  // Besser direkt die RPC aufrufen (DB-seitig, security definer):
   async function runEval() {
-    const res = await fetch('/api/creator/alerts/evaluate', { method: 'GET' })
-    if (!res.ok) toast.error('Evaluierung fehlgeschlagen')
-    else {
-      const j = await res.json().catch(() => ({}))
-      toast.success(`Evaluierung fertig${j?.inserted != null ? ` · neue Events: ${j.inserted}` : ''}`)
+    setEvaluating(true)
+    const { data, error } = await supabase.rpc('creator_alerts_eval_current_user' as any)
+    setEvaluating(false)
+
+    if (error) {
+      console.error('[runEval] RPC error', error)
+      toast.error('Evaluierung fehlgeschlagen')
+    } else {
+      const inserted = typeof data === 'number' ? data : undefined
+      toast.success(`Evaluierung fertig${inserted != null ? ` · neue Events: ${inserted}` : ''}`)
       load()
     }
   }
@@ -145,9 +176,13 @@ export default function AlertsPanel({ className }: { className?: string }) {
         </div>
         <button
           onClick={runEval}
-          className="inline-flex h-9 items-center gap-2 rounded-md border border-input px-3 text-sm hover:bg-accent"
+          disabled={evaluating}
+          className={cn(
+            'inline-flex h-9 items-center gap-2 rounded-md border border-input px-3 text-sm',
+            evaluating ? 'opacity-60 cursor-not-allowed' : 'hover:bg-accent'
+          )}
         >
-          <RefreshCw className="h-4 w-4" /> Jetzt prüfen
+          <RefreshCw className={cn('h-4 w-4', evaluating && 'animate-spin')} /> Jetzt prüfen
         </button>
       </header>
 
@@ -176,6 +211,7 @@ export default function AlertsPanel({ className }: { className?: string }) {
         </select>
         <input
           type="number"
+          min={0}
           value={form.threshold}
           onChange={(e) => setForm((f) => ({ ...f, threshold: Number(e.target.value) }))}
           className="h-9 rounded-md border border-input bg-background px-3 text-sm"
@@ -183,6 +219,7 @@ export default function AlertsPanel({ className }: { className?: string }) {
         />
         <input
           type="number"
+          min={1}
           value={form.window_days}
           onChange={(e) => setForm((f) => ({ ...f, window_days: Number(e.target.value) }))}
           className="h-9 rounded-md border border-input bg-background px-3 text-sm"
@@ -197,9 +234,13 @@ export default function AlertsPanel({ className }: { className?: string }) {
         </select>
         <button
           onClick={addRule}
-          className="md:col-span-6 inline-flex h-9 items-center justify-center gap-2 rounded-md border border-primary/30 bg-primary/10 px-3 text-sm font-medium text-primary hover:bg-primary/15"
+          disabled={saving}
+          className={cn(
+            'md:col-span-6 inline-flex h-9 items-center justify-center gap-2 rounded-md border border-primary/30 bg-primary/10 px-3 text-sm font-medium text-primary',
+            saving ? 'opacity-60 cursor-not-allowed' : 'hover:bg-primary/15'
+          )}
         >
-          <Plus className="h-4 w-4" /> Regel hinzufügen
+          <Plus className="h-4 w-4" /> {saving ? 'Speichere…' : 'Regel hinzufügen'}
         </button>
       </div>
 

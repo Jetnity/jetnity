@@ -115,7 +115,7 @@ export default async function SessionStatsPanel({
       <ul className="grid grid-cols-1 gap-3">
         {items.map((m) => (
           <li key={m.session_id}>
-            <SessionStatsCard metrics={m} />
+            <SessionStatsCard metric={m} />
           </li>
         ))}
       </ul>

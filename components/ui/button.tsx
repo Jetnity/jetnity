@@ -1,12 +1,16 @@
 'use client'
 
-import { cn } from '@/lib/utils'
+import * as React from 'react'
+import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { Loader2 } from 'lucide-react'
-import { ButtonHTMLAttributes, forwardRef } from 'react'
+import { cn } from '@/lib/utils'
 
-const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-2xl font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none shadow-sm gap-2',
+export const buttonVariants = cva(
+  // Basisklassen – dein alter Look bleibt erhalten
+  'inline-flex items-center justify-center rounded-2xl font-medium transition-all ring-offset-background ' +
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ' +
+    'disabled:opacity-50 disabled:pointer-events-none shadow-sm gap-2',
   {
     variants: {
       variant: {
@@ -38,34 +42,49 @@ const buttonVariants = cva(
 )
 
 export interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
+  /** Shadcn-Pattern: erlaubt polymorphes Rendering (z. B. <Link> als Button) */
+  asChild?: boolean
   isLoading?: boolean
   leftIcon?: React.ReactNode
   rightIcon?: React.ReactNode
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, children, variant, size, fullWidth, isLoading, leftIcon, rightIcon, ...props },
+    {
+      className,
+      children,
+      variant,
+      size,
+      fullWidth,
+      isLoading,
+      leftIcon,
+      rightIcon,
+      asChild = false,
+      ...props
+    },
     ref
   ) => {
+    const Comp = asChild ? Slot : 'button'
+
     return (
-      <button
-        className={cn(buttonVariants({ variant, size, fullWidth, className }))}
-        ref={ref}
-        disabled={isLoading || props.disabled}
+      <Comp
+        // bei asChild ist das Ref technisch ein anderes Element – das ist ok
+        ref={ref as any}
+        className={cn(buttonVariants({ variant, size, fullWidth }), className)}
+        // disabled nur sinnvoll, wenn es wirklich ein <button> ist
+        {...(!asChild ? { disabled: isLoading || (props as any).disabled } : {})}
         aria-busy={isLoading}
         {...props}
       >
         {isLoading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
-        {!isLoading && leftIcon && <span className="mr-1">{leftIcon}</span>}
-        {children}
-        {rightIcon && <span className="ml-1">{rightIcon}</span>}
-      </button>
+        {!isLoading && leftIcon ? <span className="mr-1">{leftIcon}</span> : null}
+        <span className="inline-flex items-center">{children}</span>
+        {!isLoading && rightIcon ? <span className="ml-1">{rightIcon}</span> : null}
+      </Comp>
     )
   }
 )
 Button.displayName = 'Button'
-
-export { buttonVariants }

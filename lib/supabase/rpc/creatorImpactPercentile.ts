@@ -1,28 +1,21 @@
+// lib/supabase/rpc/creatorImpactPercentile.ts
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Database } from '@/types/supabase'
 
-export type ImpactPercentile = {
-  pct: number | null
-  avg_impact: number | null
-  creator_count: number | null
-}
+export type ImpactPercentileRow = { pct: number | null; avg_impact: number | null }
 
 export async function fetchCreatorImpactPercentile(
-  supabase: SupabaseClient<Database>,
-  days = 90
-): Promise<ImpactPercentile> {
-  const { data, error } = await supabase.rpc(
-    'creator_impact_percentile' as unknown as never,
-    { days } as unknown as never
-  )
+  supabase: SupabaseClient,
+  days: number
+): Promise<ImpactPercentileRow> {
+  const { data, error } = await supabase.rpc('creator_impact_percentile' as any, {
+    _days: days,
+  })
   if (error) {
     console.error('[creator_impact_percentile] RPC error:', error)
-    return { pct: null, avg_impact: null, creator_count: null }
+    return { pct: null, avg_impact: null }
   }
-  const row = (Array.isArray(data) ? data[0] : null) as any
-  return {
-    pct: row?.pct != null ? Number(row.pct) : null,
-    avg_impact: row?.avg_impact != null ? Number(row.avg_impact) : null,
-    creator_count: row?.creator_count != null ? Number(row.creator_count) : null,
-  }
+  const row = Array.isArray(data) ? (data[0] as ImpactPercentileRow) : (data as ImpactPercentileRow)
+  return row ?? { pct: null, avg_impact: null }
 }
+
+export default fetchCreatorImpactPercentile
