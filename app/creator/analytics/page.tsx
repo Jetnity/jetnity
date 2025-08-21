@@ -1,5 +1,6 @@
 // app/creator/analytics/page.tsx
 // Server Component (RSC)
+import * as React from 'react'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
@@ -8,6 +9,69 @@ import TimeframeTabs from '@/components/creator/dashboard/TimeframeTabs'
 import SegmentFilter from '@/components/creator/analytics/SegmentFilter'
 import MetricsChart, { type MetricsChartPoint } from '@/components/creator/analytics/MetricsChart'
 import { fetchCreatorMetricsTimeseries } from '@/lib/supabase/rpc/creatorMetricsTimeseries'
+import { fetchCreatorPostingHeatmap } from '@/lib/supabase/rpc/creatorPostingHeatmap'
+import { fetchCreatorImpactPercentile } from '@/lib/supabase/rpc/creatorImpactPercentile'
+import PostingHeatmap from '@/components/creator/analytics/PostingHeatmap'
+import TopContentTable, { type TopItem } from '@/components/creator/analytics/TopContentTable'
+import type { Database } from '@/types/supabase'
+
+/* ---------- Types & Guards ---------- */
+
+type ContentTypeEnum = Database['public']['Enums']['creator_content_type']
+const CT_VALUES = ['video', 'image', 'guide', 'blog', 'story', 'other'] as const
+function isContentType(x: string): x is ContentTypeEnum {
+  return (CT_VALUES as readonly string[]).includes(x)
+}
+
+/* ---------- Small helper component: KPI ---------- */
+
+function Kpi({
+  title,
+  value,
+  delta,
+  denom,
+  isPercent,
+}: {
+  title: string
+  value: string
+  delta?: number
+  denom?: number
+  isPercent?: boolean
+}) {
+  let deltaPct: number | undefined
+  if (typeof delta === 'number' && typeof denom === 'number') {
+    deltaPct = denom > 0 ? (delta / denom) * 100 : undefined
+  } else if (typeof delta === 'number' && isPercent) {
+    deltaPct = delta
+  }
+
+  const sign =
+    typeof deltaPct === 'number' ? (deltaPct > 0 ? '+' : deltaPct < 0 ? '' : '±') : undefined
+  const color =
+    typeof deltaPct !== 'number'
+      ? 'text-muted-foreground'
+      : deltaPct > 0
+      ? 'text-emerald-600 dark:text-emerald-400'
+      : deltaPct < 0
+      ? 'text-rose-600 dark:text-rose-400'
+      : 'text-muted-foreground'
+
+  return (
+    <div className="rounded-xl border border-border bg-background/60 p-4">
+      <div className="text-xs text-muted-foreground">{title}</div>
+      <div className="text-2xl font-semibold tabular-nums">{value}</div>
+      {typeof deltaPct === 'number' && (
+        <div className={`mt-1 text-xs tabular-nums ${color}`}>
+          {sign}
+          {Math.abs(deltaPct).toFixed(1)}%
+          <span className="text-muted-foreground"> vs. vorherige Periode</span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ---------- Page ---------- */
 
 export default async function AnalyticsPage({
   searchParams,
@@ -31,7 +95,7 @@ export default async function AnalyticsPage({
   const rawType = (searchParams?.type ?? 'all').toLowerCase()
   const allowed = new Set(['all', 'video', 'image', 'guide', 'blog', 'story', 'other'])
   const type = allowed.has(rawType) ? rawType : 'all'
-  const contentType = type === 'all' ? null : type
+  const contentType: string | null = type === 'all' ? null : type
 
   // Für Δ: aktuelle + vorherige Periode (2 * days). Für "all" groß.
   const effectiveDays = days === 'all' ? 3650 : days
@@ -64,6 +128,33 @@ export default async function AnalyticsPage({
   const viewRate = curT.views / imp
   const engagementRate = curT.engagement / imp
 
+  // Heatmap & Percentile
+  const heatmap = await fetchCreatorPostingHeatmap(supabase, effectiveDays, contentType)
+  const percentile = await fetchCreatorImpactPercentile(supabase, days === 'all' ? 3650 : days)
+  const topBadge =
+    percentile.pct != null
+      ? percentileToBadge(percentile.pct)
+      : { label: '—', tone: 'muted' as const }
+
+  // Top Content (serverseitig holen; limit 100)
+  let q = supabase
+    .from('creator_session_metrics')
+    .select('session_id,title,created_at,impact_score,impressions,views,likes,comments,content_type')
+    .eq('user_id', user.id)
+    .order('impact_score', { ascending: false })
+    .limit(100)
+
+  if (days !== 'all') {
+    const from = new Date(Date.now() - Number(days) * 24 * 60 * 60 * 1000).toISOString()
+    q = q.gte('created_at', from)
+  }
+  if (contentType && isContentType(contentType)) {
+    q = q.eq('content_type', contentType as ContentTypeEnum) // Enum-Guard
+  }
+
+  const { data: topRows } = await q
+  const topItems: TopItem[] = (Array.isArray(topRows) ? topRows : []) as any
+
   // CSV-Links mit aktuellen Filtern
   const csvHrefSessions = `/api/creator/analytics/export?range=${encodeURIComponent(
     range
@@ -82,6 +173,24 @@ export default async function AnalyticsPage({
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
+          {/* Percentile-Badge */}
+          <span
+            className={`inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-medium ${
+              topBadge.tone === 'gold'
+                ? 'bg-yellow-500/15 text-yellow-700 dark:text-yellow-300'
+                : topBadge.tone === 'green'
+                ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                : 'bg-muted text-muted-foreground'
+            }`}
+            title={
+              percentile.pct != null && percentile.avg_impact != null
+                ? `Ø Impact: ${percentile.avg_impact.toFixed(1)} · Rang: ${(percentile.pct * 100).toFixed(0)}%`
+                : 'Keine Benchmark verfügbar'
+            }
+          >
+            {topBadge.label}
+          </span>
+
           <SegmentFilter />
           <TimeframeTabs />
           {/* CSV-Exports */}
@@ -142,9 +251,9 @@ export default async function AnalyticsPage({
         />
       </section>
 
-      {/* Chart mit Range-Param für Drilldown */}
+      {/* Chart */}
       {chartData.length > 0 ? (
-        <section className="rounded-2xl border border-border bg-card/60 p-5 backdrop-blur">
+        <section className="rounded-2xl border border-border bg-card/60 p-5 backdrop-blur mb-6">
           <MetricsChart data={chartData} rangeParam={range} />
           <p className="mt-3 text-xs text-muted-foreground">
             Zeitraum: {days === 'all' ? 'Gesamt' : `letzte ${days} Tage`}
@@ -152,20 +261,13 @@ export default async function AnalyticsPage({
             {type !== 'all' && ` · Segment: ${type}`}
           </p>
         </section>
-      ) : (
-        <section className="rounded-2xl border border-border bg-card/60 p-5 backdrop-blur">
-          <div className="text-lg font-semibold mb-1">Noch keine Daten</div>
-          <p className="text-sm text-muted-foreground">
-            Für das gewählte Segment/Zeitraum liegen noch keine Daten vor.
-          </p>
-          <Link
-            href="/creator/media-studio"
-            className="mt-4 inline-flex items-center rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 text-sm font-medium text-primary hover:bg-primary/15"
-          >
-            Media-Studio öffnen
-          </Link>
-        </section>
-      )}
+      ) : null}
+
+      {/* Heatmap */}
+      {heatmap.length > 0 && <PostingHeatmap data={heatmap} className="mb-6" />}
+
+      {/* Top Content */}
+      {topItems.length > 0 && <TopContentTable items={topItems} />}
     </main>
   )
 }
@@ -196,6 +298,7 @@ function totals(points: Pt[]): Agg {
   )
 }
 
+// Prozentänderung von Raten: (a/b) vs (c/d) → Δ%
 function rateDelta(numCur: number, numPrev: number, denCur: number, denPrev: number) {
   const rPrev = denPrev > 0 ? numPrev / denPrev : 0
   const rCur = denCur > 0 ? numCur / denCur : 0
@@ -203,48 +306,10 @@ function rateDelta(numCur: number, numPrev: number, denCur: number, denPrev: num
   return ((rCur - rPrev) / rPrev) * 100
 }
 
-function Kpi({
-  title,
-  value,
-  delta,
-  denom,
-  isPercent,
-}: {
-  title: string
-  value: string
-  delta?: number
-  denom?: number
-  isPercent?: boolean
-}) {
-  let deltaPct: number | undefined
-  if (typeof delta === 'number' && typeof denom === 'number') {
-    deltaPct = denom > 0 ? (delta / denom) * 100 : undefined
-  } else if (typeof delta === 'number' && isPercent) {
-    deltaPct = delta
-  }
-
-  const sign =
-    typeof deltaPct === 'number' ? (deltaPct > 0 ? '+' : deltaPct < 0 ? '' : '±') : undefined
-  const color =
-    typeof deltaPct !== 'number'
-      ? 'text-muted-foreground'
-      : deltaPct > 0
-      ? 'text-emerald-600 dark:text-emerald-400'
-      : deltaPct < 0
-      ? 'text-rose-600 dark:text-rose-400'
-      : 'text-muted-foreground'
-
-  return (
-    <div className="rounded-xl border border-border bg-background/60 p-4">
-      <div className="text-xs text-muted-foreground">{title}</div>
-      <div className="text-2xl font-semibold tabular-nums">{value}</div>
-      {typeof deltaPct === 'number' && (
-        <div className={`mt-1 text-xs tabular-nums ${color}`}>
-          {sign}
-          {Math.abs(deltaPct).toFixed(1)}%
-          <span className="text-muted-foreground"> vs. vorherige Periode</span>
-        </div>
-      )}
-    </div>
-  )
+function percentileToBadge(pct: number) {
+  // pct = cume_dist 0..1 (höher = besser)
+  const perc = Math.round(pct * 100)
+  if (perc >= 90) return { label: 'Top 10% Creator', tone: 'gold' as const }
+  if (perc >= 70) return { label: 'Top 30% Creator', tone: 'green' as const }
+  return { label: `Rang: ${perc}%`, tone: 'muted' as const }
 }
