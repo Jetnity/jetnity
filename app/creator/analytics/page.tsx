@@ -23,9 +23,9 @@ function isContentType(x: string): x is ContentTypeEnum {
   return (CT_VALUES as readonly string[]).includes(x)
 }
 
-// Rein visuelle Heatmap-Intensität (UI-Parameter)
-type Intensity = 'auto' | 'weich' | 'mittel' | 'hart'
-const INTENSITY_VALUES: Intensity[] = ['auto', 'weich', 'mittel', 'hart']
+// Intensitäts-METRIK (welche Kennzahl färbt)
+type IntensityMetric = 'sessions' | 'impressions' | 'views'
+const INTENSITY_METRICS: IntensityMetric[] = ['sessions', 'impressions', 'views']
 
 function Kpi({
   title, value, delta, denom, isPercent,
@@ -52,25 +52,6 @@ function Kpi({
   )
 }
 
-/**
- * Adapter-Komponente: nutzt die bestehende PostingHeatmap,
- * ohne deren strikte Prop-Typen anzutasten.
- * - akzeptiert rows (deine Heatmap-Daten)
- * - optional intensity (wird durchgereicht, falls vorhanden)
- */
-function HeatmapAdapter({
-  rows,
-  intensity,
-  className,
-}: {
-  rows: any[]
-  intensity?: Intensity
-  className?: string
-}) {
-  const Comp = PostingHeatmap as unknown as React.ComponentType<any>
-  return <Comp data={rows} intensity={intensity} className={className} />
-}
-
 export default async function AnalyticsPage({
   searchParams,
 }: { searchParams?: { range?: string; type?: string; intensity?: string } }) {
@@ -78,26 +59,26 @@ export default async function AnalyticsPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  // --- Zeitraum (bestehende Logik beibehalten) ---
+  // --- Zeitraum (bestehende Logik) ---
   const range = (searchParams?.range ?? '90').toLowerCase()
   const days: number | 'all' =
     range === 'all' ? 'all'
       : [30, 90, 180].includes(Number(range)) ? (Number(range) as 30|90|180)
       : 90
 
-  // --- Segment (bestehende Logik beibehalten) ---
+  // --- Segment (bestehende Logik) ---
   const rawType = (searchParams?.type ?? 'all').toLowerCase()
   const allowed = new Set(['all','video','image','guide','blog','story','other'])
   const type = allowed.has(rawType) ? rawType : 'all'
   const contentType: string | null = type === 'all' ? null : type
 
-  // --- Heatmap-Intensität (UI) ---
-  const rawIntensity = (searchParams?.intensity ?? 'auto').toLowerCase()
-  const intensity: Intensity = INTENSITY_VALUES.includes(rawIntensity as Intensity)
-    ? (rawIntensity as Intensity)
-    : 'auto'
+  // --- Intensitäts-Metrik (für deine bestehende Heatmap) ---
+  const rawIntensity = (searchParams?.intensity ?? 'sessions').toLowerCase()
+  const intensity: IntensityMetric = INTENSITY_METRICS.includes(rawIntensity as IntensityMetric)
+    ? (rawIntensity as IntensityMetric)
+    : 'sessions'
 
-  // --- Datenbeschaffung über Wrapper (unverändert) ---
+  // --- Datenbeschaffung (Timeseries etc.) ---
   const effectiveDays = days === 'all' ? 3650 : days
   const all = await fetchCreatorMetricsTimeseries(
     supabase, days === 'all' ? effectiveDays : effectiveDays * 2, contentType
@@ -119,8 +100,8 @@ export default async function AnalyticsPage({
   const viewRate = curT.views / imp
   const engagementRate = curT.engagement / imp
 
-  // Heatmap (UTC-Daten aus RPC)
-  const heatmap = await fetchCreatorPostingHeatmap(supabase, effectiveDays, contentType)
+  // RPC für Insights (Heatmap-Daten lädt die Komponente selbst via /api/creator/analytics/heatmap)
+  const heatmapForInsights = await fetchCreatorPostingHeatmap(supabase, effectiveDays, contentType)
 
   // Percentile (Benchmark)
   const percentile = await fetchCreatorImpactPercentile(supabase, days === 'all' ? 3650 : days)
@@ -138,8 +119,8 @@ export default async function AnalyticsPage({
   const { data: topRows } = await q
   const topItems: TopItem[] = (Array.isArray(topRows) ? topRows : []) as any
 
-  // Auto-Insights
-  const insights = computeInsights(current as unknown as TimeseriesPoint[], heatmap, topItems, days)
+  // Auto-Insights (nutzt RPC-Heatmap für Analysen, UI-Heatmap lädt separat)
+  const insights = computeInsights(current as unknown as TimeseriesPoint[], heatmapForInsights, topItems, days)
 
   const csvHrefSessions = `/api/creator/analytics/export?range=${encodeURIComponent(range)}&type=${encodeURIComponent(type)}`
   const csvHrefTimeseries = `/api/creator/analytics/timeseries?range=${encodeURIComponent(range)}&type=${encodeURIComponent(type)}`
@@ -184,7 +165,7 @@ export default async function AnalyticsPage({
         </div>
       </header>
 
-      {/* Zusatz-Control: Heatmap-Intensität (GET, behält range/type) */}
+      {/* Zusatz-Control: Intensitäts-METRIK (GET, behält range/type) */}
       <section className="mb-4">
         <form method="GET" className="flex flex-wrap items-center gap-3">
           <input type="hidden" name="range" value={range} />
@@ -196,10 +177,9 @@ export default async function AnalyticsPage({
             defaultValue={intensity}
             className="h-10 rounded-md border border-input bg-background px-3 text-sm"
           >
-            <option value="auto">Auto</option>
-            <option value="weich">Weich</option>
-            <option value="mittel">Mittel</option>
-            <option value="hart">Hart</option>
+            <option value="sessions">Sessions</option>
+            <option value="impressions">Impressions</option>
+            <option value="views">Views</option>
           </select>
           <button type="submit" className="h-10 rounded-md border border-input px-3 text-sm hover:bg-accent">
             Anwenden
@@ -231,11 +211,15 @@ export default async function AnalyticsPage({
         </section>
       )}
 
-      {/* Heatmap & Top Content */}
-      {heatmap.length > 0 && (
-        // Hinweis: Stunden sind UTC; Intensität ist rein visuell.
-        <HeatmapAdapter rows={heatmap as any[]} intensity={intensity} className="mb-6" />
-      )}
+      {/* Heatmap (deine Komponente lädt selbst via /api/creator/analytics/heatmap) */}
+      <PostingHeatmap
+        rangeParam={range}
+        typeParam={type}
+        className="mb-6"
+        intensity={intensity}
+      />
+
+      {/* Top Content */}
       {topItems.length > 0 && <TopContentTable items={topItems} />}
     </main>
   )
