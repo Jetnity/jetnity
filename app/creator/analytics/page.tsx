@@ -2,7 +2,6 @@
 // Server Component (RSC)
 import * as React from 'react'
 import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import TimeframeTabs from '@/components/creator/dashboard/TimeframeTabs'
@@ -23,6 +22,10 @@ const CT_VALUES = ['video', 'image', 'guide', 'blog', 'story', 'other'] as const
 function isContentType(x: string): x is ContentTypeEnum {
   return (CT_VALUES as readonly string[]).includes(x)
 }
+
+// Rein visuelle Heatmap-Intensität (UI-Parameter)
+type Intensity = 'auto' | 'weich' | 'mittel' | 'hart'
+const INTENSITY_VALUES: Intensity[] = ['auto', 'weich', 'mittel', 'hart']
 
 function Kpi({
   title, value, delta, denom, isPercent,
@@ -49,24 +52,52 @@ function Kpi({
   )
 }
 
+/**
+ * Adapter-Komponente: nutzt die bestehende PostingHeatmap,
+ * ohne deren strikte Prop-Typen anzutasten.
+ * - akzeptiert rows (deine Heatmap-Daten)
+ * - optional intensity (wird durchgereicht, falls vorhanden)
+ */
+function HeatmapAdapter({
+  rows,
+  intensity,
+  className,
+}: {
+  rows: any[]
+  intensity?: Intensity
+  className?: string
+}) {
+  const Comp = PostingHeatmap as unknown as React.ComponentType<any>
+  return <Comp data={rows} intensity={intensity} className={className} />
+}
+
 export default async function AnalyticsPage({
   searchParams,
-}: { searchParams?: { range?: string; type?: string } }) {
+}: { searchParams?: { range?: string; type?: string; intensity?: string } }) {
   const supabase = createServerComponentClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  // --- Zeitraum (bestehende Logik beibehalten) ---
   const range = (searchParams?.range ?? '90').toLowerCase()
   const days: number | 'all' =
     range === 'all' ? 'all'
       : [30, 90, 180].includes(Number(range)) ? (Number(range) as 30|90|180)
       : 90
 
+  // --- Segment (bestehende Logik beibehalten) ---
   const rawType = (searchParams?.type ?? 'all').toLowerCase()
   const allowed = new Set(['all','video','image','guide','blog','story','other'])
   const type = allowed.has(rawType) ? rawType : 'all'
   const contentType: string | null = type === 'all' ? null : type
 
+  // --- Heatmap-Intensität (UI) ---
+  const rawIntensity = (searchParams?.intensity ?? 'auto').toLowerCase()
+  const intensity: Intensity = INTENSITY_VALUES.includes(rawIntensity as Intensity)
+    ? (rawIntensity as Intensity)
+    : 'auto'
+
+  // --- Datenbeschaffung über Wrapper (unverändert) ---
   const effectiveDays = days === 'all' ? 3650 : days
   const all = await fetchCreatorMetricsTimeseries(
     supabase, days === 'all' ? effectiveDays : effectiveDays * 2, contentType
@@ -88,10 +119,14 @@ export default async function AnalyticsPage({
   const viewRate = curT.views / imp
   const engagementRate = curT.engagement / imp
 
+  // Heatmap (UTC-Daten aus RPC)
   const heatmap = await fetchCreatorPostingHeatmap(supabase, effectiveDays, contentType)
+
+  // Percentile (Benchmark)
   const percentile = await fetchCreatorImpactPercentile(supabase, days === 'all' ? 3650 : days)
   const topBadge = percentile.pct != null ? percentileToBadge(percentile.pct) : { label: '—', tone: 'muted' as const }
 
+  // Top Content
   let q = supabase
     .from('creator_session_metrics')
     .select('session_id,title,created_at,impact_score,impressions,views,likes,comments,content_type')
@@ -103,6 +138,7 @@ export default async function AnalyticsPage({
   const { data: topRows } = await q
   const topItems: TopItem[] = (Array.isArray(topRows) ? topRows : []) as any
 
+  // Auto-Insights
   const insights = computeInsights(current as unknown as TimeseriesPoint[], heatmap, topItems, days)
 
   const csvHrefSessions = `/api/creator/analytics/export?range=${encodeURIComponent(range)}&type=${encodeURIComponent(type)}`
@@ -113,7 +149,9 @@ export default async function AnalyticsPage({
       <header className="mb-8 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Analytics</h1>
-          <p className="text-sm text-muted-foreground">Performance über Zeit {type !== 'all' ? `· Segment: ${type}` : ''}</p>
+          <p className="text-sm text-muted-foreground">
+            Performance über Zeit {type !== 'all' ? `· Segment: ${type}` : ''} · Heatmap in <strong>UTC</strong>
+          </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <span
@@ -146,6 +184,29 @@ export default async function AnalyticsPage({
         </div>
       </header>
 
+      {/* Zusatz-Control: Heatmap-Intensität (GET, behält range/type) */}
+      <section className="mb-4">
+        <form method="GET" className="flex flex-wrap items-center gap-3">
+          <input type="hidden" name="range" value={range} />
+          <input type="hidden" name="type" value={type} />
+          <label className="text-xs text-muted-foreground" htmlFor="intensity">Heatmap-Intensität</label>
+          <select
+            id="intensity"
+            name="intensity"
+            defaultValue={intensity}
+            className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+          >
+            <option value="auto">Auto</option>
+            <option value="weich">Weich</option>
+            <option value="mittel">Mittel</option>
+            <option value="hart">Hart</option>
+          </select>
+          <button type="submit" className="h-10 rounded-md border border-input px-3 text-sm hover:bg-accent">
+            Anwenden
+          </button>
+        </form>
+      </section>
+
       {/* KPIs */}
       <section className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Kpi title="Impressions" value={curT.impressions.toLocaleString()} delta={days==='all'?undefined:curT.impressions-prevT.impressions} denom={prevT.impressions}/>
@@ -171,7 +232,10 @@ export default async function AnalyticsPage({
       )}
 
       {/* Heatmap & Top Content */}
-      {heatmap.length > 0 && <PostingHeatmap data={heatmap} className="mb-6" />}
+      {heatmap.length > 0 && (
+        // Hinweis: Stunden sind UTC; Intensität ist rein visuell.
+        <HeatmapAdapter rows={heatmap as any[]} intensity={intensity} className="mb-6" />
+      )}
       {topItems.length > 0 && <TopContentTable items={topItems} />}
     </main>
   )
