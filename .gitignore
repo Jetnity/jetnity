@@ -25,12 +25,8 @@ cypress/videos/
 .vercel/
 
 # Lokale Umgebungen (nie committen)
-.env
-.env.local
-.env.*.local
-.env.development
-.env.production
-.env.test
+.env*
+!.env.example   # Beispiel-Datei bleibt versioniert
 
 # Jetnity intern (lokale Arbeitsverzeichnisse)
 jetnity-clean/
