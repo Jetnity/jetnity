@@ -1287,30 +1287,6 @@ export type Database = {
           | { email_to_add: string; id: string }
         Returns: string[]
       }
-      citext: {
-        Args: { "": boolean } | { "": string } | { "": unknown }
-        Returns: string
-      }
-      citext_hash: {
-        Args: { "": string }
-        Returns: number
-      }
-      citextin: {
-        Args: { "": unknown }
-        Returns: string
-      }
-      citextout: {
-        Args: { "": string }
-        Returns: unknown
-      }
-      citextrecv: {
-        Args: { "": unknown }
-        Returns: string
-      }
-      citextsend: {
-        Args: { "": string }
-        Returns: string
-      }
       creator_alerts_eval_all: {
         Args: Record<PropertyKey, never>
         Returns: number
@@ -1370,26 +1346,6 @@ export type Database = {
         Args: { p_session_id: string }
         Returns: undefined
       }
-      gtrgm_compress: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_decompress: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_in: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_options: {
-        Args: { "": unknown }
-        Returns: undefined
-      }
-      gtrgm_out: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
       increment_impression: {
         Args: { session_id: string }
         Returns: undefined
@@ -1422,18 +1378,6 @@ export type Database = {
       remove_email_from_array: {
         Args: { email_to_remove: string; id: string }
         Returns: boolean
-      }
-      set_limit: {
-        Args: { "": number }
-        Returns: number
-      }
-      show_limit: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      show_trgm: {
-        Args: { "": string }
-        Returns: string[]
       }
       slugify: {
         Args: { "": string }
