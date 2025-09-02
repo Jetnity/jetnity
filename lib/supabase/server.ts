@@ -1,25 +1,117 @@
-import { createServerClient } from '@supabase/ssr'
+// lib/supabase/server.ts
+import 'server-only'
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import type { SupabaseClient, Session, User } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import type { Database } from '@/types/supabase'
 
-// Richtiger Next.js App Router + Supabase SSR Support
-export function createServerComponentClient<T = Database>() {
-  return createServerClient<T>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          // Liest das Cookie aus dem aktuellen SSR-Request
-          return cookies().get(name)?.value
-        },
-        set(name: string, value: string, options: any) {
-          // Wird in SSR selten gebraucht, hier leer lassen
-        },
-        remove(name: string, options: any) {
-          // Wird in SSR selten gebraucht, hier leer lassen
-        }
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const SUPABASE_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY // optional (nur Server)
+
+function assertEnvAnon() {
+  if (!SUPABASE_URL || !SUPABASE_ANON) {
+    throw new Error('[supabase] NEXT_PUBLIC_SUPABASE_URL oder NEXT_PUBLIC_SUPABASE_ANON_KEY fehlt')
+  }
+}
+function assertEnvService() {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE) {
+    throw new Error('[supabase] SUPABASE_SERVICE_ROLE_KEY fehlt (für Admin-Client)')
+  }
+}
+
+/** Read-only Cookies-Adapter (RSC) – erfüllt neues API (get/getAll/set/remove) */
+function rscCookiesAdapter(store: ReturnType<typeof cookies>) {
+  return {
+    get(name: string) {
+      return store.get(name)?.value
+    },
+    getAll() {
+      return store.getAll().map((c) => ({ name: c.name, value: c.value }))
+    },
+    set(_name: string, _value: string, _options: CookieOptions) {
+      /* no-op in RSC */
+    },
+    remove(_name: string, _options: CookieOptions) {
+      /* no-op in RSC */
+    },
+  }
+}
+
+/** Mutierbarer Cookies-Adapter (Route Handler / Server Actions) */
+function mutableCookiesAdapter(store: ReturnType<typeof cookies>) {
+  return {
+    get(name: string) {
+      return store.get(name)?.value
+    },
+    getAll() {
+      return store.getAll().map((c) => ({ name: c.name, value: c.value }))
+    },
+    set(name: string, value: string, options: CookieOptions) {
+      store.set({ name, value, ...options })
+    },
+    remove(name: string, _options: CookieOptions) {
+      // sicheres Entfernen
+      try {
+        // Next 14+
+        // @ts-ignore - delete ist vorhanden, aber nicht immer typisiert
+        store.delete?.(name)
+      } catch {
+        // Fallback: auslaufen lassen
+        store.set({ name, value: '', maxAge: 0, path: '/' })
       }
-    }
-  )
+    },
+  }
+}
+
+/** Für Server Components (RSC) – Cookies read-only */
+export function createServerComponentClient<Db = Database>(): SupabaseClient<Db> {
+  assertEnvAnon()
+  const store = cookies()
+  return createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
+    cookies: rscCookiesAdapter(store),
+  })
+}
+
+/** Für Route Handlers (/app/api/*) – Cookies mutierbar */
+export function createRouteHandlerClient<Db = Database>(): SupabaseClient<Db> {
+  assertEnvAnon()
+  const store = cookies()
+  return createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
+    cookies: mutableCookiesAdapter(store),
+  })
+}
+
+/** Für Server Actions – identisch zum Route Handler */
+export function createServerActionClient<Db = Database>(): SupabaseClient<Db> {
+  assertEnvAnon()
+  const store = cookies()
+  return createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
+    cookies: mutableCookiesAdapter(store),
+  })
+}
+
+/**
+ * Admin-Client mit Service-Role (volle Rechte).
+ * Nur serverseitig verwenden (Route-Handler / Server Actions)!
+ */
+export function createAdminClient<Db = Database>(): SupabaseClient<Db> {
+  assertEnvService()
+  const store = cookies()
+  return createServerClient<Db>(SUPABASE_URL!, SUPABASE_SERVICE!, {
+    cookies: mutableCookiesAdapter(store),
+  })
+}
+
+/* ───────────── Convenience ───────────── */
+
+export async function getSessionServer(): Promise<Session | null> {
+  const supabase = createServerComponentClient()
+  const { data } = await supabase.auth.getSession()
+  return data?.session ?? null
+}
+
+export async function getUserServer(): Promise<User | null> {
+  const session = await getSessionServer()
+  return session?.user ?? null
 }

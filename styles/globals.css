@@ -2,55 +2,191 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Base Reset */
+/* -----------------------------------------------------------------------------
+   Base Reset
+----------------------------------------------------------------------------- */
 html, body {
   padding: 0;
   margin: 0;
-  font-family: system-ui, sans-serif;
+  font-family: system-ui, ui-sans-serif, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
   scroll-behavior: smooth;
 }
+* { -webkit-tap-highlight-color: transparent; }
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
-/* =======================
-   Design Tokens (shadcn)
-   ======================= */
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --radius: 0.75rem;
+/* Textauswahl */
+::selection { background-color: rgb(0 0 0 / 0.12); }
+.dark ::selection { background-color: rgb(255 255 255 / 0.16); }
 
-    /* Jetnity Hero – Palette */
-    --jet-hero: 14 27 46;   /* #0E1B2E */
-    --jet-btn:  17 19 23;   /* #111317 */
-  }
-
-  body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+/* Bewegung reduzieren (Accessibility) */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
-/* =======================
-   Jetnity Pro UI – Components
-   ======================= */
+/* Bessere Defaults für interaktive Elemente */
+:where(button,[role="button"]) { cursor: pointer; }
+:where(a) { text-underline-offset: 3px; }
+
+/* -----------------------------------------------------------------------------
+   Design Tokens (shadcn-kompatibel) – JETNITY PRO
+----------------------------------------------------------------------------- */
+@layer base {
+  :root {
+    color-scheme: light; /* Fix: explizit nur light hier */
+
+    /* Light */
+    --background: 210 30% 98%;
+    --foreground: 220 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: var(--foreground);
+
+    --popover: 0 0% 100%;
+    --popover-foreground: var(--foreground);
+
+    /* Brand */
+    --primary: 222 84% 56%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 215 20% 92%;
+    --secondary-foreground: 220 25% 20%;
+
+    --muted: 210 18% 92%;
+    --muted-foreground: 220 10% 45%;
+
+    --accent: 264 85% 62%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 358 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 22% 86%;
+    --input: 215 22% 86%;
+    --ring: var(--primary);
+
+    /* Radius */
+    --radius: 0.875rem; /* ~14px */
+
+    /* Jetnity – Palette (Hero/Buttons) */
+    --jet-hero: 14 27 46;   /* #0E1B2E */
+    --jet-btn:  17 19 23;   /* #111317 */
+
+    /* Surfaces */
+    --surface-1: 0 0% 100%;
+    --surface-2: 210 24% 97%;
+    --surface-3: 210 22% 95%;
+
+    /* SmartSnippet */
+    --snippet-lines: 6;
+  }
+
+  /* Dark-Theme Tokens */
+  .dark {
+    color-scheme: dark; /* Fix: hier explizit dark */
+
+    --background: 224 16% 8%;
+    --foreground: 210 15% 96%;
+
+    --card: 223 22% 10%;
+    --card-foreground: var(--foreground);
+
+    --popover: 223 22% 10%;
+    --popover-foreground: var(--foreground);
+
+    --primary: 222 84% 66%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 223 18% 14%;
+    --secondary-foreground: 210 15% 96%;
+
+    --muted: 223 20% 16%;
+    --muted-foreground: 220 10% 70%;
+
+    --accent: 266 85% 66%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 358 75% 56%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 223 20% 18%;
+    --input: 223 20% 18%;
+    --ring: var(--primary);
+
+    --surface-1: 223 22% 12%;
+    --surface-2: 223 22% 14%;
+    --surface-3: 223 22% 16%;
+  }
+
+  /* App-Background: Gradient + subtile Noise */
+  body {
+    color: hsl(var(--foreground));
+    background:
+      radial-gradient(1200px 600px at 10% -10%, hsl(222 84% 56% / 6%), transparent 60%),
+      radial-gradient(800px 500px at 90% 0%, hsl(266 85% 62% / 6%), transparent 50%),
+      linear-gradient(to bottom, hsl(210 30% 98%), hsl(210 28% 96%));
+    background-attachment: fixed;
+  }
+  .dark body {
+    background:
+      radial-gradient(900px 500px at 10% -10%, hsl(222 84% 56% / 12%), transparent 60%),
+      radial-gradient(700px 420px at 90% 0%, hsl(266 85% 62% / 10%), transparent 50%),
+      linear-gradient(to bottom, hsl(224 16% 8%), hsl(224 16% 9%));
+  }
+
+  /* Subtle noise overlay (perf: SVG turbulence) */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: .06;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    mix-blend-mode: multiply;
+  }
+
+  /* Typo polish */
+  h1,h2,h3 { letter-spacing: -0.02em; }
+}
+
+/* High-Contrast / Forced Colors support */
+@media (forced-colors: active) {
+  :root, .dark {
+    --border: 0 0% 50%;
+    --ring: 240 100% 50%;
+  }
+  .focus-ring { box-shadow: 0 0 0 2px CanvasText !important; }
+}
+
+/* -----------------------------------------------------------------------------
+   Components
+----------------------------------------------------------------------------- */
 @layer components {
+  /* Surfaces */
+  .surface-1 {
+    background-color: hsl(var(--surface-1));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    box-shadow: 0 1px 2px hsl(0 0% 0% / 0.05), 0 1px 8px hsl(0 0% 0% / 0.04);
+  }
+  .surface-2 {
+    background-color: hsl(var(--surface-2));
+    border: 1px solid hsl(var(--border));
+    border-radius: calc(var(--radius) + 4px);
+    box-shadow: 0 4px 16px hsl(222 60% 20% / 0.08);
+  }
+  .surface-3 {
+    background-color: hsl(var(--surface-3));
+    border: 1px solid hsl(var(--border));
+    border-radius: calc(var(--radius) + 10px);
+    box-shadow: 0 10px 30px hsl(222 60% 20% / 0.12);
+  }
+
   .glass-elevated {
     box-shadow:
       0 1px 0 rgb(255 255 255 / 0.06) inset,
@@ -66,14 +202,60 @@ html, body {
     border-radius: 1rem;
     padding: 0.75rem;
   }
+
+  .focus-ring {
+    outline: none !important;
+    box-shadow:
+      0 0 0 2px rgb(255 255 255 / 0.22),
+      0 0 0 4px rgb(255 255 255 / 0.10) !important;
+  }
+
+  .tab-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .15s ease;
+    padding: 0.35rem 0.75rem;
+    min-height: 44px;
+    height: 44px;
+    color: rgb(255 255 255 / 0.90);
+    background-color: rgb(255 255 255 / 0.12);
+    border: 1px solid rgb(255 255 255 / 0.14);
+  }
+  .tab-chip:hover {
+    background-color: rgb(255 255 255 / 0.18);
+    border-color: rgb(255 255 255 / 0.20);
+  }
+  .tab-chip--active {
+    color: #fff;
+    font-weight: 600;
+    background-color: rgb(255 255 255 / 0.26);
+    border-color: rgb(255 255 255 / 0.30);
+  }
+
+  .btn-premium {
+    transition: transform .15s ease, box-shadow .2s ease;
+    will-change: transform, box-shadow;
+  }
+  .btn-premium:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px hsl(222 84% 56% / 0.22);
+  }
+  .btn-premium:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px hsl(222 84% 56% / 0.18);
+  }
 }
 
-/* =======================
-   Jetnity Pro UI – Utilities
-   ======================= */
+/* -----------------------------------------------------------------------------
+   Utilities
+----------------------------------------------------------------------------- */
 @layer utilities {
-  .supports-blur\:backdrop-blur-xl {
-    @supports (backdrop-filter: blur(16px)) { backdrop-filter: blur(16px); }
+  @supports (backdrop-filter: blur(16px)) {
+    .supports-blur\:backdrop-blur-xl { backdrop-filter: blur(16px); }
   }
 
   .bg-hero-panel        { background-color: rgb(var(--jet-hero) / 0.88); }
@@ -91,55 +273,36 @@ html, body {
   .btn-hero:hover { filter: brightness(1.05); }
   .btn-hero:active{ transform: translateY(1px); }
 
-  .focus-ring {
-    outline: none !important;
-    box-shadow:
-      0 0 0 2px rgb(255 255 255 / 0.22),
-      0 0 0 4px rgb(255 255 255 / 0.10) !important;
-  }
   .tap-target { min-height: 44px; height: 44px; }
 
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
   .mask-edges {
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent, black 16px,
-      black calc(100% - 16px), transparent
-    );
-            mask-image: linear-gradient(
-      to right,
-      transparent, black 16px,
-      black calc(100% - 16px), transparent
-    );
+    -webkit-mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
+            mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
   }
 
   .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
   .p-safe  { padding-bottom: env(safe-area-inset-bottom); padding-top: env(safe-area-inset-top); }
-}
 
-/* Globales Mobile-/Motion-Polish */
-* { -webkit-tap-highlight-color: transparent; }
-html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
+  .smart-snippet--clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: var(--snippet-lines, 6);
   }
 }
 
-/* ============================================================================
-   Navy Glass Pro (Hero): frosted, single subtle border, sichtbare Popover
-   ============================================================================ */
-
-/* Farbtoken für den Hero */
+/* -----------------------------------------------------------------------------
+   Navy Glass Pro (Hero)
+----------------------------------------------------------------------------- */
 :root { --hero-navy: 12 25 48; } /* #0c1930 */
 
 .hero-glass {
   position: relative;
-  z-index: 90;                           /* <- Hoch über Folge-Content */
-  overflow: visible;                     /* Popover nicht abschneiden */
+  z-index: 90;
+  overflow: visible;
   background-color: rgb(var(--hero-navy) / 0.84);
   border: 1px solid rgb(255 255 255 / 0.10);
   box-shadow:
@@ -150,16 +313,12 @@ html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 @media (min-width: 768px) {
   .hero-glass { margin-bottom: 0.75rem; }
 }
-
-/* echtes Frosted-Feeling wenn unterstützt */
 @supports (backdrop-filter: blur(16px)) {
   .hero-glass {
     background-color: rgb(var(--hero-navy) / 0.72);
     backdrop-filter: saturate(1.15) blur(18px);
   }
 }
-
-/* kleiner, eleganter „Tail“ unter der Suche */
 .hero-glass::after {
   content: "";
   position: absolute;
@@ -174,27 +333,109 @@ html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
   box-shadow: 0 10px 24px rgb(0 0 0 / 0.25);
   border-radius: 3px;
 }
-
-/* Popover/Dialoge im Hero immer sichtbar über Content darunter */
-.hero-glass [role="dialog"] { z-index: 1001 !important; }
+.hero-glass [role="dialog"],
 .hero-glass [data-popover],
-.hero-glass .popover       { z-index: 1001 !important; }
+.hero-glass .popover { z-index: 1001 !important; }
 
-/* Gläserne, ruhige Tabs */
-.tab-chip {
-  @apply tap-target focus-ring inline-flex items-center gap-2 rounded-full text-sm transition;
-  padding: 0.35rem 0.75rem;
-  color: rgb(255 255 255 / 0.90);
-  background-color: rgb(255 255 255 / 0.12);
-  border: 1px solid rgb(255 255 255 / 0.14);
+/* -----------------------------------------------------------------------------
+   Prose / Markdown Theme (Tailwind Typography)
+----------------------------------------------------------------------------- */
+@layer base {
+  .prose {
+    --tw-prose-body: hsl(var(--foreground));
+    --tw-prose-headings: hsl(var(--foreground));
+    --tw-prose-links: hsl(var(--primary));
+    --tw-prose-bold: hsl(var(--foreground));
+    --tw-prose-counters: hsl(var(--muted-foreground));
+    --tw-prose-bullets: hsl(var(--muted-foreground));
+    --tw-prose-hr: hsl(var(--border));
+    --tw-prose-quotes: hsl(var(--foreground));
+    --tw-prose-quote-borders: hsl(var(--primary) / .35);
+    --tw-prose-captions: hsl(var(--muted-foreground));
+    --tw-prose-code: hsl(var(--foreground));
+    --tw-prose-th-borders: hsl(var(--border));
+    --tw-prose-td-borders: hsl(var(--border));
+    max-width: none;
+  }
+  .dark .prose {
+    --tw-prose-links: hsl(var(--primary));
+    --tw-prose-hr: hsl(var(--border));
+    --tw-prose-quote-borders: hsl(var(--primary) / .45);
+  }
+
+  .prose h1, .prose h2, .prose h3, .prose h4 {
+    scroll-margin-top: 96px;
+    letter-spacing: -0.02em;
+  }
+
+  .prose a {
+    text-decoration: underline;
+    transition: color .15s ease, text-decoration-color .15s ease;
+  }
+  .prose a:hover { text-decoration-color: hsl(var(--primary) / .6); }
+
+  .prose table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.75rem;
+    overflow: hidden;
+  }
+  .prose thead th {
+    background: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
+    font-weight: 600;
+  }
+  .dark .prose thead th { background: hsl(var(--secondary)); }
+  .prose thead th, .prose tbody td {
+    border-bottom: 1px solid hsl(var(--border));
+    padding: .75rem 1rem;
+  }
+  .prose tbody tr:last-child td { border-bottom: 0; }
+
+  .prose blockquote {
+    border-left: 4px solid hsl(var(--primary) / .35);
+    background: hsl(var(--muted) / .35);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+  }
+
+  .prose :not(pre) > code {
+    background: hsl(var(--muted) / .55);
+    border: 1px solid hsl(var(--border));
+    padding: .15rem .35rem;
+    border-radius: .4rem;
+    font-size: .875em;
+  }
+  .dark .prose :not(pre) > code { background: hsl(var(--muted) / .35); }
+
+  .prose pre {
+    background: hsl(var(--secondary));
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.75rem;
+    padding: 0.9rem 1rem;
+    overflow: auto;
+  }
+  .dark .prose pre { background: hsl(var(--secondary)); }
+  .prose pre code {
+    background: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    display: block;
+    min-width: 100%;
+  }
+  .prose pre::-webkit-scrollbar { height: 8px; }
+  .prose pre::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / .35);
+    border-radius: 9999px;
+  }
 }
-.tab-chip:hover {
-  background-color: rgb(255 255 255 / 0.18);
-  border-color: rgb(255 255 255 / 0.20);
-}
-.tab-chip--active {
-  color: #fff;
-  font-weight: 600;
-  background-color: rgb(255 255 255 / 0.26);
-  border-color: rgb(255 255 255 / 0.30);
+
+/* Print: Hintergründe/Noise aus, klare Kontraste */
+@media print {
+  body, .dark body { background: #fff !important; }
+  body::before { display: none !important; }
 }

@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      airports: {
+        Row: {
+          city: string | null
+          country: string | null
+          created_at: string | null
+          iata: string | null
+          icao: string | null
+          id: number
+          lat: number | null
+          lon: number | null
+          name: string
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          iata?: string | null
+          icao?: string | null
+          id?: number
+          lat?: number | null
+          lon?: number | null
+          name: string
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          iata?: string | null
+          icao?: string | null
+          id?: number
+          lat?: number | null
+          lon?: number | null
+          name?: string
+        }
+        Relationships: []
+      }
+      app_admins: {
+        Row: {
+          user_id: string
+        }
+        Insert: {
+          user_id: string
+        }
+        Update: {
+          user_id?: string
+        }
+        Relationships: []
+      }
       blog_comments: {
         Row: {
           blog_id: string | null
@@ -71,13 +119,15 @@ export type Database = {
           is_featured: boolean
           likes: number
           published_at: string | null
+          scheduled_at: string | null
           seo_description: string | null
           seo_title: string | null
           slug: string
-          status: string
+          status: Database["public"]["Enums"]["blog_status"]
           tags: string[] | null
           title: string
           updated_at: string | null
+          user_id: string | null
           views: number
         }
         Insert: {
@@ -92,13 +142,15 @@ export type Database = {
           is_featured?: boolean
           likes?: number
           published_at?: string | null
+          scheduled_at?: string | null
           seo_description?: string | null
           seo_title?: string | null
           slug: string
-          status?: string
+          status?: Database["public"]["Enums"]["blog_status"]
           tags?: string[] | null
           title: string
           updated_at?: string | null
+          user_id?: string | null
           views?: number
         }
         Update: {
@@ -113,13 +165,15 @@ export type Database = {
           is_featured?: boolean
           likes?: number
           published_at?: string | null
+          scheduled_at?: string | null
           seo_description?: string | null
           seo_title?: string | null
           slug?: string
-          status?: string
+          status?: Database["public"]["Enums"]["blog_status"]
           tags?: string[] | null
           title?: string
           updated_at?: string | null
+          user_id?: string | null
           views?: number
         }
         Relationships: [
@@ -220,11 +274,15 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string | null
+          display_name: string | null
+          email: string | null
           facebook: string | null
           id: string
           instagram: string | null
+          last_seen_at: string | null
           name: string | null
           role: string | null
+          status: string
           tiktok: string | null
           twitter: string | null
           user_id: string | null
@@ -236,11 +294,15 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string | null
+          display_name?: string | null
+          email?: string | null
           facebook?: string | null
           id?: string
           instagram?: string | null
+          last_seen_at?: string | null
           name?: string | null
           role?: string | null
+          status?: string
           tiktok?: string | null
           twitter?: string | null
           user_id?: string | null
@@ -252,17 +314,146 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string | null
+          display_name?: string | null
+          email?: string | null
           facebook?: string | null
           id?: string
           instagram?: string | null
+          last_seen_at?: string | null
           name?: string | null
           role?: string | null
+          status?: string
           tiktok?: string | null
           twitter?: string | null
           user_id?: string | null
           username?: string | null
           website?: string | null
           youtube?: string | null
+        }
+        Relationships: []
+      }
+      creator_publish_events: {
+        Row: {
+          created_at: string
+          id: string
+          note: string | null
+          rating: number | null
+          reason: string | null
+          scheduled_for: string | null
+          session_id: string
+          type: string
+          visibility: string | null
+          visibility_before: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          rating?: number | null
+          reason?: string | null
+          scheduled_for?: string | null
+          session_id: string
+          type: string
+          visibility?: string | null
+          visibility_before?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          rating?: number | null
+          reason?: string | null
+          scheduled_for?: string | null
+          session_id?: string
+          type?: string
+          visibility?: string | null
+          visibility_before?: string | null
+        }
+        Relationships: []
+      }
+      creator_publish_queue: {
+        Row: {
+          caption: string | null
+          created_at: string
+          id: string
+          platform: string
+          result: Json | null
+          scheduled_at: string | null
+          session_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          platform: string
+          result?: Json | null
+          scheduled_at?: string | null
+          session_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          platform?: string
+          result?: Json | null
+          scheduled_at?: string | null
+          session_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "creator_publish_queue_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "creator_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      creator_publish_schedule: {
+        Row: {
+          attempts: number
+          created_at: string
+          id: string
+          last_error: string | null
+          note: string | null
+          run_at: string
+          session_id: string
+          status: string
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          note?: string | null
+          run_at: string
+          session_id: string
+          status?: string
+          updated_at?: string
+          visibility: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          note?: string | null
+          run_at?: string
+          session_id?: string
+          status?: string
+          updated_at?: string
+          visibility?: string
         }
         Relationships: []
       }
@@ -332,13 +523,17 @@ export type Database = {
           content: string | null
           created_at: string
           id: string
+          idempotency_key: string | null
           insights: string | null
           published_at: string | null
           rating: number | null
+          review_status: string
           role: string
-          shared_with: Json
+          shared_with: string[] | null
           status: string
           title: string
+          tracking: Json | null
+          updated_at: string
           user_id: string
           visibility: Database["public"]["Enums"]["visibility_status"] | null
         }
@@ -346,13 +541,17 @@ export type Database = {
           content?: string | null
           created_at?: string
           id?: string
+          idempotency_key?: string | null
           insights?: string | null
           published_at?: string | null
           rating?: number | null
+          review_status?: string
           role: string
-          shared_with: Json
+          shared_with?: string[] | null
           status: string
           title: string
+          tracking?: Json | null
+          updated_at?: string
           user_id?: string
           visibility?: Database["public"]["Enums"]["visibility_status"] | null
         }
@@ -360,13 +559,17 @@ export type Database = {
           content?: string | null
           created_at?: string
           id?: string
+          idempotency_key?: string | null
           insights?: string | null
           published_at?: string | null
           rating?: number | null
+          review_status?: string
           role?: string
-          shared_with?: Json
+          shared_with?: string[] | null
           status?: string
           title?: string
+          tracking?: Json | null
+          updated_at?: string
           user_id?: string
           visibility?: Database["public"]["Enums"]["visibility_status"] | null
         }
@@ -374,6 +577,8 @@ export type Database = {
       }
       creator_uploads: {
         Row: {
+          city: string | null
+          cover_url: string | null
           created_at: string
           creator_avatar: string | null
           creator_name: string | null
@@ -387,11 +592,15 @@ export type Database = {
           language: string
           mood: string | null
           region: string
+          session_id: string | null
+          slug: string | null
           tags: string[]
           title: string
           user_id: string | null
         }
         Insert: {
+          city?: string | null
+          cover_url?: string | null
           created_at: string
           creator_avatar?: string | null
           creator_name?: string | null
@@ -405,11 +614,15 @@ export type Database = {
           language: string
           mood?: string | null
           region: string
+          session_id?: string | null
+          slug?: string | null
           tags: string[]
           title: string
           user_id?: string | null
         }
         Update: {
+          city?: string | null
+          cover_url?: string | null
           created_at?: string
           creator_avatar?: string | null
           creator_name?: string | null
@@ -423,11 +636,221 @@ export type Database = {
           language?: string
           mood?: string | null
           region?: string
+          session_id?: string | null
+          slug?: string | null
           tags?: string[]
           title?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "creator_uploads_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "creator_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      edit_docs: {
+        Row: {
+          created_at: string
+          data: Json
+          doc: Json
+          id: string
+          item_id: string
+          session_id: string
+          type: string
+          updated_at: string
+          user_id: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          doc: Json
+          id?: string
+          item_id: string
+          session_id: string
+          type: string
+          updated_at?: string
+          user_id: string
+          version?: number
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          doc?: Json
+          id?: string
+          item_id?: string
+          session_id?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edit_docs_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "creator_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_edit_docs_session"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "creator_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      media_versions: {
+        Row: {
+          created_at: string
+          doc: Json
+          edit_doc_id: string | null
+          id: string
+          item_id: string
+          label: string
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          doc?: Json
+          edit_doc_id?: string | null
+          id?: string
+          item_id: string
+          label: string
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          doc?: Json
+          edit_doc_id?: string | null
+          id?: string
+          item_id?: string
+          label?: string
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_versions_edit_doc_id_fkey"
+            columns: ["edit_doc_id"]
+            isOneToOne: false
+            referencedRelation: "edit_docs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "media_versions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "creator_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      render_jobs: {
+        Row: {
+          created_at: string
+          edit_doc_id: string | null
+          edit_id: string
+          error_message: string | null
+          id: string
+          job_type: string | null
+          logs: string | null
+          output_bucket: string | null
+          output_path: string | null
+          output_url: string | null
+          params: Json | null
+          preset: string
+          progress: number
+          result_url: string | null
+          session_id: string
+          status: string
+          target: string
+          updated_at: string
+          user_id: string | null
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          edit_doc_id?: string | null
+          edit_id: string
+          error_message?: string | null
+          id?: string
+          job_type?: string | null
+          logs?: string | null
+          output_bucket?: string | null
+          output_path?: string | null
+          output_url?: string | null
+          params?: Json | null
+          preset: string
+          progress?: number
+          result_url?: string | null
+          session_id: string
+          status?: string
+          target: string
+          updated_at?: string
+          user_id?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          edit_doc_id?: string | null
+          edit_id?: string
+          error_message?: string | null
+          id?: string
+          job_type?: string | null
+          logs?: string | null
+          output_bucket?: string | null
+          output_path?: string | null
+          output_url?: string | null
+          params?: Json | null
+          preset?: string
+          progress?: number
+          result_url?: string | null
+          session_id?: string
+          status?: string
+          target?: string
+          updated_at?: string
+          user_id?: string | null
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "render_jobs_edit_id_fkey"
+            columns: ["edit_id"]
+            isOneToOne: false
+            referencedRelation: "edit_docs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "render_jobs_editdoc_fkey"
+            columns: ["edit_doc_id"]
+            isOneToOne: false
+            referencedRelation: "edit_docs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "render_jobs_session_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "creator_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "render_jobs_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "creator_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       session_cocreations: {
         Row: {
@@ -465,25 +888,49 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          meta: Json
+          parent_id: string | null
           session_id: string
           text: string | null
+          updated_at: string
           user_id: string | null
         }
         Insert: {
           created_at?: string
           id?: string
+          meta?: Json
+          parent_id?: string | null
           session_id: string
           text?: string | null
+          updated_at?: string
           user_id?: string | null
         }
         Update: {
           created_at?: string
           id?: string
+          meta?: Json
+          parent_id?: string | null
           session_id?: string
           text?: string | null
+          updated_at?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "session_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "session_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_comments_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "creator_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       session_impressions: {
         Row: {
@@ -548,6 +995,143 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "session_media_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "creator_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_metrics: {
+        Row: {
+          completion_rate: number | null
+          impressions: number | null
+          prev_impressions: number | null
+          prev_views: number | null
+          session_id: string
+          views: number | null
+          watch_time_sec_total: number | null
+        }
+        Insert: {
+          completion_rate?: number | null
+          impressions?: number | null
+          prev_impressions?: number | null
+          prev_views?: number | null
+          session_id: string
+          views?: number | null
+          watch_time_sec_total?: number | null
+        }
+        Update: {
+          completion_rate?: number | null
+          impressions?: number | null
+          prev_impressions?: number | null
+          prev_views?: number | null
+          session_id?: string
+          views?: number | null
+          watch_time_sec_total?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_metrics_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "creator_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_metrics_daily: {
+        Row: {
+          date: string
+          impressions: number | null
+          session_id: string
+          views: number | null
+        }
+        Insert: {
+          date: string
+          impressions?: number | null
+          session_id: string
+          views?: number | null
+        }
+        Update: {
+          date?: string
+          impressions?: number | null
+          session_id?: string
+          views?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_metrics_daily_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "creator_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_review_requests: {
+        Row: {
+          admin_id: string
+          created_at: string
+          details: string | null
+          due_date: string | null
+          id: string
+          reason: string | null
+          session_id: string
+          severity: string
+          status: string
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string
+          details?: string | null
+          due_date?: string | null
+          id?: string
+          reason?: string | null
+          session_id: string
+          severity: string
+          status?: string
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string
+          details?: string | null
+          due_date?: string | null
+          id?: string
+          reason?: string | null
+          session_id?: string
+          severity?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_review_requests_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "creator_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_saves: {
+        Row: {
+          created_at: string | null
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_saves_session_id_fkey"
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "creator_sessions"
@@ -625,6 +1209,44 @@ export type Database = {
           },
         ]
       }
+      session_versions: {
+        Row: {
+          content: string | null
+          created_at: string
+          id: string
+          meta: Json | null
+          session_id: string
+          title: string | null
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          session_id: string
+          title?: string | null
+          user_id?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          session_id?: string
+          title?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_versions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "creator_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       session_views: {
         Row: {
           created_at: string | null
@@ -660,8 +1282,34 @@ export type Database = {
     }
     Functions: {
       append_email_to_array: {
-        Args: { email_to_add: string; id: string }
-        Returns: undefined
+        Args:
+          | { email: string; session_id: string }
+          | { email_to_add: string; id: string }
+        Returns: string[]
+      }
+      citext: {
+        Args: { "": boolean } | { "": string } | { "": unknown }
+        Returns: string
+      }
+      citext_hash: {
+        Args: { "": string }
+        Returns: number
+      }
+      citextin: {
+        Args: { "": unknown }
+        Returns: string
+      }
+      citextout: {
+        Args: { "": string }
+        Returns: unknown
+      }
+      citextrecv: {
+        Args: { "": unknown }
+        Returns: string
+      }
+      citextsend: {
+        Args: { "": string }
+        Returns: string
       }
       creator_alerts_eval_all: {
         Args: Record<PropertyKey, never>
@@ -722,20 +1370,86 @@ export type Database = {
         Args: { p_session_id: string }
         Returns: undefined
       }
+      gtrgm_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_decompress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_options: {
+        Args: { "": unknown }
+        Returns: undefined
+      }
+      gtrgm_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
       increment_impression: {
-        Args: { session_id_input: string }
+        Args: { session_id: string }
+        Returns: undefined
+      }
+      increment_like: {
+        Args: { session_id: string }
         Returns: undefined
       }
       increment_view: {
-        Args: { session_id_input: string }
+        Args: { session_id: string }
         Returns: undefined
       }
       platform_avg_impact_score: {
+        Args: Record<PropertyKey, never> | { days?: number }
+        Returns: number
+      }
+      publish_due_blog_posts: {
+        Args: { batch_size?: number }
+        Returns: {
+          id: string
+          scheduled_at: string
+          title: string
+          user_id: string
+        }[]
+      }
+      publish_due_posts: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      remove_email_from_array: {
+        Args: { email_to_remove: string; id: string }
+        Returns: boolean
+      }
+      set_limit: {
+        Args: { "": number }
+        Returns: number
+      }
+      show_limit: {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      show_trgm: {
+        Args: { "": string }
+        Returns: string[]
+      }
+      slugify: {
+        Args: { "": string }
+        Returns: string
+      }
+      sync_creator_profile_core: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      sync_creator_profile_emails: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
+      blog_status: "draft" | "published" | "scheduled" | "archived"
       creator_content_type:
         | "video"
         | "image"
@@ -872,6 +1586,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      blog_status: ["draft", "published", "scheduled", "archived"],
       creator_content_type: [
         "video",
         "image",

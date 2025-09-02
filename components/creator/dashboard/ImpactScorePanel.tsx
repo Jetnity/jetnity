@@ -1,6 +1,7 @@
+// components/creator/dashboard/ImpactScorePanel.tsx
 // Server Component (keine Hooks, kein 'use client')
+
 import Link from 'next/link'
-import { cookies } from 'next/headers'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import ImpactScore from '@/components/creator/dashboard/ImpactScore'
 import ImpactScoreRealtimeBridge from '@/components/creator/dashboard/ImpactScoreRealtimeBridge'
@@ -10,6 +11,11 @@ import { fetchPlatformAvgImpactScore } from '@/lib/supabase/rpc/platformAvg'
 
 type Metric = Tables<'creator_session_metrics'>
 
+export const dynamic = 'force-dynamic' // user-spezifisch; keine Caches
+
+const MAX_ROWS = 1000
+const HISTORY_DAYS = 30
+
 export default async function ImpactScorePanel({
   days = 90 as number | 'all',
 }: {
@@ -18,86 +24,68 @@ export default async function ImpactScorePanel({
 }) {
   const supabase = createServerComponentClient()
 
-  const {
-    data: { user },
-    error: userErr,
-  } = await supabase.auth.getUser()
-
+  const { data: { user }, error: userErr } = await supabase.auth.getUser()
   if (userErr || !user) {
     return (
-      <div className="rounded-2xl border border-border bg-card/60 p-5 shadow-sm backdrop-blur">
-        <div className="mb-2 text-lg font-semibold">Anmeldung erforderlich</div>
+      <CardShell title="Anmeldung erforderlich" ctaHref="/auth/sign-in" cta="Jetzt anmelden">
         <p className="text-sm text-muted-foreground">
           Bitte melde dich an, um deine Impact-Zahlen zu sehen.
         </p>
-        <Link
-          href="/auth/sign-in"
-          className={cn(
-            'mt-4 inline-flex items-center justify-center rounded-lg px-4 py-2',
-            'border border-primary/30 bg-primary/10 text-primary font-medium hover:bg-primary/15 transition'
-          )}
-        >
-          Jetzt anmelden
-        </Link>
-      </div>
+      </CardShell>
     )
   }
 
-  // Zeitfenster vorbereiten
-  const now = Date.now()
-  const sinceIso =
+  // Zeitraum
+  const now = new Date()
+  const since =
     typeof days === 'number'
-      ? new Date(now - days * 24 * 60 * 60 * 1000).toISOString()
-      : null
-  const effectiveDaysForPlatform = typeof days === 'number' ? days : 3650 // "Gesamt"
+      ? new Date(now.getTime() - days * 24 * 60 * 60 * 1000)
+      : undefined
+  const sinceIso = since?.toISOString()
+  const effectiveDaysForPlatform = typeof days === 'number' ? days : 3650
 
-  // Eigene Metriken laden (optional nach Zeitfenster gefiltert)
-  let query = supabase
-    .from('creator_session_metrics')
-    .select('*')
-    .eq('user_id', user.id)
+  // Daten parallel laden
+  const [metricsRes, platformAvg] = await Promise.all([
+    (async () => {
+      let q = supabase
+        .from('creator_session_metrics')
+        .select('*')
+        .eq('user_id', user.id)
 
-  if (sinceIso) query = query.gte('created_at', sinceIso)
+      if (sinceIso) q = q.gte('created_at', sinceIso)
 
-  const { data: rows, error } = await query
-    .order('created_at', { ascending: false })
-    .limit(300)
+      const { data, error } = await q
+        .order('created_at', { ascending: false })
+        .limit(MAX_ROWS)
 
-  const metrics = (rows ?? []) as Metric[]
+      return { rows: (data ?? []) as Metric[], error }
+    })(),
+    (async () => clamp(await fetchPlatformAvgImpactScore(supabase, effectiveDaysForPlatform)))(),
+  ])
 
-  if (error || metrics.length === 0) {
+  const metrics = metricsRes.rows
+
+  if (metricsRes.error || metrics.length === 0) {
     return (
-      <div className="rounded-2xl border border-border bg-card/60 p-5 shadow-sm backdrop-blur">
-        <div className="mb-2 text-lg font-semibold">
-          {error ? 'Fehler beim Laden' : 'Noch keine Performance-Daten'}
-        </div>
+      <CardShell
+        title={metricsRes.error ? 'Fehler beim Laden' : 'Noch keine Performance-Daten'}
+        ctaHref={metricsRes.error ? '/creator/dashboard?retry=1' : '/creator/media-studio'}
+        cta={metricsRes.error ? 'Erneut versuchen' : 'Jetzt Session starten'}
+      >
         <p className="text-sm text-muted-foreground">
-          {error
+          {metricsRes.error
             ? 'Deine Impact-Daten konnten nicht geladen werden.'
             : 'Starte deine erste Session, um Impact-Scores zu sehen.'}
         </p>
-        <Link
-          href="/creator/media-studio"
-          className={cn(
-            'mt-4 inline-flex items-center justify-center rounded-lg px-4 py-2',
-            'border border-primary/30 bg-primary/10 text-primary font-medium hover:bg-primary/15 transition'
-          )}
-        >
-          {error ? 'Erneut versuchen' : 'Jetzt Session starten'}
-        </Link>
         <ImpactScoreRealtimeBridge userId={user.id} />
-      </div>
+      </CardShell>
     )
   }
 
-  // Aggregation + Score
+  // Aggregation + Score + Tages-History
   const totals = aggregate(metrics)
   const score = calcOverallScore(metrics)
-
-  // Plattform-Ø abrufen (SECURITY DEFINER RPC)
-  const avgScorePlatform = clamp(
-    await fetchPlatformAvgImpactScore(supabase, effectiveDaysForPlatform)
-  )
+  const history = buildHistorySeries(metrics, HISTORY_DAYS)
 
   return (
     <section className="rounded-2xl border border-border bg-card/60 p-5 shadow-sm backdrop-blur">
@@ -106,8 +94,7 @@ export default async function ImpactScorePanel({
           <h3 className="text-lg font-semibold">Dein Impact</h3>
           <p className="text-sm text-muted-foreground">
             Überblick über deine Performance (aggregiert)
-            {typeof days === 'number' ? ` · Zeitraum: letzte ${days} Tage` : ' · Zeitraum: Gesamt'}
-            .
+            {typeof days === 'number' ? ` · Zeitraum: letzte ${days} Tage` : ' · Zeitraum: Gesamt'}.
           </p>
         </div>
         <Link
@@ -121,8 +108,15 @@ export default async function ImpactScorePanel({
         </Link>
       </header>
 
-      {/* Score inkl. Plattform-Avg (Delta-Badge kommt aus ImpactScore.tsx) */}
-      <ImpactScore value={score} avgScore={avgScorePlatform} label="Impact Score (gesamt)" />
+      <ImpactScore
+        value={score}
+        avgScore={platformAvg}
+        label="Impact Score (gesamt)"
+        benchmarkLabel={`Plattform-Schnitt${typeof days === 'number' ? ` (${days}T)` : ''}`}
+        history={history}
+        mode="linear"
+        size="md"
+      />
 
       {/* KPI Micro-Grid */}
       <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -144,7 +138,8 @@ export default async function ImpactScorePanel({
 
       <div className="mt-3 text-xs text-muted-foreground">
         Basis: {metrics.length} Session{metrics.length === 1 ? '' : 's'} · gewichtete
-        Score-Berechnung nach Impressions (Fallback: View- &amp; Engagement-Rate).
+        Score-Berechnung nach Impressions (Fallback: View- &amp; Engagement-Rate). Sparkline zeigt {HISTORY_DAYS}
+        -Tage-Trend (täglich gewichtet).
       </div>
 
       <ImpactScoreRealtimeBridge userId={user.id} />
@@ -152,7 +147,7 @@ export default async function ImpactScorePanel({
   )
 }
 
-/* ---------- Helpers ---------- */
+/* ───────────── Helpers ───────────── */
 
 function clamp(n: number) {
   if (!Number.isFinite(n)) return 0
@@ -179,9 +174,7 @@ function aggregate(rows: Metric[]) {
 
 function calcOverallScore(rows: Metric[]): number {
   if (!rows.length) return 0
-
   const hasAnyScore = rows.some(r => Number(r.impact_score ?? 0) > 0)
-  const totals = aggregate(rows)
 
   if (hasAnyScore) {
     const weightedSum = rows.reduce((sum, r) => {
@@ -193,8 +186,85 @@ function calcOverallScore(rows: Metric[]): number {
     return clamp(weightedSum / Math.max(1, weight))
   }
 
-  const score = (totals.viewRate * 0.6 + totals.engagementRate * 0.4) * 100
-  return clamp(score)
+  const t = aggregate(rows)
+  return clamp((t.viewRate * 0.6 + t.engagementRate * 0.4) * 100)
+}
+
+/** Liefert tägliche Scores (neueste am Ende) für die Sparkline */
+function buildHistorySeries(rows: Metric[], days: number): number[] {
+  if (!rows.length) return []
+  const byDay = new Map<string, { sum: number; w: number; views: number; likesComments: number; imp: number }>()
+
+  for (const r of rows) {
+    const d = isoDay(r.created_at)
+    const imp = Math.max(1, r.impressions ?? 0)
+    const s = Number(r.impact_score ?? 0)
+    const entry = byDay.get(d) ?? { sum: 0, w: 0, views: 0, likesComments: 0, imp: 0 }
+
+    if (s > 0) {
+      entry.sum += s * imp
+      entry.w += imp
+    } else {
+      entry.views += r.views ?? 0
+      entry.likesComments += (r.likes ?? 0) + (r.comments ?? 0)
+      entry.imp += imp
+    }
+    byDay.set(d, entry)
+  }
+
+  const out: number[] = []
+  const today = new Date()
+  for (let i = days - 1; i >= 0; i--) {
+    const dayIso = isoDay(new Date(today.getTime() - i * 86400000).toISOString())
+    const e = byDay.get(dayIso)
+    if (!e) { out.push(0); continue }
+    if (e.w > 0) {
+      out.push(clamp(e.sum / Math.max(1, e.w)))
+    } else {
+      const viewRate = e.views / Math.max(1, e.imp)
+      const engagementRate = e.likesComments / Math.max(1, e.imp)
+      out.push(clamp((viewRate * 0.6 + engagementRate * 0.4) * 100))
+    }
+  }
+  return out
+}
+
+function isoDay(iso?: string | null) {
+  const d = iso ? new Date(iso) : new Date()
+  const y = d.getFullYear()
+  const m = `${d.getMonth() + 1}`.padStart(2, '0')
+  const dd = `${d.getDate()}`.padStart(2, '0')
+  return `${y}-${m}-${dd}`
+}
+
+/* ───────────── Präsentation ───────────── */
+
+function CardShell({
+  title,
+  children,
+  ctaHref,
+  cta,
+}: {
+  title: string
+  children: React.ReactNode
+  ctaHref: string
+  cta: string
+}) {
+  return (
+    <div className="rounded-2xl border border-border bg-card/60 p-5 shadow-sm backdrop-blur">
+      <div className="mb-2 text-lg font-semibold">{title}</div>
+      {children}
+      <Link
+        href={ctaHref}
+        className={cn(
+          'mt-4 inline-flex items-center justify-center rounded-lg px-4 py-2',
+          'border border-primary/30 bg-primary/10 text-primary font-medium hover:bg-primary/15 transition'
+        )}
+      >
+        {cta}
+      </Link>
+    </div>
+  )
 }
 
 function KpiCard({ title, value, sub }: { title: string; value: string; sub?: string }) {

@@ -1,25 +1,61 @@
-import OpenAI from 'openai'
+// lib/openai/generateImageFromPrompt.ts
+import 'server-only'
+import {
+  generateDalleImage,
+  type GenerateDalleOptions,
+  type GeneratedImage,
+} from '@/lib/openai/generateDalleImage'
 
-if (!process.env.OPENAI_API_KEY) {
-  throw new Error('OPENAI_API_KEY ist nicht gesetzt!')
+/**
+ * Zusätzliche Steuerung:
+ * - noThrow: bei Fehlern statt Exception -> null zurückgeben (Default false, also wie früher)
+ */
+export type GenerateImageFromPromptOptions = GenerateDalleOptions & {
+  /** Bei Fehlern nicht werfen, sondern null zurückgeben (Default false) */
+  noThrow?: boolean
 }
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-})
+/* Overloads */
 
-export async function generateImageFromPrompt(prompt: string): Promise<string> {
-  const response = await openai.images.generate({
-    model: 'dall-e-3',
-    prompt,
-    n: 1,
-    size: '1024x1024',
-    quality: 'standard',
-    response_format: 'url'
-  })
+// Rückwärtskompatibel: URL-String zurück (wirft bei Fehlern)
+export async function generateImageFromPrompt(
+  prompt: string
+): Promise<string>
 
-  const url = response.data?.[0]?.url
-  if (!url) throw new Error('Keine Bild-URL von OpenAI zurückgegeben')
+// URL-String zurück mit Optionen (Standard: wirft bei Fehlern; mit noThrow: null)
+export async function generateImageFromPrompt(
+  prompt: string,
+  opts: GenerateImageFromPromptOptions
+): Promise<string | null>
 
-  return url
+// Metadaten-Objekt zurück (mit result: 'object')
+export async function generateImageFromPrompt(
+  prompt: string,
+  opts: GenerateImageFromPromptOptions & { result: 'object' }
+): Promise<GeneratedImage | null>
+
+/* Implementierung */
+
+export async function generateImageFromPrompt(
+  prompt: string,
+  opts: GenerateImageFromPromptOptions = {}
+): Promise<string | GeneratedImage | null> {
+  // Delegation an die Pro-Implementierung (DALL·E 3, Retry, optionaler Supabase-Upload)
+  const res = await generateDalleImage(prompt, opts)
+
+  const wantObject = opts.result === 'object'
+  const noThrow = opts.noThrow === true
+
+  if (wantObject) {
+    if (res && typeof res === 'object') return res
+    if (noThrow) return null
+    throw new Error('Keine Bilddaten von OpenAI zurückgegeben')
+  }
+
+  // URL-Modus
+  const url = typeof res === 'string' ? res : (res && 'url' in (res as any) ? (res as any).url : null)
+
+  if (url) return url
+  if (noThrow) return null
+  throw new Error('Keine Bild-URL von OpenAI zurückgegeben')
 }

@@ -1,3 +1,4 @@
+// components/creator/dashboard/SessionStatsCard.tsx
 // Server Component (nur Darstellung)
 import type { Tables } from '@/types/supabase'
 import { Badge } from '@/components/ui/badge'
@@ -5,58 +6,96 @@ import { Progress } from '@/components/ui/progress'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import ContentTypePicker from './ContentTypePicker'
+import { Gauge, Eye, Heart, MessageCircle } from 'lucide-react'
 
 type Metric = Tables<'creator_session_metrics'>
 
-function truncate(s: string | null, max = 50) {
-  const str = s ?? 'Ohne Titel'
+function clamp01(n: number) {
+  if (!Number.isFinite(n)) return 0
+  return Math.max(0, Math.min(1, n))
+}
+function clamp100(n: number) {
+  if (!Number.isFinite(n)) return 0
+  return Math.max(0, Math.min(100, n))
+}
+function truncate(s: string | null | undefined, max = 64) {
+  const str = (s ?? 'Ohne Titel').trim()
   return str.length > max ? str.slice(0, max - 1) + '…' : str
 }
+function fmtPct01(n: number) {
+  return `${(clamp01(n) * 100).toFixed(1)}%`
+}
+function fmtInt(n: number) {
+  try {
+    return new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(n)
+  } catch {
+    return String(n)
+  }
+}
+function fmtDateISO(iso?: string | null) {
+  if (!iso) return ''
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      year: 'numeric', month: 'long', day: 'numeric',
+    }).format(new Date(iso))
+  } catch {
+    return ''
+  }
+}
 
-function pct(n: number) {
-  return `${(n * 100).toFixed(1)}%`
+type BadgeVariant = 'default' | 'success' | 'warning' | 'info' | 'error'
+function impactBadge(val: number): { variant: BadgeVariant; text?: string } {
+  if (val >= 90) return { variant: 'success', text: 'Top 10%' }
+  if (val >= 70) return { variant: 'info', text: 'Trending' }
+  if (val >= 50) return { variant: 'warning' }
+  return { variant: 'error', text: 'Optimieren' }
 }
 
 export default function SessionStatsCard({ metric }: { metric: Metric }) {
-  const impressions = metric.impressions ?? 0
-  const views = metric.views ?? 0
-  const likes = metric.likes ?? 0
-  const comments = metric.comments ?? 0
-  const impact = Math.max(0, Math.min(100, Number(metric.impact_score ?? 0)))
+  const impressions = Math.max(0, metric.impressions ?? 0)
+  const views = Math.max(0, metric.views ?? 0)
+  const likes = Math.max(0, metric.likes ?? 0)
+  const comments = Math.max(0, metric.comments ?? 0)
+  const impact = clamp100(Number(metric.impact_score ?? 0))
 
-  const viewRate = impressions > 0 ? views / impressions : 0
-  const engagementRate = impressions > 0 ? (likes + comments) / impressions : 0
+  const viewRate = impressions > 0 ? clamp01(views / impressions) : 0
+  const engagementAbs = likes + comments
+  const engagementRate = impressions > 0 ? clamp01(engagementAbs / impressions) : 0
 
-  let variant: 'default' | 'success' | 'warning' | 'info' | 'error' = 'default'
-  if (impact >= 90) variant = 'success'
-  else if (impact >= 70) variant = 'info'
-  else if (impact >= 50) variant = 'warning'
-  else variant = 'error'
-
-  const date = metric.created_at
-    ? new Date(metric.created_at).toLocaleDateString()
-    : ''
-
-  // Falls die generierten Types die neue Spalte noch nicht kennen, greifen wir defensiv via any
+  const date = fmtDateISO(metric.created_at)
+  // defensiv, solange Supabase-Types evtl. keine Spalte kennen
   const currentType = ((metric as any)?.content_type as string | undefined) ?? 'other'
 
-  return (
-    <div className="rounded-xl border border-border bg-background/60 p-4">
-      <div className="mb-2 flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <div className="truncate text-sm font-medium">{truncate(metric.title)}</div>
-          <div className="text-xs text-muted-foreground">{date}</div>
-        </div>
-        <Badge variant={variant} className="tabular-nums">
-          {Math.round(impact)}
-        </Badge>
-      </div>
+  const badge = impactBadge(impact)
 
-      {/* Segment-Editor */}
-      <div className="mb-2">
+  return (
+    <section
+      className="rounded-2xl border border-border bg-background/60 p-4 shadow-sm"
+      aria-label={`Session-Statistiken für ${truncate(metric.title, 40)}`}
+    >
+      {/* Kopf */}
+      <header className="mb-2 flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h4 className="truncate text-sm font-semibold">{truncate(metric.title)}</h4>
+          <p className="text-xs text-muted-foreground">{date}</p>
+        </div>
+        <Badge
+          variant={badge.variant}
+          className="inline-flex items-center gap-2 tabular-nums"
+          aria-label={`Impact ${Math.round(impact)} von 100${badge.text ? ` – ${badge.text}` : ''}`}
+          title="Impact Score (0–100)"
+        >
+          {Math.round(impact)}
+          {badge.text && <span className="hidden sm:inline">{badge.text}</span>}
+        </Badge>
+      </header>
+
+      {/* Content Type / Segmentierung */}
+      <div className="mb-3">
         <ContentTypePicker sessionId={metric.session_id} initialType={currentType} />
       </div>
 
+      {/* Impact Progress */}
       <div className="mt-1 flex items-center gap-3">
         <div className="w-full">
           <Progress value={impact} />
@@ -66,40 +105,100 @@ export default function SessionStatsCard({ metric }: { metric: Metric }) {
         </div>
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-        <div className="rounded-lg border border-border bg-card/50 px-3 py-2">
-          <div className="text-[11px] text-muted-foreground">Impressions</div>
-          <div className="font-semibold tabular-nums">{impressions.toLocaleString()}</div>
-        </div>
-        <div className="rounded-lg border border-border bg-card/50 px-3 py-2">
-          <div className="text-[11px] text-muted-foreground">Views</div>
-          <div className="font-semibold tabular-nums">{views.toLocaleString()}</div>
-        </div>
-        <div className="rounded-lg border border-border bg-card/50 px-3 py-2">
-          <div className="text-[11px] text-muted-foreground">View-Rate</div>
-          <div className="font-semibold tabular-nums">{pct(viewRate)}</div>
-        </div>
-        <div className="rounded-lg border border-border bg-card/50 px-3 py-2">
-          <div className="text-[11px] text-muted-foreground">Engagement</div>
-          <div className="font-semibold tabular-nums">
-            {(likes + comments).toLocaleString()}
-            <span className="ml-1 text-xs text-muted-foreground">
-              ({pct(engagementRate)})
-            </span>
-          </div>
-        </div>
+      {/* KPIs */}
+      <div className="mt-3 grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
+        <KpiCard
+          icon={<Gauge className="h-4 w-4" aria-hidden />}
+          title="Impressions"
+          value={fmtInt(impressions)}
+        />
+        <KpiCard
+          icon={<Eye className="h-4 w-4" aria-hidden />}
+          title="Views"
+          value={fmtInt(views)}
+          sub={impressions > 0 ? `${fmtPct01(viewRate)} View-Rate` : undefined}
+        />
+        <KpiCard
+          icon={<Heart className="h-4 w-4" aria-hidden />}
+          title="Likes"
+          value={fmtInt(likes)}
+        />
+        <KpiCard
+          icon={<MessageCircle className="h-4 w-4" aria-hidden />}
+          title="Kommentare"
+          value={fmtInt(comments)}
+          sub={`${fmtPct01(engagementRate)} Engagement-Rate`}
+        />
       </div>
 
+      {/* Mikro-Progress für Raten */}
+      <div className="mt-3 grid grid-cols-2 gap-2 sm:max-w-sm">
+        <RatePill label="View-Rate" value={viewRate} />
+        <RatePill label="Engagement-Rate" value={engagementRate} />
+      </div>
+
+      {/* Footer-Link */}
       <div className="mt-3 flex justify-end">
         <Link
           href={`/story/${metric.session_id}`}
           className={cn(
             'inline-flex items-center rounded-lg border border-input px-3 py-1.5 text-sm',
-            'hover:bg-accent'
+            'hover:bg-accent hover:text-accent-foreground transition'
           )}
+          aria-label={`Story ${truncate(metric.title, 40)} öffnen`}
         >
           Öffnen
         </Link>
+      </div>
+    </section>
+  )
+}
+
+/* ---------- Mini-Bausteine ---------- */
+
+function KpiCard({
+  icon,
+  title,
+  value,
+  sub,
+}: {
+  icon?: React.ReactNode
+  title: string
+  value: string
+  sub?: string
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-card/50 px-3 py-2">
+      <div className="mb-1 flex items-center gap-1.5 text-[11px] text-muted-foreground">
+        {icon}
+        <span>{title}</span>
+      </div>
+      <div className="text-base font-semibold tabular-nums">{value}</div>
+      {sub && <div className="mt-0.5 text-[11px] text-muted-foreground">{sub}</div>}
+    </div>
+  )
+}
+
+function RatePill({ label, value }: { label: string; value: number }) {
+  const pctLabel = fmtPct01(value)
+  const pct100 = clamp01(value) * 100
+  return (
+    <div
+      className="rounded-lg border border-border bg-background/60 px-3 py-2"
+      aria-label={`${label}: ${pctLabel}`}
+      title={label}
+    >
+      <div className="text-[11px] text-muted-foreground">{label}</div>
+      <div className="mt-1 flex items-center gap-2">
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-full rounded-full bg-primary transition-[width]"
+            style={{ width: `${pct100}%` }}
+          />
+        </div>
+        <span className="w-[54px] text-right text-sm tabular-nums text-muted-foreground">
+          {pctLabel}
+        </span>
       </div>
     </div>
   )

@@ -1,39 +1,63 @@
-import { createServerComponentClient } from '@/lib/supabase/server'
-import { cookies } from 'next/headers'
-import { notFound } from 'next/navigation'
-import AdminReviewTable from '@/components/admin/AdminReviewTable'
+// app/(admin)/media-studio/review/page.tsx
+import { redirect, notFound } from 'next/navigation';
+import { createServerComponentClient } from '@/lib/supabase/server';
+import AdminReviewTable from '@/components/admin/AdminReviewTable';
+import { updateReviewStatus } from './actions';
 
-type Session = {
-  id: string
-  title: string
-  user_id: string
-  status: 'pending' | 'approved' | 'rejected'
-  created_at: string
-}
+type ReviewStatus = 'pending' | 'approved' | 'rejected';
+type ReviewSession = {
+  id: string;
+  title: string | null;
+  user_id: string;
+  review_status: ReviewStatus;
+  created_at: string;
+};
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function AdminReviewPage() {
-  const supabase = createServerComponentClient()
+  const supabase = createServerComponentClient();
 
-  const { data } = await supabase
+  // Auth prüfen
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) redirect('/login');
+
+  // Admin-Rolle prüfen
+  const { data: me } = await supabase
+    .from('creator_profiles')
+    .select('id, role')
+    .eq('id', session.user.id)
+    .single();
+
+  if (!me || me.role !== 'admin') return notFound();
+
+  // Sessions laden (über review_status)
+  const { data, error } = await supabase
     .from('creator_sessions')
-    .select('id, title, user_id, status, created_at')
-    .order('created_at', { ascending: false })
+    .select('id, title, user_id, review_status, created_at')
+    .order('created_at', { ascending: false });
 
-  if (!data) return notFound()
+  if (error) return notFound();
 
-  // If needed, adjust the mapping to match your Session type exactly
-  const sessions: Session[] = data.map((s: any) => ({
+  const sessions: ReviewSession[] = (data || []).map((s: any) => ({
     id: s.id,
-    title: s.title,
+    title: s.title ?? null,
     user_id: s.user_id,
-    status: s.status,
+    review_status: (s.review_status ?? 'pending') as ReviewStatus,
     created_at: s.created_at,
-  }))
+  }));
 
   return (
-    <main className="max-w-4xl mx-auto px-6 py-10 space-y-6">
-      <h1 className="text-2xl font-bold">🔒 Admin Review – Creator Sessions</h1>
-      <AdminReviewTable sessions={sessions} />
+    <main className="mx-auto max-w-6xl px-6 py-10 space-y-6">
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-2xl font-semibold tracking-tight">🔒 Admin Review – Creator Sessions</h1>
+        <p className="text-sm text-muted-foreground">{sessions.length} Einträge</p>
+      </div>
+
+      <AdminReviewTable sessions={sessions} onUpdate={updateReviewStatus} />
     </main>
-  )
+  );
 }

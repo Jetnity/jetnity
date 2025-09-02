@@ -1,77 +1,104 @@
 'use client'
 
 import * as React from 'react'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Calendar } from '@/components/ui/calendar'
-import { Button } from '@/components/ui/button'
+import { format } from 'date-fns'
+import { de } from 'date-fns/locale'
+import { Calendar as CalendarIcon, X } from 'lucide-react'
+import * as Popover from '@radix-ui/react-popover'
 import { cn } from '@/lib/utils'
-import { CalendarIcon } from 'lucide-react'
-import dayjs from 'dayjs'
+import { Calendar } from './calendar'
 
-export interface DatePickerProps {
-  label: string
+type BaseProps = {
+  value?: Date | null
+  onChange: (d: Date | null) => void
   placeholder?: string
-  selectedDate: Date | null
-  onSelect: (date: Date | null) => void
-  minDate?: Date
-  maxDate?: Date
+  disabled?: boolean
   className?: string
 }
 
-const DatePicker: React.FC<DatePickerProps> = ({
-  label,
+export function DateInput({
+  value,
+  onChange,
   placeholder = 'Datum wählen',
-  selectedDate,
-  onSelect,
-  minDate,
-  maxDate,
+  disabled,
   className,
-}) => {
+}: BaseProps) {
   const [open, setOpen] = React.useState(false)
 
-  const disabledMatchers = React.useMemo(() => {
-    const matchers: any[] = []
-    if (minDate) matchers.push({ before: minDate })
-    if (maxDate) matchers.push({ after: maxDate })
-    return matchers.length > 0 ? matchers : undefined
-  }, [minDate, maxDate])
-
   return (
-    <div className={cn('w-full', className)}>
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            className={cn(
-              'w-full justify-start text-left font-normal',
-              !selectedDate && 'text-muted-foreground'
+    <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Trigger asChild>
+        <button
+          type="button"
+          disabled={disabled}
+          className={cn(
+            'inline-flex h-11 w-full items-center justify-between rounded-xl border border-zinc-200 bg-white px-3 text-left text-sm',
+            'hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50',
+            className
+          )}
+          aria-label="Datum wählen"
+        >
+          <span className={cn(!value && 'text-zinc-400')}>
+            {value ? format(value, 'dd.MM.yyyy', { locale: de }) : placeholder}
+          </span>
+          <span className="flex items-center gap-2">
+            {value && (
+              <X
+                className="h-4 w-4 opacity-60 hover:opacity-100"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onChange(null) // normalize
+                }}
+                aria-label="Löschen"
+              />
             )}
-            type="button"
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {selectedDate ? dayjs(selectedDate).format('DD.MM.YYYY') : placeholder}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent align="start" className="w-auto p-0">
+            <CalendarIcon className="h-4 w-4 opacity-60" aria-hidden="true" />
+          </span>
+        </button>
+      </Popover.Trigger>
+
+      <Popover.Portal>
+        <Popover.Content
+          align="start"
+          sideOffset={8}
+          className={cn(
+            'z-[1000] w-[320px] md:w-[620px] rounded-2xl border bg-white p-3 shadow-2xl',
+            'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0'
+          )}
+        >
+          <div className="flex items-center justify-between px-1 pb-2">
+            <div className="text-sm font-medium">Datum wählen</div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="rounded-md border px-2 py-1 text-xs hover:bg-gray-50"
+                onClick={() => onChange(new Date())}
+              >
+                Heute
+              </button>
+              <button
+                type="button"
+                className="rounded-md border px-2 py-1 text-xs hover:bg-gray-50"
+                onClick={() => onChange(null)}
+              >
+                Zurücksetzen
+              </button>
+            </div>
+          </div>
+
           <Calendar
             mode="single"
-            required
-            selected={selectedDate ?? undefined}
-            onSelect={(date) => {
-              onSelect(date ?? null)
-              setOpen(false)
+            selected={value ?? undefined}
+            onSelect={(d) => {
+              onChange(d ?? null)
+              if (d) setOpen(false)
             }}
-            disabled={disabledMatchers}
-            initialFocus
+            months={2} // auf md+ zwei Monate
           />
-        </PopoverContent>
-      </Popover>
-    </div>
+
+          <Popover.Arrow className="fill-white" />
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
   )
 }
-
-DatePicker.displayName = 'DatePicker'
-
-// NUR DAS AM ENDE DER DATEI:
-export { DatePicker }

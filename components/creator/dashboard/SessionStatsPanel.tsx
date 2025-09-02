@@ -1,6 +1,7 @@
-// Server Component
+// components/creator/dashboard/SessionStatsPanel.tsx
+// Server Component (nur Darstellung)
+
 import Link from 'next/link'
-import { cookies } from 'next/headers'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import type { Tables } from '@/types/supabase'
 import { cn } from '@/lib/utils'
@@ -25,18 +26,20 @@ export default async function SessionStatsPanel({
 
   const {
     data: { user },
+    error: userErr,
   } = await supabase.auth.getUser()
 
-  if (!user) {
+  // Nicht eingeloggt
+  if (userErr || !user) {
     if (hideWhenEmpty) return null
     return (
-      <div className="rounded-2xl border border-border bg-card/60 p-5 backdrop-blur">
-        <div className="mb-2 text-lg font-semibold">Anmeldung erforderlich</div>
+      <section className="rounded-2xl border border-border bg-card/60 p-5 backdrop-blur">
+        <h3 className="mb-2 text-lg font-semibold">Anmeldung erforderlich</h3>
         <p className="text-sm text-muted-foreground">
           Bitte melde dich an, um deine Sessions zu sehen.
         </p>
         <Link
-          href="/login"
+          href="/auth/sign-in"
           className={cn(
             'mt-4 inline-flex items-center justify-center rounded-lg px-4 py-2',
             'border border-primary/30 bg-primary/10 text-primary font-medium hover:bg-primary/15 transition'
@@ -44,34 +47,36 @@ export default async function SessionStatsPanel({
         >
           Jetzt anmelden
         </Link>
-      </div>
+      </section>
     )
   }
 
-  // Zeitfenster
+  // Zeitraum
   const sinceIso =
     typeof days === 'number'
       ? new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString()
       : null
 
+  // Daten + count in EINEM Query (count ignoriert das limit)
   let query = supabase
     .from('creator_session_metrics')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('user_id', user.id)
 
   if (sinceIso) query = query.gte('created_at', sinceIso)
 
-  const { data, error } = await query
+  const { data, count, error } = await query
     .order('created_at', { ascending: false })
     .limit(limit)
 
+  // Fehler / Leerzustände
   if (error || !data || data.length === 0) {
     if (hideWhenEmpty) return null
     return (
-      <div className="rounded-2xl border border-border bg-card/60 p-5 backdrop-blur">
-        <div className="mb-2 text-lg font-semibold">
+      <section className="rounded-2xl border border-border bg-card/60 p-5 backdrop-blur">
+        <h3 className="mb-2 text-lg font-semibold">
           {error ? 'Fehler beim Laden' : 'Noch keine Sessions im Zeitraum'}
-        </div>
+        </h3>
         <p className="text-sm text-muted-foreground">
           {error
             ? 'Deine Session-Metriken konnten nicht geladen werden.'
@@ -89,18 +94,31 @@ export default async function SessionStatsPanel({
           Jetzt Session starten
         </Link>
 
-        {/* Realtime einschalten, falls gleich Daten eintreffen */}
+        {/* Realtime: aktualisiert das Panel automatisch, sobald Daten eintreffen */}
         <ImpactScoreRealtimeBridge userId={user.id} />
-      </div>
+      </section>
     )
   }
 
-  const items = data as Metric[]
+  const items = (data ?? []) as Metric[]
+  const total = typeof count === 'number' ? count : items.length
+  const moreAvailable = total > items.length
 
   return (
-    <section className="rounded-2xl border border-border bg-card/60 p-5 backdrop-blur">
+    <section
+      className="rounded-2xl border border-border bg-card/60 p-5 backdrop-blur"
+      aria-label="Letzte Sessions"
+    >
       <header className="mb-4 flex items-center justify-between gap-3">
-        <h3 className="text-lg font-semibold">Letzte Sessions</h3>
+        <div className="min-w-0">
+          <h3 className="text-lg font-semibold">Letzte Sessions</h3>
+          <p className="text-xs text-muted-foreground">
+            Zeitraum:{' '}
+            {typeof days === 'number' ? `letzte ${days} Tage` : 'Gesamt'} ·{' '}
+            {items.length} von {total}
+          </p>
+        </div>
+
         <Link
           href="/creator/media-studio"
           className={cn(
@@ -120,6 +138,22 @@ export default async function SessionStatsPanel({
         ))}
       </ul>
 
+      {/* Fußzeile mit Mehr-Link, falls es weitere Einträge gibt */}
+      <footer className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
+        <span>
+          {items.length} / {total} Einträge
+        </span>
+        {moreAvailable && (
+          <Link
+            href="/creator/media-studio?s=all" // optionaler Deep-Link; passe bei Bedarf an
+            className="rounded-md border px-2.5 py-1.5 hover:bg-accent hover:text-accent-foreground"
+          >
+            Mehr anzeigen
+          </Link>
+        )}
+      </footer>
+
+      {/* Realtime-Bridge: sorgt für frische Daten ohne manuelles Reload */}
       <ImpactScoreRealtimeBridge userId={user.id} />
     </section>
   )

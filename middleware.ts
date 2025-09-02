@@ -1,47 +1,63 @@
+// middleware.ts
+import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
-import { NextRequest, NextResponse } from 'next/server'
-import type { Database } from './types/supabase'
+import type { Database } from './types/supabase' // ⬅️ vorher "@/types/..." → jetzt relativ
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next()
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  // Modernste Cookie-Schnittstelle: Nur getAll und setAll!
-  const cookieStore = {
-    getAll() {
-      // Liefert ein Array von { name, value } für alle Cookies
-      return req.cookies.getAll().map(({ name, value }) => ({ name, value }))
-    },
-    setAll(cookiesArr: { name: string; value: string; options?: any }[]) {
-      // Setzt alle Cookies im Response-Objekt
-      cookiesArr.forEach(({ name, value, options }) => {
-        res.cookies.set(name, value, options)
-      })
-    },
+function assertEnv() {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    console.error('Supabase ENV fehlt: NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY')
   }
-
-  // Supabase-SSR-Client inkl. Cookie-Support
-  const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: cookieStore }
-  )
-
-  // Prüfe User-Session
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  // Nur eingeloggte Creator dürfen das Dashboard sehen
-  const isProtectedPath = req.nextUrl.pathname.startsWith('/creator/creator-dashboard')
-
-  if (isProtectedPath && !user) {
-    return NextResponse.redirect(new URL('/', req.url))
-  }
-
-  return res
 }
 
-// Nur für geschützte Creator-Dashboard-Route aktivieren!
+export async function middleware(req: NextRequest) {
+  assertEnv()
+
+  const res = NextResponse.next({ request: { headers: req.headers } })
+  res.headers.set('x-middleware-cache', 'no-cache')
+
+  const { pathname, search } = req.nextUrl
+  const isProtected = pathname.startsWith('/creator/creator-dashboard')
+  if (!isProtected) return res
+
+  const supabase = createServerClient<Database>(SUPABASE_URL!, SUPABASE_ANON_KEY!, {
+    cookies: {
+      getAll() {
+        return req.cookies.getAll().map(({ name, value }) => ({ name, value }))
+      },
+      setAll(cookies) {
+        for (const { name, value, options } of cookies) {
+          res.cookies.set({ name, value, ...options })
+        }
+      },
+    },
+  })
+
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      const redirectTo = new URL('/', req.url)
+      redirectTo.searchParams.set('next', pathname + search)
+      return NextResponse.redirect(redirectTo)
+    }
+
+    const role = (user.user_metadata as any)?.role
+    if (role && role !== 'creator' && role !== 'admin') {
+      return NextResponse.redirect(new URL('/403', req.url))
+    }
+
+    return res
+  } catch (err) {
+    console.error('Middleware/Supabase Fehler:', err)
+    return NextResponse.redirect(new URL('/', req.url))
+  }
+}
+
 export const config = {
   matcher: ['/creator/creator-dashboard'],
 }

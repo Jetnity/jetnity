@@ -1,19 +1,17 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { supabase } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { marked } from 'marked'
-import dynamic from 'next/dynamic'
 
-const CreatorMiniProfile = dynamic(
-  () => import('@/components/creator/CreatorMiniProfile'),
-  { ssr: false }
-)
-
-type Comment = {
+// ───────────────────────────────────────────────────────────────────────────────
+// Minimal-Typen (nur was wir wirklich brauchen)
+// ───────────────────────────────────────────────────────────────────────────────
+type CommentRow = {
   id: string
   blog_id: string | null
   user_id: string | null
@@ -21,13 +19,47 @@ type Comment = {
   content: string
   created_at: string
   status: string | null
-  creator_profile?: {
-    id: string
-    name?: string
-    avatar_url?: string
-    username?: string
-  } | null
 }
+
+type CreatorProfileRow = {
+  id: string
+  user_id: string
+  display_name: string | null
+  name: string | null
+  username: string | null
+  avatar_url: string | null
+  role: string | null
+  email: string | null
+}
+
+type MiniCreator = {
+  id: string
+  user_id: string
+  display_name: string | null
+  name: string | null
+  username: string | null
+  avatar_url: string | null
+  role: string | null
+  email: string | null
+
+  // tolerant: viele Cards erwarten diese Keys (können null sein)
+  bio: string | null
+  created_at: string | null
+  facebook: string | null
+  instagram: string | null
+  tiktok: string | null
+  twitter: string | null
+  website: string | null
+  youtube: string | null
+}
+
+type Comment = CommentRow & { creator_profile: MiniCreator | null }
+
+// WICHTIG: keine Typen importieren, keine Generics → keine Prop-Konflikte
+const CreatorMiniProfile = dynamic(
+  () => import('@/components/creator/CreatorMiniProfile'),
+  { ssr: false }
+)
 
 interface CommentsWidgetProps {
   blogId: string
@@ -39,54 +71,78 @@ export default function CommentsWidget({ blogId }: CommentsWidgetProps) {
   const [submitting, setSubmitting] = useState(false)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
-  // Lade alle sichtbaren Kommentare zu diesem Blogpost inkl. Creator-Profil
+  const toMini = (p: CreatorProfileRow): MiniCreator => ({
+    id: p.id,
+    user_id: p.user_id,
+    display_name: p.display_name,
+    name: p.name,
+    username: p.username,
+    avatar_url: p.avatar_url,
+    role: p.role ?? 'user',
+    email: p.email,
+
+    bio: null,
+    created_at: null,
+    facebook: null,
+    instagram: null,
+    tiktok: null,
+    twitter: null,
+    website: null,
+    youtube: null,
+  })
+
+  // Kommentare + Profile getrennt laden (ohne DB-Join)
   useEffect(() => {
-    const fetchComments = async () => {
-      const { data, error } = await supabase
+    const load = async () => {
+      const { data: rows, error } = await supabase
         .from('blog_comments')
-        .select(`
-          *,
-          creator_profile:creator_profiles (
-            id,
-            name,
-            avatar_url,
-            username
-          )
-        `)
+        .select('*')
         .eq('blog_id', blogId)
         .eq('status', 'visible')
         .order('created_at', { ascending: true })
+        .limit(200)
+
       if (error) {
         toast.error('Fehler beim Laden der Kommentare')
         return
       }
+
+      const commentRows = (rows ?? []) as CommentRow[]
+      const userIds = Array.from(
+        new Set(commentRows.map(r => r.user_id).filter((v): v is string => typeof v === 'string'))
+      )
+
+      const map = new Map<string, MiniCreator>()
+      if (userIds.length) {
+        const { data: profiles } = await supabase
+          .from('creator_profiles')
+          .select('id, user_id, display_name, name, username, avatar_url, role, email')
+          .in('user_id', userIds)
+
+        for (const p of (profiles ?? []) as CreatorProfileRow[]) {
+          map.set(p.user_id, toMini(p))
+        }
+      }
+
       setComments(
-        (data || [])
-          .filter(
-            (c: any) =>
-              !c.creator_profile ||
-              (c.creator_profile && !('code' in c.creator_profile))
-          )
-          .map((c: any) => ({
-            ...c,
-            // If creator_profile is not an object, set it to null
-            creator_profile:
-              c.creator_profile && typeof c.creator_profile === 'object' && !('code' in c.creator_profile)
-                ? c.creator_profile
-                : null,
-          })) as Comment[]
+        commentRows.map(r => ({
+          ...r,
+          creator_profile: r.user_id ? map.get(r.user_id) ?? null : null,
+        }))
       )
     }
-    if (blogId) fetchComments()
+
+    if (blogId) load()
   }, [blogId])
 
-  // Kommentar absenden
+  // Absenden (optimistisches Update)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!content.trim()) return
+    const text = content.trim()
+    if (!text) return
 
     setSubmitting(true)
-    // Hole eingeloggten User (Client-Side!)
+
     const {
       data: { user },
       error: userError,
@@ -98,69 +154,81 @@ export default function CommentsWidget({ blogId }: CommentsWidgetProps) {
       return
     }
 
-    // Optimistisches Update (sofort anzeigen)
     const optimistic: Comment = {
       id: `optimistic-${Date.now()}`,
       blog_id: blogId,
       user_id: user.id,
       name: user.user_metadata?.name ?? 'User',
-      content,
+      content: text,
       created_at: new Date().toISOString(),
       status: 'visible',
       creator_profile: {
         id: user.id,
-        name: user.user_metadata?.name ?? undefined,
-        avatar_url: user.user_metadata?.avatar_url ?? undefined,
-        username: user.user_metadata?.username ?? undefined,
-      }
+        user_id: user.id,
+        display_name: (user.user_metadata as any)?.display_name ?? null,
+        name: user.user_metadata?.name ?? null,
+        username: (user.user_metadata as any)?.username ?? null,
+        avatar_url: (user.user_metadata as any)?.avatar_url ?? null,
+        role: 'user',
+        email: user.email ?? null,
+
+        bio: null,
+        created_at: null,
+        facebook: null,
+        instagram: null,
+        tiktok: null,
+        twitter: null,
+        website: null,
+        youtube: null,
+      },
     }
+
     setComments(prev => [...prev, optimistic])
 
-    // Kommentar speichern
     const { data, error } = await supabase
       .from('blog_comments')
       .insert({
         blog_id: blogId,
         user_id: user.id,
         name: user.user_metadata?.name ?? 'User',
-        content,
+        content: text,
         status: 'visible',
       })
-      .select(`
-        *,
-        creator_profile:creator_profiles (
-          id,
-          name,
-          avatar_url,
-          username
-        )
-      `)
+      .select('*')
       .single()
 
     if (error || !data) {
-      toast.error('Kommentar konnte nicht gespeichert werden.')
       setComments(prev => prev.filter(c => c.id !== optimistic.id))
-    } else {
-      // Sanitize data to ensure creator_profile is valid
-      const sanitizedData = {
-        ...data,
-        creator_profile:
-          data.creator_profile && typeof data.creator_profile === 'object' && !('code' in data.creator_profile)
-            ? data.creator_profile
-            : null,
-      } as Comment
-      setComments(prev =>
-        prev.map(c => (c.id === optimistic.id ? sanitizedData : c))
-      )
-      setContent('')
-      inputRef.current?.focus()
+      toast.error('Kommentar konnte nicht gespeichert werden.')
+      setSubmitting(false)
+      return
     }
+
+    const row = data as CommentRow
+    let creator = optimistic.creator_profile
+
+    if (!creator && row.user_id) {
+      const { data: p } = await supabase
+        .from('creator_profiles')
+        .select('id, user_id, display_name, name, username, avatar_url, role, email')
+        .eq('user_id', row.user_id)
+        .maybeSingle()
+
+      if (p) creator = toMini(p as CreatorProfileRow)
+    }
+
+    const finalized: Comment = { ...row, creator_profile: creator ?? null }
+    setComments(prev => prev.map(c => (c.id === optimistic.id ? finalized : c)))
+
+    setContent('')
+    inputRef.current?.focus()
     setSubmitting(false)
   }
 
   return (
     <div className="w-full mt-8">
       <h2 className="text-lg font-bold mb-4">💬 Kommentare</h2>
+
       <form onSubmit={handleSubmit} className="flex flex-col gap-3 mb-6">
         <textarea
           ref={inputRef}
@@ -172,7 +240,7 @@ export default function CommentsWidget({ blogId }: CommentsWidgetProps) {
           required
         />
         <Button type="submit" disabled={submitting || !content.trim()}>
-          Kommentar absenden
+          {submitting ? 'Wird gesendet…' : 'Kommentar absenden'}
         </Button>
       </form>
 
@@ -180,38 +248,28 @@ export default function CommentsWidget({ blogId }: CommentsWidgetProps) {
         {comments.length === 0 && (
           <p className="text-neutral-400 italic">Noch keine Kommentare vorhanden.</p>
         )}
+
         {comments.map(comment => (
           <div key={comment.id} className="border rounded-lg p-4 bg-white dark:bg-neutral-900 shadow-sm">
             <div className="flex items-center gap-2 mb-1">
               {comment.creator_profile ? (
-                <CreatorMiniProfile
-                  creator={{
-                    id: comment.creator_profile.id,
-                    user_id: comment.creator_profile.id,
-                    name: comment.creator_profile.name ?? null,
-                    avatar_url: comment.creator_profile.avatar_url ?? null,
-                    username: comment.creator_profile.username ?? null,
-                    bio: null,
-                    created_at: null,
-                    facebook: null,
-                    instagram: null,
-                    role: null,
-                    tiktok: null,
-                    twitter: null,
-                    website: null,
-                    youtube: null,
-                  }}
-                />
+                // bewusst locker typisiert:
+                <CreatorMiniProfile creator={comment.creator_profile as any} />
               ) : (
-                <Badge variant="outline" className="text-xs">{comment.name ?? 'Gast'}</Badge>
+                <Badge variant="outline" className="text-xs">
+                  {comment.name ?? 'Gast'}
+                </Badge>
               )}
               <span className="text-xs text-neutral-400">
                 {new Date(comment.created_at).toLocaleString()}
               </span>
             </div>
+
             <div
               className="prose prose-sm dark:prose-invert max-w-none"
-              dangerouslySetInnerHTML={{ __html: marked.parse(comment.content ?? '') as string }}
+              dangerouslySetInnerHTML={{
+                __html: (marked.parse(comment.content ?? '') as string) || '',
+              }}
             />
           </div>
         ))}

@@ -1,18 +1,33 @@
 # Node.js build & cache
 node_modules/
-.next/
-dist/
-out/
+.npm/
 *.tsbuildinfo
 *.log
-coverage/
+logs/
 
-# Vercel (lokal erzeugt, nicht pushen)
+# Next.js
+.next/
+out/
+dist/
+
+# Turborepo / allgemeine Caches
+.turbo/
+.cache/
+
+# Coverage / Test-Artefakte
+coverage/
+playwright-report/
+test-results/
+cypress/screenshots/
+cypress/videos/
+
+# Vercel (lokal generiert, nicht pushen)
 .vercel/
 
-# Lokale Umgebungen
+# Lokale Umgebungen (nie committen)
 .env
 .env.local
+.env.*.local
 .env.development
 .env.production
 .env.test
@@ -20,7 +35,7 @@ coverage/
 # Jetnity intern (lokale Arbeitsverzeichnisse)
 jetnity-clean/
 
-# macOS / Linux / Windows Systemdateien
+# macOS / Windows Systemdateien
 .DS_Store
 Thumbs.db
 
