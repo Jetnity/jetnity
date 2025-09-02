@@ -1,18 +1,17 @@
+// components/creator/ContentUploadForm.tsx
 'use client'
 
 import * as React from 'react'
 import { useRouter } from 'next/navigation'
-import { v4 as uuidv4 } from 'uuid'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase/client'
 import type { TablesInsert } from '@/types/supabase'
 import UploadDropzone from '@/components/creator/UploadDropzone'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 import { Loader2, Upload as UploadIcon, X } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 type InsertUpload = TablesInsert<'creator_uploads'>
-
 const BUCKET = 'creator-media'
 const MAX_IMAGE_MB = 15
 const MAX_VIDEO_MB = 250
@@ -20,14 +19,14 @@ const MAX_VIDEO_MB = 250
 export default function ContentUploadForm() {
   const router = useRouter()
 
-  // form state
+  // form
   const [title, setTitle] = React.useState('')
   const [description, setDescription] = React.useState('')
   const [destination, setDestination] = React.useState('')
   const [region, setRegion] = React.useState('')
-  const [format, setFormat] = React.useState<'Foto' | 'Video' | 'Reel' | 'Story'>('Foto')
+  const [format, setFormat] = React.useState<InsertUpload['format']>('Foto' as any)
   const [tags, setTags] = React.useState('')
-  const [language, setLanguage] = React.useState<'de' | 'en'>('de')
+  const [language, setLanguage] = React.useState<InsertUpload['language']>('de' as any)
   const [mood, setMood] = React.useState('')
 
   // file
@@ -36,9 +35,10 @@ export default function ContentUploadForm() {
 
   // ux
   const [submitting, setSubmitting] = React.useState(false)
+  const [progress, setProgress] = React.useState(0)
   const [errMsg, setErrMsg] = React.useState<string>('')
 
-  const abortRef = React.useRef<AbortController | null>(null)
+  const xhrRef = React.useRef<XMLHttpRequest | null>(null)
 
   React.useEffect(() => {
     if (!file) {
@@ -50,7 +50,7 @@ export default function ContentUploadForm() {
     return () => URL.revokeObjectURL(url)
   }, [file])
 
-  /* ---------- Helpers ---------- */
+  /* ---------- helpers ---------- */
 
   function cleanTags(input: string): string[] {
     const arr = input
@@ -58,18 +58,10 @@ export default function ContentUploadForm() {
       .map((t) => t.trim())
       .filter(Boolean)
       .map((t) => t.replace(/^#/, '').toLowerCase())
-    // dedupe, max 15
     return Array.from(new Set(arr)).slice(0, 15)
   }
 
-  function inferFormat(f: File, fallback: InsertUpload['format']): InsertUpload['format'] {
-    const mime = f.type || ''
-    if (mime.startsWith('video/')) return 'Video' as any
-    if (mime.startsWith('image/')) return 'Foto' as any
-    return fallback ?? ('Foto' as any)
-  }
-
-  function validateFile(f: File | null): string | null {
+  function validateFile(f: File | null) {
     if (!f) return 'Bitte eine Datei auswählen.'
     const sizeMB = f.size / (1024 * 1024)
     if (f.type.startsWith('image/')) {
@@ -82,86 +74,109 @@ export default function ContentUploadForm() {
     return null
   }
 
+  function inferFormat(f: File, fallback: InsertUpload['format']): InsertUpload['format'] {
+    const mime = f.type
+    if (mime.startsWith('video/')) return 'Video' as any
+    if (mime.startsWith('image/')) return 'Foto' as any
+    return fallback ?? ('Foto' as any)
+  }
+
   async function getUserId() {
     const { data, error } = await supabase.auth.getUser()
     if (error || !data?.user) throw Object.assign(new Error('Not authenticated'), { status: 401 })
     return data.user.id
   }
 
-  function makeObjectPath(userId: string, f: File) {
-    const ext = (() => {
-      const m = /\.([a-z0-9]+)$/i.exec(f.name)
-      return m ? m[1].toLowerCase() : (f.type.split('/')[1] || 'bin')
-    })()
-    // yyyy/mm/ für bessere Bucket-Aufräumung
-    const d = new Date()
-    const folder = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}`
-    return `${userId}/${folder}/${uuidv4()}.${ext}`
+  /* ---------- signed upload ---------- */
+
+  async function createSignedUrl(mime: string): Promise<{ signedUrl: string; path: string; publicUrl: string }> {
+    const res = await fetch('/api/uploads/signed-url', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ mime }),
+    })
+    if (!res.ok) {
+      const msg = (await res.json().catch(() => ({})))?.error || 'Konnte Signed URL nicht erstellen.'
+      throw new Error(msg)
+    }
+    const json = (await res.json()) as { signedUrl: string; path: string; publicUrl: string }
+    return json
   }
 
-  /* ---------- Submit ---------- */
+  async function putWithProgress(url: string, file: File, mime: string) {
+    return new Promise<void>((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhrRef.current = xhr
+      xhr.open('PUT', url)
+      xhr.setRequestHeader('Content-Type', mime)
+
+      xhr.upload.onprogress = (ev) => {
+        if (ev.lengthComputable) {
+          setProgress(Math.round((ev.loaded / ev.total) * 100))
+        }
+      }
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) resolve()
+        else reject(new Error(`Upload failed with status ${xhr.status}`))
+      }
+      xhr.onerror = () => reject(new Error('Netzwerkfehler beim Upload'))
+      xhr.onabort = () => reject(new Error('Upload abgebrochen'))
+      xhr.send(file)
+    })
+  }
+
+  const onCancelUpload = () => {
+    xhrRef.current?.abort()
+    setSubmitting(false)
+    setProgress(0)
+  }
+
+  /* ---------- submit ---------- */
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (submitting) return
     setSubmitting(true)
     setErrMsg('')
-    abortRef.current?.abort()
-    abortRef.current = new AbortController()
+    setProgress(0)
 
     try {
       const fileError = validateFile(file)
       if (fileError) throw new Error(fileError)
 
-      const userId = await getUserId()
+      // sichergehen: user eingeloggt (auch für spätere DB-Insert)
+      await getUserId()
+
       const f = file as File
+      const effectiveFormat = inferFormat(f, format)
 
-      // Format automatisch bestimmen (kann durch Auswahl überschrieben werden)
-      const chosenFormat = (format || 'Foto') as InsertUpload['format']
-      const effectiveFormat = inferFormat(f, chosenFormat)
+      // 1) Signed URL anfordern
+      const { signedUrl, path, publicUrl } = await createSignedUrl(f.type || 'application/octet-stream')
 
-      // 1) Upload nach Supabase Storage
-      const objectPath = makeObjectPath(userId, f)
-      const { error: upErr } = await supabase.storage
-        .from(BUCKET)
-        .upload(objectPath, f, {
-          cacheControl: '31536000, immutable',
-          upsert: false,
-          contentType: f.type || 'application/octet-stream',
-          signal: abortRef.current.signal as any, // toleranter cast – supabase nutzt fetch intern
-        } as any)
+      // 2) Hochladen (mit Progress)
+      await putWithProgress(signedUrl, f, f.type || 'application/octet-stream')
 
-      if (upErr) {
-        throw new Error(upErr.message || 'Upload fehlgeschlagen.')
-      }
-
-      // 2) Öffentliche URL sauber via API (statt String zusammenbauen)
-      const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(objectPath)
-      const publicUrl = pub?.publicUrl
-      if (!publicUrl) throw new Error('Konnte öffentliche URL nicht ermitteln.')
-
-      // 3) DB-Insert
+      // 3) DB-Insert (TS-Fix: keine nulls für string-Felder)
       const payload: InsertUpload = {
-        user_id: userId,
+        created_at: new Date().toISOString(),
         title: title.trim(),
         description: description.trim(),
-        destination: destination.trim() || null,
-        region: region.trim() || null,
+        destination: (destination.trim() || '') as InsertUpload['destination'],
+        region: (region.trim() || '') as InsertUpload['region'],
         format: effectiveFormat,
         tags: cleanTags(tags),
         language,
-        mood: mood.trim() || null,
+        mood: (mood.trim() || null) as InsertUpload['mood'],
         image_url: publicUrl,
         file_url: publicUrl,
-        // created_at lässt man i. d. R. von der DB (default now()) setzen – aber falls nötig:
-        // created_at: new Date().toISOString() as any,
+        user_id: (await getUserId()) as InsertUpload['user_id'],
       }
 
       const { error: dbErr } = await supabase.from('creator_uploads').insert([payload])
       if (dbErr) throw new Error(dbErr.message || 'Fehler beim Speichern in der Datenbank.')
 
       toast.success('Upload erfolgreich gespeichert.')
-      // Reset
+      // reset
       setTitle('')
       setDescription('')
       setDestination('')
@@ -170,8 +185,8 @@ export default function ContentUploadForm() {
       setMood('')
       setFile(null)
       setPreviewUrl(null)
+      setProgress(0)
 
-      // Seite aktualisieren (Grid etc.)
       router.refresh()
     } catch (err: any) {
       console.error('[ContentUploadForm]', err)
@@ -184,11 +199,6 @@ export default function ContentUploadForm() {
     } finally {
       setSubmitting(false)
     }
-  }
-
-  const onCancelUpload = () => {
-    abortRef.current?.abort()
-    setSubmitting(false)
   }
 
   /* ---------- UI ---------- */
@@ -235,6 +245,7 @@ export default function ContentUploadForm() {
               placeholder="z. B. Bali"
             />
           </label>
+
           <label className="block">
             <span className="mb-1 block text-sm font-medium">Region</span>
             <input
@@ -252,7 +263,7 @@ export default function ContentUploadForm() {
           <label className="block">
             <span className="mb-1 block text-sm font-medium">Format</span>
             <select
-              value={format}
+              value={format as any}
               onChange={(e) => setFormat(e.target.value as any)}
               className="w-full rounded-lg border px-3 py-2"
             >
@@ -266,7 +277,7 @@ export default function ContentUploadForm() {
           <label className="block">
             <span className="mb-1 block text-sm font-medium">Sprache</span>
             <select
-              value={language}
+              value={language as any}
               onChange={(e) => setLanguage(e.target.value as any)}
               className="w-full rounded-lg border px-3 py-2"
             >
@@ -300,50 +311,67 @@ export default function ContentUploadForm() {
           <span className="mt-1 block text-xs text-muted-foreground">Max. 15 Tags, „#“ optional.</span>
         </label>
 
-        {/* Datei */}
-        <div className="grid grid-cols-1 gap-3">
-          <UploadDropzone
-            accept="image/*,video/*"
-            onFile={(f) => setFile(f)}
-            disabled={submitting}
-          />
-          {previewUrl && (
-            <div className="relative rounded-xl border p-2">
-              {file?.type.startsWith('image/') ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={previewUrl} alt="Vorschau" className="max-h-64 w-full rounded-lg object-cover" />
-              ) : (
-                // eslint-disable-next-line jsx-a11y/media-has-caption
-                <video src={previewUrl} className="max-h-64 w-full rounded-lg" controls />
-              )}
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="absolute right-2 top-2"
-                onClick={() => { setFile(null); setPreviewUrl(null) }}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
+        {/* Dropzone + optional Overlay bei submitting */}
+        <div className="relative">
+          <UploadDropzone accept="image/*,video/*" onFile={(f) => setFile(f)} />
+          {submitting && (
+            <div className="absolute inset-0 rounded-lg bg-background/50 backdrop-blur-sm pointer-events-none" />
           )}
         </div>
 
+        {/* Preview */}
+        {previewUrl && (
+          <div className="relative rounded-xl border p-2">
+            {file?.type.startsWith('image/') ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={previewUrl} alt="Vorschau" className="max-h-64 w-full rounded-lg object-cover" />
+            ) : (
+              // eslint-disable-next-line jsx-a11y/media-has-caption
+              <video src={previewUrl} className="max-h-64 w-full rounded-lg" controls />
+            )}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="absolute right-2 top-2"
+              onClick={() => {
+                setFile(null)
+                setPreviewUrl(null)
+              }}
+              aria-label="Datei entfernen"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+
+        {/* Progress */}
+        {submitting && (
+          <div className="flex items-center gap-3">
+            <div className="h-2 w-full rounded-full bg-muted">
+              <div
+                className="h-2 rounded-full bg-primary transition-[width]"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <div className="w-12 text-right text-sm tabular-nums">{progress}%</div>
+          </div>
+        )}
+
+        {/* Error */}
         {errMsg && (
           <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700" role="alert">
             {errMsg}
           </div>
         )}
 
+        {/* Actions */}
         <div className="flex items-center gap-2">
-          <Button
-            type="submit"
-            disabled={submitting || !file}
-            className={cn('inline-flex items-center gap-2 rounded-xl')}
-          >
+          <Button type="submit" disabled={submitting || !file} className="inline-flex items-center gap-2 rounded-xl">
             {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadIcon className="h-4 w-4" />}
             {submitting ? 'Hochladen…' : 'Upload starten'}
           </Button>
+
           {submitting && (
             <Button type="button" variant="outline" onClick={onCancelUpload}>
               Abbrechen

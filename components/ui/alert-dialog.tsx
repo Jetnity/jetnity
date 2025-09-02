@@ -94,7 +94,7 @@ const AlertDialogDescription = React.forwardRef<
 AlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayName
 
 /* Action / Cancel – als vollwertige Buttons gestylt */
-type ButtonLikeProps<T> = React.ComponentPropsWithoutRef<T> & { className?: string }
+type ButtonLikeProps<T extends React.ElementType> = React.ComponentPropsWithoutRef<T> & { className?: string }
 
 const baseBtn =
   'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium',
