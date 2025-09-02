@@ -7,6 +7,8 @@ import { supabase } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { MFATotpDialog } from '@/components/auth/MFATotpDialog';
+import { getAAL, startTotpChallenge } from '@/lib/auth/mfa';
 import {
   Mail as MailIcon,
   Lock,
@@ -52,6 +54,11 @@ export default function LoginForm() {
   const [loading, setLoading] = React.useState(false);
   const [oauthLoading, setOauthLoading] = React.useState<null | 'google' | 'apple'>(null);
 
+  // MFA Dialog State
+  const [mfaOpen, setMfaOpen] = React.useState(false);
+  const [factorId, setFactorId] = React.useState('');
+  const [challengeId, setChallengeId] = React.useState('');
+
   // Caps-Lock Erkennung ohne ts-expect-error
   const onPasswordKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
     try {
@@ -74,11 +81,25 @@ export default function LoginForm() {
 
     setLoading(true);
     try {
+      // 1) Passwort-Login
       const { error } = await supabase.auth.signInWithPassword({ email: em, password });
       if (error) {
         setErrorMsg(mapAuthError(error.message));
         return;
       }
+
+      // 2) Prüfen, ob ein Step-Up auf AAL2 (MFA) benötigt wird
+      const aal = await getAAL(supabase);
+      if (aal?.nextLevel === 'aal2' && aal?.currentLevel !== 'aal2') {
+        // 3) TOTP-Challenge starten und Dialog öffnen
+        const { factorId, challengeId } = await startTotpChallenge(supabase);
+        setFactorId(factorId);
+        setChallengeId(challengeId);
+        setMfaOpen(true);
+        return; // Warten bis der Dialog verifiziert → onVerified leitet weiter
+      }
+
+      // 4) Keine MFA nötig → direkt weiter
       router.replace('/creator/creator-dashboard');
     } catch (err: any) {
       setErrorMsg(mapAuthError(err?.message));
@@ -312,6 +333,19 @@ export default function LoginForm() {
         Mit dem Login stimmst du unseren Richtlinien zu. Für Creator- und Admin-Bereiche gilt{' '}
         <span className="font-medium">noindex</span>. Datenschutz: DSGVO &amp; CH-DSG konform.
       </p>
+
+      {/* MFA – TOTP Dialog */}
+      <MFATotpDialog
+        open={mfaOpen}
+        onClose={() => setMfaOpen(false)}
+        supabase={supabase}
+        factorId={factorId}
+        challengeId={challengeId}
+        onVerified={() => {
+          setMfaOpen(false);
+          router.replace('/creator/creator-dashboard');
+        }}
+      />
     </div>
   );
 }
