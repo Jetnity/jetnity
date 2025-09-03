@@ -13,6 +13,7 @@ dist/
 # Turborepo / allgemeine Caches
 .turbo/
 .cache/
+.eslintcache
 
 # Coverage / Test-Artefakte
 coverage/
@@ -26,7 +27,12 @@ cypress/videos/
 
 # Lokale Umgebungen (nie committen)
 .env*
-!.env.example   # Beispiel-Datei bleibt versioniert
+!.env.example          # Beispiel-Dateien behalten
+!.env.*.example        # auch .env.local.example etc. behalten
+
+# Supabase (lokale Artefakte)
+supabase/.temp/
+supabase/.branches/
 
 # Jetnity intern (lokale Arbeitsverzeichnisse)
 jetnity-clean/
