@@ -1,7 +1,7 @@
 // middleware.ts
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
-import type { Database } from './types/supabase' // ⬅️ vorher "@/types/..." → jetzt relativ
+import type { Database } from './types/supabase' // relativ = gut für Edge
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -15,10 +15,13 @@ function assertEnv() {
 export async function middleware(req: NextRequest) {
   assertEnv()
 
+  // Response vorbereiten, Headers/Cookies weiterreichen
   const res = NextResponse.next({ request: { headers: req.headers } })
   res.headers.set('x-middleware-cache', 'no-cache')
 
   const { pathname, search } = req.nextUrl
+
+  // Nur Creator-Dashboard schützen (inkl. Unterseiten)
   const isProtected = pathname.startsWith('/creator/creator-dashboard')
   if (!isProtected) return res
 
@@ -58,6 +61,7 @@ export async function middleware(req: NextRequest) {
   }
 }
 
+// Wichtig: alle Unterpfade matchen
 export const config = {
-  matcher: ['/creator/creator-dashboard'],
+  matcher: ['/creator/creator-dashboard/:path*'],
 }
