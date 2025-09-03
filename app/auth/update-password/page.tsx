@@ -9,10 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, Eye, EyeOff, Lock, CheckCircle2, AlertCircle } from 'lucide-react';
 
-export const metadata = {
-  robots: { index: false, follow: false },
-  title: 'Passwort aktualisieren',
-};
+// ⛔️ Wichtig: In Client Components KEIN `export const metadata`!
 
 function scorePassword(pw: string) {
   let score = 0;
@@ -23,6 +20,7 @@ function scorePassword(pw: string) {
   if (/[^A-Za-z0-9]/.test(pw)) score++;
   return Math.min(score, 5);
 }
+
 function strengthLabel(score: number) {
   return ['Sehr schwach', 'Schwach', 'Mittel', 'Stark', 'Sehr stark'][Math.max(0, score - 1)] || 'Sehr schwach';
 }
@@ -73,7 +71,6 @@ export default function UpdatePasswordPage() {
         return;
       }
       setOkMsg('Passwort erfolgreich aktualisiert.');
-      // kurzer Delay für UX, dann weiter
       setTimeout(() => router.replace('/creator/creator-dashboard'), 600);
     } catch (err: any) {
       setErrorMsg(err?.message || 'Aktualisierung fehlgeschlagen.');
@@ -84,7 +81,7 @@ export default function UpdatePasswordPage() {
   if (checking) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin" />
+        <Loader2 className="h-6 w-6 animate-spin" aria-label="Laden" />
       </div>
     );
   }
@@ -92,7 +89,7 @@ export default function UpdatePasswordPage() {
   if (!hasSession) {
     return (
       <div className="max-w-md mx-auto text-center space-y-3 py-10">
-        <AlertCircle className="h-6 w-6 mx-auto text-destructive" />
+        <AlertCircle className="h-6 w-6 mx-auto text-destructive" aria-hidden="true" />
         <h1 className="text-xl font-semibold">Session erforderlich</h1>
         <p className="text-sm text-muted-foreground">
           Bitte fordere zuerst einen Passwort-Reset per E-Mail an und öffne dann den Link auf dieser Seite.
@@ -116,7 +113,7 @@ export default function UpdatePasswordPage() {
       <form onSubmit={onSubmit} className="space-y-5">
         <div className="space-y-2">
           <Label htmlFor="pw" className="flex items-center gap-2">
-            <Lock className="h-4 w-4" />
+            <Lock className="h-4 w-4" aria-hidden="true" />
             Neues Passwort
           </Label>
           <div className="relative">
@@ -128,6 +125,7 @@ export default function UpdatePasswordPage() {
               placeholder="Mind. 8 Zeichen"
               autoFocus
               className="pr-10"
+              autoComplete="new-password"
             />
             <button
               type="button"
@@ -141,13 +139,13 @@ export default function UpdatePasswordPage() {
 
           {/* Simple Strength Meter */}
           <div className="mt-2">
-            <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+            <div className="h-2 w-full rounded-full bg-muted overflow-hidden" aria-hidden="true">
               <div
                 className="h-2 rounded-full bg-primary transition-all"
                 style={{ width: `${pct}%` }}
               />
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">{strengthLabel(s)}</p>
+            <p className="mt-1 text-xs text-muted-foreground" aria-live="polite">{strengthLabel(s)}</p>
             <ul className="mt-1 text-[11px] text-muted-foreground space-y-0.5">
               <li>• Mind. 8 Zeichen</li>
               <li>• Groß- & Kleinbuchstaben</li>
@@ -166,6 +164,7 @@ export default function UpdatePasswordPage() {
               onChange={(e) => setPw2(e.target.value)}
               placeholder="Wiederholen"
               className="pr-10"
+              autoComplete="new-password"
             />
             <button
               type="button"
@@ -179,20 +178,32 @@ export default function UpdatePasswordPage() {
         </div>
 
         {errorMsg && (
-          <div className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive" role="alert">
-            <AlertCircle className="h-4 w-4 mt-0.5" />
+          <div
+            className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
+            role="alert"
+          >
+            <AlertCircle className="h-4 w-4 mt-0.5" aria-hidden="true" />
             <p>{errorMsg}</p>
           </div>
         )}
         {okMsg && (
-          <div className="flex items-start gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-700" role="status">
-            <CheckCircle2 className="h-4 w-4 mt-0.5" />
+          <div
+            className="flex items-start gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-700"
+            role="status"
+          >
+            <CheckCircle2 className="h-4 w-4 mt-0.5" aria-hidden="true" />
             <p>{okMsg}</p>
           </div>
         )}
 
         <Button type="submit" disabled={loading} className="w-full">
-          {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Speichern…</> : 'Passwort speichern'}
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Speichern…
+            </>
+          ) : (
+            'Passwort speichern'
+          )}
         </Button>
       </form>
     </div>
