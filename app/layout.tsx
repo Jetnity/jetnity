@@ -3,6 +3,8 @@ import '../styles/globals.css'
 import type { Metadata, Viewport } from 'next'
 import { Toaster } from 'sonner'
 
+export const runtime = 'nodejs' // gesamte App standardmäßig auf Node.js
+
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
 export const metadata: Metadata = {
@@ -39,14 +41,11 @@ export const metadata: Metadata = {
     images: ['/og-default.png'],
   },
   icons: {
-    icon: [
-      { url: '/favicon.ico' },
-      { url: '/icon.png', type: 'image/png' },
-    ],
+    icon: [{ url: '/favicon.ico' }, { url: '/icon.png', type: 'image/png' }],
     apple: [{ url: '/apple-touch-icon.png' }],
   },
   manifest: '/site.webmanifest',
-  // ⛔️ themeColor HIER entfernen – gehört in viewport
+  // themeColor gehört in das viewport-Export (siehe unten)
 }
 
 export const viewport: Viewport = {
