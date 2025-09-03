@@ -1,11 +1,10 @@
 // app/api/admin/storage/ensure/route.ts
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-
-/** WICHTIG: nicht am Edge laufen lassen, nicht prerendern */
-export const runtime = 'nodejs'
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
 
 // Optionaler Schutz (empfohlen): Secret-Header prüfen
 function assertAuthorized(req: Request) {

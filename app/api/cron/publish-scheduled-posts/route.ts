@@ -1,9 +1,11 @@
 // app/api/cron/publish-scheduled-posts/route.ts
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import type { Database } from '@/types/supabase'
-
-export const dynamic = 'force-dynamic'
 
 function isAuthorized(req: Request, url: URL) {
   // 1) Vercel Cron setzt x-vercel-cron Header

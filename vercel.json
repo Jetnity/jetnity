@@ -6,7 +6,7 @@
       "schedule": "*/10 * * * *"
     },
     {
-      "path": "/api/copilot/auto?secret=@cron_secret&sinceDays=14&maxPerRegion=1&virtualOnly=1&dryRun=0",
+      "path": "/api/copilot/auto",
       "schedule": "0 6 * * *"
     }
   ]

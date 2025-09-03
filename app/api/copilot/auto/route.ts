@@ -1,4 +1,8 @@
 // app/api/copilot/auto/route.ts
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import 'server-only'
 import { NextResponse } from 'next/server'
 import { maybeGenerateCopilotUpload } from '@/lib/intelligence/copilot-pro.server'
