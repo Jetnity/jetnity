@@ -1,7 +1,7 @@
 // middleware.ts
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
-import type { Database } from './types/supabase' // relativ = gut für Edge
+import type { Database } from './types/supabase' // relativ statt @/
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -15,15 +15,16 @@ function assertEnv() {
 export async function middleware(req: NextRequest) {
   assertEnv()
 
-  // Response vorbereiten, Headers/Cookies weiterreichen
+  // Antwortobjekt vorbereiten, Cookies durchreichen
   const res = NextResponse.next({ request: { headers: req.headers } })
   res.headers.set('x-middleware-cache', 'no-cache')
 
   const { pathname, search } = req.nextUrl
 
-  // Nur Creator-Dashboard schützen (inkl. Unterseiten)
-  const isProtected = pathname.startsWith('/creator/creator-dashboard')
-  if (!isProtected) return res
+  // Nur die Creator-Dashboard-Routen schützen
+  if (!pathname.startsWith('/creator/creator-dashboard')) {
+    return res
+  }
 
   const supabase = createServerClient<Database>(SUPABASE_URL!, SUPABASE_ANON_KEY!, {
     cookies: {
@@ -39,9 +40,7 @@ export async function middleware(req: NextRequest) {
   })
 
   try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
       const redirectTo = new URL('/', req.url)
@@ -61,7 +60,9 @@ export async function middleware(req: NextRequest) {
   }
 }
 
-// Wichtig: alle Unterpfade matchen
-export const config = {
-  matcher: ['/creator/creator-dashboard/:path*'],
-}
+/**
+ * Wichtig:
+ * KEIN export const config { matcher: ... } mehr.
+ * Dadurch entfällt die Micromatch/Picomatch-Globbing-Logik, die den Stack-Overflow verursacht.
+ * Wir scopen die Middleware über den early-return oben.
+ */
