@@ -7,15 +7,15 @@ import {
   ArrowRightLeft, Users2, ChevronDown, Plus, Minus, X, ArrowUp, ArrowDown, History
 } from 'lucide-react'
 import { cn as _cn } from '@/lib/utils'
-import { DateInput } from '@/components/ui/date-picker' // dein Popover-Calendar
-import Combobox from '@/components/ui/combobox'   // async Airports-Combobox
+import { DateInput } from '@/components/ui/date-picker'
+import Combobox from '@/components/ui/combobox'
 
 /* ---------- helpers ---------- */
 const cn = typeof _cn === 'function' ? _cn : (...a: any[]) => a.filter(Boolean).join(' ')
 type TripType = 'oneway' | 'roundtrip' | 'multicity'
 type CabinClass = 'eco' | 'premium' | 'business' | 'first'
 type Trav = { adults: number; children: number; infants: number }
-type Leg = { from: string; to: string; date: string } // UI hält Strings (YYYY-MM-DD)
+type Leg = { from: string; to: string; date: string }
 type AirportOption = { label: string; value: string; description?: string }
 
 const MAX_LEGS = 6
@@ -40,7 +40,6 @@ function isIataLike(s: string) { return /^[A-Za-z]{3}$/.test(s.trim()) }
 
 /* -------- client cache for airports search -------- */
 const airportsCache = new Map<string, AirportOption[]>()
-const searchAbortRef = React.createRef<AbortController | null>()
 
 export interface FlightSearchFormProps {
   onSubmit?: (params: {
@@ -59,6 +58,9 @@ export interface FlightSearchFormProps {
 
 export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
   const router = useRouter()
+
+  // 🔧 FIX: mutable Ref statt createRef (readonly)
+  const searchAbortRef = React.useRef<AbortController | null>(null)
 
   // Trip type
   const [tripType, setTripType] = useState<TripType>('roundtrip')
@@ -138,7 +140,6 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
     })
   }
 
-  // Auto-prefill Rückflug, wenn Roundtrip aktiviert wird
   useEffect(() => {
     if (tripType === 'roundtrip' && departure && !ret) {
       const d = strToDate(departure)
@@ -147,7 +148,6 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
     if (tripType === 'oneway') setRet('')
   }, [tripType, departure, ret])
 
-  // Rückflug nie vor Hinflug
   useEffect(() => {
     const dOut = strToDate(departure)
     const dBack = strToDate(ret)
@@ -156,7 +156,6 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
     }
   }, [tripType, departure, ret])
 
-  // Passagier-Validierung: Babys ≤ Erwachsene
   useEffect(() => {
     const errs: string[] = []
     if (trav.infants > trav.adults) errs.push('Babys dürfen die Anzahl der Erwachsenen nicht übersteigen.')
@@ -193,7 +192,6 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
       console.error('airport search error', err)
       return []
     } finally {
-      // clear controller if it's still the same
       if (searchAbortRef.current === controller) searchAbortRef.current = null
     }
   }, [])
@@ -206,7 +204,6 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
     try { localStorage.setItem(LS_RECENTS, JSON.stringify(next)) } catch {}
   }
 
-  // memoize submit to avoid new function on each render
   const submit = React.useCallback((e: React.FormEvent) => {
     e.preventDefault()
     setShowErrors(true)
@@ -298,7 +295,6 @@ export default function FlightSearchForm({ onSubmit }: FlightSearchFormProps) {
           <div
             className={cn(
               'grid gap-3 items-end',
-              // stabile Spalten, Button sprengt nicht mehr raus
               'md:grid-cols-[minmax(0,1.35fr)_2.5rem_minmax(0,1.35fr)_minmax(0,0.95fr)_minmax(0,0.95fr)_minmax(0,1.35fr)_max-content]'
             )}
           >

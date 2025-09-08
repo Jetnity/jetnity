@@ -20,9 +20,13 @@ let _authListenerStarted = false;
 /** Memoized Browser-Client */
 export function getSupabaseBrowser(): SupabaseClient<Database> {
   if (_sb) return _sb;
+
   const { url, anon } = getEnv();
-  _sb = _createBrowserClient<Database>(url, anon);
-  return _sb;
+
+  // Typ-Stabilisierung zwischen @supabase/ssr und supabase-js unter TS5/strict:
+  const sb = _createBrowserClient(url, anon) as unknown as SupabaseClient<Database>;
+  _sb = sb;
+  return sb;
 }
 
 /** Alias, damit `import { createBrowserClient } from "@/lib/supabase/client"` funktioniert */
@@ -43,7 +47,12 @@ export function startSupabaseAuthListener(options?: { refreshEndpoint?: string }
 
   const endpoint = options?.refreshEndpoint ?? '/auth/refresh';
   const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event) => {
-    if (['SIGNED_IN', 'SIGNED_OUT', 'TOKEN_REFRESHED', 'USER_UPDATED'].includes(event)) {
+    if (
+      event === 'SIGNED_IN' ||
+      event === 'SIGNED_OUT' ||
+      event === 'TOKEN_REFRESHED' ||
+      event === 'USER_UPDATED'
+    ) {
       try {
         await fetch(endpoint, { method: 'POST', credentials: 'include' });
       } catch {
@@ -52,7 +61,5 @@ export function startSupabaseAuthListener(options?: { refreshEndpoint?: string }
     }
   });
 
-  return () => {
-    subscription?.unsubscribe?.();
-  };
+  return () => subscription?.unsubscribe?.();
 }

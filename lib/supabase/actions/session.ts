@@ -19,7 +19,7 @@ export type CreateDraftSessionArgs = {
 export async function createDraftSession(
   args?: CreateDraftSessionArgs
 ): Promise<{ sessionId: SessionId }> {
-  const supabase = createServerComponentClient<Database>()
+  const supabase = createServerComponentClient()
 
   // Auth
   const {

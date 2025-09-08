@@ -94,13 +94,14 @@ async function processJob(job: any, svc: SupabaseClient<Database>) {
         .save(outPath)
     })
 
-    const buf = await readNode(outPath)
+    const buf = await readNode(outPath)          // Buffer
+    const ab = toArrayBuffer(buf)                // echtes ArrayBuffer
     const upload = await svc.storage
       .from('renders')
-      .upload(`jobs/${job.id}/export.mp4`, buf as any, {
+      .upload(`jobs/${job.id}/export.mp4`, ab, {
         upsert: true,
         contentType: 'video/mp4',
-      } as any)
+      })
     if (upload.error) throw upload.error
     const signed = await svc.storage
       .from('renders')
@@ -135,10 +136,10 @@ async function processJob(job: any, svc: SupabaseClient<Database>) {
     const file = new Blob([srt], { type: 'text/plain;charset=utf-8' })
     const upload = await svc.storage
       .from('subtitles')
-      .upload(`jobs/${job.id}/subs.srt`, file as any, {
+      .upload(`jobs/${job.id}/subs.srt`, file, {
         upsert: true,
         contentType: 'text/plain',
-      } as any)
+      })
     if (upload.error) throw upload.error
     const signed = await svc.storage
       .from('subtitles')
@@ -172,14 +173,23 @@ async function fetchToTmp(url: string, name: string) {
 
 async function readNode(path: string) {
   const fs = await import('node:fs/promises')
-  return await fs.readFile(path)
+  return await fs.readFile(path) // Buffer
+}
+
+/** Sichere Konvertierung: Buffer -> *echtes* ArrayBuffer (niemals SharedArrayBuffer). */
+function toArrayBuffer(buf: Buffer): ArrayBuffer {
+  const ab = new ArrayBuffer(buf.byteLength)
+  new Uint8Array(ab).set(buf)
+  return ab
 }
 
 async function whisperToSRT(wavPath: string) {
   const fs = await import('node:fs/promises')
-  const b = await fs.readFile(wavPath)
+  const b = await fs.readFile(wavPath)   // Buffer
+  const ab = toArrayBuffer(b)            // ArrayBuffer
+
   const form = new FormData()
-  form.append('file', new Blob([b], { type: 'audio/wav' }), 'audio.wav')
+  form.append('file', new Blob([ab], { type: 'audio/wav' }), 'audio.wav')
   form.append('model', 'whisper-1')
   form.append('response_format', 'srt')
 
@@ -195,10 +205,11 @@ async function whisperToSRT(wavPath: string) {
 async function imageInpaint(srcUrl: string, maskUrl: string, svc: SupabaseClient<Database>) {
   const imgBuf = Buffer.from(await (await fetch(srcUrl)).arrayBuffer())
   const maskBuf = Buffer.from(await (await fetch(maskUrl)).arrayBuffer())
+
   const form = new FormData()
   form.append('model', 'gpt-image-1')
-  form.append('image[]', new Blob([imgBuf], { type: 'image/png' }), 'image.png')
-  form.append('mask', new Blob([maskBuf], { type: 'image/png' }), 'mask.png')
+  form.append('image[]', new Blob([toArrayBuffer(imgBuf)], { type: 'image/png' }), 'image.png')
+  form.append('mask', new Blob([toArrayBuffer(maskBuf)], { type: 'image/png' }), 'mask.png')
 
   const r = await fetch('https://api.openai.com/v1/images/edits', {
     method: 'POST',
@@ -210,12 +221,14 @@ async function imageInpaint(srcUrl: string, maskUrl: string, svc: SupabaseClient
   const b64 = j.data?.[0]?.b64_json
   if (!b64) throw new Error('edit failed')
 
-  const png = Buffer.from(b64, 'base64')
+  const pngBuf = Buffer.from(b64, 'base64')
+  const pngAb = toArrayBuffer(pngBuf)
+
   const path = `inpaint/${crypto.randomUUID()}.png`
-  const up = await svc.storage.from('renders').upload(path, png as any, {
+  const up = await svc.storage.from('renders').upload(path, pngAb, {
     contentType: 'image/png',
     upsert: true,
-  } as any)
+  })
   if (up.error) throw up.error
   const signed = await svc.storage.from('renders').createSignedUrl(up.data.path, 60 * 60 * 24 * 30)
   return signed.data?.signedUrl ?? null

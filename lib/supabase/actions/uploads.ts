@@ -19,7 +19,7 @@ const BUCKET = 'creator-media'
  * Idempotent: fehlende Storage-Objekte führen nicht zum Abbruch.
  */
 export async function deleteUpload(id: string): Promise<{ ok: true }> {
-  const supabase = createServerComponentClient<Database>()
+  const supabase = createServerComponentClient()
   const admin = createSupabaseAdmin()
 
   // 0) Auth

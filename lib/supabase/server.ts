@@ -68,27 +68,32 @@ function mutableCookiesAdapter(store: ReturnType<typeof cookies>) {
 export function createServerComponentClient<Db = Database>(): SupabaseClient<Db> {
   assertEnvAnon()
   const store = cookies()
-  return createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
+  // NOTE: Upstream-Types von @supabase/ssr und supabase-js geraten hier in Strict/TS5 durcheinander.
+  // Wir casten bewusst zurück auf den erwarteten Clienttyp, damit Projekt-weite Row-Typen stabil bleiben.
+  const client = createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
     cookies: rscCookiesAdapter(store),
-  })
+  }) as unknown as SupabaseClient<Db>
+  return client
 }
 
 /** Für Route Handlers (/app/api/*) – Cookies mutierbar */
 export function createRouteHandlerClient<Db = Database>(): SupabaseClient<Db> {
   assertEnvAnon()
   const store = cookies()
-  return createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
+  const client = createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
     cookies: mutableCookiesAdapter(store),
-  })
+  }) as unknown as SupabaseClient<Db>
+  return client
 }
 
 /** Für Server Actions – identisch zum Route Handler */
 export function createServerActionClient<Db = Database>(): SupabaseClient<Db> {
   assertEnvAnon()
   const store = cookies()
-  return createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
+  const client = createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
     cookies: mutableCookiesAdapter(store),
-  })
+  }) as unknown as SupabaseClient<Db>
+  return client
 }
 
 /**
@@ -98,9 +103,10 @@ export function createServerActionClient<Db = Database>(): SupabaseClient<Db> {
 export function createAdminClient<Db = Database>(): SupabaseClient<Db> {
   assertEnvService()
   const store = cookies()
-  return createServerClient<Db>(SUPABASE_URL!, SUPABASE_SERVICE!, {
+  const client = createServerClient<Db>(SUPABASE_URL!, SUPABASE_SERVICE!, {
     cookies: mutableCookiesAdapter(store),
-  })
+  }) as unknown as SupabaseClient<Db>
+  return client
 }
 
 /* ───────────── Convenience ───────────── */
