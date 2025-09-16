@@ -10,10 +10,70 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "13.0.5"
   }
   public: {
     Tables: {
+      admin_domains: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          domain: string
+          id: string
+          provider: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          domain: string
+          id?: string
+          provider?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          domain?: string
+          id?: string
+          provider?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      admin_email_boxes: {
+        Row: {
+          address: string
+          created_at: string
+          domain: string
+          forwards_to: string[] | null
+          id: string
+          kind: string
+          status: string
+        }
+        Insert: {
+          address: string
+          created_at?: string
+          domain: string
+          forwards_to?: string[] | null
+          id?: string
+          kind?: string
+          status?: string
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          domain?: string
+          forwards_to?: string[] | null
+          id?: string
+          kind?: string
+          status?: string
+        }
+        Relationships: []
+      }
       airports: {
         Row: {
           city: string | null
@@ -59,6 +119,24 @@ export type Database = {
         }
         Update: {
           user_id?: string
+        }
+        Relationships: []
+      }
+      blocked_ips: {
+        Row: {
+          created_at: string
+          ip: string
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string
+          ip: string
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string
+          ip?: string
+          reason?: string | null
         }
         Relationships: []
       }
@@ -186,6 +264,39 @@ export type Database = {
           },
         ]
       }
+      copilot_suggestions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          detail: string | null
+          id: number
+          prompt: string | null
+          source: string | null
+          tags: Json | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          detail?: string | null
+          id?: number
+          prompt?: string | null
+          source?: string | null
+          tags?: Json | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          detail?: string | null
+          id?: number
+          prompt?: string | null
+          source?: string | null
+          tags?: Json | null
+          title?: string
+        }
+        Relationships: []
+      }
       creator_alert_events: {
         Row: {
           current_value: number
@@ -279,6 +390,7 @@ export type Database = {
           facebook: string | null
           id: string
           instagram: string | null
+          is_admin: boolean
           last_seen_at: string | null
           name: string | null
           role: string | null
@@ -299,6 +411,7 @@ export type Database = {
           facebook?: string | null
           id?: string
           instagram?: string | null
+          is_admin?: boolean
           last_seen_at?: string | null
           name?: string | null
           role?: string | null
@@ -319,6 +432,7 @@ export type Database = {
           facebook?: string | null
           id?: string
           instagram?: string | null
+          is_admin?: boolean
           last_seen_at?: string | null
           name?: string | null
           role?: string | null
@@ -652,6 +766,48 @@ export type Database = {
           },
         ]
       }
+      dns_audit_events: {
+        Row: {
+          actor: string
+          after: Json | null
+          apply_flags: Json | null
+          before: Json | null
+          created_at: string
+          domain: string
+          error: string | null
+          id: string
+          mode: string
+          results: Json | null
+          success: boolean
+        }
+        Insert: {
+          actor: string
+          after?: Json | null
+          apply_flags?: Json | null
+          before?: Json | null
+          created_at?: string
+          domain: string
+          error?: string | null
+          id?: string
+          mode: string
+          results?: Json | null
+          success?: boolean
+        }
+        Update: {
+          actor?: string
+          after?: Json | null
+          apply_flags?: Json | null
+          before?: Json | null
+          created_at?: string
+          domain?: string
+          error?: string | null
+          id?: string
+          mode?: string
+          results?: Json | null
+          success?: boolean
+        }
+        Relationships: []
+      }
       edit_docs: {
         Row: {
           created_at: string
@@ -754,6 +910,54 @@ export type Database = {
           },
         ]
       }
+      payments: {
+        Row: {
+          amount_chf: number | null
+          created_at: string
+          customer_email: string | null
+          id: string
+          status: string
+        }
+        Insert: {
+          amount_chf?: number | null
+          created_at?: string
+          customer_email?: string | null
+          id: string
+          status: string
+        }
+        Update: {
+          amount_chf?: number | null
+          created_at?: string
+          customer_email?: string | null
+          id?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      refunds: {
+        Row: {
+          amount_chf: number
+          created_at: string
+          id: string
+          payment_id: string
+          reason: string | null
+        }
+        Insert: {
+          amount_chf: number
+          created_at?: string
+          id?: string
+          payment_id: string
+          reason?: string | null
+        }
+        Update: {
+          amount_chf?: number
+          created_at?: string
+          id?: string
+          payment_id?: string
+          reason?: string | null
+        }
+        Relationships: []
+      }
       render_jobs: {
         Row: {
           created_at: string
@@ -851,6 +1055,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      security_events: {
+        Row: {
+          created_at: string
+          extra: Json | null
+          id: string
+          ip: string | null
+          metadata: Json | null
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          extra?: Json | null
+          id?: string
+          ip?: string | null
+          metadata?: Json | null
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          extra?: Json | null
+          id?: string
+          ip?: string | null
+          metadata?: Json | null
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       session_cocreations: {
         Row: {
@@ -1276,11 +1510,38 @@ export type Database = {
           },
         ]
       }
+      stripe_webhooks: {
+        Row: {
+          created_at: string
+          id: string
+          type: string | null
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          type?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          type?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      admin_payments_summary_30d: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          orders_count: number
+          payouts_cents: number
+          refunds_cents: number
+          total_revenue_cents: number
+        }[]
+      }
       append_email_to_array: {
         Args:
           | { email: string; session_id: string }
@@ -1358,6 +1619,10 @@ export type Database = {
         Args: { session_id: string }
         Returns: undefined
       }
+      is_admin: {
+        Args: { uid: string }
+        Returns: boolean
+      }
       platform_avg_impact_score: {
         Args: Record<PropertyKey, never> | { days?: number }
         Returns: number
@@ -1365,10 +1630,27 @@ export type Database = {
       publish_due_blog_posts: {
         Args: { batch_size?: number }
         Returns: {
+          admin_reviewed: boolean
+          ai_generated: boolean
+          content: string
+          cover_image: string | null
+          created_at: string | null
+          creator_id: string | null
+          excerpt: string | null
           id: string
-          scheduled_at: string
+          is_featured: boolean
+          likes: number
+          published_at: string | null
+          scheduled_at: string | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          status: Database["public"]["Enums"]["blog_status"]
+          tags: string[] | null
           title: string
-          user_id: string
+          updated_at: string | null
+          user_id: string | null
+          views: number
         }[]
       }
       publish_due_posts: {

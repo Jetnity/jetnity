@@ -14,57 +14,77 @@ import {
   Settings,
   LogOut,
   UserCircle2,
+  Wand2,
+  Rocket,
+  Play,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 type Props = {
   /** Überschrift links (fallback: aus Breadcrumbs) */
   title?: string
-  /** Optionaler Callback zum Öffnen/Schließen der Sidebar */
+  /** Optionaler Callback zum Öffnen/Schließen der Sidebar (z. B. Mobile-Drawer) */
   onToggleSidebar?: () => void
-  /** Menü-Button links anzeigen (für mobile/eng) */
+  /** Menü-Button links anzeigen (wird meist nur auf <md gebraucht) */
   showMenuButton?: boolean
+  /** Optionaler rechter Slot (z. B. Custom-Buttons) */
+  rightSlot?: React.ReactNode
 }
+
+/* ───────────────────────── Utilities ───────────────────────── */
+
+function buildCrumbs(pathname: string) {
+  const parts = (pathname || '/').split('/').filter(Boolean)
+  const adminIdx = parts.indexOf('admin')
+  const segs = adminIdx >= 0 ? parts.slice(adminIdx) : parts
+  const items = segs.map((s, i) => {
+    const href = '/' + segs.slice(0, i + 1).join('/')
+    const pretty = decodeURIComponent(s)
+      .replace(/[-_]/g, ' ')
+      .replace(/\b\w/g, (m) => m.toUpperCase())
+    return { href, label: pretty || 'Admin' }
+  })
+  if (items.length === 0 || items[0].label.toLowerCase() !== 'admin') {
+    items.unshift({ href: '/admin', label: 'Admin' })
+  }
+  return items
+}
+
+const THEME_LS_KEY = 'jetnity:theme' // 'light' | 'dark' | 'system'
+
+/* ───────────────────────── Component ───────────────────────── */
 
 export default function AdminTopbar({
   title,
   onToggleSidebar,
   showMenuButton = true,
+  rightSlot,
 }: Props) {
   const pathname = usePathname()
 
-  // ---- Breadcrumbs aus URL bauen
-  const crumbs = React.useMemo(() => {
-    const parts = (pathname || '/').split('/').filter(Boolean)
-    const adminIdx = parts.indexOf('admin')
-    const segs = adminIdx >= 0 ? parts.slice(adminIdx) : parts
-    const items = segs.map((s, i) => {
-      const href = '/' + segs.slice(0, i + 1).join('/')
-      const label = s
-        .replace(/[-_]/g, ' ')
-        .replace(/\b\w/g, (m) => m.toUpperCase())
-      return { href, label }
-    })
-    if (items.length === 0 || items[0].label.toLowerCase() !== 'admin') {
-      items.unshift({ href: '/admin', label: 'Admin' })
-    }
-    return items
-  }, [pathname])
+  // ---- Breadcrumbs
+  const crumbs = React.useMemo(() => buildCrumbs(pathname || '/'), [pathname])
+  const heading = title ?? crumbs.at(-1)?.label ?? 'Admin'
 
-  // ---- Theme Toggle (ohne externe Abhängigkeiten)
+  // ---- Theme
   const [isDark, setIsDark] = React.useState(false)
   React.useEffect(() => {
     const root = document.documentElement
-    const dark = root.classList.contains('dark')
-    setIsDark(dark)
+    const saved = (localStorage.getItem(THEME_LS_KEY) as 'light' | 'dark' | 'system' | null) || 'system'
+    const systemDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
+    const wantsDark = saved === 'dark' || (saved === 'system' && systemDark)
+    root.classList.toggle('dark', wantsDark)
+    setIsDark(wantsDark)
   }, [])
   const toggleTheme = () => {
     const root = document.documentElement
-    root.classList.toggle('dark')
-    setIsDark(root.classList.contains('dark'))
+    const nowDark = !root.classList.contains('dark')
+    root.classList.toggle('dark', nowDark)
+    setIsDark(nowDark)
+    try { localStorage.setItem(THEME_LS_KEY, nowDark ? 'dark' : 'light') } catch {}
   }
 
-  // ---- Benachrichtigungen & User-Menü
+  // ---- Notifications & User-Menü (A11y)
   const [notifOpen, setNotifOpen] = React.useState(false)
   const [userOpen, setUserOpen] = React.useState(false)
   const notifRef = React.useRef<HTMLDivElement | null>(null)
@@ -75,27 +95,18 @@ export default function AdminTopbar({
       if (notifOpen && notifRef.current && !notifRef.current.contains(t)) setNotifOpen(false)
       if (userOpen && userRef.current && !userRef.current.contains(t)) setUserOpen(false)
     }
-    const onEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setNotifOpen(false)
-        setUserOpen(false)
-      }
-    }
+    const onEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') { setNotifOpen(false); setUserOpen(false) } }
     document.addEventListener('mousedown', onDown)
     document.addEventListener('keydown', onEsc)
-    return () => {
-      document.removeEventListener('mousedown', onDown)
-      document.removeEventListener('keydown', onEsc)
-    }
+    return () => { document.removeEventListener('mousedown', onDown); document.removeEventListener('keydown', onEsc) }
   }, [notifOpen, userOpen])
 
-  // ---- Quick Search (⌘/Ctrl+K)
+  // ---- Command Palette (⌘/Ctrl+K)
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const isCmdK = (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'
       if (isCmdK) {
         e.preventDefault()
-        // Optional: globales Event, auf das deine Command-Palette hören kann
         window.dispatchEvent(new CustomEvent('jetnity:open-command-palette'))
       }
     }
@@ -103,14 +114,45 @@ export default function AdminTopbar({
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
-  // Abgeleitete Headline
-  const heading = title ?? crumbs.at(-1)?.label ?? 'Admin'
+  // ---- CoPilot Quick Actions (Assist/Auto/Simulate)
+  const [copilotOpen, setCopilotOpen] = React.useState(false)
+  const [busy, setBusy] = React.useState<null | 'assist' | 'auto' | 'simulate'>(null)
+  const copilotRef = React.useRef<HTMLDivElement | null>(null)
+  React.useEffect(() => {
+    const onDown = (e: MouseEvent) => {
+      const t = e.target as Node
+      if (copilotOpen && copilotRef.current && !copilotRef.current.contains(t)) setCopilotOpen(false)
+    }
+    document.addEventListener('mousedown', onDown)
+    return () => document.removeEventListener('mousedown', onDown)
+  }, [copilotOpen])
+
+  async function runCopilot(mode: 'assist' | 'auto' | 'simulate') {
+    if (busy) return
+    setBusy(mode)
+    try {
+      const res = await fetch('/api/admin/copilot/actions', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ mode }),
+      })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(json?.error || 'Aktion fehlgeschlagen')
+      // Event für Panels/Widgets feuern
+      window.dispatchEvent(new CustomEvent('jetnity:copilot:executed', { detail: { mode, suggestion: json?.suggestion } }))
+      setCopilotOpen(false)
+    } catch (e: any) {
+      alert(e?.message || 'Aktion fehlgeschlagen.')
+    } finally {
+      setBusy(null)
+    }
+  }
 
   return (
     <header
       role="banner"
       className={cn(
-        'sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur supports-blur:backdrop-blur-md',
+        'sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:backdrop-blur-md',
         'border-border'
       )}
     >
@@ -165,7 +207,7 @@ export default function AdminTopbar({
 
         {/* Rechts: Aktionen */}
         <div className="flex items-center gap-2">
-          {/* Suche */}
+          {/* Suche / Palette */}
           <button
             type="button"
             onClick={() =>
@@ -182,12 +224,66 @@ export default function AdminTopbar({
             </kbd>
           </button>
 
+          {/* CoPilot Quick Actions */}
+          <div className="relative" ref={copilotRef}>
+            <button
+              type="button"
+              onClick={() => setCopilotOpen((v) => !v)}
+              aria-haspopup="menu"
+              aria-expanded={copilotOpen}
+              aria-controls="admin-copilot-menu"
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-2.5 py-1.5 text-sm hover:bg-muted/60"
+              title="CoPilot Aktionen"
+            >
+              <Wand2 className="h-4 w-4" />
+              <span>CoPilot</span>
+              <ChevronDown className="h-4 w-4 opacity-70" />
+            </button>
+            {copilotOpen && (
+              <div
+                id="admin-copilot-menu"
+                role="menu"
+                aria-label="CoPilot Aktionen"
+                className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-border bg-card shadow-md"
+              >
+                <button
+                  role="menuitem"
+                  onClick={() => runCopilot('assist')}
+                  disabled={!!busy}
+                  className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-muted/60 disabled:opacity-60"
+                >
+                  {busy === 'assist' ? <span className="h-3 w-3 animate-spin rounded-full border-2 border-border border-t-transparent" /> : <Wand2 className="h-4 w-4" />}
+                  Assist – Antwort & Schritte
+                </button>
+                <button
+                  role="menuitem"
+                  onClick={() => runCopilot('auto')}
+                  disabled={!!busy}
+                  className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-muted/60 disabled:opacity-60"
+                >
+                  {busy === 'auto' ? <span className="h-3 w-3 animate-spin rounded-full border-2 border-border border-t-transparent" /> : <Rocket className="h-4 w-4" />}
+                  Auto – sicher ausführen
+                </button>
+                <button
+                  role="menuitem"
+                  onClick={() => runCopilot('simulate')}
+                  disabled={!!busy}
+                  className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-muted/60 disabled:opacity-60"
+                >
+                  {busy === 'simulate' ? <span className="h-3 w-3 animate-spin rounded-full border-2 border-border border-t-transparent" /> : <Play className="h-4 w-4" />}
+                  Simulate – ohne Änderungen
+                </button>
+              </div>
+            )}
+          </div>
+
           {/* Theme Toggle */}
           <button
             type="button"
             aria-label="Theme umschalten"
             className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/60"
             onClick={toggleTheme}
+            title={isDark ? 'Helles Theme' : 'Dunkles Theme'}
           >
             {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </button>
@@ -198,11 +294,11 @@ export default function AdminTopbar({
               type="button"
               aria-haspopup="menu"
               aria-expanded={notifOpen}
+              aria-controls="admin-notifications"
               onClick={() => setNotifOpen((v) => !v)}
               className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card hover:bg-muted/60"
             >
               <Bell className="h-5 w-5" />
-              {/* Badge (Beispiel) */}
               <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
                 3
               </span>
@@ -210,9 +306,10 @@ export default function AdminTopbar({
 
             {notifOpen && (
               <div
+                id="admin-notifications"
                 role="menu"
                 aria-label="Benachrichtigungen"
-                className="absolute right-0 mt-2 w-72 overflow-hidden rounded-xl border border-border bg-card shadow-e3"
+                className="absolute right-0 mt-2 w-72 overflow-hidden rounded-xl border border-border bg-card shadow-md"
               >
                 <div className="border-b border-border px-3 py-2 text-xs font-semibold">
                   Neu
@@ -243,6 +340,7 @@ export default function AdminTopbar({
               type="button"
               aria-haspopup="menu"
               aria-expanded={userOpen}
+              aria-controls="admin-user-menu"
               onClick={() => setUserOpen((v) => !v)}
               className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-2.5 py-1.5 text-sm hover:bg-muted/60"
             >
@@ -253,9 +351,10 @@ export default function AdminTopbar({
 
             {userOpen && (
               <div
+                id="admin-user-menu"
                 role="menu"
                 aria-label="Benutzermenü"
-                className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-border bg-card shadow-e3"
+                className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-border bg-card shadow-md"
               >
                 <Link
                   role="menuitem"
@@ -276,6 +375,8 @@ export default function AdminTopbar({
               </div>
             )}
           </div>
+
+          {rightSlot}
         </div>
       </div>
     </header>

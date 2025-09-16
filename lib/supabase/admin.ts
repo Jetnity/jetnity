@@ -1,26 +1,26 @@
 // lib/supabase/admin.ts
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import type { Database } from '@/types/supabase'
 
-/**
- * Server-only Admin Client (Service Role) für Cron/Backoffice/Server-RPCs.
- * ⚠️ Niemals in Client Components importieren!
- */
-export function createAdminClient<T = any>(): SupabaseClient<T> {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+function requireEnv(name: string): string {
+  const v = process.env[name]
+  if (!v) throw new Error(`Missing env ${name} for admin Supabase client`)
+  return v
+}
 
-  if (!url) {
-    throw new Error('NEXT_PUBLIC_SUPABASE_URL fehlt')
-  }
-  if (!serviceKey) {
-    throw new Error('SUPABASE_SERVICE_ROLE_KEY fehlt')
-  }
-
-  return createClient<T>(url, serviceKey, {
+/** Service-Role Client (server-only, keine Session-Persistenz) */
+export function getAdminClient(): SupabaseClient<Database> {
+  const url = requireEnv('NEXT_PUBLIC_SUPABASE_URL')
+  const key = requireEnv('SUPABASE_SERVICE_ROLE_KEY')
+  return createClient<Database>(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
-    global: { headers: { 'X-Client-Info': 'jetnity-cron' } },
+    global: { fetch: (input, init) => fetch(input, init) },
   })
 }
 
-/** Alias für bestehenden Code – verhindert Refactor-Aufwand */
-export const createSupabaseAdmin = createAdminClient
+/** Aliase für Legacy-Imports – damit alte Files weiter kompilieren */
+export function createSupabaseAdmin(): SupabaseClient<Database> { return getAdminClient() }
+export function createAdminClient(): SupabaseClient<Database> { return getAdminClient() }
+export function getServiceRoleClient(): SupabaseClient<Database> { return getAdminClient() }
+
+export default getAdminClient

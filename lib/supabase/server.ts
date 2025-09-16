@@ -51,13 +51,11 @@ function mutableCookiesAdapter(store: ReturnType<typeof cookies>) {
       store.set({ name, value, ...options })
     },
     remove(name: string, _options: CookieOptions) {
-      // sicheres Entfernen
       try {
-        // Next 14+
-        // @ts-ignore - delete ist vorhanden, aber nicht immer typisiert
+        // Next 14+: delete existiert, ist aber nicht immer typisiert
+        // @ts-ignore
         store.delete?.(name)
       } catch {
-        // Fallback: auslaufen lassen
         store.set({ name, value: '', maxAge: 0, path: '/' })
       }
     },
@@ -68,8 +66,6 @@ function mutableCookiesAdapter(store: ReturnType<typeof cookies>) {
 export function createServerComponentClient<Db = Database>(): SupabaseClient<Db> {
   assertEnvAnon()
   const store = cookies()
-  // NOTE: Upstream-Types von @supabase/ssr und supabase-js geraten hier in Strict/TS5 durcheinander.
-  // Wir casten bewusst zurück auf den erwarteten Clienttyp, damit Projekt-weite Row-Typen stabil bleiben.
   const client = createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
     cookies: rscCookiesAdapter(store),
   }) as unknown as SupabaseClient<Db>
@@ -121,3 +117,10 @@ export async function getUserServer(): Promise<User | null> {
   const session = await getSessionServer()
   return session?.user ?? null
 }
+
+/* ───────────── Kompatibilitätsschicht ─────────────
+   Viele Dateien importieren `createServerClient` direkt.
+   Wir exportieren deshalb einen Alias, der in RSC sicher ist.
+   Für API-Routen nutze in Zukunft bitte `createRouteHandlerClient`.
+*/
+export { createServerComponentClient as createServerClient }

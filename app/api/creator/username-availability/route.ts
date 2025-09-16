@@ -1,3 +1,4 @@
+// app/api/creator/username-availability/route.ts
 import { NextResponse } from 'next/server'
 import { createSupabaseAdmin } from '@/lib/supabase/admin'
 
@@ -17,36 +18,40 @@ const RESERVED = new Set([
   'test', 'tests'
 ])
 
+const USERNAME_RE = /^[a-z0-9._-]{3,30}$/
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url)
-    const username = (searchParams.get('u') || '').toLowerCase().trim()
+
+    const username = (searchParams.get('u') || '').trim().toLowerCase()
     const excludeId = searchParams.get('excludeId') || undefined
+    const excludeProfileId = searchParams.get('excludeProfileId') || undefined
+    const excludeUserId = searchParams.get('excludeUserId') || undefined
 
-    // Grundvalidierung
-    if (!/^[a-z0-9._-]{3,30}$/.test(username)) {
-      return NextResponse.json({ available: false, reason: 'invalid' }, { status: 200 })
+    if (!USERNAME_RE.test(username)) {
+      return NextResponse.json({ available: false, reason: 'invalid' })
     }
-    // Reservierte Namen sperren
     if (RESERVED.has(username)) {
-      return NextResponse.json({ available: false, reason: 'reserved' }, { status: 200 })
+      return NextResponse.json({ available: false, reason: 'reserved' })
     }
 
-    const admin = createSupabaseAdmin()
-    // Case-insensitive Eindeutigkeit setzt voraus, dass die Spalte citext ist (siehe SQL-Migration)
-    let q = admin
-      .from('creator_profiles')
+    const supa = createSupabaseAdmin()
+    let q = supa
+      .from('creator_profiles') // ⚠️ keine Generics!
       .select('id', { count: 'exact', head: true })
       .eq('username', username)
 
-    if (excludeId) q = q.neq('id', excludeId)
+    if (excludeProfileId && UUID_RE.test(excludeProfileId)) q = q.neq('id', excludeProfileId)
+    if (excludeUserId && UUID_RE.test(excludeUserId)) q = q.neq('user_id', excludeUserId)
+    if (excludeId && UUID_RE.test(excludeId)) q = q.neq('id', excludeId).neq('user_id', excludeId)
 
     const { count, error } = await q
-    if (error) {
-      return NextResponse.json({ available: false, error: error.message }, { status: 200 })
-    }
-    return NextResponse.json({ available: (count ?? 0) === 0 }, { status: 200 })
+    if (error) return NextResponse.json({ available: false, reason: 'error', error: error.message })
+
+    return NextResponse.json({ available: (count ?? 0) === 0 })
   } catch (e: any) {
-    return NextResponse.json({ available: false, error: e?.message ?? 'unknown' }, { status: 200 })
+    return NextResponse.json({ available: false, reason: 'error', error: e?.message ?? 'unknown' })
   }
 }

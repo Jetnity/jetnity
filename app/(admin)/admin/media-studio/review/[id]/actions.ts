@@ -1,75 +1,155 @@
-// app/(admin)/media-studio/review/[id]/actions.ts
-'use server';
+// app/(admin)/admin/media-studio/review/[id]/actions.ts
+'use server'
 
-import { createServerComponentClient } from '@/lib/supabase/server';
+import { revalidatePath } from 'next/cache'
+import { createServerComponentClient } from '@/lib/supabase/server'
+import { requireAdmin } from '@/lib/auth/requireAdmin'
 
-type ReviewStatus = 'pending' | 'approved' | 'rejected';
+type ReviewStatus = 'pending' | 'approved' | 'rejected'
+type Severity = 'low' | 'medium' | 'high' | 'blocker'
 
-export async function updateReviewStatus(formData: FormData) {
-  const id = String(formData.get('id') || '');
-  const review_status = String(formData.get('review_status') || '') as ReviewStatus;
+const isValidStatus = (s: string): s is ReviewStatus =>
+  s === 'pending' || s === 'approved' || s === 'rejected'
 
-  if (!id || !['pending', 'approved', 'rejected'].includes(review_status)) {
-    throw new Error('Ungültige Parameter');
+const isValidSeverity = (s: string): s is Severity =>
+  s === 'low' || s === 'medium' || s === 'high' || s === 'blocker'
+
+/** lockerer Client, um Generics-Reibung zu vermeiden */
+function sb() {
+  return createServerComponentClient() as any
+}
+
+/** YYYY-MM-DD → YYYY-MM-DD (oder null bei invalide) */
+function normalizeDateOnly(v: string | null | undefined) {
+  if (!v) return null
+  const m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  if (!m) return null
+  // keine TZ-Umrechnung – reiner Datumstyp
+  return `${m[1]}-${m[2]}-${m[3]}`
+}
+
+/* ───────────────────────── updateReviewStatus ───────────────────────── */
+
+// Overloads
+export async function updateReviewStatus(formData: FormData): Promise<void>
+export async function updateReviewStatus(id: string, review_status: ReviewStatus): Promise<void>
+export async function updateReviewStatus(a: FormData | string, b?: ReviewStatus): Promise<void> {
+  const { user } = await requireAdmin()
+  const supabase = sb()
+
+  let id: string
+  let review_status: ReviewStatus
+
+  if (typeof a === 'string') {
+    id = a
+    review_status = b as ReviewStatus
+  } else {
+    id = String(a.get('id') ?? '')
+    review_status = String(a.get('review_status') ?? '') as ReviewStatus
   }
 
-  const supabase = createServerComponentClient();
+  if (!id || !isValidStatus(review_status)) {
+    throw new Error('Ungültige Parameter')
+  }
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (!session) throw new Error('Nicht angemeldet');
-
-  const { data: me } = await supabase
-    .from('creator_profiles')
-    .select('id, role')
-    .eq('id', session.user.id)
-    .single();
-  if (!me || me.role !== 'admin') throw new Error('Keine Admin-Berechtigung');
-
+  // Update
   const { error } = await supabase
     .from('creator_sessions')
     .update({ review_status })
-    .eq('id', id);
+    .eq('id', id)
 
-  if (error) throw new Error(error.message || 'Update fehlgeschlagen');
-}
+  if (error) throw new Error(error.message || 'Update fehlgeschlagen')
 
-export async function createChangeRequest(formData: FormData) {
-  const session_id = String(formData.get('session_id') || '');
-  const severity = String(formData.get('severity') || '');
-  const reason = (formData.get('reason') || '') as string;
-  const details = (formData.get('details') || '') as string;
-  const due_date = (formData.get('due_date') || '') as string; // YYYY-MM-DD
-
-  if (!session_id || !['low','medium','high','blocker'].includes(severity)) {
-    throw new Error('Ungültige Parameter');
+  // Audit (best-effort)
+  try {
+    await supabase.from('admin_audit_events').insert({
+      actor_id: user.id,
+      action: 'review_status_update',
+      target_type: 'creator_session',
+      target_id: id,
+      meta: { review_status },
+    })
+  } catch {
+    /* Tabelle evtl. nicht vorhanden – ignorieren */
   }
 
-  const supabase = createServerComponentClient();
+  // Revalidate Liste + Detail
+  revalidatePath('/admin/media-studio/review')
+  revalidatePath(`/admin/media-studio/review/${id}`)
+}
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (!session) throw new Error('Nicht angemeldet');
+/* ───────────────────────── createChangeRequest ───────────────────────── */
 
-  const { data: me } = await supabase
-    .from('creator_profiles')
-    .select('id, role')
-    .eq('id', session.user.id)
-    .single();
-  if (!me || me.role !== 'admin') throw new Error('Keine Admin-Berechtigung');
+// Overloads
+export async function createChangeRequest(formData: FormData): Promise<void>
+export async function createChangeRequest(args: {
+  session_id: string
+  severity: Severity
+  reason?: string
+  details?: string
+  due_date?: string // YYYY-MM-DD
+}): Promise<void>
+export async function createChangeRequest(a: FormData | {
+  session_id: string
+  severity: Severity
+  reason?: string
+  details?: string
+  due_date?: string
+}): Promise<void> {
+  const { user } = await requireAdmin()
+  const supabase = sb()
+
+  let session_id = ''
+  let severity = '' as Severity
+  let reason = ''
+  let details = ''
+  let due_date: string | null = null
+
+  if (a instanceof FormData) {
+    session_id = String(a.get('session_id') ?? '')
+    severity = String(a.get('severity') ?? '') as Severity
+    reason = String(a.get('reason') ?? '')
+    details = String(a.get('details') ?? '')
+    due_date = normalizeDateOnly(String(a.get('due_date') ?? ''))
+  } else {
+    session_id = a.session_id
+    severity = a.severity
+    reason = a.reason ?? ''
+    details = a.details ?? ''
+    due_date = normalizeDateOnly(a.due_date)
+  }
+
+  if (!session_id || !isValidSeverity(severity)) {
+    throw new Error('Ungültige Parameter')
+  }
 
   const insert = {
     session_id,
-    admin_id: session.user.id,
+    admin_id: user.id,
     severity,
     reason: reason || null,
     details: details || null,
-    due_date: due_date ? new Date(due_date).toISOString().slice(0,10) : null,
+    due_date, // als YYYY-MM-DD String
     status: 'open',
-  };
+  }
 
-  const { error } = await supabase.from('session_review_requests').insert(insert);
-  if (error) throw new Error(error.message || 'Change Request fehlgeschlagen');
+  const { error } = await supabase.from('session_review_requests').insert(insert)
+  if (error) throw new Error(error.message || 'Change Request fehlgeschlagen')
+
+  // Audit (best-effort)
+  try {
+    await supabase.from('admin_audit_events').insert({
+      actor_id: user.id,
+      action: 'change_request_create',
+      target_type: 'creator_session',
+      target_id: session_id,
+      meta: { severity, has_reason: !!reason, has_details: !!details, due_date },
+    })
+  } catch {
+    /* optional */
+  }
+
+  // Revalidate Liste + Detail
+  revalidatePath('/admin/media-studio/review')
+  revalidatePath(`/admin/media-studio/review/${session_id}`)
 }
