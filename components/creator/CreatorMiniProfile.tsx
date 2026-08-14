@@ -97,8 +97,6 @@ export default function CreatorMiniProfile({
   disableLink = false,
   className,
 }: Props) {
-  if (!creator) return null
-
   const px = sizeToPx(size)
   const { username, name, avatar_url, instagram, tiktok, youtube, twitter, website, facebook } = creator
   const href = username ? `/creator/${encodeURIComponent(username)}` : '#'

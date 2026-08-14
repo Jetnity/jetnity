@@ -64,8 +64,8 @@ function mutableCookiesAdapter(store: ReturnType<typeof cookies>) {
 
 /** Für Server Components (RSC) – Cookies read-only */
 export function createServerComponentClient<Db = Database>(): SupabaseClient<Db> {
-  assertEnvAnon()
   const store = cookies()
+  assertEnvAnon()
   const client = createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
     cookies: rscCookiesAdapter(store),
   }) as unknown as SupabaseClient<Db>
@@ -74,8 +74,8 @@ export function createServerComponentClient<Db = Database>(): SupabaseClient<Db>
 
 /** Für Route Handlers (/app/api/*) – Cookies mutierbar */
 export function createRouteHandlerClient<Db = Database>(): SupabaseClient<Db> {
-  assertEnvAnon()
   const store = cookies()
+  assertEnvAnon()
   const client = createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
     cookies: mutableCookiesAdapter(store),
   }) as unknown as SupabaseClient<Db>
@@ -84,8 +84,8 @@ export function createRouteHandlerClient<Db = Database>(): SupabaseClient<Db> {
 
 /** Für Server Actions – identisch zum Route Handler */
 export function createServerActionClient<Db = Database>(): SupabaseClient<Db> {
-  assertEnvAnon()
   const store = cookies()
+  assertEnvAnon()
   const client = createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
     cookies: mutableCookiesAdapter(store),
   }) as unknown as SupabaseClient<Db>
@@ -97,8 +97,8 @@ export function createServerActionClient<Db = Database>(): SupabaseClient<Db> {
  * Nur serverseitig verwenden (Route-Handler / Server Actions)!
  */
 export function createAdminClient<Db = Database>(): SupabaseClient<Db> {
-  assertEnvService()
   const store = cookies()
+  assertEnvService()
   const client = createServerClient<Db>(SUPABASE_URL!, SUPABASE_SERVICE!, {
     cookies: mutableCookiesAdapter(store),
   }) as unknown as SupabaseClient<Db>

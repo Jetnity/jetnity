@@ -38,23 +38,6 @@ type AmadeusMapped = {
   row: AirportRow
 }
 
-/* ----------------------------- Supabase Clients ---------------------------- */
-
-const READ = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } }
-)
-
-// Nur für optionales Write-Through-Caching (Server-only!)
-const WRITE = process.env.SUPABASE_SERVICE_ROLE_KEY
-  ? createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } }
-    )
-  : null
-
 /* -------------------------------- Amadeus --------------------------------- */
 
 const AMADEUS_KEY = process.env.AMADEUS_API_KEY
@@ -144,9 +127,27 @@ export async function GET(req: Request) {
     })
   }
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim()
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return NextResponse.json({ error: 'service_unavailable' }, { status: 503 })
+  }
+
+  const read = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+  })
+
+  // Optionales Write-Through-Caching bleibt strikt serverseitig.
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()
+  const write = serviceRoleKey
+    ? createClient(supabaseUrl, serviceRoleKey, {
+        auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+      })
+    : null
+
   // 1) Schnell: lokale DB
   const like = `%${q}%`
-  const { data: rows, error } = await READ
+  const { data: rows, error } = await read
     .from('airports')
     .select('iata, icao, name, city, country')
     .or(
@@ -206,10 +207,10 @@ export async function GET(req: Request) {
         }
 
         // Optional: Write-through Cache (nur wenn WRITE-Client vorhanden)
-        if (WRITE) {
+        if (write) {
           const upserts: AirportRow[] = mapped.map((m): AirportRow => m.row)
           if (upserts.length) {
-            await WRITE.from('airports').upsert(upserts, { onConflict: 'iata' })
+            await write.from('airports').upsert(upserts, { onConflict: 'iata' })
           }
         }
       }

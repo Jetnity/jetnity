@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Jetnity">
+  <rect width="64" height="64" rx="18" fill="#153a33"/>
+  <rect x="22" y="22" width="20" height="20" rx="5" transform="rotate(45 32 32)" fill="#dff47a"/>
+  <circle cx="43" cy="20" r="5" fill="#ffffff"/>
+</svg>

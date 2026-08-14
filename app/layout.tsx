@@ -12,9 +12,9 @@ export const metadata: Metadata = {
   applicationName: 'Jetnity',
   title: {
     template: '%s – Jetnity',
-    default: 'Jetnity – KI-Reiseplattform',
+    default: 'Jetnity – Deine ganze Reise',
   },
-  description: 'Flüge, Hotels, Inspiration & Creator – alles auf einer Plattform',
+  description: 'Plane, organisiere und erlebe deine Reise an einem Ort.',
   robots: {
     index: true,
     follow: true,
@@ -30,33 +30,24 @@ export const metadata: Metadata = {
     type: 'website',
     url: APP_URL,
     siteName: 'Jetnity',
-    title: 'Jetnity – KI-Reiseplattform',
-    description: 'Flüge, Hotels, Inspiration & Creator – alles auf einer Plattform',
-    images: [{ url: '/og-default.png', width: 1200, height: 630, alt: 'Jetnity' }],
+    title: 'Jetnity – Deine ganze Reise',
+    description: 'Plane, organisiere und erlebe deine Reise an einem Ort.',
+    images: [{ url: '/images/hero-bali.png', width: 1536, height: 1024, alt: 'Jetnity' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Jetnity – KI-Reiseplattform',
-    description: 'Flüge, Hotels, Inspiration & Creator – alles auf einer Plattform',
-    images: ['/og-default.png'],
+    title: 'Jetnity – Deine ganze Reise',
+    description: 'Plane, organisiere und erlebe deine Reise an einem Ort.',
+    images: ['/images/hero-bali.png'],
   },
-  icons: {
-    icon: [{ url: '/favicon.ico' }, { url: '/icon.png', type: 'image/png' }],
-    apple: [{ url: '/apple-touch-icon.png' }],
-  },
-  manifest: '/site.webmanifest',
-  // themeColor gehört in das viewport-Export (siehe unten)
+  manifest: '/manifest.webmanifest',
 }
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  colorScheme: 'light dark',
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#0b1220' },
-  ],
+  colorScheme: 'light',
+  themeColor: '#f5f4ee',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

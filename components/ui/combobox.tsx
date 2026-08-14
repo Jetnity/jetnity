@@ -73,7 +73,8 @@ export default function Combobox({
   contentMaxHeight = 320,
 }: ComboboxProps) {
   const labelId = React.useId()
-  const triggerId = id ?? React.useId()
+  const generatedTriggerId = React.useId()
+  const triggerId = id ?? generatedTriggerId
   const [open, setOpen] = React.useState(false)
   const [query, setQuery] = React.useState('')
   const [asyncOpts, setAsyncOpts] = React.useState<ComboboxOption[] | null>(null)

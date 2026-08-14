@@ -5,7 +5,6 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! })
 const MODEL = process.env.OPENAI_TEXT_MODEL || 'gpt-4o-mini'
 
 // ── CORS ─────────────────────────────────────────────────────
@@ -113,6 +112,13 @@ export async function POST(req: NextRequest) {
   const parsed = parse(body)
   if (!parsed.ok) return j(req, { success: false, error: parsed.msg }, { status: 400, rl })
   const p = parsed.val
+
+  const apiKey = process.env.OPENAI_API_KEY?.trim()
+  if (!apiKey) {
+    return j(req, { success: false, error: 'service_unavailable' }, { status: 503, rl })
+  }
+
+  const openai = new OpenAI({ apiKey })
 
   try {
     // Leichte Moderation (nicht blockierend bei Ausfall)

@@ -6,8 +6,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { createClient } from '@supabase/supabase-js'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! })
-
 // Konfigurierbar per .env
 const MODEL = process.env.OPENAI_IMAGE_MODEL || 'gpt-image-1' // alternativ: 'dall-e-3'
 const DEFAULT_SIZE = process.env.OPENAI_IMAGE_DEFAULT_SIZE || '1024x1024'
@@ -98,6 +96,13 @@ export async function POST(req: NextRequest) {
 
   const prompt = String(body?.prompt ?? '').trim()
   if (!prompt) return j(req, { success: false, error: 'Kein Prompt angegeben' }, { status: 400 })
+
+  const apiKey = process.env.OPENAI_API_KEY?.trim()
+  if (!apiKey) {
+    return j(req, { success: false, error: 'service_unavailable' }, { status: 503 })
+  }
+
+  const openai = new OpenAI({ apiKey })
 
   const size = (body.size as Body['size']) || (DEFAULT_SIZE as Body['size'])
   const quality = (body.quality as Body['quality']) || 'standard'

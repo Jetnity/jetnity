@@ -5,11 +5,6 @@ import { createClient } from '@supabase/supabase-js'
 export const revalidate = 3600 // 1h
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-// Ungetypter Client → keine TS-Fehler, auch wenn Spalten optional sind
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON)
 
 type Row = {
   id: string
@@ -22,14 +17,21 @@ type Row = {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // STORIES – tolerant lesen, RLS muss Public-Read für public/approved erlauben
-  const { data } = await supabase
-    .from('creator_sessions')
-    .select('*') // tolerant; wir filtern in JS
-    .order('updated_at', { ascending: false })
-    .limit(10000)
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim()
 
-  const rows = (data ?? []) as Row[]
+  let rows: Row[] = []
+  if (supabaseUrl && supabaseAnonKey) {
+    // Stories tolerant lesen; RLS muss Public-Read für freigegebene Inhalte erlauben.
+    const supabase = createClient(supabaseUrl, supabaseAnonKey)
+    const { data } = await supabase
+      .from('creator_sessions')
+      .select('*')
+      .order('updated_at', { ascending: false })
+      .limit(10000)
+
+    rows = (data ?? []) as Row[]
+  }
 
   const dynamicStories: MetadataRoute.Sitemap = rows
     .filter((r) => {
@@ -53,11 +55,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // WICHTIGE statische Routen
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${APP_URL}/`,              lastModified: new Date(), changeFrequency: 'daily',  priority: 0.9 },
+    { url: `${APP_URL}/planen`,        lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${APP_URL}/reisen`,        lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: `${APP_URL}/login`,         lastModified: new Date(), changeFrequency: 'yearly', priority: 0.2 },
     { url: `${APP_URL}/register`,      lastModified: new Date(), changeFrequency: 'yearly', priority: 0.2 },
-    { url: `${APP_URL}/search`,        lastModified: new Date(), changeFrequency: 'weekly', priority: 0.5 },
-    { url: `${APP_URL}/feed`,          lastModified: new Date(), changeFrequency: 'daily',  priority: 0.6 },
-    { url: `${APP_URL}/inspiration`,   lastModified: new Date(), changeFrequency: 'weekly', priority: 0.5 },
   ]
 
   return [...staticRoutes, ...dynamicStories]

@@ -80,7 +80,8 @@ export default function MultiSelect({
   contentMaxHeight = 320,
 }: MultiSelectProps) {
   const labelId = React.useId()
-  const triggerId = id ?? React.useId()
+  const generatedTriggerId = React.useId()
+  const triggerId = id ?? generatedTriggerId
 
   const { values, setValues, isControlled } = useControlledArray(
     controlledValues?.map(String),

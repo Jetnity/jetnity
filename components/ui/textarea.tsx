@@ -30,7 +30,7 @@ const lineHeightPx = (el: HTMLElement) => {
   return Number.isFinite(n) && n > 0 ? n : 20
 }
 
-const _Textarea = (
+const TextareaImpl = (
   {
     className,
     error,
@@ -150,5 +150,5 @@ const _Textarea = (
   )
 }
 
-export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(_Textarea)
+export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(TextareaImpl)
 Textarea.displayName = 'Textarea'

@@ -94,17 +94,12 @@ function useCopy() {
 }
 
 /* Component */
-export default function SidebarAI({ sessionId, title = '', content = '', className }: Props) {
-  if (!sessionId) {
-    return (
-      <aside className={cn('space-y-6', className)}>
-        <div className="rounded-xl border bg-card/60 p-4 text-sm text-muted-foreground">
-          Wähle eine Session, um KI-Vorschläge, Score & Publishing zu sehen.
-        </div>
-      </aside>
-    )
-  }
-
+function SidebarAIContent({
+  sessionId,
+  title = '',
+  content = '',
+  className,
+}: Props & { sessionId: string }) {
   const [snippets, setSnippets] = useState<Snippet[]>([])
   const [snipLoading, setSnipLoading] = useState(false)
   const [snipError, setSnipError] = useState<string | null>(null)
@@ -528,4 +523,18 @@ export default function SidebarAI({ sessionId, title = '', content = '', classNa
       </div>
     </aside>
   )
+}
+
+export default function SidebarAI(props: Props) {
+  if (!props.sessionId) {
+    return (
+      <aside className={cn('space-y-6', props.className)}>
+        <div className="rounded-xl border bg-card/60 p-4 text-sm text-muted-foreground">
+          Wähle eine Session, um KI-Vorschläge, Score & Publishing zu sehen.
+        </div>
+      </aside>
+    )
+  }
+
+  return <SidebarAIContent {...props} sessionId={props.sessionId} />
 }

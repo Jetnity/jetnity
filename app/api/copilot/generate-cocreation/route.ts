@@ -6,8 +6,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { createServerComponentClient } from '@/lib/supabase/server'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! })
-
 // ── kleines In-Memory RateLimit pro Instanz ───────────────────
 const RL_WINDOW_MS = 60_000
 const RL_MAX_REQ = 20
@@ -61,7 +59,7 @@ async function fetchContext(sessionId: string) {
   return ctx
 }
 
-async function moderated(text: string) {
+async function moderated(openai: OpenAI, text: string) {
   try {
     const m = await openai.moderations.create({
       model: 'omni-moderation-latest',
@@ -125,12 +123,19 @@ export async function POST(req: NextRequest) {
 
 // ── Kernlogik (JSON oder Streaming) ───────────────────────────
 async function handleGenerate(req: NextRequest, p: Payload, rl: { rem: number; reset: number }) {
+  const apiKey = process.env.OPENAI_API_KEY?.trim()
+  if (!apiKey) {
+    return json(req, { success: false, error: 'service_unavailable' }, 503, rl)
+  }
+
+  const openai = new OpenAI({ apiKey })
+
   try {
     const context = await fetchContext(p.sessionId)
     if (!context) return json(req, { success: false, error: 'no_context' }, 404, rl)
 
     // Moderation (einfach)
-    const ok = await moderated(context)
+    const ok = await moderated(openai, context)
     if (!ok) return json(req, { success: false, error: 'content_flagged' }, 400, rl)
 
     const sys = mkSystemPrompt(p.language ?? 'de', p.style ?? 'short')

@@ -1,0 +1,341 @@
+'use client'
+
+import * as React from 'react'
+import type { Route } from 'next'
+import { useRouter } from 'next/navigation'
+import {
+  ArrowRight,
+  CalendarDays,
+  Check,
+  MapPin,
+  ShieldCheck,
+  Sparkles,
+  Users,
+  WalletCards,
+} from 'lucide-react'
+
+import { createGuestTrip } from '@/lib/trips/guest-store'
+import { cn } from '@/lib/utils'
+import {
+  TRIP_INTERESTS,
+  TRIP_PACES,
+  type TripInterest,
+  type TripPace,
+} from '@/types/trips'
+
+type TripPlannerProps = {
+  initialDestination?: string
+  initialIdea?: string
+}
+
+const paceLabels: Record<TripPace, { title: string; description: string }> = {
+  ruhig: { title: 'Ruhig', description: 'Mehr Freiraum und Erholung' },
+  ausgewogen: { title: 'Ausgewogen', description: 'Erlebnisse und freie Zeit' },
+  intensiv: { title: 'Intensiv', description: 'Möglichst viel entdecken' },
+}
+
+function todayIso() {
+  const today = new Date()
+  const local = new Date(today.getTime() - today.getTimezoneOffset() * 60_000)
+  return local.toISOString().slice(0, 10)
+}
+
+export default function TripPlanner({
+  initialDestination = '',
+  initialIdea = '',
+}: TripPlannerProps) {
+  const router = useRouter()
+  const [destination, setDestination] = React.useState(initialDestination)
+  const [origin, setOrigin] = React.useState('')
+  const [startDate, setStartDate] = React.useState('')
+  const [endDate, setEndDate] = React.useState('')
+  const [travelers, setTravelers] = React.useState(2)
+  const [budget, setBudget] = React.useState('')
+  const [pace, setPace] = React.useState<TripPace>('ausgewogen')
+  const [interests, setInterests] = React.useState<TripInterest[]>([])
+  const [travelWish, setTravelWish] = React.useState(initialIdea)
+  const [error, setError] = React.useState('')
+  const [isCreating, setIsCreating] = React.useState(false)
+
+  const toggleInterest = (interest: TripInterest) => {
+    setInterests((current) =>
+      current.includes(interest)
+        ? current.filter((item) => item !== interest)
+        : [...current, interest]
+    )
+  }
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setError('')
+
+    if (!destination.trim() || !origin.trim() || !startDate || !endDate) {
+      setError('Bitte fülle Reiseziel, Abreiseort und Reisedaten aus.')
+      return
+    }
+
+    if (endDate < startDate) {
+      setError('Das Rückreisedatum muss nach dem Abreisedatum liegen.')
+      return
+    }
+
+    const numericBudget = budget ? Number(budget) : undefined
+    if (numericBudget !== undefined && (!Number.isFinite(numericBudget) || numericBudget < 0)) {
+      setError('Bitte gib ein gültiges Budget ein.')
+      return
+    }
+
+    setIsCreating(true)
+
+    try {
+      const trip = createGuestTrip({
+        title: destination.trim(),
+        destination: destination.trim(),
+        origin: origin.trim(),
+        startDate,
+        endDate,
+        travelers,
+        pace,
+        budget: numericBudget,
+        interests,
+        travelWish: travelWish.trim() || undefined,
+      })
+
+      router.push(`/reisen/${trip.id}` as Route)
+    } catch {
+      setError('Die Reise konnte auf diesem Gerät nicht gespeichert werden. Bitte prüfe den Browserspeicher.')
+      setIsCreating(false)
+    }
+  }
+
+  return (
+    <div className="mx-auto grid w-full max-w-6xl gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <form
+        onSubmit={handleSubmit}
+        className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:p-8"
+      >
+        <div className="mb-8">
+          <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
+            <Sparkles className="h-3.5 w-3.5" />
+            Privater Reiseentwurf
+          </span>
+          <h1 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-[#102f2a] sm:text-4xl">
+            Beginnen wir mit deiner Reise.
+          </h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-[#536862] sm:text-base">
+            Ein paar Angaben genügen. Du kannst jeden Teil später gemeinsam mit deinen Mitreisenden verfeinern.
+          </p>
+        </div>
+
+        <div className="grid gap-5 sm:grid-cols-2">
+          <label className="grid gap-2 text-sm font-medium text-[#183a34]">
+            Reiseziel
+            <span className="relative">
+              <MapPin className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6f827d]" />
+              <input
+                value={destination}
+                onChange={(event) => setDestination(event.target.value)}
+                maxLength={120}
+                placeholder="z. B. Japan"
+                autoComplete="off"
+                className="h-12 w-full rounded-2xl border border-[#dce4df] bg-[#fbfcf9] pl-10 pr-4 text-base outline-none transition placeholder:text-[#99a7a2] focus:border-[#1d715e] focus:ring-4 focus:ring-[#1d715e]/10"
+              />
+            </span>
+          </label>
+
+          <label className="grid gap-2 text-sm font-medium text-[#183a34]">
+            Abreise ab
+            <span className="relative">
+              <MapPin className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6f827d]" />
+              <input
+                value={origin}
+                onChange={(event) => setOrigin(event.target.value)}
+                maxLength={120}
+                placeholder="z. B. Zürich"
+                autoComplete="address-level2"
+                className="h-12 w-full rounded-2xl border border-[#dce4df] bg-[#fbfcf9] pl-10 pr-4 text-base outline-none transition placeholder:text-[#99a7a2] focus:border-[#1d715e] focus:ring-4 focus:ring-[#1d715e]/10"
+              />
+            </span>
+          </label>
+
+          <label className="grid gap-2 text-sm font-medium text-[#183a34]">
+            Abreise
+            <span className="relative">
+              <CalendarDays className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6f827d]" />
+              <input
+                type="date"
+                min={todayIso()}
+                value={startDate}
+                onChange={(event) => {
+                  setStartDate(event.target.value)
+                  if (endDate && event.target.value > endDate) setEndDate('')
+                }}
+                className="h-12 w-full rounded-2xl border border-[#dce4df] bg-[#fbfcf9] pl-10 pr-4 text-base outline-none transition focus:border-[#1d715e] focus:ring-4 focus:ring-[#1d715e]/10"
+              />
+            </span>
+          </label>
+
+          <label className="grid gap-2 text-sm font-medium text-[#183a34]">
+            Rückreise
+            <span className="relative">
+              <CalendarDays className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6f827d]" />
+              <input
+                type="date"
+                min={startDate || todayIso()}
+                value={endDate}
+                onChange={(event) => setEndDate(event.target.value)}
+                className="h-12 w-full rounded-2xl border border-[#dce4df] bg-[#fbfcf9] pl-10 pr-4 text-base outline-none transition focus:border-[#1d715e] focus:ring-4 focus:ring-[#1d715e]/10"
+              />
+            </span>
+          </label>
+
+          <label className="grid gap-2 text-sm font-medium text-[#183a34]">
+            Reisende
+            <span className="relative">
+              <Users className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6f827d]" />
+              <input
+                type="number"
+                min={1}
+                max={20}
+                value={travelers}
+                onChange={(event) => setTravelers(Math.max(1, Math.min(20, Number(event.target.value))))}
+                className="h-12 w-full rounded-2xl border border-[#dce4df] bg-[#fbfcf9] pl-10 pr-4 text-base outline-none transition focus:border-[#1d715e] focus:ring-4 focus:ring-[#1d715e]/10"
+              />
+            </span>
+          </label>
+
+          <label className="grid gap-2 text-sm font-medium text-[#183a34]">
+            Ungefähres Gesamtbudget
+            <span className="relative">
+              <WalletCards className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6f827d]" />
+              <input
+                type="number"
+                min={0}
+                step={100}
+                value={budget}
+                onChange={(event) => setBudget(event.target.value)}
+                placeholder="CHF, optional"
+                className="h-12 w-full rounded-2xl border border-[#dce4df] bg-[#fbfcf9] pl-10 pr-4 text-base outline-none transition placeholder:text-[#99a7a2] focus:border-[#1d715e] focus:ring-4 focus:ring-[#1d715e]/10"
+              />
+            </span>
+          </label>
+        </div>
+
+        <fieldset className="mt-7">
+          <legend className="text-sm font-medium text-[#183a34]">Reisetempo</legend>
+          <div className="mt-3 grid gap-3 sm:grid-cols-3">
+            {TRIP_PACES.map((option) => {
+              const selected = pace === option
+              return (
+                <button
+                  key={option}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => setPace(option)}
+                  className={cn(
+                    'rounded-2xl border p-4 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#1d715e]/15',
+                    selected
+                      ? 'border-[#1d715e] bg-[#edf8f3]'
+                      : 'border-[#dce4df] bg-white hover:border-[#a7bbb4]'
+                  )}
+                >
+                  <span className="flex items-center justify-between gap-2 text-sm font-semibold text-[#153a33]">
+                    {paceLabels[option].title}
+                    {selected && <Check className="h-4 w-4 text-[#1d715e]" />}
+                  </span>
+                  <span className="mt-1 block text-xs leading-5 text-[#71817c]">
+                    {paceLabels[option].description}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </fieldset>
+
+        <fieldset className="mt-7">
+          <legend className="text-sm font-medium text-[#183a34]">Was interessiert euch?</legend>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {TRIP_INTERESTS.map((interest) => {
+              const selected = interests.includes(interest)
+              return (
+                <button
+                  key={interest}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => toggleInterest(interest)}
+                  className={cn(
+                    'rounded-full border px-4 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#1d715e]/15',
+                    selected
+                      ? 'border-[#153a33] bg-[#153a33] text-white'
+                      : 'border-[#dce4df] bg-white text-[#526a63] hover:border-[#9db2ab]'
+                  )}
+                >
+                  {interest}
+                </button>
+              )
+            })}
+          </div>
+        </fieldset>
+
+        <label className="mt-7 grid gap-2 text-sm font-medium text-[#183a34]">
+          Was ist dir bei dieser Reise besonders wichtig?
+          <textarea
+            value={travelWish}
+            onChange={(event) => setTravelWish(event.target.value)}
+            rows={4}
+            maxLength={1000}
+            placeholder="Zum Beispiel: lokale Restaurants, wenig Hotelwechsel und zwei ruhige Tage am Meer."
+            className="w-full resize-y rounded-2xl border border-[#dce4df] bg-[#fbfcf9] px-4 py-3 text-base leading-6 outline-none transition placeholder:text-[#99a7a2] focus:border-[#1d715e] focus:ring-4 focus:ring-[#1d715e]/10"
+          />
+        </label>
+
+        {error && (
+          <p role="alert" className="mt-5 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
+            {error}
+          </p>
+        )}
+
+        <div className="mt-7 flex flex-col-reverse items-stretch justify-between gap-4 border-t border-[#e6ebe7] pt-6 sm:flex-row sm:items-center">
+          <p className="flex items-center gap-2 text-xs leading-5 text-[#6a7d77]">
+            <ShieldCheck className="h-4 w-4 shrink-0 text-[#1d715e]" />
+            Dieser Entwurf bleibt zunächst nur in deinem Browser.
+          </p>
+          <button
+            type="submit"
+            disabled={isCreating}
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#153a33] px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-[#0f302a] disabled:pointer-events-none disabled:opacity-60"
+          >
+            {isCreating ? 'Reise wird erstellt …' : 'Reise erstellen'}
+            {!isCreating && <ArrowRight className="h-4 w-4" />}
+          </button>
+        </div>
+      </form>
+
+      <aside className="h-fit rounded-[28px] bg-[#153a33] p-6 text-white lg:sticky lg:top-28">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#c9e8db]">So geht es weiter</p>
+        <ol className="mt-6 space-y-6">
+          {[
+            ['01', 'Entwurf anlegen', 'Deine Eckdaten werden zu einer übersichtlichen Reise.'],
+            ['02', 'Gemeinsam verfeinern', 'Füge Tagespunkte, Buchungen und Mitreisende hinzu.'],
+            ['03', 'Entspannt reisen', 'Später begleiten dich Live-Hinweise und wichtige Erinnerungen.'],
+          ].map(([number, title, description]) => (
+            <li key={number} className="grid grid-cols-[36px_1fr] gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-xs font-semibold text-[#dff5ea]">
+                {number}
+              </span>
+              <span>
+                <strong className="block text-sm font-semibold">{title}</strong>
+                <span className="mt-1 block text-xs leading-5 text-white/65">{description}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+        <div className="mt-7 rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+          <p className="text-xs leading-5 text-white/70">
+            Für diesen Schritt wird kein kostenpflichtiger Dienst verwendet. Die intelligente Planung wird später transparent ergänzt.
+          </p>
+        </div>
+      </aside>
+    </div>
+  )
+}

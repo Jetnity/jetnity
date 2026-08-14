@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-import type { Tables } from '@/types/supabase'
+import type { Tables, TablesUpdate } from '@/types/supabase'
 import ProfileCompletion from './ProfileCompletion'
 import ConnectedAccounts from '../ConnectedAccounts'
 import { cn } from '@/lib/utils'
@@ -287,7 +287,7 @@ export default function CreatorProfileCard() {
 
     setProfileLoading(true)
     try {
-      const payload: any = {
+      const payload: TablesUpdate<'creator_profiles'> = {
         name: (form.name || '').trim(),
         username: normalizeUsername(form.username || ''),
         bio: (form.bio || '').trim(),
@@ -297,24 +297,22 @@ export default function CreatorProfileCard() {
         youtube: normYouTube(form.youtube || ''),
         website: normWebsite(form.website || ''),
         avatar_url: form.avatar_url || null,
+        facebook: supportsFacebook ? normFacebook(form.facebook || '') : profile.facebook,
       }
-      if (supportsFacebook) payload.facebook = normFacebook((form as any).facebook || '')
 
-      // nur geänderte Felder übertragen
-      const changed: Record<string, any> = {}
-      for (const k of Object.keys(payload)) {
-        if ((initial as any)[k] !== payload[k]) changed[k] = payload[k]
-      }
-      if (Object.keys(changed).length === 0) {
+      const hasChanges = (Object.keys(payload) as Array<keyof typeof payload>).some(
+        (key) => initial[key] !== payload[key]
+      )
+      if (!hasChanges) {
         toast.message('Keine Änderungen')
         setProfileLoading(false)
         return
       }
 
-      const { error } = await supabase.from('creator_profiles').update(changed).eq('id', profile.id)
+      const { error } = await supabase.from('creator_profiles').update(payload).eq('id', profile.id)
       if (error) throw error
 
-      const next = { ...profile, ...changed }
+      const next = { ...profile, ...payload }
       setProfile(next); setForm(next); setInitial(next)
       toast.success('Profil gespeichert')
     } catch (e: any) {

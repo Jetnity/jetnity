@@ -32,8 +32,20 @@ export function getSupabaseBrowser(): SupabaseClient<Database> {
 /** Alias, damit `import { createBrowserClient } from "@/lib/supabase/client"` funktioniert */
 export const createBrowserClient = getSupabaseBrowser;
 
-/** Bequemer Default (optional) */
-export const supabase = getSupabaseBrowser();
+/**
+ * Rückwärtskompatibler, lazy Browser-Client.
+ *
+ * Viele ältere Komponenten importieren `supabase` direkt. Der Proxy verhindert,
+ * dass der Client schon während Import/SSR initialisiert wird. Dadurch bleiben
+ * Builds und öffentliche Seiten auch ohne lokale Supabase-Konfiguration stabil.
+ */
+export const supabase = new Proxy({} as SupabaseClient<Database>, {
+  get(_target, property) {
+    const client = getSupabaseBrowser();
+    const value = Reflect.get(client, property, client);
+    return typeof value === 'function' ? value.bind(client) : value;
+  },
+});
 
 /**
  * Optional: Server-Cookies in Sync halten (für RLS/SSR).

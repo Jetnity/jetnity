@@ -1,283 +1,96 @@
-// components/layout/PublicNavbar.tsx
 'use client'
 
 import * as React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import {
-  Menu,
-  X,
-  ChevronDown,
-  User,
-  LogIn,
-  UserPlus,
-  LayoutDashboard,
-} from 'lucide-react'
+import { Menu, X } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
-type NavItem = { label: string; href: string }
-const NAV_ITEMS: NavItem[] = [
-  { label: 'Reiseideen', href: '/reiseideen' },
-  { label: 'Blog', href: '/blog' },
+const navigation = [
+  { label: 'Entdecken', href: '/#entdecken' },
+  { label: 'Meine Reisen', href: '/reisen' },
+  { label: 'Jetnity Pro', href: '/#pro' },
 ]
 
 export default function PublicNavbar() {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = React.useState(false)
-  const [creatorOpen, setCreatorOpen] = React.useState(false)
-  const [elevated, setElevated] = React.useState(false)
-
-  const creatorRef = React.useRef<HTMLDivElement | null>(null)
-  const creatorBtnRef = React.useRef<HTMLButtonElement | null>(null)
-  const creatorItemRefs = React.useRef<Array<HTMLAnchorElement | null>>([])
-
-  // helper: erzeugt einen void-Ref-Callback
-  const setCreatorItemRef = (i: number) => (el: HTMLAnchorElement | null) => {
-    creatorItemRefs.current[i] = el
-  }
 
   React.useEffect(() => {
-    const onScroll = () => setElevated(window.scrollY > 8)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+    setMobileOpen(false)
+  }, [pathname])
 
-  React.useEffect(() => {
-    function onClick(e: MouseEvent) {
-      if (!creatorOpen) return
-      const target = e.target as Node
-      const root = creatorRef.current
-      if (root && !root.contains(target)) setCreatorOpen(false)
-    }
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        setCreatorOpen(false)
-        creatorBtnRef.current?.focus()
-      }
-    }
-    document.addEventListener('mousedown', onClick)
-    document.addEventListener('keydown', onKey)
-    return () => {
-      document.removeEventListener('mousedown', onClick)
-      document.removeEventListener('keydown', onKey)
-    }
-  }, [creatorOpen])
-
-  function onCreatorKeyDown(e: React.KeyboardEvent) {
-    if (!creatorOpen) return
-    const items = creatorItemRefs.current.filter(Boolean) as HTMLAnchorElement[]
-    if (items.length === 0) return
-    const current = document.activeElement as HTMLElement | null
-    const idx = items.findIndex((n) => n === current)
-    const focusAt = (i: number) => items[i]?.focus()
-
-    if (e.key === 'ArrowDown') {
-      e.preventDefault()
-      focusAt(idx < 0 ? 0 : (idx + 1) % items.length)
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault()
-      focusAt(idx < 0 ? items.length - 1 : (idx - 1 + items.length) % items.length)
-    } else if (e.key === 'Home') {
-      e.preventDefault()
-      focusAt(0)
-    } else if (e.key === 'End') {
-      e.preventDefault()
-      focusAt(items.length - 1)
-    } else if (e.key === 'Tab') {
-      setTimeout(() => {
-        const active = document.activeElement
-        if (active && !creatorRef.current?.contains(active)) setCreatorOpen(false)
-      }, 0)
-    }
-  }
-
-  const activeLink = (href: string) =>
-    href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/')
-
-  const linkCls = (isActive: boolean) =>
-    cn(
-      'rounded-lg px-3 py-2 text-sm font-medium transition',
-      isActive
-        ? 'text-primary-foreground bg-primary/10'
-        : 'text-foreground/80 hover:text-foreground hover:bg-muted/60'
-    )
+  const isActive = (href: string) =>
+    href === '/reisen' && (pathname === '/reisen' || pathname.startsWith('/reisen/'))
 
   return (
-    <>
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only fixed left-2 top-2 z-[100] rounded bg-primary px-3 py-2 text-xs font-semibold text-white"
-      >
-        Zum Inhalt springen
-      </a>
+    <header className="sticky top-0 z-50 border-b border-black/5 bg-[#f8f7f2]/95 backdrop-blur-xl">
+      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8">
+        <Link href="/" aria-label="Jetnity Startseite" className="inline-flex items-center gap-2.5 text-[#153a33]">
+          <span className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-[#153a33] shadow-sm">
+            <span className="h-2.5 w-2.5 rotate-45 rounded-[3px] bg-[#dff47a]" />
+            <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-white" />
+          </span>
+          <span className="text-lg font-bold tracking-[-0.04em]">Jetnity</span>
+        </Link>
 
-      <header
-        className={cn(
-          'fixed inset-x-0 top-0 z-50 transition border-b',
-          elevated
-            ? 'bg-background/95 backdrop-blur supports-blur:backdrop-blur-xl border-border'
-            : 'bg-background/70 backdrop-blur supports-blur:backdrop-blur-md border-transparent'
-        )}
-        role="banner"
-      >
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <Link
-            href="/"
-            className="text-base font-extrabold tracking-tight text-foreground hover:opacity-90"
-            aria-label="Startseite"
-          >
-            Jetnity
+        <nav className="hidden items-center gap-1 md:flex" aria-label="Hauptnavigation">
+          {navigation.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                'rounded-full px-4 py-2 text-sm font-medium transition',
+                isActive(item.href)
+                  ? 'bg-[#e3eee8] text-[#153a33]'
+                  : 'text-[#5d716a] hover:bg-white hover:text-[#153a33]'
+              )}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="hidden items-center gap-2 md:flex">
+          <Link href="/login" className="rounded-full px-4 py-2 text-sm font-semibold text-[#476159] transition hover:bg-white">
+            Anmelden
           </Link>
+          <Link href="/planen" className="rounded-full bg-[#153a33] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#0f302a]">
+            Reise planen
+          </Link>
+        </div>
 
-          <nav className="hidden items-center gap-1 md:flex" aria-label="Hauptnavigation">
-            {NAV_ITEMS.map((item) => (
-              <Link key={item.href} href={item.href} className={linkCls(activeLink(item.href))}>
+        <button
+          type="button"
+          aria-label={mobileOpen ? 'Menü schließen' : 'Menü öffnen'}
+          aria-expanded={mobileOpen}
+          onClick={() => setMobileOpen((current) => !current)}
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-[#d9e1dc] bg-white text-[#153a33] md:hidden"
+        >
+          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </div>
+
+      {mobileOpen && (
+        <nav aria-label="Mobile Navigation" className="border-t border-black/5 bg-[#f8f7f2] px-5 py-4 md:hidden">
+          <div className="grid gap-1">
+            {navigation.map((item) => (
+              <Link key={item.href} href={item.href} className="rounded-2xl px-4 py-3 text-sm font-semibold text-[#405b53] hover:bg-white">
                 {item.label}
               </Link>
             ))}
-
-            <div className="relative ml-2" ref={creatorRef}>
-              <button
-                ref={creatorBtnRef}
-                type="button"
-                aria-haspopup="menu"
-                aria-expanded={creatorOpen}
-                className={cn(
-                  'inline-flex items-center gap-2 rounded-lg bg-foreground px-3.5 py-2 text-sm font-semibold text-background shadow-sm transition',
-                  'hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary'
-                )}
-                onClick={() => setCreatorOpen((v) => !v)}
-                onKeyDown={(e) => {
-                  if (e.key === 'ArrowDown' && !creatorOpen) {
-                    e.preventDefault()
-                    setCreatorOpen(true)
-                    setTimeout(() => creatorItemRefs.current[0]?.focus(), 0)
-                  }
-                }}
-              >
-                <User className="h-4 w-4" />
-                Creator Login
-                <ChevronDown
-                  className={cn('h-4 w-4 transition-transform', creatorOpen && 'rotate-180')}
-                />
-              </button>
-
-              {creatorOpen && (
-                <div
-                  role="menu"
-                  aria-label="Creator Menü"
-                  tabIndex={-1}
-                  onKeyDown={onCreatorKeyDown}
-                  className={cn(
-                    'absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border bg-card shadow-e3',
-                    'border-border'
-                  )}
-                >
-                  <Link
-                    ref={setCreatorItemRef(0)}
-                    role="menuitem"
-                    href="/login"
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-muted/60 focus:bg-muted/60 focus:outline-none"
-                    onClick={() => setCreatorOpen(false)}
-                  >
-                    <LogIn className="h-4 w-4" />
-                    Anmelden
-                  </Link>
-                  <Link
-                    ref={setCreatorItemRef(1)}
-                    role="menuitem"
-                    href="/register"
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-muted/60 focus:bg-muted/60 focus:outline-none"
-                    onClick={() => setCreatorOpen(false)}
-                  >
-                    <UserPlus className="h-4 w-4" />
-                    Registrieren
-                  </Link>
-                  <Link
-                    ref={setCreatorItemRef(2)}
-                    role="menuitem"
-                    href="/creator/creator-dashboard"
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-muted/60 focus:bg-muted/60 focus:outline-none"
-                    onClick={() => setCreatorOpen(false)}
-                  >
-                    <LayoutDashboard className="h-4 w-4" />
-                    Creator Dashboard
-                  </Link>
-                </div>
-              )}
-            </div>
-          </nav>
-
-          <button
-            type="button"
-            aria-label={mobileOpen ? 'Menü schließen' : 'Menü öffnen'}
-            className="inline-flex items-center justify-center rounded-lg p-2 md:hidden hover:bg-muted/60"
-            onClick={() => {
-              setMobileOpen((v) => !v)
-              setCreatorOpen(false)
-            }}
-          >
-            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
-
-        {mobileOpen && (
-          <div className="md:hidden">
-            <nav aria-label="Mobile Navigation" className="border-t border-border bg-card shadow-e2">
-              <div className="px-4 py-3">
-                {NAV_ITEMS.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      'block rounded-lg px-3 py-2 text-sm',
-                      activeLink(item.href)
-                        ? 'bg-primary/10 text-foreground'
-                        : 'text-foreground/80 hover:bg-muted/60'
-                    )}
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-
-              <div className="border-t border-border px-4 py-3">
-                <div className="mb-2 text-[13px] font-semibold text-muted-foreground">Creator</div>
-                <div className="grid gap-2">
-                  <Link
-                    href="/login"
-                    className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted/60"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    <LogIn className="h-4 w-4" />
-                    Anmelden
-                  </Link>
-                  <Link
-                    href="/register"
-                    className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted/60"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    <UserPlus className="h-4 w-4" />
-                    Registrieren
-                  </Link>
-                  <Link
-                    href="/creator/creator-dashboard"
-                    className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted/60"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    <LayoutDashboard className="h-4 w-4" />
-                    Creator Dashboard
-                  </Link>
-                </div>
-              </div>
-            </nav>
           </div>
-        )}
-      </header>
-
-      <div aria-hidden className="h-[64px]" />
-    </>
+          <div className="mt-3 grid grid-cols-2 gap-2 border-t border-[#e2e7e3] pt-4">
+            <Link href="/login" className="flex h-11 items-center justify-center rounded-full border border-[#ced9d3] bg-white text-sm font-semibold text-[#153a33]">
+              Anmelden
+            </Link>
+            <Link href="/planen" className="flex h-11 items-center justify-center rounded-full bg-[#153a33] text-sm font-semibold text-white">
+              Reise planen
+            </Link>
+          </div>
+        </nav>
+      )}
+    </header>
   )
 }

@@ -8,7 +8,6 @@ import { createServerComponentClient } from '@/lib/supabase/server'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/supabase'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! })
 const MODEL = process.env.OPENAI_TEXT_MODEL || 'gpt-4o-mini'
 
 // ── CORS ─────────────────────────────────────────────────────
@@ -154,6 +153,13 @@ function mkSystem(language: 'de' | 'en', n: number, topic?: string) {
 
 // ── Kern ─────────────────────────────────────────────────────
 async function handle(req: NextRequest, p: Payload, rl: { rem: number; reset: number }) {
+  const apiKey = process.env.OPENAI_API_KEY?.trim()
+  if (!apiKey) {
+    return j(req, { success: false, error: 'service_unavailable' }, { status: 503, rl })
+  }
+
+  const openai = new OpenAI({ apiKey })
+
   try {
     const supabase = createServerComponentClient()
     const context = await fetchContext(supabase as unknown as Db, p.sessionId)

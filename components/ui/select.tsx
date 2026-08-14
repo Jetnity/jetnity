@@ -134,7 +134,8 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(function 
   _ref,
 ) {
   const labelId = React.useId()
-  const triggerId = id ?? React.useId()
+  const generatedTriggerId = React.useId()
+  const triggerId = id ?? generatedTriggerId
   const [internal, setInternal] = React.useState<string | undefined>(
     value != null ? String(value) : defaultValue != null ? String(defaultValue) : undefined,
   )

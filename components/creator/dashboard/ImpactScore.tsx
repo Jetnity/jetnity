@@ -147,8 +147,6 @@ export default function ImpactScore({
   className,
   onClick,
 }: ImpactScoreProps) {
-  if (loading) return <ImpactScoreSkeleton mode={mode} className={className} />
-
   const val = clampScore(value)
   const avg = typeof avgScore === 'number' ? clampScore(avgScore) : undefined
   const tgt = typeof target === 'number' ? clampScore(target) : undefined
@@ -167,10 +165,11 @@ export default function ImpactScore({
     lg: { sparkW: 200, sparkH: 44, gauge: 120, barW: '18rem' },
   }
 
-  const sparkPath = React.useMemo(
-    () => (history.length ? sparklinePath(history, sizes[size].sparkW, sizes[size].sparkH) : ''),
-    [history, size]
-  )
+  const sparkPath = history.length
+    ? sparklinePath(history, sizes[size].sparkW, sizes[size].sparkH)
+    : ''
+
+  if (loading) return <ImpactScoreSkeleton mode={mode} className={className} />
 
   const markerPct = (n?: number) => (typeof n === 'number' ? `${clampScore(n)}%` : undefined)
 

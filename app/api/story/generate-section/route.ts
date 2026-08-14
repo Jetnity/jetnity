@@ -7,7 +7,6 @@ import { createServerComponentClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/supabase'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! })
 const MODEL = process.env.OPENAI_TEXT_MODEL || 'gpt-4o-mini'
 const ENFORCE_OWNER = process.env.COPILOT_ENFORCE_OWNER === '1'
 
@@ -134,6 +133,13 @@ export async function POST(req: NextRequest) {
   if (!parsed.ok) return j(req, { success: false, error: parsed.msg }, { status: 400 })
 
   const { sessionId, section, language, tone, wordLimit, customPrompt } = parsed.val // ✅ tone ist hier vom Typ Tone
+
+  const apiKey = process.env.OPENAI_API_KEY?.trim()
+  if (!apiKey) {
+    return j(req, { success: false, error: 'service_unavailable' }, { status: 503 })
+  }
+
+  const openai = new OpenAI({ apiKey })
 
   try {
     const supabase = createServerComponentClient()

@@ -63,9 +63,9 @@ export default function ProfileCompletion({
   compact,
   className,
 }: ProfileCompletionProps) {
+  const [rootRef, width] = useElementWidth<HTMLDivElement>()
   if (!profile) return null
 
-  const [rootRef, width] = useElementWidth<HTMLDivElement>()
   const isNarrow = width > 0 && width < 380
   const isVeryNarrow = width > 0 && width < 320
   const autoCompact = compact ?? isNarrow

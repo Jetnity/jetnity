@@ -7,7 +7,7 @@ export async function POST() {
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
   const supabase = createServerClient(url, anon, {
     cookies: {
-      get: (name) => undefined,
+      get: (_name: string) => undefined,
       set: () => {},
       remove: () => {},
     },
