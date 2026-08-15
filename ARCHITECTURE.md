@@ -109,20 +109,31 @@ RLS: Nur 2 der 10 Migrationen erwähnen Row Level Security. Der RLS-Zustand des 
 
 ## 7. API-Schicht
 
-Es existieren 76 Route Handler unter `app/api/`. Die Verteilung zeigt den Altlastenanteil deutlich:
+Nach der Außerbetriebnahme in Phase 1.1 existieren **16** Route Handler. Zuvor waren es 77.
 
-| Bereich | Zugehörigkeit |
-| --- | --- |
-| `api/media/*`, `api/video/*`, `api/worker/render` | Alt: Media Studio / Render-Pipeline |
-| `api/creator/*`, `api/sessions/*`, `api/feed/*`, `api/publish/*` | Alt: Creator Hub, Feed, Publishing |
-| `api/copilot/*`, `api/story/*`, `api/storyboard`, `api/generate-*`, `api/remix-image` | Alt: Creator-Copilot und Story-System |
-| `api/blog/posts`, `api/content-type`, `api/inspiration` | Alt: Content-Plattform |
-| `api/admin/infomaniak/*`, `api/admin/copilot/*`, `api/admin/dns/*`, `api/admin/cron/dns` | Infrastruktur-Automatisierung, nicht MVP-relevant |
-| `api/admin/payments/*`, `api/admin/security/*` | wird vorerst behalten, ohne Priorität |
-| `api/search/airports`, `api/search` | für V2 potenziell wiederverwendbar |
-| `app/auth/refresh` | V2-relevant |
+| Endpunkt | Zweck | Status |
+| --- | --- | --- |
+| `app/auth/refresh` | Session-Erneuerung | V2-relevant |
+| `api/search/airports` | Flughafendaten | für Flüge in Phase 3 vorgesehen |
+| `api/search` | Suche über `creator_uploads` | Alt, hält die Alt-Suchseite funktionsfähig |
+| `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
+| `api/admin/security/*` (8) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
 
-**Ist-Ziel-Abweichung:** Für V2 wird keiner der KI- und Media-Endpunkte benötigt. Die Außerbetriebnahme ist freigegeben und beginnt in Phase 1 (siehe [ROADMAP.md](ROADMAP.md)). Bis dahin gilt: keine Weiterentwicklung dieser Endpunkte.
+Entfernt wurden 61 Endpunkte: alle KI- und Modell-Endpunkte, die Media- und Video-Render-Pipeline, Creator-, Feed-, Session- und Publishing-Endpunkte, die Content-Endpunkte sowie die Infomaniak-DNS- und Mail-Automatisierung. Begründung und Umfang in [DECISIONS.md](DECISIONS.md), ADR-0014.
+
+**Grundsatz für neue Endpunkte:** Kein Endpunkt ist standardmäßig offen. Die Prüfliste steht in [AGENTS.md](AGENTS.md) Regel 15.
+
+### Kostenkontrolle bei Modellaufrufen
+
+Es existiert **kein** Codepfad mehr, der ohne Nutzerinteraktion einen kostenpflichtigen Modellaufruf auslöst. Beseitigt wurden:
+
+1. der Cron `/api/copilot/auto`, der täglich bis zu 24 DALL·E-3-Bilder erzeugte und dessen Secret-Prüfung fail-open war,
+2. ein Generator-Aufruf im Server-Rendering von `app/search/page.tsx`, der bei jedem öffentlichen Aufruf mit `region`- oder `city`-Parameter eine DALL·E-3-Generierung auslöste – ohne Authentifizierung, Secret oder Rate Limit,
+3. die gesamte Generierungskette (`copilot-upload-checker`, `copilot-upload-generator`, `copilot-image`) sowie der Block `maybeGenerateCopilotUpload`.
+
+**Verbleibend, aber nicht automatisch:** `lib/openai/*` ist weiterhin aus Alt-Oberflächen des Media Studio und aus `lib/supabase/actions.ts` erreichbar. Diese Aufrufe erfordern eine bewusste Nutzerhandlung in einer Alt-Oberfläche und laufen nicht von selbst. Sie entfallen mit der Entfernung der Alt-UI.
+
+Hinweis für die Bewertung dieses Restrisikos: `lib/openai/generateStoryInsights.ts` besitzt keinen `server-only`-Schutz und wird von Client-Komponenten importiert. Der API-Key gelangt dadurch **nicht** in den Browser, weil Next.js nur `NEXT_PUBLIC_*`-Variablen ausliefert und keine solche Variable für OpenAI existiert. Die Funktion wäre im Browser lediglich funktionslos.
 
 ---
 
@@ -159,7 +170,7 @@ Deployment über Vercel (Projekt `jetnity-app`). `main` ist der stabile Integrat
 
 Die beiden Produktionsdomains aus [JETNITY_VISION.md](JETNITY_VISION.md) sind damit noch nicht mit dem Vercel-Projekt verbunden. Für die Entwicklung ist das unkritisch, für den Launch ist es eine Voraussetzung. Automatisierte Prüfungen der Produktion müssen bis dahin den Alias verwenden, nicht die Wunschdomain.
 
-Hinweis für Prüfungen: `vercel.json` enthält vier Cron-Jobs, die ausschließlich Alt-Endpunkte aufrufen (`/api/cron/publish-scheduled-posts`, `/api/copilot/auto`, `/api/admin/cron/dns`). Sie laufen in Production weiterhin. Ihre Abschaltung gehört zu Phase 1.1.
+`vercel.json` enthält seit Phase 1.1 **keine** Cron-Jobs mehr. Die vier vorherigen Jobs zeigten ausschließlich auf Alt-Endpunkte und sind entfernt.
 
 ---
 
@@ -179,6 +190,7 @@ Aktuell nur Konsolen-Logging, kein zentrales Error-Tracking und keine strukturie
 | Keine automatisierten Tests | 0 Test-Dateien im Repo | Phase 1 beginnend |
 | `any`-Verwendung | ca. 309 Vorkommen in `app/`, `lib/`, `components/`, `types/` | überwiegend in Alt-Code; nur V2-relevante Stellen werden bereinigt |
 | Middleware schützt nur einen Pfad | 1 von vielen geschützten Bereichen | Phase 1 |
-| Alt-Endpunkte ohne Kostenkontrolle | mehrere OpenAI-Endpunkte | Phase 1, wird durch Abschaltung gelöst |
+| ~~Alt-Endpunkte ohne Kostenkontrolle~~ | ~~mehrere OpenAI-Endpunkte~~ | in Phase 1.1 durch Abschaltung gelöst |
+| Alt-Oberflächen ohne funktionierende Endpunkte | Media Studio, Creator Hub, Admin Copilot, Feed, Blog | nächster Schritt: Alt-UI-Entfernung |
 
 Bewusste Entscheidung: `any`-Vorkommen und Sicherheitslücken in Alt-Code werden **nicht** aufwendig refactored, wenn der betroffene Code kurzfristig entfernt wird ([DECISIONS.md](DECISIONS.md), ADR-0006).

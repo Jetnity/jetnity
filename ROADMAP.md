@@ -13,7 +13,8 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Phase | Inhalt | Status |
 | --- | --- | --- |
 | Phase 0 | V2-Basis, Build, CI, Design-Tokens, Dokumentation | **fertig** |
-| Phase 1 | V2-Sicherheit und Datenbasis | als Nächstes |
+| Phase 1.1 | Alt-Endpunkte und Cron-Jobs außer Betrieb | **fertig** |
+| Phase 1 (Rest) | V2-Sicherheit und Datenbasis | in Arbeit |
 | Phase 2 | Jetnity-Kern: natürliche Sprache zu strukturierter Reise | geplant |
 | Phase 3 | Reiseprodukte und Monetarisierung | geplant |
 | Phase 4 | Launch-Reife | geplant |
@@ -41,20 +42,36 @@ Umgesetzt in Pull Request [#1](https://github.com/Jetnity/jetnity/pull/1), am 15
 
 Grundsatz: Nur der Code wird abgesichert, der in V2 tatsächlich weiterbesteht. Alt-Code wird abgeschaltet, nicht gehärtet ([DECISIONS.md](DECISIONS.md), ADR-0006).
 
-### 1.1 Alt-Endpunkte außer Betrieb nehmen · als Nächstes, freigegeben
+### 1.1 Alt-Endpunkte außer Betrieb nehmen · fertig
 
-Zielsetzung: die Angriffsfläche und die Kostenrisiken der alten Produktwelt beseitigen, bevor an der Datenbasis gearbeitet wird.
+Von 77 Route Handlern wurden 61 entfernt, 16 bleiben. Alle vier Cron-Jobs sind entfernt. Details in [DECISIONS.md](DECISIONS.md), ADR-0014.
 
-- [ ] KI-Endpunkte der Creator-/Story-/Media-Welt abschalten (unter anderem `api/copilot/*`, `api/story/*`, `api/storyboard`, `api/generate-*`, `api/remix-image`, `api/media/ai/*`, `api/media/title-suggest`)
-- [ ] Render- und Video-Pipeline abschalten (`api/media/render*`, `api/media/transcode`, `api/video/*`, `api/worker/render`)
-- [ ] Creator-, Feed- und Publishing-Endpunkte abschalten (`api/creator/*`, `api/sessions/*`, `api/feed/*`, `api/publish/*`, `api/cron/publish-scheduled-posts`)
-- [ ] Content-Endpunkte abschalten (`api/blog/posts`, `api/content-type`, `api/inspiration`)
-- [ ] Infrastruktur-Automatisierung abschalten (`api/admin/infomaniak/*`, `api/admin/copilot/*`, `api/admin/dns/*`, `api/admin/cron/dns`)
-- [ ] **Cron-Jobs in `vercel.json` entfernen** – sie rufen in Production weiterhin ausschließlich Alt-Endpunkte auf: `/api/cron/publish-scheduled-posts` alle 10 Minuten, `/api/copilot/auto` täglich um 06:00 (kostenpflichtiger Modellaufruf) sowie `/api/admin/cron/dns` zweimal täglich
-- [ ] Abhängigkeiten prüfen, damit die V2-Oberflächen unberührt bleiben
-- [ ] Auswirkungen dokumentieren
+- [x] alle vier Cron-Jobs aus `vercel.json` entfernt
+- [x] Cron-Endpunkte entfernt (`api/copilot/auto`, `api/cron/publish-scheduled-posts`, `api/admin/cron/dns`)
+- [x] 21 KI-/Modell-Endpunkte entfernt, darunter sechs ohne jede Authentifizierung
+- [x] Media- und Video-Render-Pipeline entfernt (12 Endpunkte)
+- [x] Creator-, Feed- und Session-Endpunkte entfernt (13 Endpunkte)
+- [x] Content-Endpunkte entfernt (`api/blog/posts`, `api/content-type`, `api/inspiration`, `api/og/story/[id]`)
+- [x] Infrastruktur-Automatisierung entfernt (`api/admin/infomaniak/*`, `api/admin/dns/check`, `api/admin/storage/ensure`, `api/uploads/signed-url`, `api/utils/gravatar`)
+- [x] automatischen DALL·E-Aufruf im Rendering von `app/search/page.tsx` entfernt
+- [x] DALL·E-Generierungskette entfernt (`copilot-upload-checker`, `copilot-upload-generator`, `copilot-image`, Block `maybeGenerateCopilotUpload`)
+- [x] verwaiste FFmpeg-Abhängigkeiten entfernt (`ffmpeg-static`, `fluent-ffmpeg`, `@types/fluent-ffmpeg`)
+- [x] Abhängigkeiten geprüft: der transitive Graph der V2-Seiten umfasst 32 Dateien und enthält **keinen** Endpunkt-Aufruf
+- [x] Auswirkungen dokumentiert
 
-Behalten: `app/auth/refresh`, `api/search/airports`, `api/admin/payments/*`, `api/admin/security/*`, `api/admin/storage/ensure`, `api/uploads/signed-url`, `api/utils/gravatar` (Prüfung im Zuge der Umsetzung).
+Bewusst behalten: `app/auth/refresh`, `api/search/airports`, `api/search`, `api/admin/payments/*`, `api/admin/security/*`.
+
+### 1.1b Alt-Oberflächen entfernen · als Nächstes
+
+Die Alt-UI ruft teilweise entfernte Endpunkte auf und zeigt dort jetzt Fehler. Sie wird als eigener Schritt entfernt, damit die Änderungen überprüfbar bleiben.
+
+- [ ] Media Studio (`components/creator/media-studio/*`) und zugehörige Seiten
+- [ ] Creator Hub, Creator Dashboard, Creator Analytics
+- [ ] Feed und Publishing-Oberflächen
+- [ ] Blog- und Story-Oberflächen, Alt-Suchseite (`app/search/*`) samt `api/search`
+- [ ] Admin-Copilot- und Domains-Oberflächen
+- [ ] danach entfallen `lib/openai/*`, `lib/media/*`, `lib/video/*`, `lib/intelligence/*` sowie `hls.js`, `html2pdf.js`, `exifr`
+- [ ] Links aus V2-Seiten prüfen: `app/(public)/error.tsx` und `app/(public)/not-found.tsx` verweisen auf `/search`
 
 ### 1.2 shadcn-Tokens auf die V2-Farbwelt umstellen · freigegeben
 
@@ -94,6 +111,7 @@ Der Skip-Link ist der einzige Blau-Eintrag, der die regulären V2-Seiten erreich
 - [ ] RLS je Tabelle mit Tests
 - [ ] Migrationspfad Gastreise zu Konto
 - [ ] Indizes prüfen
+- [ ] `MAX_GUEST_TRIPS` von 20 auf 1 setzen, mit ehrlichem Hinweis auf das Konto statt stillem Überschreiben und definiertem Übergang für Browser, die bereits mehrere Gastreisen enthalten ([DECISIONS.md](DECISIONS.md), ADR-0013)
 
 ### 1.6 Erste Tests
 
@@ -159,7 +177,7 @@ Je Kategorie zunächst genau ein Anbieter ([DECISIONS.md](DECISIONS.md), ADR-001
 
 ## Wartet auf Freigabe
 
-- **Anzahl Gastreisen.** Empfehlung: Gastmodus auf eine aktive Reise begrenzen, damit „mehrere Reisen" ein echter Kontonutzen ist. Aktuell 20. Siehe [DECISIONS.md](DECISIONS.md), Offene Widersprüche Punkt 1.
+Derzeit nichts.
 
 ---
 
