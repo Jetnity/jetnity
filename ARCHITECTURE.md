@@ -146,7 +146,20 @@ Die V2-Markenfarben sind zentralisiert:
 - `npm run check:setup:ci` – Setup-Check mit Fail-Closed-Verhalten für CI
 - `.github/workflows/ci.yml` führt bei jedem Push auf `main` und bei jedem Pull Request aus: `npm ci`, Setup-Check, Typecheck, Lint, Production-Build
 
-Deployment über Vercel. `main` ist der stabile Integrationsbranch; größere Umbauten laufen über Feature-Branch und Preview.
+Deployment über Vercel (Projekt `jetnity-app`). `main` ist der stabile Integrationsbranch; größere Umbauten laufen über Feature-Branch und Preview. Ein Push auf `main` löst automatisch einen Production-Deploy aus.
+
+**Erreichbarkeit (Stand 15. August 2026, verifiziert):**
+
+| Adresse | Zustand |
+| --- | --- |
+| `jetnity-app.vercel.app` | öffentlich erreichbar, aktueller Production-Alias |
+| Deployment-URLs (`jetnity-<hash>-…vercel.app`) | durch Vercel Deployment Protection geschützt, liefern die Vercel-Login-Seite |
+| `jetnity.com` | **keine öffentliche DNS-Auflösung** |
+| `jetnity.ch` | **keine öffentliche DNS-Auflösung** |
+
+Die beiden Produktionsdomains aus [JETNITY_VISION.md](JETNITY_VISION.md) sind damit noch nicht mit dem Vercel-Projekt verbunden. Für die Entwicklung ist das unkritisch, für den Launch ist es eine Voraussetzung. Automatisierte Prüfungen der Produktion müssen bis dahin den Alias verwenden, nicht die Wunschdomain.
+
+Hinweis für Prüfungen: `vercel.json` enthält vier Cron-Jobs, die ausschließlich Alt-Endpunkte aufrufen (`/api/cron/publish-scheduled-posts`, `/api/copilot/auto`, `/api/admin/cron/dns`). Sie laufen in Production weiterhin. Ihre Abschaltung gehört zu Phase 1.1.
 
 ---
 

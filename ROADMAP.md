@@ -20,9 +20,9 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 
 ---
 
-## Phase 0 – V2-Basis · fertig
+## Phase 0 – V2-Basis · fertig, nach `main` gemergt und deployt
 
-Umgesetzt in Pull Request [#1](https://github.com/Jetnity/jetnity/pull/1), Branch `cursor/jetnity-v2-basis-cbcd`.
+Umgesetzt in Pull Request [#1](https://github.com/Jetnity/jetnity/pull/1), am 15. August 2026 per Fast-Forward nach `main` gemergt (`2e643c85`). CI auf `main` grün, Vercel-Production-Deploy erfolgreich, V2-Seiten in Production geprüft.
 
 - [x] V2-Branch `codex/jetnity-v2-foundation` vollständig reviewt (Diff, Typecheck, Build)
 - [x] V2 als neue Basis übernommen (Fast-Forward, keine Konflikte, keine V2-Funktion verloren)
@@ -50,6 +50,7 @@ Zielsetzung: die Angriffsfläche und die Kostenrisiken der alten Produktwelt bes
 - [ ] Creator-, Feed- und Publishing-Endpunkte abschalten (`api/creator/*`, `api/sessions/*`, `api/feed/*`, `api/publish/*`, `api/cron/publish-scheduled-posts`)
 - [ ] Content-Endpunkte abschalten (`api/blog/posts`, `api/content-type`, `api/inspiration`)
 - [ ] Infrastruktur-Automatisierung abschalten (`api/admin/infomaniak/*`, `api/admin/copilot/*`, `api/admin/dns/*`, `api/admin/cron/dns`)
+- [ ] **Cron-Jobs in `vercel.json` entfernen** – sie rufen in Production weiterhin ausschließlich Alt-Endpunkte auf: `/api/cron/publish-scheduled-posts` alle 10 Minuten, `/api/copilot/auto` täglich um 06:00 (kostenpflichtiger Modellaufruf) sowie `/api/admin/cron/dns` zweimal täglich
 - [ ] Abhängigkeiten prüfen, damit die V2-Oberflächen unberührt bleiben
 - [ ] Auswirkungen dokumentieren
 
@@ -60,6 +61,17 @@ Behalten: `app/auth/refresh`, `api/search/airports`, `api/admin/payments/*`, `ap
 - [ ] `--primary`, `--accent`, `--secondary`, `--ring`, `--border`, `--input` auf V2-Farben setzen
 - [ ] tote Tokens mit Blauanteil entfernen (`--jet-hero`, `--jet-btn`, zugehörige Utilities)
 - [ ] `DESIGN_SYSTEM.md` aktualisieren
+
+Die Production-Prüfung hat ergeben, welche V2-Oberflächen konkret betroffen sind. Diese vier Dateien nutzen noch die blau/violetten shadcn-Tokens und werden mit diesem Schritt bereinigt:
+
+| Datei | Wirkung |
+| --- | --- |
+| `components/layout/SkipToContentLink.tsx` | erscheint bei Tastaturfokus auf **jeder** V2-Seite blau |
+| `app/(public)/error.tsx` | Buttons und Hover-Flächen blau/violett |
+| `app/(public)/not-found.tsx` | Buttons und Fokus-Ring blau |
+| `components/trips/MiniTripSlider.tsx` | Akzentflächen blau |
+
+Der Skip-Link ist der einzige Blau-Eintrag, der die regulären V2-Seiten erreicht. Er ist bis zum Tastaturfokus unsichtbar, aber für Tastaturnutzer sichtbar und damit vorrangig.
 
 ### 1.3 Auth, Rollen und Middleware vereinheitlichen
 
@@ -129,6 +141,7 @@ Je Kategorie zunächst genau ein Anbieter ([DECISIONS.md](DECISIONS.md), ADR-001
 - [ ] schlankes Admin für Nutzer, Reisen, Affiliate-Aktivitäten, Provider, Support, Einnahmen, Systemstatus, Audit Logs
 - [ ] Performance: Startseite, Trip Workspace, Suchergebnisse, Bilder, Caching
 - [ ] Internationalisierung vorbereiten, Start mit Deutsch, CHF, Schweizer Datenschutz
+- [ ] `jetnity.ch` und `jetnity.com` mit dem Vercel-Projekt verbinden – beide lösen derzeit nicht auf, Production läuft nur unter `jetnity-app.vercel.app`
 - [ ] End-to-End-Tests der MVP-Strecke
 - [ ] responsive Prüfung und Browser-Kompatibilität
 
