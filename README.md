@@ -54,6 +54,17 @@ Wichtige Variablen:
 
 `.env.local` und echte Secrets dürfen nie committed werden. Kostenpflichtige Dienste werden nicht automatisch aktiviert.
 
-## Produkt- und Sicherheitsarchitektur
+## Projektdokumentation
 
-Die aktuelle V2-Entscheidung und die nächsten kontrollierten Ausbaustufen stehen in [docs/JETNITY_V2_FOUNDATION.md](docs/JETNITY_V2_FOUNDATION.md).
+Der rote Faden von Jetnity lebt im Repository, nicht in einzelnen Chats. Vor größeren Änderungen sind diese Dateien zu lesen:
+
+| Datei | Inhalt |
+| --- | --- |
+| [AGENTS.md](AGENTS.md) | verbindliche Arbeitsweise für alle Coding Agents |
+| [JETNITY_VISION.md](JETNITY_VISION.md) | Produktvision: was Jetnity ist und was nicht |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | tatsächlicher technischer Aufbau inklusive bekannter Schulden |
+| [ROADMAP.md](ROADMAP.md) | Stand, nächste Schritte, blockierte und verschobene Punkte |
+| [DECISIONS.md](DECISIONS.md) | Entscheidungsprotokoll und offene Widersprüche |
+| [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) | verbindliche Farbtokens und Designregeln |
+
+Der historische erste V2-Entwurf liegt in [docs/JETNITY_V2_FOUNDATION.md](docs/JETNITY_V2_FOUNDATION.md); bei Widersprüchen gelten die Dateien oben.

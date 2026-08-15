@@ -2,6 +2,19 @@
 
 Stand: 14. August 2026
 
+> **Hinweis zur Gültigkeit (15. August 2026)**
+>
+> Diese Datei ist der historische erste Entwurf der V2-Grundlage. Sie wird bewusst erhalten, weil die Datenschutzregel zu sensiblen Reisedokumenten und die technischen Leitplanken weiterhin gelten.
+>
+> Maßgeblich sind inzwischen [JETNITY_VISION.md](../JETNITY_VISION.md), [ROADMAP.md](../ROADMAP.md) und [DECISIONS.md](../DECISIONS.md). Bei Widersprüchen gelten diese Dateien.
+>
+> Konkret überholt sind:
+> - die Phasennummerierung „Phase 2 bis 4" – gültig ist die Phasenreihenfolge in [ROADMAP.md](../ROADMAP.md)
+> - „Jetnity Pro", „Guardian-Modul" und „B2B-Angebote" – nicht freigegeben, verschoben in den Abschnitt „Bewusst verschoben" der Roadmap
+> - „Entdecken" als gleichrangiger Hauptweg – der Produktkern ist der Trip Builder; Entdecken muss dem Reisekern dienen
+>
+> Die Abweichungen sind in [DECISIONS.md](../DECISIONS.md) unter „Offene Widersprüche" dokumentiert.
+
 ## Produktkern
 
 Jetnity wird nicht als Sammlung unverbundener Reise-Tools gebaut. Das zentrale Objekt ist eine **Reise**. Entdeckte Orte, Tagespläne, spätere Preisvergleiche, Einreisehinweise, Erinnerungen und Reisepartner beziehen sich immer auf diese Reise.
