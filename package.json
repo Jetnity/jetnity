@@ -6,6 +6,7 @@
     "build": "next build",
     "start": "next start",
     "check:setup": "tsx check-jetnity-setup.ts",
+    "check:setup:ci": "tsx check-jetnity-setup.ts --ci",
     "check:setup:fix": "tsx check-jetnity-setup.ts --fix --ci",
     "prebuild": "npm run check:setup",
     "typecheck": "tsc -p tsconfig.json --noEmit",
