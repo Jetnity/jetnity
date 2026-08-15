@@ -44,7 +44,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
   return (
     <>
       <SkipToContentLink targetId="public-content" />
-      <div className="relative min-h-screen bg-[#f5f4ee]">
+      <div className="relative min-h-screen bg-surface-75">
         <PublicNavbar />
         <div id="public-content" className="min-h-[60vh]">{children}</div>
         <Footer />

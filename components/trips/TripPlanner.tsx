@@ -119,49 +119,49 @@ export default function TripPlanner({
             <Sparkles className="h-3.5 w-3.5" />
             Privater Reiseentwurf
           </span>
-          <h1 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-[#102f2a] sm:text-4xl">
+          <h1 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-brand-900 sm:text-4xl">
             Beginnen wir mit deiner Reise.
           </h1>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-[#536862] sm:text-base">
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-900 sm:text-base">
             Ein paar Angaben genügen. Du kannst jeden Teil später gemeinsam mit deinen Mitreisenden verfeinern.
           </p>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">
-          <label className="grid gap-2 text-sm font-medium text-[#183a34]">
+          <label className="grid gap-2 text-sm font-medium text-brand-800">
             Reiseziel
             <span className="relative">
-              <MapPin className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6f827d]" />
+              <MapPin className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-700" />
               <input
                 value={destination}
                 onChange={(event) => setDestination(event.target.value)}
                 maxLength={120}
                 placeholder="z. B. Japan"
                 autoComplete="off"
-                className="h-12 w-full rounded-2xl border border-[#dce4df] bg-[#fbfcf9] pl-10 pr-4 text-base outline-none transition placeholder:text-[#99a7a2] focus:border-[#1d715e] focus:ring-4 focus:ring-[#1d715e]/10"
+                className="h-12 w-full rounded-2xl border border-line-200 bg-surface-0 pl-10 pr-4 text-base outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
               />
             </span>
           </label>
 
-          <label className="grid gap-2 text-sm font-medium text-[#183a34]">
+          <label className="grid gap-2 text-sm font-medium text-brand-800">
             Abreise ab
             <span className="relative">
-              <MapPin className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6f827d]" />
+              <MapPin className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-700" />
               <input
                 value={origin}
                 onChange={(event) => setOrigin(event.target.value)}
                 maxLength={120}
                 placeholder="z. B. Zürich"
                 autoComplete="address-level2"
-                className="h-12 w-full rounded-2xl border border-[#dce4df] bg-[#fbfcf9] pl-10 pr-4 text-base outline-none transition placeholder:text-[#99a7a2] focus:border-[#1d715e] focus:ring-4 focus:ring-[#1d715e]/10"
+                className="h-12 w-full rounded-2xl border border-line-200 bg-surface-0 pl-10 pr-4 text-base outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
               />
             </span>
           </label>
 
-          <label className="grid gap-2 text-sm font-medium text-[#183a34]">
+          <label className="grid gap-2 text-sm font-medium text-brand-800">
             Abreise
             <span className="relative">
-              <CalendarDays className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6f827d]" />
+              <CalendarDays className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-700" />
               <input
                 type="date"
                 min={todayIso()}
@@ -170,44 +170,44 @@ export default function TripPlanner({
                   setStartDate(event.target.value)
                   if (endDate && event.target.value > endDate) setEndDate('')
                 }}
-                className="h-12 w-full rounded-2xl border border-[#dce4df] bg-[#fbfcf9] pl-10 pr-4 text-base outline-none transition focus:border-[#1d715e] focus:ring-4 focus:ring-[#1d715e]/10"
+                className="h-12 w-full rounded-2xl border border-line-200 bg-surface-0 pl-10 pr-4 text-base outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
               />
             </span>
           </label>
 
-          <label className="grid gap-2 text-sm font-medium text-[#183a34]">
+          <label className="grid gap-2 text-sm font-medium text-brand-800">
             Rückreise
             <span className="relative">
-              <CalendarDays className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6f827d]" />
+              <CalendarDays className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-700" />
               <input
                 type="date"
                 min={startDate || todayIso()}
                 value={endDate}
                 onChange={(event) => setEndDate(event.target.value)}
-                className="h-12 w-full rounded-2xl border border-[#dce4df] bg-[#fbfcf9] pl-10 pr-4 text-base outline-none transition focus:border-[#1d715e] focus:ring-4 focus:ring-[#1d715e]/10"
+                className="h-12 w-full rounded-2xl border border-line-200 bg-surface-0 pl-10 pr-4 text-base outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
               />
             </span>
           </label>
 
-          <label className="grid gap-2 text-sm font-medium text-[#183a34]">
+          <label className="grid gap-2 text-sm font-medium text-brand-800">
             Reisende
             <span className="relative">
-              <Users className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6f827d]" />
+              <Users className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-700" />
               <input
                 type="number"
                 min={1}
                 max={20}
                 value={travelers}
                 onChange={(event) => setTravelers(Math.max(1, Math.min(20, Number(event.target.value))))}
-                className="h-12 w-full rounded-2xl border border-[#dce4df] bg-[#fbfcf9] pl-10 pr-4 text-base outline-none transition focus:border-[#1d715e] focus:ring-4 focus:ring-[#1d715e]/10"
+                className="h-12 w-full rounded-2xl border border-line-200 bg-surface-0 pl-10 pr-4 text-base outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
               />
             </span>
           </label>
 
-          <label className="grid gap-2 text-sm font-medium text-[#183a34]">
+          <label className="grid gap-2 text-sm font-medium text-brand-800">
             Ungefähres Gesamtbudget
             <span className="relative">
-              <WalletCards className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6f827d]" />
+              <WalletCards className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-700" />
               <input
                 type="number"
                 min={0}
@@ -215,14 +215,14 @@ export default function TripPlanner({
                 value={budget}
                 onChange={(event) => setBudget(event.target.value)}
                 placeholder="CHF, optional"
-                className="h-12 w-full rounded-2xl border border-[#dce4df] bg-[#fbfcf9] pl-10 pr-4 text-base outline-none transition placeholder:text-[#99a7a2] focus:border-[#1d715e] focus:ring-4 focus:ring-[#1d715e]/10"
+                className="h-12 w-full rounded-2xl border border-line-200 bg-surface-0 pl-10 pr-4 text-base outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
               />
             </span>
           </label>
         </div>
 
         <fieldset className="mt-7">
-          <legend className="text-sm font-medium text-[#183a34]">Reisetempo</legend>
+          <legend className="text-sm font-medium text-brand-800">Reisetempo</legend>
           <div className="mt-3 grid gap-3 sm:grid-cols-3">
             {TRIP_PACES.map((option) => {
               const selected = pace === option
@@ -233,17 +233,17 @@ export default function TripPlanner({
                   aria-pressed={selected}
                   onClick={() => setPace(option)}
                   className={cn(
-                    'rounded-2xl border p-4 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#1d715e]/15',
+                    'rounded-2xl border p-4 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
                     selected
-                      ? 'border-[#1d715e] bg-[#edf8f3]'
-                      : 'border-[#dce4df] bg-white hover:border-[#a7bbb4]'
+                      ? 'border-brand-600 bg-surface-50'
+                      : 'border-line-200 bg-white hover:border-line-500'
                   )}
                 >
-                  <span className="flex items-center justify-between gap-2 text-sm font-semibold text-[#153a33]">
+                  <span className="flex items-center justify-between gap-2 text-sm font-semibold text-brand-800">
                     {paceLabels[option].title}
-                    {selected && <Check className="h-4 w-4 text-[#1d715e]" />}
+                    {selected && <Check className="h-4 w-4 text-brand-600" />}
                   </span>
-                  <span className="mt-1 block text-xs leading-5 text-[#71817c]">
+                  <span className="mt-1 block text-xs leading-5 text-ink-700">
                     {paceLabels[option].description}
                   </span>
                 </button>
@@ -253,7 +253,7 @@ export default function TripPlanner({
         </fieldset>
 
         <fieldset className="mt-7">
-          <legend className="text-sm font-medium text-[#183a34]">Was interessiert euch?</legend>
+          <legend className="text-sm font-medium text-brand-800">Was interessiert euch?</legend>
           <div className="mt-3 flex flex-wrap gap-2">
             {TRIP_INTERESTS.map((interest) => {
               const selected = interests.includes(interest)
@@ -264,10 +264,10 @@ export default function TripPlanner({
                   aria-pressed={selected}
                   onClick={() => toggleInterest(interest)}
                   className={cn(
-                    'rounded-full border px-4 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#1d715e]/15',
+                    'rounded-full border px-4 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
                     selected
-                      ? 'border-[#153a33] bg-[#153a33] text-white'
-                      : 'border-[#dce4df] bg-white text-[#526a63] hover:border-[#9db2ab]'
+                      ? 'border-brand-800 bg-brand-800 text-white'
+                      : 'border-line-200 bg-white text-ink-900 hover:border-line-500'
                   )}
                 >
                   {interest}
@@ -277,7 +277,7 @@ export default function TripPlanner({
           </div>
         </fieldset>
 
-        <label className="mt-7 grid gap-2 text-sm font-medium text-[#183a34]">
+        <label className="mt-7 grid gap-2 text-sm font-medium text-brand-800">
           Was ist dir bei dieser Reise besonders wichtig?
           <textarea
             value={travelWish}
@@ -285,7 +285,7 @@ export default function TripPlanner({
             rows={4}
             maxLength={1000}
             placeholder="Zum Beispiel: lokale Restaurants, wenig Hotelwechsel und zwei ruhige Tage am Meer."
-            className="w-full resize-y rounded-2xl border border-[#dce4df] bg-[#fbfcf9] px-4 py-3 text-base leading-6 outline-none transition placeholder:text-[#99a7a2] focus:border-[#1d715e] focus:ring-4 focus:ring-[#1d715e]/10"
+            className="w-full resize-y rounded-2xl border border-line-200 bg-surface-0 px-4 py-3 text-base leading-6 outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
           />
         </label>
 
@@ -295,15 +295,15 @@ export default function TripPlanner({
           </p>
         )}
 
-        <div className="mt-7 flex flex-col-reverse items-stretch justify-between gap-4 border-t border-[#e6ebe7] pt-6 sm:flex-row sm:items-center">
-          <p className="flex items-center gap-2 text-xs leading-5 text-[#6a7d77]">
-            <ShieldCheck className="h-4 w-4 shrink-0 text-[#1d715e]" />
+        <div className="mt-7 flex flex-col-reverse items-stretch justify-between gap-4 border-t border-line-200 pt-6 sm:flex-row sm:items-center">
+          <p className="flex items-center gap-2 text-xs leading-5 text-ink-700">
+            <ShieldCheck className="h-4 w-4 shrink-0 text-brand-600" />
             Dieser Entwurf bleibt zunächst nur in deinem Browser.
           </p>
           <button
             type="submit"
             disabled={isCreating}
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#153a33] px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-[#0f302a] disabled:pointer-events-none disabled:opacity-60"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-brand-800 px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-900 disabled:pointer-events-none disabled:opacity-60"
           >
             {isCreating ? 'Reise wird erstellt …' : 'Reise erstellen'}
             {!isCreating && <ArrowRight className="h-4 w-4" />}
@@ -311,8 +311,8 @@ export default function TripPlanner({
         </div>
       </form>
 
-      <aside className="h-fit rounded-[28px] bg-[#153a33] p-6 text-white lg:sticky lg:top-28">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#c9e8db]">So geht es weiter</p>
+      <aside className="h-fit rounded-[28px] bg-brand-800 p-6 text-white lg:sticky lg:top-28">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-400">So geht es weiter</p>
         <ol className="mt-6 space-y-6">
           {[
             ['01', 'Entwurf anlegen', 'Deine Eckdaten werden zu einer übersichtlichen Reise.'],
@@ -320,7 +320,7 @@ export default function TripPlanner({
             ['03', 'Entspannt reisen', 'Später begleiten dich Live-Hinweise und wichtige Erinnerungen.'],
           ].map(([number, title, description]) => (
             <li key={number} className="grid grid-cols-[36px_1fr] gap-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-xs font-semibold text-[#dff5ea]">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-xs font-semibold text-ink-300">
                 {number}
               </span>
               <span>

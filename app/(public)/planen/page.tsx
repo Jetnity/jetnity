@@ -19,7 +19,7 @@ export default function PlanPage({ searchParams }: PlanPageProps) {
   const destination = Array.isArray(searchParams?.ziel) ? searchParams?.ziel[0] : searchParams?.ziel
 
   return (
-    <main className="min-h-screen bg-[#f5f4ee] px-4 py-10 sm:px-6 sm:py-14">
+    <main className="min-h-screen bg-surface-75 px-4 py-10 sm:px-6 sm:py-14">
       <TripPlanner
         initialDestination={destination?.slice(0, 120) ?? ''}
         initialIdea={idea?.slice(0, 1000) ?? ''}

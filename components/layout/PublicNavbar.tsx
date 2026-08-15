@@ -25,11 +25,11 @@ export default function PublicNavbar() {
     href === '/reisen' && (pathname === '/reisen' || pathname.startsWith('/reisen/'))
 
   return (
-    <header className="sticky top-0 z-50 border-b border-black/5 bg-[#f8f7f2]/95 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-black/5 bg-surface-75/95 backdrop-blur-xl">
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8">
-        <Link href="/" aria-label="Jetnity Startseite" className="inline-flex items-center gap-2.5 text-[#153a33]">
-          <span className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-[#153a33] shadow-sm">
-            <span className="h-2.5 w-2.5 rotate-45 rounded-[3px] bg-[#dff47a]" />
+        <Link href="/" aria-label="Jetnity Startseite" className="inline-flex items-center gap-2.5 text-brand-800">
+          <span className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-brand-800 shadow-sm">
+            <span className="h-2.5 w-2.5 rotate-45 rounded-[3px] bg-citrus-400" />
             <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-white" />
           </span>
           <span className="text-lg font-bold tracking-[-0.04em]">Jetnity</span>
@@ -43,8 +43,8 @@ export default function PublicNavbar() {
               className={cn(
                 'rounded-full px-4 py-2 text-sm font-medium transition',
                 isActive(item.href)
-                  ? 'bg-[#e3eee8] text-[#153a33]'
-                  : 'text-[#5d716a] hover:bg-white hover:text-[#153a33]'
+                  ? 'bg-surface-100 text-brand-800'
+                  : 'text-ink-800 hover:bg-white hover:text-brand-800'
               )}
             >
               {item.label}
@@ -53,10 +53,10 @@ export default function PublicNavbar() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <Link href="/login" className="rounded-full px-4 py-2 text-sm font-semibold text-[#476159] transition hover:bg-white">
+          <Link href="/login" className="rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white">
             Anmelden
           </Link>
-          <Link href="/planen" className="rounded-full bg-[#153a33] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#0f302a]">
+          <Link href="/planen" className="rounded-full bg-brand-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900">
             Reise planen
           </Link>
         </div>
@@ -66,26 +66,26 @@ export default function PublicNavbar() {
           aria-label={mobileOpen ? 'Menü schließen' : 'Menü öffnen'}
           aria-expanded={mobileOpen}
           onClick={() => setMobileOpen((current) => !current)}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-[#d9e1dc] bg-white text-[#153a33] md:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 md:hidden"
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
       {mobileOpen && (
-        <nav aria-label="Mobile Navigation" className="border-t border-black/5 bg-[#f8f7f2] px-5 py-4 md:hidden">
+        <nav aria-label="Mobile Navigation" className="border-t border-black/5 bg-surface-75 px-5 py-4 md:hidden">
           <div className="grid gap-1">
             {navigation.map((item) => (
-              <Link key={item.href} href={item.href} className="rounded-2xl px-4 py-3 text-sm font-semibold text-[#405b53] hover:bg-white">
+              <Link key={item.href} href={item.href} className="rounded-2xl px-4 py-3 text-sm font-semibold text-ink-900 hover:bg-white">
                 {item.label}
               </Link>
             ))}
           </div>
-          <div className="mt-3 grid grid-cols-2 gap-2 border-t border-[#e2e7e3] pt-4">
-            <Link href="/login" className="flex h-11 items-center justify-center rounded-full border border-[#ced9d3] bg-white text-sm font-semibold text-[#153a33]">
+          <div className="mt-3 grid grid-cols-2 gap-2 border-t border-line-200 pt-4">
+            <Link href="/login" className="flex h-11 items-center justify-center rounded-full border border-line-200 bg-white text-sm font-semibold text-brand-800">
               Anmelden
             </Link>
-            <Link href="/planen" className="flex h-11 items-center justify-center rounded-full bg-[#153a33] text-sm font-semibold text-white">
+            <Link href="/planen" className="flex h-11 items-center justify-center rounded-full bg-brand-800 text-sm font-semibold text-white">
               Reise planen
             </Link>
           </div>

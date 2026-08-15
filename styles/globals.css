@@ -39,6 +39,55 @@ html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
   :root {
     color-scheme: light; /* Fix: explizit nur light hier */
 
+    /* -------------------------------------------------------------------------
+       JETNITY V2 – Markenpalette (verbindlich)
+
+       Abgeleitet aus der V2-Preview. Die Werte sind unveraendert uebernommen;
+       Fast-Duplikate wurden auf die jeweilige Leitfarbe zusammengefuehrt
+       (groesster Abstand dE76 4.53, ausschliesslich bei kleinen Textfarben und
+       1px-Linien; Flaechen bleiben unter dE76 1.9).
+
+       Notation: RGB-Kanaele statt Hex, damit Tailwind-Opacity-Modifier wie
+       bg-brand-600/10 funktionieren.
+
+       brand   tiefes Markengruen und Primaergruen
+       citrus  Lime-/Gelbgruen als gezielter Akzent
+       surface Flaechen: warmes Off-White, Creme, helle gruene Flaechen
+       line    Rahmen und Trennlinien
+       ink     Textfarben von hell (auf dunklem Grund) nach dunkel
+    ------------------------------------------------------------------------- */
+    --jet-brand-600: 29 113 94;      /* #1d715e */
+    --jet-brand-700: 23 96 79;       /* #17604f */
+    --jet-brand-800: 21 58 51;       /* #153a33 */
+    --jet-brand-900: 15 48 42;       /* #0f302a */
+
+    --jet-citrus-300: 232 250 145;   /* #e8fa91 */
+    --jet-citrus-400: 223 244 122;   /* #dff47a */
+    --jet-citrus-500: 207 233 154;   /* #cfe99a */
+
+    --jet-surface-0: 251 252 249;    /* #fbfcf9 */
+    --jet-surface-25: 244 247 243;   /* #f4f7f3 */
+    --jet-surface-50: 237 248 243;   /* #edf8f3 */
+    --jet-surface-75: 245 244 238;   /* #f5f4ee */
+    --jet-surface-100: 229 242 236;  /* #e5f2ec */
+    --jet-surface-200: 216 228 220;  /* #d8e4dc */
+
+    --jet-line-100: 237 240 237;     /* #edf0ed */
+    --jet-line-200: 220 228 223;     /* #dce4df */
+    --jet-line-300: 203 215 210;     /* #cbd7d2 */
+    --jet-line-400: 185 200 194;     /* #b9c8c2 */
+    --jet-line-500: 167 187 180;     /* #a7bbb4 */
+
+    --jet-ink-300: 221 244 233;      /* #ddf4e9 */
+    --jet-ink-400: 188 229 212;      /* #bce5d4 */
+    --jet-ink-500: 157 184 173;      /* #9db8ad */
+    --jet-ink-600: 153 167 162;      /* #99a7a2 */
+    --jet-ink-650: 130 146 141;      /* #82928d */
+    --jet-ink-700: 111 130 125;      /* #6f827d */
+    --jet-ink-800: 95 117 109;       /* #5f756d */
+    --jet-ink-900: 69 96 89;         /* #456059 */
+    --jet-ink-950: 57 83 75;         /* #39534b */
+
     /* Light */
     --background: 210 30% 98%;
     --foreground: 220 25% 15%;

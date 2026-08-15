@@ -22,6 +22,45 @@ module.exports = {
         e3: '0 10px 30px hsl(222 60% 20% / 0.12)',
       },
       colors: {
+        // Jetnity V2 – Markenpalette. Werte in styles/globals.css.
+        brand: {
+          600: 'rgb(var(--jet-brand-600) / <alpha-value>)',
+          700: 'rgb(var(--jet-brand-700) / <alpha-value>)',
+          800: 'rgb(var(--jet-brand-800) / <alpha-value>)',
+          900: 'rgb(var(--jet-brand-900) / <alpha-value>)',
+        },
+        citrus: {
+          300: 'rgb(var(--jet-citrus-300) / <alpha-value>)',
+          400: 'rgb(var(--jet-citrus-400) / <alpha-value>)',
+          500: 'rgb(var(--jet-citrus-500) / <alpha-value>)',
+        },
+        surface: {
+          0: 'rgb(var(--jet-surface-0) / <alpha-value>)',
+          25: 'rgb(var(--jet-surface-25) / <alpha-value>)',
+          50: 'rgb(var(--jet-surface-50) / <alpha-value>)',
+          75: 'rgb(var(--jet-surface-75) / <alpha-value>)',
+          100: 'rgb(var(--jet-surface-100) / <alpha-value>)',
+          200: 'rgb(var(--jet-surface-200) / <alpha-value>)',
+        },
+        line: {
+          100: 'rgb(var(--jet-line-100) / <alpha-value>)',
+          200: 'rgb(var(--jet-line-200) / <alpha-value>)',
+          300: 'rgb(var(--jet-line-300) / <alpha-value>)',
+          400: 'rgb(var(--jet-line-400) / <alpha-value>)',
+          500: 'rgb(var(--jet-line-500) / <alpha-value>)',
+        },
+        ink: {
+          300: 'rgb(var(--jet-ink-300) / <alpha-value>)',
+          400: 'rgb(var(--jet-ink-400) / <alpha-value>)',
+          500: 'rgb(var(--jet-ink-500) / <alpha-value>)',
+          600: 'rgb(var(--jet-ink-600) / <alpha-value>)',
+          650: 'rgb(var(--jet-ink-650) / <alpha-value>)',
+          700: 'rgb(var(--jet-ink-700) / <alpha-value>)',
+          800: 'rgb(var(--jet-ink-800) / <alpha-value>)',
+          900: 'rgb(var(--jet-ink-900) / <alpha-value>)',
+          950: 'rgb(var(--jet-ink-950) / <alpha-value>)',
+        },
+
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
