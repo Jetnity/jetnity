@@ -5,7 +5,6 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { createServerComponentClient } from '@/lib/supabase/server'
-import { maybeGenerateCopilotUpload } from '@/lib/intelligence/copilot-upload-checker'
 import type { Tables } from '@/types/supabase'
 import { Search, MapPin } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -58,10 +57,6 @@ export async function generateMetadata(
 export default async function SearchPage({ searchParams }: { searchParams?: SearchParams }) {
   const { tab, q, region, mood, city, sort, perPage, page } = withDefaults(normalizeParams(searchParams || {}))
   const supabase = createServerComponentClient()
-
-  // CoPilot Pro ggf. anstoßen (non-blocking)
-  const generatorTarget = region || city || ''
-  if (generatorTarget) { try { await maybeGenerateCopilotUpload(generatorTarget) } catch {} }
 
   // Facets
   const [{ data: regRows }, { data: moodRows }] = await Promise.all([
