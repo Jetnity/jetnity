@@ -97,17 +97,41 @@ Aus 87 hartkodierten Hex-Werten wurden 27 Tokens. Zusammengelegt wurde nur, was 
 
 ---
 
-## 3. Bekannte Abweichungen und Ausnahmen
+## 3. Semantische Tokens (shadcn-Namen)
 
-**1. shadcn-Tokens tragen noch die alte Farbwelt.** In `styles/globals.css` gilt weiterhin `--primary: 222 84% 56%` (Blau) und `--accent: 264 85% 62%` (Violett), dazu `--ring: var(--primary)`. Diese Tokens widersprechen Abschnitt 1. Sie werden von Radix-/shadcn-Komponenten genutzt, unter anderem für Fokus-Ringe und Buttons in Alt-Oberflächen. Die Umstellung auf die V2-Farbwelt ist freigegeben ([DECISIONS.md](DECISIONS.md), ADR-0008) und noch nicht umgesetzt.
+Die shadcn-Namen definieren **keine eigenen Farben**. Sie verweisen auf die Palette aus Abschnitt 2, damit es je Farbe genau eine Quelle gibt:
 
-Ein Teil davon ist vorgezogen: Der blau-violette Verlauf auf dem `body` ist entfernt. Er war keine Frage der Tokens, sondern auf dem Telefon unmittelbar sichtbar, sobald der Nutzer den Scrollbereich überdehnte, und unterhalb kurzer Seiten wie der 404-Seite. Siehe Abschnitt 7.9.
+| Token | verweist auf | Zweck |
+|---|---|---|
+| `--background` | `surface-75` | Grundfläche des Dokuments |
+| `--foreground` | `brand-800` | Standardtext, 11,3:1 auf der Grundfläche |
+| `--card`, `--popover` | `surface-0` | aufliegende Flächen |
+| `--primary` | `brand-800` | Hauptaktion |
+| `--primary-foreground` | `surface-0` | Aufschrift darauf, 12,5:1 |
+| `--secondary` | `surface-200` | ruhige gefüllte Fläche |
+| `--muted` | `surface-100` | gedämpfte Fläche |
+| `--muted-foreground` | `ink-800` | Nebentext, 4,53:1 – erfüllt AA |
+| `--accent` | `surface-100` | Zeigen-Zustand in Menüs |
+| `--border`, `--input` | `line-200` | Rahmen und Felder |
+| `--ring` | `brand-600` | Fokusring |
+| `--destructive` | `danger-600` | zerstörende Aktion, 5,64:1 mit weisser Schrift |
 
-**2. Tote Tokens mit Blauanteil.** `--jet-hero: 14 27 46` (`#0E1B2E`, dunkles Blau) und `--jet-btn: 17 19 23` sowie die Utilities `.bg-hero-panel`, `.bg-hero-panel-strong` und `.btn-hero` werden in `app/` und `components/` **nicht** verwendet. Sie stammen aus der alten Farbwelt und werden mit der shadcn-Umstellung entfernt.
+Zwei Punkte sind bewusst keine reine Ableitung:
 
-**3. Namensähnlichkeit `surface`.** Es existieren zwei Gruppen: `--jet-surface-*` (V2, RGB-Kanäle, über Tailwind als `surface-*` nutzbar) und `--surface-1/2/3` (alt, HSL). Nur die `--jet-surface-*`-Tokens sind für V2 verbindlich. Die alten werden mit der shadcn-Umstellung geprüft.
+- **`--ring` liegt auf `brand-600`, nicht auf `--primary`.** Der Fokusring muss sich von dem Element abheben, auf dem er sitzt. Auf einer `brand-800`-Schaltfläche wäre ein `brand-800`-Ring unsichtbar.
+- **`danger` ist die einzige Funktionsfarbe ausserhalb der Marke.** Rot lässt sich für zerstörende Aktionen nicht durch Grün ersetzen. Es gibt zwei Stufen, beide auf AA-Kontrast gewählt: `danger-600` auf hellem, `danger-400` auf dunklem Grund.
 
-**4. Kein Dark-Mode für V2.** Die Root-Ebene setzt `color-scheme: light`. Ein Dark-Theme-Block existiert aus der Alt-Welt, ist aber für die V2-Oberflächen nicht ausgearbeitet und nicht freigegeben.
+Die Notation ist durchgehend RGB-Kanäle (`rgb(var(--token) / <alpha-value>)` in `tailwind.config.js`). Nur so funktioniert die Verweiskette, und Opacity-Modifier wie `bg-primary/10` bleiben nutzbar.
+
+**Regel:** Neue Komponenten verwenden die semantischen Namen. Die Paletten-Namen (`brand-*`, `citrus-*`) sind für Fälle da, in denen es kein passendes semantisches Token gibt – etwa die citrus-Akzentflächen.
+
+---
+
+## 3a. Bekannte Abweichungen und Ausnahmen
+
+**1. Dunkelthema nur im Admin.** Die öffentlichen V2-Seiten sind hell; ein dunkler Zustand ist für sie nicht gestaltet und nicht freigegeben. Der Admin hat einen Umschalter, dessen Flächen aus `night-*` kommen. Die Klasse sitzt auf `<html>`, weil nur dort Bildlaufleisten, native Steuerelemente und der Untergrund beim Überdehnen mitgefärbt werden – das Admin-Layout entfernt sie beim Verlassen wieder (siehe [DECISIONS.md](DECISIONS.md), ADR-0025).
+
+**2. Feine Körnung über der Fläche.** `body::before` legt eine achromatische Rausch-Textur mit 6 % Deckkraft und `mix-blend-mode: multiply` über die Seite. Sie verschiebt keine Farbtöne.
 
 ---
 
@@ -124,9 +148,24 @@ Ein Teil davon ist vorgezogen: Der blau-violette Verlauf auf dem `body` ist entf
 
 - Radien sind großzügig und rund: Pillen (`rounded-full`) für Navigation und Aktionen, weiche Radien für Karten.
 - Primäraktion: `bg-brand-800`, Hover `bg-brand-900`, dazu eine minimale Anhebung (`hover:-translate-y-0.5`). Keine harten Farbsprünge.
-- Fokus muss sichtbar sein und **grün**, nicht blau. Bei neuen Komponenten Fokus-Ringe explizit auf `brand`-Tokens setzen, solange `--ring` noch die alte Farbe trägt.
+- Fokus muss sichtbar sein und **grün**, nicht blau. `--ring` trägt `brand-600`; `focus-visible:ring-ring` genügt, eigene Ring-Farben sind nicht mehr nötig.
 - Animationen nur, wo sie Orientierung geben. Keine Dauerbewegung, keine Parallax-Effekte ohne Zweck.
 - Trennlinien möglichst leicht: `line-100` bis `line-300`, häufig zusätzlich mit Transparenz.
+
+### 5.1 Button-Varianten
+
+Das Primitiv führt nur, was auch gezeigt wird. Weitere Varianten kommen dazu, wenn eine Oberfläche sie braucht – ungenutzte müssten bei jeder Farbänderung ungeprüft mitlaufen.
+
+| Variante | Verwendung |
+|---|---|
+| `default` | die Hauptaktion der Maske, auf `--primary` |
+| `outline` | Nebenaktion mit Rahmen |
+| `ghost` | Nebenaktion, Fläche erst beim Zeigen |
+| `destructive` | zerstörende Aktion |
+
+**`default` ist die auffällige Fläche, nicht die ruhige.** Eine Schaltfläche ohne Variante ist in der Praxis immer die Hauptaktion; läge auf `default` die Sekundärfläche, würde genau sie zurückweichen.
+
+Höhen: `default` und `sm` tragen `min-h-11` (44 px, Abschnitt 7.5), Geräte mit Maus erhalten über `pointer-fine` die kompaktere Höhe. `min-h` statt `h`, damit eine umbrechende Aufschrift nicht über den Rand läuft. Der Radius liegt **nur** an der Größe – setzen Variante und Größe beide `rounded-*`, entscheidet die Auflösungsreihenfolge von `twMerge`.
 
 ---
 

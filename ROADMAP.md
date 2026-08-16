@@ -164,34 +164,50 @@ Dabei gefunden und mit behoben:
 
 **Bewusst nicht entfernt:** Admin-Bereiche für Nutzer, Inhalte, Analytics, Marketing, Zahlungen, Security, Einstellungen und Lokalisierung. Sie gehören laut Vision Abschnitt 14 zum späteren Admin-System.
 
-### 1.2 shadcn-Tokens auf die V2-Farbwelt umstellen · freigegeben
+### 1.2 shadcn-Tokens auf die V2-Farbwelt umstellen · abgeschlossen
 
-- [ ] `--primary`, `--accent`, `--secondary`, `--ring`, `--border`, `--input` auf V2-Farben setzen
-- [ ] tote Tokens mit Blauanteil entfernen (`--jet-hero`, `--jet-btn`, zugehörige Utilities)
-- [ ] `DESIGN_SYSTEM.md` aktualisieren
+- [x] semantische Tokens auf die V2-Palette gelegt
+- [x] tote Tokens mit Blauanteil entfernt
+- [x] `DESIGN_SYSTEM.md` und `ARCHITECTURE.md` aktualisiert
 
-Die Production-Prüfung hat ergeben, welche V2-Oberflächen konkret betroffen sind. Diese vier Dateien nutzen noch die blau/violetten shadcn-Tokens und werden mit diesem Schritt bereinigt:
+Die Tokens definieren keine eigenen Farben mehr, sondern **verweisen** auf die Markenpalette (`--primary: var(--jet-brand-800)`). Damit gibt es je Farbe genau eine Quelle; die frühere Doppelpflege war die Ursache dafür, dass dieselbe Fläche je nach verwendeter Klasse blau oder grün erschien. Zuordnung und Begründung: [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) Abschnitt 3, [DECISIONS.md](DECISIONS.md) ADR-0024.
 
-| Datei | Wirkung |
+Kein Klassenname in den Komponenten musste sich ändern – die Umstellung liegt vollständig in `styles/globals.css` und `tailwind.config.js`. Der Skip-Link und die Auth-Primitive sind damit mitbereinigt, ohne selbst angefasst zu werden.
+
+Entfallen sind zusätzlich `--surface-1/2/3`, `--snippet-lines`, die in `tailwind.config.js` deklarierten aber nie definierten `--chart-1..5`, dreizehn unbenutzte Klassen der alten Gestaltung und das `.prose`-Thema samt `@tailwindcss/typography` – die Klasse kommt im Markup nirgends vor, seit die Blog-Oberflächen weg sind.
+
+**Geprüft:** Unter WebKit auf acht Seiten (`/`, `/planen`, `/reisen`, `/login`, `/register`, `/unauthorized`, `/admin/login`, 404), dass jedes Token zu einer Farbe auflöst und nichts mehr im Farbtonbereich 200–300 Grad gezeichnet wird. Die Auflösungsprüfung ist nötig, weil die zweite `var()`-Ebene sonst still auf transparent fallen könnte – auf einem Screenshot teils unauffällig.
+
+Zwei Befunde kamen bei dieser Prüfung dazu und sind mitbehoben:
+
+- Die Standardvariante des Button-Primitivs lag auf der gedämpften Sekundärfläche. Jede Schaltfläche ohne ausdrückliche Variante ist aber die Hauptaktion ihrer Maske – Anmelden, Konto erstellen, Passwort setzen. Sie wichen alle optisch zurück. Ausserdem waren sie mit 40 px unter den 44 px, die Abschnitt 7.5 des Designsystems für Hauptaktionen verlangt.
+- Der Balken der Passwortstärke war auf jeder Stufe im Markengrün: Die Aussage lag allein in seiner Länge, während die Farbe durchgehend „gut" meldete.
+
+### 1.2b Unerreichbaren Code und ungenutzte Pakete entfernen · abgeschlossen
+
+Statt einer Textsuche drei Analysen über die Importkette, jede als Skript im Baum und in der CI ([DECISIONS.md](DECISIONS.md) ADR-0026):
+
+| Prüfung | gefunden |
 | --- | --- |
-| `components/layout/SkipToContentLink.tsx` | erscheint bei Tastaturfokus auf **jeder** V2-Seite blau |
-| `components/ui/*` | Primitive (Button, Input, Checkbox) tragen die shadcn-Tokens, sichtbar auf `/login` und `/register` |
+| `npm run check:dead` – Dateien ohne Weg von einem Einstiegspunkt | **53 Dateien** |
+| `npm run check:exports` – benannte Exporte ohne Aufrufer | **35 Exporte** |
+| `npm run check:deps` – Pakete ohne Verwendung | **17 Pakete** |
 
-`app/(public)/error.tsx`, `app/(public)/not-found.tsx` und `components/trips/MiniTripSlider.tsx` sind mit Phase 1.1b erledigt: die Fehlerseiten nutzen jetzt V2-Tokens, der Slider ist entfernt. Der Skip-Link ist damit der einzige Blau-Eintrag, der die regulären V2-Seiten erreicht. Er ist bis zum Tastaturfokus unsichtbar, aber für Tastaturnutzer sichtbar und damit vorrangig. Dazu kommen die Auth-Formulare, die über die `ui`-Primitive noch auf `--primary` liegen.
+Die Dateiebene allein hätte zu wenig gefunden: `card.tsx` wird importiert, aber nur fünf von elf Exporten wurden je benutzt. Umgekehrt sah manche Datei importiert aus und wurde nur von einer anderen unerreichbaren Datei aus benutzt – `PaymentsWidget` und `SecurityWidget` lagen je dreimal im Baum, live war eine Fassung.
 
-### 1.2b Ungenutzte Pakete entfernen
+Bewusst behalten, mit Begründung im jeweiligen Skript:
 
-Bei der Kartierung der Alt-Oberflächen aufgefallen: Sechs Pakete stehen in `package.json`, werden aber nirgends im Quellcode importiert. Fünf davon sind Reste der entfernten Blog- und Suchoberflächen, `react-hot-toast` stammt aus der Zeit vor `sonner`.
-
-| Paket | Herkunft |
+| behalten | Grund |
 | --- | --- |
-| `zod` | nie verwendet, kein einziges Schema im Repository |
-| `react-hot-toast` | ersetzt durch `sonner` (`app/layout.tsx`) |
-| `highlight.js`, `isomorphic-dompurify` | Alt-Blog |
-| `dayjs` | Alt-Suche (`DateRangePicker`) |
-| `uuid` | Alt-Media-Studio |
+| `zod` | Laufzeitvalidierung der strukturierten V2-Reisedaten und der Modellantworten (Phase 2) |
+| `CookieConsent.tsx` | wartet auf die Rechtsentscheidung; es zu löschen würde sie vorwegnehmen |
+| `startSupabaseAuthListener` | Gegenseite von `app/auth/refresh`, gehört in Phase 1.3 |
 
-`recharts`, `react-day-picker` und `react-resizable-panels` bleiben vorerst: sie hängen an der Admin-Oberfläche beziehungsweise an `ui`-Primitiven, die noch stehen.
+Drei Helfer in `lib/supabase/server.ts` sind entfernt, weil sie als Vorlage gefährlich gewesen wären: `createAdminClient` gab einem Client mit Service-Role-Rechten den mutierbaren Cookie-Adapter, `getSessionServer`/`getUserServer` lasen die Identität aus `auth.getSession()` – serverseitig wird dabei die Token-Signatur nicht nachgeprüft. Ein Kommentar an der Stelle hält fest, warum, damit Phase 1.3/1.4 sie nicht so wieder einführt.
+
+**Nebenbefund behoben:** Der Umschalter für das Dunkelthema setzte `dark` auf `<html>`, und niemand nahm es zurück. Beim Wechsel vom Admin auf eine öffentliche Seite blieb die Klasse stehen und die hellen V2-Seiten wurden mit den dunklen Tokens gezeichnet ([DECISIONS.md](DECISIONS.md) ADR-0025).
+
+Lint ist seither ohne Warnung (vorher drei).
 
 ### 1.3 Auth, Rollen und Middleware vereinheitlichen
 
@@ -204,7 +220,7 @@ Bei der Kartierung der Alt-Oberflächen aufgefallen: Sechs Pakete stehen in `pac
 
 - [ ] vollständige Baseline-Migration für das real existierende Schema (aktuell 37 Tabellen in den Typen, 2 in Migrationen)
 - [ ] unversionierte Migration `<timestamp>_realtime_creator_session_metrics.sql` bereinigen
-- [ ] die zwei konkurrierenden Typdateien zusammenführen (`types/supabase.ts` und `types/supabase.types.ts`)
+- [x] die zwei konkurrierenden Typdateien zusammengeführt – mit Phase 1.2b erledigt: `types/supabase.types.ts` war ein älterer, kleinerer Abzug ohne einen einzigen Import und ist entfernt; die Schematypen liegen nur noch in `types/supabase.ts`
 - [ ] RLS-Zustand erheben, versionieren und testen
 - [ ] Ownership-Modell dokumentieren
 

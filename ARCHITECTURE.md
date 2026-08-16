@@ -139,11 +139,12 @@ Mit Phase 1.1b ist zusätzlich `lib/openai/*` entfernt und das Paket `openai` de
 
 Die V2-Markenfarben sind zentralisiert:
 
-- `styles/globals.css` definiert 27 Tokens in fünf Familien (`brand`, `citrus`, `surface`, `line`, `ink`) als RGB-Kanäle.
-- `tailwind.config.js` mappt sie über `rgb(var(--jet-*) / <alpha-value>)`, damit Opacity-Modifier wie `bg-brand-600/10` funktionieren.
-- Die V2-UI-Dateien verwenden ausschließlich diese Tokens, keine Hex-Literale.
+- `styles/globals.css` definiert die Markenpalette in sieben Familien (`brand`, `citrus`, `surface`, `line`, `ink`, `night`, `danger`) als RGB-Kanäle.
+- Die semantischen shadcn-Namen (`--primary`, `--muted`, `--border` usw.) definieren keine eigenen Farben, sondern **verweisen** auf diese Palette. Damit gibt es je Farbe genau eine Quelle.
+- `tailwind.config.js` mappt beide Gruppen über `rgb(var(--token) / <alpha-value>)`, damit Opacity-Modifier wie `bg-brand-600/10` und `bg-primary/10` funktionieren.
+- Die UI-Dateien verwenden ausschließlich Tokens, keine Hex-Literale und keine Farben aus der Tailwind-Standardpalette.
 
-**Bekannte Abweichung:** Die shadcn-Tokens (`--primary`, `--accent`, `--ring` usw.) tragen noch die alte blau/violette Farbwelt. Sie werden von Alt-Komponenten genutzt. Die Umstellung auf die V2-Farbwelt ist freigegeben und als eigener Schritt eingeplant. Details in [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md).
+Zuordnung und Begründung der semantischen Tokens: [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md), Abschnitt 3.
 
 ---
 

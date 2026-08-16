@@ -414,6 +414,65 @@ Eine hier dokumentierte, freigegebene Entscheidung hat Vorrang vor bestehendem C
 
 ---
 
+## ADR-0024 – Die shadcn-Tokens verweisen auf die Palette, statt eigene Farben zu tragen
+
+**Datum:** 16. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Die semantischen Tokens (`--primary`, `--muted`, `--border` …) definieren keine Farbwerte mehr, sondern verweisen auf die V2-Markenpalette: `--primary: var(--jet-brand-800)`. Die Notation ist durchgehend RGB-Kanäle. Zusätzlich gibt es zwei neue Familien: `night-*` für das Dunkelthema und `danger-*` als einzige Funktionsfarbe ausserhalb der Marke.
+
+**Kontext:** `--primary` war `222 84% 56%` (Blau), `--accent` `264 85% 62%` (Violett), Flächen und Rahmen kühles Grau. Daneben existierte die verbindliche V2-Palette. Beide wurden parallel gepflegt: Je nachdem, welche Klasse eine Komponente benutzte, erschien dieselbe Fläche blau oder grün. Betroffen waren die am breitesten genutzten Namen – `muted` in 56 Dateien, `border` in 27, `primary` in 25.
+
+**Alternativen:**
+
+1. *Die V2-Farben nach HSL umrechnen und in die shadcn-Tokens schreiben.* Verworfen: Es gäbe weiterhin zwei Stellen je Farbe. Beim Runden entstehen Abweichungen, und eine Palettenänderung müsste doppelt nachgezogen werden – genau die Lage, aus der der Widerspruch entstanden ist.
+2. *Die shadcn-Namen aufgeben und überall Paletten-Namen verwenden.* Verworfen: Die Radix-/shadcn-Primitive erwarten sie, und eine semantische Ebene ist nützlich – `bg-muted` sagt, was gemeint ist, `bg-surface-100` nur, welche Farbe.
+
+**Begründung:** Ein Verweis kann nicht auseinanderlaufen. `rgb()` mit Kanälen statt `hsl()` ist nötig, weil die Palette so notiert ist und eine gemischte Notation die Verweiskette bricht; sie erhält ausserdem die Opacity-Modifier.
+
+Zwei Zuordnungen sind bewusst keine reine Ableitung: `--ring` liegt auf `brand-600` statt auf `--primary`, weil ein `brand-800`-Ring auf einer `brand-800`-Schaltfläche unsichtbar wäre. Und `danger` bleibt rot – für zerstörende Aktionen ist Rot keine Stilfrage. Beide Stufen sind auf AA-Kontrast gewählt (`danger-600` 5,64:1 mit weisser Schrift).
+
+**Konsequenzen:** Kein Klassenname in den Komponenten musste sich ändern. Entfallen sind die toten Tokens mit Blauanteil (`--jet-hero`, `--jet-btn`, `--hero-navy`), `--surface-1/2/3`, `--snippet-lines`, die in `tailwind.config.js` deklarierten, aber nie definierten `--chart-1..5` sowie dreizehn unbenutzte Klassen der alten Gestaltung. Geprüft ist unter WebKit auf acht Seiten, dass jedes Token zu einer Farbe auflöst – die zweite `var()`-Ebene könnte sonst still auf transparent fallen – und dass nichts mehr im Farbtonbereich 200–300 Grad gezeichnet wird.
+
+---
+
+## ADR-0025 – Das Dunkelthema gehört dem Admin und verlässt ihn nicht
+
+**Datum:** 16. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Ein Dunkelthema gibt es nur im Admin. Die Klasse `dark` sitzt weiterhin auf `<html>`, aber das Admin-Layout wendet sie an und entfernt sie beim Verlassen. Die Flächen kommen aus `night-*`.
+
+**Kontext:** Der Umschalter in der Admin-Kopfzeile setzte die Klasse auf `<html>`, und niemand nahm sie zurück. Weil die Navigation im App Router das Dokument nicht austauscht, blieb sie beim Wechsel auf eine öffentliche Seite stehen: Die hellen V2-Seiten wurden dann mit den dunklen Tokens gezeichnet. Wer den Admin mit dunkel eingestelltem Betriebssystem betrat, löste das ohne Zutun aus, denn die Voreinstellung war `system`.
+
+**Alternativen:**
+
+1. *Die Klasse auf den Admin-Container setzen statt auf `<html>`.* Custom Properties erben, das würde für die Oberfläche genügen. Verworfen: Bildlaufleisten, native Steuerelemente und der Untergrund beim Überdehnen des Scrollbereichs richten sich nach `color-scheme` am Wurzelelement. Der Admin sähe dunkel aus, sein Rahmen nicht.
+2. *Ein Dunkelthema für die öffentlichen Seiten ausarbeiten.* Nicht jetzt: Die V2-Farbwelt ist als warme, helle Palette festgelegt; ein dunkler Zustand wäre eine Gestaltungsentscheidung.
+
+**Begründung:** Die Lebensdauer der Klasse an das Layout zu binden, löst das Problem an der Ursache: Das Admin-Layout wird beim Verlassen des Bereichs abgebaut, es ist damit die einzige Stelle, die zuverlässig weiss, wann das Thema nicht mehr gelten darf.
+
+**Konsequenzen:** Die Kopfzeile besitzt das Thema nicht mehr, sie schaltet nur um; Zustand und Umschalter kommen aus `AdminShellContext`. Das vermeidet zugleich eine Reihenfolgefalle – Effekte der Kinder laufen vor denen der Eltern, eine eigene Leseoperation in der Kopfzeile hätte den noch nicht gesetzten Zustand gesehen.
+
+---
+
+## ADR-0026 – Unerreichbarer Code und ungenutzte Pakete werden in der CI geprüft
+
+**Datum:** 16. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Drei Analysen laufen als Teil der CI: `check:dead` (Dateien, die von keinem Einstiegspunkt aus erreichbar sind), `check:exports` (benannte Exporte ohne Aufrufer) und `check:deps` (Pakete ohne Verwendung). Bewusste Ausnahmen stehen **im jeweiligen Skript** mit Begründung, nicht in der Dokumentation.
+
+**Kontext:** Das Aufräumen der Alt-Oberflächen entfernte Seiten, nicht aber alles, was nur von ihnen aus erreichbar war. Eine Textsuche findet solche Reste unzuverlässig, weil sie transitive Ketten übersieht: Eine Datei kann importiert aussehen und trotzdem nur von einer anderen unerreichbaren Datei aus benutzt werden. Die Analyse über die Importkette fand 53 solcher Dateien, darunter dieselbe Komponente dreimal an verschiedenen Orten.
+
+**Alternativen:** Ein fertiges Werkzeug wie `knip` oder `ts-prune`. Verworfen: Beide brauchen eigene Konfiguration für die Einstiegspunkte des App Routers, und die Begründung für eine Ausnahme liesse sich nicht an die Ausnahme schreiben. Die drei Skripte sind zusammen unter 300 Zeilen und arbeiten mit den Regeln, die für dieses Projekt gelten.
+
+**Begründung:** Eine einmalige Aufräumaktion fällt zurück. Ein Prüflauf, der die Erweiterung sofort meldet, hält den Zustand – und zwingt zu einer Entscheidung: entfernen oder begründen. Dass die Begründung im Skript steht, hält sie an der Stelle, an der sie gelesen wird.
+
+**Konsequenzen:** Drei Ausnahmen sind eingetragen: `zod` (Laufzeitvalidierung der kommenden strukturierten V2-Daten), `CookieConsent.tsx` (wartet auf die Rechtsentscheidung) und `startSupabaseAuthListener` (Gegenseite von `app/auth/refresh`, gehört in die Auth-Phase). Die Exportanalyse arbeitet über Namen, nicht über die Importkette; sie meldet im Zweifel zu wenig, damit die Ausgabe belastbar bleibt.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
