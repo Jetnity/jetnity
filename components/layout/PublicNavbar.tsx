@@ -34,8 +34,12 @@ export default function PublicNavbar() {
                  pr-[env(safe-area-inset-right)] pt-[env(safe-area-inset-top)] backdrop-blur-xl"
     >
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8">
-        <Link href="/" aria-label="Jetnity Startseite" className="inline-flex items-center gap-2.5 text-brand-800">
-          <span className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-brand-800 shadow-sm">
+        <Link
+          href="/"
+          aria-label="Jetnity Startseite"
+          className="-mx-2 inline-flex min-h-11 items-center gap-2.5 px-2 text-brand-800"
+        >
+          <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-brand-800 shadow-sm">
             <span className="h-2.5 w-2.5 rotate-45 rounded-[3px] bg-citrus-400" />
             <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-white" />
           </span>
@@ -48,7 +52,9 @@ export default function PublicNavbar() {
               key={item.href}
               href={item.href}
               className={cn(
-                'rounded-full px-4 py-2 text-sm font-medium transition',
+                // Ab md sichtbar, auf Tablets also weiterhin per Finger bedient:
+                // volle Trefferhoehe auf Touch-Geraeten, kompakte Pille mit Maus.
+                'inline-flex min-h-11 items-center rounded-full px-4 py-2 text-sm font-medium transition pointer-fine:min-h-0',
                 isActive(item.href)
                   ? 'bg-surface-100 text-brand-800'
                   : 'text-ink-800 hover:bg-white hover:text-brand-800'
@@ -60,10 +66,16 @@ export default function PublicNavbar() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <Link href="/login" className="rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white">
+          <Link
+            href="/login"
+            className="inline-flex min-h-11 items-center rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0"
+          >
             Anmelden
           </Link>
-          <Link href="/planen" className="rounded-full bg-brand-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900">
+          <Link
+            href="/planen"
+            className="inline-flex min-h-11 items-center rounded-full bg-brand-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900 pointer-fine:min-h-0"
+          >
             Reise planen
           </Link>
         </div>

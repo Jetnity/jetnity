@@ -234,7 +234,7 @@ export default function LoginForm() {
           <button
             type="button"
             onClick={handleForgotPassword}
-            className="text-sm text-primary hover:underline underline-offset-2"
+            className="-mx-2 inline-flex min-h-11 items-center px-2 text-sm text-primary underline-offset-2 hover:underline"
           >
             Passwort vergessen?
           </button>
