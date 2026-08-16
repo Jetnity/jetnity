@@ -13,9 +13,9 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Phase | Inhalt | Status |
 | --- | --- | --- |
 | Phase 0 | V2-Basis, Build, CI, Design-Tokens, Dokumentation | **fertig** |
-| Querschnitt | Mobile- und Responsive-Qualität der V2-Seiten | **fertig** |
+| Querschnitt | Mobile- und Responsive-Qualität der V2-Seiten | **abgeschlossen, in Production verifiziert** |
 | Phase 1.1 | Alt-Endpunkte und Cron-Jobs außer Betrieb | **fertig** |
-| Phase 1.1b | Alt-Oberflächen entfernen, Auth-Texte auf V2 | **fertig** |
+| Phase 1.1b | Alt-Oberflächen entfernen, Auth-Texte auf V2 | **abgeschlossen, in Production verifiziert** |
 | Phase 1 (Rest) | V2-Sicherheit und Datenbasis | in Arbeit |
 | Phase 2 | Jetnity-Kern: natürliche Sprache zu strukturierter Reise | geplant |
 | Phase 3 | Reiseprodukte und Monetarisierung | geplant |
@@ -91,6 +91,25 @@ Abschlussmessung gegen Production, je Breite Production gegen den Zweig, gemesse
 | `/planen` mit 200-px-Datumsfeldern | 0 / 0 | 0 / 0 |
 | `/login`, `/register` | 0 / 0 | 0 / 0 |
 
+### Abschluss in Production · 16. August 2026
+
+Pull Request [#6](https://github.com/Jetnity/jetnity/pull/6) und [#7](https://github.com/Jetnity/jetnity/pull/7) sind per Fast-Forward nach `main` gemergt (`0e3fab75`, `aa6956f7`), CI auf `main` grün, Vercel-Production-Deploy erfolgreich. Danach wurde derselbe Prüfsatz gegen Production gefahren – nicht gegen einen lokalen Server:
+
+| Prüfung | Umfang | Ergebnis |
+| --- | --- | --- |
+| WebKit-Audit, neun Regeln | 227 Seiten-/Breiten-Kombinationen | 0 Fehler |
+| Chromium-Audit, Gegenprobe | 227 Kombinationen | 0 Fehler |
+| Herausragender und abgeschnittener Inhalt, kalte Flächen | 80 Kombinationen über 10 Seiten | 0 Befunde |
+| Belastungstest native Bedienelemente (200 px erzwungen) | 32 Kombinationen | 0 Fehler |
+| Wischen mit echten Touch-Ereignissen | 280/320/390/430 px | Überhang 278–428 px vollständig durchfahrbar |
+| Tastatur offen, sichtbarer Bereich 508 px | 7 Felder auf `/planen` | alle vollständig sichtbar |
+
+Belegt ist damit auch: Die Dokumentfläche trägt auf allen zehn geprüften Seiten `rgb(245, 244, 238)` – die warme V2-Fläche –, der `body` ist transparent, und keine Fläche über 4000 px² zeigt noch einen kräftigen Blauanteil. Die alten blau-violetten Verläufe sind vollständig weg.
+
+Die Safe-Area-Werte sind erwartungsgemäß 0 px: `viewport-fit` bleibt `auto`, iOS begrenzt den Viewport damit selbst auf den sicheren Bereich (ADR-0017). Die Berechnungen in Kopfzeile, Footer und „Nach oben" greifen erst im installierten `standalone`-Modus.
+
+Zwei Meldungen bleiben als Hinweis und sind keine Fehler: Die klebende Kopfzeile liegt planmäßig über vorbeigescrolltem Inhalt, und die Kacheln im waagrechten Bereich ragen gewollt über den Container – sie liegen in einem scrollbaren Vorfahren (`584 > 266 px`) und sind per Wischen erreichbar. Beide Ausnahmen sind in der Prüfung explizit begründet, damit sie nicht als bestandene Messung durchgehen.
+
 **Offen:** Verifikation auf echter iOS- und Android-Hardware. Geprüft wurde unter WebKit und Chromium mit den obigen Viewports.
 
 ---
@@ -118,9 +137,11 @@ Von 77 Route Handlern wurden 61 entfernt, 16 bleiben. Alle vier Cron-Jobs sind e
 
 Bewusst behalten: `app/auth/refresh`, `api/search/airports`, `api/search`, `api/admin/payments/*`, `api/admin/security/*`.
 
-### 1.1b Alt-Oberflächen entfernen · fertig
+### 1.1b Alt-Oberflächen entfernen · abgeschlossen, in Production verifiziert
 
-Archiv-Tag vor der Löschung: `archive/pre-1-1b-alt-ui`. 209 Dateien entfernt, Typecheck, Lint und Production-Build grün. Details in [DECISIONS.md](DECISIONS.md), ADR-0018.
+Umgesetzt in Pull Request [#6](https://github.com/Jetnity/jetnity/pull/6), am 16. August 2026 per Fast-Forward nach `main` gemergt (`0e3fab75`). Archiv-Tag vor der Löschung: `archive/pre-1-1b-alt-ui`. 209 Dateien entfernt, Typecheck, Lint und Production-Build grün. Details in [DECISIONS.md](DECISIONS.md), ADR-0018.
+
+In Production nachgewiesen: `/login` zeigt „Willkommen zurück", `/register` zeigt „Deine Reisen. Ein Konto.", und im ausgelieferten HTML beider Seiten findet sich kein Treffer mehr auf Creator, Media-Studio, Analytics oder Social.
 
 - [x] Media Studio, Creator Hub, Creator Dashboard, Creator Analytics, Creator-Story
 - [x] Feed- und Publishing-Oberflächen
