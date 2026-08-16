@@ -36,6 +36,15 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Tests
+        run: npm test
+
+      # Der Bereichsschutz für Seiten liegt im Layout der Gruppe `(admin)` und
+      # gilt dort automatisch. API-Routen haben kein Layout und müssen selbst
+      # prüfen – diese Kontrolle stellt sicher, dass keine ungeschützt bleibt.
+      - name: Schutz der Admin-API
+        run: npm run check:api-schutz
+
       # Halten den Baum frei von Code und Paketen, die niemand mehr erreicht.
       # Bewusste Ausnahmen sind in den Skripten mit Grund hinterlegt.
       - name: Unerreichbarer Code
