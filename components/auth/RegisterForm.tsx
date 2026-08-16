@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { GoogleIcon, AppleIcon } from '@/components/auth/provider-icons';
+import { cn } from '@/lib/utils';
 import {
   User,
   Mail as MailIcon,
@@ -63,6 +64,20 @@ function scorePassword(pw: string) {
 }
 function strengthLabel(score: number) {
   return ['Sehr schwach', 'Schwach', 'Mittel', 'Stark', 'Sehr stark'][Math.max(0, score - 1)] || 'Sehr schwach';
+}
+
+/**
+ * Farbe des Balkens.
+ *
+ * Vorher war er auf jeder Stufe im Markengruen. Die Aussage lag allein in
+ * seiner Laenge, waehrend die Farbe durchgehend "gut" meldete – bei einem
+ * schwachen Passwort das falsche Signal. Die Bewertung steht zusaetzlich als
+ * Text daneben, die Farbe ist also nicht der einzige Traeger.
+ */
+function strengthColor(score: number) {
+  if (score <= 2) return 'bg-destructive';
+  if (score <= 3) return 'bg-citrus-500';
+  return 'bg-primary';
 }
 
 export default function RegisterForm() {
@@ -260,8 +275,13 @@ export default function RegisterForm() {
 
           {/* Strength Meter */}
           <div className="mt-2">
-            <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-              <div className="h-2 rounded-full bg-primary transition-all" style={{ width: `${pct}%` }} />
+            {/* Der Balken zeigt, was die Zeile darunter sagt. Fuer Hilfsmittel
+                ist er deshalb ausgeblendet – sonst kaeme die Bewertung zweimal. */}
+            <div className="h-2 w-full rounded-full bg-muted overflow-hidden" aria-hidden="true">
+              <div
+                className={cn('h-2 rounded-full transition-all', strengthColor(s))}
+                style={{ width: `${pct}%` }}
+              />
             </div>
             <p className="mt-1 text-xs text-muted-foreground">{strengthLabel(s)}</p>
             <ul className="mt-1 text-[11px] text-muted-foreground space-y-0.5">
