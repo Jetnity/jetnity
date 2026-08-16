@@ -252,7 +252,9 @@ export default function RegisterForm() {
             id="password"
             type="password"
             autoComplete="new-password"
-            placeholder="Mind. 12 Zeichen (a–z, A–Z, Zahl, Symbol)"
+            // Kurz genug, damit der Text auf 320 px nicht abgeschnitten wird.
+            // Die vollstaendigen Regeln stehen unter dem Feld.
+            placeholder="Mindestens 12 Zeichen"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -315,7 +317,7 @@ export default function RegisterForm() {
           loadingText="Erstellen…"
           rightIcon={<ChevronRight className="h-4 w-4" />}
         >
-          Account erstellen
+          Konto erstellen
         </Button>
       </form>
 
@@ -356,8 +358,8 @@ export default function RegisterForm() {
       </div>
 
       <p className="mt-6 text-sm text-center text-muted-foreground">
-        Bereits einen Account?{' '}
-        <Link href="/login" className="text-primary hover:underline">Zum Login</Link>
+        Du hast schon ein Konto?{' '}
+        <Link href="/login" className="text-primary hover:underline">Zur Anmeldung</Link>
       </p>
 
       <p className="mt-2 text-[11px] text-center text-muted-foreground">

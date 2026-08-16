@@ -164,7 +164,7 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
 
   return (
     <main className="min-h-screen bg-surface-75 pb-20">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
+      <div className="mx-auto max-w-7xl px-3 py-8 sm:px-6 sm:py-10">
         <Link
           href="/reisen"
           className="-ml-2 inline-flex min-h-11 items-center gap-2 px-2 text-sm font-medium text-ink-800 transition hover:text-brand-800"
@@ -180,12 +180,12 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
                 <ShieldCheck className="h-3.5 w-3.5" />
                 Privat auf diesem Gerät
               </span>
-              <h1 className="mt-5 break-words text-3xl font-semibold tracking-[-0.04em] sm:text-5xl">
+              <h1 className="mt-5 hyphens-auto break-words text-3xl font-semibold tracking-[-0.04em] sm:text-5xl">
                 {trip.title}
               </h1>
               <p className="mt-2 flex min-w-0 items-start gap-2 text-sm text-white/65">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-                <span className="min-w-0 break-words">
+                <span className="min-w-0 hyphens-auto break-words">
                   {trip.destination} · ab {trip.origin}
                 </span>
               </p>
@@ -216,7 +216,11 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">Tagesplan</p>
               <p className="mt-1 text-sm text-ink-900">{plannedItemCount} Punkte geplant</p>
             </div>
-            <div className="max-h-[520px] space-y-1 overflow-y-auto pr-1">
+            {/* Auf Telefonen steht die Tagesliste ueber dem Tagesinhalt. Bei
+                langen Reisen wuerde eine 520 px hohe Liste den halben Bildschirm
+                fuellen und das Scrollen der Seite abfangen. Deshalb dort an die
+                Bildschirmhoehe gebunden, ab lg klebt die Spalte ohnehin. */}
+            <div className="max-h-[45dvh] space-y-1 overflow-y-auto pr-1 lg:max-h-[520px]">
               {trip.days.map((day, index) => {
                 const selected = activeDay?.id === day.id
                 return (
@@ -246,7 +250,7 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
             </div>
           </aside>
 
-          <section className="min-w-0 rounded-[26px] border border-black/5 bg-white p-5 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7">
+          <section className="min-w-0 rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7">
             {activeDay && (
               <>
                 <div className="flex flex-col justify-between gap-4 border-b border-line-200 pb-5 sm:flex-row sm:items-center">
@@ -299,7 +303,9 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
                       <textarea
                         value={note}
                         onChange={(event) => setNote(event.target.value)}
-                        rows={2}
+                        // Drei Zeilen, weil der Platzhalter auf 320 px genau so
+                        // viele braucht. Mit zwei Zeilen wird er angeschnitten.
+                        rows={3}
                         maxLength={500}
                         placeholder="Reservierung, Treffpunkt oder persönliche Notiz"
                         className="w-full min-w-0 rounded-xl border border-line-200 bg-white px-3 py-2.5 text-base outline-none placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
@@ -329,14 +335,14 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
                 ) : (
                   <ol className="mt-5 space-y-3">
                     {activeDay.items.map((item) => (
-                      <li key={item.id} className="group flex gap-4 rounded-2xl border border-line-200 p-4 transition hover:border-line-300">
-                        <span className="mt-0.5 flex h-9 min-w-9 items-center justify-center rounded-xl bg-surface-50 text-brand-600">
+                      <li key={item.id} className="group flex gap-3 rounded-2xl border border-line-200 p-3 transition hover:border-line-300 sm:gap-4 sm:p-4">
+                        <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-surface-50 text-brand-600 sm:h-9 sm:w-9">
                           {item.time ? <Clock3 className="h-4 w-4" /> : <MapPin className="h-4 w-4" />}
                         </span>
                         <span className="min-w-0 flex-1">
                           {item.time && <span className="text-xs font-semibold text-brand-600">{item.time}</span>}
-                          <strong className="block break-words text-sm font-semibold text-brand-800">{item.title}</strong>
-                          {item.note && <span className="mt-1 block break-words text-xs leading-5 text-ink-700">{item.note}</span>}
+                          <strong className="block hyphens-auto break-words text-sm font-semibold text-brand-800">{item.title}</strong>
+                          {item.note && <span className="mt-1 block hyphens-auto break-words text-xs leading-5 text-ink-700">{item.note}</span>}
                         </span>
                         <button
                           type="button"

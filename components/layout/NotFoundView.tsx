@@ -13,7 +13,7 @@ export default function NotFoundView() {
   const router = useRouter()
 
   return (
-    <main className="min-h-[70vh] bg-surface-75 px-4 py-14 sm:px-6 sm:py-20">
+    <main className="min-h-[70dvh] bg-surface-75 px-4 py-14 sm:px-6 sm:py-20">
       <div className="mx-auto max-w-2xl">
         <div className="rounded-[30px] border border-black/5 bg-white p-6 text-center shadow-[0_20px_60px_rgba(15,46,42,0.07)] sm:p-10">
           <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface-100 text-brand-600">

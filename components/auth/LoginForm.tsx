@@ -2,6 +2,7 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -244,10 +245,10 @@ export default function LoginForm() {
             disabled={loading}
             className="min-w-[8rem]"
             isLoading={loading}
-            loadingText="Einloggen…"
+            loadingText="Anmelden…"
             rightIcon={<ChevronRight className="h-4 w-4" />}
           >
-            Login
+            Anmelden
           </Button>
         </div>
       </form>
@@ -288,8 +289,13 @@ export default function LoginForm() {
         </Button>
       </div>
 
-      <p className="mt-6 text-xs text-center text-muted-foreground">
-        Mit dem Login stimmst du unseren Richtlinien zu. Datenschutz: DSGVO &amp; CH-DSG konform.
+      <p className="mt-6 text-center text-sm text-muted-foreground">
+        Noch kein Konto?{' '}
+        <Link href="/register" className="text-primary hover:underline">Konto erstellen</Link>
+      </p>
+
+      <p className="mt-4 text-xs text-center text-muted-foreground">
+        Mit der Anmeldung stimmst du unseren Richtlinien zu. Datenschutz: DSGVO &amp; CH-DSG konform.
       </p>
 
       {/* MFA – TOTP Dialog */}
