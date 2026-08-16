@@ -71,7 +71,7 @@ export default function UpdatePasswordPage() {
         return;
       }
       setOkMsg('Passwort erfolgreich aktualisiert.');
-      setTimeout(() => router.replace('/creator/creator-dashboard'), 600);
+      setTimeout(() => router.replace('/reisen'), 600);
     } catch (err: any) {
       setErrorMsg(err?.message || 'Aktualisierung fehlgeschlagen.');
       setLoading(false);

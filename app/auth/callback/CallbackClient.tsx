@@ -6,6 +6,9 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import { Loader2, CheckCircle2, AlertTriangle } from 'lucide-react'
 
+/** Nach der Anmeldung landen Reisende bei ihren Reisen. */
+const AFTER_LOGIN_ROUTE = '/reisen'
+
 export default function CallbackClient() {
   const router = useRouter()
   const [state, setState] = React.useState<'processing' | 'ok' | 'error'>('processing')
@@ -45,7 +48,7 @@ export default function CallbackClient() {
 
             const redirect = type === 'recovery'
               ? '/auth/update-password'
-              : '/creator/creator-dashboard'
+              : AFTER_LOGIN_ROUTE
             return finish('ok', 'Erfolgreich angemeldet.', redirect)
           }
         }
@@ -61,14 +64,14 @@ export default function CallbackClient() {
         if (code) {
           const { error } = await supabase.auth.exchangeCodeForSession(code)
           if (error) throw error
-          return finish('ok', 'Erfolgreich angemeldet.', '/creator/creator-dashboard')
+          return finish('ok', 'Erfolgreich angemeldet.', AFTER_LOGIN_ROUTE)
         }
 
         // 3) Fallback: gibt es bereits eine Session?
         const { data, error } = await supabase.auth.getSession()
         if (error) throw error
         if (data.session) {
-          return finish('ok', 'Erfolgreich angemeldet.', '/creator/creator-dashboard')
+          return finish('ok', 'Erfolgreich angemeldet.', AFTER_LOGIN_ROUTE)
         }
 
         // Nichts gefunden → Fehler

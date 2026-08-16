@@ -17,8 +17,9 @@ export async function middleware(req: NextRequest) {
 
   const { pathname, search } = req.nextUrl
 
-  // Nur Creator-Dashboard schützen; alles andere sofort durchlassen
-  if (!pathname.startsWith('/creator/creator-dashboard')) {
+  // Kontobereich schützen; alles andere sofort durchlassen.
+  // Die vollständige Vereinheitlichung von Auth, Rollen und Matchern folgt in Phase 1.3.
+  if (!pathname.startsWith('/account')) {
     return res
   }
 
@@ -50,17 +51,11 @@ export async function middleware(req: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser()
 
-    // Nicht eingeloggt → zur Startseite, mit "next" Rücksprungziel
+    // Nicht eingeloggt → zum Login, mit "next" Rücksprungziel
     if (!user) {
-      const redirectTo = new URL('/', req.url)
+      const redirectTo = new URL('/login', req.url)
       redirectTo.searchParams.set('next', pathname + search)
       return NextResponse.redirect(redirectTo)
-    }
-
-    // Rolle prüfen (nur creator/admin erlaubt)
-    const role = (user.user_metadata as any)?.role
-    if (role && role !== 'creator' && role !== 'admin') {
-      return NextResponse.redirect(new URL('/403', req.url))
     }
 
     return res

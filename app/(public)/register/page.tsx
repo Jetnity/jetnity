@@ -18,7 +18,7 @@ export default async function RegisterPage() {
   } = await supabase.auth.getSession();
 
   if (session) {
-    redirect('/creator/creator-dashboard');
+    redirect('/reisen');
   }
 
   return (

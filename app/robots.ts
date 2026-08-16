@@ -27,9 +27,9 @@ export default function robots(): MetadataRoute.Robots {
             disallow: [
               '/api/',
               '/admin/',
-              '/media-studio/',
-              '/creator/',
-              '/dashboard/',
+              '/account/',
+              '/login',
+              '/register',
               '/private/',
               '/draft/',
               // '/_next/'  // nicht nötig

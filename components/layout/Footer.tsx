@@ -11,7 +11,6 @@ const productLinks = [
 const accountLinks = [
   { label: 'Anmelden', href: '/login' },
   { label: 'Registrieren', href: '/register' },
-  { label: 'Reiseblog', href: '/blog' },
 ]
 
 export default function Footer() {
