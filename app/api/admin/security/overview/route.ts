@@ -1,6 +1,6 @@
 // app/api/admin/security/overview/route.ts
 import { NextResponse } from 'next/server'
-import { requireAdmin } from '@/lib/auth/requireAdmin'
+import { requireAdminApi } from '@/lib/auth/admin-guard'
 import { createRouteHandlerClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/supabase'
 
@@ -17,7 +17,9 @@ const TABLES_TO_CHECK = [
 ]
 
 export async function GET() {
-  await requireAdmin()
+  const gate = await requireAdminApi({ surface: 'api/security/overview' })
+  if (!gate.ok) return gate.response
+
   const supabase = createRouteHandlerClient<Database>()
   const { data, error } = await (supabase as any).rpc('admin_security_overview', {
     tables: TABLES_TO_CHECK as any,

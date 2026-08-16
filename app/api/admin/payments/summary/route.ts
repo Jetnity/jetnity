@@ -1,10 +1,12 @@
 // app/api/admin/payments/summary/route.ts
 import { NextResponse } from 'next/server'
 import { createServerComponentClient } from '@/lib/supabase/server'
-import { requireAdmin } from '@/lib/auth/requireAdmin'
+import { requireAdminApi } from '@/lib/auth/admin-guard'
 
 export async function GET() {
-  await requireAdmin()
+  const gate = await requireAdminApi({ surface: 'api/payments/summary' })
+  if (!gate.ok) return gate.response
+
   const supabase = createServerComponentClient() as any
   const since = new Date(Date.now() - 30*24*60*60*1000).toISOString()
 
