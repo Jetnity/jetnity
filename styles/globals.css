@@ -48,11 +48,11 @@ html {
 :where(a) { text-underline-offset: 3px; }
 
 /* -----------------------------------------------------------------------------
-   Design Tokens (shadcn-kompatibel) – JETNITY PRO
+   Design Tokens
 ----------------------------------------------------------------------------- */
 @layer base {
   :root {
-    color-scheme: light; /* Fix: explizit nur light hier */
+    color-scheme: light;
 
     /* -------------------------------------------------------------------------
        JETNITY V2 – Markenpalette (verbindlich)
@@ -70,6 +70,8 @@ html {
        surface Flaechen: warmes Off-White, Creme, helle gruene Flaechen
        line    Rahmen und Trennlinien
        ink     Textfarben von hell (auf dunklem Grund) nach dunkel
+       night   dunkle Flaechen fuer das Dunkelthema des Admin (ADR-0025)
+       danger  einzige Funktionsfarbe ausserhalb der Marke (ADR-0024)
     ------------------------------------------------------------------------- */
     --jet-brand-600: 29 113 94;      /* #1d715e */
     --jet-brand-700: 23 96 79;       /* #17604f */
@@ -103,87 +105,100 @@ html {
     --jet-ink-900: 69 96 89;         /* #456059 */
     --jet-ink-950: 57 83 75;         /* #39534b */
 
-    /* Light */
-    --background: 210 30% 98%;
-    --foreground: 220 25% 15%;
+    --jet-night-900: 10 20 18;       /* #0a1412 – Grundflaeche dunkel */
+    --jet-night-800: 16 31 27;       /* #101f1b – Karten, Overlays */
+    --jet-night-700: 26 44 39;       /* #1a2c27 – gedaempfte Flaechen */
+    --jet-night-600: 36 56 50;       /* #243832 – Rahmen, Felder */
 
-    --card: 0 0% 100%;
-    --card-foreground: var(--foreground);
+    --jet-danger-400: 232 106 110;   /* #e86a6e – auf dunklem Grund */
+    --jet-danger-600: 193 45 50;     /* #c12d32 – auf hellem Grund */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: var(--foreground);
+    /* -------------------------------------------------------------------------
+       Semantische Tokens (shadcn-Namen)
 
-    /* Brand */
-    --primary: 222 84% 56%;
-    --primary-foreground: 0 0% 100%;
+       Sie definieren keine eigenen Farben, sondern verweisen auf die Palette
+       darueber. Damit gibt es je Farbe genau eine Quelle: Eine Aenderung an
+       der Palette wirkt ueberall, und es kann keine Abweichung zwischen
+       Marken- und shadcn-Farben entstehen (ADR-0024).
 
-    --secondary: 215 20% 92%;
-    --secondary-foreground: 220 25% 20%;
+       Notation ebenfalls RGB-Kanaele – `rgb(var(--token) / <alpha-value>)` in
+       tailwind.config.js. Fruehere HSL-Tripel sind entfallen; sie waren der
+       Grund, weshalb hier eine zweite, blau-violette Farbwelt neben der Marke
+       existieren konnte.
+    ------------------------------------------------------------------------- */
+    --background: var(--jet-surface-75);
+    --foreground: var(--jet-brand-800);
 
-    --muted: 210 18% 92%;
-    --muted-foreground: 220 10% 45%;
+    --card: var(--jet-surface-0);
+    --card-foreground: var(--jet-brand-800);
 
-    --accent: 264 85% 62%;
-    --accent-foreground: 0 0% 100%;
+    --popover: var(--jet-surface-0);
+    --popover-foreground: var(--jet-brand-800);
 
-    --destructive: 358 75% 55%;
-    --destructive-foreground: 0 0% 100%;
+    --primary: var(--jet-brand-800);
+    --primary-foreground: var(--jet-surface-0);
 
-    --border: 215 22% 86%;
-    --input: 215 22% 86%;
-    --ring: var(--primary);
+    --secondary: var(--jet-surface-200);
+    --secondary-foreground: var(--jet-brand-800);
+
+    --muted: var(--jet-surface-100);
+    --muted-foreground: var(--jet-ink-800);
+
+    --accent: var(--jet-surface-100);
+    --accent-foreground: var(--jet-brand-800);
+
+    --destructive: var(--jet-danger-600);
+    --destructive-foreground: var(--jet-surface-0);
+
+    --border: var(--jet-line-200);
+    --input: var(--jet-line-200);
+
+    /* Der Fokusring liegt bewusst auf dem helleren Primaergruen: Er muss sich
+       vom Element abheben, auf dem er sitzt, und brand-800 ist dafuer auf
+       dunklen Schaltflaechen zu nah an der Flaeche selbst. */
+    --ring: var(--jet-brand-600);
 
     /* Radius */
     --radius: 0.875rem; /* ~14px */
-
-    /* Jetnity – Palette (Hero/Buttons) */
-    --jet-hero: 14 27 46;   /* #0E1B2E */
-    --jet-btn:  17 19 23;   /* #111317 */
-
-    /* Surfaces */
-    --surface-1: 0 0% 100%;
-    --surface-2: 210 24% 97%;
-    --surface-3: 210 22% 95%;
-
-    /* SmartSnippet */
-    --snippet-lines: 6;
   }
 
-  /* Dark-Theme Tokens */
+  /* ---------------------------------------------------------------------------
+     Dunkelthema.
+
+     Erreichbar ist es ausschliesslich ueber den Umschalter in der
+     Admin-Kopfzeile; die oeffentlichen V2-Seiten sind hell (ADR-0025). Die
+     Flaechen kommen deshalb aus `night`, nicht aus einem eigenen Blauton.
+  --------------------------------------------------------------------------- */
   .dark {
-    color-scheme: dark; /* Fix: hier explizit dark */
+    color-scheme: dark;
 
-    --background: 224 16% 8%;
-    --foreground: 210 15% 96%;
+    --background: var(--jet-night-900);
+    --foreground: var(--jet-surface-25);
 
-    --card: 223 22% 10%;
-    --card-foreground: var(--foreground);
+    --card: var(--jet-night-800);
+    --card-foreground: var(--jet-surface-25);
 
-    --popover: 223 22% 10%;
-    --popover-foreground: var(--foreground);
+    --popover: var(--jet-night-800);
+    --popover-foreground: var(--jet-surface-25);
 
-    --primary: 222 84% 66%;
-    --primary-foreground: 0 0% 100%;
+    --primary: var(--jet-brand-600);
+    --primary-foreground: var(--jet-surface-0);
 
-    --secondary: 223 18% 14%;
-    --secondary-foreground: 210 15% 96%;
+    --secondary: var(--jet-night-700);
+    --secondary-foreground: var(--jet-surface-25);
 
-    --muted: 223 20% 16%;
-    --muted-foreground: 220 10% 70%;
+    --muted: var(--jet-night-700);
+    --muted-foreground: var(--jet-ink-500);
 
-    --accent: 266 85% 66%;
-    --accent-foreground: 0 0% 100%;
+    --accent: var(--jet-night-700);
+    --accent-foreground: var(--jet-surface-25);
 
-    --destructive: 358 75% 56%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: var(--jet-danger-400);
+    --destructive-foreground: var(--jet-brand-900);
 
-    --border: 223 20% 18%;
-    --input: 223 20% 18%;
-    --ring: var(--primary);
-
-    --surface-1: 223 22% 12%;
-    --surface-2: 223 22% 14%;
-    --surface-3: 223 22% 16%;
+    --border: var(--jet-night-600);
+    --input: var(--jet-night-600);
+    --ring: var(--jet-citrus-400);
   }
 
   /* ---------------------------------------------------------------------------
@@ -191,23 +206,20 @@ html {
 
      Sichtbar wird er nur dort, wo keine Seitenflaeche darueber liegt: beim
      Ueberdehnen des Scrollbereichs auf iOS und auf Seiten, die kuerzer sind
-     als der Viewport. Er muss deshalb dieselbe warme Flaeche zeigen wie die
-     Seiten selbst. Der frueher hier liegende blau-violette Verlauf gehoerte
-     zur alten Gestaltung und widersprach der V2-Farbwelt.
+     als der Viewport. Er muss deshalb dieselbe Flaeche zeigen wie die Seiten
+     selbst und laeuft darum ueber dasselbe Token.
   --------------------------------------------------------------------------- */
   html {
-    background-color: rgb(var(--jet-surface-75));
-  }
-  html.dark {
-    background-color: hsl(var(--background));
+    background-color: rgb(var(--background));
   }
 
   body {
-    color: hsl(var(--foreground));
+    color: rgb(var(--foreground));
     background: transparent;
   }
 
-  /* Subtle noise overlay (perf: SVG turbulence) */
+  /* Feine Koernung ueber der Flaeche. Rein achromatisch, sie verschiebt keine
+     Farbtoene, sondern nimmt der grossen Flaeche das Digitale. */
   body::before {
     content: "";
     position: fixed;
@@ -261,285 +273,27 @@ html {
 /* High-Contrast / Forced Colors support */
 @media (forced-colors: active) {
   :root, .dark {
-    --border: 0 0% 50%;
-    --ring: 240 100% 50%;
+    --border: 128 128 128;
+    --ring: 0 0 255;
   }
-  .focus-ring { box-shadow: 0 0 0 2px CanvasText !important; }
 }
 
 /* -----------------------------------------------------------------------------
    Components
 ----------------------------------------------------------------------------- */
 @layer components {
-  /* Surfaces */
-  .surface-1 {
-    background-color: hsl(var(--surface-1));
-    border: 1px solid hsl(var(--border));
-    border-radius: var(--radius);
-    box-shadow: 0 1px 2px hsl(0 0% 0% / 0.05), 0 1px 8px hsl(0 0% 0% / 0.04);
-  }
-  .surface-2 {
-    background-color: hsl(var(--surface-2));
-    border: 1px solid hsl(var(--border));
-    border-radius: calc(var(--radius) + 4px);
-    box-shadow: 0 4px 16px hsl(222 60% 20% / 0.08);
-  }
-  .surface-3 {
-    background-color: hsl(var(--surface-3));
-    border: 1px solid hsl(var(--border));
-    border-radius: calc(var(--radius) + 10px);
-    box-shadow: 0 10px 30px hsl(222 60% 20% / 0.12);
-  }
-
-  .glass-elevated {
-    box-shadow:
-      0 1px 0 rgb(255 255 255 / 0.06) inset,
-      0 10px 32px rgb(0 0 0 / 0.30);
-  }
-
-  .panel-wrap {
-    border: 1px solid rgb(255 255 255 / 0.12);
-    background:
-      linear-gradient(180deg,
-        rgb(255 255 255 / 0.07),
-        rgb(255 255 255 / 0.04));
-    border-radius: 1rem;
-    padding: 0.75rem;
-  }
-
-  .focus-ring {
-    outline: none !important;
-    box-shadow:
-      0 0 0 2px rgb(255 255 255 / 0.22),
-      0 0 0 4px rgb(255 255 255 / 0.10) !important;
-  }
-
-  .tab-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    border-radius: 9999px;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-    transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .15s ease;
-    padding: 0.35rem 0.75rem;
-    min-height: 44px;
-    height: 44px;
-    color: rgb(255 255 255 / 0.90);
-    background-color: rgb(255 255 255 / 0.12);
-    border: 1px solid rgb(255 255 255 / 0.14);
-  }
-  .tab-chip:hover {
-    background-color: rgb(255 255 255 / 0.18);
-    border-color: rgb(255 255 255 / 0.20);
-  }
-  .tab-chip--active {
-    color: #fff;
-    font-weight: 600;
-    background-color: rgb(255 255 255 / 0.26);
-    border-color: rgb(255 255 255 / 0.30);
-  }
-
+  /* Hebt die Primaerschaltflaeche beim Zeigen leicht an. Der Schlagschatten
+     nimmt das Markengruen auf; frueher lag hier ein blauer Ton. */
   .btn-premium {
     transition: transform .15s ease, box-shadow .2s ease;
     will-change: transform, box-shadow;
   }
   .btn-premium:hover {
     transform: translateY(-1px);
-    box-shadow: 0 8px 24px hsl(222 84% 56% / 0.22);
+    box-shadow: 0 8px 24px rgb(var(--jet-brand-800) / 0.22);
   }
   .btn-premium:active {
     transform: translateY(0);
-    box-shadow: 0 4px 12px hsl(222 84% 56% / 0.18);
+    box-shadow: 0 4px 12px rgb(var(--jet-brand-800) / 0.18);
   }
-}
-
-/* -----------------------------------------------------------------------------
-   Utilities
------------------------------------------------------------------------------ */
-@layer utilities {
-  @supports (backdrop-filter: blur(16px)) {
-    .supports-blur\:backdrop-blur-xl { backdrop-filter: blur(16px); }
-  }
-
-  .bg-hero-panel        { background-color: rgb(var(--jet-hero) / 0.88); }
-  .bg-hero-panel-strong { background-color: rgb(var(--jet-hero) / 0.94); }
-
-  .bg-glass   { background-color: rgb(255 255 255 / 0.10); }
-  .bg-glass-2 { background-color: rgb(255 255 255 / 0.06); }
-  .bd-glass   { border-color:     rgb(255 255 255 / 0.10); }
-  .bd-glass-2 { border-color:     rgb(255 255 255 / 0.25); }
-
-  .label-white     { color: rgb(255 255 255 / 0.80); }
-  .placeholder-w60 { color: rgb(255 255 255 / 0.60); }
-
-  .btn-hero       { background-color: rgb(var(--jet-btn)); color: #fff; }
-  .btn-hero:hover { filter: brightness(1.05); }
-  .btn-hero:active{ transform: translateY(1px); }
-
-  .tap-target { min-height: 44px; height: 44px; }
-
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-  .mask-edges {
-    -webkit-mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
-            mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
-  }
-
-  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
-  .p-safe  { padding-bottom: env(safe-area-inset-bottom); padding-top: env(safe-area-inset-top); }
-
-  .smart-snippet--clamp {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    -webkit-line-clamp: var(--snippet-lines, 6);
-  }
-}
-
-/* -----------------------------------------------------------------------------
-   Navy Glass Pro (Hero)
------------------------------------------------------------------------------ */
-:root { --hero-navy: 12 25 48; } /* #0c1930 */
-
-.hero-glass {
-  position: relative;
-  z-index: 90;
-  overflow: visible;
-  background-color: rgb(var(--hero-navy) / 0.84);
-  border: 1px solid rgb(255 255 255 / 0.10);
-  box-shadow:
-    0 1px 0 rgb(255 255 255 / 0.05) inset,
-    0 12px 40px rgb(0 0 0 / 0.35);
-  margin-bottom: 0.5rem;
-}
-@media (min-width: 768px) {
-  .hero-glass { margin-bottom: 0.75rem; }
-}
-@supports (backdrop-filter: blur(16px)) {
-  .hero-glass {
-    background-color: rgb(var(--hero-navy) / 0.72);
-    backdrop-filter: saturate(1.15) blur(18px);
-  }
-}
-.hero-glass::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 100%;
-  transform: translateX(-50%) translateY(-10px) rotate(45deg);
-  width: 20px;
-  height: 20px;
-  background: inherit;
-  border-left: 1px solid rgb(255 255 255 / 0.10);
-  border-top: 1px solid rgb(255 255 255 / 0.10);
-  box-shadow: 0 10px 24px rgb(0 0 0 / 0.25);
-  border-radius: 3px;
-}
-.hero-glass [role="dialog"],
-.hero-glass [data-popover],
-.hero-glass .popover { z-index: 1001 !important; }
-
-/* -----------------------------------------------------------------------------
-   Prose / Markdown Theme (Tailwind Typography)
------------------------------------------------------------------------------ */
-@layer base {
-  .prose {
-    --tw-prose-body: hsl(var(--foreground));
-    --tw-prose-headings: hsl(var(--foreground));
-    --tw-prose-links: hsl(var(--primary));
-    --tw-prose-bold: hsl(var(--foreground));
-    --tw-prose-counters: hsl(var(--muted-foreground));
-    --tw-prose-bullets: hsl(var(--muted-foreground));
-    --tw-prose-hr: hsl(var(--border));
-    --tw-prose-quotes: hsl(var(--foreground));
-    --tw-prose-quote-borders: hsl(var(--primary) / .35);
-    --tw-prose-captions: hsl(var(--muted-foreground));
-    --tw-prose-code: hsl(var(--foreground));
-    --tw-prose-th-borders: hsl(var(--border));
-    --tw-prose-td-borders: hsl(var(--border));
-    max-width: none;
-  }
-  .dark .prose {
-    --tw-prose-links: hsl(var(--primary));
-    --tw-prose-hr: hsl(var(--border));
-    --tw-prose-quote-borders: hsl(var(--primary) / .45);
-  }
-
-  .prose h1, .prose h2, .prose h3, .prose h4 {
-    scroll-margin-top: 96px;
-    letter-spacing: -0.02em;
-  }
-
-  .prose a {
-    text-decoration: underline;
-    transition: color .15s ease, text-decoration-color .15s ease;
-  }
-  .prose a:hover { text-decoration-color: hsl(var(--primary) / .6); }
-
-  .prose table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    border: 1px solid hsl(var(--border));
-    border-radius: 0.75rem;
-    overflow: hidden;
-  }
-  .prose thead th {
-    background: hsl(var(--secondary));
-    color: hsl(var(--secondary-foreground));
-    font-weight: 600;
-  }
-  .dark .prose thead th { background: hsl(var(--secondary)); }
-  .prose thead th, .prose tbody td {
-    border-bottom: 1px solid hsl(var(--border));
-    padding: .75rem 1rem;
-  }
-  .prose tbody tr:last-child td { border-bottom: 0; }
-
-  .prose blockquote {
-    border-left: 4px solid hsl(var(--primary) / .35);
-    background: hsl(var(--muted) / .35);
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-  }
-
-  .prose :not(pre) > code {
-    background: hsl(var(--muted) / .55);
-    border: 1px solid hsl(var(--border));
-    padding: .15rem .35rem;
-    border-radius: .4rem;
-    font-size: .875em;
-  }
-  .dark .prose :not(pre) > code { background: hsl(var(--muted) / .35); }
-
-  .prose pre {
-    background: hsl(var(--secondary));
-    border: 1px solid hsl(var(--border));
-    border-radius: 0.75rem;
-    padding: 0.9rem 1rem;
-    overflow: auto;
-  }
-  .dark .prose pre { background: hsl(var(--secondary)); }
-  .prose pre code {
-    background: transparent !important;
-    border: 0 !important;
-    padding: 0 !important;
-    font-size: 0.875rem;
-    line-height: 1.6;
-    display: block;
-    min-width: 100%;
-  }
-  .prose pre::-webkit-scrollbar { height: 8px; }
-  .prose pre::-webkit-scrollbar-thumb {
-    background: hsl(var(--muted-foreground) / .35);
-    border-radius: 9999px;
-  }
-}
-
-/* Print: Hintergründe/Noise aus, klare Kontraste */
-@media print {
-  body, .dark body { background: #fff !important; }
-  body::before { display: none !important; }
 }
