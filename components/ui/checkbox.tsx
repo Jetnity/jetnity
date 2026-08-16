@@ -37,6 +37,25 @@ const box = cva(
   }
 )
 
+/**
+ * Trefferflaeche um die sichtbare Box.
+ *
+ * Die Box selbst ist je nach Groesse nur 16 bis 24 px gross und damit als
+ * Fingerziel zu klein. Der bedienbare Bereich ist deshalb 44 px gross und wird
+ * per negativem Rand wieder auf die Groesse der Box zurueckgerechnet: das
+ * Layout bleibt unveraendert, nur die Trefferflaeche waechst.
+ */
+const hit = cva('relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full', {
+  variants: {
+    size: {
+      sm: '-m-3.5',
+      md: '-m-3',
+      lg: '-m-2.5',
+    },
+  },
+  defaultVariants: { size: 'md' },
+})
+
 export interface CheckboxProps
   extends Omit<
       React.InputHTMLAttributes<HTMLInputElement>,
@@ -101,7 +120,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     return (
       <div className={cn('flex flex-col', containerClassName)}>
         <label className="inline-flex items-center gap-2">
-          {/* sichtbare Box */}
+          {/* Trefferflaeche mit der sichtbaren Box darin */}
           <span
             role="checkbox"
             aria-checked={isIndet ? 'mixed' : isChecked}
@@ -115,18 +134,27 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
                 toggle()
               }
             }}
-            className={cn(
-              box({ size, invalid }),
-              disabled && 'opacity-50 cursor-not-allowed',
-              (isChecked || isIndet) && 'border-primary bg-primary text-primary-foreground',
-              className
-            )}
+            className={cn(hit({ size }), 'group/cb outline-none', disabled && 'cursor-not-allowed')}
           >
-            {isIndet ? (
-              <Minus className="h-3.5 w-3.5" aria-hidden="true" />
-            ) : isChecked ? (
-              <Check className="h-3.5 w-3.5" aria-hidden="true" />
-            ) : null}
+            <span
+              aria-hidden="true"
+              className={cn(
+                box({ size, invalid }),
+                'pointer-events-none',
+                // Fokusring gehoert optisch an die kleine Box, bedient wird die
+                // umgebende Trefferflaeche.
+                'group-focus-visible/cb:ring-2 group-focus-visible/cb:ring-ring group-focus-visible/cb:ring-offset-2',
+                disabled && 'opacity-50',
+                (isChecked || isIndet) && 'border-primary bg-primary text-primary-foreground',
+                className
+              )}
+            >
+              {isIndet ? (
+                <Minus className="h-3.5 w-3.5" aria-hidden="true" />
+              ) : isChecked ? (
+                <Check className="h-3.5 w-3.5" aria-hidden="true" />
+              ) : null}
+            </span>
           </span>
 
           {/* Label */}
