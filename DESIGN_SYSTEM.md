@@ -1,7 +1,7 @@
 # Jetnity – Design-System
 
-Stand: 15. August 2026
-Status: Farbsystem verbindlich
+Stand: 16. August 2026
+Status: Farbsystem und Responsive-Regeln verbindlich
 
 Die Jetnity-V2-Markenwirkung darf nicht stillschweigend verändert werden ([AGENTS.md](AGENTS.md) Regel 11). Neue Komponenten verwenden ausschließlich die hier definierten Tokens.
 
@@ -137,10 +137,71 @@ Aus 87 hartkodierten Hex-Werten wurden 27 Tokens. Zusammengelegt wurde nur, was 
 
 ---
 
-## 7. Regeln für neue Komponenten
+## 7. Responsive-Regeln
+
+Verbindlich für alle V2-Oberflächen. Referenzbreiten: **280, 320, 360, 375, 390, 430, 768, 1280 px**, dazu Landscape (844×390 und 667×375).
+
+### 7.1 Kein horizontales Scrollen, kein Verstecken
+
+Auf keiner V2-Seite darf horizontal gescrollt werden müssen, und kein Inhalt darf außerhalb des Viewports liegen.
+
+**Ursachen werden behoben, nicht kaschiert.** `overflow-hidden` bzw. `overflow-x-hidden` darf nicht auf `main`, `body` oder ganze Seitenbereiche gelegt werden, um zu breite Inhalte unsichtbar zu machen. Genau das war der Zustand vor diesem Pass: ein `overflow-hidden` auf `main` hat auf der Startseite Inhalte bis zu 408 px breit abgeschnitten, ohne dass es als Fehler auffiel.
+
+Erlaubt bleibt Clipping dort, wo es dem Bild dient:
+
+- Karten und Sektionen mit Radius, die ihren eigenen Inhalt begrenzen
+- bewusst über den Rand laufende **dekorative** Flächen (Glow, Verlauf). Diese werden mit `aria-hidden="true"` markiert, damit ihre Absicht erkennbar ist.
+
+### 7.2 Grid- und Flex-Spuren müssen schrumpfen dürfen
+
+Häufigste Ursache für zu breite Layouts: eine `auto`-Spur wächst auf die Mindestbreite ihres Inhalts und sprengt den Container.
+
+- Grid-Spuren, die Inhalt tragen, als `minmax(0,…)` definieren, nicht als `1fr` oder `0.8fr`
+- Grid- und Flex-Kinder mit Text, Eingabefeldern oder verschachtelten Layouts erhalten `min-w-0`
+- horizontale Scroller (`overflow-x-auto`) funktionieren nur, wenn ihr Elternelement `min-w-0` hat; sonst wächst die Spur mit und der Scroller greift nie
+- `<input>` in flexiblen Zeilen brauchen `w-full min-w-0`, sonst wirkt ihre intrinsische Standardbreite
+- nutzergenerierte Texte (Reisetitel, Orte) mit `break-words` absichern
+
+### 7.3 Feste Höhen sind Mindesthöhen und wachsen mit dem Breakpoint
+
+Keine großen `min-h`-Werte pauschal für alle Breiten. Staffelung von der kleinen Breite nach oben, zum Beispiel Hero `min-h-[520px] sm:min-h-[600px] lg:min-h-[720px]`. So bleibt die Desktop-Wirkung unverändert und Landscape auf dem Telefon nutzbar.
+
+### 7.4 Typografie auf kleinen Geräten
+
+Große Schriftgrade werden unterhalb `sm` (640 px) reduziert, darüber bleiben sie unverändert:
+
+- Hero-Headline `text-[clamp(34px,7vw,78px)]` – die Untergrenze greift nur unter 600 px
+- Sektions-Headlines `text-3xl sm:text-5xl` statt `text-4xl` auf allen Breiten
+
+### 7.5 Touch-Ziele
+
+- Primäraktionen, Menüpunkte und Icon-Buttons mindestens 44 px hoch
+- Icon-Buttons in Listen mindestens 40 px
+- freistehende Textlinks dürfen kleiner sein, brauchen aber Abstand: bei Zielen unter 24 px darf sich der 24-px-Radius um zwei Ziele nicht überschneiden (WCAG 2.2, SC 2.5.8, Ausnahme „Spacing“)
+
+### 7.6 Eingabefelder
+
+Felder tragen unterhalb `sm` mindestens **16 px** Schriftgröße (`text-base sm:text-sm`). Kleinere Werte lösen auf iOS beim Fokus einen automatischen Zoom aus, der das Layout verschiebt.
+
+### 7.7 Safe Area
+
+`viewport-fit` bleibt bewusst auf `auto`. iOS begrenzt den Viewport damit selbst auf den sicheren Bereich, Inhalte geraten nicht unter Notch oder Home-Indikator. `cover` würde diesen Schutz abschalten und Randabstände in jeder Sektion nötig machen – ohne Gewinn, da die V2-Sektionen ohnehin mit Außenabstand als Karten liegen.
+
+Randverankerte Elemente rechnen zusätzlich `env(safe-area-inset-*)` ein, weil die App per Manifest als `standalone` installierbar ist und in diesem Modus (Android edge-to-edge) echte Insets auftreten:
+
+- Kopfzeile: `pt-`/`pl-`/`pr-[env(safe-area-inset-*)]`
+- Footer: `pb-`/`pl-`/`pr-[env(safe-area-inset-*)]`
+- fixierte Elemente wie „Nach oben“: `bottom-[calc(1.5rem+env(safe-area-inset-bottom))]`
+
+Im normalen Browser sind diese Werte 0, das Layout bleibt unverändert.
+
+---
+
+## 8. Regeln für neue Komponenten
 
 1. Keine Hex-Literale in `className`. Nur Tokens.
 2. Keine neue Farbe einführen, ohne zu prüfen, ob ein Token perzeptuell schon passt.
 3. Kein Blau, kein Violett, kein Gradient-AI-Look.
 4. Neue Tokens brauchen einen Eintrag in dieser Datei und in [DECISIONS.md](DECISIONS.md).
 5. Sichtbare Neugestaltung bestehender Oberflächen braucht vorher Freigabe.
+6. Neue Komponenten werden vor dem Abschluss auf den Referenzbreiten aus Abschnitt 7 geprüft.

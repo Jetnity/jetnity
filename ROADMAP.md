@@ -1,6 +1,6 @@
 # Jetnity – Roadmap
 
-Stand: 15. August 2026
+Stand: 16. August 2026
 
 Diese Datei zeigt jederzeit: was fertig ist, was in Arbeit ist, was als Nächstes kommt, was blockiert ist und was bewusst verschoben wurde ([AGENTS.md](AGENTS.md) Regel 6).
 
@@ -13,6 +13,7 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Phase | Inhalt | Status |
 | --- | --- | --- |
 | Phase 0 | V2-Basis, Build, CI, Design-Tokens, Dokumentation | **fertig** |
+| Querschnitt | Mobile- und Responsive-Qualität der V2-Seiten | **fertig** |
 | Phase 1.1 | Alt-Endpunkte und Cron-Jobs außer Betrieb | **fertig** |
 | Phase 1 (Rest) | V2-Sicherheit und Datenbasis | in Arbeit |
 | Phase 2 | Jetnity-Kern: natürliche Sprache zu strukturierter Reise | geplant |
@@ -38,7 +39,25 @@ Umgesetzt in Pull Request [#1](https://github.com/Jetnity/jetnity/pull/1), am 15
 
 ---
 
-## Phase 1 – V2-Sicherheit und Datenbasis · als Nächstes
+## Querschnitt – Mobile- und Responsive-Qualität · fertig
+
+Vollständiger Qualitätspass über alle V2-Seiten. Regeln in [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) Abschnitt 7, Entscheidungen in [DECISIONS.md](DECISIONS.md) ADR-0015 bis ADR-0017.
+
+- [x] Ursachen behoben statt versteckt: `overflow-hidden` von `main` entfernt, zu breite Layouts korrigiert
+- [x] Startseite: Hero, Reise-Cockpit-Mockup, Entdecken-Karten, Pro-Sektion
+- [x] `/planen`, `/reisen`, `/reisen/[tripId]` geprüft und angepasst
+- [x] Navigation: Mobile-Menü schließt bei Sprungmarken, Touch-Ziel der Menütaste auf 44 px
+- [x] Mindesthöhen nach Breakpoint gestaffelt, Landscape auf dem Telefon nutzbar
+- [x] Typografie unterhalb `sm` reduziert, ab `sm` unverändert
+- [x] Eingabefelder mit 16 px auf kleinen Breiten, kein iOS-Auto-Zoom
+- [x] Safe-Area-Insets für Kopfzeile, Footer und fixierte Elemente
+- [x] gemessen auf 280, 300, 320, 360, 375, 390, 430, 768, 1280 px sowie Landscape 844×390 und 667×375
+
+**Offen:** Verifikation auf echter iOS- und Android-Hardware. Geprüft wurde in Chromium mit den obigen Viewports.
+
+---
+
+## Phase 1 – V2-Sicherheit und Datenbasis · in Arbeit
 
 Grundsatz: Nur der Code wird abgesichert, der in V2 tatsächlich weiterbesteht. Alt-Code wird abgeschaltet, nicht gehärtet ([DECISIONS.md](DECISIONS.md), ADR-0006).
 
@@ -161,7 +180,7 @@ Je Kategorie zunächst genau ein Anbieter ([DECISIONS.md](DECISIONS.md), ADR-001
 - [ ] Internationalisierung vorbereiten, Start mit Deutsch, CHF, Schweizer Datenschutz
 - [ ] `jetnity.ch` und `jetnity.com` mit dem Vercel-Projekt verbinden – beide lösen derzeit nicht auf, Production läuft nur unter `jetnity-app.vercel.app`
 - [ ] End-to-End-Tests der MVP-Strecke
-- [ ] responsive Prüfung und Browser-Kompatibilität
+- [ ] Browser-Kompatibilität und Prüfung auf echter iOS-/Android-Hardware (Responsive-Regeln siehe Querschnitt oben)
 
 ---
 
@@ -208,3 +227,4 @@ Ideen ohne Termin, dokumentiert damit sie nicht verloren gehen.
 - gemeinsame Reiseplanung mit mehreren Personen
 - Offline-fähiger Cache mit Konfliktauflösung
 - strukturierte Log-Konvention ohne sensible Nutzerdaten
+- automatisierte Responsive-Regression in der CI: Seiten auf den Referenzbreiten laden und horizontales Overflow sowie abgeschnittene Inhalte prüfen. Benötigt einen Browser im CI-Lauf und damit zusätzliche Laufzeit, deshalb bewusst noch nicht eingebaut.

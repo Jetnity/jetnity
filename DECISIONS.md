@@ -261,6 +261,57 @@ Eine hier dokumentierte, freigegebene Entscheidung hat Vorrang vor bestehendem C
 
 ---
 
+## ADR-0015 – Responsive-Probleme werden an der Ursache behoben, nicht kaschiert
+
+**Datum:** 16. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Kein `overflow-hidden` und kein `overflow-x-hidden` auf `main`, `body` oder ganzen Seitenbereichen, um zu breite Inhalte unsichtbar zu machen. Stattdessen werden die auslösenden Layoutfehler behoben. Als Muster gilt: Grid-Spuren mit Inhalt als `minmax(0,…)`, Grid- und Flex-Kinder mit `min-w-0`, `min-h`-Werte gestaffelt nach Breakpoint. Die Regeln stehen in [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) Abschnitt 7.
+
+**Kontext:** Die Startseite trug ein `overflow-hidden` auf `main`. Dadurch war die Seite messbar „ohne horizontales Scrollen", schnitt aber real Inhalte ab: das Reise-Cockpit-Mockup war bei 320 px 704 px breit und wurde auf 296 px beschnitten, die Pro-Sektion und der Hero ebenfalls. Ursache war jeweils, dass eine `auto`-Grid-Spur auf die Mindestbreite ihres Inhalts wuchs – unter anderem wegen `min-w-[150px]` in einem horizontalen Scroller, dessen Elternspur nicht schrumpfen durfte.
+
+**Alternativen:** `overflow-x-hidden` global setzen und die Breiten so lassen. Das versteckt den Fehler, kostet aber Inhalt und macht künftige Fehler unsichtbar.
+
+**Begründung:** Beschnittener Inhalt ist ein Produktfehler, kein Darstellungsdetail. Ein globales Verstecken hätte zusätzlich verhindert, dass Regressionen messbar sind.
+
+**Konsequenzen:** Clipping bleibt nur dort erlaubt, wo es dem Bild dient (Karten mit Radius, bewusst überlaufende dekorative Flächen). Dekorative Überläufe werden mit `aria-hidden="true"` markiert, damit Absicht und Fehler unterscheidbar bleiben. Für die laufende Kontrolle ist eine automatisierte Prüfung sinnvoll; sie steht im Backlog der [ROADMAP.md](ROADMAP.md), weil sie einen Browser in der CI benötigt.
+
+---
+
+## ADR-0016 – Eingabefelder tragen auf kleinen Breiten 16 px Schrift
+
+**Datum:** 16. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Alle Eingabefelder verwenden unterhalb `sm` mindestens 16 px (`text-base sm:text-sm`). Das gilt auch für die gemeinsamen Primitives `components/ui/input.tsx` und `components/ui/textarea.tsx`.
+
+**Kontext:** iOS Safari zoomt beim Fokus automatisch in Felder mit weniger als 16 px Schriftgröße. Der Zoom verschiebt das Layout, und der Nutzer landet nach der Eingabe in einer verschobenen Ansicht. Betroffen waren die Felder im Trip-Workspace sowie über die Primitives `/login` und `/register`.
+
+**Alternativen:** `maximum-scale=1` im Viewport setzen. Das unterdrückt den Zoom, verhindert aber auch das manuelle Zoomen und ist ein Accessibility-Rückschritt.
+
+**Begründung:** Die Schriftgröße ist die Ursache, der Viewport-Trick nur eine Unterdrückung der Folge.
+
+**Konsequenzen:** Felder wirken auf dem Telefon etwas größer. Ab `sm` bleibt die Darstellung unverändert. Die Änderung an den Primitives betrifft auch Alt-Oberflächen; sie ist dort unschädlich und verschwindet mit deren Entfernung.
+
+---
+
+## ADR-0017 – `viewport-fit` bleibt `auto`
+
+**Datum:** 16. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Der Viewport wird nicht auf `viewport-fit=cover` umgestellt. Randverankerte Elemente (Kopfzeile, Footer, fixierte Buttons) rechnen trotzdem `env(safe-area-inset-*)` ein.
+
+**Kontext:** Mit `auto` begrenzt iOS den Viewport selbst auf den sicheren Bereich; Inhalte geraten nicht unter Notch oder Home-Indikator, und `env(safe-area-inset-*)` ist 0. Mit `cover` reicht die Seite bis an die Gerätekante, und jede randberührende Fläche muss die Insets selbst berücksichtigen.
+
+**Alternativen:** `cover` setzen, um randlose Flächen zu ermöglichen.
+
+**Begründung:** Die V2-Sektionen liegen als Karten mit Außenabstand, ein randloser Anschnitt ist gestalterisch nicht vorgesehen. `cover` hätte Aufwand und Regressionsrisiko in jeder Sektion erzeugt, ohne sichtbaren Gewinn. Die `env()`-Werte bleiben trotzdem sinnvoll, weil die App per `app/manifest.ts` mit `display: standalone` installierbar ist und in diesem Modus echte Insets auftreten.
+
+**Konsequenzen:** Eine Verifikation auf echter iOS-Hardware war in dieser Umgebung nicht möglich. Geprüft wurde die CSS-Logik sowie Portrait und Landscape im Chromium. Wenn später randlose Flächen gewünscht sind, ist diese Entscheidung neu zu treffen.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
