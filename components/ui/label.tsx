@@ -6,9 +6,13 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 const labelVariants = cva(
-  'inline-flex items-center gap-1 font-medium text-foreground transition-colors',
+  'inline-flex min-w-0 max-w-full items-center gap-1 font-medium text-foreground transition-colors',
   {
     variants: {
+      /** Satzlanger Text bricht um, statt in einer Zeile abgeschnitten zu werden */
+      multiline: {
+        true: 'items-start',
+      },
       size: {
         sm: 'text-xs',
         md: 'text-sm',
@@ -28,6 +32,7 @@ const labelVariants = cva(
       },
     },
     defaultVariants: {
+      multiline: false,
       size: 'md',
       muted: false,
       invalid: false,
@@ -61,6 +66,7 @@ const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
       invalid,
       animated,
       srOnly,
+      multiline,
       ...props
     },
     ref
@@ -71,13 +77,18 @@ const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
     return (
       <label
         ref={ref}
-        className={cn(labelVariants({ size, muted, invalid, animated, srOnly }), className)}
+        className={cn(
+          labelVariants({ size, muted, invalid, animated, srOnly, multiline }),
+          className
+        )}
         aria-required={ariaRequired}
         data-required={required ? '' : undefined}
         {...props}
       >
         {/* Haupttext */}
-        <span className="truncate">{children}</span>
+        <span className={cn('min-w-0', multiline ? 'whitespace-normal' : 'truncate')}>
+          {children}
+        </span>
 
         {/* Required-Sternchen (dekorativ) */}
         {required && (
