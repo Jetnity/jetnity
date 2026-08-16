@@ -61,7 +61,26 @@ Nachtrag nach dem Merge, gefunden bei der Messung gegen Production: `/login` und
 - [x] Icons in Absende- und Social-Buttons rutschten in eine eigene Zeile, jetzt über `leftIcon`/`rightIcon`
 - [x] Google-Icon vereinheitlicht, die Registrierung trug einen unvollständigen Pfad
 
-**Offen:** Verifikation auf echter iOS- und Android-Hardware. Geprüft wurde in Chromium mit den obigen Viewports.
+### Zweiter Durchgang unter WebKit · fertig
+
+Anlass: Auf einem echten iPhone waren weiterhin Fehler sichtbar, obwohl der erste Durchgang bestanden hatte. Ursache war die Messumgebung. Sie prüfte in Chromium und stützte sich zu stark auf `scrollWidth === clientWidth`, eine Prüfung, die abgeschnittener Inhalt mühelos besteht. Entscheidungen in [DECISIONS.md](DECISIONS.md), ADR-0020 bis ADR-0022.
+
+Messumgebung erweitert:
+
+- [x] Prüfung zusätzlich unter **WebKit**, derselben Engine wie auf dem iPhone
+- [x] neun Prüfregeln statt einer: Seiten-Overflow, abgeschnittener Inhalt, aus dem Elternteil ragende Elemente, nicht schrumpfbare Felder, Trefferflächen, Überlappungen, Schriftgröße in Feldern, erreichbare Scrollbereiche, verdeckte Sprung- und Fokusziele
+- [x] jede Seite belegt zuerst, dass ihr **erwarteter Inhalt** da ist. Eine Fehlerfläche statt des Formulars fällt jetzt auf, statt die Prüfung zu bestehen
+- [x] Wischgesten aus einzelnen Touch-Ereignissen statt `scrollLeft`
+- [x] Belastungstest: die Mindestbreite nativer Bedienelemente wird künstlich auf 200 px erzwungen, weil weder Chromium noch WebKit unter Linux den nativen iOS-Datumswähler abbilden
+- [x] 19 Seitenzustände × 12 Breiten, 227 Kombinationen je Engine
+
+Damit gefunden und behoben:
+
+- [x] Beschriftungen mit Symbol stellten das Symbol **über** den Text, auf `/login`, `/register` und beim Passwortwechsel. Ursache: `svg { display: block }` aus der Preflight im gemeinsamen Textelement der Beschriftung
+- [x] Der Untergrund des Dokuments trug einen blau-violetten Verlauf aus der alten Gestaltung, sichtbar beim Überdehnen des Scrollbereichs auf iOS und unterhalb kurzer Seiten wie der 404-Seite
+- [x] `/unauthorized` und `/admin/login` waren nie geprüft: zu kleine Trefferflächen, Felder unter 16 px
+
+**Offen:** Verifikation auf echter iOS- und Android-Hardware. Geprüft wurde unter WebKit und Chromium mit den obigen Viewports.
 
 ---
 

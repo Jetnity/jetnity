@@ -101,6 +101,8 @@ Aus 87 hartkodierten Hex-Werten wurden 27 Tokens. Zusammengelegt wurde nur, was 
 
 **1. shadcn-Tokens tragen noch die alte Farbwelt.** In `styles/globals.css` gilt weiterhin `--primary: 222 84% 56%` (Blau) und `--accent: 264 85% 62%` (Violett), dazu `--ring: var(--primary)`. Diese Tokens widersprechen Abschnitt 1. Sie werden von Radix-/shadcn-Komponenten genutzt, unter anderem für Fokus-Ringe und Buttons in Alt-Oberflächen. Die Umstellung auf die V2-Farbwelt ist freigegeben ([DECISIONS.md](DECISIONS.md), ADR-0008) und noch nicht umgesetzt.
 
+Ein Teil davon ist vorgezogen: Der blau-violette Verlauf auf dem `body` ist entfernt. Er war keine Frage der Tokens, sondern auf dem Telefon unmittelbar sichtbar, sobald der Nutzer den Scrollbereich überdehnte, und unterhalb kurzer Seiten wie der 404-Seite. Siehe Abschnitt 7.9.
+
 **2. Tote Tokens mit Blauanteil.** `--jet-hero: 14 27 46` (`#0E1B2E`, dunkles Blau) und `--jet-btn: 17 19 23` sowie die Utilities `.bg-hero-panel`, `.bg-hero-panel-strong` und `.btn-hero` werden in `app/` und `components/` **nicht** verwendet. Sie stammen aus der alten Farbwelt und werden mit der shadcn-Umstellung entfernt.
 
 **3. Namensähnlichkeit `surface`.** Es existieren zwei Gruppen: `--jet-surface-*` (V2, RGB-Kanäle, über Tailwind als `surface-*` nutzbar) und `--surface-1/2/3` (alt, HSL). Nur die `--jet-surface-*`-Tokens sind für V2 verbindlich. Die alten werden mit der shadcn-Umstellung geprüft.
@@ -189,9 +191,23 @@ Jedes Feld hat genau ein Bedienelement pro Funktion. Das `Input`-Primitiv bringt
 
 Das `Label`-Primitiv kürzt einzeilige Feldnamen mit Ellipse. Satzlanger Text – etwa eine Einwilligung mit Links – bekommt `multiline` und bricht dann um. Ohne das erzwingt `truncate` eine Zeile, die die Seite verbreitert und Linktext unerreichbar macht.
 
-Icons in Buttons gehören in `leftIcon` bzw. `rightIcon`. Innerhalb der Beschriftung platziert, rutschen sie auf schmalen Breiten in eine eigene Zeile.
+Symbole gehören in die dafür vorgesehenen Eigenschaften: `leftIcon` bzw. `rightIcon` beim Button, `icon` bei der Beschriftung. Der Grund ist dieselbe Preflight-Regel in beiden Fällen: `svg { display: block }` macht ein Symbol im laufenden Text zu einer eigenen Zeile. Beim Button rutscht es dadurch unter die Aufschrift, bei der Beschriftung über den Feldnamen.
 
-### 7.8 Safe Area
+### 7.8 Waagrechte Scrollbereiche
+
+Inhalte, die auf schmalen Geräten nicht sinnvoll umbrechen – Tabellen, Reiter, Chip-Reihen – bekommen die Komponente `ScrollRow` statt eines nackten `overflow-x-auto`. Sie löst drei Punkte, die sonst regelmäßig fehlen:
+
+- der Bereich selbst trägt `min-w-0`, sonst wächst die umgebende Spur auf die volle Inhaltsbreite und es gibt nichts zu scrollen
+- `overscroll-x-contain` verhindert, dass eine Wischbewegung am Rand die Zurück-Navigation des Browsers auslöst
+- weiche Kanten zeigen an, dass seitlich weiterer Inhalt steht; sie erscheinen nur an der Seite, an der wirklich etwas liegt
+
+Der Bereich ist über `tabIndex` auch mit der Tastatur bedienbar. Erste und letzte Kachel müssen vollständig erreichbar sein, und die Seite selbst darf dadurch kein waagrechtes Scrollen bekommen.
+
+### 7.9 Untergrund des Dokuments
+
+Die Fläche liegt auf `html`, nicht auf `body`. Sichtbar wird sie beim Überdehnen des Scrollbereichs auf iOS und unterhalb von Seiten, die kürzer sind als der Viewport. Sie muss deshalb dieselbe warme Fläche zeigen wie die Seiten; eine abweichende Farbe fällt genau in dem Moment auf, in dem der Nutzer die Seite anfasst.
+
+### 7.10 Safe Area
 
 `viewport-fit` bleibt bewusst auf `auto`. iOS begrenzt den Viewport damit selbst auf den sicheren Bereich, Inhalte geraten nicht unter Notch oder Home-Indikator. `cover` würde diesen Schutz abschalten und Randabstände in jeder Sektion nötig machen – ohne Gewinn, da die V2-Sektionen ohnehin mit Außenabstand als Karten liegen.
 

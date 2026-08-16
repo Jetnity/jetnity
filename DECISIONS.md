@@ -346,6 +346,57 @@ Eine hier dokumentierte, freigegebene Entscheidung hat Vorrang vor bestehendem C
 
 ---
 
+## ADR-0020 – Responsive-Prüfungen laufen zusätzlich unter WebKit
+
+**Datum:** 16. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Die Responsive-Prüfung läuft gegen zwei Engines: Chromium und WebKit. WebKit ist die maßgebliche Engine, Chromium dient als Gegenprobe.
+
+**Kontext:** Der erste Qualitätspass hat in Chromium bestanden, auf einem echten iPhone waren weiterhin Fehler sichtbar. Formularfelder, Mindestbreiten nativer Bedienelemente, `dvh` und klebende Schichten verhalten sich unter WebKit anders. Eine Prüfung, die iOS beurteilen soll, aber nicht in der Engine von iOS läuft, kann diese Unterschiede grundsätzlich nicht sehen.
+
+**Alternativen:** nur Chromium prüfen und auf manuelle Gerätetests vertrauen; ein bezahlter Gerätedienst wie BrowserStack.
+
+**Begründung:** WebKit ist über Playwright kostenlos und lokal verfügbar und liefert dieselbe Layout-Engine wie Safari auf iOS. Ein Gerätedienst verursacht laufende Kosten und widerspricht dem Budgetrahmen aus [AGENTS.md](AGENTS.md) Regel 18.
+
+**Konsequenzen:** Der Nachweis gegen Production zeigt den Nutzen: unter WebKit fielen dort 10 Seiten-Overflows, 22 abgeschnittene Bereiche und 50 Felder unter 16 px auf, die die reine Chromium-Prüfung nicht als Fehler geführt hatte. WebKit unter Linux bildet allerdings nicht alles ab, insbesondere nicht den nativen iOS-Datumswähler; dafür gibt es ADR-0021. Eine Prüfung auf echter Hardware bleibt offen.
+
+---
+
+## ADR-0021 – Nicht abbildbares Verhalten wird belastet, nicht geschätzt
+
+**Datum:** 16. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Wo eine Engine das Verhalten eines Geräts nicht abbilden kann, wird der ungünstige Fall künstlich erzwungen und das Layout dagegen geprüft. Konkret: Datums-, Zeit- und Zahlenfelder bekommen im Belastungstest eine Mindestbreite von 200 px.
+
+**Kontext:** Auf iOS ist `input[type=date]` ein natives Bedienelement mit großer inhaltsbasierter Mindestbreite. Weder Chromium noch WebKit unter Linux rendern dieses Element; dort ist es ein einfaches Textfeld mit rund 58 px Mindestbreite. Genau dieses Feld war aber der vom Nutzer gemeldete Fehler.
+
+**Alternativen:** auf die Meldung hin punktuell korrigieren und hoffen; oder das Verhalten aus der Ferne nachbauen.
+
+**Begründung:** Ob ein Layout hält, hängt nicht von der genauen Breite des Bedienelements ab, sondern davon, ob die umgebenden Spuren schrumpfen dürfen. Diese Eigenschaft lässt sich unabhängig vom Gerät prüfen: Hält das Layout bei 200 px erzwungener Mindestbreite, kann ein breiteres Bedienelement es nicht mehr sprengen.
+
+**Konsequenzen:** Der Belastungstest deckt `/planen`, `/reisen/[tripId]`, `/login` und `/register` auf acht Breiten ab. Gegen Production schlägt er an acht Stellen fehl, auf dem aktuellen Stand an keiner.
+
+---
+
+## ADR-0022 – Jede geprüfte Seite muss ihren Inhalt nachweisen
+
+**Datum:** 16. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Jeder Seitenzustand der Prüfung nennt einen Text, der vorhanden sein muss. Fehlt er, gilt die Prüfung als fehlgeschlagen.
+
+**Kontext:** `/login` und `/register` liefen lokal mangels Supabase-Variablen in die Fehlerfläche. Diese Fläche ist kurz, einspaltig und fehlerfrei – sie bestand jede Layoutprüfung, während das eigentliche Formular nie vermessen wurde. Der Fehler fiel erst in Production auf.
+
+**Alternativen:** Screenshots manuell sichten; oder auf das Vorhandensein bestimmter Elemente prüfen.
+
+**Begründung:** Eine bestandene Prüfung ohne Inhalt ist schlimmer als gar keine Prüfung, weil sie Sicherheit vortäuscht. Ein erwarteter Text ist die knappste Absicherung dagegen und deckt Fehlerflächen, leere Zustände und falsche Weiterleitungen gleichermaßen ab.
+
+**Konsequenzen:** Die Prüfumgebung braucht gültige Umgebungsvariablen; für die lokale Messung genügen Platzhalterwerte. Die Regel hat sich sofort bewährt und einen falschen Erwartungstext in der Prüfung selbst aufgedeckt.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
