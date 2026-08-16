@@ -10,9 +10,13 @@ export default function UnauthorizedPage() {
       <p className="mt-2 text-muted-foreground">
         Dein Account hat keine Admin-Berechtigung. Bitte wende dich an einen Owner/Admin.
       </p>
-      <div className="mt-6 flex items-center justify-center gap-3">
-        <Link className="underline" href="/">Zur Startseite</Link>
-        <Link className="underline" href="/logout">Abmelden</Link>
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6">
+        <Link className="inline-flex min-h-11 items-center underline" href="/">
+          Zur Startseite
+        </Link>
+        <Link className="inline-flex min-h-11 items-center underline" href="/logout">
+          Abmelden
+        </Link>
       </div>
     </main>
   )

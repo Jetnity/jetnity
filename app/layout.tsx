@@ -53,7 +53,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de" suppressHydrationWarning>
-      <body className="min-h-screen bg-background text-foreground antialiased">
+      {/* Die Flaeche des Dokuments liegt auf <html> (siehe globals.css), damit
+          sie auch beim Ueberdehnen des Scrollbereichs auf iOS und unterhalb
+          kurzer Seiten zur warmen V2-Flaeche passt. */}
+      <body className="min-h-screen text-foreground antialiased">
         {children}
         <Toaster position="top-right" richColors closeButton expand />
         <div id="portal-root" />

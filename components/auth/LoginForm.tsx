@@ -168,8 +168,7 @@ export default function LoginForm() {
 
       <form onSubmit={handleLogin} className="space-y-5">
         <div className="space-y-2">
-          <Label htmlFor="email" className="flex items-center gap-2">
-            <MailIcon className="h-4 w-4" />
+          <Label htmlFor="email" icon={<MailIcon className="h-4 w-4" />}>
             E-Mail
           </Label>
           <Input
@@ -186,8 +185,7 @@ export default function LoginForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password" className="flex items-center gap-2">
-            <Lock className="h-4 w-4" />
+          <Label htmlFor="password" icon={<Lock className="h-4 w-4" />}>
             Passwort
           </Label>
 

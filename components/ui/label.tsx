@@ -51,6 +51,16 @@ export interface LabelProps
   optional?: boolean
   /** Kleiner Hinweis rechts (Text oder Icon/Node). Strings bekommen automatisch `title` */
   hint?: string | React.ReactNode
+  /**
+   * Symbol links neben der Beschriftung.
+   *
+   * Bewusst als eigene Eigenschaft und nicht als Teil von `children`: Der
+   * Beschriftungstext liegt in einem eigenen Element, damit er umbrechen oder
+   * gekuerzt werden kann. Ein Symbol darin wuerde durch die Preflight-Regel
+   * `svg { display: block }` eine eigene Zeile beanspruchen und damit ueber
+   * dem Text stehen.
+   */
+  icon?: React.ReactNode
 }
 
 const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
@@ -61,6 +71,7 @@ const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
       required,
       optional,
       hint,
+      icon,
       size,
       muted,
       invalid,
@@ -79,12 +90,19 @@ const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
         ref={ref}
         className={cn(
           labelVariants({ size, muted, invalid, animated, srOnly, multiline }),
+          icon && 'gap-2',
           className
         )}
         aria-required={ariaRequired}
         data-required={required ? '' : undefined}
         {...props}
       >
+        {icon && (
+          <span aria-hidden="true" className="shrink-0">
+            {icon}
+          </span>
+        )}
+
         {/* Haupttext */}
         <span className={cn('min-w-0', multiline ? 'whitespace-normal' : 'truncate')}>
           {children}

@@ -186,20 +186,25 @@ html {
     --surface-3: 223 22% 16%;
   }
 
-  /* App-Background: Gradient + subtile Noise */
+  /* ---------------------------------------------------------------------------
+     Untergrund des Dokuments.
+
+     Sichtbar wird er nur dort, wo keine Seitenflaeche darueber liegt: beim
+     Ueberdehnen des Scrollbereichs auf iOS und auf Seiten, die kuerzer sind
+     als der Viewport. Er muss deshalb dieselbe warme Flaeche zeigen wie die
+     Seiten selbst. Der frueher hier liegende blau-violette Verlauf gehoerte
+     zur alten Gestaltung und widersprach der V2-Farbwelt.
+  --------------------------------------------------------------------------- */
+  html {
+    background-color: rgb(var(--jet-surface-75));
+  }
+  html.dark {
+    background-color: hsl(var(--background));
+  }
+
   body {
     color: hsl(var(--foreground));
-    background:
-      radial-gradient(1200px 600px at 10% -10%, hsl(222 84% 56% / 6%), transparent 60%),
-      radial-gradient(800px 500px at 90% 0%, hsl(266 85% 62% / 6%), transparent 50%),
-      linear-gradient(to bottom, hsl(210 30% 98%), hsl(210 28% 96%));
-    background-attachment: fixed;
-  }
-  .dark body {
-    background:
-      radial-gradient(900px 500px at 10% -10%, hsl(222 84% 56% / 12%), transparent 60%),
-      radial-gradient(700px 420px at 90% 0%, hsl(266 85% 62% / 10%), transparent 50%),
-      linear-gradient(to bottom, hsl(224 16% 8%), hsl(224 16% 9%));
+    background: transparent;
   }
 
   /* Subtle noise overlay (perf: SVG turbulence) */

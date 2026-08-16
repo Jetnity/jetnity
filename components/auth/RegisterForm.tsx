@@ -210,8 +210,7 @@ export default function RegisterForm() {
 
         {/* Name (optional) */}
         <div className="space-y-2">
-          <Label htmlFor="name" className="flex items-center gap-2">
-            <User className="h-4 w-4" />
+          <Label htmlFor="name" icon={<User className="h-4 w-4" />}>
             Anzeigename (optional)
           </Label>
           <Input
@@ -225,8 +224,7 @@ export default function RegisterForm() {
 
         {/* E-Mail */}
         <div className="space-y-2">
-          <Label htmlFor="email" className="flex items-center gap-2">
-            <MailIcon className="h-4 w-4" />
+          <Label htmlFor="email" icon={<MailIcon className="h-4 w-4" />}>
             E-Mail
           </Label>
           <Input
@@ -244,8 +242,7 @@ export default function RegisterForm() {
 
         {/* Passwort */}
         <div className="space-y-2">
-          <Label htmlFor="password" className="flex items-center gap-2">
-            <Lock className="h-4 w-4" />
+          <Label htmlFor="password" icon={<Lock className="h-4 w-4" />}>
             Passwort
           </Label>
           <Input

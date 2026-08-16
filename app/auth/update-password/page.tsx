@@ -112,8 +112,7 @@ export default function UpdatePasswordPage() {
 
       <form onSubmit={onSubmit} className="space-y-5">
         <div className="space-y-2">
-          <Label htmlFor="pw" className="flex items-center gap-2">
-            <Lock className="h-4 w-4" aria-hidden="true" />
+          <Label htmlFor="pw" icon={<Lock className="h-4 w-4" />}>
             Neues Passwort
           </Label>
           <div className="relative">

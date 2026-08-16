@@ -11,7 +11,7 @@ function SubmitBtn({ children }: { children: React.ReactNode }) {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex items-center justify-center rounded-md border border-border bg-card px-4 py-2 text-sm hover:bg-muted disabled:opacity-60"
+      className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-card px-4 py-2 text-sm hover:bg-muted disabled:opacity-60 pointer-fine:min-h-0"
     >
       {pending ? 'Bitte warten…' : children}
     </button>
@@ -42,7 +42,7 @@ export default function AdminLoginPage() {
               type="email"
               name="email"
               required
-              className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2"
+              className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-base pointer-fine:text-sm"
               placeholder="you@example.com"
               autoComplete="email"
             />
@@ -54,7 +54,7 @@ export default function AdminLoginPage() {
               type="password"
               name="password"
               required
-              className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2"
+              className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-base pointer-fine:text-sm"
               placeholder="••••••••"
               autoComplete="current-password"
             />
@@ -81,7 +81,7 @@ export default function AdminLoginPage() {
               type="email"
               name="email"
               required
-              className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2"
+              className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-base pointer-fine:text-sm"
               placeholder="you@example.com"
               autoComplete="email"
             />
@@ -96,7 +96,7 @@ export default function AdminLoginPage() {
         </form>
 
         <form action={signOutAction} className="mt-6">
-          <button type="submit" className="text-xs text-muted-foreground underline underline-offset-4">
+          <button type="submit" className="inline-flex min-h-11 items-center text-xs text-muted-foreground underline underline-offset-4 pointer-fine:min-h-0">
             Abmelden (falls angemeldet)
           </button>
         </form>
