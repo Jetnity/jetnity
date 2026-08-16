@@ -3,7 +3,8 @@
  *
  * Startpunkte sind alles, was Next.js selbst laedt: Seiten, Layouts, Fehler-
  * und Ladeflaechen, Route Handler, Middleware und die Konfigurationsdateien
- * im Wurzelverzeichnis. Von dort werden die Importe verfolgt.
+ * im Wurzelverzeichnis. Dazu die Testdateien, die der Test-Runner laedt.
+ * Von dort werden die Importe verfolgt.
  *
  * Ergebnis: Welche Dateien unter app/, components/, lib/, types/ und hooks/
  * werden von keinem Startpunkt aus erreicht? Absicht ist eine belastbare
@@ -98,10 +99,14 @@ const importeVon = (datei) => {
   return [...out]
 }
 
+const IST_TEST = /\.(test|spec)\.[cm]?[jt]sx?$/
+
 const istStartpunkt = (datei) => {
   const rel = relative(ROOT, datei)
   if (!rel.includes('/')) return true // Wurzeldateien: middleware.ts, next.config, tailwind.config
   if (rel.startsWith('scripts/')) return true
+  // Testdateien laedt `npm test` direkt; sie sind Startpunkte, keine Waisen.
+  if (IST_TEST.test(rel)) return true
   if (!rel.startsWith('app/')) return false
   const name = datei.split('/').pop().replace(/\.[^.]+$/, '')
   return ROUTEN_DATEIEN.has(name)
