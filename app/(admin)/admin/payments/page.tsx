@@ -2,11 +2,11 @@
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-import { requireAdmin } from '@/lib/auth/requireAdmin'
+import { requireAdminPage } from '@/lib/auth/admin-guard'
 import PaymentsCenter from '@/components/admin/payments/PaymentsCenter'
 
 export default async function PaymentsPage() {
-  const { user } = await requireAdmin()
+  const { user } = await requireAdminPage({ surface: 'payments' })
   return (
     <main className="mx-auto max-w-7xl px-4 md:px-8 py-6 md:py-8">
       <header className="mb-6">

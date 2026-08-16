@@ -15,3 +15,16 @@ export async function signOutAction() {
   await supabase.auth.signOut()
   redirect('/')
 }
+
+/**
+ * Gleiche Aktion, anderes Ziel – für den Administrationsbereich, damit man
+ * dort nach dem Abmelden nicht auf der öffentlichen Startseite landet.
+ *
+ * Das Ziel steht bewusst im Code und kommt nicht aus dem Formular: Ein aus der
+ * Anfrage übernommenes Weiterleitungsziel wäre eine offene Weiterleitung.
+ */
+export async function signOutToAdminLoginAction() {
+  const supabase = createServerActionClient()
+  await supabase.auth.signOut()
+  redirect('/admin/login')
+}

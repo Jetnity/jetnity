@@ -1,9 +1,7 @@
 // app/(admin)/admin/content/page.tsx
 export const dynamic = 'force-dynamic'
-import { requireAdmin } from '@/lib/auth/requireAdmin'
 
 export default async function ContentPage() {
-  await requireAdmin()
   return (
     <div className="grid gap-6">
       <section className="space-y-4">

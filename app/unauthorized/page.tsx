@@ -1,15 +1,31 @@
 // app/unauthorized/page.tsx
-export const dynamic = 'force-static'
-
 import Link from 'next/link'
 import { signOutAction } from '@/app/auth/sign-out'
 
-export default function UnauthorizedPage() {
+/**
+ * Die Seite unterscheidet zwei Fälle, weil sie sich für die Besucherin
+ * unterschiedlich anfühlen: Eine fehlende Berechtigung bleibt bestehen, ein
+ * Ausfall der Prüfung ist vorübergehend. Vorher stand in beiden Fällen, dem
+ * Konto fehle die Berechtigung – bei einem Ausfall war das schlicht falsch.
+ */
+type SearchParams = { grund?: string }
+
+export default function UnauthorizedPage({
+  searchParams,
+}: {
+  searchParams?: SearchParams
+}) {
+  const pruefungFehlgeschlagen = searchParams?.grund === 'lookup-failed'
+
   return (
     <main className="mx-auto max-w-xl p-8 text-center">
-      <h1 className="text-2xl font-bold">Kein Zugriff</h1>
+      <h1 className="text-2xl font-bold">
+        {pruefungFehlgeschlagen ? 'Prüfung nicht möglich' : 'Kein Zugriff'}
+      </h1>
       <p className="mt-2 text-muted-foreground">
-        Dein Account hat keine Admin-Berechtigung. Bitte wende dich an einen Owner/Admin.
+        {pruefungFehlgeschlagen
+          ? 'Deine Berechtigung konnte gerade nicht geprüft werden. Bitte versuche es in einigen Minuten erneut.'
+          : 'Dieses Konto hat keinen Zugang zur Administration. Bitte wende dich an eine Person mit Inhaber- oder Administrationsrolle.'}
       </p>
       <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6">
         <Link className="inline-flex min-h-11 items-center underline" href="/">
