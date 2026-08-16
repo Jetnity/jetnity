@@ -18,6 +18,9 @@ import {
   ChevronRight,
 } from 'lucide-react';
 
+/** Nach der Anmeldung landen Reisende bei ihren Reisen. */
+const AFTER_LOGIN_ROUTE = '/reisen';
+
 function normalizeEmail(s: string) {
   return s.trim().toLowerCase();
 }
@@ -97,7 +100,7 @@ export default function LoginForm() {
       }
 
       // 4) Keine MFA nötig → direkt weiter
-      router.replace('/creator/creator-dashboard');
+      router.replace(AFTER_LOGIN_ROUTE);
     } catch (err: any) {
       setErrorMsg(mapAuthError(err?.message));
     } finally {
@@ -156,9 +159,9 @@ export default function LoginForm() {
   return (
     <div className="w-full max-w-md mx-auto">
       <div className="mb-6 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Creator Login</h1>
-        <p className="text-sm text-muted-foreground">
-          Zugriff auf Dashboard, Media-Studio & Analytics
+        <h1 className="text-2xl font-semibold tracking-tight">Willkommen zurück</h1>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">
+          Melde dich an und plane deine Reisen dort weiter, wo du aufgehört hast.
         </p>
       </div>
 
@@ -286,8 +289,7 @@ export default function LoginForm() {
       </div>
 
       <p className="mt-6 text-xs text-center text-muted-foreground">
-        Mit dem Login stimmst du unseren Richtlinien zu. Für Creator- und Admin-Bereiche gilt{' '}
-        <span className="font-medium">noindex</span>. Datenschutz: DSGVO &amp; CH-DSG konform.
+        Mit dem Login stimmst du unseren Richtlinien zu. Datenschutz: DSGVO &amp; CH-DSG konform.
       </p>
 
       {/* MFA – TOTP Dialog */}
@@ -299,7 +301,7 @@ export default function LoginForm() {
         challengeId={challengeId}
         onVerified={() => {
           setMfaOpen(false);
-          router.replace('/creator/creator-dashboard');
+          router.replace(AFTER_LOGIN_ROUTE);
         }}
       />
     </div>

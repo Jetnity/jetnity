@@ -23,6 +23,9 @@ function normalizeEmail(s: string) {
   return s.trim().toLowerCase();
 }
 
+/** Nach der Registrierung landen Reisende bei ihren Reisen. */
+const AFTER_REGISTER_ROUTE = '/reisen';
+
 function mapAuthError(message?: string) {
   const msg = (message || '').toLowerCase();
   if (msg.includes('already registered')) return 'Diese E-Mail ist bereits registriert.';
@@ -124,7 +127,7 @@ export default function RegisterForm() {
 
       // Falls E-Mail-Verification deaktiviert wäre, gibt es ggf. schon eine Session
       if (data?.session) {
-        router.replace('/creator/creator-dashboard');
+        router.replace(AFTER_REGISTER_ROUTE);
         return;
       }
 
@@ -171,9 +174,9 @@ export default function RegisterForm() {
   return (
     <div className="w-full max-w-md mx-auto">
       <div className="mb-6 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Account erstellen</h1>
-        <p className="text-sm text-muted-foreground">
-          Werde Jetnity Creator – Zugang zu Media-Studio, Dashboard & Analytics
+        <h1 className="text-2xl font-semibold tracking-tight">Deine Reisen. Ein Konto.</h1>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">
+          Erstelle dein kostenloses Jetnity-Konto und speichere deine Reisen dauerhaft.
         </p>
       </div>
 
@@ -358,8 +361,7 @@ export default function RegisterForm() {
       </p>
 
       <p className="mt-2 text-[11px] text-center text-muted-foreground">
-        Mit der Registrierung stimmst du unseren Richtlinien zu. Creator/Admin-Bereiche sind{' '}
-        <span className="font-medium">noindex</span>. DSGVO &amp; CH-DSG konform.
+        Mit der Registrierung stimmst du unseren Richtlinien zu. Datenschutz: DSGVO &amp; CH-DSG konform.
       </p>
     </div>
   );
