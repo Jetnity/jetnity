@@ -158,6 +158,20 @@ Die Production-Prüfung hat ergeben, welche V2-Oberflächen konkret betroffen si
 
 `app/(public)/error.tsx`, `app/(public)/not-found.tsx` und `components/trips/MiniTripSlider.tsx` sind mit Phase 1.1b erledigt: die Fehlerseiten nutzen jetzt V2-Tokens, der Slider ist entfernt. Der Skip-Link ist damit der einzige Blau-Eintrag, der die regulären V2-Seiten erreicht. Er ist bis zum Tastaturfokus unsichtbar, aber für Tastaturnutzer sichtbar und damit vorrangig. Dazu kommen die Auth-Formulare, die über die `ui`-Primitive noch auf `--primary` liegen.
 
+### 1.2b Ungenutzte Pakete entfernen
+
+Bei der Kartierung der Alt-Oberflächen aufgefallen: Sechs Pakete stehen in `package.json`, werden aber nirgends im Quellcode importiert. Fünf davon sind Reste der entfernten Blog- und Suchoberflächen, `react-hot-toast` stammt aus der Zeit vor `sonner`.
+
+| Paket | Herkunft |
+| --- | --- |
+| `zod` | nie verwendet, kein einziges Schema im Repository |
+| `react-hot-toast` | ersetzt durch `sonner` (`app/layout.tsx`) |
+| `highlight.js`, `isomorphic-dompurify` | Alt-Blog |
+| `dayjs` | Alt-Suche (`DateRangePicker`) |
+| `uuid` | Alt-Media-Studio |
+
+`recharts`, `react-day-picker` und `react-resizable-panels` bleiben vorerst: sie hängen an der Admin-Oberfläche beziehungsweise an `ui`-Primitiven, die noch stehen.
+
 ### 1.3 Auth, Rollen und Middleware vereinheitlichen
 
 - [ ] einheitliches Rollen- und Berechtigungsmodell
