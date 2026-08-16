@@ -24,8 +24,15 @@ export default function PublicNavbar() {
   const isActive = (href: string) =>
     href === '/reisen' && (pathname === '/reisen' || pathname.startsWith('/reisen/'))
 
+  // Sprungmarken wie /#entdecken aendern den Pfad nicht, das Menue muss sich
+  // trotzdem schliessen, damit das Ziel sichtbar wird.
+  const closeMobile = () => setMobileOpen(false)
+
   return (
-    <header className="sticky top-0 z-50 border-b border-black/5 bg-surface-75/95 backdrop-blur-xl">
+    <header
+      className="sticky top-0 z-50 border-b border-black/5 bg-surface-75/95 pl-[env(safe-area-inset-left)]
+                 pr-[env(safe-area-inset-right)] pt-[env(safe-area-inset-top)] backdrop-blur-xl"
+    >
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8">
         <Link href="/" aria-label="Jetnity Startseite" className="inline-flex items-center gap-2.5 text-brand-800">
           <span className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-brand-800 shadow-sm">
@@ -66,26 +73,42 @@ export default function PublicNavbar() {
           aria-label={mobileOpen ? 'Menü schließen' : 'Menü öffnen'}
           aria-expanded={mobileOpen}
           onClick={() => setMobileOpen((current) => !current)}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 md:hidden"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line-200 bg-white text-brand-800 md:hidden"
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
       {mobileOpen && (
-        <nav aria-label="Mobile Navigation" className="border-t border-black/5 bg-surface-75 px-5 py-4 md:hidden">
+        <nav
+          aria-label="Mobile Navigation"
+          className="max-h-[calc(100dvh-72px)] overflow-y-auto border-t border-black/5 bg-surface-75 px-5 py-4 md:hidden"
+        >
           <div className="grid gap-1">
             {navigation.map((item) => (
-              <Link key={item.href} href={item.href} className="rounded-2xl px-4 py-3 text-sm font-semibold text-ink-900 hover:bg-white">
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={closeMobile}
+                className="rounded-2xl px-4 py-3 text-sm font-semibold text-ink-900 hover:bg-white"
+              >
                 {item.label}
               </Link>
             ))}
           </div>
           <div className="mt-3 grid grid-cols-2 gap-2 border-t border-line-200 pt-4">
-            <Link href="/login" className="flex h-11 items-center justify-center rounded-full border border-line-200 bg-white text-sm font-semibold text-brand-800">
+            <Link
+              href="/login"
+              onClick={closeMobile}
+              className="flex h-11 items-center justify-center rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800"
+            >
               Anmelden
             </Link>
-            <Link href="/planen" className="flex h-11 items-center justify-center rounded-full bg-brand-800 text-sm font-semibold text-white">
+            <Link
+              href="/planen"
+              onClick={closeMobile}
+              className="flex h-11 items-center justify-center rounded-full bg-brand-800 px-3 text-center text-sm font-semibold text-white"
+            >
               Reise planen
             </Link>
           </div>

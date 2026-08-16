@@ -16,7 +16,10 @@ const accountLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-brand-900 text-white">
+    <footer
+      className="bg-brand-900 pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)]
+                 pr-[env(safe-area-inset-right)] text-white"
+    >
       <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-16">
         <div className="grid gap-12 lg:grid-cols-[1.4fr_0.6fr_0.6fr]">
           <div className="max-w-md">

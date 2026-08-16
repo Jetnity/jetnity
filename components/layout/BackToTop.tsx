@@ -20,8 +20,9 @@ export default function BackToTop() {
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       aria-label="Nach oben"
-      className="fixed bottom-6 right-6 z-40 rounded-full border bg-background/80 backdrop-blur
-                 hover:bg-background p-3 shadow-lg"
+      className="fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-[calc(1.5rem+env(safe-area-inset-right))]
+                 z-40 flex h-11 w-11 items-center justify-center rounded-full border bg-background/80
+                 backdrop-blur hover:bg-background shadow-lg"
     >
       <ArrowUp className="h-5 w-5" />
     </button>
