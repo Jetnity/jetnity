@@ -135,7 +135,7 @@ Von 77 Route Handlern wurden 61 entfernt, 16 bleiben. Alle vier Cron-Jobs sind e
 - [x] Abhängigkeiten geprüft: der transitive Graph der V2-Seiten umfasst 32 Dateien und enthält **keinen** Endpunkt-Aufruf
 - [x] Auswirkungen dokumentiert
 
-Bewusst behalten: `app/auth/refresh`, `api/search/airports`, `api/search`, `api/admin/payments/*`, `api/admin/security/*`.
+Bewusst behalten: `app/auth/refresh`, `api/search/airports`, `api/search`, `api/admin/payments/*`, `api/admin/security/*`. `app/auth/refresh` ist mit 1.3 entfallen – der Endpunkt konnte seine Aufgabe nie erfüllen.
 
 ### 1.1b Alt-Oberflächen entfernen · abgeschlossen, in Production verifiziert
 
@@ -201,7 +201,7 @@ Bewusst behalten, mit Begründung im jeweiligen Skript:
 | --- | --- |
 | `zod` | Laufzeitvalidierung der strukturierten V2-Reisedaten und der Modellantworten (Phase 2) |
 | `CookieConsent.tsx` | wartet auf die Rechtsentscheidung; es zu löschen würde sie vorwegnehmen |
-| `startSupabaseAuthListener` | Gegenseite von `app/auth/refresh`, gehört in Phase 1.3 |
+| `startSupabaseAuthListener` | Gegenseite von `app/auth/refresh`, gehört in Phase 1.3 – dort geprüft und mit dem Endpunkt entfernt |
 
 Drei Helfer in `lib/supabase/server.ts` sind entfernt, weil sie als Vorlage gefährlich gewesen wären: `createAdminClient` gab einem Client mit Service-Role-Rechten den mutierbaren Cookie-Adapter, `getSessionServer`/`getUserServer` lasen die Identität aus `auth.getSession()` – serverseitig wird dabei die Token-Signatur nicht nachgeprüft. Ein Kommentar an der Stelle hält fest, warum, damit Phase 1.3/1.4 sie nicht so wieder einführt.
 
@@ -209,28 +209,70 @@ Drei Helfer in `lib/supabase/server.ts` sind entfernt, weil sie als Vorlage gef�
 
 Lint ist seither ohne Warnung (vorher drei).
 
-### 1.3 Auth, Rollen und Middleware vereinheitlichen · nächster Schritt
+### 1.3 Auth, Rollen und Middleware vereinheitlichen · abgeschlossen
 
-- [ ] einheitliches Rollen- und Berechtigungsmodell
-- [ ] Admin-Prüfung zentralisieren statt pro Route
-- [ ] Middleware-Schutz über alle geschützten Bereiche statt nur `/account`
-- [ ] generisches Traveller-Profil an Stelle des Creator-Profils
+Umgesetzt in Pull Request [#10](https://github.com/Jetnity/jetnity/pull/10). Entscheidungen: [DECISIONS.md](DECISIONS.md) ADR-0027 bis ADR-0029.
 
-Bestandsaufnahme vom 16. August 2026. Alle neun Admin-Seiten und alle dreizehn Admin-API-Routen rufen `requireAdmin()`, es ist also derzeit keine Fläche ungeschützt. Die Art des Schutzes trägt aber vier Probleme:
+- [x] einheitliches Rollen- und Berechtigungsmodell (`lib/auth/roles.ts`)
+- [x] Admin-Prüfung zentralisiert – Seiten über das Layout der Routengruppe, API-Routen über `requireAdminApi()` mit CI-Kontrolle
+- [x] Middleware-Schutz über `/admin`, `/api/admin` und `/account`, je Oberfläche mit der passenden Antwort
+- [x] serverseitige Identität aus `auth.getUser()` statt `auth.getSession()`
+- [x] Rollen- und Berechtigungstests (34)
+- [ ] generisches Traveller-Profil an Stelle des Creator-Profils → hängt an 1.4
 
-**1. Die E-Mail-Domain umgeht das Rollenmodell.** `lib/auth/requireAdmin.ts` lässt durch, wenn die Rolle passt **oder** die E-Mail-Adresse auf `@jetnity.com` endet. Ist `ADMIN_ALLOWED_EMAILS` nicht gesetzt – und in `.env.example` steht es nicht –, genügt eine beliebige Adresse dieser Domain für vollen Admin-Zugriff, unabhängig von jedem Datenbankeintrag. Da die Rollenabfrage Fehler verschluckt (`catch { role = null }`), ist die Domain bei einer Datenbankstörung sogar der einzige verbleibende Weg hinein. Ob eine E-Mail-Freigabe überhaupt bleiben soll, ist eine Entscheidung: als Notzugang nachvollziehbar, als Dauerzustand ein zweites, unversioniertes Berechtigungssystem neben der Datenbank.
+Die Bestandsaufnahme vom 16. August 2026 hatte vier Probleme benannt. Alle vier sind behoben, und bei der Umsetzung kamen vier weitere dazu.
 
-**2. Der Schutz ist opt-in.** Es gibt keine Prüfung im Layout, jede Seite prüft selbst. Das Admin-Layout ist eine Client-Komponente und kann es nicht – eine serverseitige Prüfung braucht dort eine Server-Komponente darüber. Eine neue Admin-Seite ohne den Aufruf wäre öffentlich, und nichts hält das auf.
+**1. Die E-Mail-Domain umging das Rollenmodell.** `requireAdmin()` liess durch, wenn die Rolle passte **oder** die Adresse auf `@jetnity.com` endete. Der Domain-Fallback ist entfernt: Eine Domain erteilt keine Berechtigung. `ADMIN_ALLOWED_EMAILS` bleibt als ausdrücklich konfigurierter Notzugang, aber ausschliesslich als exakte Adressliste – Domains, Platzhalter und Teileinträge werden verworfen, und ein gesetzter, aber unbrauchbarer Wert wird als Fehlkonfiguration protokolliert. Jede Nutzung erscheint als Warnung mit Konto, Bereich und Zustand der Rollenabfrage.
 
-**3. `requireAdmin()` leitet um, auch in API-Routen.** `redirect()` in einem Route Handler erzeugt eine 307-Antwort statt 401/403. Der Zugriff wird verhindert, aber ein `fetch` bekommt eine Weiterleitung auf HTML statt eines Fehlers. Seiten und Schnittstellen brauchen getrennte Varianten.
+Der schwerere Teil dieses Problems lag in der Fehlerbehandlung. `catch { role = null }` fing nur geworfene Ausnahmen; Supabase meldet einen abgelehnten Zugriff aber im `error`-Feld der Antwort, das nie gelesen wurde. Eine per RLS abgewiesene Rollenabfrage sah damit genauso aus wie „dieses Konto hat keine Rolle" und fiel auf die E-Mail-Prüfung zurück. Die Entscheidung unterscheidet jetzt drei Zustände – Rolle vorhanden, keine Rolle hinterlegt, Abfrage fehlgeschlagen – und ein Ausfall führt nie zu einer Freigabe.
 
-**4. Die Rollen stehen an vier Stellen, mit unterschiedlichen Teilmengen.** `requireAdmin.ts`, `admin/users/page.tsx` (zweimal: `ROLES` und eine engere Torliste), `admin/users/actions.ts` und `components/admin/UsersTable.tsx` führen je eigene Listen. Eine Rolle zu ergänzen heisst heute, vier Stellen zu finden.
+**2. Der Schutz war opt-in.** `app/(admin)/layout.tsx` ist eine Server-Komponente über der bestehenden Client-Hülle und schützt die gesamte Routengruppe, auch künftige Seiten. Die acht Seiten, die nur prüften, tragen keinen eigenen Aufruf mehr.
 
-Dazu kommt: Die Rolle liegt in `creator_profiles` – der Tabelle der alten Produktidee. Das generische Profil hängt an der Datenbank-Baseline (1.4) und braucht eine Migration; die Punkte 1 bis 4 sind davon unabhängig und können vorher erledigt werden.
+**3. `requireAdmin()` leitete um, auch in API-Routen.** Getrennt in `requireAdminPage()` (Weiterleitung) und `requireAdminApi()` (401 ohne Anmeldung, 403 ohne Berechtigung, 503 wenn die Prüfung selbst ausfällt). Da ein Layout API-Routen nicht schützen kann, prüft `npm run check:api-schutz` in der CI jeden exportierten HTTP-Handler unter `app/api/admin` darauf, dass er den Gate aufruft und die gelieferte Antwort zurückgibt.
 
-### 1.4 Datenbank-Baseline · blockierend für Phase 2
+**4. Die Rollen standen an vier Stellen.** Eine Quelle: `lib/auth/roles.ts` mit Rollen, Rangfolge, Bereichszugang und Vergaberegeln, ohne Next- und Supabase-Importe, damit die Regeln ohne Laufzeit prüfbar sind.
+
+Dabei gefunden und mit behoben:
+
+- **Rechteausweitung in der Kontoverwaltung.** `setUserRole` prüfte nur, ob die Owner-Rolle vergeben wird, und ob sich jemand selbst herabstuft. Eine Moderation konnte deshalb ihre **eigene** Rolle auf `admin` setzen – die Prüfung liess Selbständerungen „in Richtung admin/owner" ausdrücklich zu. Jetzt ist die eigene Rolle unveränderbar, und es zählt der Rang gegenüber der bisherigen **und** der künftigen Rolle. Nur der Owner darf jede fremde Rolle setzen, damit eine Nachfolge einrichtbar bleibt.
+- **Eine fünfte Zugangsliste im Loginformular.** `app/(public)/admin/login/actions.ts` hatte eine eigene Allowlist mit drei fest im Quellcode hinterlegten Adressen als Vorbelegung und demselben Domain-Fallback. Sie sperrte Konten aus, deren Berechtigung aus einer Datenbankrolle stammte, und ihre Meldung „Diese E-Mail ist nicht freigegeben" verriet vor der Anmeldung, welche Adressen Admin-Rechte haben. Das Formular entscheidet nichts mehr selbst; die Magic-Link-Antwort ist neutral.
+- **Die Middleware fiel auf.** Fehlte die Supabase-Umgebung, liess sie die geschützten Pfade durch. Jetzt gesperrt, mit deutlichem Protokolleintrag: Ein geschützter Bereich, der bei fehlender Konfiguration aufgeht, ist das Gegenteil von Schutz.
+- **`app/auth/refresh` konnte nie funktionieren.** Der Cookie-Adapter des Endpunkts gab für jeden Namen `undefined` zurück und verwarf jedes Schreiben. Er und seine Gegenseite `startSupabaseAuthListener` sind entfernt: `@supabase/ssr` legt die Sitzung im Browser bereits in Cookies ab, und die Middleware schreibt erneuerte Cookies in die Antwort zurück. Einen Aufrufer hatte die Funktion nie.
+
+**Geprüft** gegen einen lokalen Supabase-Ersatz mit echten Sitzungen und echten Cookies, je Rolle und für beide Oberflächen:
+
+| Konto | API lesen | API schreiben | `/admin` |
+| --- | --- | --- | --- |
+| ohne Anmeldung | 401 | 401 | → `/admin/login?next=` |
+| Rolle `user` | 403 | 403 | → `/unauthorized?grund=forbidden` |
+| kein Profileintrag | 403 | 403 | → `/unauthorized?grund=forbidden` |
+| Rolle `user` auf `@jetnity.com` | 403 | 403 | → `/unauthorized?grund=forbidden` |
+| Rolle `moderator` | 200 | 403 | 200 |
+| Rolle `operator` | 200 | 200 | 200 |
+| Notliste, Rolle `user` | 200 | 200 | 200 |
+| Rollenabfrage ausgefallen, Rolle `operator` | 503 | 503 | → `/unauthorized?grund=lookup-failed` |
+| Rollenabfrage ausgefallen, Notliste | 200 | 200 | 200 |
+
+Keine API-Antwort war eine Weiterleitung. Schreibende Endpunkte verlangen jetzt mindestens `operator`, lesende den Bereichszugang ab `moderator`.
+
+Offen bleibt das generische Profil: Die Rolle liegt weiterhin in `creator_profiles`, der Tabelle der alten Produktidee. Der Tabellenname steht jetzt an genau einer Stelle (`ROLE_TABLE` in `lib/auth/admin-guard.ts`), damit die Umstellung in 1.4 eine einzelne Änderung bleibt.
+
+### 1.4 Datenbank-Baseline · wartet auf den Development-Zugang, blockierend für Phase 2
+
+**Benötigter Zugang.** Ohne diese beiden Verbindungen lässt sich 1.4 nicht beginnen; erhoben werden kann nichts, und Migrationen liessen sich nirgends testen. Nach der Freigabe von Phase 1.3 gilt: keine Production-Datenbankänderungen.
+
+| Zweck | Was gebraucht wird | Rechte |
+| --- | --- | --- |
+| Bestandsaufnahme Production | Projekt-Referenz und ein lesender Zugang zum Production-Projekt | ausschliesslich lesend, projektgebunden. **Keine** Production-Service-Role |
+| Migrationen, RLS und Tests | ein eigenes Development-/Test-Projekt: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` und die Datenbank-Verbindung für `supabase db push` | schreibend, nur auf dem Development-Projekt |
+
+Eine Development-Service-Role wird erst dann als Secret angelegt, wenn ein Test sie tatsächlich braucht – etwa um für RLS-Tests Datensätze fremder Konten anzulegen. Die Rollen- und Berechtigungstests aus 1.3 brauchen sie nicht: Sie prüfen die Entscheidungslogik ohne Datenbank.
+
+**Was ohne Zugang schon feststeht.** Die Typen beschreiben 37 Tabellen, versioniert sind zwei. Es existiert eine Tabelle `admin_domains` – ein Hinweis darauf, dass eine domainbasierte Administrationsfreigabe einmal vorgesehen war. Mit ADR-0027 ist entschieden, dass eine Domain keine Berechtigung erteilt; die Tabelle ist in der Anwendung unbenutzt und gehört bei der Baseline auf die Liste der zu entfernenden Altlasten.
 
 - [ ] vollständige Baseline-Migration für das real existierende Schema (aktuell 37 Tabellen in den Typen, 2 in Migrationen)
+- [ ] `admin_domains` bewerten und entfernen – domainbasierter Admin-Zugang ist mit ADR-0027 ausgeschlossen
+- [ ] Rolle aus `creator_profiles` in ein generisches Profil überführen; `ROLE_TABLE` in `lib/auth/admin-guard.ts` ist die einzige Stelle, die den Tabellennamen kennt
 - [ ] unversionierte Migration `<timestamp>_realtime_creator_session_metrics.sql` bereinigen
 - [x] die zwei konkurrierenden Typdateien zusammengeführt – mit Phase 1.2b erledigt: `types/supabase.types.ts` war ein älterer, kleinerer Abzug ohne einen einzigen Import und ist entfernt; die Schematypen liegen nur noch in `types/supabase.ts`
 - [ ] RLS-Zustand erheben, versionieren und testen
@@ -248,8 +290,9 @@ Dazu kommt: Die Rolle liegt in `creator_profiles` – der Tabelle der alten Prod
 
 Priorität nach [AGENTS.md](AGENTS.md) Regel 24: Auth, Rollen, RLS, Trip-Persistenz.
 
-- [ ] Test-Runner einrichten (derzeit 0 Test-Dateien im Repo)
-- [ ] RLS-Tests
+- [x] Test-Runner eingerichtet – mit 1.3 erledigt: `npm test` läuft über den Test-Runner von Node mit `tsx` als Loader, ohne neues Paket ([DECISIONS.md](DECISIONS.md) ADR-0029)
+- [x] Tests für Rollen und Berechtigungen (34, ohne Datenbank)
+- [ ] RLS-Tests → braucht den Development-Zugang aus 1.4
 - [ ] Tests für Trip-Erstellung und -Persistenz
 
 ---

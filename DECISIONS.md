@@ -469,7 +469,66 @@ Zwei Zuordnungen sind bewusst keine reine Ableitung: `--ring` liegt auf `brand-6
 
 **Begründung:** Eine einmalige Aufräumaktion fällt zurück. Ein Prüflauf, der die Erweiterung sofort meldet, hält den Zustand – und zwingt zu einer Entscheidung: entfernen oder begründen. Dass die Begründung im Skript steht, hält sie an der Stelle, an der sie gelesen wird.
 
-**Konsequenzen:** Drei Ausnahmen sind eingetragen: `zod` (Laufzeitvalidierung der kommenden strukturierten V2-Daten), `CookieConsent.tsx` (wartet auf die Rechtsentscheidung) und `startSupabaseAuthListener` (Gegenseite von `app/auth/refresh`, gehört in die Auth-Phase). Die Exportanalyse arbeitet über Namen, nicht über die Importkette; sie meldet im Zweifel zu wenig, damit die Ausgabe belastbar bleibt.
+**Konsequenzen:** Drei Ausnahmen sind eingetragen: `zod` (Laufzeitvalidierung der kommenden strukturierten V2-Daten), `CookieConsent.tsx` (wartet auf die Rechtsentscheidung) und `startSupabaseAuthListener` (Gegenseite von `app/auth/refresh`, gehört in die Auth-Phase). Die Exportanalyse arbeitet über Namen, nicht über die Importkette; sie meldet im Zweifel zu wenig, damit die Ausgabe belastbar bleibt. Die dritte Ausnahme ist mit ADR-0027 entfallen: Beide Seiten sind in Phase 1.3 geprüft und entfernt worden.
+
+---
+
+## ADR-0027 – Eine Domain erteilt keine Berechtigung, und ein Ausfall erteilt sie erst recht nicht
+
+**Datum:** 16. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Reguläre Autorisierungsquelle ist die Rolle in der Datenbank. Der pauschale `@jetnity.com`-Fallback ist entfernt. `ADMIN_ALLOWED_EMAILS` bleibt als ausdrücklich konfigurierter Notzugang, ausschliesslich als exakte Adressliste – Domains, Platzhalter und Teileinträge werden verworfen, und es gibt keine im Quellcode hinterlegte Vorbelegung. Jede Nutzung des Notzugangs wird als Warnung protokolliert. Eine fehlgeschlagene Rollenabfrage führt nie zu einer Freigabe.
+
+**Kontext:** `requireAdmin()` liess durch, wenn die Rolle passte **oder** die Adresse auf `@jetnity.com` endete. Da `ADMIN_ALLOWED_EMAILS` nirgends dokumentiert und in `.env.example` nicht enthalten war, genügte praktisch jede Adresse dieser Domain für vollen Admin-Zugriff, unabhängig von jedem Datenbankeintrag. Das Loginformular führte zusätzlich eine eigene Liste mit drei fest im Quellcode stehenden Adressen.
+
+Schwerer wog die Fehlerbehandlung. `catch { role = null }` fing nur geworfene Ausnahmen; Supabase meldet einen abgelehnten Zugriff aber im `error`-Feld der Antwort, das nie gelesen wurde. Eine per RLS abgewiesene Rollenabfrage sah damit genauso aus wie „dieses Konto hat keine Rolle" – und fiel auf die E-Mail-Prüfung zurück. Bei einer Datenbankstörung war die Domain nicht nur ein zusätzlicher, sondern der einzige verbleibende Weg hinein.
+
+**Alternativen:** Den Notzugang vollständig streichen. Verworfen, weil dann ein Ausfall der Rollenabfrage niemanden mehr hineinlässt und die Berechtigung nicht reparierbar wäre. Statt ihn zu streichen, ist er eng geführt und laut: exakte Adressen, kein Muster, jede Nutzung mit Konto, Bereich und Zustand der Rollenabfrage im Protokoll.
+
+Auch geprüft: den Notzugang bei einem Ausfall der Rollenabfrage ebenfalls zu verweigern. Verworfen, weil das genau der Fall ist, für den er existiert. Der Unterschied zum alten Verhalten liegt nicht darin, **ob** ein Weg offen bleibt, sondern dass er ausdrücklich konfiguriert, auf einzelne Adressen begrenzt und nachvollziehbar ist – nicht implizit über eine Domain und nicht stillschweigend.
+
+**Begründung:** Eine Domain ist keine Berechtigung, sondern eine Zugehörigkeit. Wer eine Adresse in dieser Domain anlegen kann, kann Administrationsrechte vergeben, ohne dass es in der Datenbank sichtbar wäre – ein zweites, unversioniertes Berechtigungssystem. Und ein Fehler ist keine Aussage über eine Berechtigung: Die Entscheidung unterscheidet deshalb drei Zustände – Rolle vorhanden, keine Rolle hinterlegt, Abfrage fehlgeschlagen – statt zwei.
+
+**Konsequenzen:** Ein Konto ohne Datenbankrolle und ohne Eintrag in der Notliste kommt nicht mehr in den Administrationsbereich, auch nicht mit einer `@jetnity.com`-Adresse. Wer bisher über die Domain hineinkam, braucht einen Rolleneintrag. Ein gesetzter, aber unbrauchbarer Wert in `ADMIN_ALLOWED_EMAILS` – etwa nur `@jetnity.com` – wird als Fehlkonfiguration protokolliert, statt still eine leere Liste zu ergeben. Die Tabelle `admin_domains` im Schema widerspricht dieser Entscheidung; sie ist in der Anwendung unbenutzt und in Phase 1.4 zu entfernen.
+
+Mit derselben Begründung ist die Rollenvergabe gerichtet worden: Bisher konnte eine Moderation ihre eigene Rolle auf `admin` setzen, weil nur die Owner-Rolle und ein Selbst-Downgrade geprüft wurden. Jetzt ist die eigene Rolle unveränderbar, und es zählt der Rang gegenüber der bisherigen **und** der künftigen Rolle. Nur der Owner darf jede fremde Rolle setzen, damit eine Nachfolge einrichtbar bleibt.
+
+---
+
+## ADR-0028 – Seiten werden weitergeleitet, Schnittstellen bekommen einen Statuscode
+
+**Datum:** 16. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Der Admin-Schutz ist nach Oberfläche getrennt. `requireAdminPage()` leitet weiter, `requireAdminApi()` antwortet mit 401 ohne Anmeldung, 403 ohne Berechtigung und 503, wenn die Prüfung selbst ausfällt. Der Bereichsschutz für Seiten liegt im Layout der Routengruppe `(admin)`, nicht in den einzelnen Seiten. Die serverseitige Identität kommt aus `auth.getUser()`. Die Middleware prüft die Anmeldung für `/admin`, `/api/admin` und `/account`, nicht die Rolle.
+
+**Kontext:** `requireAdmin()` rief in allen Fällen `redirect()` – auch in den dreizehn Admin-API-Routen. Ein `fetch` folgt einer 307 und erhält die HTML-Loginseite mit Status 200; im Client kommt das als Erfolg an, und die Antwort wird als Nutzlast gelesen. Gleichzeitig war der Seitenschutz opt-in: Jede der neun Admin-Seiten trug ihren eigenen Aufruf, und eine neue Seite ohne ihn wäre öffentlich gewesen.
+
+**Alternativen:** Den Rollencheck in die Middleware zu legen, damit auch neue API-Routen automatisch geschützt sind. Verworfen: Die Rolle liegt in der Datenbank, und eine Abfrage am Rand bei jedem Request verteilt die Autorisierung auf zwei Orte mit zwei Auslegungen. Stattdessen prüft `npm run check:api-schutz` in der CI jeden exportierten HTTP-Handler unter `app/api/admin` darauf, dass er den Gate aufruft und die gelieferte Antwort zurückgibt – die Gegenprobe mit einer ungeschützten `POST`-Funktion lässt die Prüfung fehlschlagen.
+
+`auth.getClaims()` wäre die schnellere Prüfung, weil es die Signatur gegen den JWKS-Endpunkt verifiziert statt den Auth-Server zu fragen. Verworfen für den Admin-Zugang: Ein gültig signiertes Token verifiziert auch dann noch, wenn das Konto gesperrt oder gelöscht wurde. `getUser()` spiegelt den aktuellen Stand. Für weniger heikle Pfade bleibt `getClaims()` eine Option.
+
+**Begründung:** Die richtige Antwort auf eine fehlende Berechtigung hängt davon ab, wer fragt. Ein Mensch im Browser soll zur Anmeldung geführt werden, ein Programm braucht einen Statuscode, den es auswerten kann. Ein Schutz, der im Layout sitzt, gilt für jede Seite der Gruppe – auch für die, die noch niemand geschrieben hat. Das ist der Unterschied zwischen „ist geschützt" und „bleibt geschützt".
+
+**Konsequenzen:** Alle Seiten unter `(admin)` werden dynamisch gerendert – die Prüfung braucht die Cookies des Requests. `react cache()` bündelt Identität und Rolle auf eine Abfrage pro Request, sodass eine Seite, die ihre eigene Rolle braucht, keine zweite Runde kostet. 503 statt 403 bei einem Ausfall weicht vom Wortlaut „401/403" ab: Ein Ausfall der Prüfung ist keine Aussage über die Berechtigung, und der aufrufende Client soll es erneut versuchen dürfen, statt eine Ablehnung zu lernen. `/unauthorized` unterscheidet beide Fälle im Text.
+
+---
+
+## ADR-0029 – Tests laufen über den Test-Runner von Node, ohne neues Paket
+
+**Datum:** 16. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** `npm test` ruft `node --import tsx --test` über die Dateien `lib/**/*.test.ts`. Die Testdateien liegen neben dem Code, den sie prüfen. Die Erreichbarkeitsanalyse behandelt sie als Startpunkte.
+
+**Kontext:** Nach [AGENTS.md](AGENTS.md) Regel 24 haben Auth und Rollen die höchste Testpriorität, und im Repo lag keine einzige Testdatei. Die Zugangsentscheidung ist genau die Sorte Logik, bei der ein Fehler nicht auffällt: Alle Pfade führen zu „geht" oder „geht nicht", und der falsche Pfad sieht im Betrieb aus wie der richtige.
+
+**Alternativen:** `vitest`. Verworfen für diesen Zweck: `tsx` ist ohnehin vorhanden, löst die `@/`-Aliase aus der `tsconfig.json` auf, und der Test-Runner steckt in Node. Damit kostet der erste Test kein neues Paket und keine zweite Konfiguration. Sobald Komponententests mit einem DOM dazukommen, ist die Entscheidung neu zu bewerten – dafür reicht der eingebaute Runner nicht.
+
+**Begründung:** Die Prüfbarkeit ergibt sich aus dem Schnitt, nicht aus dem Werkzeug. `lib/auth/roles.ts` und `lib/auth/admin-access.ts` enthalten keine Next- und keine Supabase-Importe: Die Zugangsentscheidung nimmt Identität und Ergebnis der Rollenabfrage als Argumente entgegen und gibt eine Entscheidung zurück. Deshalb lässt sich der Fall „Rollenabfrage fehlgeschlagen" prüfen, ohne eine Datenbank kaputtzumachen – und genau dieser Fall war die Lücke aus ADR-0027.
+
+**Konsequenzen:** 34 Tests decken die Rangfolge, die Vergaberegeln, die Notliste und jeden Ablehnungsgrund ab, ohne Datenbank und ohne laufenden Server. Was die Entscheidung **ausführt** – Cookies, Abfrage, Weiterleitung, Statuscode – bleibt davon unberührt und ist gegen einen lokalen Supabase-Ersatz mit echten Sitzungen durchgespielt worden; das ist in [ROADMAP.md](ROADMAP.md) Abschnitt 1.3 festgehalten. RLS-Tests brauchen den Development-Zugang aus 1.4.
 
 ---
 

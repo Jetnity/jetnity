@@ -32,12 +32,16 @@ Ein Framework-Wechsel ist nicht vorgesehen und benötigt Freigabe.
 app/                Routing, Server Components, Route Handler, Server Actions
 components/         Präsentation und Interaktion
 lib/                Business-Logik, Datenzugriff, Integrationen
+lib/auth/           Rollenmodell und Zugangsentscheidung (siehe Abschnitt 4)
 types/              Datenbank- und Domänentypen
 supabase/migrations Datenbankschema (siehe Abschnitt 6 – aktuell unvollständig)
 middleware.ts       Edge-Middleware
+scripts/            Prüfungen, die in der CI laufen
 styles/globals.css  Design-Tokens
 tailwind.config.js  Token-Mapping
 ```
+
+Tests liegen als `*.test.ts` neben dem Code, den sie prüfen, und laufen über `npm test` ([DECISIONS.md](DECISIONS.md) ADR-0029).
 
 **Regel:** Business-Logik gehört nach `lib/`, nicht in UI-Komponenten. Sensible Logik läuft ausschließlich serverseitig.
 
@@ -47,26 +51,43 @@ tailwind.config.js  Token-Mapping
 
 Es existieren getrennte Clients je Ausführungskontext. Die Auswahl ist nicht optional:
 
-| Datei | Kontext | Rechte |
+| Funktion in `lib/supabase/` | Kontext | Rechte |
 | --- | --- | --- |
-| `lib/supabase/server.ts` | Server Components / RSC | Nutzerrechte, RLS aktiv |
-| `lib/supabase/actions.ts` | Server Actions, Route Handler | Nutzerrechte, RLS aktiv, darf Cookies schreiben |
-| `lib/supabase/client.ts` | Client Components | Anon Key, RLS aktiv |
-| `lib/supabase/admin.ts` | ausschließlich Server | **Service Role, umgeht RLS** |
+| `server.ts` → `createServerComponentClient()` | Server Components / RSC | Nutzerrechte, RLS aktiv, Cookies nur lesend |
+| `server.ts` → `createRouteHandlerClient()` | Route Handler | Nutzerrechte, RLS aktiv, darf Cookies schreiben |
+| `server.ts` → `createServerActionClient()` | Server Actions | Nutzerrechte, RLS aktiv, darf Cookies schreiben |
+| `client.ts` → `createBrowserClient()` | Client Components | Anon Key, RLS aktiv |
 
-`lib/supabase/admin.ts` darf nur verwendet werden, wenn im gleichen Codepfad Auth, Ownership und Eingabevalidierung geprüft werden ([AGENTS.md](AGENTS.md) Regel 14).
+**Einen Client mit Service-Role-Rechten gibt es derzeit nicht.** `lib/supabase/admin.ts` und der frühere `createAdminClient` sind in Phase 1.2b entfernt worden: Letzterer hängte einem Client mit vollen Rechten den mutierbaren Cookie-Adapter der Besucherin an. Ein solcher Zugang entsteht bewusst erst mit der Datenbank-Baseline in Phase 1.4 – ohne Sitzungsverwaltung und nur dort, wo Auth, Ownership und Eingabevalidierung im gleichen Codepfad geprüft werden ([AGENTS.md](AGENTS.md) Regel 14).
 
 ---
 
 ## 4. Auth und Zugriffsschutz
 
-- Sessions laufen über Supabase-Auth-Cookies und werden serverseitig gelesen.
-- `app/auth/refresh/route.ts` erneuert Sessions.
-- `middleware.ts` schützt derzeit **ausschließlich** `/account`. Alle anderen Pfade werden ohne Prüfung durchgelassen; Autorisierung liegt damit in den einzelnen Routen und Seiten. Bis Phase 1.1b zeigte der Schutz auf die entfernte Route `/creator/creator-dashboard` und wirkte damit nirgends.
-- Nach Anmeldung, Registrierung, OAuth-Callback und Passwortwechsel führt der Weg auf `/reisen` ([DECISIONS.md](DECISIONS.md), ADR-0019).
-- Fehlen die Supabase-Umgebungsvariablen, lässt die Middleware Anfragen bewusst durch („fail open"), damit Preview und CI ohne Produktions-Secrets bauen können.
+Sessions laufen über Supabase-Auth-Cookies. Serverseitig wird die Identität immer mit `auth.getUser()` ermittelt, nie mit `auth.getSession()`: Letzteres liest nur die mitgeschickten Cookies und prüft die Signatur nicht nach.
 
-**Ist-Ziel-Abweichung:** Ein einheitliches Rollen- und Berechtigungsmodell existiert noch nicht. Admin-Prüfungen sind über einzelne Routen verteilt statt zentral. Die Vereinheitlichung ist Teil von Phase 1.
+**Drei Schichten, jede mit einer Aufgabe.** Die Trennung ist bewusst; Begründung in [DECISIONS.md](DECISIONS.md) ADR-0028.
+
+| Schicht | Datei | Aufgabe | Antwort bei Ablehnung |
+| --- | --- | --- | --- |
+| Anmeldung | `middleware.ts` | ist ein verifiziertes Konto vorhanden? Gilt für `/admin`, `/api/admin`, `/account` | Seiten: Weiterleitung zur passenden Anmeldung mit Rücksprungziel. API: 401 als JSON |
+| Berechtigung Seiten | `app/(admin)/layout.tsx` | Rollenprüfung für die **gesamte** Routengruppe, auch für künftige Seiten | Weiterleitung auf `/admin/login` oder `/unauthorized?grund=…` |
+| Berechtigung API | `requireAdminApi()` je Route | Rollenprüfung, in der CI durch `check:api-schutz` erzwungen | 401 / 403 / 503 als JSON, **nie** eine Weiterleitung |
+
+`/admin/login` liegt in der Gruppe `(public)` und ist von der Rollenprüfung ausgenommen – andernfalls entstünde eine Endlosschleife.
+
+**Das Rollenmodell steht an einer Stelle.** `lib/auth/roles.ts` enthält die sechs Rollen, ihre Rangfolge, den Bereichszugang und die Regeln der Rollenvergabe – ohne Next- und Supabase-Importe, damit die Regeln ohne Laufzeit prüfbar sind. `lib/auth/admin-access.ts` trifft die Zugangsentscheidung als reine Funktion, `lib/auth/admin-guard.ts` führt sie aus und protokolliert sie.
+
+Die Entscheidung unterscheidet drei Zustände der Rollenabfrage: Rolle vorhanden, keine Rolle hinterlegt, Abfrage fehlgeschlagen. Ein Ausfall führt nie zu einer Freigabe. Reguläre Quelle ist die Datenbankrolle; `ADMIN_ALLOWED_EMAILS` ist ein Notzugang aus exakten Adressen, dessen Nutzung protokolliert wird. Eine Domain erteilt keine Berechtigung ([DECISIONS.md](DECISIONS.md) ADR-0027).
+
+Weitere Punkte:
+
+- Nach Anmeldung, Registrierung, OAuth-Callback und Passwortwechsel führt der Weg auf `/reisen` ([DECISIONS.md](DECISIONS.md), ADR-0019).
+- Fehlen die Supabase-Umgebungsvariablen, sperrt die Middleware die geschützten Bereiche und protokolliert das. Bis Phase 1.3 liess sie in diesem Fall durch – ein Bereich, der bei fehlender Konfiguration aufgeht, ist das Gegenteil von Schutz.
+- Server-Actions sind eigene Eintrittspunkte und werden von keinem Layout geschützt; sie prüfen selbst.
+- Abmelden ist eine Server-Action, kein Pfad ([DECISIONS.md](DECISIONS.md), ADR-0023).
+
+**Ist-Ziel-Abweichung:** Die Rolle liegt weiterhin in `creator_profiles`, der Tabelle der alten Produktidee. Der Tabellenname steht nur in `ROLE_TABLE` in `lib/auth/admin-guard.ts`; das generische Profil folgt mit der Datenbank-Baseline in Phase 1.4.
 
 ---
 
@@ -110,16 +131,19 @@ RLS: Nur 2 der 10 Migrationen erwähnen Row Level Security. Der RLS-Zustand des 
 
 ## 7. API-Schicht
 
-Nach Phase 1.1 und 1.1b existieren **15** Route Handler. Zuvor waren es 77.
+Nach Phase 1.1, 1.1b und 1.3 existieren **14** Route Handler. Zuvor waren es 77.
 
 | Endpunkt | Zweck | Status |
 | --- | --- | --- |
-| `app/auth/refresh` | Session-Erneuerung | V2-relevant |
 | `api/search/airports` | Flughafendaten | für Flüge in Phase 3 vorgesehen |
 | `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
 | `api/admin/security/*` (8) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
 
-Entfernt wurden 62 Endpunkte: alle KI- und Modell-Endpunkte, die Media- und Video-Render-Pipeline, Creator-, Feed-, Session- und Publishing-Endpunkte, die Content-Endpunkte, die Infomaniak-DNS- und Mail-Automatisierung sowie mit Phase 1.1b die Alt-Suche `api/search`. Begründung und Umfang in [DECISIONS.md](DECISIONS.md), ADR-0014 und ADR-0018.
+Alle dreizehn Endpunkte unter `api/admin` prüfen die Berechtigung über `requireAdminApi()`; `npm run check:api-schutz` erzwingt das in der CI. Lesende Endpunkte verlangen den Bereichszugang ab `moderator`, eingreifende (Rückerstattung, Sperren, Entsperren) mindestens `operator`.
+
+`app/auth/refresh` ist mit Phase 1.3 entfallen. Der Endpunkt sollte Sessions erneuern, konnte es aber nie: Sein Cookie-Adapter gab für jeden Namen `undefined` zurück und verwarf jedes Schreiben.
+
+Entfernt wurden 63 Endpunkte: alle KI- und Modell-Endpunkte, die Media- und Video-Render-Pipeline, Creator-, Feed-, Session- und Publishing-Endpunkte, die Content-Endpunkte, die Infomaniak-DNS- und Mail-Automatisierung sowie mit Phase 1.1b die Alt-Suche `api/search`. Begründung und Umfang in [DECISIONS.md](DECISIONS.md), ADR-0014 und ADR-0018.
 
 **Grundsatz für neue Endpunkte:** Kein Endpunkt ist standardmäßig offen. Die Prüfliste steht in [AGENTS.md](AGENTS.md) Regel 15.
 
@@ -183,12 +207,14 @@ Aktuell nur Konsolen-Logging, kein zentrales Error-Tracking und keine strukturie
 
 | Thema | Ausmaß | Einordnung |
 | --- | --- | --- |
-| Fehlende Baseline-Migration | 37 Tabellen ohne Versionierung | Phase 1, blockierend |
-| Zwei Supabase-Typdateien | 37 vs. 3 Tabellen | Phase 1 |
-| RLS-Zustand unbekannt | nicht aus dem Repo ableitbar | Phase 1, sicherheitsrelevant |
-| Keine automatisierten Tests | 0 Test-Dateien im Repo | Phase 1 beginnend |
+| Fehlende Baseline-Migration | 37 Tabellen ohne Versionierung | Phase 1.4, blockierend – wartet auf den Development-Zugang |
+| ~~Zwei Supabase-Typdateien~~ | ~~37 vs. 3 Tabellen~~ | in Phase 1.2b zusammengeführt |
+| RLS-Zustand unbekannt | nicht aus dem Repo ableitbar | Phase 1.4, sicherheitsrelevant |
+| Tests nur für Rollen und Berechtigungen | 34 Tests, ohne Datenbank | RLS- und Persistenztests brauchen den Zugang aus Phase 1.4 |
 | `any`-Verwendung | ca. 309 Vorkommen in `app/`, `lib/`, `components/`, `types/` | überwiegend in Alt-Code; nur V2-relevante Stellen werden bereinigt |
-| Middleware schützt nur einen Pfad | 1 von vielen geschützten Bereichen | Phase 1 |
+| ~~Middleware schützt nur einen Pfad~~ | ~~1 von vielen geschützten Bereichen~~ | in Phase 1.3 auf `/admin`, `/api/admin` und `/account` erweitert |
+| Rolle liegt in `creator_profiles` | Tabelle der alten Produktidee | Phase 1.4; der Name steht nur an einer Stelle |
+| `admin_domains` im Schema | unbenutzt, widerspricht ADR-0027 | Phase 1.4, zu entfernen |
 | ~~Alt-Endpunkte ohne Kostenkontrolle~~ | ~~mehrere OpenAI-Endpunkte~~ | in Phase 1.1 durch Abschaltung gelöst |
 | ~~Alt-Oberflächen ohne funktionierende Endpunkte~~ | ~~Media Studio, Creator Hub, Admin Copilot, Feed, Blog~~ | in Phase 1.1b entfernt (209 Dateien) |
 | Alt-Tabellen in der Datenbank | u. a. `creator_uploads`, `session_media`, `blog_posts` | Bereinigung mit der Baseline in Phase 1.4 |
