@@ -19,6 +19,7 @@ import {
   Play,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { signOutAction } from '@/app/auth/sign-out'
 
 type Props = {
   /** Überschrift links (fallback: aus Breadcrumbs) */
@@ -364,14 +365,16 @@ export default function AdminTopbar({
                 >
                   <Settings className="h-4 w-4" /> Einstellungen
                 </Link>
-                <Link
-                  role="menuitem"
-                  href="/logout"
-                  className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-muted/60"
-                  onClick={() => setUserOpen(false)}
-                >
-                  <LogOut className="h-4 w-4" /> Abmelden
-                </Link>
+                <form action={signOutAction}>
+                  <button
+                    role="menuitem"
+                    type="submit"
+                    className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-muted/60"
+                    onClick={() => setUserOpen(false)}
+                  >
+                    <LogOut className="h-4 w-4" /> Abmelden
+                  </button>
+                </form>
               </div>
             )}
           </div>

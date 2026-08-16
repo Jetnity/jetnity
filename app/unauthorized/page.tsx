@@ -2,6 +2,7 @@
 export const dynamic = 'force-static'
 
 import Link from 'next/link'
+import { signOutAction } from '@/app/auth/sign-out'
 
 export default function UnauthorizedPage() {
   return (
@@ -14,9 +15,11 @@ export default function UnauthorizedPage() {
         <Link className="inline-flex min-h-11 items-center underline" href="/">
           Zur Startseite
         </Link>
-        <Link className="inline-flex min-h-11 items-center underline" href="/logout">
-          Abmelden
-        </Link>
+        <form action={signOutAction}>
+          <button type="submit" className="inline-flex min-h-11 items-center underline">
+            Abmelden
+          </button>
+        </form>
       </div>
     </main>
   )
