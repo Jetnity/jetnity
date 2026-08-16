@@ -18,7 +18,7 @@ let _sb: SupabaseClient<Database> | null = null;
 let _authListenerStarted = false;
 
 /** Memoized Browser-Client */
-export function getSupabaseBrowser(): SupabaseClient<Database> {
+function getSupabaseBrowser(): SupabaseClient<Database> {
   if (_sb) return _sb;
 
   const { url, anon } = getEnv();

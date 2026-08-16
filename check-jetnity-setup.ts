@@ -49,8 +49,9 @@ const mustExist = [
   'tsconfig.json',
   'lib/supabase/client.ts',
   'lib/supabase/server.ts',
+  // Die Schematypen liegen nur noch hier. Eine zweite, kleinere Fassung unter
+  // types/supabase.types.ts war ein veralteter Abzug ohne Importe.
   'types/supabase.ts',
-  'types/supabase.types.ts',
 ]
 
 const bannedPackages = [

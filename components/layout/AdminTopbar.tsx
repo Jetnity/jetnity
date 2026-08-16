@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { signOutAction } from '@/app/auth/sign-out'
+import { useAdminShell } from '@/app/(admin)/admin/layout'
 
 type Props = {
   /** Überschrift links (fallback: aus Breadcrumbs) */
@@ -51,8 +52,6 @@ function buildCrumbs(pathname: string) {
   return items
 }
 
-const THEME_LS_KEY = 'jetnity:theme' // 'light' | 'dark' | 'system'
-
 /* ───────────────────────── Component ───────────────────────── */
 
 export default function AdminTopbar({
@@ -67,23 +66,9 @@ export default function AdminTopbar({
   const crumbs = React.useMemo(() => buildCrumbs(pathname || '/'), [pathname])
   const heading = title ?? crumbs.at(-1)?.label ?? 'Admin'
 
-  // ---- Theme
-  const [isDark, setIsDark] = React.useState(false)
-  React.useEffect(() => {
-    const root = document.documentElement
-    const saved = (localStorage.getItem(THEME_LS_KEY) as 'light' | 'dark' | 'system' | null) || 'system'
-    const systemDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
-    const wantsDark = saved === 'dark' || (saved === 'system' && systemDark)
-    root.classList.toggle('dark', wantsDark)
-    setIsDark(wantsDark)
-  }, [])
-  const toggleTheme = () => {
-    const root = document.documentElement
-    const nowDark = !root.classList.contains('dark')
-    root.classList.toggle('dark', nowDark)
-    setIsDark(nowDark)
-    try { localStorage.setItem(THEME_LS_KEY, nowDark ? 'dark' : 'light') } catch {}
-  }
+  /* Das Dunkelthema haelt das Admin-Layout: Es raeumt die Klasse beim
+     Verlassen des Admin-Bereichs wieder ab. Die Kopfzeile schaltet nur um. */
+  const { isDark, toggleTheme } = useAdminShell()
 
   // ---- Notifications & User-Menü (A11y)
   const [notifOpen, setNotifOpen] = React.useState(false)

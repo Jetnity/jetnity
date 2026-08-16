@@ -231,7 +231,7 @@ Badge.displayName = 'Badge'
 
 /* ──────────────────────────────── Extras ──────────────────────────────── */
 
-export function BadgeDot({
+function BadgeDot({
   tone = 'neutral',
   className,
 }: {
@@ -248,24 +248,4 @@ export function BadgeDot({
     danger: 'bg-red-500',
   }
   return <span className={cn('mr-1 inline-block h-1.5 w-1.5 rounded-full', cls[tone], className)} />
-}
-
-export function BadgeGroup({
-  children,
-  max = 4,
-  className,
-}: {
-  children: React.ReactNode
-  max?: number
-  className?: string
-}) {
-  const arr = React.Children.toArray(children).filter(Boolean)
-  const visible = arr.slice(0, max)
-  const rest = arr.length - visible.length
-  return (
-    <div className={cn('flex flex-wrap items-center gap-1', className)}>
-      {visible}
-      {rest > 0 && <Badge size="xs" appearance="soft" tone="neutral">+{rest}</Badge>}
-    </div>
-  )
 }

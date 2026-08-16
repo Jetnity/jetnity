@@ -1,22 +1,16 @@
 // lib/supabase/server.ts
 import 'server-only'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
-import type { SupabaseClient, Session, User } from '@supabase/supabase-js'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import type { Database } from '@/types/supabase'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-const SUPABASE_SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY // optional (nur Server)
 
 function assertEnvAnon() {
   if (!SUPABASE_URL || !SUPABASE_ANON) {
     throw new Error('[supabase] NEXT_PUBLIC_SUPABASE_URL oder NEXT_PUBLIC_SUPABASE_ANON_KEY fehlt')
-  }
-}
-function assertEnvService() {
-  if (!SUPABASE_URL || !SUPABASE_SERVICE) {
-    throw new Error('[supabase] SUPABASE_SERVICE_ROLE_KEY fehlt (für Admin-Client)')
   }
 }
 
@@ -92,31 +86,20 @@ export function createServerActionClient<Db = Database>(): SupabaseClient<Db> {
   return client
 }
 
-/**
- * Admin-Client mit Service-Role (volle Rechte).
- * Nur serverseitig verwenden (Route-Handler / Server Actions)!
- */
-export function createAdminClient<Db = Database>(): SupabaseClient<Db> {
-  const store = cookies()
-  assertEnvService()
-  const client = createServerClient<Db>(SUPABASE_URL!, SUPABASE_SERVICE!, {
-    cookies: mutableCookiesAdapter(store),
-  }) as unknown as SupabaseClient<Db>
-  return client
-}
+/* Hier standen bis Phase 1.2b drei ungenutzte Helfer, die als Vorlage
+   gefaehrlich gewesen waeren:
 
-/* ───────────── Convenience ───────────── */
+   - `createAdminClient` erzeugte einen Client mit dem Service-Role-Key und
+     haengte ihm den mutierbaren Cookie-Adapter an. Ein Client mit vollen
+     Rechten darf keine Auth-Cookies der Besucherin lesen oder schreiben; er
+     gehoert ohne Sitzungsverwaltung aufgebaut.
+   - `getSessionServer`/`getUserServer` lasen die Identitaet aus
+     `auth.getSession()`. Auf dem Server prueft das die Signatur des Tokens
+     nicht nach, der Inhalt stammt aus dem Cookie. Wer serverseitig
+     entscheidet, muss `auth.getUser()` verwenden.
 
-export async function getSessionServer(): Promise<Session | null> {
-  const supabase = createServerComponentClient()
-  const { data } = await supabase.auth.getSession()
-  return data?.session ?? null
-}
-
-export async function getUserServer(): Promise<User | null> {
-  const session = await getSessionServer()
-  return session?.user ?? null
-}
+   Ein Service-Role-Zugang und ein einheitlicher Weg zur serverseitigen
+   Identitaet entstehen bewusst in der Auth-/RLS-Phase. */
 
 /* ───────────── Kompatibilitätsschicht ─────────────
    Viele Dateien importieren `createServerClient` direkt.

@@ -12,6 +12,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "next lint",
     "check:dead": "node scripts/erreichbarkeit.mjs",
+    "check:exports": "node scripts/exporte.mjs",
     "check:deps": "node scripts/pakete.mjs"
   },
   "dependencies": {

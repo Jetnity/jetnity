@@ -41,6 +41,9 @@ jobs:
       - name: Unerreichbarer Code
         run: npm run check:dead
 
+      - name: Exporte ohne Aufrufer
+        run: npm run check:exports
+
       - name: Ungenutzte Pakete
         run: npm run check:deps
 

@@ -110,7 +110,7 @@ function toIsoDate(value: Date) {
   return value.toISOString().slice(0, 10)
 }
 
-export function buildTripDays(startDate: string, endDate: string): TripDay[] {
+function buildTripDays(startDate: string, endDate: string): TripDay[] {
   const start = toUtcDate(startDate)
   const end = toUtcDate(endDate)
 

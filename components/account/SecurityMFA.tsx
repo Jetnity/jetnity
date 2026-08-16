@@ -262,9 +262,14 @@ export default function SecurityMFA() {
                   <div className="font-medium">Schritt 1: QR-Code scannen</div>
                 </div>
                 {enrollQr?.startsWith("data:") ? (
+                  // Der QR-Code kommt als Data-URL aus der Anmeldung bei
+                  // Supabase. next/image kann daran nichts optimieren – es
+                  // gibt keine Quelle zum Abrufen und keine Groessen zum
+                  // Aushandeln –, wuerde aber einen Ladeumweg einbauen.
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={enrollQr}
-                    alt="TOTP QR"
+                    alt="QR-Code zum Einrichten der Zwei-Faktor-Anmeldung"
                     className="mx-auto h-40 w-40 rounded-lg border bg-white p-2"
                   />
                 ) : enrollUri ? (

@@ -5,16 +5,18 @@ import { usePathname } from 'next/navigation'
 import SkipToContentLink from '@/components/layout/SkipToContentLink'
 import AdminSidebar from '@/components/layout/AdminSidebar'
 import AdminTopbar from '@/components/layout/AdminTopbar'
+import { applyDark, readThemeMode, resolveDark, storeThemeMode } from '@/lib/admin/theme'
 
 /* ───────────────────────── Admin Shell Context ─────────────────────────
-   Optional für Sidebar/Topbar: liefert collapsed-Status & Toggle.
-   (Bricht nichts, wenn ungenutzt – aber bereit für spätere Upgrades.) */
+   Liefert Sidebar-Status und das Dunkelthema an Sidebar/Topbar. */
 type AdminShellCtx = {
   collapsed: boolean
   toggleCollapsed: () => void
   setCollapsed: (v: boolean) => void
   openDrawer: () => void
   closeDrawer: () => void
+  isDark: boolean
+  toggleTheme: () => void
 }
 export const AdminShellContext = React.createContext<AdminShellCtx | null>(null)
 export function useAdminShell() {
@@ -36,6 +38,28 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       const raw = localStorage.getItem(LS_KEY)
       if (raw === '1') setCollapsed(true)
     } catch { /* ignore */ }
+  }, [])
+
+  /* Dunkelthema: nur im Admin.
+     Das Layout haelt es, weil es beim Verlassen des Admin-Bereichs abgebaut
+     wird und die Klasse dann wieder von <html> nehmen kann. Ohne dieses
+     Aufraeumen bliebe sie beim Wechsel auf eine oeffentliche Seite stehen –
+     die Navigation im App Router tauscht das Dokument nicht aus – und die
+     hellen V2-Seiten wuerden mit den dunklen Tokens gezeichnet. */
+  const [isDark, setIsDark] = React.useState(false)
+  React.useEffect(() => {
+    const dark = resolveDark(readThemeMode())
+    applyDark(dark)
+    setIsDark(dark)
+    return () => applyDark(false)
+  }, [])
+  const toggleTheme = React.useCallback(() => {
+    setIsDark((vorher) => {
+      const jetzt = !vorher
+      applyDark(jetzt)
+      storeThemeMode(jetzt ? 'dark' : 'light')
+      return jetzt
+    })
   }, [])
 
   // Persist collapsed state
@@ -126,7 +150,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <AdminShellContext.Provider
-      value={{ collapsed, toggleCollapsed, setCollapsed, openDrawer, closeDrawer }}
+      value={{ collapsed, toggleCollapsed, setCollapsed, openDrawer, closeDrawer, isDark, toggleTheme }}
     >
       {/* A11y: Skip to main content */}
       <SkipToContentLink targetId="admin-content" />
@@ -159,11 +183,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* App shell */}
         <div className={`mx-auto grid ${gridCols} md:gap-0`} role="application" aria-label="Jetnity Admin">
           {/* Desktop sidebar */}
+          {/* Kein aria-expanded: Die implizite Rolle complementary kennt es
+              nicht, Hilfsmittel ignorieren es hier. Den Zustand meldet die
+              Schaltflaeche oben ueber aria-pressed. */}
           <aside
             className={`hidden md:block ${sidebarW} border-r bg-background`}
             data-collapsed={collapsed ? 'true' : 'false'}
             aria-label="Admin Navigation"
-            aria-expanded={!collapsed}
           >
             <div className="h-dvh sticky top-0 overflow-y-auto">
               <AdminSidebar />
