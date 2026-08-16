@@ -312,6 +312,40 @@ Eine hier dokumentierte, freigegebene Entscheidung hat Vorrang vor bestehendem C
 
 ---
 
+## ADR-0018 – Alt-Oberflächen werden entfernt, das Admin-Grundgerüst bleibt
+
+**Datum:** 16. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Die Oberflächen der alten Produktidee werden vollständig entfernt: Creator Hub, Creator Dashboard, Creator Analytics, Media Studio, Creator-Story, Feed, Blog, Story, die Alt-Suchseite samt `api/search`, Admin-Copilot, Copilot-Kommandopaletten, Control-Center und die Domains-Oberfläche. Die Admin-Bereiche für Nutzer, Inhalte, Analytics, Marketing, Zahlungen, Security, Einstellungen und Lokalisierung bleiben bestehen.
+
+**Kontext:** Phase 1.1 hat 61 Endpunkte abgeschaltet. Die zugehörigen Oberflächen blieben stehen und liefen dadurch in Fehler. Sie waren zusätzlich über Navigation, Footer und Login-Weiterleitungen erreichbar und bewarben ein Produkt, das es nicht mehr gibt.
+
+**Alternativen:** Alt-Oberflächen stehen lassen und nur ausblenden; oder zusätzlich das gesamte Admin-System entfernen.
+
+**Begründung:** Ausblenden hätte toten Code, tote Abhängigkeiten und irreführende Texte erhalten, ohne Nutzen. Das Admin-Grundgerüst dagegen ist in der Vision Abschnitt 14 ausdrücklich vorgesehen; seine Entfernung wäre eine Produktentscheidung ohne Freigabe. Payments und Security bleiben zusätzlich durch ADR-0010 geschützt.
+
+**Konsequenzen:** 209 Dateien entfernt, sechs Pakete deinstalliert. Der wiederherstellbare Stand liegt auf `archive/pre-1-1b-alt-ui`. Die Datenbank behält vorerst Alt-Tabellen (`creator_uploads`, `session_media`, `blog_posts` und weitere); deren Bereinigung gehört zur Baseline in Phase 1.4 und ist bewusst nicht Teil dieses Schritts, weil sie Migrationen und RLS berührt.
+
+---
+
+## ADR-0019 – Nach der Anmeldung führt der Weg zu „Meine Reisen"
+
+**Datum:** 16. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Login, Registrierung, OAuth-Callback und Passwortwechsel leiten auf `/reisen`.
+
+**Kontext:** Alle vier Wege leiteten auf `/creator/creator-dashboard`. Diese Route ist mit Phase 1.1b entfernt; jede Anmeldung wäre in einer 404-Seite geendet.
+
+**Alternativen:** Startseite `/`; oder ein neues Konto-Dashboard bauen.
+
+**Begründung:** `/reisen` ist der einzige bestehende persönliche Bereich und entspricht dem freigegebenen Login-Untertitel „plane deine Reisen dort weiter, wo du aufgehört hast". Ein eigenes Konto-Dashboard wäre eine neue Oberfläche ohne Bedarf.
+
+**Konsequenzen:** Das Ziel liegt in beiden Formularen als benannte Konstante, damit ein späteres Konto-Dashboard an einer Stelle umgestellt werden kann. Die Übernahme vorhandener Gastreisen in das Konto bleibt Phase 1.5.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

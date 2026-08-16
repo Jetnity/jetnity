@@ -62,7 +62,8 @@ Es existieren getrennte Clients je Ausführungskontext. Die Auswahl ist nicht op
 
 - Sessions laufen über Supabase-Auth-Cookies und werden serverseitig gelesen.
 - `app/auth/refresh/route.ts` erneuert Sessions.
-- `middleware.ts` schützt derzeit **ausschließlich** `/creator/creator-dashboard`. Alle anderen Pfade werden ohne Prüfung durchgelassen; Autorisierung liegt damit in den einzelnen Routen und Seiten.
+- `middleware.ts` schützt derzeit **ausschließlich** `/account`. Alle anderen Pfade werden ohne Prüfung durchgelassen; Autorisierung liegt damit in den einzelnen Routen und Seiten. Bis Phase 1.1b zeigte der Schutz auf die entfernte Route `/creator/creator-dashboard` und wirkte damit nirgends.
+- Nach Anmeldung, Registrierung, OAuth-Callback und Passwortwechsel führt der Weg auf `/reisen` ([DECISIONS.md](DECISIONS.md), ADR-0019).
 - Fehlen die Supabase-Umgebungsvariablen, lässt die Middleware Anfragen bewusst durch („fail open"), damit Preview und CI ohne Produktions-Secrets bauen können.
 
 **Ist-Ziel-Abweichung:** Ein einheitliches Rollen- und Berechtigungsmodell existiert noch nicht. Admin-Prüfungen sind über einzelne Routen verteilt statt zentral. Die Vereinheitlichung ist Teil von Phase 1.
@@ -99,7 +100,7 @@ Bewusste Datenschutzregel: In diesem Speicher werden keine Passnummern, Ausweisk
 - `supabase/migrations/` enthält 10 Dateien. Diese erzeugen lediglich zwei Tabellen (`creator_alert_rules`, `creator_alert_events`) sowie mehrere RPCs und Views aus der alten Creator-Analytics-Welt.
 - Die generierten Typen in `types/supabase.ts` beschreiben dagegen **37 Tabellen**. Für den überwiegenden Teil des real existierenden Schemas gibt es also keine versionierte Migration.
 - Eine Datei ist unversioniert benannt: `<timestamp>_realtime_creator_session_metrics.sql`.
-- Es existieren **zwei konkurrierende Typdateien**: `types/supabase.ts` (37 Tabellen, von ca. 110 Dateien importiert) und `types/supabase.types.ts` (3 Tabellen, von 2 Dateien importiert).
+- Es existieren **zwei konkurrierende Typdateien**: `types/supabase.ts` (37 Tabellen, von 11 Dateien importiert) und `types/supabase.types.ts` (3 Tabellen, von 3 Dateien importiert).
 
 **Konsequenz:** Die Datenbank ist derzeit nicht reproduzierbar aufsetzbar. Eine vollständige Baseline-Migration und die Zusammenführung der Typdateien sind Voraussetzung für alles Weitere und in Phase 1 eingeplant.
 
@@ -109,17 +110,16 @@ RLS: Nur 2 der 10 Migrationen erwähnen Row Level Security. Der RLS-Zustand des 
 
 ## 7. API-Schicht
 
-Nach der Außerbetriebnahme in Phase 1.1 existieren **16** Route Handler. Zuvor waren es 77.
+Nach Phase 1.1 und 1.1b existieren **15** Route Handler. Zuvor waren es 77.
 
 | Endpunkt | Zweck | Status |
 | --- | --- | --- |
 | `app/auth/refresh` | Session-Erneuerung | V2-relevant |
 | `api/search/airports` | Flughafendaten | für Flüge in Phase 3 vorgesehen |
-| `api/search` | Suche über `creator_uploads` | Alt, hält die Alt-Suchseite funktionsfähig |
 | `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
 | `api/admin/security/*` (8) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
 
-Entfernt wurden 61 Endpunkte: alle KI- und Modell-Endpunkte, die Media- und Video-Render-Pipeline, Creator-, Feed-, Session- und Publishing-Endpunkte, die Content-Endpunkte sowie die Infomaniak-DNS- und Mail-Automatisierung. Begründung und Umfang in [DECISIONS.md](DECISIONS.md), ADR-0014.
+Entfernt wurden 62 Endpunkte: alle KI- und Modell-Endpunkte, die Media- und Video-Render-Pipeline, Creator-, Feed-, Session- und Publishing-Endpunkte, die Content-Endpunkte, die Infomaniak-DNS- und Mail-Automatisierung sowie mit Phase 1.1b die Alt-Suche `api/search`. Begründung und Umfang in [DECISIONS.md](DECISIONS.md), ADR-0014 und ADR-0018.
 
 **Grundsatz für neue Endpunkte:** Kein Endpunkt ist standardmäßig offen. Die Prüfliste steht in [AGENTS.md](AGENTS.md) Regel 15.
 
@@ -131,9 +131,7 @@ Es existiert **kein** Codepfad mehr, der ohne Nutzerinteraktion einen kostenpfli
 2. ein Generator-Aufruf im Server-Rendering von `app/search/page.tsx`, der bei jedem öffentlichen Aufruf mit `region`- oder `city`-Parameter eine DALL·E-3-Generierung auslöste – ohne Authentifizierung, Secret oder Rate Limit,
 3. die gesamte Generierungskette (`copilot-upload-checker`, `copilot-upload-generator`, `copilot-image`) sowie der Block `maybeGenerateCopilotUpload`.
 
-**Verbleibend, aber nicht automatisch:** `lib/openai/*` ist weiterhin aus Alt-Oberflächen des Media Studio und aus `lib/supabase/actions.ts` erreichbar. Diese Aufrufe erfordern eine bewusste Nutzerhandlung in einer Alt-Oberfläche und laufen nicht von selbst. Sie entfallen mit der Entfernung der Alt-UI.
-
-Hinweis für die Bewertung dieses Restrisikos: `lib/openai/generateStoryInsights.ts` besitzt keinen `server-only`-Schutz und wird von Client-Komponenten importiert. Der API-Key gelangt dadurch **nicht** in den Browser, weil Next.js nur `NEXT_PUBLIC_*`-Variablen ausliefert und keine solche Variable für OpenAI existiert. Die Funktion wäre im Browser lediglich funktionslos.
+Mit Phase 1.1b ist zusätzlich `lib/openai/*` entfernt und das Paket `openai` deinstalliert. Es existiert damit **kein** Codepfad mehr zu einem kostenpflichtigen Modell, auch nicht über eine Nutzerhandlung. Der Setup-Check verlangt keinen `OPENAI_API_KEY` mehr.
 
 ---
 
@@ -191,6 +189,7 @@ Aktuell nur Konsolen-Logging, kein zentrales Error-Tracking und keine strukturie
 | `any`-Verwendung | ca. 309 Vorkommen in `app/`, `lib/`, `components/`, `types/` | überwiegend in Alt-Code; nur V2-relevante Stellen werden bereinigt |
 | Middleware schützt nur einen Pfad | 1 von vielen geschützten Bereichen | Phase 1 |
 | ~~Alt-Endpunkte ohne Kostenkontrolle~~ | ~~mehrere OpenAI-Endpunkte~~ | in Phase 1.1 durch Abschaltung gelöst |
-| Alt-Oberflächen ohne funktionierende Endpunkte | Media Studio, Creator Hub, Admin Copilot, Feed, Blog | nächster Schritt: Alt-UI-Entfernung |
+| ~~Alt-Oberflächen ohne funktionierende Endpunkte~~ | ~~Media Studio, Creator Hub, Admin Copilot, Feed, Blog~~ | in Phase 1.1b entfernt (209 Dateien) |
+| Alt-Tabellen in der Datenbank | u. a. `creator_uploads`, `session_media`, `blog_posts` | Bereinigung mit der Baseline in Phase 1.4 |
 
 Bewusste Entscheidung: `any`-Vorkommen und Sicherheitslücken in Alt-Code werden **nicht** aufwendig refactored, wenn der betroffene Code kurzfristig entfernt wird ([DECISIONS.md](DECISIONS.md), ADR-0006).

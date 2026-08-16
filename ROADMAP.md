@@ -15,6 +15,7 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Phase 0 | V2-Basis, Build, CI, Design-Tokens, Dokumentation | **fertig** |
 | Querschnitt | Mobile- und Responsive-Qualität der V2-Seiten | **fertig** |
 | Phase 1.1 | Alt-Endpunkte und Cron-Jobs außer Betrieb | **fertig** |
+| Phase 1.1b | Alt-Oberflächen entfernen, Auth-Texte auf V2 | **fertig** |
 | Phase 1 (Rest) | V2-Sicherheit und Datenbasis | in Arbeit |
 | Phase 2 | Jetnity-Kern: natürliche Sprache zu strukturierter Reise | geplant |
 | Phase 3 | Reiseprodukte und Monetarisierung | geplant |
@@ -87,18 +88,30 @@ Von 77 Route Handlern wurden 61 entfernt, 16 bleiben. Alle vier Cron-Jobs sind e
 
 Bewusst behalten: `app/auth/refresh`, `api/search/airports`, `api/search`, `api/admin/payments/*`, `api/admin/security/*`.
 
-### 1.1b Alt-Oberflächen entfernen · als Nächstes
+### 1.1b Alt-Oberflächen entfernen · fertig
 
-Die Alt-UI ruft teilweise entfernte Endpunkte auf und zeigt dort jetzt Fehler. Sie wird als eigener Schritt entfernt, damit die Änderungen überprüfbar bleiben.
+Archiv-Tag vor der Löschung: `archive/pre-1-1b-alt-ui`. 209 Dateien entfernt, Typecheck, Lint und Production-Build grün. Details in [DECISIONS.md](DECISIONS.md), ADR-0018.
 
-- [ ] Media Studio (`components/creator/media-studio/*`) und zugehörige Seiten
-- [ ] Creator Hub, Creator Dashboard, Creator Analytics
-- [ ] Feed und Publishing-Oberflächen
-- [ ] Blog- und Story-Oberflächen, Alt-Suchseite (`app/search/*`) samt `api/search`
-- [ ] Admin-Copilot- und Domains-Oberflächen
-- [ ] danach entfallen `lib/openai/*`, `lib/media/*`, `lib/video/*`, `lib/intelligence/*` sowie `hls.js`, `html2pdf.js`, `exifr`
-- [ ] Links aus V2-Seiten prüfen: `app/(public)/error.tsx` und `app/(public)/not-found.tsx` verweisen auf `/search`
-- [ ] Alt-Texte auf den Auth-Seiten ersetzen: `/login` wirbt mit „Creator Login – Zugriff auf Dashboard, Media-Studio & Analytics", `/register` mit „Werde Jetnity Creator". Beides widerspricht der V2-Vision und ist öffentlich sichtbar. Neuer Text ist eine Produktentscheidung und wird vorgelegt.
+- [x] Media Studio, Creator Hub, Creator Dashboard, Creator Analytics, Creator-Story
+- [x] Feed- und Publishing-Oberflächen
+- [x] Blog- und Story-Oberflächen
+- [x] Alt-Suchseite (`app/search/*`) samt `api/search`; `api/search/airports` bleibt für die Flugintegration
+- [x] Admin-Copilot, Copilot-Kommandopaletten, Control-Center und Domains-Oberfläche
+- [x] `lib/openai`, `lib/media`, `lib/video`, `lib/intelligence`, `lib/supabase/actions*`, `lib/client`, `config/api.config.ts`
+- [x] Pakete entfernt: `hls.js`, `html2pdf.js`, `exifr`, `openai`, `sharp`, `marked`
+- [x] Fehler- und 404-Seiten in V2-Gestaltung, ohne Verweise auf Alt-Suche, Feed und Blog
+- [x] Auth-Seiten mit den freigegebenen V2-Texten, ohne Creator-, Media- und Analytics-Bezug
+- [x] Weiterleitungen nach Login, Registrierung, OAuth-Callback und Passwortwechsel gehen auf `/reisen`
+- [x] Sitemap ohne Story-URLs und ohne Supabase-Aufruf, `robots.txt` ohne tote Pfade
+- [x] Setup-Check verlangt keinen `OPENAI_API_KEY` mehr
+
+Dabei gefunden und mit behoben:
+
+- Login, Registrierung, OAuth-Callback und Passwortwechsel leiteten auf das entfernte Creator-Dashboard. Ohne diese Korrektur wäre jede Anmeldung in einer 404-Seite geendet.
+- Die Middleware schützte ausschliesslich `/creator/creator-dashboard`. Sie schützte damit nichts mehr, während `/account/security` ohne serverseitige Prüfung erreichbar war. Sie schützt jetzt `/account` und leitet auf `/login` mit Rücksprungziel. Die vollständige Vereinheitlichung bleibt Phase 1.3.
+- Die Sitemap veröffentlichte weiterhin `/story/<id>`-URLs aus `creator_sessions`.
+
+**Bewusst nicht entfernt:** Admin-Bereiche für Nutzer, Inhalte, Analytics, Marketing, Zahlungen, Security, Einstellungen und Lokalisierung. Sie gehören laut Vision Abschnitt 14 zum späteren Admin-System.
 
 ### 1.2 shadcn-Tokens auf die V2-Farbwelt umstellen · freigegeben
 
@@ -111,17 +124,15 @@ Die Production-Prüfung hat ergeben, welche V2-Oberflächen konkret betroffen si
 | Datei | Wirkung |
 | --- | --- |
 | `components/layout/SkipToContentLink.tsx` | erscheint bei Tastaturfokus auf **jeder** V2-Seite blau |
-| `app/(public)/error.tsx` | Buttons und Hover-Flächen blau/violett |
-| `app/(public)/not-found.tsx` | Buttons und Fokus-Ring blau |
-| `components/trips/MiniTripSlider.tsx` | Akzentflächen blau |
+| `components/ui/*` | Primitive (Button, Input, Checkbox) tragen die shadcn-Tokens, sichtbar auf `/login` und `/register` |
 
-Der Skip-Link ist der einzige Blau-Eintrag, der die regulären V2-Seiten erreicht. Er ist bis zum Tastaturfokus unsichtbar, aber für Tastaturnutzer sichtbar und damit vorrangig.
+`app/(public)/error.tsx`, `app/(public)/not-found.tsx` und `components/trips/MiniTripSlider.tsx` sind mit Phase 1.1b erledigt: die Fehlerseiten nutzen jetzt V2-Tokens, der Slider ist entfernt. Der Skip-Link ist damit der einzige Blau-Eintrag, der die regulären V2-Seiten erreicht. Er ist bis zum Tastaturfokus unsichtbar, aber für Tastaturnutzer sichtbar und damit vorrangig. Dazu kommen die Auth-Formulare, die über die `ui`-Primitive noch auf `--primary` liegen.
 
 ### 1.3 Auth, Rollen und Middleware vereinheitlichen
 
 - [ ] einheitliches Rollen- und Berechtigungsmodell
 - [ ] Admin-Prüfung zentralisieren statt pro Route
-- [ ] Middleware-Schutz über alle geschützten Bereiche statt nur `/creator/creator-dashboard`
+- [ ] Middleware-Schutz über alle geschützten Bereiche statt nur `/account`
 - [ ] generisches Traveller-Profil an Stelle des Creator-Profils
 
 ### 1.4 Datenbank-Baseline · blockierend für Phase 2
