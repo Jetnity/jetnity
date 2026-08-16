@@ -397,6 +397,23 @@ Eine hier dokumentierte, freigegebene Entscheidung hat Vorrang vor bestehendem C
 
 ---
 
+## ADR-0023 – Abmelden ist eine Server Action, kein Pfad
+
+**Datum:** 16. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Das Abmelden läuft über die Server Action `signOutAction` in `app/auth/sign-out.ts`, aufgerufen aus einem Formular. Einen Pfad `/logout` gibt es nicht.
+
+**Kontext:** `/unauthorized` und die Admin-Kopfzeile verwiesen beide per Link auf `/logout`. Diese Route existierte in keinem Stand des Projekts, beide Schaltflächen führten also auf die 404-Seite. Aufgefallen ist das erst bei der Kartierung der Alt-Oberflächen, weil die Responsive-Prüfung Layout misst und keine Linkziele auflöst.
+
+**Alternativen:** Eine Route `/logout` anlegen, die abmeldet und weiterleitet.
+
+**Begründung:** Ein Link, dessen Aufruf abmeldet, ist gefährlich: Next.js lädt Links im Sichtbereich voraus, und Browser sowie Sicherheitsscanner holen `GET`-Adressen ungefragt ab. Die Sitzung würde enden, ohne dass jemand geklickt hat. Ein Formular sendet `POST` und wird nicht vorausgeladen.
+
+**Konsequenzen:** Zwei Aufrufstellen umgestellt. Das Abmelden auf der Admin-Anmeldeseite hat weiterhin seine eigene Aktion, weil es dort auf `/admin/login` zurückführt statt auf die Startseite.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

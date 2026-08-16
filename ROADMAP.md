@@ -230,6 +230,7 @@ Je Kategorie zunächst genau ein Anbieter ([DECISIONS.md](DECISIONS.md), ADR-001
 - [ ] `jetnity.ch` und `jetnity.com` mit dem Vercel-Projekt verbinden – beide lösen derzeit nicht auf, Production läuft nur unter `jetnity-app.vercel.app`
 - [ ] End-to-End-Tests der MVP-Strecke
 - [ ] Browser-Kompatibilität und Prüfung auf echter iOS-/Android-Hardware (Responsive-Regeln siehe Querschnitt oben)
+- [ ] Rechtstexte: `/terms` und `/privacy` existieren nicht, die Registrierung verlinkt beide (siehe „Wartet auf Freigabe")
 
 ---
 
@@ -240,12 +241,15 @@ Je Kategorie zunächst genau ein Anbieter ([DECISIONS.md](DECISIONS.md), ADR-001
 | Phase 2 (Trip-Persistenz) | Datenbank-Baseline und Trip-Schema (1.4, 1.5) |
 | RLS-Tests | fehlende versionierte RLS-Definitionen (1.4) |
 | Aussagen zur DB-Sicherheit | Schema ist aus dem Repository nicht nachvollziehbar (1.4) |
+| Nutzungsbedingungen und Datenschutzerklärung | Inhalt ist eine rechtliche Entscheidung, nicht technisch ableitbar |
 
 ---
 
 ## Wartet auf Freigabe
 
-Derzeit nichts.
+**Nutzungsbedingungen und Datenschutzerklärung.** Der Zustimmungstext der Registrierung verlinkt `/terms` und `/privacy`. Beide Routen existieren nicht, beide Links führen auf die 404-Seite – also ausgerechnet dort, wo jemand vor dem Anlegen eines Kontos zustimmen soll. Der Inhalt ist eine rechtliche Entscheidung und wird nicht erfunden. Benötigt werden die freigegebenen Texte für DSGVO und CH-DSG; danach sind die beiden Seiten schnell angelegt. Bis dahin bleibt dies der einzige bekannte tote Link auf einer V2-Seite.
+
+Ebenfalls offen, weil an derselben Freigabe hängend: `components/layout/CookieConsent.tsx` ist vorhanden, wird nirgends eingebunden und verweist ebenfalls auf `/privacy`. Ob Jetnity einen Cookie-Hinweis braucht, ist eine rechtliche Frage; die Datei bleibt deshalb liegen, statt sie als toten Code zu entfernen.
 
 ---
 
