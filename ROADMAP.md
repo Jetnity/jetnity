@@ -209,12 +209,24 @@ Drei Helfer in `lib/supabase/server.ts` sind entfernt, weil sie als Vorlage gef�
 
 Lint ist seither ohne Warnung (vorher drei).
 
-### 1.3 Auth, Rollen und Middleware vereinheitlichen
+### 1.3 Auth, Rollen und Middleware vereinheitlichen · nächster Schritt
 
 - [ ] einheitliches Rollen- und Berechtigungsmodell
 - [ ] Admin-Prüfung zentralisieren statt pro Route
 - [ ] Middleware-Schutz über alle geschützten Bereiche statt nur `/account`
 - [ ] generisches Traveller-Profil an Stelle des Creator-Profils
+
+Bestandsaufnahme vom 16. August 2026. Alle neun Admin-Seiten und alle dreizehn Admin-API-Routen rufen `requireAdmin()`, es ist also derzeit keine Fläche ungeschützt. Die Art des Schutzes trägt aber vier Probleme:
+
+**1. Die E-Mail-Domain umgeht das Rollenmodell.** `lib/auth/requireAdmin.ts` lässt durch, wenn die Rolle passt **oder** die E-Mail-Adresse auf `@jetnity.com` endet. Ist `ADMIN_ALLOWED_EMAILS` nicht gesetzt – und in `.env.example` steht es nicht –, genügt eine beliebige Adresse dieser Domain für vollen Admin-Zugriff, unabhängig von jedem Datenbankeintrag. Da die Rollenabfrage Fehler verschluckt (`catch { role = null }`), ist die Domain bei einer Datenbankstörung sogar der einzige verbleibende Weg hinein. Ob eine E-Mail-Freigabe überhaupt bleiben soll, ist eine Entscheidung: als Notzugang nachvollziehbar, als Dauerzustand ein zweites, unversioniertes Berechtigungssystem neben der Datenbank.
+
+**2. Der Schutz ist opt-in.** Es gibt keine Prüfung im Layout, jede Seite prüft selbst. Das Admin-Layout ist eine Client-Komponente und kann es nicht – eine serverseitige Prüfung braucht dort eine Server-Komponente darüber. Eine neue Admin-Seite ohne den Aufruf wäre öffentlich, und nichts hält das auf.
+
+**3. `requireAdmin()` leitet um, auch in API-Routen.** `redirect()` in einem Route Handler erzeugt eine 307-Antwort statt 401/403. Der Zugriff wird verhindert, aber ein `fetch` bekommt eine Weiterleitung auf HTML statt eines Fehlers. Seiten und Schnittstellen brauchen getrennte Varianten.
+
+**4. Die Rollen stehen an vier Stellen, mit unterschiedlichen Teilmengen.** `requireAdmin.ts`, `admin/users/page.tsx` (zweimal: `ROLES` und eine engere Torliste), `admin/users/actions.ts` und `components/admin/UsersTable.tsx` führen je eigene Listen. Eine Rolle zu ergänzen heisst heute, vier Stellen zu finden.
+
+Dazu kommt: Die Rolle liegt in `creator_profiles` – der Tabelle der alten Produktidee. Das generische Profil hängt an der Datenbank-Baseline (1.4) und braucht eine Migration; die Punkte 1 bis 4 sind davon unabhängig und können vorher erledigt werden.
 
 ### 1.4 Datenbank-Baseline · blockierend für Phase 2
 
