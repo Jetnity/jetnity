@@ -1,10 +1,12 @@
 // app/api/admin/security/list/route.ts
 import { NextResponse } from 'next/server'
-import { requireAdmin } from '@/lib/auth/requireAdmin'
+import { requireAdminApi } from '@/lib/auth/admin-guard'
 import { createServerComponentClient } from '@/lib/supabase/server'
 
 export async function GET() {
-  await requireAdmin()
+  const gate = await requireAdminApi({ surface: 'api/security/list' })
+  if (!gate.ok) return gate.response
+
   const sb = createServerComponentClient() as any
 
   const since = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString()

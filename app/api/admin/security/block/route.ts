@@ -1,10 +1,12 @@
 // app/api/admin/security/block/route.ts
 import { NextResponse } from 'next/server'
-import { requireAdmin } from '@/lib/auth/requireAdmin'
+import { requireAdminApi } from '@/lib/auth/admin-guard'
 import { createServerComponentClient } from '@/lib/supabase/server'
 
 export async function POST(req: Request) {
-  await requireAdmin()
+  const gate = await requireAdminApi({ surface: 'api/security/block', minimumRole: 'operator' })
+  if (!gate.ok) return gate.response
+
   const { ip, minutes, reason } = await req.json().catch(() => ({} as any))
 
   if (!ip || typeof ip !== 'string') {
