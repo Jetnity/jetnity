@@ -14,6 +14,21 @@ html, body {
 * { -webkit-tap-highlight-color: transparent; }
 html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
+/* -----------------------------------------------------------------------------
+   Klebender Kopfbereich und vom Browser ausgeloestes Scrollen
+
+   Der oeffentliche Kopfbereich klebt am oberen Rand. Springt der Browser ein
+   Ziel an – Sprungmarke wie /#entdecken, Fokus per Tastatur, scrollIntoView –
+   richtet er es standardmaessig an der Oberkante des Viewports aus und der
+   Kopfbereich verdeckt es. `scroll-padding-top` verschiebt diese Ausrichtung.
+----------------------------------------------------------------------------- */
+:root {
+  --jet-header-h: 73px;
+}
+html {
+  scroll-padding-top: calc(var(--jet-header-h) + env(safe-area-inset-top) + 1rem);
+}
+
 /* Textauswahl */
 ::selection { background-color: rgb(0 0 0 / 0.12); }
 .dark ::selection { background-color: rgb(255 255 255 / 0.16); }
@@ -201,6 +216,41 @@ html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 
   /* Typo polish */
   h1,h2,h3 { letter-spacing: -0.02em; }
+
+  /* ---------------------------------------------------------------------------
+     Formularfelder duerfen schrumpfen.
+
+     Eingabefelder tragen eine inhaltsbasierte Mindestbreite: Textfelder aus
+     der Standardgroesse von 20 Zeichen, Zahlenfelder zusaetzlich aus den
+     Spinner-Tasten, Datums- und Zeitfelder aus dem nativen Steuerelement.
+     WebKit auf iOS setzt diese Breite deutlich hoeher als Chromium. In Grid-
+     und Flex-Layouts wird daraus die automatische Mindestgroesse des Elements:
+     die Spur waechst mit, das Layout wird breiter als der Viewport oder der
+     Inhalt wird beschnitten.
+
+     Deshalb wird die Mindestbreite global aufgehoben. Die tatsaechliche Breite
+     kommt aus dem Layout (in der Regel w-full).
+  --------------------------------------------------------------------------- */
+  input, select, textarea { min-width: 0; }
+
+  /* iOS zentriert den Wert von Datums- und Zeitfeldern und reserviert dafuer
+     zusaetzliche Breite. Ohne diese Normalisierung stehen Wert und Platzhalter
+     nicht auf einer Linie mit den uebrigen Feldern. */
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  input[type="month"] {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input[type="date"]::-webkit-date-and-time-value,
+  input[type="time"]::-webkit-date-and-time-value,
+  input[type="datetime-local"]::-webkit-date-and-time-value,
+  input[type="month"]::-webkit-date-and-time-value {
+    text-align: left;
+    margin: 0;
+    min-width: 0;
+  }
 }
 
 /* High-Contrast / Forced Colors support */

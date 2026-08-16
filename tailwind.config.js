@@ -1,3 +1,5 @@
+const plugin = require("tailwindcss/plugin")
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -9,6 +11,14 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        // Flache Viewports: Telefone im Querformat und Fenster, in denen die
+        // Browserleisten viel Hoehe kosten. Grosse Mindesthoehen aus dem
+        // Hochformat wuerden dort ueber den Bildschirm hinausreichen.
+        // Bewusst nach den Breiten-Breakpoints ergaenzt, damit `short:` eine
+        // vorher gesetzte `sm:`-Hoehe uebersteuern kann.
+        short: { raw: '(max-height: 560px)' },
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
@@ -105,8 +115,15 @@ module.exports = {
     },
   },
   plugins: [
-    require("@tailwindcss/typography"), // für .prose (Blog/Markdown)
+    require("@tailwindcss/typography"), // für .prose (Markdown)
     require("tailwind-scrollbar-hide"),
     require("tailwindcss-animate"),
+    // Zeigegerät statt Breakpoint: Telefone und Tablets bleiben auch im
+    // Querformat Touch-Geräte. Nur Geräte mit Maus erhalten die kompaktere
+    // Variante (Schriftgröße in Feldern, kleinere Trefferflächen).
+    plugin(({ addVariant }) => {
+      addVariant("pointer-fine", "@media (hover: hover) and (pointer: fine)")
+      addVariant("pointer-coarse", "@media (pointer: coarse)")
+    }),
   ],
 }
