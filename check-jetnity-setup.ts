@@ -203,10 +203,8 @@ function checkPackageJson() {
   }
   const dep = (n: string) => pkg.dependencies?.[n] || pkg.devDependencies?.[n] || null
   const next = dep('next')
-  const openai = dep('openai')
   const ssr = dep('@supabase/ssr')
   next ? log.ok(`next ${next}`) : warn('next nicht gefunden')
-  openai ? log.ok(`openai ${openai}`) : warn('openai nicht gefunden')
   ssr ? log.ok(`@supabase/ssr ${ssr}`) : warn('@supabase/ssr nicht gefunden')
 }
 
@@ -254,7 +252,6 @@ function checkEnv() {
     const keys = [
       'NEXT_PUBLIC_SUPABASE_URL',
       'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-      'OPENAI_API_KEY',
       // optional:
       'SUPABASE_SERVICE_ROLE_KEY',
       'NEXT_PUBLIC_APP_URL',
