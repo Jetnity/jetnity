@@ -76,9 +76,20 @@ Messumgebung erweitert:
 
 Damit gefunden und behoben:
 
+- [x] Der Kopfbereich der Reise war auf jeder Telefonbreite **566 px** breit und wurde vom `overflow-hidden` seiner eigenen Sektion abgeschnitten. Auf 320 px verschwanden 262 px Inhalt rechts, ohne dass die Seite waagrecht scrollte – genau das Bild, das auf dem iPhone berichtet wurde. Die alte Messung bestand hier, weil `scrollWidth === clientWidth` durch das Abschneiden erfüllt blieb
 - [x] Beschriftungen mit Symbol stellten das Symbol **über** den Text, auf `/login`, `/register` und beim Passwortwechsel. Ursache: `svg { display: block }` aus der Preflight im gemeinsamen Textelement der Beschriftung
 - [x] Der Untergrund des Dokuments trug einen blau-violetten Verlauf aus der alten Gestaltung, sichtbar beim Überdehnen des Scrollbereichs auf iOS und unterhalb kurzer Seiten wie der 404-Seite
 - [x] `/unauthorized` und `/admin/login` waren nie geprüft: zu kleine Trefferflächen, Felder unter 16 px
+
+Abschlussmessung gegen Production, je Breite Production gegen den Zweig, gemessen wird herausragender und abgeschnittener Inhalt statt nur Seiten-Overflow:
+
+| Seite | Production | Zweig |
+| --- | --- | --- |
+| `/reisen/[tripId]` 280 px | 11 herausragend, 9 abgeschnitten | 0 / 0 |
+| `/reisen/[tripId]` 320 px | 11 herausragend, 9 abgeschnitten | 0 / 0 |
+| `/reisen/[tripId]` 390 px | 7 herausragend, 8 abgeschnitten | 0 / 0 |
+| `/planen` mit 200-px-Datumsfeldern | 0 / 0 | 0 / 0 |
+| `/login`, `/register` | 0 / 0 | 0 / 0 |
 
 **Offen:** Verifikation auf echter iOS- und Android-Hardware. Geprüft wurde unter WebKit und Chromium mit den obigen Viewports.
 
