@@ -53,6 +53,13 @@ Vollständiger Qualitätspass über alle V2-Seiten. Regeln in [DESIGN_SYSTEM.md]
 - [x] Safe-Area-Insets für Kopfzeile, Footer und fixierte Elemente
 - [x] gemessen auf 280, 300, 320, 360, 375, 390, 430, 768, 1280 px sowie Landscape 844×390 und 667×375
 
+Nachtrag nach dem Merge, gefunden bei der Messung gegen Production: `/login` und `/register` liefen lokal mangels Supabase-Variablen in die Fehlerseite und waren deshalb nie real vermessen. In Production zeigten sich drei Fehler, alle behoben.
+
+- [x] Zustimmungstext der Registrierung verbreiterte die Seite um bis zu 207 px (`truncate` im `Label`-Primitiv erzwang eine Zeile)
+- [x] doppelter Passwort-Umschalter in beiden Formularen entfernt, das `Input`-Primitiv bringt ihn mit
+- [x] Icons in Absende- und Social-Buttons rutschten in eine eigene Zeile, jetzt über `leftIcon`/`rightIcon`
+- [x] Google-Icon vereinheitlicht, die Registrierung trug einen unvollständigen Pfad
+
 **Offen:** Verifikation auf echter iOS- und Android-Hardware. Geprüft wurde in Chromium mit den obigen Viewports.
 
 ---
@@ -91,6 +98,7 @@ Die Alt-UI ruft teilweise entfernte Endpunkte auf und zeigt dort jetzt Fehler. S
 - [ ] Admin-Copilot- und Domains-Oberflächen
 - [ ] danach entfallen `lib/openai/*`, `lib/media/*`, `lib/video/*`, `lib/intelligence/*` sowie `hls.js`, `html2pdf.js`, `exifr`
 - [ ] Links aus V2-Seiten prüfen: `app/(public)/error.tsx` und `app/(public)/not-found.tsx` verweisen auf `/search`
+- [ ] Alt-Texte auf den Auth-Seiten ersetzen: `/login` wirbt mit „Creator Login – Zugriff auf Dashboard, Media-Studio & Analytics", `/register` mit „Werde Jetnity Creator". Beides widerspricht der V2-Vision und ist öffentlich sichtbar. Neuer Text ist eine Produktentscheidung und wird vorgelegt.
 
 ### 1.2 shadcn-Tokens auf die V2-Farbwelt umstellen · freigegeben
 
@@ -227,4 +235,4 @@ Ideen ohne Termin, dokumentiert damit sie nicht verloren gehen.
 - gemeinsame Reiseplanung mit mehreren Personen
 - Offline-fähiger Cache mit Konfliktauflösung
 - strukturierte Log-Konvention ohne sensible Nutzerdaten
-- automatisierte Responsive-Regression in der CI: Seiten auf den Referenzbreiten laden und horizontales Overflow sowie abgeschnittene Inhalte prüfen. Benötigt einen Browser im CI-Lauf und damit zusätzliche Laufzeit, deshalb bewusst noch nicht eingebaut.
+- automatisierte Responsive-Regression in der CI: Seiten auf den Referenzbreiten laden und horizontales Overflow sowie abgeschnittene Inhalte prüfen. Benötigt einen Browser im CI-Lauf und damit zusätzliche Laufzeit, deshalb bewusst noch nicht eingebaut. Wichtig dabei: Seiten, die ohne Supabase-Variablen in die Fehlerseite laufen, werden sonst scheinbar fehlerfrei gemessen – der Lauf braucht Platzhalter-Variablen und eine Prüfung, dass die echte Seite gerendert wurde.

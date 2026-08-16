@@ -183,7 +183,15 @@ Große Schriftgrade werden unterhalb `sm` (640 px) reduziert, darüber bleiben s
 
 Felder tragen unterhalb `sm` mindestens **16 px** Schriftgröße (`text-base sm:text-sm`). Kleinere Werte lösen auf iOS beim Fokus einen automatischen Zoom aus, der das Layout verschiebt.
 
-### 7.7 Safe Area
+Jedes Feld hat genau ein Bedienelement pro Funktion. Das `Input`-Primitiv bringt für `type="password"` bereits einen Umschalter mit; Formulare bauen keinen zweiten daneben.
+
+### 7.7 Beschriftungen
+
+Das `Label`-Primitiv kürzt einzeilige Feldnamen mit Ellipse. Satzlanger Text – etwa eine Einwilligung mit Links – bekommt `multiline` und bricht dann um. Ohne das erzwingt `truncate` eine Zeile, die die Seite verbreitert und Linktext unerreichbar macht.
+
+Icons in Buttons gehören in `leftIcon` bzw. `rightIcon`. Innerhalb der Beschriftung platziert, rutschen sie auf schmalen Breiten in eine eigene Zeile.
+
+### 7.8 Safe Area
 
 `viewport-fit` bleibt bewusst auf `auto`. iOS begrenzt den Viewport damit selbst auf den sicheren Bereich, Inhalte geraten nicht unter Notch oder Home-Indikator. `cover` würde diesen Schutz abschalten und Randabstände in jeder Sektion nötig machen – ohne Gewinn, da die V2-Sektionen ohnehin mit Außenabstand als Karten liegen.
 
