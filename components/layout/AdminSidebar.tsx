@@ -38,17 +38,14 @@ const SECTIONS: NavSection[] = [
     label: 'Übersicht',
     items: [
       { label: 'Dashboard', href: '/admin', icon: LayoutDashboard, title: 'Startübersicht' },
-      { label: 'Control Center', href: '/admin/control-center', icon: Activity, title: 'Systemzentrale & Metriken' },
-      { label: 'CoPilot Pro', href: '/admin/copilot', icon: Bot, title: 'KI Steuerzentrale' },
+      { label: 'Analytics', href: '/admin/analytics', icon: Activity, title: 'Berichte & Metriken' },
     ],
   },
   {
     label: 'Verwaltung',
     items: [
-      { label: 'Nutzer & Creator', href: '/admin/users', icon: Users },
-      { label: 'Inhalte & Uploads', href: '/admin/content', icon: FolderKanban },
-      // ↑ Route existiert bereits. Falls du /review willst, leg /admin/media-studio/review/page.tsx an.
-      { label: 'Medien-Studio', href: '/admin/media-studio', icon: Images, title: 'KI-Medien & Reviews' },
+      { label: 'Nutzer', href: '/admin/users', icon: Users },
+      { label: 'Inhalte', href: '/admin/content', icon: FolderKanban },
     ],
   },
   {
@@ -63,7 +60,6 @@ const SECTIONS: NavSection[] = [
   {
     label: 'Sicherheit & Settings',
     items: [
-      { label: 'Domains & E-Mail', href: '/admin/domains-email', icon: Globe, title: 'DNS & Mail' }, // ← hinzugefügt
       { label: 'Security', href: '/admin/security', icon: ShieldCheck },
       { label: 'Einstellungen', href: '/admin/settings', icon: Settings },
     ],

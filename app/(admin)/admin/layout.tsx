@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'
 import SkipToContentLink from '@/components/layout/SkipToContentLink'
 import AdminSidebar from '@/components/layout/AdminSidebar'
 import AdminTopbar from '@/components/layout/AdminTopbar'
-import CommandPalette from '@/components/admin/CommandPalette' // ⟵ Neu
 
 /* ───────────────────────── Admin Shell Context ─────────────────────────
    Optional für Sidebar/Topbar: liefert collapsed-Status & Toggle.
@@ -225,7 +224,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
 
       {/* ⌘/Ctrl+K – globale Befehlspalette */}
-      <CommandPalette />
     </AdminShellContext.Provider>
   )
 }
