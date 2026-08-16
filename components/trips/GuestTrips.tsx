@@ -30,7 +30,7 @@ export default function GuestTrips() {
 
   if (!ready) {
     return (
-      <div aria-busy="true" className="grid gap-4 sm:grid-cols-2">
+      <div aria-busy="true" className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="h-52 animate-pulse rounded-[26px] bg-white/70" />
         <div className="h-52 animate-pulse rounded-[26px] bg-white/70" />
       </div>
@@ -61,30 +61,30 @@ export default function GuestTrips() {
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {trips.map((trip) => (
         <Link
           key={trip.id}
           href={`/reisen/${trip.id}` as Route}
-          className="group rounded-[26px] border border-black/5 bg-white p-5 shadow-[0_16px_50px_rgba(15,46,42,0.06)] transition hover:-translate-y-1 hover:shadow-[0_22px_60px_rgba(15,46,42,0.11)]"
+          className="group min-w-0 rounded-[26px] border border-black/5 bg-white p-5 shadow-[0_16px_50px_rgba(15,46,42,0.06)] transition hover:-translate-y-1 hover:shadow-[0_22px_60px_rgba(15,46,42,0.11)]"
         >
-          <div className="flex items-start justify-between gap-4">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-surface-100 text-brand-600">
+          <div className="flex items-start justify-between gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-surface-100 text-brand-600">
               <MapPin className="h-5 w-5" />
             </span>
-            <ArrowRight className="h-5 w-5 text-ink-600 transition group-hover:translate-x-1 group-hover:text-brand-600" />
+            <ArrowRight className="h-5 w-5 shrink-0 text-ink-600 transition group-hover:translate-x-1 group-hover:text-brand-600" />
           </div>
           <h2 className="mt-6 break-words text-xl font-semibold tracking-[-0.03em] text-brand-800">
             {trip.title}
           </h2>
           <p className="mt-1 break-words text-sm text-ink-700">ab {trip.origin}</p>
           <div className="mt-5 grid gap-2 border-t border-line-100 pt-4 text-xs text-ink-800">
-            <span className="flex items-center gap-2">
-              <CalendarDays className="h-3.5 w-3.5 text-brand-600" />
+            <span className="flex min-w-0 items-start gap-2">
+              <CalendarDays className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-600" />
               {formatDate(trip.startDate)} – {formatDate(trip.endDate)}
             </span>
-            <span className="flex items-center gap-2">
-              <Users className="h-3.5 w-3.5 text-brand-600" />
+            <span className="flex min-w-0 items-start gap-2">
+              <Users className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-600" />
               {trip.travelers} {trip.travelers === 1 ? 'Person' : 'Personen'}
             </span>
           </div>

@@ -34,6 +34,22 @@ const paceLabels: Record<TripPace, { title: string; description: string }> = {
   intensiv: { title: 'Intensiv', description: 'Möglichst viel entdecken' },
 }
 
+/**
+ * Feldgestaltung aller Eingaben dieses Formulars.
+ * `min-w-0` ist notwendig, weil die Felder in Grid-Spuren liegen: ohne die
+ * Angabe waechst die Spur auf die inhaltsbasierte Mindestbreite des nativen
+ * Steuerelements, was auf schmalen Geraeten das Layout sprengt.
+ */
+const fieldClass =
+  'h-12 w-full min-w-0 rounded-2xl border border-line-200 bg-surface-0 pl-10 pr-4 text-base ' +
+  'outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10'
+
+/** Beschriftung mit Feld darunter; als Grid-Kind schrumpfbar. */
+const fieldLabelClass = 'grid min-w-0 gap-2 text-sm font-medium text-brand-800'
+
+const fieldIconClass =
+  'pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-700'
+
 function todayIso() {
   const today = new Date()
   const local = new Date(today.getTime() - today.getTimezoneOffset() * 60_000)
@@ -109,7 +125,7 @@ export default function TripPlanner({
   }
 
   return (
-    <div className="mx-auto grid w-full max-w-6xl gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+    <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
       <form
         onSubmit={handleSubmit}
         className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:p-8"
@@ -127,41 +143,41 @@ export default function TripPlanner({
           </p>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2">
-          <label className="grid gap-2 text-sm font-medium text-brand-800">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <label className={fieldLabelClass}>
             Reiseziel
-            <span className="relative">
-              <MapPin className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-700" />
+            <span className="relative block min-w-0">
+              <MapPin className={fieldIconClass} aria-hidden="true" />
               <input
                 value={destination}
                 onChange={(event) => setDestination(event.target.value)}
                 maxLength={120}
                 placeholder="z. B. Japan"
                 autoComplete="off"
-                className="h-12 w-full rounded-2xl border border-line-200 bg-surface-0 pl-10 pr-4 text-base outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
+                className={fieldClass}
               />
             </span>
           </label>
 
-          <label className="grid gap-2 text-sm font-medium text-brand-800">
+          <label className={fieldLabelClass}>
             Abreise ab
-            <span className="relative">
-              <MapPin className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-700" />
+            <span className="relative block min-w-0">
+              <MapPin className={fieldIconClass} aria-hidden="true" />
               <input
                 value={origin}
                 onChange={(event) => setOrigin(event.target.value)}
                 maxLength={120}
                 placeholder="z. B. Zürich"
                 autoComplete="address-level2"
-                className="h-12 w-full rounded-2xl border border-line-200 bg-surface-0 pl-10 pr-4 text-base outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
+                className={fieldClass}
               />
             </span>
           </label>
 
-          <label className="grid gap-2 text-sm font-medium text-brand-800">
+          <label className={fieldLabelClass}>
             Abreise
-            <span className="relative">
-              <CalendarDays className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-700" />
+            <span className="relative block min-w-0">
+              <CalendarDays className={fieldIconClass} aria-hidden="true" />
               <input
                 type="date"
                 min={todayIso()}
@@ -170,52 +186,54 @@ export default function TripPlanner({
                   setStartDate(event.target.value)
                   if (endDate && event.target.value > endDate) setEndDate('')
                 }}
-                className="h-12 w-full rounded-2xl border border-line-200 bg-surface-0 pl-10 pr-4 text-base outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
+                className={fieldClass}
               />
             </span>
           </label>
 
-          <label className="grid gap-2 text-sm font-medium text-brand-800">
+          <label className={fieldLabelClass}>
             Rückreise
-            <span className="relative">
-              <CalendarDays className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-700" />
+            <span className="relative block min-w-0">
+              <CalendarDays className={fieldIconClass} aria-hidden="true" />
               <input
                 type="date"
                 min={startDate || todayIso()}
                 value={endDate}
                 onChange={(event) => setEndDate(event.target.value)}
-                className="h-12 w-full rounded-2xl border border-line-200 bg-surface-0 pl-10 pr-4 text-base outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
+                className={fieldClass}
               />
             </span>
           </label>
 
-          <label className="grid gap-2 text-sm font-medium text-brand-800">
+          <label className={fieldLabelClass}>
             Reisende
-            <span className="relative">
-              <Users className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-700" />
+            <span className="relative block min-w-0">
+              <Users className={fieldIconClass} aria-hidden="true" />
               <input
                 type="number"
                 min={1}
                 max={20}
+                inputMode="numeric"
                 value={travelers}
                 onChange={(event) => setTravelers(Math.max(1, Math.min(20, Number(event.target.value))))}
-                className="h-12 w-full rounded-2xl border border-line-200 bg-surface-0 pl-10 pr-4 text-base outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
+                className={fieldClass}
               />
             </span>
           </label>
 
-          <label className="grid gap-2 text-sm font-medium text-brand-800">
+          <label className={fieldLabelClass}>
             Ungefähres Gesamtbudget
-            <span className="relative">
-              <WalletCards className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-700" />
+            <span className="relative block min-w-0">
+              <WalletCards className={fieldIconClass} aria-hidden="true" />
               <input
                 type="number"
                 min={0}
                 step={100}
+                inputMode="numeric"
                 value={budget}
                 onChange={(event) => setBudget(event.target.value)}
                 placeholder="CHF, optional"
-                className="h-12 w-full rounded-2xl border border-line-200 bg-surface-0 pl-10 pr-4 text-base outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
+                className={fieldClass}
               />
             </span>
           </label>
@@ -223,7 +241,7 @@ export default function TripPlanner({
 
         <fieldset className="mt-7">
           <legend className="text-sm font-medium text-brand-800">Reisetempo</legend>
-          <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
             {TRIP_PACES.map((option) => {
               const selected = pace === option
               return (
@@ -233,7 +251,7 @@ export default function TripPlanner({
                   aria-pressed={selected}
                   onClick={() => setPace(option)}
                   className={cn(
-                    'rounded-2xl border p-4 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
+                    'min-w-0 rounded-2xl border p-4 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
                     selected
                       ? 'border-brand-600 bg-surface-50'
                       : 'border-line-200 bg-white hover:border-line-500'
@@ -241,7 +259,7 @@ export default function TripPlanner({
                 >
                   <span className="flex items-center justify-between gap-2 text-sm font-semibold text-brand-800">
                     {paceLabels[option].title}
-                    {selected && <Check className="h-4 w-4 text-brand-600" />}
+                    {selected && <Check className="h-4 w-4 shrink-0 text-brand-600" />}
                   </span>
                   <span className="mt-1 block text-xs leading-5 text-ink-700">
                     {paceLabels[option].description}
@@ -264,7 +282,7 @@ export default function TripPlanner({
                   aria-pressed={selected}
                   onClick={() => toggleInterest(interest)}
                   className={cn(
-                    'rounded-full border px-4 py-2.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
+                    'inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
                     selected
                       ? 'border-brand-800 bg-brand-800 text-white'
                       : 'border-line-200 bg-white text-ink-900 hover:border-line-500'
@@ -277,7 +295,7 @@ export default function TripPlanner({
           </div>
         </fieldset>
 
-        <label className="mt-7 grid gap-2 text-sm font-medium text-brand-800">
+        <label className="mt-7 grid min-w-0 gap-2 text-sm font-medium text-brand-800">
           Was ist dir bei dieser Reise besonders wichtig?
           <textarea
             value={travelWish}
@@ -285,7 +303,7 @@ export default function TripPlanner({
             rows={4}
             maxLength={1000}
             placeholder="Zum Beispiel: lokale Restaurants, wenig Hotelwechsel und zwei ruhige Tage am Meer."
-            className="w-full resize-y rounded-2xl border border-line-200 bg-surface-0 px-4 py-3 text-base leading-6 outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
+            className="w-full min-w-0 resize-y rounded-2xl border border-line-200 bg-surface-0 px-4 py-3 text-base leading-6 outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
           />
         </label>
 
@@ -296,14 +314,14 @@ export default function TripPlanner({
         )}
 
         <div className="mt-7 flex flex-col-reverse items-stretch justify-between gap-4 border-t border-line-200 pt-6 sm:flex-row sm:items-center">
-          <p className="flex items-center gap-2 text-xs leading-5 text-ink-700">
+          <p className="flex min-w-0 items-start gap-2 text-xs leading-5 text-ink-700">
             <ShieldCheck className="h-4 w-4 shrink-0 text-brand-600" />
             Dieser Entwurf bleibt zunächst nur in deinem Browser.
           </p>
           <button
             type="submit"
             disabled={isCreating}
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-brand-800 px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-900 disabled:pointer-events-none disabled:opacity-60"
+            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-900 disabled:pointer-events-none disabled:opacity-60"
           >
             {isCreating ? 'Reise wird erstellt …' : 'Reise erstellen'}
             {!isCreating && <ArrowRight className="h-4 w-4" />}

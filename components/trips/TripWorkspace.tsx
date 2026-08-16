@@ -167,14 +167,14 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
         <Link
           href="/reisen"
-          className="inline-flex items-center gap-2 text-sm font-medium text-ink-800 transition hover:text-brand-800"
+          className="-ml-2 inline-flex min-h-11 items-center gap-2 px-2 text-sm font-medium text-ink-800 transition hover:text-brand-800"
         >
           <ArrowLeft className="h-4 w-4" />
           Meine Reisen
         </Link>
 
-        <section className="mt-5 overflow-hidden rounded-[30px] bg-brand-800 text-white shadow-[0_24px_70px_rgba(15,46,42,0.16)]">
-          <div className="grid gap-7 p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-end">
+        <section className="mt-5 rounded-[30px] bg-brand-800 text-white shadow-[0_24px_70px_rgba(15,46,42,0.16)]">
+          <div className="grid grid-cols-1 gap-7 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-ink-300">
                 <ShieldCheck className="h-3.5 w-3.5" />
@@ -183,12 +183,14 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
               <h1 className="mt-5 break-words text-3xl font-semibold tracking-[-0.04em] sm:text-5xl">
                 {trip.title}
               </h1>
-              <p className="mt-2 flex items-center gap-2 text-sm text-white/65">
-                <MapPin className="h-4 w-4" />
-                {trip.destination} · ab {trip.origin}
+              <p className="mt-2 flex min-w-0 items-start gap-2 text-sm text-white/65">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                <span className="min-w-0 break-words">
+                  {trip.destination} · ab {trip.origin}
+                </span>
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3">
               <div className="rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-3">
                 <CalendarDays className="h-4 w-4 text-ink-400" />
                 <strong className="mt-2 block text-sm">{trip.days.length} Tage</strong>
@@ -208,7 +210,7 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
           </div>
         </section>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)_280px]">
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[280px_minmax(0,1fr)_280px]">
           <aside className="h-fit rounded-[26px] border border-black/5 bg-white p-3 lg:sticky lg:top-24">
             <div className="px-3 pb-3 pt-2">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">Tagesplan</p>
@@ -230,11 +232,11 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
                       selected ? 'bg-surface-100 text-brand-800' : 'text-ink-800 hover:bg-surface-0'
                     )}
                   >
-                    <span>
+                    <span className="min-w-0">
                       <strong className="block text-sm font-semibold">Tag {index + 1}</strong>
                       <span className="mt-0.5 block text-xs opacity-70">{formatShortDate(day.date)}</span>
                     </span>
-                    <span className="flex items-center gap-1.5 text-xs">
+                    <span className="flex shrink-0 items-center gap-1.5 text-xs">
                       {day.items.length > 0 && day.items.length}
                       <ChevronRight className="h-4 w-4" />
                     </span>
@@ -248,11 +250,12 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
             {activeDay && (
               <>
                 <div className="flex flex-col justify-between gap-4 border-b border-line-200 pb-5 sm:flex-row sm:items-center">
-                  <div>
+                  {/* Datum kann auf schmalen Breiten mehrzeilig werden */}
+                  <div className="min-w-0">
                     <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
                       Tag {trip.days.findIndex((day) => day.id === activeDay.id) + 1}
                     </p>
-                    <h2 className="mt-1 text-2xl font-semibold tracking-[-0.03em] text-brand-800">
+                    <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
                       {formatFullDate(activeDay.date)}
                     </h2>
                   </div>
@@ -268,17 +271,17 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
 
                 {formOpen && (
                   <form onSubmit={addItem} className="mt-5 rounded-2xl border border-line-200 bg-surface-0 p-4">
-                    <div className="grid gap-3 sm:grid-cols-[120px_1fr]">
-                      <label className="grid gap-1.5 text-xs font-medium text-ink-900">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,120px)_minmax(0,1fr)]">
+                      <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
                         Uhrzeit
                         <input
                           type="time"
                           value={time}
                           onChange={(event) => setTime(event.target.value)}
-                          className="h-11 rounded-xl border border-line-200 bg-white px-3 text-base outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 sm:text-sm"
+                          className="h-11 w-full min-w-0 rounded-xl border border-line-200 bg-white px-3 text-base outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
                         />
                       </label>
-                      <label className="grid gap-1.5 text-xs font-medium text-ink-900">
+                      <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
                         Ort oder Aktivität
                         <input
                           value={title}
@@ -287,11 +290,11 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
                           maxLength={120}
                           autoFocus
                           placeholder="z. B. Tsukiji Outer Market"
-                          className="h-11 rounded-xl border border-line-200 bg-white px-3 text-base outline-none placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 sm:text-sm"
+                          className="h-11 w-full min-w-0 rounded-xl border border-line-200 bg-white px-3 text-base outline-none placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
                         />
                       </label>
                     </div>
-                    <label className="mt-3 grid gap-1.5 text-xs font-medium text-ink-900">
+                    <label className="mt-3 grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
                       Notiz, optional
                       <textarea
                         value={note}
@@ -299,14 +302,14 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
                         rows={2}
                         maxLength={500}
                         placeholder="Reservierung, Treffpunkt oder persönliche Notiz"
-                        className="rounded-xl border border-line-200 bg-white px-3 py-2.5 text-base outline-none placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 sm:text-sm"
+                        className="w-full min-w-0 rounded-xl border border-line-200 bg-white px-3 py-2.5 text-base outline-none placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
                       />
                     </label>
                     <div className="mt-3 flex justify-end gap-2">
-                      <button type="button" onClick={() => setFormOpen(false)} className="rounded-full px-4 py-2 text-sm font-medium text-ink-800 hover:bg-white">
+                      <button type="button" onClick={() => setFormOpen(false)} className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-medium text-ink-800 hover:bg-white">
                         Abbrechen
                       </button>
-                      <button type="submit" className="rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
+                      <button type="submit" className="inline-flex min-h-11 items-center rounded-full bg-brand-600 px-4 text-sm font-semibold text-white hover:bg-brand-700">
                         Speichern
                       </button>
                     </div>
@@ -339,7 +342,7 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
                           type="button"
                           onClick={() => removeItem(activeDay.id, item.id)}
                           aria-label={`${item.title} entfernen`}
-                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-600 opacity-70 transition hover:bg-red-50 hover:text-red-600 focus-visible:opacity-100 group-hover:opacity-100 sm:h-9 sm:w-9"
+                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-600 opacity-70 transition hover:bg-red-50 hover:text-red-600 focus-visible:opacity-100 group-hover:opacity-100 pointer-fine:h-9 pointer-fine:w-9"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -361,7 +364,7 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
                 </div>
                 <div className="flex items-start justify-between gap-3">
                   <dt className="text-ink-700">Interessen</dt>
-                  <dd className="max-w-[150px] text-right font-semibold text-brand-800">
+                  <dd className="min-w-0 break-words text-right font-semibold text-brand-800">
                     {trip.interests.length ? trip.interests.join(', ') : 'Noch offen'}
                   </dd>
                 </div>
