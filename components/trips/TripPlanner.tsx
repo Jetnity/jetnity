@@ -264,7 +264,7 @@ export default function TripPlanner({
                   aria-pressed={selected}
                   onClick={() => toggleInterest(interest)}
                   className={cn(
-                    'rounded-full border px-4 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
+                    'rounded-full border px-4 py-2.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
                     selected
                       ? 'border-brand-800 bg-brand-800 text-white'
                       : 'border-line-200 bg-white text-ink-900 hover:border-line-500'

@@ -74,10 +74,10 @@ export default function GuestTrips() {
             </span>
             <ArrowRight className="h-5 w-5 text-ink-600 transition group-hover:translate-x-1 group-hover:text-brand-600" />
           </div>
-          <h2 className="mt-6 text-xl font-semibold tracking-[-0.03em] text-brand-800">
+          <h2 className="mt-6 break-words text-xl font-semibold tracking-[-0.03em] text-brand-800">
             {trip.title}
           </h2>
-          <p className="mt-1 text-sm text-ink-700">ab {trip.origin}</p>
+          <p className="mt-1 break-words text-sm text-ink-700">ab {trip.origin}</p>
           <div className="mt-5 grid gap-2 border-t border-line-100 pt-4 text-xs text-ink-800">
             <span className="flex items-center gap-2">
               <CalendarDays className="h-3.5 w-3.5 text-brand-600" />

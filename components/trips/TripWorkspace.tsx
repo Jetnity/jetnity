@@ -180,7 +180,7 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
                 <ShieldCheck className="h-3.5 w-3.5" />
                 Privat auf diesem Gerät
               </span>
-              <h1 className="mt-5 text-3xl font-semibold tracking-[-0.04em] sm:text-5xl">
+              <h1 className="mt-5 break-words text-3xl font-semibold tracking-[-0.04em] sm:text-5xl">
                 {trip.title}
               </h1>
               <p className="mt-2 flex items-center gap-2 text-sm text-white/65">
@@ -244,7 +244,7 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
             </div>
           </aside>
 
-          <section className="rounded-[26px] border border-black/5 bg-white p-5 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7">
+          <section className="min-w-0 rounded-[26px] border border-black/5 bg-white p-5 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7">
             {activeDay && (
               <>
                 <div className="flex flex-col justify-between gap-4 border-b border-line-200 pb-5 sm:flex-row sm:items-center">
@@ -259,7 +259,7 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
                   <button
                     type="button"
                     onClick={() => setFormOpen((current) => !current)}
-                    className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-900"
+                    className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-900"
                   >
                     <Plus className="h-4 w-4" />
                     Punkt hinzufügen
@@ -275,7 +275,7 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
                           type="time"
                           value={time}
                           onChange={(event) => setTime(event.target.value)}
-                          className="h-11 rounded-xl border border-line-200 bg-white px-3 text-sm outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
+                          className="h-11 rounded-xl border border-line-200 bg-white px-3 text-base outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 sm:text-sm"
                         />
                       </label>
                       <label className="grid gap-1.5 text-xs font-medium text-ink-900">
@@ -287,7 +287,7 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
                           maxLength={120}
                           autoFocus
                           placeholder="z. B. Tsukiji Outer Market"
-                          className="h-11 rounded-xl border border-line-200 bg-white px-3 text-sm outline-none placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
+                          className="h-11 rounded-xl border border-line-200 bg-white px-3 text-base outline-none placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 sm:text-sm"
                         />
                       </label>
                     </div>
@@ -299,7 +299,7 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
                         rows={2}
                         maxLength={500}
                         placeholder="Reservierung, Treffpunkt oder persönliche Notiz"
-                        className="rounded-xl border border-line-200 bg-white px-3 py-2.5 text-sm outline-none placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10"
+                        className="rounded-xl border border-line-200 bg-white px-3 py-2.5 text-base outline-none placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 sm:text-sm"
                       />
                     </label>
                     <div className="mt-3 flex justify-end gap-2">
@@ -339,7 +339,7 @@ export default function TripWorkspace({ tripId }: TripWorkspaceProps) {
                           type="button"
                           onClick={() => removeItem(activeDay.id, item.id)}
                           aria-label={`${item.title} entfernen`}
-                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-600 opacity-70 transition hover:bg-red-50 hover:text-red-600 focus-visible:opacity-100 group-hover:opacity-100"
+                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-600 opacity-70 transition hover:bg-red-50 hover:text-red-600 focus-visible:opacity-100 group-hover:opacity-100 sm:h-9 sm:w-9"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
