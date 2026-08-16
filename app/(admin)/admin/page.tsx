@@ -1,15 +1,12 @@
 // app/(admin)/admin/page.tsx
 export const dynamic = 'force-dynamic'
 
-import { requireAdmin } from '@/lib/auth/requireAdmin'
 import AdminStatsStrip from '@/components/admin/home/AdminStatsStrip'
 import AdminTimeSeries from '@/components/admin/home/AdminTimeSeries'
 import AdminSetupGuide from '@/components/admin/home/AdminSetupGuide'
 import AdminHealthCards from '@/components/admin/home/AdminHealthCards'
 
 export default async function AdminHomePage() {
-  await requireAdmin()
-
   return (
     <>
       <div className="grid gap-6">

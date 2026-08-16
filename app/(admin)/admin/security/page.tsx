@@ -2,12 +2,9 @@
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-import { requireAdmin } from '@/lib/auth/requireAdmin'
 import SecurityWidget from '@/components/admin/security/SecurityWidget'
 
 export default async function SecurityPage() {
-  await requireAdmin()
-
   return (
     <main className="mx-auto max-w-7xl px-4 md:px-6 py-6 md:py-8 space-y-6">
       <header className="flex items-center justify-between gap-3">
