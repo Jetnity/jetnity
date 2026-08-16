@@ -107,10 +107,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     const sizeCls =
       fieldSize === 'sm'
-        ? { h: 'h-9', text: 'text-sm', px: 'px-3', gap: 'gap-2', icon: 'h-4 w-4', padX: 'px-2' }
+        ? { h: 'h-9', text: 'text-base sm:text-sm', px: 'px-3', gap: 'gap-2', icon: 'h-4 w-4', padX: 'px-2' }
         : fieldSize === 'lg'
         ? { h: 'h-12', text: 'text-base', px: 'px-4', gap: 'gap-3', icon: 'h-5 w-5', padX: 'px-3' }
-        : { h: 'h-10', text: 'text-sm', px: 'px-3.5', gap: 'gap-2.5', icon: 'h-4.5 w-4.5', padX: 'px-2.5' }
+        : { h: 'h-10', text: 'text-base sm:text-sm', px: 'px-3.5', gap: 'gap-2.5', icon: 'h-4.5 w-4.5', padX: 'px-2.5' }
 
     return (
       <div className={cn(fullWidth && 'w-full', 'space-y-1.5', containerClassName)}>
