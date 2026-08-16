@@ -81,9 +81,9 @@ export default function HomePage() {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
   return (
-    <main className="overflow-hidden bg-surface-75 text-brand-800">
+    <main className="bg-surface-75 text-brand-800">
       <section className="px-3 pb-16 pt-3 sm:px-5 sm:pb-24">
-        <div className="relative mx-auto min-h-[720px] max-w-[1500px] overflow-hidden rounded-[32px] bg-brand-800 shadow-[0_28px_90px_rgba(15,46,42,0.18)] sm:rounded-[40px]">
+        <div className="relative mx-auto min-h-[520px] max-w-[1500px] overflow-hidden rounded-[32px] bg-brand-800 shadow-[0_28px_90px_rgba(15,46,42,0.18)] sm:min-h-[600px] sm:rounded-[40px] lg:min-h-[720px]">
           <Image
             src="/images/hero-bali.png"
             alt="Reisterrassen und Palmen bei Sonnenuntergang auf Bali"
@@ -92,16 +92,16 @@ export default function HomePage() {
             sizes="(max-width: 1500px) 100vw, 1500px"
             className="object-cover object-center"
           />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,27,23,0.92)_0%,rgba(7,27,23,0.78)_42%,rgba(7,27,23,0.18)_78%,rgba(7,27,23,0.28)_100%)]" />
-          <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(7,27,23,0.52)_0%,transparent_46%)]" />
+          <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,27,23,0.92)_0%,rgba(7,27,23,0.78)_42%,rgba(7,27,23,0.18)_78%,rgba(7,27,23,0.28)_100%)]" />
+          <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(0deg,rgba(7,27,23,0.52)_0%,transparent_46%)]" />
 
-          <div className="relative z-10 mx-auto grid min-h-[720px] max-w-7xl items-center gap-10 px-6 py-16 sm:px-10 lg:grid-cols-[minmax(0,650px)_1fr] lg:px-14 xl:px-16">
-            <div>
+          <div className="relative z-10 mx-auto grid min-h-[520px] max-w-7xl items-center gap-10 px-5 py-12 sm:min-h-[600px] sm:px-10 sm:py-16 lg:min-h-[720px] lg:grid-cols-[minmax(0,650px)_minmax(0,1fr)] lg:px-14 xl:px-16">
+            <div className="min-w-0">
               <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold text-ink-300 backdrop-blur">
                 <Sparkles className="h-3.5 w-3.5" />
                 Eine Reise. Ein intelligenter Begleiter.
               </span>
-              <h1 className="mt-6 max-w-3xl text-[clamp(42px,7vw,78px)] font-semibold leading-[0.98] tracking-[-0.055em] text-white">
+              <h1 className="mt-6 max-w-3xl text-[clamp(34px,7vw,78px)] font-semibold leading-[1.02] tracking-[-0.055em] text-white sm:leading-[0.98]">
                 Deine ganze Reise. Einfach an einem Ort.
               </h1>
               <p className="mt-6 max-w-xl text-base leading-7 text-white/75 sm:text-lg">
@@ -126,7 +126,7 @@ export default function HomePage() {
                       minLength={3}
                       maxLength={1000}
                       placeholder="Wohin möchtest du reisen?"
-                      className="h-11 min-w-0 flex-1 bg-transparent text-base text-brand-800 outline-none placeholder:text-ink-650"
+                      className="h-11 w-full min-w-0 flex-1 bg-transparent text-base text-brand-800 outline-none placeholder:text-ink-650"
                     />
                   </div>
                   <button
@@ -197,7 +197,7 @@ export default function HomePage() {
       <section id="so-funktionierts" className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
         <div className="max-w-2xl">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-600">Ein klarer Weg</p>
-          <h2 className="mt-3 text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">
+          <h2 className="mt-3 text-3xl font-semibold tracking-[-0.045em] sm:text-5xl">
             Nicht mehr Apps. Weniger Reisestress.
           </h2>
           <p className="mt-4 text-base leading-7 text-ink-700">
@@ -223,10 +223,10 @@ export default function HomePage() {
 
       <section className="px-3 py-10 sm:px-5 sm:py-16">
         <div className="mx-auto max-w-[1450px] overflow-hidden rounded-[36px] bg-surface-100 px-5 py-12 sm:px-10 sm:py-16 lg:px-16">
-          <div className="grid items-center gap-12 lg:grid-cols-[0.8fr_1.2fr]">
-            <div className="max-w-xl">
+          <div className="grid items-center gap-10 sm:gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+            <div className="min-w-0 max-w-xl">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-600">Das geplante Reise-Cockpit</p>
-              <h2 className="mt-3 text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">
+              <h2 className="mt-3 text-3xl font-semibold tracking-[-0.045em] sm:text-5xl">
                 Eine Ansicht, die deine Reise versteht.
               </h2>
               <p className="mt-5 text-base leading-7 text-ink-800">
@@ -251,25 +251,25 @@ export default function HomePage() {
               </Link>
             </div>
 
-            <div className="rounded-[30px] border border-white/70 bg-surface-0 p-3 shadow-[0_30px_80px_rgba(15,46,42,0.13)] sm:p-4">
-              <div className="grid min-h-[500px] overflow-hidden rounded-[23px] border border-line-200 bg-white md:grid-cols-[210px_1fr]">
-                <div className="border-b border-line-200 bg-surface-25 p-4 md:border-b-0 md:border-r">
+            <div className="min-w-0 rounded-[30px] border border-white/70 bg-surface-0 p-3 shadow-[0_30px_80px_rgba(15,46,42,0.13)] sm:p-4">
+              <div className="grid min-h-[420px] overflow-hidden rounded-[23px] border border-line-200 bg-white sm:min-h-[500px] md:grid-cols-[210px_minmax(0,1fr)]">
+                <div className="min-w-0 border-b border-line-200 bg-surface-25 p-4 md:border-b-0 md:border-r">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-700">Portugal · 8 Tage</p>
-                  <div className="mt-4 flex gap-2 overflow-x-auto md:block md:space-y-2">
+                  <div className="mt-4 flex min-w-0 snap-x snap-mandatory gap-2 overflow-x-auto pb-1 md:block md:space-y-2 md:overflow-x-visible md:pb-0">
                     {['Lissabon', 'Sintra', 'Porto', 'Douro'].map((place, index) => (
-                      <div key={place} className={`min-w-[150px] rounded-2xl px-3 py-3 md:min-w-0 ${index === 1 ? 'bg-brand-800 text-white' : 'bg-white text-ink-800'}`}>
+                      <div key={place} className={`min-w-[140px] shrink-0 snap-start rounded-2xl px-3 py-3 md:min-w-0 md:shrink ${index === 1 ? 'bg-brand-800 text-white' : 'bg-white text-ink-800'}`}>
                         <span className="block text-[10px] opacity-65">Tag {index * 2 + 1}–{index * 2 + 2}</span>
                         <strong className="mt-0.5 block text-sm font-semibold">{place}</strong>
                       </div>
                     ))}
                   </div>
                 </div>
-                <div className="grid min-h-[390px] grid-rows-[1fr_auto]">
-                  <div className="relative overflow-hidden bg-surface-200">
-                    <div className="absolute inset-0 opacity-60 [background-image:radial-gradient(circle_at_20%_30%,#ffffff_0_2px,transparent_3px),radial-gradient(circle_at_65%_58%,#ffffff_0_2px,transparent_3px),linear-gradient(120deg,transparent_0_42%,rgba(29,113,94,.35)_43%_45%,transparent_46%)] [background-size:70px_70px,90px_90px,100%_100%]" />
+                <div className="grid min-w-0 grid-rows-[1fr_auto] sm:min-h-[390px]">
+                  <div className="relative min-h-[220px] overflow-hidden bg-surface-200">
+                    <div aria-hidden="true" className="absolute inset-0 opacity-60 [background-image:radial-gradient(circle_at_20%_30%,#ffffff_0_2px,transparent_3px),radial-gradient(circle_at_65%_58%,#ffffff_0_2px,transparent_3px),linear-gradient(120deg,transparent_0_42%,rgba(29,113,94,.35)_43%_45%,transparent_46%)] [background-size:70px_70px,90px_90px,100%_100%]" />
                     <div className="absolute left-[20%] top-[28%] flex h-10 w-10 items-center justify-center rounded-full border-4 border-white bg-brand-600 text-xs font-bold text-white shadow-lg">1</div>
                     <div className="absolute left-[61%] top-[54%] flex h-10 w-10 items-center justify-center rounded-full border-4 border-white bg-citrus-400 text-xs font-bold text-brand-800 shadow-lg">2</div>
-                    <div className="absolute bottom-5 left-5 rounded-2xl border border-white/70 bg-white/90 px-4 py-3 shadow-lg backdrop-blur">
+                    <div className="absolute inset-x-5 bottom-5 rounded-2xl border border-white/70 bg-white/90 px-4 py-3 shadow-lg backdrop-blur sm:inset-x-auto sm:left-5">
                       <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-brand-600">Heute sinnvoll</p>
                       <p className="mt-1 text-sm font-semibold">Sintra früh starten</p>
                       <p className="mt-0.5 text-[11px] text-ink-700">Weniger Andrang vor 09:30 Uhr</p>
@@ -298,7 +298,7 @@ export default function HomePage() {
         <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-600">Entdecken</p>
-            <h2 className="mt-3 max-w-2xl text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">
+            <h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-[-0.045em] sm:text-5xl">
               Eine gute Reise beginnt mit dem richtigen Gefühl.
             </h2>
           </div>
@@ -311,7 +311,7 @@ export default function HomePage() {
             <Link
               key={destination.name}
               href={`/planen?ziel=${encodeURIComponent(destination.name)}&idee=${encodeURIComponent(destination.idea)}`}
-              className="group relative min-h-[420px] overflow-hidden rounded-[28px] bg-brand-800 text-white"
+              className="group relative min-h-[340px] overflow-hidden rounded-[28px] bg-brand-800 text-white sm:min-h-[420px]"
             >
               <Image
                 src={destination.image}
@@ -336,14 +336,14 @@ export default function HomePage() {
       </section>
 
       <section id="pro" className="px-3 pb-16 sm:px-5 sm:pb-24">
-        <div className="relative mx-auto max-w-[1450px] overflow-hidden rounded-[36px] bg-brand-800 px-6 py-14 text-white sm:px-12 sm:py-20 lg:px-16">
-          <div className="absolute -right-28 -top-28 h-96 w-96 rounded-full bg-citrus-400/10 blur-3xl" />
-          <div className="relative grid items-center gap-10 lg:grid-cols-[1fr_auto]">
-            <div className="max-w-3xl">
+        <div className="relative mx-auto max-w-[1450px] overflow-hidden rounded-[36px] bg-brand-800 px-5 py-12 text-white sm:px-12 sm:py-20 lg:px-16">
+          <div aria-hidden="true" className="absolute -right-28 -top-28 h-96 w-96 rounded-full bg-citrus-400/10 blur-3xl" />
+          <div className="relative grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_auto]">
+            <div className="min-w-0 max-w-3xl">
               <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold text-ink-300">
                 <MessageCircle className="h-3.5 w-3.5" /> Jetnity Pro
               </span>
-              <h2 className="mt-5 text-4xl font-semibold tracking-[-0.045em] sm:text-6xl">
+              <h2 className="mt-5 text-3xl font-semibold tracking-[-0.045em] sm:text-6xl">
                 Unterwegs einen Schritt voraus.
               </h2>
               <p className="mt-5 max-w-2xl text-base leading-7 text-white/70">
