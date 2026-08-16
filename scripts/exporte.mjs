@@ -40,12 +40,7 @@ const BEOBACHTET = ['components', 'lib', 'types', 'hooks']
 const GENERIERT = ['types/supabase.ts']
 
 // Bewusst ohne Aufrufer – mit Grund.
-const ABSICHTLICH = new Map([
-  [
-    'lib/supabase/client.ts:startSupabaseAuthListener',
-    'haelt die Server-Cookies mit der Browser-Sitzung im Takt und ist die Gegenseite von app/auth/refresh; wird beim Vereinheitlichen von Auth und Middleware eingebunden oder ersetzt',
-  ],
-])
+const ABSICHTLICH = new Map()
 
 const alleDateien = async (dir, acc = []) => {
   let einträge

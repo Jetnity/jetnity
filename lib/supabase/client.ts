@@ -15,7 +15,6 @@ function getEnv() {
 
 // HMR-sicheres Singleton (ohne globale TS-Deklarationen)
 let _sb: SupabaseClient<Database> | null = null;
-let _authListenerStarted = false;
 
 /** Memoized Browser-Client */
 function getSupabaseBrowser(): SupabaseClient<Database> {
@@ -47,31 +46,15 @@ export const supabase = new Proxy({} as SupabaseClient<Database>, {
   },
 });
 
-/**
- * Optional: Server-Cookies in Sync halten (für RLS/SSR).
- * In `app/layout.tsx` einmalig per:
- *   useEffect(() => startSupabaseAuthListener(), []);
- * Gibt eine Cleanup-Funktion zurück (unsubscribe).
- */
-export function startSupabaseAuthListener(options?: { refreshEndpoint?: string }) {
-  if (_authListenerStarted) return () => {};
-  _authListenerStarted = true;
+/* Hier stand bis Phase 1.3 `startSupabaseAuthListener`. Die Funktion meldete
+   jede Sitzungsänderung an `app/auth/refresh`, damit die Server-Cookies
+   nachziehen. Beides ist entfallen:
 
-  const endpoint = options?.refreshEndpoint ?? '/auth/refresh';
-  const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event) => {
-    if (
-      event === 'SIGNED_IN' ||
-      event === 'SIGNED_OUT' ||
-      event === 'TOKEN_REFRESHED' ||
-      event === 'USER_UPDATED'
-    ) {
-      try {
-        await fetch(endpoint, { method: 'POST', credentials: 'include' });
-      } catch {
-        /* ignore */
-      }
-    }
-  });
+   - `@supabase/ssr` legt die Sitzung im Browser bereits in Cookies ab, nicht im
+     Local Storage. Der Server liest damit ohne Zwischenschritt denselben Stand.
+   - Die Middleware erneuert die Sitzung auf den geschützten Pfaden und schreibt
+     die Cookies über `setAll` in die Antwort zurück.
+   - Der Endpunkt selbst konnte seine Aufgabe nie erfüllen: Sein Cookie-Adapter
+     gab für jeden Namen `undefined` zurück und verwarf jedes Schreiben.
 
-  return () => subscription?.unsubscribe?.();
-}
+   Ein Aufrufer hat nie existiert. */
