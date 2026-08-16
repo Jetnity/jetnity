@@ -36,5 +36,13 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # Halten den Baum frei von Code und Paketen, die niemand mehr erreicht.
+      # Bewusste Ausnahmen sind in den Skripten mit Grund hinterlegt.
+      - name: Unerreichbarer Code
+        run: npm run check:dead
+
+      - name: Ungenutzte Pakete
+        run: npm run check:deps
+
       - name: Production build
         run: npm run build
