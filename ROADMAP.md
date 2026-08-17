@@ -1,6 +1,6 @@
 # Jetnity – Roadmap
 
-Stand: 16. August 2026
+Stand: 17. August 2026
 
 Diese Datei zeigt jederzeit: was fertig ist, was in Arbeit ist, was als Nächstes kommt, was blockiert ist und was bewusst verschoben wurde ([AGENTS.md](AGENTS.md) Regel 6).
 
@@ -270,6 +270,7 @@ Eine Development-Service-Role wird erst dann als Secret angelegt, wenn ein Test 
 
 **Was ohne Zugang schon feststeht.** Die Typen beschreiben 37 Tabellen, versioniert sind zwei. Es existiert eine Tabelle `admin_domains` – ein Hinweis darauf, dass eine domainbasierte Administrationsfreigabe einmal vorgesehen war. Mit ADR-0027 ist entschieden, dass eine Domain keine Berechtigung erteilt; die Tabelle ist in der Anwendung unbenutzt und gehört bei der Baseline auf die Liste der zu entfernenden Altlasten.
 
+- [x] Offiziellen Supabase Remote MCP Server für den Development-Branch eingerichtet (`.cursor/mcp.json`, nur `database` / `debugging` / `development`, keine Production-Verbindung). Details in [DECISIONS.md](DECISIONS.md), ADR-0030. **Keine Schemaänderungen in diesem Schritt.**
 - [ ] vollständige Baseline-Migration für das real existierende Schema (aktuell 37 Tabellen in den Typen, 2 in Migrationen)
 - [ ] `admin_domains` bewerten und entfernen – domainbasierter Admin-Zugang ist mit ADR-0027 ausgeschlossen
 - [ ] Rolle aus `creator_profiles` in ein generisches Profil überführen; `ROLE_TABLE` in `lib/auth/admin-guard.ts` ist die einzige Stelle, die den Tabellennamen kennt
