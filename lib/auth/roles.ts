@@ -84,7 +84,16 @@ export const CAPABILITY_MINIMUM = {
   'konten-verwalten': 'moderator',
   /** Fremde Inhalte sichten und beanstanden. */
   'inhalte-moderieren': 'moderator',
-  /** Postfächer, DNS-Protokoll, Modellvorschläge. */
+  /**
+   * Systemnahe Konfiguration.
+   *
+   * Deckt seit Phase 1.4b keine Tabelle mehr ab: Ihre drei Tabellen –
+   * Postfächer, DNS-Protokoll, Modellvorschläge – gehörten zu den 29
+   * entfernten Legacy-Tabellen. Die Fähigkeit bleibt als höchste Stufe des
+   * Modells bestehen, statt sie zu entfernen und beim nächsten
+   * konfigurationsnahen Eingriff neu zu erfinden. `npm run db:sicherheit`
+   * weist sie direkt über `darf_konfiguration_verwalten()` nach.
+   */
   'konfiguration-verwalten': 'admin',
 } as const satisfies Record<string, Role>
 
