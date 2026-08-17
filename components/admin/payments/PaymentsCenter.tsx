@@ -276,11 +276,16 @@ function TransactionsCard() {
         </table>
       </div>
 
-      <div className="mt-3 flex items-center justify-center">
-        <Button variant="outline" onClick={()=>load()} disabled={loading || done || Boolean(fehler)}>
-          {done ? 'Ende' : 'Mehr laden'}
-        </Button>
-      </div>
+      {/* Solange keine erste Seite da ist, gibt es keine zweite. Die Schaltfläche
+          war hier auch im Fehlerfall zu sehen – abgeschaltet, aber sichtbar, und
+          damit ein zweites Angebot neben „Erneut versuchen“. */}
+      {rows !== null && !fehler && (
+        <div className="mt-3 flex items-center justify-center">
+          <Button variant="outline" onClick={()=>load()} disabled={loading || done}>
+            {done ? 'Ende' : 'Mehr laden'}
+          </Button>
+        </div>
+      )}
     </section>
   )
 }
@@ -424,11 +429,13 @@ function WebhooksCard() {
           </tbody>
         </table>
       </div>
-      <div className="mt-3 flex items-center justify-center">
-        <Button variant="outline" onClick={()=>load()} disabled={loading || done || Boolean(fehler)}>
-          {done ? 'Ende' : 'Mehr laden'}
-        </Button>
-      </div>
+      {rows !== null && !fehler && (
+        <div className="mt-3 flex items-center justify-center">
+          <Button variant="outline" onClick={()=>load()} disabled={loading || done}>
+            {done ? 'Ende' : 'Mehr laden'}
+          </Button>
+        </div>
+      )}
     </section>
   )
 }
