@@ -69,10 +69,14 @@ jobs:
   # im Dashboard genügt. Deshalb wird sie gegen supabase/config.toml geprüft
   # (Phase 1.4c, DECISIONS.md ADR-0039).
   #
-  # Eigener Job, weil er ein Geheimnis braucht: Der Job oben läuft auch für
-  # einen Fork, dieser übersprungen sich dort selbst. Ohne die beiden Werte in
-  # den Repository-Secrets bleibt die Prüfung übersprungen und sagt das auch –
-  # sie darf nicht grün aussehen, wenn sie nicht gelaufen ist.
+  # Eigener Job, weil er ein Geheimnis braucht. Er ist fail-closed: Fehlen die
+  # beiden Werte in den Repository-Secrets, bricht er ab. Eine Prüfung, die
+  # nicht gelaufen ist, darf nicht grün aussehen – und ein grüner Job, in dem
+  # der eigentliche Schritt übersprungen wurde, sieht genau so aus.
+  #
+  # Die einzige Ausnahme ist ein Pull Request aus einem Fork: GitHub gibt ihm
+  # keine Secrets, das Fehlen ist dort also keine Nachlässigkeit, sondern die
+  # Regel. Dieser Fall überspringt sich und sagt es.
   auth-konfiguration:
     name: Auth-Konfiguration gegen config.toml
     runs-on: ubuntu-latest
@@ -95,12 +99,19 @@ jobs:
 
       - name: Zugang vorhanden?
         id: zugang
+        env:
+          # Bei einem `push` ist der Ausdruck `false`, weil die erste
+          # Bedingung schon nicht zutrifft.
+          AUS_FORK: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
         run: |
           if [ -n "$SUPABASE_ACCESS_TOKEN" ] && [ -n "$SUPABASE_PROJECT_REF" ]; then
             echo "vorhanden=ja" >> "$GITHUB_OUTPUT"
-          else
+          elif [ "$AUS_FORK" = "true" ]; then
             echo "vorhanden=nein" >> "$GITHUB_OUTPUT"
-            echo "::notice::Übersprungen. Für die Prüfung fehlen die Secrets SUPABASE_ACCESS_TOKEN und SUPABASE_PROJECT_REF."
+            echo "::notice::Übersprungen: Ein Pull Request aus einem Fork bekommt von GitHub keine Secrets."
+          else
+            echo "::error::SUPABASE_ACCESS_TOKEN und SUPABASE_PROJECT_REF fehlen in den Repository-Secrets. Der Abgleich der Auth-Konfiguration kann nicht laufen – und darf deshalb nicht grün aussehen."
+            exit 1
           fi
 
       # Das Skript bricht selbst ab, wenn der Ref auf ein eigenständiges
