@@ -33,10 +33,6 @@ type AmadeusLocation = {
   }
 }
 
-type AmadeusMapped = {
-  option: Option
-  row: AirportRow
-}
 
 /* -------------------------------- Amadeus --------------------------------- */
 
@@ -78,28 +74,17 @@ function mapLocalRow(r: AirportRow): Option {
   return { label, value: code || r.name, description }
 }
 
-function mapAmadeus(loc: AmadeusLocation): AmadeusMapped {
+function mapAmadeus(loc: AmadeusLocation): Option {
   const code = loc.iataCode ?? loc.address?.cityCode ?? ''
   const city = loc.address?.cityName ?? loc.name
   const name = loc.name
   const country = loc.address?.countryName
-  const label = `${code ? `${code} — ` : ''}${name}${city ? `, ${city}` : ''}`
 
-  const option: Option = {
-    label,
+  return {
+    label: `${code ? `${code} — ` : ''}${name}${city ? `, ${city}` : ''}`,
     value: code || name,
     description: country ?? undefined,
   }
-
-  const row: AirportRow = {
-    iata: code || null,
-    icao: null,
-    name,
-    city: city ?? null,
-    country: country ?? null,
-  }
-
-  return { option, row }
 }
 
 /* --------------------------------- Handler -------------------------------- */
@@ -136,14 +121,6 @@ export async function GET(req: Request) {
   const read = createClient(supabaseUrl, supabaseAnonKey, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   })
-
-  // Optionales Write-Through-Caching bleibt strikt serverseitig.
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()
-  const write = serviceRoleKey
-    ? createClient(supabaseUrl, serviceRoleKey, {
-        auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
-      })
-    : null
 
   // 1) Schnell: lokale DB
   const like = `%${q}%`
@@ -193,24 +170,14 @@ export async function GET(req: Request) {
       const resp = await fetch(url, { headers: { Authorization: `Bearer ${t}` }, cache: 'no-store' })
       if (resp.ok) {
         const json = (await resp.json()) as { data?: AmadeusLocation[] }
-        const mapped: AmadeusMapped[] = (json.data ?? []).map((d: AmadeusLocation): AmadeusMapped =>
-          mapAmadeus(d)
-        )
+        const mapped = (json.data ?? []).map(mapAmadeus)
 
         // De-dupe über value
         const seen = new Set<string>(options.map((o) => o.value))
-        for (const m of mapped) {
-          if (!seen.has(m.option.value)) {
-            options.push(m.option)
-            seen.add(m.option.value)
-          }
-        }
-
-        // Optional: Write-through Cache (nur wenn WRITE-Client vorhanden)
-        if (write) {
-          const upserts: AirportRow[] = mapped.map((m): AirportRow => m.row)
-          if (upserts.length) {
-            await write.from('airports').upsert(upserts, { onConflict: 'iata' })
+        for (const treffer of mapped) {
+          if (!seen.has(treffer.value)) {
+            options.push(treffer)
+            seen.add(treffer.value)
           }
         }
       }
