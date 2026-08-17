@@ -6,6 +6,7 @@ import { NextResponse } from 'next/server'
 
 import { problemAntwort } from '@/lib/api/antwort'
 import { lese } from '@/lib/api/datenbank-lesen'
+import { textSuchfilter } from '@/lib/api/suchfilter'
 import { requireAdminApi } from '@/lib/auth/admin-guard'
 import { createRouteHandlerClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/supabase'
@@ -31,7 +32,7 @@ export async function GET(req: Request) {
 
     if (cursor) abfrage = abfrage.lt('created_at', cursor)
     if (status) abfrage = abfrage.eq('status', status)
-    if (suche) abfrage = abfrage.or(`id.ilike.%${suche}%,customer_email.ilike.%${suche}%`)
+    if (suche) abfrage = abfrage.or(textSuchfilter(['id', 'customer_email'], suche))
 
     return abfrage
   })

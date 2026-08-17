@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server'
 
 import { problemAntwort } from '@/lib/api/antwort'
 import { lese } from '@/lib/api/datenbank-lesen'
+import { ereignisSuchfilter } from '@/lib/api/suchfilter'
 import { requireAdminApi } from '@/lib/auth/admin-guard'
 import { createRouteHandlerClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/supabase'
@@ -30,7 +31,7 @@ export async function GET(req: Request) {
       .limit(LIMIT + 1)
 
     if (cursor) abfrage = abfrage.lt('created_at', cursor)
-    if (suche) abfrage = abfrage.or(`type.ilike.%${suche}%,ip.ilike.%${suche}%,user_id.ilike.%${suche}%`)
+    if (suche) abfrage = abfrage.or(ereignisSuchfilter(suche))
 
     return abfrage
   })
