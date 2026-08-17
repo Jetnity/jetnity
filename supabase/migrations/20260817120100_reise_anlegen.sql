@@ -47,6 +47,25 @@
 -- Fehler in der Funktion sofort fremde Daten erreicht. Die Eigentümerkennung
 -- kommt aus `auth.uid()` und nicht aus der Nutzlast; eine mitgeschickte
 -- `user_id` wird nicht gelesen.
+--
+-- ---------------------------------------------------------------------------
+-- Missbrauchsschranke
+-- ---------------------------------------------------------------------------
+--
+-- Der Aufruf ist angemeldet, aber ein angemeldetes Konto kann ihn in einer
+-- Schleife absetzen. Eine Reise mit 366 Tagen und 1000 Planpunkten ist ein
+-- gutes Kilobyte je Aufruf; unbegrenzt oft wäre das Schreibrecht des Kontos
+-- gleichzeitig ein Weg, die Datenbank zu füllen (AGENTS.md Regel 15).
+--
+-- Die Schranke ist bewusst eine Rate und keine Gesamtzahl: Wie viele Reisen ein
+-- Konto besitzen darf, ist eine Produktentscheidung und steht hier nicht zur
+-- Debatte. Wie schnell es sie anlegen kann, ist eine technische Frage. 60 neue
+-- Reisen je Stunde liegen weit über jeder menschlichen Nutzung und über dem
+-- grössten denkbaren Login – die Übernahme bringt höchstens die eine aktive
+-- Gastreise plus 20 Entwürfe aus der Fassung vor Phase 1.5 mit.
+--
+-- Kein zusätzlicher Index: Die Zählung läuft über
+-- `trips_user_id_updated_at_idx`, dessen führende Spalte `user_id` ist.
 
 create or replace function public.reise_anlegen(_reise jsonb)
 returns uuid
@@ -104,6 +123,15 @@ begin
 
   if _punkte > 1000 then
     raise exception 'Eine Reise trägt höchstens 1000 Planpunkte.' using errcode = '22023';
+  end if;
+
+  -- Missbrauchsschranke, siehe oben. `53400` ist `configuration_limit_exceeded`
+  -- und damit für `lib/api/datenbank-lesen.ts` ein vorübergehendes Problem:
+  -- „später erneut versuchen" ist hier die richtige Auskunft.
+  if (select count(*) from public.trips
+       where user_id = _uid and created_at >= now() - interval '1 hour') >= 60 then
+    raise exception 'Zu viele neue Reisen in kurzer Zeit. Bitte versuche es später erneut.'
+      using errcode = '53400';
   end if;
 
   -- 1. Die Reise selbst. Alles Weitere hängt daran.
@@ -196,7 +224,7 @@ end
 $$;
 
 comment on function public.reise_anlegen(jsonb) is
-  'Legt eine Reise samt Etappen, Tagen und Planpunkten für das aufrufende Konto an. Idempotent über trips.client_ref: derselbe Aufruf ergibt dieselbe Reise. Trägt die Übernahme einer Gastreise und das Formular unter /planen. SECURITY INVOKER: RLS gilt, die Eigentümerkennung kommt aus auth.uid(), status ist immer draft.';
+  'Legt eine Reise samt Etappen, Tagen und Planpunkten für das aufrufende Konto an. Idempotent über trips.client_ref: derselbe Aufruf ergibt dieselbe Reise. Trägt die Übernahme einer Gastreise und das Formular unter /planen. SECURITY INVOKER: RLS gilt, die Eigentümerkennung kommt aus auth.uid(), status ist immer draft. Höchstens 60 neue Reisen je Konto und Stunde.';
 
 revoke all on function public.reise_anlegen(jsonb) from public, anon;
 grant execute on function public.reise_anlegen(jsonb) to authenticated;

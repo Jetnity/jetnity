@@ -28,13 +28,14 @@ import {
   type Trip,
 } from '@/types/trips'
 import { interesseLesen, tempoLesen } from '@/lib/trips/bezeichnungen'
+import { TAGE_MAXIMUM } from '@/lib/trips/tage'
 
 /** Höchstwerte, die auch die Datenbank kennt. An einer Stelle, damit sie gleich bleiben. */
 export const GRENZEN = {
   titel: 120,
   ort: 120,
   reisende: 20,
-  reisetageJeReise: 366,
+  reisetageJeReise: TAGE_MAXIMUM,
   reisedauerInTagen: 365,
   etappenJeReise: 50,
   punkteJeReise: 1000,
@@ -339,6 +340,15 @@ export type ReiseNutzlast = z.infer<typeof reiseNutzlastSchema>
 // ---------------------------------------------------------------------------
 
 export const neueReiseSchema = z.object({
+  /**
+   * Die Kennung, die das Formular je Anlauf erzeugt.
+   *
+   * Sie trägt die Idempotenz bis in die Datenbank: Ein Doppelklick auf „Reise
+   * erstellen" und ein erneut abgeschickter Vorgang nach einer abgebrochenen
+   * Antwort schicken dieselbe Kennung und ergeben über
+   * `unique (user_id, client_ref)` dieselbe Reise.
+   */
+  clientRef: z.string().min(1).max(64),
   title: titel,
   destination: titel,
   origin: titel,
@@ -354,16 +364,27 @@ export const neueReiseSchema = z.object({
 
 export type NeueReise = z.infer<typeof neueReiseSchema>
 
-export const neuerPlanpunktSchema = z.object({
-  tripId: z.string().uuid(),
-  dayId: z.string().uuid().nullable().default(null),
+/**
+ * Was das Formular „Punkt hinzufügen" liefert.
+ *
+ * Ohne Kennungen: Der Tag steht in der Oberfläche fest, und ob er lokal
+ * (`day-<uuid>`) oder in der Datenbank (UUID) liegt, ist eine Frage der Ablage
+ * und nicht der Eingabe. Beide Arbeitsbereiche prüfen deshalb dasselbe.
+ */
+export const planpunktFormularSchema = z.object({
   kind: z.enum(TRIP_ITEM_KINDS).default('note'),
   title: titel,
   note: optionalerText(GRENZEN.notiz).nullable().default(null),
   startsAt: uhrzeit.nullable().default(null),
 })
 
-export type NeuerPlanpunkt = z.infer<typeof neuerPlanpunktSchema>
+export type PlanpunktFormular = z.infer<typeof planpunktFormularSchema>
+
+/** Dasselbe Formular, an eine Reise und einen Tag im Konto gebunden. */
+export const neuePlanpunktNutzlastSchema = planpunktFormularSchema.extend({
+  tripId: z.string().uuid(),
+  dayId: z.string().uuid(),
+})
 
 /** Die erste Fehlermeldung eines Prüflaufs, für die Anzeige. */
 export function ersteMeldung(fehler: z.ZodError): string {

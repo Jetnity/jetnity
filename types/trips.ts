@@ -148,8 +148,16 @@ export type TripSummary = {
   itemCount: number
 }
 
-/** Die Angaben, aus denen eine neue Reise entsteht – das Formular unter /planen. */
+/**
+ * Die Angaben, aus denen eine neue Reise entsteht – das Formular unter /planen.
+ *
+ * `clientRef` gehört dazu und ist keine technische Beigabe: Sie entscheidet, ob
+ * ein zweiter Anlauf dieselbe Reise ergibt oder eine zweite. Beide Ablagen
+ * benutzen sie – im Browser als Kennung des Entwurfs, in der Datenbank als
+ * `trips.client_ref`.
+ */
 export type CreateTripInput = {
+  clientRef: string
   title: string
   destination: string
   origin: string
@@ -161,13 +169,4 @@ export type CreateTripInput = {
   pace: TripPace
   interests: TripInterest[]
   travelWish: string | null
-}
-
-/** Die Angaben, aus denen ein neuer Planpunkt entsteht. */
-export type CreateTripItemInput = {
-  dayId: string | null
-  kind: TripItemKind
-  title: string
-  note: string | null
-  startsAt: string | null
 }

@@ -32,18 +32,10 @@
 // Der alte Schlüssel wird erst gelöscht, wenn der neue geschrieben ist. Bricht
 // der Vorgang dazwischen ab, läuft er beim nächsten Laden erneut.
 
-import {
-  reiseLesen,
-  type GepruefteReise,
-} from '@/lib/trips/schema'
-import type {
-  CreateTripInput,
-  CreateTripItemInput,
-  Trip,
-  TripDay,
-  TripItem,
-} from '@/types/trips'
+import { reiseLesen, type PlanpunktFormular } from '@/lib/trips/schema'
+import type { CreateTripInput, Trip, TripDay, TripItem } from '@/types/trips'
 import { interesseLesen, tempoLesen } from '@/lib/trips/bezeichnungen'
+import { reisetageBauen } from '@/lib/trips/tage'
 
 /** Die aktive Gastreise. Höchstens eine. */
 const SCHLUESSEL_AKTIV = 'jetnity:reise:v3'
@@ -87,7 +79,17 @@ function verfuegbar(): boolean {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'
 }
 
-function kennung(prefix: string): string {
+/**
+ * Eine lokale Kennung, etwa `trip-8f2c…`.
+ *
+ * Das Präfix hält die Kennung einer Gastreise von einer UUID der Datenbank
+ * unterscheidbar: `/reisen/[tripId]` entscheidet daran, ob es im Konto oder im
+ * Browser nachsieht (`lib/trips/daten.ts`, `istKontoKennung`).
+ *
+ * Exportiert, weil das Formular unter /planen die Kennung schon braucht, bevor
+ * klar ist, ob die Reise im Browser oder im Konto entsteht.
+ */
+export function kennungErzeugen(prefix: string): string {
   const zufall =
     typeof crypto !== 'undefined' && 'randomUUID' in crypto
       ? crypto.randomUUID()
@@ -129,7 +131,7 @@ function ausLegacy(wert: unknown): Trip | null {
   if (!wert || typeof wert !== 'object') return null
   const alt = wert as Record<string, unknown>
 
-  const id = typeof alt.id === 'string' && alt.id ? alt.id.slice(0, 64) : kennung('trip')
+  const id = typeof alt.id === 'string' && alt.id ? alt.id.slice(0, 64) : kennungErzeugen('trip')
   const jetzt = new Date().toISOString()
 
   const tage: TripDay[] = Array.isArray(alt.days)
@@ -138,14 +140,14 @@ function ausLegacy(wert: unknown): Trip | null {
         const punkte = Array.isArray(tag.items) ? tag.items : []
 
         return {
-          id: kennung('day'),
+          id: kennungErzeugen('day'),
           dayIndex: index + 1,
           dayDate: typeof tag.date === 'string' ? tag.date : null,
           title: null,
           items: punkte.map((rohPunkt, stelle) => {
             const punkt = (rohPunkt ?? {}) as LegacyPunkt
             return {
-              id: kennung('item'),
+              id: kennungErzeugen('item'),
               dayId: null,
               stageId: null,
               // Die Fassung v2 kannte keine Arten. Alles darin war ein
@@ -201,14 +203,18 @@ function ausLegacy(wert: unknown): Trip | null {
   return reiseLesen(entwurf)
 }
 
-function einzelneEtappe(name: string) {
+function einzelneEtappe(
+  name: string,
+  arrivalDate: string | null = null,
+  departureDate: string | null = null,
+) {
   return {
-    id: kennung('stage'),
+    id: kennungErzeugen('stage'),
     position: 1,
     name,
     countryCode: null,
-    arrivalDate: null,
-    departureDate: null,
+    arrivalDate,
+    departureDate,
     latitude: null,
     longitude: null,
   }
@@ -279,7 +285,7 @@ export function gastspeicherLaden(): Gastspeicher {
 }
 
 /** Die aktive Gastreise, oder `null`. */
-export function gastreiseLaden(): Trip | null {
+function gastreiseLaden(): Trip | null {
   return gastspeicherLaden().aktiv
 }
 
@@ -317,7 +323,11 @@ export function gastreiseAnlegen(eingabe: CreateTripInput): Trip {
   if (bestehend) throw new GastreiseBestehtFehler(bestehend.id)
 
   const jetzt = new Date().toISOString()
-  const id = kennung('trip')
+
+  // Die Kennung des Formulars wird die Kennung des Entwurfs. Damit trägt sie
+  // die Idempotenz weiter: Wird dieser Entwurf später ins Konto übernommen, ist
+  // es dieselbe Kennung, die dort `unique (user_id, client_ref)` prüft.
+  const id = eingabe.clientRef
 
   const entwurf = {
     id,
@@ -333,8 +343,10 @@ export function gastreiseAnlegen(eingabe: CreateTripInput): Trip {
     pace: eingabe.pace,
     interests: eingabe.interests,
     travelWish: eingabe.travelWish,
-    stages: eingabe.destination ? [einzelneEtappe(eingabe.destination)] : [],
-    days: tageBauen(eingabe.startDate, eingabe.endDate),
+    stages: eingabe.destination
+      ? [einzelneEtappe(eingabe.destination, eingabe.startDate, eingabe.endDate)]
+      : [],
+    days: tageMitKennung(eingabe.startDate, eingabe.endDate),
     createdAt: jetzt,
     updatedAt: jetzt,
   }
@@ -347,12 +359,15 @@ export function gastreiseAnlegen(eingabe: CreateTripInput): Trip {
 }
 
 /** Hängt einen Planpunkt an einen Tag der aktiven Gastreise. */
-export function gastPlanpunktAnlegen(reise: Trip, eingabe: CreateTripItemInput): Trip {
+export function gastPlanpunktAnlegen(
+  reise: Trip,
+  eingabe: PlanpunktFormular & { dayId: string },
+): Trip {
   const tag = reise.days.find((eintrag) => eintrag.id === eingabe.dayId)
   if (!tag) throw new Error('Dieser Tag gehört nicht zur Reise.')
 
   const punkt: TripItem = {
-    id: kennung('item'),
+    id: kennungErzeugen('item'),
     dayId: tag.id,
     stageId: null,
     kind: eingabe.kind,
@@ -431,33 +446,15 @@ export function uebernommenStreichen(clientRef: string) {
   }
 }
 
-/**
- * Baut die Tage zwischen zwei Daten.
- *
- * Exportiert, weil der Server dieselbe Aufteilung braucht, wenn eine Reise
- * direkt im Konto entsteht. Zwei Fassungen davon würden auseinanderlaufen, und
- * eine Reise hätte im Konto andere Tage als im Browser.
- */
-export function tageBauen(startDate: string, endDate: string) {
-  const start = Date.parse(`${startDate}T00:00:00Z`)
-  const ende = Date.parse(`${endDate}T00:00:00Z`)
-
-  if (Number.isNaN(start) || Number.isNaN(ende) || ende < start) return []
-
-  const tage: { id: string; dayIndex: number; dayDate: string; title: null; items: never[] }[] = []
-  const einTag = 86_400_000
-
-  for (let zeit = start; zeit <= ende && tage.length < 366; zeit += einTag) {
-    tage.push({
-      id: kennung('day'),
-      dayIndex: tage.length + 1,
-      dayDate: new Date(zeit).toISOString().slice(0, 10),
-      title: null,
-      items: [],
-    })
-  }
-
-  return tage
+/** Die Tage einer Gastreise: dieselbe Aufteilung wie im Konto, plus lokale Kennungen. */
+function tageMitKennung(startDate: string, endDate: string): TripDay[] {
+  return reisetageBauen(startDate, endDate).map((tag) => ({
+    id: kennungErzeugen('day'),
+    dayIndex: tag.dayIndex,
+    dayDate: tag.dayDate,
+    title: null,
+    items: [],
+  }))
 }
 
 /** Nur für Tests: die Schlüssel, unter denen dieser Speicher arbeitet. */
@@ -466,5 +463,3 @@ export const SCHLUESSEL = {
   warteschlange: SCHLUESSEL_WARTESCHLANGE,
   legacy: SCHLUESSEL_LEGACY,
 } as const
-
-export type { GepruefteReise }
