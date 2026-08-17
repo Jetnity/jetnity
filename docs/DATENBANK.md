@@ -308,10 +308,11 @@ Die Tabelle wird ausschliesslich vom Webhook geschrieben, der mit dem Service-Ke
 
 ## 8. Advisor-Befunde
 
-Behoben sind `function_search_path_mutable`, `auth_rls_initplan`, `multiple_permissive_policies`, `duplicate_index` und – seit `20260817100800` – `rls_enabled_no_policy`. Es bleiben 44 Security- und 47 Performance-Befunde. Was bleibt, bleibt mit Grund:
+Behoben sind `function_search_path_mutable`, `auth_rls_initplan`, `multiple_permissive_policies`, `duplicate_index` und – seit `20260817100800` – `rls_enabled_no_policy`. Es bleiben 45 Security- und 47 Performance-Befunde. Was bleibt, bleibt mit Grund:
 
 | Befund | Anzahl | Bewertung |
 | --- | --- | --- |
+| `auth_leaked_password_protection` | 1 | `password_hibp_enabled` steht auf dem Branch auf `false`. Kein Schemabefund, sondern eine Einstellung des Auth-Servers – sie lässt sich weder durch eine Migration herstellen noch aus dem Repository nachweisen, siehe Abschnitt 11 |
 | `authenticated_security_definer_function_executable` | 4 | `aktuelle_rolle()` und `hat_rolle_mindestens()` werden von den Policies gebraucht und müssen deshalb für `authenticated` ausführbar sein. Sie geben nur Auskunft über das aufrufende Konto selbst. `admin_payments_summary_30d()` und `admin_security_overview()` prüfen die Fähigkeit intern und liefern ohne `betrieb-lesen` keine Zeile – nachgewiesen in Abschnitt 7 |
 | `pg_graphql_anon_table_exposed` | 3 | `airports`, `blog_posts`, `blog_comments` sollen ohne Anmeldung lesbar sein. Sichtbarkeit im GraphQL-Schema ist die Folge des `SELECT`-Rechts, nicht ein zusätzliches Recht |
 | `pg_graphql_authenticated_table_exposed` | 37 | dasselbe für angemeldete Konten. Welche Zeilen sichtbar sind, entscheidet RLS – nachgewiesen in Abschnitt 7 |
@@ -319,6 +320,8 @@ Behoben sind `function_search_path_mutable`, `auth_rls_initplan`, `multiple_perm
 | `auth_db_connections_absolute` | 1 | Einstellung des Auth-Servers, kein Schemabefund. Gehört zur Kapazitätsplanung vor dem Launch |
 
 Zwei Verschiebungen gegenüber dem ersten Durchgang: `rls_enabled_no_policy` auf `stripe_webhooks` ist weg, weil die Tabelle jetzt eine Lesepolicy hat – dafür zählt sie in der GraphQL-Gruppe mit, die von 36 auf 37 steigt. Und die Funktion `admin_security_overview()` erhöht die erste Gruppe von drei auf vier. Sie folgt demselben Muster wie `admin_payments_summary_30d()` – `SECURITY DEFINER` mit interner Prüfung. `pg_policy` wäre für jede Rolle lesbar und verriete die Bedingung jeder Policy; die Funktion gibt nur deren Anzahl heraus.
+
+`auth_leaked_password_protection` meldeten die Advisors in den Läufen vom 17. August 09:20 und 10:49 noch nicht, im Abschlusslauf dagegen schon. Dazwischen entstanden die ersten passwortgestützten Konten auf dem Branch, für die manuelle Prüfung von Moderation und Notzugang. Warum der Advisor vorher schwieg, ist damit nicht bewiesen. Festgehalten ist nur, dass Phase 1.4 keine Auth-Einstellung geschrieben hat – gearbeitet wurde ausschliesslich über Migrationen und SQL.
 
 Die fünf `darf_…()`-Funktionen erzeugen keinen Befund: Sie sind `SECURITY INVOKER` und tragen einen festen `search_path`.
 
@@ -428,4 +431,6 @@ Alle vier Tabellen stehen in der Liste der obsoleten. Sie dafür einzeln zu bere
 | `creator_sessions` aus den Admin-Kennzahlen lösen | Phase 1.5, zusammen mit dem Reise-Schema |
 | Datenbanknahe Prüfungen in die CI | braucht einen kurzlebigen Branch je Lauf, siehe Abschnitt 9 |
 | Lesende Admin-Routen verschlucken Fehler | `security/summary`, `security/events`, `payments/list`, `payments/summary`, `payments/breakdown`, `payments/webhooks` antworten bei einem Fehler mit einer leeren Liste statt mit einem Status. Für den Notzugang fängt das der Hinweis über der Shell ab, für einen echten Ausfall nicht. Behoben ist bisher nur der schreibende Weg `payments/refund`, weil eine erfundene Erfolgsmeldung bei einer Rückerstattung die teuerste ist |
+| Schutz vor kompromittierten Passwörtern | `password_hibp_enabled` steht auf `false`, obwohl `components/auth/RegisterForm.tsx` die zugehörige Fehlermeldung bereits übersetzt. Bewusst nicht im Vorbeigehen umgelegt: Eine Auth-Einstellung liegt neben dem Schema, sie steht in keiner Migration und wäre aus dem Repository weder nachvollziehbar noch reproduzierbar. Sie gehört zusammen mit `password_min_length` und den Redirect-URLs in einen eigenen Schritt, der die Auth-Konfiguration versioniert |
+| Auth-Konfiguration nicht versioniert | `supabase/config.toml` ist der unveränderte Vorlagenstand der CLI – `site_url` zeigt auf `127.0.0.1`, `minimum_password_length` steht auf 6, der Branch verlangt 12. Die Datei beschreibt damit weder Development noch Production. Solange das so bleibt, ist die Auth-Ebene die einzige Schicht, die nicht aus dem Repository hervorgeht |
 | Production-Stand | in Phase 1.4 nicht erhoben und nicht verändert. Der Abgleich gehört zum ersten Production-Deploy nach 1.5 |

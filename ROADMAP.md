@@ -17,7 +17,7 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Phase 1.1 | Alt-Endpunkte und Cron-Jobs außer Betrieb | **fertig** |
 | Phase 1.1b | Alt-Oberflächen entfernen, Auth-Texte auf V2 | **abgeschlossen, in Production verifiziert** |
 | Phase 1.2 – 1.4 | Tokens, Auth-Vereinheitlichung, Datenbank-Baseline | **fertig auf Development** |
-| Phase 1 (Rest) | obsolete Tabellen entfernen, V2-Reise-Schema | in Arbeit |
+| Phase 1 (Rest) | obsolete Tabellen entfernen, Auth-Konfiguration versionieren, V2-Reise-Schema | in Arbeit |
 | Phase 2 | Jetnity-Kern: natürliche Sprache zu strukturierter Reise | geplant |
 | Phase 3 | Reiseprodukte und Monetarisierung | geplant |
 | Phase 4 | Launch-Reife | geplant |
@@ -306,7 +306,9 @@ Damit stellte sich die Frage nach dem Notzugang: `ADMIN_ALLOWED_EMAILS` öffnet 
 | `npm run db:typen -- --pruefen` | `types/supabase.ts` entspricht dem Schema |
 | `npm test` | 52 Tests, darin der Abgleich von Rollenmodell und Fähigkeiten zwischen TypeScript und Migrations-SQL |
 
-**Advisors.** `function_search_path_mutable`, `auth_rls_initplan`, `multiple_permissive_policies`, `duplicate_index` und `rls_enabled_no_policy` sind behoben. Es bleiben 44 Security- und 47 Performance-Befunde, jeder mit Begründung in [docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 8. Der Grossteil sind Hinweise auf GraphQL-Sichtbarkeit, die aus dem `SELECT`-Recht folgt, und nie benutzte Indizes auf einem Branch ohne Verkehr.
+**Advisors.** `function_search_path_mutable`, `auth_rls_initplan`, `multiple_permissive_policies`, `duplicate_index` und `rls_enabled_no_policy` sind behoben. Es bleiben 45 Security- und 47 Performance-Befunde, jeder mit Begründung in [docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 8. Der Grossteil sind Hinweise auf GraphQL-Sichtbarkeit, die aus dem `SELECT`-Recht folgt, und nie benutzte Indizes auf einem Branch ohne Verkehr.
+
+Ein Befund ist im Abschlusslauf neu dazugekommen und bleibt offen: `auth_leaked_password_protection`. Er betrifft keine Struktur, sondern eine Einstellung des Auth-Servers, die in keiner Migration steht. Sie im Vorbeigehen umzulegen hiesse, eine Sicherheitszusage zu geben, die das Repository nicht belegen kann; die Auth-Konfiguration braucht einen eigenen, versionierten Schritt (siehe [docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 11).
 
 **Keine Development-Service-Role angelegt.** Sie war an keiner Stelle nötig. Die Skripte gehen über die Management API mit dem Personal Access Token, und die RLS-Nachweise legen ihre Testkonten innerhalb der zurückgerollten Transaktion selbst an.
 
@@ -322,6 +324,15 @@ Bei der Rechtedurchsicht fiel dafür der letzte Service-Role-Pfad **in der Anwen
 - [ ] Typen neu erzeugen, Reproduzierbarkeit und Nachweise erneut fahren
 
 Die Liste steht in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 10.
+
+### 1.4c Auth-Konfiguration versionieren · offen
+
+Phase 1.4 hat Schema, Rechte und Policies aus dem Repository nachvollziehbar gemacht. Die Auth-Ebene liegt daneben und ist es nicht: `supabase/config.toml` ist der unveränderte Vorlagenstand der CLI und beschreibt weder Development noch Production.
+
+- [ ] `password_hibp_enabled` einschalten – der Advisor meldet es, und `components/auth/RegisterForm.tsx` übersetzt die zugehörige Fehlermeldung bereits
+- [ ] `minimum_password_length` in `config.toml` (6) an den tatsächlichen Stand des Branches (12) angleichen
+- [ ] `site_url` und Redirect-URLs je Umgebung festhalten, statt `127.0.0.1`
+- [ ] festlegen, wie die Auth-Konfiguration überprüft wird – ohne Prüfung wiederholt sich der Zustand, den 1.4 gerade für das Schema beendet hat
 
 ### 1.5 V2-Reise-Schema
 
@@ -396,7 +407,7 @@ Je Kategorie zunächst genau ein Anbieter ([DECISIONS.md](DECISIONS.md), ADR-001
 | Datenbanknahe Prüfungen in der CI | braucht einen kurzlebigen Supabase-Branch je Lauf |
 | Nutzungsbedingungen und Datenschutzerklärung | Inhalt ist eine rechtliche Entscheidung, nicht technisch ableitbar |
 
-Mit Phase 1.4 sind zwei Einträge entfallen: RLS ist versioniert und mit 45 Nachweisen belegt, und das Schema ist aus dem Repository nachvollziehbar und reproduzierbar.
+Mit Phase 1.4 sind zwei Einträge entfallen: RLS ist versioniert und mit 81 Nachweisen belegt, und das Schema ist aus dem Repository nachvollziehbar und reproduzierbar.
 
 ---
 
