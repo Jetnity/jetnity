@@ -82,16 +82,37 @@ export function buildSeedPlan(inv) {
     byTable.get(c.table).push(c)
   }
 
+  // Primärschlüssel je Tabelle, für die Auflösung zusammengesetzter Fremdschlüssel.
+  const pkByTable = new Map()
+  for (const con of constraints) {
+    if (con.type !== 'p') continue
+    const m = con.definition.match(/\(([^)]+)\)/)
+    if (m) pkByTable.set(con.table, m[1].split(',').map((s) => s.trim().replace(/"/g, '')))
+  }
+
   // Fremdschlüssel: Spalte -> Zieltabelle
   const fks = new Map() // "tabelle.spalte" -> zieltabelle
   const deps = new Map() // tabelle -> Set(zieltabellen im selben Schema)
   for (const con of constraints) {
     if (con.type !== 'f') continue
-    const m = con.definition.match(/FOREIGN KEY \(([^)]+)\) REFERENCES ([\w.]+)\(/)
+    const m = con.definition.match(/FOREIGN KEY \(([^)]+)\) REFERENCES ([\w.]+)\(([^)]+)\)/)
     if (!m) continue
     const cols = m[1].split(',').map((s) => s.trim().replace(/"/g, ''))
     const target = m[2].replace(/^public\./, '')
-    for (const col of cols) fks.set(`${con.table}.${col}`, target)
+    const refCols = m[3].split(',').map((s) => s.trim().replace(/"/g, ''))
+
+    // Bei einem zusammengesetzten Fremdschlüssel zeigt nur eine Spalte auf den
+    // Schlüssel der Zieltabelle; die übrigen binden ihn an einen gemeinsamen
+    // Wert. `trip_items (day_id, trip_id) → trip_days (id, trip_id)` heisst:
+    // `day_id` ist der Verweis, `trip_id` gehört zur Reise. Ohne diese
+    // Unterscheidung bekäme `trip_id` die Kennung eines Reisetages und der
+    // Fremdschlüssel auf `trips` würde scheitern.
+    const pk = pkByTable.get(target) ?? []
+    for (const [i, col] of cols.entries()) {
+      const zeigtAufSchluessel = cols.length === 1 || pk.includes(refCols[i])
+      if (zeigtAufSchluessel) fks.set(`${con.table}.${col}`, target)
+    }
+
     if (!target.startsWith('auth.') && target !== con.table) {
       if (!deps.has(con.table)) deps.set(con.table, new Set())
       deps.get(con.table).add(target)
@@ -186,8 +207,21 @@ export function buildSeedPlan(inv) {
       else {
         const pkCol = cols.find((c) => c.name === pkCols[0])
         if (pkCol && pkCol.default) {
-          // Wert entsteht per Default – nachträglich lesen.
-          seededId.set(table, `(select ${pkCols[0]} from public.${table} limit 1)`)
+          // Wert entsteht per Default – nachträglich lesen. `order by ctid desc`
+          // und, wo es die Spalte gibt, die Einschränkung auf Alice: Auf einem
+          // Branch mit Daten würde ein blankes `limit 1` eine fremde Zeile
+          // treffen, und ein zusammengesetzter Fremdschlüssel
+          // `(trip_id, user_id)` scheiterte dann an einer Zeile, die es gibt.
+          const hatEigentuemer = cols.some(
+            (c) => OWNER_COLUMNS.has(c.name) && c.type === 'uuid',
+          )
+          const eigentuemer = cols.find((c) => OWNER_COLUMNS.has(c.name) && c.type === 'uuid')
+          seededId.set(
+            table,
+            `(select ${pkCols[0]} from public.${table}` +
+              (hatEigentuemer ? ` where ${eigentuemer.name} = '${ALICE}'::uuid` : '') +
+              ` order by ctid desc limit 1)`,
+          )
         }
       }
     }
@@ -214,8 +248,8 @@ function uuidFor(n) {
  * `probe` setzt Rolle und JWT-Anspruch so, wie PostgREST es zur Laufzeit tut,
  * führt die Anweisung aus – und wirft danach absichtlich einen Fehler. Dadurch
  * rollt der Unterabschnitt zurück, und zwar auch bei Erfolg. Ohne diesen Kniff
- * würde ein erfolgreiches `delete from creator_sessions` die Zeilen aller
- * abhängigen Tabellen mitnehmen und jede spätere Messung verfälschen.
+ * würde ein erfolgreiches `delete from trips` die Zeilen aller abhängigen
+ * Tabellen mitnehmen und jede spätere Messung verfälschen.
  *
  * `saee` legt die Testdaten an und muss deshalb bestehen bleiben.
  */
@@ -342,10 +376,10 @@ ${seedUsers}
 ${seedStatements}
 -- Jedes Testkonto braucht ein Profil, sonst laufen die rollenbasierten Policies
 -- ins Leere und ein fehlender Admin-Zugriff sähe aus wie eine dichte Policy.
-insert into public.creator_profiles (user_id, username, role, status)
-values ('${BOB}', 'nutzerbob', 'user', 'active'),
-       ('${CAROL}', 'nutzercarol', 'admin', 'active');
-update public.creator_profiles set role = 'user' where user_id = '${ALICE}';
+insert into public.profiles (user_id, display_name, role, status)
+values ('${BOB}', 'Bob', 'user', 'active'),
+       ('${CAROL}', 'Carol', 'admin', 'active');
+update public.profiles set role = 'user' where user_id = '${ALICE}';
 ${probeStatements.join('\n')}
 select jsonb_build_object(
   'saat', (select coalesce(jsonb_agg(to_jsonb(s)), '[]'::jsonb) from saat s),

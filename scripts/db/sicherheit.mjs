@@ -28,6 +28,20 @@ const CREATOR = '77777777-7777-7777-7777-777777777777'
 const MODERATION = '88888888-8888-8888-8888-888888888888'
 const BETRIEB = '99999999-9999-9999-9999-999999999999'
 
+// Feste Kennungen der Reise von NUTZER und ihrer Kinder, damit die Fälle sie
+// benennen können.
+const REISE = 'aaaaaaaa-0000-4000-8000-000000000001'
+const ETAPPE = 'aaaaaaaa-0000-4000-8000-000000000002'
+const TAG = 'aaaaaaaa-0000-4000-8000-000000000003'
+const PUNKT = 'aaaaaaaa-0000-4000-8000-000000000004'
+
+// Die Reise des zweiten Kontos.
+const FREMDE_REISE = 'bbbbbbbb-0000-4000-8000-000000000001'
+
+// Ein Konto, das die Missbrauchsschranke von public.reise_anlegen() im Aufbau
+// bereits erreicht hat.
+const VIELREISEND = 'dddddddd-0000-4000-8000-000000000001'
+
 /**
  * Erwartungen.
  *
@@ -60,7 +74,7 @@ const FAELLE = [
   {
     name: 'anon liest Profile',
     rolle: 'anon',
-    sql: `select * from public.creator_profiles`,
+    sql: `select * from public.profiles`,
     erwartung: 'abgelehnt',
   },
   {
@@ -76,13 +90,14 @@ const FAELLE = [
     erwartung: 'abgelehnt',
   },
   {
-    name: 'anon liest Sitzungen',
+    name: 'anon liest Reisen',
     rolle: 'anon',
-    sql: `select * from public.creator_sessions`,
+    sql: `select * from public.trips`,
     erwartung: 'abgelehnt',
     grund:
       'Der Fall ersetzt die entfallenen Nachweise zu creator_uploads und session_comments, ' +
-      'auf denen bis Phase 1.4 USING true galt.',
+      'auf denen bis Phase 1.4 USING true galt. Seit Phase 1.5 ist public.trips die ' +
+      'Tabelle mit privaten Inhalten; anon hat dort weder Recht noch Policy.',
   },
   {
     name: 'anon liest Stripe-Ereignisse',
@@ -92,14 +107,22 @@ const FAELLE = [
     grund: 'Die Tabelle ist seit dem Nachtrag lesbar – aber erst ab der Fähigkeit betrieb-lesen.',
   },
   {
-    name: 'anon legt eine Sitzung an',
+    name: 'anon legt eine Reise an',
     rolle: 'anon',
-    sql: `insert into public.creator_sessions (user_id, title, role, status)
-          values ('${NUTZER}', 'x', 'creator', 'draft')`,
+    sql: `insert into public.trips (user_id, title) values ('${NUTZER}', 'x')`,
     erwartung: 'abgelehnt',
     grund:
       'Ersetzt den entfallenen Nachweis zu creator_uploads, dessen Policy ' +
       '„Allow insert for virtual uploads" das jedem Besucher erlaubte.',
+  },
+  {
+    name: 'anon ruft reise_anlegen',
+    rolle: 'anon',
+    sql: `select public.reise_anlegen('{"client_ref":"anon","title":"x"}'::jsonb)`,
+    erwartung: 'abgelehnt',
+    grund:
+      'Die Funktion ist der einzige Schreibweg für eine ganze Reise. Ohne Anmeldung ' +
+      'fehlt das EXECUTE-Recht – der Gast bleibt im localStorage (ADR-0042).',
   },
   {
     name: 'anon leert eine Tabelle mit TRUNCATE',
@@ -121,59 +144,38 @@ const FAELLE = [
     name: 'Konto liest das eigene Profil',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `select * from public.creator_profiles where user_id = '${NUTZER}'`,
+    sql: `select * from public.profiles where user_id = '${NUTZER}'`,
     erwartung: 'erlaubt',
   },
   {
     name: 'Konto liest ein fremdes Profil',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `select * from public.creator_profiles where user_id = '${ZWEITER}'`,
+    sql: `select * from public.profiles where user_id = '${ZWEITER}'`,
     erwartung: 'leer',
   },
   {
     name: 'Konto ändert den eigenen Anzeigenamen',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `update public.creator_profiles set display_name = 'neu' where user_id = '${NUTZER}'`,
+    sql: `update public.profiles set display_name = 'neu' where user_id = '${NUTZER}'`,
     erwartung: 'erlaubt',
   },
   {
     name: 'Konto ändert ein fremdes Profil',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `update public.creator_profiles set display_name = 'fremd' where user_id = '${ZWEITER}'`,
+    sql: `update public.profiles set display_name = 'fremd' where user_id = '${ZWEITER}'`,
     erwartung: 'leer',
   },
-  {
-    name: 'Konto liest die eigene Sitzung',
-    rolle: 'authenticated',
-    uid: NUTZER,
-    sql: `select * from public.creator_sessions where user_id = '${NUTZER}'`,
-    erwartung: 'erlaubt',
-  },
-  {
-    name: 'Konto liest eine fremde Sitzung',
-    rolle: 'authenticated',
-    uid: ZWEITER,
-    sql: `select * from public.creator_sessions where user_id = '${NUTZER}'`,
-    erwartung: 'leer',
-  },
-  {
-    name: 'Konto legt eine Sitzung im fremden Namen an',
-    rolle: 'authenticated',
-    uid: ZWEITER,
-    sql: `insert into public.creator_sessions (user_id, title, role, status)
-          values ('${NUTZER}', 'geklaut', 'creator', 'draft')`,
-    erwartung: 'abgelehnt',
-  },
+  ...reisenachweise(),
 
   // --- Rechteausweitung ---------------------------------------------------
   {
     name: 'Konto befördert sich selbst zum Inhaber',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `update public.creator_profiles set role = 'owner' where user_id = '${NUTZER}'`,
+    sql: `update public.profiles set role = 'owner' where user_id = '${NUTZER}'`,
     erwartung: 'abgelehnt',
     grund: 'Vor Phase 1.4 lieferte genau diese Anweisung ok:1.',
   },
@@ -181,43 +183,43 @@ const FAELLE = [
     name: 'gesperrtes Konto entsperrt sich selbst',
     rolle: 'authenticated',
     uid: GESPERRT,
-    sql: `update public.creator_profiles set status = 'active' where user_id = '${GESPERRT}'`,
+    sql: `update public.profiles set status = 'active' where user_id = '${GESPERRT}'`,
     erwartung: 'abgelehnt',
   },
   {
     name: 'Konto befördert ein fremdes Konto',
     rolle: 'authenticated',
     uid: NUTZER,
-    sql: `update public.creator_profiles set role = 'admin' where user_id = '${ZWEITER}'`,
+    sql: `update public.profiles set role = 'admin' where user_id = '${ZWEITER}'`,
     erwartung: 'leer',
   },
   {
     name: 'neues Konto legt sich ein Profil mit Rolle owner an',
     rolle: 'authenticated',
     uid: OHNE_PROFIL,
-    sql: `insert into public.creator_profiles (user_id, username, role)
-          values ('${OHNE_PROFIL}', 'neuling', 'owner')`,
+    sql: `insert into public.profiles (user_id, display_name, role)
+          values ('${OHNE_PROFIL}', 'Neuling', 'owner')`,
     erwartung: 'abgelehnt',
   },
   {
     name: 'neues Konto legt sich ein gewöhnliches Profil an',
     rolle: 'authenticated',
     uid: OHNE_PROFIL,
-    sql: `insert into public.creator_profiles (user_id, username) values ('${OHNE_PROFIL}', 'neuling')`,
+    sql: `insert into public.profiles (user_id, display_name) values ('${OHNE_PROFIL}', 'Neuling')`,
     erwartung: 'erlaubt',
   },
   {
     name: 'Administration setzt ein fremdes Konto auf moderator',
     rolle: 'authenticated',
     uid: ADMIN,
-    sql: `update public.creator_profiles set role = 'moderator' where user_id = '${ZWEITER}'`,
+    sql: `update public.profiles set role = 'moderator' where user_id = '${ZWEITER}'`,
     erwartung: 'erlaubt',
   },
   {
     name: 'Administration ernennt eine zweite Administration',
     rolle: 'authenticated',
     uid: ADMIN,
-    sql: `update public.creator_profiles set role = 'admin' where user_id = '${ZWEITER}'`,
+    sql: `update public.profiles set role = 'admin' where user_id = '${ZWEITER}'`,
     erwartung: 'abgelehnt',
     grund: 'canAssignRole() verlangt einen echt höheren Rang als die künftige Rolle.',
   },
@@ -225,36 +227,36 @@ const FAELLE = [
     name: 'Inhaber ernennt eine Administration',
     rolle: 'authenticated',
     uid: INHABER,
-    sql: `update public.creator_profiles set role = 'admin' where user_id = '${ZWEITER}'`,
+    sql: `update public.profiles set role = 'admin' where user_id = '${ZWEITER}'`,
     erwartung: 'erlaubt',
   },
   {
     name: 'Administration ändert die eigene Rolle',
     rolle: 'authenticated',
     uid: ADMIN,
-    sql: `update public.creator_profiles set role = 'owner' where user_id = '${ADMIN}'`,
+    sql: `update public.profiles set role = 'owner' where user_id = '${ADMIN}'`,
     erwartung: 'abgelehnt',
   },
   {
     name: 'unbekannte Rolle lässt sich nicht setzen',
     rolle: 'authenticated',
     uid: INHABER,
-    sql: `update public.creator_profiles set role = 'superuser' where user_id = '${ZWEITER}'`,
+    sql: `update public.profiles set role = 'superuser' where user_id = '${ZWEITER}'`,
     erwartung: 'abgelehnt',
-    grund: 'creator_profiles_role_check lässt nur Rollen mit bekanntem Rang zu.',
+    grund: 'profiles_role_check lässt nur Rollen mit bekanntem Rang zu.',
   },
   {
     name: 'unbekannter Status lässt sich nicht setzen',
     rolle: 'authenticated',
     uid: ADMIN,
-    sql: `update public.creator_profiles set status = 'gelöscht' where user_id = '${ZWEITER}'`,
+    sql: `update public.profiles set status = 'gelöscht' where user_id = '${ZWEITER}'`,
     erwartung: 'abgelehnt',
   },
   {
     name: 'Administration setzt einen der vier gültigen Zustände',
     rolle: 'authenticated',
     uid: ADMIN,
-    sql: `update public.creator_profiles set status = 'disabled' where user_id = '${ZWEITER}'`,
+    sql: `update public.profiles set status = 'disabled' where user_id = '${ZWEITER}'`,
     erwartung: 'erlaubt',
     grund: 'Der frühere CHECK kannte nur active und banned; setUserStatus scheiterte an pending und disabled.',
   },
@@ -286,16 +288,19 @@ const FAELLE = [
     name: 'Administration liest alle Profile',
     rolle: 'authenticated',
     uid: ADMIN,
-    sql: `select * from public.creator_profiles where user_id <> '${ADMIN}'`,
+    sql: `select * from public.profiles where user_id <> '${ADMIN}'`,
     erwartung: 'erlaubt',
   },
   {
-    name: 'Administration liest fremde Sitzungen',
+    name: 'Administration liest fremde Reisen',
     rolle: 'authenticated',
     uid: ADMIN,
-    sql: `select * from public.creator_sessions where user_id = '${NUTZER}'`,
-    erwartung: 'erlaubt',
-    grund: 'Die alte Policy verglich creator_profiles.id statt user_id und konnte nie zutreffen.',
+    sql: `select * from public.trips where user_id = '${NUTZER}'`,
+    erwartung: 'leer',
+    grund:
+      'Absichtlich leer: Adminrechte öffnen private Reiseinhalte nicht (ADR-0041). Die ' +
+      'Kennzahlen des Administrationsbereichs kommen aus Aggregatfunktionen, nicht aus ' +
+      'dieser Tabelle.',
   },
   {
     name: 'Administration sperrt eine IP',
@@ -514,7 +519,7 @@ const FAELLE = [
     name: 'Moderation liest fremde Profile',
     rolle: 'authenticated',
     uid: MODERATION,
-    sql: `select * from public.creator_profiles where user_id = '${NUTZER}'`,
+    sql: `select * from public.profiles where user_id = '${NUTZER}'`,
     erwartung: 'erlaubt',
     grund: 'canManageUsers() lässt eine Moderation auf /admin/users; RLS verlangte admin.',
   },
@@ -522,14 +527,14 @@ const FAELLE = [
     name: 'Moderation setzt ein fremdes Konto auf creator',
     rolle: 'authenticated',
     uid: MODERATION,
-    sql: `update public.creator_profiles set role = 'creator' where user_id = '${ZWEITER}'`,
+    sql: `update public.profiles set role = 'creator' where user_id = '${ZWEITER}'`,
     erwartung: 'erlaubt',
   },
   {
     name: 'Moderation ernennt eine Administration',
     rolle: 'authenticated',
     uid: MODERATION,
-    sql: `update public.creator_profiles set role = 'admin' where user_id = '${ZWEITER}'`,
+    sql: `update public.profiles set role = 'admin' where user_id = '${ZWEITER}'`,
     erwartung: 'abgelehnt',
     grund: 'Der Auslöser verlangt einen echt höheren Rang als die künftige Rolle.',
   },
@@ -537,42 +542,45 @@ const FAELLE = [
     name: 'Creator liest fremde Profile',
     rolle: 'authenticated',
     uid: CREATOR,
-    sql: `select * from public.creator_profiles where user_id = '${NUTZER}'`,
+    sql: `select * from public.profiles where user_id = '${NUTZER}'`,
     erwartung: 'leer',
   },
 
   // --- Fähigkeit inhalte-moderieren (ab moderator) -------------------------
+  //
+  // Diese Fähigkeit deckt seit Phase 1.5 keine Tabelle mehr ab: Ihre letzte
+  // Tabelle war `creator_sessions`, entfernt mit
+  // `20260817120200_creator_sessions_entfernen.sql`. Die neuen Reisetabellen
+  // treten **nicht** an ihre Stelle – eine Reise ist privat und kein zu
+  // moderierender Inhalt (ADR-0041). Die Fähigkeit bleibt Teil des Modells,
+  // das `CAPABILITY_MINIMUM` in `lib/auth/roles.ts` und
+  // `lib/auth/faehigkeiten-datenbank.test.ts` zusammenhalten, und wird deshalb
+  // wie `konfiguration-verwalten` direkt geprüft.
   {
-    name: 'Moderation liest fremde Sitzungen',
+    name: 'Moderation erreicht die Fähigkeit inhalte-moderieren',
     rolle: 'authenticated',
     uid: MODERATION,
-    sql: `select * from public.creator_sessions where user_id = '${NUTZER}'`,
+    sql: `select 1 where public.darf_inhalte_moderieren()`,
     erwartung: 'erlaubt',
   },
   {
-    name: 'Moderation ändert eine fremde Sitzung',
+    name: 'Creator erreicht die Fähigkeit inhalte-moderieren nicht',
+    rolle: 'authenticated',
+    uid: CREATOR,
+    sql: `select 1 where public.darf_inhalte_moderieren()`,
+    erwartung: 'leer',
+    grund: 'Genau eine Stufe unterhalb: creator liegt unter moderator.',
+  },
+  {
+    name: 'Moderation liest fremde Reisen',
     rolle: 'authenticated',
     uid: MODERATION,
-    sql: `update public.creator_sessions set review_status = 'rejected' where user_id = '${NUTZER}'`,
-    erwartung: 'erlaubt',
+    sql: `select * from public.trips where user_id = '${NUTZER}'`,
+    erwartung: 'leer',
     grund:
-      'Ersetzt den entfallenen Nachweis am Blogkommentar. Nach Phase 1.4b deckt ' +
-      'die Fähigkeit inhalte-moderieren nur noch creator_sessions ab; ohne einen ' +
-      'schreibenden Fall wäre sie nur noch lesend belegt.',
-  },
-  {
-    name: 'Creator liest fremde Sitzungen',
-    rolle: 'authenticated',
-    uid: CREATOR,
-    sql: `select * from public.creator_sessions where user_id = '${NUTZER}'`,
-    erwartung: 'leer',
-  },
-  {
-    name: 'Creator ändert eine fremde Sitzung',
-    rolle: 'authenticated',
-    uid: CREATOR,
-    sql: `update public.creator_sessions set review_status = 'rejected' where user_id = '${NUTZER}'`,
-    erwartung: 'leer',
+      'Die Fähigkeit inhalte-moderieren erstreckt sich nicht auf Reisen. Der Fall hält ' +
+      'fest, dass die entfallene Moderation von creator_sessions keine Entsprechung im ' +
+      'neuen Reiseschema bekommt.',
   },
 
   // --- Fähigkeit konfiguration-verwalten (ab admin) ------------------------
@@ -633,7 +641,7 @@ const FAELLE = [
     name: 'Notzugang ohne Profil liest alle Profile',
     rolle: 'authenticated',
     uid: OHNE_PROFIL,
-    sql: `select * from public.creator_profiles`,
+    sql: `select * from public.profiles`,
     erwartung: 'leer',
   },
 
@@ -667,7 +675,494 @@ const FAELLE = [
     sql: `select * from public.admin_security_overview()`,
     erwartung: 'leer',
   },
+
+  // --- Reisekennzahlen: Zahlen ja, Inhalte nein ----------------------------
+  {
+    name: 'anon ruft admin_reisen_kennzahlen',
+    rolle: 'anon',
+    sql: `select * from public.admin_reisen_kennzahlen()`,
+    erwartung: 'abgelehnt',
+  },
+  {
+    name: 'gewöhnliches Konto ruft admin_reisen_kennzahlen',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select * from public.admin_reisen_kennzahlen()`,
+    erwartung: 'leer',
+    grund: 'Die Funktion ist SECURITY DEFINER und prüft betrieb-lesen selbst.',
+  },
+  {
+    name: 'Moderation ruft admin_reisen_kennzahlen',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `select * from public.admin_reisen_kennzahlen()`,
+    erwartung: 'erlaubt',
+  },
+  {
+    name: 'anon ruft admin_reisen_zeitreihe',
+    rolle: 'anon',
+    sql: `select * from public.admin_reisen_zeitreihe(14)`,
+    erwartung: 'abgelehnt',
+  },
+  {
+    name: 'Creator ruft admin_reisen_zeitreihe',
+    rolle: 'authenticated',
+    uid: CREATOR,
+    sql: `select * from public.admin_reisen_zeitreihe(14)`,
+    erwartung: 'leer',
+  },
+  {
+    name: 'Moderation ruft admin_reisen_zeitreihe',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `select * from public.admin_reisen_zeitreihe(14)`,
+    erwartung: 'erlaubt',
+  },
 ]
+
+/**
+ * Die Nachweise zu den vier Reisetabellen und zu `public.reise_anlegen()`.
+ *
+ * Als eigene Funktion, weil es rund vierzig Fälle sind und die Liste `FAELLE`
+ * sonst zur Hälfte aus Reisen bestünde. Aufgerufen wird sie dort, wo die
+ * Nachweise zum Eigentum stehen – die Reihenfolge der Ausgabe folgt der Liste.
+ *
+ * Ein JSON-Rumpf für `reise_anlegen()`. Die Nutzlast ist absichtlich klein: Was
+ * die Funktion aus einem vollständigen Reisegraphen macht, prüfen die
+ * Einheitentests der Abbildung; hier geht es um Eigentum, Idempotenz und die
+ * Frage, was die Funktion aus der Nutzlast **nicht** übernimmt.
+ */
+function reisenachweise() {
+  const reise = (kennung, weiteres = '') =>
+    `'{"client_ref":"${kennung}","title":"Testreise"${weiteres}}'::jsonb`
+
+  return [
+    // --- trips: Eigentum ---------------------------------------------------
+    {
+      name: 'Konto liest die eigene Reise',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select * from public.trips where id = '${REISE}'`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'Konto liest eine fremde Reise',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `select * from public.trips where id = '${REISE}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'Konto liest ausser der eigenen keine Reise',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select * from public.trips where user_id <> '${NUTZER}'`,
+      erwartung: 'leer',
+      grund:
+        'Der Gegenprobe-Fall zum Lesen: Es gibt eine zweite Reise in der Tabelle, und ' +
+        'sie bleibt unsichtbar.',
+    },
+    {
+      name: 'Konto ändert den Titel der eigenen Reise',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `update public.trips set title = 'Japan im Frühling' where id = '${REISE}'`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'Konto ändert eine fremde Reise',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `update public.trips set title = 'geklaut' where id = '${REISE}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'Konto löscht die eigene Reise',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `delete from public.trips where id = '${REISE}'`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'Konto löscht eine fremde Reise',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `delete from public.trips where id = '${REISE}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'Konto leert die Reisetabelle mit TRUNCATE',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `truncate table public.trips`,
+      erwartung: 'abgelehnt',
+      grund: 'TRUNCATE greift an RLS vorbei und ist deshalb kein vergebenes Recht.',
+    },
+
+    // --- trips: Eigentum ist nicht vom Client setzbar ----------------------
+    {
+      name: 'Konto legt eine Reise im fremden Namen an',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `insert into public.trips (user_id, title) values ('${NUTZER}', 'geschenkt')`,
+      erwartung: 'abgelehnt',
+      grund: 'Der WITH CHECK der INSERT-Policy verlangt user_id = auth.uid().',
+    },
+    {
+      name: 'Konto legt eine Reise ohne user_id an',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `insert into public.trips (title) values ('meine')`,
+      erwartung: 'erlaubt',
+      grund:
+        'Der positive Gegenfall: `default auth.uid()` setzt die Spalte. Genau so schreibt ' +
+        'lib/trips/aktionen.ts – die Anwendung schickt user_id nie mit.',
+    },
+    {
+      name: 'Konto schreibt die eigene Reise auf ein fremdes Konto um',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `update public.trips set user_id = '${ZWEITER}' where id = '${REISE}'`,
+      erwartung: 'abgelehnt',
+      grund:
+        'Der WITH CHECK der UPDATE-Policy macht user_id faktisch unveränderlich. Ohne ihn ' +
+        'liesse sich fremdes Eigentum erzeugen, ohne es je zu lesen.',
+    },
+    {
+      name: 'Konto legt dieselbe Kennung zweimal an',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trips (title, client_ref) values ('zweite', 'gast-1')`,
+      erwartung: 'abgelehnt',
+      grund:
+        'trips_client_ref_eindeutig ist der Träger der Idempotenz. Ohne die Bedingung wäre ' +
+        'jeder Retry der Gastübernahme eine zweite Reise.',
+    },
+    {
+      name: 'zwei Konten dürfen dieselbe Kennung tragen',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `insert into public.trips (title, client_ref) values ('gleiche Kennung', 'gast-1')`,
+      erwartung: 'erlaubt',
+      grund:
+        'Die Eindeutigkeit gilt je Konto. Sonst könnte ein fremder Browser eine Kennung ' +
+        'belegen und die Übernahme eines anderen Kontos blockieren.',
+    },
+
+    // --- trips: Adminrechte öffnen keine Reise -----------------------------
+    {
+      name: 'Inhaber liest eine fremde Reise',
+      rolle: 'authenticated',
+      uid: INHABER,
+      sql: `select * from public.trips where id = '${REISE}'`,
+      erwartung: 'leer',
+      grund: 'Die höchste Rolle des Modells sieht keine private Reise (ADR-0041).',
+    },
+    {
+      name: 'Administration ändert eine fremde Reise',
+      rolle: 'authenticated',
+      uid: ADMIN,
+      sql: `update public.trips set status = 'archived' where id = '${REISE}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'Administration löscht eine fremde Reise',
+      rolle: 'authenticated',
+      uid: ADMIN,
+      sql: `delete from public.trips where id = '${REISE}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'keine Policy der Reisetabellen prüft eine Fähigkeit',
+      rolle: 'anon',
+      sql: `select polname from pg_policy p
+            join pg_class c on c.oid = p.polrelid
+            join pg_namespace n on n.oid = c.relnamespace
+            where n.nspname = 'public'
+              and c.relname in ('trips', 'trip_stages', 'trip_days', 'trip_items')
+              and (pg_get_expr(p.polqual, p.polrelid) like '%darf\\_%'
+                or pg_get_expr(p.polwithcheck, p.polrelid) like '%darf\\_%'
+                or pg_get_expr(p.polqual, p.polrelid) like '%hat\\_rolle%'
+                or pg_get_expr(p.polwithcheck, p.polrelid) like '%hat\\_rolle%')`,
+      erwartung: 'leer',
+      grund:
+        'Der strukturelle Nachweis zu den drei Fällen darüber: Es gibt keine Policy, über ' +
+        'die eine künftige Rolle in Reisen hineinkäme. Ein solcher Zugriff müsste als ' +
+        'eigene Entscheidung dokumentiert werden.',
+    },
+
+    // --- Kindtabellen: anon ------------------------------------------------
+    {
+      name: 'anon liest Reiseetappen',
+      rolle: 'anon',
+      sql: `select * from public.trip_stages`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'anon liest Reisetage',
+      rolle: 'anon',
+      sql: `select * from public.trip_days`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'anon liest Planpunkte',
+      rolle: 'anon',
+      sql: `select * from public.trip_items`,
+      erwartung: 'abgelehnt',
+    },
+
+    // --- Kindtabellen: Eigentum -------------------------------------------
+    {
+      name: 'Konto liest die eigene Etappe',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select * from public.trip_stages where trip_id = '${REISE}'`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'Konto liest eine fremde Etappe',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `select * from public.trip_stages where trip_id = '${REISE}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'Konto liest den eigenen Reisetag',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select * from public.trip_days where trip_id = '${REISE}'`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'Konto liest einen fremden Reisetag',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `select * from public.trip_days where trip_id = '${REISE}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'Konto liest den eigenen Planpunkt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select * from public.trip_items where trip_id = '${REISE}'`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'Konto liest einen fremden Planpunkt',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `select * from public.trip_items where trip_id = '${REISE}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'Konto ändert die eigene Etappe',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `update public.trip_stages set name = 'Kyoto' where id = '${ETAPPE}'`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'Konto ändert einen fremden Planpunkt',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `update public.trip_items set title = 'geklaut' where id = '${PUNKT}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'Konto löscht den eigenen Planpunkt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `delete from public.trip_items where id = '${PUNKT}'`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'Konto löscht einen fremden Reisetag',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `delete from public.trip_days where id = '${TAG}'`,
+      erwartung: 'leer',
+    },
+
+    // --- Kindtabellen: kein Kind an einer fremden Reise --------------------
+    //
+    // Diese vier Fälle prüfen den zusammengesetzten Fremdschlüssel
+    // `(trip_id, user_id) → trips (id, user_id)`. Er ist der Grund, warum die
+    // Policies der Kindtabellen ein Spaltenvergleich sein dürfen: Ein Kind mit
+    // eigener `user_id` kann nicht auf eine fremde Reise zeigen, weil das Paar
+    // in `trips` nicht existiert.
+    {
+      name: 'Konto hängt eine Etappe an eine fremde Reise',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `insert into public.trip_stages (trip_id, name) values ('${REISE}', 'Einbruch')`,
+      erwartung: 'abgelehnt',
+      grund: 'Das Paar (fremde Reise, eigenes Konto) gibt es in trips nicht.',
+    },
+    {
+      name: 'Konto hängt einen Reisetag an eine fremde Reise',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `insert into public.trip_days (trip_id, day_index) values ('${REISE}', 9)`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'Konto hängt einen Planpunkt an eine fremde Reise',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `insert into public.trip_items (trip_id, kind, title)
+            values ('${REISE}', 'note', 'Einbruch')`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'Konto hängt einen Planpunkt an einen fremden Reisetag',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `insert into public.trip_items (trip_id, day_id, kind, title)
+            values ('${FREMDE_REISE}', '${TAG}', 'note', 'Einbruch')`,
+      erwartung: 'abgelehnt',
+      grund:
+        'trip_items_tag_fk bindet den Tag an dieselbe Reise. Ein Tag einer anderen Reise ' +
+        'ist deshalb auch dann unerreichbar, wenn die eigene Reise stimmt.',
+    },
+    {
+      name: 'Konto hängt eine Etappe mit fremder user_id an die eigene Reise',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `insert into public.trip_stages (trip_id, user_id, name)
+            values ('${FREMDE_REISE}', '${NUTZER}', 'untergeschoben')`,
+      erwartung: 'abgelehnt',
+      grund:
+        'Der WITH CHECK verlangt user_id = auth.uid(); ohne ihn liefe die Eigentümerspalte ' +
+        'der Kindtabelle von der Reise weg.',
+    },
+    {
+      name: 'Konto hängt eine Etappe ohne user_id an die eigene Reise',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `insert into public.trip_stages (trip_id, name) values ('${FREMDE_REISE}', 'Bergen')`,
+      erwartung: 'erlaubt',
+      grund: 'Der positive Gegenfall: So schreibt die Anwendung.',
+    },
+
+    // --- reise_anlegen -----------------------------------------------------
+    {
+      name: 'Konto ruft reise_anlegen',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise('neu-1')})`,
+      erwartung: 'erlaubt',
+    },
+    // Die folgenden Fälle setzen zwei Anweisungen ab: erst der Aufruf, dann die
+    // Nachschau. Ein einzelner Ausdruck ginge nicht – ein `select` über
+    // `public.trips` arbeitet auf dem Zustand vom Beginn seiner Anweisung und
+    // sähe die Reise nicht, die ein Funktionsaufruf in derselben Anweisung
+    // gerade angelegt hat.
+    {
+      name: 'reise_anlegen liefert bei zweitem Aufruf dieselbe Reise',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise('idem-1')});
+            select 1 where public.reise_anlegen(${reise('idem-1')})
+              = (select id from public.trips
+                 where user_id = '${NUTZER}' and client_ref = 'idem-1')`,
+      erwartung: 'erlaubt',
+      grund:
+        'Der Kern der Idempotenz: Der zweite Aufruf legt nichts an und liefert die Kennung ' +
+        'der bestehenden Reise. Genau darauf verlässt sich die Brücke auf /reisen, wenn sie ' +
+        'den Entwurf im Browser erst nach der Antwort löscht.',
+    },
+    {
+      name: 'reise_anlegen legt bei zweitem Aufruf keine zweite Reise an',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise('idem-2')});
+            select public.reise_anlegen(${reise('idem-2')});
+            select id from public.trips
+              where user_id = '${NUTZER}' and client_ref = 'idem-2' offset 1`,
+      erwartung: 'leer',
+      grund:
+        'Die Gegenprobe: Nach zwei Aufrufen gibt es keine zweite Zeile. `offset 1` lässt die ' +
+        'erste liegen – bleibt etwas übrig, wäre die Übernahme nicht idempotent.',
+    },
+    {
+      name: 'reise_anlegen übernimmt keine mitgeschickte user_id',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise('fremd-1', `,"user_id":"${ZWEITER}"`)});
+            select id from public.trips
+              where client_ref = 'fremd-1' and user_id = '${NUTZER}'`,
+      erwartung: 'erlaubt',
+      grund:
+        'Die Eigentümerkennung kommt aus auth.uid(). Eine mitgeschickte user_id wird nicht ' +
+        'gelesen – die Reise gehört dem Aufrufer, nicht dem genannten Konto.',
+    },
+    {
+      name: 'reise_anlegen legt die Reise nicht beim genannten Konto an',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise('fremd-2', `,"user_id":"${ZWEITER}"`)});
+            select id from public.trips
+              where client_ref = 'fremd-2' and user_id = '${ZWEITER}'`,
+      erwartung: 'leer',
+      grund: 'Die Gegenprobe zum Fall darüber, gelesen als Eigentümer der behaupteten Kennung.',
+    },
+    {
+      name: 'reise_anlegen übernimmt keinen mitgeschickten Status',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise('status-1', ',"status":"booked"')});
+            select id from public.trips where client_ref = 'status-1' and status = 'draft'`,
+      erwartung: 'erlaubt',
+      grund: 'Eine neue Reise ist ein Entwurf. „booked" darf niemand über diesen Weg behaupten.',
+    },
+    {
+      name: 'reise_anlegen lehnt eine unbekannte Interessenangabe ab',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise('interesse-1', ',"interests":["hacking"]')})`,
+      erwartung: 'abgelehnt',
+      grund: 'trips_interests_werte greift auch auf diesem Weg.',
+    },
+    {
+      name: 'reise_anlegen lehnt eine Reise ohne Kennung ab',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen('{"title":"ohne Kennung"}'::jsonb)`,
+      erwartung: 'abgelehnt',
+      grund: 'Ohne client_ref gäbe es keine Idempotenz – die Funktion nimmt sie nicht an.',
+    },
+    {
+      name: 'reise_anlegen lehnt zu viele Reisetage ab',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(jsonb_build_object(
+              'client_ref', 'viele-tage',
+              'title', 'zu lang',
+              'days', (select jsonb_agg(jsonb_build_object('day_index', g))
+                         from generate_series(1, 367) as g)))`,
+      erwartung: 'abgelehnt',
+      grund: 'Die Grenze der Nutzlast liegt vor dem ersten INSERT, nicht erst im CHECK.',
+    },
+    {
+      name: 'reise_anlegen greift bei zu vielen Reisen in kurzer Zeit',
+      rolle: 'authenticated',
+      uid: VIELREISEND,
+      sql: `select public.reise_anlegen(${reise('schranke-1')})`,
+      erwartung: 'abgelehnt',
+      grund:
+        'Die Missbrauchsschranke: 60 Reisen je Stunde. Dieses Konto hat sie im Aufbau ' +
+        'erreicht. Ohne die Schranke wäre das Schreibrecht ein Weg, die Datenbank zu füllen.',
+    },
+    {
+      name: 'reise_anlegen läuft unterhalb der Schranke',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `select public.reise_anlegen(${reise('schranke-2')})`,
+      erwartung: 'erlaubt',
+      grund: 'Der positive Gegenfall zur Schranke.',
+    },
+  ]
+}
 
 // Je ein Konto für jede Stufe des Modells. Ohne die beiden mittleren Rollen
 // blieb bis zum Nachtrag unbemerkt, dass die Policies pauschal `admin`
@@ -681,6 +1176,7 @@ const KONTEN = [
   { id: ADMIN, name: 'verwaltung', role: 'admin', status: 'active', profil: true },
   { id: INHABER, name: 'inhaber', role: 'owner', status: 'active', profil: true },
   { id: GESPERRT, name: 'gesperrt', role: 'user', status: 'disabled', profil: true },
+  { id: VIELREISEND, name: 'vielreisend', role: 'user', status: 'active', profil: true },
   // Ein Konto ohne Profil: Nur so lässt sich das erstmalige Anlegen prüfen –
   // und der Notzugang, dessen Rolle die Datenbank gar nicht kennt.
   { id: OHNE_PROFIL, name: null, role: null, status: null, profil: false },
@@ -697,15 +1193,32 @@ function aufbau() {
   )
 
   const profile = KONTEN.filter((k) => k.profil).map(
-    (k) => `insert into public.creator_profiles (user_id, username, role, status)
+    (k) => `insert into public.profiles (user_id, display_name, role, status)
             values ('${k.id}', '${k.name}', '${k.role}', '${k.status}');`,
   )
 
   // Je eine Zeile in den Tabellen, auf die sich die Fälle beziehen. Ohne Daten
   // wäre „0 Zeilen“ mehrdeutig: gefiltert oder schlicht leer?
   const daten = [
-    `insert into public.creator_sessions (user_id, title, role, status)
-       values ('${NUTZER}', 'Reise', 'creator', 'draft');`,
+    // Eine vollständige Reise mit Etappe, Tag und Planpunkt, alle mit fester
+    // Kennung: Die Fälle brauchen bekannte Kennungen, um eine Zeile im fremden
+    // Namen anzulegen oder ein Kind an eine fremde Reise zu hängen.
+    `insert into public.trips (id, user_id, client_ref, title, start_date, end_date)
+       values ('${REISE}', '${NUTZER}', 'gast-1', 'Japan im Herbst', current_date, current_date + 3);`,
+    `insert into public.trip_stages (id, trip_id, user_id, position, name)
+       values ('${ETAPPE}', '${REISE}', '${NUTZER}', 1, 'Tokio');`,
+    `insert into public.trip_days (id, trip_id, user_id, day_index, day_date)
+       values ('${TAG}', '${REISE}', '${NUTZER}', 1, current_date);`,
+    `insert into public.trip_items (id, trip_id, user_id, day_id, kind, title)
+       values ('${PUNKT}', '${REISE}', '${NUTZER}', '${TAG}', 'activity', 'Fischmarkt');`,
+    // Eine zweite Reise, die dem fremden Konto gehört. Ohne sie wäre „0 Zeilen“
+    // beim Zugriff des fremden Kontos nicht von „nichts vorhanden“ zu trennen.
+    `insert into public.trips (id, user_id, client_ref, title)
+       values ('${FREMDE_REISE}', '${ZWEITER}', 'gast-2', 'Norwegen');`,
+    // 60 Reisen innerhalb der letzten Stunde: genau die Schranke von
+    // public.reise_anlegen(). Ohne Kennung, damit sie einander nicht ausschliessen.
+    `insert into public.trips (user_id, title)
+       select '${VIELREISEND}', 'Serie ' || g from generate_series(1, 60) as g;`,
     `insert into public.payments (id, status, amount_chf, created_at) values ('pay_1', 'paid', 100, now());`,
     `insert into public.refunds (payment_id, amount_chf, created_at) values ('pay_1', 10, now());`,
     `insert into public.security_events (type, ip) values ('login_failed', '203.0.113.1');`,
