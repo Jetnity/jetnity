@@ -25,7 +25,10 @@
     "db:rechte": "node scripts/db/rechte.mjs",
     "db:sicherheit": "node scripts/db/sicherheit.mjs",
     "db:typen": "node scripts/db/typen.mjs",
-    "db:advisors": "node scripts/db/advisors.mjs"
+    "db:advisors": "node scripts/db/advisors.mjs",
+    "auth:pruefen": "node --import tsx scripts/auth/pruefen.ts",
+    "auth:anwenden": "node --import tsx scripts/auth/anwenden.ts",
+    "auth:fluesse": "node --import tsx scripts/auth/fluesse.ts"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.16",

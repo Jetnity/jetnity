@@ -757,6 +757,39 @@ Production ist nicht angefasst. Ob dort dieselben 29 Tabellen liegen, ist nicht 
 
 ---
 
+## ADR-0039 – Die Auth-Konfiguration steht im Repository, und ihre Vollständigkeit wird geprüft
+
+**Datum:** 17. August 2026
+**Status:** umgesetzt auf dem Development-Branch
+
+**Entscheidung:** Der Auth-Abschnitt von `supabase/config.toml` beschreibt ab jetzt den Development-Branch, Schlüssel für Schlüssel gegen `GET /v1/projects/{ref}/config/auth` abgeglichen. Was die CLI-Konfiguration nicht ausdrücken kann, steht mit Begründung in `OHNE_TOML_SCHLUESSEL` in `lib/supabase/auth-erwartung.ts` und wird per PATCH gesetzt. `npm run auth:pruefen` vergleicht beides mit dem laufenden Branch und verlangt zusätzlich, dass **jeder** der 242 Schlüssel der API im Repository eingeordnet ist – als Sollwert, mit begründetem Verzicht oder über ein Muster. `password_hibp_enabled` ist auf `true` gesetzt. Ein `[remotes.*]`-Block entsteht nicht; das Ziel ist immer der Branch aus `SUPABASE_PROJECT_REF`, und `scripts/auth/ziel.ts` bricht ab, wenn dahinter ein eigenständiges Projekt steht.
+
+**Kontext:** Phase 1.4 hat Schema, Rechte und Policies aus dem Repository nachvollziehbar gemacht. Die Auth-Ebene lag daneben und war es nicht: `config.toml` war der unveränderte Vorlagenstand der CLI. Er beschrieb weder Development noch Production und widersprach dem laufenden Branch an neun Stellen – Passwortlänge 6 statt 12, E-Mail-Bestätigung aus statt an, TOTP aus statt an, Redirect-Liste `["https://127.0.0.1:3000"]` statt leer. Wer die Datei gelesen hätte, um zu erfahren, wie sich ein Konto anmeldet, hätte sich getäuscht. Anders als beim Schema gibt es hier keine Migration: Ein Klick im Dashboard ändert die Anmeldung ohne Spur im Repository.
+
+**Alternativen:**
+
+1. *Nur `password_hibp_enabled` einschalten und den Rest lassen.* Der Advisor wäre still, und die Datei wäre weiter falsch. Genau diese Reihenfolge – Symptom vor Ursache – hat die Lage erzeugt: Die Einstellung ist ja nicht deshalb offen geblieben, weil niemand sie kannte, sondern weil es keinen Ort gab, an dem sie hätte stehen können.
+2. *Einen `[remotes.<branch>]`-Block anlegen*, wie die offizielle Branch-Konfiguration es vorsieht. Er verlangt den Projekt-Ref im Klartext im Repository und trennt zwei Umgebungen – solange von hier aus nur Development verwaltet wird, ist das eine Unterscheidung ohne Wirkung ([AGENTS.md](AGENTS.md) Regel 12). Der Parameter dafür bleibt in `erwarteteAuthKonfiguration()` vorhanden, damit ein zweites Ziel andocken kann.
+3. *Nur die Werte prüfen, die `config.toml` nennt.* Das wäre die halbe Zusage. Zehn sicherheitsrelevante Schlüssel kennt die CLI nicht, unter ihnen der wichtigste – der Schutz vor kompromittierten Passwörtern. Eine Konfiguration-als-Code, die gerade den offenen Befund nicht abdeckt, hätte den Namen nicht verdient.
+4. *Eine Liste erwarteter Werte pflegen und alles Übrige ignorieren.* Eine Liste deckt ab, was sie kennt. Sie hätte nicht gemeldet, wenn ein neuer Anmeldedienst oder ein Auth-Hook eingeschaltet worden wäre – beides Wege in die Anwendung hinein. Deshalb zusätzlich zwei Musterregeln: Jedes `external_*_enabled` und jedes `hook_*_enabled`, das `config.toml` nicht nennt, muss aus sein.
+5. *Ein TOML-Paket für den Abgleich benutzen.* Vierzig Zeilen Grammatik gegen eine Abhängigkeit – und der Wert von `password_requirements` enthält `#`, wo TOML einen Kommentar beginnt. Der eigene Leser in `lib/supabase/config-toml.ts` bricht bei allem ab, was er nicht kennt, statt still etwas Falsches zu liefern.
+
+**Begründung:** Ein Zustand, den niemand aus dem Repository ableiten kann, ist kein Zustand, auf den man sich verlassen kann. Für das Schema ist das seit Phase 1.4 entschieden; die Anmeldung ist der Weg *in* die Anwendung und verdient dieselbe Behandlung.
+
+Die Vollständigkeitsprüfung ist der eigentliche Gewinn, nicht der Abgleich der 55 Werte. Sie beantwortet die Frage, die zur Lage geführt hat: nicht „stimmt dieser Wert", sondern „gibt es einen Schalter, über den wir nie etwas gesagt haben".
+
+Zum Befund `auth_leaked_password_protection` ist das Kommen und Gehen des Advisors jetzt erklärt statt vermutet: Er meldet nur, solange passwortgestützte Konten existieren. Ohne solches Konto ergibt der Lauf 13 Security-Befunde, mit einem 14. Die Testkonten der RLS-Nachweise entstehen in zurückgerollten Transaktionen und sind beim Advisor-Lauf nicht mehr da. `password_hibp_enabled` war der einzige Unterschied zwischen Branch und Elternprojekt in den 35 sicherheitsrelevanten Schlüsseln – der Branch lag hinter Production zurück. Die Funktion ist in Supabase Auth enthalten, in allen Plänen verfügbar und erzeugt keine neuen laufenden Kosten.
+
+**Konsequenzen:** `npm run auth:pruefen` läuft in der CI in einem eigenen Job und überspringt sich selbst, solange die Secrets fehlen – sichtbar im Protokoll, denn eine Prüfung, die nicht gelaufen ist, darf nicht grün aussehen. `npm run auth:fluesse` prüft die Wirkung statt der Werte: 18 Fälle an den echten Endpunkten, vom abgelehnten Datenleck-Passwort bis zum Rücksetzlink, der bei einem fremden Host auf `site_url` zurückfällt.
+
+Drei Dinge sind dabei aufgefallen und behoben. Die Passwortregel stand zweimal im Code und beide Male anders: Die Seite nach dem Rücksetzlink verlangte acht Zeichen ohne Zeichengruppen, der Auth-Server zwölf aus vier – wer der Anzeige folgte, bekam eine englische Ablehnung. Die Ablehnung wegen eines Datenlecks fiel im Formular auf „Passwortanforderungen nicht erfüllt" durch, obwohl die angezeigten Anforderungen erfüllt waren; GoTrue schreibt „known to be weak and easy to guess" und nennt weder „leaked" noch „pwned". Und der Fortschrittsbalken stand auf jeder Stufe im Markengrün. Alles drei liegt jetzt in `lib/auth/passwort-richtlinie.ts`, und `lib/supabase/auth-erwartung.test.ts` vergleicht die Regel bei jedem `npm test` mit `config.toml`.
+
+Nicht behoben, sondern festgehalten: Google und Apple stehen als Schaltfläche in beiden Formularen und sind auf dem Branch aus – ein Klick endet in „provider is not enabled". Einschalten braucht Client-ID und Secret beider Anbieter und ist eine Handlung ausserhalb dieses Repositories ([ROADMAP.md](ROADMAP.md)).
+
+Production ist nicht angefasst. Der Vergleich in [docs/AUTH.md](docs/AUTH.md) Abschnitt 3 ist ausschliesslich gelesen; der Abgleich gehört zum ersten Production-Deploy nach Phase 1.5.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

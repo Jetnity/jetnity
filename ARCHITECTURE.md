@@ -114,6 +114,12 @@ Die Entscheidung unterscheidet drei Zustände der Rollenabfrage: Rolle vorhanden
 
 Der Notzugang öffnet die Oberfläche, nicht die Datenbank. Die Policies kennen die Liste nicht und sollen sie nicht kennen – sonst stünde neben `creator_profiles.role` wieder eine zweite Autorität. Eine solche Sitzung sieht deshalb einen Hinweis über der gesamten Administrations-Shell, statt leere Übersichten, die sich als Entwarnung lesen liessen. `reachesDatabase()` in `lib/auth/admin-access.ts` hält den Satz als prüfbare Funktion fest ([DECISIONS.md](DECISIONS.md) ADR-0036).
 
+**Die Einstellungen des Auth-Servers stehen im Repository.** Die Anmeldung ist der Weg *in* die Anwendung, ihre Konfiguration liegt aber nicht in der Datenbank, sondern beim Auth-Server – ein Klick im Dashboard ändert sie ohne Migration und ohne Commit. Seit Phase 1.4c beschreibt der Abschnitt `[auth]` in `supabase/config.toml` deshalb den Development-Branch, nicht die CLI-Vorlage. Was die Datei nicht ausdrücken kann – voran der Schutz vor kompromittierten Passwörtern –, steht mit Begründung in `lib/supabase/auth-erwartung.ts`.
+
+`npm run auth:pruefen` vergleicht beides mit dem laufenden Branch und verlangt für **jeden** der 242 Schlüssel der Management API eine Aussage des Repositories; zwei Musterregeln fangen jeden neuen Anmeldedienst und jeden Auth-Hook. `npm run auth:fluesse` prüft die Wirkung statt der Werte, an den echten Endpunkten. Beides zielt ausschliesslich auf den Branch aus `SUPABASE_PROJECT_REF`: `scripts/auth/ziel.ts` fragt bei Supabase, ob der Ref ein Branch ist, und bricht bei einem eigenständigen Projekt ab. Einzelheiten in [docs/AUTH.md](docs/AUTH.md), Entscheidung in [DECISIONS.md](DECISIONS.md) ADR-0039.
+
+Die Passwortregel, die beide Formulare zeigen und prüfen, steht in `lib/auth/passwort-richtlinie.ts` und wird bei jedem `npm test` mit `config.toml` verglichen – ohne Datenbank und ohne Netz.
+
 Weitere Punkte:
 
 - Nach Anmeldung, Registrierung, OAuth-Callback und Passwortwechsel führt der Weg auf `/reisen` ([DECISIONS.md](DECISIONS.md), ADR-0019).

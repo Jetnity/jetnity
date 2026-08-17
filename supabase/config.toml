@@ -77,7 +77,8 @@ openai_api_key = "env(OPENAI_API_KEY)"
 
 # Email testing server. Emails sent with the local dev setup are not actually sent - rather, they
 # are monitored, and you can view the emails that would have been sent from the web interface.
-[inbucket]
+# Vormals [inbucket]; die CLI führt den Abschnitt seit 2.x unter diesem Namen.
+[local_smtp]
 enabled = true
 # Port to use for the email testing server web interface.
 port = 54324
@@ -103,69 +104,112 @@ file_size_limit = "50MiB"
 # allowed_mime_types = ["image/png", "image/jpeg"]
 # objects_path = "./images"
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Auth
+#
+# Dieser Abschnitt ist keine Vorlage mehr, sondern der gemessene Stand des
+# Supabase-Development-Branches, Schlüssel für Schlüssel gegen
+# `GET /v1/projects/{ref}/config/auth` abgeglichen. Bis Phase 1.4c stand hier
+# der unveränderte Vorlagenstand der CLI; er beschrieb weder Development noch
+# Production und widersprach dem laufenden Branch an neun Stellen – unter
+# anderem bei der Passwortlänge (6 statt 12) und der E-Mail-Bestätigung
+# (aus statt an).
+#
+# Angewendet wird die Datei mit `npm run auth:anwenden`, verglichen mit
+# `npm run auth:pruefen`. Beides zielt ausschliesslich auf den Branch aus
+# `SUPABASE_PROJECT_REF` und bricht ab, wenn dahinter kein Branch, sondern ein
+# eigenständiges Projekt steht – Production wird von hier aus nicht verwaltet.
+#
+# Kein `[remotes.*]`-Block: Er verlangt den Projekt-Ref im Klartext, und ohne
+# ihn überspringt die Supabase-GitHub-Integration das Anwenden von
+# Konfiguration auf persistente Ziele. Begründung in DECISIONS.md ADR-0039,
+# Grenzen und offene Schlüssel in docs/AUTH.md.
+# ─────────────────────────────────────────────────────────────────────────────
+
 [auth]
 enabled = true
-# The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
-# in emails.
-site_url = "http://127.0.0.1:3000"
-# A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://127.0.0.1:3000"]
-# How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
+# Ziel jeder Bestätigungs- und Rücksetz-E-Mail, wenn die Anwendung kein
+# `redirectTo` mitgibt. Der Development-Branch wird ausschliesslich vom
+# lokalen Entwicklungsserver aus benutzt.
+site_url = "http://localhost:3000"
+# Leer – und das ist kein Versehen, sondern nachgemessen.
+#
+# Die Vorlage nannte hier `["https://127.0.0.1:3000"]`, der Branch führt eine
+# leere Liste. Naheliegend wäre, das für einen Defekt zu halten: Die offizielle
+# Musterregel für Redirect-URLs legt nahe, dass `site_url` ohne `/**` keinen
+# Unterpfad abdeckt, der Rücksetzlink auf `/auth/update-password` also auf der
+# Startseite landen müsste. Nachgestellt an einem echten Rücksetzlink des
+# Branches trifft das nicht zu (docs/AUTH.md, Abschnitt „Redirect-Ziele"):
+#
+#   /auth/update-password am eigenen Ursprung  → wird übernommen
+#   /reisen am eigenen Ursprung                → wird übernommen
+#   derselbe Pfad auf 127.0.0.1 statt localhost → wird übernommen
+#   ein fremder Host                            → fällt auf site_url zurück
+#
+# Die Liste bleibt deshalb leer: Sie zu füllen würde den Kreis erlaubter Ziele
+# erweitern, ohne einen Weg zu öffnen, der heute fehlt – und ein Muster wie
+# `https://*.vercel.app/**` würde Hosts einschliessen, die Jetnity nicht
+# besitzt. Sobald es einen ausgelieferten Ursprung gibt, muss er hier stehen;
+# bis dahin ist er nicht erfunden. Offener Punkt in ROADMAP.md.
+additional_redirect_urls = []
+# Gültigkeitsdauer des Access-Tokens in Sekunden.
 jwt_expiry = 3600
-# If disabled, the refresh token will never expire.
+# Ein benutztes Refresh-Token wird ersetzt; ein zweiter Gebrauch entwertet die
+# ganze Kette. Der Wiederverwendungsspielraum fängt parallele Anfragen des
+# gleichen Browsers ab, ohne den Diebstahlschutz aufzugeben.
 enable_refresh_token_rotation = true
-# Allows refresh tokens to be reused after expiry, up to the specified interval in seconds.
-# Requires enable_refresh_token_rotation = true.
 refresh_token_reuse_interval = 10
-# Allow/disallow new user signups to your project.
+# Registrierung offen: Jetnity braucht sie für neue Reisende.
 enable_signup = true
-# Allow/disallow anonymous sign-ins to your project.
+# Anonyme Anmeldungen sind kein Weg, den Jetnity vorsieht. Gastreisen laufen
+# ohne Konto im Browser (DECISIONS.md ADR-0013), nicht über ein Schattenkonto.
 enable_anonymous_sign_ins = false
-# Allow/disallow testing manual linking of accounts
 enable_manual_linking = false
-# Passwords shorter than this value will be rejected as weak. Minimum 6, recommended 8 or more.
-minimum_password_length = 6
-# Passwords that do not meet the following requirements will be rejected as weak. Supported values
-# are: `letters_digits`, `lower_upper_letters_digits`, `lower_upper_letters_digits_symbols`
-password_requirements = ""
+# Zwölf Zeichen aus vier Gruppen. Dieselbe Regel zeigen und prüfen die
+# Formulare; die einzige Quelle dafür ist lib/auth/passwort-richtlinie.ts, und
+# lib/supabase/auth-erwartung.test.ts vergleicht beide Seiten bei jedem Test.
+minimum_password_length = 12
+password_requirements = "lower_upper_letters_digits_symbols"
 
 [auth.rate_limit]
-# Number of emails that can be sent per hour. Requires auth.email.smtp to be enabled.
+# Ohne eigenen SMTP-Server versendet Supabase selbst und begrenzt hart auf
+# zwei E-Mails pro Stunde. Der Wert wird von `config push` nur übertragen,
+# wenn [auth.email.smtp] eingeschaltet ist – festgehalten ist er trotzdem,
+# damit die Prüfung ihn sieht.
 email_sent = 2
-# Number of SMS messages that can be sent per hour. Requires auth.sms to be enabled.
 sms_sent = 30
-# Number of anonymous sign-ins that can be made per hour per IP address. Requires enable_anonymous_sign_ins = true.
 anonymous_users = 30
-# Number of sessions that can be refreshed in a 5 minute interval per IP address.
+# Aktualisierungen der Sitzung je IP in fünf Minuten.
 token_refresh = 150
-# Number of sign up and sign-in requests that can be made in a 5 minute interval per IP address (excludes anonymous users).
+# An- und Registrierungsversuche je IP in fünf Minuten.
 sign_in_sign_ups = 30
-# Number of OTP / Magic link verifications that can be made in a 5 minute interval per IP address.
+# Einlösungen von OTP und Magic Link je IP in fünf Minuten.
 token_verifications = 30
-# Number of Web3 logins that can be made in a 5 minute interval per IP address.
 web3 = 30
 
-# Configure one of the supported captcha providers: `hcaptcha`, `turnstile`.
-# [auth.captcha]
-# enabled = true
-# provider = "hcaptcha"
-# secret = ""
+# Kein Captcha. Es verlangt einen Anbieter samt Secret und würde jede
+# Anmeldung von einem Dritten abhängig machen; die Ratenbegrenzung oben deckt
+# den Missbrauchsfall, den Jetnity heute hat.
+[auth.captcha]
+enabled = false
 
 [auth.email]
-# Allow/disallow new user signups via email to your project.
+# E-Mail und Passwort sind der Hauptweg in Jetnity hinein.
 enable_signup = true
-# If enabled, a user will be required to confirm any email change on both the old, and new email
-# addresses. If disabled, only the new email is required to confirm.
+# Eine Adressänderung muss von der alten *und* der neuen Adresse bestätigt
+# werden. Sonst genügt ein übernommener Browser, um das Konto zu entwenden.
 double_confirm_changes = true
-# If enabled, users need to confirm their email address before signing in.
-enable_confirmations = false
-# If enabled, users will need to reauthenticate or have logged in recently to change their password.
-secure_password_change = false
-# Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
-max_frequency = "1s"
-# Number of characters used in the email OTP.
+# Ohne Bestätigung könnte jeder ein Konto auf eine fremde Adresse anlegen.
+# Der Branch führt die Bestätigung; die Vorlage hatte sie aus.
+enable_confirmations = true
+# Vor einer Passwortänderung wird eine kürzlich bestätigte Anmeldung
+# verlangt. Setzt `security_update_password_require_reauthentication`, nicht
+# „aktuelles Passwort mitsenden" – das bliebe aus, weil der Weg über den
+# Rücksetzlink führt (docs/AUTH.md).
+secure_password_change = true
+# Mindestabstand zwischen zwei E-Mails an dieselbe Adresse.
+max_frequency = "1m"
 otp_length = 6
-# Number of seconds before the email OTP expires (defaults to 1 hour).
 otp_expiry = 3600
 
 # Use a production-ready SMTP server
@@ -183,26 +227,25 @@ otp_expiry = 3600
 # subject = "You have been invited"
 # content_path = "./supabase/templates/invite.html"
 
+# Keine Anmeldung per Telefonnummer. Sie verlangt einen SMS-Anbieter mit
+# laufenden Kosten je Nachricht und bringt Jetnity keinen Weg, den E-Mail und
+# Passwort nicht schon abdecken.
 [auth.sms]
-# Allow/disallow new user signups via SMS to your project.
 enable_signup = false
-# If enabled, users need to confirm their phone number before signing in.
 enable_confirmations = false
-# Template for sending OTP to users
 template = "Your code is {{ .Code }}"
-# Controls the minimum amount of time that must pass before sending another sms otp.
 max_frequency = "5s"
 
 # Use pre-defined map of phone number to OTP for testing.
 # [auth.sms.test_otp]
 # 4152127777 = "123456"
 
-# Configure logged in session timeouts.
-# [auth.sessions]
-# Force log out after the specified duration.
-# timebox = "24h"
-# Force log out if the user has been inactive longer than the specified duration.
-# inactivity_timeout = "8h"
+# Keine Zwangsabmeldung nach Zeit. `0s` heisst: aus – der Stand des Branches.
+# Eine Sitzung endet über die Token-Rotation und das Abmelden, nicht über eine
+# Uhr. Die Werte stehen hier, damit die Prüfung sie sieht.
+[auth.sessions]
+timebox = "0s"
+inactivity_timeout = "0s"
 
 # This hook runs before a new user is created and allows developers to reject the request based on the incoming user object.
 # [auth.hook.before_user_created]
@@ -222,17 +265,19 @@ message_service_sid = ""
 # DO NOT commit your Twilio auth token to git. Use environment variable substitution instead:
 auth_token = "env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)"
 
-# Multi-factor-authentication is available to Supabase Pro plan.
+# Zweiter Faktor. TOTP ist auf dem Branch eingeschaltet, und die Anwendung
+# führt den Weg zu Ende: `components/auth/MFATotpDialog.tsx` fordert den Code
+# nach der Anmeldung an, wenn Supabase AAL2 verlangt. Die Vorlage hatte TOTP
+# aus – ein Widerspruch, der bis hierher unbemerkt blieb.
 [auth.mfa]
-# Control how many MFA factors can be enrolled at once per user.
-max_enrolled_factors = 10
+max_enrolled_factors = 5
 
-# Control MFA via App Authenticator (TOTP)
 [auth.mfa.totp]
-enroll_enabled = false
-verify_enabled = false
+enroll_enabled = true
+verify_enabled = true
 
-# Configure MFA via Phone Messaging
+# Zweiter Faktor per SMS: derselbe Grund wie bei [auth.sms] – Kosten je
+# Nachricht ohne zusätzlichen Nutzen gegenüber TOTP.
 [auth.mfa.phone]
 enroll_enabled = false
 verify_enabled = false
@@ -240,30 +285,48 @@ otp_length = 6
 template = "Your code is {{ .Code }}"
 max_frequency = "5s"
 
-# Configure MFA via WebAuthn
-# [auth.mfa.web_authn]
-# enroll_enabled = true
-# verify_enabled = true
+[auth.mfa.web_authn]
+enroll_enabled = false
+verify_enabled = false
 
-# Use an external OAuth provider. The full list of providers are: `apple`, `azure`, `bitbucket`,
-# `discord`, `facebook`, `github`, `gitlab`, `google`, `keycloak`, `linkedin_oidc`, `notion`, `twitch`,
-# `twitter`, `slack`, `spotify`, `workos`, `zoom`.
+# Kein Anmeldedienst ohne eigenen Beschluss: Was hier nicht steht, gilt als
+# aus, und `npm run auth:pruefen` meldet jeden `external_*_enabled`, der auf
+# dem Branch trotzdem eingeschaltet ist.
+#
+# Google und Apple stehen als Schaltfläche in `components/auth/LoginForm.tsx`
+# und `RegisterForm.tsx`, sind auf dem Branch aber aus – ein Klick endet in
+# einer Fehlermeldung von Supabase. Das ist festgehalten, nicht behoben:
+# Einschalten braucht Client-ID und Secret beider Anbieter, also eine
+# Handlung ausserhalb dieses Repositories. Offener Punkt in ROADMAP.md.
+#
+# Secrets gehören nicht in diese Datei. `env(...)` verweist auf eine
+# Umgebungsvariable; solange der Anbieter aus ist, überträgt die CLI weder
+# Client-ID noch Secret.
+[auth.external.google]
+enabled = false
+client_id = ""
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+skip_nonce_check = false
+
 [auth.external.apple]
 enabled = false
 client_id = ""
-# DO NOT commit your OAuth provider secret to git. Use environment variable substitution instead:
 secret = "env(SUPABASE_AUTH_EXTERNAL_APPLE_SECRET)"
-# Overrides the default auth redirectUrl.
 redirect_uri = ""
-# Overrides the default auth provider URL. Used to support self-hosted gitlab, single-tenant Azure,
-# or any other third-party OIDC providers.
 url = ""
-# If enabled, the nonce check will be skipped. Required for local sign in with Google auth.
 skip_nonce_check = false
 
-# Allow Solana wallet holders to sign in to your project via the Sign in with Solana (SIWS, EIP-4361) standard.
-# You can configure "web3" rate limit in the [auth.rate_limit] section and set up [auth.captcha] if self-hosting.
+# Kein Passkey. Er verlangt eine gesetzte Relying-Party-Domain, und Jetnity hat
+# noch keine (ARCHITECTURE.md: jetnity.com löst nicht auf).
+[auth.passkey]
+enabled = false
+
+# Keine Anmeldung mit einer Krypto-Wallet. Sie gehört zu keinem Weg, den
+# Jetnity vorsieht.
 [auth.web3.solana]
+enabled = false
+
+[auth.web3.ethereum]
 enabled = false
 
 # Use Firebase Auth as a third-party provider alongside Supabase Auth.

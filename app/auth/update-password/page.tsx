@@ -7,23 +7,26 @@ import { supabase } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  PASSWORT_RICHTLINIE,
+  RICHTLINIE_PUNKTE,
+  RICHTLINIE_TEXT,
+  erfuelltRichtlinie,
+  passwortAblehnung,
+  passwortStaerke,
+  staerkeFarbe,
+  staerkeText,
+} from '@/lib/auth/passwort-richtlinie';
+import { cn } from '@/lib/utils';
 import { Loader2, Eye, EyeOff, Lock, CheckCircle2, AlertCircle } from 'lucide-react';
 
 // ⛔️ Wichtig: In Client Components KEIN `export const metadata`!
-
-function scorePassword(pw: string) {
-  let score = 0;
-  if (pw.length >= 8) score++;
-  if (/[a-z]/.test(pw)) score++;
-  if (/[A-Z]/.test(pw)) score++;
-  if (/\d/.test(pw)) score++;
-  if (/[^A-Za-z0-9]/.test(pw)) score++;
-  return Math.min(score, 5);
-}
-
-function strengthLabel(score: number) {
-  return ['Sehr schwach', 'Schwach', 'Mittel', 'Stark', 'Sehr stark'][Math.max(0, score - 1)] || 'Sehr schwach';
-}
+//
+// Die Passwortregel stand hier eigenständig und milder als die des
+// Auth-Servers: acht Zeichen, Gruppen nur „empfohlen". Wer sich daran hielt,
+// bekam nach dem Absenden eine englische Ablehnung zu sehen, die zur
+// angezeigten Liste nicht passte. Beides kommt jetzt aus
+// lib/auth/passwort-richtlinie.ts, derselben Quelle wie in der Registrierung.
 
 export default function UpdatePasswordPage() {
   const router = useRouter();
@@ -53,8 +56,8 @@ export default function UpdatePasswordPage() {
     setErrorMsg(null);
     setOkMsg(null);
 
-    if (!pw || pw.length < 8) {
-      setErrorMsg('Bitte wähle ein Passwort mit mindestens 8 Zeichen.');
+    if (!erfuelltRichtlinie(pw)) {
+      setErrorMsg(RICHTLINIE_TEXT);
       return;
     }
     if (pw !== pw2) {
@@ -66,14 +69,14 @@ export default function UpdatePasswordPage() {
     try {
       const { error } = await supabase.auth.updateUser({ password: pw });
       if (error) {
-        setErrorMsg(error.message || 'Aktualisierung fehlgeschlagen.');
+        setErrorMsg(passwortAblehnung(error.message) ?? error.message ?? 'Aktualisierung fehlgeschlagen.');
         setLoading(false);
         return;
       }
       setOkMsg('Passwort erfolgreich aktualisiert.');
       setTimeout(() => router.replace('/reisen'), 600);
     } catch (err: any) {
-      setErrorMsg(err?.message || 'Aktualisierung fehlgeschlagen.');
+      setErrorMsg(passwortAblehnung(err?.message) ?? err?.message ?? 'Aktualisierung fehlgeschlagen.');
       setLoading(false);
     }
   };
@@ -98,7 +101,7 @@ export default function UpdatePasswordPage() {
     );
   }
 
-  const s = scorePassword(pw);
+  const s = passwortStaerke(pw);
   const pct = (s / 5) * 100;
 
   return (
@@ -121,7 +124,7 @@ export default function UpdatePasswordPage() {
               type={showPw ? 'text' : 'password'}
               value={pw}
               onChange={(e) => setPw(e.target.value)}
-              placeholder="Mind. 8 Zeichen"
+              placeholder={`Mind. ${PASSWORT_RICHTLINIE.mindestlaenge} Zeichen`}
               autoFocus
               className="pr-10"
               autoComplete="new-password"
@@ -140,15 +143,15 @@ export default function UpdatePasswordPage() {
           <div className="mt-2">
             <div className="h-2 w-full rounded-full bg-muted overflow-hidden" aria-hidden="true">
               <div
-                className="h-2 rounded-full bg-primary transition-all"
+                className={cn('h-2 rounded-full transition-all', staerkeFarbe(s))}
                 style={{ width: `${pct}%` }}
               />
             </div>
-            <p className="mt-1 text-xs text-muted-foreground" aria-live="polite">{strengthLabel(s)}</p>
+            <p className="mt-1 text-xs text-muted-foreground" aria-live="polite">{staerkeText(s)}</p>
             <ul className="mt-1 text-[11px] text-muted-foreground space-y-0.5">
-              <li>• Mind. 8 Zeichen</li>
-              <li>• Groß- & Kleinbuchstaben</li>
-              <li>• Zahlen und Sonderzeichen empfohlen</li>
+              {RICHTLINIE_PUNKTE.map((punkt) => (
+                <li key={punkt}>• {punkt}</li>
+              ))}
             </ul>
           </div>
         </div>

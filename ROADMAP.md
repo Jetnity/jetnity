@@ -18,7 +18,9 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Phase 1.1b | Alt-Oberflächen entfernen, Auth-Texte auf V2 | **abgeschlossen, in Production verifiziert** |
 | Phase 1.2 – 1.4 | Tokens, Auth-Vereinheitlichung, Datenbank-Baseline | **fertig auf Development** |
 | Phase 1.4b | obsolete Legacy-Tabellen archiviert und entfernt (37 → 8) | **fertig auf Development** |
-| Phase 1 (Rest) | Auth-Konfiguration versionieren, Fehlerdarstellung, V2-Reise-Schema | in Arbeit |
+| Phase 1.4c | Auth-Konfiguration als Code, Abgleich und Flussprüfung | **fertig auf Development** |
+| Phase 1.4d | Fehler im Administrationsbereich sichtbar statt leer | **fertig** |
+| Phase 1 (Rest) | V2-Reise-Schema | als Nächstes |
 | Phase 2 | Jetnity-Kern: natürliche Sprache zu strukturierter Reise | geplant |
 | Phase 3 | Reiseprodukte und Monetarisierung | geplant |
 | Phase 4 | Launch-Reife | geplant |
@@ -315,7 +317,7 @@ Damit stellte sich die Frage nach dem Notzugang: `ADMIN_ALLOWED_EMAILS` öffnet 
 
 **Advisors.** `function_search_path_mutable`, `auth_rls_initplan`, `multiple_permissive_policies`, `duplicate_index` und `rls_enabled_no_policy` sind behoben. Es bleiben 45 Security- und 47 Performance-Befunde, jeder mit Begründung in [docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 8. Der Grossteil sind Hinweise auf GraphQL-Sichtbarkeit, die aus dem `SELECT`-Recht folgt, und nie benutzte Indizes auf einem Branch ohne Verkehr.
 
-Ein Befund ist im Abschlusslauf neu dazugekommen und bleibt offen: `auth_leaked_password_protection`. Er betrifft keine Struktur, sondern eine Einstellung des Auth-Servers, die in keiner Migration steht. Sie im Vorbeigehen umzulegen hiesse, eine Sicherheitszusage zu geben, die das Repository nicht belegen kann; die Auth-Konfiguration braucht einen eigenen, versionierten Schritt (siehe [docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 11).
+Ein Befund kam im Abschlusslauf neu dazu und blieb zunächst offen: `auth_leaked_password_protection`. Er betrifft keine Struktur, sondern eine Einstellung des Auth-Servers, die in keiner Migration steht. Sie im Vorbeigehen umzulegen hätte geheissen, eine Sicherheitszusage zu geben, die das Repository nicht belegen kann. **Erledigt in 1.4c**: Die Einstellung ist eingeschaltet, ihre Wirkung nachgewiesen und ihr Sollwert im Repository festgehalten ([docs/AUTH.md](docs/AUTH.md) Abschnitt 5).
 
 **Keine Development-Service-Role angelegt.** Sie war an keiner Stelle nötig. Die Skripte gehen über die Management API mit dem Personal Access Token, und die RLS-Nachweise legen ihre Testkonten innerhalb der zurückgerollten Transaktion selbst an.
 
@@ -348,14 +350,35 @@ Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst wo
 
 **Nicht entfernt, weil der Nachweis fehlte.** Das Enum `session_status` war schon vor dieser Phase verwaist, seine drei Werte sind aber genau die, die `creator_sessions_review_status_check` auf der verbleibenden Spalte `creator_sessions.review_status` erlaubt – es gehört damit nicht nachweisbar ausschliesslich zur entfernten Struktur. Die Fähigkeit `konfiguration-verwalten` deckt keine Tabelle mehr ab, bleibt aber als höchste Stufe des Fähigkeitsmodells bestehen und wird jetzt direkt geprüft. Beide Punkte sind in [docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 11 als offen geführt.
 
-### 1.4c Auth-Konfiguration versionieren · offen
+### 1.4c Auth-Konfiguration versionieren · abgeschlossen auf Development
 
-Phase 1.4 hat Schema, Rechte und Policies aus dem Repository nachvollziehbar gemacht. Die Auth-Ebene liegt daneben und ist es nicht: `supabase/config.toml` ist der unveränderte Vorlagenstand der CLI und beschreibt weder Development noch Production.
+Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst worden – der Vergleich mit dem Elternprojekt ist ausschliesslich gelesen. Vollständige Beschreibung: [docs/AUTH.md](docs/AUTH.md). Entscheidung: [DECISIONS.md](DECISIONS.md) ADR-0039.
 
-- [ ] `password_hibp_enabled` einschalten – der Advisor meldet es, und `components/auth/RegisterForm.tsx` übersetzt die zugehörige Fehlermeldung bereits
-- [ ] `minimum_password_length` in `config.toml` (6) an den tatsächlichen Stand des Branches (12) angleichen
-- [ ] `site_url` und Redirect-URLs je Umgebung festhalten, statt `127.0.0.1`
-- [ ] festlegen, wie die Auth-Konfiguration überprüft wird – ohne Prüfung wiederholt sich der Zustand, den 1.4 gerade für das Schema beendet hat
+- [x] den realen Auth-Stand des Branches über die Management API erhoben, bevor etwas geändert wurde – 242 Schlüssel, davon 35 sicherheitsrelevante gegen das Elternprojekt verglichen
+- [x] `supabase/config.toml` beschreibt jetzt den Branch statt der CLI-Vorlage; neun Widersprüche aufgelöst, unter anderem Passwortlänge (6 → 12), E-Mail-Bestätigung (aus → an), TOTP (aus → an)
+- [x] `password_hibp_enabled` auf Development eingeschaltet und die Wirkung nachgewiesen – ein Passwort aus einem bekannten Datenleck wird abgelehnt, obwohl es die Regel erfüllt
+- [x] erklärt, warum der Advisor `auth_leaked_password_protection` kam und ging: Er meldet nur, solange passwortgestützte Konten existieren (13 Befunde ohne, 14 mit einem solchen Konto)
+- [x] Redirect-Verhalten gemessen statt vermutet: Ein Pfad am eigenen Ursprung wird übernommen, ein fremder Host fällt auf `site_url` zurück. `additional_redirect_urls` bleibt deshalb leer
+- [x] zehn sicherheitsrelevante Schlüssel ohne CLI-Entsprechung mit Begründung im Code festgehalten und per PATCH gesetzt
+- [x] `npm run auth:pruefen` prüft nicht nur die 55 Sollwerte, sondern verlangt für **jeden** der 242 Schlüssel eine Aussage des Repositories; zwei Musterregeln fangen jeden neuen Anmeldedienst und jeden Auth-Hook
+- [x] `npm run auth:fluesse` prüft die Wirkung an den echten Endpunkten: 18 Fälle, alle grün
+- [x] Schutz vor dem falschen Ziel: `scripts/auth/ziel.ts` fragt bei Supabase, ob der Ref ein Branch ist, und bricht bei einem eigenständigen Projekt ab
+- [x] Passwortregel der Formulare auf eine Quelle gebracht (`lib/auth/passwort-richtlinie.ts`); die Seite nach dem Rücksetzlink verlangte acht Zeichen, der Server zwölf aus vier Gruppen
+- [x] die Ablehnung wegen eines Datenlecks wird als solche angezeigt, nicht mehr als „Anforderungen nicht erfüllt"
+- [x] eigener CI-Job für den Abgleich; er überspringt sich sichtbar, solange die Secrets fehlen
+
+**Kein `[remotes.*]`-Block.** Die offizielle Branch-Konfiguration läuft darüber, verlangt aber den Projekt-Ref im Klartext und trennt zwei Umgebungen – solange von hier aus nur Development verwaltet wird, ohne Wirkung. Begründung in ADR-0039; der Parameter dafür bleibt im Code vorhanden.
+
+**Offen geblieben, mit Grund.** Google und Apple stehen als Schaltfläche in beiden Formularen und sind auf dem Branch aus; einschalten braucht Client-ID und Secret beider Anbieter. `additional_redirect_urls` bleibt leer, bis ein ausgelieferter Ursprung existiert. Es gibt keinen eigenen SMTP-Server: Supabase versendet selbst und begrenzt auf zwei E-Mails je Stunde – für den Launch reicht das nicht.
+
+### 1.4d Fehler in der Oberfläche sichtbar machen · abgeschlossen
+
+Umgesetzt. Entscheidung: [DECISIONS.md](DECISIONS.md) ADR-0040.
+
+- [x] `TransactionsCard` und `WebhooksCard` prüften den Status der Antwort nicht und schrieben `data.rows ?? []` in den Zustand – bei 500 also eine leere Tabelle. Beide zeigen jetzt einen Fehlerzustand
+- [x] eine gemeinsame Fläche für die drei Zustände *lädt* / *leer* / *nicht ermittelbar* in `components/admin/Ladezustand.tsx`; `OverviewCard` und `SecurityWidget` benutzen sie ebenfalls
+- [x] ein erfolgreicher Request mit null Zeilen bleibt die gewohnte leere Ansicht
+- [x] `lib/admin/ladezustand.test.ts` prüft „leer" gegen „Fehler" ohne Netz, darunter den Fall Status 500 mit `{ rows: [] }` im Körper
 
 ### 1.4d Fehler in der Oberfläche sichtbar machen · offen
 

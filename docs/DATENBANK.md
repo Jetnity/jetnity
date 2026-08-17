@@ -9,6 +9,8 @@ Alle Angaben stammen aus dem Development-Branch. Production ist weder in Phase 1
 
 Phase 1.4b hat 29 Tabellen entfernt. Warum, mit welchem Nachweis und was bewusst geblieben ist, steht in [docs/LEGACY_ENTFERNUNG.md](LEGACY_ENTFERNUNG.md). Diese Datei beschreibt das Ergebnis, jene den Übergang.
 
+Die Einstellungen des Auth-Servers – Passwortregel, E-Mail-Bestätigung, Anmeldedienste, Ratenbegrenzung – liegen nicht im Schema und stehen deshalb nicht hier, sondern in [docs/AUTH.md](AUTH.md).
+
 ---
 
 ## 1. Grundsatz
@@ -349,12 +351,14 @@ Behoben sind `function_search_path_mutable`, `auth_rls_initplan`, `multiple_perm
 | `pg_graphql_authenticated_table_exposed` | 8 | 37 | dasselbe für angemeldete Konten, jetzt für alle acht verbleibenden Tabellen. Welche Zeilen sichtbar sind, entscheidet RLS – nachgewiesen in Abschnitt 7 |
 | `unused_index` | 8 | 46 | der Development-Branch trägt keine echte Last. Ein Index, den nie eine Abfrage benutzt hat, ist auf einem Branch ohne Verkehr keine Aussage. Die 19 Fremdschlüsselindizes aus `20260817100400` lagen auf den entfernten Tabellen und sind mit ihnen weg; die verbleibenden acht liegen auf `airports`, `creator_profiles` und `creator_sessions` |
 | `auth_db_connections_absolute` | 1 | 1 | Einstellung des Auth-Servers, kein Schemabefund. Gehört zur Kapazitätsplanung vor dem Launch |
-| `auth_leaked_password_protection` | – | 1 | im Lauf nach Phase 1.4b **nicht gemeldet**, siehe unten. `password_hibp_enabled` ist unverändert `false` und bleibt offener Punkt, siehe Abschnitt 11 |
+| `auth_leaked_password_protection` | – | 1 | **behoben in Phase 1.4c.** `password_hibp_enabled` steht auf `true`; der Lauf danach meldet den Befund nicht, obwohl ein passwortgestütztes Konto existiert. Siehe unten |
 | `rls_enabled_no_policy` | 0 | 0 | bleibt behoben |
 
 Die vier `SECURITY DEFINER`-Funktionen folgen demselben Muster: interne Prüfung statt Rechteentzug. `pg_policy` wäre für jede Rolle lesbar und verriete die Bedingung jeder Policy; `admin_security_overview()` gibt nur deren Anzahl heraus.
 
-`auth_leaked_password_protection` meldeten die Advisors in den Läufen vom 17. August 09:20 und 10:49 nicht, im Abschlusslauf der Phase 1.4 dagegen schon – und im Lauf nach Phase 1.4b wieder nicht. Geschrieben hat die Einstellung keine der beiden Phasen; gearbeitet wurde ausschliesslich über Migrationen und SQL. Naheliegend ist, dass der Advisor den Befund nur meldet, solange passwortgestützte Konten auf dem Branch existieren, und die Testkonten entstehen in zurückgerollten Transaktionen. Bewiesen ist das nicht. Festgehalten ist, dass `password_hibp_enabled` unverändert `false` ist.
+`auth_leaked_password_protection` meldeten die Advisors in den Läufen vom 17. August 09:20 und 10:49 nicht, im Abschlusslauf der Phase 1.4 dagegen schon – und im Lauf nach Phase 1.4b wieder nicht. Geschrieben hatte die Einstellung keine der beiden Phasen; gearbeitet wurde ausschliesslich über Migrationen und SQL.
+
+Phase 1.4c hat die Vermutung geprüft und bestätigt: **Der Advisor meldet den Befund nur, solange passwortgestützte Konten auf dem Branch existieren.** Ein Lauf ohne solches Konto ergab 13 Security-Befunde; nach dem Anlegen genau eines Kontos mit Passwort waren es 14, der zusätzliche war dieser. Die Testkonten der RLS-Nachweise entstehen in zurückgerollten Transaktionen und sind beim Advisor-Lauf nicht mehr da – daher das Kommen und Gehen. Seit `password_hibp_enabled = true` bleibt es bei 13, obwohl das Konto mit Passwort weiterhin existiert ([docs/AUTH.md](AUTH.md) Abschnitt 5).
 
 Die fünf `darf_…()`-Funktionen erzeugen keinen Befund: Sie sind `SECURITY INVOKER` und tragen einen festen `search_path`.
 
@@ -397,6 +401,8 @@ Beides ist behoben. Die Prüfung verhindert den Rückfall und kostet keinen Date
 | `npm run db:rechte` | ja |
 | `npm run db:typen -- --pruefen` | ja |
 | `npm run db:advisors` | ja |
+
+Dazu kommt seit Phase 1.4c `npm run auth:pruefen` – der Abgleich der Auth-Konfiguration. Er liegt in einem eigenen CI-Job, weil er ein Geheimnis braucht, liest nur und rührt die Datenbank nicht an ([docs/AUTH.md](AUTH.md) Abschnitt 2). `npm run auth:fluesse` schreibt dagegen (ein Wegwerfkonto) und läuft aus demselben Grund wie die fünf unten von Hand.
 
 Diese fünf laufen vor einer Zusammenführung von Hand gegen den Development-Branch. In die CI gehören sie erst, wenn dafür ein eigener, kurzlebiger Branch entsteht – ein CI-Lauf gegen den gemeinsamen Development-Branch würde bei nebenläufigen Läufen dieselben Testkonten anlegen.
 
@@ -468,7 +474,7 @@ Keine der zwei verbleibenden Fremdschlüsselbedingungen ist doppelt.
 | Fähigkeit `konfiguration-verwalten` ohne Fläche | deckt seit Phase 1.4b keine Tabelle mehr ab, bleibt aber als höchste Stufe des Fähigkeitsmodells bestehen und wird direkt geprüft, siehe Abschnitt 6 |
 | Fünf Funktionen ohne Aufrufer auf verbleibenden Tabellen | `sync_creator_profile_core()`, `sync_creator_profile_emails()`, `append_email_to_array()` (2 Signaturen), `remove_email_from_array()` hängen an keinem Trigger und werden vom Anwendungscode nicht gerufen. Sie gehören zu `creator_profiles` und `creator_sessions`, nicht zur Legacy-Struktur, und lagen damit ausserhalb des Auftrags von Phase 1.4b. Entscheidung fällig in Phase 1.5 |
 | Datenbanknahe Prüfungen in die CI | braucht einen kurzlebigen Branch je Lauf, siehe Abschnitt 9 |
-| Fehler in der Oberfläche sichtbar machen | Die Routen antworten seit ADR-0037 korrekt, aber `TransactionsCard` und `WebhooksCard` in `components/admin/payments/PaymentsCenter.tsx` werfen die Meldung in ein `finally` ohne `catch`. Die Tabelle bleibt dann leer statt zu erklären, warum. `OverviewCard` und `SecurityWidget` zeigen die Meldung bereits an |
-| Schutz vor kompromittierten Passwörtern | `password_hibp_enabled` steht auf `false`, obwohl `components/auth/RegisterForm.tsx` die zugehörige Fehlermeldung bereits übersetzt. Bewusst nicht im Vorbeigehen umgelegt: Eine Auth-Einstellung liegt neben dem Schema, sie steht in keiner Migration und wäre aus dem Repository weder nachvollziehbar noch reproduzierbar. Sie gehört zusammen mit `password_min_length` und den Redirect-URLs in einen eigenen Schritt, der die Auth-Konfiguration versioniert |
-| Auth-Konfiguration nicht versioniert | `supabase/config.toml` ist der unveränderte Vorlagenstand der CLI – `site_url` zeigt auf `127.0.0.1`, `minimum_password_length` steht auf 6, der Branch verlangt 12. Die Datei beschreibt damit weder Development noch Production. Solange das so bleibt, ist die Auth-Ebene die einzige Schicht, die nicht aus dem Repository hervorgeht |
+| ~~Fehler in der Oberfläche sichtbar machen~~ | **erledigt in Phase 1.4d.** `TransactionsCard` und `WebhooksCard` prüften den Status der Antwort nicht und schrieben `data.rows ?? []` in den Zustand – bei 500 also eine leere Tabelle. Alle vier Admin-Ansichten benutzen jetzt dieselbe Fläche für *lädt* / *leer* / *nicht ermittelbar* ([DECISIONS.md](../DECISIONS.md) ADR-0040) |
+| ~~Schutz vor kompromittierten Passwörtern~~ | **erledigt in Phase 1.4c.** `password_hibp_enabled` steht auf `true`, die Wirkung ist nachgewiesen, und der Sollwert liegt im Repository. Warum der Advisor kam und ging, ist gemessen statt vermutet: Er meldet nur, solange passwortgestützte Konten existieren ([docs/AUTH.md](AUTH.md) Abschnitt 5) |
+| ~~Auth-Konfiguration nicht versioniert~~ | **erledigt in Phase 1.4c.** Der Abschnitt `[auth]` in `supabase/config.toml` beschreibt jetzt den Branch; `npm run auth:pruefen` vergleicht ihn mit dem laufenden Stand und verlangt für jeden Schlüssel der API eine Aussage des Repositories. Beschreibung in [docs/AUTH.md](AUTH.md), Entscheidung in [DECISIONS.md](../DECISIONS.md) ADR-0039 |
 | Production-Stand | weder in Phase 1.4 noch in Phase 1.4b erhoben oder verändert. Ob Production dieselben 29 Tabellen trägt, ist damit unbekannt – nicht angenommen. Der Abgleich gehört zum ersten Production-Deploy nach 1.5 |
