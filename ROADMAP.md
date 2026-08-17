@@ -365,7 +365,10 @@ Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst wo
 - [x] Schutz vor dem falschen Ziel: `scripts/auth/ziel.ts` fragt bei Supabase, ob der Ref ein Branch ist, und bricht bei einem eigenständigen Projekt ab
 - [x] Passwortregel der Formulare auf eine Quelle gebracht (`lib/auth/passwort-richtlinie.ts`); die Seite nach dem Rücksetzlink verlangte acht Zeichen, der Server zwölf aus vier Gruppen
 - [x] die Ablehnung wegen eines Datenlecks wird als solche angezeigt, nicht mehr als „Anforderungen nicht erfüllt"
-- [x] eigener CI-Job für den Abgleich; er überspringt sich sichtbar, solange die Secrets fehlen
+- [x] eigener CI-Job für den Abgleich, fail-closed: Fehlen die Secrets, schlägt er fehl. Nur ein Pull Request aus einem Fork überspringt sich, weil GitHub ihm keine Secrets gibt
+- [x] der Abgleich nennt bei einem unbekannten Schlüssel nur den Namen, nie den Wert – die Auth-Konfiguration führt Geheimnisse, und was in einem neuen Schlüssel steht, weiss niemand. `lib/supabase/auth-bericht.test.ts` speist einen Secret-artigen Wert ein und sucht ihn in Text- und JSON-Ausgabe
+
+**Nachgezogen nach der Prüfung des Pull Requests.** Drei Punkte, alle eng begrenzt. Der CI-Job war nicht fail-closed: Der Schritt „Abgleich" übersprang sich bei fehlenden Secrets, der Job meldete trotzdem `success` – genau der Zustand, den der Kommentar im Workflow ausschliessen wollte. Der Abgleich schrieb den Live-Wert eines unklassifizierten Schlüssels ins Protokoll, obwohl bei einem unbekannten Schlüssel niemand weiss, ob ein Geheimnis darin steht. Und die Aussage zum Plan war falsch: Leaked Password Protection ist Pro Plan und höher, nicht „in allen Plänen" – für Jetnity ohne Folge, weil die Organisation bereits auf Pro läuft, aber als Aussage nicht haltbar ([docs/AUTH.md](docs/AUTH.md) Abschnitt 5).
 
 **Kein `[remotes.*]`-Block.** Die offizielle Branch-Konfiguration läuft darüber, verlangt aber den Projekt-Ref im Klartext und trennt zwei Umgebungen – solange von hier aus nur Development verwaltet wird, ohne Wirkung. Begründung in ADR-0039; der Parameter dafür bleibt im Code vorhanden.
 

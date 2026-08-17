@@ -39,7 +39,9 @@ Das Testkonto entsteht über den Admin-Endpunkt von Auth und nicht über rohes S
 
 **Der Schutz vor dem falschen Ziel steht vor jedem Zugriff.** `scripts/auth/ziel.ts` fragt bei Supabase, ob `SUPABASE_PROJECT_REF` ein Branch ist oder ein eigenständiges Projekt, und bricht im zweiten Fall ab. Die Unterscheidung ist eindeutig: Ein Branch antwortet unter `/v1/projects/{ref}` mit 404 und unter `/v1/branches/{ref}` mit 200, ein Elternprojekt umgekehrt. Ein hart eingetragener Production-Ref wäre schwächer – er müsste gepflegt werden und würde ein zweites Produktionsprojekt nicht erkennen.
 
-`npm run auth:pruefen` läuft in der CI in einem eigenen Job. Er überspringt sich selbst, solange die Secrets `SUPABASE_ACCESS_TOKEN` und `SUPABASE_PROJECT_REF` im Repository fehlen, und sagt das im Protokoll – eine Prüfung, die nicht gelaufen ist, darf nicht grün aussehen.
+`npm run auth:pruefen` läuft in der CI in einem eigenen Job, und der Job ist **fail-closed**: Fehlen `SUPABASE_ACCESS_TOKEN` oder `SUPABASE_PROJECT_REF` in den Repository-Secrets, bricht er ab. Eine Prüfung, die nicht gelaufen ist, darf nicht grün aussehen – und ein grüner Job, in dem der eigentliche Schritt übersprungen wurde, sieht genau so aus. Die einzige Ausnahme ist ein Pull Request aus einem Fork: GitHub gibt ihm keine Secrets, dort ist das Fehlen die Regel und wird mit einer Notiz im Protokoll übersprungen.
+
+**Was der Abgleich über einen unbekannten Schlüssel sagt.** Nur seinen Namen. Die Auth-Konfiguration führt Geheimnisse – `jwt_secret` und `security_captcha_secret` stehen in derselben Antwort –, und was in einem Schlüssel steht, den das Repository noch nicht kennt, weiss niemand. Genau diese Schlüssel meldet die Vollständigkeitsprüfung aber, in ein Protokoll, das jeder mit Leserecht öffnen kann. Der Wert gelangt deshalb nicht in den Befund, statt in der Ausgabe weggefiltert zu werden (`lib/supabase/auth-bericht.ts`); `lib/supabase/auth-bericht.test.ts` speist einen Secret-artigen Wert ein und sucht ihn in Text- und JSON-Ausgabe. Für begutachtete Schlüssel gilt das Gegenteil: Dort ist der gefundene Wert die Information, um die es geht, und er wird gezeigt.
 
 ---
 
@@ -170,7 +172,15 @@ nicht geleakt    → HTTP 200  angenommen
 
 Die Zahl bewegt sich nicht mehr. Das Konto für die Gegenprobe entsteht mit `npm run auth:testkonto` und wird danach entfernt; auf dem Branch bleibt kein Testkonto stehen.
 
-**Keine Kosten, kein Plan-Wechsel.** Der Abgleich mit HaveIBeenPwned ist in Supabase Auth enthalten und in allen Plänen verfügbar; das Elternprojekt führt ihn im selben Plan. `PATCH /config/auth` hat den Wert ohne Rückfrage und ohne Hinweis auf ein kostenpflichtiges Zusatzprodukt übernommen.
+**Welcher Plan die Funktion trägt.** Der Abgleich mit HaveIBeenPwned ist **nicht in allen Plänen verfügbar**. Die offizielle Dokumentation sagt es ausdrücklich: „Leaked password protection is available on the Pro Plan and above" ([Password security](https://supabase.com/docs/guides/auth/password-security)). Eine frühere Fassung dieses Abschnitts behauptete das Gegenteil; die Behauptung stützte sich darauf, dass `PATCH /config/auth` den Wert ohne Rückfrage übernahm – was nur belegt, dass *dieses* Projekt die Funktion nutzen darf, nicht dass jedes sie dürfte.
+
+**Für Jetnity trotzdem kein Plan-Wechsel und keine Zusatzgebühr.** Die Organisation läuft bereits auf Pro, gemessen über `GET /v1/organizations/{id}`:
+
+```
+{ "id": "…", "name": "Jetnity", "plan": "pro" }
+```
+
+Der Branch gehört zu derselben Organisation wie das Elternprojekt, das die Funktion schon führte. Es entsteht also nichts Neues – wohl aber eine Abhängigkeit, die benannt sein muss: **Fällt Jetnity je auf Free zurück, fällt dieser Schutz mit.** `npm run auth:pruefen` würde das melden, weil der Sollwert `password_hibp_enabled = true` im Repository steht.
 
 **Der Wortlaut ist übersetzt.** GoTrue antwortet mit „Password is known to be weak and easy to guess" – ohne „leaked", „pwned" oder „breach". Vorher fiel diese Meldung im Formular auf „Passwortanforderungen nicht erfüllt" durch. Das ist die schlechtestmögliche Antwort: Die angezeigte Liste ist ja erfüllt, und Reisende probieren Varianten, die genauso scheitern. `passwortAblehnung()` in `lib/auth/passwort-richtlinie.ts` trennt beide Fälle, mit dem gemessenen Wortlaut als Test.
 
@@ -272,4 +282,5 @@ Die Folge ist bekannt und in Kauf genommen: Die Supabase-GitHub-Integration wend
 | kein eigener SMTP-Server; zwei E-Mails je Stunde | offen. Vor dem Launch nötig |
 | `auth_db_connections_absolute` (Performance-Advisor) | Kapazitätsplanung vor dem Launch, kein Sicherheitsbefund |
 | Production ist nicht abgeglichen | Absicht. Der Vergleich in Abschnitt 3 ist nur gelesen; ein Abgleich gehört zum ersten Production-Deploy nach Phase 1.5 |
-| Die CI-Prüfung braucht `SUPABASE_ACCESS_TOKEN` und `SUPABASE_PROJECT_REF` als Repository-Secrets | solange sie fehlen, überspringt der Job sich selbst und protokolliert das |
+| Die CI-Prüfung braucht `SUPABASE_ACCESS_TOKEN` und `SUPABASE_PROJECT_REF` als Repository-Secrets | fehlen sie, schlägt der Job fehl. Fail-closed, siehe Abschnitt 2 – nur ein Pull Request aus einem Fork überspringt sich |
+| Leaked Password Protection hängt am Pro Plan | Abschnitt 5. Kein Handlungsbedarf, solange die Organisation auf Pro läuft; ein Rückfall auf Free würde den Schutz mitnehmen |
