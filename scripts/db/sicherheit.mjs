@@ -321,7 +321,7 @@ const FAELLE = [
   // angemeldete Konto unerreichbar – belegen die folgenden sechs Fälle für die
   // beiden verbleibenden Funktionen dieser Art.
   {
-    name: 'keine Funktion ist für anon ausführbar, die die Rolle nicht selbst prüft',
+    name: 'keine SECURITY-DEFINER-Funktion ist für anon ausführbar',
     rolle: 'anon',
     sql: `select p.proname from pg_proc p
           join pg_namespace n on n.oid = p.pronamespace

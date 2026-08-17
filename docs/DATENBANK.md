@@ -292,7 +292,7 @@ Und je Fähigkeit ein Paar aus der Stufe, ab der sie gilt, und der Stufe direkt 
 | Creator ändert eine fremde Sitzung | 0 Zeilen |
 | Administration erreicht die Fähigkeit `konfiguration-verwalten` | erlaubt |
 | Betrieb erreicht dieselbe Fähigkeit | 0 Zeilen |
-| keine `SECURITY DEFINER`-Funktion ist für `anon` ausführbar, die die Rolle nicht selbst prüft | erfüllt |
+| keine `SECURITY DEFINER`-Funktion ist für `anon` ausführbar | erfüllt |
 | Moderation ruft `admin_payments_summary_30d()` und `admin_security_overview()` | erlaubt |
 | Creator ruft dieselben beiden | 0 Zeilen |
 
