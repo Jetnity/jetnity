@@ -24,6 +24,27 @@ export type Ziel = {
   token: string
 }
 
+/**
+ * Der Grund einer abgelehnten Antwort, ohne ihren Körper weiterzugeben.
+ *
+ * Die Management API antwortet im Fehlerfall mit `{ "message": … }`. Diesen
+ * Satz zu zeigen hilft; die Antwort ungelesen in eine Fehlermeldung zu schieben
+ * ist etwas anderes – sie landet im CI-Protokoll, und was ausser einer Meldung
+ * darin steht, entscheidet nicht Jetnity. Deshalb nur die bekannten Felder.
+ */
+function grund(text: string): string {
+  try {
+    const koerper = JSON.parse(text) as Record<string, unknown>
+    for (const feld of ['message', 'msg', 'error_description', 'error']) {
+      const wert = koerper[feld]
+      if (typeof wert === 'string' && wert.length > 0) return wert
+    }
+  } catch {
+    // Keine JSON-Antwort: Der Status ist dann alles, was gesagt werden kann.
+  }
+  return 'ohne nennbaren Grund'
+}
+
 async function status(pfad: string, token: string): Promise<number> {
   // Bewusst nur der Status. `/v1/branches/{ref}` liefert das Datenbankkennwort
   // und das JWT-Secret des Branches mit; nichts davon darf in eine Ausgabe,
@@ -75,7 +96,7 @@ export async function authKonfiguration({ ref, token }: Ziel): Promise<Record<st
     headers: { Authorization: `Bearer ${token}` },
   })
   const text = await res.text()
-  if (!res.ok) throw new Error(`Auth-Konfiguration nicht lesbar (HTTP ${res.status}): ${text}`)
+  if (!res.ok) throw new Error(`Auth-Konfiguration nicht lesbar (HTTP ${res.status}): ${grund(text)}`)
   return JSON.parse(text) as Record<string, unknown>
 }
 
@@ -122,6 +143,6 @@ export async function authKonfigurationSetzen(
     body: JSON.stringify(werte),
   })
   const text = await res.text()
-  if (!res.ok) throw new Error(`Auth-Konfiguration nicht schreibbar (HTTP ${res.status}): ${text}`)
+  if (!res.ok) throw new Error(`Auth-Konfiguration nicht schreibbar (HTTP ${res.status}): ${grund(text)}`)
   return JSON.parse(text) as Record<string, unknown>
 }
