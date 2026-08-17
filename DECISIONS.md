@@ -819,7 +819,7 @@ Nur bei 503 lädt die Fläche zusätzlich zum zweiten Versuch ein; bei 500 hat d
 
 **Begründung:** Eine leere Liste ist im Administrationsbereich eine Aussage – keine Sperre, keine Fehlanmeldung, keine Zahlung – und sie ist ausgerechnet dort am wichtigsten, wo sie beruhigt. Ein Fehler ist die Abwesenheit einer Aussage. Beides gleich darzustellen nimmt der leeren Liste ihre Bedeutung.
 
-Dass die Unterscheidung in `lib/` liegt und nicht in einer Komponente, ist der Punkt, an dem sie prüfbar wird. `lib/admin/ladezustand.test.ts` stellt 19 Fälle gegeneinander, darunter den, an dem die zwei Karten gescheitert sind: Status 500 mit `{ rows: [] }` im Körper. Ein fehlendes Feld gilt dabei ebenfalls als Fehler und nicht als leere Liste – `data.rows ?? []` war genau die Zeile, die aus beidem dasselbe machte.
+Dass die Unterscheidung in `lib/` liegt und nicht in einer Komponente, ist der Punkt, an dem sie prüfbar wird. `lib/admin/ladezustand.test.ts` stellt 23 Fälle gegeneinander, darunter den, an dem die zwei Karten gescheitert sind: Status 500 mit `{ rows: [] }` im Körper. Ein fehlendes Feld gilt dabei ebenfalls als Fehler und nicht als leere Liste – `data.rows ?? []` war genau die Zeile, die aus beidem dasselbe machte.
 
 **Konsequenzen:** Am laufenden Server gemessen, mit entzogenem `select` auf `payments`, `stripe_webhooks` und `security_events`: Alle drei Karten zeigen „permission denied for table …" statt einer leeren Tabelle, die Kennzahlen der Sicherheitsübersicht stehen auf Strich statt auf 0, und ein Filter ohne Treffer zeigt weiterhin „Keine Transaktionen." ohne Fehlerfläche. Nach dem Zurückgeben des Rechts führt „Erneut versuchen" zurück in die gefüllte Ansicht.
 
@@ -832,7 +832,17 @@ Vier Dinge sind dabei aufgefallen und behoben:
 
 Kein neues Aussehen: Rahmen, Radius und Fehlerfarben sind die, die die Formulare in `components/auth` für ihre Meldungen benutzen ([DESIGN_SYSTEM.md](DESIGN_SYSTEM.md)).
 
-Die drei übrigen Admin-Bereiche – `analytics`, `content`, `localization`, `marketing`, `settings` – lesen heute keine Daten und sind deshalb nicht betroffen. `UsersTable` und die Startseite lesen serverseitig; dort trägt ein Fehler die Seite selbst und nicht eine Karte darin.
+**Die Prüfung der übrigen Ansichten hat drei weitere Stellen derselben Klasse gefunden**, alle serverseitig und deshalb ohne HTTP-Status dazwischen. Der Auftrag nannte sie nicht; sie stehen trotzdem hier, weil sie dieselbe Falschaussage erzeugen und zwei davon auf der Startseite der Administration.
+
+- `AdminStatsStrip` las unter `if (!error && data)`. Scheiterte die Abfrage, blieben die Vorgabewerte stehen: „Gesamtumsatz (30T) CHF 0.00", „Bestellungen 0", „Conversion-Rate 0.0%".
+- `AdminTimeSeries` prüfte `error` überhaupt nicht und zeichnete vierzehn Tage mit null Sitzungen.
+- `app/(admin)/admin/users/page.tsx` schrieb die Ablehnung ins Serverprotokoll und zeigte „Admin · 0 Nutzer gesamt" mit leerer Tabelle – in einer Benutzerverwaltung die Aussage, es gebe niemanden.
+
+`AdminHealthCards` hatte den Fall bereits richtig, seit ADR-0034, und ist das Muster: ein Strich und „Abfrage fehlgeschlagen" statt einer Zahl. Die drei folgen ihm, mit der Fläche und ohne Wiederholen-Schaltfläche – eine Server-Komponente kann keine Funktion an den Browser geben, das Neuladen der Seite ist der Weg. Die übrigen Admin-Seiten (`analytics`, `content`, `localization`, `marketing`, `settings`) lesen heute keine Daten.
+
+Damit die Einordnung nicht zweimal formuliert wird, ist `problemAus()` aus `lib/api/datenbank-lesen.ts` exportiert. Nötig war das, weil eine Abfrage mit `head: true` absichtlich `data: null` liefert und deshalb nicht durch `lese()` passt – sie durch `lese()` zu schicken hiesse, den Zähler als fehlende Daten zu lesen. Dabei ist eine Eigenschaft von PostgREST aufgefallen und gemessen: **Eine HEAD-Antwort hat keinen Körper**, `postgrest-js` liefert dann `{ message: '' }` ohne SQLSTATE. Dieselbe Abfrage meldet als GET „permission denied for table creator_sessions", als HEAD nichts. `problemAus()` nennt in diesem Fall den Statuscode – „Die Datenbank hat die Abfrage abgelehnt (HTTP 403), ohne eine Begründung mitzusenden" – statt eine leere Zeile anzuzeigen.
+
+Zuletzt eine Ursache, die erst durch die Fehlerdarstellung sichtbar wurde: Der Suchbegriff der Benutzerverwaltung stand unzitiert im `or`-Ausdruck, in dem das Komma die Glieder trennt. Am Branch gemessen ergab `a,b` HTTP 400 „failed to parse logic tree"; die Seite zeigte „0 Nutzer gesamt". Es ist derselbe Fehler, der in ADR-0037 für die Ereignissuche behoben wurde, und der Ausdruck kommt jetzt aus derselben Stelle, `lib/api/suchfilter.ts`.
 
 ---
 

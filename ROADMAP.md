@@ -373,19 +373,20 @@ Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst wo
 
 ### 1.4d Fehler in der Oberfläche sichtbar machen · abgeschlossen
 
-Umgesetzt. Entscheidung: [DECISIONS.md](DECISIONS.md) ADR-0040.
+Umgesetzt. Am laufenden Server gemessen, mit entzogenem `select` auf `payments`, `stripe_webhooks`, `security_events` und `creator_sessions`. Entscheidung: [DECISIONS.md](DECISIONS.md) ADR-0040.
 
-- [x] `TransactionsCard` und `WebhooksCard` prüften den Status der Antwort nicht und schrieben `data.rows ?? []` in den Zustand – bei 500 also eine leere Tabelle. Beide zeigen jetzt einen Fehlerzustand
-- [x] eine gemeinsame Fläche für die drei Zustände *lädt* / *leer* / *nicht ermittelbar* in `components/admin/Ladezustand.tsx`; `OverviewCard` und `SecurityWidget` benutzen sie ebenfalls
-- [x] ein erfolgreicher Request mit null Zeilen bleibt die gewohnte leere Ansicht
-- [x] `lib/admin/ladezustand.test.ts` prüft „leer" gegen „Fehler" ohne Netz, darunter den Fall Status 500 mit `{ rows: [] }` im Körper
+- [x] `TransactionsCard` und `WebhooksCard` warfen bei `!res.ok` in ein `finally` **ohne `catch`**; der Zustand blieb auf `[]` stehen und die Tabelle meldete „Keine Transaktionen" bzw. „Keine Events". Beide zeigen jetzt die Meldung des Servers
+- [x] `OverviewCard` zeigte die Meldung, darunter aber trotzdem drei Nullen und eine flache Kurve; `SecurityWidget` einen Toast, der nach vier Sekunden verschwand und vier Kennzahlen auf 0 zurückliess – bei einem Lauf alle 15 Sekunden zudem immer wieder
+- [x] eine gemeinsame Fläche für *lädt* / *leer* / *nicht ermittelbar* in `components/admin/Ladezustand.tsx`, die Unterscheidung einmal in `lib/admin/ladezustand.ts`; alle Admin-Ansichten benutzen beides
+- [x] ein erfolgreicher Request mit null Zeilen bleibt die gewohnte leere Ansicht – nachgestellt mit einem Statusfilter ohne Treffer
+- [x] nur 503 lädt zum zweiten Versuch ein; bei 500 hat die Datenbank geantwortet und abgelehnt
+- [x] `lib/admin/ladezustand.test.ts`: 23 Fälle „leer" gegen „Fehler" ohne Netz, darunter Status 500 mit `{ rows: [] }` im Körper und ein fehlendes Feld
+- [x] drei weitere Stellen derselben Klasse gefunden und behoben, alle serverseitig: `AdminStatsStrip` („Gesamtumsatz CHF 0.00" bei gescheiterter Abfrage), `AdminTimeSeries` (vierzehn Tage ohne Sitzungen) und die Benutzerverwaltung („Admin · 0 Nutzer gesamt")
+- [x] `app/api/admin/security/list/route.ts` war die einzige lesende Route ohne `lese()` und bildete jede Ablehnung auf 500 ab, auch eine erschöpfte Verbindung
+- [x] `RefundCard` las `data.error`, die Route sendet `message` – die Begründung der Datenbank kam nie an
+- [x] der Suchbegriff der Benutzerverwaltung stand unzitiert im `or`-Ausdruck; `a,b` ergab HTTP 400 und die Seite „0 Nutzer gesamt" (derselbe Fehler wie in ADR-0037 für die Ereignissuche)
 
-### 1.4d Fehler in der Oberfläche sichtbar machen · offen
-
-Die lesenden Admin-Routen antworten seit ADR-0037 mit 500 oder 503, wenn die Datenbank nicht liefert. Zwei Karten geben das noch nicht weiter.
-
-- [ ] `TransactionsCard` und `WebhooksCard` in `components/admin/payments/PaymentsCenter.tsx` werfen die Meldung in ein `finally` ohne `catch`; die Tabelle bleibt dann leer, ohne zu sagen warum. `OverviewCard` und `SecurityWidget` zeigen sie bereits an
-- [ ] festlegen, wie eine fehlgeschlagene Übersicht im Administrationsbereich einheitlich aussieht – heute einmal roter Text, einmal Toast
+**Gemessen statt behauptet.** `head: true` schickt HEAD, und eine HEAD-Antwort hat keinen Körper: `postgrest-js` liefert `{ message: '' }` ohne SQLSTATE, wo dieselbe Abfrage als GET „permission denied for table creator_sessions" meldet. Ohne Behandlung wäre die Fehlerfläche dort eine leere Zeile; sie nennt jetzt den Statuscode.
 
 ### 1.5 V2-Reise-Schema
 

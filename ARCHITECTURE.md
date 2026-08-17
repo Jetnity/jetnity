@@ -194,6 +194,8 @@ Alle zehn Endpunkte unter `api/admin` prüfen die Berechtigung über `requireAdm
 
 Was die Datenbank nicht liefert, meldet der Endpunkt, statt es zu verschweigen: Eine Ablehnung wird 500, ein Ausfall 503, jeweils mit `{ message }`; eine erfolgreiche Abfrage ohne Zeilen bleibt eine leere Liste mit 200. Die Unterscheidung steht einmal in `lese()` in `lib/api/datenbank-lesen.ts` und nicht in den Routen ([DECISIONS.md](DECISIONS.md) ADR-0037). Von RLS weggefilterte Zeilen sind bewusst kein Fehler – das ist der Fall einer Notzugangs-Sitzung, den der Hinweisbalken erklärt.
 
+Die Oberfläche gibt das seit Phase 1.4d weiter, statt es in eine leere Tabelle zu verwandeln. Die Deutung einer Antwort steht einmal in `lib/admin/ladezustand.ts` – bewusst frei von React, Next und `fetch`, damit beide Fälle ohne Laufzeit prüfbar sind –, die Darstellung einmal in `components/admin/Ladezustand.tsx`. Ansichten, die serverseitig lesen (Startseite der Administration, Benutzerverwaltung), holen die Einordnung 500/503 über `problemAus()` aus derselben Stelle wie die Routen und zeigen dieselbe Fläche, nur ohne Wiederholen-Schaltfläche. Einzelheiten in [DECISIONS.md](DECISIONS.md) ADR-0040.
+
 Phase 1.4 hat drei weitere entfernt: `security/block-ip` und `security/unblock-ip` waren Doppelungen von `security/block` und `security/unblock` ohne Aufrufer, `security/overview` rief eine Funktion auf, die es nicht gab, und hatte ebenfalls keinen Aufrufer.
 
 `app/auth/refresh` ist mit Phase 1.3 entfallen. Der Endpunkt sollte Sessions erneuern, konnte es aber nie: Sein Cookie-Adapter gab für jeden Namen `undefined` zurück und verwarf jedes Schreiben.

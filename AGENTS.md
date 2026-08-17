@@ -439,6 +439,14 @@ Für jede neue API-Route prüfen:
 
 Neue Endpunkte dürfen nicht standardmäßig offen sein.
 
+Zusätzlich für jeden lesenden Zugriff, in der Route **und** in der Ansicht, die ihn anzeigt:
+
+- Ist eine leere Antwort von einem Fehler unterscheidbar?
+
+Eine leere Liste ist eine Aussage über die Wirklichkeit. Ein Fehler ist die Abwesenheit einer Aussage. Beides über denselben Zustand auszuliefern ist ein Defekt, auch wenn nichts abstürzt.
+
+Verbindlich umgesetzt in `lib/api/datenbank-lesen.ts` (Server) und `lib/admin/ladezustand.ts` (Oberfläche); Begründung in DECISIONS.md ADR-0037 und ADR-0040. Eine neue lesende Route oder Ansicht benutzt beides, statt die Unterscheidung erneut zu formulieren.
+
 ---
 
 ## 16. Secrets
@@ -613,10 +621,14 @@ Eine Entwicklungsphase gilt nicht als technisch abgeschlossen, wenn:
 - relevante Lint-Checks fehlschlagen
 - Production-Build fehlschlägt
 - zentrale Tests fehlschlagen
+- ein Hygiene-Check fehlschlägt: `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`
+- bei Änderungen an Datenbank oder Anmeldung: `db:rechte`, `db:rls`, `db:sicherheit`, `auth:pruefen` fehlschlagen
 
 Wenn eine Ausnahme notwendig ist:
 
 Explizit dokumentieren.
+
+Ein Werkzeug, das sich selbst überspringt, weil ein Secret fehlt, gilt nicht als gelaufen. Es muss das im Protokoll sagen.
 
 ---
 

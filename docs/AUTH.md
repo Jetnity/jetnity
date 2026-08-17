@@ -32,11 +32,14 @@ Seit Phase 1.4c gilt:
 | `npm run auth:anwenden -- --zeigen` | sagt, was sich ändern würde | ja, nur lesend |
 | `npm run auth:anwenden` | überträgt `config.toml` mit `supabase config push` und setzt die Schlüssel ohne CLI-Entsprechung per PATCH | ja, schreibend |
 | `npm run auth:fluesse` | prüft die Anmeldewege an ihnen selbst: Registrierung, Bestätigung, Anmeldung, Rücksetzung, zweiter Faktor, Anbieter | ja, schreibend (ein Wegwerfkonto) |
+| `npm run auth:testkonto -- anlegen <mail> <passwort> [rolle]` | legt ein anmeldbares Konto mit Rolle an, für die Prüfung der Admin-Oberflächen von Hand. `entfernen <mail>` nimmt es zurück | ja, schreibend |
 | `npm test` | vergleicht die Abbildung und die Passwortregel der Formulare mit `config.toml` | nein |
+
+Das Testkonto entsteht über den Admin-Endpunkt von Auth und nicht über rohes SQL. Der Grund ist gemessen: Ein direkt in `auth.users` geschriebenes Konto lässt die Token-Spalten auf `NULL`, und GoTrue bricht danach mit „Database error finding user" ab – `sql: Scan error on column index 3, name "confirmation_token": converting NULL to string is unsupported`.
 
 **Der Schutz vor dem falschen Ziel steht vor jedem Zugriff.** `scripts/auth/ziel.ts` fragt bei Supabase, ob `SUPABASE_PROJECT_REF` ein Branch ist oder ein eigenständiges Projekt, und bricht im zweiten Fall ab. Die Unterscheidung ist eindeutig: Ein Branch antwortet unter `/v1/projects/{ref}` mit 404 und unter `/v1/branches/{ref}` mit 200, ein Elternprojekt umgekehrt. Ein hart eingetragener Production-Ref wäre schwächer – er müsste gepflegt werden und würde ein zweites Produktionsprojekt nicht erkennen.
 
-`npm run auth:pruefen` läuft in der CI in einem eigenen Job. Er übersprungen sich selbst, solange die Secrets `SUPABASE_ACCESS_TOKEN` und `SUPABASE_PROJECT_REF` im Repository fehlen, und sagt das im Protokoll – eine Prüfung, die nicht gelaufen ist, darf nicht grün aussehen.
+`npm run auth:pruefen` läuft in der CI in einem eigenen Job. Er überspringt sich selbst, solange die Secrets `SUPABASE_ACCESS_TOKEN` und `SUPABASE_PROJECT_REF` im Repository fehlen, und sagt das im Protokoll – eine Prüfung, die nicht gelaufen ist, darf nicht grün aussehen.
 
 ---
 
@@ -156,6 +159,8 @@ Der Advisor `auth_leaked_password_protection` war der letzte offene Befund aus P
 bekannt geleakt  → HTTP 422  Password is known to be weak and easy to guess, please choose a different one.
 nicht geleakt    → HTTP 200  angenommen
 ```
+
+**Gegengeprobt am Ende der Phase.** Der entscheidende Lauf ist der mit einem Konto, das ein Passwort hat – ohne ein solches meldet der Advisor ohnehin nichts. Er ergibt jetzt 13 Security-Befunde und **null** Treffer auf `auth_leaked_password_protection`, wo derselbe Aufbau vor der Umstellung 14 und einen ergab. Das Konto wird danach wieder entfernt.
 
 **Keine Kosten, kein Plan-Wechsel.** Der Abgleich mit HaveIBeenPwned ist in Supabase Auth enthalten und in allen Plänen verfügbar; das Elternprojekt führt ihn im selben Plan. `PATCH /config/auth` hat den Wert ohne Rückfrage und ohne Hinweis auf ein kostenpflichtiges Zusatzprodukt übernommen.
 
