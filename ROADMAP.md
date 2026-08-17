@@ -16,7 +16,8 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Querschnitt | Mobile- und Responsive-Qualität der V2-Seiten | **abgeschlossen, in Production verifiziert** |
 | Phase 1.1 | Alt-Endpunkte und Cron-Jobs außer Betrieb | **fertig** |
 | Phase 1.1b | Alt-Oberflächen entfernen, Auth-Texte auf V2 | **abgeschlossen, in Production verifiziert** |
-| Phase 1 (Rest) | V2-Sicherheit und Datenbasis | in Arbeit |
+| Phase 1.2 – 1.4 | Tokens, Auth-Vereinheitlichung, Datenbank-Baseline | **fertig auf Development** |
+| Phase 1 (Rest) | obsolete Tabellen entfernen, V2-Reise-Schema | in Arbeit |
 | Phase 2 | Jetnity-Kern: natürliche Sprache zu strukturierter Reise | geplant |
 | Phase 3 | Reiseprodukte und Monetarisierung | geplant |
 | Phase 4 | Launch-Reife | geplant |
@@ -257,32 +258,71 @@ Keine API-Antwort war eine Weiterleitung. Schreibende Endpunkte verlangen jetzt 
 
 Offen bleibt das generische Profil: Die Rolle liegt weiterhin in `creator_profiles`, der Tabelle der alten Produktidee. Der Tabellenname steht jetzt an genau einer Stelle (`ROLE_TABLE` in `lib/auth/admin-guard.ts`), damit die Umstellung in 1.4 eine einzelne Änderung bleibt.
 
-### 1.4 Datenbank-Baseline · Development-MCP eingerichtet, Baseline ausstehend · blockierend für Phase 2
+### 1.4 Datenbank-Baseline · abgeschlossen auf Development
 
-**Benötigter Zugang.** Ohne diese beiden Verbindungen lässt sich 1.4 nicht beginnen; erhoben werden kann nichts, und Migrationen liessen sich nirgends testen. Nach der Freigabe von Phase 1.3 gilt: keine Production-Datenbankänderungen.
+Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst worden. Vollständige Beschreibung: [docs/DATENBANK.md](docs/DATENBANK.md). Entscheidungen: [DECISIONS.md](DECISIONS.md) ADR-0031 bis ADR-0034.
 
-| Zweck | Was gebraucht wird | Rechte |
-| --- | --- | --- |
-| Bestandsaufnahme Production | Projekt-Referenz und ein lesender Zugang zum Production-Projekt | ausschliesslich lesend, projektgebunden. **Keine** Production-Service-Role |
-| Migrationen, RLS und Tests | ein eigenes Development-/Test-Projekt: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` und die Datenbank-Verbindung für `supabase db push` | schreibend, nur auf dem Development-Projekt |
+- [x] Development-Schema vollständig inventarisiert – Tabellen, Spalten, Schlüssel, Bedingungen, Indizes, Enums, Views, Funktionen, Trigger, Extensions, Rechte, RLS und Policies (`npm run db:inventar`)
+- [x] Drift gegen Repo-Migrationen und Typdateien dokumentiert
+- [x] reproduzierbare Baseline hergestellt und **gemessen**: Wiederaufbau aus den Migrationen gegen das laufende Schema, Abschnitt für Abschnitt, ohne Unterschied
+- [x] Altlasten eingeordnet: 7 für V2 benötigt, 1 vorläufig, 29 obsolet
+- [x] `admin_domains` entfernt, dazu `app_admins`, `is_admin(uuid)` und `creator_profiles.is_admin`
+- [x] Rollenmodell in der Datenbank auf eine Autorität zurückgeführt und mit `lib/auth/roles.ts` verbunden
+- [x] `types/supabase.ts` aus dem Schema erzeugt statt gepflegt, mit Prüfung auf Abweichung
+- [x] RLS auf allen 37 Tabellen aktiv, 60 Policies, positive und negative Zugriffsfälle nachgewiesen
+- [x] Rechte auf das Nötige begrenzt, `TRUNCATE` entzogen
+- [x] Advisors ausgeführt, Befunde behoben oder begründet dokumentiert
+- [x] Ownership-Modell dokumentiert
+- [x] unversionierte Migration `<timestamp>_realtime_creator_session_metrics.sql` bereinigt – sie ist Teil der Baseline
+- [x] die zwei konkurrierenden Typdateien zusammengeführt – mit Phase 1.2b erledigt: `types/supabase.types.ts` war ein älterer, kleinerer Abzug ohne einen einzigen Import und ist entfernt
+- [ ] Rolle aus `creator_profiles` in ein generisches Profil überführen → nach 1.5 verschoben, siehe unten
 
-Eine Development-Service-Role wird erst dann als Secret angelegt, wenn ein Test sie tatsächlich braucht – etwa um für RLS-Tests Datensätze fremder Konten anzulegen. Die Rollen- und Berechtigungstests aus 1.3 brauchen sie nicht: Sie prüfen die Entscheidungslogik ohne Datenbank.
+Ausgangslage waren zehn Migrationsdateien, die zusammen **zwei** Tabellen erzeugten, während der Branch **39** trug. Für 37 Tabellen existierte keine versionierte Beschreibung; der RLS-Zustand war aus dem Repository nicht ableitbar.
 
-**Was ohne Zugang schon feststeht.** Die Typen beschreiben 37 Tabellen, versioniert sind zwei. Es existiert eine Tabelle `admin_domains` – ein Hinweis darauf, dass eine domainbasierte Administrationsfreigabe einmal vorgesehen war. Mit ADR-0027 ist entschieden, dass eine Domain keine Berechtigung erteilt; die Tabelle ist in der Anwendung unbenutzt und gehört bei der Baseline auf die Liste der zu entfernenden Altlasten.
+**Vier Befunde waren mehr als Unordnung.**
 
-- [x] Offiziellen Supabase Remote MCP Server für den Development-Branch eingerichtet (`.cursor/mcp.json`, nur `database` / `debugging` / `development`, keine Production-Verbindung). Am 17. August 2026 verifiziert: Server `supabase` 0.10.0, 10 Tools, Scope nur Development, 39 öffentliche Tabellen lesbar, keine Schemaänderung. Details in [DECISIONS.md](DECISIONS.md), ADR-0030.
-- [ ] vollständige Baseline-Migration für das real existierende Schema (aktuell 37 Tabellen in den Typen, 2 in Migrationen)
-- [ ] `admin_domains` bewerten und entfernen – domainbasierter Admin-Zugang ist mit ADR-0027 ausgeschlossen
-- [ ] Rolle aus `creator_profiles` in ein generisches Profil überführen; `ROLE_TABLE` in `lib/auth/admin-guard.ts` ist die einzige Stelle, die den Tabellennamen kennt
-- [ ] unversionierte Migration `<timestamp>_realtime_creator_session_metrics.sql` bereinigen
-- [x] die zwei konkurrierenden Typdateien zusammengeführt – mit Phase 1.2b erledigt: `types/supabase.types.ts` war ein älterer, kleinerer Abzug ohne einen einzigen Import und ist entfernt; die Schematypen liegen nur noch in `types/supabase.ts`
-- [ ] RLS-Zustand erheben, versionieren und testen
-- [ ] Ownership-Modell dokumentieren
+**1. `TRUNCATE` umgeht RLS.** `anon` und `authenticated` hatten auf allen 39 Tabellen sämtliche Rechte, einschliesslich `TRUNCATE`, `REFERENCES` und `TRIGGER`. Wer die Seite nur aufrief, konnte `truncate public.payments` ausführen und die Tabelle leeren – Policies greifen dabei nicht. Alle Rechte sind entzogen und einzeln neu vergeben; `npm run db:rechte` prüft seither in beide Richtungen, dass kein Recht ohne Policy und keine Policy ohne Recht existiert.
+
+**2. Jedes Konto konnte sich selbst befördern.** Die Policy auf `creator_profiles` erlaubte das Ändern der eigenen Zeile – einschliesslich der Spalten `role` und `status`. `update creator_profiles set role = 'owner' where user_id = auth.uid()` ging durch. Dasselbe galt beim Anlegen: Ein frisch registriertes Konto ohne Profil konnte sich sein erstes Profil direkt mit `role = 'owner'` ausstellen. Ein Trigger prüft jetzt beide Wege gegen dieselbe Rangfolge, die auch die Anwendung verwendet.
+
+**3. Vier Stellen entschieden, wer Administrator ist.** `creator_profiles.role`, `creator_profiles.is_admin`, die Tabelle `app_admins` und die Tabelle `admin_domains`. Ein Konto konnte in der Anwendung `user` sein und in den Policies Administrator. Die drei überzähligen sind entfernt; wer über sie Rechte hatte, hat vorher die Rolle `admin` erhalten. Damit ist ADR-0027 auch in der Datenbank umgesetzt.
+
+**4. Zwei Anzeigen logen.** Drei Security-Routen schrieben in `ip_blocklist` – eine Tabelle, die es nicht gibt. Weil `supabase-js` nicht wirft, sondern im `error`-Feld meldet, lief das `try/catch` nie an: Das Sperren einer IP meldete Erfolg und tat nichts. Die Karten „Security & Health" riefen eine Funktion `admin_security_overview` auf, die es nicht gab, fingen den Fehler ab und zeigten aus null Zeilen „RLS aktiv 0/0 – alle Tabellen geschützt". Beides ist behoben, und `npm run check:schema-bezug` verhindert in der CI den Rückfall.
+
+**Nachweise.** Nicht abgeleitet, sondern gemessen – alles in Transaktionen, die zurückgerollt werden:
+
+| Prüfung | Ergebnis |
+| --- | --- |
+| `npm run db:reproduzierbarkeit` | Wiederaufbau gleich dem laufenden Schema, kein Unterschied über 18 Abschnitte |
+| `npm run db:sicherheit` | 45 von 45 Nachweisen erfüllt |
+| `npm run db:rechte` | 115 Tabellenrechte, jedes durch eine Policy gedeckt; kein `TRUNCATE`, `REFERENCES`, `TRIGGER`; RLS auf allen Tabellen |
+| `npm run db:rls` | vollständige Matrix aus 4 Rollen × 37 Tabellen × bis zu 5 Operationen |
+| `npm run db:typen -- --pruefen` | `types/supabase.ts` entspricht dem Schema |
+| `npm test` | 41 Tests, darin der Abgleich des Rollenmodells zwischen TypeScript und Migrations-SQL |
+
+**Advisors.** `function_search_path_mutable`, `auth_rls_initplan`, `multiple_permissive_policies` und `duplicate_index` sind behoben. Es bleiben 44 Security- und 48 Performance-Befunde, jeder mit Begründung in [docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 8. Der Grossteil sind Hinweise auf GraphQL-Sichtbarkeit, die aus dem `SELECT`-Recht folgt, und nie benutzte Indizes auf einem Branch ohne Verkehr.
+
+**Keine Development-Service-Role angelegt.** Sie war an keiner Stelle nötig. Die Skripte gehen über die Management API mit dem Personal Access Token, und die RLS-Nachweise legen ihre Testkonten innerhalb der zurückgerollten Transaktion selbst an.
+
+Bei der Rechtedurchsicht fiel dafür der letzte Service-Role-Pfad **in der Anwendung** auf: `api/search/airports` legte, sobald `SUPABASE_SERVICE_ROLE_KEY` gesetzt war, einen zweiten Client mit vollen Rechten an, um Amadeus-Ergebnisse zurückzuschreiben. Der Endpunkt ist öffentlich und ohne Anmeldung erreichbar. Das Zwischenspeichern ist entfernt – die Suche liefert unverändert lokale Treffer und den Amadeus-Fallback, sie schreibt nur nicht mehr. Damit liest kein Codepfad der Anwendung einen Service-Role-Key.
+
+**Bewusst nicht getan.** Die 29 obsoleten Tabellen sind eingeordnet, aber nicht gelöscht. Das ist eine eigene, unumkehrbare Handlung und braucht nach [AGENTS.md](AGENTS.md) Regel 22 ein Archiv-Tag. Sie sind jetzt versioniert, RLS-gedeckt und rechtlich eng geführt; ihre Entfernung ist damit eine Aufräumaktion, keine Sicherheitsmassnahme.
+
+### 1.4b Obsolete Tabellen entfernen · nächster Schritt
+
+- [ ] Archiv-Tag auf den Stand vor der Löschung setzen
+- [ ] 29 Tabellen der Creator-, Media-, Blog-, Publishing- und Insights-Welt entfernen, mit ihren Funktionen, Triggern und Enums
+- [ ] `creator_sessions` löst sich erst mit 1.5 – die Admin-Startseite zieht daraus noch ihre Kennzahlen
+- [ ] Typen neu erzeugen, Reproduzierbarkeit und Nachweise erneut fahren
+
+Die Liste steht in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 10.
 
 ### 1.5 V2-Reise-Schema
 
 - [ ] Schema für Reisen, Etappen, Tage, Planpunkte, Teilnehmer
-- [ ] RLS je Tabelle mit Tests
+- [ ] RLS je Tabelle mit Tests, nach dem Muster aus 1.4
+- [ ] `creator_profiles` in ein generisches Profil überführen; `ROLE_TABLE` in `lib/auth/admin-guard.ts` ist die einzige Stelle, die den Tabellennamen kennt
+- [ ] Admin-Kennzahlen von `creator_sessions` auf Reisen umstellen
 - [ ] Migrationspfad Gastreise zu Konto
 - [ ] Indizes prüfen
 - [ ] `MAX_GUEST_TRIPS` von 20 auf 1 setzen, mit ehrlichem Hinweis auf das Konto statt stillem Überschreiben und definiertem Übergang für Browser, die bereits mehrere Gastreisen enthalten ([DECISIONS.md](DECISIONS.md), ADR-0013)
@@ -292,9 +332,10 @@ Eine Development-Service-Role wird erst dann als Secret angelegt, wenn ein Test 
 Priorität nach [AGENTS.md](AGENTS.md) Regel 24: Auth, Rollen, RLS, Trip-Persistenz.
 
 - [x] Test-Runner eingerichtet – mit 1.3 erledigt: `npm test` läuft über den Test-Runner von Node mit `tsx` als Loader, ohne neues Paket ([DECISIONS.md](DECISIONS.md) ADR-0029)
-- [x] Tests für Rollen und Berechtigungen (34, ohne Datenbank)
-- [ ] RLS-Tests → braucht den Development-Zugang aus 1.4
-- [ ] Tests für Trip-Erstellung und -Persistenz
+- [x] Tests für Rollen und Berechtigungen (41 ohne Datenbank; 34 aus 1.3, dazu 7 für den Abgleich zwischen TypeScript- und Datenbank-Rollenmodell)
+- [x] RLS-Nachweise gegen den Development-Branch (45), dazu die Rechteprüfung und der Reproduzierbarkeitsbeweis
+- [ ] datenbanknahe Prüfungen in die CI holen – braucht einen kurzlebigen Branch je Lauf, sonst legen nebenläufige Läufe dieselben Testkonten an
+- [ ] Tests für Trip-Erstellung und -Persistenz → braucht das Schema aus 1.5
 
 ---
 
@@ -310,7 +351,7 @@ Höchste Produktpriorität: **natürliche Sprache zu strukturierter Reise.**
 - [ ] Kostenkontrolle für jede Modellfunktion: Request-Limit, Tageslimit, Timeout, Max Tokens, Fallback, Kill Switch, Nutzungs-Logging ([AGENTS.md](AGENTS.md) Regel 17)
 - [ ] Tests für die strukturierten Sprachoperationen
 
-**Voraussetzung:** Phase 1.4 und 1.5. Ohne Trip-Schema wäre der Trip Builder eine Demo.
+**Voraussetzung:** Phase 1.5. Die Datenbank-Baseline aus 1.4 steht; ohne Trip-Schema wäre der Trip Builder eine Demo.
 
 ---
 
@@ -345,10 +386,11 @@ Je Kategorie zunächst genau ein Anbieter ([DECISIONS.md](DECISIONS.md), ADR-001
 
 | Thema | blockiert durch |
 | --- | --- |
-| Phase 2 (Trip-Persistenz) | Datenbank-Baseline und Trip-Schema (1.4, 1.5) |
-| RLS-Tests | fehlende versionierte RLS-Definitionen (1.4) |
-| Aussagen zur DB-Sicherheit | Schema ist aus dem Repository nicht nachvollziehbar (1.4) |
+| Phase 2 (Trip-Persistenz) | Trip-Schema (1.5) |
+| Datenbanknahe Prüfungen in der CI | braucht einen kurzlebigen Supabase-Branch je Lauf |
 | Nutzungsbedingungen und Datenschutzerklärung | Inhalt ist eine rechtliche Entscheidung, nicht technisch ableitbar |
+
+Mit Phase 1.4 sind zwei Einträge entfallen: RLS ist versioniert und mit 45 Nachweisen belegt, und das Schema ist aus dem Repository nachvollziehbar und reproduzierbar.
 
 ---
 

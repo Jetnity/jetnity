@@ -555,6 +555,91 @@ Cursor interpoliert Secrets über `${env:NAME}`. Deshalb stehen in `.cursor/mcp.
 
 ---
 
+## ADR-0031 – Die Baseline ist ein Abzug des Bestands, und der Wiederaufbau wird gemessen
+
+**Datum:** 17. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** `supabase/migrations/20260815060111_baseline.sql` ist ein vollständiger Abzug des Schemas, wie es auf dem Development-Branch vorgefunden wurde – einschliesslich der Strukturen, die Jetnity V2 nicht mehr braucht. Die zehn früheren Dateien sind dadurch ersetzt. Änderungen am Bestand folgen als eigene, aufeinander aufbauende Migrationen danach. Dass die Kette das laufende Schema erzeugt, wird nicht angenommen, sondern gemessen: `npm run db:reproduzierbarkeit` baut `public` in einer Transaktion neu auf, vergleicht achtzehn Abschnitte gegen den laufenden Stand und rollt zurück.
+
+**Kontext:** Zehn Migrationsdateien erzeugten zusammen zwei Tabellen, während der Branch 39 trug. Für 37 Tabellen gab es keine versionierte Beschreibung, eine Datei war unversioniert benannt, und der Inhalt einzelner Dateien wich vom realen Bestand ab. Damit liess sich weder eine Aussage über RLS treffen noch eine zweite Umgebung aufsetzen.
+
+**Alternativen:**
+
+1. *Nur die Strukturen versionieren, die V2 braucht.* Verworfen: Die Baseline wäre dann keine Beschreibung der Datenbank, sondern eine Wunschliste. Der Unterschied zwischen Repository und Wirklichkeit bliebe bestehen – nur kleiner und schwerer zu finden.
+2. *Erst aufräumen, dann versionieren.* Verworfen: Eine Löschung ohne versionierten Ausgangszustand ist nicht rücknehmbar, und der Nachweis, dass die Löschung nichts Benötigtes trifft, braucht genau die Inventur, die die Baseline liefert.
+3. *Auf `supabase db diff` vertrauen, ohne den Wiederaufbau zu prüfen.* Verworfen, weil ein Durchlauf ohne Fehler nicht dasselbe ist wie ein gleiches Ergebnis. Der Vergleich fand tatsächlich Abweichungen – 153 Rechte, die im Abzug anders standen als im laufenden Schema.
+
+**Begründung:** Eine Baseline, die den Bestand beschreibt, macht jede spätere Änderung zu einem lesbaren Schritt mit Vorher und Nachher. Und eine Reproduzierbarkeit, die geprüft wird, ist der Unterschied zwischen „sollte gehen" und „geht".
+
+**Konsequenzen:** Die Baseline enthält Strukturen, die als obsolet eingeordnet sind; das ist gewollt und in [docs/DATENBANK.md](docs/DATENBANK.md) festgehalten. Zwei Dinge liessen sich nicht wegdefinieren: Die Darstellung von Bedingungen und Typen hängt am `search_path`, weshalb beide Fingerabdrücke mit demselben Pfad laufen; und 48 Vorgaberechte gehören dem Platform-Rollenkonto `supabase_admin` und lassen sich von einer Anwendungsmigration nicht erzeugen – sie sind ausdrücklich vom Vergleich ausgenommen, statt den Vergleich weicher zu machen.
+
+---
+
+## ADR-0032 – Rechte und Policies müssen sich decken, in beide Richtungen
+
+**Datum:** 17. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** `anon` und `authenticated` erhalten in `public` kein Tabellenrecht, dem nicht eine Policy entspricht – und keine Policy ohne das zugehörige Recht. `TRUNCATE`, `REFERENCES` und `TRIGGER` sind entzogen, ebenso die Vorgaberechte für künftige Objekte. `EXECUTE` auf Funktionen ist entzogen und einzeln vergeben. `npm run db:rechte` prüft beide Richtungen.
+
+**Kontext:** Beide Rollen hatten auf allen 39 Tabellen sämtliche Rechte; einzige Schranke war RLS. Das genügt nicht: `TRUNCATE` umgeht RLS vollständig. Jedes angemeldete Konto – und über `anon` jeder Besucher – konnte `truncate public.payments` ausführen und die Tabelle leeren, obwohl keine Policy ihm eine einzige Zeile zum Lesen gab. Gleichzeitig waren mehrere `SECURITY DEFINER`-Funktionen für `authenticated` aufrufbar, die als Definer die Policies umgingen und selbst keine Berechtigung prüften: `admin_payments_summary_30d()` gab jedem angemeldeten Konto die Umsatzzahlen der Plattform.
+
+**Alternativen:** Sich auf RLS allein verlassen und die Rechte lassen, wie sie waren. Das ist die Voreinstellung von Supabase und der Grund, warum der Zustand so entstand. Verworfen: RLS wirkt auf Zeilen, Rechte wirken auf Tabellen und Befehle. Ein Befehl, der keine Zeile anfasst, sondern die Tabelle als Ganzes, läuft an RLS vorbei.
+
+Auch geprüft: nur `TRUNCATE` zu entziehen und den Rest zu belassen. Verworfen, weil das die Frage „welches Recht braucht diese Tabelle" nicht beantwortet, sondern nur einen bekannten Fall abräumt. Der Deckungsabgleich beantwortet sie für jede Tabelle und meldet die nächste Lücke von selbst.
+
+**Begründung:** Ein Zugriff hängt an vier Dingen – Tabellenrecht, RLS-Schalter, Policy, Rollenbindung –, und drei davon standen bisher fest auf „offen". Dass die Deckung in beide Richtungen geprüft wird, fängt zwei entgegengesetzte Fehler: ein Recht, das niemand braucht, und eine Policy, die wirkungslos bleibt, weil das Recht fehlt.
+
+**Konsequenzen:** 115 Tabellenrechte sind einzeln vergeben. `anon` liest nur noch `airports`, `blog_posts` und `blog_comments`. Funktionen, die erhöhte Rechte brauchen, prüfen die Rolle selbst und liefern ohne sie keine Zeile. `stripe_webhooks` hat RLS eingeschaltet und bewusst keine Policy: Ohne Policy gibt RLS nichts frei, und ein Tabellenrecht besteht ebenfalls nicht. Der Supabase-Advisor meldet das als `rls_enabled_no_policy`; der Befund bleibt bewusst stehen, weil eine Policy hier die Lockerung wäre.
+
+Bei der Durchsicht fiel der letzte verbliebene Service-Role-Pfad in der Anwendung auf: `api/search/airports` legte, sobald `SUPABASE_SERVICE_ROLE_KEY` gesetzt war, einen zweiten Client mit vollen Rechten an und schrieb damit Amadeus-Ergebnisse in `airports` zurück. Der Endpunkt ist öffentlich und ohne Anmeldung erreichbar; eine Suchanfrage eines beliebigen Besuchers hätte damit einen Schreibvorgang mit vollen Datenbankrechten ausgelöst, ohne Auth, ohne Ownership und ohne Rate Limit – die Prüfliste aus [AGENTS.md](AGENTS.md) Regel 14 verfehlt er in drei Punkten. Das Zwischenspeichern ist entfernt; die Suche liefert unverändert lokale Treffer und den Amadeus-Fallback, sie schreibt nur nicht mehr. Referenzdaten zu befüllen gehört in eine Migration oder einen Verwaltungsvorgang, nicht in eine öffentliche Suchabfrage. Damit liest kein Codepfad der Anwendung mehr einen Service-Role-Key, und der Setup-Check fragt ihn nicht mehr ab.
+
+---
+
+## ADR-0033 – Rolle und Kontostatus ändert niemand an sich selbst
+
+**Datum:** 17. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** In der Datenbank entscheidet allein `creator_profiles.role`, wer welche Rechte hat. `creator_profiles.is_admin`, die Tabelle `app_admins`, die Tabelle `admin_domains` und die Funktion `is_admin(uuid)` sind entfernt. Der Trigger `creator_profiles_rollenwechsel` prüft beim Anlegen und beim Ändern: Die eigene Rolle und der eigene Status sind unveränderlich, Rollen vergeben darf erst ab `moderator`, und nur unterhalb der eigenen Rolle – ausgenommen `owner`. Ein selbst angelegtes Profil bekommt `role = 'user'` und `status = 'active'`.
+
+**Kontext:** ADR-0027 hat den domainbasierten Zugang in der Anwendung beseitigt. In der Datenbank galt er weiter, und drei weitere Quellen dazu. Schwerer wog, dass die Policy auf `creator_profiles` das Ändern der eigenen Zeile erlaubte, ohne zwischen den Spalten zu unterscheiden: `update creator_profiles set role = 'owner' where user_id = auth.uid()` ging durch. Beim Anlegen war es dasselbe – ein frisch registriertes Konto ohne Profil konnte sich sein erstes Profil direkt als Inhaber ausstellen. Die Rollenprüfung der Anwendung aus Phase 1.3 half dabei nicht: Der Weg führt über PostgREST direkt auf die Tabelle.
+
+**Alternativen:**
+
+1. *Die Spalten über eine `WITH CHECK`-Bedingung in der Policy schützen.* Verworfen: Eine Policy sieht die alte Zeile nur in `USING`, die neue nur in `WITH CHECK`. Der Vergleich „hat sich `role` geändert" braucht beide gleichzeitig – das kann nur ein Trigger.
+2. *Die Rollenvergabe ausschliesslich über eine Funktion zulassen und `UPDATE` auf der Tabelle entziehen.* Verworfen für jetzt: Das Profil enthält auch gewöhnliche Felder wie Anzeigename und Biografie, die die Besitzerin selbst ändern darf. Der Trigger trennt beides, ohne einen zweiten Schreibweg zu bauen.
+3. *Eine eigene Rollentabelle neben dem Profil.* Verworfen als vorgezogene Phase 1.5: Das generische Profil kommt mit dem Reise-Schema, und dann ist der Schnitt neu zu entscheiden.
+
+**Begründung:** Eine Berechtigung, die sich selbst vergeben kann, ist keine. Dass die Prüfung im Trigger sitzt und nicht in der Anwendung, ist der Kern: Sie gilt für jeden Weg auf die Tabelle, auch für den, den noch niemand geschrieben hat.
+
+**Begründung für die Rangfolge in der Datenbank:** `public.rollenrang(text)` gibt für eine unbekannte Rolle `null` zurück, nicht `0`. Das ist der Unterschied zwischen „hat die niedrigste Rolle" und „diese Rolle kennt niemand"; ein Vergleich mit `null` ist nie wahr, und damit ist der Fehlerfall geschlossen. Die CHECK-Bedingung auf der Spalte lautet deshalb `rollenrang(role) is not null` und wächst mit dem Modell mit, statt eine zweite Liste zu führen.
+
+**Konsequenzen:** Wer bisher über `is_admin` oder `app_admins` Administrator war, hat in derselben Migrationskette vorher die Rolle `admin` erhalten – niemand verliert den Zugang. Die Rangfolge steht jetzt an zwei Orten, in `lib/auth/roles.ts` und in `public.rollenrang()`; `lib/auth/roles-datenbank.test.ts` vergleicht beide bei jedem `npm test` ohne Datenbank, sodass eine einseitig eingetragene Rolle den Test fehlschlagen lässt. Ein Nachfolger für den Inhaber bleibt einrichtbar, weil `owner` als einzige Rolle jede fremde Rolle setzen darf.
+
+---
+
+## ADR-0034 – Der Code darf nur ansprechen, was im Schema steht
+
+**Datum:** 17. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** `npm run check:schema-bezug` vergleicht jedes `.from('…')` und `.rpc('…')` im Anwendungscode mit `types/supabase.ts` und schlägt fehl, sobald etwas angesprochen wird, das es nicht gibt. Die Prüfung liest nur die erzeugte Typdatei und läuft deshalb ohne Datenbankzugang in der CI. `types/supabase.ts` wird ausschliesslich mit `npm run db:typen` erzeugt.
+
+**Kontext:** Die Inventur fand zwei solche Stellen. Drei Security-Routen schrieben und lasen `ip_blocklist`; die Tabelle existiert nicht, die richtige heisst `blocked_ips`. Aufgefallen war es nie, weil `supabase-js` nicht wirft, sondern im `error`-Feld meldet – das `try/catch` um den Aufruf lief also nie an, und das Sperren einer IP meldete Erfolg, ohne etwas zu tun. Die Karten „Security & Health" riefen eine Funktion `admin_security_overview` auf, die es nie gab, fingen den Fehler ab und zeigten aus null Zeilen „RLS aktiv 0/0 – alle Tabellen geschützt".
+
+**Alternativen:**
+
+1. *Auf die Typisierung vertrauen.* Sie hätte beides gefunden – aber beide Aufrufstellen waren über `as any` beziehungsweise einen untypisierten Client geführt, genau um den Fehler herum. Eine Prüfung, die man mit einer Zeile abschaltet, ist keine.
+2. *Gegen die laufende Datenbank prüfen.* Genauer, aber dann braucht die CI den Development-Zugang, und die Prüfung fiele bei jedem Lauf ohne Secrets aus. Die erzeugte Typdatei ist im Repository und sagt dasselbe, solange sie erzeugt und nicht gepflegt wird – wofür `db:typen -- --pruefen` sorgt.
+
+**Begründung:** Beide Fehler waren still. Sie führten nicht zu einer Ausnahme, sondern zu einer falschen Aussage – „IP gesperrt", „alle Tabellen geschützt". Solche Fehler findet kein Test, der auf Ausnahmen wartet; sie brauchen einen Abgleich gegen die Wirklichkeit. Dass dieser Abgleich ohne Zugangsdaten auskommt, ist der Grund, warum er bei jedem Pull Request läuft.
+
+**Konsequenzen:** Die Prüfung erfasst nur den geläufigen Weg über `.from()` und `.rpc()` mit einem Namen als Zeichenkette. Ein dynamisch zusammengesetzter Tabellenname entgeht ihr – das ist bewusst, weil eine Prüfung mit unsicheren Treffern niemand ernst nimmt. Drei Endpunkte sind bei der Korrektur entfallen: `security/block-ip` und `security/unblock-ip` waren Doppelungen ohne Aufrufer, `security/overview` rief die fehlende Funktion auf und hatte ebenfalls keinen. Die Funktion `admin_security_overview()` ist hergestellt worden, statt die Karten zu entfernen – mit interner Rollenprüfung und ohne die zweite, im Anwendungscode gepflegte Tabellenliste, die vorher unter anderem `payouts` enthielt, eine Tabelle, die es nicht gibt.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
