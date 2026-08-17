@@ -1,4 +1,11 @@
 // components/admin/security/SecurityWidget.tsx
+//
+// Die Ansicht lädt sich alle 15 Sekunden neu. Ein Toast war dafür das falsche
+// Mittel: Er verschwand nach vier Sekunden und liess vier Kennzahlen auf 0 und
+// zwei Tabellen mit „Keine Einträge“ zurück – im Sicherheitsbereich also die
+// Entwarnung, die es nicht gab. Und bei jedem Lauf kam er erneut. Die Meldung
+// bleibt jetzt stehen, solange sie gilt (ADR-0040).
+
 'use client'
 
 import * as React from 'react'
@@ -15,6 +22,8 @@ import {
   Clock,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { Fehlerflaeche } from '@/components/admin/Ladezustand'
+import { lade, liste, type Fehler } from '@/lib/admin/ladezustand'
 import { cn } from '@/lib/utils'
 
 type SecEvent = {
@@ -38,7 +47,11 @@ type ApiPayload = {
 }
 
 export default function SecurityWidget() {
-  const [data, setData] = React.useState<ApiPayload>({ events: [], blocklist: [] })
+  // `null` heisst „noch keine Antwort“. Der Vorgabewert war
+  // `{ events: [], blocklist: [] }` und damit von einem Ergebnis nicht zu
+  // unterscheiden.
+  const [data, setData] = React.useState<ApiPayload | null>(null)
+  const [fehler, setFehler] = React.useState<Fehler | null>(null)
   const [loading, setLoading] = React.useState(false)
   const [filter, setFilter] = React.useState('')
   const [banIp, setBanIp] = React.useState('')
@@ -46,16 +59,25 @@ export default function SecurityWidget() {
 
   const refresh = React.useCallback(async () => {
     setLoading(true)
-    try {
-      const r = await fetch('/api/admin/security/list', { cache: 'no-store' })
-      const j = await r.json()
-      if (!r.ok) throw new Error(j?.message || 'Konnte Security-Daten nicht laden.')
-      setData({ events: j.events ?? [], blocklist: j.blocklist ?? [] })
-    } catch (e: any) {
-      toast.error(e?.message ?? 'Konnte Security-Daten nicht laden.')
-    } finally {
-      setLoading(false)
+    const ergebnis = await lade(
+      () => fetch('/api/admin/security/list', { cache: 'no-store' }),
+      (koerper): ApiPayload => ({
+        events: liste<SecEvent>(koerper, 'events'),
+        blocklist: liste<BlockEntry>(koerper, 'blocklist'),
+      }),
+    )
+    setLoading(false)
+
+    if (ergebnis.fehler) {
+      // Die zuletzt geholten Daten bleiben stehen und werden als älter
+      // gekennzeichnet – sie zu verwerfen hiesse, aus einem Aussetzer eine
+      // Entwarnung zu machen.
+      setFehler(ergebnis.fehler)
+      return
     }
+
+    setFehler(null)
+    setData(ergebnis.daten)
   }, [])
 
   React.useEffect(() => {
@@ -64,39 +86,34 @@ export default function SecurityWidget() {
     return () => clearInterval(t)
   }, [refresh])
 
-  const block = async (ip: string, reason = 'admin block') => {
+  // Für die zwei Eingriffe bleibt der Toast: Sie sind einmalige Handlungen mit
+  // einer Antwort, keine Ansicht, die sich selbst nachlädt. `requireAdminApi`
+  // antwortet allerdings ohne `ok` und mit `error` statt `message` – ein Gate,
+  // das die Anfrage abweist, führte deshalb zu „Block fehlgeschlagen" ohne Grund.
+  const schreibe = async (pfad: string, koerper: unknown, gelungen: string, misslungen: string) => {
     try {
-      const r = await fetch('/api/admin/security/block', {
+      const r = await fetch(pfad, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ ip, reason }),
+        body: JSON.stringify(koerper),
       })
-      const j = await r.json()
-      if (!j.ok) throw new Error(j?.message || 'Block fehlgeschlagen')
-      toast.success(`IP ${ip} blockiert`)
+      const j = await r.json().catch(() => null)
+      if (!r.ok || j?.ok !== true) throw new Error(j?.message || j?.error || misslungen)
+      toast.success(gelungen)
       refresh()
     } catch (e: any) {
-      toast.error(e?.message ?? 'Fehler beim Blockieren')
+      toast.error(e?.message ?? misslungen)
     }
   }
 
-  const unblock = async (ip: string) => {
-    try {
-      const r = await fetch('/api/admin/security/unblock', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ ip }),
-      })
-      const j = await r.json()
-      if (!j.ok) throw new Error(j?.message || 'Unblock fehlgeschlagen')
-      toast.success(`IP ${ip} entfernt`)
-      refresh()
-    } catch (e: any) {
-      toast.error(e?.message ?? 'Fehler beim Entfernen')
-    }
-  }
+  const block = (ip: string, reason = 'admin block') =>
+    schreibe('/api/admin/security/block', { ip, reason }, `IP ${ip} blockiert`, 'Block fehlgeschlagen')
+
+  const unblock = (ip: string) =>
+    schreibe('/api/admin/security/unblock', { ip }, `IP ${ip} entfernt`, 'Unblock fehlgeschlagen')
 
   const events = React.useMemo(() => {
+    if (!data) return null
     const t = filter.trim().toLowerCase()
     if (!t) return data.events
     return data.events.filter(
@@ -106,35 +123,46 @@ export default function SecurityWidget() {
         (e.detail ?? '').toLowerCase().includes(t) ||
         (e.user_id ?? '').toLowerCase().includes(t)
     )
-  }, [data.events, filter])
+  }, [data, filter])
 
-  // KPIs (clientseitig aus Events abgeleitet)
+  // KPIs (clientseitig aus Events abgeleitet). Ohne Antwort bleiben sie leer:
+  // „0 Login-Fehler" ist die Aussage, die eine Sicherheitsübersicht am
+  // deutlichsten treffen kann, und ohne Daten trifft sie sie zu Unrecht.
   const now = Date.now()
-  const last24 = events.filter((e) =>
+  const last24 = (events ?? []).filter((e) =>
     e.created_at ? now - new Date(e.created_at).getTime() <= 24 * 3600 * 1000 : false
   )
   const failed = last24.filter((e) => (e.type ?? '').includes('failed')).length
   const suspicious = last24.filter((e) => (e.type ?? '').match(/bot|suspicious|ddos/i)).length
-  const blockedCount = data.blocklist.length
+  const blockedCount = data ? data.blocklist.length : null
 
   return (
     <div className="space-y-6">
+      {fehler && (
+        <Fehlerflaeche
+          fehler={fehler}
+          onWiederholen={refresh}
+          laeuft={loading}
+          veraltet={data !== null}
+        />
+      )}
+
       {/* KPIs */}
       <section className="grid gap-3 grid-cols-2 sm:grid-cols-4 lg:grid-cols-4">
         <KPICard
           icon={<ShieldCheck className="h-5 w-5" />}
           label="Events (24h)"
-          value={last24.length}
+          value={data ? last24.length : null}
         />
         <KPICard
           icon={<LockKeyhole className="h-5 w-5" />}
           label="Login-Fehler (24h)"
-          value={failed}
+          value={data ? failed : null}
         />
         <KPICard
           icon={<ShieldAlert className="h-5 w-5" />}
           label="Verdächtig (24h)"
-          value={suspicious}
+          value={data ? suspicious : null}
         />
         <KPICard
           icon={<Ban className="h-5 w-5" />}
@@ -189,7 +217,9 @@ export default function SecurityWidget() {
       <section className="rounded-2xl border bg-card">
         <div className="flex items-center justify-between px-4 py-3 border-b">
           <h2 className="text-sm font-semibold">Blockliste</h2>
-          <span className="text-xs text-muted-foreground">{blockedCount} Einträge</span>
+          <span className="text-xs text-muted-foreground">
+            {blockedCount === null ? '—' : `${blockedCount} Einträge`}
+          </span>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
@@ -202,7 +232,7 @@ export default function SecurityWidget() {
               </tr>
             </thead>
             <tbody>
-              {data.blocklist.map((b) => (
+              {(data?.blocklist ?? []).map((b) => (
                 <tr key={b.ip + (b.created_at ?? '')} className="border-t">
                   <td className="px-4 py-2 font-mono">{b.ip}</td>
                   <td className="px-4 py-2">{b.reason || '—'}</td>
@@ -226,10 +256,20 @@ export default function SecurityWidget() {
                   </td>
                 </tr>
               ))}
-              {data.blocklist.length === 0 && (
+              {/* „Keine Einträge" nur, wenn der Server das gesagt hat. Ohne
+                  Antwort ist die Aussage nicht zu treffen; die Fehlerfläche
+                  über der Ansicht sagt dann, warum. */}
+              {data !== null && data.blocklist.length === 0 && (
                 <tr>
                   <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">
                     Keine Einträge.
+                  </td>
+                </tr>
+              )}
+              {data === null && (
+                <tr>
+                  <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">
+                    {fehler ? 'Nicht ermittelbar.' : 'Wird geladen…'}
                   </td>
                 </tr>
               )}
@@ -242,7 +282,9 @@ export default function SecurityWidget() {
       <section className="rounded-2xl border bg-card">
         <div className="flex items-center justify-between px-4 py-3 border-b">
           <h2 className="text-sm font-semibold">Letzte Security-Events (7 Tage)</h2>
-          <span className="text-xs text-muted-foreground">{events.length} Einträge</span>
+          <span className="text-xs text-muted-foreground">
+            {events === null ? '—' : `${events.length} Einträge`}
+          </span>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
@@ -257,7 +299,7 @@ export default function SecurityWidget() {
               </tr>
             </thead>
             <tbody>
-              {events.map((e) => (
+              {(events ?? []).map((e) => (
                 <tr key={e.id} className="border-t">
                   <td className="px-4 py-2 whitespace-nowrap">
                     {e.created_at ? new Date(e.created_at).toLocaleString() : '—'}
@@ -292,10 +334,17 @@ export default function SecurityWidget() {
                   </td>
                 </tr>
               ))}
-              {events.length === 0 && (
+              {events !== null && events.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
                     Keine Events gefunden.
+                  </td>
+                </tr>
+              )}
+              {events === null && (
+                <tr>
+                  <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
+                    {fehler ? 'Nicht ermittelbar.' : 'Wird geladen…'}
                   </td>
                 </tr>
               )}
@@ -307,15 +356,22 @@ export default function SecurityWidget() {
   )
 }
 
-/* Small KPI card */
-function KPICard({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
+/* Small KPI card. `null` heisst „nicht ermittelbar“ und wird als Strich gezeigt. */
+function KPICard({ icon, label, value }: { icon: React.ReactNode; label: string; value: number | null }) {
   return (
     <div className="rounded-2xl border bg-card p-4">
       <div className="flex items-center justify-between">
         <span className="text-xs text-muted-foreground">{label}</span>
         <span className="text-muted-foreground">{icon}</span>
       </div>
-      <div className="mt-1 text-2xl font-semibold tabular-nums">{value}</div>
+      <div
+        className={cn(
+          'mt-1 text-2xl font-semibold tabular-nums',
+          value === null && 'text-muted-foreground',
+        )}
+      >
+        {value === null ? '—' : value}
+      </div>
     </div>
   )
 }

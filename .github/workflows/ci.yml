@@ -63,3 +63,60 @@ jobs:
 
       - name: Production build
         run: npm run build
+
+  # Die Auth-Konfiguration liegt nicht in der Datenbank, sondern beim
+  # Auth-Server des Branches. Sie kann sich also ohne Commit ändern – ein Klick
+  # im Dashboard genügt. Deshalb wird sie gegen supabase/config.toml geprüft
+  # (Phase 1.4c, DECISIONS.md ADR-0039).
+  #
+  # Eigener Job, weil er ein Geheimnis braucht. Er ist fail-closed: Fehlen die
+  # beiden Werte in den Repository-Secrets, bricht er ab. Eine Prüfung, die
+  # nicht gelaufen ist, darf nicht grün aussehen – und ein grüner Job, in dem
+  # der eigentliche Schritt übersprungen wurde, sieht genau so aus.
+  #
+  # Die einzige Ausnahme ist ein Pull Request aus einem Fork: GitHub gibt ihm
+  # keine Secrets, das Fehlen ist dort also keine Nachlässigkeit, sondern die
+  # Regel. Dieser Fall überspringt sich und sagt es.
+  auth-konfiguration:
+    name: Auth-Konfiguration gegen config.toml
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Zugang vorhanden?
+        id: zugang
+        env:
+          # Bei einem `push` ist der Ausdruck `false`, weil die erste
+          # Bedingung schon nicht zutrifft.
+          AUS_FORK: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
+        run: |
+          if [ -n "$SUPABASE_ACCESS_TOKEN" ] && [ -n "$SUPABASE_PROJECT_REF" ]; then
+            echo "vorhanden=ja" >> "$GITHUB_OUTPUT"
+          elif [ "$AUS_FORK" = "true" ]; then
+            echo "vorhanden=nein" >> "$GITHUB_OUTPUT"
+            echo "::notice::Übersprungen: Ein Pull Request aus einem Fork bekommt von GitHub keine Secrets."
+          else
+            echo "::error::SUPABASE_ACCESS_TOKEN und SUPABASE_PROJECT_REF fehlen in den Repository-Secrets. Der Abgleich der Auth-Konfiguration kann nicht laufen – und darf deshalb nicht grün aussehen."
+            exit 1
+          fi
+
+      # Das Skript bricht selbst ab, wenn der Ref auf ein eigenständiges
+      # Projekt zeigt statt auf einen Branch. Es liest und schreibt nichts an
+      # der Datenbank und ändert keine Konfiguration.
+      - name: Abgleich
+        if: steps.zugang.outputs.vorhanden == 'ja'
+        run: npm run auth:pruefen

@@ -10,6 +10,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { GoogleIcon, AppleIcon } from '@/components/auth/provider-icons';
+import {
+  PASSWORT_RICHTLINIE,
+  RICHTLINIE_PUNKTE,
+  RICHTLINIE_TEXT,
+  erfuelltRichtlinie,
+  passwortAblehnung,
+  passwortStaerke,
+  staerkeFarbe,
+  staerkeText,
+} from '@/lib/auth/passwort-richtlinie';
 import { cn } from '@/lib/utils';
 import {
   User,
@@ -31,53 +41,17 @@ function mapAuthError(message?: string) {
   const msg = (message || '').toLowerCase();
   if (msg.includes('already registered')) return 'Diese E-Mail ist bereits registriert.';
   if (msg.includes('invalid email')) return 'Bitte gib eine gültige E-Mail-Adresse ein.';
-  if (msg.includes('leaked') || msg.includes('pwned') || msg.includes('data breach')) {
-    return 'Dieses Passwort wurde in einem Datenleck gefunden und ist nicht erlaubt.';
-  }
-  if (msg.includes('weak password') || msg.includes('password')) {
-    return 'Passwortanforderungen nicht erfüllt.';
-  }
+
+  // Die Ablehnungen des Auth-Servers zum Passwort kommen aus einer Quelle, die
+  // ihren Wortlaut kennt – darunter die des Lecks-Abgleichs, die keines der
+  // naheliegenden Stichwörter enthält.
+  const zumPasswort = passwortAblehnung(message);
+  if (zumPasswort) return zumPasswort;
+
   if (msg.includes('network') || msg.includes('fetch')) {
     return 'Netzwerkproblem. Bitte versuche es später erneut.';
   }
   return message || 'Registrierung fehlgeschlagen.';
-}
-
-// Komplexitätsregeln passend zu Supabase-Einstellungen
-function hasLower(pw: string) { return /[a-z]/.test(pw); }
-function hasUpper(pw: string) { return /[A-Z]/.test(pw); }
-function hasDigit(pw: string) { return /\d/.test(pw); }
-function hasSymbol(pw: string) { return /[^A-Za-z0-9]/.test(pw); }
-function meetsPolicy(pw: string) {
-  return pw.length >= 12 && hasLower(pw) && hasUpper(pw) && hasDigit(pw) && hasSymbol(pw);
-}
-
-// kleines Meter (0–5) für UI
-function scorePassword(pw: string) {
-  let score = 0;
-  if (pw.length >= 12) score++;
-  if (pw.length >= 16) score++; // Bonus
-  if (hasLower(pw) && hasUpper(pw)) score++;
-  if (hasDigit(pw)) score++;
-  if (hasSymbol(pw)) score++;
-  return Math.max(0, Math.min(score, 5));
-}
-function strengthLabel(score: number) {
-  return ['Sehr schwach', 'Schwach', 'Mittel', 'Stark', 'Sehr stark'][Math.max(0, score - 1)] || 'Sehr schwach';
-}
-
-/**
- * Farbe des Balkens.
- *
- * Vorher war er auf jeder Stufe im Markengruen. Die Aussage lag allein in
- * seiner Laenge, waehrend die Farbe durchgehend "gut" meldete – bei einem
- * schwachen Passwort das falsche Signal. Die Bewertung steht zusaetzlich als
- * Text daneben, die Farbe ist also nicht der einzige Traeger.
- */
-function strengthColor(score: number) {
-  if (score <= 2) return 'bg-destructive';
-  if (score <= 3) return 'bg-citrus-500';
-  return 'bg-primary';
 }
 
 export default function RegisterForm() {
@@ -108,8 +82,8 @@ export default function RegisterForm() {
       setErrorMsg('Bitte E-Mail eingeben.');
       return;
     }
-    if (!meetsPolicy(password)) {
-      setErrorMsg('Bitte nutze mind. 12 Zeichen inkl. Groß-/Kleinbuchstaben, Zahl und Symbol.');
+    if (!erfuelltRichtlinie(password)) {
+      setErrorMsg(RICHTLINIE_TEXT);
       return;
     }
     if (password !== password2) {
@@ -183,7 +157,7 @@ export default function RegisterForm() {
     }
   };
 
-  const s = scorePassword(password);
+  const s = passwortStaerke(password);
   const pct = (s / 5) * 100;
 
   return (
@@ -266,7 +240,7 @@ export default function RegisterForm() {
             autoComplete="new-password"
             // Kurz genug, damit der Text auf 320 px nicht abgeschnitten wird.
             // Die vollstaendigen Regeln stehen unter dem Feld.
-            placeholder="Mindestens 12 Zeichen"
+            placeholder={`Mindestens ${PASSWORT_RICHTLINIE.mindestlaenge} Zeichen`}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -279,16 +253,15 @@ export default function RegisterForm() {
                 ist er deshalb ausgeblendet – sonst kaeme die Bewertung zweimal. */}
             <div className="h-2 w-full rounded-full bg-muted overflow-hidden" aria-hidden="true">
               <div
-                className={cn('h-2 rounded-full transition-all', strengthColor(s))}
+                className={cn('h-2 rounded-full transition-all', staerkeFarbe(s))}
                 style={{ width: `${pct}%` }}
               />
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">{strengthLabel(s)}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{staerkeText(s)}</p>
             <ul className="mt-1 text-[11px] text-muted-foreground space-y-0.5">
-              <li>• Mind. 12 Zeichen</li>
-              <li>• Groß- & Kleinbuchstaben</li>
-              <li>• Mind. 1 Zahl</li>
-              <li>• Mind. 1 Symbol (z. B. !?@#)</li>
+              {RICHTLINIE_PUNKTE.map((punkt) => (
+                <li key={punkt}>• {punkt}</li>
+              ))}
             </ul>
           </div>
         </div>

@@ -14,6 +14,10 @@ import {
   DEFAULT_ROLE,
 } from '@/lib/auth/roles'
 import UsersTable, { type UserRow } from '@/components/admin/UsersTable'
+import { Fehlerflaeche } from '@/components/admin/Ladezustand'
+import { ausProblem } from '@/lib/admin/ladezustand'
+import { problemAus } from '@/lib/api/datenbank-lesen'
+import { textSuchfilter } from '@/lib/api/suchfilter'
 
 const PAGE_SIZE = 20
 
@@ -44,14 +48,32 @@ export default async function UsersPage({ searchParams }: { searchParams?: Searc
     .range(from, to)
 
   if (q) {
-    // Hinweis: or()-Syntax ist PostgREST-konform
-    query = query.or(`display_name.ilike.%${q}%,email.ilike.%${q}%`)
+    // Der Begriff stand vorher unzitiert im `or`-Ausdruck, in dem das Komma die
+    // Glieder trennt. Am Branch gemessen: Eine Suche nach `a,b` ergab HTTP 400,
+    // „failed to parse logic tree" – und weil die Ablehnung nur ins Protokoll
+    // ging, zeigte die Seite „0 Nutzer gesamt". Dieselbe Stelle war in der
+    // Ereignissuche zu korrigieren (ADR-0037); der Ausdruck kommt jetzt von dort.
+    query = query.or(textSuchfilter(['display_name', 'email'], q))
   }
 
-  const { data: rows, count = 0, error } = await query
+  const { data: rows, count = 0, error, status } = await query
+
+  // Vorher wurde die Ablehnung nur ins Serverprotokoll geschrieben und die Seite
+  // zeigte „Admin · 0 Nutzer gesamt" mit leerer Tabelle – in einer
+  // Benutzerverwaltung die Aussage, es gebe niemanden (ADR-0040). Von RLS
+  // weggefilterte Zeilen bleiben bewusst eine leere Liste: Das ist der Fall
+  // einer Notzugangs-Sitzung, den der Hinweisbalken erklärt (ADR-0036).
   if (error) {
-    // Fallback: leere Liste, damit UI nicht crasht
     console.error('[admin/users] list error:', error)
+
+    return (
+      <main className="p-6 space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Benutzerverwaltung</h1>
+        </div>
+        <Fehlerflaeche fehler={ausProblem(problemAus({ data: null, error, status }, error))} />
+      </main>
+    )
   }
 
   const users: UserRow[] = (rows ?? []).map((r: any) => ({

@@ -114,6 +114,12 @@ Die Entscheidung unterscheidet drei Zustände der Rollenabfrage: Rolle vorhanden
 
 Der Notzugang öffnet die Oberfläche, nicht die Datenbank. Die Policies kennen die Liste nicht und sollen sie nicht kennen – sonst stünde neben `creator_profiles.role` wieder eine zweite Autorität. Eine solche Sitzung sieht deshalb einen Hinweis über der gesamten Administrations-Shell, statt leere Übersichten, die sich als Entwarnung lesen liessen. `reachesDatabase()` in `lib/auth/admin-access.ts` hält den Satz als prüfbare Funktion fest ([DECISIONS.md](DECISIONS.md) ADR-0036).
 
+**Die Einstellungen des Auth-Servers stehen im Repository.** Die Anmeldung ist der Weg *in* die Anwendung, ihre Konfiguration liegt aber nicht in der Datenbank, sondern beim Auth-Server – ein Klick im Dashboard ändert sie ohne Migration und ohne Commit. Seit Phase 1.4c beschreibt der Abschnitt `[auth]` in `supabase/config.toml` deshalb den Development-Branch, nicht die CLI-Vorlage. Was die Datei nicht ausdrücken kann – voran der Schutz vor kompromittierten Passwörtern –, steht mit Begründung in `lib/supabase/auth-erwartung.ts`.
+
+`npm run auth:pruefen` vergleicht beides mit dem laufenden Branch und verlangt für **jeden** der 242 Schlüssel der Management API eine Aussage des Repositories; zwei Musterregeln fangen jeden neuen Anmeldedienst und jeden Auth-Hook. Die Rechnung selbst liegt in `lib/supabase/auth-bericht.ts` und ist ohne Supabase-Zugang prüfbar; sie nennt bei einem unbekannten Schlüssel nur den Namen, weil dessen Inhalt niemand begutachtet hat. `npm run auth:fluesse` prüft die Wirkung statt der Werte, an den echten Endpunkten. Beides zielt ausschliesslich auf den Branch aus `SUPABASE_PROJECT_REF`: `scripts/auth/ziel.ts` fragt bei Supabase, ob der Ref ein Branch ist, und bricht bei einem eigenständigen Projekt ab. Einzelheiten in [docs/AUTH.md](docs/AUTH.md), Entscheidung in [DECISIONS.md](DECISIONS.md) ADR-0039.
+
+Die Passwortregel, die beide Formulare zeigen und prüfen, steht in `lib/auth/passwort-richtlinie.ts` und wird bei jedem `npm test` mit `config.toml` verglichen – ohne Datenbank und ohne Netz.
+
 Weitere Punkte:
 
 - Nach Anmeldung, Registrierung, OAuth-Callback und Passwortwechsel führt der Weg auf `/reisen` ([DECISIONS.md](DECISIONS.md), ADR-0019).
@@ -188,6 +194,8 @@ Alle zehn Endpunkte unter `api/admin` prüfen die Berechtigung über `requireAdm
 
 Was die Datenbank nicht liefert, meldet der Endpunkt, statt es zu verschweigen: Eine Ablehnung wird 500, ein Ausfall 503, jeweils mit `{ message }`; eine erfolgreiche Abfrage ohne Zeilen bleibt eine leere Liste mit 200. Die Unterscheidung steht einmal in `lese()` in `lib/api/datenbank-lesen.ts` und nicht in den Routen ([DECISIONS.md](DECISIONS.md) ADR-0037). Von RLS weggefilterte Zeilen sind bewusst kein Fehler – das ist der Fall einer Notzugangs-Sitzung, den der Hinweisbalken erklärt.
 
+Die Oberfläche gibt das seit Phase 1.4d weiter, statt es in eine leere Tabelle zu verwandeln. Die Deutung einer Antwort steht einmal in `lib/admin/ladezustand.ts` – bewusst frei von React, Next und `fetch`, damit beide Fälle ohne Laufzeit prüfbar sind –, die Darstellung einmal in `components/admin/Ladezustand.tsx`. Ansichten, die serverseitig lesen (Startseite der Administration, Benutzerverwaltung), holen die Einordnung 500/503 über `problemAus()` aus derselben Stelle wie die Routen und zeigen dieselbe Fläche, nur ohne Wiederholen-Schaltfläche. Einzelheiten in [DECISIONS.md](DECISIONS.md) ADR-0040.
+
 Phase 1.4 hat drei weitere entfernt: `security/block-ip` und `security/unblock-ip` waren Doppelungen von `security/block` und `security/unblock` ohne Aufrufer, `security/overview` rief eine Funktion auf, die es nicht gab, und hatte ebenfalls keinen Aufrufer.
 
 `app/auth/refresh` ist mit Phase 1.3 entfallen. Der Endpunkt sollte Sessions erneuern, konnte es aber nie: Sein Cookie-Adapter gab für jeden Namen `undefined` zurück und verwarf jedes Schreiben.
@@ -229,6 +237,7 @@ Zuordnung und Begründung der semantischen Tokens: [DESIGN_SYSTEM.md](DESIGN_SYS
 - `npm run check:setup:ci` – Setup-Check mit Fail-Closed-Verhalten für CI
 - `npm run check:schema-bezug` – jedes `.from()` und `.rpc()` gegen `types/supabase.ts`
 - `.github/workflows/ci.yml` führt bei jedem Push auf `main` und bei jedem Pull Request aus: `npm ci`, Setup-Check, Typecheck, Lint, Tests, Schutz der Admin-API, Bezug auf das Schema, die drei Hygiene-Prüfungen und den Production-Build
+- ein zweiter Job gleicht die Auth-Konfiguration des Branches gegen `supabase/config.toml` ab (`npm run auth:pruefen`). Er ist fail-closed: Ohne die Secrets `SUPABASE_ACCESS_TOKEN` und `SUPABASE_PROJECT_REF` schlägt er fehl, statt sich stillschweigend zu überspringen. Nur ein Pull Request aus einem Fork überspringt sich, weil GitHub ihm keine Secrets gibt
 
 Die datenbanknahen Prüfungen aus `scripts/db/` laufen nicht in der CI. Sie brauchen den Development-Zugang, und mehrere Läufe gegen denselben Branch würden dieselben Testkonten anlegen. Sie werden vor einer Zusammenführung von Hand ausgeführt; die Liste steht in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 9.
 
