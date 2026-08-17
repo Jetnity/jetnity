@@ -7,7 +7,7 @@
 // insbesondere der Fehlerfall, der früher stillschweigend zu einer Freigabe
 // über die E-Mail-Domain führte.
 
-import { canAccessAdminArea, hasAtLeast, type Role } from '@/lib/auth/roles'
+import { can, canAccessAdminArea, type Capability, type Role } from '@/lib/auth/roles'
 
 /**
  * Ergebnis der Rollenabfrage. Der Unterschied zwischen „keine Rolle
@@ -24,7 +24,17 @@ export type AdminUser = {
   email: string | null
 }
 
-/** Warum ein Zugriff gilt – für Protokollierung und Tests. */
+/**
+ * Warum ein Zugriff gilt – für Protokollierung, Anzeige und Tests.
+ *
+ *   · `role`        – die Rolle aus der Datenbank deckt die Fähigkeit ab. Nur
+ *                     in diesem Fall lassen die Policies die zugehörigen
+ *                     Datenzugriffe ebenfalls durch.
+ *   · `break-glass` – der Zugang stammt aus `ADMIN_ALLOWED_EMAILS`. Er öffnet
+ *                     ausschließlich die Oberfläche. Die Datenbank kennt die
+ *                     Liste nicht und wird jeden rollengebundenen Zugriff
+ *                     dieser Sitzung ablehnen. Siehe ADR-0035.
+ */
 export type AdminGrant = 'role' | 'break-glass'
 
 export type AdminDenial = 'unauthenticated' | 'forbidden' | 'lookup-failed'
@@ -86,7 +96,8 @@ export function isBreakGlassEmail(
  * 3. Der ausdrücklich konfigurierte Notzugang greift, wenn die Rolle nicht
  *    reicht oder nicht ermittelbar war. Das ist genau sein Zweck, deshalb wirkt
  *    er auch bei einem Ausfall der Rollenabfrage – der Aufrufer protokolliert
- *    jede solche Nutzung.
+ *    jede solche Nutzung. Er öffnet aber nur die Oberfläche, nicht die
+ *    Datenbank; `grant` sagt das der aufrufenden Stelle.
  * 4. Ist die Rollenabfrage fehlgeschlagen und kein Notzugang konfiguriert,
  *    wird abgelehnt. Ein Ausfall wird nie zu einer Freigabe.
  */
@@ -94,16 +105,16 @@ export function decideAdminAccess(input: {
   user: AdminUser | null
   lookup: RoleLookup
   allowlist: ReadonlySet<string>
-  /** Optional höhere Anforderung als der reine Bereichszugang. */
-  minimumRole?: Role
+  /** Verlangte Fähigkeit. Ohne Angabe genügt der reine Bereichszugang. */
+  capability?: Capability
 }): AdminDecision {
-  const { user, lookup, allowlist, minimumRole } = input
+  const { user, lookup, allowlist, capability } = input
 
   if (!user) return { allowed: false, denial: 'unauthenticated' }
 
   const role = lookup.status === 'ok' ? lookup.role : null
 
-  if (role && canAccessAdminArea(role) && (!minimumRole || hasAtLeast(role, minimumRole))) {
+  if (role && canAccessAdminArea(role) && (!capability || can(role, capability))) {
     return { allowed: true, grant: 'role', role }
   }
 
@@ -116,6 +127,23 @@ export function decideAdminAccess(input: {
   }
 
   return { allowed: false, denial: 'forbidden' }
+}
+
+/**
+ * Trägt diese Entscheidung bis in die Datenbank?
+ *
+ * Nur eine Rolle tut das. `ADMIN_ALLOWED_EMAILS` steht in der Umgebung der
+ * Anwendung; die Policies kennen die Liste nicht und sollen sie nicht kennen –
+ * sonst stünde neben `creator_profiles.role` wieder eine zweite Autorität, wie
+ * sie Phase 1.4 mit `admin_domains` und `app_admins` gerade beseitigt hat
+ * (ADR-0035).
+ *
+ * Wer das ignoriert, baut Oberflächen, die einer Break-Glass-Sitzung leere
+ * Listen zeigen und damit „nichts vorgefallen“ suggerieren, wo „nicht
+ * berechtigt“ gemeint ist.
+ */
+export function reachesDatabase(decision: AdminDecision): boolean {
+  return decision.allowed && decision.grant === 'role'
 }
 
 /** HTTP-Status, den eine API-Route für eine Ablehnung senden muss. */

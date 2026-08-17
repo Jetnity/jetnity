@@ -56,15 +56,58 @@ export function hasAtLeast(role: Role, minimum: Role): boolean {
 }
 
 /** Ab dieser Stufe darf ein Konto den Administrationsbereich betreten. */
-const ADMIN_AREA_MINIMUM: Role = 'moderator'
+export const ADMIN_AREA_MINIMUM: Role = 'moderator'
 
 export function canAccessAdminArea(role: Role): boolean {
   return hasAtLeast(role, ADMIN_AREA_MINIMUM)
 }
 
+/**
+ * Administrative Fähigkeiten und die Rolle, ab der sie gelten.
+ *
+ * Diese Tabelle ist die einzige Stelle, an der eine Mindestrolle steht. Bis
+ * Phase 1.4 stand dieselbe Aussage zweimal: einmal als `minimumRole` an der
+ * Route, einmal als `hat_rolle_mindestens('admin')` in der Policy. Die beiden
+ * liefen auseinander – eine Moderation kam durch den Gate der Anwendung und
+ * scheiterte danach an RLS, ohne dass jemand ihr das erklärt hätte.
+ *
+ * Die Datenbank bildet jede Fähigkeit als `public.darf_<name mit _>()` nach.
+ * `lib/auth/faehigkeiten-datenbank.test.ts` vergleicht beide Seiten und
+ * schlägt fehl, sobald eine allein geändert wird.
+ */
+export const CAPABILITY_MINIMUM = {
+  /** Sicherheits- und Zahlungsübersichten lesen. */
+  'betrieb-lesen': 'moderator',
+  /** In den Betrieb eingreifen: IP sperren, Rückerstattung buchen. */
+  'betrieb-eingreifen': 'operator',
+  /** Konten sehen, Rolle und Status vergeben. */
+  'konten-verwalten': 'moderator',
+  /** Fremde Inhalte sichten und beanstanden. */
+  'inhalte-moderieren': 'moderator',
+  /** Postfächer, DNS-Protokoll, Modellvorschläge. */
+  'konfiguration-verwalten': 'admin',
+} as const satisfies Record<string, Role>
+
+export type Capability = keyof typeof CAPABILITY_MINIMUM
+
+export const CAPABILITIES = Object.keys(CAPABILITY_MINIMUM) as Capability[]
+
+export function minimumRoleFor(capability: Capability): Role {
+  return CAPABILITY_MINIMUM[capability]
+}
+
+export function can(role: Role, capability: Capability): boolean {
+  return hasAtLeast(role, CAPABILITY_MINIMUM[capability])
+}
+
+/** Name der Funktion, die dieselbe Fähigkeit in der Datenbank prüft. */
+export function databaseFunctionFor(capability: Capability): string {
+  return `darf_${capability.replace(/-/g, '_')}`
+}
+
 /** Darf Konten sehen und Status ändern. */
 export function canManageUsers(role: Role): boolean {
-  return hasAtLeast(role, 'moderator')
+  return can(role, 'konten-verwalten')
 }
 
 /**

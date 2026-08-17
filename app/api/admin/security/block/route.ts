@@ -5,7 +5,7 @@ import { createRouteHandlerClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/supabase'
 
 export async function POST(req: Request) {
-  const gate = await requireAdminApi({ surface: 'api/security/block', minimumRole: 'operator' })
+  const gate = await requireAdminApi({ surface: 'api/security/block', capability: 'betrieb-eingreifen' })
   if (!gate.ok) return gate.response
 
   const body = await req.json().catch(() => null)

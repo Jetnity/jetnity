@@ -24,6 +24,9 @@ const ADMIN = '33333333-3333-3333-3333-333333333333'
 const INHABER = '44444444-4444-4444-4444-444444444444'
 const GESPERRT = '55555555-5555-5555-5555-555555555555'
 const OHNE_PROFIL = '66666666-6666-6666-6666-666666666666'
+const CREATOR = '77777777-7777-7777-7777-777777777777'
+const MODERATION = '88888888-8888-8888-8888-888888888888'
+const BETRIEB = '99999999-9999-9999-9999-999999999999'
 
 /**
  * Erwartungen.
@@ -81,6 +84,13 @@ const FAELLE = [
     sql: `select * from public.session_comments`,
     erwartung: 'abgelehnt',
     grund: 'Bis Phase 1.4 galt hier USING true.',
+  },
+  {
+    name: 'anon liest Stripe-Ereignisse',
+    rolle: 'anon',
+    sql: `select * from public.stripe_webhooks`,
+    erwartung: 'abgelehnt',
+    grund: 'Die Tabelle ist seit dem Nachtrag lesbar – aber erst ab der Fähigkeit betrieb-lesen.',
   },
   {
     name: 'anon legt einen Creator-Upload an',
@@ -360,23 +370,309 @@ const FAELLE = [
     erwartung: 'erlaubt',
   },
 
-  // --- Nur mit Service-Key ------------------------------------------------
+  // --- Fähigkeit betrieb-lesen (ab moderator) ------------------------------
+  //
+  // Bis zum Nachtrag verlangten diese Tabellen `admin`. Eine Moderation kam
+  // durch `requireAdminApi()` und scheiterte danach an RLS – die Oberfläche
+  // zeigte eine leere Liste statt einer Ablehnung.
   {
-    name: 'angemeldetes Konto liest Stripe-Ereignisse',
+    name: 'Moderation liest Sicherheitsereignisse',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `select * from public.security_events`,
+    erwartung: 'erlaubt',
+    grund: 'GET /api/admin/security/list lässt eine Moderation durch.',
+  },
+  {
+    name: 'Moderation liest die Sperrliste',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `select * from public.blocked_ips`,
+    erwartung: 'erlaubt',
+  },
+  {
+    name: 'Moderation liest Zahlungen',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `select * from public.payments`,
+    erwartung: 'erlaubt',
+  },
+  {
+    name: 'Moderation liest Rückerstattungen',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `select * from public.refunds`,
+    erwartung: 'erlaubt',
+  },
+  {
+    name: 'Moderation liest Stripe-Ereignisse',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `select * from public.stripe_webhooks`,
+    erwartung: 'erlaubt',
+    grund: 'GET /api/admin/payments/webhooks lieferte vorher immer eine leere Liste.',
+  },
+  // Eine Stufe unterhalb: `creator` liegt direkt unter `moderator`.
+  {
+    name: 'Creator liest Sicherheitsereignisse',
+    rolle: 'authenticated',
+    uid: CREATOR,
+    sql: `select * from public.security_events`,
+    erwartung: 'leer',
+  },
+  {
+    name: 'Creator liest die Sperrliste',
+    rolle: 'authenticated',
+    uid: CREATOR,
+    sql: `select * from public.blocked_ips`,
+    erwartung: 'leer',
+  },
+  {
+    name: 'Creator liest Zahlungen',
+    rolle: 'authenticated',
+    uid: CREATOR,
+    sql: `select * from public.payments`,
+    erwartung: 'leer',
+  },
+  {
+    name: 'Creator liest Stripe-Ereignisse',
+    rolle: 'authenticated',
+    uid: CREATOR,
+    sql: `select * from public.stripe_webhooks`,
+    erwartung: 'leer',
+  },
+
+  // --- Fähigkeit betrieb-eingreifen (ab operator) --------------------------
+  {
+    name: 'Betrieb sperrt eine IP',
+    rolle: 'authenticated',
+    uid: BETRIEB,
+    sql: `insert into public.blocked_ips (ip, reason) values ('203.0.113.50', 'Test')`,
+    erwartung: 'erlaubt',
+    grund: 'POST /api/admin/security/block verlangt operator; die Policy verlangte admin.',
+  },
+  {
+    name: 'Moderation sperrt eine IP',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `insert into public.blocked_ips (ip, reason) values ('203.0.113.51', 'Test')`,
+    erwartung: 'abgelehnt',
+    grund: 'Lesen ja, eingreifen nein – genau eine Stufe unterhalb.',
+  },
+  {
+    name: 'Betrieb entsperrt eine IP',
+    rolle: 'authenticated',
+    uid: BETRIEB,
+    sql: `delete from public.blocked_ips where ip = '203.0.113.2'`,
+    erwartung: 'erlaubt',
+  },
+  {
+    name: 'Moderation entsperrt eine IP',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `delete from public.blocked_ips where ip = '203.0.113.2'`,
+    erwartung: 'leer',
+  },
+  {
+    name: 'Betrieb bucht eine Rückerstattung',
+    rolle: 'authenticated',
+    uid: BETRIEB,
+    sql: `insert into public.refunds (payment_id, amount_chf) values ('pay_1', 5)`,
+    erwartung: 'erlaubt',
+    grund: 'POST /api/admin/payments/refund schrieb vorher ins Leere: keine INSERT-Policy.',
+  },
+  {
+    name: 'Moderation bucht eine Rückerstattung',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `insert into public.refunds (payment_id, amount_chf) values ('pay_1', 5)`,
+    erwartung: 'abgelehnt',
+  },
+  {
+    name: 'Betrieb setzt eine Zahlung auf erstattet',
+    rolle: 'authenticated',
+    uid: BETRIEB,
+    sql: `update public.payments set status = 'refunded' where id = 'pay_1'`,
+    erwartung: 'erlaubt',
+  },
+  {
+    name: 'Moderation setzt eine Zahlung auf erstattet',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `update public.payments set status = 'refunded' where id = 'pay_1'`,
+    erwartung: 'leer',
+  },
+
+  // --- Fähigkeit konten-verwalten (ab moderator) ---------------------------
+  {
+    name: 'Moderation liest fremde Profile',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `select * from public.creator_profiles where user_id = '${NUTZER}'`,
+    erwartung: 'erlaubt',
+    grund: 'canManageUsers() lässt eine Moderation auf /admin/users; RLS verlangte admin.',
+  },
+  {
+    name: 'Moderation setzt ein fremdes Konto auf creator',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `update public.creator_profiles set role = 'creator' where user_id = '${ZWEITER}'`,
+    erwartung: 'erlaubt',
+  },
+  {
+    name: 'Moderation ernennt eine Administration',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `update public.creator_profiles set role = 'admin' where user_id = '${ZWEITER}'`,
+    erwartung: 'abgelehnt',
+    grund: 'Der Auslöser verlangt einen echt höheren Rang als die künftige Rolle.',
+  },
+  {
+    name: 'Creator liest fremde Profile',
+    rolle: 'authenticated',
+    uid: CREATOR,
+    sql: `select * from public.creator_profiles where user_id = '${NUTZER}'`,
+    erwartung: 'leer',
+  },
+
+  // --- Fähigkeit inhalte-moderieren (ab moderator) -------------------------
+  {
+    name: 'Moderation liest fremde Sitzungen',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `select * from public.creator_sessions where user_id = '${NUTZER}'`,
+    erwartung: 'erlaubt',
+  },
+  {
+    name: 'Moderation verbirgt einen fremden Blogkommentar',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `update public.blog_comments set status = 'hidden' where user_id = '${NUTZER}'`,
+    erwartung: 'erlaubt',
+  },
+  {
+    name: 'Creator liest fremde Sitzungen',
+    rolle: 'authenticated',
+    uid: CREATOR,
+    sql: `select * from public.creator_sessions where user_id = '${NUTZER}'`,
+    erwartung: 'leer',
+  },
+
+  // --- Fähigkeit konfiguration-verwalten (ab admin) ------------------------
+  //
+  // Für diese Tabellen gibt es keine Route. Sie bleiben bei `admin`; die Fälle
+  // belegen, dass die Absenkung der übrigen Tabellen sie nicht mitgenommen hat.
+  {
+    name: 'Administration liest das DNS-Protokoll',
     rolle: 'authenticated',
     uid: ADMIN,
-    sql: `select * from public.stripe_webhooks`,
+    sql: `select * from public.dns_audit_events`,
+    erwartung: 'erlaubt',
+  },
+  {
+    name: 'Betrieb liest das DNS-Protokoll',
+    rolle: 'authenticated',
+    uid: BETRIEB,
+    sql: `select * from public.dns_audit_events`,
+    erwartung: 'leer',
+  },
+  {
+    name: 'Betrieb legt ein Postfach an',
+    rolle: 'authenticated',
+    uid: BETRIEB,
+    sql: `insert into public.admin_email_boxes (domain, address) values ('jetnity.com', 'x@jetnity.com')`,
     erwartung: 'abgelehnt',
+  },
+  {
+    name: 'Administration legt ein Postfach an',
+    rolle: 'authenticated',
+    uid: ADMIN,
+    sql: `insert into public.admin_email_boxes (domain, address) values ('jetnity.com', 'y@jetnity.com')`,
+    erwartung: 'erlaubt',
+  },
+
+  // --- Notzugang erteilt keine Datenbankrechte -----------------------------
+  //
+  // `ADMIN_ALLOWED_EMAILS` öffnet die Oberfläche. Die Datenbank kennt die
+  // Liste nicht und soll sie nicht kennen (ADR-0035). Für die Datenbank ist
+  // ein solches Konto genau das, was seine Rolle sagt – hier `user`, im
+  // zweiten Fall ein Konto ganz ohne Profil.
+  {
+    name: 'Notzugang mit Rolle user liest Sicherheitsereignisse',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select * from public.security_events`,
+    erwartung: 'leer',
+  },
+  {
+    name: 'Notzugang mit Rolle user sperrt eine IP',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `insert into public.blocked_ips (ip, reason) values ('203.0.113.52', 'Test')`,
+    erwartung: 'abgelehnt',
+  },
+  {
+    name: 'Notzugang ohne Profil liest Zahlungen',
+    rolle: 'authenticated',
+    uid: OHNE_PROFIL,
+    sql: `select * from public.payments`,
+    erwartung: 'leer',
+    grund: 'aktuelle_rolle() liefert NULL; hat_rolle_mindestens() ist fail-closed.',
+  },
+  {
+    name: 'Notzugang ohne Profil liest alle Profile',
+    rolle: 'authenticated',
+    uid: OHNE_PROFIL,
+    sql: `select * from public.creator_profiles`,
+    erwartung: 'leer',
+  },
+
+  // --- Funktionen mit eigener Prüfung --------------------------------------
+  {
+    name: 'Moderation ruft admin_payments_summary_30d',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `select * from public.admin_payments_summary_30d()`,
+    erwartung: 'erlaubt',
+    grund: 'Die Kennzahlenleiste steht im Bereich, der ab moderator offen ist.',
+  },
+  {
+    name: 'Creator ruft admin_payments_summary_30d',
+    rolle: 'authenticated',
+    uid: CREATOR,
+    sql: `select * from public.admin_payments_summary_30d()`,
+    erwartung: 'leer',
+  },
+  {
+    name: 'Moderation ruft admin_security_overview',
+    rolle: 'authenticated',
+    uid: MODERATION,
+    sql: `select * from public.admin_security_overview()`,
+    erwartung: 'erlaubt',
+  },
+  {
+    name: 'Creator ruft admin_security_overview',
+    rolle: 'authenticated',
+    uid: CREATOR,
+    sql: `select * from public.admin_security_overview()`,
+    erwartung: 'leer',
   },
 ]
 
+// Je ein Konto für jede Stufe des Modells. Ohne die beiden mittleren Rollen
+// blieb bis zum Nachtrag unbemerkt, dass die Policies pauschal `admin`
+// verlangten, während die Anwendung ab `moderator` hereinliess.
 const KONTEN = [
   { id: NUTZER, name: 'nutzer', role: 'user', status: 'active', profil: true },
   { id: ZWEITER, name: 'zweiter', role: 'user', status: 'active', profil: true },
+  { id: CREATOR, name: 'creator', role: 'creator', status: 'active', profil: true },
+  { id: MODERATION, name: 'moderation', role: 'moderator', status: 'active', profil: true },
+  { id: BETRIEB, name: 'betrieb', role: 'operator', status: 'active', profil: true },
   { id: ADMIN, name: 'verwaltung', role: 'admin', status: 'active', profil: true },
   { id: INHABER, name: 'inhaber', role: 'owner', status: 'active', profil: true },
   { id: GESPERRT, name: 'gesperrt', role: 'user', status: 'disabled', profil: true },
-  // Ein Konto ohne Profil: Nur so lässt sich das erstmalige Anlegen prüfen.
+  // Ein Konto ohne Profil: Nur so lässt sich das erstmalige Anlegen prüfen –
+  // und der Notzugang, dessen Rolle die Datenbank gar nicht kennt.
   { id: OHNE_PROFIL, name: null, role: null, status: null, profil: false },
 ]
 
@@ -411,6 +707,8 @@ function aufbau() {
     `insert into public.session_comments (user_id, session_id, text)
        select '${NUTZER}', s.id, 'Notiz' from public.creator_sessions s limit 1;`,
     `insert into public.stripe_webhooks (id, type) values ('evt_1', 'payment_intent.succeeded');`,
+    `insert into public.dns_audit_events (domain, actor, mode) values ('jetnity.com', 'test', 'plan');`,
+    `insert into public.admin_email_boxes (domain, address) values ('jetnity.com', 'info@jetnity.com');`,
   ]
 
   return [...nutzer, ...profile, ...daten].join('\n')

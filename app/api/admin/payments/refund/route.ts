@@ -1,33 +1,66 @@
 // app/api/admin/payments/refund/route.ts
 import { NextResponse } from 'next/server'
-import { createServerComponentClient } from '@/lib/supabase/server'
+import { createRouteHandlerClient } from '@/lib/supabase/server'
 import { requireAdminApi } from '@/lib/auth/admin-guard'
+import type { Database } from '@/types/supabase'
 
 export async function POST(req: Request) {
-  // Eingriffe in Zahlungen verlangen mehr als reinen Bereichszugang.
-  const gate = await requireAdminApi({ surface: 'api/payments/refund', minimumRole: 'operator' })
+  // Ein Eingriff in Zahlungen verlangt mehr als reinen Bereichszugang.
+  const gate = await requireAdminApi({
+    surface: 'api/payments/refund',
+    capability: 'betrieb-eingreifen',
+  })
   if (!gate.ok) return gate.response
 
-  const supabase = createServerComponentClient() as any
-  const { payment_id, amount_chf, reason } = await req.json().catch(()=>({}))
-  if (!payment_id || typeof amount_chf !== 'number' || isNaN(amount_chf)) {
-    return NextResponse.json({ error: 'payment_id & amount_chf erforderlich' }, { status: 400 })
+  const body = await req.json().catch(() => null)
+  const zahlung = typeof body?.payment_id === 'string' ? body.payment_id.trim() : ''
+  const betrag = typeof body?.amount_chf === 'number' ? body.amount_chf : NaN
+  const grund = typeof body?.reason === 'string' ? body.reason.trim() : ''
+
+  if (!zahlung || !Number.isFinite(betrag) || betrag <= 0) {
+    return NextResponse.json(
+      { ok: false, message: 'payment_id und ein positiver amount_chf sind erforderlich' },
+      { status: 400 },
+    )
   }
 
-  // Optional: in refunds loggen & Payment markieren (wenn Tabellen existieren)
-  try {
-    await supabase.from('refunds').insert({
-      payment_id, amount_chf, reason: reason ?? null
-    })
-  } catch {}
-  try {
-    // Falls vollständiger Refund: Status auf refunded setzen
-    const { data: p } = await supabase.from('payments').select('amount_chf').eq('id', payment_id).maybeSingle()
-    if (p && Number(p.amount_chf) <= Number(amount_chf)) {
-      await supabase.from('payments').update({ status: 'refunded' }).eq('id', payment_id)
-    }
-  } catch {}
+  const supabase = createRouteHandlerClient<Database>()
 
-  // Hier würdest du Stripe API callen; wir antworten optimistisch
-  return NextResponse.json({ ok: true })
+  // supabase-js wirft nicht, es meldet im `error`-Feld. Das frühere `try/catch`
+  // fing deshalb nie etwas ab: Eine von RLS abgelehnte Buchung lief in die
+  // Antwort `{ ok: true }`. Bei einer Rückerstattung ist das die teuerste
+  // Sorte falscher Erfolgsmeldung.
+  const { error: buchungFehler } = await supabase
+    .from('refunds')
+    .insert({ payment_id: zahlung, amount_chf: betrag, reason: grund || null })
+
+  if (buchungFehler) {
+    return NextResponse.json({ ok: false, message: buchungFehler.message }, { status: 500 })
+  }
+
+  const { data: bezahlt, error: leseFehler } = await supabase
+    .from('payments')
+    .select('amount_chf')
+    .eq('id', zahlung)
+    .maybeSingle()
+
+  if (leseFehler) {
+    return NextResponse.json({ ok: false, message: leseFehler.message }, { status: 500 })
+  }
+
+  // Deckt die Erstattung den vollen Betrag, gilt die Zahlung als erstattet.
+  const vollstaendig = bezahlt !== null && Number(bezahlt.amount_chf) <= betrag
+
+  if (vollstaendig) {
+    const { error: statusFehler } = await supabase
+      .from('payments')
+      .update({ status: 'refunded' })
+      .eq('id', zahlung)
+
+    if (statusFehler) {
+      return NextResponse.json({ ok: false, message: statusFehler.message }, { status: 500 })
+    }
+  }
+
+  return NextResponse.json({ ok: true, settled: vollstaendig })
 }

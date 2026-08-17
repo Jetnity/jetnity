@@ -4,7 +4,7 @@ import { createServerComponentClient } from '@/lib/supabase/server'
 import { requireAdminApi } from '@/lib/auth/admin-guard'
 
 export async function GET(req: Request) {
-  const gate = await requireAdminApi({ surface: 'api/payments/list' })
+  const gate = await requireAdminApi({ surface: 'api/payments/list', capability: 'betrieb-lesen' })
   if (!gate.ok) return gate.response
 
   const supabase = createServerComponentClient() as any

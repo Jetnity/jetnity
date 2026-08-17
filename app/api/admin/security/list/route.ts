@@ -8,7 +8,7 @@ const TAGE = 7
 const MAX_ZEILEN = 200
 
 export async function GET() {
-  const gate = await requireAdminApi({ surface: 'api/security/list' })
+  const gate = await requireAdminApi({ surface: 'api/security/list', capability: 'betrieb-lesen' })
   if (!gate.ok) return gate.response
 
   const supabase = createRouteHandlerClient<Database>()

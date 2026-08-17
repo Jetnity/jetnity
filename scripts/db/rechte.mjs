@@ -18,6 +18,14 @@
 // Rechte kennt RLS nicht; TRUNCATE leert eine Tabelle unabhängig von jeder
 // Policy.
 //
+// Und seit dem Nachtrag zu Phase 1.4 eine dritte Regel: Eine Policy nennt
+// keine Rolle, sondern eine Fähigkeit. `hat_rolle_mindestens('admin')` direkt
+// in einer Policy ist der Weg, auf dem Anwendung und Datenbank
+// auseinandergelaufen sind – die Anwendung liess ab `moderator` herein, die
+// Policy verlangte `admin`, und niemand sah den Widerspruch. Über die
+// `darf_…()`-Funktionen steht die Mindestrolle an einer Stelle, die
+// lib/auth/faehigkeiten-datenbank.test.ts mit lib/auth/roles.ts vergleicht.
+//
 // Aufruf:
 //   npm run db:rechte
 
@@ -34,7 +42,8 @@ async function erhebe() {
       from information_schema.role_table_grants
       where table_schema = 'public' and grantee in ('anon', 'authenticated')`),
     runSql(`
-      select tablename as tabelle, unnest(roles)::text as rolle, cmd
+      select tablename as tabelle, policyname, unnest(roles)::text as rolle, cmd,
+             coalesce(qual, '') || ' ' || coalesce(with_check, '') as ausdruck
       from pg_policies where schemaname = 'public'`),
     runSql(`
       select relname as tabelle
@@ -53,13 +62,28 @@ export async function pruefe() {
   const { rechte, policies, ohneRls } = await erhebe()
 
   const erlaubtLautPolicy = new Set()
+  const befunde = []
+  const gesehenePolicies = new Set()
+
   for (const p of policies) {
     if (!ROLLEN.includes(p.rolle)) continue
     for (const op of operationenVon(p.cmd)) erlaubtLautPolicy.add(`${p.tabelle}|${p.rolle}|${op}`)
+
+    // `unnest(roles)` liefert eine Zeile je Zielrolle; die Bedingung ist
+    // dieselbe. Ohne diese Sperre stünde derselbe Befund mehrfach da.
+    const kennung = `${p.tabelle}.${p.policyname}`
+    if (gesehenePolicies.has(kennung)) continue
+    gesehenePolicies.add(kennung)
+
+    if (/hat_rolle_mindestens\(/.test(p.ausdruck)) {
+      befunde.push({
+        art: 'Rolle statt Fähigkeit',
+        text: `${kennung} nennt eine Rolle direkt; erwartet wird eine der darf_…()-Funktionen`,
+      })
+    }
   }
 
   const vergeben = new Set()
-  const befunde = []
 
   for (const r of rechte) {
     if (VERBOTEN.includes(r.recht)) {
@@ -107,6 +131,7 @@ async function main() {
     console.log(`OK – ${vergebene} Tabellenrechte, jedes durch eine Policy gedeckt.`)
     console.log('Kein TRUNCATE, kein REFERENCES, kein TRIGGER für anon oder authenticated.')
     console.log('Row Level Security auf allen Tabellen aktiv.')
+    console.log('Jede rollengebundene Policy nennt eine Fähigkeit, keine Rolle.')
     return
   }
 

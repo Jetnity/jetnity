@@ -1656,6 +1656,11 @@ export type Database = {
         Args: { p_session_id: string }
         Returns: undefined
       }
+      darf_betrieb_eingreifen: { Args: never; Returns: boolean }
+      darf_betrieb_lesen: { Args: never; Returns: boolean }
+      darf_inhalte_moderieren: { Args: never; Returns: boolean }
+      darf_konfiguration_verwalten: { Args: never; Returns: boolean }
+      darf_konten_verwalten: { Args: never; Returns: boolean }
       hat_rolle_mindestens: { Args: { minimum: string }; Returns: boolean }
       increment_impression: { Args: { session_id: string }; Returns: undefined }
       increment_like: { Args: { session_id: string }; Returns: undefined }

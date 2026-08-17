@@ -7,10 +7,11 @@ import {
   isBreakGlassEmail,
   messageForDenial,
   parseBreakGlassAllowlist,
+  reachesDatabase,
   statusForDenial,
   type RoleLookup,
 } from '@/lib/auth/admin-access'
-import { ROLES, type Role } from '@/lib/auth/roles'
+import { CAPABILITIES, ROLES, minimumRoleFor, type Role } from '@/lib/auth/roles'
 
 const USER = { id: 'konto-1', email: 'chef@jetnity.com' }
 const OHNE_LISTE = new Set<string>()
@@ -124,15 +125,27 @@ describe('Zugangsentscheidung', () => {
   })
 })
 
-describe('Höhere Anforderung einzelner Oberflächen', () => {
-  test('eine Moderation erreicht eine Betriebsaktion nicht', () => {
+describe('Fähigkeiten einzelner Oberflächen', () => {
+  test('eine Moderation erreicht einen Betriebseingriff nicht', () => {
     const d = decideAdminAccess({
       user: USER,
       lookup: ok('moderator'),
       allowlist: OHNE_LISTE,
-      minimumRole: 'operator',
+      capability: 'betrieb-eingreifen',
     })
     assert.deepEqual(d, { allowed: false, denial: 'forbidden' })
+  })
+
+  test('eine Moderation darf den Betrieb lesen', () => {
+    // Genau hier liefen Anwendung und Datenbank auseinander: Der Gate liess
+    // durch, die Policy verlangte `admin`. Beide Seiten sagen jetzt moderator.
+    const d = decideAdminAccess({
+      user: USER,
+      lookup: ok('moderator'),
+      allowlist: OHNE_LISTE,
+      capability: 'betrieb-lesen',
+    })
+    assert.equal(d.allowed && d.grant, 'role')
   })
 
   test('ab der geforderten Stufe ist die Aktion erlaubt', () => {
@@ -141,20 +154,71 @@ describe('Höhere Anforderung einzelner Oberflächen', () => {
         user: USER,
         lookup: ok(role),
         allowlist: OHNE_LISTE,
-        minimumRole: 'operator',
+        capability: 'betrieb-eingreifen',
       })
       assert.equal(d.allowed, true, `Rolle ${role}`)
     }
   })
 
-  test('der Notzugang deckt auch höhere Anforderungen ab', () => {
+  test('jede Fähigkeit greift genau ab ihrer Mindestrolle', () => {
+    for (const capability of CAPABILITIES) {
+      const minimum = minimumRoleFor(capability)
+      for (const role of ROLES) {
+        const d = decideAdminAccess({
+          user: USER,
+          lookup: ok(role),
+          allowlist: OHNE_LISTE,
+          capability,
+        })
+        const erwartet = ROLES.indexOf(role) >= ROLES.indexOf(minimum)
+        assert.equal(d.allowed, erwartet, `${capability} mit Rolle ${role}`)
+      }
+    }
+  })
+})
+
+describe('Notzugang trägt nicht bis in die Datenbank', () => {
+  const allowlist = parseBreakGlassAllowlist('chef@jetnity.com')
+
+  test('er öffnet auch eine Oberfläche mit höherer Anforderung', () => {
+    // Bewusst unverändert gegenüber Phase 1.3: Wer auf der Liste steht, kommt
+    // in den Bereich. Neu ist nur, dass `grant` sagt, was das wert ist.
     const d = decideAdminAccess({
       user: USER,
       lookup: ok('user'),
-      allowlist: parseBreakGlassAllowlist('chef@jetnity.com'),
-      minimumRole: 'operator',
+      allowlist,
+      capability: 'betrieb-eingreifen',
     })
     assert.equal(d.allowed && d.grant, 'break-glass')
+  })
+
+  test('nur eine Rolle reicht bis in die Datenbank', () => {
+    const ueberDieRolle = decideAdminAccess({
+      user: USER,
+      lookup: ok('admin'),
+      allowlist,
+      capability: 'betrieb-lesen',
+    })
+    assert.equal(reachesDatabase(ueberDieRolle), true)
+
+    const ueberDieListe = decideAdminAccess({
+      user: USER,
+      lookup: ok('user'),
+      allowlist,
+      capability: 'betrieb-lesen',
+    })
+    assert.equal(reachesDatabase(ueberDieListe), false)
+  })
+
+  test('auch bei ausgefallener Rollenabfrage bleibt die Datenbank zu', () => {
+    const d = decideAdminAccess({ user: USER, lookup: kaputt, allowlist })
+    assert.equal(d.allowed, true)
+    assert.equal(reachesDatabase(d), false)
+  })
+
+  test('eine Ablehnung reicht ebenfalls nicht in die Datenbank', () => {
+    const d = decideAdminAccess({ user: USER, lookup: ok('user'), allowlist: OHNE_LISTE })
+    assert.equal(reachesDatabase(d), false)
   })
 })
 

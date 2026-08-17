@@ -26,7 +26,13 @@ import {
   type AdminUser,
   type RoleLookup,
 } from '@/lib/auth/admin-access'
-import { parseRole, type Role } from '@/lib/auth/roles'
+import {
+  ADMIN_AREA_MINIMUM,
+  minimumRoleFor,
+  parseRole,
+  type Capability,
+  type Role,
+} from '@/lib/auth/roles'
 
 /**
  * Tabelle, in der die Rolle heute hinterlegt ist.
@@ -40,6 +46,11 @@ const ROLE_TABLE = 'creator_profiles'
 export type AdminContext = {
   user: AdminUser
   role: Role | null
+  /**
+   * `role` heisst: Die Datenbank lässt die zugehörigen Zugriffe ebenfalls
+   * durch. `break-glass` heisst: nur die Oberfläche ist offen, jeder
+   * rollengebundene Datenzugriff dieser Sitzung wird abgelehnt (ADR-0035).
+   */
   grant: 'role' | 'break-glass'
 }
 
@@ -153,7 +164,7 @@ const loadAdminIdentity = cache(async () => {
  * später nachvollziehen möchte.
  */
 export async function evaluateAdminAccess(options?: {
-  minimumRole?: Role
+  capability?: Capability
   surface?: string
 }): Promise<AdminDecision & { user: AdminUser | null }> {
   const allowlist = loadAllowlist()
@@ -172,16 +183,19 @@ export async function evaluateAdminAccess(options?: {
     user,
     lookup,
     allowlist,
-    minimumRole: options?.minimumRole,
+    capability: options?.capability,
   })
 
   if (decision.allowed && decision.grant === 'break-glass') {
+    const benoetigt = options?.capability ? minimumRoleFor(options.capability) : ADMIN_AREA_MINIMUM
     console.warn(
       `[admin-zugang] BREAK-GLASS: Zugriff über ADMIN_ALLOWED_EMAILS gewährt. ` +
         `Konto ${user.id} <${user.email ?? 'ohne E-Mail'}>, Bereich ${surface}, ` +
         `Rollenabfrage ${lookup.status}` +
         (lookup.status === 'ok' ? ` (${lookup.role})` : '') +
-        '. Dieser Weg ist nur als Notzugang gedacht – bitte eine Datenbankrolle hinterlegen.',
+        `. Nötig wäre mindestens die Rolle ${benoetigt}. Dieser Weg öffnet nur die ` +
+        'Oberfläche – die Datenbank lehnt die Zugriffe dieser Sitzung ab. Bitte eine ' +
+        'Datenbankrolle hinterlegen.',
     )
   }
 
@@ -202,7 +216,7 @@ export async function evaluateAdminAccess(options?: {
  * sind eigene Eintrittspunkte und rufen die Funktion selbst auf.
  */
 export async function requireAdminPage(options?: {
-  minimumRole?: Role
+  capability?: Capability
   surface?: string
 }): Promise<AdminContext> {
   const decision = await evaluateAdminAccess(options)
@@ -232,7 +246,7 @@ export type AdminApiGate =
  *     if (!gate.ok) return gate.response
  */
 export async function requireAdminApi(options?: {
-  minimumRole?: Role
+  capability?: Capability
   surface?: string
 }): Promise<AdminApiGate> {
   const decision = await evaluateAdminAccess(options)
