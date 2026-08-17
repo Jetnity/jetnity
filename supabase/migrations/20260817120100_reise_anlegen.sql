@@ -1,14 +1,19 @@
--- Jetnity V2 – Phase 1.5: Gastreise ins Konto übernehmen, genau einmal
+-- Jetnity V2 – Phase 1.5: eine Reise anlegen, genau einmal
 --
--- Ein Gast hat serverseitig keine Identität. Seine Reise liegt im
--- `localStorage`, und das ist die bewusste Entscheidung: Ein Gastkonto in
--- `auth.users` anzulegen, nur damit eine Zeile einen Besitzer hat, erzeugt
--- Konten, die niemand bestätigt, niemand löscht und niemand verantwortet
--- (DECISIONS.md ADR-0042).
+-- Eine Reise entsteht auf zwei Wegen, und beide brauchen dasselbe:
 --
--- Beim Login oder bei der Registrierung muss diese eine Reise vollständig ins
--- Konto wandern – und zwar genau einmal, auch bei Reload, Retry, doppeltem
--- Request und mehrfachem Login.
+--   · Ein Gast plant unter /planen. Seine Reise liegt im `localStorage` – ein
+--     Gast hat serverseitig bewusst keine Identität, weil ein Gastkonto in
+--     `auth.users` Konten erzeugt, die niemand bestätigt, niemand löscht und
+--     niemand verantwortet (DECISIONS.md ADR-0042). Bei Login oder
+--     Registrierung muss diese Reise vollständig ins Konto wandern.
+--   · Ein angemeldetes Konto plant unter /planen. Die Reise entsteht sofort in
+--     der Datenbank.
+--
+-- Beides ist dieselbe Anweisung: „Lege diesen Reisegraphen für mich an, und
+-- zwar genau einmal." Eine zweite Funktion dafür wäre eine zweite Stelle, an
+-- der `status`, `user_id` und die Grenzen der Nutzlast geprüft werden – und
+-- damit eine zweite Stelle, an der eine davon fehlen kann.
 --
 -- ---------------------------------------------------------------------------
 -- Warum Idempotenz nur auf der Reise sitzt, nicht auf jedem Kind
@@ -17,7 +22,7 @@
 -- Ein Aufruf über PostgREST ist eine Anweisung und damit eine Transaktion.
 -- Entweder die Reise **und** ihre Etappen, Tage und Planpunkte entstehen, oder
 -- nichts entsteht. Ein halber Stand ist nicht erreichbar. Damit genügt eine
--- eindeutige Kennung auf der Reise: `unique (user_id, guest_ref)`.
+-- eindeutige Kennung auf der Reise: `unique (user_id, client_ref)`.
 --
 --   · Erster Aufruf   → Reise entsteht, Kinder entstehen, Kennung wird geliefert.
 --   · Zweiter Aufruf  → `on conflict do nothing`, keine Zeile entsteht, dieselbe
@@ -25,7 +30,10 @@
 --   · Zwei parallele Aufrufe → der zweite wartet an der Eindeutigkeit, sieht
 --                       danach die festgeschriebene Zeile und liefert sie.
 --
--- Kindtabellen tragen deshalb bewusst keine `guest_ref` und keinen eigenen
+-- Das deckt Reload, Retry, doppelten Request, mehrfachen Login und einen
+-- Doppelklick auf „Reise erstellen" mit einer Bedingung ab.
+--
+-- Kindtabellen tragen deshalb bewusst keine `client_ref` und keinen eigenen
 -- Eindeutigkeitsindex. Vier zusätzliche Indizes für einen Zustand, der nicht
 -- eintreten kann, wären Aufwand ohne Nutzen.
 --
@@ -40,7 +48,7 @@
 -- kommt aus `auth.uid()` und nicht aus der Nutzlast; eine mitgeschickte
 -- `user_id` wird nicht gelesen.
 
-create or replace function public.gastreise_uebernehmen(_reise jsonb)
+create or replace function public.reise_anlegen(_reise jsonb)
 returns uuid
 language plpgsql
 volatile
@@ -49,30 +57,30 @@ set search_path = public, pg_temp
 as $$
 declare
   _uid uuid := (select auth.uid());
-  _guest_ref text;
+  _client_ref text;
   _trip_id uuid;
   _etappen jsonb;
   _tage jsonb;
   _punkte integer;
 begin
   if _uid is null then
-    raise exception 'Für die Übernahme einer Gastreise ist eine Anmeldung erforderlich.'
+    raise exception 'Um eine Reise zu speichern, ist eine Anmeldung erforderlich.'
       using errcode = '42501';
   end if;
 
   if _reise is null or jsonb_typeof(_reise) <> 'object' then
-    raise exception 'Die Gastreise muss ein JSON-Objekt sein.' using errcode = '22023';
+    raise exception 'Die Reise muss ein JSON-Objekt sein.' using errcode = '22023';
   end if;
 
   -- Obergrenze gegen einen aufgeblähten Aufruf. 256 KB sind ein Vielfaches
-  -- dessen, was eine Gastreise mit 366 Tagen belegt.
+  -- dessen, was eine Reise mit 366 Tagen belegt.
   if pg_column_size(_reise) > 262144 then
-    raise exception 'Die Gastreise ist zu gross.' using errcode = '22023';
+    raise exception 'Die Reise ist zu gross.' using errcode = '22023';
   end if;
 
-  _guest_ref := _reise ->> 'guest_ref';
-  if _guest_ref is null or char_length(_guest_ref) not between 1 and 64 then
-    raise exception 'Die Gastreise trägt keine brauchbare Kennung.' using errcode = '22023';
+  _client_ref := _reise ->> 'client_ref';
+  if _client_ref is null or char_length(_client_ref) not between 1 and 64 then
+    raise exception 'Die Reise trägt keine brauchbare Kennung.' using errcode = '22023';
   end if;
 
   _etappen := coalesce(_reise -> 'stages', '[]'::jsonb);
@@ -100,12 +108,12 @@ begin
 
   -- 1. Die Reise selbst. Alles Weitere hängt daran.
   insert into public.trips (
-    user_id, guest_ref, title, origin, start_date, end_date, travellers,
+    user_id, client_ref, title, origin, start_date, end_date, travellers,
     currency, budget_amount, status, pace, interests, travel_wish
   )
   values (
     _uid,
-    _guest_ref,
+    _client_ref,
     btrim(coalesce(_reise ->> 'title', '')),
     nullif(btrim(coalesce(_reise ->> 'origin', '')), ''),
     (_reise ->> 'start_date')::date,
@@ -113,8 +121,8 @@ begin
     coalesce((_reise ->> 'travellers')::smallint, 1),
     coalesce(nullif(_reise ->> 'currency', ''), 'CHF'),
     (_reise ->> 'budget_amount')::numeric,
-    -- Status kommt nicht aus der Nutzlast: Eine übernommene Gastreise ist ein
-    -- Entwurf, und `booked` darf niemand über diesen Weg behaupten.
+    -- Status kommt nicht aus der Nutzlast: Eine neue Reise ist ein Entwurf, und
+    -- `booked` darf niemand über diesen Weg behaupten.
     'draft',
     coalesce(nullif(_reise ->> 'pace', ''), 'balanced'),
     coalesce(
@@ -124,15 +132,15 @@ begin
     ),
     nullif(btrim(coalesce(_reise ->> 'travel_wish', '')), '')
   )
-  on conflict (user_id, guest_ref) do nothing
+  on conflict (user_id, client_ref) do nothing
   returning id into _trip_id;
 
   if _trip_id is null then
-    -- Schon übernommen. Weil Reise und Kinder in derselben Transaktion
-    -- entstanden sind, ist der Stand vollständig; es gibt nichts nachzutragen.
+    -- Schon angelegt. Weil Reise und Kinder in derselben Transaktion entstanden
+    -- sind, ist der Stand vollständig; es gibt nichts nachzutragen.
     select id into _trip_id
       from public.trips
-      where user_id = _uid and guest_ref = _guest_ref;
+      where user_id = _uid and client_ref = _client_ref;
     return _trip_id;
   end if;
 
@@ -187,11 +195,11 @@ begin
 end
 $$;
 
-comment on function public.gastreise_uebernehmen(jsonb) is
-  'Übernimmt eine Gastreise samt Etappen, Tagen und Planpunkten in das Konto des Aufrufers. Idempotent über trips.guest_ref. SECURITY INVOKER: RLS gilt, die Eigentümerkennung kommt aus auth.uid().';
+comment on function public.reise_anlegen(jsonb) is
+  'Legt eine Reise samt Etappen, Tagen und Planpunkten für das aufrufende Konto an. Idempotent über trips.client_ref: derselbe Aufruf ergibt dieselbe Reise. Trägt die Übernahme einer Gastreise und das Formular unter /planen. SECURITY INVOKER: RLS gilt, die Eigentümerkennung kommt aus auth.uid(), status ist immer draft.';
 
-revoke all on function public.gastreise_uebernehmen(jsonb) from public, anon;
-grant execute on function public.gastreise_uebernehmen(jsonb) to authenticated;
+revoke all on function public.reise_anlegen(jsonb) from public, anon;
+grant execute on function public.reise_anlegen(jsonb) to authenticated;
 
 -- ---------------------------------------------------------------------------
 -- Kennzahlen für den Administrationsbereich

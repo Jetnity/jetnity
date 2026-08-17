@@ -45,10 +45,19 @@ function rangfolgeAusDerDatenbank(sql: string): Map<string, number> {
   return paare
 }
 
-/** Liest die zulässigen Werte aus der letzten Fassung von creator_profiles_status_check. */
+/**
+ * Liest die zulässigen Werte aus der letzten Fassung des Statuschecks.
+ *
+ * Der Name der Bedingung hat sich mit dem Umbenennen der Tabelle geändert
+ * (`creator_profiles_status_check` → `profiles_status_check`, ADR-0043).
+ * Das Muster deckt beide ab: Der Test soll die letzte Fassung lesen, nicht die
+ * letzte Fassung eines bestimmten Namens.
+ */
 function statusAusDerDatenbank(sql: string): string[] {
-  const alle = [...sql.matchAll(/add constraint creator_profiles_status_check\s*check\s*\(([\s\S]*?)\);/g)]
-  assert.ok(alle.length > 0, 'creator_profiles_status_check fehlt in den Migrationen')
+  const alle = [
+    ...sql.matchAll(/add constraint (?:creator_)?profiles?_status_check\s*check\s*\(([\s\S]*?)\);/g),
+  ]
+  assert.ok(alle.length > 0, 'Der Statuscheck auf dem Profil fehlt in den Migrationen')
 
   const bedingung = alle[alle.length - 1][1]
   return [...bedingung.matchAll(/'([a-z]+)'/g)].map(treffer => treffer[1])

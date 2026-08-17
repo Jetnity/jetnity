@@ -35,13 +35,13 @@ import {
 } from '@/lib/auth/roles'
 
 /**
- * Tabelle, in der die Rolle heute hinterlegt ist.
+ * Tabelle, in der die Rolle hinterlegt ist.
  *
- * `creator_profiles` stammt aus der alten Produktidee. Der Name steht deshalb
- * genau an dieser einen Stelle, damit die Umstellung auf das V2-Schema in
- * Phase 1.4 eine einzelne Änderung bleibt.
+ * Bis Phase 1.5 hiess sie `creator_profiles` – ein Name aus der alten
+ * Produktidee. Weil er nur an dieser einen Stelle stand, war die Umstellung auf
+ * `profiles` eine einzelne Änderung (ADR-0043).
  */
-const ROLE_TABLE = 'creator_profiles'
+const ROLE_TABLE = 'profiles'
 
 export type AdminContext = {
   user: AdminUser

@@ -123,12 +123,19 @@ create table public.trips (
   user_id uuid not null default auth.uid()
     references auth.users (id) on delete cascade,
 
-  -- Kennung der Gastreise aus dem `localStorage`. Trägt die Idempotenz der
-  -- Übernahme: `unique (user_id, guest_ref)` lässt dieselbe Gastreise pro
-  -- Konto genau einmal entstehen. NULL kollidiert in PostgreSQL nicht mit
-  -- NULL, im Konto angelegte Reisen bleiben deshalb unbegrenzt.
-  guest_ref text
-    constraint trips_guest_ref_laenge check (guest_ref is null or char_length(guest_ref) between 1 and 64),
+  -- Kennung, die der Client vergibt, und der Träger der Idempotenz:
+  -- `unique (user_id, client_ref)` lässt dieselbe Kennung pro Konto genau eine
+  -- Reise ergeben. Zwei Wege benutzen das:
+  --
+  --   · Die Übernahme einer Gastreise schickt die Kennung des Entwurfs aus dem
+  --     `localStorage`. Reload, Retry und mehrfacher Login ergeben eine Reise.
+  --   · Das Formular unter /planen schickt eine je Formular erzeugte Kennung.
+  --     Ein Doppelklick auf „Reise erstellen" ergibt eine Reise.
+  --
+  -- NULL kollidiert in PostgreSQL nicht mit NULL. Eine Reise ohne Kennung
+  -- bleibt deshalb möglich, ohne die Eindeutigkeit zu verletzen.
+  client_ref text
+    constraint trips_client_ref_laenge check (client_ref is null or char_length(client_ref) between 1 and 64),
 
   title text not null
     constraint trips_title_laenge check (char_length(btrim(title)) between 1 and 120),
@@ -191,16 +198,16 @@ create table public.trips (
   -- `(id, user_id)` aber eine Eindeutigkeit über genau diese beiden Spalten.
   constraint trips_id_user_id_eindeutig unique (id, user_id),
 
-  -- Idempotenz der Gastübernahme, siehe oben.
-  constraint trips_guest_ref_eindeutig unique (user_id, guest_ref)
+  -- Idempotenz beim Anlegen, siehe oben.
+  constraint trips_client_ref_eindeutig unique (user_id, client_ref)
 );
 
 comment on table public.trips is
   'Eine Reise eines Kontos. Privat: keine Policy öffnet sie für fremde Konten, auch nicht für die Administration (ADR-0041).';
 comment on column public.trips.user_id is
   'Eigentümerin. Nicht vom Client setzbar: default auth.uid() plus with check in jeder Policy.';
-comment on column public.trips.guest_ref is
-  'Lokale Kennung der übernommenen Gastreise. Macht public.gastreise_uebernehmen() idempotent.';
+comment on column public.trips.client_ref is
+  'Vom Client vergebene Kennung. Macht public.reise_anlegen() idempotent: dieselbe Kennung ergibt pro Konto eine Reise.';
 comment on column public.trips.origin is
   'Abreiseort für die späteren Flugangebote. Bewusst keine Etappe – eine Etappe ist ein Aufenthalt.';
 comment on column public.trips.currency is
@@ -213,9 +220,10 @@ comment on column public.trips.metadata is
 -- Zugriffspfade, die es wirklich gibt:
 --
 --   · „Meine Reisen“: alle Reisen des Kontos, neueste Änderung zuerst.
---   · Idempotenz der Übernahme: eine Reise über (user_id, guest_ref).
---     Deckt gleichzeitig den Fremdschlüssel auf auth.users ab, weil `user_id`
---     die führende Spalte ist.
+--   · Idempotenz beim Anlegen: eine Reise über (user_id, client_ref). Die
+--     Eindeutigkeitsbedingung liefert diesen Index mit und deckt gleichzeitig
+--     den Fremdschlüssel auf auth.users ab, weil `user_id` die führende Spalte
+--     ist.
 create index trips_user_id_updated_at_idx on public.trips (user_id, updated_at desc);
 
 create trigger trips_aktualisiert_am

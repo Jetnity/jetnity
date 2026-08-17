@@ -42,7 +42,7 @@ export default async function UsersPage({ searchParams }: { searchParams?: Searc
   const supabase = createServerComponentClient() as any
 
   let query = supabase
-    .from('creator_profiles')
+    .from('profiles')
     .select('user_id, email, display_name, role, status, created_at, last_seen_at', { count: 'exact' })
     .order('created_at', { ascending: false })
     .range(from, to)

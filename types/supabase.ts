@@ -403,10 +403,10 @@ export type Database = {
       trips: {
         Row: {
           budget_amount: number | null
+          client_ref: string | null
           created_at: string
           currency: string
           end_date: string | null
-          guest_ref: string | null
           id: string
           interests: string[]
           metadata: Json
@@ -422,10 +422,10 @@ export type Database = {
         }
         Insert: {
           budget_amount?: number | null
+          client_ref?: string | null
           created_at?: string
           currency?: string
           end_date?: string | null
-          guest_ref?: string | null
           id?: string
           interests?: string[]
           metadata?: Json
@@ -441,10 +441,10 @@ export type Database = {
         }
         Update: {
           budget_amount?: number | null
+          client_ref?: string | null
           created_at?: string
           currency?: string
           end_date?: string | null
-          guest_ref?: string | null
           id?: string
           interests?: string[]
           metadata?: Json
@@ -503,9 +503,9 @@ export type Database = {
       darf_inhalte_moderieren: { Args: never; Returns: boolean }
       darf_konfiguration_verwalten: { Args: never; Returns: boolean }
       darf_konten_verwalten: { Args: never; Returns: boolean }
-      gastreise_uebernehmen: { Args: { _reise: Json }; Returns: string }
       hat_rolle_mindestens: { Args: { minimum: string }; Returns: boolean }
       liste_ohne_doppelte: { Args: { _werte: string[] }; Returns: boolean }
+      reise_anlegen: { Args: { _reise: Json }; Returns: string }
       rollenrang: { Args: { rolle: string }; Returns: number }
     }
     Enums: {
