@@ -83,9 +83,9 @@ Cursor interpoliert die Werte zur Laufzeit über `${env:SUPABASE_PROJECT_REF}` u
 
 Diese Verbindung ist ein Entwicklerwerkzeug. Sie ersetzt weder die App-Clients aus Abschnitt 3 noch Service-Role-Zugriff in der Anwendung.
 
-Verifikation am 17. August 2026 gegen den offiziellen Remote-Server: Authentifizierung erfolgreich, genau die zehn Werkzeuge der drei Feature-Gruppen, Account-/Branching-/Functions-/Storage-Werkzeuge abwesend, Projekt-URL identisch mit `SUPABASE_PROJECT_REF`. `list_tables` lieferte 39 Tabellen in `public`.
+Verifikation am 17. August 2026 gegen den offiziellen Remote-Server, vor Phase 1.4: Authentifizierung erfolgreich, genau die zehn Werkzeuge der drei Feature-Gruppen, Account-/Branching-/Functions-/Storage-Werkzeuge abwesend, Projekt-URL identisch mit `SUPABASE_PROJECT_REF`. `list_tables` lieferte damals 39 Tabellen in `public`; nach Phase 1.4 und 1.4b sind es 8.
 
-Dieselben Zugangsdaten – Personal Access Token und Projekt-Referenz – nutzen die Skripte in `scripts/db/` über die Management API. Sie sind der Weg, auf dem Phase 1.4 inventarisiert, Migrationen angewendet und Nachweise geführt hat; ein Datenbankpasswort oder ein Service-Key war dafür nicht nötig. Beschreibung in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 2.
+Dieselben Zugangsdaten – Personal Access Token und Projekt-Referenz – nutzen die Skripte in `scripts/db/` über die Management API. Sie sind der Weg, auf dem Phase 1.4 und 1.4b inventarisiert, Migrationen angewendet und Nachweise geführt haben; ein Datenbankpasswort oder ein Service-Key war dafür nicht nötig. Beschreibung in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 2.
 
 ---
 
@@ -152,7 +152,7 @@ Bewusste Datenschutzregel: In diesem Speicher werden keine Passnummern, Ausweisk
 
 Vollständige Beschreibung: [docs/DATENBANK.md](docs/DATENBANK.md). Hier steht nur, wie sie in die Architektur eingebunden ist.
 
-**Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Neun Migrationen in `supabase/migrations/` beschreiben 37 Tabellen, 60 Policies und 38 Funktionen. Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
+**Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Elf Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b – **8 Tabellen, 19 Policies und 19 Funktionen**. Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
 
 Drei Regeln halten das zusammen:
 
@@ -164,11 +164,13 @@ Drei Regeln halten das zusammen:
 
 Die ersten beiden brauchen den Development-Zugang und laufen vor einer Zusammenführung von Hand. Die dritte liest nur die erzeugte Typdatei und läuft in der CI mit.
 
-**Zugriffsschutz.** RLS ist auf allen 37 Tabellen eingeschaltet. `anon` und `authenticated` haben kein Tabellenrecht, das nicht eine Policy braucht – geprüft in beide Richtungen durch `npm run db:rechte`. Bis Phase 1.4 hatten beide Rollen auf jeder Tabelle alle Rechte einschließlich `TRUNCATE`, das RLS vollständig umgeht.
+**Zugriffsschutz.** RLS ist auf allen 8 Tabellen eingeschaltet. `anon` und `authenticated` haben kein Tabellenrecht, das nicht eine Policy braucht – geprüft in beide Richtungen durch `npm run db:rechte`. Bis Phase 1.4 hatten beide Rollen auf jeder Tabelle alle Rechte einschließlich `TRUNCATE`, das RLS vollständig umgeht. Ohne Anmeldung lesbar ist seit Phase 1.4b nur noch `airports`.
 
-`npm run db:sicherheit` führt 45 benannte Nachweise, positiv und negativ, gegen den Development-Branch. Sie belegen unter anderem, dass sich kein Konto selbst befördert, kein Konto ein fremdes Profil ändert und kein angemeldetes Konto Zahlungsdaten sieht.
+Seit Phase 1.4b prüft `npm run db:rechte` eine vierte Regel: Keine Funktion nennt eine Struktur, die es nicht gibt. Tabellenbezüge im Rumpf einer Funktion stehen nicht in `pg_depend`, PostgreSQL verfolgt sie also nicht – 18 Funktionen hätten die Entfernung ihrer Tabellen unbemerkt überlebt und erst beim Aufruf gescheitert. Das ist dieselbe Fehlerklasse, die `npm run check:schema-bezug` für den Anwendungscode abdeckt, nun auch für die Datenbank selbst.
 
-**Die Reisedaten fehlen noch.** Das Schema beschreibt zum überwiegenden Teil die alte Produktidee: 29 der 37 Tabellen sind ohne Verwendung im Anwendungscode. Sie sind eingeordnet und versioniert, aber nicht gelöscht; die Entfernung ist ein eigener Schritt vor dem Reise-Schema. Eine Tabelle für Reisen gibt es bis Phase 1.5 nicht – siehe Abschnitt 5.
+`npm run db:sicherheit` führt 78 benannte Nachweise, positiv und negativ, gegen den Development-Branch. Sie belegen unter anderem, dass sich kein Konto selbst befördert, kein Konto ein fremdes Profil ändert und kein angemeldetes Konto Zahlungsdaten sieht.
+
+**Die Reisedaten fehlen noch.** Phase 1.4b hat die 29 Tabellen der alten Produktidee entfernt; das Schema beschreibt jetzt nur, was verwendet wird. Eine Tabelle für Reisen gibt es damit aber noch nicht – sie entsteht in Phase 1.5, siehe Abschnitt 5. Der Übergang ist in [docs/LEGACY_ENTFERNUNG.md](docs/LEGACY_ENTFERNUNG.md) belegt, das Ergebnis in [docs/DATENBANK.md](docs/DATENBANK.md) beschrieben.
 
 ---
 
@@ -259,9 +261,10 @@ Aktuell nur Konsolen-Logging, kein zentrales Error-Tracking und keine strukturie
 | --- | --- | --- |
 | ~~Fehlende Baseline-Migration~~ | ~~37 Tabellen ohne Versionierung~~ | in Phase 1.4 hergestellt, Wiederaufbau gemessen |
 | ~~Zwei Supabase-Typdateien~~ | ~~37 vs. 3 Tabellen~~ | in Phase 1.2b zusammengeführt, seit 1.4 erzeugt statt gepflegt |
-| ~~RLS-Zustand unbekannt~~ | ~~nicht aus dem Repo ableitbar~~ | in Phase 1.4 erhoben, neu aufgebaut und mit 45 Nachweisen belegt |
-| Alt-Tabellen in der Datenbank | 29 von 37 ohne Verwendung im Code | eingeordnet in `docs/DATENBANK.md`; Entfernung als eigener Schritt vor dem Reise-Schema |
+| ~~RLS-Zustand unbekannt~~ | ~~nicht aus dem Repo ableitbar~~ | in Phase 1.4 erhoben, neu aufgebaut und mit 78 Nachweisen belegt |
+| ~~Alt-Tabellen in der Datenbank~~ | ~~29 von 37 ohne Verwendung im Code~~ | in Phase 1.4b entfernt, mit Archiv-Tag und Nachweis in `docs/LEGACY_ENTFERNUNG.md` |
 | Rolle liegt in `creator_profiles` | Tabelle der alten Produktidee | Phase 1.5; der Name steht nur an einer Stelle |
+| Fünf Funktionen ohne Aufrufer | auf `creator_profiles` und `creator_sessions` | nicht Legacy und damit ausserhalb von Phase 1.4b; Entscheidung in Phase 1.5 (`docs/DATENBANK.md` Abschnitt 11) |
 | Datenbanknahe Prüfungen laufen nicht in der CI | 5 Prüfungen von Hand | braucht einen kurzlebigen Branch je Lauf, sonst kollidieren die Testkonten |
 | Tests ohne Reisedaten | 41 Tests, davon keiner zur Persistenz | Trip-Persistenz existiert noch nicht (Phase 1.5) |
 | `any`-Verwendung | ca. 309 Vorkommen in `app/`, `lib/`, `components/`, `types/` | überwiegend in Alt-Code; nur V2-relevante Stellen werden bereinigt |

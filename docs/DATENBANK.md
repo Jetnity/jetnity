@@ -1,11 +1,13 @@
 # Jetnity – Datenbank
 
 Stand: 17. August 2026
-Gültig für: Supabase-Development-Branch nach Phase 1.4
+Gültig für: Supabase-Development-Branch nach Phase 1.4b
 
 Diese Datei beschreibt den **tatsächlichen** Zustand des Schemas, wie er sich aus dem Repository herstellen lässt. Sie ist die Antwort auf die Frage, die [ARCHITECTURE.md](../ARCHITECTURE.md) Abschnitt 6 bis Phase 1.4 offenlassen musste: Was steht in der Datenbank, wer darf was, und woher weiß man das.
 
-Alle Angaben stammen aus dem Development-Branch. Production ist in Phase 1.4 nicht angefasst worden.
+Alle Angaben stammen aus dem Development-Branch. Production ist weder in Phase 1.4 noch in Phase 1.4b angefasst worden.
+
+Phase 1.4b hat 29 Tabellen entfernt. Warum, mit welchem Nachweis und was bewusst geblieben ist, steht in [docs/LEGACY_ENTFERNUNG.md](LEGACY_ENTFERNUNG.md). Diese Datei beschreibt das Ergebnis, jene den Übergang.
 
 ---
 
@@ -33,8 +35,8 @@ Alle Skripte liegen in `scripts/db/` und sprechen über die Supabase Management 
 | `npm run db:anwenden` | offene Migrationen anwenden und in `supabase_migrations.schema_migrations` eintragen; `-- --probe` zeigt nur, was offen ist |
 | `npm run db:reproduzierbarkeit` | baut das Schema aus den Migrationen neu auf und vergleicht es mit dem laufenden |
 | `npm run db:rls` | empirische RLS-Matrix: was darf welche Rolle auf welcher Tabelle wirklich |
-| `npm run db:sicherheit` | 45 benannte Nachweise mit Erwartung, positiv und negativ |
-| `npm run db:rechte` | Tabellenrechte gegen Policies prüfen |
+| `npm run db:sicherheit` | 78 benannte Nachweise mit Erwartung, positiv und negativ |
+| `npm run db:rechte` | Tabellenrechte gegen Policies prüfen; zusätzlich, dass keine Funktion eine Struktur nennt, die es nicht gibt |
 | `npm run db:verwendung` | welche Tabellen und RPCs der Anwendungscode anspricht |
 | `npm run check:schema-bezug` | dieselbe Auswertung als Prüfung gegen `types/supabase.ts` (läuft in der CI) |
 | `npm run db:typen` | `types/supabase.ts` erzeugen; `-- --pruefen` vergleicht nur |
@@ -46,24 +48,26 @@ Bis auf `check:schema-bezug` braucht jedes davon den Development-Zugang. `check:
 
 ## 3. Bestand
 
-| Gegenstand | Anzahl |
-| --- | --- |
-| Tabellen | 37 |
-| Spalten | 324 |
-| Primärschlüssel | 37 |
-| Fremdschlüssel | 52 |
-| Eindeutigkeitsbedingungen | 4 |
-| CHECK-Bedingungen | 26 |
-| Indizes | 127 |
-| RLS-Policies | 60 |
-| Funktionen | 38 |
-| Trigger | 13 |
-| Enums | 4 |
-| Views / materialisierte Views | 0 |
-| Sequenzen | 2 |
-| Extensions | 10 |
+| Gegenstand | Anzahl | vor Phase 1.4b |
+| --- | --- | --- |
+| Tabellen | **8** | 37 |
+| Spalten | 66 | 324 |
+| Primärschlüssel | 8 | 37 |
+| Fremdschlüssel | 2 | 52 |
+| Eindeutigkeitsbedingungen | 3 | 4 |
+| CHECK-Bedingungen | 4 | 26 |
+| Indizes | 25 | 127 |
+| RLS-Policies | 19 | 66 |
+| Funktionen | 19 | 43 |
+| Trigger | 4 | 13 |
+| Enums | 2 | 4 |
+| Views / materialisierte Views | 0 | 0 |
+| Sequenzen | 1 | 2 |
+| Extensions | 10 | 10 |
 
-Enums: `blog_status`, `creator_content_type`, `session_status`, `visibility_status`.
+Die acht Tabellen: `creator_profiles`, `creator_sessions`, `airports`, `payments`, `refunds`, `stripe_webhooks`, `security_events`, `blocked_ips`. Ihre Einordnung steht in Abschnitt 10.
+
+Enums: `session_status`, `visibility_status`. `blog_status` und `creator_content_type` sind mit ihren Tabellen entfallen. `session_status` hat auf dem Branch keine Spalte und keine Signatur – es war schon vor Phase 1.4b verwaist und ist geblieben, weil sich nicht nachweisen liess, dass es ausschliesslich zur entfernten Struktur gehört ([docs/LEGACY_ENTFERNUNG.md](LEGACY_ENTFERNUNG.md) Abschnitt 9). Geführt als offener Punkt in Abschnitt 11.
 
 Extensions: `citext`, `pg_cron`, `pg_graphql`, `pg_net`, `pg_stat_statements`, `pg_trgm`, `pgcrypto`, `plpgsql`, `supabase_vault`, `uuid-ossp`.
 
@@ -71,11 +75,11 @@ Extensions: `citext`, `pg_cron`, `pg_graphql`, `pg_net`, `pg_stat_statements`, `
 
 ### Auth- und Storage-Abhängigkeiten
 
-21 Tabellen verweisen mit zusammen 23 Fremdschlüsseln auf `auth.users`, fast durchgehend mit `ON DELETE CASCADE`. Ein gelöschtes Konto nimmt seine Daten also mit.
+Zwei Tabellen verweisen mit je einem Fremdschlüssel auf `auth.users`: `creator_profiles.user_id` und `creator_sessions.user_id`, beide mit `ON DELETE CASCADE`. Ein gelöschtes Konto nimmt seine Daten also mit. Vor Phase 1.4b waren es 21 Tabellen mit 23 Fremdschlüsseln.
 
 Auf `auth.users` liegt **kein** Trigger. Ein Profil in `creator_profiles` entsteht nicht automatisch bei der Registrierung, sondern erst, wenn die Anwendung eine Zeile anlegt. Ein frisch registriertes Konto hat deshalb kein Profil und damit keine Rolle. Die Zugangsentscheidung aus Phase 1.3 kennt diesen Zustand („keine Rolle hinterlegt") und lehnt ab – das ist das gewollte Verhalten, kein Fehler.
 
-Storage wird nicht verwendet: `storage.buckets` ist leer, und in `storage` existiert keine Policy. Die Alt-Oberflächen, die Dateien hochluden, sind mit Phase 1.1b entfernt worden; die zugehörigen Tabellen (`creator_uploads`, `session_media`, `media_versions`) enthalten nur noch Verweise.
+Storage wird nicht verwendet: `storage.buckets` ist leer, und in `storage` existiert keine Policy. Die Alt-Oberflächen, die Dateien hochluden, sind mit Phase 1.1b entfernt worden; die Tabellen, die deren Verweise noch führten (`creator_uploads`, `session_media`, `media_versions`), sind mit Phase 1.4b entfallen.
 
 ---
 
@@ -119,8 +123,11 @@ Der Zustand nach Phase 1.4 steht in Abschnitt 9; dort ist auch nachgewiesen, das
 | `20260817100600_policies_zusammenfassen.sql` | überlappende Policies je Tabelle und Operation zu einer zusammengefasst |
 | `20260817100700_admin_security_overview.sql` | die von der Oberfläche erwartete, nie vorhandene Funktion hergestellt |
 | `20260817100800_faehigkeiten.sql` | Policies von der pauschalen Rolle `admin` auf Fähigkeiten umgestellt, passend zum Rollenmodell aus Phase 1.3 |
+| `20260817110000_legacy_entfernen.sql` | 29 obsolete Tabellen, 24 Funktionssignaturen und 2 Enums entfernt (Phase 1.4b) |
 
 Die Reihenfolge ist nicht beliebig: `20260817100200` darf erst laufen, wenn `20260817100000` die Rollen der Betroffenen übernommen und `20260817100100` alle Policies auf `creator_profiles.role` umgestellt hat. Sonst verlöre jemand seinen Zugang oder eine Policy liefe ins Leere.
+
+Auch innerhalb von `20260817110000` ist die Reihenfolge gemessen und nicht gewählt: Abfragefunktionen fallen vor den Tabellen, Triggerfunktionen danach. Die Migration arbeitet **ohne `cascade`**, damit eine unerwartete Abhängigkeit sie scheitern lässt statt still mitgenommen zu werden. Der Nachweis dazu steht in [docs/LEGACY_ENTFERNUNG.md](LEGACY_ENTFERNUNG.md) Abschnitt 4.
 
 ---
 
@@ -176,10 +183,14 @@ Seit `20260817100800` sprechen beide Seiten dieselbe Sprache. `CAPABILITY_MINIMU
 | `betrieb-lesen` | `moderator` | `public.darf_betrieb_lesen()` | `security_events`, `blocked_ips`, `payments`, `refunds`, `stripe_webhooks` – lesend |
 | `betrieb-eingreifen` | `operator` | `public.darf_betrieb_eingreifen()` | `blocked_ips` schreibend, `refunds` anlegen, `payments` auf erstattet setzen |
 | `konten-verwalten` | `moderator` | `public.darf_konten_verwalten()` | fremde `creator_profiles` |
-| `inhalte-moderieren` | `moderator` | `public.darf_inhalte_moderieren()` | `blog_comments`, `creator_sessions`, `session_review_requests` |
-| `konfiguration-verwalten` | `admin` | `public.darf_konfiguration_verwalten()` | `admin_email_boxes`, `dns_audit_events`, `copilot_suggestions` |
+| `inhalte-moderieren` | `moderator` | `public.darf_inhalte_moderieren()` | `creator_sessions` |
+| `konfiguration-verwalten` | `admin` | `public.darf_konfiguration_verwalten()` | derzeit **keine Tabelle** |
 
-Die Zuordnung ist aus den bestehenden Gates der Anwendung abgelesen, nicht erfunden. Wo es keine Route gibt – Postfächer, DNS-Protokoll, Modellvorschläge –, bleibt es bei `admin`.
+Die Zuordnung ist aus den bestehenden Gates der Anwendung abgelesen, nicht erfunden.
+
+Zwei Fähigkeiten haben mit Phase 1.4b Fläche verloren. `inhalte-moderieren` deckte zusätzlich `blog_comments` und `session_review_requests` ab; beide Tabellen sind entfallen, `creator_sessions` bleibt. `konfiguration-verwalten` deckte ausschliesslich `admin_email_boxes`, `dns_audit_events` und `copilot_suggestions` ab – alle drei entfernt. Seither ruft keine Policy `darf_konfiguration_verwalten()` mehr auf.
+
+Die Fähigkeit bleibt trotzdem bestehen. Sie ist die höchste Stufe eines Modells, das an zwei Orten übereinstimmen muss – `CAPABILITY_MINIMUM` in `lib/auth/roles.ts` und die `darf_…()`-Funktionen in der Datenbank – und ihre Entfernung wäre ein Eingriff in das Admin-Rollen- und Fähigkeitssystem statt eine Aufräumaktion. Damit sie nicht unbelegt dasteht, prüft `npm run db:sicherheit` sie jetzt direkt: `select 1 where public.darf_konfiguration_verwalten()` liefert einer Administration eine Zeile und dem Betrieb keine. Die Begründung im Einzelnen steht in [docs/LEGACY_ENTFERNUNG.md](LEGACY_ENTFERNUNG.md) Abschnitt 9.
 
 Zwei Prüfungen halten das zusammen:
 
@@ -194,13 +205,12 @@ Zwei Prüfungen halten das zusammen:
 
 ### Eigentum
 
-Das Eigentumsmodell ist einheitlich: Eine Zeile gehört dem Konto in ihrer Spalte `user_id`. Bei Tabellen, die an einer Sitzung hängen, gehört die Zeile dem Konto der Sitzung.
+Das Eigentumsmodell ist einheitlich: Eine Zeile gehört dem Konto in ihrer Spalte `user_id`.
 
 | Muster | Regel |
 | --- | --- |
-| eigene Zeile | `user_id = auth.uid()` – lesen, ändern, löschen |
-| Zeile an fremder Sitzung | Eigentum folgt `creator_sessions.user_id` |
-| öffentlich | `airports` sowie veröffentlichte Beiträge und sichtbare Kommentare, lesend |
+| eigene Zeile | `user_id = auth.uid()` – lesen, ändern, löschen. Gilt für `creator_profiles` und `creator_sessions` |
+| öffentlich | `airports`, lesend – seit Phase 1.4b die einzige Tabelle ohne Anmeldung |
 | Verwaltung | über eine Fähigkeit, nicht über eine Rolle – siehe die Tabelle oben |
 | nur mit Service-Key schreibbar | `stripe_webhooks` |
 
@@ -221,23 +231,27 @@ Der letzte Punkt war eine echte Lücke: Ein frisch registriertes Konto ohne Prof
 
 ## 7. Row Level Security
 
-RLS ist auf allen 37 Tabellen eingeschaltet, mit 66 Policies.
+RLS ist auf allen 8 Tabellen eingeschaltet, mit 19 Policies. Vor Phase 1.4b waren es 37 Tabellen mit 66 Policies; die 47 entfallenen Policies gehörten zu den entfernten Tabellen und haben ohne sie keine Bedeutung.
 
 Ein Zugriff hängt an vier Dingen, nicht an einem: am Tabellenrecht, am RLS-Schalter, an der Policy und an deren Rollenbindung. Fehlt das Tabellenrecht, ist die schönste Policy wirkungslos – und umgekehrt.
 
 ### Rechte
 
-`anon` und `authenticated` haben kein Recht mehr, das nicht eine Policy braucht. `npm run db:rechte` prüft beide Richtungen und meldet 118 vergebene Tabellenrechte, jedes durch eine Policy gedeckt, und keine Policy ohne das zugehörige Recht.
+`anon` und `authenticated` haben kein Recht mehr, das nicht eine Policy braucht. `npm run db:rechte` prüft beide Richtungen und meldet 20 vergebene Tabellenrechte, jedes durch eine Policy gedeckt, und keine Policy ohne das zugehörige Recht. Vor Phase 1.4b waren es 118.
 
 `TRUNCATE`, `REFERENCES` und `TRIGGER` sind entzogen. `TRUNCATE` war der schwerwiegendste Einzelbefund der Inventur: Das Recht umgeht RLS vollständig. Jedes angemeldete Konto – und über `anon` jeder Besucher – konnte `truncate public.payments` ausführen und die Tabelle leeren, obwohl keine Policy ihm auch nur eine Zeile zum Lesen gab.
 
-`anon` darf nur noch drei Tabellen lesen: `airports`, `blog_posts`, `blog_comments`.
+`anon` darf genau **eine** Tabelle lesen: `airports`. `blog_posts` und `blog_comments` waren die beiden anderen und sind mit Phase 1.4b entfallen.
+
+Seit Phase 1.4b prüft `npm run db:rechte` eine vierte Regel: Kein `public.<name>` in einem Funktionsrumpf darf ins Leere greifen – es muss sich als Relation, Funktion oder Typ auflösen. Das ist die Antwort auf eine Fehlerklasse, nicht auf einen Einzelfall: PostgreSQL verfolgt Tabellenbezüge im Rumpf einer Funktion nicht in `pg_depend`, weshalb 18 Signaturen den `drop table` unbemerkt überlebt hätten und erst beim Aufruf mit „relation does not exist" gescheitert wären – dieselbe Klasse wie `ip_blocklist` und `admin_security_overview` in Phase 1.4. Die Prüfung ist gegengeprobt: In einer zurückgerollten Transaktion findet sie eine künstlich erzeugte Funktion mit totem Bezug.
 
 ### Nachweise
 
-`npm run db:rls` misst die vollständige Matrix aus Rolle × Tabelle × Operation. Gemessen wird, nicht abgeleitet: Vier Konten (nicht angemeldet, Eigentümerin, fremdes Konto, Administration) probieren jede Operation auf jeder Tabelle aus. Der ganze Lauf liegt in einer Transaktion, die am Ende zurückgerollt wird, und jede einzelne Probe zusätzlich in einem eigenen Unterabschnitt – sonst nähme ein erfolgreiches `delete` die Zeilen abhängiger Tabellen mit und verfälschte jede spätere Messung.
+`npm run db:rls` misst die vollständige Matrix aus Rolle × Tabelle × Operation. Gemessen wird, nicht abgeleitet: Vier Konten (nicht angemeldet, Eigentümerin, fremdes Konto, Administration) probieren jede Operation auf jeder Tabelle aus – nach Phase 1.4b sind das 144 Proben über 8 Tabellen. Der ganze Lauf liegt in einer Transaktion, die am Ende zurückgerollt wird, und jede einzelne Probe zusätzlich in einem eigenen Unterabschnitt – sonst nähme ein erfolgreiches `delete` die Zeilen abhängiger Tabellen mit und verfälschte jede spätere Messung.
 
-`npm run db:sicherheit` prüft dieselbe Datenbank gegen 81 benannte Erwartungen. Der Unterschied ist wichtig: Die Matrix zeigt, was gilt; die Nachweise sagen, was gelten **soll**, und schlagen fehl, wenn es sich ändert.
+`npm run db:sicherheit` prüft dieselbe Datenbank gegen 78 benannte Erwartungen. Der Unterschied ist wichtig: Die Matrix zeigt, was gilt; die Nachweise sagen, was gelten **soll**, und schlagen fehl, wenn es sich ändert.
+
+Neun Nachweise bezogen sich auf Tabellen oder Funktionen, die Phase 1.4b entfernt hat. Sie sind nicht gestrichen, sondern durch gleichwertige an verbleibenden Strukturen ersetzt – ein Nachweis, der wegfällt, nimmt seine Aussage mit. Der Ersatz ist teils strenger als das Original: Statt zu prüfen, dass `anon` eine benannte `SECURITY DEFINER`-Funktion nicht ausführen darf, prüft er das für **jede** solche Funktion in `public` und deckt damit auch Funktionen ab, die noch niemand geschrieben hat. Die Gegenüberstellung steht in [docs/LEGACY_ENTFERNUNG.md](LEGACY_ENTFERNUNG.md) Abschnitt 11.
 
 Neun Konten decken jede Stufe des Modells ab: `user`, ein zweites `user`, `creator`, `moderator`, `operator`, `admin`, `owner`, ein gesperrtes Konto und eines ganz ohne Profil. Die beiden mittleren Rollen fehlten zunächst – und genau deshalb blieb unbemerkt, dass die Policies pauschal `admin` verlangten.
 
@@ -246,7 +260,9 @@ Ein Ausschnitt:
 | Nachweis | Erwartung |
 | --- | --- |
 | `anon` liest Flughäfen | erlaubt |
-| `anon` liest Profile, Zahlungen, Sicherheitsereignisse | abgelehnt, 42501 |
+| `anon` hat auf keiner Tabelle ausser `airports` ein Recht | erfüllt |
+| `anon` liest Profile, Zahlungen, Sicherheitsereignisse, Sitzungen, Stripe-Ereignisse | abgelehnt, 42501 |
+| `anon` legt eine Sitzung an | abgelehnt, 42501 |
 | `anon` und angemeldetes Konto leeren eine Tabelle mit `TRUNCATE` | abgelehnt, 42501 |
 | Konto liest und ändert das eigene Profil | erlaubt |
 | Konto liest oder ändert ein fremdes Profil | 0 Zeilen |
@@ -272,10 +288,11 @@ Und je Fähigkeit ein Paar aus der Stufe, ab der sie gilt, und der Stufe direkt 
 | Moderation liest fremde Profile, setzt ein fremdes Konto auf `creator` | erlaubt |
 | Moderation ernennt eine Administration | abgelehnt |
 | Creator liest fremde Profile, fremde Sitzungen | 0 Zeilen |
-| Moderation liest fremde Sitzungen, verbirgt einen fremden Blogkommentar | erlaubt |
-| Administration liest das DNS-Protokoll, legt ein Postfach an | erlaubt |
-| Betrieb liest das DNS-Protokoll | 0 Zeilen |
-| Betrieb legt ein Postfach an | abgelehnt |
+| Moderation liest eine fremde Sitzung, ändert eine fremde Sitzung | erlaubt |
+| Creator ändert eine fremde Sitzung | 0 Zeilen |
+| Administration erreicht die Fähigkeit `konfiguration-verwalten` | erlaubt |
+| Betrieb erreicht dieselbe Fähigkeit | 0 Zeilen |
+| keine `SECURITY DEFINER`-Funktion ist für `anon` ausführbar | erfüllt |
 | Moderation ruft `admin_payments_summary_30d()` und `admin_security_overview()` | erlaubt |
 | Creator ruft dieselben beiden | 0 Zeilen |
 
@@ -323,20 +340,21 @@ Die Tabelle wird ausschliesslich vom Webhook geschrieben, der mit dem Service-Ke
 
 ## 8. Advisor-Befunde
 
-Behoben sind `function_search_path_mutable`, `auth_rls_initplan`, `multiple_permissive_policies`, `duplicate_index` und – seit `20260817100800` – `rls_enabled_no_policy`. Es bleiben 45 Security- und 47 Performance-Befunde. Was bleibt, bleibt mit Grund:
+Behoben sind `function_search_path_mutable`, `auth_rls_initplan`, `multiple_permissive_policies`, `duplicate_index` und – seit `20260817100800` – `rls_enabled_no_policy`. Es bleiben **13** Security- und **9** Performance-Befunde; vor Phase 1.4b waren es 45 und 47. Was bleibt, bleibt mit Grund:
 
-| Befund | Anzahl | Bewertung |
-| --- | --- | --- |
-| `auth_leaked_password_protection` | 1 | `password_hibp_enabled` steht auf dem Branch auf `false`. Kein Schemabefund, sondern eine Einstellung des Auth-Servers – sie lässt sich weder durch eine Migration herstellen noch aus dem Repository nachweisen, siehe Abschnitt 11 |
-| `authenticated_security_definer_function_executable` | 4 | `aktuelle_rolle()` und `hat_rolle_mindestens()` werden von den Policies gebraucht und müssen deshalb für `authenticated` ausführbar sein. Sie geben nur Auskunft über das aufrufende Konto selbst. `admin_payments_summary_30d()` und `admin_security_overview()` prüfen die Fähigkeit intern und liefern ohne `betrieb-lesen` keine Zeile – nachgewiesen in Abschnitt 7 |
-| `pg_graphql_anon_table_exposed` | 3 | `airports`, `blog_posts`, `blog_comments` sollen ohne Anmeldung lesbar sein. Sichtbarkeit im GraphQL-Schema ist die Folge des `SELECT`-Rechts, nicht ein zusätzliches Recht |
-| `pg_graphql_authenticated_table_exposed` | 37 | dasselbe für angemeldete Konten. Welche Zeilen sichtbar sind, entscheidet RLS – nachgewiesen in Abschnitt 7 |
-| `unused_index` | 46 | der Development-Branch trägt keine echte Last. Ein Index, den nie eine Abfrage benutzt hat, ist auf einem Branch ohne Verkehr keine Aussage – die Zahl schwankt allein danach, was zuletzt jemand abgefragt hat. Darunter sind die 19 Fremdschlüsselindizes aus `20260817100400`, die genau für den Betrieb angelegt wurden |
-| `auth_db_connections_absolute` | 1 | Einstellung des Auth-Servers, kein Schemabefund. Gehört zur Kapazitätsplanung vor dem Launch |
+| Befund | Anzahl | vor 1.4b | Bewertung |
+| --- | --- | --- | --- |
+| `authenticated_security_definer_function_executable` | 4 | 4 | `aktuelle_rolle()` und `hat_rolle_mindestens()` werden von den Policies gebraucht und müssen deshalb für `authenticated` ausführbar sein. Sie geben nur Auskunft über das aufrufende Konto selbst. `admin_payments_summary_30d()` und `admin_security_overview()` prüfen die Fähigkeit intern und liefern ohne `betrieb-lesen` keine Zeile – nachgewiesen in Abschnitt 7 |
+| `pg_graphql_anon_table_exposed` | 1 | 3 | nur noch `airports`; die Tabelle soll ohne Anmeldung lesbar sein. Sichtbarkeit im GraphQL-Schema ist die Folge des `SELECT`-Rechts, nicht ein zusätzliches Recht. `blog_posts` und `blog_comments` sind mit Phase 1.4b entfallen |
+| `pg_graphql_authenticated_table_exposed` | 8 | 37 | dasselbe für angemeldete Konten, jetzt für alle acht verbleibenden Tabellen. Welche Zeilen sichtbar sind, entscheidet RLS – nachgewiesen in Abschnitt 7 |
+| `unused_index` | 8 | 46 | der Development-Branch trägt keine echte Last. Ein Index, den nie eine Abfrage benutzt hat, ist auf einem Branch ohne Verkehr keine Aussage. Die 19 Fremdschlüsselindizes aus `20260817100400` lagen auf den entfernten Tabellen und sind mit ihnen weg; die verbleibenden acht liegen auf `airports`, `creator_profiles` und `creator_sessions` |
+| `auth_db_connections_absolute` | 1 | 1 | Einstellung des Auth-Servers, kein Schemabefund. Gehört zur Kapazitätsplanung vor dem Launch |
+| `auth_leaked_password_protection` | – | 1 | im Lauf nach Phase 1.4b **nicht gemeldet**, siehe unten. `password_hibp_enabled` ist unverändert `false` und bleibt offener Punkt, siehe Abschnitt 11 |
+| `rls_enabled_no_policy` | 0 | 0 | bleibt behoben |
 
-Zwei Verschiebungen gegenüber dem ersten Durchgang: `rls_enabled_no_policy` auf `stripe_webhooks` ist weg, weil die Tabelle jetzt eine Lesepolicy hat – dafür zählt sie in der GraphQL-Gruppe mit, die von 36 auf 37 steigt. Und die Funktion `admin_security_overview()` erhöht die erste Gruppe von drei auf vier. Sie folgt demselben Muster wie `admin_payments_summary_30d()` – `SECURITY DEFINER` mit interner Prüfung. `pg_policy` wäre für jede Rolle lesbar und verriete die Bedingung jeder Policy; die Funktion gibt nur deren Anzahl heraus.
+Die vier `SECURITY DEFINER`-Funktionen folgen demselben Muster: interne Prüfung statt Rechteentzug. `pg_policy` wäre für jede Rolle lesbar und verriete die Bedingung jeder Policy; `admin_security_overview()` gibt nur deren Anzahl heraus.
 
-`auth_leaked_password_protection` meldeten die Advisors in den Läufen vom 17. August 09:20 und 10:49 noch nicht, im Abschlusslauf dagegen schon. Dazwischen entstanden die ersten passwortgestützten Konten auf dem Branch, für die manuelle Prüfung von Moderation und Notzugang. Warum der Advisor vorher schwieg, ist damit nicht bewiesen. Festgehalten ist nur, dass Phase 1.4 keine Auth-Einstellung geschrieben hat – gearbeitet wurde ausschliesslich über Migrationen und SQL.
+`auth_leaked_password_protection` meldeten die Advisors in den Läufen vom 17. August 09:20 und 10:49 nicht, im Abschlusslauf der Phase 1.4 dagegen schon – und im Lauf nach Phase 1.4b wieder nicht. Geschrieben hat die Einstellung keine der beiden Phasen; gearbeitet wurde ausschliesslich über Migrationen und SQL. Naheliegend ist, dass der Advisor den Befund nur meldet, solange passwortgestützte Konten auf dem Branch existieren, und die Testkonten entstehen in zurückgerollten Transaktionen. Bewiesen ist das nicht. Festgehalten ist, dass `password_hibp_enabled` unverändert `false` ist.
 
 Die fünf `darf_…()`-Funktionen erzeugen keinen Befund: Sie sind `SECURITY INVOKER` und tragen einen festen `search_path`.
 
@@ -352,7 +370,7 @@ Das Skript verwirft `public` in einer Transaktion, baut es aus den Migrationen n
 
 Danach prüft das Skript ein zweites Mal, dass das laufende Schema unverändert ist. Ein Test, der die Datenbank verändert, die er prüft, wäre wertlos.
 
-Ergebnis über alle zehn Migrationen: kein Unterschied.
+Ergebnis über alle elf Migrationen: kein Unterschied. Das ist nach Phase 1.4b die wichtigste Einzelaussage: Die Entfernung von 29 Tabellen steht vollständig in einer Migration, nicht in der Oberfläche – ein Wiederaufbau aus dem Repository ergibt genau die acht Tabellen des laufenden Branches.
 
 Zwei Dinge mussten dafür geklärt werden. Erstens hing die Darstellung von Bedingungen und Typen am `search_path` – derselbe Index wurde einmal mit und einmal ohne Schemapräfix ausgegeben und sah dadurch verschieden aus, obwohl er identisch war. Beide Fingerabdrücke laufen jetzt mit demselben Pfad. Zweitens gehören 48 Vorgaberechte dem Platform-Rollenkonto `supabase_admin`; `alter default privileges for role supabase_admin` scheitert als `postgres` mit „permission denied", eine Anwendungsmigration kann sie also gar nicht herstellen. Sie sind ausdrücklich vom Vergleich ausgenommen, statt den Vergleich weicher zu machen.
 
@@ -386,7 +404,9 @@ Diese fünf laufen vor einer Zusammenführung von Hand gegen den Development-Bra
 
 ## 10. Einordnung der Tabellen
 
-Maßstab ist nicht der Name, sondern die Verwendung. Grundlage ist `npm run db:verwendung`, das nur die Stellen zählt, an denen der Supabase-Client eine Struktur wirklich anspricht. Eine Textsuche zählt zu viel: `payments` trifft auch `admin_payments`, `session_metrics` auch `creator_session_metrics`.
+Maßstab ist nicht der Name, sondern die Verwendung. Grundlage ist `npm run db:verwendung`, das nur die Stellen zählt, an denen der Supabase-Client eine Struktur wirklich anspricht. Eine Textsuche zählt zu viel: `payments` trifft auch `admin_payments`, `creator_profiles` auch `sync_creator_profile_core`.
+
+Nach Phase 1.4b enthält das Schema nur noch Tabellen, die verwendet werden. Die Einordnung bleibt trotzdem stehen: Sie erklärt, warum die acht geblieben sind, und die letzten beiden Abschnitte halten fest, was entfernt wurde.
 
 ### V2 benötigt – 7
 
@@ -401,9 +421,9 @@ Maßstab ist nicht der Name, sondern die Verwendung. Grundlage ist `npm run db:v
 
 `creator_sessions` gehört zur alten Produktidee, versorgt aber die Startseite des Administrationsbereichs mit den Kennzahlen „Sitzungen (30 Tage)" und dem 14-Tage-Verlauf (`AdminStatsStrip`, `AdminTimeSeries`). Die Tabelle verschwindet, sobald diese Kennzahlen auf Reisen umgestellt sind – das gehört zu Phase 1.5, nicht hierher.
 
-### Obsolet – 29
+### Entfernt in Phase 1.4b – 29
 
-Kein Anwendungscode spricht diese Tabellen mehr an. Sie stammen aus der Creator-, Media-, Blog- und Publishing-Welt, deren Oberflächen mit Phase 1.1b und deren Endpunkte mit Phase 1.1 entfernt wurden.
+Kein Anwendungscode sprach diese Tabellen mehr an. Sie stammten aus der Creator-, Media-, Blog- und Publishing-Welt, deren Oberflächen mit Phase 1.1b und deren Endpunkte mit Phase 1.1 entfernt wurden. Alle 29 waren beim Entfernen leer.
 
 | Bereich | Tabellen |
 | --- | --- |
@@ -415,9 +435,11 @@ Kein Anwendungscode spricht diese Tabellen mehr an. Sie stammen aus der Creator-
 | Infrastruktur-Automatisierung | `admin_email_boxes`, `dns_audit_events` |
 | Sonstiges | `copilot_suggestions`, `insights_bets`, `insights_user_settings` |
 
-`insights_bets` und `insights_user_settings` bilden Wetten mit Quoten ab (`odds >= 1.01`). Sie haben mit Reisen nichts zu tun.
+`insights_bets` und `insights_user_settings` bildeten Wetten mit Quoten ab (`odds >= 1.01`). Sie hatten mit Reisen nichts zu tun.
 
-**Sie sind trotzdem nicht in Phase 1.4 gelöscht.** 29 Tabellen zu entfernen ist eine eigene, unumkehrbare Handlung; nach [AGENTS.md](../AGENTS.md) Regel 22 gehört ein Archiv-Tag davor. Sie sind jetzt versioniert, RLS-gedeckt und rechtlich eng geführt – damit richten sie keinen Schaden an, und ihre Entfernung ist eine Aufräumaktion statt einer Sicherheitsmaßnahme. Der Schritt steht in [ROADMAP.md](../ROADMAP.md) vor dem Reise-Schema, weil die freiwerdenden Namen dort gebraucht werden.
+Der Schritt war absichtlich nicht Teil von Phase 1.4: 29 Tabellen zu entfernen ist eine eigene, unumkehrbare Handlung, und nach [AGENTS.md](../AGENTS.md) Regel 22 gehört ein Archiv-Tag davor. Phase 1.4 hat sie stattdessen versioniert, RLS-gedeckt und rechtlich eng geführt, damit sie in der Zwischenzeit keinen Schaden anrichten konnten.
+
+Mit den Tabellen sind 24 Funktionssignaturen, 9 Trigger und die Enums `blog_status` und `creator_content_type` entfallen. Der vollständige Nachweis – Zeilenzahlen, Abhängigkeiten, Trockenlauf ohne `cascade`, bewusst verbliebene Objekte – steht in [docs/LEGACY_ENTFERNUNG.md](LEGACY_ENTFERNUNG.md).
 
 ### Entfernt in Phase 1.4 – 2
 
@@ -428,13 +450,11 @@ Kein Anwendungscode spricht diese Tabellen mehr an. Sie stammen aus der Creator-
 
 Mit ihnen sind `public.is_admin(uuid)` und die Spalte `creator_profiles.is_admin` entfallen.
 
-### Bekannte Redundanz in den obsoleten Tabellen
+### Erledigte Redundanz
 
-Vier Tabellen tragen denselben Fremdschlüssel doppelt oder dreifach: `blog_comments.user_id` (2), `creator_session_metrics.session_id` (3), `edit_docs.session_id` (2), `render_jobs.session_id` (2). Das kostet bei jedem Schreibvorgang eine überflüssige Prüfung.
+Vier Tabellen trugen denselben Fremdschlüssel doppelt oder dreifach: `blog_comments.user_id` (2), `creator_session_metrics.session_id` (3), `edit_docs.session_id` (2), `render_jobs.session_id` (2). Phase 1.4 hat sie nicht einzeln bereinigt, weil das Arbeit an Code gewesen wäre, der als Nächstes entfernt wird ([AGENTS.md](../AGENTS.md) Regel 22). Alle vier Tabellen gehörten zu den 29 und sind mitsamt der Redundanz entfallen.
 
-Nachgemessen wurde, ob mehr dahintersteckt: Bei `blog_comments` haben die beiden Bedingungen verschiedene Löschregeln (`ON DELETE SET NULL` und keine). Das Löschen eines Kontos mit Kommentaren gelingt trotzdem – PostgreSQL führt die Regel aus, bevor es die strengere Bedingung prüft, und die trifft dann auf `NULL`. Es ist also Redundanz, kein Defekt.
-
-Alle vier Tabellen stehen in der Liste der obsoleten. Sie dafür einzeln zu bereinigen wäre Arbeit an Code, der als Nächstes entfernt wird ([AGENTS.md](../AGENTS.md) Regel 22).
+Keine der zwei verbleibenden Fremdschlüsselbedingungen ist doppelt.
 
 ---
 
@@ -442,11 +462,13 @@ Alle vier Tabellen stehen in der Liste der obsoleten. Sie dafür einzeln zu bere
 
 | Punkt | Einordnung |
 | --- | --- |
-| 29 obsolete Tabellen entfernen | eigener Schritt mit Archiv-Tag, vor dem Reise-Schema |
 | `creator_profiles` in ein generisches Profil überführen | Phase 1.5. Der Tabellenname steht nur in `ROLE_TABLE` in `lib/auth/admin-guard.ts` |
 | `creator_sessions` aus den Admin-Kennzahlen lösen | Phase 1.5, zusammen mit dem Reise-Schema |
+| Enum `session_status` | verwaist: keine Spalte, keine Signatur, kein `pg_depend`-Eintrag. Schon vor Phase 1.4b verwaist und deshalb nicht mitentfernt – seine drei Werte `pending`, `approved`, `rejected` sind genau die, die `creator_sessions_review_status_check` auf der verbleibenden Spalte `creator_sessions.review_status` erlaubt. Damit gehört er nicht nachweisbar ausschliesslich zur entfernten Struktur ([docs/LEGACY_ENTFERNUNG.md](LEGACY_ENTFERNUNG.md) Abschnitt 9). Entscheidung fällig, wenn Phase 1.5 `creator_sessions` neu schneidet |
+| Fähigkeit `konfiguration-verwalten` ohne Fläche | deckt seit Phase 1.4b keine Tabelle mehr ab, bleibt aber als höchste Stufe des Fähigkeitsmodells bestehen und wird direkt geprüft, siehe Abschnitt 6 |
+| Fünf Funktionen ohne Aufrufer auf verbleibenden Tabellen | `sync_creator_profile_core()`, `sync_creator_profile_emails()`, `append_email_to_array()` (2 Signaturen), `remove_email_from_array()` hängen an keinem Trigger und werden vom Anwendungscode nicht gerufen. Sie gehören zu `creator_profiles` und `creator_sessions`, nicht zur Legacy-Struktur, und lagen damit ausserhalb des Auftrags von Phase 1.4b. Entscheidung fällig in Phase 1.5 |
 | Datenbanknahe Prüfungen in die CI | braucht einen kurzlebigen Branch je Lauf, siehe Abschnitt 9 |
 | Fehler in der Oberfläche sichtbar machen | Die Routen antworten seit ADR-0037 korrekt, aber `TransactionsCard` und `WebhooksCard` in `components/admin/payments/PaymentsCenter.tsx` werfen die Meldung in ein `finally` ohne `catch`. Die Tabelle bleibt dann leer statt zu erklären, warum. `OverviewCard` und `SecurityWidget` zeigen die Meldung bereits an |
 | Schutz vor kompromittierten Passwörtern | `password_hibp_enabled` steht auf `false`, obwohl `components/auth/RegisterForm.tsx` die zugehörige Fehlermeldung bereits übersetzt. Bewusst nicht im Vorbeigehen umgelegt: Eine Auth-Einstellung liegt neben dem Schema, sie steht in keiner Migration und wäre aus dem Repository weder nachvollziehbar noch reproduzierbar. Sie gehört zusammen mit `password_min_length` und den Redirect-URLs in einen eigenen Schritt, der die Auth-Konfiguration versioniert |
 | Auth-Konfiguration nicht versioniert | `supabase/config.toml` ist der unveränderte Vorlagenstand der CLI – `site_url` zeigt auf `127.0.0.1`, `minimum_password_length` steht auf 6, der Branch verlangt 12. Die Datei beschreibt damit weder Development noch Production. Solange das so bleibt, ist die Auth-Ebene die einzige Schicht, die nicht aus dem Repository hervorgeht |
-| Production-Stand | in Phase 1.4 nicht erhoben und nicht verändert. Der Abgleich gehört zum ersten Production-Deploy nach 1.5 |
+| Production-Stand | weder in Phase 1.4 noch in Phase 1.4b erhoben oder verändert. Ob Production dieselben 29 Tabellen trägt, ist damit unbekannt – nicht angenommen. Der Abgleich gehört zum ersten Production-Deploy nach 1.5 |

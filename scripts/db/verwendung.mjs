@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 // Welche Tabellen und RPCs benutzt der Anwendungscode wirklich?
 //
-// Ein `rg tabellenname` zählt zu viel: `payments` trifft auch `admin_payments`,
-// `session_metrics` auch `creator_session_metrics`. Für die Entscheidung, ob eine
-// Struktur obsolet ist, reicht das nicht. Dieses Modul sucht deshalb nur nach den
-// Stellen, an denen der Supabase-Client eine Struktur tatsächlich anspricht:
+// Ein `rg tabellenname` zählt zu viel: `payments` trifft auch die Funktion
+// `admin_payments_summary_30d`, `refunds` auch die Route `payments/refund`. Für
+// die Entscheidung, ob eine Struktur obsolet ist, reicht das nicht – genau
+// diese Entscheidung stand in Phase 1.4b für 29 Tabellen an. Dieses Modul sucht
+// deshalb nur nach den Stellen, an denen der Supabase-Client eine Struktur
+// tatsächlich anspricht:
 //
 //   .from('tabelle')      Tabellen- und View-Zugriff
 //   .rpc('funktion')      Funktionsaufruf

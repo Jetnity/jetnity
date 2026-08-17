@@ -46,10 +46,14 @@ const FAELLE = [
     grund: 'Die öffentliche Flughafensuche unter /api/search/airports braucht diesen Zugriff.',
   },
   {
-    name: 'anon liest sichtbare Blogkommentare',
+    name: 'anon liest die einzige öffentliche Tabelle und sonst keine',
     rolle: 'anon',
-    sql: `select * from public.blog_comments where status = 'visible'`,
-    erwartung: 'erlaubt',
+    sql: `select * from information_schema.role_table_grants
+          where table_schema = 'public' and grantee = 'anon' and table_name <> 'airports'`,
+    erwartung: 'leer',
+    grund:
+      'Bis Phase 1.4b las anon zusätzlich blog_posts und blog_comments. Beide Tabellen sind entfernt; ' +
+      'airports ist der letzte öffentliche Lesezugriff und soll der letzte bleiben.',
   },
 
   // --- Kein Zugriff ohne Anmeldung ----------------------------------------
@@ -72,18 +76,13 @@ const FAELLE = [
     erwartung: 'abgelehnt',
   },
   {
-    name: 'anon liest Creator-Uploads',
+    name: 'anon liest Sitzungen',
     rolle: 'anon',
-    sql: `select * from public.creator_uploads`,
+    sql: `select * from public.creator_sessions`,
     erwartung: 'abgelehnt',
-    grund: 'Bis Phase 1.4 galt hier USING true – jede Zeile war ohne Anmeldung lesbar.',
-  },
-  {
-    name: 'anon liest Sitzungskommentare',
-    rolle: 'anon',
-    sql: `select * from public.session_comments`,
-    erwartung: 'abgelehnt',
-    grund: 'Bis Phase 1.4 galt hier USING true.',
+    grund:
+      'Der Fall ersetzt die entfallenen Nachweise zu creator_uploads und session_comments, ' +
+      'auf denen bis Phase 1.4 USING true galt.',
   },
   {
     name: 'anon liest Stripe-Ereignisse',
@@ -93,12 +92,14 @@ const FAELLE = [
     grund: 'Die Tabelle ist seit dem Nachtrag lesbar – aber erst ab der Fähigkeit betrieb-lesen.',
   },
   {
-    name: 'anon legt einen Creator-Upload an',
+    name: 'anon legt eine Sitzung an',
     rolle: 'anon',
-    sql: `insert into public.creator_uploads (title, description, file_url, region, tags, language, created_at, is_virtual)
-          values ('x','x','x','x','{}','de', now(), true)`,
+    sql: `insert into public.creator_sessions (user_id, title, role, status)
+          values ('${NUTZER}', 'x', 'creator', 'draft')`,
     erwartung: 'abgelehnt',
-    grund: 'Die Policy „Allow insert for virtual uploads" erlaubte das jedem Besucher.',
+    grund:
+      'Ersetzt den entfallenen Nachweis zu creator_uploads, dessen Policy ' +
+      '„Allow insert for virtual uploads" das jedem Besucher erlaubte.',
   },
   {
     name: 'anon leert eine Tabelle mit TRUNCATE',
@@ -313,19 +314,24 @@ const FAELLE = [
   },
 
   // --- Funktionen ---------------------------------------------------------
+  //
+  // Die beiden Nachweise zu `creator_alerts_eval_all` sind mit Phase 1.4b
+  // entfallen: Die Funktion ist entfernt. Was sie belegten – ein
+  // `SECURITY DEFINER` ohne eigene Rechteprüfung ist für `anon` und für jedes
+  // angemeldete Konto unerreichbar – belegen die folgenden sechs Fälle für die
+  // beiden verbleibenden Funktionen dieser Art.
   {
-    name: 'anon ruft creator_alerts_eval_all',
+    name: 'keine SECURITY-DEFINER-Funktion ist für anon ausführbar',
     rolle: 'anon',
-    sql: `select public.creator_alerts_eval_all()`,
-    erwartung: 'abgelehnt',
-    grund: 'SECURITY DEFINER ohne Rechtenachweis: Der Aufruf lieferte vorher ok:1 und schrieb Zeilen.',
-  },
-  {
-    name: 'angemeldetes Konto ruft creator_alerts_eval_all',
-    rolle: 'authenticated',
-    uid: NUTZER,
-    sql: `select public.creator_alerts_eval_all()`,
-    erwartung: 'abgelehnt',
+    sql: `select p.proname from pg_proc p
+          join pg_namespace n on n.oid = p.pronamespace
+          where n.nspname = 'public'
+            and p.prosecdef
+            and has_function_privilege('anon', p.oid, 'execute')`,
+    erwartung: 'leer',
+    grund:
+      'Vor Phase 1.4 war creator_alerts_eval_all() für anon aufrufbar und schrieb Zeilen. ' +
+      'Der Fall hält fest, dass keine SECURITY-DEFINER-Funktion diesen Weg zurückbekommt.',
   },
   {
     name: 'anon ruft admin_payments_summary_30d',
@@ -544,11 +550,15 @@ const FAELLE = [
     erwartung: 'erlaubt',
   },
   {
-    name: 'Moderation verbirgt einen fremden Blogkommentar',
+    name: 'Moderation ändert eine fremde Sitzung',
     rolle: 'authenticated',
     uid: MODERATION,
-    sql: `update public.blog_comments set status = 'hidden' where user_id = '${NUTZER}'`,
+    sql: `update public.creator_sessions set review_status = 'rejected' where user_id = '${NUTZER}'`,
     erwartung: 'erlaubt',
+    grund:
+      'Ersetzt den entfallenen Nachweis am Blogkommentar. Nach Phase 1.4b deckt ' +
+      'die Fähigkeit inhalte-moderieren nur noch creator_sessions ab; ohne einen ' +
+      'schreibenden Fall wäre sie nur noch lesend belegt.',
   },
   {
     name: 'Creator liest fremde Sitzungen',
@@ -557,38 +567,38 @@ const FAELLE = [
     sql: `select * from public.creator_sessions where user_id = '${NUTZER}'`,
     erwartung: 'leer',
   },
+  {
+    name: 'Creator ändert eine fremde Sitzung',
+    rolle: 'authenticated',
+    uid: CREATOR,
+    sql: `update public.creator_sessions set review_status = 'rejected' where user_id = '${NUTZER}'`,
+    erwartung: 'leer',
+  },
 
   // --- Fähigkeit konfiguration-verwalten (ab admin) ------------------------
   //
-  // Für diese Tabellen gibt es keine Route. Sie bleiben bei `admin`; die Fälle
-  // belegen, dass die Absenkung der übrigen Tabellen sie nicht mitgenommen hat.
+  // Diese Fähigkeit deckt seit Phase 1.4b keine Tabelle mehr ab: Ihre drei
+  // Tabellen – `admin_email_boxes`, `dns_audit_events`, `copilot_suggestions` –
+  // gehörten zu den 29 entfernten. Die Funktion bleibt trotzdem bestehen; sie
+  // ist Teil des Fähigkeitsmodells, das `CAPABILITY_MINIMUM` in
+  // `lib/auth/roles.ts` und `lib/auth/faehigkeiten-datenbank.test.ts`
+  // zusammenhalten. Die beiden Fälle prüfen sie deshalb direkt statt über eine
+  // Tabelle: `select 1 where …` liefert eine Zeile, wenn die Fähigkeit greift,
+  // und keine, wenn sie es nicht tut.
   {
-    name: 'Administration liest das DNS-Protokoll',
+    name: 'Administration erreicht die Fähigkeit konfiguration-verwalten',
     rolle: 'authenticated',
     uid: ADMIN,
-    sql: `select * from public.dns_audit_events`,
+    sql: `select 1 where public.darf_konfiguration_verwalten()`,
     erwartung: 'erlaubt',
   },
   {
-    name: 'Betrieb liest das DNS-Protokoll',
+    name: 'Betrieb erreicht die Fähigkeit konfiguration-verwalten nicht',
     rolle: 'authenticated',
     uid: BETRIEB,
-    sql: `select * from public.dns_audit_events`,
+    sql: `select 1 where public.darf_konfiguration_verwalten()`,
     erwartung: 'leer',
-  },
-  {
-    name: 'Betrieb legt ein Postfach an',
-    rolle: 'authenticated',
-    uid: BETRIEB,
-    sql: `insert into public.admin_email_boxes (domain, address) values ('jetnity.com', 'x@jetnity.com')`,
-    erwartung: 'abgelehnt',
-  },
-  {
-    name: 'Administration legt ein Postfach an',
-    rolle: 'authenticated',
-    uid: ADMIN,
-    sql: `insert into public.admin_email_boxes (domain, address) values ('jetnity.com', 'y@jetnity.com')`,
-    erwartung: 'erlaubt',
+    grund: 'Genau eine Stufe unterhalb: operator liegt unter admin.',
   },
 
   // --- Notzugang erteilt keine Datenbankrechte -----------------------------
@@ -701,14 +711,7 @@ function aufbau() {
     `insert into public.security_events (type, ip) values ('login_failed', '203.0.113.1');`,
     `insert into public.blocked_ips (ip, reason) values ('203.0.113.2', 'Test');`,
     `insert into public.airports (iata, name, city, country) values ('ZRH', 'Zürich', 'Zürich', 'CH');`,
-    `insert into public.blog_comments (user_id, status, content) values ('${NUTZER}', 'visible', 'Hallo');`,
-    `insert into public.creator_uploads (user_id, title, description, file_url, region, tags, language, created_at)
-       values ('${NUTZER}', 'T', 'B', 'https://example.invalid/a', 'CH', '{}', 'de', now());`,
-    `insert into public.session_comments (user_id, session_id, text)
-       select '${NUTZER}', s.id, 'Notiz' from public.creator_sessions s limit 1;`,
     `insert into public.stripe_webhooks (id, type) values ('evt_1', 'payment_intent.succeeded');`,
-    `insert into public.dns_audit_events (domain, actor, mode) values ('jetnity.com', 'test', 'plan');`,
-    `insert into public.admin_email_boxes (domain, address) values ('jetnity.com', 'info@jetnity.com');`,
   ]
 
   return [...nutzer, ...profile, ...daten].join('\n')
