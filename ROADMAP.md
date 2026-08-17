@@ -17,7 +17,8 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Phase 1.1 | Alt-Endpunkte und Cron-Jobs außer Betrieb | **fertig** |
 | Phase 1.1b | Alt-Oberflächen entfernen, Auth-Texte auf V2 | **abgeschlossen, in Production verifiziert** |
 | Phase 1.2 – 1.4 | Tokens, Auth-Vereinheitlichung, Datenbank-Baseline | **fertig auf Development** |
-| Phase 1 (Rest) | obsolete Tabellen entfernen, Auth-Konfiguration versionieren, V2-Reise-Schema | in Arbeit |
+| Phase 1.4b | obsolete Legacy-Tabellen archiviert und entfernt (37 → 8) | **fertig auf Development** |
+| Phase 1 (Rest) | Auth-Konfiguration versionieren, Fehlerdarstellung, V2-Reise-Schema | in Arbeit |
 | Phase 2 | Jetnity-Kern: natürliche Sprache zu strukturierter Reise | geplant |
 | Phase 3 | Reiseprodukte und Monetarisierung | geplant |
 | Phase 4 | Launch-Reife | geplant |
@@ -320,16 +321,32 @@ Ein Befund ist im Abschlusslauf neu dazugekommen und bleibt offen: `auth_leaked_
 
 Bei der Rechtedurchsicht fiel dafür der letzte Service-Role-Pfad **in der Anwendung** auf: `api/search/airports` legte, sobald `SUPABASE_SERVICE_ROLE_KEY` gesetzt war, einen zweiten Client mit vollen Rechten an, um Amadeus-Ergebnisse zurückzuschreiben. Der Endpunkt ist öffentlich und ohne Anmeldung erreichbar. Das Zwischenspeichern ist entfernt – die Suche liefert unverändert lokale Treffer und den Amadeus-Fallback, sie schreibt nur nicht mehr. Damit liest kein Codepfad der Anwendung einen Service-Role-Key.
 
-**Bewusst nicht getan.** Die 29 obsoleten Tabellen sind eingeordnet, aber nicht gelöscht. Das ist eine eigene, unumkehrbare Handlung und braucht nach [AGENTS.md](AGENTS.md) Regel 22 ein Archiv-Tag. Sie sind jetzt versioniert, RLS-gedeckt und rechtlich eng geführt; ihre Entfernung ist damit eine Aufräumaktion, keine Sicherheitsmassnahme.
+**Bewusst nicht getan.** Die 29 obsoleten Tabellen sind eingeordnet, aber nicht gelöscht. Das ist eine eigene, unumkehrbare Handlung und braucht nach [AGENTS.md](AGENTS.md) Regel 22 ein Archiv-Tag. Sie sind jetzt versioniert, RLS-gedeckt und rechtlich eng geführt; ihre Entfernung ist damit eine Aufräumaktion, keine Sicherheitsmassnahme. Nachgeholt in 1.4b.
 
-### 1.4b Obsolete Tabellen entfernen · nächster Schritt
+### 1.4b Obsolete Tabellen entfernen · abgeschlossen auf Development
 
-- [ ] Archiv-Tag auf den Stand vor der Löschung setzen
-- [ ] 29 Tabellen der Creator-, Media-, Blog-, Publishing- und Insights-Welt entfernen, mit ihren Funktionen, Triggern und Enums
-- [ ] `creator_sessions` löst sich erst mit 1.5 – die Admin-Startseite zieht daraus noch ihre Kennzahlen
-- [ ] Typen neu erzeugen, Reproduzierbarkeit und Nachweise erneut fahren
+Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst worden. Vollständiger Bericht: [docs/LEGACY_ENTFERNUNG.md](docs/LEGACY_ENTFERNUNG.md). Entscheidung: [DECISIONS.md](DECISIONS.md) ADR-0038.
 
-Die Liste steht in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 10.
+- [x] Archiv-Tag `archive/pre-1-4b-legacy-datenbank` auf den gemergten `main`-Stand gesetzt und gepusht (Commit `c058e845`)
+- [x] die 29 Tabellen gegen den realen Development-Stand verifiziert, statt nach Namen zu löschen
+- [x] Zeilenzahlen vor dem Drop erhoben: alle 29 leer, keine Daten vernichtet
+- [x] Abhängigkeiten vollständig geprüft – Fremdschlüssel, Views, Funktionen, Trigger, Policies, Grants, Indizes, Enums, Sequenzen, Kommentare, Publikationen, cron-Jobs, Anwendungscode
+- [x] 29 Tabellen entfernt, dazu 24 Funktionssignaturen, 9 Trigger und die Enums `blog_status` und `creator_content_type`
+- [x] Migration `20260817110000_legacy_entfernen.sql` arbeitet **ohne `cascade`** – eine unerwartete Abhängigkeit lässt sie scheitern statt still mitgenommen zu werden
+- [x] `creator_profiles`, `airports`, `payments`, `refunds`, `stripe_webhooks`, `security_events`, `blocked_ips` und `creator_sessions` geschützt: 8 Tabellen bleiben
+- [x] Typen neu erzeugt (1400 Zeilen entfallen), Reproduzierbarkeit über alle 11 Migrationen ohne Unterschied
+- [x] Nachweise angepasst statt gestrichen: 78 Sicherheitsnachweise, 144 RLS-Proben, Advisors erneut gefahren
+- [x] `npm run db:rechte` um eine vierte Regel erweitert: keine Funktion nennt eine Struktur, die es nicht gibt
+- [x] tote Codepfade entfernt – `scripts/db/sicherheit.mjs`, `scripts/db/verwendung.mjs`, `lib/auth/roles.ts`
+- [x] `creator_sessions` bleibt bis 1.5 – die Admin-Startseite zieht daraus noch ihre Kennzahlen
+
+**Erwartung und Messung.** Die Aufgabe nannte ungefähr 39 → 10 Tabellen; gemessen sind es **37 → 8**. Die Abweichung ist zeitlich, nicht fachlich: 39 war der Stand *vor* Phase 1.4, die `admin_domains` und `app_admins` entfernt hat. Die Liste der zu entfernenden Tabellen blieb unverändert 29, und 37 − 29 = 8.
+
+**Der Trockenlauf war der eigentliche Nachweis.** Eine Aufzählung von Abhängigkeiten sagt, was gefunden wurde, nicht was übersehen wurde. Die Migration lief deshalb zuerst in einer zurückgerollten Transaktion und ohne `cascade` – so scheitert sie, sobald etwas ausserhalb der Liste an den Objekten hängt. Sie hat zwei echte Reihenfolgeabhängigkeiten gefunden, die keine Katalogabfrage gezeigt hätte: `publish_due_blog_posts(integer)` gibt `setof blog_posts` zurück und muss vor der Tabelle fallen, Triggerfunktionen erst nach ihren Tabellen.
+
+**Eine Fehlerklasse statt eines Einzelfalls.** PostgreSQL verfolgt Tabellenbezüge im Rumpf einer Funktion nicht in `pg_depend`. 18 Signaturen hätten den `drop table` unbemerkt überlebt und wären erst beim Aufruf mit „relation does not exist" gescheitert – dieselbe Klasse wie `ip_blocklist` und `admin_security_overview` in Phase 1.4. `npm run db:rechte` prüft das jetzt, und die Prüfung ist gegengeprobt: In einer zurückgerollten Transaktion findet sie eine künstlich erzeugte Funktion mit totem Bezug.
+
+**Nicht entfernt, weil der Nachweis fehlte.** Das Enum `session_status` war schon vor dieser Phase verwaist, seine drei Werte sind aber genau die, die `creator_sessions_review_status_check` auf der verbleibenden Spalte `creator_sessions.review_status` erlaubt – es gehört damit nicht nachweisbar ausschliesslich zur entfernten Struktur. Die Fähigkeit `konfiguration-verwalten` deckt keine Tabelle mehr ab, bleibt aber als höchste Stufe des Fähigkeitsmodells bestehen und wird jetzt direkt geprüft. Beide Punkte sind in [docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 11 als offen geführt.
 
 ### 1.4c Auth-Konfiguration versionieren · offen
 

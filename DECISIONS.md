@@ -721,6 +721,42 @@ In der Oberfläche bleibt eine Lücke. `OverviewCard` und `SecurityWidget` zeige
 
 ---
 
+## ADR-0038 – Legacy-Tabellen werden ohne `cascade` entfernt, und nur was nachgewiesen ist
+
+**Datum:** 17. August 2026
+**Status:** umgesetzt auf dem Development-Branch
+
+**Entscheidung:** Die 29 als obsolet eingeordneten Tabellen sind in einer einzigen versionierten Migration entfernt worden, `supabase/migrations/20260817110000_legacy_entfernen.sql`. Drei Regeln haben den Umfang bestimmt:
+
+1. **Kein `cascade`.** Jede Anweisung nennt ihr Ziel selbst. Eine Abhängigkeit, die nicht in der Liste steht, lässt die Migration scheitern.
+2. **Nur nachgewiesene Zugehörigkeit.** Eine abhängige Funktion, ein Trigger, ein Enum oder eine Sequenz wird nur mitentfernt, wenn belegt ist, dass sie ausschliesslich zur entfernten Struktur gehört ([AGENTS.md](AGENTS.md) Regel 22).
+3. **Archiv vor dem ersten Drop.** Der annotierte Tag `archive/pre-1-4b-legacy-datenbank` auf Commit `c058e845` sichert den Stand vorher und ist ins Remote gepusht (ADR-0003).
+
+Entfernt sind damit 29 Tabellen, 24 Funktionssignaturen, 9 Trigger und die Enums `blog_status` und `creator_content_type`. Es bleiben 8 Tabellen.
+
+**Kontext:** Phase 1.4 hat die Tabellen eingeordnet, versioniert und rechtlich eng geführt, sie aber bewusst nicht gelöscht – 29 Tabellen zu entfernen ist eine eigene, unumkehrbare Handlung. Vor dem Drop waren alle 29 leer; es gab keine Unterscheidung zwischen Testdaten und echten Daten zu treffen. Kein Anwendungscode sprach sie an (`npm run db:verwendung`), und in `app/`, `components/` und `lib/` fand die Textsuche keinen einzigen Treffer.
+
+**Alternativen:**
+
+1. *`drop table … cascade`.* Eine Anweisung statt vier Gruppen, und sie gelingt immer. Genau das ist der Einwand: Sie gelingt auch dann, wenn etwas daran hängt, das bleiben sollte, und sagt nicht, was sie mitgenommen hat. Bei 29 Tabellen mit 50 Fremdschlüsseln, 47 Policies und 24 Funktionen wäre der Umfang der Löschung nicht mehr aus der Migration ablesbar.
+2. *Die Tabellen zunächst umbenennen oder in ein Schema `legacy` verschieben.* Reversibel ohne Tag. Aber der Bestand wäre nicht kleiner, nur verschoben: Rechte, Policies und Advisor-Befunde blieben, und das Schema wäre weiterhin überwiegend Alt-Struktur. Die Reproduzierbarkeit aus Phase 1.4 macht den Tag zur besseren Sicherung – aus den elf Migrationen des Tags lässt sich der alte Stand herstellen.
+3. *Nur die Tabellen entfernen und die abhängigen Funktionen stehen lassen.* PostgreSQL verlangt es nicht: Tabellenbezüge im Rumpf einer Funktion stehen nicht in `pg_depend`. Genau deshalb wäre es falsch – 18 Signaturen hätten den Drop unbemerkt überlebt und wären erst beim Aufruf mit „relation does not exist" gescheitert, dieselbe Klasse wie `ip_blocklist` und `admin_security_overview` (ADR-0034).
+4. *Auch die verwaisten Objekte auf den verbleibenden Tabellen mitnehmen*, etwa das Enum `session_status` und fünf Funktionen ohne Aufrufer. Verlockend, weil sie beim Aufräumen auffallen. Aber sie gehören zu `creator_profiles` und `creator_sessions`, nicht zur Legacy-Struktur; sie hier zu entfernen wäre ein ungeplanter Eingriff in Tabellen, die geschützt bleiben sollten.
+
+**Begründung:** Der Verzicht auf `cascade` verwandelt eine Vermutung in einen Nachweis. Eine Aufzählung von Abhängigkeiten sagt, was gefunden wurde; sie kann nicht sagen, was übersehen wurde. Der Trockenlauf in einer zurückgerollten Transaktion ohne `cascade` sagt es – und er hat zwei echte Reihenfolgeabhängigkeiten gefunden, die keine Katalogabfrage gezeigt hätte: `publish_due_blog_posts(integer)` gibt `setof blog_posts` zurück und hängt damit am Zeilentyp der Tabelle, und Triggerfunktionen lassen sich nicht vor ihren Triggern entfernen. Die Reihenfolge der Migration – Abfragefunktionen, Tabellen, Triggerfunktionen, Enums – ist deshalb gemessen und nicht gewählt.
+
+Die zweite Regel kostet Sauberkeit und kauft Verlässlichkeit. Drei Objektgruppen wirken nach der Migration verwaist und sind trotzdem geblieben: `set_updated_at()`, weil `creator_sessions` sie noch über einen Trigger ruft; das Enum `session_status`, weil seine drei Werte genau die sind, die `creator_sessions_review_status_check` auf der verbleibenden Spalte `creator_sessions.review_status` erlaubt – die Zugehörigkeit zur entfernten Struktur ist damit nicht nachweisbar; und `darf_konfiguration_verwalten()` samt der Fähigkeit `konfiguration-verwalten`, deren drei Tabellen alle zu den 29 gehörten. Die Fähigkeit zu entfernen wäre ein Eingriff in das Admin-Rollen- und Fähigkeitssystem (ADR-0035) statt eine Aufräumaktion; sie wird stattdessen jetzt direkt nachgewiesen, `select 1 where public.darf_konfiguration_verwalten()`, statt über eine Tabelle.
+
+**Konsequenzen:** Das Schema beschreibt nur noch, was verwendet wird: 8 Tabellen, 66 Spalten, 2 Fremdschlüssel, 19 Policies, 19 Funktionen. `anon` liest genau eine Tabelle, `airports`. Die Advisor-Befunde fallen von 45 auf 13 (Security) und von 47 auf 9 (Performance), ohne dass eine Einstellung geändert wurde – die Befunde hingen an den entfernten Tabellen.
+
+`npm run db:rechte` prüft seither eine vierte Regel, die aus dem dritten Alternativpunkt folgt: Jedes `public.<name>` in einem Funktionsrumpf muss sich als Relation, Funktion oder Typ auflösen. Die Prüfung ist gegengeprobt – in einer zurückgerollten Transaktion findet sie eine künstlich erzeugte Funktion mit totem Bezug. Damit ist die Fehlerklasse aus ADR-0034 auch für die Datenbank selbst abgedeckt, nicht nur für den Anwendungscode.
+
+Neun der Nachweise in `npm run db:sicherheit` bezogen sich auf entfernte Strukturen. Sie sind durch gleichwertige an verbleibenden Strukturen ersetzt statt gestrichen: Ein Nachweis, der wegfällt, nimmt seine Aussage mit. Zwei Ersetzungen sind strenger als das Original – statt einer benannten `SECURITY DEFINER`-Funktion prüft der Nachweis jetzt jede solche Funktion in `public` daraufhin, dass `anon` sie nicht ausführen darf.
+
+Production ist nicht angefasst. Ob dort dieselben 29 Tabellen liegen, ist nicht erhoben; der Abgleich gehört zum ersten Production-Deploy nach Phase 1.5. Der vollständige Bericht mit Zeilenzahlen, Dependency-Nachweis und den Listen der entfernten und verbliebenen Objekte steht in [docs/LEGACY_ENTFERNUNG.md](docs/LEGACY_ENTFERNUNG.md).
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

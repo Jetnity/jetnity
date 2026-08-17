@@ -74,5 +74,6 @@ Der rote Faden von Jetnity lebt im Repository, nicht in einzelnen Chats. Vor gr�
 | [DECISIONS.md](DECISIONS.md) | Entscheidungsprotokoll und offene Widersprüche |
 | [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) | verbindliche Farbtokens und Designregeln |
 | [docs/DATENBANK.md](docs/DATENBANK.md) | Schema, Rollen, Eigentum, RLS und die Prüfungen dazu |
+| [docs/LEGACY_ENTFERNUNG.md](docs/LEGACY_ENTFERNUNG.md) | Bericht zur Entfernung der 29 Legacy-Tabellen: Archiv-Tag, Nachweis, verbliebene Objekte |
 
 Der historische erste V2-Entwurf liegt in [docs/JETNITY_V2_FOUNDATION.md](docs/JETNITY_V2_FOUNDATION.md); bei Widersprüchen gelten die Dateien oben.
