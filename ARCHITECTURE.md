@@ -78,6 +78,8 @@ Cursor interpoliert die Werte zur Laufzeit über `${env:SUPABASE_PROJECT_REF}` u
 
 Diese Verbindung ist ein Entwicklerwerkzeug. Sie ersetzt weder die App-Clients aus Abschnitt 3 noch Service-Role-Zugriff in der Anwendung. Schemaänderungen über MCP sind erst nach explizitem Auftrag in Phase 1.4 zulässig.
 
+Verifikation am 17. August 2026 gegen den offiziellen Remote-Server: Authentifizierung erfolgreich, genau die zehn Werkzeuge der drei Feature-Gruppen, Account-/Branching-/Functions-/Storage-Werkzeuge abwesend, Projekt-URL identisch mit `SUPABASE_PROJECT_REF`. `list_tables` lieferte 39 Tabellen in `public`. Es wurde keine Migration angewendet.
+
 ---
 
 ## 4. Auth und Zugriffsschutz

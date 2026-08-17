@@ -257,7 +257,7 @@ Keine API-Antwort war eine Weiterleitung. Schreibende Endpunkte verlangen jetzt 
 
 Offen bleibt das generische Profil: Die Rolle liegt weiterhin in `creator_profiles`, der Tabelle der alten Produktidee. Der Tabellenname steht jetzt an genau einer Stelle (`ROLE_TABLE` in `lib/auth/admin-guard.ts`), damit die Umstellung in 1.4 eine einzelne Änderung bleibt.
 
-### 1.4 Datenbank-Baseline · wartet auf den Development-Zugang, blockierend für Phase 2
+### 1.4 Datenbank-Baseline · Development-MCP eingerichtet, Baseline ausstehend · blockierend für Phase 2
 
 **Benötigter Zugang.** Ohne diese beiden Verbindungen lässt sich 1.4 nicht beginnen; erhoben werden kann nichts, und Migrationen liessen sich nirgends testen. Nach der Freigabe von Phase 1.3 gilt: keine Production-Datenbankänderungen.
 
@@ -270,7 +270,7 @@ Eine Development-Service-Role wird erst dann als Secret angelegt, wenn ein Test 
 
 **Was ohne Zugang schon feststeht.** Die Typen beschreiben 37 Tabellen, versioniert sind zwei. Es existiert eine Tabelle `admin_domains` – ein Hinweis darauf, dass eine domainbasierte Administrationsfreigabe einmal vorgesehen war. Mit ADR-0027 ist entschieden, dass eine Domain keine Berechtigung erteilt; die Tabelle ist in der Anwendung unbenutzt und gehört bei der Baseline auf die Liste der zu entfernenden Altlasten.
 
-- [x] Offiziellen Supabase Remote MCP Server für den Development-Branch eingerichtet (`.cursor/mcp.json`, nur `database` / `debugging` / `development`, keine Production-Verbindung). Details in [DECISIONS.md](DECISIONS.md), ADR-0030. **Keine Schemaänderungen in diesem Schritt.**
+- [x] Offiziellen Supabase Remote MCP Server für den Development-Branch eingerichtet (`.cursor/mcp.json`, nur `database` / `debugging` / `development`, keine Production-Verbindung). Am 17. August 2026 verifiziert: Server `supabase` 0.10.0, 10 Tools, Scope nur Development, 39 öffentliche Tabellen lesbar, keine Schemaänderung. Details in [DECISIONS.md](DECISIONS.md), ADR-0030.
 - [ ] vollständige Baseline-Migration für das real existierende Schema (aktuell 37 Tabellen in den Typen, 2 in Migrationen)
 - [ ] `admin_domains` bewerten und entfernen – domainbasierter Admin-Zugang ist mit ADR-0027 ausgeschlossen
 - [ ] Rolle aus `creator_profiles` in ein generisches Profil überführen; `ROLE_TABLE` in `lib/auth/admin-guard.ts` ist die einzige Stelle, die den Tabellennamen kennt
