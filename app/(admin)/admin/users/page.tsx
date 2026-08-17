@@ -25,7 +25,7 @@ export default async function UsersPage({ searchParams }: { searchParams?: Searc
   // Der Bereichsschutz sitzt im Layout der Gruppe `(admin)`. Hier geht es um
   // die zusätzliche Anforderung dieser Seite und um die Rolle des Aufrufers,
   // die bestimmt, welche Aktionen die Tabelle überhaupt anbietet.
-  const { user, role } = await requireAdminPage({ surface: 'users' })
+  const { user, role } = await requireAdminPage({ surface: 'users', capability: 'konten-verwalten' })
   if (!role || !canManageUsers(role)) {
     redirect('/unauthorized?grund=forbidden')
   }

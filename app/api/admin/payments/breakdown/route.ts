@@ -1,40 +1,34 @@
 // app/api/admin/payments/breakdown/route.ts
+//
+// Der frühere `catch` liess die dreissig vorbereiteten Tages-Eimer auf null
+// stehen und gab sie aus. Das Diagramm zeigte dann eine flache Linie – nicht
+// zu unterscheiden von dreissig Tagen ohne Umsatz.
 import { NextResponse } from 'next/server'
-import { createServerComponentClient } from '@/lib/supabase/server'
-import { requireAdminApi } from '@/lib/auth/admin-guard'
 
-export async function GET(req: Request) {
-  const gate = await requireAdminApi({ surface: 'api/payments/breakdown' })
+import { problemAntwort } from '@/lib/api/antwort'
+import { lese } from '@/lib/api/datenbank-lesen'
+import { verteileAufTage } from '@/lib/admin/kennzahlen'
+import { requireAdminApi } from '@/lib/auth/admin-guard'
+import { createRouteHandlerClient } from '@/lib/supabase/server'
+import type { Database } from '@/types/supabase'
+
+const TAGE = 30
+
+export async function GET() {
+  const gate = await requireAdminApi({ surface: 'api/payments/breakdown', capability: 'betrieb-lesen' })
   if (!gate.ok) return gate.response
 
-  const supabase = createServerComponentClient() as any
-  const since = new Date(Date.now() - 30*24*60*60*1000)
-  const sinceIso = since.toISOString()
+  const supabase = createRouteHandlerClient<Database>()
+  const beginn = new Date(Date.now() - TAGE * 24 * 3600 * 1000)
 
-  // Vorinitialisieren: 30 Tages-Buckets
-  const days: string[] = []
-  const d = new Date(since)
-  for (let i=0;i<30;i++){ days.push(d.toISOString().slice(0,10)); d.setDate(d.getDate()+1) }
-  const map: Record<string,{ revenue_chf:number; orders:number }> = {}
-  days.forEach(k => map[k] = { revenue_chf: 0, orders: 0 })
-
-  try {
-    const { data } = await supabase
+  const zahlungen = await lese(() =>
+    supabase
       .from('payments')
       .select('amount_chf, status, created_at')
-      .gte('created_at', sinceIso)
-    if (Array.isArray(data)) {
-      for (const r of data) {
-        const k = String(r.created_at).slice(0,10)
-        if (!map[k]) continue
-        if (r.status === 'paid') {
-          map[k].orders += 1
-          map[k].revenue_chf += Number(r.amount_chf || 0)
-        }
-      }
-    }
-  } catch {/* Tabelle fehlt → bleibt leer */}
+      .gte('created_at', beginn.toISOString()),
+  )
 
-  const out = days.map(k => ({ date: k, revenue_chf: +map[k].revenue_chf.toFixed(2), orders: map[k].orders }))
-  return NextResponse.json({ days: out })
+  if (zahlungen.problem) return problemAntwort(zahlungen.problem)
+
+  return NextResponse.json({ days: verteileAufTage(zahlungen.zeilen, beginn, TAGE) })
 }

@@ -1,40 +1,48 @@
 // app/api/admin/security/events/route.ts
+//
+// Der frühere `catch` lieferte `{ rows: [] }` – dieselbe Antwort, die auch
+// eine Datenbank ohne Vorfälle gibt. Wer die Liste ansah, konnte beides nicht
+// auseinanderhalten.
 import { NextResponse } from 'next/server'
-import { createServerComponentClient } from '@/lib/supabase/server'
+
+import { problemAntwort } from '@/lib/api/antwort'
+import { lese } from '@/lib/api/datenbank-lesen'
+import { ereignisSuchfilter } from '@/lib/api/suchfilter'
 import { requireAdminApi } from '@/lib/auth/admin-guard'
+import { createRouteHandlerClient } from '@/lib/supabase/server'
+import type { Database } from '@/types/supabase'
+
+const LIMIT = 25
 
 export async function GET(req: Request) {
-  const gate = await requireAdminApi({ surface: 'api/security/events' })
+  const gate = await requireAdminApi({ surface: 'api/security/events', capability: 'betrieb-lesen' })
   if (!gate.ok) return gate.response
 
-  const supabase = createServerComponentClient() as any
-
+  const supabase = createRouteHandlerClient<Database>()
   const { searchParams } = new URL(req.url)
-  const cursor = searchParams.get('cursor') // created_at ISO
-  const q = (searchParams.get('q') || '').trim()
-  const LIMIT = 25
+  const cursor = searchParams.get('cursor')
+  const suche = (searchParams.get('q') || '').trim()
 
-  try {
-    let query = supabase
+  const ergebnis = await lese(() => {
+    let abfrage = supabase
       .from('security_events')
       .select('id, type, ip, user_id, created_at, extra')
       .order('created_at', { ascending: false })
       .limit(LIMIT + 1)
 
-    if (cursor) query = query.lt('created_at', cursor)
-    if (q) {
-      // einfache OR-Suche
-      query = query.or(`type.ilike.%${q}%,ip.ilike.%${q}%,user_id.ilike.%${q}%`)
-    }
+    if (cursor) abfrage = abfrage.lt('created_at', cursor)
+    if (suche) abfrage = abfrage.or(ereignisSuchfilter(suche))
 
-    const { data } = await query
-    const rows = (data ?? []) as any[]
-    const next = rows.length > LIMIT ? rows[LIMIT - 1]?.created_at : null
-    const page = rows.slice(0, LIMIT)
+    return abfrage
+  })
 
-    return NextResponse.json({ rows: page, next_cursor: next })
-  } catch {
-    // Fallback, wenn Tabelle fehlt
-    return NextResponse.json({ rows: [], next_cursor: null })
-  }
+  if (ergebnis.problem) return problemAntwort(ergebnis.problem)
+
+  const seite = ergebnis.zeilen.slice(0, LIMIT)
+  const weitere = ergebnis.zeilen.length > LIMIT
+
+  return NextResponse.json({
+    rows: seite,
+    next_cursor: weitere ? (seite[seite.length - 1]?.created_at ?? null) : null,
+  })
 }

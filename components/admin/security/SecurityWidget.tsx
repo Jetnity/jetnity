@@ -4,7 +4,6 @@
 import * as React from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import {
   ShieldAlert,
   ShieldCheck,
@@ -30,7 +29,6 @@ type SecEvent = {
 type BlockEntry = {
   ip: string
   reason?: string | null
-  expires_at?: string | null
   created_at?: string | null
 }
 
@@ -44,7 +42,6 @@ export default function SecurityWidget() {
   const [loading, setLoading] = React.useState(false)
   const [filter, setFilter] = React.useState('')
   const [banIp, setBanIp] = React.useState('')
-  const [banMinutes, setBanMinutes] = React.useState<number | ''>(60)
   const [banReason, setBanReason] = React.useState('admin block')
 
   const refresh = React.useCallback(async () => {
@@ -52,6 +49,7 @@ export default function SecurityWidget() {
     try {
       const r = await fetch('/api/admin/security/list', { cache: 'no-store' })
       const j = await r.json()
+      if (!r.ok) throw new Error(j?.message || 'Konnte Security-Daten nicht laden.')
       setData({ events: j.events ?? [], blocklist: j.blocklist ?? [] })
     } catch (e: any) {
       toast.error(e?.message ?? 'Konnte Security-Daten nicht laden.')
@@ -66,16 +64,16 @@ export default function SecurityWidget() {
     return () => clearInterval(t)
   }, [refresh])
 
-  const block = async (ip: string, minutes = 60, reason = 'admin block') => {
+  const block = async (ip: string, reason = 'admin block') => {
     try {
       const r = await fetch('/api/admin/security/block', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ ip, minutes, reason }),
+        body: JSON.stringify({ ip, reason }),
       })
       const j = await r.json()
       if (!j.ok) throw new Error(j?.message || 'Block fehlgeschlagen')
-      toast.success(`IP ${ip} blockiert${minutes ? ` (${minutes} Min.)` : ''}`)
+      toast.success(`IP ${ip} blockiert`)
       refresh()
     } catch (e: any) {
       toast.error(e?.message ?? 'Fehler beim Blockieren')
@@ -156,16 +154,6 @@ export default function SecurityWidget() {
               onChange={(e) => setBanIp(e.target.value)}
             />
           </div>
-          <div className="sm:w-32">
-            <label className="text-xs text-muted-foreground">Dauer (Min.)</label>
-            <Input
-              type="number"
-              min={0}
-              placeholder="60"
-              value={banMinutes}
-              onChange={(e) => setBanMinutes(e.target.value === '' ? '' : Number(e.target.value))}
-            />
-          </div>
           <div className="sm:flex-1">
             <label className="text-xs text-muted-foreground">Grund</label>
             <Input
@@ -176,7 +164,7 @@ export default function SecurityWidget() {
           </div>
           <Button
             className="sm:self-auto"
-            onClick={() => banIp && block(banIp.trim(), banMinutes || 0, banReason.trim())}
+            onClick={() => banIp && block(banIp.trim(), banReason.trim())}
           >
             <Ban className="h-4 w-4 mr-2" />
             Blockieren
@@ -209,7 +197,7 @@ export default function SecurityWidget() {
               <tr className="text-left">
                 <th className="px-4 py-2">IP</th>
                 <th className="px-4 py-2">Grund</th>
-                <th className="px-4 py-2">Ablauf</th>
+                <th className="px-4 py-2">Gesperrt seit</th>
                 <th className="px-4 py-2 text-right">Aktion</th>
               </tr>
             </thead>
@@ -219,13 +207,13 @@ export default function SecurityWidget() {
                   <td className="px-4 py-2 font-mono">{b.ip}</td>
                   <td className="px-4 py-2">{b.reason || '—'}</td>
                   <td className="px-4 py-2">
-                    {b.expires_at ? (
+                    {b.created_at ? (
                       <span className="inline-flex items-center gap-1">
                         <Clock className="h-3.5 w-3.5" />
-                        {new Date(b.expires_at).toLocaleString()}
+                        {new Date(b.created_at).toLocaleString()}
                       </span>
                     ) : (
-                      <Badge variant="outline">permanent</Badge>
+                      '—'
                     )}
                   </td>
                   <td className="px-4 py-2">
@@ -291,11 +279,11 @@ export default function SecurityWidget() {
                         <Button
                           size="sm"
                           variant="destructive"
-                          onClick={() => block(e.ip!, 60, `auto from ${e.type || 'event'}`)}
-                          title="IP 60 Min. blockieren"
+                          onClick={() => block(e.ip!, `aus Ereignis ${e.type || 'unbekannt'}`)}
+                          title="IP sperren"
                         >
                           <Ban className="h-4 w-4 mr-1" />
-                          Block 60
+                          Sperren
                         </Button>
                       ) : (
                         <span className="text-xs text-muted-foreground">—</span>

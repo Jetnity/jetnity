@@ -3,63 +3,60 @@ import { createServerComponentClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/supabase'
 import { cn } from '@/lib/utils'
 
-const TABLES_TO_CHECK = [
-  'creator_sessions',
-  'creator_uploads',
-  'creator_session_metrics',
-  'blog_comments',
-  'copilot_suggestions',
-  'creator_alert_rules',
-  'creator_alert_events',
-  'payments',
-  'payouts',
-] as const
-
-type Row = { table_name: string; rls_enabled: boolean; policy_count: number }
+type Row = Database['public']['Functions']['admin_security_overview']['Returns'][number]
 
 export default async function AdminHealthCards() {
   const supabase = createServerComponentClient<Database>()
+  const { data, error } = await supabase.rpc('admin_security_overview')
 
-  // --- RPC ohne `.catch()`; robust gegen unterschiedliche Return-Formate
-  let rows: Row[] = []
-  try {
-    const res = await (supabase as any).rpc('admin_security_overview', {
-      tables: TABLES_TO_CHECK as any,
-    })
-    const payload = res?.data
-    if (payload) rows = (Array.isArray(payload) ? payload : [payload]) as Row[]
-  } catch {
-    rows = []
-  }
+  const rows: Row[] = data ?? []
+  // Ohne Zeilen lässt sich nichts aussagen. Bis Phase 1.4 zeigte die Karte in
+  // genau diesem Fall „0/0 – alle Tabellen geschützt".
+  const unbekannt = error !== null || rows.length === 0
 
-  const rlsOff = rows.filter((r) => !r.rls_enabled).length
-  const policySum = rows.reduce((s, r) => s + (r.policy_count || 0), 0)
+  const ohneRls = rows.filter((r) => !r.rls_enabled).length
+  const policies = rows.reduce((summe, r) => summe + r.policy_count, 0)
 
-  const items = [
-    {
-      label: 'RLS aktiv',
-      value: `${rows.length - rlsOff}/${rows.length}`,
-      hint: rlsOff ? `${rlsOff} Tabellen ohne RLS` : 'Alle Tabellen geschützt',
-      ok: rlsOff === 0,
-    },
-    {
-      label: 'Policy-Abdeckung',
-      value: String(policySum),
-      hint: 'Summe aller Policies',
-      ok: policySum > 0,
-    },
-  ]
+  const karten = unbekannt
+    ? [
+        {
+          label: 'RLS aktiv',
+          value: '–',
+          hint: error ? 'Abfrage fehlgeschlagen' : 'Keine Auskunft erhalten',
+          ok: false,
+        },
+        {
+          label: 'Policy-Abdeckung',
+          value: '–',
+          hint: 'Keine Auskunft erhalten',
+          ok: false,
+        },
+      ]
+    : [
+        {
+          label: 'RLS aktiv',
+          value: `${rows.length - ohneRls}/${rows.length}`,
+          hint: ohneRls ? `${ohneRls} Tabellen ohne RLS` : 'Alle Tabellen geschützt',
+          ok: ohneRls === 0,
+        },
+        {
+          label: 'Policy-Abdeckung',
+          value: String(policies),
+          hint: 'Summe aller Policies',
+          ok: policies > 0,
+        },
+      ]
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-3">Security & Health</h2>
+      <h2 className="text-lg font-semibold mb-3">Security &amp; Health</h2>
       <div className="grid sm:grid-cols-2 gap-4">
-        {items.map((it) => (
-          <div key={it.label} className="rounded-xl border border-border p-4 bg-background">
-            <p className="text-sm text-muted-foreground">{it.label}</p>
-            <p className="mt-1 text-2xl font-semibold">{it.value}</p>
-            <p className={cn('text-xs mt-1', it.ok ? 'text-emerald-600' : 'text-amber-600')}>
-              {it.hint}
+        {karten.map((karte) => (
+          <div key={karte.label} className="rounded-xl border border-border p-4 bg-background">
+            <p className="text-sm text-muted-foreground">{karte.label}</p>
+            <p className="mt-1 text-2xl font-semibold">{karte.value}</p>
+            <p className={cn('text-xs mt-1', karte.ok ? 'text-emerald-600' : 'text-amber-600')}>
+              {karte.hint}
             </p>
           </div>
         ))}

@@ -45,7 +45,7 @@ async function loadTargetRole(userId: string): Promise<Role | null> {
  * ausrichtet.
  */
 async function requireUserManager() {
-  const { user, role } = await requireAdminPage({ surface: 'users-action' })
+  const { user, role } = await requireAdminPage({ surface: 'users-action', capability: 'konten-verwalten' })
 
   if (!role || !canManageUsers(role)) {
     throw new Error('Keine Berechtigung zur Kontoverwaltung.')

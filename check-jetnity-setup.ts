@@ -250,11 +250,13 @@ function checkEnv() {
         })
     ) as Record<string, string>
 
+    // `SUPABASE_SERVICE_ROLE_KEY` steht hier bewusst nicht mehr: Seit Phase 1.4
+    // gibt es keinen Codepfad, der ihn liest. Ihn weiter abzufragen legte nahe,
+    // er gehöre in eine lokale Umgebung.
     const keys = [
       'NEXT_PUBLIC_SUPABASE_URL',
       'NEXT_PUBLIC_SUPABASE_ANON_KEY',
       // optional:
-      'SUPABASE_SERVICE_ROLE_KEY',
       'NEXT_PUBLIC_APP_URL',
     ]
     log.info(`${f}:`)
