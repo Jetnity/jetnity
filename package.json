@@ -15,6 +15,7 @@
     "check:exports": "node scripts/exporte.mjs",
     "check:deps": "node scripts/pakete.mjs",
     "check:api-schutz": "node scripts/api-schutz.mjs",
+    "check:schema-bezug": "node scripts/db/verwendung.mjs --pruefen",
     "test": "node --import tsx --test \"lib/**/*.test.ts\"",
     "db:inventar": "node scripts/db/inventory.mjs",
     "db:reproduzierbarkeit": "node scripts/db/reproduzierbarkeit.mjs",

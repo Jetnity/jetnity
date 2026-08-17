@@ -45,6 +45,11 @@ jobs:
       - name: Schutz der Admin-API
         run: npm run check:api-schutz
 
+      # Findet Zugriffe auf Tabellen und RPCs, die es im Schema nicht gibt.
+      # Liest nur types/supabase.ts und braucht deshalb keinen Datenbankzugang.
+      - name: Bezug auf das Schema
+        run: npm run check:schema-bezug
+
       # Halten den Baum frei von Code und Paketen, die niemand mehr erreicht.
       # Bewusste Ausnahmen sind in den Skripten mit Grund hinterlegt.
       - name: Unerreichbarer Code

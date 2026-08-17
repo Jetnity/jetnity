@@ -1566,6 +1566,14 @@ export type Database = {
           total_revenue_cents: number
         }[]
       }
+      admin_security_overview: {
+        Args: never
+        Returns: {
+          policy_count: number
+          rls_enabled: boolean
+          table_name: string
+        }[]
+      }
       aktuelle_rolle: { Args: never; Returns: string }
       append_email_to_array:
         | { Args: { email: string; session_id: string }; Returns: string[] }

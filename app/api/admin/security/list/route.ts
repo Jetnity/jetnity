@@ -1,55 +1,49 @@
 // app/api/admin/security/list/route.ts
 import { NextResponse } from 'next/server'
 import { requireAdminApi } from '@/lib/auth/admin-guard'
-import { createServerComponentClient } from '@/lib/supabase/server'
+import { createRouteHandlerClient } from '@/lib/supabase/server'
+import type { Database } from '@/types/supabase'
+
+const TAGE = 7
+const MAX_ZEILEN = 200
 
 export async function GET() {
   const gate = await requireAdminApi({ surface: 'api/security/list' })
   if (!gate.ok) return gate.response
 
-  const sb = createServerComponentClient() as any
+  const supabase = createRouteHandlerClient<Database>()
+  const seit = new Date(Date.now() - TAGE * 24 * 3600 * 1000).toISOString()
 
-  const since = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString()
-
-  // Events tolerant laden
-  let events: any[] = []
-  try {
-    const { data } = await sb
+  const [ereignisse, sperren] = await Promise.all([
+    supabase
       .from('security_events')
-      .select('*')
-      .gte('created_at', since)
+      .select('id, created_at, ip, type, user_id, extra')
+      .gte('created_at', seit)
       .order('created_at', { ascending: false })
-      .limit(200)
-    events = data ?? []
-  } catch {
-    events = []
+      .limit(MAX_ZEILEN),
+    supabase
+      .from('blocked_ips')
+      .select('ip, reason, created_at')
+      .order('created_at', { ascending: false })
+      .limit(MAX_ZEILEN),
+  ])
+
+  // Ein Fehler wurde hier bisher verschluckt und als leere Liste ausgeliefert.
+  // Eine leere Sicherheitsübersicht sieht dann aus wie „nichts vorgefallen".
+  const fehler = ereignisse.error ?? sperren.error
+  if (fehler) {
+    return NextResponse.json({ message: fehler.message }, { status: 500 })
   }
 
-  // Blocklist tolerant laden
-  let blocklist: any[] = []
-  try {
-    const { data } = await sb.from('ip_blocklist').select('*').order('created_at', { ascending: false }).limit(200)
-    blocklist = data ?? []
-  } catch {
-    blocklist = []
-  }
-
-  // Auf Minimal-Form mappen
-  const ev = events.map((e) => ({
-    id: String(e.id ?? crypto.randomUUID()),
-    created_at: e.created_at ?? null,
-    ip: e.ip ?? null,
-    type: e.type ?? null,
-    user_id: e.user_id ?? null,
-    detail: e.detail ?? e.message ?? null,
-  }))
-
-  const bl = blocklist.map((b) => ({
-    ip: String(b.ip ?? ''),
-    reason: b.reason ?? null,
-    expires_at: b.expires_at ?? null,
-    created_at: b.created_at ?? null,
-  }))
-
-  return NextResponse.json({ events: ev, blocklist: bl })
+  return NextResponse.json({
+    events: (ereignisse.data ?? []).map((e) => ({
+      id: e.id,
+      created_at: e.created_at,
+      ip: e.ip,
+      type: e.type,
+      user_id: e.user_id,
+      detail: typeof e.extra === 'string' ? e.extra : e.extra ? JSON.stringify(e.extra) : null,
+    })),
+    blocklist: sperren.data ?? [],
+  })
 }

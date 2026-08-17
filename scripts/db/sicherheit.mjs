@@ -338,6 +338,27 @@ const FAELLE = [
     sql: `select * from public.admin_payments_summary_30d()`,
     erwartung: 'erlaubt',
   },
+  {
+    name: 'anon ruft admin_security_overview',
+    rolle: 'anon',
+    sql: `select * from public.admin_security_overview()`,
+    erwartung: 'abgelehnt',
+  },
+  {
+    name: 'gewöhnliches Konto ruft admin_security_overview',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select * from public.admin_security_overview()`,
+    erwartung: 'leer',
+    grund: 'Die Funktion umgeht als DEFINER die Policies und prüft die Rolle deshalb selbst.',
+  },
+  {
+    name: 'Administration ruft admin_security_overview',
+    rolle: 'authenticated',
+    uid: ADMIN,
+    sql: `select * from public.admin_security_overview()`,
+    erwartung: 'erlaubt',
+  },
 
   // --- Nur mit Service-Key ------------------------------------------------
   {
