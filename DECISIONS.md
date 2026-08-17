@@ -532,6 +532,29 @@ Mit derselben Begründung ist die Rollenvergabe gerichtet worden: Bisher konnte 
 
 ---
 
+## ADR-0030 – Offizieller Supabase Remote MCP Server nur für Development
+
+**Datum:** 17. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Coding Agents und Cursor verbinden sich über den offiziellen gehosteten Supabase MCP Server (`https://mcp.supabase.com/mcp`) mit genau einem Projekt: dem Development-Branch aus den Environment-Secrets `SUPABASE_PROJECT_REF` und `SUPABASE_ACCESS_TOKEN`. Die projektspezifische Konfiguration liegt in `.cursor/mcp.json`. Aktiviert sind nur die Feature-Gruppen `database`, `debugging` und `development`. Es gibt keine Production-Verbindung.
+
+**Kontext:** Phase 1.4 braucht eine belastbare Sicht auf das real existierende Schema. Das Repository enthält dafür keine vollständige Migrationshistorie. Ein ungescopter Account-MCP oder eine Production-Verbindung würde das Risiko unkontrollierter Schema- oder Datenzugriffe erhöhen.
+
+**Alternativen:**
+1. Lokaler `@supabase/mcp-server-supabase` per `npx` (stdio).
+2. Browser-OAuth ohne Personal Access Token.
+3. Ungescopter Account-MCP mit allen Feature-Gruppen.
+4. Zusätzliche Production-Verbindung, ggf. `read_only`.
+
+**Begründung:** Der Remote-Server ist der offizielle Weg und verursacht keine eigene Infrastruktur. Ein Personal Access Token ist in Cloud- und CI-Umgebungen ohne Browser-OAuth der vorgesehene Weg. `project_ref` schaltet Account-Werkzeuge ab und begrenzt den Zugriff auf ein Projekt. Die eingeschränkten Feature-Gruppen reichen für Baseline, Logs und Typen; Branching, Storage, Edge Functions, Docs und Account-Verwaltung bleiben aus. Production bleibt getrennt, weil Schemaarbeit dort nicht stattfinden darf.
+
+Cursor interpoliert Secrets über `${env:NAME}`. Deshalb stehen in `.cursor/mcp.json` `Bearer ${env:SUPABASE_ACCESS_TOKEN}` und `project_ref=${env:SUPABASE_PROJECT_REF}` – nicht die Literalwerte und nicht hartkodierte Refs.
+
+**Konsequenzen:** Agents können Tabellen, Migrationen und Advisors des Development-Projekts lesen. Schemaänderungen über MCP sind erst nach explizitem Auftrag in Phase 1.4 zulässig. Token und Projekt-Ref dürfen nicht ins Repository, in Logs oder in Antworten.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

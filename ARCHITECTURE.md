@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
-Stand: 15. August 2026
-Gültig für: Branch `cursor/jetnity-v2-basis-cbcd` (Phase 0)
+Stand: 17. August 2026
+Gültig für: Phase 1, Stand nach Einrichtung des Development-MCP
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -59,6 +59,24 @@ Es existieren getrennte Clients je Ausführungskontext. Die Auswahl ist nicht op
 | `client.ts` → `createBrowserClient()` | Client Components | Anon Key, RLS aktiv |
 
 **Einen Client mit Service-Role-Rechten gibt es derzeit nicht.** `lib/supabase/admin.ts` und der frühere `createAdminClient` sind in Phase 1.2b entfernt worden: Letzterer hängte einem Client mit vollen Rechten den mutierbaren Cookie-Adapter der Besucherin an. Ein solcher Zugang entsteht bewusst erst mit der Datenbank-Baseline in Phase 1.4 – ohne Sitzungsverwaltung und nur dort, wo Auth, Ownership und Eingabevalidierung im gleichen Codepfad geprüft werden ([AGENTS.md](AGENTS.md) Regel 14).
+
+---
+
+## 3a. Cursor MCP – nur Development
+
+Für Phase 1.4 (Datenbank-Baseline) ist der offizielle Supabase Remote MCP Server projektspezifisch unter `.cursor/mcp.json` konfiguriert. Begründung in [DECISIONS.md](DECISIONS.md), ADR-0030.
+
+| Vorgabe | Umsetzung |
+| --- | --- |
+| Server | `https://mcp.supabase.com/mcp` (offiziell, remote) |
+| Authentifizierung | `Authorization: Bearer` über Environment-Secret `SUPABASE_ACCESS_TOKEN` |
+| Scope | ausschließlich `SUPABASE_PROJECT_REF` (Development-Branch) |
+| Feature-Gruppen | `database`, `debugging`, `development` |
+| Production | keine zweite Verbindung, kein Production-`project_ref` |
+
+Cursor interpoliert die Werte zur Laufzeit über `${env:SUPABASE_PROJECT_REF}` und `${env:SUPABASE_ACCESS_TOKEN}`. Im Repository stehen nur die Platzhalter, niemals Token oder Projekt-Refs.
+
+Diese Verbindung ist ein Entwicklerwerkzeug. Sie ersetzt weder die App-Clients aus Abschnitt 3 noch Service-Role-Zugriff in der Anwendung. Schemaänderungen über MCP sind erst nach explizitem Auftrag in Phase 1.4 zulässig.
 
 ---
 
