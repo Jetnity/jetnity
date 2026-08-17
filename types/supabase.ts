@@ -1,3 +1,6 @@
+// Erzeugt aus dem Supabase-Development-Branch mit `npm run db:typen`.
+// Nicht von Hand ändern – Änderungen gehören in eine Migration.
+
 export type Json =
   | string
   | number
@@ -10,40 +13,10 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "13.0.5"
+    PostgrestVersion: "14.15"
   }
   public: {
     Tables: {
-      admin_domains: {
-        Row: {
-          active: boolean
-          created_at: string
-          created_by: string | null
-          domain: string
-          id: string
-          provider: string
-          updated_at: string
-        }
-        Insert: {
-          active?: boolean
-          created_at?: string
-          created_by?: string | null
-          domain: string
-          id?: string
-          provider?: string
-          updated_at?: string
-        }
-        Update: {
-          active?: boolean
-          created_at?: string
-          created_by?: string | null
-          domain?: string
-          id?: string
-          provider?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       admin_email_boxes: {
         Row: {
           address: string
@@ -107,18 +80,6 @@ export type Database = {
           lat?: number | null
           lon?: number | null
           name?: string
-        }
-        Relationships: []
-      }
-      app_admins: {
-        Row: {
-          user_id: string
-        }
-        Insert: {
-          user_id: string
-        }
-        Update: {
-          user_id?: string
         }
         Relationships: []
       }
@@ -390,14 +351,13 @@ export type Database = {
           facebook: string | null
           id: string
           instagram: string | null
-          is_admin: boolean
           last_seen_at: string | null
           name: string | null
-          role: string | null
+          role: string
           status: string
           tiktok: string | null
           twitter: string | null
-          user_id: string | null
+          user_id: string
           username: string | null
           website: string | null
           youtube: string | null
@@ -411,14 +371,13 @@ export type Database = {
           facebook?: string | null
           id?: string
           instagram?: string | null
-          is_admin?: boolean
           last_seen_at?: string | null
           name?: string | null
-          role?: string | null
+          role?: string
           status?: string
           tiktok?: string | null
           twitter?: string | null
-          user_id?: string | null
+          user_id: string
           username?: string | null
           website?: string | null
           youtube?: string | null
@@ -432,14 +391,13 @@ export type Database = {
           facebook?: string | null
           id?: string
           instagram?: string | null
-          is_admin?: boolean
           last_seen_at?: string | null
           name?: string | null
-          role?: string | null
+          role?: string
           status?: string
           tiktok?: string | null
           twitter?: string | null
-          user_id?: string | null
+          user_id?: string
           username?: string | null
           website?: string | null
           youtube?: string | null
@@ -861,6 +819,72 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      insights_bets: {
+        Row: {
+          created_at: string
+          event_name: string
+          id: string
+          market: string
+          odds: number
+          placed_at: string
+          result: string
+          selection: string
+          sport: string
+          stake: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_name: string
+          id?: string
+          market: string
+          odds: number
+          placed_at?: string
+          result?: string
+          selection: string
+          sport: string
+          stake: number
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          event_name?: string
+          id?: string
+          market?: string
+          odds?: number
+          placed_at?: string
+          result?: string
+          selection?: string
+          sport?: string
+          stake?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      insights_user_settings: {
+        Row: {
+          created_at: string
+          currency_code: string
+          risk_profile: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          currency_code?: string
+          risk_profile?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          currency_code?: string
+          risk_profile?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       media_versions: {
         Row: {
@@ -1534,7 +1558,7 @@ export type Database = {
     }
     Functions: {
       admin_payments_summary_30d: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           orders_count: number
           payouts_cents: number
@@ -1542,63 +1566,80 @@ export type Database = {
           total_revenue_cents: number
         }[]
       }
-      append_email_to_array: {
-        Args:
-          | { email: string; session_id: string }
-          | { email_to_add: string; id: string }
-        Returns: string[]
-      }
-      creator_alerts_eval_all: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      creator_alerts_eval_current_user: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      creator_alerts_eval_for: {
-        Args: { _uid: string }
-        Returns: number
-      }
-      creator_impact_percentile: {
-        Args: { _days: number } | { args: Json }
-        Returns: {
-          avg_impact: number
-          pct: number
-        }[]
-      }
-      creator_metrics_timeseries: {
-        Args:
-          | {
+      aktuelle_rolle: { Args: never; Returns: string }
+      append_email_to_array:
+        | { Args: { email: string; session_id: string }; Returns: string[] }
+        | { Args: { email_to_add: string; id: string }; Returns: boolean }
+      creator_alerts_eval_all: { Args: never; Returns: number }
+      creator_alerts_eval_current_user: { Args: never; Returns: number }
+      creator_alerts_eval_for: { Args: { _uid: string }; Returns: number }
+      creator_impact_percentile:
+        | {
+            Args: { _days: number }
+            Returns: {
+              avg_impact: number
+              pct: number
+            }[]
+          }
+        | {
+            Args: { args: Json }
+            Returns: {
+              avg_impact: number
+              pct: number
+            }[]
+          }
+      creator_metrics_timeseries:
+        | {
+            Args: {
               _content_type?: Database["public"]["Enums"]["creator_content_type"]
               _days: number
             }
-          | { args: Json }
-        Returns: {
-          comments: number
-          d: string
-          impressions: number
-          likes: number
-          views: number
-        }[]
-      }
-      creator_posting_heatmap: {
-        Args:
-          | {
+            Returns: {
+              comments: number
+              d: string
+              impressions: number
+              likes: number
+              views: number
+            }[]
+          }
+        | {
+            Args: { args: Json }
+            Returns: {
+              comments: number
+              d: string
+              impressions: number
+              likes: number
+              views: number
+            }[]
+          }
+      creator_posting_heatmap:
+        | {
+            Args: {
               _content_type?: Database["public"]["Enums"]["creator_content_type"]
               _days: number
             }
-          | { args: Json }
-        Returns: {
-          comments: number
-          dow: number
-          hour: number
-          impressions: number
-          likes: number
-          sessions: number
-          views: number
-        }[]
-      }
+            Returns: {
+              comments: number
+              dow: number
+              hour: number
+              impressions: number
+              likes: number
+              sessions: number
+              views: number
+            }[]
+          }
+        | {
+            Args: { args: Json }
+            Returns: {
+              comments: number
+              dow: number
+              hour: number
+              impressions: number
+              likes: number
+              sessions: number
+              views: number
+            }[]
+          }
       csm_increment_impressions: {
         Args: { p_session_id: string }
         Returns: undefined
@@ -1607,26 +1648,13 @@ export type Database = {
         Args: { p_session_id: string }
         Returns: undefined
       }
-      increment_impression: {
-        Args: { session_id: string }
-        Returns: undefined
-      }
-      increment_like: {
-        Args: { session_id: string }
-        Returns: undefined
-      }
-      increment_view: {
-        Args: { session_id: string }
-        Returns: undefined
-      }
-      is_admin: {
-        Args: { uid: string }
-        Returns: boolean
-      }
-      platform_avg_impact_score: {
-        Args: Record<PropertyKey, never> | { days?: number }
-        Returns: number
-      }
+      hat_rolle_mindestens: { Args: { minimum: string }; Returns: boolean }
+      increment_impression: { Args: { session_id: string }; Returns: undefined }
+      increment_like: { Args: { session_id: string }; Returns: undefined }
+      increment_view: { Args: { session_id: string }; Returns: undefined }
+      platform_avg_impact_score:
+        | { Args: never; Returns: number }
+        | { Args: { days?: number }; Returns: number }
       publish_due_blog_posts: {
         Args: { batch_size?: number }
         Returns: {
@@ -1652,27 +1680,22 @@ export type Database = {
           user_id: string | null
           views: number
         }[]
+        SetofOptions: {
+          from: "*"
+          to: "blog_posts"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
-      publish_due_posts: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      publish_due_posts: { Args: never; Returns: undefined }
       remove_email_from_array: {
         Args: { email_to_remove: string; id: string }
         Returns: boolean
       }
-      slugify: {
-        Args: { "": string }
-        Returns: string
-      }
-      sync_creator_profile_core: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      sync_creator_profile_emails: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      rollenrang: { Args: { rolle: string }; Returns: number }
+      slugify: { Args: { "": string }; Returns: string }
+      sync_creator_profile_core: { Args: never; Returns: undefined }
+      sync_creator_profile_emails: { Args: never; Returns: undefined }
     }
     Enums: {
       blog_status: "draft" | "published" | "scheduled" | "archived"
