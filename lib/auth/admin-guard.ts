@@ -49,7 +49,7 @@ export type AdminContext = {
   /**
    * `role` heisst: Die Datenbank lässt die zugehörigen Zugriffe ebenfalls
    * durch. `break-glass` heisst: nur die Oberfläche ist offen, jeder
-   * rollengebundene Datenzugriff dieser Sitzung wird abgelehnt (ADR-0035).
+   * rollengebundene Datenzugriff dieser Sitzung wird abgelehnt (ADR-0036).
    */
   grant: 'role' | 'break-glass'
 }

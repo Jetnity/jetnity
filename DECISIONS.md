@@ -640,6 +640,60 @@ Bei der Durchsicht fiel der letzte verbliebene Service-Role-Pfad in der Anwendun
 
 ---
 
+## ADR-0035 – Eine Policy nennt eine Fähigkeit, keine Rolle
+
+**Datum:** 17. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Zwischen Rollenmodell und Policies steht eine Zwischenschicht aus fünf benannten Fähigkeiten: `betrieb-lesen` (ab `moderator`), `betrieb-eingreifen` (ab `operator`), `konten-verwalten` (ab `moderator`), `inhalte-moderieren` (ab `moderator`), `konfiguration-verwalten` (ab `admin`). Jede Mindestrolle steht genau einmal – in `CAPABILITY_MINIMUM` (`lib/auth/roles.ts`) – und wird in der Datenbank als `public.darf_…()` gespiegelt. Routen und Seiten verlangen eine Fähigkeit, keine Rolle; Policies rufen eine `darf_…()`-Funktion auf, nicht `hat_rolle_mindestens()`.
+
+**Kontext:** Der erste Durchgang von Phase 1.4 stellte jede administrative Policy auf `hat_rolle_mindestens('admin')`. Die Anwendung lässt den Administrationsbereich seit Phase 1.3 aber ab `moderator` zu, und einzelne Eingriffe verlangen `operator`. Damit standen zwei unabhängige Aussagen über dieselbe Frage nebeneinander, und sie widersprachen sich:
+
+- Eine Moderation kam durch `requireAdminApi()` für `GET /api/admin/security/list` und bekam danach von RLS jede Zeile weggefiltert – eine leere Liste, kein Fehler.
+- Ein Betrieb kam durch `POST /api/admin/security/block`, die Policy verlangte `admin`, die Sperre lief ins Leere.
+- `POST /api/admin/payments/refund` konnte gar nichts schreiben: Für `refunds` gab es keine INSERT-Policy und für `payments` keine UPDATE-Policy.
+- `GET /api/admin/payments/webhooks` antwortete immer leer, weil `stripe_webhooks` weder Recht noch Policy hatte.
+
+Die damaligen `db:sicherheit`-Fälle kannten nur `user`, `admin` und `owner`. Genau die beiden mittleren Rollen fehlten – deshalb blieb der Widerspruch unbemerkt.
+
+**Alternativen:**
+
+1. *Die Mindestrolle direkt in jede Policy schreiben, nur mit dem richtigen Wert.* Behebt den heutigen Widerspruch, nicht seine Ursache. Die Aussage stünde weiterhin an zwei Orten, und der nächste Gate-Wechsel liefe wieder auseinander – diesmal ohne dass jemand danach sucht.
+2. *Die Anwendung an die Datenbank angleichen, also überall `admin` verlangen.* Das hätte `moderator` und `operator` bedeutungslos gemacht und wäre eine stille Rücknahme von Phase 1.3 gewesen.
+3. *Eine Tabelle Fähigkeit → Mindestrolle in der Datenbank.* Zur Laufzeit änderbar, aber damit wäre die Berechtigungsregel Daten statt Code: nicht versioniert, nicht überprüfbar, nicht Teil eines Reviews.
+
+**Begründung:** Die beiden Seiten lassen sich nicht auf eine reduzieren – die Anwendung muss vor dem Zugriff entscheiden, die Datenbank beim Zugriff. Wenn dieselbe Aussage zwangsläufig zweimal steht, muss sie maschinell vergleichbar sein. Über den Umweg der Fähigkeit ist sie das: `lib/auth/faehigkeiten-datenbank.test.ts` liest die Mindestrollen aus dem Migrations-SQL und vergleicht sie mit `CAPABILITY_MINIMUM` – ohne Datenbank, also in jedem CI-Lauf. `npm run db:rechte` lehnt zusätzlich jede Policy ab, die eine Rolle direkt nennt, damit der Umweg nicht umgangen wird.
+
+Der zweite Gewinn ist die Sprache selbst. „Wer darf eine IP sperren" ist eine Produktfrage; „ab Rang 30" ist es nicht.
+
+**Konsequenzen:** Eine Moderation sieht jetzt tatsächlich, was der Bereich ihr zeigt: Sicherheitsereignisse, Sperrliste, Zahlungen, fremde Profile. Ein Betrieb kann tatsächlich sperren und erstatten. `stripe_webhooks` ist ab `betrieb-lesen` lesbar – die Tabelle führt nur Kennung, Ereignisart und Zeitpunkt, keine Nutzlast; geschrieben wird sie weiterhin allein mit dem Service-Key. Tabellen ohne Route – `admin_email_boxes`, `dns_audit_events`, `copilot_suggestions` – bleiben bei `admin`. Die Nachweise in `npm run db:sicherheit` sind von 45 auf 81 gewachsen und decken jede Fähigkeit mit einem Paar aus der Stufe, ab der sie gilt, und der Stufe direkt darunter ab.
+
+---
+
+## ADR-0036 – Der Notzugang öffnet die Oberfläche, nicht die Datenbank
+
+**Datum:** 17. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** `ADMIN_ALLOWED_EMAILS` behält genau die Wirkung aus Phase 1.3: Es lässt eine eingetragene Adresse in den Administrationsbereich, auch ohne ausreichende oder lesbare Rolle. Es erteilt bewusst **keine** Rechte in der Datenbank. Jeder Datenzugriff einer solchen Sitzung wird von den Policies abgelehnt. Damit das nicht als Ausfall erscheint, zeigt der Bereich über der gesamten Shell einen Hinweis, sobald der Zugang über die Notliste zustande kam.
+
+**Kontext:** Mit ADR-0035 hängt jeder administrative Datenzugriff an `creator_profiles.role`. Der Notzugang läuft danach weiterhin mit dem gewöhnlichen Client des angemeldeten Kontos. Sein Zweck – im Notfall wieder hereinzukommen – trägt damit nur bis zur Oberfläche; dahinter bleibt alles leer. Das musste entschieden werden, nicht stillschweigend hingenommen.
+
+**Alternativen:**
+
+1. *Die Notliste in der Datenbank hinterlegen und in `hat_rolle_mindestens()` mitprüfen.* Das wäre eine zweite Autorität neben `creator_profiles.role` – dieselbe Bauart wie `admin_domains` und `app_admins`, die Phase 1.4 gerade entfernt hat (ADR-0027, ADR-0033). Ein Eintrag ausserhalb des Rollenmodells könnte Rechte erteilen, und die Frage „wer ist Administrator" hätte wieder zwei Antworten.
+2. *Den Service-Key für Notzugangs-Sitzungen verwenden.* Ein Umgehen von RLS, ausgelöst durch eine Umgebungsvariable. Der Schlüssel umgeht jede Policy und jeden Trigger, auch den gegen Rechteausweitung. Ausgeschlossen, und für Production ohnehin nicht verhandelbar.
+3. *Einen Selbstbedienungsweg bauen: Wer über die Notliste hereinkommt, darf sich eine Rolle eintragen.* Das ist die Rechteausweitung, die ADR-0033 gerade unterbunden hat – nur mit der Umgebungsvariablen als Auslöser.
+4. *Den Notzugang ersatzlos streichen.* Konsequent, aber eine stille Rücknahme von Phase 1.3 und ohne Not: Er hat weiterhin einen Wert, nur einen kleineren als gedacht.
+
+**Begründung:** Ein Notzugang darf die Diagnose ermöglichen, nicht die Autorität ersetzen. Wer hereinkommt, sieht, dass er hereingekommen ist, sieht seine fehlende Rolle benannt und weiss, was zu tun ist. Was er nicht bekommt, sind Daten – denn dafür gibt es genau eine Quelle, und eine Umgebungsvariable ist keine.
+
+Der Hinweis ist Teil der Entscheidung, nicht Beiwerk. Ohne ihn zeigte der Bereich einer Notzugangs-Sitzung leere Übersichten, und eine leere Sicherheitsübersicht liest sich als „nichts vorgefallen". Dieselbe Verwechslung von Ausfall und Entwarnung steckte in `admin_security_overview` („RLS aktiv 0/0 – alle Tabellen geschützt", ADR-0034) und im Sperren einer nicht existierenden Tabelle.
+
+**Konsequenzen:** Der Weg zurück in den regulären Betrieb führt über einen Eintrag in `creator_profiles.role` – auf dem Development-Branch über den SQL-Editor oder `scripts/db/sql.mjs`, in Production über eine Migration oder eine bereits berechtigte Person. Das ist bewusst ausserhalb der Anwendung. `reachesDatabase()` in `lib/auth/admin-access.ts` hält den Satz als prüfbare Funktion fest, `lib/auth/admin-access.test.ts` prüft ihn auch für den Fall einer ausgefallenen Rollenabfrage, und vier Fälle in `npm run db:sicherheit` weisen nach, dass ein solches Konto in der Datenbank genau das ist, was seine Rolle sagt.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

@@ -3,7 +3,7 @@
 // Sichtbarer Hinweis auf eine Sitzung, die über `ADMIN_ALLOWED_EMAILS`
 // hereingekommen ist.
 //
-// Der Notzugang öffnet die Oberfläche, nicht die Datenbank (ADR-0035). Ohne
+// Der Notzugang öffnet die Oberfläche, nicht die Datenbank (ADR-0036). Ohne
 // diesen Hinweis wäre das nicht zu erkennen: Die Seiten laden, die Listen
 // bleiben leer und Änderungen scheitern. Eine leere Sicherheitsübersicht
 // sieht dann aus wie „nichts vorgefallen“, obwohl „nicht berechtigt“ gemeint

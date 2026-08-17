@@ -260,7 +260,7 @@ Offen bleibt das generische Profil: Die Rolle liegt weiterhin in `creator_profil
 
 ### 1.4 Datenbank-Baseline · abgeschlossen auf Development
 
-Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst worden. Vollständige Beschreibung: [docs/DATENBANK.md](docs/DATENBANK.md). Entscheidungen: [DECISIONS.md](DECISIONS.md) ADR-0031 bis ADR-0034.
+Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst worden. Vollständige Beschreibung: [docs/DATENBANK.md](docs/DATENBANK.md). Entscheidungen: [DECISIONS.md](DECISIONS.md) ADR-0031 bis ADR-0036.
 
 - [x] Development-Schema vollständig inventarisiert – Tabellen, Spalten, Schlüssel, Bedingungen, Indizes, Enums, Views, Funktionen, Trigger, Extensions, Rechte, RLS und Policies (`npm run db:inventar`)
 - [x] Drift gegen Repo-Migrationen und Typdateien dokumentiert
@@ -269,7 +269,9 @@ Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst wo
 - [x] `admin_domains` entfernt, dazu `app_admins`, `is_admin(uuid)` und `creator_profiles.is_admin`
 - [x] Rollenmodell in der Datenbank auf eine Autorität zurückgeführt und mit `lib/auth/roles.ts` verbunden
 - [x] `types/supabase.ts` aus dem Schema erzeugt statt gepflegt, mit Prüfung auf Abweichung
-- [x] RLS auf allen 37 Tabellen aktiv, 60 Policies, positive und negative Zugriffsfälle nachgewiesen
+- [x] RLS auf allen 37 Tabellen aktiv, 66 Policies, positive und negative Zugriffsfälle nachgewiesen
+- [x] Datenbankrechte an das Rollenmodell aus 1.3 gebunden – fünf benannte Fähigkeiten statt der pauschalen Rolle `admin`, je Fähigkeit ein Nachweis für die Stufe darüber und darunter
+- [x] Notzugang entschieden und sichtbar gemacht: `ADMIN_ALLOWED_EMAILS` öffnet die Oberfläche, nicht die Datenbank
 - [x] Rechte auf das Nötige begrenzt, `TRUNCATE` entzogen
 - [x] Advisors ausgeführt, Befunde behoben oder begründet dokumentiert
 - [x] Ownership-Modell dokumentiert
@@ -279,7 +281,7 @@ Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst wo
 
 Ausgangslage waren zehn Migrationsdateien, die zusammen **zwei** Tabellen erzeugten, während der Branch **39** trug. Für 37 Tabellen existierte keine versionierte Beschreibung; der RLS-Zustand war aus dem Repository nicht ableitbar.
 
-**Vier Befunde waren mehr als Unordnung.**
+**Fünf Befunde waren mehr als Unordnung.**
 
 **1. `TRUNCATE` umgeht RLS.** `anon` und `authenticated` hatten auf allen 39 Tabellen sämtliche Rechte, einschliesslich `TRUNCATE`, `REFERENCES` und `TRIGGER`. Wer die Seite nur aufrief, konnte `truncate public.payments` ausführen und die Tabelle leeren – Policies greifen dabei nicht. Alle Rechte sind entzogen und einzeln neu vergeben; `npm run db:rechte` prüft seither in beide Richtungen, dass kein Recht ohne Policy und keine Policy ohne Recht existiert.
 
@@ -289,18 +291,22 @@ Ausgangslage waren zehn Migrationsdateien, die zusammen **zwei** Tabellen erzeug
 
 **4. Zwei Anzeigen logen.** Drei Security-Routen schrieben in `ip_blocklist` – eine Tabelle, die es nicht gibt. Weil `supabase-js` nicht wirft, sondern im `error`-Feld meldet, lief das `try/catch` nie an: Das Sperren einer IP meldete Erfolg und tat nichts. Die Karten „Security & Health" riefen eine Funktion `admin_security_overview` auf, die es nicht gab, fingen den Fehler ab und zeigten aus null Zeilen „RLS aktiv 0/0 – alle Tabellen geschützt". Beides ist behoben, und `npm run check:schema-bezug` verhindert in der CI den Rückfall.
 
+**5. Anwendung und Datenbank waren sich über die Mindestrollen nicht einig.** Der erste Durchgang stellte jede administrative Policy auf `hat_rolle_mindestens('admin')`, während die Anwendung den Bereich seit 1.3 ab `moderator` öffnet und einzelne Eingriffe ab `operator`. Eine Moderation kam damit durch `requireAdminApi()` und bekam von RLS jede Zeile weggefiltert – eine leere Liste, kein Fehler. Ein Betrieb kam durch `POST /api/admin/security/block`, und die Sperre lief ins Leere. `POST /api/admin/payments/refund` konnte überhaupt nichts schreiben, `GET /api/admin/payments/webhooks` antwortete immer leer. Gefunden hat das die Durchsicht des Pull Requests, nicht die Nachweise: Die kannten nur `user`, `admin` und `owner` – genau die beiden mittleren Rollen fehlten. Beide Seiten sprechen jetzt über Fähigkeiten statt über Rollen, und jede Fähigkeit hat einen Nachweis für die Stufe, ab der sie gilt, und die Stufe direkt darunter ([DECISIONS.md](DECISIONS.md) ADR-0035).
+
+Damit stellte sich die Frage nach dem Notzugang: `ADMIN_ALLOWED_EMAILS` öffnet den Gate der Anwendung, aber die Policies kennen die Liste nicht. Entschieden ist, dass das so bleibt – eine zweite Autorität neben `creator_profiles.role` wäre `admin_domains` unter neuem Namen. Eine solche Sitzung sieht jetzt einen Hinweis über der gesamten Shell, statt leere Übersichten, die sich als Entwarnung lesen liessen ([DECISIONS.md](DECISIONS.md) ADR-0036).
+
 **Nachweise.** Nicht abgeleitet, sondern gemessen – alles in Transaktionen, die zurückgerollt werden:
 
 | Prüfung | Ergebnis |
 | --- | --- |
 | `npm run db:reproduzierbarkeit` | Wiederaufbau gleich dem laufenden Schema, kein Unterschied über 18 Abschnitte |
-| `npm run db:sicherheit` | 45 von 45 Nachweisen erfüllt |
-| `npm run db:rechte` | 115 Tabellenrechte, jedes durch eine Policy gedeckt; kein `TRUNCATE`, `REFERENCES`, `TRIGGER`; RLS auf allen Tabellen |
+| `npm run db:sicherheit` | 81 von 81 Nachweisen erfüllt, über neun Konten von `user` bis `owner` |
+| `npm run db:rechte` | 118 Tabellenrechte, jedes durch eine Policy gedeckt; kein `TRUNCATE`, `REFERENCES`, `TRIGGER`; RLS auf allen Tabellen; keine Policy nennt eine Rolle direkt |
 | `npm run db:rls` | vollständige Matrix aus 4 Rollen × 37 Tabellen × bis zu 5 Operationen |
 | `npm run db:typen -- --pruefen` | `types/supabase.ts` entspricht dem Schema |
-| `npm test` | 41 Tests, darin der Abgleich des Rollenmodells zwischen TypeScript und Migrations-SQL |
+| `npm test` | 52 Tests, darin der Abgleich von Rollenmodell und Fähigkeiten zwischen TypeScript und Migrations-SQL |
 
-**Advisors.** `function_search_path_mutable`, `auth_rls_initplan`, `multiple_permissive_policies` und `duplicate_index` sind behoben. Es bleiben 44 Security- und 48 Performance-Befunde, jeder mit Begründung in [docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 8. Der Grossteil sind Hinweise auf GraphQL-Sichtbarkeit, die aus dem `SELECT`-Recht folgt, und nie benutzte Indizes auf einem Branch ohne Verkehr.
+**Advisors.** `function_search_path_mutable`, `auth_rls_initplan`, `multiple_permissive_policies`, `duplicate_index` und `rls_enabled_no_policy` sind behoben. Es bleiben 44 Security- und 47 Performance-Befunde, jeder mit Begründung in [docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 8. Der Grossteil sind Hinweise auf GraphQL-Sichtbarkeit, die aus dem `SELECT`-Recht folgt, und nie benutzte Indizes auf einem Branch ohne Verkehr.
 
 **Keine Development-Service-Role angelegt.** Sie war an keiner Stelle nötig. Die Skripte gehen über die Management API mit dem Personal Access Token, und die RLS-Nachweise legen ihre Testkonten innerhalb der zurückgerollten Transaktion selbst an.
 
@@ -332,8 +338,8 @@ Die Liste steht in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 10.
 Priorität nach [AGENTS.md](AGENTS.md) Regel 24: Auth, Rollen, RLS, Trip-Persistenz.
 
 - [x] Test-Runner eingerichtet – mit 1.3 erledigt: `npm test` läuft über den Test-Runner von Node mit `tsx` als Loader, ohne neues Paket ([DECISIONS.md](DECISIONS.md) ADR-0029)
-- [x] Tests für Rollen und Berechtigungen (41 ohne Datenbank; 34 aus 1.3, dazu 7 für den Abgleich zwischen TypeScript- und Datenbank-Rollenmodell)
-- [x] RLS-Nachweise gegen den Development-Branch (45), dazu die Rechteprüfung und der Reproduzierbarkeitsbeweis
+- [x] Tests für Rollen und Berechtigungen (52 ohne Datenbank; 34 aus 1.3, dazu 7 für den Abgleich des Rollenmodells, 6 für den Abgleich der Fähigkeiten und 5 für Fähigkeiten und Notzugang in der Zugangsentscheidung)
+- [x] RLS-Nachweise gegen den Development-Branch (81), dazu die Rechteprüfung und der Reproduzierbarkeitsbeweis
 - [ ] datenbanknahe Prüfungen in die CI holen – braucht einen kurzlebigen Branch je Lauf, sonst legen nebenläufige Läufe dieselben Testkonten an
 - [ ] Tests für Trip-Erstellung und -Persistenz → braucht das Schema aus 1.5
 

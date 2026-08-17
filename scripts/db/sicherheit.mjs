@@ -594,7 +594,7 @@ const FAELLE = [
   // --- Notzugang erteilt keine Datenbankrechte -----------------------------
   //
   // `ADMIN_ALLOWED_EMAILS` öffnet die Oberfläche. Die Datenbank kennt die
-  // Liste nicht und soll sie nicht kennen (ADR-0035). Für die Datenbank ist
+  // Liste nicht und soll sie nicht kennen (ADR-0036). Für die Datenbank ist
   // ein solches Konto genau das, was seine Rolle sagt – hier `user`, im
   // zweiten Fall ein Konto ganz ohne Profil.
   {

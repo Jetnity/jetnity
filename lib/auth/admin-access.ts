@@ -33,7 +33,7 @@ export type AdminUser = {
  *   · `break-glass` – der Zugang stammt aus `ADMIN_ALLOWED_EMAILS`. Er öffnet
  *                     ausschließlich die Oberfläche. Die Datenbank kennt die
  *                     Liste nicht und wird jeden rollengebundenen Zugriff
- *                     dieser Sitzung ablehnen. Siehe ADR-0035.
+ *                     dieser Sitzung ablehnen. Siehe ADR-0036.
  */
 export type AdminGrant = 'role' | 'break-glass'
 
@@ -136,7 +136,7 @@ export function decideAdminAccess(input: {
  * Anwendung; die Policies kennen die Liste nicht und sollen sie nicht kennen –
  * sonst stünde neben `creator_profiles.role` wieder eine zweite Autorität, wie
  * sie Phase 1.4 mit `admin_domains` und `app_admins` gerade beseitigt hat
- * (ADR-0035).
+ * (ADR-0036).
  *
  * Wer das ignoriert, baut Oberflächen, die einer Break-Glass-Sitzung leere
  * Listen zeigen und damit „nichts vorgefallen“ suggerieren, wo „nicht

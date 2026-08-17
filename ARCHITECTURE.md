@@ -107,7 +107,11 @@ Sessions laufen über Supabase-Auth-Cookies. Serverseitig wird die Identität im
 
 Seit Phase 1.4 gilt dasselbe Modell auch in der Datenbank: `public.rollenrang()`, `public.aktuelle_rolle()` und `public.hat_rolle_mindestens()` sind die Grundlage jeder Policy. Bis dahin entschieden vier Stellen unabhängig voneinander über Administrationsrechte – ein Konto konnte in der Anwendung `user` sein und in den Policies trotzdem Administrator. `lib/auth/roles-datenbank.test.ts` vergleicht bei jedem `npm test` die Rangfolge in TypeScript mit der im Migrations-SQL, ohne Datenbank. Einzelheiten in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 6.
 
+**Zwischen Rolle und Zugriff steht eine Fähigkeit.** Eine Route verlangt nicht „mindestens `operator`", sondern die Fähigkeit `betrieb-eingreifen`; eine Policy ruft nicht `hat_rolle_mindestens('operator')` auf, sondern `public.darf_betrieb_eingreifen()`. Die Mindestrolle steht damit an genau einer Stelle: in `CAPABILITY_MINIMUM` in `lib/auth/roles.ts`. Der Umweg ist die Antwort auf einen realen Bruch – der erste Durchgang von Phase 1.4 stellte alle Policies pauschal auf `admin`, während die Anwendung ab `moderator` hereinliess, sodass eine Moderation durch den Gate kam und danach von RLS leer ausging. `lib/auth/faehigkeiten-datenbank.test.ts` vergleicht beide Seiten ohne Datenbank, `npm run db:rechte` lehnt jede Policy ab, die eine Rolle direkt nennt ([DECISIONS.md](DECISIONS.md) ADR-0035).
+
 Die Entscheidung unterscheidet drei Zustände der Rollenabfrage: Rolle vorhanden, keine Rolle hinterlegt, Abfrage fehlgeschlagen. Ein Ausfall führt nie zu einer Freigabe. Reguläre Quelle ist die Datenbankrolle; `ADMIN_ALLOWED_EMAILS` ist ein Notzugang aus exakten Adressen, dessen Nutzung protokolliert wird. Eine Domain erteilt keine Berechtigung ([DECISIONS.md](DECISIONS.md) ADR-0027).
+
+Der Notzugang öffnet die Oberfläche, nicht die Datenbank. Die Policies kennen die Liste nicht und sollen sie nicht kennen – sonst stünde neben `creator_profiles.role` wieder eine zweite Autorität. Eine solche Sitzung sieht deshalb einen Hinweis über der gesamten Administrations-Shell, statt leere Übersichten, die sich als Entwarnung lesen liessen. `reachesDatabase()` in `lib/auth/admin-access.ts` hält den Satz als prüfbare Funktion fest ([DECISIONS.md](DECISIONS.md) ADR-0036).
 
 Weitere Punkte:
 
@@ -177,7 +181,7 @@ Nach Phase 1.1, 1.1b, 1.3 und 1.4 existieren **11** Route Handler. Zuvor waren e
 | `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
 | `api/admin/security/*` (5) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
 
-Alle zehn Endpunkte unter `api/admin` prüfen die Berechtigung über `requireAdminApi()`; `npm run check:api-schutz` erzwingt das in der CI. Lesende Endpunkte verlangen den Bereichszugang ab `moderator`, eingreifende (Rückerstattung, Sperren, Entsperren) mindestens `operator`.
+Alle zehn Endpunkte unter `api/admin` prüfen die Berechtigung über `requireAdminApi()`; `npm run check:api-schutz` erzwingt das in der CI. Lesende Endpunkte verlangen die Fähigkeit `betrieb-lesen` (ab `moderator`), eingreifende – Rückerstattung, Sperren, Entsperren – `betrieb-eingreifen` (ab `operator`). Dieselben Fähigkeiten gelten in den Policies, sodass ein Endpunkt, der jemanden durchlässt, ihm auch die Daten zeigen kann.
 
 Phase 1.4 hat drei weitere entfernt: `security/block-ip` und `security/unblock-ip` waren Doppelungen von `security/block` und `security/unblock` ohne Aufrufer, `security/overview` rief eine Funktion auf, die es nicht gab, und hatte ebenfalls keinen Aufrufer.
 

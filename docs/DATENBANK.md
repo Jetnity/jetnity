@@ -118,6 +118,7 @@ Der Zustand nach Phase 1.4 steht in Abschnitt 9; dort ist auch nachgewiesen, das
 | `20260817100500_rollenwechsel_beim_anlegen.sql` | derselbe Schutz beim Anlegen eines Profils wie beim Ändern |
 | `20260817100600_policies_zusammenfassen.sql` | überlappende Policies je Tabelle und Operation zu einer zusammengefasst |
 | `20260817100700_admin_security_overview.sql` | die von der Oberfläche erwartete, nie vorhandene Funktion hergestellt |
+| `20260817100800_faehigkeiten.sql` | Policies von der pauschalen Rolle `admin` auf Fähigkeiten umgestellt, passend zum Rollenmodell aus Phase 1.3 |
 
 Die Reihenfolge ist nicht beliebig: `20260817100200` darf erst laufen, wenn `20260817100000` die Rollen der Betroffenen übernommen und `20260817100100` alle Policies auf `creator_profiles.role` umgestellt hat. Sonst verlöre jemand seinen Zugang oder eine Policy liefe ins Leere.
 
@@ -154,6 +155,39 @@ Dass beide Seiten übereinstimmen, prüft `lib/auth/roles-datenbank.test.ts` bei
 
 `rollenrang()` gibt für eine unbekannte Rolle `null` zurück, nicht `0`. Das ist der Unterschied zwischen „hat die niedrigste Rolle" und „diese Rolle kennt niemand". Die CHECK-Bedingung auf `creator_profiles.role` lautet deshalb `rollenrang(role) is not null`: Eine Rolle, die das Modell nicht kennt, lässt sich nicht eintragen, und die Bedingung wächst mit dem Modell mit, statt eine zweite Liste zu führen.
 
+### Fähigkeiten
+
+Eine Rolle zu kennen genügt nicht. Es muss auch feststehen, **wofür** sie reicht – und zwar für die Anwendung und die Datenbank gemeinsam.
+
+Der erste Anlauf in `20260817100100` stellte jede administrative Policy auf `hat_rolle_mindestens('admin')`. Das war grob und falsch. Die Anwendung lässt den Administrationsbereich seit Phase 1.3 ab `moderator` zu, einzelne Eingriffe verlangen `operator`. Beide Aussagen standen unabhängig voneinander an zwei Orten und liefen auseinander:
+
+| Weg | Anwendung liess durch | Datenbank verlangte | Folge |
+| --- | --- | --- | --- |
+| `GET /api/admin/security/list` | ab `moderator` | `admin` | leere Liste – sieht aus wie „nichts vorgefallen" |
+| `POST /api/admin/security/block` | ab `operator` | `admin` | die Sperre lief ins Leere |
+| `POST /api/admin/payments/refund` | ab `operator` | keine Policy für `refunds`/`payments` | die Buchung wurde nie geschrieben |
+| `GET /api/admin/payments/webhooks` | ab `moderator` | kein Recht auf `stripe_webhooks` | immer leere Antwort |
+| `/admin/users` | ab `moderator` | `admin` | eine Moderation sah kein einziges fremdes Konto |
+
+Seit `20260817100800` sprechen beide Seiten dieselbe Sprache. `CAPABILITY_MINIMUM` in `lib/auth/roles.ts` nennt je Fähigkeit eine Mindestrolle, die Datenbank bildet dieselbe Fähigkeit als Funktion ab:
+
+| Fähigkeit | ab | Funktion | gilt für |
+| --- | --- | --- | --- |
+| `betrieb-lesen` | `moderator` | `public.darf_betrieb_lesen()` | `security_events`, `blocked_ips`, `payments`, `refunds`, `stripe_webhooks` – lesend |
+| `betrieb-eingreifen` | `operator` | `public.darf_betrieb_eingreifen()` | `blocked_ips` schreibend, `refunds` anlegen, `payments` auf erstattet setzen |
+| `konten-verwalten` | `moderator` | `public.darf_konten_verwalten()` | fremde `creator_profiles` |
+| `inhalte-moderieren` | `moderator` | `public.darf_inhalte_moderieren()` | `blog_comments`, `creator_sessions`, `session_review_requests` |
+| `konfiguration-verwalten` | `admin` | `public.darf_konfiguration_verwalten()` | `admin_email_boxes`, `dns_audit_events`, `copilot_suggestions` |
+
+Die Zuordnung ist aus den bestehenden Gates der Anwendung abgelesen, nicht erfunden. Wo es keine Route gibt – Postfächer, DNS-Protokoll, Modellvorschläge –, bleibt es bei `admin`.
+
+Zwei Prüfungen halten das zusammen:
+
+- `lib/auth/faehigkeiten-datenbank.test.ts` vergleicht `CAPABILITY_MINIMUM` mit den Rollen in den `darf_…()`-Funktionen. Ohne Datenbank, damit die CI ihn ausführen kann.
+- `npm run db:rechte` lehnt jede Policy ab, die `hat_rolle_mindestens()` direkt aufruft. Eine neue Policy muss eine Fähigkeit nennen; nur so bleibt die Mindestrolle an einer Stelle.
+
+`hat_rolle_mindestens()` bleibt bestehen – aber nur noch als Baustein innerhalb der fünf Funktionen, nicht mehr als Sprache der Policies.
+
 ### Kontostatus
 
 `creator_profiles.status` ist `NOT NULL` mit Vorgabe `active` und erlaubt `active`, `pending`, `disabled`, `banned`.
@@ -167,8 +201,8 @@ Das Eigentumsmodell ist einheitlich: Eine Zeile gehört dem Konto in ihrer Spalt
 | eigene Zeile | `user_id = auth.uid()` – lesen, ändern, löschen |
 | Zeile an fremder Sitzung | Eigentum folgt `creator_sessions.user_id` |
 | öffentlich | `airports` sowie veröffentlichte Beiträge und sichtbare Kommentare, lesend |
-| Administration | ab `admin` lesend über alles, schreibend nur dort, wo die Verwaltung es braucht |
-| nur Service-Key | `stripe_webhooks` |
+| Verwaltung | über eine Fähigkeit, nicht über eine Rolle – siehe die Tabelle oben |
+| nur mit Service-Key schreibbar | `stripe_webhooks` |
 
 Ein Profil gehört zu genau einem Konto: `user_id` ist `NOT NULL`, eindeutig, und verweist mit `ON DELETE CASCADE` auf `auth.users`.
 
@@ -187,13 +221,13 @@ Der letzte Punkt war eine echte Lücke: Ein frisch registriertes Konto ohne Prof
 
 ## 7. Row Level Security
 
-RLS ist auf allen 37 Tabellen eingeschaltet, mit 60 Policies.
+RLS ist auf allen 37 Tabellen eingeschaltet, mit 66 Policies.
 
 Ein Zugriff hängt an vier Dingen, nicht an einem: am Tabellenrecht, am RLS-Schalter, an der Policy und an deren Rollenbindung. Fehlt das Tabellenrecht, ist die schönste Policy wirkungslos – und umgekehrt.
 
 ### Rechte
 
-`anon` und `authenticated` haben kein Recht mehr, das nicht eine Policy braucht. `npm run db:rechte` prüft beide Richtungen und meldet 115 vergebene Tabellenrechte, jedes durch eine Policy gedeckt, und keine Policy ohne das zugehörige Recht.
+`anon` und `authenticated` haben kein Recht mehr, das nicht eine Policy braucht. `npm run db:rechte` prüft beide Richtungen und meldet 118 vergebene Tabellenrechte, jedes durch eine Policy gedeckt, und keine Policy ohne das zugehörige Recht.
 
 `TRUNCATE`, `REFERENCES` und `TRIGGER` sind entzogen. `TRUNCATE` war der schwerwiegendste Einzelbefund der Inventur: Das Recht umgeht RLS vollständig. Jedes angemeldete Konto – und über `anon` jeder Besucher – konnte `truncate public.payments` ausführen und die Tabelle leeren, obwohl keine Policy ihm auch nur eine Zeile zum Lesen gab.
 
@@ -203,7 +237,9 @@ Ein Zugriff hängt an vier Dingen, nicht an einem: am Tabellenrecht, am RLS-Scha
 
 `npm run db:rls` misst die vollständige Matrix aus Rolle × Tabelle × Operation. Gemessen wird, nicht abgeleitet: Vier Konten (nicht angemeldet, Eigentümerin, fremdes Konto, Administration) probieren jede Operation auf jeder Tabelle aus. Der ganze Lauf liegt in einer Transaktion, die am Ende zurückgerollt wird, und jede einzelne Probe zusätzlich in einem eigenen Unterabschnitt – sonst nähme ein erfolgreiches `delete` die Zeilen abhängiger Tabellen mit und verfälschte jede spätere Messung.
 
-`npm run db:sicherheit` prüft dieselbe Datenbank gegen 45 benannte Erwartungen. Der Unterschied ist wichtig: Die Matrix zeigt, was gilt; die Nachweise sagen, was gelten **soll**, und schlagen fehl, wenn es sich ändert.
+`npm run db:sicherheit` prüft dieselbe Datenbank gegen 81 benannte Erwartungen. Der Unterschied ist wichtig: Die Matrix zeigt, was gilt; die Nachweise sagen, was gelten **soll**, und schlagen fehl, wenn es sich ändert.
+
+Neun Konten decken jede Stufe des Modells ab: `user`, ein zweites `user`, `creator`, `moderator`, `operator`, `admin`, `owner`, ein gesperrtes Konto und eines ganz ohne Profil. Die beiden mittleren Rollen fehlten zunächst – und genau deshalb blieb unbemerkt, dass die Policies pauschal `admin` verlangten.
 
 Ein Ausschnitt:
 
@@ -221,33 +257,70 @@ Ein Ausschnitt:
 | Administration ernennt eine zweite Administration | abgelehnt |
 | Inhaber ernennt eine Administration | erlaubt |
 | unbekannte Rolle oder unbekannter Status | abgelehnt, 23514 |
-| gewöhnliches Konto liest Zahlungen | 0 Zeilen |
-| Administration liest Zahlungen | erlaubt |
-| gewöhnliches Konto sperrt eine IP | abgelehnt |
-| angemeldetes Konto liest Stripe-Ereignisse | abgelehnt, 42501 |
+
+Und je Fähigkeit ein Paar aus der Stufe, ab der sie gilt, und der Stufe direkt darunter:
+
+| Nachweis | Erwartung |
+| --- | --- |
+| Moderation liest Sicherheitsereignisse, Sperrliste, Zahlungen, Rückerstattungen, Stripe-Ereignisse | erlaubt |
+| Creator liest dieselben fünf | 0 Zeilen |
+| Betrieb sperrt eine IP, entsperrt eine IP | erlaubt |
+| Moderation sperrt eine IP | abgelehnt |
+| Moderation entsperrt eine IP | 0 Zeilen |
+| Betrieb bucht eine Rückerstattung, setzt eine Zahlung auf erstattet | erlaubt |
+| Moderation bucht eine Rückerstattung | abgelehnt |
+| Moderation liest fremde Profile, setzt ein fremdes Konto auf `creator` | erlaubt |
+| Moderation ernennt eine Administration | abgelehnt |
+| Creator liest fremde Profile, fremde Sitzungen | 0 Zeilen |
+| Moderation liest fremde Sitzungen, verbirgt einen fremden Blogkommentar | erlaubt |
+| Administration liest das DNS-Protokoll, legt ein Postfach an | erlaubt |
+| Betrieb liest das DNS-Protokoll | 0 Zeilen |
+| Betrieb legt ein Postfach an | abgelehnt |
+| Moderation ruft `admin_payments_summary_30d()` und `admin_security_overview()` | erlaubt |
+| Creator ruft dieselben beiden | 0 Zeilen |
 
 Die Unterscheidung zwischen „abgelehnt" (`42501`, das Recht fehlt) und „0 Zeilen" (das Recht besteht, die Policy gibt nichts frei) ist beabsichtigt und wird mitgeprüft. Beides sieht für die Anwendung gleich aus, sagt aber Verschiedenes über die Ursache.
 
+### Notzugang
+
+`ADMIN_ALLOWED_EMAILS` öffnet die Oberfläche des Administrationsbereichs, auch wenn die Rolle fehlt oder nicht lesbar war. Es erteilt **keine** Rechte in der Datenbank. Die Begründung steht in ADR-0036; kurz: Die Liste ist eine Umgebungsvariable der Anwendung, und eine zweite Autorität neben `creator_profiles.role` ist genau das, was Phase 1.4 mit `admin_domains` und `app_admins` beseitigt hat.
+
+Für die Datenbank ist ein solches Konto schlicht das, was seine Rolle sagt. Vier Nachweise halten das fest:
+
+| Nachweis | Erwartung |
+| --- | --- |
+| Notzugang mit Rolle `user` liest Sicherheitsereignisse | 0 Zeilen |
+| Notzugang mit Rolle `user` sperrt eine IP | abgelehnt |
+| Notzugang ohne Profil liest Zahlungen | 0 Zeilen |
+| Notzugang ohne Profil liest alle Profile | 0 Zeilen |
+
+Damit das nicht als Ausfall missverstanden wird, zeigt der Bereich seit dem Nachtrag einen Hinweis über der gesamten Shell (`components/admin/NotzugangHinweis.tsx`), sobald `grant === 'break-glass'` gilt. Ohne ihn wäre die Einschränkung nicht zu erkennen: Die Seiten laden, die Listen bleiben leer – dieselbe Verwechslung von „nichts vorgefallen" mit „nicht berechtigt", die Phase 1.4 an mehreren Stellen behoben hat.
+
+Auf der Seite der Anwendung hält `reachesDatabase()` in `lib/auth/admin-access.ts` denselben Satz fest, und `lib/auth/admin-access.test.ts` prüft ihn – auch für den Fall einer ausgefallenen Rollenabfrage.
+
+Der Weg zurück in den regulären Betrieb führt nicht durch die Anwendung: Das Konto braucht einen Eintrag in `creator_profiles.role`. Auf dem Development-Branch geschieht das über den SQL-Editor oder `scripts/db/sql.mjs`, für Production über eine Migration oder eine bereits berechtigte Person. Ein Selbstbedienungsweg wäre wieder eine Autorität, die an der Rolle vorbeigeht.
+
 ### `stripe_webhooks`
 
-Diese Tabelle hat RLS eingeschaltet und **keine** Policy. Das ist Absicht: Ohne Policy gibt RLS nichts frei, und `anon` wie `authenticated` haben zusätzlich kein Tabellenrecht. Die Tabelle gehört allein dem Webhook, der mit dem Service-Key schreibt. Der Advisor meldet das als `rls_enabled_no_policy` (siehe Abschnitt 8).
+Die Tabelle wird ausschliesslich vom Webhook geschrieben, der mit dem Service-Key arbeitet; eine Schreibpolicy gibt es bewusst nicht. Lesbar ist sie seit `20260817100800` ab der Fähigkeit `betrieb-lesen`, weil `GET /api/admin/payments/webhooks` sie anzeigt und die Antwort sonst dauerhaft leer bliebe. Sie führt nur Kennung, Ereignisart und Zeitpunkt – keine Nutzlast und keine Kundendaten.
 
 ---
 
 ## 8. Advisor-Befunde
 
-Behoben sind `function_search_path_mutable`, `auth_rls_initplan`, `multiple_permissive_policies` und `duplicate_index`. Nach den Migrationen bleiben 44 Security- und 48 Performance-Befunde. Was bleibt, bleibt mit Grund:
+Behoben sind `function_search_path_mutable`, `auth_rls_initplan`, `multiple_permissive_policies`, `duplicate_index` und – seit `20260817100800` – `rls_enabled_no_policy`. Es bleiben 44 Security- und 47 Performance-Befunde. Was bleibt, bleibt mit Grund:
 
 | Befund | Anzahl | Bewertung |
 | --- | --- | --- |
-| `rls_enabled_no_policy` – `stripe_webhooks` | 1 | gewollt. Ohne Policy gibt RLS nichts frei; genau das ist der Zweck. Eine Policy hinzuzufügen wäre die Lockerung, nicht die Härtung |
-| `authenticated_security_definer_function_executable` | 4 | `aktuelle_rolle()` und `hat_rolle_mindestens()` werden von den Policies gebraucht und müssen deshalb für `authenticated` ausführbar sein. Sie geben nur Auskunft über das aufrufende Konto selbst. `admin_payments_summary_30d()` und `admin_security_overview()` prüfen die Rolle intern und liefern ohne `admin` keine Zeile – nachgewiesen in Abschnitt 7 |
+| `authenticated_security_definer_function_executable` | 4 | `aktuelle_rolle()` und `hat_rolle_mindestens()` werden von den Policies gebraucht und müssen deshalb für `authenticated` ausführbar sein. Sie geben nur Auskunft über das aufrufende Konto selbst. `admin_payments_summary_30d()` und `admin_security_overview()` prüfen die Fähigkeit intern und liefern ohne `betrieb-lesen` keine Zeile – nachgewiesen in Abschnitt 7 |
 | `pg_graphql_anon_table_exposed` | 3 | `airports`, `blog_posts`, `blog_comments` sollen ohne Anmeldung lesbar sein. Sichtbarkeit im GraphQL-Schema ist die Folge des `SELECT`-Rechts, nicht ein zusätzliches Recht |
-| `pg_graphql_authenticated_table_exposed` | 36 | dasselbe für angemeldete Konten. Welche Zeilen sichtbar sind, entscheidet RLS – nachgewiesen in Abschnitt 7 |
-| `unused_index` | 47 | der Development-Branch trägt keine echte Last. Ein Index, den nie eine Abfrage benutzt hat, ist auf einem Branch ohne Verkehr keine Aussage – die Zahl schwankt allein danach, was zuletzt jemand abgefragt hat. Darunter sind die 19 Fremdschlüsselindizes aus `20260817100400`, die genau für den Betrieb angelegt wurden |
+| `pg_graphql_authenticated_table_exposed` | 37 | dasselbe für angemeldete Konten. Welche Zeilen sichtbar sind, entscheidet RLS – nachgewiesen in Abschnitt 7 |
+| `unused_index` | 46 | der Development-Branch trägt keine echte Last. Ein Index, den nie eine Abfrage benutzt hat, ist auf einem Branch ohne Verkehr keine Aussage – die Zahl schwankt allein danach, was zuletzt jemand abgefragt hat. Darunter sind die 19 Fremdschlüsselindizes aus `20260817100400`, die genau für den Betrieb angelegt wurden |
 | `auth_db_connections_absolute` | 1 | Einstellung des Auth-Servers, kein Schemabefund. Gehört zur Kapazitätsplanung vor dem Launch |
 
-Ein Befund ist bewusst hinzugekommen: Die neue Funktion `admin_security_overview()` erhöht die zweite Gruppe von drei auf vier. Sie folgt demselben Muster wie `admin_payments_summary_30d()` – `SECURITY DEFINER` mit interner Rollenprüfung. `pg_policy` wäre für jede Rolle lesbar und verriete die Bedingung jeder Policy; die Funktion gibt nur deren Anzahl heraus.
+Zwei Verschiebungen gegenüber dem ersten Durchgang: `rls_enabled_no_policy` auf `stripe_webhooks` ist weg, weil die Tabelle jetzt eine Lesepolicy hat – dafür zählt sie in der GraphQL-Gruppe mit, die von 36 auf 37 steigt. Und die Funktion `admin_security_overview()` erhöht die erste Gruppe von drei auf vier. Sie folgt demselben Muster wie `admin_payments_summary_30d()` – `SECURITY DEFINER` mit interner Prüfung. `pg_policy` wäre für jede Rolle lesbar und verriete die Bedingung jeder Policy; die Funktion gibt nur deren Anzahl heraus.
+
+Die fünf `darf_…()`-Funktionen erzeugen keinen Befund: Sie sind `SECURITY INVOKER` und tragen einen festen `search_path`.
 
 ---
 
@@ -261,7 +334,7 @@ Das Skript verwirft `public` in einer Transaktion, baut es aus den Migrationen n
 
 Danach prüft das Skript ein zweites Mal, dass das laufende Schema unverändert ist. Ein Test, der die Datenbank verändert, die er prüft, wäre wertlos.
 
-Ergebnis über alle neun Migrationen: kein Unterschied.
+Ergebnis über alle zehn Migrationen: kein Unterschied.
 
 Zwei Dinge mussten dafür geklärt werden. Erstens hing die Darstellung von Bedingungen und Typen am `search_path` – derselbe Index wurde einmal mit und einmal ohne Schemapräfix ausgegeben und sah dadurch verschieden aus, obwohl er identisch war. Beide Fingerabdrücke laufen jetzt mit demselben Pfad. Zweitens gehören 48 Vorgaberechte dem Platform-Rollenkonto `supabase_admin`; `alter default privileges for role supabase_admin` scheitert als `postgres` mit „permission denied", eine Anwendungsmigration kann sie also gar nicht herstellen. Sie sind ausdrücklich vom Vergleich ausgenommen, statt den Vergleich weicher zu machen.
 
@@ -272,6 +345,7 @@ Der Vergleich hat sich gelohnt: Er fand 153 Rechte, die im Abzug anders standen 
 | Prüfung | braucht Datenbank |
 | --- | --- |
 | `npm test` – darin `lib/auth/roles-datenbank.test.ts`, Rollenmodell in TypeScript gegen das Rollenmodell im Migrations-SQL | nein |
+| `npm test` – darin `lib/auth/faehigkeiten-datenbank.test.ts`, `CAPABILITY_MINIMUM` gegen die `darf_…()`-Funktionen | nein |
 | `npm run check:schema-bezug` – jedes `.from()` und `.rpc()` gegen `types/supabase.ts` | nein |
 | `npm run check:api-schutz` – jede Admin-Route ruft `requireAdminApi()` | nein |
 
@@ -353,4 +427,5 @@ Alle vier Tabellen stehen in der Liste der obsoleten. Sie dafür einzeln zu bere
 | `creator_profiles` in ein generisches Profil überführen | Phase 1.5. Der Tabellenname steht nur in `ROLE_TABLE` in `lib/auth/admin-guard.ts` |
 | `creator_sessions` aus den Admin-Kennzahlen lösen | Phase 1.5, zusammen mit dem Reise-Schema |
 | Datenbanknahe Prüfungen in die CI | braucht einen kurzlebigen Branch je Lauf, siehe Abschnitt 9 |
+| Lesende Admin-Routen verschlucken Fehler | `security/summary`, `security/events`, `payments/list`, `payments/summary`, `payments/breakdown`, `payments/webhooks` antworten bei einem Fehler mit einer leeren Liste statt mit einem Status. Für den Notzugang fängt das der Hinweis über der Shell ab, für einen echten Ausfall nicht. Behoben ist bisher nur der schreibende Weg `payments/refund`, weil eine erfundene Erfolgsmeldung bei einer Rückerstattung die teuerste ist |
 | Production-Stand | in Phase 1.4 nicht erhoben und nicht verändert. Der Abgleich gehört zum ersten Production-Deploy nach 1.5 |
