@@ -357,7 +357,7 @@ Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst wo
 - [x] den realen Auth-Stand des Branches über die Management API erhoben, bevor etwas geändert wurde – 242 Schlüssel, davon 35 sicherheitsrelevante gegen das Elternprojekt verglichen
 - [x] `supabase/config.toml` beschreibt jetzt den Branch statt der CLI-Vorlage; neun Widersprüche aufgelöst, unter anderem Passwortlänge (6 → 12), E-Mail-Bestätigung (aus → an), TOTP (aus → an)
 - [x] `password_hibp_enabled` auf Development eingeschaltet und die Wirkung nachgewiesen – ein Passwort aus einem bekannten Datenleck wird abgelehnt, obwohl es die Regel erfüllt
-- [x] erklärt, warum der Advisor `auth_leaked_password_protection` kam und ging: Er meldet nur, solange passwortgestützte Konten existieren (13 Befunde ohne, 14 mit einem solchen Konto)
+- [x] erklärt, warum der Advisor `auth_leaked_password_protection` kam und ging: Er meldet nur, solange passwortgestützte Konten existieren (vorher 13 Befunde ohne, 14 mit einem solchen Konto). Am Ende der Phase in beide Richtungen gegengeprobt: jetzt 13 ohne **und** 13 mit, jeweils ohne Treffer
 - [x] Redirect-Verhalten gemessen statt vermutet: Ein Pfad am eigenen Ursprung wird übernommen, ein fremder Host fällt auf `site_url` zurück. `additional_redirect_urls` bleibt deshalb leer
 - [x] zehn sicherheitsrelevante Schlüssel ohne CLI-Entsprechung mit Begründung im Code festgehalten und per PATCH gesetzt
 - [x] `npm run auth:pruefen` prüft nicht nur die 55 Sollwerte, sondern verlangt für **jeden** der 242 Schlüssel eine Aussage des Repositories; zwei Musterregeln fangen jeden neuen Anmeldedienst und jeden Auth-Hook

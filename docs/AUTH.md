@@ -160,7 +160,15 @@ bekannt geleakt  → HTTP 422  Password is known to be weak and easy to guess, p
 nicht geleakt    → HTTP 200  angenommen
 ```
 
-**Gegengeprobt am Ende der Phase.** Der entscheidende Lauf ist der mit einem Konto, das ein Passwort hat – ohne ein solches meldet der Advisor ohnehin nichts. Er ergibt jetzt 13 Security-Befunde und **null** Treffer auf `auth_leaked_password_protection`, wo derselbe Aufbau vor der Umstellung 14 und einen ergab. Das Konto wird danach wieder entfernt.
+**Gegengeprobt am Ende der Phase, beide Richtungen.** Der entscheidende Lauf ist der mit einem Konto, das ein Passwort hat – ohne ein solches meldet der Advisor ohnehin nichts. Gemessen am 17. August 2026, nachdem `auth.users` leer war:
+
+| Lage | Security-Befunde | davon `auth_leaked_password_protection` |
+| --- | --- | --- |
+| ohne passwortgestütztes Konto | 13 | 0 |
+| mit einem passwortgestützten Konto | 13 | 0 |
+| *vorher, mit einem solchen Konto* | *14* | *1* |
+
+Die Zahl bewegt sich nicht mehr. Das Konto für die Gegenprobe entsteht mit `npm run auth:testkonto` und wird danach entfernt; auf dem Branch bleibt kein Testkonto stehen.
 
 **Keine Kosten, kein Plan-Wechsel.** Der Abgleich mit HaveIBeenPwned ist in Supabase Auth enthalten und in allen Plänen verfügbar; das Elternprojekt führt ihn im selben Plan. `PATCH /config/auth` hat den Wert ohne Rückfrage und ohne Hinweis auf ein kostenpflichtiges Zusatzprodukt übernommen.
 
