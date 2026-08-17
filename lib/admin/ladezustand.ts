@@ -14,6 +14,8 @@
 // Fehler und echte Leere – sind so ohne Laufzeit und ohne Netz prüfbar
 // (`lib/admin/ladezustand.test.ts`).
 
+import type { Problem } from '@/lib/api/datenbank-lesen'
+
 export type Fehler = {
   /** Was angezeigt wird. Die Meldung des Servers, wenn er eine schickt. */
   meldung: string
@@ -28,6 +30,19 @@ export type Fehler = {
 }
 
 export type Ladung<T> = { daten: T; fehler: null } | { daten: null; fehler: Fehler }
+
+/**
+ * Dieselbe Anzeige für die Ansichten, die serverseitig lesen.
+ *
+ * Die Startseite der Administration und die Benutzerverwaltung fragen die
+ * Datenbank direkt, ohne Route dazwischen; sie sahen die Ablehnung also nie als
+ * HTTP-Status. Statt daraus eine zweite Auslegung zu machen, kommt die
+ * Einordnung aus `problemAus()` in `lib/api/datenbank-lesen.ts` – derselben
+ * Stelle, die auch die Routen benutzen.
+ */
+export function ausProblem(problem: Problem): Fehler {
+  return { meldung: problem.message, wiederholbar: problem.status === 503 }
+}
 
 /** So viel von `Response`, wie hier zählt – damit der Test kein `fetch` braucht. */
 export type Antwortartig = {

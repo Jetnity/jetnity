@@ -57,9 +57,30 @@ const VORUEBERGEHEND = new Set([
   '58', // system_error
 ])
 
-function statusFuer(antwort: Leseantwort<unknown>, fehler: Datenbankfehler): 500 | 503 {
-  if (antwort.status === 0) return 503
-  return VORUEBERGEHEND.has((fehler.code ?? '').slice(0, 2)) ? 503 : 500
+/**
+ * Ordnet eine Ablehnung ein: 503, wenn die Datenbank keine Antwort gegeben hat,
+ * sonst 500.
+ *
+ * Exportiert, weil nicht jeder Lesezugriff durch `lese()` passt. Eine Abfrage
+ * mit `head: true` liefert absichtlich `data: null` und nur einen Zähler; sie
+ * durch `lese()` zu schicken hiesse, den Zähler als fehlende Daten zu lesen.
+ * Server-Komponenten, die so lesen, sollen die Einordnung trotzdem nicht ein
+ * zweites Mal formulieren.
+ */
+export function problemAus(antwort: Leseantwort<unknown>, fehler: Datenbankfehler): Problem {
+  const status = antwort.status === 0 || VORUEBERGEHEND.has((fehler.code ?? '').slice(0, 2)) ? 503 : 500
+
+  // Eine Abfrage mit `head: true` schickt HEAD, und eine HEAD-Antwort hat keinen
+  // Körper: `postgrest-js` liefert dann `{ message: '' }` ohne SQLSTATE. Am
+  // laufenden Branch gemessen – mit entzogenem `select` antwortet dieselbe
+  // Abfrage als GET „permission denied for table creator_sessions", als HEAD
+  // eine leere Meldung. Der Statuscode ist das Einzige, was bleibt; ihn zu
+  // nennen ist ehrlicher als eine leere Zeile.
+  const message = fehler.message.trim()
+    ? fehler.message
+    : `Die Datenbank hat die Abfrage abgelehnt (HTTP ${antwort.status ?? '–'}), ohne eine Begründung mitzusenden.`
+
+  return { status, message }
 }
 
 function nachricht(fehler: unknown): string {
@@ -97,10 +118,7 @@ export async function lese<Zeile>(
   }
 
   if (antwort.error) {
-    return {
-      zeilen: null,
-      problem: { status: statusFuer(antwort, antwort.error), message: antwort.error.message },
-    }
+    return { zeilen: null, problem: problemAus(antwort, antwort.error) }
   }
 
   if (antwort.data === null) {

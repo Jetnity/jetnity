@@ -10,11 +10,13 @@ import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
 
 import {
+  ausProblem,
   fortsetzung,
   lade,
   liste,
   type Antwortartig,
 } from '@/lib/admin/ladezustand'
+import { problemAus } from '@/lib/api/datenbank-lesen'
 
 type Zeile = { id: string }
 
@@ -169,6 +171,46 @@ describe('Ein fehlendes Feld ist keine leere Liste', () => {
     const ergebnis = await lade(async () => antwort(200, { rows: 5 }), zeilen)
 
     assert.equal(ergebnis.fehler?.wiederholbar, false)
+  })
+})
+
+describe('Serverseitige Ansichten benutzen dieselbe Einordnung', () => {
+  // Die Startseite der Administration und die Benutzerverwaltung lesen ohne
+  // Route dazwischen. Ihre Anzeige darf deshalb nicht anders ausfallen als
+  // hinter einer Route.
+  test('ein fehlendes Recht ist nicht wiederholbar', () => {
+    const fehler = ausProblem(
+      problemAus({ data: null, error: null, status: 403 }, { message: 'permission denied', code: '42501' }),
+    )
+
+    assert.equal(fehler.meldung, 'permission denied')
+    assert.equal(fehler.wiederholbar, false)
+  })
+
+  test('eine erschöpfte Verbindung ist wiederholbar', () => {
+    const fehler = ausProblem(
+      problemAus({ data: null, error: null, status: 500 }, { message: 'too many connections', code: '53300' }),
+    )
+
+    assert.equal(fehler.wiederholbar, true)
+  })
+
+  test('eine Zählabfrage ohne Körper nennt wenigstens den Status', () => {
+    // `head: true` schickt HEAD, und eine HEAD-Antwort hat keinen Körper.
+    // `postgrest-js` liefert dann `{ message: '' }` – eine leere Zeile in der
+    // Fehlerfläche wäre das Ergebnis.
+    const fehler = ausProblem(problemAus({ data: null, error: null, status: 403 }, { message: '' }))
+
+    assert.match(fehler.meldung, /403/)
+    assert.ok(fehler.meldung.length > 20)
+  })
+
+  test('eine Anfrage, die die Datenbank nicht erreicht hat, ebenso', () => {
+    // `postgrest-js` fängt einen gescheiterten `fetch` selbst ab und baut daraus
+    // eine Antwort mit `status: 0`.
+    const fehler = ausProblem(problemAus({ data: null, error: null, status: 0 }, { message: 'fetch failed' }))
+
+    assert.equal(fehler.wiederholbar, true)
   })
 })
 

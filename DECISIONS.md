@@ -717,7 +717,7 @@ Der Unterschied zwischen 500 und 503 ist keine Kosmetik: Er sagt der Bedienerin,
 
 **Konsequenzen:** Drei Defekte, die das Verschlucken verdeckt hatte, sind dabei sichtbar geworden und behoben. Die Suche in den Sicherheitsereignissen verglich `security_events.user_id` – eine `uuid` – mit `ilike`; Postgres lehnte jede Suche ab, die Route lieferte stillschweigend nichts. Ein Suchbegriff mit Komma oder Klammer zerlegte den `or`-Ausdruck von PostgREST und führte eine andere Abfrage aus als die gemeinte; Werte werden jetzt zitiert. Das Feld `configured`, das eine fehlende Tabelle anzeigen sollte, ist entfallen: Eine fehlende Tabelle ist jetzt ein Fehler, und niemand hat das Feld je gelesen.
 
-In der Oberfläche bleibt eine Lücke. `OverviewCard` und `SecurityWidget` zeigen die Meldung an, `TransactionsCard` und `WebhooksCard` in `components/admin/payments/PaymentsCenter.tsx` werfen den Fehler in ein `finally` ohne `catch` – die Tabelle bleibt dann leer, ohne Hinweis. Die Antwort des Servers ist korrekt, ihre Darstellung noch nicht; das gehört zur Oberflächenarbeit und ist in [ROADMAP.md](ROADMAP.md) vermerkt.
+In der Oberfläche blieb zunächst eine Lücke: Die Antwort des Servers war korrekt, ihre Darstellung nicht. Sie ist in Phase 1.4d geschlossen, siehe ADR-0040. Eine Route hat der damalige Umbau übersehen – `app/api/admin/security/list/route.ts` bildete jede Ablehnung auf 500 ab, statt `lese()` zu benutzen; auch das ist dort behoben.
 
 ---
 
@@ -787,6 +787,52 @@ Drei Dinge sind dabei aufgefallen und behoben. Die Passwortregel stand zweimal i
 Nicht behoben, sondern festgehalten: Google und Apple stehen als Schaltfläche in beiden Formularen und sind auf dem Branch aus – ein Klick endet in „provider is not enabled". Einschalten braucht Client-ID und Secret beider Anbieter und ist eine Handlung ausserhalb dieses Repositories ([ROADMAP.md](ROADMAP.md)).
 
 Production ist nicht angefasst. Der Vergleich in [docs/AUTH.md](docs/AUTH.md) Abschnitt 3 ist ausschliesslich gelesen; der Abgleich gehört zum ersten Production-Deploy nach Phase 1.5.
+
+---
+
+## ADR-0040 – Eine Admin-Ansicht sagt, wenn sie nichts weiss
+
+**Datum:** 17. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Die Unterscheidung zwischen einem Fehler und einer echten Leere steht in der Oberfläche einmal, in `lib/admin/ladezustand.ts`, und ihre Darstellung einmal, in `components/admin/Ladezustand.tsx`. Alle vier lesenden Admin-Ansichten benutzen beides. Drei Zustände sind unterscheidbar und werden unterschiedlich gezeigt:
+
+1. **Antwort da, keine Zeile** – die gewohnte leere Ansicht, „Keine Transaktionen", „Keine Events".
+2. **Abgelehnt (4xx/5xx)** – eine Fehlerfläche mit der Meldung des Servers. Die Leermeldung erscheint dann nicht, und wo Zahlen stünden, steht ein Strich.
+3. **Nicht angekommen** – dieselbe Fläche, ohne die Meldung des Browsers durchzureichen.
+
+Nur bei 503 lädt die Fläche zusätzlich zum zweiten Versuch ein; bei 500 hat die Datenbank geantwortet und abgelehnt, und dieselbe Anfrage scheitert wieder. Die Schaltfläche „Erneut versuchen" bleibt in beiden Fällen – sie ist der Weg zurück, nachdem die Ursache behoben wurde –, der Satz „Ein zweiter Versuch kann helfen" nur beim ersten.
+
+**Kontext:** ADR-0037 hat die Serverseite geordnet. Die Oberfläche gab das nur zum Teil weiter, und zwar in vier verschiedenen Formen:
+
+- `TransactionsCard` und `WebhooksCard` warfen bei `!res.ok` eine Ausnahme in ein `finally` **ohne `catch`**. Niemand fing sie, der Zustand blieb auf `[]` stehen, und die Tabelle meldete „Keine Transaktionen" bzw. „Keine Events". Im Zahlungsbereich heisst das: es gab keine Zahlung. `WebhooksCard` hat den Fall vorgeführt – `stripe_webhooks` hatte bis Phase 1.4 weder Recht noch Policy, die Route antwortete 500, die Karte sagte „Stripe hat nichts geschickt".
+- `OverviewCard` zeigte die Meldung, darunter aber trotzdem drei Nullen, eine flache Kurve und „Keine Daten in den letzten 30 Tagen". Der Vorgabewert `[]` war von einem Ergebnis nicht zu unterscheiden.
+- `SecurityWidget` zeigte einen Toast. Er verschwand nach vier Sekunden und liess vier Kennzahlen auf 0 und zwei Tabellen mit „Keine Einträge" zurück – im Sicherheitsbereich also genau die Entwarnung, gegen die ADR-0034 und ADR-0037 geschrieben sind. Die Ansicht lädt sich alle 15 Sekunden neu; der Toast kam bei jedem Lauf erneut.
+
+**Alternativen:**
+
+1. *Nur die zwei Zahlungskarten korrigieren*, wie die Roadmap den Punkt geführt hat. Dann hätten vier Ansichten weiter vier Formen für denselben Zustand, und `OverviewCard` und `SecurityWidget` – die vermeintlichen Vorbilder – wären die beiden falschen geblieben.
+2. *Den Toast zum Muster machen.* Er ist das richtige Mittel für eine Handlung mit einer Antwort und bleibt es dort: Sperren und Entsperren melden weiter per Toast. Für eine Ansicht ist er falsch, weil er verschwindet und die falsche Aussage stehen lässt.
+3. *Die Meldung als `string | null` in jeder Karte halten.* Reicht für die Anzeige, verliert aber die Unterscheidung aus ADR-0037: Ob ein zweiter Versuch Sinn hat, ist dann nicht mehr im Zustand.
+4. *Einen Datenlade-Haken oder eine Bibliothek dafür einführen.* Mehr, als das Problem verlangt ([AGENTS.md](AGENTS.md) Regel 12). Es ging nie um das Holen, sondern um die Deutung einer Antwort – und die ist ohne React und ohne `fetch` prüfbar, sobald sie in `lib/` steht.
+5. *Bei einem Fehler die zuletzt geholten Daten verwerfen.* Konsequent, aber im Sicherheitsbereich schädlich: Aus einem Aussetzer würde eine leere Liste. Die Daten bleiben stehen und werden als älter gekennzeichnet.
+
+**Begründung:** Eine leere Liste ist im Administrationsbereich eine Aussage – keine Sperre, keine Fehlanmeldung, keine Zahlung – und sie ist ausgerechnet dort am wichtigsten, wo sie beruhigt. Ein Fehler ist die Abwesenheit einer Aussage. Beides gleich darzustellen nimmt der leeren Liste ihre Bedeutung.
+
+Dass die Unterscheidung in `lib/` liegt und nicht in einer Komponente, ist der Punkt, an dem sie prüfbar wird. `lib/admin/ladezustand.test.ts` stellt 19 Fälle gegeneinander, darunter den, an dem die zwei Karten gescheitert sind: Status 500 mit `{ rows: [] }` im Körper. Ein fehlendes Feld gilt dabei ebenfalls als Fehler und nicht als leere Liste – `data.rows ?? []` war genau die Zeile, die aus beidem dasselbe machte.
+
+**Konsequenzen:** Am laufenden Server gemessen, mit entzogenem `select` auf `payments`, `stripe_webhooks` und `security_events`: Alle drei Karten zeigen „permission denied for table …" statt einer leeren Tabelle, die Kennzahlen der Sicherheitsübersicht stehen auf Strich statt auf 0, und ein Filter ohne Treffer zeigt weiterhin „Keine Transaktionen." ohne Fehlerfläche. Nach dem Zurückgeben des Rechts führt „Erneut versuchen" zurück in die gefüllte Ansicht.
+
+Vier Dinge sind dabei aufgefallen und behoben:
+
+- `app/api/admin/security/list/route.ts` war die einzige lesende Route, die `lese()` nicht benutzte, und bildete jede Ablehnung auf 500 ab – auch eine erschöpfte Verbindung. Die Oberfläche wertet den Unterschied jetzt aus, also musste die Route ihn liefern (ADR-0037).
+- `RefundCard` las `data.error`, die Route sendet `message`. Die Begründung der Datenbank – der einzige Hinweis, warum eine Rückerstattung nicht gebucht wurde – kam nie an. Der Hinweis darunter versprach ausserdem noch, die API antworte bei fehlenden Tabellen „freundlich ohne Crash"; seit ADR-0037 stimmt das nicht, und es wäre die falsche Zusage.
+- Die zwei Eingriffe in `SecurityWidget` prüften nur `j.ok`. `requireAdminApi` antwortet ohne `ok` und mit `error` statt `message` – ein abweisendes Gate führte damit zu „Block fehlgeschlagen" ohne nennbaren Grund.
+- „Mehr laden" stand im Fehlerfall weiter unter der Tabelle, abgeschaltet aber sichtbar, und damit als zweites Angebot neben „Erneut versuchen". Eine Fortsetzung gibt es nicht, solange die erste Seite fehlt.
+
+Kein neues Aussehen: Rahmen, Radius und Fehlerfarben sind die, die die Formulare in `components/auth` für ihre Meldungen benutzen ([DESIGN_SYSTEM.md](DESIGN_SYSTEM.md)).
+
+Die drei übrigen Admin-Bereiche – `analytics`, `content`, `localization`, `marketing`, `settings` – lesen heute keine Daten und sind deshalb nicht betroffen. `UsersTable` und die Startseite lesen serverseitig; dort trägt ein Fehler die Seite selbst und nicht eine Karte darin.
 
 ---
 
