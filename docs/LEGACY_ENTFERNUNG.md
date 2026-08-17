@@ -274,8 +274,16 @@ Die 21 Tabellen, die vorher mit 23 Fremdschlüsseln auf `auth.users` zeigten, si
 | `npm run db:verwendung` | 8 Tabellen, 2 RPCs |
 | `npm run check:schema-bezug` | jede angesprochene Struktur existiert |
 | `npm test` | 83 von 83 |
-| Typecheck, Lint, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz` | grün |
-| Production-Build | grün |
+| Typecheck (702 Dateien), Lint, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz` | grün |
+| Production-Build | grün, 36 Seiten |
+| GitHub CI auf dem Pull Request | grün – `npm ci`, Setup-Check, Typecheck, Lint, Tests, vier Hygiene-Checks, Production-Build |
+| Vercel-Preview-Deploy | erfolgreich gebaut und ausgerollt |
+
+Der Bestand ist danach gegengeprüft statt vorausgesetzt: Von den 29 entfernten Tabellen existiert keine mehr, von den 8 zu schützenden fehlt keine, und `supabase_migrations.schema_migrations` führt genau elf Einträge.
+
+Die Preview-Deployments des Projekts liegen hinter dem Zugriffsschutz von Vercel (SSO). Der Build und das Ausrollen sind damit belegt, ein Aufruf der Oberfläche gegen die Preview-URL nicht – jede Anfrage endet in einer Weiterleitung auf `vercel.com/sso-api`. Funktional geprüft ist stattdessen der lokal laufende Server gegen denselben Development-Branch: `GET /api/search/airports?q=zur` antwortet 200 mit einer leeren Liste. Das ist die richtige Antwort und keine Ausweichantwort – `airports` führt auf dem Branch null Zeilen, und die Route greift seit Phase 1.4 nicht mehr auf Amadeus zurück, um zu schreiben. Wäre die Tabelle mitentfernt worden, hätte dieselbe Route nichts zu lesen gehabt.
+
+Die Abfragen, die die Startseite des Administrationsbereichs stellt – `creator_sessions` zählen, `admin_payments_summary_30d()` und `admin_security_overview()` rufen –, sind nicht über die Oberfläche geprüft, sondern in `npm run db:sicherheit` als acht benannte Nachweise über die Stufen `moderator`, `creator` und `admin`. Das ist die belastbarere Prüfung: Sie läuft in einer zurückgerollten Transaktion, legt ihre Konten selbst an und braucht keine dauerhaften Testkonten auf dem gemeinsamen Branch.
 
 ### Die neue vierte Regel in `npm run db:rechte`
 
