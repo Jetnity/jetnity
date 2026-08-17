@@ -71,126 +71,6 @@ export type Database = {
         }
         Relationships: []
       }
-      creator_profiles: {
-        Row: {
-          avatar_url: string | null
-          bio: string | null
-          created_at: string | null
-          display_name: string | null
-          email: string | null
-          facebook: string | null
-          id: string
-          instagram: string | null
-          last_seen_at: string | null
-          name: string | null
-          role: string
-          status: string
-          tiktok: string | null
-          twitter: string | null
-          user_id: string
-          username: string | null
-          website: string | null
-          youtube: string | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          bio?: string | null
-          created_at?: string | null
-          display_name?: string | null
-          email?: string | null
-          facebook?: string | null
-          id?: string
-          instagram?: string | null
-          last_seen_at?: string | null
-          name?: string | null
-          role?: string
-          status?: string
-          tiktok?: string | null
-          twitter?: string | null
-          user_id: string
-          username?: string | null
-          website?: string | null
-          youtube?: string | null
-        }
-        Update: {
-          avatar_url?: string | null
-          bio?: string | null
-          created_at?: string | null
-          display_name?: string | null
-          email?: string | null
-          facebook?: string | null
-          id?: string
-          instagram?: string | null
-          last_seen_at?: string | null
-          name?: string | null
-          role?: string
-          status?: string
-          tiktok?: string | null
-          twitter?: string | null
-          user_id?: string
-          username?: string | null
-          website?: string | null
-          youtube?: string | null
-        }
-        Relationships: []
-      }
-      creator_sessions: {
-        Row: {
-          content: string | null
-          created_at: string
-          id: string
-          idempotency_key: string | null
-          insights: string | null
-          published_at: string | null
-          rating: number | null
-          review_status: string
-          role: string
-          shared_with: string[] | null
-          status: string
-          title: string
-          tracking: Json | null
-          updated_at: string
-          user_id: string
-          visibility: Database["public"]["Enums"]["visibility_status"] | null
-        }
-        Insert: {
-          content?: string | null
-          created_at?: string
-          id?: string
-          idempotency_key?: string | null
-          insights?: string | null
-          published_at?: string | null
-          rating?: number | null
-          review_status?: string
-          role: string
-          shared_with?: string[] | null
-          status: string
-          title: string
-          tracking?: Json | null
-          updated_at?: string
-          user_id?: string
-          visibility?: Database["public"]["Enums"]["visibility_status"] | null
-        }
-        Update: {
-          content?: string | null
-          created_at?: string
-          id?: string
-          idempotency_key?: string | null
-          insights?: string | null
-          published_at?: string | null
-          rating?: number | null
-          review_status?: string
-          role?: string
-          shared_with?: string[] | null
-          status?: string
-          title?: string
-          tracking?: Json | null
-          updated_at?: string
-          user_id?: string
-          visibility?: Database["public"]["Enums"]["visibility_status"] | null
-        }
-        Relationships: []
-      }
       payments: {
         Row: {
           amount_chf: number | null
@@ -212,6 +92,42 @@ export type Database = {
           customer_email?: string | null
           id?: string
           status?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          display_name: string | null
+          email: string | null
+          id: string
+          last_seen_at: string | null
+          role: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          last_seen_at?: string | null
+          role?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          last_seen_at?: string | null
+          role?: string
+          status?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -287,6 +203,263 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_days: {
+        Row: {
+          created_at: string
+          day_date: string | null
+          day_index: number
+          id: string
+          metadata: Json
+          title: string | null
+          trip_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day_date?: string | null
+          day_index: number
+          id?: string
+          metadata?: Json
+          title?: string | null
+          trip_id: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          day_date?: string | null
+          day_index?: number
+          id?: string
+          metadata?: Json
+          title?: string | null
+          trip_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_days_reise_fk"
+            columns: ["trip_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id", "user_id"]
+          },
+        ]
+      }
+      trip_items: {
+        Row: {
+          booking_url: string | null
+          created_at: string
+          day_id: string | null
+          ends_at: string | null
+          ends_on: string | null
+          external_ref: string | null
+          id: string
+          kind: string
+          metadata: Json
+          note: string | null
+          position: number
+          price_amount: number | null
+          price_currency: string | null
+          provider: string | null
+          stage_id: string | null
+          starts_at: string | null
+          starts_on: string | null
+          time_zone: string | null
+          title: string
+          trip_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          booking_url?: string | null
+          created_at?: string
+          day_id?: string | null
+          ends_at?: string | null
+          ends_on?: string | null
+          external_ref?: string | null
+          id?: string
+          kind: string
+          metadata?: Json
+          note?: string | null
+          position?: number
+          price_amount?: number | null
+          price_currency?: string | null
+          provider?: string | null
+          stage_id?: string | null
+          starts_at?: string | null
+          starts_on?: string | null
+          time_zone?: string | null
+          title: string
+          trip_id: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          booking_url?: string | null
+          created_at?: string
+          day_id?: string | null
+          ends_at?: string | null
+          ends_on?: string | null
+          external_ref?: string | null
+          id?: string
+          kind?: string
+          metadata?: Json
+          note?: string | null
+          position?: number
+          price_amount?: number | null
+          price_currency?: string | null
+          provider?: string | null
+          stage_id?: string | null
+          starts_at?: string | null
+          starts_on?: string | null
+          time_zone?: string | null
+          title?: string
+          trip_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_items_etappe_fk"
+            columns: ["stage_id", "trip_id"]
+            isOneToOne: false
+            referencedRelation: "trip_stages"
+            referencedColumns: ["id", "trip_id"]
+          },
+          {
+            foreignKeyName: "trip_items_reise_fk"
+            columns: ["trip_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id", "user_id"]
+          },
+          {
+            foreignKeyName: "trip_items_tag_fk"
+            columns: ["day_id", "trip_id"]
+            isOneToOne: false
+            referencedRelation: "trip_days"
+            referencedColumns: ["id", "trip_id"]
+          },
+        ]
+      }
+      trip_stages: {
+        Row: {
+          arrival_date: string | null
+          country_code: string | null
+          created_at: string
+          departure_date: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          metadata: Json
+          name: string
+          position: number
+          trip_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          arrival_date?: string | null
+          country_code?: string | null
+          created_at?: string
+          departure_date?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          metadata?: Json
+          name: string
+          position?: number
+          trip_id: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          arrival_date?: string | null
+          country_code?: string | null
+          created_at?: string
+          departure_date?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          metadata?: Json
+          name?: string
+          position?: number
+          trip_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_stages_reise_fk"
+            columns: ["trip_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id", "user_id"]
+          },
+        ]
+      }
+      trips: {
+        Row: {
+          budget_amount: number | null
+          created_at: string
+          currency: string
+          end_date: string | null
+          guest_ref: string | null
+          id: string
+          interests: string[]
+          metadata: Json
+          origin: string | null
+          pace: string
+          start_date: string | null
+          status: string
+          title: string
+          travel_wish: string | null
+          travellers: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          budget_amount?: number | null
+          created_at?: string
+          currency?: string
+          end_date?: string | null
+          guest_ref?: string | null
+          id?: string
+          interests?: string[]
+          metadata?: Json
+          origin?: string | null
+          pace?: string
+          start_date?: string | null
+          status?: string
+          title: string
+          travel_wish?: string | null
+          travellers?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          budget_amount?: number | null
+          created_at?: string
+          currency?: string
+          end_date?: string | null
+          guest_ref?: string | null
+          id?: string
+          interests?: string[]
+          metadata?: Json
+          origin?: string | null
+          pace?: string
+          start_date?: string | null
+          status?: string
+          title?: string
+          travel_wish?: string | null
+          travellers?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -301,6 +474,21 @@ export type Database = {
           total_revenue_cents: number
         }[]
       }
+      admin_reisen_kennzahlen: {
+        Args: never
+        Returns: {
+          konten_mit_reise_30d: number
+          reisen_30d: number
+          reisen_gesamt: number
+        }[]
+      }
+      admin_reisen_zeitreihe: {
+        Args: { _tage?: number }
+        Returns: {
+          anzahl: number
+          tag: string
+        }[]
+      }
       admin_security_overview: {
         Args: never
         Returns: {
@@ -310,26 +498,18 @@ export type Database = {
         }[]
       }
       aktuelle_rolle: { Args: never; Returns: string }
-      append_email_to_array:
-        | { Args: { email: string; session_id: string }; Returns: string[] }
-        | { Args: { email_to_add: string; id: string }; Returns: boolean }
       darf_betrieb_eingreifen: { Args: never; Returns: boolean }
       darf_betrieb_lesen: { Args: never; Returns: boolean }
       darf_inhalte_moderieren: { Args: never; Returns: boolean }
       darf_konfiguration_verwalten: { Args: never; Returns: boolean }
       darf_konten_verwalten: { Args: never; Returns: boolean }
+      gastreise_uebernehmen: { Args: { _reise: Json }; Returns: string }
       hat_rolle_mindestens: { Args: { minimum: string }; Returns: boolean }
-      remove_email_from_array: {
-        Args: { email_to_remove: string; id: string }
-        Returns: boolean
-      }
+      liste_ohne_doppelte: { Args: { _werte: string[] }; Returns: boolean }
       rollenrang: { Args: { rolle: string }; Returns: number }
-      sync_creator_profile_core: { Args: never; Returns: undefined }
-      sync_creator_profile_emails: { Args: never; Returns: undefined }
     }
     Enums: {
-      session_status: "pending" | "approved" | "rejected"
-      visibility_status: "private" | "public"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -456,9 +636,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      session_status: ["pending", "approved", "rejected"],
-      visibility_status: ["private", "public"],
-    },
+    Enums: {},
   },
 } as const
