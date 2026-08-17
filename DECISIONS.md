@@ -696,6 +696,31 @@ Der Hinweis ist Teil der Entscheidung, nicht Beiwerk. Ohne ihn zeigte der Bereic
 
 ---
 
+## ADR-0037 – Ein fehlgeschlagener Lesezugriff ist keine leere Liste
+
+**Datum:** 17. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Die lesenden Admin-Routen unterscheiden drei Ausgänge statt einem. Eine erfolgreiche Abfrage ohne Zeilen bleibt eine leere Liste mit Status 200. Eine Ablehnung der Datenbank – fehlendes Recht, fehlende Relation, fehlerhafte Anfrage – wird 500. Ein Ausfall der Datenbank – nicht erreichbar, abgebrochen, Verbindungen erschöpft – wird 503. Die Unterscheidung steht einmal in `lese()` in `lib/api/datenbank-lesen.ts`, nicht in jeder Route.
+
+**Kontext:** Sechs Routen umschlossen ihre Abfrage mit `try/catch` und lieferten im Fehlerfall `{ rows: [] }` oder Nullen. Das war doppelt wirkungslos: `supabase-js` wirft nicht, sondern meldet im Feld `error` – der Fang lief also nie an –, und wenn er anliefe, wäre das Ergebnis eine Falschaussage. `GET /api/admin/security/summary` hätte im Ausfall „0 Fehlanmeldungen, 0 Sperren" gemeldet, `GET /api/admin/payments/breakdown` dreissig Tage ohne Umsatz. Dieselbe Verwechslung von Ausfall und Entwarnung steckte in `admin_security_overview` („RLS aktiv 0/0 – alle Tabellen geschützt", ADR-0034) und in `stripe_webhooks`, das ohne Leserecht dauerhaft leer antwortete (ADR-0035).
+
+**Alternativen:**
+
+1. *Jeden Fehler auf 500 abbilden.* Einfacher, aber 500 heisst „hier ist etwas kaputt" und lädt nicht zum zweiten Versuch ein. Eine erschöpfte Verbindung ist kein Defekt, sondern ein Moment. Die Anwendung nutzt 503 bereits für die ausgefallene Rollenabfrage (ADR-0033); dieselbe Bedeutung gilt hier weiter.
+2. *Den Fehler mitliefern und trotzdem 200 antworten*, etwa `{ rows: [], error: "…" }`. Damit müsste jede Aufrufstelle daran denken, das Feld zu lesen. Genau dieses Vertrauen hat vorher nicht getragen. Ein Status, den `fetch` von sich aus prüfbar macht, hält besser.
+3. *Nur die Routen mit Aufrufern korrigieren.* Drei der sechs ruft heute niemand auf. Sie zurückzulassen hiesse, den Fehler für die nächste Oberfläche aufzubewahren, die sie einbindet.
+
+**Begründung:** Eine leere Liste ist eine Aussage über die Wirklichkeit: Es ist nichts passiert, es gibt keine Zahlung, keine Sperre. Ein Fehler ist die Abwesenheit einer Aussage. Beides über dieselbe Antwort auszuliefern, nimmt der leeren Liste ihre Bedeutung – und im Administrationsbereich ist die leere Liste ausgerechnet dort am wichtigsten, wo sie beruhigt.
+
+Der Unterschied zwischen 500 und 503 ist keine Kosmetik: Er sagt der Bedienerin, ob ein zweiter Versuch Sinn hat. Von RLS weggefilterte Zeilen bleiben bewusst eine leere Liste, denn die Datenbank hat geantwortet und ihre Antwort lautet „keine" – das ist der Fall einer Notzugangs-Sitzung, den der Hinweisbalken erklärt (ADR-0036), nicht ein Fehler.
+
+**Konsequenzen:** Drei Defekte, die das Verschlucken verdeckt hatte, sind dabei sichtbar geworden und behoben. Die Suche in den Sicherheitsereignissen verglich `security_events.user_id` – eine `uuid` – mit `ilike`; Postgres lehnte jede Suche ab, die Route lieferte stillschweigend nichts. Ein Suchbegriff mit Komma oder Klammer zerlegte den `or`-Ausdruck von PostgREST und führte eine andere Abfrage aus als die gemeinte; Werte werden jetzt zitiert. Das Feld `configured`, das eine fehlende Tabelle anzeigen sollte, ist entfallen: Eine fehlende Tabelle ist jetzt ein Fehler, und niemand hat das Feld je gelesen.
+
+In der Oberfläche bleibt eine Lücke. `OverviewCard` und `SecurityWidget` zeigen die Meldung an, `TransactionsCard` und `WebhooksCard` in `components/admin/payments/PaymentsCenter.tsx` werfen den Fehler in ein `finally` ohne `catch` – die Tabelle bleibt dann leer, ohne Hinweis. Die Antwort des Servers ist korrekt, ihre Darstellung noch nicht; das gehört zur Oberflächenarbeit und ist in [ROADMAP.md](ROADMAP.md) vermerkt.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

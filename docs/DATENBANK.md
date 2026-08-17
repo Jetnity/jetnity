@@ -300,6 +300,21 @@ Auf der Seite der Anwendung hält `reachesDatabase()` in `lib/auth/admin-access.
 
 Der Weg zurück in den regulären Betrieb führt nicht durch die Anwendung: Das Konto braucht einen Eintrag in `creator_profiles.role`. Auf dem Development-Branch geschieht das über den SQL-Editor oder `scripts/db/sql.mjs`, für Production über eine Migration oder eine bereits berechtigte Person. Ein Selbstbedienungsweg wäre wieder eine Autorität, die an der Rolle vorbeigeht.
 
+### Leere Liste und Fehler
+
+Eine leere Liste ist im Administrationsbereich eine Aussage: keine Sperre, keine Fehlanmeldung, keine Zahlung. Deshalb darf sie nicht auch die Antwort auf einen Fehler sein. Seit ADR-0037 trennen die lesenden Routen drei Ausgänge:
+
+| Lage | Antwort |
+| --- | --- |
+| Abfrage lief, keine Zeile | 200 mit leerer Liste |
+| Zeilen von RLS weggefiltert | 200 mit leerer Liste – die Datenbank hat geantwortet, und ihre Antwort lautet „keine" |
+| Datenbank lehnt ab: fehlendes Recht, fehlende Relation, fehlerhafte Anfrage | 500 mit `{ message }` |
+| Datenbank nicht erreichbar, abgebrochen, Verbindungen erschöpft | 503 mit `{ message }` |
+
+Die Unterscheidung steht einmal in `lese()` in `lib/api/datenbank-lesen.ts` und wird von `security/summary`, `security/events`, `payments/list`, `payments/summary`, `payments/breakdown` und `payments/webhooks` benutzt. `security/list` und `payments/refund` waren bereits vorher fail-closed und antworten auf jede Fehlerart mit 500.
+
+Nachgewiesen ist das am laufenden Server: Mit entzogenem `select` auf `payments` antworten die drei Zahlungswege 500 mit `permission denied for table payments`, während die Sicherheitswege unverändert 200 liefern – vorher gaben alle drei 200 mit `{"rows":[],"next_cursor":null}` zurück. Eine Suche ohne Treffer bleibt 200 mit leerer Liste.
+
 ### `stripe_webhooks`
 
 Die Tabelle wird ausschliesslich vom Webhook geschrieben, der mit dem Service-Key arbeitet; eine Schreibpolicy gibt es bewusst nicht. Lesbar ist sie seit `20260817100800` ab der Fähigkeit `betrieb-lesen`, weil `GET /api/admin/payments/webhooks` sie anzeigt und die Antwort sonst dauerhaft leer bliebe. Sie führt nur Kennung, Ereignisart und Zeitpunkt – keine Nutzlast und keine Kundendaten.
@@ -349,6 +364,7 @@ Der Vergleich hat sich gelohnt: Er fand 153 Rechte, die im Abzug anders standen 
 | --- | --- |
 | `npm test` – darin `lib/auth/roles-datenbank.test.ts`, Rollenmodell in TypeScript gegen das Rollenmodell im Migrations-SQL | nein |
 | `npm test` – darin `lib/auth/faehigkeiten-datenbank.test.ts`, `CAPABILITY_MINIMUM` gegen die `darf_…()`-Funktionen | nein |
+| `npm test` – darin `lib/api/datenbank-lesen.test.ts`, Fehler gegen echte Leere, und `lib/api/suchfilter.test.ts` | nein |
 | `npm run check:schema-bezug` – jedes `.from()` und `.rpc()` gegen `types/supabase.ts` | nein |
 | `npm run check:api-schutz` – jede Admin-Route ruft `requireAdminApi()` | nein |
 
@@ -430,7 +446,7 @@ Alle vier Tabellen stehen in der Liste der obsoleten. Sie dafür einzeln zu bere
 | `creator_profiles` in ein generisches Profil überführen | Phase 1.5. Der Tabellenname steht nur in `ROLE_TABLE` in `lib/auth/admin-guard.ts` |
 | `creator_sessions` aus den Admin-Kennzahlen lösen | Phase 1.5, zusammen mit dem Reise-Schema |
 | Datenbanknahe Prüfungen in die CI | braucht einen kurzlebigen Branch je Lauf, siehe Abschnitt 9 |
-| Lesende Admin-Routen verschlucken Fehler | `security/summary`, `security/events`, `payments/list`, `payments/summary`, `payments/breakdown`, `payments/webhooks` antworten bei einem Fehler mit einer leeren Liste statt mit einem Status. Für den Notzugang fängt das der Hinweis über der Shell ab, für einen echten Ausfall nicht. Behoben ist bisher nur der schreibende Weg `payments/refund`, weil eine erfundene Erfolgsmeldung bei einer Rückerstattung die teuerste ist |
+| Fehler in der Oberfläche sichtbar machen | Die Routen antworten seit ADR-0037 korrekt, aber `TransactionsCard` und `WebhooksCard` in `components/admin/payments/PaymentsCenter.tsx` werfen die Meldung in ein `finally` ohne `catch`. Die Tabelle bleibt dann leer statt zu erklären, warum. `OverviewCard` und `SecurityWidget` zeigen die Meldung bereits an |
 | Schutz vor kompromittierten Passwörtern | `password_hibp_enabled` steht auf `false`, obwohl `components/auth/RegisterForm.tsx` die zugehörige Fehlermeldung bereits übersetzt. Bewusst nicht im Vorbeigehen umgelegt: Eine Auth-Einstellung liegt neben dem Schema, sie steht in keiner Migration und wäre aus dem Repository weder nachvollziehbar noch reproduzierbar. Sie gehört zusammen mit `password_min_length` und den Redirect-URLs in einen eigenen Schritt, der die Auth-Konfiguration versioniert |
 | Auth-Konfiguration nicht versioniert | `supabase/config.toml` ist der unveränderte Vorlagenstand der CLI – `site_url` zeigt auf `127.0.0.1`, `minimum_password_length` steht auf 6, der Branch verlangt 12. Die Datei beschreibt damit weder Development noch Production. Solange das so bleibt, ist die Auth-Ebene die einzige Schicht, die nicht aus dem Repository hervorgeht |
 | Production-Stand | in Phase 1.4 nicht erhoben und nicht verändert. Der Abgleich gehört zum ersten Production-Deploy nach 1.5 |

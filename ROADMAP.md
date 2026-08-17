@@ -260,7 +260,7 @@ Offen bleibt das generische Profil: Die Rolle liegt weiterhin in `creator_profil
 
 ### 1.4 Datenbank-Baseline · abgeschlossen auf Development
 
-Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst worden. Vollständige Beschreibung: [docs/DATENBANK.md](docs/DATENBANK.md). Entscheidungen: [DECISIONS.md](DECISIONS.md) ADR-0031 bis ADR-0036.
+Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst worden. Vollständige Beschreibung: [docs/DATENBANK.md](docs/DATENBANK.md). Entscheidungen: [DECISIONS.md](DECISIONS.md) ADR-0031 bis ADR-0037.
 
 - [x] Development-Schema vollständig inventarisiert – Tabellen, Spalten, Schlüssel, Bedingungen, Indizes, Enums, Views, Funktionen, Trigger, Extensions, Rechte, RLS und Policies (`npm run db:inventar`)
 - [x] Drift gegen Repo-Migrationen und Typdateien dokumentiert
@@ -272,6 +272,7 @@ Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst wo
 - [x] RLS auf allen 37 Tabellen aktiv, 66 Policies, positive und negative Zugriffsfälle nachgewiesen
 - [x] Datenbankrechte an das Rollenmodell aus 1.3 gebunden – fünf benannte Fähigkeiten statt der pauschalen Rolle `admin`, je Fähigkeit ein Nachweis für die Stufe darüber und darunter
 - [x] Notzugang entschieden und sichtbar gemacht: `ADMIN_ALLOWED_EMAILS` öffnet die Oberfläche, nicht die Datenbank
+- [x] lesende Admin-Routen fail-closed: ein Datenbankfehler wird 500 oder 503, eine echt leere Abfrage bleibt eine leere Liste
 - [x] Rechte auf das Nötige begrenzt, `TRUNCATE` entzogen
 - [x] Advisors ausgeführt, Befunde behoben oder begründet dokumentiert
 - [x] Ownership-Modell dokumentiert
@@ -281,7 +282,7 @@ Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst wo
 
 Ausgangslage waren zehn Migrationsdateien, die zusammen **zwei** Tabellen erzeugten, während der Branch **39** trug. Für 37 Tabellen existierte keine versionierte Beschreibung; der RLS-Zustand war aus dem Repository nicht ableitbar.
 
-**Fünf Befunde waren mehr als Unordnung.**
+**Sechs Befunde waren mehr als Unordnung.**
 
 **1. `TRUNCATE` umgeht RLS.** `anon` und `authenticated` hatten auf allen 39 Tabellen sämtliche Rechte, einschliesslich `TRUNCATE`, `REFERENCES` und `TRIGGER`. Wer die Seite nur aufrief, konnte `truncate public.payments` ausführen und die Tabelle leeren – Policies greifen dabei nicht. Alle Rechte sind entzogen und einzeln neu vergeben; `npm run db:rechte` prüft seither in beide Richtungen, dass kein Recht ohne Policy und keine Policy ohne Recht existiert.
 
@@ -292,6 +293,10 @@ Ausgangslage waren zehn Migrationsdateien, die zusammen **zwei** Tabellen erzeug
 **4. Zwei Anzeigen logen.** Drei Security-Routen schrieben in `ip_blocklist` – eine Tabelle, die es nicht gibt. Weil `supabase-js` nicht wirft, sondern im `error`-Feld meldet, lief das `try/catch` nie an: Das Sperren einer IP meldete Erfolg und tat nichts. Die Karten „Security & Health" riefen eine Funktion `admin_security_overview` auf, die es nicht gab, fingen den Fehler ab und zeigten aus null Zeilen „RLS aktiv 0/0 – alle Tabellen geschützt". Beides ist behoben, und `npm run check:schema-bezug` verhindert in der CI den Rückfall.
 
 **5. Anwendung und Datenbank waren sich über die Mindestrollen nicht einig.** Der erste Durchgang stellte jede administrative Policy auf `hat_rolle_mindestens('admin')`, während die Anwendung den Bereich seit 1.3 ab `moderator` öffnet und einzelne Eingriffe ab `operator`. Eine Moderation kam damit durch `requireAdminApi()` und bekam von RLS jede Zeile weggefiltert – eine leere Liste, kein Fehler. Ein Betrieb kam durch `POST /api/admin/security/block`, und die Sperre lief ins Leere. `POST /api/admin/payments/refund` konnte überhaupt nichts schreiben, `GET /api/admin/payments/webhooks` antwortete immer leer. Gefunden hat das die Durchsicht des Pull Requests, nicht die Nachweise: Die kannten nur `user`, `admin` und `owner` – genau die beiden mittleren Rollen fehlten. Beide Seiten sprechen jetzt über Fähigkeiten statt über Rollen, und jede Fähigkeit hat einen Nachweis für die Stufe, ab der sie gilt, und die Stufe direkt darunter ([DECISIONS.md](DECISIONS.md) ADR-0035).
+
+**6. Ein Fehler sah aus wie eine leere Liste.** Sechs lesende Admin-Routen umschlossen ihre Abfrage mit `try/catch` und antworteten im Fehlerfall mit `{ rows: [] }` oder mit Nullen. `GET /api/admin/security/summary` hätte im Ausfall „0 Fehlanmeldungen, 0 Sperren" gemeldet, `GET /api/admin/payments/breakdown` dreissig Tage ohne Umsatz. Wirksam war der Fang ohnehin nie, denn `supabase-js` wirft nicht – dieselbe Ursache wie bei Befund 4. Die Routen unterscheiden jetzt drei Ausgänge: leere Liste bei einer erfolgreichen Abfrage ohne Zeilen, 500 bei einer Ablehnung der Datenbank, 503 bei einem Ausfall ([DECISIONS.md](DECISIONS.md) ADR-0037). Am laufenden Server gemessen: Mit entzogenem `select` auf `payments` antworten die drei Zahlungswege 500 statt wie vorher 200 mit leerer Liste.
+
+Dabei kamen zwei Defekte zum Vorschein, die das Verschlucken verdeckt hatte. Die Suche in den Sicherheitsereignissen verglich `security_events.user_id` – eine `uuid` – mit `ilike`; Postgres lehnte jede Suche ab, die Route lieferte stillschweigend nichts. Und ein Suchbegriff mit Komma oder Klammer zerlegte den `or`-Ausdruck von PostgREST, sodass eine andere als die gemeinte Abfrage lief. Beides ist behoben und in `lib/api/suchfilter.test.ts` festgehalten.
 
 Damit stellte sich die Frage nach dem Notzugang: `ADMIN_ALLOWED_EMAILS` öffnet den Gate der Anwendung, aber die Policies kennen die Liste nicht. Entschieden ist, dass das so bleibt – eine zweite Autorität neben `creator_profiles.role` wäre `admin_domains` unter neuem Namen. Eine solche Sitzung sieht jetzt einen Hinweis über der gesamten Shell, statt leere Übersichten, die sich als Entwarnung lesen liessen ([DECISIONS.md](DECISIONS.md) ADR-0036).
 
@@ -304,7 +309,8 @@ Damit stellte sich die Frage nach dem Notzugang: `ADMIN_ALLOWED_EMAILS` öffnet 
 | `npm run db:rechte` | 118 Tabellenrechte, jedes durch eine Policy gedeckt; kein `TRUNCATE`, `REFERENCES`, `TRIGGER`; RLS auf allen Tabellen; keine Policy nennt eine Rolle direkt |
 | `npm run db:rls` | vollständige Matrix aus 4 Rollen × 37 Tabellen × bis zu 5 Operationen |
 | `npm run db:typen -- --pruefen` | `types/supabase.ts` entspricht dem Schema |
-| `npm test` | 52 Tests, darin der Abgleich von Rollenmodell und Fähigkeiten zwischen TypeScript und Migrations-SQL |
+| `npm test` | 83 Tests, darin der Abgleich von Rollenmodell und Fähigkeiten zwischen TypeScript und Migrations-SQL sowie die Trennung von Fehler und echter Leere |
+| Fail-closed am laufenden Server | mit entzogenem `select` auf `payments`: 500 statt 200 mit leerer Liste; Recht zurückgegeben, wieder 200 mit Daten |
 
 **Advisors.** `function_search_path_mutable`, `auth_rls_initplan`, `multiple_permissive_policies`, `duplicate_index` und `rls_enabled_no_policy` sind behoben. Es bleiben 45 Security- und 47 Performance-Befunde, jeder mit Begründung in [docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 8. Der Grossteil sind Hinweise auf GraphQL-Sichtbarkeit, die aus dem `SELECT`-Recht folgt, und nie benutzte Indizes auf einem Branch ohne Verkehr.
 
@@ -334,6 +340,13 @@ Phase 1.4 hat Schema, Rechte und Policies aus dem Repository nachvollziehbar gem
 - [ ] `site_url` und Redirect-URLs je Umgebung festhalten, statt `127.0.0.1`
 - [ ] festlegen, wie die Auth-Konfiguration überprüft wird – ohne Prüfung wiederholt sich der Zustand, den 1.4 gerade für das Schema beendet hat
 
+### 1.4d Fehler in der Oberfläche sichtbar machen · offen
+
+Die lesenden Admin-Routen antworten seit ADR-0037 mit 500 oder 503, wenn die Datenbank nicht liefert. Zwei Karten geben das noch nicht weiter.
+
+- [ ] `TransactionsCard` und `WebhooksCard` in `components/admin/payments/PaymentsCenter.tsx` werfen die Meldung in ein `finally` ohne `catch`; die Tabelle bleibt dann leer, ohne zu sagen warum. `OverviewCard` und `SecurityWidget` zeigen sie bereits an
+- [ ] festlegen, wie eine fehlgeschlagene Übersicht im Administrationsbereich einheitlich aussieht – heute einmal roter Text, einmal Toast
+
 ### 1.5 V2-Reise-Schema
 
 - [ ] Schema für Reisen, Etappen, Tage, Planpunkte, Teilnehmer
@@ -350,6 +363,7 @@ Priorität nach [AGENTS.md](AGENTS.md) Regel 24: Auth, Rollen, RLS, Trip-Persist
 
 - [x] Test-Runner eingerichtet – mit 1.3 erledigt: `npm test` läuft über den Test-Runner von Node mit `tsx` als Loader, ohne neues Paket ([DECISIONS.md](DECISIONS.md) ADR-0029)
 - [x] Tests für Rollen und Berechtigungen (52 ohne Datenbank; 34 aus 1.3, dazu 7 für den Abgleich des Rollenmodells, 6 für den Abgleich der Fähigkeiten und 5 für Fähigkeiten und Notzugang in der Zugangsentscheidung)
+- [x] Tests für die Antworten der lesenden Admin-Routen (31 ohne Datenbank: 14 für Fehler gegen echte Leere, 7 für die Suchausdrücke, 10 für die Kennzahlen)
 - [x] RLS-Nachweise gegen den Development-Branch (81), dazu die Rechteprüfung und der Reproduzierbarkeitsbeweis
 - [ ] datenbanknahe Prüfungen in die CI holen – braucht einen kurzlebigen Branch je Lauf, sonst legen nebenläufige Läufe dieselben Testkonten an
 - [ ] Tests für Trip-Erstellung und -Persistenz → braucht das Schema aus 1.5

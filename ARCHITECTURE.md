@@ -100,6 +100,7 @@ Sessions laufen über Supabase-Auth-Cookies. Serverseitig wird die Identität im
 | Anmeldung | `middleware.ts` | ist ein verifiziertes Konto vorhanden? Gilt für `/admin`, `/api/admin`, `/account` | Seiten: Weiterleitung zur passenden Anmeldung mit Rücksprungziel. API: 401 als JSON |
 | Berechtigung Seiten | `app/(admin)/layout.tsx` | Rollenprüfung für die **gesamte** Routengruppe, auch für künftige Seiten | Weiterleitung auf `/admin/login` oder `/unauthorized?grund=…` |
 | Berechtigung API | `requireAdminApi()` je Route | Rollenprüfung, in der CI durch `check:api-schutz` erzwungen | 401 / 403 / 503 als JSON, **nie** eine Weiterleitung |
+| Datenzugriff | `lese()` in `lib/api/datenbank-lesen.ts` | trennt eine erfolgreiche leere Abfrage von einem Fehler der Datenbank | 500 bei Ablehnung, 503 bei Ausfall, jeweils als JSON |
 
 `/admin/login` liegt in der Gruppe `(public)` und ist von der Rollenprüfung ausgenommen – andernfalls entstünde eine Endlosschleife.
 
@@ -182,6 +183,8 @@ Nach Phase 1.1, 1.1b, 1.3 und 1.4 existieren **11** Route Handler. Zuvor waren e
 | `api/admin/security/*` (5) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
 
 Alle zehn Endpunkte unter `api/admin` prüfen die Berechtigung über `requireAdminApi()`; `npm run check:api-schutz` erzwingt das in der CI. Lesende Endpunkte verlangen die Fähigkeit `betrieb-lesen` (ab `moderator`), eingreifende – Rückerstattung, Sperren, Entsperren – `betrieb-eingreifen` (ab `operator`). Dieselben Fähigkeiten gelten in den Policies, sodass ein Endpunkt, der jemanden durchlässt, ihm auch die Daten zeigen kann.
+
+Was die Datenbank nicht liefert, meldet der Endpunkt, statt es zu verschweigen: Eine Ablehnung wird 500, ein Ausfall 503, jeweils mit `{ message }`; eine erfolgreiche Abfrage ohne Zeilen bleibt eine leere Liste mit 200. Die Unterscheidung steht einmal in `lese()` in `lib/api/datenbank-lesen.ts` und nicht in den Routen ([DECISIONS.md](DECISIONS.md) ADR-0037). Von RLS weggefilterte Zeilen sind bewusst kein Fehler – das ist der Fall einer Notzugangs-Sitzung, den der Hinweisbalken erklärt.
 
 Phase 1.4 hat drei weitere entfernt: `security/block-ip` und `security/unblock-ip` waren Doppelungen von `security/block` und `security/unblock` ohne Aufrufer, `security/overview` rief eine Funktion auf, die es nicht gab, und hatte ebenfalls keinen Aufrufer.
 
