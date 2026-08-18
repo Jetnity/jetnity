@@ -910,6 +910,7 @@ function reisenachweise() {
       uid: VIELREISEND,
       sql: `insert into public.trips (title, client_ref) values ('direkt', 'direkt-4')`,
       erwartung: 'abgelehnt',
+      code: '53400',
       grund:
         'Der Kern des Befunds: Bis ADR-0045 stand die Schranke nur in reise_anlegen(). Über ' +
         'PostgREST liess sie sich mit einem direkten INSERT vollständig übergehen.',
@@ -921,6 +922,7 @@ function reisenachweise() {
       sql: `insert into public.trips (title, client_ref, created_at)
             values ('alt', 'direkt-5', now() - interval '3 hours')`,
       erwartung: 'abgelehnt',
+      code: '53400',
       grund:
         'Die zweite Hälfte derselben Lücke: Eine Schranke über ein Zeitfenster ist nur so ' +
         'gut wie der Zeitstempel, auf den sie sich stützt.',
@@ -932,9 +934,78 @@ function reisenachweise() {
       sql: `insert into public.trips (title, client_ref)
             select 'Serie ' || g, 'serie-' || g from generate_series(1, 61) as g`,
       erwartung: 'abgelehnt',
+      code: '53400',
       grund:
         'Eine Anweisung ist kein Schlupfloch: Der Auslöser zählt je Zeile und sieht die ' +
         'Zeilen, die dieselbe Anweisung vorher eingefügt hat.',
+    },
+
+    // --- trips: an der Schranke bleibt die Wiederholung idempotent ---------
+    //
+    // Ein `BEFORE INSERT`-Auslöser läuft vor dem eindeutigen Index. Ohne die
+    // Prüfung auf eine bestehende Kennung warf die Schranke deshalb auch dann,
+    // wenn gar keine Reise entstand – ein Retry nach Netzfehler, ein Reload oder
+    // eine zweite Anmeldung scheiterte an der Grenze, obwohl die Reise längst im
+    // Konto lag (ADR-0048). Die Fälle prüfen beide Richtungen: Die Wiederholung
+    // muss durchlaufen, eine tatsächlich neue Kennung muss weiter scheitern.
+    {
+      name: 'Wiederholung an der Schranke liefert dieselbe Reise',
+      rolle: 'authenticated',
+      uid: VIELREISEND,
+      sql: `select 1 where public.reise_anlegen(${reise('aufbau-1')})
+              = (select id from public.trips
+                 where user_id = '${VIELREISEND}' and client_ref = 'aufbau-1')`,
+      erwartung: 'erlaubt',
+      grund:
+        'Der Befund der zweiten Überprüfung: Dieses Konto steht an der Schranke, und die ' +
+        'Kennung aufbau-1 liegt bereits im Konto. Dabei entsteht keine Reise, also darf die ' +
+        'Schranke nicht greifen – der Aufruf liefert die bestehende Kennung.',
+    },
+    {
+      name: 'die Wiederholung legt an der Schranke keine zweite Reise an',
+      rolle: 'authenticated',
+      uid: VIELREISEND,
+      sql: `select public.reise_anlegen(${reise('aufbau-1')});
+            select id from public.trips
+              where user_id = '${VIELREISEND}' and client_ref = 'aufbau-1' offset 1`,
+      erwartung: 'leer',
+      grund:
+        'Die Gegenprobe: Der durchgelassene Aufruf legt nichts an. Bliebe hinter `offset 1` ' +
+        'eine Zeile, wäre die Ausnahme von der Schranke ein Weg, sie zu übergehen.',
+    },
+    {
+      name: 'die Wiederholung verbraucht die Schranke nicht',
+      rolle: 'authenticated',
+      uid: VIELREISEND,
+      sql: `select public.reise_anlegen(${reise('aufbau-1')});
+            select id from public.trips where user_id = '${VIELREISEND}' offset 60`,
+      erwartung: 'leer',
+      grund:
+        'Nach der Wiederholung stehen weiterhin 60 Reisen im Konto. Die Schranke zählt ' +
+        'Zeilen, und eine Wiederholung erzeugt keine – sie kostet also auch kein Guthaben.',
+    },
+    {
+      name: 'eine neue Kennung scheitert an der Schranke weiterhin',
+      rolle: 'authenticated',
+      uid: VIELREISEND,
+      sql: `select public.reise_anlegen(${reise('nach-wiederholung')})`,
+      erwartung: 'abgelehnt',
+      code: '53400',
+      grund:
+        'Die zweite Richtung: Die Ausnahme gilt für die Wiederholung einer belegten Kennung, ' +
+        'nicht für das Konto. Eine tatsächlich neue Reise bleibt an der Grenze abgewiesen.',
+    },
+    {
+      name: 'direkter INSERT einer belegten Kennung nennt den Konflikt',
+      rolle: 'authenticated',
+      uid: VIELREISEND,
+      sql: `insert into public.trips (title, client_ref) values ('wieder', 'aufbau-1')`,
+      erwartung: 'abgelehnt',
+      code: '23505',
+      grund:
+        'Auch auf dem direkten Weg entscheidet die Frage, ob eine Reise entsteht: Der ' +
+        'Schreibvorgang endet am eindeutigen Index und nicht an der Schranke. Vorher meldete ' +
+        'er 53400 – die falsche Auskunft für einen belegten Schlüssel.',
     },
 
     // --- trips: Adminrechte öffnen keine Reise -----------------------------
@@ -1237,6 +1308,7 @@ function reisenachweise() {
       uid: VIELREISEND,
       sql: `select public.reise_anlegen(${reise('schranke-1')})`,
       erwartung: 'abgelehnt',
+      code: '53400',
       grund:
         'Die Missbrauchsschranke: 60 Reisen je Stunde. Dieses Konto hat sie im Aufbau ' +
         'erreicht. Sie steht seit ADR-0045 im Auslöser der Tabelle und gilt damit auch für ' +
@@ -1350,9 +1422,14 @@ function bewerte(fall, ergebnis) {
     return { ok: tatsaechlich === fall.erwartung, tatsaechlich, detail: `${n} Zeilen` }
   }
   const [, code, ...rest] = ergebnis.split(':')
+  // `code` an einem Fall verlangt zusätzlich den SQLSTATE. Nötig, wo nicht die
+  // Ablehnung die Aussage ist, sondern *woran* sie scheitert: Eine Wiederholung
+  // darf am eindeutigen Index enden (23505), nicht an der Missbrauchsschranke
+  // (53400) – sonst wäre die Idempotenz an der Grenze aufgehoben (ADR-0048).
+  const passt = fall.code ? fall.code === code : true
   return {
-    ok: fall.erwartung === 'abgelehnt',
-    tatsaechlich: 'abgelehnt',
+    ok: fall.erwartung === 'abgelehnt' && passt,
+    tatsaechlich: fall.code && !passt ? `abgelehnt mit ${code}, erwartet ${fall.code}` : 'abgelehnt',
     detail: `${code} ${rest.join(':').trim()}`,
   }
 }
