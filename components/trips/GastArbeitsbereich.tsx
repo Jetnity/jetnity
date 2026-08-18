@@ -28,6 +28,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
   const router = useRouter()
   const [reise, setReise] = React.useState<Trip | null>(null)
   const [geladen, setGeladen] = React.useState(false)
+  const [speicherfehler, setSpeicherfehler] = React.useState('')
 
   React.useEffect(() => {
     setReise(gastreiseLadenNach(tripId))
@@ -60,6 +61,9 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
    * Für einen Gast ist das der einzige Weg zu einer anderen Reise: Ohne Konto
    * gilt genau eine aktive Gastreise. Ohne diesen Vorgang wäre die Regel eine
    * Sackgasse, aus der nur das Löschen des Browserspeichers herausführt.
+   *
+   * Weitergeleitet wird erst, wenn der Entwurf bestätigt weg ist. Sonst zeigte
+   * die Liste ihn gleich wieder – und niemand wüsste, warum.
    */
   const verwerfen = () => {
     const sicher = window.confirm(
@@ -68,7 +72,17 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
     )
     if (!sicher) return
 
-    gastreiseEntfernen()
+    try {
+      gastreiseEntfernen()
+    } catch (fehler) {
+      setSpeicherfehler(
+        fehler instanceof Error
+          ? fehler.message
+          : 'Der Entwurf konnte auf diesem Gerät nicht entfernt werden.',
+      )
+      return
+    }
+
     router.replace('/reisen')
   }
 
@@ -122,19 +136,29 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
       onPunktAnlegen={anlegen}
       onPunktEntfernen={entfernen}
       kopfzeile={
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="min-w-0 text-xs leading-5 text-white/65">
-            Ohne Konto lässt sich eine Reise planen. Verwirf diesen Entwurf, um mit einem anderen zu
-            beginnen.
-          </p>
-          <button
-            type="button"
-            onClick={verwerfen}
-            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-white/20 px-4 text-sm font-medium text-white/85 transition hover:border-white/40 hover:text-white"
-          >
-            <Trash2 className="h-4 w-4" />
-            Entwurf verwerfen
-          </button>
+        <div className="grid gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="min-w-0 text-xs leading-5 text-white/65">
+              Ohne Konto lässt sich eine Reise planen. Verwirf diesen Entwurf, um mit einem anderen zu
+              beginnen.
+            </p>
+            <button
+              type="button"
+              onClick={verwerfen}
+              className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-white/20 px-4 text-sm font-medium text-white/85 transition hover:border-white/40 hover:text-white"
+            >
+              <Trash2 className="h-4 w-4" />
+              Entwurf verwerfen
+            </button>
+          </div>
+          {speicherfehler && (
+            <p
+              role="alert"
+              className="rounded-2xl bg-white/10 px-4 py-2.5 text-xs leading-5 text-white"
+            >
+              {speicherfehler}
+            </p>
+          )}
         </div>
       }
       hinweis={

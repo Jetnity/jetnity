@@ -37,7 +37,12 @@ import {
 
 import { reiseAnlegen } from '@/lib/trips/aktionen'
 import { INTERESSE_BEZEICHNUNG, TEMPO_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
-import { GastreiseBestehtFehler, gastreiseAnlegen, kennungErzeugen } from '@/lib/trips/gastspeicher'
+import {
+  GastreiseBestehtFehler,
+  SpeicherFehler,
+  gastreiseAnlegen,
+  kennungErzeugen,
+} from '@/lib/trips/gastspeicher'
 import { GRENZEN, ersteMeldung, neueReiseSchema } from '@/lib/trips/schema'
 import { cn } from '@/lib/utils'
 import { TRIP_INTERESTS, TRIP_PACES, type TripInterest, type TripPace } from '@/types/trips'
@@ -154,8 +159,13 @@ export default function TripPlanner({
         setMeldung(fehler.message)
         return
       }
+
+      // Auch der Speicherfehler bleibt hier stehen: Kein `router.push` in einen
+      // Arbeitsbereich, dessen Reise nirgends liegt.
       setMeldung(
-        'Die Reise konnte auf diesem Gerät nicht gespeichert werden. Bitte prüfe den Browserspeicher.',
+        fehler instanceof SpeicherFehler
+          ? fehler.message
+          : 'Die Reise konnte auf diesem Gerät nicht gespeichert werden. Bitte prüfe den Browserspeicher.',
       )
     }
   }

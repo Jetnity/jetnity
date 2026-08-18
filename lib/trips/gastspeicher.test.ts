@@ -21,6 +21,7 @@ import assert from 'node:assert/strict'
 import {
   GastreiseBestehtFehler,
   SCHLUESSEL,
+  SpeicherFehler,
   gastPlanpunktAnlegen,
   gastPlanpunktEntfernen,
   gastreiseAnlegen,
@@ -34,18 +35,33 @@ import {
 } from '@/lib/trips/gastspeicher'
 import type { CreateTripInput } from '@/types/trips'
 
-/** Ein `localStorage`, der sich wie einer verhält – inklusive Wurf bei voller Ablage. */
+/**
+ * Ein `localStorage`, der sich wie einer verhält – inklusive der drei Arten,
+ * auf die ein echter versagt:
+ *
+ *   · `sperren()`      – voller Speicher, `setItem` wirft (Quota).
+ *   · `sperrenFuer()`  – nur ein Schlüssel scheitert. Genau so bricht eine
+ *                        Übernahme zwischen zwei Schlüsseln ab.
+ *   · `stummschalten()`– `setItem` wirft nicht und behält trotzdem nichts. So
+ *                        verhält sich der private Modus mancher Browser, und
+ *                        nur das Zurücklesen bemerkt es.
+ */
 function speicherStellen() {
   const ablage = new Map<string, string>()
   let gesperrt = false
+  let stumm = false
+  let loeschenGesperrt = false
+  const gesperrteSchluessel = new Set<string>()
 
   const localStorage = {
     getItem: (schluessel: string) => ablage.get(schluessel) ?? null,
     setItem: (schluessel: string, wert: string) => {
-      if (gesperrt) throw new Error('QuotaExceededError')
+      if (gesperrt || gesperrteSchluessel.has(schluessel)) throw new Error('QuotaExceededError')
+      if (stumm) return
       ablage.set(schluessel, wert)
     },
     removeItem: (schluessel: string) => {
+      if (loeschenGesperrt) throw new Error('SecurityError')
       ablage.delete(schluessel)
     },
   }
@@ -57,6 +73,19 @@ function speicherStellen() {
     ablage,
     sperren: () => {
       gesperrt = true
+    },
+    entsperren: () => {
+      gesperrt = false
+      stumm = false
+      loeschenGesperrt = false
+      gesperrteSchluessel.clear()
+    },
+    sperrenFuer: (schluessel: string) => gesperrteSchluessel.add(schluessel),
+    stummschalten: () => {
+      stumm = true
+    },
+    loeschenSperren: () => {
+      loeschenGesperrt = true
     },
     roh: (schluessel: string) => ablage.get(schluessel) ?? null,
     setzen: (schluessel: string, wert: unknown) =>
@@ -400,11 +429,13 @@ describe('Übernahme der Entwürfe aus der Fassung vor Phase 1.5', () => {
     assert.equal(gastspeicherLaden().aktiv?.title, 'Barcelona')
   })
 
-  test('ein alter Schlüssel ohne Liste wird weggeräumt', () => {
+  test('ein alter Schlüssel ohne Liste bleibt liegen, statt gelöscht zu werden', () => {
+    // Zu löschen gäbe es nichts, wohin geschrieben wurde. Das Laden bleibt
+    // trotzdem ruhig: kein Fehler, keine halbe Reise.
     speicher.setzen(SCHLUESSEL.legacy, { nicht: 'eine Liste' })
 
     assert.equal(gastspeicherLaden().aktiv, null)
-    assert.equal(speicher.roh(SCHLUESSEL.legacy), null)
+    assert.ok(speicher.roh(SCHLUESSEL.legacy), 'nichts geschrieben, also nichts gelöscht')
   })
 })
 
@@ -479,14 +510,131 @@ describe('Aufräumen erst nach bestätigter Übernahme', () => {
   })
 })
 
-describe('Ein gesperrter Browserspeicher reisst die Oberfläche nicht ab', () => {
-  test('das Anlegen wirft nicht, wenn nicht geschrieben werden kann', () => {
+describe('Ein Schreibfehler gilt nie als Erfolg', () => {
+  // Bis zum Nachtrag dieser Phase erwartete der Test an dieser Stelle „kein
+  // Throw": Das Anlegen meldete Erfolg, die Oberfläche wechselte in den
+  // Arbeitsbereich, und im Browser lag nichts. Für eine Reise, die es nur hier
+  // gibt, ist das die falsche Semantik – der Fehler ist die Auskunft.
+
+  test('ein gesperrter Speicher lässt keine Reise entstehen', () => {
     speicher.sperren()
 
-    // Die Reise entsteht im Speicher des Fensters und lässt sich anzeigen. Beim
-    // nächsten Laden ist sie weg – das ist ehrlicher als eine Ausnahme mitten
-    // in einer Eingabe.
-    assert.doesNotThrow(() => gastreiseAnlegen(eingabe()))
+    assert.throws(() => gastreiseAnlegen(eingabe()), SpeicherFehler)
+    assert.equal(gastspeicherLaden().aktiv, null, 'und es liegt auch nichts halb da')
+  })
+
+  test('ein stummer Speicher fällt trotz fehlender Ausnahme auf', () => {
+    // `setItem` wirft nicht und behält nichts. Ohne das Zurücklesen wäre das
+    // der Fall, der als Erfolg durchgeht.
+    speicher.stummschalten()
+
+    assert.throws(() => gastreiseAnlegen(eingabe()), SpeicherFehler)
+  })
+
+  test('nach einem gescheiterten Anlegen bleibt der Weg frei', () => {
+    speicher.sperren()
+    assert.throws(() => gastreiseAnlegen(eingabe()))
+
+    // Kein Phantom: Der zweite Versuch scheitert nicht an einer „bestehenden"
+    // Gastreise, die niemand sehen kann.
+    speicher.entsperren()
+    assert.equal(gastreiseAnlegen(eingabe({ title: 'Zweiter Versuch' })).title, 'Zweiter Versuch')
+  })
+
+  test('eine Bearbeitung ohne Ablage wirft und lässt den alten Stand stehen', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    speicher.sperren()
+
+    assert.throws(() => gastreiseSpeichern({ ...reise, title: 'Nur im Speicher des Fensters' }), SpeicherFehler)
+
+    speicher.entsperren()
+    assert.equal(gastspeicherLaden().aktiv?.title, 'Japan im Herbst', 'der letzte gute Stand bleibt')
+  })
+
+  test('ein Planpunkt, der nicht abgelegt werden kann, gilt nicht als angelegt', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    speicher.sperren()
+
+    assert.throws(
+      () =>
+        gastPlanpunktAnlegen(reise, {
+          dayId: reise.days[0].id,
+          kind: 'activity',
+          title: 'Fischmarkt',
+          note: null,
+          startsAt: null,
+        }),
+      SpeicherFehler,
+    )
+
+    speicher.entsperren()
+    assert.equal(gastspeicherLaden().aktiv?.days[0].items.length, 0)
+  })
+
+  test('ein Entwurf gilt nur als verworfen, wenn er wirklich weg ist', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    speicher.loeschenSperren()
+
+    assert.throws(() => gastreiseEntfernen(), SpeicherFehler)
+
+    speicher.entsperren()
+    assert.equal(
+      gastspeicherLaden().aktiv?.id,
+      reise.id,
+      'der Entwurf ist noch da – und die Oberfläche leitet nicht weiter',
+    )
+  })
+})
+
+describe('Die Übernahme aus der alten Fassung löscht nichts auf Verdacht', () => {
+  test('scheitert das Schreiben, bleibt der alte Schlüssel vollständig liegen', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [
+      legacyMini('trip-1', 'Erste', '2026-08-02T10:00:00.000Z'),
+      legacyMini('trip-2', 'Zweite', '2026-08-01T10:00:00.000Z'),
+    ])
+    const vorher = speicher.roh(SCHLUESSEL.legacy)
+
+    speicher.sperren()
+    const stand = gastspeicherLaden()
+
+    assert.equal(stand.aktiv?.title, 'Erste', 'die Entwürfe sind in dieser Sitzung sichtbar')
+    assert.equal(speicher.roh(SCHLUESSEL.legacy), vorher, 'und im Speicher unverändert vorhanden')
+  })
+
+  test('scheitert nur die Warteschlange, bleibt der alte Schlüssel liegen', () => {
+    // Der teure Fall: Der erste Schlüssel ist geschrieben, der zweite nicht.
+    // Ein `removeItem` an dieser Stelle hätte alle wartenden Entwürfe gekostet.
+    speicher.setzen(SCHLUESSEL.legacy, [
+      legacyMini('trip-1', 'Erste', '2026-08-02T10:00:00.000Z'),
+      legacyMini('trip-2', 'Zweite', '2026-08-01T10:00:00.000Z'),
+    ])
+
+    speicher.sperrenFuer(SCHLUESSEL.warteschlange)
+    gastspeicherLaden()
+
+    assert.ok(speicher.roh(SCHLUESSEL.legacy), 'der alte Schlüssel ist noch da')
+    assert.ok(speicher.roh(SCHLUESSEL.aktiv), 'die aktive Reise ist geschrieben')
+  })
+
+  test('der nächste Lauf holt alles nach, ohne etwas zu verdoppeln', () => {
+    speicher.setzen(SCHLUESSEL.legacy, [
+      legacyMini('trip-1', 'Erste', '2026-08-02T10:00:00.000Z'),
+      legacyMini('trip-2', 'Zweite', '2026-08-01T10:00:00.000Z'),
+    ])
+
+    speicher.sperrenFuer(SCHLUESSEL.warteschlange)
+    gastspeicherLaden()
+
+    speicher.entsperren()
+    const stand = gastspeicherLaden()
+
+    assert.equal(speicher.roh(SCHLUESSEL.legacy), null, 'jetzt darf der alte Schlüssel weg')
+    assert.deepEqual(
+      zurUebernahme().map((reise) => reise.title),
+      ['Erste', 'Zweite'],
+      'jede Reise genau einmal – die aktive steht nicht zusätzlich in der Warteschlange',
+    )
+    assert.equal(stand.aktiv?.title, 'Erste')
   })
 })
 

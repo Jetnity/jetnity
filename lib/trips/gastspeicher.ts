@@ -29,8 +29,29 @@
 //   · die übrigen wandern in eine Warteschlange. Sie sind nicht bearbeitbar
 //     und werden mit dem nächsten Login vollständig ins Konto übernommen.
 //
-// Der alte Schlüssel wird erst gelöscht, wenn der neue geschrieben ist. Bricht
-// der Vorgang dazwischen ab, läuft er beim nächsten Laden erneut.
+// Der alte Schlüssel wird erst gelöscht, wenn der neue **bestätigt** geschrieben
+// ist. Bricht der Vorgang dazwischen ab, läuft er beim nächsten Laden erneut.
+//
+// ---------------------------------------------------------------------------
+// Kein Erfolg ohne bestätigte Ablage
+// ---------------------------------------------------------------------------
+//
+// Der `localStorage` kann voll, gesperrt oder – im privaten Modus mancher
+// Browser – stumm sein: `setItem` wirft dann nicht, behält aber auch nichts.
+// Bis zum Nachtrag dieser Phase verschluckte diese Datei jeden Schreibfehler.
+// Die Oberfläche meldete danach Erfolg und navigierte weiter, während im
+// Browser nichts lag – und beim nächsten Laden war die Reise „verschwunden“.
+//
+// Für eine Reise, die es nur hier gibt, ist das die falsche Reihenfolge.
+// Deshalb gilt jetzt:
+//
+//   · Jeder Schreibvorgang wird zurückgelesen. Erst was wieder herauskommt,
+//     gilt als abgelegt (`schreibenVersuch`).
+//   · Ein fehlgeschlagener Schreibvorgang wirft `SpeicherFehler`. Die
+//     Oberfläche zeigt den Fehler statt eines gespeicherten Zustands.
+//   · Gelöscht wird nur, was nachweislich anderswo liegt: der alte Schlüssel
+//     erst nach bestätigtem Schreiben der neuen Ablage, ein übernommener
+//     Entwurf erst nach der Kennung aus dem Konto.
 
 import { reiseLesen, type PlanpunktFormular } from '@/lib/trips/schema'
 import type { CreateTripInput, Trip, TripDay, TripItem } from '@/types/trips'
@@ -53,6 +74,23 @@ const SCHLUESSEL_LEGACY = 'jetnity:guest-trips:v2'
 
 /** Obergrenze der Warteschlange – dieselbe wie die alte Obergrenze der Liste. */
 const WARTESCHLANGE_MAXIMUM = 20
+
+/**
+ * Wird geworfen, wenn der Browserspeicher die Reise nicht behalten hat.
+ *
+ * Der Fall ist selten und teuer: Ohne Konto ist der `localStorage` der einzige
+ * Ort, an dem die Reise existiert. Eine Ausnahme mitten in einer Eingabe ist
+ * unangenehm – ein „gespeichert“, das nicht stimmt, ist schlimmer.
+ */
+export class SpeicherFehler extends Error {
+  constructor() {
+    super(
+      'Diese Reise konnte auf diesem Gerät nicht gespeichert werden. Der Browserspeicher ist voll ' +
+        'oder gesperrt. Mit einem Konto liegt deine Reise auf dem Server.',
+    )
+    this.name = 'SpeicherFehler'
+  }
+}
 
 /** Wird geworfen, wenn schon eine Gastreise besteht. */
 export class GastreiseBestehtFehler extends Error {
@@ -108,15 +146,33 @@ function rohLesen(schluessel: string): unknown {
   }
 }
 
-function schreiben(schluessel: string, wert: unknown) {
+/**
+ * Schreibt und liest zurück. Liefert, ob der Wert wirklich abgelegt wurde.
+ *
+ * Das Zurücklesen ist kein Misstrauen gegen `setItem`, sondern gegen die
+ * Browser, in denen es nichts tut: Im privaten Modus mancher Fassungen nimmt
+ * der Speicher den Wert an und liefert danach `null`. Ein `try/catch` allein
+ * würde diesen Fall als Erfolg zählen.
+ */
+function schreibenVersuch(schluessel: string, wert: unknown): boolean {
   try {
-    if (wert === null) window.localStorage.removeItem(schluessel)
-    else window.localStorage.setItem(schluessel, JSON.stringify(wert))
+    if (wert === null) {
+      window.localStorage.removeItem(schluessel)
+      return window.localStorage.getItem(schluessel) === null
+    }
+
+    const roh = JSON.stringify(wert)
+    window.localStorage.setItem(schluessel, roh)
+    return window.localStorage.getItem(schluessel) === roh
   } catch {
-    // Voller oder gesperrter Speicher. Der Aufrufer merkt es daran, dass beim
-    // nächsten Lesen nichts da ist – eine Ausnahme hier würde die Oberfläche
-    // mitten in einer Eingabe abreissen.
+    // Voller oder gesperrter Speicher.
+    return false
   }
+}
+
+/** Wie `schreibenVersuch`, aber ein Fehlschlag ist ein Fehler. */
+function schreibenMuss(schluessel: string, wert: unknown) {
+  if (!schreibenVersuch(schluessel, wert)) throw new SpeicherFehler()
 }
 
 // ---------------------------------------------------------------------------
@@ -223,25 +279,26 @@ function einzelneEtappe(
 /**
  * Holt die Entwürfe der Fassung v2 herüber, falls es welche gibt.
  *
- * Läuft genau einmal: Der alte Schlüssel fällt danach weg. Die Reihenfolge –
- * erst schreiben, dann löschen – ist Absicht.
+ * Läuft genau einmal – aber nur, wenn sie gelingt. Der alte Schlüssel fällt
+ * ausschliesslich dann weg, wenn beide neuen Schlüssel bestätigt geschrieben
+ * sind. Gelingt das nicht, bleibt alles liegen und der Vorgang läuft beim
+ * nächsten Laden erneut; die Entwürfe dieses Laufs sind trotzdem sichtbar, sie
+ * kommen aus dem Speicher des Fensters.
+ *
+ * Ein unbrauchbarer alter Eintrag wird nicht mehr weggeräumt: Es gäbe nichts,
+ * wohin er geschrieben wäre, und ein Löschen ohne Ziel ist genau der Vorgang,
+ * den diese Datei nicht mehr macht. Er kostet je Laden ein `JSON.parse`.
  */
 function legacyUebernehmen(): Gastspeicher | null {
   const roh = rohLesen(SCHLUESSEL_LEGACY)
-  if (!Array.isArray(roh)) {
-    if (roh !== null) schreiben(SCHLUESSEL_LEGACY, null)
-    return null
-  }
+  if (!Array.isArray(roh)) return null
 
   const entwuerfe = roh
     .map(ausLegacy)
     .filter((entwurf): entwurf is Trip => entwurf !== null)
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
 
-  if (entwuerfe.length === 0) {
-    schreiben(SCHLUESSEL_LEGACY, null)
-    return null
-  }
+  if (entwuerfe.length === 0) return null
 
   const [neuester, ...uebrige] = entwuerfe
   const bereitsAktiv = reiseLesen(rohLesen(SCHLUESSEL_AKTIV))
@@ -249,16 +306,36 @@ function legacyUebernehmen(): Gastspeicher | null {
   // Steht schon eine Reise unter dem neuen Schlüssel, gewinnt sie: Sie ist in
   // dieser Fassung entstanden und wird gerade bearbeitet.
   const aktiv = bereitsAktiv ?? neuester
-  const warteschlange = [
-    ...bestandWarteschlange(),
-    ...(bereitsAktiv ? entwuerfe : uebrige),
-  ].slice(0, WARTESCHLANGE_MAXIMUM)
 
-  schreiben(SCHLUESSEL_AKTIV, aktiv)
-  schreiben(SCHLUESSEL_WARTESCHLANGE, warteschlange)
-  schreiben(SCHLUESSEL_LEGACY, null)
+  // Die Warteschlange darf die aktive Reise nicht doppelt führen. Ohne diesen
+  // Abgleich stünde ein Entwurf zweimal im Speicher, sobald ein Lauf zwischen
+  // den beiden Schlüsseln abbricht und der nächste ihn erneut einreiht.
+  const aktivRef = kennungVon(aktiv)
+  const gesehen = new Set<string>([aktivRef])
+  const warteschlange = [...bestandWarteschlange(), ...(bereitsAktiv ? entwuerfe : uebrige)]
+    .filter((eintrag) => {
+      const ref = kennungVon(eintrag)
+      if (gesehen.has(ref)) return false
+      gesehen.add(ref)
+      return true
+    })
+    .slice(0, WARTESCHLANGE_MAXIMUM)
+
+  const abgelegt =
+    schreibenVersuch(SCHLUESSEL_AKTIV, aktiv) &&
+    schreibenVersuch(SCHLUESSEL_WARTESCHLANGE, warteschlange.length ? warteschlange : null)
+
+  // Nur jetzt. Ein `removeItem`, das nach einem gescheiterten `setItem` gelingt,
+  // wäre die eine Stelle in dieser Anwendung, an der Reisedaten wirklich
+  // verloren gehen.
+  if (abgelegt) schreibenVersuch(SCHLUESSEL_LEGACY, null)
 
   return { aktiv, warteschlange }
+}
+
+/** Die Kennung, unter der eine Reise im Konto ankommt. */
+function kennungVon(reise: Trip): string {
+  return reise.clientRef ?? reise.id
 }
 
 function bestandWarteschlange(): Trip[] {
@@ -295,30 +372,38 @@ export function gastreiseLadenNach(id: string): Trip | null {
   return aktiv && aktiv.id === id ? aktiv : null
 }
 
-/** Schreibt die aktive Gastreise zurück und zieht `updatedAt` nach. */
+/**
+ * Schreibt die aktive Gastreise zurück und zieht `updatedAt` nach.
+ *
+ * Wirft, wenn nichts abgelegt werden konnte. Der Aufrufer darf die Rückgabe
+ * deshalb als gespeicherten Stand behandeln – und nur sie.
+ */
 export function gastreiseSpeichern(reise: Trip): Trip {
-  const aktualisiert: Trip = { ...reise, updatedAt: new Date().toISOString() }
-  if (!verfuegbar()) return aktualisiert
+  if (!verfuegbar()) throw new SpeicherFehler()
 
   // Auch der eigene Schreibweg läuft durch das Schema. Wäre in der Oberfläche
   // ein Feld über seine Grenze gewachsen, fiele es hier auf und nicht erst
   // beim Login.
-  const geprueft = reiseLesen(aktualisiert)
+  const geprueft = reiseLesen({ ...reise, updatedAt: new Date().toISOString() })
   if (!geprueft) {
     throw new Error('Diese Änderung ergibt keine gültige Reise und wurde nicht gespeichert.')
   }
 
-  schreiben(SCHLUESSEL_AKTIV, geprueft)
+  schreibenMuss(SCHLUESSEL_AKTIV, geprueft)
   return geprueft
 }
 
 /**
  * Legt die eine Gastreise an.
  *
- * Besteht schon eine, wirft die Funktion. Der Aufrufer soll darauf hinweisen
- * und nicht raten, was gemeint war.
+ * Besteht schon eine, wirft die Funktion `GastreiseBestehtFehler`. Lässt sich
+ * die neue nicht ablegen, wirft sie `SpeicherFehler` – die Oberfläche darf in
+ * diesem Fall nicht in den Arbeitsbereich einer Reise wechseln, die es nirgends
+ * gibt.
  */
 export function gastreiseAnlegen(eingabe: CreateTripInput): Trip {
+  if (!verfuegbar()) throw new SpeicherFehler()
+
   const bestehend = gastreiseLaden()
   if (bestehend) throw new GastreiseBestehtFehler(bestehend.id)
 
@@ -354,7 +439,7 @@ export function gastreiseAnlegen(eingabe: CreateTripInput): Trip {
   const geprueft = reiseLesen(entwurf)
   if (!geprueft) throw new Error('Aus diesen Angaben entsteht keine gültige Reise.')
 
-  if (verfuegbar()) schreiben(SCHLUESSEL_AKTIV, geprueft)
+  schreibenMuss(SCHLUESSEL_AKTIV, geprueft)
   return geprueft
 }
 
@@ -406,9 +491,16 @@ export function gastPlanpunktEntfernen(reise: Trip, punktId: string): Trip {
   })
 }
 
-/** Entfernt die aktive Gastreise. */
+/**
+ * Entfernt die aktive Gastreise.
+ *
+ * Wirft, wenn der Entwurf danach noch da ist: Ein „verworfen“, nach dem die
+ * Reise beim nächsten Laden wieder auftaucht, wäre dieselbe falsche Auskunft
+ * wie ein „gespeichert“ ohne Ablage – nur in die andere Richtung.
+ */
 export function gastreiseEntfernen() {
-  if (verfuegbar()) schreiben(SCHLUESSEL_AKTIV, null)
+  if (!verfuegbar()) throw new SpeicherFehler()
+  schreibenMuss(SCHLUESSEL_AKTIV, null)
 }
 
 /**
@@ -429,20 +521,25 @@ export function zurUebernahme(): Trip[] {
  * Der Aufrufer ruft das je Reise einzeln, nachdem der Server ihre Kennung
  * gemeldet hat. Alles auf einmal zu löschen wäre die Annahme, es habe alles
  * geklappt.
+ *
+ * Hier darf ein Fehlschlag ohne Ausnahme bleiben, und nur hier: Die Reise liegt
+ * bestätigt im Konto. Bleibt der Entwurf im Browser liegen, schickt ihn die
+ * nächste Übernahme erneut – und `public.reise_anlegen()` ist über
+ * `client_ref` idempotent, es entsteht keine zweite Reise.
  */
 export function uebernommenStreichen(clientRef: string) {
   if (!verfuegbar()) return
 
   const aktiv = reiseLesen(rohLesen(SCHLUESSEL_AKTIV))
-  if (aktiv && (aktiv.clientRef ?? aktiv.id) === clientRef) {
-    schreiben(SCHLUESSEL_AKTIV, null)
+  if (aktiv && kennungVon(aktiv) === clientRef) {
+    schreibenVersuch(SCHLUESSEL_AKTIV, null)
     return
   }
 
   const warteschlange = bestandWarteschlange()
-  const verbleibend = warteschlange.filter((reise) => (reise.clientRef ?? reise.id) !== clientRef)
+  const verbleibend = warteschlange.filter((reise) => kennungVon(reise) !== clientRef)
   if (verbleibend.length !== warteschlange.length) {
-    schreiben(SCHLUESSEL_WARTESCHLANGE, verbleibend.length ? verbleibend : null)
+    schreibenVersuch(SCHLUESSEL_WARTESCHLANGE, verbleibend.length ? verbleibend : null)
   }
 }
 
