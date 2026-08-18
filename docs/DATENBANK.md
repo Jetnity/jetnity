@@ -40,6 +40,7 @@ Alle Skripte liegen in `scripts/db/` und sprechen über die Supabase Management 
 | `npm run db:reproduzierbarkeit` | baut das Schema aus den Migrationen neu auf und vergleicht es mit dem laufenden |
 | `npm run db:rls` | empirische RLS-Matrix: was darf welche Rolle auf welcher Tabelle wirklich |
 | `npm run db:sicherheit` | 140 benannte Nachweise mit Erwartung, positiv und negativ; wo es darauf ankommt, mit verlangtem SQLSTATE |
+| `npm run db:parallelitaet` | 5 Nachweise gegen die Erzeugungsschranke von `public.trips` unter echter Gleichzeitigkeit |
 | `npm run db:rechte` | Tabellenrechte gegen Policies prüfen; zusätzlich, dass keine Funktion eine Struktur nennt, die es nicht gibt |
 | `npm run db:verwendung` | welche Tabellen und RPCs der Anwendungscode anspricht |
 | `npm run check:schema-bezug` | dieselbe Auswertung als Prüfung gegen `types/supabase.ts` (läuft in der CI) |
@@ -47,6 +48,8 @@ Alle Skripte liegen in `scripts/db/` und sprechen über die Supabase Management 
 | `npm run db:advisors` | Security- und Performance-Advisors von Supabase |
 
 Bis auf `check:schema-bezug` braucht jedes davon den Development-Zugang. `check:schema-bezug` liest nur die erzeugte Typdatei und läuft deshalb in der CI mit.
+
+Ein Unterschied ist wichtig: Alle Skripte ausser `db:parallelitaet` und `db:anwenden` arbeiten ausschliesslich in Transaktionen, die zurückrollen, und hinterlassen nichts. `db:parallelitaet` **schreibt echte Zeilen**, weil gleichzeitige Sitzungen einander nur festgeschrieben sehen; es räumt vor und nach jedem Lauf auf (Abschnitt 7b).
 
 ---
 
@@ -140,6 +143,7 @@ Der Zustand nach Phase 1.4 steht in Abschnitt 9; dort ist auch nachgewiesen, das
 | `20260817120300_generisches_profil.sql` | `creator_profiles` → `profiles`, neun Creator-Spalten entfernt, doppelter Auslöser aufgelöst, Namen nachgezogen |
 | `20260818010000_reise_erzeugungsregeln.sql` | `trips.client_ref` auf `NOT NULL`; Auslöser `trips_erzeugung_pruefen` für Zeitstempel, Anfangsstatus und Missbrauchsschranke; `reise_anlegen()` ohne eigene Zählung (Nachtrag Phase 1.5, ADR-0045) |
 | `20260818020000_reise_wiederholung.sql` | Die Schranke zählt Neuanlagen: Ist `(user_id, client_ref)` belegt, gilt sie nicht – der Retry bleibt auch an der Grenze idempotent (Nachtrag Phase 1.5, ADR-0048) |
+| `20260818030000_reise_erzeugung_serialisieren.sql` | Zählung und Einfügung laufen je Konto der Reihe nach, serialisiert über `pg_advisory_xact_lock` – die Schranke hält auch bei gleichzeitigen Anfragen (Nachtrag Phase 1.5, ADR-0049) |
 
 Die Reihenfolge ist nicht beliebig: `20260817100200` darf erst laufen, wenn `20260817100000` die Rollen der Betroffenen übernommen und `20260817100100` alle Policies auf `creator_profiles.role` umgestellt hat. Sonst verlöre jemand seinen Zugang oder eine Policy liefe ins Leere.
 
@@ -286,6 +290,8 @@ Für die Kindtabellen musste das Skript in Phase 1.5 genauer werden. Es säte ei
 **Eine Grenze der Matrix ist zu kennen, damit sie nicht überlesen wird.** Die Probe `insert_eigen` schreibt die Kennung der Eigentümerin auf den jeweiligen Akteur um. Auf den Kindtabellen zeigt der Verweis auf die Reise danach ins Leere – die Reise gehört ja der Eigentümerin –, und die Probe endet mit `23502 not-null violation` statt mit einer Ablehnung durch die Policy. Die Aussage „ein fremdes Konto schreibt hier nichts" bleibt richtig, ihre Ursache ist aber die fehlende Reise und nicht die Policy. Der positive und der negative Schreibfall der Reisetabellen stehen deshalb nicht in der Matrix, sondern in den benannten Nachweisen unten, mit eigens angelegten Reisen je Konto.
 
 `npm run db:sicherheit` prüft dieselbe Datenbank gegen 140 benannte Erwartungen. Der Unterschied ist wichtig: Die Matrix zeigt, was gilt; die Nachweise sagen, was gelten **soll**, und schlagen fehl, wenn es sich ändert.
+
+Beide Läufe teilen eine Grenze: Sie liegen vollständig in einer Transaktion, und damit sehen alle ihre Anweisungen einander. Was nur zwischen **gleichzeitigen** Transaktionen schiefgehen kann, steht in Abschnitt 7b.
 
 Neun Nachweise bezogen sich auf Tabellen oder Funktionen, die Phase 1.4b entfernt hat. Sie sind nicht gestrichen, sondern durch gleichwertige an verbleibenden Strukturen ersetzt – ein Nachweis, der wegfällt, nimmt seine Aussage mit. Der Ersatz ist teils strenger als das Original: Statt zu prüfen, dass `anon` eine benannte `SECURITY DEFINER`-Funktion nicht ausführen darf, prüft er das für **jede** solche Funktion in `public` und deckt damit auch Funktionen ab, die noch niemand geschrieben hat. Die Gegenüberstellung steht in [docs/LEGACY_ENTFERNUNG.md](LEGACY_ENTFERNUNG.md) Abschnitt 11.
 
@@ -434,16 +440,17 @@ Seit `20260818010000_reise_erzeugungsregeln.sql` liegen sie in der Tabelle:
 | Die Kennung ist je Konto eindeutig | `unique (user_id, client_ref)` – wirkt erst mit `NOT NULL` auf jede Zeile, weil NULL in PostgreSQL nicht mit NULL kollidiert | `23505` |
 | Eine neue Reise ist ein Entwurf | Auslöser `trips_erzeugung_pruefen` | `22023` |
 | `created_at` und `updated_at` gehören der Datenbank | derselbe Auslöser setzt beide auf `now()` | – (wird überschrieben) |
-| Höchstens 60 neue **Neuanlagen** je Konto und Stunde | derselbe Auslöser, Zählung über `trips_user_id_updated_at_idx`; übersprungen, wenn `(user_id, client_ref)` schon belegt ist | `53400` |
+| Höchstens 60 neue **Neuanlagen** je Konto und Stunde | derselbe Auslöser, Zählung über `trips_user_id_updated_at_idx`; übersprungen, wenn `(user_id, client_ref)` schon belegt ist; je Konto serialisiert über `pg_advisory_xact_lock` | `53400` |
 
 Zur Wahl standen zwei Wege: `INSERT` entziehen und `reise_anlegen()` auf `SECURITY DEFINER` umstellen, oder die Regeln in der Tabelle verankern. Entschieden ist der zweite – nach dem ersten trüge ein Funktionsrumpf die Verantwortung für das Eigentum an vier Tabellen, weil `SECURITY DEFINER` an RLS vorbeiläuft. Begründung und Alternativen in [DECISIONS.md](../DECISIONS.md) ADR-0045.
 
-Vier Eigenschaften des Auslösers sind zu kennen:
+Fünf Eigenschaften des Auslösers sind zu kennen:
 
 - Er ist `SECURITY DEFINER`, damit die Zählung nicht durch die Lesepolicy läuft. Eine Schranke, die von einer Lesepolicy abhängt, wäre nur so lange richtig, wie diese jede eigene Reise zeigt.
 - Aufrufbar ist er trotzdem für niemanden: `revoke all on function public.reise_erzeugung_pruefen() from public, anon, authenticated`. Ein Auslöser braucht kein Ausführungsrecht des Aufrufers – deshalb erscheint er auch nicht unter `authenticated_security_definer_function_executable` in den Advisors.
 - Er zählt je Zeile und sieht dabei die Zeilen, die dieselbe Anweisung vorher eingefügt hat. Ein `insert … select … generate_series(1, 61)` scheitert deshalb an derselben Schranke wie 61 einzelne Anweisungen.
 - **Er läuft vor dem eindeutigen Index.** Die Reihenfolge einer Einfügung ist: Auslöser, dann `trips_client_ref_eindeutig`, dann `on conflict`. Genau daran ist die Idempotenz zunächst gescheitert – siehe unten.
+- **Er serialisiert je Konto.** Zählung und Einfügung gehören zusammen; ohne Sperre sieht jede gleichzeitige Anfrage denselben veralteten Stand.
 
 **Die Schranke zählt Neuanlagen, nicht Schreibversuche (ADR-0048).** Weil der Auslöser vor dem eindeutigen Index läuft, warf er bis `20260818020000` auch dann mit `53400`, wenn `on conflict do nothing` gar keine Reise angelegt hätte. Ein Konto mit 60 Reisen in der letzten Stunde konnte damit einen bereits erfolgreichen Aufruf nicht wiederholen – Retry nach einem Netzfehler, ein Reload, eine zweite Anmeldung –, obwohl die Reise längst in seinem Konto lag. Da `lib/trips/uebernahme.ts` den Entwurf im Browser erst nach der Kennung aus dem Konto löscht, blieb er liegen und jeder weitere Versuch scheiterte gleich, bis eine Stunde vergangen war.
 
@@ -451,7 +458,49 @@ Der Auslöser fragt jetzt zuerst, ob überhaupt eine Reise entsteht. Ist `(user_
 
 `status = 'draft'` wird weiterhin vor dieser Frage geprüft: `booked` beim Anlegen zu behaupten ist auf jedem Weg falsch, auch wenn die Zeile danach ohnehin am eindeutigen Index scheitern würde.
 
-Zwei Grenzen bleiben, benannt statt verschwiegen: `status = 'draft'` gilt beim Anlegen, nicht bei jeder Änderung – ein Konto kann seine eigene Reise anschliessend auf `booked` setzen, und ein Statusmodell mit erlaubten Übergängen entsteht mit der Buchung in Phase 3. Und die Zahl der Etappen, Tage und Planpunkte **je Reise** prüft weiterhin nur `reise_anlegen()`; der direkte Weg in die Kindtabellen ist unbegrenzt. Der Punkt steht im Backlog der [ROADMAP.md](../ROADMAP.md).
+**Zählung und Einfügung laufen je Konto der Reihe nach (ADR-0049).** Die Prüfung ist ein Lesen mit anschliessendem Schreiben, und in PostgreSQL sieht eine Transaktion die noch nicht festgeschriebene Zeile einer anderen nicht. Bei 59 vorhandenen Reisen sahen darum gleichzeitige Anfragen alle den Stand 59 und kamen alle durch – gemessen mit sechs Sitzungen: 65 Reisen statt höchstens 60, auf beiden Schreibwegen. Über PostgREST sind gleichzeitige Anfragen der Normalfall, nicht der Sonderfall.
+
+Der Auslöser nimmt deshalb vor dem ersten Lesen eine Beratungssperre auf Transaktionsdauer:
+
+```sql
+perform pg_advisory_xact_lock(hashtext('public.trips'), hashtext(new.user_id::text));
+```
+
+Drei Punkte dazu:
+
+- **Der Schlüssel ist zweiteilig.** Beratungssperren teilen sich einen Namensraum über die ganze Datenbank; der erste Teil benennt den Zweck, damit eine spätere Sperre zu einem anderen Zweck nicht zufällig dieselbe Zahl trifft. Ein Zusammenstoss zweier Konten im zweiten Teil kostet Wartezeit, nie Richtigkeit.
+- **Die Sperre steht vor der Prüfung auf eine bestehende Kennung, nicht dazwischen.** Davor gelesen wäre diese Prüfung veraltet, sobald sie gebraucht wird: Zwei gleichzeitige Anfragen mit derselben neuen Kennung sähen beide „noch nicht vorhanden", und die zweite scheiterte nach dem Warten an der Schranke, obwohl die erste ihre Reise angelegt hat. Zwei Tabs, ein Klick – dieser Fall muss idempotent bleiben.
+- **`_xact_` gibt von selbst frei**, beim Festschreiben wie beim Abbruch, und ist innerhalb derselben Transaktion wiederholt nehmbar. Eine Anweisung mit 61 Zeilen ruft den Auslöser 61-mal und blockiert sich dabei nicht selbst.
+
+Der Preis ist ein Wartepunkt je Konto, der nur das Anlegen von Reisen trifft und nur dasselbe Konto. Bei 60 erlaubten Neuanlagen je Stunde ist Gedrängel dort kein Dauerzustand, und `authenticated` trägt `statement_timeout = 8s`: Eine wartende Anfrage kann nicht unbegrenzt hängen, sie endet spätestens mit `57014`.
+
+Drei Grenzen bleiben, benannt statt verschwiegen: `status = 'draft'` gilt beim Anlegen, nicht bei jeder Änderung – ein Konto kann seine eigene Reise anschliessend auf `booked` setzen, und ein Statusmodell mit erlaubten Übergängen entsteht mit der Buchung in Phase 3. Die Zahl der Etappen, Tage und Planpunkte **je Reise** prüft weiterhin nur `reise_anlegen()`; der direkte Weg in die Kindtabellen ist unbegrenzt. Der Punkt steht im Backlog der [ROADMAP.md](../ROADMAP.md).
+
+Und: Eine Transaktion, die Reisen für **mehrere** Konten anlegt, nimmt mehrere Beratungssperren und kann mit einer zweiten solchen Transaktion in umgekehrter Reihenfolge verklemmen; PostgreSQL erkennt das und bricht eine der beiden mit `40P01` ab. Auf den vorhandenen Wegen kann der Fall nicht eintreten, weil RLS `user_id = auth.uid()` verlangt und eine Anfrage damit für genau ein Konto schreibt. Erreichbar wäre er nur über die Service Role, die Jetnity für Reisen nicht benutzt.
+
+---
+
+## 7b. Nachweis unter Gleichzeitigkeit
+
+`npm run db:sicherheit` und `npm run db:rls` laufen vollständig in einer Transaktion, die am Ende zurückrollt. Für Policies und Bedingungen ist das genau richtig und hinterlässt nichts. Für Wettläufe ist es blind: Zwei Anweisungen derselben Transaktion sehen einander immer, zwei gleichzeitige Transaktionen nicht.
+
+Die Erzeugungsschranke ist aber genau davon abhängig – sie liest und schliesst daraus auf ein Schreiben. `npm run db:parallelitaet` prüft deshalb, was der andere Lauf nicht kann.
+
+**Aufbau eines Falls.** Aufräumen, dann ein Testkonto mit N Reisen der letzten Stunde säen und **festschreiben** – gleichzeitige Sitzungen sehen einander nur festgeschrieben. Dann ein Treffpunkt auf der Uhr des Servers, weil sonst die Laufzeit der HTTP-Anfragen entscheidet, ob sich die Sitzungen überhaupt begegnen. Dann sechs gleichzeitige Verbindungen: Jede wartet bis zum Treffpunkt, schreibt und hält ihre Transaktion danach 0,8 Sekunden offen. Zum Schluss den Bestand nachzählen und das Konto löschen; `on delete cascade` nimmt alles mit.
+
+Das Offenhalten ist kein Kunstgriff: `reise_anlegen()` schreibt nach der Reise bis zu 1416 weitere Zeilen, das Fenster zwischen Zählung und Festschreibung ist real.
+
+| Nachweis | Erwartung |
+| --- | --- |
+| 6 parallele **neue** Kennungen bei 59, direkter `INSERT` | genau eine Reise kommt hinzu, der Rest `53400` |
+| dasselbe über `reise_anlegen()` | genau eine Reise kommt hinzu |
+| 6 parallele **Wiederholungen** einer bestehenden Kennung bei 59 | alle erfolgreich, dieselbe Reise, Bestand unverändert 59 |
+| 6 paralleles **Doppelabsenden** derselben neuen Kennung bei 59 | alle erfolgreich, dieselbe Reise, Bestand 60 |
+| 6 parallele neue Kennungen bei erreichtem Limit | alle `53400`, Bestand unverändert 60 |
+
+**Der Nachweis hat Zähne, und das ist selbst nachgewiesen.** Mit der Fassung vor `20260818030000` scheitert das Skript mit Exit-Code 1 und meldet 65 Reisen statt 60 – auf beiden Schreibwegen. Ein Nachweis, der auch ohne die Behebung grün wäre, wäre keiner.
+
+Dieses Skript ist das einzige unter `scripts/db/`, das echte Zeilen schreibt und nicht zurückrollt. Es benutzt ein eigenes Konto, das kein anderer Nachweis anfasst, und räumt vor **und** nach jedem Lauf auf – auch wenn ein Fall scheitert.
 
 ---
 

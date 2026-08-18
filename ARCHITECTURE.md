@@ -69,6 +69,8 @@ Sie ist deshalb aber auch nicht der einzige Weg, auf dem eine Reise entstehen ka
 
 Die Schranke zählt Neuanlagen und keine Schreibversuche: Ist `(user_id, client_ref)` schon belegt, entsteht keine Reise, die Schranke gilt nicht, und der Schreibvorgang endet am eindeutigen Index – in `reise_anlegen()` im `on conflict do nothing`, auf dem direkten Weg in `23505`. Ohne diese Frage wäre ein Retry an der Grenze abgelehnt worden, obwohl die Reise bereits im Konto liegt; ein `BEFORE INSERT`-Auslöser läuft vor dem eindeutigen Index (ADR-0048).
 
+Zählung und Einfügung sind ein Lesen mit anschliessendem Schreiben und laufen deshalb je Konto der Reihe nach, serialisiert über `pg_advisory_xact_lock` auf Transaktionsdauer. Ohne diese Sperre sahen gleichzeitige Anfragen bei 59 vorhandenen Reisen alle denselben Stand und kamen alle durch – über PostgREST war die Schranke damit parallel überschreitbar. `npm run db:parallelitaet` weist das mit echten gleichzeitigen Verbindungen nach; `npm run db:sicherheit` kann es nicht, weil sein Lauf vollständig in einer Transaktion liegt (ADR-0049).
+
 Auch die Migrationen brauchen keinen Service-Key: `npm run db:anwenden` geht über die Management API. Eine Development-Service-Role ist damit an keiner Stelle angelegt worden.
 
 ---
@@ -176,7 +178,7 @@ Bewusste Datenschutzregel, unverändert: Weder im Browserspeicher noch in den Re
 
 Vollständige Beschreibung: [docs/DATENBANK.md](docs/DATENBANK.md). Hier steht nur, wie sie in die Architektur eingebunden ist.
 
-**Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Siebzehn Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b und dem Reiseschema aus Phase 1.5 – **11 Tabellen, 31 Policies und 18 Funktionen**. Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
+**Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Achtzehn Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b und dem Reiseschema aus Phase 1.5 – **11 Tabellen, 31 Policies und 18 Funktionen**. Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
 
 Vier der elf Tabellen sind die Reisedaten: `trips`, `trip_stages`, `trip_days`, `trip_items`. Sie sind privat und tragen ihre Eigentümerkennung selbst; ein zusammengesetzter Fremdschlüssel `(trip_id, user_id) → trips (id, user_id)` verhindert, dass ein Kind an einer fremden Reise hängt. Enum-Typen führt das Schema keine mehr – jeder Wertebereich steht in einer Prüfbedingung ([DECISIONS.md](DECISIONS.md) ADR-0043).
 

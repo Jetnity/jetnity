@@ -1135,6 +1135,50 @@ Der Weg an der Schranke vorbei ist kein Loch: Er setzt eine bestehende Kennung v
 
 Die Nachweise können jetzt einen SQLSTATE verlangen. Ohne diese Erweiterung wäre der Kern nicht prüfbar: Vor der Behebung wurde der direkte `INSERT` einer belegten Kennung ebenfalls „abgelehnt" – nur mit dem falschen Code. Wo nicht die Ablehnung die Aussage ist, sondern woran sie scheitert, steht am Fall ein `code`.
 
+Die Behebung war noch nicht vollständig: Die Schranke prüfte weiterhin sequenziell, was gleichzeitig geschieht. Siehe ADR-0049.
+
+---
+
+## ADR-0049 – Zählung und Einfügung laufen je Konto der Reihe nach
+
+**Datum:** 18. August 2026
+**Status:** umgesetzt auf dem Development-Branch
+
+**Entscheidung:** `20260818030000_reise_erzeugung_serialisieren.sql` nimmt in `public.reise_erzeugung_pruefen()` eine Beratungssperre je Konto auf Transaktionsdauer, bevor gelesen wird:
+
+```sql
+perform pg_advisory_xact_lock(hashtext('public.trips'), hashtext(new.user_id::text));
+```
+
+Der Schlüssel ist zweiteilig: Der erste Teil benennt den Zweck, der zweite das Konto. Beratungssperren teilen sich einen Namensraum über die ganze Datenbank – ohne den ersten Teil könnte eine spätere Sperre zu einem anderen Zweck zufällig dieselbe Zahl treffen. Ein Zusammenstoss zweier Konten im zweiten Teil kostet Wartezeit, nie Richtigkeit.
+
+Die Sperre steht **vor** der Prüfung auf eine bestehende Kennung, nicht dazwischen. Davor gelesen wäre diese Prüfung veraltet, sobald sie gebraucht wird: Zwei gleichzeitige Anfragen mit derselben neuen Kennung sähen beide „noch nicht vorhanden", und die zweite scheiterte nach dem Warten an der Schranke, obwohl die erste ihre Reise inzwischen angelegt hat. Genau dieser Fall – zwei Tabs, ein Klick – muss nach ADR-0048 idempotent bleiben. Die Regel `status = 'draft'` bleibt vor der Sperre: Sie liest nichts.
+
+**Kontext:** ADR-0045 hat die Schranke in den Auslöser verlegt, ADR-0048 hat ihr beigebracht, Neuanlagen von Wiederholungen zu unterscheiden. Beide Male blieb dieselbe Annahme unausgesprochen: dass ein Konto seine Reisen der Reihe nach anlegt.
+
+Die Prüfung ist ein Lesen mit anschliessendem Schreiben – `count(*)`, dann die Einfügung. Zwischen beidem liegt ein Fenster, und in PostgreSQL sieht eine Transaktion die noch nicht festgeschriebene Zeile einer anderen nicht. Bei 59 vorhandenen Reisen sahen darum mehrere gleichzeitige Anfragen alle den Stand 59, alle kamen durch. Gemessen mit sechs gleichzeitigen Sitzungen: **65 Reisen statt höchstens 60**, auf beiden Schreibwegen. Über PostgREST sind gleichzeitige Anfragen der Normalfall; genau der öffentliche Weg, gegen den ADR-0045 absichert, war damit weiter offen – nur nicht mehr sequenziell, sondern parallel.
+
+**Alternativen:**
+
+1. *`select … for update` auf einer Zeile je Konto, etwa in `public.profiles`.* Bindet die Erzeugung einer Reise an eine fremde Tabelle: Wer sein Profil ändert, blockiert dann das Anlegen einer Reise. Ausserdem hat nicht jedes Konto ein Profil – `trips.user_id` verweist auf `auth.users`.
+2. *`SERIALIZABLE`.* Die Isolationsstufe bestimmt der Client, nicht die Tabelle. Ein Auslöser kann sie nicht verlangen, und `40001` müsste die Anwendung überall behandeln.
+3. *Ein Zähler je Konto und Stunde in einer eigenen Tabelle.* Serialisiert über die Zeilensperre, aber um den Preis einer weiteren Tabelle, einer weiteren Policy und eines zweiten Ortes, an dem die Wahrheit über den Bestand steht.
+4. *Die Schranke als Bedingung formulieren.* Ein `CHECK` kann nicht über andere Zeilen zählen, und ein `unique` auf eine laufende Nummer je Stunde hiesse, diese Nummer zu pflegen – wieder ein zweiter Ort.
+
+**Begründung:** Eine Beratungssperre braucht kein Schemaobjekt, sperrt keine Nutzdaten und wird mit dem Ende der Transaktion von selbst frei – auch bei einem Abbruch. Eine vergessene Freigabe ist damit ausgeschlossen. `_xact_` ist innerhalb derselben Transaktion wiederholt nehmbar: Eine Anweisung, die 61 Zeilen einfügt, ruft den Auslöser 61-mal und blockiert sich dabei nicht selbst.
+
+Der Preis ist ein Wartepunkt je Konto. Er trifft nur das Anlegen von Reisen und nur dasselbe Konto; bei 60 erlaubten Neuanlagen je Stunde ist Gedrängel dort kein Dauerzustand. `authenticated` trägt ausserdem `statement_timeout = 8s`: Eine wartende Anfrage kann nicht unbegrenzt hängen, sie endet spätestens mit `57014`.
+
+**Konsequenzen:** Ein neues Skript `npm run db:parallelitaet` mit fünf Nachweisen. Es musste ein eigenes sein: `db:sicherheit` läuft vollständig in einer Transaktion, die am Ende zurückrollt – richtig für Policies und Bedingungen, und vollständig blind für Wettläufe, weil zwei Anweisungen derselben Transaktion einander immer sehen.
+
+Der Nachweis öffnet mehrere echte Verbindungen gleichzeitig, verabredet einen Treffpunkt auf der Uhr des Servers und hält jede Transaktion nach dem Schreiben offen. Das Offenhalten ist kein Kunstgriff: `reise_anlegen()` schreibt nach der Reise bis zu 1416 weitere Zeilen, das Fenster ist real. Geprüft werden parallele neue Kennungen bei 59 auf beiden Schreibwegen, parallele Wiederholungen einer bestehenden Kennung, paralleles Doppelabsenden derselben neuen Kennung und parallele neue Kennungen bei erreichtem Limit.
+
+Dass die Parameter des Nachweises ausreichen, ist selbst nachgewiesen: Mit der Fassung ohne Sperre scheitert das Skript mit Exit-Code 1 und meldet 65 Reisen. Ein Nachweis, der auch ohne die Behebung grün wäre, wäre keiner.
+
+Anders als die übrigen `db:`-Skripte schreibt dieses echte Zeilen und rollt sie nicht zurück – gleichzeitige Sitzungen müssen die Saat sehen, und eine gemeinsame Transaktion gibt es dafür nicht. Es räumt vor und nach jedem Lauf auf; das Löschen des Testkontos nimmt über `on delete cascade` alles mit.
+
+**Bekannte Grenze:** Eine Transaktion, die Reisen für **mehrere** Konten anlegt, nimmt mehrere Sperren und kann mit einer zweiten solchen Transaktion in umgekehrter Reihenfolge verklemmen. PostgreSQL erkennt das und bricht eine der beiden mit `40P01` ab. Auf den vorhandenen Wegen kann der Fall nicht eintreten: RLS verlangt `user_id = auth.uid()`, eine Anfrage schreibt also für genau ein Konto. Erreichbar wäre er nur über die Service Role, die Jetnity für Reisen nicht benutzt.
+
 ---
 
 ## Offene Widersprüche

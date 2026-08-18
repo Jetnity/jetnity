@@ -419,8 +419,9 @@ Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst wo
 
 | Prüfung | Ergebnis |
 | --- | --- |
-| `npm run db:reproduzierbarkeit` | Wiederaufbau aus 17 Migrationen gleich dem laufenden Schema, kein Unterschied |
+| `npm run db:reproduzierbarkeit` | Wiederaufbau aus 18 Migrationen gleich dem laufenden Schema, kein Unterschied |
 | `npm run db:sicherheit` | 140 von 140 Nachweisen erfüllt, davon 52 neue zu Reisen |
+| `npm run db:parallelitaet` | 5 von 5 Nachweisen erfüllt, je 6 gleichzeitige Sitzungen gegen die Erzeugungsschranke |
 | `npm run db:rechte` | 32 Tabellenrechte, jedes durch eine Policy gedeckt; kein `TRUNCATE`, `REFERENCES`, `TRIGGER`; RLS auf allen 11 Tabellen; keine Policy nennt eine Rolle direkt; keine Funktion greift ins Leere |
 | `npm run db:rls` | Matrix aus 4 Akteuren × 11 Tabellen × bis zu 5 Operationen |
 | `npm run db:typen -- --pruefen` | `types/supabase.ts` entspricht dem Schema |
@@ -439,6 +440,11 @@ Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst wo
 
 - [x] Der Auslöser aus ADR-0045 läuft vor dem eindeutigen Index und warf damit an der Grenze auch dann mit `53400`, wenn `on conflict do nothing` gar keine Reise angelegt hätte: Ein Retry mit belegter Kennung – Netzfehler, Reload, zweite Anmeldung – war an einem Konto mit 60 Reisen in der letzten Stunde eine Stunde lang nicht wiederholbar, obwohl die Reise längst im Konto lag. Die Schranke fragt jetzt zuerst, ob überhaupt eine Reise entsteht: Ist `(user_id, client_ref)` belegt, gilt sie nicht, und der Schreibvorgang endet am eindeutigen Index statt an der Schranke. Eine tatsächlich neue Kennung scheitert weiter mit `53400` (ADR-0048)
 
+**Nachtrag aus der dritten Überprüfung.** Die Schranke prüfte sequenziell, was gleichzeitig geschieht:
+
+- [x] `count(*)` und die anschliessende Einfügung liefen ohne Serialisierung je Konto. Bei 59 vorhandenen Reisen sahen gleichzeitige Anfragen alle den Stand 59 und kamen alle durch – gemessen mit sechs Sitzungen: 65 Reisen statt höchstens 60, auf beiden Schreibwegen. Über PostgREST sind gleichzeitige Anfragen der Normalfall, der öffentliche Weg aus ADR-0045 war also weiter offen, nur parallel statt sequenziell. Zählung und Einfügung laufen jetzt je Konto der Reihe nach, serialisiert über eine Beratungssperre auf Transaktionsdauer (ADR-0049)
+- [x] Dazu ein eigener Nachweis `npm run db:parallelitaet` mit echten gleichzeitigen Verbindungen. `db:sicherheit` konnte das nicht leisten: Der Lauf liegt vollständig in einer Transaktion, und zwei Anweisungen derselben Transaktion sehen einander immer. Dass die Parameter genügen, ist gegengeprüft – mit der Fassung ohne Sperre scheitert das Skript
+
 **Vier Dinge sind bei der Umsetzung aufgefallen und mit behoben.** Die Prüfbedingung auf `interests` liess denselben Wert doppelt zu – ein CHECK mit `unnest` braucht eine `immutable` Funktion, weil eine Unterabfrage dort nicht erlaubt ist (SQLSTATE `0A000`). Ein Preis war ohne Währung eintragbar; beides ist jetzt aneinander gebunden. Die Zuordnung eines Planpunkts zu seinem Tag lief zunächst über die lokale Kennung des Browsers, die in der Datenbank keine Bedeutung hat – sie läuft jetzt über `day_index`. Und `npm run db:rls` konnte Kindtabellen mit zusammengesetztem Fremdschlüssel nicht säen: Die Saat wählte eine beliebige Reise, häufig die eines anderen Testkontos, und scheiterte an `trip_days_reise_fk`. Das Skript löst Fremdschlüssel jetzt über die Primärschlüsselspalten der Zieltabelle auf und wählt bei Tabellen mit `user_id` deterministisch die Zeile des eigenen Kontos.
 
 ### 1.6 Erste Tests
@@ -448,7 +454,7 @@ Priorität nach [AGENTS.md](AGENTS.md) Regel 24: Auth, Rollen, RLS, Trip-Persist
 - [x] Test-Runner eingerichtet – mit 1.3 erledigt: `npm test` läuft über den Test-Runner von Node mit `tsx` als Loader, ohne neues Paket ([DECISIONS.md](DECISIONS.md) ADR-0029)
 - [x] Tests für Rollen und Berechtigungen (52 ohne Datenbank; 34 aus 1.3, dazu 7 für den Abgleich des Rollenmodells, 6 für den Abgleich der Fähigkeiten und 5 für Fähigkeiten und Notzugang in der Zugangsentscheidung)
 - [x] Tests für die Antworten der lesenden Admin-Routen (31 ohne Datenbank: 14 für Fehler gegen echte Leere, 7 für die Suchausdrücke, 10 für die Kennzahlen)
-- [x] RLS-Nachweise gegen den Development-Branch (140 nach Phase 1.5), dazu die Rechteprüfung und der Reproduzierbarkeitsbeweis
+- [x] RLS-Nachweise gegen den Development-Branch (140 nach Phase 1.5), dazu die Rechteprüfung, der Reproduzierbarkeitsbeweis und fünf Nachweise unter echter Parallelität
 - [x] Tests für Trip-Erstellung und -Persistenz – 129 in `lib/trips/` ohne Datenbank (Schemas, Mapper, Tage, Gastspeicher inklusive voller und stummer Ablage, Übernahme mit Retry, Doppelrequest und Manipulationsversuch), dazu 52 Nachweise gegen den Branch für RLS, Idempotenz und die Erzeugungsregeln – geprüft über `reise_anlegen()` **und** über den direkten `INSERT`, einschliesslich der Wiederholung an der Schranke
 - [ ] datenbanknahe Prüfungen in die CI holen – braucht einen kurzlebigen Branch je Lauf, sonst legen nebenläufige Läufe dieselben Testkonten an
 

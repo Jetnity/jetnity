@@ -75,7 +75,7 @@ Dieselben Zahlen in `GRENZEN` (`lib/trips/schema.ts`), in den CHECK-Bedingungen 
 
 Die letzte Zeile ist kein Modellwert, sondern ein Missbrauchsriegel: Eine Reise anzulegen ist der einzige Vorgang, den ein angemeldetes Konto beliebig oft auslösen kann, und jeder Aufruf schreibt bis zu 1417 Zeilen. Er sitzt im Auslöser `trips_erzeugung_pruefen` der Tabelle und nicht in `public.reise_anlegen()`, weil `authenticated` auch direkt in `public.trips` schreiben darf (ADR-0045).
 
-Gezählt werden Neuanlagen, nicht Aufrufe: Ist `(user_id, client_ref)` schon belegt, entsteht keine Reise, und der Riegel gilt nicht. Sonst wäre eine Wiederholung an der Grenze abgewiesen worden, obwohl die Reise bereits im Konto liegt (ADR-0048).
+Gezählt werden Neuanlagen, nicht Aufrufe: Ist `(user_id, client_ref)` schon belegt, entsteht keine Reise, und der Riegel gilt nicht. Sonst wäre eine Wiederholung an der Grenze abgewiesen worden, obwohl die Reise bereits im Konto liegt (ADR-0048). Zählung und Einfügung laufen je Konto der Reihe nach; ohne diese Serialisierung liesse sich der Riegel mit gleichzeitigen Anfragen überschreiten (ADR-0049).
 
 ---
 
