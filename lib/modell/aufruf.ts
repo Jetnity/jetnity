@@ -14,51 +14,24 @@
 // ist ein Aufruf ohne Kostenkontrolle (AGENTS.md Regel 17).
 //
 // ---------------------------------------------------------------------------
-// Structured Outputs
-// ---------------------------------------------------------------------------
-//
-// Der Aufruf geht an die Responses API und schickt das JSON-Schema im Feld
-// `text.format` mit `strict: true`. Damit garantiert die Plattform die
-// Schemakonformität der Antwort – nicht der Prompt.
-//
-// Das ersetzt die Prüfung nicht. Ein Schema sagt, welche Felder vorkommen, nicht
-// ob ihr Inhalt zu Jetnity passt: Ein Ländercode `XX`, ein Tag mit der Nummer
-// 400 oder ein Titel mit 300 Zeichen sind schemakonform und trotzdem falsch.
-// Die zweite Instanz ist `lib/reisevorschlag/schema.ts`.
-//
-// Quelle: https://developers.openai.com/api/docs/guides/structured-outputs
-// (Responses API, Stand 18. August 2026)
-//
-// ---------------------------------------------------------------------------
 // Was hier nicht passiert
 // ---------------------------------------------------------------------------
 //
 // Kein Logging der Anfrage oder der Antwort. Kein Wiederholen: Ein zweiter
 // Versuch ist ein zweiter bezahlter Aufruf, und diese Entscheidung gehört dem
-// Menschen vor dem Bildschirm, nicht einer Schleife. Und `store: false` – die
-// Reisebeschreibung soll nicht auf der Gegenseite liegen bleiben.
+// Menschen vor dem Bildschirm, nicht einer Schleife.
 //
-// Das Lesen der Antwort steht in `lib/modell/antwort.ts`. Hier bleibt nur, was
-// eine Serverumgebung braucht: der Schlüssel, `fetch` und die Uhr.
+// Der Körper der Anfrage steht in `lib/modell/anfrage.ts`, das Lesen der Antwort
+// in `lib/modell/antwort.ts`. Beide sind ohne Serverumgebung prüfbar. Hier bleibt
+// nur, was eine Serverumgebung braucht: der Schlüssel, `fetch` und die Uhr.
 
 import 'server-only'
 
+import { ENDPUNKT, anfragekoerper, type Modellanfrage } from '@/lib/modell/anfrage'
 import { rohergebnisAus, type Rohergebnis } from '@/lib/modell/antwort'
-import { MODELL_GRENZEN, type Denkaufwand } from '@/lib/modell/konfiguration'
-import type { Modellname } from '@/lib/modell/preise'
+import { MODELL_GRENZEN } from '@/lib/modell/konfiguration'
 
-const ENDPUNKT = 'https://api.openai.com/v1/responses'
-
-export type Modellanfrage = {
-  modell: Modellname
-  aufwand: Denkaufwand
-  /** Die Systemregeln. Unveränderlich und nicht aus Nutzereingaben zusammengesetzt. */
-  systemregeln: string
-  /** Der Freitext des Nutzers. Untrusted, und zwar auf beiden Seiten des Aufrufs. */
-  nutzertext: string
-  schemaName: string
-  jsonSchema: unknown
-}
+export type { Modellanfrage }
 
 export type Modellergebnis = Rohergebnis & { laufzeitMs: number }
 
@@ -100,28 +73,7 @@ export async function modellAufrufen(anfrage: Modellanfrage): Promise<Modellerge
         authorization: `Bearer ${schluessel}`,
         'content-type': 'application/json',
       },
-      body: JSON.stringify({
-        model: anfrage.modell,
-        // Die Systemregeln stehen als eigene Nachricht mit der Rolle `system`,
-        // der Freitext als eigene mit `user`. Beides in einen String zu
-        // verketten wäre die Einladung, Regeln durch Eingaben zu überschreiben.
-        input: [
-          { role: 'system', content: anfrage.systemregeln },
-          { role: 'user', content: anfrage.nutzertext },
-        ],
-        reasoning: { effort: anfrage.aufwand },
-        text: {
-          format: {
-            type: 'json_schema',
-            name: anfrage.schemaName,
-            strict: true,
-            schema: anfrage.jsonSchema,
-          },
-        },
-        max_output_tokens: MODELL_GRENZEN.ausgabeTokens,
-        // Die Reisebeschreibung bleibt nicht auf der Gegenseite liegen.
-        store: false,
-      }),
+      body: anfragekoerper(anfrage),
       signal: controller.signal,
       cache: 'no-store',
     })
