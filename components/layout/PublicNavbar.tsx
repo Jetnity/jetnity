@@ -1,25 +1,77 @@
 'use client'
 
+// components/layout/PublicNavbar.tsx
+//
+// Die öffentliche Leiste. Sie kennt die Sitzung.
+//
+// ---------------------------------------------------------------------------
+// Warum die Sitzung im Browser gelesen wird und nicht im Layout
+// ---------------------------------------------------------------------------
+//
+// Ein `createServerComponentClient()` in `app/(public)/layout.tsx` wäre der
+// kürzere Weg – und würde jede öffentliche Seite dynamisch machen, weil das
+// Layout dann Cookies liest. Die Startseite ist Marketing und soll statisch
+// bleiben.
+//
+// Diese Komponente ist ohnehin ein Client Component (Menü, aktiver Pfad). Sie
+// liest die Sitzung deshalb selbst: `getSession()` von `@supabase/ssr` schaut
+// dafür in die Cookies, die der Server gesetzt hat, und geht nicht ins Netz.
+// `onAuthStateChange` hält den Stand nach – eine Anmeldung in einem anderen Tab
+// oder ein Abmelden erreichen die Leiste damit ohne Neuladen.
+//
+// Sicherheit: Was die Leiste zeigt, ist eine Anzeige und keine Berechtigung.
+// Über Zugriff entscheiden weiterhin Middleware, Server Components und RLS.
+
 import * as React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X } from 'lucide-react'
+import { LogOut, Menu, X } from 'lucide-react'
 
+import { signOutAction } from '@/app/auth/sign-out'
+import {
+  HAUPTNAVIGATION,
+  sitzungseintraege,
+  type Navigationseintrag,
+  type Sitzungsstand,
+} from '@/lib/auth/oeffentliche-navigation'
+import { createBrowserClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
-
-const navigation = [
-  { label: 'Entdecken', href: '/#entdecken' },
-  { label: 'Meine Reisen', href: '/reisen' },
-  { label: 'Jetnity Pro', href: '/#pro' },
-]
 
 export default function PublicNavbar() {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = React.useState(false)
+  const [sitzung, setSitzung] = React.useState<Sitzungsstand>('unbekannt')
 
   React.useEffect(() => {
     setMobileOpen(false)
   }, [pathname])
+
+  React.useEffect(() => {
+    let aktiv = true
+
+    // Ohne Supabase-Konfiguration – etwa in einer Vorschau ohne Umgebung –
+    // bleibt der Stand `unbekannt`. Die Leiste behauptet dann nichts, statt die
+    // Seite mit einer Ausnahme abzureissen.
+    let client: ReturnType<typeof createBrowserClient>
+    try {
+      client = createBrowserClient()
+    } catch {
+      return
+    }
+
+    client.auth.getSession().then(({ data }) => {
+      if (aktiv) setSitzung(data.session ? 'konto' : 'gast')
+    })
+
+    const { data: beobachter } = client.auth.onAuthStateChange((_ereignis, aktuelleSitzung) => {
+      if (aktiv) setSitzung(aktuelleSitzung ? 'konto' : 'gast')
+    })
+
+    return () => {
+      aktiv = false
+      beobachter.subscription.unsubscribe()
+    }
+  }, [])
 
   const isActive = (href: string) =>
     href === '/reisen' && (pathname === '/reisen' || pathname.startsWith('/reisen/'))
@@ -27,6 +79,8 @@ export default function PublicNavbar() {
   // Sprungmarken wie /#entdecken aendern den Pfad nicht, das Menue muss sich
   // trotzdem schliessen, damit das Ziel sichtbar wird.
   const closeMobile = () => setMobileOpen(false)
+
+  const eintraege = sitzungseintraege(sitzung)
 
   return (
     <header
@@ -47,7 +101,7 @@ export default function PublicNavbar() {
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Hauptnavigation">
-          {navigation.map((item) => (
+          {HAUPTNAVIGATION.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -66,12 +120,9 @@ export default function PublicNavbar() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <Link
-            href="/login"
-            className="inline-flex min-h-11 items-center rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0"
-          >
-            Anmelden
-          </Link>
+          {eintraege.map((eintrag) => (
+            <Sitzungseintrag key={eintrag.label} eintrag={eintrag} />
+          ))}
           <Link
             href="/planen"
             className="inline-flex min-h-11 items-center rounded-full bg-brand-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900 pointer-fine:min-h-0"
@@ -97,7 +148,7 @@ export default function PublicNavbar() {
           className="max-h-[calc(100dvh-72px)] overflow-y-auto border-t border-black/5 bg-surface-75 px-5 py-4 md:hidden"
         >
           <div className="grid gap-1">
-            {navigation.map((item) => (
+            {HAUPTNAVIGATION.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -109,13 +160,9 @@ export default function PublicNavbar() {
             ))}
           </div>
           <div className="mt-3 grid grid-cols-2 gap-2 border-t border-line-200 pt-4">
-            <Link
-              href="/login"
-              onClick={closeMobile}
-              className="flex h-11 items-center justify-center rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800"
-            >
-              Anmelden
-            </Link>
+            {eintraege.map((eintrag) => (
+              <Sitzungseintrag key={eintrag.label} eintrag={eintrag} mobil onFertig={closeMobile} />
+            ))}
             <Link
               href="/planen"
               onClick={closeMobile}
@@ -127,5 +174,58 @@ export default function PublicNavbar() {
         </nav>
       )}
     </header>
+  )
+}
+
+/**
+ * Ein sitzungsabhängiger Eintrag: Link oder Vorgang.
+ *
+ * Der Vorgang ist ein Formular auf `signOutAction()`. Die Server Action löscht
+ * die Sitzungscookies und leitet auf die Startseite – ein Abmelden im Browser
+ * allein liesse die Cookies des Servers stehen.
+ */
+function Sitzungseintrag({
+  eintrag,
+  mobil = false,
+  onFertig,
+}: {
+  eintrag: Navigationseintrag
+  mobil?: boolean
+  onFertig?: () => void
+}) {
+  if (eintrag.art === 'link') {
+    return mobil ? (
+      <Link
+        href={eintrag.href}
+        onClick={onFertig}
+        className="flex h-11 items-center justify-center rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800"
+      >
+        {eintrag.label}
+      </Link>
+    ) : (
+      <Link
+        href={eintrag.href}
+        className="inline-flex min-h-11 items-center rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0"
+      >
+        {eintrag.label}
+      </Link>
+    )
+  }
+
+  return (
+    <form action={signOutAction} className={mobil ? 'contents' : undefined}>
+      <button
+        type="submit"
+        onClick={onFertig}
+        className={
+          mobil
+            ? 'flex h-11 w-full items-center justify-center gap-2 rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800'
+            : 'inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0'
+        }
+      >
+        <LogOut className="h-4 w-4" aria-hidden="true" />
+        {eintrag.label}
+      </button>
+    </form>
   )
 }
