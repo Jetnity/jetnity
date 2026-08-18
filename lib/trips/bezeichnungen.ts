@@ -51,6 +51,29 @@ export const ART_BEZEICHNUNG: Record<TripItemKind, string> = {
 }
 
 /**
+ * Ein Betrag, wie Reisende ihn lesen: `CHF 3’000`.
+ *
+ * Bewusst ohne `Intl.NumberFormat`, und das ist keine Bastelei. Der
+ * Gruppentrenner von `de-CH` kommt aus ICU, und Node und Browser bringen jeweils
+ * ihre eigene Fassung mit: Node 22 schreibt U+2019, ältere ICU-Fassungen
+ * schreiben U+0027. Derselbe Betrag sieht dann auf dem Server anders aus als im
+ * Browser, React findet beim Hydrieren zwei verschiedene Texte und bricht die
+ * ganze Seite auf Client-Rendering zurück („Text content does not match
+ * server-rendered HTML“). Ein Trenner, den Jetnity selbst setzt, ist in beiden
+ * Laufzeiten derselbe.
+ *
+ * Die Währung erscheint als ISO-Code und nicht als Symbol, weil auch die
+ * Symbolwahl aus ICU kommt – sie würde dieselbe Frage nur verschieben.
+ *
+ * `wert` ist nach `lib/trips/schema.ts` nicht negativ; ein Vorzeichen kann hier
+ * deshalb nicht entstehen.
+ */
+export function betragLesbar(wert: number, waehrung: string): string {
+  const gruppiert = String(Math.round(wert)).replace(/\B(?=(\d{3})+$)/g, '\u2019')
+  return `${waehrung} ${gruppiert}`
+}
+
+/**
  * Die deutschen Tempowerte der Fassung bis Phase 1.5.
  *
  * Sie standen in `types/trips.ts` als `TRIP_PACES` und liegen deshalb in jedem

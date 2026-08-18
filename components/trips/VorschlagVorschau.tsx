@@ -29,7 +29,12 @@
 import * as React from 'react'
 import { CalendarDays, Info, MapPin, Users, WalletCards } from 'lucide-react'
 
-import { ART_BEZEICHNUNG, INTERESSE_BEZEICHNUNG, TEMPO_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
+import {
+  ART_BEZEICHNUNG,
+  INTERESSE_BEZEICHNUNG,
+  TEMPO_BEZEICHNUNG,
+  betragLesbar,
+} from '@/lib/trips/bezeichnungen'
 import { reiseende } from '@/lib/reisevorschlag/abbildung'
 import type { Reisevorschlag } from '@/lib/reisevorschlag/schema'
 import { cn } from '@/lib/utils'
@@ -123,7 +128,7 @@ export default function VorschlagVorschau({
           wert={
             vorschlag.budgetziel === null
               ? 'Nicht angegeben'
-              : `${vorschlag.waehrung} ${vorschlag.budgetziel.toLocaleString('de-CH')}`
+              : betragLesbar(vorschlag.budgetziel, vorschlag.waehrung)
           }
         />
       </div>
