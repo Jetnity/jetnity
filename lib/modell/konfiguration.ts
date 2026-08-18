@@ -127,6 +127,25 @@ export const MODELL_VORGABE: Modellname = 'gpt-5.6-terra'
 /** Der Denkaufwand, wenn die Umgebung keinen nennt. */
 export const AUFWAND_VORGABE: Denkaufwand = 'low'
 
+/**
+ * Nur die vier Variablen, die dieser Weg liest.
+ *
+ * Nicht `NodeJS.ProcessEnv`: Der Typ verlangt Felder, die hier nichts zu suchen
+ * haben, und eine Prüfung, die eine vollständige Umgebung fordert, um vier Werte
+ * zu lesen, macht aus einem Test eine Nachbildung der Laufzeit.
+ */
+export type Modellumgebung = {
+  JETNITY_MODELL_AKTIV?: string
+  OPENAI_API_KEY?: string
+  JETNITY_MODELL_NAME?: string
+  JETNITY_MODELL_AUFWAND?: string
+}
+
+function prozessumgebung(): Modellumgebung {
+  const { JETNITY_MODELL_AKTIV, OPENAI_API_KEY, JETNITY_MODELL_NAME, JETNITY_MODELL_AUFWAND } = process.env
+  return { JETNITY_MODELL_AKTIV, OPENAI_API_KEY, JETNITY_MODELL_NAME, JETNITY_MODELL_AUFWAND }
+}
+
 function eingeschaltet(wert: string | undefined): boolean {
   // Nur ausdrückliche Zustimmung. `''`, `'0'`, `'false'`, ein Tippfehler und
   // eine fehlende Variable bedeuten alle dasselbe: aus.
@@ -140,7 +159,7 @@ function eingeschaltet(wert: string | undefined): boolean {
  * `process.env` zu verändern. Ein Test, der globalen Zustand anfasst, ist von
  * der Reihenfolge der übrigen Tests abhängig.
  */
-export function modellZustand(umgebung: NodeJS.ProcessEnv = process.env): Modellzustand {
+export function modellZustand(umgebung: Modellumgebung = prozessumgebung()): Modellzustand {
   if (!eingeschaltet(umgebung.JETNITY_MODELL_AKTIV)) return { aktiv: false, grund: 'abgeschaltet' }
 
   // Nur die Anwesenheit zählt. Der Wert selbst verlässt `lib/modell/aufruf.ts`

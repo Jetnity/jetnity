@@ -115,6 +115,24 @@ const kanntext = (maximum: number) =>
     .pipe(z.string().max(maximum))
     .transform((wert) => (wert === '' ? null : wert))
 
+/**
+ * Text des Nutzers, nicht des Modells.
+ *
+ * Steuerzeichen fallen weg, Preisangaben bleiben stehen – und das ist der
+ * Unterschied zu `kanntext()`. „Maximal CHF 3'000“ ist im Satz eines Nutzers
+ * keine Behauptung über einen Marktpreis, sondern seine eigene Angabe über sein
+ * Budget. Sie zu entfernen wäre kein Schutz, sondern der Verlust des Wunsches,
+ * um den es geht; dasselbe Feld nimmt über das Formular unter /planen jeden Satz
+ * an, den ein Mensch dort schreibt.
+ */
+const nutzertext = (maximum: number) =>
+  z
+    .string()
+    .nullable()
+    .transform((wert) => (wert === null ? '' : ohneSteuerzeichen(wert)))
+    .pipe(z.string().max(maximum))
+    .transform((wert) => (wert === '' ? null : wert))
+
 const isoDatum = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/)
@@ -275,6 +293,10 @@ export type Modellvorschlag = z.infer<typeof modellvorschlagSchema>
 // existiert. Ihn durch das Modell zurückzuspiegeln wäre ein Umweg, auf dem er
 // sich ändern könnte.
 //
+// Weil er vom Nutzer stammt, wird er anders behandelt als jeder andere Text
+// hier: `nutzertext()` statt `kanntext()`, also ohne das Entfernen von
+// Preisangaben. Siehe die Begründung dort.
+//
 // Dieses Schema ist die Eingangsprüfung von `vorschlagUebernehmen()`. Der
 // Vorschlag kommt dort aus dem Browser zurück und ist damit dieselbe Art
 // Eingabe wie jede andere: unbekannt.
@@ -282,7 +304,7 @@ export type Modellvorschlag = z.infer<typeof modellvorschlagSchema>
 export const reisevorschlagSchema = modellvorschlagRoh
   .extend({
     fassung: z.literal(VORSCHLAG_FASSUNG),
-    reisewunsch: kanntext(GRENZEN.reisewunsch),
+    reisewunsch: nutzertext(GRENZEN.reisewunsch),
   })
   .superRefine(stimmigkeitPruefen)
 
