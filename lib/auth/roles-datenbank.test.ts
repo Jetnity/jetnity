@@ -49,7 +49,7 @@ function rangfolgeAusDerDatenbank(sql: string): Map<string, number> {
  * Liest die zulässigen Werte aus der letzten Fassung des Statuschecks.
  *
  * Der Name der Bedingung hat sich mit dem Umbenennen der Tabelle geändert
- * (`creator_profiles_status_check` → `profiles_status_check`, ADR-0043).
+ * (`creator_profiles_status_check` → `profiles_status_check`, ADR-0044).
  * Das Muster deckt beide ab: Der Test soll die letzte Fassung lesen, nicht die
  * letzte Fassung eines bestimmten Namens.
  */

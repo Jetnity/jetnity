@@ -1,6 +1,6 @@
 # Jetnity – Entfernung der Legacy-Datenbank (Phase 1.4b)
 
-Stand: 17. August 2026
+Stand: 17. August 2026 · Abschnitt 14 als Nachtrag aus Phase 1.5
 Gültig für: Supabase-Development-Branch
 
 Dieser Bericht dokumentiert eine unumkehrbare Handlung: die Entfernung von 29 Tabellen aus dem Schema `public`. Er hält fest, was entfernt wurde, was bewusst geblieben ist, und woraus sich beides ableitet – damit die Entscheidung ohne den Chat nachvollziehbar bleibt, in dem sie getroffen wurde ([AGENTS.md](../AGENTS.md) Regel 30).
@@ -214,6 +214,8 @@ Der Nachweis je Funktion ist eine vollständige Aufzählung ihrer Trigger. Bleib
 
 Diese Liste ist der wichtigere Teil des Berichts. Nach [AGENTS.md](../AGENTS.md) Regel 22 darf ein abhängiges Objekt nur entfernt werden, wenn nachgewiesen ist, dass es **ausschliesslich** zur Legacy-Struktur gehört. Für die folgenden Objekte fehlt dieser Nachweis – nicht aus Vorsicht, sondern weil er tatsächlich nicht zu führen ist.
 
+Phase 1.5 hat ihn für alle bis auf eines geführt und die Objekte entfernt; der Stand steht in Abschnitt 14. Die Begründungen hier bleiben unverändert stehen, weil sie den Zustand zum Zeitpunkt der Entscheidung beschreiben.
+
 ### `set_updated_at()` – bleibt, weil sie noch gebraucht wird
 
 Sie hing an `blog_posts` und `render_jobs`, **und** an `creator_sessions.t_creator_sessions_updated_at`. `creator_sessions` bleibt, also bleibt die Funktion. Von den drei inhaltsgleichen `updated_at`-Triggerfunktionen ist sie die einzige mit verbleibendem Aufrufer; die frühere Dreifachpflege ist damit nebenbei aufgelöst, ohne dass eine Umbenennung nötig war.
@@ -354,3 +356,28 @@ Ausserhalb von Migrationen und Dokumentation gab es genau drei Stellen mit Bezug
 | Service-Role-Pfade | keine eingeführt. Alle Arbeit lief über die Management-API mit dem Development-Token |
 
 Keine Secrets im Repository, in Logs oder in Ausgaben. Keine neuen laufenden Kosten – es sind ausschliesslich Objekte entfernt worden.
+
+---
+
+## 14. Nachtrag Phase 1.5 – die offenen Punkte sind geschlossen
+
+Abschnitt 9 dieses Berichts führt fünf Objekte, die Phase 1.4b bewusst stehen liess, weil der Nachweis fehlte, dass sie **ausschliesslich** zur Legacy-Struktur gehören. Phase 1.5 hat diesen Nachweis geführt, indem sie das Reiseschema gebaut hat, das `creator_sessions` ersetzt. Der Stand:
+
+| Objekt aus Abschnitt 9 | Stand nach Phase 1.5 |
+| --- | --- |
+| `creator_sessions` (Abschnitt 8) | **entfernt** in `20260817120200_creator_sessions_entfernen.sql`. Die Admin-Kennzahlen lesen jetzt Reisen: `admin_reisen_kennzahlen()` und `admin_reisen_zeitreihe(integer)` |
+| `set_updated_at()` | **entfernt.** Ihr letzter Aufrufer war `t_creator_sessions_updated_at`. Das Reiseschema führt `setze_aktualisiert_am()` mit festem `search_path` und ohne Doppelfassung |
+| Enum `session_status` | **entfernt.** Mit der Tabelle ist `creator_sessions.review_status` gefallen – die einzige Spalte, deren CHECK dieselben drei Werte erlaubte. Damit ist belegt, dass der Typ zu keiner verbleibenden Struktur gehörte |
+| Enum `visibility_status` | **entfernt**, aus demselben Grund |
+| `sync_creator_profile_core()`, `sync_creator_profile_emails()` | **entfernt** in `20260817120300_generisches_profil.sql`. Sie waren Doppelfassungen der angebundenen Auslöser; die Entscheidung war laut Abschnitt 9 in dieser Phase fällig |
+| `append_email_to_array()` (2 Signaturen), `remove_email_from_array()` | **entfernt.** Alle drei schrieben in `creator_sessions.emails` |
+| `darf_konfiguration_verwalten()` und die Fähigkeit `konfiguration-verwalten` | **bleiben.** Die Lage ist unverändert: keine Policy ruft sie auf, und sie zu entfernen wäre ein Eingriff in das Rollen- und Fähigkeitssystem. `npm run db:sicherheit` weist sie weiter direkt nach, in beiden Stufen |
+| `creator_profiles` | **umbenannt zu `profiles`**, neun Creator-Spalten entfernt. Bedingungen, Indizes, Policies, Auslöser und Funktionen tragen die neuen Namen ([DECISIONS.md](../DECISIONS.md) ADR-0044) |
+
+Zwei Punkte sind wichtiger als die Liste:
+
+**Auch diese Migrationen arbeiten ohne `cascade`.** Die Reihenfolge ist wieder gemessen und nicht gewählt: Funktionen fallen vor dem Auslöser, der Auslöser vor der Tabelle, die Tabelle vor den Enums. Eine unerwartete Abhängigkeit lässt die Migration scheitern, statt still mitgenommen zu werden – derselbe Grundsatz wie in Abschnitt 4.
+
+**Der Ersatz stand vor der Entfernung.** `20260817120100_reise_anlegen.sql` bringt die Admin-Kennzahlen auf Reisen, und erst `20260817120200` entfernt `creator_sessions`. Zwischen beiden Migrationen ist die Startseite des Administrationsbereichs zu keinem Zeitpunkt ohne Datenquelle.
+
+Der Bestand nach Phase 1.5 – 11 Tabellen, 0 Enums, 17 Funktionen – steht in [docs/DATENBANK.md](DATENBANK.md) Abschnitt 3. Das Reisemodell selbst in [docs/REISEN.md](REISEN.md).

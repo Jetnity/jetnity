@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
 Stand: 17. August 2026
-Gültig für: Phase 1, Stand nach der Datenbank-Baseline (1.4)
+Gültig für: Phase 1, Stand nach dem V2-Reiseschema (1.5)
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -61,7 +61,9 @@ Es existieren getrennte Clients je Ausführungskontext. Die Auswahl ist nicht op
 
 **Einen Client mit Service-Role-Rechten gibt es weiterhin nicht.** `lib/supabase/admin.ts` und der frühere `createAdminClient` sind in Phase 1.2b entfernt worden: Letzterer hängte einem Client mit vollen Rechten den mutierbaren Cookie-Adapter der Besucherin an.
 
-Phase 1.4 hat gezeigt, dass die Anwendung ohne ihn auskommt. Wo bisher erhöhte Rechte nötig schienen, steht jetzt eine Funktion mit `SECURITY DEFINER`, die die Rolle selbst prüft und nur das Ergebnis herausgibt – `admin_payments_summary_30d()` und `admin_security_overview()`. Das begrenzt den erhöhten Zugriff auf einige Zeilen SQL, statt einen Client mit vollen Rechten in den Anwendungscode zu holen ([AGENTS.md](AGENTS.md) Regel 14).
+Phase 1.4 hat gezeigt, dass die Anwendung ohne ihn auskommt. Wo bisher erhöhte Rechte nötig schienen, steht jetzt eine Funktion mit `SECURITY DEFINER`, die die Rolle selbst prüft und nur das Ergebnis herausgibt – `admin_payments_summary_30d()` und `admin_security_overview()`, seit Phase 1.5 dazu `admin_reisen_kennzahlen()` und `admin_reisen_zeitreihe(integer)`. Das begrenzt den erhöhten Zugriff auf einige Zeilen SQL, statt einen Client mit vollen Rechten in den Anwendungscode zu holen ([AGENTS.md](AGENTS.md) Regel 14).
+
+`public.reise_anlegen(jsonb)` ist ausdrücklich **nicht** so gebaut: Sie ist `SECURITY INVOKER` und schreibt ausschliesslich in die Reisen des aufrufenden Kontos, was die Policies ohnehin erlauben. Erhöhte Rechte bekommt eine Funktion nur, wenn sie sie braucht.
 
 Auch die Migrationen brauchen keinen Service-Key: `npm run db:anwenden` geht über die Management API. Eine Development-Service-Role ist damit an keiner Stelle angelegt worden.
 
@@ -83,7 +85,7 @@ Cursor interpoliert die Werte zur Laufzeit über `${env:SUPABASE_PROJECT_REF}` u
 
 Diese Verbindung ist ein Entwicklerwerkzeug. Sie ersetzt weder die App-Clients aus Abschnitt 3 noch Service-Role-Zugriff in der Anwendung.
 
-Verifikation am 17. August 2026 gegen den offiziellen Remote-Server, vor Phase 1.4: Authentifizierung erfolgreich, genau die zehn Werkzeuge der drei Feature-Gruppen, Account-/Branching-/Functions-/Storage-Werkzeuge abwesend, Projekt-URL identisch mit `SUPABASE_PROJECT_REF`. `list_tables` lieferte damals 39 Tabellen in `public`; nach Phase 1.4 und 1.4b sind es 8.
+Verifikation am 17. August 2026 gegen den offiziellen Remote-Server, vor Phase 1.4: Authentifizierung erfolgreich, genau die zehn Werkzeuge der drei Feature-Gruppen, Account-/Branching-/Functions-/Storage-Werkzeuge abwesend, Projekt-URL identisch mit `SUPABASE_PROJECT_REF`. `list_tables` lieferte damals 39 Tabellen in `public`; nach Phase 1.4b sind es 8 und nach Phase 1.5 elf.
 
 Dieselben Zugangsdaten – Personal Access Token und Projekt-Referenz – nutzen die Skripte in `scripts/db/` über die Management API. Sie sind der Weg, auf dem Phase 1.4 und 1.4b inventarisiert, Migrationen angewendet und Nachweise geführt haben; ein Datenbankpasswort oder ein Service-Key war dafür nicht nötig. Beschreibung in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 2.
 
@@ -127,7 +129,9 @@ Weitere Punkte:
 - Server-Actions sind eigene Eintrittspunkte und werden von keinem Layout geschützt; sie prüfen selbst.
 - Abmelden ist eine Server-Action, kein Pfad ([DECISIONS.md](DECISIONS.md), ADR-0023).
 
-**Ist-Ziel-Abweichung:** Die Rolle liegt weiterhin in `creator_profiles`, der Tabelle der alten Produktidee. Phase 1.4 hat die Tabelle dafür hergerichtet – `role` und `status` sind `NOT NULL` mit Bedingung, `user_id` ist eindeutig und nicht leer, und ein Trigger verhindert Rechteausweitung –, sie aber nicht umbenannt. Der Tabellenname steht nur in `ROLE_TABLE` in `lib/auth/admin-guard.ts`; das generische Profil folgt in Phase 1.5 zusammen mit dem Reise-Schema.
+**Die Rolle liegt seit Phase 1.5 in `public.profiles`.** Die Tabelle hiess bis dahin `creator_profiles` – ein Name aus der alten Produktidee. Weil er nur in `ROLE_TABLE` in `lib/auth/admin-guard.ts` stand, war die Umstellung eine einzelne Änderung im Anwendungscode. Mit der Umbenennung sind die neun Spalten der öffentlichen Creator-Identität entfallen; was bleibt, ist das, was ein Reisekonto braucht: Kennung, E-Mail, Anzeigename, Avatar, Rolle, Status, Zeitstempel. Persönliche Reisepräferenzen bekommen eigene Spalten oder eine eigene Tabelle, wenn sie fällig sind – nicht die freigewordenen ([DECISIONS.md](DECISIONS.md) ADR-0044).
+
+**Nach Anmeldung und Registrierung führt der Weg über eine Übernahme.** Liegt im Browser eine Gastreise, überträgt `lib/trips/uebernahme.ts` sie in das Konto, bevor „Meine Reisen" etwas anzeigt; der lokale Entwurf verschwindet erst, wenn der Server die Kennung der gespeicherten Reise gemeldet hat. Einzelheiten in Abschnitt 5 und in [docs/REISEN.md](docs/REISEN.md).
 
 ---
 
@@ -139,18 +143,28 @@ Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
 | --- | --- |
 | `/` | Startseite mit Positionierung und Einstieg in die Reiseplanung |
 | `/planen` | Erfassung der Reiseidee (`components/trips/TripPlanner.tsx`) |
-| `/reisen` | Übersicht der Reisen (`components/trips/GuestTrips.tsx`) |
+| `/reisen` | Übersicht der Reisen – im Konto aus Supabase, als Gast die eine Gastreise |
 | `/reisen/[tripId]` | Trip Workspace mit Tagesplanung (`components/trips/TripWorkspace.tsx`) |
 
-Persistenz erfolgt derzeit **ausschließlich im Browser** über `lib/trips/guest-store.ts`:
+**Seit Phase 1.5 gibt es zwei Wege, und sie unterscheiden sich nur im Speicher.** Fachliche Beschreibung: [docs/REISEN.md](docs/REISEN.md), Entscheidungen in [DECISIONS.md](DECISIONS.md) ADR-0041 bis ADR-0043.
 
-- `localStorage`-Schlüssel `jetnity:guest-trips:v2`
-- maximal 20 Entwürfe pro Browser
-- maximal 366 Tage pro Entwurf
+| Schicht | Datei | Aufgabe |
+| --- | --- | --- |
+| Domänenmodell | `types/trips.ts` | eine Reise, wie die Anwendung sie kennt – gleich für Gast und Konto |
+| Validierung | `lib/trips/schema.ts` | Zod-Schemas für jede Eingabe und für die Nutzlast an die Datenbank |
+| Abbildung | `lib/trips/abbildung.ts` | zwischen Datenbankzeile (`snake_case`) und Domänenmodell (`camelCase`) |
+| Gastspeicher | `lib/trips/gastspeicher.ts` | die eine Gastreise im `localStorage`, Schlüssel `jetnity:reise:v3` |
+| Lesen im Konto | `lib/trips/daten.ts` | `server-only`, Anon-Key, kein `eq('user_id', …)` – RLS filtert |
+| Schreiben im Konto | `lib/trips/aktionen.ts` | Server Actions, Identität über `auth.getUser()`, Rückgabe als Ergebnis statt als Ausnahme |
+| Übernahme | `lib/trips/uebernahme.ts` | Gastreise ins Konto, idempotent, ohne React und damit prüfbar |
 
-**Ist-Ziel-Abweichung:** Die Datenbank ist laut [AGENTS.md](AGENTS.md) Regel 13 die Source of Truth. Reisen existieren aktuell nur clientseitig. Der Gastmodus darf `localStorage` verwenden, die serverseitige Persistenz für angemeldete Nutzer fehlt jedoch noch vollständig. Das ist der zentrale Inhalt von Phase 1 (Trip-Schema) und Phase 2.
+Die serverseitigen Module benutzen ausschliesslich die Clients aus Abschnitt 3 und damit die Rechte des angemeldeten Kontos. Ein Filter auf `user_id` steht bewusst nirgends: Wer die Zugehörigkeit im Code filtert, hat sie in dem Moment nicht mehr durchgesetzt, in dem er den Filter vergisst.
 
-Bewusste Datenschutzregel: In diesem Speicher werden keine Passnummern, Ausweiskopien, Visa-Dokumente, Zahlungs- oder Gesundheitsdaten verarbeitet.
+**Der Gast bleibt ohne serverseitige Identität.** Er hat genau eine aktive Gastreise im Browser; `anon` hat auf keiner Reisetabelle ein Recht und auf `public.reise_anlegen()` kein EXECUTE. Bei Anmeldung oder Registrierung wandert die Gastreise genau einmal ins Konto – die Idempotenz trägt `unique (user_id, client_ref)` in der Datenbank, nicht ein Vermerk im Browser ([DECISIONS.md](DECISIONS.md) ADR-0042).
+
+Damit ist die frühere Ist-Ziel-Abweichung aufgelöst: Reisen eines Kontos liegen in der Datenbank, `localStorage` trägt nur noch den Gastentwurf – und für den ist er nach [AGENTS.md](AGENTS.md) Regel 13 zulässig, weil der Weg ins Konto existiert und geprüft ist. Was bleibt, ist die Eigenschaft einer Gastreise: Sie ist an einen Browser gebunden und mit dessen Speicher weg.
+
+Bewusste Datenschutzregel, unverändert: Weder im Browserspeicher noch in den Reisetabellen werden Passnummern, Ausweiskopien, Visa-Dokumente, Zahlungs- oder Gesundheitsdaten verarbeitet. Für sie wäre ein getrennter Sicherheitsbereich nötig; er ist in [ROADMAP.md](ROADMAP.md) bewusst verschoben.
 
 ---
 
@@ -158,7 +172,9 @@ Bewusste Datenschutzregel: In diesem Speicher werden keine Passnummern, Ausweisk
 
 Vollständige Beschreibung: [docs/DATENBANK.md](docs/DATENBANK.md). Hier steht nur, wie sie in die Architektur eingebunden ist.
 
-**Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Elf Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b – **8 Tabellen, 19 Policies und 19 Funktionen**. Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
+**Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Fünfzehn Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b und dem Reiseschema aus Phase 1.5 – **11 Tabellen, 31 Policies und 17 Funktionen**. Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
+
+Vier der elf Tabellen sind die Reisedaten: `trips`, `trip_stages`, `trip_days`, `trip_items`. Sie sind privat und tragen ihre Eigentümerkennung selbst; ein zusammengesetzter Fremdschlüssel `(trip_id, user_id) → trips (id, user_id)` verhindert, dass ein Kind an einer fremden Reise hängt. Enum-Typen führt das Schema keine mehr – jeder Wertebereich steht in einer Prüfbedingung ([DECISIONS.md](DECISIONS.md) ADR-0043).
 
 Drei Regeln halten das zusammen:
 
@@ -170,13 +186,15 @@ Drei Regeln halten das zusammen:
 
 Die ersten beiden brauchen den Development-Zugang und laufen vor einer Zusammenführung von Hand. Die dritte liest nur die erzeugte Typdatei und läuft in der CI mit.
 
-**Zugriffsschutz.** RLS ist auf allen 8 Tabellen eingeschaltet. `anon` und `authenticated` haben kein Tabellenrecht, das nicht eine Policy braucht – geprüft in beide Richtungen durch `npm run db:rechte`. Bis Phase 1.4 hatten beide Rollen auf jeder Tabelle alle Rechte einschließlich `TRUNCATE`, das RLS vollständig umgeht. Ohne Anmeldung lesbar ist seit Phase 1.4b nur noch `airports`.
+**Zugriffsschutz.** RLS ist auf allen 11 Tabellen eingeschaltet. `anon` und `authenticated` haben kein Tabellenrecht, das nicht eine Policy braucht – geprüft in beide Richtungen durch `npm run db:rechte`. Bis Phase 1.4 hatten beide Rollen auf jeder Tabelle alle Rechte einschließlich `TRUNCATE`, das RLS vollständig umgeht. Ohne Anmeldung lesbar ist seit Phase 1.4b nur noch `airports`.
+
+Auf den vier Reisetabellen prüft **keine** Policy eine Fähigkeit: Adminrechte öffnen private Reiseinhalte nicht, und das gilt bis zur Rolle `owner`. Die Kennzahlen des Administrationsbereichs kommen deshalb aus zwei `SECURITY DEFINER`-Funktionen, die ausschliesslich Anzahlen liefern und die Fähigkeit `betrieb-lesen` selbst prüfen ([DECISIONS.md](DECISIONS.md) ADR-0041).
 
 Seit Phase 1.4b prüft `npm run db:rechte` eine vierte Regel: Keine Funktion nennt eine Struktur, die es nicht gibt. Tabellenbezüge im Rumpf einer Funktion stehen nicht in `pg_depend`, PostgreSQL verfolgt sie also nicht – 18 Funktionen hätten die Entfernung ihrer Tabellen unbemerkt überlebt und erst beim Aufruf gescheitert. Das ist dieselbe Fehlerklasse, die `npm run check:schema-bezug` für den Anwendungscode abdeckt, nun auch für die Datenbank selbst.
 
-`npm run db:sicherheit` führt 78 benannte Nachweise, positiv und negativ, gegen den Development-Branch. Sie belegen unter anderem, dass sich kein Konto selbst befördert, kein Konto ein fremdes Profil ändert und kein angemeldetes Konto Zahlungsdaten sieht.
+`npm run db:sicherheit` führt 128 benannte Nachweise, positiv und negativ, gegen den Development-Branch. Sie belegen unter anderem, dass sich kein Konto selbst befördert, kein Konto ein fremdes Profil ändert, kein angemeldetes Konto Zahlungsdaten sieht, keine Rolle eine fremde Reise liest und dieselbe Gastreise zweimal übernommen genau eine Reise ergibt.
 
-**Die Reisedaten fehlen noch.** Phase 1.4b hat die 29 Tabellen der alten Produktidee entfernt; das Schema beschreibt jetzt nur, was verwendet wird. Eine Tabelle für Reisen gibt es damit aber noch nicht – sie entsteht in Phase 1.5, siehe Abschnitt 5. Der Übergang ist in [docs/LEGACY_ENTFERNUNG.md](docs/LEGACY_ENTFERNUNG.md) belegt, das Ergebnis in [docs/DATENBANK.md](docs/DATENBANK.md) beschrieben.
+**Die Reisedaten liegen seit Phase 1.5 in der Datenbank.** Phase 1.4b hatte die 29 Tabellen der alten Produktidee entfernt und damit ein Schema hinterlassen, das nur noch beschrieb, was verwendet wird – aber keine Reise speichern konnte. Die vier Reisetabellen füllen diese Lücke; `creator_sessions`, die letzte Alt-Tabelle, ist mit derselben Phase entfallen. Der Übergang ist in [docs/LEGACY_ENTFERNUNG.md](docs/LEGACY_ENTFERNUNG.md) belegt, das Ergebnis in [docs/DATENBANK.md](docs/DATENBANK.md) beschrieben, das Modell fachlich in [docs/REISEN.md](docs/REISEN.md).
 
 ---
 
@@ -270,12 +288,14 @@ Aktuell nur Konsolen-Logging, kein zentrales Error-Tracking und keine strukturie
 | --- | --- | --- |
 | ~~Fehlende Baseline-Migration~~ | ~~37 Tabellen ohne Versionierung~~ | in Phase 1.4 hergestellt, Wiederaufbau gemessen |
 | ~~Zwei Supabase-Typdateien~~ | ~~37 vs. 3 Tabellen~~ | in Phase 1.2b zusammengeführt, seit 1.4 erzeugt statt gepflegt |
-| ~~RLS-Zustand unbekannt~~ | ~~nicht aus dem Repo ableitbar~~ | in Phase 1.4 erhoben, neu aufgebaut und mit 78 Nachweisen belegt |
-| ~~Alt-Tabellen in der Datenbank~~ | ~~29 von 37 ohne Verwendung im Code~~ | in Phase 1.4b entfernt, mit Archiv-Tag und Nachweis in `docs/LEGACY_ENTFERNUNG.md` |
-| Rolle liegt in `creator_profiles` | Tabelle der alten Produktidee | Phase 1.5; der Name steht nur an einer Stelle |
-| Fünf Funktionen ohne Aufrufer | auf `creator_profiles` und `creator_sessions` | nicht Legacy und damit ausserhalb von Phase 1.4b; Entscheidung in Phase 1.5 (`docs/DATENBANK.md` Abschnitt 11) |
+| ~~RLS-Zustand unbekannt~~ | ~~nicht aus dem Repo ableitbar~~ | in Phase 1.4 erhoben, neu aufgebaut und mit inzwischen 128 Nachweisen belegt |
+| ~~Alt-Tabellen in der Datenbank~~ | ~~29 von 37 ohne Verwendung im Code~~ | in Phase 1.4b entfernt, mit Archiv-Tag und Nachweis in `docs/LEGACY_ENTFERNUNG.md`; `creator_sessions` als letzte in Phase 1.5 |
+| ~~Rolle liegt in `creator_profiles`~~ | ~~Tabelle der alten Produktidee~~ | in Phase 1.5 auf `public.profiles` umgestellt, samt Entfernung der neun Creator-Spalten (ADR-0044) |
+| ~~Fünf Funktionen ohne Aufrufer~~ | ~~auf `creator_profiles` und `creator_sessions`~~ | in Phase 1.5 entfernt, dazu ein doppelter Auslöser auf dem Profil |
 | Datenbanknahe Prüfungen laufen nicht in der CI | 5 Prüfungen von Hand | braucht einen kurzlebigen Branch je Lauf, sonst kollidieren die Testkonten |
-| Tests ohne Reisedaten | 41 Tests, davon keiner zur Persistenz | Trip-Persistenz existiert noch nicht (Phase 1.5) |
+| ~~Tests ohne Reisedaten~~ | ~~41 Tests, davon keiner zur Persistenz~~ | in Phase 1.5: 119 Tests in `lib/trips/` ohne Datenbank, dazu 40 Nachweise gegen den Branch |
+| Reise bearbeiten ist noch schmal | Anlegen, Planpunkt hinzufügen und entfernen, Reise löschen | Umbenennen, Umsortieren und Verschieben von Tagen entstehen mit dem Trip Builder in Phase 2 |
+| Einsicht in eine fremde Reise für den Support | bewusst nicht vorhanden | braucht eine eigene Entscheidung samt Protokollierung, nicht eine Policy (ADR-0041) |
 | `any`-Verwendung | ca. 309 Vorkommen in `app/`, `lib/`, `components/`, `types/` | überwiegend in Alt-Code; nur V2-relevante Stellen werden bereinigt |
 | ~~Middleware schützt nur einen Pfad~~ | ~~1 von vielen geschützten Bereichen~~ | in Phase 1.3 auf `/admin`, `/api/admin` und `/account` erweitert |
 | ~~`admin_domains` im Schema~~ | ~~unbenutzt, widerspricht ADR-0027~~ | in Phase 1.4 entfernt, zusammen mit `app_admins` und `is_admin` |

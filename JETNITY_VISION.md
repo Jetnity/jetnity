@@ -141,7 +141,9 @@ Ein Konto wird benötigt für:
 - gemeinsame Reiseplanung
 - spätere personalisierte Funktionen
 
-Vorhandene Gastreisen sollen bei Registrierung bzw. Login sauber in das Benutzerkonto übernommen werden.
+Ohne Konto ist **genau eine aktive Gastreise** vorgesehen. Sie liegt im Browser und ist an dieses Gerät gebunden. Mehrere gespeicherte Reisen sind eine Leistung des Kontos – das ist die Grenze zwischen Ausprobieren und Benutzen, und sie soll erklärt und nicht versteckt werden.
+
+Vorhandene Gastreisen sollen bei Registrierung bzw. Login sauber in das Benutzerkonto übernommen werden. Umgesetzt seit Phase 1.5; der Weg ist in [docs/REISEN.md](docs/REISEN.md) beschrieben.
 
 ---
 

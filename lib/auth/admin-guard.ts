@@ -39,7 +39,7 @@ import {
  *
  * Bis Phase 1.5 hiess sie `creator_profiles` – ein Name aus der alten
  * Produktidee. Weil er nur an dieser einen Stelle stand, war die Umstellung auf
- * `profiles` eine einzelne Änderung (ADR-0043).
+ * `profiles` eine einzelne Änderung (ADR-0044).
  */
 const ROLE_TABLE = 'profiles'
 

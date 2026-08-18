@@ -11,12 +11,12 @@
 // Warum sie auf /reisen steht und nicht in den Anmeldeformularen
 // ---------------------------------------------------------------------------
 //
-// Es gibt vier Wege in eine angemeldete Sitzung: Login mit Passwort, Login mit
-// zweitem Faktor, Registrierung und OAuth über `/auth/callback`. Alle vier
-// enden auf /reisen. Die Übernahme dort einmal zu bauen ist vier Stellen
-// weniger, an denen sie fehlen kann – und sie greift zusätzlich in Fällen, in
-// denen keine dieser vier Stellen beteiligt war: eine Sitzung, die in einem
-// anderen Tab entstanden ist, oder ein Versuch, der beim letzten Mal
+// Es gibt fünf Wege in eine angemeldete Sitzung: Login mit Passwort, Login mit
+// zweitem Faktor, Registrierung, OAuth über `/auth/callback` und die Rücksetzung
+// des Passworts. Alle fünf enden auf /reisen. Die Übernahme dort einmal zu bauen
+// ist fünf Stellen weniger, an denen sie fehlen kann – und sie greift zusätzlich
+// in Fällen, in denen keine dieser Stellen beteiligt war: eine Sitzung, die in
+// einem anderen Tab entstanden ist, oder ein Versuch, der beim letzten Mal
 // gescheitert ist.
 
 import * as React from 'react'

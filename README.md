@@ -8,12 +8,14 @@ Die erste neue Produktschicht ist bereits nutzbar:
 
 - neue öffentliche Startseite mit klarer Positionierung
 - fokussierte Navigation mit `Entdecken`, `Meine Reisen` und `Reise planen`
-- privater Gast-Reiseplaner unter `/planen`
-- lokale Reiseübersicht unter `/reisen`
+- Reiseplaner unter `/planen`, ohne Konto und mit Konto derselbe Weg
+- Reiseübersicht unter `/reisen`: ohne Konto der eine Gastentwurf, mit Konto die gespeicherten Reisen
 - Tagesplanung mit eigenen Orten, Zeiten und Notizen unter `/reisen/[tripId]`
 - App-Manifest, Icon, Metadaten und aktualisierte Sitemap
 
-Gastreisen werden bewusst nur im Browser gespeichert. Es werden in dieser Stufe weder Passdaten noch andere sensible Dokumente verarbeitet.
+Ohne Konto liegt **genau eine** Gastreise im Browser; mehrere gespeicherte Reisen brauchen ein Konto. Bei Registrierung oder Anmeldung wandert der Entwurf einmalig in das Konto. Reisen im Konto liegen in Supabase und sind durch Row Level Security auf ihr eigenes Konto beschränkt ([docs/REISEN.md](docs/REISEN.md)).
+
+Es werden in dieser Stufe weder Passdaten noch andere sensible Dokumente verarbeitet.
 
 ## Lokale Entwicklung
 
@@ -74,6 +76,8 @@ Der rote Faden von Jetnity lebt im Repository, nicht in einzelnen Chats. Vor gr�
 | [DECISIONS.md](DECISIONS.md) | Entscheidungsprotokoll und offene Widersprüche |
 | [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) | verbindliche Farbtokens und Designregeln |
 | [docs/DATENBANK.md](docs/DATENBANK.md) | Schema, Rollen, Eigentum, RLS und die Prüfungen dazu |
+| [docs/REISEN.md](docs/REISEN.md) | Reisedatenmodell, Gast und Konto, der Weg Gast → Konto |
+| [docs/AUTH.md](docs/AUTH.md) | Auth-Konfiguration des Development-Branches und die Prüfungen dazu |
 | [docs/LEGACY_ENTFERNUNG.md](docs/LEGACY_ENTFERNUNG.md) | Bericht zur Entfernung der 29 Legacy-Tabellen: Archiv-Tag, Nachweis, verbliebene Objekte |
 
 Der historische erste V2-Entwurf liegt in [docs/JETNITY_V2_FOUNDATION.md](docs/JETNITY_V2_FOUNDATION.md); bei Widersprüchen gelten die Dateien oben.
