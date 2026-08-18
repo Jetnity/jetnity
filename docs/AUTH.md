@@ -1,11 +1,11 @@
 # Jetnity – Auth-Konfiguration
 
-**Stand:** 17. August 2026 · Phase 1.4c
+**Stand:** 17. August 2026 · Phase 1.4c, Abschnitt 10 ergänzt in Phase 1.5
 **Gilt für:** den Supabase-**Development-Branch**. Production wird von hier aus nicht verwaltet.
 
-Diese Datei beantwortet drei Fragen: Wie ist die Anmeldung des Branches eingestellt, woher stammt jeder dieser Werte, und woran würde auffallen, wenn er sich ändert.
+Diese Datei beantwortet drei Fragen: Wie ist die Anmeldung des Branches eingestellt, woher stammt jeder dieser Werte, und woran würde auffallen, wenn er sich ändert. Abschnitt 10 kommt hinzu: was eine erfolgreiche Anmeldung mit einem Reiseentwurf macht, der ohne Konto entstanden ist.
 
-Für Rollen, Policies und Datenzugriff gilt [docs/DATENBANK.md](DATENBANK.md); für den Aufbau der Zugriffsschichten [ARCHITECTURE.md](../ARCHITECTURE.md) Abschnitt 4.
+Für Rollen, Policies und Datenzugriff gilt [docs/DATENBANK.md](DATENBANK.md); für das Reisemodell und die Übernahme selbst [docs/REISEN.md](REISEN.md); für den Aufbau der Zugriffsschichten [ARCHITECTURE.md](../ARCHITECTURE.md) Abschnitt 4.
 
 ---
 
@@ -273,7 +273,35 @@ Die Folge ist bekannt und in Kauf genommen: Die Supabase-GitHub-Integration wend
 
 ---
 
-## 10. Offene Punkte
+## 10. Was nach der Anmeldung mit der Gastreise passiert
+
+Seit Phase 1.5 hat eine Anmeldung eine Folge, die über die Sitzung hinausgeht: Der Reiseentwurf, den ein Gast ohne Konto angelegt hat, wandert in das Konto. Für die Auth-Konfiguration ändert das nichts – wohl aber für die Frage, was ein Anmeldeweg zu Ende bringen muss.
+
+**Ein Gast hat keine serverseitige Identität.** Kein Gastkonto, kein anonymer Login (`enable_anonymous_sign_ins` bleibt aus, Abschnitt 3), keine Zeile in `trips`. Sein Entwurf liegt im `localStorage`. Die Entscheidung ist ausdrücklich ([DECISIONS.md](../DECISIONS.md) ADR-0042): Eine serverseitige Gastidentität wäre ein Schreibweg ohne Konto, und zusammenführen müsste man ihn beim Login trotzdem.
+
+**Jeder Weg in eine angemeldete Sitzung endet auf `/reisen`**, und dort steht die Übernahme – einmal, nicht fünfmal:
+
+| Weg | Ziel |
+| --- | --- |
+| Anmeldung mit Passwort | `/reisen` (`AFTER_LOGIN_ROUTE`) |
+| Anmeldung mit zweitem Faktor | `/reisen`, nach dem TOTP-Dialog |
+| Registrierung mit E-Mail-Bestätigung | Bestätigungslink → `/auth/callback` → `/reisen` |
+| OAuth (vorbereitet, Anbieter aus) | `/auth/callback` → `/reisen` |
+| Rücksetzung des Passworts | `/auth/callback` → `/auth/update-password` → `/reisen` |
+
+Die Übernahme in jedes Formular zu bauen wären fünf Stellen, an denen sie fehlen kann. Auf `/reisen` greift sie zusätzlich in Fällen, in denen keiner dieser Wege beteiligt war: bei einer Sitzung, die in einem anderen Tab entstanden ist, und nach einem Versuch, der beim letzten Mal an der Datenbank gescheitert ist.
+
+**Die Übernahme hängt an keiner Reihenfolge, die niemand garantieren kann.** `trips.user_id` verweist auf `auth.users` und nicht auf `profiles`. Ein frisch registriertes Konto hat kein Profil – auf `auth.users` liegt kein Trigger (Abschnitt 3 von [docs/DATENBANK.md](DATENBANK.md)) – und kann trotzdem sofort speichern. Ohne diese Wahl wäre die erste Reise eines neuen Kontos davon abhängig, dass vorher irgendwo eine Profilzeile entstanden ist.
+
+**Was der Anmeldeweg nicht leisten muss.** Er muss die Übernahme nicht anstossen, nicht abwarten und nicht davon wissen. Sie ist idempotent: `public.reise_anlegen()` liefert über `unique (user_id, client_ref)` bei jedem weiteren Aufruf dieselbe Reise. Ein zweiter Login, ein Reload und zwei offene Tabs ergeben deshalb kein zweites Exemplar. Der Entwurf verschwindet aus dem Browser erst, wenn der Server seine Kennung gemeldet hat.
+
+Der Vorgang selbst, seine Reihenfolge und die 23 geprüften Fälle stehen in [docs/REISEN.md](REISEN.md) Abschnitt 5.
+
+**Für `npm run auth:fluesse` folgt daraus nichts.** Der Lauf prüft die Anmeldewege an den Endpunkten des Auth-Servers, ohne Browser und ohne `localStorage`; eine Übernahme kann er nicht auslösen. Sie ist stattdessen dort geprüft, wo sie stattfindet: in `lib/trips/uebernahme.test.ts` ohne Laufzeit und in `npm run db:sicherheit` gegen die laufende Datenbank.
+
+---
+
+## 11. Offene Punkte
 
 | Punkt | Stand |
 | --- | --- |

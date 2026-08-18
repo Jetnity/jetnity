@@ -850,14 +850,345 @@ Zuletzt eine Ursache, die erst durch die Fehlerdarstellung sichtbar wurde: Der S
 
 ---
 
+## ADR-0041 – Adminrechte öffnen keine privaten Reiseinhalte
+
+**Datum:** 17. August 2026
+**Status:** umgesetzt auf dem Development-Branch
+
+**Entscheidung:** Auf keiner der vier Reisetabellen – `trips`, `trip_stages`, `trip_days`, `trip_items` – gibt es eine Policy, die eine Fähigkeit prüft. Es gibt dort ausschliesslich Policies der Form `user_id = (select auth.uid())`, je Tabelle für SELECT, INSERT, UPDATE und DELETE. Wer `/admin` erreicht, sieht keine Reise, und das gilt bis zur höchsten Rolle des Modells.
+
+Die Kennzahlen des Administrationsbereichs kommen deshalb nicht aus einer Abfrage über die Tabelle, sondern aus zwei `SECURITY DEFINER`-Funktionen, die ausschliesslich Aggregate liefern: `admin_reisen_kennzahlen()` (Reisen der letzten 30 Tage, Reisen insgesamt, Konten mit Reise) und `admin_reisen_zeitreihe(integer)` (neue Reisen je Tag). Beide prüfen `darf_betrieb_lesen()` selbst und liefern ohne die Fähigkeit keine Zeile. Kein Titel, kein Ziel, keine Kennung, kein Betrag verlässt sie.
+
+**Kontext:** Für jede andere Tabelle des Schemas ist eine Verwaltungsfähigkeit selbstverständlich: `payments` und `security_events` sind ab `betrieb-lesen` lesbar, fremde Profile ab `konten-verwalten`. Für Reisen war dieselbe Zeile schnell geschrieben – und zwei Umstände legten sie nahe. Erstens verlor die Fähigkeit `inhalte-moderieren` mit `creator_sessions` ihren letzten Gegenstand (ADR-0044); Reisen wären der naheliegende neue gewesen. Zweitens zog die Startseite der Administration ihre Kennzahlen aus genau dieser Tabelle und brauchte einen Ersatz.
+
+Der zweite Umstand ist die eigentliche Falle. Eine Abfrage über `public.trips` aus einer Admin-Ansicht scheitert nicht, sie liefert null Zeilen – RLS filtert jede weg. Die Ansicht hätte „0 Reisen" gemeldet, und das ist die Verwechslung von „nicht berechtigt" mit „nichts vorhanden", gegen die ADR-0034, ADR-0037 und ADR-0040 geschrieben sind.
+
+**Alternativen:**
+
+1. *Eine Lesepolicy ab `betrieb-lesen` auf `trips`.* Der Supportfall ist echt: „Meine Reise ist verschwunden" lässt sich ohne Einsicht schwer beantworten. Aber eine Policy ist eine dauerhafte, stille Öffnung für jede Person ab `moderator` und für jede Abfrage – auch für die, die niemand gestellt hat. Ein Support, der Reiseinhalte sehen soll, braucht eine ausdrückliche Entscheidung samt Protokollierung, nicht eine Zeile in einer Migration.
+2. *Reisen zum Gegenstand von `inhalte-moderieren` machen.* Moderation gehört zu veröffentlichten Inhalten. Eine private Reiseplanung wird nicht veröffentlicht; es gibt nichts zu moderieren. Die Fähigkeit bleibt deshalb vorläufig ohne Fläche, wie `konfiguration-verwalten` seit Phase 1.4b.
+3. *Die Kennzahlen direkt über die Tabelle lesen.* Siehe oben: still eine Null.
+4. *Für die Kennzahlen einen Service-Role-Client verwenden.* Damit wäre der erste Service-Role-Pfad seit Phase 1.4 zurück in der Anwendung, und zwar für drei Zahlen ([AGENTS.md](AGENTS.md) Regel 14). Eine `SECURITY DEFINER`-Funktion begrenzt den erhöhten Zugriff auf wenige Zeilen SQL, deren Ausgabe man lesen kann.
+
+**Begründung:** Eine Reiseplanung enthält, wohin jemand wann mit wem fährt. Das ist kein Betriebsdatum wie eine Zahlung, sondern das Privateste, was Jetnity speichert. Ein Adminkonto ist für die Datenbank ein Konto wie jedes andere – derselbe Satz, den ADR-0036 für den Notzugang festgehalten hat, hier auf Reiseinhalte angewendet.
+
+Der Unterschied zwischen Zahl und Inhalt ist dabei der Punkt, an dem die Entscheidung praktikabel bleibt: „Wie viele Reisen entstehen pro Tag" ist eine legitime Betriebsfrage, „was hat diese Person geplant" nicht. Zwei Aggregatfunktionen beantworten die erste, ohne die zweite zu ermöglichen.
+
+**Konsequenzen:** Sechs Nachweise in `npm run db:sicherheit` halten die Entscheidung fest, und zwei davon sind bewusst leer: Inhaber und Administration lesen eine fremde Reise – 0 Zeilen; die Administration ändert und löscht eine fremde Reise – 0 Zeilen; Moderation liest fremde Reisen – 0 Zeilen. Ein siebter prüft die Aussage strukturell statt beispielhaft: Keine Policy auf den vier Reisetabellen nennt eine der `darf_…()`-Funktionen. Diese Form fängt auch eine Policy, die es heute noch nicht gibt.
+
+Die beiden Aggregatfunktionen sind ihrerseits sechsfach nachgewiesen – `anon` bekommt kein EXECUTE-Recht, ein gewöhnliches Konto und ein Creator keine Zeile, Moderation die Zahlen.
+
+Die Advisors melden dafür zwei Befunde mehr in der Klasse `authenticated_security_definer_function_executable` (6 statt 4). Das ist die bekannte, in [docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 8 begründete Klasse: Die Funktion muss für `authenticated` aufrufbar sein, prüft die Fähigkeit aber selbst.
+
+Offen bleibt der Supportfall. Er ist nicht gelöst, sondern zurückgestellt: Wenn Einsicht in eine fremde Reise nötig wird, ist das eine Produktentscheidung mit eigenem ADR, eigener Protokollierung und der Frage, ob die betroffene Person davon erfährt.
+
+---
+
+## ADR-0042 – Der Gast bleibt ohne serverseitige Identität, und seine Reise wandert genau einmal ins Konto
+
+**Datum:** 17. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Ein Gast bekommt kein Konto in `auth.users`, keine Zeile in einer Gasttabelle und kein serverseitiges Kennzeichen. Seine Reise liegt im `localStorage`, unter genau einem Schlüssel und als genau eine aktive Reise (`jetnity:reise:v3`). `anon` hat auf keiner Reisetabelle ein Recht und auf `public.reise_anlegen()` kein EXECUTE.
+
+Bei Login oder Registrierung überträgt `lib/trips/uebernahme.ts` alles, was im Browser liegt, in drei Schritten:
+
+1. je Entwurf ein Aufruf von `public.reise_anlegen()`,
+2. der lokale Entwurf verschwindet erst, wenn der Server die Kennung der Reise gemeldet hat,
+3. beim ersten Fehler bricht der Vorgang ab und lässt liegen, was noch nicht bestätigt ist.
+
+Die Idempotenz sitzt in der Datenbank, nicht im Browser: `trips.client_ref` trägt mit `unique (user_id, client_ref)` die Kennung des Entwurfs, und `reise_anlegen()` schreibt mit `on conflict do nothing`. Derselbe Entwurf ergibt pro Konto genau eine Reise – bei Reload, Retry, doppeltem Request, zweitem Login und zwei offenen Tabs.
+
+**Kontext:** ADR-0009 macht Jetnity ohne Konto nutzbar, ADR-0013 begrenzt den Gast auf eine Reise. Der Code hielt beides nur halb: `lib/trips/guest-store.ts` erlaubte 20 Entwürfe (`MAX_GUEST_TRIPS = 20`) und kannte keinen Weg ins Konto – der offene Widerspruch Nummer 1 dieser Datei.
+
+Supabase bietet für Gäste anonyme Anmeldungen an. Sie wären der bequeme Weg: Der Gast hätte eine `auth.uid()`, die Reise läge sofort in der Datenbank, und die Übernahme wäre ein `update … set user_id = …`.
+
+**Alternativen:**
+
+1. *Anonyme Anmeldung.* Sie erzeugt echte Zeilen in `auth.users` – eine je Besucherin, ohne E-Mail, ohne Bestätigung, ohne jemanden, der sie verantwortet. Damit entstehen drei neue Aufgaben, die es heute nicht gibt: ein Aufräumen verwaister Konten, RLS-Policies für ein Konto, das niemandem gehört, und eine Zählung, die in die monatlich aktiven Benutzer einfliesst. Für ein Produkt, das seinen Gästen ausdrücklich *keine* Registrierung abverlangt, ist ein unsichtbares Schattenkonto das Gegenteil der Zusage.
+2. *Eine Gasttabelle mit Token im Cookie.* Dasselbe Problem in eigener Verwaltung, dazu ein Cookie, das ohne Zustimmung gesetzt wird und eine Person über Sitzungen hinweg wiedererkennbar macht.
+3. *Die Übernahme im Auth-Callback erledigen.* Der naheliegende Ort – und technisch unmöglich: `localStorage` gehört dem Browser, ein Route Handler sieht ihn nicht. Die Übernahme muss dort beginnen, wo die Daten liegen.
+4. *Nach dem Login zum Neuanlegen auffordern.* Ehrlich, aber es wirft die Arbeit weg, für die der Gastmodus überhaupt existiert.
+5. *Idempotenz über einen „migriert"-Vermerk im Browser.* Der Vermerk steht auf der falschen Seite: Zwei Tabs, ein Reload zwischen Aufruf und Antwort oder ein zweites Gerät kennen ihn nicht. Nur die Datenbank sieht alle Fälle gleichzeitig, und dort ist es eine Eindeutigkeitsbedingung – kein Code.
+
+**Begründung:** Der Gastmodus soll den Wert von Jetnity vor der Registrierung zeigen, nicht eine Identität anlegen, die niemand bestellt hat. `localStorage` ist dafür nach [AGENTS.md](AGENTS.md) Regel 13 ausdrücklich zulässig, sofern die Daten später sauber migrierbar sind – und genau diese Migrierbarkeit ist hier der Preis, der bezahlt wurde: `client_ref` steht im Schema, `reise_anlegen()` nimmt den ganzen Reisegraphen in einer Transaktion, und die Kennung des Entwurfs ist von Anfang an die Kennung, die später die Idempotenz trägt.
+
+Die Reihenfolge senden → bestätigen → löschen ist die einzige, die keinen Entwurf verlieren kann. Ein Entwurf, der gelöscht ist, ohne im Konto zu liegen, ist verlorene Arbeit, die niemand rekonstruieren kann; ein Entwurf, der zweimal gesendet wird, ist dank der Eindeutigkeit ein Nichtereignis. Von zwei möglichen Fehlern ist damit der harmlose ausgewählt.
+
+**Konsequenzen:** Die Übernahme liegt bewusst nicht in der React-Komponente, sondern in `lib/trips/uebernahme.ts`; `components/trips/GastreiseBruecke.tsx` ist nur noch ihre Anzeige. Damit ist die Reihenfolge ohne Browser prüfbar, und `lib/trips/uebernahme.test.ts` prüft sie in den Fällen, die der Auftrag genannt hat: Gast ohne Reise (kein Aufruf), Gast mit Reise, Retry nach Fehler, doppelter Request, bereits übernommene Reise, Manipulation der Nutzlast, sowie zwei parallel gestartete Durchläufe. Ein Riegel im Modul verhindert dabei nur das gleichzeitige Aufräumen des Browserspeichers – für die Datenbank wäre auch der Doppellauf harmlos.
+
+Der Umstieg auf die eine aktive Reise verwirft keine Daten. Browser mit mehreren Entwürfen aus der Fassung `jetnity:guest-trips:v2` behalten den zuletzt geänderten als aktive Reise; die übrigen wandern in eine Warteschlange, sind nicht bearbeitbar und werden beim nächsten Login mit übernommen. Der alte Schlüssel wird erst gelöscht, wenn der neue geschrieben ist – bricht der Vorgang dazwischen ab, läuft er beim nächsten Laden erneut. Ein zweiter Versuch, eine Gastreise anzulegen, während eine besteht, endet in einem Hinweis auf das Konto, nicht im stillen Überschreiben (ADR-0013).
+
+Was bleibt, ist der Preis der Entscheidung, und er ist nicht klein: Eine Gastreise ist an einen Browser gebunden. Privates Fenster geschlossen, Speicher geleert, Gerät gewechselt – die Reise ist weg. Die Oberfläche sagt das, statt Dauerhaftigkeit anzudeuten.
+
+`reise_anlegen()` ist zusätzlich begrenzt: höchstens 60 neue Reisen je Konto und Stunde, mit SQLSTATE `53400`, den die Anwendung als „später erneut versuchen" übersetzt. Der Aufruf ist angemeldet, aber ein angemeldetes Konto in einer Schleife wäre sonst ein Weg, die Datenbank zu füllen ([AGENTS.md](AGENTS.md) Regel 15). Die Schranke ist eine Rate und keine Gesamtzahl – wie viele Reisen ein Konto besitzen darf, ist eine Produktentscheidung und steht hier nicht zur Debatte.
+
+---
+
+## ADR-0043 – Das Reiseschema: vier Tabellen, CHECK statt Enum, Eigentum auf jeder Zeile
+
+**Datum:** 17. August 2026
+**Status:** umgesetzt auf dem Development-Branch
+
+**Entscheidung:** Das V2-Reisedatenmodell besteht aus vier Tabellen in `20260817120000_reiseschema.sql`:
+
+| Tabelle | Inhalt |
+| --- | --- |
+| `trips` | die Reise: Titel, Abreiseort, Zeitraum, Reisende, Währung, Budget, Status, Tempo, Interessen, Reisewunsch |
+| `trip_stages` | Etappen und Orte in Reihenfolge, mit Land und Koordinaten |
+| `trip_days` | Reisetage: `day_index` als verbindliche Ordnung, `day_date` als optionales Kalenderdatum |
+| `trip_items` | Planpunkte: `flight`, `stay`, `activity`, `transfer`, `note` |
+
+Sechs Festlegungen prägen die Form, jede gegen eine naheliegendere Alternative:
+
+1. **CHECK statt Enum.** Jeder Wertebereich – Status, Tempo, Art, Interessen – steht in einer Prüfbedingung. Das Schema führt damit **keinen** Enum-Typ mehr.
+2. **`user_id` auf jeder Tabelle**, dazu ein zusammengesetzter Fremdschlüssel `(trip_id, user_id) → trips (id, user_id)`. Die Policy ist ein Spaltenvergleich statt einer Unterabfrage, und ein Kind kann keine Reise einer anderen Person benennen.
+3. **Eigentum ist nicht vom Client setzbar.** `user_id` trägt `default auth.uid()`, und jede Policy verlangt in `using` **und** `with check` die Gleichheit mit `auth.uid()`. Damit ist die Spalte faktisch unveränderlich, ohne Auslöser.
+4. **`jsonb` nur für das, wonach nicht gefragt wird.** Jede Tabelle hat `metadata jsonb`, begrenzt auf ein Objekt und 8192 Zeichen, und nichts filtert oder sortiert darüber. Was abgefragt wird, bekommt eine Spalte.
+5. **Keine Provider-Abstraktion.** Ein Planpunkt trägt `provider`, `external_ref` und `booking_url` (nur HTTPS). Eine Angebots-, Anbieter- oder Buchungstabelle entsteht, wenn ein Anbieter angebunden ist ([AGENTS.md](AGENTS.md) Regel 19).
+6. **Zeit in Teilen statt als `timestamptz`.** `starts_on`/`starts_at`/`ends_on`/`ends_at` plus `time_zone`. Ein Check-in um 15:00 ist eine Ortszeit und bleibt 15:00.
+
+**Kontext:** Bis zu dieser Phase existierte eine Reise ausschliesslich im `localStorage`: ein Titel, ein Ziel, Tage mit freien Einträgen. Darauf lässt sich der Produktkern nicht bauen – ohne Struktur gibt es keine Preisübersicht, kein Budget über die ganze Reise und keine Übergabe an einen Anbieter, und der Trip Builder aus Phase 2 wäre eine Demo. Das Modell ist deshalb aus den Produktanforderungen abgeleitet und nicht aus dem bestehenden Speicherformat.
+
+**Alternativen:**
+
+1. *Enum-Typen für die Wertebereiche.* Sie lesen sich sauberer und werden von PostgreSQL geprüft. Aber ein Enum lässt sich nur erweitern, nie kürzen: Einen Wert zurückzunehmen heisst, einen neuen Typ anzulegen und jede Spalte umzuschreiben. Für Wertebereiche, die in Phase 2 und 3 noch wachsen und sich korrigieren werden, ist ein CHECK die billigere Migration – eine Zeile. Dieselbe Entscheidung trägt `profiles.role` seit Phase 1.4.
+2. *Policies über `exists (select 1 from trips …)`.* Der übliche Weg, und er spart drei Spalten. Er läuft aber je Zeile und je Operation, und er lässt ein Kind an einer fremden Reise hängen, solange nur die Policy stimmt. Mit `user_id` auf dem Kind und dem zusammengesetzten Fremdschlüssel ist beides erledigt, und der Index, der den Fremdschlüssel deckt, ist derselbe, der die Leseordnung liefert.
+3. *Eine Tabelle `trips` mit dem ganzen Reisegraphen als `jsonb`.* Verlockend schnell. Damit wäre aber jede Frage der Phase 3 – „was kostet diese Reise", „welche Flüge sind gebucht" – eine Textsuche, und kein Fremdschlüssel würde einen halben Stand verhindern.
+4. *Eine eindeutige `position`.* Klingt richtiger, macht aber jedes Umsortieren mehrschrittig, weil PostgREST eine Bedingung nicht auf das Transaktionsende verschieben kann. Gelesen wird deterministisch nach `position, created_at, id`.
+5. *Eine Teilnehmertabelle statt `travellers smallint`.* Solange nur die Anzahl gebraucht wird, wäre sie eine Tabelle für eine Zahl. Sobald Namen, Geburtsdaten oder Ausweisdaten anfallen, ist sie fällig – und dann als eigene Entscheidung mit eigener Schutzstufe, nicht als leere Vorbereitung.
+6. *Eine Verknüpfung von Tag zu Etappe.* Wäre eine zweite Quelle für dieselbe Aussage: Welche Etappe ein Tag betrifft, folgt aus deren Daten. Was wirklich an einer Etappe hängt – eine Unterkunft über mehrere Nächte –, hängt an `trip_items.stage_id`.
+7. *Nur `day_date` oder nur `day_index`.* Ohne Index liesse sich „Tag 1 Anreise, Tag 2 Tempel" ohne festen Zeitraum nicht abbilden – und genau so entsteht eine Reiseidee. Ohne Datum wäre jede Datumsanzeige eine Rechnung über den Reisebeginn und beim Verschieben falsch.
+
+**Begründung:** Das Modell soll das kleinste sein, das die Anforderungen trägt – und trotzdem eines, auf dem Phase 2 und 3 ohne Neubau aufsetzen können. Deshalb sind alle Datumsangaben optional (eine Reiseidee entsteht ohne Zeitraum), deshalb sind Tag und Etappe an einem Planpunkt beide optional (ein noch nicht eingeplanter Fund hängt an keinem von beiden), und deshalb löscht `on delete set null` bei einem entfernten Tag nur die Zuordnung und nicht den Planpunkt. Wird eine Reise kürzer, verschwindet die Arbeit nicht, sie wird unzugeordnet.
+
+Die Grenzen sind gezählt und nicht geschätzt: 366 Tage, 50 Etappen, 1000 Planpunkte, 8 KB `metadata`, 256 KB Nutzlast je Aufruf. Sie liegen weit über jeder realen Reise und tief unter allem, was einer Datenbank schadet.
+
+**Konsequenzen:** Das Schema wächst von 8 auf 11 Tabellen, von 66 auf 102 Spalten, von 2 auf 7 Fremdschlüssel, von 4 auf 45 CHECK-Bedingungen und von 19 auf 31 Policies. Enums gibt es keine mehr. Die Zahlen stehen in [docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 3, das Modell fachlich in [docs/REISEN.md](docs/REISEN.md).
+
+Die Indizes folgen den Zugriffspfaden, die es wirklich gibt: `trips (user_id, updated_at desc)` für „Meine Reisen", je Kindtabelle ein Index, der den zusammengesetzten Fremdschlüssel deckt und gleichzeitig die Leseordnung liefert, dazu zwei für die optionalen Verweise auf Tag und Etappe, weil PostgreSQL beim Löschen darüber sucht. Ein Teilindex verhindert zwei Tage mit demselben Datum in einer Reise.
+
+Nachgewiesen ist das Modell in `npm run db:sicherheit` mit 128 statt 78 Nachweisen – 40 davon neu und auf Reisen bezogen, darunter jede Operation getrennt, der Zugriff zwischen zwei Konten, der Zugriff ohne Anmeldung, das Umschreiben der eigenen Reise auf ein fremdes Konto und das Anhängen eines Kindes an eine fremde Reise. Zwei Prüfbedingungen sind dabei aufgefallen und im Entwurf korrigiert worden: `interests` liess denselben Wert doppelt zu (jetzt `liste_ohne_doppelte()`, weil eine Unterabfrage in einem CHECK nicht erlaubt ist), und ein Preis war ohne Währung eintragbar (jetzt beides oder nichts).
+
+---
+
+## ADR-0044 – Aus `creator_profiles` wird `profiles`, und die letzte Alt-Tabelle fällt
+
+**Datum:** 17. August 2026
+**Status:** umgesetzt auf dem Development-Branch
+
+**Entscheidung:** Zwei Migrationen schliessen die Alt-Struktur ab.
+
+`20260817120200_creator_sessions_entfernen.sql` entfernt `creator_sessions`, die letzte Tabelle der alten Produktidee, dazu drei Funktionen, die ausschliesslich ihre Freigabeliste lasen, den Auslöser `t_creator_sessions_updated_at` mit `set_updated_at()` und die beiden letzten Enums `visibility_status` und `session_status`. Ohne `cascade`, mit demselben Nachweisverfahren wie Phase 1.4b (ADR-0038).
+
+`20260817120300_generisches_profil.sql` benennt `creator_profiles` in `profiles` um – und entfernt im selben Zug die neun Spalten der öffentlichen Creator-Identität (`instagram`, `tiktok`, `youtube`, `twitter`, `facebook`, `bio`, `website`, `username`, `name`). Bedingungen, Indizes, Policies, Auslöser und Funktionen tragen danach Namen ohne `creator`. `ROLE_TABLE` in `lib/auth/admin-guard.ts` nennt `profiles`.
+
+**Kontext:** Die Rolle eines Kontos liegt seit Phase 1.3 an genau einer Stelle, und diese Stelle hiess `creator_profiles`. Phase 1.3 hat den Tabellennamen deshalb in einer Konstante zusammengeführt, Phase 1.4 hat die Tabelle hergerichtet und die Umbenennung auf 1.5 verschoben, weil zuerst Rollenmodell und Rechte stehen mussten. Beides stand.
+
+`creator_sessions` war in Phase 1.4b bewusst verschont geblieben: Die Startseite der Administration zog daraus „Sitzungen (30 Tage)" und einen 14-Tage-Verlauf, und eine Kennzahl ohne Ersatz zu entfernen wäre eine Verschlechterung gewesen. Der Ersatz existiert seit `20260817120100` (ADR-0041).
+
+**Alternativen:**
+
+1. *Nur umbenennen, Spalten behalten.* Eine Tabelle `profiles`, die weiterhin `instagram`, `tiktok` und `username` führt, ist kein generisches Profil, sondern das Creator-Profil unter neuem Namen. Der Name hätte die Aufräumarbeit vorgetäuscht, die er ankündigt.
+2. *Die freigewordenen Spalten für Reisepräferenzen weiterverwenden.* Verlockend, weil sie da sind. Eine Präferenz in einer Spalte namens `bio` ist aber eine Falle für jede Person, die das Schema später liest. Präferenzen bekommen eigene Spalten oder eine eigene Tabelle, wenn sie fällig sind.
+3. *Eine neue Tabelle anlegen und die Zeilen migrieren.* Sauber bei einem Schnittwechsel, hier aber unnötig: Der Schnitt bleibt (ein Profil je Konto), und ein Umbenennen behält Rechte, RLS-Schalter und Fremdschlüssel, statt sie neu aufzubauen.
+4. *`session_status` stehen lassen.* Es war schon vor Phase 1.4b verwaist, durfte damals aber nicht fallen, weil seine Werte genau die des CHECK auf `creator_sessions.review_status` waren – der Nachweis der Zugehörigkeit fehlte. Mit der Tabelle fällt die Spalte, und damit ist er erbracht.
+
+**Begründung:** Ein Name, der etwas anderes sagt als der Inhalt, kostet jede Leserin einmal Vertrauen und einmal Zeit. `AGENTS.md` Regel 22 erlaubt das Entfernen von Alt-Code, verlangt aber den Nachweis – und der lag hier vollständig vor: null Zeilen in beiden Tabellen, keine eingehenden Fremdschlüssel, keine Views, und im Anwendungscode ausschliesslich die zwei Admin-Ansichten, die in derselben Änderung auf Reisen umgestellt sind.
+
+Dass der Statuscheck neu gesetzt und nicht umbenannt wird, hat einen prüfbaren Grund: `lib/auth/roles-datenbank.test.ts` liest die zulässigen Werte aus der **letzten** `add constraint …_status_check`-Anweisung der Migrationen. Ein reines Umbenennen hätte diese Anweisung nicht erneuert, und der Test läse weiter die Fassung von Phase 1.4 – eine Prüfung, die nur noch zufällig auf die Wirklichkeit zeigt.
+
+**Konsequenzen:** Drei offene Punkte aus Phase 1.4b sind damit geschlossen, keiner davon durch Wegsehen. Das Enum `session_status` ist entfernt, jetzt mit Nachweis. Von den fünf Funktionen ohne Aufrufer sind alle fünf gefallen – drei mit `creator_sessions`, zwei mit dem Profil, dazu ein doppelter Auslöser: `set_profile_email_from_auth()` schrieb die E-Mail, `set_profile_core_from_auth()` schrieb E-Mail **und** Anzeigename; der zweite enthält den ersten vollständig. Zwei Auslöser für dieselbe Zuweisung sind keine Absicherung, sondern zwei Stellen, an denen sie auseinanderlaufen kann.
+
+Was bleibt, bleibt mit Grund. Die Extension `citext` wird von keiner Spalte mehr verwendet (`username` war die letzte), bleibt aber stehen: Sie liegt in einem eigenen Schema, kostet nichts, und eine Extension zu entfernen ist eine eigene Handlung mit eigenem Nachweis. Die Fähigkeit `inhalte-moderieren` hat mit `creator_sessions` ihren letzten Gegenstand verloren und bleibt trotzdem Teil des Fähigkeitsmodells – wie `konfiguration-verwalten` seit Phase 1.4b, und ausdrücklich **ohne** Reisen als neuen Gegenstand (ADR-0041). Beide werden direkt geprüft, `select 1 where public.darf_…()`.
+
+Im Anwendungscode war die Umstellung, was Phase 1.3 versprochen hatte: `ROLE_TABLE` an einer Stelle, dazu die Abfragen der Benutzerverwaltung, ein Testskript und zwei Prüfskripte. `AdminStatsStrip` und `AdminTimeSeries` lesen jetzt „Reisen (30 Tage)", „Reisen gesamt", „Konten mit Reise (30 Tage)" und einen 14-Tage-Verlauf neuer Reisen – über die Aggregatfunktionen, nicht über die Tabelle.
+
+---
+
+## ADR-0045 – Die Erzeugungsregeln einer Reise gehören in die Datenbank, nicht in eine Funktion
+
+**Datum:** 18. August 2026
+**Status:** umgesetzt auf dem Development-Branch
+
+**Entscheidung:** `20260818010000_reise_erzeugungsregeln.sql` verankert drei Regeln so, dass sie unabhängig vom Aufrufweg gelten:
+
+* `trips.client_ref` ist `NOT NULL`. Die Kennung ist damit Pflicht, und `unique (user_id, client_ref)` wirkt auf jede Zeile.
+* Der Auslöser `trips_erzeugung_pruefen` läuft vor jeder Einfügung. Er setzt `created_at` und `updated_at` selbst, verlangt `status = 'draft'` und lehnt die einundsechzigste neue Reise eines Kontos innerhalb einer Stunde ab (`53400`).
+* `public.reise_anlegen()` verliert seine eigene Zählung. Sie stand an zwei Stellen mit derselben Zahl; die im Auslöser ist die vollständige.
+
+`INSERT` auf `public.trips` bleibt bei `authenticated`, RLS bleibt die Stelle, die über Eigentum entscheidet.
+
+**Kontext:** Phase 1.5 hat `reise_anlegen()` als „die einzige Stelle, an der eine Reise entsteht" beschrieben. Das war eine Aussage über die Anwendung. `authenticated` hat `INSERT` auf der Tabelle, und PostgREST macht dieses Recht mit dem öffentlichen anon-Key erreichbar – der Sicherheitsnachweis „Konto legt eine Reise ohne user_id an" belegte es sogar ausdrücklich. Ein angemeldeter Client konnte damit beliebig viele Reisen direkt anlegen, die Kennung weglassen, `status = 'booked'` behaupten und die Missbrauchsschranke vollständig übergehen. Ein rückdatiertes `created_at` hätte auch eine Schranke ausgehebelt, die direkte Einfügungen mitzählt: Zeilen ausserhalb des Zeitfensters zählen nicht mit.
+
+**Alternativen:**
+
+1. *`INSERT` entziehen und `reise_anlegen()` auf `SECURITY DEFINER` umstellen.* Ergibt tatsächlich genau einen Erzeugungsweg. Der Preis ist hoch: Die Funktion schreibt in vier Tabellen, und als `SECURITY DEFINER` läuft sie an RLS vorbei. Das Eigentum an einer Reise hinge danach an der Sorgfalt eines Funktionsrumpfs statt an Policies, die jeder Nachweis einzeln prüft. Dazu käme eine sechste per RPC erreichbare `SECURITY DEFINER`-Funktion – die Advisors zählen sie zu Recht.
+2. *Eine Policy mit der Schranke im `WITH CHECK`.* Policies gelten nur für `authenticated`, nicht für andere Rollen, und ein Unterausdruck mit `count(*)` in einer Policy ist schwer zu lesen und schwer zu prüfen. Ein Auslöser sagt, was er tut.
+3. *Die Zahl in der Anwendung prüfen.* Die Anwendung ist nicht der einzige Client eines PostgREST-Endpunkts. Genau das war der Befund.
+4. *Auch die Zahl der Etappen, Tage und Planpunkte je Reise im Auslöser prüfen.* Fachlich derselbe Gedanke, technisch ein anderer Fall: `reise_anlegen()` fügt bis zu 1000 Planpunkte in einer Anweisung ein, und ein Auslöser je Zeile mit einer Zählung machte daraus quadratischen Aufwand. Der Punkt steht im Backlog der [ROADMAP.md](ROADMAP.md) und ist dort als offen benannt, nicht stillschweigend erledigt.
+
+**Begründung:** Eine Schranke, die man umgehen kann, indem man einen anderen Weg nimmt, ist keine. Zwischen den beiden ernsten Varianten – Recht entziehen oder Regel verankern – entscheidet, was danach die Sicherheit trägt: Nach a) trägt sie Code, nach b) tragen sie Bedingung, Auslöser und Policies gemeinsam, jedes für sich prüfbar. Ein direkter `INSERT` ist nach b) kein Loch mehr, sondern ergibt dasselbe wie ein Aufruf ohne Etappen: eine eigene Reise mit Kennung, als Entwurf, innerhalb der Schranke.
+
+Der Auslöser ist `SECURITY DEFINER`, damit die Zählung nicht durch die Lesepolicy läuft – eine Schranke, die von einer Lesepolicy abhängt, wäre nur so lange richtig, wie diese jede eigene Reise zeigt. Aufrufbar ist die Funktion für niemanden: `revoke all … from public, anon, authenticated`; ein Auslöser braucht kein Ausführungsrecht des Aufrufers. Deshalb erscheint sie auch nicht in den Advisors, und die Zahl der Sicherheitsbefunde bleibt bei 18.
+
+Dass die Zeitstempel überschrieben und nicht abgelehnt werden, ist die Ausnahme von „nichts stillschweigend ändern": `created_at` ist kein Feld der Oberfläche, sondern eine Feststellung der Datenbank. `setze_aktualisiert_am()` macht seit Phase 1.5 dasselbe beim Ändern.
+
+**Konsequenzen:** Sieben neue Nachweise in `scripts/db/sicherheit.mjs` prüfen den direkten Weg, jeder mit Gegenprobe: ohne Kennung, mit `booked`, als Entwurf (erlaubt), mit rückdatiertem Zeitstempel, an der Schranke, und mit 61 Zeilen in einer einzigen Anweisung.
+
+Ein Nebeneffekt der Verlegung ist der zweiten Überprüfung aufgefallen und in ADR-0048 behoben: Ein `BEFORE INSERT`-Auslöser läuft vor dem eindeutigen Index, und damit warf die Schranke an der Grenze auch dann, wenn `on conflict do nothing` gar keine Reise angelegt hätte.
+
+Zwei Grenzen bleiben und sind zu kennen. Erstens gilt `status = 'draft'` beim Anlegen, nicht bei jeder Änderung: Ein Konto kann seine eigene Reise anschliessend auf `booked` setzen. Ein Statusmodell mit erlaubten Übergängen gehört zu Phase 2, wenn eine Buchung entsteht – vorher wäre es eine Regel ohne Vorgang. Zweitens bleibt die Zahl der Kindzeilen je Reise ungebremst; siehe Alternative 4.
+
+---
+
+## ADR-0046 – Im Browser gilt nur als gespeichert, was zurückgelesen wurde
+
+**Datum:** 18. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** `lib/trips/gastspeicher.ts` behandelt einen fehlgeschlagenen Schreibvorgang als Fehler.
+
+* Jeder Schreibvorgang wird zurückgelesen. Nur was wieder herauskommt, gilt als abgelegt.
+* Ein Fehlschlag wirft `SpeicherFehler`. Das Formular unter /planen bleibt stehen und wechselt nicht in den Arbeitsbereich einer Reise, die es nirgends gibt; der Arbeitsbereich zeigt den Fehler statt eines gespeicherten Stands.
+* Gelöscht wird nur, was nachweislich anderswo liegt: der alte Schlüssel `jetnity:guest-trips:v2` erst nach bestätigtem Schreiben **beider** neuer Schlüssel, ein übernommener Entwurf erst nach der Kennung aus dem Konto.
+* Ausgenommen ist `uebernommenStreichen()`. Dort liegt die Reise bestätigt im Konto, und `public.reise_anlegen()` ist über `client_ref` idempotent: Bleibt der Entwurf liegen, schickt ihn die nächste Übernahme erneut, ohne eine zweite Reise zu erzeugen.
+
+**Kontext:** Die Fassung aus Phase 1.5 verschluckte jeden Fehler von `setItem` mit der Begründung, eine Ausnahme würde die Oberfläche mitten in einer Eingabe abreissen. Die Folge war schlimmer: `gastreiseAnlegen()` und `gastreiseSpeichern()` meldeten Erfolg, die Oberfläche navigierte weiter, und beim nächsten Laden war die Reise „verschwunden". Am teuersten war die Übernahme aus der alten Fassung: Sie schrieb zwei Schlüssel, prüfte keinen davon und löschte danach den alten. Bei voller Ablage gelang das `removeItem` – und die alten Entwürfe waren weg.
+
+**Alternativen:**
+
+1. *`try/catch` behalten und nur den Rückgabewert um ein „nicht gespeichert" erweitern.* Ein Rückgabewert, den ein Aufrufer ignorieren kann, ist bei Datenverlust die falsche Bauform. Eine Ausnahme muss behandelt werden.
+2. *Nur `try/catch`, ohne Zurücklesen.* Es gibt Browser, in denen `setItem` nicht wirft und trotzdem nichts behält – der private Modus mancher Fassungen. Genau dieser Fall wäre weiter als Erfolg durchgegangen.
+3. *Auf einen anderen Speicher ausweichen (IndexedDB, Cookie).* Ein zweiter Speicherweg für den Ausnahmefall ist ein zweites Datenmodell im Browser. Der ehrliche Weg ist der Hinweis auf das Konto: Dort liegt die Reise auf dem Server.
+4. *Den unbrauchbaren alten Eintrag weiter wegräumen.* Er kostet je Laden ein `JSON.parse`. Ihn zu löschen, ohne dass etwas geschrieben wurde, ist genau der Vorgang, den diese Entscheidung ausschliesst.
+
+**Begründung:** Ohne Konto ist der `localStorage` der einzige Ort, an dem die Reise existiert. Eine Ausnahme ist unangenehm, ein „gespeichert", das nicht stimmt, ist ein Datenverlust mit falscher Auskunft. Reihenfolge und Nachweis sind deshalb wichtiger als ein ungestörter Ablauf im seltenen Fehlerfall.
+
+**Konsequenzen:** Zehn neue Fälle in `lib/trips/gastspeicher.test.ts`: gesperrter Speicher beim Anlegen, stummer Speicher, freier Weg nach einem gescheiterten Versuch, Bearbeitung und Planpunkt ohne Ablage, Verwerfen, das nicht gelingt, sowie drei Fälle zur Legacy-Übernahme – Schreibfehler auf beiden Schlüsseln, Schreibfehler nur auf der Warteschlange und der Nachholvorgang, der nichts verdoppelt. Der Fall, der bisher „kein Throw" erwartete, erwartet jetzt das Gegenteil.
+
+Die Warteschlange wird beim Nachholen gegen die aktive Reise abgeglichen. Ohne diesen Abgleich stünde ein Entwurf zweimal im Speicher, sobald ein Lauf zwischen den beiden Schlüsseln abbricht.
+
+Eine Grenze bleibt: Ein alter Entwurf, den das Schema ablehnt – etwa mit einem Titel über 120 Zeichen –, fällt bei der Übernahme heraus. Das ist unverändert die Entscheidung aus ADR-0042 (nicht halb laden), betrifft Daten, die die Anwendung nicht darstellen kann, und ist kein Fehlschlag eines Schreibvorgangs.
+
+---
+
+## ADR-0047 – Die öffentliche Leiste kennt die Sitzung, das öffentliche Layout bleibt statisch
+
+**Datum:** 18. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** `components/layout/PublicNavbar.tsx` liest die Sitzung im Browser und zeigt „Abmelden" statt „Anmelden", sobald eine besteht. Das Abmelden ist ein Formular auf `signOutAction()`.
+
+Die Entscheidung, was in der Leiste steht, liegt in `lib/auth/oeffentliche-navigation.ts` und kennt drei Zustände: `unbekannt`, `gast`, `konto`. Im Zustand `unbekannt` behauptet die Leiste nichts.
+
+**Kontext:** Die Leiste zeigte auch bei offener Sitzung immer „Anmelden" und nie „Abmelden", obwohl `signOutAction()` seit Phase 1.3 existiert. Solange im öffentlichen Bereich nur Marketingseiten lagen, war das Kosmetik. Mit persistenten privaten Reisen ist es keine mehr: Auf einem geteilten Gerät bleibt eine Sitzung offen, deren einziger sichtbarer Ausweg der Administrationsbereich wäre – den ein gewöhnliches Konto nicht betreten darf. Die [ROADMAP.md](ROADMAP.md) hatte den Punkt als 1.7 vermerkt; die Überprüfung vor dem Merge hat ihn zu Recht als Sicherheitsthema eingeordnet.
+
+**Alternativen:**
+
+1. *Die Sitzung im Layout lesen (`app/(public)/layout.tsx`).* Der kürzere Weg – und jede öffentliche Seite wäre dynamisch, weil das Layout dann Cookies liest. Die Startseite ist Marketing und bleibt vorgerendert (`○ /` im Build).
+2. *Eine eigene Leiste je Bereich.* Zwei Leisten für eine Marke laufen auseinander.
+3. *Im Browser über `supabase.auth.signOut()` abmelden.* Beendet die Sitzung im Browser und lässt die Cookies des Servers stehen. Die Server Action löscht beide.
+4. *Zwei Zustände statt drei, mit „Anmelden" als Anfangszustand.* Die Leiste erschiene für ein angemeldetes Konto einen Moment lang mit der falschen Aussage. Genau die falsche Aussage war der Befund.
+
+**Begründung:** Die Leiste ist ohnehin ein Client Component (Menü, aktiver Pfad). `getSession()` von `@supabase/ssr` liest die Cookies, die der Server gesetzt hat, und geht nicht ins Netz; `onAuthStateChange` hält den Stand nach, sodass eine Anmeldung in einem anderen Tab die Leiste ohne Neuladen erreicht. Damit kostet die Sitzungskenntnis kein Rendering-Verhalten.
+
+**Nachtrag aus der Prüfung im Browser.** Die erste Fassung liess nach dem Abmelden weiter „Abmelden“ stehen, bis jemand neu lud. Der Grund liegt im Zusammenspiel der beiden Wege: `signOutAction()` löscht die Cookies auf dem Server, die Weiterleitung ist eine Navigation innerhalb der Anwendung, und die Leiste liegt im Layout – sie wird dabei nicht neu aufgebaut. `onAuthStateChange` schweigt, weil der Browser-Client nicht selbst abgemeldet hat. Die Leiste liest die Sitzung deshalb zusätzlich nach jedem Wechsel des Pfads und nach jedem abgeschlossenen Vorgang (`useFormStatus`; nur dort gilt der Status des Formulars).
+
+Gelesen und nicht angenommen: `standAusSitzung()` bekommt den tatsächlichen Stand aus den Cookies, nicht den erwarteten Erfolg des Klicks. Ein optimistisches „Anmelden“ nach dem Absenden wäre kürzer und in der gefährlichen Richtung falsch – es sagte, die Sitzung sei beendet, während sie nach einem gescheiterten Vorgang offen bleibt. `getSession()` liest bei jedem Aufruf aus dem Speicher (`__loadSession`), ein zwischengespeicherter Stand steht dem also nicht entgegen.
+
+Dass „Abmelden" kein Link ist, ist keine Stilfrage: Next.js lädt Links voraus und Browser holen sie vor. Eine Adresse, die beim Aufruf abmeldet, beendet die Sitzung, ohne dass jemand geklickt hat – dieselbe Begründung, aus der `app/auth/sign-out.ts` eine Server Action ist. Der Typ `Navigationseintrag` unterscheidet deshalb `link` und `aktion`, und ein Test hält fest, dass „Abmelden" nie ein Link wird.
+
+**Konsequenzen:** Was die Leiste zeigt, ist eine Anzeige und keine Berechtigung; über Zugriff entscheiden weiterhin Middleware, Server Components und RLS. Fehlt die Supabase-Konfiguration – etwa in einer Vorschau ohne Umgebung –, bleibt der Zustand `unbekannt`, statt die Seite mit einer Ausnahme abzureissen.
+
+Acht Fälle in `lib/auth/oeffentliche-navigation.test.ts` prüfen die Regel ohne Browser, darunter beide Richtungen nach einem Abmelden: keine Sitzung mehr ergibt „Anmelden“, eine weiter offene Sitzung lässt „Abmelden“ stehen. Der Punkt 1.7 der Roadmap ist damit erledigt und nicht verschoben.
+
+---
+
+## ADR-0048 – Die Missbrauchsschranke zählt Neuanlagen, nicht Schreibversuche
+
+**Datum:** 18. August 2026
+**Status:** umgesetzt auf dem Development-Branch
+
+**Entscheidung:** `20260818020000_reise_wiederholung.sql` ergänzt `public.reise_erzeugung_pruefen()` um eine Frage vor der Zählung: Liegt `(user_id, client_ref)` schon vor, entsteht keine Reise, und die Schranke gilt nicht. Der Schreibvorgang ist damit nicht erlaubt – er läuft weiter in `trips_client_ref_eindeutig` und endet dort, wo er hingehört: in `reise_anlegen()` im `on conflict do nothing`, auf dem direkten Weg in `23505`.
+
+Die Prüfung steht **nach** `status = 'draft'` und nach dem Setzen der Zeitstempel. `booked` beim Anlegen zu behaupten ist auf jedem Weg falsch, auch wenn die Zeile danach ohnehin am eindeutigen Index scheitern würde.
+
+**Kontext:** ADR-0045 hat die Erzeugungsregeln aus dem Rumpf von `reise_anlegen()` in einen `BEFORE INSERT`-Auslöser verlegt, damit sie auf jedem Schreibweg gelten. Übersehen wurde dabei die Reihenfolge, in der PostgreSQL eine Einfügung abarbeitet: erst der Auslöser, dann der eindeutige Index, dann `on conflict`. Der Auslöser warf also, bevor die Idempotenz greifen konnte.
+
+Hatte ein Konto 60 Reisen in der letzten Stunde und wiederholte danach einen bereits erfolgreichen Aufruf – Retry nach einem Netzfehler, ein Reload, eine zweite Anmeldung –, dann entstand dabei fachlich keine Reise, und die Schranke lehnte trotzdem mit `53400` ab. Der Entwurf im Browser blieb liegen, weil `lib/trips/uebernahme.ts` ihn erst nach der Kennung aus dem Konto löscht, und jeder weitere Versuch scheiterte gleich – bis eine Stunde vergangen war. Dieselbe Verwechslung traf den direkten Weg: Ein `INSERT` mit belegter Kennung meldete `53400` statt `23505`.
+
+Die Ursache war keine falsche Zahl, sondern eine falsche Frage. Der Auslöser fragte „wie viele Reisen hat dieses Konto in der letzten Stunde angelegt?" und schloss daraus auf „darf dieser Schreibvorgang durch?". Dazwischen fehlte: „entsteht hier überhaupt eine Reise?"
+
+**Alternativen:**
+
+1. *Die Schranke in einen `AFTER INSERT`-Auslöser verlegen.* Dann läuft sie nach dem eindeutigen Index, und eine per `on conflict` verworfene Zeile erreicht sie nie. Verlockend, aber die Zeitstempel und `status = 'draft'` müssen `BEFORE` bleiben – die Regeln lägen danach in zwei Auslösern mit zwei Zeitpunkten. Ausserdem prüft `AFTER` erst, wenn die Zeile steht: Die Ablehnung wäre eine Rücknahme statt einer Abwehr.
+2. *Die Schranke zurück in `reise_anlegen()` holen, hinter das `on conflict`.* Damit wäre genau der Befund von ADR-0045 wieder offen – der direkte `INSERT` übergeht sie.
+3. *`reise_anlegen()` vor dem `INSERT` selbst nachsehen und bei bestehender Kennung sofort zurückgeben.* Behebt den Fall für die Anwendung und lässt den direkten Weg weiter `53400` für einen belegten Schlüssel melden. Zwei Stellen mit derselben Frage; die im Auslöser ist die vollständige.
+4. *Die Zählung auf Zeilen einschränken, die keine Wiederholung sind.* Missverstandene Ursache: Die Zählung ist richtig – sie zählt vorhandene Zeilen. Falsch war, sie überhaupt zu befragen.
+
+**Begründung:** Eine Schranke gegen Missbrauch soll begrenzen, was entsteht. Ein Schreibvorgang, aus dem keine Zeile hervorgeht, kostet nichts und darf nichts kosten. Die Existenzprüfung stellt genau das fest, und sie stellt es an derselben Stelle fest, an der auch die Regeln stehen – nicht in einer zweiten Schicht mit eigener Reihenfolge.
+
+Der Weg an der Schranke vorbei ist kein Loch: Er setzt eine bestehende Kennung voraus, und genau die lässt `trips_client_ref_eindeutig` keine zweite Zeile werden. Eine tatsächlich neue Kennung kommt an der Existenzprüfung nicht vorbei. Die Abfrage läuft über denselben Index, an dem der Schreibvorgang unmittelbar danach hängt, und ist `SECURITY DEFINER` aus demselben Grund wie die Zählung: Eine Prüfung, die durch die Lesepolicy läuft, wäre nur so lange richtig, wie diese jede eigene Reise zeigt.
+
+**Konsequenzen:** Fünf neue Nachweise in `scripts/db/sicherheit.mjs`, alle gegen das Konto, das die Schranke im Aufbau erreicht: Die Wiederholung liefert dieselbe Reise, sie legt keine zweite an, sie verbraucht kein Guthaben (nach ihr stehen weiterhin 60 Reisen), eine neue Kennung scheitert weiter mit `53400`, und der direkte `INSERT` einer belegten Kennung nennt `23505`. `npm run db:sicherheit` steht bei 140 Nachweisen.
+
+Die Nachweise können jetzt einen SQLSTATE verlangen. Ohne diese Erweiterung wäre der Kern nicht prüfbar: Vor der Behebung wurde der direkte `INSERT` einer belegten Kennung ebenfalls „abgelehnt" – nur mit dem falschen Code. Wo nicht die Ablehnung die Aussage ist, sondern woran sie scheitert, steht am Fall ein `code`.
+
+Die Behebung war noch nicht vollständig: Die Schranke prüfte weiterhin sequenziell, was gleichzeitig geschieht. Siehe ADR-0049.
+
+---
+
+## ADR-0049 – Zählung und Einfügung laufen je Konto der Reihe nach
+
+**Datum:** 18. August 2026
+**Status:** umgesetzt auf dem Development-Branch
+
+**Entscheidung:** `20260818030000_reise_erzeugung_serialisieren.sql` nimmt in `public.reise_erzeugung_pruefen()` eine Beratungssperre je Konto auf Transaktionsdauer, bevor gelesen wird:
+
+```sql
+perform pg_advisory_xact_lock(hashtext('public.trips'), hashtext(new.user_id::text));
+```
+
+Der Schlüssel ist zweiteilig: Der erste Teil benennt den Zweck, der zweite das Konto. Beratungssperren teilen sich einen Namensraum über die ganze Datenbank – ohne den ersten Teil könnte eine spätere Sperre zu einem anderen Zweck zufällig dieselbe Zahl treffen. Ein Zusammenstoss zweier Konten im zweiten Teil kostet Wartezeit, nie Richtigkeit.
+
+Die Sperre steht **vor** der Prüfung auf eine bestehende Kennung, nicht dazwischen. Davor gelesen wäre diese Prüfung veraltet, sobald sie gebraucht wird: Zwei gleichzeitige Anfragen mit derselben neuen Kennung sähen beide „noch nicht vorhanden", und die zweite scheiterte nach dem Warten an der Schranke, obwohl die erste ihre Reise inzwischen angelegt hat. Genau dieser Fall – zwei Tabs, ein Klick – muss nach ADR-0048 idempotent bleiben. Die Regel `status = 'draft'` bleibt vor der Sperre: Sie liest nichts.
+
+**Kontext:** ADR-0045 hat die Schranke in den Auslöser verlegt, ADR-0048 hat ihr beigebracht, Neuanlagen von Wiederholungen zu unterscheiden. Beide Male blieb dieselbe Annahme unausgesprochen: dass ein Konto seine Reisen der Reihe nach anlegt.
+
+Die Prüfung ist ein Lesen mit anschliessendem Schreiben – `count(*)`, dann die Einfügung. Zwischen beidem liegt ein Fenster, und in PostgreSQL sieht eine Transaktion die noch nicht festgeschriebene Zeile einer anderen nicht. Bei 59 vorhandenen Reisen sahen darum mehrere gleichzeitige Anfragen alle den Stand 59, alle kamen durch. Gemessen mit sechs gleichzeitigen Sitzungen: **65 Reisen statt höchstens 60**, auf beiden Schreibwegen. Über PostgREST sind gleichzeitige Anfragen der Normalfall; genau der öffentliche Weg, gegen den ADR-0045 absichert, war damit weiter offen – nur nicht mehr sequenziell, sondern parallel.
+
+**Alternativen:**
+
+1. *`select … for update` auf einer Zeile je Konto, etwa in `public.profiles`.* Bindet die Erzeugung einer Reise an eine fremde Tabelle: Wer sein Profil ändert, blockiert dann das Anlegen einer Reise. Ausserdem hat nicht jedes Konto ein Profil – `trips.user_id` verweist auf `auth.users`.
+2. *`SERIALIZABLE`.* Die Isolationsstufe bestimmt der Client, nicht die Tabelle. Ein Auslöser kann sie nicht verlangen, und `40001` müsste die Anwendung überall behandeln.
+3. *Ein Zähler je Konto und Stunde in einer eigenen Tabelle.* Serialisiert über die Zeilensperre, aber um den Preis einer weiteren Tabelle, einer weiteren Policy und eines zweiten Ortes, an dem die Wahrheit über den Bestand steht.
+4. *Die Schranke als Bedingung formulieren.* Ein `CHECK` kann nicht über andere Zeilen zählen, und ein `unique` auf eine laufende Nummer je Stunde hiesse, diese Nummer zu pflegen – wieder ein zweiter Ort.
+
+**Begründung:** Eine Beratungssperre braucht kein Schemaobjekt, sperrt keine Nutzdaten und wird mit dem Ende der Transaktion von selbst frei – auch bei einem Abbruch. Eine vergessene Freigabe ist damit ausgeschlossen. `_xact_` ist innerhalb derselben Transaktion wiederholt nehmbar: Eine Anweisung, die 61 Zeilen einfügt, ruft den Auslöser 61-mal und blockiert sich dabei nicht selbst.
+
+Der Preis ist ein Wartepunkt je Konto. Er trifft nur das Anlegen von Reisen und nur dasselbe Konto; bei 60 erlaubten Neuanlagen je Stunde ist Gedrängel dort kein Dauerzustand. `authenticated` trägt ausserdem `statement_timeout = 8s`: Eine wartende Anfrage kann nicht unbegrenzt hängen, sie endet spätestens mit `57014`.
+
+**Konsequenzen:** Ein neues Skript `npm run db:parallelitaet` mit fünf Nachweisen. Es musste ein eigenes sein: `db:sicherheit` läuft vollständig in einer Transaktion, die am Ende zurückrollt – richtig für Policies und Bedingungen, und vollständig blind für Wettläufe, weil zwei Anweisungen derselben Transaktion einander immer sehen.
+
+Der Nachweis öffnet mehrere echte Verbindungen gleichzeitig, verabredet einen Treffpunkt auf der Uhr des Servers und hält jede Transaktion nach dem Schreiben offen. Das Offenhalten ist kein Kunstgriff: `reise_anlegen()` schreibt nach der Reise bis zu 1416 weitere Zeilen, das Fenster ist real. Geprüft werden parallele neue Kennungen bei 59 auf beiden Schreibwegen, parallele Wiederholungen einer bestehenden Kennung, paralleles Doppelabsenden derselben neuen Kennung und parallele neue Kennungen bei erreichtem Limit.
+
+Dass die Parameter des Nachweises ausreichen, ist selbst nachgewiesen: Mit der Fassung ohne Sperre scheitert das Skript mit Exit-Code 1 und meldet 65 Reisen. Ein Nachweis, der auch ohne die Behebung grün wäre, wäre keiner.
+
+Anders als die übrigen `db:`-Skripte schreibt dieses echte Zeilen und rollt sie nicht zurück – gleichzeitige Sitzungen müssen die Saat sehen, und eine gemeinsame Transaktion gibt es dafür nicht. Es räumt vor und nach jedem Lauf auf; das Löschen des Testkontos nimmt über `on delete cascade` alles mit.
+
+**Bekannte Grenze:** Eine Transaktion, die Reisen für **mehrere** Konten anlegt, nimmt mehrere Sperren und kann mit einer zweiten solchen Transaktion in umgekehrter Reihenfolge verklemmen. PostgreSQL erkennt das und bricht eine der beiden mit `40P01` ab. Auf den vorhandenen Wegen kann der Fall nicht eintreten: RLS verlangt `user_id = auth.uid()`, eine Anfrage schreibt also für genau ein Konto. Erreichbar wäre er nur über die Service Role, die Jetnity für Reisen nicht benutzt.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
 
-**1. Anzahl Gastreisen – aufgelöst am 15. August 2026.** Entschieden ist: genau eine aktive Gastreise, mehrere Reisen erfordern ein Konto. Siehe ADR-0013. Der Code trägt weiterhin `MAX_GUEST_TRIPS = 20`; die Angleichung ist Phase 1.5 zugeordnet. Bis dahin bleibt dies eine bekannte, dokumentierte Abweichung zwischen Entscheidung und Code.
+**1. Anzahl Gastreisen – aufgelöst am 15. August 2026, im Code angeglichen in Phase 1.5.** Entschieden ist: genau eine aktive Gastreise, mehrere Reisen erfordern ein Konto. Siehe ADR-0013. `MAX_GUEST_TRIPS = 20` ist entfallen; `lib/trips/gastspeicher.ts` führt genau eine aktive Gastreise und lehnt eine zweite mit einem Hinweis auf das Konto ab, statt still zu überschreiben. Browser mit mehreren Entwürfen der Fassung v2 behalten den zuletzt geänderten als aktive Reise, die übrigen warten auf den nächsten Login (ADR-0042). Damit besteht hier keine Abweichung mehr.
 
 **2. Monetarisierungsmodell in `docs/JETNITY_V2_FOUNDATION.md`.** Diese ältere Datei (14. August 2026) nennt „Jetnity Pro" als Monetarisierungsstufe sowie ein „Guardian-Modul" und „B2B-Angebote für Reiseberater". Die Vision stellt dagegen klar, dass primär über Reisevermittlung monetarisiert wird und keine neuen Produktkategorien ohne Freigabe entstehen. Auflösung: [JETNITY_VISION.md](JETNITY_VISION.md) hat Vorrang; die genannten Punkte sind in den Backlog der [ROADMAP.md](ROADMAP.md) verschoben, nicht eingeplant.
 
 **3. „Entdecken" als eigener Hauptweg.** `docs/JETNITY_V2_FOUNDATION.md` beschreibt drei gleichrangige Wege (Entdecken, Planen, Meine Reisen). Die Vision benennt den Trip Builder als Kern und grenzt Jetnity von einer Inspirations- und Contentplattform ab. Auflösung: „Entdecken" darf existieren, muss aber dem Reisekern dienen (Einstieg in eine Reise) und darf nicht zu einer eigenen Content-Plattform ausgebaut werden.
 
-**4. Datenbank als Source of Truth.** Regel 13 verlangt, dass keine kritische Geschäftsfunktion ausschließlich im Local Storage lebt. Reisen existieren derzeit ausschließlich dort. Das ist für den Gastmodus zulässig, für angemeldete Nutzer nicht. Auflösung ist Bestandteil von Phase 1 und 2, kein Widerspruch in der Zielarchitektur.
+**4. Datenbank als Source of Truth – aufgelöst in Phase 1.5.** Regel 13 verlangt, dass keine kritische Geschäftsfunktion ausschliesslich im Local Storage lebt. Reisen eines angemeldeten Kontos liegen jetzt in `public.trips` samt Etappen, Tagen und Planpunkten (ADR-0043); der Browserspeicher trägt ausschliesslich die eine Gastreise, und für die ist er nach Regel 13 ausdrücklich zulässig, weil der Weg ins Konto existiert und geprüft ist (ADR-0042).

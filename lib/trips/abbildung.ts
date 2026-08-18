@@ -1,0 +1,276 @@
+// lib/trips/abbildung.ts
+//
+// Zwischen den Zeilen der Datenbank und dem Modell der Anwendung.
+//
+// Die Umschrift ist absichtlich langweilig: snake_case zu camelCase, sonst
+// nichts. Jede Umrechnung, die hier stattfände – ein anderer Wertebereich, ein
+// anderes Datumsformat, eine berechnete Spalte –, wäre eine zweite Wahrheit
+// neben dem Schema.
+//
+// Zwei Stellen weichen bewusst ab:
+//
+//   · `numeric` kommt bei PostgREST als Zeichenkette an, wenn der Wert die
+//     Genauigkeit von `double` überschreiten könnte. Beträge werden deshalb
+//     durch `Number()` gelesen und nicht durchgereicht.
+//   · `time` kommt als `HH:MM:SS`. Die Anwendung führt Ortszeiten ohne
+//     Sekunden; `HH:MM` ist das, was das Formular schreibt und liest.
+//
+// Frei von Supabase-Importen, damit der Test keine Datenbank braucht.
+
+import {
+  TRIP_INTERESTS,
+  TRIP_ITEM_KINDS,
+  TRIP_PACES,
+  TRIP_STATUSES,
+  type Trip,
+  type TripDay,
+  type TripInterest,
+  type TripItem,
+  type TripItemKind,
+  type TripPace,
+  type TripStage,
+  type TripStatus,
+} from '@/types/trips'
+import type { ReiseNutzlast } from '@/lib/trips/schema'
+
+/** Nur die Spalten, die diese Datei liest. So bleibt sie von der Generierung unabhängig. */
+export type ReiseZeile = {
+  id: string
+  client_ref: string | null
+  title: string
+  origin: string | null
+  start_date: string | null
+  end_date: string | null
+  travellers: number
+  currency: string
+  budget_amount: number | string | null
+  status: string
+  pace: string
+  interests: string[] | null
+  travel_wish: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type EtappeZeile = {
+  id: string
+  position: number
+  name: string
+  country_code: string | null
+  arrival_date: string | null
+  departure_date: string | null
+  latitude: number | string | null
+  longitude: number | string | null
+  created_at: string
+}
+
+export type TagZeile = {
+  id: string
+  day_index: number
+  day_date: string | null
+  title: string | null
+}
+
+export type PunktZeile = {
+  id: string
+  day_id: string | null
+  stage_id: string | null
+  kind: string
+  title: string
+  note: string | null
+  position: number
+  starts_on: string | null
+  starts_at: string | null
+  ends_on: string | null
+  ends_at: string | null
+  price_amount: number | string | null
+  price_currency: string | null
+  provider: string | null
+  external_ref: string | null
+  booking_url: string | null
+  created_at: string
+}
+
+function zahl(wert: number | string | null): number | null {
+  if (wert === null) return null
+  const gelesen = typeof wert === 'number' ? wert : Number(wert)
+  return Number.isFinite(gelesen) ? gelesen : null
+}
+
+/** `HH:MM:SS` → `HH:MM`. Eine bereits kurze Angabe bleibt, wie sie ist. */
+function uhrzeit(wert: string | null): string | null {
+  if (!wert) return null
+  return /^\d{2}:\d{2}/.test(wert) ? wert.slice(0, 5) : null
+}
+
+/**
+ * Liest einen Wert aus einem festen Bereich.
+ *
+ * Die Datenbank sichert den Bereich per CHECK zu; die generierten Typen sagen
+ * nur `string`. Statt das mit einer Behauptung zu überbrücken, fällt ein
+ * unbekannter Wert auf die Vorgabe zurück – so bleibt eine Reise lesbar, auch
+ * wenn eine künftige Migration einen Wert ergänzt, den diese Fassung nicht kennt.
+ */
+function ausBereich<T extends string>(
+  wert: string,
+  erlaubt: readonly T[],
+  vorgabe: T,
+): T {
+  return (erlaubt as readonly string[]).includes(wert) ? (wert as T) : vorgabe
+}
+
+export function planpunktAus(zeile: PunktZeile): TripItem {
+  return {
+    id: zeile.id,
+    dayId: zeile.day_id,
+    stageId: zeile.stage_id,
+    kind: ausBereich<TripItemKind>(zeile.kind, TRIP_ITEM_KINDS, 'note'),
+    title: zeile.title,
+    note: zeile.note,
+    position: zeile.position,
+    startsOn: zeile.starts_on,
+    startsAt: uhrzeit(zeile.starts_at),
+    endsOn: zeile.ends_on,
+    endsAt: uhrzeit(zeile.ends_at),
+    priceAmount: zahl(zeile.price_amount),
+    priceCurrency: zeile.price_currency,
+    provider: zeile.provider,
+    externalRef: zeile.external_ref,
+    bookingUrl: zeile.booking_url,
+  }
+}
+
+export function etappeAus(zeile: EtappeZeile): TripStage {
+  return {
+    id: zeile.id,
+    position: zeile.position,
+    name: zeile.name,
+    countryCode: zeile.country_code,
+    arrivalDate: zeile.arrival_date,
+    departureDate: zeile.departure_date,
+    latitude: zahl(zeile.latitude),
+    longitude: zahl(zeile.longitude),
+  }
+}
+
+/**
+ * Setzt eine Reise aus ihren vier Tabellen zusammen.
+ *
+ * Die Sortierung geschieht hier und nicht in der Abfrage: Ein Planpunkt hängt
+ * an einem Tag, und die Zuordnung ist dieselbe Rechnung, egal ob PostgREST oder
+ * die Anwendung sie macht. Ein Punkt ohne Tag – etwa nach dem Löschen eines
+ * Tages, `on delete set null` – landet in `ohneTag`.
+ */
+export function reiseAus(
+  reise: ReiseZeile,
+  etappen: EtappeZeile[],
+  tage: TagZeile[],
+  punkte: PunktZeile[],
+): Trip & { ohneTag: TripItem[] } {
+  const alle = [...punkte]
+    .sort(
+      (a, b) =>
+        a.position - b.position ||
+        a.created_at.localeCompare(b.created_at) ||
+        a.id.localeCompare(b.id),
+    )
+    .map(planpunktAus)
+
+  const jeTag = new Map<string, TripItem[]>()
+  const ohneTag: TripItem[] = []
+
+  for (const punkt of alle) {
+    if (!punkt.dayId) {
+      ohneTag.push(punkt)
+      continue
+    }
+    const liste = jeTag.get(punkt.dayId)
+    if (liste) liste.push(punkt)
+    else jeTag.set(punkt.dayId, [punkt])
+  }
+
+  const geordneteTage: TripDay[] = [...tage]
+    .sort((a, b) => a.day_index - b.day_index)
+    .map((zeile) => ({
+      id: zeile.id,
+      dayIndex: zeile.day_index,
+      dayDate: zeile.day_date,
+      title: zeile.title,
+      items: jeTag.get(zeile.id) ?? [],
+    }))
+
+  const geordneteEtappen = [...etappen]
+    .sort(
+      (a, b) =>
+        a.position - b.position ||
+        a.created_at.localeCompare(b.created_at) ||
+        a.id.localeCompare(b.id),
+    )
+    .map(etappeAus)
+
+  return {
+    id: reise.id,
+    clientRef: reise.client_ref,
+    title: reise.title,
+    origin: reise.origin,
+    startDate: reise.start_date,
+    endDate: reise.end_date,
+    travellers: reise.travellers,
+    currency: reise.currency,
+    budgetAmount: zahl(reise.budget_amount),
+    status: ausBereich<TripStatus>(reise.status, TRIP_STATUSES, 'draft'),
+    pace: ausBereich<TripPace>(reise.pace, TRIP_PACES, 'balanced'),
+    interests: (reise.interests ?? []).filter((wert): wert is TripInterest =>
+      (TRIP_INTERESTS as readonly string[]).includes(wert),
+    ),
+    travelWish: reise.travel_wish,
+    stages: geordneteEtappen,
+    days: geordneteTage,
+    createdAt: reise.created_at,
+    updatedAt: reise.updated_at,
+    ohneTag,
+  }
+}
+
+/**
+ * Formt eine Reise in die Nutzlast von `public.reise_anlegen()`.
+ *
+ * Was hier fehlt, fehlt mit Absicht: `status` setzt die Funktion auf `draft`,
+ * `user_id` kommt aus `auth.uid()`. Die lokalen Kennungen der Tage und Punkte
+ * gehen nicht mit – in der Datenbank hätten sie keine Bedeutung, und die
+ * Zuordnung eines Punkts zu seinem Tag läuft über `day_index`.
+ */
+export function alsNutzlast(reise: Trip): ReiseNutzlast {
+  return {
+    client_ref: reise.clientRef ?? reise.id,
+    title: reise.title,
+    origin: reise.origin,
+    start_date: reise.startDate,
+    end_date: reise.endDate,
+    travellers: reise.travellers,
+    currency: reise.currency,
+    budget_amount: reise.budgetAmount,
+    pace: reise.pace,
+    interests: reise.interests,
+    travel_wish: reise.travelWish,
+    stages: reise.stages.map((etappe, stelle) => ({
+      position: etappe.position || stelle + 1,
+      name: etappe.name,
+      country_code: etappe.countryCode,
+      arrival_date: etappe.arrivalDate,
+      departure_date: etappe.departureDate,
+    })),
+    days: reise.days.map((tag, stelle) => ({
+      day_index: tag.dayIndex || stelle + 1,
+      day_date: tag.dayDate,
+      title: tag.title,
+      items: tag.items.map((punkt, ort) => ({
+        kind: punkt.kind,
+        title: punkt.title,
+        note: punkt.note,
+        position: punkt.position || ort + 1,
+        starts_at: punkt.startsAt,
+      })),
+    })),
+  }
+}

@@ -75,7 +75,7 @@ async function anlegen(z: Ziel, mail: string, passwort: string, rolle: Role) {
 
   await sql(
     z,
-    `insert into public.creator_profiles (user_id, email, role, name)
+    `insert into public.profiles (user_id, email, role, display_name)
      values (${zitat(konto.id)}, ${zitat(mail)}, ${zitat(rolle)}, 'Testkonto')
      on conflict (user_id) do update set role = excluded.role`,
   )
@@ -92,7 +92,7 @@ async function entfernen(z: Ziel, mail: string) {
     return
   }
 
-  await sql(z, `delete from public.creator_profiles where user_id = ${zitat(id)}`)
+  await sql(z, `delete from public.profiles where user_id = ${zitat(id)}`)
   await authAdmin(`/users/${id}`, 'DELETE', geheim)
   console.log(`entfernt: ${mail}`)
 }

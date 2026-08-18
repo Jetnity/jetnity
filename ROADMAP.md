@@ -20,8 +20,8 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Phase 1.4b | obsolete Legacy-Tabellen archiviert und entfernt (37 → 8) | **fertig auf Development** |
 | Phase 1.4c | Auth-Konfiguration als Code, Abgleich und Flussprüfung | **fertig auf Development** |
 | Phase 1.4d | Fehler im Administrationsbereich sichtbar statt leer | **fertig** |
-| Phase 1 (Rest) | V2-Reise-Schema | als Nächstes |
-| Phase 2 | Jetnity-Kern: natürliche Sprache zu strukturierter Reise | geplant |
+| Phase 1.5 | V2-Reiseschema, persistente Reisen, Gast → Konto | **fertig auf Development** |
+| Phase 2 | Jetnity-Kern: natürliche Sprache zu strukturierter Reise | als Nächstes |
 | Phase 3 | Reiseprodukte und Monetarisierung | geplant |
 | Phase 4 | Launch-Reife | geplant |
 
@@ -391,15 +391,61 @@ Umgesetzt. Am laufenden Server gemessen, mit entzogenem `select` auf `payments`,
 
 **Gemessen statt behauptet.** `head: true` schickt HEAD, und eine HEAD-Antwort hat keinen Körper: `postgrest-js` liefert `{ message: '' }` ohne SQLSTATE, wo dieselbe Abfrage als GET „permission denied for table creator_sessions" meldet. Ohne Behandlung wäre die Fehlerfläche dort eine leere Zeile; sie nennt jetzt den Statuscode.
 
-### 1.5 V2-Reise-Schema
+### 1.5 V2-Reiseschema und persistente Reisen · abgeschlossen auf Development
 
-- [ ] Schema für Reisen, Etappen, Tage, Planpunkte, Teilnehmer
-- [ ] RLS je Tabelle mit Tests, nach dem Muster aus 1.4
-- [ ] `creator_profiles` in ein generisches Profil überführen; `ROLE_TABLE` in `lib/auth/admin-guard.ts` ist die einzige Stelle, die den Tabellennamen kennt
-- [ ] Admin-Kennzahlen von `creator_sessions` auf Reisen umstellen
-- [ ] Migrationspfad Gastreise zu Konto
-- [ ] Indizes prüfen
-- [ ] `MAX_GUEST_TRIPS` von 20 auf 1 setzen, mit ehrlichem Hinweis auf das Konto statt stillem Überschreiben und definiertem Übergang für Browser, die bereits mehrere Gastreisen enthalten ([DECISIONS.md](DECISIONS.md), ADR-0013)
+Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst worden. Fachliche Beschreibung: [docs/REISEN.md](docs/REISEN.md). Entscheidungen: [DECISIONS.md](DECISIONS.md) ADR-0041 bis ADR-0044.
+
+- [x] Schema für Reisen, Etappen, Tage und Planpunkte (`20260817120000_reiseschema.sql`): 4 Tabellen, 45 CHECK-Bedingungen, 7 Fremdschlüssel, 16 Policies, kein Enum-Typ
+- [x] RLS je Tabelle und je Operation getrennt nachgewiesen, positiv und negativ, über zwei Konten und alle Rollenstufen – `npm run db:sicherheit` führt jetzt 128 statt 78 Nachweise
+- [x] Eigentum nicht vom Client setzbar: `default auth.uid()`, `with check` in jeder Policy, zusammengesetzter Fremdschlüssel `(trip_id, user_id) → trips (id, user_id)` auf jeder Kindtabelle
+- [x] Adminrechte öffnen keine private Reise – nachgewiesen bis zur Rolle `owner`; die Kennzahlen kommen aus zwei Aggregatfunktionen, die nur Anzahlen liefern (ADR-0041)
+- [x] Gast → Konto: eine Datenbankfunktion `public.reise_anlegen()`, idempotent über `unique (user_id, client_ref)`; lokaler Entwurf verschwindet erst nach bestätigter Kennung (ADR-0042)
+- [x] `creator_profiles` in ein generisches `profiles` überführt, dazu die neun Spalten der Creator-Identität entfernt (ADR-0044)
+- [x] Admin-Kennzahlen von `creator_sessions` auf Reisen umgestellt; die Tabelle ist damit entfallen, mit ihr die letzten beiden Enums und fünf Funktionen ohne Aufrufer
+- [x] `MAX_GUEST_TRIPS` entfallen: genau eine aktive Gastreise, Hinweis auf das Konto statt stillem Überschreiben, und ein definierter Übergang für Browser mit mehreren Entwürfen der Fassung v2 ([DECISIONS.md](DECISIONS.md) ADR-0013)
+- [x] `/planen`, `/reisen` und `/reisen/[tripId]` auf das neue Modell gebracht – Gast im Browser, Konto in Supabase, ohne Beispieldaten und mit getrennten Lade-, Leer- und Fehlerzuständen
+- [x] Indizes an den realen Zugriffspfaden, Advisors danach erneut gefahren
+- [x] Reproduzierbarkeit über alle 15 Migrationen ohne Unterschied, Typen neu erzeugt, kein Type-Drift
+- [x] Browser-Flow gegen den laufenden Branch verifiziert: Gast plant im Browser, meldet sich an, dieselbe Reise liegt danach im Konto – ein Reload erzeugt keine zweite. Öffnen, Planpunkt hinzufügen und Reise löschen im Konto ebenfalls durchgespielt, danach der Bestand in der Datenbank nachgezählt
+- [ ] Registrierung über die Oberfläche **nicht** von Hand durchgespielt: Der Branch verlangt die E-Mail-Bestätigung, und es gibt kein Postfach dafür ([docs/AUTH.md](docs/AUTH.md) Abschnitt 8). Die Brücke ist für Anmeldung und Registrierung dieselbe Stelle und liegt auf `/reisen`; der Signup-Fall ist in `lib/trips/uebernahme.test.ts` abgedeckt
+
+**Das Datenmodell ist aus den Anforderungen abgeleitet, nicht aus dem Speicherformat.** Eine Reise lag bis hierher als Titel, Ziel und Liste freier Einträge im `localStorage`. Vier Tabellen tragen jetzt, was der Produktkern braucht: mehrere Ziele als Etappen in Reihenfolge, Reisetage mit verbindlicher Ordnung und optionalem Datum, Planpunkte in fünf Arten mit Zeitfenster, Preis und drei Spalten für spätere Anbieter. Optional ist dabei Absicht: Eine Reiseidee entsteht ohne festen Zeitraum, und Phase 2 soll sie in diesem Zustand speichern können. Begründung je Festlegung in ADR-0043.
+
+**Die Idempotenz sitzt in der Datenbank.** `trips.client_ref` trägt die Kennung, die der Browser vergibt, und `unique (user_id, client_ref)` macht daraus pro Konto genau eine Reise. Damit sind Reload, Retry, doppelter Request, zweiter Login, zwei offene Tabs und ein Doppelklick auf „Reise erstellen" mit einer Bedingung abgedeckt – ein Vermerk im Browser hätte keinen dieser Fälle vollständig gesehen.
+
+**Kein Gastkonto.** Anonyme Anmeldungen wären der bequeme Weg gewesen und hätten für jede Besucherin eine Zeile in `auth.users` erzeugt, die niemand bestätigt, aufräumt oder verantwortet. Der Gast bleibt deshalb ohne serverseitige Identität; `anon` hat auf keiner Reisetabelle ein Recht und auf `reise_anlegen()` kein EXECUTE (ADR-0042).
+
+**Nachweise.** Gemessen, nicht abgeleitet – die datenbanknahen Läufe in Transaktionen, die zurückgerollt werden:
+
+| Prüfung | Ergebnis |
+| --- | --- |
+| `npm run db:reproduzierbarkeit` | Wiederaufbau aus 18 Migrationen gleich dem laufenden Schema, kein Unterschied |
+| `npm run db:sicherheit` | 140 von 140 Nachweisen erfüllt, davon 52 neue zu Reisen |
+| `npm run db:parallelitaet` | 5 von 5 Nachweisen erfüllt, je 6 gleichzeitige Sitzungen gegen die Erzeugungsschranke |
+| `npm run db:rechte` | 32 Tabellenrechte, jedes durch eine Policy gedeckt; kein `TRUNCATE`, `REFERENCES`, `TRIGGER`; RLS auf allen 11 Tabellen; keine Policy nennt eine Rolle direkt; keine Funktion greift ins Leere |
+| `npm run db:rls` | Matrix aus 4 Akteuren × 11 Tabellen × bis zu 5 Operationen |
+| `npm run db:typen -- --pruefen` | `types/supabase.ts` entspricht dem Schema |
+| `npm run db:advisors` | 18 Security-, 6 Performance-Befunde, jeder begründet ([docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 8) |
+| `npm run auth:pruefen` | 55 Sollwerte, 242 Schlüssel eingeordnet, unverändert grün |
+| `npm test` | 327 Tests in 75 Gruppen, davon 129 in `lib/trips/`: Zod-Schemas, Mapper, Tagesaufteilung, Gastspeicher und Übernahme |
+| Typecheck, Lint, Hygiene, Production-Build | grün |
+
+**Nachtrag aus der Überprüfung vor dem Merge.** Drei Befunde sind in derselben Phase behoben, jeder an der Ursache:
+
+- [x] Die Erzeugungsregeln lagen nur in `public.reise_anlegen()`, `authenticated` hat aber `INSERT` auf `public.trips`: Über PostgREST liessen sich Kennung, Anfangsstatus und die Schranke von 60 neuen Reisen je Stunde vollständig übergehen, ein rückdatiertes `created_at` zusätzlich das Zeitfenster der Schranke. `client_ref` ist jetzt `NOT NULL`, ein Auslöser vor jeder Einfügung setzt die Zeitstempel, verlangt `draft` und zählt die Schranke – auf jedem Schreibweg (ADR-0045)
+- [x] Der Gastspeicher verschluckte Schreibfehler: Anlegen und Bearbeiten meldeten Erfolg, obwohl nichts im Browser lag, und die Übernahme aus der alten Fassung löschte den alten Schlüssel, ohne das Schreiben der neuen zu prüfen. Jeder Schreibvorgang wird jetzt zurückgelesen, ein Fehlschlag wirft, und gelöscht wird nur, was nachweislich anderswo liegt (ADR-0046)
+- [x] `PublicNavbar` zeigte auch bei offener Sitzung immer „Anmelden" und bot kein Abmelden. Mit persistenten privaten Reisen ist das auf einem geteilten Gerät ein Sicherheitsthema und keine Kosmetik: Die Leiste liest die Sitzung jetzt im Browser, das öffentliche Layout bleibt statisch (ADR-0047)
+
+**Nachtrag aus der zweiten Überprüfung.** Ein Folgefehler der Verlegung aus ADR-0045, behoben an der Ursache:
+
+- [x] Der Auslöser aus ADR-0045 läuft vor dem eindeutigen Index und warf damit an der Grenze auch dann mit `53400`, wenn `on conflict do nothing` gar keine Reise angelegt hätte: Ein Retry mit belegter Kennung – Netzfehler, Reload, zweite Anmeldung – war an einem Konto mit 60 Reisen in der letzten Stunde eine Stunde lang nicht wiederholbar, obwohl die Reise längst im Konto lag. Die Schranke fragt jetzt zuerst, ob überhaupt eine Reise entsteht: Ist `(user_id, client_ref)` belegt, gilt sie nicht, und der Schreibvorgang endet am eindeutigen Index statt an der Schranke. Eine tatsächlich neue Kennung scheitert weiter mit `53400` (ADR-0048)
+
+**Nachtrag aus der dritten Überprüfung.** Die Schranke prüfte sequenziell, was gleichzeitig geschieht:
+
+- [x] `count(*)` und die anschliessende Einfügung liefen ohne Serialisierung je Konto. Bei 59 vorhandenen Reisen sahen gleichzeitige Anfragen alle den Stand 59 und kamen alle durch – gemessen mit sechs Sitzungen: 65 Reisen statt höchstens 60, auf beiden Schreibwegen. Über PostgREST sind gleichzeitige Anfragen der Normalfall, der öffentliche Weg aus ADR-0045 war also weiter offen, nur parallel statt sequenziell. Zählung und Einfügung laufen jetzt je Konto der Reihe nach, serialisiert über eine Beratungssperre auf Transaktionsdauer (ADR-0049)
+- [x] Dazu ein eigener Nachweis `npm run db:parallelitaet` mit echten gleichzeitigen Verbindungen. `db:sicherheit` konnte das nicht leisten: Der Lauf liegt vollständig in einer Transaktion, und zwei Anweisungen derselben Transaktion sehen einander immer. Dass die Parameter genügen, ist gegengeprüft – mit der Fassung ohne Sperre scheitert das Skript
+
+**Vier Dinge sind bei der Umsetzung aufgefallen und mit behoben.** Die Prüfbedingung auf `interests` liess denselben Wert doppelt zu – ein CHECK mit `unnest` braucht eine `immutable` Funktion, weil eine Unterabfrage dort nicht erlaubt ist (SQLSTATE `0A000`). Ein Preis war ohne Währung eintragbar; beides ist jetzt aneinander gebunden. Die Zuordnung eines Planpunkts zu seinem Tag lief zunächst über die lokale Kennung des Browsers, die in der Datenbank keine Bedeutung hat – sie läuft jetzt über `day_index`. Und `npm run db:rls` konnte Kindtabellen mit zusammengesetztem Fremdschlüssel nicht säen: Die Saat wählte eine beliebige Reise, häufig die eines anderen Testkontos, und scheiterte an `trip_days_reise_fk`. Das Skript löst Fremdschlüssel jetzt über die Primärschlüsselspalten der Zieltabelle auf und wählt bei Tabellen mit `user_id` deterministisch die Zeile des eigenen Kontos.
 
 ### 1.6 Erste Tests
 
@@ -408,9 +454,19 @@ Priorität nach [AGENTS.md](AGENTS.md) Regel 24: Auth, Rollen, RLS, Trip-Persist
 - [x] Test-Runner eingerichtet – mit 1.3 erledigt: `npm test` läuft über den Test-Runner von Node mit `tsx` als Loader, ohne neues Paket ([DECISIONS.md](DECISIONS.md) ADR-0029)
 - [x] Tests für Rollen und Berechtigungen (52 ohne Datenbank; 34 aus 1.3, dazu 7 für den Abgleich des Rollenmodells, 6 für den Abgleich der Fähigkeiten und 5 für Fähigkeiten und Notzugang in der Zugangsentscheidung)
 - [x] Tests für die Antworten der lesenden Admin-Routen (31 ohne Datenbank: 14 für Fehler gegen echte Leere, 7 für die Suchausdrücke, 10 für die Kennzahlen)
-- [x] RLS-Nachweise gegen den Development-Branch (81), dazu die Rechteprüfung und der Reproduzierbarkeitsbeweis
+- [x] RLS-Nachweise gegen den Development-Branch (140 nach Phase 1.5), dazu die Rechteprüfung, der Reproduzierbarkeitsbeweis und fünf Nachweise unter echter Parallelität
+- [x] Tests für Trip-Erstellung und -Persistenz – 129 in `lib/trips/` ohne Datenbank (Schemas, Mapper, Tage, Gastspeicher inklusive voller und stummer Ablage, Übernahme mit Retry, Doppelrequest und Manipulationsversuch), dazu 52 Nachweise gegen den Branch für RLS, Idempotenz und die Erzeugungsregeln – geprüft über `reise_anlegen()` **und** über den direkten `INSERT`, einschliesslich der Wiederholung an der Schranke
 - [ ] datenbanknahe Prüfungen in die CI holen – braucht einen kurzlebigen Branch je Lauf, sonst legen nebenläufige Läufe dieselben Testkonten an
-- [ ] Tests für Trip-Erstellung und -Persistenz → braucht das Schema aus 1.5
+
+### 1.7 Sitzung im öffentlichen Bereich sichtbar · abgeschlossen
+
+Aufgefallen bei der Prüfung der Phase 1.5 im Browser, nicht durch sie verursacht – und in der Überprüfung vor dem Merge als Sicherheitsthema eingeordnet statt verschoben.
+
+- [x] `PublicNavbar` kennt die Sitzung: „Anmelden" nur für Gäste, „Abmelden" über `signOutAction()`, solange die Sitzung unbekannt ist keine der beiden Aussagen
+- [x] Entscheidung dokumentiert: clientseitig im Browser über die Cookies, die der Server gesetzt hat, dazu `onAuthStateChange`. Das öffentliche Layout bleibt statisch, die Startseite weiter vorgerendert (ADR-0047)
+- [x] Die Regel liegt in `lib/auth/oeffentliche-navigation.ts` und ist ohne Browser prüfbar – 8 Fälle, darunter „Abmelden wird nie ein Link", weil Next.js Links vorauslädt
+- [x] Prüfung im Browser: angemeldet abmelden, danach zeigt `/reisen` wieder den Gastzustand
+- [x] Dabei aufgefallen und behoben: Die erste Fassung liess nach dem Abmelden weiter „Abmelden" stehen, bis jemand neu lud – die Leiste liegt im Layout und wird von der Weiterleitung der Server Action nicht neu aufgebaut. Sie liest die Sitzung jetzt zusätzlich nach jedem Wechsel des Pfads und nach jedem abgeschlossenen Vorgang, und zwar gelesen statt angenommen (ADR-0047, Nachtrag)
 
 ---
 
@@ -426,7 +482,9 @@ Höchste Produktpriorität: **natürliche Sprache zu strukturierter Reise.**
 - [ ] Kostenkontrolle für jede Modellfunktion: Request-Limit, Tageslimit, Timeout, Max Tokens, Fallback, Kill Switch, Nutzungs-Logging ([AGENTS.md](AGENTS.md) Regel 17)
 - [ ] Tests für die strukturierten Sprachoperationen
 
-**Voraussetzung:** Phase 1.5. Die Datenbank-Baseline aus 1.4 steht; ohne Trip-Schema wäre der Trip Builder eine Demo.
+**Voraussetzung erfüllt.** Das Reiseschema aus Phase 1.5 steht: Eine strukturierte Reise lässt sich speichern, laden, bearbeiten und löschen, und `public.reise_anlegen()` nimmt einen vollständigen Reisegraphen in einer Transaktion an – genau die Form, in der ein Sprachmodell einen Vorschlag liefern würde ([docs/REISEN.md](docs/REISEN.md)).
+
+Was Phase 2 zusätzlich braucht, ist damit nicht erledigt: eine Änderung an einer bestehenden Reise über Sprache (heute gibt es Anlegen, Planpunkt hinzufügen, Planpunkt entfernen, Reise löschen – kein Umbenennen, kein Umsortieren, kein Verschieben von Tagen) und die Kostenkontrolle jeder Modellfunktion nach [AGENTS.md](AGENTS.md) Regel 17.
 
 ---
 
@@ -461,11 +519,11 @@ Je Kategorie zunächst genau ein Anbieter ([DECISIONS.md](DECISIONS.md), ADR-001
 
 | Thema | blockiert durch |
 | --- | --- |
-| Phase 2 (Trip-Persistenz) | Trip-Schema (1.5) |
 | Datenbanknahe Prüfungen in der CI | braucht einen kurzlebigen Supabase-Branch je Lauf |
 | Nutzungsbedingungen und Datenschutzerklärung | Inhalt ist eine rechtliche Entscheidung, nicht technisch ableitbar |
+| Anmeldung über Google und Apple | Client-ID und Secret beider Anbieter, eine Handlung ausserhalb dieses Repositories |
 
-Mit Phase 1.4 sind zwei Einträge entfallen: RLS ist versioniert und mit 81 Nachweisen belegt, und das Schema ist aus dem Repository nachvollziehbar und reproduzierbar.
+Mit Phase 1.4 sind zwei Einträge entfallen: RLS ist versioniert und mit Nachweisen belegt, und das Schema ist aus dem Repository nachvollziehbar und reproduzierbar. Mit Phase 1.5 ist der dritte entfallen – die Trip-Persistenz, an der Phase 2 hing.
 
 ---
 
@@ -504,4 +562,5 @@ Ideen ohne Termin, dokumentiert damit sie nicht verloren gehen.
 - gemeinsame Reiseplanung mit mehreren Personen
 - Offline-fähiger Cache mit Konfliktauflösung
 - strukturierte Log-Konvention ohne sensible Nutzerdaten
+- Obergrenze für Etappen, Tage und Planpunkte **je Reise** auch auf dem direkten Schreibweg. `public.reise_anlegen()` prüft sie (50 / 366 / 1000), ein direkter `INSERT` in die Kindtabellen nicht: Ein Konto kann seine eigene Reise beliebig weit füllen. Ein Auslöser je Zeile mit einer Zählung wäre bei 1000 Planpunkten in einer Anweisung quadratisch; der brauchbare Weg ist ein Auslöser je Anweisung mit Übergangstabelle. Bewusst nicht in den Nachtrag der Phase 1.5 gezogen (ADR-0045, Alternative 4)
 - automatisierte Responsive-Regression in der CI: Seiten auf den Referenzbreiten laden und horizontales Overflow sowie abgeschnittene Inhalte prüfen. Benötigt einen Browser im CI-Lauf und damit zusätzliche Laufzeit, deshalb bewusst noch nicht eingebaut. Wichtig dabei: Seiten, die ohne Supabase-Variablen in die Fehlerseite laufen, werden sonst scheinbar fehlerfrei gemessen – der Lauf braucht Platzhalter-Variablen und eine Prüfung, dass die echte Seite gerendert wurde.
