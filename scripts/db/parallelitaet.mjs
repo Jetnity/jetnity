@@ -1,0 +1,279 @@
+#!/usr/bin/env node
+// Nachweis, dass die Erzeugungsschranke von `public.trips` auch unter echter
+// Parallelität hält.
+//
+// Warum ein eigenes Skript und nicht ein weiterer Fall in `db:sicherheit`:
+// Jener Nachweis läuft vollständig in EINER Transaktion, die am Ende zurückrollt.
+// Das ist genau richtig, um Policies und Bedingungen zu prüfen, und vollständig
+// blind für Wettläufe – zwei Anweisungen derselben Transaktion sehen einander
+// immer, zwei gleichzeitige Transaktionen nicht.
+//
+// Die Schranke aus ADR-0045 ist ein Lesen mit anschliessendem Schreiben:
+// `count(*)` gefolgt von der Einfügung. Ohne Serialisierung je Konto sehen zwei
+// gleichzeitige Sitzungen bei 59 vorhandenen Reisen beide den Stand 59 und legen
+// beide an. Über parallele PostgREST-Requests wäre die Schranke damit weiter
+// überschreitbar (ADR-0049).
+//
+// Aufbau eines Falls:
+//   1. Aufräumen, dann Saat: ein Testkonto mit N Reisen der letzten Stunde.
+//      Die Saat wird festgeschrieben – gleichzeitige Sitzungen müssen sie sehen.
+//   2. Ein Treffpunkt auf der Uhr des Servers. Ohne ihn entscheidet die Laufzeit
+//      der HTTP-Anfragen, ob sich die Sitzungen überhaupt begegnen.
+//   3. Mehrere gleichzeitige Sitzungen. Jede wartet bis zum Treffpunkt, schreibt
+//      und hält ihre Transaktion danach offen. Das Offenhalten ist kein Kunstgriff:
+//      `reise_anlegen()` schreibt nach der Reise bis zu 1416 weitere Zeilen, das
+//      Fenster zwischen Zählung und Festschreibung ist also real.
+//   4. Bestand nachzählen und mit der Erwartung vergleichen.
+//   5. Aufräumen. Das Löschen des Kontos nimmt über `on delete cascade` alles mit.
+//
+// Das Skript schreibt echte Zeilen und rollt sie nicht zurück. Es läuft deshalb
+// nur gegen den Development-Branch, auf den `SUPABASE_PROJECT_REF` zeigt – wie
+// jedes Skript in diesem Verzeichnis.
+//
+// Aufruf:
+//   node scripts/db/parallelitaet.mjs
+
+import { runSql } from './sql.mjs'
+
+// Ein eigenes Konto, das keiner der anderen Nachweise benutzt. Die Kennung ist
+// fest, damit ein abgebrochener Lauf beim nächsten Mal aufgeräumt wird.
+const KONTO = 'ffffffff-0000-4000-8000-00000000f001'
+const INSTANCE = '00000000-0000-0000-0000-000000000000'
+
+const SITZUNGEN = 6
+// Vorlauf bis zum Treffpunkt. Die Anfragen starten laut Messung innerhalb von
+// etwa einer halben Sekunde; 2,5 Sekunden lassen jeder Sitzung Zeit, ihre
+// Verbindung aufzubauen und am Treffpunkt zu warten.
+const VORLAUF_MS = 2500
+// Wie lange eine Sitzung ihre Transaktion nach dem Schreiben offen hält. Deckt
+// den Startversatz der Anfragen ab: Auch eine spät eintreffende Sitzung trifft
+// die anderen noch im Fenster an.
+//
+// Die Zahl ist ein Kompromiss. Grösser macht den Wettlauf sicherer sichtbar,
+// verlängert aber die Fälle, in denen alle Sitzungen durchkommen: Sie halten die
+// Sperre der Reihe nach, die Laufzeit ist `SITZUNGEN × HALTEN_S`. Dass der Wert
+// gross genug ist, ist nachgewiesen – mit der Fassung ohne Serialisierung
+// scheitert das Skript (ADR-0049).
+const HALTEN_S = 0.8
+
+const claims = `select set_config('role', 'authenticated', true);
+select set_config('request.jwt.claims', '{"sub":"${KONTO}","role":"authenticated"}', true);`
+
+/** Der Treffpunkt kommt von der Uhr des Servers, nicht von der des Clients. */
+async function treffpunkt() {
+  const rows = await runSql(
+    `select (clock_timestamp() + interval '${VORLAUF_MS} milliseconds')::text as ziel`,
+  )
+  return rows[0].ziel
+}
+
+const warten = (ziel) =>
+  `select pg_sleep(greatest(0, extract(epoch from ('${ziel}'::timestamptz - clock_timestamp()))));`
+
+async function aufraeumen() {
+  await runSql(`delete from auth.users where id = '${KONTO}';`)
+}
+
+/**
+ * Ein Konto mit `anzahl` Reisen der letzten Stunde. Die Kennungen sind
+ * `bestand-1` … `bestand-<anzahl>`; ein Fall, der einen Retry prüft, greift auf
+ * `bestand-1` zurück.
+ */
+async function saat(anzahl) {
+  await aufraeumen()
+  await runSql(`
+insert into auth.users
+  (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, created_at, updated_at)
+  values ('${KONTO}', '${INSTANCE}', 'authenticated', 'authenticated',
+          'parallelitaet@example.invalid', 'x', now(), now(), now());
+insert into public.profiles (user_id, display_name, role, status)
+  values ('${KONTO}', 'parallelitaet', 'user', 'active');
+insert into public.trips (user_id, client_ref, title)
+  select '${KONTO}', 'bestand-' || g, 'Bestand ' || g from generate_series(1, ${anzahl}) as g;`)
+}
+
+async function bestand() {
+  const rows = await runSql(
+    `select count(*) as anzahl from public.trips where user_id = '${KONTO}'`,
+  )
+  return Number(rows[0].anzahl)
+}
+
+/** Aus dem Fehlertext der Management-API den SQLSTATE herausziehen. */
+function sqlstate(fehler) {
+  const treffer = /ERROR:\s+([0-9A-Z]{5}):/.exec(fehler.message)
+  return treffer ? treffer[1] : 'unbekannt'
+}
+
+/**
+ * `SITZUNGEN` gleichzeitige Sitzungen desselben Falls. Jede wartet bis zum
+ * Treffpunkt, schreibt, hält ihre Transaktion offen und liest zum Schluss die
+ * Reise ihrer Kennung – so lässt sich prüfen, ob alle dieselbe bekommen haben.
+ *
+ * Scheitert eine Sitzung, bricht ihre Transaktion ab; die Management-API meldet
+ * das als HTTP 400 mit dem SQLSTATE im Text.
+ */
+async function gleichzeitig(ziel, fall) {
+  const eine = async (nr) => {
+    try {
+      const rows = await runSql(`
+begin;
+${claims}
+${warten(ziel)}
+${fall.sql(nr)}
+select pg_sleep(${HALTEN_S});
+select coalesce((select id::text from public.trips
+                 where user_id = '${KONTO}' and client_ref = '${fall.kennung(nr)}'), 'keine') as id;
+commit;`)
+      return { ok: true, id: rows[0]?.id ?? null }
+    } catch (fehler) {
+      return { ok: false, code: sqlstate(fehler) }
+    }
+  }
+  return Promise.all(Array.from({ length: SITZUNGEN }, (_, i) => eine(i + 1)))
+}
+
+const FAELLE = [
+  {
+    name: 'parallele neue Kennungen bei 59 – direkter INSERT',
+    bestandVorher: 59,
+    kennung: (nr) => `parallel-${nr}`,
+    sql: (nr) =>
+      `insert into public.trips (user_id, client_ref, title)
+       values ('${KONTO}', 'parallel-${nr}', 'Parallel ${nr}');`,
+    erwartung: {
+      bestandNachher: 60,
+      erfolge: 1,
+      code: '53400',
+      grund:
+        'Der Kern des Befunds: Ohne Serialisierung je Konto sehen alle acht Sitzungen den ' +
+        'Stand 59 und legen alle an. Höchstens eine darf durchkommen, der Rest mit 53400.',
+    },
+  },
+  {
+    name: 'parallele neue Kennungen bei 59 – reise_anlegen()',
+    bestandVorher: 59,
+    kennung: (nr) => `funktion-${nr}`,
+    sql: (nr) =>
+      `select public.reise_anlegen('{"client_ref":"funktion-${nr}","title":"Parallel"}'::jsonb);`,
+    erwartung: {
+      bestandNachher: 60,
+      erfolge: 1,
+      code: '53400',
+      grund: 'Dasselbe auf dem Weg, den die Anwendung nimmt.',
+    },
+  },
+  {
+    name: 'parallele Retries einer bestehenden Kennung bei 59',
+    bestandVorher: 59,
+    kennung: () => `bestand-1`,
+    sql: () =>
+      `select public.reise_anlegen('{"client_ref":"bestand-1","title":"Parallel"}'::jsonb);`,
+    erwartung: {
+      bestandNachher: 59,
+      erfolge: SITZUNGEN,
+      eineKennung: true,
+      grund:
+        'Die Idempotenz aus ADR-0048 muss auch gleichzeitig gelten: Acht Retries derselben ' +
+        'Kennung sind acht Mal dieselbe Reise und keine neue Zeile.',
+    },
+  },
+  {
+    name: 'paralleles Doppelabsenden derselben neuen Kennung bei 59',
+    bestandVorher: 59,
+    kennung: () => `doppelt`,
+    sql: () =>
+      `select public.reise_anlegen('{"client_ref":"doppelt","title":"Parallel"}'::jsonb);`,
+    erwartung: {
+      bestandNachher: 60,
+      erfolge: SITZUNGEN,
+      eineKennung: true,
+      grund:
+        'Zwei Tabs, ein Klick: Alle acht Sitzungen legen dieselbe Kennung an. Genau eine ' +
+        'Zeile entsteht, und jede Sitzung bekommt deren Kennung – nicht sieben Fehler.',
+    },
+  },
+  {
+    name: 'parallele neue Kennungen bei erreichtem Limit',
+    bestandVorher: 60,
+    kennung: (nr) => `voll-${nr}`,
+    sql: (nr) =>
+      `select public.reise_anlegen('{"client_ref":"voll-${nr}","title":"Parallel"}'::jsonb);`,
+    erwartung: {
+      bestandNachher: 60,
+      erfolge: 0,
+      code: '53400',
+      grund: 'Die Schranke bleibt eine Schranke: Bei 60 kommt keine weitere Reise hinzu.',
+    },
+  },
+]
+
+function bewerte(fall, ergebnisse, nachher) {
+  const erfolge = ergebnisse.filter((e) => e.ok)
+  const fehler = ergebnisse.filter((e) => !e.ok)
+  const codes = [...new Set(fehler.map((e) => e.code))]
+  const ids = [...new Set(erfolge.map((e) => e.id))]
+  const e = fall.erwartung
+  const maengel = []
+
+  if (nachher !== e.bestandNachher) {
+    maengel.push(`Bestand ${nachher}, erwartet ${e.bestandNachher}`)
+  }
+  if (erfolge.length !== e.erfolge) {
+    maengel.push(`${erfolge.length} Sitzungen erfolgreich, erwartet ${e.erfolge}`)
+  }
+  if (e.code && codes.some((c) => c !== e.code)) {
+    maengel.push(`Fehlercodes ${codes.join(', ')}, erwartet nur ${e.code}`)
+  }
+  if (e.eineKennung && ids.length !== 1) {
+    maengel.push(`${ids.length} verschiedene Reisen geliefert, erwartet 1`)
+  }
+  if (e.eineKennung && ids[0] === 'keine') {
+    maengel.push('keine Reise geliefert')
+  }
+
+  const teile = [`Bestand ${fall.bestandVorher} → ${nachher}`, `${erfolge.length}× erfolgreich`]
+  if (fehler.length) teile.push(`${fehler.length}× ${codes.join('/')}`)
+  if (e.eineKennung) teile.push(`${ids.length} Reise(n) geliefert`)
+
+  return { ok: maengel.length === 0, detail: teile.join(', '), maengel }
+}
+
+async function pruefe() {
+  const ergebnisse = []
+  try {
+    for (const fall of FAELLE) {
+      await saat(fall.bestandVorher)
+      const laeufe = await gleichzeitig(await treffpunkt(), fall)
+      ergebnisse.push({ fall, ...bewerte(fall, laeufe, await bestand()) })
+    }
+  } finally {
+    await aufraeumen()
+  }
+  return ergebnisse
+}
+
+async function main() {
+  console.log(
+    `${SITZUNGEN} gleichzeitige Sitzungen je Fall, Treffpunkt auf der Uhr des Servers,\n` +
+      `Transaktion nach dem Schreiben ${HALTEN_S} s offen gehalten.\n`,
+  )
+
+  const ergebnisse = await pruefe()
+  const fehler = ergebnisse.filter((e) => !e.ok)
+
+  for (const e of ergebnisse) {
+    console.log(`${e.ok ? '  ok  ' : ' FEHL '} ${e.fall.name.padEnd(52)} ${e.detail}`)
+    for (const m of e.maengel) console.log(`       ${m}`)
+  }
+
+  console.log(`\n${ergebnisse.length - fehler.length}/${ergebnisse.length} Nachweise erfüllt.`)
+  if (fehler.length) process.exit(1)
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((err) => {
+    console.error(err.message)
+    process.exit(1)
+  })
+}
