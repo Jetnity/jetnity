@@ -25,6 +25,7 @@
     "db:rechte": "node scripts/db/rechte.mjs",
     "db:sicherheit": "node scripts/db/sicherheit.mjs",
     "db:parallelitaet": "node scripts/db/parallelitaet.mjs",
+    "db:kontingent": "node --import tsx scripts/db/kontingent.ts",
     "db:typen": "node scripts/db/typen.mjs",
     "db:advisors": "node scripts/db/advisors.mjs",
     "auth:pruefen": "node --import tsx scripts/auth/pruefen.ts",

@@ -326,17 +326,87 @@ const FAELLE = [
   // angemeldete Konto unerreichbar – belegen die folgenden sechs Fälle für die
   // beiden verbleibenden Funktionen dieser Art.
   {
-    name: 'keine SECURITY-DEFINER-Funktion ist für anon ausführbar',
+    name: 'für anon ist keine SECURITY-DEFINER-Funktion ausführbar ausser den zwei benannten',
     rolle: 'anon',
     sql: `select p.proname from pg_proc p
           join pg_namespace n on n.oid = p.pronamespace
           where n.nspname = 'public'
             and p.prosecdef
-            and has_function_privilege('anon', p.oid, 'execute')`,
+            and has_function_privilege('anon', p.oid, 'execute')
+            and p.proname not in ('modell_kontingent_beanspruchen', 'modell_nutzung_abschliessen')`,
     erwartung: 'leer',
     grund:
       'Vor Phase 1.4 war creator_alerts_eval_all() für anon aufrufbar und schrieb Zeilen. ' +
-      'Der Fall hält fest, dass keine SECURITY-DEFINER-Funktion diesen Weg zurückbekommt.',
+      'Der Fall hält fest, dass keine SECURITY-DEFINER-Funktion diesen Weg zurückbekommt.\n' +
+      'Seit Phase 2.1 gibt es zwei benannte Ausnahmen: Ein Gast beschreibt seine Reise, und ' +
+      'die Schranke gegen unkontrollierte Kosten muss deshalb ohne Anmeldung erreichbar sein ' +
+      '(ADR-0052). Sie stehen hier namentlich, damit eine dritte Funktion diesen Nachweis ' +
+      'wieder scheitern lässt, statt still in einer Ausnahme mitzulaufen.',
+  },
+  {
+    name: 'anon beansprucht Kontingent ohne Gastkennung',
+    rolle: 'anon',
+    sql: `select public.modell_kontingent_beanspruchen('reisevorschlag', 'gpt-5.6-terra')`,
+    erwartung: 'abgelehnt',
+    grund:
+      'Die eine der beiden Ausnahmen ist erreichbar, aber nicht kennungslos: Ohne Kennung ' +
+      'gäbe es kein Kontingent, das sich einer Herkunft zuordnen liesse.',
+  },
+  {
+    name: 'anon beansprucht Kontingent für ein unbekanntes Modell',
+    rolle: 'anon',
+    sql: `select public.modell_kontingent_beanspruchen('reisevorschlag', 'gpt-teuer-4711', 'gast-sicherheitsnachweis-1')`,
+    erwartung: 'abgelehnt',
+    grund:
+      'Ein Modell ohne Preis in public.modell_preis() hätte keinen Kostendeckel. Der Name ' +
+      'kommt aus der Serverumgebung, ein Tippfehler darf aber nicht in einen ungezählten ' +
+      'Aufruf münden.',
+  },
+  {
+    name: 'anon liest das Kostenprotokoll',
+    rolle: 'anon',
+    sql: `select * from public.model_usage`,
+    erwartung: 'abgelehnt',
+    grund:
+      'Schreiben über die zwei Funktionen heisst nicht lesen: Die Tabelle ist ab der ' +
+      'Fähigkeit betrieb-lesen sichtbar und für anon ohne Recht.',
+  },
+  {
+    name: 'gewöhnliches Konto liest das Kostenprotokoll',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select * from public.model_usage`,
+    erwartung: 'leer',
+    grund: 'Recht vorhanden, Policy verlangt betrieb-lesen – die Zeilen bleiben unsichtbar.',
+  },
+  {
+    name: 'Betrieb liest das Kostenprotokoll',
+    rolle: 'authenticated',
+    uid: BETRIEB,
+    sql: `select * from public.model_usage`,
+    erwartung: 'erlaubt',
+    grund:
+      'Der positive Fall zum vorigen: Ein Kostenprotokoll, das niemand ansehen kann, ' +
+      'erfüllt AGENTS.md Regel 17 nicht.',
+  },
+  {
+    name: 'anon schreibt von Hand in das Kostenprotokoll',
+    rolle: 'anon',
+    sql: `insert into public.model_usage (funktion, modell, art, kennung_hash, kosten_mikro_usd)
+          values ('reisevorschlag', 'gpt-5.6-terra', 'gast', repeat('a', 64), 0)`,
+    erwartung: 'abgelehnt',
+    grund:
+      'Eine Zeile mit 0 µ$ von Hand wäre ein Aufruf, der das Kontingent nicht belastet – ' +
+      'und damit ein Weg, es zu fälschen. Geschrieben wird nur über die beiden Funktionen.',
+  },
+  {
+    name: 'anon ruft public.modell_preis',
+    rolle: 'anon',
+    sql: `select * from public.modell_preis('gpt-5.6-terra')`,
+    erwartung: 'abgelehnt',
+    grund:
+      'Die Preistabelle ist Innenleben der Schranke. Sie ist für die beiden ' +
+      'SECURITY-DEFINER-Funktionen da, nicht für Aufrufer.',
   },
   {
     name: 'anon ruft admin_payments_summary_30d',
@@ -1387,6 +1457,14 @@ function aufbau() {
     `insert into public.blocked_ips (ip, reason) values ('203.0.113.2', 'Test');`,
     `insert into public.airports (iata, name, city, country) values ('ZRH', 'Zürich', 'Zürich', 'CH');`,
     `insert into public.stripe_webhooks (id, type) values ('evt_1', 'payment_intent.succeeded');`,
+    // Eine abgeschlossene Zeile im Kostenprotokoll. Ohne sie wäre beim Betrieb
+    // „0 Zeilen“ nicht von einer dichten Policy zu unterscheiden. Die Kennung ist
+    // ein Hash, der auf nichts zeigt – dieselbe Form, die die Funktion schreibt.
+    `insert into public.model_usage
+       (funktion, modell, art, kennung_hash, ergebnis, eingabe_tokens, ausgabe_tokens,
+        laufzeit_ms, kosten_mikro_usd, abgeschlossen_am)
+       values ('reisevorschlag', 'gpt-5.6-terra', 'gast', repeat('b', 64), 'erfolg',
+               2400, 2900, 8200, 39600, now());`,
   ]
 
   return [...nutzer, ...profile, ...daten].join('\n')

@@ -49,6 +49,16 @@ function valueForType(type) {
 const OWNER_COLUMNS = new Set(['user_id', 'created_by', 'owner_id'])
 
 /**
+ * Werte, die sich aus Typ und CHECK nicht ableiten lassen.
+ *
+ * `model_usage.kennung_hash` verlangt genau 64 Hexzeichen. Ein Ersatzwert wie
+ * `'test'` scheitert daran, und eine Saat, die nicht entsteht, macht jede
+ * Messung auf dieser Tabelle blind – eine 0 wäre dann nicht mehr von einer
+ * dichten Policy zu unterscheiden.
+ */
+const FESTE_WERTE = new Map([['model_usage.kennung_hash', `'${'0'.repeat(64)}'`]])
+
+/**
  * Liest die zulässigen Werte aus einem CHECK, sofern er eine einfache Liste ist.
  * Ohne diesen Schritt scheitert das Anlegen an Spalten wie `metric` oder
  * `comparator`, die nur wenige Werte erlauben.
@@ -58,6 +68,10 @@ function allowedFromCheck(definition, column) {
     new RegExp(`${column}\\s*=\\s*ANY\\s*\\(\\s*ARRAY\\[([^\\]]+)\\]`, 'i'),
     new RegExp(`${column}\\s*=\\s*ANY\\s*\\(\\s*\\(\\s*ARRAY\\[([^\\]]+)\\]`, 'i'),
     new RegExp(`${column}\\s+IN\\s*\\(([^)]+)\\)`, 'i'),
+    // Eine Liste mit genau einem Wert schreibt PostgreSQL als Gleichheit
+    // zurück: `funktion in ('reisevorschlag')` wird zu `funktion = 'reisevorschlag'`.
+    // Ohne diesen Fall bekäme die Spalte den Ersatzwert und die Zeile entstünde nicht.
+    new RegExp(`${column}\\s*=\\s*('[^']*')`, 'i'),
   ]
   for (const re of patterns) {
     const m = definition.match(re)
@@ -188,7 +202,8 @@ export function buildSeedPlan(inv) {
         .map((d) => allowedFromCheck(d, col.name))
         .find(Boolean)
 
-      if (fromCheck) value = fromCheck
+      if (FESTE_WERTE.has(key)) value = FESTE_WERTE.get(key)
+      else if (fromCheck) value = fromCheck
       else if (types.has(col.type)) value = `'${types.get(col.type).labels.split(',')[0]}'::${col.type}`
       else if (col.type === 'uuid') value = `'${uuidFor(++counter)}'::uuid`
       else if (col.name === 'username') value = `'nutzer${counter}'`

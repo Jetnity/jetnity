@@ -201,7 +201,7 @@ language sql
 immutable
 set search_path = public, pg_temp
 as $$
-  select *
+  select preis.eingabe, preis.eingabe_gecacht, preis.ausgabe
     from (
       values
         ('gpt-5.6-luna',    200000::bigint,   20000::bigint,  1200000::bigint),
@@ -398,12 +398,16 @@ begin
     end if;
   end if;
 
+  -- `null` bleibt `null`. Eine 0 an dieser Stelle wäre die Behauptung, die API
+  -- habe null Tokens berichtet, und damit von „hat nichts berichtet" nicht mehr
+  -- zu unterscheiden – dieselbe Unterscheidung, die AGENTS.md Regel 15 für
+  -- lesende Zugriffe verlangt, hier auf der schreibenden Seite.
   update public.model_usage
      set ergebnis = _ergebnis,
-         eingabe_tokens = greatest(coalesce(_eingabe_tokens, 0), 0),
-         gecachte_tokens = greatest(coalesce(_gecachte_tokens, 0), 0),
-         ausgabe_tokens = greatest(coalesce(_ausgabe_tokens, 0), 0),
-         laufzeit_ms = least(greatest(coalesce(_laufzeit_ms, 0), 0), 600000),
+         eingabe_tokens = case when _eingabe_tokens is null then null else greatest(_eingabe_tokens, 0) end,
+         gecachte_tokens = case when _gecachte_tokens is null then null else greatest(_gecachte_tokens, 0) end,
+         ausgabe_tokens = case when _ausgabe_tokens is null then null else greatest(_ausgabe_tokens, 0) end,
+         laufzeit_ms = case when _laufzeit_ms is null then null else least(greatest(_laufzeit_ms, 0), 600000) end,
          kosten_mikro_usd = coalesce(_kosten, kosten_mikro_usd),
          abgeschlossen_am = now()
    where id = _id and ergebnis = 'reserviert';
