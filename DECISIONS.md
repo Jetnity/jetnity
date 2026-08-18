@@ -1091,11 +1091,15 @@ Die Entscheidung, was in der Leiste steht, liegt in `lib/auth/oeffentliche-navig
 
 **Begründung:** Die Leiste ist ohnehin ein Client Component (Menü, aktiver Pfad). `getSession()` von `@supabase/ssr` liest die Cookies, die der Server gesetzt hat, und geht nicht ins Netz; `onAuthStateChange` hält den Stand nach, sodass eine Anmeldung in einem anderen Tab die Leiste ohne Neuladen erreicht. Damit kostet die Sitzungskenntnis kein Rendering-Verhalten.
 
+**Nachtrag aus der Prüfung im Browser.** Die erste Fassung liess nach dem Abmelden weiter „Abmelden“ stehen, bis jemand neu lud. Der Grund liegt im Zusammenspiel der beiden Wege: `signOutAction()` löscht die Cookies auf dem Server, die Weiterleitung ist eine Navigation innerhalb der Anwendung, und die Leiste liegt im Layout – sie wird dabei nicht neu aufgebaut. `onAuthStateChange` schweigt, weil der Browser-Client nicht selbst abgemeldet hat. Die Leiste liest die Sitzung deshalb zusätzlich nach jedem Wechsel des Pfads und nach jedem abgeschlossenen Vorgang (`useFormStatus`; nur dort gilt der Status des Formulars).
+
+Gelesen und nicht angenommen: `standAusSitzung()` bekommt den tatsächlichen Stand aus den Cookies, nicht den erwarteten Erfolg des Klicks. Ein optimistisches „Anmelden“ nach dem Absenden wäre kürzer und in der gefährlichen Richtung falsch – es sagte, die Sitzung sei beendet, während sie nach einem gescheiterten Vorgang offen bleibt. `getSession()` liest bei jedem Aufruf aus dem Speicher (`__loadSession`), ein zwischengespeicherter Stand steht dem also nicht entgegen.
+
 Dass „Abmelden" kein Link ist, ist keine Stilfrage: Next.js lädt Links voraus und Browser holen sie vor. Eine Adresse, die beim Aufruf abmeldet, beendet die Sitzung, ohne dass jemand geklickt hat – dieselbe Begründung, aus der `app/auth/sign-out.ts` eine Server Action ist. Der Typ `Navigationseintrag` unterscheidet deshalb `link` und `aktion`, und ein Test hält fest, dass „Abmelden" nie ein Link wird.
 
 **Konsequenzen:** Was die Leiste zeigt, ist eine Anzeige und keine Berechtigung; über Zugriff entscheiden weiterhin Middleware, Server Components und RLS. Fehlt die Supabase-Konfiguration – etwa in einer Vorschau ohne Umgebung –, bleibt der Zustand `unbekannt`, statt die Seite mit einer Ausnahme abzureissen.
 
-Sechs Fälle in `lib/auth/oeffentliche-navigation.test.ts` prüfen die Regel ohne Browser. Der Punkt 1.7 der Roadmap ist damit erledigt und nicht verschoben.
+Acht Fälle in `lib/auth/oeffentliche-navigation.test.ts` prüfen die Regel ohne Browser, darunter beide Richtungen nach einem Abmelden: keine Sitzung mehr ergibt „Anmelden“, eine weiter offene Sitzung lässt „Abmelden“ stehen. Der Punkt 1.7 der Roadmap ist damit erledigt und nicht verschoben.
 
 ---
 

@@ -426,7 +426,7 @@ Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst wo
 | `npm run db:typen -- --pruefen` | `types/supabase.ts` entspricht dem Schema |
 | `npm run db:advisors` | 18 Security-, 6 Performance-Befunde, jeder begründet ([docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 8) |
 | `npm run auth:pruefen` | 55 Sollwerte, 242 Schlüssel eingeordnet, unverändert grün |
-| `npm test` | 325 Tests in 74 Gruppen, davon 129 in `lib/trips/`: Zod-Schemas, Mapper, Tagesaufteilung, Gastspeicher und Übernahme |
+| `npm test` | 327 Tests in 75 Gruppen, davon 129 in `lib/trips/`: Zod-Schemas, Mapper, Tagesaufteilung, Gastspeicher und Übernahme |
 | Typecheck, Lint, Hygiene, Production-Build | grün |
 
 **Nachtrag aus der Überprüfung vor dem Merge.** Drei Befunde sind in derselben Phase behoben, jeder an der Ursache:
@@ -454,8 +454,9 @@ Aufgefallen bei der Prüfung der Phase 1.5 im Browser, nicht durch sie verursach
 
 - [x] `PublicNavbar` kennt die Sitzung: „Anmelden" nur für Gäste, „Abmelden" über `signOutAction()`, solange die Sitzung unbekannt ist keine der beiden Aussagen
 - [x] Entscheidung dokumentiert: clientseitig im Browser über die Cookies, die der Server gesetzt hat, dazu `onAuthStateChange`. Das öffentliche Layout bleibt statisch, die Startseite weiter vorgerendert (ADR-0047)
-- [x] Die Regel liegt in `lib/auth/oeffentliche-navigation.ts` und ist ohne Browser prüfbar – 6 Fälle, darunter „Abmelden wird nie ein Link", weil Next.js Links vorauslädt
+- [x] Die Regel liegt in `lib/auth/oeffentliche-navigation.ts` und ist ohne Browser prüfbar – 8 Fälle, darunter „Abmelden wird nie ein Link", weil Next.js Links vorauslädt
 - [x] Prüfung im Browser: angemeldet abmelden, danach zeigt `/reisen` wieder den Gastzustand
+- [x] Dabei aufgefallen und behoben: Die erste Fassung liess nach dem Abmelden weiter „Abmelden" stehen, bis jemand neu lud – die Leiste liegt im Layout und wird von der Weiterleitung der Server Action nicht neu aufgebaut. Sie liest die Sitzung jetzt zusätzlich nach jedem Wechsel des Pfads und nach jedem abgeschlossenen Vorgang, und zwar gelesen statt angenommen (ADR-0047, Nachtrag)
 
 ---
 
