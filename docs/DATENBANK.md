@@ -39,7 +39,7 @@ Alle Skripte liegen in `scripts/db/` und sprechen über die Supabase Management 
 | `npm run db:anwenden` | offene Migrationen anwenden und in `supabase_migrations.schema_migrations` eintragen; `-- --probe` zeigt nur, was offen ist |
 | `npm run db:reproduzierbarkeit` | baut das Schema aus den Migrationen neu auf und vergleicht es mit dem laufenden |
 | `npm run db:rls` | empirische RLS-Matrix: was darf welche Rolle auf welcher Tabelle wirklich |
-| `npm run db:sicherheit` | 135 benannte Nachweise mit Erwartung, positiv und negativ |
+| `npm run db:sicherheit` | 140 benannte Nachweise mit Erwartung, positiv und negativ; wo es darauf ankommt, mit verlangtem SQLSTATE |
 | `npm run db:rechte` | Tabellenrechte gegen Policies prüfen; zusätzlich, dass keine Funktion eine Struktur nennt, die es nicht gibt |
 | `npm run db:verwendung` | welche Tabellen und RPCs der Anwendungscode anspricht |
 | `npm run check:schema-bezug` | dieselbe Auswertung als Prüfung gegen `types/supabase.ts` (läuft in der CI) |
@@ -139,6 +139,7 @@ Der Zustand nach Phase 1.4 steht in Abschnitt 9; dort ist auch nachgewiesen, das
 | `20260817120200_creator_sessions_entfernen.sql` | letzte Alt-Tabelle entfernt, dazu 3 Funktionen, 1 Auslöser mit `set_updated_at()` und die letzten 2 Enums |
 | `20260817120300_generisches_profil.sql` | `creator_profiles` → `profiles`, neun Creator-Spalten entfernt, doppelter Auslöser aufgelöst, Namen nachgezogen |
 | `20260818010000_reise_erzeugungsregeln.sql` | `trips.client_ref` auf `NOT NULL`; Auslöser `trips_erzeugung_pruefen` für Zeitstempel, Anfangsstatus und Missbrauchsschranke; `reise_anlegen()` ohne eigene Zählung (Nachtrag Phase 1.5, ADR-0045) |
+| `20260818020000_reise_wiederholung.sql` | Die Schranke zählt Neuanlagen: Ist `(user_id, client_ref)` belegt, gilt sie nicht – der Retry bleibt auch an der Grenze idempotent (Nachtrag Phase 1.5, ADR-0048) |
 
 Die Reihenfolge ist nicht beliebig: `20260817100200` darf erst laufen, wenn `20260817100000` die Rollen der Betroffenen übernommen und `20260817100100` alle Policies auf `creator_profiles.role` umgestellt hat. Sonst verlöre jemand seinen Zugang oder eine Policy liefe ins Leere.
 
@@ -284,7 +285,7 @@ Für die Kindtabellen musste das Skript in Phase 1.5 genauer werden. Es säte ei
 
 **Eine Grenze der Matrix ist zu kennen, damit sie nicht überlesen wird.** Die Probe `insert_eigen` schreibt die Kennung der Eigentümerin auf den jeweiligen Akteur um. Auf den Kindtabellen zeigt der Verweis auf die Reise danach ins Leere – die Reise gehört ja der Eigentümerin –, und die Probe endet mit `23502 not-null violation` statt mit einer Ablehnung durch die Policy. Die Aussage „ein fremdes Konto schreibt hier nichts" bleibt richtig, ihre Ursache ist aber die fehlende Reise und nicht die Policy. Der positive und der negative Schreibfall der Reisetabellen stehen deshalb nicht in der Matrix, sondern in den benannten Nachweisen unten, mit eigens angelegten Reisen je Konto.
 
-`npm run db:sicherheit` prüft dieselbe Datenbank gegen 135 benannte Erwartungen. Der Unterschied ist wichtig: Die Matrix zeigt, was gilt; die Nachweise sagen, was gelten **soll**, und schlagen fehl, wenn es sich ändert.
+`npm run db:sicherheit` prüft dieselbe Datenbank gegen 140 benannte Erwartungen. Der Unterschied ist wichtig: Die Matrix zeigt, was gilt; die Nachweise sagen, was gelten **soll**, und schlagen fehl, wenn es sich ändert.
 
 Neun Nachweise bezogen sich auf Tabellen oder Funktionen, die Phase 1.4b entfernt hat. Sie sind nicht gestrichen, sondern durch gleichwertige an verbleibenden Strukturen ersetzt – ein Nachweis, der wegfällt, nimmt seine Aussage mit. Der Ersatz ist teils strenger als das Original: Statt zu prüfen, dass `anon` eine benannte `SECURITY DEFINER`-Funktion nicht ausführen darf, prüft er das für **jede** solche Funktion in `public` und deckt damit auch Funktionen ab, die noch niemand geschrieben hat. Die Gegenüberstellung steht in [docs/LEGACY_ENTFERNUNG.md](LEGACY_ENTFERNUNG.md) Abschnitt 11.
 
@@ -336,7 +337,7 @@ Die Unterscheidung zwischen „abgelehnt" (`42501`, das Recht fehlt) und „0 Ze
 
 ### Nachweise zu den Reisedaten
 
-Siebenundvierzig der 135 Nachweise betreffen Reisen. Sie sind der Grund, warum das Modell nicht nur beschrieben, sondern belegt ist:
+Zweiundfünfzig der 140 Nachweise betreffen Reisen. Sie sind der Grund, warum das Modell nicht nur beschrieben, sondern belegt ist:
 
 | Nachweis | Erwartung |
 | --- | --- |
@@ -364,6 +365,9 @@ Siebenundvierzig der 135 Nachweise betreffen Reisen. Sie sind der Grund, warum d
 | direkter `INSERT` mit rückdatiertem `created_at` | Zeitstempel von der Datenbank gesetzt |
 | direkter `INSERT` als 61. Reise der Stunde, auch rückdatiert | abgelehnt, 53400 |
 | 61 Reisen in **einer** Anweisung | abgelehnt, 53400 – der Auslöser zählt je Zeile |
+| `reise_anlegen()` an der Schranke mit **belegter** Kennung | dieselbe Reise, keine zweite Zeile, weiterhin 60 Reisen im Konto |
+| `reise_anlegen()` an der Schranke mit **neuer** Kennung | abgelehnt, 53400 – die Ausnahme gilt der Wiederholung, nicht dem Konto |
+| direkter `INSERT` einer belegten Kennung an der Schranke | abgelehnt, 23505 – der eindeutige Index, nicht die Schranke |
 | Inhaber, Administration und Moderation lesen eine fremde Reise | 0 Zeilen |
 | Administration ändert oder löscht eine fremde Reise | 0 Zeilen |
 | keine Policy der vier Reisetabellen nennt eine `darf_…()`-Funktion | erfüllt |
@@ -430,15 +434,22 @@ Seit `20260818010000_reise_erzeugungsregeln.sql` liegen sie in der Tabelle:
 | Die Kennung ist je Konto eindeutig | `unique (user_id, client_ref)` – wirkt erst mit `NOT NULL` auf jede Zeile, weil NULL in PostgreSQL nicht mit NULL kollidiert | `23505` |
 | Eine neue Reise ist ein Entwurf | Auslöser `trips_erzeugung_pruefen` | `22023` |
 | `created_at` und `updated_at` gehören der Datenbank | derselbe Auslöser setzt beide auf `now()` | – (wird überschrieben) |
-| Höchstens 60 neue Reisen je Konto und Stunde | derselbe Auslöser, Zählung über `trips_user_id_updated_at_idx` | `53400` |
+| Höchstens 60 neue **Neuanlagen** je Konto und Stunde | derselbe Auslöser, Zählung über `trips_user_id_updated_at_idx`; übersprungen, wenn `(user_id, client_ref)` schon belegt ist | `53400` |
 
 Zur Wahl standen zwei Wege: `INSERT` entziehen und `reise_anlegen()` auf `SECURITY DEFINER` umstellen, oder die Regeln in der Tabelle verankern. Entschieden ist der zweite – nach dem ersten trüge ein Funktionsrumpf die Verantwortung für das Eigentum an vier Tabellen, weil `SECURITY DEFINER` an RLS vorbeiläuft. Begründung und Alternativen in [DECISIONS.md](../DECISIONS.md) ADR-0045.
 
-Drei Eigenschaften des Auslösers sind zu kennen:
+Vier Eigenschaften des Auslösers sind zu kennen:
 
 - Er ist `SECURITY DEFINER`, damit die Zählung nicht durch die Lesepolicy läuft. Eine Schranke, die von einer Lesepolicy abhängt, wäre nur so lange richtig, wie diese jede eigene Reise zeigt.
 - Aufrufbar ist er trotzdem für niemanden: `revoke all on function public.reise_erzeugung_pruefen() from public, anon, authenticated`. Ein Auslöser braucht kein Ausführungsrecht des Aufrufers – deshalb erscheint er auch nicht unter `authenticated_security_definer_function_executable` in den Advisors.
 - Er zählt je Zeile und sieht dabei die Zeilen, die dieselbe Anweisung vorher eingefügt hat. Ein `insert … select … generate_series(1, 61)` scheitert deshalb an derselben Schranke wie 61 einzelne Anweisungen.
+- **Er läuft vor dem eindeutigen Index.** Die Reihenfolge einer Einfügung ist: Auslöser, dann `trips_client_ref_eindeutig`, dann `on conflict`. Genau daran ist die Idempotenz zunächst gescheitert – siehe unten.
+
+**Die Schranke zählt Neuanlagen, nicht Schreibversuche (ADR-0048).** Weil der Auslöser vor dem eindeutigen Index läuft, warf er bis `20260818020000` auch dann mit `53400`, wenn `on conflict do nothing` gar keine Reise angelegt hätte. Ein Konto mit 60 Reisen in der letzten Stunde konnte damit einen bereits erfolgreichen Aufruf nicht wiederholen – Retry nach einem Netzfehler, ein Reload, eine zweite Anmeldung –, obwohl die Reise längst in seinem Konto lag. Da `lib/trips/uebernahme.ts` den Entwurf im Browser erst nach der Kennung aus dem Konto löscht, blieb er liegen und jeder weitere Versuch scheiterte gleich, bis eine Stunde vergangen war.
+
+Der Auslöser fragt jetzt zuerst, ob überhaupt eine Reise entsteht. Ist `(user_id, client_ref)` belegt, gilt die Schranke nicht; der Schreibvorgang ist damit nicht erlaubt, sondern läuft weiter in den eindeutigen Index und endet dort – in `reise_anlegen()` im `on conflict do nothing`, auf dem direkten Weg in `23505` statt bisher `53400`. Ein Weg an der Schranke vorbei entsteht dadurch nicht: Er setzt eine belegte Kennung voraus, und genau die lässt keine zweite Zeile werden.
+
+`status = 'draft'` wird weiterhin vor dieser Frage geprüft: `booked` beim Anlegen zu behaupten ist auf jedem Weg falsch, auch wenn die Zeile danach ohnehin am eindeutigen Index scheitern würde.
 
 Zwei Grenzen bleiben, benannt statt verschwiegen: `status = 'draft'` gilt beim Anlegen, nicht bei jeder Änderung – ein Konto kann seine eigene Reise anschliessend auf `booked` setzen, und ein Statusmodell mit erlaubten Übergängen entsteht mit der Buchung in Phase 3. Und die Zahl der Etappen, Tage und Planpunkte **je Reise** prüft weiterhin nur `reise_anlegen()`; der direkte Weg in die Kindtabellen ist unbegrenzt. Der Punkt steht im Backlog der [ROADMAP.md](../ROADMAP.md).
 

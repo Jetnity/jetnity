@@ -67,6 +67,8 @@ Phase 1.4 hat gezeigt, dass die Anwendung ohne ihn auskommt. Wo bisher erhöhte 
 
 Sie ist deshalb aber auch nicht der einzige Weg, auf dem eine Reise entstehen kann: `authenticated` hat `INSERT` auf `public.trips`, und PostgREST macht dieses Recht erreichbar. Die Regeln des Anlegens – Kennung, Anfangsstatus, Zeitstempel und die Schranke von 60 neuen Reisen je Stunde – liegen darum nicht in der Funktion, sondern in einer Bedingung und im Auslöser `trips_erzeugung_pruefen` der Tabelle. Er ist `SECURITY DEFINER`, damit seine Zählung nicht von einer Lesepolicy abhängt, und für niemanden aufrufbar ([DECISIONS.md](DECISIONS.md) ADR-0045).
 
+Die Schranke zählt Neuanlagen und keine Schreibversuche: Ist `(user_id, client_ref)` schon belegt, entsteht keine Reise, die Schranke gilt nicht, und der Schreibvorgang endet am eindeutigen Index – in `reise_anlegen()` im `on conflict do nothing`, auf dem direkten Weg in `23505`. Ohne diese Frage wäre ein Retry an der Grenze abgelehnt worden, obwohl die Reise bereits im Konto liegt; ein `BEFORE INSERT`-Auslöser läuft vor dem eindeutigen Index (ADR-0048).
+
 Auch die Migrationen brauchen keinen Service-Key: `npm run db:anwenden` geht über die Management API. Eine Development-Service-Role ist damit an keiner Stelle angelegt worden.
 
 ---
@@ -174,7 +176,7 @@ Bewusste Datenschutzregel, unverändert: Weder im Browserspeicher noch in den Re
 
 Vollständige Beschreibung: [docs/DATENBANK.md](docs/DATENBANK.md). Hier steht nur, wie sie in die Architektur eingebunden ist.
 
-**Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Sechzehn Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b und dem Reiseschema aus Phase 1.5 – **11 Tabellen, 31 Policies und 18 Funktionen**. Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
+**Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Siebzehn Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b und dem Reiseschema aus Phase 1.5 – **11 Tabellen, 31 Policies und 18 Funktionen**. Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
 
 Vier der elf Tabellen sind die Reisedaten: `trips`, `trip_stages`, `trip_days`, `trip_items`. Sie sind privat und tragen ihre Eigentümerkennung selbst; ein zusammengesetzter Fremdschlüssel `(trip_id, user_id) → trips (id, user_id)` verhindert, dass ein Kind an einer fremden Reise hängt. Enum-Typen führt das Schema keine mehr – jeder Wertebereich steht in einer Prüfbedingung ([DECISIONS.md](DECISIONS.md) ADR-0043).
 
@@ -194,7 +196,7 @@ Auf den vier Reisetabellen prüft **keine** Policy eine Fähigkeit: Adminrechte 
 
 Seit Phase 1.4b prüft `npm run db:rechte` eine vierte Regel: Keine Funktion nennt eine Struktur, die es nicht gibt. Tabellenbezüge im Rumpf einer Funktion stehen nicht in `pg_depend`, PostgreSQL verfolgt sie also nicht – 18 Funktionen hätten die Entfernung ihrer Tabellen unbemerkt überlebt und erst beim Aufruf gescheitert. Das ist dieselbe Fehlerklasse, die `npm run check:schema-bezug` für den Anwendungscode abdeckt, nun auch für die Datenbank selbst.
 
-`npm run db:sicherheit` führt 135 benannte Nachweise, positiv und negativ, gegen den Development-Branch. Sie belegen unter anderem, dass sich kein Konto selbst befördert, kein Konto ein fremdes Profil ändert, kein angemeldetes Konto Zahlungsdaten sieht, keine Rolle eine fremde Reise liest, dieselbe Gastreise zweimal übernommen genau eine Reise ergibt – und dass ein direkter `INSERT` in `public.trips` weder die Kennung weglassen noch `booked` behaupten noch die Missbrauchsschranke übergehen kann.
+`npm run db:sicherheit` führt 140 benannte Nachweise, positiv und negativ, gegen den Development-Branch. Sie belegen unter anderem, dass sich kein Konto selbst befördert, kein Konto ein fremdes Profil ändert, kein angemeldetes Konto Zahlungsdaten sieht, keine Rolle eine fremde Reise liest, dieselbe Gastreise zweimal übernommen genau eine Reise ergibt – und dass ein direkter `INSERT` in `public.trips` weder die Kennung weglassen noch `booked` behaupten noch die Missbrauchsschranke übergehen kann. Wo nicht die Ablehnung die Aussage ist, sondern woran sie scheitert, verlangt ein Nachweis zusätzlich den SQLSTATE: Eine Wiederholung darf am eindeutigen Index enden, nicht an der Schranke.
 
 **Die Reisedaten liegen seit Phase 1.5 in der Datenbank.** Phase 1.4b hatte die 29 Tabellen der alten Produktidee entfernt und damit ein Schema hinterlassen, das nur noch beschrieb, was verwendet wird – aber keine Reise speichern konnte. Die vier Reisetabellen füllen diese Lücke; `creator_sessions`, die letzte Alt-Tabelle, ist mit derselben Phase entfallen. Der Übergang ist in [docs/LEGACY_ENTFERNUNG.md](docs/LEGACY_ENTFERNUNG.md) belegt, das Ergebnis in [docs/DATENBANK.md](docs/DATENBANK.md) beschrieben, das Modell fachlich in [docs/REISEN.md](docs/REISEN.md).
 

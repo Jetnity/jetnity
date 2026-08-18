@@ -1034,7 +1034,9 @@ Der Auslöser ist `SECURITY DEFINER`, damit die Zählung nicht durch die Lesepol
 
 Dass die Zeitstempel überschrieben und nicht abgelehnt werden, ist die Ausnahme von „nichts stillschweigend ändern": `created_at` ist kein Feld der Oberfläche, sondern eine Feststellung der Datenbank. `setze_aktualisiert_am()` macht seit Phase 1.5 dasselbe beim Ändern.
 
-**Konsequenzen:** Sieben neue Nachweise in `scripts/db/sicherheit.mjs` prüfen den direkten Weg, jeder mit Gegenprobe: ohne Kennung, mit `booked`, als Entwurf (erlaubt), mit rückdatiertem Zeitstempel, an der Schranke, und mit 61 Zeilen in einer einzigen Anweisung. `npm run db:sicherheit` steht bei 135 Nachweisen.
+**Konsequenzen:** Sieben neue Nachweise in `scripts/db/sicherheit.mjs` prüfen den direkten Weg, jeder mit Gegenprobe: ohne Kennung, mit `booked`, als Entwurf (erlaubt), mit rückdatiertem Zeitstempel, an der Schranke, und mit 61 Zeilen in einer einzigen Anweisung.
+
+Ein Nebeneffekt der Verlegung ist der zweiten Überprüfung aufgefallen und in ADR-0048 behoben: Ein `BEFORE INSERT`-Auslöser läuft vor dem eindeutigen Index, und damit warf die Schranke an der Grenze auch dann, wenn `on conflict do nothing` gar keine Reise angelegt hätte.
 
 Zwei Grenzen bleiben und sind zu kennen. Erstens gilt `status = 'draft'` beim Anlegen, nicht bei jeder Änderung: Ein Konto kann seine eigene Reise anschliessend auf `booked` setzen. Ein Statusmodell mit erlaubten Übergängen gehört zu Phase 2, wenn eine Buchung entsteht – vorher wäre es eine Regel ohne Vorgang. Zweitens bleibt die Zahl der Kindzeilen je Reise ungebremst; siehe Alternative 4.
 
@@ -1100,6 +1102,38 @@ Dass „Abmelden" kein Link ist, ist keine Stilfrage: Next.js lädt Links voraus
 **Konsequenzen:** Was die Leiste zeigt, ist eine Anzeige und keine Berechtigung; über Zugriff entscheiden weiterhin Middleware, Server Components und RLS. Fehlt die Supabase-Konfiguration – etwa in einer Vorschau ohne Umgebung –, bleibt der Zustand `unbekannt`, statt die Seite mit einer Ausnahme abzureissen.
 
 Acht Fälle in `lib/auth/oeffentliche-navigation.test.ts` prüfen die Regel ohne Browser, darunter beide Richtungen nach einem Abmelden: keine Sitzung mehr ergibt „Anmelden“, eine weiter offene Sitzung lässt „Abmelden“ stehen. Der Punkt 1.7 der Roadmap ist damit erledigt und nicht verschoben.
+
+---
+
+## ADR-0048 – Die Missbrauchsschranke zählt Neuanlagen, nicht Schreibversuche
+
+**Datum:** 18. August 2026
+**Status:** umgesetzt auf dem Development-Branch
+
+**Entscheidung:** `20260818020000_reise_wiederholung.sql` ergänzt `public.reise_erzeugung_pruefen()` um eine Frage vor der Zählung: Liegt `(user_id, client_ref)` schon vor, entsteht keine Reise, und die Schranke gilt nicht. Der Schreibvorgang ist damit nicht erlaubt – er läuft weiter in `trips_client_ref_eindeutig` und endet dort, wo er hingehört: in `reise_anlegen()` im `on conflict do nothing`, auf dem direkten Weg in `23505`.
+
+Die Prüfung steht **nach** `status = 'draft'` und nach dem Setzen der Zeitstempel. `booked` beim Anlegen zu behaupten ist auf jedem Weg falsch, auch wenn die Zeile danach ohnehin am eindeutigen Index scheitern würde.
+
+**Kontext:** ADR-0045 hat die Erzeugungsregeln aus dem Rumpf von `reise_anlegen()` in einen `BEFORE INSERT`-Auslöser verlegt, damit sie auf jedem Schreibweg gelten. Übersehen wurde dabei die Reihenfolge, in der PostgreSQL eine Einfügung abarbeitet: erst der Auslöser, dann der eindeutige Index, dann `on conflict`. Der Auslöser warf also, bevor die Idempotenz greifen konnte.
+
+Hatte ein Konto 60 Reisen in der letzten Stunde und wiederholte danach einen bereits erfolgreichen Aufruf – Retry nach einem Netzfehler, ein Reload, eine zweite Anmeldung –, dann entstand dabei fachlich keine Reise, und die Schranke lehnte trotzdem mit `53400` ab. Der Entwurf im Browser blieb liegen, weil `lib/trips/uebernahme.ts` ihn erst nach der Kennung aus dem Konto löscht, und jeder weitere Versuch scheiterte gleich – bis eine Stunde vergangen war. Dieselbe Verwechslung traf den direkten Weg: Ein `INSERT` mit belegter Kennung meldete `53400` statt `23505`.
+
+Die Ursache war keine falsche Zahl, sondern eine falsche Frage. Der Auslöser fragte „wie viele Reisen hat dieses Konto in der letzten Stunde angelegt?" und schloss daraus auf „darf dieser Schreibvorgang durch?". Dazwischen fehlte: „entsteht hier überhaupt eine Reise?"
+
+**Alternativen:**
+
+1. *Die Schranke in einen `AFTER INSERT`-Auslöser verlegen.* Dann läuft sie nach dem eindeutigen Index, und eine per `on conflict` verworfene Zeile erreicht sie nie. Verlockend, aber die Zeitstempel und `status = 'draft'` müssen `BEFORE` bleiben – die Regeln lägen danach in zwei Auslösern mit zwei Zeitpunkten. Ausserdem prüft `AFTER` erst, wenn die Zeile steht: Die Ablehnung wäre eine Rücknahme statt einer Abwehr.
+2. *Die Schranke zurück in `reise_anlegen()` holen, hinter das `on conflict`.* Damit wäre genau der Befund von ADR-0045 wieder offen – der direkte `INSERT` übergeht sie.
+3. *`reise_anlegen()` vor dem `INSERT` selbst nachsehen und bei bestehender Kennung sofort zurückgeben.* Behebt den Fall für die Anwendung und lässt den direkten Weg weiter `53400` für einen belegten Schlüssel melden. Zwei Stellen mit derselben Frage; die im Auslöser ist die vollständige.
+4. *Die Zählung auf Zeilen einschränken, die keine Wiederholung sind.* Missverstandene Ursache: Die Zählung ist richtig – sie zählt vorhandene Zeilen. Falsch war, sie überhaupt zu befragen.
+
+**Begründung:** Eine Schranke gegen Missbrauch soll begrenzen, was entsteht. Ein Schreibvorgang, aus dem keine Zeile hervorgeht, kostet nichts und darf nichts kosten. Die Existenzprüfung stellt genau das fest, und sie stellt es an derselben Stelle fest, an der auch die Regeln stehen – nicht in einer zweiten Schicht mit eigener Reihenfolge.
+
+Der Weg an der Schranke vorbei ist kein Loch: Er setzt eine bestehende Kennung voraus, und genau die lässt `trips_client_ref_eindeutig` keine zweite Zeile werden. Eine tatsächlich neue Kennung kommt an der Existenzprüfung nicht vorbei. Die Abfrage läuft über denselben Index, an dem der Schreibvorgang unmittelbar danach hängt, und ist `SECURITY DEFINER` aus demselben Grund wie die Zählung: Eine Prüfung, die durch die Lesepolicy läuft, wäre nur so lange richtig, wie diese jede eigene Reise zeigt.
+
+**Konsequenzen:** Fünf neue Nachweise in `scripts/db/sicherheit.mjs`, alle gegen das Konto, das die Schranke im Aufbau erreicht: Die Wiederholung liefert dieselbe Reise, sie legt keine zweite an, sie verbraucht kein Guthaben (nach ihr stehen weiterhin 60 Reisen), eine neue Kennung scheitert weiter mit `53400`, und der direkte `INSERT` einer belegten Kennung nennt `23505`. `npm run db:sicherheit` steht bei 140 Nachweisen.
+
+Die Nachweise können jetzt einen SQLSTATE verlangen. Ohne diese Erweiterung wäre der Kern nicht prüfbar: Vor der Behebung wurde der direkte `INSERT` einer belegten Kennung ebenfalls „abgelehnt" – nur mit dem falschen Code. Wo nicht die Ablehnung die Aussage ist, sondern woran sie scheitert, steht am Fall ein `code`.
 
 ---
 

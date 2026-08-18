@@ -73,7 +73,9 @@ Dieselben Zahlen in `GRENZEN` (`lib/trips/schema.ts`), in den CHECK-Bedingungen 
 | Betrag | `numeric(12, 2)` |
 | neue Reisen je Konto und Stunde | 60 |
 
-Die letzte Zeile ist kein Modellwert, sondern ein Missbrauchsriegel in `public.reise_anlegen()`: Eine Reise anzulegen ist der einzige Vorgang, den ein angemeldetes Konto beliebig oft auslösen kann, und jeder Aufruf schreibt bis zu 1417 Zeilen.
+Die letzte Zeile ist kein Modellwert, sondern ein Missbrauchsriegel: Eine Reise anzulegen ist der einzige Vorgang, den ein angemeldetes Konto beliebig oft auslösen kann, und jeder Aufruf schreibt bis zu 1417 Zeilen. Er sitzt im Auslöser `trips_erzeugung_pruefen` der Tabelle und nicht in `public.reise_anlegen()`, weil `authenticated` auch direkt in `public.trips` schreiben darf (ADR-0045).
+
+Gezählt werden Neuanlagen, nicht Aufrufe: Ist `(user_id, client_ref)` schon belegt, entsteht keine Reise, und der Riegel gilt nicht. Sonst wäre eine Wiederholung an der Grenze abgewiesen worden, obwohl die Reise bereits im Konto liegt (ADR-0048).
 
 ---
 
@@ -112,7 +114,7 @@ Vier Eigenschaften sind wesentlich:
 
 **Die Zugehörigkeit kommt aus `auth.uid()`.** Eine mitgeschickte `user_id` liest die Funktion nicht; `status` liest sie ebenfalls nicht, eine neue Reise ist ein Entwurf. Beides sind Angaben, die ein Client machen könnte, und genau deshalb macht er sie nicht. `lib/trips/uebernahme.test.ts` prüft, dass eine untergeschobene `user_id` den Browser nicht verlässt, und `npm run db:sicherheit`, dass die Datenbank sie auch dann nicht übernähme.
 
-**Idempotenz über `unique (user_id, client_ref)`.** `client_ref` ist die Kennung, unter der der Client die Reise angelegt hat – im Browser die Kennung des Entwurfs, im Formular eine je Anlauf erzeugte. Ein zweiter Aufruf mit derselben Kennung legt nichts an und liefert die bestehende Kennung zurück (`on conflict do nothing`, danach ein `select`). Reload, Doppelklick, abgebrochene Antwort, zweiter Login und zwei offene Tabs führen zum selben Ergebnis.
+**Idempotenz über `unique (user_id, client_ref)`.** `client_ref` ist die Kennung, unter der der Client die Reise angelegt hat – im Browser die Kennung des Entwurfs, im Formular eine je Anlauf erzeugte. Ein zweiter Aufruf mit derselben Kennung legt nichts an und liefert die bestehende Kennung zurück (`on conflict do nothing`, danach ein `select`). Reload, Doppelklick, abgebrochene Antwort, zweiter Login und zwei offene Tabs führen zum selben Ergebnis – auch an der Schranke von 60 neuen Reisen je Stunde, weil diese Neuanlagen zählt und eine Wiederholung keine ist (ADR-0048).
 
 **Fehlermeldungen für Reisende.** Die Funktion wirft `P0001` und `22023` mit Sätzen wie „Eine Reise trägt höchstens 366 Tage." `lib/trips/aktionen.ts` gibt genau diese weiter und übersetzt alles andere in einen allgemeinen Satz – ein SQLSTATE ist keine Auskunft.
 
