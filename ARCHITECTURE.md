@@ -295,6 +295,7 @@ Aktuell nur Konsolen-Logging, kein zentrales Error-Tracking und keine strukturie
 | Datenbanknahe Prüfungen laufen nicht in der CI | 5 Prüfungen von Hand | braucht einen kurzlebigen Branch je Lauf, sonst kollidieren die Testkonten |
 | ~~Tests ohne Reisedaten~~ | ~~41 Tests, davon keiner zur Persistenz~~ | in Phase 1.5: 119 Tests in `lib/trips/` ohne Datenbank, dazu 40 Nachweise gegen den Branch |
 | Reise bearbeiten ist noch schmal | Anlegen, Planpunkt hinzufügen und entfernen, Reise löschen | Umbenennen, Umsortieren und Verschieben von Tagen entstehen mit dem Trip Builder in Phase 2 |
+| `PublicNavbar` kennt die Sitzung nicht | zeigt immer „Anmelden", kein Abmelden im öffentlichen Bereich | Altbestand aus Phase 1.1b, mit persistenten Reisen erstmals spürbar. Die Leiste sitzt im Layout aller öffentlichen Seiten; sie sitzungsabhängig zu machen zieht dynamisches Rendering oder eine clientseitige Sitzungsabfrage nach sich. Eigener Schritt 1.7 in [ROADMAP.md](ROADMAP.md) |
 | Einsicht in eine fremde Reise für den Support | bewusst nicht vorhanden | braucht eine eigene Entscheidung samt Protokollierung, nicht eine Policy (ADR-0041) |
 | `any`-Verwendung | ca. 309 Vorkommen in `app/`, `lib/`, `components/`, `types/` | überwiegend in Alt-Code; nur V2-relevante Stellen werden bereinigt |
 | ~~Middleware schützt nur einen Pfad~~ | ~~1 von vielen geschützten Bereichen~~ | in Phase 1.3 auf `/admin`, `/api/admin` und `/account` erweitert |

@@ -406,7 +406,8 @@ Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst wo
 - [x] `/planen`, `/reisen` und `/reisen/[tripId]` auf das neue Modell gebracht – Gast im Browser, Konto in Supabase, ohne Beispieldaten und mit getrennten Lade-, Leer- und Fehlerzuständen
 - [x] Indizes an den realen Zugriffspfaden, Advisors danach erneut gefahren
 - [x] Reproduzierbarkeit über alle 15 Migrationen ohne Unterschied, Typen neu erzeugt, kein Type-Drift
-- [x] Browser-Flow verifiziert: Gast plant → Registrierung → Reise liegt im Konto; danach Login in einem zweiten Fenster ohne zweite Reise
+- [x] Browser-Flow gegen den laufenden Branch verifiziert: Gast plant im Browser, meldet sich an, dieselbe Reise liegt danach im Konto – ein Reload erzeugt keine zweite. Öffnen, Planpunkt hinzufügen und Reise löschen im Konto ebenfalls durchgespielt, danach der Bestand in der Datenbank nachgezählt
+- [ ] Registrierung über die Oberfläche **nicht** von Hand durchgespielt: Der Branch verlangt die E-Mail-Bestätigung, und es gibt kein Postfach dafür ([docs/AUTH.md](docs/AUTH.md) Abschnitt 8). Die Brücke ist für Anmeldung und Registrierung dieselbe Stelle und liegt auf `/reisen`; der Signup-Fall ist in `lib/trips/uebernahme.test.ts` abgedeckt
 
 **Das Datenmodell ist aus den Anforderungen abgeleitet, nicht aus dem Speicherformat.** Eine Reise lag bis hierher als Titel, Ziel und Liste freier Einträge im `localStorage`. Vier Tabellen tragen jetzt, was der Produktkern braucht: mehrere Ziele als Etappen in Reihenfolge, Reisetage mit verbindlicher Ordnung und optionalem Datum, Planpunkte in fünf Arten mit Zeitfenster, Preis und drei Spalten für spätere Anbieter. Optional ist dabei Absicht: Eine Reiseidee entsteht ohne festen Zeitraum, und Phase 2 soll sie in diesem Zustand speichern können. Begründung je Festlegung in ADR-0043.
 
@@ -428,6 +429,8 @@ Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst wo
 | `npm test` | 309 Tests in 69 Gruppen, davon 119 in `lib/trips/`: Zod-Schemas, Mapper, Tagesaufteilung, Gastspeicher und Übernahme |
 | Typecheck, Lint, Hygiene, Production-Build | grün |
 
+**Eine Lücke ist bei der Prüfung im Browser aufgefallen und bewusst nicht in dieser Phase behoben.** `components/layout/PublicNavbar.tsx` kennt die Sitzung nicht: Die Leiste zeigt immer „Anmelden" und bietet im öffentlichen Bereich kein Abmelden – der Weg existiert nur im Administrationsbereich. Das ist Altbestand aus Phase 1.1b und war ohne gespeicherte Reisen folgenlos; mit persistenten Reisen wird es sichtbar, weil auf einem gemeinsam genutzten Gerät niemand die Sitzung beenden kann. Die Leiste sitzt im Layout aller öffentlichen Seiten, und sie sitzungsabhängig zu machen zieht entweder die ganze Gruppe in dynamisches Rendering oder eine clientseitige Sitzungsabfrage nach sich. Beides ist eine eigene Änderung mit eigener Prüfung und gehört nicht in eine Phase, die das Datenmodell baut ([AGENTS.md](AGENTS.md) Regel 26). Aufgenommen als nächster Schritt vor Phase 2.
+
 **Vier Dinge sind bei der Umsetzung aufgefallen und mit behoben.** Die Prüfbedingung auf `interests` liess denselben Wert doppelt zu – ein CHECK mit `unnest` braucht eine `immutable` Funktion, weil eine Unterabfrage dort nicht erlaubt ist (SQLSTATE `0A000`). Ein Preis war ohne Währung eintragbar; beides ist jetzt aneinander gebunden. Die Zuordnung eines Planpunkts zu seinem Tag lief zunächst über die lokale Kennung des Browsers, die in der Datenbank keine Bedeutung hat – sie läuft jetzt über `day_index`. Und `npm run db:rls` konnte Kindtabellen mit zusammengesetztem Fremdschlüssel nicht säen: Die Saat wählte eine beliebige Reise, häufig die eines anderen Testkontos, und scheiterte an `trip_days_reise_fk`. Das Skript löst Fremdschlüssel jetzt über die Primärschlüsselspalten der Zieltabelle auf und wählt bei Tabellen mit `user_id` deterministisch die Zeile des eigenen Kontos.
 
 ### 1.6 Erste Tests
@@ -440,6 +443,14 @@ Priorität nach [AGENTS.md](AGENTS.md) Regel 24: Auth, Rollen, RLS, Trip-Persist
 - [x] RLS-Nachweise gegen den Development-Branch (128 nach Phase 1.5), dazu die Rechteprüfung und der Reproduzierbarkeitsbeweis
 - [x] Tests für Trip-Erstellung und -Persistenz – 119 in `lib/trips/` ohne Datenbank (Schemas, Mapper, Tage, Gastspeicher, Übernahme mit Retry, Doppelrequest und Manipulationsversuch), dazu 40 Nachweise gegen den Branch für RLS, Idempotenz und die Grenzen von `reise_anlegen()`
 - [ ] datenbanknahe Prüfungen in die CI holen – braucht einen kurzlebigen Branch je Lauf, sonst legen nebenläufige Läufe dieselben Testkonten an
+
+### 1.7 Sitzung im öffentlichen Bereich sichtbar · offen, klein, vor Phase 2
+
+Aufgefallen bei der Prüfung der Phase 1.5 im Browser, nicht durch sie verursacht.
+
+- [ ] `PublicNavbar` kennt die Sitzung: „Anmelden" nur für Gäste, sonst der Zugang zum Konto samt „Abmelden" über `signOutAction()`
+- [ ] Entscheidung dokumentieren, wie die Leiste die Sitzung erfährt – serverseitig im Layout (macht alle öffentlichen Seiten dynamisch) oder clientseitig im Browser (Layout bleibt statisch, kurzes Nachziehen)
+- [ ] Prüfung: angemeldet abmelden, danach zeigt `/reisen` wieder den Gastzustand
 
 ---
 
