@@ -9,6 +9,7 @@ import assert from 'node:assert/strict'
 import {
   HAUPTNAVIGATION,
   sitzungseintraege,
+  standAusSitzung,
   type Navigationseintrag,
 } from '@/lib/auth/oeffentliche-navigation'
 
@@ -56,6 +57,26 @@ describe('Solange die Sitzung unbekannt ist', () => {
     // Das Layout wird statisch ausgeliefert; die Sitzung liest der Browser
     // nach. In diesem Moment ist jede der beiden Aussagen möglicherweise falsch.
     assert.deepEqual(sitzungseintraege('unbekannt'), [])
+  })
+})
+
+describe('Nach einem Abmelden', () => {
+  test('zeigt die Leiste wieder Anmelden, wenn keine Sitzung mehr vorliegt', () => {
+    // `signOutAction()` löscht die Cookies und leitet weiter. Die Leiste liegt im
+    // Layout und wird dabei nicht neu aufgebaut – ohne erneutes Lesen stünde dort
+    // weiter „Abmelden“.
+    const stand = standAusSitzung(false)
+    assert.equal(stand, 'gast')
+    assert.deepEqual(beschriftungen(sitzungseintraege(stand)), ['Anmelden'])
+  })
+
+  test('bleibt Abmelden stehen, wenn die Sitzung noch offen ist', () => {
+    // Der gefährliche Fall und der Grund, weshalb der Stand aus der Sitzung
+    // gelesen und nicht aus dem Klick geschlossen wird: Ein „Anmelden“ nach einem
+    // gescheiterten Abmelden sagt, die Sitzung sei beendet, während sie offen ist.
+    const stand = standAusSitzung(true)
+    assert.equal(stand, 'konto')
+    assert.deepEqual(beschriftungen(sitzungseintraege(stand)), ['Abmelden'])
   })
 })
 

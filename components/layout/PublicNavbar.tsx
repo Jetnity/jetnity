@@ -21,16 +21,32 @@
 //
 // Sicherheit: Was die Leiste zeigt, ist eine Anzeige und keine Berechtigung.
 // Über Zugriff entscheiden weiterhin Middleware, Server Components und RLS.
+//
+// ---------------------------------------------------------------------------
+// Warum nach dem Abmelden erneut gelesen wird
+// ---------------------------------------------------------------------------
+//
+// `signOutAction()` löscht die Cookies auf dem Server und leitet weiter. Die
+// Leiste liegt im Layout und wird dabei nicht neu aufgebaut; `onAuthStateChange`
+// schweigt, weil der Browser-Client nicht selbst abgemeldet hat. Ohne
+// erneutes Lesen stünde nach dem Abmelden weiter „Abmelden“ da.
+//
+// Gelesen wird deshalb nach jedem Wechsel des Pfads und nach jedem
+// abgeschlossenen Vorgang. Nicht angenommen: `getSession()` schaut jedes Mal in
+// die Cookies, und nur was dort liegt, entscheidet – ein gescheitertes Abmelden
+// darf nicht als beendete Sitzung erscheinen (`standAusSitzung`).
 
 import * as React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useFormStatus } from 'react-dom'
 import { LogOut, Menu, X } from 'lucide-react'
 
 import { signOutAction } from '@/app/auth/sign-out'
 import {
   HAUPTNAVIGATION,
   sitzungseintraege,
+  standAusSitzung,
   type Navigationseintrag,
   type Sitzungsstand,
 } from '@/lib/auth/oeffentliche-navigation'
@@ -46,31 +62,50 @@ export default function PublicNavbar() {
     setMobileOpen(false)
   }, [pathname])
 
-  React.useEffect(() => {
-    let aktiv = true
-
-    // Ohne Supabase-Konfiguration – etwa in einer Vorschau ohne Umgebung –
-    // bleibt der Stand `unbekannt`. Die Leiste behauptet dann nichts, statt die
-    // Seite mit einer Ausnahme abzureissen.
-    let client: ReturnType<typeof createBrowserClient>
+  // Ohne Supabase-Konfiguration – etwa in einer Vorschau ohne Umgebung – bleibt
+  // der Stand `unbekannt`. Die Leiste behauptet dann nichts, statt die Seite mit
+  // einer Ausnahme abzureissen.
+  const clientHolen = () => {
     try {
-      client = createBrowserClient()
+      return createBrowserClient()
     } catch {
-      return
+      return null
     }
+  }
 
-    client.auth.getSession().then(({ data }) => {
-      if (aktiv) setSitzung(data.session ? 'konto' : 'gast')
-    })
+  const lebt = React.useRef(true)
+  React.useEffect(() => {
+    lebt.current = true
+    return () => {
+      lebt.current = false
+    }
+  }, [])
+
+  const sitzungLesen = React.useCallback(async () => {
+    const client = clientHolen()
+    if (!client) return
+
+    const { data } = await client.auth.getSession()
+    if (lebt.current) setSitzung(standAusSitzung(Boolean(data.session)))
+  }, [])
+
+  // Nach jedem Wechsel des Pfads: Eine Anmeldung leitet auf `/reisen`, ein
+  // Abmelden auf `/`. Beide erreichen die Leiste sonst nicht, weil das Layout
+  // bestehen bleibt.
+  React.useEffect(() => {
+    void sitzungLesen()
+  }, [pathname, sitzungLesen])
+
+  // Eine Anmeldung in einem anderen Tab erreicht die Leiste ohne Neuladen.
+  React.useEffect(() => {
+    const client = clientHolen()
+    if (!client) return
 
     const { data: beobachter } = client.auth.onAuthStateChange((_ereignis, aktuelleSitzung) => {
-      if (aktiv) setSitzung(aktuelleSitzung ? 'konto' : 'gast')
+      if (lebt.current) setSitzung(standAusSitzung(Boolean(aktuelleSitzung)))
     })
 
-    return () => {
-      aktiv = false
-      beobachter.subscription.unsubscribe()
-    }
+    return () => beobachter.subscription.unsubscribe()
   }, [])
 
   const isActive = (href: string) =>
@@ -121,7 +156,7 @@ export default function PublicNavbar() {
 
         <div className="hidden items-center gap-2 md:flex">
           {eintraege.map((eintrag) => (
-            <Sitzungseintrag key={eintrag.label} eintrag={eintrag} />
+            <Sitzungseintrag key={eintrag.label} eintrag={eintrag} onNachlesen={sitzungLesen} />
           ))}
           <Link
             href="/planen"
@@ -161,7 +196,13 @@ export default function PublicNavbar() {
           </div>
           <div className="mt-3 grid grid-cols-2 gap-2 border-t border-line-200 pt-4">
             {eintraege.map((eintrag) => (
-              <Sitzungseintrag key={eintrag.label} eintrag={eintrag} mobil onFertig={closeMobile} />
+              <Sitzungseintrag
+                key={eintrag.label}
+                eintrag={eintrag}
+                mobil
+                onFertig={closeMobile}
+                onNachlesen={sitzungLesen}
+              />
             ))}
             <Link
               href="/planen"
@@ -188,10 +229,12 @@ function Sitzungseintrag({
   eintrag,
   mobil = false,
   onFertig,
+  onNachlesen,
 }: {
   eintrag: Navigationseintrag
   mobil?: boolean
   onFertig?: () => void
+  onNachlesen: () => void
 }) {
   if (eintrag.art === 'link') {
     return mobil ? (
@@ -214,18 +257,62 @@ function Sitzungseintrag({
 
   return (
     <form action={signOutAction} className={mobil ? 'contents' : undefined}>
-      <button
-        type="submit"
-        onClick={onFertig}
-        className={
-          mobil
-            ? 'flex h-11 w-full items-center justify-center gap-2 rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800'
-            : 'inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0'
-        }
-      >
-        <LogOut className="h-4 w-4" aria-hidden="true" />
-        {eintrag.label}
-      </button>
+      <AbmeldenKnopf
+        label={eintrag.label}
+        mobil={mobil}
+        onFertig={onFertig}
+        onNachlesen={onNachlesen}
+      />
     </form>
+  )
+}
+
+/**
+ * Der Knopf im Formular – und die Stelle, die den Abschluss des Vorgangs merkt.
+ *
+ * `useFormStatus` gilt nur innerhalb des Formulars, deshalb ist das eine eigene
+ * Komponente. Sobald der Vorgang von „läuft“ auf „fertig“ wechselt, liest die
+ * Leiste die Sitzung erneut. Der Weg über den Server ist nötig, weil ein
+ * Abmelden im Browser die Cookies des Servers stehen liesse – die Leiste erfährt
+ * davon aber nur, wenn sie danach selbst nachsieht.
+ */
+function AbmeldenKnopf({
+  label,
+  mobil,
+  onFertig,
+  onNachlesen,
+}: {
+  label: string
+  mobil: boolean
+  onFertig?: () => void
+  onNachlesen: () => void
+}) {
+  const { pending } = useFormStatus()
+  const lief = React.useRef(false)
+
+  React.useEffect(() => {
+    if (pending) {
+      lief.current = true
+      return
+    }
+    if (lief.current) {
+      lief.current = false
+      onNachlesen()
+    }
+  }, [pending, onNachlesen])
+
+  return (
+    <button
+      type="submit"
+      onClick={onFertig}
+      className={
+        mobil
+          ? 'flex h-11 w-full items-center justify-center gap-2 rounded-full border border-line-200 bg-white px-3 text-center text-sm font-semibold text-brand-800'
+          : 'inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-ink-900 transition hover:bg-white pointer-fine:min-h-0'
+      }
+    >
+      <LogOut className="h-4 w-4" aria-hidden="true" />
+      {label}
+    </button>
   )
 }

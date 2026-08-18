@@ -35,6 +35,19 @@ export type Sitzungsstand =
   /** Angemeldet. */
   | 'konto'
 
+/**
+ * Der Stand folgt der Sitzung, nicht dem Klick.
+ *
+ * Nach einem Abmelden muss die Leiste erneut lesen, was tatsächlich vorliegt,
+ * statt den Erfolg des Vorgangs anzunehmen. Beide Richtungen wären sonst falsch,
+ * und die eine ist gefährlich: Ein „Anmelden“ nach einem gescheiterten Abmelden
+ * sagt, die Sitzung sei beendet, während sie offen ist – genau die Auskunft, auf
+ * die sich jemand auf einem geteilten Gerät verlässt.
+ */
+export function standAusSitzung(sitzungVorhanden: boolean): Sitzungsstand {
+  return sitzungVorhanden ? 'konto' : 'gast'
+}
+
 export type Navigationseintrag =
   | { art: 'link'; label: string; href: string }
   /**
