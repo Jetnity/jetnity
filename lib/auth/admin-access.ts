@@ -134,7 +134,7 @@ export function decideAdminAccess(input: {
  *
  * Nur eine Rolle tut das. `ADMIN_ALLOWED_EMAILS` steht in der Umgebung der
  * Anwendung; die Policies kennen die Liste nicht und sollen sie nicht kennen –
- * sonst stünde neben `creator_profiles.role` wieder eine zweite Autorität, wie
+ * sonst stünde neben `profiles.role` wieder eine zweite Autorität, wie
  * sie Phase 1.4 mit `admin_domains` und `app_admins` gerade beseitigt hat
  * (ADR-0036).
  *

@@ -2,7 +2,10 @@
 
 // components/trips/GastreiseBruecke.tsx
 //
-// Die Brücke von „Entwurf im Browser" nach „Reise im Konto".
+// Die Anzeige zur Übernahme eines Gastentwurfs ins Konto.
+//
+// Der Vorgang selbst steht in `lib/trips/uebernahme.ts` – dort ist er ohne
+// Browser prüfbar. Diese Datei löst ihn aus und erzählt, was passiert ist.
 //
 // ---------------------------------------------------------------------------
 // Warum sie auf /reisen steht und nicht in den Anmeldeformularen
@@ -15,28 +18,13 @@
 // denen keine dieser vier Stellen beteiligt war: eine Sitzung, die in einem
 // anderen Tab entstanden ist, oder ein Versuch, der beim letzten Mal
 // gescheitert ist.
-//
-// ---------------------------------------------------------------------------
-// Warum ein zweiter Durchlauf nichts kaputt macht
-// ---------------------------------------------------------------------------
-//
-// `public.reise_anlegen()` ist über `unique (user_id, client_ref)` idempotent:
-// Dieselbe Gastreise ergibt pro Konto genau eine Reise. Ein Reload, ein
-// doppelter Request, ein zweiter Login und zwei offene Tabs führen deshalb zum
-// selben Ergebnis. Die Brücke darf laufen, sooft sie will.
-//
-// Der Browser räumt einen Entwurf erst weg, nachdem der Server die Kennung der
-// Reise gemeldet hat – je Entwurf einzeln. Alles auf einmal zu löschen wäre die
-// Annahme, es habe alles geklappt; und ein Entwurf, der nach einem Abbruch
-// gelöscht ist, ohne im Konto zu liegen, ist verlorene Arbeit.
 
 import * as React from 'react'
 import { useRouter } from 'next/navigation'
 import { AlertCircle, Check, Loader2, RefreshCw } from 'lucide-react'
 
 import { gastreiseUebernehmen } from '@/lib/trips/aktionen'
-import { alsNutzlast } from '@/lib/trips/abbildung'
-import { uebernommenStreichen, zurUebernahme } from '@/lib/trips/gastspeicher'
+import { gastreisenUebernehmen } from '@/lib/trips/uebernahme'
 
 type Stand =
   | { art: 'ruht' }
@@ -48,45 +36,25 @@ export default function GastreiseBruecke() {
   const router = useRouter()
   const [stand, setStand] = React.useState<Stand>({ art: 'ruht' })
 
-  // Verhindert einen zweiten gleichzeitigen Durchlauf. Nicht aus Sorge um die
-  // Datenbank – die Übernahme ist idempotent –, sondern weil zwei Durchläufe
-  // sich beim Aufräumen des Browserspeichers gegenseitig die Liste unter den
-  // Füssen wegziehen würden.
-  const laeuft = React.useRef(false)
-
   const uebernehmen = React.useCallback(async () => {
-    if (laeuft.current) return
-    const entwuerfe = zurUebernahme()
-    if (entwuerfe.length === 0) return
+    const bericht = await gastreisenUebernehmen(gastreiseUebernehmen, (anzahl) =>
+      setStand({ art: 'laeuft', anzahl }),
+    )
 
-    laeuft.current = true
-    setStand({ art: 'laeuft', anzahl: entwuerfe.length })
-
-    let uebernommen = 0
-
-    for (const entwurf of entwuerfe) {
-      const ergebnis = await gastreiseUebernehmen(alsNutzlast(entwurf))
-
-      if (!ergebnis.ok) {
-        laeuft.current = false
-        setStand({
-          art: 'fehler',
-          meldung: ergebnis.meldung,
-          offen: entwuerfe.length - uebernommen,
-        })
-        // Abbrechen und nicht weiterlaufen: Ist der Grund die Sitzung oder die
-        // Erreichbarkeit der Datenbank, scheitert jeder weitere Entwurf
-        // genauso. Der Browserspeicher bleibt, wie er ist.
-        if (uebernommen > 0) router.refresh()
-        return
-      }
-
-      uebernommen += 1
-      uebernommenStreichen(entwurf.clientRef ?? entwurf.id)
+    if (bericht.art === 'nichts' || bericht.art === 'laeuft') {
+      setStand({ art: 'ruht' })
+      return
     }
 
-    laeuft.current = false
-    setStand({ art: 'fertig', anzahl: uebernommen })
+    if (bericht.art === 'fehler') {
+      setStand({ art: 'fehler', meldung: bericht.meldung, offen: bericht.offen })
+      // Ein Teilerfolg ist sichtbar zu machen: Die Liste dahinter zeigt sonst
+      // eine Reise nicht, die längst im Konto liegt.
+      if (bericht.uebernommen > 0) router.refresh()
+      return
+    }
+
+    setStand({ art: 'fertig', anzahl: bericht.uebernommen })
     router.refresh()
   }, [router])
 

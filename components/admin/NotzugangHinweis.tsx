@@ -22,7 +22,7 @@ export default function NotzugangHinweis() {
         Dieses Konto ist über die Notliste hereingekommen, nicht über eine Rolle. Die
         Datenbank kennt diese Liste nicht: Übersichten bleiben leer und jede Änderung wird
         abgelehnt. Damit der Bereich wirklich nutzbar wird, braucht das Konto in{' '}
-        <code className="font-mono">creator_profiles.role</code> mindestens{' '}
+        <code className="font-mono">profiles.role</code> mindestens{' '}
         <code className="font-mono">{ADMIN_AREA_MINIMUM}</code>.
       </p>
     </div>
