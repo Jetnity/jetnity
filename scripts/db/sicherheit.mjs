@@ -812,7 +812,7 @@ function reisenachweise() {
       name: 'Konto legt eine Reise ohne user_id an',
       rolle: 'authenticated',
       uid: ZWEITER,
-      sql: `insert into public.trips (title) values ('meine')`,
+      sql: `insert into public.trips (title, client_ref) values ('meine', 'ohne-uid')`,
       erwartung: 'erlaubt',
       grund:
         'Der positive Gegenfall: `default auth.uid()` setzt die Spalte. Genau so schreibt ' +
@@ -847,6 +847,94 @@ function reisenachweise() {
       grund:
         'Die Eindeutigkeit gilt je Konto. Sonst könnte ein fremder Browser eine Kennung ' +
         'belegen und die Übernahme eines anderen Kontos blockieren.',
+    },
+
+    // --- trips: die Erzeugungsregeln gelten auf jedem Weg ------------------
+    //
+    // `public.reise_anlegen()` ist der Weg, den die Anwendung nimmt – aber
+    // `authenticated` hat `INSERT` auf der Tabelle, und PostgREST macht dieses
+    // Recht öffentlich erreichbar. Die folgenden Fälle prüfen deshalb die
+    // Regeln dort, wo jeder Weg vorbeikommt: am Auslöser
+    // `trips_erzeugung_pruefen` und an der Bedingung auf `client_ref`
+    // (ADR-0045). Zu jeder Regel gehört der direkte Versuch, sie zu umgehen.
+    {
+      name: 'Konto legt direkt eine Reise ohne Kennung an',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trips (title) values ('ohne Kennung')`,
+      erwartung: 'abgelehnt',
+      grund:
+        'Ohne Kennung wäre trips_client_ref_eindeutig wirkungslos – NULL kollidiert in ' +
+        'PostgreSQL nicht mit NULL. Die Spalte ist seit ADR-0045 NOT NULL, damit die ' +
+        'Idempotenz nicht am Aufrufweg hängt.',
+    },
+    {
+      name: 'Konto legt direkt eine gebuchte Reise an',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trips (title, client_ref, status)
+            values ('direkt gebucht', 'direkt-1', 'booked')`,
+      erwartung: 'abgelehnt',
+      grund:
+        'reise_anlegen() setzt status hart auf draft. Ohne den Auslöser liesse sich derselbe ' +
+        'Status am direkten Weg einfach behaupten.',
+    },
+    {
+      name: 'Konto legt direkt eine Reise als Entwurf an',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trips (title, client_ref) values ('direkt', 'direkt-2')`,
+      erwartung: 'erlaubt',
+      grund:
+        'Der positive Gegenfall: Ein direkter INSERT bleibt möglich. Er ergibt dasselbe wie ' +
+        'ein Aufruf ohne Etappen – eine eigene Reise mit Kennung, als Entwurf.',
+    },
+    {
+      name: 'die Datenbank setzt created_at selbst',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trips (title, client_ref, created_at, updated_at)
+              values ('rückdatiert', 'direkt-3', '2020-01-01', '2020-01-01');
+            select id from public.trips
+              where client_ref = 'direkt-3'
+                and created_at >= now() - interval '1 minute'
+                and updated_at >= now() - interval '1 minute'`,
+      erwartung: 'erlaubt',
+      grund:
+        'Ein rückdatiertes created_at wäre der bequemste Weg an der Schranke vorbei: Zeilen ' +
+        'ausserhalb des Fensters zählen nicht mit. Der Auslöser setzt beide Zeitstempel.',
+    },
+    {
+      name: 'Konto umgeht die Schranke mit einem direkten INSERT',
+      rolle: 'authenticated',
+      uid: VIELREISEND,
+      sql: `insert into public.trips (title, client_ref) values ('direkt', 'direkt-4')`,
+      erwartung: 'abgelehnt',
+      grund:
+        'Der Kern des Befunds: Bis ADR-0045 stand die Schranke nur in reise_anlegen(). Über ' +
+        'PostgREST liess sie sich mit einem direkten INSERT vollständig übergehen.',
+    },
+    {
+      name: 'Konto umgeht die Schranke mit einem rückdatierten INSERT',
+      rolle: 'authenticated',
+      uid: VIELREISEND,
+      sql: `insert into public.trips (title, client_ref, created_at)
+            values ('alt', 'direkt-5', now() - interval '3 hours')`,
+      erwartung: 'abgelehnt',
+      grund:
+        'Die zweite Hälfte derselben Lücke: Eine Schranke über ein Zeitfenster ist nur so ' +
+        'gut wie der Zeitstempel, auf den sie sich stützt.',
+    },
+    {
+      name: 'Konto legt viele Reisen in einer Anweisung an',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trips (title, client_ref)
+            select 'Serie ' || g, 'serie-' || g from generate_series(1, 61) as g`,
+      erwartung: 'abgelehnt',
+      grund:
+        'Eine Anweisung ist kein Schlupfloch: Der Auslöser zählt je Zeile und sieht die ' +
+        'Zeilen, die dieselbe Anweisung vorher eingefügt hat.',
     },
 
     // --- trips: Adminrechte öffnen keine Reise -----------------------------
@@ -1151,7 +1239,8 @@ function reisenachweise() {
       erwartung: 'abgelehnt',
       grund:
         'Die Missbrauchsschranke: 60 Reisen je Stunde. Dieses Konto hat sie im Aufbau ' +
-        'erreicht. Ohne die Schranke wäre das Schreibrecht ein Weg, die Datenbank zu füllen.',
+        'erreicht. Sie steht seit ADR-0045 im Auslöser der Tabelle und gilt damit auch für ' +
+        'den direkten Weg – die Fälle oben prüfen ihn.',
     },
     {
       name: 'reise_anlegen läuft unterhalb der Schranke',
@@ -1215,10 +1304,11 @@ function aufbau() {
     // beim Zugriff des fremden Kontos nicht von „nichts vorhanden“ zu trennen.
     `insert into public.trips (id, user_id, client_ref, title)
        values ('${FREMDE_REISE}', '${ZWEITER}', 'gast-2', 'Norwegen');`,
-    // 60 Reisen innerhalb der letzten Stunde: genau die Schranke von
-    // public.reise_anlegen(). Ohne Kennung, damit sie einander nicht ausschliessen.
-    `insert into public.trips (user_id, title)
-       select '${VIELREISEND}', 'Serie ' || g from generate_series(1, 60) as g;`,
+    // 60 Reisen innerhalb der letzten Stunde: genau die Schranke aus
+    // public.reise_erzeugung_pruefen(). Der Auslöser zählt je Zeile und lässt
+    // die sechzigste noch durch – die einundsechzigste ist Sache der Fälle.
+    `insert into public.trips (user_id, client_ref, title)
+       select '${VIELREISEND}', 'aufbau-' || g, 'Serie ' || g from generate_series(1, 60) as g;`,
     `insert into public.payments (id, status, amount_chf, created_at) values ('pay_1', 'paid', 100, now());`,
     `insert into public.refunds (payment_id, amount_chf, created_at) values ('pay_1', 10, now());`,
     `insert into public.security_events (type, ip) values ('login_failed', '203.0.113.1');`,

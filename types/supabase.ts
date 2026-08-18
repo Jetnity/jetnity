@@ -403,7 +403,7 @@ export type Database = {
       trips: {
         Row: {
           budget_amount: number | null
-          client_ref: string | null
+          client_ref: string
           created_at: string
           currency: string
           end_date: string | null
@@ -422,7 +422,7 @@ export type Database = {
         }
         Insert: {
           budget_amount?: number | null
-          client_ref?: string | null
+          client_ref: string
           created_at?: string
           currency?: string
           end_date?: string | null
@@ -441,7 +441,7 @@ export type Database = {
         }
         Update: {
           budget_amount?: number | null
-          client_ref?: string | null
+          client_ref?: string
           created_at?: string
           currency?: string
           end_date?: string | null
