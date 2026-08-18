@@ -71,6 +71,54 @@ export type Database = {
         }
         Relationships: []
       }
+      model_usage: {
+        Row: {
+          abgeschlossen_am: string | null
+          art: string
+          ausgabe_tokens: number | null
+          created_at: string
+          eingabe_tokens: number | null
+          ergebnis: string
+          funktion: string
+          gecachte_tokens: number | null
+          id: string
+          kennung_hash: string
+          kosten_mikro_usd: number
+          laufzeit_ms: number | null
+          modell: string
+        }
+        Insert: {
+          abgeschlossen_am?: string | null
+          art: string
+          ausgabe_tokens?: number | null
+          created_at?: string
+          eingabe_tokens?: number | null
+          ergebnis?: string
+          funktion: string
+          gecachte_tokens?: number | null
+          id?: string
+          kennung_hash: string
+          kosten_mikro_usd: number
+          laufzeit_ms?: number | null
+          modell: string
+        }
+        Update: {
+          abgeschlossen_am?: string | null
+          art?: string
+          ausgabe_tokens?: number | null
+          created_at?: string
+          eingabe_tokens?: number | null
+          ergebnis?: string
+          funktion?: string
+          gecachte_tokens?: number | null
+          id?: string
+          kennung_hash?: string
+          kosten_mikro_usd?: number
+          laufzeit_ms?: number | null
+          modell?: string
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount_chf: number | null
@@ -505,6 +553,29 @@ export type Database = {
       darf_konten_verwalten: { Args: never; Returns: boolean }
       hat_rolle_mindestens: { Args: { minimum: string }; Returns: boolean }
       liste_ohne_doppelte: { Args: { _werte: string[] }; Returns: boolean }
+      modell_kontingent_beanspruchen: {
+        Args: { _funktion: string; _gastkennung?: string; _modell: string }
+        Returns: string
+      }
+      modell_nutzung_abschliessen: {
+        Args: {
+          _ausgabe_tokens?: number
+          _eingabe_tokens?: number
+          _ergebnis: string
+          _gecachte_tokens?: number
+          _id: string
+          _laufzeit_ms?: number
+        }
+        Returns: undefined
+      }
+      modell_preis: {
+        Args: { _modell: string }
+        Returns: {
+          ausgabe: number
+          eingabe: number
+          eingabe_gecacht: number
+        }[]
+      }
       reise_anlegen: { Args: { _reise: Json }; Returns: string }
       rollenrang: { Args: { rolle: string }; Returns: number }
     }

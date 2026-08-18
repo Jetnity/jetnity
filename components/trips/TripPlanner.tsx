@@ -171,7 +171,7 @@ export default function TripPlanner({
   }
 
   return (
-    <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+    <div className="grid w-full grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
       <form
         onSubmit={absenden}
         className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:p-8"
@@ -181,9 +181,9 @@ export default function TripPlanner({
             <Sparkles className="h-3.5 w-3.5" />
             {angemeldet ? 'Reise in deinem Konto' : 'Privater Reiseentwurf'}
           </span>
-          <h1 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-brand-900 sm:text-4xl">
-            Beginnen wir mit deiner Reise.
-          </h1>
+          <h2 className="mt-4 text-2xl font-semibold tracking-[-0.04em] text-brand-900 sm:text-3xl">
+            Deine Reise Schritt für Schritt.
+          </h2>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-900 sm:text-base">
             Ein paar Angaben genügen. Du kannst jeden Teil später gemeinsam mit deinen Mitreisenden verfeinern.
           </p>
@@ -421,7 +421,7 @@ export default function TripPlanner({
         <div className="mt-7 rounded-2xl border border-white/10 bg-white/[0.06] p-4">
           <p className="text-xs leading-5 text-white/70">
             {angemeldet
-              ? 'Für diesen Schritt wird kein kostenpflichtiger Dienst verwendet. Die intelligente Planung wird später transparent ergänzt.'
+              ? 'Dieses Formular funktioniert ohne die intelligente Planung. Beide Wege führen zur gleichen Reise.'
               : 'Ohne Konto lässt sich eine Reise planen. Für mehrere gespeicherte Reisen und den Zugriff von jedem Gerät genügt eine Registrierung.'}
           </p>
         </div>

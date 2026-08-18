@@ -1,0 +1,203 @@
+// lib/reisevorschlag/abbildung.ts
+//
+// Aus einem Vorschlag wird eine Reise des Phase-1.5-Modells.
+//
+// ---------------------------------------------------------------------------
+// Zwei Ziele, eine Rechnung
+// ---------------------------------------------------------------------------
+//
+// Ein Gast bekommt einen `Trip` für den `localStorage`, ein Konto eine
+// `ReiseNutzlast` für `public.reise_anlegen()`. Beides entsteht hier, aus
+// derselben Vorlage. Zwei Abbildungen wären zwei Gelegenheiten, dass eine
+// Gastreise nach dem Login andere Tage hat als vorher – genau der Fehler, den
+// `lib/trips/tage.ts` für das Formular schon verhindert.
+//
+// Es entsteht **keine** zweite Persistenz: Der Gastweg endet in
+// `gastreiseAusVorschlag()` im bestehenden Gastspeicher, der Kontoweg in
+// `public.reise_anlegen()`. Der Vorschlag ist eine Vorlage, kein Speicherort.
+//
+// ---------------------------------------------------------------------------
+// Was hier nicht durchkommt
+// ---------------------------------------------------------------------------
+//
+// `priceAmount`, `priceCurrency`, `provider`, `externalRef`, `bookingUrl`
+// bleiben `null`. Das ist keine Vorsichtsmassnahme, sondern die einzige
+// mögliche Zuweisung: Der Vorschlag hat diese Felder nicht (ADR-0054). Ein
+// Budget landet in `budgetAmount` der Reise – als Ziel, wie im Formular unter
+// /planen – und nirgends als Preis eines Planpunkts.
+//
+// `status` wird nicht gesetzt: Eine neue Reise ist ein Entwurf, und
+// `reise_erzeugung_pruefen` in der Datenbank lässt nichts anderes zu.
+//
+// ---------------------------------------------------------------------------
+// Daten rechnet Jetnity, nicht das Modell
+// ---------------------------------------------------------------------------
+//
+// Der Vorschlag trägt genau ein Datum: `startdatum`, und nur wenn der Text einen
+// Zeitraum nennt. Alles andere – Reiseende, Datum je Tag, An- und Abreisetag je
+// Etappe – folgt daraus mit `reisetageBauen()`. Hätte jeder Tag sein eigenes
+// Datum vom Modell, wäre ein doppeltes oder fehlendes darunter, und
+// `trip_days_datum_eindeutig` fiele erst bei der Übernahme auf.
+//
+// Frei von Next, Supabase, `window` und `crypto`: Die Kennungen kommen als
+// Funktion herein, damit dieselbe Rechnung im Browser und auf dem Server läuft.
+
+import type { Reisevorschlag } from '@/lib/reisevorschlag/schema'
+import type { ReiseNutzlast } from '@/lib/trips/schema'
+import { reisetageBauen } from '@/lib/trips/tage'
+import type { Trip, TripDay, TripItem, TripStage } from '@/types/trips'
+
+const EIN_TAG = 86_400_000
+
+/** Das Datum `versatz` Tage nach `start`, oder `null` ohne Start. */
+function datumNach(start: string | null, versatz: number): string | null {
+  if (!start) return null
+  const zeit = Date.parse(`${start}T00:00:00Z`)
+  if (Number.isNaN(zeit)) return null
+  return new Date(zeit + versatz * EIN_TAG).toISOString().slice(0, 10)
+}
+
+/** Der letzte Reisetag: Start plus Dauer minus eins. Beide Tage eingeschlossen. */
+export function reiseende(vorschlag: Reisevorschlag): string | null {
+  return datumNach(vorschlag.startdatum, vorschlag.tage.length - 1)
+}
+
+/**
+ * Die Tage der Reise – mit Datum, wenn der Vorschlag einen Start nennt.
+ *
+ * Mit Start läuft die Rechnung durch `reisetageBauen()`, also durch dieselbe
+ * Funktion wie das Formular. Ohne Start bleibt die Nummer, und `dayDate` ist
+ * `null`; das Reiseschema ist dafür gebaut.
+ */
+function tagesgeruest(vorschlag: Reisevorschlag): { dayIndex: number; dayDate: string | null }[] {
+  const ende = reiseende(vorschlag)
+
+  if (vorschlag.startdatum && ende) {
+    const gebaut = reisetageBauen(vorschlag.startdatum, ende)
+    if (gebaut.length === vorschlag.tage.length) return gebaut
+  }
+
+  return vorschlag.tage.map((_, stelle) => ({ dayIndex: stelle + 1, dayDate: null }))
+}
+
+/** Die Etappen der Reise. An- und Abreisedatum aus den Tagesnummern. */
+function etappen(vorschlag: Reisevorschlag): Omit<TripStage, 'id'>[] {
+  return vorschlag.etappen.map((etappe, stelle) => ({
+    position: stelle + 1,
+    name: etappe.name,
+    countryCode: etappe.laendercode,
+    arrivalDate: datumNach(vorschlag.startdatum, etappe.vonTag - 1),
+    departureDate: datumNach(vorschlag.startdatum, etappe.bisTag - 1),
+    // Koordinaten kommen aus einer Geodatenquelle, nicht aus einem Sprachmodell.
+    latitude: null,
+    longitude: null,
+  }))
+}
+
+/**
+ * Der Vorschlag als Nutzlast für `public.reise_anlegen()`.
+ *
+ * Der Ausschnitt ist der, den die Funktion liest – nicht mehr. Was sie nicht
+ * liest, mitzuschicken wäre die Behauptung, es käme an (`lib/trips/schema.ts`).
+ */
+export function vorschlagAlsNutzlast(vorschlag: Reisevorschlag, clientRef: string): ReiseNutzlast {
+  const geruest = tagesgeruest(vorschlag)
+
+  return {
+    client_ref: clientRef,
+    title: vorschlag.titel,
+    origin: vorschlag.abreiseort,
+    start_date: vorschlag.startdatum,
+    end_date: reiseende(vorschlag),
+    travellers: vorschlag.reisende,
+    currency: vorschlag.waehrung,
+    budget_amount: vorschlag.budgetziel,
+    pace: vorschlag.tempo,
+    interests: vorschlag.interessen,
+    travel_wish: vorschlag.reisewunsch,
+    stages: etappen(vorschlag).map((etappe) => ({
+      position: etappe.position,
+      name: etappe.name,
+      country_code: etappe.countryCode,
+      arrival_date: etappe.arrivalDate,
+      departure_date: etappe.departureDate,
+    })),
+    days: vorschlag.tage.map((tag, stelle) => ({
+      day_index: geruest[stelle].dayIndex,
+      day_date: geruest[stelle].dayDate,
+      title: tag.titel,
+      items: tag.punkte.map((punkt, position) => ({
+        kind: punkt.art,
+        title: punkt.titel,
+        note: punkt.notiz,
+        position: position + 1,
+        starts_at: punkt.beginn,
+      })),
+    })),
+  }
+}
+
+/**
+ * Der Vorschlag als vollständige Reise – die Fassung für den Gastspeicher.
+ *
+ * `kennung` liefert die lokalen Kennungen (`trip-…`, `day-…`, `item-…`). Sie
+ * kommt von aussen, weil `crypto.randomUUID()` im Browser lebt und diese Datei
+ * ohne Browserbezug bleiben soll.
+ *
+ * Die Rückgabe ist noch nicht geprüft. Wer sie ablegt, schickt sie durch
+ * `reiseLesen()` – so wie jeder andere Weg in den Gastspeicher.
+ */
+export function vorschlagAlsReise(
+  vorschlag: Reisevorschlag,
+  clientRef: string,
+  kennung: (prefix: string) => string,
+  jetzt: string,
+): Trip {
+  const geruest = tagesgeruest(vorschlag)
+
+  const tage: TripDay[] = vorschlag.tage.map((tag, stelle) => {
+    const tagId = kennung('day')
+    const datum = geruest[stelle].dayDate
+
+    const punkte: TripItem[] = tag.punkte.map((punkt, position) => ({
+      id: kennung('item'),
+      dayId: tagId,
+      stageId: null,
+      kind: punkt.art,
+      title: punkt.titel,
+      note: punkt.notiz,
+      position: position + 1,
+      startsOn: datum,
+      startsAt: punkt.beginn,
+      endsOn: null,
+      endsAt: null,
+      priceAmount: null,
+      priceCurrency: null,
+      provider: null,
+      externalRef: null,
+      bookingUrl: null,
+    }))
+
+    return { id: tagId, dayIndex: geruest[stelle].dayIndex, dayDate: datum, title: tag.titel, items: punkte }
+  })
+
+  return {
+    id: clientRef,
+    clientRef,
+    title: vorschlag.titel,
+    origin: vorschlag.abreiseort,
+    startDate: vorschlag.startdatum,
+    endDate: reiseende(vorschlag),
+    travellers: vorschlag.reisende,
+    currency: vorschlag.waehrung,
+    budgetAmount: vorschlag.budgetziel,
+    status: 'draft',
+    pace: vorschlag.tempo,
+    interests: vorschlag.interessen,
+    travelWish: vorschlag.reisewunsch,
+    stages: etappen(vorschlag).map((etappe) => ({ ...etappe, id: kennung('stage') })),
+    days: tage,
+    createdAt: jetzt,
+    updatedAt: jetzt,
+  }
+}

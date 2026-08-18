@@ -443,6 +443,36 @@ export function gastreiseAnlegen(eingabe: CreateTripInput): Trip {
   return geprueft
 }
 
+/**
+ * Legt eine fertig geformte Reise als die eine Gastreise ab.
+ *
+ * Der Weg eines übernommenen Reisevorschlags (Phase 2.1). Er braucht eine eigene
+ * Funktion und nicht `gastreiseAnlegen()`, weil ein Vorschlag mehr mitbringt als
+ * ein Formular – Etappen, Tage, Planpunkte – und weniger verlangt: Ein Vorschlag
+ * ohne Zeitraum ist zulässig, `CreateTripInput` schreibt zwei Daten vor.
+ *
+ * Ein zweiter Anlauf mit derselben Kennung liefert die abgelegte Reise zurück,
+ * statt `GastreiseBestehtFehler` zu werfen. Das ist derselbe Vertrag, den
+ * `public.reise_anlegen()` über `client_ref` im Konto hat: Doppelklick, Reload
+ * und Retry ergeben eine Reise. `gastreiseAnlegen()` bleibt unverändert – dort
+ * navigiert die Oberfläche nach dem ersten Anlauf weg.
+ */
+export function gastreiseAblegen(entwurf: Trip): Trip {
+  if (!verfuegbar()) throw new SpeicherFehler()
+
+  const bestehend = gastreiseLaden()
+  if (bestehend) {
+    if (kennungVon(bestehend) === kennungVon(entwurf)) return bestehend
+    throw new GastreiseBestehtFehler(bestehend.id)
+  }
+
+  const geprueft = reiseLesen(entwurf)
+  if (!geprueft) throw new Error('Aus diesem Vorschlag entsteht keine gültige Reise.')
+
+  schreibenMuss(SCHLUESSEL_AKTIV, geprueft)
+  return geprueft
+}
+
 /** Hängt einen Planpunkt an einen Tag der aktiven Gastreise. */
 export function gastPlanpunktAnlegen(
   reise: Trip,
