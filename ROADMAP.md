@@ -419,17 +419,21 @@ Umgesetzt auf dem Supabase-Development-Branch. Production ist nicht angefasst wo
 
 | Prüfung | Ergebnis |
 | --- | --- |
-| `npm run db:reproduzierbarkeit` | Wiederaufbau aus 15 Migrationen gleich dem laufenden Schema, kein Unterschied |
-| `npm run db:sicherheit` | 128 von 128 Nachweisen erfüllt, davon 40 neue zu Reisen |
+| `npm run db:reproduzierbarkeit` | Wiederaufbau aus 16 Migrationen gleich dem laufenden Schema, kein Unterschied |
+| `npm run db:sicherheit` | 135 von 135 Nachweisen erfüllt, davon 47 neue zu Reisen |
 | `npm run db:rechte` | 32 Tabellenrechte, jedes durch eine Policy gedeckt; kein `TRUNCATE`, `REFERENCES`, `TRIGGER`; RLS auf allen 11 Tabellen; keine Policy nennt eine Rolle direkt; keine Funktion greift ins Leere |
 | `npm run db:rls` | Matrix aus 4 Akteuren × 11 Tabellen × bis zu 5 Operationen |
 | `npm run db:typen -- --pruefen` | `types/supabase.ts` entspricht dem Schema |
 | `npm run db:advisors` | 18 Security-, 6 Performance-Befunde, jeder begründet ([docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 8) |
 | `npm run auth:pruefen` | 55 Sollwerte, 242 Schlüssel eingeordnet, unverändert grün |
-| `npm test` | 309 Tests in 69 Gruppen, davon 119 in `lib/trips/`: Zod-Schemas, Mapper, Tagesaufteilung, Gastspeicher und Übernahme |
+| `npm test` | 325 Tests in 74 Gruppen, davon 129 in `lib/trips/`: Zod-Schemas, Mapper, Tagesaufteilung, Gastspeicher und Übernahme |
 | Typecheck, Lint, Hygiene, Production-Build | grün |
 
-**Eine Lücke ist bei der Prüfung im Browser aufgefallen und bewusst nicht in dieser Phase behoben.** `components/layout/PublicNavbar.tsx` kennt die Sitzung nicht: Die Leiste zeigt immer „Anmelden" und bietet im öffentlichen Bereich kein Abmelden – der Weg existiert nur im Administrationsbereich. Das ist Altbestand aus Phase 1.1b und war ohne gespeicherte Reisen folgenlos; mit persistenten Reisen wird es sichtbar, weil auf einem gemeinsam genutzten Gerät niemand die Sitzung beenden kann. Die Leiste sitzt im Layout aller öffentlichen Seiten, und sie sitzungsabhängig zu machen zieht entweder die ganze Gruppe in dynamisches Rendering oder eine clientseitige Sitzungsabfrage nach sich. Beides ist eine eigene Änderung mit eigener Prüfung und gehört nicht in eine Phase, die das Datenmodell baut ([AGENTS.md](AGENTS.md) Regel 26). Aufgenommen als nächster Schritt vor Phase 2.
+**Nachtrag aus der Überprüfung vor dem Merge.** Drei Befunde sind in derselben Phase behoben, jeder an der Ursache:
+
+- [x] Die Erzeugungsregeln lagen nur in `public.reise_anlegen()`, `authenticated` hat aber `INSERT` auf `public.trips`: Über PostgREST liessen sich Kennung, Anfangsstatus und die Schranke von 60 neuen Reisen je Stunde vollständig übergehen, ein rückdatiertes `created_at` zusätzlich das Zeitfenster der Schranke. `client_ref` ist jetzt `NOT NULL`, ein Auslöser vor jeder Einfügung setzt die Zeitstempel, verlangt `draft` und zählt die Schranke – auf jedem Schreibweg (ADR-0045)
+- [x] Der Gastspeicher verschluckte Schreibfehler: Anlegen und Bearbeiten meldeten Erfolg, obwohl nichts im Browser lag, und die Übernahme aus der alten Fassung löschte den alten Schlüssel, ohne das Schreiben der neuen zu prüfen. Jeder Schreibvorgang wird jetzt zurückgelesen, ein Fehlschlag wirft, und gelöscht wird nur, was nachweislich anderswo liegt (ADR-0046)
+- [x] `PublicNavbar` zeigte auch bei offener Sitzung immer „Anmelden" und bot kein Abmelden. Mit persistenten privaten Reisen ist das auf einem geteilten Gerät ein Sicherheitsthema und keine Kosmetik: Die Leiste liest die Sitzung jetzt im Browser, das öffentliche Layout bleibt statisch (ADR-0047)
 
 **Vier Dinge sind bei der Umsetzung aufgefallen und mit behoben.** Die Prüfbedingung auf `interests` liess denselben Wert doppelt zu – ein CHECK mit `unnest` braucht eine `immutable` Funktion, weil eine Unterabfrage dort nicht erlaubt ist (SQLSTATE `0A000`). Ein Preis war ohne Währung eintragbar; beides ist jetzt aneinander gebunden. Die Zuordnung eines Planpunkts zu seinem Tag lief zunächst über die lokale Kennung des Browsers, die in der Datenbank keine Bedeutung hat – sie läuft jetzt über `day_index`. Und `npm run db:rls` konnte Kindtabellen mit zusammengesetztem Fremdschlüssel nicht säen: Die Saat wählte eine beliebige Reise, häufig die eines anderen Testkontos, und scheiterte an `trip_days_reise_fk`. Das Skript löst Fremdschlüssel jetzt über die Primärschlüsselspalten der Zieltabelle auf und wählt bei Tabellen mit `user_id` deterministisch die Zeile des eigenen Kontos.
 
@@ -440,17 +444,18 @@ Priorität nach [AGENTS.md](AGENTS.md) Regel 24: Auth, Rollen, RLS, Trip-Persist
 - [x] Test-Runner eingerichtet – mit 1.3 erledigt: `npm test` läuft über den Test-Runner von Node mit `tsx` als Loader, ohne neues Paket ([DECISIONS.md](DECISIONS.md) ADR-0029)
 - [x] Tests für Rollen und Berechtigungen (52 ohne Datenbank; 34 aus 1.3, dazu 7 für den Abgleich des Rollenmodells, 6 für den Abgleich der Fähigkeiten und 5 für Fähigkeiten und Notzugang in der Zugangsentscheidung)
 - [x] Tests für die Antworten der lesenden Admin-Routen (31 ohne Datenbank: 14 für Fehler gegen echte Leere, 7 für die Suchausdrücke, 10 für die Kennzahlen)
-- [x] RLS-Nachweise gegen den Development-Branch (128 nach Phase 1.5), dazu die Rechteprüfung und der Reproduzierbarkeitsbeweis
-- [x] Tests für Trip-Erstellung und -Persistenz – 119 in `lib/trips/` ohne Datenbank (Schemas, Mapper, Tage, Gastspeicher, Übernahme mit Retry, Doppelrequest und Manipulationsversuch), dazu 40 Nachweise gegen den Branch für RLS, Idempotenz und die Grenzen von `reise_anlegen()`
+- [x] RLS-Nachweise gegen den Development-Branch (135 nach Phase 1.5), dazu die Rechteprüfung und der Reproduzierbarkeitsbeweis
+- [x] Tests für Trip-Erstellung und -Persistenz – 129 in `lib/trips/` ohne Datenbank (Schemas, Mapper, Tage, Gastspeicher inklusive voller und stummer Ablage, Übernahme mit Retry, Doppelrequest und Manipulationsversuch), dazu 47 Nachweise gegen den Branch für RLS, Idempotenz und die Erzeugungsregeln – geprüft über `reise_anlegen()` **und** über den direkten `INSERT`
 - [ ] datenbanknahe Prüfungen in die CI holen – braucht einen kurzlebigen Branch je Lauf, sonst legen nebenläufige Läufe dieselben Testkonten an
 
-### 1.7 Sitzung im öffentlichen Bereich sichtbar · offen, klein, vor Phase 2
+### 1.7 Sitzung im öffentlichen Bereich sichtbar · abgeschlossen
 
-Aufgefallen bei der Prüfung der Phase 1.5 im Browser, nicht durch sie verursacht.
+Aufgefallen bei der Prüfung der Phase 1.5 im Browser, nicht durch sie verursacht – und in der Überprüfung vor dem Merge als Sicherheitsthema eingeordnet statt verschoben.
 
-- [ ] `PublicNavbar` kennt die Sitzung: „Anmelden" nur für Gäste, sonst der Zugang zum Konto samt „Abmelden" über `signOutAction()`
-- [ ] Entscheidung dokumentieren, wie die Leiste die Sitzung erfährt – serverseitig im Layout (macht alle öffentlichen Seiten dynamisch) oder clientseitig im Browser (Layout bleibt statisch, kurzes Nachziehen)
-- [ ] Prüfung: angemeldet abmelden, danach zeigt `/reisen` wieder den Gastzustand
+- [x] `PublicNavbar` kennt die Sitzung: „Anmelden" nur für Gäste, „Abmelden" über `signOutAction()`, solange die Sitzung unbekannt ist keine der beiden Aussagen
+- [x] Entscheidung dokumentiert: clientseitig im Browser über die Cookies, die der Server gesetzt hat, dazu `onAuthStateChange`. Das öffentliche Layout bleibt statisch, die Startseite weiter vorgerendert (ADR-0047)
+- [x] Die Regel liegt in `lib/auth/oeffentliche-navigation.ts` und ist ohne Browser prüfbar – 6 Fälle, darunter „Abmelden wird nie ein Link", weil Next.js Links vorauslädt
+- [x] Prüfung im Browser: angemeldet abmelden, danach zeigt `/reisen` wieder den Gastzustand
 
 ---
 
@@ -546,4 +551,5 @@ Ideen ohne Termin, dokumentiert damit sie nicht verloren gehen.
 - gemeinsame Reiseplanung mit mehreren Personen
 - Offline-fähiger Cache mit Konfliktauflösung
 - strukturierte Log-Konvention ohne sensible Nutzerdaten
+- Obergrenze für Etappen, Tage und Planpunkte **je Reise** auch auf dem direkten Schreibweg. `public.reise_anlegen()` prüft sie (50 / 366 / 1000), ein direkter `INSERT` in die Kindtabellen nicht: Ein Konto kann seine eigene Reise beliebig weit füllen. Ein Auslöser je Zeile mit einer Zählung wäre bei 1000 Planpunkten in einer Anweisung quadratisch; der brauchbare Weg ist ein Auslöser je Anweisung mit Übergangstabelle. Bewusst nicht in den Nachtrag der Phase 1.5 gezogen (ADR-0045, Alternative 4)
 - automatisierte Responsive-Regression in der CI: Seiten auf den Referenzbreiten laden und horizontales Overflow sowie abgeschnittene Inhalte prüfen. Benötigt einen Browser im CI-Lauf und damit zusätzliche Laufzeit, deshalb bewusst noch nicht eingebaut. Wichtig dabei: Seiten, die ohne Supabase-Variablen in die Fehlerseite laufen, werden sonst scheinbar fehlerfrei gemessen – der Lauf braucht Platzhalter-Variablen und eine Prüfung, dass die echte Seite gerendert wurde.

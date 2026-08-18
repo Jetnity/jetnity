@@ -65,6 +65,8 @@ Phase 1.4 hat gezeigt, dass die Anwendung ohne ihn auskommt. Wo bisher erhöhte 
 
 `public.reise_anlegen(jsonb)` ist ausdrücklich **nicht** so gebaut: Sie ist `SECURITY INVOKER` und schreibt ausschliesslich in die Reisen des aufrufenden Kontos, was die Policies ohnehin erlauben. Erhöhte Rechte bekommt eine Funktion nur, wenn sie sie braucht.
 
+Sie ist deshalb aber auch nicht der einzige Weg, auf dem eine Reise entstehen kann: `authenticated` hat `INSERT` auf `public.trips`, und PostgREST macht dieses Recht erreichbar. Die Regeln des Anlegens – Kennung, Anfangsstatus, Zeitstempel und die Schranke von 60 neuen Reisen je Stunde – liegen darum nicht in der Funktion, sondern in einer Bedingung und im Auslöser `trips_erzeugung_pruefen` der Tabelle. Er ist `SECURITY DEFINER`, damit seine Zählung nicht von einer Lesepolicy abhängt, und für niemanden aufrufbar ([DECISIONS.md](DECISIONS.md) ADR-0045).
+
 Auch die Migrationen brauchen keinen Service-Key: `npm run db:anwenden` geht über die Management API. Eine Development-Service-Role ist damit an keiner Stelle angelegt worden.
 
 ---
@@ -127,7 +129,7 @@ Weitere Punkte:
 - Nach Anmeldung, Registrierung, OAuth-Callback und Passwortwechsel führt der Weg auf `/reisen` ([DECISIONS.md](DECISIONS.md), ADR-0019).
 - Fehlen die Supabase-Umgebungsvariablen, sperrt die Middleware die geschützten Bereiche und protokolliert das. Bis Phase 1.3 liess sie in diesem Fall durch – ein Bereich, der bei fehlender Konfiguration aufgeht, ist das Gegenteil von Schutz.
 - Server-Actions sind eigene Eintrittspunkte und werden von keinem Layout geschützt; sie prüfen selbst.
-- Abmelden ist eine Server-Action, kein Pfad ([DECISIONS.md](DECISIONS.md), ADR-0023).
+- Abmelden ist eine Server-Action, kein Pfad ([DECISIONS.md](DECISIONS.md), ADR-0023) – und seit dem Nachtrag der Phase 1.5 auch im öffentlichen Bereich erreichbar. `components/layout/PublicNavbar.tsx` liest die Sitzung clientseitig aus den Cookies, die der Server gesetzt hat; die Entscheidung, was die Leiste zeigt, liegt in `lib/auth/oeffentliche-navigation.ts` und ist ohne Browser prüfbar. Das öffentliche Layout bleibt dadurch statisch (ADR-0047).
 
 **Die Rolle liegt seit Phase 1.5 in `public.profiles`.** Die Tabelle hiess bis dahin `creator_profiles` – ein Name aus der alten Produktidee. Weil er nur in `ROLE_TABLE` in `lib/auth/admin-guard.ts` stand, war die Umstellung eine einzelne Änderung im Anwendungscode. Mit der Umbenennung sind die neun Spalten der öffentlichen Creator-Identität entfallen; was bleibt, ist das, was ein Reisekonto braucht: Kennung, E-Mail, Anzeigename, Avatar, Rolle, Status, Zeitstempel. Persönliche Reisepräferenzen bekommen eigene Spalten oder eine eigene Tabelle, wenn sie fällig sind – nicht die freigewordenen ([DECISIONS.md](DECISIONS.md) ADR-0044).
 
@@ -153,7 +155,7 @@ Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
 | Domänenmodell | `types/trips.ts` | eine Reise, wie die Anwendung sie kennt – gleich für Gast und Konto |
 | Validierung | `lib/trips/schema.ts` | Zod-Schemas für jede Eingabe und für die Nutzlast an die Datenbank |
 | Abbildung | `lib/trips/abbildung.ts` | zwischen Datenbankzeile (`snake_case`) und Domänenmodell (`camelCase`) |
-| Gastspeicher | `lib/trips/gastspeicher.ts` | die eine Gastreise im `localStorage`, Schlüssel `jetnity:reise:v3` |
+| Gastspeicher | `lib/trips/gastspeicher.ts` | die eine Gastreise im `localStorage`, Schlüssel `jetnity:reise:v3`; jeder Schreibvorgang wird zurückgelesen, ein Fehlschlag wirft (ADR-0046) |
 | Lesen im Konto | `lib/trips/daten.ts` | `server-only`, Anon-Key, kein `eq('user_id', …)` – RLS filtert |
 | Schreiben im Konto | `lib/trips/aktionen.ts` | Server Actions, Identität über `auth.getUser()`, Rückgabe als Ergebnis statt als Ausnahme |
 | Übernahme | `lib/trips/uebernahme.ts` | Gastreise ins Konto, idempotent, ohne React und damit prüfbar |
@@ -172,7 +174,7 @@ Bewusste Datenschutzregel, unverändert: Weder im Browserspeicher noch in den Re
 
 Vollständige Beschreibung: [docs/DATENBANK.md](docs/DATENBANK.md). Hier steht nur, wie sie in die Architektur eingebunden ist.
 
-**Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Fünfzehn Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b und dem Reiseschema aus Phase 1.5 – **11 Tabellen, 31 Policies und 17 Funktionen**. Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
+**Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Sechzehn Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b und dem Reiseschema aus Phase 1.5 – **11 Tabellen, 31 Policies und 18 Funktionen**. Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
 
 Vier der elf Tabellen sind die Reisedaten: `trips`, `trip_stages`, `trip_days`, `trip_items`. Sie sind privat und tragen ihre Eigentümerkennung selbst; ein zusammengesetzter Fremdschlüssel `(trip_id, user_id) → trips (id, user_id)` verhindert, dass ein Kind an einer fremden Reise hängt. Enum-Typen führt das Schema keine mehr – jeder Wertebereich steht in einer Prüfbedingung ([DECISIONS.md](DECISIONS.md) ADR-0043).
 
@@ -192,7 +194,7 @@ Auf den vier Reisetabellen prüft **keine** Policy eine Fähigkeit: Adminrechte 
 
 Seit Phase 1.4b prüft `npm run db:rechte` eine vierte Regel: Keine Funktion nennt eine Struktur, die es nicht gibt. Tabellenbezüge im Rumpf einer Funktion stehen nicht in `pg_depend`, PostgreSQL verfolgt sie also nicht – 18 Funktionen hätten die Entfernung ihrer Tabellen unbemerkt überlebt und erst beim Aufruf gescheitert. Das ist dieselbe Fehlerklasse, die `npm run check:schema-bezug` für den Anwendungscode abdeckt, nun auch für die Datenbank selbst.
 
-`npm run db:sicherheit` führt 128 benannte Nachweise, positiv und negativ, gegen den Development-Branch. Sie belegen unter anderem, dass sich kein Konto selbst befördert, kein Konto ein fremdes Profil ändert, kein angemeldetes Konto Zahlungsdaten sieht, keine Rolle eine fremde Reise liest und dieselbe Gastreise zweimal übernommen genau eine Reise ergibt.
+`npm run db:sicherheit` führt 135 benannte Nachweise, positiv und negativ, gegen den Development-Branch. Sie belegen unter anderem, dass sich kein Konto selbst befördert, kein Konto ein fremdes Profil ändert, kein angemeldetes Konto Zahlungsdaten sieht, keine Rolle eine fremde Reise liest, dieselbe Gastreise zweimal übernommen genau eine Reise ergibt – und dass ein direkter `INSERT` in `public.trips` weder die Kennung weglassen noch `booked` behaupten noch die Missbrauchsschranke übergehen kann.
 
 **Die Reisedaten liegen seit Phase 1.5 in der Datenbank.** Phase 1.4b hatte die 29 Tabellen der alten Produktidee entfernt und damit ein Schema hinterlassen, das nur noch beschrieb, was verwendet wird – aber keine Reise speichern konnte. Die vier Reisetabellen füllen diese Lücke; `creator_sessions`, die letzte Alt-Tabelle, ist mit derselben Phase entfallen. Der Übergang ist in [docs/LEGACY_ENTFERNUNG.md](docs/LEGACY_ENTFERNUNG.md) belegt, das Ergebnis in [docs/DATENBANK.md](docs/DATENBANK.md) beschrieben, das Modell fachlich in [docs/REISEN.md](docs/REISEN.md).
 
@@ -288,14 +290,15 @@ Aktuell nur Konsolen-Logging, kein zentrales Error-Tracking und keine strukturie
 | --- | --- | --- |
 | ~~Fehlende Baseline-Migration~~ | ~~37 Tabellen ohne Versionierung~~ | in Phase 1.4 hergestellt, Wiederaufbau gemessen |
 | ~~Zwei Supabase-Typdateien~~ | ~~37 vs. 3 Tabellen~~ | in Phase 1.2b zusammengeführt, seit 1.4 erzeugt statt gepflegt |
-| ~~RLS-Zustand unbekannt~~ | ~~nicht aus dem Repo ableitbar~~ | in Phase 1.4 erhoben, neu aufgebaut und mit inzwischen 128 Nachweisen belegt |
+| ~~RLS-Zustand unbekannt~~ | ~~nicht aus dem Repo ableitbar~~ | in Phase 1.4 erhoben, neu aufgebaut und mit inzwischen 135 Nachweisen belegt |
 | ~~Alt-Tabellen in der Datenbank~~ | ~~29 von 37 ohne Verwendung im Code~~ | in Phase 1.4b entfernt, mit Archiv-Tag und Nachweis in `docs/LEGACY_ENTFERNUNG.md`; `creator_sessions` als letzte in Phase 1.5 |
 | ~~Rolle liegt in `creator_profiles`~~ | ~~Tabelle der alten Produktidee~~ | in Phase 1.5 auf `public.profiles` umgestellt, samt Entfernung der neun Creator-Spalten (ADR-0044) |
 | ~~Fünf Funktionen ohne Aufrufer~~ | ~~auf `creator_profiles` und `creator_sessions`~~ | in Phase 1.5 entfernt, dazu ein doppelter Auslöser auf dem Profil |
 | Datenbanknahe Prüfungen laufen nicht in der CI | 5 Prüfungen von Hand | braucht einen kurzlebigen Branch je Lauf, sonst kollidieren die Testkonten |
-| ~~Tests ohne Reisedaten~~ | ~~41 Tests, davon keiner zur Persistenz~~ | in Phase 1.5: 119 Tests in `lib/trips/` ohne Datenbank, dazu 40 Nachweise gegen den Branch |
+| ~~Tests ohne Reisedaten~~ | ~~41 Tests, davon keiner zur Persistenz~~ | in Phase 1.5: 129 Tests in `lib/trips/` ohne Datenbank, dazu 47 Nachweise gegen den Branch |
 | Reise bearbeiten ist noch schmal | Anlegen, Planpunkt hinzufügen und entfernen, Reise löschen | Umbenennen, Umsortieren und Verschieben von Tagen entstehen mit dem Trip Builder in Phase 2 |
-| `PublicNavbar` kennt die Sitzung nicht | zeigt immer „Anmelden", kein Abmelden im öffentlichen Bereich | Altbestand aus Phase 1.1b, mit persistenten Reisen erstmals spürbar. Die Leiste sitzt im Layout aller öffentlichen Seiten; sie sitzungsabhängig zu machen zieht dynamisches Rendering oder eine clientseitige Sitzungsabfrage nach sich. Eigener Schritt 1.7 in [ROADMAP.md](ROADMAP.md) |
+| ~~`PublicNavbar` kennt die Sitzung nicht~~ | ~~zeigt immer „Anmelden", kein Abmelden im öffentlichen Bereich~~ | im Nachtrag der Phase 1.5 behoben: Die Leiste liest die Sitzung clientseitig, das öffentliche Layout bleibt statisch (ADR-0047) |
+| Zahl der Kindzeilen je Reise ungebremst | Etappen, Tage und Planpunkte nur über `reise_anlegen()` begrenzt | ein direkter `INSERT` kann die eigene Reise beliebig weit füllen. Ein Auslöser je Zeile wäre quadratisch; der Weg ist ein Auslöser je Anweisung. Backlog in [ROADMAP.md](ROADMAP.md), Begründung ADR-0045 |
 | Einsicht in eine fremde Reise für den Support | bewusst nicht vorhanden | braucht eine eigene Entscheidung samt Protokollierung, nicht eine Policy (ADR-0041) |
 | `any`-Verwendung | ca. 309 Vorkommen in `app/`, `lib/`, `components/`, `types/` | überwiegend in Alt-Code; nur V2-relevante Stellen werden bereinigt |
 | ~~Middleware schützt nur einen Pfad~~ | ~~1 von vielen geschützten Bereichen~~ | in Phase 1.3 auf `/admin`, `/api/admin` und `/account` erweitert |

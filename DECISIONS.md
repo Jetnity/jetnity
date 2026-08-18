@@ -1006,6 +1006,99 @@ Im Anwendungscode war die Umstellung, was Phase 1.3 versprochen hatte: `ROLE_TAB
 
 ---
 
+## ADR-0045 – Die Erzeugungsregeln einer Reise gehören in die Datenbank, nicht in eine Funktion
+
+**Datum:** 18. August 2026
+**Status:** umgesetzt auf dem Development-Branch
+
+**Entscheidung:** `20260818010000_reise_erzeugungsregeln.sql` verankert drei Regeln so, dass sie unabhängig vom Aufrufweg gelten:
+
+* `trips.client_ref` ist `NOT NULL`. Die Kennung ist damit Pflicht, und `unique (user_id, client_ref)` wirkt auf jede Zeile.
+* Der Auslöser `trips_erzeugung_pruefen` läuft vor jeder Einfügung. Er setzt `created_at` und `updated_at` selbst, verlangt `status = 'draft'` und lehnt die einundsechzigste neue Reise eines Kontos innerhalb einer Stunde ab (`53400`).
+* `public.reise_anlegen()` verliert seine eigene Zählung. Sie stand an zwei Stellen mit derselben Zahl; die im Auslöser ist die vollständige.
+
+`INSERT` auf `public.trips` bleibt bei `authenticated`, RLS bleibt die Stelle, die über Eigentum entscheidet.
+
+**Kontext:** Phase 1.5 hat `reise_anlegen()` als „die einzige Stelle, an der eine Reise entsteht" beschrieben. Das war eine Aussage über die Anwendung. `authenticated` hat `INSERT` auf der Tabelle, und PostgREST macht dieses Recht mit dem öffentlichen anon-Key erreichbar – der Sicherheitsnachweis „Konto legt eine Reise ohne user_id an" belegte es sogar ausdrücklich. Ein angemeldeter Client konnte damit beliebig viele Reisen direkt anlegen, die Kennung weglassen, `status = 'booked'` behaupten und die Missbrauchsschranke vollständig übergehen. Ein rückdatiertes `created_at` hätte auch eine Schranke ausgehebelt, die direkte Einfügungen mitzählt: Zeilen ausserhalb des Zeitfensters zählen nicht mit.
+
+**Alternativen:**
+
+1. *`INSERT` entziehen und `reise_anlegen()` auf `SECURITY DEFINER` umstellen.* Ergibt tatsächlich genau einen Erzeugungsweg. Der Preis ist hoch: Die Funktion schreibt in vier Tabellen, und als `SECURITY DEFINER` läuft sie an RLS vorbei. Das Eigentum an einer Reise hinge danach an der Sorgfalt eines Funktionsrumpfs statt an Policies, die jeder Nachweis einzeln prüft. Dazu käme eine sechste per RPC erreichbare `SECURITY DEFINER`-Funktion – die Advisors zählen sie zu Recht.
+2. *Eine Policy mit der Schranke im `WITH CHECK`.* Policies gelten nur für `authenticated`, nicht für andere Rollen, und ein Unterausdruck mit `count(*)` in einer Policy ist schwer zu lesen und schwer zu prüfen. Ein Auslöser sagt, was er tut.
+3. *Die Zahl in der Anwendung prüfen.* Die Anwendung ist nicht der einzige Client eines PostgREST-Endpunkts. Genau das war der Befund.
+4. *Auch die Zahl der Etappen, Tage und Planpunkte je Reise im Auslöser prüfen.* Fachlich derselbe Gedanke, technisch ein anderer Fall: `reise_anlegen()` fügt bis zu 1000 Planpunkte in einer Anweisung ein, und ein Auslöser je Zeile mit einer Zählung machte daraus quadratischen Aufwand. Der Punkt steht im Backlog der [ROADMAP.md](ROADMAP.md) und ist dort als offen benannt, nicht stillschweigend erledigt.
+
+**Begründung:** Eine Schranke, die man umgehen kann, indem man einen anderen Weg nimmt, ist keine. Zwischen den beiden ernsten Varianten – Recht entziehen oder Regel verankern – entscheidet, was danach die Sicherheit trägt: Nach a) trägt sie Code, nach b) tragen sie Bedingung, Auslöser und Policies gemeinsam, jedes für sich prüfbar. Ein direkter `INSERT` ist nach b) kein Loch mehr, sondern ergibt dasselbe wie ein Aufruf ohne Etappen: eine eigene Reise mit Kennung, als Entwurf, innerhalb der Schranke.
+
+Der Auslöser ist `SECURITY DEFINER`, damit die Zählung nicht durch die Lesepolicy läuft – eine Schranke, die von einer Lesepolicy abhängt, wäre nur so lange richtig, wie diese jede eigene Reise zeigt. Aufrufbar ist die Funktion für niemanden: `revoke all … from public, anon, authenticated`; ein Auslöser braucht kein Ausführungsrecht des Aufrufers. Deshalb erscheint sie auch nicht in den Advisors, und die Zahl der Sicherheitsbefunde bleibt bei 18.
+
+Dass die Zeitstempel überschrieben und nicht abgelehnt werden, ist die Ausnahme von „nichts stillschweigend ändern": `created_at` ist kein Feld der Oberfläche, sondern eine Feststellung der Datenbank. `setze_aktualisiert_am()` macht seit Phase 1.5 dasselbe beim Ändern.
+
+**Konsequenzen:** Sieben neue Nachweise in `scripts/db/sicherheit.mjs` prüfen den direkten Weg, jeder mit Gegenprobe: ohne Kennung, mit `booked`, als Entwurf (erlaubt), mit rückdatiertem Zeitstempel, an der Schranke, und mit 61 Zeilen in einer einzigen Anweisung. `npm run db:sicherheit` steht bei 135 Nachweisen.
+
+Zwei Grenzen bleiben und sind zu kennen. Erstens gilt `status = 'draft'` beim Anlegen, nicht bei jeder Änderung: Ein Konto kann seine eigene Reise anschliessend auf `booked` setzen. Ein Statusmodell mit erlaubten Übergängen gehört zu Phase 2, wenn eine Buchung entsteht – vorher wäre es eine Regel ohne Vorgang. Zweitens bleibt die Zahl der Kindzeilen je Reise ungebremst; siehe Alternative 4.
+
+---
+
+## ADR-0046 – Im Browser gilt nur als gespeichert, was zurückgelesen wurde
+
+**Datum:** 18. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** `lib/trips/gastspeicher.ts` behandelt einen fehlgeschlagenen Schreibvorgang als Fehler.
+
+* Jeder Schreibvorgang wird zurückgelesen. Nur was wieder herauskommt, gilt als abgelegt.
+* Ein Fehlschlag wirft `SpeicherFehler`. Das Formular unter /planen bleibt stehen und wechselt nicht in den Arbeitsbereich einer Reise, die es nirgends gibt; der Arbeitsbereich zeigt den Fehler statt eines gespeicherten Stands.
+* Gelöscht wird nur, was nachweislich anderswo liegt: der alte Schlüssel `jetnity:guest-trips:v2` erst nach bestätigtem Schreiben **beider** neuer Schlüssel, ein übernommener Entwurf erst nach der Kennung aus dem Konto.
+* Ausgenommen ist `uebernommenStreichen()`. Dort liegt die Reise bestätigt im Konto, und `public.reise_anlegen()` ist über `client_ref` idempotent: Bleibt der Entwurf liegen, schickt ihn die nächste Übernahme erneut, ohne eine zweite Reise zu erzeugen.
+
+**Kontext:** Die Fassung aus Phase 1.5 verschluckte jeden Fehler von `setItem` mit der Begründung, eine Ausnahme würde die Oberfläche mitten in einer Eingabe abreissen. Die Folge war schlimmer: `gastreiseAnlegen()` und `gastreiseSpeichern()` meldeten Erfolg, die Oberfläche navigierte weiter, und beim nächsten Laden war die Reise „verschwunden". Am teuersten war die Übernahme aus der alten Fassung: Sie schrieb zwei Schlüssel, prüfte keinen davon und löschte danach den alten. Bei voller Ablage gelang das `removeItem` – und die alten Entwürfe waren weg.
+
+**Alternativen:**
+
+1. *`try/catch` behalten und nur den Rückgabewert um ein „nicht gespeichert" erweitern.* Ein Rückgabewert, den ein Aufrufer ignorieren kann, ist bei Datenverlust die falsche Bauform. Eine Ausnahme muss behandelt werden.
+2. *Nur `try/catch`, ohne Zurücklesen.* Es gibt Browser, in denen `setItem` nicht wirft und trotzdem nichts behält – der private Modus mancher Fassungen. Genau dieser Fall wäre weiter als Erfolg durchgegangen.
+3. *Auf einen anderen Speicher ausweichen (IndexedDB, Cookie).* Ein zweiter Speicherweg für den Ausnahmefall ist ein zweites Datenmodell im Browser. Der ehrliche Weg ist der Hinweis auf das Konto: Dort liegt die Reise auf dem Server.
+4. *Den unbrauchbaren alten Eintrag weiter wegräumen.* Er kostet je Laden ein `JSON.parse`. Ihn zu löschen, ohne dass etwas geschrieben wurde, ist genau der Vorgang, den diese Entscheidung ausschliesst.
+
+**Begründung:** Ohne Konto ist der `localStorage` der einzige Ort, an dem die Reise existiert. Eine Ausnahme ist unangenehm, ein „gespeichert", das nicht stimmt, ist ein Datenverlust mit falscher Auskunft. Reihenfolge und Nachweis sind deshalb wichtiger als ein ungestörter Ablauf im seltenen Fehlerfall.
+
+**Konsequenzen:** Zehn neue Fälle in `lib/trips/gastspeicher.test.ts`: gesperrter Speicher beim Anlegen, stummer Speicher, freier Weg nach einem gescheiterten Versuch, Bearbeitung und Planpunkt ohne Ablage, Verwerfen, das nicht gelingt, sowie drei Fälle zur Legacy-Übernahme – Schreibfehler auf beiden Schlüsseln, Schreibfehler nur auf der Warteschlange und der Nachholvorgang, der nichts verdoppelt. Der Fall, der bisher „kein Throw" erwartete, erwartet jetzt das Gegenteil.
+
+Die Warteschlange wird beim Nachholen gegen die aktive Reise abgeglichen. Ohne diesen Abgleich stünde ein Entwurf zweimal im Speicher, sobald ein Lauf zwischen den beiden Schlüsseln abbricht.
+
+Eine Grenze bleibt: Ein alter Entwurf, den das Schema ablehnt – etwa mit einem Titel über 120 Zeichen –, fällt bei der Übernahme heraus. Das ist unverändert die Entscheidung aus ADR-0042 (nicht halb laden), betrifft Daten, die die Anwendung nicht darstellen kann, und ist kein Fehlschlag eines Schreibvorgangs.
+
+---
+
+## ADR-0047 – Die öffentliche Leiste kennt die Sitzung, das öffentliche Layout bleibt statisch
+
+**Datum:** 18. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** `components/layout/PublicNavbar.tsx` liest die Sitzung im Browser und zeigt „Abmelden" statt „Anmelden", sobald eine besteht. Das Abmelden ist ein Formular auf `signOutAction()`.
+
+Die Entscheidung, was in der Leiste steht, liegt in `lib/auth/oeffentliche-navigation.ts` und kennt drei Zustände: `unbekannt`, `gast`, `konto`. Im Zustand `unbekannt` behauptet die Leiste nichts.
+
+**Kontext:** Die Leiste zeigte auch bei offener Sitzung immer „Anmelden" und nie „Abmelden", obwohl `signOutAction()` seit Phase 1.3 existiert. Solange im öffentlichen Bereich nur Marketingseiten lagen, war das Kosmetik. Mit persistenten privaten Reisen ist es keine mehr: Auf einem geteilten Gerät bleibt eine Sitzung offen, deren einziger sichtbarer Ausweg der Administrationsbereich wäre – den ein gewöhnliches Konto nicht betreten darf. Die [ROADMAP.md](ROADMAP.md) hatte den Punkt als 1.7 vermerkt; die Überprüfung vor dem Merge hat ihn zu Recht als Sicherheitsthema eingeordnet.
+
+**Alternativen:**
+
+1. *Die Sitzung im Layout lesen (`app/(public)/layout.tsx`).* Der kürzere Weg – und jede öffentliche Seite wäre dynamisch, weil das Layout dann Cookies liest. Die Startseite ist Marketing und bleibt vorgerendert (`○ /` im Build).
+2. *Eine eigene Leiste je Bereich.* Zwei Leisten für eine Marke laufen auseinander.
+3. *Im Browser über `supabase.auth.signOut()` abmelden.* Beendet die Sitzung im Browser und lässt die Cookies des Servers stehen. Die Server Action löscht beide.
+4. *Zwei Zustände statt drei, mit „Anmelden" als Anfangszustand.* Die Leiste erschiene für ein angemeldetes Konto einen Moment lang mit der falschen Aussage. Genau die falsche Aussage war der Befund.
+
+**Begründung:** Die Leiste ist ohnehin ein Client Component (Menü, aktiver Pfad). `getSession()` von `@supabase/ssr` liest die Cookies, die der Server gesetzt hat, und geht nicht ins Netz; `onAuthStateChange` hält den Stand nach, sodass eine Anmeldung in einem anderen Tab die Leiste ohne Neuladen erreicht. Damit kostet die Sitzungskenntnis kein Rendering-Verhalten.
+
+Dass „Abmelden" kein Link ist, ist keine Stilfrage: Next.js lädt Links voraus und Browser holen sie vor. Eine Adresse, die beim Aufruf abmeldet, beendet die Sitzung, ohne dass jemand geklickt hat – dieselbe Begründung, aus der `app/auth/sign-out.ts` eine Server Action ist. Der Typ `Navigationseintrag` unterscheidet deshalb `link` und `aktion`, und ein Test hält fest, dass „Abmelden" nie ein Link wird.
+
+**Konsequenzen:** Was die Leiste zeigt, ist eine Anzeige und keine Berechtigung; über Zugriff entscheiden weiterhin Middleware, Server Components und RLS. Fehlt die Supabase-Konfiguration – etwa in einer Vorschau ohne Umgebung –, bleibt der Zustand `unbekannt`, statt die Seite mit einer Ausnahme abzureissen.
+
+Sechs Fälle in `lib/auth/oeffentliche-navigation.test.ts` prüfen die Regel ohne Browser. Der Punkt 1.7 der Roadmap ist damit erledigt und nicht verschoben.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

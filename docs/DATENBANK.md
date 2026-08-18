@@ -1,7 +1,7 @@
 # Jetnity – Datenbank
 
-Stand: 17. August 2026
-Gültig für: Supabase-Development-Branch nach Phase 1.5
+Stand: 18. August 2026
+Gültig für: Supabase-Development-Branch nach Phase 1.5, einschliesslich des Nachtrags aus der Überprüfung vor dem Merge
 
 Diese Datei beschreibt den **tatsächlichen** Zustand des Schemas, wie er sich aus dem Repository herstellen lässt. Sie ist die Antwort auf die Frage, die [ARCHITECTURE.md](../ARCHITECTURE.md) Abschnitt 6 bis Phase 1.4 offenlassen musste: Was steht in der Datenbank, wer darf was, und woher weiß man das.
 
@@ -39,7 +39,7 @@ Alle Skripte liegen in `scripts/db/` und sprechen über die Supabase Management 
 | `npm run db:anwenden` | offene Migrationen anwenden und in `supabase_migrations.schema_migrations` eintragen; `-- --probe` zeigt nur, was offen ist |
 | `npm run db:reproduzierbarkeit` | baut das Schema aus den Migrationen neu auf und vergleicht es mit dem laufenden |
 | `npm run db:rls` | empirische RLS-Matrix: was darf welche Rolle auf welcher Tabelle wirklich |
-| `npm run db:sicherheit` | 128 benannte Nachweise mit Erwartung, positiv und negativ |
+| `npm run db:sicherheit` | 135 benannte Nachweise mit Erwartung, positiv und negativ |
 | `npm run db:rechte` | Tabellenrechte gegen Policies prüfen; zusätzlich, dass keine Funktion eine Struktur nennt, die es nicht gibt |
 | `npm run db:verwendung` | welche Tabellen und RPCs der Anwendungscode anspricht |
 | `npm run check:schema-bezug` | dieselbe Auswertung als Prüfung gegen `types/supabase.ts` (läuft in der CI) |
@@ -62,8 +62,8 @@ Bis auf `check:schema-bezug` braucht jedes davon den Development-Zugang. `check:
 | CHECK-Bedingungen | 45 | 4 | 26 |
 | Indizes | 31 | 25 | 127 |
 | RLS-Policies | 31 | 19 | 66 |
-| Funktionen | 17 | 19 | 43 |
-| Trigger | 6 | 4 | 13 |
+| Funktionen | 18 | 19 | 43 |
+| Trigger | 7 | 4 | 13 |
 | Enums | **0** | 2 | 4 |
 | Views / materialisierte Views | 0 | 0 | 0 |
 | Sequenzen | 1 | 1 | 2 |
@@ -71,7 +71,7 @@ Bis auf `check:schema-bezug` braucht jedes davon den Development-Zugang. `check:
 
 Die elf Tabellen: `profiles`, `trips`, `trip_stages`, `trip_days`, `trip_items`, `airports`, `payments`, `refunds`, `stripe_webhooks`, `security_events`, `blocked_ips`. Ihre Einordnung steht in Abschnitt 10.
 
-Das Wachstum liegt vollständig bei den Reisedaten: Die vier neuen Tabellen tragen 61 Spalten, 43 CHECK-Bedingungen, 6 Fremdschlüssel, 5 Eindeutigkeitsbedingungen, 15 Indizes, 16 Policies und 4 Auslöser. Gleichzeitig sind mit `creator_sessions` 16 Spalten, 7 Indizes und 4 Policies sowie die neun Creator-Spalten des Profils entfallen – die Nettozahlen der Tabelle oben sind deshalb kleiner als die Zugänge.
+Das Wachstum liegt vollständig bei den Reisedaten: Die vier neuen Tabellen tragen 61 Spalten, 43 CHECK-Bedingungen, 6 Fremdschlüssel, 5 Eindeutigkeitsbedingungen, 15 Indizes, 16 Policies und 5 Auslöser – vier für `updated_at`, einer für die Erzeugungsregeln von `public.trips` (Abschnitt 7a). Gleichzeitig sind mit `creator_sessions` 16 Spalten, 7 Indizes und 4 Policies sowie die neun Creator-Spalten des Profils entfallen – die Nettozahlen der Tabelle oben sind deshalb kleiner als die Zugänge.
 
 Dass die CHECK-Bedingungen von 4 auf 45 steigen, ist Absicht: Jeder Wertebereich, jede Länge, jede Reihenfolge und jede Zahlengrenze steht als Bedingung im Schema statt als Annahme im Anwendungscode ([DECISIONS.md](../DECISIONS.md) ADR-0043).
 
@@ -138,10 +138,13 @@ Der Zustand nach Phase 1.4 steht in Abschnitt 9; dort ist auch nachgewiesen, das
 | `20260817120100_reise_anlegen.sql` | `reise_anlegen(jsonb)` – eine Reise samt Kindern in einer Transaktion, idempotent; dazu `admin_reisen_kennzahlen()` und `admin_reisen_zeitreihe(integer)` |
 | `20260817120200_creator_sessions_entfernen.sql` | letzte Alt-Tabelle entfernt, dazu 3 Funktionen, 1 Auslöser mit `set_updated_at()` und die letzten 2 Enums |
 | `20260817120300_generisches_profil.sql` | `creator_profiles` → `profiles`, neun Creator-Spalten entfernt, doppelter Auslöser aufgelöst, Namen nachgezogen |
+| `20260818010000_reise_erzeugungsregeln.sql` | `trips.client_ref` auf `NOT NULL`; Auslöser `trips_erzeugung_pruefen` für Zeitstempel, Anfangsstatus und Missbrauchsschranke; `reise_anlegen()` ohne eigene Zählung (Nachtrag Phase 1.5, ADR-0045) |
 
 Die Reihenfolge ist nicht beliebig: `20260817100200` darf erst laufen, wenn `20260817100000` die Rollen der Betroffenen übernommen und `20260817100100` alle Policies auf `creator_profiles.role` umgestellt hat. Sonst verlöre jemand seinen Zugang oder eine Policy liefe ins Leere.
 
 Dasselbe gilt für die vier Migrationen der Phase 1.5, und zwar in beide Richtungen: `20260817120200` darf `creator_sessions` erst entfernen, wenn `20260817120100` den Ersatz für die Admin-Kennzahlen bereitstellt, und `20260817120300` benennt das Profil erst um, nachdem keine Migration mehr `creator_profiles` schreibt. Umgekehrt ist `20260817120000` bewusst die erste: Auf `trips` verweist alles Weitere.
+
+`20260818010000` steht nach dem Reiseschema, weil sie dessen Tabelle verschärft, und sie beginnt mit einem Nachtrag für bestehende Zeilen: Jede Reise ohne Kennung bekommt eine aus ihrer eigenen Kennung, bevor die Spalte `NOT NULL` wird. Auf dem Development-Branch war die Tabelle leer; der Nachtrag steht für den Fall, dass sie es später nicht ist.
 
 Auch innerhalb von `20260817110000` ist die Reihenfolge gemessen und nicht gewählt: Abfragefunktionen fallen vor den Tabellen, Triggerfunktionen danach. Die Migration arbeitet **ohne `cascade`**, damit eine unerwartete Abhängigkeit sie scheitern lässt statt still mitgenommen zu werden. Der Nachweis dazu steht in [docs/LEGACY_ENTFERNUNG.md](LEGACY_ENTFERNUNG.md) Abschnitt 4.
 
@@ -281,7 +284,7 @@ Für die Kindtabellen musste das Skript in Phase 1.5 genauer werden. Es säte ei
 
 **Eine Grenze der Matrix ist zu kennen, damit sie nicht überlesen wird.** Die Probe `insert_eigen` schreibt die Kennung der Eigentümerin auf den jeweiligen Akteur um. Auf den Kindtabellen zeigt der Verweis auf die Reise danach ins Leere – die Reise gehört ja der Eigentümerin –, und die Probe endet mit `23502 not-null violation` statt mit einer Ablehnung durch die Policy. Die Aussage „ein fremdes Konto schreibt hier nichts" bleibt richtig, ihre Ursache ist aber die fehlende Reise und nicht die Policy. Der positive und der negative Schreibfall der Reisetabellen stehen deshalb nicht in der Matrix, sondern in den benannten Nachweisen unten, mit eigens angelegten Reisen je Konto.
 
-`npm run db:sicherheit` prüft dieselbe Datenbank gegen 128 benannte Erwartungen. Der Unterschied ist wichtig: Die Matrix zeigt, was gilt; die Nachweise sagen, was gelten **soll**, und schlagen fehl, wenn es sich ändert.
+`npm run db:sicherheit` prüft dieselbe Datenbank gegen 135 benannte Erwartungen. Der Unterschied ist wichtig: Die Matrix zeigt, was gilt; die Nachweise sagen, was gelten **soll**, und schlagen fehl, wenn es sich ändert.
 
 Neun Nachweise bezogen sich auf Tabellen oder Funktionen, die Phase 1.4b entfernt hat. Sie sind nicht gestrichen, sondern durch gleichwertige an verbleibenden Strukturen ersetzt – ein Nachweis, der wegfällt, nimmt seine Aussage mit. Der Ersatz ist teils strenger als das Original: Statt zu prüfen, dass `anon` eine benannte `SECURITY DEFINER`-Funktion nicht ausführen darf, prüft er das für **jede** solche Funktion in `public` und deckt damit auch Funktionen ab, die noch niemand geschrieben hat. Die Gegenüberstellung steht in [docs/LEGACY_ENTFERNUNG.md](LEGACY_ENTFERNUNG.md) Abschnitt 11.
 
@@ -333,7 +336,7 @@ Die Unterscheidung zwischen „abgelehnt" (`42501`, das Recht fehlt) und „0 Ze
 
 ### Nachweise zu den Reisedaten
 
-Vierzig der 128 Nachweise betreffen Reisen. Sie sind der Grund, warum das Modell nicht nur beschrieben, sondern belegt ist:
+Siebenundvierzig der 135 Nachweise betreffen Reisen. Sie sind der Grund, warum das Modell nicht nur beschrieben, sondern belegt ist:
 
 | Nachweis | Erwartung |
 | --- | --- |
@@ -345,6 +348,7 @@ Vierzig der 128 Nachweise betreffen Reisen. Sie sind der Grund, warum das Modell
 | dasselbe je Kindtabelle, lesend, ändernd und löschend | erlaubt / 0 Zeilen |
 | Konto legt eine Reise mit fremder `user_id` an | abgelehnt, 42501 – `with check` der INSERT-Policy |
 | Konto legt eine Reise ohne `user_id` an | erlaubt – `default auth.uid()` |
+| Konto legt eine Reise ohne `client_ref` an | abgelehnt, 23502 – die Kennung ist Pflicht |
 | Konto schreibt die eigene Reise auf ein fremdes Konto um | abgelehnt, 42501 – `with check` der UPDATE-Policy |
 | Konto hängt Etappe, Tag oder Planpunkt an eine fremde Reise | abgelehnt, 23503 – zusammengesetzter Fremdschlüssel |
 | Konto hängt einen Planpunkt an einen fremden Reisetag | abgelehnt, 23503 |
@@ -355,11 +359,18 @@ Vierzig der 128 Nachweise betreffen Reisen. Sie sind der Grund, warum das Modell
 | `reise_anlegen()` mit mitgeschickter `user_id` oder `status` | beides ignoriert: Eigentum aus `auth.uid()`, Status `draft` |
 | `reise_anlegen()` mit unbekanntem Interesse, ohne Kennung, mit 400 Tagen | abgelehnt, 23514 bzw. 22023 |
 | `reise_anlegen()` beim 61. Aufruf innerhalb einer Stunde | abgelehnt, 53400 |
+| direkter `INSERT` mit `status = 'booked'` | abgelehnt, 22023 – eine neue Reise ist ein Entwurf |
+| direkter `INSERT` als Entwurf, mit Kennung | erlaubt – der positive Gegenfall |
+| direkter `INSERT` mit rückdatiertem `created_at` | Zeitstempel von der Datenbank gesetzt |
+| direkter `INSERT` als 61. Reise der Stunde, auch rückdatiert | abgelehnt, 53400 |
+| 61 Reisen in **einer** Anweisung | abgelehnt, 53400 – der Auslöser zählt je Zeile |
 | Inhaber, Administration und Moderation lesen eine fremde Reise | 0 Zeilen |
 | Administration ändert oder löscht eine fremde Reise | 0 Zeilen |
 | keine Policy der vier Reisetabellen nennt eine `darf_…()`-Funktion | erfüllt |
 
 Der letzte Nachweis prüft die Aussage aus ADR-0041 strukturell und nicht beispielhaft: Er fängt auch eine Policy, die es heute noch nicht gibt.
+
+**Sieben dieser Nachweise gehen bewusst nicht über `reise_anlegen()`.** Die Regeln des Anlegens standen bis zum Nachtrag der Phase 1.5 nur in der Funktion, während `authenticated` `INSERT` auf `public.trips` hat – über PostgREST liessen sich Kennung, Anfangsstatus und die Missbrauchsschranke damit vollständig übergehen. Sie liegen jetzt in der Tabelle selbst (Abschnitt 7a), und die Nachweise nehmen deshalb den direkten Weg.
 
 Drei der Nachweise mussten anders geschrieben werden als geplant. `with neu as (select public.reise_anlegen(…)) select …` sieht die von der Funktion geschriebene Zeile nicht – eine Anweisung arbeitet auf einem Schnappschuss. Die Prüfungen auf Idempotenz und auf die ignorierte `user_id` laufen deshalb als mehrere Anweisungen hintereinander, nicht als eine mit CTE.
 
@@ -407,25 +418,53 @@ Die Tabelle wird ausschliesslich vom Webhook geschrieben, der mit dem Service-Ke
 
 ---
 
+## 7a. Erzeugungsregeln von `public.trips`
+
+RLS entscheidet, **wem** eine Zeile gehört. Sie sagt nichts darüber, wie eine Reise entstehen darf. Diese Regeln standen bis zum Nachtrag der Phase 1.5 in `public.reise_anlegen()` – und damit nur auf dem Weg, den die Anwendung nimmt. `authenticated` hat `INSERT` auf `public.trips`, PostgREST macht dieses Recht mit dem öffentlichen anon-Key erreichbar, und ein direkter `INSERT` umging alle drei.
+
+Seit `20260818010000_reise_erzeugungsregeln.sql` liegen sie in der Tabelle:
+
+| Regel | Durchsetzung | Verletzung |
+| --- | --- | --- |
+| Jede Reise trägt eine Kennung | `trips.client_ref` ist `NOT NULL`, Länge 1–64 | `23502` |
+| Die Kennung ist je Konto eindeutig | `unique (user_id, client_ref)` – wirkt erst mit `NOT NULL` auf jede Zeile, weil NULL in PostgreSQL nicht mit NULL kollidiert | `23505` |
+| Eine neue Reise ist ein Entwurf | Auslöser `trips_erzeugung_pruefen` | `22023` |
+| `created_at` und `updated_at` gehören der Datenbank | derselbe Auslöser setzt beide auf `now()` | – (wird überschrieben) |
+| Höchstens 60 neue Reisen je Konto und Stunde | derselbe Auslöser, Zählung über `trips_user_id_updated_at_idx` | `53400` |
+
+Zur Wahl standen zwei Wege: `INSERT` entziehen und `reise_anlegen()` auf `SECURITY DEFINER` umstellen, oder die Regeln in der Tabelle verankern. Entschieden ist der zweite – nach dem ersten trüge ein Funktionsrumpf die Verantwortung für das Eigentum an vier Tabellen, weil `SECURITY DEFINER` an RLS vorbeiläuft. Begründung und Alternativen in [DECISIONS.md](../DECISIONS.md) ADR-0045.
+
+Drei Eigenschaften des Auslösers sind zu kennen:
+
+- Er ist `SECURITY DEFINER`, damit die Zählung nicht durch die Lesepolicy läuft. Eine Schranke, die von einer Lesepolicy abhängt, wäre nur so lange richtig, wie diese jede eigene Reise zeigt.
+- Aufrufbar ist er trotzdem für niemanden: `revoke all on function public.reise_erzeugung_pruefen() from public, anon, authenticated`. Ein Auslöser braucht kein Ausführungsrecht des Aufrufers – deshalb erscheint er auch nicht unter `authenticated_security_definer_function_executable` in den Advisors.
+- Er zählt je Zeile und sieht dabei die Zeilen, die dieselbe Anweisung vorher eingefügt hat. Ein `insert … select … generate_series(1, 61)` scheitert deshalb an derselben Schranke wie 61 einzelne Anweisungen.
+
+Zwei Grenzen bleiben, benannt statt verschwiegen: `status = 'draft'` gilt beim Anlegen, nicht bei jeder Änderung – ein Konto kann seine eigene Reise anschliessend auf `booked` setzen, und ein Statusmodell mit erlaubten Übergängen entsteht mit der Buchung in Phase 3. Und die Zahl der Etappen, Tage und Planpunkte **je Reise** prüft weiterhin nur `reise_anlegen()`; der direkte Weg in die Kindtabellen ist unbegrenzt. Der Punkt steht im Backlog der [ROADMAP.md](../ROADMAP.md).
+
+---
+
 ## 8. Advisor-Befunde
 
-Behoben sind `function_search_path_mutable`, `auth_rls_initplan`, `multiple_permissive_policies`, `duplicate_index` und – seit `20260817100800` – `rls_enabled_no_policy`. Es bleiben **13** Security- und **9** Performance-Befunde; vor Phase 1.4b waren es 45 und 47. Was bleibt, bleibt mit Grund:
+Behoben sind `function_search_path_mutable`, `auth_rls_initplan`, `multiple_permissive_policies`, `duplicate_index` und – seit `20260817100800` – `rls_enabled_no_policy`. Es bleiben **18** Security- und **6** Performance-Befunde; nach Phase 1.4b waren es 13 und 9, vor Phase 1.4b 45 und 47. Der Anstieg auf der Sicherheitsseite kommt vollständig aus Phase 1.5 und ist gezählte Struktur, nicht neues Risiko: zwei weitere Aggregatfunktionen für die Administration und drei weitere Tabellen im GraphQL-Schema. Was bleibt, bleibt mit Grund:
 
-| Befund | Anzahl | vor 1.4b | Bewertung |
-| --- | --- | --- | --- |
-| `authenticated_security_definer_function_executable` | 4 | 4 | `aktuelle_rolle()` und `hat_rolle_mindestens()` werden von den Policies gebraucht und müssen deshalb für `authenticated` ausführbar sein. Sie geben nur Auskunft über das aufrufende Konto selbst. `admin_payments_summary_30d()` und `admin_security_overview()` prüfen die Fähigkeit intern und liefern ohne `betrieb-lesen` keine Zeile – nachgewiesen in Abschnitt 7 |
-| `pg_graphql_anon_table_exposed` | 1 | 3 | nur noch `airports`; die Tabelle soll ohne Anmeldung lesbar sein. Sichtbarkeit im GraphQL-Schema ist die Folge des `SELECT`-Rechts, nicht ein zusätzliches Recht. `blog_posts` und `blog_comments` sind mit Phase 1.4b entfallen |
-| `pg_graphql_authenticated_table_exposed` | 8 | 37 | dasselbe für angemeldete Konten, jetzt für alle acht verbleibenden Tabellen. Welche Zeilen sichtbar sind, entscheidet RLS – nachgewiesen in Abschnitt 7 |
-| `unused_index` | 8 | 46 | der Development-Branch trägt keine echte Last. Ein Index, den nie eine Abfrage benutzt hat, ist auf einem Branch ohne Verkehr keine Aussage. Die 19 Fremdschlüsselindizes aus `20260817100400` lagen auf den entfernten Tabellen und sind mit ihnen weg; die verbleibenden acht liegen auf `airports`, `creator_profiles` und `creator_sessions` |
-| `auth_db_connections_absolute` | 1 | 1 | Einstellung des Auth-Servers, kein Schemabefund. Gehört zur Kapazitätsplanung vor dem Launch |
-| `auth_leaked_password_protection` | – | 1 | **behoben in Phase 1.4c.** `password_hibp_enabled` steht auf `true`; der Lauf danach meldet den Befund nicht, obwohl ein passwortgestütztes Konto existiert. Siehe unten |
-| `rls_enabled_no_policy` | 0 | 0 | bleibt behoben |
+| Befund | Anzahl | nach 1.4b | vor 1.4b | Bewertung |
+| --- | --- | --- | --- | --- |
+| `authenticated_security_definer_function_executable` | 6 | 4 | 4 | `aktuelle_rolle()` und `hat_rolle_mindestens()` werden von den Policies gebraucht und müssen deshalb für `authenticated` ausführbar sein. Sie geben nur Auskunft über das aufrufende Konto selbst. `admin_payments_summary_30d()`, `admin_security_overview()` und seit Phase 1.5 `admin_reisen_kennzahlen()` und `admin_reisen_zeitreihe(integer)` prüfen die Fähigkeit intern und liefern ohne `betrieb-lesen` keine Zeile – nachgewiesen in Abschnitt 7 |
+| `pg_graphql_anon_table_exposed` | 1 | 1 | 3 | nur noch `airports`; die Tabelle soll ohne Anmeldung lesbar sein. Sichtbarkeit im GraphQL-Schema ist die Folge des `SELECT`-Rechts, nicht ein zusätzliches Recht. `blog_posts` und `blog_comments` sind mit Phase 1.4b entfallen |
+| `pg_graphql_authenticated_table_exposed` | 11 | 8 | 37 | dasselbe für angemeldete Konten, jetzt für alle elf Tabellen einschliesslich der vier Reisetabellen. Welche Zeilen sichtbar sind, entscheidet RLS – nachgewiesen in Abschnitt 7 |
+| `unused_index` | 5 | 8 | 46 | der Development-Branch trägt keine echte Last. Ein Index, den nie eine Abfrage benutzt hat, ist auf einem Branch ohne Verkehr keine Aussage. Die fünf liegen auf `airports` (drei Trigramm-Indizes der Flughafensuche) und `profiles` |
+| `auth_db_connections_absolute` | 1 | 1 | 1 | Einstellung des Auth-Servers, kein Schemabefund. Gehört zur Kapazitätsplanung vor dem Launch |
+| `auth_leaked_password_protection` | – | – | 1 | **behoben in Phase 1.4c.** `password_hibp_enabled` steht auf `true`; der Lauf danach meldet den Befund nicht, obwohl ein passwortgestütztes Konto existiert. Siehe unten |
+| `rls_enabled_no_policy` | 0 | 0 | 0 | bleibt behoben |
 
-Die vier `SECURITY DEFINER`-Funktionen folgen demselben Muster: interne Prüfung statt Rechteentzug. `pg_policy` wäre für jede Rolle lesbar und verriete die Bedingung jeder Policy; `admin_security_overview()` gibt nur deren Anzahl heraus.
+Die sechs `SECURITY DEFINER`-Funktionen folgen demselben Muster: interne Prüfung statt Rechteentzug. `pg_policy` wäre für jede Rolle lesbar und verriete die Bedingung jeder Policy; `admin_security_overview()` gibt nur deren Anzahl heraus.
+
+**Der Auslöser aus dem Nachtrag der Phase 1.5 erscheint hier nicht, und das ist kein Versehen.** `public.reise_erzeugung_pruefen()` ist ebenfalls `SECURITY DEFINER`, aber `revoke all … from public, anon, authenticated` nimmt ihr das Ausführungsrecht: Sie ist über `/rest/v1/rpc/` nicht erreichbar, und ein Auslöser braucht das Recht des Aufrufers nicht. Der Lauf nach der Migration meldet unverändert 18 Befunde (Abschnitt 7a).
 
 `auth_leaked_password_protection` meldeten die Advisors in den Läufen vom 17. August 09:20 und 10:49 nicht, im Abschlusslauf der Phase 1.4 dagegen schon – und im Lauf nach Phase 1.4b wieder nicht. Geschrieben hatte die Einstellung keine der beiden Phasen; gearbeitet wurde ausschliesslich über Migrationen und SQL.
 
-Phase 1.4c hat die Vermutung geprüft und bestätigt: **Der Advisor meldet den Befund nur, solange passwortgestützte Konten auf dem Branch existieren.** Ein Lauf ohne solches Konto ergab 13 Security-Befunde; nach dem Anlegen genau eines Kontos mit Passwort waren es 14, der zusätzliche war dieser. Die Testkonten der RLS-Nachweise entstehen in zurückgerollten Transaktionen und sind beim Advisor-Lauf nicht mehr da – daher das Kommen und Gehen. Seit `password_hibp_enabled = true` bleibt es bei 13, obwohl das Konto mit Passwort weiterhin existiert ([docs/AUTH.md](AUTH.md) Abschnitt 5).
+Phase 1.4c hat die Vermutung geprüft und bestätigt: **Der Advisor meldet den Befund nur, solange passwortgestützte Konten auf dem Branch existieren.** Ein Lauf ohne solches Konto ergab damals 13 Security-Befunde; nach dem Anlegen genau eines Kontos mit Passwort waren es 14, der zusätzliche war dieser. Die Testkonten der RLS-Nachweise entstehen in zurückgerollten Transaktionen und sind beim Advisor-Lauf nicht mehr da – daher das Kommen und Gehen. Seit `password_hibp_enabled = true` bleibt der Befund aus, obwohl das Konto mit Passwort weiterhin existiert ([docs/AUTH.md](AUTH.md) Abschnitt 5); die Gesamtzahl liegt seit Phase 1.5 bei 18.
 
 Die fünf `darf_…()`-Funktionen erzeugen keinen Befund: Sie sind `SECURITY INVOKER` und tragen einen festen `search_path`.
 
