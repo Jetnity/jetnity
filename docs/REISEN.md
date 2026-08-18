@@ -1,11 +1,11 @@
 # Jetnity – Reisen
 
-**Stand:** 17. August 2026 · Phase 1.5
+**Stand:** 18. August 2026 · Phase 2.1
 **Gilt für:** das Reisedatenmodell und die Wege, auf denen eine Reise entsteht, gespeichert und bearbeitet wird.
 
 Diese Datei beantwortet vier Fragen: Woraus besteht eine Reise, wo liegt sie, wie kommt sie aus dem Browser in ein Konto, und was ist bewusst noch nicht gebaut.
 
-Für Tabellen, Bedingungen, Policies und Nachweise gilt [docs/DATENBANK.md](DATENBANK.md); für die Anmeldung [docs/AUTH.md](AUTH.md); für die Einordnung in das Gesamtsystem [ARCHITECTURE.md](../ARCHITECTURE.md).
+Für Tabellen, Bedingungen, Policies und Nachweise gilt [docs/DATENBANK.md](DATENBANK.md); für die Anmeldung [docs/AUTH.md](AUTH.md); für den Weg von einer freien Beschreibung zu einem Reisevorschlag [docs/MODELL.md](MODELL.md); für die Einordnung in das Gesamtsystem [ARCHITECTURE.md](../ARCHITECTURE.md).
 
 ---
 
@@ -77,6 +77,8 @@ Die letzte Zeile ist kein Modellwert, sondern ein Missbrauchsriegel: Eine Reise 
 
 Gezählt werden Neuanlagen, nicht Aufrufe: Ist `(user_id, client_ref)` schon belegt, entsteht keine Reise, und der Riegel gilt nicht. Sonst wäre eine Wiederholung an der Grenze abgewiesen worden, obwohl die Reise bereits im Konto liegt (ADR-0048). Zählung und Einfügung laufen je Konto der Reihe nach; ohne diese Serialisierung liesse sich der Riegel mit gleichzeitigen Anfragen überschreiten (ADR-0049).
 
+**Ein Reisevorschlag aus Phase 2.1 bleibt enger.** Er darf höchstens 30 Tage, 8 Etappen und 5 Planpunkte je Tag beschreiben – nicht weil das Reiseschema mehr nicht könnte, sondern weil die Antwort des Modells in ein Ausgabebudget passen muss und eine Reise über ein halbes Jahr Tag für Tag vorzuschlagen keine Planung wäre, sondern eine Aufzählung. Titel, Notizen, Reisende und Beträge folgen denselben Zahlen wie oben, weil derselbe Reisegraph daraus entsteht ([MODELL.md](MODELL.md)).
+
 ---
 
 ## 3. Wo eine Reise liegt
@@ -104,7 +106,7 @@ Die Warteschlange ist ein Übergangszustand und bleibt im laufenden Betrieb leer
 
 ## 4. Eine Reise entsteht
 
-`public.reise_anlegen(jsonb)` ist die einzige Stelle, an der eine Reise im Konto entsteht – gleich ob sie aus dem Formular unter `/planen` kommt oder als Gastentwurf aus dem Browser. Zwei Wege wären zwei Stellen, an denen die Prüfung fehlen kann.
+`public.reise_anlegen(jsonb)` ist die einzige Stelle, an der eine Reise im Konto entsteht – gleich ob sie aus dem Formular unter `/planen` kommt, aus einem freigegebenen Reisevorschlag (Phase 2.1) oder als Gastentwurf aus dem Browser. Drei Wege wären drei Stellen, an denen die Prüfung fehlen kann.
 
 Die Funktion legt Reise, Etappen, Tage und Planpunkte **in einer Transaktion** an. Vier Einzelaufrufe von PostgREST wären vier Transaktionen: Bricht der dritte ab, läge eine Reise ohne Tage im Konto, und niemand könnte sagen, ob sie gerade entsteht oder unvollständig ist.
 
@@ -161,7 +163,7 @@ Drei Adressen, für Gast und Konto dieselben. Der Unterschied entsteht auf dem S
 
 | Adresse | Gast | Konto |
 | --- | --- | --- |
-| `/planen` | legt die eine Gastreise im Browser an | ruft `reiseAnlegen()` und leitet auf die Reise weiter |
+| `/planen` | freie Beschreibung oder Formular; legt die eine Gastreise im Browser an | dieselben zwei Einstiege; ruft `reiseAnlegen()` bzw. `vorschlagUebernehmen()` und leitet auf die Reise weiter |
 | `/reisen` | zeigt den Entwurf mit dem Hinweis, dass er nur in diesem Browser liegt | zeigt die Reisen des Kontos, davor die Brücke |
 | `/reisen/[tripId]` | Arbeitsbereich auf dem Browserspeicher | Arbeitsbereich auf der Datenbank, mit Löschen |
 
@@ -181,13 +183,13 @@ Die Kennung entscheidet, wo `/reisen/[tripId]` nachsieht: `trip-<uuid>` ist ein 
 
 | Nicht gebaut | Grund |
 | --- | --- |
-| AI-Reisegenerierung | Phase 2. Das Modell trägt `travel_wish` und `pace`, damit sie später darauf aufsetzen kann |
-| Amadeus, Hotels, Aktivitäten | Phase 3. `trip_items.provider`, `external_ref` und `booking_url` sind die Anknüpfung, mehr nicht |
+| ~~Reisevorschlag aus natürlicher Sprache~~ | **in Phase 2.1 gebaut.** Ein Vorschlag wird auf dieses Modell abgebildet und über `public.reise_anlegen()` bzw. den Gastspeicher übernommen; `travel_wish` und `pace` waren dafür vorbereitet ([MODELL.md](MODELL.md)) |
+| Amadeus, Hotels, Aktivitäten | Phase 3. `trip_items.provider`, `external_ref` und `booking_url` sind die Anknüpfung, mehr nicht – ein Vorschlag aus Phase 2.1 lässt sie leer (ADR-0054) |
 | Anbieter-Abstraktion | erst bei einem zweiten Anbieter ([AGENTS.md](../AGENTS.md) Regel 19) |
 | Preisoptimierung, Preishistorie | braucht Anbieterpreise, die es noch nicht gibt |
 | Affiliate-Tracking | Phase 4 |
 | gemeinsame Reiseplanung | braucht ein Berechtigungsmodell je Reise. Heute ist eine Reise privat, und das ist die einfachere und sicherere Aussage |
-| Änderung per natürlicher Sprache | Phase 2. Sie setzt auf denselben Server Actions auf |
+| Änderung einer bestehenden Reise per Sprache | Phase 2.2. Sie setzt auf denselben Server Actions und auf der Modellschicht aus 2.1 auf |
 | Bearbeiten von Etappen und Reisestammdaten in der Oberfläche | Tabellen, Policies und Bedingungen sind vollständig; die Oberfläche kann heute Planpunkte anlegen und entfernen sowie eine Reise löschen. Etappen entstehen beim Anlegen |
 
 ---
@@ -198,7 +200,7 @@ Die Kennung entscheidet, wo `/reisen/[tripId]` nachsieht: `trip-<uuid>` ist ein 
 | --- | --- |
 | Titel, Zeitraum und Budget einer bestehenden Reise sind in der Oberfläche nicht änderbar | Schema und Policies erlauben es (`trips_aendern`). Die Oberfläche dazu gehört zum Trip Workspace der Phase 2 |
 | Etappen sind nach dem Anlegen nicht bearbeitbar | dasselbe. Eine Reise entsteht mit einer Etappe aus dem Ziel |
-| `trip_days.title` wird gespeichert, aber von keiner Oberfläche gesetzt | das Feld trägt die Tagesüberschrift, die die AI-Generierung erzeugen wird |
+| `trip_days.title` wird von keiner Oberfläche gesetzt | seit Phase 2.1 füllt es ein übernommener Reisevorschlag – die Tagesüberschrift kommt aus dem Entwurf. Über das Formular bleibt es leer, und änderbar ist es noch nicht |
 | Die Liste „Meine Reisen" endet bei 200 Reisen | Vorsichtsmassnahme, keine Produktregel. Blätterung soll bewusst entstehen, nicht als unbemerkt abgeschnittene Liste |
 | Ein Gast, der den Browserspeicher leert, verliert seinen Entwurf | Absicht. Ohne Konto gibt es keinen anderen Ort. Beide Gastansichten sagen es ausdrücklich |
 | Der Reisegraph wird bei jedem Aufruf vollständig geladen | bei 1000 Planpunkten je Reise vertretbar. Eine Aufteilung braucht einen gemessenen Grund |

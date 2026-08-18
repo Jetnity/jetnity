@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
-Stand: 17. August 2026
-Gültig für: Phase 1, Stand nach dem V2-Reiseschema (1.5)
+Stand: 18. August 2026
+Gültig für: Phase 2.1, Stand nach dem Reisevorschlag aus natürlicher Sprache
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -19,7 +19,7 @@ Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Ziel
 | Datenbank | Supabase PostgreSQL |
 | Auth | Supabase Auth (Cookie-basiert, SSR) |
 | Storage | Supabase Storage |
-| KI | OpenAI API (serverseitig) |
+| Modell | OpenAI Responses API, serverseitig, **abgeschaltet** (Abschnitt 5a) |
 | Node | >= 20.9 (siehe `package.json` → `engines`) |
 
 Ein Framework-Wechsel ist nicht vorgesehen und benötigt Freigabe.
@@ -148,7 +148,7 @@ Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
 | Pfad | Aufgabe |
 | --- | --- |
 | `/` | Startseite mit Positionierung und Einstieg in die Reiseplanung |
-| `/planen` | Erfassung der Reiseidee (`components/trips/TripPlanner.tsx`) |
+| `/planen` | Reisebeschreibung in eigenen Worten (`components/trips/Reiseidee.tsx`) und darunter das Formular (`components/trips/TripPlanner.tsx`) |
 | `/reisen` | Übersicht der Reisen – im Konto aus Supabase, als Gast die eine Gastreise |
 | `/reisen/[tripId]` | Trip Workspace mit Tagesplanung (`components/trips/TripWorkspace.tsx`) |
 
@@ -174,13 +174,54 @@ Bewusste Datenschutzregel, unverändert: Weder im Browserspeicher noch in den Re
 
 ---
 
+## 5a. Der Reisevorschlag aus natürlicher Sprache
+
+Vollständige Beschreibung: [docs/MODELL.md](docs/MODELL.md). Hier steht, wie die Schicht in die Architektur greift.
+
+Seit Phase 2.1 gibt es unter `/planen` neben dem Formular einen zweiten Einstieg: eine freie Reisebeschreibung. Aus ihr entsteht ein strukturierter Entwurf mit Etappen, Tagen und Planpunkten.
+
+```
+Freitext → Eingabeprüfung → Modellzustand → Kontingent buchen → Modellaufruf
+  → Nutzung abschliessen → Antwortprüfung → Vorschau → Freigabe → Persistenz
+```
+
+| Schicht | Datei | Aufgabe |
+| --- | --- | --- |
+| Konfiguration | `lib/modell/konfiguration.ts` | Kill Switch, Modellwahl, alle Grenzen, neun Ergebnisklassen |
+| Preise | `lib/modell/preise.ts` | Preise in Mikrodollar, Kostenrechnung, Reservierung |
+| Anfrage und Antwort | `lib/modell/anfrage.ts`, `antwort.ts` | Anfragekörper; HTTP-Status und Antwortobjekt → Ergebnisklasse |
+| Aufruf | `lib/modell/aufruf.ts` | der eine `fetch`, `server-only`, Abbruch nach 40 s |
+| Kontingent | `lib/modell/kontingent.ts` | Gastkennung als Cookie, Aufruf der beiden Datenbankfunktionen |
+| Vorschlagsschema | `lib/reisevorschlag/schema.ts` | Zod- und JSON-Schema, fachliche Stimmigkeit, Fassung |
+| Systemregeln | `lib/reisevorschlag/regeln.ts` | der einzige Prompt, den Jetnity schreibt |
+| Normalisierung | `lib/reisevorschlag/normalisierung.ts` | Steuerzeichen und Preisangaben aus Modelltext |
+| Ablauf | `lib/reisevorschlag/erzeugen.ts` | die Kette oben, mit Ports statt Verbindungen |
+| Abbildung | `lib/reisevorschlag/abbildung.ts` | Vorschlag → `Trip` (Gast) bzw. `ReiseNutzlast` (Konto) |
+| Server Actions | `lib/reisevorschlag/aktionen.ts` | `vorschlagErzeugen()`, `vorschlagUebernehmen()` |
+
+Elf der dreizehn Module laufen ohne Serverumgebung, ohne Datenbank und ohne `fetch`. Nur `aufruf.ts` und `kontingent.ts` tragen `server-only`, nur `aktionen.ts` hat echte Verbindungen. Damit sind Zeitüberschreitung, HTTP 500, erschöpftes Kontingent, abgeschnittene Antwort, kaputtes JSON und schemawidriger Inhalt ohne bezahlten Aufruf prüfbar – 256 Tests, kein Modellaufruf.
+
+**Es entsteht keine zweite Persistenz.** Der Vorschlag lebt bis zur Freigabe im Zustand einer React-Komponente; danach schreibt der Gastweg über `gastreiseAblegen()` und der Kontoweg über `public.reise_anlegen()` – dieselben Wege wie das Formular, mit derselben Idempotenz über `client_ref` ([DECISIONS.md](DECISIONS.md) ADR-0050).
+
+**Modelloutput ist untrusted input.** Die Antwort wird zweimal geprüft: von der Plattform gegen ein JSON-Schema mit `strict: true`, danach von Jetnity gegen ein Zod-Schema mit den fachlichen Grenzen des Reiseschemas. Beim Übernehmen läuft dieselbe Prüfung noch einmal, weil der Vorschlag durch den Browser gelaufen ist (ADR-0053).
+
+**Der Vorschlag kann keine Preise, Anbieter oder Verfügbarkeiten enthalten.** Das Schema hat diese Felder nicht, `additionalProperties: false` macht sie unaussprechbar, und die Normalisierung entfernt Beträge aus Freitexten. Nach der Abbildung sind `price_amount`, `price_currency`, `provider`, `external_ref` und `booking_url` `null`; ein genanntes Budget ist ein Ziel in `trips.budget_amount` (ADR-0054).
+
+**Der Weg ist in keiner Umgebung eingeschaltet.** `modellZustand()` verlangt `JETNITY_MODELL_AKTIV`, einen `OPENAI_API_KEY` und ein Modell mit bekanntem Preis. Fehlt eines, entsteht kein Aufruf, und die Oberfläche sagt es – das Formular unter `/planen` bleibt vollständig benutzbar. Was zur Aktivierung nötig ist, steht in [docs/MODELL.md](docs/MODELL.md), Abschnitt 8.
+
+---
+
 ## 6. Datenbank
 
 Vollständige Beschreibung: [docs/DATENBANK.md](docs/DATENBANK.md). Hier steht nur, wie sie in die Architektur eingebunden ist.
 
-**Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Achtzehn Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b und dem Reiseschema aus Phase 1.5 – **11 Tabellen, 31 Policies und 18 Funktionen**. Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
+**Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Neunzehn Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b, dem Reiseschema aus Phase 1.5 und dem Kostenprotokoll aus Phase 2.1 – **12 Tabellen, 32 Policies und 21 Funktionen**. Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
 
-Vier der elf Tabellen sind die Reisedaten: `trips`, `trip_stages`, `trip_days`, `trip_items`. Sie sind privat und tragen ihre Eigentümerkennung selbst; ein zusammengesetzter Fremdschlüssel `(trip_id, user_id) → trips (id, user_id)` verhindert, dass ein Kind an einer fremden Reise hängt. Enum-Typen führt das Schema keine mehr – jeder Wertebereich steht in einer Prüfbedingung ([DECISIONS.md](DECISIONS.md) ADR-0043).
+Vier der zwölf Tabellen sind die Reisedaten: `trips`, `trip_stages`, `trip_days`, `trip_items`. Sie sind privat und tragen ihre Eigentümerkennung selbst; ein zusammengesetzter Fremdschlüssel `(trip_id, user_id) → trips (id, user_id)` verhindert, dass ein Kind an einer fremden Reise hängt. Enum-Typen führt das Schema keine mehr – jeder Wertebereich steht in einer Prüfbedingung ([DECISIONS.md](DECISIONS.md) ADR-0043).
+
+Die zwölfte Tabelle ist `public.model_usage` aus Phase 2.1 – ein Kostenprotokoll, keine Nutzdaten. Sie ist die Stelle, an der die Kostenkontrolle für Modellaufrufe wirklich stattfindet: Ein Zähler in einem Serverprozess kennt nur seine eigene Instanz, und Vercel startet beliebig viele. Zwei `SECURITY DEFINER`-Funktionen buchen ein Kontingent, bevor ein Aufruf geschieht, und schliessen es danach ab; `pg_advisory_xact_lock` serialisiert Prüfung und Einfügung – dieselbe Bauweise wie die Missbrauchsschranke aus ADR-0049. Einzelheiten in [docs/MODELL.md](docs/MODELL.md), Begründung in ADR-0052.
+
+Auf dieser Tabelle hat `anon` **kein** Recht. Er darf ausschliesslich die beiden Funktionen ausführen, und das ist die erste bewusste Ausnahme von der Regel, dass für `anon` keine `SECURITY DEFINER`-Funktion ausführbar ist. `npm run db:sicherheit` nennt die zwei namentlich, sodass eine dritte den Nachweis brechen würde. Lesen darf die Tabelle nur, wer `betrieb-lesen` hat; ändern und löschen darf sie niemand – ein Kostenprotokoll, das sein Eigentümer aufräumen kann, ist keins.
 
 Drei Regeln halten das zusammen:
 
@@ -192,7 +233,7 @@ Drei Regeln halten das zusammen:
 
 Die ersten beiden brauchen den Development-Zugang und laufen vor einer Zusammenführung von Hand. Die dritte liest nur die erzeugte Typdatei und läuft in der CI mit.
 
-**Zugriffsschutz.** RLS ist auf allen 11 Tabellen eingeschaltet. `anon` und `authenticated` haben kein Tabellenrecht, das nicht eine Policy braucht – geprüft in beide Richtungen durch `npm run db:rechte`. Bis Phase 1.4 hatten beide Rollen auf jeder Tabelle alle Rechte einschließlich `TRUNCATE`, das RLS vollständig umgeht. Ohne Anmeldung lesbar ist seit Phase 1.4b nur noch `airports`.
+**Zugriffsschutz.** RLS ist auf allen 12 Tabellen eingeschaltet. `anon` und `authenticated` haben kein Tabellenrecht, das nicht eine Policy braucht – geprüft in beide Richtungen durch `npm run db:rechte`. Bis Phase 1.4 hatten beide Rollen auf jeder Tabelle alle Rechte einschließlich `TRUNCATE`, das RLS vollständig umgeht. Ohne Anmeldung lesbar ist seit Phase 1.4b nur noch `airports`.
 
 Auf den vier Reisetabellen prüft **keine** Policy eine Fähigkeit: Adminrechte öffnen private Reiseinhalte nicht, und das gilt bis zur Rolle `owner`. Die Kennzahlen des Administrationsbereichs kommen deshalb aus zwei `SECURITY DEFINER`-Funktionen, die ausschliesslich Anzahlen liefern und die Fähigkeit `betrieb-lesen` selbst prüfen ([DECISIONS.md](DECISIONS.md) ADR-0041).
 
@@ -230,13 +271,28 @@ Entfernt wurden 63 Endpunkte: alle KI- und Modell-Endpunkte, die Media- und Vide
 
 ### Kostenkontrolle bei Modellaufrufen
 
-Es existiert **kein** Codepfad mehr, der ohne Nutzerinteraktion einen kostenpflichtigen Modellaufruf auslöst. Beseitigt wurden:
+Es existiert **kein** Codepfad, der ohne Nutzerinteraktion einen kostenpflichtigen Modellaufruf auslöst. Beseitigt wurden in Phase 1.1:
 
 1. der Cron `/api/copilot/auto`, der täglich bis zu 24 DALL·E-3-Bilder erzeugte und dessen Secret-Prüfung fail-open war,
 2. ein Generator-Aufruf im Server-Rendering von `app/search/page.tsx`, der bei jedem öffentlichen Aufruf mit `region`- oder `city`-Parameter eine DALL·E-3-Generierung auslöste – ohne Authentifizierung, Secret oder Rate Limit,
 3. die gesamte Generierungskette (`copilot-upload-checker`, `copilot-upload-generator`, `copilot-image`) sowie der Block `maybeGenerateCopilotUpload`.
 
-Mit Phase 1.1b ist zusätzlich `lib/openai/*` entfernt und das Paket `openai` deinstalliert. Es existiert damit **kein** Codepfad mehr zu einem kostenpflichtigen Modell, auch nicht über eine Nutzerhandlung. Der Setup-Check verlangt keinen `OPENAI_API_KEY` mehr.
+Mit Phase 1.1b wurde zusätzlich `lib/openai/*` entfernt und das Paket `openai` deinstalliert.
+
+**Seit Phase 2.1 gibt es wieder einen Weg zu einem kostenpflichtigen Modell – abgeschaltet, und nur über eine Nutzerhandlung.** Er unterscheidet sich in jedem Punkt von den entfernten:
+
+| Eigenschaft | Alt-Endpunkte (entfernt) | `vorschlagErzeugen()` |
+| --- | --- | --- |
+| Auslöser | Cron und Server-Rendering | ein Klick auf „Entwurf erstellen" |
+| Standardzustand | eingeschaltet | aus; drei Variablen müssen zusammenkommen |
+| Grenze je Aufrufer | keine | 4 je Stunde, 8 je Tag |
+| Globale Grenze | keine | 38 Aufrufe und $3.00 je Tag |
+| Durchsetzung | – | Datenbank, serialisiert, vor dem Aufruf gebucht |
+| Ausgabegrenze | keine | `max_output_tokens: 6000` |
+| Zeitgrenze | keine | 40 s, eigener `AbortController` |
+| Protokoll | keins | `public.model_usage`, eine Zeile je Aufruf |
+
+Der Setup-Check verlangt `OPENAI_API_KEY` weiterhin **nicht** – eine fehlende Variable ist der Normalzustand einer Umgebung, in der die Funktion nicht laufen soll. Vollständige Beschreibung in [docs/MODELL.md](docs/MODELL.md), Entscheidung in [DECISIONS.md](DECISIONS.md) ADR-0052.
 
 ---
 
@@ -263,7 +319,9 @@ Zuordnung und Begründung der semantischen Tokens: [DESIGN_SYSTEM.md](DESIGN_SYS
 - `.github/workflows/ci.yml` führt bei jedem Push auf `main` und bei jedem Pull Request aus: `npm ci`, Setup-Check, Typecheck, Lint, Tests, Schutz der Admin-API, Bezug auf das Schema, die drei Hygiene-Prüfungen und den Production-Build
 - ein zweiter Job gleicht die Auth-Konfiguration des Branches gegen `supabase/config.toml` ab (`npm run auth:pruefen`). Er ist fail-closed: Ohne die Secrets `SUPABASE_ACCESS_TOKEN` und `SUPABASE_PROJECT_REF` schlägt er fehl, statt sich stillschweigend zu überspringen. Nur ein Pull Request aus einem Fork überspringt sich, weil GitHub ihm keine Secrets gibt
 
-Die datenbanknahen Prüfungen aus `scripts/db/` laufen nicht in der CI. Sie brauchen den Development-Zugang, und mehrere Läufe gegen denselben Branch würden dieselben Testkonten anlegen. Sie werden vor einer Zusammenführung von Hand ausgeführt; die Liste steht in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 9.
+Die datenbanknahen Prüfungen aus `scripts/db/` laufen nicht in der CI. Sie brauchen den Development-Zugang, und mehrere Läufe gegen denselben Branch würden dieselben Testkonten anlegen. Sie werden vor einer Zusammenführung von Hand ausgeführt; die Liste steht in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 9. Seit Phase 2.1 gehört `npm run db:kontingent` dazu.
+
+`npm run modell:probe` löst einen echten, bezahlten Modellaufruf aus und läuft deshalb **nie** in der CI, sondern nur ausdrücklich von Hand ([docs/MODELL.md](docs/MODELL.md), Abschnitt 8).
 
 Deployment über Vercel (Projekt `jetnity-app`). `main` ist der stabile Integrationsbranch; größere Umbauten laufen über Feature-Branch und Preview. Ein Push auf `main` löst automatisch einen Production-Deploy aus.
 
@@ -301,6 +359,9 @@ Aktuell nur Konsolen-Logging, kein zentrales Error-Tracking und keine strukturie
 | Datenbanknahe Prüfungen laufen nicht in der CI | 5 Prüfungen von Hand | braucht einen kurzlebigen Branch je Lauf, sonst kollidieren die Testkonten |
 | ~~Tests ohne Reisedaten~~ | ~~41 Tests, davon keiner zur Persistenz~~ | in Phase 1.5: 129 Tests in `lib/trips/` ohne Datenbank, dazu 47 Nachweise gegen den Branch |
 | Reise bearbeiten ist noch schmal | Anlegen, Planpunkt hinzufügen und entfernen, Reise löschen | Umbenennen, Umsortieren und Verschieben von Tagen entstehen mit dem Trip Builder in Phase 2 |
+| Modellweg ohne echten Aufruf belegt | 256 Tests gegen Fixtures, 0 Aufrufe gegen OpenAI | in Phase 2.1 fehlte ein `OPENAI_API_KEY`. Unbelegt bleiben Modellqualität, tatsächliche Tokennutzung und Laufzeit; die Modellwahl ist begründet, nicht gemessen (ADR-0051). Erster Schritt einer Aktivierung: `npm run modell:probe` |
+| `model_usage` ohne Aufbewahrungsfrist | höchstens 38 Zeilen am Tag, keine Reiseinhalte | eine Frist gehört zu der Entscheidung, die Funktion einzuschalten. Backlog in [ROADMAP.md](ROADMAP.md), Begründung ADR-0052 |
+| Ein Vorschlag überlebt kein Reload | Zustand einer React-Komponente | bewusst: der Vorschlag ist kein Systemzustand, und ein Verlust kostet einen Aufruf, nicht eine Reise (ADR-0050) |
 | ~~`PublicNavbar` kennt die Sitzung nicht~~ | ~~zeigt immer „Anmelden", kein Abmelden im öffentlichen Bereich~~ | im Nachtrag der Phase 1.5 behoben: Die Leiste liest die Sitzung clientseitig, das öffentliche Layout bleibt statisch (ADR-0047) |
 | Zahl der Kindzeilen je Reise ungebremst | Etappen, Tage und Planpunkte nur über `reise_anlegen()` begrenzt | ein direkter `INSERT` kann die eigene Reise beliebig weit füllen. Ein Auslöser je Zeile wäre quadratisch; der Weg ist ein Auslöser je Anweisung. Backlog in [ROADMAP.md](ROADMAP.md), Begründung ADR-0045 |
 | Einsicht in eine fremde Reise für den Support | bewusst nicht vorhanden | braucht eine eigene Entscheidung samt Protokollierung, nicht eine Policy (ADR-0041) |

@@ -55,24 +55,26 @@ Ein Unterschied ist wichtig: Alle Skripte ausser `db:parallelitaet` und `db:anwe
 
 ## 3. Bestand
 
-| Gegenstand | Anzahl | nach Phase 1.4b | vor Phase 1.4b |
-| --- | --- | --- | --- |
-| Tabellen | **11** | 8 | 37 |
-| Spalten | 102 | 66 | 324 |
-| Primärschlüssel | 11 | 8 | 37 |
-| Fremdschlüssel | 7 | 2 | 52 |
-| Eindeutigkeitsbedingungen | 6 | 3 | 4 |
-| CHECK-Bedingungen | 45 | 4 | 26 |
-| Indizes | 31 | 25 | 127 |
-| RLS-Policies | 31 | 19 | 66 |
-| Funktionen | 18 | 19 | 43 |
-| Trigger | 7 | 4 | 13 |
-| Enums | **0** | 2 | 4 |
-| Views / materialisierte Views | 0 | 0 | 0 |
-| Sequenzen | 1 | 1 | 2 |
-| Extensions | 10 | 10 | 10 |
+| Gegenstand | Anzahl | nach Phase 1.5 | nach Phase 1.4b | vor Phase 1.4b |
+| --- | --- | --- | --- | --- |
+| Tabellen | **12** | 11 | 8 | 37 |
+| Spalten | 115 | 102 | 66 | 324 |
+| Primärschlüssel | 12 | 11 | 8 | 37 |
+| Fremdschlüssel | 7 | 7 | 2 | 52 |
+| Eindeutigkeitsbedingungen | 6 | 6 | 3 | 4 |
+| CHECK-Bedingungen | 56 | 45 | 4 | 26 |
+| Indizes | 34 | 31 | 25 | 127 |
+| RLS-Policies | 32 | 31 | 19 | 66 |
+| Funktionen | 21 | 18 | 19 | 43 |
+| Trigger | 7 | 7 | 4 | 13 |
+| Enums | **0** | 0 | 2 | 4 |
+| Views / materialisierte Views | 0 | 0 | 0 | 0 |
+| Sequenzen | 1 | 1 | 1 | 2 |
+| Extensions | 10 | 10 | 10 | 10 |
 
-Die elf Tabellen: `profiles`, `trips`, `trip_stages`, `trip_days`, `trip_items`, `airports`, `payments`, `refunds`, `stripe_webhooks`, `security_events`, `blocked_ips`. Ihre Einordnung steht in Abschnitt 10.
+Die zwölf Tabellen: `profiles`, `trips`, `trip_stages`, `trip_days`, `trip_items`, `model_usage`, `airports`, `payments`, `refunds`, `stripe_webhooks`, `security_events`, `blocked_ips`. Ihre Einordnung steht in Abschnitt 10.
+
+**Phase 2.1 hat genau eine Tabelle ergänzt:** `model_usage` mit 13 Spalten, 11 CHECK-Bedingungen, 3 Indizes, 1 Policy und 3 Funktionen (Abschnitt 7c). Sie hat bewusst **keinen** Fremdschlüssel: Was dort steht, ist der SHA-256 einer Konto- oder Gastkennung und keine Kennung, auf die man verweisen könnte. Ein Kostenprotokoll soll ein gelöschtes Konto überleben – sonst verschwinden mit dem Konto die Kosten, die es verursacht hat.
 
 Das Wachstum liegt vollständig bei den Reisedaten: Die vier neuen Tabellen tragen 61 Spalten, 43 CHECK-Bedingungen, 6 Fremdschlüssel, 5 Eindeutigkeitsbedingungen, 15 Indizes, 16 Policies und 5 Auslöser – vier für `updated_at`, einer für die Erzeugungsregeln von `public.trips` (Abschnitt 7a). Gleichzeitig sind mit `creator_sessions` 16 Spalten, 7 Indizes und 4 Policies sowie die neun Creator-Spalten des Profils entfallen – die Nettozahlen der Tabelle oben sind deshalb kleiner als die Zugänge.
 
@@ -144,6 +146,7 @@ Der Zustand nach Phase 1.4 steht in Abschnitt 9; dort ist auch nachgewiesen, das
 | `20260818010000_reise_erzeugungsregeln.sql` | `trips.client_ref` auf `NOT NULL`; Auslöser `trips_erzeugung_pruefen` für Zeitstempel, Anfangsstatus und Missbrauchsschranke; `reise_anlegen()` ohne eigene Zählung (Nachtrag Phase 1.5, ADR-0045) |
 | `20260818020000_reise_wiederholung.sql` | Die Schranke zählt Neuanlagen: Ist `(user_id, client_ref)` belegt, gilt sie nicht – der Retry bleibt auch an der Grenze idempotent (Nachtrag Phase 1.5, ADR-0048) |
 | `20260818030000_reise_erzeugung_serialisieren.sql` | Zählung und Einfügung laufen je Konto der Reihe nach, serialisiert über `pg_advisory_xact_lock` – die Schranke hält auch bei gleichzeitigen Anfragen (Nachtrag Phase 1.5, ADR-0049) |
+| `20260818040000_modellnutzung.sql` | `model_usage` als Kostenprotokoll, `modell_preis()`, `modell_kontingent_beanspruchen()` und `modell_nutzung_abschliessen()` – die Kostenschranke für Modellaufrufe (Phase 2.1, ADR-0052) |
 
 Die Reihenfolge ist nicht beliebig: `20260817100200` darf erst laufen, wenn `20260817100000` die Rollen der Betroffenen übernommen und `20260817100100` alle Policies auf `creator_profiles.role` umgestellt hat. Sonst verlöre jemand seinen Zugang oder eine Policy liefe ins Leere.
 
@@ -500,7 +503,101 @@ Das Offenhalten ist kein Kunstgriff: `reise_anlegen()` schreibt nach der Reise b
 
 **Der Nachweis hat Zähne, und das ist selbst nachgewiesen.** Mit der Fassung vor `20260818030000` scheitert das Skript mit Exit-Code 1 und meldet 65 Reisen statt 60 – auf beiden Schreibwegen. Ein Nachweis, der auch ohne die Behebung grün wäre, wäre keiner.
 
-Dieses Skript ist das einzige unter `scripts/db/`, das echte Zeilen schreibt und nicht zurückrollt. Es benutzt ein eigenes Konto, das kein anderer Nachweis anfasst, und räumt vor **und** nach jedem Lauf auf – auch wenn ein Fall scheitert.
+Dieses Skript und `npm run db:kontingent` (Abschnitt 7c) sind die einzigen unter `scripts/db/`, die echte Zeilen schreiben und nicht zurückrollen. Beide benutzen ein eigenes Konto, das kein anderer Nachweis anfasst, und räumen vor **und** nach jedem Lauf auf – auch wenn ein Fall scheitert.
+
+---
+
+## 7c. Das Kostenprotokoll für Modellaufrufe
+
+Vollständige Beschreibung der Modellschicht: [MODELL.md](MODELL.md). Hier steht der Teil, der in der Datenbank liegt.
+
+`public.model_usage` ist die Stelle, an der die Kostenkontrolle für Modellaufrufe stattfindet. Nicht aus Bequemlichkeit: Vercel startet beliebig viele Instanzen, und ein Zähler in einem Serverprozess kennt nur seine eigene. Die einzige Stelle, die alle Aufrufe sieht, ist die Datenbank ([DECISIONS.md](../DECISIONS.md) ADR-0052).
+
+### Die Tabelle
+
+| Spalte | Typ | Inhalt |
+| --- | --- | --- |
+| `id` | `uuid` | Primärschlüssel; wird der Anwendung nach der Buchung zurückgegeben |
+| `funktion` | `text` | `reisevorschlag` – die eine Funktion dieser Phase |
+| `modell` | `text` | eines der drei Modelle mit bekanntem Preis |
+| `art` | `text` | `konto` oder `gast` |
+| `kennung_hash` | `text` | SHA-256 der Konto- oder Gastkennung, 64 Hexzeichen |
+| `ergebnis` | `text` | `reserviert` oder eine der neun Ergebnisklassen |
+| `eingabe_tokens`, `gecachte_tokens`, `ausgabe_tokens` | `integer` | soweit die API sie berichtet, sonst `null` |
+| `laufzeit_ms` | `integer` | Dauer des Aufrufs |
+| `kosten_mikro_usd` | `bigint` | Reservierung, nach Abschluss der ermittelte Betrag |
+| `created_at`, `abgeschlossen_am` | `timestamptz` | Zeitpunkte |
+
+Was **nicht** darin steht: die Reisebeschreibung, der Vorschlag, der Prompt, die Antwort, eine IP-Adresse, eine E-Mail-Adresse, ein Schlüssel. Ein Kostenprotokoll braucht Kosten, keine Reiseinhalte.
+
+`null` bei den Tokens heisst „nicht berichtet" und nicht „null Tokens". Der Unterschied ist Geld: Auf `null` bleibt der reservierte Betrag stehen, auf `0` würde ein bezahlter Aufruf als kostenlos gelten. Die Bedingung `model_usage_abschluss_stimmig` hält zusammen, dass ein abgeschlossener Eintrag einen Zeitpunkt hat und ein reservierter keinen.
+
+### Die drei Funktionen
+
+| Funktion | Rechte | Aufgabe |
+| --- | --- | --- |
+| `modell_preis(text)` | nur Definer, kein `EXECUTE` für `anon`/`authenticated` | Preis eines Modells in Mikrodollar je Million Tokens |
+| `modell_kontingent_beanspruchen(text, text, text)` | `EXECUTE` für `anon` und `authenticated` | prüft alle Grenzen und legt vor dem Aufruf eine Zeile mit dem Preis des schlechtesten Falls an |
+| `modell_nutzung_abschliessen(uuid, text, int, int, int, int)` | `EXECUTE` für `anon` und `authenticated` | ersetzt Schätzung durch ermittelten Betrag |
+
+Alle drei sind `SECURITY DEFINER` mit `set search_path = public, pg_temp`.
+
+Beide öffentlichen Funktionen beginnen mit `perform pg_advisory_xact_lock(hashtext('public.model_usage'), 0)` – **eine** globale Sperre, kein Schlüssel je Kennung. Der Grund liegt in den Grenzen: Zwei verschiedene Kennungen nähmen verschiedene Sperren, sähen denselben Gesamtstand und kämen beide durch. Gerade die globalen Grenzen sind die, die gegen rotierende Gastkennungen wirken. Die Sperre wird höchstens 38-mal am Tag genommen.
+
+Die Kennung eines angemeldeten Kontos kommt aus `auth.uid()`, nicht vom Aufrufer. Wer seine eigene Kontokennung mitschicken dürfte, dürfte auch eine fremde mitschicken.
+
+### Die fünf Grenzen
+
+| Grenze | Wert |
+| --- | --- |
+| je Kennung und Stunde | 4 |
+| je Kennung und Tag | 8 |
+| alle Gäste und Tag | 24 |
+| insgesamt und Tag | 38 |
+| Kosten insgesamt und Tag | 3 000 000 µ$ = $3.00 |
+
+Sie stehen als Konstanten im Rumpf der Funktion und **nicht** in einer Konfigurationstabelle: Eine Grenze, die sich über eine Zeile ändern lässt, ändert sich irgendwann. Dieselben Zahlen stehen in `MODELL_GRENZEN` in `lib/modell/konfiguration.ts`, und `lib/modell/grenzen-datenbank.test.ts` vergleicht beide Seiten bei jedem `npm test` allein aus dem Migrations-SQL.
+
+Die Reservierung wirkt **vor** dem Aufruf. Damit ist die Tagessumme zu jedem Zeitpunkt eine Obergrenze, auch während zehn Aufrufe gleichzeitig laufen. `gesamtTag = 38` hält den Kostendeckel allein ein: 38 × 77 200 µ$ = 2 933 600 µ$ < 3 000 000 µ$.
+
+### Rechte
+
+RLS ist eingeschaltet, eine Policy: `select` für `authenticated` mit `public.darf_betrieb_lesen()` – ab `moderator`.
+
+`anon` hat auf der Tabelle **kein** Recht, auch kein `insert`. Ein Gast schreibt ausschliesslich über die beiden Funktionen. Das ist die erste bewusste Ausnahme von der Regel, dass für `anon` keine `SECURITY DEFINER`-Funktion ausführbar ist; `scripts/db/sicherheit.mjs` nennt die zwei namentlich, damit eine dritte den Nachweis brechen würde.
+
+`update` und `delete` hat niemand, auch der Betrieb nicht. Ein Kostenprotokoll, das sein Eigentümer aufräumen kann, ist keins.
+
+### Nachweise
+
+`npm run db:kontingent`, **16 Nachweise** gegen den Development-Branch:
+
+| Nachweis | Erwartung |
+| --- | --- |
+| 4. Aufruf einer Kennung in der Stunde | Kontingent erteilt |
+| 5. Aufruf | `53400` |
+| 8. Aufruf einer Kennung am Tag | Kontingent erteilt |
+| 9. Aufruf | `53400` |
+| 25. Gastaufruf am Tag | `53400` |
+| Konto bei vollem Gasttopf | Kontingent erteilt |
+| 38. Aufruf insgesamt am Tag | Kontingent erteilt |
+| 39. Aufruf | `53400` |
+| Kostendeckel bei 2 922 798 µ$ | Kontingent erteilt |
+| Kostendeckel bei 2 922 801 µ$ | `53400` |
+| 6 gleichzeitige Sitzungen auf einen freien Platz | 1× erteilt, 5× `53400`, Bestand 38 |
+| Abschluss mit Tokens | Kosten aus `modell_preis()` gerechnet |
+| Abschluss ohne Tokens | Reservierung bleibt stehen |
+| zweiter Abschluss derselben Zeile | ohne Wirkung |
+| Abschluss einer fremden Kennung | ohne Fehler, ohne Wirkung |
+| Konto schickt eine Gastkennung mit | `art = konto`, Kennung aus `auth.uid()` |
+
+Wie `db:parallelitaet` schreibt dieses Skript echte Zeilen und rollt sie nicht zurück – gleichzeitige Sitzungen sehen einander nur festgeschrieben.
+
+### Aufbewahrung
+
+Es gibt **keine** automatische Löschung. Die Tabelle wächst um höchstens 38 Zeilen am Tag, also unter 14 000 im Jahr, und enthält keine Reiseinhalte. Der Hash ist eine Pseudonymisierung und keine Anonymisierung: Wer eine Kennung kennt, kann ihren Hash bilden. Er verhindert, dass das Protokoll selbst eine Liste von Kontokennungen ist.
+
+Eine Aufbewahrungsfrist gehört zu der Entscheidung, die Funktion in Production einzuschalten, und steht als offener Punkt in [ROADMAP.md](../ROADMAP.md).
 
 ---
 
@@ -553,6 +650,7 @@ Der Vergleich hat sich gelohnt: Er fand 153 Rechte, die im Abzug anders standen 
 | `npm test` – darin `lib/auth/roles-datenbank.test.ts`, Rollenmodell in TypeScript gegen das Rollenmodell im Migrations-SQL | nein |
 | `npm test` – darin `lib/auth/faehigkeiten-datenbank.test.ts`, `CAPABILITY_MINIMUM` gegen die `darf_…()`-Funktionen | nein |
 | `npm test` – darin `lib/api/datenbank-lesen.test.ts`, Fehler gegen echte Leere, und `lib/api/suchfilter.test.ts` | nein |
+| `npm test` – darin `lib/modell/grenzen-datenbank.test.ts`, `MODELL_GRENZEN` gegen die Konstanten in `20260818040000_modellnutzung.sql` | nein |
 | `npm run check:schema-bezug` – jedes `.from()` und `.rpc()` gegen `types/supabase.ts` | nein |
 | `npm run check:api-schutz` – jede Admin-Route ruft `requireAdminApi()` | nein |
 
@@ -560,17 +658,22 @@ Der Vergleich hat sich gelohnt: Er fand 153 Rechte, die im Abzug anders standen 
 
 Beides ist behoben. Die Prüfung verhindert den Rückfall und kostet keinen Datenbankzugang.
 
-| Prüfung | braucht Datenbank |
-| --- | --- |
-| `npm run db:reproduzierbarkeit` | ja |
-| `npm run db:sicherheit` | ja |
-| `npm run db:rechte` | ja |
-| `npm run db:typen -- --pruefen` | ja |
-| `npm run db:advisors` | ja |
+| Prüfung | braucht Datenbank | schreibt echte Zeilen |
+| --- | --- | --- |
+| `npm run db:reproduzierbarkeit` | ja | nein |
+| `npm run db:sicherheit` | ja | nein, Transaktion rollt zurück |
+| `npm run db:rls` | ja | nein, Transaktion rollt zurück |
+| `npm run db:rechte` | ja | nein |
+| `npm run db:typen -- --pruefen` | ja | nein |
+| `npm run db:advisors` | ja | nein |
+| `npm run db:parallelitaet` | ja | ja, räumt auf (Abschnitt 7b) |
+| `npm run db:kontingent` | ja | ja, räumt auf (Abschnitt 7c) |
 
-Dazu kommt seit Phase 1.4c `npm run auth:pruefen` – der Abgleich der Auth-Konfiguration. Er liegt in einem eigenen CI-Job, weil er ein Geheimnis braucht, liest nur und rührt die Datenbank nicht an ([docs/AUTH.md](AUTH.md) Abschnitt 2). `npm run auth:fluesse` schreibt dagegen (ein Wegwerfkonto) und läuft aus demselben Grund wie die fünf unten von Hand.
+Dazu kommt seit Phase 1.4c `npm run auth:pruefen` – der Abgleich der Auth-Konfiguration. Er liegt in einem eigenen CI-Job, weil er ein Geheimnis braucht, liest nur und rührt die Datenbank nicht an ([docs/AUTH.md](AUTH.md) Abschnitt 2). `npm run auth:fluesse` schreibt dagegen (ein Wegwerfkonto) und läuft aus demselben Grund wie die acht oben von Hand.
 
-Diese fünf laufen vor einer Zusammenführung von Hand gegen den Development-Branch. In die CI gehören sie erst, wenn dafür ein eigener, kurzlebiger Branch entsteht – ein CI-Lauf gegen den gemeinsamen Development-Branch würde bei nebenläufigen Läufen dieselben Testkonten anlegen.
+Diese acht laufen vor einer Zusammenführung von Hand gegen den Development-Branch. In die CI gehören sie erst, wenn dafür ein eigener, kurzlebiger Branch entsteht – ein CI-Lauf gegen den gemeinsamen Development-Branch würde bei nebenläufigen Läufen dieselben Testkonten anlegen.
+
+`npm run modell:probe` gehört **nicht** in diese Liste und nicht in die CI: Es löst einen echten, bezahlten Modellaufruf aus und läuft nur ausdrücklich ([MODELL.md](MODELL.md) Abschnitt 8).
 
 ---
 
@@ -640,6 +743,8 @@ Keine der zwei verbleibenden Fremdschlüsselbedingungen ist doppelt.
 | Fähigkeit `konfiguration-verwalten` ohne Fläche | deckt seit Phase 1.4b keine Tabelle mehr ab, bleibt aber als höchste Stufe des Fähigkeitsmodells bestehen und wird direkt geprüft, siehe Abschnitt 6 |
 | Fünf Funktionen ohne Aufrufer auf verbleibenden Tabellen | `sync_creator_profile_core()`, `sync_creator_profile_emails()`, `append_email_to_array()` (2 Signaturen), `remove_email_from_array()` hängen an keinem Trigger und werden vom Anwendungscode nicht gerufen. Sie gehören zu `creator_profiles` und `creator_sessions`, nicht zur Legacy-Struktur, und lagen damit ausserhalb des Auftrags von Phase 1.4b. Entscheidung fällig in Phase 1.5 |
 | Datenbanknahe Prüfungen in die CI | braucht einen kurzlebigen Branch je Lauf, siehe Abschnitt 9 |
+| Aufbewahrungsfrist für `model_usage` | keine automatische Löschung. Höchstens 38 Zeilen am Tag, keine Reiseinhalte, Kennung nur als SHA-256. Die Frist gehört zu der Entscheidung, den Modellweg einzuschalten – Phase 2.1 hat ihn implementiert und abgeschaltet gelassen (Abschnitt 7c, [DECISIONS.md](../DECISIONS.md) ADR-0052) |
+| `anon` darf zwei `SECURITY DEFINER`-Funktionen ausführen | bewusst und namentlich im Sicherheitsnachweis geführt. Es ist die einzige Ausnahme; eine dritte Funktion bricht den Nachweis. Grund: Ein Gast hat keine serverseitige Identität und braucht trotzdem eine Kostenschranke (ADR-0052) |
 | ~~Fehler in der Oberfläche sichtbar machen~~ | **erledigt in Phase 1.4d.** `TransactionsCard` und `WebhooksCard` prüften den Status der Antwort nicht und schrieben `data.rows ?? []` in den Zustand – bei 500 also eine leere Tabelle. Alle Admin-Ansichten benutzen jetzt dieselbe Fläche für *lädt* / *leer* / *nicht ermittelbar*, auch die drei serverseitig lesenden, bei denen die Prüfung denselben Fehler fand ([DECISIONS.md](../DECISIONS.md) ADR-0040) |
 | ~~Schutz vor kompromittierten Passwörtern~~ | **erledigt in Phase 1.4c.** `password_hibp_enabled` steht auf `true`, die Wirkung ist nachgewiesen, und der Sollwert liegt im Repository. Warum der Advisor kam und ging, ist gemessen statt vermutet: Er meldet nur, solange passwortgestützte Konten existieren ([docs/AUTH.md](AUTH.md) Abschnitt 5) |
 | ~~Auth-Konfiguration nicht versioniert~~ | **erledigt in Phase 1.4c.** Der Abschnitt `[auth]` in `supabase/config.toml` beschreibt jetzt den Branch; `npm run auth:pruefen` vergleicht ihn mit dem laufenden Stand und verlangt für jeden Schlüssel der API eine Aussage des Repositories. Beschreibung in [docs/AUTH.md](AUTH.md), Entscheidung in [DECISIONS.md](../DECISIONS.md) ADR-0039 |

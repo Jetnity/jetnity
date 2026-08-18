@@ -1,6 +1,6 @@
 # Jetnity – Roadmap
 
-Stand: 17. August 2026
+Stand: 18. August 2026
 
 Diese Datei zeigt jederzeit: was fertig ist, was in Arbeit ist, was als Nächstes kommt, was blockiert ist und was bewusst verschoben wurde ([AGENTS.md](AGENTS.md) Regel 6).
 
@@ -20,10 +20,13 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Phase 1.4b | obsolete Legacy-Tabellen archiviert und entfernt (37 → 8) | **fertig auf Development** |
 | Phase 1.4c | Auth-Konfiguration als Code, Abgleich und Flussprüfung | **fertig auf Development** |
 | Phase 1.4d | Fehler im Administrationsbereich sichtbar statt leer | **fertig** |
-| Phase 1.5 | V2-Reiseschema, persistente Reisen, Gast → Konto | **fertig auf Development** |
-| Phase 2 | Jetnity-Kern: natürliche Sprache zu strukturierter Reise | als Nächstes |
+| Phase 1.5 | V2-Reiseschema, persistente Reisen, Gast → Konto | **fertig** |
+| Phase 2.1 | natürliche Sprache zu strukturiertem Reisevorschlag | **fertig auf Development, Modellweg abgeschaltet** |
+| Phase 2.2 | bestehende Reise per Sprache ändern | als Nächstes |
 | Phase 3 | Reiseprodukte und Monetarisierung | geplant |
 | Phase 4 | Launch-Reife | geplant |
+
+Phase 2 ist **nicht** abgeschlossen: 2.1 erzeugt einen Vorschlag, 2.2 verändert eine bestehende Reise.
 
 ---
 
@@ -470,21 +473,44 @@ Aufgefallen bei der Prüfung der Phase 1.5 im Browser, nicht durch sie verursach
 
 ---
 
-## Phase 2 – Jetnity-Kern · geplant
+## Phase 2 – Jetnity-Kern · in Arbeit
 
 Höchste Produktpriorität: **natürliche Sprache zu strukturierter Reise.**
 
-- [ ] Reiseidee in Freitext erfassen und strukturiert interpretieren (Ziel, Zeitraum, Reisende, Budget, Präferenzen)
-- [ ] strukturierten Reisevorschlag mit Etappen und Tagesstruktur erzeugen
-- [ ] Reise speichern und im Workspace weiterbearbeiten
+### 2.1 Freitext zu strukturiertem Reisevorschlag · abgeschlossen auf Development, Modellweg abgeschaltet
+
+Vollständige Beschreibung: [docs/MODELL.md](docs/MODELL.md). Entscheidungen: [DECISIONS.md](DECISIONS.md) ADR-0050 bis ADR-0055.
+
+- [x] Reiseidee in Freitext erfassen und strukturiert interpretieren – Abreiseort, Ziele, Zeitraum oder Dauer, Reisende, Währung, Budgetziel, Tempo, Interessen, besondere Wünsche
+- [x] strukturierten Reisevorschlag mit Etappen, Tagen und Planpunkten erzeugen, direkt abbildbar auf das Reiseschema aus Phase 1.5
+- [x] Vorschau vor dem Speichern: erkannte Daten, Etappen, Tagesstruktur, Planpunkte, Budgetziel, Tempo, Interessen, Annahmen
+- [x] Vorschläge erst nach ausdrücklicher Freigabe übernehmen – der Vorschlag lebt bis dahin im Browser, nicht in der Datenbank (ADR-0050)
+- [x] Übernahme über die bestehende Persistenz: `public.reise_anlegen()` im Konto, `gastreiseAblegen()` als Gast, Idempotenz über `client_ref` – keine zweite Persistenz für Modellreisen
+- [x] Modelloutput als untrusted input: JSON-Schema mit `strict: true`, danach Zod mit den fachlichen Grenzen des Reiseschemas, dieselbe Prüfung noch einmal beim Übernehmen, versionierte Fassung (ADR-0053)
+- [x] keine erfundenen Live-Angebote: Preis-, Anbieter- und Buchungsfelder existieren im Vorschlagsschema nicht, Beträge werden aus Freitexten entfernt, ein genanntes Budget bleibt ein Ziel (ADR-0054)
+- [x] Kostenkontrolle nach [AGENTS.md](AGENTS.md) Regel 17: Kill Switch, 4 Aufrufe je Kennung und Stunde, 8 je Tag, 24 für alle Gäste, 38 insgesamt, Kostendeckel $3.00 je Tag, 2000 Zeichen Eingabe, 6000 Ausgabetokens, 40 s Zeitgrenze, neun Ergebnisklassen, Nutzungsprotokoll
+- [x] die Kostenschranke liegt in der Datenbank und ist race-condition-sicher: Reservierung **vor** dem Aufruf, serialisiert über `pg_advisory_xact_lock` (ADR-0052)
+- [x] Gaststrategie ohne Gastkonto und ohne neue kostenpflichtige Infrastruktur: Cookie-Kennung, in der Datenbank nur als SHA-256, eigener kleinerer Tagestopf gegen rotierende Kennungen
+- [x] 256 Tests ohne einen Modellaufruf, dazu 16 Nachweise gegen die echte Datenbank (`npm run db:kontingent`)
+- [x] Prompt-Injection als Testfall: Regeln ignorieren, Systemregeln ausgeben lassen, HTML und SQL im Text
+- [x] das bestehende Formular unter `/planen` bleibt unverändert nutzbar und ist der Weg, der auch ohne Modell funktioniert
+
+**Der Modellweg ist in keiner Umgebung eingeschaltet, und es gab keinen `OPENAI_API_KEY`.** Damit ist unbelegt: die Qualität der Modellwahl, die tatsächliche Tokennutzung und die tatsächliche Laufzeit. Alles andere – Eingabeprüfung, Schemaprüfung, Abbildung, Vorschau, Freigabe, Persistenz, Kontingent, Kostendeckel – ist geprüft, das Kontingent gegen die echte Datenbank.
+
+Offen aus 2.1:
+
+- [ ] `OPENAI_API_KEY` in der Preview-Umgebung hinterlegen und `npm run modell:probe` gegen `gpt-5.6-terra` und `gpt-5.6-luna` laufen lassen – die Modellwahl ist begründet, nicht gemessen (ADR-0051)
+- [ ] Aufbewahrungsfrist für `public.model_usage` entscheiden – sie gehört zur Freigabe, nicht zur Implementierung (ADR-0052)
+- [ ] Entscheidung über die Aktivierung in Production, nach den Messungen
+
+### 2.2 Bestehende Reise per Sprache ändern · als Nächstes
+
 - [ ] Änderung per Sprache („Hotel günstiger", „Eine Nacht weniger Bangkok", „Mach Tag 3 entspannter", „maximal CHF 3'000")
-- [ ] Vorschläge erst nach Nutzerfreigabe übernehmen
-- [ ] Kostenkontrolle für jede Modellfunktion: Request-Limit, Tageslimit, Timeout, Max Tokens, Fallback, Kill Switch, Nutzungs-Logging ([AGENTS.md](AGENTS.md) Regel 17)
-- [ ] Tests für die strukturierten Sprachoperationen
+- [ ] Reise umbenennen, Tage umsortieren, Tage verschieben – heute gibt es Anlegen, Planpunkt hinzufügen, Planpunkt entfernen und Reise löschen
+- [ ] Änderungen als Vorschlag zeigen und erst nach Freigabe anwenden, wie in 2.1
+- [ ] Tests für die strukturierten Sprachoperationen auf einer bestehenden Reise
 
-**Voraussetzung erfüllt.** Das Reiseschema aus Phase 1.5 steht: Eine strukturierte Reise lässt sich speichern, laden, bearbeiten und löschen, und `public.reise_anlegen()` nimmt einen vollständigen Reisegraphen in einer Transaktion an – genau die Form, in der ein Sprachmodell einen Vorschlag liefern würde ([docs/REISEN.md](docs/REISEN.md)).
-
-Was Phase 2 zusätzlich braucht, ist damit nicht erledigt: eine Änderung an einer bestehenden Reise über Sprache (heute gibt es Anlegen, Planpunkt hinzufügen, Planpunkt entfernen, Reise löschen – kein Umbenennen, kein Umsortieren, kein Verschieben von Tagen) und die Kostenkontrolle jeder Modellfunktion nach [AGENTS.md](AGENTS.md) Regel 17.
+**Voraussetzungen erfüllt.** Das Reiseschema aus Phase 1.5 trägt die Reise, die Modell- und Vorschlagsschicht aus 2.1 trägt Kostenkontrolle, Schemaprüfung und Vorschau – 2.2 braucht keine neue Infrastruktur, sondern strukturierte Operationen auf einem bestehenden Reisegraphen und eine Fassung des Vorschlags, die Änderungen statt einer ganzen Reise beschreibt.
 
 ---
 
