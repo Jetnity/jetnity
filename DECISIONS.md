@@ -1304,6 +1304,8 @@ Die Kennung eines Kontos kommt aus `auth.uid()` und nicht vom Aufrufer. Wer sein
 
 `anon` bekommt `EXECUTE` auf beide Funktionen. Das ist die erste bewusste Ausnahme von der Regel, dass für `anon` keine `SECURITY DEFINER`-Funktion ausführbar ist; `scripts/db/sicherheit.mjs` nennt die zwei namentlich, damit eine dritte den Nachweis brechen würde. Auf der Tabelle selbst hat `anon` **kein** Recht.
 
+Die Advisors zählen dafür fünf Befunde mehr, von 18 auf 23: die neue Klasse `anon_security_definer_function_executable` mit zwei, zwei weitere unter `authenticated_security_definer_function_executable` – dieselben Funktionen, andere Rolle –, und `model_usage` als zwölfte Tabelle unter `pg_graphql_authenticated_table_exposed`. Der letzte Befund ist die Folge des `SELECT`-Rechts für den Betrieb; welche Zeilen ein Konto sieht, entscheidet RLS, und ohne `betrieb-lesen` sind es null. Bewertung je Befund in [docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 8.
+
 Neues Skript `npm run db:kontingent` mit **16 Nachweisen** gegen die echte Datenbank: jede Grenze am letzten erlaubten und am ersten abgelehnten Aufruf, der Kostendeckel an derselben Kante, der Abschluss in vier Varianten (echte Kosten, fehlende Tokens, zweiter Abschluss ohne Wirkung, fremde Kennung ohne Wirkung), die Identitätsfrage und die Parallelität. Es schreibt echte Zeilen und räumt auf – wie `db:parallelitaet` und aus demselben Grund.
 
 **Bekannte Grenze:** Für `model_usage` gibt es keine automatische Löschung. Die Tabelle wächst um höchstens 38 Zeilen am Tag und enthält keine Reiseinhalte; eine Aufbewahrungsfrist gehört zu der Entscheidung, die Funktion einzuschalten, und steht als offener Punkt in [ROADMAP.md](ROADMAP.md).

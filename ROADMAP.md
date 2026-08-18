@@ -497,6 +497,23 @@ Vollständige Beschreibung: [docs/MODELL.md](docs/MODELL.md). Entscheidungen: [D
 
 **Der Modellweg ist in keiner Umgebung eingeschaltet, und es gab keinen `OPENAI_API_KEY`.** Damit ist unbelegt: die Qualität der Modellwahl, die tatsächliche Tokennutzung und die tatsächliche Laufzeit. Alles andere – Eingabeprüfung, Schemaprüfung, Abbildung, Vorschau, Freigabe, Persistenz, Kontingent, Kostendeckel – ist geprüft, das Kontingent gegen die echte Datenbank.
 
+**Nachweise.** Der Abschlusslauf der Phase, die datenbanknahen Teile gegen den Development-Branch:
+
+| Prüfung | Ergebnis |
+| --- | --- |
+| `npm test` | 592 Tests in 124 Gruppen, davon 256 in `lib/modell/` und `lib/reisevorschlag/` – kein Lauf ruft ein Modell |
+| `npm run db:kontingent` | 16 von 16 Nachweisen erfüllt: jede der fünf Grenzen einzeln, 6 gleichzeitige Sitzungen auf einen freien Platz, Abschluss, Doppelabschluss, fremde Kennung, Identität eines Kontos |
+| `npm run db:sicherheit` | 147 von 147 Nachweisen erfüllt, darin die neuen zu `model_usage` und zu den zwei RPCs |
+| `npm run db:reproduzierbarkeit` | Wiederaufbau aus 19 Migrationen gleich dem laufenden Schema, kein Unterschied |
+| `npm run db:rechte` | 33 Tabellenrechte, jedes durch eine Policy gedeckt; RLS auf allen 12 Tabellen |
+| `npm run db:rls` | Matrix aus 4 Akteuren × 12 Tabellen; auf `model_usage` hat `anon` kein Recht, ein gewöhnliches Konto sieht null Zeilen, niemand schreibt direkt |
+| `npm run db:parallelitaet` | 5 von 5 Nachweisen erfüllt, unverändert grün |
+| `npm run db:typen -- --pruefen` | `types/supabase.ts` entspricht dem Schema |
+| `npm run db:advisors` | 23 Security-, 6 Performance-Befunde; die fünf neuen sind gezählte Struktur der Kostenschranke, jeder begründet ([docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 8) |
+| `npm run auth:pruefen` | 55 Sollwerte, 242 Schlüssel eingeordnet, unverändert grün |
+| Typecheck, Lint, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, Production-Build | grün |
+| Browser, Gast und Konto, Mobile und Desktop | Freitext, Vorschau, Übernehmen, Reise öffnen, Reload – die Reise bleibt, ein Reload erzeugt keine zweite. Der Modellaufruf war dabei lokal durch eine Attrappe ersetzt, die die Fixture zurückgibt; Kontingent, Protokoll und Persistenz liefen echt |
+
 Offen aus 2.1:
 
 - [ ] `OPENAI_API_KEY` in der Preview-Umgebung hinterlegen und `npm run modell:probe` gegen `gpt-5.6-terra` und `gpt-5.6-luna` laufen lassen – die Modellwahl ist begründet, nicht gemessen (ADR-0051)
