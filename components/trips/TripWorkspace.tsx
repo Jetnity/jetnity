@@ -35,7 +35,12 @@ import {
   WalletCards,
 } from 'lucide-react'
 
-import { ART_BEZEICHNUNG, INTERESSE_BEZEICHNUNG, TEMPO_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
+import {
+  ART_BEZEICHNUNG,
+  INTERESSE_BEZEICHNUNG,
+  TEMPO_BEZEICHNUNG,
+  betragLesbar,
+} from '@/lib/trips/bezeichnungen'
 import { GRENZEN, planpunktFormularSchema, type PlanpunktFormular } from '@/lib/trips/schema'
 import { cn } from '@/lib/utils'
 import { TRIP_ITEM_KINDS, type Trip, type TripItem, type TripItemKind, type TripSource } from '@/types/trips'
@@ -60,11 +65,7 @@ function alsDatum(wert: string) {
 
 function betrag(wert: number | null, waehrung: string) {
   if (wert === null) return 'Noch offen'
-  return new Intl.NumberFormat('de-CH', {
-    style: 'currency',
-    currency: waehrung,
-    maximumFractionDigits: 0,
-  }).format(wert)
+  return betragLesbar(wert, waehrung)
 }
 
 /** „12.–16. Sep“ oder, ohne Zeitraum, ein ehrlicher Hinweis darauf. */

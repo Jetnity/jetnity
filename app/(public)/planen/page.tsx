@@ -4,15 +4,23 @@
 //
 // Ob die Reise im Konto oder im Browser entsteht, entscheidet der Server:
 // `auth.getUser()` prüft das Token beim Auth-Server. Die Antwort geht als
-// `angemeldet` in das Formular. Der Client selbst darf das nicht beantworten –
+// `angemeldet` in beide Einstiege. Der Client selbst darf das nicht beantworten –
 // er könnte es behaupten, und die Server Action würde ihn korrigieren, aber erst
 // nach dem Absenden.
+//
+// Seit Phase 2.1 gibt es zwei Einstiege, und ihre Reihenfolge ist eine Aussage:
+// Die freie Beschreibung steht oben, das Formular darunter. Das Formular bleibt
+// vollständig – es ist der Weg, der ohne Modell funktioniert, und genau deshalb
+// wird er nicht ersetzt. Ist die intelligente Planung nicht freigegeben, sagt der
+// obere Teil das und der untere trägt die Reise weiter.
 
 import type { Metadata } from 'next'
 
 import { createServerComponentClient } from '@/lib/supabase/server'
+import Reiseidee from '@/components/trips/Reiseidee'
 import TripPlanner from '@/components/trips/TripPlanner'
 import { GRENZEN } from '@/lib/trips/schema'
+import { VORSCHLAG_GRENZEN } from '@/lib/reisevorschlag/schema'
 
 export const metadata: Metadata = {
   title: 'Reise planen',
@@ -20,6 +28,12 @@ export const metadata: Metadata = {
 }
 
 export const dynamic = 'force-dynamic'
+
+/**
+ * Sol 120 s plus Terra-Fallback. Next.js verlangt hier ein Literal;
+ * dieselbe Zahl steht in `SEITEN_DAUER_S` (`lib/modell/konfiguration.ts`).
+ */
+export const maxDuration = 300
 
 type PlanenSeiteProps = {
   searchParams?: {
@@ -39,13 +53,30 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
   const idee = ersterWert(searchParams?.idee)
   const ziel = ersterWert(searchParams?.ziel)
 
+  const angemeldet = Boolean(data.user)
+
   return (
     <main className="min-h-screen bg-surface-75 px-4 py-10 sm:px-6 sm:py-14">
-      <TripPlanner
-        angemeldet={Boolean(data.user)}
-        initialDestination={ziel?.slice(0, GRENZEN.titel) ?? ''}
-        initialIdea={idee?.slice(0, GRENZEN.reisewunsch) ?? ''}
-      />
+      <div className="mx-auto grid w-full max-w-6xl gap-10">
+        <Reiseidee
+          angemeldet={angemeldet}
+          initialIdee={idee?.slice(0, VORSCHLAG_GRENZEN.freitextMaximum) ?? ''}
+        />
+
+        <div className="flex items-center gap-4">
+          <span className="h-px flex-1 bg-line-200" />
+          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-700">
+            Oder Schritt für Schritt
+          </span>
+          <span className="h-px flex-1 bg-line-200" />
+        </div>
+
+        <TripPlanner
+          angemeldet={angemeldet}
+          initialDestination={ziel?.slice(0, GRENZEN.titel) ?? ''}
+          initialIdea={idee?.slice(0, GRENZEN.reisewunsch) ?? ''}
+        />
+      </div>
     </main>
   )
 }

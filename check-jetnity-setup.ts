@@ -250,9 +250,10 @@ function checkEnv() {
         })
     ) as Record<string, string>
 
-    // `SUPABASE_SERVICE_ROLE_KEY` steht hier bewusst nicht mehr: Seit Phase 1.4
-    // gibt es keinen Codepfad, der ihn liest. Ihn weiter abzufragen legte nahe,
-    // er gehöre in eine lokale Umgebung.
+    // `SUPABASE_SERVICE_ROLE_KEY` wird nur von lib/modell/kontingent.ts gelesen
+    // und hier bewusst nicht verlangt: Ohne ihn bleibt der Modellweg zu, wie
+    // ohne OPENAI_API_KEY. Ihn im Setup-Check zu fordern legte nahe, er gehöre
+    // in jede lokale Umgebung.
     const keys = [
       'NEXT_PUBLIC_SUPABASE_URL',
       'NEXT_PUBLIC_SUPABASE_ANON_KEY',

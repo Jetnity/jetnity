@@ -98,8 +98,9 @@ export function createServerActionClient<Db = Database>(): SupabaseClient<Db> {
      nicht nach, der Inhalt stammt aus dem Cookie. Wer serverseitig
      entscheidet, muss `auth.getUser()` verwenden.
 
-   Ein Service-Role-Zugang und ein einheitlicher Weg zur serverseitigen
-   Identitaet entstehen bewusst in der Auth-/RLS-Phase. */
+   Der eine verbliebene Service-Role-Zugang sitzt in lib/modell/kontingent.ts:
+   cookie-los, nicht exportiert, nur die zwei Kontingent-RPCs. Begruendung in
+   DECISIONS.md ADR-0052 (Nachtrag). */
 
 /* ───────────── Kompatibilitätsschicht ─────────────
    Viele Dateien importieren `createServerClient` direkt.

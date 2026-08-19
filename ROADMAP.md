@@ -1,6 +1,6 @@
 # Jetnity – Roadmap
 
-Stand: 17. August 2026
+Stand: 18. August 2026
 
 Diese Datei zeigt jederzeit: was fertig ist, was in Arbeit ist, was als Nächstes kommt, was blockiert ist und was bewusst verschoben wurde ([AGENTS.md](AGENTS.md) Regel 6).
 
@@ -20,10 +20,13 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Phase 1.4b | obsolete Legacy-Tabellen archiviert und entfernt (37 → 8) | **fertig auf Development** |
 | Phase 1.4c | Auth-Konfiguration als Code, Abgleich und Flussprüfung | **fertig auf Development** |
 | Phase 1.4d | Fehler im Administrationsbereich sichtbar statt leer | **fertig** |
-| Phase 1.5 | V2-Reiseschema, persistente Reisen, Gast → Konto | **fertig auf Development** |
-| Phase 2 | Jetnity-Kern: natürliche Sprache zu strukturierter Reise | als Nächstes |
+| Phase 1.5 | V2-Reiseschema, persistente Reisen, Gast → Konto | **fertig** |
+| Phase 2.1 | natürliche Sprache zu strukturiertem Reisevorschlag | **fertig auf Development, Preview aktivierbar, Production aus** |
+| Phase 2.2 | bestehende Reise per Sprache ändern | als Nächstes |
 | Phase 3 | Reiseprodukte und Monetarisierung | geplant |
 | Phase 4 | Launch-Reife | geplant |
+
+Phase 2 ist **nicht** abgeschlossen: 2.1 erzeugt einen Vorschlag, 2.2 verändert eine bestehende Reise.
 
 ---
 
@@ -470,21 +473,66 @@ Aufgefallen bei der Prüfung der Phase 1.5 im Browser, nicht durch sie verursach
 
 ---
 
-## Phase 2 – Jetnity-Kern · geplant
+## Phase 2 – Jetnity-Kern · in Arbeit
 
 Höchste Produktpriorität: **natürliche Sprache zu strukturierter Reise.**
 
-- [ ] Reiseidee in Freitext erfassen und strukturiert interpretieren (Ziel, Zeitraum, Reisende, Budget, Präferenzen)
-- [ ] strukturierten Reisevorschlag mit Etappen und Tagesstruktur erzeugen
-- [ ] Reise speichern und im Workspace weiterbearbeiten
+### 2.1 Freitext zu strukturiertem Reisevorschlag · abgeschlossen auf Development, Modellweg abgeschaltet
+
+Vollständige Beschreibung: [docs/MODELL.md](docs/MODELL.md). Entscheidungen: [DECISIONS.md](DECISIONS.md) ADR-0050 bis ADR-0056.
+
+- [x] Reiseidee in Freitext erfassen und strukturiert interpretieren – Abreiseort, Ziele, Zeitraum oder Dauer, Reisende, Währung, Budgetziel, Tempo, Interessen, besondere Wünsche
+- [x] strukturierten Reisevorschlag mit Etappen, Tagen und Planpunkten erzeugen, direkt abbildbar auf das Reiseschema aus Phase 1.5
+- [x] Vorschau vor dem Speichern: erkannte Daten, Etappen, Tagesstruktur, Planpunkte, Budgetziel, Tempo, Interessen, Annahmen
+- [x] Vorschläge erst nach ausdrücklicher Freigabe übernehmen – der Vorschlag lebt bis dahin im Browser, nicht in der Datenbank (ADR-0050)
+- [x] Übernahme über die bestehende Persistenz: `public.reise_anlegen()` im Konto, `gastreiseAblegen()` als Gast, Idempotenz über `client_ref` – keine zweite Persistenz für Modellreisen
+- [x] Modelloutput als untrusted input: JSON-Schema mit `strict: true`, danach Zod mit den fachlichen Grenzen des Reiseschemas, dieselbe Prüfung noch einmal beim Übernehmen, versionierte Fassung (ADR-0053)
+- [x] keine erfundenen Live-Angebote: Preis-, Anbieter- und Buchungsfelder existieren im Vorschlagsschema nicht, Beträge werden aus Freitexten entfernt, ein genanntes Budget bleibt ein Ziel (ADR-0054)
+- [x] Kostenkontrolle nach [AGENTS.md](AGENTS.md) Regel 17: Kill Switch, 4 Aufrufe je Kennung und Stunde, 8 je Tag, 24 für alle Gäste, 38 insgesamt, Kostendeckel $3.00 je Tag, 2000 Zeichen Eingabe, 6000 Ausgabetokens, Terra/Luna 90 s und Sol 120 s, neun Ergebnisklassen, Nutzungsprotokoll
+- [x] die Kostenschranke liegt in der Datenbank und ist race-condition-sicher: Reservierung **vor** dem Aufruf, serialisiert über `pg_advisory_xact_lock` (ADR-0052)
+- [x] Gaststrategie ohne Gastkonto und ohne neue kostenpflichtige Infrastruktur: Cookie-Kennung, in der Datenbank nur als SHA-256, eigener kleinerer Tagestopf gegen rotierende Kennungen
+- [x] 618 Tests ohne einen Modellaufruf, dazu 16 Nachweise gegen die echte Datenbank (`npm run db:kontingent`)
+- [x] Prompt-Injection als Testfall: Regeln ignorieren, Systemregeln ausgeben lassen, HTML und SQL im Text
+- [x] das bestehende Formular unter `/planen` bleibt unverändert nutzbar und ist der Weg, der auch ohne Modell funktioniert
+
+**Nachtrag 19. August 2026.** Direkter anonymer PostgREST-/RPC-Zugriff darf kein Kontingent mehr reservieren: `EXECUTE` nur noch `service_role`, Server Action bleibt der Gastweg (ADR-0052). ADR-0050 unterscheidet Doppelklick/Retry von einem Reload in der Vorschau. Preview hat Schlüssel und Kill Switch; Production bleibt aus. Die Development-Migration `20260819010000` ist angewendet; die datenbanknahen Nachweise sind gegen den Development-Branch grün.
+
+**Nachtrag Modellstrategie, 19. August 2026.** Die Drei-Fixture-Messung hatte Luna als Vorgabe gesetzt. Die spätere Fünf-Fälle-Messung (`reasoning.effort: low`) hat das geändert: Terra ist Standard, Sol übernimmt komplexe Abwägungen, Luna plant keine komplette Reise automatisch. 40 s kommen nicht zurück; Sol hat 120 s hart. Genau ein Terra-Fallback, genau eine Vorgabe-Korrektur, Progressive Loading auf `/planen` (ADR-0056). Production unverändert aus.
+
+**Nachweise.** Der Abschlusslauf der Phase, die datenbanknahen Teile gegen den Development-Branch:
+
+| Prüfung | Ergebnis |
+| --- | --- |
+| `npm test` | 618 Tests in 131 Gruppen, inklusive Routing, Vorgabenprüfung, Fortschritt, Fallback und Korrektur – kein Lauf ruft ein Modell |
+| `npm run db:kontingent` | 16 von 16 Nachweisen erfüllt: jede der fünf Grenzen einzeln, 6 gleichzeitige Sitzungen auf einen freien Platz, Abschluss, Doppelabschluss, fremde Kennung, Identität eines Kontos |
+| `npm run db:sicherheit` | 149 von 149 Nachweisen erfüllt, darin der SQL-Negativfall und der echte PostgREST-Aufruf gegen die Kontingent-RPCs |
+| `npm run db:reproduzierbarkeit` | Wiederaufbau aus den versionierten Migrationen gleich dem laufenden Schema |
+| `npm run db:rechte` | 33 Tabellenrechte, jedes durch eine Policy gedeckt; RLS auf allen 12 Tabellen |
+| `npm run db:rls` | Matrix aus 4 Akteuren × 12 Tabellen; auf `model_usage` hat `anon` kein Recht, ein gewöhnliches Konto sieht null Zeilen, niemand schreibt direkt |
+| `npm run db:parallelitaet` | 5 von 5 Nachweisen erfüllt, unverändert grün |
+| `npm run db:typen -- --pruefen` | `types/supabase.ts` entspricht dem Schema |
+| `npm run db:advisors` | 19 Security-, 6 Performance-Befunde; die früher gefährlichen Kontingent-RPC-Rechte für `anon`/`authenticated` sind entfallen, die verbleibenden sind begründet ([docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 8) |
+| `npm run auth:pruefen` | 55 Sollwerte, 242 Schlüssel eingeordnet, unverändert grün |
+| Typecheck, Lint, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, Production-Build | grün |
+| Browser, Gast und Konto, Mobile und Desktop | Freitext, Vorschau, Übernehmen, Reise öffnen, Reload – die Reise bleibt, ein Reload erzeugt keine zweite. Der Modellaufruf war dabei lokal durch eine Attrappe ersetzt, die die Fixture zurückgibt; Kontingent, Protokoll und Persistenz liefen echt |
+
+Offen aus 2.1:
+
+- [x] `OPENAI_API_KEY` in der Preview-Umgebung hinterlegen (`JETNITY_MODELL_AKTIV=true`, Hard Spend Limit $5) – Production unverändert aus
+- [x] Gast-Kontingent nicht mehr über direkten anon-RPC erreichbar (Nachtrag ADR-0052)
+- [x] `npm run modell:probe` gegen `gpt-5.6-terra` und `gpt-5.6-luna` mit Ideen 1, 2 und 7 – frühe Vorgabe, später durch ADR-0056 ersetzt
+- [x] Sol/Terra auf fünf vollständigen Planungsfällen gemessen; Routing, 120-s-Sol-Grenze, Vorgabeprüfung und Progressive Loading (ADR-0056)
+- [ ] Aufbewahrungsfrist für `public.model_usage` entscheiden – sie gehört zur Freigabe, nicht zur Implementierung (ADR-0052)
+- [ ] Entscheidung über die Aktivierung in Production – die Modellwahl ist gemessen, Production bleibt aus
+
+### 2.2 Bestehende Reise per Sprache ändern · als Nächstes
+
 - [ ] Änderung per Sprache („Hotel günstiger", „Eine Nacht weniger Bangkok", „Mach Tag 3 entspannter", „maximal CHF 3'000")
-- [ ] Vorschläge erst nach Nutzerfreigabe übernehmen
-- [ ] Kostenkontrolle für jede Modellfunktion: Request-Limit, Tageslimit, Timeout, Max Tokens, Fallback, Kill Switch, Nutzungs-Logging ([AGENTS.md](AGENTS.md) Regel 17)
-- [ ] Tests für die strukturierten Sprachoperationen
+- [ ] Reise umbenennen, Tage umsortieren, Tage verschieben – heute gibt es Anlegen, Planpunkt hinzufügen, Planpunkt entfernen und Reise löschen
+- [ ] Änderungen als Vorschlag zeigen und erst nach Freigabe anwenden, wie in 2.1
+- [ ] Tests für die strukturierten Sprachoperationen auf einer bestehenden Reise
 
-**Voraussetzung erfüllt.** Das Reiseschema aus Phase 1.5 steht: Eine strukturierte Reise lässt sich speichern, laden, bearbeiten und löschen, und `public.reise_anlegen()` nimmt einen vollständigen Reisegraphen in einer Transaktion an – genau die Form, in der ein Sprachmodell einen Vorschlag liefern würde ([docs/REISEN.md](docs/REISEN.md)).
-
-Was Phase 2 zusätzlich braucht, ist damit nicht erledigt: eine Änderung an einer bestehenden Reise über Sprache (heute gibt es Anlegen, Planpunkt hinzufügen, Planpunkt entfernen, Reise löschen – kein Umbenennen, kein Umsortieren, kein Verschieben von Tagen) und die Kostenkontrolle jeder Modellfunktion nach [AGENTS.md](AGENTS.md) Regel 17.
+**Voraussetzungen erfüllt.** Das Reiseschema aus Phase 1.5 trägt die Reise, die Modell- und Vorschlagsschicht aus 2.1 trägt Kostenkontrolle, Schemaprüfung und Vorschau – 2.2 braucht keine neue Infrastruktur, sondern strukturierte Operationen auf einem bestehenden Reisegraphen und eine Fassung des Vorschlags, die Änderungen statt einer ganzen Reise beschreibt.
 
 ---
 

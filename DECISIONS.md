@@ -1181,6 +1181,309 @@ Anders als die übrigen `db:`-Skripte schreibt dieses echte Zeilen und rollt sie
 
 ---
 
+## ADR-0050 – Ein Vorschlag lebt im Browser, bis ein Mensch ihn freigibt
+
+**Datum:** 18. August 2026
+**Status:** umgesetzt, Modellweg abgeschaltet
+
+**Entscheidung:** Ein modellgenerierter Reisevorschlag wird **nicht** gespeichert. `vorschlagErzeugen()` gibt ihn zurück, `Reiseidee.tsx` hält ihn im Zustand einer React-Komponente, `VorschlagVorschau.tsx` zeigt ihn. Erst „Übernehmen" ruft `vorschlagUebernehmen()` (Konto) oder `gastreiseAblegen()` (Gast) und damit die bestehende Persistenz aus Phase 1.5.
+
+Es entsteht keine Tabelle für Entwürfe, kein Feld `trips.quelle`, kein Status `vorgeschlagen`, kein Zwischenspeicher in `localStorage`.
+
+Weil der Vorschlag durch den Browser läuft, prüft `vorschlagUebernehmen()` ihn vollständig neu – mit demselben `modellvorschlagSchema`, das die Modellantwort geprüft hat, erweitert um `clientRef` und die Fassung.
+
+**Kontext:** Die Anforderung lautet: Ohne ausdrückliche Freigabe wird keine modellgenerierte Reise übernommen. Ein Vorschlag braucht dafür einen Ort für die Dauer zwischen Erzeugung und Entscheidung – Sekunden bis Minuten, gelegentlich eine Stunde bei einem offenen Tab.
+
+Die naheliegende Antwort wäre ein Serverzustand: eine Zeile mit `status = 'vorgeschlagen'`, die bei Freigabe befördert wird. Sie hat drei Folgen, die alle gegen sie sprechen.
+
+**Alternativen:**
+
+1. *Eine Tabelle `trip_drafts`.* Eine fünfte Reisetabelle mit eigener Policy, eigenem Eigentum, eigener Aufbewahrungsfrist – und ohne Eigentümer für Gäste, die serverseitig keine Identität haben (ADR-0042). Ein Gast könnte seinen Entwurf nur über eine `anon`-schreibbare Tabelle ablegen; genau das vermeidet die Architektur seit Phase 1.4b.
+2. *Ein Status `vorgeschlagen` auf `public.trips`.* Billiger als eine Tabelle und teurer in jeder Abfrage danach: `/reisen` müsste ihn ausschliessen, `reise_erzeugung_pruefen()` ihn kennen, die Missbrauchsschranke ihn zählen oder nicht zählen. Ein nicht freigegebener Vorschlag wäre eine Reise, die nur deshalb keine ist, weil überall ein Filter steht. Ausserdem gilt heute: Eine neue Reise ist ein Entwurf und nichts anderes (`reise_erzeugung_pruefen`), und diese Zusage wäre aufzuweichen.
+3. *Der Vorschlag im `localStorage`, auch für Konten.* Bringt für Konten nichts, was der Komponentenzustand nicht schon leistet, und schafft eine zweite Stelle, an der ein Reisegraph liegen kann – mit eigener Fassung, eigener Migration und eigener Verwechslungsgefahr mit der Gastreise.
+4. *Den Vorschlag sofort speichern und bei Ablehnung löschen.* Widerspricht der Anforderung wörtlich. Nebenbei wäre jeder abgebrochene Vorgang eine Reise, die niemand wollte, und jede Ablehnung ein Löschvorgang, der scheitern kann.
+
+**Begründung:** Der Zustand „ein Mensch schaut sich etwas an" ist ein Zustand der Oberfläche und kein Zustand des Systems. Ihn in die Datenbank zu schreiben heisst, eine Frage zu beantworten, die niemand gestellt hat – und dafür fünf Stellen zu ändern, die heute richtig sind.
+
+Der Preis ist ehrlich und klein: Ein Reload verliert den Vorschlag. Das ist vertretbar, weil die Vorschau der eine Zwischenschritt ist, den der Nutzer gerade vor sich hat, und weil ein verlorener Vorschlag genau einen neuen Aufruf kostet – nicht eine verlorene Reise. Der Fall, der wirklich weh täte, ist ein anderer: ein Vorschlag, der mit einem Speicherfehler verschwindet. Genau der ist behandelt, und zwar in der Oberfläche: Ein Fehlschlag beim Übernehmen lässt die Vorschau stehen.
+
+**Konsequenzen:** Die Persistenz für Modellreisen ist die bestehende, Zeile für Zeile: `public.reise_anlegen()` für Konten, `gastreiseAblegen()` für Gäste, `unique (user_id, client_ref)` für die Idempotenz. `clientRef` entsteht mit dem Vorschlag und bleibt an ihm hängen; **Doppelklick und Retry** ergeben deshalb eine Reise und nicht zwei. Ein Reload **während einer nicht übernommenen Vorschau** verwirft den Vorschlag bewusst – er lebt nur im Komponentenzustand und ist von dieser Idempotenz nicht gedeckt. Ein Reload **nach** der Übernahme trifft die bereits gespeicherte Reise und erzeugt keine zweite.
+
+Zwanzig Tests in `lib/reisevorschlag/uebernahme.test.ts` prüfen genau die Naht: Vorschau ohne Persistenz, Übernahme mit Persistenz, zweimal derselbe `clientRef`, Persistenzfehler nach erfolgreichem Vorschlag, und ein im Browser manipulierter Vorschlag, der abgelehnt wird.
+
+**Bekannte Grenze:** Ein Vorschlag überlebt kein Reload und keinen Gerätewechsel. Wer ihn behalten will, muss ihn übernehmen. Sollte sich das als Verlust erweisen, ist der nächste Schritt nicht eine Entwurfstabelle, sondern der Vorschlag im `sessionStorage` – ein Ort, der mit dem Tab endet, zu dem er gehört.
+
+---
+
+## ADR-0051 – Responses API mit `strict: true`; Vorgabe `gpt-5.6-luna` / `low`
+
+**Datum:** 18. August 2026
+**Status:** Responses API und `strict: true` gelten weiter. Die alleinige Vorgabe `gpt-5.6-luna` ist durch ADR-0056 ersetzt.
+
+**Entscheidung:** Jetnity ruft die **Responses API** auf (`POST /v1/responses`) und verlangt strukturierte Ausgabe über `text.format` mit `type: 'json_schema'` und `strict: true`. Die erste gemessene Vorgabe war `gpt-5.6-luna` mit `reasoning.effort: 'low'` (drei Fixtures, 19. August). Seit ADR-0056 routet Jetnity Terra und Sol deterministisch; Luna plant keine komplette Reise automatisch. `JETNITY_MODELL_NAME` und `JETNITY_MODELL_AUFWAND` können die Wahl weiter festnageln, aber nur innerhalb von drei Modellen mit bekanntem Preis und drei Aufwandstufen.
+
+`high`, `xhigh` und `max` sind **nicht** zugelassen.
+
+Kein SDK. Ein `fetch` in `lib/modell/aufruf.ts`.
+
+**Kontext:** Die Aufgabe ist eng: aus einem Satz einen Reisegraphen mit Etappen, Tagen und Planpunkten. Die Ausgabe muss einem festen Schema entsprechen, sonst ist sie wertlos – ein Vorschlag, der zu 90 % passt, ist keine Reise.
+
+Die Modellwahl ist seit dem 19. August 2026 gemessen, nicht nur begründet. Siehe Nachtrag unten.
+
+**Alternativen:**
+
+1. *Chat Completions mit `response_format: json_object`.* Der ältere Weg. `json_object` sagt „gültiges JSON" und nichts über die Felder; das Schema wäre eine Bitte im Prompt, und Jetnity müsste jede Abweichung selbst abfangen. Die offizielle Dokumentation nennt Structured Outputs über die Responses API als den vorgesehenen Weg.
+2. *`gpt-5.6-terra` als Vorgabe.* Die erste, unbelegte Wahl vom 18. August. In der Messung vom 19. August gleich zuverlässig, aber teurer: Die kürzeste Terra-Idee allein kostete USD 0.0050, die drei Luna-Ideen zusammen USD 0.0054. Terra bleibt als Fallback über `JETNITY_MODELL_NAME` wählbar.
+3. *`gpt-5.6-sol` als Vorgabe.* Teurer als Terra. Regel 17 verbietet, das teuerste Modell zu nehmen, weil es das teuerste ist. Die Messung hat keinen Mangel gezeigt, den Sol beheben müsste.
+4. *`reasoning.effort: 'medium'` oder höher.* `max_output_tokens` begrenzt die Ausgabe **einschliesslich** der Denk-Tokens. Ein Aufruf, der sein Budget im Denken verbraucht, endet als `incomplete` – bezahlt, ohne Vorschlag. Bei `low` lag die höchste Ausgabe bei 2104 Tokens von 6000.
+5. *Das Paket `openai`.* Phase 1.1b hat es entfernt. Es wieder aufzunehmen, um einen Endpunkt zu erreichen, wäre eine Abhängigkeit für dreissig Zeilen – mit eigener Zeitsteuerung, eigenen Wiederholungen und eigener Fehlerdarstellung, an genau der Stelle, an der Jetnity beides selbst bestimmen muss: Ein Aufruf ohne harte Obergrenze für Dauer und Ausgabe ist ein Aufruf ohne Kostenkontrolle.
+
+**Begründung:** `strict: true` verschiebt die Zusage über die Form der Antwort auf die Plattform. Das ersetzt keine eigene Prüfung (ADR-0053), aber es macht den häufigsten Fehlerfall – ein Feld fehlt, ein Enum-Wert ist erfunden – zu einem, der nicht mehr eintritt.
+
+Luna ist die Vorgabe, weil sie auf denselben drei Fixtures schema- und abbildungstreu war und klar weniger kostete. Die Wahl bleibt eine Variable: `JETNITY_MODELL_NAME` und `JETNITY_MODELL_AUFWAND` können sie ändern. Was nicht über die Umgebung änderbar ist, sind die Grenzen – ein Modell ohne bekannten Preis schaltet den Weg ab, weil ohne Preis kein Kostendeckel existiert.
+
+Nur drei Modelle sind zugelassen, weil `PREISE` drei kennt. Ein Tippfehler in `JETNITY_MODELL_NAME` schaltet ab, statt ungezählt Geld auszugeben.
+
+**Konsequenzen:** `lib/modell/anfrage.ts` baut den Anfragekörper ohne Serverumgebung und ist damit im Test und im Probe-Skript dasselbe Stück Code wie in Produktion. `lib/modell/antwort.ts` liest jeden Ausgang der API – `completed`, `incomplete`, `refusal`, jeder HTTP-Status, fehlende `usage` – und übersetzt ihn in eine von neun Ergebnisklassen; 19 Tests decken die Formen ab, die eine echte API liefert.
+
+Die Preise stehen in `lib/modell/preise.ts` in Mikrodollar je Million Tokens, also in der Einheit der Preisliste. Ein Eintrag ist eine Umschrift und keine Umrechnung, die jemand nachprüfen muss.
+
+**Nachtrag, 19. August 2026:** Sechs echte Läufe mit `npm run modell:probe` gegen Ideen 1 (vollständig), 2 (mehrere Ziele) und 7 (unbestimmt), `reasoning.effort: low`. Alle sechs Klasse `erfolg`, Schema gültig, Abbildung auf `public.reise_anlegen()` geprüft. 6000 Ausgabetokens reichten.
+
+| Modell | Idee | Laufzeit | Kosten |
+| --- | --- | ---: | ---: |
+| `gpt-5.6-terra` | 7 | 7 123 ms | USD 0.0050 |
+| `gpt-5.6-luna` | 1 | 10 874 ms | USD 0.0019 |
+| `gpt-5.6-luna` | 2 | 16 717 ms | USD 0.0026 |
+| `gpt-5.6-luna` | 7 | 7 030 ms | USD 0.0009 |
+
+Terra-Ideen 1 und 2 endeten ebenfalls mit `erfolg` und geprüfter Abbildung (Idee 2: 3 Etappen, 14 Tage, 51 Punkte); ihre Kostenzeilen sind im lokalen Scrollback nicht mehr vollständig. Die drei vollständigen Luna-Läufe zusammen USD 0.0054. Vorgabe deshalb `gpt-5.6-luna` / `low`. Vollständige Tokenzahlen in [docs/MODELL.md](docs/MODELL.md) Abschnitt 8.
+
+---
+
+## ADR-0052 – Die Kostenschranke steht in der Datenbank, mit einem eigenen Topf für Gäste
+
+**Datum:** 18. August 2026
+**Status:** umgesetzt auf dem Development-Branch
+
+**Entscheidung:** `20260818040000_modellnutzung.sql` legt `public.model_usage` an und zwei `SECURITY DEFINER`-Funktionen:
+
+- `public.modell_kontingent_beanspruchen(_funktion, _modell, _gastkennung)` prüft **vor** dem Aufruf alle Grenzen und legt bei Erfolg eine Zeile mit `ergebnis = 'reserviert'` und dem Preis des schlechtesten Falls an. Sie gibt deren Kennung zurück. Erschöpftes Kontingent: `53400` mit einer Meldung für Reisende.
+- `public.modell_nutzung_abschliessen(_id, _ergebnis, …)` ersetzt Schätzung durch echten Betrag.
+
+Beide beginnen mit `perform pg_advisory_xact_lock(hashtext('public.model_usage'), 0)` – **eine** globale Sperre, nicht eine je Kennung.
+
+Fünf Grenzen, alle im SQL, keine über eine Umgebungsvariable erhöhbar:
+
+| Grenze | Wert |
+| --- | --- |
+| je Kennung und Stunde | 4 |
+| je Kennung und Tag | 8 |
+| alle Gäste und Tag | 24 |
+| insgesamt und Tag | 38 |
+| Kosten insgesamt und Tag | 3 000 000 µ$ = $3.00 |
+
+Die Kennung eines Gastes ist ein Cookie `jetnity_gast`: 32 Hexzeichen, `httpOnly`, `sameSite: lax`, 30 Tage, nicht signiert. In der Tabelle steht nur sein SHA-256. Für ein angemeldetes Konto gewinnt `auth.uid()`; eine mitgeschickte Gastkennung wird dann verworfen.
+
+**Kontext:** Regel 17 verlangt eine serverseitige, race-condition-sichere Kostenkontrolle. Vercel startet beliebig viele Instanzen – ein Zähler in einem Serverprozess kennt nur seine eigene, und zehn gleichzeitige Anfragen an zehn Instanzen sähen zehnmal „noch Platz".
+
+Dazu die Anforderung, dass Gäste Jetnity weiter benutzen können, ohne Gastkonto und ohne neue kostenpflichtige Rate-Limit-Plattform. Ein Gast hat nach ADR-0042 bewusst keine serverseitige Identität. Eine Schranke „je Kennung" braucht trotzdem eine, sonst gibt es für alle Gäste nur eine gemeinsame Zahl, die ein einzelner aufbrauchen kann.
+
+**Alternativen:**
+
+1. *Upstash, Vercel KV oder ein anderer Rate-Limit-Dienst.* Neue laufende Kosten und ein neuer Anbieter – nach Regel 18 und Regel 5 nicht ohne Freigabe, und nach Regel 19 nicht, solange die vorhandene Infrastruktur es kann. Supabase kann es.
+2. *Ein Zähler im Speicher der Serverinstanz.* Kennt nur seine Instanz und verliert alles bei jedem Kaltstart. Als Kostenschranke wertlos.
+3. *Nachträglich zählen statt vorher buchen.* Wer nachher zählt, hat bezahlt. Zwischen Start und Ergebnis eines Aufrufs liegen Sekunden; ein Deckel, der abgeschlossene Aufrufe summiert, sieht in dieser Zeit einen Stand, der nicht stimmt.
+4. *Eine Sperre je Kennung statt einer globalen.* Genügt für die beiden Grenzen je Kennung und **nicht** für die drei globalen: Zwei verschiedene Kennungen nehmen verschiedene Sperren, sehen denselben Gesamtstand und kommen beide durch. Die globalen Grenzen sind gerade die, die gegen rotierende Gastkennungen wirken.
+5. *IP-Adressen zählen.* Wirksam und datenschutzrechtlich eine eigene Entscheidung: Eine IP-Adresse ist ein personenbezogenes Datum, und sie zu speichern verlangt Zweck, Frist und Dokumentation. Der gemeinsame Gasttopf löst dasselbe Problem ohne diese Daten.
+6. *Anmeldung verlangen.* Wäre eine stille Produktänderung gegen ADR-0042 und Regel 10.
+7. *Den Gastcookie signieren.* Er gewährt nichts, er begrenzt. Ihn zu fälschen bringt nicht mehr als ihn zu löschen, und beides fängt der Gasttopf auf. Eine Signatur bräuchte ein Geheimnis, dessen Verlust den Weg für alle Gäste schliesst.
+
+**Begründung:** Die einzige Stelle, die alle Aufrufe sieht, ist die Datenbank. Sie hat mit `pg_advisory_xact_lock` das Mittel, Prüfung und Einfügung der Reihe nach laufen zu lassen – dieselbe Bauweise, die ADR-0049 für die Missbrauchsschranke gewählt hat. Eine globale Sperre ist hier richtig und nicht zu teuer: Sie wird 38-mal am Tag genommen.
+
+Die Reservierung macht die Aussage über die Tageskosten belastbar, weil sie **vor** dem Aufruf wirkt. Die Summe ist damit zu jedem Zeitpunkt eine Obergrenze. Ein Aufruf, der nie abgeschlossen wird – abgebrochene Verbindung, beendete Instanz, geschlossener Tab –, behält seine Reservierung; das kostet Kontingent, nicht Geld, und ist die sichere Richtung.
+
+`gesamtTag = 38` hält den Kostendeckel allein ein: 38 × 77 200 µ$ = 2 933 600 µ$ < 3 000 000 µ$. Der Deckel ist deshalb nicht die erste Schranke, sondern die zweite – er greift, wenn ein Aufruf mehr kostet als geschätzt, etwa nach einem Wechsel auf ein teureres Modell, bei dem niemand `gesamtTag` nachgezogen hat.
+
+Der Gasttopf (24) ist kleiner als das Gesamte (38). Rotierende Gastkennungen können damit das Kontingent angemeldeter Konten nicht aufbrauchen – nachgewiesen als eigener Fall: bei vollem Gasttopf kommt ein Konto weiterhin durch.
+
+Die Kennung eines Kontos kommt vom vertrauenswürdigen Server als `_konto`, nicht aus einem JWT und nicht vom Browser. Wer seine eigene Kontokennung mitschicken dürfte, dürfte auch eine fremde mitschicken – deshalb sind die Funktionen nur für `service_role` ausführbar.
+
+**Konsequenzen:** Die Grenzen stehen zweimal – in `MODELL_GRENZEN` und im SQL. Zwei Orte sind einer zu viel, aber die Durchsetzung liegt in der Datenbank, und eine Grenze, die im Code höher steht, ist keine. `lib/modell/grenzen-datenbank.test.ts` vergleicht beide Seiten bei jedem `npm test`, ohne Datenbank, allein aus dem Migrations-SQL: ein Auseinanderlaufen ist ein roter Test.
+
+`anon` und `authenticated` haben auf beiden Funktionen **kein** `EXECUTE`. Das stellt die Regel wieder her, dass für `anon` keine `SECURITY DEFINER`-Funktion ausführbar ist. Auf der Tabelle selbst hat `anon` weiterhin kein Recht.
+
+Neues Skript `npm run db:kontingent` mit **16 Nachweisen** gegen die echte Datenbank: jede Grenze am letzten erlaubten und am ersten abgelehnten Aufruf, der Kostendeckel an derselben Kante, der Abschluss in vier Varianten (echte Kosten, fehlende Tokens, zweiter Abschluss ohne Wirkung, fremde Kennung ohne Wirkung), die Identitätsfrage und die Parallelität. Es schreibt echte Zeilen und räumt auf – wie `db:parallelitaet` und aus demselben Grund.
+
+**Bekannte Grenze:** Für `model_usage` gibt es keine automatische Löschung. Die Tabelle wächst um höchstens 38 Zeilen am Tag und enthält keine Reiseinhalte; eine Aufbewahrungsfrist gehört zu der Entscheidung, die Funktion einzuschalten, und steht als offener Punkt in [ROADMAP.md](ROADMAP.md).
+
+**Nachtrag, 19. August 2026:** Der erste Stand gab `EXECUTE` an `anon` und `authenticated`, damit ein Gast ohne Sitzung die Schranke trotzdem erreichen konnte. Damit war dieselbe Funktion über PostgREST mit dem öffentlichen Key erreichbar: Ein externer Client konnte Reservierungen erzeugen und den Gasttopf leeren, ohne einen Modellaufruf. `20260819010000_modell_kontingent_nur_server.sql` zieht das Recht zurück und gibt es nur `service_role`. Die Server Action bestimmt die Identität mit `auth.getUser()` und ruft die Funktionen über einen cookie-losen Dienstclient auf – der einzige Service-Role-Pfad in der Anwendung, nicht exportiert, nur diese zwei RPCs (AGENTS.md Regel 14). Gäste ohne Konto bleiben möglich, weil der Server die Gastkennung setzt. Ein direkter anonymer PostgREST-Aufruf endet mit 4xx und erzeugt keine Zeile; nachgewiesen in `npm run db:sicherheit`. Die Parallelitäts-, Race- und Kosteninvarianten sind unverändert.
+
+---
+
+## ADR-0053 – Modelloutput ist untrusted input, und ein Vorschlag trägt seine Fassung
+
+**Datum:** 18. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Dieselbe Modellantwort wird zweimal geprüft: von der Plattform gegen `VORSCHLAG_JSON_SCHEMA` (`strict: true`), danach von Jetnity gegen `modellvorschlagSchema` (Zod) mit denselben fachlichen Grenzen wie das Reiseschema plus Stimmigkeitsprüfung.
+
+Jeder Vorschlag trägt `fassung: VORSCHLAG_FASSUNG`. Beim Übernehmen wird sie geprüft; eine andere Fassung wird abgelehnt.
+
+Der Vorschlag enthält kein `id`, kein `user_id`, kein `status`, kein `provider`, kein `booking_url` und kein `price` – nicht als verbotenen Wert, sondern gar nicht: `additionalProperties: false` auf jedem Objekt macht sie unaussprechbar.
+
+Systemregeln gehen als Nachricht mit der Rolle `system`, der Freitext als eigene mit `user`.
+
+**Kontext:** Regel 15 behandelt Eingaben von aussen als unsicher. Eine Modellantwort ist eine Eingabe von aussen, auch wenn sie von einem Anbieter kommt, dem man vertraut – und `strict: true` ist eine Zusage dieses Anbieters, keine Eigenschaft von Jetnity.
+
+Dazu ein konkreter Ablauf: Der Vorschlag geht in den Browser, wird dort angesehen und kommt beim Übernehmen zurück. In der Zwischenzeit ist er veränderbar, und zwar von jedem, der die Entwicklerwerkzeuge öffnet.
+
+**Alternativen:**
+
+1. *Nur `strict: true`, keine eigene Prüfung.* Ein Titel mit 400 Zeichen, ein Tag mit der Nummer 99 in einer Reise mit sieben Tagen, eine Etappe von Tag 3 bis Tag 1 – alles formgerecht und trotzdem keine Reise. Formgerechtes Unsinniges würde bis `public.reise_anlegen()` durchlaufen und dort scheitern: mitten in der Übernahme, nachdem der Nutzer freigegeben hat.
+2. *Nur Zod, ohne JSON-Schema an die API.* Verzichtet auf die Zusage über die Form und erzeugt mehr abgelehnte – also bezahlte – Antworten.
+3. *Verbotene Felder herausfiltern statt sie nicht zu definieren.* Ein Filter ist eine Liste, und eine Liste wird unvollständig, sobald das Reiseschema ein Feld gewinnt. `additionalProperties: false` ist keine Liste.
+4. *Beim Übernehmen nur `clientRef` prüfen und den Vorschlag als geprüft ansehen.* Er war geprüft, bevor er den Server verliess. Danach war er in einem Browser.
+5. *Keine Fassung.* Ein Tab liegt eine Stunde offen, ein Deployment ändert das Format – der Vorschlag würde dann halb verstanden statt abgelehnt.
+
+**Begründung:** Die beiden Schemata beantworten verschiedene Fragen. Das JSON-Schema beantwortet „hat die Antwort die richtige Form?", Zod beantwortet „beschreibt sie eine Reise, die Jetnity anlegen kann?". Die zweite Frage ist die, an der eine Übernahme scheitern würde, und sie zu stellen kostet keinen Aufruf.
+
+Der Umfang beider Seiten wird gegeneinander geprüft (`schema.test.ts`), damit ein neues Feld nicht auf einer Seite fehlen kann. Ohne diesen Vergleich wäre die Doppelung genau die Fehlerquelle, die man ihr vorwirft.
+
+Zur Injection: Der letzte Absatz der Systemregeln sagt ausdrücklich, dass der Nutzertext eine Reisebeschreibung ist und keine Anweisung. Das ist eine Bitte, und die Regeln stützen keine Sicherheitszusage. Die Schranke ist, dass ein Vorschlag nach dem Schema nichts enthalten **kann**, was über eine Reise hinausgeht. Ein vollständig übernommenes Modell kann höchstens eine unsinnige Reise vorschlagen – die ein Mensch verwirft, weil sie in der Vorschau steht.
+
+**Konsequenzen:** 60 Tests in `lib/reisevorschlag/schema.test.ts`, darunter die drei Injection-Eingaben aus `fixtures/reiseideen.ts` (Regeln ignorieren, Systemregeln ausgeben, HTML und SQL), formgerechte aber unstimmige Vorschläge, Grenzwerte aus [docs/REISEN.md](docs/REISEN.md) und der Umfangsvergleich der beiden Schemata.
+
+Die Stimmigkeitsprüfung deckt ab, was eine Form nicht ausdrückt: Tage von 1 an ohne Lücke, Etappen lückenlos und ohne Überlappung, `bisTag ≥ vonTag`, Etappen innerhalb der Tagesanzahl.
+
+**Bekannte Grenze:** Die Prüfung stellt fest, ob ein Vorschlag eine zulässige Reise ist – nicht, ob er eine gute ist. Eine Reise, die an sieben Tagen fünfmal den Ort wechselt, ist zulässig. Dagegen stehen die Systemregeln und der Mensch in der Vorschau.
+
+---
+
+## ADR-0054 – Kein Preis, kein Anbieter, keine Verfügbarkeit aus dem Modell
+
+**Datum:** 18. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Ein Reisevorschlag kann keine Preise, Anbieter, Buchungslinks oder Verfügbarkeiten enthalten. Drei Schranken hintereinander:
+
+1. **Strukturell:** Das Vorschlagsschema hat kein Preis-, Anbieter- oder Buchungsfeld, und `additionalProperties: false` macht eines unaussprechbar.
+2. **Im Freitext:** `lib/reisevorschlag/normalisierung.ts` entfernt Beträge mit Währung aus Titeln, Notizen und Annahmen – „Flug ab CHF 412" wird „Flug".
+3. **Im Prompt:** Die Systemregeln verbieten Preise, Verfügbarkeiten, Buchbarkeit, Anbieter und Links ausdrücklich.
+
+Nach der Abbildung bleiben `trip_items.price_amount`, `price_currency`, `provider`, `external_ref` und `booking_url` `null`. Ein genanntes Budget landet in `trips.budget_amount` – als Ziel, wie im Formular unter `/planen`.
+
+**Ausnahme mit Absicht:** Im Feld `trips.travel_wish` bleiben Preisangaben stehen, weil dort der Satz des **Nutzers** steht.
+
+**Kontext:** Phase 3 – Amadeus, Hotels, Aktivitäten – existiert nicht. Bis dahin hat Jetnity keine belastbare Herkunft für einen Preis. „Flug ab CHF 412" ist dann keine Auskunft, sondern eine Behauptung mit dem Aussehen einer Auskunft, und wer sie liest, rechnet damit.
+
+`trip_items.price_amount` existiert seit Phase 1.5 und bedeutet dort: ein Preis mit belegbarer Herkunft. Diese Bedeutung darf nicht dadurch verwässert werden, dass sie ab jetzt auch „Schätzung eines Sprachmodells" heissen kann.
+
+**Alternativen:**
+
+1. *Modellschätzungen in `price_amount` schreiben.* Ändert die Bedeutung eines bestehenden Feldes stillschweigend. Ab Phase 3 stünden zwei verschiedene Dinge in derselben Spalte, und keine Abfrage könnte sie unterscheiden.
+2. *Ein zweites Feld `price_estimate`.* Eine Migration, eine Spalte in vier Tabellenschichten und eine Anzeige für einen Wert, dessen Nutzen unbewiesen ist. Regel 23: Erst der Kern, dann die Verfeinerung. Falls Schätzungen später gewollt sind, ist das eine eigene Entscheidung mit eigener Herkunftsangabe.
+3. *Nur die Systemregeln, keine Normalisierung.* Eine Regel im Prompt ist eine Bitte. Ein Modell, das sich nicht daran hält, hat dann einen Preis in einem Titel, der gespeichert wird.
+4. *Nur die Normalisierung, keine Regeln.* Erzeugt Titel wie „Flug nach Bangkok, ab" – der Betrag weg, der Satz kaputt. Die Regeln sorgen dafür, dass der Fall selten eintritt; die Normalisierung dafür, dass er nichts anrichtet.
+5. *Preisangaben auch im Reisewunsch entfernen.* „Maximal CHF 3'000" ist im Satz eines Nutzers keine Behauptung über einen Marktpreis, sondern seine Angabe über sein Budget. Sie zu entfernen wäre kein Schutz, sondern der Verlust des Wunsches, um den es geht – dasselbe Feld nimmt über das Formular jeden Satz an, den ein Mensch dort schreibt.
+
+**Begründung:** Die strukturelle Schranke ist die stärkste, weil sie nichts prüft: Ein Feld, das es nicht gibt, muss nicht gefiltert werden. Die Normalisierung schliesst den einen verbleibenden Weg – den Freitext –, und die Regeln machen den Fall selten. Diese Reihenfolge ist wichtig, weil sie bestimmt, was passiert, wenn der Prompt ignoriert wird. Und ein Prompt wird irgendwann ignoriert.
+
+**Konsequenzen:** 31 Tests in `normalisierung.test.ts` für Beträge in europäischen Schreibweisen, als Code, Symbol und Wort, einschliesslich „45.– Fr." – und für das, was bewusst stehen bleibt: Jahreszahlen, Uhrzeiten, Hausnummern, Höhenangaben. 32 Tests in `abbildung.test.ts` belegen, dass alle Provider- und Preisfelder nach der Abbildung `null` sind.
+
+**Bekannte Grenze:** Die Normalisierung erkennt Beträge, keine Sätze. „Dieses Hotel ist noch frei" ist eine Verfügbarkeitsbehauptung ohne Muster und bleibt stehen. Dagegen stehen die Systemregeln und die Vorschau, die den Entwurf ausdrücklich als Vorschlag zeigt und nicht als Angebot. Eine Erkennung von Behauptungen im Satzbau wäre eine zweite Modellaufgabe mit eigenen Kosten und eigener Fehlerquote – für Phase 2.1 nicht angemessen.
+
+---
+
+## ADR-0055 – Annahmen werden gezeigt, nicht gespeichert
+
+**Datum:** 18. August 2026
+**Status:** umgesetzt
+
+**Entscheidung:** Ein Vorschlag trägt bis zu vier `annahmen` – kurze Sätze zu allem, was das Modell entschieden hat, ohne es im Text zu lesen. Sie stehen in der Vorschau. Bei der Übernahme werden sie **nicht** gespeichert: weder in `trips.travel_wish`, noch in `trips.metadata`, noch als Planpunkt oder Notiz.
+
+Gespeichert wird stattdessen der Reisewunsch – der Text des Nutzers, geprüft, auf `GRENZEN.reisewunsch` gekürzt.
+
+**Kontext:** Die Anforderung lautet: Fehlende Informationen nicht erfinden, und wo Annahmen nötig sind, müssen sie als Annahmen erkennbar sein. „Wir wollen mal irgendwo weg, kurz und warm" ergibt keinen Reisegraphen, ohne ein Ziel zu wählen; diese Wahl darf nicht wie eine Erkenntnis aus dem Text aussehen.
+
+Die Frage ist, wie lange eine Annahme erkennbar bleiben muss.
+
+**Alternativen:**
+
+1. *Annahmen in `trips.metadata` ablegen.* Das Feld existiert und hält die Nutzlast von `reise_anlegen()`. Es ist aber nach [docs/DATENBANK.md](docs/DATENBANK.md) ausdrücklich nicht der Ort für Reiseinhalte, es ist auf 8192 Zeichen begrenzt, und ein Inhalt dort wird von keiner Ansicht gezeigt – eine Annahme, die niemand liest, ist keine Kennzeichnung, sondern eine Ablage.
+2. *Annahmen an den Reisewunsch anhängen.* Vermischt zwei Dinge in einem Feld: was der Nutzer wollte und was ein Modell daraus geschlossen hat. Beim nächsten Bearbeiten wäre nicht mehr unterscheidbar, welcher Satz von wem ist.
+3. *Eine eigene Spalte oder Tabelle für Annahmen.* Eine Migration für einen Text, der nach der Freigabe seinen Zweck erfüllt hat. Regel 23.
+4. *Annahmen als Planpunkte oder Notiz am ersten Tag.* Macht aus einem Hinweis über die Planung einen Teil der Reise. Wer den Tag später bearbeitet, hätte eine Notiz darin, die nicht zur Reise gehört.
+
+**Begründung:** Eine Annahme ist eine Aussage über den **Vorschlag**, nicht über die Reise. Sie hat genau einen Adressaten und genau einen Zeitpunkt: den Menschen, der entscheidet, ob er den Vorschlag übernimmt. Danach hat er entschieden – er hat die Annahme gesehen und trotzdem zugestimmt, oder er hat den Text geändert und neu erzeugt. Die Reise, die daraus entsteht, ist seine.
+
+Der Reisewunsch dagegen ist der Satz des Nutzers und gehört ihm. Er wird gespeichert, damit später nachvollziehbar ist, wovon die Reise ausging – und damit Phase 2.2 daran anknüpfen kann.
+
+**Konsequenzen:** `vorschlagAlsNutzlast()` und `vorschlagAlsReise()` bilden `annahmen` auf nichts ab; ein Test hält das fest, damit es nicht versehentlich zu einer Zuweisung wird. Die Vorschau zeigt sie in einem eigenen Block, sichtbar als Annahmen und nicht als Reisedaten.
+
+**Bekannte Grenze:** Nach der Übernahme lässt sich nicht mehr feststellen, welche Teile einer Reise auf einer Annahme beruhten. Wenn Phase 2.2 – eine bestehende Reise per Sprache ändern – das braucht, ist es dort zu entscheiden, mit einem Ort, der dann auch gelesen wird.
+
+---
+
+## ADR-0056 – Terra plant, Sol wägt ab, Luna hilft nur
+
+**Datum:** 19. August 2026
+**Status:** umgesetzt auf dem Phase-2.1-Branch, Production unverändert aus
+
+**Entscheidung:** Eine komplette Reiseplanung benutzt nicht ein Modell für alles.
+
+- **Luna** nur für sehr einfache, schnelle Hilfsaufgaben. Sie wird für eine komplette Reise **nicht** automatisch gewählt.
+- **Terra** ist das Standardmodell für normale Planung und der eine Fallback, wenn Sol an Zeit, Netz, 5xx oder einer abgeschnittenen Antwort scheitert.
+- **Sol** nur bei komplexen Abwägungen: mehrere harte Vorgaben, mehrere Ziele oder Insel-Transfers, Roadtrip, widersprüchliche Wünsche, mehrere Verkehrsmittel, enge Budget-/Komfort-/Zeitbedingungen.
+
+Die Wahl ist deterministisch und steht im Freitext (`lib/reisevorschlag/routing.ts`). Es gibt **keinen** zusätzlichen Modellaufruf nur zur Auswahl. `JETNITY_MODELL_NAME` bleibt der manuelle Stift für Probe und Betrieb.
+
+Zeitgrenzen, ohne künstliches Warten:
+
+| Modell | Harte Obergrenze |
+| --- | ---: |
+| Terra, Luna | 90 s |
+| Sol | 120 s |
+
+60 s bleiben das Soft-Ziel. 60–90 s sind zulässig. 90–120 s sind Reserve für schwierige Sol-Fälle. `maxDuration` der Planungsseite ist 300 s, damit ein Sol-Lauf plus genau ein Terra-Fallback nicht an der Plattform stirbt. Vercel Hobby (60 s) reicht dafür nicht.
+
+Nach einem gültigen Plan prüft Jetnity harte, aus dem Text ableitbare Vorgaben (Dauer, Reisende, Budgetziel, Orte, Ausschlüsse, Flugverbot, Ruhetage, maximale Etappen). Bei einer klaren Verletzung gibt es **genau eine** Korrektur, danach eine zweite Prüfung. Offene Punkte erscheinen als `warnungen`, nicht als perfekter Plan. Subjektive Wünsche („schön“, „entspannt“) sind keine harten Vorgaben.
+
+Während der Generierung zeigt `/planen` zeitgesteuerte Phasen, keine erfundenen Prozente und keine Providerdaten.
+
+**Kontext:** Die Vorgabe Luna (ADR-0051) beruhte auf drei kurzen Fixtures. Die spätere Messung mit `reasoning.effort: low` und vergleichbarer Struktur auf fünf vollständigen Planungsfällen zeigte ein anderes Bild.
+
+| Fall | Sol | Terra | Qualität |
+| --- | ---: | ---: | --- |
+| Japan | 47,3 s / USD 0.0538 / 38 Punkte | 23,3 s / USD 0.0247 / 40 Punkte | Terra knapp besser |
+| Vietnam, komplex | 87,9 s / USD 0.1503 / 65 Punkte | 41,2 s / USD 0.0421 / 60 Punkte | Sol besser (Logistik und Entspannung zusammen) |
+| Griechenland, Inseln | 52,2 s / USD 0.0748 / 45 Punkte | 34,3 s / USD 0.0314 / 52 Punkte | Sol besser (eine Insel weniger, weniger Wechsel) |
+| Kalifornien, Roadtrip | 68,8 s / USD 0.1002 / 58 Punkte | 40,5 s / USD 0.0349 / 47 Punkte | Sol knapp besser |
+| Italien, widersprüchlich | 50,1 s / USD 0.0656 / 30 Punkte | 33,4 s / USD 0.0279 / 33 Punkte | praktisch Gleichstand, Sol minimal besser |
+
+Zwei zuvor vermutete Budgetabweichungen waren **keine** Modellfehler: Die falschen Beträge standen schon im per Hand kopierten Testprompt.
+
+Sol ist damit nicht „immer besser“. Terra gewinnt einfache Fälle und ist meist deutlich schneller. Sol hat seinen Vorteil bei komplexen Abwägungen.
+
+Die frühere 40-Sekunden-Grenze würde genau diese Sol-Läufe abschneiden.
+
+**Alternativen:**
+
+1. *Ein Modell für alles, Luna.* Günstig auf kurzen Fixtures, zu schwach als alleinige Qualitätslinie für eine komplette Reiseplanung.
+2. *Ein Modell für alles, Terra.* Stark und schnell genug für den Normalfall, in den komplexen Messungen aber nicht die bessere Gesamtentscheidung.
+3. *Ein Modell für alles, Sol.* In mehreren komplexen Fällen besser, aber langsamer und teurer – und in Japan nicht die bessere Wahl.
+4. *Ein Modellaufruf, der das Modell wählt.* Ein zusätzlicher bezahlter Schritt, der selbst fehlschlagen kann, ohne die Planung besser zu machen.
+5. *OpenRouter, LiteLLM oder Vercel AI Gateway.* Neue laufende Infrastruktur für eine Entscheidung, die ein kurzer Textvergleich schon trägt.
+6. *Die 40-Sekunden-Grenze behalten.* Würde gemessene Sol-Pläne von 50–90 s verwerfen.
+
+**Begründung:** Qualität hat Vorrang vor Kosten und Geschwindigkeit, aber nicht um den Preis, Terra dort zu verwerfen, wo es schneller und mindestens so gut ist. Routing statt Monokultur. Eine Korrektur statt einer Retry-Schleife. Sichtbare Arbeit statt eines leeren Warteschirms.
+
+**Konsequenzen:** `modellFuerReisevorschlag()` entscheidet vor dem Kontingent. Jeder Aufruf – erster Plan, Terra-Fallback, eine Korrektur – bucht sein eigenes Kontingent und umgeht weder Quota noch Kostendeckel. 38 Sol-Reservierungen würden den $3-Tagesdeckel sprengen; der Deckel bleibt die harte Kostenschranke (ADR-0052). Production bleibt aus.
+
+**Bekannte Grenze:** Der Router liest Muster, keine Weltkarte. Ein ungewöhnlich formulierter einfacher Wunsch kann Sol auslösen, ein komplexer ohne die bekannten Wörter Terra. Der Stift `JETNITY_MODELL_NAME` bleibt der bewusste Eingriff.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

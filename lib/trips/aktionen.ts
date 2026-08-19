@@ -20,89 +20,31 @@
 // Rückgabe ist immer ein Ergebnis und keine Ausnahme. Eine geworfene Ausnahme
 // erreicht den Browser in der Produktion als „An error occurred in the Server
 // Components render" – ein Satz, der niemandem sagt, was zu tun ist.
+//
+// Der Aufruf von `public.reise_anlegen()` selbst steht seit Phase 2.1 in
+// `lib/trips/anlegen.ts`: Der Reisevorschlag ist ein dritter Anlass, aus dem eine
+// Reise entsteht, und alle drei sollen durch dieselbe Prüfung und dieselbe
+// Fehlerübersetzung laufen.
 
 'use server'
 
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
-import { problemAus } from '@/lib/api/datenbank-lesen'
-import { createServerActionClient } from '@/lib/supabase/server'
+import {
+  NICHT_ANGEMELDET,
+  konto,
+  meldungAus,
+  reiseAusNutzlastAnlegen,
+  type Aktionsergebnis,
+} from '@/lib/trips/anlegen'
 import {
   ersteMeldung,
   neuePlanpunktNutzlastSchema,
   neueReiseSchema,
   reiseNutzlastSchema,
-  type ReiseNutzlast,
 } from '@/lib/trips/schema'
 import { reisetageBauen } from '@/lib/trips/tage'
-import type { Json } from '@/types/supabase'
-
-export type Aktionsergebnis<Wert> =
-  | { ok: true; wert: Wert }
-  | { ok: false; meldung: string }
-
-const NICHT_ANGEMELDET =
-  'Für diesen Schritt ist eine Anmeldung erforderlich. Bitte melde dich erneut an.'
-
-/**
- * Die geprüfte Identität des Aufrufers.
- *
- * `auth.getUser()` fragt den Auth-Server und prüft damit das Token. Ohne diesen
- * Weg wäre die Kennung eine Behauptung aus einem Cookie.
- */
-async function konto() {
-  const supabase = createServerActionClient()
-  const { data, error } = await supabase.auth.getUser()
-
-  if (error || !data.user) return { supabase, benutzerId: null as string | null }
-  return { supabase, benutzerId: data.user.id }
-}
-
-/** Übersetzt eine Ablehnung der Datenbank in einen Satz, den Reisende lesen können. */
-function meldungAus(fehler: { message: string; code?: string | null }, status?: number): string {
-  const problem = problemAus({ data: null, error: fehler, status }, fehler)
-
-  if (problem.status === 503) {
-    return 'Die Reise konnte gerade nicht gespeichert werden. Bitte versuche es in einem Moment erneut.'
-  }
-
-  // Die Fehlermeldungen von `public.reise_anlegen()` sind für Reisende
-  // geschrieben („Eine Reise trägt höchstens 366 Tage."). Ein SQLSTATE einer
-  // verletzten Prüfbedingung ist es nicht – dafür der allgemeine Satz.
-  return fehler.code === 'P0001' || fehler.code === '22023' || fehler.code === '53400'
-    ? fehler.message
-    : 'Die Reise konnte nicht gespeichert werden. Bitte prüfe deine Angaben.'
-}
-
-/**
- * Schickt einen Reisegraphen an `public.reise_anlegen()`.
- *
- * Die eine Stelle, an der eine Reise entsteht – gleich ob sie aus dem Formular
- * unter /planen kommt oder als Gastentwurf aus dem Browser. Zwei Wege dorthin
- * wären zwei Stellen, an denen die Prüfung der Nutzlast fehlen kann.
- */
-async function anlegen(nutzlast: ReiseNutzlast): Promise<Aktionsergebnis<string>> {
-  const { supabase, benutzerId } = await konto()
-  if (!benutzerId) return { ok: false, meldung: NICHT_ANGEMELDET }
-
-  // Der geprüfte Reisegraph ist strukturell JSON; `ReiseNutzlast` sagt das
-  // genauer als `Json`, nur beweist es der Typprüfung nichts.
-  const { data, error, status } = await supabase.rpc('reise_anlegen', {
-    _reise: nutzlast as unknown as Json,
-  })
-
-  if (error) return { ok: false, meldung: meldungAus(error, status) }
-  if (typeof data !== 'string' || !data) {
-    return {
-      ok: false,
-      meldung: 'Die Reise wurde angelegt, aber ohne Kennung gemeldet. Bitte lade „Meine Reisen" neu.',
-    }
-  }
-
-  revalidatePath('/reisen')
-  return { ok: true, wert: data }
-}
 
 /**
  * Legt eine Reise aus dem Formular unter /planen an.
@@ -117,7 +59,7 @@ export async function reiseAnlegen(eingabe: unknown): Promise<Aktionsergebnis<st
 
   const reise = geprueft.data
 
-  return anlegen({
+  return reiseAusNutzlastAnlegen({
     client_ref: reise.clientRef,
     title: reise.title,
     origin: reise.origin,
@@ -159,7 +101,7 @@ export async function gastreiseUebernehmen(nutzlast: unknown): Promise<Aktionser
   const geprueft = reiseNutzlastSchema.safeParse(nutzlast)
   if (!geprueft.success) return { ok: false, meldung: ersteMeldung(geprueft.error) }
 
-  return anlegen(geprueft.data)
+  return reiseAusNutzlastAnlegen(geprueft.data)
 }
 
 /** Hängt einen Planpunkt an einen Tag einer Reise im Konto. */

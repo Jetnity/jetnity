@@ -323,10 +323,13 @@ const FAELLE = [
   // Die beiden Nachweise zu `creator_alerts_eval_all` sind mit Phase 1.4b
   // entfallen: Die Funktion ist entfernt. Was sie belegten – ein
   // `SECURITY DEFINER` ohne eigene Rechteprüfung ist für `anon` und für jedes
-  // angemeldete Konto unerreichbar – belegen die folgenden sechs Fälle für die
-  // beiden verbleibenden Funktionen dieser Art.
+  // angemeldete Konto unerreichbar – belegen die folgenden Fälle erneut.
+  //
+  // Die zwei Ausnahmen aus dem ersten Stand von Phase 2.1 sind zurückgenommen:
+  // Direkter anon- oder Konto-RPC darf kein Kontingent mehr buchen (ADR-0052,
+  // Nachtrag). Gäste laufen über den Serverweg.
   {
-    name: 'keine SECURITY-DEFINER-Funktion ist für anon ausführbar',
+    name: 'für anon ist keine SECURITY-DEFINER-Funktion ausführbar',
     rolle: 'anon',
     sql: `select p.proname from pg_proc p
           join pg_namespace n on n.oid = p.pronamespace
@@ -336,7 +339,83 @@ const FAELLE = [
     erwartung: 'leer',
     grund:
       'Vor Phase 1.4 war creator_alerts_eval_all() für anon aufrufbar und schrieb Zeilen. ' +
-      'Der Fall hält fest, dass keine SECURITY-DEFINER-Funktion diesen Weg zurückbekommt.',
+      'Der Fall hält fest, dass keine SECURITY-DEFINER-Funktion diesen Weg zurückbekommt – ' +
+      'auch nicht die Kostenschranke.',
+  },
+  {
+    name: 'anon beansprucht Kontingent mit Gastkennung',
+    rolle: 'anon',
+    sql: `select public.modell_kontingent_beanspruchen('reisevorschlag', 'gpt-5.6-terra', 'gast-sicherheitsnachweis-1')`,
+    erwartung: 'abgelehnt',
+    code: '42501',
+    grund:
+      'Der eigentliche Negativfall: Eine gültige Gastkennung reicht nicht. Ohne Dienstrolle ' +
+      'entsteht keine Reservierung – auch nicht, wenn jemand EXECUTE später wieder vergibt.',
+  },
+  {
+    name: 'gewöhnliches Konto beansprucht Kontingent über RPC',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select public.modell_kontingent_beanspruchen('reisevorschlag', 'gpt-5.6-terra', 'gast-sicherheitsnachweis-2')`,
+    erwartung: 'abgelehnt',
+    code: '42501',
+    grund: 'Auch eine Sitzung öffnet den RPC nicht. Nur der Serverweg darf reservieren.',
+  },
+  {
+    name: 'der Dienstweg als Gast bekommt Kontingent',
+    rolle: 'service_role',
+    sql: `select set_config('request.jwt.claims', '{"role":"service_role"}', true);
+          select public.modell_kontingent_beanspruchen('reisevorschlag', 'gpt-5.6-terra', 'gast-sicherheitsnachweis-ok')`,
+    erwartung: 'erlaubt',
+    grund:
+      'Gäste ohne Konto bleiben möglich: Derselbe Aufruf, den die Server Action setzt, ' +
+      'erzeugt die Reservierung. Die Transaktion rollt zurück.',
+  },
+  {
+    name: 'anon liest das Kostenprotokoll',
+    rolle: 'anon',
+    sql: `select * from public.model_usage`,
+    erwartung: 'abgelehnt',
+    grund:
+      'Schreiben über die zwei Funktionen heisst nicht lesen: Die Tabelle ist ab der ' +
+      'Fähigkeit betrieb-lesen sichtbar und für anon ohne Recht.',
+  },
+  {
+    name: 'gewöhnliches Konto liest das Kostenprotokoll',
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `select * from public.model_usage`,
+    erwartung: 'leer',
+    grund: 'Recht vorhanden, Policy verlangt betrieb-lesen – die Zeilen bleiben unsichtbar.',
+  },
+  {
+    name: 'Betrieb liest das Kostenprotokoll',
+    rolle: 'authenticated',
+    uid: BETRIEB,
+    sql: `select * from public.model_usage`,
+    erwartung: 'erlaubt',
+    grund:
+      'Der positive Fall zum vorigen: Ein Kostenprotokoll, das niemand ansehen kann, ' +
+      'erfüllt AGENTS.md Regel 17 nicht.',
+  },
+  {
+    name: 'anon schreibt von Hand in das Kostenprotokoll',
+    rolle: 'anon',
+    sql: `insert into public.model_usage (funktion, modell, art, kennung_hash, kosten_mikro_usd)
+          values ('reisevorschlag', 'gpt-5.6-terra', 'gast', repeat('a', 64), 0)`,
+    erwartung: 'abgelehnt',
+    grund:
+      'Eine Zeile mit 0 µ$ von Hand wäre ein Aufruf, der das Kontingent nicht belastet – ' +
+      'und damit ein Weg, es zu fälschen. Geschrieben wird nur über die beiden Funktionen.',
+  },
+  {
+    name: 'anon ruft public.modell_preis',
+    rolle: 'anon',
+    sql: `select * from public.modell_preis('gpt-5.6-terra')`,
+    erwartung: 'abgelehnt',
+    grund:
+      'Die Preistabelle ist Innenleben der Schranke. Sie ist für die beiden ' +
+      'SECURITY-DEFINER-Funktionen da, nicht für Aufrufer.',
   },
   {
     name: 'anon ruft admin_payments_summary_30d',
@@ -1387,6 +1466,14 @@ function aufbau() {
     `insert into public.blocked_ips (ip, reason) values ('203.0.113.2', 'Test');`,
     `insert into public.airports (iata, name, city, country) values ('ZRH', 'Zürich', 'Zürich', 'CH');`,
     `insert into public.stripe_webhooks (id, type) values ('evt_1', 'payment_intent.succeeded');`,
+    // Eine abgeschlossene Zeile im Kostenprotokoll. Ohne sie wäre beim Betrieb
+    // „0 Zeilen“ nicht von einer dichten Policy zu unterscheiden. Die Kennung ist
+    // ein Hash, der auf nichts zeigt – dieselbe Form, die die Funktion schreibt.
+    `insert into public.model_usage
+       (funktion, modell, art, kennung_hash, ergebnis, eingabe_tokens, ausgabe_tokens,
+        laufzeit_ms, kosten_mikro_usd, abgeschlossen_am)
+       values ('reisevorschlag', 'gpt-5.6-terra', 'gast', repeat('b', 64), 'erfolg',
+               2400, 2900, 8200, 39600, now());`,
   ]
 
   return [...nutzer, ...profile, ...daten].join('\n')
@@ -1460,9 +1547,74 @@ rollback;`
   })
 }
 
+/**
+ * Echter PostgREST-Aufruf mit dem öffentlichen anon-Key.
+ *
+ * Die SQL-Fälle oben laufen über die Management-API als Superuser und prüfen
+ * `auth.role()`. Dieser Fall spricht denselben Endpunkt an, den ein externer
+ * Client mit dem anon-Key erreichen würde – ohne Dienstkontext, ohne Cookie.
+ */
+async function pruefeAnonPostgrest() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()?.replace(/\/$/, '')
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim()
+  if (!url || !key) {
+    return {
+      ok: false,
+      name: 'anon PostgREST reserviert kein Kontingent',
+      erwartung: 'abgelehnt',
+      detail: 'NEXT_PUBLIC_SUPABASE_URL oder NEXT_PUBLIC_SUPABASE_ANON_KEY fehlt – nicht still übersprungen',
+    }
+  }
+
+  const kennung = `negativ-anon-rpc-${crypto.randomUUID().replace(/-/g, '').slice(0, 12)}`
+  const vorher = await runSql(`
+select count(*) as anzahl from public.model_usage
+ where kennung_hash = encode(sha256(convert_to('gast:${kennung}', 'UTF8')), 'hex')`)
+  const bestandVorher = Number(vorher[0].anzahl)
+
+  const antwort = await fetch(`${url}/rest/v1/rpc/modell_kontingent_beanspruchen`, {
+    method: 'POST',
+    headers: {
+      apikey: key,
+      authorization: `Bearer ${key}`,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      _funktion: 'reisevorschlag',
+      _modell: 'gpt-5.6-terra',
+      _gastkennung: kennung,
+    }),
+  })
+
+  const nachher = await runSql(`
+select count(*) as anzahl from public.model_usage
+ where kennung_hash = encode(sha256(convert_to('gast:${kennung}', 'UTF8')), 'hex')`)
+  const bestandNachher = Number(nachher[0].anzahl)
+
+  const maengel = []
+  if (antwort.ok) maengel.push(`HTTP ${antwort.status}, erwartet 4xx`)
+  if (bestandNachher !== bestandVorher) {
+    maengel.push(`Bestand ${bestandNachher}, vorher ${bestandVorher} – Reservierung darf nicht entstehen`)
+    await runSql(`
+delete from public.model_usage
+ where kennung_hash = encode(sha256(convert_to('gast:${kennung}', 'UTF8')), 'hex')`)
+  }
+
+  return {
+    ok: maengel.length === 0,
+    name: 'anon PostgREST reserviert kein Kontingent',
+    erwartung: 'abgelehnt',
+    detail: maengel.length
+      ? maengel.join('; ')
+      : `HTTP ${antwort.status}, Bestand unverändert ${bestandNachher}`,
+  }
+}
+
 async function main() {
   const ergebnisse = await pruefe()
+  const postgrest = await pruefeAnonPostgrest()
   const fehler = ergebnisse.filter((e) => !e.ok)
+  if (!postgrest.ok) fehler.push(postgrest)
 
   for (const e of ergebnisse) {
     const zeichen = e.ok ? '  ok  ' : ' FEHL '
@@ -1472,7 +1624,13 @@ async function main() {
     if (!e.ok) console.log(`       erwartet ${e.fall.erwartung}, gemessen ${e.tatsaechlich}`)
   }
 
-  console.log(`\n${ergebnisse.length - fehler.length}/${ergebnisse.length} Nachweise erfüllt.`)
+  console.log(
+    `${postgrest.ok ? '  ok  ' : ' FEHL '} ${postgrest.name.padEnd(58)} ${String(postgrest.erwartung).padEnd(10)} ${postgrest.detail}`,
+  )
+
+  const gesamt = ergebnisse.length + 1
+  const ok = gesamt - fehler.length
+  console.log(`\n${ok}/${gesamt} Nachweise erfüllt.`)
   if (fehler.length) process.exit(1)
 }
 
