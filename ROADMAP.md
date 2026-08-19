@@ -495,7 +495,7 @@ Vollständige Beschreibung: [docs/MODELL.md](docs/MODELL.md). Entscheidungen: [D
 - [x] Prompt-Injection als Testfall: Regeln ignorieren, Systemregeln ausgeben lassen, HTML und SQL im Text
 - [x] das bestehende Formular unter `/planen` bleibt unverändert nutzbar und ist der Weg, der auch ohne Modell funktioniert
 
-**Nachtrag 19. August 2026.** Direkter anonymer PostgREST-/RPC-Zugriff darf kein Kontingent mehr reservieren: `EXECUTE` nur noch `service_role`, Server Action bleibt der Gastweg (ADR-0052). ADR-0050 unterscheidet Doppelklick/Retry von einem Reload in der Vorschau. Preview hat Schlüssel und Kill Switch; Production bleibt aus. Die echte Terra/Luna-Messung ist vorbereitet und in dieser Session nicht gelaufen – der Schlüssel liegt nur als Preview-Secret und wurde hier nicht gelesen.
+**Nachtrag 19. August 2026.** Direkter anonymer PostgREST-/RPC-Zugriff darf kein Kontingent mehr reservieren: `EXECUTE` nur noch `service_role`, Server Action bleibt der Gastweg (ADR-0052). ADR-0050 unterscheidet Doppelklick/Retry von einem Reload in der Vorschau. Preview hat Schlüssel und Kill Switch; Production bleibt aus. Die Development-Migration `20260819010000` ist angewendet; die datenbanknahen Nachweise (Sicherheit, Kontingent, Rechte, RLS, Parallelität, Reproduzierbarkeit, Typen, Advisors) sind gegen den Development-Branch grün. Die echte Terra/Luna-Messung ist vorbereitet und noch nicht gelaufen – `npm run modell:probe` braucht einen injizierbaren `OPENAI_API_KEY` plus Management-Zugang, und der Preview-Schlüssel ist Sensitive.
 
 **Nachweise.** Der Abschlusslauf der Phase, die datenbanknahen Teile gegen den Development-Branch:
 
@@ -503,13 +503,13 @@ Vollständige Beschreibung: [docs/MODELL.md](docs/MODELL.md). Entscheidungen: [D
 | --- | --- |
 | `npm test` | 595 Tests in 125 Gruppen, davon die Modell- und Vorschlagsschicht plus drei Dateitests auf den Nachtrag – kein Lauf ruft ein Modell |
 | `npm run db:kontingent` | 16 von 16 Nachweisen erfüllt: jede der fünf Grenzen einzeln, 6 gleichzeitige Sitzungen auf einen freien Platz, Abschluss, Doppelabschluss, fremde Kennung, Identität eines Kontos |
-| `npm run db:sicherheit` | 147 von 147 Nachweisen erfüllt, darin die neuen zu `model_usage` und zu den zwei RPCs |
+| `npm run db:sicherheit` | 149 von 149 Nachweisen erfüllt, darin der SQL-Negativfall und der echte PostgREST-Aufruf gegen die Kontingent-RPCs |
 | `npm run db:reproduzierbarkeit` | Wiederaufbau aus den versionierten Migrationen gleich dem laufenden Schema |
 | `npm run db:rechte` | 33 Tabellenrechte, jedes durch eine Policy gedeckt; RLS auf allen 12 Tabellen |
 | `npm run db:rls` | Matrix aus 4 Akteuren × 12 Tabellen; auf `model_usage` hat `anon` kein Recht, ein gewöhnliches Konto sieht null Zeilen, niemand schreibt direkt |
 | `npm run db:parallelitaet` | 5 von 5 Nachweisen erfüllt, unverändert grün |
 | `npm run db:typen -- --pruefen` | `types/supabase.ts` entspricht dem Schema |
-| `npm run db:advisors` | 23 Security-, 6 Performance-Befunde; die fünf neuen sind gezählte Struktur der Kostenschranke, jeder begründet ([docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 8) |
+| `npm run db:advisors` | 19 Security-, 6 Performance-Befunde; die früher gefährlichen Kontingent-RPC-Rechte für `anon`/`authenticated` sind entfallen, die verbleibenden sind begründet ([docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 8) |
 | `npm run auth:pruefen` | 55 Sollwerte, 242 Schlüssel eingeordnet, unverändert grün |
 | Typecheck, Lint, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, Production-Build | grün |
 | Browser, Gast und Konto, Mobile und Desktop | Freitext, Vorschau, Übernehmen, Reise öffnen, Reload – die Reise bleibt, ein Reload erzeugt keine zweite. Der Modellaufruf war dabei lokal durch eine Attrappe ersetzt, die die Fixture zurückgibt; Kontingent, Protokoll und Persistenz liefen echt |

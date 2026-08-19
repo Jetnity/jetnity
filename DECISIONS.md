@@ -1250,6 +1250,8 @@ Die Preise stehen in `lib/modell/preise.ts` in Mikrodollar je Million Tokens, al
 
 **Bekannte Grenze:** Preview hat einen Schlüssel; ein gemessener Vergleich `terra` gegen `luna` ist vorbereitet (`npm run modell:probe`) und noch nicht gelaufen. Damit bleibt unbelegt: die Qualität beider Modelle an dieser Aufgabe, die tatsächliche Tokennutzung, die tatsächliche Laufzeit und die Frage, ob 6000 Ausgabetokens bei `low` reichen. Die Vorgabe bleibt `terra`/`low`, bis Zahlen vorliegen (docs/MODELL.md, Abschnitt 8).
 
+**Nachtrag, 19. August 2026:** Der Preview-Schlüssel liegt als Sensitive-Variable und ist über `vercel env run` lokal nicht lesbar. Die Management-Variablen für das Kontingent (`SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF`) liegen nicht in der Preview-Umgebung. Ein Lauf, der den Schlüssel umgeht oder das Kontingent überspringt, wäre kein Nachweis des Anwendungswegs. Deshalb bleibt die Messung offen, statt Zahlen zu erfinden.
+
 ---
 
 ## ADR-0052 – Die Kostenschranke steht in der Datenbank, mit einem eigenen Topf für Gäste

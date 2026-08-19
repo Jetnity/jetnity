@@ -81,11 +81,11 @@ Was ein Reisevorschlag kostet, bei 2600 Eingabe- und 6000 Ausgabetokens im schle
 | `gpt-5.6-terra` | $0.0772 | $0.0472 | $0.0436 |
 | `gpt-5.6-sol` | $0.1930 | $0.1180 | $0.1090 |
 
-Die Zahl des schlechtesten Falls ist die einzige belastbare: Sie wird vor dem Aufruf gebucht (Abschnitt 4). Die beiden anderen sind Schätzungen und **nicht gemessen** – es gab keinen Schlüssel, um sie zu messen (Abschnitt 8).
+Die Zahl des schlechtesten Falls ist die einzige belastbare: Sie wird vor dem Aufruf gebucht (Abschnitt 4). Die beiden anderen sind Schätzungen und **nicht gemessen** – Preview hat einen Schlüssel, `npm run modell:probe` ist aber noch nicht gegen `terra` und `luna` gelaufen (Abschnitt 8).
 
 **Warum `gpt-5.6-terra` die Vorgabe ist,** und nicht das zwanzigfach billigere `luna`: Ein Reisevorschlag ist keine Umformatierung. Er verlangt Geografie („Bangkok, Chiang Mai, Krabi in sieben Tagen“ ist eine andere Reise als „Bangkok, Krabi, Chiang Mai“), eine Vorstellung von Wegen und Entfernungen und das Einhalten mehrerer Bedingungen gleichzeitig. Ein Vorschlag, der 4 Cent kostet und brauchbar ist, ist besser als drei Vorschläge zu 0,5 Cent, von denen keiner überzeugt.
 
-Diese Wahl ist **nicht belegt**, sondern begründet – ein Vergleich braucht Aufrufe, und dafür fehlte der Schlüssel. Der Vergleich ist als erster Schritt der Aktivierung vorgesehen: `JETNITY_MODELL_NAME=gpt-5.6-luna` und die dreizehn Reiseideen aus `lib/reisevorschlag/fixtures/reiseideen.ts` über `npm run modell:probe` (ADR-0051).
+Diese Wahl ist **nicht belegt**, sondern begründet. Der Vergleich ist vorbereitet: wenige Fixtures über `npm run modell:probe` gegen `gpt-5.6-terra` und `gpt-5.6-luna` (ADR-0051). Er ist noch nicht gelaufen.
 
 ---
 
@@ -260,13 +260,13 @@ Fehlt etwas, ist das kein Laufzeitfehler, sondern der Normalzustand einer Umgebu
 
 **Preview:** `OPENAI_API_KEY` (Sensitive) und `JETNITY_MODELL_AKTIV=true` sind gesetzt. Das OpenAI-Projekt *Jetnity Development* hat ein Hard Spend Limit von $5. Production bleibt ohne Aktivierung.
 
-**Production** hat keinen Kill Switch und soll ihn nicht bekommen, bevor die Modellwahl gemessen ist.
+**Production** hat keinen Kill Switch und bekommt ihn nicht, bevor die Modellwahl gemessen ist.
 
 Es gibt keine `NEXT_PUBLIC_OPENAI_*`-Variable und keinen Modellaufruf im Browser. Der Schlüssel wird in `lib/modell/aufruf.ts` gelesen und verlässt diese Datei nicht; er steht in keinem Rückgabewert, keiner Fehlermeldung und keinem Protokoll.
 
 ### Vergleich terra / luna
 
-Vorbereitet ist `npm run modell:probe` gegen dieselben Fixtures, dasselbe Schema und dieselbe Kostenschranke. Der Lauf gehört nicht in die CI. Ohne Schlüssel in der laufenden Umgebung bricht er ab, statt Zahlen zu erfinden.
+Vorbereitet ist `npm run modell:probe` gegen dieselben Fixtures, dasselbe Schema und dieselbe Kostenschranke. Der Lauf gehört nicht in die CI. Ohne injizierbaren Schlüssel und ohne Management-Zugang für das Kontingent bricht er ab, statt Zahlen zu erfinden. Der Preview-Schlüssel ist Sensitive und lokal nicht lesbar.
 
 Die Vorgabe bleibt `gpt-5.6-terra` mit `reasoning.effort: low`, solange kein gemessener Vergleich vorliegt (ADR-0051).
 
