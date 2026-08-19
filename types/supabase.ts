@@ -554,7 +554,12 @@ export type Database = {
       hat_rolle_mindestens: { Args: { minimum: string }; Returns: boolean }
       liste_ohne_doppelte: { Args: { _werte: string[] }; Returns: boolean }
       modell_kontingent_beanspruchen: {
-        Args: { _funktion: string; _gastkennung?: string; _modell: string }
+        Args: {
+          _funktion: string
+          _gastkennung?: string
+          _konto?: string
+          _modell: string
+        }
         Returns: string
       }
       modell_nutzung_abschliessen: {

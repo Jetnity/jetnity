@@ -147,6 +147,7 @@ Der Zustand nach Phase 1.4 steht in Abschnitt 9; dort ist auch nachgewiesen, das
 | `20260818020000_reise_wiederholung.sql` | Die Schranke zählt Neuanlagen: Ist `(user_id, client_ref)` belegt, gilt sie nicht – der Retry bleibt auch an der Grenze idempotent (Nachtrag Phase 1.5, ADR-0048) |
 | `20260818030000_reise_erzeugung_serialisieren.sql` | Zählung und Einfügung laufen je Konto der Reihe nach, serialisiert über `pg_advisory_xact_lock` – die Schranke hält auch bei gleichzeitigen Anfragen (Nachtrag Phase 1.5, ADR-0049) |
 | `20260818040000_modellnutzung.sql` | `model_usage` als Kostenprotokoll, `modell_preis()`, `modell_kontingent_beanspruchen()` und `modell_nutzung_abschliessen()` – die Kostenschranke für Modellaufrufe (Phase 2.1, ADR-0052) |
+| `20260819010000_modell_kontingent_nur_server.sql` | `EXECUTE` auf die beiden Kontingent-Funktionen nur noch `service_role`; Identität eines Kontos als Argument vom Server (Nachtrag ADR-0052) |
 
 Die Reihenfolge ist nicht beliebig: `20260817100200` darf erst laufen, wenn `20260817100000` die Rollen der Betroffenen übernommen und `20260817100100` alle Policies auf `creator_profiles.role` umgestellt hat. Sonst verlöre jemand seinen Zugang oder eine Policy liefe ins Leere.
 
@@ -537,14 +538,14 @@ Was **nicht** darin steht: die Reisebeschreibung, der Vorschlag, der Prompt, die
 | Funktion | Rechte | Aufgabe |
 | --- | --- | --- |
 | `modell_preis(text)` | nur Definer, kein `EXECUTE` für `anon`/`authenticated` | Preis eines Modells in Mikrodollar je Million Tokens |
-| `modell_kontingent_beanspruchen(text, text, text)` | `EXECUTE` für `anon` und `authenticated` | prüft alle Grenzen und legt vor dem Aufruf eine Zeile mit dem Preis des schlechtesten Falls an |
-| `modell_nutzung_abschliessen(uuid, text, int, int, int, int)` | `EXECUTE` für `anon` und `authenticated` | ersetzt Schätzung durch ermittelten Betrag |
+| `modell_kontingent_beanspruchen(text, text, text, uuid)` | `EXECUTE` nur für `service_role` | prüft alle Grenzen und legt vor dem Aufruf eine Zeile mit dem Preis des schlechtesten Falls an |
+| `modell_nutzung_abschliessen(uuid, text, int, int, int, int)` | `EXECUTE` nur für `service_role` | ersetzt Schätzung durch ermittelten Betrag |
 
 Alle drei sind `SECURITY DEFINER` mit `set search_path = public, pg_temp`.
 
 Beide öffentlichen Funktionen beginnen mit `perform pg_advisory_xact_lock(hashtext('public.model_usage'), 0)` – **eine** globale Sperre, kein Schlüssel je Kennung. Der Grund liegt in den Grenzen: Zwei verschiedene Kennungen nähmen verschiedene Sperren, sähen denselben Gesamtstand und kämen beide durch. Gerade die globalen Grenzen sind die, die gegen rotierende Gastkennungen wirken. Die Sperre wird höchstens 38-mal am Tag genommen.
 
-Die Kennung eines angemeldeten Kontos kommt aus `auth.uid()`, nicht vom Aufrufer. Wer seine eigene Kontokennung mitschicken dürfte, dürfte auch eine fremde mitschicken.
+Die Kennung eines angemeldeten Kontos kommt vom Server als `_konto`, nachdem `auth.getUser()` sie gelesen hat. Die Funktionen selbst sind für `anon` und `authenticated` nicht ausführbar.
 
 ### Die fünf Grenzen
 
@@ -564,7 +565,7 @@ Die Reservierung wirkt **vor** dem Aufruf. Damit ist die Tagessumme zu jedem Zei
 
 RLS ist eingeschaltet, eine Policy: `select` für `authenticated` mit `public.darf_betrieb_lesen()` – ab `moderator`.
 
-`anon` hat auf der Tabelle **kein** Recht, auch kein `insert`. Ein Gast schreibt ausschliesslich über die beiden Funktionen. Das ist die erste bewusste Ausnahme von der Regel, dass für `anon` keine `SECURITY DEFINER`-Funktion ausführbar ist; `scripts/db/sicherheit.mjs` nennt die zwei namentlich, damit eine dritte den Nachweis brechen würde.
+`anon` hat auf der Tabelle **kein** Recht, auch kein `insert`. Ein Gast schreibt nicht selbst: Die Server Action ruft die beiden Funktionen über `service_role` auf. Für `anon` ist wieder keine `SECURITY DEFINER`-Funktion ausführbar.
 
 `update` und `delete` hat niemand, auch der Betrieb nicht. Ein Kostenprotokoll, das sein Eigentümer aufräumen kann, ist keins.
 
@@ -603,12 +604,12 @@ Eine Aufbewahrungsfrist gehört zu der Entscheidung, die Funktion in Production 
 
 ## 8. Advisor-Befunde
 
-Behoben sind `function_search_path_mutable`, `auth_rls_initplan`, `multiple_permissive_policies`, `duplicate_index` und – seit `20260817100800` – `rls_enabled_no_policy`. Es bleiben **23** Security- und **6** Performance-Befunde; nach Phase 1.5 waren es 18 und 6, nach Phase 1.4b 13 und 9, vor Phase 1.4b 45 und 47. Die fünf neuen Befunde kommen vollständig aus der Kostenschranke der Phase 2.1 und sind gezählte Struktur, nicht neues Risiko: zwei Funktionen, die für `anon` **und** `authenticated` ausführbar sind – das sind vier Befunde, weil jede Rolle einzeln gezählt wird – und `model_usage` als zwölfte Tabelle im GraphQL-Schema. Was bleibt, bleibt mit Grund:
+Behoben sind `function_search_path_mutable`, `auth_rls_initplan`, `multiple_permissive_policies`, `duplicate_index` und – seit `20260817100800` – `rls_enabled_no_policy`. Es bleiben **19** Security- und **6** Performance-Befunde; nach dem ersten Stand von Phase 2.1 waren es 23 und 6, nach Phase 1.5 18 und 6. Die vier Befunde `anon_security_definer_function_executable` (2) und die zwei zusätzlichen unter `authenticated_security_definer_function_executable` sind mit `20260819010000` entfallen: Die Kontingent-Funktionen sind für `anon` und `authenticated` nicht mehr ausführbar. Es bleibt `model_usage` als zwölfte Tabelle im GraphQL-Schema. Was bleibt, bleibt mit Grund:
 
 | Befund | Anzahl | nach 1.5 | nach 1.4b | Bewertung |
 | --- | --- | --- | --- | --- |
-| `anon_security_definer_function_executable` | 2 | 0 | 0 | **neu in Phase 2.1, und der einzige Befund dieser Art im Schema.** `modell_kontingent_beanspruchen()` und `modell_nutzung_abschliessen()` müssen für `anon` ausführbar sein, weil ein Gast keine Sitzung hat und die Schranke trotzdem gelten soll. Beide sind auf genau diesen Zweck zugeschnitten: kein Argument bestimmt die Kennung eines Kontos, keine gibt Fremdes heraus, und die zweite wirkt nur auf eine `reserviert`-Zeile, deren UUID der Aufrufer bereits besitzt. Nachgewiesen in Abschnitt 7c und in `npm run db:sicherheit`, das seit Phase 2.1 genau diese zwei Namen ausnimmt und stattdessen ihr Verhalten prüft. Begründung in [DECISIONS.md](../DECISIONS.md) ADR-0052 |
-| `authenticated_security_definer_function_executable` | 8 | 6 | 4 | `aktuelle_rolle()` und `hat_rolle_mindestens()` werden von den Policies gebraucht und müssen deshalb für `authenticated` ausführbar sein. Sie geben nur Auskunft über das aufrufende Konto selbst. `admin_payments_summary_30d()`, `admin_security_overview()` und seit Phase 1.5 `admin_reisen_kennzahlen()` und `admin_reisen_zeitreihe(integer)` prüfen die Fähigkeit intern und liefern ohne `betrieb-lesen` keine Zeile – nachgewiesen in Abschnitt 7. Die zwei aus Phase 2.1 sind dieselben wie eine Zeile höher: Ein angemeldetes Konto ruft sie auf demselben Weg, seine Kennung kommt aber aus `auth.uid()` und nicht aus einem Argument |
+| `anon_security_definer_function_executable` | 0 | 0 | 0 | **behoben im Nachtrag zu Phase 2.1.** Der erste Stand gab den zwei Kontingent-Funktionen `EXECUTE` für `anon`; das öffnete denselben Weg über PostgREST. Seit `20260819010000` hat `anon` auf keiner `SECURITY DEFINER`-Funktion ein Ausführungsrecht. Nachgewiesen in `npm run db:sicherheit`, einschliesslich eines echten PostgREST-Aufrufs mit dem anon-Key |
+| `authenticated_security_definer_function_executable` | 6 | 6 | 4 | `aktuelle_rolle()` und `hat_rolle_mindestens()` werden von den Policies gebraucht und müssen deshalb für `authenticated` ausführbar sein. Sie geben nur Auskunft über das aufrufende Konto selbst. `admin_payments_summary_30d()`, `admin_security_overview()` und seit Phase 1.5 `admin_reisen_kennzahlen()` und `admin_reisen_zeitreihe(integer)` prüfen die Fähigkeit intern und liefern ohne `betrieb-lesen` keine Zeile – nachgewiesen in Abschnitt 7. Die zwei Kontingent-Funktionen aus Phase 2.1 zählen hier nicht mehr |
 | `pg_graphql_anon_table_exposed` | 1 | 1 | 1 | nur noch `airports`; die Tabelle soll ohne Anmeldung lesbar sein. Sichtbarkeit im GraphQL-Schema ist die Folge des `SELECT`-Rechts, nicht ein zusätzliches Recht. `blog_posts` und `blog_comments` sind mit Phase 1.4b entfallen. `model_usage` steht hier **nicht**: `anon` hat auf der Tabelle kein einziges Recht |
 | `pg_graphql_authenticated_table_exposed` | 12 | 11 | 8 | dasselbe für angemeldete Konten, jetzt für alle zwölf Tabellen einschliesslich `model_usage`. Welche Zeilen sichtbar sind, entscheidet RLS – für `model_usage` sind es ohne `betrieb-lesen` null, nachgewiesen in Abschnitt 7 und in der Matrix von `npm run db:rls` |
 | `unused_index` | 5 | 5 | 8 | der Development-Branch trägt keine echte Last. Ein Index, den nie eine Abfrage benutzt hat, ist auf einem Branch ohne Verkehr keine Aussage. Die fünf liegen auf `airports` (drei Trigramm-Indizes der Flughafensuche) und `profiles`. Die zwei Indizes auf `model_usage` erscheinen nicht: Jeder Anspruch liest über beide |
@@ -616,7 +617,7 @@ Behoben sind `function_search_path_mutable`, `auth_rls_initplan`, `multiple_perm
 | `auth_leaked_password_protection` | – | – | – | **behoben in Phase 1.4c.** `password_hibp_enabled` steht auf `true`; der Lauf danach meldet den Befund nicht, obwohl ein passwortgestütztes Konto existiert. Siehe unten |
 | `rls_enabled_no_policy` | 0 | 0 | 0 | bleibt behoben |
 
-Die acht `SECURITY DEFINER`-Funktionen für `authenticated` folgen demselben Muster: interne Prüfung statt Rechteentzug. `pg_policy` wäre für jede Rolle lesbar und verriete die Bedingung jeder Policy; `admin_security_overview()` gibt nur deren Anzahl heraus. Bei den zwei aus Phase 2.1 ist die interne Prüfung die Schranke selbst – sie ist der Zweck der Funktion und nicht eine Bedingung davor.
+Die sechs `SECURITY DEFINER`-Funktionen für `authenticated` folgen demselben Muster: interne Prüfung statt Rechteentzug. `pg_policy` wäre für jede Rolle lesbar und verriete die Bedingung jeder Policy; `admin_security_overview()` gibt nur deren Anzahl heraus.
 
 **Der Auslöser aus dem Nachtrag der Phase 1.5 erscheint hier nicht, und das ist kein Versehen.** `public.reise_erzeugung_pruefen()` ist ebenfalls `SECURITY DEFINER`, aber `revoke all … from public, anon, authenticated` nimmt ihr das Ausführungsrecht: Sie ist über `/rest/v1/rpc/` nicht erreichbar, und ein Auslöser braucht das Recht des Aufrufers nicht. Dasselbe gilt für `modell_preis(text)` aus Phase 2.1: `revoke all … from public, anon, authenticated` nimmt auch ihr das Ausführungsrecht. Erreichbar ist sie nur aus den beiden Funktionen darüber – ein Preis, den ein Aufrufer selbst abfragen oder gar setzen könnte, wäre kein Deckel.
 
@@ -745,7 +746,7 @@ Keine der zwei verbleibenden Fremdschlüsselbedingungen ist doppelt.
 | Fünf Funktionen ohne Aufrufer auf verbleibenden Tabellen | `sync_creator_profile_core()`, `sync_creator_profile_emails()`, `append_email_to_array()` (2 Signaturen), `remove_email_from_array()` hängen an keinem Trigger und werden vom Anwendungscode nicht gerufen. Sie gehören zu `creator_profiles` und `creator_sessions`, nicht zur Legacy-Struktur, und lagen damit ausserhalb des Auftrags von Phase 1.4b. Entscheidung fällig in Phase 1.5 |
 | Datenbanknahe Prüfungen in die CI | braucht einen kurzlebigen Branch je Lauf, siehe Abschnitt 9 |
 | Aufbewahrungsfrist für `model_usage` | keine automatische Löschung. Höchstens 38 Zeilen am Tag, keine Reiseinhalte, Kennung nur als SHA-256. Die Frist gehört zu der Entscheidung, den Modellweg einzuschalten – Phase 2.1 hat ihn implementiert und abgeschaltet gelassen (Abschnitt 7c, [DECISIONS.md](../DECISIONS.md) ADR-0052) |
-| `anon` darf zwei `SECURITY DEFINER`-Funktionen ausführen | bewusst und namentlich im Sicherheitsnachweis geführt. Es ist die einzige Ausnahme; eine dritte Funktion bricht den Nachweis. Grund: Ein Gast hat keine serverseitige Identität und braucht trotzdem eine Kostenschranke (ADR-0052) |
+| ~~`anon` darf zwei `SECURITY DEFINER`-Funktionen ausführen~~ | **behoben im Nachtrag zu Phase 2.1.** `EXECUTE` nur noch `service_role`; Gäste laufen über die Server Action. Direkter anon-PostgREST erzeugt keine Reservierung |
 | ~~Fehler in der Oberfläche sichtbar machen~~ | **erledigt in Phase 1.4d.** `TransactionsCard` und `WebhooksCard` prüften den Status der Antwort nicht und schrieben `data.rows ?? []` in den Zustand – bei 500 also eine leere Tabelle. Alle Admin-Ansichten benutzen jetzt dieselbe Fläche für *lädt* / *leer* / *nicht ermittelbar*, auch die drei serverseitig lesenden, bei denen die Prüfung denselben Fehler fand ([DECISIONS.md](../DECISIONS.md) ADR-0040) |
 | ~~Schutz vor kompromittierten Passwörtern~~ | **erledigt in Phase 1.4c.** `password_hibp_enabled` steht auf `true`, die Wirkung ist nachgewiesen, und der Sollwert liegt im Repository. Warum der Advisor kam und ging, ist gemessen statt vermutet: Er meldet nur, solange passwortgestützte Konten existieren ([docs/AUTH.md](AUTH.md) Abschnitt 5) |
 | ~~Auth-Konfiguration nicht versioniert~~ | **erledigt in Phase 1.4c.** Der Abschnitt `[auth]` in `supabase/config.toml` beschreibt jetzt den Branch; `npm run auth:pruefen` vergleicht ihn mit dem laufenden Stand und verlangt für jeden Schlüssel der API eine Aussage des Repositories. Beschreibung in [docs/AUTH.md](AUTH.md), Entscheidung in [DECISIONS.md](../DECISIONS.md) ADR-0039 |

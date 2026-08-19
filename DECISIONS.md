@@ -1207,7 +1207,7 @@ Die naheliegende Antwort wäre ein Serverzustand: eine Zeile mit `status = 'vorg
 
 Der Preis ist ehrlich und klein: Ein Reload verliert den Vorschlag. Das ist vertretbar, weil die Vorschau der eine Zwischenschritt ist, den der Nutzer gerade vor sich hat, und weil ein verlorener Vorschlag genau einen neuen Aufruf kostet – nicht eine verlorene Reise. Der Fall, der wirklich weh täte, ist ein anderer: ein Vorschlag, der mit einem Speicherfehler verschwindet. Genau der ist behandelt, und zwar in der Oberfläche: Ein Fehlschlag beim Übernehmen lässt die Vorschau stehen.
 
-**Konsequenzen:** Die Persistenz für Modellreisen ist die bestehende, Zeile für Zeile: `public.reise_anlegen()` für Konten, `gastreiseAblegen()` für Gäste, `unique (user_id, client_ref)` für die Idempotenz. `clientRef` entsteht mit dem Vorschlag und bleibt an ihm hängen; Doppelklick, Reload und Retry ergeben deshalb eine Reise und nicht drei.
+**Konsequenzen:** Die Persistenz für Modellreisen ist die bestehende, Zeile für Zeile: `public.reise_anlegen()` für Konten, `gastreiseAblegen()` für Gäste, `unique (user_id, client_ref)` für die Idempotenz. `clientRef` entsteht mit dem Vorschlag und bleibt an ihm hängen; **Doppelklick und Retry** ergeben deshalb eine Reise und nicht zwei. Ein Reload **während einer nicht übernommenen Vorschau** verwirft den Vorschlag bewusst – er lebt nur im Komponentenzustand und ist von dieser Idempotenz nicht gedeckt. Ein Reload **nach** der Übernahme trifft die bereits gespeicherte Reise und erzeugt keine zweite.
 
 Zwanzig Tests in `lib/reisevorschlag/uebernahme.test.ts` prüfen genau die Naht: Vorschau ohne Persistenz, Übernahme mit Persistenz, zweimal derselbe `clientRef`, Persistenzfehler nach erfolgreichem Vorschlag, und ein im Browser manipulierter Vorschlag, der abgelehnt wird.
 
@@ -1218,7 +1218,7 @@ Zwanzig Tests in `lib/reisevorschlag/uebernahme.test.ts` prüfen genau die Naht:
 ## ADR-0051 – `gpt-5.6-terra` mit `low`, über die Responses API mit `strict: true`
 
 **Datum:** 18. August 2026
-**Status:** umgesetzt, nicht mit echten Aufrufen belegt
+**Status:** umgesetzt, Preview-Schlüssel vorhanden, Vergleich nicht gemessen
 
 **Entscheidung:** Jetnity ruft die **Responses API** auf (`POST /v1/responses`) und verlangt strukturierte Ausgabe über `text.format` mit `type: 'json_schema'` und `strict: true`. Vorgabe ist `gpt-5.6-terra` mit `reasoning.effort: 'low'`; `JETNITY_MODELL_NAME` und `JETNITY_MODELL_AUFWAND` können sie ändern, aber nur innerhalb von drei Modellen mit bekanntem Preis und drei Aufwandstufen.
 
@@ -1248,7 +1248,7 @@ Nur drei Modelle sind zugelassen, weil `PREISE` drei kennt. Ein Tippfehler in `J
 
 Die Preise stehen in `lib/modell/preise.ts` in Mikrodollar je Million Tokens, also in der Einheit der Preisliste. Ein Eintrag ist eine Umschrift und keine Umrechnung, die jemand nachprüfen muss.
 
-**Bekannte Grenze:** Es gab in dieser Phase keinen `OPENAI_API_KEY`. Kein Aufruf ist geschehen, weder gegen `terra` noch gegen `luna`. Damit ist unbelegt: die Qualität beider Modelle an dieser Aufgabe, die tatsächliche Tokennutzung, die tatsächliche Laufzeit und die Frage, ob 6000 Ausgabetokens bei `low` reichen. Der erste Schritt einer Aktivierung ist deshalb `npm run modell:probe` gegen beide Modelle, nicht die Freigabe (docs/MODELL.md, Abschnitt 8).
+**Bekannte Grenze:** Preview hat einen Schlüssel; ein gemessener Vergleich `terra` gegen `luna` ist vorbereitet (`npm run modell:probe`) und noch nicht gelaufen. Damit bleibt unbelegt: die Qualität beider Modelle an dieser Aufgabe, die tatsächliche Tokennutzung, die tatsächliche Laufzeit und die Frage, ob 6000 Ausgabetokens bei `low` reichen. Die Vorgabe bleibt `terra`/`low`, bis Zahlen vorliegen (docs/MODELL.md, Abschnitt 8).
 
 ---
 
@@ -1298,17 +1298,17 @@ Die Reservierung macht die Aussage über die Tageskosten belastbar, weil sie **v
 
 Der Gasttopf (24) ist kleiner als das Gesamte (38). Rotierende Gastkennungen können damit das Kontingent angemeldeter Konten nicht aufbrauchen – nachgewiesen als eigener Fall: bei vollem Gasttopf kommt ein Konto weiterhin durch.
 
-Die Kennung eines Kontos kommt aus `auth.uid()` und nicht vom Aufrufer. Wer seine eigene Kontokennung mitschicken dürfte, dürfte auch eine fremde mitschicken.
+Die Kennung eines Kontos kommt vom vertrauenswürdigen Server als `_konto`, nicht aus einem JWT und nicht vom Browser. Wer seine eigene Kontokennung mitschicken dürfte, dürfte auch eine fremde mitschicken – deshalb sind die Funktionen nur für `service_role` ausführbar.
 
-**Konsequenzen:** Die Grenzen stehen zweimal – in `MODELL_GRENZEN` und im SQL. Zwei Orte sind einer zu viel, aber die Durchsetzung liegt in der Datenbank, und eine Grenze, die im Code höher steht, ist keine. `lib/modell/grenzen-datenbank.test.ts` vergleicht beide Seiten bei jedem `npm test`, ohne Datenbank, allein aus dem Migrations-SQL: zwölf Tests, ein Auseinanderlaufen ist ein roter Test.
+**Konsequenzen:** Die Grenzen stehen zweimal – in `MODELL_GRENZEN` und im SQL. Zwei Orte sind einer zu viel, aber die Durchsetzung liegt in der Datenbank, und eine Grenze, die im Code höher steht, ist keine. `lib/modell/grenzen-datenbank.test.ts` vergleicht beide Seiten bei jedem `npm test`, ohne Datenbank, allein aus dem Migrations-SQL: ein Auseinanderlaufen ist ein roter Test.
 
-`anon` bekommt `EXECUTE` auf beide Funktionen. Das ist die erste bewusste Ausnahme von der Regel, dass für `anon` keine `SECURITY DEFINER`-Funktion ausführbar ist; `scripts/db/sicherheit.mjs` nennt die zwei namentlich, damit eine dritte den Nachweis brechen würde. Auf der Tabelle selbst hat `anon` **kein** Recht.
-
-Die Advisors zählen dafür fünf Befunde mehr, von 18 auf 23: die neue Klasse `anon_security_definer_function_executable` mit zwei, zwei weitere unter `authenticated_security_definer_function_executable` – dieselben Funktionen, andere Rolle –, und `model_usage` als zwölfte Tabelle unter `pg_graphql_authenticated_table_exposed`. Der letzte Befund ist die Folge des `SELECT`-Rechts für den Betrieb; welche Zeilen ein Konto sieht, entscheidet RLS, und ohne `betrieb-lesen` sind es null. Bewertung je Befund in [docs/DATENBANK.md](docs/DATENBANK.md) Abschnitt 8.
+`anon` und `authenticated` haben auf beiden Funktionen **kein** `EXECUTE`. Das stellt die Regel wieder her, dass für `anon` keine `SECURITY DEFINER`-Funktion ausführbar ist. Auf der Tabelle selbst hat `anon` weiterhin kein Recht.
 
 Neues Skript `npm run db:kontingent` mit **16 Nachweisen** gegen die echte Datenbank: jede Grenze am letzten erlaubten und am ersten abgelehnten Aufruf, der Kostendeckel an derselben Kante, der Abschluss in vier Varianten (echte Kosten, fehlende Tokens, zweiter Abschluss ohne Wirkung, fremde Kennung ohne Wirkung), die Identitätsfrage und die Parallelität. Es schreibt echte Zeilen und räumt auf – wie `db:parallelitaet` und aus demselben Grund.
 
 **Bekannte Grenze:** Für `model_usage` gibt es keine automatische Löschung. Die Tabelle wächst um höchstens 38 Zeilen am Tag und enthält keine Reiseinhalte; eine Aufbewahrungsfrist gehört zu der Entscheidung, die Funktion einzuschalten, und steht als offener Punkt in [ROADMAP.md](ROADMAP.md).
+
+**Nachtrag, 19. August 2026:** Der erste Stand gab `EXECUTE` an `anon` und `authenticated`, damit ein Gast ohne Sitzung die Schranke trotzdem erreichen konnte. Damit war dieselbe Funktion über PostgREST mit dem öffentlichen Key erreichbar: Ein externer Client konnte Reservierungen erzeugen und den Gasttopf leeren, ohne einen Modellaufruf. `20260819010000_modell_kontingent_nur_server.sql` zieht das Recht zurück und gibt es nur `service_role`. Die Server Action bestimmt die Identität mit `auth.getUser()` und ruft die Funktionen über einen cookie-losen Dienstclient auf – der einzige Service-Role-Pfad in der Anwendung, nicht exportiert, nur diese zwei RPCs (AGENTS.md Regel 14). Gäste ohne Konto bleiben möglich, weil der Server die Gastkennung setzt. Ein direkter anonymer PostgREST-Aufruf endet mit 4xx und erzeugt keine Zeile; nachgewiesen in `npm run db:sicherheit`. Die Parallelitäts-, Race- und Kosteninvarianten sind unverändert.
 
 ---
 

@@ -123,8 +123,8 @@ async function main() {
   let id: string
   try {
     const rows = await runSql(`begin;
-select set_config('role', 'anon', true);
-select set_config('request.jwt.claims', '', true);
+select set_config('role', 'service_role', true);
+select set_config('request.jwt.claims', '{"role":"service_role"}', true);
 select public.modell_kontingent_beanspruchen('reisevorschlag', '${zustand.modell}', '${kennung}')::text as id;
 commit;`)
     id = rows[0].id
@@ -176,8 +176,8 @@ commit;`)
 
   const abschliessen = (ergebnisklasse: string) =>
     runSql(`begin;
-select set_config('role', 'anon', true);
-select set_config('request.jwt.claims', '', true);
+select set_config('role', 'service_role', true);
+select set_config('request.jwt.claims', '{"role":"service_role"}', true);
 select public.modell_nutzung_abschliessen(
   '${id}', '${ergebnisklasse}',
   ${nutzung ? nutzung.eingabeTokens : 'null'},

@@ -76,19 +76,16 @@ const gastHash = (nr: number) =>
 
 const kontoHash = `encode(sha256(convert_to('konto:${KONTO}', 'UTF8')), 'hex')`
 
-/** Rolle und Anspruch so setzen, wie PostgREST es zur Laufzeit tut. */
-function alsRolle(konto: string | null): string {
-  if (!konto) {
-    return `select set_config('role', 'anon', true);
-            select set_config('request.jwt.claims', '', true);`
-  }
-  return `select set_config('role', 'authenticated', true);
-          select set_config('request.jwt.claims', '{"sub":"${konto}","role":"authenticated"}', true);`
+/** Dienstweg: so setzt ihn der Server, nicht der öffentliche PostgREST-Client. */
+function alsDienst(): string {
+  return `select set_config('role', 'service_role', true);
+          select set_config('request.jwt.claims', '{"role":"service_role"}', true);`
 }
 
-function beanspruchenSql(gast: number | null): string {
+function beanspruchenSql(gast: number | null, konto: string | null = null): string {
   const kennung = gast === null ? 'null' : `'${gastkennung(gast)}'`
-  return `select public.modell_kontingent_beanspruchen('reisevorschlag', '${MODELL}', ${kennung})::text as id;`
+  const kontoArg = konto === null ? 'null' : `'${konto}'::uuid`
+  return `select public.modell_kontingent_beanspruchen('reisevorschlag', '${MODELL}', ${kennung}, ${kontoArg})::text as id;`
 }
 
 /** Aus dem Fehlertext der Management-API den SQLSTATE herausziehen. */
@@ -102,8 +99,8 @@ type Versuch = { ok: true; id: string } | { ok: false; code: string }
 async function beanspruchen(gast: number | null, konto: string | null = null): Promise<Versuch> {
   try {
     const rows = await runSql(`begin;
-${alsRolle(konto)}
-${beanspruchenSql(gast)}
+${alsDienst()}
+${beanspruchenSql(gast, konto)}
 commit;`)
     return { ok: true, id: rows[0].id }
   } catch (fehler) {
@@ -355,7 +352,7 @@ const FAELLE: Fall[] = [
           // Management-API nur die Zeilen der letzten Anweisung liefert – und die
           // letzte muss das Offenhalten der Transaktion sein, nicht der Anspruch.
           const rows = await runSql(`begin;
-${alsRolle(null)}
+${alsDienst()}
 ${warten(ziel)}
 create temporary table anspruch on commit drop as
 ${beanspruchenSql(G.gaesteTag + 10 + nr)}
@@ -397,7 +394,7 @@ select count(*) as anzahl from public.model_usage where created_at >= now() - in
       if (!versuch.ok) return { ok: false, detail: `Anspruch ${versuch.code}`, maengel: ['kein Kontingent'] }
 
       await runSql(`begin;
-${alsRolle(null)}
+${alsDienst()}
 select public.modell_nutzung_abschliessen('${versuch.id}', 'erfolg', 2400, 1800, 2900, 8200);
 commit;`)
 
@@ -427,7 +424,7 @@ select ergebnis, kosten_mikro_usd::text as kosten, eingabe_tokens, gecachte_toke
       if (!versuch.ok) return { ok: false, detail: `Anspruch ${versuch.code}`, maengel: ['kein Kontingent'] }
 
       await runSql(`begin;
-${alsRolle(null)}
+${alsDienst()}
 select public.modell_nutzung_abschliessen('${versuch.id}', 'zeitueberschreitung', null, null, null, 40000);
 commit;`)
 
@@ -455,7 +452,7 @@ select ergebnis, kosten_mikro_usd::text as kosten,
       if (!versuch.ok) return { ok: false, detail: `Anspruch ${versuch.code}`, maengel: ['kein Kontingent'] }
 
       await runSql(`begin;
-${alsRolle(null)}
+${alsDienst()}
 select public.modell_nutzung_abschliessen('${versuch.id}', 'erfolg', 2400, 0, 2900, 8200);
 select public.modell_nutzung_abschliessen('${versuch.id}', 'erfolg', 0, 0, 0, 1);
 commit;`)
@@ -477,7 +474,7 @@ select ergebnis, kosten_mikro_usd::text as kosten, ausgabe_tokens
       'treffen – und keinen Fehler erzeugen, der etwas über den Bestand verrät.',
     lauf: async () => {
       const rows = await runSql(`begin;
-${alsRolle(null)}
+${alsDienst()}
 select public.modell_nutzung_abschliessen('11111111-2222-4333-8444-555555555555', 'erfolg', 1, 0, 1, 1);
 commit;
 select count(*) as anzahl from public.model_usage where created_at >= now() - interval '1 day';`)
@@ -490,7 +487,7 @@ select count(*) as anzahl from public.model_usage where created_at >= now() - in
     name: 'Identität: ein Konto kann sich nicht als Gast ausgeben',
     grund:
       'Sonst wäre die Grenze je Kennung mit einem selbstgewählten Cookie umgehbar. Die ' +
-      'Identität eines angemeldeten Kontos kommt aus auth.uid().',
+      'Identität eines angemeldeten Kontos kommt vom Server als _konto.',
     lauf: async () => {
       await konto()
       const versuch = await beanspruchen(7, KONTO)
@@ -502,9 +499,9 @@ select art, kennung_hash = ${kontoHash} as ist_konto, kennung_hash = ${gastHash(
       const z = rows[0]
       const maengel: string[] = []
       if (z.art !== 'konto') maengel.push(`Art ${z.art}, erwartet konto`)
-      if (z.ist_konto !== true) maengel.push('Kennung nicht aus auth.uid() gebildet')
+      if (z.ist_konto !== true) maengel.push('Kennung nicht aus _konto gebildet')
       if (z.ist_gast === true) maengel.push('die mitgeschickte Gastkennung wurde übernommen')
-      return { ok: maengel.length === 0, detail: `Art ${z.art}, Kennung aus auth.uid()`, maengel }
+      return { ok: maengel.length === 0, detail: `Art ${z.art}, Kennung aus _konto`, maengel }
     },
   },
 ]

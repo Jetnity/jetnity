@@ -4,7 +4,7 @@ Wie Jetnity aus einer freien Reisebeschreibung einen strukturierten Reiseentwurf
 
 Fachliches Reisemodell: [REISEN.md](REISEN.md). Datenbank: [DATENBANK.md](DATENBANK.md). Entscheidungen: [../DECISIONS.md](../DECISIONS.md) ADR-0050 bis ADR-0055.
 
-**Stand:** Phase 2.1. Der Weg ist vollständig implementiert und **in keiner Umgebung eingeschaltet**. Warum, steht in Abschnitt 8.
+**Stand:** Phase 2.1. Der Weg ist vollständig implementiert. In der **Preview** sind Schlüssel und Kill Switch gesetzt; **Production bleibt aus**. Warum, steht in Abschnitt 8.
 
 ---
 
@@ -144,7 +144,7 @@ Deshalb ein Cookie `jetnity_gast`: 32 Hexzeichen, `httpOnly`, `sameSite: lax`, 3
 
 Der Cookie ist nicht signiert, und das ist kein Versäumnis: Er gewährt nichts, er begrenzt. Ihn zu fälschen bringt nicht mehr als ihn zu löschen, und beides fängt das gemeinsame Tageskontingent der Gäste auf.
 
-Für ein angemeldetes Konto gewinnt `auth.uid()`. Die Kennung kommt aus der Datenbank und nicht vom Aufrufer: Wer seine eigene Kontokennung mitschicken dürfte, dürfte auch eine fremde mitschicken.
+Für ein angemeldetes Konto gewinnt `_konto` vom Server, der die Sitzung mit `auth.getUser()` gelesen hat. Die beiden Funktionen sind für `anon` und `authenticated` nicht ausführbar: Ein direkter PostgREST-Aufruf mit dem öffentlichen Key erzeugt keine Reservierung. Gäste ohne Konto bleiben möglich, weil die Server Action die Gastkennung setzt und den Aufruf über `service_role` übernimmt.
 
 ---
 
@@ -211,7 +211,7 @@ Neun Ergebnisklassen stehen in `ERGEBNISKLASSEN` und als `CHECK` auf `model_usag
 
 **Ein Persistenzfehler löscht keinen Vorschlag.** Scheitert das Speichern – voller Browserspeicher, abgebrochene Verbindung, bereits bestehender Gastentwurf –, bleibt die Vorschau stehen und die Meldung erscheint darüber. Ein Vorschlag, der mit seinem Fehler verschwindet, ist ein verlorener bezahlter Aufruf.
 
-**Doppelklick, Reload und Retry ergeben eine Reise, nicht drei.** `clientRef` entsteht mit dem Vorschlag und bleibt an ihm hängen: im Konto über `unique (user_id, client_ref)` in `public.reise_anlegen()`, im Browser über die Kennungsprüfung in `gastreiseAblegen()`. Die Idempotenz aus Phase 1.5 wird benutzt, nicht nachgebaut.
+**Doppelklick und Retry ergeben eine Reise, nicht zwei.** `clientRef` entsteht mit dem Vorschlag und bleibt an ihm hängen: im Konto über `unique (user_id, client_ref)` in `public.reise_anlegen()`, im Browser über die Kennungsprüfung in `gastreiseAblegen()`. Die Idempotenz aus Phase 1.5 wird benutzt, nicht nachgebaut. Ein Reload während einer nicht übernommenen Vorschau verwirft den Vorschlag bewusst – er lebt nur im Komponentenzustand (ADR-0050).
 
 **Verlässt der Nutzer die Seite während der Generierung,** endet die Server Action ohne Empfänger. Die Reservierung bleibt stehen; ein Zähler `anlauf` in `Reiseidee.tsx` verhindert zusätzlich, dass eine langsame erste Antwort eine schnellere zweite überschreibt.
 
@@ -239,15 +239,13 @@ Was **nicht** drinsteht: die Reisebeschreibung, der Vorschlag, der Prompt, die A
 
 Der Hash ist keine Anonymisierung, sondern eine Pseudonymisierung – wer eine Kennung kennt, kann ihren Hash bilden. Er verhindert, dass das Protokoll selbst eine Liste von Kontokennungen ist, und reicht für seinen Zweck: Aufrufe je Kennung zählen.
 
-**Rechte.** RLS ist eingeschaltet. Eine Policy: `select` für `authenticated` mit `public.darf_betrieb_lesen()` – ab `moderator`. `anon` hat auf der Tabelle **kein** Recht, auch kein `insert`; ein Gast schreibt ausschliesslich über die beiden `SECURITY DEFINER`-Funktionen. Niemand kann eine Zeile ändern oder löschen, auch der Betrieb nicht: Ein Kostenprotokoll, das sein Eigentümer aufräumen kann, ist keins.
+**Rechte.** RLS ist eingeschaltet. Eine Policy: `select` für `authenticated` mit `public.darf_betrieb_lesen()` – ab `moderator`. `anon` hat auf der Tabelle **kein** Recht, auch kein `insert`. Die beiden Funktionen sind nur für `service_role` ausführbar; ein Gast schreibt nicht selbst, sondern über die Server Action. Niemand kann eine Zeile ändern oder löschen, auch der Betrieb nicht: Ein Kostenprotokoll, das sein Eigentümer aufräumen kann, ist keins.
 
 **Retention.** Es gibt **keine** automatische Löschung. Das ist bewusst und für Phase 2.1 vertretbar – die Tabelle wächst um höchstens 38 Zeilen am Tag, also unter 14 000 im Jahr, und enthält keine Reiseinhalte. Eine Aufbewahrungsfrist gehört zu der Entscheidung, die Funktion in Production einzuschalten, und ist als offener Punkt in [ROADMAP.md](../ROADMAP.md) vermerkt.
 
 ---
 
 ## 8. Aktivierung
-
-**Der Weg ist in keiner Umgebung eingeschaltet, und es gibt keinen Schlüssel.**
 
 Drei Dinge müssen zusammenkommen, sonst ruft `modellZustand()` nichts auf und nennt den Grund:
 
@@ -256,22 +254,23 @@ Drei Dinge müssen zusammenkommen, sonst ruft `modellZustand()` nichts auf und n
 | `JETNITY_MODELL_AKTIV` | `true` oder `1` |
 | `OPENAI_API_KEY` | ein Schlüssel mit Zugang zur Responses API |
 | `JETNITY_MODELL_NAME` | leer (dann `gpt-5.6-terra`) oder eines der drei Modelle |
+| `SUPABASE_SERVICE_ROLE_KEY` | serverseitig; ohne ihn kann die Server Action kein Kontingent buchen |
 
-Fehlt etwas, ist das kein Laufzeitfehler, sondern der Normalzustand einer Umgebung, in der die Funktion nicht laufen soll. Die Oberfläche sagt es ehrlich: „Die intelligente Planung ist in dieser Umgebung noch nicht freigegeben. Deine Reise lässt sich unverändert über das Formular planen.“ Das Formular unter `/planen` bleibt vollständig benutzbar.
+Fehlt etwas, ist das kein Laufzeitfehler, sondern der Normalzustand einer Umgebung, in der die Funktion nicht laufen soll. Die Oberfläche sagt es ehrlich. Das Formular unter `/planen` bleibt vollständig benutzbar.
 
-`OPENAI_API_KEY` war mit Phase 1.1b aus dem Projekt entfallen, weil es keinen Codepfad zu einem Modell mehr gab. Mit Phase 2.1 gibt es wieder einen – abgeschaltet. Der Setup-Check verlangt die Variable weiterhin **nicht**.
+**Preview:** `OPENAI_API_KEY` (Sensitive) und `JETNITY_MODELL_AKTIV=true` sind gesetzt. Das OpenAI-Projekt *Jetnity Development* hat ein Hard Spend Limit von $5. Production bleibt ohne Aktivierung.
+
+**Production** hat keinen Kill Switch und soll ihn nicht bekommen, bevor die Modellwahl gemessen ist.
 
 Es gibt keine `NEXT_PUBLIC_OPENAI_*`-Variable und keinen Modellaufruf im Browser. Der Schlüssel wird in `lib/modell/aufruf.ts` gelesen und verlässt diese Datei nicht; er steht in keinem Rückgabewert, keiner Fehlermeldung und keinem Protokoll.
 
-### Was zur Aktivierung nötig ist
+### Vergleich terra / luna
 
-1. `OPENAI_API_KEY` als Environment-Secret in der Preview-Umgebung – **nicht** in Production.
-2. `npm run modell:probe -- "7 Tage Thailand ab Zürich, zwei Personen, Strand"` – ein Aufruf, ausdrücklich ausgelöst. Das Skript bucht Kontingent, ruft auf, schliesst ab, prüft gegen beide Schemata, bildet auf den Reisegraphen ab und nennt Tokens, Kosten und Laufzeit.
-3. Denselben Aufruf mit `JETNITY_MODELL_NAME=gpt-5.6-luna`, um die Modellwahl aus Abschnitt 3 zu belegen statt zu begründen.
-4. Die dreizehn Reiseideen aus `reiseideen.ts` durchspielen – dreizehn Aufrufe, unter $1.
-5. Erst danach eine Entscheidung über Production, samt Aufbewahrungsfrist für `model_usage`.
+Vorbereitet ist `npm run modell:probe` gegen dieselben Fixtures, dasselbe Schema und dieselbe Kostenschranke. Der Lauf gehört nicht in die CI. Ohne Schlüssel in der laufenden Umgebung bricht er ab, statt Zahlen zu erfinden.
 
-`npm run modell:probe` läuft **nie** in der CI. Ohne Schlüssel bricht es mit einem Hinweis ab, statt zu improvisieren.
+Die Vorgabe bleibt `gpt-5.6-terra` mit `reasoning.effort: low`, solange kein gemessener Vergleich vorliegt (ADR-0051).
+
+`npm run modell:probe` läuft **nie** in der CI.
 
 ---
 

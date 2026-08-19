@@ -75,9 +75,10 @@ export async function vorschlagErzeugen(freitext: unknown): Promise<Vorschlagser
  * durch.
  *
  * Idempotent über `clientRef`: Derselbe Aufruf ergibt dieselbe Reise, weil
- * `public.reise_anlegen()` über `unique (user_id, client_ref)` geht. Doppelklick,
- * Reload und Retry sind damit ein Vorgang. Eine zweite Persistenz für
- * Modellreisen entsteht nicht.
+ * `public.reise_anlegen()` über `unique (user_id, client_ref)` geht. Doppelklick
+ * und Retry sind damit ein Vorgang. Ein Reload während einer nicht übernommenen
+ * Vorschau verwirft den Vorschlag bewusst – er lebt nur im Komponentenzustand
+ * (ADR-0050). Eine zweite Persistenz für Modellreisen entsteht nicht.
  */
 export async function vorschlagUebernehmen(eingabe: unknown): Promise<Aktionsergebnis<string>> {
   const geprueft = uebernahmeSchema.safeParse(eingabe)

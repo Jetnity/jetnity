@@ -21,7 +21,7 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Phase 1.4c | Auth-Konfiguration als Code, Abgleich und Flussprüfung | **fertig auf Development** |
 | Phase 1.4d | Fehler im Administrationsbereich sichtbar statt leer | **fertig** |
 | Phase 1.5 | V2-Reiseschema, persistente Reisen, Gast → Konto | **fertig** |
-| Phase 2.1 | natürliche Sprache zu strukturiertem Reisevorschlag | **fertig auf Development, Modellweg abgeschaltet** |
+| Phase 2.1 | natürliche Sprache zu strukturiertem Reisevorschlag | **fertig auf Development, Preview aktivierbar, Production aus** |
 | Phase 2.2 | bestehende Reise per Sprache ändern | als Nächstes |
 | Phase 3 | Reiseprodukte und Monetarisierung | geplant |
 | Phase 4 | Launch-Reife | geplant |
@@ -495,16 +495,16 @@ Vollständige Beschreibung: [docs/MODELL.md](docs/MODELL.md). Entscheidungen: [D
 - [x] Prompt-Injection als Testfall: Regeln ignorieren, Systemregeln ausgeben lassen, HTML und SQL im Text
 - [x] das bestehende Formular unter `/planen` bleibt unverändert nutzbar und ist der Weg, der auch ohne Modell funktioniert
 
-**Der Modellweg ist in keiner Umgebung eingeschaltet, und es gab keinen `OPENAI_API_KEY`.** Damit ist unbelegt: die Qualität der Modellwahl, die tatsächliche Tokennutzung und die tatsächliche Laufzeit. Alles andere – Eingabeprüfung, Schemaprüfung, Abbildung, Vorschau, Freigabe, Persistenz, Kontingent, Kostendeckel – ist geprüft, das Kontingent gegen die echte Datenbank.
+**Nachtrag 19. August 2026.** Direkter anonymer PostgREST-/RPC-Zugriff darf kein Kontingent mehr reservieren: `EXECUTE` nur noch `service_role`, Server Action bleibt der Gastweg (ADR-0052). ADR-0050 unterscheidet Doppelklick/Retry von einem Reload in der Vorschau. Preview hat Schlüssel und Kill Switch; Production bleibt aus. Die echte Terra/Luna-Messung ist vorbereitet und in dieser Session nicht gelaufen – der Schlüssel liegt nur als Preview-Secret und wurde hier nicht gelesen.
 
 **Nachweise.** Der Abschlusslauf der Phase, die datenbanknahen Teile gegen den Development-Branch:
 
 | Prüfung | Ergebnis |
 | --- | --- |
-| `npm test` | 592 Tests in 124 Gruppen, davon 256 in `lib/modell/` und `lib/reisevorschlag/` – kein Lauf ruft ein Modell |
+| `npm test` | 595 Tests in 125 Gruppen, davon die Modell- und Vorschlagsschicht plus drei Dateitests auf den Nachtrag – kein Lauf ruft ein Modell |
 | `npm run db:kontingent` | 16 von 16 Nachweisen erfüllt: jede der fünf Grenzen einzeln, 6 gleichzeitige Sitzungen auf einen freien Platz, Abschluss, Doppelabschluss, fremde Kennung, Identität eines Kontos |
 | `npm run db:sicherheit` | 147 von 147 Nachweisen erfüllt, darin die neuen zu `model_usage` und zu den zwei RPCs |
-| `npm run db:reproduzierbarkeit` | Wiederaufbau aus 19 Migrationen gleich dem laufenden Schema, kein Unterschied |
+| `npm run db:reproduzierbarkeit` | Wiederaufbau aus den versionierten Migrationen gleich dem laufenden Schema |
 | `npm run db:rechte` | 33 Tabellenrechte, jedes durch eine Policy gedeckt; RLS auf allen 12 Tabellen |
 | `npm run db:rls` | Matrix aus 4 Akteuren × 12 Tabellen; auf `model_usage` hat `anon` kein Recht, ein gewöhnliches Konto sieht null Zeilen, niemand schreibt direkt |
 | `npm run db:parallelitaet` | 5 von 5 Nachweisen erfüllt, unverändert grün |
@@ -516,7 +516,9 @@ Vollständige Beschreibung: [docs/MODELL.md](docs/MODELL.md). Entscheidungen: [D
 
 Offen aus 2.1:
 
-- [ ] `OPENAI_API_KEY` in der Preview-Umgebung hinterlegen und `npm run modell:probe` gegen `gpt-5.6-terra` und `gpt-5.6-luna` laufen lassen – die Modellwahl ist begründet, nicht gemessen (ADR-0051)
+- [x] `OPENAI_API_KEY` in der Preview-Umgebung hinterlegen (`JETNITY_MODELL_AKTIV=true`, Hard Spend Limit $5) – Production unverändert aus
+- [x] Gast-Kontingent nicht mehr über direkten anon-RPC erreichbar (Nachtrag ADR-0052)
+- [ ] `npm run modell:probe` gegen `gpt-5.6-terra` und `gpt-5.6-luna` mit wenigen Fixtures – die Modellwahl ist begründet, nicht gemessen (ADR-0051)
 - [ ] Aufbewahrungsfrist für `public.model_usage` entscheiden – sie gehört zur Freigabe, nicht zur Implementierung (ADR-0052)
 - [ ] Entscheidung über die Aktivierung in Production, nach den Messungen
 

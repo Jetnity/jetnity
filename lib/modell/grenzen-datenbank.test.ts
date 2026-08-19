@@ -16,35 +16,38 @@
 
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 import { ERGEBNISKLASSEN, MODELL_GRENZEN, MODELL_VORGABE } from '@/lib/modell/konfiguration'
 import { MODELLE, PREISE, reservierungMikroUsd } from '@/lib/modell/preise'
 
-const MIGRATION = join(
-  process.cwd(),
-  'supabase',
-  'migrations',
-  '20260818040000_modellnutzung.sql',
-)
+const MIGRATIONEN_ORDNER = join(process.cwd(), 'supabase', 'migrations')
 
-const sql = readFileSync(MIGRATION, 'utf8')
+/** Alle Migrationen in Reihenfolge – die letzte Definition einer Funktion gilt. */
+const sql = readdirSync(MIGRATIONEN_ORDNER)
+  .filter((datei) => datei.endsWith('.sql'))
+  .sort()
+  .map((datei) => readFileSync(join(MIGRATIONEN_ORDNER, datei), 'utf8'))
+  .join('\n')
 
 /**
- * Liest eine `constant`-Deklaration aus `modell_kontingent_beanspruchen()`.
+ * Liest die letzte `constant`-Deklaration aus `modell_kontingent_beanspruchen()`.
  *
  * Bewusst streng: Fehlt die Zeile oder heisst sie anders, ist das ein Fehler und
  * kein „0“. Ein Test, der eine fehlende Grenze als 0 liest, würde eine entfernte
- * Schranke für eine besonders strenge halten.
+ * Schranke für eine besonders strenge halten. Die letzte zählt, weil der
+ * Nachtrag die Funktion ersetzt.
  */
 function konstante(name: string): number {
-  const treffer = sql.match(
-    new RegExp(`_${name}\\s+constant\\s+(?:integer|bigint)\\s*:=\\s*(\\d+)\\s*;`),
-  )
+  const alle = [
+    ...sql.matchAll(
+      new RegExp(`_${name}\\s+constant\\s+(?:integer|bigint)\\s*:=\\s*(\\d+)\\s*;`, 'g'),
+    ),
+  ]
 
-  assert.ok(treffer, `In der Migration fehlt die Konstante _${name}`)
-  return Number(treffer[1])
+  assert.ok(alle.length > 0, `In den Migrationen fehlt die Konstante _${name}`)
+  return Number(alle[alle.length - 1][1])
 }
 
 describe('Die Grenzen stimmen auf beiden Seiten überein', () => {
@@ -79,11 +82,10 @@ describe('Die Grenzen stimmen auf beiden Seiten überein', () => {
 
 describe('Die Zählgrenze allein hält den Kostendeckel ein', () => {
   // Das ist der Kern der Zusage. Der Kostendeckel ist die weichere der beiden
-  // Schranken: `modell_nutzung_abschliessen()` ist für `anon` ausführbar – ein
-  // Gast muss seinen eigenen Aufruf abschliessen können –, und wer den Endpunkt
-  // direkt anspricht, kann seine Reservierung mit 0 Tokens abschliessen und den
-  // Deckel damit entlasten. Die Zählgrenze wirkt dagegen auf der Reservierung
-  // und lässt sich durch nichts, was danach geschieht, zurücknehmen.
+  // Schranken: Ein Abschluss ohne Tokens lässt die Reservierung stehen, und die
+  // Zählgrenze wirkt auf der Reservierung – sie lässt sich durch nichts, was
+  // danach geschieht, zurücknehmen. Den Abschluss selbst erreicht nur noch der
+  // Dienstweg (`service_role`); ein direkter anon-Aufruf kommt nicht mehr hin.
 
   test('das vorgegebene Modell bleibt im Rahmen', () => {
     const schlechtesterFall = reservierungMikroUsd(
@@ -178,5 +180,46 @@ describe('Die Ergebnisklassen stimmen auf beiden Seiten überein', () => {
     const ausDb = [...treffer[1].matchAll(/'([a-z0-9\-]+)'/g)].map((eintrag) => eintrag[1])
 
     assert.deepEqual(ausDb.sort(), ['reserviert', ...ERGEBNISKLASSEN].sort())
+  })
+})
+
+describe('Direkter anon-Zugriff darf kein Kontingent auslösen', () => {
+  // Der Nachtrag entzieht EXECUTE und lässt nur service_role. Ein Test, der
+  // nur die erste Migration liest, würde die alte Ausnahme weiter als Soll
+  // führen.
+
+  test('die dreistellige Fassung wird entfernt', () => {
+    assert.match(
+      sql,
+      /drop function if exists public\.modell_kontingent_beanspruchen\(text, text, text\)/,
+    )
+  })
+
+  test('beide Funktionen prüfen auf service_role', () => {
+    const pruefungen = [
+      ...sql.matchAll(
+        /coalesce\(auth\.role\(\), ''\) is distinct from 'service_role'/g,
+      ),
+    ]
+    assert.equal(pruefungen.length, 2)
+  })
+
+  test('anon und authenticated verlieren EXECUTE, service_role behält es', () => {
+    assert.match(
+      sql,
+      /revoke all on function public\.modell_kontingent_beanspruchen\(text, text, text, uuid\)\s+from public, anon, authenticated/,
+    )
+    assert.match(
+      sql,
+      /grant execute on function public\.modell_kontingent_beanspruchen\(text, text, text, uuid\)\s+to service_role/,
+    )
+    assert.match(
+      sql,
+      /revoke all on function public\.modell_nutzung_abschliessen\(uuid, text, integer, integer, integer, integer\)\s+from public, anon, authenticated/,
+    )
+    assert.match(
+      sql,
+      /grant execute on function public\.modell_nutzung_abschliessen\(uuid, text, integer, integer, integer, integer\)\s+to service_role/,
+    )
   })
 })

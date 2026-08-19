@@ -19,7 +19,7 @@ Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Ziel
 | Datenbank | Supabase PostgreSQL |
 | Auth | Supabase Auth (Cookie-basiert, SSR) |
 | Storage | Supabase Storage |
-| Modell | OpenAI Responses API, serverseitig, **abgeschaltet** (Abschnitt 5a) |
+| Modell | OpenAI Responses API, serverseitig; Preview aktivierbar, Production aus (Abschnitt 5a) |
 | Node | >= 20.9 (siehe `package.json` → `engines`) |
 
 Ein Framework-Wechsel ist nicht vorgesehen und benötigt Freigabe.
@@ -59,9 +59,9 @@ Es existieren getrennte Clients je Ausführungskontext. Die Auswahl ist nicht op
 | `server.ts` → `createServerActionClient()` | Server Actions | Nutzerrechte, RLS aktiv, darf Cookies schreiben |
 | `client.ts` → `createBrowserClient()` | Client Components | Anon Key, RLS aktiv |
 
-**Einen Client mit Service-Role-Rechten gibt es weiterhin nicht.** `lib/supabase/admin.ts` und der frühere `createAdminClient` sind in Phase 1.2b entfernt worden: Letzterer hängte einem Client mit vollen Rechten den mutierbaren Cookie-Adapter der Besucherin an.
+**Einen allgemeinen Admin-Client gibt es weiterhin nicht.** `lib/supabase/admin.ts` und der frühere `createAdminClient` sind in Phase 1.2b entfernt worden: Letzterer hängte einem Client mit vollen Rechten den mutierbaren Cookie-Adapter der Besucherin an.
 
-Phase 1.4 hat gezeigt, dass die Anwendung ohne ihn auskommt. Wo bisher erhöhte Rechte nötig schienen, steht jetzt eine Funktion mit `SECURITY DEFINER`, die die Rolle selbst prüft und nur das Ergebnis herausgibt – `admin_payments_summary_30d()` und `admin_security_overview()`, seit Phase 1.5 dazu `admin_reisen_kennzahlen()` und `admin_reisen_zeitreihe(integer)`. Das begrenzt den erhöhten Zugriff auf einige Zeilen SQL, statt einen Client mit vollen Rechten in den Anwendungscode zu holen ([AGENTS.md](AGENTS.md) Regel 14).
+Der eine verbliebene Service-Role-Zugang sitzt in `lib/modell/kontingent.ts`: cookie-los, nicht exportiert, ausschliesslich die zwei Kontingent-RPCs. Ohne ihn könnte ein Gast die Schranke nicht erreichen, ohne `anon` wieder `EXECUTE` zu geben – und genau das öffnete den direkten PostgREST-Weg (ADR-0052, Nachtrag). Alle übrigen erhöhten Rechte liegen in `SECURITY DEFINER`-Funktionen, die die Rolle selbst prüfen: `admin_payments_summary_30d()`, `admin_security_overview()`, `admin_reisen_kennzahlen()` und `admin_reisen_zeitreihe(integer)` ([AGENTS.md](AGENTS.md) Regel 14).
 
 `public.reise_anlegen(jsonb)` ist ausdrücklich **nicht** so gebaut: Sie ist `SECURITY INVOKER` und schreibt ausschliesslich in die Reisen des aufrufenden Kontos, was die Policies ohnehin erlauben. Erhöhte Rechte bekommt eine Funktion nur, wenn sie sie braucht.
 
@@ -71,7 +71,7 @@ Die Schranke zählt Neuanlagen und keine Schreibversuche: Ist `(user_id, client_
 
 Zählung und Einfügung sind ein Lesen mit anschliessendem Schreiben und laufen deshalb je Konto der Reihe nach, serialisiert über `pg_advisory_xact_lock` auf Transaktionsdauer. Ohne diese Sperre sahen gleichzeitige Anfragen bei 59 vorhandenen Reisen alle denselben Stand und kamen alle durch – über PostgREST war die Schranke damit parallel überschreitbar. `npm run db:parallelitaet` weist das mit echten gleichzeitigen Verbindungen nach; `npm run db:sicherheit` kann es nicht, weil sein Lauf vollständig in einer Transaktion liegt (ADR-0049).
 
-Auch die Migrationen brauchen keinen Service-Key: `npm run db:anwenden` geht über die Management API. Eine Development-Service-Role ist damit an keiner Stelle angelegt worden.
+Die Migrationen brauchen keinen Service-Key: `npm run db:anwenden` geht über die Management API.
 
 ---
 
@@ -191,7 +191,7 @@ Freitext → Eingabeprüfung → Modellzustand → Kontingent buchen → Modella
 | Preise | `lib/modell/preise.ts` | Preise in Mikrodollar, Kostenrechnung, Reservierung |
 | Anfrage und Antwort | `lib/modell/anfrage.ts`, `antwort.ts` | Anfragekörper; HTTP-Status und Antwortobjekt → Ergebnisklasse |
 | Aufruf | `lib/modell/aufruf.ts` | der eine `fetch`, `server-only`, Abbruch nach 40 s |
-| Kontingent | `lib/modell/kontingent.ts` | Gastkennung als Cookie, Aufruf der beiden Datenbankfunktionen |
+| Kontingent | `lib/modell/kontingent.ts` | Gastkennung als Cookie, Dienstclient nur für die zwei Kontingent-RPCs |
 | Vorschlagsschema | `lib/reisevorschlag/schema.ts` | Zod- und JSON-Schema, fachliche Stimmigkeit, Fassung |
 | Systemregeln | `lib/reisevorschlag/regeln.ts` | der einzige Prompt, den Jetnity schreibt |
 | Normalisierung | `lib/reisevorschlag/normalisierung.ts` | Steuerzeichen und Preisangaben aus Modelltext |
@@ -207,7 +207,7 @@ Elf der dreizehn Module laufen ohne Serverumgebung, ohne Datenbank und ohne `fet
 
 **Der Vorschlag kann keine Preise, Anbieter oder Verfügbarkeiten enthalten.** Das Schema hat diese Felder nicht, `additionalProperties: false` macht sie unaussprechbar, und die Normalisierung entfernt Beträge aus Freitexten. Nach der Abbildung sind `price_amount`, `price_currency`, `provider`, `external_ref` und `booking_url` `null`; ein genanntes Budget ist ein Ziel in `trips.budget_amount` (ADR-0054).
 
-**Der Weg ist in keiner Umgebung eingeschaltet.** `modellZustand()` verlangt `JETNITY_MODELL_AKTIV`, einen `OPENAI_API_KEY` und ein Modell mit bekanntem Preis. Fehlt eines, entsteht kein Aufruf, und die Oberfläche sagt es – das Formular unter `/planen` bleibt vollständig benutzbar. Was zur Aktivierung nötig ist, steht in [docs/MODELL.md](docs/MODELL.md), Abschnitt 8.
+**Production bleibt aus.** Preview hat Kill Switch und Schlüssel. `modellZustand()` verlangt `JETNITY_MODELL_AKTIV`, einen `OPENAI_API_KEY` und ein Modell mit bekanntem Preis. Fehlt eines, entsteht kein Aufruf, und die Oberfläche sagt es – das Formular unter `/planen` bleibt vollständig benutzbar. Was zur Aktivierung nötig ist, steht in [docs/MODELL.md](docs/MODELL.md), Abschnitt 8.
 
 ---
 
@@ -359,7 +359,7 @@ Aktuell nur Konsolen-Logging, kein zentrales Error-Tracking und keine strukturie
 | Datenbanknahe Prüfungen laufen nicht in der CI | 5 Prüfungen von Hand | braucht einen kurzlebigen Branch je Lauf, sonst kollidieren die Testkonten |
 | ~~Tests ohne Reisedaten~~ | ~~41 Tests, davon keiner zur Persistenz~~ | in Phase 1.5: 129 Tests in `lib/trips/` ohne Datenbank, dazu 47 Nachweise gegen den Branch |
 | Reise bearbeiten ist noch schmal | Anlegen, Planpunkt hinzufügen und entfernen, Reise löschen | Umbenennen, Umsortieren und Verschieben von Tagen entstehen mit dem Trip Builder in Phase 2 |
-| Modellweg ohne echten Aufruf belegt | 256 Tests gegen Fixtures, 0 Aufrufe gegen OpenAI | in Phase 2.1 fehlte ein `OPENAI_API_KEY`. Unbelegt bleiben Modellqualität, tatsächliche Tokennutzung und Laufzeit; die Modellwahl ist begründet, nicht gemessen (ADR-0051). Erster Schritt einer Aktivierung: `npm run modell:probe` |
+| Modellweg ohne echten Aufruf belegt | 256 Tests gegen Fixtures, 0 Aufrufe gegen OpenAI | Preview hat einen Schlüssel; die Messung terra/luna ist vorbereitet und noch nicht gelaufen. Die Modellwahl bleibt begründet, nicht gemessen (ADR-0051) |
 | `model_usage` ohne Aufbewahrungsfrist | höchstens 38 Zeilen am Tag, keine Reiseinhalte | eine Frist gehört zu der Entscheidung, die Funktion einzuschalten. Backlog in [ROADMAP.md](ROADMAP.md), Begründung ADR-0052 |
 | Ein Vorschlag überlebt kein Reload | Zustand einer React-Komponente | bewusst: der Vorschlag ist kein Systemzustand, und ein Verlust kostet einen Aufruf, nicht eine Reise (ADR-0050) |
 | ~~`PublicNavbar` kennt die Sitzung nicht~~ | ~~zeigt immer „Anmelden", kein Abmelden im öffentlichen Bereich~~ | im Nachtrag der Phase 1.5 behoben: Die Leiste liest die Sitzung clientseitig, das öffentliche Layout bleibt statisch (ADR-0047) |

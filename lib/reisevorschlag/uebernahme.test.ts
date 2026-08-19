@@ -8,8 +8,10 @@
 //   · mit Konto   → `public.reise_anlegen()` über `vorschlagUebernehmen()`
 //
 // Für Modellreisen entsteht keine zweite Persistenz, und das ist der Grund,
-// warum dieser Test vor allem eine Sache prüft: dass ein Doppelklick, ein Reload
-// und ein erneuter Anlauf nach einem Abbruch **eine** Reise ergeben.
+// warum dieser Test vor allem eine Sache prüft: dass ein Doppelklick und ein
+// erneuter Anlauf nach einem Abbruch **eine** Reise ergeben. Ein Reload nach
+// der Übernahme trifft dieselbe gespeicherte Reise; ein Reload in der Vorschau
+// verwirft den noch nicht übernommenen Vorschlag bewusst (ADR-0050).
 //
 // Der Gastweg läuft hier vollständig, mit einem gestellten `localStorage`. Der
 // Kontoweg endet in einer Server Action mit echter Verbindung; geprüft wird

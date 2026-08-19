@@ -2,11 +2,22 @@
 //
 // Die Schranke vor dem bezahlten Aufruf – und das Protokoll danach.
 //
-// Beides liegt in der Datenbank (`supabase/migrations/20260818040000_modellnutzung.sql`),
-// und zwar nicht aus Bequemlichkeit: Vercel startet beliebig viele Instanzen,
-// und ein Zähler in einem Serverprozess kennt nur seine eigene. Die einzige
-// Stelle, die alle Aufrufe sieht, ist die Datenbank. Diese Datei ist der
-// Aufrufer, nicht die Durchsetzung.
+// Beides liegt in der Datenbank (`supabase/migrations/20260818040000_modellnutzung.sql`,
+// Nachtrag `20260819010000_modell_kontingent_nur_server.sql`), und zwar nicht
+// aus Bequemlichkeit: Vercel startet beliebig viele Instanzen, und ein Zähler
+// in einem Serverprozess kennt nur seine eigene. Die einzige Stelle, die alle
+// Aufrufe sieht, ist die Datenbank. Diese Datei ist der Aufrufer, nicht die
+// Durchsetzung.
+//
+// ---------------------------------------------------------------------------
+// Wer die Funktionen aufrufen darf
+// ---------------------------------------------------------------------------
+//
+// `anon` und `authenticated` haben kein `EXECUTE`. Ein direkter PostgREST-Aufruf
+// mit dem öffentlichen Key erzeugt deshalb keine Reservierung – das war der
+// Befund vor diesem Nachtrag. Erreichbar sind die beiden Funktionen nur für
+// `service_role`, also nur von hier. Der Client unten hängt keine Cookies an
+// und wird nicht exportiert (ADR-0032, Nachtrag ADR-0052).
 //
 // ---------------------------------------------------------------------------
 // Die Kennung eines Gastes
@@ -28,12 +39,14 @@
 
 import 'server-only'
 
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 
 import { problemAus } from '@/lib/api/datenbank-lesen'
 import type { Ergebnisklasse } from '@/lib/modell/konfiguration'
 import type { Modellname, Tokennutzung } from '@/lib/modell/preise'
 import { createServerActionClient } from '@/lib/supabase/server'
+import type { Database } from '@/types/supabase'
 
 /** Die eine Modellfunktion dieser Phase. Dieselben Werte wie `model_usage.funktion`. */
 export type Modellfunktion = 'reisevorschlag'
@@ -49,11 +62,31 @@ const GAST_TAGE = 30
 const AUSGELASTET =
   'Die intelligente Planung ist gerade nicht erreichbar. Bitte versuche es in einem Moment erneut.'
 
+const NICHT_KONFIGURIERT =
+  'Die intelligente Planung ist nicht richtig konfiguriert. Bitte plane deine Reise für den Moment über das Formular.'
+
+/**
+ * Cookie-loser Dienstclient nur für die zwei Kontingent-RPCs.
+ *
+ * Kein Cookie-Adapter, kein Export, kein anderer Datenzugriff. Fehlt der Key,
+ * ist das kein stilles Überspringen: Der Aufrufer bekommt `null` und der Weg
+ * bleibt zu (AGENTS.md Regel 14 und 25).
+ */
+function modelldienst(): SupabaseClient<Database> | null {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()
+  if (!url || !key) return null
+
+  return createClient<Database>(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+  })
+}
+
 /**
  * Die Gastkennung dieses Browsers, notfalls eine neue.
  *
  * Wird auch für ein angemeldetes Konto gelesen und mitgeschickt – die Datenbank
- * verwirft sie dann, weil `auth.uid()` vorgeht. Die Kennung hier von der
+ * verwirft sie dann, weil `_konto` vorgeht. Die Kennung hier von der
  * Anmeldung abhängig zu machen hiesse, sie zweimal zu bestimmen.
  */
 function gastkennung(): string {
@@ -80,6 +113,13 @@ function gastkennung(): string {
   return neu
 }
 
+/** Kontokennung aus der geprüften Sitzung, nicht aus dem Cookie. */
+async function kontoId(): Promise<string | null> {
+  const { data, error } = await createServerActionClient().auth.getUser()
+  if (error || !data.user?.id) return null
+  return data.user.id
+}
+
 /**
  * Bucht einen Aufruf, bevor er stattfindet.
  *
@@ -92,12 +132,14 @@ export async function kontingentBeanspruchen(
   funktion: Modellfunktion,
   modell: Modellname,
 ): Promise<Kontingentergebnis> {
-  const supabase = createServerActionClient()
+  const dienst = modelldienst()
+  if (!dienst) return { ok: false, meldung: NICHT_KONFIGURIERT }
 
-  const { data, error, status } = await supabase.rpc('modell_kontingent_beanspruchen', {
+  const { data, error, status } = await dienst.rpc('modell_kontingent_beanspruchen', {
     _funktion: funktion,
     _modell: modell,
     _gastkennung: gastkennung(),
+    _konto: (await kontoId()) ?? undefined,
   })
 
   if (error) {
@@ -112,10 +154,7 @@ export async function kontingentBeanspruchen(
     const problem = problemAus({ data: null, error, status }, error)
     return {
       ok: false,
-      meldung:
-        problem.status === 503
-          ? AUSGELASTET
-          : 'Die intelligente Planung ist nicht richtig konfiguriert. Bitte plane deine Reise für den Moment über das Formular.',
+      meldung: problem.status === 503 ? AUSGELASTET : NICHT_KONFIGURIERT,
     }
   }
 
@@ -138,9 +177,10 @@ export async function nutzungAbschliessen(
   nutzung: Tokennutzung | null,
   laufzeitMs: number,
 ): Promise<void> {
-  const supabase = createServerActionClient()
+  const dienst = modelldienst()
+  if (!dienst) return
 
-  await supabase.rpc('modell_nutzung_abschliessen', {
+  await dienst.rpc('modell_nutzung_abschliessen', {
     _id: id,
     _ergebnis: ergebnis,
     // Ohne Nutzung bleiben die Argumente weg. Die Funktion sieht dann `null` –
