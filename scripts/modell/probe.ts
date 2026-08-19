@@ -41,7 +41,7 @@
 
 import { ENDPUNKT, anfragekoerper } from '@/lib/modell/anfrage'
 import { rohergebnisAus } from '@/lib/modell/antwort'
-import { MODELL_GRENZEN, modellZustand } from '@/lib/modell/konfiguration'
+import { modellZustand, timeoutMsFuer } from '@/lib/modell/konfiguration'
 import { alsUsd, kostenMikroUsd } from '@/lib/modell/preise'
 import { vorschlagAlsNutzlast } from '@/lib/reisevorschlag/abbildung'
 import { REISEIDEEN } from '@/lib/reisevorschlag/fixtures/reiseideen'
@@ -153,7 +153,7 @@ commit;`)
       schemaName: VORSCHLAG_SCHEMA_NAME,
       jsonSchema: VORSCHLAG_JSON_SCHEMA,
     }),
-    signal: AbortSignal.timeout(MODELL_GRENZEN.timeoutMs),
+    signal: AbortSignal.timeout(timeoutMsFuer(zustand.modell)),
   })
 
   const laufzeitMs = Date.now() - beginn

@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
-Stand: 18. August 2026
-Gültig für: Phase 2.1, Stand nach dem Reisevorschlag aus natürlicher Sprache
+Stand: 19. August 2026
+Gültig für: Phase 2.1, Stand nach Routing, 120-s-Sol-Grenze und Vorgabeprüfung
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -181,8 +181,9 @@ Vollständige Beschreibung: [docs/MODELL.md](docs/MODELL.md). Hier steht, wie di
 Seit Phase 2.1 gibt es unter `/planen` neben dem Formular einen zweiten Einstieg: eine freie Reisebeschreibung. Aus ihr entsteht ein strukturierter Entwurf mit Etappen, Tagen und Planpunkten.
 
 ```
-Freitext → Eingabeprüfung → Modellzustand → Kontingent buchen → Modellaufruf
-  → Nutzung abschliessen → Antwortprüfung → Vorschau → Freigabe → Persistenz
+Freitext → Eingabeprüfung → Modellzustand → Routing (Terra/Sol)
+  → Kontingent buchen → Modellaufruf → Nutzung abschliessen → Antwortprüfung
+  → Vorgaben (eine Korrektur) → Vorschau → Freigabe → Persistenz
 ```
 
 | Schicht | Datei | Aufgabe |
@@ -190,16 +191,19 @@ Freitext → Eingabeprüfung → Modellzustand → Kontingent buchen → Modella
 | Konfiguration | `lib/modell/konfiguration.ts` | Kill Switch, Modellwahl, alle Grenzen, neun Ergebnisklassen |
 | Preise | `lib/modell/preise.ts` | Preise in Mikrodollar, Kostenrechnung, Reservierung |
 | Anfrage und Antwort | `lib/modell/anfrage.ts`, `antwort.ts` | Anfragekörper; HTTP-Status und Antwortobjekt → Ergebnisklasse |
-| Aufruf | `lib/modell/aufruf.ts` | der eine `fetch`, `server-only`, Abbruch nach 40 s |
+| Aufruf | `lib/modell/aufruf.ts` | der eine `fetch`, `server-only`, Terra/Luna 90 s, Sol 120 s |
 | Kontingent | `lib/modell/kontingent.ts` | Gastkennung als Cookie, Dienstclient nur für die zwei Kontingent-RPCs |
 | Vorschlagsschema | `lib/reisevorschlag/schema.ts` | Zod- und JSON-Schema, fachliche Stimmigkeit, Fassung |
 | Systemregeln | `lib/reisevorschlag/regeln.ts` | der einzige Prompt, den Jetnity schreibt |
+| Routing | `lib/reisevorschlag/routing.ts` | Terra Standard, Sol bei Komplexität, Luna nie automatisch |
+| Vorgaben | `lib/reisevorschlag/vorgaben.ts` | harte Constraints, höchstens eine Korrektur |
+| Fortschritt | `lib/reisevorschlag/fortschritt.ts` | zeitgesteuerte Phasen ohne erfundene Prozente |
 | Normalisierung | `lib/reisevorschlag/normalisierung.ts` | Steuerzeichen und Preisangaben aus Modelltext |
 | Ablauf | `lib/reisevorschlag/erzeugen.ts` | die Kette oben, mit Ports statt Verbindungen |
 | Abbildung | `lib/reisevorschlag/abbildung.ts` | Vorschlag → `Trip` (Gast) bzw. `ReiseNutzlast` (Konto) |
 | Server Actions | `lib/reisevorschlag/aktionen.ts` | `vorschlagErzeugen()`, `vorschlagUebernehmen()` |
 
-Elf der dreizehn Module laufen ohne Serverumgebung, ohne Datenbank und ohne `fetch`. Nur `aufruf.ts` und `kontingent.ts` tragen `server-only`, nur `aktionen.ts` hat echte Verbindungen. Damit sind Zeitüberschreitung, HTTP 500, erschöpftes Kontingent, abgeschnittene Antwort, kaputtes JSON und schemawidriger Inhalt ohne bezahlten Aufruf prüfbar – 256 Tests, kein Modellaufruf.
+Zwölf der fünfzehn Module laufen ohne Serverumgebung, ohne Datenbank und ohne `fetch`. Nur `aufruf.ts` und `kontingent.ts` tragen `server-only`, nur `aktionen.ts` hat echte Verbindungen. Damit sind Zeitüberschreitung, HTTP 500, erschöpftes Kontingent, abgeschnittene Antwort, kaputtes JSON und schemawidriger Inhalt ohne bezahlten Aufruf prüfbar. Modellwahl: Terra Standard, Sol bei komplexen Abwägungen, Luna nie automatisch (ADR-0056).
 
 **Es entsteht keine zweite Persistenz.** Der Vorschlag lebt bis zur Freigabe im Zustand einer React-Komponente; danach schreibt der Gastweg über `gastreiseAblegen()` und der Kontoweg über `public.reise_anlegen()` – dieselben Wege wie das Formular, mit derselben Idempotenz über `client_ref` ([DECISIONS.md](DECISIONS.md) ADR-0050).
 
@@ -289,7 +293,7 @@ Mit Phase 1.1b wurde zusätzlich `lib/openai/*` entfernt und das Paket `openai` 
 | Globale Grenze | keine | 38 Aufrufe und $3.00 je Tag |
 | Durchsetzung | – | Datenbank, serialisiert, vor dem Aufruf gebucht |
 | Ausgabegrenze | keine | `max_output_tokens: 6000` |
-| Zeitgrenze | keine | 40 s, eigener `AbortController` |
+| Zeitgrenze | keine | Terra/Luna 90 s, Sol 120 s, eigener `AbortController` |
 | Protokoll | keins | `public.model_usage`, eine Zeile je Aufruf |
 
 Der Setup-Check verlangt `OPENAI_API_KEY` weiterhin **nicht** – eine fehlende Variable ist der Normalzustand einer Umgebung, in der die Funktion nicht laufen soll. Vollständige Beschreibung in [docs/MODELL.md](docs/MODELL.md), Entscheidung in [DECISIONS.md](DECISIONS.md) ADR-0052.
@@ -359,7 +363,7 @@ Aktuell nur Konsolen-Logging, kein zentrales Error-Tracking und keine strukturie
 | Datenbanknahe Prüfungen laufen nicht in der CI | 5 Prüfungen von Hand | braucht einen kurzlebigen Branch je Lauf, sonst kollidieren die Testkonten |
 | ~~Tests ohne Reisedaten~~ | ~~41 Tests, davon keiner zur Persistenz~~ | in Phase 1.5: 129 Tests in `lib/trips/` ohne Datenbank, dazu 47 Nachweise gegen den Branch |
 | Reise bearbeiten ist noch schmal | Anlegen, Planpunkt hinzufügen und entfernen, Reise löschen | Umbenennen, Umsortieren und Verschieben von Tagen entstehen mit dem Trip Builder in Phase 2 |
-| Modellweg ohne echten Aufruf belegt | 256 Tests gegen Fixtures, 0 Aufrufe gegen OpenAI | Sechs `modell:probe`-Läufe gemessen. Vorgabe `gpt-5.6-luna` / `low`; Terra bleibt Fallback (ADR-0051) |
+| Modellweg ohne echten Aufruf belegt | Fixture-Tests, 0 Aufrufe gegen OpenAI | Routing Terra/Sol, Sol 120 s, eine Korrektur (ADR-0056). Frühe Luna-Vorgabe durch die Fünf-Fälle-Messung ersetzt. |
 | `model_usage` ohne Aufbewahrungsfrist | höchstens 38 Zeilen am Tag, keine Reiseinhalte | eine Frist gehört zu der Entscheidung, die Funktion einzuschalten. Backlog in [ROADMAP.md](ROADMAP.md), Begründung ADR-0052 |
 | Ein Vorschlag überlebt kein Reload | Zustand einer React-Komponente | bewusst: der Vorschlag ist kein Systemzustand, und ein Verlust kostet einen Aufruf, nicht eine Reise (ADR-0050) |
 | ~~`PublicNavbar` kennt die Sitzung nicht~~ | ~~zeigt immer „Anmelden", kein Abmelden im öffentlichen Bereich~~ | im Nachtrag der Phase 1.5 behoben: Die Leiste liest die Sitzung clientseitig, das öffentliche Layout bleibt statisch (ADR-0047) |

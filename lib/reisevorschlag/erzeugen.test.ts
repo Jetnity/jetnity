@@ -70,12 +70,18 @@ function werkzeuge(abweichung: Partial<Werkzeuge> = {}) {
     abschliessen: async (id, klasse, nutzung, laufzeitMs) => {
       abschluesse.push({ id, klasse, nutzung, laufzeitMs })
     },
-    aufrufen: async (anfrage) => {
-      anfragen.push(anfrage)
-      return { ...rohergebnisAus(200, antwortMit(VORSCHLAG_THAILAND)), laufzeitMs: 4200 }
-    },
+    aufrufen: async () => ({
+      ...rohergebnisAus(200, antwortMit(VORSCHLAG_THAILAND)),
+      laufzeitMs: 4200,
+    }),
     heute: HEUTE,
     ...abweichung,
+  }
+
+  const wirklichAufrufen = gestellt.aufrufen
+  gestellt.aufrufen = async (anfrage) => {
+    anfragen.push(anfrage)
+    return wirklichAufrufen(anfrage)
   }
 
   return {
@@ -104,6 +110,7 @@ describe('Ein Vorschlag entsteht', () => {
       assert.equal(ergebnis.vorschlag.titel, VORSCHLAG_THAILAND.titel)
       assert.equal(ergebnis.vorschlag.tage.length, 7)
       assert.equal(ergebnis.vorschlag.fassung, VORSCHLAG_FASSUNG)
+      assert.deepEqual(ergebnis.warnungen, [])
     }
   })
 
@@ -208,7 +215,10 @@ describe('Die Eingabe wird geprüft, bevor Geld ausgegeben wird', () => {
 
       if (idee.erwartet === 'angenommen') {
         assert.equal(ergebnis.ok, true, `„${idee.name}" wurde abgelehnt`)
-        assert.equal(werkzeug.beanspruchtWie(), 1, `„${idee.name}" hat kein Kontingent gebucht`)
+        assert.ok(
+          werkzeug.beanspruchtWie() >= 1 && werkzeug.beanspruchtWie() <= 2,
+          `„${idee.name}" hat ${werkzeug.beanspruchtWie()} statt 1 oder 2 Buchungen`,
+        )
       } else {
         assert.equal(ergebnis.ok, false, `„${idee.name}" wurde angenommen`)
         assert.equal(werkzeug.beanspruchtWie(), 0, `„${idee.name}" hat Kontingent gebucht`)
@@ -330,9 +340,9 @@ describe('Jeder Fehlschlag des Aufrufs endet in einem Satz und einer Klasse', ()
       async () => ({
         ok: false,
         klasse: 'zeitueberschreitung',
-        hinweis: 'Kein Ergebnis innerhalb von 40000 ms.',
+        hinweis: 'Kein Ergebnis innerhalb von 120000 ms.',
         nutzung: null,
-        laufzeitMs: 40_000,
+        laufzeitMs: 120_000,
       }),
       'zeitueberschreitung',
     ],
@@ -510,6 +520,130 @@ describe('Das Protokoll eines bezahlten Aufrufs', () => {
     await reisevorschlagErzeugen(IDEE, werkzeug.gestellt)
 
     assert.equal(werkzeug.beanspruchtWie(), 2)
+    assert.equal(werkzeug.abschluesse.length, 2)
+  })
+})
+
+describe('Ein Sol-Fehler bekommt genau einen Terra-Versuch', () => {
+  const SOL: Modellzustand = { aktiv: true, modell: 'gpt-5.6-sol', aufwand: 'low' }
+  const timeout: Modellergebnis = {
+    ok: false,
+    klasse: 'zeitueberschreitung',
+    hinweis: 'Kein Ergebnis innerhalb von 120000 ms.',
+    nutzung: null,
+    laufzeitMs: 120_000,
+  }
+
+  test('nach einem Timeout kommt Terra durch', async () => {
+    let aufruf = 0
+    const werkzeug = werkzeuge({
+      zustand: SOL,
+      aufrufen: async (anfrage) => {
+        aufruf += 1
+        if (aufruf === 1) {
+          assert.equal(anfrage.modell, 'gpt-5.6-sol')
+          return timeout
+        }
+        assert.equal(anfrage.modell, 'gpt-5.6-terra')
+        return { ...rohergebnisAus(200, antwortMit(VORSCHLAG_THAILAND)), laufzeitMs: 4200 }
+      },
+    })
+
+    const ergebnis = await reisevorschlagErzeugen(IDEE, werkzeug.gestellt)
+
+    assert.equal(ergebnis.ok, true)
+    assert.equal(werkzeug.anfragen.length, 2)
+    assert.equal(werkzeug.beanspruchtWie(), 2)
+    assert.equal(werkzeug.abschluesse[0].klasse, 'zeitueberschreitung')
+    assert.equal(werkzeug.abschluesse[1].klasse, 'erfolg')
+  })
+
+  test('scheitert auch Terra, bleibt der Fehler sichtbar', async () => {
+    const werkzeug = werkzeuge({
+      zustand: SOL,
+      aufrufen: async () => timeout,
+    })
+
+    const ergebnis = await reisevorschlagErzeugen(IDEE, werkzeug.gestellt)
+
+    assert.equal(ergebnis.ok, false)
+    if (!ergebnis.ok) assert.equal(ergebnis.klasse, 'zeitueberschreitung')
+    assert.equal(werkzeug.anfragen.length, 2)
+    assert.equal(werkzeug.abschluesse.length, 2)
+  })
+
+  test('ein 4xx oder ein Luna-Fehler wird nicht wiederholt', async () => {
+    const luna = werkzeuge({ aufrufen: async () => timeout })
+    await reisevorschlagErzeugen(IDEE, luna.gestellt)
+    assert.equal(luna.anfragen.length, 1)
+
+    const vierxx = werkzeuge({
+      zustand: SOL,
+      aufrufen: antwortet(400, { error: { message: 'Unknown parameter' } }),
+    })
+    const ergebnis = await reisevorschlagErzeugen(IDEE, vierxx.gestellt)
+    assert.equal(ergebnis.ok, false)
+    assert.equal(vierxx.anfragen.length, 1)
+  })
+})
+
+describe('Harte Vorgaben werden geprüft, nicht als perfekt ausgegeben', () => {
+  const abweichend = '5 Tage Wien ab Zürich, zwei Personen, maximal CHF 3’000, Museen.'
+
+  test('eine Verletzung löst genau eine Korrektur aus', async () => {
+    let aufruf = 0
+    const werkzeug = werkzeuge({
+      aufrufen: async (anfrage) => {
+        aufruf += 1
+        if (aufruf === 2) assert.match(anfrage.nutzertext, /Korrektur, einmalig/)
+        return { ...rohergebnisAus(200, antwortMit(VORSCHLAG_THAILAND)), laufzeitMs: 4200 }
+      },
+    })
+
+    const ergebnis = await reisevorschlagErzeugen(abweichend, werkzeug.gestellt)
+
+    assert.equal(ergebnis.ok, true)
+    assert.equal(werkzeug.anfragen.length, 2)
+    assert.equal(werkzeug.beanspruchtWie(), 2)
+    if (ergebnis.ok) assert.ok(ergebnis.warnungen.length > 0)
+  })
+
+  test('scheitert die Korrektur, bleibt der erste Entwurf mit Warnung', async () => {
+    let aufruf = 0
+    const werkzeug = werkzeuge({
+      aufrufen: async () => {
+        aufruf += 1
+        if (aufruf === 1) {
+          return { ...rohergebnisAus(200, antwortMit(VORSCHLAG_THAILAND)), laufzeitMs: 4200 }
+        }
+        return {
+          ok: false as const,
+          klasse: 'zeitueberschreitung' as const,
+          hinweis: 'Kein Ergebnis innerhalb von 90000 ms.',
+          nutzung: null,
+          laufzeitMs: 90_000,
+        }
+      },
+    })
+
+    const ergebnis = await reisevorschlagErzeugen(abweichend, werkzeug.gestellt)
+
+    assert.equal(ergebnis.ok, true)
+    if (ergebnis.ok) {
+      assert.equal(ergebnis.vorschlag.titel, VORSCHLAG_THAILAND.titel)
+      assert.ok(ergebnis.warnungen.some((text) => /Tage|Wien/.test(text)))
+    }
+    assert.equal(werkzeug.anfragen.length, 2)
+  })
+
+  test('es gibt keine dritte Runde', async () => {
+    const werkzeug = werkzeuge({
+      aufrufen: antwortet(200, antwortMit(VORSCHLAG_THAILAND)),
+    })
+
+    await reisevorschlagErzeugen(abweichend, werkzeug.gestellt)
+
+    assert.equal(werkzeug.anfragen.length, 2)
     assert.equal(werkzeug.abschluesse.length, 2)
   })
 })

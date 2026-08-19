@@ -32,6 +32,7 @@ import { kontingentBeanspruchen, nutzungAbschliessen } from '@/lib/modell/kontin
 import { modellAufrufen } from '@/lib/modell/aufruf'
 import { modellZustand } from '@/lib/modell/konfiguration'
 import { reisevorschlagErzeugen, type Vorschlagsergebnis } from '@/lib/reisevorschlag/erzeugen'
+import { modellFuerReisevorschlag } from '@/lib/reisevorschlag/routing'
 import { vorschlagAlsNutzlast } from '@/lib/reisevorschlag/abbildung'
 import { uebernahmeSchema } from '@/lib/reisevorschlag/schema'
 import { reiseAusNutzlastAnlegen, type Aktionsergebnis } from '@/lib/trips/anlegen'
@@ -50,14 +51,18 @@ function heute(): string {
  */
 export async function vorschlagErzeugen(freitext: unknown): Promise<Vorschlagsergebnis> {
   const zustand = modellZustand()
+  const text = typeof freitext === 'string' ? freitext : ''
+  const modell = zustand.aktiv
+    ? modellFuerReisevorschlag(text, process.env.JETNITY_MODELL_NAME)
+    : null
 
   return reisevorschlagErzeugen(freitext, {
-    zustand,
-    // `zustand.modell` gibt es nur im aktiven Fall. Im abgeschalteten kommt der
-    // Ablauf nie bis zum Kontingent – diese Funktion wird dann nicht gerufen.
-    beanspruchen: () =>
+    zustand: zustand.aktiv && modell ? { ...zustand, modell } : zustand,
+    // Das geroutete Modell kommt als Argument: Ein Sol-Fallback und eine
+    // Korrektur buchen ihr eigenes Kontingent, nicht still das erste Modell.
+    beanspruchen: (gewaehlt) =>
       zustand.aktiv
-        ? kontingentBeanspruchen('reisevorschlag', zustand.modell)
+        ? kontingentBeanspruchen('reisevorschlag', gewaehlt)
         : Promise.resolve({ ok: false as const, meldung: 'Die intelligente Planung ist abgeschaltet.' }),
     abschliessen: nutzungAbschliessen,
     aufrufen: modellAufrufen,

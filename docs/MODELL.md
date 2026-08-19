@@ -2,7 +2,7 @@
 
 Wie Jetnity aus einer freien Reisebeschreibung einen strukturierten Reiseentwurf macht – und was diesen Weg davon abhält, Geld zu kosten, das niemand freigegeben hat.
 
-Fachliches Reisemodell: [REISEN.md](REISEN.md). Datenbank: [DATENBANK.md](DATENBANK.md). Entscheidungen: [../DECISIONS.md](../DECISIONS.md) ADR-0050 bis ADR-0055.
+Fachliches Reisemodell: [REISEN.md](REISEN.md). Datenbank: [DATENBANK.md](DATENBANK.md). Entscheidungen: [../DECISIONS.md](../DECISIONS.md) ADR-0050 bis ADR-0056.
 
 **Stand:** Phase 2.1. Der Weg ist vollständig implementiert. In der **Preview** sind Schlüssel und Kill Switch gesetzt; **Production bleibt aus**. Warum, steht in Abschnitt 8.
 
@@ -13,14 +13,16 @@ Fachliches Reisemodell: [REISEN.md](REISEN.md). Datenbank: [DATENBANK.md](DATENB
 ```
 Freitext (/planen)
   → Eingabe prüfen              lib/reisevorschlag/schema.ts        12 … 2000 Zeichen
-    → Modellzustand prüfen      lib/modell/konfiguration.ts         Kill Switch, Schlüssel, Modellwahl
-      → Kontingent buchen       public.modell_kontingent_beanspruchen()
-        → Modell aufrufen       lib/modell/aufruf.ts                40 s, 6000 Ausgabetokens
-          → Nutzung abschliessen public.modell_nutzung_abschliessen()
-            → Antwort prüfen    lib/reisevorschlag/schema.ts        JSON, Schema, Stimmigkeit
-              → Vorschau        components/trips/VorschlagVorschau.tsx
-                → Freigabe      „Übernehmen“
-                  → Persistenz  public.reise_anlegen()  bzw.  gastreiseAblegen()
+    → Modellzustand prüfen      lib/modell/konfiguration.ts         Kill Switch, Schlüssel
+      → Routing                 lib/reisevorschlag/routing.ts       Terra Standard, Sol bei Komplexität
+        → Kontingent buchen     public.modell_kontingent_beanspruchen()
+          → Modell aufrufen     lib/modell/aufruf.ts                Sol 120 s, Terra/Luna 90 s
+            → Nutzung abschliessen public.modell_nutzung_abschliessen()
+              → Antwort prüfen  lib/reisevorschlag/schema.ts        JSON, Schema, Stimmigkeit
+                → Vorgaben      lib/reisevorschlag/vorgaben.ts      eine Korrektur, dann warnungen
+                  → Vorschau    components/trips/VorschlagVorschau.tsx
+                    → Freigabe  „Übernehmen“
+                      → Persistenz  public.reise_anlegen()  bzw.  gastreiseAblegen()
 ```
 
 Zwei Eigenschaften dieses Ablaufs sind die eigentliche Aussage von Phase 2.1.
@@ -39,16 +41,19 @@ Zwei Eigenschaften dieses Ablaufs sind die eigentliche Aussage von Phase 2.1.
 | `lib/modell/konfiguration.ts` | Kill Switch, Modellwahl, alle Grenzen, Ergebnisklassen | nein |
 | `lib/modell/anfrage.ts` | Körper der HTTP-Anfrage an die Responses API | nein |
 | `lib/modell/antwort.ts` | HTTP-Status und Antwortobjekt → Ergebnisklasse, Rohtext, Tokennutzung | nein |
-| `lib/modell/aufruf.ts` | der eine `fetch`, mit Abbruch nach 40 s | ja (`server-only`) |
+| `lib/modell/aufruf.ts` | der eine `fetch`, Abbruch nach 90 s bzw. 120 s bei Sol | ja (`server-only`) |
 | `lib/modell/kontingent.ts` | Gastkennung als Cookie, Aufruf der beiden Kontingent-Funktionen | ja (`server-only`) |
 | `lib/reisevorschlag/schema.ts` | Zod- und JSON-Schema eines Vorschlags, fachliche Stimmigkeit | nein |
 | `lib/reisevorschlag/regeln.ts` | Systemregeln (der einzige Prompt, den Jetnity schreibt) | nein |
+| `lib/reisevorschlag/routing.ts` | deterministische Wahl Terra/Sol, Luna nie automatisch | nein |
+| `lib/reisevorschlag/vorgaben.ts` | harte Vorgaben lesen und gegen den Plan prüfen | nein |
+| `lib/reisevorschlag/fortschritt.ts` | zeitgesteuerte Phasen für die Warteansicht | nein |
 | `lib/reisevorschlag/normalisierung.ts` | Steuerzeichen und Preisangaben aus Modelltext entfernen | nein |
 | `lib/reisevorschlag/erzeugen.ts` | der Ablauf oben, mit Ports statt Verbindungen | nein |
 | `lib/reisevorschlag/abbildung.ts` | Vorschlag → `Trip` (Gast) bzw. `ReiseNutzlast` (Konto) | nein |
 | `lib/reisevorschlag/aktionen.ts` | die zwei Server Actions; die einzige Stelle mit echten Verbindungen | ja (`'use server'`) |
 
-Elf der dreizehn Module laufen ohne Serverumgebung, ohne Datenbank und ohne `fetch`. Das ist kein Selbstzweck: Zeitüberschreitung, HTTP 500, erschöpftes Kontingent, abgeschnittene Antwort, kaputtes JSON und schemawidriger Inhalt sind die Fälle, die in Produktion zählen – und mit echten Verbindungen wäre jeder einzelne nur über einen bezahlten Aufruf erreichbar.
+Zwölf der fünfzehn Module laufen ohne Serverumgebung, ohne Datenbank und ohne `fetch`. Das ist kein Selbstzweck: Zeitüberschreitung, HTTP 500, erschöpftes Kontingent, abgeschnittene Antwort, kaputtes JSON und schemawidriger Inhalt sind die Fälle, die in Produktion zählen – und mit echten Verbindungen wäre jeder einzelne nur über einen bezahlten Aufruf erreichbar.
 
 Es gibt **keine** Provider-Abstraktion. OpenAI ist der eine Anbieter, `lib/modell/aufruf.ts` die eine Stelle, die ihn kennt ([AGENTS.md](../AGENTS.md) Regel 19).
 
@@ -58,9 +63,19 @@ Es gibt **keine** Provider-Abstraktion. OpenAI ist der eine Anbieter, `lib/model
 
 Jetnity benutzt die **Responses API** mit `text.format.type: 'json_schema'` und `strict: true`. Das ist der von OpenAI dafür vorgesehene Weg: Die Plattform garantiert, dass die Antwort dem übergebenen JSON-Schema entspricht.
 
-| Variable | Vorgabe | Zulässig |
+Jetnity setzt nicht nur ein Modell ein (ADR-0056):
+
+| Modell | Rolle |
+| --- | --- |
+| `gpt-5.6-terra` | Standard für normale Reiseplanung; Fallback nach Sol-Fehler oder Timeout |
+| `gpt-5.6-sol` | komplexe Abwägungen (viele harte Vorgaben, mehrere Ziele, Inseln, Roadtrip, Widerspruch) |
+| `gpt-5.6-luna` | nur sehr einfache Hilfsaufgaben; **nie** automatisch für eine komplette Reise |
+
+Die Wahl steht im Freitext (`planungspfad()`), ohne einen zusätzlichen Modellaufruf. `JETNITY_MODELL_NAME` bleibt der manuelle Stift: gesetzt, gewinnt er; leer, entscheidet der Router; unbekannt, bleibt der Weg zu.
+
+| Variable | Vorgabe ohne Stift | Zulässig |
 | --- | --- | --- |
-| `JETNITY_MODELL_NAME` | `gpt-5.6-luna` | `gpt-5.6-luna`, `gpt-5.6-terra`, `gpt-5.6-sol` |
+| `JETNITY_MODELL_NAME` | leer → Routing, Stift-Fallback `gpt-5.6-terra` | `gpt-5.6-luna`, `gpt-5.6-terra`, `gpt-5.6-sol` |
 | `JETNITY_MODELL_AUFWAND` | `low` | `none`, `low`, `medium` |
 
 `high`, `xhigh` und `max` sind nicht zugelassen. Der Grund ist nicht Sparsamkeit: `max_output_tokens` begrenzt die Ausgabe **einschliesslich** der Denk-Tokens. Ein Aufruf, der sein Ausgabebudget im Denken verbraucht, endet als `incomplete` – bezahlt, ohne einen Vorschlag geliefert zu haben.
@@ -83,7 +98,7 @@ Was ein Reisevorschlag kostet, bei 2600 Eingabe- und 6000 Ausgabetokens im schle
 
 Die Zahl des schlechtesten Falls bleibt die einzige belastbare Obergrenze: Sie wird vor dem Aufruf gebucht (Abschnitt 4). Die gemessenen Läufe vom 19. August 2026 lagen deutlich darunter (Abschnitt 8).
 
-**Warum `gpt-5.6-luna` die Vorgabe ist:** Sechs `npm run modell:probe`-Läufe gegen Ideen 1, 2 und 7, beide Modelle, `reasoning.effort: low`. Alle sechs endeten mit Klasse `erfolg`, gültigem Schema und geprüfter Abbildung auf `public.reise_anlegen()`. Luna lieferte auf derselben Aufgabe eine brauchbare Reise – Etappen lückenlos, Annahmen gekennzeichnet, Budget und Tempo aus dem Text – und kostete auf den drei Fixtures zusammen USD 0.0054. Terra blieb auf der kürzesten Idee allein bei USD 0.0050. 6000 Ausgabetokens reichten (Maximum 2104). `gpt-5.6-terra` bleibt über `JETNITY_MODELL_NAME` wählbar, ist aber nicht mehr die Vorgabe (ADR-0051).
+Die frühe Vorgabe `gpt-5.6-luna` (ADR-0051) beruhte auf drei kurzen Fixtures. Die spätere Messung auf fünf vollständigen Planungsfällen hat das geändert: Terra ist das Standardmodell, Sol das Modell für komplexe Abwägungen, Luna plant keine komplette Reise automatisch (ADR-0056, Abschnitt 8). Sol ist nicht immer besser; Terra gewinnt einfache Fälle und ist meist deutlich schneller.
 
 ---
 
@@ -98,9 +113,9 @@ Die Zahl des schlechtesten Falls bleibt die einzige belastbare Obergrenze: Sie w
 | Tagesgrenze | 8 je Kennung, 24 alle Gäste, 38 insgesamt | Datenbankfunktion |
 | maximale Eingabelänge | 2000 Zeichen, geprüft vor dem Kontingent | `lib/reisevorschlag/schema.ts` |
 | Ausgabegrenze | `max_output_tokens: 6000` | `lib/modell/anfrage.ts` |
-| Timeout / Abort | 40 s, eigener `AbortController` | `lib/modell/aufruf.ts` |
-| Modellwahl | drei Modelle mit bekanntem Preis, sonst aus | `lib/modell/konfiguration.ts` |
-| Fehler-/Fallback-Verhalten | neun Ergebnisklassen, je ein Satz für Reisende | `lib/reisevorschlag/erzeugen.ts` |
+| Timeout / Abort | Terra/Luna 90 s, Sol 120 s, eigener `AbortController` | `lib/modell/aufruf.ts` |
+| Modellwahl | Routing Terra/Sol, Stift über die Umgebung, sonst aus | `lib/reisevorschlag/routing.ts` |
+| Fehler-/Fallback-Verhalten | neun Ergebnisklassen; genau ein Terra-Versuch nach Sol-Fehler | `lib/reisevorschlag/erzeugen.ts` |
 | Usage-Logging | `public.model_usage`, eine Zeile je Aufruf | Migration |
 | globaler Kostenschutz | $3.00 je Tag, auf Reservierungen | Datenbankfunktion |
 
@@ -196,7 +211,7 @@ Neun Ergebnisklassen stehen in `ERGEBNISKLASSEN` und als `CHECK` auf `model_usag
 | Kill Switch aus, Schlüssel fehlt, Modell unbekannt | – (`gesperrt`) | nein, geprüft davor |
 | Freitext zu kurz, zu lang, leer | – (`eingabe`) | nein, geprüft davor |
 | Kontingent oder Kostendeckel erschöpft | – (`gesperrt`) | nein, abgelehnt |
-| 40 s ohne Ergebnis | `zeitueberschreitung` | ja |
+| Zeitgrenze ohne Ergebnis (90 s bzw. 120 s bei Sol) | `zeitueberschreitung` | ja |
 | Verbindung abgebrochen, DNS, TLS | `netz` | ja |
 | HTTP 400 – 499 | `anbieter-4xx` | ja |
 | HTTP 500 – 599 | `anbieter-5xx` | ja |
@@ -251,7 +266,7 @@ Drei Dinge müssen zusammenkommen, sonst ruft `modellZustand()` nichts auf und n
 | --- | --- |
 | `JETNITY_MODELL_AKTIV` | `true` oder `1` |
 | `OPENAI_API_KEY` | ein Schlüssel mit Zugang zur Responses API |
-| `JETNITY_MODELL_NAME` | leer (dann `gpt-5.6-luna`) oder eines der drei Modelle |
+| `JETNITY_MODELL_NAME` | leer (dann Routing, Stift-Fallback `gpt-5.6-terra`) oder eines der drei Modelle |
 | `SUPABASE_SERVICE_ROLE_KEY` | serverseitig; ohne ihn kann die Server Action kein Kontingent buchen |
 
 Fehlt etwas, ist das kein Laufzeitfehler, sondern der Normalzustand einer Umgebung, in der die Funktion nicht laufen soll. Die Oberfläche sagt es ehrlich. Das Formular unter `/planen` bleibt vollständig benutzbar.
@@ -262,9 +277,9 @@ Fehlt etwas, ist das kein Laufzeitfehler, sondern der Normalzustand einer Umgebu
 
 Es gibt keine `NEXT_PUBLIC_OPENAI_*`-Variable und keinen Modellaufruf im Browser. Der Schlüssel wird in `lib/modell/aufruf.ts` gelesen und verlässt diese Datei nicht; er steht in keinem Rückgabewert, keiner Fehlermeldung und keinem Protokoll.
 
-### Vergleich terra / luna
+### Früher Vergleich terra / luna (drei Fixtures)
 
-Gemessen am 19. August 2026 mit `npm run modell:probe`, dieselben Fixtures, dasselbe Schema, dieselbe Kostenschranke, `reasoning.effort: low`. Der Lauf gehört nicht in die CI.
+Gemessen am 19. August 2026 mit `npm run modell:probe`, dieselben Fixtures, dasselbe Schema, dieselbe Kostenschranke, `reasoning.effort: low`. Der Lauf gehört nicht in die CI. Diese drei Ideen haben die Vorgabe Luna begründet; sie reichen nicht als Qualitätslinie für eine komplette Reiseplanung (ADR-0056).
 
 | Modell | Idee | Laufzeit | Tokens ein (gecacht) | Tokens aus | Kosten | Abbildung |
 | --- | --- | ---: | ---: | ---: | ---: | --- |
@@ -275,9 +290,25 @@ Gemessen am 19. August 2026 mit `npm run modell:probe`, dieselben Fixtures, dass
 | `gpt-5.6-luna` | 2 mehrere Ziele | 16 717 ms | 1 612 (1 578) | 2 104 | USD 0.0026 | 3 Etappen, 14 Tage, 42 Punkte, Klasse `erfolg` |
 | `gpt-5.6-luna` | 7 unbestimmt | 7 030 ms | 1 595 (1 578) | 695 | USD 0.0009 | 1 Etappe, 4 Tage, 12 Punkte, Klasse `erfolg` |
 
-Terra-Idee 1 und die Kostenzeile von Terra-Idee 2 sind im lokalen Terminal-Scrollback nicht mehr vollständig; beide Läufe endeten laut Abschlusszeile mit Klasse `erfolg` und geprüfter Abbildung. Die drei Luna-Läufe zusammen: **USD 0.0054**. Terra-Idee 7 allein: **USD 0.0050**.
+Terra-Idee 1 und die Kostenzeile von Terra-Idee 2 sind im lokalen Terminal-Scrollback nicht mehr vollständig; beide Läufe endeten laut Abschlusszeile mit Klasse `erfolg` und geprüfter Abbildung. Die drei Luna-Läufe zusammen: **USD 0.0054**. Terra-Idee 7 allein: **USD 0.0050**. Das hat die frühe Vorgabe Luna erklärt. Die spätere Messung auf fünf vollständigen Fällen hat die Strategie geändert.
 
-Die Vorgabe ist deshalb `gpt-5.6-luna` mit `reasoning.effort: low`. `gpt-5.6-terra` bleibt über die Umgebung wählbar (ADR-0051).
+### Vergleich Sol / Terra (fünf Planungsfälle)
+
+Dieselbe Struktur, `reasoning.effort: low`. Qualität von Hand bewertet, nicht automatisch. Sol ist **nicht** immer besser.
+
+| Fall | Sol Laufzeit / Kosten / Punkte | Terra Laufzeit / Kosten / Punkte | Qualität |
+| --- | --- | --- | --- |
+| Japan | 47 303 ms / USD 0.0538 / 38 | 23 335 ms / USD 0.0247 / 40 | Terra knapp besser |
+| Vietnam, komplex | 87 881 ms / USD 0.1503 / 65 | 41 172 ms / USD 0.0421 / 60 | Sol besser |
+| Griechenland, Inseln | 52 215 ms / USD 0.0748 / 45 | 34 314 ms / USD 0.0314 / 52 | Sol besser |
+| Kalifornien, Roadtrip | 68 809 ms / USD 0.1002 / 58 | 40 548 ms / USD 0.0349 / 47 | Sol knapp besser |
+| Italien, widersprüchlich | 50 089 ms / USD 0.0656 / 30 | 33 392 ms / USD 0.0279 / 33 | praktisch Gleichstand, Sol minimal besser |
+
+Zwei zuvor vermutete Budgetabweichungen waren **keine** Modellfehler. Die falschen Beträge standen bereits im per Hand kopierten Testprompt.
+
+Schlussfolgerung: Terra ist das Standardmodell. Sol liefert bei komplexen Abwägungen häufiger die bessere Gesamtentscheidung. Deshalb Routing statt eines Modells für alles (ADR-0056).
+
+Während ein solcher Lauf 50–100 Sekunden braucht, zeigt `/planen` zeitgesteuerte Phasen („Wünsche werden verstanden“, Route, Transferlogik, Tagesplan, Prüfung). Keine erfundenen Prozente, keine Flugpreise, solange keine Providerdaten angebunden sind.
 
 `npm run modell:probe` läuft **nie** in der CI.
 
@@ -285,18 +316,21 @@ Die Vorgabe ist deshalb `gpt-5.6-luna` mit `reasoning.effort: low`. `gpt-5.6-ter
 
 ## 9. Tests
 
-**256 Tests ohne einen einzigen Modellaufruf**, in neun Dateien:
+Tests ohne einen einzigen Modellaufruf, in zwölf Dateien der Modell- und Vorschlagsschicht:
 
 | Datei | Deckt ab |
 | --- | --- |
 | `lib/modell/preise.test.ts` | Kostenrechnung, Cache-Abzug, Aufrunden, Reservierung |
-| `lib/modell/konfiguration.test.ts` | Kill Switch in jeder Schreibweise, fehlender Schlüssel, unbekanntes Modell, Verhältnis der Grenzen |
+| `lib/modell/konfiguration.test.ts` | Kill Switch in jeder Schreibweise, fehlender Schlüssel, unbekanntes Modell, 90/120-s-Grenzen |
 | `lib/modell/antwort.test.ts` | jeder HTTP-Status, `incomplete`, `refusal`, fehlende Tokennutzung, kaputte Antwortformen |
 | `lib/modell/grenzen-datenbank.test.ts` | jede Zahl aus `MODELL_GRENZEN` gegen das Migrations-SQL |
 | `lib/reisevorschlag/schema.test.ts` | Eingabeprüfung, Ausgabeschema, Stimmigkeit, Umfangsvergleich Zod ↔ JSON-Schema, Injection-Eingaben |
 | `lib/reisevorschlag/normalisierung.test.ts` | Preisangaben in Schreibweisen, Steuerzeichen, was bewusst stehen bleibt |
 | `lib/reisevorschlag/abbildung.test.ts` | Vorschlag → Reisegraph, Daten aus dem Startdatum, `null` in allen Provider- und Preisfeldern |
-| `lib/reisevorschlag/erzeugen.test.ts` | der ganze Ablauf, jeder Fehlerfall, Reihenfolge von Buchen und Abschliessen |
+| `lib/reisevorschlag/routing.test.ts` | Terra/Sol aus dem Text, Luna nie automatisch, Stift sticht |
+| `lib/reisevorschlag/vorgaben.test.ts` | harte Vorgaben lesen und gegen den Plan prüfen |
+| `lib/reisevorschlag/fortschritt.test.ts` | Phasen ohne Prozente und ohne Providerdaten |
+| `lib/reisevorschlag/erzeugen.test.ts` | der ganze Ablauf, Fallback, eine Korrektur, Reihenfolge von Buchen und Abschliessen |
 | `lib/reisevorschlag/uebernahme.test.ts` | Vorschau ohne Persistenz, Übernahme mit, Doppelklick, Persistenzfehler, Manipulation im Browser |
 
 Die Fixtures liegen in `lib/reisevorschlag/fixtures/`: dreizehn Reiseideen als Eingaben, Modellantworten als Ausgaben. Die Ideen sind **keine** erwarteten Ausgaben – was ein Modell daraus macht, prüft kein Test, denn das wäre eine Prüfung des Modells und kostete je Lauf Geld. Geprüft wird, was Jetnity mit einer Antwort tut.

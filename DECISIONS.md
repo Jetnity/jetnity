@@ -1218,9 +1218,9 @@ Zwanzig Tests in `lib/reisevorschlag/uebernahme.test.ts` prüfen genau die Naht:
 ## ADR-0051 – Responses API mit `strict: true`; Vorgabe `gpt-5.6-luna` / `low`
 
 **Datum:** 18. August 2026
-**Status:** umgesetzt, gemessen, Vorgabe `gpt-5.6-luna` / `low`
+**Status:** Responses API und `strict: true` gelten weiter. Die alleinige Vorgabe `gpt-5.6-luna` ist durch ADR-0056 ersetzt.
 
-**Entscheidung:** Jetnity ruft die **Responses API** auf (`POST /v1/responses`) und verlangt strukturierte Ausgabe über `text.format` mit `type: 'json_schema'` und `strict: true`. Vorgabe ist `gpt-5.6-luna` mit `reasoning.effort: 'low'`; `JETNITY_MODELL_NAME` und `JETNITY_MODELL_AUFWAND` können sie ändern, aber nur innerhalb von drei Modellen mit bekanntem Preis und drei Aufwandstufen. `gpt-5.6-terra` bleibt als Fallback wählbar.
+**Entscheidung:** Jetnity ruft die **Responses API** auf (`POST /v1/responses`) und verlangt strukturierte Ausgabe über `text.format` mit `type: 'json_schema'` und `strict: true`. Die erste gemessene Vorgabe war `gpt-5.6-luna` mit `reasoning.effort: 'low'` (drei Fixtures, 19. August). Seit ADR-0056 routet Jetnity Terra und Sol deterministisch; Luna plant keine komplette Reise automatisch. `JETNITY_MODELL_NAME` und `JETNITY_MODELL_AUFWAND` können die Wahl weiter festnageln, aber nur innerhalb von drei Modellen mit bekanntem Preis und drei Aufwandstufen.
 
 `high`, `xhigh` und `max` sind **nicht** zugelassen.
 
@@ -1422,6 +1422,65 @@ Der Reisewunsch dagegen ist der Satz des Nutzers und gehört ihm. Er wird gespei
 **Konsequenzen:** `vorschlagAlsNutzlast()` und `vorschlagAlsReise()` bilden `annahmen` auf nichts ab; ein Test hält das fest, damit es nicht versehentlich zu einer Zuweisung wird. Die Vorschau zeigt sie in einem eigenen Block, sichtbar als Annahmen und nicht als Reisedaten.
 
 **Bekannte Grenze:** Nach der Übernahme lässt sich nicht mehr feststellen, welche Teile einer Reise auf einer Annahme beruhten. Wenn Phase 2.2 – eine bestehende Reise per Sprache ändern – das braucht, ist es dort zu entscheiden, mit einem Ort, der dann auch gelesen wird.
+
+---
+
+## ADR-0056 – Terra plant, Sol wägt ab, Luna hilft nur
+
+**Datum:** 19. August 2026
+**Status:** umgesetzt auf dem Phase-2.1-Branch, Production unverändert aus
+
+**Entscheidung:** Eine komplette Reiseplanung benutzt nicht ein Modell für alles.
+
+- **Luna** nur für sehr einfache, schnelle Hilfsaufgaben. Sie wird für eine komplette Reise **nicht** automatisch gewählt.
+- **Terra** ist das Standardmodell für normale Planung und der eine Fallback, wenn Sol an Zeit, Netz, 5xx oder einer abgeschnittenen Antwort scheitert.
+- **Sol** nur bei komplexen Abwägungen: mehrere harte Vorgaben, mehrere Ziele oder Insel-Transfers, Roadtrip, widersprüchliche Wünsche, mehrere Verkehrsmittel, enge Budget-/Komfort-/Zeitbedingungen.
+
+Die Wahl ist deterministisch und steht im Freitext (`lib/reisevorschlag/routing.ts`). Es gibt **keinen** zusätzlichen Modellaufruf nur zur Auswahl. `JETNITY_MODELL_NAME` bleibt der manuelle Stift für Probe und Betrieb.
+
+Zeitgrenzen, ohne künstliches Warten:
+
+| Modell | Harte Obergrenze |
+| --- | ---: |
+| Terra, Luna | 90 s |
+| Sol | 120 s |
+
+60 s bleiben das Soft-Ziel. 60–90 s sind zulässig. 90–120 s sind Reserve für schwierige Sol-Fälle. `maxDuration` der Planungsseite ist 300 s, damit ein Sol-Lauf plus genau ein Terra-Fallback nicht an der Plattform stirbt. Vercel Hobby (60 s) reicht dafür nicht.
+
+Nach einem gültigen Plan prüft Jetnity harte, aus dem Text ableitbare Vorgaben (Dauer, Reisende, Budgetziel, Orte, Ausschlüsse, Flugverbot, Ruhetage, maximale Etappen). Bei einer klaren Verletzung gibt es **genau eine** Korrektur, danach eine zweite Prüfung. Offene Punkte erscheinen als `warnungen`, nicht als perfekter Plan. Subjektive Wünsche („schön“, „entspannt“) sind keine harten Vorgaben.
+
+Während der Generierung zeigt `/planen` zeitgesteuerte Phasen, keine erfundenen Prozente und keine Providerdaten.
+
+**Kontext:** Die Vorgabe Luna (ADR-0051) beruhte auf drei kurzen Fixtures. Die spätere Messung mit `reasoning.effort: low` und vergleichbarer Struktur auf fünf vollständigen Planungsfällen zeigte ein anderes Bild.
+
+| Fall | Sol | Terra | Qualität |
+| --- | ---: | ---: | --- |
+| Japan | 47,3 s / USD 0.0538 / 38 Punkte | 23,3 s / USD 0.0247 / 40 Punkte | Terra knapp besser |
+| Vietnam, komplex | 87,9 s / USD 0.1503 / 65 Punkte | 41,2 s / USD 0.0421 / 60 Punkte | Sol besser (Logistik und Entspannung zusammen) |
+| Griechenland, Inseln | 52,2 s / USD 0.0748 / 45 Punkte | 34,3 s / USD 0.0314 / 52 Punkte | Sol besser (eine Insel weniger, weniger Wechsel) |
+| Kalifornien, Roadtrip | 68,8 s / USD 0.1002 / 58 Punkte | 40,5 s / USD 0.0349 / 47 Punkte | Sol knapp besser |
+| Italien, widersprüchlich | 50,1 s / USD 0.0656 / 30 Punkte | 33,4 s / USD 0.0279 / 33 Punkte | praktisch Gleichstand, Sol minimal besser |
+
+Zwei zuvor vermutete Budgetabweichungen waren **keine** Modellfehler: Die falschen Beträge standen schon im per Hand kopierten Testprompt.
+
+Sol ist damit nicht „immer besser“. Terra gewinnt einfache Fälle und ist meist deutlich schneller. Sol hat seinen Vorteil bei komplexen Abwägungen.
+
+Die frühere 40-Sekunden-Grenze würde genau diese Sol-Läufe abschneiden.
+
+**Alternativen:**
+
+1. *Ein Modell für alles, Luna.* Günstig auf kurzen Fixtures, zu schwach als alleinige Qualitätslinie für eine komplette Reiseplanung.
+2. *Ein Modell für alles, Terra.* Stark und schnell genug für den Normalfall, in den komplexen Messungen aber nicht die bessere Gesamtentscheidung.
+3. *Ein Modell für alles, Sol.* In mehreren komplexen Fällen besser, aber langsamer und teurer – und in Japan nicht die bessere Wahl.
+4. *Ein Modellaufruf, der das Modell wählt.* Ein zusätzlicher bezahlter Schritt, der selbst fehlschlagen kann, ohne die Planung besser zu machen.
+5. *OpenRouter, LiteLLM oder Vercel AI Gateway.* Neue laufende Infrastruktur für eine Entscheidung, die ein kurzer Textvergleich schon trägt.
+6. *Die 40-Sekunden-Grenze behalten.* Würde gemessene Sol-Pläne von 50–90 s verwerfen.
+
+**Begründung:** Qualität hat Vorrang vor Kosten und Geschwindigkeit, aber nicht um den Preis, Terra dort zu verwerfen, wo es schneller und mindestens so gut ist. Routing statt Monokultur. Eine Korrektur statt einer Retry-Schleife. Sichtbare Arbeit statt eines leeren Warteschirms.
+
+**Konsequenzen:** `modellFuerReisevorschlag()` entscheidet vor dem Kontingent. Jeder Aufruf – erster Plan, Terra-Fallback, eine Korrektur – bucht sein eigenes Kontingent und umgeht weder Quota noch Kostendeckel. 38 Sol-Reservierungen würden den $3-Tagesdeckel sprengen; der Deckel bleibt die harte Kostenschranke (ADR-0052). Production bleibt aus.
+
+**Bekannte Grenze:** Der Router liest Muster, keine Weltkarte. Ein ungewöhnlich formulierter einfacher Wunsch kann Sol auslösen, ein komplexer ohne die bekannten Wörter Terra. Der Stift `JETNITY_MODELL_NAME` bleibt der bewusste Eingriff.
 
 ---
 

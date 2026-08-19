@@ -29,7 +29,7 @@ import 'server-only'
 
 import { ENDPUNKT, anfragekoerper, type Modellanfrage } from '@/lib/modell/anfrage'
 import { rohergebnisAus, type Rohergebnis } from '@/lib/modell/antwort'
-import { MODELL_GRENZEN } from '@/lib/modell/konfiguration'
+import { timeoutMsFuer } from '@/lib/modell/konfiguration'
 
 export type { Modellanfrage }
 
@@ -64,7 +64,7 @@ export async function modellAufrufen(anfrage: Modellanfrage): Promise<Modellerge
   const uhr = setTimeout(() => {
     abgelaufen = true
     controller.abort()
-  }, MODELL_GRENZEN.timeoutMs)
+  }, timeoutMsFuer(anfrage.modell))
 
   try {
     const antwort = await fetch(ENDPUNKT, {
@@ -90,7 +90,7 @@ export async function modellAufrufen(anfrage: Modellanfrage): Promise<Modellerge
       return {
         ok: false,
         klasse: 'zeitueberschreitung',
-        hinweis: `Kein Ergebnis innerhalb von ${MODELL_GRENZEN.timeoutMs} ms.`,
+        hinweis: `Kein Ergebnis innerhalb von ${timeoutMsFuer(anfrage.modell)} ms.`,
         nutzung: null,
         laufzeitMs,
       }

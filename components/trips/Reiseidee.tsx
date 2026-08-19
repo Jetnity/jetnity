@@ -47,6 +47,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ArrowRight, Sparkles } from 'lucide-react'
 
+import Planungsfortschritt from '@/components/trips/Planungsfortschritt'
 import VorschlagVorschau from '@/components/trips/VorschlagVorschau'
 import { vorschlagErzeugen, vorschlagUebernehmen } from '@/lib/reisevorschlag/aktionen'
 import { vorschlagAlsReise } from '@/lib/reisevorschlag/abbildung'
@@ -74,9 +75,11 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
   const router = useRouter()
   const [freitext, setFreitext] = React.useState(initialIdee)
   const [vorschlag, setVorschlag] = React.useState<Reisevorschlag | null>(null)
+  const [warnungen, setWarnungen] = React.useState<string[]>([])
   const [meldung, setMeldung] = React.useState('')
   const [bestehendeReise, setBestehendeReise] = React.useState('')
   const [laeuft, setLaeuft] = React.useState(false)
+  const [warteMs, setWarteMs] = React.useState(0)
 
   // Eine Kennung je Vorschlag. Sie entsteht erst beim Übernehmen und bleibt
   // danach: Ein zweiter Anlauf mit demselben Vorschlag ist derselbe Vorgang.
@@ -86,6 +89,18 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
   // eine langsame erste Antwort eine schnellere zweite überschreiben.
   const anlauf = React.useRef(0)
 
+  const plant = laeuft && !vorschlag
+
+  React.useEffect(() => {
+    if (!plant) {
+      setWarteMs(0)
+      return
+    }
+    const beginn = Date.now()
+    const uhr = window.setInterval(() => setWarteMs(Date.now() - beginn), 1000)
+    return () => window.clearInterval(uhr)
+  }, [plant])
+
   const erzeugen = async (ereignis: React.FormEvent<HTMLFormElement>) => {
     ereignis.preventDefault()
     if (laeuft) return
@@ -93,6 +108,7 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
     setMeldung('')
     setBestehendeReise('')
     setVorschlag(null)
+    setWarnungen([])
     setLaeuft(true)
 
     const eigener = ++anlauf.current
@@ -108,6 +124,7 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
 
     clientRef.current = kennungErzeugen('trip')
     setVorschlag(ergebnis.vorschlag)
+    setWarnungen(ergebnis.warnungen)
   }
 
   const uebernehmen = async () => {
@@ -194,6 +211,12 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
           ))}
         </div>
 
+        {plant && (
+          <div className="mt-5">
+            <Planungsfortschritt laufzeitMs={warteMs} />
+          </div>
+        )}
+
         {meldung && !vorschlag && (
           <div
             role="alert"
@@ -212,8 +235,8 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
             disabled={laeuft}
             className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-6 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(21,58,51,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-900 disabled:pointer-events-none disabled:opacity-60"
           >
-            {laeuft && !vorschlag ? 'Entwurf entsteht …' : 'Entwurf erstellen'}
-            {!(laeuft && !vorschlag) && <ArrowRight className="h-4 w-4" aria-hidden="true" />}
+            {plant ? 'Entwurf entsteht …' : 'Entwurf erstellen'}
+            {!plant && <ArrowRight className="h-4 w-4" aria-hidden="true" />}
           </button>
         </div>
       </form>
@@ -244,16 +267,19 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
 
           <VorschlagVorschau
             vorschlag={vorschlag}
+            warnungen={warnungen}
             laeuft={laeuft}
             angemeldet={angemeldet}
             onUebernehmen={uebernehmen}
             onAendern={() => {
               setVorschlag(null)
+              setWarnungen([])
               setMeldung('')
               setBestehendeReise('')
             }}
             onVerwerfen={() => {
               setVorschlag(null)
+              setWarnungen([])
               setFreitext('')
               setMeldung('')
               setBestehendeReise('')

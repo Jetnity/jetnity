@@ -3,12 +3,14 @@
 // Der Ablauf eines Reisevorschlags, in einer Funktion.
 //
 //   Freitext prüfen
-//     → Modellzustand prüfen        (Kill Switch, Schlüssel, Modellwahl)
+//     → Modellzustand prüfen        (Kill Switch, Schlüssel, geroutetes Modell)
 //       → Kontingent beanspruchen   (Datenbank, race-safe, fail closed)
-//         → Modell aufrufen         (mit Zeitgrenze und Ausgabegrenze)
+//         → Modell aufrufen         (Sol 120 s, Terra/Luna 90 s)
 //           → Nutzung abschliessen  (Ergebnisklasse, Tokens, Kosten)
 //             → Antwort prüfen      (JSON, Schema, fachliche Grenzen)
-//               → Vorschlag
+//               → bei Sol-Fehler genau ein Terra-Versuch
+//                 → harte Vorgaben prüfen, höchstens eine Korrektur
+//                   → Vorschlag, offene Verletzungen als warnungen
 //
 // Jeder Schritt kann scheitern, und jeder Fehlschlag endet in einem Satz für
 // Reisende – nie in einem leeren Vorschlag. Das ist die eigentliche Anforderung:
@@ -33,16 +35,17 @@
 // Die Reihenfolge von Abschluss und Prüfung
 // ---------------------------------------------------------------------------
 //
-// `abschliessen()` läuft **einmal**, mit der Klasse, die am Ende feststeht. Ein
-// Aufruf, dessen Antwort das Schema verletzt, wird als `schema` protokolliert
-// und nicht als `erfolg` – er hat dasselbe Geld gekostet, und wer später
-// nachsieht, warum die Kosten stiegen, soll den Unterschied sehen.
+// `abschliessen()` läuft **einmal je Aufruf**, mit der Klasse, die für diesen
+// Aufruf feststeht. Ein Aufruf, dessen Antwort das Schema verletzt, wird als
+// `schema` protokolliert und nicht als `erfolg`. Ein Sol-Fehler darf genau
+// einen Terra-Versuch auslösen – keine Schleife. Eine klare Vorgabeverletzung
+// darf genau eine Korrektur auslösen, danach bleiben offene Punkte sichtbar.
 //
 // Frei von Next, Supabase und `process.env`.
 
 import type { Modellanfrage, Modellergebnis } from '@/lib/modell/aufruf'
-import type { Ergebnisklasse, Modellzustand } from '@/lib/modell/konfiguration'
-import type { Tokennutzung } from '@/lib/modell/preise'
+import type { Denkaufwand, Ergebnisklasse, Modellzustand } from '@/lib/modell/konfiguration'
+import type { Modellname, Tokennutzung } from '@/lib/modell/preise'
 import {
   VORSCHLAG_FASSUNG,
   VORSCHLAG_JSON_SCHEMA,
@@ -52,10 +55,11 @@ import {
   type Reisevorschlag,
 } from '@/lib/reisevorschlag/schema'
 import { systemregeln } from '@/lib/reisevorschlag/regeln'
+import { korrekturtext, vorgabenAus, vorgabenPruefen } from '@/lib/reisevorschlag/vorgaben'
 import { GRENZEN } from '@/lib/trips/schema'
 
 export type Vorschlagsergebnis =
-  | { ok: true; vorschlag: Reisevorschlag }
+  | { ok: true; vorschlag: Reisevorschlag; warnungen: string[] }
   /** `klasse` ist für Protokoll und Test, `meldung` für den Bildschirm. */
   | { ok: false; meldung: string; klasse: Ergebnisklasse | 'gesperrt' | 'eingabe' }
 
@@ -68,7 +72,9 @@ export type Vorschlagsergebnis =
 export type Werkzeuge = {
   zustand: Modellzustand
   /** Bucht den Aufruf, bevor er geschieht. Ein Nein ist ein Nein. */
-  beanspruchen: () => Promise<{ ok: true; id: string } | { ok: false; meldung: string }>
+  beanspruchen: (
+    modell: Modellname,
+  ) => Promise<{ ok: true; id: string } | { ok: false; meldung: string }>
   abschliessen: (
     id: string,
     klasse: Ergebnisklasse,
@@ -124,6 +130,77 @@ function alsObjekt(text: string): unknown {
   }
 }
 
+const FALLBACK_KLASSEN = [
+  'zeitueberschreitung',
+  'netz',
+  'anbieter-5xx',
+  'abgeschnitten',
+] as const satisfies readonly Ergebnisklasse[]
+
+function terraNachziehen(
+  klasse: Ergebnisklasse | 'gesperrt' | 'eingabe',
+): klasse is (typeof FALLBACK_KLASSEN)[number] {
+  return (FALLBACK_KLASSEN as readonly string[]).includes(klasse)
+}
+
+function alsVorschlag(
+  roh: unknown,
+  reisewunsch: string,
+): Reisevorschlag | null {
+  const geprueft = modellvorschlagSchema.safeParse(roh)
+  if (!geprueft.success) return null
+  return {
+    ...geprueft.data,
+    fassung: VORSCHLAG_FASSUNG,
+    reisewunsch: reisewunsch.slice(0, GRENZEN.reisewunsch) || null,
+  }
+}
+
+async function einmalPlanen(
+  modell: Modellname,
+  aufwand: Denkaufwand,
+  nutzertext: string,
+  werkzeuge: Werkzeuge,
+): Promise<
+  | { ok: true; vorschlag: Reisevorschlag }
+  | { ok: false; klasse: Ergebnisklasse | 'gesperrt'; meldung: string }
+> {
+  const gebucht = await werkzeuge.beanspruchen(modell)
+  if (!gebucht.ok) return { ok: false, klasse: 'gesperrt', meldung: gebucht.meldung }
+
+  const ergebnis = await werkzeuge.aufrufen({
+    modell,
+    aufwand,
+    systemregeln: systemregeln(werkzeuge.heute),
+    nutzertext,
+    schemaName: VORSCHLAG_SCHEMA_NAME,
+    jsonSchema: VORSCHLAG_JSON_SCHEMA,
+  })
+
+  const beenden = (klasse: Ergebnisklasse) =>
+    werkzeuge.abschliessen(gebucht.id, klasse, ergebnis.nutzung, ergebnis.laufzeitMs)
+
+  if (!ergebnis.ok) {
+    await beenden(ergebnis.klasse)
+    return { ok: false, klasse: ergebnis.klasse, meldung: MELDUNGEN[ergebnis.klasse] }
+  }
+
+  const roh = alsObjekt(ergebnis.text)
+  if (roh === null) {
+    await beenden('ungueltige-antwort')
+    return { ok: false, klasse: 'ungueltige-antwort', meldung: MELDUNGEN['ungueltige-antwort'] }
+  }
+
+  const vorschlag = alsVorschlag(roh, nutzertext)
+  if (!vorschlag) {
+    await beenden('schema')
+    return { ok: false, klasse: 'schema', meldung: MELDUNGEN.schema }
+  }
+
+  await beenden('erfolg')
+  return { ok: true, vorschlag }
+}
+
 /**
  * Erzeugt einen Reisevorschlag aus einer freien Beschreibung.
  *
@@ -154,53 +231,48 @@ export async function reisevorschlagErzeugen(
     }
   }
 
-  const gebucht = await werkzeuge.beanspruchen()
-  if (!gebucht.ok) return { ok: false, klasse: 'gesperrt', meldung: gebucht.meldung }
+  let modell = werkzeuge.zustand.modell
+  const aufwand = werkzeuge.zustand.aufwand
 
-  const ergebnis = await werkzeuge.aufrufen({
-    modell: werkzeuge.zustand.modell,
-    aufwand: werkzeuge.zustand.aufwand,
-    systemregeln: systemregeln(werkzeuge.heute),
-    nutzertext: beschreibung.data,
-    schemaName: VORSCHLAG_SCHEMA_NAME,
-    jsonSchema: VORSCHLAG_JSON_SCHEMA,
-  })
+  let geplant = await einmalPlanen(modell, aufwand, beschreibung.data, werkzeuge)
 
-  // Ab hier ist der Aufruf bezahlt. Jeder Ausgang schliesst die Nutzung ab, und
-  // zwar genau einmal – auch der Erfolg.
-  const beenden = (klasse: Ergebnisklasse) =>
-    werkzeuge.abschliessen(gebucht.id, klasse, ergebnis.nutzung, ergebnis.laufzeitMs)
-
-  if (!ergebnis.ok) {
-    await beenden(ergebnis.klasse)
-    return { ok: false, klasse: ergebnis.klasse, meldung: MELDUNGEN[ergebnis.klasse] }
+  // Ein Sol-Fehler bekommt genau einen Terra-Versuch. Keine Schleife.
+  if (!geplant.ok && terraNachziehen(geplant.klasse) && modell === 'gpt-5.6-sol') {
+    const fallback = await einmalPlanen('gpt-5.6-terra', aufwand, beschreibung.data, werkzeuge)
+    if (fallback.ok) {
+      geplant = fallback
+      modell = 'gpt-5.6-terra'
+    } else {
+      return fallback
+    }
   }
 
-  const roh = alsObjekt(ergebnis.text)
-  if (roh === null) {
-    await beenden('ungueltige-antwort')
-    return { ok: false, klasse: 'ungueltige-antwort', meldung: MELDUNGEN['ungueltige-antwort'] }
+  if (!geplant.ok) return geplant
+
+  const vorgaben = vorgabenAus(beschreibung.data)
+  const verstoesse = vorgabenPruefen(geplant.vorschlag, vorgaben)
+  if (verstoesse.length === 0) {
+    return { ok: true, vorschlag: geplant.vorschlag, warnungen: [] }
   }
 
-  // Die zweite Instanz. `strict: true` hat die Form zugesagt, nicht den Inhalt.
-  const geprueft = modellvorschlagSchema.safeParse(roh)
-  if (!geprueft.success) {
-    await beenden('schema')
-    return { ok: false, klasse: 'schema', meldung: MELDUNGEN.schema }
+  const korrektur = await einmalPlanen(
+    modell,
+    aufwand,
+    korrekturtext(beschreibung.data, verstoesse),
+    werkzeuge,
+  )
+  if (!korrektur.ok) {
+    return {
+      ok: true,
+      vorschlag: geplant.vorschlag,
+      warnungen: verstoesse.map((verstoss) => verstoss.meldung),
+    }
   }
 
-  await beenden('erfolg')
-
+  const erneut = vorgabenPruefen(korrektur.vorschlag, vorgaben)
   return {
     ok: true,
-    vorschlag: {
-      ...geprueft.data,
-      fassung: VORSCHLAG_FASSUNG,
-      // Der Reisewunsch ist der Text des Nutzers, geprüft und bereinigt – nicht
-      // das, was das Modell daraus gemacht hat. Er wird beim Übernehmen zu
-      // `trips.travel_wish` und ist auf `GRENZEN.reisewunsch` gekürzt, weil die
-      // Beschreibung länger sein darf als das gespeicherte Feld.
-      reisewunsch: beschreibung.data.slice(0, GRENZEN.reisewunsch) || null,
-    },
+    vorschlag: korrektur.vorschlag,
+    warnungen: erneut.map((verstoss) => verstoss.meldung),
   }
 }

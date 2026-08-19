@@ -29,6 +29,12 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic'
 
+/**
+ * Sol 120 s plus Terra-Fallback. Next.js verlangt hier ein Literal;
+ * dieselbe Zahl steht in `SEITEN_DAUER_S` (`lib/modell/konfiguration.ts`).
+ */
+export const maxDuration = 300
+
 type PlanenSeiteProps = {
   searchParams?: {
     idee?: string | string[]

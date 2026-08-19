@@ -479,7 +479,7 @@ Höchste Produktpriorität: **natürliche Sprache zu strukturierter Reise.**
 
 ### 2.1 Freitext zu strukturiertem Reisevorschlag · abgeschlossen auf Development, Modellweg abgeschaltet
 
-Vollständige Beschreibung: [docs/MODELL.md](docs/MODELL.md). Entscheidungen: [DECISIONS.md](DECISIONS.md) ADR-0050 bis ADR-0055.
+Vollständige Beschreibung: [docs/MODELL.md](docs/MODELL.md). Entscheidungen: [DECISIONS.md](DECISIONS.md) ADR-0050 bis ADR-0056.
 
 - [x] Reiseidee in Freitext erfassen und strukturiert interpretieren – Abreiseort, Ziele, Zeitraum oder Dauer, Reisende, Währung, Budgetziel, Tempo, Interessen, besondere Wünsche
 - [x] strukturierten Reisevorschlag mit Etappen, Tagen und Planpunkten erzeugen, direkt abbildbar auf das Reiseschema aus Phase 1.5
@@ -488,20 +488,22 @@ Vollständige Beschreibung: [docs/MODELL.md](docs/MODELL.md). Entscheidungen: [D
 - [x] Übernahme über die bestehende Persistenz: `public.reise_anlegen()` im Konto, `gastreiseAblegen()` als Gast, Idempotenz über `client_ref` – keine zweite Persistenz für Modellreisen
 - [x] Modelloutput als untrusted input: JSON-Schema mit `strict: true`, danach Zod mit den fachlichen Grenzen des Reiseschemas, dieselbe Prüfung noch einmal beim Übernehmen, versionierte Fassung (ADR-0053)
 - [x] keine erfundenen Live-Angebote: Preis-, Anbieter- und Buchungsfelder existieren im Vorschlagsschema nicht, Beträge werden aus Freitexten entfernt, ein genanntes Budget bleibt ein Ziel (ADR-0054)
-- [x] Kostenkontrolle nach [AGENTS.md](AGENTS.md) Regel 17: Kill Switch, 4 Aufrufe je Kennung und Stunde, 8 je Tag, 24 für alle Gäste, 38 insgesamt, Kostendeckel $3.00 je Tag, 2000 Zeichen Eingabe, 6000 Ausgabetokens, 40 s Zeitgrenze, neun Ergebnisklassen, Nutzungsprotokoll
+- [x] Kostenkontrolle nach [AGENTS.md](AGENTS.md) Regel 17: Kill Switch, 4 Aufrufe je Kennung und Stunde, 8 je Tag, 24 für alle Gäste, 38 insgesamt, Kostendeckel $3.00 je Tag, 2000 Zeichen Eingabe, 6000 Ausgabetokens, Terra/Luna 90 s und Sol 120 s, neun Ergebnisklassen, Nutzungsprotokoll
 - [x] die Kostenschranke liegt in der Datenbank und ist race-condition-sicher: Reservierung **vor** dem Aufruf, serialisiert über `pg_advisory_xact_lock` (ADR-0052)
 - [x] Gaststrategie ohne Gastkonto und ohne neue kostenpflichtige Infrastruktur: Cookie-Kennung, in der Datenbank nur als SHA-256, eigener kleinerer Tagestopf gegen rotierende Kennungen
-- [x] 256 Tests ohne einen Modellaufruf, dazu 16 Nachweise gegen die echte Datenbank (`npm run db:kontingent`)
+- [x] 618 Tests ohne einen Modellaufruf, dazu 16 Nachweise gegen die echte Datenbank (`npm run db:kontingent`)
 - [x] Prompt-Injection als Testfall: Regeln ignorieren, Systemregeln ausgeben lassen, HTML und SQL im Text
 - [x] das bestehende Formular unter `/planen` bleibt unverändert nutzbar und ist der Weg, der auch ohne Modell funktioniert
 
-**Nachtrag 19. August 2026.** Direkter anonymer PostgREST-/RPC-Zugriff darf kein Kontingent mehr reservieren: `EXECUTE` nur noch `service_role`, Server Action bleibt der Gastweg (ADR-0052). ADR-0050 unterscheidet Doppelklick/Retry von einem Reload in der Vorschau. Preview hat Schlüssel und Kill Switch; Production bleibt aus. Die Development-Migration `20260819010000` ist angewendet; die datenbanknahen Nachweise sind gegen den Development-Branch grün. Die Terra/Luna-Messung ist gelaufen: Vorgabe `gpt-5.6-luna` / `low`, Terra bleibt Fallback (ADR-0051).
+**Nachtrag 19. August 2026.** Direkter anonymer PostgREST-/RPC-Zugriff darf kein Kontingent mehr reservieren: `EXECUTE` nur noch `service_role`, Server Action bleibt der Gastweg (ADR-0052). ADR-0050 unterscheidet Doppelklick/Retry von einem Reload in der Vorschau. Preview hat Schlüssel und Kill Switch; Production bleibt aus. Die Development-Migration `20260819010000` ist angewendet; die datenbanknahen Nachweise sind gegen den Development-Branch grün.
+
+**Nachtrag Modellstrategie, 19. August 2026.** Die Drei-Fixture-Messung hatte Luna als Vorgabe gesetzt. Die spätere Fünf-Fälle-Messung (`reasoning.effort: low`) hat das geändert: Terra ist Standard, Sol übernimmt komplexe Abwägungen, Luna plant keine komplette Reise automatisch. 40 s kommen nicht zurück; Sol hat 120 s hart. Genau ein Terra-Fallback, genau eine Vorgabe-Korrektur, Progressive Loading auf `/planen` (ADR-0056). Production unverändert aus.
 
 **Nachweise.** Der Abschlusslauf der Phase, die datenbanknahen Teile gegen den Development-Branch:
 
 | Prüfung | Ergebnis |
 | --- | --- |
-| `npm test` | 595 Tests in 125 Gruppen, davon die Modell- und Vorschlagsschicht plus drei Dateitests auf den Nachtrag – kein Lauf ruft ein Modell |
+| `npm test` | 618 Tests in 131 Gruppen, inklusive Routing, Vorgabenprüfung, Fortschritt, Fallback und Korrektur – kein Lauf ruft ein Modell |
 | `npm run db:kontingent` | 16 von 16 Nachweisen erfüllt: jede der fünf Grenzen einzeln, 6 gleichzeitige Sitzungen auf einen freien Platz, Abschluss, Doppelabschluss, fremde Kennung, Identität eines Kontos |
 | `npm run db:sicherheit` | 149 von 149 Nachweisen erfüllt, darin der SQL-Negativfall und der echte PostgREST-Aufruf gegen die Kontingent-RPCs |
 | `npm run db:reproduzierbarkeit` | Wiederaufbau aus den versionierten Migrationen gleich dem laufenden Schema |
@@ -518,7 +520,8 @@ Offen aus 2.1:
 
 - [x] `OPENAI_API_KEY` in der Preview-Umgebung hinterlegen (`JETNITY_MODELL_AKTIV=true`, Hard Spend Limit $5) – Production unverändert aus
 - [x] Gast-Kontingent nicht mehr über direkten anon-RPC erreichbar (Nachtrag ADR-0052)
-- [x] `npm run modell:probe` gegen `gpt-5.6-terra` und `gpt-5.6-luna` mit Ideen 1, 2 und 7 – Vorgabe `gpt-5.6-luna` / `low` (ADR-0051)
+- [x] `npm run modell:probe` gegen `gpt-5.6-terra` und `gpt-5.6-luna` mit Ideen 1, 2 und 7 – frühe Vorgabe, später durch ADR-0056 ersetzt
+- [x] Sol/Terra auf fünf vollständigen Planungsfällen gemessen; Routing, 120-s-Sol-Grenze, Vorgabeprüfung und Progressive Loading (ADR-0056)
 - [ ] Aufbewahrungsfrist für `public.model_usage` entscheiden – sie gehört zur Freigabe, nicht zur Implementierung (ADR-0052)
 - [ ] Entscheidung über die Aktivierung in Production – die Modellwahl ist gemessen, Production bleibt aus
 

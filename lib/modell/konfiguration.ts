@@ -72,8 +72,17 @@ export const MODELL_GRENZEN = {
   /** Obergrenze der Eingabe für die Kostenreservierung – Systemregeln plus Freitext. */
   eingabeTokensSchaetzung: 2600,
 
-  /** Abbruch des Aufrufs. Muss unter `maxDuration` der aufrufenden Seite bleiben. */
-  timeoutMs: 40_000,
+  /**
+   * Abbruch für Terra und Luna. Gemessene Terra-Läufe lagen unter 45 s.
+   * 60–90 s bleiben zulässig. Muss unter `maxDuration` der Seite bleiben.
+   */
+  timeoutMs: 90_000,
+
+  /**
+   * Harte Obergrenze für Sol. Komplexe Pläne brauchten 50–90 s.
+   * 90–120 s sind Reserve, kein künstliches Warten.
+   */
+  timeoutMsSol: 120_000,
 
   /** Aufrufe je Kennung (Konto oder Gastkennung) und Stunde. */
   jeKennungStunde: 4,
@@ -121,8 +130,24 @@ export type Modellzustand =
   | { aktiv: true; modell: Modellname; aufwand: Denkaufwand }
   | { aktiv: false; grund: Abschaltgrund }
 
-/** Das Modell, wenn die Umgebung keines nennt. Gemessen in DECISIONS.md ADR-0051. */
-export const MODELL_VORGABE: Modellname = 'gpt-5.6-luna'
+/** Fallback und Stift-Vorgabe, wenn kein Routing greift. ADR-0051. */
+export const MODELL_VORGABE: Modellname = 'gpt-5.6-terra'
+
+/**
+ * Obere Laufzeit der Planungsseite und der Server Action, in Sekunden.
+ *
+ * Muss Sol-Timeout plus einen Terra-Fallback tragen. 300 s ist die Grenze von
+ * Vercel Pro; Hobby schneidet bei 60 s ab und reicht für Sol nicht.
+ *
+ * Next.js liest `export const maxDuration` nur als Literal. In
+ * `app/(public)/planen/page.tsx` steht deshalb `300`, nicht diese Konstante.
+ */
+export const SEITEN_DAUER_S = 300
+
+/** Harte Zeitgrenze des gewählten Modells. Kein künstliches Minimum. */
+export function timeoutMsFuer(modell: Modellname): number {
+  return modell === 'gpt-5.6-sol' ? MODELL_GRENZEN.timeoutMsSol : MODELL_GRENZEN.timeoutMs
+}
 
 /** Der Denkaufwand, wenn die Umgebung keinen nennt. */
 export const AUFWAND_VORGABE: Denkaufwand = 'low'

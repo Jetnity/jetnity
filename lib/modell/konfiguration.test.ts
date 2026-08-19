@@ -15,6 +15,8 @@
 
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 
 import {
   AUFWAND_VORGABE,
@@ -22,7 +24,9 @@ import {
   ERGEBNISKLASSEN,
   MODELL_GRENZEN,
   MODELL_VORGABE,
+  SEITEN_DAUER_S,
   modellZustand,
+  timeoutMsFuer,
   type Modellumgebung,
 } from '@/lib/modell/konfiguration'
 import { MODELLE } from '@/lib/modell/preise'
@@ -143,10 +147,23 @@ describe('Die Modellwahl', () => {
 })
 
 describe('Die Grenzen sind in sich stimmig', () => {
-  test('die Zeitgrenze liegt unter einer Minute', () => {
-    // Sie muss unter `maxDuration` der aufrufenden Seite bleiben. Eine Server
-    // Action auf Vercel hat auf dem Hobby-Plan 60 Sekunden.
-    assert.ok(MODELL_GRENZEN.timeoutMs < 60_000)
+  test('Terra und Luna enden nach 90 Sekunden, Sol nach 120', () => {
+    // Die Seite muss Sol plus einen Terra-Fallback aushalten. Ein Timeout über
+    // maxDuration wäre wirkungslos; eines darunter lässt den Fallback zu.
+    assert.equal(MODELL_GRENZEN.timeoutMs, 90_000)
+    assert.equal(MODELL_GRENZEN.timeoutMsSol, 120_000)
+    assert.equal(timeoutMsFuer('gpt-5.6-terra'), 90_000)
+    assert.equal(timeoutMsFuer('gpt-5.6-luna'), 90_000)
+    assert.equal(timeoutMsFuer('gpt-5.6-sol'), 120_000)
+    assert.equal(SEITEN_DAUER_S, 300)
+    assert.ok(
+      MODELL_GRENZEN.timeoutMsSol + MODELL_GRENZEN.timeoutMs < SEITEN_DAUER_S * 1000,
+      'sonst stirbt der Terra-Fallback mit dem Sol-Timeout',
+    )
+    // Next.js akzeptiert bei maxDuration nur ein Literal. Die Zahl muss
+    // trotzdem dieselbe sein wie `SEITEN_DAUER_S`.
+    const seite = readFileSync(join(process.cwd(), 'app/(public)/planen/page.tsx'), 'utf8')
+    assert.match(seite, new RegExp(`export const maxDuration = ${SEITEN_DAUER_S}\\b`))
   })
 
   test('die Eingabeschätzung deckt die längste erlaubte Beschreibung', () => {

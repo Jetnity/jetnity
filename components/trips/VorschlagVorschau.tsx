@@ -41,6 +41,8 @@ import { cn } from '@/lib/utils'
 
 type VorschlagVorschauProps = {
   vorschlag: Reisevorschlag
+  /** Harte Vorgaben, die nach einer Korrektur noch offen sind. Kein „perfekt“. */
+  warnungen?: string[]
   laeuft: boolean
   angemeldet: boolean
   onUebernehmen: () => void
@@ -88,6 +90,7 @@ function Angabe({
 
 export default function VorschlagVorschau({
   vorschlag,
+  warnungen = [],
   laeuft,
   angemeldet,
   onUebernehmen,
@@ -146,6 +149,21 @@ export default function VorschlagVorschau({
           </span>
         ))}
       </div>
+
+      {warnungen.length > 0 && (
+        <div className="mt-6 rounded-2xl border border-line-300 bg-surface-75 p-4" role="status">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-800">
+            Noch nicht vollständig erfüllt
+          </p>
+          <ul className="mt-3 space-y-1.5">
+            {warnungen.map((warnung) => (
+              <li key={warnung} className="text-sm leading-6 text-ink-950">
+                {warnung}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {vorschlag.annahmen.length > 0 && (
         <div className="mt-6 rounded-2xl bg-surface-25 p-4">
