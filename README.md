@@ -75,7 +75,7 @@ Optional und standardmässig leer, für die intelligente Reiseplanung aus Phase 
 
 - `JETNITY_MODELL_AKTIV` – Kill Switch. Nur `true` oder `1` schalten ein
 - `OPENAI_API_KEY` – serverseitig. Mit Phase 1.1b war die Variable entfallen, weil es keinen Modellpfad mehr gab; seit Phase 2.1 gibt es wieder einen, abgeschaltet
-- `JETNITY_MODELL_NAME`, `JETNITY_MODELL_AUFWAND` – optional, Vorgabe `gpt-5.6-terra` mit `low`
+- `JETNITY_MODELL_NAME`, `JETNITY_MODELL_AUFWAND` – optional, Vorgabe `gpt-5.6-luna` mit `low`; `gpt-5.6-terra` bleibt wählbar
 
 Ohne diese Variablen läuft Jetnity vollständig; nur die freie Reisebeschreibung meldet, dass sie nicht freigegeben ist. Es gibt keine `NEXT_PUBLIC_OPENAI_*`-Variable und keinen Modellaufruf im Browser. Die Grenzen und Kostendeckel stehen bewusst **nicht** in der Umgebung, sondern in der Datenbank ([docs/MODELL.md](docs/MODELL.md)).
 

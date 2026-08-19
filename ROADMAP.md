@@ -495,7 +495,7 @@ Vollständige Beschreibung: [docs/MODELL.md](docs/MODELL.md). Entscheidungen: [D
 - [x] Prompt-Injection als Testfall: Regeln ignorieren, Systemregeln ausgeben lassen, HTML und SQL im Text
 - [x] das bestehende Formular unter `/planen` bleibt unverändert nutzbar und ist der Weg, der auch ohne Modell funktioniert
 
-**Nachtrag 19. August 2026.** Direkter anonymer PostgREST-/RPC-Zugriff darf kein Kontingent mehr reservieren: `EXECUTE` nur noch `service_role`, Server Action bleibt der Gastweg (ADR-0052). ADR-0050 unterscheidet Doppelklick/Retry von einem Reload in der Vorschau. Preview hat Schlüssel und Kill Switch; Production bleibt aus. Die Development-Migration `20260819010000` ist angewendet; die datenbanknahen Nachweise (Sicherheit, Kontingent, Rechte, RLS, Parallelität, Reproduzierbarkeit, Typen, Advisors) sind gegen den Development-Branch grün. Die echte Terra/Luna-Messung ist vorbereitet und noch nicht gelaufen – `npm run modell:probe` braucht einen injizierbaren `OPENAI_API_KEY` plus Management-Zugang, und der Preview-Schlüssel ist Sensitive.
+**Nachtrag 19. August 2026.** Direkter anonymer PostgREST-/RPC-Zugriff darf kein Kontingent mehr reservieren: `EXECUTE` nur noch `service_role`, Server Action bleibt der Gastweg (ADR-0052). ADR-0050 unterscheidet Doppelklick/Retry von einem Reload in der Vorschau. Preview hat Schlüssel und Kill Switch; Production bleibt aus. Die Development-Migration `20260819010000` ist angewendet; die datenbanknahen Nachweise sind gegen den Development-Branch grün. Die Terra/Luna-Messung ist gelaufen: Vorgabe `gpt-5.6-luna` / `low`, Terra bleibt Fallback (ADR-0051).
 
 **Nachweise.** Der Abschlusslauf der Phase, die datenbanknahen Teile gegen den Development-Branch:
 
@@ -518,9 +518,9 @@ Offen aus 2.1:
 
 - [x] `OPENAI_API_KEY` in der Preview-Umgebung hinterlegen (`JETNITY_MODELL_AKTIV=true`, Hard Spend Limit $5) – Production unverändert aus
 - [x] Gast-Kontingent nicht mehr über direkten anon-RPC erreichbar (Nachtrag ADR-0052)
-- [ ] `npm run modell:probe` gegen `gpt-5.6-terra` und `gpt-5.6-luna` mit wenigen Fixtures – die Modellwahl ist begründet, nicht gemessen (ADR-0051)
+- [x] `npm run modell:probe` gegen `gpt-5.6-terra` und `gpt-5.6-luna` mit Ideen 1, 2 und 7 – Vorgabe `gpt-5.6-luna` / `low` (ADR-0051)
 - [ ] Aufbewahrungsfrist für `public.model_usage` entscheiden – sie gehört zur Freigabe, nicht zur Implementierung (ADR-0052)
-- [ ] Entscheidung über die Aktivierung in Production, nach den Messungen
+- [ ] Entscheidung über die Aktivierung in Production – die Modellwahl ist gemessen, Production bleibt aus
 
 ### 2.2 Bestehende Reise per Sprache ändern · als Nächstes
 

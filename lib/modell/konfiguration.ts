@@ -121,8 +121,8 @@ export type Modellzustand =
   | { aktiv: true; modell: Modellname; aufwand: Denkaufwand }
   | { aktiv: false; grund: Abschaltgrund }
 
-/** Das Modell, wenn die Umgebung keines nennt. Begründung in DECISIONS.md ADR-0051. */
-export const MODELL_VORGABE: Modellname = 'gpt-5.6-terra'
+/** Das Modell, wenn die Umgebung keines nennt. Gemessen in DECISIONS.md ADR-0051. */
+export const MODELL_VORGABE: Modellname = 'gpt-5.6-luna'
 
 /** Der Denkaufwand, wenn die Umgebung keinen nennt. */
 export const AUFWAND_VORGABE: Denkaufwand = 'low'

@@ -60,7 +60,7 @@ Jetnity benutzt die **Responses API** mit `text.format.type: 'json_schema'` und 
 
 | Variable | Vorgabe | Zulässig |
 | --- | --- | --- |
-| `JETNITY_MODELL_NAME` | `gpt-5.6-terra` | `gpt-5.6-luna`, `gpt-5.6-terra`, `gpt-5.6-sol` |
+| `JETNITY_MODELL_NAME` | `gpt-5.6-luna` | `gpt-5.6-luna`, `gpt-5.6-terra`, `gpt-5.6-sol` |
 | `JETNITY_MODELL_AUFWAND` | `low` | `none`, `low`, `medium` |
 
 `high`, `xhigh` und `max` sind nicht zugelassen. Der Grund ist nicht Sparsamkeit: `max_output_tokens` begrenzt die Ausgabe **einschliesslich** der Denk-Tokens. Ein Aufruf, der sein Ausgabebudget im Denken verbraucht, endet als `incomplete` – bezahlt, ohne einen Vorschlag geliefert zu haben.
@@ -81,11 +81,9 @@ Was ein Reisevorschlag kostet, bei 2600 Eingabe- und 6000 Ausgabetokens im schle
 | `gpt-5.6-terra` | $0.0772 | $0.0472 | $0.0436 |
 | `gpt-5.6-sol` | $0.1930 | $0.1180 | $0.1090 |
 
-Die Zahl des schlechtesten Falls ist die einzige belastbare: Sie wird vor dem Aufruf gebucht (Abschnitt 4). Die beiden anderen sind Schätzungen und **nicht gemessen** – Preview hat einen Schlüssel, `npm run modell:probe` ist aber noch nicht gegen `terra` und `luna` gelaufen (Abschnitt 8).
+Die Zahl des schlechtesten Falls bleibt die einzige belastbare Obergrenze: Sie wird vor dem Aufruf gebucht (Abschnitt 4). Die gemessenen Läufe vom 19. August 2026 lagen deutlich darunter (Abschnitt 8).
 
-**Warum `gpt-5.6-terra` die Vorgabe ist,** und nicht das zwanzigfach billigere `luna`: Ein Reisevorschlag ist keine Umformatierung. Er verlangt Geografie („Bangkok, Chiang Mai, Krabi in sieben Tagen“ ist eine andere Reise als „Bangkok, Krabi, Chiang Mai“), eine Vorstellung von Wegen und Entfernungen und das Einhalten mehrerer Bedingungen gleichzeitig. Ein Vorschlag, der 4 Cent kostet und brauchbar ist, ist besser als drei Vorschläge zu 0,5 Cent, von denen keiner überzeugt.
-
-Diese Wahl ist **nicht belegt**, sondern begründet. Der Vergleich ist vorbereitet: wenige Fixtures über `npm run modell:probe` gegen `gpt-5.6-terra` und `gpt-5.6-luna` (ADR-0051). Er ist noch nicht gelaufen.
+**Warum `gpt-5.6-luna` die Vorgabe ist:** Sechs `npm run modell:probe`-Läufe gegen Ideen 1, 2 und 7, beide Modelle, `reasoning.effort: low`. Alle sechs endeten mit Klasse `erfolg`, gültigem Schema und geprüfter Abbildung auf `public.reise_anlegen()`. Luna lieferte auf derselben Aufgabe eine brauchbare Reise – Etappen lückenlos, Annahmen gekennzeichnet, Budget und Tempo aus dem Text – und kostete auf den drei Fixtures zusammen USD 0.0054. Terra blieb auf der kürzesten Idee allein bei USD 0.0050. 6000 Ausgabetokens reichten (Maximum 2104). `gpt-5.6-terra` bleibt über `JETNITY_MODELL_NAME` wählbar, ist aber nicht mehr die Vorgabe (ADR-0051).
 
 ---
 
@@ -224,7 +222,7 @@ Neun Ergebnisklassen stehen in `ERGEBNISKLASSEN` und als `CHECK` auf `model_usag
 | Spalte | Inhalt |
 | --- | --- |
 | `funktion` | `reisevorschlag` – die eine Funktion dieser Phase |
-| `modell` | `gpt-5.6-terra` usw. |
+| `modell` | `gpt-5.6-luna` usw. |
 | `art` | `konto` oder `gast` |
 | `kennung_hash` | SHA-256 der Kontokennung oder der Gastkennung, 64 Hexzeichen |
 | `ergebnis` | `reserviert` oder eine der neun Klassen |
@@ -253,22 +251,33 @@ Drei Dinge müssen zusammenkommen, sonst ruft `modellZustand()` nichts auf und n
 | --- | --- |
 | `JETNITY_MODELL_AKTIV` | `true` oder `1` |
 | `OPENAI_API_KEY` | ein Schlüssel mit Zugang zur Responses API |
-| `JETNITY_MODELL_NAME` | leer (dann `gpt-5.6-terra`) oder eines der drei Modelle |
+| `JETNITY_MODELL_NAME` | leer (dann `gpt-5.6-luna`) oder eines der drei Modelle |
 | `SUPABASE_SERVICE_ROLE_KEY` | serverseitig; ohne ihn kann die Server Action kein Kontingent buchen |
 
 Fehlt etwas, ist das kein Laufzeitfehler, sondern der Normalzustand einer Umgebung, in der die Funktion nicht laufen soll. Die Oberfläche sagt es ehrlich. Das Formular unter `/planen` bleibt vollständig benutzbar.
 
 **Preview:** `OPENAI_API_KEY` (Sensitive) und `JETNITY_MODELL_AKTIV=true` sind gesetzt. Das OpenAI-Projekt *Jetnity Development* hat ein Hard Spend Limit von $5. Production bleibt ohne Aktivierung.
 
-**Production** hat keinen Kill Switch und bekommt ihn nicht, bevor die Modellwahl gemessen ist.
+**Production** hat keinen Kill Switch. Die Modellwahl ist gemessen; die Freigabe in Production bleibt eine eigene Entscheidung.
 
 Es gibt keine `NEXT_PUBLIC_OPENAI_*`-Variable und keinen Modellaufruf im Browser. Der Schlüssel wird in `lib/modell/aufruf.ts` gelesen und verlässt diese Datei nicht; er steht in keinem Rückgabewert, keiner Fehlermeldung und keinem Protokoll.
 
 ### Vergleich terra / luna
 
-Vorbereitet ist `npm run modell:probe` gegen dieselben Fixtures, dasselbe Schema und dieselbe Kostenschranke. Der Lauf gehört nicht in die CI. Ohne injizierbaren Schlüssel und ohne Management-Zugang für das Kontingent bricht er ab, statt Zahlen zu erfinden. Der Preview-Schlüssel ist Sensitive und lokal nicht lesbar.
+Gemessen am 19. August 2026 mit `npm run modell:probe`, dieselben Fixtures, dasselbe Schema, dieselbe Kostenschranke, `reasoning.effort: low`. Der Lauf gehört nicht in die CI.
 
-Die Vorgabe bleibt `gpt-5.6-terra` mit `reasoning.effort: low`, solange kein gemessener Vergleich vorliegt (ADR-0051).
+| Modell | Idee | Laufzeit | Tokens ein (gecacht) | Tokens aus | Kosten | Abbildung |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| `gpt-5.6-terra` | 1 vollständig | — | — | — | — | Klasse `erfolg`, Abbildung geprüft |
+| `gpt-5.6-terra` | 2 mehrere Ziele | — | — | — | — | 3 Etappen, 14 Tage, 51 Punkte, Klasse `erfolg` |
+| `gpt-5.6-terra` | 7 unbestimmt | 7 123 ms | 1 595 (1 578) | 389 | USD 0.0050 | 1 Etappe, 3 Tage, 7 Punkte, Klasse `erfolg` |
+| `gpt-5.6-luna` | 1 vollständig | 10 874 ms | 1 611 (0) | 1 290 | USD 0.0019 | 1 Etappe, 7 Tage, 26 Punkte, Klasse `erfolg` |
+| `gpt-5.6-luna` | 2 mehrere Ziele | 16 717 ms | 1 612 (1 578) | 2 104 | USD 0.0026 | 3 Etappen, 14 Tage, 42 Punkte, Klasse `erfolg` |
+| `gpt-5.6-luna` | 7 unbestimmt | 7 030 ms | 1 595 (1 578) | 695 | USD 0.0009 | 1 Etappe, 4 Tage, 12 Punkte, Klasse `erfolg` |
+
+Terra-Idee 1 und die Kostenzeile von Terra-Idee 2 sind im lokalen Terminal-Scrollback nicht mehr vollständig; beide Läufe endeten laut Abschlusszeile mit Klasse `erfolg` und geprüfter Abbildung. Die drei Luna-Läufe zusammen: **USD 0.0054**. Terra-Idee 7 allein: **USD 0.0050**.
+
+Die Vorgabe ist deshalb `gpt-5.6-luna` mit `reasoning.effort: low`. `gpt-5.6-terra` bleibt über die Umgebung wählbar (ADR-0051).
 
 `npm run modell:probe` läuft **nie** in der CI.
 

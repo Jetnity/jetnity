@@ -359,7 +359,7 @@ Aktuell nur Konsolen-Logging, kein zentrales Error-Tracking und keine strukturie
 | Datenbanknahe Prüfungen laufen nicht in der CI | 5 Prüfungen von Hand | braucht einen kurzlebigen Branch je Lauf, sonst kollidieren die Testkonten |
 | ~~Tests ohne Reisedaten~~ | ~~41 Tests, davon keiner zur Persistenz~~ | in Phase 1.5: 129 Tests in `lib/trips/` ohne Datenbank, dazu 47 Nachweise gegen den Branch |
 | Reise bearbeiten ist noch schmal | Anlegen, Planpunkt hinzufügen und entfernen, Reise löschen | Umbenennen, Umsortieren und Verschieben von Tagen entstehen mit dem Trip Builder in Phase 2 |
-| Modellweg ohne echten Aufruf belegt | 256 Tests gegen Fixtures, 0 Aufrufe gegen OpenAI | Preview hat einen Schlüssel; die Messung terra/luna ist vorbereitet und noch nicht gelaufen. Die Modellwahl bleibt begründet, nicht gemessen (ADR-0051) |
+| Modellweg ohne echten Aufruf belegt | 256 Tests gegen Fixtures, 0 Aufrufe gegen OpenAI | Sechs `modell:probe`-Läufe gemessen. Vorgabe `gpt-5.6-luna` / `low`; Terra bleibt Fallback (ADR-0051) |
 | `model_usage` ohne Aufbewahrungsfrist | höchstens 38 Zeilen am Tag, keine Reiseinhalte | eine Frist gehört zu der Entscheidung, die Funktion einzuschalten. Backlog in [ROADMAP.md](ROADMAP.md), Begründung ADR-0052 |
 | Ein Vorschlag überlebt kein Reload | Zustand einer React-Komponente | bewusst: der Vorschlag ist kein Systemzustand, und ein Verlust kostet einen Aufruf, nicht eine Reise (ADR-0050) |
 | ~~`PublicNavbar` kennt die Sitzung nicht~~ | ~~zeigt immer „Anmelden", kein Abmelden im öffentlichen Bereich~~ | im Nachtrag der Phase 1.5 behoben: Die Leiste liest die Sitzung clientseitig, das öffentliche Layout bleibt statisch (ADR-0047) |

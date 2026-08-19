@@ -39,7 +39,7 @@ import { REISEIDEEN, zuLangerText } from '@/lib/reisevorschlag/fixtures/reiseide
 const IDEE = '7 Tage Thailand ab Zürich, zwei Personen, maximal CHF 3’000, Strand und Essen.'
 const HEUTE = '2026-08-18'
 
-const AKTIV: Modellzustand = { aktiv: true, modell: 'gpt-5.6-terra', aufwand: 'low' }
+const AKTIV: Modellzustand = { aktiv: true, modell: 'gpt-5.6-luna', aufwand: 'low' }
 
 type Protokoll = {
   klasse: Ergebnisklasse

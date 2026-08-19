@@ -1215,12 +1215,12 @@ Zwanzig Tests in `lib/reisevorschlag/uebernahme.test.ts` prüfen genau die Naht:
 
 ---
 
-## ADR-0051 – `gpt-5.6-terra` mit `low`, über die Responses API mit `strict: true`
+## ADR-0051 – Responses API mit `strict: true`; Vorgabe `gpt-5.6-luna` / `low`
 
 **Datum:** 18. August 2026
-**Status:** umgesetzt, Preview-Schlüssel vorhanden, Vergleich nicht gemessen
+**Status:** umgesetzt, gemessen, Vorgabe `gpt-5.6-luna` / `low`
 
-**Entscheidung:** Jetnity ruft die **Responses API** auf (`POST /v1/responses`) und verlangt strukturierte Ausgabe über `text.format` mit `type: 'json_schema'` und `strict: true`. Vorgabe ist `gpt-5.6-terra` mit `reasoning.effort: 'low'`; `JETNITY_MODELL_NAME` und `JETNITY_MODELL_AUFWAND` können sie ändern, aber nur innerhalb von drei Modellen mit bekanntem Preis und drei Aufwandstufen.
+**Entscheidung:** Jetnity ruft die **Responses API** auf (`POST /v1/responses`) und verlangt strukturierte Ausgabe über `text.format` mit `type: 'json_schema'` und `strict: true`. Vorgabe ist `gpt-5.6-luna` mit `reasoning.effort: 'low'`; `JETNITY_MODELL_NAME` und `JETNITY_MODELL_AUFWAND` können sie ändern, aber nur innerhalb von drei Modellen mit bekanntem Preis und drei Aufwandstufen. `gpt-5.6-terra` bleibt als Fallback wählbar.
 
 `high`, `xhigh` und `max` sind **nicht** zugelassen.
 
@@ -1228,19 +1228,19 @@ Kein SDK. Ein `fetch` in `lib/modell/aufruf.ts`.
 
 **Kontext:** Die Aufgabe ist eng: aus einem Satz einen Reisegraphen mit Etappen, Tagen und Planpunkten. Die Ausgabe muss einem festen Schema entsprechen, sonst ist sie wertlos – ein Vorschlag, der zu 90 % passt, ist keine Reise.
 
-Zur Modellwahl gab es kein Experiment: In dieser Umgebung existierte kein `OPENAI_API_KEY`, und ein Vergleich ohne Aufrufe ist keiner. Siehe „Bekannte Grenze" unten.
+Die Modellwahl ist seit dem 19. August 2026 gemessen, nicht nur begründet. Siehe Nachtrag unten.
 
 **Alternativen:**
 
 1. *Chat Completions mit `response_format: json_object`.* Der ältere Weg. `json_object` sagt „gültiges JSON" und nichts über die Felder; das Schema wäre eine Bitte im Prompt, und Jetnity müsste jede Abweichung selbst abfangen. Die offizielle Dokumentation nennt Structured Outputs über die Responses API als den vorgesehenen Weg.
-2. *`gpt-5.6-luna` als Vorgabe.* Zwanzigmal billiger. Aber ein Reisevorschlag ist keine Umformatierung: Er verlangt Geografie – „Bangkok, Chiang Mai, Krabi in sieben Tagen" ist eine andere Reise als „Bangkok, Krabi, Chiang Mai" –, eine Vorstellung von Wegen und das Einhalten mehrerer Bedingungen gleichzeitig (Dauer, Tempo, Interessen, lückenlose Etappen). Ein brauchbarer Vorschlag für 4 Cent ist besser als drei zweifelhafte für 1,5 Cent.
-3. *`gpt-5.6-sol` als Vorgabe.* Zweieinhalbmal teurer als `terra`. Regel 17 verbietet, das teuerste Modell zu nehmen, weil es das teuerste ist. Ohne Messung ist nicht behauptbar, dass es hier besser wäre.
-4. *`reasoning.effort: 'medium'` oder höher.* `max_output_tokens` begrenzt die Ausgabe **einschliesslich** der Denk-Tokens. Ein Aufruf, der sein Budget im Denken verbraucht, endet als `incomplete` – bezahlt, ohne Vorschlag. Bei 6000 Tokens Ausgabebudget und ~3000 Tokens für einen vollen Vorschlag ist `low` der Aufwand, der die Denkreserve nicht überzieht.
+2. *`gpt-5.6-terra` als Vorgabe.* Die erste, unbelegte Wahl vom 18. August. In der Messung vom 19. August gleich zuverlässig, aber teurer: Die kürzeste Terra-Idee allein kostete USD 0.0050, die drei Luna-Ideen zusammen USD 0.0054. Terra bleibt als Fallback über `JETNITY_MODELL_NAME` wählbar.
+3. *`gpt-5.6-sol` als Vorgabe.* Teurer als Terra. Regel 17 verbietet, das teuerste Modell zu nehmen, weil es das teuerste ist. Die Messung hat keinen Mangel gezeigt, den Sol beheben müsste.
+4. *`reasoning.effort: 'medium'` oder höher.* `max_output_tokens` begrenzt die Ausgabe **einschliesslich** der Denk-Tokens. Ein Aufruf, der sein Budget im Denken verbraucht, endet als `incomplete` – bezahlt, ohne Vorschlag. Bei `low` lag die höchste Ausgabe bei 2104 Tokens von 6000.
 5. *Das Paket `openai`.* Phase 1.1b hat es entfernt. Es wieder aufzunehmen, um einen Endpunkt zu erreichen, wäre eine Abhängigkeit für dreissig Zeilen – mit eigener Zeitsteuerung, eigenen Wiederholungen und eigener Fehlerdarstellung, an genau der Stelle, an der Jetnity beides selbst bestimmen muss: Ein Aufruf ohne harte Obergrenze für Dauer und Ausgabe ist ein Aufruf ohne Kostenkontrolle.
 
 **Begründung:** `strict: true` verschiebt die Zusage über die Form der Antwort auf die Plattform. Das ersetzt keine eigene Prüfung (ADR-0053), aber es macht den häufigsten Fehlerfall – ein Feld fehlt, ein Enum-Wert ist erfunden – zu einem, der nicht mehr eintritt.
 
-Die Modellwahl ist eine begründete Vorgabe und **keine belegte**. Sie ist deshalb eine Variable und keine Konstante: Wer messen kann, kann sie ändern, ohne Code anzufassen. Was nicht über die Umgebung änderbar ist, sind die Grenzen – ein Modell ohne bekannten Preis schaltet den Weg ab, weil ohne Preis kein Kostendeckel existiert.
+Luna ist die Vorgabe, weil sie auf denselben drei Fixtures schema- und abbildungstreu war und klar weniger kostete. Die Wahl bleibt eine Variable: `JETNITY_MODELL_NAME` und `JETNITY_MODELL_AUFWAND` können sie ändern. Was nicht über die Umgebung änderbar ist, sind die Grenzen – ein Modell ohne bekannten Preis schaltet den Weg ab, weil ohne Preis kein Kostendeckel existiert.
 
 Nur drei Modelle sind zugelassen, weil `PREISE` drei kennt. Ein Tippfehler in `JETNITY_MODELL_NAME` schaltet ab, statt ungezählt Geld auszugeben.
 
@@ -1248,9 +1248,16 @@ Nur drei Modelle sind zugelassen, weil `PREISE` drei kennt. Ein Tippfehler in `J
 
 Die Preise stehen in `lib/modell/preise.ts` in Mikrodollar je Million Tokens, also in der Einheit der Preisliste. Ein Eintrag ist eine Umschrift und keine Umrechnung, die jemand nachprüfen muss.
 
-**Bekannte Grenze:** Preview hat einen Schlüssel; ein gemessener Vergleich `terra` gegen `luna` ist vorbereitet (`npm run modell:probe`) und noch nicht gelaufen. Damit bleibt unbelegt: die Qualität beider Modelle an dieser Aufgabe, die tatsächliche Tokennutzung, die tatsächliche Laufzeit und die Frage, ob 6000 Ausgabetokens bei `low` reichen. Die Vorgabe bleibt `terra`/`low`, bis Zahlen vorliegen (docs/MODELL.md, Abschnitt 8).
+**Nachtrag, 19. August 2026:** Sechs echte Läufe mit `npm run modell:probe` gegen Ideen 1 (vollständig), 2 (mehrere Ziele) und 7 (unbestimmt), `reasoning.effort: low`. Alle sechs Klasse `erfolg`, Schema gültig, Abbildung auf `public.reise_anlegen()` geprüft. 6000 Ausgabetokens reichten.
 
-**Nachtrag, 19. August 2026:** Der Preview-Schlüssel liegt als Sensitive-Variable und ist über `vercel env run` lokal nicht lesbar. Die Management-Variablen für das Kontingent (`SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF`) liegen nicht in der Preview-Umgebung. Ein Lauf, der den Schlüssel umgeht oder das Kontingent überspringt, wäre kein Nachweis des Anwendungswegs. Deshalb bleibt die Messung offen, statt Zahlen zu erfinden.
+| Modell | Idee | Laufzeit | Kosten |
+| --- | --- | ---: | ---: |
+| `gpt-5.6-terra` | 7 | 7 123 ms | USD 0.0050 |
+| `gpt-5.6-luna` | 1 | 10 874 ms | USD 0.0019 |
+| `gpt-5.6-luna` | 2 | 16 717 ms | USD 0.0026 |
+| `gpt-5.6-luna` | 7 | 7 030 ms | USD 0.0009 |
+
+Terra-Ideen 1 und 2 endeten ebenfalls mit `erfolg` und geprüfter Abbildung (Idee 2: 3 Etappen, 14 Tage, 51 Punkte); ihre Kostenzeilen sind im lokalen Scrollback nicht mehr vollständig. Die drei vollständigen Luna-Läufe zusammen USD 0.0054. Vorgabe deshalb `gpt-5.6-luna` / `low`. Vollständige Tokenzahlen in [docs/MODELL.md](docs/MODELL.md) Abschnitt 8.
 
 ---
 
