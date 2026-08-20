@@ -54,7 +54,7 @@ export default function OrtSuche({
   const listeId = React.useId()
 
   React.useEffect(() => {
-    if (value?.name && value.name !== text) setText(value.name)
+    if (value?.name) setText(value.name)
   }, [value?.id, value?.name])
 
   React.useEffect(() => {
@@ -176,7 +176,7 @@ export default function OrtSuche({
         autoCorrect="off"
         spellCheck={false}
         role="combobox"
-        aria-expanded={listeSichtbar}
+        aria-expanded={Boolean(listeSichtbar)}
         aria-controls={listeId}
         aria-autocomplete="list"
         aria-activedescendant={aktiv >= 0 ? `${listeId}-${aktiv}` : undefined}

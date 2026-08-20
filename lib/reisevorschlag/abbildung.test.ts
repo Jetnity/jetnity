@@ -139,6 +139,9 @@ describe('Der Vorschlag als Nutzlast für public.reise_anlegen()', () => {
         country_code: 'IT',
         arrival_date: '2027-06-01',
         departure_date: '2027-06-03',
+        latitude: null,
+        longitude: null,
+        place_id: null,
       },
     ])
   })

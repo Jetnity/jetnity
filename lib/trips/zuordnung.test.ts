@@ -87,6 +87,7 @@ describe('Tage ohne stageId erhalten eine Etappe', () => {
           departureDate: '2026-09-14',
           latitude: null,
           longitude: null,
+          placeId: null,
         },
         {
           id: 's2',
@@ -97,6 +98,7 @@ describe('Tage ohne stageId erhalten eine Etappe', () => {
           departureDate: '2026-09-16',
           latitude: null,
           longitude: null,
+          placeId: null,
         },
       ],
       5,

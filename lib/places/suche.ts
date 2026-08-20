@@ -54,7 +54,7 @@ function ortRang(ort: Ort, suche: string, rolle: OrtRolle): number {
   return treffer + typBonus(ort, rolle)
 }
 
-export function ortAlsOption(ort: Ort): OrtOption {
+function ortAlsOption(ort: Ort): OrtOption {
   const zusatz = [ort.region, ort.country].filter((wert, i, alle) => wert && alle.indexOf(wert) === i)
   const iata = ort.iata ? `${ort.iata} — ` : ''
   return {

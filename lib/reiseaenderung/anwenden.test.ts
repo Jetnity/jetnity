@@ -106,6 +106,7 @@ function reise(abweichung: Partial<Reisegraph> = {}): Reisegraph {
     clientRef: 'trip-1',
     title: 'Italien',
     origin: 'Zürich',
+    originPlaceId: null,
     startDate: '2026-09-12',
     endDate: '2026-09-16',
     travellers: 2,
