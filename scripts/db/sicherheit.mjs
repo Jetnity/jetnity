@@ -2000,7 +2000,8 @@ function aufbau() {
     `insert into public.refunds (payment_id, amount_chf, created_at) values ('pay_1', 10, now());`,
     `insert into public.security_events (type, ip) values ('login_failed', '203.0.113.1');`,
     `insert into public.blocked_ips (ip, reason) values ('203.0.113.2', 'Test');`,
-    `insert into public.airports (iata, name, city, country) values ('ZRH', 'Zürich', 'Zürich', 'CH');`,
+    `insert into public.airports (iata, name, city, country) values ('ZRH', 'Zürich', 'Zürich', 'CH')
+       on conflict (iata) do nothing;`,
     `insert into public.stripe_webhooks (id, type) values ('evt_1', 'payment_intent.succeeded');`,
     // Eine abgeschlossene Zeile im Kostenprotokoll. Ohne sie wäre beim Betrieb
     // „0 Zeilen“ nicht von einer dichten Policy zu unterscheiden. Die Kennung ist
