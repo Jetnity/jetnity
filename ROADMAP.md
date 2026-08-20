@@ -615,6 +615,7 @@ Provider-unabhängige Aktivitätsdomäne, Tageskontext, Konfliktlogik, Suchpipel
 - [x] kommerzieller `activity` gegen Modelloperationen mitgeprüft (`istKommerziell`)
 - [x] `ActivityNachweis` an Ziel, Datum, Teilnehmer, Währung und Timeslot gebunden
 - [x] Such-Body per Content-Length und Stream-Cap vor grosser Allokation begrenzt
+- [x] Phase 3.3b: WebKit-/Chromium-Abnahme der Activities-UI, 184 Kombinationen, 0 Fehler
 - [ ] genau einen ersten Activity-Datenanbieter entscheiden und anbinden · **eigene Freigabe**
 - [ ] Preview mit echtem Adapter und Nachweis verifizieren
 - [ ] Affiliate-/Redirect-Pfad, getrennt von der Suche

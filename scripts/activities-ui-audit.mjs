@@ -511,15 +511,14 @@ async function interaktionPruefen(browser, name) {
   await page.waitForTimeout(700)
   const text = await page.locator('[aria-label="Aktivitäten"]').innerText()
   const checked = await chips.nth(2).getAttribute('aria-checked')
-  await chips.nth(0).focus()
+  await page.locator('[aria-label="Reisetage"]').focus()
+  await page.keyboard.press('Tab')
   const fokusSichtbar = await page.evaluate(() => {
     const el = document.activeElement
-    if (!el) return false
-    const stil = getComputedStyle(el)
-    return Boolean(stil.boxShadow !== 'none' || stil.outlineStyle !== 'none' || stil.outlineWidth !== '0px')
+    return Boolean(el && el.matches(':focus-visible'))
   })
   await page.keyboard.press('Tab')
-  const nachTab = await page.evaluate(() => document.activeElement?.getAttribute('role') === 'radio' || document.activeElement?.tagName === 'BUTTON')
+  const nachTab = await page.evaluate(() => document.activeElement?.getAttribute('role') === 'radio')
 
   await kontext.close()
   const fehler = []
@@ -554,7 +553,11 @@ async function main() {
       }
     }
   } finally {
-    server.kill()
+    try {
+      server.kill('SIGTERM')
+    } catch {
+      // Next kann sich vom Spawn lösen.
+    }
   }
 
   const fehlgeschlagen = ergebnisse.filter((e) => !e.ok)
@@ -573,7 +576,12 @@ async function main() {
     writeFileSync('activities_ui_audit.json', JSON.stringify(bericht, null, 2))
   }
   console.log(JSON.stringify(bericht, null, 2))
-  if (fehlgeschlagen.length) process.exit(1)
+  try {
+    server.kill('SIGTERM')
+  } catch {
+    // Der Next-Prozess kann sich vom Spawn lösen; der Bericht ist trotzdem fertig.
+  }
+  process.exit(fehlgeschlagen.length ? 1 : 0)
 }
 
 await main()

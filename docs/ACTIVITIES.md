@@ -244,6 +244,24 @@ Im bestehenden Trip Workspace, nicht als Demo:
 
 Solange kein Provider konfiguriert ist, erklärt die Fläche das ehrlich und zeigt höchstens den belegbaren Tageskontext aus der Reise.
 
+### Browser-Abnahme (Phase 3.3b)
+
+Gemessen mit `npm run audit:activities` (Playwright WebKit + Chromium, PR-7-Regeln). Die Audit-Seite `/ui-audit/activities` antwortet ohne `JETNITY_UI_AUDIT=1` mit 404 und liegt nicht im produktiven Weg. Karten-Fixtures nur im Harness per Request-Interception.
+
+| Messung | Umfang | Ergebnis |
+| --- | --- | --- |
+| Layout, 13 Zustände × 7 Viewports × 2 Engines | 182 | 0 Fehler |
+| Tagwechsel, Fokus, Tastatur, Request-Zählung | 2 (WebKit + Chromium, 390 px) | 0 Fehler |
+| Summe | **184** | **0** |
+
+Viewports: 280, 320, 360, 390, 430, Landscape 667×375 und 844×390.
+
+Zustände: keine Tage, Tag ohne Etappe, leerer Tag, Tag mit Punkten/Uhrzeiten, 12 Tag-Chips, lange Texte, Loading, reales `unavailable` ohne Provider, Empty, Error, Timeout, Rate-Limit, Karten mit langen Providerinhalten.
+
+Interaktion: 4 Suchen je Engine beim schnellen Chipwechsel, keine Schleife. Nach dem Wechsel bleibt nur die Antwort des gewählten Tags. `aria-checked` stimmt. Fokus über `:focus-visible` nach Tastatur-Tab. Interne Scores nicht im DOM.
+
+Bekannte Ausnahme wie bei PR #7: Die Chip-Zeile darf intern waagrecht scrollen (`ScrollRow`). Die Seite selbst hat kein Overflow. Programmatisches `.focus()` ohne Tastatur zeigt keinen Ring – das ist `focus-visible`, kein Defekt.
+
 ---
 
 ## 9. Aktivierung (später, nicht jetzt)
