@@ -8,7 +8,7 @@ Diese Datei ist der kompakte Übergabepunkt für einen neuen Chat, neuen Cursor-
 
 Phase 2.2 ist nach `main` gemergt (PR #18, `76f21929`) und in Production verifiziert. Der Modellweg bleibt in Production aus.
 
-Phase 3.1 – Flight Foundation – läuft: Jetnity hat die erste echte Flugprodukt-Basis. Duffel Flights API ist der erste Daten-/Entwicklungsadapter. Amadeus Self-Service wurde am 17. Juli 2026 eingestellt und ist im aktiven V2-Code nicht mehr angebunden – auch nicht als Airport-Fallback. Die Autocomplete liest nur `public.airports` und wird in Development aus OurAirports befüllt. Production-Flugsuche bleibt aus. Production-Airportbestand bleibt unverändert. Keine eigene Flugbuchung.
+Phase 3.1 – Flight Foundation – ist fachlich abgeschlossen und der zugehörige Supabase-Production-Rollout wurde am 20. August 2026 erfolgreich verifiziert. PR #19 bleibt bis zur finalen GitHub-Freigabe Draft. Duffel Flights API ist der erste Daten-/Entwicklungsadapter; die echte Sandbox-Verifikation ist nachgelagert und kein Merge-Blocker. Amadeus Self-Service wurde am 17. Juli 2026 eingestellt und ist im aktiven V2-Code nicht mehr angebunden – auch nicht als Airport-Fallback. Die Autocomplete liest nur `public.airports`; die Ortsauswahl liest nur `public.places`. Production-Flugsuche bleibt aus. Keine eigene Flugbuchung.
 
 Verbindlicher Ablauf der Änderung (Phase 2.2, unverändert):
 
@@ -33,44 +33,61 @@ Phase 3.1 ergänzt:
 - Übernahme als kommerzieller `trip_item` ohne `booking_url`
 - lokale Flughafenbasis aus OurAirports, ohne Provider- und ohne Live-Abfrage
 - lokale Ortsbasis aus GeoNames (CC BY 4.0) plus Flughafen-Zeilen; Startseite und `/planen` speichern nur bestätigte Orte
+- serverseitige Kanonisierung auch für Modellorte; bei Mehrdeutigkeit wird nicht geraten
+- verbesserte Formularfehler-UX mit Feldmeldung, Scroll/Fokus und Accessibility
 
 Entscheidungen: ADR-0057 bis ADR-0061 (Phase 2.2), ADR-0062 bis ADR-0069 (Phase 3.1). Fachlich: `docs/REISEN.md`, `docs/FLUEGE.md`, `docs/FLUGHAFEN.md`, `docs/ORTE.md`, `docs/MODELL.md`, `docs/DATENBANK.md`, `docs/PRODUCTION_ROLLOUT.md`.
 
-## 2. Production-Rollout am 20. August 2026
+## 2. Production-Rollouts am 20. August 2026
+
+### 2.1 V2-Basis / Phase 2.2
 
 Vor dem GitHub-Merge von Phase 2.2 wurde Supabase Production kontrolliert auf den bereits auf dem Development-Branch getesteten V2-Datenbankstand gebracht.
 
-### Ausgangslage
+Die wichtigen Kontodaten wurden getrennt von der alten Creator-/Media-/Blog-Struktur behandelt. Ergebnis:
 
-Production stand noch auf der historischen Baseline und enthielt 39 Tabellen aus der alten Jetnity-Produktidee. Development war bereits auf das V2-Schema mit 12 Public-Tabellen migriert.
-
-In Production befanden sich noch wenige Bestandsdaten aus der alten Creator-/Media-/Blog-Struktur. Die wichtigen Kontodaten wurden davon getrennt behandelt:
-
-- 3 Einträge in `auth.users`
-- 3 zugehörige alte `creator_profiles`
-- zusätzlich kleine Mengen alter Creator-/Session-/Upload-/Blog-Daten
-
-### Freigegebene Bereinigung
-
-Der Nutzer hat ausdrücklich freigegeben, die nicht mehr benötigten alten Creator-/Blog-/Media-/Session-Inhalte zu entfernen. Die Benutzerkonten und notwendigen Kontoprofile sollten erhalten bleiben.
-
-Der Rollout erfolgte über den getesteten Supabase-Development-Branch und dessen Migrationen, nicht über manuelle Einzeländerungen am V2-Schema.
-
-### Ergebnis nach dem Rollout
-
-Production wurde erfolgreich auf denselben fachlichen Datenbankstand wie Development gebracht:
-
-- 3 `auth.users` **erhalten**
-- 3 `profiles` **erhalten und weiterhin mit den 3 Auth-Konten verknüpft**
+- 3 `auth.users` erhalten
+- 3 `profiles` erhalten und weiterhin mit den 3 Auth-Konten verknüpft
 - keine verwaisten Profile
 - alte Creator-/Blog-/Media-/Session-Altlasten entfernt
-- 12 Public-Tabellen
-- 28 registrierte Migrationen
-- neueste Production-Migration: `20260820080000_reise_tage_eindeutig_aufgeschoben`
 - Reisetabellen (`trips`, `trip_stages`, `trip_days`, `trip_items`) vorhanden
-- Supabase Production nach dem Rollout gesund; der Branch-Merge endete mit `FUNCTIONS_DEPLOYED` / `ACTIVE_HEALTHY`
+- Production gesund
 
-Wichtig: **Der Modellweg bleibt in Production weiterhin deaktiviert.** Die Flugsuche bleibt in Production ebenfalls aus. `20260820100000_reise_anlegen_handelsfelder.sql` ist **nicht** auf Production anzuwenden, solange keine ausdrückliche Freigabe vorliegt.
+Der Stand endete zunächst bei `20260820080000_reise_tage_eindeutig_aufgeschoben`.
+
+### 2.2 Phase 3.1 – Airports und Places
+
+Nach ausdrücklicher Nutzerfreigabe wurde der dokumentierte Phase-3.1-Rollout ausgeführt und verifiziert.
+
+Angewendete Production-Migrationen, exakt in dieser Reihenfolge:
+
+1. `20260820100000_reise_anlegen_handelsfelder`
+2. `20260820110000_airports_referenz`
+3. `20260820120000_places_referenz`
+4. `20260820130000_reise_aendern_places`
+
+Ergebnis:
+
+- neueste Production-Migration: `20260820130000_reise_aendern_places`
+- 5 332 Airports in `public.airports`
+- 124 811 Places in `public.places`
+  - 105 914 Städte
+  - 13 035 Regionen
+  - 290 Inseln
+  - 240 Länder
+  - 5 332 Flughafen-Orte
+- Pflicht-Airports ZRH/GVA/BSL/LHR/LGW/JFK/EWR/DXB/BKK/HND/NRT vorhanden
+- Bali, Thailand, Südtirol, Toskana, New York, Japan, Zürich/ZRH in der lokalen Ortsbasis auffindbar
+- `Test`, `Mordor`, `abcxyz` haben keinen exakten kanonischen Place-Treffer
+- RLS auf `airports` und `places` aktiv
+- `anon` und `authenticated` besitzen dort nur `SELECT`; keine schreibende Policy
+- 3 `auth.users` und 3 `profiles` unverändert erhalten
+- der für den kontrollierten Datentransfer temporär verwendete `http`-Extension-Pfad wurde danach wieder entfernt; `http` ist in Production nicht installiert
+- Supabase Production nach dem Rollout `ACTIVE_HEALTHY`
+
+Die Referenzdaten wurden aus dem bereits geprüften Development-Bestand übernommen. Die fachlichen Quellen bleiben OurAirports (Public Domain) und GeoNames (CC BY 4.0); es gibt weiterhin keine Live-Abfrage dieser Quellen bei einer Nutzersuche.
+
+Wichtig: **Der Modellweg bleibt in Production deaktiviert. Die Production-Flugsuche bleibt ebenfalls aus. Duffel wird erst separat nach Sandbox-Zugang verifiziert.**
 
 ## 3. Produktprinzip, das alle nächsten Phasen leitet
 
@@ -90,7 +107,9 @@ Die manuelle Grundfunktion kann Teil des kostenlosen Kerns sein; automatische Ü
 
 ## 4. Nächster Entwicklungsschritt
 
-Phase 3.1 ist in Arbeit. Nach Merge und Preview-Verifikation – **nicht** Production-Aktivierung – folgen Hotels, dann Aktivitäten, dann Transfers. Parallel die Gesamtoptimierung und reaktive Folgenanalyse als Jetnity-DNA erhalten.
+Phase 3.1 ist fachlich und auf Datenbankebene in Production vorbereitet/verifiziert. Vor dem nächsten Produktblock wird PR #19 final auf GitHub freigegeben und nach ausdrücklicher Nutzerfreigabe nach `main` gemergt. Danach folgen Hotels, dann Aktivitäten, dann Transfers. Parallel die Gesamtoptimierung und reaktive Folgenanalyse als Jetnity-DNA erhalten.
+
+Die Duffel-Sandbox-Verifikation wird separat nachgeholt, sobald Testzugang vorliegt; sie blockiert den Merge nicht. Production-Flugsuche bleibt bis zu einer eigenen späteren Freigabe aus.
 
 Kein weiterer Production-Eingriff ohne ausdrückliche Freigabe.
 
@@ -102,17 +121,18 @@ Nicht alle Provider gleichzeitig anbinden. Schrittweise und produktorientiert vo
 
 Erste echte Produktintegration: Flüge.
 
-Umgesetzt bzw. in diesem Schritt:
+Umgesetzt:
 
 - reale Verbindungen in die Planung einbeziehen
 - Zeit, Stopps, Abflug-/Ankunftszeiten und Preis bewerten
 - keine reine Preisrangliste
 - Search-Provider und Affiliate-/Booking-Provider getrennt
 - Duffel als erster Datenadapter, nicht als strategische Bindung
+- provider-unabhängige Airport- und Place-Basis
 
 Später möglich ohne Rewrite von UI, Scoring und Trip-Integration: Skyscanner, Aviasales oder ein anderer Metasuch-Provider.
 
-Nicht in Phase 3.1: eigene Buchung, Production-Aktivierung, Hotels, Aktivitäten, Transfers.
+Nicht in Phase 3.1: eigene Buchung, Production-Aktivierung der Flugsuche, Hotels, Aktivitäten, Transfers.
 
 ### 5.2 Hotels danach
 
@@ -125,6 +145,8 @@ Jetnity soll nicht nur den billigsten Zimmerpreis sehen, sondern vor allem:
 - Qualität/Komfort
 - Stornierbarkeit und relevante Bedingungen
 - Gesamtwirkung auf die Reise
+
+Vor der konkreten Hotelwahl soll Jetnity zuerst bestimmen, **welches Viertel bzw. welche Gegend für genau diese Reise am sinnvollsten ist**. Danach werden wenige passende Hotels empfohlen und der Trade-off aus Preis, Lage, Zeit und Komfort erklärt. Provisionen dürfen dieses Ranking nicht verzerren.
 
 Start pragmatisch mit Affiliate/Deeplink oder einem passenden Anbieter; keine unnötige Buchungsplattform selbst bauen.
 
@@ -183,6 +205,8 @@ Ein mögliches Premium-Modell kann später Mehrwert bieten, insbesondere:
 - mehrere optimierte Lösungsvorschläge nach Kosten, Zeit, Komfort und Reibung
 - erweiterte Kollaboration, Dokumente und Offline-Funktionen
 
+Die Grenze zwischen Free und Pro wird nicht jetzt hart in einzelne Funktionen eingebaut. Vor der ersten echten Pro-Funktion entsteht eine zentrale Entitlement-/Feature-Access-Schicht; Billing wird später daran angebunden. Details: `docs/MONETARISIERUNG.md`.
+
 Nicht pro einzelne Änderung abrechnen. Jetnity Pro soll einen dauerhaften Begleit- und Schutzwert bieten.
 
 ## 8. Danach: Phase 4 – Launch-Reife
@@ -208,6 +232,10 @@ Dazu gehören mindestens:
 
 Vor Production-Aktivierung des Modellwegs ist zusätzlich die Aufbewahrungsfrist für `public.model_usage` verbindlich festzulegen.
 
+Die geplante Travel-Readiness-Funktion (Pass/Nationalität, Visa, Transit, Einreiseformulare, Impf-/Gesundheitsvorgaben, Fristen und Checkliste) wird aufgebaut, sobald Reisegraph, reale Orte/Länder, Flugdaten/Transit und die nötigen Profilangaben stabil sind. Details: `docs/TRAVEL_READINESS.md`.
+
+Gemeinsame Reiseplanung für Paare, Familien und Gruppen wird nach stabiler Phase-3-Kernbasis, aber vor Phase 4/Launch, als Kollaborationsfundament eingeführt. GitHub Issue #20 hält Rollen, Einladungen, RLS, Versions-/Konfliktstrategie und Realtime-Vorbereitung fest.
+
 ## 9. Architektur- und Qualitätsregeln für alle nächsten Arbeiten
 
 - Cursor setzt große Implementierungsaufträge um; ChatGPT steuert mit Produkt, Architektur, Security, Kosten und Review.
@@ -223,31 +251,32 @@ Vor Production-Aktivierung des Modellwegs ist zusätzlich die Aufbewahrungsfrist
 - Security/RLS/Auth/Tests/Mobile/Accessibility/Performance/Loading/Error States/Permissions/Kostenkontrollen nicht aus Spargründen überspringen.
 - Starke Modelle dort einsetzen, wo sie messbar mehr Qualität bringen; effiziente Modelle für Routinearbeit. Qualität pro Token optimieren, nicht blind Kosten minimieren.
 
-## 10. Offene Punkte nach Phase 2.2 / während 3.1
+## 10. Offene Punkte nach Phase 3.1
 
-Diese Punkte sind bekannt und blockieren die Flugbasis nicht, müssen aber im Projektgedächtnis bleiben:
+Diese Punkte blockieren den Phase-3.1-Merge nicht, müssen aber im Projektgedächtnis bleiben:
 
-- `public.model_usage`: Aufbewahrungsfrist noch offen; vor Production-Freigabe entscheiden.
+- `public.model_usage`: Aufbewahrungsfrist noch offen; vor Production-Freigabe des Modellwegs entscheiden.
 - Reload während einer noch nicht übernommenen Vorschau verwirft sie bewusst nach ADR-0050.
 - Der Router arbeitet mit Mustern und kann ungewöhnliche Formulierungen falsch einordnen; manueller Modell-Stift bleibt möglich.
 - Preview-Tests sind keine Lasttests.
 - Production-Modellaktivierung bleibt eine eigene Freigabe.
-- Production-Flugsuche bleibt eine eigene Freigabe; Duffel-Live-Token sind in Phase 3.1 abgelehnt. Die Duffel-Sandbox-Verifikation ist nachgelagert und kein Merge-Blocker.
+- Production-Flugsuche bleibt eine eigene Freigabe. Duffel-Sandbox-Verifikation ist nachgelagert und kein Merge-Blocker.
 - Duffel-Angebots-IDs sind kurzlebig; die Reise speichert eine Momentaufnahme, keinen live buchbaren Offer.
-- Das In-Memory-Rate-Limit gilt je Serverless-Instanz.
+- Das In-Memory-Rate-Limit gilt je Serverless-Instanz und muss vor Production-Aktivierung der Flugsuche durch eine geeignete globale Schranke ersetzt/ergänzt werden.
 - Duffel Self-Service / Test deckt nicht den gesamten Markt; die UI darf das nicht als „bester Preis im Internet“ verkaufen.
-- `/api/search/airports` liest nur die lokale Tabelle; ein Fehler bleibt ein Fehler, eine leere Menge eine leere Liste. Development wird über `npm run airports:importieren -- --schreiben --entwicklung` befüllt. Production erst über den kontrollierten Rollout in [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md).
-- `/api/search/places` liest nur `public.places` (124 811 Zeilen in Development). Fantasieorte (`Test`, `Mordor`) ergeben keine Treffer und werden nicht als geografischer Kern gespeichert. Der Modellweg kanonisiert eindeutige Etappen- und Abreiseorte gegen dieselbe Tabelle; mehrdeutige oder fehlende Treffer bleiben ohne `place_id`. Production-Places erst über [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md).
-- Formularfehler unter `/planen`, auf der Startseite (Ortssuche) und in den Auth-Formularen sitzen am Feld. Beim Absenden scrollt die Ansicht zum ersten Fehler. Eine allgemeine Zusammenfassung ersetzt die Feldmeldung nicht.
-- Der Sicherheitstest `der Dienstweg als Gast bekommt Kontingent` isoliert Live-Gastzeilen der letzten 24 Stunden nur innerhalb der Rollback-Transaktion. Das Development-Tageslimit bleibt 24 und wird nicht erhöht.
+- GeoNames-Anzeigenamen können vom im Deutschen gebräuchlichen Namen abweichen (z. B. Südtirol); Such-Keywords funktionieren, Anzeige-Lokalisierung/Aliase kommen später.
+- Gleichnamige Orte bleiben absichtlich disambiguiert; bei Mehrdeutigkeit darf Jetnity nicht raten.
+- Die neuen optionalen FKs `trips.origin_place_id` und `trip_stages.place_id` haben laut Supabase Performance Advisor noch keine eigenen Covering-Indizes. Das ist bei aktuellem Bestand kein Release-Blocker und wird in einem späteren Performance-Pass geprüft.
+- Formularfehler unter `/planen`, auf der Startseite (Ortssuche) und in den Auth-Formularen sitzen am Feld. Workspace „Punkt hinzufügen“ und `/auth/update-password` können beim späteren UI-/Launch-Pass dieselbe Feldhülle erhalten.
+- In Supabase Production existiert ein historischer Cron-Job, der stündlich `public.sync_creator_profile_core()` aufruft, obwohl die Funktion nach der Legacy-Bereinigung nicht mehr existiert. Das erzeugt nur Logfehler, gehört nicht zu Phase 3.1 und muss in einem eigenen, ausdrücklich freigegebenen Production-Cleanup entfernt werden.
 
 ## 11. Sofortiger Startpunkt im nächsten Chat
 
-Phase 3.1 ist fachlich abgeschlossen. Der nächste **freigegebene** Schritt ist der kontrollierte Production-Rollout (Schema + Airports + Places), beschrieben in [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md). **Production ist noch unverändert.** Nicht mergen, nicht Mark Ready, nicht importieren ohne ausdrückliche Freigabe.
+Phase 3.1 ist fachlich abgeschlossen und der Production-Datenbankrollout ist grün. PR #19 bleibt bis zur finalen GitHub-Freigabe Draft. Als nächstes: finalen PR-Stand prüfen, `Mark Ready` nur nach Nutzerfreigabe, danach Merge zu `main` ebenfalls nur nach ausdrücklicher Nutzerfreigabe und anschließend Vercel Production verifizieren.
 
 **Duffel-Sandbox ist nachgelagerte Provider-Verifikation.** Sie blockiert Phase 3.1 und den Merge nicht. Production bleibt `JETNITY_FLIGHT_AKTIV` aus; kein Duffel-Token in Production.
 
-Hotels, Aktivitäten und Transfers nicht beginnen.
+Hotels, Aktivitäten und Transfers nicht beginnen, bevor PR #19 sauber abgeschlossen und Production nach dem GitHub-Merge verifiziert ist.
 
 Benötigte Preview-Credentials nur für die spätere Duffel-Verifikation (nicht Production):
 
