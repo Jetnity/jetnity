@@ -106,6 +106,24 @@ Tag 3   Strand
 
 Dazu gehören Flug, Hotel, Aktivitäten, Transfers, Budget und Gesamtpreis. Der Workspace ist der Ort, an dem die Reise lebt.
 
+### Hotel- und Quartierlogik
+
+Jetnity darf Hotels nicht losgelöst vom restlichen Reiseplan empfehlen. Bevor konkrete Hotels vorgeschlagen werden, soll Jetnity bestimmen, **in welchem Viertel bzw. in welcher Gegend der Nutzer für genau diese Reise am sinnvollsten wohnen sollte**.
+
+Die Entscheidung soll unter anderem berücksichtigen: geplante Sehenswürdigkeiten und Aktivitäten, Reiseetappen, Flughäfen und Bahnhöfe, Transfers, Aufenthaltsdauer, Budget, tägliche Wegezeiten, Erreichbarkeit zu Fuß und mit öffentlichen Verkehrsmitteln sowie Präferenzen wie Ruhe, Nachtleben, Kulinarik, Strand oder Familienfreundlichkeit.
+
+Danach zeigt Jetnity bewusst nur wenige passende Hoteloptionen, typischerweise 3–5, zum Beispiel **Jetnity empfiehlt**, **Bestes Preis-Leistungs-Verhältnis**, **Beste Lage**, **Ruhigere Alternative** oder **Premium-Option**. Zu jeder Empfehlung erklärt Jetnity nachvollziehbar, warum sie zur konkreten Reise passt und welche Abwägung gegenüber günstigeren oder schnelleren Alternativen besteht.
+
+Beispielprinzip: Ein Hotel darf empfohlen werden, obwohl es etwas teurer ist, wenn dadurch während der gesamten Reise deutlich weniger Transferzeit, weniger Umstiege oder eine bessere Lage zu den geplanten Aktivitäten entsteht. Der günstigste Hotelpreis ist **nicht automatisch** die beste Reiseentscheidung.
+
+Auch innerhalb derselben Stadt kann für verschiedene Aufenthalte eine andere Gegend sinnvoll sein – etwa wenn der letzte Aufenthalt vor einem frühen Rückflug bewusst näher am Flughafen oder an einer passenden Verkehrsanbindung liegen sollte.
+
+Verbindlicher Grundsatz:
+
+> **Nicht zuerst „Welches Hotel ist am billigsten?“, sondern zuerst „Wo sollte der Nutzer für diese konkrete Reise wohnen?“ – danach die besten passenden Hotels in dieser Gegend empfehlen.**
+
+Provisionen oder kommerzielle Providerinteressen dürfen weder die Quartierentscheidung noch das Jetnity-Ranking beeinflussen.
+
 ---
 
 ## 6. Prioritäten
