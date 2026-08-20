@@ -1787,6 +1787,108 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 
 ---
 
+## ADR-0070 – Hoteldomäne und `HotelProvider` sind die Architektur, kein Anbieter
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.2
+
+**Entscheidung:** Jetnity spricht intern eine schlanke Hotel-/Quartierdomäne (`HotelSuchanfrage`, `HotelOption`, `HotelProvider`). Phase 3.2 bindet **keinen** Hotelanbieter an. Search-Provider und Affiliate-/Booking-Provider bleiben getrennte Verantwortlichkeiten. `booking_url` bleibt `null`.
+
+**Kontext:** Die Vision verlangt zuerst die Gegend, dann wenige Hotels. ADR-0011 und [AGENTS.md](AGENTS.md) Regel 19 verbieten eine Multi-Provider-Plattform auf Vorrat. Gleichzeitig darf der spätere erste Anbieter nicht zur stillen Produktbindung werden.
+
+**Alternativen:**
+
+1. *Sofort Booking.com/Expedia als Architektur nehmen.* Macht jeden Wechsel zum Rewrite.
+2. *Jetzt eine generische Plattform für zehn Hotelanbieter.* Komplexität ohne ersten Provider.
+3. *Deeplinks erfinden, damit die UI voll wirkt.* Wäre eine irreführende Buchungs-URL.
+
+**Begründung:** Die Naht ist klein genug, um verdient zu sein. UI, Quartierlogik, Ranking und Trip-Übernahme kennen den Adapter nicht.
+
+**Konsequenzen:** `hotelProviderAus()` gibt `null` zurück. Tests injizieren höchstens Fixtures. Dokumentation in [docs/HOTELS.md](docs/HOTELS.md).
+
+---
+
+## ADR-0071 – Quartier- und Hotelranking sind deterministisch und provisionsneutral
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.2
+
+**Entscheidung:** Zuerst wird die Gegend bewertet, danach Hotels innerhalb dieser Gegend. Beide Rankings sind reine Funktionen mit festen Gewichten. Kein Modell. Keine Provision. Kein Providername. Labels: Jetnity empfiehlt, Best Value, beste Lage, ruhigere Alternative, Premium.
+
+**Kontext:** Vision und Handoff verlangen Gesamtreise statt billigstes Hotel. Ein LLM-Ranking wäre weder reproduzierbar noch in der CI prüfbar.
+
+**Alternativen:**
+
+1. *Billigstes Hotel zuerst.* Widerspricht dem Produktprinzip.
+2. *Modell begründet Gegend und Rangfolge.* Teuer, nicht deterministisch.
+
+**Begründung:** Vertrauen entsteht, wenn dieselbe Reise dieselbe Gegend und dieselbe Reihenfolge liefert.
+
+**Konsequenzen:** Gewichte stehen im Code (`QUARTIER_GEWICHTE`, `HOTEL_RANGLISTE_GEWICHTE`). Tests belegen, dass der günstigste Preis nicht automatisch die Empfehlung ist.
+
+---
+
+## ADR-0072 – Quartierkontext nur aus vorhandenen Reisedaten
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.2
+
+**Entscheidung:** Die Quartierbewertung liest Etappe, Koordinaten, Zeitraum, bestätigte Anker, frühen Abflug und vorhandene Nutzerangaben. Fehlende Routing-/POI-/ÖV-Daten bleiben `null`. Die Begründung behauptet keine kurzen Wege und keine Gegendprofile, die nicht belegt sind.
+
+**Kontext:** Ein Hotelranking ohne echte Wegezeiten wirkt präzise und ist es nicht. Aktivitätstitel wie „Sagrada Família“ ohne Koordinaten sind kein POI.
+
+**Alternativen:**
+
+1. *Nachbarschaften und Gehzeiten schätzen.* Scheingenauigkeit.
+2. *Sofort einen Routing-Provider kaufen.* Laufende Kosten ohne Freigabe.
+
+**Begründung:** Unbekannt ist eine Aussage. Eine erfundene Minute ist ein Defekt.
+
+**Konsequenzen:** Ohne Koordinaten gibt es keine Quartierempfehlung in der UI. Ein späterer Routing- oder POI-Weg ersetzt die Nullen, ändert aber nicht die Domäne.
+
+---
+
+## ADR-0073 – Hotelsuche in Production aus, fehlender Provider ist unavailable
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.2
+
+**Entscheidung:** `VERCEL_ENV=production` schaltet die Hotelsuche hart aus. Development/Preview brauchen `JETNITY_HOTEL_AKTIV` plus einen späteren Provider. Fehlender Provider ist ein sauberer unavailable-Zustand, kein Buildfehler. Quartierkontext darf aus der validierten Reiseanfrage trotzdem berechnet werden.
+
+**Kontext:** Dieselbe Fail-closed-Linie wie Modellweg (ADR-0052) und Flugsuche (ADR-0064). Phase 3.2 hat noch keinen Token-Vertrag.
+
+**Alternativen:**
+
+1. *Secrets im Setup-Check verlangen.* Würde jede Umgebung ohne Hotelanbieter rot färben.
+2. *Fake-Hotels in der echten UI.* Widerspricht der Produktregel.
+
+**Begründung:** Die Pipeline kann integrationsbereit sein, ohne Production oder Nutzer mit erfundenen Angeboten zu täuschen.
+
+**Konsequenzen:** Keine `NEXT_PUBLIC_HOTEL_*`. Rate-Limit im Prozess. Timeout 12 s. `POST /api/hotels/search` ist kein Provider-Proxy.
+
+---
+
+## ADR-0074 – Hotelübernahme als `stay` auf dem bestehenden Schema
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.2; keine neue Migration
+
+**Entscheidung:** Ein ausgewähltes Hotel wird als `trip_items.kind = stay` gespeichert. Die Momentaufnahme nutzt Titel, Notiz, Check-in/Check-out, Preis, Provider und External-Ref. `booking_url` bleibt `null`. `stage_id` bindet die Nächte an die Etappe. Keine neue Production- oder Development-Migration.
+
+**Kontext:** Die Spalten existieren seit Phase 1.5. Eine Extra-Tabelle für Hotelnächte oder Quartier-IDs wäre voreilig, solange kein Provider echte Angebote liefert.
+
+**Alternativen:**
+
+1. *Eigene `hotel_stays`-Tabelle jetzt.* Schema ohne Daten.
+2. *Übernahme erst nach dem ersten Provider bauen.* Würde die Trip-Naht später erneut öffnen.
+3. *JSON in `note` als verstecktes Schema.* Die Notiz bleibt Menschenlesart, kein Speicher für Felder.
+
+**Begründung:** Dieselbe Persistenz wie der Flug. Modelloperationen dürfen kommerzielle Punkte nicht ändern (ADR-0059). Preisänderungen später beobachten, nicht still überschreiben.
+
+**Konsequenzen:** Gast- und Kontoweg sind vorbereitet. Die UI zeigt den Übernehmen-Knopf nur bei echten Optionen. Eine spätere feinere Hotelpersistenz wäre eine eigene Development-Migration.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

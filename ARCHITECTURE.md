@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
 Stand: 20. August 2026
-Gültig für: Phase 3.1, Stand nach Flight Foundation, Duffel-Adapter und lokaler Flughafenbasis
+Gültig für: Phase 3.2, Stand nach Hotel Foundation auf der Flight- und Place-Basis
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -151,7 +151,7 @@ Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
 | `/` | Startseite mit Positionierung und Einstieg in die Reiseplanung |
 | `/planen` | Reisebeschreibung in eigenen Worten (`components/trips/Reiseidee.tsx`) und darunter das Formular (`components/trips/TripPlanner.tsx`). Feldfehler sitzen am Feld, nicht nur unter der Absenden-Taste (ADR-0068). |
 | `/reisen` | Übersicht der Reisen – im Konto aus Supabase, als Gast die eine Gastreise |
-| `/reisen/[tripId]` | Trip Workspace mit Tagesplanung (`components/trips/TripWorkspace.tsx`) |
+| `/reisen/[tripId]` | Trip Workspace mit Tagesplanung, Flugsuche und Hotel-/Quartierbereich je Etappe |
 
 **Seit Phase 1.5 gibt es zwei Wege, und sie unterscheiden sich nur im Speicher.** Fachliche Beschreibung: [docs/REISEN.md](docs/REISEN.md), Entscheidungen in [DECISIONS.md](DECISIONS.md) ADR-0041 bis ADR-0043.
 
@@ -268,13 +268,14 @@ Seit Phase 1.4b prüft `npm run db:rechte` eine vierte Regel: Keine Funktion nen
 
 ## 7. API-Schicht
 
-Nach Phase 1.1, 1.1b, 1.3, 1.4 und 3.1 existieren **13** Route Handler. Zuvor waren es 77.
+Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1 und 3.2 existieren **14** Route Handler. Zuvor waren es 77.
 
 | Endpunkt | Zweck | Status |
 | --- | --- | --- |
 | `api/search/airports` | Flughafendaten | nur `public.airports`; Import ist ein Skript, kein Request-Pfad |
 | `api/search/places` | Reiseziel- und Abreiseorte | nur `public.places`; Import ist ein Skript, kein Geocoding-Proxy |
 | `api/flights/search` | geschlossene Flugsuche | Phase 3.1, Production aus, nur Duffel-Test |
+| `api/hotels/search` | geschlossene Hotelsuche | Phase 3.2, Production aus, noch kein Hotelprovider |
 | `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
 | `api/admin/security/*` (5) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
 
@@ -303,6 +304,14 @@ Production bleibt hart aus. Development/Preview brauchen `JETNITY_FLIGHT_AKTIV` 
 ### Flughafenbasis (Phase 3.1)
 
 `GET /api/search/airports` liest ausschliesslich `public.airports`. Der Bestand kommt aus OurAirports Open Data (Public Domain), gefiltert und idempotent über `npm run airports:importieren` geschrieben. Weder Build noch CI noch eine Nutzersuche laden den Upstream. Production-Schreiben nur über [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md). Fachlich: [docs/FLUGHAFEN.md](docs/FLUGHAFEN.md), ADR-0066.
+
+### Hotelsuche (Phase 3.2)
+
+`POST /api/hotels/search` ist geschlossen: validierte Reise-/Etappenangaben, Quartierkontext, Quartierbewertung, optional Provider, Ranking, Client-Sicht. Kein Provider-Proxy. Die UI spricht `HotelOption` und ein sichtbares Quartier, nicht einen Anbieter.
+
+Phase 3.2 hat bewusst keinen Hoteladapter. `hotelProviderAus()` gibt `null` zurück. Production bleibt hart aus. Development/Preview brauchen `JETNITY_HOTEL_AKTIV` **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Quartiergründe entstehen nur aus vorhandenen Reisedaten. Wegezeiten, ÖV-Zeiten und POIs werden nicht erfunden.
+
+Ein später ausgewähltes Hotel wird als `trip_items.kind = stay` auf dem bestehenden Schema gespeichert. `booking_url` bleibt `null`. Fachlich: [docs/HOTELS.md](docs/HOTELS.md), ADR-0070 bis ADR-0074.
 
 ### Ortsbasis (Phase 3.1)
 

@@ -93,7 +93,7 @@ Das Modell schreibt niemals direkt in die Datenbank. Modellantworten sind untrus
 
 ## 5. Nächster Produktblock
 
-**Nächster regulärer Entwicklungsschritt: Hotel Foundation.**
+**Phase 3.2 Hotel Foundation ist in Arbeit** auf Branch `phase-3-2-hotel-foundation`, Draft-PR #22. Die Foundation (Domäne, Quartierkontext, Pipeline, Workspace, `stay`-Übernahme) ist integrationsbereit. Ein echter Hotelprovider ist noch nicht gewählt.
 
 Danach folgen Aktivitäten und Transfers. Nicht mehrere Provider gleichzeitig anbinden; schrittweise und produktorientiert vorgehen.
 
@@ -211,13 +211,13 @@ Diese Punkte sind bekannt und müssen im Projektgedächtnis bleiben:
 
 ## 12. Sofortiger Startpunkt für den nächsten Agenten
 
-1. `main` als Basis nehmen; Phase-3.1-Merge-Commit ist `1ce99839d725d9e97597580909f068dd8af77b57`.
+1. An Phase 3.2 auf `phase-3-2-hotel-foundation` / PR #22 weiterarbeiten oder den Hotelanbieter als nächste Freigabe entscheiden.
 2. Nicht mehr an PR #19 weiterarbeiten – er ist gemergt und abgeschlossen.
-3. Hotel Foundation als nächsten regulären Produktblock planen und auf **neuem Branch + Draft PR** beginnen.
-4. Die Hotel-/Quartierlogik aus Abschnitt 5 und `JETNITY_VISION.md` verbindlich erhalten.
-5. Duffel-Sandbox separat nachholen, sobald Zugang eintrifft; sie blockiert Hotels nicht.
-6. Production-Flugsuche und Modellweg bleiben aus, bis sie jeweils separat freigegeben werden.
-7. Den historischen Supabase-Cronjob nicht nebenbei entfernen; dafür eigene Production-Freigabe einholen.
-8. Hotels/weitere Provider nicht provisionsgetrieben ranken.
+3. Die Hotel-/Quartierlogik aus Abschnitt 5 und `JETNITY_VISION.md` verbindlich erhalten.
+4. Duffel-Sandbox separat nachholen, sobald Zugang eintrifft; sie blockiert Hotels nicht.
+5. Production-Flugsuche, Production-Hotelsuche und Modellweg bleiben aus, bis sie jeweils separat freigegeben werden.
+6. Den historischen Supabase-Cronjob nicht nebenbei entfernen; dafür eigene Production-Freigabe einholen.
+7. Hotels/weitere Provider nicht provisionsgetrieben ranken.
+8. Keinen Hotelprovider anbinden, bevor eine gesonderte Entscheidung vorliegt.
 
 Damit ist Phase 3.1 vollständig abgeschlossen, gemergt, in Supabase Production vorbereitet/verifiziert und als Vercel Production Deployment ausgerollt.

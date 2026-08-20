@@ -1,42 +1,90 @@
-# Hotels – Phase 3.2 Foundation
+# Jetnity – Hotels
 
-Stand: 20. August 2026  
-Status: in Arbeit auf `phase-3-2-hotel-foundation`
+**Stand:** 20. August 2026 · Phase 3.2  
+**Gilt für:** die interne Hotel-/Quartierdomäne, die Suchpipeline, den Trip-Workspace und die vorbereitete Übernahme als `stay`.
 
-## Ziel
+Diese Datei beschreibt den **tatsächlichen** Hotelweg. Produktprinzip: [JETNITY_VISION.md](../JETNITY_VISION.md) Abschnitt 5 und [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md). Entscheidungen: ADR-0070 bis ADR-0074 in [DECISIONS.md](../DECISIONS.md).
 
-Jetnity soll Hotels nicht wie eine klassische Ergebnisliste behandeln. Die zentrale Frage lautet zuerst:
+---
 
-> In welcher Gegend sollte der Nutzer für genau diese Reise wohnen?
+## 1. Was Phase 3.2 ist – und was nicht
 
-Erst danach werden wenige passende Hotels innerhalb der sinnvollsten Gegend bewertet.
+Jetnity bestimmt zuerst, **in welcher Gegend** eine Etappe sinnvoll liegt, und erst danach wenige Hotels in dieser Gegend.
 
-## Architektur
+Gebaut:
 
-Die Hotelarchitektur bleibt provider-unabhängig:
+- provider-unabhängige Hotel-/Quartierdomäne
+- Quartierkontext aus dem echten Reisegraphen
+- deterministische Quartierbewertung und Hotelrangfolge
+- geschlossene Suchpipeline und Client-Sicht
+- Hotelbereich je Etappe im bestehenden Reise-Arbeitsbereich
+- Übernahme-Abbildung auf das bestehende `trip_items`-Schema (`kind = stay`)
 
-`Reisekontext → Quartier-Kandidaten → deterministische Quartierbewertung → HotelProvider → normalisierte Hoteloptionen → Jetnity-Kontext → deterministisches Hotelranking → Nutzerentscheidung → Trip-Übernahme`
+Nicht gebaut:
 
-Die Schichten sind bewusst getrennt:
+- ein echter Hotelprovider oder Affiliate-/Booking-Deeplink
+- Production-Hotelsuche
+- eine neue Migration
+- Routing-/POI-Daten für reale Wegezeiten
+- eigene Hotelbuchung
 
-- `lib/hotels/domain.ts`: interne Hotel-/Quartiertypen
-- `lib/hotels/provider.ts`: schmales Suchprovider-Interface
-- `lib/hotels/quartier-ranking.ts`: Lageentscheidung vor der Hotelsuche
-- `lib/hotels/ranking.ts`: Hotelranking innerhalb der ausgewählten Gegend
+Kein Hotel in der Oberfläche ist erfunden. Fixtures leben nur in Tests.
 
-Kein Provider-SDK darf in UI, Ranking oder Trip-Logik durchsickern.
+---
 
-## Quartierbewertung
+## 2. Schichten
 
-Die erste Foundation bewertet Gegenden deterministisch anhand von:
+```
+Reise-Arbeitsbereich
+  → POST /api/hotels/search
+    → Zod (untrusted input)
+      → Quartierkontext aus Etappe, Zeitraum, Ankern, Flügen
+        → deterministische Quartierbewertung
+          → Zustand (Production, Kill Switch, fehlender Provider)
+            → Rate-Limit
+              → HotelProvider.suchen()
+                → Normalisierung + Jetnity-Kontext
+                  → deterministisches Ranking
+                    → Client-Sicht (ohne Score, ohne Rohdaten)
+```
 
-- tatsächlichen Wegezeiten zu den bekannten Reiseankern
-- An- und Abreisetransfers
-- Geh- und ÖV-Eignung
-- Nutzerpräferenzen wie Ruhe, Nachtleben, Essen, Strand und Familie
-- typischem Preisniveau relativ zum Budget
+| Schicht | Datei | Aufgabe |
+| --- | --- | --- |
+| Domäne | `lib/hotels/domain.ts` | Suchanfrage, Option, Quartier, Evidenz, Status |
+| Prüfung | `lib/hotels/schema.ts` | Zod, untrusted input |
+| Quartierkontext | `lib/hotels/quartier-kontext.ts` | nur vorhandene Reisedaten |
+| Quartierbewertung | `lib/hotels/quartier-ranking.ts` | Lageentscheidung vor der Hotelsuche |
+| Interface | `lib/hotels/provider.ts` | `HotelProvider` – ein späterer Adapter ohne UI-Rewrite |
+| Zustand | `lib/hotels/zustand.ts` | Production aus, Kill Switch, ohne Provider unavailable |
+| Anreicherung | `lib/hotels/anreichern.ts` | Quartier-Fit aus Koordinaten; Wegezeiten bleiben null |
+| Ranking | `lib/hotels/ranking.ts` | provisionsneutral, deterministisch, kein Modell |
+| Orchestrierung | `lib/hotels/suche.ts` | Kontext → Limit → Provider → Ranking |
+| Client-Sicht | `lib/hotels/client-sicht.ts` | keine Tokens, kein Score, keine Rohfelder |
+| Übernahme | `lib/hotels/uebernahme.ts` | Option → kommerzieller `stay`-Planpunkt |
+| Factory | `lib/hotels/factory.ts` | Phase 3.2 gibt `null` zurück |
 
-Aktuelle feste Gewichte:
+Die UI (`components/trips/HotelBereich.tsx`) spricht nur die interne Domäne.
+
+---
+
+## 3. Quartier zuerst
+
+Verbindliche Frage:
+
+> Wo sollte der Nutzer für genau diese Etappe wohnen?
+
+Der Kontext nutzt nur belastbare Reisedaten:
+
+- Etappenname, `place_id` und Koordinaten, soweit vorhanden
+- An-/Abreise oder Reisezeitraum und daraus die Nächte
+- Reiseanker nur mit echten Koordinaten; ein Aktivitätstitel ohne Ort wird nicht zum POI
+- früher Abflug (`startsAt` vor 08:00 am Abreisetag) erhöht die Transferpriorität, erfindet aber keine Transferzeit
+- Budget pro Nacht nur, wenn Budget und Nächte bekannt sind
+- Interessen `food` / `beach` / `wellness` und Tempo `calm` als Nutzerwunsch – nicht als Quartierprofil
+
+Ohne Routing-/POI-Provider bleiben Wegezeiten, ÖV-Zeiten, Geh-Scores und Quartierprofile `null`. Die Begründung darf dann keine kurzen Wege, keine ÖV-Güte und keine Passung zu einem unbekannten Gegendprofil behaupten.
+
+Aktuelle feste Gewichte der Quartierbewertung:
 
 | Faktor | Gewicht |
 | --- | ---: |
@@ -46,13 +94,13 @@ Aktuelle feste Gewichte:
 | Präferenzen | 25 |
 | Budget | 10 |
 
-Die Gewichte enthalten keine Provider- oder Provisionskomponente.
+Ohne echte Werte bleibt der jeweilige Faktor neutral (0,5). Das ist Absicht, keine Scheingenauigkeit.
 
-Fehlende Geodaten werden nicht erfunden. Unbekannte Werte bleiben neutral und werden später durch echte Routing-/POI-Daten ersetzt oder ergänzt.
+---
 
-## Hotelranking
+## 4. Hotelranking
 
-Innerhalb der ausgewählten Gegend bewertet Jetnity:
+Innerhalb der ausgewählten Gegend:
 
 | Faktor | Gewicht |
 | --- | ---: |
@@ -63,66 +111,87 @@ Innerhalb der ausgewählten Gegend bewertet Jetnity:
 | Nutzerpräferenzen | 8 |
 | Evidenz / Bewertungsbasis | 6 |
 
-Der billigste Preis ist damit bewusst nicht automatisch die Jetnity-Empfehlung.
+Der billigste Preis ist nicht automatisch die Jetnity-Empfehlung. Provision und Providername fliessen nicht ein.
 
-Vorgesehene Labels:
+Labels:
 
-- `jetnity` – beste Gesamtpassung
-- `best_value` – starkes Verhältnis aus Preis, Qualität und Lage
-- `best_location` – beste Lage für die konkrete Reise
-- `quiet` – ruhigere Alternative, wenn Daten vorhanden
-- `premium` – höchste Qualitätsoption
+- `jetnity` – Jetnity empfiehlt
+- `best_value` – Bestes Preis-Leistungs-Verhältnis
+- `best_location` – Beste Lage
+- `quiet` – Ruhigere Alternative, nur wenn `ruheScore` vorhanden
+- `premium` – Premium-Option
 
-Die Empfehlung erklärt die wichtigsten Trade-offs. Provisionen dürfen Score oder Labels nicht beeinflussen.
+Die Client-Antwort enthält höchstens fünf Optionen. Interne Scores verlassen den Server nicht.
 
-## Provider-Trennung
+---
 
-`HotelProvider` liefert nur normalisierte Suchdaten. Es erzeugt keine Booking-/Affiliate-URL und bucht nichts.
+## 5. Sicherheit und Kosten
 
-Search-Provider und Monetarisierungs-/Deeplink-Provider können später identisch sein, müssen es aber architektonisch nicht sein. Dadurch kann Jetnity einen Hotelanbieter austauschen oder ergänzen, ohne UI, Quartierlogik, Ranking und Trip-Integration neu zu bauen.
+- Nur serverseitig, geschlossener Endpunkt, kein Provider-Proxy
+- Eingaben begrenzt: Zimmer 1–8, Erwachsene 1–16, Kinder 0–12, Timeout 12 s, max. 40 Providerangebote
+- Rate-Limit im Prozess: 8 Suchen / 10 min und 24 / Tag je IP
+- Production hart aus (`VERCEL_ENV=production`)
+- `JETNITY_HOTEL_AKTIV` muss `true` oder `1` sein, **und** ein Provider muss existieren
+- Phase 3.2 hat keinen Provider; der Normalzustand ist `unavailable`
+- keine `NEXT_PUBLIC_*`-Hotel-Secrets
+- keine kommerziellen Fakten aus dem Sprachmodell
+- Tests rufen keinen echten Hotelprovider auf
 
-## Kommerzielle Fakten
+---
 
-Providerdaten dürfen nur gespeichert oder angezeigt werden, wenn sie tatsächlich geliefert wurden. Unter anderem:
+## 6. Übernahme in die Reise
 
-- Hotelname und Lage
-- Preis und Währung
-- Zimmer-/Rate-Bezeichnung
-- Sterne und Gästebewertung
-- Stornierbarkeit / Deadline
-- Frühstück
-- Steuerhinweis
-- Provider und External-Ref
+Ein später ausgewähltes Hotel wird als kommerzieller `trip_item` mit `kind = stay` gespeichert. Dafür reicht das bestehende Schema. **Keine neue Migration.**
 
-Fehlende Fakten bleiben `null`; Jetnity darf sie nicht aus dem Sprachmodell ergänzen.
+Gespeicherte Momentaufnahme:
 
-## Noch nicht Teil der Foundation
+| Feld | Inhalt |
+| --- | --- |
+| `title` | Hotelname, optional Quartiername |
+| `note` | Adresse, Sterne, Bewertung, Zimmer, Frühstück, Storno, Zeitraum, Nachtpreis – nur gelieferte Fakten |
+| `starts_on` / `ends_on` | Check-in / Check-out der Etappe |
+| `starts_at` / `ends_at` | `null` (keine erfundenen Check-in-Uhrzeiten) |
+| `price_amount` / `price_currency` | Gesamtpreis der angebotenen Rate |
+| `provider` / `external_ref` | Suchanbieter und dessen Angebots-ID |
+| `booking_url` | immer `null` |
+| `stage_id` | Etappe der Unterkunft |
+| `day_id` | Check-in-Tag, falls vorhanden; sonst ungeplant |
 
-- kein echter Hotelprovider
-- keine Production-Hotelsuche
-- keine Affiliate-/Booking-Deeplinks
-- keine eigene Hotelbuchung
-- keine neue Production-Migration
-- noch keine persistente Hotelübernahme in den Trip
-- noch kein Routing-/POI-Provider für reale Wegezeiten
+Was niemals aus dem Modell stammen darf: Preis, Währung, Provider, External-Ref, Booking-URL, Sterne, Bewertung, Storno, Frühstück, Verfügbarkeit.
 
-Diese Punkte werden schrittweise ergänzt, nachdem Domain, Ranking und Sicherheitsgrenzen grün sind.
+Spätere Preis- oder Verfügbarkeitsänderungen ändern die gespeicherte Zeile nicht still. Wie beim Flug ist die Reise eine Momentaufnahme. Eine Überwachung ist Backlog, keine stille Aktualisierung. Modelloperationen dürfen kommerzielle `stay`-Punkte nicht verändern (`istKommerziell`).
 
-## Nächste Schritte innerhalb Phase 3.2
+Nächte gehören zur Etappe, nicht zu einem einzelnen Tag. Deshalb hängt der Punkt an `stage_id`. Ein späterer Bedarf an eigenen Hotel-Nacht-Zeilen oder Quartier-IDs wäre eine **Development-Migration**, nicht Teil dieser Phase.
 
-1. Foundation durch CI/Typecheck/Lint absichern.
-2. Quartier-Datenquelle und Routingstrategie auswählen, ohne unnötige laufende Kosten.
-3. aktuellen Hotel-Daten-/Affiliateanbieter für die Schweiz und spätere Internationalisierung vergleichen.
-4. genau einen ersten Hoteladapter implementieren.
-5. Preview-Suche und 3–5 Ergebnisoptionen in den bestehenden Trip Workspace integrieren.
-6. ausgewähltes Hotel als kommerziellen Trip-Baustein übernehmen; Modell darf kommerzielle Fakten nicht still überschreiben.
-7. Production-Aktivierung erst nach separater Freigabe.
+---
 
-## Verbindliche Leitplanken
+## 7. Oberfläche
 
-- Gesamtreise statt Einzelpreis optimieren.
-- Erst Gegend, dann Hotel.
-- Provisionen dürfen weder Quartierwahl noch Hotelranking verändern.
-- Keine erfundenen Preise, Verfügbarkeiten, Stornoregeln oder Booking-URLs.
-- Keine Secrets im Client oder Repository.
-- Production bleibt kontrolliert und benötigt ausdrückliche Freigabe.
+Im bestehenden Trip Workspace, nicht als Demo:
+
+- ein Hotelbereich je Etappe
+- Quartierempfehlung nur bei vorhandenem Ort **und** Koordinaten
+- Loading / Empty / Unavailable / Timeout / Error / Rate-Limit als getrennte Zustände
+- Hotelkarten nur bei echten Optionen
+- mobile-first, 44 px Trefferflächen, Status über `aria-*`
+
+Solange kein Provider konfiguriert ist, erklärt die Fläche das ehrlich und zeigt höchstens die Gegeneinordnung aus der Reise.
+
+---
+
+## 8. Aktivierung (später, nicht jetzt)
+
+1. Genau einen Hotel-Datenanbieter entscheiden (eigene Freigabe).
+2. Adapter gegen `HotelProvider` bauen. Keine Booking-URL erfinden.
+3. `JETNITY_HOTEL_AKTIV=true` nur in Development/Preview.
+4. Niemals Production, kein Live-Token ohne eigene Freigabe.
+
+---
+
+## 9. Nächste Schritte nach Phase 3.2
+
+1. Hotel-Daten-/Affiliateanbieter für die Schweiz vergleichen und genau einen wählen.
+2. Quartier-Datenquelle bzw. Routing nur, wenn der Nutzen die Kosten trägt.
+3. Ersten Adapter implementieren und in Preview verifizieren.
+4. 3–5 echte Optionen im Workspace zeigen und übernehmen.
+5. Production-Aktivierung erst nach separater Freigabe.
