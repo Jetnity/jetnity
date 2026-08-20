@@ -338,6 +338,41 @@ describe('Geschützte kommerzielle Felder', () => {
     assert.equal(neu?.provider, null)
     assert.equal(neu?.bookingUrl, null)
   })
+
+  test('eine allgemeine Umplanung lässt den kommerziellen Punkt stehen', () => {
+    const ergebnis = anwenden([op({ art: 'stammdaten', tempo: 'calm' })])
+    assert.equal(ergebnis.ok, true)
+    if (!ergebnis.ok) return
+    const dom = ergebnis.reise.days[0]?.items.find((punkt) => punkt.id === 'item-1')
+    assert.equal(dom?.title, 'Dom')
+    assert.equal(dom?.provider, 'getyourguide')
+    assert.equal(dom?.priceAmount, 18)
+  })
+
+  test('punkt_entfernen nimmt einen kommerziellen Punkt nicht weg', () => {
+    const ergebnis = anwenden([op({ art: 'punkt_entfernen', punktId: 'item-1' })])
+    assert.equal(ergebnis.ok, true)
+    if (!ergebnis.ok) return
+    const alle = [
+      ...ergebnis.reise.days.flatMap((tag) => tag.items),
+      ...ergebnis.reise.ohneTag,
+    ]
+    const dom = alle.find((punkt) => punkt.id === 'item-1')
+    assert.equal(dom?.title, 'Dom')
+    assert.equal(dom?.provider, 'getyourguide')
+    assert.equal(dom?.bookingUrl, 'https://example.com/dom')
+  })
+
+  test('eine gekürzte Etappe bewahrt den kommerziellen Punkt ungeplant', () => {
+    const ergebnis = anwenden([op({ art: 'etappe_entfernen', etappeId: 'stage-1' })])
+    assert.equal(ergebnis.ok, true)
+    if (!ergebnis.ok) return
+    assert.equal(ergebnis.reise.days.some((tag) => tag.items.some((punkt) => punkt.id === 'item-1')), false)
+    const dom = ergebnis.reise.ohneTag.find((punkt) => punkt.id === 'item-1')
+    assert.equal(dom?.provider, 'getyourguide')
+    assert.equal(dom?.priceAmount, 18)
+    assert.equal(dom?.dayId, null)
+  })
 })
 
 describe('Unbekannte Referenzen', () => {

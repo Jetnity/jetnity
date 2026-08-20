@@ -206,6 +206,7 @@ export const reiseSchema = z
     lastMutationId: z.string().min(1).max(64).nullable().default(null),
     stages: z.array(etappeSchema).max(GRENZEN.etappenJeReise).default([]),
     days: z.array(reisetagSchema).max(GRENZEN.reisetageJeReise).default([]),
+    ohneTag: z.array(planpunktSchema).max(GRENZEN.punkteJeReise).default([]),
     createdAt: zeitstempel,
     updatedAt: zeitstempel,
   })
@@ -242,7 +243,8 @@ export const reiseSchema = z
       'Zwei Tage tragen dasselbe Datum',
     )
 
-    const punkte = reise.days.reduce((summe, tag) => summe + tag.items.length, 0)
+    const punkte =
+      reise.days.reduce((summe, tag) => summe + tag.items.length, 0) + reise.ohneTag.length
     if (punkte > GRENZEN.punkteJeReise) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -268,6 +270,15 @@ export const reiseSchema = z
             message: 'Dieser Planpunkt verweist auf eine unbekannte Etappe',
           })
         }
+      }
+    }
+    for (const [ort, punkt] of reise.ohneTag.entries()) {
+      if (punkt.stageId && !etappenKennungen.has(punkt.stageId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['ohneTag', ort, 'stageId'],
+          message: 'Dieser Planpunkt verweist auf eine unbekannte Etappe',
+        })
       }
     }
   })
@@ -360,6 +371,7 @@ export const reiseNutzlastSchema = z.object({
   travel_wish: z.string().max(GRENZEN.reisewunsch).nullable(),
   stages: z.array(nutzlastEtappeSchema).max(GRENZEN.etappenJeReise),
   days: z.array(nutzlastTagSchema).max(GRENZEN.reisetageJeReise),
+  ungeplante: z.array(nutzlastPunktSchema).max(GRENZEN.punkteJeReise).default([]),
 })
 
 export type ReiseNutzlast = z.infer<typeof reiseNutzlastSchema>

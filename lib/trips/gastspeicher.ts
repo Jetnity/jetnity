@@ -59,7 +59,7 @@ import { interesseLesen, tempoLesen } from '@/lib/trips/bezeichnungen'
 import { reiseLesen, type PlanpunktFormular } from '@/lib/trips/schema'
 import { reisetageBauen } from '@/lib/trips/tage'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
-import type { CreateTripInput, Reisegraph, Trip, TripDay, TripItem } from '@/types/trips'
+import type { CreateTripInput, Trip, TripDay, TripItem } from '@/types/trips'
 
 /** Die aktive Gastreise. Höchstens eine. */
 const SCHLUESSEL_AKTIV = 'jetnity:reise:v3'
@@ -270,6 +270,7 @@ function ausLegacy(wert: unknown): Trip | null {
     lastMutationId: null,
     stages: ziel ? [einzelneEtappe(ziel)] : [],
     days: tage,
+    ohneTag: [],
     createdAt: typeof alt.createdAt === 'string' ? alt.createdAt : jetzt,
     updatedAt: typeof alt.updatedAt === 'string' ? alt.updatedAt : jetzt,
   }
@@ -429,8 +430,8 @@ export function gastreiseSpeichern(reise: Trip): Trip {
  *
  * Derselbe fachliche Ablauf wie `public.reise_aendern()`: aktuelle Fassung
  * laden, dieselbe Mutation idempotent zurückgeben, eine veraltete Basis
- * ablehnen, Operationen erneut anwenden, Revision erhöhen. Planpunkte ohne Tag
- * hängen am letzten verbleibenden Tag – der Gastspeicher kennt kein `ohneTag`.
+ * ablehnen, Operationen erneut anwenden, Revision erhöhen. Ungeplante
+ * Planpunkte bleiben ungeplant – Konto und Gast teilen denselben Graphen.
  */
 export function gastreiseAendern(eingabe: {
   mutationId: string
@@ -447,44 +448,14 @@ export function gastreiseAendern(eingabe: {
   if (aktuell.lastMutationId === eingabe.mutationId) return aktuell
   if (aktuell.revision !== eingabe.basisRevision) throw new VeralteteFassungFehler()
 
-  const angewandt = operationenAnwenden(
-    { ...aktuell, ohneTag: [] },
-    eingabe.operationen,
-    kennungErzeugen,
-  )
+  const angewandt = operationenAnwenden(aktuell, eingabe.operationen, kennungErzeugen)
   if (!angewandt.ok) throw new Error(angewandt.fehler.meldung)
 
   return gastreiseSpeichern({
-    ...gastGraphAlsReise(angewandt.reise),
+    ...angewandt.reise,
     revision: aktuell.revision + 1,
     lastMutationId: eingabe.mutationId,
   })
-}
-
-/** Hängt ungeplante Punkte an den letzten Tag, damit sie im Gastspeicher bleiben. */
-function gastGraphAlsReise(graph: Reisegraph): Trip {
-  const { ohneTag, ...trip } = graph
-  if (ohneTag.length === 0 || trip.days.length === 0) return trip
-
-  const letzter = trip.days.length - 1
-  return {
-    ...trip,
-    days: trip.days.map((tag, stelle) => {
-      if (stelle !== letzter) return tag
-      return {
-        ...tag,
-        items: [
-          ...tag.items,
-          ...ohneTag.map((punkt, ort) => ({
-            ...punkt,
-            dayId: tag.id,
-            stageId: tag.stageId,
-            position: tag.items.length + ort + 1,
-          })),
-        ],
-      }
-    }),
-  }
 }
 
 /**
@@ -530,6 +501,7 @@ export function gastreiseAnlegen(eingabe: CreateTripInput): Trip {
     lastMutationId: null,
     stages: etappe ? [etappe] : [],
     days: tageMitKennung(eingabe.startDate, eingabe.endDate, etappe?.id ?? null),
+    ohneTag: [],
     createdAt: jetzt,
     updatedAt: jetzt,
   }
@@ -600,6 +572,7 @@ export function gastPlanpunktAnlegen(
 
   return gastreiseSpeichern({
     ...reise,
+    revision: reise.revision + 1,
     days: reise.days.map((eintrag) =>
       eintrag.id === tag.id ? { ...eintrag, items: [...eintrag.items, punkt] } : eintrag,
     ),
@@ -610,12 +583,14 @@ export function gastPlanpunktAnlegen(
 export function gastPlanpunktEntfernen(reise: Trip, punktId: string): Trip {
   return gastreiseSpeichern({
     ...reise,
+    revision: reise.revision + 1,
     days: reise.days.map((tag) => ({
       ...tag,
       items: tag.items
         .filter((punkt) => punkt.id !== punktId)
         .map((punkt, stelle) => ({ ...punkt, position: stelle + 1 })),
     })),
+    ohneTag: reise.ohneTag.filter((punkt) => punkt.id !== punktId),
   })
 }
 

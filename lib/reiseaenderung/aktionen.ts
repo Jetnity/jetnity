@@ -134,7 +134,7 @@ export async function aenderungErzeugenGast(eingabe: unknown): Promise<Aenderung
     return { ok: false, klasse: 'eingabe', meldung: 'Diese Reise ist auf diesem Gerät nicht mehr gültig.' }
   }
 
-  const graph: Reisegraph = { ...tageEtappenZuordnen(reise.data), ohneTag: [] }
+  const graph: Reisegraph = tageEtappenZuordnen(reise.data)
   return mitModell(geprueft.data.text, graph, gastKennung)
 }
 

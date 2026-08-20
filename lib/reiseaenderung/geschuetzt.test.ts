@@ -37,4 +37,17 @@ describe('Geschützte kommerzielle Felder', () => {
     assert.equal(neu?.provider, null)
     assert.equal(neu?.bookingUrl, null)
   })
+
+  test('ein verschwundener kommerzieller Punkt kehrt ungeplant zurück', () => {
+    const vorher = beispielreise()
+    const nachher = beispielreise()
+    nachher.days[0]!.items = []
+
+    const geschuetzt = kommerziellErhalten(vorher, nachher)
+    const dom = geschuetzt.ohneTag.find((punkt) => punkt.id === 'item-1')
+    assert.equal(dom?.title, 'Dom')
+    assert.equal(dom?.provider, 'getyourguide')
+    assert.equal(dom?.priceAmount, 18)
+    assert.equal(dom?.dayId, null)
+  })
 })

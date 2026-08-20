@@ -202,6 +202,30 @@ describe('Was die Datenbank ablehnen würde, wird hier abgelehnt', () => {
     assert.notEqual(gelesen, null)
   })
 
+  test('eine v3-Reise ohne ohneTag bleibt lesbar', () => {
+    const gelesen = reiseLesen(reise())
+    assert.deepEqual(gelesen?.ohneTag, [])
+  })
+
+  test('ungeplante Planpunkte gehören nicht zu einem Tag', () => {
+    const gelesen = reiseLesen(
+      reise({
+        ohneTag: [
+          {
+            id: 'item-offen',
+            dayId: null,
+            title: 'Noch offen',
+            kind: 'note',
+            position: 1,
+          },
+        ],
+      }),
+    )
+
+    assert.equal(gelesen?.ohneTag[0]?.title, 'Noch offen')
+    assert.equal(gelesen?.days.every((tag) => tag.items.length === 0), true)
+  })
+
   test('ein Buchungslink ohne HTTPS – wie trip_items_booking_url_format', () => {
     const mitLink = (url: string) =>
       reise({

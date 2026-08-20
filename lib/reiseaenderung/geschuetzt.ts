@@ -3,9 +3,11 @@
 // Kommerzielle Felder gehören nicht dem Modell.
 //
 // Ein Planpunkt, der vor der Änderung einen Preis, Anbieter oder Buchungslink
-// trug, behält ihn, solange er dieselbe Kennung hat. Neue Planpunkte bleiben
-// ohne diese Felder. Die Nutzlast an die Datenbank darf sie nicht überschreiben;
-// diese Funktion ist die TypeScript-Seite derselben Regel.
+// trug, behält ihn, solange er dieselbe Kennung hat. Fehlt er nach der
+// Anwendung – etwa durch punkt_entfernen oder eine gekürzte Etappe –, landet
+// er ungeplant wieder auf der Reise. Neue Planpunkte bleiben ohne diese Felder.
+// Die Nutzlast an die Datenbank darf sie nicht überschreiben; diese Funktion
+// ist die TypeScript-Seite derselben Regel.
 //
 // Frei von Next, Supabase und `process.env`.
 
@@ -35,6 +37,13 @@ function handelswerte(punkt: TripItem): Pick<TripItem, GeschuetztesFeld> {
   }
 }
 
+/** Ein Planpunkt mit Anbieter, Buchungslink, Fremdkennung oder Preis. */
+export function istKommerziell(punkt: TripItem): boolean {
+  return Boolean(
+    punkt.provider || punkt.bookingUrl || punkt.externalRef || punkt.priceAmount !== null,
+  )
+}
+
 function leer(): Pick<TripItem, GeschuetztesFeld> {
   return {
     priceAmount: null,
@@ -53,11 +62,20 @@ function leer(): Pick<TripItem, GeschuetztesFeld> {
  */
 export function kommerziellErhalten(vorher: Reisegraph, nachher: Reisegraph): Reisegraph {
   const ursprung = new Map(allePunkte(vorher).map((punkt) => [punkt.id, punkt]))
+  const danach = new Set(allePunkte(nachher).map((punkt) => punkt.id))
 
   const punktAnpassen = (punkt: TripItem): TripItem => {
     const alt = ursprung.get(punkt.id)
     return { ...punkt, ...(alt ? handelswerte(alt) : leer()) }
   }
+
+  const wiederhergestellt = allePunkte(vorher)
+    .filter((punkt) => istKommerziell(punkt) && !danach.has(punkt.id))
+    .map((punkt) => ({
+      ...punkt,
+      dayId: null,
+      stageId: null,
+    }))
 
   return {
     ...nachher,
@@ -65,6 +83,6 @@ export function kommerziellErhalten(vorher: Reisegraph, nachher: Reisegraph): Re
       ...tag,
       items: tag.items.map(punktAnpassen),
     })),
-    ohneTag: nachher.ohneTag.map(punktAnpassen),
+    ohneTag: [...nachher.ohneTag.map(punktAnpassen), ...wiederhergestellt],
   }
 }

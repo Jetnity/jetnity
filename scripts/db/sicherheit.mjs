@@ -34,6 +34,7 @@ const REISE = 'aaaaaaaa-0000-4000-8000-000000000001'
 const ETAPPE = 'aaaaaaaa-0000-4000-8000-000000000002'
 const TAG = 'aaaaaaaa-0000-4000-8000-000000000003'
 const PUNKT = 'aaaaaaaa-0000-4000-8000-000000000004'
+const PUNKT_NEU = 'aaaaaaaa-0000-4000-8000-000000000005'
 
 // Die Reise des zweiten Kontos.
 const FREMDE_REISE = 'bbbbbbbb-0000-4000-8000-000000000001'
@@ -379,7 +380,9 @@ const FAELLE = [
     erwartung: 'erlaubt',
     grund:
       'Gäste ohne Konto bleiben möglich: Derselbe Aufruf, den die Server Action setzt, ' +
-      'erzeugt die Reservierung. Die Transaktion rollt zurück.',
+      'erzeugt die Reservierung. Die Transaktion rollt zurück. Live-Gastzeilen von ' +
+      'heute werden im Aufbau um zwei Tage zurückdatiert, damit der Nachweis nicht am ' +
+      'Development-Tageskontingent hängt.',
   },
   {
     name: 'anon liest das Kostenprotokoll',
@@ -1499,7 +1502,7 @@ begin
          external_ref = 'ref-1',
          booking_url = 'https://example.com/x'
    where id = '${PUNKT}';
-  perform public.reise_aendern(${nutzlast('mut-handel', 1, 3, 'Neuer Titel')});
+  perform public.reise_aendern(${nutzlast('mut-handel', 2, 3, 'Neuer Titel')});
   if not exists (
     select 1 from public.trip_items
      where id = '${PUNKT}'
@@ -1562,6 +1565,79 @@ end
 $body$`,
       erwartung: 'erlaubt',
     },
+    {
+      name: 'ein neuer Planpunkt erhöht die Fassung',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `do $body$
+declare
+  _rev integer;
+  _updated timestamptz;
+begin
+  select revision, updated_at into _rev, _updated from public.trips where id = '${REISE}';
+  insert into public.trip_items (id, trip_id, user_id, day_id, kind, title, position)
+    values ('${PUNKT_NEU}', '${REISE}', '${NUTZER}', '${TAG}', 'note', 'Zwischenstopp', 2);
+  if not exists (
+    select 1 from public.trips
+     where id = '${REISE}'
+       and revision = _rev + 1
+       and updated_at >= _updated
+  ) then
+    raise exception 'Revision oder updated_at nach neuem Planpunkt unverändert';
+  end if;
+  raise exception using errcode = 'ZZ000', message = 'treffer:1';
+end
+$body$`,
+      erwartung: 'erlaubt',
+      grund:
+        'planpunktAnlegen() schreibt trip_items direkt. Die Fassung muss steigen, ' +
+        'sonst gilt ein älterer Sprachvorschlag weiter als aktuell.',
+    },
+    {
+      name: 'ein Planpunkt macht einen Vorschlag der vorigen Fassung ungültig',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `do $body$
+begin
+  insert into public.trip_items (id, trip_id, user_id, day_id, kind, title, position)
+    values ('${PUNKT_NEU}', '${REISE}', '${NUTZER}', '${TAG}', 'note', 'Zwischenstopp', 2);
+  begin
+    perform public.reise_aendern(${nutzlast('mut-nach-punkt', 1)});
+    raise exception 'veraltete Fassung hätte scheitern müssen';
+  exception when others then
+    if sqlstate is distinct from 'P0001' then raise; end if;
+  end;
+  raise exception using errcode = 'ZZ000', message = 'treffer:1';
+end
+$body$`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'ein entfernter Planpunkt erhöht die Fassung',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `do $body$
+declare
+  _rev integer;
+begin
+  select revision into _rev from public.trips where id = '${REISE}';
+  delete from public.trip_items where id = '${PUNKT}';
+  if not exists (
+    select 1 from public.trips where id = '${REISE}' and revision = _rev + 1
+  ) then
+    raise exception 'Revision nach dem Löschen unverändert';
+  end if;
+  begin
+    perform public.reise_aendern(${nutzlast('mut-nach-delete', 1)});
+    raise exception 'veraltete Fassung hätte scheitern müssen';
+  exception when others then
+    if sqlstate is distinct from 'P0001' then raise; end if;
+  end;
+  raise exception using errcode = 'ZZ000', message = 'treffer:1';
+end
+$body$`,
+      erwartung: 'erlaubt',
+    },
   ]
 }
 
@@ -1601,17 +1677,32 @@ function aufbau() {
   // Je eine Zeile in den Tabellen, auf die sich die Fälle beziehen. Ohne Daten
   // wäre „0 Zeilen“ mehrdeutig: gefiltert oder schlicht leer?
   const daten = [
+    // Live-Gastzeilen der letzten 24 Stunden zählen in der Quota mit. Im
+    // Rollback datieren wir sie zurück, ohne das Development-Kontingent zu
+    // erhöhen oder dauerhaft zu verändern. Der Nachweis bleibt deterministisch.
+    `update public.model_usage
+        set created_at = created_at - interval '2 days',
+            abgeschlossen_am = case
+              when abgeschlossen_am is null then null
+              else abgeschlossen_am - interval '2 days'
+            end
+      where art = 'gast'
+        and created_at >= now() - interval '1 day';`,
     // Eine vollständige Reise mit Etappe, Tag und Planpunkt, alle mit fester
     // Kennung: Die Fälle brauchen bekannte Kennungen, um eine Zeile im fremden
     // Namen anzulegen oder ein Kind an eine fremde Reise zu hängen.
     `insert into public.trips (id, user_id, client_ref, title, start_date, end_date)
        values ('${REISE}', '${NUTZER}', 'gast-1', 'Japan im Herbst', current_date, current_date + 3);`,
+    // Kindzeilen dürfen die Fassung der Aufbaureise nicht hochzählen – sonst
+    // wären alle Nachweise mit basis_revision 1 veraltet.
+    `select set_config('jetnity.graph_mutation', '1', true);`,
     `insert into public.trip_stages (id, trip_id, user_id, position, name)
        values ('${ETAPPE}', '${REISE}', '${NUTZER}', 1, 'Tokio');`,
     `insert into public.trip_days (id, trip_id, user_id, day_index, day_date)
        values ('${TAG}', '${REISE}', '${NUTZER}', 1, current_date);`,
     `insert into public.trip_items (id, trip_id, user_id, day_id, kind, title)
        values ('${PUNKT}', '${REISE}', '${NUTZER}', '${TAG}', 'activity', 'Fischmarkt');`,
+    `select set_config('jetnity.graph_mutation', '', true);`,
     // Eine zweite Reise, die dem fremden Konto gehört. Ohne sie wäre „0 Zeilen“
     // beim Zugriff des fremden Kontos nicht von „nichts vorhanden“ zu trennen.
     `insert into public.trips (id, user_id, client_ref, title)

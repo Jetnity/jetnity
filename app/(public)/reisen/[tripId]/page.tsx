@@ -71,7 +71,5 @@ export default async function ReiseSeite({ params }: ReiseSeiteProps) {
   const reise = zeilen[0]
   if (!reise) notFound()
 
-  const { ohneTag, ...reisedaten } = reise
-
-  return <KontoArbeitsbereich reise={reisedaten} ohneTag={ohneTag} />
+  return <KontoArbeitsbereich reise={reise} ohneTag={reise.ohneTag} />
 }

@@ -36,6 +36,7 @@ import {
   zurUebernahme,
 } from '@/lib/trips/gastspeicher'
 import type { CreateTripInput } from '@/types/trips'
+import type { Modelloperation } from '@/lib/reiseaenderung/schema'
 
 /**
  * Ein `localStorage`, der sich wie einer verhält – inklusive der drei Arten,
@@ -116,6 +117,32 @@ function eingabe(abweichung: Partial<CreateTripInput> = {}): CreateTripInput {
     interests: ['culture'],
     travelWish: null,
     ...abweichung,
+  }
+}
+
+function leerOp(teil: Partial<Modelloperation> & Pick<Modelloperation, 'art'>): Modelloperation {
+  return {
+    etappeId: null,
+    tagId: null,
+    punktId: null,
+    nachEtappeId: null,
+    nachTagId: null,
+    name: null,
+    laendercode: null,
+    titel: null,
+    notiz: null,
+    beginn: null,
+    punktArt: null,
+    tageDelta: null,
+    tage: null,
+    reisende: null,
+    budgetziel: null,
+    tempo: null,
+    interessen: null,
+    reisewunsch: null,
+    abreiseort: null,
+    startdatum: null,
+    ...teil,
   }
 }
 
@@ -425,6 +452,167 @@ describe('Sprachänderung im Gastspeicher', () => {
       VeralteteFassungFehler,
     )
     assert.equal(gastspeicherLaden().aktiv?.travellers, 3)
+  })
+})
+
+describe('Ungeplante Planpunkte im Gastspeicher', () => {
+  test('ein ungeplanter Punkt bleibt nach Reload ungeplant', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    gastreiseSpeichern({
+      ...reise,
+      ohneTag: [
+        {
+          id: 'item-offen',
+          dayId: null,
+          stageId: null,
+          kind: 'note',
+          title: 'Noch offen',
+          note: null,
+          position: 1,
+          startsOn: null,
+          startsAt: null,
+          endsOn: null,
+          endsAt: null,
+          priceAmount: null,
+          priceCurrency: null,
+          provider: null,
+          externalRef: null,
+          bookingUrl: null,
+        },
+      ],
+    })
+
+    const erneut = gastreiseLadenNach(reise.id)
+    assert.equal(erneut?.ohneTag[0]?.title, 'Noch offen')
+    assert.equal(erneut?.days.every((tag) => tag.items.length === 0), true)
+  })
+
+  test('eine Sprachänderung hängt ungeplante Punkte nicht an den letzten Tag', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    gastreiseSpeichern({
+      ...reise,
+      ohneTag: [
+        {
+          id: 'item-offen',
+          dayId: null,
+          stageId: null,
+          kind: 'note',
+          title: 'Noch offen',
+          note: null,
+          position: 1,
+          startsOn: null,
+          startsAt: null,
+          endsOn: null,
+          endsAt: null,
+          priceAmount: null,
+          priceCurrency: null,
+          provider: null,
+          externalRef: null,
+          bookingUrl: null,
+        },
+      ],
+    })
+
+    const danach = gastreiseAendern({
+      mutationId: 'mut-ohne-tag',
+      basisRevision: 1,
+      operationen: [leerOp({ art: 'stammdaten', reisende: 3 })],
+    })
+
+    assert.equal(danach.travellers, 3)
+    assert.equal(danach.ohneTag[0]?.title, 'Noch offen')
+    assert.equal(danach.days.every((tag) => tag.items.length === 0), true)
+  })
+
+  test('ein gekürzter Zeitraum bewahrt den kommerziellen Punkt ungeplant', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const letzter = reise.days[reise.days.length - 1]
+    if (!letzter) throw new Error('Die Vorlage braucht mindestens einen Tag.')
+    gastreiseSpeichern({
+      ...reise,
+      days: reise.days.map((tag) =>
+        tag.id === letzter.id
+          ? {
+              ...tag,
+              items: [
+                {
+                  id: 'item-dom',
+                  dayId: letzter.id,
+                  stageId: letzter.stageId,
+                  kind: 'activity',
+                  title: 'Dom',
+                  note: null,
+                  position: 1,
+                  startsOn: letzter.dayDate,
+                  startsAt: null,
+                  endsOn: null,
+                  endsAt: null,
+                  priceAmount: 18,
+                  priceCurrency: 'EUR',
+                  provider: 'getyourguide',
+                  externalRef: 'gyg-1',
+                  bookingUrl: 'https://example.com/dom',
+                },
+              ],
+            }
+          : tag,
+      ),
+    })
+
+    const danach = gastreiseAendern({
+      mutationId: 'mut-kuerzen',
+      basisRevision: 1,
+      operationen: [leerOp({ art: 'dauer_aendern', tageDelta: -2 })],
+    })
+
+    const dom = danach.ohneTag.find((punkt) => punkt.id === 'item-dom')
+    assert.equal(dom?.provider, 'getyourguide')
+    assert.equal(danach.days.some((tag) => tag.items.some((punkt) => punkt.id === 'item-dom')), false)
+  })
+
+  test('ein manueller Planpunkt macht einen älteren Änderungsvorschlag ungültig', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const tag = reise.days[0]
+    if (!tag) throw new Error('Die Vorlage braucht mindestens einen Tag.')
+
+    const danach = gastPlanpunktAnlegen(reise, {
+      dayId: tag.id,
+      kind: 'note',
+      title: 'Zwischenstopp',
+      note: null,
+      startsAt: null,
+    })
+
+    assert.equal(danach.revision, 2)
+    assert.throws(
+      () =>
+        gastreiseAendern({
+          mutationId: 'mut-stale',
+          basisRevision: 1,
+          operationen: [leerOp({ art: 'stammdaten', reisende: 4 })],
+        }),
+      VeralteteFassungFehler,
+    )
+    assert.equal(gastspeicherLaden().aktiv?.travellers, 2)
+  })
+
+  test('derselbe Retry nach Reload ändert nichts zweimal', () => {
+    gastreiseAnlegen(eingabe())
+    const einmal = gastreiseAendern({
+      mutationId: 'mut-reload',
+      basisRevision: 1,
+      operationen: [leerOp({ art: 'stammdaten', reisende: 3 })],
+    })
+    const nachReload = gastreiseLadenNach(einmal.id)
+    assert.equal(nachReload?.revision, 2)
+
+    const nochmal = gastreiseAendern({
+      mutationId: 'mut-reload',
+      basisRevision: 1,
+      operationen: [leerOp({ art: 'stammdaten', reisende: 5 })],
+    })
+    assert.equal(nochmal.travellers, 3)
+    assert.equal(nochmal.revision, 2)
   })
 })
 

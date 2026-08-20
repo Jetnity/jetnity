@@ -6,7 +6,8 @@
 // Datei ist die einzige Stelle, die daraus einen neuen Reisegraphen macht.
 // Nach dem Anwenden muss das Ergebnis erneut durch `reiseSchema`. Kommerzielle
 // Felder unveränderter Planpunkte werden aus dem Original übernommen, nicht
-// aus der Operation.
+// aus der Operation. Kommerzielle Planpunkte selbst dürfen durch eine
+// Modelloperation nicht verschwinden.
 //
 // Frei von Next, Supabase und `process.env`.
 
@@ -14,7 +15,7 @@ import { GRENZEN, reiseLesen } from '@/lib/trips/schema'
 import { datumVerschieben } from '@/lib/trips/tage'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 import type { Reisegraph, TripDay, TripItem, TripStage } from '@/types/trips'
-import { kommerziellErhalten } from '@/lib/reiseaenderung/geschuetzt'
+import { kommerziellErhalten, istKommerziell } from '@/lib/reiseaenderung/geschuetzt'
 import type { Modelloperation } from '@/lib/reiseaenderung/schema'
 
 export type KennungFn = (prefix: string) => string
@@ -210,8 +211,8 @@ function tageEntfernenAb(reise: Reisegraph, ids: Set<string>) {
   reise.days = reise.days.filter((tag) => {
     if (!ids.has(tag.id)) return true
     for (const punkt of tag.items) {
-      if (punkt.provider || punkt.bookingUrl || punkt.externalRef || punkt.priceAmount !== null) {
-        entfernt.push({ ...punkt, dayId: null })
+      if (istKommerziell(punkt)) {
+        entfernt.push({ ...punkt, dayId: null, stageId: null })
       }
     }
     return false
@@ -335,6 +336,7 @@ function tagTitel(reise: Reisegraph, op: Modelloperation) {
 
 function punktEntfernen(reise: Reisegraph, op: Modelloperation) {
   const { punkt, tag } = punktSuchen(reise, op.punktId, 'Dieser Planpunkt gehört nicht zur Reise.')
+  if (istKommerziell(punkt)) return
   if (tag) tag.items = tag.items.filter((eintrag) => eintrag.id !== punkt.id)
   else reise.ohneTag = reise.ohneTag.filter((eintrag) => eintrag.id !== punkt.id)
 }
@@ -467,5 +469,5 @@ export function operationenAnwenden(
     }
   }
 
-  return { ok: true, reise: { ...geprueft, ohneTag: erhalten.ohneTag } }
+  return { ok: true, reise: geprueft }
 }

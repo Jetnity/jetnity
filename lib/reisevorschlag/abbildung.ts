@@ -143,6 +143,7 @@ export function vorschlagAlsNutzlast(vorschlag: Reisevorschlag, clientRef: strin
         starts_at: punkt.beginn,
       })),
     })),
+    ungeplante: [],
   }
 }
 
@@ -218,6 +219,7 @@ export function vorschlagAlsReise(
     lastMutationId: null,
     stages: stufen,
     days: tage,
+    ohneTag: [],
     createdAt: jetzt,
     updatedAt: jetzt,
   }

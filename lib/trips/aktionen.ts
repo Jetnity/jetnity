@@ -87,6 +87,7 @@ export async function reiseAnlegen(eingabe: unknown): Promise<Aktionsergebnis<st
       stage_position: 1,
       items: [],
     })),
+    ungeplante: [],
   })
 }
 

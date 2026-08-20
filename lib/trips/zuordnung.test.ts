@@ -27,6 +27,7 @@ function reise(etappen: TripStage[], tage: TripDay[]): Trip {
     lastMutationId: null,
     stages: etappen,
     days: tage,
+    ohneTag: [],
     createdAt: JETZT,
     updatedAt: JETZT,
   }

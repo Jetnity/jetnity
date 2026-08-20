@@ -289,5 +289,12 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
         })),
       }
     }),
+    ungeplante: (reise.ohneTag ?? []).map((punkt, ort) => ({
+      kind: punkt.kind,
+      title: punkt.title,
+      note: punkt.note,
+      position: punkt.position || ort + 1,
+      starts_at: punkt.startsAt,
+    })),
   }
 }

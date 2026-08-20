@@ -310,6 +310,25 @@ describe('Aus einer Reise wird die Nutzlast für public.reise_anlegen()', () => 
     assert.equal(nutzlast.days[0].items[0].starts_at, '09:30')
   })
 
+  test('ungeplante Planpunkte gehen als eigene Liste mit', () => {
+    const mitOffen = {
+      ...gastreise,
+      ohneTag: [
+        {
+          ...gastreise.days[0]!.items[0]!,
+          id: 'offen',
+          dayId: null,
+          title: 'Noch offen',
+        },
+      ],
+    }
+    const nutzlast = alsNutzlast(mitOffen)
+
+    assert.equal(nutzlast.ungeplante.length, 1)
+    assert.equal(nutzlast.ungeplante[0]?.title, 'Noch offen')
+    assert.equal(nutzlast.days[0]?.items.some((punkt) => punkt.title === 'Noch offen'), false)
+  })
+
   test('fehlende Reihenfolgen werden aus der Liste ergänzt', () => {
     // Ein Entwurf aus der Fassung vor Phase 1.5 kennt `position` nicht. Ohne
     // Ersatz wäre `position: 0` in der Datenbank ein

@@ -143,6 +143,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
           onGespeichert={(aktualisiert) => aktualisiert && setReise(aktualisiert)}
         />
       }
+      ohneTag={reise.ohneTag}
       kopfzeile={
         <div className="grid gap-2">
           <div className="flex flex-wrap items-center justify-between gap-3">

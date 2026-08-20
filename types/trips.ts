@@ -143,17 +143,18 @@ export type Trip = {
   lastMutationId: string | null
   stages: TripStage[]
   days: TripDay[]
+  /**
+   * Planpunkte ohne Tag. Entsteht, wenn ein Tag entfällt (`on delete set null`)
+   * oder ein Punkt noch nicht eingeplant ist. Gehört zur Reise, nicht zum
+   * letzten Reisetag – Konto und Gast speichern denselben Graphen.
+   */
+  ohneTag: TripItem[]
   createdAt: string
   updatedAt: string
 }
 
-/**
- * Der vollständige Reisegraph, einschliesslich Planpunkten ohne Tag.
- *
- * `ohneTag` entsteht, wenn ein Tag entfernt wird (`on delete set null`). Die
- * Punkte gehören weiter zur Reise und dürfen nicht unsichtbar werden.
- */
-export type Reisegraph = Trip & { ohneTag: TripItem[] }
+/** Der vollständige Reisegraph. Seit der Vereinheitlichung identisch mit `Trip`. */
+export type Reisegraph = Trip
 
 /**
  * Eine Reise in der Liste „Meine Reisen“.
