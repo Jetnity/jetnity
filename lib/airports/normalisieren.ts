@@ -13,14 +13,14 @@ const UMLAUT: Record<string, string> = {
   å: 'aa',
 }
 
-export function falten(wert: string): string {
+function falten(wert: string): string {
   return wert
     .normalize('NFD')
     .replace(/\p{M}/gu, '')
     .toLowerCase()
 }
 
-export function umlauteExpandieren(wert: string): string {
+function umlauteExpandieren(wert: string): string {
   return wert
     .toLowerCase()
     .replace(/[äöüßæøå]/g, (zeichen) => UMLAUT[zeichen] ?? zeichen)
