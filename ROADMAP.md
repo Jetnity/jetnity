@@ -325,7 +325,7 @@ Ein Befund kam im Abschlusslauf neu dazu und blieb zunächst offen: `auth_leaked
 
 **Keine Development-Service-Role angelegt.** Sie war an keiner Stelle nötig. Die Skripte gehen über die Management API mit dem Personal Access Token, und die RLS-Nachweise legen ihre Testkonten innerhalb der zurückgerollten Transaktion selbst an.
 
-Bei der Rechtedurchsicht fiel dafür der letzte Service-Role-Pfad **in der Anwendung** auf: `api/search/airports` legte, sobald `SUPABASE_SERVICE_ROLE_KEY` gesetzt war, einen zweiten Client mit vollen Rechten an, um Amadeus-Ergebnisse zurückzuschreiben. Der Endpunkt ist öffentlich und ohne Anmeldung erreichbar. Das Zwischenspeichern ist entfernt – die Suche liefert unverändert lokale Treffer und den Amadeus-Fallback, sie schreibt nur nicht mehr. Damit liest kein Codepfad der Anwendung einen Service-Role-Key.
+Bei der Rechtedurchsicht fiel dafür der letzte Service-Role-Pfad **in der Anwendung** auf: `api/search/airports` legte, sobald `SUPABASE_SERVICE_ROLE_KEY` gesetzt war, einen zweiten Client mit vollen Rechten an, um Amadeus-Ergebnisse zurückzuschreiben. Der Endpunkt ist öffentlich und ohne Anmeldung erreichbar. Das Zwischenspeichern ist entfernt. Mit Phase 3.1 entfällt auch der lesende Amadeus-Fallback: die Suche liest nur noch `public.airports`. Damit liest kein Codepfad der Anwendung einen Service-Role-Key und kein aktiver V2-Pfad mehr die Amadeus-API.
 
 **Bewusst nicht getan.** Die 29 obsoleten Tabellen sind eingeordnet, aber nicht gelöscht. Das ist eine eigene, unumkehrbare Handlung und braucht nach [AGENTS.md](AGENTS.md) Regel 22 ein Archiv-Tag. Sie sind jetzt versioniert, RLS-gedeckt und rechtlich eng geführt; ihre Entfernung ist damit eine Aufräumaktion, keine Sicherheitsmassnahme. Nachgeholt in 1.4b.
 
@@ -553,11 +553,12 @@ Schlanke interne Flugdomäne, Duffel als erster Datenadapter, deterministisches 
 - [x] deterministisches, provisionsneutrales Ranking
 - [x] Suche im Reise-Arbeitsbereich
 - [x] Übernahme als kommerzieller `trip_item`, modellgeschützt
+- [x] Amadeus-Fallback aus `/api/search/airports` entfernt; Suche nur noch `public.airports`
 - [ ] Preview mit Duffel-Test-Token verifizieren
 - [ ] Development-Migration `20260820100000` auf dem Development-Branch anwenden
 - [ ] Production-Flugsuche – eigene Freigabe, nicht Teil dieses Schritts
 
-Amadeus Self-Service (eingestellt 17. Juli 2026) wird nicht angebunden. Ein späterer Skyscanner- oder Aviasales-Adapter muss dasselbe Interface erfüllen, ohne UI-, Ranking- oder Trip-Rewrite.
+Amadeus Self-Service (eingestellt 17. Juli 2026) wird nicht angebunden. Im aktiven V2-Code gibt es keinen funktionsfähigen Amadeus-API-Pfad mehr. Ein späterer Skyscanner- oder Aviasales-Adapter muss dasselbe Interface erfüllen, ohne UI-, Ranking- oder Trip-Rewrite.
 
 ---
 

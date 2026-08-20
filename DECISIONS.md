@@ -597,7 +597,7 @@ Auch geprüft: nur `TRUNCATE` zu entziehen und den Rest zu belassen. Verworfen, 
 
 **Nachtrag vom 17. August 2026:** ADR-0035 hat zwei dieser Konsequenzen überholt. Die Zahl der einzeln vergebenen Tabellenrechte ist von 115 auf 118 gestiegen – hinzugekommen sind `update` auf `payments`, `insert` auf `refunds` und `select` auf `stripe_webhooks`. Damit hat `stripe_webhooks` eine Lesepolicy und der Befund `rls_enabled_no_policy` ist weg. Die Begründung von damals bleibt richtig, ihre Voraussetzung nicht: Die Tabelle hatte keine Route, die sie gebraucht hätte. `GET /api/admin/payments/webhooks` gibt es, und der Endpunkt antwortete deshalb dauerhaft leer.
 
-Bei der Durchsicht fiel der letzte verbliebene Service-Role-Pfad in der Anwendung auf: `api/search/airports` legte, sobald `SUPABASE_SERVICE_ROLE_KEY` gesetzt war, einen zweiten Client mit vollen Rechten an und schrieb damit Amadeus-Ergebnisse in `airports` zurück. Der Endpunkt ist öffentlich und ohne Anmeldung erreichbar; eine Suchanfrage eines beliebigen Besuchers hätte damit einen Schreibvorgang mit vollen Datenbankrechten ausgelöst, ohne Auth, ohne Ownership und ohne Rate Limit – die Prüfliste aus [AGENTS.md](AGENTS.md) Regel 14 verfehlt er in drei Punkten. Das Zwischenspeichern ist entfernt; die Suche liefert unverändert lokale Treffer und den Amadeus-Fallback, sie schreibt nur nicht mehr. Referenzdaten zu befüllen gehört in eine Migration oder einen Verwaltungsvorgang, nicht in eine öffentliche Suchabfrage. Damit liest kein Codepfad der Anwendung mehr einen Service-Role-Key, und der Setup-Check fragt ihn nicht mehr ab.
+Bei der Durchsicht fiel der letzte verbliebene Service-Role-Pfad in der Anwendung auf: `api/search/airports` legte, sobald `SUPABASE_SERVICE_ROLE_KEY` gesetzt war, einen zweiten Client mit vollen Rechten an und schrieb damit Amadeus-Ergebnisse in `airports` zurück. Der Endpunkt ist öffentlich und ohne Anmeldung erreichbar; eine Suchanfrage eines beliebigen Besuchers hätte damit einen Schreibvorgang mit vollen Datenbankrechten ausgelöst, ohne Auth, ohne Ownership und ohne Rate Limit – die Prüfliste aus [AGENTS.md](AGENTS.md) Regel 14 verfehlt er in drei Punkten. Das Zwischenspeichern ist entfernt. Mit Phase 3.1 entfällt auch der lesende Amadeus-Fallback: `api/search/airports` liest nur noch `public.airports`. Referenzdaten zu befüllen gehört in eine Migration oder einen Verwaltungsvorgang, nicht in eine öffentliche Suchabfrage. Damit liest kein Codepfad der Anwendung mehr einen Service-Role-Key, und der Setup-Check fragt ihn nicht mehr ab.
 
 ---
 
@@ -1635,7 +1635,7 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 
 **Begründung:** Die Naht ist klein genug, um verdient zu sein, und gross genug, damit UI, Scoring und Trip-Integration den Adapter nicht kennen. Buchung kommt später und darf einen anderen Partner nutzen.
 
-**Konsequenzen:** Keine Duffel-Typen in Komponenten. Keine eigene Flugbuchung. Keine Production-Aktivierung. Dokumentation in [docs/FLUEGE.md](docs/FLUEGE.md).
+**Konsequenzen:** Keine Duffel-Typen in Komponenten. Keine eigene Flugbuchung. Keine Production-Aktivierung. `/api/search/airports` hat keinen Amadeus-Fallback mehr und liest nur `public.airports`. Dokumentation in [docs/FLUEGE.md](docs/FLUEGE.md).
 
 ---
 

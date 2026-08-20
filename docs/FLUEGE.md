@@ -81,7 +81,7 @@ Umgebung:
 
 Die Suche spricht `https://api.duffel.com/air/offer_requests`. Test und Live teilen den Hostname; die Umgebung steht im Token. Phase 3.1 akzeptiert nur Test-Tokens. Buchungsendpunkte (`/air/orders`) werden nicht aufgerufen.
 
-Der bestehende Airport-Fallback unter `/api/search/airports` ist Altbestand und **nicht** der Flugadapter von Phase 3.1.
+`/api/search/airports` liest nur `public.airports`. Es gibt keinen Amadeus-Fallback und keinen zweiten Airport-Provider.
 
 ---
 

@@ -8,7 +8,7 @@ Diese Datei ist der kompakte Übergabepunkt für einen neuen Chat, neuen Cursor-
 
 Phase 2.2 ist nach `main` gemergt (PR #18, `76f21929`) und in Production verifiziert. Der Modellweg bleibt in Production aus.
 
-Phase 3.1 – Flight Foundation – läuft: Jetnity hat die erste echte Flugprodukt-Basis. Duffel Flights API ist der erste Daten-/Entwicklungsadapter. Amadeus Self-Service wurde am 17. Juli 2026 eingestellt und wird **nicht** angebunden. Production-Flugsuche bleibt aus. Keine eigene Flugbuchung.
+Phase 3.1 – Flight Foundation – läuft: Jetnity hat die erste echte Flugprodukt-Basis. Duffel Flights API ist der erste Daten-/Entwicklungsadapter. Amadeus Self-Service wurde am 17. Juli 2026 eingestellt und ist im aktiven V2-Code nicht mehr angebunden – auch nicht als Airport-Fallback. Production-Flugsuche bleibt aus. Keine eigene Flugbuchung.
 
 Verbindlicher Ablauf der Änderung (Phase 2.2, unverändert):
 
@@ -234,6 +234,7 @@ Diese Punkte sind bekannt und blockieren die Flugbasis nicht, müssen aber im Pr
 - Duffel-Angebots-IDs sind kurzlebig; die Reise speichert eine Momentaufnahme, keinen live buchbaren Offer.
 - Das In-Memory-Rate-Limit gilt je Serverless-Instanz.
 - Duffel Self-Service / Test deckt nicht den gesamten Markt; die UI darf das nicht als „bester Preis im Internet“ verkaufen.
+- `/api/search/airports` liest nur die lokale Tabelle; ein leerer Bestand liefert eine leere Liste, keinen Provider-Fallback.
 - Der Sicherheitstest `der Dienstweg als Gast bekommt Kontingent` isoliert Live-Gastzeilen der letzten 24 Stunden nur innerhalb der Rollback-Transaktion. Das Development-Tageslimit bleibt 24 und wird nicht erhöht.
 
 ## 11. Sofortiger Startpunkt im nächsten Chat

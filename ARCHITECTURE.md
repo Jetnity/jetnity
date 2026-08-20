@@ -271,7 +271,7 @@ Nach Phase 1.1, 1.1b, 1.3, 1.4 und 3.1 existieren **12** Route Handler. Zuvor wa
 
 | Endpunkt | Zweck | Status |
 | --- | --- | --- |
-| `api/search/airports` | Flughafendaten | lokaler Bestand; optionaler Amadeus-Fallback ist Altbestand, nicht der Flugweg |
+| `api/search/airports` | Flughafendaten | nur `public.airports`, kein externer Provider |
 | `api/flights/search` | geschlossene Flugsuche | Phase 3.1, Production aus, nur Duffel-Test |
 | `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
 | `api/admin/security/*` (5) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
