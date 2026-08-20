@@ -10,8 +10,6 @@ import {
   gleichGefaltet,
   sucheVarianten,
 } from '@/lib/airports/normalisieren'
-import type { FlughafenKlasse } from '@/lib/airports/importieren'
-
 export type FlughafenZeile = {
   iata: string | null
   icao: string | null
@@ -20,7 +18,7 @@ export type FlughafenZeile = {
   region?: string | null
   country: string | null
   keywords?: string | null
-  klasse?: FlughafenKlasse | null
+  klasse?: string | null
 }
 
 export type FlughafenOption = {
@@ -32,7 +30,7 @@ export type FlughafenOption = {
 const FLUGHAFEN_TREFFER = 12
 export const FLUGHAFEN_ABFRAGE = 80
 
-function klasseBonus(klasse: FlughafenKlasse | null | undefined): number {
+function klasseBonus(klasse: string | null | undefined): number {
   if (klasse === 'large') return 80
   if (klasse === 'medium') return 40
   if (klasse === 'small') return 10
