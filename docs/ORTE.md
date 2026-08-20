@@ -139,10 +139,11 @@ Nach dem ersten Import wurden auf Development die Anzeigenamen `geonames:1650535
 ## 7. Development befüllen
 
 1. Migration `20260820120000_places_referenz.sql` nur auf dem Development-Branch anwenden (`npm run db:anwenden`).
-2. Typen neu erzeugen (`npm run db:typen`).
-3. Airport-Bestand muss bereits existieren, weil Flughafen-Orte daraus kopiert werden.
-4. Import schreiben: `npm run places:importieren -- --schreiben --entwicklung`.
-5. Pflichtbeispiele prüfen: Bali, Thailand, Südtirol/Toskana, New York, Japan, Zürich, ZRH.
+2. Nachtrag `20260820130000_reise_aendern_places.sql` anwenden, damit `reise_aendern()` die Referenzen mitschreibt.
+3. Typen neu erzeugen (`npm run db:typen`).
+4. Airport-Bestand muss bereits existieren, weil Flughafen-Orte daraus kopiert werden.
+5. Import schreiben: `npm run places:importieren -- --schreiben --entwicklung`.
+6. Pflichtbeispiele prüfen: Bali, Thailand, Südtirol/Toskana, New York, Japan, Zürich, ZRH.
 
 Production bleibt unverändert. Die Schemaerweiterung und der Inhalt sind getrennte Handlungen; keines von beiden darf still nach Production.
 

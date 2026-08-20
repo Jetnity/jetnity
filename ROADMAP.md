@@ -556,6 +556,7 @@ Schlanke interne Flugdomäne, Duffel als erster Datenadapter, deterministisches 
 - [x] Amadeus-Fallback aus `/api/search/airports` entfernt; Suche nur noch `public.airports`
 - [x] Provider-unabhängige Airport-Datenbasis (OurAirports-Import, Development 5332 Zeilen)
 - [x] Destination Validation & Place Foundation (GeoNames-Dump, lokale `public.places` mit 124 811 Development-Orten, gemeinsame Autocomplete)
+- [x] Modellweg kanonisiert eindeutige Abreise- und Etappenorte gegen `public.places`; Mehrdeutiges und Fantasieorte bleiben ohne `place_id`
 - [ ] Preview mit Duffel-Test-Token verifizieren
 - [x] Development-Migration `20260820100000` auf dem Development-Branch anwenden
 - [ ] Production-Flugsuche – eigene Freigabe, nicht Teil dieses Schritts
