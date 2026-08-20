@@ -65,8 +65,8 @@ Ein Unterschied ist wichtig: Alle Skripte ausser `db:parallelitaet` und `db:anwe
 | CHECK-Bedingungen | 56 | 45 | 4 | 26 |
 | Indizes | 34 | 31 | 25 | 127 |
 | RLS-Policies | 32 | 31 | 19 | 66 |
-| Funktionen | 21 | 18 | 19 | 43 |
-| Trigger | 7 | 7 | 4 | 13 |
+| Funktionen | 23 | 18 | 19 | 43 |
+| Trigger | 16 | 7 | 4 | 13 |
 | Enums | **0** | 0 | 2 | 4 |
 | Views / materialisierte Views | 0 | 0 | 0 | 0 |
 | Sequenzen | 1 | 1 | 1 | 2 |
@@ -74,7 +74,7 @@ Ein Unterschied ist wichtig: Alle Skripte ausser `db:parallelitaet` und `db:anwe
 
 Die zwölf Tabellen: `profiles`, `trips`, `trip_stages`, `trip_days`, `trip_items`, `model_usage`, `airports`, `payments`, `refunds`, `stripe_webhooks`, `security_events`, `blocked_ips`. Ihre Einordnung steht in Abschnitt 10.
 
-**Phase 2.1 hat genau eine Tabelle ergänzt:** `model_usage` mit 13 Spalten, 11 CHECK-Bedingungen, 3 Indizes, 1 Policy und 3 Funktionen (Abschnitt 7c). Sie hat bewusst **keinen** Fremdschlüssel: Was dort steht, ist der SHA-256 einer Konto- oder Gastkennung und keine Kennung, auf die man verweisen könnte. Ein Kostenprotokoll soll ein gelöschtes Konto überleben – sonst verschwinden mit dem Konto die Kosten, die es verursacht hat.
+**Phase 2.2 Nachtrag `20260820060000`:** `public.reise_graph_geaendert()` plus neun Statement-Trigger auf den Kindtabellen. Die Inventur zählt danach 23 Funktionen und 16 Trigger. Production unverändert.
 
 Das Wachstum liegt vollständig bei den Reisedaten: Die vier neuen Tabellen tragen 61 Spalten, 43 CHECK-Bedingungen, 6 Fremdschlüssel, 5 Eindeutigkeitsbedingungen, 15 Indizes, 16 Policies und 5 Auslöser – vier für `updated_at`, einer für die Erzeugungsregeln von `public.trips` (Abschnitt 7a). Gleichzeitig sind mit `creator_sessions` 16 Spalten, 7 Indizes und 4 Policies sowie die neun Creator-Spalten des Profils entfallen – die Nettozahlen der Tabelle oben sind deshalb kleiner als die Zugänge.
 

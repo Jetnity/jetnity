@@ -537,6 +537,8 @@ Offen aus 2.1:
 
 **Voraussetzungen erfüllt.** Keine neue Infrastruktur. Dieselbe Kostenschranke wie Phase 2.1. Production unverändert aus. Draft-PR #18 bleibt Draft, nicht mergen.
 
+**Nachweise Nachtrag `20260820060000` (Development):** `npm test` 698/698; typecheck, lint, Hygiene, `db:typen --pruefen`, `db:rechte`, Production-Build grün; `db:sicherheit` 160/160, einschließlich Graph-Revision und isoliertem Gastkontingent. `db:kontingent` nicht gegen die Live-Gasttagesgrenze geschrieben.
+
 ---
 
 ## Phase 3 – Reiseprodukte und Monetarisierung · als Nächstes
