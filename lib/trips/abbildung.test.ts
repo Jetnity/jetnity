@@ -40,6 +40,8 @@ function reisezeile(abweichung: Partial<ReiseZeile> = {}): ReiseZeile {
     pace: 'balanced',
     interests: ['culture', 'food'],
     travel_wish: null,
+    revision: 1,
+    last_mutation_id: null,
     created_at: JETZT,
     updated_at: JETZT,
     ...abweichung,
@@ -69,8 +71,8 @@ function punktzeile(abweichung: Partial<PunktZeile> = {}): PunktZeile {
   }
 }
 
-function tagzeile(nr: number, id: string): TagZeile {
-  return { id, day_index: nr, day_date: `2026-09-${11 + nr}`, title: null }
+function tagzeile(nr: number, id: string, stageId: string | null = null): TagZeile {
+  return { id, stage_id: stageId, day_index: nr, day_date: `2026-09-${11 + nr}`, title: null }
 }
 
 describe('Beträge kommen als Zahl an', () => {
@@ -306,6 +308,25 @@ describe('Aus einer Reise wird die Nutzlast für public.reise_anlegen()', () => 
     assert.equal(nutzlast.days[0].items.length, 1)
     assert.equal(nutzlast.days[0].items[0].title, 'Markt')
     assert.equal(nutzlast.days[0].items[0].starts_at, '09:30')
+  })
+
+  test('ungeplante Planpunkte gehen als eigene Liste mit', () => {
+    const mitOffen = {
+      ...gastreise,
+      ohneTag: [
+        {
+          ...gastreise.days[0]!.items[0]!,
+          id: 'offen',
+          dayId: null,
+          title: 'Noch offen',
+        },
+      ],
+    }
+    const nutzlast = alsNutzlast(mitOffen)
+
+    assert.equal(nutzlast.ungeplante.length, 1)
+    assert.equal(nutzlast.ungeplante[0]?.title, 'Noch offen')
+    assert.equal(nutzlast.days[0]?.items.some((punkt) => punkt.title === 'Noch offen'), false)
   })
 
   test('fehlende Reihenfolgen werden aus der Liste ergänzt', () => {

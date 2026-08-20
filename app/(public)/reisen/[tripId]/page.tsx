@@ -29,6 +29,9 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic'
 
+/** Next.js liest nur ein Literal. Muss den Sol-Lauf plus Terra-Fallback tragen. */
+export const maxDuration = 300
+
 type ReiseSeiteProps = {
   params: { tripId: string }
 }
@@ -68,7 +71,5 @@ export default async function ReiseSeite({ params }: ReiseSeiteProps) {
   const reise = zeilen[0]
   if (!reise) notFound()
 
-  const { ohneTag, ...reisedaten } = reise
-
-  return <KontoArbeitsbereich reise={reisedaten} ohneTag={ohneTag} />
+  return <KontoArbeitsbereich reise={reise} ohneTag={reise.ohneTag} />
 }

@@ -84,8 +84,10 @@ export async function reiseAnlegen(eingabe: unknown): Promise<Aktionsergebnis<st
       day_index: tag.dayIndex,
       day_date: tag.dayDate,
       title: null,
+      stage_position: 1,
       items: [],
     })),
+    ungeplante: [],
   })
 }
 

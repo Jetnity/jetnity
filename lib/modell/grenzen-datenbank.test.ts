@@ -183,6 +183,16 @@ describe('Die Ergebnisklassen stimmen auf beiden Seiten überein', () => {
   })
 })
 
+describe('Die Modellfunktionen teilen denselben Topf', () => {
+  test('model_usage.funktion kennt reisevorschlag und reiseaenderung', () => {
+    const alle = [...sql.matchAll(/model_usage_funktion_werte[\s\S]*?check \(funktion in \(([^)]+)\)/g)]
+    assert.ok(alle.length > 0, 'die Prüfbedingung model_usage_funktion_werte fehlt')
+    const letzter = alle[alle.length - 1]
+    const werte = [...letzter[1].matchAll(/'([a-z]+)'/g)].map((eintrag) => eintrag[1]).sort()
+    assert.deepEqual(werte, ['reiseaenderung', 'reisevorschlag'])
+  })
+})
+
 describe('Direkter anon-Zugriff darf kein Kontingent auslösen', () => {
   // Der Nachtrag entzieht EXECUTE und lässt nur service_role. Ein Test, der
   // nur die erste Migration liest, würde die alte Ausnahme weiter als Soll

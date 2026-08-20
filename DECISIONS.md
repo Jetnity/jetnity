@@ -1040,6 +1040,8 @@ Ein Nebeneffekt der Verlegung ist der zweiten Überprüfung aufgefallen und in A
 
 Zwei Grenzen bleiben und sind zu kennen. Erstens gilt `status = 'draft'` beim Anlegen, nicht bei jeder Änderung: Ein Konto kann seine eigene Reise anschliessend auf `booked` setzen. Ein Statusmodell mit erlaubten Übergängen gehört zu Phase 2, wenn eine Buchung entsteht – vorher wäre es eine Regel ohne Vorgang. Zweitens bleibt die Zahl der Kindzeilen je Reise ungebremst; siehe Alternative 4.
 
+**Nachtrag, 20. August 2026:** Phase 2.2 hat `reise_anlegen()` für `trip_days.stage_id` ersetzt und dabei die Zählung aus der Urfassung `20260817120100` wieder in den Rumpf geholt. Das brach ADR-0048: An der Schranke warf die Funktion `53400`, bevor `on conflict` die Wiederholung erkennen konnte. `20260820050000_reise_anlegen_ohne_schranke.sql` nimmt die Zählung wieder heraus. Die Schranke gilt weiter nur im Auslöser.
+
 ---
 
 ## ADR-0046 – Im Browser gilt nur als gespeichert, was zurückgelesen wurde
@@ -1481,6 +1483,135 @@ Die frühere 40-Sekunden-Grenze würde genau diese Sol-Läufe abschneiden.
 **Konsequenzen:** `modellFuerReisevorschlag()` entscheidet vor dem Kontingent. Jeder Aufruf – erster Plan, Terra-Fallback, eine Korrektur – bucht sein eigenes Kontingent und umgeht weder Quota noch Kostendeckel. 38 Sol-Reservierungen würden den $3-Tagesdeckel sprengen; der Deckel bleibt die harte Kostenschranke (ADR-0052). Production bleibt aus.
 
 **Bekannte Grenze:** Der Router liest Muster, keine Weltkarte. Ein ungewöhnlich formulierter einfacher Wunsch kann Sol auslösen, ein komplexer ohne die bekannten Wörter Terra. Der Stift `JETNITY_MODELL_NAME` bleibt der bewusste Eingriff.
+
+---
+
+## ADR-0057 – Ein Reisetag gehört zu einer Etappe
+
+**Datum:** 20. August 2026
+**Status:** umgesetzt auf dem Phase-2.2-Branch, Production unverändert
+
+**Entscheidung:** `trip_days.stage_id` ist die verbindliche Zuordnung eines Tages zu einer Etappe. Sie gilt auch dann, wenn die Reise keine Kalenderdaten hat.
+
+Der zusammengesetzte Fremdschlüssel `(stage_id, trip_id) → trip_stages (id, trip_id)` verhindert, dass ein Tag an einer fremden Reise hängt. `ON DELETE SET NULL` nur für `stage_id` lässt den Tag stehen, wenn die Etappe entfällt.
+
+Bestehende Zeilen werden beim Migrieren zugeordnet: eine Etappe, sonst Datumsüberlappung, sonst Mehrheit aus `trip_items.stage_id`, sonst anteilig nach `day_index`. Neue Reisen setzen die Zuordnung in `public.reise_anlegen()` und im Gastspeicher, auch ohne Zeitraum.
+
+**Kontext:** Das ursprüngliche Schema hat die Verknüpfung bewusst offengelassen: Ein Tag hatte Nummer und optionales Datum, ein Planpunkt konnte an Tag oder Etappe hängen. Für Phase 2.2 – „Florenz einen Tag kürzer, danach zwei Tage am Meer“ – reicht das nicht. Ohne `stage_id` am Tag gäbe es bei einer datumsfreien Mehr-Etappen-Reise keine deterministische Antwort, welche Tage zu welcher Etappe gehören.
+
+**Alternativen:**
+
+1. *Zuordnung nur über Kalenderdaten.* Scheitert genau am Fall ohne Datum, den das Modell seit Phase 1.5 erlaubt.
+2. *Zuordnung nur über `trip_items.stage_id`.* Ein leerer Tag hätte keine Etappe, und genau leere Tage entstehen beim Verlängern.
+3. *Das Modell liefert eine komplette Ersatzreise.* Würde bestehende Kennungen und kommerzielle Felder verwerfen.
+
+**Begründung:** Die Zuordnung ist eine Eigenschaft des Tages, nicht des Modells. TypeScript, Zod und die Datenbank sagen dieselbe Sache.
+
+**Konsequenzen:** `tageEtappenZuordnen()` füllt fehlende Werte beim Lesen. Die Oberfläche ändert sich nicht: Etappen bleiben die Route, Tage der Plan. `ON DELETE SET NULL` kann `stage_id` leeren; der nächste Lesevorgang ordnet neu zu.
+
+---
+
+## ADR-0058 – Eine Reiseänderung steht auf einer Fassung
+
+**Datum:** 20. August 2026
+**Status:** umgesetzt auf dem Phase-2.2-Branch, Production unverändert
+
+**Entscheidung:** `trips.revision` ist die technische Fassung einer Reise. Ein Änderungsvorschlag trägt `basis_revision`. Speichern gelingt nur, wenn die aktuelle Fassung noch dieselbe ist.
+
+`trips.last_mutation_id` macht denselben Bestätigungsvorgang idempotent: Retry und Doppelklick mit derselben Mutationskennung ändern nichts ein zweites Mal. Eindeutig ist `(user_id, last_mutation_id)`; mehrere Reisen ohne letzte Mutation bleiben zulässig (`NULL` kollidiert nicht).
+
+**Kontext:** Zwei Tabs, ein langsames Netz und „Änderung übernehmen“ zweimal sind der Normalfall, nicht der Rand. Ohne Fassung würde der zweite Vorschlag den ersten überschreiben. Ohne Mutationskennung würde derselbe Klick die Reise zwei Tage länger und dann noch einmal zwei Tage länger machen.
+
+**Alternativen:**
+
+1. *Nur `updated_at`.* Ein Zeitstempel ist kein Vergleichswert für „dieselbe Fassung“, sobald zwei Schreibvorgänge in derselben Sekunde liegen.
+2. *Die komplette Reise sperren.* Würde den zweiten Tab blockieren, statt ihm zu sagen, dass sein Vorschlag veraltet ist.
+3. *Idempotenz nur im Browser.* Überlebt keinen Retry nach einem abgebrochenen `fetch`.
+
+**Begründung:** Optimistische Concurrency und Idempotenz gehören in die Datenbank, weil nur sie alle Tabs und alle Retries sieht. Dieselbe Lehre wie ADR-0048 und ADR-0049.
+
+**Konsequenzen:** Die Server Action lädt die Reise neu, prüft Fassung und Mutationskennung und wendet die Operationen erneut an, bevor `public.reise_aendern()` schreibt.
+
+**Nachtrag, 20. August 2026:** Jede fachliche Änderung an `trip_stages`, `trip_days` oder `trip_items` erhöht `trips.revision` und damit `updated_at`. Statement-Trigger rufen `public.reise_graph_geaendert()` auf. `reise_anlegen()` und `reise_aendern()` setzen transaktionslokal `jetnity.graph_mutation`, damit ihre Kindzeilen die Fassung nicht ein zweites Mal zählen. Direkte Schreibwege (`planpunktAnlegen`, `planpunktEntfernen`, PostgREST) zählen mit: Ein Sprachänderungsvorschlag auf Fassung N ist nach einem manuellen Planpunkt veraltet.
+
+**Nachtrag, 20. August 2026 (Stammdaten):** Ein direktes UPDATE der fachlichen Spalten auf `public.trips` (`title`, `origin`, `start_date`, `end_date`, `travellers`, `currency`, `budget_amount`, `status`, `pace`, `interests`, `travel_wish`) erhöht `revision`, wenn der Schreibweg sie nicht bereits gesetzt hat. `reise_aendern()` schreibt `revision + 1` selbst und wird nicht doppelt gezählt. Der Kind-Trigger ändert nur `revision` und löst den Stamm-Auslöser nicht aus.
+
+---
+
+## ADR-0059 – Das Modell ändert Operationen, nicht die Reise
+
+**Datum:** 20. August 2026
+**Status:** umgesetzt auf dem Phase-2.2-Branch, Production unverändert
+
+**Entscheidung:** Die Modellfunktion `reiseaenderung` liefert strukturierte Operationen mit den Kennungen der bestehenden Reise. Reine TypeScript-Logik (`lib/reiseaenderung/anwenden.ts`) wendet sie auf die vertrauenswürdige Reise an. Das Ergebnis wird erneut als Reise geprüft.
+
+Das Modell schreibt nicht in die Datenbank und erhält keine SQL-Rechte. Sein Output bleibt untrusted input (ADR-0053). Das Schema enthält keine Preise, Anbieter, Buchungslinks oder External-Refs (ADR-0054). Unveränderte Planpunkte behalten diese Felder über ihre Kennung; neue bleiben leer.
+
+Kontingent und Kostendeckel sind dieselben wie bei `reisevorschlag`. `model_usage.funktion` unterscheidet die Aufrufe im Protokoll, nicht in der Schranke.
+
+**Kontext:** Eine komplette Ersatzreise vom Modell würde bestehende IDs, Preise und Buchungsanker verwerfen. Phase 2.2 braucht das Gegenteil: „zwei Tage länger“ hängt Tage an, „entferne Rom“ löscht eine Etappe, der Dom behält seinen GetYourGuide-Verweis.
+
+**Alternativen:**
+
+1. *Das Modell liefert eine komplette Ersatzreise.* Einfacher Prompt, teurer an Integrität.
+2. *Das Modell schreibt per Werkzeug in die Datenbank.* Genau der Weg, den Phase 2.1 ausgeschlossen hat.
+3. *Ein zweiter, unabhängiger Modellstack.* Würde Quota, Kill Switch und Routing verdoppeln.
+
+**Begründung:** Operationen plus deterministisches Anwenden halten die bestehende Reise als Wahrheit. Der Unterbau aus Phase 2.1 (Terra/Sol, Structured Outputs, Kontingent) wird erweitert, nicht ersetzt.
+
+**Konsequenzen:** Unbekannte Kennungen, leere Diffs und schemawidrige Antworten werden verworfen, bevor eine Vorschau entsteht. Speichern bestätigt Operationen, nicht den Graphen aus dem Browser. Gäste schicken die geprüfte Reise mit; Konten laden sie aus der Datenbank.
+
+**Nachtrag, 20. August 2026:** Bis Phase 3 ein bewusstes Buchungs-/Providerverhalten definiert, bleiben Planpunkte mit `provider`, `externalRef`, `bookingUrl` oder Preis bei Modelloperationen stehen. `punkt_entfernen` ist für sie ein No-Op. Fehlt ein solcher Punkt nach dem Anwenden, setzt `kommerziellErhalten()` ihn ungeplant zurück. Eine allgemeine Umplanung („mach die Reise entspannter“) darf ihn nicht verschwinden lassen.
+
+**Nachtrag, 20. August 2026 (Sperre):** Bis Phase 3 darf das Modell einen solchen Punkt überhaupt nicht inhaltlich verändern: nicht `kind`, `title`, `note`, `startsOn`/`startsAt`, `endsOn`/`endsAt`, `dayId`/`stageId` und nicht die Handelsfelder. `punkt_anpassen` ist dafür ein No-Op. `zeitraum_verschieben` und ein neues Startdatum lassen seine Termine stehen. Entfällt sein Tag oder seine Etappe, bleibt er ungeplant und sonst unverändert.
+
+---
+
+## ADR-0060 – `reise_aendern()` ist SECURITY INVOKER, atomisch und ohne Handelsfelder
+
+**Datum:** 20. August 2026
+**Status:** umgesetzt auf dem Phase-2.2-Branch, Production unverändert
+
+**Entscheidung:** Account-Änderungen laufen über `public.reise_aendern(jsonb)`, `SECURITY INVOKER`. RLS bleibt die Eigentumsprüfung. Die Funktion prüft `basis_revision`, schreibt die Reise samt Kindern in einer Transaktion, ignoriert kommerzielle Spalten und erhöht `revision`.
+
+Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der überzähligen. Die Reise wird nicht gelöscht und neu angelegt.
+
+`anon` hat kein `EXECUTE`. `authenticated` schon – unter RLS.
+
+**Kontext:** Direkte Updates über PostgREST wären mehrere Roundtrips ohne gemeinsame Fassung. Ein `SECURITY DEFINER` würde RLS umgehen und die Funktion zur zweiten Eigentumsprüfung machen. Phase 1.5 hat denselben Konflikt bei `reise_anlegen()` zugunsten von INVOKER entschieden (ADR-0045).
+
+**Alternativen:**
+
+1. *SECURITY DEFINER mit eigener Eigentumsprüfung.* Mehr Recht als nötig, zweite Quelle für „wem gehört die Reise".
+2. *Vier Roundtrips aus der Server Action.* Kein gemeinsames Rollback, keine atomische Revision.
+3. *Reise löschen und `reise_anlegen()` erneut aufrufen.* Verlöre IDs, Preise und die Missbrauchsschranke zählte eine Neuanlage.
+
+**Begründung:** Dieselbe Bauart wie das Anlegen: INVOKER, eine Transaktion, Idempotenz in der Datenbank. Kommerzielle Felder gehören der späteren Anbieterphase, nicht dem Modell und nicht der Nutzlast.
+
+**Konsequenzen:** Ein Fehler mitten in der Funktion lässt die vorige Fassung stehen, nachgewiesen in `npm run db:sicherheit`. Die Nutzlast darf Preise mitschicken – die Funktion liest sie nicht. Gäste speichern denselben fachlichen Ablauf im `localStorage` (`gastreiseAendern()`).
+
+**Nachtrag, 20. August 2026:** `trip_days_index_eindeutig` und `trip_days_datum_eindeutig` sind `UNIQUE … DEFERRABLE INITIALLY IMMEDIATE`. Der partielle Unique-Index auf `day_date` entfällt; mehrere `NULL`-Daten bleiben zulässig. `reise_aendern()` setzt beide Bedingungen während des Kindschreibens auf `DEFERRED` und vor dem Rückgabewert wieder auf `IMMEDIATE`. Gültige Umnummerierungen und Datumsverschiebungen laufen durch; ein Zielgraph mit doppelter Nummer bleibt `23505`.
+
+---
+
+## ADR-0061 – Gast und Konto teilen denselben Reisegraphen samt ungeplanter Punkte
+
+**Datum:** 20. August 2026
+**Status:** umgesetzt auf dem Phase-2.2-Branch, Production unverändert
+
+**Entscheidung:** `ohneTag` gehört zum Reisemodell, nicht nur zur Konto-Abbildung. Der Gastspeicher persistiert ungeplante Planpunkte unter `jetnity:reise:v3`. `public.reise_anlegen()` übernimmt sie als `ungeplante` mit `day_id` null. Alte v3-JSON ohne das Feld bleibt lesbar (`default []`). Bestehende Punkte, die fälschlich am letzten Tag hingen, werden nicht still umgehängt.
+
+**Kontext:** Konto-Reisen legen Restpunkte nach `on delete set null` in `ohneTag`. Der Gastspeicher hängte sie an den letzten Tag, weil LocalStorage kein eigenes Feld hatte. Nach Reload gehörte ein ungeplanter Punkt scheinbar zum letzten Reisetag.
+
+**Alternativen:**
+
+1. *Weiter am letzten Tag hängen.* Fachlich falsch und nach der Übernahme nicht mehr von echten Tagespunkten zu unterscheiden.
+2. *LocalStorage-Schlüssel v4.* Unnötig: ein optionales Feld mit Vorgabe `[]` liest v3 weiter.
+3. *Stille Migration: Punkte ohne Uhrzeit am letzten Tag nach ohneTag.* Würde echte letzte-Tag-Punkte verlieren.
+
+**Begründung:** Dieselbe Graphform in beiden Ablagen. Keine Datenlöschung, keine Spekulation über alte Entwürfe.
+
+**Konsequenzen:** `gastreiseAendern()` und `aenderungErzeugenGast()` wischen `ohneTag` nicht mehr. Die Übernahme schickt `ungeplante`. Die Listen-Sortierung über `trips.updated_at` folgt der Graph-Revision (ADR-0058 Nachtrag).
 
 ---
 

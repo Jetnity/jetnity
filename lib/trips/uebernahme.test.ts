@@ -220,6 +220,44 @@ describe('Gast mit Reise – der Weg beim Login', () => {
       { kind: 'activity', title: 'Fischmarkt', note: 'früh dort sein', position: 1, starts_at: '06:30' },
     ])
   })
+
+  test('ungeplante Planpunkte bleiben ungeplant', async () => {
+    const entwurf = gastreiseAnlegen(eingabe())
+    speicher.setzen(SCHLUESSEL.aktiv, {
+      ...entwurf,
+      ohneTag: [
+        {
+          id: 'item-offen',
+          dayId: null,
+          stageId: null,
+          kind: 'note',
+          title: 'Noch offen',
+          note: null,
+          position: 1,
+          startsOn: null,
+          startsAt: null,
+          endsOn: null,
+          endsAt: null,
+          priceAmount: null,
+          priceCurrency: null,
+          provider: null,
+          externalRef: null,
+          bookingUrl: null,
+        },
+      ],
+    })
+
+    const server = attrappe()
+    await gastreisenUebernehmen(server.senden)
+
+    assert.deepEqual(server.empfangen[0].ungeplante, [
+      { kind: 'note', title: 'Noch offen', note: null, position: 1, starts_at: null },
+    ])
+    assert.equal(
+      server.empfangen[0].days.every((tag) => tag.items.every((punkt) => punkt.title !== 'Noch offen')),
+      true,
+    )
+  })
 })
 
 describe('Signup mit Reise', () => {
@@ -483,7 +521,7 @@ describe('Manipulationsversuche', () => {
     // Die lokalen Kennungen der Tage sind in der Datenbank ohne Bedeutung. Die
     // Zuordnung eines Planpunkts läuft über `day_index`.
     const felder = new Set(server.empfangen[0].days.flatMap((tag) => Object.keys(tag)))
-    assert.deepEqual([...felder].sort(), ['day_date', 'day_index', 'items', 'title'])
+    assert.deepEqual([...felder].sort(), ['day_date', 'day_index', 'items', 'stage_position', 'title'])
   })
 
   test('ein unlesbarer Eintrag führt nicht zu einem Aufruf', async () => {

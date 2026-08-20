@@ -53,10 +53,13 @@
 //     erst nach bestätigtem Schreiben der neuen Ablage, ein übernommener
 //     Entwurf erst nach der Kennung aus dem Konto.
 
-import { reiseLesen, type PlanpunktFormular } from '@/lib/trips/schema'
-import type { CreateTripInput, Trip, TripDay, TripItem } from '@/types/trips'
+import { operationenAnwenden } from '@/lib/reiseaenderung/anwenden'
+import type { Modelloperation } from '@/lib/reiseaenderung/schema'
 import { interesseLesen, tempoLesen } from '@/lib/trips/bezeichnungen'
+import { reiseLesen, type PlanpunktFormular } from '@/lib/trips/schema'
 import { reisetageBauen } from '@/lib/trips/tage'
+import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
+import type { CreateTripInput, Trip, TripDay, TripItem } from '@/types/trips'
 
 /** Die aktive Gastreise. Höchstens eine. */
 const SCHLUESSEL_AKTIV = 'jetnity:reise:v3'
@@ -103,6 +106,21 @@ export class GastreiseBestehtFehler extends Error {
     )
     this.name = 'GastreiseBestehtFehler'
     this.bestehendeId = bestehendeId
+  }
+}
+
+/**
+ * Die Gastreise im Speicher ist eine neuere Fassung als der Vorschlag.
+ *
+ * Dieselbe Meldung wie bei einer veralteten `trips.revision` im Konto. Die
+ * Oberfläche soll die Vorschau nicht still überschreiben.
+ */
+export class VeralteteFassungFehler extends Error {
+  constructor() {
+    super(
+      'Diese Reise hat sich inzwischen geändert. Bitte verwirf die Vorschau und formuliere den Wunsch erneut.',
+    )
+    this.name = 'VeralteteFassungFehler'
   }
 }
 
@@ -197,6 +215,7 @@ function ausLegacy(wert: unknown): Trip | null {
 
         return {
           id: kennungErzeugen('day'),
+          stageId: null,
           dayIndex: index + 1,
           dayDate: typeof tag.date === 'string' ? tag.date : null,
           title: null,
@@ -247,8 +266,11 @@ function ausLegacy(wert: unknown): Trip | null {
       ? alt.interests.map(interesseLesen).filter((eintrag) => eintrag !== null)
       : [],
     travelWish: typeof alt.travelWish === 'string' ? alt.travelWish : null,
+    revision: 1,
+    lastMutationId: null,
     stages: ziel ? [einzelneEtappe(ziel)] : [],
     days: tage,
+    ohneTag: [],
     createdAt: typeof alt.createdAt === 'string' ? alt.createdAt : jetzt,
     updatedAt: typeof alt.updatedAt === 'string' ? alt.updatedAt : jetzt,
   }
@@ -330,7 +352,14 @@ function legacyUebernehmen(): Gastspeicher | null {
   // verloren gehen.
   if (abgelegt) schreibenVersuch(SCHLUESSEL_LEGACY, null)
 
-  return { aktiv, warteschlange }
+  return {
+    aktiv: mitZuordnung(aktiv),
+    warteschlange: warteschlange.map((reise) => mitZuordnung(reise)).filter((reise): reise is Trip => reise !== null),
+  }
+}
+
+function mitZuordnung(reise: Trip | null): Trip | null {
+  return reise ? tageEtappenZuordnen(reise) : null
 }
 
 /** Die Kennung, unter der eine Reise im Konto ankommt. */
@@ -342,7 +371,7 @@ function bestandWarteschlange(): Trip[] {
   const roh = rohLesen(SCHLUESSEL_WARTESCHLANGE)
   if (!Array.isArray(roh)) return []
   return roh
-    .map(reiseLesen)
+    .map((eintrag) => mitZuordnung(reiseLesen(eintrag)))
     .filter((eintrag): eintrag is Trip => eintrag !== null)
     .slice(0, WARTESCHLANGE_MAXIMUM)
 }
@@ -358,7 +387,10 @@ export function gastspeicherLaden(): Gastspeicher {
   const uebernommen = legacyUebernehmen()
   if (uebernommen) return uebernommen
 
-  return { aktiv: reiseLesen(rohLesen(SCHLUESSEL_AKTIV)), warteschlange: bestandWarteschlange() }
+  return {
+    aktiv: mitZuordnung(reiseLesen(rohLesen(SCHLUESSEL_AKTIV))),
+    warteschlange: bestandWarteschlange(),
+  }
 }
 
 /** Die aktive Gastreise, oder `null`. */
@@ -394,6 +426,39 @@ export function gastreiseSpeichern(reise: Trip): Trip {
 }
 
 /**
+ * Übernimmt eine bestätigte Sprachänderung in den Gastspeicher.
+ *
+ * Derselbe fachliche Ablauf wie `public.reise_aendern()`: aktuelle Fassung
+ * laden, dieselbe Mutation idempotent zurückgeben, eine veraltete Basis
+ * ablehnen, Operationen erneut anwenden, Revision erhöhen. Ungeplante
+ * Planpunkte bleiben ungeplant – Konto und Gast teilen denselben Graphen.
+ */
+export function gastreiseAendern(eingabe: {
+  mutationId: string
+  basisRevision: number
+  operationen: Modelloperation[]
+}): Trip {
+  if (!verfuegbar()) throw new SpeicherFehler()
+
+  const aktuell = gastreiseLaden()
+  if (!aktuell) {
+    throw new Error('Diese Reise ist auf diesem Gerät nicht mehr vorhanden.')
+  }
+
+  if (aktuell.lastMutationId === eingabe.mutationId) return aktuell
+  if (aktuell.revision !== eingabe.basisRevision) throw new VeralteteFassungFehler()
+
+  const angewandt = operationenAnwenden(aktuell, eingabe.operationen, kennungErzeugen)
+  if (!angewandt.ok) throw new Error(angewandt.fehler.meldung)
+
+  return gastreiseSpeichern({
+    ...angewandt.reise,
+    revision: aktuell.revision + 1,
+    lastMutationId: eingabe.mutationId,
+  })
+}
+
+/**
  * Legt die eine Gastreise an.
  *
  * Besteht schon eine, wirft die Funktion `GastreiseBestehtFehler`. Lässt sich
@@ -414,6 +479,10 @@ export function gastreiseAnlegen(eingabe: CreateTripInput): Trip {
   // es dieselbe Kennung, die dort `unique (user_id, client_ref)` prüft.
   const id = eingabe.clientRef
 
+  const etappe = eingabe.destination
+    ? einzelneEtappe(eingabe.destination, eingabe.startDate, eingabe.endDate)
+    : null
+
   const entwurf = {
     id,
     clientRef: id,
@@ -428,10 +497,11 @@ export function gastreiseAnlegen(eingabe: CreateTripInput): Trip {
     pace: eingabe.pace,
     interests: eingabe.interests,
     travelWish: eingabe.travelWish,
-    stages: eingabe.destination
-      ? [einzelneEtappe(eingabe.destination, eingabe.startDate, eingabe.endDate)]
-      : [],
-    days: tageMitKennung(eingabe.startDate, eingabe.endDate),
+    revision: 1,
+    lastMutationId: null,
+    stages: etappe ? [etappe] : [],
+    days: tageMitKennung(eingabe.startDate, eingabe.endDate, etappe?.id ?? null),
+    ohneTag: [],
     createdAt: jetzt,
     updatedAt: jetzt,
   }
@@ -484,7 +554,7 @@ export function gastPlanpunktAnlegen(
   const punkt: TripItem = {
     id: kennungErzeugen('item'),
     dayId: tag.id,
-    stageId: null,
+    stageId: tag.stageId,
     kind: eingabe.kind,
     title: eingabe.title,
     note: eingabe.note,
@@ -502,6 +572,7 @@ export function gastPlanpunktAnlegen(
 
   return gastreiseSpeichern({
     ...reise,
+    revision: reise.revision + 1,
     days: reise.days.map((eintrag) =>
       eintrag.id === tag.id ? { ...eintrag, items: [...eintrag.items, punkt] } : eintrag,
     ),
@@ -512,12 +583,14 @@ export function gastPlanpunktAnlegen(
 export function gastPlanpunktEntfernen(reise: Trip, punktId: string): Trip {
   return gastreiseSpeichern({
     ...reise,
+    revision: reise.revision + 1,
     days: reise.days.map((tag) => ({
       ...tag,
       items: tag.items
         .filter((punkt) => punkt.id !== punktId)
         .map((punkt, stelle) => ({ ...punkt, position: stelle + 1 })),
     })),
+    ohneTag: reise.ohneTag.filter((punkt) => punkt.id !== punktId),
   })
 }
 
@@ -574,9 +647,10 @@ export function uebernommenStreichen(clientRef: string) {
 }
 
 /** Die Tage einer Gastreise: dieselbe Aufteilung wie im Konto, plus lokale Kennungen. */
-function tageMitKennung(startDate: string, endDate: string): TripDay[] {
+function tageMitKennung(startDate: string, endDate: string, stageId: string | null): TripDay[] {
   return reisetageBauen(startDate, endDate).map((tag) => ({
     id: kennungErzeugen('day'),
+    stageId,
     dayIndex: tag.dayIndex,
     dayDate: tag.dayDate,
     title: null,

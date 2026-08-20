@@ -22,6 +22,7 @@ import {
   TRIP_ITEM_KINDS,
   TRIP_PACES,
   TRIP_STATUSES,
+  type Reisegraph,
   type Trip,
   type TripDay,
   type TripInterest,
@@ -48,6 +49,8 @@ export type ReiseZeile = {
   pace: string
   interests: string[] | null
   travel_wish: string | null
+  revision: number | string | null
+  last_mutation_id: string | null
   created_at: string
   updated_at: string
 }
@@ -66,6 +69,7 @@ export type EtappeZeile = {
 
 export type TagZeile = {
   id: string
+  stage_id: string | null
   day_index: number
   day_date: string | null
   title: string | null
@@ -166,7 +170,7 @@ export function reiseAus(
   etappen: EtappeZeile[],
   tage: TagZeile[],
   punkte: PunktZeile[],
-): Trip & { ohneTag: TripItem[] } {
+): Reisegraph {
   const alle = [...punkte]
     .sort(
       (a, b) =>
@@ -193,6 +197,7 @@ export function reiseAus(
     .sort((a, b) => a.day_index - b.day_index)
     .map((zeile) => ({
       id: zeile.id,
+      stageId: zeile.stage_id,
       dayIndex: zeile.day_index,
       dayDate: zeile.day_date,
       title: zeile.title,
@@ -224,6 +229,8 @@ export function reiseAus(
       (TRIP_INTERESTS as readonly string[]).includes(wert),
     ),
     travelWish: reise.travel_wish,
+    revision: Math.max(1, Math.trunc(zahl(reise.revision) ?? 1)),
+    lastMutationId: reise.last_mutation_id,
     stages: geordneteEtappen,
     days: geordneteTage,
     createdAt: reise.created_at,
@@ -260,17 +267,34 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
       arrival_date: etappe.arrivalDate,
       departure_date: etappe.departureDate,
     })),
-    days: reise.days.map((tag, stelle) => ({
-      day_index: tag.dayIndex || stelle + 1,
-      day_date: tag.dayDate,
-      title: tag.title,
-      items: tag.items.map((punkt, ort) => ({
-        kind: punkt.kind,
-        title: punkt.title,
-        note: punkt.note,
-        position: punkt.position || ort + 1,
-        starts_at: punkt.startsAt,
-      })),
+    days: reise.days.map((tag, stelle) => {
+      const etappe = tag.stageId
+        ? reise.stages.find((eintrag) => eintrag.id === tag.stageId)
+        : null
+      const position =
+        etappe?.position ||
+        (reise.stages.length === 1 ? 1 : null)
+
+      return {
+        day_index: tag.dayIndex || stelle + 1,
+        day_date: tag.dayDate,
+        title: tag.title,
+        stage_position: position,
+        items: tag.items.map((punkt, ort) => ({
+          kind: punkt.kind,
+          title: punkt.title,
+          note: punkt.note,
+          position: punkt.position || ort + 1,
+          starts_at: punkt.startsAt,
+        })),
+      }
+    }),
+    ungeplante: (reise.ohneTag ?? []).map((punkt, ort) => ({
+      kind: punkt.kind,
+      title: punkt.title,
+      note: punkt.note,
+      position: punkt.position || ort + 1,
+      starts_at: punkt.startsAt,
     })),
   }
 }

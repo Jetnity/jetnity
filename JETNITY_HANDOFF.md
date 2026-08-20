@@ -6,27 +6,70 @@ Diese Datei ist der kompakte Übergabepunkt für einen neuen Chat, neuen Cursor-
 
 ## 1. Aktueller Stand
 
-Phase 2.1 ist abgeschlossen und per Squash Merge in `main` übernommen.
+Phase 2.2 ist auf dem Feature-Branch implementiert und als PR #18 **Ready for Review**. Phase 2.1 bleibt bis zum Merge von PR #18 der aktuelle Code-Stand in `main` (PR #16, Merge `d9fc8d6`).
 
-- PR: #16 – Freitext zu strukturiertem Reisevorschlag
-- Merge-Commit: `d9fc8d6ece7d7cce0d5409a784f7e09527dff011`
-- Freitext → Modell-Routing → strikt geprüfter Reisevorschlag → Vorgabenprüfung → Vorschau → ausdrückliche Übernahme → Persistenz
-- Modellstrategie: Terra als Standard, Sol für komplexe Abwägungen, Luna nicht automatisch für komplette Reisen
-- Terra/Luna: 90 s harte Modellgrenze
-- Sol: 120 s harte Modellgrenze
-- `/planen`: `maxDuration = 300`
-- Genau ein Terra-Fallback nach Sol-Fehler/Timeout
-- Genau eine Korrekturrunde bei klarer Verletzung harter Vorgaben
-- Progressive Loading statt leerem Warteschirm
-- Keine erfundenen Live-Preise, Anbieter oder Buchungsangebote
-- Modelloutput wird als untrusted input behandelt und mehrfach validiert
-- Kosten-/Kontingentschranke liegt in der Datenbank und wird vor jedem Modellaufruf reserviert
-- Direkter anon/auth RPC kann das Modellkontingent nicht verbrauchen; die beiden Kontingent-RPCs sind nur serverseitig ausführbar
-- Development/Preview ist für echte Modelltests konfiguriert; Production-Aktivierung des Modellwegs ist weiterhin eine eigene Freigabeentscheidung
+Phase 2 ist als konversationeller Kern fertig: Jetnity kann Reisen **erstellen und verändern**. Der Modellweg bleibt in Production aus.
 
-Die detaillierten Entscheidungen zu Phase 2.1 stehen insbesondere in `docs/MODELL.md` und ADR-0050 bis ADR-0056 in `DECISIONS.md`.
+Verbindlicher Ablauf der Änderung:
 
-## 2. Produktprinzip, das alle nächsten Phasen leitet
+`vertrauenswürdige Reise → Änderungswunsch → strukturierte Operationen → deterministische Anwendung → Vorher/Nachher → ausdrückliche Bestätigung → atomisches Speichern`
+
+- Das Modell schreibt nicht in die Datenbank und erhält keine SQL-Rechte
+- Modellantworten sind untrusted input
+- Preise, Provider, Booking-URLs und External-Refs kommen nicht aus dem Modell
+- `trip_days.stage_id` ordnet Tage einer Etappe zu, auch ohne Kalenderdaten
+- `trips.revision` / `last_mutation_id` tragen optimistische Concurrency und Idempotenz; die Fassung steigt bei jeder Graph- und Stammdatenänderung, nicht nur in `reise_aendern()`
+- Account: `public.reise_aendern()`, SECURITY INVOKER, RLS, atomisch
+- Gast: derselbe fachliche Ablauf im LocalStorage, inklusive ungeplanter Planpunkte
+- Kommerzielle Planpunkte sind bei Modelloperationen bis Phase 3 vollständig gesperrt: Inhalt, Termin und Zuordnung bleiben unverändert; entfällt ihre Struktur, bleiben sie ungeplant erhalten
+- `reise_aendern()` schiebt die Eindeutigkeit von `day_index`/`day_date` bis zum fertigen Graphen auf
+- Gemeinsames Modellkontingent mit `reisevorschlag` (38 Aufrufe / USD 3 pro Tag)
+- `/planen` und `/reisen/[tripId]`: `maxDuration = 300`
+- `reise_anlegen()` trägt keine eigene Missbrauchszählung; die Schranke bleibt im Auslöser (`20260820050000`)
+- Feature-Branch / PR: `cursor/phase-22-reise-aendern-e90a`, PR #18
+
+Entscheidungen: ADR-0057 bis ADR-0061. Fachlich: `docs/REISEN.md`, `docs/MODELL.md`, `docs/DATENBANK.md`.
+
+## 2. Production-Rollout am 20. August 2026
+
+Vor dem GitHub-Merge von Phase 2.2 wurde Supabase Production kontrolliert auf den bereits auf dem Development-Branch getesteten V2-Datenbankstand gebracht.
+
+### Ausgangslage
+
+Production stand noch auf der historischen Baseline und enthielt 39 Tabellen aus der alten Jetnity-Produktidee. Development war bereits auf das V2-Schema mit 12 Public-Tabellen migriert.
+
+In Production befanden sich noch wenige Bestandsdaten aus der alten Creator-/Media-/Blog-Struktur. Die wichtigen Kontodaten wurden davon getrennt behandelt:
+
+- 3 Einträge in `auth.users`
+- 3 zugehörige alte `creator_profiles`
+- zusätzlich kleine Mengen alter Creator-/Session-/Upload-/Blog-Daten
+
+### Freigegebene Bereinigung
+
+Der Nutzer hat ausdrücklich freigegeben, die nicht mehr benötigten alten Creator-/Blog-/Media-/Session-Inhalte zu entfernen. Die Benutzerkonten und notwendigen Kontoprofile sollten erhalten bleiben.
+
+Der Rollout erfolgte über den getesteten Supabase-Development-Branch und dessen Migrationen, nicht über manuelle Einzeländerungen am V2-Schema.
+
+### Ergebnis nach dem Rollout
+
+Production wurde erfolgreich auf denselben fachlichen Datenbankstand wie Development gebracht:
+
+- 3 `auth.users` **erhalten**
+- 3 `profiles` **erhalten und weiterhin mit den 3 Auth-Konten verknüpft**
+- keine verwaisten Profile
+- alte Creator-/Blog-/Media-/Session-Altlasten entfernt
+- 12 Public-Tabellen
+- 28 registrierte Migrationen
+- neueste Migration: `20260820080000_reise_tage_eindeutig_aufgeschoben`
+- Reisetabellen (`trips`, `trip_stages`, `trip_days`, `trip_items`) vorhanden und zum Rollout-Zeitpunkt leer
+- Supabase Production nach dem Rollout gesund; der Branch-Merge endete mit `FUNCTIONS_DEPLOYED` / `ACTIVE_HEALTHY`
+- bekannte Security-Advisor-Warnungen entsprechen dem bereits dokumentierten Development-Stand; durch den Rollout wurde keine neue Warnklasse eingeführt
+
+Wichtig: **Der Modellweg bleibt in Production weiterhin deaktiviert.** Das Datenbankschema ist vorbereitet; eine spätere Modellaktivierung ist eine separate Production-Freigabe.
+
+Der Production-Datenbankrollout erfolgte bewusst **vor** dem GitHub-Merge, damit der neue Phase-2.2-Code nach dem Merge nicht gegen ein veraltetes Production-Schema läuft.
+
+## 3. Produktprinzip, das alle nächsten Phasen leitet
 
 Jetnity soll nicht nur mehr Funktionen anbieten, sondern bessere Reiseentscheidungen treffen.
 
@@ -34,40 +77,25 @@ Die Kernoptimierung ist die **Gesamtreise**, nicht der isoliert billigste Flug o
 
 Monetarisierung darf die Empfehlung niemals verzerren. Affiliate- oder Vermittlungsprovisionen sind Einnahmequellen, aber Jetnity muss weiterhin die beste Nutzeroption empfehlen, nicht die margenstärkste.
 
-## 3. Nächster Entwicklungsschritt: Phase 2.2
+Jetnity soll außerdem reale Änderungen als Kettenereignis verstehen. Beispiel: Wird ein Flug um einen Tag verschoben, analysiert Jetnity die Folgen für Hotelnächte, Aktivitäten, Transfers, Anschlussverbindungen, Budget und Reisezeit und bereitet einen Anpassungsvorschlag vor. Externe Änderungen dürfen niemals still andere Reiseelemente verändern.
 
-**Phase 2.2 – bestehende Reise per Sprache ändern** ist der unmittelbare nächste PR.
+Verbindlicher Ablauf:
 
-Ziel: Ein Nutzer kann eine bereits bestehende Reise natürlich verändern, zum Beispiel:
+`Änderung erkennen → Auswirkungen auf die Gesamtreise bestimmen → optimierte Anpassung vorschlagen → Vorher/Nachher zeigen → erst nach ausdrücklicher Nutzerfreigabe übernehmen`
 
-- „Mach Florenz einen Tag kürzer und gib mir dafür zwei volle Tage am Meer.“
-- „Entferne Los Angeles und verlängere Yosemite.“
-- „Der Plan ist mir zu stressig. Mach ihn entspannter.“
-- „Wir wollen jetzt mit Kind reisen und brauchen mehr Pausen.“
+Die manuelle Grundfunktion kann Teil des kostenlosen Kerns sein; automatische Überwachung, proaktive Warnungen und fortlaufende Reiseoptimierung sind ein starker Kandidat für Jetnity Pro.
 
-### Verbindlicher Ablauf
+## 4. Nächster Entwicklungsschritt: Phase 3
 
-`bestehende Reise → Änderungswunsch verstehen → Änderungsvorschlag berechnen → harte Regeln prüfen → Vorher/Nachher anzeigen → Nutzer bestätigt → erst dann speichern`
+Phase 2.2 ist umgesetzt und das Production-Datenbankschema vorbereitet. Nach dem kontrollierten Merge von PR #18 und erfolgreichem Production-Deploy folgt **Phase 3 – echte Reiseprodukte**, beginnend mit Flügen.
 
-Wichtig:
+Kein weiterer Production-Eingriff ohne ausdrückliche Freigabe.
 
-- Keine direkte Datenbankmutation aus einem Modelloutput.
-- Bestehende Reise zuerst als vertrauenswürdigen strukturierten Zustand laden.
-- Modelloutput erneut als untrusted input behandeln.
-- Änderungen müssen auf das bestehende Reiseschema abbildbar und deterministisch prüfbar sein.
-- Vorher/Nachher-Diff für den Nutzer verständlich zeigen.
-- Harte Vorgaben wie Dauer, Orte, Ausschlüsse, Budgetziel, Flugverbot, Ruhetage und maximale Etappen weiter respektieren.
-- Konflikte und offene Punkte ehrlich als Warnung anzeigen statt einen „perfekten“ Plan zu behaupten.
-- Doppelklick, Retry und Idempotenz sauber behandeln.
-- Kein Phase-2.2-Merge ohne relevante Unit-/Integration-/Browser-Tests, Typecheck, Lint, Build, CI und Dokumentationsupdate.
-
-Wenn Phase 2.2 fertig ist, ist Phase 2 als konversationeller Kern abgeschlossen: Jetnity kann Reisen **erstellen und verändern**.
-
-## 4. Danach: Phase 3 – echte Reiseprodukte und Monetarisierung
+## 5. Phase 3 – echte Reiseprodukte und Monetarisierung
 
 Nicht alle Provider gleichzeitig anbinden. Schrittweise und produktorientiert vorgehen.
 
-### 4.1 Flüge zuerst
+### 5.1 Flüge zuerst
 
 Erste echte Produktintegration: Flüge.
 
@@ -80,7 +108,7 @@ Ziel:
 
 Amadeus bzw. ein geeigneter Flight-Provider ist der erste Kandidat. Vor konkreter Integration aktuelle API-Bedingungen, Kosten, Affiliate-Möglichkeiten, Produktionszugang und Datenqualität erneut prüfen.
 
-### 4.2 Hotels danach
+### 5.2 Hotels danach
 
 Hotels erst integrieren, wenn die Flug-/Reiseproduktbasis stabil ist.
 
@@ -94,17 +122,17 @@ Jetnity soll nicht nur den billigsten Zimmerpreis sehen, sondern vor allem:
 
 Start pragmatisch mit Affiliate/Deeplink oder einem passenden Anbieter; keine unnötige Buchungsplattform selbst bauen.
 
-### 4.3 Aktivitäten danach
+### 5.3 Aktivitäten danach
 
 GetYourGuide ist ein Kandidat für Aktivitäten.
 
 Aktivitäten sollen nicht als willkürliche Liste erscheinen, sondern in den vorhandenen Tagesplan passen und Zeit, Lage, Öffnungszeiten, Dauer und Transfers berücksichtigen.
 
-### 4.4 Transfers / Bahn / Bus / Fähre
+### 5.4 Transfers / Bahn / Bus / Fähre
 
 Danach die Lücken zwischen den Etappen und Aktivitäten mit realen Transferoptionen schließen. Besonders wichtig für Inselreisen, Roadtrips und Multi-City-Reisen.
 
-## 5. Jetnitys eigentlicher Wettbewerbsvorteil
+## 6. Jetnitys eigentlicher Wettbewerbsvorteil
 
 Sobald echte Produktdaten verfügbar sind, muss Jetnity die Reise **gesamtoptimieren**.
 
@@ -131,7 +159,7 @@ Die Empfehlung soll die wichtigsten Trade-offs in verständlicher Sprache erklä
 
 **Keine Provision darf diese Rangfolge manipulieren.**
 
-## 6. Monetarisierungsprinzip
+## 7. Monetarisierungsprinzip
 
 Primärmodell:
 
@@ -141,9 +169,17 @@ Primärmodell:
 
 Die zentrale Reiseplanung sollte zum Launch nicht hinter einer harten Bezahlschranke verschwinden. Der Nutzer soll den Kernnutzen kennenlernen.
 
-Ein mögliches Premium-Modell kann später Mehrwert bieten, zum Beispiel bei besonders umfangreichen Reisen, erweiterten Optimierungen, Kollaboration, Dokumenten, Offline-Funktionen oder weiteren Pro-Funktionen. Das konkrete Abo-Modell wird erst festgelegt, wenn echte Nutzungsmuster und Kosten vorliegen.
+Ein mögliches Premium-Modell kann später Mehrwert bieten, insbesondere:
 
-## 7. Danach: Phase 4 – Launch-Reife
+- automatische Überwachung gespeicherter Reisen
+- proaktive Hinweise auf Flug-/Hotel-/Provideränderungen
+- automatische Folgenanalyse auf die gesamte Reise
+- mehrere optimierte Lösungsvorschläge nach Kosten, Zeit, Komfort und Reibung
+- erweiterte Kollaboration, Dokumente und Offline-Funktionen
+
+Nicht pro einzelne Änderung abrechnen. Jetnity Pro soll einen dauerhaften Begleit- und Schutzwert bieten.
+
+## 8. Danach: Phase 4 – Launch-Reife
 
 Erst wenn Erstellen, Ändern und die wichtigsten Produktintegrationen stabil sind, kommt der vollständige Launch-Pass.
 
@@ -166,9 +202,9 @@ Dazu gehören mindestens:
 
 Vor Production-Aktivierung des Modellwegs ist zusätzlich die Aufbewahrungsfrist für `public.model_usage` verbindlich festzulegen.
 
-## 8. Architektur- und Qualitätsregeln für alle nächsten Arbeiten
+## 9. Architektur- und Qualitätsregeln für alle nächsten Arbeiten
 
-- Cursor ist technischer Lead/Hauptentwickler; ChatGPT steuert Produkt, Architektur, Security, Kosten und Qualität mit.
+- Cursor setzt große Implementierungsaufträge um; ChatGPT steuert mit Produkt, Architektur, Security, Kosten und Review.
 - Größere Aufgabe: analysieren → entscheiden → implementieren → relevante Tests → Build/CI → Dokumentation → PR.
 - Ursachen beheben, nicht Symptome verstecken.
 - Keine Demos oder Wegwerfarchitektur als Produktionsbasis.
@@ -181,23 +217,26 @@ Vor Production-Aktivierung des Modellwegs ist zusätzlich die Aufbewahrungsfrist
 - Security/RLS/Auth/Tests/Mobile/Accessibility/Performance/Loading/Error States/Permissions/Kostenkontrollen nicht aus Spargründen überspringen.
 - Starke Modelle dort einsetzen, wo sie messbar mehr Qualität bringen; effiziente Modelle für Routinearbeit. Qualität pro Token optimieren, nicht blind Kosten minimieren.
 
-## 9. Aktuelle offene Punkte aus Phase 2.1
+## 10. Offene Punkte nach Phase 2.2
 
-Diese Punkte sind bekannt und blockieren den Start von Phase 2.2 nicht, müssen aber im Projektgedächtnis bleiben:
+Diese Punkte sind bekannt und blockieren Phase 3 nicht, müssen aber im Projektgedächtnis bleiben:
 
 - `public.model_usage`: Aufbewahrungsfrist noch offen; vor Production-Freigabe entscheiden.
 - Reload während einer noch nicht übernommenen Vorschau verwirft sie bewusst nach ADR-0050.
 - Der Router arbeitet mit Mustern und kann ungewöhnliche Formulierungen falsch einordnen; manueller Modell-Stift bleibt möglich.
 - Preview-Tests sind keine Lasttests.
 - Production-Modellaktivierung bleibt eine eigene Freigabe.
-- Echte Reiseangebote/Preise sind noch nicht Teil von Phase 2.1.
+- Echte Reiseangebote/Preise sind noch nicht Teil von Phase 2. Phase 3 muss das Buchungs-/Providerverhalten für kommerzielle Planpunkte bewusst definieren; bis dahin sind sie bei Modelloperationen vollständig gesperrt.
+- Der Sicherheitstest `der Dienstweg als Gast bekommt Kontingent` isoliert Live-Gastzeilen der letzten 24 Stunden nur innerhalb der Rollback-Transaktion. Das Development-Tageslimit bleibt 24 und wird nicht erhöht.
 
-## 10. Sofortiger Startpunkt im nächsten Chat
+## 11. Sofortiger Startpunkt im nächsten Chat
 
-Wenn in einem neuen Chat gefragt wird „Wie geht es mit Jetnity weiter?“, ist die Antwort:
+Wenn PR #18 noch offen ist:
 
-**Phase 2.2 starten: bestehende Reise per natürlicher Sprache ändern.**
+**PR #18 auf aktuellem Head und CI prüfen. Das Production-Datenbankschema ist bereits auf Phase 2.2 vorbereitet. Nach erfolgreichem Squash-Merge Production-Deploy und Runtime prüfen.**
 
-Noch nicht gleichzeitig Amadeus, Hotels, GetYourGuide und Monetarisierung bauen. Erst Phase 2.2 vollständig, getestet, dokumentiert und gemergt. Danach Phase 3 in der Reihenfolge Flüge → Hotels → Aktivitäten → Transfers; parallel die Gesamtoptimierung als Jetnity-DNA erhalten. Danach Launch-Reife.
+Wenn PR #18 bereits gemergt und Production grün ist:
 
-Vor dem ersten Phase-2.2-Prompt soll der aktuelle `main`-Stand und die bestehende Dokumentation gelesen werden. Danach einen klar abgegrenzten PR für Phase 2.2 anlegen.
+**Phase 3 starten – echte Reiseprodukte, beginnend mit Flügen.**
+
+Noch nicht gleichzeitig Hotels, GetYourGuide und Monetarisierung bauen. Erst Flüge, dann Hotels, dann Aktivitäten, dann Transfers; parallel die Gesamtoptimierung und reaktive Folgenanalyse als Jetnity-DNA erhalten. Danach Launch-Reife.

@@ -1,7 +1,7 @@
 # Jetnity – Datenbank
 
-Stand: 18. August 2026
-Gültig für: Supabase-Development-Branch nach Phase 1.5, einschliesslich des Nachtrags aus der Überprüfung vor dem Merge
+Stand: 20. August 2026
+Gültig für: Supabase-Development-Branch nach Phase 2.2. Production ist in keiner der Phasen 1.4 bis 2.2 angefasst worden.
 
 Diese Datei beschreibt den **tatsächlichen** Zustand des Schemas, wie er sich aus dem Repository herstellen lässt. Sie ist die Antwort auf die Frage, die [ARCHITECTURE.md](../ARCHITECTURE.md) Abschnitt 6 bis Phase 1.4 offenlassen musste: Was steht in der Datenbank, wer darf was, und woher weiß man das.
 
@@ -39,7 +39,7 @@ Alle Skripte liegen in `scripts/db/` und sprechen über die Supabase Management 
 | `npm run db:anwenden` | offene Migrationen anwenden und in `supabase_migrations.schema_migrations` eintragen; `-- --probe` zeigt nur, was offen ist |
 | `npm run db:reproduzierbarkeit` | baut das Schema aus den Migrationen neu auf und vergleicht es mit dem laufenden |
 | `npm run db:rls` | empirische RLS-Matrix: was darf welche Rolle auf welcher Tabelle wirklich |
-| `npm run db:sicherheit` | 140 benannte Nachweise mit Erwartung, positiv und negativ; wo es darauf ankommt, mit verlangtem SQLSTATE |
+| `npm run db:sicherheit` | 168 benannte Nachweise mit Erwartung, positiv und negativ; wo es darauf ankommt, mit verlangtem SQLSTATE |
 | `npm run db:parallelitaet` | 5 Nachweise gegen die Erzeugungsschranke von `public.trips` unter echter Gleichzeitigkeit |
 | `npm run db:rechte` | Tabellenrechte gegen Policies prüfen; zusätzlich, dass keine Funktion eine Struktur nennt, die es nicht gibt |
 | `npm run db:verwendung` | welche Tabellen und RPCs der Anwendungscode anspricht |
@@ -61,12 +61,12 @@ Ein Unterschied ist wichtig: Alle Skripte ausser `db:parallelitaet` und `db:anwe
 | Spalten | 115 | 102 | 66 | 324 |
 | Primärschlüssel | 12 | 11 | 8 | 37 |
 | Fremdschlüssel | 7 | 7 | 2 | 52 |
-| Eindeutigkeitsbedingungen | 6 | 6 | 3 | 4 |
+| Eindeutigkeitsbedingungen | 7 | 6 | 3 | 4 |
 | CHECK-Bedingungen | 56 | 45 | 4 | 26 |
 | Indizes | 34 | 31 | 25 | 127 |
 | RLS-Policies | 32 | 31 | 19 | 66 |
-| Funktionen | 21 | 18 | 19 | 43 |
-| Trigger | 7 | 7 | 4 | 13 |
+| Funktionen | 24 | 18 | 19 | 43 |
+| Trigger | 17 | 7 | 4 | 13 |
 | Enums | **0** | 0 | 2 | 4 |
 | Views / materialisierte Views | 0 | 0 | 0 | 0 |
 | Sequenzen | 1 | 1 | 1 | 2 |
@@ -74,7 +74,7 @@ Ein Unterschied ist wichtig: Alle Skripte ausser `db:parallelitaet` und `db:anwe
 
 Die zwölf Tabellen: `profiles`, `trips`, `trip_stages`, `trip_days`, `trip_items`, `model_usage`, `airports`, `payments`, `refunds`, `stripe_webhooks`, `security_events`, `blocked_ips`. Ihre Einordnung steht in Abschnitt 10.
 
-**Phase 2.1 hat genau eine Tabelle ergänzt:** `model_usage` mit 13 Spalten, 11 CHECK-Bedingungen, 3 Indizes, 1 Policy und 3 Funktionen (Abschnitt 7c). Sie hat bewusst **keinen** Fremdschlüssel: Was dort steht, ist der SHA-256 einer Konto- oder Gastkennung und keine Kennung, auf die man verweisen könnte. Ein Kostenprotokoll soll ein gelöschtes Konto überleben – sonst verschwinden mit dem Konto die Kosten, die es verursacht hat.
+**Phase 2.2 Nachtrag `20260820060000`:** `public.reise_graph_geaendert()` plus neun Statement-Trigger auf den Kindtabellen. **Nachtrag `20260820070000`:** `public.reise_stamm_geaendert()` erhöht die Fassung bei direkten Stammdaten-Updates auf `trips`. **Nachtrag `20260820080000`:** `trip_days_index_eindeutig` und `trip_days_datum_eindeutig` sind `UNIQUE … DEFERRABLE`; der partielle Unique-Index auf `day_date` entfällt. Die Inventur zählt danach 24 Funktionen, 17 Trigger und 7 Eindeutigkeitsbedingungen. Production unverändert.
 
 Das Wachstum liegt vollständig bei den Reisedaten: Die vier neuen Tabellen tragen 61 Spalten, 43 CHECK-Bedingungen, 6 Fremdschlüssel, 5 Eindeutigkeitsbedingungen, 15 Indizes, 16 Policies und 5 Auslöser – vier für `updated_at`, einer für die Erzeugungsregeln von `public.trips` (Abschnitt 7a). Gleichzeitig sind mit `creator_sessions` 16 Spalten, 7 Indizes und 4 Policies sowie die neun Creator-Spalten des Profils entfallen – die Nettozahlen der Tabelle oben sind deshalb kleiner als die Zugänge.
 
@@ -148,6 +148,13 @@ Der Zustand nach Phase 1.4 steht in Abschnitt 9; dort ist auch nachgewiesen, das
 | `20260818030000_reise_erzeugung_serialisieren.sql` | Zählung und Einfügung laufen je Konto der Reihe nach, serialisiert über `pg_advisory_xact_lock` – die Schranke hält auch bei gleichzeitigen Anfragen (Nachtrag Phase 1.5, ADR-0049) |
 | `20260818040000_modellnutzung.sql` | `model_usage` als Kostenprotokoll, `modell_preis()`, `modell_kontingent_beanspruchen()` und `modell_nutzung_abschliessen()` – die Kostenschranke für Modellaufrufe (Phase 2.1, ADR-0052) |
 | `20260819010000_modell_kontingent_nur_server.sql` | `EXECUTE` auf die beiden Kontingent-Funktionen nur noch `service_role`; Identität eines Kontos als Argument vom Server (Nachtrag ADR-0052) |
+| `20260820010000_reise_stage_revision.sql` | `trips.revision`, `trips.last_mutation_id`, `trip_days.stage_id` samt Backfill (Phase 2.2, ADR-0057, ADR-0058) |
+| `20260820020000_reise_anlegen_stage.sql` | `reise_anlegen()` setzt `stage_id` auch ohne Kalenderdaten; ohne eigene Missbrauchszählung (ADR-0045) |
+| `20260820030000_reise_aendern.sql` | `reise_aendern(jsonb)` – atomisch, SECURITY INVOKER, Fassung und Idempotenz, ohne Handelsfelder (ADR-0060) |
+| `20260820040000_modell_reiseaenderung.sql` | `model_usage.funktion` kennt `reiseaenderung`; derselbe Kontingenttopf |
+| `20260820050000_reise_anlegen_ohne_schranke.sql` | Nachtrag: nimmt die versehentlich zurückgeholte Zählung aus `reise_anlegen()` wieder heraus (ADR-0045, ADR-0048) |
+| `20260820060000_reise_graph_revision.sql` | Statement-Trigger erhöhen `trips.revision` bei Graphänderungen; `reise_anlegen()` übernimmt `ungeplante`; keine Doppelzählung in den RPCs (ADR-0058 Nachtrag, ADR-0061) |
+| `20260820070000_reise_trips_revision.sql` | Direkte Stammdaten-Updates auf `trips` erhöhen `revision`, ohne `reise_aendern()` doppelt zu zählen (ADR-0058 Nachtrag) |
 
 Die Reihenfolge ist nicht beliebig: `20260817100200` darf erst laufen, wenn `20260817100000` die Rollen der Betroffenen übernommen und `20260817100100` alle Policies auf `creator_profiles.role` umgestellt hat. Sonst verlöre jemand seinen Zugang oder eine Policy liefe ins Leere.
 
@@ -293,7 +300,7 @@ Für die Kindtabellen musste das Skript in Phase 1.5 genauer werden. Es säte ei
 
 **Eine Grenze der Matrix ist zu kennen, damit sie nicht überlesen wird.** Die Probe `insert_eigen` schreibt die Kennung der Eigentümerin auf den jeweiligen Akteur um. Auf den Kindtabellen zeigt der Verweis auf die Reise danach ins Leere – die Reise gehört ja der Eigentümerin –, und die Probe endet mit `23502 not-null violation` statt mit einer Ablehnung durch die Policy. Die Aussage „ein fremdes Konto schreibt hier nichts" bleibt richtig, ihre Ursache ist aber die fehlende Reise und nicht die Policy. Der positive und der negative Schreibfall der Reisetabellen stehen deshalb nicht in der Matrix, sondern in den benannten Nachweisen unten, mit eigens angelegten Reisen je Konto.
 
-`npm run db:sicherheit` prüft dieselbe Datenbank gegen 140 benannte Erwartungen. Der Unterschied ist wichtig: Die Matrix zeigt, was gilt; die Nachweise sagen, was gelten **soll**, und schlagen fehl, wenn es sich ändert.
+`npm run db:sicherheit` prüft dieselbe Datenbank gegen 168 benannte Erwartungen. Der Unterschied ist wichtig: Die Matrix zeigt, was gilt; die Nachweise sagen, was gelten **soll**, und schlagen fehl, wenn es sich ändert.
 
 Beide Läufe teilen eine Grenze: Sie liegen vollständig in einer Transaktion, und damit sehen alle ihre Anweisungen einander. Was nur zwischen **gleichzeitigen** Transaktionen schiefgehen kann, steht in Abschnitt 7b.
 

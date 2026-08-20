@@ -28,7 +28,8 @@ import {
   type ReiseZeile,
   type TagZeile,
 } from '@/lib/trips/abbildung'
-import { TRIP_STATUSES, type Trip, type TripItem, type TripStatus, type TripSummary } from '@/types/trips'
+import { TRIP_STATUSES, type Reisegraph, type TripStatus, type TripSummary } from '@/types/trips'
+import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 
 /**
  * Spalten der Liste „Meine Reisen“ – und die eingebetteten Anzahlen ihrer
@@ -43,13 +44,7 @@ const UEBERSICHT_SPALTEN =
   'id, title, origin, start_date, end_date, travellers, currency, budget_amount, status, updated_at, ' +
   'trip_stages(count), trip_days(count), trip_items(count)'
 
-/**
- * Der Reisegraph einer Reise, wie PostgREST ihn liefert.
- *
- * `ohneTag` trägt Planpunkte, deren Tag entfernt wurde (`on delete set null`).
- * Sie gehören weiter zur Reise und dürfen nicht unsichtbar werden.
- */
-export type Reisegraph = Trip & { ohneTag: TripItem[] }
+export type { Reisegraph }
 
 type Anzahl = { count: number }
 
@@ -161,9 +156,11 @@ export async function reiseLaden(id: string): Promise<Lesung<Reisegraph>> {
 
   return {
     problem: null,
-    zeilen: ergebnis.zeilen.map((zeile) =>
-      reiseAus(zeile, zeile.trip_stages ?? [], zeile.trip_days ?? [], zeile.trip_items ?? []),
-    ),
+    zeilen: ergebnis.zeilen.map((zeile) => {
+      const graph = reiseAus(zeile, zeile.trip_stages ?? [], zeile.trip_days ?? [], zeile.trip_items ?? [])
+      const zugeordnet = tageEtappenZuordnen(graph)
+      return { ...zugeordnet, ohneTag: graph.ohneTag }
+    }),
   }
 }
 

@@ -258,6 +258,7 @@ export type Database = {
           day_index: number
           id: string
           metadata: Json
+          stage_id: string | null
           title: string | null
           trip_id: string
           updated_at: string
@@ -269,6 +270,7 @@ export type Database = {
           day_index: number
           id?: string
           metadata?: Json
+          stage_id?: string | null
           title?: string | null
           trip_id: string
           updated_at?: string
@@ -280,12 +282,20 @@ export type Database = {
           day_index?: number
           id?: string
           metadata?: Json
+          stage_id?: string | null
           title?: string | null
           trip_id?: string
           updated_at?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "trip_days_etappe_fk"
+            columns: ["stage_id", "trip_id"]
+            isOneToOne: false
+            referencedRelation: "trip_stages"
+            referencedColumns: ["id", "trip_id"]
+          },
           {
             foreignKeyName: "trip_days_reise_fk"
             columns: ["trip_id", "user_id"]
@@ -457,9 +467,11 @@ export type Database = {
           end_date: string | null
           id: string
           interests: string[]
+          last_mutation_id: string | null
           metadata: Json
           origin: string | null
           pace: string
+          revision: number
           start_date: string | null
           status: string
           title: string
@@ -476,9 +488,11 @@ export type Database = {
           end_date?: string | null
           id?: string
           interests?: string[]
+          last_mutation_id?: string | null
           metadata?: Json
           origin?: string | null
           pace?: string
+          revision?: number
           start_date?: string | null
           status?: string
           title: string
@@ -495,9 +509,11 @@ export type Database = {
           end_date?: string | null
           id?: string
           interests?: string[]
+          last_mutation_id?: string | null
           metadata?: Json
           origin?: string | null
           pace?: string
+          revision?: number
           start_date?: string | null
           status?: string
           title?: string
@@ -581,6 +597,7 @@ export type Database = {
           eingabe_gecacht: number
         }[]
       }
+      reise_aendern: { Args: { _aenderung: Json }; Returns: Json }
       reise_anlegen: { Args: { _reise: Json }; Returns: string }
       rollenrang: { Args: { rolle: string }; Returns: number }
     }

@@ -1,6 +1,6 @@
 # Jetnity – Produktvision
 
-Stand: 15. August 2026
+Stand: 20. August 2026
 Status: verbindlich
 
 Diese Datei ist die maßgebliche Produktspezifikation von Jetnity V2. Sie hat Vorrang vor bestehendem Code. Wenn Code und diese Datei widersprechen, gilt diese Datei (siehe [AGENTS.md](AGENTS.md) Regel 29).
@@ -78,6 +78,18 @@ Eine bestehende Reise muss über Sprache veränderbar sein. Beispiele:
 
 Jetnity versteht die Änderungsabsicht und aktualisiert die Reise. Vorschläge werden erst nach Nutzerfreigabe übernommen.
 
+### Auswirkungen realer Reiseänderungen verstehen
+
+Jetnity behandelt eine Reise als zusammenhängendes System. Ändert sich ein bereits eingeplanter oder gebuchter Bestandteil – zum Beispiel ein Flug wird um einen Tag verschoben –, darf Jetnity nicht nur dieses einzelne Element aktualisieren. Es soll erkennen, welche nachgelagerten Teile der Reise dadurch betroffen sind, und einen verständlichen Anpassungsvorschlag vorbereiten.
+
+Beispiel: Ein Flug kommt einen Tag später an. Jetnity prüft dann unter anderem Hotelnächte, Aktivitäten, Transfers, Anschlussflüge, Aufenthaltsdauer, Budget und zeitliche Konflikte. Es zeigt, **welche Teile betroffen sind**, welche Alternativen bestehen und welche Gesamtlösung unter Berücksichtigung von Zeit, Kosten, Komfort und Reibung am sinnvollsten ist.
+
+Verbindlicher Grundsatz:
+
+> **Änderung erkennen → Auswirkungen auf die Gesamtreise bestimmen → optimierte Anpassung vorschlagen → Vorher/Nachher zeigen → erst nach ausdrücklicher Nutzerfreigabe übernehmen.**
+
+Mit Provider-Anbindungen soll Jetnity solche Änderungen später auch proaktiv erkennen können, zum Beispiel bei einer Flugplanänderung. Eine externe Änderung darf niemals still andere Buchungen oder Reiseelemente verändern. Jetnity informiert, erklärt die Folgen und bereitet eine Lösung vor; der Nutzer entscheidet über die Übernahme.
+
 ---
 
 ## 5. Trip Workspace
@@ -99,7 +111,7 @@ Dazu gehören Flug, Hotel, Aktivitäten, Transfers, Budget und Gesamtpreis. Der 
 ## 6. Prioritäten
 
 1. **Reise erstellen** – sehr schnell zu einer Reise kommen
-2. **Reise bearbeiten** – jede Reise flexibel verändern
+2. **Reise bearbeiten** – jede Reise flexibel verändern und Auswirkungen von Änderungen auf die Gesamtreise verstehen
 3. **Reiseprodukte** – Flüge, Hotels und Aktivitäten sinnvoll einbinden
 4. **Monetarisierung** – Umsatz aus vorgeschlagenen bzw. gebuchten Leistungen
 5. **Persönlicher Reisebegleiter** – Nutzerpräferenzen und Reiseverhalten verstehen
