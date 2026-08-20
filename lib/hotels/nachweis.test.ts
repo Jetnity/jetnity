@@ -6,7 +6,10 @@ import {
   hotelNachweisAusKatalog,
   hotelNachweisAusUmgebung,
   hotelNachweisFehler,
+  hotelNachweisKontextAusGraph,
+  type HotelNachweisKontext,
 } from '@/lib/hotels/nachweis'
+import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 
 const OPTION: HotelOption = {
   id: 'opt-1',
@@ -29,23 +32,47 @@ const OPTION: HotelOption = {
   zimmerName: 'Doppelzimmer',
 }
 
+const KONTEXT: HotelNachweisKontext = {
+  destinationPlaceId: 'stage:stage-1',
+  checkIn: '2026-09-12',
+  checkOut: '2026-09-14',
+  rooms: 1,
+  adults: 2,
+  children: 0,
+  currency: 'CHF',
+}
+
+function katalog() {
+  return hotelNachweisAusKatalog({
+    optionen: { 'opt-1': OPTION },
+    kontexte: { 'opt-1': KONTEXT },
+    abgelaufen: ['opt-alt'],
+    geaendert: ['opt-neu'],
+    fehler: { 'opt-err': 'error' },
+  })
+}
+
 describe('Hotel-Nachweis', () => {
   test('ohne Umgebung gibt es keinen Nachweis', () => {
     assert.equal(hotelNachweisAusUmgebung(), null)
   })
 
-  test('eine unbekannte, abgelaufene oder geänderte Auswahl wird abgelehnt', async () => {
-    const nachweis = hotelNachweisAusKatalog({
-      optionen: { 'opt-1': OPTION },
-      abgelaufen: ['opt-alt'],
-      geaendert: ['opt-neu'],
-      fehler: { 'opt-err': 'error' },
+  test('der erwartete Kontext kommt aus dem Reisegraphen, nicht aus dem Browser', () => {
+    const reise = beispielreise()
+    const kontext = hotelNachweisKontextAusGraph(reise, {
+      etappe: reise.stages[0]!,
+      checkIn: '2026-09-12',
+      checkOut: '2026-09-14',
     })
+    assert.deepEqual(kontext, KONTEXT)
+  })
 
-    const unbekannt = await nachweis.nachweisen({ optionId: 'gibt-es-nicht' })
-    const abgelaufen = await nachweis.nachweisen({ optionId: 'opt-alt' })
-    const geaendert = await nachweis.nachweisen({ optionId: 'opt-neu' })
-    const fehlerhaft = await nachweis.nachweisen({ optionId: 'opt-err' })
+  test('eine unbekannte, abgelaufene oder geänderte Auswahl wird abgelehnt', async () => {
+    const nachweis = katalog()
+    const unbekannt = await nachweis.nachweisen({ optionId: 'gibt-es-nicht', kontext: KONTEXT })
+    const abgelaufen = await nachweis.nachweisen({ optionId: 'opt-alt', kontext: KONTEXT })
+    const geaendert = await nachweis.nachweisen({ optionId: 'opt-neu', kontext: KONTEXT })
+    const fehlerhaft = await nachweis.nachweisen({ optionId: 'opt-err', kontext: KONTEXT })
     assert.equal(unbekannt.ok, false)
     assert.equal(abgelaufen.ok, false)
     assert.equal(geaendert.ok, false)
@@ -57,9 +84,27 @@ describe('Hotel-Nachweis', () => {
     assert.equal(fehlerhaft.art, 'error')
   })
 
-  test('eine gültige Katalogauswahl liefert die serverseitige Option', async () => {
-    const nachweis = hotelNachweisAusKatalog({ optionen: { 'opt-1': OPTION } })
-    const ergebnis = await nachweis.nachweisen({ optionId: 'opt-1' })
+  test('gleiche optionId mit anderem Ziel, Zeitraum, Belegung oder Währung wird abgelehnt', async () => {
+    const nachweis = katalog()
+    const faelle: HotelNachweisKontext[] = [
+      { ...KONTEXT, destinationPlaceId: 'geonames:3128760' },
+      { ...KONTEXT, checkIn: '2026-10-01', checkOut: '2026-10-05' },
+      { ...KONTEXT, rooms: 2 },
+      { ...KONTEXT, adults: 4 },
+      { ...KONTEXT, children: 1 },
+      { ...KONTEXT, currency: 'EUR' },
+    ]
+    for (const kontext of faelle) {
+      const ergebnis = await nachweis.nachweisen({ optionId: 'opt-1', kontext })
+      assert.equal(ergebnis.ok, false)
+      if (ergebnis.ok) return
+      assert.equal(ergebnis.art, 'geaendert')
+    }
+  })
+
+  test('eine gültige Katalogauswahl mit passendem Kontext liefert die Option', async () => {
+    const nachweis = katalog()
+    const ergebnis = await nachweis.nachweisen({ optionId: 'opt-1', kontext: KONTEXT })
     assert.equal(ergebnis.ok, true)
     if (!ergebnis.ok) return
     assert.equal(ergebnis.option.preisGesamt, 760)
@@ -69,8 +114,9 @@ describe('Hotel-Nachweis', () => {
   test('eine unvollständige Katalogzeile fällt fail-closed', async () => {
     const nachweis = hotelNachweisAusKatalog({
       optionen: { 'opt-leer': { id: 'opt-leer', name: 'Ohne Preis' } },
+      kontexte: { 'opt-leer': KONTEXT },
     })
-    const ergebnis = await nachweis.nachweisen({ optionId: 'opt-leer' })
+    const ergebnis = await nachweis.nachweisen({ optionId: 'opt-leer', kontext: KONTEXT })
     assert.equal(ergebnis.ok, false)
     if (ergebnis.ok) return
     assert.equal(ergebnis.art, 'invalid')

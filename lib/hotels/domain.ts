@@ -21,6 +21,20 @@ export const HOTEL_SUCHE_GRENZEN = {
   maxAnfrageBytes: 16_384,
 } as const
 
+/**
+ * Belegung der Suche und des Nachweises, solange die Reise keine eigenen
+ * Zimmer-/Kinderfelder trägt. Kommt nicht aus dem Browser.
+ */
+export const HOTEL_SUCHE_STANDARD_BELEGUNG = {
+  rooms: 1,
+  children: 0,
+} as const
+
+export function hotelZielKennungAus(etappe: { id: string; placeId: string | null | undefined }): string {
+  const ort = etappe.placeId?.trim()
+  return ort ? ort : `stage:${etappe.id}`
+}
+
 /** Ob die sichtbare Gegend nur der Etappenort oder ein echter Vorschlag ist. */
 export type QuartierHerkunft = 'etappenort' | 'quartiervorschlag'
 

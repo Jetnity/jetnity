@@ -2,7 +2,7 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { hotelKontoUebernahmePruefen } from '@/lib/hotels/konto-uebernahme'
-import { hotelNachweisAusKatalog } from '@/lib/hotels/nachweis'
+import { hotelNachweisAusKatalog, type HotelNachweisKontext } from '@/lib/hotels/nachweis'
 import { hotelKontoUebernahmeSchema } from '@/lib/hotels/schema'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import type { HotelOption } from '@/lib/hotels/domain'
@@ -28,6 +28,26 @@ const OPTION: HotelOption = {
   zimmerName: 'Doppelzimmer',
 }
 
+const KONTEXT: HotelNachweisKontext = {
+  destinationPlaceId: 'stage:stage-1',
+  checkIn: '2026-09-12',
+  checkOut: '2026-09-14',
+  rooms: 1,
+  adults: 2,
+  children: 0,
+  currency: 'CHF',
+}
+
+function nachweisMit(
+  extra: { geaendert?: readonly string[]; abgelaufen?: readonly string[] } = {},
+) {
+  return hotelNachweisAusKatalog({
+    optionen: { 'opt-1': OPTION },
+    kontexte: { 'opt-1': KONTEXT },
+    ...extra,
+  })
+}
+
 const EINGABE = {
   tripId: 'trip-1',
   stageId: 'stage-1',
@@ -47,13 +67,9 @@ describe('Konto-Hotelübernahme', () => {
   })
 
   test('eine vom Browser erfundene Option mit fremdem Preis wird nicht übernommen', async () => {
-    const nachweis = hotelNachweisAusKatalog({ optionen: { 'opt-1': OPTION } })
     const ergebnis = await hotelKontoUebernahmePruefen(
-      {
-        ...EINGABE,
-        optionId: 'opt-erfunden',
-      },
-      { nachweis, reise: beispielreise() },
+      { ...EINGABE, optionId: 'opt-erfunden' },
+      { nachweis: nachweisMit(), reise: beispielreise() },
     )
     assert.equal(ergebnis.ok, false)
     if (ergebnis.ok) return
@@ -61,7 +77,6 @@ describe('Konto-Hotelübernahme', () => {
   })
 
   test('manipulierte Preise im Request ändern die persistierte Momentaufnahme nicht', async () => {
-    const nachweis = hotelNachweisAusKatalog({ optionen: { 'opt-1': OPTION } })
     const geparst = hotelKontoUebernahmeSchema.safeParse({
       tripId: '11111111-1111-4111-8111-111111111111',
       stageId: '22222222-2222-4222-8222-222222222222',
@@ -77,7 +92,7 @@ describe('Konto-Hotelübernahme', () => {
     assert.equal('checkIn' in geparst.data, false)
 
     const ergebnis = await hotelKontoUebernahmePruefen(EINGABE, {
-      nachweis,
+      nachweis: nachweisMit(),
       reise: beispielreise(),
     })
     assert.equal(ergebnis.ok, true)
@@ -92,7 +107,7 @@ describe('Konto-Hotelübernahme', () => {
 
   test('eine serverseitig vertrauenswürdige Auswahl wird als stay abgebildet', async () => {
     const ergebnis = await hotelKontoUebernahmePruefen(EINGABE, {
-      nachweis: hotelNachweisAusKatalog({ optionen: { 'opt-1': OPTION } }),
+      nachweis: nachweisMit(),
       reise: beispielreise(),
     })
     assert.equal(ergebnis.ok, true)
@@ -102,11 +117,25 @@ describe('Konto-Hotelübernahme', () => {
     assert.equal(ergebnis.dayId, 'day-1')
   })
 
-  test('falsche Etappe, fremder Tag und fehlender Zeitraum werden abgewiesen', async () => {
-    const ports = {
-      nachweis: hotelNachweisAusKatalog({ optionen: { 'opt-1': OPTION } }),
-      reise: beispielreise(),
+  test('eine Option einer anderen Reise oder Belegung wird nicht persistiert', async () => {
+    const anderesZiel = beispielreise()
+    anderesZiel.stages[0] = { ...anderesZiel.stages[0]!, placeId: 'geonames:3128760' }
+    const andereWaehrung = beispielreise({ currency: 'EUR' })
+    const andereBelegung = beispielreise({ travellers: 4 })
+
+    for (const reise of [anderesZiel, andereWaehrung, andereBelegung]) {
+      const ergebnis = await hotelKontoUebernahmePruefen(EINGABE, {
+        nachweis: nachweisMit(),
+        reise,
+      })
+      assert.equal(ergebnis.ok, false)
+      if (ergebnis.ok) return
+      assert.equal(ergebnis.art, 'geaendert')
     }
+  })
+
+  test('falsche Etappe, fremder Tag und fehlender Zeitraum werden abgewiesen', async () => {
+    const ports = { nachweis: nachweisMit(), reise: beispielreise() }
     const fremd = await hotelKontoUebernahmePruefen({ ...EINGABE, stageId: 'stage-fremd' }, ports)
     const andererTag = await hotelKontoUebernahmePruefen({ ...EINGABE, dayId: 'day-4' }, ports)
     assert.equal(fremd.ok, false)
@@ -127,11 +156,7 @@ describe('Konto-Hotelübernahme', () => {
   })
 
   test('Preisänderung oder nicht mehr verfügbare Option werden abgelehnt', async () => {
-    const nachweis = hotelNachweisAusKatalog({
-      optionen: { 'opt-1': OPTION },
-      geaendert: ['opt-preis'],
-      abgelaufen: ['opt-weg'],
-    })
+    const nachweis = nachweisMit({ geaendert: ['opt-preis'], abgelaufen: ['opt-weg'] })
     const ports = { nachweis, reise: beispielreise() }
     const preis = await hotelKontoUebernahmePruefen({ ...EINGABE, optionId: 'opt-preis' }, ports)
     const weg = await hotelKontoUebernahmePruefen({ ...EINGABE, optionId: 'opt-weg' }, ports)

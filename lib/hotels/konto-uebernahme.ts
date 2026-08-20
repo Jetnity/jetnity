@@ -9,7 +9,7 @@
 // Frei von Next und Supabase.
 
 import type { HotelNachweis } from '@/lib/hotels/nachweis'
-import { hotelNachweisFehler } from '@/lib/hotels/nachweis'
+import { hotelNachweisFehler, hotelNachweisKontextAusGraph } from '@/lib/hotels/nachweis'
 import { hotelReisegraphPruefen, type HotelReisegraphFehlerArt } from '@/lib/hotels/reisegraph'
 import { alsHotelMomentaufnahme, type HotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import type { Trip } from '@/types/trips'
@@ -52,7 +52,8 @@ export async function hotelKontoUebernahmePruefen(
 
   if (!ports.nachweis) return hotelNachweisFehler('unavailable')
 
-  const nachgewiesen = await ports.nachweis.nachweisen({ optionId: eingabe.optionId })
+  const kontext = hotelNachweisKontextAusGraph(ports.reise, graph)
+  const nachgewiesen = await ports.nachweis.nachweisen({ optionId: eingabe.optionId, kontext })
   if (!nachgewiesen.ok) return nachgewiesen
 
   const aufnahme = alsHotelMomentaufnahme(nachgewiesen.option, {

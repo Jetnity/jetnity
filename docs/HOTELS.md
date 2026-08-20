@@ -1,13 +1,13 @@
 # Jetnity – Hotels
 
-**Stand:** 20. August 2026 · Phase 3.2b  
+**Stand:** 20. August 2026 · Phase 3.2c  
 **Gilt für:** die interne Hotel-/Quartierdomäne, die Suchpipeline, den Trip-Workspace und die serverseitige Vertrauensgrenze der `stay`-Übernahme.
 
-Diese Datei beschreibt den **tatsächlichen** Hotelweg. Produktprinzip: [JETNITY_VISION.md](../JETNITY_VISION.md) Abschnitt 5 und [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md). Entscheidungen: ADR-0070 bis ADR-0075 in [DECISIONS.md](../DECISIONS.md).
+Diese Datei beschreibt den **tatsächlichen** Hotelweg. Produktprinzip: [JETNITY_VISION.md](../JETNITY_VISION.md) Abschnitt 5 und [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md). Entscheidungen: ADR-0070 bis ADR-0077 in [DECISIONS.md](../DECISIONS.md). Strategie: [HOTEL_PROVIDER_STRATEGY.md](HOTEL_PROVIDER_STRATEGY.md).
 
 ---
 
-## 1. Was Phase 3.2 / 3.2b ist – und was nicht
+## 1. Was Phase 3.2 / 3.2b / 3.2c ist – und was nicht
 
 Jetnity bestimmt zuerst, **in welcher Gegend** eine Etappe sinnvoll liegt, und erst danach wenige Hotels in dieser Gegend.
 
@@ -21,7 +21,8 @@ Gebaut:
 - Übernahme-Abbildung auf das bestehende `trip_items`-Schema (`kind = stay`)
 - serverseitige Vertrauensgrenze: Konto-Übernahme nur über `HotelNachweis`
 - Reisegraph-Prüfung für Etappe, Tag und Zeitraum
-- API-Härtung von `POST /api/hotels/search` (Grösse, Content-Type, `Retry-After`)
+- API-Härtung von `POST /api/hotels/search` (Content-Length, Stream-Cap 16 KB, Content-Type, `Retry-After`)
+- `HotelNachweis` gebunden an Ziel, Zeitraum, Belegung und Währung
 
 Nicht gebaut:
 
@@ -66,7 +67,7 @@ Reise-Arbeitsbereich
 | Orchestrierung | `lib/hotels/suche.ts` | Kontext → Limit → Provider → Ranking |
 | Client-Sicht | `lib/hotels/client-sicht.ts` | keine Tokens, kein Score, keine Rohfelder |
 | Übernahme | `lib/hotels/uebernahme.ts` | nachgewiesene Option → kommerzieller `stay`-Planpunkt |
-| Nachweis | `lib/hotels/nachweis.ts` | serverseitige Auswahlbestätigung, heute `null` |
+| Nachweis | `lib/hotels/nachweis.ts` | Auswahlbestätigung gegen `HotelNachweisKontext`, heute `null` |
 | Reisegraph | `lib/hotels/reisegraph.ts` | Etappe, Tag und Zeitraum aus der Reise |
 | Konto-Kern | `lib/hotels/konto-uebernahme.ts` | identifiers + Nachweis + Graph, fail closed |
 | Factory | `lib/hotels/factory.ts` | Phase 3.2 gibt `null` zurück |
@@ -136,13 +137,14 @@ Die Client-Antwort enthält höchstens fünf Optionen. Interne Scores verlassen 
 ## 5. Sicherheit und Kosten
 
 - Nur serverseitig, geschlossener Endpunkt, kein Provider-Proxy
-- Eingaben begrenzt: Zimmer 1–8, Erwachsene 1–16, Kinder 0–12, Timeout 12 s, max. 40 Providerangebote, Request höchstens 16 KB
+- Eingaben begrenzt: Zimmer 1–8, Erwachsene 1–16, Kinder 0–12, Timeout 12 s, max. 40 Providerangebote, Request höchstens 16 KB UTF-8
+- `Content-Length` über dem Limit wird **vor** dem Lesen mit 413 abgewiesen. Der Body wird zusätzlich streamend mit hartem Byte-Cap gelesen; ein irreführendes `Content-Length` hilft nicht
 - nur `application/json`; sonst 415. Zu gross: 413. Ungültiges JSON: 400
 - Rate-Limit im Prozess: 8 Suchen / 10 min und 24 / Tag je IP-Kennung. Bei 429 setzt die Route `Retry-After`
 - Die IP-Kennung ist **kein** Authentizitätsbeweis. Das In-Memory-Limit schützt nur Preview/Development
 - Production hart aus (`VERCEL_ENV=production`), auch wenn `JETNITY_HOTEL_AKTIV` gesetzt ist
 - `JETNITY_HOTEL_AKTIV` muss `true` oder `1` sein, **und** ein Provider muss existieren
-- Phase 3.2b hat keinen Provider und keinen Nachweis; Suche und Konto-Übernahme sind `unavailable` / fail closed
+- Phase 3.2c hat keinen Provider und keinen Nachweis; Suche und Konto-Übernahme sind `unavailable` / fail closed
 - Client-Antwort ohne Score, Rohdaten, Secrets, Stacktraces oder Umgebungsdaten; `cache-control: no-store`
 - keine `NEXT_PUBLIC_*`-Hotel-Secrets
 - keine kommerziellen Fakten aus dem Sprachmodell
@@ -163,7 +165,19 @@ Die persistierte Momentaufnahme entsteht nur, wenn:
 1. die Reise dem angemeldeten Konto gehört (RLS über `reiseLaden`)
 2. Etappe und optionaler Tag zum Reisegraphen passen (`trip_days.stage_id`, Check-in-Tag)
 3. Check-in/Check-out aus der Etappe bzw. der Reise vollständig sind – sonst fail closed, keine stille Korrektur
-4. ein serverseitiger `HotelNachweis` die `optionId` bestätigt
+4. ein serverseitiger `HotelNachweis` die `optionId` **und** den erwarteten Suchkontext bestätigt
+
+Der Nachweis-Kontext kommt nur aus dem Reisegraphen:
+
+| Feld | Quelle |
+| --- | --- |
+| `destinationPlaceId` | kanonische `placeId` der Etappe, sonst `stage:{etappenId}` – kein Client-Ortsname |
+| `checkIn` / `checkOut` | Etappe, sonst Reisezeitraum |
+| `adults` | `trip.travellers` |
+| `rooms` / `children` | feste Suche-Defaults `1` / `0`, solange die Reise keine eigenen Zimmer-/Kinderfelder trägt |
+| `currency` | `trip.currency` |
+
+Zimmer und Kinder darf der Browser bei der Übernahme nicht setzen. Eine Option, die zu einem anderen Ziel, Zeitraum, einer anderen Belegung oder Währung gehört, wird als `geaendert` abgelehnt.
 
 Heute gibt es keinen Nachweis. Eine authentifizierte, selbst gebaute Server-Action speichert deshalb keinen erfundenen `stay`. Tests dürfen einen Fake-Katalog injizieren.
 

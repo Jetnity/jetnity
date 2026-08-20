@@ -1910,6 +1910,48 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 
 ---
 
+## ADR-0076 – HotelNachweis ist an den Suchkontext gebunden
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.2c; kein echter Provider
+
+**Entscheidung:** `HotelNachweis.nachweisen()` bestätigt eine `optionId` nur zusammen mit einem serverseitigen `HotelNachweisKontext`: Ziel, Check-in, Check-out, Zimmer, Erwachsene, Kinder, Währung. Der Kontext kommt aus dem Reisegraphen und denselben Belegungs-Defaults wie die offizielle Suche (`1` Zimmer, `0` Kinder). Der Browser darf keines dieser Felder als Wahrheit liefern.
+
+**Kontext:** Phase 3.2b band nur die `optionId`. Dieselbe Angebots-ID könnte zu einem anderen Ziel, Zeitraum oder einer anderen Belegung gehören. Dann würde ein Preis von Reise A auf Reise B landen.
+
+**Alternativen:**
+
+1. *Nur optionId, Zeitraum aus dem Graphen nachziehen.* Bindet den kommerziellen Fakt nicht an die Suche, die ihn erzeugt hat.
+2. *Client schickt den Suchkontext mit.* Untrusted input in der Vertrauensgrenze.
+3. *Secret-Signatur der Suchergebnisse.* Weiterhin ohne Providerbedarf und ohne Schutz vor späteren Preisänderungen.
+
+**Begründung:** Der erste Adapter muss eine Option gegen genau die erwartete Suche ablehnen können. Ohne Place-ID bindet Jetnity an `stage:{etappenId}` derselben Reise, nicht an einen Client-Ortsnamen.
+
+**Konsequenzen:** Tests injizieren einen Katalog mit Kontext. Abweichendes Ziel, Datum, Belegung oder Währung ist `geaendert`. Zimmer/Kinder bleiben Defaults, bis das Reiseschema eigene Felder trägt.
+
+---
+
+## ADR-0077 – Hotelsuche liest den Body nur bis zur Bytegrenze
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.2c
+
+**Entscheidung:** `POST /api/hotels/search` prüft `Content-Length` vor jedem Lesen. Der Body wird anschliessend streamend mit einem harten Cap von 16 KB UTF-8 gelesen und abgebrochen, sobald das Limit überschritten ist. `Content-Length` allein ist kein Vertrauensbeweis.
+
+**Kontext:** Phase 3.2b prüfte die Grösse erst nach `req.text()`. Ein übergrosser Request lag dann bereits vollständig im Speicher.
+
+**Alternativen:**
+
+1. *Nur Content-Length.* Fehlt oder lügt der Header, bleibt die Grenze wirkungslos.
+2. *Globales Body-Limit-Middleware.* Unnötige Infrastruktur für einen Endpunkt.
+3. *Zeichenanzahl statt Bytes.* Würde UTF-8-Multibyte unterschätzen.
+
+**Begründung:** Die 3.2b-Anforderung war, kein praktisch unbegrenztes JSON einzulesen. Das geht nur vor der Allokation des ganzen Körpers.
+
+**Konsequenzen:** 413 ohne vollständiges Buffering. Tests decken fehlendes, korrektes und irreführendes `Content-Length` sowie den Grenzfall exakt am Limit.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

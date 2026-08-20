@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
 Stand: 20. August 2026
-Gültig für: Phase 3.2b, Stand nach Hotel-Härtung auf der Flight- und Place-Basis
+Gültig für: Phase 3.2c, Stand nach provider-ready Hotel-Härtung auf der Flight- und Place-Basis
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -275,7 +275,7 @@ Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1 und 3.2 existieren **14** Route Handler. Zuv
 | `api/search/airports` | Flughafendaten | nur `public.airports`; Import ist ein Skript, kein Request-Pfad |
 | `api/search/places` | Reiseziel- und Abreiseorte | nur `public.places`; Import ist ein Skript, kein Geocoding-Proxy |
 | `api/flights/search` | geschlossene Flugsuche | Phase 3.1, Production aus, nur Duffel-Test |
-| `api/hotels/search` | geschlossene Hotelsuche | Phase 3.2b, Production aus, noch kein Hotelprovider |
+| `api/hotels/search` | geschlossene Hotelsuche | Phase 3.2c, Production aus, noch kein Hotelprovider |
 | `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
 | `api/admin/security/*` (5) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
 
@@ -305,13 +305,13 @@ Production bleibt hart aus. Development/Preview brauchen `JETNITY_FLIGHT_AKTIV` 
 
 `GET /api/search/airports` liest ausschliesslich `public.airports`. Der Bestand kommt aus OurAirports Open Data (Public Domain), gefiltert und idempotent über `npm run airports:importieren` geschrieben. Weder Build noch CI noch eine Nutzersuche laden den Upstream. Production-Schreiben nur über [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md). Fachlich: [docs/FLUGHAFEN.md](docs/FLUGHAFEN.md), ADR-0066.
 
-### Hotelsuche (Phase 3.2 / 3.2b)
+### Hotelsuche (Phase 3.2 / 3.2c)
 
-`POST /api/hotels/search` ist geschlossen: nur `application/json`, höchstens 16 KB, validierte Reise-/Etappenangaben, Quartierkontext, Quartierbewertung, optional Provider, Ranking, Client-Sicht. Kein Provider-Proxy. 429 setzt `Retry-After`. Die UI spricht `HotelOption` und ein sichtbares Quartier, nicht einen Anbieter.
+`POST /api/hotels/search` ist geschlossen: nur `application/json`, höchstens 16 KB UTF-8. `Content-Length` über dem Limit wird vor dem Lesen abgewiesen; der Body wird zusätzlich streamend mit hartem Cap gelesen. Quartierkontext, Quartierbewertung, optional Provider, Ranking, Client-Sicht. Kein Provider-Proxy. 429 setzt `Retry-After`. Die UI spricht `HotelOption` und ein sichtbares Quartier, nicht einen Anbieter.
 
-Phase 3.2b hat bewusst keinen Hoteladapter. `hotelProviderAus()` gibt `null` zurück. Production bleibt hart aus. Development/Preview brauchen `JETNITY_HOTEL_AKTIV` **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Quartiergründe entstehen nur aus vorhandenen Reisedaten. Wegezeiten, ÖV-Zeiten und POIs werden nicht erfunden. Ein Etappenort wird nicht als Viertel verkauft.
+Phase 3.2c hat bewusst keinen Hoteladapter. `hotelProviderAus()` gibt `null` zurück. Production bleibt hart aus. Development/Preview brauchen `JETNITY_HOTEL_AKTIV` **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Quartiergründe entstehen nur aus vorhandenen Reisedaten. Wegezeiten, ÖV-Zeiten und POIs werden nicht erfunden. Ein Etappenort wird nicht als Viertel verkauft.
 
-Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `HotelNachweis`. Heute ist der Nachweis `null` – fail closed. Gast-LocalStorage gilt nicht als serverseitig verifiziert. Fachlich: [docs/HOTELS.md](docs/HOTELS.md), ADR-0070 bis ADR-0075.
+Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `HotelNachweis` gegen Ziel, Zeitraum, Belegung und Währung. Heute ist der Nachweis `null` – fail closed. Gast-LocalStorage gilt nicht als serverseitig verifiziert. Fachlich: [docs/HOTELS.md](docs/HOTELS.md), ADR-0070 bis ADR-0077.
 
 ### Ortsbasis (Phase 3.1)
 

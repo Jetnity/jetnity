@@ -69,6 +69,6 @@ Beispiel des gewünschten Produktverhaltens:
 
 ## Aktueller Umsetzungsstand
 
-Phase 3.2 bleibt provider-unabhängig. Solange kein echter Zugang vorhanden ist, wird die Hotel-Foundation weiter gehärtet und vorbereitet. Ein echter Adapter wird erst ergänzt, wenn für einen ausgewählten Provider gültige Zugangsdaten vorliegen.
+Phase 3.2c bleibt provider-unabhängig. Die Nachweis-Naht ist an Ziel, Zeitraum, Belegung und Währung gebunden; die Suchanfrage wird vor grosser Allokation begrenzt. Ein echter Adapter wird erst ergänzt, wenn für einen ausgewählten Provider gültige Zugangsdaten vorliegen.
 
 **Verbindliche Reihenfolge:** Booking.com zuerst versuchen → HBX/Hotelbeds als Backup für reale Integration → Expedia Rapid später prüfen → langfristig mehrere Quellen provisionsneutral vergleichen.

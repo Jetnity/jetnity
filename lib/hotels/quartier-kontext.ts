@@ -7,7 +7,9 @@
 
 import {
   FRUEHER_ABFLUG_MINUTE,
+  HOTEL_SUCHE_STANDARD_BELEGUNG,
   LEERE_QUARTIER_EVIDENZ,
+  hotelZielKennungAus,
   type HotelSuchanfrage,
   type QuartierEvidenz,
   type QuartierKandidat,
@@ -143,8 +145,8 @@ export function hotelSucheEingabeAusReise(reise: Trip, etappe: TripStage): Hotel
       interests: reise.interests,
       pace: reise.pace,
     },
-    rooms: 1,
-    children: 0,
+    rooms: HOTEL_SUCHE_STANDARD_BELEGUNG.rooms,
+    children: HOTEL_SUCHE_STANDARD_BELEGUNG.children,
     flights: [...reise.days.flatMap((tag) => tag.items), ...reise.ohneTag]
       .filter((punkt) => punkt.kind === 'flight')
       .map((punkt) => ({
@@ -179,7 +181,7 @@ export function quartierKontextAusReise(eingabe: HotelSucheEingabe): QuartierKon
 
   return {
     kontext: {
-      destinationPlaceId: eingabe.stage.placeId ?? `stage:${eingabe.stage.id}`,
+      destinationPlaceId: hotelZielKennungAus(eingabe.stage),
       destinationName: eingabe.stage.name,
       naechte: naechte ?? 0,
       reiseAnker: anker,
@@ -206,7 +208,7 @@ export function suchanfrageAusKontext(
   if (!eingabe.stage.placeId && !eingabe.stage.name.trim()) return null
 
   return {
-    destinationPlaceId: eingabe.stage.placeId ?? `stage:${eingabe.stage.id}`,
+    destinationPlaceId: hotelZielKennungAus(eingabe.stage),
     checkIn,
     checkOut,
     rooms: eingabe.rooms,

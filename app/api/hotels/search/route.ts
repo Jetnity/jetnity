@@ -5,7 +5,13 @@
 
 import { NextResponse } from 'next/server'
 
-import { hotelSucheHttpHeader, hotelSucheInhaltstypOk, hotelSucheKoerperLesen } from '@/lib/hotels/anfrage'
+import {
+  hotelSucheBegrenztLesen,
+  hotelSucheContentLengthUeberschritten,
+  hotelSucheHttpHeader,
+  hotelSucheInhaltstypOk,
+  hotelSucheKoerperLesen,
+} from '@/lib/hotels/anfrage'
 import { sucheFuerClient, type HotelSucheAntwort } from '@/lib/hotels/client-sicht'
 import { LEERE_QUARTIER_EVIDENZ } from '@/lib/hotels/domain'
 import { hotelProviderAus } from '@/lib/hotels/factory'
@@ -42,8 +48,16 @@ export async function POST(req: Request) {
     return antwort(415, leer('error', 'Die Hotelsuche erwartet application/json.'))
   }
 
-  const text = await req.text()
-  const gelesen = hotelSucheKoerperLesen(text)
+  if (hotelSucheContentLengthUeberschritten(req.headers.get('content-length'))) {
+    return antwort(413, leer('error', 'Die Suchanfrage ist zu gross.'))
+  }
+
+  const begrenzt = await hotelSucheBegrenztLesen(req.body)
+  if (!begrenzt.ok) {
+    return antwort(begrenzt.status, leer('error', begrenzt.message))
+  }
+
+  const gelesen = hotelSucheKoerperLesen(begrenzt.text)
   if (!gelesen.ok) {
     return antwort(gelesen.status, leer('error', gelesen.message))
   }
