@@ -1787,6 +1787,171 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 
 ---
 
+## ADR-0070 – Hoteldomäne und `HotelProvider` sind die Architektur, kein Anbieter
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.2
+
+**Entscheidung:** Jetnity spricht intern eine schlanke Hotel-/Quartierdomäne (`HotelSuchanfrage`, `HotelOption`, `HotelProvider`). Phase 3.2 bindet **keinen** Hotelanbieter an. Search-Provider und Affiliate-/Booking-Provider bleiben getrennte Verantwortlichkeiten. `booking_url` bleibt `null`.
+
+**Kontext:** Die Vision verlangt zuerst die Gegend, dann wenige Hotels. ADR-0011 und [AGENTS.md](AGENTS.md) Regel 19 verbieten eine Multi-Provider-Plattform auf Vorrat. Gleichzeitig darf der spätere erste Anbieter nicht zur stillen Produktbindung werden.
+
+**Alternativen:**
+
+1. *Sofort Booking.com/Expedia als Architektur nehmen.* Macht jeden Wechsel zum Rewrite.
+2. *Jetzt eine generische Plattform für zehn Hotelanbieter.* Komplexität ohne ersten Provider.
+3. *Deeplinks erfinden, damit die UI voll wirkt.* Wäre eine irreführende Buchungs-URL.
+
+**Begründung:** Die Naht ist klein genug, um verdient zu sein. UI, Quartierlogik, Ranking und Trip-Übernahme kennen den Adapter nicht.
+
+**Konsequenzen:** `hotelProviderAus()` gibt `null` zurück. Tests injizieren höchstens Fixtures. Dokumentation in [docs/HOTELS.md](docs/HOTELS.md).
+
+---
+
+## ADR-0071 – Quartier- und Hotelranking sind deterministisch und provisionsneutral
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.2
+
+**Entscheidung:** Zuerst wird die Gegend bewertet, danach Hotels innerhalb dieser Gegend. Beide Rankings sind reine Funktionen mit festen Gewichten. Kein Modell. Keine Provision. Kein Providername. Labels: Jetnity empfiehlt, Best Value, beste Lage, ruhigere Alternative, Premium.
+
+**Kontext:** Vision und Handoff verlangen Gesamtreise statt billigstes Hotel. Ein LLM-Ranking wäre weder reproduzierbar noch in der CI prüfbar.
+
+**Alternativen:**
+
+1. *Billigstes Hotel zuerst.* Widerspricht dem Produktprinzip.
+2. *Modell begründet Gegend und Rangfolge.* Teuer, nicht deterministisch.
+
+**Begründung:** Vertrauen entsteht, wenn dieselbe Reise dieselbe Gegend und dieselbe Reihenfolge liefert.
+
+**Konsequenzen:** Gewichte stehen im Code (`QUARTIER_GEWICHTE`, `HOTEL_RANGLISTE_GEWICHTE`). Tests belegen, dass der günstigste Preis nicht automatisch die Empfehlung ist.
+
+---
+
+## ADR-0072 – Quartierkontext nur aus vorhandenen Reisedaten
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.2
+
+**Entscheidung:** Die Quartierbewertung liest Etappe, Koordinaten, Zeitraum, bestätigte Anker, frühen Abflug und vorhandene Nutzerangaben. Fehlende Routing-/POI-/ÖV-Daten bleiben `null`. Die Begründung behauptet keine kurzen Wege und keine Gegendprofile, die nicht belegt sind.
+
+**Kontext:** Ein Hotelranking ohne echte Wegezeiten wirkt präzise und ist es nicht. Aktivitätstitel wie „Sagrada Família“ ohne Koordinaten sind kein POI.
+
+**Alternativen:**
+
+1. *Nachbarschaften und Gehzeiten schätzen.* Scheingenauigkeit.
+2. *Sofort einen Routing-Provider kaufen.* Laufende Kosten ohne Freigabe.
+
+**Begründung:** Unbekannt ist eine Aussage. Eine erfundene Minute ist ein Defekt.
+
+**Konsequenzen:** Ohne Koordinaten gibt es keine Quartierempfehlung in der UI. Ein späterer Routing- oder POI-Weg ersetzt die Nullen, ändert aber nicht die Domäne.
+
+---
+
+## ADR-0073 – Hotelsuche in Production aus, fehlender Provider ist unavailable
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.2
+
+**Entscheidung:** `VERCEL_ENV=production` schaltet die Hotelsuche hart aus. Development/Preview brauchen `JETNITY_HOTEL_AKTIV` plus einen späteren Provider. Fehlender Provider ist ein sauberer unavailable-Zustand, kein Buildfehler. Quartierkontext darf aus der validierten Reiseanfrage trotzdem berechnet werden.
+
+**Kontext:** Dieselbe Fail-closed-Linie wie Modellweg (ADR-0052) und Flugsuche (ADR-0064). Phase 3.2 hat noch keinen Token-Vertrag.
+
+**Alternativen:**
+
+1. *Secrets im Setup-Check verlangen.* Würde jede Umgebung ohne Hotelanbieter rot färben.
+2. *Fake-Hotels in der echten UI.* Widerspricht der Produktregel.
+
+**Begründung:** Die Pipeline kann integrationsbereit sein, ohne Production oder Nutzer mit erfundenen Angeboten zu täuschen.
+
+**Konsequenzen:** Keine `NEXT_PUBLIC_HOTEL_*`. Rate-Limit im Prozess. Timeout 12 s. `POST /api/hotels/search` ist kein Provider-Proxy.
+
+---
+
+## ADR-0074 – Hotelübernahme als `stay` auf dem bestehenden Schema
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.2; keine neue Migration
+
+**Entscheidung:** Ein ausgewähltes Hotel wird als `trip_items.kind = stay` gespeichert. Die Momentaufnahme nutzt Titel, Notiz, Check-in/Check-out, Preis, Provider und External-Ref. `booking_url` bleibt `null`. `stage_id` bindet die Nächte an die Etappe. Keine neue Production- oder Development-Migration.
+
+**Kontext:** Die Spalten existieren seit Phase 1.5. Eine Extra-Tabelle für Hotelnächte oder Quartier-IDs wäre voreilig, solange kein Provider echte Angebote liefert.
+
+**Alternativen:**
+
+1. *Eigene `hotel_stays`-Tabelle jetzt.* Schema ohne Daten.
+2. *Übernahme erst nach dem ersten Provider bauen.* Würde die Trip-Naht später erneut öffnen.
+3. *JSON in `note` als verstecktes Schema.* Die Notiz bleibt Menschenlesart, kein Speicher für Felder.
+
+**Begründung:** Dieselbe Persistenz wie der Flug. Modelloperationen dürfen kommerzielle Punkte nicht ändern (ADR-0059). Preisänderungen später beobachten, nicht still überschreiben.
+
+**Konsequenzen:** Gast- und Kontoweg sind vorbereitet. Die UI zeigt den Übernehmen-Knopf nur bei echten Optionen. Eine spätere feinere Hotelpersistenz wäre eine eigene Development-Migration.
+
+---
+
+## ADR-0075 – Konto-Hotelübernahme nur über serverseitigen Nachweis
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.2b; kein echter Provider
+
+**Entscheidung:** Eine kommerzielle Hotelübernahme im Konto speichert keine Browseroption. Der Client liefert nur identifiers (`tripId`, `stageId`, `dayId`, `optionId`). Preis, Provider, External-Ref und der Zeitraum kommen aus einem serverseitigen `HotelNachweis` plus dem per RLS geladenen Reisegraphen. Solange kein Nachweis existiert, fällt die Übernahme fail closed. `HotelProvider.suchen()` bleibt schmal; die Auswahlbestätigung ist eine eigene Naht.
+
+**Kontext:** Phase 3.2 validierte die Option mit Zod und persistierte sie. Ein authentifizierter Nutzer konnte damit einen erfundenen `stay` mit beliebigem Preis speichern. Zod prüft Form, nicht Herkunft.
+
+**Alternativen:**
+
+1. *HMAC-Signatur der Suchergebnisse mit einem App-Secret.* Zweckentfremdet Secrets, koppelt Suche und Übernahme, hilft nicht bei Provider-Preisänderungen.
+2. *Nachweis in `HotelProvider.suchen()` einbauen.* Würde die Suchnaht aufblähen und Search mit Booking/Affiliate vermischen.
+3. *Übernahme erst nach dem ersten Provider erlauben, ohne Naht.* Würde dieselbe Lücke später erneut öffnen.
+
+**Begründung:** Die Vertrauensgrenze muss stehen, bevor der erste Adapter kommt. Tests können einen Fake-Katalog injizieren. Search-Provider und Affiliate-Partner müssen nicht identisch sein. Gastreisen bleiben LocalStorage und gelten nicht als serverseitig verifiziert.
+
+**Konsequenzen:** `hotelNachweisAusUmgebung()` gibt heute `null` zurück. Der erste Provider oder ein Jetnity-eigener serverseitiger Nachweis implementiert `HotelNachweis`. Keine Secret-Signatur, keine Booking.com-/HBX-Annahme. Modelloperationen schützen kommerzielle `stay`-Punkte weiter über `istKommerziell` (ADR-0059).
+
+---
+
+## ADR-0076 – HotelNachweis ist an den Suchkontext gebunden
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.2c; kein echter Provider
+
+**Entscheidung:** `HotelNachweis.nachweisen()` bestätigt eine `optionId` nur zusammen mit einem serverseitigen `HotelNachweisKontext`: Ziel, Check-in, Check-out, Zimmer, Erwachsene, Kinder, Währung. Der Kontext kommt aus dem Reisegraphen und denselben Belegungs-Defaults wie die offizielle Suche (`1` Zimmer, `0` Kinder). Der Browser darf keines dieser Felder als Wahrheit liefern.
+
+**Kontext:** Phase 3.2b band nur die `optionId`. Dieselbe Angebots-ID könnte zu einem anderen Ziel, Zeitraum oder einer anderen Belegung gehören. Dann würde ein Preis von Reise A auf Reise B landen.
+
+**Alternativen:**
+
+1. *Nur optionId, Zeitraum aus dem Graphen nachziehen.* Bindet den kommerziellen Fakt nicht an die Suche, die ihn erzeugt hat.
+2. *Client schickt den Suchkontext mit.* Untrusted input in der Vertrauensgrenze.
+3. *Secret-Signatur der Suchergebnisse.* Weiterhin ohne Providerbedarf und ohne Schutz vor späteren Preisänderungen.
+
+**Begründung:** Der erste Adapter muss eine Option gegen genau die erwartete Suche ablehnen können. Ohne Place-ID bindet Jetnity an `stage:{etappenId}` derselben Reise, nicht an einen Client-Ortsnamen.
+
+**Konsequenzen:** Tests injizieren einen Katalog mit Kontext. Abweichendes Ziel, Datum, Belegung oder Währung ist `geaendert`. Zimmer/Kinder bleiben Defaults, bis das Reiseschema eigene Felder trägt.
+
+---
+
+## ADR-0077 – Hotelsuche liest den Body nur bis zur Bytegrenze
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.2c
+
+**Entscheidung:** `POST /api/hotels/search` prüft `Content-Length` vor jedem Lesen. Der Body wird anschliessend streamend mit einem harten Cap von 16 KB UTF-8 gelesen und abgebrochen, sobald das Limit überschritten ist. `Content-Length` allein ist kein Vertrauensbeweis.
+
+**Kontext:** Phase 3.2b prüfte die Grösse erst nach `req.text()`. Ein übergrosser Request lag dann bereits vollständig im Speicher.
+
+**Alternativen:**
+
+1. *Nur Content-Length.* Fehlt oder lügt der Header, bleibt die Grenze wirkungslos.
+2. *Globales Body-Limit-Middleware.* Unnötige Infrastruktur für einen Endpunkt.
+3. *Zeichenanzahl statt Bytes.* Würde UTF-8-Multibyte unterschätzen.
+
+**Begründung:** Die 3.2b-Anforderung war, kein praktisch unbegrenztes JSON einzulesen. Das geht nur vor der Allokation des ganzen Körpers.
+
+**Konsequenzen:** 413 ohne vollständiges Buffering. Tests decken fehlendes, korrektes und irreführendes `Content-Length` sowie den Grenzfall exakt am Limit.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

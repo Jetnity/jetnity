@@ -20,12 +20,14 @@ import assert from 'node:assert/strict'
 
 import { OPTION_DIREKT } from '@/lib/flights/fixtures/optionen'
 import { alsFlugMomentaufnahme } from '@/lib/flights/uebernahme'
+import { alsHotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import { istKommerziell } from '@/lib/reiseaenderung/geschuetzt'
 import {
   GastreiseBestehtFehler,
   SCHLUESSEL,
   SpeicherFehler,
   gastFlugUebernehmen,
+  gastHotelUebernehmen,
   gastPlanpunktAnlegen,
   gastPlanpunktEntfernen,
   gastreiseAendern,
@@ -255,6 +257,45 @@ describe('Bearbeiten einer Gastreise', () => {
     assert.equal(danach.days[1].items[0].dayId, tag.id)
     assert.equal(danach.days[0].items.length, 0)
     assert.equal(gastspeicherLaden().aktiv?.days[1].items.length, 1, 'und ist gespeichert')
+  })
+
+  test('ein übernommenes Hotel bleibt kommerziell an der Etappe gespeichert', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const aufnahme = alsHotelMomentaufnahme(
+      {
+        id: 'hotel-1',
+        provider: 'test-hotel',
+        externalRef: 'ref-hotel',
+        name: 'Hotel Test',
+        punkt: { lat: 35.68, lon: 139.76 },
+        quartierName: 'Ginza',
+        adresse: null,
+        sterne: 4,
+        bewertung: 8.6,
+        bewertungenAnzahl: 400,
+        preisGesamt: 880,
+        preisProNacht: 220,
+        preisWaehrung: 'CHF',
+        steuernEnthalten: true,
+        stornierbar: true,
+        stornierungBis: null,
+        fruehstueckEnthalten: null,
+        zimmerName: null,
+      },
+      { checkIn: '2026-09-12', checkOut: '2026-09-16' },
+    )
+    assert.ok(aufnahme)
+    const etappe = reise.stages[0]
+    assert.ok(etappe)
+    const danach = gastHotelUebernehmen(reise, aufnahme, etappe.id, reise.days[0]!.id)
+    const hotel = danach.days[0]?.items.find((punkt) => punkt.kind === 'stay')
+    assert.ok(hotel)
+    assert.equal(istKommerziell(hotel), true)
+    assert.equal(hotel.provider, 'test-hotel')
+    assert.equal(hotel.bookingUrl, null)
+    assert.equal(hotel.stageId, etappe.id)
+    assert.equal(hotel.startsOn, '2026-09-12')
+    assert.equal(hotel.endsOn, '2026-09-16')
   })
 
   test('ein übernommener Flug bleibt kommerziell gespeichert', () => {

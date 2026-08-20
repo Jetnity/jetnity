@@ -1,6 +1,6 @@
 # Jetnity – Reisen
 
-**Stand:** 20. August 2026 · Phase 3.1
+**Stand:** 20. August 2026 · Phase 3.2
 **Gilt für:** das Reisedatenmodell und die Wege, auf denen eine Reise entsteht, gespeichert und bearbeitet wird.
 
 Diese Datei beantwortet vier Fragen: Woraus besteht eine Reise, wo liegt sie, wie kommt sie aus dem Browser in ein Konto, und was ist bewusst noch nicht gebaut.
@@ -210,7 +210,8 @@ Die Kennung entscheidet, wo `/reisen/[tripId]` nachsieht: `trip-<uuid>` ist ein 
 | ~~Änderung einer bestehenden Reise per Sprache~~ | **in Phase 2.2 gebaut.** Vertrauenswürdige Reise → Operationen → Vorschau → `public.reise_aendern()` bzw. Gastspeicher. Das Modell schreibt nicht in die Datenbank (ADR-0059, ADR-0060). |
 | ~~Flugoptionen suchen und in die Reise übernehmen~~ | **in Phase 3.1 gebaut.** Interne Flugdomäne, Duffel als erster Adapter, Ranking, Übernahme als kommerzieller Planpunkt. `booking_url` bleibt leer. Production aus ([docs/FLUEGE.md](FLUEGE.md), ADR-0062). |
 | ~~Reiseziel und Abreise als freie Texte~~ | **in Phase 3.1 geschlossen.** Gemeinsame Autocomplete und Serverprüfung gegen `public.places`. Fantasieorte werden nicht gespeichert ([docs/ORTE.md](ORTE.md), ADR-0067). |
-| Hotels, Aktivitäten | später in Phase 3. Ein Vorschlag aus Phase 2.1 lässt Handelsfelder leer (ADR-0054) |
+| ~~Hotels suchen und in die Reise übernehmen~~ | **Foundation in Phase 3.2 / 3.2c.** Quartier zuerst, Pipeline, `stay`-Abbildung, Nachweis an Suchkontext gebunden. Noch kein Hotelprovider, Konto-Übernahme fail closed, keine Production-Suche ([docs/HOTELS.md](HOTELS.md), ADR-0070 bis ADR-0077). |
+| Aktivitäten | später in Phase 3. Ein Vorschlag aus Phase 2.1 lässt Handelsfelder leer (ADR-0054) |
 | eigene Flugbuchung / Affiliate-Deeplink | getrennte Verantwortlichkeit, nicht der Suchadapter |
 | Anbieter-Plattform für zehn Provider | ein zweiter Suchadapter (Skyscanner, Aviasales) muss dasselbe Interface erfüllen; kein Framework auf Vorrat ([AGENTS.md](../AGENTS.md) Regel 19) |
 | Preisoptimierung, Preishistorie | braucht Anbieterpreise, die es noch nicht gibt |

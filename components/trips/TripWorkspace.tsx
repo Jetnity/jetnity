@@ -106,6 +106,8 @@ type TripWorkspaceProps = {
   aenderung?: React.ReactNode
   /** Flugsuche im Reisekontext, nicht als isolierte Suchmaschine. */
   flugsuche?: React.ReactNode
+  /** Hotel- und Quartierbereich je Etappe. */
+  hotelsuche?: React.ReactNode
 }
 
 export default function TripWorkspace({
@@ -118,6 +120,7 @@ export default function TripWorkspace({
   hinweis,
   aenderung,
   flugsuche,
+  hotelsuche,
 }: TripWorkspaceProps) {
   const [aktiverTag, setAktiverTag] = React.useState(reise.days[0]?.id ?? '')
   const [formularOffen, setFormularOffen] = React.useState(false)
@@ -253,6 +256,7 @@ export default function TripWorkspace({
         {aenderung}
 
         {flugsuche && <div className="mt-6">{flugsuche}</div>}
+        {hotelsuche && <div className="mt-6">{hotelsuche}</div>}
 
         <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[280px_minmax(0,1fr)_280px]">
           <aside className="h-fit rounded-[26px] border border-black/5 bg-white p-3 lg:sticky lg:top-24">

@@ -66,6 +66,48 @@ describe('Geschützte kommerzielle Felder', () => {
     assert.equal(dom?.stageId, 'stage-1')
   })
 
+  test('ein übernommener stay bleibt gegen Modellmutation geschützt', () => {
+    const vorher = beispielreise()
+    vorher.days[0]!.items.push({
+      id: 'item-stay',
+      dayId: 'day-1',
+      stageId: 'stage-1',
+      kind: 'stay',
+      title: 'Hotel Eixample · Eixample',
+      note: '2026-09-12 bis 2026-09-14',
+      position: 2,
+      startsOn: '2026-09-12',
+      startsAt: null,
+      endsOn: '2026-09-14',
+      endsAt: null,
+      priceAmount: 760,
+      priceCurrency: 'CHF',
+      provider: 'test-hotel',
+      externalRef: 'ref-77',
+      bookingUrl: null,
+    })
+    const nachher = structuredClone(vorher)
+    const stay = nachher.days[0]!.items.find((punkt) => punkt.id === 'item-stay')
+    assert.ok(stay)
+    stay.title = 'Geändertes Hotel'
+    stay.kind = 'note'
+    stay.priceAmount = 10
+    stay.startsOn = '2026-10-01'
+    stay.provider = 'evil'
+    stay.externalRef = 'hack'
+    stay.dayId = 'day-2'
+
+    const geschuetzt = kommerziellErhalten(vorher, nachher)
+    const bleibt = geschuetzt.days[0]?.items.find((punkt) => punkt.id === 'item-stay')
+    assert.equal(bleibt?.title, 'Hotel Eixample · Eixample')
+    assert.equal(bleibt?.kind, 'stay')
+    assert.equal(bleibt?.priceAmount, 760)
+    assert.equal(bleibt?.startsOn, '2026-09-12')
+    assert.equal(bleibt?.provider, 'test-hotel')
+    assert.equal(bleibt?.externalRef, 'ref-77')
+    assert.equal(bleibt?.dayId, 'day-1')
+  })
+
   test('ein übernommener Flug bleibt gegen Modellmutation geschützt', () => {
     const vorher = beispielreise()
     vorher.days[0]!.items.push({

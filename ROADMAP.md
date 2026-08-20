@@ -23,11 +23,12 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Phase 1.5 | V2-Reiseschema, persistente Reisen, Gast → Konto | **fertig** |
 | Phase 2.1 | natürliche Sprache zu strukturiertem Reisevorschlag | **fertig auf Development, Preview aktivierbar, Production aus** |
 | Phase 2.2 | bestehende Reise per Sprache ändern | **fertig, nach main gemergt, Production verifiziert; Modellweg aus** |
-| Phase 3.1 | Flight Foundation, erster Duffel-Adapter | **in Arbeit** |
-| Phase 3 | Hotels, Aktivitäten, Monetarisierung | als Nächstes nach 3.1 |
+| Phase 3.1 | Flight Foundation, erster Duffel-Adapter | **fertig, nach main gemergt, Production-Flugsuche aus** |
+| Phase 3.2 | Hotel Foundation, Quartierlogik, Suchpipeline, 3.2b/3.2c-Härtung | **in Arbeit** auf `phase-3-2-hotel-foundation` |
+| Phase 3 | Hotels (erster Adapter), Aktivitäten, Monetarisierung | als Nächstes nach 3.2 |
 | Phase 4 | Launch-Reife | geplant |
 
-Phase 2 ist als konversationeller Kern **fertig**: 2.1 erzeugt einen Vorschlag, 2.2 verändert eine bestehende Reise. Production bleibt für den Modellweg aus. Phase 3.1 liefert die erste Flugbasis; Production-Flugsuche bleibt aus.
+Phase 2 ist als konversationeller Kern **fertig**: 2.1 erzeugt einen Vorschlag, 2.2 verändert eine bestehende Reise. Production bleibt für den Modellweg aus. Phase 3.1 liefert die erste Flugbasis; Production-Flugsuche bleibt aus. Phase 3.2 legt die Hotel-/Quartierbasis; Production-Hotelsuche bleibt aus.
 
 ---
 
@@ -544,7 +545,7 @@ Offen aus 2.1:
 
 ---
 
-## Phase 3.1 – Flight Foundation · in Arbeit
+## Phase 3.1 – Flight Foundation · fertig, nach `main` gemergt
 
 Schlanke interne Flugdomäne, Duffel als erster Datenadapter, deterministisches Ranking, Übernahme in die Reise. Keine eigene Buchung. Production aus.
 
@@ -569,11 +570,38 @@ Amadeus Self-Service (eingestellt 17. Juli 2026) wird nicht angebunden. Im aktiv
 
 ---
 
-## Phase 3 – Hotels, Aktivitäten, Monetarisierung · als Nächstes
+## Phase 3.2 – Hotel Foundation · in Arbeit
+
+Provider-unabhängige Hotel-/Quartierdomäne, Quartier zuerst, Suchpipeline, Workspace-Bereich, 3.2b/3.2c-Härtung. Kein echter Hotelprovider. Production aus. Branch `phase-3-2-hotel-foundation`, Draft-PR #22.
+
+- [x] provider-unabhängige Hotel-/Quartierdomäne und `HotelProvider`
+- [x] deterministische Quartierbewertung vor der Hotelsuche
+- [x] deterministisches, provisionsneutrales Hotelranking
+- [x] Quartierkontext aus dem echten Reisegraphen; unbekannte Wegezeiten bleiben unbekannt
+- [x] geschlossene Pipeline `POST /api/hotels/search` mit Zustand, Timeout, Rate-Limit und Client-Sicht
+- [x] Hotelbereich je Etappe im bestehenden Trip Workspace
+- [x] Übernahme-Abbildung auf bestehendes `trip_items.kind = stay`, ohne neue Migration
+- [x] Konto-Übernahme fail closed ohne serverseitigen Nachweis; Client liefert nur identifiers
+- [x] Etappe, Tag und Zeitraum gegen den Reisegraphen geprüft
+- [x] API-Härtung: Request-Grösse, Content-Type, `Retry-After`, `cache-control: no-store`
+- [x] kommerzieller `stay` gegen Modelloperationen mitgeprüft (`istKommerziell`)
+- [x] `HotelNachweis` an Ziel, Zeitraum, Belegung und Währung gebunden
+- [x] Such-Body per Content-Length und Stream-Cap vor grosser Allokation begrenzt
+- [ ] genau einen ersten Hotel-Daten-/Affiliateanbieter entscheiden und anbinden · **eigene Freigabe**
+- [ ] Preview mit echtem Adapter und Nachweis verifizieren
+- [ ] globales/gespeichertes Rate-Limit vor jeder Production-Diskussion
+- [ ] reale Routing-/POI-/ÖV-Daten für echte Quartierwege
+- [ ] Production-Hotelsuche – eigene Freigabe, nicht Teil dieses Schritts
+
+Fachlich: [docs/HOTELS.md](docs/HOTELS.md), [docs/HOTEL_PROVIDER_STRATEGY.md](docs/HOTEL_PROVIDER_STRATEGY.md), ADR-0070 bis ADR-0077.
+
+---
+
+## Phase 3 – Hotels, Aktivitäten, Monetarisierung · als Nächstes nach 3.2
 
 Je Kategorie zunächst genau ein Weg ([DECISIONS.md](DECISIONS.md), ADR-0011, Nachtrag ADR-0062).
 
-- [ ] Hotels über einfache Affiliate-/Deeplink-Lösung
+- [ ] Hotels: erster Suchadapter und spätere Affiliate-/Deeplink-Schicht, getrennt
 - [ ] Aktivitäten über GetYourGuide
 - [ ] Budget- und Gesamtpreisübersicht über die ganze Reise
 - [ ] Affiliate-Tracking und Übergabe an Buchungspartner
