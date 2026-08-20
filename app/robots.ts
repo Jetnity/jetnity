@@ -32,6 +32,7 @@ export default function robots(): MetadataRoute.Robots {
               '/register',
               '/private/',
               '/draft/',
+              '/ui-audit',
               // '/_next/'  // nicht nötig
               '/*?*preview=*',
             ],

@@ -8,9 +8,11 @@ import * as React from 'react'
 import { AlertCircle, Loader2, Sparkles } from 'lucide-react'
 
 import type { ActivityOptionSichtbar, ActivitySucheAntwort } from '@/lib/activities/client-sicht'
-import { ACTIVITY_ABDECKUNGSHINWEIS, LEERE_ACTIVITY_EVIDENZ } from '@/lib/activities/domain'
+import { activitySucheFehlerAntwort, activitySucheVomClient } from '@/lib/activities/client-anfrage'
+import { ACTIVITY_ABDECKUNGSHINWEIS } from '@/lib/activities/domain'
 import { activitySucheEingabeAusReise } from '@/lib/activities/tageskontext'
 import AktivitaetKarte from '@/components/trips/AktivitaetKarte'
+import { ScrollRow } from '@/components/ui/scroll-row'
 import { cn } from '@/lib/utils'
 import type { Trip, TripDay, TripStage } from '@/types/trips'
 
@@ -111,6 +113,8 @@ function ActivityTag({
     return activitySucheEingabeAusReise(reise, etappe, tag)
   }, [reise, etappe, tag])
 
+  const eingabeSchluessel = eingabe ? JSON.stringify(eingabe) : ''
+
   React.useEffect(() => {
     if (!eingabe) {
       setLaeuft(false)
@@ -124,27 +128,15 @@ function ActivityTag({
     setAntwort(null)
     setMeldung('')
 
-    void fetch('/api/activities/search', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(eingabe),
-      signal: steuerung.signal,
-    })
-      .then(async (res) => {
-        const json = (await res.json()) as ActivitySucheAntwort
+    void activitySucheVomClient(eingabe, { signal: steuerung.signal })
+      .then((json) => {
         if (!aktiv) return
         setAntwort(json)
-        if (!res.ok && !json.message) setMeldung('Die Aktivitätsanfrage ist fehlgeschlagen.')
       })
       .catch((fehler: unknown) => {
         if (!aktiv || (fehler instanceof DOMException && fehler.name === 'AbortError')) return
-        setAntwort({
-          status: 'error',
-          message: 'Die Aktivitätsanfrage ist gerade nicht erreichbar.',
-          coverageNote: ACTIVITY_ABDECKUNGSHINWEIS,
-          evidenz: { ...LEERE_ACTIVITY_EVIDENZ },
-          options: [],
-        })
+        if (fehler instanceof Error && fehler.name === 'AbortError') return
+        setAntwort(activitySucheFehlerAntwort('Die Aktivitätsanfrage ist gerade nicht erreichbar.'))
       })
       .finally(() => {
         if (aktiv) setLaeuft(false)
@@ -154,7 +146,9 @@ function ActivityTag({
       aktiv = false
       steuerung.abort()
     }
-  }, [eingabe])
+    // `eingabeSchluessel` hält den Effekt an den Inhalt, nicht an die Objektreferenz.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eingabeSchluessel])
 
   const uebernehmen = async (option: ActivityOptionSichtbar) => {
     if (!onUebernehmen || !etappe || !tag || uebernimmt) return
@@ -176,9 +170,9 @@ function ActivityTag({
   return (
     <section
       aria-label="Aktivitäten"
-      className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7"
+      className="min-w-0 rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7"
     >
-      <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Aktivitäten</p>
           <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
@@ -189,32 +183,41 @@ function ActivityTag({
             {tag?.dayDate ? ` · ${kurzesDatum.format(alsDatum(tag.dayDate))}` : ' · Datum noch offen'}
           </p>
         </div>
-        <Sparkles className="h-5 w-5 text-brand-600" aria-hidden="true" />
+        <Sparkles className="h-5 w-5 shrink-0 text-brand-600" aria-hidden="true" />
       </div>
 
       <div className="mt-4 min-w-0">
-        <p className="text-xs font-medium text-ink-800">Reisetag</p>
-        <div className="mt-2 flex min-w-0 flex-wrap gap-2">
+        <p id="activity-tag-label" className="text-xs font-medium text-ink-800">
+          Reisetag
+        </p>
+        <ScrollRow
+          label="Reisetage"
+          className="mt-2"
+          fadeFromClassName="from-white"
+          viewportClassName="gap-2 pb-1"
+          aria-labelledby="activity-tag-label"
+        >
           {reise.days.map((eintrag) => {
             const gewaehlt = tag?.id === eintrag.id
             return (
               <button
                 key={eintrag.id}
                 type="button"
-                aria-pressed={gewaehlt}
+                role="radio"
+                aria-checked={gewaehlt}
                 onClick={() => onTagWechseln(eintrag.id)}
                 className={cn(
-                  'inline-flex min-h-11 items-center rounded-full border px-3.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
+                  'inline-flex min-h-11 max-w-[14rem] shrink-0 items-center rounded-full border px-3.5 text-left text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
                   gewaehlt
                     ? 'border-brand-800 bg-brand-800 text-white'
                     : 'border-line-200 bg-white text-ink-900 hover:border-line-500',
                 )}
               >
-                {tagTitel(eintrag)}
+                <span className="min-w-0 break-words">{tagTitel(eintrag)}</span>
               </button>
             )
           })}
-        </div>
+        </ScrollRow>
       </div>
 
       <div className="mt-5 rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
@@ -238,59 +241,61 @@ function ActivityTag({
         </p>
       )}
 
-      {laeuft && (
-        <p aria-busy="true" className="mt-5 flex items-start gap-3 rounded-2xl bg-surface-25 px-4 py-3 text-sm text-ink-800">
-          <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-brand-600" />
-          Jetnity prüft, welche Aktivitäten zu diesem Tag passen.
-        </p>
-      )}
+      <div className="mt-5 min-h-[7rem]" aria-live="polite">
+        {laeuft && (
+          <p aria-busy="true" className="flex items-start gap-3 rounded-2xl bg-surface-25 px-4 py-3 text-sm text-ink-800">
+            <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-brand-600" aria-hidden="true" />
+            Jetnity prüft, welche Aktivitäten zu diesem Tag passen.
+          </p>
+        )}
 
-      {!laeuft && antwort && (
-        <div className="mt-5 grid gap-4">
-          {zustand === 'unavailable' && (
-            <p role="status" className="rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
-              {antwort.message}
-            </p>
-          )}
+        {!laeuft && antwort && (
+          <div className="grid gap-4">
+            {zustand === 'unavailable' && (
+              <p role="status" className="rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
+                {antwort.message}
+              </p>
+            )}
 
-          {zustand === 'empty' && (
-            <p className="rounded-2xl bg-surface-25 px-4 py-6 text-center text-sm leading-6 text-ink-800">
-              {antwort.message}
-            </p>
-          )}
+            {zustand === 'empty' && (
+              <p role="status" className="rounded-2xl bg-surface-25 px-4 py-6 text-center text-sm leading-6 text-ink-800">
+                {antwort.message}
+              </p>
+            )}
 
-          {(zustand === 'timeout' ||
-            zustand === 'error' ||
-            zustand === 'invalid' ||
-            zustand === 'rate_limited') && (
-            <p
-              role="status"
-              className="flex items-start gap-3 rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800"
-            >
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
-              {antwort.message}
-            </p>
-          )}
+            {(zustand === 'timeout' ||
+              zustand === 'error' ||
+              zustand === 'invalid' ||
+              zustand === 'rate_limited') && (
+              <p
+                role="status"
+                className="flex items-start gap-3 rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800"
+              >
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />
+                {antwort.message}
+              </p>
+            )}
 
-          {antwort.options.length > 0 && (
-            <ol className="grid gap-3">
-              {antwort.options.map((option) => (
-                <li key={option.id} className="min-w-0">
-                  <AktivitaetKarte
-                    option={option}
-                    laeuft={uebernimmt}
-                    onUebernehmen={
-                      onUebernehmen && etappe && tag ? () => void uebernehmen(option) : undefined
-                    }
-                  />
-                </li>
-              ))}
-            </ol>
-          )}
+            {antwort.options.length > 0 && (
+              <ol className="grid min-w-0 gap-3">
+                {antwort.options.map((option) => (
+                  <li key={option.id} className="min-w-0">
+                    <AktivitaetKarte
+                      option={option}
+                      laeuft={uebernimmt}
+                      onUebernehmen={
+                        onUebernehmen && etappe && tag ? () => void uebernehmen(option) : undefined
+                      }
+                    />
+                  </li>
+                ))}
+              </ol>
+            )}
 
-          <p className="text-xs leading-5 text-ink-700">{antwort.coverageNote || ACTIVITY_ABDECKUNGSHINWEIS}</p>
-        </div>
-      )}
+            <p className="text-xs leading-5 text-ink-700">{antwort.coverageNote || ACTIVITY_ABDECKUNGSHINWEIS}</p>
+          </div>
+        )}
+      </div>
 
       {meldung && (
         <p role="alert" className="mt-4 rounded-2xl bg-surface-50 px-4 py-3 text-sm text-danger-600">

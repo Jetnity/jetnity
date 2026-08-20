@@ -88,9 +88,9 @@ export default function AktivitaetKarte({
             type="button"
             onClick={onUebernehmen}
             disabled={laeuft}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-900 disabled:pointer-events-none disabled:opacity-60"
+            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:pointer-events-none disabled:opacity-60"
           >
-            <Sparkles className="h-4 w-4" />
+            <Sparkles className="h-4 w-4" aria-hidden="true" />
             In die Reise
           </button>
         )}
