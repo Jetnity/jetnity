@@ -140,7 +140,8 @@ export const MODELL_VORGABE: Modellname = 'gpt-5.6-terra'
  * Vercel Pro; Hobby schneidet bei 60 s ab und reicht für Sol nicht.
  *
  * Next.js liest `export const maxDuration` nur als Literal. In
- * `app/(public)/planen/page.tsx` steht deshalb `300`, nicht diese Konstante.
+ * `app/(public)/planen/page.tsx` und `app/(public)/reisen/[tripId]/page.tsx`
+ * steht deshalb `300`, nicht diese Konstante.
  */
 export const SEITEN_DAUER_S = 300
 

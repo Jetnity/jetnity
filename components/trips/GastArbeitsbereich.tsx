@@ -21,6 +21,7 @@ import {
   gastreiseLadenNach,
 } from '@/lib/trips/gastspeicher'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
+import ReiseAenderung from '@/components/trips/ReiseAenderung'
 import TripWorkspace from '@/components/trips/TripWorkspace'
 import type { Trip } from '@/types/trips'
 
@@ -135,6 +136,13 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
       quelle="guest"
       onPunktAnlegen={anlegen}
       onPunktEntfernen={entfernen}
+      aenderung={
+        <ReiseAenderung
+          reise={reise}
+          quelle="guest"
+          onGespeichert={(aktualisiert) => aktualisiert && setReise(aktualisiert)}
+        />
+      }
       kopfzeile={
         <div className="grid gap-2">
           <div className="flex flex-wrap items-center justify-between gap-3">

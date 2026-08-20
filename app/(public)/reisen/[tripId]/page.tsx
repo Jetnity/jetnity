@@ -29,6 +29,9 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic'
 
+/** Next.js liest nur ein Literal. Muss den Sol-Lauf plus Terra-Fallback tragen. */
+export const maxDuration = 300
+
 type ReiseSeiteProps = {
   params: { tripId: string }
 }

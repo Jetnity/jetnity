@@ -21,6 +21,7 @@ import { Cloud, Trash2 } from 'lucide-react'
 
 import { planpunktAnlegen, planpunktEntfernen, reiseLoeschen } from '@/lib/trips/aktionen'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
+import ReiseAenderung from '@/components/trips/ReiseAenderung'
 import TripWorkspace from '@/components/trips/TripWorkspace'
 import type { Trip, TripItem } from '@/types/trips'
 
@@ -78,6 +79,9 @@ export default function KontoArbeitsbereich({
       ohneTag={ohneTag}
       onPunktAnlegen={anlegen}
       onPunktEntfernen={entfernen}
+      aenderung={
+        <ReiseAenderung reise={reise} quelle="account" onGespeichert={() => router.refresh()} />
+      }
       hinweis={
         loeschmeldung ? (
           <p role="alert" className="mt-5 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">

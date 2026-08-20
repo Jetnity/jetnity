@@ -102,6 +102,8 @@ type TripWorkspaceProps = {
   kopfzeile?: React.ReactNode
   /** Platz für Hinweise der jeweiligen Ablage, etwa die Übernahme ins Konto. */
   hinweis?: React.ReactNode
+  /** Platz für die Sprachänderung – bewusst zwischen Kopf und Tagesplan. */
+  aenderung?: React.ReactNode
 }
 
 export default function TripWorkspace({
@@ -112,6 +114,7 @@ export default function TripWorkspace({
   onPunktEntfernen,
   kopfzeile,
   hinweis,
+  aenderung,
 }: TripWorkspaceProps) {
   const [aktiverTag, setAktiverTag] = React.useState(reise.days[0]?.id ?? '')
   const [formularOffen, setFormularOffen] = React.useState(false)
@@ -243,6 +246,8 @@ export default function TripWorkspace({
             <div className="border-t border-white/10 px-6 py-4 sm:px-8">{kopfzeile}</div>
           )}
         </section>
+
+        {aenderung}
 
         <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[280px_minmax(0,1fr)_280px]">
           <aside className="h-fit rounded-[26px] border border-black/5 bg-white p-3 lg:sticky lg:top-24">

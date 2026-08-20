@@ -24,6 +24,7 @@ import {
   SpeicherFehler,
   gastPlanpunktAnlegen,
   gastPlanpunktEntfernen,
+  gastreiseAendern,
   gastreiseAnlegen,
   gastreiseEntfernen,
   gastreiseLadenNach,
@@ -31,6 +32,7 @@ import {
   gastspeicherLaden,
   kennungErzeugen,
   uebernommenStreichen,
+  VeralteteFassungFehler,
   zurUebernahme,
 } from '@/lib/trips/gastspeicher'
 import type { CreateTripInput } from '@/types/trips'
@@ -282,6 +284,147 @@ describe('Bearbeiten einer Gastreise', () => {
 
     assert.equal(gastreiseLadenNach(reise.id)?.id, reise.id)
     assert.equal(gastreiseLadenNach('trip-fremd'), null)
+  })
+})
+
+describe('Sprachänderung im Gastspeicher', () => {
+  test('Reisende werden übernommen und die Revision steigt', () => {
+    gastreiseAnlegen(eingabe())
+    const danach = gastreiseAendern({
+      mutationId: 'mut-1',
+      basisRevision: 1,
+      operationen: [
+        {
+          art: 'stammdaten',
+          etappeId: null,
+          tagId: null,
+          punktId: null,
+          nachEtappeId: null,
+          nachTagId: null,
+          name: null,
+          laendercode: null,
+          titel: null,
+          notiz: null,
+          beginn: null,
+          punktArt: null,
+          tageDelta: null,
+          tage: null,
+          reisende: 3,
+          budgetziel: null,
+          tempo: null,
+          interessen: null,
+          reisewunsch: null,
+          abreiseort: null,
+          startdatum: null,
+        },
+      ],
+    })
+
+    assert.equal(danach.travellers, 3)
+    assert.equal(danach.revision, 2)
+    assert.equal(danach.lastMutationId, 'mut-1')
+    assert.equal(gastspeicherLaden().aktiv?.travellers, 3)
+  })
+
+  test('derselbe Retry ändert nichts zweimal', () => {
+    gastreiseAnlegen(eingabe())
+    const op = {
+      art: 'dauer_aendern' as const,
+      etappeId: null,
+      tagId: null,
+      punktId: null,
+      nachEtappeId: null,
+      nachTagId: null,
+      name: null,
+      laendercode: null,
+      titel: null,
+      notiz: null,
+      beginn: null,
+      punktArt: null,
+      tageDelta: 2,
+      tage: null,
+      reisende: null,
+      budgetziel: null,
+      tempo: null,
+      interessen: null,
+      reisewunsch: null,
+      abreiseort: null,
+      startdatum: null,
+    }
+    const einmal = gastreiseAendern({ mutationId: 'mut-idem', basisRevision: 1, operationen: [op] })
+    const nochmal = gastreiseAendern({ mutationId: 'mut-idem', basisRevision: 1, operationen: [op] })
+
+    assert.equal(einmal.days.length, 7)
+    assert.equal(nochmal.days.length, 7)
+    assert.equal(nochmal.revision, einmal.revision)
+  })
+
+  test('eine veraltete Fassung wird abgelehnt', () => {
+    gastreiseAnlegen(eingabe())
+    gastreiseAendern({
+      mutationId: 'mut-a',
+      basisRevision: 1,
+      operationen: [
+        {
+          art: 'stammdaten',
+          etappeId: null,
+          tagId: null,
+          punktId: null,
+          nachEtappeId: null,
+          nachTagId: null,
+          name: null,
+          laendercode: null,
+          titel: null,
+          notiz: null,
+          beginn: null,
+          punktArt: null,
+          tageDelta: null,
+          tage: null,
+          reisende: 3,
+          budgetziel: null,
+          tempo: null,
+          interessen: null,
+          reisewunsch: null,
+          abreiseort: null,
+          startdatum: null,
+        },
+      ],
+    })
+
+    assert.throws(
+      () =>
+        gastreiseAendern({
+          mutationId: 'mut-b',
+          basisRevision: 1,
+          operationen: [
+            {
+              art: 'stammdaten',
+              etappeId: null,
+              tagId: null,
+              punktId: null,
+              nachEtappeId: null,
+              nachTagId: null,
+              name: null,
+              laendercode: null,
+              titel: null,
+              notiz: null,
+              beginn: null,
+              punktArt: null,
+              tageDelta: null,
+              tage: null,
+              reisende: 4,
+              budgetziel: null,
+              tempo: null,
+              interessen: null,
+              reisewunsch: null,
+              abreiseort: null,
+              startdatum: null,
+            },
+          ],
+        }),
+      VeralteteFassungFehler,
+    )
+    assert.equal(gastspeicherLaden().aktiv?.travellers, 3)
   })
 })
 

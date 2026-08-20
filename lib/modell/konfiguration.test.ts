@@ -164,6 +164,9 @@ describe('Die Grenzen sind in sich stimmig', () => {
     // trotzdem dieselbe sein wie `SEITEN_DAUER_S`.
     const seite = readFileSync(join(process.cwd(), 'app/(public)/planen/page.tsx'), 'utf8')
     assert.match(seite, new RegExp(`export const maxDuration = ${SEITEN_DAUER_S}\\b`))
+
+    const reise = readFileSync(join(process.cwd(), 'app/(public)/reisen/[tripId]/page.tsx'), 'utf8')
+    assert.match(reise, new RegExp(`export const maxDuration = ${SEITEN_DAUER_S}\\b`))
   })
 
   test('die Eingabeschätzung deckt die längste erlaubte Beschreibung', () => {
