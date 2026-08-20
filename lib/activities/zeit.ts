@@ -6,7 +6,7 @@
 const UHRZEIT = /^([01]\d|2[0-3]):[0-5]\d$/
 const DATUM = /^\d{4}-\d{2}-\d{2}$/
 
-export function istUhrzeit(wert: string | null | undefined): wert is string {
+function istUhrzeit(wert: string | null | undefined): wert is string {
   return typeof wert === 'string' && UHRZEIT.test(wert)
 }
 
@@ -28,7 +28,7 @@ export function minutenAlsUhrzeit(minuten: number): string {
   return `${String(stunde).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
 }
 
-export function datumGueltig(wert: string): boolean {
+function datumGueltig(wert: string): boolean {
   if (!istDatum(wert)) return false
   const [jahr, monat, tag] = wert.split('-').map(Number)
   const geprueft = new Date(Date.UTC(jahr, monat - 1, tag))

@@ -45,7 +45,7 @@ export function timeslotAlsFenster(slot: ActivityTimeslot | null): Zeitfenster |
  * Ein Fenster ist nur dann vollständig beurteilbar, wenn Start und Ende
  * am selben Kalendertag als HH:MM vorliegen.
  */
-export function fensterVollstaendig(fenster: Zeitfenster, tagDatum: string | null): boolean {
+function fensterVollstaendig(fenster: Zeitfenster, tagDatum: string | null): boolean {
   if (!tagDatum || !istDatum(tagDatum)) return false
   const startTag = fenster.startsOn ?? tagDatum
   const endeTag = fenster.endsOn ?? fenster.startsOn ?? tagDatum
@@ -53,7 +53,7 @@ export function fensterVollstaendig(fenster: Zeitfenster, tagDatum: string | nul
   return minutenSeitMitternacht(fenster.startsAt) !== null && minutenSeitMitternacht(fenster.endsAt) !== null
 }
 
-export function fensterMehrtägig(fenster: Zeitfenster): boolean {
+function fensterMehrtägig(fenster: Zeitfenster): boolean {
   const start = fenster.startsOn
   const ende = fenster.endsOn
   if (!start || !ende) return false
@@ -61,7 +61,7 @@ export function fensterMehrtägig(fenster: Zeitfenster): boolean {
   return differenz !== null && differenz !== 0
 }
 
-export function fensterUeberMitternacht(fenster: Zeitfenster, tagDatum: string | null): boolean {
+function fensterUeberMitternacht(fenster: Zeitfenster, tagDatum: string | null): boolean {
   if (fensterMehrtägig(fenster)) return false
   if (!fensterVollstaendig(fenster, tagDatum ?? fenster.startsOn)) return false
   const start = minutenSeitMitternacht(fenster.startsAt)
