@@ -14,13 +14,17 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { CloudOff, MapPin, Trash2 } from 'lucide-react'
 
+import type { FlugOptionSichtbar } from '@/lib/flights/client-sicht'
+import { alsFlugMomentaufnahme } from '@/lib/flights/uebernahme'
 import {
+  gastFlugUebernehmen,
   gastPlanpunktAnlegen,
   gastPlanpunktEntfernen,
   gastreiseEntfernen,
   gastreiseLadenNach,
 } from '@/lib/trips/gastspeicher'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
+import FlugSuche from '@/components/trips/FlugSuche'
 import ReiseAenderung from '@/components/trips/ReiseAenderung'
 import TripWorkspace from '@/components/trips/TripWorkspace'
 import type { Trip } from '@/types/trips'
@@ -141,6 +145,24 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
           reise={reise}
           quelle="guest"
           onGespeichert={(aktualisiert) => aktualisiert && setReise(aktualisiert)}
+        />
+      }
+      flugsuche={
+        <FlugSuche
+          reise={reise}
+          tagId={reise.days[0]?.id ?? null}
+          onUebernehmen={async (tagId, option: FlugOptionSichtbar) => {
+            const aufnahme = alsFlugMomentaufnahme(option)
+            if (!aufnahme) return 'Diese Flugoption ist unvollständig.'
+            try {
+              setReise(gastFlugUebernehmen(reise, aufnahme, tagId))
+              return null
+            } catch (fehler) {
+              return fehler instanceof Error
+                ? fehler.message
+                : 'Der Flug konnte nicht in die Reise übernommen werden.'
+            }
+          }}
         />
       }
       ohneTag={reise.ohneTag}

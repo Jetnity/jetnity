@@ -19,8 +19,11 @@ import * as React from 'react'
 import { useRouter } from 'next/navigation'
 import { Cloud, Trash2 } from 'lucide-react'
 
+import { flugInReiseUebernehmen } from '@/lib/flights/aktionen'
+import type { FlugOptionSichtbar } from '@/lib/flights/client-sicht'
 import { planpunktAnlegen, planpunktEntfernen, reiseLoeschen } from '@/lib/trips/aktionen'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
+import FlugSuche from '@/components/trips/FlugSuche'
 import ReiseAenderung from '@/components/trips/ReiseAenderung'
 import TripWorkspace from '@/components/trips/TripWorkspace'
 import type { Trip, TripItem } from '@/types/trips'
@@ -81,6 +84,22 @@ export default function KontoArbeitsbereich({
       onPunktEntfernen={entfernen}
       aenderung={
         <ReiseAenderung reise={reise} quelle="account" onGespeichert={() => router.refresh()} />
+      }
+      flugsuche={
+        <FlugSuche
+          reise={reise}
+          tagId={reise.days[0]?.id ?? null}
+          onUebernehmen={async (tagId, option: FlugOptionSichtbar) => {
+            const ergebnis = await flugInReiseUebernehmen({
+              tripId: reise.id,
+              dayId: tagId,
+              option,
+            })
+            if (!ergebnis.ok) return ergebnis.meldung
+            router.refresh()
+            return null
+          }}
+        />
       }
       hinweis={
         loeschmeldung ? (

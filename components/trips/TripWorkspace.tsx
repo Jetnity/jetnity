@@ -104,6 +104,8 @@ type TripWorkspaceProps = {
   hinweis?: React.ReactNode
   /** Platz für die Sprachänderung – bewusst zwischen Kopf und Tagesplan. */
   aenderung?: React.ReactNode
+  /** Flugsuche im Reisekontext, nicht als isolierte Suchmaschine. */
+  flugsuche?: React.ReactNode
 }
 
 export default function TripWorkspace({
@@ -115,6 +117,7 @@ export default function TripWorkspace({
   kopfzeile,
   hinweis,
   aenderung,
+  flugsuche,
 }: TripWorkspaceProps) {
   const [aktiverTag, setAktiverTag] = React.useState(reise.days[0]?.id ?? '')
   const [formularOffen, setFormularOffen] = React.useState(false)
@@ -248,6 +251,8 @@ export default function TripWorkspace({
         </section>
 
         {aenderung}
+
+        {flugsuche && <div className="mt-6">{flugsuche}</div>}
 
         <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[280px_minmax(0,1fr)_280px]">
           <aside className="h-fit rounded-[26px] border border-black/5 bg-white p-3 lg:sticky lg:top-24">
@@ -529,6 +534,12 @@ function Planpunkt({
         {punkt.note && (
           <span className="mt-1 block hyphens-auto break-words text-xs leading-5 text-ink-700">
             {punkt.note}
+          </span>
+        )}
+        {punkt.priceAmount !== null && punkt.priceCurrency && (
+          <span className="mt-1 block text-xs font-semibold text-brand-700">
+            {betragLesbar(punkt.priceAmount, punkt.priceCurrency)}
+            {punkt.kind === 'flight' ? ' · zum Auswahlzeitpunkt' : ''}
           </span>
         )}
       </span>
