@@ -7,6 +7,8 @@
 // Production braucht --schreiben --produktion und den exakten Project-Ref.
 // Kein Production-Ref als stilles Default.
 
+import { PRODUCTION_GRENZE_VERSION } from '@/lib/rollout/anwenden-grenze'
+
 export type ImportModus = 'probe' | 'entwicklung' | 'produktion'
 
 export type ImportAuftrag =
@@ -14,9 +16,13 @@ export type ImportAuftrag =
   | { modus: 'entwicklung'; bereinigen: boolean }
   | { modus: 'produktion'; bestaetigterRef: string }
 
-export type AnwendenAuftrag =
+export type ZielAuftrag =
   | { modus: 'entwicklung' }
   | { modus: 'produktion'; bestaetigterRef: string }
+
+export type AnwendenAuftrag =
+  | { modus: 'entwicklung' }
+  | { modus: 'produktion'; bestaetigterRef: string; bis: string }
 
 function argument(argv: readonly string[], name: string): string | undefined {
   const i = argv.indexOf(`--${name}`)
@@ -98,7 +104,14 @@ export function anwendenAuftragLesen(
   }
   if (produktion) {
     const bestaetigterRef = refsStimmenUeberein(umgebung.SUPABASE_PROJECT_REF, argument(argv, 'projekt-ref'))
-    return { modus: 'produktion', bestaetigterRef }
+    const bis = argument(argv, 'bis')?.trim() ?? ''
+    if (bis !== PRODUCTION_GRENZE_VERSION) {
+      throw new Error(
+        `Production-Anwenden braucht --bis ${PRODUCTION_GRENZE_VERSION}. ` +
+          'Spätere Migrationen laufen in diesem Playbook nicht mit.',
+      )
+    }
+    return { modus: 'produktion', bestaetigterRef, bis }
   }
   return { modus: 'entwicklung' }
 }
@@ -106,7 +119,7 @@ export function anwendenAuftragLesen(
 export function pruefenAuftragLesen(
   argv: readonly string[],
   umgebung: Umgebung | NodeJS.ProcessEnv = process.env,
-): AnwendenAuftrag {
+): ZielAuftrag {
   const entwicklung = hatFlag(argv, 'entwicklung')
   const produktion = hatFlag(argv, 'produktion')
   if (entwicklung && produktion) {

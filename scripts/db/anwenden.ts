@@ -2,12 +2,14 @@
 // Spielt noch nicht angewendete Migrationen auf das bestätigte Ziel.
 //
 // Default: Development-Branch (`ziel()`). Production nur mit
-// --produktion --projekt-ref <exakter Ref>, nachdem die Management API
-// bestätigt hat, dass das Ziel ein eigenständiges Projekt ist.
+// --produktion --projekt-ref <exakter Ref> --bis 20260820130000,
+// nachdem die Management API bestätigt hat, dass das Ziel ein
+// eigenständiges Projekt ist. Spätere Migrationen laufen nicht mit.
 
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 
+import { produktionsPlan } from '@/lib/rollout/anwenden-grenze'
 import { anwendenAuftragLesen } from '@/lib/rollout/schreibauftrag'
 import { zielFuerAuftrag } from '../auth/ziel'
 import { runSql } from './sql.mjs'
@@ -42,10 +44,32 @@ async function main() {
 
   const nurProbe = process.argv.includes('--probe')
   const angewendet = await angewendeteVersionen()
-  const offen = alleMigrationen().filter((m) => !angewendet.has(m.version))
+  const alle = alleMigrationen()
+  const offen =
+    auftrag.modus === 'produktion'
+      ? (() => {
+          const plan = produktionsPlan({
+            angewendet: [...angewendet],
+            alle,
+            bis: auftrag.bis,
+          })
+          if (plan.spaeterAusgeschlossen.length > 0) {
+            console.log(
+              `Ausserhalb der Phase-3.1-Grenze, nicht angewendet: ${plan.spaeterAusgeschlossen
+                .map((m) => m.datei)
+                .join(', ')}`,
+            )
+          }
+          return plan.offen
+        })()
+      : alle.filter((m) => !angewendet.has(m.version))
 
   if (offen.length === 0) {
-    console.log('Nichts offen – der Branch entspricht den Migrationen im Repository.')
+    console.log(
+      auftrag.modus === 'produktion'
+        ? 'Nichts offen innerhalb der Phase-3.1-Grenze.'
+        : 'Nichts offen – der Branch entspricht den Migrationen im Repository.',
+    )
     return
   }
 

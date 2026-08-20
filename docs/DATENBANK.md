@@ -36,8 +36,8 @@ Alle Skripte liegen in `scripts/db/` und sprechen über die Supabase Management 
 | Befehl | Aufgabe |
 | --- | --- |
 | `npm run db:inventar` | vollständige Inventur eines Schemas als JSON |
-| `npm run db:anwenden` | offene Migrationen anwenden; ohne Flags nur Development-Branch; Production nur mit `-- --produktion --projekt-ref`; `-- --probe` zeigt nur, was offen ist |
-| `npm run production:pruefen` | read-only Rollout-Check; braucht `-- --entwicklung` oder `-- --produktion --projekt-ref`; `--vorab` prüft nur Constraints und Kill Switches |
+| `npm run db:anwenden` | offene Migrationen anwenden; ohne Flags nur Development-Branch; Production nur mit `-- --produktion --projekt-ref --bis 20260820130000`; `-- --probe` zeigt nur, was offen ist |
+| `npm run production:pruefen` | vollständig read-only (nur SELECT/Metadaten); braucht `-- --entwicklung` oder `-- --produktion --projekt-ref`; `--vorab` prüft nur Constraints und Kill Switches |
 | `npm run db:reproduzierbarkeit` | baut das Schema aus den Migrationen neu auf und vergleicht es mit dem laufenden |
 | `npm run db:rls` | empirische RLS-Matrix: was darf welche Rolle auf welcher Tabelle wirklich |
 | `npm run db:sicherheit` | 169 benannte Nachweise mit Erwartung, positiv und negativ; wo es darauf ankommt, mit verlangtem SQLSTATE |

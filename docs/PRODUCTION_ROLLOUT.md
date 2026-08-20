@@ -63,7 +63,9 @@ Die Importer dürfen Production nicht mehr „aus Versehen“ beschreiben. Der D
 | Secrets | Token, JWT und Schlüssel werden nicht geloggt. |
 | CI / Build / Merge | rufen den Import nicht auf. `prebuild` und `npm test` enthalten keinen Import. |
 
-`npm run db:anwenden` ist ebenfalls geschützt: ohne Flags nur Development-Branch. Production-Schema nur mit `--produktion --projekt-ref <Ref>`.
+`npm run db:anwenden` ist ebenfalls geschützt: ohne Flags nur Development-Branch. Production-Schema nur mit `--produktion --projekt-ref <Ref> --bis 20260820130000`. Ohne `--bis` oder mit einem höheren Grenzwert bricht der Lauf ab. Migrationen nach `20260820130000` laufen in diesem Playbook nicht mit, auch wenn sie im Repository schon liegen.
+
+`npm run production:pruefen` ist vollständig read-only: nur `SELECT` auf Bestand und PostgreSQL-Metadaten (Rechte, RLS, Policies). Kein HTTP-POST, kein INSERT/UPDATE/DELETE.
 
 ---
 
@@ -91,11 +93,11 @@ Prüft nur historische Airport-Constraints und die Kill Switches. Places dürfen
 ### Schritt A – Schema (wenige Minuten)
 
 ```bash
-npm run db:anwenden -- --produktion --projekt-ref "$SUPABASE_PROJECT_REF" --probe
-npm run db:anwenden -- --produktion --projekt-ref "$SUPABASE_PROJECT_REF"
+npm run db:anwenden -- --produktion --projekt-ref "$SUPABASE_PROJECT_REF" --bis 20260820130000 --probe
+npm run db:anwenden -- --produktion --projekt-ref "$SUPABASE_PROJECT_REF" --bis 20260820130000
 ```
 
-`--probe` muss genau die vier Dateien aus Abschnitt 2 zeigen (und nichts Älteres, das schon auf `20260820080000` steht).
+`--probe` muss genau die vier Dateien aus Abschnitt 2 zeigen. Der Ausgang muss `20260820080000` sein. Spätere Dateien nach `20260820130000` werden gemeldet und nicht angewendet. Weicht Production davon ab: **abbrechen**.
 
 Scheitert eine Migration: **Rollout abbrechen.** Nicht importieren.
 
@@ -123,7 +125,7 @@ Airports müssen schon in Production liegen, weil Flughafen-Orte daraus kopiert 
 npm run production:pruefen -- --produktion --projekt-ref "$SUPABASE_PROJECT_REF"
 ```
 
-Der Check schreibt nichts. Er prüft Tabelle, Anzahlen, Pflichtbeispiele, Fantasieorte, RLS (anon liest, schreibt nicht), lesbare Reisen ohne Place-ID sowie die Code-Kill-Switches für Modell und Duffel.
+Der Check schreibt nichts, auch nicht bei fehlerhaftem RLS: Schreibschutz kommt aus `role_table_grants`, `pg_policies` und `relrowsecurity`. Er prüft Tabelle, Anzahlen, Pflichtbeispiele, Fantasieorte, Rechte (SELECT ja, INSERT/UPDATE/DELETE/TRUNCATE nein), lesbare Reisen ohne Place-ID sowie die Code-Kill-Switches für Modell und Duffel.
 
 ### Schritt E – Code
 

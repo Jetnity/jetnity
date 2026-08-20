@@ -1783,7 +1783,7 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 
 **Begründung:** Referenzdaten dürfen fehlen oder unvollständig sein; sie dürfen nicht still überschrieben oder gelöscht werden. UPSERT ohne Bereinigen erhält die 40 historischen Zeilen. Die Reihenfolge Schema → Airports → Places steht in [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md).
 
-**Konsequenzen:** Development-Weg unverändert (`--schreiben --entwicklung`). Production bleibt aus, bis die Freigabe und der manuelle Lauf vorliegen. `npm run production:pruefen` ist read-only; `--vorab` prüft historische Airport-Constraints, bevor das Schema angewendet wird. Duffel-Sandbox ist kein Merge-Blocker.
+**Konsequenzen:** Development-Weg unverändert (`--schreiben --entwicklung`). Production bleibt aus, bis die Freigabe und der manuelle Lauf vorliegen. `npm run production:pruefen` ist vollständig read-only (Metadaten, kein HTTP-Schreibversuch). `db:anwenden --produktion` verlangt `--bis 20260820130000` und wendet keine spätere Migration an. Duffel-Sandbox ist kein Merge-Blocker.
 
 ---
 

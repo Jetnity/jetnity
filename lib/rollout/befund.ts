@@ -112,7 +112,7 @@ export function rolloutBefund(beobachtung: RolloutBeobachtung): {
           : `${beobachtung.airportConstraintVerletzungen} Zeilen würden 20260820110000 ablehnen`,
     },
     {
-      name: 'RLS: anon liest, schreibt nicht',
+      name: 'RLS und Rechte: lesen ja, schreiben nein',
       ok: beobachtung.anonKannLesen === true && beobachtung.anonKannSchreiben === false,
       detail: `lesen=${beobachtung.anonKannLesen} schreiben=${beobachtung.anonKannSchreiben}`,
     },

@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 // Read-only Prüfung eines Airport-/Places-Rollouts.
-// Schreibt nichts. Kein stilles Production-Default.
+// Nur SELECT gegen Metadaten und Bestand. Kein mutierender HTTP- oder SQL-Pfad.
 //
 //   npm run production:pruefen -- --entwicklung
 //   npm run production:pruefen -- --produktion --projekt-ref <Ref>
 //   npm run production:pruefen -- --produktion --projekt-ref <Ref> --vorab
 
 import { AIRPORT_PFLICHT, AIRPORT_PFLICHT_ODER, ORT_FANTASIE, ORT_PFLICHT, ORT_PFLICHT_KEYWORD, rolloutBefund, vorabBefund, type RolloutBeobachtung } from '@/lib/rollout/befund'
+import { rechteAusMetadaten } from '@/lib/rollout/rechte'
 import { pruefenAuftragLesen } from '@/lib/rollout/schreibauftrag'
-import { projektSchluessel, zielFuerAuftrag } from '../auth/ziel'
+import { zielFuerAuftrag } from '../auth/ziel'
 import { runSql } from './sql.mjs'
 
 function sqlText(wert: string): string {
@@ -44,36 +45,58 @@ async function anzahl(tabelle: string): Promise<number | null> {
   return zeilen[0]?.n ?? 0
 }
 
-async function anonRechte(ref: string, token: string, tabelle: 'places' | 'airports'): Promise<{
-  lesen: boolean | null
-  schreiben: boolean | null
-}> {
-  const { anon } = await projektSchluessel({ ref, token })
-  const basis = `https://${ref}.supabase.co/rest/v1/${tabelle}`
-  const kopf = {
-    apikey: anon,
-    Authorization: `Bearer ${anon}`,
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-  }
-  try {
-    const lesen = await fetch(`${basis}?select=id&limit=1`, { headers: kopf })
-    const schreiben = await fetch(basis, {
-      method: 'POST',
-      headers: { ...kopf, Prefer: 'return=minimal' },
-      body: JSON.stringify({ id: 'rollout-check-darf-nicht-schreiben' }),
-    })
-    const schreibenBlockiert = schreiben.status === 401 || schreiben.status === 403
-    return {
-      lesen: lesen.ok,
-      schreiben: schreibenBlockiert ? false : true,
+async function placesRechte(): Promise<{ lesen: boolean | null; schreiben: boolean | null }> {
+  if (!(await tabelleDa('places'))) return { lesen: null, schreiben: null }
+
+  const rls = (await runSql(
+    `select c.relrowsecurity as aktiv
+       from pg_class c
+       join pg_namespace n on n.oid = c.relnamespace
+      where n.nspname = 'public'
+        and c.relname = 'places'
+        and c.relkind = 'r'`,
+  )) as { aktiv: boolean }[]
+
+  const rechte = (await runSql(
+    `select grantee as rolle, privilege_type as privileg
+       from information_schema.role_table_grants
+      where table_schema = 'public'
+        and table_name = 'places'
+        and grantee in ('anon', 'authenticated', 'PUBLIC')`,
+  )) as { rolle: string; privileg: string }[]
+
+  const policies = (await runSql(
+    `select policyname as name, cmd, roles
+       from pg_policies
+      where schemaname = 'public'
+        and tablename = 'places'`,
+  )) as { name: string; cmd: string; roles: string[] | string }[]
+
+  const rollenAus = (wert: string[] | string | null | undefined): string[] => {
+    if (Array.isArray(wert)) return wert.map(String)
+    if (typeof wert === 'string') {
+      return wert
+        .replace(/[{}]/g, '')
+        .split(',')
+        .map((teil) => teil.trim())
+        .filter(Boolean)
     }
-  } finally {
-    // anon-Schlüssel nicht loggen.
+    return []
   }
+
+  const befund = rechteAusMetadaten({
+    rlsAktiv: rls[0]?.aktiv === true,
+    rechte,
+    policies: policies.map((zeile) => ({
+      name: zeile.name,
+      cmd: zeile.cmd,
+      rollen: rollenAus(zeile.roles),
+    })),
+  })
+  return { lesen: befund.lesen, schreiben: befund.schreiben }
 }
 
-async function beobachten(ref: string, token: string): Promise<RolloutBeobachtung> {
+async function beobachten(): Promise<RolloutBeobachtung> {
   const placesExistiert = await tabelleDa('places')
   const originPlaceIdExistiert = await spalteDa('trips', 'origin_place_id')
   const stagePlaceIdExistiert = await spalteDa('trip_stages', 'place_id')
@@ -134,8 +157,7 @@ async function beobachten(ref: string, token: string): Promise<RolloutBeobachtun
     }
   }
 
-  const rlsTabelle = placesExistiert ? 'places' : 'airports'
-  const rechte = await anonRechte(ref, token, rlsTabelle)
+  const rechte = await placesRechte()
 
   return {
     placesExistiert,
@@ -158,11 +180,11 @@ async function beobachten(ref: string, token: string): Promise<RolloutBeobachtun
 
 async function main() {
   const auftrag = pruefenAuftragLesen(process.argv)
-  const ziel = await zielFuerAuftrag(auftrag)
+  await zielFuerAuftrag(auftrag)
   console.log(`Ziel: ${auftrag.modus}`)
-  console.log('Read-only – es wird nichts geschrieben.')
+  console.log('Read-only – nur Metadaten und Bestand, kein Schreibversuch.')
 
-  const beobachtung = await beobachten(ziel.ref, ziel.token)
+  const beobachtung = await beobachten()
   const vorab = process.argv.includes('--vorab')
   const befund = vorab ? vorabBefund(beobachtung) : rolloutBefund(beobachtung)
   if (vorab) console.log('Modus: Vorab (Constraints und Kill Switches, Places dürfen fehlen).')

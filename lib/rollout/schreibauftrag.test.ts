@@ -73,8 +73,23 @@ describe('Schreibauftrag', () => {
   test('Anwenden bleibt ohne Production-Flags auf Development', () => {
     assert.deepEqual(anwendenAuftragLesen([], env), { modus: 'entwicklung' })
     assert.deepEqual(
-      anwendenAuftragLesen(['--produktion', '--projekt-ref', 'abcdefghijklmnop'], env),
-      { modus: 'produktion', bestaetigterRef: 'abcdefghijklmnop' },
+      anwendenAuftragLesen(
+        ['--produktion', '--projekt-ref', 'abcdefghijklmnop', '--bis', '20260820130000'],
+        env,
+      ),
+      { modus: 'produktion', bestaetigterRef: 'abcdefghijklmnop', bis: '20260820130000' },
+    )
+    assert.throws(
+      () => anwendenAuftragLesen(['--produktion', '--projekt-ref', 'abcdefghijklmnop'], env),
+      /--bis 20260820130000/,
+    )
+    assert.throws(
+      () =>
+        anwendenAuftragLesen(
+          ['--produktion', '--projekt-ref', 'abcdefghijklmnop', '--bis', '20260820140000'],
+          env,
+        ),
+      /--bis 20260820130000/,
     )
   })
 
