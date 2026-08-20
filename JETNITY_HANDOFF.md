@@ -2,285 +2,222 @@
 
 Stand: 20. August 2026
 
-Diese Datei ist der kompakte Übergabepunkt für einen neuen Chat, neuen Cursor-Agenten oder eine spätere Fortsetzung. Sie ergänzt `JETNITY_VISION.md`, `ARCHITECTURE.md`, `ROADMAP.md`, `DECISIONS.md`, `DESIGN_SYSTEM.md` und die Fach-Dokumentation unter `docs/`.
+Diese Datei ist der kompakte Übergabepunkt für einen neuen Chat oder Cursor-Agenten. Für Details zusätzlich `JETNITY_VISION.md`, `ARCHITECTURE.md`, `ROADMAP.md`, `DECISIONS.md`, `DESIGN_SYSTEM.md` sowie die Fach-Dokumentation unter `docs/` lesen.
 
-## 1. Aktueller Stand
+## 1. Aktueller verbindlicher Stand
 
-Phase 2.2 ist nach `main` gemergt (PR #18, `76f21929`) und in Production verifiziert. Der Modellweg bleibt in Production aus.
+Phase 2.2 ist nach `main` gemergt und in Production verifiziert. Der Modellweg bleibt in Production deaktiviert.
 
-Phase 3.1 – Flight Foundation – ist fachlich abgeschlossen und der zugehörige Supabase-Production-Rollout wurde am 20. August 2026 erfolgreich verifiziert. PR #19 bleibt bis zur finalen GitHub-Freigabe Draft. Duffel Flights API ist der erste Daten-/Entwicklungsadapter; die echte Sandbox-Verifikation ist nachgelagert und kein Merge-Blocker. Amadeus Self-Service wurde am 17. Juli 2026 eingestellt und ist im aktiven V2-Code nicht mehr angebunden – auch nicht als Airport-Fallback. Die Autocomplete liest nur `public.airports`; die Ortsauswahl liest nur `public.places`. Production-Flugsuche bleibt aus. Keine eigene Flugbuchung.
+**Phase 3.1 ist abgeschlossen und nach `main` gemergt.** Pull Request #19 wurde am 20. August 2026 per Squash Merge abgeschlossen. Aktueller Phase-3.1-Merge-Commit auf `main`:
 
-Verbindlicher Ablauf der Änderung (Phase 2.2, unverändert):
+`1ce99839d725d9e97597580909f068dd8af77b57`
 
-`vertrauenswürdige Reise → Änderungswunsch → strukturierte Operationen → deterministische Anwendung → Vorher/Nachher → ausdrückliche Bestätigung → atomisches Speichern`
+Vercel hat diesen Commit anschließend automatisch als **Production Deployment `READY`** ausgerollt.
 
-- Das Modell schreibt nicht in die Datenbank und erhält keine SQL-Rechte
-- Modellantworten sind untrusted input
-- Preise, Provider, Booking-URLs und External-Refs kommen nicht aus dem Modell
-- Ein übernommener kommerzieller Flug bleibt gegen Sprach-/Modelloperationen vollständig gesperrt (Inhalt, Termin, Zuordnung)
-- `trip_days.stage_id` ordnet Tage einer Etappe zu, auch ohne Kalenderdaten
-- `trips.revision` / `last_mutation_id` tragen optimistische Concurrency und Idempotenz
-- Account: `public.reise_aendern()`, SECURITY INVOKER, RLS, atomisch
-- Gast: derselbe fachliche Ablauf im LocalStorage
-- Gemeinsames Modellkontingent mit `reisevorschlag` (38 Aufrufe / USD 3 pro Tag)
+Phase 3.1 umfasst:
 
-Phase 3.1 ergänzt:
-
-- interne Flugdomäne und schmales `FlightProvider`-Interface
-- Duffel Offer Requests als erster Adapter (nur Test-Token)
-- deterministisches, provisionsneutrales Ranking
+- interne, provider-unabhängige Flugdomäne mit schmalem `FlightProvider`-Interface
+- Duffel Offer Requests als erster Daten-/Entwicklungsadapter
+- deterministisches, provisionsneutrales Flugranking
 - Flugsuche im Reise-Arbeitsbereich
-- Übernahme als kommerzieller `trip_item` ohne `booking_url`
-- lokale Flughafenbasis aus OurAirports, ohne Provider- und ohne Live-Abfrage
-- lokale Ortsbasis aus GeoNames (CC BY 4.0) plus Flughafen-Zeilen; Startseite und `/planen` speichern nur bestätigte Orte
-- serverseitige Kanonisierung auch für Modellorte; bei Mehrdeutigkeit wird nicht geraten
-- verbesserte Formularfehler-UX mit Feldmeldung, Scroll/Fokus und Accessibility
+- Übernahme eines Fluges als kommerzieller `trip_item` ohne erfundene `booking_url`
+- lokale Airport-Basis aus OurAirports
+- lokale Place-Basis aus GeoNames + Airport-Orten
+- bestätigte Ortsauswahl auf Startseite und `/planen`
+- serverseitige Kanonisierung von Modellorten; bei Mehrdeutigkeit wird nicht geraten
+- Feldfehler-UX mit Inline-Meldungen, Scroll/Fokus auf den ersten Fehler und Accessibility
+- kontrollierter Production-Rollout für Schema, Airports und Places
 
-Entscheidungen: ADR-0057 bis ADR-0061 (Phase 2.2), ADR-0062 bis ADR-0069 (Phase 3.1). Fachlich: `docs/REISEN.md`, `docs/FLUEGE.md`, `docs/FLUGHAFEN.md`, `docs/ORTE.md`, `docs/MODELL.md`, `docs/DATENBANK.md`, `docs/PRODUCTION_ROLLOUT.md`.
+Amadeus Self-Service ist im aktiven V2-Code nicht angebunden. Der alte Cursor-Threadname mit „amadeus“ ist nur historisch und kein Architekturhinweis.
 
-## 2. Production-Rollouts am 20. August 2026
+## 2. Production-Datenbank nach Phase 3.1
 
-### 2.1 V2-Basis / Phase 2.2
+Supabase Production ist gesund. Der Phase-3.1-Rollout wurde vor dem Merge ausdrücklich freigegeben und verifiziert.
 
-Vor dem GitHub-Merge von Phase 2.2 wurde Supabase Production kontrolliert auf den bereits auf dem Development-Branch getesteten V2-Datenbankstand gebracht.
-
-Die wichtigen Kontodaten wurden getrennt von der alten Creator-/Media-/Blog-Struktur behandelt. Ergebnis:
-
-- 3 `auth.users` erhalten
-- 3 `profiles` erhalten und weiterhin mit den 3 Auth-Konten verknüpft
-- keine verwaisten Profile
-- alte Creator-/Blog-/Media-/Session-Altlasten entfernt
-- Reisetabellen (`trips`, `trip_stages`, `trip_days`, `trip_items`) vorhanden
-- Production gesund
-
-Der Stand endete zunächst bei `20260820080000_reise_tage_eindeutig_aufgeschoben`.
-
-### 2.2 Phase 3.1 – Airports und Places
-
-Nach ausdrücklicher Nutzerfreigabe wurde der dokumentierte Phase-3.1-Rollout ausgeführt und verifiziert.
-
-Angewendete Production-Migrationen, exakt in dieser Reihenfolge:
+Angewendete Migrationen, exakt in dieser Reihenfolge:
 
 1. `20260820100000_reise_anlegen_handelsfelder`
 2. `20260820110000_airports_referenz`
 3. `20260820120000_places_referenz`
 4. `20260820130000_reise_aendern_places`
 
-Ergebnis:
+Aktueller Production-Stand:
 
-- neueste Production-Migration: `20260820130000_reise_aendern_places`
-- 5 332 Airports in `public.airports`
-- 124 811 Places in `public.places`
+- neueste Phase-3.1-Migration: `20260820130000_reise_aendern_places`
+- **5 332 Airports** in `public.airports`
+- **124 811 Places** in `public.places`
   - 105 914 Städte
   - 13 035 Regionen
   - 290 Inseln
   - 240 Länder
   - 5 332 Flughafen-Orte
-- Pflicht-Airports ZRH/GVA/BSL/LHR/LGW/JFK/EWR/DXB/BKK/HND/NRT vorhanden
-- Bali, Thailand, Südtirol, Toskana, New York, Japan, Zürich/ZRH in der lokalen Ortsbasis auffindbar
+- ZRH/GVA/BSL/LHR/LGW/JFK/EWR/DXB/BKK/HND/NRT vorhanden
+- Bali, Thailand, Südtirol, Toskana, New York, Japan und Zürich/ZRH auffindbar
 - `Test`, `Mordor`, `abcxyz` haben keinen exakten kanonischen Place-Treffer
 - RLS auf `airports` und `places` aktiv
 - `anon` und `authenticated` besitzen dort nur `SELECT`; keine schreibende Policy
-- 3 `auth.users` und 3 `profiles` unverändert erhalten
-- der für den kontrollierten Datentransfer temporär verwendete `http`-Extension-Pfad wurde danach wieder entfernt; `http` ist in Production nicht installiert
-- Supabase Production nach dem Rollout `ACTIVE_HEALTHY`
+- 3 bestehende `auth.users` und 3 `profiles` unverändert erhalten
+- der temporär für den kontrollierten Datentransfer verwendete `http`-Extension-Pfad wurde wieder entfernt; `http` ist in Production nicht installiert
 
-Die Referenzdaten wurden aus dem bereits geprüften Development-Bestand übernommen. Die fachlichen Quellen bleiben OurAirports (Public Domain) und GeoNames (CC BY 4.0); es gibt weiterhin keine Live-Abfrage dieser Quellen bei einer Nutzersuche.
+Die Referenzdaten stammen aus dem bereits geprüften Development-Bestand. Fachliche Quellen: OurAirports (Public Domain) und GeoNames (CC BY 4.0). Keine Live-Abfrage dieser Quellen pro Nutzersuche.
 
-Wichtig: **Der Modellweg bleibt in Production deaktiviert. Die Production-Flugsuche bleibt ebenfalls aus. Duffel wird erst separat nach Sandbox-Zugang verifiziert.**
+**Wichtig:** Der Modellweg bleibt in Production aus. Die Production-Flugsuche bleibt ebenfalls aus. Kein Duffel-Test- oder Live-Token gehört in Production.
 
-## 3. Produktprinzip, das alle nächsten Phasen leitet
+## 3. Qualität und Sicherheitsstatus des Merge
 
-Jetnity soll nicht nur mehr Funktionen anbieten, sondern bessere Reiseentscheidungen treffen.
+Vor dem Merge war der aktuelle Stand vollständig grün:
 
-Die Kernoptimierung ist die **Gesamtreise**, nicht der isoliert billigste Flug oder das billigste Hotel. Jetnity soll Preis, Zeit, Komfort, Lage, Verbindungen, Transfers, Tagesplanung, Folgekosten und Reibung gemeinsam bewerten und verständlich begründen.
+- `npm test`: **852/852**
+- Typecheck grün
+- Lint grün
+- Hygiene-Checks grün
+- Production-Build grün
+- GitHub CI grün
+- Vercel Preview grün
+- Production-Rollout verifiziert
+- Vercel Production nach dem Squash Merge: `READY`
 
-Monetarisierung darf die Empfehlung niemals verzerren. Affiliate- oder Vermittlungsprovisionen sind Einnahmequellen, aber Jetnity muss weiterhin die beste Nutzeroption empfehlen, nicht die margenstärkste.
+Der Production-Checker ist vollständig read-only. Im Phase-3.1-Production-Modus war der Migrationslauf auf `20260820130000` begrenzt, damit keine späteren Migrationen versehentlich mitlaufen.
 
-Jetnity soll außerdem reale Änderungen als Kettenereignis verstehen. Beispiel: Wird ein Flug um einen Tag verschoben, analysiert Jetnity die Folgen für Hotelnächte, Aktivitäten, Transfers, Anschlussverbindungen, Budget und Reisezeit und bereitet einen Anpassungsvorschlag vor. Externe Änderungen dürfen niemals still andere Reiseelemente verändern.
+## 4. Verbindliches Produktprinzip
 
-Verbindlicher Ablauf:
+Jetnity optimiert die **Gesamtreise**, nicht den isoliert billigsten Einzelbaustein.
+
+Preis, Zeit, Komfort, Lage, Verbindungen, Transfers, Tagesplanung, Folgekosten und Reibung sollen gemeinsam bewertet und verständlich erklärt werden. Affiliate- oder Vermittlungsprovisionen dürfen das Ranking niemals manipulieren.
+
+Für reale Änderungen gilt weiterhin:
 
 `Änderung erkennen → Auswirkungen auf die Gesamtreise bestimmen → optimierte Anpassung vorschlagen → Vorher/Nachher zeigen → erst nach ausdrücklicher Nutzerfreigabe übernehmen`
 
-Die manuelle Grundfunktion kann Teil des kostenlosen Kerns sein; automatische Überwachung, proaktive Warnungen und fortlaufende Reiseoptimierung sind ein starker Kandidat für Jetnity Pro.
+Das Modell schreibt niemals direkt in die Datenbank. Modellantworten sind untrusted input. Preise, Provider, Booking-URLs und External-Refs dürfen nicht aus dem Modell erfunden werden.
 
-## 4. Nächster Entwicklungsschritt
+## 5. Nächster Produktblock
 
-Phase 3.1 ist fachlich und auf Datenbankebene in Production vorbereitet/verifiziert. Vor dem nächsten Produktblock wird PR #19 final auf GitHub freigegeben und nach ausdrücklicher Nutzerfreigabe nach `main` gemergt. Danach folgen Hotels, dann Aktivitäten, dann Transfers. Parallel die Gesamtoptimierung und reaktive Folgenanalyse als Jetnity-DNA erhalten.
+**Nächster regulärer Entwicklungsschritt: Hotel Foundation.**
 
-Die Duffel-Sandbox-Verifikation wird separat nachgeholt, sobald Testzugang vorliegt; sie blockiert den Merge nicht. Production-Flugsuche bleibt bis zu einer eigenen späteren Freigabe aus.
+Danach folgen Aktivitäten und Transfers. Nicht mehrere Provider gleichzeitig anbinden; schrittweise und produktorientiert vorgehen.
 
-Kein weiterer Production-Eingriff ohne ausdrückliche Freigabe.
+### Hotel-Prinzip
 
-## 5. Phase 3 – echte Reiseprodukte und Monetarisierung
+Jetnity soll vor der konkreten Hotelwahl zuerst bestimmen, **welches Viertel bzw. welche Gegend für genau diese Reise am sinnvollsten ist**.
 
-Nicht alle Provider gleichzeitig anbinden. Schrittweise und produktorientiert vorgehen.
+Dabei sollen unter anderem berücksichtigt werden:
 
-### 5.1 Flüge zuerst · Phase 3.1
+- tatsächliche Etappen und Tagesplanung
+- Sehenswürdigkeiten/Aktivitäten
+- Flughäfen/Bahnhöfe und Transfers
+- Aufenthaltsdauer
+- Budget
+- Geh- und ÖV-Aufwand
+- Ruhe/Nachtleben/Essen/Strand/Familie
+- Sonderfälle wie die letzte Nacht vor einem frühen Flug
 
-Erste echte Produktintegration: Flüge.
+Erst danach wenige passende Hotels zeigen, z. B. Jetnity-Empfehlung, Best Value, beste Lage, ruhigere Alternative und Premium. Der Trade-off aus Preis, Lage, Zeit und Komfort muss erklärt werden. Provisionen dürfen weder Quartierwahl noch Ranking verzerren.
 
-Umgesetzt:
+Start pragmatisch mit Affiliate/Deeplink oder passendem Anbieter; keine unnötige eigene Buchungsplattform bauen.
 
-- reale Verbindungen in die Planung einbeziehen
-- Zeit, Stopps, Abflug-/Ankunftszeiten und Preis bewerten
-- keine reine Preisrangliste
-- Search-Provider und Affiliate-/Booking-Provider getrennt
-- Duffel als erster Datenadapter, nicht als strategische Bindung
-- provider-unabhängige Airport- und Place-Basis
+## 6. Duffel – separat nachholen
 
-Später möglich ohne Rewrite von UI, Scoring und Trip-Integration: Skyscanner, Aviasales oder ein anderer Metasuch-Provider.
+Duffel ist **kein Blocker mehr für Phase 3.1**.
 
-Nicht in Phase 3.1: eigene Buchung, Production-Aktivierung der Flugsuche, Hotels, Aktivitäten, Transfers.
+Sobald Sandbox-/Testzugang vorliegt, die echte Preview-Verifikation separat durchführen. Nur Preview:
 
-### 5.2 Hotels danach
+- `JETNITY_FLIGHT_AKTIV=true`
+- `DUFFEL_ACCESS_TOKEN=duffel_test_...`
 
-Hotels erst integrieren, wenn die Flug-/Reiseproduktbasis stabil ist.
+Niemals `NEXT_PUBLIC_*`, niemals Live-Token, niemals Production ohne eigene ausdrückliche Freigabe.
 
-Jetnity soll nicht nur den billigsten Zimmerpreis sehen, sondern vor allem:
+Der Adapter ist bewusst provider-neutral. Später können Skyscanner, Aviasales oder andere Search-Provider ergänzt/ersetzt werden, ohne UI, Ranking und Trip-Integration neu zu bauen.
 
-- Lage zur tatsächlichen Tagesplanung
-- Transferzeit und Transferkosten
-- Qualität/Komfort
-- Stornierbarkeit und relevante Bedingungen
-- Gesamtwirkung auf die Reise
+## 7. Monetarisierung
 
-Vor der konkreten Hotelwahl soll Jetnity zuerst bestimmen, **welches Viertel bzw. welche Gegend für genau diese Reise am sinnvollsten ist**. Danach werden wenige passende Hotels empfohlen und der Trade-off aus Preis, Lage, Zeit und Komfort erklärt. Provisionen dürfen dieses Ranking nicht verzerren.
+Primärmodell: Affiliate- und Vermittlungsprovisionen; später passende Partnererlöse.
 
-Start pragmatisch mit Affiliate/Deeplink oder einem passenden Anbieter; keine unnötige Buchungsplattform selbst bauen.
+Die Grenze zwischen Free und Jetnity Pro wird **nicht** heute hart in einzelne Funktionen eingebaut. Vor der ersten echten Pro-Funktion entsteht eine zentrale Entitlement-/Feature-Access-Schicht. Billing/Stripe wird später daran angebunden. Funktionen müssen später zwischen Free, Pro, Limit und Promo verschiebbar sein, ohne verstreute Sonderlogik.
 
-### 5.3 Aktivitäten danach
+Details: `docs/MONETARISIERUNG.md`.
 
-GetYourGuide ist ein Kandidat für Aktivitäten.
+Starker Pro-Kandidat: automatische Überwachung gespeicherter Reisen, proaktive Hinweise auf Flug-/Hotel-/Provideränderungen, Folgenanalyse und mehrere optimierte Lösungen.
 
-Aktivitäten sollen nicht als willkürliche Liste erscheinen, sondern in den vorhandenen Tagesplan passen und Zeit, Lage, Öffnungszeiten, Dauer und Transfers berücksichtigen.
+## 8. Travel Readiness
 
-### 5.4 Transfers / Bahn / Bus / Fähre
+Geplant ist ein professioneller Reisebereitschafts-/Einreisebereich mit:
 
-Danach die Lücken zwischen den Etappen und Aktivitäten mit realen Transferoptionen schließen. Besonders wichtig für Inselreisen, Roadtrips und Multi-City-Reisen.
+- Wohnsitz
+- Reisepass-Nationalität bzw. ausstellendem Land
+- optional mehreren Pässen und bevorzugtem Reisepass
+- Visa/eVisa
+- Transitregeln
+- digitale Einreiseformulare
+- Impf-/Gesundheits-Einreisevorgaben getrennt von bloßen Empfehlungen
+- Passgültigkeit
+- Weiter-/Rückflug und notwendige Dokumente
+- Fristen und Erinnerungen relativ zu Reisedaten
 
-## 6. Jetnitys eigentlicher Wettbewerbsvorteil
+Nicht das Sprachmodell als Rechts-/Einreisequelle verwenden. Später professionelle, aktuelle Quelle wie IATA Timatic bzw. offizielle Behörden prüfen. Quelle und Prüfzeitpunkt sichtbar machen. Minimalprinzip bei personenbezogenen Daten; zunächst keine Passnummern oder Scans ohne echten Funktionsbedarf.
 
-Sobald echte Produktdaten verfügbar sind, muss Jetnity die Reise **gesamtoptimieren**.
+Details: `docs/TRAVEL_READINESS.md`.
 
-Beispiel:
+## 9. Gemeinsame Reiseplanung
 
-Ein Flug ist CHF 80 billiger, landet aber sehr spät, verursacht einen teuren Transfer und kostet praktisch einen Urlaubstag. Ein etwas teurerer Flug kann für die Gesamtreise klar besser sein.
+Gemeinsame Reiseplanung für Paare, Familien und Gruppen bleibt als wichtiger zukünftiger Kern vorgemerkt. GitHub Issue #20 hält das Kollaborationsfundament fest.
 
-Jetnity soll deshalb Optionen anhand der gesamten Konsequenzen bewerten:
+Zielbild:
 
-- Preis
-- Reisezeit
-- Anzahl und Qualität der Verbindungen
-- Ankunfts-/Abflugzeiten
-- Komfort
-- Lage
-- Transferaufwand
-- Transferkosten
-- verlorene oder gewonnene Urlaubstage
-- Passung zum Tagesplan
-- Folgekosten
-- Stress/Reibung
+- Owner, Editor, Viewer
+- sichere Einladung per Link/E-Mail
+- gemeinsamer Reisegraph
+- keine stillen Überschreibungen bei parallelen Änderungen
+- vorhandene Revision/Concurrency als Basis
+- RLS serverseitig über Mitgliedschaften/Rollen
+- Supabase Realtime später für Live-Aktualisierung
+- Gast-Reise zunächst persönlicher Draft; echte Kollaboration zuerst mit Konten
+- später Vorschläge, Likes/Votes, Gruppenbudget und Änderungsverlauf
 
-Die Empfehlung soll die wichtigsten Trade-offs in verständlicher Sprache erklären.
-
-**Keine Provision darf diese Rangfolge manipulieren.**
-
-## 7. Monetarisierungsprinzip
-
-Primärmodell:
-
-- Affiliate
-- Vermittlungsprovisionen
-- später weitere Partnererlöse, wenn sie zur Nutzerreise passen
-
-Die zentrale Reiseplanung sollte zum Launch nicht hinter einer harten Bezahlschranke verschwinden. Der Nutzer soll den Kernnutzen kennenlernen.
-
-Ein mögliches Premium-Modell kann später Mehrwert bieten, insbesondere:
-
-- automatische Überwachung gespeicherter Reisen
-- proaktive Hinweise auf Flug-/Hotel-/Provideränderungen
-- automatische Folgenanalyse auf die gesamte Reise
-- mehrere optimierte Lösungsvorschläge nach Kosten, Zeit, Komfort und Reibung
-- erweiterte Kollaboration, Dokumente und Offline-Funktionen
-
-Die Grenze zwischen Free und Pro wird nicht jetzt hart in einzelne Funktionen eingebaut. Vor der ersten echten Pro-Funktion entsteht eine zentrale Entitlement-/Feature-Access-Schicht; Billing wird später daran angebunden. Details: `docs/MONETARISIERUNG.md`.
-
-Nicht pro einzelne Änderung abrechnen. Jetnity Pro soll einen dauerhaften Begleit- und Schutzwert bieten.
-
-## 8. Danach: Phase 4 – Launch-Reife
-
-Erst wenn Erstellen, Ändern und die wichtigsten Produktintegrationen stabil sind, kommt der vollständige Launch-Pass.
-
-Dazu gehören mindestens:
-
-- Security-Endprüfung
-- RLS/Auth/Permissions erneut vollständig prüfen
-- DSG/CH-DSG und – bei EU-Zielgruppe – DSGVO sauber abdecken
-- rechtliche Texte nur mit ausdrücklicher Freigabe, nicht automatisch erfinden
-- Monitoring und Fehlertracking
-- Kostenmonitoring und harte Ausgabengrenzen
-- Performance und Ladezeiten
-- echte iPhone-/Android-Gerätetests zusätzlich zu WebKit/Chromium
-- Accessibility
-- SEO
-- Analytics
-- Affiliate-Tracking und Attribution
-- Produktionsfreigabe des Modellwegs
-- kontrollierte öffentliche Beta
-
-Vor Production-Aktivierung des Modellwegs ist zusätzlich die Aufbewahrungsfrist für `public.model_usage` verbindlich festzulegen.
-
-Die geplante Travel-Readiness-Funktion (Pass/Nationalität, Visa, Transit, Einreiseformulare, Impf-/Gesundheitsvorgaben, Fristen und Checkliste) wird aufgebaut, sobald Reisegraph, reale Orte/Länder, Flugdaten/Transit und die nötigen Profilangaben stabil sind. Details: `docs/TRAVEL_READINESS.md`.
-
-Gemeinsame Reiseplanung für Paare, Familien und Gruppen wird nach stabiler Phase-3-Kernbasis, aber vor Phase 4/Launch, als Kollaborationsfundament eingeführt. GitHub Issue #20 hält Rollen, Einladungen, RLS, Versions-/Konfliktstrategie und Realtime-Vorbereitung fest.
-
-## 9. Architektur- und Qualitätsregeln für alle nächsten Arbeiten
-
-- Cursor setzt große Implementierungsaufträge um; ChatGPT steuert mit Produkt, Architektur, Security, Kosten und Review.
-- Größere Aufgabe: analysieren → entscheiden → implementieren → relevante Tests → Build/CI → Dokumentation → PR.
-- Ursachen beheben, nicht Symptome verstecken.
-- Keine Demos oder Wegwerfarchitektur als Produktionsbasis.
-- Keine neuen wiederkehrenden Kosten oder materiell neue Architektur-/Produkt-/Businessentscheidungen ohne ausdrückliche Freigabe.
-- Kostenrahmen Infrastruktur: maximal USD 100/Monat; darüber vorher fragen.
-- Dev/Test und Preview dürfen autonom genutzt werden; Production bleibt kontrolliert.
-- Keine destruktiven Production-Datenaktionen, riskanten direkten Production-DB-Eingriffe, DNS-/Domainänderungen oder neue Production-Secrets ohne ausdrückliche Freigabe.
-- Keine Secrets in Chat, Logs, Screenshots oder Commits.
-- Relevante DB-Migrationen zuerst Development; Production nur über getesteten, dokumentierten Weg.
-- Security/RLS/Auth/Tests/Mobile/Accessibility/Performance/Loading/Error States/Permissions/Kostenkontrollen nicht aus Spargründen überspringen.
-- Starke Modelle dort einsetzen, wo sie messbar mehr Qualität bringen; effiziente Modelle für Routinearbeit. Qualität pro Token optimieren, nicht blind Kosten minimieren.
+Nicht als breites soziales Netzwerk bauen, sondern als Zusammenarbeit an einer konkreten Reise.
 
 ## 10. Offene Punkte nach Phase 3.1
 
-Diese Punkte blockieren den Phase-3.1-Merge nicht, müssen aber im Projektgedächtnis bleiben:
+Diese Punkte sind bekannt und müssen im Projektgedächtnis bleiben:
 
-- `public.model_usage`: Aufbewahrungsfrist noch offen; vor Production-Freigabe des Modellwegs entscheiden.
-- Reload während einer noch nicht übernommenen Vorschau verwirft sie bewusst nach ADR-0050.
-- Der Router arbeitet mit Mustern und kann ungewöhnliche Formulierungen falsch einordnen; manueller Modell-Stift bleibt möglich.
-- Preview-Tests sind keine Lasttests.
-- Production-Modellaktivierung bleibt eine eigene Freigabe.
-- Production-Flugsuche bleibt eine eigene Freigabe. Duffel-Sandbox-Verifikation ist nachgelagert und kein Merge-Blocker.
-- Duffel-Angebots-IDs sind kurzlebig; die Reise speichert eine Momentaufnahme, keinen live buchbaren Offer.
-- Das In-Memory-Rate-Limit gilt je Serverless-Instanz und muss vor Production-Aktivierung der Flugsuche durch eine geeignete globale Schranke ersetzt/ergänzt werden.
-- Duffel Self-Service / Test deckt nicht den gesamten Markt; die UI darf das nicht als „bester Preis im Internet“ verkaufen.
-- GeoNames-Anzeigenamen können vom im Deutschen gebräuchlichen Namen abweichen (z. B. Südtirol); Such-Keywords funktionieren, Anzeige-Lokalisierung/Aliase kommen später.
-- Gleichnamige Orte bleiben absichtlich disambiguiert; bei Mehrdeutigkeit darf Jetnity nicht raten.
-- Die neuen optionalen FKs `trips.origin_place_id` und `trip_stages.place_id` haben laut Supabase Performance Advisor noch keine eigenen Covering-Indizes. Das ist bei aktuellem Bestand kein Release-Blocker und wird in einem späteren Performance-Pass geprüft.
-- Formularfehler unter `/planen`, auf der Startseite (Ortssuche) und in den Auth-Formularen sitzen am Feld. Workspace „Punkt hinzufügen“ und `/auth/update-password` können beim späteren UI-/Launch-Pass dieselbe Feldhülle erhalten.
-- In Supabase Production existiert ein historischer Cron-Job, der stündlich `public.sync_creator_profile_core()` aufruft, obwohl die Funktion nach der Legacy-Bereinigung nicht mehr existiert. Das erzeugt nur Logfehler, gehört nicht zu Phase 3.1 und muss in einem eigenen, ausdrücklich freigegebenen Production-Cleanup entfernt werden.
+- `public.model_usage`: Aufbewahrungsfrist vor Production-Freigabe des Modellwegs festlegen
+- Reload verwirft eine noch nicht übernommene Vorschau bewusst
+- Router kann ungewöhnliche Formulierungen falsch einordnen; manueller Modell-Stift bleibt möglich
+- Preview-Tests sind keine Lasttests
+- Production-Modellaktivierung bleibt eine eigene Freigabe
+- Production-Flugsuche bleibt eine eigene Freigabe
+- Duffel-Angebots-IDs sind kurzlebig; Reise speichert Momentaufnahme, keinen live buchbaren Offer
+- aktuelles Flight-Rate-Limit ist In-Memory je Serverless-Instanz; vor Production-Aktivierung globalen/gespeicherten Schutz ergänzen
+- Duffel Test deckt nicht den gesamten Markt; UI darf nicht „bester Preis im Internet“ behaupten
+- GeoNames-Anzeigenamen können von gebräuchlichen deutschen Namen abweichen; Aliase/Lokalisierung später
+- gleichnamige Orte bleiben absichtlich disambiguiert; bei Mehrdeutigkeit nicht raten
+- `trips.origin_place_id` und `trip_stages.place_id` haben laut Performance Advisor noch keine eigenen Covering-Indizes; späterer Performance-Pass
+- Workspace „Punkt hinzufügen“ und `/auth/update-password` können beim späteren UI-/Launch-Pass dieselbe Feldhülle wie die neuen Formularfehler bekommen
+- in Supabase Production existiert ein historischer Cron-Job für `public.sync_creator_profile_core()`, obwohl die Funktion nach Legacy-Bereinigung nicht mehr existiert; erzeugt nur Logfehler und muss in einem **separaten, ausdrücklich freigegebenen Production-Cleanup** entfernt werden
 
-## 11. Sofortiger Startpunkt im nächsten Chat
+## 11. Arbeits- und Sicherheitsregeln
 
-Phase 3.1 ist fachlich abgeschlossen und der Production-Datenbankrollout ist grün. PR #19 bleibt bis zur finalen GitHub-Freigabe Draft. Als nächstes: finalen PR-Stand prüfen, `Mark Ready` nur nach Nutzerfreigabe, danach Merge zu `main` ebenfalls nur nach ausdrücklicher Nutzerfreigabe und anschließend Vercel Production verifizieren.
+- Cursor setzt große Implementierungsaufträge um; ChatGPT steuert Produkt, Architektur, Security, Kosten und Review
+- größere Aufgabe: analysieren → entscheiden → implementieren → Tests → Build/CI → Dokumentation → PR
+- Ursachen beheben, nicht Symptome verstecken
+- keine Demo-/Wegwerfarchitektur als Produktionsbasis
+- keine neuen wiederkehrenden Kosten oder materiell neue Architektur-/Businessentscheidung ohne Freigabe
+- Infrastrukturkosten maximal USD 100/Monat; darüber vorher fragen
+- Dev/Test/Preview dürfen genutzt werden; Production bleibt kontrolliert
+- keine destruktiven Production-Datenaktionen, riskanten direkten Production-DB-Eingriffe, DNS-/Domainänderungen oder neuen Production-Secrets ohne ausdrückliche Freigabe
+- keine Secrets in Chat, Logs, Screenshots oder Commits
+- relevante DB-Migrationen zuerst Development; Production nur über getesteten, dokumentierten Weg
+- Security/RLS/Auth/Mobile/Accessibility/Performance/Loading/Error States/Permissions/Kostenkontrollen nicht überspringen
 
-**Duffel-Sandbox ist nachgelagerte Provider-Verifikation.** Sie blockiert Phase 3.1 und den Merge nicht. Production bleibt `JETNITY_FLIGHT_AKTIV` aus; kein Duffel-Token in Production.
+## 12. Sofortiger Startpunkt für den nächsten Agenten
 
-Hotels, Aktivitäten und Transfers nicht beginnen, bevor PR #19 sauber abgeschlossen und Production nach dem GitHub-Merge verifiziert ist.
+1. `main` als Basis nehmen; Phase-3.1-Merge-Commit ist `1ce99839d725d9e97597580909f068dd8af77b57`.
+2. Nicht mehr an PR #19 weiterarbeiten – er ist gemergt und abgeschlossen.
+3. Hotel Foundation als nächsten regulären Produktblock planen und auf **neuem Branch + Draft PR** beginnen.
+4. Die Hotel-/Quartierlogik aus Abschnitt 5 und `JETNITY_VISION.md` verbindlich erhalten.
+5. Duffel-Sandbox separat nachholen, sobald Zugang eintrifft; sie blockiert Hotels nicht.
+6. Production-Flugsuche und Modellweg bleiben aus, bis sie jeweils separat freigegeben werden.
+7. Den historischen Supabase-Cronjob nicht nebenbei entfernen; dafür eigene Production-Freigabe einholen.
+8. Hotels/weitere Provider nicht provisionsgetrieben ranken.
 
-Benötigte Preview-Credentials nur für die spätere Duffel-Verifikation (nicht Production):
-
-- `JETNITY_FLIGHT_AKTIV=true`
-- `DUFFEL_ACCESS_TOKEN` mit Präfix `duffel_test_`
-
-Niemals `NEXT_PUBLIC_*`, niemals Live-Token, niemals Production ohne Freigabe.
+Damit ist Phase 3.1 vollständig abgeschlossen, gemergt, in Supabase Production vorbereitet/verifiziert und als Vercel Production Deployment ausgerollt.
