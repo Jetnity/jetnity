@@ -42,6 +42,8 @@
 // Frei von Next, Supabase, `window` und `crypto`: Die Kennungen kommen als
 // Funktion herein, damit dieselbe Rechnung im Browser und auf dem Server läuft.
 
+import type { KanonischeOrte } from '@/lib/places/kanon'
+import { etappeMitOrt } from '@/lib/places/kanon'
 import type { Reisevorschlag } from '@/lib/reisevorschlag/schema'
 import type { ReiseNutzlast } from '@/lib/trips/schema'
 import { reisetageBauen } from '@/lib/trips/tage'
@@ -81,18 +83,22 @@ function tagesgeruest(vorschlag: Reisevorschlag): { dayIndex: number; dayDate: s
 }
 
 /** Die Etappen der Reise. An- und Abreisedatum aus den Tagesnummern. */
-function etappen(vorschlag: Reisevorschlag): Omit<TripStage, 'id'>[] {
-  return vorschlag.etappen.map((etappe, stelle) => ({
-    position: stelle + 1,
-    name: etappe.name,
-    countryCode: etappe.laendercode,
-    arrivalDate: datumNach(vorschlag.startdatum, etappe.vonTag - 1),
-    departureDate: datumNach(vorschlag.startdatum, etappe.bisTag - 1),
-    // Koordinaten und Place-ID kommen aus einer Geodatenquelle, nicht aus einem Sprachmodell.
-    latitude: null,
-    longitude: null,
-    placeId: null,
-  }))
+function etappen(vorschlag: Reisevorschlag, orte?: KanonischeOrte): Omit<TripStage, 'id'>[] {
+  return vorschlag.etappen.map((etappe, stelle) =>
+    etappeMitOrt(
+      {
+        position: stelle + 1,
+        name: etappe.name,
+        countryCode: etappe.laendercode,
+        arrivalDate: datumNach(vorschlag.startdatum, etappe.vonTag - 1),
+        departureDate: datumNach(vorschlag.startdatum, etappe.bisTag - 1),
+        latitude: null,
+        longitude: null,
+        placeId: null,
+      },
+      orte?.stages[stelle] ?? null,
+    ),
+  )
 }
 
 /** Position der Etappe, die den Reisetag `nummer` trägt – 1-basiert. */
@@ -109,14 +115,18 @@ function etappenpositionFuerTag(vorschlag: Reisevorschlag, nummer: number): numb
  * Der Ausschnitt ist der, den die Funktion liest – nicht mehr. Was sie nicht
  * liest, mitzuschicken wäre die Behauptung, es käme an (`lib/trips/schema.ts`).
  */
-export function vorschlagAlsNutzlast(vorschlag: Reisevorschlag, clientRef: string): ReiseNutzlast {
+export function vorschlagAlsNutzlast(
+  vorschlag: Reisevorschlag,
+  clientRef: string,
+  orte?: KanonischeOrte,
+): ReiseNutzlast {
   const geruest = tagesgeruest(vorschlag)
 
   return {
     client_ref: clientRef,
     title: vorschlag.titel,
     origin: vorschlag.abreiseort,
-    origin_place_id: null,
+    origin_place_id: orte?.origin?.id ?? null,
     start_date: vorschlag.startdatum,
     end_date: reiseende(vorschlag),
     travellers: vorschlag.reisende,
@@ -125,7 +135,7 @@ export function vorschlagAlsNutzlast(vorschlag: Reisevorschlag, clientRef: strin
     pace: vorschlag.tempo,
     interests: vorschlag.interessen,
     travel_wish: vorschlag.reisewunsch,
-    stages: etappen(vorschlag).map((etappe) => ({
+    stages: etappen(vorschlag, orte).map((etappe) => ({
       position: etappe.position,
       name: etappe.name,
       country_code: etappe.countryCode,
@@ -175,9 +185,10 @@ export function vorschlagAlsReise(
   clientRef: string,
   kennung: (prefix: string) => string,
   jetzt: string,
+  orte?: KanonischeOrte,
 ): Trip {
   const geruest = tagesgeruest(vorschlag)
-  const stufen = etappen(vorschlag).map((etappe) => ({ ...etappe, id: kennung('stage') }))
+  const stufen = etappen(vorschlag, orte).map((etappe) => ({ ...etappe, id: kennung('stage') }))
 
   const tage: TripDay[] = vorschlag.tage.map((tag, stelle) => {
     const tagId = kennung('day')
@@ -219,7 +230,7 @@ export function vorschlagAlsReise(
     clientRef,
     title: vorschlag.titel,
     origin: vorschlag.abreiseort,
-    originPlaceId: null,
+    originPlaceId: orte?.origin?.id ?? null,
     startDate: vorschlag.startdatum,
     endDate: reiseende(vorschlag),
     travellers: vorschlag.reisende,

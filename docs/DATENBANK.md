@@ -82,6 +82,8 @@ Die dreizehn Tabellen: `profiles`, `trips`, `trip_stages`, `trip_days`, `trip_it
 
 **Phase 3.1 Nachtrag `20260820120000`:** `public.places` ist die lokale Ortsbasis für Reiseziel und Abreise. Additive Spalten `trips.origin_place_id` und `trip_stages.place_id` (beide nullable). `reise_anlegen()` schreibt die Referenzen, wenn sie in der Nutzlast stehen. Inhalt aus `npm run places:importieren` (GeoNames CC BY 4.0 plus `public.airports`). Development enthält 124 811 Orte. Nur Development. Production unverändert. Einzelheiten in [docs/ORTE.md](ORTE.md).
 
+**Phase 3.1 Nachtrag `20260820130000`:** `reise_aendern()` schreibt dieselben optionalen Referenzen. Ohne eindeutige Auflösung bleibt der Wert `null`. Production unverändert.
+
 Das Wachstum liegt vollständig bei den Reisedaten: Die vier neuen Tabellen tragen 61 Spalten, 43 CHECK-Bedingungen, 6 Fremdschlüssel, 5 Eindeutigkeitsbedingungen, 15 Indizes, 16 Policies und 5 Auslöser – vier für `updated_at`, einer für die Erzeugungsregeln von `public.trips` (Abschnitt 7a). Gleichzeitig sind mit `creator_sessions` 16 Spalten, 7 Indizes und 4 Policies sowie die neun Creator-Spalten des Profils entfallen – die Nettozahlen der Tabelle oben sind deshalb kleiner als die Zugänge.
 
 Dass die CHECK-Bedingungen von 4 auf 45 steigen, ist Absicht: Jeder Wertebereich, jede Länge, jede Reihenfolge und jede Zahlengrenze steht als Bedingung im Schema statt als Annahme im Anwendungscode ([DECISIONS.md](../DECISIONS.md) ADR-0043).
@@ -165,6 +167,7 @@ Der Zustand nach Phase 1.4 steht in Abschnitt 9; dort ist auch nachgewiesen, das
 | `20260820100000_reise_anlegen_handelsfelder.sql` | `reise_anlegen()` schreibt Preis, Währung, Provider, Ref, Buchungslink und Termin (Phase 3.1, ADR-0065). **Nur Development.** Production nicht ohne Freigabe. |
 | `20260820110000_airports_referenz.sql` | `public.airports` um Region, Landescode, Keywords, Klasse erweitert (Phase 3.1, ADR-0066). **Nur Development.** |
 | `20260820120000_places_referenz.sql` | `public.places` plus optionale `trips.origin_place_id` / `trip_stages.place_id`; `reise_anlegen()` schreibt die Referenzen, wenn sie in der Nutzlast stehen (Phase 3.1, ADR-0067). **Nur Development.** |
+| `20260820130000_reise_aendern_places.sql` | `reise_aendern()` schreibt `origin_place_id` und `trip_stages.place_id` aus der Nutzlast (Phase 3.1, ADR-0067). **Nur Development.** |
 
 Die Reihenfolge ist nicht beliebig: `20260817100200` darf erst laufen, wenn `20260817100000` die Rollen der Betroffenen übernommen und `20260817100100` alle Policies auf `creator_profiles.role` umgestellt hat. Sonst verlöre jemand seinen Zugang oder eine Policy liefe ins Leere.
 

@@ -133,7 +133,10 @@ function leererTag(id: string, stageId: string | null, dayIndex: number, dayDate
 
 function stammdaten(reise: Reisegraph, op: Modelloperation) {
   if (op.titel) reise.title = op.titel
-  if (op.abreiseort !== null) reise.origin = op.abreiseort
+  if (op.abreiseort !== null) {
+    reise.origin = op.abreiseort
+    reise.originPlaceId = null
+  }
   if (op.reisende !== null) reise.travellers = op.reisende
   if (op.budgetziel !== null) reise.budgetAmount = op.budgetziel
   if (op.tempo !== null) reise.pace = op.tempo

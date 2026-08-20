@@ -80,7 +80,7 @@ Der Browser darf eine Place-ID behaupten. Gültig ist sie erst nach der Serverpr
 
 `title`, `origin` und `trip_stages.name` bleiben der menschenlesbare Text. `trips.origin_place_id` und `trip_stages.place_id` tragen die kanonische Referenz. Altbestand ohne diese Felder bleibt lesbar.
 
-Der Modellweg (`Reiseidee`) erzeugt weiter unvalidierte Etappennamen. Das ist bewusst offen und nicht still geändert.
+Der Modellweg löst Abreise und Etappen serverseitig gegen `public.places` auf. Ein eindeutiger Treffer (Name plus Ländercode) wird zur `place_id`. Mehrere plausible Treffer oder keiner bleiben ausdrücklich unaufgelöst – der Anzeigetext bleibt, die Referenz nicht. Dasselbe gilt für den Änderungsweg. Eine Place-ID aus dem Modell oder dem Browser ist untrusted und muss im Bestand stehen.
 
 ---
 

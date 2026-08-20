@@ -62,6 +62,7 @@ import { reiseLesen, type PlanpunktFormular } from '@/lib/trips/schema'
 import { reisetageBauen } from '@/lib/trips/tage'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 import type { Ort } from '@/lib/places/domain'
+import { reiseMitKanonischenOrten, type KanonischeOrte } from '@/lib/places/kanon'
 import type { CreateTripInput, Trip, TripDay, TripItem } from '@/types/trips'
 
 /** Die aktive Gastreise. Höchstens eine. */
@@ -447,6 +448,7 @@ export function gastreiseAendern(eingabe: {
   mutationId: string
   basisRevision: number
   operationen: Modelloperation[]
+  orte?: KanonischeOrte
 }): Trip {
   if (!verfuegbar()) throw new SpeicherFehler()
 
@@ -460,9 +462,12 @@ export function gastreiseAendern(eingabe: {
 
   const angewandt = operationenAnwenden(aktuell, eingabe.operationen, kennungErzeugen)
   if (!angewandt.ok) throw new Error(angewandt.fehler.meldung)
+  const graph = eingabe.orte
+    ? reiseMitKanonischenOrten(angewandt.reise, eingabe.orte)
+    : angewandt.reise
 
   return gastreiseSpeichern({
-    ...angewandt.reise,
+    ...graph,
     revision: aktuell.revision + 1,
     lastMutationId: eingabe.mutationId,
   })

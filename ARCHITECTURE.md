@@ -306,7 +306,7 @@ Production bleibt hart aus. Development/Preview brauchen `JETNITY_FLIGHT_AKTIV` 
 
 ### Ortsbasis (Phase 3.1)
 
-`GET /api/search/places` liest ausschliesslich `public.places`. Der Bestand kommt aus dem GeoNames-Dump (CC BY 4.0) plus Flughafen-Zeilen aus `public.airports`. Development enthält nach dem ersten Import 124 811 Orte. Kein Live-Geocoding, keine Google-/Nominatim-Abfrage. Startseite und `/planen` teilen dieselbe Auswahlkomponente und dieselbe Serverprüfung. Schemaerweiterung `20260820120000` und Inhalt gelten nur für Development. Fachlich: [docs/ORTE.md](docs/ORTE.md), ADR-0067.
+`GET /api/search/places` liest ausschliesslich `public.places`. Der Bestand kommt aus dem GeoNames-Dump (CC BY 4.0) plus Flughafen-Zeilen aus `public.airports`. Development enthält nach dem ersten Import 124 811 Orte. Kein Live-Geocoding, keine Google-/Nominatim-Abfrage. Startseite und `/planen` teilen dieselbe Auswahlkomponente und dieselbe Serverprüfung. Der Modellweg löst eindeutige Orte gegen dieselbe Tabelle auf und rät nicht. Schemaerweiterung `20260820120000`/`20260820130000` und Inhalt gelten nur für Development. Fachlich: [docs/ORTE.md](docs/ORTE.md), ADR-0067.
 
 ### Kostenkontrolle bei Modellaufrufen
 

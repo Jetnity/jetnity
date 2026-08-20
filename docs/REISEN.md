@@ -35,7 +35,7 @@ Vier Tabellen, ein Graph. Der Anwendungstyp dazu steht in `types/trips.ts` und t
 
 **Mehrere Ziele sind mehrere Etappen.** Ein Feld `destination` hätte die heutige Oberfläche abgedeckt und die zweite Station einer Reise nicht. Das Formular unter `/planen` fragt weiterhin ein Ziel und legt daraus eine Etappe an – dieselbe Struktur, nur mit einem Element.
 
-**Der geografische Kern ist ein bestätigter Ort.** Startseite und `/planen` speichern Reiseziel und Abreise nur nach einer Auswahl aus `public.places`. `origin` und `trip_stages.name` bleiben der Anzeigetext; `origin_place_id` und `place_id` tragen die kanonische Referenz. Altbestand ohne diese Felder bleibt lesbar. Der Modellweg erzeugt weiter unvalidierte Etappennamen – das ist bewusst offen ([docs/ORTE.md](ORTE.md), ADR-0067).
+**Der geografische Kern ist ein bestätigter Ort.** Startseite und `/planen` speichern Reiseziel und Abreise nur nach einer Auswahl aus `public.places`. `origin` und `trip_stages.name` bleiben der Anzeigetext; `origin_place_id` und `place_id` tragen die kanonische Referenz. Altbestand ohne diese Felder bleibt lesbar. Der Modellweg löst eindeutige Etappen- und Abreiseorte gegen dieselbe Tabelle auf und lässt Mehrdeutiges unaufgelöst ([docs/ORTE.md](ORTE.md), ADR-0067).
 
 **Tage haben eine Nummer, nicht nur ein Datum.** `day_index` ist die verbindliche Reihenfolge, `day_date` optional. Eine Reiseidee hat Tage, bevor sie Daten hat, und eine um eine Woche verschobene Reise behält ihre Struktur.
 

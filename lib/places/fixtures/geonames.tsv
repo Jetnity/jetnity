@@ -13,6 +13,10 @@
 2657915	Zermatt	Zermatt		46.02013	7.74863	P	PPL	CH		VS				5820		1608	Europe/Zurich	2024-01-01
 2267057	Lisbon	Lisbon	Lisboa,Lissabon	38.71667	-9.13333	P	PPLC	PT		14				517802		2	Europe/Lisbon	2024-01-01
 2759794	Amsterdam	Amsterdam		52.37403	4.88969	P	PPLC	NL		07				741636		-2	Europe/Amsterdam	2024-01-01
+1609350	Bangkok	Bangkok	Krung Thep,Krung Thep Maha Nakhon	13.75	100.51667	P	PPLC	TH		40				5104476		2	Asia/Bangkok	2024-01-01
+3128760	Barcelona	Barcelona	Barcelone,Barcelon	41.38879	2.15899	P	PPLC	ES		56				1620343		12	Europe/Madrid	2024-01-01
+4717560	Paris	Paris	Paris Texas	33.66094	-95.55551	P	PPLA2	US		TX				24782		183	America/Chicago	2024-01-01
+1606376	Koh Samui	Koh Samui	Ko Samui,Samui	9.53567	99.93567	T	ISL	TH		46				62940		0	Asia/Bangkok	2024-01-01
 9990001	Mordor	Mordor	Mordor	0	0	P	PPL	XX		00				12		0	UTC	2024-01-01
 9990002	Test	Test	Test Village	1	1	P	PPL	US		TX				10		0	America/Chicago	2024-01-01
 9990003	abcxyz	abcxyz		2	2	P	PPL	DE		00				3		0	Europe/Berlin	2024-01-01

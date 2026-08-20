@@ -49,7 +49,7 @@ import { ArrowRight, Sparkles } from 'lucide-react'
 
 import Planungsfortschritt from '@/components/trips/Planungsfortschritt'
 import VorschlagVorschau from '@/components/trips/VorschlagVorschau'
-import { vorschlagErzeugen, vorschlagUebernehmen } from '@/lib/reisevorschlag/aktionen'
+import { vorschlagErzeugen, vorschlagOrteAufloesen, vorschlagUebernehmen } from '@/lib/reisevorschlag/aktionen'
 import { vorschlagAlsReise } from '@/lib/reisevorschlag/abbildung'
 import { VORSCHLAG_GRENZEN, type Reisevorschlag } from '@/lib/reisevorschlag/schema'
 import {
@@ -146,8 +146,9 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
     }
 
     try {
+      const orte = await vorschlagOrteAufloesen(vorschlag)
       const reise = gastreiseAblegen(
-        vorschlagAlsReise(vorschlag, clientRef.current, kennungErzeugen, new Date().toISOString()),
+        vorschlagAlsReise(vorschlag, clientRef.current, kennungErzeugen, new Date().toISOString(), orte),
       )
       router.push(`/reisen/${reise.id}` as Route)
     } catch (fehler) {

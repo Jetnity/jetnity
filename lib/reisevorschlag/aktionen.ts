@@ -33,8 +33,10 @@ import { modellAufrufen } from '@/lib/modell/aufruf'
 import { modellZustand } from '@/lib/modell/konfiguration'
 import { reisevorschlagErzeugen, type Vorschlagsergebnis } from '@/lib/reisevorschlag/erzeugen'
 import { modellFuerReisevorschlag } from '@/lib/reisevorschlag/routing'
+import { hinweiseAusTexten, type KanonischeOrte } from '@/lib/places/kanon'
+import { kanonischeOrteLesen } from '@/lib/places/lesen'
 import { vorschlagAlsNutzlast } from '@/lib/reisevorschlag/abbildung'
-import { uebernahmeSchema } from '@/lib/reisevorschlag/schema'
+import { reisevorschlagSchema, uebernahmeSchema } from '@/lib/reisevorschlag/schema'
 import { reiseAusNutzlastAnlegen, type Aktionsergebnis } from '@/lib/trips/anlegen'
 import { ersteMeldung } from '@/lib/trips/schema'
 
@@ -89,7 +91,34 @@ export async function vorschlagUebernehmen(eingabe: unknown): Promise<Aktionserg
   const geprueft = uebernahmeSchema.safeParse(eingabe)
   if (!geprueft.success) return { ok: false, meldung: ersteMeldung(geprueft.error) }
 
-  return reiseAusNutzlastAnlegen(
-    vorschlagAlsNutzlast(geprueft.data.vorschlag, geprueft.data.clientRef),
+  const vorschlag = geprueft.data.vorschlag
+  const orte = await kanonischeOrteLesen(
+    hinweiseAusTexten({
+      origin: vorschlag.abreiseort,
+      stages: vorschlag.etappen.map((etappe) => ({
+        name: etappe.name,
+        countryCode: etappe.laendercode,
+      })),
+    }),
+  )
+
+  return reiseAusNutzlastAnlegen(vorschlagAlsNutzlast(vorschlag, geprueft.data.clientRef, orte))
+}
+
+/** Löst Modellorte gegen public.places auf. Derselbe Stand für Konto und Gast. */
+export async function vorschlagOrteAufloesen(eingabe: unknown) {
+  const geprueft = reisevorschlagSchema.safeParse(eingabe)
+  if (!geprueft.success) {
+    const leer: KanonischeOrte = { origin: null, stages: [] }
+    return leer
+  }
+  return kanonischeOrteLesen(
+    hinweiseAusTexten({
+      origin: geprueft.data.abreiseort,
+      stages: geprueft.data.etappen.map((etappe) => ({
+        name: etappe.name,
+        countryCode: etappe.laendercode,
+      })),
+    }),
   )
 }

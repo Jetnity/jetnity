@@ -45,9 +45,9 @@ describe('Ortssuche', () => {
   })
 
   test('Paris bleibt über Land unterscheidbar', () => {
-    const option = orteOrdnen(orte, 'Paris', 'ziel')[0]
-    assert.ok(option)
-    assert.match(option?.description ?? '', /France/)
+    const optionen = orteOrdnen(orte, 'Paris', 'ziel')
+    assert.ok(optionen.some((option) => /France/.test(option.description ?? '')))
+    assert.ok(optionen.some((option) => /United States/.test(option.description ?? '')))
   })
 
   test('London liefert einen realen London-Treffer', () => {

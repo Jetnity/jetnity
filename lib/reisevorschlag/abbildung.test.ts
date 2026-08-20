@@ -338,3 +338,38 @@ describe('Die Grenzen halten auch am Rand', () => {
     assert.equal(new Set(daten).size, daten.length)
   })
 })
+
+describe('Kanonische Orte am Vorschlag', () => {
+  const bangkok = {
+    id: 'geonames:1609350',
+    source: 'geonames' as const,
+    sourceId: '1609350',
+    name: 'Bangkok',
+    typ: 'city' as const,
+    country: 'Thailand',
+    countryCode: 'TH',
+    region: null,
+    lat: 13.75,
+    lon: 100.52,
+    iata: null,
+    keywords: null,
+  }
+
+  test('ohne Auflösung bleibt keine Place-ID stehen', () => {
+    const nutzlast = vorschlagAlsNutzlast(alsVorschlag(VORSCHLAG_THAILAND), 'trip-1')
+    assert.equal(nutzlast.origin_place_id, null)
+    assert.deepEqual(nutzlast.stages.map((etappe) => etappe.place_id), [null, null])
+  })
+
+  test('ein eindeutiger Treffer wird zur Place-ID, der Name bleibt der Modelltext', () => {
+    const nutzlast = vorschlagAlsNutzlast(alsVorschlag(VORSCHLAG_THAILAND), 'trip-1', {
+      origin: null,
+      stages: [bangkok, null],
+    })
+    assert.equal(nutzlast.stages[0]?.name, 'Bangkok')
+    assert.equal(nutzlast.stages[0]?.place_id, 'geonames:1609350')
+    assert.equal(nutzlast.stages[0]?.latitude, 13.75)
+    assert.equal(nutzlast.stages[1]?.place_id, null)
+    assert.equal(nutzlast.origin_place_id, null)
+  })
+})

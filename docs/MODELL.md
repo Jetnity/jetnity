@@ -22,6 +22,7 @@ Freitext (/planen)
                 → Vorgaben      lib/reisevorschlag/vorgaben.ts      eine Korrektur, dann warnungen
                   → Vorschau    components/trips/VorschlagVorschau.tsx
                     → Freigabe  „Übernehmen“
+                      → Ortsauflösung  lib/places/aufloesen.ts     eindeutig → place_id, sonst unaufgelöst
                       → Persistenz  public.reise_anlegen()  bzw.  gastreiseAblegen()
 ```
 
