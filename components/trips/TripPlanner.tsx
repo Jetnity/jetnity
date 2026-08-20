@@ -35,6 +35,9 @@ import {
   WalletCards,
 } from 'lucide-react'
 
+import OrtSuche from '@/components/places/OrtSuche'
+import { reiseorteBestaetigen } from '@/lib/places/aktionen'
+import { reiseortePflicht, type OrtAuswahl } from '@/lib/places/auswahl'
 import { reiseAnlegen } from '@/lib/trips/aktionen'
 import { INTERESSE_BEZEICHNUNG, TEMPO_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import {
@@ -51,6 +54,7 @@ type TripPlannerProps = {
   /** Kommt aus der Server-Komponente: `auth.getUser()` auf dem Server, nicht geraten. */
   angemeldet: boolean
   initialDestination?: string
+  initialDestinationId?: string
   initialIdea?: string
 }
 
@@ -79,11 +83,18 @@ function heuteIso() {
 export default function TripPlanner({
   angemeldet,
   initialDestination = '',
+  initialDestinationId = '',
   initialIdea = '',
 }: TripPlannerProps) {
   const router = useRouter()
   const [destination, setDestination] = React.useState(initialDestination)
+  const [destinationOrt, setDestinationOrt] = React.useState<OrtAuswahl | null>(
+    initialDestinationId && initialDestination
+      ? { id: initialDestinationId, name: initialDestination }
+      : null,
+  )
   const [origin, setOrigin] = React.useState('')
+  const [originOrt, setOriginOrt] = React.useState<OrtAuswahl | null>(null)
   const [startDate, setStartDate] = React.useState('')
   const [endDate, setEndDate] = React.useState('')
   const [travellers, setTravellers] = React.useState(2)
@@ -116,11 +127,24 @@ export default function TripPlanner({
 
     if (!clientRef.current) clientRef.current = kennungErzeugen('trip')
 
+    const auswahlFehler = reiseortePflicht({
+      destination,
+      destinationPlaceId: destinationOrt?.id,
+      origin,
+      originPlaceId: originOrt?.id,
+    })
+    if (auswahlFehler) {
+      setMeldung(auswahlFehler)
+      return
+    }
+
     const geprueft = neueReiseSchema.safeParse({
       clientRef: clientRef.current,
-      title: destination,
-      destination,
-      origin,
+      title: destinationOrt?.name ?? destination,
+      destination: destinationOrt?.name ?? destination,
+      destinationPlaceId: destinationOrt?.id,
+      origin: originOrt?.name ?? origin,
+      originPlaceId: originOrt?.id,
       startDate,
       endDate,
       travellers,
@@ -138,8 +162,25 @@ export default function TripPlanner({
 
     setLaeuft(true)
 
+    const orte = await reiseorteBestaetigen({
+      zielId: geprueft.data.destinationPlaceId,
+      abreiseId: geprueft.data.originPlaceId,
+    })
+    if (!orte.ok) {
+      setMeldung(orte.meldung)
+      setLaeuft(false)
+      return
+    }
+
     if (angemeldet) {
-      const ergebnis = await reiseAnlegen(geprueft.data)
+      const ergebnis = await reiseAnlegen({
+        ...geprueft.data,
+        title: orte.ziel.name,
+        destination: orte.ziel.name,
+        destinationPlaceId: orte.ziel.id,
+        origin: orte.abreise.name,
+        originPlaceId: orte.abreise.id,
+      })
       if (!ergebnis.ok) {
         setMeldung(ergebnis.meldung)
         setLaeuft(false)
@@ -150,7 +191,7 @@ export default function TripPlanner({
     }
 
     try {
-      const reise = gastreiseAnlegen(geprueft.data)
+      const reise = gastreiseAnlegen(geprueft.data, orte)
       router.push(`/reisen/${reise.id}` as Route)
     } catch (fehler) {
       setLaeuft(false)
@@ -194,13 +235,17 @@ export default function TripPlanner({
             Reiseziel
             <span className="relative block min-w-0">
               <MapPin className={fieldIconClass} aria-hidden="true" />
-              <input
-                value={destination}
-                onChange={(ereignis) => setDestination(ereignis.target.value)}
-                maxLength={GRENZEN.titel}
+              <OrtSuche
+                rolle="ziel"
+                variante="field"
+                value={destinationOrt}
+                initialText={destination}
+                onChange={(wert, roh) => {
+                  setDestinationOrt(wert)
+                  setDestination(wert?.name ?? roh)
+                }}
                 placeholder="z. B. Japan"
-                autoComplete="off"
-                className={fieldClass}
+                inputClassName={`${fieldClass} pr-10`}
               />
             </span>
           </label>
@@ -209,13 +254,16 @@ export default function TripPlanner({
             Abreise ab
             <span className="relative block min-w-0">
               <MapPin className={fieldIconClass} aria-hidden="true" />
-              <input
-                value={origin}
-                onChange={(ereignis) => setOrigin(ereignis.target.value)}
-                maxLength={GRENZEN.ort}
+              <OrtSuche
+                rolle="abreise"
+                variante="field"
+                value={originOrt}
+                onChange={(wert, roh) => {
+                  setOriginOrt(wert)
+                  setOrigin(wert?.name ?? roh)
+                }}
                 placeholder="z. B. Zürich"
-                autoComplete="address-level2"
-                className={fieldClass}
+                inputClassName={`${fieldClass} pr-10`}
               />
             </span>
           </label>

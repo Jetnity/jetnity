@@ -1722,6 +1722,29 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 
 ---
 
+## ADR-0067 – Ortsbasis kommt aus GeoNames-Dumps, nicht aus einem Geocoding-Proxy
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.1; Schema und Inhalt nur Development
+
+**Entscheidung:** Reiseziel und Abreise werden gegen eine lokale Tabelle `public.places` geprüft. Der Bestand kommt aus dem GeoNames-Dump (`allCountries` + `countryInfo`, CC BY 4.0) plus Flughafen-Zeilen aus `public.airports`. Die Nutzersuche trifft niemals GeoNames, Google, Nominatim oder einen Flugprovider. Ein eingetippter Text ohne bestätigte Auswahl wird nicht als geografischer Kern gespeichert. Production bleibt unangetastet.
+
+**Kontext:** Startseite und `/planen` akzeptierten freie Texte. Für Flüge, Karten, Hotels und Länderinformationen braucht der gespeicherte Kern einen realen Ort. `public.airports` deckt Bali, Südtirol oder Toskana nicht. Ein Live-Geocoding bei jedem Tastendruck wäre entweder kostenpflichtig, gegen die Nominatim-Nutzungsregeln oder neue Infrastruktur.
+
+**Alternativen:**
+
+1. *Nominatim öffentlich als Autocomplete.* Usage Policy verbietet schwere Autocomplete-Last.
+2. *Google Places oder vergleichbare APIs.* Laufende Kosten, Secret im Suchweg.
+3. *`public.airports` als Destination-Datenbank.* Falsch für Regionen und Inseln.
+4. *Eine kuratierte Fantasieliste.* Keine belastbare Weltbasis.
+5. *GeoNames-Webservice.* Username, Credit-Limit, Live-Abhängigkeit.
+
+**Begründung:** Der Dump ist kostenlos, kommerziell nutzbar und einmal importierbar. Attribution ist die einzige Lizenzpflicht. Filter halten Fantasieorte und Helipads draussen. UI und Reisegraph sprechen nur die interne `Ort`-Form.
+
+**Konsequenzen:** Additive Development-Migration `20260820120000`. `trips.origin_place_id` und `trip_stages.place_id` sind optional. Altbestand bleibt lesbar. Schreibweg nur `npm run places:importieren -- --schreiben --entwicklung`, davor `ziel()`. Dokumentation in [docs/ORTE.md](docs/ORTE.md). Der Modellweg validiert Etappennamen weiterhin nicht. Ein späterer Production-Import braucht Freigabe.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

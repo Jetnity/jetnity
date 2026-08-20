@@ -1,7 +1,7 @@
 # Jetnity – Datenbank
 
 Stand: 20. August 2026
-Gültig für: Supabase-Development-Branch nach Phase 3.1 (Airport-Referenz). Production ist in keiner der Phasen 1.4 bis 3.1 angefasst worden; die Airport-Migration und der Import gelten nur für Development.
+Gültig für: Supabase-Development-Branch nach Phase 3.1 (Airport- und Ortsreferenz). Production ist in keiner der Phasen 1.4 bis 3.1 angefasst worden; Airport- und Places-Migration sowie deren Importe gelten nur für Development.
 
 Diese Datei beschreibt den **tatsächlichen** Zustand des Schemas, wie er sich aus dem Repository herstellen lässt. Sie ist die Antwort auf die Frage, die [ARCHITECTURE.md](../ARCHITECTURE.md) Abschnitt 6 bis Phase 1.4 offenlassen musste: Was steht in der Datenbank, wer darf was, und woher weiß man das.
 
@@ -39,7 +39,7 @@ Alle Skripte liegen in `scripts/db/` und sprechen über die Supabase Management 
 | `npm run db:anwenden` | offene Migrationen anwenden und in `supabase_migrations.schema_migrations` eintragen; `-- --probe` zeigt nur, was offen ist |
 | `npm run db:reproduzierbarkeit` | baut das Schema aus den Migrationen neu auf und vergleicht es mit dem laufenden |
 | `npm run db:rls` | empirische RLS-Matrix: was darf welche Rolle auf welcher Tabelle wirklich |
-| `npm run db:sicherheit` | 168 benannte Nachweise mit Erwartung, positiv und negativ; wo es darauf ankommt, mit verlangtem SQLSTATE |
+| `npm run db:sicherheit` | 169 benannte Nachweise mit Erwartung, positiv und negativ; wo es darauf ankommt, mit verlangtem SQLSTATE |
 | `npm run db:parallelitaet` | 5 Nachweise gegen die Erzeugungsschranke von `public.trips` unter echter Gleichzeitigkeit |
 | `npm run db:rechte` | Tabellenrechte gegen Policies prüfen; zusätzlich, dass keine Funktion eine Struktur nennt, die es nicht gibt |
 | `npm run db:verwendung` | welche Tabellen und RPCs der Anwendungscode anspricht |
@@ -47,6 +47,7 @@ Alle Skripte liegen in `scripts/db/` und sprechen über die Supabase Management 
 | `npm run db:typen` | `types/supabase.ts` erzeugen; `-- --pruefen` vergleicht nur |
 | `npm run db:advisors` | Security- und Performance-Advisors von Supabase |
 | `npm run airports:importieren` | OurAirports lesen, filtern, gegen Development upserten; Standard ist Probe |
+| `npm run places:importieren` | GeoNames-Dump lesen, filtern, gegen Development upserten; Standard ist Probe |
 
 Bis auf `check:schema-bezug` braucht jedes davon den Development-Zugang. `check:schema-bezug` liest nur die erzeugte Typdatei und läuft deshalb in der CI mit.
 
@@ -73,11 +74,13 @@ Ein Unterschied ist wichtig: Alle Skripte ausser `db:parallelitaet` und `db:anwe
 | Sequenzen | 1 | 1 | 1 | 2 |
 | Extensions | 10 | 10 | 10 | 10 |
 
-Die zwölf Tabellen: `profiles`, `trips`, `trip_stages`, `trip_days`, `trip_items`, `model_usage`, `airports`, `payments`, `refunds`, `stripe_webhooks`, `security_events`, `blocked_ips`. Ihre Einordnung steht in Abschnitt 10.
+Die dreizehn Tabellen: `profiles`, `trips`, `trip_stages`, `trip_days`, `trip_items`, `model_usage`, `airports`, `places`, `payments`, `refunds`, `stripe_webhooks`, `security_events`, `blocked_ips`. Ihre Einordnung steht in Abschnitt 10.
 
 **Phase 2.2 Nachtrag `20260820060000`:** `public.reise_graph_geaendert()` plus neun Statement-Trigger auf den Kindtabellen. **Nachtrag `20260820070000`:** `public.reise_stamm_geaendert()` erhöht die Fassung bei direkten Stammdaten-Updates auf `trips`. **Nachtrag `20260820080000`:** `trip_days_index_eindeutig` und `trip_days_datum_eindeutig` sind `UNIQUE … DEFERRABLE`; der partielle Unique-Index auf `day_date` entfällt. Die Inventur zählt danach 24 Funktionen, 17 Trigger und 7 Eindeutigkeitsbedingungen. Production unverändert.
 
 **Phase 3.1 Nachtrag `20260820110000`:** `public.airports` erhält `region`, `country_code`, `keywords`, `klasse`, `updated_at`, passende CHECKs und den Trigramm-Index `airports_keywords_trgm`. Der Inhalt kommt nicht aus der Migration, sondern aus `npm run airports:importieren`. Nur Development. Production unverändert. Einzelheiten in [docs/FLUGHAFEN.md](FLUGHAFEN.md).
+
+**Phase 3.1 Nachtrag `20260820120000`:** `public.places` ist die lokale Ortsbasis für Reiseziel und Abreise. Additive Spalten `trips.origin_place_id` und `trip_stages.place_id` (beide nullable). `reise_anlegen()` schreibt die Referenzen, wenn sie in der Nutzlast stehen. Inhalt aus `npm run places:importieren` (GeoNames CC BY 4.0 plus `public.airports`). Nur Development. Production unverändert. Einzelheiten in [docs/ORTE.md](ORTE.md).
 
 Das Wachstum liegt vollständig bei den Reisedaten: Die vier neuen Tabellen tragen 61 Spalten, 43 CHECK-Bedingungen, 6 Fremdschlüssel, 5 Eindeutigkeitsbedingungen, 15 Indizes, 16 Policies und 5 Auslöser – vier für `updated_at`, einer für die Erzeugungsregeln von `public.trips` (Abschnitt 7a). Gleichzeitig sind mit `creator_sessions` 16 Spalten, 7 Indizes und 4 Policies sowie die neun Creator-Spalten des Profils entfallen – die Nettozahlen der Tabelle oben sind deshalb kleiner als die Zugänge.
 
@@ -160,6 +163,8 @@ Der Zustand nach Phase 1.4 steht in Abschnitt 9; dort ist auch nachgewiesen, das
 | `20260820070000_reise_trips_revision.sql` | Direkte Stammdaten-Updates auf `trips` erhöhen `revision`, ohne `reise_aendern()` doppelt zu zählen (ADR-0058 Nachtrag) |
 | `20260820080000_reise_tage_eindeutig_aufgeschoben.sql` | `UNIQUE … DEFERRABLE` für `day_index`/`day_date` in `reise_aendern()` (Phase 2.2, ADR-0060 Nachtrag) |
 | `20260820100000_reise_anlegen_handelsfelder.sql` | `reise_anlegen()` schreibt Preis, Währung, Provider, Ref, Buchungslink und Termin (Phase 3.1, ADR-0065). **Nur Development.** Production nicht ohne Freigabe. |
+| `20260820110000_airports_referenz.sql` | `public.airports` um Region, Landescode, Keywords, Klasse erweitert (Phase 3.1, ADR-0066). **Nur Development.** |
+| `20260820120000_places_referenz.sql` | `public.places` plus optionale `trips.origin_place_id` / `trip_stages.place_id`; `reise_anlegen()` schreibt die Referenzen, wenn sie in der Nutzlast stehen (Phase 3.1, ADR-0067). **Nur Development.** |
 
 Die Reihenfolge ist nicht beliebig: `20260817100200` darf erst laufen, wenn `20260817100000` die Rollen der Betroffenen übernommen und `20260817100100` alle Policies auf `creator_profiles.role` umgestellt hat. Sonst verlöre jemand seinen Zugang oder eine Policy liefe ins Leere.
 
@@ -252,7 +257,7 @@ Das Eigentumsmodell ist einheitlich: Eine Zeile gehört dem Konto in ihrer Spalt
 | Muster | Regel |
 | --- | --- |
 | eigene Zeile | `user_id = auth.uid()` – lesen, ändern, löschen. Gilt für `profiles` und die vier Reisetabellen |
-| öffentlich | `airports`, lesend – seit Phase 1.4b die einzige Tabelle ohne Anmeldung |
+| öffentlich | `airports` und `places`, lesend – Flughafen- und Ortssuche ohne Anmeldung |
 | Verwaltung | über eine Fähigkeit, nicht über eine Rolle – siehe die Tabelle oben, **ausgenommen Reisen** |
 | nur mit Service-Key schreibbar | `stripe_webhooks` |
 
@@ -293,7 +298,7 @@ Ein Zugriff hängt an vier Dingen, nicht an einem: am Tabellenrecht, am RLS-Scha
 
 `TRUNCATE`, `REFERENCES` und `TRIGGER` sind entzogen. `TRUNCATE` war der schwerwiegendste Einzelbefund der Inventur: Das Recht umgeht RLS vollständig. Jedes angemeldete Konto – und über `anon` jeder Besucher – konnte `truncate public.payments` ausführen und die Tabelle leeren, obwohl keine Policy ihm auch nur eine Zeile zum Lesen gab.
 
-`anon` darf genau **eine** Tabelle lesen: `airports`. `blog_posts` und `blog_comments` waren die beiden anderen und sind mit Phase 1.4b entfallen.
+`anon` darf genau **zwei** Tabellen lesen: `airports` und `places`. `blog_posts` und `blog_comments` waren die früheren öffentlichen Tabellen und sind mit Phase 1.4b entfallen.
 
 Seit Phase 1.4b prüft `npm run db:rechte` eine vierte Regel: Kein `public.<name>` in einem Funktionsrumpf darf ins Leere greifen – es muss sich als Relation, Funktion oder Typ auflösen. Das ist die Antwort auf eine Fehlerklasse, nicht auf einen Einzelfall: PostgreSQL verfolgt Tabellenbezüge im Rumpf einer Funktion nicht in `pg_depend`, weshalb 18 Signaturen den `drop table` unbemerkt überlebt hätten und erst beim Aufruf mit „relation does not exist" gescheitert wären – dieselbe Klasse wie `ip_blocklist` und `admin_security_overview` in Phase 1.4. Die Prüfung ist gegengeprobt: In einer zurückgerollten Transaktion findet sie eine künstlich erzeugte Funktion mit totem Bezug.
 
@@ -305,7 +310,7 @@ Für die Kindtabellen musste das Skript in Phase 1.5 genauer werden. Es säte ei
 
 **Eine Grenze der Matrix ist zu kennen, damit sie nicht überlesen wird.** Die Probe `insert_eigen` schreibt die Kennung der Eigentümerin auf den jeweiligen Akteur um. Auf den Kindtabellen zeigt der Verweis auf die Reise danach ins Leere – die Reise gehört ja der Eigentümerin –, und die Probe endet mit `23502 not-null violation` statt mit einer Ablehnung durch die Policy. Die Aussage „ein fremdes Konto schreibt hier nichts" bleibt richtig, ihre Ursache ist aber die fehlende Reise und nicht die Policy. Der positive und der negative Schreibfall der Reisetabellen stehen deshalb nicht in der Matrix, sondern in den benannten Nachweisen unten, mit eigens angelegten Reisen je Konto.
 
-`npm run db:sicherheit` prüft dieselbe Datenbank gegen 168 benannte Erwartungen. Der Unterschied ist wichtig: Die Matrix zeigt, was gilt; die Nachweise sagen, was gelten **soll**, und schlagen fehl, wenn es sich ändert.
+`npm run db:sicherheit` prüft dieselbe Datenbank gegen 169 benannte Erwartungen. Der Unterschied ist wichtig: Die Matrix zeigt, was gilt; die Nachweise sagen, was gelten **soll**, und schlagen fehl, wenn es sich ändert.
 
 Beide Läufe teilen eine Grenze: Sie liegen vollständig in einer Transaktion, und damit sehen alle ihre Anweisungen einander. Was nur zwischen **gleichzeitigen** Transaktionen schiefgehen kann, steht in Abschnitt 7b.
 
@@ -318,7 +323,8 @@ Ein Ausschnitt:
 | Nachweis | Erwartung |
 | --- | --- |
 | `anon` liest Flughäfen | erlaubt |
-| `anon` hat auf keiner Tabelle ausser `airports` ein Recht | erfüllt |
+| `anon` hat auf keiner Tabelle ausser `airports` und `places` ein Recht | erfüllt |
+| `anon` liest Orte | erlaubt |
 | `anon` liest Profile, Zahlungen, Sicherheitsereignisse, Reisen, Stripe-Ereignisse | abgelehnt, 42501 |
 | `anon` legt eine Reise an, `anon` ruft `reise_anlegen()` | abgelehnt, 42501 |
 | `anon` und angemeldetes Konto leeren eine Tabelle mit `TRUNCATE` | abgelehnt, 42501 |
@@ -703,6 +709,7 @@ Nach Phase 1.4b enthält das Schema nur noch Tabellen, die verwendet werden. Die
 | --- | --- |
 | `creator_profiles` | Konto, Rolle, Status. Wird in Phase 1.5 zum generischen Profil |
 | `airports` | lokale Flughafenbasis für die Autocomplete (Phase 3.1), benutzt von `api/search/airports`; Import siehe [docs/FLUGHAFEN.md](FLUGHAFEN.md) |
+| `places` | lokale Ortsbasis für Reiseziel und Abreise (Phase 3.1), benutzt von `api/search/places`; Import siehe [docs/ORTE.md](ORTE.md) |
 | `payments`, `refunds`, `stripe_webhooks` | Zahlungen, behalten ohne Priorität ([DECISIONS.md](../DECISIONS.md) ADR-0010) |
 | `security_events`, `blocked_ips` | Sicherheitsereignisse und IP-Sperren im Administrationsbereich |
 

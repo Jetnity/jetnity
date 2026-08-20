@@ -555,10 +555,12 @@ Schlanke interne Flugdomäne, Duffel als erster Datenadapter, deterministisches 
 - [x] Übernahme als kommerzieller `trip_item`, modellgeschützt
 - [x] Amadeus-Fallback aus `/api/search/airports` entfernt; Suche nur noch `public.airports`
 - [x] Provider-unabhängige Airport-Datenbasis (OurAirports-Import, Development 5332 Zeilen)
+- [x] Destination Validation & Place Foundation (GeoNames-Dump, lokale `public.places`, gemeinsame Autocomplete)
 - [ ] Preview mit Duffel-Test-Token verifizieren
 - [x] Development-Migration `20260820100000` auf dem Development-Branch anwenden
 - [ ] Production-Flugsuche – eigene Freigabe, nicht Teil dieses Schritts
 - [ ] Production-Airport-Schema und -Bestand – eigene Freigabe, nicht Teil dieses Schritts
+- [ ] Production-Places-Schema und -Bestand – eigene Freigabe, nicht Teil dieses Schritts
 
 Amadeus Self-Service (eingestellt 17. Juli 2026) wird nicht angebunden. Im aktiven V2-Code gibt es keinen funktionsfähigen Amadeus-API-Pfad mehr. Ein späterer Skyscanner- oder Aviasales-Adapter muss dasselbe Interface erfüllen, ohne UI-, Ranking- oder Trip-Rewrite.
 

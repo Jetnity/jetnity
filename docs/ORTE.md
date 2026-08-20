@@ -1,0 +1,133 @@
+# Jetnity – Ortsbasis
+
+**Stand:** 20. August 2026 · Phase 3.1  
+**Gilt für:** die lokale, provider-unabhängige Referenz `public.places` und `/api/search/places`.
+
+Diese Datei beschreibt, woher Reiseziele und Abreiseorte kommen, was in die Suche darf und wie ein Refresh läuft. Entscheidung: ADR-0067 in [DECISIONS.md](../DECISIONS.md). Flughäfen als Verkehrsorte stehen in [docs/FLUGHAFEN.md](FLUGHAFEN.md). `public.airports` ist **keine** weltweite Destination-Datenbank.
+
+---
+
+## 1. Was die Basis ist – und was nicht
+
+Startseite und `/planen` speichern den geografischen Kern einer Reise nur nach einer bestätigten Auswahl. Ein freier Text wie `Test` oder `Mordor` wird nicht als Ort abgelegt.
+
+Die Autocomplete-Suche liest **nur** `public.places`. Sie hängt nicht an GeoNames-Webservices, Google, Nominatim, Amadeus oder Duffel.
+
+Nicht gebaut:
+
+- eine globale Places-Plattform
+- ein Geocoding-Proxy
+- eine Live-Abfrage gegen GeoNames bei jedem Tastendruck
+- ein Dump im Git oder im CI-Image
+- ein Schreibweg aus der öffentlichen Suche
+
+Eine leere Tabelle bleibt eine leere Liste. Ein Fehler bleibt ein Fehler. Beides darf nicht in denselben Zustand fallen ([AGENTS.md](../AGENTS.md) Regel 15, ADR-0037).
+
+---
+
+## 2. Quelle und Lizenz
+
+| Feld | Wert |
+| --- | --- |
+| Datensatz | [GeoNames](https://www.geonames.org/) Dump `allCountries` plus `countryInfo` |
+| Verteilung | [download.geonames.org/export/dump](https://download.geonames.org/export/dump/) |
+| Dateien | `allCountries.zip`, `countryInfo.txt` |
+| Lizenz | [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/) (CC BY 4.0) |
+| Kosten | keine Lizenzkosten, kein API-Schlüssel, kein laufender Anbietervertrag |
+
+GeoNames erlaubt die freie Nutzung der Dump-Dateien, sofern GeoNames namentlich genannt wird. Jetnity nutzt **nicht** den GeoNames-Webservice (kein Username, kein Credit-Kontingent).
+
+Flughafen-Orte (`airport:ZRH`) kommen beim Import aus der bereits lokalen Tabelle `public.airports` (OurAirports, Public Domain). Sie ergänzen die Destination-Basis, ersetzen sie nicht.
+
+Verworfene Alternativen:
+
+1. *Nominatim öffentlich als Autocomplete.* Die Usage Policy verbietet schwere Autocomplete-Last; Selbst-Hosting wäre neue Infrastruktur.
+2. *Google Places.* Kostenpflichtige API.
+3. *`public.airports` als Destination-Datenbank.* Bali, Südtirol und Toskana sind keine Flughäfen.
+4. *Eine erfundene Kurzliste.* Verboten: keine geratenen Ortslisten.
+
+---
+
+## 3. Filter
+
+In `public.places` kommt nur, was als Reiseziel oder Abreise taugt:
+
+| Typ | GeoNames | Schwelle |
+| --- | --- | --- |
+| Land | `PCLI`, `PCLD`, `PCLS`, `TERR` | alle |
+| Region | `ADM1`; `ADM2` | ADM2 nur bei Einwohnerzahl ≥ 50 000 (Südtirol) |
+| Insel | `ISL`, `ISLS`, `ATOL` | Einwohnerzahl ≥ 5 000 (Mallorca) |
+| Stadt | `PPLC`, `PPLA`, `PPLA2`, `PPLA3`, `PPLG` oder `PPL*` | sonst Einwohnerzahl ≥ 5 000 (Zermatt bleibt) |
+| Flughafen | aus `public.airports` | bestehender Airport-Filter |
+
+Helipads und winzige `PPL`-Einträge (Fixtures: Mordor, Test, abcxyz) bleiben draussen.
+
+IDs:
+
+- `geonames:<numerische GeoNames-ID>`
+- `airport:<IATA>`
+
+---
+
+## 4. Rollen
+
+| Rolle | gültig | Beispiele |
+| --- | --- | --- |
+| Reiseziel | Land, Region, Insel, Stadt – **kein** Flughafen | Bali, Thailand, Südtirol, Toskana, Japan, New York, Mallorca |
+| Abreise | Stadt oder Flughafen | Zürich, Luzern, Basel, ZRH |
+
+Der Browser darf eine Place-ID behaupten. Gültig ist sie erst nach der Serverprüfung gegen `public.places` (`ortBestaetigen` / `reiseorteBestaetigen`). Dieselbe Regel gilt für Konto und Gast.
+
+`title`, `origin` und `trip_stages.name` bleiben der menschenlesbare Text. `trips.origin_place_id` und `trip_stages.place_id` tragen die kanonische Referenz. Altbestand ohne diese Felder bleibt lesbar.
+
+Der Modellweg (`Reiseidee`) erzeugt weiter unvalidierte Etappennamen. Das ist bewusst offen und nicht still geändert.
+
+---
+
+## 5. Suche
+
+`GET /api/search/places?q=&rolle=` liest die lokale Tabelle und rangiert in Prozess. Kein Geocoding-Proxy.
+
+Umlaute werden gefaltet (`Südtirol` trifft `South Tyrol` über Keywords). Gleichnamige Orte bleiben über Land/Region unterscheidbar (`Paris, France`).
+
+Die Abfrage holt höchstens 80 Zeilen, die Antwort höchstens 12 Optionen. Sonderzeichen, die PostgREST-`.or()` oder `LIKE` zerlegen würden, werden vorher entfernt.
+
+Startseite und `/planen` nutzen dieselbe Komponente (`OrtSuche`) und dieselbe Fachregel (`lib/places/auswahl.ts`, `lib/places/pruefen.ts`). Nur Text ohne bestätigten Treffer wird nicht als Ort gespeichert.
+
+---
+
+## 6. Import
+
+Der einzige Schreibweg liegt im Repository und läuft von Hand:
+
+```bash
+npm run places:importieren
+npm run places:importieren -- --datei lib/places/fixtures
+npm run places:importieren -- --schreiben --entwicklung
+```
+
+Ohne `--schreiben --entwicklung` ist jeder Lauf eine Probe. `--schreiben` allein reicht nicht.
+
+Vor dem ersten Schreibzugriff ruft das Skript `ziel()` auf. Zeigt `SUPABASE_PROJECT_REF` auf ein eigenständiges Projekt statt auf einen Branch, bricht der Lauf ab. Production wird dadurch nicht befüllt.
+
+Der GeoNames-Dump wird gestreamt (`unzip -p`) und schon beim Lesen gefiltert. Der volle Bestand liegt nicht im Speicher und nicht im Repository.
+
+`npm run build`, `prebuild` und die CI rufen den Import nicht auf.
+
+---
+
+## 7. Development befüllen
+
+1. Migration `20260820120000_places_referenz.sql` nur auf dem Development-Branch anwenden (`npm run db:anwenden`).
+2. Typen neu erzeugen (`npm run db:typen`).
+3. Airport-Bestand muss bereits existieren, weil Flughafen-Orte daraus kopiert werden.
+4. Import schreiben: `npm run places:importieren -- --schreiben --entwicklung`.
+5. Pflichtbeispiele prüfen: Bali, Thailand, Südtirol/Toskana, New York, Japan, Zürich, ZRH.
+
+Production bleibt unverändert. Die Schemaerweiterung und der Inhalt sind getrennte Handlungen; keines von beiden darf still nach Production.
+
+---
+
+## 8. Attribution
+
+Contains geographical data from [GeoNames](https://www.geonames.org/), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Airport rows additionally derive from OurAirports Open Data (Public Domain).

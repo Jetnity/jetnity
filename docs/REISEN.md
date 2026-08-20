@@ -28,12 +28,14 @@ Vier Tabellen, ein Graph. Der Anwendungstyp dazu steht in `types/trips.ts` und t
 
 | Ebene | Tabelle | Was sie trägt |
 | --- | --- | --- |
-| Reise | `trips` | Titel, Startort, Zeitraum, Reisende, Währung, Budget, Status, Tempo, Interessen, Reisewunsch, technische Fassung (`revision`) |
-| Etappe | `trip_stages` | ein Aufenthalt an einem Ort: Name, Ländercode, An- und Abreise, Koordinaten, Reihenfolge |
+| Reise | `trips` | Titel, Startort, optionaler kanonischer Abreiseort (`origin_place_id`), Zeitraum, Reisende, Währung, Budget, Status, Tempo, Interessen, Reisewunsch, technische Fassung (`revision`) |
+| Etappe | `trip_stages` | ein Aufenthalt an einem Ort: Name, Ländercode, An- und Abreise, Koordinaten, optionale Ortsreferenz (`place_id`), Reihenfolge |
 | Tag | `trip_days` | Nummer im Reiseverlauf, optionales Datum, optionaler Titel, **Etappe** (`stage_id`) |
 | Planpunkt | `trip_items` | Flug, Unterkunft, Aktivität, Transfer oder freie Notiz – mit Zeitfenster, Preis, Anbieter, Buchungsverweis. Ohne Tag (`day_id` null) bleibt der Punkt ungeplant (`ohneTag`). |
 
 **Mehrere Ziele sind mehrere Etappen.** Ein Feld `destination` hätte die heutige Oberfläche abgedeckt und die zweite Station einer Reise nicht. Das Formular unter `/planen` fragt weiterhin ein Ziel und legt daraus eine Etappe an – dieselbe Struktur, nur mit einem Element.
+
+**Der geografische Kern ist ein bestätigter Ort.** Startseite und `/planen` speichern Reiseziel und Abreise nur nach einer Auswahl aus `public.places`. `origin` und `trip_stages.name` bleiben der Anzeigetext; `origin_place_id` und `place_id` tragen die kanonische Referenz. Altbestand ohne diese Felder bleibt lesbar. Der Modellweg erzeugt weiter unvalidierte Etappennamen – das ist bewusst offen ([docs/ORTE.md](ORTE.md), ADR-0067).
 
 **Tage haben eine Nummer, nicht nur ein Datum.** `day_index` ist die verbindliche Reihenfolge, `day_date` optional. Eine Reiseidee hat Tage, bevor sie Daten hat, und eine um eine Woche verschobene Reise behält ihre Struktur.
 
@@ -207,6 +209,7 @@ Die Kennung entscheidet, wo `/reisen/[tripId]` nachsieht: `trip-<uuid>` ist ein 
 | ~~Reisevorschlag aus natürlicher Sprache~~ | **in Phase 2.1 gebaut.** |
 | ~~Änderung einer bestehenden Reise per Sprache~~ | **in Phase 2.2 gebaut.** Vertrauenswürdige Reise → Operationen → Vorschau → `public.reise_aendern()` bzw. Gastspeicher. Das Modell schreibt nicht in die Datenbank (ADR-0059, ADR-0060). |
 | ~~Flugoptionen suchen und in die Reise übernehmen~~ | **in Phase 3.1 gebaut.** Interne Flugdomäne, Duffel als erster Adapter, Ranking, Übernahme als kommerzieller Planpunkt. `booking_url` bleibt leer. Production aus ([docs/FLUEGE.md](FLUEGE.md), ADR-0062). |
+| ~~Reiseziel und Abreise als freie Texte~~ | **in Phase 3.1 geschlossen.** Gemeinsame Autocomplete und Serverprüfung gegen `public.places`. Fantasieorte werden nicht gespeichert ([docs/ORTE.md](ORTE.md), ADR-0067). |
 | Hotels, Aktivitäten | später in Phase 3. Ein Vorschlag aus Phase 2.1 lässt Handelsfelder leer (ADR-0054) |
 | eigene Flugbuchung / Affiliate-Deeplink | getrennte Verantwortlichkeit, nicht der Suchadapter |
 | Anbieter-Plattform für zehn Provider | ein zweiter Suchadapter (Skyscanner, Aviasales) muss dasselbe Interface erfüllen; kein Framework auf Vorrat ([AGENTS.md](../AGENTS.md) Regel 19) |

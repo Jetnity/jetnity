@@ -268,11 +268,12 @@ Seit Phase 1.4b prüft `npm run db:rechte` eine vierte Regel: Keine Funktion nen
 
 ## 7. API-Schicht
 
-Nach Phase 1.1, 1.1b, 1.3, 1.4 und 3.1 existieren **12** Route Handler. Zuvor waren es 77.
+Nach Phase 1.1, 1.1b, 1.3, 1.4 und 3.1 existieren **13** Route Handler. Zuvor waren es 77.
 
 | Endpunkt | Zweck | Status |
 | --- | --- | --- |
 | `api/search/airports` | Flughafendaten | nur `public.airports`; Import ist ein Skript, kein Request-Pfad |
+| `api/search/places` | Reiseziel- und Abreiseorte | nur `public.places`; Import ist ein Skript, kein Geocoding-Proxy |
 | `api/flights/search` | geschlossene Flugsuche | Phase 3.1, Production aus, nur Duffel-Test |
 | `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
 | `api/admin/security/*` (5) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
@@ -302,6 +303,10 @@ Production bleibt hart aus. Development/Preview brauchen `JETNITY_FLIGHT_AKTIV` 
 ### Flughafenbasis (Phase 3.1)
 
 `GET /api/search/airports` liest ausschliesslich `public.airports`. Der Bestand kommt aus OurAirports Open Data (Public Domain), gefiltert und idempotent über `npm run airports:importieren` geschrieben. Weder Build noch CI noch eine Nutzersuche laden den Upstream. Schemaerweiterung `20260820110000` und Inhalt gelten nur für Development. Fachlich: [docs/FLUGHAFEN.md](docs/FLUGHAFEN.md), ADR-0066.
+
+### Ortsbasis (Phase 3.1)
+
+`GET /api/search/places` liest ausschliesslich `public.places`. Der Bestand kommt aus dem GeoNames-Dump (CC BY 4.0) plus Flughafen-Zeilen aus `public.airports`. Kein Live-Geocoding, keine Google-/Nominatim-Abfrage. Startseite und `/planen` teilen dieselbe Auswahlkomponente und dieselbe Serverprüfung. Schemaerweiterung `20260820120000` und Inhalt gelten nur für Development. Fachlich: [docs/ORTE.md](docs/ORTE.md), ADR-0067.
 
 ### Kostenkontrolle bei Modellaufrufen
 

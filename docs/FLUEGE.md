@@ -81,7 +81,7 @@ Umgebung:
 
 Die Suche spricht `https://api.duffel.com/air/offer_requests`. Test und Live teilen den Hostname; die Umgebung steht im Token. Phase 3.1 akzeptiert nur Test-Tokens. Buchungsendpunkte (`/air/orders`) werden nicht aufgerufen.
 
-`/api/search/airports` liest nur `public.airports`. Es gibt keinen Amadeus-Fallback, keinen Duffel-Airport-Weg und keine Live-Abfrage gegen OurAirports. Quelle, Filter, Import und Refresh stehen in [docs/FLUGHAFEN.md](FLUGHAFEN.md).
+`/api/search/airports` liest nur `public.airports`. Es gibt keinen Amadeus-Fallback, keinen Duffel-Airport-Weg und keine Live-Abfrage gegen OurAirports. Quelle, Filter, Import und Refresh stehen in [docs/FLUGHAFEN.md](FLUGHAFEN.md). Reiseziele stehen in [docs/ORTE.md](ORTE.md) und dürfen nicht aus der Flughafentabelle abgeleitet werden.
 
 ---
 

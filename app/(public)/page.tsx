@@ -8,7 +8,6 @@ import {
   Compass,
   FileCheck2,
   Map,
-  MapPin,
   MessageCircle,
   Route,
   ShieldCheck,
@@ -16,6 +15,9 @@ import {
   Users,
 } from 'lucide-react'
 
+import StartzielForm from '@/components/places/StartzielForm'
+import { INSPIRATION_ZIELE } from '@/lib/places/inspiration'
+import { zielHref } from '@/lib/places/auswahl'
 import { ScrollRow } from '@/components/ui/scroll-row'
 
 export const metadata: Metadata = {
@@ -24,32 +26,7 @@ export const metadata: Metadata = {
     'Plane, organisiere und erlebe deine Reise an einem Ort – übersichtlich, persönlich und sicher mit Jetnity.',
 }
 
-const destinations = [
-  {
-    name: 'Bali',
-    country: 'Indonesien',
-    image: '/images/bali.jpg',
-    idea: 'Zwei Wochen Bali mit Ubud, ruhigen Stränden, Natur und lokaler Küche',
-  },
-  {
-    name: 'Lissabon',
-    country: 'Portugal',
-    image: '/images/lisbon.jpg',
-    idea: 'Fünf Tage Lissabon mit Aussichtspunkten, gutem Essen und einem Tagesausflug ans Meer',
-  },
-  {
-    name: 'Zermatt',
-    country: 'Schweiz',
-    image: '/images/zermatt.jpg',
-    idea: 'Ein verlängertes Wochenende in Zermatt mit Wandern, Wellness und Matterhornblick',
-  },
-  {
-    name: 'Amsterdam',
-    country: 'Niederlande',
-    image: '/images/amsterdam.jpg',
-    idea: 'Vier Tage Amsterdam mit Grachten, Museen, Fahrradtour und besonderen Restaurants',
-  },
-]
+const destinations = INSPIRATION_ZIELE
 
 const steps = [
   {
@@ -110,36 +87,7 @@ export default function HomePage() {
                 Von der ersten Idee bis zur Rückkehr: Jetnity plant, ordnet und begleitet deine Reise persönlich und übersichtlich.
               </p>
 
-              <form
-                action="/planen"
-                method="get"
-                className="mt-8 max-w-2xl rounded-[24px] border border-white/15 bg-white p-2 shadow-[0_22px_60px_rgba(0,0,0,0.22)]"
-              >
-                <label htmlFor="travel-idea" className="sr-only">
-                  Beschreibe deine Reiseidee
-                </label>
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <div className="flex min-w-0 flex-1 items-center gap-3 px-3 py-2">
-                    <MapPin className="h-5 w-5 shrink-0 text-brand-600" />
-                    <input
-                      id="travel-idea"
-                      name="ziel"
-                      required
-                      minLength={3}
-                      maxLength={1000}
-                      placeholder="Wohin möchtest du reisen?"
-                      className="h-11 w-full min-w-0 flex-1 bg-transparent text-base text-brand-800 outline-none placeholder:text-ink-650"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="inline-flex h-12 items-center justify-center gap-2 rounded-[18px] bg-citrus-400 px-5 text-sm font-semibold text-brand-800 transition hover:-translate-y-0.5 hover:bg-citrus-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-citrus-400/40"
-                  >
-                    Reise planen
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </form>
+              <StartzielForm />
 
               <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-white/65">
                 <span className="inline-flex items-center gap-1.5">
@@ -320,7 +268,7 @@ export default function HomePage() {
           {destinations.map((destination) => (
             <Link
               key={destination.name}
-              href={`/planen?ziel=${encodeURIComponent(destination.name)}&idee=${encodeURIComponent(destination.idea)}`}
+              href={zielHref({ id: destination.placeId, name: destination.name }, destination.idea) ?? '/planen'}
               className="group relative min-h-[340px] overflow-hidden rounded-[28px] bg-brand-800 text-white sm:min-h-[420px] short:min-h-[240px]"
             >
               <Image
