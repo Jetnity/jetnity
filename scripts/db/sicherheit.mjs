@@ -43,6 +43,18 @@ const FREMDE_REISE = 'bbbbbbbb-0000-4000-8000-000000000001'
 // bereits erreicht hat.
 const VIELREISEND = 'dddddddd-0000-4000-8000-000000000001'
 
+const GRAPH = {
+  reise: 'aaaaaaaa-0000-4000-8000-000000000101',
+  a: 'aaaaaaaa-0000-4000-8000-000000000102',
+  b: 'aaaaaaaa-0000-4000-8000-000000000103',
+  t1: 'aaaaaaaa-0000-4000-8000-000000000111',
+  t2: 'aaaaaaaa-0000-4000-8000-000000000112',
+  t3: 'aaaaaaaa-0000-4000-8000-000000000113',
+  t4: 'aaaaaaaa-0000-4000-8000-000000000114',
+  t5: 'aaaaaaaa-0000-4000-8000-000000000115',
+  tNeu: 'aaaaaaaa-0000-4000-8000-000000000116',
+}
+
 /**
  * Erwartungen.
  *
@@ -1417,22 +1429,10 @@ function reisenachweise() {
   ]
 }
 
-const GRAPH = {
-  reise: 'aaaaaaaa-0000-4000-8000-000000000101',
-  a: 'aaaaaaaa-0000-4000-8000-000000000102',
-  b: 'aaaaaaaa-0000-4000-8000-000000000103',
-  t1: 'aaaaaaaa-0000-4000-8000-000000000111',
-  t2: 'aaaaaaaa-0000-4000-8000-000000000112',
-  t3: 'aaaaaaaa-0000-4000-8000-000000000113',
-  t4: 'aaaaaaaa-0000-4000-8000-000000000114',
-  t5: 'aaaaaaaa-0000-4000-8000-000000000115',
-  tNeu: 'aaaaaaaa-0000-4000-8000-000000000116',
-}
-
 function graphAufbauSql() {
   return `
-  insert into public.trips (id, user_id, title, start_date, end_date)
-    values ('${GRAPH.reise}', '${NUTZER}', 'Italien', '2026-09-12', '2026-09-16');
+  insert into public.trips (id, user_id, client_ref, title, start_date, end_date)
+    values ('${GRAPH.reise}', '${NUTZER}', 'graph-1', 'Italien', '2026-09-12', '2026-09-16');
   perform set_config('jetnity.graph_mutation', '1', true);
   insert into public.trip_stages (id, trip_id, user_id, position, name, arrival_date, departure_date)
     values

@@ -539,7 +539,7 @@ Offen aus 2.1:
 
 **Voraussetzungen erfüllt.** Keine neue Infrastruktur. Dieselbe Kostenschranke wie Phase 2.1. Production unverändert aus. Draft-PR #18 bleibt Draft, nicht mergen.
 
-**Nachweise Nachtrag `20260820060000` / `20260820070000` (Development):** `npm test` 698/698; typecheck, lint, Hygiene, `db:typen --pruefen`, `db:rechte`, Production-Build grün; `db:sicherheit` 161/161, einschließlich Graph-Revision, Stammdaten-Revision und isoliertem Gastkontingent. `db:kontingent` nicht gegen die Live-Gasttagesgrenze geschrieben.
+**Nachweise Nachtrag `20260820080000` (Development):** `npm test` 701/701; typecheck, lint, Hygiene, `db:typen --pruefen`, `db:rechte`, Production-Build grün; `db:sicherheit` 168/168, einschließlich aufgeschobener Tages-Eindeutigkeit (fünf gültige Umnummerierungen, eine abgelehnte Doppelnummer) und vollständiger Kommerzial-Sperre. `db:kontingent` nicht gegen die Live-Gasttagesgrenze geschrieben.
 
 ---
 
