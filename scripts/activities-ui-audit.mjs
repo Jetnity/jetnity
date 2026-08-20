@@ -450,8 +450,7 @@ async function seiteVorbereiten(page, zustand, { delayMs = 0 } = {}) {
   })
 }
 
-async function zustandPruefen(browserTyp, name, viewport, zustand) {
-  const browser = await browserTyp.launch({ headless: true })
+async function zustandPruefen(browser, name, viewport, zustand) {
   const kontext = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
     hasTouch: viewport.width <= 430,
@@ -463,7 +462,7 @@ async function zustandPruefen(browserTyp, name, viewport, zustand) {
   try {
     await page.getByText(nachweis, { exact: false }).first().waitFor({ timeout: zustand === 'loading' ? 4000 : 15000 })
   } catch {
-    await browser.close()
+    await kontext.close()
     return {
       ok: false,
       engine: name,
@@ -473,7 +472,7 @@ async function zustandPruefen(browserTyp, name, viewport, zustand) {
     }
   }
   const layout = await page.evaluate(layoutPruefen)
-  await browser.close()
+  await kontext.close()
   return {
     ok: layout.ok,
     engine: name,
@@ -483,8 +482,7 @@ async function zustandPruefen(browserTyp, name, viewport, zustand) {
   }
 }
 
-async function interaktionPruefen(browserTyp, name) {
-  const browser = await browserTyp.launch({ headless: true })
+async function interaktionPruefen(browser, name) {
   const kontext = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true })
   const page = await kontext.newPage()
   let anfragen = 0
@@ -523,7 +521,7 @@ async function interaktionPruefen(browserTyp, name) {
   await page.keyboard.press('Tab')
   const nachTab = await page.evaluate(() => document.activeElement?.getAttribute('role') === 'radio' || document.activeElement?.tagName === 'BUTTON')
 
-  await browser.close()
+  await kontext.close()
   const fehler = []
   if (!text.includes('Antwort für day-3')) fehler.push(`nach schnellem Wechsel blieb nicht die Antwort des gewählten Tags: ${text.slice(0, 180)}`)
   if (checked !== 'true') fehler.push('aria-checked des dritten Chips ist nicht true')
@@ -543,12 +541,17 @@ async function main() {
   ]
   try {
     for (const [name, typ] of engines) {
-      for (const viewport of BREITEN) {
-        for (const zustand of Object.keys(ZUSTAENDE)) {
-          ergebnisse.push(await zustandPruefen(typ, name, viewport, zustand))
+      const browser = await typ.launch({ headless: true })
+      try {
+        for (const viewport of BREITEN) {
+          for (const zustand of Object.keys(ZUSTAENDE)) {
+            ergebnisse.push(await zustandPruefen(browser, name, viewport, zustand))
+          }
         }
+        ergebnisse.push(await interaktionPruefen(browser, name))
+      } finally {
+        await browser.close()
       }
-      ergebnisse.push(await interaktionPruefen(typ, name))
     }
   } finally {
     server.kill()
