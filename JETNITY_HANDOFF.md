@@ -62,7 +62,7 @@ Production wurde erfolgreich auf denselben fachlichen Datenbankstand wie Develop
 - 28 registrierte Migrationen
 - neueste Migration: `20260820080000_reise_tage_eindeutig_aufgeschoben`
 - Reisetabellen (`trips`, `trip_stages`, `trip_days`, `trip_items`) vorhanden und zum Rollout-Zeitpunkt leer
-- Supabase-Projekt nach dem Rollout `ACTIVE_HEALTHY`
+- Supabase Production nach dem Rollout gesund; der Branch-Merge endete mit `FUNCTIONS_DEPLOYED` / `ACTIVE_HEALTHY`
 - bekannte Security-Advisor-Warnungen entsprechen dem bereits dokumentierten Development-Stand; durch den Rollout wurde keine neue Warnklasse eingeführt
 
 Wichtig: **Der Modellweg bleibt in Production weiterhin deaktiviert.** Das Datenbankschema ist vorbereitet; eine spätere Modellaktivierung ist eine separate Production-Freigabe.
