@@ -354,22 +354,45 @@ describe('Die Nutzlast für public.reise_anlegen() trägt nur, was die Funktion 
     if (ergebnis.success) assert.equal('user_id' in ergebnis.data, false)
   })
 
-  test('ein mitgeschickter Preis wird nicht übernommen', () => {
-    // Die Funktion liest an einem Planpunkt nur `kind`, `title`, `note`,
-    // `position` und `starts_at`. Ein Preis in der Nutzlast käme nicht an; ihn
-    // zu akzeptieren wäre die Behauptung, er täte es.
+  test('ein übernommener Flugpreis bleibt in der Nutzlast', () => {
     const ergebnis = reiseNutzlastSchema.safeParse({
       ...nutzlast,
       days: [
         {
           ...nutzlast.days[0],
-          items: [{ ...nutzlast.days[0].items[0], price_amount: 120, price_currency: 'CHF' }],
+          items: [
+            {
+              ...nutzlast.days[0].items[0],
+              kind: 'flight',
+              price_amount: 120,
+              price_currency: 'CHF',
+              provider: 'duffel',
+              external_ref: '1:ZRH:BKK:20261101:LX180',
+            },
+          ],
         },
       ],
     })
 
     assert.equal(ergebnis.success, true)
-    if (ergebnis.success) assert.equal('price_amount' in ergebnis.data.days[0].items[0], false)
+    if (ergebnis.success) {
+      assert.equal(ergebnis.data.days[0].items[0].price_amount, 120)
+      assert.equal(ergebnis.data.days[0].items[0].provider, 'duffel')
+    }
+  })
+
+  test('ein Preis ohne Währung wird abgelehnt', () => {
+    const ergebnis = reiseNutzlastSchema.safeParse({
+      ...nutzlast,
+      days: [
+        {
+          ...nutzlast.days[0],
+          items: [{ ...nutzlast.days[0].items[0], price_amount: 120, price_currency: null }],
+        },
+      ],
+    })
+
+    assert.equal(ergebnis.success, false)
   })
 
   test('mehr Etappen als erlaubt', () => {
@@ -401,7 +424,9 @@ describe('Das Formular unter /planen', () => {
     clientRef: 'trip-1',
     title: 'Japan',
     destination: 'Japan',
+    destinationPlaceId: 'geonames:1861060',
     origin: 'Zürich',
+    originPlaceId: 'geonames:2657896',
     startDate: '2026-09-12',
     endDate: '2026-09-16',
     travellers: 2,
@@ -427,11 +452,63 @@ describe('Das Formular unter /planen', () => {
     assert.equal(neueReiseSchema.safeParse({ ...eingabe, startDate: '' }).success, false)
   })
 
+  test('eine Rückreise vor der Abreise kommt nicht durch', () => {
+    const ergebnis = neueReiseSchema.safeParse({
+      ...eingabe,
+      startDate: '2026-09-16',
+      endDate: '2026-09-12',
+    })
+    assert.equal(ergebnis.success, false)
+    if (!ergebnis.success) {
+      assert.match(ersteMeldung(ergebnis.error), /Rückreise darf nicht vor der Abreise/)
+    }
+  })
+
   test('Rand-Leerzeichen werden entfernt', () => {
     const ergebnis = neueReiseSchema.safeParse({ ...eingabe, title: '  Japan  ' })
 
     assert.equal(ergebnis.success, true)
     if (ergebnis.success) assert.equal(ergebnis.data.title, 'Japan')
+  })
+
+  test('nur eingetippter Text ohne bestätigten Treffer ist kein Ort', () => {
+    assert.equal(
+      neueReiseSchema.safeParse({
+        ...eingabe,
+        destination: 'Test',
+        destinationPlaceId: '',
+      }).success,
+      false,
+    )
+    assert.equal(
+      neueReiseSchema.safeParse({
+        ...eingabe,
+        destination: 'Mordor',
+        destinationPlaceId: undefined,
+      }).success,
+      false,
+    )
+  })
+
+  test('eine manipulierte Place-ID kommt nicht durch', () => {
+    assert.equal(
+      neueReiseSchema.safeParse({ ...eingabe, destinationPlaceId: 'mordor' }).success,
+      false,
+    )
+    assert.equal(
+      neueReiseSchema.safeParse({ ...eingabe, originPlaceId: 'airport:xxx' }).success,
+      false,
+    )
+  })
+})
+
+describe('Eine alte Reise ohne Place-Metadaten bleibt lesbar', () => {
+  test('fehlende originPlaceId und placeId werden zu null', () => {
+    const gelesen = reiseLesen(reise())
+
+    assert.notEqual(gelesen, null)
+    assert.equal(gelesen?.originPlaceId, null)
+    assert.equal(gelesen?.stages[0]?.placeId, null)
   })
 })
 

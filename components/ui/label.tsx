@@ -22,7 +22,7 @@ const labelVariants = cva(
         true: 'text-muted-foreground',
       },
       invalid: {
-        true: 'text-red-600',
+        true: 'text-brand-900',
       },
       animated: {
         true: 'hover:text-primary/90 focus-within:text-primary/90',
@@ -110,7 +110,7 @@ const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
 
         {/* Required-Sternchen (dekorativ) */}
         {required && (
-          <span aria-hidden="true" className="ml-0.5 text-red-600">
+          <span aria-hidden="true" className="ml-0.5 text-danger-600">
             *
           </span>
         )}

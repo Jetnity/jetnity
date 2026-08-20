@@ -6,7 +6,7 @@
 // Warum Preisangaben verschwinden
 // ---------------------------------------------------------------------------
 //
-// Phase 3 – Amadeus, Hotels, Aktivitäten – gibt es nicht. Bis dahin hat Jetnity
+// Phase 3 – echte Flug-, Hotel- und Aktivitätspreise – war hier noch nicht angebunden. Bis dahin hat Jetnity
 // keine belastbare Herkunft für einen Preis, und ein Satz wie „Flug ab CHF 412“
 // ist deshalb keine Auskunft, sondern eine Behauptung mit dem Aussehen einer
 // Auskunft. Genau das ist die Sorte Fehler, die teuer wird: Wer ihn liest,

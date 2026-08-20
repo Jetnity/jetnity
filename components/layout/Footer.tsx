@@ -83,7 +83,16 @@ export default function Footer() {
 
         <div className="mt-14 flex flex-col justify-between gap-3 border-t border-white/10 pt-6 text-xs text-white/45 sm:flex-row">
           <p>© {new Date().getFullYear()} Jetnity. Alle Rechte vorbehalten.</p>
-          <p>Entwickelt mit Datenschutz und Schweizer Qualitätsanspruch.</p>
+          <p>
+            Ortsdaten:{' '}
+            <a
+              href="https://www.geonames.org/"
+              className="underline decoration-white/25 underline-offset-2 hover:text-white"
+            >
+              GeoNames
+            </a>{' '}
+            (CC BY 4.0)
+          </p>
         </div>
       </div>
     </footer>

@@ -118,7 +118,15 @@ describe('Der Vorschlag als Nutzlast für public.reise_anlegen()', () => {
         title: 'Forum Romanum und Kolosseum',
         note: null,
         position: 1,
+        starts_on: null,
         starts_at: '09:00',
+        ends_on: null,
+        ends_at: null,
+        price_amount: null,
+        price_currency: null,
+        provider: null,
+        external_ref: null,
+        booking_url: null,
       },
     ])
   })
@@ -131,16 +139,21 @@ describe('Der Vorschlag als Nutzlast für public.reise_anlegen()', () => {
         country_code: 'IT',
         arrival_date: '2027-06-01',
         departure_date: '2027-06-03',
+        latitude: null,
+        longitude: null,
+        place_id: null,
       },
     ])
   })
 
   test('kein Preis, kein Anbieter, kein Buchungslink', () => {
-    // Nicht als leerer Wert, sondern gar nicht: `public.reise_anlegen()` liest an
-    // einem Planpunkt nur `kind`, `title`, `note`, `position` und `starts_at`.
-    const felder = new Set(nutzlast.days.flatMap((tag) => tag.items.flatMap(Object.keys)))
-
-    assert.deepEqual([...felder].sort(), ['kind', 'note', 'position', 'starts_at', 'title'])
+    // Der Modellweg setzt Handelsfelder ausdrücklich auf null (ADR-0054).
+    // `reise_anlegen()` kann sie seit Phase 3.1 schreiben – aber nicht aus einem Vorschlag.
+    const punkt = nutzlast.days[1]?.items[0]
+    assert.equal(punkt?.price_amount, null)
+    assert.equal(punkt?.provider, null)
+    assert.equal(punkt?.external_ref, null)
+    assert.equal(punkt?.booking_url, null)
   })
 
   test('das Budgetziel steht an der Reise, nicht an einem Planpunkt', () => {
@@ -323,5 +336,40 @@ describe('Die Grenzen halten auch am Rand', () => {
     const daten = vorschlagAlsNutzlast(voll, 'trip-1').days.map((tag) => tag.day_date)
 
     assert.equal(new Set(daten).size, daten.length)
+  })
+})
+
+describe('Kanonische Orte am Vorschlag', () => {
+  const bangkok = {
+    id: 'geonames:1609350',
+    source: 'geonames' as const,
+    sourceId: '1609350',
+    name: 'Bangkok',
+    typ: 'city' as const,
+    country: 'Thailand',
+    countryCode: 'TH',
+    region: null,
+    lat: 13.75,
+    lon: 100.52,
+    iata: null,
+    keywords: null,
+  }
+
+  test('ohne Auflösung bleibt keine Place-ID stehen', () => {
+    const nutzlast = vorschlagAlsNutzlast(alsVorschlag(VORSCHLAG_THAILAND), 'trip-1')
+    assert.equal(nutzlast.origin_place_id, null)
+    assert.deepEqual(nutzlast.stages.map((etappe) => etappe.place_id), [null, null])
+  })
+
+  test('ein eindeutiger Treffer wird zur Place-ID, der Name bleibt der Modelltext', () => {
+    const nutzlast = vorschlagAlsNutzlast(alsVorschlag(VORSCHLAG_THAILAND), 'trip-1', {
+      origin: null,
+      stages: [bangkok, null],
+    })
+    assert.equal(nutzlast.stages[0]?.name, 'Bangkok')
+    assert.equal(nutzlast.stages[0]?.place_id, 'geonames:1609350')
+    assert.equal(nutzlast.stages[0]?.latitude, 13.75)
+    assert.equal(nutzlast.stages[1]?.place_id, null)
+    assert.equal(nutzlast.origin_place_id, null)
   })
 })

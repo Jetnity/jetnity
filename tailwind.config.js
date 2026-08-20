@@ -57,6 +57,10 @@ module.exports = {
           400: 'rgb(var(--jet-line-400) / <alpha-value>)',
           500: 'rgb(var(--jet-line-500) / <alpha-value>)',
         },
+        danger: {
+          400: 'rgb(var(--jet-danger-400) / <alpha-value>)',
+          600: 'rgb(var(--jet-danger-600) / <alpha-value>)',
+        },
         ink: {
           300: 'rgb(var(--jet-ink-300) / <alpha-value>)',
           400: 'rgb(var(--jet-ink-400) / <alpha-value>)',

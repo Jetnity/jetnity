@@ -1,0 +1,23 @@
+1861060	Japan	Japan	Nippon,Nihon,Japon	35.68536	139.75309	A	PCLI	JP		00				126860301		0	Asia/Tokyo	2024-01-01
+1605651	Thailand	Thailand	Siam,Prathet Thai	15.5	101	A	PCLI	TH		00				69428524		0	Asia/Bangkok	2024-01-01
+1650535	Bali	Bali	Pulau Bali	-8.33333	115.16667	A	ADM1	ID		BA				4362000		0	Asia/Makassar	2024-01-01
+3165361	Tuscany	Tuscany	Toscana,Toskana	43.41667	11	A	ADM1	IT		16				3729644		0	Europe/Rome	2024-01-01
+3181913	South Tyrol	South Tyrol	Südtirol,Alto Adige,Suedtirol	46.5	11.35	A	ADM2	IT		32	BZ			533715		0	Europe/Rome	2024-01-01
+5128581	New York City	New York City	New York,NYC,Nueva York	40.71427	-74.00597	P	PPL	US		NY				8804190		10	America/New_York	2024-01-01
+2657896	Zürich	Zurich	Zurich,Zuerich	47.36667	8.55	P	PPLA	CH		ZH				434008		408	Europe/Zurich	2024-01-01
+2659811	Lucerne	Lucerne	Luzern	47.05048	8.30635	P	PPLA	CH		LU				81691		436	Europe/Zurich	2024-01-01
+2661604	Basel	Basel	Bâle,Basle	47.5584	7.57327	P	PPLA	CH		BS				177595		260	Europe/Zurich	2024-01-01
+2512989	Mallorca	Mallorca	Majorca,Mallorca Island	39.61667	2.98333	T	ISL	ES		07				896038		0	Europe/Madrid	2024-01-01
+2988507	Paris	Paris	Paname	48.85341	2.3488	P	PPLC	FR		11				2138551		35	Europe/Paris	2024-01-01
+2643743	London	London	Greater London	51.50853	-0.12574	P	PPLC	GB		ENG				8961989		25	Europe/London	2024-01-01
+2657915	Zermatt	Zermatt		46.02013	7.74863	P	PPL	CH		VS				5820		1608	Europe/Zurich	2024-01-01
+2267057	Lisbon	Lisbon	Lisboa,Lissabon	38.71667	-9.13333	P	PPLC	PT		14				517802		2	Europe/Lisbon	2024-01-01
+2759794	Amsterdam	Amsterdam		52.37403	4.88969	P	PPLC	NL		07				741636		-2	Europe/Amsterdam	2024-01-01
+1609350	Bangkok	Bangkok	Krung Thep,Krung Thep Maha Nakhon	13.75	100.51667	P	PPLC	TH		40				5104476		2	Asia/Bangkok	2024-01-01
+3128760	Barcelona	Barcelona	Barcelone,Barcelon	41.38879	2.15899	P	PPLC	ES		56				1620343		12	Europe/Madrid	2024-01-01
+4717560	Paris	Paris	Paris Texas	33.66094	-95.55551	P	PPLA2	US		TX				24782		183	America/Chicago	2024-01-01
+1606376	Koh Samui	Koh Samui	Ko Samui,Samui	9.53567	99.93567	T	ISL	TH		46				62940		0	Asia/Bangkok	2024-01-01
+9990001	Mordor	Mordor	Mordor	0	0	P	PPL	XX		00				12		0	UTC	2024-01-01
+9990002	Test	Test	Test Village	1	1	P	PPL	US		TX				10		0	America/Chicago	2024-01-01
+9990003	abcxyz	abcxyz		2	2	P	PPL	DE		00				3		0	Europe/Berlin	2024-01-01
+9990004	Helipad Nowhere	Helipad Nowhere		3	3	S	AIRH	CH		ZH				0		0	Europe/Zurich	2024-01-01

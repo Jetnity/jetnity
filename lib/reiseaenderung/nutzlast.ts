@@ -35,6 +35,7 @@ export function aenderungAlsNutzlast(
     basis_revision: basisRevision,
     title: graph.title,
     origin: graph.origin,
+    origin_place_id: graph.originPlaceId,
     start_date: graph.startDate,
     end_date: graph.endDate,
     travellers: graph.travellers,
@@ -52,6 +53,7 @@ export function aenderungAlsNutzlast(
       departure_date: etappe.departureDate,
       latitude: etappe.latitude,
       longitude: etappe.longitude,
+      place_id: etappe.placeId,
     })),
     days: graph.days.map((tag) => ({
       id: tag.id,

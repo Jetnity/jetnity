@@ -18,10 +18,14 @@
 import { test, describe, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { OPTION_DIREKT } from '@/lib/flights/fixtures/optionen'
+import { alsFlugMomentaufnahme } from '@/lib/flights/uebernahme'
+import { istKommerziell } from '@/lib/reiseaenderung/geschuetzt'
 import {
   GastreiseBestehtFehler,
   SCHLUESSEL,
   SpeicherFehler,
+  gastFlugUebernehmen,
   gastPlanpunktAnlegen,
   gastPlanpunktEntfernen,
   gastreiseAendern,
@@ -107,7 +111,9 @@ function eingabe(abweichung: Partial<CreateTripInput> = {}): CreateTripInput {
     clientRef: kennungErzeugen('trip'),
     title: 'Japan im Herbst',
     destination: 'Japan',
+    destinationPlaceId: 'geonames:1861060',
     origin: 'Zürich',
+    originPlaceId: 'geonames:2657896',
     startDate: '2026-09-12',
     endDate: '2026-09-16',
     travellers: 2,
@@ -180,6 +186,8 @@ describe('Genau eine aktive Gastreise', () => {
     assert.equal(reise.title, 'Japan im Herbst')
     assert.equal(reise.days.length, 5, 'die Tage entstehen aus dem Zeitraum')
     assert.equal(reise.stages[0].name, 'Japan', 'das Ziel wird die erste Etappe')
+    assert.equal(reise.stages[0].placeId, 'geonames:1861060')
+    assert.equal(reise.originPlaceId, 'geonames:2657896')
     assert.equal(gastspeicherLaden().aktiv?.id, reise.id)
   })
 
@@ -247,6 +255,20 @@ describe('Bearbeiten einer Gastreise', () => {
     assert.equal(danach.days[1].items[0].dayId, tag.id)
     assert.equal(danach.days[0].items.length, 0)
     assert.equal(gastspeicherLaden().aktiv?.days[1].items.length, 1, 'und ist gespeichert')
+  })
+
+  test('ein übernommener Flug bleibt kommerziell gespeichert', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const aufnahme = alsFlugMomentaufnahme(OPTION_DIREKT)
+    assert.ok(aufnahme)
+    const danach = gastFlugUebernehmen(reise, aufnahme, reise.days[0]!.id)
+    const flug = danach.days[0]?.items.find((punkt) => punkt.kind === 'flight')
+    assert.ok(flug)
+    assert.equal(istKommerziell(flug), true)
+    assert.equal(flug.priceAmount, 892.5)
+    assert.equal(flug.provider, 'duffel')
+    assert.equal(flug.bookingUrl, null)
+    assert.equal(gastspeicherLaden().aktiv?.days[0]?.items[0]?.provider, 'duffel')
   })
 
   test('ein Punkt an einem fremden Tag wird abgelehnt', () => {

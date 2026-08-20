@@ -17,13 +17,20 @@ import { Sparkles } from 'lucide-react'
 
 import Aenderungsfortschritt from '@/components/trips/Aenderungsfortschritt'
 import AenderungVorschau from '@/components/trips/AenderungVorschau'
-import { aenderungErzeugen, aenderungErzeugenGast, aenderungUebernehmen } from '@/lib/reiseaenderung/aktionen'
+import {
+  aenderungErzeugen,
+  aenderungErzeugenGast,
+  aenderungOrteAufloesen,
+  aenderungUebernehmen,
+} from '@/lib/reiseaenderung/aktionen'
+import { operationenAnwenden } from '@/lib/reiseaenderung/anwenden'
 import type { Aenderungsvorschau } from '@/lib/reiseaenderung/erzeugen'
 import { AENDERUNG_GRENZEN } from '@/lib/reiseaenderung/schema'
 import {
   SpeicherFehler,
   VeralteteFassungFehler,
   gastreiseAendern,
+  kennungErzeugen,
 } from '@/lib/trips/gastspeicher'
 import type { Trip, TripSource } from '@/types/trips'
 
@@ -95,10 +102,13 @@ export default function ReiseAenderung({ reise, quelle, onGespeichert }: ReiseAe
 
     if (gast) {
       try {
+        const angewandt = operationenAnwenden(reise, vorschau.aenderung.operationen, kennungErzeugen)
+        const orte = angewandt.ok ? await aenderungOrteAufloesen(angewandt.reise) : undefined
         const gespeichert = gastreiseAendern({
           mutationId: vorschau.mutationId,
           basisRevision: vorschau.basisRevision,
           operationen: vorschau.aenderung.operationen,
+          orte,
         })
         setVorschau(null)
         setFreitext('')

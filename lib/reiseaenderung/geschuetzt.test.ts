@@ -66,6 +66,43 @@ describe('Geschützte kommerzielle Felder', () => {
     assert.equal(dom?.stageId, 'stage-1')
   })
 
+  test('ein übernommener Flug bleibt gegen Modellmutation geschützt', () => {
+    const vorher = beispielreise()
+    vorher.days[0]!.items.push({
+      id: 'item-flug',
+      dayId: 'day-1',
+      stageId: 'stage-1',
+      kind: 'flight',
+      title: 'ZRH → BKK · SWISS',
+      note: 'LX180 ZRH 09:15 → BKK 21:40',
+      position: 2,
+      startsOn: '2026-11-01',
+      startsAt: '09:15',
+      endsOn: '2026-11-01',
+      endsAt: '21:40',
+      priceAmount: 892.5,
+      priceCurrency: 'CHF',
+      provider: 'duffel',
+      externalRef: '1:ZRH:BKK:20261101:LX180',
+      bookingUrl: null,
+    })
+    const nachher = structuredClone(vorher)
+    const flug = nachher.days[0]!.items.find((punkt) => punkt.id === 'item-flug')
+    assert.ok(flug)
+    flug.title = 'Geänderter Flug'
+    flug.priceAmount = 10
+    flug.startsAt = '03:00'
+    flug.provider = 'evil'
+
+    const geschuetzt = kommerziellErhalten(vorher, nachher)
+    const bleibt = geschuetzt.days[0]?.items.find((punkt) => punkt.id === 'item-flug')
+    assert.equal(bleibt?.title, 'ZRH → BKK · SWISS')
+    assert.equal(bleibt?.priceAmount, 892.5)
+    assert.equal(bleibt?.startsAt, '09:15')
+    assert.equal(bleibt?.provider, 'duffel')
+    assert.equal(bleibt?.kind, 'flight')
+  })
+
   test('ohne Tag oder Etappe bleibt der kommerzielle Punkt ungeplant und unverändert', () => {
     const vorher = beispielreise()
     const nachher = beispielreise()

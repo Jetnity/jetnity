@@ -51,6 +51,7 @@ function etappe(teil: Partial<TripStage> & Pick<TripStage, 'id' | 'position' | '
     departureDate: null,
     latitude: null,
     longitude: null,
+    placeId: null,
     ...teil,
   }
 }
@@ -105,6 +106,7 @@ function reise(abweichung: Partial<Reisegraph> = {}): Reisegraph {
     clientRef: 'trip-1',
     title: 'Italien',
     origin: 'Zürich',
+    originPlaceId: null,
     startDate: '2026-09-12',
     endDate: '2026-09-16',
     travellers: 2,
@@ -156,6 +158,16 @@ function anwenden(operationen: Modelloperation[], basis = reise()) {
 }
 
 describe('Stammdaten', () => {
+  test('eine neue Abreise verliert die alte Place-ID', () => {
+    const basis = reise()
+    basis.originPlaceId = 'geonames:2657896'
+    const ergebnis = anwenden([op({ art: 'stammdaten', abreiseort: 'Basel' })], basis)
+    assert.equal(ergebnis.ok, true)
+    if (!ergebnis.ok) return
+    assert.equal(ergebnis.reise.origin, 'Basel')
+    assert.equal(ergebnis.reise.originPlaceId, null)
+  })
+
   test('Reisende, Budget und Tempo', () => {
     const ergebnis = anwenden([
       op({ art: 'stammdaten', reisende: 3, budgetziel: 3000, tempo: 'calm' }),

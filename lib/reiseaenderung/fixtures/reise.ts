@@ -43,6 +43,7 @@ function etappe(teil: Partial<TripStage> & Pick<TripStage, 'id' | 'position' | '
     departureDate: null,
     latitude: null,
     longitude: null,
+    placeId: null,
     ...teil,
   }
 }
@@ -53,6 +54,7 @@ export function beispielreise(abweichung: Partial<Reisegraph> = {}): Reisegraph 
     clientRef: 'trip-1',
     title: 'Italien',
     origin: 'Zürich',
+    originPlaceId: null,
     startDate: '2026-09-12',
     endDate: '2026-09-16',
     travellers: 2,

@@ -1,0 +1,120 @@
+// lib/flights/suche.ts
+//
+// Orchestrierung: Zustand → Rate-Limit → Provider → Ranking.
+// Der Provider wird übergeben, damit Tests keinen echten Adapter brauchen.
+
+import { sucheFuerClient, type FlugSucheAntwort } from '@/lib/flights/client-sicht'
+import { FLUG_ABDECKUNGSHINWEIS } from '@/lib/flights/domain'
+import { FlugProviderFehler, type FlugProvider } from '@/lib/flights/provider'
+import { optionenBewerten } from '@/lib/flights/ranking'
+import { flugSucheErlaubt } from '@/lib/flights/rate-limit'
+import { ersteFlugmeldung, flugSuchanfrageSchema } from '@/lib/flights/schema'
+import { flugZustand, flugZustandMeldung, type FlugUmgebung, type FlugZustand } from '@/lib/flights/zustand'
+
+export type SuchePorts = {
+  zustand: FlugZustand
+  provider: FlugProvider | null
+  kennung: string
+}
+
+function sucheOhneProvider(zustand: FlugZustand): FlugSucheAntwort {
+  return {
+    status: 'unavailable',
+    message: flugZustandMeldung(zustand),
+    coverageNote: FLUG_ABDECKUNGSHINWEIS,
+    options: [],
+  }
+}
+
+export async function fluegeSuchen(
+  eingabe: unknown,
+  ports: SuchePorts,
+): Promise<{ httpStatus: number; koerper: FlugSucheAntwort }> {
+  if (!ports.zustand.aktiv || !ports.provider) {
+    return { httpStatus: 200, koerper: sucheOhneProvider(ports.zustand) }
+  }
+
+  const geprueft = flugSuchanfrageSchema.safeParse(eingabe)
+  if (!geprueft.success) {
+    return {
+      httpStatus: 400,
+      koerper: {
+        status: 'error',
+        message: ersteFlugmeldung(geprueft.error),
+        coverageNote: FLUG_ABDECKUNGSHINWEIS,
+        options: [],
+      },
+    }
+  }
+
+  const quota = flugSucheErlaubt(ports.kennung)
+  if (!quota.ok) {
+    return {
+      httpStatus: 429,
+      koerper: {
+        status: 'rate_limited',
+        message: 'Du hast gerade zu oft gesucht. Bitte warte einen Moment.',
+        coverageNote: FLUG_ABDECKUNGSHINWEIS,
+        options: [],
+      },
+    }
+  }
+
+  try {
+    const treffer = await ports.provider.suchen(geprueft.data)
+    const bewertet = optionenBewerten(treffer.options, geprueft.data)
+    const status = treffer.partial ? 'partial' : bewertet.length === 0 ? 'empty' : 'ok'
+    const message =
+      status === 'empty'
+        ? 'Keine passenden Verbindungen gefunden.'
+        : status === 'partial'
+          ? 'Einige Angebote konnten nicht gelesen werden. Die übrigen Verbindungen siehst du unten.'
+          : 'Verbindungen gefunden.'
+
+    return {
+      httpStatus: 200,
+      koerper: sucheFuerClient({ status, message, options: bewertet }),
+    }
+  } catch (fehler) {
+    if (fehler instanceof FlugProviderFehler) {
+      const status =
+        fehler.art === 'timeout'
+          ? 'timeout'
+          : fehler.art === 'unavailable'
+            ? 'unavailable'
+            : fehler.art === 'invalid'
+              ? 'invalid'
+              : 'error'
+      return {
+        httpStatus: 200,
+        koerper: {
+          status,
+          message: fehler.message,
+          coverageNote: FLUG_ABDECKUNGSHINWEIS,
+          options: [],
+        },
+      }
+    }
+    return {
+      httpStatus: 200,
+      koerper: {
+        status: 'error',
+        message: 'Die Flugsuche ist fehlgeschlagen.',
+        coverageNote: FLUG_ABDECKUNGSHINWEIS,
+        options: [],
+      },
+    }
+  }
+}
+
+export function suchePortsAusUmgebung(
+  umgebung: FlugUmgebung,
+  provider: FlugProvider | null,
+  kennung: string,
+): SuchePorts {
+  return {
+    zustand: flugZustand(umgebung),
+    provider,
+    kennung,
+  }
+}

@@ -76,11 +76,18 @@ const FAELLE = [
     name: 'anon liest die einzige öffentliche Tabelle und sonst keine',
     rolle: 'anon',
     sql: `select * from information_schema.role_table_grants
-          where table_schema = 'public' and grantee = 'anon' and table_name <> 'airports'`,
+          where table_schema = 'public' and grantee = 'anon' and table_name not in ('airports', 'places')`,
     erwartung: 'leer',
     grund:
       'Bis Phase 1.4b las anon zusätzlich blog_posts und blog_comments. Beide Tabellen sind entfernt; ' +
-      'airports ist der letzte öffentliche Lesezugriff und soll der letzte bleiben.',
+      'airports und places sind die einzigen öffentlichen Lesetabellen (Flughafen- und Ortssuche).',
+  },
+  {
+    name: 'anon liest Orte',
+    rolle: 'anon',
+    sql: `select * from public.places`,
+    erwartung: 'erlaubt',
+    grund: 'Die öffentliche Ortssuche unter /api/search/places braucht diesen Zugriff.',
   },
 
   // --- Kein Zugriff ohne Anmeldung ----------------------------------------
@@ -2000,7 +2007,11 @@ function aufbau() {
     `insert into public.refunds (payment_id, amount_chf, created_at) values ('pay_1', 10, now());`,
     `insert into public.security_events (type, ip) values ('login_failed', '203.0.113.1');`,
     `insert into public.blocked_ips (ip, reason) values ('203.0.113.2', 'Test');`,
-    `insert into public.airports (iata, name, city, country) values ('ZRH', 'Zürich', 'Zürich', 'CH');`,
+    `insert into public.airports (iata, name, city, country) values ('ZRH', 'Zürich', 'Zürich', 'CH')
+       on conflict (iata) do nothing;`,
+    `insert into public.places (id, source, source_id, name, typ, country, country_code)
+       values ('test', 'geonames', '1', 'Testort', 'city', 'Schweiz', 'CH')
+       on conflict (id) do nothing;`,
     `insert into public.stripe_webhooks (id, type) values ('evt_1', 'payment_intent.succeeded');`,
     // Eine abgeschlossene Zeile im Kostenprotokoll. Ohne sie wäre beim Betrieb
     // „0 Zeilen“ nicht von einer dichten Policy zu unterscheiden. Die Kennung ist

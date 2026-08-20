@@ -40,6 +40,7 @@ export type ReiseZeile = {
   client_ref: string | null
   title: string
   origin: string | null
+  origin_place_id?: string | null
   start_date: string | null
   end_date: string | null
   travellers: number
@@ -64,6 +65,7 @@ export type EtappeZeile = {
   departure_date: string | null
   latitude: number | string | null
   longitude: number | string | null
+  place_id?: string | null
   created_at: string
 }
 
@@ -154,6 +156,7 @@ export function etappeAus(zeile: EtappeZeile): TripStage {
     departureDate: zeile.departure_date,
     latitude: zahl(zeile.latitude),
     longitude: zahl(zeile.longitude),
+    placeId: zeile.place_id ?? null,
   }
 }
 
@@ -218,6 +221,7 @@ export function reiseAus(
     clientRef: reise.client_ref,
     title: reise.title,
     origin: reise.origin,
+    originPlaceId: reise.origin_place_id ?? null,
     startDate: reise.start_date,
     endDate: reise.end_date,
     travellers: reise.travellers,
@@ -252,6 +256,7 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
     client_ref: reise.clientRef ?? reise.id,
     title: reise.title,
     origin: reise.origin,
+    origin_place_id: reise.originPlaceId,
     start_date: reise.startDate,
     end_date: reise.endDate,
     travellers: reise.travellers,
@@ -266,6 +271,9 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
       country_code: etappe.countryCode,
       arrival_date: etappe.arrivalDate,
       departure_date: etappe.departureDate,
+      latitude: etappe.latitude,
+      longitude: etappe.longitude,
+      place_id: etappe.placeId,
     })),
     days: reise.days.map((tag, stelle) => {
       const etappe = tag.stageId
@@ -285,7 +293,15 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
           title: punkt.title,
           note: punkt.note,
           position: punkt.position || ort + 1,
+          starts_on: punkt.startsOn,
           starts_at: punkt.startsAt,
+          ends_on: punkt.endsOn,
+          ends_at: punkt.endsAt,
+          price_amount: punkt.priceAmount,
+          price_currency: punkt.priceCurrency,
+          provider: punkt.provider,
+          external_ref: punkt.externalRef,
+          booking_url: punkt.bookingUrl,
         })),
       }
     }),
@@ -294,7 +310,15 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
       title: punkt.title,
       note: punkt.note,
       position: punkt.position || ort + 1,
+      starts_on: punkt.startsOn,
       starts_at: punkt.startsAt,
+      ends_on: punkt.endsOn,
+      ends_at: punkt.endsAt,
+      price_amount: punkt.priceAmount,
+      price_currency: punkt.priceCurrency,
+      provider: punkt.provider,
+      external_ref: punkt.externalRef,
+      booking_url: punkt.bookingUrl,
     })),
   }
 }

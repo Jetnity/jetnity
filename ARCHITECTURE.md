@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
 Stand: 20. August 2026
-Gültig für: Phase 2.2, Stand nach Sprachänderung, `trip_days.stage_id` und `reise_aendern()`
+Gültig für: Phase 3.1, Stand nach Flight Foundation, Duffel-Adapter und lokaler Flughafenbasis
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -38,6 +38,7 @@ supabase/migrations Datenbankschema, vollständig und reproduzierbar (Abschnitt 
 middleware.ts       Edge-Middleware
 scripts/            Prüfungen, die in der CI laufen
 scripts/db/         Inventur, Migrationslauf und Nachweise gegen Development
+scripts/airports/   OurAirports-Import nach Development, nie in der CI
 styles/globals.css  Design-Tokens
 tailwind.config.js  Token-Mapping
 ```
@@ -93,7 +94,7 @@ Diese Verbindung ist ein Entwicklerwerkzeug. Sie ersetzt weder die App-Clients a
 
 Verifikation am 17. August 2026 gegen den offiziellen Remote-Server, vor Phase 1.4: Authentifizierung erfolgreich, genau die zehn Werkzeuge der drei Feature-Gruppen, Account-/Branching-/Functions-/Storage-Werkzeuge abwesend, Projekt-URL identisch mit `SUPABASE_PROJECT_REF`. `list_tables` lieferte damals 39 Tabellen in `public`; nach Phase 1.4b sind es 8 und nach Phase 1.5 elf.
 
-Dieselben Zugangsdaten – Personal Access Token und Projekt-Referenz – nutzen die Skripte in `scripts/db/` über die Management API. Sie sind der Weg, auf dem Phase 1.4 und 1.4b inventarisiert, Migrationen angewendet und Nachweise geführt haben; ein Datenbankpasswort oder ein Service-Key war dafür nicht nötig. Beschreibung in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 2.
+Dieselben Zugangsdaten – Personal Access Token und Projekt-Referenz – nutzen die Skripte in `scripts/db/` über die Management API. Sie sind der Weg, auf dem Phase 1.4 und 1.4b inventarisiert, Migrationen angewendet und Nachweise geführt haben; ein Datenbankpasswort oder ein Service-Key war dafür nicht nötig. Beschreibung in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 2. Ein späterer Production-Import geht nicht über MCP, sondern nur über den manuellen Mehrfachschutz in [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md).
 
 ---
 
@@ -148,7 +149,7 @@ Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
 | Pfad | Aufgabe |
 | --- | --- |
 | `/` | Startseite mit Positionierung und Einstieg in die Reiseplanung |
-| `/planen` | Reisebeschreibung in eigenen Worten (`components/trips/Reiseidee.tsx`) und darunter das Formular (`components/trips/TripPlanner.tsx`) |
+| `/planen` | Reisebeschreibung in eigenen Worten (`components/trips/Reiseidee.tsx`) und darunter das Formular (`components/trips/TripPlanner.tsx`). Feldfehler sitzen am Feld, nicht nur unter der Absenden-Taste (ADR-0068). |
 | `/reisen` | Übersicht der Reisen – im Konto aus Supabase, als Gast die eine Gastreise |
 | `/reisen/[tripId]` | Trip Workspace mit Tagesplanung (`components/trips/TripWorkspace.tsx`) |
 
@@ -219,7 +220,7 @@ Bestehende Reise → Änderungswunsch → Kontingent (gemeinsam mit reisevorschl
 | Ablauf | `lib/reiseaenderung/erzeugen.ts` | wie 2.1, mit Ports |
 | Server Actions | `lib/reiseaenderung/aktionen.ts` | Erzeugen speichert nichts; Übernehmen wendet erneut an |
 
-Das Modell ändert die Datenbank nicht (ADR-0059). Account-Schreiben ist `SECURITY INVOKER` und atomisch (ADR-0060). `trip_days.stage_id` bindet Tage an Etappen, auch ohne Kalenderdaten (ADR-0057). `trips.revision` steigt bei jeder fachlichen Graphänderung und bei direkten Stammdaten-Updates, nicht nur in `reise_aendern()` (ADR-0058). Gast und Konto speichern ungeplante Planpunkte gleich (ADR-0061). Kommerzielle Planpunkte sind bei Modelloperationen bis Phase 3 vollständig gesperrt (ADR-0059 Nachtrag). `reise_aendern()` schiebt die Eindeutigkeit von Tagesnummer und -datum bis zum fertigen Graphen auf (ADR-0060 Nachtrag).
+Das Modell ändert die Datenbank nicht (ADR-0059). Account-Schreiben ist `SECURITY INVOKER` und atomisch (ADR-0060). `trip_days.stage_id` bindet Tage an Etappen, auch ohne Kalenderdaten (ADR-0057). `trips.revision` steigt bei jeder fachlichen Graphänderung und bei direkten Stammdaten-Updates, nicht nur in `reise_aendern()` (ADR-0058). Gast und Konto speichern ungeplante Planpunkte gleich (ADR-0061). Kommerzielle Planpunkte – einschliesslich übernommener Flüge – sind bei Modelloperationen vollständig gesperrt (ADR-0059 Nachtrag, ADR-0060). `reise_aendern()` schiebt die Eindeutigkeit von Tagesnummer und -datum bis zum fertigen Graphen auf (ADR-0060 Nachtrag).
 
 **Es entsteht keine zweite Persistenz.** Ein Vorschlag aus 2.1 lebt bis zur Freigabe im React-Zustand; danach schreiben Gastweg (`gastreiseAblegen()`) und Kontoweg (`public.reise_anlegen()`) wie das Formular. Eine Änderung aus 2.2 lebt ebenso nur in der Vorschau; danach schreiben `gastreiseAendern()` bzw. `public.reise_aendern()`.
 
@@ -267,11 +268,13 @@ Seit Phase 1.4b prüft `npm run db:rechte` eine vierte Regel: Keine Funktion nen
 
 ## 7. API-Schicht
 
-Nach Phase 1.1, 1.1b, 1.3 und 1.4 existieren **11** Route Handler. Zuvor waren es 77.
+Nach Phase 1.1, 1.1b, 1.3, 1.4 und 3.1 existieren **13** Route Handler. Zuvor waren es 77.
 
 | Endpunkt | Zweck | Status |
 | --- | --- | --- |
-| `api/search/airports` | Flughafendaten | für Flüge in Phase 3 vorgesehen |
+| `api/search/airports` | Flughafendaten | nur `public.airports`; Import ist ein Skript, kein Request-Pfad |
+| `api/search/places` | Reiseziel- und Abreiseorte | nur `public.places`; Import ist ein Skript, kein Geocoding-Proxy |
+| `api/flights/search` | geschlossene Flugsuche | Phase 3.1, Production aus, nur Duffel-Test |
 | `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
 | `api/admin/security/*` (5) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
 
@@ -288,6 +291,22 @@ Phase 1.4 hat drei weitere entfernt: `security/block-ip` und `security/unblock-i
 Entfernt wurden 63 Endpunkte: alle KI- und Modell-Endpunkte, die Media- und Video-Render-Pipeline, Creator-, Feed-, Session- und Publishing-Endpunkte, die Content-Endpunkte, die Infomaniak-DNS- und Mail-Automatisierung sowie mit Phase 1.1b die Alt-Suche `api/search`. Begründung und Umfang in [DECISIONS.md](DECISIONS.md), ADR-0014 und ADR-0018.
 
 **Grundsatz für neue Endpunkte:** Kein Endpunkt ist standardmäßig offen. Die Prüfliste steht in [AGENTS.md](AGENTS.md) Regel 15.
+
+### Flugsuche (Phase 3.1)
+
+`POST /api/flights/search` ist geschlossen: nur die Jetnity-Suchanfrage, nur die normalisierte Antwort. Kein Provider-Proxy. UI, Ranking und Reisegraph sprechen `FlugOption`, nicht Duffel.
+
+Duffel ist der erste Datenadapter, nicht die Produktarchitektur. Search und Booking/Affiliate sind getrennt; `booking_url` bleibt `null`. Ein späterer Skyscanner- oder Aviasales-Adapter implementiert dasselbe `FlightProvider`-Interface. Amadeus Self-Service ist eingestellt und nicht angebunden.
+
+Production bleibt hart aus. Development/Preview brauchen `JETNITY_FLIGHT_AKTIV` und `DUFFEL_ACCESS_TOKEN` (`duffel_test_…`). Fehlende Credentials sind Feature-unavailable, kein Buildfehler. Fachlich: [docs/FLUEGE.md](docs/FLUEGE.md), ADR-0062 bis ADR-0065.
+
+### Flughafenbasis (Phase 3.1)
+
+`GET /api/search/airports` liest ausschliesslich `public.airports`. Der Bestand kommt aus OurAirports Open Data (Public Domain), gefiltert und idempotent über `npm run airports:importieren` geschrieben. Weder Build noch CI noch eine Nutzersuche laden den Upstream. Production-Schreiben nur über [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md). Fachlich: [docs/FLUGHAFEN.md](docs/FLUGHAFEN.md), ADR-0066.
+
+### Ortsbasis (Phase 3.1)
+
+`GET /api/search/places` liest ausschliesslich `public.places`. Der Bestand kommt aus dem GeoNames-Dump (CC BY 4.0) plus Flughafen-Zeilen aus `public.airports`. Development enthält nach dem ersten Import 124 811 Orte. Kein Live-Geocoding, keine Google-/Nominatim-Abfrage. Startseite und `/planen` teilen dieselbe Auswahlkomponente und dieselbe Serverprüfung. Der Modellweg löst eindeutige Orte gegen dieselbe Tabelle auf und rät nicht. Schema und Inhalt für Production nur über den kontrollierten Rollout in [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md) (ADR-0069). Fachlich: [docs/ORTE.md](docs/ORTE.md), ADR-0067.
 
 ### Kostenkontrolle bei Modellaufrufen
 

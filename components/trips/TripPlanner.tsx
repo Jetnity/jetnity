@@ -35,6 +35,22 @@ import {
   WalletCards,
 } from 'lucide-react'
 
+import OrtSuche from '@/components/places/OrtSuche'
+import { Feld, FELD_FEHLER_RAHMEN, FormularZusammenfassung } from '@/components/ui/feld'
+import {
+  FORMULAR_ZUSAMMENFASSUNG,
+  REISE_FORMULAR_FELDER,
+  erstesFehlerfeld,
+  feldFehlerId,
+  feldfehlerLoeschen,
+  reiseFormularPruefen,
+  type Feldfehler,
+  type ReiseFormularFeld,
+} from '@/lib/formular/feldfehler'
+import { feldInSichtNehmen } from '@/lib/formular/sicht'
+import { reiseorteBestaetigen } from '@/lib/places/aktionen'
+import { type OrtAuswahl } from '@/lib/places/auswahl'
+import { ORT_MELDUNG } from '@/lib/places/pruefen'
 import { reiseAnlegen } from '@/lib/trips/aktionen'
 import { INTERESSE_BEZEICHNUNG, TEMPO_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import {
@@ -43,7 +59,7 @@ import {
   gastreiseAnlegen,
   kennungErzeugen,
 } from '@/lib/trips/gastspeicher'
-import { GRENZEN, ersteMeldung, neueReiseSchema } from '@/lib/trips/schema'
+import { GRENZEN, neueReiseSchema } from '@/lib/trips/schema'
 import { cn } from '@/lib/utils'
 import { TRIP_INTERESTS, TRIP_PACES, type TripInterest, type TripPace } from '@/types/trips'
 
@@ -51,6 +67,7 @@ type TripPlannerProps = {
   /** Kommt aus der Server-Komponente: `auth.getUser()` auf dem Server, nicht geraten. */
   angemeldet: boolean
   initialDestination?: string
+  initialDestinationId?: string
   initialIdea?: string
 }
 
@@ -64,9 +81,6 @@ const fieldClass =
   'h-12 w-full min-w-0 rounded-2xl border border-line-200 bg-surface-0 pl-10 pr-4 text-base ' +
   'outline-none transition placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10'
 
-/** Beschriftung mit Feld darunter; als Grid-Kind schrumpfbar. */
-const fieldLabelClass = 'grid min-w-0 gap-2 text-sm font-medium text-brand-800'
-
 const fieldIconClass =
   'pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-700'
 
@@ -79,25 +93,46 @@ function heuteIso() {
 export default function TripPlanner({
   angemeldet,
   initialDestination = '',
+  initialDestinationId = '',
   initialIdea = '',
 }: TripPlannerProps) {
   const router = useRouter()
   const [destination, setDestination] = React.useState(initialDestination)
+  const [destinationOrt, setDestinationOrt] = React.useState<OrtAuswahl | null>(
+    initialDestinationId && initialDestination
+      ? { id: initialDestinationId, name: initialDestination }
+      : null,
+  )
   const [origin, setOrigin] = React.useState('')
+  const [originOrt, setOriginOrt] = React.useState<OrtAuswahl | null>(null)
   const [startDate, setStartDate] = React.useState('')
   const [endDate, setEndDate] = React.useState('')
-  const [travellers, setTravellers] = React.useState(2)
+  const [travellers, setTravellers] = React.useState<number | ''>(2)
   const [budget, setBudget] = React.useState('')
   const [pace, setPace] = React.useState<TripPace>('balanced')
   const [interests, setInterests] = React.useState<TripInterest[]>([])
   const [travelWish, setTravelWish] = React.useState(initialIdea)
   const [meldung, setMeldung] = React.useState('')
+  const [feldfehler, setFeldfehler] = React.useState<Feldfehler>({})
   const [bestehendeReise, setBestehendeReise] = React.useState('')
   const [laeuft, setLaeuft] = React.useState(false)
+  const felder = React.useRef<Partial<Record<ReiseFormularFeld, HTMLInputElement | null>>>({})
+  const anvisiert = React.useRef<ReiseFormularFeld | null>(null)
 
   // Bleibt über einen erneuten Anlauf hinweg gleich. Das ist der ganze Zweck:
   // dieselbe Kennung, dieselbe Reise.
   const clientRef = React.useRef('')
+
+  React.useEffect(() => {
+    if (!anvisiert.current) return
+    const feld = anvisiert.current
+    anvisiert.current = null
+    feldInSichtNehmen(felder.current[feld])
+  }, [feldfehler])
+
+  const feldKorrigieren = (feld: ReiseFormularFeld) => {
+    setFeldfehler((bisher) => feldfehlerLoeschen(bisher, feld))
+  }
 
   const interesseUmschalten = (interesse: TripInterest) => {
     setInterests((bisher) =>
@@ -116,14 +151,33 @@ export default function TripPlanner({
 
     if (!clientRef.current) clientRef.current = kennungErzeugen('trip')
 
-    const geprueft = neueReiseSchema.safeParse({
-      clientRef: clientRef.current,
-      title: destination,
+    const sichtbar = reiseFormularPruefen({
       destination,
+      destinationPlaceId: destinationOrt?.id,
       origin,
+      originPlaceId: originOrt?.id,
       startDate,
       endDate,
       travellers,
+      budget,
+    })
+    if (sichtbar.erstes) {
+      anvisiert.current = sichtbar.erstes
+      setFeldfehler(sichtbar.fehler)
+      return
+    }
+    setFeldfehler({})
+
+    const geprueft = neueReiseSchema.safeParse({
+      clientRef: clientRef.current,
+      title: destinationOrt?.name ?? destination,
+      destination: destinationOrt?.name ?? destination,
+      destinationPlaceId: destinationOrt?.id,
+      origin: originOrt?.name ?? origin,
+      originPlaceId: originOrt?.id,
+      startDate,
+      endDate,
+      travellers: typeof travellers === 'number' ? travellers : 1,
       currency: 'CHF',
       budgetAmount: budget === '' ? null : Number(budget),
       pace,
@@ -132,14 +186,51 @@ export default function TripPlanner({
     })
 
     if (!geprueft.success) {
-      setMeldung(ersteMeldung(geprueft.error))
+      const rest: Feldfehler = {}
+      for (const issue of geprueft.error.issues) {
+        const pfad = issue.path[0]
+        if (pfad === 'startDate' || pfad === 'endDate' || pfad === 'travellers') rest[pfad] = issue.message
+        if (pfad === 'budgetAmount') rest.budget = issue.message
+        if (pfad === 'destinationPlaceId' || pfad === 'destination') rest.destination = issue.message
+        if (pfad === 'originPlaceId' || pfad === 'origin') rest.origin = issue.message
+      }
+      anvisiert.current = erstesFehlerfeld(rest, REISE_FORMULAR_FELDER)
+      setFeldfehler(rest)
       return
     }
 
     setLaeuft(true)
 
+    const orte = await reiseorteBestaetigen({
+      zielId: geprueft.data.destinationPlaceId,
+      abreiseId: geprueft.data.originPlaceId,
+    })
+    if (!orte.ok) {
+      const amFeld: Feldfehler =
+        orte.meldung === ORT_MELDUNG.abreiseFehlt || orte.meldung === ORT_MELDUNG.abreiseUnbekannt
+          ? { origin: orte.meldung }
+          : orte.meldung === ORT_MELDUNG.zielFehlt || orte.meldung === ORT_MELDUNG.zielUnbekannt
+            ? { destination: orte.meldung }
+            : {}
+      if (amFeld.destination || amFeld.origin) {
+        anvisiert.current = erstesFehlerfeld(amFeld, REISE_FORMULAR_FELDER)
+        setFeldfehler(amFeld)
+      } else {
+        setMeldung(orte.meldung)
+      }
+      setLaeuft(false)
+      return
+    }
+
     if (angemeldet) {
-      const ergebnis = await reiseAnlegen(geprueft.data)
+      const ergebnis = await reiseAnlegen({
+        ...geprueft.data,
+        title: orte.ziel.name,
+        destination: orte.ziel.name,
+        destinationPlaceId: orte.ziel.id,
+        origin: orte.abreise.name,
+        originPlaceId: orte.abreise.id,
+      })
       if (!ergebnis.ok) {
         setMeldung(ergebnis.meldung)
         setLaeuft(false)
@@ -150,7 +241,7 @@ export default function TripPlanner({
     }
 
     try {
-      const reise = gastreiseAnlegen(geprueft.data)
+      const reise = gastreiseAnlegen(geprueft.data, orte)
       router.push(`/reisen/${reise.id}` as Route)
     } catch (fehler) {
       setLaeuft(false)
@@ -173,6 +264,7 @@ export default function TripPlanner({
   return (
     <div className="grid w-full grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
       <form
+        noValidate
         onSubmit={absenden}
         className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_24px_80px_rgba(15,46,42,0.08)] sm:p-8"
       >
@@ -190,101 +282,149 @@ export default function TripPlanner({
         </div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <label className={fieldLabelClass}>
-            Reiseziel
-            <span className="relative block min-w-0">
-              <MapPin className={fieldIconClass} aria-hidden="true" />
-              <input
-                value={destination}
-                onChange={(ereignis) => setDestination(ereignis.target.value)}
-                maxLength={GRENZEN.titel}
-                placeholder="z. B. Japan"
-                autoComplete="off"
-                className={fieldClass}
-              />
-            </span>
-          </label>
+          <Feld id="feld-ziel" label="Reiseziel" fehler={feldfehler.destination} icon={<MapPin className={fieldIconClass} aria-hidden="true" />}>
+            <OrtSuche
+              rolle="ziel"
+              variante="field"
+              value={destinationOrt}
+              initialText={destination}
+              inputId="feld-ziel"
+              ungueltig={Boolean(feldfehler.destination)}
+              describedBy={feldfehler.destination ? feldFehlerId('feld-ziel') : undefined}
+              inputRef={(el) => {
+                felder.current.destination = el
+              }}
+              onChange={(wert, roh) => {
+                setDestinationOrt(wert)
+                setDestination(wert?.name ?? roh)
+                if (wert) feldKorrigieren('destination')
+              }}
+              placeholder="z. B. Japan"
+              inputClassName={cn(fieldClass, 'pr-10', feldfehler.destination && FELD_FEHLER_RAHMEN)}
+            />
+          </Feld>
 
-          <label className={fieldLabelClass}>
-            Abreise ab
-            <span className="relative block min-w-0">
-              <MapPin className={fieldIconClass} aria-hidden="true" />
-              <input
-                value={origin}
-                onChange={(ereignis) => setOrigin(ereignis.target.value)}
-                maxLength={GRENZEN.ort}
-                placeholder="z. B. Zürich"
-                autoComplete="address-level2"
-                className={fieldClass}
-              />
-            </span>
-          </label>
+          <Feld id="feld-abreiseort" label="Abreise ab" fehler={feldfehler.origin} icon={<MapPin className={fieldIconClass} aria-hidden="true" />}>
+            <OrtSuche
+              rolle="abreise"
+              variante="field"
+              value={originOrt}
+              inputId="feld-abreiseort"
+              ungueltig={Boolean(feldfehler.origin)}
+              describedBy={feldfehler.origin ? feldFehlerId('feld-abreiseort') : undefined}
+              inputRef={(el) => {
+                felder.current.origin = el
+              }}
+              onChange={(wert, roh) => {
+                setOriginOrt(wert)
+                setOrigin(wert?.name ?? roh)
+                if (wert) feldKorrigieren('origin')
+              }}
+              placeholder="z. B. Zürich"
+              inputClassName={cn(fieldClass, 'pr-10', feldfehler.origin && FELD_FEHLER_RAHMEN)}
+            />
+          </Feld>
 
-          <label className={fieldLabelClass}>
-            Abreise
-            <span className="relative block min-w-0">
-              <CalendarDays className={fieldIconClass} aria-hidden="true" />
-              <input
-                type="date"
-                min={heuteIso()}
-                value={startDate}
-                onChange={(ereignis) => {
-                  setStartDate(ereignis.target.value)
-                  if (endDate && ereignis.target.value > endDate) setEndDate('')
-                }}
-                className={fieldClass}
-              />
-            </span>
-          </label>
-
-          <label className={fieldLabelClass}>
-            Rückreise
-            <span className="relative block min-w-0">
-              <CalendarDays className={fieldIconClass} aria-hidden="true" />
-              <input
-                type="date"
-                min={startDate || heuteIso()}
-                value={endDate}
-                onChange={(ereignis) => setEndDate(ereignis.target.value)}
-                className={fieldClass}
-              />
-            </span>
-          </label>
-
-          <label className={fieldLabelClass}>
-            Reisende
-            <span className="relative block min-w-0">
-              <Users className={fieldIconClass} aria-hidden="true" />
-              <input
-                type="number"
-                min={1}
-                max={GRENZEN.reisende}
-                inputMode="numeric"
-                value={travellers}
-                onChange={(ereignis) =>
-                  setTravellers(Math.max(1, Math.min(GRENZEN.reisende, Number(ereignis.target.value))))
+          <Feld id="feld-start" label="Abreise" fehler={feldfehler.startDate} icon={<CalendarDays className={fieldIconClass} aria-hidden="true" />}>
+            <input
+              id="feld-start"
+              ref={(el) => {
+                felder.current.startDate = el
+              }}
+              type="date"
+              min={heuteIso()}
+              value={startDate}
+              aria-invalid={Boolean(feldfehler.startDate) || undefined}
+              aria-describedby={feldfehler.startDate ? feldFehlerId('feld-start') : undefined}
+              aria-required="true"
+              onChange={(ereignis) => {
+                setStartDate(ereignis.target.value)
+                feldKorrigieren('startDate')
+                if (endDate && ereignis.target.value > endDate) {
+                  setEndDate('')
+                  feldKorrigieren('endDate')
+                } else if (endDate && ereignis.target.value <= endDate) {
+                  feldKorrigieren('endDate')
                 }
-                className={fieldClass}
-              />
-            </span>
-          </label>
+              }}
+              className={cn(fieldClass, feldfehler.startDate && FELD_FEHLER_RAHMEN)}
+            />
+          </Feld>
 
-          <label className={fieldLabelClass}>
-            Ungefähres Gesamtbudget
-            <span className="relative block min-w-0">
-              <WalletCards className={fieldIconClass} aria-hidden="true" />
-              <input
-                type="number"
-                min={0}
-                step={100}
-                inputMode="numeric"
-                value={budget}
-                onChange={(ereignis) => setBudget(ereignis.target.value)}
-                placeholder="CHF, optional"
-                className={fieldClass}
-              />
-            </span>
-          </label>
+          <Feld id="feld-ende" label="Rückreise" fehler={feldfehler.endDate} icon={<CalendarDays className={fieldIconClass} aria-hidden="true" />}>
+            <input
+              id="feld-ende"
+              ref={(el) => {
+                felder.current.endDate = el
+              }}
+              type="date"
+              min={startDate || heuteIso()}
+              value={endDate}
+              aria-invalid={Boolean(feldfehler.endDate) || undefined}
+              aria-describedby={feldfehler.endDate ? feldFehlerId('feld-ende') : undefined}
+              aria-required="true"
+              onChange={(ereignis) => {
+                setEndDate(ereignis.target.value)
+                feldKorrigieren('endDate')
+              }}
+              className={cn(fieldClass, feldfehler.endDate && FELD_FEHLER_RAHMEN)}
+            />
+          </Feld>
+
+          <Feld id="feld-reisende" label="Reisende" fehler={feldfehler.travellers} icon={<Users className={fieldIconClass} aria-hidden="true" />}>
+            <input
+              id="feld-reisende"
+              ref={(el) => {
+                felder.current.travellers = el
+              }}
+              type="number"
+              min={1}
+              max={GRENZEN.reisende}
+              inputMode="numeric"
+              value={travellers}
+              aria-invalid={Boolean(feldfehler.travellers) || undefined}
+              aria-describedby={feldfehler.travellers ? feldFehlerId('feld-reisende') : undefined}
+              aria-required="true"
+              onChange={(ereignis) => {
+                const roh = ereignis.target.value
+                if (roh === '') {
+                  setTravellers('')
+                  return
+                }
+                setTravellers(Number(roh))
+                feldKorrigieren('travellers')
+              }}
+              className={cn(fieldClass, feldfehler.travellers && FELD_FEHLER_RAHMEN)}
+            />
+          </Feld>
+
+          <Feld
+            id="feld-budget"
+            label="Ungefähres Gesamtbudget"
+            optional
+            fehler={feldfehler.budget}
+            icon={<WalletCards className={fieldIconClass} aria-hidden="true" />}
+          >
+            <input
+              id="feld-budget"
+              ref={(el) => {
+                felder.current.budget = el
+              }}
+              type="number"
+              min={0}
+              step={100}
+              inputMode="numeric"
+              value={budget}
+              aria-invalid={Boolean(feldfehler.budget) || undefined}
+              aria-describedby={feldfehler.budget ? feldFehlerId('feld-budget') : undefined}
+              onChange={(ereignis) => {
+                setBudget(ereignis.target.value)
+                feldKorrigieren('budget')
+              }}
+              placeholder="CHF, optional"
+              className={cn(fieldClass, feldfehler.budget && FELD_FEHLER_RAHMEN)}
+            />
+          </Feld>
         </div>
 
         <fieldset className="mt-7">
@@ -355,24 +495,30 @@ export default function TripPlanner({
           />
         </label>
 
-        {meldung && (
-          <div role="alert" className="mt-5 rounded-2xl bg-red-50 px-4 py-3 text-sm leading-6 text-red-700">
-            <p>{meldung}</p>
-            {bestehendeReise && (
-              <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
-                <Link
-                  href={`/reisen/${bestehendeReise}` as Route}
-                  className="font-semibold underline underline-offset-2"
-                >
-                  Entwurf öffnen
-                </Link>
-                <Link href="/register" className="font-semibold underline underline-offset-2">
-                  Konto erstellen
-                </Link>
-              </p>
-            )}
-          </div>
-        )}
+        <FormularZusammenfassung
+          sichtbar={Object.keys(feldfehler).length > 0}
+          text={FORMULAR_ZUSAMMENFASSUNG}
+          extra={
+            meldung || bestehendeReise ? (
+              <div className={Object.keys(feldfehler).length > 0 ? 'mt-2' : undefined}>
+                {meldung ? <p>{meldung}</p> : null}
+                {bestehendeReise ? (
+                  <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+                    <Link
+                      href={`/reisen/${bestehendeReise}` as Route}
+                      className="font-semibold underline underline-offset-2"
+                    >
+                      Entwurf öffnen
+                    </Link>
+                    <Link href="/register" className="font-semibold underline underline-offset-2">
+                      Konto erstellen
+                    </Link>
+                  </p>
+                ) : null}
+              </div>
+            ) : null
+          }
+        />
 
         <div className="mt-7 flex flex-col-reverse items-stretch justify-between gap-4 border-t border-line-200 pt-6 sm:flex-row sm:items-center">
           <p className="flex min-w-0 items-start gap-2 text-xs leading-5 text-ink-700">

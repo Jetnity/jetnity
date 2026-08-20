@@ -61,7 +61,9 @@ function eingabe(abweichung: Partial<CreateTripInput> = {}): CreateTripInput {
     clientRef: kennungErzeugen('trip'),
     title: 'Japan im Herbst',
     destination: 'Japan',
+    destinationPlaceId: 'geonames:1861060',
     origin: 'Zürich',
+    originPlaceId: 'geonames:2657896',
     startDate: '2026-09-12',
     endDate: '2026-09-16',
     travellers: 2,
@@ -217,7 +219,21 @@ describe('Gast mit Reise – der Weg beim Login', () => {
 
     const punkte = server.empfangen[0].days.flatMap((tag) => tag.items)
     assert.deepEqual(punkte, [
-      { kind: 'activity', title: 'Fischmarkt', note: 'früh dort sein', position: 1, starts_at: '06:30' },
+      {
+        kind: 'activity',
+        title: 'Fischmarkt',
+        note: 'früh dort sein',
+        position: 1,
+        starts_on: '2026-09-13',
+        starts_at: '06:30',
+        ends_on: null,
+        ends_at: null,
+        price_amount: null,
+        price_currency: null,
+        provider: null,
+        external_ref: null,
+        booking_url: null,
+      },
     ])
   })
 
@@ -251,7 +267,21 @@ describe('Gast mit Reise – der Weg beim Login', () => {
     await gastreisenUebernehmen(server.senden)
 
     assert.deepEqual(server.empfangen[0].ungeplante, [
-      { kind: 'note', title: 'Noch offen', note: null, position: 1, starts_at: null },
+      {
+        kind: 'note',
+        title: 'Noch offen',
+        note: null,
+        position: 1,
+        starts_on: null,
+        starts_at: null,
+        ends_on: null,
+        ends_at: null,
+        price_amount: null,
+        price_currency: null,
+        provider: null,
+        external_ref: null,
+        booking_url: null,
+      },
     ])
     assert.equal(
       server.empfangen[0].days.every((tag) => tag.items.every((punkt) => punkt.title !== 'Noch offen')),

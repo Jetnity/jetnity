@@ -14,6 +14,7 @@ function reise(etappen: TripStage[], tage: TripDay[]): Trip {
     clientRef: 'trip-1',
     title: 'Test',
     origin: null,
+    originPlaceId: null,
     startDate: null,
     endDate: null,
     travellers: 1,
@@ -37,7 +38,7 @@ describe('Tage ohne stageId erhalten eine Etappe', () => {
   test('eine Etappe gilt für alle Tage', () => {
     const zugeordnet = tageEtappenZuordnen(
       reise(
-        [{ id: 's1', position: 1, name: 'Rom', countryCode: null, arrivalDate: null, departureDate: null, latitude: null, longitude: null }],
+        [{ id: 's1', position: 1, name: 'Rom', countryCode: null, arrivalDate: null, departureDate: null, latitude: null, longitude: null, placeId: null }],
         [
           { id: 'd1', stageId: null, dayIndex: 1, dayDate: null, title: null, items: [] },
           { id: 'd2', stageId: null, dayIndex: 2, dayDate: null, title: null, items: [] },
@@ -53,8 +54,8 @@ describe('Tage ohne stageId erhalten eine Etappe', () => {
     const zugeordnet = tageEtappenZuordnen(
       reise(
         [
-          { id: 's1', position: 1, name: 'Florenz', countryCode: null, arrivalDate: null, departureDate: null, latitude: null, longitude: null },
-          { id: 's2', position: 2, name: 'Rom', countryCode: null, arrivalDate: null, departureDate: null, latitude: null, longitude: null },
+          { id: 's1', position: 1, name: 'Florenz', countryCode: null, arrivalDate: null, departureDate: null, latitude: null, longitude: null, placeId: null },
+          { id: 's2', position: 2, name: 'Rom', countryCode: null, arrivalDate: null, departureDate: null, latitude: null, longitude: null, placeId: null },
         ],
         [1, 2, 3, 4].map((nr) => ({
           id: `d${nr}`,
@@ -86,6 +87,7 @@ describe('Tage ohne stageId erhalten eine Etappe', () => {
           departureDate: '2026-09-14',
           latitude: null,
           longitude: null,
+          placeId: null,
         },
         {
           id: 's2',
@@ -96,6 +98,7 @@ describe('Tage ohne stageId erhalten eine Etappe', () => {
           departureDate: '2026-09-16',
           latitude: null,
           longitude: null,
+          placeId: null,
         },
       ],
       5,
@@ -108,8 +111,8 @@ describe('Tage ohne stageId erhalten eine Etappe', () => {
     const zugeordnet = tageEtappenZuordnen(
       reise(
         [
-          { id: 's1', position: 1, name: 'A', countryCode: null, arrivalDate: null, departureDate: null, latitude: null, longitude: null },
-          { id: 's2', position: 2, name: 'B', countryCode: null, arrivalDate: null, departureDate: null, latitude: null, longitude: null },
+          { id: 's1', position: 1, name: 'A', countryCode: null, arrivalDate: null, departureDate: null, latitude: null, longitude: null, placeId: null },
+          { id: 's2', position: 2, name: 'B', countryCode: null, arrivalDate: null, departureDate: null, latitude: null, longitude: null, placeId: null },
         ],
         [{ id: 'd1', stageId: 's2', dayIndex: 1, dayDate: null, title: null, items: [] }],
       ),

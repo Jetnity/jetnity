@@ -8,6 +8,8 @@ import { supabase } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { erstesFehlerfeld, feldfehlerLoeschen, type Feldfehler } from '@/lib/formular/feldfehler';
+import { feldInSichtNehmen } from '@/lib/formular/sicht';
 import { Checkbox } from '@/components/ui/checkbox';
 import { GoogleIcon, AppleIcon } from '@/components/auth/provider-icons';
 import {
@@ -65,6 +67,11 @@ export default function RegisterForm() {
   const [accept, setAccept] = React.useState(false);
 
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
+  const [feldfehler, setFeldfehler] = React.useState<Feldfehler<'email' | 'password' | 'password2' | 'terms'>>({});
+  const emailRef = React.useRef<HTMLInputElement>(null);
+  const passwordRef = React.useRef<HTMLInputElement>(null);
+  const password2Ref = React.useRef<HTMLInputElement>(null);
+  const termsRef = React.useRef<HTMLDivElement>(null);
   const [infoMsg, setInfoMsg] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -77,23 +84,24 @@ export default function RegisterForm() {
     setSuccess(false);
 
     const em = normalizeEmail(email);
-
-    if (!em) {
-      setErrorMsg('Bitte E-Mail eingeben.');
+    const amFeld: Feldfehler<'email' | 'password' | 'password2' | 'terms'> = {
+      ...(!em ? { email: 'Bitte gib eine gültige E-Mail-Adresse ein.' } : {}),
+      ...(!erfuelltRichtlinie(password) ? { password: RICHTLINIE_TEXT } : {}),
+      ...(password && password !== password2 ? { password2: 'Die Passwörter stimmen nicht überein.' } : {}),
+      ...(!accept ? { terms: 'Bitte akzeptiere die Nutzungsbedingungen und die Datenschutzerklärung.' } : {}),
+    };
+    if (amFeld.email || amFeld.password || amFeld.password2 || amFeld.terms) {
+      setFeldfehler(amFeld);
+      const erstes = erstesFehlerfeld(amFeld, ['email', 'password', 'password2', 'terms']);
+      const ziel =
+        erstes === 'password' ? passwordRef.current
+        : erstes === 'password2' ? password2Ref.current
+        : erstes === 'terms' ? termsRef.current
+        : emailRef.current;
+      feldInSichtNehmen(ziel);
       return;
     }
-    if (!erfuelltRichtlinie(password)) {
-      setErrorMsg(RICHTLINIE_TEXT);
-      return;
-    }
-    if (password !== password2) {
-      setErrorMsg('Die Passwörter stimmen nicht überein.');
-      return;
-    }
-    if (!accept) {
-      setErrorMsg('Bitte akzeptiere die Nutzungsbedingungen & Datenschutzhinweise.');
-      return;
-    }
+    setFeldfehler({});
 
     setLoading(true);
     try {
@@ -169,14 +177,15 @@ export default function RegisterForm() {
         </p>
       </div>
 
-      <form onSubmit={handleRegister} className="space-y-5">
-        {errorMsg && (
+      <form noValidate onSubmit={handleRegister} className="space-y-5">
+        {(errorMsg || Object.keys(feldfehler).length > 0) && (
           <div
-            className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
-            role="alert"
+            className="flex items-start gap-2 rounded-xl border border-danger-600/25 bg-surface-50 p-3 text-sm text-brand-800"
+            role="status"
+            aria-live="polite"
           >
-            <AlertCircle className="h-4 w-4 mt-0.5" />
-            <p>{errorMsg}</p>
+            <AlertCircle className="h-4 w-4 mt-0.5 text-brand-800" />
+            <p>{errorMsg ?? 'Bitte prüfe die markierten Angaben.'}</p>
           </div>
         )}
         {infoMsg && (
@@ -218,14 +227,17 @@ export default function RegisterForm() {
           </Label>
           <Input
             id="email"
+            ref={emailRef}
             type="email"
             inputMode="email"
             autoComplete="email"
             placeholder="you@example.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            aria-invalid={!!errorMsg}
+            onChange={(e) => {
+              setEmail(e.target.value)
+              setFeldfehler((bisher) => feldfehlerLoeschen(bisher, 'email'))
+            }}
+            error={feldfehler.email}
           />
         </div>
 
@@ -236,15 +248,18 @@ export default function RegisterForm() {
           </Label>
           <Input
             id="password"
+            ref={passwordRef}
             type="password"
             autoComplete="new-password"
             // Kurz genug, damit der Text auf 320 px nicht abgeschnitten wird.
             // Die vollstaendigen Regeln stehen unter dem Feld.
             placeholder={`Mindestens ${PASSWORT_RICHTLINIE.mindestlaenge} Zeichen`}
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            aria-invalid={!!errorMsg}
+            onChange={(e) => {
+              setPassword(e.target.value)
+              setFeldfehler((bisher) => feldfehlerLoeschen(bisher, 'password'))
+            }}
+            error={feldfehler.password}
           />
 
           {/* Strength Meter */}
@@ -271,32 +286,57 @@ export default function RegisterForm() {
           <Label htmlFor="password2">Passwort bestätigen</Label>
           <Input
             id="password2"
+            ref={password2Ref}
             type="password"
             autoComplete="new-password"
             placeholder="Wiederholen"
             value={password2}
-            onChange={(e) => setPassword2(e.target.value)}
-            required
+            onChange={(e) => {
+              setPassword2(e.target.value)
+              setFeldfehler((bisher) => feldfehlerLoeschen(bisher, 'password2'))
+            }}
+            error={feldfehler.password2}
           />
         </div>
 
         {/* Terms */}
-        <div className="flex items-start gap-3">
-          <Checkbox
-            id="terms"
-            checked={accept}
-            onCheckedChange={(v) => setAccept(Boolean(v))}
-          />
-          <Label
-            htmlFor="terms"
-            multiline
-            className="text-sm font-normal leading-6 text-muted-foreground"
-          >
-            Ich akzeptiere die{' '}
-            <Link href="/terms" className="text-primary hover:underline">Nutzungsbedingungen</Link>{' '}
-            und die{' '}
-            <Link href="/privacy" className="text-primary hover:underline">Datenschutzerklärung</Link>.
-          </Label>
+        <div
+          ref={termsRef}
+          tabIndex={-1}
+          className={cn(
+            'rounded-xl',
+            feldfehler.terms && 'bg-surface-50 ring-2 ring-danger-600/20',
+          )}
+        >
+          <div className="flex items-start gap-3">
+            <Checkbox
+              id="terms"
+              checked={accept}
+              invalid={Boolean(feldfehler.terms)}
+              aria-invalid={Boolean(feldfehler.terms) || undefined}
+              aria-describedby={feldfehler.terms ? 'terms-fehler' : undefined}
+              onCheckedChange={(v) => {
+                setAccept(Boolean(v))
+                if (v) setFeldfehler((bisher) => feldfehlerLoeschen(bisher, 'terms'))
+              }}
+            />
+            <Label
+              htmlFor="terms"
+              multiline
+              invalid={Boolean(feldfehler.terms)}
+              className="text-sm font-normal leading-6 text-muted-foreground"
+            >
+              Ich akzeptiere die{' '}
+              <Link href="/terms" className="text-primary hover:underline">Nutzungsbedingungen</Link>{' '}
+              und die{' '}
+              <Link href="/privacy" className="text-primary hover:underline">Datenschutzerklärung</Link>.
+            </Label>
+          </div>
+          {feldfehler.terms ? (
+            <p id="terms-fehler" role="alert" className="mt-2 text-sm text-danger-600">
+              {feldfehler.terms}
+            </p>
+          ) : null}
         </div>
 
         <Button

@@ -22,11 +22,12 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Phase 1.4d | Fehler im Administrationsbereich sichtbar statt leer | **fertig** |
 | Phase 1.5 | V2-Reiseschema, persistente Reisen, Gast → Konto | **fertig** |
 | Phase 2.1 | natürliche Sprache zu strukturiertem Reisevorschlag | **fertig auf Development, Preview aktivierbar, Production aus** |
-| Phase 2.2 | bestehende Reise per Sprache ändern | **fertig auf Development, Preview aktivierbar, Production aus** |
-| Phase 3 | Reiseprodukte und Monetarisierung | als Nächstes |
+| Phase 2.2 | bestehende Reise per Sprache ändern | **fertig, nach main gemergt, Production verifiziert; Modellweg aus** |
+| Phase 3.1 | Flight Foundation, erster Duffel-Adapter | **in Arbeit** |
+| Phase 3 | Hotels, Aktivitäten, Monetarisierung | als Nächstes nach 3.1 |
 | Phase 4 | Launch-Reife | geplant |
 
-Phase 2 ist als konversationeller Kern **fertig**: 2.1 erzeugt einen Vorschlag, 2.2 verändert eine bestehende Reise. Production bleibt für den Modellweg aus.
+Phase 2 ist als konversationeller Kern **fertig**: 2.1 erzeugt einen Vorschlag, 2.2 verändert eine bestehende Reise. Production bleibt für den Modellweg aus. Phase 3.1 liefert die erste Flugbasis; Production-Flugsuche bleibt aus.
 
 ---
 
@@ -324,7 +325,7 @@ Ein Befund kam im Abschlusslauf neu dazu und blieb zunächst offen: `auth_leaked
 
 **Keine Development-Service-Role angelegt.** Sie war an keiner Stelle nötig. Die Skripte gehen über die Management API mit dem Personal Access Token, und die RLS-Nachweise legen ihre Testkonten innerhalb der zurückgerollten Transaktion selbst an.
 
-Bei der Rechtedurchsicht fiel dafür der letzte Service-Role-Pfad **in der Anwendung** auf: `api/search/airports` legte, sobald `SUPABASE_SERVICE_ROLE_KEY` gesetzt war, einen zweiten Client mit vollen Rechten an, um Amadeus-Ergebnisse zurückzuschreiben. Der Endpunkt ist öffentlich und ohne Anmeldung erreichbar. Das Zwischenspeichern ist entfernt – die Suche liefert unverändert lokale Treffer und den Amadeus-Fallback, sie schreibt nur nicht mehr. Damit liest kein Codepfad der Anwendung einen Service-Role-Key.
+Bei der Rechtedurchsicht fiel dafür der letzte Service-Role-Pfad **in der Anwendung** auf: `api/search/airports` legte, sobald `SUPABASE_SERVICE_ROLE_KEY` gesetzt war, einen zweiten Client mit vollen Rechten an, um Amadeus-Ergebnisse zurückzuschreiben. Der Endpunkt ist öffentlich und ohne Anmeldung erreichbar. Das Zwischenspeichern ist entfernt. Mit Phase 3.1 entfällt auch der lesende Amadeus-Fallback: die Suche liest nur noch `public.airports`. Damit liest kein Codepfad der Anwendung einen Service-Role-Key und kein aktiver V2-Pfad mehr die Amadeus-API.
 
 **Bewusst nicht getan.** Die 29 obsoleten Tabellen sind eingeordnet, aber nicht gelöscht. Das ist eine eigene, unumkehrbare Handlung und braucht nach [AGENTS.md](AGENTS.md) Regel 22 ein Archiv-Tag. Sie sind jetzt versioniert, RLS-gedeckt und rechtlich eng geführt; ihre Entfernung ist damit eine Aufräumaktion, keine Sicherheitsmassnahme. Nachgeholt in 1.4b.
 
@@ -537,17 +538,41 @@ Offen aus 2.1:
 - [x] Nachtrag: direkte Stammdaten-Updates auf `trips` erhöhen `revision` (`20260820070000`)
 - [x] Nachtrag: aufgeschobene Tages-Eindeutigkeit in `reise_aendern()` (`20260820080000`) und vollständige Sperre kommerzieller Planpunkte
 
-**Voraussetzungen erfüllt.** Keine neue Infrastruktur. Dieselbe Kostenschranke wie Phase 2.1. Production unverändert aus. Draft-PR #18 bleibt Draft, nicht mergen.
+**Voraussetzungen erfüllt.** PR #18 ist gemergt, Production-Deploy verifiziert. Modellweg in Production unverändert aus.
 
 **Nachweise Nachtrag `20260820080000` (Development):** `npm test` 701/701; typecheck, lint, Hygiene, `db:typen --pruefen`, `db:rechte`, Production-Build grün; `db:sicherheit` 168/168, einschließlich aufgeschobener Tages-Eindeutigkeit (fünf gültige Umnummerierungen, eine abgelehnte Doppelnummer) und vollständiger Kommerzial-Sperre. `db:kontingent` nicht gegen die Live-Gasttagesgrenze geschrieben.
 
 ---
 
-## Phase 3 – Reiseprodukte und Monetarisierung · als Nächstes
+## Phase 3.1 – Flight Foundation · in Arbeit
 
-Je Kategorie zunächst genau ein Anbieter ([DECISIONS.md](DECISIONS.md), ADR-0011).
+Schlanke interne Flugdomäne, Duffel als erster Datenadapter, deterministisches Ranking, Übernahme in die Reise. Keine eigene Buchung. Production aus.
 
-- [ ] Flüge über Amadeus, bestehende Airport-Integration weiterverwenden
+- [x] Provider-unabhängige Flight-Domain und `FlightProvider`
+- [x] Duffel Flights API als erster Adapter (nur Test-Token)
+- [x] deterministisches, provisionsneutrales Ranking
+- [x] Suche im Reise-Arbeitsbereich
+- [x] Übernahme als kommerzieller `trip_item`, modellgeschützt
+- [x] Amadeus-Fallback aus `/api/search/airports` entfernt; Suche nur noch `public.airports`
+- [x] Provider-unabhängige Airport-Datenbasis (OurAirports-Import, Development 5332 Zeilen)
+- [x] Destination Validation & Place Foundation (GeoNames-Dump, lokale `public.places` mit 124 811 Development-Orten, gemeinsame Autocomplete)
+- [x] Modellweg kanonisiert eindeutige Abreise- und Etappenorte gegen `public.places`; Mehrdeutiges und Fantasieorte bleiben ohne `place_id`
+- [x] Formularfehler sitzen am Feld, scrollen zum ersten Fehler und bleiben nicht nur als allgemeine Meldung unten
+- [ ] Preview mit Duffel-Test-Token verifizieren · **nachgelagert, kein Merge-Blocker für Phase 3.1**
+- [x] Development-Migration `20260820100000` auf dem Development-Branch anwenden
+- [x] Kontrollierter Production-Rollout vorbereitet (Mehrfachschutz, Reihenfolge, read-only Check) · Ausführung braucht Freigabe
+- [ ] Production-Flugsuche – eigene Freigabe, nicht Teil dieses Schritts
+- [ ] Production-Airport-Schema und -Bestand – eigene Freigabe, siehe [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md)
+- [ ] Production-Places-Schema und -Bestand – eigene Freigabe, siehe [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md)
+
+Amadeus Self-Service (eingestellt 17. Juli 2026) wird nicht angebunden. Im aktiven V2-Code gibt es keinen funktionsfähigen Amadeus-API-Pfad mehr. Ein späterer Skyscanner- oder Aviasales-Adapter muss dasselbe Interface erfüllen, ohne UI-, Ranking- oder Trip-Rewrite.
+
+---
+
+## Phase 3 – Hotels, Aktivitäten, Monetarisierung · als Nächstes
+
+Je Kategorie zunächst genau ein Weg ([DECISIONS.md](DECISIONS.md), ADR-0011, Nachtrag ADR-0062).
+
 - [ ] Hotels über einfache Affiliate-/Deeplink-Lösung
 - [ ] Aktivitäten über GetYourGuide
 - [ ] Budget- und Gesamtpreisübersicht über die ganze Reise

@@ -27,7 +27,7 @@ describe('Das Routing für eine Reiseänderung', () => {
     const lang = beispielreise({
       stages: [
         ...beispielreise().stages,
-        { id: 's3', position: 3, name: 'Neapel', countryCode: 'IT', arrivalDate: null, departureDate: null, latitude: null, longitude: null },
+        { id: 's3', position: 3, name: 'Neapel', countryCode: 'IT', arrivalDate: null, departureDate: null, latitude: null, longitude: null, placeId: null },
       ],
     })
     assert.equal(modellFuerReiseaenderung('Mach es ruhiger.', lang), 'gpt-5.6-sol')

@@ -204,7 +204,7 @@ Jede wichtige technische oder produktnahe Entscheidung muss dokumentiert werden.
 
 Beispiele:
 
-- warum Amadeus verwendet wird
+- warum Duffel der erste Flugadapter ist, nicht die Produktarchitektur
 - warum ein bestimmtes Datenmodell gewählt wurde
 - warum ein Alt-Modul entfernt wurde
 - warum ein Framework nicht eingeführt wurde

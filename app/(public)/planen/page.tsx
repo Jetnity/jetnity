@@ -19,6 +19,7 @@ import type { Metadata } from 'next'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import Reiseidee from '@/components/trips/Reiseidee'
 import TripPlanner from '@/components/trips/TripPlanner'
+import { ortBestaetigen } from '@/lib/places/aktionen'
 import { GRENZEN } from '@/lib/trips/schema'
 import { VORSCHLAG_GRENZEN } from '@/lib/reisevorschlag/schema'
 
@@ -39,6 +40,7 @@ type PlanenSeiteProps = {
   searchParams?: {
     idee?: string | string[]
     ziel?: string | string[]
+    zielId?: string | string[]
   }
 }
 
@@ -52,6 +54,9 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
 
   const idee = ersterWert(searchParams?.idee)
   const ziel = ersterWert(searchParams?.ziel)
+  const zielId = ersterWert(searchParams?.zielId)
+  const bestaetigt = zielId ? await ortBestaetigen(zielId, 'ziel') : null
+  const zielOrt = bestaetigt?.ok ? bestaetigt.wert : null
 
   const angemeldet = Boolean(data.user)
 
@@ -73,7 +78,8 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
 
         <TripPlanner
           angemeldet={angemeldet}
-          initialDestination={ziel?.slice(0, GRENZEN.titel) ?? ''}
+          initialDestination={(zielOrt?.name ?? ziel)?.slice(0, GRENZEN.titel) ?? ''}
+          initialDestinationId={zielOrt?.id ?? ''}
           initialIdea={idee?.slice(0, GRENZEN.reisewunsch) ?? ''}
         />
       </div>

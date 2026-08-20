@@ -22,6 +22,8 @@ import { reiseaenderungErzeugen, type Aenderungsergebnis } from '@/lib/reiseaend
 import { aenderungAlsNutzlast } from '@/lib/reiseaenderung/nutzlast'
 import { modellFuerReiseaenderung } from '@/lib/reiseaenderung/routing'
 import { reiseaenderungSchema } from '@/lib/reiseaenderung/schema'
+import { reiseMitKanonischenOrten, type KanonischeOrte } from '@/lib/places/kanon'
+import { reiseOrteKanonisieren } from '@/lib/places/lesen'
 import { NICHT_ANGEMELDET, konto, meldungAus, type Aktionsergebnis } from '@/lib/trips/anlegen'
 import { reiseLaden } from '@/lib/trips/daten'
 import { ersteMeldung, reiseSchema } from '@/lib/trips/schema'
@@ -138,6 +140,16 @@ export async function aenderungErzeugenGast(eingabe: unknown): Promise<Aenderung
   return mitModell(geprueft.data.text, graph, gastKennung)
 }
 
+/** Löst Modellorte einer geänderten Reise. Konto und Gast teilen dieselbe Regel. */
+export async function aenderungOrteAufloesen(eingabe: unknown) {
+  const reise = reiseSchema.safeParse(eingabe)
+  if (!reise.success) {
+    const leer: KanonischeOrte = { origin: null, stages: [] }
+    return leer
+  }
+  return reiseOrteKanonisieren(tageEtappenZuordnen(reise.data))
+}
+
 /**
  * Übernimmt eine bestätigte Änderung in das Konto.
  *
@@ -185,9 +197,12 @@ export async function aenderungUebernehmen(eingabe: unknown): Promise<Aktionserg
   )
   if (!angewandt.ok) return { ok: false, meldung: angewandt.fehler.meldung }
 
+  const orte = await reiseOrteKanonisieren(angewandt.reise)
+  const kanonisch = reiseMitKanonischenOrten(angewandt.reise, orte)
+
   const { data, error, status } = await supabase.rpc('reise_aendern', {
     _aenderung: aenderungAlsNutzlast(
-      angewandt.reise,
+      kanonisch,
       geprueft.data.mutationId,
       geprueft.data.basisRevision,
     ),

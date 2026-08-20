@@ -181,9 +181,11 @@ Eine hier dokumentierte, freigegebene Entscheidung hat Vorrang vor bestehendem C
 ## ADR-0011 – Ein Provider pro Kategorie, keine Abstraktion auf Vorrat
 
 **Datum:** 15. August 2026
-**Status:** freigegeben, noch nicht umgesetzt
+**Status:** freigegeben; Flüge in Phase 3.1 teilweise umgesetzt
 
-**Entscheidung:** Flüge über **Amadeus** (bestehende Airport-Integration weiterverwenden), Hotels zunächst über eine einfache **Affiliate-/Deeplink-Lösung**, Aktivitäten über **GetYourGuide**. Je Kategorie zunächst genau ein Weg.
+**Entscheidung:** Je Kategorie zunächst genau ein Weg: Hotels zunächst über eine einfache **Affiliate-/Deeplink-Lösung**, Aktivitäten über **GetYourGuide**. Für Flüge galt ursprünglich Amadeus; das ist durch den Nachtrag und ADR-0062 überholt.
+
+**Nachtrag 20. August 2026:** Amadeus Self-Service wurde am 17. Juli 2026 eingestellt. Phase 3.1 bindet **keinen** Amadeus-Adapter an. Der erste Flug-Suchadapter ist Duffel Flights API, ausschliesslich als Daten-/Entwicklungsweg. Jetnity darf sich weder technisch noch geschäftlich an Duffel koppeln. Search, Ranking und Trip-Domain müssen später Skyscanner oder Aviasales ohne Rewrite aufnehmen können. Search und Booking/Affiliate bleiben getrennte Verantwortlichkeiten. Siehe ADR-0062.
 
 **Kontext:** Die alte Codebasis deutete auf viele parallele Reisekategorien und Anbieter hin.
 
@@ -595,7 +597,7 @@ Auch geprüft: nur `TRUNCATE` zu entziehen und den Rest zu belassen. Verworfen, 
 
 **Nachtrag vom 17. August 2026:** ADR-0035 hat zwei dieser Konsequenzen überholt. Die Zahl der einzeln vergebenen Tabellenrechte ist von 115 auf 118 gestiegen – hinzugekommen sind `update` auf `payments`, `insert` auf `refunds` und `select` auf `stripe_webhooks`. Damit hat `stripe_webhooks` eine Lesepolicy und der Befund `rls_enabled_no_policy` ist weg. Die Begründung von damals bleibt richtig, ihre Voraussetzung nicht: Die Tabelle hatte keine Route, die sie gebraucht hätte. `GET /api/admin/payments/webhooks` gibt es, und der Endpunkt antwortete deshalb dauerhaft leer.
 
-Bei der Durchsicht fiel der letzte verbliebene Service-Role-Pfad in der Anwendung auf: `api/search/airports` legte, sobald `SUPABASE_SERVICE_ROLE_KEY` gesetzt war, einen zweiten Client mit vollen Rechten an und schrieb damit Amadeus-Ergebnisse in `airports` zurück. Der Endpunkt ist öffentlich und ohne Anmeldung erreichbar; eine Suchanfrage eines beliebigen Besuchers hätte damit einen Schreibvorgang mit vollen Datenbankrechten ausgelöst, ohne Auth, ohne Ownership und ohne Rate Limit – die Prüfliste aus [AGENTS.md](AGENTS.md) Regel 14 verfehlt er in drei Punkten. Das Zwischenspeichern ist entfernt; die Suche liefert unverändert lokale Treffer und den Amadeus-Fallback, sie schreibt nur nicht mehr. Referenzdaten zu befüllen gehört in eine Migration oder einen Verwaltungsvorgang, nicht in eine öffentliche Suchabfrage. Damit liest kein Codepfad der Anwendung mehr einen Service-Role-Key, und der Setup-Check fragt ihn nicht mehr ab.
+Bei der Durchsicht fiel der letzte verbliebene Service-Role-Pfad in der Anwendung auf: `api/search/airports` legte, sobald `SUPABASE_SERVICE_ROLE_KEY` gesetzt war, einen zweiten Client mit vollen Rechten an und schrieb damit Amadeus-Ergebnisse in `airports` zurück. Der Endpunkt ist öffentlich und ohne Anmeldung erreichbar; eine Suchanfrage eines beliebigen Besuchers hätte damit einen Schreibvorgang mit vollen Datenbankrechten ausgelöst, ohne Auth, ohne Ownership und ohne Rate Limit – die Prüfliste aus [AGENTS.md](AGENTS.md) Regel 14 verfehlt er in drei Punkten. Das Zwischenspeichern ist entfernt. Mit Phase 3.1 entfällt auch der lesende Amadeus-Fallback: `api/search/airports` liest nur noch `public.airports`. Referenzdaten zu befüllen gehört in eine Migration oder einen Verwaltungsvorgang, nicht in eine öffentliche Suchabfrage. Damit liest kein Codepfad der Anwendung mehr einen Service-Role-Key, und der Setup-Check fragt ihn nicht mehr ab.
 
 ---
 
@@ -1377,7 +1379,7 @@ Nach der Abbildung bleiben `trip_items.price_amount`, `price_currency`, `provide
 
 **Ausnahme mit Absicht:** Im Feld `trips.travel_wish` bleiben Preisangaben stehen, weil dort der Satz des **Nutzers** steht.
 
-**Kontext:** Phase 3 – Amadeus, Hotels, Aktivitäten – existiert nicht. Bis dahin hat Jetnity keine belastbare Herkunft für einen Preis. „Flug ab CHF 412" ist dann keine Auskunft, sondern eine Behauptung mit dem Aussehen einer Auskunft, und wer sie liest, rechnet damit.
+**Kontext:** Phase 3 – echte Flug-, Hotel- und Aktivitätspreise – existierte zum Entscheidungszeitpunkt nicht. Bis dahin hat Jetnity keine belastbare Herkunft für einen Preis. „Flug ab CHF 412" ist dann keine Auskunft, sondern eine Behauptung mit dem Aussehen einer Auskunft, und wer sie liest, rechnet damit.
 
 `trip_items.price_amount` existiert seit Phase 1.5 und bedeutet dort: ein Preis mit belegbarer Herkunft. Diese Bedeutung darf nicht dadurch verwässert werden, dass sie ab jetzt auch „Schätzung eines Sprachmodells" heissen kann.
 
@@ -1612,6 +1614,176 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 **Begründung:** Dieselbe Graphform in beiden Ablagen. Keine Datenlöschung, keine Spekulation über alte Entwürfe.
 
 **Konsequenzen:** `gastreiseAendern()` und `aenderungErzeugenGast()` wischen `ohneTag` nicht mehr. Die Übernahme schickt `ungeplante`. Die Listen-Sortierung über `trips.updated_at` folgt der Graph-Revision (ADR-0058 Nachtrag).
+
+---
+
+## ADR-0062 – Duffel ist der erste Flugadapter, nicht die Produktarchitektur
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.1
+
+**Entscheidung:** Jetnity spricht intern eine schlanke Flugdomäne (`FlugSuchanfrage`, `FlugOption`, `FlightProvider`). Duffel Flights API ist der erste Daten-/Entwicklungsadapter. Ein späterer Metasuch-Provider (Skyscanner, Aviasales) muss dasselbe Interface erfüllen. Search-Provider und Affiliate-/Booking-Provider sind getrennte Verantwortlichkeiten. `booking_url` bleibt bei Duffel `null`. Jetnity darf sich weder technisch noch geschäftlich an Duffel koppeln. Amadeus Self-Service wird nicht angebunden (eingestellt am 17. Juli 2026).
+
+**Kontext:** Phase 3 beginnt mit echten Flügen. ADR-0011 und [AGENTS.md](AGENTS.md) Regel 19 verbieten eine Multi-Provider-Plattform auf Vorrat. Gleichzeitig darf der erste Anbieter nicht zur stillen Produktbindung werden. Amadeus Self-Service steht nicht mehr zur Verfügung.
+
+**Alternativen:**
+
+1. *Duffel-Typen durch UI und Reisegraph reichen.* Macht jeden Providerwechsel zu einem Rewrite.
+2. *Jetzt eine generische Plattform für zehn Anbieter.* Komplexität ohne zweiten Provider.
+3. *Deeplinks aus der Suche erfinden.* Wäre eine irreführende Buchungs-URL.
+4. *Amadeus trotzdem anbinden.* Die Self-Service-API ist eingestellt.
+
+**Begründung:** Die Naht ist klein genug, um verdient zu sein, und gross genug, damit UI, Scoring und Trip-Integration den Adapter nicht kennen. Buchung kommt später und darf einen anderen Partner nutzen.
+
+**Konsequenzen:** Keine Duffel-Typen in Komponenten. Keine eigene Flugbuchung. Keine Production-Aktivierung. `/api/search/airports` hat keinen Amadeus-Fallback mehr und liest nur `public.airports`. Dokumentation in [docs/FLUEGE.md](docs/FLUEGE.md).
+
+---
+
+## ADR-0063 – Flug-Ranking ist deterministisch und provisionsneutral
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.1
+
+**Entscheidung:** Das Kernranking ist eine reine Funktion über Preis, Dauer, Stopps, sehr frühe Abflüge, sehr späte Ankünfte, lange Umstiege, Overnight-Verbindungen und Passung zu bekannten Reisedaten. Kein Modell. Keine Provision. Kein Providername. Die UI zeigt „Jetnity empfiehlt“, „Günstigste“ und „Schnellste“ plus 2–4 Gründe.
+
+**Kontext:** Der Handoff und die Vision verlangen Gesamtreise statt billigster Flug. Ein LLM-Ranking wäre weder reproduzierbar noch in der CI prüfbar.
+
+**Alternativen:**
+
+1. *Billigste zuerst.* Widerspricht dem Produktprinzip.
+2. *Modell begründet die Rangfolge.* Teuer, nicht deterministisch, in Tests nicht reproduzierbar.
+
+**Begründung:** Vertrauen entsteht, wenn dieselbe Suche dieselbe Reihenfolge liefert und der Nutzer den Trade-off lesen kann.
+
+**Konsequenzen:** Gewichte stehen im Code (`RANGLISTE_GEWICHTE`), nicht in der Umgebung. Tests belegen, dass die günstigste Option nicht automatisch die Empfehlung ist.
+
+---
+
+## ADR-0064 – Flugsuche in Production aus, nur Duffel-Test, fehlende Secrets sind unavailable
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.1
+
+**Entscheidung:** `VERCEL_ENV=production` schaltet die Flugsuche hart aus. Development/Preview brauchen `JETNITY_FLIGHT_AKTIV` plus ein Duffel-Test-Token (`duffel_test_…`). Ein Live-Token gilt als fehlender Zugang. Fehlende Credentials sind ein sauberer unavailable-Zustand, kein Buildfehler.
+
+**Kontext:** Kostenpflichtige Provider-Aufrufe und Production-Secrets brauchen ausdrückliche Freigabe. Der Modellweg hat dasselbe Muster (ADR-0052). Duffel unterscheidet Test und Live am Token, nicht am Hostname.
+
+**Alternativen:**
+
+1. *Production mit Test-API.* Würde echte Nutzer gegen Sandbox-Angebote zeigen.
+2. *Secrets im Setup-Check verlangen.* Würde jede Umgebung ohne Duffel rot färben.
+3. *Live-Token in Preview zulassen.* Wäre ein kostenpflichtiger Aufruf ohne Freigabe.
+
+**Begründung:** Dieselbe Fail-closed-Linie wie beim Modell. Die Suche darf lokal fehlen, ohne den Build zu brechen.
+
+**Konsequenzen:** Keine `NEXT_PUBLIC_DUFFEL_*`. Rate-Limit im Prozess. Timeout 12 s. Keine Passagiernamen an Duffel. Kein `/air/orders`.
+
+---
+
+## ADR-0065 – `reise_anlegen()` schreibt kommerzielle Momentaufnahmen
+
+**Datum:** 20. August 2026
+**Status:** freigegeben für Development, Production nicht angewendet
+
+**Entscheidung:** `public.reise_anlegen()` übernimmt Preis, Währung, Provider, External-Ref, Buchungslink und Termin einer Planpunkt-Nutzlast. Modellvorschläge setzen diese Felder weiter auf null. `reise_aendern()` bleibt unverändert und überschreibt Handelsfelder nicht.
+
+**Kontext:** Ohne diese Schreibseite verlöre ein Gast seinen ausgewählten Flug beim Login. Die Spalten existieren seit Phase 1.5.
+
+**Alternativen:**
+
+1. *Nach der Übernahme separat inserieren.* Zwei Schreibwege, Race, Dubletten.
+2. *Gäste dürfen keine Flüge übernehmen.* Widerspricht dem Gastmodus.
+
+**Begründung:** Dieselbe Persistenz, die schon Gast → Konto trägt, muss die Momentaufnahme mitnehmen. Die Modellregel (ADR-0054, ADR-0060) bleibt: das Modell erzeugt und verändert keine Handelsfelder.
+
+**Konsequenzen:** Zod akzeptiert die Felder. Development-Migration `20260820100000`. Production erst nach Freigabe.
+
+---
+
+## ADR-0066 – Flughafenbasis kommt aus OurAirports, nicht aus einem Provider
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.1; Schema und Inhalt nur Development
+
+**Entscheidung:** Die Autocomplete-Suche unter `/api/search/airports` liest ausschliesslich `public.airports`. Der Bestand kommt aus einem kontrollierten Import der OurAirports-Open-Data-CSV (Public Domain), gefiltert auf IATA plus kommerziell relevante Nutzung. Weder Amadeus noch Duffel noch eine Live-Abfrage gegen OurAirports gehören zum Suchweg. CI und Production-Build laden den Datensatz nicht. Production bleibt unangetastet, bis eine eigene Freigabe Schema und Inhalt dorthin trägt.
+
+**Kontext:** Nach dem Entfernen des Amadeus-Fallbacks war die Suche korrekt lokal – und leer. Development hatte 0 Zeilen, Production etwa 40 historische Einträge. Das reicht nicht für eine globale Flugsuche. Ein Provider als Airport-Quelle würde die Autocomplete an denselben Zugang koppeln, der für die Flugangebote noch fehlt, und bei jedem Tastendruck Kosten oder Ausfälle erzeugen.
+
+**Alternativen:**
+
+1. *OurAirports bei jeder Suche live abfragen.* Langsam, ausfallabhängig, CI und Preview ohne Netz wären rot, Verstoss gegen die Anforderung.
+2. *Den vollen Dump ins Repository oder ins CI-Image legen.* Zehntausende irrelevante Felder, Lizenz- und Grössenballast, jeder Test würde ihn laden.
+3. *Duffel Places oder einen anderen Flugprovider als Airport-Quelle.* Koppelt die Suche an den Preview-Zugang und an einen Anbieter.
+4. *Nur die 40 historischen Production-Zeilen kopieren.* Keine globale Basis.
+
+**Begründung:** Die Autocomplete ist Teil der Reiseidee, nicht Teil eines Fluganbieters. OurAirports ist gemeinfrei, offline importierbar und unabhängig vom Duffel-Sandbox-Zugang. Der Filter hält Helipads und private Felder aus der Nutzersuche. Tests bleiben klein, weil sie Fixtures lesen.
+
+**Konsequenzen:** Schemaerweiterung `20260820110000` nur Development (`region`, `country_code`, `keywords`, `klasse`, `updated_at`). Schreibweg nur `npm run airports:importieren -- --schreiben --entwicklung`, davor `ziel()`. Dokumentation in [docs/FLUGHAFEN.md](docs/FLUGHAFEN.md). Ein späterer Production-Import braucht Freigabe.
+
+---
+
+## ADR-0067 – Ortsbasis kommt aus GeoNames-Dumps, nicht aus einem Geocoding-Proxy
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.1; Schema und Inhalt nur Development
+
+**Entscheidung:** Reiseziel und Abreise werden gegen eine lokale Tabelle `public.places` geprüft. Der Bestand kommt aus dem GeoNames-Dump (`allCountries` + `countryInfo`, CC BY 4.0) plus Flughafen-Zeilen aus `public.airports`. Die Nutzersuche trifft niemals GeoNames, Google, Nominatim oder einen Flugprovider. Ein eingetippter Text ohne bestätigte Auswahl wird nicht als geografischer Kern gespeichert. Production bleibt unangetastet.
+
+**Kontext:** Startseite und `/planen` akzeptierten freie Texte. Für Flüge, Karten, Hotels und Länderinformationen braucht der gespeicherte Kern einen realen Ort. `public.airports` deckt Bali, Südtirol oder Toskana nicht. Ein Live-Geocoding bei jedem Tastendruck wäre entweder kostenpflichtig, gegen die Nominatim-Nutzungsregeln oder neue Infrastruktur.
+
+**Alternativen:**
+
+1. *Nominatim öffentlich als Autocomplete.* Usage Policy verbietet schwere Autocomplete-Last.
+2. *Google Places oder vergleichbare APIs.* Laufende Kosten, Secret im Suchweg.
+3. *`public.airports` als Destination-Datenbank.* Falsch für Regionen und Inseln.
+4. *Eine kuratierte Fantasieliste.* Keine belastbare Weltbasis.
+5. *GeoNames-Webservice.* Username, Credit-Limit, Live-Abhängigkeit.
+
+**Begründung:** Der Dump ist kostenlos, kommerziell nutzbar und einmal importierbar. Attribution ist die einzige Lizenzpflicht. Filter halten Fantasieorte und Helipads draussen. UI und Reisegraph sprechen nur die interne `Ort`-Form.
+
+**Konsequenzen:** Additive Development-Migration `20260820120000`. `trips.origin_place_id` und `trip_stages.place_id` sind optional. Altbestand bleibt lesbar. Schreibweg nur `npm run places:importieren -- --schreiben --entwicklung`, davor `ziel()`. Der erste Development-Import enthält 124 811 Orte. Dokumentation in [docs/ORTE.md](docs/ORTE.md). Der Modellweg kanonisiert eindeutige Orte gegen dieselbe Tabelle und rät nicht bei Mehrdeutigkeit (`20260820130000` schreibt die Referenzen auch in `reise_aendern()`). Ein späterer Production-Import braucht Freigabe.
+
+---
+
+## ADR-0068 – Formularfehler sitzen am Feld, nicht nur in einer Zusammenfassung
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.1
+
+**Entscheidung:** Pflicht- und Validierungsfehler der V2-Formulare erscheinen direkt am betroffenen Feld. Beim Absenden werden alle fehlerhaften Felder markiert. Die Ansicht scrollt zum ersten Fehler und setzt den Fokus dorthin. Eine allgemeine Zeile „Bitte prüfe die markierten Angaben.“ ist nur Ergänzung. Reines Rot ist nie das einzige Fehlersignal.
+
+**Kontext:** Unter `/planen` landete die Ablehnung oft nur unterhalb der Absenden-Taste. Auf dem Telefon sah niemand, welches Feld fehlte. Ortssuche, Datum, Reisende und Budget brauchen dieselbe Regel wie die Auth-Felder, die das `Input`-Primitiv schon vorbereiten.
+
+**Alternativen:**
+
+1. *Nur die native Browser-Validierung.* Uneinheitlich, oft ohne konkreten Satz, und auf iOS leicht zu übersehen.
+2. *Nur eine Toast- oder Banner-Meldung.* Das Feld bleibt unsichtbar.
+3. *Nur den ersten Fehler zeigen.* Der Nutzer korrigiert, sendet erneut, findet den nächsten.
+
+**Begründung:** Mobile-first und Screenreader brauchen die Verbindung Feld → Meldung (`aria-invalid`, `aria-describedby`). Die Fachprüfung bleibt in `lib/formular/feldfehler.ts` und den bestehenden Ortsregeln, nicht in einer neuen Geodatenquelle.
+
+**Konsequenzen:** `/planen`, Startseiten-Ortssuche und die Auth-Formulare teilen dieselbe UX-Regel. `noValidate` verhindert, dass der Browser die eigene Meldung darüberlegt. Production unverändert.
+
+---
+
+## ADR-0069 – Production-Import nur mit Mehrfachschutz, nie still
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, vorbereitet; Production noch nicht beschrieben
+
+**Entscheidung:** Der Airport- und Place-Import nach Production ist ein manueller Release-Schritt. Er braucht `--schreiben --produktion` und den exakten Project-Ref. Die Management API muss bestätigen, dass das Ziel ein eigenständiges Projekt ist. Ein Development-Branch wird im Production-Modus abgelehnt. `--bereinigen` ist dort verboten. CI, Build und Merge importieren nicht.
+
+**Kontext:** Production steht auf `20260820080000`, hat 40 historische Airports und keine `places`. Development hat Schema und Bestand. Dieselbe Schreibfunktion ohne extra Schutz würde Production treffen, sobald `SUPABASE_PROJECT_REF` auf das Projekt zeigt. Einen Production-Ref hart im Repository zu hinterlegen wäre die schwächere Lösung.
+
+**Alternativen:**
+
+1. *Schutz `ziel()` einfach entfernen.* Ein falscher Ref schreibt Production.
+2. *Production-Ref als Default im Code.* Muss gepflegt werden, erkennt ein zweites Projekt nicht.
+3. *Automatischer Import beim Deploy.* Keine Freigabe, keine Pause nach einem Schemafehler.
+
+**Begründung:** Referenzdaten dürfen fehlen oder unvollständig sein; sie dürfen nicht still überschrieben oder gelöscht werden. UPSERT ohne Bereinigen erhält die 40 historischen Zeilen. Die Reihenfolge Schema → Airports → Places steht in [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md).
+
+**Konsequenzen:** Development-Weg unverändert (`--schreiben --entwicklung`). Production bleibt aus, bis die Freigabe und der manuelle Lauf vorliegen. `npm run production:pruefen` ist vollständig read-only (Metadaten, kein HTTP-Schreibversuch). `db:anwenden --produktion` verlangt `--bis 20260820130000` und wendet keine spätere Migration an. Duffel-Sandbox ist kein Merge-Blocker.
 
 ---
 
