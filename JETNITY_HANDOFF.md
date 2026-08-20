@@ -21,7 +21,8 @@ Verbindlicher Ablauf der Änderung:
 - `trips.revision` / `last_mutation_id` tragen optimistische Concurrency und Idempotenz; die Fassung steigt bei jeder Graph- und Stammdatenänderung, nicht nur in `reise_aendern()`
 - Account: `public.reise_aendern()`, SECURITY INVOKER, RLS, atomisch
 - Gast: derselbe fachliche Ablauf im LocalStorage, inklusive ungeplanter Planpunkte
-- Kommerzielle Planpunkte bleiben bei Modelloperationen bis Phase 3 stehen
+- Kommerzielle Planpunkte sind bei Modelloperationen bis Phase 3 vollständig gesperrt (Inhalt, Termin, Zuordnung)
+- `reise_aendern()` schiebt die Eindeutigkeit von `day_index`/`day_date` bis zum fertigen Graphen auf
 - Gemeinsames Modellkontingent mit `reisevorschlag` (38 Aufrufe / USD 3 pro Tag)
 - `/planen` und `/reisen/[tripId]`: `maxDuration = 300`
 - `reise_anlegen()` trägt keine eigene Missbrauchszählung; die Schranke bleibt im Auslöser (`20260820050000`)
@@ -170,7 +171,7 @@ Diese Punkte sind bekannt und blockieren Phase 3 nicht, müssen aber im Projektg
 - Der Router arbeitet mit Mustern und kann ungewöhnliche Formulierungen falsch einordnen; manueller Modell-Stift bleibt möglich.
 - Preview-Tests sind keine Lasttests.
 - Production-Modellaktivierung bleibt eine eigene Freigabe.
-- Echte Reiseangebote/Preise sind noch nicht Teil von Phase 2. Phase 3 muss das Buchungs-/Providerverhalten für kommerzielle Planpunkte bewusst definieren; bis dahin bleiben sie bei Modelloperationen konservativ geschützt.
+- Echte Reiseangebote/Preise sind noch nicht Teil von Phase 2. Phase 3 muss das Buchungs-/Providerverhalten für kommerzielle Planpunkte bewusst definieren; bis dahin sind sie bei Modelloperationen vollständig gesperrt.
 - Der Sicherheitstest `der Dienstweg als Gast bekommt Kontingent` isoliert Live-Gastzeilen der letzten 24 Stunden nur innerhalb der Rollback-Transaktion. Das Development-Tageslimit bleibt 24 und wird nicht erhöht.
 
 ## 10. Sofortiger Startpunkt im nächsten Chat

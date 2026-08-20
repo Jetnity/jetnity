@@ -567,6 +567,10 @@ describe('Ungeplante Planpunkte im Gastspeicher', () => {
 
     const dom = danach.ohneTag.find((punkt) => punkt.id === 'item-dom')
     assert.equal(dom?.provider, 'getyourguide')
+    assert.equal(dom?.title, 'Dom')
+    assert.equal(dom?.startsOn, letzter.dayDate)
+    assert.equal(dom?.dayId, null)
+    assert.equal(dom?.stageId, null)
     assert.equal(danach.days.some((tag) => tag.items.some((punkt) => punkt.id === 'item-dom')), false)
   })
 

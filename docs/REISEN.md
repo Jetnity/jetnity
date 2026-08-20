@@ -135,7 +135,9 @@ vertrauenswürdige Reise → Wunsch → Operationen → anwenden → Vorschau �
 
 `public.reise_aendern(jsonb)` ist `SECURITY INVOKER`, atomisch, prüft `trips.revision`, ist über `last_mutation_id` idempotent und schreibt keine Preise, Anbieter oder Buchungsfelder. Bestehende Kennungen unveränderter Zeilen bleiben. Eine veraltete Fassung (zweiter Tab) wird abgelehnt, nicht still überschrieben. Direkte Änderungen an Etappen, Tagen, Planpunkten und Stammdaten der Reise erhöhen dieselbe Fassung (ADR-0058 Nachtrag).
 
-Das Modell sieht einen Snapshot ohne Handelsfelder und liefert Operationen, keine Ersatzreise (ADR-0059). Planpunkte mit Anbieter, Buchungslink, Fremdkennung oder Preis bleiben bis Phase 3 bei Modelloperationen stehen. Kontingent und Kostendeckel sind dieselben wie beim Vorschlag.
+Die Eindeutigkeit von `day_index` und `day_date` ist während des Schreibens aufgeschoben und wird vor dem Erfolg geprüft (ADR-0060 Nachtrag). Ein Tag zwischen zwei Tagen, ein entfernter mittlerer Tag oder verschobene Kalenderdaten dürfen dazwischen kollidieren, im fertigen Graphen nicht.
+
+Das Modell sieht einen Snapshot ohne Handelsfelder und liefert Operationen, keine Ersatzreise (ADR-0059). Planpunkte mit Anbieter, Buchungslink, Fremdkennung oder Preis sind bis Phase 3 vollständig gesperrt: weder Inhalt noch Termin noch Zuordnung. Entfällt ihr Tag oder ihre Etappe, bleiben sie ungeplant und unverändert. Kontingent und Kostendeckel sind dieselben wie beim Vorschlag.
 
 Gast und Konto speichern ungeplante Planpunkte gleich: im Konto `trip_items.day_id` null, im Browser `ohneTag`. Die Übernahme schickt sie als `ungeplante` (ADR-0061).
 

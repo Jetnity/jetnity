@@ -293,16 +293,16 @@ describe('Tage und Planpunkte', () => {
     assert.equal(tag2?.items.some((punkt) => punkt.title === 'Spaziergang am Arno'), true)
   })
 
-  test('ein Planpunkt kann auf einen anderen Tag wandern', () => {
-    const ergebnis = anwenden([op({ art: 'punkt_anpassen', punktId: 'item-1', tagId: 'day-2' })])
+  test('ein nicht-kommerzieller Planpunkt kann auf einen anderen Tag wandern', () => {
+    const ergebnis = anwenden([op({ art: 'punkt_anpassen', punktId: 'item-2', tagId: 'day-3' })])
     assert.equal(ergebnis.ok, true)
     if (!ergebnis.ok) return
-    assert.equal(ergebnis.reise.days[0]?.items.some((punkt) => punkt.id === 'item-1'), false)
     const tag2 = ergebnis.reise.days.find((tag) => tag.id === 'day-2')
-    const verschoben = tag2?.items.find((punkt) => punkt.id === 'item-1')
-    assert.equal(verschoben?.title, 'Dom')
-    assert.equal(verschoben?.priceAmount, 18)
-    assert.equal(verschoben?.dayId, 'day-2')
+    const tag3 = ergebnis.reise.days.find((tag) => tag.id === 'day-3')
+    assert.equal(tag2?.items.some((punkt) => punkt.id === 'item-2'), false)
+    const verschoben = tag3?.items.find((punkt) => punkt.id === 'item-2')
+    assert.equal(verschoben?.title, 'Uffizien')
+    assert.equal(verschoben?.dayId, 'day-3')
   })
 })
 
@@ -319,14 +319,54 @@ describe('Geschützte kommerzielle Felder', () => {
     assert.equal(dom?.bookingUrl, 'https://example.com/dom')
   })
 
-  test('angepasste Punkte behalten den Preis trotz neuem Titel', () => {
-    const ergebnis = anwenden([op({ art: 'punkt_anpassen', punktId: 'item-1', titel: 'Dom von Florenz' })])
+  test('punkt_anpassen ändert einen kommerziellen Punkt nicht', () => {
+    const ergebnis = anwenden([
+      op({
+        art: 'punkt_anpassen',
+        punktId: 'item-1',
+        titel: 'Dom von Florenz',
+        notiz: 'neu',
+        punktArt: 'note',
+        beginn: '18:00',
+        tagId: 'day-2',
+      }),
+    ])
     assert.equal(ergebnis.ok, true)
     if (!ergebnis.ok) return
     const dom = ergebnis.reise.days[0]?.items.find((punkt) => punkt.id === 'item-1')
-    assert.equal(dom?.title, 'Dom von Florenz')
+    assert.equal(dom?.title, 'Dom')
+    assert.equal(dom?.kind, 'activity')
+    assert.equal(dom?.note, null)
+    assert.equal(dom?.startsAt, '09:00')
+    assert.equal(dom?.startsOn, '2026-09-12')
+    assert.equal(dom?.dayId, 'day-1')
+    assert.equal(dom?.stageId, 'stage-1')
     assert.equal(dom?.priceAmount, 18)
     assert.equal(dom?.provider, 'getyourguide')
+    assert.equal(ergebnis.reise.days[1]?.items.some((punkt) => punkt.id === 'item-1'), false)
+  })
+
+  test('zeitraum_verschieben lässt Termine eines kommerziellen Punkts stehen', () => {
+    const ergebnis = anwenden([op({ art: 'zeitraum_verschieben', tageDelta: 7 })])
+    assert.equal(ergebnis.ok, true)
+    if (!ergebnis.ok) return
+    const dom = ergebnis.reise.days[0]?.items.find((punkt) => punkt.id === 'item-1')
+    assert.equal(ergebnis.reise.days[0]?.dayDate, '2026-09-19')
+    assert.equal(dom?.startsOn, '2026-09-12')
+    assert.equal(dom?.startsAt, '09:00')
+    assert.equal(dom?.endsOn, null)
+    assert.equal(dom?.dayId, 'day-1')
+    assert.equal(dom?.title, 'Dom')
+  })
+
+  test('ein neues Startdatum verschiebt den kommerziellen Termin nicht', () => {
+    const ergebnis = anwenden([op({ art: 'stammdaten', startdatum: '2026-10-01' })])
+    assert.equal(ergebnis.ok, true)
+    if (!ergebnis.ok) return
+    const dom = ergebnis.reise.days[0]?.items.find((punkt) => punkt.id === 'item-1')
+    assert.equal(ergebnis.reise.startDate, '2026-10-01')
+    assert.equal(dom?.startsOn, '2026-09-12')
+    assert.equal(dom?.dayId, 'day-1')
   })
 
   test('neue Punkte haben keine Handelsfelder', () => {
@@ -369,9 +409,18 @@ describe('Geschützte kommerzielle Felder', () => {
     if (!ergebnis.ok) return
     assert.equal(ergebnis.reise.days.some((tag) => tag.items.some((punkt) => punkt.id === 'item-1')), false)
     const dom = ergebnis.reise.ohneTag.find((punkt) => punkt.id === 'item-1')
+    assert.equal(dom?.title, 'Dom')
+    assert.equal(dom?.kind, 'activity')
+    assert.equal(dom?.note, null)
+    assert.equal(dom?.startsOn, '2026-09-12')
+    assert.equal(dom?.startsAt, '09:00')
+    assert.equal(dom?.endsOn, null)
+    assert.equal(dom?.endsAt, null)
     assert.equal(dom?.provider, 'getyourguide')
     assert.equal(dom?.priceAmount, 18)
+    assert.equal(dom?.bookingUrl, 'https://example.com/dom')
     assert.equal(dom?.dayId, null)
+    assert.equal(dom?.stageId, null)
   })
 })
 

@@ -228,8 +228,9 @@ export const reiseSchema = z
     }
 
     // `trip_days_index_eindeutig` und `trip_days_datum_eindeutig` in der
-    // Datenbank. Zwei Tage mit derselben Nummer wären dort ein `23505` mitten
-    // in der Übernahme.
+    // Datenbank. Während `reise_aendern()` sind sie aufgeschoben; am Ende des
+    // Schreibens und in Zod gelten sie sofort. Zwei Tage mit derselben Nummer
+    // wären dort ein `23505`.
     pruefeEindeutig(
       reise.days.map((tag) => tag.dayIndex),
       ctx,

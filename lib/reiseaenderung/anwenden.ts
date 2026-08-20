@@ -5,9 +5,9 @@
 // Das Modell schreibt nicht in die Datenbank. Es liefert Operationen. Diese
 // Datei ist die einzige Stelle, die daraus einen neuen Reisegraphen macht.
 // Nach dem Anwenden muss das Ergebnis erneut durch `reiseSchema`. Kommerzielle
-// Felder unveränderter Planpunkte werden aus dem Original übernommen, nicht
-// aus der Operation. Kommerzielle Planpunkte selbst dürfen durch eine
-// Modelloperation nicht verschwinden.
+// Planpunkte sind bis Phase 3 vollständig gesperrt: Inhalt, Termin und
+// Zuordnung bleiben. Entfällt ihr Tag oder ihre Etappe, bleiben sie ungeplant
+// und sonst unverändert. Neue Planpunkte bleiben ohne Handelsfelder.
 //
 // Frei von Next, Supabase und `process.env`.
 
@@ -82,6 +82,7 @@ function reindex(reise: Reisegraph): void {
     tag.dayIndex = stelle + 1
     if (start) tag.dayDate = datumVerschieben(start, stelle)
     tag.items.forEach((punkt, ort) => {
+      if (istKommerziell(punkt)) return
       punkt.position = ort + 1
       punkt.dayId = tag.id
       if (tag.dayDate) {
@@ -164,11 +165,13 @@ function zeitraumVerschieben(reise: Reisegraph, op: Modelloperation) {
   for (const tag of reise.days) {
     tag.dayDate = datumVerschieben(tag.dayDate, delta)
     for (const punkt of tag.items) {
+      if (istKommerziell(punkt)) continue
       punkt.startsOn = datumVerschieben(punkt.startsOn, delta)
       punkt.endsOn = datumVerschieben(punkt.endsOn, delta)
     }
   }
   for (const punkt of reise.ohneTag) {
+    if (istKommerziell(punkt)) continue
     punkt.startsOn = datumVerschieben(punkt.startsOn, delta)
     punkt.endsOn = datumVerschieben(punkt.endsOn, delta)
   }
@@ -370,6 +373,7 @@ function punktHinzufuegen(reise: Reisegraph, op: Modelloperation, kennung: Kennu
 
 function punktAnpassen(reise: Reisegraph, op: Modelloperation) {
   const { punkt } = punktSuchen(reise, op.punktId, 'Dieser Planpunkt gehört nicht zur Reise.')
+  if (istKommerziell(punkt)) return
   if (op.titel) punkt.title = op.titel
   if (op.notiz !== null) punkt.note = op.notiz
   if (op.punktArt) punkt.kind = op.punktArt

@@ -1417,6 +1417,142 @@ function reisenachweise() {
   ]
 }
 
+const GRAPH = {
+  reise: 'aaaaaaaa-0000-4000-8000-000000000101',
+  a: 'aaaaaaaa-0000-4000-8000-000000000102',
+  b: 'aaaaaaaa-0000-4000-8000-000000000103',
+  t1: 'aaaaaaaa-0000-4000-8000-000000000111',
+  t2: 'aaaaaaaa-0000-4000-8000-000000000112',
+  t3: 'aaaaaaaa-0000-4000-8000-000000000113',
+  t4: 'aaaaaaaa-0000-4000-8000-000000000114',
+  t5: 'aaaaaaaa-0000-4000-8000-000000000115',
+  tNeu: 'aaaaaaaa-0000-4000-8000-000000000116',
+}
+
+function graphAufbauSql() {
+  return `
+  insert into public.trips (id, user_id, title, start_date, end_date)
+    values ('${GRAPH.reise}', '${NUTZER}', 'Italien', '2026-09-12', '2026-09-16');
+  perform set_config('jetnity.graph_mutation', '1', true);
+  insert into public.trip_stages (id, trip_id, user_id, position, name, arrival_date, departure_date)
+    values
+      ('${GRAPH.a}', '${GRAPH.reise}', '${NUTZER}', 1, 'Florenz', '2026-09-12', '2026-09-14'),
+      ('${GRAPH.b}', '${GRAPH.reise}', '${NUTZER}', 2, 'Rom', '2026-09-15', '2026-09-16');
+  insert into public.trip_days (id, trip_id, user_id, day_index, day_date, stage_id)
+    values
+      ('${GRAPH.t1}', '${GRAPH.reise}', '${NUTZER}', 1, '2026-09-12', '${GRAPH.a}'),
+      ('${GRAPH.t2}', '${GRAPH.reise}', '${NUTZER}', 2, '2026-09-13', '${GRAPH.a}'),
+      ('${GRAPH.t3}', '${GRAPH.reise}', '${NUTZER}', 3, '2026-09-14', '${GRAPH.a}'),
+      ('${GRAPH.t4}', '${GRAPH.reise}', '${NUTZER}', 4, '2026-09-15', '${GRAPH.b}'),
+      ('${GRAPH.t5}', '${GRAPH.reise}', '${NUTZER}', 5, '2026-09-16', '${GRAPH.b}');
+  perform set_config('jetnity.graph_mutation', '', true);`
+}
+
+function graphEtappe(id, position, name, arrival, departure) {
+  return {
+    id,
+    position,
+    name,
+    country_code: null,
+    arrival_date: arrival,
+    departure_date: departure,
+    latitude: null,
+    longitude: null,
+  }
+}
+
+function graphTag(id, stageId, index, date) {
+  return {
+    id,
+    stage_id: stageId,
+    day_index: index,
+    day_date: date,
+    title: null,
+    items: [],
+  }
+}
+
+function graphNutzlast(mutation, stages, days, extra = {}) {
+  return JSON.stringify({
+    trip_id: GRAPH.reise,
+    mutation_id: mutation,
+    basis_revision: 1,
+    title: 'Italien',
+    origin: null,
+    start_date: extra.start ?? days[0]?.day_date ?? null,
+    end_date: extra.end ?? days[days.length - 1]?.day_date ?? null,
+    travellers: 2,
+    currency: 'CHF',
+    budget_amount: null,
+    pace: 'balanced',
+    interests: ['culture'],
+    travel_wish: null,
+    stages,
+    days,
+    ungeplante: [],
+  })
+}
+
+function graphPruefenSql(tage) {
+  const checks = tage
+    .map(
+      (tag) =>
+        `if not exists (
+    select 1 from public.trip_days
+     where id = '${tag.id}'
+       and day_index = ${tag.day_index}
+       and day_date = '${tag.day_date}'
+       and stage_id = '${tag.stage_id}'
+  ) then
+    raise exception 'Tag ${tag.id} hat nicht ${tag.day_index}/${tag.day_date}';
+  end if;`,
+    )
+    .join('\n')
+  return `
+  if (select count(*) from public.trip_days where trip_id = '${GRAPH.reise}') <> ${tage.length} then
+    raise exception 'unerwartete Tageszahl';
+  end if;
+  if exists (
+    select 1 from public.trip_days
+     where trip_id = '${GRAPH.reise}'
+     group by day_index
+    having count(*) > 1
+  ) then
+    raise exception 'doppelte day_index nach reise_aendern';
+  end if;
+  if exists (
+    select 1 from public.trip_days
+     where trip_id = '${GRAPH.reise}'
+       and day_date is not null
+     group by day_date
+    having count(*) > 1
+  ) then
+    raise exception 'doppeltes day_date nach reise_aendern';
+  end if;
+  ${checks}`
+}
+
+function graphFall(name, mutation, stages, days, extra = {}) {
+  const nutzlast = graphNutzlast(mutation, stages, days, extra)
+  return {
+    name,
+    rolle: 'authenticated',
+    uid: NUTZER,
+    sql: `do $body$
+begin
+  ${graphAufbauSql()}
+  perform public.reise_aendern('${nutzlast}'::jsonb);
+  ${graphPruefenSql(days)}
+  raise exception using errcode = 'ZZ000', message = 'treffer:1';
+end
+$body$`,
+    erwartung: 'erlaubt',
+    grund:
+      'Ein gültiger Zielgraph darf day_index und day_date vorübergehend teilen. ' +
+      'Die Eindeutigkeit gilt erst für das Ergebnis von reise_aendern().',
+  }
+}
+
 /**
  * Nachweise zu public.reise_aendern(): Eigentum, Revision, Idempotenz,
  * Rollback und der Schutz kommerzieller Felder.
@@ -1672,6 +1808,119 @@ $body$`,
         'Ein direktes UPDATE von title (oder Herkunft, Zeitraum, Reisende, Budget, ' +
         'Status, Tempo, Interessen, Reisewunsch) muss die Fassung erhöhen. Sonst gilt ' +
         'ein älterer Sprachvorschlag weiter als aktuell.',
+    },
+    graphFall(
+      'reise_aendern fügt einen Tag zwischen zwei Tagen ein',
+      'mut-tag-ein',
+      [
+        graphEtappe(GRAPH.a, 1, 'Florenz', '2026-09-12', '2026-09-15'),
+        graphEtappe(GRAPH.b, 2, 'Rom', '2026-09-16', '2026-09-17'),
+      ],
+      [
+        graphTag(GRAPH.t1, GRAPH.a, 1, '2026-09-12'),
+        graphTag(GRAPH.tNeu, GRAPH.a, 2, '2026-09-13'),
+        graphTag(GRAPH.t2, GRAPH.a, 3, '2026-09-14'),
+        graphTag(GRAPH.t3, GRAPH.a, 4, '2026-09-15'),
+        graphTag(GRAPH.t4, GRAPH.b, 5, '2026-09-16'),
+        graphTag(GRAPH.t5, GRAPH.b, 6, '2026-09-17'),
+      ],
+    ),
+    graphFall(
+      'reise_aendern entfernt den mittleren Tag',
+      'mut-tag-mitte',
+      [
+        graphEtappe(GRAPH.a, 1, 'Florenz', '2026-09-12', '2026-09-13'),
+        graphEtappe(GRAPH.b, 2, 'Rom', '2026-09-14', '2026-09-15'),
+      ],
+      [
+        graphTag(GRAPH.t1, GRAPH.a, 1, '2026-09-12'),
+        graphTag(GRAPH.t3, GRAPH.a, 2, '2026-09-13'),
+        graphTag(GRAPH.t4, GRAPH.b, 3, '2026-09-14'),
+        graphTag(GRAPH.t5, GRAPH.b, 4, '2026-09-15'),
+      ],
+    ),
+    graphFall(
+      'reise_aendern kürzt eine Etappe und rückt Folgetage vor',
+      'mut-etappe-dauer',
+      [
+        graphEtappe(GRAPH.a, 1, 'Florenz', '2026-09-12', '2026-09-13'),
+        graphEtappe(GRAPH.b, 2, 'Rom', '2026-09-14', '2026-09-15'),
+      ],
+      [
+        graphTag(GRAPH.t1, GRAPH.a, 1, '2026-09-12'),
+        graphTag(GRAPH.t2, GRAPH.a, 2, '2026-09-13'),
+        graphTag(GRAPH.t4, GRAPH.b, 3, '2026-09-14'),
+        graphTag(GRAPH.t5, GRAPH.b, 4, '2026-09-15'),
+      ],
+    ),
+    graphFall(
+      'reise_aendern entfernt eine Etappe und nummeriert Folgetage neu',
+      'mut-etappe-weg',
+      [graphEtappe(GRAPH.b, 1, 'Rom', '2026-09-12', '2026-09-13')],
+      [
+        graphTag(GRAPH.t4, GRAPH.b, 1, '2026-09-12'),
+        graphTag(GRAPH.t5, GRAPH.b, 2, '2026-09-13'),
+      ],
+      { start: '2026-09-12', end: '2026-09-13' },
+    ),
+    graphFall(
+      'reise_aendern verschiebt Kalenderdaten nach hinten',
+      'mut-datum-plus',
+      [
+        graphEtappe(GRAPH.a, 1, 'Florenz', '2026-09-13', '2026-09-15'),
+        graphEtappe(GRAPH.b, 2, 'Rom', '2026-09-16', '2026-09-17'),
+      ],
+      [
+        graphTag(GRAPH.t1, GRAPH.a, 1, '2026-09-13'),
+        graphTag(GRAPH.t2, GRAPH.a, 2, '2026-09-14'),
+        graphTag(GRAPH.t3, GRAPH.a, 3, '2026-09-15'),
+        graphTag(GRAPH.t4, GRAPH.b, 4, '2026-09-16'),
+        graphTag(GRAPH.t5, GRAPH.b, 5, '2026-09-17'),
+      ],
+    ),
+    graphFall(
+      'reise_aendern verschiebt Kalenderdaten nach vorne',
+      'mut-datum-minus',
+      [
+        graphEtappe(GRAPH.a, 1, 'Florenz', '2026-09-11', '2026-09-13'),
+        graphEtappe(GRAPH.b, 2, 'Rom', '2026-09-14', '2026-09-15'),
+      ],
+      [
+        graphTag(GRAPH.t1, GRAPH.a, 1, '2026-09-11'),
+        graphTag(GRAPH.t2, GRAPH.a, 2, '2026-09-12'),
+        graphTag(GRAPH.t3, GRAPH.a, 3, '2026-09-13'),
+        graphTag(GRAPH.t4, GRAPH.b, 4, '2026-09-14'),
+        graphTag(GRAPH.t5, GRAPH.b, 5, '2026-09-15'),
+      ],
+    ),
+    {
+      name: 'reise_aendern lehnt doppelte Tagesnummern im Zielgraphen ab',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `do $body$
+begin
+  ${graphAufbauSql()}
+  perform public.reise_aendern('${graphNutzlast(
+    'mut-doppelt',
+    [
+      graphEtappe(GRAPH.a, 1, 'Florenz', '2026-09-12', '2026-09-14'),
+      graphEtappe(GRAPH.b, 2, 'Rom', '2026-09-15', '2026-09-16'),
+    ],
+    [
+      graphTag(GRAPH.t1, GRAPH.a, 1, '2026-09-12'),
+      graphTag(GRAPH.t2, GRAPH.a, 1, '2026-09-13'),
+      graphTag(GRAPH.t3, GRAPH.a, 3, '2026-09-14'),
+      graphTag(GRAPH.t4, GRAPH.b, 4, '2026-09-15'),
+      graphTag(GRAPH.t5, GRAPH.b, 5, '2026-09-16'),
+    ],
+  )}'::jsonb);
+end
+$body$`,
+      erwartung: 'abgelehnt',
+      code: '23505',
+      grund:
+        'Aufgeschobene Eindeutigkeit gilt nur dazwischen. Zwei Tage mit derselben ' +
+        'Nummer im fertigen Graphen bleiben unzulässig.',
     },
   ]
 }

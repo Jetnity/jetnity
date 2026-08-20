@@ -535,6 +535,7 @@ Offen aus 2.1:
 - [x] Nachtrag: `reise_anlegen()` ohne eigene Missbrauchszählung (`20260820050000`, ADR-0045/0048)
 - [x] Nachtrag: Graph-Revision über Trigger (`20260820060000`), Guest-`ohneTag`, kommerzielle Planpunkte bei Modelloperationen geschützt
 - [x] Nachtrag: direkte Stammdaten-Updates auf `trips` erhöhen `revision` (`20260820070000`)
+- [x] Nachtrag: aufgeschobene Tages-Eindeutigkeit in `reise_aendern()` (`20260820080000`) und vollständige Sperre kommerzieller Planpunkte
 
 **Voraussetzungen erfüllt.** Keine neue Infrastruktur. Dieselbe Kostenschranke wie Phase 2.1. Production unverändert aus. Draft-PR #18 bleibt Draft, nicht mergen.
 

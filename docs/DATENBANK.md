@@ -61,7 +61,7 @@ Ein Unterschied ist wichtig: Alle Skripte ausser `db:parallelitaet` und `db:anwe
 | Spalten | 115 | 102 | 66 | 324 |
 | Primärschlüssel | 12 | 11 | 8 | 37 |
 | Fremdschlüssel | 7 | 7 | 2 | 52 |
-| Eindeutigkeitsbedingungen | 6 | 6 | 3 | 4 |
+| Eindeutigkeitsbedingungen | 7 | 6 | 3 | 4 |
 | CHECK-Bedingungen | 56 | 45 | 4 | 26 |
 | Indizes | 34 | 31 | 25 | 127 |
 | RLS-Policies | 32 | 31 | 19 | 66 |
@@ -74,7 +74,7 @@ Ein Unterschied ist wichtig: Alle Skripte ausser `db:parallelitaet` und `db:anwe
 
 Die zwölf Tabellen: `profiles`, `trips`, `trip_stages`, `trip_days`, `trip_items`, `model_usage`, `airports`, `payments`, `refunds`, `stripe_webhooks`, `security_events`, `blocked_ips`. Ihre Einordnung steht in Abschnitt 10.
 
-**Phase 2.2 Nachtrag `20260820060000`:** `public.reise_graph_geaendert()` plus neun Statement-Trigger auf den Kindtabellen. **Nachtrag `20260820070000`:** `public.reise_stamm_geaendert()` erhöht die Fassung bei direkten Stammdaten-Updates auf `trips`. Die Inventur zählt danach 24 Funktionen und 17 Trigger. Production unverändert.
+**Phase 2.2 Nachtrag `20260820060000`:** `public.reise_graph_geaendert()` plus neun Statement-Trigger auf den Kindtabellen. **Nachtrag `20260820070000`:** `public.reise_stamm_geaendert()` erhöht die Fassung bei direkten Stammdaten-Updates auf `trips`. **Nachtrag `20260820080000`:** `trip_days_index_eindeutig` und `trip_days_datum_eindeutig` sind `UNIQUE … DEFERRABLE`; der partielle Unique-Index auf `day_date` entfällt. Die Inventur zählt danach 24 Funktionen, 17 Trigger und 7 Eindeutigkeitsbedingungen. Production unverändert.
 
 Das Wachstum liegt vollständig bei den Reisedaten: Die vier neuen Tabellen tragen 61 Spalten, 43 CHECK-Bedingungen, 6 Fremdschlüssel, 5 Eindeutigkeitsbedingungen, 15 Indizes, 16 Policies und 5 Auslöser – vier für `updated_at`, einer für die Erzeugungsregeln von `public.trips` (Abschnitt 7a). Gleichzeitig sind mit `creator_sessions` 16 Spalten, 7 Indizes und 4 Policies sowie die neun Creator-Spalten des Profils entfallen – die Nettozahlen der Tabelle oben sind deshalb kleiner als die Zugänge.
 

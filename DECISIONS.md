@@ -1563,6 +1563,8 @@ Kontingent und Kostendeckel sind dieselben wie bei `reisevorschlag`. `model_usag
 
 **Nachtrag, 20. August 2026:** Bis Phase 3 ein bewusstes Buchungs-/Providerverhalten definiert, bleiben Planpunkte mit `provider`, `externalRef`, `bookingUrl` oder Preis bei Modelloperationen stehen. `punkt_entfernen` ist für sie ein No-Op. Fehlt ein solcher Punkt nach dem Anwenden, setzt `kommerziellErhalten()` ihn ungeplant zurück. Eine allgemeine Umplanung („mach die Reise entspannter“) darf ihn nicht verschwinden lassen.
 
+**Nachtrag, 20. August 2026 (Sperre):** Bis Phase 3 darf das Modell einen solchen Punkt überhaupt nicht inhaltlich verändern: nicht `kind`, `title`, `note`, `startsOn`/`startsAt`, `endsOn`/`endsAt`, `dayId`/`stageId` und nicht die Handelsfelder. `punkt_anpassen` ist dafür ein No-Op. `zeitraum_verschieben` und ein neues Startdatum lassen seine Termine stehen. Entfällt sein Tag oder seine Etappe, bleibt er ungeplant und sonst unverändert.
+
 ---
 
 ## ADR-0060 – `reise_aendern()` ist SECURITY INVOKER, atomisch und ohne Handelsfelder
@@ -1587,6 +1589,8 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 **Begründung:** Dieselbe Bauart wie das Anlegen: INVOKER, eine Transaktion, Idempotenz in der Datenbank. Kommerzielle Felder gehören der späteren Anbieterphase, nicht dem Modell und nicht der Nutzlast.
 
 **Konsequenzen:** Ein Fehler mitten in der Funktion lässt die vorige Fassung stehen, nachgewiesen in `npm run db:sicherheit`. Die Nutzlast darf Preise mitschicken – die Funktion liest sie nicht. Gäste speichern denselben fachlichen Ablauf im `localStorage` (`gastreiseAendern()`).
+
+**Nachtrag, 20. August 2026:** `trip_days_index_eindeutig` und `trip_days_datum_eindeutig` sind `UNIQUE … DEFERRABLE INITIALLY IMMEDIATE`. Der partielle Unique-Index auf `day_date` entfällt; mehrere `NULL`-Daten bleiben zulässig. `reise_aendern()` setzt beide Bedingungen während des Kindschreibens auf `DEFERRED` und vor dem Rückgabewert wieder auf `IMMEDIATE`. Gültige Umnummerierungen und Datumsverschiebungen laufen durch; ein Zielgraph mit doppelter Nummer bleibt `23505`.
 
 ---
 
