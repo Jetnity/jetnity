@@ -11,7 +11,7 @@ import {
 import { ortPasstZurRolle, type Ort, type OrtOption, type OrtRolle } from '@/lib/places/domain'
 
 const ORT_TREFFER = 12
-export const ORT_ABFRAGE = 80
+export const ORT_ABFRAGE = 40
 
 export function sucheSicher(wert: string): string {
   return wert.replace(/[%_,.()\\*]/g, '').trim()
@@ -21,6 +21,45 @@ export function sucheFilter(suche: string): string[] {
   return sucheVarianten(suche)
     .map(sucheSicher)
     .filter((eintrag) => eintrag.length > 0)
+}
+
+/** Bewusste Dummy-Eingabe, kein Reiseziel. */
+function sucheIstPlatzhalter(suche: string): boolean {
+  return gleichGefaltet(suche.trim(), 'test')
+}
+
+export function ortNamensfilter(suche: string): string | null {
+  if (sucheIstPlatzhalter(suche)) return null
+  const teile = sucheFilter(suche)
+  if (teile.length === 0) return null
+  return teile
+    .flatMap((teil) => {
+      const felder = [`name.ilike.${teil}%`, `name.ilike.% ${teil}%`]
+      if (/^[A-Za-z]{3}$/.test(teil)) felder.push(`iata.eq.${teil.toUpperCase()}`)
+      return felder
+    })
+    .join(',')
+}
+
+export function ortSchluesselfilter(suche: string): string | null {
+  if (sucheIstPlatzhalter(suche)) return null
+  const teile = sucheFilter(suche)
+  if (teile.length === 0) return null
+  return teile.map((teil) => `keywords.ilike.%${teil}%`).join(',')
+}
+
+function nameAlsWort(name: string | null | undefined, suche: string): boolean {
+  if (!name) return false
+  if (beginntGefaltet(name, suche)) return true
+  return enthaeltGefaltet(name, ` ${suche}`) || enthaeltGefaltet(name, `-${suche}`)
+}
+
+function keywordAlsWort(keywords: string | null | undefined, suche: string): boolean {
+  if (!keywords) return false
+  return keywords.split(',').some((teil) => {
+    const wort = teil.trim()
+    return gleichGefaltet(wort, suche) || nameAlsWort(wort, suche)
+  })
 }
 
 function typBonus(ort: Ort, rolle: OrtRolle): number {
@@ -38,19 +77,18 @@ function typBonus(ort: Ort, rolle: OrtRolle): number {
 
 function ortRang(ort: Ort, suche: string, rolle: OrtRolle): number {
   const raw = suche.trim()
-  if (!raw) return 0
+  if (!raw || sucheIstPlatzhalter(raw)) return 0
   const up = raw.toUpperCase()
   let treffer = 0
 
   if (ort.iata && ort.iata === up) treffer += 10_000
   if (gleichGefaltet(ort.name, raw)) treffer += 2_000
-  else if (beginntGefaltet(ort.name, raw)) treffer += 1_400
-  else if (enthaeltGefaltet(ort.name, raw)) treffer += 700
+  else if (nameAlsWort(ort.name, raw)) treffer += 1_400
 
   if (gleichGefaltet(ort.region, raw)) treffer += 500
-  if (enthaeltGefaltet(ort.keywords, raw)) treffer += 400
-  if (enthaeltGefaltet(ort.country, raw)) treffer += 80
+  if (keywordAlsWort(ort.keywords, raw)) treffer += 400
   if (treffer === 0) return 0
+  if (enthaeltGefaltet(ort.country, raw)) treffer += 80
   return treffer + typBonus(ort, rolle)
 }
 

@@ -90,6 +90,10 @@ Der Modellweg (`Reiseidee`) erzeugt weiter unvalidierte Etappennamen. Das ist be
 
 Umlaute werden gefaltet (`Südtirol` trifft `South Tyrol` über Keywords). Gleichnamige Orte bleiben über Land/Region unterscheidbar (`Paris, France`).
 
+Die Abfrage sucht zuerst im Namen und in der IATA, nicht im Land. Für die Abreise werden passende Flughäfen extra dazugeholt, damit `Zürich` auch `ZRH` trifft. Nur wenn weniger als zwölf Namens­treffer da sind, kommen Keywords dazu (`Südtirol`, `Toskana`). Sonst würden `Thailand` oder `Japan` in den Städten desselben Landes untergehen. Rang zählt nur Wortanfang oder exakten Namen, nicht beliebige Teilstrings.
+
+Die Eingabe `Test` ist ein Platzhalter und liefert bewusst keine Treffer. Ein realer Ort wie Testaccio bleibt über den vollen Namen erreichbar.
+
 Die Abfrage holt höchstens 80 Zeilen, die Antwort höchstens 12 Optionen. Sonderzeichen, die PostgREST-`.or()` oder `LIKE` zerlegen würden, werden vorher entfernt.
 
 Startseite und `/planen` nutzen dieselbe Komponente (`OrtSuche`) und dieselbe Fachregel (`lib/places/auswahl.ts`, `lib/places/pruefen.ts`). Nur Text ohne bestätigten Treffer wird nicht als Ort gespeichert.
@@ -127,6 +131,8 @@ Im Development-Import vom 20. August 2026 stehen **124 811** Orte:
 | OurAirports | Flughafen | 5 332 |
 
 Production bleibt ohne diese Tabelle. Ein erneuter Import mit `--schreiben --entwicklung` ersetzt den Development-Bestand.
+
+Nach dem ersten Import wurden auf Development die Anzeigenamen `geonames:1650535` → `Bali` und `geonames:1605651` → `Thailand` nachgezogen. Ein späterer Import wendet dieselbe Präfixregel selbst an.
 
 ---
 

@@ -7,7 +7,7 @@ import assert from 'node:assert/strict'
 import { FLUGHAFEN_FIXTURES } from '@/lib/places/fixtures/airports'
 import { geoNamesTsvZeile, laenderAusCountryInfo, ortAusFlughafen, orteAusGeoNames } from '@/lib/places/importieren'
 import { eingabeOhneAuswahl, ortAusBestand, ORT_MELDUNG } from '@/lib/places/pruefen'
-import { orteOrdnen } from '@/lib/places/suche'
+import { orteOrdnen, ortNamensfilter, ortSchluesselfilter } from '@/lib/places/suche'
 
 const hier = dirname(fileURLToPath(import.meta.url))
 
@@ -58,6 +58,52 @@ describe('Ortssuche', () => {
     assert.deepEqual(orteOrdnen(orte, 'Test', 'ziel'), [])
     assert.deepEqual(orteOrdnen(orte, 'Mordor', 'ziel'), [])
     assert.deepEqual(orteOrdnen(orte, 'abcxyz', 'ziel'), [])
+  })
+
+  test('Test bleibt leer, auch wenn Testaccio im Bestand steht', () => {
+    const testaccio: (typeof orte)[number] = {
+      id: 'geonames:6545164',
+      source: 'geonames',
+      sourceId: '6545164',
+      name: 'Testaccio',
+      typ: 'city',
+      country: 'Italy',
+      countryCode: 'IT',
+      region: 'Lazio',
+      lat: 41.87,
+      lon: 12.47,
+      iata: null,
+      keywords: null,
+    }
+    assert.deepEqual(orteOrdnen([...orte, testaccio], 'Test', 'ziel'), [])
+    assert.equal(orteOrdnen([testaccio], 'Testaccio', 'ziel')[0]?.id, 'geonames:6545164')
+  })
+
+  test('die Datenbankabfrage sucht nicht im Land und nicht nach Test', () => {
+    assert.equal(ortNamensfilter('Test'), null)
+    assert.equal(ortSchluesselfilter('Test'), null)
+    const filter = ortNamensfilter('Thailand')
+    assert.ok(filter)
+    assert.equal(filter.includes('country.'), false)
+    assert.equal(filter.includes('keywords.'), false)
+    assert.equal(filter.includes('name.ilike.Thailand%'), true)
+    assert.equal(ortSchluesselfilter('Südtirol')?.includes('keywords.ilike.'), true)
+  })
+
+  test('ein Land gewinnt gegen gleichnamige Unterorte im selben Land', () => {
+    const thailand = orte.find((ort) => ort.name === 'Thailand')
+    assert.ok(thailand)
+    const amphoe: (typeof orte)[number] = {
+      ...thailand!,
+      id: 'geonames:1152356',
+      sourceId: '1152356',
+      name: 'Amphoe Li',
+      typ: 'region',
+      keywords: null,
+    }
+    const optionen = orteOrdnen([amphoe, thailand!], 'Thailand', 'ziel')
+    assert.equal(optionen[0]?.id, thailand!.id)
+    assert.equal(optionen.some((option) => option.id === amphoe.id), false)
   })
 })
 
