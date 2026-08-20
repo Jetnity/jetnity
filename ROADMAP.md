@@ -1,6 +1,6 @@
 # Jetnity – Roadmap
 
-Stand: 18. August 2026
+Stand: 20. August 2026
 
 Diese Datei zeigt jederzeit: was fertig ist, was in Arbeit ist, was als Nächstes kommt, was blockiert ist und was bewusst verschoben wurde ([AGENTS.md](AGENTS.md) Regel 6).
 
@@ -22,11 +22,11 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Phase 1.4d | Fehler im Administrationsbereich sichtbar statt leer | **fertig** |
 | Phase 1.5 | V2-Reiseschema, persistente Reisen, Gast → Konto | **fertig** |
 | Phase 2.1 | natürliche Sprache zu strukturiertem Reisevorschlag | **fertig auf Development, Preview aktivierbar, Production aus** |
-| Phase 2.2 | bestehende Reise per Sprache ändern | als Nächstes |
-| Phase 3 | Reiseprodukte und Monetarisierung | geplant |
+| Phase 2.2 | bestehende Reise per Sprache ändern | **fertig auf Development, Preview aktivierbar, Production aus** |
+| Phase 3 | Reiseprodukte und Monetarisierung | als Nächstes |
 | Phase 4 | Launch-Reife | geplant |
 
-Phase 2 ist **nicht** abgeschlossen: 2.1 erzeugt einen Vorschlag, 2.2 verändert eine bestehende Reise.
+Phase 2 ist als konversationeller Kern **fertig**: 2.1 erzeugt einen Vorschlag, 2.2 verändert eine bestehende Reise. Production bleibt für den Modellweg aus.
 
 ---
 
@@ -525,18 +525,19 @@ Offen aus 2.1:
 - [ ] Aufbewahrungsfrist für `public.model_usage` entscheiden – sie gehört zur Freigabe, nicht zur Implementierung (ADR-0052)
 - [ ] Entscheidung über die Aktivierung in Production – die Modellwahl ist gemessen, Production bleibt aus
 
-### 2.2 Bestehende Reise per Sprache ändern · als Nächstes
+### 2.2 Bestehende Reise per Sprache ändern · fertig auf Development
 
-- [ ] Änderung per Sprache („Hotel günstiger", „Eine Nacht weniger Bangkok", „Mach Tag 3 entspannter", „maximal CHF 3'000")
-- [ ] Reise umbenennen, Tage umsortieren, Tage verschieben – heute gibt es Anlegen, Planpunkt hinzufügen, Planpunkt entfernen und Reise löschen
-- [ ] Änderungen als Vorschlag zeigen und erst nach Freigabe anwenden, wie in 2.1
-- [ ] Tests für die strukturierten Sprachoperationen auf einer bestehenden Reise
+- [x] Änderung per Sprache („Mach die Reise zwei Tage länger", „Entferne Los Angeles", „Wir reisen jetzt zu dritt", „Mach die Reise entspannter", „Füge nach Florenz noch zwei Tage am Meer hinzu")
+- [x] `trip_days.stage_id` und `trips.revision` / `last_mutation_id`
+- [x] strukturierte Operationen, deterministisch angewendet, Vorher/Nachher, ausdrückliche Bestätigung
+- [x] atomisches `public.reise_aendern()`, Idempotenz, veraltete Fassung, Gastspeicher
+- [x] Tests für Operationen, Zuordnung, kommerzielle Felder, Kontingent, RLS
 
-**Voraussetzungen erfüllt.** Das Reiseschema aus Phase 1.5 trägt die Reise, die Modell- und Vorschlagsschicht aus 2.1 trägt Kostenkontrolle, Schemaprüfung und Vorschau – 2.2 braucht keine neue Infrastruktur, sondern strukturierte Operationen auf einem bestehenden Reisegraphen und eine Fassung des Vorschlags, die Änderungen statt einer ganzen Reise beschreibt.
+**Voraussetzungen erfüllt.** Keine neue Infrastruktur. Dieselbe Kostenschranke wie Phase 2.1. Production unverändert aus.
 
 ---
 
-## Phase 3 – Reiseprodukte und Monetarisierung · geplant
+## Phase 3 – Reiseprodukte und Monetarisierung · als Nächstes
 
 Je Kategorie zunächst genau ein Anbieter ([DECISIONS.md](DECISIONS.md), ADR-0011).
 

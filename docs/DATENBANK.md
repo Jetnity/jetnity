@@ -1,7 +1,7 @@
 # Jetnity – Datenbank
 
-Stand: 18. August 2026
-Gültig für: Supabase-Development-Branch nach Phase 1.5, einschliesslich des Nachtrags aus der Überprüfung vor dem Merge
+Stand: 20. August 2026
+Gültig für: Supabase-Development-Branch nach Phase 2.2. Production ist in keiner der Phasen 1.4 bis 2.2 angefasst worden.
 
 Diese Datei beschreibt den **tatsächlichen** Zustand des Schemas, wie er sich aus dem Repository herstellen lässt. Sie ist die Antwort auf die Frage, die [ARCHITECTURE.md](../ARCHITECTURE.md) Abschnitt 6 bis Phase 1.4 offenlassen musste: Was steht in der Datenbank, wer darf was, und woher weiß man das.
 
@@ -148,6 +148,10 @@ Der Zustand nach Phase 1.4 steht in Abschnitt 9; dort ist auch nachgewiesen, das
 | `20260818030000_reise_erzeugung_serialisieren.sql` | Zählung und Einfügung laufen je Konto der Reihe nach, serialisiert über `pg_advisory_xact_lock` – die Schranke hält auch bei gleichzeitigen Anfragen (Nachtrag Phase 1.5, ADR-0049) |
 | `20260818040000_modellnutzung.sql` | `model_usage` als Kostenprotokoll, `modell_preis()`, `modell_kontingent_beanspruchen()` und `modell_nutzung_abschliessen()` – die Kostenschranke für Modellaufrufe (Phase 2.1, ADR-0052) |
 | `20260819010000_modell_kontingent_nur_server.sql` | `EXECUTE` auf die beiden Kontingent-Funktionen nur noch `service_role`; Identität eines Kontos als Argument vom Server (Nachtrag ADR-0052) |
+| `20260820010000_reise_stage_revision.sql` | `trips.revision`, `trips.last_mutation_id`, `trip_days.stage_id` samt Backfill (Phase 2.2, ADR-0057, ADR-0058) |
+| `20260820020000_reise_anlegen_stage.sql` | `reise_anlegen()` setzt `stage_id` auch ohne Kalenderdaten |
+| `20260820030000_reise_aendern.sql` | `reise_aendern(jsonb)` – atomisch, SECURITY INVOKER, Fassung und Idempotenz, ohne Handelsfelder (ADR-0060) |
+| `20260820040000_modell_reiseaenderung.sql` | `model_usage.funktion` kennt `reiseaenderung`; derselbe Kontingenttopf |
 
 Die Reihenfolge ist nicht beliebig: `20260817100200` darf erst laufen, wenn `20260817100000` die Rollen der Betroffenen übernommen und `20260817100100` alle Policies auf `creator_profiles.role` umgestellt hat. Sonst verlöre jemand seinen Zugang oder eine Policy liefe ins Leere.
 

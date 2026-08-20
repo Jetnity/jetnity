@@ -2,9 +2,9 @@
 
 Wie Jetnity aus einer freien Reisebeschreibung einen strukturierten Reiseentwurf macht – und was diesen Weg davon abhält, Geld zu kosten, das niemand freigegeben hat.
 
-Fachliches Reisemodell: [REISEN.md](REISEN.md). Datenbank: [DATENBANK.md](DATENBANK.md). Entscheidungen: [../DECISIONS.md](../DECISIONS.md) ADR-0050 bis ADR-0056.
+Fachliches Reisemodell: [REISEN.md](REISEN.md). Datenbank: [DATENBANK.md](DATENBANK.md). Entscheidungen: [../DECISIONS.md](../DECISIONS.md) ADR-0050 bis ADR-0060.
 
-**Stand:** Phase 2.1. Der Weg ist vollständig implementiert. In der **Preview** sind Schlüssel und Kill Switch gesetzt; **Production bleibt aus**. Warum, steht in Abschnitt 8.
+**Stand:** Phase 2.2. Vorschlag (2.1) und Änderung (2.2) sind implementiert. In der **Preview** sind Schlüssel und Kill Switch gesetzt; **Production bleibt aus**. Warum, steht in Abschnitt 8.
 
 ---
 
@@ -56,6 +56,8 @@ Zwei Eigenschaften dieses Ablaufs sind die eigentliche Aussage von Phase 2.1.
 Zwölf der fünfzehn Module laufen ohne Serverumgebung, ohne Datenbank und ohne `fetch`. Das ist kein Selbstzweck: Zeitüberschreitung, HTTP 500, erschöpftes Kontingent, abgeschnittene Antwort, kaputtes JSON und schemawidriger Inhalt sind die Fälle, die in Produktion zählen – und mit echten Verbindungen wäre jeder einzelne nur über einen bezahlten Aufruf erreichbar.
 
 Es gibt **keine** Provider-Abstraktion. OpenAI ist der eine Anbieter, `lib/modell/aufruf.ts` die eine Stelle, die ihn kennt ([AGENTS.md](../AGENTS.md) Regel 19).
+
+Phase 2.2 erweitert denselben Unterbau um `lib/reiseaenderung/`: Operationen statt Ersatzreise, gemeinsames Kontingent, Terra/Sol, Vorschau vor dem Speichern. Die Dateien sind in [ARCHITECTURE.md](../ARCHITECTURE.md) Abschnitt 5a aufgeführt.
 
 ---
 
@@ -236,7 +238,7 @@ Neun Ergebnisklassen stehen in `ERGEBNISKLASSEN` und als `CHECK` auf `model_usag
 
 | Spalte | Inhalt |
 | --- | --- |
-| `funktion` | `reisevorschlag` – die eine Funktion dieser Phase |
+| `funktion` | `reisevorschlag` oder `reiseaenderung` – dieselbe Schranke, zwei Bezeichnungen |
 | `modell` | `gpt-5.6-luna` usw. |
 | `art` | `konto` oder `gast` |
 | `kennung_hash` | SHA-256 der Kontokennung oder der Gastkennung, 64 Hexzeichen |
@@ -339,11 +341,10 @@ Gegen die echte Datenbank laufen **16 Nachweise** über `npm run db:kontingent`:
 
 ---
 
-## 10. Was Phase 2.1 nicht enthält
+## 10. Was Phase 2 nicht enthält
 
 | Nicht gebaut | Wohin es gehört |
 | --- | --- |
-| eine bestehende Reise per Sprache ändern | Phase 2.2 |
 | Amadeus, Flugpreise, Hotels, Aktivitäten | Phase 3 |
 | Buchungslinks, Affiliate-Tracking, Preisvergleich | Phase 3 / Monetarisierung |
 | ein zweiter Modellprovider | nicht vorgesehen (Regel 19) |

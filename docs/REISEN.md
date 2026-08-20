@@ -1,6 +1,6 @@
 # Jetnity – Reisen
 
-**Stand:** 18. August 2026 · Phase 2.1
+**Stand:** 20. August 2026 · Phase 2.2
 **Gilt für:** das Reisedatenmodell und die Wege, auf denen eine Reise entsteht, gespeichert und bearbeitet wird.
 
 Diese Datei beantwortet vier Fragen: Woraus besteht eine Reise, wo liegt sie, wie kommt sie aus dem Browser in ein Konto, und was ist bewusst noch nicht gebaut.
@@ -28,14 +28,16 @@ Vier Tabellen, ein Graph. Der Anwendungstyp dazu steht in `types/trips.ts` und t
 
 | Ebene | Tabelle | Was sie trägt |
 | --- | --- | --- |
-| Reise | `trips` | Titel, Startort, Zeitraum, Reisende, Währung, Budget, Status, Tempo, Interessen, Reisewunsch |
+| Reise | `trips` | Titel, Startort, Zeitraum, Reisende, Währung, Budget, Status, Tempo, Interessen, Reisewunsch, technische Fassung (`revision`) |
 | Etappe | `trip_stages` | ein Aufenthalt an einem Ort: Name, Ländercode, An- und Abreise, Koordinaten, Reihenfolge |
-| Tag | `trip_days` | Nummer im Reiseverlauf, optionales Datum, optionaler Titel |
+| Tag | `trip_days` | Nummer im Reiseverlauf, optionales Datum, optionaler Titel, **Etappe** (`stage_id`) |
 | Planpunkt | `trip_items` | Flug, Unterkunft, Aktivität, Transfer oder freie Notiz – mit Zeitfenster, Preis, Anbieter, Buchungsverweis |
 
 **Mehrere Ziele sind mehrere Etappen.** Ein Feld `destination` hätte die heutige Oberfläche abgedeckt und die zweite Station einer Reise nicht. Das Formular unter `/planen` fragt weiterhin ein Ziel und legt daraus eine Etappe an – dieselbe Struktur, nur mit einem Element.
 
 **Tage haben eine Nummer, nicht nur ein Datum.** `day_index` ist die verbindliche Reihenfolge, `day_date` optional. Eine Reiseidee hat Tage, bevor sie Daten hat, und eine um eine Woche verschobene Reise behält ihre Struktur.
+
+**Ein Tag gehört zu einer Etappe.** `trip_days.stage_id` ist seit Phase 2.2 die Zuordnung, auch ohne Kalenderdaten. Ohne sie liesse sich „Florenz einen Tag kürzer“ auf einer datumsfreien Reise nicht deterministisch anwenden (ADR-0057).
 
 **Ein Planpunkt hängt an einem Tag oder an einer Etappe – oder an keinem von beiden.** Eine Unterkunft über vier Nächte gehört zur Etappe, ein Museumsbesuch zum Tag, ein noch nicht eingeplanter Flug zu keinem. Wird ein Tag gelöscht, verliert der Punkt seinen Tag (`on delete set null`) und nicht seine Reise; `/reisen/[tripId]` zeigt ihn dann als „noch nicht eingeplant".
 
@@ -43,7 +45,7 @@ Vier Tabellen, ein Graph. Der Anwendungstyp dazu steht in `types/trips.ts` und t
 
 **Keine Enums.** Alle Wertebereiche – `status`, `pace`, `kind`, `interests` – sind CHECK-Bedingungen. Ein Enum lässt sich in PostgreSQL erweitern, aber nicht kürzen; ein Wert, der sich als falsch erweist, bleibt für immer im Typ. Ein CHECK ist eine Zeile in der nächsten Migration ([DECISIONS.md](../DECISIONS.md) ADR-0043).
 
-**Kein `jsonb` für Reiseinhalte.** Was durchsucht, sortiert oder geprüft wird, ist eine Spalte. `jsonb` trägt ausschliesslich die Nutzlast von `public.reise_anlegen()` – einen Übergabewert, keinen Speicherort.
+**Kein `jsonb` für Reiseinhalte.** Was durchsucht, sortiert oder geprüft wird, ist eine Spalte. `jsonb` trägt ausschliesslich die Nutzlast von `public.reise_anlegen()` und `public.reise_aendern()` – einen Übergabewert, keinen Speicherort.
 
 ### Wertebereiche
 
@@ -122,6 +124,21 @@ Vier Eigenschaften sind wesentlich:
 
 ---
 
+## 4a. Eine bestehende Reise ändert sich
+
+Seit Phase 2.2 ändert ein Satz im Arbeitsbereich die Reise – aber nicht das Modell die Datenbank.
+
+```
+vertrauenswürdige Reise → Wunsch → Operationen → anwenden → Vorschau → Bestätigung
+  → public.reise_aendern()  bzw.  gastreiseAendern()
+```
+
+`public.reise_aendern(jsonb)` ist `SECURITY INVOKER`, atomisch, prüft `trips.revision`, ist über `last_mutation_id` idempotent und schreibt keine Preise, Anbieter oder Buchungsfelder. Bestehende Kennungen unveränderter Zeilen bleiben. Eine veraltete Fassung (zweiter Tab) wird abgelehnt, nicht still überschrieben.
+
+Das Modell sieht einen Snapshot ohne Handelsfelder und liefert Operationen, keine Ersatzreise (ADR-0059). Kontingent und Kostendeckel sind dieselben wie beim Vorschlag.
+
+---
+
 ## 5. Der Weg Gast → Konto
 
 Der Vorgang steht in `lib/trips/uebernahme.ts`, bewusst ohne React: Die Reihenfolge ist die Stelle, an der Arbeit verloren gehen kann, und sie gehört in ein Modul, das ein Test ohne Browser durchspielt. `components/trips/GastreiseBruecke.tsx` ist nur die Anzeige dazu.
@@ -183,14 +200,14 @@ Die Kennung entscheidet, wo `/reisen/[tripId]` nachsieht: `trip-<uuid>` ist ein 
 
 | Nicht gebaut | Grund |
 | --- | --- |
-| ~~Reisevorschlag aus natürlicher Sprache~~ | **in Phase 2.1 gebaut.** Ein Vorschlag wird auf dieses Modell abgebildet und über `public.reise_anlegen()` bzw. den Gastspeicher übernommen; `travel_wish` und `pace` waren dafür vorbereitet ([MODELL.md](MODELL.md)) |
+| ~~Reisevorschlag aus natürlicher Sprache~~ | **in Phase 2.1 gebaut.** |
+| ~~Änderung einer bestehenden Reise per Sprache~~ | **in Phase 2.2 gebaut.** Vertrauenswürdige Reise → Operationen → Vorschau → `public.reise_aendern()` bzw. Gastspeicher. Das Modell schreibt nicht in die Datenbank (ADR-0059, ADR-0060). |
 | Amadeus, Hotels, Aktivitäten | Phase 3. `trip_items.provider`, `external_ref` und `booking_url` sind die Anknüpfung, mehr nicht – ein Vorschlag aus Phase 2.1 lässt sie leer (ADR-0054) |
 | Anbieter-Abstraktion | erst bei einem zweiten Anbieter ([AGENTS.md](../AGENTS.md) Regel 19) |
 | Preisoptimierung, Preishistorie | braucht Anbieterpreise, die es noch nicht gibt |
 | Affiliate-Tracking | Phase 4 |
 | gemeinsame Reiseplanung | braucht ein Berechtigungsmodell je Reise. Heute ist eine Reise privat, und das ist die einfachere und sicherere Aussage |
-| Änderung einer bestehenden Reise per Sprache | Phase 2.2. Sie setzt auf denselben Server Actions und auf der Modellschicht aus 2.1 auf |
-| Bearbeiten von Etappen und Reisestammdaten in der Oberfläche | Tabellen, Policies und Bedingungen sind vollständig; die Oberfläche kann heute Planpunkte anlegen und entfernen sowie eine Reise löschen. Etappen entstehen beim Anlegen |
+| Bearbeiten von Etappen und Reisestammdaten als eigenes Formular | Sprachänderung im Arbeitsbereich setzt Titel, Reisende, Budget, Tempo, Etappen und Tage. Ein separates Stammdaten-Formular ist nicht gebaut |
 
 ---
 
@@ -198,9 +215,9 @@ Die Kennung entscheidet, wo `/reisen/[tripId]` nachsieht: `trip-<uuid>` ist ein 
 
 | Punkt | Stand |
 | --- | --- |
-| Titel, Zeitraum und Budget einer bestehenden Reise sind in der Oberfläche nicht änderbar | Schema und Policies erlauben es (`trips_aendern`). Die Oberfläche dazu gehört zum Trip Workspace der Phase 2 |
-| Etappen sind nach dem Anlegen nicht bearbeitbar | dasselbe. Eine Reise entsteht mit einer Etappe aus dem Ziel |
-| `trip_days.title` wird von keiner Oberfläche gesetzt | seit Phase 2.1 füllt es ein übernommener Reisevorschlag – die Tagesüberschrift kommt aus dem Entwurf. Über das Formular bleibt es leer, und änderbar ist es noch nicht |
+| Titel, Zeitraum und Budget einer bestehenden Reise sind in der Oberfläche nicht änderbar | per Sprache im Arbeitsbereich (Phase 2.2). Ein eigenes Formular dafür gibt es nicht |
+| Etappen sind nach dem Anlegen nicht bearbeitbar | per Sprache im Arbeitsbereich. Ein Etappen-Editor ist nicht gebaut |
+| `trip_days.title` wird von keiner Oberfläche gesetzt | seit Phase 2.1 füllt es ein übernommener Reisevorschlag; Phase 2.2 kann es per Sprache setzen. Über das Formular bleibt es leer |
 | Die Liste „Meine Reisen" endet bei 200 Reisen | Vorsichtsmassnahme, keine Produktregel. Blätterung soll bewusst entstehen, nicht als unbemerkt abgeschnittene Liste |
 | Ein Gast, der den Browserspeicher leert, verliert seinen Entwurf | Absicht. Ohne Konto gibt es keinen anderen Ort. Beide Gastansichten sagen es ausdrücklich |
 | Der Reisegraph wird bei jedem Aufruf vollständig geladen | bei 1000 Planpunkten je Reise vertretbar. Eine Aufteilung braucht einen gemessenen Grund |

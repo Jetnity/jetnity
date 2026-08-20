@@ -6,25 +6,25 @@ Diese Datei ist der kompakte Übergabepunkt für einen neuen Chat, neuen Cursor-
 
 ## 1. Aktueller Stand
 
-Phase 2.1 ist abgeschlossen und per Squash Merge in `main` übernommen.
+Phase 2.2 ist auf dem Feature-Branch implementiert. Phase 2.1 bleibt in `main` (PR #16, Merge `d9fc8d6`).
 
-- PR: #16 – Freitext zu strukturiertem Reisevorschlag
-- Merge-Commit: `d9fc8d6ece7d7cce0d5409a784f7e09527dff011`
-- Freitext → Modell-Routing → strikt geprüfter Reisevorschlag → Vorgabenprüfung → Vorschau → ausdrückliche Übernahme → Persistenz
-- Modellstrategie: Terra als Standard, Sol für komplexe Abwägungen, Luna nicht automatisch für komplette Reisen
-- Terra/Luna: 90 s harte Modellgrenze
-- Sol: 120 s harte Modellgrenze
-- `/planen`: `maxDuration = 300`
-- Genau ein Terra-Fallback nach Sol-Fehler/Timeout
-- Genau eine Korrekturrunde bei klarer Verletzung harter Vorgaben
-- Progressive Loading statt leerem Warteschirm
-- Keine erfundenen Live-Preise, Anbieter oder Buchungsangebote
-- Modelloutput wird als untrusted input behandelt und mehrfach validiert
-- Kosten-/Kontingentschranke liegt in der Datenbank und wird vor jedem Modellaufruf reserviert
-- Direkter anon/auth RPC kann das Modellkontingent nicht verbrauchen; die beiden Kontingent-RPCs sind nur serverseitig ausführbar
-- Development/Preview ist für echte Modelltests konfiguriert; Production-Aktivierung des Modellwegs ist weiterhin eine eigene Freigabeentscheidung
+Phase 2 ist als konversationeller Kern fertig: Jetnity kann Reisen **erstellen und verändern**. Der Modellweg bleibt in Production aus.
 
-Die detaillierten Entscheidungen zu Phase 2.1 stehen insbesondere in `docs/MODELL.md` und ADR-0050 bis ADR-0056 in `DECISIONS.md`.
+Verbindlicher Ablauf der Änderung:
+
+`vertrauenswürdige Reise → Änderungswunsch → strukturierte Operationen → deterministische Anwendung → Vorher/Nachher → ausdrückliche Bestätigung → atomisches Speichern`
+
+- Das Modell schreibt nicht in die Datenbank und erhält keine SQL-Rechte
+- Modellantworten sind untrusted input
+- Preise, Provider, Booking-URLs und External-Refs kommen nicht aus dem Modell und werden auf unveränderten Einträgen erhalten
+- `trip_days.stage_id` ordnet Tage einer Etappe zu, auch ohne Kalenderdaten
+- `trips.revision` / `last_mutation_id` tragen optimistische Concurrency und Idempotenz
+- Account: `public.reise_aendern()`, SECURITY INVOKER, RLS, atomisch
+- Gast: derselbe fachliche Ablauf im LocalStorage
+- Gemeinsames Modellkontingent mit `reisevorschlag` (38 Aufrufe / USD 3 pro Tag)
+- `/planen` und `/reisen/[tripId]`: `maxDuration = 300`
+
+Entscheidungen: ADR-0057 bis ADR-0060. Fachlich: `docs/REISEN.md`, `docs/MODELL.md`.
 
 ## 2. Produktprinzip, das alle nächsten Phasen leitet
 
@@ -34,34 +34,11 @@ Die Kernoptimierung ist die **Gesamtreise**, nicht der isoliert billigste Flug o
 
 Monetarisierung darf die Empfehlung niemals verzerren. Affiliate- oder Vermittlungsprovisionen sind Einnahmequellen, aber Jetnity muss weiterhin die beste Nutzeroption empfehlen, nicht die margenstärkste.
 
-## 3. Nächster Entwicklungsschritt: Phase 2.2
+## 3. Nächster Entwicklungsschritt: Phase 3
 
-**Phase 2.2 – bestehende Reise per Sprache ändern** ist der unmittelbare nächste PR.
+Phase 2.2 ist umgesetzt. **Als Nächstes: Phase 3 – echte Reiseprodukte**, beginnend mit Flügen.
 
-Ziel: Ein Nutzer kann eine bereits bestehende Reise natürlich verändern, zum Beispiel:
-
-- „Mach Florenz einen Tag kürzer und gib mir dafür zwei volle Tage am Meer.“
-- „Entferne Los Angeles und verlängere Yosemite.“
-- „Der Plan ist mir zu stressig. Mach ihn entspannter.“
-- „Wir wollen jetzt mit Kind reisen und brauchen mehr Pausen.“
-
-### Verbindlicher Ablauf
-
-`bestehende Reise → Änderungswunsch verstehen → Änderungsvorschlag berechnen → harte Regeln prüfen → Vorher/Nachher anzeigen → Nutzer bestätigt → erst dann speichern`
-
-Wichtig:
-
-- Keine direkte Datenbankmutation aus einem Modelloutput.
-- Bestehende Reise zuerst als vertrauenswürdigen strukturierten Zustand laden.
-- Modelloutput erneut als untrusted input behandeln.
-- Änderungen müssen auf das bestehende Reiseschema abbildbar und deterministisch prüfbar sein.
-- Vorher/Nachher-Diff für den Nutzer verständlich zeigen.
-- Harte Vorgaben wie Dauer, Orte, Ausschlüsse, Budgetziel, Flugverbot, Ruhetage und maximale Etappen weiter respektieren.
-- Konflikte und offene Punkte ehrlich als Warnung anzeigen statt einen „perfekten“ Plan zu behaupten.
-- Doppelklick, Retry und Idempotenz sauber behandeln.
-- Kein Phase-2.2-Merge ohne relevante Unit-/Integration-/Browser-Tests, Typecheck, Lint, Build, CI und Dokumentationsupdate.
-
-Wenn Phase 2.2 fertig ist, ist Phase 2 als konversationeller Kern abgeschlossen: Jetnity kann Reisen **erstellen und verändern**.
+Kein Merge nach `main` und keine Production-Änderung ohne ausdrückliche Freigabe.
 
 ## 4. Danach: Phase 3 – echte Reiseprodukte und Monetarisierung
 
