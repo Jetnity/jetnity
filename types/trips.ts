@@ -65,7 +65,7 @@ export type TripItem = {
   endsAt: string | null
   priceAmount: number | null
   priceCurrency: string | null
-  /** Anbieterkennung für Phase 3, etwa `amadeus`. */
+  /** Anbieterkennung für Phase 3, etwa `duffel`. Keine UI-Bindung. */
   provider: string | null
   externalRef: string | null
   bookingUrl: string | null
