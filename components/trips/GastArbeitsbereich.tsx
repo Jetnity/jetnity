@@ -14,12 +14,15 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { CloudOff, MapPin, Trash2 } from 'lucide-react'
 
+import type { ActivityOptionSichtbar } from '@/lib/activities/client-sicht'
+import { alsActivityMomentaufnahme } from '@/lib/activities/uebernahme'
 import type { FlugOptionSichtbar } from '@/lib/flights/client-sicht'
 import { alsFlugMomentaufnahme } from '@/lib/flights/uebernahme'
 import type { HotelOptionSichtbar } from '@/lib/hotels/client-sicht'
 import { hotelZeitraumAusEtappe } from '@/lib/hotels/reisegraph'
 import { alsHotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import {
+  gastAktivitaetUebernehmen,
   gastFlugUebernehmen,
   gastHotelUebernehmen,
   gastPlanpunktAnlegen,
@@ -28,6 +31,7 @@ import {
   gastreiseLadenNach,
 } from '@/lib/trips/gastspeicher'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
+import AktivitaetenBereich from '@/components/trips/AktivitaetenBereich'
 import FlugSuche from '@/components/trips/FlugSuche'
 import HotelBereich from '@/components/trips/HotelBereich'
 import ReiseAenderung from '@/components/trips/ReiseAenderung'
@@ -185,6 +189,23 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
               return fehler instanceof Error
                 ? fehler.message
                 : 'Das Hotel konnte nicht in die Reise übernommen werden.'
+            }
+          }}
+        />
+      }
+      aktivitaetensuche={
+        <AktivitaetenBereich
+          reise={reise}
+          onUebernehmen={async (etappe, tag, option: ActivityOptionSichtbar) => {
+            const aufnahme = alsActivityMomentaufnahme(option, tag.dayDate)
+            if (!aufnahme) return 'Diese Aktivitätsoption ist unvollständig.'
+            try {
+              setReise(gastAktivitaetUebernehmen(reise, aufnahme, etappe.id, tag.id))
+              return null
+            } catch (fehler) {
+              return fehler instanceof Error
+                ? fehler.message
+                : 'Die Aktivität konnte nicht in die Reise übernommen werden.'
             }
           }}
         />

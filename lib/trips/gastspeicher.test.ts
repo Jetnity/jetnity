@@ -20,12 +20,14 @@ import assert from 'node:assert/strict'
 
 import { OPTION_DIREKT } from '@/lib/flights/fixtures/optionen'
 import { alsFlugMomentaufnahme } from '@/lib/flights/uebernahme'
+import { alsActivityMomentaufnahme } from '@/lib/activities/uebernahme'
 import { alsHotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import { istKommerziell } from '@/lib/reiseaenderung/geschuetzt'
 import {
   GastreiseBestehtFehler,
   SCHLUESSEL,
   SpeicherFehler,
+  gastAktivitaetUebernehmen,
   gastFlugUebernehmen,
   gastHotelUebernehmen,
   gastPlanpunktAnlegen,
@@ -257,6 +259,49 @@ describe('Bearbeiten einer Gastreise', () => {
     assert.equal(danach.days[1].items[0].dayId, tag.id)
     assert.equal(danach.days[0].items.length, 0)
     assert.equal(gastspeicherLaden().aktiv?.days[1].items.length, 1, 'und ist gespeichert')
+  })
+
+  test('eine übernommene Aktivität bleibt kommerziell am Tag gespeichert', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const aufnahme = alsActivityMomentaufnahme(
+      {
+        id: 'act-1',
+        provider: 'test-activity',
+        externalRef: 'ref-act',
+        title: 'Tsukiji-Rundgang',
+        description: 'Marktbesuch',
+        locationName: 'Tsukiji',
+        punkt: { lat: 35.665, lon: 139.77 },
+        dauerMinuten: 180,
+        timeslot: {
+          startsOn: '2026-09-12',
+          startsAt: '09:00',
+          endsOn: '2026-09-12',
+          endsAt: '12:00',
+        },
+        preis: 45,
+        preisWaehrung: 'CHF',
+        bewertung: 8.6,
+        bewertungenAnzahl: 80,
+        stornierbar: true,
+        kategorien: ['food'],
+        tags: ['markt'],
+      },
+      '2026-09-12',
+    )
+    assert.ok(aufnahme)
+    const etappe = reise.stages[0]
+    assert.ok(etappe)
+    const danach = gastAktivitaetUebernehmen(reise, aufnahme, etappe.id, reise.days[0]!.id)
+    const punkt = danach.days[0]?.items.find((eintrag) => eintrag.kind === 'activity')
+    assert.ok(punkt)
+    assert.equal(istKommerziell(punkt), true)
+    assert.equal(punkt.provider, 'test-activity')
+    assert.equal(punkt.bookingUrl, null)
+    assert.equal(punkt.startsOn, '2026-09-12')
+    assert.equal(punkt.startsAt, '09:00')
+    assert.equal(punkt.stageId, etappe.id)
+    assert.equal(gastspeicherLaden().aktiv?.days[0]?.items[0]?.title, 'Tsukiji-Rundgang')
   })
 
   test('ein übernommenes Hotel bleibt kommerziell an der Etappe gespeichert', () => {

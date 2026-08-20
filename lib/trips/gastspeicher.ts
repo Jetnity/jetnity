@@ -56,6 +56,11 @@
 import { operationenAnwenden } from '@/lib/reiseaenderung/anwenden'
 import type { Modelloperation } from '@/lib/reiseaenderung/schema'
 import { interesseLesen, tempoLesen } from '@/lib/trips/bezeichnungen'
+import {
+  activityReisegraphMitTimeslotPruefen,
+} from '@/lib/activities/reisegraph'
+import type { ActivityMomentaufnahme } from '@/lib/activities/uebernahme'
+import { activityMomentaufnahmeAlsPunkt } from '@/lib/activities/uebernahme'
 import type { FlugMomentaufnahme } from '@/lib/flights/uebernahme'
 import { momentaufnahmeAlsPunkt } from '@/lib/flights/uebernahme'
 import { hotelReisegraphPruefen } from '@/lib/hotels/reisegraph'
@@ -673,6 +678,50 @@ export function gastHotelUebernehmen(
         )
       : reise.days,
     ohneTag: tag ? reise.ohneTag : [...reise.ohneTag, punkt],
+  })
+}
+
+/**
+ * Übernimmt eine Aktivitätsoption in die Gastreise.
+ *
+ * LocalStorage bleibt vom Nutzer manipulierbar. Die UI darf nur Optionen aus
+ * der Jetnity-Suche übergeben; das ist keine serverseitige Verifikation.
+ */
+export function gastAktivitaetUebernehmen(
+  reise: Trip,
+  aufnahme: ActivityMomentaufnahme,
+  stageId: string,
+  dayId: string,
+): Trip {
+  const timeslot =
+    aufnahme.startsOn && aufnahme.startsAt
+      ? {
+          startsOn: aufnahme.startsOn,
+          startsAt: aufnahme.startsAt,
+          endsOn: aufnahme.endsOn,
+          endsAt: aufnahme.endsAt,
+        }
+      : null
+  const graph = activityReisegraphMitTimeslotPruefen(
+    reise,
+    { tripId: reise.id, stageId, dayId },
+    timeslot,
+  )
+  if (!graph.ok) throw new Error(graph.message)
+
+  const punkt = activityMomentaufnahmeAlsPunkt(aufnahme, {
+    id: kennungErzeugen('item'),
+    dayId: graph.tag.id,
+    stageId: graph.etappe.id,
+    position: graph.tag.items.length + 1,
+  })
+
+  return gastreiseSpeichern({
+    ...reise,
+    revision: reise.revision + 1,
+    days: reise.days.map((eintrag) =>
+      eintrag.id === graph.tag.id ? { ...eintrag, items: [...eintrag.items, punkt] } : eintrag,
+    ),
   })
 }
 
