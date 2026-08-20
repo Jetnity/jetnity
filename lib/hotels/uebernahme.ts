@@ -35,12 +35,12 @@ function bewertungText(option: HotelOption): string | null {
   return `Bewertung ${option.bewertung.toFixed(1)}${basis}`
 }
 
-export function hotelTitel(option: HotelOption): string {
+function hotelTitel(option: HotelOption): string {
   const lage = option.quartierName ? ` · ${option.quartierName}` : ''
   return `${option.name}${lage}`.slice(0, 120)
 }
 
-export function hotelNotiz(option: HotelOption, checkIn: string, checkOut: string): string {
+function hotelNotiz(option: HotelOption, checkIn: string, checkOut: string): string {
   const teile = [
     option.adresse,
     sterneText(option),

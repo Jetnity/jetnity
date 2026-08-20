@@ -110,7 +110,7 @@ const hotelPraeferenzenSchema = z.object({
   stornierbarBevorzugt: z.boolean().nullable().default(null),
 })
 
-export const hotelSuchanfrageSchema = z
+const hotelSuchanfrageSchema = z
   .object({
     destinationPlaceId: z.string().trim().min(1).max(80),
     checkIn: datum,

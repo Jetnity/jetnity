@@ -18,7 +18,7 @@ function quartierFitScore(option: HotelOption, anfrage: HotelSuchanfrage): numbe
   return Math.round(clamp01(1 - km / 8) * 1000) / 1000
 }
 
-export function hotelKontextAnreichern(option: HotelOption, anfrage: HotelSuchanfrage): HotelKontext {
+function hotelKontextAnreichern(option: HotelOption, anfrage: HotelSuchanfrage): HotelKontext {
   return {
     taeglicheWegeMinuten: null,
     quartierFitScore: quartierFitScore(option, anfrage),
