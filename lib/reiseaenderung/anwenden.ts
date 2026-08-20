@@ -270,6 +270,7 @@ function etappeHinzufuegen(reise: Reisegraph, op: Modelloperation, kennung: Kenn
     departureDate: null,
     latitude: null,
     longitude: null,
+    placeId: null,
   }
   reise.stages = reise.stages.map((etappe) =>
     etappe.position > nachPosition ? { ...etappe, position: etappe.position + 1 } : etappe,

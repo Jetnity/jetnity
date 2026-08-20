@@ -90,6 +90,17 @@ describe('Beträge kommen als Zahl an', () => {
     assert.equal(reiseAus(reisezeile({ budget_amount: null }), [], [], []).budgetAmount, null)
   })
 
+  test('eine alte Reise ohne origin_place_id bleibt lesbar', () => {
+    assert.equal(reiseAus(reisezeile(), [], [], []).originPlaceId, null)
+  })
+
+  test('origin_place_id wird zur kanonischen Abreise', () => {
+    assert.equal(
+      reiseAus(reisezeile({ origin_place_id: 'geonames:2657896' }), [], [], []).originPlaceId,
+      'geonames:2657896',
+    )
+  })
+
   test('ein unlesbarer Betrag wird null und nicht NaN', () => {
     // `NaN` überlebt `JSON.stringify` nicht und würde in der Oberfläche als
     // `null` erscheinen – nur eine Ebene später und ohne Erklärung.
@@ -111,6 +122,24 @@ describe('Beträge kommen als Zahl an', () => {
 
     assert.equal(etappe.latitude, 35.67619)
     assert.equal(etappe.longitude, 139.650311)
+    assert.equal(etappe.placeId, null)
+  })
+
+  test('eine Place-ID an der Etappe bleibt erhalten', () => {
+    const etappe = etappeAus({
+      id: 'ssssssss-ssss-4sss-8sss-sssssssssss1',
+      position: 1,
+      name: 'Bali',
+      country_code: 'ID',
+      arrival_date: null,
+      departure_date: null,
+      latitude: -8.33333,
+      longitude: 115.16667,
+      place_id: 'geonames:1650535',
+      created_at: JETZT,
+    })
+
+    assert.equal(etappe.placeId, 'geonames:1650535')
   })
 })
 

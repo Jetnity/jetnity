@@ -61,6 +61,7 @@ import { momentaufnahmeAlsPunkt } from '@/lib/flights/uebernahme'
 import { reiseLesen, type PlanpunktFormular } from '@/lib/trips/schema'
 import { reisetageBauen } from '@/lib/trips/tage'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
+import type { Ort } from '@/lib/places/domain'
 import type { CreateTripInput, Trip, TripDay, TripItem } from '@/types/trips'
 
 /** Die aktive Gastreise. Höchstens eine. */
@@ -287,16 +288,23 @@ function einzelneEtappe(
   name: string,
   arrivalDate: string | null = null,
   departureDate: string | null = null,
+  extra?: {
+    countryCode?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    placeId?: string | null
+  },
 ) {
   return {
     id: kennungErzeugen('stage'),
     position: 1,
     name,
-    countryCode: null,
+    countryCode: extra?.countryCode ?? null,
     arrivalDate,
     departureDate,
-    latitude: null,
-    longitude: null,
+    latitude: extra?.latitude ?? null,
+    longitude: extra?.longitude ?? null,
+    placeId: extra?.placeId ?? null,
   }
 }
 
@@ -468,7 +476,10 @@ export function gastreiseAendern(eingabe: {
  * diesem Fall nicht in den Arbeitsbereich einer Reise wechseln, die es nirgends
  * gibt.
  */
-export function gastreiseAnlegen(eingabe: CreateTripInput): Trip {
+export function gastreiseAnlegen(
+  eingabe: CreateTripInput,
+  bestaetigt?: { ziel: Ort; abreise: Ort },
+): Trip {
   if (!verfuegbar()) throw new SpeicherFehler()
 
   const bestehend = gastreiseLaden()
@@ -480,16 +491,26 @@ export function gastreiseAnlegen(eingabe: CreateTripInput): Trip {
   // die Idempotenz weiter: Wird dieser Entwurf später ins Konto übernommen, ist
   // es dieselbe Kennung, die dort `unique (user_id, client_ref)` prüft.
   const id = eingabe.clientRef
+  const zielName = bestaetigt?.ziel.name ?? eingabe.destination
+  const abreiseName = bestaetigt?.abreise.name ?? eingabe.origin
+  const zielId = bestaetigt?.ziel.id ?? eingabe.destinationPlaceId
+  const abreiseId = bestaetigt?.abreise.id ?? eingabe.originPlaceId
 
-  const etappe = eingabe.destination
-    ? einzelneEtappe(eingabe.destination, eingabe.startDate, eingabe.endDate)
+  const etappe = zielName
+    ? einzelneEtappe(zielName, eingabe.startDate, eingabe.endDate, {
+        countryCode: bestaetigt?.ziel.countryCode ?? null,
+        latitude: bestaetigt?.ziel.lat ?? null,
+        longitude: bestaetigt?.ziel.lon ?? null,
+        placeId: zielId,
+      })
     : null
 
   const entwurf = {
     id,
     clientRef: id,
-    title: eingabe.title,
-    origin: eingabe.origin,
+    title: bestaetigt?.ziel.name ?? eingabe.title,
+    origin: abreiseName,
+    originPlaceId: abreiseId,
     startDate: eingabe.startDate,
     endDate: eingabe.endDate,
     travellers: eingabe.travellers,

@@ -51,6 +51,7 @@ function etappe(teil: Partial<TripStage> & Pick<TripStage, 'id' | 'position' | '
     departureDate: null,
     latitude: null,
     longitude: null,
+    placeId: null,
     ...teil,
   }
 }

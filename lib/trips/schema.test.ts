@@ -424,7 +424,9 @@ describe('Das Formular unter /planen', () => {
     clientRef: 'trip-1',
     title: 'Japan',
     destination: 'Japan',
+    destinationPlaceId: 'geonames:1861060',
     origin: 'Zürich',
+    originPlaceId: 'geonames:2657896',
     startDate: '2026-09-12',
     endDate: '2026-09-16',
     travellers: 2,
@@ -455,6 +457,46 @@ describe('Das Formular unter /planen', () => {
 
     assert.equal(ergebnis.success, true)
     if (ergebnis.success) assert.equal(ergebnis.data.title, 'Japan')
+  })
+
+  test('nur eingetippter Text ohne bestätigten Treffer ist kein Ort', () => {
+    assert.equal(
+      neueReiseSchema.safeParse({
+        ...eingabe,
+        destination: 'Test',
+        destinationPlaceId: '',
+      }).success,
+      false,
+    )
+    assert.equal(
+      neueReiseSchema.safeParse({
+        ...eingabe,
+        destination: 'Mordor',
+        destinationPlaceId: undefined,
+      }).success,
+      false,
+    )
+  })
+
+  test('eine manipulierte Place-ID kommt nicht durch', () => {
+    assert.equal(
+      neueReiseSchema.safeParse({ ...eingabe, destinationPlaceId: 'mordor' }).success,
+      false,
+    )
+    assert.equal(
+      neueReiseSchema.safeParse({ ...eingabe, originPlaceId: 'airport:xxx' }).success,
+      false,
+    )
+  })
+})
+
+describe('Eine alte Reise ohne Place-Metadaten bleibt lesbar', () => {
+  test('fehlende originPlaceId und placeId werden zu null', () => {
+    const gelesen = reiseLesen(reise())
+
+    assert.notEqual(gelesen, null)
+    assert.equal(gelesen?.originPlaceId, null)
+    assert.equal(gelesen?.stages[0]?.placeId, null)
   })
 })
 

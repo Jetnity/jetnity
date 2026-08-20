@@ -88,9 +88,10 @@ function etappen(vorschlag: Reisevorschlag): Omit<TripStage, 'id'>[] {
     countryCode: etappe.laendercode,
     arrivalDate: datumNach(vorschlag.startdatum, etappe.vonTag - 1),
     departureDate: datumNach(vorschlag.startdatum, etappe.bisTag - 1),
-    // Koordinaten kommen aus einer Geodatenquelle, nicht aus einem Sprachmodell.
+    // Koordinaten und Place-ID kommen aus einer Geodatenquelle, nicht aus einem Sprachmodell.
     latitude: null,
     longitude: null,
+    placeId: null,
   }))
 }
 

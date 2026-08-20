@@ -31,6 +31,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { ortBestaetigen, reiseorteBestaetigen } from '@/lib/places/aktionen'
 import {
   NICHT_ANGEMELDET,
   konto,
@@ -43,6 +44,7 @@ import {
   neuePlanpunktNutzlastSchema,
   neueReiseSchema,
   reiseNutzlastSchema,
+  type ReiseNutzlast,
 } from '@/lib/trips/schema'
 import { reisetageBauen } from '@/lib/trips/tage'
 
@@ -58,11 +60,17 @@ export async function reiseAnlegen(eingabe: unknown): Promise<Aktionsergebnis<st
   if (!geprueft.success) return { ok: false, meldung: ersteMeldung(geprueft.error) }
 
   const reise = geprueft.data
+  const orte = await reiseorteBestaetigen({
+    zielId: reise.destinationPlaceId,
+    abreiseId: reise.originPlaceId,
+  })
+  if (!orte.ok) return orte
 
   return reiseAusNutzlastAnlegen({
     client_ref: reise.clientRef,
-    title: reise.title,
-    origin: reise.origin,
+    title: orte.ziel.name,
+    origin: orte.abreise.name,
+    origin_place_id: orte.abreise.id,
     start_date: reise.startDate,
     end_date: reise.endDate,
     travellers: reise.travellers,
@@ -74,10 +82,13 @@ export async function reiseAnlegen(eingabe: unknown): Promise<Aktionsergebnis<st
     stages: [
       {
         position: 1,
-        name: reise.destination,
-        country_code: null,
+        name: orte.ziel.name,
+        country_code: orte.ziel.countryCode,
         arrival_date: reise.startDate,
         departure_date: reise.endDate,
+        latitude: orte.ziel.lat,
+        longitude: orte.ziel.lon,
+        place_id: orte.ziel.id,
       },
     ],
     days: reisetageBauen(reise.startDate, reise.endDate).map((tag) => ({
@@ -99,9 +110,28 @@ export async function reiseAnlegen(eingabe: unknown): Promise<Aktionsergebnis<st
  * Request und ein zweiter Login liefern deshalb dieselbe Kennung zurück, und
  * der Browser räumt seinen Entwurf erst weg, wenn er sie gesehen hat.
  */
+async function nutzlastOrtePruefen(nutzlast: ReiseNutzlast): Promise<Aktionsergebnis<null>> {
+  const originId = nutzlast.origin_place_id
+  const zielId = nutzlast.stages[0]?.place_id ?? null
+  if (!originId && !zielId) return { ok: true, wert: null }
+
+  if (originId) {
+    const abreise = await ortBestaetigen(originId, 'abreise')
+    if (!abreise.ok) return abreise
+  }
+  if (zielId) {
+    const ziel = await ortBestaetigen(zielId, 'ziel')
+    if (!ziel.ok) return ziel
+  }
+  return { ok: true, wert: null }
+}
+
 export async function gastreiseUebernehmen(nutzlast: unknown): Promise<Aktionsergebnis<string>> {
   const geprueft = reiseNutzlastSchema.safeParse(nutzlast)
   if (!geprueft.success) return { ok: false, meldung: ersteMeldung(geprueft.error) }
+
+  const orte = await nutzlastOrtePruefen(geprueft.data)
+  if (!orte.ok) return orte
 
   return reiseAusNutzlastAnlegen(geprueft.data)
 }

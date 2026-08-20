@@ -178,6 +178,7 @@ const etappeSchema = z.object({
   departureDate: datum.nullable().default(null),
   latitude: z.number().min(-90).max(90).nullable().default(null),
   longitude: z.number().min(-180).max(180).nullable().default(null),
+  placeId: z.string().min(1).max(80).nullable().default(null),
 })
 
 /**
@@ -193,6 +194,7 @@ export const reiseSchema = z
     clientRef: z.string().min(1).max(64).nullable().default(null),
     title: titel,
     origin: optionalerText(GRENZEN.ort).nullable().default(null),
+    originPlaceId: z.string().min(1).max(80).nullable().default(null),
     startDate: datum.nullable().default(null),
     endDate: datum.nullable().default(null),
     travellers: z.number().int().min(1).max(GRENZEN.reisende).default(1),
@@ -371,6 +373,9 @@ const nutzlastEtappeSchema = z.object({
   country_code: landescode.nullable(),
   arrival_date: datum.nullable(),
   departure_date: datum.nullable(),
+  latitude: z.number().min(-90).max(90).nullable().optional().default(null),
+  longitude: z.number().min(-180).max(180).nullable().optional().default(null),
+  place_id: z.string().min(1).max(80).nullable().optional().default(null),
 })
 
 /**
@@ -385,6 +390,7 @@ export const reiseNutzlastSchema = z.object({
   client_ref: z.string().min(1).max(64),
   title: z.string().min(1).max(GRENZEN.titel),
   origin: z.string().min(1).max(GRENZEN.ort).nullable(),
+  origin_place_id: z.string().min(1).max(80).nullable().optional().default(null),
   start_date: datum.nullable(),
   end_date: datum.nullable(),
   travellers: z.number().int().min(1).max(GRENZEN.reisende),
@@ -416,7 +422,17 @@ export const neueReiseSchema = z.object({
   clientRef: z.string().min(1).max(64),
   title: titel,
   destination: titel,
+  destinationPlaceId: z
+    .string()
+    .min(1, 'Bitte wähle ein Reiseziel aus der Liste.')
+    .max(80)
+    .refine((wert) => /^geonames:\d+$/.test(wert), 'Kein passendes Reiseziel gefunden. Bitte wähle einen Eintrag aus der Liste.'),
   origin: titel,
+  originPlaceId: z
+    .string()
+    .min(1, 'Bitte wähle einen Abreiseort aus der Liste.')
+    .max(80)
+    .refine((wert) => /^(geonames:\d+|airport:[A-Z]{3})$/.test(wert), 'Dieser Abreiseort ist unbekannt. Bitte wähle einen Eintrag aus der Liste.'),
   startDate: datum,
   endDate: datum,
   travellers: z.number().int().min(1).max(GRENZEN.reisende),

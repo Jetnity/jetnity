@@ -101,6 +101,8 @@ export type TripStage = {
   departureDate: string | null
   latitude: number | null
   longitude: number | null
+  /** Kanonischer Ort. Fehlt beim Altbestand. */
+  placeId: string | null
 }
 
 export type Trip = {
@@ -116,6 +118,8 @@ export type Trip = {
   clientRef: string | null
   title: string
   origin: string | null
+  /** Kanonischer Abreiseort. Fehlt beim Altbestand. */
+  originPlaceId: string | null
   startDate: string | null
   endDate: string | null
   travellers: number
@@ -190,7 +194,9 @@ export type CreateTripInput = {
   clientRef: string
   title: string
   destination: string
+  destinationPlaceId: string
   origin: string
+  originPlaceId: string
   startDate: string
   endDate: string
   travellers: number

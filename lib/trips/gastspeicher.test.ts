@@ -111,7 +111,9 @@ function eingabe(abweichung: Partial<CreateTripInput> = {}): CreateTripInput {
     clientRef: kennungErzeugen('trip'),
     title: 'Japan im Herbst',
     destination: 'Japan',
+    destinationPlaceId: 'geonames:1861060',
     origin: 'Zürich',
+    originPlaceId: 'geonames:2657896',
     startDate: '2026-09-12',
     endDate: '2026-09-16',
     travellers: 2,
@@ -184,6 +186,8 @@ describe('Genau eine aktive Gastreise', () => {
     assert.equal(reise.title, 'Japan im Herbst')
     assert.equal(reise.days.length, 5, 'die Tage entstehen aus dem Zeitraum')
     assert.equal(reise.stages[0].name, 'Japan', 'das Ziel wird die erste Etappe')
+    assert.equal(reise.stages[0].placeId, 'geonames:1861060')
+    assert.equal(reise.originPlaceId, 'geonames:2657896')
     assert.equal(gastspeicherLaden().aktiv?.id, reise.id)
   })
 
