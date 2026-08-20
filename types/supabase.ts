@@ -597,8 +597,8 @@ export type Database = {
           eingabe_gecacht: number
         }[]
       }
-      reise_anlegen: { Args: { _reise: Json }; Returns: string }
       reise_aendern: { Args: { _aenderung: Json }; Returns: Json }
+      reise_anlegen: { Args: { _reise: Json }; Returns: string }
       rollenrang: { Args: { rolle: string }; Returns: number }
     }
     Enums: {

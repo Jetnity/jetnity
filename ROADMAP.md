@@ -532,6 +532,7 @@ Offen aus 2.1:
 - [x] strukturierte Operationen, deterministisch angewendet, Vorher/Nachher, ausdrückliche Bestätigung
 - [x] atomisches `public.reise_aendern()`, Idempotenz, veraltete Fassung, Gastspeicher
 - [x] Tests für Operationen, Zuordnung, kommerzielle Felder, Kontingent, RLS
+- [x] Nachtrag: `reise_anlegen()` ohne eigene Missbrauchszählung (`20260820050000`, ADR-0045/0048)
 
 **Voraussetzungen erfüllt.** Keine neue Infrastruktur. Dieselbe Kostenschranke wie Phase 2.1. Production unverändert aus.
 

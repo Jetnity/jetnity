@@ -23,6 +23,8 @@ Verbindlicher Ablauf der Änderung:
 - Gast: derselbe fachliche Ablauf im LocalStorage
 - Gemeinsames Modellkontingent mit `reisevorschlag` (38 Aufrufe / USD 3 pro Tag)
 - `/planen` und `/reisen/[tripId]`: `maxDuration = 300`
+- `reise_anlegen()` trägt keine eigene Missbrauchszählung; die Schranke bleibt im Auslöser (`20260820050000`)
+- Feature-Branch / Draft-PR: `cursor/phase-22-reise-aendern-e90a`, https://github.com/Jetnity/jetnity/pull/18
 
 Entscheidungen: ADR-0057 bis ADR-0060. Fachlich: `docs/REISEN.md`, `docs/MODELL.md`.
 
@@ -158,23 +160,26 @@ Vor Production-Aktivierung des Modellwegs ist zusätzlich die Aufbewahrungsfrist
 - Security/RLS/Auth/Tests/Mobile/Accessibility/Performance/Loading/Error States/Permissions/Kostenkontrollen nicht aus Spargründen überspringen.
 - Starke Modelle dort einsetzen, wo sie messbar mehr Qualität bringen; effiziente Modelle für Routinearbeit. Qualität pro Token optimieren, nicht blind Kosten minimieren.
 
-## 9. Aktuelle offene Punkte aus Phase 2.1
+## 9. Offene Punkte nach Phase 2.2
 
-Diese Punkte sind bekannt und blockieren den Start von Phase 2.2 nicht, müssen aber im Projektgedächtnis bleiben:
+Diese Punkte sind bekannt und blockieren Phase 3 nicht, müssen aber im Projektgedächtnis bleiben:
 
 - `public.model_usage`: Aufbewahrungsfrist noch offen; vor Production-Freigabe entscheiden.
 - Reload während einer noch nicht übernommenen Vorschau verwirft sie bewusst nach ADR-0050.
 - Der Router arbeitet mit Mustern und kann ungewöhnliche Formulierungen falsch einordnen; manueller Modell-Stift bleibt möglich.
+- Planpunkte über die bestehende Oberfläche erhöhen `revision` noch nicht (ADR-0058).
+- Guest-`ohneTag` ist kein eigener LocalStorage-Bestand; Restpunkte hängen am letzten Tag.
 - Preview-Tests sind keine Lasttests.
 - Production-Modellaktivierung bleibt eine eigene Freigabe.
-- Echte Reiseangebote/Preise sind noch nicht Teil von Phase 2.1.
+- Echte Reiseangebote/Preise sind noch nicht Teil von Phase 2.
+- `db:sicherheit` 156/157: der eine Fehlschlag ist `der Dienstweg als Gast bekommt Kontingent`, weil Development heute 24 Gast-Aufrufe in `model_usage` hat (Tagesgrenze). Die Funktion selbst ist unverändert; der Nachweis sieht die live Zeilen. Die drei Wiederholungsfälle an der Reiseschranke sind nach `20260820050000` wieder grün. `db:kontingent` wurde bei vollem Gasttopf nicht erneut gegen die Live-Datenbank geschrieben.
 
 ## 10. Sofortiger Startpunkt im nächsten Chat
 
 Wenn in einem neuen Chat gefragt wird „Wie geht es mit Jetnity weiter?“, ist die Antwort:
 
-**Phase 2.2 starten: bestehende Reise per natürlicher Sprache ändern.**
+**Phase 2.2 nicht mergen und Production nicht anfassen, ohne ausdrückliche Freigabe. Als Nächstes: Phase 3 – echte Reiseprodukte, beginnend mit Flügen.**
 
-Noch nicht gleichzeitig Amadeus, Hotels, GetYourGuide und Monetarisierung bauen. Erst Phase 2.2 vollständig, getestet, dokumentiert und gemergt. Danach Phase 3 in der Reihenfolge Flüge → Hotels → Aktivitäten → Transfers; parallel die Gesamtoptimierung als Jetnity-DNA erhalten. Danach Launch-Reife.
+Noch nicht gleichzeitig Hotels, GetYourGuide und Monetarisierung bauen. Erst Flüge, dann Hotels, dann Aktivitäten, dann Transfers; parallel die Gesamtoptimierung als Jetnity-DNA erhalten. Danach Launch-Reife.
 
-Vor dem ersten Phase-2.2-Prompt soll der aktuelle `main`-Stand und die bestehende Dokumentation gelesen werden. Danach einen klar abgegrenzten PR für Phase 2.2 anlegen.
+Vor dem ersten Phase-3-Prompt den aktuellen Branch-Stand (PR #18) oder nach Freigabe `main` und die bestehende Dokumentation lesen.
