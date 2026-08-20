@@ -1,0 +1,12 @@
+id,code,local_code,name,continent,iso_country,wikipedia_link,keywords
+1,CH-ZH,ZH,Zurich,EU,CH,,
+2,CH-GE,GE,Geneva,EU,CH,,
+3,FR-GES,GES,Grand Est,EU,FR,,
+4,GB-ENG,ENG,England,EU,GB,,
+5,US-NY,NY,New York,NA,US,,
+6,US-NJ,NJ,New Jersey,NA,US,,
+7,AE-DU,DU,Dubai,AS,AE,,
+8,TH-10,10,Bangkok,AS,TH,,
+9,JP-13,13,Tokyo,AS,JP,,
+10,JP-12,12,Chiba,AS,JP,,
+11,CH-GR,GR,Grisons,EU,CH,,

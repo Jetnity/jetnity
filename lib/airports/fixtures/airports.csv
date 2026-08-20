@@ -1,0 +1,17 @@
+id,ident,type,name,latitude_deg,longitude_deg,elevation_ft,continent,iso_country,iso_region,municipality,scheduled_service,icao_code,iata_code,gps_code,local_code,home_link,wikipedia_link,keywords
+1,LSZH,large_airport,Zurich Airport,47.458056,8.548056,1416,EU,CH,CH-ZH,Zurich,yes,LSZH,ZRH,LSZH,,,https://en.wikipedia.org/wiki/Zurich_Airport,Zürich
+2,LSGG,large_airport,Geneva Cointrin International Airport,46.238098,6.10895,1411,EU,CH,CH-GE,Geneva,yes,LSGG,GVA,LSGG,,,https://en.wikipedia.org/wiki/Geneva_Airport,"Genève, Genf"
+3,LFSB,medium_airport,EuroAirport Basel-Mulhouse-Freiburg,47.59,7.529167,885,EU,FR,FR-GES,Saint-Louis,yes,LFSB,BSL,LFSB,,,https://en.wikipedia.org/wiki/EuroAirport_Basel_Mulhouse_Freiburg,"Basel, Mulhouse, Freiburg, MLH, EAP"
+4,EGLL,large_airport,London Heathrow Airport,51.4706,-0.461941,83,EU,GB,GB-ENG,London,yes,EGLL,LHR,EGLL,,,https://en.wikipedia.org/wiki/Heathrow_Airport,
+5,EGKK,large_airport,London Gatwick Airport,51.148102,-0.190278,202,EU,GB,GB-ENG,London,yes,EGKK,LGW,EGKK,,,https://en.wikipedia.org/wiki/Gatwick_Airport,
+6,KJFK,large_airport,John F Kennedy International Airport,40.639801,-73.7789,13,NA,US,US-NY,New York,yes,KJFK,JFK,KJFK,,,https://en.wikipedia.org/wiki/John_F._Kennedy_International_Airport,"New York, Kennedy"
+7,KEWR,large_airport,Newark Liberty International Airport,40.692501,-74.168701,18,NA,US,US-NJ,Newark,yes,KEWR,EWR,KEWR,,,https://en.wikipedia.org/wiki/Newark_Liberty_International_Airport,"New York, Newark"
+8,OMDB,large_airport,Dubai International Airport,25.2528,55.3644,62,AS,AE,AE-DU,Dubai,yes,OMDB,DXB,OMDB,,,https://en.wikipedia.org/wiki/Dubai_International_Airport,
+9,VTBS,large_airport,Suvarnabhumi Airport,13.6811,100.747,5,AS,TH,TH-10,Bangkok,yes,VTBS,BKK,VTBS,,,https://en.wikipedia.org/wiki/Suvarnabhumi_Airport,
+10,RJTT,large_airport,Tokyo Haneda International Airport,35.552299,139.779999,35,AS,JP,JP-13,Tokyo,yes,RJTT,HND,RJTT,,,https://en.wikipedia.org/wiki/Haneda_Airport,"Tokyo, Haneda"
+11,RJAA,large_airport,Narita International Airport,35.764702,140.386002,141,AS,JP,JP-12,Narita,yes,RJAA,NRT,RJAA,,,https://en.wikipedia.org/wiki/Narita_International_Airport,"Tokyo, Narita"
+12,XXXX,heliport,Zurich Downtown Helipad,47.37,8.54,400,EU,CH,CH-ZH,Zurich,no,,ZUR,,,,should-drop
+13,YYYY,closed,Old Zurich Airport,47.4,8.5,400,EU,CH,CH-ZH,Zurich,no,LSZZ,ZZZ,,,,closed
+14,ZZZZ,small_airport,Private Field Without Code,47.1,8.1,400,EU,CH,CH-ZH,Nowhere,no,LSTP,,,,,
+15,LSZS,small_airport,Samedan Airport,46.5341,9.88411,5600,EU,CH,CH-GR,Samedan,yes,LSZS,SMV,LSZS,,,https://en.wikipedia.org/wiki/Samedan_Airport,St. Moritz
+16,ZZZA,medium_airport,Zurich Collision Field,47.4,8.5,400,EU,CH,CH-ZH,Zurich,yes,LSZH,AAA,LSZH,,,,"same ICAO as ZRH, must lose"
