@@ -158,6 +158,54 @@ export type Database = {
         }
         Relationships: []
       }
+      places: {
+        Row: {
+          country: string | null
+          country_code: string | null
+          iata: string | null
+          id: string
+          keywords: string | null
+          lat: number | null
+          lon: number | null
+          name: string
+          region: string | null
+          source: string
+          source_id: string
+          typ: string
+          updated_at: string | null
+        }
+        Insert: {
+          country?: string | null
+          country_code?: string | null
+          iata?: string | null
+          id: string
+          keywords?: string | null
+          lat?: number | null
+          lon?: number | null
+          name: string
+          region?: string | null
+          source: string
+          source_id: string
+          typ: string
+          updated_at?: string | null
+        }
+        Update: {
+          country?: string | null
+          country_code?: string | null
+          iata?: string | null
+          id?: string
+          keywords?: string | null
+          lat?: number | null
+          lon?: number | null
+          name?: string
+          region?: string | null
+          source?: string
+          source_id?: string
+          typ?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -428,6 +476,7 @@ export type Database = {
           longitude: number | null
           metadata: Json
           name: string
+          place_id: string | null
           position: number
           trip_id: string
           updated_at: string
@@ -443,6 +492,7 @@ export type Database = {
           longitude?: number | null
           metadata?: Json
           name: string
+          place_id?: string | null
           position?: number
           trip_id: string
           updated_at?: string
@@ -458,12 +508,20 @@ export type Database = {
           longitude?: number | null
           metadata?: Json
           name?: string
+          place_id?: string | null
           position?: number
           trip_id?: string
           updated_at?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "trip_stages_place_id_fkey"
+            columns: ["place_id"]
+            isOneToOne: false
+            referencedRelation: "places"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "trip_stages_reise_fk"
             columns: ["trip_id", "user_id"]
@@ -485,6 +543,7 @@ export type Database = {
           last_mutation_id: string | null
           metadata: Json
           origin: string | null
+          origin_place_id: string | null
           pace: string
           revision: number
           start_date: string | null
@@ -506,6 +565,7 @@ export type Database = {
           last_mutation_id?: string | null
           metadata?: Json
           origin?: string | null
+          origin_place_id?: string | null
           pace?: string
           revision?: number
           start_date?: string | null
@@ -527,6 +587,7 @@ export type Database = {
           last_mutation_id?: string | null
           metadata?: Json
           origin?: string | null
+          origin_place_id?: string | null
           pace?: string
           revision?: number
           start_date?: string | null
@@ -537,7 +598,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "trips_origin_place_id_fkey"
+            columns: ["origin_place_id"]
+            isOneToOne: false
+            referencedRelation: "places"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

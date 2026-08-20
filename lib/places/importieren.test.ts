@@ -62,7 +62,7 @@ describe('GeoNames → Jetnity-Orte', () => {
 
   test('eine Helipad-Zeile ist nicht relevant', () => {
     const zeile = geoNamesTsvZeile(
-      '1	X	X		0	0	S	AIRH	CH		ZH			0',
+      '1	X	X		0	0	S	AIRH	CH		ZH				0		0	Europe/Zurich	2024-01-01',
     )
     assert.ok(zeile)
     assert.equal(geoNamesZeileRelevant(zeile!), false)
