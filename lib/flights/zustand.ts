@@ -38,7 +38,12 @@ function istProduction(umgebung: FlugUmgebung): boolean {
   return umgebung.VERCEL_ENV?.trim() === 'production'
 }
 
-export function flugZustand(umgebung: FlugUmgebung = process.env): FlugZustand {
+export function flugUmgebungAusProzess(): FlugUmgebung {
+  const { VERCEL_ENV, JETNITY_FLIGHT_AKTIV, DUFFEL_ACCESS_TOKEN } = process.env
+  return { VERCEL_ENV, JETNITY_FLIGHT_AKTIV, DUFFEL_ACCESS_TOKEN }
+}
+
+export function flugZustand(umgebung: FlugUmgebung = flugUmgebungAusProzess()): FlugZustand {
   if (istProduction(umgebung)) return { aktiv: false, grund: 'production' }
   if (!eingeschaltet(umgebung.JETNITY_FLIGHT_AKTIV)) return { aktiv: false, grund: 'abgeschaltet' }
 

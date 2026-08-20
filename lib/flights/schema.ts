@@ -143,7 +143,7 @@ const teilstreckeSchema = z.object({
  * Bewusst ohne Provider-Rohdaten, ohne Token und ohne interne Ranking-Zahlen.
  * `bookingUrl` gehört nicht hierher: Die Suchschicht erzeugt keinen Deeplink.
  */
-export const flugOptionSchema = z.object({
+const flugOptionSchema = z.object({
   id: z.string().trim().min(1).max(120),
   provider: z.string().trim().min(1).max(40),
   externalRef: z.string().trim().min(1).max(200),

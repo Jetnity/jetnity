@@ -110,7 +110,7 @@ export const ANGEBOT_MIT_STOPP = {
 }
 
 /** Overnight-Umstieg: Ankunft 22:10, Weiterflug 08:40 am nächsten Tag. */
-export const ANGEBOT_OVERNIGHT = {
+const ANGEBOT_OVERNIGHT = {
   id: 'off_test_overnight',
   total_amount: '810.00',
   total_currency: 'CHF',
@@ -183,10 +183,6 @@ export const ANTWORT_MIT_UNGUELTIGEM = {
     id: 'orq_test_2',
     offers: [ANGEBOT_DIREKT, { id: 'kaputt', total_amount: 'abc' }, ANGEBOT_MIT_STOPP],
   },
-}
-
-export const ANTWORT_LEER = {
-  data: { id: 'orq_test_leer', offers: [] },
 }
 
 export const ANTWORT_NUR_MUELL = {

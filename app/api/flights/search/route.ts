@@ -8,6 +8,7 @@ import { NextResponse } from 'next/server'
 import { duffelProviderAus } from '@/lib/flights/duffel/factory'
 import { flugRateKennungAus } from '@/lib/flights/rate-limit'
 import { fluegeSuchen, suchePortsAusUmgebung } from '@/lib/flights/suche'
+import { flugUmgebungAusProzess } from '@/lib/flights/zustand'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 30
@@ -30,7 +31,7 @@ export async function POST(req: Request) {
 
   const { httpStatus, koerper } = await fluegeSuchen(
     eingabe,
-    suchePortsAusUmgebung(process.env, duffelProviderAus(process.env), flugRateKennungAus(req.headers)),
+    suchePortsAusUmgebung(flugUmgebungAusProzess(), duffelProviderAus(), flugRateKennungAus(req.headers)),
   )
 
   return NextResponse.json(koerper, {

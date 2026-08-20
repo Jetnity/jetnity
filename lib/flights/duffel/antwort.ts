@@ -36,7 +36,7 @@ const gepack = z.object({
   quantity: z.number().int().min(0).max(9).optional(),
 })
 
-export const duffelSegmentSchema = z.object({
+const duffelSegmentSchema = z.object({
   origin: ort,
   destination: ort,
   departing_at: ortszeit,
@@ -57,7 +57,7 @@ export const duffelSegmentSchema = z.object({
     .optional(),
 })
 
-export const duffelSliceSchema = z.object({
+const duffelSliceSchema = z.object({
   duration: z.string().min(2).max(20),
   fare_brand_name: z.string().trim().min(1).max(40).nullable().optional(),
   segments: z.array(duffelSegmentSchema).min(1).max(8),

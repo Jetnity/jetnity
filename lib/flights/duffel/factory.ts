@@ -6,9 +6,9 @@ import 'server-only'
 
 import { duffelAdapter } from '@/lib/flights/duffel/adapter'
 import type { FlugProvider } from '@/lib/flights/provider'
-import { flugZustand, istDuffelTestToken, type FlugUmgebung } from '@/lib/flights/zustand'
+import { flugUmgebungAusProzess, flugZustand, istDuffelTestToken, type FlugUmgebung } from '@/lib/flights/zustand'
 
-export function duffelProviderAus(umgebung: FlugUmgebung = process.env): FlugProvider | null {
+export function duffelProviderAus(umgebung: FlugUmgebung = flugUmgebungAusProzess()): FlugProvider | null {
   const zustand = flugZustand(umgebung)
   if (!zustand.aktiv) return null
   const token = umgebung.DUFFEL_ACCESS_TOKEN?.trim()
