@@ -21,9 +21,12 @@ import { Cloud, Trash2 } from 'lucide-react'
 
 import { flugInReiseUebernehmen } from '@/lib/flights/aktionen'
 import type { FlugOptionSichtbar } from '@/lib/flights/client-sicht'
+import { hotelInReiseUebernehmen } from '@/lib/hotels/aktionen'
+import type { HotelOptionSichtbar } from '@/lib/hotels/client-sicht'
 import { planpunktAnlegen, planpunktEntfernen, reiseLoeschen } from '@/lib/trips/aktionen'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
 import FlugSuche from '@/components/trips/FlugSuche'
+import HotelBereich from '@/components/trips/HotelBereich'
 import ReiseAenderung from '@/components/trips/ReiseAenderung'
 import TripWorkspace from '@/components/trips/TripWorkspace'
 import type { Trip, TripItem } from '@/types/trips'
@@ -93,6 +96,24 @@ export default function KontoArbeitsbereich({
             const ergebnis = await flugInReiseUebernehmen({
               tripId: reise.id,
               dayId: tagId,
+              option,
+            })
+            if (!ergebnis.ok) return ergebnis.meldung
+            router.refresh()
+            return null
+          }}
+        />
+      }
+      hotelsuche={
+        <HotelBereich
+          reise={reise}
+          onUebernehmen={async (etappe, option: HotelOptionSichtbar, zeitraum, dayId) => {
+            const ergebnis = await hotelInReiseUebernehmen({
+              tripId: reise.id,
+              stageId: etappe.id,
+              dayId,
+              checkIn: zeitraum.checkIn,
+              checkOut: zeitraum.checkOut,
               option,
             })
             if (!ergebnis.ok) return ergebnis.meldung

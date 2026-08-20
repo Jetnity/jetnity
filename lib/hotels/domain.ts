@@ -17,7 +17,11 @@ export const HOTEL_SUCHE_GRENZEN = {
   kinder: { min: 0, max: 12 },
   angebote: 40,
   empfohleneOptionen: 5,
+  timeoutMs: 12_000,
 } as const
+
+/** Wann ein Abflug die letzte Nacht näher an den Abreiseweg rückt. */
+export const FRUEHER_ABFLUG_MINUTE = 8 * 60
 
 export type HotelPraeferenzen = {
   budgetProNachtMax: number | null
@@ -77,6 +81,30 @@ export type QuartierKandidat = {
 export type BewertetesQuartier = QuartierKandidat & {
   score: number
   reasons: string[]
+}
+
+/**
+ * Was für die Quartierwahl tatsächlich belegt ist.
+ * Fehlende Werte bleiben unbekannt; die UI darf daraus keine Scheingenauigkeit machen.
+ */
+export type QuartierEvidenz = {
+  hatOrt: boolean
+  hatKoordinaten: boolean
+  hatZeitraum: boolean
+  hatReiseanker: boolean
+  hatWegezeiten: boolean
+  hatTransferzeiten: boolean
+  hatPraeferenzprofil: boolean
+}
+
+export const LEERE_QUARTIER_EVIDENZ: QuartierEvidenz = {
+  hatOrt: false,
+  hatKoordinaten: false,
+  hatZeitraum: false,
+  hatReiseanker: false,
+  hatWegezeiten: false,
+  hatTransferzeiten: false,
+  hatPraeferenzprofil: false,
 }
 
 export type HotelSuchanfrage = {
@@ -151,7 +179,16 @@ export type HotelSuchergebnis = {
   message: string
   coverageNote: string
   quartier: BewertetesQuartier | null
+  evidenz: QuartierEvidenz
   options: BewerteteHotelOption[]
+}
+
+export const HOTEL_MARKE_TEXT: Record<HotelMarke, string> = {
+  jetnity: 'Jetnity empfiehlt',
+  best_value: 'Bestes Preis-Leistungs-Verhältnis',
+  best_location: 'Beste Lage',
+  quiet: 'Ruhigere Alternative',
+  premium: 'Premium-Option',
 }
 
 export const HOTEL_ABDECKUNGSHINWEIS =

@@ -147,6 +147,26 @@ describe('Hotelranking', () => {
     assert.equal('provision' in HOTEL_RANGLISTE_GEWICHTE, false)
     assert.equal(Object.values(HOTEL_RANGLISTE_GEWICHTE).reduce((summe, wert) => summe + wert, 0), 100)
   })
+
+  test('ohne Wegezeit behauptet die Empfehlung keine kurzen Wege', () => {
+    const ohneWege = hotel({
+      id: 'ohne-wege',
+      name: 'Hotel Unbekannt',
+      preisGesamt: 700,
+      preisProNacht: 175,
+      context: {
+        taeglicheWegeMinuten: null,
+        quartierFitScore: 0.92,
+        ruheScore: null,
+        praeferenzFitScore: null,
+      },
+    })
+    const bewertet = hotelOptionenBewerten([ohneWege], ANFRAGE)
+    const texte = bewertet[0]?.reasons.join(' ') ?? ''
+    assert.equal(texte.includes('täglichen Wege'), false)
+    assert.equal(texte.includes('Sehr gute Lage für die geplanten Wege'), false)
+    assert.match(texte, /empfohlenen Gegend|Preislich|teurer/)
+  })
 })
 
 const QUARTIER_KONTEXT: QuartierSuchkontext = {

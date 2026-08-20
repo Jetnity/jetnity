@@ -80,18 +80,47 @@ function budgetFit(kandidat: QuartierKandidat, budget: number | null): number {
 
 function gruende(
   kandidat: QuartierKandidat,
+  context: QuartierSuchkontext,
   scoreTeile: { reisewege: number; transfer: number; mobilitaet: number; praeferenzen: number; budget: number },
 ): string[] {
-  const kandidaten: Array<{ score: number; text: string }> = [
-    { score: scoreTeile.reisewege, text: 'Kurze Wege zu den geplanten Stationen der Reise.' },
-    { score: scoreTeile.transfer, text: 'Gute Lage für An- und Abreise.' },
-    { score: scoreTeile.mobilitaet, text: 'Gute Erreichbarkeit zu Fuß und mit öffentlichen Verkehrsmitteln.' },
-    { score: scoreTeile.praeferenzen, text: 'Passt gut zu deinen gewünschten Eigenschaften der Gegend.' },
-    { score: scoreTeile.budget, text: 'Das typische Preisniveau passt zum geplanten Budget.' },
-  ]
-  if (kandidat.taeglicheWegeMinuten === null) {
-    kandidaten.push({ score: 0.49, text: 'Für diese Gegend fehlen noch vollständige Wegezeitdaten; Jetnity bewertet sie deshalb vorsichtig.' })
+  const kandidaten: Array<{ score: number; text: string }> = []
+
+  if (kandidat.taeglicheWegeMinuten !== null) {
+    kandidaten.push({ score: scoreTeile.reisewege, text: 'Kurze Wege zu den geplanten Stationen der Reise.' })
+  } else {
+    kandidaten.push({
+      score: 0.4,
+      text: 'Für diese Gegend fehlen noch Wegezeitdaten; Jetnity bewertet sie deshalb vorsichtig.',
+    })
   }
+
+  if (kandidat.anreiseTransferMinuten !== null || kandidat.abreiseTransferMinuten !== null) {
+    kandidaten.push({ score: scoreTeile.transfer, text: 'Gute Lage für An- und Abreise.' })
+  } else if (context.transferPrioritaet.abreise >= 1) {
+    kandidaten.push({
+      score: 0.45,
+      text: 'Die letzte Nacht liegt vor einem frühen Abflug; eine lagebewusste Wahl wird wichtig, sobald Wegezeiten bekannt sind.',
+    })
+  }
+
+  if (kandidat.gehScore !== null || kandidat.oevScore !== null) {
+    kandidaten.push({
+      score: scoreTeile.mobilitaet,
+      text: 'Gute Erreichbarkeit zu Fuß und mit öffentlichen Verkehrsmitteln.',
+    })
+  }
+
+  if (profilWerte(kandidat, context.praeferenzen).length > 0) {
+    kandidaten.push({
+      score: scoreTeile.praeferenzen,
+      text: 'Passt gut zu deinen gewünschten Eigenschaften der Gegend.',
+    })
+  }
+
+  if (context.budgetProNachtMax !== null && kandidat.typischeNachtPreis !== null) {
+    kandidaten.push({ score: scoreTeile.budget, text: 'Das typische Preisniveau passt zum geplanten Budget.' })
+  }
+
   return kandidaten
     .sort((a, b) => b.score - a.score || a.text.localeCompare(b.text))
     .slice(0, 3)
@@ -126,7 +155,13 @@ export function quartiereBewerten(kandidaten: QuartierKandidat[], context: Quart
       return {
         ...kandidat,
         score: Math.round(score * 1000) / 1000,
-        reasons: gruende(kandidat, { reisewege, transfer, mobilitaet: mobil, praeferenzen: pref, budget }),
+        reasons: gruende(kandidat, context, {
+          reisewege,
+          transfer,
+          mobilitaet: mobil,
+          praeferenzen: pref,
+          budget,
+        }),
       }
     })
     .sort((a, b) => {

@@ -16,8 +16,11 @@ import { CloudOff, MapPin, Trash2 } from 'lucide-react'
 
 import type { FlugOptionSichtbar } from '@/lib/flights/client-sicht'
 import { alsFlugMomentaufnahme } from '@/lib/flights/uebernahme'
+import type { HotelOptionSichtbar } from '@/lib/hotels/client-sicht'
+import { alsHotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import {
   gastFlugUebernehmen,
+  gastHotelUebernehmen,
   gastPlanpunktAnlegen,
   gastPlanpunktEntfernen,
   gastreiseEntfernen,
@@ -25,6 +28,7 @@ import {
 } from '@/lib/trips/gastspeicher'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
 import FlugSuche from '@/components/trips/FlugSuche'
+import HotelBereich from '@/components/trips/HotelBereich'
 import ReiseAenderung from '@/components/trips/ReiseAenderung'
 import TripWorkspace from '@/components/trips/TripWorkspace'
 import type { Trip } from '@/types/trips'
@@ -161,6 +165,23 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
               return fehler instanceof Error
                 ? fehler.message
                 : 'Der Flug konnte nicht in die Reise übernommen werden.'
+            }
+          }}
+        />
+      }
+      hotelsuche={
+        <HotelBereich
+          reise={reise}
+          onUebernehmen={async (etappe, option: HotelOptionSichtbar, zeitraum, dayId) => {
+            const aufnahme = alsHotelMomentaufnahme(option, zeitraum)
+            if (!aufnahme) return 'Diese Hoteloption ist unvollständig.'
+            try {
+              setReise(gastHotelUebernehmen(reise, aufnahme, etappe.id, dayId))
+              return null
+            } catch (fehler) {
+              return fehler instanceof Error
+                ? fehler.message
+                : 'Das Hotel konnte nicht in die Reise übernommen werden.'
             }
           }}
         />

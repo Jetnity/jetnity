@@ -58,6 +58,8 @@ import type { Modelloperation } from '@/lib/reiseaenderung/schema'
 import { interesseLesen, tempoLesen } from '@/lib/trips/bezeichnungen'
 import type { FlugMomentaufnahme } from '@/lib/flights/uebernahme'
 import { momentaufnahmeAlsPunkt } from '@/lib/flights/uebernahme'
+import type { HotelMomentaufnahme } from '@/lib/hotels/uebernahme'
+import { hotelMomentaufnahmeAlsPunkt } from '@/lib/hotels/uebernahme'
 import { reiseLesen, type PlanpunktFormular } from '@/lib/trips/schema'
 import { reisetageBauen } from '@/lib/trips/tage'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
@@ -620,6 +622,41 @@ export function gastFlugUebernehmen(
     id: kennungErzeugen('item'),
     dayId: tag?.id ?? null,
     stageId: tag?.stageId ?? null,
+    position: tag ? tag.items.length + 1 : reise.ohneTag.length + 1,
+  })
+
+  return gastreiseSpeichern({
+    ...reise,
+    revision: reise.revision + 1,
+    days: tag
+      ? reise.days.map((eintrag) =>
+          eintrag.id === tag.id ? { ...eintrag, items: [...eintrag.items, punkt] } : eintrag,
+        )
+      : reise.days,
+    ohneTag: tag ? reise.ohneTag : [...reise.ohneTag, punkt],
+  })
+}
+
+/** Übernimmt eine geprüfte Hoteloption als kommerziellen Unterkunftspunkt. */
+export function gastHotelUebernehmen(
+  reise: Trip,
+  aufnahme: HotelMomentaufnahme,
+  stageId: string,
+  dayId: string | null,
+): Trip {
+  const etappe = reise.stages.find((eintrag) => eintrag.id === stageId)
+  if (!etappe) throw new Error('Diese Etappe gehört nicht zur Reise.')
+
+  const tag = dayId ? reise.days.find((eintrag) => eintrag.id === dayId) : undefined
+  if (dayId && !tag) throw new Error('Dieser Tag gehört nicht zur Reise.')
+  if (tag && tag.stageId && tag.stageId !== stageId) {
+    throw new Error('Dieser Tag gehört nicht zu dieser Etappe.')
+  }
+
+  const punkt = hotelMomentaufnahmeAlsPunkt(aufnahme, {
+    id: kennungErzeugen('item'),
+    dayId: tag?.id ?? null,
+    stageId,
     position: tag ? tag.items.length + 1 : reise.ohneTag.length + 1,
   })
 

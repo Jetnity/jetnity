@@ -127,7 +127,11 @@ function premium(optionen: BewerteteHotelOption[]): BewerteteHotelOption {
 
 function gruendeFuer(jetnity: BewerteteHotelOption, billigstes: BewerteteHotelOption, lage: BewerteteHotelOption): string[] {
   const gruende: string[] = []
-  if (jetnity.id === lage.id) gruende.push('Sehr gute Lage für die geplanten Wege dieser Reise.')
+  if (jetnity.id === lage.id && jetnity.context.taeglicheWegeMinuten !== null) {
+    gruende.push('Sehr gute Lage für die geplanten Wege dieser Reise.')
+  } else if (jetnity.context.quartierFitScore !== null && jetnity.context.quartierFitScore >= 0.7) {
+    gruende.push('Liegt nahe an der für diese Reise empfohlenen Gegend.')
+  }
   if (jetnity.context.taeglicheWegeMinuten !== null && lage.context.taeglicheWegeMinuten !== null) {
     const differenz = jetnity.context.taeglicheWegeMinuten - lage.context.taeglicheWegeMinuten
     if (differenz <= 5) gruende.push('Die täglichen Wege bleiben nahe an der besten Lageoption.')
