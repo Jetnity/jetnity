@@ -354,22 +354,45 @@ describe('Die Nutzlast für public.reise_anlegen() trägt nur, was die Funktion 
     if (ergebnis.success) assert.equal('user_id' in ergebnis.data, false)
   })
 
-  test('ein mitgeschickter Preis wird nicht übernommen', () => {
-    // Die Funktion liest an einem Planpunkt nur `kind`, `title`, `note`,
-    // `position` und `starts_at`. Ein Preis in der Nutzlast käme nicht an; ihn
-    // zu akzeptieren wäre die Behauptung, er täte es.
+  test('ein übernommener Flugpreis bleibt in der Nutzlast', () => {
     const ergebnis = reiseNutzlastSchema.safeParse({
       ...nutzlast,
       days: [
         {
           ...nutzlast.days[0],
-          items: [{ ...nutzlast.days[0].items[0], price_amount: 120, price_currency: 'CHF' }],
+          items: [
+            {
+              ...nutzlast.days[0].items[0],
+              kind: 'flight',
+              price_amount: 120,
+              price_currency: 'CHF',
+              provider: 'duffel',
+              external_ref: '1:ZRH:BKK:20261101:LX180',
+            },
+          ],
         },
       ],
     })
 
     assert.equal(ergebnis.success, true)
-    if (ergebnis.success) assert.equal('price_amount' in ergebnis.data.days[0].items[0], false)
+    if (ergebnis.success) {
+      assert.equal(ergebnis.data.days[0].items[0].price_amount, 120)
+      assert.equal(ergebnis.data.days[0].items[0].provider, 'duffel')
+    }
+  })
+
+  test('ein Preis ohne Währung wird abgelehnt', () => {
+    const ergebnis = reiseNutzlastSchema.safeParse({
+      ...nutzlast,
+      days: [
+        {
+          ...nutzlast.days[0],
+          items: [{ ...nutzlast.days[0].items[0], price_amount: 120, price_currency: null }],
+        },
+      ],
+    })
+
+    assert.equal(ergebnis.success, false)
   })
 
   test('mehr Etappen als erlaubt', () => {

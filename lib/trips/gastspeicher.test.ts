@@ -18,10 +18,14 @@
 import { test, describe, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { OPTION_DIREKT } from '@/lib/flights/fixtures/optionen'
+import { alsFlugMomentaufnahme } from '@/lib/flights/uebernahme'
+import { istKommerziell } from '@/lib/reiseaenderung/geschuetzt'
 import {
   GastreiseBestehtFehler,
   SCHLUESSEL,
   SpeicherFehler,
+  gastFlugUebernehmen,
   gastPlanpunktAnlegen,
   gastPlanpunktEntfernen,
   gastreiseAendern,
@@ -247,6 +251,20 @@ describe('Bearbeiten einer Gastreise', () => {
     assert.equal(danach.days[1].items[0].dayId, tag.id)
     assert.equal(danach.days[0].items.length, 0)
     assert.equal(gastspeicherLaden().aktiv?.days[1].items.length, 1, 'und ist gespeichert')
+  })
+
+  test('ein übernommener Flug bleibt kommerziell gespeichert', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const aufnahme = alsFlugMomentaufnahme(OPTION_DIREKT)
+    assert.ok(aufnahme)
+    const danach = gastFlugUebernehmen(reise, aufnahme, reise.days[0]!.id)
+    const flug = danach.days[0]?.items.find((punkt) => punkt.kind === 'flight')
+    assert.ok(flug)
+    assert.equal(istKommerziell(flug), true)
+    assert.equal(flug.priceAmount, 892.5)
+    assert.equal(flug.provider, 'duffel')
+    assert.equal(flug.bookingUrl, null)
+    assert.equal(gastspeicherLaden().aktiv?.days[0]?.items[0]?.provider, 'duffel')
   })
 
   test('ein Punkt an einem fremden Tag wird abgelehnt', () => {

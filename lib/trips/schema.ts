@@ -326,8 +326,31 @@ const nutzlastPunktSchema = z.object({
   title: z.string().min(1).max(GRENZEN.titel),
   note: z.string().max(GRENZEN.notiz).nullable(),
   position: z.number().int().min(1).max(500),
+  starts_on: datum.nullable().default(null),
   starts_at: uhrzeit.nullable(),
+  ends_on: datum.nullable().default(null),
+  ends_at: uhrzeit.nullable().default(null),
+  price_amount: betrag.nullable().default(null),
+  price_currency: waehrung.nullable().default(null),
+  provider: z.string().min(1).max(40).nullable().default(null),
+  external_ref: z.string().min(1).max(200).nullable().default(null),
+  booking_url: z
+    .string()
+    .url()
+    .startsWith('https://', 'Ein Buchungslink muss über HTTPS gehen')
+    .max(2048)
+    .nullable()
+    .default(null),
 })
+  .superRefine((punkt, ctx) => {
+    if ((punkt.price_amount === null) !== (punkt.price_currency === null)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['price_amount'],
+        message: 'Preis und Währung gehören zusammen.',
+      })
+    }
+  })
 
 const nutzlastTagSchema = z.object({
   day_index: z.number().int().min(1).max(GRENZEN.reisetageJeReise),

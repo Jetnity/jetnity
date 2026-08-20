@@ -118,7 +118,15 @@ describe('Der Vorschlag als Nutzlast für public.reise_anlegen()', () => {
         title: 'Forum Romanum und Kolosseum',
         note: null,
         position: 1,
+        starts_on: null,
         starts_at: '09:00',
+        ends_on: null,
+        ends_at: null,
+        price_amount: null,
+        price_currency: null,
+        provider: null,
+        external_ref: null,
+        booking_url: null,
       },
     ])
   })
@@ -136,11 +144,13 @@ describe('Der Vorschlag als Nutzlast für public.reise_anlegen()', () => {
   })
 
   test('kein Preis, kein Anbieter, kein Buchungslink', () => {
-    // Nicht als leerer Wert, sondern gar nicht: `public.reise_anlegen()` liest an
-    // einem Planpunkt nur `kind`, `title`, `note`, `position` und `starts_at`.
-    const felder = new Set(nutzlast.days.flatMap((tag) => tag.items.flatMap(Object.keys)))
-
-    assert.deepEqual([...felder].sort(), ['kind', 'note', 'position', 'starts_at', 'title'])
+    // Der Modellweg setzt Handelsfelder ausdrücklich auf null (ADR-0054).
+    // `reise_anlegen()` kann sie seit Phase 3.1 schreiben – aber nicht aus einem Vorschlag.
+    const punkt = nutzlast.days[1]?.items[0]
+    assert.equal(punkt?.price_amount, null)
+    assert.equal(punkt?.provider, null)
+    assert.equal(punkt?.external_ref, null)
+    assert.equal(punkt?.booking_url, null)
   })
 
   test('das Budgetziel steht an der Reise, nicht an einem Planpunkt', () => {

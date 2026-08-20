@@ -56,6 +56,8 @@
 import { operationenAnwenden } from '@/lib/reiseaenderung/anwenden'
 import type { Modelloperation } from '@/lib/reiseaenderung/schema'
 import { interesseLesen, tempoLesen } from '@/lib/trips/bezeichnungen'
+import type { FlugMomentaufnahme } from '@/lib/flights/uebernahme'
+import { momentaufnahmeAlsPunkt } from '@/lib/flights/uebernahme'
 import { reiseLesen, type PlanpunktFormular } from '@/lib/trips/schema'
 import { reisetageBauen } from '@/lib/trips/tage'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
@@ -576,6 +578,34 @@ export function gastPlanpunktAnlegen(
     days: reise.days.map((eintrag) =>
       eintrag.id === tag.id ? { ...eintrag, items: [...eintrag.items, punkt] } : eintrag,
     ),
+  })
+}
+
+/** Übernimmt eine geprüfte Flugoption als kommerziellen Planpunkt. */
+export function gastFlugUebernehmen(
+  reise: Trip,
+  aufnahme: FlugMomentaufnahme,
+  dayId: string | null,
+): Trip {
+  const tag = dayId ? reise.days.find((eintrag) => eintrag.id === dayId) : undefined
+  if (dayId && !tag) throw new Error('Dieser Tag gehört nicht zur Reise.')
+
+  const punkt = momentaufnahmeAlsPunkt(aufnahme, {
+    id: kennungErzeugen('item'),
+    dayId: tag?.id ?? null,
+    stageId: tag?.stageId ?? null,
+    position: tag ? tag.items.length + 1 : reise.ohneTag.length + 1,
+  })
+
+  return gastreiseSpeichern({
+    ...reise,
+    revision: reise.revision + 1,
+    days: tag
+      ? reise.days.map((eintrag) =>
+          eintrag.id === tag.id ? { ...eintrag, items: [...eintrag.items, punkt] } : eintrag,
+        )
+      : reise.days,
+    ohneTag: tag ? reise.ohneTag : [...reise.ohneTag, punkt],
   })
 }
 
