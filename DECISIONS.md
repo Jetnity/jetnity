@@ -1952,6 +1952,172 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 
 ---
 
+## ADR-0078 – Aktivitätsdomäne und `ActivityProvider` sind die Architektur, kein Anbieter
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.3
+
+**Entscheidung:** Jetnity spricht intern eine schlanke Aktivitätsdomäne (`ActivitySuchanfrage`, `ActivityOption`, `ActivityTimeslot`, `ActivityProvider`). Phase 3.3 bindet **keinen** Aktivitätenanbieter an. Search-Provider und Affiliate-/Booking-Provider bleiben getrennte Verantwortlichkeiten. `booking_url` bleibt `null`. GetYourGuide ist ein möglicher späterer Kandidat, keine festgelegte Architektur.
+
+**Kontext:** Die Vision verlangt Aktivitäten, die zum konkreten Reisetag passen, nicht eine Ticketliste. ADR-0011 und [AGENTS.md](AGENTS.md) Regel 19 verbieten eine Multi-Provider-Plattform auf Vorrat. Die Hotelnaht (ADR-0070) ist Qualitätsreferenz, aber fachlich nicht kopierbar: Aktivitäten sind tages- und zeitgebunden.
+
+**Alternativen:**
+
+1. *Sofort GetYourGuide als Architektur nehmen.* Macht jeden Wechsel zum Rewrite.
+2. *Hoteldomäne wiederverwenden.* Würde Etappen-Nächte mit Tageszeiten vermischen.
+3. *Deeplinks erfinden, damit die UI voll wirkt.* Wäre eine irreführende Buchungs-URL.
+
+**Begründung:** Die Naht ist klein genug, um verdient zu sein. UI, Tageskontext, Ranking und Trip-Übernahme kennen den Adapter nicht.
+
+**Konsequenzen:** `activityProviderAus()` gibt `null` zurück. Tests injizieren höchstens Fixtures. Dokumentation in [docs/ACTIVITIES.md](docs/ACTIVITIES.md).
+
+---
+
+## ADR-0079 – Aktivitätsranking ist deterministisch, provisionsneutral und ohne Neutralwerte
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.3
+
+**Entscheidung:** Das Ranking ist eine reine Funktion mit festen Gewichten (`ACTIVITY_RANGLISTE_GEWICHTE`). Kein Modell. Keine Provision. Kein Providername. Fehlende Signale bleiben `null` und verdünnen vorhandene Evidenz nicht mit einem fiktiven Neutralwert 0,5. Labels: Jetnity empfiehlt, Best Value, beste Bewertung, flexibel, kurz und gut integrierbar – nur mit Evidenz.
+
+**Kontext:** Dieselbe korrigierte Hotel-Logik (ADR-0071) gilt für Aktivitäten. Ein LLM-Ranking wäre weder reproduzierbar noch in der CI prüfbar. Ein Neutralwert 0,5 würde echte Interessen- oder Zeitsignale überdecken.
+
+**Alternativen:**
+
+1. *Billigste Aktivität zuerst.* Widerspricht dem Produktprinzip.
+2. *Unbekannte Dimensionen mit 0,5 füllen.* Scheingenauigkeit.
+3. *Modell begründet die Rangfolge.* Teuer, nicht deterministisch.
+
+**Begründung:** Vertrauen entsteht, wenn dieselbe Reise und derselbe Tag dieselbe Reihenfolge liefern. Unbekannt ist eine Aussage.
+
+**Konsequenzen:** Gewichte stehen im Code und sind getestet. Tests belegen, dass Providername und Provision die Rangfolge nicht ändern.
+
+---
+
+## ADR-0080 – Tageskontext nur aus vorhandenen Reisedaten
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.3
+
+**Entscheidung:** Der Aktivitätskontext liest Etappe, Koordinaten, Reisetag, vorhandene Punkte, Interessen, Tempo, Budget und Teilnehmer. Fehlende Öffnungszeiten, Wegezeiten und minutengenaue Lücken bleiben unbekannt. Lage-Fit entsteht nur bei Koordinaten und ist Luftlinie, keine Wegezeit.
+
+**Kontext:** Ein Ranking ohne echte Uhrzeiten oder Wege wirkt präzise und ist es nicht. Zwei Aktivitäten in derselben Stadt sind nicht automatisch nah.
+
+**Alternativen:**
+
+1. *Öffnungszeiten und Gehminuten schätzen.* Scheingenauigkeit.
+2. *Sofort einen Routing- oder POI-Provider kaufen.* Laufende Kosten ohne Freigabe.
+
+**Begründung:** Unbekannt ist eine Aussage. Eine erfundene Minute ist ein Defekt.
+
+**Konsequenzen:** Ohne belastbare Daten zeigt die UI den belegbaren Tageskontext und keine Fake-Karten. Ein späterer Routing- oder Öffnungszeiten-Weg ersetzt die Nullen, ändert aber nicht die Domäne.
+
+---
+
+## ADR-0081 – Zeitkonflikte nur bei vollständigen lokalen Tagesfenstern
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.3
+
+**Entscheidung:** Die Konfliktlogik beurteilt nur zwei vollständige lokale `HH:MM`-Fenster am selben Kalendertag. Fehlende Zeiten, mehrtägige Optionen und Fenster über Mitternacht sind `unbekannt`, nicht konfliktfrei. Zeitzonen werden nicht aus Koordinaten geraten.
+
+**Kontext:** Aktivitäten sind stärker zeitgebunden als Hotels. Eine Lücke „frei“ ohne Uhrzeiten wäre eine unbelegte Aussage.
+
+**Alternativen:**
+
+1. *Fehlende Zeiten als konfliktfrei werten.* Würde Überschneidungen verschweigen.
+2. *Zeitzone aus Stadt oder Koordinate ableiten.* Falsch und nicht belegt.
+3. *Mehrtägige und Mitternachtsfenster jetzt vollständig modellieren.* Mehr Komplexität als die Foundation braucht.
+
+**Begründung:** Die Foundation muss klar sagen, was sie sicher beurteilen kann. Der Rest bleibt ehrlich unbekannt.
+
+**Konsequenzen:** Eindeutige Überschneidungen werden erkannt und im Ranking hinter konfliktfreien Optionen sortiert. `ACTIVITY_ZEIT_HINWEIS` dokumentiert die Grenze.
+
+---
+
+## ADR-0082 – Aktivitätensuche in Production aus, fehlender Provider ist unavailable
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.3
+
+**Entscheidung:** `VERCEL_ENV=production` schaltet die Aktivitätensuche hart aus. Development/Preview brauchen `JETNITY_ACTIVITY_AKTIV` plus einen späteren Provider. Fehlender Provider ist ein sauberer unavailable-Zustand, kein Buildfehler. Der Tageskontext darf aus der validierten Reiseanfrage trotzdem berechnet werden.
+
+**Kontext:** Dieselbe Fail-closed-Linie wie Modellweg (ADR-0052), Flugsuche (ADR-0064) und Hotelsuche (ADR-0073). Phase 3.3 hat noch keinen Token-Vertrag.
+
+**Alternativen:**
+
+1. *Secrets im Setup-Check verlangen.* Würde jede Umgebung ohne Aktivitätenanbieter rot färben.
+2. *Fake-Aktivitäten in der echten UI.* Widerspricht der Produktregel.
+
+**Begründung:** Die Pipeline kann integrationsbereit sein, ohne Production oder Nutzer mit erfundenen Angeboten zu täuschen.
+
+**Konsequenzen:** Keine `NEXT_PUBLIC_ACTIVITY_*`. Rate-Limit im Prozess. Timeout 12 s. `POST /api/activities/search` ist kein Provider-Proxy.
+
+---
+
+## ADR-0083 – Aktivitätsübernahme als `activity` auf dem bestehenden Schema
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.3; keine neue Migration
+
+**Entscheidung:** Eine ausgewählte Aktivität wird als `trip_items.kind = activity` gespeichert. Die Momentaufnahme nutzt Titel, Notiz, Termin, Preis, Provider und External-Ref. `booking_url` bleibt `null`. `day_id` und `stage_id` binden den Punkt an Tag und Etappe. Keine neue Production- oder Development-Migration.
+
+**Kontext:** Die Spalten und `kind = activity` existieren seit Phase 1.5. Eine Extra-Tabelle für Timeslots wäre voreilig, solange kein Provider echte Angebote liefert.
+
+**Alternativen:**
+
+1. *Eigene `activity_bookings`-Tabelle jetzt.* Schema ohne Daten.
+2. *Übernahme erst nach dem ersten Provider bauen.* Würde die Trip-Naht später erneut öffnen.
+3. *JSON in `note` als verstecktes Schema.* Die Notiz bleibt Menschenlesart, kein Speicher für Felder.
+
+**Begründung:** Dieselbe Persistenz wie Flug und Hotel. Modelloperationen dürfen kommerzielle Punkte nicht ändern (ADR-0059). Preisänderungen später beobachten, nicht still überschreiben.
+
+**Konsequenzen:** Gast- und Kontoweg sind vorbereitet. Die UI zeigt den Übernehmen-Knopf nur bei echten Optionen. Kommerzielle `activity`-Punkte teilen `istKommerziell` mit Flug und Hotel.
+
+---
+
+## ADR-0084 – Konto-Aktivitätsübernahme nur über serverseitigen Nachweis am Suchkontext
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.3; kein echter Provider
+
+**Entscheidung:** Eine kommerzielle Aktivitätsübernahme im Konto speichert keine Browseroption. Der Client liefert nur identifiers (`tripId`, `stageId`, `dayId`, `optionId`). Preis, Provider, External-Ref und der Timeslot kommen aus einem serverseitigen `ActivityNachweis` plus dem per RLS geladenen Reisegraphen. Der Nachweis bestätigt die `optionId` nur zusammen mit Ziel, Datum, Teilnehmer, Währung und – falls die Option einen Timeslot trägt – dem bestätigten Timeslot. Solange kein Nachweis existiert, fällt die Übernahme fail closed. `ActivityProvider.suchen()` bleibt schmal; die Auswahlbestätigung ist eine eigene Naht.
+
+**Kontext:** Dieselbe Vertrauensgrenze wie bei Hotels (ADR-0075, ADR-0076). Zod prüft Form, nicht Herkunft. Dieselbe Angebots-ID könnte zu einem anderen Tag oder Ziel gehören.
+
+**Alternativen:**
+
+1. *HMAC-Signatur der Suchergebnisse mit einem App-Secret.* Zweckentfremdet Secrets, koppelt Suche und Übernahme.
+2. *Nachweis in `ActivityProvider.suchen()` einbauen.* Würde Search mit Booking/Affiliate vermischen.
+3. *Client schickt Timeslot und Preis mit.* Untrusted input in der Vertrauensgrenze.
+
+**Begründung:** Die Vertrauensgrenze muss stehen, bevor der erste Adapter kommt. Tests können einen Fake-Katalog injizieren. Search-Provider und Affiliate-Partner müssen nicht identisch sein. Gastreisen bleiben LocalStorage und gelten nicht als serverseitig verifiziert.
+
+**Konsequenzen:** `activityNachweisAusUmgebung()` gibt heute `null` zurück. Der erste Provider oder ein Jetnity-eigener serverseitiger Nachweis implementiert `ActivityNachweis`. Keine Secret-Signatur. Modelloperationen schützen kommerzielle `activity`-Punkte weiter über `istKommerziell` (ADR-0059).
+
+---
+
+## ADR-0085 – Aktivitätensuche liest den Body nur bis zur Bytegrenze
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.3
+
+**Entscheidung:** `POST /api/activities/search` prüft `Content-Length` vor jedem Lesen. Der Body wird anschliessend streamend mit einem harten Cap von 16 KB UTF-8 gelesen und abgebrochen, sobald das Limit überschritten ist. `Content-Length` allein ist kein Vertrauensbeweis.
+
+**Kontext:** Dieselbe Härtung wie die Hotelsuche (ADR-0077). Ein übergrosser Request darf nicht vollständig im Speicher landen.
+
+**Alternativen:**
+
+1. *Nur Content-Length.* Fehlt oder lügt der Header, bleibt die Grenze wirkungslos.
+2. *Globales Body-Limit-Middleware.* Unnötige Infrastruktur für einen Endpunkt.
+3. *Zeichenanzahl statt Bytes.* Würde UTF-8-Multibyte unterschätzen.
+
+**Begründung:** Die Anforderung war, kein praktisch unbegrenztes JSON einzulesen. Das geht nur vor der Allokation des ganzen Körpers.
+
+**Konsequenzen:** 413 ohne vollständiges Buffering. Tests decken fehlendes, korrektes und irreführendes `Content-Length` sowie den Grenzfall exakt am Limit.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

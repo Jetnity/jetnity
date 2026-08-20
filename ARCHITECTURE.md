@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
 Stand: 20. August 2026
-Gültig für: Phase 3.2c, Stand nach provider-ready Hotel-Härtung auf der Flight- und Place-Basis
+Gültig für: Phase 3.3, Stand nach Activities Foundation auf der Flight-, Place- und Hotel-Basis
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -151,7 +151,7 @@ Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
 | `/` | Startseite mit Positionierung und Einstieg in die Reiseplanung |
 | `/planen` | Reisebeschreibung in eigenen Worten (`components/trips/Reiseidee.tsx`) und darunter das Formular (`components/trips/TripPlanner.tsx`). Feldfehler sitzen am Feld, nicht nur unter der Absenden-Taste (ADR-0068). |
 | `/reisen` | Übersicht der Reisen – im Konto aus Supabase, als Gast die eine Gastreise |
-| `/reisen/[tripId]` | Trip Workspace mit Tagesplanung, Flugsuche und Hotel-/Quartierbereich je Etappe |
+| `/reisen/[tripId]` | Trip Workspace mit Tagesplanung, Flugsuche, Hotel-/Quartierbereich je Etappe und Aktivitätsbereich je Reisetag |
 
 **Seit Phase 1.5 gibt es zwei Wege, und sie unterscheiden sich nur im Speicher.** Fachliche Beschreibung: [docs/REISEN.md](docs/REISEN.md), Entscheidungen in [DECISIONS.md](DECISIONS.md) ADR-0041 bis ADR-0043.
 
@@ -268,7 +268,7 @@ Seit Phase 1.4b prüft `npm run db:rechte` eine vierte Regel: Keine Funktion nen
 
 ## 7. API-Schicht
 
-Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1 und 3.2 existieren **14** Route Handler. Zuvor waren es 77.
+Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1, 3.2 und 3.3 existieren **15** Route Handler. Zuvor waren es 77.
 
 | Endpunkt | Zweck | Status |
 | --- | --- | --- |
@@ -276,6 +276,7 @@ Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1 und 3.2 existieren **14** Route Handler. Zuv
 | `api/search/places` | Reiseziel- und Abreiseorte | nur `public.places`; Import ist ein Skript, kein Geocoding-Proxy |
 | `api/flights/search` | geschlossene Flugsuche | Phase 3.1, Production aus, nur Duffel-Test |
 | `api/hotels/search` | geschlossene Hotelsuche | Phase 3.2c, Production aus, noch kein Hotelprovider |
+| `api/activities/search` | geschlossene Aktivitätensuche | Phase 3.3, Production aus, noch kein Activity-Provider |
 | `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
 | `api/admin/security/*` (5) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
 
@@ -312,6 +313,14 @@ Production bleibt hart aus. Development/Preview brauchen `JETNITY_FLIGHT_AKTIV` 
 Phase 3.2c hat bewusst keinen Hoteladapter. `hotelProviderAus()` gibt `null` zurück. Production bleibt hart aus. Development/Preview brauchen `JETNITY_HOTEL_AKTIV` **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Quartiergründe entstehen nur aus vorhandenen Reisedaten. Wegezeiten, ÖV-Zeiten und POIs werden nicht erfunden. Ein Etappenort wird nicht als Viertel verkauft.
 
 Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `HotelNachweis` gegen Ziel, Zeitraum, Belegung und Währung. Heute ist der Nachweis `null` – fail closed. Gast-LocalStorage gilt nicht als serverseitig verifiziert. Fachlich: [docs/HOTELS.md](docs/HOTELS.md), ADR-0070 bis ADR-0077.
+
+### Aktivitätensuche (Phase 3.3)
+
+`POST /api/activities/search` ist geschlossen: nur `application/json`, höchstens 16 KB UTF-8. `Content-Length` über dem Limit wird vor dem Lesen abgewiesen; der Body wird zusätzlich streamend mit hartem Cap gelesen. Tageskontext, optional Provider, Konfliktprüfung, Ranking, Client-Sicht. Kein Provider-Proxy. 429 setzt `Retry-After`. Die UI spricht `ActivityOption`, nicht einen Anbieter.
+
+Phase 3.3 hat bewusst keinen Activity-Adapter. `activityProviderAus()` gibt `null` zurück. Production bleibt hart aus. Development/Preview brauchen `JETNITY_ACTIVITY_AKTIV` **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Der Tageskontext entsteht nur aus vorhandenen Reisedaten. Öffnungszeiten, Wegezeiten und minutengenaue Lücken werden nicht erfunden. Fehlende Uhrzeiten gelten nicht als konfliktfrei.
+
+Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `ActivityNachweis` gegen Ziel, Datum, Teilnehmer, Währung und den Timeslot der Option. Heute ist der Nachweis `null` – fail closed. Gast-LocalStorage gilt nicht als serverseitig verifiziert. Fachlich: [docs/ACTIVITIES.md](docs/ACTIVITIES.md), ADR-0078 bis ADR-0085.
 
 ### Ortsbasis (Phase 3.1)
 

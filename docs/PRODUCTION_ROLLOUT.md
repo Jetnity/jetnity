@@ -169,7 +169,7 @@ Funktionen (`reise_anlegen`, `reise_aendern`) können durch erneutes Anwenden de
 
 - Modellweg nicht einschalten
 - Duffel nicht einschalten, kein Test- und kein Live-Token
-- Hotels, Aktivitäten, Transfers nicht beginnen
+- Hotelsuche, Aktivitätensuche und Transfers in Production nicht einschalten; Foundation existiert, Provider und Production-Freigabe fehlen
 - Production nicht aus CI, Build oder Merge befüllen
 - Duffel-Sandbox nicht als Merge-Blocker behandeln; das ist eine nachgelagerte Provider-Verifikation
 
@@ -181,4 +181,6 @@ Production hat dann Schema und Referenzdaten. Die Suche gegen `public.places` / 
 
 - `JETNITY_MODELL_AKTIV` nicht auf `true`
 - `JETNITY_FLIGHT_AKTIV` nicht auf `true`
+- `JETNITY_HOTEL_AKTIV` nicht auf `true`
+- `JETNITY_ACTIVITY_AKTIV` nicht auf `true`
 - kein `DUFFEL_ACCESS_TOKEN` in Production

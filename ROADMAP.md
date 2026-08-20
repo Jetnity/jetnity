@@ -24,11 +24,12 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Phase 2.1 | natürliche Sprache zu strukturiertem Reisevorschlag | **fertig auf Development, Preview aktivierbar, Production aus** |
 | Phase 2.2 | bestehende Reise per Sprache ändern | **fertig, nach main gemergt, Production verifiziert; Modellweg aus** |
 | Phase 3.1 | Flight Foundation, erster Duffel-Adapter | **fertig, nach main gemergt, Production-Flugsuche aus** |
-| Phase 3.2 | Hotel Foundation, Quartierlogik, Suchpipeline, 3.2b/3.2c-Härtung | **in Arbeit** auf `phase-3-2-hotel-foundation` |
-| Phase 3 | Hotels (erster Adapter), Aktivitäten, Monetarisierung | als Nächstes nach 3.2 |
+| Phase 3.2 | Hotel Foundation, Quartierlogik, Suchpipeline, 3.2b/3.2c-Härtung | **fertig, nach main gemergt, Production-Hotelsuche aus** |
+| Phase 3.3 | Activities Foundation, Tageskontext, Ranking, Nachweis, Workspace | **in Arbeit** auf `phase-3-3-activities-foundation` |
+| Phase 3 | Hotels (erster Adapter), Aktivitäten (erster Adapter), Monetarisierung | als Nächstes nach 3.3 |
 | Phase 4 | Launch-Reife | geplant |
 
-Phase 2 ist als konversationeller Kern **fertig**: 2.1 erzeugt einen Vorschlag, 2.2 verändert eine bestehende Reise. Production bleibt für den Modellweg aus. Phase 3.1 liefert die erste Flugbasis; Production-Flugsuche bleibt aus. Phase 3.2 legt die Hotel-/Quartierbasis; Production-Hotelsuche bleibt aus.
+Phase 2 ist als konversationeller Kern **fertig**: 2.1 erzeugt einen Vorschlag, 2.2 verändert eine bestehende Reise. Production bleibt für den Modellweg aus. Phase 3.1 liefert die erste Flugbasis; Production-Flugsuche bleibt aus. Phase 3.2 liefert die Hotel-/Quartierbasis; Production-Hotelsuche bleibt aus. Phase 3.3 legt die Aktivitätsbasis; Production-Aktivitätensuche bleibt aus.
 
 ---
 
@@ -570,9 +571,9 @@ Amadeus Self-Service (eingestellt 17. Juli 2026) wird nicht angebunden. Im aktiv
 
 ---
 
-## Phase 3.2 – Hotel Foundation · in Arbeit
+## Phase 3.2 – Hotel Foundation · fertig, nach `main` gemergt
 
-Provider-unabhängige Hotel-/Quartierdomäne, Quartier zuerst, Suchpipeline, Workspace-Bereich, 3.2b/3.2c-Härtung. Kein echter Hotelprovider. Production aus. Branch `phase-3-2-hotel-foundation`, Draft-PR #22.
+Provider-unabhängige Hotel-/Quartierdomäne, Quartier zuerst, Suchpipeline, Workspace-Bereich, 3.2b/3.2c-Härtung. Kein echter Hotelprovider. Production aus. Nach `main` gemergt über Pull Request [#22](https://github.com/Jetnity/jetnity/pull/22) (`a5f39a29`).
 
 - [x] provider-unabhängige Hotel-/Quartierdomäne und `HotelProvider`
 - [x] deterministische Quartierbewertung vor der Hotelsuche
@@ -597,12 +598,40 @@ Fachlich: [docs/HOTELS.md](docs/HOTELS.md), [docs/HOTEL_PROVIDER_STRATEGY.md](do
 
 ---
 
-## Phase 3 – Hotels, Aktivitäten, Monetarisierung · als Nächstes nach 3.2
+## Phase 3.3 – Activities Foundation · in Arbeit
+
+Provider-unabhängige Aktivitätsdomäne, Tageskontext, Konfliktlogik, Suchpipeline, Workspace-Bereich, Nachweis-Naht. Kein echter Activity-Provider. Production aus. Branch `phase-3-3-activities-foundation`, Draft-PR #24.
+
+- [x] provider-unabhängige Aktivitätsdomäne und `ActivityProvider`
+- [x] Tageskontext aus dem echten Reisegraphen; unbekannte Zeiten und Wege bleiben unbekannt
+- [x] deterministisches, provisionsneutrales Aktivitätsranking
+- [x] reine Zeit-/Konfliktlogik für lokale `HH:MM` am selben Kalendertag
+- [x] geschlossene Pipeline `POST /api/activities/search` mit Zustand, Timeout, Rate-Limit und Client-Sicht
+- [x] Aktivitätsbereich je Reisetag im bestehenden Trip Workspace
+- [x] Übernahme-Abbildung auf bestehendes `trip_items.kind = activity`, ohne neue Migration
+- [x] Konto-Übernahme fail closed ohne serverseitigen Nachweis; Client liefert nur identifiers
+- [x] Etappe, Tag und Timeslot gegen den Reisegraphen geprüft
+- [x] API-Härtung: Request-Grösse, Content-Type, `Retry-After`, `cache-control: no-store`
+- [x] kommerzieller `activity` gegen Modelloperationen mitgeprüft (`istKommerziell`)
+- [x] `ActivityNachweis` an Ziel, Datum, Teilnehmer, Währung und Timeslot gebunden
+- [x] Such-Body per Content-Length und Stream-Cap vor grosser Allokation begrenzt
+- [ ] genau einen ersten Activity-Datenanbieter entscheiden und anbinden · **eigene Freigabe**
+- [ ] Preview mit echtem Adapter und Nachweis verifizieren
+- [ ] Affiliate-/Redirect-Pfad, getrennt von der Suche
+- [ ] globales/gespeichertes Rate-Limit vor jeder Production-Diskussion
+- [ ] reale Routing-/POI-/Öffnungszeitdaten, soweit später fachlich nötig
+- [ ] Production-Aktivitätensuche – eigene Freigabe, nicht Teil dieses Schritts
+
+Fachlich: [docs/ACTIVITIES.md](docs/ACTIVITIES.md), ADR-0078 bis ADR-0085.
+
+---
+
+## Phase 3 – Hotels, Aktivitäten, Monetarisierung · als Nächstes nach 3.3
 
 Je Kategorie zunächst genau ein Weg ([DECISIONS.md](DECISIONS.md), ADR-0011, Nachtrag ADR-0062).
 
 - [ ] Hotels: erster Suchadapter und spätere Affiliate-/Deeplink-Schicht, getrennt
-- [ ] Aktivitäten über GetYourGuide
+- [ ] Aktivitäten: erster Suchadapter (GetYourGuide bleibt Kandidat, keine festgelegte Architektur) und spätere Affiliate-/Deeplink-Schicht, getrennt
 - [ ] Budget- und Gesamtpreisübersicht über die ganze Reise
 - [ ] Affiliate-Tracking und Übergabe an Buchungspartner
 - [ ] Angebote erscheinen im Reisekontext, nicht als getrennte Suchmaschinen
