@@ -181,9 +181,11 @@ Eine hier dokumentierte, freigegebene Entscheidung hat Vorrang vor bestehendem C
 ## ADR-0011 – Ein Provider pro Kategorie, keine Abstraktion auf Vorrat
 
 **Datum:** 15. August 2026
-**Status:** freigegeben, noch nicht umgesetzt
+**Status:** freigegeben; Flüge in Phase 3.1 teilweise umgesetzt
 
-**Entscheidung:** Flüge über **Amadeus** (bestehende Airport-Integration weiterverwenden), Hotels zunächst über eine einfache **Affiliate-/Deeplink-Lösung**, Aktivitäten über **GetYourGuide**. Je Kategorie zunächst genau ein Weg.
+**Entscheidung:** Je Kategorie zunächst genau ein Weg: Hotels zunächst über eine einfache **Affiliate-/Deeplink-Lösung**, Aktivitäten über **GetYourGuide**. Für Flüge galt ursprünglich Amadeus; das ist durch den Nachtrag und ADR-0062 überholt.
+
+**Nachtrag 20. August 2026:** Amadeus Self-Service wurde am 17. Juli 2026 eingestellt. Phase 3.1 bindet **keinen** Amadeus-Adapter an. Der erste Flug-Suchadapter ist Duffel Flights API, ausschliesslich als Daten-/Entwicklungsweg. Jetnity darf sich weder technisch noch geschäftlich an Duffel koppeln. Search, Ranking und Trip-Domain müssen später Skyscanner oder Aviasales ohne Rewrite aufnehmen können. Search und Booking/Affiliate bleiben getrennte Verantwortlichkeiten. Siehe ADR-0062.
 
 **Kontext:** Die alte Codebasis deutete auf viele parallele Reisekategorien und Anbieter hin.
 
@@ -1377,7 +1379,7 @@ Nach der Abbildung bleiben `trip_items.price_amount`, `price_currency`, `provide
 
 **Ausnahme mit Absicht:** Im Feld `trips.travel_wish` bleiben Preisangaben stehen, weil dort der Satz des **Nutzers** steht.
 
-**Kontext:** Phase 3 – Amadeus, Hotels, Aktivitäten – existiert nicht. Bis dahin hat Jetnity keine belastbare Herkunft für einen Preis. „Flug ab CHF 412" ist dann keine Auskunft, sondern eine Behauptung mit dem Aussehen einer Auskunft, und wer sie liest, rechnet damit.
+**Kontext:** Phase 3 – echte Flug-, Hotel- und Aktivitätspreise – existierte zum Entscheidungszeitpunkt nicht. Bis dahin hat Jetnity keine belastbare Herkunft für einen Preis. „Flug ab CHF 412" ist dann keine Auskunft, sondern eine Behauptung mit dem Aussehen einer Auskunft, und wer sie liest, rechnet damit.
 
 `trip_items.price_amount` existiert seit Phase 1.5 und bedeutet dort: ein Preis mit belegbarer Herkunft. Diese Bedeutung darf nicht dadurch verwässert werden, dass sie ab jetzt auch „Schätzung eines Sprachmodells" heissen kann.
 
@@ -1612,6 +1614,89 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 **Begründung:** Dieselbe Graphform in beiden Ablagen. Keine Datenlöschung, keine Spekulation über alte Entwürfe.
 
 **Konsequenzen:** `gastreiseAendern()` und `aenderungErzeugenGast()` wischen `ohneTag` nicht mehr. Die Übernahme schickt `ungeplante`. Die Listen-Sortierung über `trips.updated_at` folgt der Graph-Revision (ADR-0058 Nachtrag).
+
+---
+
+## ADR-0062 – Duffel ist der erste Flugadapter, nicht die Produktarchitektur
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.1
+
+**Entscheidung:** Jetnity spricht intern eine schlanke Flugdomäne (`FlugSuchanfrage`, `FlugOption`, `FlightProvider`). Duffel Flights API ist der erste Daten-/Entwicklungsadapter. Ein späterer Metasuch-Provider (Skyscanner, Aviasales) muss dasselbe Interface erfüllen. Search-Provider und Affiliate-/Booking-Provider sind getrennte Verantwortlichkeiten. `booking_url` bleibt bei Duffel `null`. Jetnity darf sich weder technisch noch geschäftlich an Duffel koppeln. Amadeus Self-Service wird nicht angebunden (eingestellt am 17. Juli 2026).
+
+**Kontext:** Phase 3 beginnt mit echten Flügen. ADR-0011 und [AGENTS.md](AGENTS.md) Regel 19 verbieten eine Multi-Provider-Plattform auf Vorrat. Gleichzeitig darf der erste Anbieter nicht zur stillen Produktbindung werden. Amadeus Self-Service steht nicht mehr zur Verfügung.
+
+**Alternativen:**
+
+1. *Duffel-Typen durch UI und Reisegraph reichen.* Macht jeden Providerwechsel zu einem Rewrite.
+2. *Jetzt eine generische Plattform für zehn Anbieter.* Komplexität ohne zweiten Provider.
+3. *Deeplinks aus der Suche erfinden.* Wäre eine irreführende Buchungs-URL.
+4. *Amadeus trotzdem anbinden.* Die Self-Service-API ist eingestellt.
+
+**Begründung:** Die Naht ist klein genug, um verdient zu sein, und gross genug, damit UI, Scoring und Trip-Integration den Adapter nicht kennen. Buchung kommt später und darf einen anderen Partner nutzen.
+
+**Konsequenzen:** Keine Duffel-Typen in Komponenten. Keine eigene Flugbuchung. Keine Production-Aktivierung. Dokumentation in [docs/FLUEGE.md](docs/FLUEGE.md).
+
+---
+
+## ADR-0063 – Flug-Ranking ist deterministisch und provisionsneutral
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.1
+
+**Entscheidung:** Das Kernranking ist eine reine Funktion über Preis, Dauer, Stopps, sehr frühe Abflüge, sehr späte Ankünfte, lange Umstiege, Overnight-Verbindungen und Passung zu bekannten Reisedaten. Kein Modell. Keine Provision. Kein Providername. Die UI zeigt „Jetnity empfiehlt“, „Günstigste“ und „Schnellste“ plus 2–4 Gründe.
+
+**Kontext:** Der Handoff und die Vision verlangen Gesamtreise statt billigster Flug. Ein LLM-Ranking wäre weder reproduzierbar noch in der CI prüfbar.
+
+**Alternativen:**
+
+1. *Billigste zuerst.* Widerspricht dem Produktprinzip.
+2. *Modell begründet die Rangfolge.* Teuer, nicht deterministisch, in Tests nicht reproduzierbar.
+
+**Begründung:** Vertrauen entsteht, wenn dieselbe Suche dieselbe Reihenfolge liefert und der Nutzer den Trade-off lesen kann.
+
+**Konsequenzen:** Gewichte stehen im Code (`RANGLISTE_GEWICHTE`), nicht in der Umgebung. Tests belegen, dass die günstigste Option nicht automatisch die Empfehlung ist.
+
+---
+
+## ADR-0064 – Flugsuche in Production aus, nur Duffel-Test, fehlende Secrets sind unavailable
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.1
+
+**Entscheidung:** `VERCEL_ENV=production` schaltet die Flugsuche hart aus. Development/Preview brauchen `JETNITY_FLIGHT_AKTIV` plus ein Duffel-Test-Token (`duffel_test_…`). Ein Live-Token gilt als fehlender Zugang. Fehlende Credentials sind ein sauberer unavailable-Zustand, kein Buildfehler.
+
+**Kontext:** Kostenpflichtige Provider-Aufrufe und Production-Secrets brauchen ausdrückliche Freigabe. Der Modellweg hat dasselbe Muster (ADR-0052). Duffel unterscheidet Test und Live am Token, nicht am Hostname.
+
+**Alternativen:**
+
+1. *Production mit Test-API.* Würde echte Nutzer gegen Sandbox-Angebote zeigen.
+2. *Secrets im Setup-Check verlangen.* Würde jede Umgebung ohne Duffel rot färben.
+3. *Live-Token in Preview zulassen.* Wäre ein kostenpflichtiger Aufruf ohne Freigabe.
+
+**Begründung:** Dieselbe Fail-closed-Linie wie beim Modell. Die Suche darf lokal fehlen, ohne den Build zu brechen.
+
+**Konsequenzen:** Keine `NEXT_PUBLIC_DUFFEL_*`. Rate-Limit im Prozess. Timeout 12 s. Keine Passagiernamen an Duffel. Kein `/air/orders`.
+
+---
+
+## ADR-0065 – `reise_anlegen()` schreibt kommerzielle Momentaufnahmen
+
+**Datum:** 20. August 2026
+**Status:** freigegeben für Development, Production nicht angewendet
+
+**Entscheidung:** `public.reise_anlegen()` übernimmt Preis, Währung, Provider, External-Ref, Buchungslink und Termin einer Planpunkt-Nutzlast. Modellvorschläge setzen diese Felder weiter auf null. `reise_aendern()` bleibt unverändert und überschreibt Handelsfelder nicht.
+
+**Kontext:** Ohne diese Schreibseite verlöre ein Gast seinen ausgewählten Flug beim Login. Die Spalten existieren seit Phase 1.5.
+
+**Alternativen:**
+
+1. *Nach der Übernahme separat inserieren.* Zwei Schreibwege, Race, Dubletten.
+2. *Gäste dürfen keine Flüge übernehmen.* Widerspricht dem Gastmodus.
+
+**Begründung:** Dieselbe Persistenz, die schon Gast → Konto trägt, muss die Momentaufnahme mitnehmen. Die Modellregel (ADR-0054, ADR-0060) bleibt: das Modell erzeugt und verändert keine Handelsfelder.
+
+**Konsequenzen:** Zod akzeptiert die Felder. Development-Migration `20260820100000`. Production erst nach Freigabe.
 
 ---
 

@@ -79,6 +79,13 @@ Optional und standardmässig leer, für die intelligente Reiseplanung aus Phase 
 
 Ohne diese Variablen läuft Jetnity vollständig; nur die freie Reisebeschreibung meldet, dass sie nicht freigegeben ist. Es gibt keine `NEXT_PUBLIC_OPENAI_*`-Variable und keinen Modellaufruf im Browser. Die Grenzen und Kostendeckel stehen bewusst **nicht** in der Umgebung, sondern in der Datenbank ([docs/MODELL.md](docs/MODELL.md)).
 
+Optional und standardmässig leer, für die Flugsuche aus Phase 3.1:
+
+- `JETNITY_FLIGHT_AKTIV` – Kill Switch. Nur `true` oder `1` schalten ein
+- `DUFFEL_ACCESS_TOKEN` – serverseitig, nur `duffel_test_…`. Live-Tokens werden abgelehnt
+
+Production bleibt für die Flugsuche hart aus. Es gibt keine `NEXT_PUBLIC_DUFFEL_*`-Variable. Duffel ist der erste Adapter, nicht die Produktarchitektur ([docs/FLUEGE.md](docs/FLUEGE.md)).
+
 `.env.local` und echte Secrets dürfen nie committed werden. Kostenpflichtige Dienste werden nicht automatisch aktiviert – der Setup-Check verlangt `OPENAI_API_KEY` nicht.
 
 ## Projektdokumentation
@@ -96,6 +103,7 @@ Der rote Faden von Jetnity lebt im Repository, nicht in einzelnen Chats. Vor gr�
 | [docs/DATENBANK.md](docs/DATENBANK.md) | Schema, Rollen, Eigentum, RLS und die Prüfungen dazu |
 | [docs/REISEN.md](docs/REISEN.md) | Reisedatenmodell, Gast und Konto, der Weg Gast → Konto |
 | [docs/MODELL.md](docs/MODELL.md) | Modellintegration, Reisevorschlag, Kostenkontrolle, Aktivierung |
+| [docs/FLUEGE.md](docs/FLUEGE.md) | Flugdomäne, Duffel-Adapter, Ranking, Übernahme in die Reise |
 | [docs/AUTH.md](docs/AUTH.md) | Auth-Konfiguration des Development-Branches und die Prüfungen dazu |
 | [docs/LEGACY_ENTFERNUNG.md](docs/LEGACY_ENTFERNUNG.md) | Bericht zur Entfernung der 29 Legacy-Tabellen: Archiv-Tag, Nachweis, verbliebene Objekte |
 

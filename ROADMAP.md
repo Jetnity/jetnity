@@ -22,11 +22,12 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Phase 1.4d | Fehler im Administrationsbereich sichtbar statt leer | **fertig** |
 | Phase 1.5 | V2-Reiseschema, persistente Reisen, Gast → Konto | **fertig** |
 | Phase 2.1 | natürliche Sprache zu strukturiertem Reisevorschlag | **fertig auf Development, Preview aktivierbar, Production aus** |
-| Phase 2.2 | bestehende Reise per Sprache ändern | **fertig auf Development, Preview aktivierbar, Production aus** |
-| Phase 3 | Reiseprodukte und Monetarisierung | als Nächstes |
+| Phase 2.2 | bestehende Reise per Sprache ändern | **fertig, nach main gemergt, Production verifiziert; Modellweg aus** |
+| Phase 3.1 | Flight Foundation, erster Duffel-Adapter | **in Arbeit** |
+| Phase 3 | Hotels, Aktivitäten, Monetarisierung | als Nächstes nach 3.1 |
 | Phase 4 | Launch-Reife | geplant |
 
-Phase 2 ist als konversationeller Kern **fertig**: 2.1 erzeugt einen Vorschlag, 2.2 verändert eine bestehende Reise. Production bleibt für den Modellweg aus.
+Phase 2 ist als konversationeller Kern **fertig**: 2.1 erzeugt einen Vorschlag, 2.2 verändert eine bestehende Reise. Production bleibt für den Modellweg aus. Phase 3.1 liefert die erste Flugbasis; Production-Flugsuche bleibt aus.
 
 ---
 
@@ -537,17 +538,33 @@ Offen aus 2.1:
 - [x] Nachtrag: direkte Stammdaten-Updates auf `trips` erhöhen `revision` (`20260820070000`)
 - [x] Nachtrag: aufgeschobene Tages-Eindeutigkeit in `reise_aendern()` (`20260820080000`) und vollständige Sperre kommerzieller Planpunkte
 
-**Voraussetzungen erfüllt.** Keine neue Infrastruktur. Dieselbe Kostenschranke wie Phase 2.1. Production unverändert aus. Draft-PR #18 bleibt Draft, nicht mergen.
+**Voraussetzungen erfüllt.** PR #18 ist gemergt, Production-Deploy verifiziert. Modellweg in Production unverändert aus.
 
 **Nachweise Nachtrag `20260820080000` (Development):** `npm test` 701/701; typecheck, lint, Hygiene, `db:typen --pruefen`, `db:rechte`, Production-Build grün; `db:sicherheit` 168/168, einschließlich aufgeschobener Tages-Eindeutigkeit (fünf gültige Umnummerierungen, eine abgelehnte Doppelnummer) und vollständiger Kommerzial-Sperre. `db:kontingent` nicht gegen die Live-Gasttagesgrenze geschrieben.
 
 ---
 
-## Phase 3 – Reiseprodukte und Monetarisierung · als Nächstes
+## Phase 3.1 – Flight Foundation · in Arbeit
 
-Je Kategorie zunächst genau ein Anbieter ([DECISIONS.md](DECISIONS.md), ADR-0011).
+Schlanke interne Flugdomäne, Duffel als erster Datenadapter, deterministisches Ranking, Übernahme in die Reise. Keine eigene Buchung. Production aus.
 
-- [ ] Flüge über Amadeus, bestehende Airport-Integration weiterverwenden
+- [x] Provider-unabhängige Flight-Domain und `FlightProvider`
+- [x] Duffel Flights API als erster Adapter (nur Test-Token)
+- [x] deterministisches, provisionsneutrales Ranking
+- [x] Suche im Reise-Arbeitsbereich
+- [x] Übernahme als kommerzieller `trip_item`, modellgeschützt
+- [ ] Preview mit Duffel-Test-Token verifizieren
+- [ ] Development-Migration `20260820100000` auf dem Development-Branch anwenden
+- [ ] Production-Flugsuche – eigene Freigabe, nicht Teil dieses Schritts
+
+Amadeus Self-Service (eingestellt 17. Juli 2026) wird nicht angebunden. Ein späterer Skyscanner- oder Aviasales-Adapter muss dasselbe Interface erfüllen, ohne UI-, Ranking- oder Trip-Rewrite.
+
+---
+
+## Phase 3 – Hotels, Aktivitäten, Monetarisierung · als Nächstes
+
+Je Kategorie zunächst genau ein Weg ([DECISIONS.md](DECISIONS.md), ADR-0011, Nachtrag ADR-0062).
+
 - [ ] Hotels über einfache Affiliate-/Deeplink-Lösung
 - [ ] Aktivitäten über GetYourGuide
 - [ ] Budget- und Gesamtpreisübersicht über die ganze Reise

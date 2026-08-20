@@ -6,29 +6,33 @@ Diese Datei ist der kompakte Übergabepunkt für einen neuen Chat, neuen Cursor-
 
 ## 1. Aktueller Stand
 
-Phase 2.2 ist auf dem Feature-Branch implementiert und als PR #18 **Ready for Review**. Phase 2.1 bleibt bis zum Merge von PR #18 der aktuelle Code-Stand in `main` (PR #16, Merge `d9fc8d6`).
+Phase 2.2 ist nach `main` gemergt (PR #18, `76f21929`) und in Production verifiziert. Der Modellweg bleibt in Production aus.
 
-Phase 2 ist als konversationeller Kern fertig: Jetnity kann Reisen **erstellen und verändern**. Der Modellweg bleibt in Production aus.
+Phase 3.1 – Flight Foundation – läuft: Jetnity hat die erste echte Flugprodukt-Basis. Duffel Flights API ist der erste Daten-/Entwicklungsadapter. Amadeus Self-Service wurde am 17. Juli 2026 eingestellt und wird **nicht** angebunden. Production-Flugsuche bleibt aus. Keine eigene Flugbuchung.
 
-Verbindlicher Ablauf der Änderung:
+Verbindlicher Ablauf der Änderung (Phase 2.2, unverändert):
 
 `vertrauenswürdige Reise → Änderungswunsch → strukturierte Operationen → deterministische Anwendung → Vorher/Nachher → ausdrückliche Bestätigung → atomisches Speichern`
 
 - Das Modell schreibt nicht in die Datenbank und erhält keine SQL-Rechte
 - Modellantworten sind untrusted input
 - Preise, Provider, Booking-URLs und External-Refs kommen nicht aus dem Modell
+- Ein übernommener kommerzieller Flug bleibt gegen Sprach-/Modelloperationen vollständig gesperrt (Inhalt, Termin, Zuordnung)
 - `trip_days.stage_id` ordnet Tage einer Etappe zu, auch ohne Kalenderdaten
-- `trips.revision` / `last_mutation_id` tragen optimistische Concurrency und Idempotenz; die Fassung steigt bei jeder Graph- und Stammdatenänderung, nicht nur in `reise_aendern()`
+- `trips.revision` / `last_mutation_id` tragen optimistische Concurrency und Idempotenz
 - Account: `public.reise_aendern()`, SECURITY INVOKER, RLS, atomisch
-- Gast: derselbe fachliche Ablauf im LocalStorage, inklusive ungeplanter Planpunkte
-- Kommerzielle Planpunkte sind bei Modelloperationen bis Phase 3 vollständig gesperrt: Inhalt, Termin und Zuordnung bleiben unverändert; entfällt ihre Struktur, bleiben sie ungeplant erhalten
-- `reise_aendern()` schiebt die Eindeutigkeit von `day_index`/`day_date` bis zum fertigen Graphen auf
+- Gast: derselbe fachliche Ablauf im LocalStorage
 - Gemeinsames Modellkontingent mit `reisevorschlag` (38 Aufrufe / USD 3 pro Tag)
-- `/planen` und `/reisen/[tripId]`: `maxDuration = 300`
-- `reise_anlegen()` trägt keine eigene Missbrauchszählung; die Schranke bleibt im Auslöser (`20260820050000`)
-- Feature-Branch / PR: `cursor/phase-22-reise-aendern-e90a`, PR #18
 
-Entscheidungen: ADR-0057 bis ADR-0061. Fachlich: `docs/REISEN.md`, `docs/MODELL.md`, `docs/DATENBANK.md`.
+Phase 3.1 ergänzt:
+
+- interne Flugdomäne und schmales `FlightProvider`-Interface
+- Duffel Offer Requests als erster Adapter (nur Test-Token)
+- deterministisches, provisionsneutrales Ranking
+- Flugsuche im Reise-Arbeitsbereich
+- Übernahme als kommerzieller `trip_item` ohne `booking_url`
+
+Entscheidungen: ADR-0057 bis ADR-0061 (Phase 2.2), ADR-0062 bis ADR-0065 (Phase 3.1). Fachlich: `docs/REISEN.md`, `docs/FLUEGE.md`, `docs/MODELL.md`, `docs/DATENBANK.md`.
 
 ## 2. Production-Rollout am 20. August 2026
 
@@ -60,14 +64,11 @@ Production wurde erfolgreich auf denselben fachlichen Datenbankstand wie Develop
 - alte Creator-/Blog-/Media-/Session-Altlasten entfernt
 - 12 Public-Tabellen
 - 28 registrierte Migrationen
-- neueste Migration: `20260820080000_reise_tage_eindeutig_aufgeschoben`
-- Reisetabellen (`trips`, `trip_stages`, `trip_days`, `trip_items`) vorhanden und zum Rollout-Zeitpunkt leer
+- neueste Production-Migration: `20260820080000_reise_tage_eindeutig_aufgeschoben`
+- Reisetabellen (`trips`, `trip_stages`, `trip_days`, `trip_items`) vorhanden
 - Supabase Production nach dem Rollout gesund; der Branch-Merge endete mit `FUNCTIONS_DEPLOYED` / `ACTIVE_HEALTHY`
-- bekannte Security-Advisor-Warnungen entsprechen dem bereits dokumentierten Development-Stand; durch den Rollout wurde keine neue Warnklasse eingeführt
 
-Wichtig: **Der Modellweg bleibt in Production weiterhin deaktiviert.** Das Datenbankschema ist vorbereitet; eine spätere Modellaktivierung ist eine separate Production-Freigabe.
-
-Der Production-Datenbankrollout erfolgte bewusst **vor** dem GitHub-Merge, damit der neue Phase-2.2-Code nach dem Merge nicht gegen ein veraltetes Production-Schema läuft.
+Wichtig: **Der Modellweg bleibt in Production weiterhin deaktiviert.** Die Flugsuche bleibt in Production ebenfalls aus. `20260820100000_reise_anlegen_handelsfelder.sql` ist **nicht** auf Production anzuwenden, solange keine ausdrückliche Freigabe vorliegt.
 
 ## 3. Produktprinzip, das alle nächsten Phasen leitet
 
@@ -85,9 +86,9 @@ Verbindlicher Ablauf:
 
 Die manuelle Grundfunktion kann Teil des kostenlosen Kerns sein; automatische Überwachung, proaktive Warnungen und fortlaufende Reiseoptimierung sind ein starker Kandidat für Jetnity Pro.
 
-## 4. Nächster Entwicklungsschritt: Phase 3
+## 4. Nächster Entwicklungsschritt
 
-Phase 2.2 ist umgesetzt und das Production-Datenbankschema vorbereitet. Nach dem kontrollierten Merge von PR #18 und erfolgreichem Production-Deploy folgt **Phase 3 – echte Reiseprodukte**, beginnend mit Flügen.
+Phase 3.1 ist in Arbeit. Nach Merge und Preview-Verifikation – **nicht** Production-Aktivierung – folgen Hotels, dann Aktivitäten, dann Transfers. Parallel die Gesamtoptimierung und reaktive Folgenanalyse als Jetnity-DNA erhalten.
 
 Kein weiterer Production-Eingriff ohne ausdrückliche Freigabe.
 
@@ -95,18 +96,21 @@ Kein weiterer Production-Eingriff ohne ausdrückliche Freigabe.
 
 Nicht alle Provider gleichzeitig anbinden. Schrittweise und produktorientiert vorgehen.
 
-### 5.1 Flüge zuerst
+### 5.1 Flüge zuerst · Phase 3.1
 
 Erste echte Produktintegration: Flüge.
 
-Ziel:
+Umgesetzt bzw. in diesem Schritt:
 
-- reale Verbindungen und verfügbare Optionen in die Planung einbeziehen
-- Zeit, Stopps, Abflug-/Ankunftszeiten, Flughäfen und Folgewirkungen auf die Reise bewerten
+- reale Verbindungen in die Planung einbeziehen
+- Zeit, Stopps, Abflug-/Ankunftszeiten und Preis bewerten
 - keine reine Preisrangliste
-- Affiliate-/Deeplink-/API-Strategie so bauen, dass ein späterer Providerwechsel möglich bleibt, ohne jetzt einen überdimensionierten Multi-Provider-Abstraktionslayer zu bauen
+- Search-Provider und Affiliate-/Booking-Provider getrennt
+- Duffel als erster Datenadapter, nicht als strategische Bindung
 
-Amadeus bzw. ein geeigneter Flight-Provider ist der erste Kandidat. Vor konkreter Integration aktuelle API-Bedingungen, Kosten, Affiliate-Möglichkeiten, Produktionszugang und Datenqualität erneut prüfen.
+Später möglich ohne Rewrite von UI, Scoring und Trip-Integration: Skyscanner, Aviasales oder ein anderer Metasuch-Provider.
+
+Nicht in Phase 3.1: eigene Buchung, Production-Aktivierung, Hotels, Aktivitäten, Transfers.
 
 ### 5.2 Hotels danach
 
@@ -217,26 +221,28 @@ Vor Production-Aktivierung des Modellwegs ist zusätzlich die Aufbewahrungsfrist
 - Security/RLS/Auth/Tests/Mobile/Accessibility/Performance/Loading/Error States/Permissions/Kostenkontrollen nicht aus Spargründen überspringen.
 - Starke Modelle dort einsetzen, wo sie messbar mehr Qualität bringen; effiziente Modelle für Routinearbeit. Qualität pro Token optimieren, nicht blind Kosten minimieren.
 
-## 10. Offene Punkte nach Phase 2.2
+## 10. Offene Punkte nach Phase 2.2 / während 3.1
 
-Diese Punkte sind bekannt und blockieren Phase 3 nicht, müssen aber im Projektgedächtnis bleiben:
+Diese Punkte sind bekannt und blockieren die Flugbasis nicht, müssen aber im Projektgedächtnis bleiben:
 
 - `public.model_usage`: Aufbewahrungsfrist noch offen; vor Production-Freigabe entscheiden.
 - Reload während einer noch nicht übernommenen Vorschau verwirft sie bewusst nach ADR-0050.
 - Der Router arbeitet mit Mustern und kann ungewöhnliche Formulierungen falsch einordnen; manueller Modell-Stift bleibt möglich.
 - Preview-Tests sind keine Lasttests.
 - Production-Modellaktivierung bleibt eine eigene Freigabe.
-- Echte Reiseangebote/Preise sind noch nicht Teil von Phase 2. Phase 3 muss das Buchungs-/Providerverhalten für kommerzielle Planpunkte bewusst definieren; bis dahin sind sie bei Modelloperationen vollständig gesperrt.
+- Production-Flugsuche bleibt eine eigene Freigabe; Duffel-Live-Token sind in Phase 3.1 abgelehnt.
+- Duffel-Angebots-IDs sind kurzlebig; die Reise speichert eine Momentaufnahme, keinen live buchbaren Offer.
+- Das In-Memory-Rate-Limit gilt je Serverless-Instanz.
+- Duffel Self-Service / Test deckt nicht den gesamten Markt; die UI darf das nicht als „bester Preis im Internet“ verkaufen.
 - Der Sicherheitstest `der Dienstweg als Gast bekommt Kontingent` isoliert Live-Gastzeilen der letzten 24 Stunden nur innerhalb der Rollback-Transaktion. Das Development-Tageslimit bleibt 24 und wird nicht erhöht.
 
 ## 11. Sofortiger Startpunkt im nächsten Chat
 
-Wenn PR #18 noch offen ist:
+**Phase 3.1 abschliessen oder nach Merge Preview prüfen. Hotels, Aktivitäten und Transfers noch nicht beginnen.**
 
-**PR #18 auf aktuellem Head und CI prüfen. Das Production-Datenbankschema ist bereits auf Phase 2.2 vorbereitet. Nach erfolgreichem Squash-Merge Production-Deploy und Runtime prüfen.**
+Benötigte Preview-Credentials (nicht Production):
 
-Wenn PR #18 bereits gemergt und Production grün ist:
+- `JETNITY_FLIGHT_AKTIV=true`
+- `DUFFEL_ACCESS_TOKEN` mit Präfix `duffel_test_`
 
-**Phase 3 starten – echte Reiseprodukte, beginnend mit Flügen.**
-
-Noch nicht gleichzeitig Hotels, GetYourGuide und Monetarisierung bauen. Erst Flüge, dann Hotels, dann Aktivitäten, dann Transfers; parallel die Gesamtoptimierung und reaktive Folgenanalyse als Jetnity-DNA erhalten. Danach Launch-Reife.
+Niemals `NEXT_PUBLIC_*`, niemals Live-Token, niemals Production ohne Freigabe.

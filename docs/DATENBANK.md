@@ -155,6 +155,8 @@ Der Zustand nach Phase 1.4 steht in Abschnitt 9; dort ist auch nachgewiesen, das
 | `20260820050000_reise_anlegen_ohne_schranke.sql` | Nachtrag: nimmt die versehentlich zurückgeholte Zählung aus `reise_anlegen()` wieder heraus (ADR-0045, ADR-0048) |
 | `20260820060000_reise_graph_revision.sql` | Statement-Trigger erhöhen `trips.revision` bei Graphänderungen; `reise_anlegen()` übernimmt `ungeplante`; keine Doppelzählung in den RPCs (ADR-0058 Nachtrag, ADR-0061) |
 | `20260820070000_reise_trips_revision.sql` | Direkte Stammdaten-Updates auf `trips` erhöhen `revision`, ohne `reise_aendern()` doppelt zu zählen (ADR-0058 Nachtrag) |
+| `20260820080000_reise_tage_eindeutig_aufgeschoben.sql` | `UNIQUE … DEFERRABLE` für `day_index`/`day_date` in `reise_aendern()` (Phase 2.2, ADR-0060 Nachtrag) |
+| `20260820100000_reise_anlegen_handelsfelder.sql` | `reise_anlegen()` schreibt Preis, Währung, Provider, Ref, Buchungslink und Termin (Phase 3.1, ADR-0065). **Nur Development.** Production nicht ohne Freigabe. |
 
 Die Reihenfolge ist nicht beliebig: `20260817100200` darf erst laufen, wenn `20260817100000` die Rollen der Betroffenen übernommen und `20260817100100` alle Policies auf `creator_profiles.role` umgestellt hat. Sonst verlöre jemand seinen Zugang oder eine Policy liefe ins Leere.
 

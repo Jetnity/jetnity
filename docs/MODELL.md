@@ -189,7 +189,7 @@ Drei Injection-Eingaben stehen als Fixture in `reiseideen.ts` und in den Tests: 
 
 ### Keine erfundenen Live-Angebote
 
-Phase 3 – Amadeus, Hotels, Aktivitäten – existiert nicht. Bis dahin hat Jetnity keine belastbare Herkunft für einen Preis (ADR-0054):
+Phase 2.1 erzeugt weiter keine Live-Preise. Echte Flugpreise kommen erst über die Flugsuche in Phase 3.1 in die Reise, nicht über das Modell (ADR-0054, ADR-0062):
 
 | Feld | Wert nach der Übernahme |
 | --- | --- |
@@ -345,7 +345,8 @@ Gegen die echte Datenbank laufen **16 Nachweise** über `npm run db:kontingent`:
 
 | Nicht gebaut | Wohin es gehört |
 | --- | --- |
-| Amadeus, Flugpreise, Hotels, Aktivitäten | Phase 3 |
+| Flugpreise aus dem Modell | bewusst nicht; echte Flüge über Phase 3.1, nicht über den Vorschlag |
+| Hotels, Aktivitäten | später in Phase 3 |
 | Buchungslinks, Affiliate-Tracking, Preisvergleich | Phase 3 / Monetarisierung |
 | ein zweiter Modellprovider | nicht vorgesehen (Regel 19) |
 | Sprache als Eingabe (Voice) | nicht vorgesehen |

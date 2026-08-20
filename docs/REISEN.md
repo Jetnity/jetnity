@@ -1,6 +1,6 @@
 # Jetnity – Reisen
 
-**Stand:** 20. August 2026 · Phase 2.2
+**Stand:** 20. August 2026 · Phase 3.1
 **Gilt für:** das Reisedatenmodell und die Wege, auf denen eine Reise entsteht, gespeichert und bearbeitet wird.
 
 Diese Datei beantwortet vier Fragen: Woraus besteht eine Reise, wo liegt sie, wie kommt sie aus dem Browser in ein Konto, und was ist bewusst noch nicht gebaut.
@@ -13,7 +13,7 @@ Für Tabellen, Bedingungen, Policies und Nachweise gilt [docs/DATENBANK.md](DATE
 
 Eine Reise ist ab Phase 1.5 ein Datensatz in Supabase und kein Zustand im Browser. Vorher war sie ausschliesslich Letzteres: bis zu zwanzig Entwürfe unter einem `localStorage`-Schlüssel, ohne Tabelle, ohne Bedingung, ohne Zugriffsschutz – und mit dem Browserprofil verloren.
 
-Das Modell ist auf die Phasen ausgelegt, die darauf aufbauen: Preisvergleich, Anbieter, Budget und Änderung per natürlicher Sprache. Es ist deshalb kein Formularabbild, sondern ein Graph aus vier Ebenen, und jede Ebene trägt die Felder, die diese Phasen brauchen – Reihenfolge, Zeitfenster, Preis, Anbieterverweis. Was noch nicht existiert, ist trotzdem nicht vorgebaut: Es gibt keine Anbietertabelle, keine Preishistorie und keine Abstraktion über Anbieter hinweg ([AGENTS.md](../AGENTS.md) Regel 19).
+Das Modell ist auf die Phasen ausgelegt, die darauf aufbauen: Preisvergleich, Anbieter, Budget und Änderung per natürlicher Sprache. Es ist deshalb kein Formularabbild, sondern ein Graph aus vier Ebenen, und jede Ebene trägt die Felder, die diese Phasen brauchen – Reihenfolge, Zeitfenster, Preis, Anbieterverweis. Es gibt keine Anbietertabelle und keine Preishistorie. Die Flugnaht ist ein schmales `FlightProvider`-Interface, keine Plattform für zehn Anbieter ([AGENTS.md](../AGENTS.md) Regel 19, ADR-0062).
 
 Zwei Regeln gelten überall:
 
@@ -137,7 +137,7 @@ vertrauenswürdige Reise → Wunsch → Operationen → anwenden → Vorschau �
 
 Die Eindeutigkeit von `day_index` und `day_date` ist während des Schreibens aufgeschoben und wird vor dem Erfolg geprüft (ADR-0060 Nachtrag). Ein Tag zwischen zwei Tagen, ein entfernter mittlerer Tag oder verschobene Kalenderdaten dürfen dazwischen kollidieren, im fertigen Graphen nicht.
 
-Das Modell sieht einen Snapshot ohne Handelsfelder und liefert Operationen, keine Ersatzreise (ADR-0059). Planpunkte mit Anbieter, Buchungslink, Fremdkennung oder Preis sind bis Phase 3 vollständig gesperrt: weder Inhalt noch Termin noch Zuordnung. Entfällt ihr Tag oder ihre Etappe, bleiben sie ungeplant und unverändert. Kontingent und Kostendeckel sind dieselben wie beim Vorschlag.
+Das Modell sieht einen Snapshot ohne Handelsfelder und liefert Operationen, keine Ersatzreise (ADR-0059). Planpunkte mit Anbieter, Buchungslink, Fremdkennung oder Preis – einschliesslich eines in Phase 3.1 übernommenen Flugs – sind vollständig gesperrt: weder Inhalt noch Termin noch Zuordnung. Entfällt ihr Tag oder ihre Etappe, bleiben sie ungeplant und unverändert. Kontingent und Kostendeckel sind dieselben wie beim Vorschlag.
 
 Gast und Konto speichern ungeplante Planpunkte gleich: im Konto `trip_items.day_id` null, im Browser `ohneTag`. Die Übernahme schickt sie als `ungeplante` (ADR-0061).
 
@@ -206,8 +206,10 @@ Die Kennung entscheidet, wo `/reisen/[tripId]` nachsieht: `trip-<uuid>` ist ein 
 | --- | --- |
 | ~~Reisevorschlag aus natürlicher Sprache~~ | **in Phase 2.1 gebaut.** |
 | ~~Änderung einer bestehenden Reise per Sprache~~ | **in Phase 2.2 gebaut.** Vertrauenswürdige Reise → Operationen → Vorschau → `public.reise_aendern()` bzw. Gastspeicher. Das Modell schreibt nicht in die Datenbank (ADR-0059, ADR-0060). |
-| Amadeus, Hotels, Aktivitäten | Phase 3. `trip_items.provider`, `external_ref` und `booking_url` sind die Anknüpfung, mehr nicht – ein Vorschlag aus Phase 2.1 lässt sie leer (ADR-0054) |
-| Anbieter-Abstraktion | erst bei einem zweiten Anbieter ([AGENTS.md](../AGENTS.md) Regel 19) |
+| ~~Flugoptionen suchen und in die Reise übernehmen~~ | **in Phase 3.1 gebaut.** Interne Flugdomäne, Duffel als erster Adapter, Ranking, Übernahme als kommerzieller Planpunkt. `booking_url` bleibt leer. Production aus ([docs/FLUEGE.md](FLUEGE.md), ADR-0062). |
+| Hotels, Aktivitäten | später in Phase 3. Ein Vorschlag aus Phase 2.1 lässt Handelsfelder leer (ADR-0054) |
+| eigene Flugbuchung / Affiliate-Deeplink | getrennte Verantwortlichkeit, nicht der Suchadapter |
+| Anbieter-Plattform für zehn Provider | ein zweiter Suchadapter (Skyscanner, Aviasales) muss dasselbe Interface erfüllen; kein Framework auf Vorrat ([AGENTS.md](../AGENTS.md) Regel 19) |
 | Preisoptimierung, Preishistorie | braucht Anbieterpreise, die es noch nicht gibt |
 | Affiliate-Tracking | Phase 4 |
 | gemeinsame Reiseplanung | braucht ein Berechtigungsmodell je Reise. Heute ist eine Reise privat, und das ist die einfachere und sicherere Aussage |
