@@ -149,9 +149,10 @@ Der Zustand nach Phase 1.4 steht in Abschnitt 9; dort ist auch nachgewiesen, das
 | `20260818040000_modellnutzung.sql` | `model_usage` als Kostenprotokoll, `modell_preis()`, `modell_kontingent_beanspruchen()` und `modell_nutzung_abschliessen()` – die Kostenschranke für Modellaufrufe (Phase 2.1, ADR-0052) |
 | `20260819010000_modell_kontingent_nur_server.sql` | `EXECUTE` auf die beiden Kontingent-Funktionen nur noch `service_role`; Identität eines Kontos als Argument vom Server (Nachtrag ADR-0052) |
 | `20260820010000_reise_stage_revision.sql` | `trips.revision`, `trips.last_mutation_id`, `trip_days.stage_id` samt Backfill (Phase 2.2, ADR-0057, ADR-0058) |
-| `20260820020000_reise_anlegen_stage.sql` | `reise_anlegen()` setzt `stage_id` auch ohne Kalenderdaten |
+| `20260820020000_reise_anlegen_stage.sql` | `reise_anlegen()` setzt `stage_id` auch ohne Kalenderdaten; ohne eigene Missbrauchszählung (ADR-0045) |
 | `20260820030000_reise_aendern.sql` | `reise_aendern(jsonb)` – atomisch, SECURITY INVOKER, Fassung und Idempotenz, ohne Handelsfelder (ADR-0060) |
 | `20260820040000_modell_reiseaenderung.sql` | `model_usage.funktion` kennt `reiseaenderung`; derselbe Kontingenttopf |
+| `20260820050000_reise_anlegen_ohne_schranke.sql` | Nachtrag: nimmt die versehentlich zurückgeholte Zählung aus `reise_anlegen()` wieder heraus (ADR-0045, ADR-0048) |
 
 Die Reihenfolge ist nicht beliebig: `20260817100200` darf erst laufen, wenn `20260817100000` die Rollen der Betroffenen übernommen und `20260817100100` alle Policies auf `creator_profiles.role` umgestellt hat. Sonst verlöre jemand seinen Zugang oder eine Policy liefe ins Leere.
 

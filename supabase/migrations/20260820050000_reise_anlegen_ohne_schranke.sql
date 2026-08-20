@@ -1,19 +1,14 @@
--- Jetnity V2 – Phase 2.2: public.reise_anlegen() kennt trip_days.stage_id
+-- Jetnity V2 – Phase 2.2 Nachtrag: reise_anlegen() ohne eigene Schranke
 --
--- Neue Reisen – Formular, Gastübernahme, übernommener Vorschlag – müssen die
--- Stage/Day-Zuordnung auch ohne Kalenderdaten erhalten. Die Funktion bleibt
--- SECURITY INVOKER, idempotent über client_ref und setzt status weiter hart
--- auf draft. Neu: Tage tragen `stage_position` (1-basiert, zur Etappe in
--- derselben Nutzlast). Fehlt sie, gilt die einzige Etappe, sonst der
--- Datumsvergleich, sonst die proportionale Aufteilung wie in der Migration
--- `20260820010000`.
+-- `20260820020000` hat den Rumpf von `public.reise_anlegen()` für `stage_id`
+-- ersetzt und dabei die vorgezogene Zählung aus der Urfassung
+-- `20260817120100` mitgenommen. ADR-0045 hatte genau diese Zählung in den
+-- Auslöser `reise_erzeugung_pruefen` verlegt, ADR-0048 hat ihr beigebracht,
+-- Wiederholungen einer belegten Kennung nicht mit 53400 zu bestrafen.
 --
--- CREATE OR REPLACE ersetzt den Rumpf. Signatur und Rechte bleiben.
---
--- Die Missbrauchsschranke bleibt im Auslöser `reise_erzeugung_pruefen`
--- (ADR-0045, ADR-0048). Eine vorgezogene Zählung hier würde Wiederholungen
--- einer belegten Kennung an der Grenze mit 53400 abweisen, bevor
--- `on conflict do nothing` greifen kann.
+-- Development hatte die fehlerhafte Fassung bereits. Diese Migration stellt
+-- denselben Rumpf ohne Zählung wieder her. Signatur und Rechte bleiben.
+-- Die Schranke gilt weiter nur im Auslöser.
 
 create or replace function public.reise_anlegen(_reise jsonb)
 returns uuid
@@ -219,4 +214,4 @@ end
 $$;
 
 comment on function public.reise_anlegen(jsonb) is
-  'Legt eine Reise samt Etappen, Tagen und Planpunkten für das aufrufende Konto an. Idempotent über trips.client_ref. SECURITY INVOKER. Tage erhalten stage_id über stage_position, die einzige Etappe, den Datumsvergleich oder eine proportionale Aufteilung.';
+  'Legt eine Reise samt Etappen, Tagen und Planpunkten für das aufrufende Konto an. Idempotent über trips.client_ref. SECURITY INVOKER. Tage erhalten stage_id über stage_position, die einzige Etappe, den Datumsvergleich oder eine proportionale Aufteilung. Die Missbrauchsschranke liegt im Auslöser trips_erzeugung_pruefen, nicht in dieser Funktion (ADR-0045, ADR-0048).';

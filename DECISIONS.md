@@ -1040,6 +1040,8 @@ Ein Nebeneffekt der Verlegung ist der zweiten Überprüfung aufgefallen und in A
 
 Zwei Grenzen bleiben und sind zu kennen. Erstens gilt `status = 'draft'` beim Anlegen, nicht bei jeder Änderung: Ein Konto kann seine eigene Reise anschliessend auf `booked` setzen. Ein Statusmodell mit erlaubten Übergängen gehört zu Phase 2, wenn eine Buchung entsteht – vorher wäre es eine Regel ohne Vorgang. Zweitens bleibt die Zahl der Kindzeilen je Reise ungebremst; siehe Alternative 4.
 
+**Nachtrag, 20. August 2026:** Phase 2.2 hat `reise_anlegen()` für `trip_days.stage_id` ersetzt und dabei die Zählung aus der Urfassung `20260817120100` wieder in den Rumpf geholt. Das brach ADR-0048: An der Schranke warf die Funktion `53400`, bevor `on conflict` die Wiederholung erkennen konnte. `20260820050000_reise_anlegen_ohne_schranke.sql` nimmt die Zählung wieder heraus. Die Schranke gilt weiter nur im Auslöser.
+
 ---
 
 ## ADR-0046 – Im Browser gilt nur als gespeichert, was zurückgelesen wurde
