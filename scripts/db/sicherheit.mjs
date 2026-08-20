@@ -1638,6 +1638,41 @@ end
 $body$`,
       erwartung: 'erlaubt',
     },
+    {
+      name: 'ein Stammdaten-Update erhöht die Fassung',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `do $body$
+declare
+  _rev integer;
+  _updated timestamptz;
+begin
+  select revision, updated_at into _rev, _updated from public.trips where id = '${REISE}';
+  update public.trips set title = 'Japan im Frühling' where id = '${REISE}';
+  if not exists (
+    select 1 from public.trips
+     where id = '${REISE}'
+       and title = 'Japan im Frühling'
+       and revision = _rev + 1
+       and updated_at >= _updated
+  ) then
+    raise exception 'Revision oder updated_at nach Stammdaten-Update unverändert';
+  end if;
+  begin
+    perform public.reise_aendern(${nutzlast('mut-nach-stamm', 1)});
+    raise exception 'veraltete Fassung hätte scheitern müssen';
+  exception when others then
+    if sqlstate is distinct from 'P0001' then raise; end if;
+  end;
+  raise exception using errcode = 'ZZ000', message = 'treffer:1';
+end
+$body$`,
+      erwartung: 'erlaubt',
+      grund:
+        'Ein direktes UPDATE von title (oder Herkunft, Zeitraum, Reisende, Budget, ' +
+        'Status, Tempo, Interessen, Reisewunsch) muss die Fassung erhöhen. Sonst gilt ' +
+        'ein älterer Sprachvorschlag weiter als aktuell.',
+    },
   ]
 }
 
