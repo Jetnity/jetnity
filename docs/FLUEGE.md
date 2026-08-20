@@ -16,7 +16,8 @@ Nicht gebaut:
 - eigene Flugbuchung
 - Deeplinks / Affiliate-Übergabe
 - Hotels, Aktivitäten, Transfers
-- Production-Aktivierung
+- Production-Aktivierung (`JETNITY_FLIGHT_AKTIV` bleibt aus, kein Duffel-Token)
+- die Duffel-Sandbox-Verifikation; sie ist nachgelagert und kein Merge-Blocker
 - ein Enterprise-Framework für zehn Provider
 - ein Amadeus-Adapter (Amadeus Self-Service wurde am 17. Juli 2026 eingestellt)
 

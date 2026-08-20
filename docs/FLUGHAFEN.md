@@ -83,7 +83,7 @@ npm run airports:importieren -- --schreiben --entwicklung --bereinigen
 
 Ohne `--schreiben --entwicklung` ist jeder Lauf eine Probe: Quelle lesen, validieren, zählen, nichts schreiben. `--schreiben` allein reicht nicht.
 
-Vor dem ersten Schreibzugriff ruft das Skript `ziel()` auf. Zeigt `SUPABASE_PROJECT_REF` auf ein eigenständiges Projekt statt auf einen Branch, bricht der Lauf ab. Production wird dadurch nicht befüllt.
+Vor dem Development-Schreiben ruft das Skript `ziel()` auf. Zeigt `SUPABASE_PROJECT_REF` auf ein eigenständiges Projekt statt auf einen Branch, bricht der Lauf ab. Production-Schreiben ist ein zweiter Weg (`--schreiben --produktion --projekt-ref`) und steht in [PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md).
 
 `--bereinigen` löscht Zeilen, deren IATA nicht mehr in der gefilterten Menge liegt. Ohne dieses Flag bleibt historischer Ballast stehen und wird nur überschrieben, wenn derselbe IATA wiederkommt.
 
@@ -104,7 +104,7 @@ Die Logik (`lib/airports/importieren.ts`) ist ohne Netzwerk prüfbar. Tests lade
 
 Erster Development-Import am 20. August 2026: **5332** Zeilen (1169 large, 3396 medium, 767 small mit Linienverkehr), 80604 OurAirports-Zeilen verworfen. Vorher 0. Production unverändert.
 
-Production bleibt unverändert. Die Schemaerweiterung und der Inhalt sind getrennte Handlungen; keines von beiden darf still nach Production.
+Production bleibt unverändert, bis der kontrollierte Rollout in [PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md) ausdrücklich freigegeben und von Hand ausgeführt wird. Schema und Inhalt bleiben getrennte Handlungen. Production-Schreiben braucht `--schreiben --produktion --projekt-ref`. `--bereinigen` ist dort abgelehnt, damit die 40 historischen Zeilen nicht still entfallen.
 
 ---
 

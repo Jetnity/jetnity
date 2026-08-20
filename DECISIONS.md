@@ -1766,6 +1766,27 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 
 ---
 
+## ADR-0069 – Production-Import nur mit Mehrfachschutz, nie still
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, vorbereitet; Production noch nicht beschrieben
+
+**Entscheidung:** Der Airport- und Place-Import nach Production ist ein manueller Release-Schritt. Er braucht `--schreiben --produktion` und den exakten Project-Ref. Die Management API muss bestätigen, dass das Ziel ein eigenständiges Projekt ist. Ein Development-Branch wird im Production-Modus abgelehnt. `--bereinigen` ist dort verboten. CI, Build und Merge importieren nicht.
+
+**Kontext:** Production steht auf `20260820080000`, hat 40 historische Airports und keine `places`. Development hat Schema und Bestand. Dieselbe Schreibfunktion ohne extra Schutz würde Production treffen, sobald `SUPABASE_PROJECT_REF` auf das Projekt zeigt. Einen Production-Ref hart im Repository zu hinterlegen wäre die schwächere Lösung.
+
+**Alternativen:**
+
+1. *Schutz `ziel()` einfach entfernen.* Ein falscher Ref schreibt Production.
+2. *Production-Ref als Default im Code.* Muss gepflegt werden, erkennt ein zweites Projekt nicht.
+3. *Automatischer Import beim Deploy.* Keine Freigabe, keine Pause nach einem Schemafehler.
+
+**Begründung:** Referenzdaten dürfen fehlen oder unvollständig sein; sie dürfen nicht still überschrieben oder gelöscht werden. UPSERT ohne Bereinigen erhält die 40 historischen Zeilen. Die Reihenfolge Schema → Airports → Places steht in [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md).
+
+**Konsequenzen:** Development-Weg unverändert (`--schreiben --entwicklung`). Production bleibt aus, bis die Freigabe und der manuelle Lauf vorliegen. `npm run production:pruefen` ist read-only; `--vorab` prüft historische Airport-Constraints, bevor das Schema angewendet wird. Duffel-Sandbox ist kein Merge-Blocker.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

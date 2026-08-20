@@ -1,7 +1,7 @@
 # Jetnity – Datenbank
 
 Stand: 20. August 2026
-Gültig für: Supabase-Development-Branch nach Phase 3.1 (Airport- und Ortsreferenz). Production ist in keiner der Phasen 1.4 bis 3.1 angefasst worden; Airport- und Places-Migration sowie deren Importe gelten nur für Development.
+Gültig für: Supabase-Development-Branch nach Phase 3.1 (Airport- und Ortsreferenz). Production steht auf `20260820080000`. Airport- und Places-Schema sowie deren Importe gelten nur für Development, bis der kontrollierte Rollout in [PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md) ausdrücklich freigegeben ist.
 
 Diese Datei beschreibt den **tatsächlichen** Zustand des Schemas, wie er sich aus dem Repository herstellen lässt. Sie ist die Antwort auf die Frage, die [ARCHITECTURE.md](../ARCHITECTURE.md) Abschnitt 6 bis Phase 1.4 offenlassen musste: Was steht in der Datenbank, wer darf was, und woher weiß man das.
 
@@ -31,12 +31,13 @@ Die Prüfungen dazu stehen in Abschnitt 9.
 
 ## 2. Werkzeuge
 
-Alle Skripte liegen in `scripts/db/` und sprechen über die Supabase Management API mit dem Development-Branch. Sie brauchen `SUPABASE_ACCESS_TOKEN` und `SUPABASE_PROJECT_REF` aus der Umgebung; im Repository steht keiner der beiden Werte.
+Alle Skripte liegen in `scripts/db/` und sprechen über die Supabase Management API. Der Default ist der Development-Branch (`ziel()`). Production-Schreiben braucht `--produktion --projekt-ref` und die Bestätigung, dass das Ziel ein eigenständiges Projekt ist; Anleitung in [PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md). Sie brauchen `SUPABASE_ACCESS_TOKEN` und `SUPABASE_PROJECT_REF` aus der Umgebung; im Repository steht keiner der beiden Werte.
 
 | Befehl | Aufgabe |
 | --- | --- |
 | `npm run db:inventar` | vollständige Inventur eines Schemas als JSON |
-| `npm run db:anwenden` | offene Migrationen anwenden und in `supabase_migrations.schema_migrations` eintragen; `-- --probe` zeigt nur, was offen ist |
+| `npm run db:anwenden` | offene Migrationen anwenden; ohne Flags nur Development-Branch; Production nur mit `-- --produktion --projekt-ref`; `-- --probe` zeigt nur, was offen ist |
+| `npm run production:pruefen` | read-only Rollout-Check; braucht `-- --entwicklung` oder `-- --produktion --projekt-ref`; `--vorab` prüft nur Constraints und Kill Switches |
 | `npm run db:reproduzierbarkeit` | baut das Schema aus den Migrationen neu auf und vergleicht es mit dem laufenden |
 | `npm run db:rls` | empirische RLS-Matrix: was darf welche Rolle auf welcher Tabelle wirklich |
 | `npm run db:sicherheit` | 169 benannte Nachweise mit Erwartung, positiv und negativ; wo es darauf ankommt, mit verlangtem SQLSTATE |
@@ -46,8 +47,8 @@ Alle Skripte liegen in `scripts/db/` und sprechen über die Supabase Management 
 | `npm run check:schema-bezug` | dieselbe Auswertung als Prüfung gegen `types/supabase.ts` (läuft in der CI) |
 | `npm run db:typen` | `types/supabase.ts` erzeugen; `-- --pruefen` vergleicht nur |
 | `npm run db:advisors` | Security- und Performance-Advisors von Supabase |
-| `npm run airports:importieren` | OurAirports lesen, filtern, gegen Development upserten; Standard ist Probe |
-| `npm run places:importieren` | GeoNames-Dump lesen, filtern, gegen Development upserten; Standard ist Probe |
+| `npm run airports:importieren` | OurAirports lesen, filtern; Standard ist Probe; Development `--schreiben --entwicklung`; Production nur über den Rollout-Playbook |
+| `npm run places:importieren` | GeoNames-Dump lesen, filtern; Standard ist Probe; Development `--schreiben --entwicklung`; Production nur über den Rollout-Playbook |
 
 Bis auf `check:schema-bezug` braucht jedes davon den Development-Zugang. `check:schema-bezug` liest nur die erzeugte Typdatei und läuft deshalb in der CI mit.
 
@@ -78,11 +79,11 @@ Die dreizehn Tabellen: `profiles`, `trips`, `trip_stages`, `trip_days`, `trip_it
 
 **Phase 2.2 Nachtrag `20260820060000`:** `public.reise_graph_geaendert()` plus neun Statement-Trigger auf den Kindtabellen. **Nachtrag `20260820070000`:** `public.reise_stamm_geaendert()` erhöht die Fassung bei direkten Stammdaten-Updates auf `trips`. **Nachtrag `20260820080000`:** `trip_days_index_eindeutig` und `trip_days_datum_eindeutig` sind `UNIQUE … DEFERRABLE`; der partielle Unique-Index auf `day_date` entfällt. Die Inventur zählt danach 24 Funktionen, 17 Trigger und 7 Eindeutigkeitsbedingungen. Production unverändert.
 
-**Phase 3.1 Nachtrag `20260820110000`:** `public.airports` erhält `region`, `country_code`, `keywords`, `klasse`, `updated_at`, passende CHECKs und den Trigramm-Index `airports_keywords_trgm`. Der Inhalt kommt nicht aus der Migration, sondern aus `npm run airports:importieren`. Nur Development. Production unverändert. Einzelheiten in [docs/FLUGHAFEN.md](FLUGHAFEN.md).
+**Phase 3.1 Nachtrag `20260820110000`:** `public.airports` erhält `region`, `country_code`, `keywords`, `klasse`, `updated_at`, passende CHECKs und den Trigramm-Index `airports_keywords_trgm`. Der Inhalt kommt nicht aus der Migration, sondern aus `npm run airports:importieren`. Development angewendet. Production erst über [PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md). Einzelheiten in [docs/FLUGHAFEN.md](FLUGHAFEN.md).
 
-**Phase 3.1 Nachtrag `20260820120000`:** `public.places` ist die lokale Ortsbasis für Reiseziel und Abreise. Additive Spalten `trips.origin_place_id` und `trip_stages.place_id` (beide nullable). `reise_anlegen()` schreibt die Referenzen, wenn sie in der Nutzlast stehen. Inhalt aus `npm run places:importieren` (GeoNames CC BY 4.0 plus `public.airports`). Development enthält 124 811 Orte. Nur Development. Production unverändert. Einzelheiten in [docs/ORTE.md](ORTE.md).
+**Phase 3.1 Nachtrag `20260820120000`:** `public.places` ist die lokale Ortsbasis für Reiseziel und Abreise. Additive Spalten `trips.origin_place_id` und `trip_stages.place_id` (beide nullable). `reise_anlegen()` schreibt die Referenzen, wenn sie in der Nutzlast stehen. Inhalt aus `npm run places:importieren` (GeoNames CC BY 4.0 plus `public.airports`). Development enthält 124 811 Orte. Production erst über den kontrollierten Rollout. Einzelheiten in [docs/ORTE.md](ORTE.md).
 
-**Phase 3.1 Nachtrag `20260820130000`:** `reise_aendern()` schreibt dieselben optionalen Referenzen. Ohne eindeutige Auflösung bleibt der Wert `null`. Production unverändert.
+**Phase 3.1 Nachtrag `20260820130000`:** `reise_aendern()` schreibt dieselben optionalen Referenzen. Ohne eindeutige Auflösung bleibt der Wert `null`. Production unverändert, bis der Rollout freigegeben ist.
 
 Das Wachstum liegt vollständig bei den Reisedaten: Die vier neuen Tabellen tragen 61 Spalten, 43 CHECK-Bedingungen, 6 Fremdschlüssel, 5 Eindeutigkeitsbedingungen, 15 Indizes, 16 Policies und 5 Auslöser – vier für `updated_at`, einer für die Erzeugungsregeln von `public.trips` (Abschnitt 7a). Gleichzeitig sind mit `creator_sessions` 16 Spalten, 7 Indizes und 4 Policies sowie die neun Creator-Spalten des Profils entfallen – die Nettozahlen der Tabelle oben sind deshalb kleiner als die Zugänge.
 
@@ -164,10 +165,10 @@ Der Zustand nach Phase 1.4 steht in Abschnitt 9; dort ist auch nachgewiesen, das
 | `20260820060000_reise_graph_revision.sql` | Statement-Trigger erhöhen `trips.revision` bei Graphänderungen; `reise_anlegen()` übernimmt `ungeplante`; keine Doppelzählung in den RPCs (ADR-0058 Nachtrag, ADR-0061) |
 | `20260820070000_reise_trips_revision.sql` | Direkte Stammdaten-Updates auf `trips` erhöhen `revision`, ohne `reise_aendern()` doppelt zu zählen (ADR-0058 Nachtrag) |
 | `20260820080000_reise_tage_eindeutig_aufgeschoben.sql` | `UNIQUE … DEFERRABLE` für `day_index`/`day_date` in `reise_aendern()` (Phase 2.2, ADR-0060 Nachtrag) |
-| `20260820100000_reise_anlegen_handelsfelder.sql` | `reise_anlegen()` schreibt Preis, Währung, Provider, Ref, Buchungslink und Termin (Phase 3.1, ADR-0065). **Nur Development.** Production nicht ohne Freigabe. |
-| `20260820110000_airports_referenz.sql` | `public.airports` um Region, Landescode, Keywords, Klasse erweitert (Phase 3.1, ADR-0066). **Nur Development.** |
-| `20260820120000_places_referenz.sql` | `public.places` plus optionale `trips.origin_place_id` / `trip_stages.place_id`; `reise_anlegen()` schreibt die Referenzen, wenn sie in der Nutzlast stehen (Phase 3.1, ADR-0067). **Nur Development.** |
-| `20260820130000_reise_aendern_places.sql` | `reise_aendern()` schreibt `origin_place_id` und `trip_stages.place_id` aus der Nutzlast (Phase 3.1, ADR-0067). **Nur Development.** |
+| `20260820100000_reise_anlegen_handelsfelder.sql` | `reise_anlegen()` schreibt Preis, Währung, Provider, Ref, Buchungslink und Termin (Phase 3.1, ADR-0065). Development angewendet. Production nur über [PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md). |
+| `20260820110000_airports_referenz.sql` | `public.airports` um Region, Landescode, Keywords, Klasse erweitert (Phase 3.1, ADR-0066). Development angewendet. Production nur über den kontrollierten Rollout. |
+| `20260820120000_places_referenz.sql` | `public.places` plus optionale `trips.origin_place_id` / `trip_stages.place_id`; `reise_anlegen()` schreibt die Referenzen, wenn sie in der Nutzlast stehen (Phase 3.1, ADR-0067). Development angewendet. Production nur über den kontrollierten Rollout. |
+| `20260820130000_reise_aendern_places.sql` | `reise_aendern()` schreibt `origin_place_id` und `trip_stages.place_id` aus der Nutzlast (Phase 3.1, ADR-0067). Development angewendet. Production nur über den kontrollierten Rollout. |
 
 Die Reihenfolge ist nicht beliebig: `20260817100200` darf erst laufen, wenn `20260817100000` die Rollen der Betroffenen übernommen und `20260817100100` alle Policies auf `creator_profiles.role` umgestellt hat. Sonst verlöre jemand seinen Zugang oder eine Policy liefe ins Leere.
 

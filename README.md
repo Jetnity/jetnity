@@ -53,7 +53,7 @@ Die CI führt darüber hinaus `check:api-schutz`, `check:schema-bezug`, `check:d
 
 Die datenbanknahen Prüfungen aus `scripts/db/` brauchen den Supabase-Development-Zugang und laufen von Hand; sie sind in [docs/DATENBANK.md](docs/DATENBANK.md) beschrieben.
 
-Der Flughafen-Import (`npm run airports:importieren`) und der Orts-Import (`npm run places:importieren`) gehören ebenfalls nicht in die CI. Ohne `--schreiben --entwicklung` sind sie eine Probe. Schreiben trifft nur einen Supabase-Branch, nie Production. Quelle, Lizenz und Refresh stehen in [docs/FLUGHAFEN.md](docs/FLUGHAFEN.md) und [docs/ORTE.md](docs/ORTE.md).
+Der Flughafen-Import (`npm run airports:importieren`) und der Orts-Import (`npm run places:importieren`) gehören ebenfalls nicht in die CI. Ohne `--schreiben` sind sie eine Probe. Development-Schreiben braucht `--schreiben --entwicklung` und trifft nur einen Supabase-Branch. Production-Schreiben braucht `--schreiben --produktion --projekt-ref` plus Management-API-Bestätigung; das ist ein manueller Release-Schritt, siehe [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md). Quelle, Lizenz und Refresh stehen in [docs/FLUGHAFEN.md](docs/FLUGHAFEN.md) und [docs/ORTE.md](docs/ORTE.md).
 
 ## Umgebungsvariablen
 

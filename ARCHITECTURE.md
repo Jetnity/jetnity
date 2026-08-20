@@ -94,7 +94,7 @@ Diese Verbindung ist ein Entwicklerwerkzeug. Sie ersetzt weder die App-Clients a
 
 Verifikation am 17. August 2026 gegen den offiziellen Remote-Server, vor Phase 1.4: Authentifizierung erfolgreich, genau die zehn Werkzeuge der drei Feature-Gruppen, Account-/Branching-/Functions-/Storage-Werkzeuge abwesend, Projekt-URL identisch mit `SUPABASE_PROJECT_REF`. `list_tables` lieferte damals 39 Tabellen in `public`; nach Phase 1.4b sind es 8 und nach Phase 1.5 elf.
 
-Dieselben Zugangsdaten – Personal Access Token und Projekt-Referenz – nutzen die Skripte in `scripts/db/` über die Management API. Sie sind der Weg, auf dem Phase 1.4 und 1.4b inventarisiert, Migrationen angewendet und Nachweise geführt haben; ein Datenbankpasswort oder ein Service-Key war dafür nicht nötig. Beschreibung in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 2.
+Dieselben Zugangsdaten – Personal Access Token und Projekt-Referenz – nutzen die Skripte in `scripts/db/` über die Management API. Sie sind der Weg, auf dem Phase 1.4 und 1.4b inventarisiert, Migrationen angewendet und Nachweise geführt haben; ein Datenbankpasswort oder ein Service-Key war dafür nicht nötig. Beschreibung in [docs/DATENBANK.md](docs/DATENBANK.md), Abschnitt 2. Ein späterer Production-Import geht nicht über MCP, sondern nur über den manuellen Mehrfachschutz in [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md).
 
 ---
 
@@ -302,11 +302,11 @@ Production bleibt hart aus. Development/Preview brauchen `JETNITY_FLIGHT_AKTIV` 
 
 ### Flughafenbasis (Phase 3.1)
 
-`GET /api/search/airports` liest ausschliesslich `public.airports`. Der Bestand kommt aus OurAirports Open Data (Public Domain), gefiltert und idempotent über `npm run airports:importieren` geschrieben. Weder Build noch CI noch eine Nutzersuche laden den Upstream. Schemaerweiterung `20260820110000` und Inhalt gelten nur für Development. Fachlich: [docs/FLUGHAFEN.md](docs/FLUGHAFEN.md), ADR-0066.
+`GET /api/search/airports` liest ausschliesslich `public.airports`. Der Bestand kommt aus OurAirports Open Data (Public Domain), gefiltert und idempotent über `npm run airports:importieren` geschrieben. Weder Build noch CI noch eine Nutzersuche laden den Upstream. Production-Schreiben nur über [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md). Fachlich: [docs/FLUGHAFEN.md](docs/FLUGHAFEN.md), ADR-0066.
 
 ### Ortsbasis (Phase 3.1)
 
-`GET /api/search/places` liest ausschliesslich `public.places`. Der Bestand kommt aus dem GeoNames-Dump (CC BY 4.0) plus Flughafen-Zeilen aus `public.airports`. Development enthält nach dem ersten Import 124 811 Orte. Kein Live-Geocoding, keine Google-/Nominatim-Abfrage. Startseite und `/planen` teilen dieselbe Auswahlkomponente und dieselbe Serverprüfung. Der Modellweg löst eindeutige Orte gegen dieselbe Tabelle auf und rät nicht. Schemaerweiterung `20260820120000`/`20260820130000` und Inhalt gelten nur für Development. Fachlich: [docs/ORTE.md](docs/ORTE.md), ADR-0067.
+`GET /api/search/places` liest ausschliesslich `public.places`. Der Bestand kommt aus dem GeoNames-Dump (CC BY 4.0) plus Flughafen-Zeilen aus `public.airports`. Development enthält nach dem ersten Import 124 811 Orte. Kein Live-Geocoding, keine Google-/Nominatim-Abfrage. Startseite und `/planen` teilen dieselbe Auswahlkomponente und dieselbe Serverprüfung. Der Modellweg löst eindeutige Orte gegen dieselbe Tabelle auf und rät nicht. Schema und Inhalt für Production nur über den kontrollierten Rollout in [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md) (ADR-0069). Fachlich: [docs/ORTE.md](docs/ORTE.md), ADR-0067.
 
 ### Kostenkontrolle bei Modellaufrufen
 

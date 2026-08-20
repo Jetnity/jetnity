@@ -2,9 +2,9 @@
 // Kontrollierter Airport-Import nach public.airports.
 //
 // Standard ist Probe: Quelle lesen, validieren, zählen, nichts schreiben.
-// Schreiben braucht --schreiben und --entwicklung. ziel() bricht ab, sobald
-// SUPABASE_PROJECT_REF auf ein eigenständiges Projekt (Production) zeigt.
-//
+// Development: --schreiben --entwicklung. Production nur mit
+// --schreiben --produktion --projekt-ref <exakter Ref>.
+// --bereinigen ist in Production abgelehnt.
 // Nicht in der CI, nicht im prebuild, nicht bei einer Nutzersuche.
 
 import { readFileSync } from 'node:fs'
@@ -12,7 +12,8 @@ import { join } from 'node:path'
 
 import { flughaefenAusOurAirports, type FlughafenImportZeile } from '@/lib/airports/importieren'
 
-import { ziel } from '../auth/ziel'
+import { importAuftragLesen } from '@/lib/rollout/schreibauftrag'
+import { zielFuerAuftrag } from '../auth/ziel'
 import { runSql } from '../db/sql.mjs'
 
 const QUELLE = 'https://raw.githubusercontent.com/davidmegginson/ourairports-data/main'
@@ -149,15 +150,9 @@ async function bereinigen(zeilen: FlughafenImportZeile[]): Promise<number> {
 }
 
 async function main() {
-  const schreiben = process.argv.includes('--schreiben')
-  const entwicklung = process.argv.includes('--entwicklung')
-  const sollBereinigen = process.argv.includes('--bereinigen')
-
-  if (schreiben && !entwicklung) {
-    throw new Error(
-      'Schreiben braucht --schreiben und --entwicklung. Ohne beides bleibt der Lauf eine Probe.',
-    )
-  }
+  const auftrag = importAuftragLesen(process.argv)
+  const schreiben = auftrag.modus !== 'probe'
+  const sollBereinigen = auftrag.modus === 'entwicklung' && auftrag.bereinigen
 
   const quelle = await quelleLesen()
   const { zeilen, verworfen } = flughaefenAusOurAirports(quelle)
@@ -173,11 +168,15 @@ async function main() {
   console.log(`Pflichtcodes vorhanden: ${BEISPIELE.join(', ')}`)
 
   if (!schreiben) {
-    console.log('Probe – nichts geschrieben. Zum Schreiben: --schreiben --entwicklung')
+    console.log(
+      'Probe – nichts geschrieben. Zum Schreiben: --schreiben --entwicklung ' +
+        'oder --schreiben --produktion --projekt-ref <Ref>',
+    )
     return
   }
 
-  await ziel()
+  await zielFuerAuftrag(auftrag)
+  console.log(`Ziel: ${auftrag.modus}`)
   const vorher = await anzahl()
   console.log(`Bestand vorher: ${vorher}`)
 

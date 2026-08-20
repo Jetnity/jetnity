@@ -17,12 +17,16 @@
 // Ein hart eingetragener Production-Ref wäre die schwächere Lösung: Er müsste
 // gepflegt werden und würde ein zweites Produktionsprojekt nicht erkennen.
 
+import { artAusStatus, type ZielArt } from '@/lib/rollout/ziel-art'
+
 const API = 'https://api.supabase.com/v1'
 
 export type Ziel = {
   ref: string
   token: string
 }
+
+export type { ZielArt }
 
 /**
  * Der Grund einer abgelehnten Antwort, ohne ihren Körper weiterzugeben.
@@ -58,15 +62,33 @@ async function status(pfad: string, token: string): Promise<number> {
  * einen Branch zeigt. Alles andere bricht ab, bevor irgendetwas gelesen oder
  * geschrieben wird.
  */
-export async function ziel(): Promise<Ziel> {
+export async function zielArt(ref: string, token: string): Promise<{
+  art: ZielArt
+  projektStatus: number
+  branchStatus: number
+}> {
+  const projektStatus = await status(`/projects/${ref}`, token)
+  const branchStatus = await status(`/branches/${ref}`, token)
+  return {
+    art: artAusStatus(projektStatus, branchStatus),
+    projektStatus,
+    branchStatus,
+  }
+}
+
+function umgebungLesen(): Ziel {
   const ref = process.env.SUPABASE_PROJECT_REF
   const token = process.env.SUPABASE_ACCESS_TOKEN
   if (!ref) throw new Error('SUPABASE_PROJECT_REF fehlt')
   if (!token) throw new Error('SUPABASE_ACCESS_TOKEN fehlt')
+  return { ref, token }
+}
 
-  const alsProjekt = await status(`/projects/${ref}`, token)
+export async function ziel(): Promise<Ziel> {
+  const { ref, token } = umgebungLesen()
+  const erkannt = await zielArt(ref, token)
 
-  if (alsProjekt === 200) {
+  if (erkannt.art === 'projekt') {
     throw new Error(
       'SUPABASE_PROJECT_REF zeigt auf ein eigenständiges Projekt, nicht auf einen Branch. ' +
         'Die Auth-Konfiguration in supabase/config.toml beschreibt Development. Abgebrochen, ' +
@@ -74,20 +96,55 @@ export async function ziel(): Promise<Ziel> {
     )
   }
 
-  if (alsProjekt !== 404) {
-    throw new Error(`Unerwartete Antwort ${alsProjekt} auf /projects/${ref}. Abgebrochen.`)
-  }
-
-  const alsBranch = await status(`/branches/${ref}`, token)
-
-  if (alsBranch !== 200) {
+  if (erkannt.art !== 'branch') {
     throw new Error(
-      `SUPABASE_PROJECT_REF ist weder Projekt (404) noch Branch (${alsBranch}). ` +
+      `SUPABASE_PROJECT_REF ist weder Projekt (${erkannt.projektStatus}) noch Branch (${erkannt.branchStatus}). ` +
         'Ref oder Token prüfen. Abgebrochen.',
     )
   }
 
   return { ref, token }
+}
+
+/**
+ * Production-Schreiben: das Ziel muss ein eigenständiges Projekt sein.
+ * Ein Development-Branch wird abgelehnt. Der bestätigte Ref kommt vom Aufrufer
+ * und muss bereits mit der Umgebung übereinstimmen.
+ */
+export async function produktionsZiel(bestaetigterRef: string): Promise<Ziel> {
+  const { ref, token } = umgebungLesen()
+  if (ref !== bestaetigterRef) {
+    throw new Error(
+      'Der bestätigte --projekt-ref stimmt nicht mit SUPABASE_PROJECT_REF überein. Abgebrochen.',
+    )
+  }
+
+  const erkannt = await zielArt(ref, token)
+  if (erkannt.art === 'branch') {
+    throw new Error(
+      'Production-Modus zeigt auf einen Development-Branch. Abgebrochen. ' +
+        'Ein Branch darf nicht als Production beschrieben werden.',
+    )
+  }
+  if (erkannt.art !== 'projekt') {
+    throw new Error(
+      `Production-Ziel ist unklar (Projekt ${erkannt.projektStatus}, Branch ${erkannt.branchStatus}). Abgebrochen.`,
+    )
+  }
+  return { ref, token }
+}
+
+export async function zielFuerAuftrag(auftrag: {
+  modus: 'entwicklung' | 'produktion'
+  bestaetigterRef?: string
+}): Promise<Ziel> {
+  if (auftrag.modus === 'produktion') {
+    if (!auftrag.bestaetigterRef) {
+      throw new Error('Production-Ziel ohne bestätigten Project-Ref. Abgebrochen.')
+    }
+    return produktionsZiel(auftrag.bestaetigterRef)
+  }
+  return ziel()
 }
 
 /** Holt die laufende Auth-Konfiguration des Ziels. */

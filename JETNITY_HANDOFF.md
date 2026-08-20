@@ -34,7 +34,7 @@ Phase 3.1 ergänzt:
 - lokale Flughafenbasis aus OurAirports, ohne Provider- und ohne Live-Abfrage
 - lokale Ortsbasis aus GeoNames (CC BY 4.0) plus Flughafen-Zeilen; Startseite und `/planen` speichern nur bestätigte Orte
 
-Entscheidungen: ADR-0057 bis ADR-0061 (Phase 2.2), ADR-0062 bis ADR-0068 (Phase 3.1). Fachlich: `docs/REISEN.md`, `docs/FLUEGE.md`, `docs/FLUGHAFEN.md`, `docs/ORTE.md`, `docs/MODELL.md`, `docs/DATENBANK.md`.
+Entscheidungen: ADR-0057 bis ADR-0061 (Phase 2.2), ADR-0062 bis ADR-0069 (Phase 3.1). Fachlich: `docs/REISEN.md`, `docs/FLUEGE.md`, `docs/FLUGHAFEN.md`, `docs/ORTE.md`, `docs/MODELL.md`, `docs/DATENBANK.md`, `docs/PRODUCTION_ROLLOUT.md`.
 
 ## 2. Production-Rollout am 20. August 2026
 
@@ -232,20 +232,24 @@ Diese Punkte sind bekannt und blockieren die Flugbasis nicht, müssen aber im Pr
 - Der Router arbeitet mit Mustern und kann ungewöhnliche Formulierungen falsch einordnen; manueller Modell-Stift bleibt möglich.
 - Preview-Tests sind keine Lasttests.
 - Production-Modellaktivierung bleibt eine eigene Freigabe.
-- Production-Flugsuche bleibt eine eigene Freigabe; Duffel-Live-Token sind in Phase 3.1 abgelehnt.
+- Production-Flugsuche bleibt eine eigene Freigabe; Duffel-Live-Token sind in Phase 3.1 abgelehnt. Die Duffel-Sandbox-Verifikation ist nachgelagert und kein Merge-Blocker.
 - Duffel-Angebots-IDs sind kurzlebig; die Reise speichert eine Momentaufnahme, keinen live buchbaren Offer.
 - Das In-Memory-Rate-Limit gilt je Serverless-Instanz.
 - Duffel Self-Service / Test deckt nicht den gesamten Markt; die UI darf das nicht als „bester Preis im Internet“ verkaufen.
-- `/api/search/airports` liest nur die lokale Tabelle; ein Fehler bleibt ein Fehler, eine leere Menge eine leere Liste. Development wird über `npm run airports:importieren` befüllt, Production nicht.
-- `/api/search/places` liest nur `public.places` (124 811 Zeilen in Development). Fantasieorte (`Test`, `Mordor`) ergeben keine Treffer und werden nicht als geografischer Kern gespeichert. Der Modellweg kanonisiert eindeutige Etappen- und Abreiseorte gegen dieselbe Tabelle; mehrdeutige oder fehlende Treffer bleiben ohne `place_id`. Production-Places bleiben unverändert.
+- `/api/search/airports` liest nur die lokale Tabelle; ein Fehler bleibt ein Fehler, eine leere Menge eine leere Liste. Development wird über `npm run airports:importieren -- --schreiben --entwicklung` befüllt. Production erst über den kontrollierten Rollout in [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md).
+- `/api/search/places` liest nur `public.places` (124 811 Zeilen in Development). Fantasieorte (`Test`, `Mordor`) ergeben keine Treffer und werden nicht als geografischer Kern gespeichert. Der Modellweg kanonisiert eindeutige Etappen- und Abreiseorte gegen dieselbe Tabelle; mehrdeutige oder fehlende Treffer bleiben ohne `place_id`. Production-Places erst über [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md).
 - Formularfehler unter `/planen`, auf der Startseite (Ortssuche) und in den Auth-Formularen sitzen am Feld. Beim Absenden scrollt die Ansicht zum ersten Fehler. Eine allgemeine Zusammenfassung ersetzt die Feldmeldung nicht.
 - Der Sicherheitstest `der Dienstweg als Gast bekommt Kontingent` isoliert Live-Gastzeilen der letzten 24 Stunden nur innerhalb der Rollback-Transaktion. Das Development-Tageslimit bleibt 24 und wird nicht erhöht.
 
 ## 11. Sofortiger Startpunkt im nächsten Chat
 
-**Duffel-Preview wartet auf den Test-Zugang. Hotels, Aktivitäten und Transfers noch nicht beginnen.** Development hat die lokale Flughafenbasis (5332 Zeilen) und die lokale Ortsbasis (`public.places`, 124 811 Zeilen aus GeoNames plus Flughäfen). Production-Airportbestand, Production-Places und Production-Flugsuche bleiben eigene Freigaben.
+Phase 3.1 ist fachlich abgeschlossen. Der nächste **freigegebene** Schritt ist der kontrollierte Production-Rollout (Schema + Airports + Places), beschrieben in [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md). **Production ist noch unverändert.** Nicht mergen, nicht Mark Ready, nicht importieren ohne ausdrückliche Freigabe.
 
-Benötigte Preview-Credentials (nicht Production):
+**Duffel-Sandbox ist nachgelagerte Provider-Verifikation.** Sie blockiert Phase 3.1 und den Merge nicht. Production bleibt `JETNITY_FLIGHT_AKTIV` aus; kein Duffel-Token in Production.
+
+Hotels, Aktivitäten und Transfers nicht beginnen.
+
+Benötigte Preview-Credentials nur für die spätere Duffel-Verifikation (nicht Production):
 
 - `JETNITY_FLIGHT_AKTIV=true`
 - `DUFFEL_ACCESS_TOKEN` mit Präfix `duffel_test_`

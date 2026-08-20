@@ -112,7 +112,7 @@ npm run places:importieren -- --schreiben --entwicklung
 
 Ohne `--schreiben --entwicklung` ist jeder Lauf eine Probe. `--schreiben` allein reicht nicht.
 
-Vor dem ersten Schreibzugriff ruft das Skript `ziel()` auf. Zeigt `SUPABASE_PROJECT_REF` auf ein eigenständiges Projekt statt auf einen Branch, bricht der Lauf ab. Production wird dadurch nicht befüllt.
+Vor dem Development-Schreiben ruft das Skript `ziel()` auf. Zeigt `SUPABASE_PROJECT_REF` auf ein eigenständiges Projekt statt auf einen Branch, bricht der Lauf ab. Production-Schreiben ist ein zweiter Weg (`--schreiben --produktion --projekt-ref`) und steht in [PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md).
 
 Der GeoNames-Dump wird gestreamt (`unzip -p`) und schon beim Lesen gefiltert. Der volle Bestand liegt nicht im Speicher und nicht im Repository.
 
@@ -130,7 +130,7 @@ Im Development-Import vom 20. August 2026 stehen **124 811** Orte:
 | GeoNames | Land | 240 |
 | OurAirports | Flughafen | 5 332 |
 
-Production bleibt ohne diese Tabelle. Ein erneuter Import mit `--schreiben --entwicklung` ersetzt den Development-Bestand.
+Production hat diese Tabelle noch nicht. Ein erneuter Development-Import mit `--schreiben --entwicklung` upsertet den Development-Bestand.
 
 Nach dem ersten Import wurden auf Development die Anzeigenamen `geonames:1650535` → `Bali` und `geonames:1605651` → `Thailand` nachgezogen. Ein späterer Import wendet dieselbe Präfixregel selbst an.
 
@@ -145,7 +145,7 @@ Nach dem ersten Import wurden auf Development die Anzeigenamen `geonames:1650535
 5. Import schreiben: `npm run places:importieren -- --schreiben --entwicklung`.
 6. Pflichtbeispiele prüfen: Bali, Thailand, Südtirol/Toskana, New York, Japan, Zürich, ZRH.
 
-Production bleibt unverändert. Die Schemaerweiterung und der Inhalt sind getrennte Handlungen; keines von beiden darf still nach Production.
+Production bleibt unverändert, bis der kontrollierte Rollout in [PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md) ausdrücklich freigegeben ist. Places kommen **nach** dem Airport-Import, weil Flughafen-Orte aus `public.airports` kopiert werden. Production-Schreiben braucht `--schreiben --produktion --projekt-ref`.
 
 ---
 

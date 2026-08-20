@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // Kontrollierter Ortsimport nach public.places.
 //
-// Standard ist Probe. Schreiben braucht --schreiben und --entwicklung.
-// ziel() bricht ab, sobald SUPABASE_PROJECT_REF auf Production zeigt.
+// Standard ist Probe. Development: --schreiben --entwicklung.
+// Production nur mit --schreiben --produktion --projekt-ref <exakter Ref>.
 // Nicht in der CI, nicht im prebuild, nicht bei einer Nutzersuche.
 
 import { readFileSync } from 'node:fs'
@@ -23,7 +23,8 @@ import {
   type GeoNamesZeile,
 } from '@/lib/places/importieren'
 
-import { ziel } from '../auth/ziel'
+import { importAuftragLesen } from '@/lib/rollout/schreibauftrag'
+import { zielFuerAuftrag } from '../auth/ziel'
 import { runSql } from '../db/sql.mjs'
 
 const QUELLE = 'https://download.geonames.org/export/dump'
@@ -151,18 +152,15 @@ async function stapelSchreiben(orte: Ort[]): Promise<void> {
 }
 
 async function main() {
-  const schreiben = process.argv.includes('--schreiben')
-  const entwicklung = process.argv.includes('--entwicklung')
-
-  if (schreiben && !entwicklung) {
-    throw new Error('Schreiben braucht --schreiben und --entwicklung.')
-  }
+  const auftrag = importAuftragLesen(process.argv)
+  const schreiben = auftrag.modus !== 'probe'
 
   const quelle = await quelleLesen()
   let orte = quelle.orte
 
   if (schreiben) {
-    await ziel()
+    await zielFuerAuftrag(auftrag)
+    console.log(`Ziel: ${auftrag.modus}`)
     const fluege = await flughaefenHolen()
     const ids = new Set(orte.map((ort) => ort.id))
     orte = [...orte, ...fluege.filter((ort) => !ids.has(ort.id))]
@@ -173,7 +171,10 @@ async function main() {
   console.log(`Verworfen: ${quelle.verworfen}`)
 
   if (!schreiben) {
-    console.log('Probe – nichts geschrieben. Zum Schreiben: --schreiben --entwicklung')
+    console.log(
+      'Probe – nichts geschrieben. Zum Schreiben: --schreiben --entwicklung ' +
+        'oder --schreiben --produktion --projekt-ref <Ref>',
+    )
     return
   }
 

@@ -558,11 +558,12 @@ Schlanke interne Flugdomäne, Duffel als erster Datenadapter, deterministisches 
 - [x] Destination Validation & Place Foundation (GeoNames-Dump, lokale `public.places` mit 124 811 Development-Orten, gemeinsame Autocomplete)
 - [x] Modellweg kanonisiert eindeutige Abreise- und Etappenorte gegen `public.places`; Mehrdeutiges und Fantasieorte bleiben ohne `place_id`
 - [x] Formularfehler sitzen am Feld, scrollen zum ersten Fehler und bleiben nicht nur als allgemeine Meldung unten
-- [ ] Preview mit Duffel-Test-Token verifizieren
+- [ ] Preview mit Duffel-Test-Token verifizieren · **nachgelagert, kein Merge-Blocker für Phase 3.1**
 - [x] Development-Migration `20260820100000` auf dem Development-Branch anwenden
+- [x] Kontrollierter Production-Rollout vorbereitet (Mehrfachschutz, Reihenfolge, read-only Check) · Ausführung braucht Freigabe
 - [ ] Production-Flugsuche – eigene Freigabe, nicht Teil dieses Schritts
-- [ ] Production-Airport-Schema und -Bestand – eigene Freigabe, nicht Teil dieses Schritts
-- [ ] Production-Places-Schema und -Bestand – eigene Freigabe, nicht Teil dieses Schritts
+- [ ] Production-Airport-Schema und -Bestand – eigene Freigabe, siehe [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md)
+- [ ] Production-Places-Schema und -Bestand – eigene Freigabe, siehe [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md)
 
 Amadeus Self-Service (eingestellt 17. Juli 2026) wird nicht angebunden. Im aktiven V2-Code gibt es keinen funktionsfähigen Amadeus-API-Pfad mehr. Ein späterer Skyscanner- oder Aviasales-Adapter muss dasselbe Interface erfüllen, ohne UI-, Ranking- oder Trip-Rewrite.
 
