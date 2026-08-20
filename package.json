@@ -32,7 +32,8 @@
     "auth:pruefen": "node --import tsx scripts/auth/pruefen.ts",
     "auth:anwenden": "node --import tsx scripts/auth/anwenden.ts",
     "auth:fluesse": "node --import tsx scripts/auth/fluesse.ts",
-    "auth:testkonto": "node --import tsx scripts/auth/testkonto.ts"
+    "auth:testkonto": "node --import tsx scripts/auth/testkonto.ts",
+    "airports:importieren": "node --import tsx scripts/airports/importieren.ts"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.16",
