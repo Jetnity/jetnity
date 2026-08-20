@@ -49,6 +49,19 @@ function textOderNull(wert: string | undefined, maximum: number): string | null 
   return gelesen.slice(0, maximum)
 }
 
+const KURZNAME_PRAEFIX = /^(provinsi|kingdom of|the kingdom of)\s+/i
+
+function anzeigename(offiziell: string, ascii: string, alts: string): string {
+  const treffer = KURZNAME_PRAEFIX.exec(offiziell)
+  if (!treffer) return offiziell.slice(0, 120)
+  const rest = offiziell.slice(treffer[0].length).trim()
+  if (rest.length < 3) return offiziell.slice(0, 120)
+  const bekannt = [ascii, ...alts.split(',')]
+    .map((wert) => wert.trim().toLowerCase())
+    .includes(rest.toLowerCase())
+  return (bekannt ? rest : offiziell).slice(0, 120)
+}
+
 function typAus(code: string): OrtTyp | null {
   if (code === 'PCLI' || code === 'PCLD' || code === 'PCLS' || code === 'TERR') return 'country'
   if (code === 'ADM1' || code === 'ADM2') return 'region'
@@ -109,7 +122,7 @@ export function orteAusGeoNames(eingabe: {
       id,
       source: 'geonames',
       sourceId: geonameId,
-      name,
+      name: anzeigename(name, zeile.asciiName, zeile.altNames),
       typ,
       country: countryCode.success ? (laender.get(countryCode.data) ?? countryCode.data) : null,
       countryCode: countryCode.success ? countryCode.data : null,

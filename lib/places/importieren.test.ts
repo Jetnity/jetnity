@@ -67,6 +67,63 @@ describe('GeoNames → Jetnity-Orte', () => {
     assert.ok(zeile)
     assert.equal(geoNamesZeileRelevant(zeile!), false)
   })
+
+  test('offizielle Verwaltungsnamen werden nur bei bekanntem Kurznamen gekürzt', () => {
+    const { orte } = orteAusGeoNames({
+      zeilen: [
+        {
+          geonameId: '1650535',
+          name: 'Provinsi Bali',
+          asciiName: 'Provinsi Bali',
+          altNames: 'Bali,Pulau Bali',
+          lat: -8.33,
+          lon: 115.16,
+          featureClass: 'A',
+          featureCode: 'ADM1',
+          countryCode: 'ID',
+          admin1: 'BA',
+          population: 4_362_000,
+        },
+        {
+          geonameId: '1605651',
+          name: 'Kingdom of Thailand',
+          asciiName: 'Kingdom of Thailand',
+          altNames: 'Thailand,Siam',
+          lat: 15.5,
+          lon: 101,
+          featureClass: 'A',
+          featureCode: 'PCLI',
+          countryCode: 'TH',
+          admin1: '00',
+          population: 69_428_524,
+        },
+        {
+          geonameId: '3181912',
+          name: 'Provincia autonoma di Bolzano',
+          asciiName: 'Provincia autonoma di Bolzano',
+          altNames: 'Bolzano,Südtirol',
+          lat: 46.5,
+          lon: 11.35,
+          featureClass: 'A',
+          featureCode: 'ADM2',
+          countryCode: 'IT',
+          admin1: '32',
+          population: 533_715,
+        },
+      ],
+      laender: [
+        { code: 'ID', name: 'Indonesia' },
+        { code: 'TH', name: 'Thailand' },
+        { code: 'IT', name: 'Italy' },
+      ],
+    })
+    assert.equal(orte.find((ort) => ort.id === 'geonames:1650535')?.name, 'Bali')
+    assert.equal(orte.find((ort) => ort.id === 'geonames:1605651')?.name, 'Thailand')
+    assert.equal(
+      orte.find((ort) => ort.id === 'geonames:3181912')?.name,
+      'Provincia autonoma di Bolzano',
+    )
+  })
 })
 
 describe('Flughafen als Ort', () => {

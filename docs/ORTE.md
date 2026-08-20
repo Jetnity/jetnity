@@ -114,6 +114,20 @@ Der GeoNames-Dump wird gestreamt (`unzip -p`) und schon beim Lesen gefiltert. De
 
 `npm run build`, `prebuild` und die CI rufen den Import nicht auf.
 
+Der Anzeigename bleibt der offizielle GeoNames-Name, ausser bei den bekannten Verwaltungspräfixen `Provinsi` und `Kingdom of`, wenn der Rest bereits als Alternativname vorkommt (`Provinsi Bali` → `Bali`). Südtirol bleibt über Keywords auffindbar, auch wenn der gespeicherte Name englisch oder italienisch ist.
+
+Im Development-Import vom 20. August 2026 stehen **124 811** Orte:
+
+| Quelle | Typ | Anzahl |
+| --- | --- | ---: |
+| GeoNames | Stadt | 105 914 |
+| GeoNames | Region | 13 035 |
+| GeoNames | Insel | 290 |
+| GeoNames | Land | 240 |
+| OurAirports | Flughafen | 5 332 |
+
+Production bleibt ohne diese Tabelle. Ein erneuter Import mit `--schreiben --entwicklung` ersetzt den Development-Bestand.
+
 ---
 
 ## 7. Development befüllen

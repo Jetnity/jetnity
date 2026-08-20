@@ -1741,7 +1741,7 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 
 **Begründung:** Der Dump ist kostenlos, kommerziell nutzbar und einmal importierbar. Attribution ist die einzige Lizenzpflicht. Filter halten Fantasieorte und Helipads draussen. UI und Reisegraph sprechen nur die interne `Ort`-Form.
 
-**Konsequenzen:** Additive Development-Migration `20260820120000`. `trips.origin_place_id` und `trip_stages.place_id` sind optional. Altbestand bleibt lesbar. Schreibweg nur `npm run places:importieren -- --schreiben --entwicklung`, davor `ziel()`. Dokumentation in [docs/ORTE.md](docs/ORTE.md). Der Modellweg validiert Etappennamen weiterhin nicht. Ein späterer Production-Import braucht Freigabe.
+**Konsequenzen:** Additive Development-Migration `20260820120000`. `trips.origin_place_id` und `trip_stages.place_id` sind optional. Altbestand bleibt lesbar. Schreibweg nur `npm run places:importieren -- --schreiben --entwicklung`, davor `ziel()`. Der erste Development-Import enthält 124 811 Orte. Dokumentation in [docs/ORTE.md](docs/ORTE.md). Der Modellweg validiert Etappennamen weiterhin nicht. Ein späterer Production-Import braucht Freigabe.
 
 ---
 

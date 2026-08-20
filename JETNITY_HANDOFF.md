@@ -237,12 +237,12 @@ Diese Punkte sind bekannt und blockieren die Flugbasis nicht, müssen aber im Pr
 - Das In-Memory-Rate-Limit gilt je Serverless-Instanz.
 - Duffel Self-Service / Test deckt nicht den gesamten Markt; die UI darf das nicht als „bester Preis im Internet“ verkaufen.
 - `/api/search/airports` liest nur die lokale Tabelle; ein Fehler bleibt ein Fehler, eine leere Menge eine leere Liste. Development wird über `npm run airports:importieren` befüllt, Production nicht.
-- `/api/search/places` liest nur `public.places`. Fantasieorte (`Test`, `Mordor`) ergeben keine Treffer und werden nicht als geografischer Kern gespeichert. Der Modellweg validiert Etappennamen weiterhin nicht. Production-Places bleiben unverändert.
+- `/api/search/places` liest nur `public.places` (124 811 Zeilen in Development). Fantasieorte (`Test`, `Mordor`) ergeben keine Treffer und werden nicht als geografischer Kern gespeichert. Der Modellweg validiert Etappennamen weiterhin nicht. Production-Places bleiben unverändert.
 - Der Sicherheitstest `der Dienstweg als Gast bekommt Kontingent` isoliert Live-Gastzeilen der letzten 24 Stunden nur innerhalb der Rollback-Transaktion. Das Development-Tageslimit bleibt 24 und wird nicht erhöht.
 
 ## 11. Sofortiger Startpunkt im nächsten Chat
 
-**Duffel-Preview wartet auf den Test-Zugang. Hotels, Aktivitäten und Transfers noch nicht beginnen.** Development hat die lokale Flughafenbasis (5332 Zeilen) und die lokale Ortsbasis (`public.places`, GeoNames). Production-Airportbestand, Production-Places und Production-Flugsuche bleiben eigene Freigaben.
+**Duffel-Preview wartet auf den Test-Zugang. Hotels, Aktivitäten und Transfers noch nicht beginnen.** Development hat die lokale Flughafenbasis (5332 Zeilen) und die lokale Ortsbasis (`public.places`, 124 811 Zeilen aus GeoNames plus Flughäfen). Production-Airportbestand, Production-Places und Production-Flugsuche bleiben eigene Freigaben.
 
 Benötigte Preview-Credentials (nicht Production):
 
