@@ -18,9 +18,10 @@ Verbindlicher Ablauf der Änderung:
 - Modellantworten sind untrusted input
 - Preise, Provider, Booking-URLs und External-Refs kommen nicht aus dem Modell und werden auf unveränderten Einträgen erhalten
 - `trip_days.stage_id` ordnet Tage einer Etappe zu, auch ohne Kalenderdaten
-- `trips.revision` / `last_mutation_id` tragen optimistische Concurrency und Idempotenz
+- `trips.revision` / `last_mutation_id` tragen optimistische Concurrency und Idempotenz; die Fassung steigt bei jeder Graphänderung, nicht nur in `reise_aendern()`
 - Account: `public.reise_aendern()`, SECURITY INVOKER, RLS, atomisch
-- Gast: derselbe fachliche Ablauf im LocalStorage
+- Gast: derselbe fachliche Ablauf im LocalStorage, inklusive ungeplanter Planpunkte
+- Kommerzielle Planpunkte bleiben bei Modelloperationen bis Phase 3 stehen
 - Gemeinsames Modellkontingent mit `reisevorschlag` (38 Aufrufe / USD 3 pro Tag)
 - `/planen` und `/reisen/[tripId]`: `maxDuration = 300`
 - `reise_anlegen()` trägt keine eigene Missbrauchszählung; die Schranke bleibt im Auslöser (`20260820050000`)
@@ -167,12 +168,10 @@ Diese Punkte sind bekannt und blockieren Phase 3 nicht, müssen aber im Projektg
 - `public.model_usage`: Aufbewahrungsfrist noch offen; vor Production-Freigabe entscheiden.
 - Reload während einer noch nicht übernommenen Vorschau verwirft sie bewusst nach ADR-0050.
 - Der Router arbeitet mit Mustern und kann ungewöhnliche Formulierungen falsch einordnen; manueller Modell-Stift bleibt möglich.
-- Planpunkte über die bestehende Oberfläche erhöhen `revision` noch nicht (ADR-0058).
-- Guest-`ohneTag` ist kein eigener LocalStorage-Bestand; Restpunkte hängen am letzten Tag.
 - Preview-Tests sind keine Lasttests.
 - Production-Modellaktivierung bleibt eine eigene Freigabe.
-- Echte Reiseangebote/Preise sind noch nicht Teil von Phase 2.
-- `db:sicherheit` 156/157: der eine Fehlschlag ist `der Dienstweg als Gast bekommt Kontingent`, weil Development heute 24 Gast-Aufrufe in `model_usage` hat (Tagesgrenze). Die Funktion selbst ist unverändert; der Nachweis sieht die live Zeilen. Die drei Wiederholungsfälle an der Reiseschranke sind nach `20260820050000` wieder grün. `db:kontingent` wurde bei vollem Gasttopf nicht erneut gegen die Live-Datenbank geschrieben.
+- Echte Reiseangebote/Preise sind noch nicht Teil von Phase 2. Phase 3 muss das Buchungs-/Providerverhalten für kommerzielle Planpunkte bewusst definieren; bis dahin bleiben sie bei Modelloperationen konservativ geschützt.
+- Der Sicherheitstest `der Dienstweg als Gast bekommt Kontingent` isoliert Live-Gastzeilen der letzten 24 Stunden nur innerhalb der Rollback-Transaktion. Das Development-Tageslimit bleibt 24 und wird nicht erhöht.
 
 ## 10. Sofortiger Startpunkt im nächsten Chat
 

@@ -1530,7 +1530,9 @@ Bestehende Zeilen werden beim Migrieren zugeordnet: eine Etappe, sonst Datumsüb
 
 **Begründung:** Optimistische Concurrency und Idempotenz gehören in die Datenbank, weil nur sie alle Tabs und alle Retries sieht. Dieselbe Lehre wie ADR-0048 und ADR-0049.
 
-**Konsequenzen:** Die Server Action lädt die Reise neu, prüft Fassung und Mutationskennung und wendet die Operationen erneut an, bevor `public.reise_aendern()` schreibt. Planpunkte anlegen oder entfernen über die bestehende Oberfläche erhöhen `revision` absichtlich noch nicht – eine Sprachänderung, die dazwischen bestätigt wird, sieht die neuen Punkte, solange die Fassung gleich bleibt. Das ist eine bekannte Grenze, kein Versehen.
+**Konsequenzen:** Die Server Action lädt die Reise neu, prüft Fassung und Mutationskennung und wendet die Operationen erneut an, bevor `public.reise_aendern()` schreibt.
+
+**Nachtrag, 20. August 2026:** Jede fachliche Änderung an `trip_stages`, `trip_days` oder `trip_items` erhöht `trips.revision` und damit `updated_at`. Statement-Trigger rufen `public.reise_graph_geaendert()` auf. `reise_anlegen()` und `reise_aendern()` setzen transaktionslokal `jetnity.graph_mutation`, damit ihre Kindzeilen die Fassung nicht ein zweites Mal zählen. Direkte Schreibwege (`planpunktAnlegen`, `planpunktEntfernen`, PostgREST) zählen mit: Ein Sprachänderungsvorschlag auf Fassung N ist nach einem manuellen Planpunkt veraltet.
 
 ---
 
@@ -1557,6 +1559,8 @@ Kontingent und Kostendeckel sind dieselben wie bei `reisevorschlag`. `model_usag
 
 **Konsequenzen:** Unbekannte Kennungen, leere Diffs und schemawidrige Antworten werden verworfen, bevor eine Vorschau entsteht. Speichern bestätigt Operationen, nicht den Graphen aus dem Browser. Gäste schicken die geprüfte Reise mit; Konten laden sie aus der Datenbank.
 
+**Nachtrag, 20. August 2026:** Bis Phase 3 ein bewusstes Buchungs-/Providerverhalten definiert, bleiben Planpunkte mit `provider`, `externalRef`, `bookingUrl` oder Preis bei Modelloperationen stehen. `punkt_entfernen` ist für sie ein No-Op. Fehlt ein solcher Punkt nach dem Anwenden, setzt `kommerziellErhalten()` ihn ungeplant zurück. Eine allgemeine Umplanung („mach die Reise entspannter“) darf ihn nicht verschwinden lassen.
+
 ---
 
 ## ADR-0060 – `reise_aendern()` ist SECURITY INVOKER, atomisch und ohne Handelsfelder
@@ -1581,6 +1585,27 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 **Begründung:** Dieselbe Bauart wie das Anlegen: INVOKER, eine Transaktion, Idempotenz in der Datenbank. Kommerzielle Felder gehören der späteren Anbieterphase, nicht dem Modell und nicht der Nutzlast.
 
 **Konsequenzen:** Ein Fehler mitten in der Funktion lässt die vorige Fassung stehen, nachgewiesen in `npm run db:sicherheit`. Die Nutzlast darf Preise mitschicken – die Funktion liest sie nicht. Gäste speichern denselben fachlichen Ablauf im `localStorage` (`gastreiseAendern()`).
+
+---
+
+## ADR-0061 – Gast und Konto teilen denselben Reisegraphen samt ungeplanter Punkte
+
+**Datum:** 20. August 2026
+**Status:** umgesetzt auf dem Phase-2.2-Branch, Production unverändert
+
+**Entscheidung:** `ohneTag` gehört zum Reisemodell, nicht nur zur Konto-Abbildung. Der Gastspeicher persistiert ungeplante Planpunkte unter `jetnity:reise:v3`. `public.reise_anlegen()` übernimmt sie als `ungeplante` mit `day_id` null. Alte v3-JSON ohne das Feld bleibt lesbar (`default []`). Bestehende Punkte, die fälschlich am letzten Tag hingen, werden nicht still umgehängt.
+
+**Kontext:** Konto-Reisen legen Restpunkte nach `on delete set null` in `ohneTag`. Der Gastspeicher hängte sie an den letzten Tag, weil LocalStorage kein eigenes Feld hatte. Nach Reload gehörte ein ungeplanter Punkt scheinbar zum letzten Reisetag.
+
+**Alternativen:**
+
+1. *Weiter am letzten Tag hängen.* Fachlich falsch und nach der Übernahme nicht mehr von echten Tagespunkten zu unterscheiden.
+2. *LocalStorage-Schlüssel v4.* Unnötig: ein optionales Feld mit Vorgabe `[]` liest v3 weiter.
+3. *Stille Migration: Punkte ohne Uhrzeit am letzten Tag nach ohneTag.* Würde echte letzte-Tag-Punkte verlieren.
+
+**Begründung:** Dieselbe Graphform in beiden Ablagen. Keine Datenlöschung, keine Spekulation über alte Entwürfe.
+
+**Konsequenzen:** `gastreiseAendern()` und `aenderungErzeugenGast()` wischen `ohneTag` nicht mehr. Die Übernahme schickt `ungeplante`. Die Listen-Sortierung über `trips.updated_at` folgt der Graph-Revision (ADR-0058 Nachtrag).
 
 ---
 

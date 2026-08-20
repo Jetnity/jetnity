@@ -31,7 +31,7 @@ Vier Tabellen, ein Graph. Der Anwendungstyp dazu steht in `types/trips.ts` und t
 | Reise | `trips` | Titel, Startort, Zeitraum, Reisende, Währung, Budget, Status, Tempo, Interessen, Reisewunsch, technische Fassung (`revision`) |
 | Etappe | `trip_stages` | ein Aufenthalt an einem Ort: Name, Ländercode, An- und Abreise, Koordinaten, Reihenfolge |
 | Tag | `trip_days` | Nummer im Reiseverlauf, optionales Datum, optionaler Titel, **Etappe** (`stage_id`) |
-| Planpunkt | `trip_items` | Flug, Unterkunft, Aktivität, Transfer oder freie Notiz – mit Zeitfenster, Preis, Anbieter, Buchungsverweis |
+| Planpunkt | `trip_items` | Flug, Unterkunft, Aktivität, Transfer oder freie Notiz – mit Zeitfenster, Preis, Anbieter, Buchungsverweis. Ohne Tag (`day_id` null) bleibt der Punkt ungeplant (`ohneTag`). |
 
 **Mehrere Ziele sind mehrere Etappen.** Ein Feld `destination` hätte die heutige Oberfläche abgedeckt und die zweite Station einer Reise nicht. Das Formular unter `/planen` fragt weiterhin ein Ziel und legt daraus eine Etappe an – dieselbe Struktur, nur mit einem Element.
 
@@ -133,9 +133,11 @@ vertrauenswürdige Reise → Wunsch → Operationen → anwenden → Vorschau �
   → public.reise_aendern()  bzw.  gastreiseAendern()
 ```
 
-`public.reise_aendern(jsonb)` ist `SECURITY INVOKER`, atomisch, prüft `trips.revision`, ist über `last_mutation_id` idempotent und schreibt keine Preise, Anbieter oder Buchungsfelder. Bestehende Kennungen unveränderter Zeilen bleiben. Eine veraltete Fassung (zweiter Tab) wird abgelehnt, nicht still überschrieben.
+`public.reise_aendern(jsonb)` ist `SECURITY INVOKER`, atomisch, prüft `trips.revision`, ist über `last_mutation_id` idempotent und schreibt keine Preise, Anbieter oder Buchungsfelder. Bestehende Kennungen unveränderter Zeilen bleiben. Eine veraltete Fassung (zweiter Tab) wird abgelehnt, nicht still überschrieben. Direkte Änderungen an Etappen, Tagen und Planpunkten erhöhen dieselbe Fassung (ADR-0058 Nachtrag).
 
-Das Modell sieht einen Snapshot ohne Handelsfelder und liefert Operationen, keine Ersatzreise (ADR-0059). Kontingent und Kostendeckel sind dieselben wie beim Vorschlag.
+Das Modell sieht einen Snapshot ohne Handelsfelder und liefert Operationen, keine Ersatzreise (ADR-0059). Planpunkte mit Anbieter, Buchungslink, Fremdkennung oder Preis bleiben bis Phase 3 bei Modelloperationen stehen. Kontingent und Kostendeckel sind dieselben wie beim Vorschlag.
+
+Gast und Konto speichern ungeplante Planpunkte gleich: im Konto `trip_items.day_id` null, im Browser `ohneTag`. Die Übernahme schickt sie als `ungeplante` (ADR-0061).
 
 ---
 
@@ -157,7 +159,7 @@ Es gibt fünf Wege in eine angemeldete Sitzung: Login mit Passwort, Login mit zw
 
 ### Was geprüft ist
 
-`lib/trips/uebernahme.test.ts` – 23 Fälle in 8 Gruppen, alle ohne Browser und ohne Datenbank, mit der Server Action als eingesetzter Funktion:
+`lib/trips/uebernahme.test.ts` – 24 Fälle in 8 Gruppen, alle ohne Browser und ohne Datenbank, mit der Server Action als eingesetzter Funktion:
 
 | Lage | geprüft |
 | --- | --- |

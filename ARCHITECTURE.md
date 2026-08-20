@@ -219,7 +219,7 @@ Bestehende Reise → Änderungswunsch → Kontingent (gemeinsam mit reisevorschl
 | Ablauf | `lib/reiseaenderung/erzeugen.ts` | wie 2.1, mit Ports |
 | Server Actions | `lib/reiseaenderung/aktionen.ts` | Erzeugen speichert nichts; Übernehmen wendet erneut an |
 
-Das Modell ändert die Datenbank nicht (ADR-0059). Account-Schreiben ist `SECURITY INVOKER` und atomisch (ADR-0060). `trip_days.stage_id` bindet Tage an Etappen, auch ohne Kalenderdaten (ADR-0057). `trips.revision` verhindert, dass ein veralteter Vorschlag neuere Änderungen überschreibt (ADR-0058).
+Das Modell ändert die Datenbank nicht (ADR-0059). Account-Schreiben ist `SECURITY INVOKER` und atomisch (ADR-0060). `trip_days.stage_id` bindet Tage an Etappen, auch ohne Kalenderdaten (ADR-0057). `trips.revision` steigt bei jeder fachlichen Graphänderung, nicht nur in `reise_aendern()` (ADR-0058). Gast und Konto speichern ungeplante Planpunkte gleich (ADR-0061). Kommerzielle Planpunkte bleiben bei Modelloperationen bis Phase 3 stehen (ADR-0059 Nachtrag).
 
 **Es entsteht keine zweite Persistenz.** Ein Vorschlag aus 2.1 lebt bis zur Freigabe im React-Zustand; danach schreiben Gastweg (`gastreiseAblegen()`) und Kontoweg (`public.reise_anlegen()`) wie das Formular. Eine Änderung aus 2.2 lebt ebenso nur in der Vorschau; danach schreiben `gastreiseAendern()` bzw. `public.reise_aendern()`.
 
@@ -235,7 +235,7 @@ Das Modell ändert die Datenbank nicht (ADR-0059). Account-Schreiben ist `SECURI
 
 Vollständige Beschreibung: [docs/DATENBANK.md](docs/DATENBANK.md). Hier steht nur, wie sie in die Architektur eingebunden ist.
 
-**Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Die Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b, dem Reiseschema aus Phase 1.5, dem Kostenprotokoll aus Phase 2.1 und der Sprachänderung aus Phase 2.2 – **12 Tabellen, 32 Policies und 22 Funktionen**. Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
+**Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Die Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b, dem Reiseschema aus Phase 1.5, dem Kostenprotokoll aus Phase 2.1 und der Sprachänderung aus Phase 2.2 – **12 Tabellen, 32 Policies und 23 Funktionen**. Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
 
 Vier der zwölf Tabellen sind die Reisedaten: `trips`, `trip_stages`, `trip_days`, `trip_items`. Sie sind privat und tragen ihre Eigentümerkennung selbst; ein zusammengesetzter Fremdschlüssel `(trip_id, user_id) → trips (id, user_id)` verhindert, dass ein Kind an einer fremden Reise hängt. `trip_days.stage_id` bindet einen Tag an eine Etappe derselben Reise, auch ohne Kalenderdatum (ADR-0057). `trips.revision` und `trips.last_mutation_id` tragen Fassung und Idempotenz einer Sprachänderung (ADR-0058). Enum-Typen führt das Schema keine mehr – jeder Wertebereich steht in einer Prüfbedingung ([DECISIONS.md](DECISIONS.md) ADR-0043).
 
@@ -259,7 +259,7 @@ Auf den vier Reisetabellen prüft **keine** Policy eine Fähigkeit: Adminrechte 
 
 Seit Phase 1.4b prüft `npm run db:rechte` eine vierte Regel: Keine Funktion nennt eine Struktur, die es nicht gibt. Tabellenbezüge im Rumpf einer Funktion stehen nicht in `pg_depend`, PostgreSQL verfolgt sie also nicht – 18 Funktionen hätten die Entfernung ihrer Tabellen unbemerkt überlebt und erst beim Aufruf gescheitert. Das ist dieselbe Fehlerklasse, die `npm run check:schema-bezug` für den Anwendungscode abdeckt, nun auch für die Datenbank selbst.
 
-`npm run db:sicherheit` führt benannte Nachweise, positiv und negativ, gegen den Development-Branch. Sie belegen unter anderem, dass sich kein Konto selbst befördert, keine Rolle eine fremde Reise liest, dieselbe Gastreise zweimal übernommen genau eine Reise ergibt – und dass `public.reise_aendern()` eine veraltete Fassung ablehnt, denselben Retry nicht zweimal anwendet, kommerzielle Felder nicht überschreibt und bei Fehler die Revision zurückrollt.
+`npm run db:sicherheit` führt benannte Nachweise, positiv und negativ, gegen den Development-Branch. Sie belegen unter anderem, dass sich kein Konto selbst befördert, keine Rolle eine fremde Reise liest, dieselbe Gastreise zweimal übernommen genau eine Reise ergibt – und dass `public.reise_aendern()` eine veraltete Fassung ablehnt, denselben Retry nicht zweimal anwendet, kommerzielle Felder nicht überschreibt, bei Fehler die Revision zurückrollt und dass ein direkter Planpunkt die Fassung erhöht.
 
 **Die Reisedaten liegen seit Phase 1.5 in der Datenbank.** Phase 1.4b hatte die 29 Tabellen der alten Produktidee entfernt und damit ein Schema hinterlassen, das nur noch beschrieb, was verwendet wird – aber keine Reise speichern konnte. Die vier Reisetabellen füllen diese Lücke; `creator_sessions`, die letzte Alt-Tabelle, ist mit derselben Phase entfallen. Der Übergang ist in [docs/LEGACY_ENTFERNUNG.md](docs/LEGACY_ENTFERNUNG.md) belegt, das Ergebnis in [docs/DATENBANK.md](docs/DATENBANK.md) beschrieben, das Modell fachlich in [docs/REISEN.md](docs/REISEN.md).
 

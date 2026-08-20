@@ -533,8 +533,9 @@ Offen aus 2.1:
 - [x] atomisches `public.reise_aendern()`, Idempotenz, veraltete Fassung, Gastspeicher
 - [x] Tests für Operationen, Zuordnung, kommerzielle Felder, Kontingent, RLS
 - [x] Nachtrag: `reise_anlegen()` ohne eigene Missbrauchszählung (`20260820050000`, ADR-0045/0048)
+- [x] Nachtrag: Graph-Revision über Trigger (`20260820060000`), Guest-`ohneTag`, kommerzielle Planpunkte bei Modelloperationen geschützt
 
-**Voraussetzungen erfüllt.** Keine neue Infrastruktur. Dieselbe Kostenschranke wie Phase 2.1. Production unverändert aus.
+**Voraussetzungen erfüllt.** Keine neue Infrastruktur. Dieselbe Kostenschranke wie Phase 2.1. Production unverändert aus. Draft-PR #18 bleibt Draft, nicht mergen.
 
 ---
 
