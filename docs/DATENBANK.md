@@ -65,8 +65,8 @@ Ein Unterschied ist wichtig: Alle Skripte ausser `db:parallelitaet` und `db:anwe
 | CHECK-Bedingungen | 56 | 45 | 4 | 26 |
 | Indizes | 34 | 31 | 25 | 127 |
 | RLS-Policies | 32 | 31 | 19 | 66 |
-| Funktionen | 23 | 18 | 19 | 43 |
-| Trigger | 16 | 7 | 4 | 13 |
+| Funktionen | 24 | 18 | 19 | 43 |
+| Trigger | 17 | 7 | 4 | 13 |
 | Enums | **0** | 0 | 2 | 4 |
 | Views / materialisierte Views | 0 | 0 | 0 | 0 |
 | Sequenzen | 1 | 1 | 1 | 2 |
@@ -74,7 +74,7 @@ Ein Unterschied ist wichtig: Alle Skripte ausser `db:parallelitaet` und `db:anwe
 
 Die zwölf Tabellen: `profiles`, `trips`, `trip_stages`, `trip_days`, `trip_items`, `model_usage`, `airports`, `payments`, `refunds`, `stripe_webhooks`, `security_events`, `blocked_ips`. Ihre Einordnung steht in Abschnitt 10.
 
-**Phase 2.2 Nachtrag `20260820060000`:** `public.reise_graph_geaendert()` plus neun Statement-Trigger auf den Kindtabellen. Die Inventur zählt danach 23 Funktionen und 16 Trigger. Production unverändert.
+**Phase 2.2 Nachtrag `20260820060000`:** `public.reise_graph_geaendert()` plus neun Statement-Trigger auf den Kindtabellen. **Nachtrag `20260820070000`:** `public.reise_stamm_geaendert()` erhöht die Fassung bei direkten Stammdaten-Updates auf `trips`. Die Inventur zählt danach 24 Funktionen und 17 Trigger. Production unverändert.
 
 Das Wachstum liegt vollständig bei den Reisedaten: Die vier neuen Tabellen tragen 61 Spalten, 43 CHECK-Bedingungen, 6 Fremdschlüssel, 5 Eindeutigkeitsbedingungen, 15 Indizes, 16 Policies und 5 Auslöser – vier für `updated_at`, einer für die Erzeugungsregeln von `public.trips` (Abschnitt 7a). Gleichzeitig sind mit `creator_sessions` 16 Spalten, 7 Indizes und 4 Policies sowie die neun Creator-Spalten des Profils entfallen – die Nettozahlen der Tabelle oben sind deshalb kleiner als die Zugänge.
 
@@ -154,6 +154,7 @@ Der Zustand nach Phase 1.4 steht in Abschnitt 9; dort ist auch nachgewiesen, das
 | `20260820040000_modell_reiseaenderung.sql` | `model_usage.funktion` kennt `reiseaenderung`; derselbe Kontingenttopf |
 | `20260820050000_reise_anlegen_ohne_schranke.sql` | Nachtrag: nimmt die versehentlich zurückgeholte Zählung aus `reise_anlegen()` wieder heraus (ADR-0045, ADR-0048) |
 | `20260820060000_reise_graph_revision.sql` | Statement-Trigger erhöhen `trips.revision` bei Graphänderungen; `reise_anlegen()` übernimmt `ungeplante`; keine Doppelzählung in den RPCs (ADR-0058 Nachtrag, ADR-0061) |
+| `20260820070000_reise_trips_revision.sql` | Direkte Stammdaten-Updates auf `trips` erhöhen `revision`, ohne `reise_aendern()` doppelt zu zählen (ADR-0058 Nachtrag) |
 
 Die Reihenfolge ist nicht beliebig: `20260817100200` darf erst laufen, wenn `20260817100000` die Rollen der Betroffenen übernommen und `20260817100100` alle Policies auf `creator_profiles.role` umgestellt hat. Sonst verlöre jemand seinen Zugang oder eine Policy liefe ins Leere.
 

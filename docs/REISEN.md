@@ -133,7 +133,7 @@ vertrauenswürdige Reise → Wunsch → Operationen → anwenden → Vorschau �
   → public.reise_aendern()  bzw.  gastreiseAendern()
 ```
 
-`public.reise_aendern(jsonb)` ist `SECURITY INVOKER`, atomisch, prüft `trips.revision`, ist über `last_mutation_id` idempotent und schreibt keine Preise, Anbieter oder Buchungsfelder. Bestehende Kennungen unveränderter Zeilen bleiben. Eine veraltete Fassung (zweiter Tab) wird abgelehnt, nicht still überschrieben. Direkte Änderungen an Etappen, Tagen und Planpunkten erhöhen dieselbe Fassung (ADR-0058 Nachtrag).
+`public.reise_aendern(jsonb)` ist `SECURITY INVOKER`, atomisch, prüft `trips.revision`, ist über `last_mutation_id` idempotent und schreibt keine Preise, Anbieter oder Buchungsfelder. Bestehende Kennungen unveränderter Zeilen bleiben. Eine veraltete Fassung (zweiter Tab) wird abgelehnt, nicht still überschrieben. Direkte Änderungen an Etappen, Tagen, Planpunkten und Stammdaten der Reise erhöhen dieselbe Fassung (ADR-0058 Nachtrag).
 
 Das Modell sieht einen Snapshot ohne Handelsfelder und liefert Operationen, keine Ersatzreise (ADR-0059). Planpunkte mit Anbieter, Buchungslink, Fremdkennung oder Preis bleiben bis Phase 3 bei Modelloperationen stehen. Kontingent und Kostendeckel sind dieselben wie beim Vorschlag.
 

@@ -1534,6 +1534,8 @@ Bestehende Zeilen werden beim Migrieren zugeordnet: eine Etappe, sonst Datumsüb
 
 **Nachtrag, 20. August 2026:** Jede fachliche Änderung an `trip_stages`, `trip_days` oder `trip_items` erhöht `trips.revision` und damit `updated_at`. Statement-Trigger rufen `public.reise_graph_geaendert()` auf. `reise_anlegen()` und `reise_aendern()` setzen transaktionslokal `jetnity.graph_mutation`, damit ihre Kindzeilen die Fassung nicht ein zweites Mal zählen. Direkte Schreibwege (`planpunktAnlegen`, `planpunktEntfernen`, PostgREST) zählen mit: Ein Sprachänderungsvorschlag auf Fassung N ist nach einem manuellen Planpunkt veraltet.
 
+**Nachtrag, 20. August 2026 (Stammdaten):** Ein direktes UPDATE der fachlichen Spalten auf `public.trips` (`title`, `origin`, `start_date`, `end_date`, `travellers`, `currency`, `budget_amount`, `status`, `pace`, `interests`, `travel_wish`) erhöht `revision`, wenn der Schreibweg sie nicht bereits gesetzt hat. `reise_aendern()` schreibt `revision + 1` selbst und wird nicht doppelt gezählt. Der Kind-Trigger ändert nur `revision` und löst den Stamm-Auslöser nicht aus.
+
 ---
 
 ## ADR-0059 – Das Modell ändert Operationen, nicht die Reise

@@ -18,7 +18,7 @@ Verbindlicher Ablauf der Änderung:
 - Modellantworten sind untrusted input
 - Preise, Provider, Booking-URLs und External-Refs kommen nicht aus dem Modell und werden auf unveränderten Einträgen erhalten
 - `trip_days.stage_id` ordnet Tage einer Etappe zu, auch ohne Kalenderdaten
-- `trips.revision` / `last_mutation_id` tragen optimistische Concurrency und Idempotenz; die Fassung steigt bei jeder Graphänderung, nicht nur in `reise_aendern()`
+- `trips.revision` / `last_mutation_id` tragen optimistische Concurrency und Idempotenz; die Fassung steigt bei jeder Graph- und Stammdatenänderung, nicht nur in `reise_aendern()`
 - Account: `public.reise_aendern()`, SECURITY INVOKER, RLS, atomisch
 - Gast: derselbe fachliche Ablauf im LocalStorage, inklusive ungeplanter Planpunkte
 - Kommerzielle Planpunkte bleiben bei Modelloperationen bis Phase 3 stehen
