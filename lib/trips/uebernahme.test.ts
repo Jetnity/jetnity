@@ -483,7 +483,7 @@ describe('Manipulationsversuche', () => {
     // Die lokalen Kennungen der Tage sind in der Datenbank ohne Bedeutung. Die
     // Zuordnung eines Planpunkts läuft über `day_index`.
     const felder = new Set(server.empfangen[0].days.flatMap((tag) => Object.keys(tag)))
-    assert.deepEqual([...felder].sort(), ['day_date', 'day_index', 'items', 'title'])
+    assert.deepEqual([...felder].sort(), ['day_date', 'day_index', 'items', 'stage_position', 'title'])
   })
 
   test('ein unlesbarer Eintrag führt nicht zu einem Aufruf', async () => {

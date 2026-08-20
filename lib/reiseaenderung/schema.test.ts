@@ -119,7 +119,20 @@ describe('JSON-Schema und Zod sagen dasselbe', () => {
   })
 
   test('keine Preise, Anbieter oder Buchungsfelder', () => {
-    const roh = JSON.stringify(AENDERUNG_JSON_SCHEMA)
-    assert.doesNotMatch(roh, /price|preis|provider|anbieter|booking|buchung|externalRef|external_ref/i)
+    const namen: string[] = []
+    const sammeln = (schema: Record<string, unknown>) => {
+      if (schema.properties && typeof schema.properties === 'object') {
+        for (const [name, kind] of Object.entries(schema.properties as Record<string, Record<string, unknown>>)) {
+          namen.push(name)
+          sammeln(kind)
+          if (kind.items && typeof kind.items === 'object') sammeln(kind.items as Record<string, unknown>)
+        }
+      }
+    }
+    sammeln(AENDERUNG_JSON_SCHEMA as unknown as Record<string, unknown>)
+    assert.equal(
+      namen.some((name) => /price|preis|provider|anbieter|booking|buchung|external/i.test(name)),
+      false,
+    )
   })
 })

@@ -326,7 +326,7 @@ const nutzlastTagSchema = z.object({
    *
    * Darüber erhält `trip_days.stage_id` seine Zuordnung, auch ohne Kalenderdatum.
    */
-  stage_position: z.number().int().min(1).max(200).nullable(),
+  stage_position: z.number().int().min(1).max(200).nullable().optional().default(null),
   items: z.array(nutzlastPunktSchema).max(GRENZEN.punkteJeReise),
 })
 

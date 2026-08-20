@@ -185,9 +185,10 @@ describe('Sol fällt genau einmal auf Terra zurück', () => {
           return {
             ok: false,
             klasse: 'zeitueberschreitung',
+            hinweis: 'Kein Ergebnis innerhalb von 120000 ms.',
             nutzung: null,
             laufzeitMs: 120_000,
-          } satisfies Modellergebnis
+          }
         }
         return antwortet(ANTWORT_ZWEI_TAGE_LAENGER, 4000)
       },

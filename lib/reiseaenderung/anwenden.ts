@@ -138,16 +138,14 @@ function stammdaten(reise: Reisegraph, op: Modelloperation) {
   if (op.interessen !== null) reise.interests = [...new Set(op.interessen)]
   if (op.reisewunsch !== null) reise.travelWish = op.reisewunsch
   if (op.startdatum) {
-    const delta = reise.startDate
-      ? Math.round(
-          (Date.parse(`${op.startdatum}T00:00:00Z`) - Date.parse(`${reise.startDate}T00:00:00Z`)) /
-            86_400_000,
-        )
-      : 0
-    reise.startDate = op.startdatum
-    if (reise.endDate && delta !== 0) {
-      zeitraumVerschieben(reise, { ...op, tageDelta: delta })
-    } else if (!reise.endDate) {
+    if (reise.startDate) {
+      const delta = Math.round(
+        (Date.parse(`${op.startdatum}T00:00:00Z`) - Date.parse(`${reise.startDate}T00:00:00Z`)) /
+          86_400_000,
+      )
+      if (delta !== 0) zeitraumVerschieben(reise, { ...op, tageDelta: delta })
+    } else {
+      reise.startDate = op.startdatum
       reindex(reise)
     }
   }

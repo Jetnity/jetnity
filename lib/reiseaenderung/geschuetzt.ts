@@ -11,7 +11,7 @@
 
 import type { Reisegraph, TripItem } from '@/types/trips'
 
-export const GESCHUETZTE_FELDER = [
+const GESCHUETZTE_FELDER = [
   'priceAmount',
   'priceCurrency',
   'provider',
@@ -19,7 +19,7 @@ export const GESCHUETZTE_FELDER = [
   'bookingUrl',
 ] as const
 
-export type GeschuetztesFeld = (typeof GESCHUETZTE_FELDER)[number]
+type GeschuetztesFeld = (typeof GESCHUETZTE_FELDER)[number]
 
 function allePunkte(reise: Reisegraph): TripItem[] {
   return [...reise.days.flatMap((tag) => tag.items), ...reise.ohneTag]
