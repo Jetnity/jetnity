@@ -1,12 +1,21 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import type { HotelKandidat, HotelSuchanfrage, QuartierKandidat, QuartierSuchkontext } from '@/lib/hotels/domain'
+import {
+  HOTEL_ABDECKUNGSHINWEIS,
+  HOTEL_MARKEN,
+  HOTEL_SUCHE_GRENZEN,
+  type HotelKandidat,
+  type HotelSuchanfrage,
+  type QuartierKandidat,
+  type QuartierSuchkontext,
+} from '@/lib/hotels/domain'
+import { HotelProviderFehler } from '@/lib/hotels/provider'
 import { HOTEL_RANGLISTE_GEWICHTE, hotelOptionenBewerten } from '@/lib/hotels/ranking'
 import { QUARTIER_GEWICHTE, quartiereBewerten } from '@/lib/hotels/quartier-ranking'
 
 const ANFRAGE: HotelSuchanfrage = {
-  destinationPlaceId: 'geonames:2950159',
+  destinationPlaceId: 'geonames:3128760',
   checkIn: '2026-09-12',
   checkOut: '2026-09-16',
   rooms: 1,
@@ -97,6 +106,20 @@ const PREMIUM = hotel({
     ruheScore: 0.85,
     praeferenzFitScore: 0.9,
   },
+})
+
+describe('Hotel Foundation', () => {
+  test('Grenzen, Marken und Coverage-Hinweis sind explizit', () => {
+    assert.equal(HOTEL_SUCHE_GRENZEN.empfohleneOptionen, 5)
+    assert.deepEqual(HOTEL_MARKEN, ['jetnity', 'best_value', 'best_location', 'quiet', 'premium'])
+    assert.match(HOTEL_ABDECKUNGSHINWEIS, /keine provisionsgetriebene Rangliste/i)
+  })
+
+  test('Providerfehler bleibt ein enger technischer Vertrag', () => {
+    const fehler = new HotelProviderFehler('timeout', 'Zeitüberschreitung')
+    assert.equal(fehler.art, 'timeout')
+    assert.equal(fehler.name, 'HotelProviderFehler')
+  })
 })
 
 describe('Hotelranking', () => {
