@@ -102,6 +102,8 @@ Die Logik (`lib/airports/importieren.ts`) ist ohne Netzwerk prüfbar. Tests lade
 3. Import schreiben: `npm run airports:importieren -- --schreiben --entwicklung`.
 4. Anzahl und Pflichtcodes prüfen. Die Pflichtcodes sind mindestens ZRH, GVA, BSL, LHR, LGW, JFK, EWR, DXB, BKK, HND, NRT.
 
+Erster Development-Import am 20. August 2026: **5332** Zeilen (1169 large, 3396 medium, 767 small mit Linienverkehr), 80604 OurAirports-Zeilen verworfen. Vorher 0. Production unverändert.
+
 Production bleibt unverändert. Die Schemaerweiterung und der Inhalt sind getrennte Handlungen; keines von beiden darf still nach Production.
 
 ---

@@ -33,7 +33,7 @@ describe('Lokale Flughafensuche', () => {
     const codes = optionen.map((option) => option.value)
     assert.equal(codes.includes('LHR'), true)
     assert.equal(codes.includes('LGW'), true)
-    assert.ok(codes.indexOf('LHR') < codes.indexOf('LGW') || codes.indexOf('LHR') === 0)
+    assert.equal(flughaefenOrdnen(zeilen, 'LHR')[0]?.value, 'LHR')
   })
 
   test('New York trifft JFK und Newark', () => {

@@ -240,7 +240,7 @@ Diese Punkte sind bekannt und blockieren die Flugbasis nicht, müssen aber im Pr
 
 ## 11. Sofortiger Startpunkt im nächsten Chat
 
-**Airport-Datenbasis auf Development ist der nächste harte Schritt vor dem Duffel-Preview. Hotels, Aktivitäten und Transfers noch nicht beginnen. Duffel-Preview wartet auf den Test-Zugang.**
+**Duffel-Preview wartet auf den Test-Zugang. Hotels, Aktivitäten und Transfers noch nicht beginnen.** Development hat die lokale Flughafenbasis (5332 Zeilen). Production-Airportbestand und Production-Flugsuche bleiben eigene Freigaben.
 
 Benötigte Preview-Credentials (nicht Production):
 
