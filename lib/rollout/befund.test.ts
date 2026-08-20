@@ -3,9 +3,11 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 import {
+  AIRPORT_ANZAHL,
   AIRPORT_PFLICHT,
   ORT_FANTASIE,
   PHASE31_MIGRATIONEN,
+  PLACE_ANZAHL,
   anzahlIstPlausibel,
   rolloutBefund,
   vorabBefund,
@@ -89,8 +91,10 @@ describe('Production-Rollout-Befund', () => {
   })
 
   test('Anzahlgrenzen sind Orientierungen, keine exakte Dump-Kopie', () => {
-    assert.equal(anzahlIstPlausibel(5200, { min: 4000, max: 8000 }), true)
-    assert.equal(anzahlIstPlausibel(124000, { min: 100000, max: 200000 }), true)
-    assert.equal(anzahlIstPlausibel(40, { min: 4000, max: 8000 }), false)
+    assert.equal(anzahlIstPlausibel(5200, AIRPORT_ANZAHL), true)
+    assert.equal(anzahlIstPlausibel(124000, PLACE_ANZAHL), true)
+    assert.equal(anzahlIstPlausibel(40, AIRPORT_ANZAHL), false)
+    assert.equal(AIRPORT_ANZAHL.orientierung, 5332)
+    assert.equal(PLACE_ANZAHL.orientierung, 124811)
   })
 })

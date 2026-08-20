@@ -88,7 +88,7 @@ async function beobachten(ref: string, token: string): Promise<RolloutBeobachtun
 
   const ortPflicht = placesExistiert
     ? ((await runSql(
-        `select name from public.places where name in (${ORT_PFLICHT.map(sqlText).join(', ')})`,
+        `select distinct name from public.places where name in (${ORT_PFLICHT.map(sqlText).join(', ')})`,
       )) as { name: string }[]).map((zeile) => zeile.name)
     : []
 
