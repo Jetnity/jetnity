@@ -17,6 +17,7 @@ import { CloudOff, MapPin, Trash2 } from 'lucide-react'
 import type { FlugOptionSichtbar } from '@/lib/flights/client-sicht'
 import { alsFlugMomentaufnahme } from '@/lib/flights/uebernahme'
 import type { HotelOptionSichtbar } from '@/lib/hotels/client-sicht'
+import { hotelZeitraumAusEtappe } from '@/lib/hotels/reisegraph'
 import { alsHotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import {
   gastFlugUebernehmen,
@@ -172,7 +173,9 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
       hotelsuche={
         <HotelBereich
           reise={reise}
-          onUebernehmen={async (etappe, option: HotelOptionSichtbar, zeitraum, dayId) => {
+          onUebernehmen={async (etappe, option: HotelOptionSichtbar, _zeitraum, dayId) => {
+            const zeitraum = hotelZeitraumAusEtappe(reise, etappe)
+            if (!zeitraum) return 'Für diese Etappe fehlt ein belastbarer Zeitraum.'
             const aufnahme = alsHotelMomentaufnahme(option, zeitraum)
             if (!aufnahme) return 'Diese Hoteloption ist unvollständig.'
             try {

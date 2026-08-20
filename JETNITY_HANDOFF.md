@@ -93,7 +93,7 @@ Das Modell schreibt niemals direkt in die Datenbank. Modellantworten sind untrus
 
 ## 5. Nächster Produktblock
 
-**Phase 3.2 Hotel Foundation ist in Arbeit** auf Branch `phase-3-2-hotel-foundation`, Draft-PR #22. Die Foundation (Domäne, Quartierkontext, Pipeline, Workspace, `stay`-Übernahme) ist integrationsbereit. Ein echter Hotelprovider ist noch nicht gewählt.
+**Phase 3.2 / 3.2b Hotel Foundation ist in Arbeit** auf Branch `phase-3-2-hotel-foundation`, Draft-PR #22. Die Foundation (Domäne, Quartierkontext, Pipeline, Workspace, `stay`-Abbildung) und die provider-unabhängige Härtung (Nachweis-Naht, Reisegraph, API-Vertrag) sind integrationsbereit. Ein echter Hotelprovider ist noch nicht gewählt. Die Konto-Übernahme ist fail closed, bis ein `HotelNachweis` existiert.
 
 Danach folgen Aktivitäten und Transfers. Nicht mehrere Provider gleichzeitig anbinden; schrittweise und produktorientiert vorgehen.
 
@@ -211,7 +211,7 @@ Diese Punkte sind bekannt und müssen im Projektgedächtnis bleiben:
 
 ## 12. Sofortiger Startpunkt für den nächsten Agenten
 
-1. An Phase 3.2 auf `phase-3-2-hotel-foundation` / PR #22 weiterarbeiten oder den Hotelanbieter als nächste Freigabe entscheiden.
+1. Phase 3.2b-Härtung auf `phase-3-2-hotel-foundation` / Draft-PR #22 ist der aktuelle Hotelstand. Nächste Freigabe: genau einen Hotelanbieter plus `HotelNachweis`, nicht Production.
 2. Nicht mehr an PR #19 weiterarbeiten – er ist gemergt und abgeschlossen.
 3. Die Hotel-/Quartierlogik aus Abschnitt 5 und `JETNITY_VISION.md` verbindlich erhalten.
 4. Duffel-Sandbox separat nachholen, sobald Zugang eintrifft; sie blockiert Hotels nicht.

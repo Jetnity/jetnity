@@ -7,6 +7,7 @@ import type { BewerteteHotelOption, BewertetesQuartier } from '@/lib/hotels/doma
 const QUARTIER: BewertetesQuartier = {
   id: 'barcelona',
   name: 'Barcelona',
+  herkunft: 'etappenort',
   zentrum: { lat: 41.3874, lon: 2.1686 },
   taeglicheWegeMinuten: null,
   anreiseTransferMinuten: null,
@@ -63,6 +64,7 @@ describe('Client-Sicht der Hotelsuche', () => {
     })
     assert.equal('score' in koerper.options[0]!, false)
     assert.equal(koerper.quartier && 'score' in koerper.quartier, false)
+    assert.equal(koerper.quartier?.herkunft, 'etappenort')
     assert.equal(clientEnthaeltGeheimnis(koerper), false)
     assert.equal(koerper.options[0]?.name, 'Hotel Test')
     assert.ok(koerper.quartier?.reasons.length)

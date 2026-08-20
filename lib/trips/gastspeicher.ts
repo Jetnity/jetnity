@@ -58,6 +58,7 @@ import type { Modelloperation } from '@/lib/reiseaenderung/schema'
 import { interesseLesen, tempoLesen } from '@/lib/trips/bezeichnungen'
 import type { FlugMomentaufnahme } from '@/lib/flights/uebernahme'
 import { momentaufnahmeAlsPunkt } from '@/lib/flights/uebernahme'
+import { hotelReisegraphPruefen } from '@/lib/hotels/reisegraph'
 import type { HotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import { hotelMomentaufnahmeAlsPunkt } from '@/lib/hotels/uebernahme'
 import { reiseLesen, type PlanpunktFormular } from '@/lib/trips/schema'
@@ -637,26 +638,29 @@ export function gastFlugUebernehmen(
   })
 }
 
-/** Übernimmt eine geprüfte Hoteloption als kommerziellen Unterkunftspunkt. */
+/**
+ * Übernimmt eine Hoteloption in die Gastreise.
+ *
+ * LocalStorage bleibt vom Nutzer manipulierbar. Die UI darf nur Optionen aus
+ * der Jetnity-Suche übergeben; das ist keine serverseitige Verifikation.
+ */
 export function gastHotelUebernehmen(
   reise: Trip,
   aufnahme: HotelMomentaufnahme,
   stageId: string,
   dayId: string | null,
 ): Trip {
-  const etappe = reise.stages.find((eintrag) => eintrag.id === stageId)
-  if (!etappe) throw new Error('Diese Etappe gehört nicht zur Reise.')
-
-  const tag = dayId ? reise.days.find((eintrag) => eintrag.id === dayId) : undefined
-  if (dayId && !tag) throw new Error('Dieser Tag gehört nicht zur Reise.')
-  if (tag && tag.stageId && tag.stageId !== stageId) {
-    throw new Error('Dieser Tag gehört nicht zu dieser Etappe.')
+  const graph = hotelReisegraphPruefen(reise, { tripId: reise.id, stageId, dayId })
+  if (!graph.ok) throw new Error(graph.message)
+  if (aufnahme.startsOn !== graph.checkIn || aufnahme.endsOn !== graph.checkOut) {
+    throw new Error('Der Zeitraum dieser Unterkunft passt nicht zur Etappe.')
   }
 
+  const tag = graph.tag
   const punkt = hotelMomentaufnahmeAlsPunkt(aufnahme, {
     id: kennungErzeugen('item'),
     dayId: tag?.id ?? null,
-    stageId,
+    stageId: graph.etappe.id,
     position: tag ? tag.items.length + 1 : reise.ohneTag.length + 1,
   })
 

@@ -436,6 +436,77 @@ describe('Geschützte kommerzielle Felder', () => {
   })
 })
 
+describe('Geschützter kommerzieller stay', () => {
+  function mitStay() {
+    const basis = reise()
+    basis.days[0]!.items.push({
+      id: 'item-stay',
+      dayId: 'day-1',
+      stageId: 'stage-1',
+      kind: 'stay',
+      title: 'Hotel Eixample · Eixample',
+      note: '2026-09-12 bis 2026-09-14',
+      position: 2,
+      startsOn: '2026-09-12',
+      startsAt: null,
+      endsOn: '2026-09-14',
+      endsAt: null,
+      priceAmount: 760,
+      priceCurrency: 'CHF',
+      provider: 'test-hotel',
+      externalRef: 'ref-77',
+      bookingUrl: null,
+    })
+    return basis
+  }
+
+  test('punkt_anpassen ändert einen kommerziellen stay nicht', () => {
+    const ergebnis = anwenden(
+      [
+        op({
+          art: 'punkt_anpassen',
+          punktId: 'item-stay',
+          titel: 'Anderes Hotel',
+          notiz: 'neu',
+          punktArt: 'note',
+          beginn: '18:00',
+          tagId: 'day-2',
+        }),
+      ],
+      mitStay(),
+    )
+    assert.equal(ergebnis.ok, true)
+    if (!ergebnis.ok) return
+    const stay = ergebnis.reise.days[0]?.items.find((punkt) => punkt.id === 'item-stay')
+    assert.equal(stay?.title, 'Hotel Eixample · Eixample')
+    assert.equal(stay?.kind, 'stay')
+    assert.equal(stay?.priceAmount, 760)
+    assert.equal(stay?.provider, 'test-hotel')
+    assert.equal(stay?.startsOn, '2026-09-12')
+    assert.equal(stay?.dayId, 'day-1')
+  })
+
+  test('punkt_entfernen nimmt einen kommerziellen stay nicht weg', () => {
+    const ergebnis = anwenden([op({ art: 'punkt_entfernen', punktId: 'item-stay' })], mitStay())
+    assert.equal(ergebnis.ok, true)
+    if (!ergebnis.ok) return
+    const alle = [...ergebnis.reise.days.flatMap((tag) => tag.items), ...ergebnis.reise.ohneTag]
+    const stay = alle.find((punkt) => punkt.id === 'item-stay')
+    assert.equal(stay?.kind, 'stay')
+    assert.equal(stay?.provider, 'test-hotel')
+    assert.equal(stay?.priceAmount, 760)
+  })
+
+  test('zeitraum_verschieben lässt den stay-Termin stehen', () => {
+    const ergebnis = anwenden([op({ art: 'zeitraum_verschieben', tageDelta: 7 })], mitStay())
+    assert.equal(ergebnis.ok, true)
+    if (!ergebnis.ok) return
+    const stay = ergebnis.reise.days[0]?.items.find((punkt) => punkt.id === 'item-stay')
+    assert.equal(stay?.startsOn, '2026-09-12')
+    assert.equal(stay?.endsOn, '2026-09-14')
+  })
+})
+
 describe('Unbekannte Referenzen', () => {
   test('unbekannte Etappe', () => {
     const ergebnis = anwenden([op({ art: 'etappe_entfernen', etappeId: 'gibt-es-nicht' })])

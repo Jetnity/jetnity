@@ -4,6 +4,10 @@
 // Der Zähler lebt im Prozess. Auf Vercel gilt er je Instanz – bewusst schmaler
 // als eine Datenbankschranke, solange die Suche in Production aus bleibt.
 //
+// Die IP-Kennung ist kein Authentizitätsbeweis. Das In-Memory-Limit schützt
+// nur Preview/Development vor offensichtlichem Missbrauch. Vor Production
+// braucht es ein gespeichertes, globales Limit.
+//
 // Frei von Next.
 
 export const HOTEL_RATE_GRENZEN = {

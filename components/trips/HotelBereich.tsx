@@ -146,6 +146,10 @@ function HotelEtappe({
 
   const uebernehmen = async (option: HotelOptionSichtbar) => {
     if (!onUebernehmen || !checkIn || !checkOut || uebernimmt) return
+    if (!antwort?.options.some((sichtbar) => sichtbar.id === option.id)) {
+      setMeldung('Diese Hoteloption stammt nicht aus der aktuellen Suche.')
+      return
+    }
     setUebernimmt(true)
     setMeldung('')
     const fehler = await onUebernehmen(
@@ -196,7 +200,9 @@ function HotelEtappe({
                 Gegend
               </p>
               <p className="mt-2 text-base font-semibold text-brand-800">
-                Jetnity empfiehlt: in oder nahe {antwort.quartier.name}
+                {antwort.quartier.herkunft === 'quartiervorschlag'
+                  ? `Jetnity empfiehlt: in oder nahe ${antwort.quartier.name}`
+                  : `Jetnity sucht in ${antwort.quartier.name}. Ein genaueres Viertel folgt, sobald mehr Ortsdaten vorliegen.`}
               </p>
               {antwort.quartier.reasons.length > 0 && (
                 <ul className="mt-2 grid gap-1.5">
@@ -218,8 +224,7 @@ function HotelEtappe({
           )}
 
           {hotelZustand === 'unavailable' && (
-            <p role="status" className="flex items-start gap-3 text-sm leading-6 text-ink-800">
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
+            <p role="status" className="rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
               {antwort.message}
             </p>
           )}

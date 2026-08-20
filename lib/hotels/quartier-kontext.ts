@@ -107,6 +107,7 @@ function etappenKandidat(eingabe: HotelSucheEingabe, anker: ReiseAnker[]): Quart
   return {
     id: eingabe.stage.placeId ?? `stage:${eingabe.stage.id}`,
     name,
+    herkunft: 'etappenort',
     zentrum,
     taeglicheWegeMinuten: null,
     anreiseTransferMinuten: null,

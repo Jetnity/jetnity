@@ -1889,6 +1889,27 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 
 ---
 
+## ADR-0075 – Konto-Hotelübernahme nur über serverseitigen Nachweis
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.2b; kein echter Provider
+
+**Entscheidung:** Eine kommerzielle Hotelübernahme im Konto speichert keine Browseroption. Der Client liefert nur identifiers (`tripId`, `stageId`, `dayId`, `optionId`). Preis, Provider, External-Ref und der Zeitraum kommen aus einem serverseitigen `HotelNachweis` plus dem per RLS geladenen Reisegraphen. Solange kein Nachweis existiert, fällt die Übernahme fail closed. `HotelProvider.suchen()` bleibt schmal; die Auswahlbestätigung ist eine eigene Naht.
+
+**Kontext:** Phase 3.2 validierte die Option mit Zod und persistierte sie. Ein authentifizierter Nutzer konnte damit einen erfundenen `stay` mit beliebigem Preis speichern. Zod prüft Form, nicht Herkunft.
+
+**Alternativen:**
+
+1. *HMAC-Signatur der Suchergebnisse mit einem App-Secret.* Zweckentfremdet Secrets, koppelt Suche und Übernahme, hilft nicht bei Provider-Preisänderungen.
+2. *Nachweis in `HotelProvider.suchen()` einbauen.* Würde die Suchnaht aufblähen und Search mit Booking/Affiliate vermischen.
+3. *Übernahme erst nach dem ersten Provider erlauben, ohne Naht.* Würde dieselbe Lücke später erneut öffnen.
+
+**Begründung:** Die Vertrauensgrenze muss stehen, bevor der erste Adapter kommt. Tests können einen Fake-Katalog injizieren. Search-Provider und Affiliate-Partner müssen nicht identisch sein. Gastreisen bleiben LocalStorage und gelten nicht als serverseitig verifiziert.
+
+**Konsequenzen:** `hotelNachweisAusUmgebung()` gibt heute `null` zurück. Der erste Provider oder ein Jetnity-eigener serverseitiger Nachweis implementiert `HotelNachweis`. Keine Secret-Signatur, keine Booking.com-/HBX-Annahme. Modelloperationen schützen kommerzielle `stay`-Punkte weiter über `istKommerziell` (ADR-0059).
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

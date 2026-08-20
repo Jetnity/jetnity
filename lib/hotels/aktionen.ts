@@ -1,44 +1,51 @@
 // lib/hotels/aktionen.ts
 //
-// Übernimmt eine geprüfte Hoteloption in eine Reise im Konto.
-// bookingUrl bleibt null. RLS prüft das Eigentum.
+// Übernimmt eine serverseitig nachgewiesene Hoteloption in eine Reise im Konto.
+// Der Browser liefert nur identifiers. bookingUrl bleibt null. RLS prüft das Eigentum.
 
 'use server'
 
 import { revalidatePath } from 'next/cache'
 
-import { alsHotelMomentaufnahme } from '@/lib/hotels/uebernahme'
+import { hotelKontoUebernahmePruefen } from '@/lib/hotels/konto-uebernahme'
+import { hotelNachweisAusUmgebung } from '@/lib/hotels/nachweis'
 import { ersteHotelmeldung, hotelKontoUebernahmeSchema } from '@/lib/hotels/schema'
 import { NICHT_ANGEMELDET, konto, meldungAus, type Aktionsergebnis } from '@/lib/trips/anlegen'
+import { reiseLaden } from '@/lib/trips/daten'
 
 export async function hotelInReiseUebernehmen(eingabe: unknown): Promise<Aktionsergebnis<null>> {
   const geprueft = hotelKontoUebernahmeSchema.safeParse(eingabe)
   if (!geprueft.success) return { ok: false, meldung: ersteHotelmeldung(geprueft.error) }
 
-  const aufnahme = alsHotelMomentaufnahme(geprueft.data.option, {
-    checkIn: geprueft.data.checkIn,
-    checkOut: geprueft.data.checkOut,
-  })
-  if (!aufnahme) return { ok: false, meldung: 'Diese Hoteloption ist unvollständig.' }
-
   const { supabase, benutzerId } = await konto()
   if (!benutzerId) return { ok: false, meldung: NICHT_ANGEMELDET }
 
-  const { data: etappe, error: etappenfehler } = await supabase
-    .from('trip_stages')
-    .select('id')
-    .eq('id', geprueft.data.stageId)
-    .eq('trip_id', geprueft.data.tripId)
-    .maybeSingle()
-  if (etappenfehler) return { ok: false, meldung: meldungAus(etappenfehler) }
-  if (!etappe) return { ok: false, meldung: 'Diese Etappe gehört nicht zur Reise.' }
+  const geladen = await reiseLaden(geprueft.data.tripId)
+  if (geladen.problem) {
+    return {
+      ok: false,
+      meldung:
+        geladen.problem.status === 503
+          ? 'Die Reise konnte gerade nicht geladen werden. Bitte versuche es in einem Moment erneut.'
+          : 'Die Reise konnte nicht geladen werden.',
+    }
+  }
+
+  const reise = geladen.zeilen[0]
+  if (!reise) return { ok: false, meldung: 'Diese Reise wurde nicht gefunden.' }
+
+  const gepruefteUebernahme = await hotelKontoUebernahmePruefen(geprueft.data, {
+    nachweis: hotelNachweisAusUmgebung(),
+    reise,
+  })
+  if (!gepruefteUebernahme.ok) return { ok: false, meldung: gepruefteUebernahme.message }
 
   let zaehlung = supabase
     .from('trip_items')
     .select('id', { count: 'exact', head: true })
     .eq('trip_id', geprueft.data.tripId)
-  zaehlung = geprueft.data.dayId
-    ? zaehlung.eq('day_id', geprueft.data.dayId)
+  zaehlung = gepruefteUebernahme.dayId
+    ? zaehlung.eq('day_id', gepruefteUebernahme.dayId)
     : zaehlung.is('day_id', null)
 
   const { count, error: zaehlfehler } = await zaehlung
@@ -47,20 +54,20 @@ export async function hotelInReiseUebernehmen(eingabe: unknown): Promise<Aktions
 
   const { error, status } = await supabase.from('trip_items').insert({
     trip_id: geprueft.data.tripId,
-    day_id: geprueft.data.dayId,
-    stage_id: geprueft.data.stageId,
+    day_id: gepruefteUebernahme.dayId,
+    stage_id: gepruefteUebernahme.stageId,
     kind: 'stay',
-    title: aufnahme.title,
-    note: aufnahme.note,
+    title: gepruefteUebernahme.aufnahme.title,
+    note: gepruefteUebernahme.aufnahme.note,
     position,
-    starts_on: aufnahme.startsOn,
-    starts_at: aufnahme.startsAt,
-    ends_on: aufnahme.endsOn,
-    ends_at: aufnahme.endsAt,
-    price_amount: aufnahme.priceAmount,
-    price_currency: aufnahme.priceCurrency,
-    provider: aufnahme.provider,
-    external_ref: aufnahme.externalRef,
+    starts_on: gepruefteUebernahme.aufnahme.startsOn,
+    starts_at: gepruefteUebernahme.aufnahme.startsAt,
+    ends_on: gepruefteUebernahme.aufnahme.endsOn,
+    ends_at: gepruefteUebernahme.aufnahme.endsAt,
+    price_amount: gepruefteUebernahme.aufnahme.priceAmount,
+    price_currency: gepruefteUebernahme.aufnahme.priceCurrency,
+    provider: gepruefteUebernahme.aufnahme.provider,
+    external_ref: gepruefteUebernahme.aufnahme.externalRef,
     booking_url: null,
   })
 

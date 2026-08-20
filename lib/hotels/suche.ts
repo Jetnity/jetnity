@@ -59,7 +59,7 @@ async function mitTimeout<T>(arbeit: Promise<T>, timeoutMs: number): Promise<T> 
 export async function hotelsSuchen(
   eingabe: unknown,
   ports: HotelSuchePorts,
-): Promise<{ httpStatus: number; koerper: HotelSucheAntwort }> {
+): Promise<{ httpStatus: number; koerper: HotelSucheAntwort; retryAfterSec?: number }> {
   const geprueft = hotelSucheEingabeSchema.safeParse(eingabe)
   if (!geprueft.success) {
     return {
@@ -101,6 +101,7 @@ export async function hotelsSuchen(
   if (!quota.ok) {
     return {
       httpStatus: 429,
+      retryAfterSec: quota.retryAfterSec,
       koerper: leerAntwort(
         'rate_limited',
         'Du hast gerade zu oft nach Hotels gesucht. Bitte warte einen Moment.',

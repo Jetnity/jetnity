@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 
 import {
   ersteHotelmeldung,
+  hotelKontoUebernahmeSchema,
   hotelOptionLesen,
   hotelSucheEingabeLesen,
   hotelSucheEingabeSchema,
@@ -113,6 +114,21 @@ describe('Hoteloption', () => {
     assert.equal(gelesen?.preisWaehrung, 'CHF')
     assert.equal(gelesen && 'score' in gelesen, false)
     assert.equal(gelesen && 'access_token' in gelesen, false)
+  })
+
+  test('die Konto-Übernahme akzeptiert nur identifiers, keine kommerziellen Felder', () => {
+    const geparst = hotelKontoUebernahmeSchema.safeParse({
+      tripId: '11111111-1111-4111-8111-111111111111',
+      stageId: '22222222-2222-4222-8222-222222222222',
+      dayId: null,
+      optionId: 'opt-1',
+      option: { preisGesamt: 1, provider: 'evil' },
+      checkIn: '2020-01-01',
+    })
+    assert.equal(geparst.success, true)
+    if (!geparst.success) return
+    assert.deepEqual(Object.keys(geparst.data).sort(), ['dayId', 'optionId', 'stageId', 'tripId'])
+    assert.equal(hotelKontoUebernahmeSchema.safeParse({ tripId: 'keine-uuid', optionId: 'x' }).success, false)
   })
 
   test('ohne Preis fällt die Option fail-closed', () => {

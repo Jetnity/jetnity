@@ -1,7 +1,8 @@
 // lib/hotels/schema.ts
 //
-// Laufzeitprüfung der Hotelsuche und der übernommenen Momentaufnahme.
+// Laufzeitprüfung der Hotelsuche und der Konto-Übernahme.
 // Beides kommt aus dem Browser und ist untrusted input.
+// Die Übernahme trägt nur identifiers; kommerzielle Fakten kommen serverseitig.
 //
 // Frei von Next, Supabase und `process.env`.
 
@@ -177,16 +178,13 @@ export function ersteHotelmeldung(fehler: z.ZodError): string {
   return fehler.issues[0]?.message ?? 'Die Hotelangaben sind unvollständig.'
 }
 
-export const hotelKontoUebernahmeSchema = z
-  .object({
-    tripId: z.string().uuid(),
-    stageId: z.string().uuid(),
-    dayId: z.string().uuid().nullable(),
-    checkIn: datum,
-    checkOut: datum,
-    option: hotelOptionSchema,
-  })
-  .refine((wert) => wert.checkIn < wert.checkOut, {
-    message: 'Das Abreisedatum muss nach der Anreise liegen.',
-    path: ['checkOut'],
-  })
+/**
+ * Konto-Übernahme: nur identifiers. Kommerzielle Fakten und der Zeitraum
+ * kommen serverseitig aus Nachweis und Reisegraph.
+ */
+export const hotelKontoUebernahmeSchema = z.object({
+  tripId: z.string().uuid(),
+  stageId: z.string().uuid(),
+  dayId: z.string().uuid().nullable().default(null),
+  optionId: z.string().trim().min(1).max(200),
+})

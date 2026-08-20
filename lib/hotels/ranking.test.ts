@@ -192,6 +192,7 @@ function quartier(werte: Partial<QuartierKandidat> & Pick<QuartierKandidat, 'id'
   return {
     id: werte.id,
     name: werte.name,
+    herkunft: werte.herkunft ?? 'etappenort',
     zentrum: werte.zentrum ?? { lat: 41.39, lon: 2.16 },
     taeglicheWegeMinuten: werte.taeglicheWegeMinuten ?? 30,
     anreiseTransferMinuten: werte.anreiseTransferMinuten ?? 35,

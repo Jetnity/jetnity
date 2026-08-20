@@ -107,14 +107,12 @@ export default function KontoArbeitsbereich({
       hotelsuche={
         <HotelBereich
           reise={reise}
-          onUebernehmen={async (etappe, option: HotelOptionSichtbar, zeitraum, dayId) => {
+          onUebernehmen={async (etappe, option: HotelOptionSichtbar, _zeitraum, dayId) => {
             const ergebnis = await hotelInReiseUebernehmen({
               tripId: reise.id,
               stageId: etappe.id,
               dayId,
-              checkIn: zeitraum.checkIn,
-              checkOut: zeitraum.checkOut,
-              option,
+              optionId: option.id,
             })
             if (!ergebnis.ok) return ergebnis.meldung
             router.refresh()

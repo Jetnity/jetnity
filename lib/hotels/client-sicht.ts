@@ -35,6 +35,7 @@ const VERBOTENE_SCHLUESSEL = [
 export type QuartierSichtbar = {
   id: string
   name: string
+  herkunft: 'etappenort' | 'quartiervorschlag'
   zentrum: { lat: number; lon: number } | null
   reasons: string[]
 }
@@ -77,6 +78,7 @@ function quartierFuerClient(quartier: BewertetesQuartier | null): QuartierSichtb
   return {
     id: quartier.id,
     name: quartier.name,
+    herkunft: quartier.herkunft,
     zentrum: quartier.zentrum,
     reasons: quartier.reasons.slice(0, 3),
   }

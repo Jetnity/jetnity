@@ -73,6 +73,7 @@ describe('Hotelsuche-Orchestrierung', () => {
     assert.equal(koerper.status, 'unavailable')
     assert.equal(koerper.options.length, 0)
     assert.equal(koerper.quartier?.name, 'Barcelona')
+    assert.equal(koerper.quartier?.herkunft, 'etappenort')
     assert.equal(koerper.evidenz.hatWegezeiten, false)
     assert.equal(clientEnthaeltGeheimnis(koerper), false)
   })
@@ -143,5 +144,23 @@ describe('Hotelsuche-Orchestrierung', () => {
     assert.equal(koerper.options.find((eintrag) => eintrag.labels.includes('jetnity'))?.id, 'lage')
     assert.equal('score' in koerper.options[0]!, false)
     assert.equal(clientEnthaeltGeheimnis(koerper), false)
+  })
+
+  test('zu viele Suchen liefern 429 mit Retry-After', async () => {
+    hotelRateLeeren()
+    const ports = {
+      zustand: { aktiv: true, umgebung: 'test' } as const,
+      provider: providerMit([]),
+      kennung: 'hotel-rate',
+    }
+    for (let i = 0; i < 8; i += 1) {
+      const erlaubt = await hotelsSuchen(EINGABE, ports)
+      assert.equal(erlaubt.httpStatus, 200)
+    }
+    const begrenzt = await hotelsSuchen(EINGABE, ports)
+    assert.equal(begrenzt.httpStatus, 429)
+    assert.equal(begrenzt.koerper.status, 'rate_limited')
+    assert.ok((begrenzt.retryAfterSec ?? 0) >= 1)
+    assert.equal(begrenzt.koerper.options.length, 0)
   })
 })

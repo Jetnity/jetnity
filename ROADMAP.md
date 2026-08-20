@@ -24,7 +24,7 @@ Die Reihenfolge ist freigegeben und begründet in [DECISIONS.md](DECISIONS.md), 
 | Phase 2.1 | natürliche Sprache zu strukturiertem Reisevorschlag | **fertig auf Development, Preview aktivierbar, Production aus** |
 | Phase 2.2 | bestehende Reise per Sprache ändern | **fertig, nach main gemergt, Production verifiziert; Modellweg aus** |
 | Phase 3.1 | Flight Foundation, erster Duffel-Adapter | **fertig, nach main gemergt, Production-Flugsuche aus** |
-| Phase 3.2 | Hotel Foundation, Quartierlogik, Suchpipeline | **in Arbeit** auf `phase-3-2-hotel-foundation` |
+| Phase 3.2 | Hotel Foundation, Quartierlogik, Suchpipeline, 3.2b-Härtung | **in Arbeit** auf `phase-3-2-hotel-foundation` |
 | Phase 3 | Hotels (erster Adapter), Aktivitäten, Monetarisierung | als Nächstes nach 3.2 |
 | Phase 4 | Launch-Reife | geplant |
 
@@ -572,7 +572,7 @@ Amadeus Self-Service (eingestellt 17. Juli 2026) wird nicht angebunden. Im aktiv
 
 ## Phase 3.2 – Hotel Foundation · in Arbeit
 
-Provider-unabhängige Hotel-/Quartierdomäne, Quartier zuerst, Suchpipeline, Workspace-Bereich. Kein echter Hotelprovider. Production aus. Branch `phase-3-2-hotel-foundation`, Draft-PR #22.
+Provider-unabhängige Hotel-/Quartierdomäne, Quartier zuerst, Suchpipeline, Workspace-Bereich, 3.2b-Härtung. Kein echter Hotelprovider. Production aus. Branch `phase-3-2-hotel-foundation`, Draft-PR #22.
 
 - [x] provider-unabhängige Hotel-/Quartierdomäne und `HotelProvider`
 - [x] deterministische Quartierbewertung vor der Hotelsuche
@@ -581,11 +581,17 @@ Provider-unabhängige Hotel-/Quartierdomäne, Quartier zuerst, Suchpipeline, Wor
 - [x] geschlossene Pipeline `POST /api/hotels/search` mit Zustand, Timeout, Rate-Limit und Client-Sicht
 - [x] Hotelbereich je Etappe im bestehenden Trip Workspace
 - [x] Übernahme-Abbildung auf bestehendes `trip_items.kind = stay`, ohne neue Migration
+- [x] Konto-Übernahme fail closed ohne serverseitigen Nachweis; Client liefert nur identifiers
+- [x] Etappe, Tag und Zeitraum gegen den Reisegraphen geprüft
+- [x] API-Härtung: Request-Grösse, Content-Type, `Retry-After`, `cache-control: no-store`
+- [x] kommerzieller `stay` gegen Modelloperationen mitgeprüft (`istKommerziell`)
 - [ ] genau einen ersten Hotel-Daten-/Affiliateanbieter entscheiden und anbinden · **eigene Freigabe**
-- [ ] Preview mit echtem Adapter verifizieren
+- [ ] Preview mit echtem Adapter und Nachweis verifizieren
+- [ ] globales/gespeichertes Rate-Limit vor jeder Production-Diskussion
+- [ ] reale Routing-/POI-/ÖV-Daten für echte Quartierwege
 - [ ] Production-Hotelsuche – eigene Freigabe, nicht Teil dieses Schritts
 
-Fachlich: [docs/HOTELS.md](docs/HOTELS.md), ADR-0070 bis ADR-0074.
+Fachlich: [docs/HOTELS.md](docs/HOTELS.md), ADR-0070 bis ADR-0075.
 
 ---
 

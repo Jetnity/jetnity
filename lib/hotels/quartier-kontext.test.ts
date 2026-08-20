@@ -109,6 +109,7 @@ describe('Quartierkontext aus der Reise', () => {
     assert.equal(kontext.kontext?.reiseAnker.length, 1)
     assert.equal(kontext.kontext?.reiseAnker[0]?.name, 'Barcelona')
     assert.equal(kontext.kandidaten[0]?.taeglicheWegeMinuten, null)
+    assert.equal(kontext.kandidaten[0]?.herkunft, 'etappenort')
   })
 
   test('ein früher Abflug erhöht die Abreise-Priorität, erfindet aber keine Transferzeit', () => {

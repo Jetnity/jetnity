@@ -18,7 +18,11 @@ export const HOTEL_SUCHE_GRENZEN = {
   angebote: 40,
   empfohleneOptionen: 5,
   timeoutMs: 12_000,
+  maxAnfrageBytes: 16_384,
 } as const
+
+/** Ob die sichtbare Gegend nur der Etappenort oder ein echter Vorschlag ist. */
+export type QuartierHerkunft = 'etappenort' | 'quartiervorschlag'
 
 /** Wann ein Abflug die letzte Nacht näher an den Abreiseweg rückt. */
 export const FRUEHER_ABFLUG_MINUTE = 8 * 60
@@ -63,6 +67,7 @@ export type QuartierSuchkontext = {
 export type QuartierKandidat = {
   id: string
   name: string
+  herkunft: QuartierHerkunft
   zentrum: GeoPunkt
   /** Geschätzte tägliche Wegezeit zu den bekannten Reiseankern. */
   taeglicheWegeMinuten: number | null
