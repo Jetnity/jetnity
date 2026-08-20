@@ -34,7 +34,7 @@ Phase 3.1 ergänzt:
 - lokale Flughafenbasis aus OurAirports, ohne Provider- und ohne Live-Abfrage
 - lokale Ortsbasis aus GeoNames (CC BY 4.0) plus Flughafen-Zeilen; Startseite und `/planen` speichern nur bestätigte Orte
 
-Entscheidungen: ADR-0057 bis ADR-0061 (Phase 2.2), ADR-0062 bis ADR-0067 (Phase 3.1). Fachlich: `docs/REISEN.md`, `docs/FLUEGE.md`, `docs/FLUGHAFEN.md`, `docs/ORTE.md`, `docs/MODELL.md`, `docs/DATENBANK.md`.
+Entscheidungen: ADR-0057 bis ADR-0061 (Phase 2.2), ADR-0062 bis ADR-0068 (Phase 3.1). Fachlich: `docs/REISEN.md`, `docs/FLUEGE.md`, `docs/FLUGHAFEN.md`, `docs/ORTE.md`, `docs/MODELL.md`, `docs/DATENBANK.md`.
 
 ## 2. Production-Rollout am 20. August 2026
 
@@ -238,6 +238,7 @@ Diese Punkte sind bekannt und blockieren die Flugbasis nicht, müssen aber im Pr
 - Duffel Self-Service / Test deckt nicht den gesamten Markt; die UI darf das nicht als „bester Preis im Internet“ verkaufen.
 - `/api/search/airports` liest nur die lokale Tabelle; ein Fehler bleibt ein Fehler, eine leere Menge eine leere Liste. Development wird über `npm run airports:importieren` befüllt, Production nicht.
 - `/api/search/places` liest nur `public.places` (124 811 Zeilen in Development). Fantasieorte (`Test`, `Mordor`) ergeben keine Treffer und werden nicht als geografischer Kern gespeichert. Der Modellweg kanonisiert eindeutige Etappen- und Abreiseorte gegen dieselbe Tabelle; mehrdeutige oder fehlende Treffer bleiben ohne `place_id`. Production-Places bleiben unverändert.
+- Formularfehler unter `/planen`, auf der Startseite (Ortssuche) und in den Auth-Formularen sitzen am Feld. Beim Absenden scrollt die Ansicht zum ersten Fehler. Eine allgemeine Zusammenfassung ersetzt die Feldmeldung nicht.
 - Der Sicherheitstest `der Dienstweg als Gast bekommt Kontingent` isoliert Live-Gastzeilen der letzten 24 Stunden nur innerhalb der Rollback-Transaktion. Das Development-Tageslimit bleibt 24 und wird nicht erhöht.
 
 ## 11. Sofortiger Startpunkt im nächsten Chat

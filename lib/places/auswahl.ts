@@ -26,20 +26,38 @@ export function auswahlFehlt(
   return null
 }
 
+export function reiseorteFehler(eingabe: {
+  destination: string
+  destinationPlaceId?: string | null
+  origin: string
+  originPlaceId?: string | null
+}): { destination?: string; origin?: string } {
+  const destination = auswahlFehlt(
+    eingabe.destination,
+    eingabe.destinationPlaceId
+      ? { id: eingabe.destinationPlaceId, name: eingabe.destination }
+      : null,
+    'ziel',
+  )
+  const origin = auswahlFehlt(
+    eingabe.origin,
+    eingabe.originPlaceId ? { id: eingabe.originPlaceId, name: eingabe.origin } : null,
+    'abreise',
+  )
+  return {
+    ...(destination ? { destination } : {}),
+    ...(origin ? { origin } : {}),
+  }
+}
+
 export function reiseortePflicht(eingabe: {
   destination: string
   destinationPlaceId?: string | null
   origin: string
   originPlaceId?: string | null
 }): string | null {
-  return (
-    auswahlFehlt(eingabe.destination, eingabe.destinationPlaceId
-      ? { id: eingabe.destinationPlaceId, name: eingabe.destination }
-      : null, 'ziel') ??
-    auswahlFehlt(eingabe.origin, eingabe.originPlaceId
-      ? { id: eingabe.originPlaceId, name: eingabe.origin }
-      : null, 'abreise')
-  )
+  const fehler = reiseorteFehler(eingabe)
+  return fehler.destination ?? fehler.origin ?? null
 }
 
 /** Nur eine bestätigte Ziel-ID darf nach /planen als Ort mitgegeben werden. */

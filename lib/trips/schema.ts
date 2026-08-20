@@ -442,6 +442,15 @@ export const neueReiseSchema = z.object({
   interests: interessen.default([]),
   travelWish: optionalerText(GRENZEN.reisewunsch).nullable().default(null),
 })
+  .superRefine((reise, ctx) => {
+    if (reise.endDate < reise.startDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['endDate'],
+        message: 'Die Rückreise darf nicht vor der Abreise liegen.',
+      })
+    }
+  })
 
 export type NeueReise = z.infer<typeof neueReiseSchema>
 

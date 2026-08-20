@@ -26,7 +26,7 @@ const box = cva(
         lg: 'h-6 w-6 text-[14px]',
       },
       invalid: {
-        true: 'border-destructive ring-destructive',
+        true: 'border-danger-600 ring-danger-600',
         false: '',
       },
     },

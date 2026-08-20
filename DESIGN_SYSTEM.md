@@ -1,6 +1,6 @@
 # Jetnity – Design-System
 
-Stand: 16. August 2026
+Stand: 20. August 2026
 Status: Farbsystem und Responsive-Regeln verbindlich
 
 Die Jetnity-V2-Markenwirkung darf nicht stillschweigend verändert werden ([AGENTS.md](AGENTS.md) Regel 11). Neue Komponenten verwenden ausschließlich die hier definierten Tokens.
@@ -85,6 +85,15 @@ Von hell (auf dunklem Grund) nach dunkel (auf hellem Grund).
 | `--jet-ink-800` | `ink-800` | `#5f756d` | Sekundärtext |
 | `--jet-ink-900` | `ink-900` | `#456059` | starker Sekundärtext |
 | `--jet-ink-950` | `ink-950` | `#39534b` | dunkelster Fließtext |
+
+### danger – Funktionsfarbe
+
+Bereits in `styles/globals.css` definiert; Tailwind-Namen `danger-400` / `danger-600` für Feldfehler und zerstörende Aktionen. Nie als einziges Fehlersignal, immer zusammen mit Fläche, Icon oder Text.
+
+| Token | Tailwind | Hex | Verwendung |
+| --- | --- | --- | --- |
+| `--jet-danger-400` | `danger-400` | `#e86a6e` | auf dunklem Grund |
+| `--jet-danger-600` | `danger-600` | `#c12d32` | Feldfehler und zerstörende Aktion auf hellem Grund |
 
 ### Zusammenführungsregel
 
@@ -225,6 +234,16 @@ Große Schriftgrade werden unterhalb `sm` (640 px) reduziert, darüber bleiben s
 Felder tragen unterhalb `sm` mindestens **16 px** Schriftgröße (`text-base sm:text-sm`). Kleinere Werte lösen auf iOS beim Fokus einen automatischen Zoom aus, der das Layout verschiebt.
 
 Jedes Feld hat genau ein Bedienelement pro Funktion. Das `Input`-Primitiv bringt für `type="password"` bereits einen Umschalter mit; Formulare bauen keinen zweiten daneben.
+
+### 7.6a Feldfehler
+
+Fehler sitzen am betroffenen Feld, nicht nur in einer Meldung unter dem Formular. Beim Absenden werden **alle** ungültigen Felder markiert. Anschließend scrollt die Ansicht zum ersten Fehler und setzt den Fokus dorthin, damit auf dem Telefon niemand unterhalb der Absenden-Taste hängen bleibt.
+
+Sichtbare Signale sind immer mehrere: Rahmen in `danger-600`, ruhige Fläche `surface-50`, Marken-Icon und Text. Reines Rot allein ist kein Fehlersignal.
+
+Jedes fehlerhafte Feld trägt `aria-invalid` und `aria-describedby` auf die eigene Meldung (`role="alert"`). Eine allgemeine Zeile „Bitte prüfe die markierten Angaben.“ darf ergänzen, ersetzt die Feldmeldung aber nicht. Korrigiert der Nutzer das Feld, verschwindet genau dieser Fehler.
+
+Formulare, die eigene Prüfung brauchen, setzen `noValidate`, damit der native Browser-Hinweis die Feldmeldung nicht verdeckt.
 
 ### 7.7 Beschriftungen
 

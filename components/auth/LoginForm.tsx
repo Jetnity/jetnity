@@ -8,6 +8,8 @@ import { supabase } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { erstesFehlerfeld, feldfehlerLoeschen, type Feldfehler } from '@/lib/formular/feldfehler';
+import { feldInSichtNehmen } from '@/lib/formular/sicht';
 import { GoogleIcon, AppleIcon } from '@/components/auth/provider-icons';
 import { MFATotpDialog } from '@/components/auth/MFATotpDialog';
 import { getAAL, startTotpChallenge } from '@/lib/auth/mfa';
@@ -51,7 +53,10 @@ export default function LoginForm() {
   const [capsLock, setCapsLock] = React.useState(false);
 
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
+  const [feldfehler, setFeldfehler] = React.useState<Feldfehler<'email' | 'password'>>({});
   const [infoMsg, setInfoMsg] = React.useState<string | null>(null);
+  const emailRef = React.useRef<HTMLInputElement>(null);
+  const passwordRef = React.useRef<HTMLInputElement>(null);
   const [loading, setLoading] = React.useState(false);
   const [oauthLoading, setOauthLoading] = React.useState<null | 'google' | 'apple'>(null);
 
@@ -75,10 +80,17 @@ export default function LoginForm() {
     setInfoMsg(null);
 
     const em = normalizeEmail(email);
-    if (!em || !password) {
-      setErrorMsg('Bitte E-Mail und Passwort ausfüllen.');
+    const amFeld: Feldfehler<'email' | 'password'> = {
+      ...(!em ? { email: 'Bitte gib deine E-Mail ein.' } : {}),
+      ...(!password ? { password: 'Bitte gib dein Passwort ein.' } : {}),
+    };
+    if (amFeld.email || amFeld.password) {
+      setFeldfehler(amFeld);
+      const erstes = erstesFehlerfeld(amFeld, ['email', 'password']);
+      feldInSichtNehmen(erstes === 'password' ? passwordRef.current : emailRef.current);
       return;
     }
+    setFeldfehler({});
 
     setLoading(true);
     try {
@@ -115,7 +127,8 @@ export default function LoginForm() {
 
     const em = normalizeEmail(email);
     if (!em) {
-      setErrorMsg('Bitte gib zuerst deine E-Mail ein.');
+      setFeldfehler({ email: 'Bitte gib zuerst deine E-Mail ein.' });
+      feldInSichtNehmen(emailRef.current);
       return;
     }
 
@@ -166,40 +179,46 @@ export default function LoginForm() {
         </p>
       </div>
 
-      <form onSubmit={handleLogin} className="space-y-5">
+      <form noValidate onSubmit={handleLogin} className="space-y-5">
         <div className="space-y-2">
-          <Label htmlFor="email" icon={<MailIcon className="h-4 w-4" />}>
+          <Label htmlFor="email" icon={<MailIcon className="h-4 w-4" />} invalid={!!feldfehler.email}>
             E-Mail
           </Label>
           <Input
             id="email"
+            ref={emailRef}
             type="email"
             inputMode="email"
             autoComplete="email"
             placeholder="you@example.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            aria-invalid={!!errorMsg}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setFeldfehler((bisher) => feldfehlerLoeschen(bisher, 'email'));
+            }}
+            error={feldfehler.email}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password" icon={<Lock className="h-4 w-4" />}>
+          <Label htmlFor="password" icon={<Lock className="h-4 w-4" />} invalid={!!feldfehler.password}>
             Passwort
           </Label>
 
           <Input
             id="password"
+            ref={passwordRef}
             type="password"
             autoComplete="current-password"
             placeholder="••••••••"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setFeldfehler((bisher) => feldfehlerLoeschen(bisher, 'password'));
+            }}
             onKeyDown={onPasswordKey}
             onKeyUp={onPasswordKey}
-            required
-            aria-invalid={!!errorMsg}
+            error={feldfehler.password}
           />
 
           {capsLock && (
@@ -210,13 +229,14 @@ export default function LoginForm() {
           )}
         </div>
 
-        {errorMsg && (
+        {(errorMsg || Object.keys(feldfehler).length > 0) && (
           <div
-            className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
-            role="alert"
+            className="flex items-start gap-2 rounded-xl border border-danger-600/25 bg-surface-50 p-3 text-sm text-brand-800"
+            role="status"
+            aria-live="polite"
           >
-            <AlertCircle className="h-4 w-4 mt-0.5" />
-            <p>{errorMsg}</p>
+            <AlertCircle className="h-4 w-4 mt-0.5 text-brand-800" />
+            <p>{errorMsg ?? 'Bitte prüfe die markierten Angaben.'}</p>
           </div>
         )}
 

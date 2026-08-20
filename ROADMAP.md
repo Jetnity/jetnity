@@ -557,6 +557,7 @@ Schlanke interne Flugdomäne, Duffel als erster Datenadapter, deterministisches 
 - [x] Provider-unabhängige Airport-Datenbasis (OurAirports-Import, Development 5332 Zeilen)
 - [x] Destination Validation & Place Foundation (GeoNames-Dump, lokale `public.places` mit 124 811 Development-Orten, gemeinsame Autocomplete)
 - [x] Modellweg kanonisiert eindeutige Abreise- und Etappenorte gegen `public.places`; Mehrdeutiges und Fantasieorte bleiben ohne `place_id`
+- [x] Formularfehler sitzen am Feld, scrollen zum ersten Fehler und bleiben nicht nur als allgemeine Meldung unten
 - [ ] Preview mit Duffel-Test-Token verifizieren
 - [x] Development-Migration `20260820100000` auf dem Development-Branch anwenden
 - [ ] Production-Flugsuche – eigene Freigabe, nicht Teil dieses Schritts

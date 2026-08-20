@@ -2,8 +2,10 @@
 'use client'
 
 import * as React from 'react'
+import { AlertCircle, Loader2, Eye, EyeOff, X } from 'lucide-react'
+
+import { ariaBeschrieben, feldFehlerId } from '@/lib/formular/feldfehler'
 import { cn } from '@/lib/utils'
-import { Loader2, Eye, EyeOff, X } from 'lucide-react'
 
 export type FieldSize = 'sm' | 'md' | 'lg'
 
@@ -71,7 +73,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ) => {
     const generatedId = React.useId()
     const inputId = id ?? `in-${generatedId}`
-    const helpId = error ? `${inputId}-error` : description ? `${inputId}-desc` : undefined
+    const errorId = error ? feldFehlerId(inputId) : undefined
+    const descId = !error && description ? `${inputId}-desc` : undefined
+    const helpId = ariaBeschrieben(errorId, descId)
 
     const inputRef = React.useRef<HTMLInputElement>(null)
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement)
@@ -127,7 +131,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             sizeCls.px,
             'rounded-xl border border-input bg-background shadow-sm transition-all',
             'focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 ring-offset-background',
-            error && 'border-red-500 focus-within:ring-red-500',
+            error && 'border-danger-600 bg-surface-50 focus-within:ring-danger-600',
             disabled && 'opacity-60 cursor-not-allowed',
             innerClassName,
             className
@@ -187,11 +191,12 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <div className="flex items-start justify-between">
           <div className="min-h-[1rem]">
             {error ? (
-              <p id={helpId} className="text-xs text-red-600">
+              <p id={errorId} role="alert" className="flex items-start gap-1.5 text-xs text-danger-600">
+                <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-800" aria-hidden="true" />
                 {error}
               </p>
             ) : description ? (
-              <p id={helpId} className="text-xs text-muted-foreground">
+              <p id={descId} className="text-xs text-muted-foreground">
                 {description}
               </p>
             ) : null}

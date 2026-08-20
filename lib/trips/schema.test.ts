@@ -452,6 +452,18 @@ describe('Das Formular unter /planen', () => {
     assert.equal(neueReiseSchema.safeParse({ ...eingabe, startDate: '' }).success, false)
   })
 
+  test('eine Rückreise vor der Abreise kommt nicht durch', () => {
+    const ergebnis = neueReiseSchema.safeParse({
+      ...eingabe,
+      startDate: '2026-09-16',
+      endDate: '2026-09-12',
+    })
+    assert.equal(ergebnis.success, false)
+    if (!ergebnis.success) {
+      assert.match(ersteMeldung(ergebnis.error), /Rückreise darf nicht vor der Abreise/)
+    }
+  })
+
   test('Rand-Leerzeichen werden entfernt', () => {
     const ergebnis = neueReiseSchema.safeParse({ ...eingabe, title: '  Japan  ' })
 

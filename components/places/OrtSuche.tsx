@@ -6,9 +6,10 @@
 import * as React from 'react'
 import { Loader2 } from 'lucide-react'
 
+import { ariaBeschrieben } from '@/lib/formular/feldfehler'
+import type { OrtAuswahl } from '@/lib/places/auswahl'
 import type { OrtOption, OrtRolle } from '@/lib/places/domain'
 import { ORT_MELDUNG } from '@/lib/places/pruefen'
-import type { OrtAuswahl } from '@/lib/places/auswahl'
 import { cn } from '@/lib/utils'
 
 const DEBOUNCE_MS = 280
@@ -23,6 +24,9 @@ type OrtSucheProps = {
   inputId?: string
   inputClassName?: string
   disabled?: boolean
+  ungueltig?: boolean
+  describedBy?: string
+  inputRef?: React.Ref<HTMLInputElement>
 }
 
 function typText(typ: OrtOption['typ']): string {
@@ -43,6 +47,9 @@ export default function OrtSuche({
   inputId,
   inputClassName,
   disabled = false,
+  ungueltig = false,
+  describedBy,
+  inputRef,
 }: OrtSucheProps) {
   const [text, setText] = React.useState(value?.name ?? initialText)
   const [treffer, setTreffer] = React.useState<OrtOption[]>([])
@@ -167,6 +174,7 @@ export default function OrtSuche({
     <div ref={wurzel} className="relative min-w-0">
       <input
         id={inputId}
+        ref={inputRef}
         value={text}
         onChange={(ereignis) => tippen(ereignis.target.value)}
         onFocus={() => setOffen(true)}
@@ -180,6 +188,8 @@ export default function OrtSuche({
         aria-controls={listeId}
         aria-autocomplete="list"
         aria-activedescendant={aktiv >= 0 ? `${listeId}-${aktiv}` : undefined}
+        aria-invalid={ungueltig || undefined}
+        aria-describedby={ariaBeschrieben(describedBy)}
         disabled={disabled}
         className={inputClassName}
       />

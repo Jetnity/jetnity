@@ -1745,6 +1745,27 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 
 ---
 
+## ADR-0068 – Formularfehler sitzen am Feld, nicht nur in einer Zusammenfassung
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.1
+
+**Entscheidung:** Pflicht- und Validierungsfehler der V2-Formulare erscheinen direkt am betroffenen Feld. Beim Absenden werden alle fehlerhaften Felder markiert. Die Ansicht scrollt zum ersten Fehler und setzt den Fokus dorthin. Eine allgemeine Zeile „Bitte prüfe die markierten Angaben.“ ist nur Ergänzung. Reines Rot ist nie das einzige Fehlersignal.
+
+**Kontext:** Unter `/planen` landete die Ablehnung oft nur unterhalb der Absenden-Taste. Auf dem Telefon sah niemand, welches Feld fehlte. Ortssuche, Datum, Reisende und Budget brauchen dieselbe Regel wie die Auth-Felder, die das `Input`-Primitiv schon vorbereiten.
+
+**Alternativen:**
+
+1. *Nur die native Browser-Validierung.* Uneinheitlich, oft ohne konkreten Satz, und auf iOS leicht zu übersehen.
+2. *Nur eine Toast- oder Banner-Meldung.* Das Feld bleibt unsichtbar.
+3. *Nur den ersten Fehler zeigen.* Der Nutzer korrigiert, sendet erneut, findet den nächsten.
+
+**Begründung:** Mobile-first und Screenreader brauchen die Verbindung Feld → Meldung (`aria-invalid`, `aria-describedby`). Die Fachprüfung bleibt in `lib/formular/feldfehler.ts` und den bestehenden Ortsregeln, nicht in einer neuen Geodatenquelle.
+
+**Konsequenzen:** `/planen`, Startseiten-Ortssuche und die Auth-Formulare teilen dieselbe UX-Regel. `noValidate` verhindert, dass der Browser die eigene Meldung darüberlegt. Production unverändert.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

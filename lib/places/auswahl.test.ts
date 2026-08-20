@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { auswahlFehlt, reiseortePflicht, zielHref } from '@/lib/places/auswahl'
+import { auswahlFehlt, reiseorteFehler, reiseortePflicht, zielHref } from '@/lib/places/auswahl'
 import { ORT_MELDUNG } from '@/lib/places/pruefen'
 import { INSPIRATION_ZIELE } from '@/lib/places/inspiration'
 import { istOrtId } from '@/lib/places/domain'
@@ -22,6 +22,18 @@ describe('Gemeinsame Ortsauswahl', () => {
   test('eine manipulierte ID wird schon in der Auswahlregel abgelehnt', () => {
     assert.equal(auswahlFehlt('Bali', { id: 'mordor', name: 'Bali' }, 'ziel'), ORT_MELDUNG.zielUnbekannt)
     assert.equal(auswahlFehlt('ZRH', { id: 'airport:xxx', name: 'ZRH' }, 'abreise'), ORT_MELDUNG.abreiseUnbekannt)
+  })
+
+  test('Ziel und Abreise werden unabhängig voneinander markiert', () => {
+    assert.deepEqual(
+      reiseorteFehler({
+        destination: 'Test',
+        destinationPlaceId: null,
+        origin: 'Zürich',
+        originPlaceId: null,
+      }),
+      { destination: ORT_MELDUNG.zielFehlt, origin: ORT_MELDUNG.abreiseFehlt },
+    )
   })
 
   test('Startseite und /planen prüfen Ziel und Abreise mit derselben Regel', () => {

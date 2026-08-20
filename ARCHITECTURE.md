@@ -149,7 +149,7 @@ Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
 | Pfad | Aufgabe |
 | --- | --- |
 | `/` | Startseite mit Positionierung und Einstieg in die Reiseplanung |
-| `/planen` | Reisebeschreibung in eigenen Worten (`components/trips/Reiseidee.tsx`) und darunter das Formular (`components/trips/TripPlanner.tsx`) |
+| `/planen` | Reisebeschreibung in eigenen Worten (`components/trips/Reiseidee.tsx`) und darunter das Formular (`components/trips/TripPlanner.tsx`). Feldfehler sitzen am Feld, nicht nur unter der Absenden-Taste (ADR-0068). |
 | `/reisen` | Übersicht der Reisen – im Konto aus Supabase, als Gast die eine Gastreise |
 | `/reisen/[tripId]` | Trip Workspace mit Tagesplanung (`components/trips/TripWorkspace.tsx`) |
 
