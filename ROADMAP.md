@@ -556,7 +556,7 @@ Schlanke interne Flugdomäne, Duffel als erster Datenadapter, deterministisches 
 - [x] Amadeus-Fallback aus `/api/search/airports` entfernt; Suche nur noch `public.airports`
 - [x] Provider-unabhängige Airport-Datenbasis (OurAirports-Import, Development 5332 Zeilen)
 - [ ] Preview mit Duffel-Test-Token verifizieren
-- [ ] Development-Migration `20260820100000` auf dem Development-Branch anwenden
+- [x] Development-Migration `20260820100000` auf dem Development-Branch anwenden
 - [ ] Production-Flugsuche – eigene Freigabe, nicht Teil dieses Schritts
 - [ ] Production-Airport-Schema und -Bestand – eigene Freigabe, nicht Teil dieses Schritts
 
