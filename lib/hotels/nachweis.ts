@@ -36,7 +36,9 @@ const HOTEL_NACHWEIS_MELDUNG: Record<HotelNachweisFehlerArt, string> = {
   error: 'Die Hotelauswahl konnte gerade nicht bestätigt werden.',
 }
 
-export function hotelNachweisFehler(art: HotelNachweisFehlerArt): HotelNachweisErgebnis {
+export function hotelNachweisFehler(
+  art: HotelNachweisFehlerArt,
+): Extract<HotelNachweisErgebnis, { ok: false }> {
   return { ok: false, art, message: HOTEL_NACHWEIS_MELDUNG[art] }
 }
 
