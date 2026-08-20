@@ -1,9 +1,9 @@
 # Jetnity – Aktivitäten
 
-**Stand:** 20. August 2026 · Phase 3.3  
+**Stand:** 21. August 2026 · Phase 3.3c  
 **Gilt für:** die interne Aktivitätsdomäne, die tagesgebundene Suchpipeline, den Trip-Workspace und die serverseitige Vertrauensgrenze der `activity`-Übernahme.
 
-Diese Datei beschreibt den **tatsächlichen** Aktivitätsweg. Produktprinzip: [JETNITY_VISION.md](../JETNITY_VISION.md) und [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md). Entscheidungen: ADR-0078 bis ADR-0085 in [DECISIONS.md](../DECISIONS.md).
+Diese Datei beschreibt den **tatsächlichen** Aktivitätsweg. Produktprinzip: [JETNITY_VISION.md](../JETNITY_VISION.md) und [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md). Entscheidungen: ADR-0078 bis ADR-0086 in [DECISIONS.md](../DECISIONS.md).
 
 ---
 
@@ -246,7 +246,7 @@ Solange kein Provider konfiguriert ist, erklärt die Fläche das ehrlich und zei
 
 ### Browser-Abnahme (Phase 3.3b)
 
-Gemessen mit `npm run audit:activities` (Playwright WebKit + Chromium, PR-7-Regeln). Die Audit-Seite `/ui-audit/activities` antwortet ohne `JETNITY_UI_AUDIT=1` mit 404 und liegt nicht im produktiven Weg. Karten-Fixtures nur im Harness per Request-Interception.
+Gemessen mit `npm run audit:activities` (Playwright WebKit + Chromium, PR-7-Regeln). Die Audit-Seite `/ui-audit/activities` liegt nicht im produktiven Weg. `VERCEL_ENV=production` ergibt immer 404, auch wenn `JETNITY_UI_AUDIT` gesetzt ist. Ausserhalb von Production braucht die Seite ausdrücklich `JETNITY_UI_AUDIT=1` oder `true`. Karten-Fixtures nur im Harness per Request-Interception.
 
 | Messung | Umfang | Ergebnis |
 | --- | --- | --- |

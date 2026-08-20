@@ -95,7 +95,7 @@ Das Modell schreibt niemals direkt in die Datenbank. Modellantworten sind untrus
 
 ## 5. Nächster Produktblock
 
-**Phase 3.3 / 3.3b Activities Foundation ist in Arbeit** auf Branch `phase-3-3-activities-foundation`, Draft-PR #24. Die Foundation ist integrationsbereit, inklusive WebKit-/Chromium-Abnahme der Activities-UI (184 Kombinationen, 0 Fehler). Ein echter Activity-Provider ist noch nicht angebunden. Die Konto-Übernahme ist fail closed, bis ein `ActivityNachweis` existiert. Fachlich: `docs/ACTIVITIES.md`.
+**Phase 3.3 / 3.3b / 3.3c Activities Foundation ist in Arbeit** auf Branch `phase-3-3-activities-foundation`, Draft-PR #24. Die Foundation ist integrationsbereit, inklusive WebKit-/Chromium-Abnahme der Activities-UI (184 Kombinationen, 0 Fehler). `/ui-audit/activities` bleibt in Production fail closed, unabhängig von `JETNITY_UI_AUDIT`. Ein echter Activity-Provider ist noch nicht angebunden. Die Konto-Übernahme ist fail closed, bis ein `ActivityNachweis` existiert. Fachlich: `docs/ACTIVITIES.md`.
 
 Hotel Foundation (Phase 3.2 / 3.2c) liegt auf `main`. Nächste Hotelfreigabe bleibt der erste Suchadapter, nicht Production. Danach folgen der erste Activity-Adapter und Transfers. Nicht mehrere Provider gleichzeitig anbinden; schrittweise und produktorientiert vorgehen.
 
@@ -233,7 +233,7 @@ Diese Punkte sind bekannt und müssen im Projektgedächtnis bleiben:
 
 ## 12. Sofortiger Startpunkt für den nächsten Agenten
 
-1. Phase 3.3 / 3.3b Activities Foundation auf `phase-3-3-activities-foundation` / Draft-PR #24 ist der aktuelle Aktivitätsstand. UI-Abnahme ist gemessen (184 Kombinationen, 0 Fehler). Nächste Freigabe: genau einen ersten Activity-Datenanbieter plus `ActivityNachweis`, nicht Production. Siehe `docs/ACTIVITIES.md`.
+1. Phase 3.3 / 3.3b / 3.3c Activities Foundation auf `phase-3-3-activities-foundation` / Draft-PR #24 ist der aktuelle Aktivitätsstand. UI-Abnahme ist gemessen (184 Kombinationen, 0 Fehler). Die Audit-Route ist in Production unabhängig vom Flag fail closed. Nächste Freigabe: genau einen ersten Activity-Datenanbieter plus `ActivityNachweis`, nicht Production. Siehe `docs/ACTIVITIES.md`.
 2. Hotel Foundation liegt auf `main` (PR #22). Nächste Hotelfreigabe: Zugang für Booking.com Demand API oder HBX-Backup plus `HotelNachweis`, nicht Production. Siehe `docs/HOTEL_PROVIDER_STRATEGY.md`.
 3. Nicht mehr an PR #19 weiterarbeiten – er ist gemergt und abgeschlossen. PR #24 bleibt Draft, bis ChatGPT/Product-Review Ready freigibt.
 4. Die Hotel-/Quartierlogik und die tagesgebundene Aktivitätslogik aus Abschnitt 5 und `JETNITY_VISION.md` verbindlich erhalten.

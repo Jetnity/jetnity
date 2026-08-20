@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
-Stand: 20. August 2026
-Gültig für: Phase 3.3, Stand nach Activities Foundation auf der Flight-, Place- und Hotel-Basis
+Stand: 21. August 2026
+Gültig für: Phase 3.3c, Stand nach Activities Foundation auf der Flight-, Place- und Hotel-Basis
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -318,7 +318,7 @@ Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen 
 
 `POST /api/activities/search` ist geschlossen: nur `application/json`, höchstens 16 KB UTF-8. `Content-Length` über dem Limit wird vor dem Lesen abgewiesen; der Body wird zusätzlich streamend mit hartem Cap gelesen. Tageskontext, optional Provider, Konfliktprüfung, Ranking, Client-Sicht. Kein Provider-Proxy. 429 setzt `Retry-After`. Die UI spricht `ActivityOption`, nicht einen Anbieter.
 
-Phase 3.3 hat bewusst keinen Activity-Adapter. `activityProviderAus()` gibt `null` zurück. Production bleibt hart aus. Development/Preview brauchen `JETNITY_ACTIVITY_AKTIV` **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Der Tageskontext entsteht nur aus vorhandenen Reisedaten. Öffnungszeiten, Wegezeiten und minutengenaue Lücken werden nicht erfunden. Fehlende Uhrzeiten gelten nicht als konfliktfrei.
+Phase 3.3 hat bewusst keinen Activity-Adapter. `activityProviderAus()` gibt `null` zurück. Production bleibt hart aus. Development/Preview brauchen `JETNITY_ACTIVITY_AKTIV` **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Der Tageskontext entsteht nur aus vorhandenen Reisedaten. Öffnungszeiten, Wegezeiten und minutengenaue Lücken werden nicht erfunden. Fehlende Uhrzeiten gelten nicht als konfliktfrei. Die interne Audit-Seite `/ui-audit/activities` ist in Production unabhängig von `JETNITY_UI_AUDIT` fail closed (ADR-0086).
 
 Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `ActivityNachweis` gegen Ziel, Datum, Teilnehmer, Währung und den Timeslot der Option. Heute ist der Nachweis `null` – fail closed. Gast-LocalStorage gilt nicht als serverseitig verifiziert. Fachlich: [docs/ACTIVITIES.md](docs/ACTIVITIES.md), ADR-0078 bis ADR-0085.
 

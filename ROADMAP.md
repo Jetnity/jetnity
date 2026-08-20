@@ -616,6 +616,7 @@ Provider-unabhängige Aktivitätsdomäne, Tageskontext, Konfliktlogik, Suchpipel
 - [x] `ActivityNachweis` an Ziel, Datum, Teilnehmer, Währung und Timeslot gebunden
 - [x] Such-Body per Content-Length und Stream-Cap vor grosser Allokation begrenzt
 - [x] Phase 3.3b: WebKit-/Chromium-Abnahme der Activities-UI, 184 Kombinationen, 0 Fehler
+- [x] Phase 3.3c: `/ui-audit/activities` in Production fail closed, unabhängig vom Audit-Flag
 - [ ] genau einen ersten Activity-Datenanbieter entscheiden und anbinden · **eigene Freigabe**
 - [ ] Preview mit echtem Adapter und Nachweis verifizieren
 - [ ] Affiliate-/Redirect-Pfad, getrennt von der Suche
@@ -623,7 +624,7 @@ Provider-unabhängige Aktivitätsdomäne, Tageskontext, Konfliktlogik, Suchpipel
 - [ ] reale Routing-/POI-/Öffnungszeitdaten, soweit später fachlich nötig
 - [ ] Production-Aktivitätensuche – eigene Freigabe, nicht Teil dieses Schritts
 
-Fachlich: [docs/ACTIVITIES.md](docs/ACTIVITIES.md), ADR-0078 bis ADR-0085.
+Fachlich: [docs/ACTIVITIES.md](docs/ACTIVITIES.md), ADR-0078 bis ADR-0086.
 
 ---
 

@@ -2118,6 +2118,27 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 
 ---
 
+## ADR-0086 – Interne UI-Audit-Route in Production unabhängig vom Flag fail closed
+
+**Datum:** 21. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.3c
+
+**Entscheidung:** `/ui-audit/activities` antwortet in `VERCEL_ENV=production` immer mit 404. `JETNITY_UI_AUDIT=1` oder `true` darf die Seite nur ausserhalb von Production aktivieren. Eine fehlende oder andere Flag-Wert bleibt 404. Eine unbekannte Umgebung gilt nicht als Production, braucht aber dasselbe explizite Flag.
+
+**Kontext:** Phase 3.3b hat die Audit-Seite hinter `JETNITY_UI_AUDIT` gelegt. Ein versehentlich gesetztes Flag in Production hätte die interne Testfläche erreichbar gemacht.
+
+**Alternativen:**
+
+1. *Nur das Audit-Flag.* Reicht nicht, wenn Production das Flag erbt oder jemand es setzt.
+2. *Audit-Seite ganz entfernen.* Würde die gemessene 3.3b-Abnahme unnötig zerstören.
+3. *NODE_ENV=production ebenfalls sperren.* Würde `next start` lokal mit dem Audit-Harness vermischen; massgeblich ist Vercels Umgebung.
+
+**Begründung:** Interne Auditflächen dürfen nicht von einer einzelnen Feature-Variable abhängen. Dieselbe Fail-closed-Linie wie Modellweg, Flug-, Hotel- und Aktivitätensuche.
+
+**Konsequenzen:** Die Entscheidung liegt in `uiAuditSeiteAktiv`. Der Produktweg der Aktivitäten ändert sich nicht. `npm run audit:activities` bleibt lokal/Preview nutzbar, weil das Harness nicht `VERCEL_ENV=production` setzt.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
