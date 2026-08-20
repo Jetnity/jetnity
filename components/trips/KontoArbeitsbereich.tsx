@@ -19,12 +19,15 @@ import * as React from 'react'
 import { useRouter } from 'next/navigation'
 import { Cloud, Trash2 } from 'lucide-react'
 
+import { activityInReiseUebernehmen } from '@/lib/activities/aktionen'
+import type { ActivityOptionSichtbar } from '@/lib/activities/client-sicht'
 import { flugInReiseUebernehmen } from '@/lib/flights/aktionen'
 import type { FlugOptionSichtbar } from '@/lib/flights/client-sicht'
 import { hotelInReiseUebernehmen } from '@/lib/hotels/aktionen'
 import type { HotelOptionSichtbar } from '@/lib/hotels/client-sicht'
 import { planpunktAnlegen, planpunktEntfernen, reiseLoeschen } from '@/lib/trips/aktionen'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
+import AktivitaetenBereich from '@/components/trips/AktivitaetenBereich'
 import FlugSuche from '@/components/trips/FlugSuche'
 import HotelBereich from '@/components/trips/HotelBereich'
 import ReiseAenderung from '@/components/trips/ReiseAenderung'
@@ -112,6 +115,22 @@ export default function KontoArbeitsbereich({
               tripId: reise.id,
               stageId: etappe.id,
               dayId,
+              optionId: option.id,
+            })
+            if (!ergebnis.ok) return ergebnis.meldung
+            router.refresh()
+            return null
+          }}
+        />
+      }
+      aktivitaetensuche={
+        <AktivitaetenBereich
+          reise={reise}
+          onUebernehmen={async (etappe, tag, option: ActivityOptionSichtbar) => {
+            const ergebnis = await activityInReiseUebernehmen({
+              tripId: reise.id,
+              stageId: etappe.id,
+              dayId: tag.id,
               optionId: option.id,
             })
             if (!ergebnis.ok) return ergebnis.meldung

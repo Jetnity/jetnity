@@ -28,6 +28,8 @@ Phase 3.1 umfasst:
 - Feldfehler-UX mit Inline-Meldungen, Scroll/Fokus auf den ersten Fehler und Accessibility
 - kontrollierter Production-Rollout für Schema, Airports und Places
 
+**Phase 3.2 / 3.2c Hotel Foundation ist nach `main` gemergt** (Pull Request #22, `a5f39a29`). Die Hotelpipeline ist integrationsbereit. Ein echter Hotelprovider ist nicht angebunden. Production-Hotelsuche bleibt aus. Strategie: `docs/HOTEL_PROVIDER_STRATEGY.md`.
+
 Amadeus Self-Service ist im aktiven V2-Code nicht angebunden. Der alte Cursor-Threadname mit „amadeus“ ist nur historisch und kein Architekturhinweis.
 
 ## 2. Production-Datenbank nach Phase 3.1
@@ -93,9 +95,9 @@ Das Modell schreibt niemals direkt in die Datenbank. Modellantworten sind untrus
 
 ## 5. Nächster Produktblock
 
-**Phase 3.2 / 3.2c Hotel Foundation ist in Arbeit** auf Branch `phase-3-2-hotel-foundation`, Draft-PR #22. Die Foundation und die provider-unabhängige Härtung sind integrationsbereit: Nachweis-Naht an Suchkontext gebunden, Such-Body vor Allokation begrenzt. Ein echter Hotelprovider ist noch nicht angebunden. Die verbindliche Reihenfolge steht in `docs/HOTEL_PROVIDER_STRATEGY.md`. Die Konto-Übernahme ist fail closed, bis ein `HotelNachweis` existiert.
+**Phase 3.3 / 3.3b / 3.3c Activities Foundation ist in Arbeit** auf Branch `phase-3-3-activities-foundation`, Draft-PR #24. Die Foundation ist integrationsbereit, inklusive WebKit-/Chromium-Abnahme der Activities-UI (184 Kombinationen, 0 Fehler). `/ui-audit/activities` bleibt in Production fail closed, unabhängig von `JETNITY_UI_AUDIT`. Ein echter Activity-Provider ist noch nicht angebunden. Die Konto-Übernahme ist fail closed, bis ein `ActivityNachweis` existiert. Fachlich: `docs/ACTIVITIES.md`.
 
-Danach folgen Aktivitäten und Transfers. Nicht mehrere Provider gleichzeitig anbinden; schrittweise und produktorientiert vorgehen.
+Hotel Foundation (Phase 3.2 / 3.2c) liegt auf `main`. Nächste Hotelfreigabe bleibt der erste Suchadapter, nicht Production. Danach folgen der erste Activity-Adapter und Transfers. Nicht mehrere Provider gleichzeitig anbinden; schrittweise und produktorientiert vorgehen.
 
 ### Hotel-Prinzip
 
@@ -115,6 +117,23 @@ Dabei sollen unter anderem berücksichtigt werden:
 Erst danach wenige passende Hotels zeigen, z. B. Jetnity-Empfehlung, Best Value, beste Lage, ruhigere Alternative und Premium. Der Trade-off aus Preis, Lage, Zeit und Komfort muss erklärt werden. Provisionen dürfen weder Quartierwahl noch Ranking verzerren.
 
 Start pragmatisch mit Affiliate/Deeplink oder passendem Anbieter; keine unnötige eigene Buchungsplattform bauen.
+
+### Aktivitäts-Prinzip
+
+Jetnity soll Aktivitäten nicht als beliebige Ticketliste behandeln. Eine Aktivität ist dann gut, wenn sie zur **konkreten Reise und zum konkreten Reisetag** passt.
+
+Dabei sollen unter anderem berücksichtigt werden:
+
+- Etappe und belastbarer Zielort
+- konkreter Reisetag und vorhandene Tagespunkte
+- lokale Uhrzeiten, soweit sie wirklich vorliegen
+- Interessen und Tempo der Reise
+- Budget und Teilnehmerzahl
+- Qualität und Stornierbarkeit nur als Provider-Fakt
+
+Nicht erfinden: Öffnungszeiten, Wegezeiten, Nähe nur wegen derselben Stadt, minutengenaue Lücken ohne Uhrzeit. Fehlende Zeiten gelten nicht als konfliktfrei. Provisionen dürfen das Ranking nicht verzerren.
+
+Start pragmatisch mit genau einem Suchadapter nach eigener Freigabe; keine unnötige eigene Buchungsplattform bauen.
 
 ## 6. Duffel – separat nachholen
 
@@ -176,7 +195,7 @@ Zielbild:
 
 Nicht als breites soziales Netzwerk bauen, sondern als Zusammenarbeit an einer konkreten Reise.
 
-## 10. Offene Punkte nach Phase 3.1
+## 10. Offene Punkte nach Phase 3.2 / 3.3
 
 Diese Punkte sind bekannt und müssen im Projektgedächtnis bleiben:
 
@@ -186,6 +205,9 @@ Diese Punkte sind bekannt und müssen im Projektgedächtnis bleiben:
 - Preview-Tests sind keine Lasttests
 - Production-Modellaktivierung bleibt eine eigene Freigabe
 - Production-Flugsuche bleibt eine eigene Freigabe
+- Production-Hotelsuche bleibt eine eigene Freigabe
+- Production-Aktivitätensuche bleibt eine eigene Freigabe
+- Hotel- und Activity-Rate-Limits sind In-Memory je Serverless-Instanz; vor Production-Aktivierung globalen/gespeicherten Schutz ergänzen
 - Duffel-Angebots-IDs sind kurzlebig; Reise speichert Momentaufnahme, keinen live buchbaren Offer
 - aktuelles Flight-Rate-Limit ist In-Memory je Serverless-Instanz; vor Production-Aktivierung globalen/gespeicherten Schutz ergänzen
 - Duffel Test deckt nicht den gesamten Markt; UI darf nicht „bester Preis im Internet“ behaupten
@@ -211,13 +233,14 @@ Diese Punkte sind bekannt und müssen im Projektgedächtnis bleiben:
 
 ## 12. Sofortiger Startpunkt für den nächsten Agenten
 
-1. Phase 3.2c-Härtung auf `phase-3-2-hotel-foundation` / Draft-PR #22 ist der aktuelle Hotelstand. Nächste Freigabe: Zugang für Booking.com Demand API oder HBX-Backup plus `HotelNachweis`, nicht Production. Siehe `docs/HOTEL_PROVIDER_STRATEGY.md`.
-2. Nicht mehr an PR #19 weiterarbeiten – er ist gemergt und abgeschlossen.
-3. Die Hotel-/Quartierlogik aus Abschnitt 5 und `JETNITY_VISION.md` verbindlich erhalten.
-4. Duffel-Sandbox separat nachholen, sobald Zugang eintrifft; sie blockiert Hotels nicht.
-5. Production-Flugsuche, Production-Hotelsuche und Modellweg bleiben aus, bis sie jeweils separat freigegeben werden.
-6. Den historischen Supabase-Cronjob nicht nebenbei entfernen; dafür eigene Production-Freigabe einholen.
-7. Hotels/weitere Provider nicht provisionsgetrieben ranken.
-8. Keinen Hotelprovider anbinden, bevor eine gesonderte Entscheidung vorliegt.
+1. Phase 3.3 / 3.3b / 3.3c Activities Foundation auf `phase-3-3-activities-foundation` / Draft-PR #24 ist der aktuelle Aktivitätsstand. UI-Abnahme ist gemessen (184 Kombinationen, 0 Fehler). Die Audit-Route ist in Production unabhängig vom Flag fail closed. Nächste Freigabe: genau einen ersten Activity-Datenanbieter plus `ActivityNachweis`, nicht Production. Siehe `docs/ACTIVITIES.md`.
+2. Hotel Foundation liegt auf `main` (PR #22). Nächste Hotelfreigabe: Zugang für Booking.com Demand API oder HBX-Backup plus `HotelNachweis`, nicht Production. Siehe `docs/HOTEL_PROVIDER_STRATEGY.md`.
+3. Nicht mehr an PR #19 weiterarbeiten – er ist gemergt und abgeschlossen. PR #24 bleibt Draft, bis ChatGPT/Product-Review Ready freigibt.
+4. Die Hotel-/Quartierlogik und die tagesgebundene Aktivitätslogik aus Abschnitt 5 und `JETNITY_VISION.md` verbindlich erhalten.
+5. Duffel-Sandbox separat nachholen, sobald Zugang eintrifft; sie blockiert Hotels und Aktivitäten nicht.
+6. Production-Flugsuche, Production-Hotelsuche, Production-Aktivitätensuche und Modellweg bleiben aus, bis sie jeweils separat freigegeben werden.
+7. Den historischen Supabase-Cronjob nicht nebenbei entfernen; dafür eigene Production-Freigabe einholen.
+8. Hotels und Aktivitäten nicht provisionsgetrieben ranken.
+9. Keinen Hotel- oder Activity-Provider anbinden, bevor eine gesonderte Entscheidung vorliegt.
 
-Damit ist Phase 3.1 vollständig abgeschlossen, gemergt, in Supabase Production vorbereitet/verifiziert und als Vercel Production Deployment ausgerollt.
+Damit ist Phase 3.1 vollständig abgeschlossen, gemergt, in Supabase Production vorbereitet/verifiziert und als Vercel Production Deployment ausgerollt. Phase 3.2 liegt auf `main`; Production-Hotelsuche bleibt aus.
