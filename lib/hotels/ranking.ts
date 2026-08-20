@@ -30,9 +30,15 @@ function lowerBetter(wert: number, min: number, max: number): number {
 
 function lageScore(option: HotelKandidat, minWege: number, maxWege: number): number {
   const wege = option.context.taeglicheWegeMinuten
-  const wegeScore = wege === null ? 0.5 : lowerBetter(wege, minWege, maxWege)
-  const quartierFit = option.context.quartierFitScore ?? 0.5
-  return clamp01(wegeScore * 0.7 + quartierFit * 0.3)
+  const quartierFit = option.context.quartierFitScore
+  const wegeScore = wege === null ? null : lowerBetter(wege, minWege, maxWege)
+
+  if (wegeScore !== null && quartierFit !== null) {
+    return clamp01(wegeScore * 0.7 + quartierFit * 0.3)
+  }
+  if (wegeScore !== null) return wegeScore
+  if (quartierFit !== null) return clamp01(quartierFit)
+  return 0.5
 }
 
 function qualitaetScore(option: HotelKandidat): number {
