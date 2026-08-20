@@ -8,7 +8,7 @@ Diese Datei ist der kompakte Übergabepunkt für einen neuen Chat, neuen Cursor-
 
 Phase 2.2 ist nach `main` gemergt (PR #18, `76f21929`) und in Production verifiziert. Der Modellweg bleibt in Production aus.
 
-Phase 3.1 – Flight Foundation – läuft: Jetnity hat die erste echte Flugprodukt-Basis. Duffel Flights API ist der erste Daten-/Entwicklungsadapter. Amadeus Self-Service wurde am 17. Juli 2026 eingestellt und ist im aktiven V2-Code nicht mehr angebunden – auch nicht als Airport-Fallback. Production-Flugsuche bleibt aus. Keine eigene Flugbuchung.
+Phase 3.1 – Flight Foundation – läuft: Jetnity hat die erste echte Flugprodukt-Basis. Duffel Flights API ist der erste Daten-/Entwicklungsadapter. Amadeus Self-Service wurde am 17. Juli 2026 eingestellt und ist im aktiven V2-Code nicht mehr angebunden – auch nicht als Airport-Fallback. Die Autocomplete liest nur `public.airports` und wird in Development aus OurAirports befüllt. Production-Flugsuche bleibt aus. Production-Airportbestand bleibt unverändert. Keine eigene Flugbuchung.
 
 Verbindlicher Ablauf der Änderung (Phase 2.2, unverändert):
 
@@ -31,8 +31,9 @@ Phase 3.1 ergänzt:
 - deterministisches, provisionsneutrales Ranking
 - Flugsuche im Reise-Arbeitsbereich
 - Übernahme als kommerzieller `trip_item` ohne `booking_url`
+- lokale Flughafenbasis aus OurAirports, ohne Provider- und ohne Live-Abfrage
 
-Entscheidungen: ADR-0057 bis ADR-0061 (Phase 2.2), ADR-0062 bis ADR-0065 (Phase 3.1). Fachlich: `docs/REISEN.md`, `docs/FLUEGE.md`, `docs/MODELL.md`, `docs/DATENBANK.md`.
+Entscheidungen: ADR-0057 bis ADR-0061 (Phase 2.2), ADR-0062 bis ADR-0066 (Phase 3.1). Fachlich: `docs/REISEN.md`, `docs/FLUEGE.md`, `docs/FLUGHAFEN.md`, `docs/MODELL.md`, `docs/DATENBANK.md`.
 
 ## 2. Production-Rollout am 20. August 2026
 
@@ -234,12 +235,12 @@ Diese Punkte sind bekannt und blockieren die Flugbasis nicht, müssen aber im Pr
 - Duffel-Angebots-IDs sind kurzlebig; die Reise speichert eine Momentaufnahme, keinen live buchbaren Offer.
 - Das In-Memory-Rate-Limit gilt je Serverless-Instanz.
 - Duffel Self-Service / Test deckt nicht den gesamten Markt; die UI darf das nicht als „bester Preis im Internet“ verkaufen.
-- `/api/search/airports` liest nur die lokale Tabelle; ein leerer Bestand liefert eine leere Liste, keinen Provider-Fallback.
+- `/api/search/airports` liest nur die lokale Tabelle; ein Fehler bleibt ein Fehler, eine leere Menge eine leere Liste. Development wird über `npm run airports:importieren` befüllt, Production nicht.
 - Der Sicherheitstest `der Dienstweg als Gast bekommt Kontingent` isoliert Live-Gastzeilen der letzten 24 Stunden nur innerhalb der Rollback-Transaktion. Das Development-Tageslimit bleibt 24 und wird nicht erhöht.
 
 ## 11. Sofortiger Startpunkt im nächsten Chat
 
-**Phase 3.1 abschliessen oder nach Merge Preview prüfen. Hotels, Aktivitäten und Transfers noch nicht beginnen.**
+**Airport-Datenbasis auf Development ist der nächste harte Schritt vor dem Duffel-Preview. Hotels, Aktivitäten und Transfers noch nicht beginnen. Duffel-Preview wartet auf den Test-Zugang.**
 
 Benötigte Preview-Credentials (nicht Production):
 

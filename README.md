@@ -53,6 +53,8 @@ Die CI führt darüber hinaus `check:api-schutz`, `check:schema-bezug`, `check:d
 
 Die datenbanknahen Prüfungen aus `scripts/db/` brauchen den Supabase-Development-Zugang und laufen von Hand; sie sind in [docs/DATENBANK.md](docs/DATENBANK.md) beschrieben.
 
+Der Flughafen-Import (`npm run airports:importieren`) gehört ebenfalls nicht in die CI. Ohne `--schreiben --entwicklung` ist er eine Probe. Schreiben trifft nur einen Supabase-Branch, nie Production. Quelle, Lizenz und Refresh stehen in [docs/FLUGHAFEN.md](docs/FLUGHAFEN.md).
+
 ## Umgebungsvariablen
 
 Kopiere `.env.example` nach `.env.local` und hinterlege ausschließlich lokale Entwicklungswerte:
@@ -104,6 +106,7 @@ Der rote Faden von Jetnity lebt im Repository, nicht in einzelnen Chats. Vor gr�
 | [docs/REISEN.md](docs/REISEN.md) | Reisedatenmodell, Gast und Konto, der Weg Gast → Konto |
 | [docs/MODELL.md](docs/MODELL.md) | Modellintegration, Reisevorschlag, Kostenkontrolle, Aktivierung |
 | [docs/FLUEGE.md](docs/FLUEGE.md) | Flugdomäne, Duffel-Adapter, Ranking, Übernahme in die Reise |
+| [docs/FLUGHAFEN.md](docs/FLUGHAFEN.md) | lokale Flughafenbasis, OurAirports-Import, Suche |
 | [docs/AUTH.md](docs/AUTH.md) | Auth-Konfiguration des Development-Branches und die Prüfungen dazu |
 | [docs/LEGACY_ENTFERNUNG.md](docs/LEGACY_ENTFERNUNG.md) | Bericht zur Entfernung der 29 Legacy-Tabellen: Archiv-Tag, Nachweis, verbliebene Objekte |
 

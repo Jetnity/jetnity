@@ -1700,6 +1700,28 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 
 ---
 
+## ADR-0066 – Flughafenbasis kommt aus OurAirports, nicht aus einem Provider
+
+**Datum:** 20. August 2026
+**Status:** freigegeben, umgesetzt in Phase 3.1; Schema und Inhalt nur Development
+
+**Entscheidung:** Die Autocomplete-Suche unter `/api/search/airports` liest ausschliesslich `public.airports`. Der Bestand kommt aus einem kontrollierten Import der OurAirports-Open-Data-CSV (Public Domain), gefiltert auf IATA plus kommerziell relevante Nutzung. Weder Amadeus noch Duffel noch eine Live-Abfrage gegen OurAirports gehören zum Suchweg. CI und Production-Build laden den Datensatz nicht. Production bleibt unangetastet, bis eine eigene Freigabe Schema und Inhalt dorthin trägt.
+
+**Kontext:** Nach dem Entfernen des Amadeus-Fallbacks war die Suche korrekt lokal – und leer. Development hatte 0 Zeilen, Production etwa 40 historische Einträge. Das reicht nicht für eine globale Flugsuche. Ein Provider als Airport-Quelle würde die Autocomplete an denselben Zugang koppeln, der für die Flugangebote noch fehlt, und bei jedem Tastendruck Kosten oder Ausfälle erzeugen.
+
+**Alternativen:**
+
+1. *OurAirports bei jeder Suche live abfragen.* Langsam, ausfallabhängig, CI und Preview ohne Netz wären rot, Verstoss gegen die Anforderung.
+2. *Den vollen Dump ins Repository oder ins CI-Image legen.* Zehntausende irrelevante Felder, Lizenz- und Grössenballast, jeder Test würde ihn laden.
+3. *Duffel Places oder einen anderen Flugprovider als Airport-Quelle.* Koppelt die Suche an den Preview-Zugang und an einen Anbieter.
+4. *Nur die 40 historischen Production-Zeilen kopieren.* Keine globale Basis.
+
+**Begründung:** Die Autocomplete ist Teil der Reiseidee, nicht Teil eines Fluganbieters. OurAirports ist gemeinfrei, offline importierbar und unabhängig vom Duffel-Sandbox-Zugang. Der Filter hält Helipads und private Felder aus der Nutzersuche. Tests bleiben klein, weil sie Fixtures lesen.
+
+**Konsequenzen:** Schemaerweiterung `20260820110000` nur Development (`region`, `country_code`, `keywords`, `klasse`, `updated_at`). Schreibweg nur `npm run airports:importieren -- --schreiben --entwicklung`, davor `ziel()`. Dokumentation in [docs/FLUGHAFEN.md](docs/FLUGHAFEN.md). Ein späterer Production-Import braucht Freigabe.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

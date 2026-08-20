@@ -1,7 +1,7 @@
 # Jetnity – Datenbank
 
 Stand: 20. August 2026
-Gültig für: Supabase-Development-Branch nach Phase 2.2. Production ist in keiner der Phasen 1.4 bis 2.2 angefasst worden.
+Gültig für: Supabase-Development-Branch nach Phase 3.1 (Airport-Referenz). Production ist in keiner der Phasen 1.4 bis 3.1 angefasst worden; die Airport-Migration und der Import gelten nur für Development.
 
 Diese Datei beschreibt den **tatsächlichen** Zustand des Schemas, wie er sich aus dem Repository herstellen lässt. Sie ist die Antwort auf die Frage, die [ARCHITECTURE.md](../ARCHITECTURE.md) Abschnitt 6 bis Phase 1.4 offenlassen musste: Was steht in der Datenbank, wer darf was, und woher weiß man das.
 
@@ -46,6 +46,7 @@ Alle Skripte liegen in `scripts/db/` und sprechen über die Supabase Management 
 | `npm run check:schema-bezug` | dieselbe Auswertung als Prüfung gegen `types/supabase.ts` (läuft in der CI) |
 | `npm run db:typen` | `types/supabase.ts` erzeugen; `-- --pruefen` vergleicht nur |
 | `npm run db:advisors` | Security- und Performance-Advisors von Supabase |
+| `npm run airports:importieren` | OurAirports lesen, filtern, gegen Development upserten; Standard ist Probe |
 
 Bis auf `check:schema-bezug` braucht jedes davon den Development-Zugang. `check:schema-bezug` liest nur die erzeugte Typdatei und läuft deshalb in der CI mit.
 
@@ -75,6 +76,8 @@ Ein Unterschied ist wichtig: Alle Skripte ausser `db:parallelitaet` und `db:anwe
 Die zwölf Tabellen: `profiles`, `trips`, `trip_stages`, `trip_days`, `trip_items`, `model_usage`, `airports`, `payments`, `refunds`, `stripe_webhooks`, `security_events`, `blocked_ips`. Ihre Einordnung steht in Abschnitt 10.
 
 **Phase 2.2 Nachtrag `20260820060000`:** `public.reise_graph_geaendert()` plus neun Statement-Trigger auf den Kindtabellen. **Nachtrag `20260820070000`:** `public.reise_stamm_geaendert()` erhöht die Fassung bei direkten Stammdaten-Updates auf `trips`. **Nachtrag `20260820080000`:** `trip_days_index_eindeutig` und `trip_days_datum_eindeutig` sind `UNIQUE … DEFERRABLE`; der partielle Unique-Index auf `day_date` entfällt. Die Inventur zählt danach 24 Funktionen, 17 Trigger und 7 Eindeutigkeitsbedingungen. Production unverändert.
+
+**Phase 3.1 Nachtrag `20260820110000`:** `public.airports` erhält `region`, `country_code`, `keywords`, `klasse`, `updated_at`, passende CHECKs und den Trigramm-Index `airports_keywords_trgm`. Der Inhalt kommt nicht aus der Migration, sondern aus `npm run airports:importieren`. Nur Development. Production unverändert. Einzelheiten in [docs/FLUGHAFEN.md](FLUGHAFEN.md).
 
 Das Wachstum liegt vollständig bei den Reisedaten: Die vier neuen Tabellen tragen 61 Spalten, 43 CHECK-Bedingungen, 6 Fremdschlüssel, 5 Eindeutigkeitsbedingungen, 15 Indizes, 16 Policies und 5 Auslöser – vier für `updated_at`, einer für die Erzeugungsregeln von `public.trips` (Abschnitt 7a). Gleichzeitig sind mit `creator_sessions` 16 Spalten, 7 Indizes und 4 Policies sowie die neun Creator-Spalten des Profils entfallen – die Nettozahlen der Tabelle oben sind deshalb kleiner als die Zugänge.
 
@@ -699,7 +702,7 @@ Nach Phase 1.4b enthält das Schema nur noch Tabellen, die verwendet werden. Die
 | Tabelle | Zweck |
 | --- | --- |
 | `creator_profiles` | Konto, Rolle, Status. Wird in Phase 1.5 zum generischen Profil |
-| `airports` | Flughafendaten für die Flugintegration (Phase 3), benutzt von `api/search/airports` |
+| `airports` | lokale Flughafenbasis für die Autocomplete (Phase 3.1), benutzt von `api/search/airports`; Import siehe [docs/FLUGHAFEN.md](FLUGHAFEN.md) |
 | `payments`, `refunds`, `stripe_webhooks` | Zahlungen, behalten ohne Priorität ([DECISIONS.md](../DECISIONS.md) ADR-0010) |
 | `security_events`, `blocked_ips` | Sicherheitsereignisse und IP-Sperren im Administrationsbereich |
 

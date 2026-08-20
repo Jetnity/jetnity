@@ -3,7 +3,7 @@
 **Stand:** 20. August 2026 · Phase 3.1  
 **Gilt für:** die interne Flugdomäne, den ersten Duffel-Adapter, das Ranking und die Übernahme in die Reise.
 
-Diese Datei beschreibt den **tatsächlichen** Flugweg. Produktprinzip: [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md). Entscheidungen: ADR-0062 bis ADR-0065 in [DECISIONS.md](../DECISIONS.md).
+Diese Datei beschreibt den **tatsächlichen** Flugweg. Produktprinzip: [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md). Entscheidungen: ADR-0062 bis ADR-0066 in [DECISIONS.md](../DECISIONS.md). Die Flughafenbasis steht in [docs/FLUGHAFEN.md](FLUGHAFEN.md).
 
 ---
 
@@ -81,7 +81,7 @@ Umgebung:
 
 Die Suche spricht `https://api.duffel.com/air/offer_requests`. Test und Live teilen den Hostname; die Umgebung steht im Token. Phase 3.1 akzeptiert nur Test-Tokens. Buchungsendpunkte (`/air/orders`) werden nicht aufgerufen.
 
-`/api/search/airports` liest nur `public.airports`. Es gibt keinen Amadeus-Fallback und keinen zweiten Airport-Provider.
+`/api/search/airports` liest nur `public.airports`. Es gibt keinen Amadeus-Fallback, keinen Duffel-Airport-Weg und keine Live-Abfrage gegen OurAirports. Quelle, Filter, Import und Refresh stehen in [docs/FLUGHAFEN.md](FLUGHAFEN.md).
 
 ---
 

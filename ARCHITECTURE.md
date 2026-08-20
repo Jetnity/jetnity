@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
 Stand: 20. August 2026
-Gültig für: Phase 3.1, Stand nach Flight Foundation und Duffel-Adapter
+Gültig für: Phase 3.1, Stand nach Flight Foundation, Duffel-Adapter und lokaler Flughafenbasis
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -38,6 +38,7 @@ supabase/migrations Datenbankschema, vollständig und reproduzierbar (Abschnitt 
 middleware.ts       Edge-Middleware
 scripts/            Prüfungen, die in der CI laufen
 scripts/db/         Inventur, Migrationslauf und Nachweise gegen Development
+scripts/airports/   OurAirports-Import nach Development, nie in der CI
 styles/globals.css  Design-Tokens
 tailwind.config.js  Token-Mapping
 ```
@@ -271,7 +272,7 @@ Nach Phase 1.1, 1.1b, 1.3, 1.4 und 3.1 existieren **12** Route Handler. Zuvor wa
 
 | Endpunkt | Zweck | Status |
 | --- | --- | --- |
-| `api/search/airports` | Flughafendaten | nur `public.airports`, kein externer Provider |
+| `api/search/airports` | Flughafendaten | nur `public.airports`; Import ist ein Skript, kein Request-Pfad |
 | `api/flights/search` | geschlossene Flugsuche | Phase 3.1, Production aus, nur Duffel-Test |
 | `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
 | `api/admin/security/*` (5) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
@@ -297,6 +298,10 @@ Entfernt wurden 63 Endpunkte: alle KI- und Modell-Endpunkte, die Media- und Vide
 Duffel ist der erste Datenadapter, nicht die Produktarchitektur. Search und Booking/Affiliate sind getrennt; `booking_url` bleibt `null`. Ein späterer Skyscanner- oder Aviasales-Adapter implementiert dasselbe `FlightProvider`-Interface. Amadeus Self-Service ist eingestellt und nicht angebunden.
 
 Production bleibt hart aus. Development/Preview brauchen `JETNITY_FLIGHT_AKTIV` und `DUFFEL_ACCESS_TOKEN` (`duffel_test_…`). Fehlende Credentials sind Feature-unavailable, kein Buildfehler. Fachlich: [docs/FLUEGE.md](docs/FLUEGE.md), ADR-0062 bis ADR-0065.
+
+### Flughafenbasis (Phase 3.1)
+
+`GET /api/search/airports` liest ausschliesslich `public.airports`. Der Bestand kommt aus OurAirports Open Data (Public Domain), gefiltert und idempotent über `npm run airports:importieren` geschrieben. Weder Build noch CI noch eine Nutzersuche laden den Upstream. Schemaerweiterung `20260820110000` und Inhalt gelten nur für Development. Fachlich: [docs/FLUGHAFEN.md](docs/FLUGHAFEN.md), ADR-0066.
 
 ### Kostenkontrolle bei Modellaufrufen
 
