@@ -162,6 +162,7 @@ const planpunktSchema = z.object({
 
 const reisetagSchema = z.object({
   id: z.string().min(1).max(80),
+  stageId: z.string().min(1).max(80).nullable().default(null),
   dayIndex: z.number().int().min(1).max(GRENZEN.reisetageJeReise),
   dayDate: datum.nullable().default(null),
   title: optionalerText(GRENZEN.titel).nullable().default(null),
@@ -201,6 +202,8 @@ export const reiseSchema = z
     pace: tempo,
     interests: interessen.default([]),
     travelWish: optionalerText(GRENZEN.reisewunsch).nullable().default(null),
+    revision: z.number().int().min(1).max(1_000_000_000).default(1),
+    lastMutationId: z.string().min(1).max(64).nullable().default(null),
     stages: z.array(etappeSchema).max(GRENZEN.etappenJeReise).default([]),
     days: z.array(reisetagSchema).max(GRENZEN.reisetageJeReise).default([]),
     createdAt: zeitstempel,
@@ -246,6 +249,26 @@ export const reiseSchema = z
         path: ['days'],
         message: `Eine Reise trägt höchstens ${GRENZEN.punkteJeReise} Planpunkte`,
       })
+    }
+
+    const etappenKennungen = new Set(reise.stages.map((etappe) => etappe.id))
+    for (const [stelle, tag] of reise.days.entries()) {
+      if (tag.stageId && !etappenKennungen.has(tag.stageId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['days', stelle, 'stageId'],
+          message: 'Dieser Tag verweist auf eine unbekannte Etappe',
+        })
+      }
+      for (const [ort, punkt] of tag.items.entries()) {
+        if (punkt.stageId && !etappenKennungen.has(punkt.stageId)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['days', stelle, 'items', ort, 'stageId'],
+            message: 'Dieser Planpunkt verweist auf eine unbekannte Etappe',
+          })
+        }
+      }
     }
   })
 
@@ -298,6 +321,12 @@ const nutzlastTagSchema = z.object({
   day_index: z.number().int().min(1).max(GRENZEN.reisetageJeReise),
   day_date: datum.nullable(),
   title: z.string().min(1).max(GRENZEN.titel).nullable(),
+  /**
+   * Position der Etappe in derselben Nutzlast, 1-basiert.
+   *
+   * Darüber erhält `trip_days.stage_id` seine Zuordnung, auch ohne Kalenderdatum.
+   */
+  stage_position: z.number().int().min(1).max(200).nullable(),
   items: z.array(nutzlastPunktSchema).max(GRENZEN.punkteJeReise),
 })
 

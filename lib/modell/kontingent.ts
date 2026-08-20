@@ -49,7 +49,7 @@ import { createServerActionClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/supabase'
 
 /** Die eine Modellfunktion dieser Phase. Dieselben Werte wie `model_usage.funktion`. */
-export type Modellfunktion = 'reisevorschlag'
+export type Modellfunktion = 'reisevorschlag' | 'reiseaenderung'
 
 export type Kontingentergebnis =
   | { ok: true; id: string }

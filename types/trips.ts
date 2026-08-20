@@ -76,9 +76,15 @@ export type TripItem = {
  *
  * `dayIndex` ist die verbindliche Reihenfolge, `dayDate` das optionale
  * Kalenderdatum: Eine Reiseidee hat Tage, bevor sie Daten hat.
+ *
+ * `stageId` bindet den Tag an eine Etappe. Ohne diese Zuordnung wäre eine
+ * mehrstufige Reise ohne Kalenderdaten nicht per Sprache änderbar
+ * („Florenz einen Tag kürzer“).
  */
 export type TripDay = {
   id: string
+  /** Etappe, zu der dieser Tag gehört. `null` nur nach dem Entfernen einer Etappe. */
+  stageId: string | null
   dayIndex: number
   dayDate: string | null
   title: string | null
@@ -120,11 +126,34 @@ export type Trip = {
   pace: TripPace
   interests: TripInterest[]
   travelWish: string | null
+  /**
+   * Technische Fassung. Steigt bei jeder übernommenen Änderung.
+   *
+   * Ein Änderungsvorschlag nennt die Fassung, auf der er beruht. Eine neuere
+   * Fassung macht den Vorschlag ungültig – zwei offene Tabs überschreiben
+   * einander nicht.
+   */
+  revision: number
+  /**
+   * Kennung der zuletzt übernommenen Änderung.
+   *
+   * Retry und Doppelklick mit derselben Kennung ändern die Reise nicht ein
+   * zweites Mal.
+   */
+  lastMutationId: string | null
   stages: TripStage[]
   days: TripDay[]
   createdAt: string
   updatedAt: string
 }
+
+/**
+ * Der vollständige Reisegraph, einschliesslich Planpunkten ohne Tag.
+ *
+ * `ohneTag` entsteht, wenn ein Tag entfernt wird (`on delete set null`). Die
+ * Punkte gehören weiter zur Reise und dürfen nicht unsichtbar werden.
+ */
+export type Reisegraph = Trip & { ohneTag: TripItem[] }
 
 /**
  * Eine Reise in der Liste „Meine Reisen“.

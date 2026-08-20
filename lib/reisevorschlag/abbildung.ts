@@ -94,6 +94,14 @@ function etappen(vorschlag: Reisevorschlag): Omit<TripStage, 'id'>[] {
   }))
 }
 
+/** Position der Etappe, die den Reisetag `nummer` trägt – 1-basiert. */
+function etappenpositionFuerTag(vorschlag: Reisevorschlag, nummer: number): number {
+  const stelle = vorschlag.etappen.findIndex(
+    (etappe) => nummer >= etappe.vonTag && nummer <= etappe.bisTag,
+  )
+  return stelle >= 0 ? stelle + 1 : 1
+}
+
 /**
  * Der Vorschlag als Nutzlast für `public.reise_anlegen()`.
  *
@@ -126,6 +134,7 @@ export function vorschlagAlsNutzlast(vorschlag: Reisevorschlag, clientRef: strin
       day_index: geruest[stelle].dayIndex,
       day_date: geruest[stelle].dayDate,
       title: tag.titel,
+      stage_position: etappenpositionFuerTag(vorschlag, tag.nummer),
       items: tag.punkte.map((punkt, position) => ({
         kind: punkt.art,
         title: punkt.titel,
@@ -154,15 +163,18 @@ export function vorschlagAlsReise(
   jetzt: string,
 ): Trip {
   const geruest = tagesgeruest(vorschlag)
+  const stufen = etappen(vorschlag).map((etappe) => ({ ...etappe, id: kennung('stage') }))
 
   const tage: TripDay[] = vorschlag.tage.map((tag, stelle) => {
     const tagId = kennung('day')
     const datum = geruest[stelle].dayDate
+    const etappe = stufen[etappenpositionFuerTag(vorschlag, tag.nummer) - 1] ?? stufen[0] ?? null
+    const stageId = etappe?.id ?? null
 
     const punkte: TripItem[] = tag.punkte.map((punkt, position) => ({
       id: kennung('item'),
       dayId: tagId,
-      stageId: null,
+      stageId,
       kind: punkt.art,
       title: punkt.titel,
       note: punkt.notiz,
@@ -178,7 +190,14 @@ export function vorschlagAlsReise(
       bookingUrl: null,
     }))
 
-    return { id: tagId, dayIndex: geruest[stelle].dayIndex, dayDate: datum, title: tag.titel, items: punkte }
+    return {
+      id: tagId,
+      stageId,
+      dayIndex: geruest[stelle].dayIndex,
+      dayDate: datum,
+      title: tag.titel,
+      items: punkte,
+    }
   })
 
   return {
@@ -195,7 +214,9 @@ export function vorschlagAlsReise(
     pace: vorschlag.tempo,
     interests: vorschlag.interessen,
     travelWish: vorschlag.reisewunsch,
-    stages: etappen(vorschlag).map((etappe) => ({ ...etappe, id: kennung('stage') })),
+    revision: 1,
+    lastMutationId: null,
+    stages: stufen,
     days: tage,
     createdAt: jetzt,
     updatedAt: jetzt,

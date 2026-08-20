@@ -22,6 +22,14 @@ export const TAGE_MAXIMUM = 366
 
 const EIN_TAG = 86_400_000
 
+/** Verschiebt ein Kalenderdatum um ganze Tage. `null` bleibt `null`. */
+export function datumVerschieben(iso: string | null, delta: number): string | null {
+  if (!iso || delta === 0) return iso
+  const zeit = Date.parse(`${iso}T00:00:00Z`)
+  if (Number.isNaN(zeit)) return null
+  return new Date(zeit + delta * EIN_TAG).toISOString().slice(0, 10)
+}
+
 /**
  * Die Tage zwischen zwei Daten, beide eingeschlossen.
  *

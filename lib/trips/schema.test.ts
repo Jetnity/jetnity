@@ -138,6 +138,17 @@ describe('Was die Datenbank ablehnen würde, wird hier abgelehnt', () => {
     assert.equal(reiseLesen(reise({ budgetAmount: 10_000_000_000 })), null)
   })
 
+  test('ein Tag darf nicht auf eine unbekannte Etappe zeigen', () => {
+    assert.equal(
+      reiseLesen(
+        reise({
+          days: [{ id: 'day-1', dayIndex: 1, dayDate: '2026-09-12', stageId: 'gibt-es-nicht', items: [] }],
+        }),
+      ),
+      null,
+    )
+  })
+
   test('ein unbekannter Status – wie trips_status_werte', () => {
     assert.equal(reiseLesen(reise({ status: 'unterwegs' })), null)
   })

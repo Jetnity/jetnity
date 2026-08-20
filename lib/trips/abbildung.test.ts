@@ -40,6 +40,8 @@ function reisezeile(abweichung: Partial<ReiseZeile> = {}): ReiseZeile {
     pace: 'balanced',
     interests: ['culture', 'food'],
     travel_wish: null,
+    revision: 1,
+    last_mutation_id: null,
     created_at: JETZT,
     updated_at: JETZT,
     ...abweichung,
@@ -69,8 +71,8 @@ function punktzeile(abweichung: Partial<PunktZeile> = {}): PunktZeile {
   }
 }
 
-function tagzeile(nr: number, id: string): TagZeile {
-  return { id, day_index: nr, day_date: `2026-09-${11 + nr}`, title: null }
+function tagzeile(nr: number, id: string, stageId: string | null = null): TagZeile {
+  return { id, stage_id: stageId, day_index: nr, day_date: `2026-09-${11 + nr}`, title: null }
 }
 
 describe('Beträge kommen als Zahl an', () => {
