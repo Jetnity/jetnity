@@ -215,11 +215,13 @@ Keine Production-Datenbankänderung. Provider-Suchen bleiben aus.
 
 ## 6b. Querschnitt – Trip Coverage & Booking Status
 
-**In Arbeit auf Draft-PR #29. Nicht mergen. Keine Production-Migration, kein Production-Kill-Switch.**
+**Umgesetzt auf Draft-PR #29. Nicht mergen. Keine Production-Migration, kein Production-Kill-Switch.**
 
 Branch: `feat/trip-coverage-booking-status`
 
 Auftrag: `docs/CURSOR_TRIP_COVERAGE_BOOKING_STATUS_TASK.md`
+
+Trip-Workspace-Audit (WebKit + Chromium): **274 Kombinationen, 0 Fehler**, inklusive Bestand/gebucht/unbestimmt. Activities-Regression: **184 Kombinationen, 0 Fehler**.
 
 Was dieser Block baut:
 

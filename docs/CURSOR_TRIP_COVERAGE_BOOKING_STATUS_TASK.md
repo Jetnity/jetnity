@@ -8,6 +8,8 @@ Umgesetzt auf Branch `feat/trip-coverage-booking-status`, Draft-PR #29.
 
 Parent auf `main`: Merge-Commit `70e471b00c7505356fe13f8185b204200c4bb781` (PR #27, Trip Workspace Mobile UX Iteration 1–3).
 
+Trip-Workspace-Audit: 274 Kombinationen, 0 Fehler. Activities-Regression: 184 Kombinationen, 0 Fehler.
+
 **PR bleibt Draft. Nicht mergen. Nichts in Production aktivieren oder migrieren.**
 
 ---
