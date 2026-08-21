@@ -81,6 +81,12 @@ function sucheMitTag(
   )
 }
 
+function setzeInert(el: HTMLElement | null, verborgen: boolean) {
+  if (!el) return
+  if (verborgen) el.setAttribute('inert', '')
+  else el.removeAttribute('inert')
+}
+
 function BereichHuelle({
   bereich,
   verborgen,
@@ -96,8 +102,8 @@ function BereichHuelle({
     <div
       data-arbeitsbereich={bereich}
       hidden={verborgen}
-      inert={verborgen || undefined}
       className={bereichDarstellungKlasse(verborgen, sichtbarKlasse)}
+      ref={(el) => setzeInert(el, verborgen)}
     >
       {children}
     </div>
@@ -192,9 +198,11 @@ export default function TripWorkspace({
   const aenderungFeld = aenderungBereit && aenderung && (
     <div
       id="reise-aenderung"
-      ref={aenderungFeldRef}
       hidden={!aenderungSichtbar}
-      inert={!aenderungSichtbar || undefined}
+      ref={(el) => {
+        aenderungFeldRef.current = el
+        setzeInert(el, !aenderungSichtbar)
+      }}
       onKeyDown={(ereignis) => {
         if (ereignis.key !== 'Escape' || !kompakt || !aenderungOffen) return
         ereignis.stopPropagation()
