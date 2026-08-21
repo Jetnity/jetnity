@@ -1037,10 +1037,10 @@ async function zustandPruefen(browser, name, viewport, zustand) {
     if (sichtbar > 0) extra.push(`Unerwarteter Text sichtbar: «${defin.ohneText}»`)
   }
   if (defin.formularLeer) {
-    const abholung = await page.locator('label:has-text("Abholung") input').inputValue()
-    const rueckgabe = await page.locator('label:has-text("Rückgabe") input').inputValue()
-    const abholdatum = await page.locator('label:has-text("Abholdatum") input').inputValue()
-    const rueckgabedatum = await page.locator('label:has-text("Rückgabedatum") input').inputValue()
+    const abholung = await page.getByRole('textbox', { name: 'Abholung', exact: true }).inputValue()
+    const rueckgabe = await page.getByRole('textbox', { name: 'Rückgabe', exact: true }).inputValue()
+    const abholdatum = await page.getByLabel('Abholdatum', { exact: true }).inputValue()
+    const rueckgabedatum = await page.getByLabel('Rückgabedatum', { exact: true }).inputValue()
     if (abholung || rueckgabe || abholdatum || rueckgabedatum) {
       extra.push(
         `Manuelles Formular war vorbelegt: Abholung=«${abholung}» Rückgabe=«${rueckgabe}» Abholdatum=«${abholdatum}» Rückgabedatum=«${rueckgabedatum}»`,
