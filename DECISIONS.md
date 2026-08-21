@@ -2194,7 +2194,7 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 ## ADR-0089 – Persistenter Buchungsstatus ist nutzerbestätigt, nicht aus einem Planpunkt abgeleitet
 
 **Datum:** 21. August 2026
-**Status:** umgesetzt auf Draft-PR #29; Repository-Migration vorhanden; nicht auf Production angewendet
+**Status:** umgesetzt auf Draft-PR #29; Development-Migration angewendet am 21. August 2026; nicht auf Production angewendet
 
 **Entscheidung:** Ein gespeicherter `trip_item` ist ausgewählt/geplant, nicht gebucht. `Gebucht` entsteht nur durch eine ausdrückliche Nutzerbestätigung. Dafür trägt `trip_items` drei provider-neutrale Spalten:
 
@@ -2217,12 +2217,12 @@ Offene Flugabschnitte und fehlende Nächte sind abgeleitete Lücken, keine gespe
 
 **Konsequenzen:**
 
-- Migration `20260821100000_trip_items_booking_status.sql` liegt im Repository. Sie darf Development/Preview/Test erreichen, **nicht Production**.
+- Migration `20260821100000_trip_items_booking_status.sql` liegt im Repository. Development angewendet am 21. August 2026. **Nicht Production.**
 - `public.reise_anlegen()` übernimmt einen gebuchten Status nur für `flight`/`stay` und setzt die Quelle immer auf `user`.
 - Account-Aktion `planpunktBuchungsstatusSetzen` läuft über Anon-Key und RLS, ohne Service Role.
 - Gast und Konto teilen dieselbe `TripItem`-Form.
 - Natürliche Sprache darf den Status nicht erfinden, löschen oder still ändern.
-- `types/supabase.ts` ist in diesem Block von Hand nachgezogen, bis Development die Migration trägt und `db:typen` gegen das live Schema laufen kann.
+- `types/supabase.ts` entspricht nach dem Development-Lauf dem live Schema (`db:typen --pruefen`).
 
 ---
 

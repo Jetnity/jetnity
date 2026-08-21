@@ -137,7 +137,7 @@ Gezielter Dashboard-Block auf Draft-PR #29, parallel zu Phase 3.4, ohne Provider
 - ehrliche Flug-/Nachtabdeckung aus dem Reisegraphen
 - expliziter manueller Buchungsstatus (`unconfirmed` / `booked`, Quelle nur `user`)
 - Bestand oberhalb der bestehenden Suche
-- Repository-Migration `20260821100000_trip_items_booking_status.sql` **nicht** im Production-Playbook
+- Repository-Migration `20260821100000_trip_items_booking_status.sql` am 21. August 2026 auf Development angewendet, **nicht** im Production-Playbook
 - **nicht mergen**, keine Production-Änderung
 
 ### Während Booking.com noch offen ist
