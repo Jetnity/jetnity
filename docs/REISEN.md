@@ -200,7 +200,7 @@ Die Kennung entscheidet, wo `/reisen/[tripId]` nachsieht: `trip-<uuid>` ist ein 
 
 **Keine Beispieldaten.** Ein leeres Konto zeigt einen leeren Zustand mit dem Weg nach `/planen`. Eine erfundene Reise als Produktzustand wäre eine Behauptung über gespeicherte Daten.
 
-**Mobile-UX Iteration 2 (Preview, PR #27).** Unterhalb von 1024 px ist der Arbeitsbereich keine lange Kartenfolge. Zuerst kommt ein kompakter Reisekopf, darunter eine klebende Bereichsnavigation: Übersicht, Flüge, Unterkunft, Aktivitäten. Die Übersicht ist das Dashboard: Status zu Flügen, Unterkunft und Aktivitäten, eingebetteter Tagesplan, `Reise ändern`, Reiseprofil. Der Planstatus ist Einleitung des Tagesplans, kein eigener Tab. Der gewählte Reisetag gilt gemeinsam für Übersicht und Aktivitäten. Ab 1024 px bleibt die bisherige breite Arbeitsansicht. Der aktive Bereich ist Client-State, nicht Teil der URL. Siehe ADR-0087 und ADR-0088.
+**Mobile-UX Iteration 3 (Preview, PR #27).** Unterhalb von 1024 px ist der Arbeitsbereich keine lange Kartenfolge. Zuerst kommt ein kompakter Reisekopf, darunter eine klebende Bereichsnavigation: Übersicht, Flüge, Unterkunft, Aktivitäten. Die Übersicht ist das Dashboard: Status zu Flügen, Unterkunft und Aktivitäten, eingebetteter Tagesplan, `Reise ändern`, Reiseprofil. Der mobile Tagesplan ist ein Modul – Tagesauswahl und Tagesinhalt teilen eine Karte, nur die Chip-Zeile scrollt horizontal. Der Planstatus ist Einleitung des Tagesplans, kein eigener Tab. Der gewählte Reisetag gilt gemeinsam für Übersicht und Aktivitäten. Ab 1024 px bleibt die bisherige breite Arbeitsansicht. Der aktive Bereich ist Client-State, nicht Teil der URL. Siehe ADR-0087 und ADR-0088.
 
 ---
 

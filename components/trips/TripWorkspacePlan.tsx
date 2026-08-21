@@ -137,6 +137,153 @@ export default function TripWorkspacePlan({
     if (fehler) setMeldung(fehler)
   }
 
+  const tagesKopf = tag && (
+    <div
+      className={cn(
+        'flex flex-col justify-between gap-4',
+        kompakt ? '' : 'border-b border-line-200 pb-5 sm:flex-row sm:items-center',
+      )}
+    >
+      <div className="min-w-0">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
+          Tag {tag.dayIndex}
+        </p>
+        {kompakt ? (
+          <h3 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800">
+            {tag.dayDate ? langesDatum.format(alsDatum(tag.dayDate)) : (tag.title ?? 'Noch ohne Datum')}
+          </h3>
+        ) : (
+          <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
+            {tag.dayDate ? langesDatum.format(alsDatum(tag.dayDate)) : (tag.title ?? 'Noch ohne Datum')}
+          </h2>
+        )}
+      </div>
+      <button
+        type="button"
+        onClick={() => setFormularOffen((offen) => !offen)}
+        className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+      >
+        <Plus className="h-4 w-4" aria-hidden="true" />
+        Punkt hinzufügen
+      </button>
+    </div>
+  )
+
+  const tagesFelder = tag && (
+    <>
+      {formularOffen && (
+        <form onSubmit={anlegen} className="mt-5 rounded-2xl border border-line-200 bg-surface-0 p-4">
+          <fieldset className="min-w-0">
+            <legend className="text-xs font-medium text-ink-900">Art</legend>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {TRIP_ITEM_KINDS.map((option) => {
+                const Symbol = ART_SYMBOL[option]
+                const gewaehlt = art === option
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    aria-pressed={gewaehlt}
+                    onClick={() => setArt(option)}
+                    className={cn(
+                      'inline-flex min-h-11 items-center gap-2 rounded-full border px-3.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
+                      gewaehlt
+                        ? 'border-brand-800 bg-brand-800 text-white'
+                        : 'border-line-200 bg-white text-ink-900 hover:border-line-500',
+                    )}
+                  >
+                    <Symbol className="h-3.5 w-3.5" aria-hidden="true" />
+                    {ART_BEZEICHNUNG[option]}
+                  </button>
+                )
+              })}
+            </div>
+          </fieldset>
+
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,120px)_minmax(0,1fr)]">
+            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
+              Uhrzeit
+              <input
+                type="time"
+                value={zeit}
+                onChange={(ereignis) => setZeit(ereignis.target.value)}
+                className="h-11 w-full min-w-0 rounded-xl border border-line-200 bg-white px-3 text-base outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
+              />
+            </label>
+            <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
+              Ort oder Aktivität
+              <input
+                value={titel}
+                onChange={(ereignis) => setTitel(ereignis.target.value)}
+                required
+                maxLength={GRENZEN.titel}
+                autoFocus
+                placeholder="z. B. Tsukiji Outer Market"
+                className="h-11 w-full min-w-0 rounded-xl border border-line-200 bg-white px-3 text-base outline-none placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
+              />
+            </label>
+          </div>
+          <label className="mt-3 grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
+            Notiz, optional
+            <textarea
+              value={notiz}
+              onChange={(ereignis) => setNotiz(ereignis.target.value)}
+              rows={3}
+              maxLength={GRENZEN.notiz}
+              placeholder="Reservierung, Treffpunkt oder persönliche Notiz"
+              className="w-full min-w-0 rounded-xl border border-line-200 bg-white px-3 py-2.5 text-base outline-none placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
+            />
+          </label>
+          <div className="mt-3 flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={zurueck}
+              className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-medium text-ink-800 hover:bg-white"
+            >
+              Abbrechen
+            </button>
+            <button
+              type="submit"
+              disabled={laeuft}
+              className="inline-flex min-h-11 items-center rounded-full bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:pointer-events-none disabled:opacity-60"
+            >
+              {laeuft ? 'Speichern …' : 'Speichern'}
+            </button>
+          </div>
+        </form>
+      )}
+
+      {meldung && (
+        <p role="alert" className="mt-5 rounded-2xl bg-surface-50 px-4 py-3 text-sm text-danger-600">
+          {meldung}
+        </p>
+      )}
+
+      {tag.items.length === 0 ? (
+        <div className={kompakt ? 'py-8 text-center' : 'py-14 text-center'}>
+          <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-surface-100 text-brand-600">
+            <CalendarDays className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <p className="mt-4 text-lg font-semibold text-brand-800">Dieser Tag gehört dir.</p>
+          <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-ink-700">
+            Füge einen Ort, eine Aktivität oder einfach freie Zeit hinzu. Jetnity ordnet alles chronologisch.
+          </p>
+        </div>
+      ) : (
+        <ol className="mt-5 space-y-3">
+          {tag.items.map((punkt) => (
+            <Planpunkt
+              key={punkt.id}
+              punkt={punkt}
+              gesperrt={laeuft}
+              onEntfernen={() => entfernen(tag.id, punkt.id)}
+            />
+          ))}
+        </ol>
+      )}
+    </>
+  )
+
   const tagesInhalt = (
     <section
       aria-label="Gewählter Reisetag"
@@ -144,142 +291,15 @@ export default function TripWorkspacePlan({
     >
       {tag ? (
         <>
-          <div className="flex flex-col justify-between gap-4 border-b border-line-200 pb-5 sm:flex-row sm:items-center">
-            <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
-                Tag {tag.dayIndex}
-              </p>
-              <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
-                {tag.dayDate ? langesDatum.format(alsDatum(tag.dayDate)) : (tag.title ?? 'Noch ohne Datum')}
-              </h2>
-            </div>
-            <button
-              type="button"
-              onClick={() => setFormularOffen((offen) => !offen)}
-              className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-4 text-sm font-semibold text-white transition hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-            >
-              <Plus className="h-4 w-4" aria-hidden="true" />
-              Punkt hinzufügen
-            </button>
-          </div>
-
-          {formularOffen && (
-            <form onSubmit={anlegen} className="mt-5 rounded-2xl border border-line-200 bg-surface-0 p-4">
-              <fieldset className="min-w-0">
-                <legend className="text-xs font-medium text-ink-900">Art</legend>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {TRIP_ITEM_KINDS.map((option) => {
-                    const Symbol = ART_SYMBOL[option]
-                    const gewaehlt = art === option
-                    return (
-                      <button
-                        key={option}
-                        type="button"
-                        aria-pressed={gewaehlt}
-                        onClick={() => setArt(option)}
-                        className={cn(
-                          'inline-flex min-h-11 items-center gap-2 rounded-full border px-3.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
-                          gewaehlt
-                            ? 'border-brand-800 bg-brand-800 text-white'
-                            : 'border-line-200 bg-white text-ink-900 hover:border-line-500',
-                        )}
-                      >
-                        <Symbol className="h-3.5 w-3.5" aria-hidden="true" />
-                        {ART_BEZEICHNUNG[option]}
-                      </button>
-                    )
-                  })}
-                </div>
-              </fieldset>
-
-              <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,120px)_minmax(0,1fr)]">
-                <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
-                  Uhrzeit
-                  <input
-                    type="time"
-                    value={zeit}
-                    onChange={(ereignis) => setZeit(ereignis.target.value)}
-                    className="h-11 w-full min-w-0 rounded-xl border border-line-200 bg-white px-3 text-base outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
-                  />
-                </label>
-                <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
-                  Ort oder Aktivität
-                  <input
-                    value={titel}
-                    onChange={(ereignis) => setTitel(ereignis.target.value)}
-                    required
-                    maxLength={GRENZEN.titel}
-                    autoFocus
-                    placeholder="z. B. Tsukiji Outer Market"
-                    className="h-11 w-full min-w-0 rounded-xl border border-line-200 bg-white px-3 text-base outline-none placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
-                  />
-                </label>
-              </div>
-              <label className="mt-3 grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
-                Notiz, optional
-                <textarea
-                  value={notiz}
-                  onChange={(ereignis) => setNotiz(ereignis.target.value)}
-                  rows={3}
-                  maxLength={GRENZEN.notiz}
-                  placeholder="Reservierung, Treffpunkt oder persönliche Notiz"
-                  className="w-full min-w-0 rounded-xl border border-line-200 bg-white px-3 py-2.5 text-base outline-none placeholder:text-ink-600 focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
-                />
-              </label>
-              <div className="mt-3 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={zurueck}
-                  className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-medium text-ink-800 hover:bg-white"
-                >
-                  Abbrechen
-                </button>
-                <button
-                  type="submit"
-                  disabled={laeuft}
-                  className="inline-flex min-h-11 items-center rounded-full bg-brand-600 px-4 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:pointer-events-none disabled:opacity-60"
-                >
-                  {laeuft ? 'Speichern …' : 'Speichern'}
-                </button>
-              </div>
-            </form>
-          )}
-
-          {meldung && (
-            <p role="alert" className="mt-5 rounded-2xl bg-surface-50 px-4 py-3 text-sm text-danger-600">
-              {meldung}
-            </p>
-          )}
-
-          {tag.items.length === 0 ? (
-            <div className="py-14 text-center">
-              <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-surface-100 text-brand-600">
-                <CalendarDays className="h-5 w-5" aria-hidden="true" />
-              </span>
-              <h3 className="mt-4 text-lg font-semibold text-brand-800">Dieser Tag gehört dir.</h3>
-              <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-ink-700">
-                Füge einen Ort, eine Aktivität oder einfach freie Zeit hinzu. Jetnity ordnet alles chronologisch.
-              </p>
-            </div>
-          ) : (
-            <ol className="mt-5 space-y-3">
-              {tag.items.map((punkt) => (
-                <Planpunkt
-                  key={punkt.id}
-                  punkt={punkt}
-                  gesperrt={laeuft}
-                  onEntfernen={() => entfernen(tag.id, punkt.id)}
-                />
-              ))}
-            </ol>
-          )}
+          {tagesKopf}
+          {tagesFelder}
         </>
       ) : (
         <div className="py-14 text-center">
           <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-surface-100 text-brand-600">
             <CalendarDays className="h-5 w-5" aria-hidden="true" />
           </span>
-          <h3 className="mt-4 text-lg font-semibold text-brand-800">Noch keine Reisetage.</h3>
+          <p className="mt-4 text-lg font-semibold text-brand-800">Noch keine Reisetage.</p>
           <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-ink-700">
             Sobald ein Zeitraum feststeht, entstehen die Tage dieser Reise.
           </p>
@@ -308,53 +328,83 @@ export default function TripWorkspacePlan({
 
   if (kompakt) {
     return (
-      <div aria-label="Tagesplan" className={cn('grid min-w-0 gap-4', eingebettet ? 'mt-1' : 'mt-5')}>
-        <div className="min-w-0 rounded-[26px] border border-black/5 bg-white p-3">
-          <div className="px-2 pb-2 pt-1">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">Tagesplan</p>
-            <p className="mt-1 text-sm text-ink-900">{status.text}</p>
-          </div>
-          {reise.days.length === 0 ? (
-            <p className="px-3 py-6 text-sm leading-6 text-ink-700">
-              Diese Reise hat noch keine Tage. Sie entstehen, sobald ein Zeitraum feststeht.
-            </p>
-          ) : (
-            <ScrollRow
-              label="Reisetage im Plan"
-              fadeFromClassName="from-white"
-              viewportClassName="gap-2 px-1 pb-1"
-            >
-              {reise.days.map((eintrag) => {
-                const gewaehlt = tag?.id === eintrag.id
-                return (
-                  <button
-                    key={eintrag.id}
-                    type="button"
-                    aria-current={gewaehlt ? 'date' : undefined}
-                    onClick={() => onTagWechseln(eintrag.id)}
-                    className={cn(
-                      'inline-flex min-h-11 min-w-[6.5rem] shrink-0 flex-col justify-center rounded-2xl border px-3 py-2 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
-                      gewaehlt
-                        ? 'border-brand-800 bg-brand-800 text-white'
-                        : 'border-line-200 bg-white text-ink-900 hover:border-line-500',
-                    )}
-                  >
-                    <strong className="block text-sm font-semibold">
-                      {eintrag.title ?? `Tag ${eintrag.dayIndex}`}
-                    </strong>
-                    <span className="mt-0.5 block text-xs opacity-70">
-                      {eintrag.dayDate ? kurzesDatum.format(alsDatum(eintrag.dayDate)) : 'Ohne Datum'}
-                      {eintrag.items.length > 0 ? ` · ${eintrag.items.length}` : ''}
-                    </span>
-                  </button>
-                )
-              })}
-            </ScrollRow>
-          )}
+      <section
+        aria-label="Tagesplan"
+        data-tagesplan-modul="ein"
+        className={cn(
+          'min-w-0 rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_18px_60px_rgba(15,46,42,0.06)]',
+          eingebettet ? 'mt-1' : 'mt-5',
+        )}
+      >
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">Tagesplan</p>
+          <p className="mt-1 text-sm text-ink-900">{status.text}</p>
         </div>
-        {tagesInhalt}
-        {ungeplant}
-      </div>
+
+        {reise.days.length === 0 ? (
+          <p className="mt-4 text-sm leading-6 text-ink-700">
+            Diese Reise hat noch keine Tage. Sie entstehen, sobald ein Zeitraum feststeht.
+          </p>
+        ) : (
+          <ScrollRow
+            label="Reisetage im Plan"
+            className="mt-4"
+            fadeFromClassName="from-white"
+            viewportClassName="gap-2 pb-1"
+          >
+            {reise.days.map((eintrag) => {
+              const gewaehlt = tag?.id === eintrag.id
+              return (
+                <button
+                  key={eintrag.id}
+                  type="button"
+                  aria-current={gewaehlt ? 'date' : undefined}
+                  onClick={() => onTagWechseln(eintrag.id)}
+                  className={cn(
+                    'inline-flex min-h-11 min-w-[6.5rem] shrink-0 flex-col justify-center rounded-2xl border px-3 py-2 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
+                    gewaehlt
+                      ? 'border-brand-800 bg-brand-800 text-white'
+                      : 'border-line-200 bg-white text-ink-900 hover:border-line-500',
+                  )}
+                >
+                  <strong className="block text-sm font-semibold">
+                    {eintrag.title ?? `Tag ${eintrag.dayIndex}`}
+                  </strong>
+                  <span className="mt-0.5 block text-xs opacity-70">
+                    {eintrag.dayDate ? kurzesDatum.format(alsDatum(eintrag.dayDate)) : 'Ohne Datum'}
+                    {eintrag.items.length > 0 ? ` · ${eintrag.items.length}` : ''}
+                  </span>
+                </button>
+              )
+            })}
+          </ScrollRow>
+        )}
+
+        {tag && (
+          <div className="mt-4 border-t border-line-200 pt-4">
+            {tagesKopf}
+            {tagesFelder}
+          </div>
+        )}
+
+        {ohneTag.length > 0 && (
+          <div className="mt-5 border-t border-line-200 pt-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">
+              Noch nicht eingeplant
+            </p>
+            <ol className="mt-4 space-y-3">
+              {ohneTag.map((punkt) => (
+                <Planpunkt
+                  key={punkt.id}
+                  punkt={punkt}
+                  gesperrt={laeuft}
+                  onEntfernen={() => entfernen('', punkt.id)}
+                />
+              ))}
+            </ol>
+          </div>
+        )}
+      </section>
     )
   }
 

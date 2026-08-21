@@ -236,6 +236,34 @@ const ZUSTAENDE = {
       }),
     },
   },
+  'plan-punkte': {
+    kompakt: 'Sehr langer Planpunkt ohne Abschneiden fuer die Mobile-Tageskarte Tsukiji',
+    desktop: 'Sehr langer Planpunkt ohne Abschneiden fuer die Mobile-Tageskarte Tsukiji',
+    nutzlast: {
+      reise: reise({
+        days: [
+          tag(1, {
+            items: [
+              punkt({
+                id: 'lang-1',
+                kind: 'activity',
+                title: 'Sehr langer Planpunkt ohne Abschneiden fuer die Mobile-Tageskarte Tsukiji',
+              }),
+              punkt({ id: 'p-2', kind: 'note', title: 'Zweiter Punkt', position: 2 }),
+              punkt({ id: 'p-3', kind: 'note', title: 'Dritter Punkt', position: 3 }),
+            ],
+          }),
+          tag(2),
+        ],
+      }),
+    },
+  },
+  'plan-formular': {
+    kompakt: 'Ort oder Aktivität',
+    desktop: 'Ort oder Aktivität',
+    oeffnePunkt: true,
+    nutzlast: { reise: reise() },
+  },
 }
 
 function layoutPruefen() {
@@ -300,6 +328,28 @@ function layoutPruefen() {
   const planScroller = document.querySelector('[aria-label="Tagesplan"] .overflow-y-auto')
   if (planScroller && window.innerWidth < 1024) {
     fehler.push('vertikaler Tageslisten-Scroller auf Mobile')
+  }
+
+  const plan = document.querySelector('[aria-label="Tagesplan"]')
+  if (plan && window.innerWidth < 1024 && !plan.closest('[hidden]')) {
+    if (plan.getAttribute('data-tagesplan-modul') !== 'ein') {
+      fehler.push('Tagesplan ist kein gemeinsames Modul')
+    }
+    if (plan.querySelector('[aria-label="Gewählter Reisetag"]')) {
+      fehler.push('Tagesinhalt als zweite Karte')
+    }
+    if (plan.scrollWidth > plan.clientWidth + 1) {
+      fehler.push(`Tagesplan-Container scrollt horizontal ${plan.scrollWidth}>${plan.clientWidth}`)
+    }
+    const zeile = plan.querySelector('[aria-label="Reisetage im Plan"]')
+    if (zeile && zeile.scrollWidth > zeile.clientWidth + 1) {
+      const andere = [...plan.querySelectorAll('*')].filter((el) => {
+        if (el === zeile || zeile.contains(el) || el.contains(zeile)) return false
+        const stil = getComputedStyle(el)
+        return (stil.overflowX === 'auto' || stil.overflowX === 'scroll') && el.scrollWidth > el.clientWidth + 1
+      })
+      if (andere.length) fehler.push('horizontaler Scroll ausserhalb der Tageszeile')
+    }
   }
 
   return { ok: fehler.length === 0, fehler: [...new Set(fehler)].slice(0, 12) }
@@ -387,6 +437,9 @@ async function zustandOeffnen(page, zustand, viewport) {
   if (defin.oeffneAenderung && viewport.width < 1024) {
     await page.getByRole('button', { name: 'Reise ändern' }).click()
   }
+  if (defin.oeffnePunkt) {
+    await page.getByRole('button', { name: 'Punkt hinzufügen' }).click()
+  }
 }
 
 async function zustandPruefen(browser, name, viewport, zustand) {
@@ -434,7 +487,7 @@ async function interaktionPruefen(browser, name) {
       speicher: SPEICHER,
       nutzlast: {
         reise: reise({
-          days: Array.from({ length: 8 }, (_, i) => tag(i + 1)),
+          days: Array.from({ length: 15 }, (_, i) => tag(i + 1)),
         }),
         mitSuche: true,
         mitAenderung: true,
@@ -473,6 +526,7 @@ async function interaktionPruefen(browser, name) {
   const nav = page.getByRole('navigation', { name: 'Reisebereiche' })
   const planTab = await nav.getByRole('button', { name: 'Plan', exact: true }).count()
   const tagesplanInUebersicht = await page.getByLabel('Tagesplan').isVisible()
+  const einModul = await page.locator('[data-tagesplan-modul="ein"]').count()
   const hotelNachUebersicht = hotel
   const activityNachUebersicht = activity
 
@@ -489,6 +543,9 @@ async function interaktionPruefen(browser, name) {
   await nav.getByRole('button', { name: 'Übersicht', exact: true }).click()
   await page.getByLabel('Tagesplan').waitFor({ timeout: 15000 })
   const tagDreiZurueck = await page.getByRole('button', { name: /Tag 3/ }).getAttribute('aria-current')
+  await page.getByRole('button', { name: /Tag 15/ }).click()
+  const tag15 = await page.getByRole('button', { name: /Tag 15/ }).getAttribute('aria-current')
+  await page.getByRole('button', { name: /Tag 3/ }).click()
 
   await nav.getByRole('button', { name: 'Flüge', exact: true }).click()
   await page.getByText('Verbindungen für diese Reise').waitFor({ timeout: 15000 })
@@ -521,6 +578,8 @@ async function interaktionPruefen(browser, name) {
   const fehler = []
   if (planTab !== 0) fehler.push('Navigation enthält einen separaten Plan-Tab')
   if (!tagesplanInUebersicht) fehler.push('Übersicht enthält keinen Tagesplan')
+  if (einModul !== 1) fehler.push(`Tagesplan nicht als ein Modul: ${einModul}`)
+  if (tag15 !== 'date') fehler.push('letzter Reisetag in der Tageszeile nicht erreichbar')
   if (!formular) fehler.push('Punkt hinzufügen öffnete das Formular nicht')
   if (hotelNachUebersicht !== 0) fehler.push(`Hotelsuche startete in der Übersicht: ${hotelNachUebersicht}`)
   if (activityNachUebersicht !== 0) fehler.push(`Aktivitätensuche startete in der Übersicht: ${activityNachUebersicht}`)
