@@ -36,7 +36,8 @@
     "auth:testkonto": "node --import tsx scripts/auth/testkonto.ts",
     "airports:importieren": "node --import tsx scripts/airports/importieren.ts",
     "places:importieren": "node --import tsx scripts/places/importieren.ts",
-    "audit:activities": "node scripts/activities-ui-audit.mjs"
+    "audit:activities": "node scripts/activities-ui-audit.mjs",
+    "audit:trip-workspace": "node scripts/trip-workspace-ui-audit.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.16",

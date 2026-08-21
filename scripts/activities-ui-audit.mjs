@@ -458,6 +458,13 @@ async function zustandPruefen(browser, name, viewport, zustand) {
   const page = await kontext.newPage()
   await seiteVorbereiten(page, zustand)
   await page.goto(`${BASIS}${PFAD}`, { waitUntil: 'domcontentloaded' })
+  if (viewport.width < 1024) {
+    const tab = page.getByRole('navigation', { name: 'Reisebereiche' }).getByRole('button', {
+      name: 'Aktivitäten',
+      exact: true,
+    })
+    if (await tab.count()) await tab.click()
+  }
   const nachweis = ZUSTAENDE[zustand].nachweis
   try {
     await page.getByText(nachweis, { exact: false }).first().waitFor({ timeout: zustand === 'loading' ? 4000 : 15000 })
@@ -504,6 +511,11 @@ async function interaktionPruefen(browser, name) {
     })
   })
   await page.goto(`${BASIS}${PFAD}`, { waitUntil: 'domcontentloaded' })
+  const tab = page.getByRole('navigation', { name: 'Reisebereiche' }).getByRole('button', {
+    name: 'Aktivitäten',
+    exact: true,
+  })
+  if (await tab.count()) await tab.click()
   await page.getByRole('radio').first().waitFor({ timeout: 15000 })
   const chips = page.getByRole('radio')
   await chips.nth(1).click()
