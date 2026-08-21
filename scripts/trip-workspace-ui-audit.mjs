@@ -272,6 +272,7 @@ const ZUSTAENDE = {
     desktop: 'Deine Flüge',
     tab: 'Flüge',
     nutzlast: {
+      anfangsBereich: 'fluege',
       reise: reise({
         startDate: '2026-08-30',
         endDate: '2026-09-13',
@@ -308,6 +309,7 @@ const ZUSTAENDE = {
     desktop: 'Nächte-Abdeckung',
     tab: 'Unterkunft',
     nutzlast: {
+      anfangsBereich: 'unterkunft',
       reise: reise({
         startDate: '2026-08-30',
         endDate: '2026-09-13',
@@ -372,6 +374,7 @@ const ZUSTAENDE = {
     desktop: 'noch nicht vollständig bestimmbar',
     tab: 'Flüge',
     nutzlast: {
+      anfangsBereich: 'fluege',
       reise: reise({
         origin: null,
         originPlaceId: null,
@@ -585,7 +588,14 @@ async function zustandPruefen(browser, name, viewport, zustand) {
   const nachweis = viewport.width >= 1024 ? defin.desktop : defin.kompakt
   try {
     await zustandOeffnen(page, zustand, viewport)
-    await page.getByText(nachweis, { exact: false }).first().waitFor({ timeout: 15000 })
+    // Die kompakte Übersicht bleibt eingehängt und `hidden`. Dieselben
+    // Statuszeilen stehen dort und im sichtbaren Bestand. `.first()` würde
+    // sonst auf den versteckten Knoten warten.
+    await page
+      .getByText(nachweis, { exact: false })
+      .filter({ visible: true })
+      .first()
+      .waitFor({ timeout: 15000 })
   } catch {
     await kontext.close()
     return {
