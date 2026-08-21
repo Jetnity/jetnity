@@ -231,10 +231,15 @@ Umgesetzt im Draft:
 - Development-Migration `20260821200000` – **nicht Production**
 - Review-Fix (ADR-0094): keine automatische Suche aus Reisekontext, leere manuelle Defaults, `one_way` nur bei bewiesenen Orten, Kalendertage statt Reisetage, währungssicheres Ranking
 
-Qualitätsnachweis im Draft:
+Qualitätsnachweis im Draft (Head `b65341a8`):
 
-- Review-Fix der vier Wahrheitsbefunde ist im Code; vollständiger Test-/Audit-/CI-Nachweis folgt auf dem neuen Head
-- Development-Migration `20260821200000` bleibt Development-only, unverändert
+- `npm test`: **1157/1157**
+- Typecheck, Lint, Hygiene, Production-Build grün
+- Development-Migration `20260821200000` unverändert, nur Development
+- `db:rechte`, `db:rls`, `db:sicherheit` 169/169, `db:typen --pruefen`, `auth:pruefen`
+- Trip-Workspace-Audit WebKit + Chromium: **502 Kombinationen, 0 Fehler**
+- Activities-Regression: **184 Kombinationen, 0 Fehler**
+- GitHub CI und Vercel Preview waren auf `b65341a8` grün; dieser Dokumentations-Head zieht sie erneut
 - echter iPhone-Test **offen**, erst nach diesem Review-Fix
 
 Fachdoku: `docs/RENTAL_CARS.md`, ADR-0092 / ADR-0093 / ADR-0094.
