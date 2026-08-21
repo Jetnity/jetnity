@@ -256,9 +256,13 @@ export function mobilitaetsAbdeckung(reise: Trip, ohneTag: readonly TripItem[] =
     }
 
     const transferTreffer = restTransfers.filter((punkt) => passtAnKante(punkt, kante))
-    const flugTreffer = restFluege.filter((flug) => flug.startsOn === kante.date)
+    // Ein gleichdatiger Flug ist ein möglicher Kandidat, aber kein Routennachweis.
+    // Persistierte Flüge tragen Start/Ziel nur in Titel/Notiz (keine Trust Boundary)
+    // und lassen die Transfer-Routenspalten leer. covered_by_flight entsteht daher
+    // in Foundation A nicht: Truth > scheinbare Vollständigkeit.
+    const gleichdatigeFluege = restFluege.filter((flug) => flug.startsOn === kante.date)
 
-    if (transferTreffer.length > 1 || flugTreffer.length > 1) {
+    if (transferTreffer.length > 1 || gleichdatigeFluege.length > 1) {
       return {
         ...kante,
         status: 'unknown',
@@ -268,7 +272,7 @@ export function mobilitaetsAbdeckung(reise: Trip, ohneTag: readonly TripItem[] =
       }
     }
 
-    if (transferTreffer.length === 1 && flugTreffer.length === 1) {
+    if (transferTreffer.length === 1 && gleichdatigeFluege.length === 1) {
       return {
         ...kante,
         status: 'unknown',
@@ -279,7 +283,6 @@ export function mobilitaetsAbdeckung(reise: Trip, ohneTag: readonly TripItem[] =
     }
 
     const mobilityItem = einenNehmen(restTransfers, transferTreffer)
-    const flightItem = einenNehmen(restFluege, flugTreffer)
 
     if (mobilityItem) {
       return {
@@ -291,13 +294,13 @@ export function mobilitaetsAbdeckung(reise: Trip, ohneTag: readonly TripItem[] =
       }
     }
 
-    if (flightItem) {
+    if (gleichdatigeFluege.length === 1) {
       return {
         ...kante,
-        status: 'covered_by_flight',
-        flightItem,
+        status: 'unknown',
+        flightItem: null,
         mobilityItem: null,
-        durationMinutes: minutenZwischen(flightItem),
+        durationMinutes: null,
       }
     }
 

@@ -128,7 +128,7 @@ describe('Mobilitätsabdeckung', () => {
     }
   })
 
-  test('ein passender Flug deckt die Kante ab, ohne sie als offene Mobilität zu zeigen', () => {
+  test('ein einzelner Flug am Kantendatum ohne strukturierte Route bleibt unbestimmt', () => {
     const flug = punkt({
       id: 'flight-1',
       kind: 'flight',
@@ -136,9 +136,61 @@ describe('Mobilitätsabdeckung', () => {
       startsOn: '2026-09-12',
     })
     const lage = mobilitaetsAbdeckung(reise({ days: [{ ...reise().days[0], items: [flug] }] }))
-    assert.equal(lage.kanten[0]?.status, 'covered_by_flight')
-    assert.equal(lage.kanten.some((kante) => kante.status === 'open'), true)
-    assert.match(lage.zusammenfassung, /Noch keine Verbindung geplant|Keine offene Bodenverbindung|über Flug|Keine Verbindung/)
+    assert.equal(lage.kanten[0]?.status, 'unknown')
+    assert.equal(lage.kanten[0]?.flightItem, null)
+    assert.equal(lage.kanten.find((kante) => kante.art === 'return')?.status, 'open')
+    assert.equal(lage.kanten.some((kante) => kante.status === 'covered_by_flight'), false)
+    assert.match(lage.zusammenfassung, /noch nicht vollständig bestimmbar/i)
+  })
+
+  test('ein anders gerouteter gleichdatiger Flug darf die Kante nicht als Flugabdeckung markieren', () => {
+    const flug = punkt({
+      id: 'flight-wrong',
+      kind: 'flight',
+      title: 'ZRH → GVA',
+      note: 'Zürich → Genf',
+      startsOn: '2026-09-12',
+    })
+    const lage = mobilitaetsAbdeckung(reise({ days: [{ ...reise().days[0], items: [flug] }] }))
+    assert.equal(lage.kanten[0]?.status, 'unknown')
+    assert.equal(lage.kanten[0]?.originName, 'Zürich')
+    assert.equal(lage.kanten[0]?.destinationName, 'Lugano')
+    assert.equal(lage.kanten.some((kante) => kante.status === 'covered_by_flight'), false)
+  })
+
+  test('ohne Flug und ohne Transfer bleibt eine vollständige Kante offen', () => {
+    const lage = mobilitaetsAbdeckung(reise())
+    assert.equal(lage.bestimmbar, true)
+    assert.equal(lage.kanten[0]?.status, 'open')
+    assert.equal(lage.kanten[0]?.art, 'outbound')
+    assert.equal(lage.kanten.some((kante) => kante.status === 'covered_by_flight'), false)
+    assert.equal(lage.zusammenfassung, 'Noch keine Verbindung geplant')
+  })
+
+  test('ein Flug an einem anderen Tag lässt die Kante offen', () => {
+    const flug = punkt({
+      id: 'flight-other-day',
+      kind: 'flight',
+      title: 'ZRH → LUG',
+      startsOn: '2026-09-14',
+    })
+    const lage = mobilitaetsAbdeckung(reise({ days: [{ ...reise().days[0], items: [flug] }] }))
+    assert.equal(lage.kanten[0]?.status, 'open')
+    assert.equal(lage.kanten[0]?.art, 'outbound')
+    assert.equal(lage.kanten.some((kante) => kante.status === 'covered_by_flight'), false)
+  })
+
+  test('Titel und Notiz eines Fluges sind keine Trust Boundary für die Route', () => {
+    const flug = punkt({
+      id: 'flight-title',
+      kind: 'flight',
+      title: 'Zürich → Lugano',
+      note: 'ZRH 08:10 → LUG 09:05',
+      startsOn: '2026-09-12',
+    })
+    const lage = mobilitaetsAbdeckung(reise({ days: [{ ...reise().days[0], items: [flug] }] }))
+    assert.equal(lage.kanten[0]?.status, 'unknown')
+    assert.equal(lage.kanten.some((kante) => kante.status === 'covered_by_flight'), false)
   })
 
   test('fehlendes Datum macht die Kante unbestimmt, nicht offen', () => {
