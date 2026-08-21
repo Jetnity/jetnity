@@ -1,7 +1,7 @@
 # Jetnity – Datenbank
 
-Stand: 20. August 2026
-Gültig für: Supabase-Development-Branch nach Phase 3.1 (Airport- und Ortsreferenz). Production steht auf `20260820080000`. Airport- und Places-Schema sowie deren Importe gelten nur für Development, bis der kontrollierte Rollout in [PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md) ausdrücklich freigegeben ist.
+Stand: 21. August 2026
+Gültig für: Supabase-Development-Branch nach Phase 3.1 (Airport- und Ortsreferenz). Production steht auf `20260820080000`. Airport- und Places-Schema sowie deren Importe gelten nur für Development, bis der kontrollierte Rollout in [PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md) ausdrücklich freigegeben ist. Die Booking-Status-Migration `20260821100000` liegt im Repository und ist **nicht** Production.
 
 Diese Datei beschreibt den **tatsächlichen** Zustand des Schemas, wie er sich aus dem Repository herstellen lässt. Sie ist die Antwort auf die Frage, die [ARCHITECTURE.md](../ARCHITECTURE.md) Abschnitt 6 bis Phase 1.4 offenlassen musste: Was steht in der Datenbank, wer darf was, und woher weiß man das.
 
@@ -22,7 +22,7 @@ Die Migrationen in `supabase/migrations/` sind die Quelle. Was dort nicht steht,
 Konkret heißt das:
 
 - Eine Schemaänderung entsteht als Migration und wird von dort angewendet, nicht in der Supabase-Oberfläche.
-- `types/supabase.ts` wird erzeugt, nicht gepflegt.
+- `types/supabase.ts` wird erzeugt, nicht gepflegt. Draft-PR #29 hat die Booking-Status-Spalten dort von Hand nachgezogen, bis Development die Migration trägt und `db:typen` gegen das live Schema laufen kann.
 - Dass beides zusammenpasst, wird geprüft und nicht angenommen.
 
 Die Prüfungen dazu stehen in Abschnitt 9.
@@ -84,6 +84,8 @@ Die dreizehn Tabellen: `profiles`, `trips`, `trip_stages`, `trip_days`, `trip_it
 **Phase 3.1 Nachtrag `20260820120000`:** `public.places` ist die lokale Ortsbasis für Reiseziel und Abreise. Additive Spalten `trips.origin_place_id` und `trip_stages.place_id` (beide nullable). `reise_anlegen()` schreibt die Referenzen, wenn sie in der Nutzlast stehen. Inhalt aus `npm run places:importieren` (GeoNames CC BY 4.0 plus `public.airports`). Development enthält 124 811 Orte. Production erst über den kontrollierten Rollout. Einzelheiten in [docs/ORTE.md](ORTE.md).
 
 **Phase 3.1 Nachtrag `20260820130000`:** `reise_aendern()` schreibt dieselben optionalen Referenzen. Ohne eindeutige Auflösung bleibt der Wert `null`. Production unverändert, bis der Rollout freigegeben ist.
+
+**Coverage/Booking Status `20260821100000`:** Additive Spalten auf `trip_items` plus CHECKs. Historische Zeilen bleiben `unconfirmed`. `reise_anlegen()` darf einen gebuchten Status nur für Flug/Stay und nur als `user` übernehmen. `reise_aendern()` bleibt ohne diese Spalten. Die Datei liegt im Repository. Production-Playbook stoppt weiter bei `20260820130000`.
 
 Das Wachstum liegt vollständig bei den Reisedaten: Die vier neuen Tabellen tragen 61 Spalten, 43 CHECK-Bedingungen, 6 Fremdschlüssel, 5 Eindeutigkeitsbedingungen, 15 Indizes, 16 Policies und 5 Auslöser – vier für `updated_at`, einer für die Erzeugungsregeln von `public.trips` (Abschnitt 7a). Gleichzeitig sind mit `creator_sessions` 16 Spalten, 7 Indizes und 4 Policies sowie die neun Creator-Spalten des Profils entfallen – die Nettozahlen der Tabelle oben sind deshalb kleiner als die Zugänge.
 
@@ -169,6 +171,7 @@ Der Zustand nach Phase 1.4 steht in Abschnitt 9; dort ist auch nachgewiesen, das
 | `20260820110000_airports_referenz.sql` | `public.airports` um Region, Landescode, Keywords, Klasse erweitert (Phase 3.1, ADR-0066). Development angewendet. Production nur über den kontrollierten Rollout. |
 | `20260820120000_places_referenz.sql` | `public.places` plus optionale `trips.origin_place_id` / `trip_stages.place_id`; `reise_anlegen()` schreibt die Referenzen, wenn sie in der Nutzlast stehen (Phase 3.1, ADR-0067). Development angewendet. Production nur über den kontrollierten Rollout. |
 | `20260820130000_reise_aendern_places.sql` | `reise_aendern()` schreibt `origin_place_id` und `trip_stages.place_id` aus der Nutzlast (Phase 3.1, ADR-0067). Development angewendet. Production nur über den kontrollierten Rollout. |
+| `20260821100000_trip_items_booking_status.sql` | `trip_items.booking_status` / `booking_source` / `booking_confirmed_at`; `reise_anlegen()` übernimmt nur `user` als Quelle (Coverage/Booking Status, ADR-0089). **Nur Repository / Development-Preview. Nicht auf Production anwenden.** |
 
 Die Reihenfolge ist nicht beliebig: `20260817100200` darf erst laufen, wenn `20260817100000` die Rollen der Betroffenen übernommen und `20260817100100` alle Policies auf `creator_profiles.role` umgestellt hat. Sonst verlöre jemand seinen Zugang oder eine Policy liefe ins Leere.
 

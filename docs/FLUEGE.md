@@ -1,6 +1,6 @@
 # Jetnity – Flüge
 
-**Stand:** 20. August 2026 · Phase 3.1  
+**Stand:** 21. August 2026 · Phase 3.1 plus Coverage/Booking Status (Draft-PR #29)  
 **Gilt für:** die interne Flugdomäne, den ersten Duffel-Adapter, das Ranking und die Übernahme in die Reise.
 
 Diese Datei beschreibt den **tatsächlichen** Flugweg. Produktprinzip: [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md). Entscheidungen: ADR-0062 bis ADR-0066 in [DECISIONS.md](../DECISIONS.md). Die Flughafenbasis steht in [docs/FLUGHAFEN.md](FLUGHAFEN.md).
@@ -62,6 +62,8 @@ Nutzer wählt Option
 | Duffel | `lib/flights/duffel/*` | erster Daten-/Entwicklungsadapter |
 
 Die UI (`components/trips/FlugSuche.tsx`) spricht nur die interne Domäne. Duffel-Typen kommen dort nicht vor.
+
+Im Flugbereich des Trip Workspace steht zuerst der Reisebestand (`components/trips/FlugBestand.tsx`): benötigte Abschnitte aus Origin und Etappen, gespeicherte Flüge mit manuellem Buchungsstatus, erst darunter die bestehende Suche. Coverage ist Domainlogik in `lib/trips/flug-abdeckung.ts`, nicht im Rendering. Ein vorhandener `trip_item` ist nicht automatisch gebucht (ADR-0089). Production-Suche bleibt aus. Keine Fake-Ergebnisse.
 
 ---
 

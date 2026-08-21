@@ -4,11 +4,9 @@ Stand: 21. August 2026
 
 ## Status
 
-Neuer, eigenständiger Produktblock nach dem Merge von PR #27 (`Trip Workspace Mobile UX – Iteration 1–3`).
+Umgesetzt auf Branch `feat/trip-coverage-booking-status`, Draft-PR #29.
 
-Branch: `feat/trip-coverage-booking-status`
-
-Der Auftrag startet vom aktuellen `main` nach Merge-Commit `70e471b00c7505356fe13f8185b204200c4bb781`.
+Parent auf `main`: Merge-Commit `70e471b00c7505356fe13f8185b204200c4bb781` (PR #27, Trip Workspace Mobile UX Iteration 1–3).
 
 **PR bleibt Draft. Nicht mergen. Nichts in Production aktivieren oder migrieren.**
 

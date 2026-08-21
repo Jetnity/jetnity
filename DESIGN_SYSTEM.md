@@ -228,6 +228,11 @@ Große Schriftgrade werden unterhalb `sm` (640 px) reduziert, darüber bleiben s
 - Primäraktionen, Menüpunkte und Icon-Buttons mindestens 44 px hoch
 - Icon-Buttons in Listen mindestens 40 px
 - freistehende Textlinks dürfen kleiner sein, brauchen aber Abstand: bei Zielen unter 24 px darf sich der 24-px-Radius um zwei Ziele nicht überschneiden (WCAG 2.2, SC 2.5.8, Ausnahme „Spacing“)
+- `Als gebucht markieren` / `Buchung korrigieren` sind Aktionen, keine Siegel: `min-h-11`, sichtbarer Fokusring in `brand-600`
+
+### 7.5a Status nicht nur über Farbe
+
+Buchungs- und Abdeckungsstatus im Trip Workspace tragen immer einen lesbaren Text (`Gebucht`, `Ausgewählt`, `Noch offen`, `Noch nicht vollständig bestimmbar`). Die Fläche darf den Status stützen, ersetzt die Worte aber nicht. Keine neuen Statusfarben ausserhalb der bestehenden Tokens. Siegel sind `span`, keine Buttons.
 
 ### 7.6 Eingabefelder
 

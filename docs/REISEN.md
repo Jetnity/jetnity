@@ -1,6 +1,6 @@
 # Jetnity – Reisen
 
-**Stand:** 21. August 2026 · Phase 3.3 plus Mobile-UX Iteration 2 (Preview)
+**Stand:** 21. August 2026 · Phase 3.3 plus Mobile-UX auf `main` plus Coverage/Booking Status (Draft-PR #29)
 **Gilt für:** das Reisedatenmodell und die Wege, auf denen eine Reise entsteht, gespeichert und bearbeitet wird.
 
 Diese Datei beantwortet vier Fragen: Woraus besteht eine Reise, wo liegt sie, wie kommt sie aus dem Browser in ein Konto, und was ist bewusst noch nicht gebaut.
@@ -31,7 +31,7 @@ Vier Tabellen, ein Graph. Der Anwendungstyp dazu steht in `types/trips.ts` und t
 | Reise | `trips` | Titel, Startort, optionaler kanonischer Abreiseort (`origin_place_id`), Zeitraum, Reisende, Währung, Budget, Status, Tempo, Interessen, Reisewunsch, technische Fassung (`revision`) |
 | Etappe | `trip_stages` | ein Aufenthalt an einem Ort: Name, Ländercode, An- und Abreise, Koordinaten, optionale Ortsreferenz (`place_id`), Reihenfolge |
 | Tag | `trip_days` | Nummer im Reiseverlauf, optionales Datum, optionaler Titel, **Etappe** (`stage_id`) |
-| Planpunkt | `trip_items` | Flug, Unterkunft, Aktivität, Transfer oder freie Notiz – mit Zeitfenster, Preis, Anbieter, Buchungsverweis. Ohne Tag (`day_id` null) bleibt der Punkt ungeplant (`ohneTag`). |
+| Planpunkt | `trip_items` | Flug, Unterkunft, Aktivität, Transfer oder freie Notiz – mit Zeitfenster, Preis, Anbieter, Buchungsverweis und manuellem Buchungsstatus. Ohne Tag (`day_id` null) bleibt der Punkt ungeplant (`ohneTag`). |
 
 **Mehrere Ziele sind mehrere Etappen.** Ein Feld `destination` hätte die heutige Oberfläche abgedeckt und die zweite Station einer Reise nicht. Das Formular unter `/planen` fragt weiterhin ein Ziel und legt daraus eine Etappe an – dieselbe Struktur, nur mit einem Element.
 
@@ -57,6 +57,8 @@ Vier Tabellen, ein Graph. Der Anwendungstyp dazu steht in `types/trips.ts` und t
 | `trips.pace` | `calm`, `balanced`, `intense` |
 | `trips.interests` | `culture`, `nature`, `food`, `beach`, `adventure`, `wellness` – als Menge, ohne Doppelte |
 | `trip_items.kind` | `flight`, `stay`, `activity`, `transfer`, `note` |
+| `trip_items.booking_status` | `unconfirmed` (ausgewählt/geplant), `booked` (ausdrücklich bestätigt). Nur `flight` und `stay` dürfen `booked` sein. |
+| `trip_items.booking_source` | `null` oder `user`. Der Browser darf keine Provider-Quelle setzen. |
 
 Die Werte stehen in Englisch, weil sie Spaltenwerte sind. Was Reisende lesen, steht an einer Stelle: `lib/trips/bezeichnungen.ts`.
 
@@ -135,11 +137,11 @@ vertrauenswürdige Reise → Wunsch → Operationen → anwenden → Vorschau �
   → public.reise_aendern()  bzw.  gastreiseAendern()
 ```
 
-`public.reise_aendern(jsonb)` ist `SECURITY INVOKER`, atomisch, prüft `trips.revision`, ist über `last_mutation_id` idempotent und schreibt keine Preise, Anbieter oder Buchungsfelder. Bestehende Kennungen unveränderter Zeilen bleiben. Eine veraltete Fassung (zweiter Tab) wird abgelehnt, nicht still überschrieben. Direkte Änderungen an Etappen, Tagen, Planpunkten und Stammdaten der Reise erhöhen dieselbe Fassung (ADR-0058 Nachtrag).
+`public.reise_aendern(jsonb)` ist `SECURITY INVOKER`, atomisch, prüft `trips.revision`, ist über `last_mutation_id` idempotent und schreibt keine Preise, Anbieter, Buchungs-URLs oder Buchungsstatusfelder. Bestehende Kennungen unveränderter Zeilen bleiben. Eine veraltete Fassung (zweiter Tab) wird abgelehnt, nicht still überschrieben. Direkte Änderungen an Etappen, Tagen, Planpunkten und Stammdaten der Reise erhöhen dieselbe Fassung (ADR-0058 Nachtrag).
 
 Die Eindeutigkeit von `day_index` und `day_date` ist während des Schreibens aufgeschoben und wird vor dem Erfolg geprüft (ADR-0060 Nachtrag). Ein Tag zwischen zwei Tagen, ein entfernter mittlerer Tag oder verschobene Kalenderdaten dürfen dazwischen kollidieren, im fertigen Graphen nicht.
 
-Das Modell sieht einen Snapshot ohne Handelsfelder und liefert Operationen, keine Ersatzreise (ADR-0059). Planpunkte mit Anbieter, Buchungslink, Fremdkennung oder Preis – einschliesslich eines in Phase 3.1 übernommenen Flugs – sind vollständig gesperrt: weder Inhalt noch Termin noch Zuordnung. Entfällt ihr Tag oder ihre Etappe, bleiben sie ungeplant und unverändert. Kontingent und Kostendeckel sind dieselben wie beim Vorschlag.
+Das Modell sieht einen Snapshot ohne Handelsfelder und liefert Operationen, keine Ersatzreise (ADR-0059). Planpunkte mit Anbieter, Buchungslink, Fremdkennung, Preis oder `booking_status = booked` sind vollständig gesperrt: weder Inhalt noch Termin noch Zuordnung noch Buchungsstatus. Entfällt ihr Tag oder ihre Etappe, bleiben sie ungeplant und unverändert. Kontingent und Kostendeckel sind dieselben wie beim Vorschlag.
 
 Gast und Konto speichern ungeplante Planpunkte gleich: im Konto `trip_items.day_id` null, im Browser `ohneTag`. Die Übernahme schickt sie als `ungeplante` (ADR-0061).
 
@@ -200,7 +202,9 @@ Die Kennung entscheidet, wo `/reisen/[tripId]` nachsieht: `trip-<uuid>` ist ein 
 
 **Keine Beispieldaten.** Ein leeres Konto zeigt einen leeren Zustand mit dem Weg nach `/planen`. Eine erfundene Reise als Produktzustand wäre eine Behauptung über gespeicherte Daten.
 
-**Mobile-UX Iteration 3 (Preview, PR #27).** Unterhalb von 1024 px ist der Arbeitsbereich keine lange Kartenfolge. Zuerst kommt ein kompakter Reisekopf, darunter eine klebende Bereichsnavigation: Übersicht, Flüge, Unterkunft, Aktivitäten. Die Übersicht ist das Dashboard: Status zu Flügen, Unterkunft und Aktivitäten, eingebetteter Tagesplan, `Reise ändern`, Reiseprofil. Der mobile Tagesplan ist ein Modul – Tagesauswahl und Tagesinhalt teilen eine Karte, nur die Chip-Zeile scrollt horizontal. Der Planstatus ist Einleitung des Tagesplans, kein eigener Tab. Der gewählte Reisetag gilt gemeinsam für Übersicht und Aktivitäten. Ab 1024 px bleibt die bisherige breite Arbeitsansicht. Der aktive Bereich ist Client-State, nicht Teil der URL. Siehe ADR-0087 und ADR-0088.
+**Mobile-UX auf `main` (PR #27).** Unterhalb von 1024 px ist der Arbeitsbereich keine lange Kartenfolge. Zuerst kommt ein kompakter Reisekopf, darunter eine klebende Bereichsnavigation: Übersicht, Flüge, Unterkunft, Aktivitäten. Die Übersicht ist das Dashboard: Status zu Flügen, Unterkunft und Aktivitäten, eingebetteter Tagesplan, `Reise ändern`, Reiseprofil. Der mobile Tagesplan ist ein Modul – Tagesauswahl und Tagesinhalt teilen eine Karte, nur die Chip-Zeile scrollt horizontal. Der Planstatus ist Einleitung des Tagesplans, kein eigener Tab. Der gewählte Reisetag gilt gemeinsam für Übersicht und Aktivitäten. Ab 1024 px bleibt die bisherige breite Arbeitsansicht. Der aktive Bereich ist Client-State, nicht Teil der URL. Siehe ADR-0087 und ADR-0088.
+
+**Coverage und Buchungsstatus (Draft-PR #29, nicht Production).** Ein gespeicherter Flug oder Stay ist ausgewählt/geplant, nicht gebucht. `Gebucht` entsteht nur durch `Als gebucht markieren`. Offene Abschnitte und fehlende Nächte werden aus dem Graphen abgeleitet, nicht als eigene Zeilen gespeichert. Die Übersicht zeigt kompakte, ehrliche Statuszeilen; unvollständige Daten heissen `noch nicht vollständig bestimmbar`, nicht `0/14`. Siehe ADR-0089.
 
 ---
 

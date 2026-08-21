@@ -1,6 +1,6 @@
 # Jetnity – Hotels
 
-**Stand:** 20. August 2026 · Phase 3.2c  
+**Stand:** 21. August 2026 · Phase 3.2c plus Coverage/Booking Status (Draft-PR #29)  
 **Gilt für:** die interne Hotel-/Quartierdomäne, die Suchpipeline, den Trip-Workspace und die serverseitige Vertrauensgrenze der `stay`-Übernahme.
 
 Diese Datei beschreibt den **tatsächlichen** Hotelweg. Produktprinzip: [JETNITY_VISION.md](../JETNITY_VISION.md) Abschnitt 5 und [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md). Entscheidungen: ADR-0070 bis ADR-0077 in [DECISIONS.md](../DECISIONS.md). Strategie: [HOTEL_PROVIDER_STRATEGY.md](HOTEL_PROVIDER_STRATEGY.md).
@@ -154,7 +154,7 @@ Die Client-Antwort enthält höchstens fünf Optionen. Interne Scores verlassen 
 
 ## 6. Übernahme in die Reise
 
-Ein später ausgewähltes Hotel wird als kommerzieller `trip_item` mit `kind = stay` gespeichert. Dafür reicht das bestehende Schema. **Keine neue Migration.**
+Ein später ausgewähltes Hotel wird als kommerzieller `trip_item` mit `kind = stay` gespeichert. Die Foundation braucht dafür keine neue Tabelle. Der manuelle Buchungsstatus liegt auf denselben Zeilen (`booking_status`, ADR-0089) und bleibt nach der Übernahme `unconfirmed`, bis der Nutzer `Als gebucht markieren` setzt.
 
 ### Konto
 
@@ -198,6 +198,7 @@ Gespeicherte Momentaufnahme:
 | `price_amount` / `price_currency` | Gesamtpreis der angebotenen Rate |
 | `provider` / `external_ref` | Suchanbieter und dessen Angebots-ID |
 | `booking_url` | immer `null` |
+| `booking_status` | nach Übernahme `unconfirmed`; `booked` nur nach manueller Bestätigung |
 | `stage_id` | Etappe der Unterkunft |
 | `day_id` | Check-in-Tag, falls vorhanden; sonst ungeplant |
 
@@ -213,7 +214,11 @@ Nächte gehören zur Etappe, nicht zu einem einzelnen Tag. Deshalb hängt der Pu
 
 Im bestehenden Trip Workspace, nicht als Demo:
 
-- ein Hotelbereich je Etappe
+- oben zuerst `Deine Unterkunft` / Nächte-Abdeckung aus dem Reisegraphen (`components/trips/UnterkunftBestand.tsx`)
+- Check-in/Check-out als halboffenes Intervall; Überlappungen werden vereinigt
+- fehlende Nächte als konkrete Zeiträume; unbekannte Daten nicht als `0/14`
+- gespeicherte Stays mit manuellem Buchungsstatus; `Gebucht` nur nach ausdrücklicher Bestätigung
+- erst darunter ein Hotelbereich je Etappe
 - Gegend nur bei vorhandenem Ort **und** Koordinaten
 - ist die Gegend nur der Etappenort (`herkunft: etappenort`), keine Viertel-Empfehlung
 - Loading / Empty / Unavailable / Timeout / Error / Rate-Limit als getrennte Zustände
