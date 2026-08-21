@@ -5,6 +5,12 @@ Stand: 21. August 2026
 Branch: `feat/trip-coverage-booking-status`
 PR: #29
 
+## Status
+
+Fix auf dem Branch. Trip-Workspace-Audit **278 Kombinationen, 0 Fehler** inklusive Wechselketten auf 390/430 px (WebKit + Chromium). Activities-Regression **184/0**. Local Tests **1059/1059**, Typecheck, Lint, Hygiene, Production-Build grün. GitHub CI und Vercel Preview für den Visibility-Fix SUCCESS.
+
+iPhone-Nachtest steht noch aus. **PR bleibt Draft. Nicht mergen.**
+
 ## Ziel
 
 Den auf einem echten iPhone reproduzierten Fehler beheben, dass nach einem Wechsel zwischen `Flüge`, `Unterkunft` und `Aktivitäten` Inhalte bereits besuchter Bereiche sichtbar bleiben und sich unter dem aktiven Bereich stapeln.

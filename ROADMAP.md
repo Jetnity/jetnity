@@ -138,7 +138,9 @@ Gezielter Dashboard-Block auf Draft-PR #29, parallel zu Phase 3.4, ohne Provider
 - expliziter manueller Buchungsstatus (`unconfirmed` / `booked`, Quelle nur `user`)
 - Bestand oberhalb der bestehenden Suche
 - Repository-Migration `20260821100000_trip_items_booking_status.sql` am 21. August 2026 auf Development angewendet, **nicht** im Production-Playbook
-- Trip-Workspace-Audit: 274 Kombinationen, 0 Fehler; Activities-Regression: 184 Kombinationen, 0 Fehler
+- Trip-Workspace-Audit nach Visibility-Fix: **278 Kombinationen, 0 Fehler**, inklusive Wechselketten 390/430 px
+- Activities-Regression: **184 Kombinationen, 0 Fehler**
+- iPhone-Nachtest der Tab-Sichtbarkeit steht noch aus
 - **nicht mergen**, keine Production-Änderung
 
 ### Während Booking.com noch offen ist

@@ -223,7 +223,7 @@ Keine Production-Datenbankänderung. Provider-Suchen bleiben aus.
 
 ## 6b. Querschnitt – Trip Coverage & Booking Status
 
-**Umgesetzt auf Draft-PR #29, aber wegen eines realen iPhone-Visibility-Bugs noch nicht freigabereif. Nicht mergen. Keine Production-Migration, kein Production-Kill-Switch.**
+**Umgesetzt auf Draft-PR #29. Visibility-Fix für den iPhone-Tab-Stack ist auf dem Branch. Nicht mergen, bis ein erneuter iPhone-Test bestätigt. Keine Production-Migration, kein Production-Kill-Switch.**
 
 Branch: `feat/trip-coverage-booking-status`
 
@@ -231,29 +231,20 @@ Hauptauftrag: `docs/CURSOR_TRIP_COVERAGE_BOOKING_STATUS_TASK.md`
 
 Real-Device-Fixauftrag: `docs/CURSOR_PR29_TAB_VISIBILITY_FIX.md`
 
-Der automatisierte Trip-Workspace-Audit war zunächst bei **274 Kombinationen, 0 Fehler** und die Activities-Regression bei **184 Kombinationen, 0 Fehler**. Ein anschließender echter iPhone-Test hat jedoch eine Tab-Visibility-Regression gefunden. Deshalb dürfen diese früheren grünen Audit-Zahlen nicht als Freigabe interpretiert werden.
+Der frühere Trip-Workspace-Audit mit **274 Kombinationen, 0 Fehler** hat die iPhone-Regression nicht gefunden, weil er nur das `hidden`-Attribut prüfte. Nach dem Fix: **278 Kombinationen, 0 Fehler**, inklusive Wechselketten auf 390/430 px (WebKit + Chromium). Activities-Regression: **184 Kombinationen, 0 Fehler**. Local `npm test` **1059/1059**. Typecheck, Lint, Hygiene und Production-Build grün. GitHub CI und Vercel Preview für den Visibility-Fix SUCCESS.
 
-### Offener iPhone-Blocker
+### Visibility-Fix (iPhone-Stack)
 
-Reproduktion auf kompakter Ansicht:
+Ursache: inaktive gemountete Wrapper trugen HTML `hidden` und gleichzeitig Tailwind `grid`. Author-CSS `display: grid` überstimmt `[hidden] { display: none }`. Zusätzlich setzt React 18 `inert={true}` nicht ins DOM.
 
-- zuerst z. B. `Flüge` öffnen: zunächst korrekt
-- anschließend `Unterkunft` oder `Aktivitäten` öffnen
-- bereits besuchte Bereiche bleiben sichtbar und stapeln sich unter dem aktiven Bereich
-- umgekehrt reproduzierbar bei anderer Reihenfolge
+Umsetzung:
 
-Gefundene Ursache im aktuellen `TripWorkspace.tsx`:
+- ein einheitlicher Wrapper `BereichHuelle` mit `data-arbeitsbereich`
+- verborgene Bereiche tragen nur die Klasse `hidden`, niemals `grid`/`flex`/`block`
+- `inert` wird per `setAttribute` gesetzt
+- besuchte Bereiche bleiben eingehängt, nehmen aber kein Layout mehr ein
 
-- inaktive bereits gemountete Bereiche erhalten zwar HTML `hidden`
-- die Flüge-/Unterkunft-Wrapper tragen gleichzeitig Tailwind `grid`
-- die Display-Regel kann die erwartete `hidden`-Darstellung übersteuern
-- dadurch bleiben inaktive Bereiche visuell im Layout
-
-Der Fix muss alle kompakten Bereiche absichern und Browser-Regressionsprüfungen mit echten Wechselketten enthalten, z. B.:
-
-`Übersicht → Flüge → Unterkunft → Aktivitäten → Übersicht`
-
-Der Test darf nicht nur das Vorhandensein des `hidden`-Attributs prüfen, sondern muss verifizieren, dass inaktive Bereiche tatsächlich keinen sichtbaren Layoutplatz einnehmen.
+Der automatisierte Audit prüft nach jeder Sequenz `getComputedStyle` und die Layoutbox, nicht nur das Attribut. Ein erneuter Test auf echtem iPhone steht noch aus.
 
 Was dieser Block baut:
 
@@ -272,11 +263,9 @@ Was dieser Block ausdrücklich nicht baut:
 
 Nächster Schritt auf PR #29:
 
-1. Visibility-Fix durch Cursor abschließen
-2. WebKit-/Chromium-Wechselketten und vollständige CI grün
-3. neue Preview erzeugen
-4. erneut auf echtem iPhone prüfen
-5. erst danach `Mark Ready` erwägen
+1. neue Preview auf echtem iPhone prüfen (`Flüge → Unterkunft` und die anderen Wechselketten)
+2. erst danach `Mark Ready` erwägen
+3. PR bleibt Draft, nicht mergen
 
 ## 7. Arbeiten während wir auf Booking.com warten
 
@@ -405,7 +394,7 @@ Eine Phase ist erst fertig, wenn Dokumentation und Handoff dem tatsächlichen St
 3. Aktuellen `main`-/PR-/CI-Stand prüfen.
 4. Phase 3.3 nicht erneut bauen: sie ist fertig und auf `main`.
 5. PR #27 nicht erneut bauen: Trip Workspace Mobile UX Iteration 1–3 ist auf `main`.
-6. Draft-PR #29 bleibt Draft. Vor jeder Freigabe zuerst den offenen iPhone-Visibility-Fix aus `docs/CURSOR_PR29_TAB_VISIBILITY_FIX.md` und den erneuten Real-Device-Test prüfen.
+6. Draft-PR #29 bleibt Draft. Der Tab-Visibility-Fix liegt auf dem Branch; vor Freigabe den erneuten iPhone-Test aus `docs/CURSOR_PR29_TAB_VISIBILITY_FIX.md` prüfen.
 7. Nach sauberem Abschluss des Querschnittsblocks ist Phase 3.4 der nächste Hauptblock; der erste echte Hoteladapter wartet primär auf Booking.com-Zugang.
 8. Solange der Zugang fehlt, nur konkrete produktnahe Qualitätsverbesserungen oder andere ausdrücklich freigegebene provider-unabhängige Arbeiten durchführen.
 9. Keine Production-Aktivierung und keine Secrets ohne separate ausdrückliche Freigabe.
