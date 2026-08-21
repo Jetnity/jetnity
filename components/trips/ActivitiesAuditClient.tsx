@@ -56,6 +56,7 @@ export default function ActivitiesAuditClient() {
         ohneTag={reise.ohneTag}
         onPunktAnlegen={async () => null}
         onPunktEntfernen={async () => null}
+        anfangsBereich="aktivitaeten"
         aktivitaetensuche={<AktivitaetenBereich reise={reise} />}
       />
     </main>

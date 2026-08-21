@@ -39,9 +39,14 @@ function etappeFuer(reise: Trip, tag: TripDay): TripStage | null {
 
 export default function AktivitaetenBereich({
   reise,
+  tagId: gesteuerteTagId,
+  onTagWechseln,
   onUebernehmen,
 }: {
   reise: Trip
+  /** Gemeinsame Tagesauswahl mit dem Plan, wenn der Arbeitsbereich sie setzt. */
+  tagId?: string
+  onTagWechseln?: (id: string) => void
   onUebernehmen?: (
     etappe: TripStage,
     tag: TripDay,
@@ -49,13 +54,16 @@ export default function AktivitaetenBereich({
   ) => Promise<string | null>
 }) {
   const ersterTag = reise.days[0] ?? null
-  const [tagId, setTagId] = React.useState(ersterTag?.id ?? '')
+  const [eigeneTagId, setEigeneTagId] = React.useState(ersterTag?.id ?? '')
 
   React.useEffect(() => {
-    setTagId((bisher) =>
+    setEigeneTagId((bisher) =>
       reise.days.some((tag) => tag.id === bisher) ? bisher : reise.days[0]?.id ?? '',
     )
   }, [reise])
+
+  const tagId = gesteuerteTagId ?? eigeneTagId
+  const setTagId = onTagWechseln ?? setEigeneTagId
 
   const tag = reise.days.find((eintrag) => eintrag.id === tagId) ?? ersterTag
 

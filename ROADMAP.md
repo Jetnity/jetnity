@@ -17,6 +17,7 @@ Diese Datei ist die operative Roadmap. Historische Detailstände bleiben über G
 | Phase 3.2 | Hotel Foundation + Quartierlogik + 3.2b/3.2c-Härtung | **fertig, nach `main` gemergt; Production-Hotelsuche aus** |
 | Phase 3.3 | Activities Foundation + Tageskontext + Ranking + UI-Audit | **fertig, nach `main` gemergt; Production-Aktivitätensuche aus** |
 | Phase 3.4 | erster echter Hotel-Suchadapter | **als Nächstes; wartet primär auf Booking.com-Zugang** |
+| Querschnitt | Trip Workspace Mobile UX Iteration 1–3 | **in Arbeit, Draft-PR #27; nicht gemergt** |
 | Phase 3.5 | erster echter Activity-Suchadapter | geplant nach 3.4 |
 | Phase 3.6 | Transfers Foundation / erster Integrationsweg | geplant |
 | Phase 4 | Launch-Reife, Monetarisierung, Production-Freigaben | geplant |
@@ -117,6 +118,18 @@ Sobald Zugang vorliegt:
 - Error/Timeout/Rate-Limit/Provider-Ausfall sauber behandeln
 - Preview-End-to-End-Test und Mobile-/Browser-Audit durchführen
 - Production-Hotelsuche weiterhin aus lassen, bis separat freigegeben
+
+### Querschnitt – Trip Workspace Mobile UX Iteration 1–3
+
+Gezielte Mobile-IA für `/reisen/[tripId]`, parallel zu Phase 3.4, ohne Provider- oder Production-Änderung.
+
+- Branch `ux-trip-workspace-mobile-iteration-1`, Draft-PR #27
+- kompakter Reisekopf, klebende Bereichsnavigation, Übersicht als Default
+- Iteration 2: sichtbare Mobile-Bereiche sind Übersicht, Flüge, Unterkunft, Aktivitäten; der Tagesplan liegt in der Übersicht
+- Iteration 3: Tagesauswahl und Tagesinhalt sind auf Mobile ein Modul; nur die Chip-Zeile scrollt horizontal
+- Desktop-Arbeitsansicht bleibt
+- Iteration-3-Nachweise: `npm test` 1018/1018; Typecheck, Lint, Hygiene und Production-Build grün; Trip-Workspace-Audit 210/0; Activities-Audit 184/0
+- **nicht mergen**, keine Production-Änderung
 
 ### Während Booking.com noch offen ist
 

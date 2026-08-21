@@ -31,6 +31,8 @@ Phase 3.3 wurde als Pull Request #24 per Squash Merge abgeschlossen. Die Product
 
 Der Kontinuitätsstandard wurde als Pull Request #25 gemergt. Er verändert keine Produktlogik, macht aber Dokumentation/Übergabe verbindlich.
 
+Parallel liegt Draft-PR #27 für die Trip-Workspace Mobile-UX Iterationen 1 bis 3. Dieser Stand ist nicht auf `main` und nicht in Production.
+
 ## 2. Verbindlicher Produktkern
 
 Jetnity optimiert die **Gesamtreise**, nicht isoliert den billigsten Einzelbaustein.
@@ -204,6 +206,44 @@ Sobald Zugang vorliegt, zuerst nur Preview:
 
 Wenn Booking.com-Zugang nicht zeitnah möglich ist, HBX / Hotelbeds als dokumentierten Backup-Weg prüfen.
 
+## 6a. Querschnitt – Trip Workspace Mobile UX Iteration 1–3
+
+**In Arbeit auf Draft-PR #27. Nicht gemergt. Keine Production-Änderung.**
+
+Branch: `ux-trip-workspace-mobile-iteration-1`
+
+Aufträge: `docs/CURSOR_TRIP_WORKSPACE_MOBILE_UX_ITERATION_1.md`, `docs/CURSOR_TRIP_WORKSPACE_MOBILE_UX_ITERATION_2.md`, `docs/CURSOR_TRIP_WORKSPACE_MOBILE_UX_ITERATION_3.md`
+
+Vercel Preview: https://jetnity-app-git-ux-trip-workspace-mobil-c58bb6-jetnity-e1b93c82.vercel.app
+
+Iteration 1 bleibt die Basis. Iteration 2 setzt die Produktentscheidung um: auf Mobile gehören Übersicht und Tagesplan zusammen. Iteration 3 fasst Tagesauswahl und Tagesinhalt visuell zu einem Modul zusammen.
+
+Was sich auf Mobile geändert hat:
+
+- kompakter Reisekopf statt großem Hero
+- klebende Bereichsnavigation: Übersicht, Flüge, Unterkunft, Aktivitäten
+- Default bleibt die Übersicht
+- die Übersicht enthält Status zu Flügen, Unterkunft und Aktivitäten sowie den Tagesplan
+- `Plan` ist kein sichtbarer Haupt-Tab mehr
+- der mobile Tagesplan ist eine Karte: Status, Chip-Zeile und gewählter Tag
+- nur die Tageschips scrollen horizontal
+- `Reise ändern` bleibt eine kompakte Aktion in der Übersicht
+- Übersicht und Aktivitäten teilen dieselbe Tagesauswahl
+- Hotel- und Aktivitätssuche starten auf Mobile erst beim ersten Besuch des Bereichs
+- Desktop ab 1024 px bleibt die bisherige breite Arbeitsansicht
+
+Iteration-3-Nachweise auf diesem Branch:
+
+- `npm test`: **1018/1018**
+- Typecheck, Lint, Hygiene und Production-Build grün
+- Trip-Workspace-Audit (WebKit + Chromium): **210 Kombinationen, 0 Fehler**
+- Activities-Regression-Audit: **184 Kombinationen, 0 Fehler**
+- Deep Link für den aktiven Bereich bleibt bewusst Client-State
+
+Provider und Production sind unverändert aus. Keine Migration, keine neuen Secrets. Keine neue ADR, weil sich nur die visuelle Gruppierung geändert hat.
+
+Nächster Schritt: Nutzer prüft die Preview auf einem echten iPhone. PR #27 bleibt Draft.
+
 ## 7. Arbeiten während wir auf Booking.com warten
 
 Es ist ausdrücklich sinnvoll, konkrete Probleme der echten Jetnity-Website parallel zu verbessern.
@@ -327,4 +367,5 @@ Eine Phase ist erst fertig, wenn Dokumentation und Handoff dem tatsächlichen St
 4. Phase 3.3 nicht erneut bauen: sie ist fertig und auf `main`.
 5. Phase 3.4 ist der nächste Hauptblock, aber der erste echte Hoteladapter wartet primär auf Booking.com-Zugang.
 6. Solange der Zugang fehlt, nur konkrete produktnahe Qualitätsverbesserungen oder andere ausdrücklich freigegebene provider-unabhängige Arbeiten durchführen.
-7. Keine Production-Aktivierung und keine Secrets ohne separate ausdrückliche Freigabe.
+7. Draft-PR #27 (Trip Workspace Mobile UX Iteration 1–3) bleibt Draft. Nicht mergen. Keine Production-Änderung.
+8. Keine Production-Aktivierung und keine Secrets ohne separate ausdrückliche Freigabe.

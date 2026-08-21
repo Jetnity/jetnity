@@ -1,6 +1,6 @@
 # Jetnity – Design-System
 
-Stand: 20. August 2026
+Stand: 21. August 2026
 Status: Farbsystem und Responsive-Regeln verbindlich
 
 Die Jetnity-V2-Markenwirkung darf nicht stillschweigend verändert werden ([AGENTS.md](AGENTS.md) Regel 11). Neue Komponenten verwenden ausschließlich die hier definierten Tokens.
@@ -276,6 +276,12 @@ Randverankerte Elemente rechnen zusätzlich `env(safe-area-inset-*)` ein, weil d
 - fixierte Elemente wie „Nach oben“: `bottom-[calc(1.5rem+env(safe-area-inset-bottom))]`
 
 Im normalen Browser sind diese Werte 0, das Layout bleibt unverändert.
+
+### 7.11 Bereichsnavigation im Trip Workspace
+
+Unterhalb von 1024 px hat `/reisen/[tripId]` eine klebende Bereichsnavigation direkt unter der öffentlichen Kopfzeile (`top: 72px + safe-area`). Sie nutzt `ScrollRow`, Pillen und `min-h-11`. Der aktive Bereich trägt `aria-current="page"` und dieselbe `brand-800`-Fläche wie andere gewählte Chips.
+
+Die sichtbaren Ziele sind Übersicht, Flüge, Unterkunft und Aktivitäten. Der Tagesplan gehört in die Übersicht und hat keinen eigenen Tab. Auf Mobile sind Tagesauswahl und Tagesinhalt ein Modul: eine Karte, nur die Chip-Zeile scrollt horizontal. Die Navigation ist eine robuste Button-Leiste, kein unvollständiges ARIA-Tabs-Muster. Auf Desktop (`lg`) entfällt sie; dort bleibt die bisherige breite Arbeitsansicht.
 
 ---
 

@@ -156,7 +156,7 @@ export default function KontoArbeitsbereich({
             type="button"
             onClick={loeschen}
             disabled={loescht}
-            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-white/20 px-4 text-sm font-medium text-white/85 transition hover:border-white/40 hover:text-white disabled:pointer-events-none disabled:opacity-50"
+            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full px-2 text-sm font-medium text-white/70 transition hover:text-white disabled:pointer-events-none disabled:opacity-50"
           >
             <Trash2 className="h-4 w-4" />
             {loescht ? 'Reise wird gelöscht …' : 'Reise löschen'}

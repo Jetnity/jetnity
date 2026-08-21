@@ -1,6 +1,6 @@
 // lib/ui-audit/freigabe.ts
 //
-// Ob die interne Activities-Audit-Seite antworten darf.
+// Ob eine interne UI-Audit-Seite antworten darf.
 //
 // Fail closed:
 //   · VERCEL_ENV=production ist immer aus, auch mit JETNITY_UI_AUDIT.
