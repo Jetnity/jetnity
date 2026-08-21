@@ -25,9 +25,12 @@ import { flugInReiseUebernehmen } from '@/lib/flights/aktionen'
 import type { FlugOptionSichtbar } from '@/lib/flights/client-sicht'
 import { hotelInReiseUebernehmen } from '@/lib/hotels/aktionen'
 import type { HotelOptionSichtbar } from '@/lib/hotels/client-sicht'
+import { mobilityManuellInReiseAnlegen } from '@/lib/mobility/aktionen'
+import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
 import { planpunktAnlegen, planpunktBuchungsstatusSetzen, planpunktEntfernen, reiseLoeschen } from '@/lib/trips/aktionen'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
 import AktivitaetenBereich from '@/components/trips/AktivitaetenBereich'
+import MobilitaetBereich from '@/components/trips/MobilitaetBereich'
 import FlugSuche from '@/components/trips/FlugSuche'
 import HotelBereich from '@/components/trips/HotelBereich'
 import ReiseAenderung from '@/components/trips/ReiseAenderung'
@@ -126,6 +129,31 @@ export default function KontoArbeitsbereich({
               stageId: etappe.id,
               dayId,
               optionId: option.id,
+            })
+            if (!ergebnis.ok) return ergebnis.meldung
+            router.refresh()
+            return null
+          }}
+        />
+      }
+      mobilitaetssuche={
+        <MobilitaetBereich
+          reise={reise}
+          ohneTag={ohneTag}
+          onBuchungsstatus={async (itemId, gebucht) => {
+            const ergebnis = await planpunktBuchungsstatusSetzen({
+              tripId: reise.id,
+              itemId,
+              gebucht,
+            })
+            if (!ergebnis.ok) return ergebnis.meldung
+            router.refresh()
+            return null
+          }}
+          onManuellAnlegen={async (eingabe: MobilityManuellEingabe) => {
+            const ergebnis = await mobilityManuellInReiseAnlegen({
+              ...eingabe,
+              tripId: reise.id,
             })
             if (!ergebnis.ok) return ergebnis.meldung
             router.refresh()

@@ -40,6 +40,7 @@ Mindestens bei jeder größeren Phase oder relevanten Änderung:
 - bewusste Nicht-Ziele und verschobene Punkte
 - der konkrete nächste empfohlene Schritt
 - relevante neue Produktprinzipien, die die langfristige Jetnity-Vision verändern oder präzisieren
+- fachliche Invarianten und Logic-/Truth-Regeln, wenn eine Phase neue bereichsübergreifende Logik einführt oder verändert
 
 Keine Phase gilt als sauber abgeschlossen, wenn dieser Übergabestand nicht nachvollziehbar ist.
 
@@ -56,12 +57,13 @@ Je nach Änderung müssen insbesondere aktuell gehalten werden:
 - `DECISIONS.md` – ADRs für wichtige Entscheidungen
 - `DESIGN_SYSTEM.md` – verbindliche UI-/UX-Regeln
 - `docs/PRODUCT_QUALITY_STANDARD.md` – Produktqualitätsanforderungen
-- fachliche Modul-Dokumente, z. B. `docs/HOTELS.md`, `docs/ACTIVITIES.md`
+- `docs/LOGIC_STANDARD.md` – verbindliche Regeln für Datenwahrheit, Source of Truth, fachliche Invarianten, Zustände und bereichsübergreifende Konsistenz
+- fachliche Modul-Dokumente, z. B. `docs/HOTELS.md`, `docs/ACTIVITIES.md`, `docs/MOBILITY.md`
 - dieser `docs/CONTINUITY_STANDARD.md`
 
 Aufgaben für Coding Agents sollen diese Quellen passend zum Auftrag ausdrücklich einbeziehen.
 
-Vor jeder größeren Produkt-, UX- oder Architekturentscheidung muss `JETNITY_VISION.md` gelesen werden. Eine lokale technische Verbesserung darf den Produkt-Nordstern nicht unbemerkt verschlechtern.
+Vor jeder größeren Produkt-, UX-, Logik- oder Architekturentscheidung müssen `JETNITY_VISION.md` und `docs/LOGIC_STANDARD.md` gelesen werden. Eine lokale technische Verbesserung darf den Produkt-Nordstern oder die fachliche Konsistenz nicht unbemerkt verschlechtern.
 
 ---
 
@@ -71,6 +73,10 @@ Unabhängig von Phase oder Agent gelten dauerhaft folgende Leitplanken:
 
 - Jetnity ist ein **zusammenhängendes Reisesystem**, keine Sammlung isolierter Flug-, Hotel- und Aktivitätssuchen.
 - Der gemeinsame Reisegraph ist die fachliche Grundlage für bereichsübergreifende Entscheidungen.
+- **Logik, Datenwahrheit und bereichsübergreifende Konsistenz gehören zu den höchsten Entwicklungsprioritäten – auf derselben Ebene wie Security, Datenintegrität und Produktqualität.**
+- Für dieselbe fachliche Information soll es genau eine maßgebliche Source of Truth geben; konkurrierende Parallelwahrheiten sind zu vermeiden.
+- Unbekannt bleibt unbekannt. Jetnity darf nie mehr behaupten, als vertrauenswürdige strukturierte Daten oder ausdrücklich gekennzeichnete Nutzerangaben belegen.
+- Kein bekannter fachlicher Wahrheits- oder Logikfehler darf als „spätere Optimierung“ in einen Merge verschoben werden, wenn er falsche Nutzerentscheidungen verursachen kann.
 - Vorhandener Reisekontext soll wiederverwendet werden, statt den Nutzer dieselben Informationen erneut eingeben oder selbst zusammenführen zu lassen.
 - Jetnity soll konkret **Zeit, Suchaufwand, Doppelarbeit, Entscheidungsstress und organisatorische Reibung** reduzieren.
 - Änderungen an einem Reisebestandteil sollen auf Auswirkungen auf die Gesamtreise geprüft werden.
@@ -98,6 +104,7 @@ Der Abschluss einer Phase muss mindestens beantworten:
 9. Was ist der nächste konkrete Schritt?
 10. Welche Entscheidung braucht noch eine Nutzerfreigabe?
 11. Wurde die Produktvision durch diese Phase verändert oder präzisiert, und falls ja: ist `JETNITY_VISION.md` aktualisiert?
+12. Welche fachlichen Invarianten / Truth-Regeln gelten und sind sie in `docs/LOGIC_STANDARD.md`, ADRs oder dem zuständigen Moduldokument nachvollziehbar?
 
 ---
 
@@ -131,9 +138,9 @@ Wenn Erinnerung und Repository widersprechen, gilt nicht automatisch die Erinner
 
 Ein neuer Chat oder Agent soll Jetnity anhand der Repository-Dokumentation übernehmen können.
 
-Mindestens zu Beginn einer größeren Jetnity-Arbeit sollen `JETNITY_VISION.md`, `JETNITY_HANDOFF.md`, `ROADMAP.md` und die für die Aufgabe relevanten Architektur-/Entscheidungs-/Qualitätsdokumente gelesen werden.
+Mindestens zu Beginn einer größeren Jetnity-Arbeit sollen `JETNITY_VISION.md`, `JETNITY_HANDOFF.md`, `ROADMAP.md`, `docs/PRODUCT_QUALITY_STANDARD.md`, `docs/LOGIC_STANDARD.md` und die für die Aufgabe relevanten Architektur-/Entscheidungs-/Moduldokumente gelesen werden.
 
-Der Nutzer soll dafür **nicht erneut sagen müssen**, dass sauber dokumentiert werden soll oder welches übergeordnete Produktziel Jetnity verfolgt.
+Der Nutzer soll dafür **nicht erneut sagen müssen**, dass sauber dokumentiert werden soll, welches übergeordnete Produktziel Jetnity verfolgt oder dass Logik und bereichsübergreifende Konsistenz höchste Priorität haben.
 
 Diese Regel gilt dauerhaft als Teil des Jetnity-Entwicklungsprozesses.
 
@@ -148,6 +155,7 @@ Dokumentation darf nur bestätigte Tatsachen als fertig markieren.
 - keine Production-Aktivierung behaupten, wenn ein Kill Switch aktiv ist
 - keine Migrations-/RLS-Verifikation behaupten, wenn sie nicht durchgeführt wurde
 - keine UI-Qualität behaupten, wenn der erforderliche Audit fehlt
+- keine fachliche Abdeckung oder Buchung behaupten, wenn die zugrunde liegenden Daten den Zustand nicht sicher beweisen
 
 Dokumentation muss den tatsächlichen Stand abbilden, nicht den gewünschten Stand.
 
@@ -161,11 +169,12 @@ Bei Jetnity soll ChatGPT dauerhaft:
 
 - als Produkt-/Architektursteuerung den Gesamtfaden halten
 - `JETNITY_VISION.md` als oberste Produktleitplanke bei neuen Funktionen und Architekturentscheidungen berücksichtigen
-- größere Cursor-Aufträge so formulieren, dass Dokumentation Teil der Definition of Done ist
-- nach Cursor-Abschluss Code, Security, CI und Produktqualität prüfen
+- `docs/LOGIC_STANDARD.md` als verbindliche Leitplanke für fachliche Wahrheit, Source of Truth und bereichsübergreifende Konsistenz anwenden
+- größere Cursor-Aufträge so formulieren, dass Dokumentation und Logic-/Truth-Prüfung Teil der Definition of Done sind
+- nach Cursor-Abschluss Code, Security, CI, Produktqualität und fachliche Annahmen unabhängig prüfen
 - wichtige offene Punkte in den dauerhaften Projektquellen sichern
 - neue verbindliche Produktprinzipien aus Nutzerentscheidungen in der Vision/Handoff-Dokumentation festhalten
-- vor Merge und Production den aktuellen technischen Stand erneut verifizieren
+- vor Merge und Production den aktuellen technischen und fachlichen Stand erneut verifizieren
 - den Nutzer nicht mit bereits dokumentierten Projektfragen belasten, wenn sie aus dem Repo beantwortet werden können
 
 ---
@@ -174,7 +183,9 @@ Bei Jetnity soll ChatGPT dauerhaft:
 
 Ein Coding Agent darf eine größere Aufgabe nicht als vollständig abgeschlossen melden, solange relevante Dokumentation veraltet ist.
 
-Vor größeren Aufgaben muss der Agent prüfen, ob seine Lösung mit dem Produkt-Nordstern vereinbar ist. Insbesondere darf ein Agent Jetnity nicht unbeabsichtigt in getrennte, voneinander unabhängige Suchprodukte zerlegen, wenn derselbe Reisegraph die Bereiche verbinden soll.
+Vor größeren Aufgaben muss der Agent prüfen, ob seine Lösung mit dem Produkt-Nordstern und `docs/LOGIC_STANDARD.md` vereinbar ist. Insbesondere darf ein Agent Jetnity nicht unbeabsichtigt in getrennte, voneinander unabhängige Suchprodukte oder konkurrierende fachliche Wahrheiten zerlegen, wenn derselbe Reisegraph die Bereiche verbinden soll.
+
+Bei neuer oder geänderter Kernlogik muss der Agent außerdem negative und mehrdeutige Fälle prüfen und dokumentieren: fehlende Daten, falsche Route, gleicher Tag aber anderer Zusammenhang, Mehrfachtreffer, Zustandswechsel sowie Fehler-vs.-Leerzustände, soweit fachlich relevant.
 
 Im Abschlussbericht müssen mindestens enthalten sein:
 
@@ -182,6 +193,7 @@ Im Abschlussbericht müssen mindestens enthalten sein:
 - Tests / CI / Build
 - Security
 - Datenbank / Migration / RLS
+- Logic / Truth / bereichsübergreifende Auswirkungen
 - Kosten
 - Dokumentation
 - offene Risiken
@@ -196,4 +208,8 @@ Wenn ein Punkt nicht zutrifft, ausdrücklich `keine` bzw. `nicht Teil dieser Pha
 
 Jetnity soll über Monate und Jahre konsistent weiterentwickelt werden können, auch wenn Chats gewechselt werden, Agenten neu gestartet werden oder einzelne Beteiligte den unmittelbaren Gesprächskontext verlieren.
 
-**Der Projektfaden und der Produkt-Nordstern gehören ins Repository, nicht nur in den Kopf eines Agents oder in einen einzelnen Chat.**
+**Der Projektfaden, der Produkt-Nordstern und die fachlichen Wahrheitsregeln gehören ins Repository, nicht nur in den Kopf eines Agents oder in einen einzelnen Chat.**
+
+Verbindlicher Merksatz aus `docs/LOGIC_STANDARD.md`:
+
+> **Einfach für den Nutzer. Streng logisch im Inneren. Eine Reise, eine Wahrheit.**

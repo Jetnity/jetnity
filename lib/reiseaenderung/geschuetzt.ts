@@ -22,6 +22,14 @@ const GESCHUETZTE_FELDER = [
   'bookingStatus',
   'bookingSource',
   'bookingConfirmedAt',
+  'mobilityMode',
+  'originPlaceId',
+  'destinationPlaceId',
+  'originName',
+  'destinationName',
+  'connectionRef',
+  'mobilityChanges',
+  'mobilityEvidence',
 ] as const
 
 type GeschuetztesFeld = (typeof GESCHUETZTE_FELDER)[number]
@@ -40,6 +48,14 @@ function handelswerte(punkt: TripItem): Pick<TripItem, GeschuetztesFeld> {
     bookingStatus: punkt.bookingStatus,
     bookingSource: punkt.bookingSource,
     bookingConfirmedAt: punkt.bookingConfirmedAt,
+    mobilityMode: punkt.mobilityMode,
+    originPlaceId: punkt.originPlaceId,
+    destinationPlaceId: punkt.destinationPlaceId,
+    originName: punkt.originName,
+    destinationName: punkt.destinationName,
+    connectionRef: punkt.connectionRef,
+    mobilityChanges: punkt.mobilityChanges,
+    mobilityEvidence: punkt.mobilityEvidence,
   }
 }
 
@@ -64,6 +80,14 @@ function leer(): Pick<TripItem, GeschuetztesFeld> {
     bookingStatus: 'unconfirmed',
     bookingSource: null,
     bookingConfirmedAt: null,
+    mobilityMode: null,
+    originPlaceId: null,
+    destinationPlaceId: null,
+    originName: null,
+    destinationName: null,
+    connectionRef: null,
+    mobilityChanges: null,
+    mobilityEvidence: null,
   }
 }
 

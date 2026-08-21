@@ -18,8 +18,8 @@ Diese Datei ist die operative Roadmap. Historische Detailstände bleiben über G
 | Phase 3.3 | Activities Foundation + Tageskontext + Ranking + UI-Audit | **fertig, nach `main` gemergt; Production-Aktivitätensuche aus** |
 | Phase 3.4 | erster echter Hotel-Suchadapter | **wartet / extern blockiert durch Booking.com-Zugang; HBX/Hotelbeds Backup** |
 | Querschnitt | Trip Workspace Mobile UX Iteration 1–3 | **fertig, nach `main` gemergt (PR #27)** |
-| Querschnitt | Trip Coverage & Booking Status | **Ready for Review auf PR #29; iPhone-Retest bestanden; Production-Migration angewendet/verifiziert** |
-| Foundation-Track A | Mobilität & Transfers – Bahn, Bus, Fähre, Transfers | **als Nächstes nach PR #29** |
+| Querschnitt | Trip Coverage & Booking Status | **auf `main` (PR #29, `211872c1`); Production-Booking-Migration nach Nutzerfreigabe angewendet** |
+| Foundation-Track A | Mobilität & Transfers – Bahn, Bus, Fähre, Transfers | **in Arbeit auf Draft-PR #30** |
 | Foundation-Track B | Mietwagen Foundation | geplant nach A |
 | Foundation-Track C | Travel Readiness & Dokumente Foundation | geplant nach B |
 | Foundation-Track D | Gesamt-Abdeckung im Reisegraphen erweitern | geplant nach C |
@@ -131,16 +131,16 @@ Sobald Zugang vorliegt:
 **Auf `main` gemergt** als Pull Request #27, Merge-Commit `70e471b00c7505356fe13f8185b204200c4bb781`.
 
 - kompakter Reisekopf, klebende Bereichsnavigation, Übersicht als Default
-- sichtbare Mobile-Bereiche sind Übersicht, Flüge, Unterkunft, Aktivitäten; der Tagesplan liegt in der Übersicht
+- sichtbare Mobile-Bereiche waren Übersicht, Flüge, Unterkunft, Aktivitäten; der Tagesplan liegt in der Übersicht. Foundation A ergänzt Mobilität als fünften Bereich.
 - Desktop-Arbeitsansicht bleibt
 - keine Production-Datenbankänderung, Provider-Suchen unverändert aus
 
 ### Querschnitt – Trip Coverage & Booking Status
 
-Gezielter Dashboard-Block auf PR #29, parallel zu Phase 3.4, ohne Provider-Aktivierung.
+Gezielter Dashboard-Block, parallel zu Phase 3.4, ohne Provider-Aktivierung. **Auf `main` gemergt** als Pull Request #29, Merge-Commit `211872c1aad0e002d81f5ea1fb2d7eef4490d4b7`.
 
-- Branch `feat/trip-coverage-booking-status`
-- Status: **Ready for Review**
+- Branch war `feat/trip-coverage-booking-status`
+- Status: **auf `main`**
 - ehrliche Flug-/Nachtabdeckung aus dem Reisegraphen
 - expliziter manueller Buchungsstatus (`unconfirmed` / `booked`, Quelle nur `user`)
 - Bestand oberhalb der bestehenden Suche
@@ -153,7 +153,6 @@ Gezielter Dashboard-Block auf PR #29, parallel zu Phase 3.4, ohne Provider-Aktiv
 - Activities-Regression: **184 Kombinationen, 0 Fehler**
 - echter iPhone-Nachtest der Tab-Sichtbarkeit: **bestanden**
 - Provider-Suchen/Kill-Switches unverändert aus
-- Merge erst nach grünem finalen CI-/Preview-Stand und ausdrücklicher Nutzerfreigabe
 
 ## Provider-unabhängiger Foundation-Track während Phase 3.4 wartet
 
@@ -161,14 +160,22 @@ Die Wartezeit auf externe Providerzugänge wird genutzt, um Jetnity funktional b
 
 ### Foundation A – Mobilität & Transfers
 
-Gemeinsames Reisegraph-Modell für:
+**In Arbeit auf Draft-PR #30**, Branch `feat/mobility-transfers-foundation`. Nicht mergen. Nicht auf Production migrieren oder aktivieren. Phase 3.4 bleibt wartend.
 
-- Bahn
-- Bus
-- Fähre
-- lokale/gebuchte Transfers
+Nachweis 21. August 2026: Tests **1100/1100**, Development-Migration angewendet und verifiziert, Workspace-Audit **358/0**, Activities-Regression **184/0**. Route-Truth-Korrektur: gleichdatiger Flug ohne strukturierte Route ist `unknown`, nicht `covered_by_flight`. Ein echter iPhone-Preview-Test steht vor Ready noch aus.
 
-Berücksichtigen: Start/Ziel, Station/Hafen, Abfahrt/Ankunft, Dauer, Status und Anschlussbeziehungen zu Flug, Unterkunft und Tagesplan.
+Gemeinsames Reisegraph-Modell für Bahn, Bus, Fähre und Transfer:
+
+- persistenter Planpunkt bleibt `trip_items.kind = transfer`
+- strukturierte optionale Spalten statt JSON oder 1:1-Tabelle (ADR-0090)
+- konservative `Bewegungskante`-Abdeckung (ADR-0091): Transfer nur bei Start + Ziel + Datum; ein Datum allein macht keinen Flug zur Abdeckung
+- manueller Buchungsstatus analog zu Flug/Stay
+- geschlossene Suchnaht, Factory/Nachweis `null`, Kill Switch `JETNITY_MOBILITY_AKTIV`
+- ein Workspace-Bereich „Mobilität“, keine vier Tabs
+
+Fachdoku: [docs/MOBILITY.md](docs/MOBILITY.md). Auftrag: [docs/CURSOR_MOBILITY_TRANSFERS_FOUNDATION_TASK.md](docs/CURSOR_MOBILITY_TRANSFERS_FOUNDATION_TASK.md).
+
+Nicht in diesem Block: Mietwagen, Kreuzfahrten, echter Provider, Fake-Fahrpläne/Preise, Production-Aktivierung.
 
 ### Foundation B – Mietwagen
 

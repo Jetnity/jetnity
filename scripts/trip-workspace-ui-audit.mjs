@@ -30,6 +30,7 @@ const TAB_ID = {
   Flüge: 'fluege',
   Unterkunft: 'unterkunft',
   Aktivitäten: 'aktivitaeten',
+  Mobilität: 'mobilitaet',
 }
 
 const TAB_NACHWEIS = {
@@ -37,12 +38,13 @@ const TAB_NACHWEIS = {
   Flüge: 'Verbindungen für diese Reise',
   Unterkunft: 'Die Hotelsuche ist in dieser Umgebung nicht verfügbar.',
   Aktivitäten: 'Passende Aktivitäten werden vorbereitet.',
+  Mobilität: 'Bahn, Bus, Fähre und Transfer',
 }
 
 const TAB_SEQUENZEN = [
-  ['Übersicht', 'Flüge', 'Unterkunft', 'Aktivitäten', 'Übersicht'],
-  ['Unterkunft', 'Flüge', 'Aktivitäten', 'Unterkunft'],
-  ['Aktivitäten', 'Unterkunft', 'Flüge', 'Aktivitäten'],
+  ['Übersicht', 'Flüge', 'Unterkunft', 'Aktivitäten', 'Mobilität', 'Übersicht'],
+  ['Mobilität', 'Aktivitäten', 'Unterkunft', 'Flüge', 'Übersicht'],
+  ['Aktivitäten', 'Mobilität', 'Flüge', 'Unterkunft', 'Aktivitäten'],
 ]
 
 const TABWECHSEL_BREITEN = BREITEN.filter((breite) => breite.name === '390' || breite.name === '430')
@@ -82,6 +84,14 @@ function punkt(teil) {
     bookingStatus: 'unconfirmed',
     bookingSource: null,
     bookingConfirmedAt: null,
+    mobilityMode: null,
+    originPlaceId: null,
+    destinationPlaceId: null,
+    originName: null,
+    destinationName: null,
+    connectionRef: null,
+    mobilityChanges: null,
+    mobilityEvidence: null,
     ...teil,
   }
 }
@@ -155,6 +165,19 @@ const ACTIVITY_UNAVAILABLE = {
     hatBelastbareZeiten: false,
     hatInteressen: true,
     hatBudget: true,
+  },
+  options: [],
+}
+
+const MOBILITY_UNAVAILABLE = {
+  status: 'unavailable',
+  message: 'Verbindungen per Bahn, Bus, Fähre oder Transfer werden vorbereitet. Sobald ein Datenpartner angebunden ist, erscheinen hier echte Angebote – ohne erfundene Fahrpläne oder Preise.',
+  coverageNote: 'Kein Mobilitätsprovider.',
+  evidenz: {
+    hatStart: false,
+    hatZiel: false,
+    hatDatum: false,
+    hatModus: false,
   },
   options: [],
 }
@@ -251,6 +274,12 @@ const ZUSTAENDE = {
     desktop: 'Passende Aktivitäten werden vorbereitet.',
     tab: 'Aktivitäten',
     nutzlast: { reise: reise(), mitSuche: true },
+  },
+  mobilitaet: {
+    kompakt: 'Bahn, Bus, Fähre und Transfer',
+    desktop: 'Bahn, Bus, Fähre und Transfer',
+    tab: 'Mobilität',
+    nutzlast: { reise: reise(), anfangsBereich: 'mobilitaet' },
   },
   'ohne-tag': {
     kompakt: 'Offener Punkt',
@@ -391,6 +420,131 @@ const ZUSTAENDE = {
       }),
     },
   },
+  'mobilitaet-manuell': {
+    kompakt: 'IC 890',
+    desktop: 'IC 890',
+    tab: 'Mobilität',
+    nutzlast: {
+      anfangsBereich: 'mobilitaet',
+      reise: reise({
+        stages: [etappe({ name: 'Lugano', placeId: 'geonames:2659836', arrivalDate: '2026-09-12' })],
+        days: [
+          tag(1, {
+            items: [
+              punkt({
+                id: 'rail-1',
+                kind: 'transfer',
+                title: 'Zürich → Lugano',
+                mobilityMode: 'rail',
+                originName: 'Zürich Hauptbahnhof',
+                destinationName: 'Lugano',
+                originPlaceId: 'geonames:2657896',
+                destinationPlaceId: 'geonames:2659836',
+                startsOn: '2026-09-12',
+                startsAt: '08:10',
+                endsOn: '2026-09-12',
+                endsAt: '10:40',
+                connectionRef: 'IC 890',
+                mobilityChanges: 0,
+                mobilityEvidence: 'user',
+              }),
+            ],
+          }),
+          tag(2),
+        ],
+      }),
+    },
+  },
+  'mobilitaet-gebucht': {
+    kompakt: 'Gebucht',
+    desktop: 'Gebucht',
+    tab: 'Mobilität',
+    nutzlast: {
+      anfangsBereich: 'mobilitaet',
+      reise: reise({
+        stages: [etappe({ name: 'Lugano', placeId: 'geonames:2659836', arrivalDate: '2026-09-12' })],
+        days: [
+          tag(1, {
+            items: [
+              punkt({
+                id: 'bus-1',
+                kind: 'transfer',
+                title: 'Zürich → Lugano',
+                mobilityMode: 'bus',
+                originName: 'Zürich',
+                destinationName: 'Lugano',
+                originPlaceId: 'geonames:2657896',
+                destinationPlaceId: 'geonames:2659836',
+                startsOn: '2026-09-12',
+                bookingStatus: 'booked',
+                bookingSource: 'user',
+                bookingConfirmedAt: JETZT,
+                mobilityEvidence: 'user',
+              }),
+            ],
+          }),
+        ],
+      }),
+    },
+  },
+  'mobilitaet-unbestimmt': {
+    kompakt: 'noch nicht vollständig bestimmbar',
+    desktop: 'noch nicht vollständig bestimmbar',
+    tab: 'Mobilität',
+    nutzlast: {
+      anfangsBereich: 'mobilitaet',
+      reise: reise({
+        origin: null,
+        originPlaceId: null,
+        startDate: null,
+        endDate: null,
+        stages: [etappe({ arrivalDate: null, departureDate: null, placeId: null })],
+        ohneTag: [
+          punkt({
+            id: 'ferry-offen',
+            kind: 'transfer',
+            title: 'Fähre ohne Zuordnung',
+            dayId: null,
+            mobilityMode: 'ferry',
+            mobilityEvidence: 'user',
+          }),
+        ],
+      }),
+    },
+  },
+  'mobilitaet-lange-namen': {
+    kompakt: 'Bahnhof Zürich Stadelhofen mit sehr langem Stationsnamen ohne Abschneiden',
+    desktop: 'Bahnhof Zürich Stadelhofen mit sehr langem Stationsnamen ohne Abschneiden',
+    tab: 'Mobilität',
+    nutzlast: {
+      anfangsBereich: 'mobilitaet',
+      reise: reise({
+        origin: 'Bahnhof Zürich Stadelhofen mit sehr langem Stationsnamen ohne Abschneiden',
+        stages: [
+          etappe({
+            name: 'Lugano Stazione FFS mit sehr langem Zielnamen ohne horizontales Abschneiden',
+            placeId: 'geonames:2659836',
+          }),
+        ],
+        days: [
+          tag(1, {
+            items: [
+              punkt({
+                id: 'rail-lang',
+                kind: 'transfer',
+                title: 'Bahnhof Zürich Stadelhofen mit sehr langem Stationsnamen ohne Abschneiden → Lugano Stazione FFS mit sehr langem Zielnamen ohne horizontales Abschneiden',
+                mobilityMode: 'rail',
+                originName: 'Bahnhof Zürich Stadelhofen mit sehr langem Stationsnamen ohne Abschneiden',
+                destinationName: 'Lugano Stazione FFS mit sehr langem Zielnamen ohne horizontales Abschneiden',
+                startsOn: '2026-09-12',
+                mobilityEvidence: 'user',
+              }),
+            ],
+          }),
+        ],
+      }),
+    },
+  },
   'bestand-unbestimmt': {
     kompakt: 'noch nicht vollständig bestimmbar',
     desktop: 'noch nicht vollständig bestimmbar',
@@ -450,7 +604,7 @@ function layoutPruefen(erwartetBereich) {
     const tabs = [...nav.querySelectorAll('button')]
     const labels = tabs.map((el) => (el.textContent || '').trim())
     if (labels.includes('Plan')) fehler.push('separater Plan-Tab')
-    if (tabs.length !== 4) fehler.push(`Bereichsnavigation hat ${tabs.length} Ziele`)
+    if (tabs.length !== 5) fehler.push(`Bereichsnavigation hat ${tabs.length} Ziele`)
     const aktuell = tabs.filter((el) => el.getAttribute('aria-current') === 'page')
     if (aktuell.length !== 1) fehler.push(`aktiver Bereich nicht eindeutig: ${aktuell.length}`)
     const aktiv = aktuell[0]?.textContent?.trim()
@@ -467,6 +621,7 @@ function layoutPruefen(erwartetBereich) {
       fluege: 'Flüge',
       unterkunft: 'Unterkunft',
       aktivitaeten: 'Aktivitäten',
+      mobilitaet: 'Mobilität',
     }
     const huellen = [...document.querySelectorAll('[data-arbeitsbereich]')]
     const sichtbare = []
@@ -615,6 +770,13 @@ async function seiteVorbereiten(page, zustand) {
       }),
     })
   })
+  await page.route('**/api/mobility/search', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(MOBILITY_UNAVAILABLE),
+    })
+  })
 }
 
 async function zustandOeffnen(page, zustand, viewport) {
@@ -724,6 +886,13 @@ async function tabwechselPruefen(browser, name, viewport) {
       }),
     })
   })
+  await page.route('**/api/mobility/search', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(MOBILITY_UNAVAILABLE),
+    })
+  })
 
   await page.goto(`${BASIS}${PFAD}`, { waitUntil: 'domcontentloaded' })
   const nav = page.getByRole('navigation', { name: 'Reisebereiche' })
@@ -765,6 +934,7 @@ async function interaktionPruefen(browser, name) {
   const page = await kontext.newPage()
   let hotel = 0
   let activity = 0
+  let mobility = 0
   await page.addInitScript(
     ({ speicher, nutzlast }) => sessionStorage.setItem(speicher, JSON.stringify(nutzlast)),
     {
@@ -804,6 +974,14 @@ async function interaktionPruefen(browser, name) {
       body: JSON.stringify({ status: 'unavailable', message: 'aus', options: [] }),
     })
   })
+  await page.route('**/api/mobility/search', async (route) => {
+    mobility += 1
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(MOBILITY_UNAVAILABLE),
+    })
+  })
 
   await page.goto(`${BASIS}${PFAD}`, { waitUntil: 'domcontentloaded' })
   await page.getByText('Noch kein Flug ausgewählt').waitFor({ timeout: 15000 })
@@ -813,6 +991,7 @@ async function interaktionPruefen(browser, name) {
   const einModul = await page.locator('[data-tagesplan-modul="ein"]').count()
   const hotelNachUebersicht = hotel
   const activityNachUebersicht = activity
+  const mobilityNachUebersicht = mobility
 
   await page.getByRole('button', { name: 'Punkt hinzufügen' }).click()
   const formular = await page.getByText('Ort oder Aktivität').isVisible()
@@ -844,6 +1023,14 @@ async function interaktionPruefen(browser, name) {
   await page.waitForTimeout(400)
   const hotelNachZweitemBesuch = hotel
 
+  await nav.getByRole('button', { name: 'Mobilität', exact: true }).click()
+  await page.getByText('Bahn, Bus, Fähre und Transfer').waitFor({ timeout: 15000 })
+  const mobilityNachErstbesuch = mobility
+  await nav.getByRole('button', { name: 'Übersicht', exact: true }).click()
+  await nav.getByRole('button', { name: 'Mobilität', exact: true }).click()
+  await page.waitForTimeout(400)
+  const mobilityNachZweitemBesuch = mobility
+
   await nav.getByRole('button', { name: 'Übersicht', exact: true }).click()
   await page.getByRole('button', { name: 'Reise ändern' }).click()
   const fokus = await page.evaluate(() => document.activeElement?.tagName === 'TEXTAREA')
@@ -867,12 +1054,17 @@ async function interaktionPruefen(browser, name) {
   if (!formular) fehler.push('Punkt hinzufügen öffnete das Formular nicht')
   if (hotelNachUebersicht !== 0) fehler.push(`Hotelsuche startete in der Übersicht: ${hotelNachUebersicht}`)
   if (activityNachUebersicht !== 0) fehler.push(`Aktivitätensuche startete in der Übersicht: ${activityNachUebersicht}`)
+  if (mobilityNachUebersicht !== 0) fehler.push(`Mobilitätssuche startete in der Übersicht: ${mobilityNachUebersicht}`)
   if (checked !== 'true') fehler.push('gewählter Tag blieb zwischen Übersicht und Aktivitäten nicht erhalten')
   if (tagDreiZurueck !== 'date') fehler.push('Tagesauswahl in der Übersicht blieb nach Aktivitäten nicht erhalten')
   if (!planNachFluege) fehler.push('Rückkehr von Flügen zeigte den Tagesplan nicht')
   if (hotelNachErstbesuch < 1) fehler.push('Unterkunft löste keine Hotelsuche aus')
   if (hotelNachZweitemBesuch !== hotelNachErstbesuch) {
     fehler.push(`Tabwechsel löste Hotelsuche erneut aus: ${hotelNachErstbesuch} → ${hotelNachZweitemBesuch}`)
+  }
+  if (mobilityNachErstbesuch < 1) fehler.push('Mobilität löste keine Suche aus')
+  if (mobilityNachZweitemBesuch !== mobilityNachErstbesuch) {
+    fehler.push(`Tabwechsel löste Mobilitätssuche erneut aus: ${mobilityNachErstbesuch} → ${mobilityNachZweitemBesuch}`)
   }
   if (!fokus) fehler.push('Fokus lag nach Reise ändern nicht im Feld')
   if (geschlossen !== 'false') fehler.push('Escape schloss Reise ändern nicht')

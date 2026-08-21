@@ -270,6 +270,71 @@ describe('Was die Datenbank ablehnen würde, wird hier abgelehnt', () => {
     assert.equal(gelesen?.days[0]?.items[0]?.bookingSource, 'user')
   })
 
+  test('eine gebuchte Verbindung bleibt gebucht und behält Mobilitätsfakten', () => {
+    const gelesen = reiseLesen(
+      reise({
+        days: [
+          {
+            id: 'day-1',
+            dayIndex: 1,
+            dayDate: '2026-09-12',
+            items: [
+              {
+                id: 'item-1',
+                title: 'Zürich → Lugano',
+                kind: 'transfer',
+                bookingStatus: 'booked',
+                bookingSource: 'provider',
+                bookingConfirmedAt: '2026-08-21T10:00:00.000Z',
+                mobilityMode: 'rail',
+                originName: 'Zürich',
+                destinationName: 'Lugano',
+                originPlaceId: 'geonames:2657896',
+                destinationPlaceId: 'geonames:2659836',
+                connectionRef: 'IC 890',
+                mobilityChanges: 0,
+              },
+            ],
+          },
+        ],
+      }),
+    )
+    const punkt = gelesen?.days[0]?.items[0]
+    assert.equal(punkt?.bookingStatus, 'booked')
+    assert.equal(punkt?.bookingSource, 'user')
+    assert.equal(punkt?.mobilityMode, 'rail')
+    assert.equal(punkt?.originName, 'Zürich')
+    assert.equal(punkt?.mobilityEvidence, 'user')
+  })
+
+  test('Mobilitätsfakten an einer Notiz werden verworfen', () => {
+    const gelesen = reiseLesen(
+      reise({
+        days: [
+          {
+            id: 'day-1',
+            dayIndex: 1,
+            dayDate: '2026-09-12',
+            items: [
+              {
+                id: 'item-1',
+                title: 'Notiz',
+                kind: 'note',
+                mobilityMode: 'rail',
+                originName: 'Zürich',
+                destinationName: 'Lugano',
+              },
+            ],
+          },
+        ],
+      }),
+    )
+    const punkt = gelesen?.days[0]?.items[0]
+    assert.equal(punkt?.mobilityMode, null)
+    assert.equal(punkt?.originName, null)
+    assert.equal(punkt?.mobilityEvidence, null)
+  })
+
   test('eine Notiz darf nicht als gebucht gelesen werden', () => {
     const gelesen = reiseLesen(
       reise({

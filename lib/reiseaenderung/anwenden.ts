@@ -17,6 +17,7 @@ import { datumVerschieben } from '@/lib/trips/tage'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 import type { Reisegraph, TripDay, TripItem, TripStage } from '@/types/trips'
 import { kommerziellErhalten, istKommerziell } from '@/lib/reiseaenderung/geschuetzt'
+import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 import type { Modelloperation } from '@/lib/reiseaenderung/schema'
 
 export type KennungFn = (prefix: string) => string
@@ -372,6 +373,7 @@ function punktHinzufuegen(reise: Reisegraph, op: Modelloperation, kennung: Kennu
     externalRef: null,
     bookingUrl: null,
     ...unbestaetigteBuchung(),
+    ...leereMobilitaet(),
   }
   if (tag) tag.items.push(punkt)
   else reise.ohneTag.push(punkt)

@@ -7,10 +7,11 @@
 // gewählt ist, und welche Statuszeilen ehrlich sind. Keine Providerzustände,
 // keine erfundenen Flüge, Hotels oder Aktivitäten.
 //
-// Iteration 2: sichtbare Mobile-Hauptbereiche sind Übersicht, Flüge,
-// Unterkunft und Aktivitäten. Der Tagesplan gehört zur Übersicht, nicht zu
-// einem eigenen Tab. Ein historischer Wert `plan` fällt auf die Übersicht.
+// Sichtbare Mobile-Hauptbereiche: Übersicht, Flüge, Unterkunft, Aktivitäten
+// und Mobilität. Der Tagesplan gehört zur Übersicht, nicht zu einem eigenen
+// Tab. Ein historischer Wert `plan` fällt auf die Übersicht.
 
+import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
 import { flugAbdeckung } from '@/lib/trips/flug-abdeckung'
 import { unterkunftAbdeckung } from '@/lib/trips/naechte-abdeckung'
 import type { Trip, TripItem, TripItemKind } from '@/types/trips'
@@ -20,6 +21,7 @@ export const ARBEITSBEREICHE = [
   'fluege',
   'unterkunft',
   'aktivitaeten',
+  'mobilitaet',
 ] as const
 
 export type Arbeitsbereich = (typeof ARBEITSBEREICHE)[number]
@@ -31,6 +33,7 @@ export const ARBEITSBEREICH_BEZEICHNUNG: Record<Arbeitsbereich, string> = {
   fluege: 'Flüge',
   unterkunft: 'Unterkunft',
   aktivitaeten: 'Aktivitäten',
+  mobilitaet: 'Mobilität',
 }
 
 /** Unterhalb dieser Breite gilt die kompakte Mobile-/Tablet-Ansicht. */
@@ -107,6 +110,7 @@ export function bereichStatus(reise: Trip, ohneTag: readonly TripItem[] = []): B
   const punkte = planpunkteSammeln(reise, ohneTag)
   const fluege = flugAbdeckung(reise, ohneTag)
   const unterkunft = unterkunftAbdeckung(reise, ohneTag)
+  const mobilitaet = mobilitaetsAbdeckung(reise, ohneTag)
 
   return [
     {
@@ -128,6 +132,11 @@ export function bereichStatus(reise: Trip, ohneTag: readonly TripItem[] = []): B
         'Aktivitäten geplant',
         'Noch keine Aktivität geplant',
       ),
+    },
+    {
+      bereich: 'mobilitaet',
+      anzahl: anzahlVon(punkte, 'transfer'),
+      text: mobilitaet.zusammenfassung,
     },
   ]
 }

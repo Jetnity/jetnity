@@ -2,19 +2,21 @@
 
 import { BUCHUNGSSTATUS_BEZEICHNUNG } from '@/lib/trips/buchung'
 import { cn } from '@/lib/utils'
+import type { BewegungsStatus } from '@/lib/mobility/kanten'
 import type { FlugAbschnittStatus } from '@/lib/trips/flug-abdeckung'
 
-const TEXT: Record<FlugAbschnittStatus | 'selected' | 'booked', string> = {
+const TEXT: Record<FlugAbschnittStatus | BewegungsStatus | 'selected' | 'booked', string> = {
   booked: BUCHUNGSSTATUS_BEZEICHNUNG.booked,
   selected: BUCHUNGSSTATUS_BEZEICHNUNG.unconfirmed,
   open: 'Noch offen',
   unknown: 'Noch nicht vollständig bestimmbar',
+  covered_by_flight: 'Über Flug abgedeckt',
 }
 
 export default function BuchungsSiegel({
   status,
 }: {
-  status: FlugAbschnittStatus | 'selected' | 'booked'
+  status: FlugAbschnittStatus | BewegungsStatus | 'selected' | 'booked'
 }) {
   const text = TEXT[status]
   return (
@@ -25,6 +27,7 @@ export default function BuchungsSiegel({
         status === 'selected' && 'bg-surface-25 text-ink-800',
         status === 'open' && 'border border-line-300 bg-white text-ink-800',
         status === 'unknown' && 'bg-surface-25 text-ink-700',
+        status === 'covered_by_flight' && 'bg-surface-25 text-ink-800',
       )}
     >
       {text}

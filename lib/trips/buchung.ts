@@ -2,9 +2,9 @@
 //
 // Buchungsstatus eines Planpunkts. Rein, ohne React und ohne Provider.
 //
-// Ein gespeicherter Flug oder Stay ist ausgewählt/geplant. `Gebucht` entsteht
-// nur durch eine ausdrückliche Nutzerbestätigung. Der Browser darf keine
-// Provider-Quelle behaupten.
+// Ein gespeicherter Flug, Stay oder Transfer ist ausgewählt/geplant. `Gebucht`
+// entsteht nur durch eine ausdrückliche Nutzerbestätigung. Der Browser darf
+// keine Provider-Quelle behaupten.
 
 import {
   TRIP_ITEM_BOOKING_SOURCES,
@@ -30,7 +30,7 @@ export const BUCHUNGSSTATUS_BEZEICHNUNG: Record<TripItemBookingStatus, string> =
   booked: 'Gebucht',
 }
 
-const BUCHBARE_ARTEN: ReadonlySet<TripItemKind> = new Set(['flight', 'stay'])
+const BUCHBARE_ARTEN: ReadonlySet<TripItemKind> = new Set(['flight', 'stay', 'transfer'])
 
 export function unbestaetigteBuchung(): typeof UNBESTAETIGTE_BUCHUNG {
   return { ...UNBESTAETIGTE_BUCHUNG }
@@ -52,7 +52,7 @@ export function istGebucht(punkt: Pick<TripItem, 'bookingStatus'>): boolean {
   return punkt.bookingStatus === 'booked'
 }
 
-/** Flug- und Stay-Planpunkte können manuell als gebucht bestätigt werden. */
+/** Flug-, Stay- und Transfer-Planpunkte können manuell als gebucht bestätigt werden. */
 export function kannBuchungMarkieren(punkt: Pick<TripItem, 'kind'>): boolean {
   return BUCHBARE_ARTEN.has(punkt.kind)
 }
@@ -81,7 +81,7 @@ export function buchungsstatusAnwenden(
   zeit: string,
 ): { ok: true; punkt: TripItem } | { ok: false; meldung: string } {
   if (!kannBuchungMarkieren(punkt)) {
-    return { ok: false, meldung: 'Nur Flüge und Unterkünfte können als gebucht markiert werden.' }
+    return { ok: false, meldung: 'Nur Flüge, Unterkünfte und Verbindungen können als gebucht markiert werden.' }
   }
 
   if (!gebucht) {

@@ -46,6 +46,7 @@ import type { KanonischeOrte } from '@/lib/places/kanon'
 import { etappeMitOrt } from '@/lib/places/kanon'
 import type { Reisevorschlag } from '@/lib/reisevorschlag/schema'
 import type { ReiseNutzlast } from '@/lib/trips/schema'
+import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 import { reisetageBauen } from '@/lib/trips/tage'
 import type { Trip, TripDay, TripItem, TripStage } from '@/types/trips'
 
@@ -166,6 +167,13 @@ export function vorschlagAlsNutzlast(
         booking_url: null,
         booking_status: 'unconfirmed' as const,
         booking_confirmed_at: null,
+        mobility_mode: null,
+        origin_place_id: null,
+        destination_place_id: null,
+        origin_name: null,
+        destination_name: null,
+        connection_ref: null,
+        mobility_changes: null,
       })),
     })),
     ungeplante: [],
@@ -218,6 +226,7 @@ export function vorschlagAlsReise(
       bookingStatus: 'unconfirmed',
       bookingSource: null,
       bookingConfirmedAt: null,
+      ...leereMobilitaet(),
     }))
 
     return {

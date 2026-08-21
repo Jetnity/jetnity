@@ -1,7 +1,9 @@
 # Jetnity – Datenbank
 
 Stand: 21. August 2026
-Gültig für: Supabase-Development-Branch nach Phase 3.1 (Airport- und Ortsreferenz) plus Booking-Status-Spalten (`20260821100000`, Development 21. August 2026). Production steht auf `20260820080000`. Airport- und Places-Schema sowie deren Importe gelten nur für Development, bis der kontrollierte Rollout in [PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md) ausdrücklich freigegeben ist. Die Booking-Status-Migration ist **nicht** Production.
+Gültig für: Supabase-Development-Branch nach Phase 3.1 (Airport- und Ortsreferenz) plus Booking-Status-Spalten (`20260821100000`, Development 21. August 2026) und Mobilitätsspalten (`20260821120000`, nur Development). Airport- und Places-Schema sowie deren Importe gelten nur für Development, bis der kontrollierte Rollout in [PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md) ausdrücklich freigegeben ist.
+
+Zwei getrennte Aussagen, kein Widerspruch: **Production hat** `20260821100000` nach ausdrücklicher Nutzerfreigabe (PR #29). Das Playbook in [PRODUCTION_ROLLOUT.md](PRODUCTION_ROLLOUT.md) hält `20260820130000` als Default-Sicherheitsgrenze für automatische Production-Läufe. Das ist eine Guardrail, kein Gegenbeweis zum realen Production-Stand. `20260821120000` bleibt Development-only und darf nicht auf Production angewendet werden.
 
 Diese Datei beschreibt den **tatsächlichen** Zustand des Schemas, wie er sich aus dem Repository herstellen lässt. Sie ist die Antwort auf die Frage, die [ARCHITECTURE.md](../ARCHITECTURE.md) Abschnitt 6 bis Phase 1.4 offenlassen musste: Was steht in der Datenbank, wer darf was, und woher weiß man das.
 
@@ -22,7 +24,7 @@ Die Migrationen in `supabase/migrations/` sind die Quelle. Was dort nicht steht,
 Konkret heißt das:
 
 - Eine Schemaänderung entsteht als Migration und wird von dort angewendet, nicht in der Supabase-Oberfläche.
-- `types/supabase.ts` wird erzeugt, nicht gepflegt. Nach dem Development-Lauf von `20260821100000` entspricht die Datei dem live Schema (`npm run db:typen -- --pruefen`).
+- `types/supabase.ts` wird erzeugt, nicht gepflegt. Nach dem Development-Lauf von `20260821120000` muss die Datei dem live Schema entsprechen (`npm run db:typen -- --pruefen`).
 - Dass beides zusammenpasst, wird geprüft und nicht angenommen.
 
 Die Prüfungen dazu stehen in Abschnitt 9.
@@ -85,7 +87,9 @@ Die dreizehn Tabellen: `profiles`, `trips`, `trip_stages`, `trip_days`, `trip_it
 
 **Phase 3.1 Nachtrag `20260820130000`:** `reise_aendern()` schreibt dieselben optionalen Referenzen. Ohne eindeutige Auflösung bleibt der Wert `null`. Production unverändert, bis der Rollout freigegeben ist.
 
-**Coverage/Booking Status `20260821100000`:** Additive Spalten auf `trip_items` plus CHECKs. Historische Zeilen bleiben `unconfirmed`. `reise_anlegen()` darf einen gebuchten Status nur für Flug/Stay und nur als `user` übernehmen. `reise_aendern()` bleibt ohne diese Spalten. Development angewendet am 21. August 2026. `npm run db:typen -- --pruefen` entspricht danach dem live Schema. Production-Playbook stoppt weiter bei `20260820130000`.
+**Coverage/Booking Status `20260821100000`:** Additive Spalten auf `trip_items` plus CHECKs. Historische Zeilen bleiben `unconfirmed`. `reise_anlegen()` durfte einen gebuchten Status nur für Flug/Stay und nur als `user` übernehmen. `reise_aendern()` bleibt ohne diese Spalten. Development angewendet am 21. August 2026. **Production angewendet** am 21. August 2026 nach ausdrücklicher Nutzerfreigabe (PR #29). Das Playbook erlaubt automatische Production-Läufe weiterhin nur bis `20260820130000`.
+
+**Mobilität `20260821120000`:** Additive Spalten auf `trip_items` plus CHECKs. `kind` bleibt `transfer`. Historische Transfer-Zeilen bleiben ohne Modus und `unconfirmed`. `reise_anlegen()` schreibt die Felder. `reise_aendern()` wird nicht ersetzt. **Development angewendet am 21. August 2026.** Verifiziert: 8 Spalten, CHECKs inkl. `booking` für `transfer`, 1 historischer Transfer ohne Modus/`booked`, 0 Nicht-Transfers mit Mobilitätsfakten, RLS auf `trip_items` aktiv, `reise_aendern()` schreibt die Spalten nicht. `npm run db:typen -- --pruefen` entspricht danach dem live Schema. **Nicht Production.**
 
 Das Wachstum liegt vollständig bei den Reisedaten: Die vier neuen Tabellen tragen 61 Spalten, 43 CHECK-Bedingungen, 6 Fremdschlüssel, 5 Eindeutigkeitsbedingungen, 15 Indizes, 16 Policies und 5 Auslöser – vier für `updated_at`, einer für die Erzeugungsregeln von `public.trips` (Abschnitt 7a). Gleichzeitig sind mit `creator_sessions` 16 Spalten, 7 Indizes und 4 Policies sowie die neun Creator-Spalten des Profils entfallen – die Nettozahlen der Tabelle oben sind deshalb kleiner als die Zugänge.
 
@@ -171,7 +175,8 @@ Der Zustand nach Phase 1.4 steht in Abschnitt 9; dort ist auch nachgewiesen, das
 | `20260820110000_airports_referenz.sql` | `public.airports` um Region, Landescode, Keywords, Klasse erweitert (Phase 3.1, ADR-0066). Development angewendet. Production nur über den kontrollierten Rollout. |
 | `20260820120000_places_referenz.sql` | `public.places` plus optionale `trips.origin_place_id` / `trip_stages.place_id`; `reise_anlegen()` schreibt die Referenzen, wenn sie in der Nutzlast stehen (Phase 3.1, ADR-0067). Development angewendet. Production nur über den kontrollierten Rollout. |
 | `20260820130000_reise_aendern_places.sql` | `reise_aendern()` schreibt `origin_place_id` und `trip_stages.place_id` aus der Nutzlast (Phase 3.1, ADR-0067). Development angewendet. Production nur über den kontrollierten Rollout. |
-| `20260821100000_trip_items_booking_status.sql` | `trip_items.booking_status` / `booking_source` / `booking_confirmed_at`; `reise_anlegen()` übernimmt nur `user` als Quelle (Coverage/Booking Status, ADR-0089). **Development angewendet am 21. August 2026. Nicht auf Production anwenden.** |
+| `20260821100000_trip_items_booking_status.sql` | `trip_items.booking_status` / `booking_source` / `booking_confirmed_at`; `reise_anlegen()` übernimmt nur `user` als Quelle (Coverage/Booking Status, ADR-0089). **Development und Production angewendet** am 21. August 2026 (Production nach ausdrücklicher Nutzerfreigabe). Das Playbook zieht diese Datei nicht automatisch nach. |
+| `20260821120000_trip_items_mobility.sql` | optionale Mobilitätsspalten auf `trip_items`; `reise_anlegen()` schreibt sie; Booking-CHECK erlaubt `booked` für `transfer` (Foundation A, ADR-0090). **Nur Development. Nicht auf Production anwenden.** |
 
 Die Reihenfolge ist nicht beliebig: `20260817100200` darf erst laufen, wenn `20260817100000` die Rollen der Betroffenen übernommen und `20260817100100` alle Policies auf `creator_profiles.role` umgestellt hat. Sonst verlöre jemand seinen Zugang oder eine Policy liefe ins Leere.
 

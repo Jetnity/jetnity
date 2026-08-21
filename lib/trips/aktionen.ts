@@ -208,7 +208,7 @@ export async function planpunktEntfernen(eingabe: unknown): Promise<Aktionsergeb
 }
 
 /**
- * Setzt oder korrigiert den manuellen Buchungsstatus eines Flug- oder Stay-Punkts.
+ * Setzt oder korrigiert den manuellen Buchungsstatus eines Flug-, Stay- oder Transfer-Punkts.
  *
  * Kein Service-Role-Weg. RLS prüft das Eigentum. Die Quelle ist immer `user`;
  * der Client kann keine Provider-Bestätigung behaupten.
@@ -229,8 +229,8 @@ export async function planpunktBuchungsstatusSetzen(eingabe: unknown): Promise<A
 
   if (lesefehler) return { ok: false, meldung: meldungAus(lesefehler, lesestatus) }
   if (!data) return { ok: false, meldung: 'Dieser Planpunkt ist unbekannt.' }
-  if (data.kind !== 'flight' && data.kind !== 'stay') {
-    return { ok: false, meldung: 'Nur Flüge und Unterkünfte können als gebucht markiert werden.' }
+  if (data.kind !== 'flight' && data.kind !== 'stay' && data.kind !== 'transfer') {
+    return { ok: false, meldung: 'Nur Flüge, Unterkünfte und Verbindungen können als gebucht markiert werden.' }
   }
 
   const gebucht = geprueft.data.gebucht

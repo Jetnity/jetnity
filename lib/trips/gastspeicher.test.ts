@@ -31,6 +31,7 @@ import {
   gastBuchungsstatusSetzen,
   gastFlugUebernehmen,
   gastHotelUebernehmen,
+  gastMobilitaetAnlegen,
   gastPlanpunktAnlegen,
   gastPlanpunktEntfernen,
   gastreiseAendern,
@@ -46,6 +47,7 @@ import {
 } from '@/lib/trips/gastspeicher'
 import type { CreateTripInput } from '@/types/trips'
 import type { Modelloperation } from '@/lib/reiseaenderung/schema'
+import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 
 /**
  * Ein `localStorage`, der sich wie einer verhält – inklusive der drei Arten,
@@ -389,7 +391,48 @@ describe('Bearbeiten einer Gastreise', () => {
     })
     const punkt = reise.days[0]?.items[0]
     assert.ok(punkt)
-    assert.throws(() => gastBuchungsstatusSetzen(reise, punkt.id, true), /Nur Flüge und Unterkünfte/)
+    assert.throws(
+      () => gastBuchungsstatusSetzen(reise, punkt.id, true),
+      /Nur Flüge, Unterkünfte und Verbindungen/,
+    )
+  })
+
+  test('eine manuelle Bahnverbindung bleibt nach Reload eine Nutzerangabe', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const tag = reise.days[0]
+    assert.ok(tag)
+    const danach = gastMobilitaetAnlegen(reise, {
+      mode: 'rail',
+      originName: 'Zürich',
+      destinationName: 'Lugano',
+      originPlaceId: 'geonames:2657896',
+      destinationPlaceId: 'geonames:2659836',
+      startsOn: tag.dayDate,
+      startsAt: '08:10',
+      endsOn: tag.dayDate,
+      endsAt: '10:40',
+      connectionRef: 'IC 890',
+      mobilityChanges: 0,
+      dayId: tag.id,
+      stageId: tag.stageId,
+    })
+    const zug = danach.days[0]?.items.find((punkt) => punkt.kind === 'transfer')
+    assert.ok(zug)
+    assert.equal(zug.mobilityMode, 'rail')
+    assert.equal(zug.originName, 'Zürich')
+    assert.equal(zug.destinationName, 'Lugano')
+    assert.equal(zug.mobilityEvidence, 'user')
+    assert.equal(zug.provider, null)
+    assert.equal(zug.bookingUrl, null)
+    assert.equal(zug.bookingStatus, 'unconfirmed')
+
+    const gebucht = gastBuchungsstatusSetzen(danach, zug.id, true, '2026-08-21T10:00:00.000Z')
+    assert.equal(gebucht.days[0]?.items.find((punkt) => punkt.id === zug.id)?.bookingStatus, 'booked')
+    const erneut = gastreiseLadenNach(reise.id)
+    const gespeichert = erneut?.days[0]?.items.find((punkt) => punkt.id === zug.id)
+    assert.equal(gespeichert?.mobilityMode, 'rail')
+    assert.equal(gespeichert?.connectionRef, 'IC 890')
+    assert.equal(gespeichert?.bookingSource, 'user')
   })
 
   test('ein Punkt an einem fremden Tag wird abgelehnt', () => {
@@ -624,6 +667,7 @@ describe('Ungeplante Planpunkte im Gastspeicher', () => {
           bookingStatus: 'unconfirmed',
           bookingSource: null,
           bookingConfirmedAt: null,
+          ...leereMobilitaet(),
         },
       ],
     })
@@ -658,6 +702,7 @@ describe('Ungeplante Planpunkte im Gastspeicher', () => {
           bookingStatus: 'unconfirmed',
           bookingSource: null,
           bookingConfirmedAt: null,
+          ...leereMobilitaet(),
         },
       ],
     })
@@ -704,6 +749,7 @@ describe('Ungeplante Planpunkte im Gastspeicher', () => {
                   bookingStatus: 'unconfirmed',
                   bookingSource: null,
                   bookingConfirmedAt: null,
+                  ...leereMobilitaet(),
                 },
               ],
             }
