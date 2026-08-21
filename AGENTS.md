@@ -13,6 +13,8 @@ Vor jeder größeren Aufgabe müssen außerdem die folgenden Projektdateien gele
 - [ROADMAP.md](ROADMAP.md)
 - [DECISIONS.md](DECISIONS.md)
 - [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md)
+- [docs/PRODUCT_QUALITY_STANDARD.md](docs/PRODUCT_QUALITY_STANDARD.md)
+- [docs/CONTINUITY_STANDARD.md](docs/CONTINUITY_STANDARD.md)
 - relevante README-Dateien
 - relevante Datenbankmigrationen
 - relevante Tests
@@ -36,7 +38,8 @@ Die maßgebliche Richtung ergibt sich aus:
 3. aktueller Architektur
 4. aktueller Roadmap
 5. verbindlichem Design-System
-6. erst danach dem bestehenden Code
+6. Produktqualitäts- und Kontinuitätsstandard
+7. erst danach dem bestehenden Code
 
 Wenn alter Code der neuen Jetnity-V2-Strategie widerspricht, darf und soll er hinterfragt werden.
 
@@ -63,6 +66,7 @@ Nicht automatisch weiterbauen:
 Neue Features müssen mindestens eine dieser Fragen überzeugend mit Ja beantworten:
 
 - Macht die Funktion Reiseplanung deutlich einfacher?
+- Spart sie dem Nutzer konkret Zeit, Suchaufwand, Doppelarbeit oder Entscheidungsstress?
 - Erhöht sie Nutzerbindung oder Wiederkehr sinnvoll?
 - Erhöht sie das realistische Umsatzpotenzial?
 - Ist sie technisch notwendig, damit ein Kernfeature zuverlässig funktioniert?
@@ -78,6 +82,8 @@ Nicht bauen.
 Der zentrale Produktkern von Jetnity V2 ist:
 
 Eine Reiseidee wird möglichst einfach in eine strukturierte, bearbeitbare und buchbare Reise verwandelt.
+
+Jetnity ist dabei **ein zusammenhängendes Reisesystem und keine Sammlung isolierter Suchmaschinen**. Flug, Unterkunft, Aktivitäten, Transfers, Tagesplan, Budget, Reisende und Präferenzen sollen um denselben Reisegraphen herum zusammenarbeiten und vorhandenen Kontext wiederverwenden.
 
 Der intelligente Trip Builder und Trip Workspace haben Vorrang vor Nebenfeatures.
 
@@ -100,6 +106,8 @@ Relevante Kernbereiche:
 
 Keine Nebenfunktion darf den Aufbau dieses Kerns unnötig verzögern.
 
+Verbindlicher Produkt-Nordstern: Jetnity soll so viel sinnvolle Arbeit, Suchaufwand, Doppelarbeit, Entscheidungsstress und organisatorische Reibung wie möglich abnehmen, ohne dem Nutzer die Kontrolle über wichtige Entscheidungen zu entziehen. Die erste vollständig mit Jetnity geplante/begleitete Reise ist ein zentraler Produkttest: Nutzerbindung soll aus realem Nutzen, Vertrauen und Zeitersparnis entstehen.
+
 ---
 
 ## 4. Vor jeder größeren Entwicklungsphase
@@ -111,7 +119,8 @@ Vor einer größeren Änderung muss der Agent zunächst:
 3. bestehende Tests prüfen,
 4. Datenbankschema und Migrationen prüfen,
 5. aktuelle Roadmap lesen,
-6. relevante Entscheidungen in DECISIONS.md lesen.
+6. relevante Entscheidungen in DECISIONS.md lesen,
+7. prüfen, ob die Lösung mit `JETNITY_VISION.md` und `docs/PRODUCT_QUALITY_STANDARD.md` vereinbar ist.
 
 Danach muss ein kurzer Umsetzungsplan erstellt werden.
 
@@ -126,6 +135,7 @@ Der Plan soll enthalten:
 - mögliche Security-Auswirkungen
 - mögliche Kosten
 - geplante Tests
+- Auswirkung auf den zusammenhängenden Reisegraphen bzw. andere Reisebereiche, falls relevant
 
 Erst danach implementieren.
 
@@ -165,6 +175,17 @@ Wenn eine solche Entscheidung sinnvoll erscheint:
 Eine größere Aufgabe ist nicht abgeschlossen, solange die Projektdokumentation nicht aktuell ist.
 
 Nach jeder relevanten Entwicklungsphase muss geprüft werden, ob folgende Dateien aktualisiert werden müssen:
+
+### JETNITY_VISION.md
+
+Aktualisieren, wenn eine ausdrücklich freigegebene Produktentscheidung den langfristigen Produkt-Nordstern verändert oder präzisiert, insbesondere:
+
+- welche Arbeit Jetnity dem Nutzer abnimmt
+- wie Reisebereiche intelligent zusammenarbeiten
+- welche Nutzererfahrung langfristig erreicht werden soll
+- welche verbindlichen Produktprinzipien für zukünftige Phasen gelten
+
+Vision ist Zielbild und darf Zukunft beschreiben; sie darf aber nicht als bereits umgesetzter Stand ausgegeben werden.
 
 ### ARCHITECTURE.md
 
@@ -236,6 +257,10 @@ Aktualisieren bei:
 
 Die bestehende Jetnity-V2-Markenwirkung darf nicht stillschweigend verändert werden.
 
+### docs/CONTINUITY_STANDARD.md
+
+Der Kontinuitätsstandard ist verbindlich. Projektstand, Produkt-Nordstern, offene externe Abhängigkeiten und nächste Schritte müssen so dokumentiert bleiben, dass ein neuer Chat oder Agent ohne Wiederholung durch den Nutzer fortfahren kann.
+
 ---
 
 ## 7. Am Ende jeder größeren Aufgabe
@@ -281,6 +306,8 @@ Wenn eine Migration nicht getestet wurde: Dokumentieren.
 Wenn ein Security-Risiko übrig bleibt: Dokumentieren.
 
 Wenn etwas nur teilweise implementiert wurde: Klar als teilweise implementiert kennzeichnen.
+
+Ein grüner automatisierter UI-Audit ersetzt keinen ausdrücklich erforderlichen Real-Device-Test. Wenn reale Hardware einen Fehler zeigt, gilt die Funktion bis zum Fix und erneuten Test als nicht abgenommen.
 
 ---
 
@@ -610,6 +637,8 @@ Nicht jede kleine Präsentationskomponente benötigt zwingend Unit Tests.
 
 Tests dort einsetzen, wo Fehler teuer wären.
 
+Bei zentralen Mobile-/Workspace-Flows gehören zusätzlich echte Bereichswechsel und – wenn für die Abnahme verlangt – Real-Device-Prüfungen zur Qualitätssicherung. Ein Test, der nur DOM-Attribute prüft, ist nicht ausreichend, wenn die Nutzerfrage die tatsächliche Sichtbarkeit oder Bedienbarkeit betrifft.
+
 ---
 
 ## 25. Build-Regel
@@ -691,7 +720,8 @@ Priorität:
 4. ARCHITECTURE.md
 5. ROADMAP.md
 6. DESIGN_SYSTEM.md
-7. bestehender Code
+7. docs/PRODUCT_QUALITY_STANDARD.md und docs/CONTINUITY_STANDARD.md
+8. bestehender Code
 
 Der Widerspruch muss behoben werden.
 
@@ -706,6 +736,8 @@ Jetnity darf niemals davon abhängig werden, dass ein einzelner Chat oder Agent 
 Nach jeder wichtigen Phase muss ein neuer Entwickler oder neuer Agent anhand des Repositories nachvollziehen können:
 
 - Was ist Jetnity?
+- Welchen konkreten Stress und welche Arbeit soll Jetnity dem Nutzer abnehmen?
+- Wie sollen die Reisebereiche als ein System zusammenarbeiten?
 - Was bauen wir?
 - Was bauen wir bewusst nicht?
 - Wie ist das System aufgebaut?
@@ -733,6 +765,7 @@ Eine größere Aufgabe ist erst Done, wenn:
 - Roadmap aktualisiert
 - wichtige Entscheidungen dokumentiert
 - offene Risiken genannt
+- erforderliche Produkt-/Mobile-/Real-Device-Abnahme abgeschlossen oder als offen dokumentiert
 
 Code allein bedeutet nicht Done.
 
@@ -771,5 +804,7 @@ Bei jeder größeren Entscheidung gilt:
 Baue nicht möglichst viel Jetnity.
 
 Baue das richtige Jetnity so einfach, sicher und hochwertig wie möglich.
+
+**Das richtige Jetnity fühlt sich für den Nutzer wie eine zusammenhängende Reise an – nicht wie viele einzelne Werkzeuge.**
 
 Das ist wichtiger als die Menge an Code.
