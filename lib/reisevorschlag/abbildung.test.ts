@@ -127,6 +127,8 @@ describe('Der Vorschlag als Nutzlast für public.reise_anlegen()', () => {
         provider: null,
         external_ref: null,
         booking_url: null,
+        booking_status: 'unconfirmed',
+        booking_confirmed_at: null,
       },
     ])
   })
@@ -154,6 +156,9 @@ describe('Der Vorschlag als Nutzlast für public.reise_anlegen()', () => {
     assert.equal(punkt?.provider, null)
     assert.equal(punkt?.external_ref, null)
     assert.equal(punkt?.booking_url, null)
+    assert.equal(punkt?.booking_status, 'unconfirmed')
+    assert.equal(punkt?.booking_confirmed_at, null)
+    assert.equal('booking_source' in (punkt ?? {}), false)
   })
 
   test('das Budgetziel steht an der Reise, nicht an einem Planpunkt', () => {
