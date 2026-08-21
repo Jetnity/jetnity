@@ -12,6 +12,7 @@ import {
   STANDARD_ARBEITSBEREICH,
   aenderungIstSichtbar,
   arbeitsbereichLesen,
+  bereichDarstellungKlasse,
   bereichSollMounten,
   bereichSollSichtbar,
   bereichStatus,
@@ -285,5 +286,13 @@ describe('Sichtbarkeit und Mount', () => {
     assert.equal(aenderungIstSichtbar(false, false), true)
     assert.equal(aenderungIstSichtbar(true, false), false)
     assert.equal(aenderungIstSichtbar(true, true), true)
+  })
+
+  test('ein verborgener Bereich trägt keine Display-Utility neben hidden', () => {
+    assert.equal(bereichDarstellungKlasse(true, 'mt-6 grid gap-6'), 'hidden')
+    assert.equal(bereichDarstellungKlasse(true, 'mt-6 grid gap-6').includes('grid'), false)
+    assert.equal(bereichDarstellungKlasse(false, 'mt-6 grid gap-6'), 'mt-6 grid gap-6')
+    assert.equal(bereichDarstellungKlasse(false, 'mt-6'), 'mt-6')
+    assert.equal(bereichDarstellungKlasse(true), 'hidden')
   })
 })

@@ -8,6 +8,10 @@
 // klebende Bereichsnavigation, nur der aktive Bereich. Die Übersicht enthält
 // den Tagesplan. Desktop behält die bisherige breite Arbeitsansicht. Der aktive
 // Bereich ist Client-State, nicht Teil der URL.
+//
+// Besuchte Mobile-Bereiche bleiben eingehängt (keine erneute Suche), sind aber
+// visuell `display: none`. `hidden` plus Tailwind `grid` würde den Bereich
+// semantisch verbergen und trotzdem Layout erzeugen.
 
 import * as React from 'react'
 import Link from 'next/link'
@@ -19,6 +23,7 @@ import {
   type Arbeitsbereich,
   aenderungIstSichtbar,
   arbeitsbereichLesen,
+  bereichDarstellungKlasse,
   bereichSollMounten,
   bereichSollSichtbar,
   bereichStatus,
@@ -73,6 +78,29 @@ function sucheMitTag(
   return React.cloneElement(
     knoten as React.ReactElement<{ tagId?: string; onTagWechseln?: (id: string) => void }>,
     { tagId, onTagWechseln },
+  )
+}
+
+function BereichHuelle({
+  bereich,
+  verborgen,
+  sichtbarKlasse,
+  children,
+}: {
+  bereich: Arbeitsbereich
+  verborgen: boolean
+  sichtbarKlasse?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div
+      data-arbeitsbereich={bereich}
+      hidden={verborgen}
+      inert={verborgen || undefined}
+      className={bereichDarstellungKlasse(verborgen, sichtbarKlasse)}
+    >
+      {children}
+    </div>
   )
 }
 
@@ -196,7 +224,7 @@ export default function TripWorkspace({
         {kompakt && <TripWorkspaceNavigation aktiv={bereich} onWechsel={wechseln} />}
 
         {bereichBereit('uebersicht') && (
-          <div hidden={uebersichtVerborgen} inert={uebersichtVerborgen || undefined}>
+          <BereichHuelle bereich="uebersicht" verborgen={uebersichtVerborgen}>
             <TripWorkspaceUebersicht
               reise={reise}
               status={status}
@@ -207,37 +235,33 @@ export default function TripWorkspace({
               plan={kompakt ? plan : null}
               aenderungFeld={kompakt ? aenderungFeld : null}
             />
-          </div>
+          </BereichHuelle>
         )}
 
         {!kompakt && aenderungFeld}
 
         {bereichBereit('fluege') && (
-          <div hidden={verbergen('fluege')} inert={verbergen('fluege') || undefined} className="mt-6 grid gap-6">
+          <BereichHuelle bereich="fluege" verborgen={verbergen('fluege')} sichtbarKlasse="mt-6 grid gap-6">
             <FlugBestand reise={reise} ohneTag={ungeplantePunkte} onBuchungsstatus={onBuchungsstatus} />
             {flugsuche}
-          </div>
+          </BereichHuelle>
         )}
 
         {bereichBereit('unterkunft') && (
-          <div
-            hidden={verbergen('unterkunft')}
-            inert={verbergen('unterkunft') || undefined}
-            className="mt-6 grid gap-6"
+          <BereichHuelle
+            bereich="unterkunft"
+            verborgen={verbergen('unterkunft')}
+            sichtbarKlasse="mt-6 grid gap-6"
           >
             <UnterkunftBestand reise={reise} ohneTag={ungeplantePunkte} onBuchungsstatus={onBuchungsstatus} />
             {hotelsuche}
-          </div>
+          </BereichHuelle>
         )}
 
         {bereichBereit('aktivitaeten') && aktivitaeten && (
-          <div
-            hidden={verbergen('aktivitaeten')}
-            inert={verbergen('aktivitaeten') || undefined}
-            className="mt-6"
-          >
+          <BereichHuelle bereich="aktivitaeten" verborgen={verbergen('aktivitaeten')} sichtbarKlasse="mt-6">
             {aktivitaeten}
-          </div>
+          </BereichHuelle>
         )}
 
         {!kompakt && plan}

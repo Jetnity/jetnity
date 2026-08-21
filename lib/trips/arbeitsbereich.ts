@@ -181,6 +181,17 @@ export function bereichSollSichtbar(
   return bereich === aktiv
 }
 
+/**
+ * Display-Klasse eines gemounteten Hauptbereichs.
+ *
+ * Tailwind-Utilities wie `grid` überschreiben Preflight `[hidden] { display: none }`.
+ * Ein verborgener Bereich darf deshalb nur `hidden` tragen, niemals zusätzlich
+ * `grid`, `flex` oder `block`.
+ */
+export function bereichDarstellungKlasse(verborgen: boolean, sichtbarKlasse = ''): string {
+  return verborgen ? 'hidden' : sichtbarKlasse
+}
+
 export function besuchteBereicheErweitern(
   bisher: ReadonlySet<Arbeitsbereich>,
   naechster: Arbeitsbereich,

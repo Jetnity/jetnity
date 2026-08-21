@@ -288,6 +288,12 @@ Unterhalb von 1024 px hat `/reisen/[tripId]` eine klebende Bereichsnavigation di
 
 Die sichtbaren Ziele sind Übersicht, Flüge, Unterkunft und Aktivitäten. Der Tagesplan gehört in die Übersicht und hat keinen eigenen Tab. Auf Mobile sind Tagesauswahl und Tagesinhalt ein Modul: eine Karte, nur die Chip-Zeile scrollt horizontal. Die Navigation ist eine robuste Button-Leiste, kein unvollständiges ARIA-Tabs-Muster. Auf Desktop (`lg`) entfällt sie; dort bleibt die bisherige breite Arbeitsansicht.
 
+### 7.12 Versteckte gemountete Bereiche
+
+Besuchte Mobile-Bereiche im Trip Workspace bleiben eingehängt, damit ein Tabwechsel keine neue Suche auslöst. Sie tragen `hidden` und `inert`.
+
+Die HTML-Eigenschaft `hidden` allein reicht nicht, wenn derselbe Knoten eine Tailwind-Display-Klasse trägt (`grid`, `flex`, `block`). Utilities überschreiben Preflight `[hidden] { display: none }`. Deshalb trägt ein verborgener Bereich nur `hidden`, niemals zusätzlich eine Display-Utility. Sichtbarkeit wird über `getComputedStyle` und Layoutbox geprüft, nicht nur über das Attribut.
+
 ---
 
 ## 8. Regeln für neue Komponenten
