@@ -11,6 +11,8 @@
 // Unterkunft und Aktivitäten. Der Tagesplan gehört zur Übersicht, nicht zu
 // einem eigenen Tab. Ein historischer Wert `plan` fällt auf die Übersicht.
 
+import { flugAbdeckung } from '@/lib/trips/flug-abdeckung'
+import { unterkunftAbdeckung } from '@/lib/trips/naechte-abdeckung'
 import type { Trip, TripItem, TripItemKind } from '@/types/trips'
 
 export const ARBEITSBEREICHE = [
@@ -103,22 +105,19 @@ export function planStatus(reise: Trip, ohneTag: readonly TripItem[] = []): Plan
  */
 export function bereichStatus(reise: Trip, ohneTag: readonly TripItem[] = []): BereichStatus[] {
   const punkte = planpunkteSammeln(reise, ohneTag)
+  const fluege = flugAbdeckung(reise, ohneTag)
+  const unterkunft = unterkunftAbdeckung(reise, ohneTag)
 
   return [
     {
       bereich: 'fluege',
       anzahl: anzahlVon(punkte, 'flight'),
-      text: anzahlText(anzahlVon(punkte, 'flight'), 'Flug ausgewählt', 'Flüge ausgewählt', 'Noch kein Flug ausgewählt'),
+      text: fluege.zusammenfassung,
     },
     {
       bereich: 'unterkunft',
       anzahl: anzahlVon(punkte, 'stay'),
-      text: anzahlText(
-        anzahlVon(punkte, 'stay'),
-        'Unterkunft ausgewählt',
-        'Unterkünfte ausgewählt',
-        'Noch keine Unterkunft ausgewählt',
-      ),
+      text: unterkunft.zusammenfassung,
     },
     {
       bereich: 'aktivitaeten',

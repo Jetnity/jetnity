@@ -57,6 +57,9 @@ function punkt(teil) {
     provider: null,
     externalRef: null,
     bookingUrl: null,
+    bookingStatus: 'unconfirmed',
+    bookingSource: null,
+    bookingConfirmedAt: null,
     ...teil,
   }
 }
@@ -263,6 +266,134 @@ const ZUSTAENDE = {
     desktop: 'Ort oder Aktivität',
     oeffnePunkt: true,
     nutzlast: { reise: reise() },
+  },
+  'fluege-bestand': {
+    kompakt: 'Hinflug gebucht',
+    desktop: 'Deine Flüge',
+    tab: 'Flüge',
+    nutzlast: {
+      reise: reise({
+        startDate: '2026-08-30',
+        endDate: '2026-09-13',
+        stages: [
+          etappe({
+            arrivalDate: '2026-08-30',
+            departureDate: '2026-09-13',
+          }),
+        ],
+        days: [tag(1), tag(2), tag(3), tag(4), tag(5)],
+        ohneTag: [
+          punkt({
+            id: 'flug-hin',
+            kind: 'flight',
+            title: 'ZRH → DPS · Swiss',
+            dayId: null,
+            startsOn: '2026-08-30',
+            endsOn: '2026-08-31',
+            priceAmount: 890,
+            priceCurrency: 'CHF',
+            provider: 'duffel',
+            externalRef: 'off_1',
+            bookingStatus: 'booked',
+            bookingSource: 'user',
+            bookingConfirmedAt: JETZT,
+          }),
+        ],
+      }),
+      mitSuche: true,
+    },
+  },
+  'unterkunft-luecken': {
+    kompakt: 'Nächte fehlen',
+    desktop: 'Nächte-Abdeckung',
+    tab: 'Unterkunft',
+    nutzlast: {
+      reise: reise({
+        startDate: '2026-08-30',
+        endDate: '2026-09-13',
+        stages: [
+          etappe({
+            arrivalDate: '2026-08-30',
+            departureDate: '2026-09-13',
+          }),
+        ],
+        ohneTag: [
+          punkt({
+            id: 'stay-1',
+            kind: 'stay',
+            title: 'Ubud Inn',
+            dayId: null,
+            startsOn: '2026-08-30',
+            endsOn: '2026-09-05',
+            priceAmount: 800,
+            priceCurrency: 'CHF',
+            provider: 'test-hotel',
+            externalRef: 'stay-1',
+          }),
+        ],
+      }),
+      mitSuche: true,
+    },
+  },
+  'uebersicht-gebucht': {
+    kompakt: 'Hinflug gebucht · Rückflug offen',
+    desktop: 'Tagesplan',
+    nutzlast: {
+      reise: reise({
+        startDate: '2026-08-30',
+        endDate: '2026-09-13',
+        stages: [
+          etappe({
+            arrivalDate: '2026-08-30',
+            departureDate: '2026-09-13',
+          }),
+        ],
+        ohneTag: [
+          punkt({
+            id: 'flug-hin',
+            kind: 'flight',
+            title: 'ZRH → DPS · Swiss',
+            dayId: null,
+            startsOn: '2026-08-30',
+            priceAmount: 890,
+            priceCurrency: 'CHF',
+            provider: 'duffel',
+            externalRef: 'off_1',
+            bookingStatus: 'booked',
+            bookingSource: 'user',
+            bookingConfirmedAt: JETZT,
+          }),
+        ],
+      }),
+    },
+  },
+  'bestand-unbestimmt': {
+    kompakt: 'noch nicht vollständig bestimmbar',
+    desktop: 'noch nicht vollständig bestimmbar',
+    tab: 'Flüge',
+    nutzlast: {
+      reise: reise({
+        origin: null,
+        originPlaceId: null,
+        startDate: null,
+        endDate: null,
+        stages: [etappe({ arrivalDate: null, departureDate: null, placeId: null })],
+        ohneTag: [
+          punkt({
+            id: 'flug-offen',
+            kind: 'flight',
+            title: 'ZRH → DPS',
+            dayId: null,
+            startsOn: null,
+            priceAmount: 890,
+            priceCurrency: 'CHF',
+            provider: 'duffel',
+            externalRef: 'off_1',
+          }),
+        ],
+      }),
+      mitSuche: true,
+    },
   },
 }
 

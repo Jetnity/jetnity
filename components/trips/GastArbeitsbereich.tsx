@@ -23,6 +23,7 @@ import { hotelZeitraumAusEtappe } from '@/lib/hotels/reisegraph'
 import { alsHotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import {
   gastAktivitaetUebernehmen,
+  gastBuchungsstatusSetzen,
   gastFlugUebernehmen,
   gastHotelUebernehmen,
   gastPlanpunktAnlegen,
@@ -149,6 +150,17 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
       quelle="guest"
       onPunktAnlegen={anlegen}
       onPunktEntfernen={entfernen}
+      onBuchungsstatus={async (itemId, gebucht) => {
+        if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
+        try {
+          setReise(gastBuchungsstatusSetzen(reise, itemId, gebucht))
+          return null
+        } catch (fehler) {
+          return fehler instanceof Error
+            ? fehler.message
+            : 'Der Buchungsstatus konnte nicht gespeichert werden.'
+        }
+      }}
       aenderung={
         <ReiseAenderung
           reise={reise}

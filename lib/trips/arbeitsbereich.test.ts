@@ -41,6 +41,9 @@ function punkt(teil: Partial<TripItem> & Pick<TripItem, 'id' | 'kind' | 'title'>
     provider: null,
     externalRef: null,
     bookingUrl: null,
+    bookingStatus: 'unconfirmed',
+    bookingSource: null,
+    bookingConfirmedAt: null,
     ...teil,
   }
 }
@@ -165,9 +168,50 @@ describe('Status der Übersicht', () => {
 
     assert.equal(planpunkteSammeln(reise(), ohneTag).length, 1)
     assert.equal(planStatus(reise(), ohneTag).text, '1 Punkt geplant, davon 1 noch nicht eingeplant')
-    assert.equal(status[0]?.text, '1 Flug ausgewählt')
-    assert.equal(status[1]?.text, '1 Unterkunft ausgewählt')
+    assert.equal(status[0]?.text, 'noch nicht vollständig bestimmbar')
+    assert.equal(status[1]?.text, 'Abdeckung noch nicht vollständig bestimmbar')
     assert.equal(status[2]?.text, '1 Aktivität geplant')
+  })
+
+  test('zeigt gebuchten Hinflug und offenen Rückflug ehrlich', () => {
+    const status = bereichStatus(
+      reise({
+        origin: 'Zürich',
+        originPlaceId: 'geonames:2657896',
+        startDate: '2026-08-30',
+        endDate: '2026-09-13',
+        stages: [
+          {
+            id: 'stage-1',
+            position: 1,
+            name: 'Bali',
+            countryCode: 'ID',
+            arrivalDate: '2026-08-30',
+            departureDate: '2026-09-13',
+            latitude: null,
+            longitude: null,
+            placeId: 'geonames:1650535',
+          },
+        ],
+        ohneTag: [
+          punkt({
+            id: 'flug-hin',
+            kind: 'flight',
+            title: 'ZRH → DPS',
+            dayId: null,
+            startsOn: '2026-08-30',
+            bookingStatus: 'booked',
+            bookingSource: 'user',
+            bookingConfirmedAt: JETZT,
+            priceAmount: 890,
+            priceCurrency: 'CHF',
+            provider: 'duffel',
+            externalRef: 'off_1',
+          }),
+        ],
+      }),
+    )
+    assert.equal(status[0]?.text, 'Hinflug gebucht · Rückflug offen')
   })
 
   test('erfindet keinen Status aus fehlenden Providerdaten', () => {

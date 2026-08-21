@@ -30,6 +30,8 @@ import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
 import TripWorkspaceNavigation from '@/components/trips/TripWorkspaceNavigation'
 import TripWorkspacePlan from '@/components/trips/TripWorkspacePlan'
 import TripWorkspaceUebersicht from '@/components/trips/TripWorkspaceUebersicht'
+import FlugBestand from '@/components/trips/FlugBestand'
+import UnterkunftBestand from '@/components/trips/UnterkunftBestand'
 import type { Trip, TripItem, TripSource } from '@/types/trips'
 
 function kompakteAnsichtAbonnieren(melden: () => void) {
@@ -54,6 +56,7 @@ type TripWorkspaceProps = {
   flugsuche?: React.ReactNode
   hotelsuche?: React.ReactNode
   aktivitaetensuche?: React.ReactNode
+  onBuchungsstatus?: (itemId: string, gebucht: boolean) => Promise<string | null>
   /**
    * Nur für interne Audits: startet nicht in der Übersicht.
    * Der Produktweg lässt den Parameter weg.
@@ -85,6 +88,7 @@ export default function TripWorkspace({
   flugsuche,
   hotelsuche,
   aktivitaetensuche,
+  onBuchungsstatus,
   anfangsBereich,
 }: TripWorkspaceProps) {
   const kompakt = React.useSyncExternalStore(
@@ -208,18 +212,20 @@ export default function TripWorkspace({
 
         {!kompakt && aenderungFeld}
 
-        {bereichBereit('fluege') && flugsuche && (
-          <div hidden={verbergen('fluege')} inert={verbergen('fluege') || undefined} className="mt-6">
+        {bereichBereit('fluege') && (
+          <div hidden={verbergen('fluege')} inert={verbergen('fluege') || undefined} className="mt-6 grid gap-6">
+            <FlugBestand reise={reise} ohneTag={ungeplantePunkte} onBuchungsstatus={onBuchungsstatus} />
             {flugsuche}
           </div>
         )}
 
-        {bereichBereit('unterkunft') && hotelsuche && (
+        {bereichBereit('unterkunft') && (
           <div
             hidden={verbergen('unterkunft')}
             inert={verbergen('unterkunft') || undefined}
-            className="mt-6"
+            className="mt-6 grid gap-6"
           >
+            <UnterkunftBestand reise={reise} ohneTag={ungeplantePunkte} onBuchungsstatus={onBuchungsstatus} />
             {hotelsuche}
           </div>
         )}
