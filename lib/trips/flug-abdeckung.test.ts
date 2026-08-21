@@ -35,6 +35,10 @@ function flug(teil: Partial<TripItem> & Pick<TripItem, 'id'>): TripItem {
     connectionRef: null,
     mobilityChanges: null,
     mobilityEvidence: null,
+    rentalSupplier: null,
+    vehicleClass: null,
+    transmission: null,
+    rentalEvidence: null,
     ...teil,
   }
 }

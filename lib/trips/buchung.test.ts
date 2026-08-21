@@ -39,6 +39,10 @@ function punkt(teil: Partial<TripItem> & Pick<TripItem, 'id' | 'kind'>): TripIte
     connectionRef: null,
     mobilityChanges: null,
     mobilityEvidence: null,
+    rentalSupplier: null,
+    vehicleClass: null,
+    transmission: null,
+    rentalEvidence: null,
     ...teil,
   }
 }
@@ -50,10 +54,11 @@ describe('Buchungsstatus', () => {
     assert.equal(unbestaetigteBuchung().bookingSource, null)
   })
 
-  test('nur Flug, Stay und Transfer dürfen manuell als gebucht markiert werden', () => {
+  test('nur Flug, Stay, Transfer und Mietwagen dürfen manuell als gebucht markiert werden', () => {
     assert.equal(kannBuchungMarkieren(punkt({ id: 'f', kind: 'flight' })), true)
     assert.equal(kannBuchungMarkieren(punkt({ id: 's', kind: 'stay' })), true)
     assert.equal(kannBuchungMarkieren(punkt({ id: 't', kind: 'transfer' })), true)
+    assert.equal(kannBuchungMarkieren(punkt({ id: 'r', kind: 'rental_car' })), true)
     assert.equal(kannBuchungMarkieren(punkt({ id: 'a', kind: 'activity' })), false)
     assert.equal(kannBuchungMarkieren(punkt({ id: 'n', kind: 'note' })), false)
   })

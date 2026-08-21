@@ -67,10 +67,10 @@ Die Importer dürfen Production nicht mehr „aus Versehen“ beschreiben. Der D
 
 Zwei getrennte Aussagen, kein Widerspruch:
 
-- **Tatsächlicher Production-Stand:** `20260821100000_trip_items_booking_status` ist nach ausdrücklicher Nutzerfreigabe (21. August 2026, PR #29) auf Production angewendet.
+- **Tatsächlicher Production-Stand:** `20260821100000_trip_items_booking_status` (PR #29) und `20260821120000_trip_items_mobility` (PR #30) sind nach ausdrücklicher Nutzerfreigabe (21. August 2026) auf Production angewendet.
 - **Playbook-Grenze:** Automatische Production-Läufe stoppen bei `20260820130000`. Das ist eine Guardrail gegen unbeabsichtigtes Nachziehen späterer Dateien, kein Gegenbeweis zum realen Production-Stand.
 
-`20260821120000_trip_items_mobility.sql` bleibt Development-only und darf **nicht** auf Production angewendet werden. Eine Production-Anwendung späterer Migrationen braucht eine neue ausdrückliche Freigabe.
+`20260821200000_trip_items_rental_car.sql` bleibt Development-only und darf **nicht** auf Production angewendet werden. Eine Production-Anwendung späterer Migrationen braucht eine neue ausdrückliche Freigabe.
 
 `npm run production:pruefen` ist vollständig read-only: nur `SELECT` auf Bestand und PostgreSQL-Metadaten (Rechte, RLS, Policies). Kein HTTP-POST, kein INSERT/UPDATE/DELETE.
 
@@ -176,7 +176,7 @@ Funktionen (`reise_anlegen`, `reise_aendern`) können durch erneutes Anwenden de
 
 - Modellweg nicht einschalten
 - Duffel nicht einschalten, kein Test- und kein Live-Token
-- Hotelsuche, Aktivitätensuche und Transfers in Production nicht einschalten; Foundation existiert, Provider und Production-Freigabe fehlen
+- Hotelsuche, Aktivitätensuche, Transfers und Mietwagen in Production nicht einschalten; Foundation existiert, Provider und Production-Freigabe fehlen
 - Production nicht aus CI, Build oder Merge befüllen
 - Duffel-Sandbox nicht als Merge-Blocker behandeln; das ist eine nachgelagerte Provider-Verifikation
 
@@ -191,4 +191,5 @@ Production hat dann Schema und Referenzdaten. Die Suche gegen `public.places` / 
 - `JETNITY_HOTEL_AKTIV` nicht auf `true`
 - `JETNITY_ACTIVITY_AKTIV` nicht auf `true`
 - `JETNITY_MOBILITY_AKTIV` nicht auf `true`
+- `JETNITY_RENTAL_CAR_AKTIV` nicht auf `true`
 - kein `DUFFEL_ACCESS_TOKEN` in Production

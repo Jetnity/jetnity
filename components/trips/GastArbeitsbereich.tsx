@@ -26,6 +26,7 @@ import {
   gastBuchungsstatusSetzen,
   gastFlugUebernehmen,
   gastHotelUebernehmen,
+  gastMietwagenAnlegen,
   gastMobilitaetAnlegen,
   gastPlanpunktAnlegen,
   gastPlanpunktEntfernen,
@@ -231,6 +232,17 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
               return fehler instanceof Error
                 ? fehler.message
                 : 'Die Verbindung konnte nicht gespeichert werden.'
+            }
+          }}
+          onMietwagenAnlegen={async (eingabe) => {
+            if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
+            try {
+              setReise(gastMietwagenAnlegen(reise, eingabe))
+              return null
+            } catch (fehler) {
+              return fehler instanceof Error
+                ? fehler.message
+                : 'Der Mietwagen konnte nicht gespeichert werden.'
             }
           }}
         />

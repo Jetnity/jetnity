@@ -19,8 +19,8 @@ Diese Datei ist die operative Roadmap. Historische Detailstände bleiben über G
 | Phase 3.4 | erster echter Hotel-Suchadapter | **wartet / extern blockiert durch Booking.com-Zugang; HBX/Hotelbeds Backup** |
 | Querschnitt | Trip Workspace Mobile UX Iteration 1–3 | **fertig, nach `main` gemergt (PR #27)** |
 | Querschnitt | Trip Coverage & Booking Status | **auf `main` (PR #29, `211872c1`); Production-Booking-Migration nach Nutzerfreigabe angewendet** |
-| Foundation-Track A | Mobilität & Transfers – Bahn, Bus, Fähre, Transfers | **in Arbeit auf Draft-PR #30** |
-| Foundation-Track B | Mietwagen Foundation | geplant nach A |
+| Foundation-Track A | Mobilität & Transfers – Bahn, Bus, Fähre, Transfers | **fertig, nach `main` gemergt (PR #30); Production-Schema angewendet, Suche aus** |
+| Foundation-Track B | Mietwagen Foundation | **in Arbeit auf Draft-PR #31**; Development-Migration, nicht Production |
 | Foundation-Track C | Travel Readiness & Dokumente Foundation | geplant nach B |
 | Foundation-Track D | Gesamt-Abdeckung im Reisegraphen erweitern | geplant nach C |
 | Phase 3.5 | erster echter Activity-Suchadapter | geplant; bei fehlendem Zugang extern blockiert |
@@ -160,9 +160,7 @@ Die Wartezeit auf externe Providerzugänge wird genutzt, um Jetnity funktional b
 
 ### Foundation A – Mobilität & Transfers
 
-**In Arbeit auf Draft-PR #30**, Branch `feat/mobility-transfers-foundation`. Nicht mergen. Nicht auf Production migrieren oder aktivieren. Phase 3.4 bleibt wartend.
-
-Nachweis 21. August 2026: Tests **1100/1100**, Development-Migration angewendet und verifiziert, Workspace-Audit **358/0**, Activities-Regression **184/0**. Route-Truth-Korrektur: gleichdatiger Flug ohne strukturierte Route ist `unknown`, nicht `covered_by_flight`. Ein echter iPhone-Preview-Test steht vor Ready noch aus.
+**Abgeschlossen und auf `main` (PR #30).** Schema-Migration `20260821120000` ist auf Production angewendet. Die Mobilitätssuche bleibt hart aus. Phase 3.4 bleibt wartend.
 
 Gemeinsames Reisegraph-Modell für Bahn, Bus, Fähre und Transfer:
 
@@ -179,14 +177,22 @@ Nicht in diesem Block: Mietwagen, Kreuzfahrten, echter Provider, Fake-Fahrpläne
 
 ### Foundation B – Mietwagen
 
-Provider-neutrales Modell für:
+**In Arbeit auf Draft-PR #31**, Branch `feat/rental-car-foundation`. Nicht mergen. Nicht auf Production migrieren oder aktivieren.
 
-- Abhol-/Rückgabeort
-- Abhol-/Rückgabezeit
-- Fahrer-/Reisendenbezug
-- Fahrzeugklasse/Anforderungen
-- Preis/Flexibilität nur als verifizierbare Provider-Fakten
-- Zusammenhang mit Etappen, Unterkünften und Transfers
+Provider-neutrales Modell:
+
+- persistenter Planpunkt `trip_items.kind = rental_car`
+- Abhol-/Rückgabeort über vorhandene Ortsfelder
+- Abhol-/Rückgabezeit über vorhandene Zeitfelder
+- Fahrzeugklasse/Getriebe/Vermieter nur als bekannte Fakten
+- Preis/Booking nur als Nutzerfakt; Quelle `user`
+- kein automatisches Covering einer Bewegungskante
+- geschlossene Suchnaht, Factory/Nachweis `null`, Kill Switch `JETNITY_RENTAL_CAR_AKTIV`
+- UX im bestehenden Bereich Mobilität, kein sechster Tab
+
+Fachdoku: [docs/RENTAL_CARS.md](docs/RENTAL_CARS.md). Auftrag: [docs/CURSOR_RENTAL_CAR_FOUNDATION_TASK.md](docs/CURSOR_RENTAL_CAR_FOUNDATION_TASK.md).
+
+Nicht in diesem Block: echter Provider, Fake-Angebote, Führerschein-/Zahlungsdaten, Production-Aktivierung.
 
 ### Foundation C – Travel Readiness & Dokumente
 

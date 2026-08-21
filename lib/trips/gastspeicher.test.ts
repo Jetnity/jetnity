@@ -31,6 +31,7 @@ import {
   gastBuchungsstatusSetzen,
   gastFlugUebernehmen,
   gastHotelUebernehmen,
+  gastMietwagenAnlegen,
   gastMobilitaetAnlegen,
   gastPlanpunktAnlegen,
   gastPlanpunktEntfernen,
@@ -393,7 +394,7 @@ describe('Bearbeiten einer Gastreise', () => {
     assert.ok(punkt)
     assert.throws(
       () => gastBuchungsstatusSetzen(reise, punkt.id, true),
-      /Nur Flüge, Unterkünfte und Verbindungen/,
+      /Nur Flüge, Unterkünfte, Verbindungen und Mietwagen/,
     )
   })
 
@@ -433,6 +434,45 @@ describe('Bearbeiten einer Gastreise', () => {
     assert.equal(gespeichert?.mobilityMode, 'rail')
     assert.equal(gespeichert?.connectionRef, 'IC 890')
     assert.equal(gespeichert?.bookingSource, 'user')
+  })
+
+  test('ein manueller Mietwagen bleibt nach Reload eine Nutzerangabe', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const danach = gastMietwagenAnlegen(reise, {
+      pickupName: 'Zürich Flughafen',
+      dropoffName: 'Lugano',
+      pickupPlaceId: 'geonames:2657896',
+      dropoffPlaceId: 'geonames:2659836',
+      pickupOn: '2026-09-12',
+      pickupAt: '09:00',
+      dropoffOn: '2026-09-16',
+      dropoffAt: '18:00',
+      rentalSupplier: 'Europcar',
+      vehicleClass: 'compact',
+      transmission: 'automatic',
+      dayId: null,
+      stageId: reise.stages[0]?.id ?? null,
+    })
+    const auto = danach.ohneTag.find((punkt) => punkt.kind === 'rental_car')
+    assert.ok(auto)
+    assert.equal(auto.originName, 'Zürich Flughafen')
+    assert.equal(auto.destinationName, 'Lugano')
+    assert.equal(auto.rentalSupplier, 'Europcar')
+    assert.equal(auto.vehicleClass, 'compact')
+    assert.equal(auto.transmission, 'automatic')
+    assert.equal(auto.rentalEvidence, 'user')
+    assert.equal(auto.provider, null)
+    assert.equal(auto.bookingUrl, null)
+    assert.equal(auto.bookingStatus, 'unconfirmed')
+    assert.equal(auto.mobilityMode, null)
+
+    const gebucht = gastBuchungsstatusSetzen(danach, auto.id, true, '2026-08-21T10:00:00.000Z')
+    assert.equal(gebucht.ohneTag.find((punkt) => punkt.id === auto.id)?.bookingStatus, 'booked')
+    const erneut = gastreiseLadenNach(reise.id)
+    const gespeichert = erneut?.ohneTag.find((punkt) => punkt.id === auto.id)
+    assert.equal(gespeichert?.rentalEvidence, 'user')
+    assert.equal(gespeichert?.bookingSource, 'user')
+    assert.equal(gespeichert?.bookingStatus, 'booked')
   })
 
   test('ein Punkt an einem fremden Tag wird abgelehnt', () => {

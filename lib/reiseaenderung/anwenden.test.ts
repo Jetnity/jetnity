@@ -41,6 +41,10 @@ function punkt(teil: Partial<TripItem> & Pick<TripItem, 'id' | 'title'>): TripIt
     connectionRef: null,
     mobilityChanges: null,
     mobilityEvidence: null,
+    rentalSupplier: null,
+    vehicleClass: null,
+    transmission: null,
+    rentalEvidence: null,
     ...teil,
   }
 }
@@ -481,6 +485,10 @@ describe('Geschützter kommerzieller stay', () => {
       connectionRef: null,
       mobilityChanges: null,
       mobilityEvidence: null,
+      rentalSupplier: null,
+      vehicleClass: null,
+      transmission: null,
+      rentalEvidence: null,
     })
     return basis
   }

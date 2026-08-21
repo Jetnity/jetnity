@@ -53,6 +53,10 @@ function punkt(teil: Partial<TripItem> & Pick<TripItem, 'id' | 'kind' | 'title'>
     connectionRef: null,
     mobilityChanges: null,
     mobilityEvidence: null,
+    rentalSupplier: null,
+    vehicleClass: null,
+    transmission: null,
+    rentalEvidence: null,
     ...teil,
   }
 }

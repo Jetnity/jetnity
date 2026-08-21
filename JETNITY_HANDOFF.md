@@ -63,9 +63,9 @@ Leitsatz:
 
 ## 3. Aktueller `main`-Stand
 
-Vor Abschluss von PR #30 basiert `main` auf dem Squash-Merge von PR #29:
+`main` enthält den Squash-Merge von Foundation A / PR #30:
 
-`211872c1aad0e002d81f5ea1fb2d7eef4490d4b7`
+`463360e64dae068e3d8eb9f3012890b94df4a75a`
 
 Bereits abgeschlossen und auf `main`:
 
@@ -74,6 +74,7 @@ Bereits abgeschlossen und auf `main`:
 - Phase 3.3 / 3.3b / 3.3c – Activities Foundation
 - Trip Workspace Mobile UX Iteration 1–3 – PR #27
 - Trip Coverage & Booking Status – PR #29
+- Foundation A – Mobilität & Transfers – PR #30
 - Produktqualitäts- und Kontinuitätsstandards
 
 Stabile öffentliche Production-URL:
@@ -86,6 +87,7 @@ Production-Suchen bleiben weiterhin deaktiviert für:
 - Hotels
 - Aktivitäten
 - Mobilität
+- Mietwagen
 
 Keine Provider-Suche darf ohne separate Production-Freigabe aktiviert werden.
 
@@ -93,13 +95,9 @@ Keine Provider-Suche darf ohne separate Production-Freigabe aktiviert werden.
 
 ## 4. Foundation A – Mobilität & Transfers / PR #30
 
+**Gemergt nach `main`.** Foundation A nicht erneut bauen.
+
 Pull Request: **#30 – Foundation A – Mobilität & Transfers**
-
-Branch:
-
-`feat/mobility-transfers-foundation`
-
-Vor jeder Aktion den **live PR-Status** prüfen. Wenn PR #30 bereits gemergt ist, Foundation A nicht erneut bauen.
 
 Umgesetzt:
 
@@ -118,11 +116,10 @@ Umgesetzt:
 - Commercial Protection / natürliche Reiseänderung berücksichtigt Mobilitätsfelder
 - Mobile Navigation: `Übersicht · Flüge · Unterkunft · Aktivitäten · Mobilität`
 
-Nicht Teil der Foundation:
+Nicht Teil der Foundation und bewusst nicht nachgezogen:
 
 - echter Bahn-/Bus-/Fähren-/Transferprovider
 - Productive Mobility Search
-- Mietwagen
 - Kreuzfahrten
 - erfundene Wegezeiten oder Mindestumstiege
 
@@ -217,20 +214,23 @@ Während Phase 3.4 auf externen Zugang wartet, wird der fehlende Reise-Unterbau 
 
 ### A. Mobilität & Transfers
 
-Foundation A über PR #30. Nicht erneut bauen, wenn PR #30 gemergt ist.
+Auf `main` und Production-Schema. Suche bleibt aus. Nicht erneut bauen.
 
-### B. Mietwagen – nächster geplanter Foundation-Block
+### B. Mietwagen – Draft-PR #31
 
-Provider-neutral vorbereiten für:
+Branch `feat/rental-car-foundation`. **Draft lassen, nicht mergen.**
 
-- Abholort / Rückgabeort
-- Abhol- und Rückgabezeit
-- Fahrer-/Reisendenbezug
-- Fahrzeugklasse / Anforderungen
-- Preis / Währung / Flexibilität nur als belegbare Fakten
-- Buchungsstatus
-- Zusammenhang mit Etappen, Unterkünften, Mobilität und Reisegraph
-- spätere Provider-/Nachweis-Naht
+Umgesetzt im Draft:
+
+- `trip_items.kind = rental_car` plus wenige optionale Spalten
+- Domäne `lib/rental-cars/`, geschlossene `POST /api/rental-cars/search`
+- Kill Switch `JETNITY_RENTAL_CAR_AKTIV`; Production hart aus
+- manuelle Erfassung als Nutzerangabe; Booking nur `user`
+- UX als Unterbereich in Mobilität, kein sechster Tab
+- Mietwagen deckt keine Bewegungskante
+- Development-Migration `20260821200000` – **nicht Production**
+
+Fachdoku: `docs/RENTAL_CARS.md`, ADR-0092 / ADR-0093.
 
 Kein Fake-Provider und keine Production-Aktivierung.
 
@@ -318,9 +318,9 @@ Verbindlich:
 1. Pflichtdokumente aus dem Kopf dieses Handoffs lesen.
 2. Aktuellen `main`-, PR-, CI-, Vercel- und Production-Stand prüfen.
 3. PR #29 nicht erneut bauen: Coverage/Booking Status ist abgeschlossen.
-4. PR #30 live prüfen. Wenn gemergt: Foundation A nicht erneut bauen. Wenn noch offen: keine neue große Aufgabe auf denselben Branch legen.
-5. Phase 3.4 bleibt extern blockiert, bis echter Hotelprovider-Zugang vorliegt.
-6. Nach sauberem Abschluss von PR #30 ist der nächste geplante provider-unabhängige Block **Foundation B – Mietwagen**.
-7. Danach **Travel Readiness & Dokumente Foundation**.
+4. PR #30 ist gemergt: Foundation A nicht erneut bauen.
+5. PR #31 live prüfen. Foundation B bleibt Draft, bis Real-Device und Review abgeschlossen sind. Nicht mergen. Keine Production-Migration.
+6. Phase 3.4 bleibt extern blockiert, bis echter Hotelprovider-Zugang vorliegt.
+7. Nach sauberem Abschluss von PR #31 ist der nächste geplante provider-unabhängige Block **Travel Readiness & Dokumente Foundation**.
 8. Keine Fake-Providerdaten, keine Production-Provideraktivierung und keine Secrets ohne separate Freigabe.
 9. Bei jeder neuen Funktion zuerst prüfen, wie sie logisch mit dem bestehenden Reisegraphen und den anderen Reisebereichen zusammenarbeitet.

@@ -56,8 +56,8 @@ Vier Tabellen, ein Graph. Der Anwendungstyp dazu steht in `types/trips.ts` und t
 | `trips.status` | `draft`, `planned`, `booked`, `archived` |
 | `trips.pace` | `calm`, `balanced`, `intense` |
 | `trips.interests` | `culture`, `nature`, `food`, `beach`, `adventure`, `wellness` – als Menge, ohne Doppelte |
-| `trip_items.kind` | `flight`, `stay`, `activity`, `transfer`, `note` |
-| `trip_items.booking_status` | `unconfirmed` (ausgewählt/geplant), `booked` (ausdrücklich bestätigt). Nur `flight` und `stay` dürfen `booked` sein. |
+| `trip_items.kind` | `flight`, `stay`, `activity`, `transfer`, `rental_car`, `note` |
+| `trip_items.booking_status` | `unconfirmed` (ausgewählt/geplant), `booked` (ausdrücklich bestätigt). Nur `flight`, `stay`, `transfer` und `rental_car` dürfen `booked` sein. |
 | `trip_items.booking_source` | `null` oder `user`. Der Browser darf keine Provider-Quelle setzen. |
 
 Die Werte stehen in Englisch, weil sie Spaltenwerte sind. Was Reisende lesen, steht an einer Stelle: `lib/trips/bezeichnungen.ts`.
@@ -202,11 +202,13 @@ Die Kennung entscheidet, wo `/reisen/[tripId]` nachsieht: `trip-<uuid>` ist ein 
 
 **Keine Beispieldaten.** Ein leeres Konto zeigt einen leeren Zustand mit dem Weg nach `/planen`. Eine erfundene Reise als Produktzustand wäre eine Behauptung über gespeicherte Daten.
 
-**Mobile-UX auf `main` (PR #27), erweitert um Mobilität auf Draft-PR #30.** Unterhalb von 1024 px ist der Arbeitsbereich keine lange Kartenfolge. Zuerst kommt ein kompakter Reisekopf, darunter eine klebende Bereichsnavigation: Übersicht, Flüge, Unterkunft, Aktivitäten, Mobilität. Die Übersicht ist das Dashboard: Status zu Flügen, Unterkunft, Aktivitäten und Mobilität, eingebetteter Tagesplan, `Reise ändern`, Reiseprofil. Der mobile Tagesplan ist ein Modul – Tagesauswahl und Tagesinhalt teilen eine Karte, nur die Chip-Zeile scrollt horizontal. Der Planstatus ist Einleitung des Tagesplans, kein eigener Tab. Der gewählte Reisetag gilt gemeinsam für Übersicht und Aktivitäten. Ab 1024 px bleibt die bisherige breite Arbeitsansicht. Der aktive Bereich ist Client-State, nicht Teil der URL. Siehe ADR-0087 und ADR-0088.
+**Mobile-UX auf `main` (PR #27), erweitert um Mobilität auf `main` (PR #30).** Unterhalb von 1024 px ist der Arbeitsbereich keine lange Kartenfolge. Zuerst kommt ein kompakter Reisekopf, darunter eine klebende Bereichsnavigation: Übersicht, Flüge, Unterkunft, Aktivitäten, Mobilität. Die Übersicht ist das Dashboard: Status zu Flügen, Unterkunft, Aktivitäten und Mobilität, eingebetteter Tagesplan, `Reise ändern`, Reiseprofil. Der mobile Tagesplan ist ein Modul – Tagesauswahl und Tagesinhalt teilen eine Karte, nur die Chip-Zeile scrollt horizontal. Der Planstatus ist Einleitung des Tagesplans, kein eigener Tab. Der gewählte Reisetag gilt gemeinsam für Übersicht und Aktivitäten. Ab 1024 px bleibt die bisherige breite Arbeitsansicht. Der aktive Bereich ist Client-State, nicht Teil der URL. Siehe ADR-0087 und ADR-0088.
 
 **Coverage und Buchungsstatus (PR #29 auf `main`).** Ein gespeicherter Flug oder Stay ist ausgewählt/geplant, nicht gebucht. `Gebucht` entsteht nur durch `Als gebucht markieren`. Offene Abschnitte und fehlende Nächte werden aus dem Graphen abgeleitet, nicht als eigene Zeilen gespeichert. Die Übersicht zeigt kompakte, ehrliche Statuszeilen; unvollständige Daten heissen `noch nicht vollständig bestimmbar`, nicht `0/14`. Siehe ADR-0089. Handoff hält fest, dass die Booking-Migration nach Nutzerfreigabe auf Production angewendet wurde; das Production-Playbook erlaubt spätere Migrationen weiterhin nicht als Default.
 
-**Mobilität (Draft-PR #30, nicht Production).** Bahn, Bus, Fähre und Transfer bleiben `kind = transfer` mit optionalen Spalten. Ein Transfer darf manuell gebucht werden. Abdeckung kommt aus `Bewegungskante`n; fehlende Graphdaten bleiben unbestimmt. Die Suche ist geschlossen und fail closed. Siehe [docs/MOBILITY.md](MOBILITY.md), ADR-0090 und ADR-0091.
+**Mobilität (PR #30 auf `main`, Production-Schema angewendet).** Bahn, Bus, Fähre und Transfer bleiben `kind = transfer` mit optionalen Spalten. Ein Transfer darf manuell gebucht werden. Abdeckung kommt aus `Bewegungskante`n; fehlende Graphdaten bleiben unbestimmt. Die Suche ist geschlossen und fail closed. Siehe [docs/MOBILITY.md](MOBILITY.md), ADR-0090 und ADR-0091.
+
+**Mietwagen (Draft-PR #31, nicht Production).** Ein Mietwagen ist `kind = rental_car` und lebt als Unterbereich in Mobilität, nicht als sechster Tab. Abholung/Rückgabe nutzen die Ortsfelder. Ein überlappender Mietwagen deckt keine Bewegungskante. Die Suche ist geschlossen und fail closed. Siehe [docs/RENTAL_CARS.md](RENTAL_CARS.md), ADR-0092 und ADR-0093.
 
 ---
 
@@ -220,7 +222,8 @@ Die Kennung entscheidet, wo `/reisen/[tripId]` nachsieht: `trip-<uuid>` ist ein 
 | ~~Reiseziel und Abreise als freie Texte~~ | **in Phase 3.1 geschlossen.** Gemeinsame Autocomplete und Serverprüfung gegen `public.places`. Fantasieorte werden nicht gespeichert ([docs/ORTE.md](ORTE.md), ADR-0067). |
 | ~~Hotels suchen und in die Reise übernehmen~~ | **Foundation in Phase 3.2 / 3.2c.** Quartier zuerst, Pipeline, `stay`-Abbildung, Nachweis an Suchkontext gebunden. Noch kein Hotelprovider, Konto-Übernahme fail closed, keine Production-Suche ([docs/HOTELS.md](HOTELS.md), ADR-0070 bis ADR-0077). |
 | ~~Aktivitäten suchen und in die Reise übernehmen~~ | **Foundation in Phase 3.3.** Tageskontext, Pipeline, `activity`-Abbildung, Nachweis an Ziel/Datum/Teilnehmer/Währung/Timeslot gebunden. Noch kein Activity-Provider, Konto-Übernahme fail closed, keine Production-Suche ([docs/ACTIVITIES.md](ACTIVITIES.md), ADR-0078 bis ADR-0085). Ein Vorschlag aus Phase 2.1 lässt Handelsfelder leer (ADR-0054). |
-| ~~Mobilität als vier Suchmaschinen~~ | **Foundation A auf Draft-PR #30.** Ein Bereich, `kind=transfer`, optionale Spalten, konservative Abdeckung, fail-closed Suche. Noch kein Provider, keine Production-Migration ([docs/MOBILITY.md](MOBILITY.md), ADR-0090, ADR-0091). |
+| ~~Mobilität als vier Suchmaschinen~~ | **Foundation A auf `main` (PR #30).** Ein Bereich, `kind=transfer`, optionale Spalten, konservative Abdeckung, fail-closed Suche. Production-Schema angewendet, Suche aus ([docs/MOBILITY.md](MOBILITY.md), ADR-0090, ADR-0091). |
+| ~~Mietwagen als eigene Suchmaschine / sechster Tab~~ | **Foundation B auf Draft-PR #31.** `kind=rental_car`, Unterbereich in Mobilität, keine automatische Kantenabdeckung, fail-closed Suche. Development-Migration, nicht Production ([docs/RENTAL_CARS.md](RENTAL_CARS.md), ADR-0092, ADR-0093). |
 | eigene Flugbuchung / Affiliate-Deeplink | getrennte Verantwortlichkeit, nicht der Suchadapter |
 | Anbieter-Plattform für zehn Provider | ein zweiter Suchadapter (Skyscanner, Aviasales) muss dasselbe Interface erfüllen; kein Framework auf Vorrat ([AGENTS.md](../AGENTS.md) Regel 19) |
 | Preisoptimierung, Preishistorie | braucht Anbieterpreise, die es noch nicht gibt |

@@ -2296,6 +2296,73 @@ Die Suchnaht folgt den bestehenden Foundations: `MobilityProvider.suchen()`, ges
 
 ---
 
+## ADR-0092 – Mietwagen als `trip_items.kind = rental_car`
+
+**Datum:** 21. August 2026
+**Status:** umgesetzt auf Draft-PR #31; Development-Migration, nicht Production
+
+**Entscheidung:** Ein Mietwagen ist ein eigener persistenter Planpunkt `trip_items.kind = rental_car` mit wenigen optionalen Spalten. Abholung und Rückgabe nutzen die vorhandenen Ortsfelder. Zeitraum und Preis/Booking bleiben die vorhandenen Spalten. One-way wird aus Ortsfakten abgeleitet. Es gibt keine 1:1-Tabelle und kein `metadata`-JSON.
+
+Neue Spalten:
+
+- `rental_supplier` (Nutzerfakt, nicht Such-Provider, max. 120)
+- `vehicle_class` (`economy | compact | intermediate | fullsize | suv | van | luxury`)
+- `transmission` (`automatic | manual`)
+- `rental_evidence` (in dieser Foundation nur `user`)
+
+Transfer-Felder `mobility_mode`, `connection_ref`, `mobility_changes` und `mobility_evidence` bleiben transfer-only. Origin/Destination sind für `transfer` **oder** `rental_car` erlaubt. `booked` ist für `flight | stay | transfer | rental_car` zulässig, Quelle weiterhin nur `user`. `public.reise_aendern()` wird nicht ersetzt.
+
+**Kontext:** Foundation B muss Mietwagen im selben Reisegraphen speichern wie Flug, Stay, Aktivität und Transfer, ohne einen Transfer zu fälschen und ohne Ownership/RLS/Gastreise-Übernahme zu verdoppeln. Ein Mietwagen überspannt Tage und Orte; er ist kein einzelner Transfer.
+
+**Alternativen:**
+
+1. *Mietwagen als `kind=transfer` mit einem Modus `rental`.* Würde Bewegungskanten, Booking-Constraints und UI-Wahrheit vermischen. Ein Auto ist keine nachgewiesene Verbindung.
+2. *Eigene `trip_rental_cars`-Tabelle 1:1.* Mehr RLS-, Übernahme- und Join-Fläche, ohne dass Foundation B mehr Semantik braucht.
+3. *Fakten in `trip_items.metadata`.* Verstösst gegen die Schema-Regel: was UI und Fachlogik abfragen, ist eine Spalte.
+
+**Begründung:** Ein klarer `kind`, wenige optionale Spalten und vorhandene Zeit-/Ortsfelder reichen für manuelle Erfassung, Booking und späteren Providerabgleich. Place-IDs bleiben Strings. Fahreralter, Führerschein und Zahlungsdaten werden nicht persistiert.
+
+**Konsequenzen:**
+
+- Migration `20260821200000_trip_items_rental_car.sql` liegt im Repository. **Nur Development.** Nicht Production.
+- `public.reise_anlegen()` schreibt die Felder und erlaubt gebuchte Mietwagen nur als `user`.
+- Gast- und Konto-Übernahme tragen dieselben Felder.
+- Natürliche Sprache darf Mietwagen- und Buchungsfakten nicht erfinden.
+- Keine neue RLS-Tabelle; vorhandene `trip_items`-Policies bleiben die Eigentumsgrenze.
+- Kein sechster Workspace-Tab. Mietwagen lebt im Bereich Mobilität.
+
+---
+
+## ADR-0093 – Mietwagen deckt keine Bewegungskante; Suche fail closed
+
+**Datum:** 21. August 2026
+**Status:** umgesetzt auf Draft-PR #31; kein Provider gewählt
+
+**Entscheidung:** Ein vorhandener Mietwagen darf eine `Bewegungskante` nicht als `covered` markieren, auch wenn Zeitraum und Städte plausibel überlappen. Foundation A bleibt unverändert die Source of Truth für Verbindungsabdeckung. Ein Mietwagen ist ein verfügbarer Reisebaustein im Zeitraum, kein Routennachweis.
+
+Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, geschlossene Route `POST /api/rental-cars/search`, Production hart aus, Factory und Nachweis `null`. Kill Switch `JETNITY_RENTAL_CAR_AKTIV` benennt keinen Anbieter und ist kein Secret. Ranking ist deterministisch und provisionsneutral. Providername, Provision oder Umsatz sind niemals Rankingfaktor.
+
+**Kontext:** `docs/LOGIC_STANDARD.md` verbietet, aus gleichem Datum oder ähnlichem Ort eine Verbindung zu erfinden. Ohne expliziten belastbaren Link zwischen Mietwagen und Kante wäre jede automatische Coverage eine Parallelwahrheit.
+
+**Alternativen:**
+
+1. *Überlappender Mietwagen macht die Kante `covered`.* Würde Transportabdeckung erfinden.
+2. *Eigene Link-Tabelle Mietwagen↔Kante schon jetzt.* Kein heutiger Nutzerweg erzeugt diesen Link bewusst; das wäre Vorratsmodellierung.
+3. *Providername oder Env-Token schon jetzt festlegen.* Verstösst gegen die Foundation-Regel: kein Anbieter, keine Secrets.
+
+**Begründung:** Konservative Graphwahrheit und eine geschlossene Naht lassen später einen echten Adapter zu, ohne Preview oder Production zu täuschen. Manuelle Eingaben bleiben sichtbar Nutzerangaben.
+
+**Konsequenzen:**
+
+- `lib/rental-cars/` ist frei von Provider-SDKs.
+- `rentalCarProviderAus()` und `rentalCarNachweisAusUmgebung()` geben `null` zurück.
+- Preview/Development ohne Provider bleiben unavailable, auch wenn `JETNITY_RENTAL_CAR_AKTIV=true`.
+- Production bleibt selbst bei gesetztem Kill Switch aus.
+- Keine Fake-Ergebnisse, keine manuelle Booking-URL, keine Browser-Providerbestätigung.
+- Nächster Schritt nach Review ist nicht automatisch ein Provider.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

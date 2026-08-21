@@ -30,7 +30,7 @@ export const BUCHUNGSSTATUS_BEZEICHNUNG: Record<TripItemBookingStatus, string> =
   booked: 'Gebucht',
 }
 
-const BUCHBARE_ARTEN: ReadonlySet<TripItemKind> = new Set(['flight', 'stay', 'transfer'])
+const BUCHBARE_ARTEN: ReadonlySet<TripItemKind> = new Set(['flight', 'stay', 'transfer', 'rental_car'])
 
 export function unbestaetigteBuchung(): typeof UNBESTAETIGTE_BUCHUNG {
   return { ...UNBESTAETIGTE_BUCHUNG }
@@ -81,7 +81,7 @@ export function buchungsstatusAnwenden(
   zeit: string,
 ): { ok: true; punkt: TripItem } | { ok: false; meldung: string } {
   if (!kannBuchungMarkieren(punkt)) {
-    return { ok: false, meldung: 'Nur Flüge, Unterkünfte und Verbindungen können als gebucht markiert werden.' }
+    return { ok: false, meldung: 'Nur Flüge, Unterkünfte, Verbindungen und Mietwagen können als gebucht markiert werden.' }
   }
 
   if (!gebucht) {

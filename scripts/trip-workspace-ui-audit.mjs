@@ -92,6 +92,10 @@ function punkt(teil) {
     connectionRef: null,
     mobilityChanges: null,
     mobilityEvidence: null,
+    rentalSupplier: null,
+    vehicleClass: null,
+    transmission: null,
+    rentalEvidence: null,
     ...teil,
   }
 }
@@ -178,6 +182,19 @@ const MOBILITY_UNAVAILABLE = {
     hatZiel: false,
     hatDatum: false,
     hatModus: false,
+  },
+  options: [],
+}
+
+const RENTAL_UNAVAILABLE = {
+  status: 'unavailable',
+  message: 'Mietwagenangebote werden vorbereitet. Sobald ein Datenpartner angebunden ist, erscheinen hier echte Fahrzeuge – ohne erfundene Preise, Klassen oder Verfügbarkeiten.',
+  coverageNote: 'Kein Mietwagenprovider.',
+  evidenz: {
+    hatAbholung: false,
+    hatRueckgabe: false,
+    hatAbholdatum: false,
+    hatRueckgabedatum: false,
   },
   options: [],
 }
@@ -545,6 +562,181 @@ const ZUSTAENDE = {
       }),
     },
   },
+  'mietwagen-leer': {
+    kompakt: 'Kein Mietwagen eingetragen',
+    desktop: 'Kein Mietwagen eingetragen',
+    tab: 'Mobilität',
+    oeffneMietwagen: true,
+    nutzlast: { anfangsBereich: 'mobilitaet', reise: reise() },
+  },
+  'mietwagen-geplant': {
+    kompakt: 'Mietwagen · 12. Sept. – 16. Sept. · geplant',
+    desktop: 'Mietwagen · 12. Sept. – 16. Sept. · geplant',
+    tab: 'Mobilität',
+    oeffneMietwagen: true,
+    nutzlast: {
+      anfangsBereich: 'mobilitaet',
+      reise: reise({
+        ohneTag: [
+          punkt({
+            id: 'car-1',
+            kind: 'rental_car',
+            title: 'Mietwagen Zürich Flughafen → Lugano',
+            dayId: null,
+            originName: 'Zürich Flughafen',
+            destinationName: 'Lugano',
+            startsOn: '2026-09-12',
+            startsAt: '09:00',
+            endsOn: '2026-09-16',
+            endsAt: '18:00',
+            rentalEvidence: 'user',
+          }),
+        ],
+      }),
+    },
+  },
+  'mietwagen-gebucht': {
+    kompakt: 'Mietwagen · 12. Sept. – 16. Sept. · gebucht',
+    desktop: 'Mietwagen · 12. Sept. – 16. Sept. · gebucht',
+    tab: 'Mobilität',
+    oeffneMietwagen: true,
+    nutzlast: {
+      anfangsBereich: 'mobilitaet',
+      reise: reise({
+        ohneTag: [
+          punkt({
+            id: 'car-booked',
+            kind: 'rental_car',
+            title: 'Mietwagen Zürich Flughafen → Lugano',
+            dayId: null,
+            originName: 'Zürich Flughafen',
+            destinationName: 'Lugano',
+            startsOn: '2026-09-12',
+            endsOn: '2026-09-16',
+            bookingStatus: 'booked',
+            bookingSource: 'user',
+            bookingConfirmedAt: JETZT,
+            rentalEvidence: 'user',
+          }),
+        ],
+      }),
+    },
+  },
+  'mietwagen-oneway': {
+    kompakt: 'One-way',
+    desktop: 'One-way',
+    tab: 'Mobilität',
+    oeffneMietwagen: true,
+    nutzlast: {
+      anfangsBereich: 'mobilitaet',
+      reise: reise({
+        ohneTag: [
+          punkt({
+            id: 'car-ow',
+            kind: 'rental_car',
+            title: 'Mietwagen Zürich Flughafen → Lugano Zentrum',
+            dayId: null,
+            originName: 'Zürich Flughafen',
+            destinationName: 'Lugano Zentrum',
+            originPlaceId: 'geonames:2657896',
+            destinationPlaceId: 'geonames:2659836',
+            startsOn: '2026-09-12',
+            endsOn: '2026-09-16',
+            rentalEvidence: 'user',
+          }),
+        ],
+      }),
+    },
+  },
+  'mietwagen-gleiche-station': {
+    kompakt: 'Mietwagen Zürich Flughafen',
+    desktop: 'Mietwagen Zürich Flughafen',
+    tab: 'Mobilität',
+    oeffneMietwagen: true,
+    nutzlast: {
+      anfangsBereich: 'mobilitaet',
+      reise: reise({
+        ohneTag: [
+          punkt({
+            id: 'car-same',
+            kind: 'rental_car',
+            title: 'Mietwagen Zürich Flughafen',
+            dayId: null,
+            originName: 'Zürich Flughafen',
+            destinationName: 'Zürich Flughafen',
+            originPlaceId: 'geonames:2657896',
+            destinationPlaceId: 'geonames:2657896',
+            startsOn: '2026-09-12',
+            endsOn: '2026-09-16',
+            rentalEvidence: 'user',
+          }),
+        ],
+      }),
+    },
+  },
+  'mietwagen-ohne-uhrzeit': {
+    kompakt: 'zeitlich 5 Reisetage',
+    desktop: 'zeitlich 5 Reisetage',
+    tab: 'Mobilität',
+    oeffneMietwagen: true,
+    nutzlast: {
+      anfangsBereich: 'mobilitaet',
+      reise: reise({
+        ohneTag: [
+          punkt({
+            id: 'car-date',
+            kind: 'rental_car',
+            title: 'Mietwagen Zürich → Lugano',
+            dayId: null,
+            originName: 'Zürich',
+            destinationName: 'Lugano',
+            startsOn: '2026-09-12',
+            endsOn: '2026-09-16',
+            rentalEvidence: 'user',
+          }),
+        ],
+      }),
+    },
+  },
+  'mietwagen-lange-namen': {
+    kompakt: 'Zürich Flughafen Terminal 2 Abholzone mit sehr langem Stationsnamen ohne Abschneiden',
+    desktop: 'Zürich Flughafen Terminal 2 Abholzone mit sehr langem Stationsnamen ohne Abschneiden',
+    tab: 'Mobilität',
+    oeffneMietwagen: true,
+    nutzlast: {
+      anfangsBereich: 'mobilitaet',
+      reise: reise({
+        ohneTag: [
+          punkt({
+            id: 'car-lang',
+            kind: 'rental_car',
+            title: 'Mietwagen Zürich Flughafen Terminal 2 Abholzone mit sehr langem Stationsnamen ohne Abschneiden → Lugano Centro Stazione FFS mit sehr langem Zielnamen ohne horizontales Abschneiden',
+            dayId: null,
+            originName: 'Zürich Flughafen Terminal 2 Abholzone mit sehr langem Stationsnamen ohne Abschneiden',
+            destinationName: 'Lugano Centro Stazione FFS mit sehr langem Zielnamen ohne horizontales Abschneiden',
+            startsOn: '2026-09-12',
+            endsOn: '2026-09-16',
+            rentalSupplier: 'Europcar Tessin Filiale mit sehr langem Vermieternamen ohne horizontales Abschneiden',
+            rentalEvidence: 'user',
+          }),
+        ],
+      }),
+    },
+  },
+  'mietwagen-unavailable': {
+    kompakt: 'Mietwagenangebote werden vorbereitet',
+    desktop: 'Mietwagenangebote werden vorbereitet',
+    tab: 'Mobilität',
+    oeffneMietwagen: true,
+    nutzlast: { anfangsBereich: 'mobilitaet', reise: reise(), mitSuche: true },
+  },
+  'mietwagen-formular': {
+    kompakt: 'Bekannten Mietwagen eintragen',
+    desktop: 'Bekannten Mietwagen eintragen',
+    tab: 'Mobilität',
+    oeffneMietwagen: true,
+    nutzlast: { anfangsBereich: 'mobilitaet', reise: reise() },
+  },
   'bestand-unbestimmt': {
     kompakt: 'noch nicht vollständig bestimmbar',
     desktop: 'noch nicht vollständig bestimmbar',
@@ -777,6 +969,13 @@ async function seiteVorbereiten(page, zustand) {
       body: JSON.stringify(MOBILITY_UNAVAILABLE),
     })
   })
+  await page.route('**/api/rental-cars/search', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(RENTAL_UNAVAILABLE),
+    })
+  })
 }
 
 async function zustandOeffnen(page, zustand, viewport) {
@@ -794,6 +993,9 @@ async function zustandOeffnen(page, zustand, viewport) {
   }
   if (defin.oeffnePunkt) {
     await page.getByRole('button', { name: 'Punkt hinzufügen' }).click()
+  }
+  if (defin.oeffneMietwagen) {
+    await page.getByRole('tab', { name: 'Mietwagen', exact: true }).click()
   }
 }
 
@@ -893,6 +1095,13 @@ async function tabwechselPruefen(browser, name, viewport) {
       body: JSON.stringify(MOBILITY_UNAVAILABLE),
     })
   })
+  await page.route('**/api/rental-cars/search', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(RENTAL_UNAVAILABLE),
+    })
+  })
 
   await page.goto(`${BASIS}${PFAD}`, { waitUntil: 'domcontentloaded' })
   const nav = page.getByRole('navigation', { name: 'Reisebereiche' })
@@ -935,6 +1144,7 @@ async function interaktionPruefen(browser, name) {
   let hotel = 0
   let activity = 0
   let mobility = 0
+  let rental = 0
   await page.addInitScript(
     ({ speicher, nutzlast }) => sessionStorage.setItem(speicher, JSON.stringify(nutzlast)),
     {
@@ -982,6 +1192,14 @@ async function interaktionPruefen(browser, name) {
       body: JSON.stringify(MOBILITY_UNAVAILABLE),
     })
   })
+  await page.route('**/api/rental-cars/search', async (route) => {
+    rental += 1
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(RENTAL_UNAVAILABLE),
+    })
+  })
 
   await page.goto(`${BASIS}${PFAD}`, { waitUntil: 'domcontentloaded' })
   await page.getByText('Noch kein Flug ausgewählt').waitFor({ timeout: 15000 })
@@ -992,6 +1210,7 @@ async function interaktionPruefen(browser, name) {
   const hotelNachUebersicht = hotel
   const activityNachUebersicht = activity
   const mobilityNachUebersicht = mobility
+  const rentalNachUebersicht = rental
 
   await page.getByRole('button', { name: 'Punkt hinzufügen' }).click()
   const formular = await page.getByText('Ort oder Aktivität').isVisible()
@@ -1026,6 +1245,15 @@ async function interaktionPruefen(browser, name) {
   await nav.getByRole('button', { name: 'Mobilität', exact: true }).click()
   await page.getByText('Bahn, Bus, Fähre und Transfer').waitFor({ timeout: 15000 })
   const mobilityNachErstbesuch = mobility
+  const rentalNachVerbindungen = rental
+  await page.getByRole('tab', { name: 'Mietwagen', exact: true }).click()
+  await page.getByText('Kein Mietwagen eingetragen').waitFor({ timeout: 15000 })
+  const rentalNachErstbesuch = rental
+  await page.getByRole('tab', { name: 'Verbindungen', exact: true }).click()
+  await page.getByText('Bahn, Bus, Fähre und Transfer').waitFor({ timeout: 15000 })
+  await page.getByRole('tab', { name: 'Mietwagen', exact: true }).click()
+  await page.waitForTimeout(400)
+  const rentalNachZweitemBesuch = rental
   await nav.getByRole('button', { name: 'Übersicht', exact: true }).click()
   await nav.getByRole('button', { name: 'Mobilität', exact: true }).click()
   await page.waitForTimeout(400)
@@ -1055,6 +1283,10 @@ async function interaktionPruefen(browser, name) {
   if (hotelNachUebersicht !== 0) fehler.push(`Hotelsuche startete in der Übersicht: ${hotelNachUebersicht}`)
   if (activityNachUebersicht !== 0) fehler.push(`Aktivitätensuche startete in der Übersicht: ${activityNachUebersicht}`)
   if (mobilityNachUebersicht !== 0) fehler.push(`Mobilitätssuche startete in der Übersicht: ${mobilityNachUebersicht}`)
+  if (rentalNachUebersicht !== 0) fehler.push(`Mietwagensuche startete in der Übersicht: ${rentalNachUebersicht}`)
+  if (rentalNachVerbindungen !== 0) {
+    fehler.push(`Mietwagensuche startete im Verbindungsbereich: ${rentalNachVerbindungen}`)
+  }
   if (checked !== 'true') fehler.push('gewählter Tag blieb zwischen Übersicht und Aktivitäten nicht erhalten')
   if (tagDreiZurueck !== 'date') fehler.push('Tagesauswahl in der Übersicht blieb nach Aktivitäten nicht erhalten')
   if (!planNachFluege) fehler.push('Rückkehr von Flügen zeigte den Tagesplan nicht')
@@ -1065,6 +1297,10 @@ async function interaktionPruefen(browser, name) {
   if (mobilityNachErstbesuch < 1) fehler.push('Mobilität löste keine Suche aus')
   if (mobilityNachZweitemBesuch !== mobilityNachErstbesuch) {
     fehler.push(`Tabwechsel löste Mobilitätssuche erneut aus: ${mobilityNachErstbesuch} → ${mobilityNachZweitemBesuch}`)
+  }
+  if (rentalNachErstbesuch < 1) fehler.push('Mietwagen löste keine Suche aus')
+  if (rentalNachZweitemBesuch !== rentalNachErstbesuch) {
+    fehler.push(`Unterbereichwechsel löste Mietwagensuche erneut aus: ${rentalNachErstbesuch} → ${rentalNachZweitemBesuch}`)
   }
   if (!fokus) fehler.push('Fokus lag nach Reise ändern nicht im Feld')
   if (geschlossen !== 'false') fehler.push('Escape schloss Reise ändern nicht')

@@ -103,7 +103,12 @@ export default function TripWorkspaceAuditClient() {
       hotelsuche={daten.mitSuche ? <HotelBereich reise={reise} /> : null}
       aktivitaetensuche={daten.mitSuche ? <AktivitaetenBereich reise={reise} /> : null}
       mobilitaetssuche={
-        <MobilitaetBereich reise={reise} ohneTag={reise.ohneTag} onBuchungsstatus={async () => null} />
+        <MobilitaetBereich
+          reise={reise}
+          ohneTag={reise.ohneTag}
+          onBuchungsstatus={async () => null}
+          onMietwagenAnlegen={async () => null}
+        />
       }
     />
   )

@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
 Stand: 21. August 2026
-Gültig für: Phase 3.3c plus Mobile-UX Iteration 1–3 auf `main` (PR #27) plus Trip Coverage & Booking Status (Draft-PR #29, nicht Production)
+Gültig für: Phase 3.3c plus Mobile-UX Iteration 1–3, Coverage/Booking und Foundation A auf `main`; Foundation B (Mietwagen) auf Draft-PR #31
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -272,7 +272,7 @@ Seit Phase 1.4b prüft `npm run db:rechte` eine vierte Regel: Keine Funktion nen
 
 ## 7. API-Schicht
 
-Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1, 3.2, 3.3 und Foundation A existieren **16** Route Handler. Zuvor waren es 77.
+Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1, 3.2, 3.3, Foundation A und Foundation B existieren **17** Route Handler. Zuvor waren es 77.
 
 | Endpunkt | Zweck | Status |
 | --- | --- | --- |
@@ -282,6 +282,7 @@ Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1, 3.2, 3.3 und Foundation A existieren **16**
 | `api/hotels/search` | geschlossene Hotelsuche | Phase 3.2c, Production aus, noch kein Hotelprovider |
 | `api/activities/search` | geschlossene Aktivitätensuche | Phase 3.3, Production aus, noch kein Activity-Provider |
 | `api/mobility/search` | geschlossene Mobilitätssuche | Foundation A, Production aus, noch kein Mobility-Provider |
+| `api/rental-cars/search` | geschlossene Mietwagensuche | Foundation B, Production aus, noch kein Mietwagenprovider |
 | `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
 | `api/admin/security/*` (5) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
 
@@ -334,6 +335,14 @@ Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen 
 Foundation A hat bewusst keinen Mobility-Adapter. `mobilityProviderAus()` gibt `null` zurück. Production bleibt hart aus. Development/Preview brauchen `JETNITY_MOBILITY_AKTIV` **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Es gibt keinen Providernamen und kein Provider-Secret. Abdeckung entsteht nur aus vorhandenen Reisedaten. Fahrpläne, Wegezeiten und Anschlussgarantien werden nicht erfunden. Fehlende Graphdaten bleiben unbestimmt.
 
 Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browseroption. Sie verlangt einen serverseitigen `MobilityNachweis`. Heute ist der Nachweis `null` – fail closed. Manuelle Verbindungen sind Nutzerangaben, keine Providerfakten. Fachlich: [docs/MOBILITY.md](docs/MOBILITY.md), ADR-0090 und ADR-0091.
+
+### Mietwagensuche (Foundation B)
+
+`POST /api/rental-cars/search` ist geschlossen: nur `application/json`, höchstens 16 KB UTF-8. `Content-Length` über dem Limit wird vor dem Lesen abgewiesen; der Body wird zusätzlich streamend mit hartem Cap gelesen. Optional Provider, Ranking, Client-Sicht. Kein Provider-Proxy. 429 setzt `Retry-After`. Die UI spricht eine clientseitige Mietwagenoption, nicht einen Anbieter.
+
+Foundation B hat bewusst keinen Mietwagen-Adapter. `rentalCarProviderAus()` gibt `null` zurück. Production bleibt hart aus, auch wenn `JETNITY_RENTAL_CAR_AKTIV` gesetzt wäre. Development/Preview brauchen den Kill Switch **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Es gibt keinen Providernamen und kein Provider-Secret. Ein Mietwagen im Zeitraum ist kein Nachweis, dass eine konkrete Strecke damit gefahren wird. Unbekannte Klasse, Getriebe, Kaution oder Kilometerregel bleiben unbekannt.
+
+Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browseroption. Sie verlangt einen serverseitigen `RentalCarNachweis`. Heute ist der Nachweis `null` – fail closed. Manuelle Mietwagen sind Nutzerangaben, keine Providerfakten. Fachlich: [docs/RENTAL_CARS.md](docs/RENTAL_CARS.md), ADR-0092 und ADR-0093.
 
 ### Ortsbasis (Phase 3.1)
 

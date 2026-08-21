@@ -38,6 +38,9 @@ const LEERE_MOBILITAET_NUTZLAST = {
   destination_name: null,
   connection_ref: null,
   mobility_changes: null,
+  rental_supplier: null,
+  vehicle_class: null,
+  transmission: null,
 } as const
 
 /** Ein `localStorage`, der sich wie einer verhält. */
@@ -378,6 +381,84 @@ describe('Gast mit Reise – der Weg beim Login', () => {
         destination_name: 'Lugano',
         connection_ref: 'IC 890',
         mobility_changes: 0,
+        rental_supplier: null,
+        vehicle_class: null,
+        transmission: null,
+      },
+    ])
+  })
+
+  test('ein manueller Mietwagen nimmt Abholung, Rückgabe und Nutzerfakten mit', async () => {
+    const entwurf = gastreiseAnlegen(eingabe())
+    speicher.setzen(SCHLUESSEL.aktiv, {
+      ...entwurf,
+      ohneTag: [
+        {
+          id: 'item-mietwagen',
+          dayId: null,
+          stageId: null,
+          kind: 'rental_car',
+          title: 'Mietwagen Zürich Flughafen → Lugano',
+          note: null,
+          position: 1,
+          startsOn: '2026-09-12',
+          startsAt: '09:00',
+          endsOn: '2026-09-16',
+          endsAt: '18:00',
+          priceAmount: 280,
+          priceCurrency: 'CHF',
+          provider: null,
+          externalRef: null,
+          bookingUrl: null,
+          bookingStatus: 'booked',
+          bookingSource: 'user',
+          bookingConfirmedAt: '2026-08-21T10:00:00.000Z',
+          mobilityMode: null,
+          originPlaceId: 'geonames:2657896',
+          destinationPlaceId: 'geonames:2659836',
+          originName: 'Zürich Flughafen',
+          destinationName: 'Lugano',
+          connectionRef: null,
+          mobilityChanges: null,
+          mobilityEvidence: null,
+          rentalSupplier: 'Europcar',
+          vehicleClass: 'compact',
+          transmission: 'automatic',
+          rentalEvidence: 'user',
+        },
+      ],
+    })
+
+    const server = attrappe()
+    await gastreisenUebernehmen(server.senden)
+
+    assert.deepEqual(server.empfangen[0].ungeplante, [
+      {
+        kind: 'rental_car',
+        title: 'Mietwagen Zürich Flughafen → Lugano',
+        note: null,
+        position: 1,
+        starts_on: '2026-09-12',
+        starts_at: '09:00',
+        ends_on: '2026-09-16',
+        ends_at: '18:00',
+        price_amount: 280,
+        price_currency: 'CHF',
+        provider: null,
+        external_ref: null,
+        booking_url: null,
+        booking_status: 'booked',
+        booking_confirmed_at: '2026-08-21T10:00:00.000Z',
+        mobility_mode: null,
+        origin_place_id: 'geonames:2657896',
+        destination_place_id: 'geonames:2659836',
+        origin_name: 'Zürich Flughafen',
+        destination_name: 'Lugano',
+        connection_ref: null,
+        mobility_changes: null,
+        rental_supplier: 'Europcar',
+        vehicle_class: 'compact',
+        transmission: 'automatic',
       },
     ])
   })

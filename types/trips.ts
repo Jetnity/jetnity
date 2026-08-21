@@ -35,7 +35,7 @@ export const TRIP_STATUSES = ['draft', 'planned', 'booked', 'archived'] as const
 export type TripStatus = (typeof TRIP_STATUSES)[number]
 
 /** Art eines Planpunkts. Werte wie in `trip_items.kind`. */
-export const TRIP_ITEM_KINDS = ['flight', 'stay', 'activity', 'transfer', 'note'] as const
+export const TRIP_ITEM_KINDS = ['flight', 'stay', 'activity', 'transfer', 'rental_car', 'note'] as const
 export type TripItemKind = (typeof TRIP_ITEM_KINDS)[number]
 
 /**
@@ -53,6 +53,32 @@ export type MobilityMode = (typeof MOBILITY_MODES)[number]
  */
 export const MOBILITY_EVIDENCES = ['user'] as const
 export type MobilityEvidence = (typeof MOBILITY_EVIDENCES)[number]
+
+/**
+ * Fahrzeugklasse nur wenn der Nutzer sie kennt oder ein Provider sie später
+ * liefert. Keine ACRISS-Behauptung und kein erfundener Standard.
+ */
+export const VEHICLE_CLASSES = [
+  'economy',
+  'compact',
+  'intermediate',
+  'fullsize',
+  'suv',
+  'van',
+  'luxury',
+] as const
+export type VehicleClass = (typeof VEHICLE_CLASSES)[number]
+
+export const TRANSMISSIONS = ['automatic', 'manual'] as const
+export type Transmission = (typeof TRANSMISSIONS)[number]
+
+/**
+ * Herkunft strukturierter Mietwagenfakten.
+ * In dieser Foundation nur `user`. Eine Providerbestätigung kommt später
+ * serverseitig; der Browser darf sie nicht behaupten.
+ */
+export const RENTAL_EVIDENCES = ['user'] as const
+export type RentalEvidence = (typeof RENTAL_EVIDENCES)[number]
 
 /**
  * Buchungsstatus eines Planpunkts. Werte wie in `trip_items.booking_status`.
@@ -81,7 +107,7 @@ export type TripItemBookingSource = (typeof TRIP_ITEM_BOOKING_SOURCES)[number]
  */
 export type TripSource = 'guest' | 'account'
 
-/** Ein Planpunkt: Flug, Unterkunft, Aktivität, Transfer oder freie Notiz. */
+/** Ein Planpunkt: Flug, Unterkunft, Aktivität, Transfer, Mietwagen oder freie Notiz. */
 export type TripItem = {
   id: string
   /** Tag, an dem der Punkt hängt. `null`, solange er nicht eingeplant ist. */
@@ -124,6 +150,15 @@ export type TripItem = {
   mobilityChanges: number | null
   /** `user` bei manueller Erfassung. `null` ohne strukturierte Mobilitätsfakten. */
   mobilityEvidence: MobilityEvidence | null
+  /**
+   * Vermieter als Nutzerfakt. Nicht der kommerzielle Such-Provider.
+   * Nur bei `kind = rental_car` gesetzt.
+   */
+  rentalSupplier: string | null
+  vehicleClass: VehicleClass | null
+  transmission: Transmission | null
+  /** `user` bei manueller Erfassung. `null` ohne strukturierte Mietwagenfakten. */
+  rentalEvidence: RentalEvidence | null
 }
 
 /**

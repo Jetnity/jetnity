@@ -12,6 +12,7 @@
 // Tab. Ein historischer Wert `plan` fällt auf die Übersicht.
 
 import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
+import { mietwagenBestand } from '@/lib/rental-cars/bestand'
 import { flugAbdeckung } from '@/lib/trips/flug-abdeckung'
 import { unterkunftAbdeckung } from '@/lib/trips/naechte-abdeckung'
 import type { Trip, TripItem, TripItemKind } from '@/types/trips'
@@ -111,6 +112,12 @@ export function bereichStatus(reise: Trip, ohneTag: readonly TripItem[] = []): B
   const fluege = flugAbdeckung(reise, ohneTag)
   const unterkunft = unterkunftAbdeckung(reise, ohneTag)
   const mobilitaet = mobilitaetsAbdeckung(reise, ohneTag)
+  const mietwagen = mietwagenBestand(reise, ohneTag)
+  const verbindungsAnzahl = anzahlVon(punkte, 'transfer')
+  const mietwagenAnzahl = anzahlVon(punkte, 'rental_car')
+  const mobilitaetText = mietwagen.uebersicht
+    ? `${mobilitaet.zusammenfassung} · ${mietwagen.uebersicht}`
+    : mobilitaet.zusammenfassung
 
   return [
     {
@@ -135,8 +142,8 @@ export function bereichStatus(reise: Trip, ohneTag: readonly TripItem[] = []): B
     },
     {
       bereich: 'mobilitaet',
-      anzahl: anzahlVon(punkte, 'transfer'),
-      text: mobilitaet.zusammenfassung,
+      anzahl: verbindungsAnzahl + mietwagenAnzahl,
+      text: mobilitaetText,
     },
   ]
 }

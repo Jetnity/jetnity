@@ -265,6 +265,10 @@ describe('Geschützte kommerzielle Felder', () => {
       connectionRef: 'IC 890',
       mobilityChanges: 1,
       mobilityEvidence: 'user',
+      rentalSupplier: null,
+      vehicleClass: null,
+      transmission: null,
+      rentalEvidence: null,
     })
     const nachher = structuredClone(vorher)
     const zug = nachher.days[0]!.items.find((punkt) => punkt.id === 'item-zug')
@@ -285,6 +289,68 @@ describe('Geschützte kommerzielle Felder', () => {
     assert.equal(bleibt?.originName, 'Zürich')
     assert.equal(bleibt?.mobilityMode, 'rail')
     assert.equal(bleibt?.connectionRef, 'IC 890')
+    assert.equal(bleibt?.bookingStatus, 'booked')
+    assert.equal(bleibt?.bookingSource, 'user')
+    assert.equal(bleibt?.bookingConfirmedAt, '2026-08-21T10:00:00.000Z')
+  })
+
+  test('ein gebuchter Mietwagen bleibt gegen Modellmutation geschützt', () => {
+    const vorher = beispielreise()
+    vorher.days[0]!.items.push({
+      id: 'item-mietwagen',
+      dayId: 'day-1',
+      stageId: 'stage-1',
+      kind: 'rental_car',
+      title: 'Mietwagen Zürich Flughafen → Lugano',
+      note: null,
+      position: 3,
+      startsOn: '2026-09-12',
+      startsAt: '09:00',
+      endsOn: '2026-09-16',
+      endsAt: '18:00',
+      priceAmount: 280,
+      priceCurrency: 'CHF',
+      provider: null,
+      externalRef: null,
+      bookingUrl: null,
+      bookingStatus: 'booked',
+      bookingSource: 'user',
+      bookingConfirmedAt: '2026-08-21T10:00:00.000Z',
+      mobilityMode: null,
+      originPlaceId: 'geonames:2657896',
+      destinationPlaceId: 'geonames:2659836',
+      originName: 'Zürich Flughafen',
+      destinationName: 'Lugano',
+      connectionRef: null,
+      mobilityChanges: null,
+      mobilityEvidence: null,
+      rentalSupplier: 'Europcar',
+      vehicleClass: 'compact',
+      transmission: 'automatic',
+      rentalEvidence: 'user',
+    })
+    const nachher = structuredClone(vorher)
+    const auto = nachher.days[0]!.items.find((punkt) => punkt.id === 'item-mietwagen')
+    assert.ok(auto)
+    auto.title = 'Geänderter Mietwagen'
+    auto.priceAmount = 10
+    auto.originName = 'Basel'
+    auto.rentalSupplier = 'Sixt'
+    auto.vehicleClass = 'luxury'
+    auto.bookingStatus = 'unconfirmed'
+    auto.bookingSource = null
+    auto.bookingConfirmedAt = null
+
+    const geschuetzt = kommerziellErhalten(vorher, nachher)
+    const bleibt = geschuetzt.days[0]?.items.find((punkt) => punkt.id === 'item-mietwagen')
+    assert.equal(bleibt?.title, 'Mietwagen Zürich Flughafen → Lugano')
+    assert.equal(bleibt?.kind, 'rental_car')
+    assert.equal(bleibt?.priceAmount, 280)
+    assert.equal(bleibt?.originName, 'Zürich Flughafen')
+    assert.equal(bleibt?.rentalSupplier, 'Europcar')
+    assert.equal(bleibt?.vehicleClass, 'compact')
+    assert.equal(bleibt?.transmission, 'automatic')
+    assert.equal(bleibt?.rentalEvidence, 'user')
     assert.equal(bleibt?.bookingStatus, 'booked')
     assert.equal(bleibt?.bookingSource, 'user')
     assert.equal(bleibt?.bookingConfirmedAt, '2026-08-21T10:00:00.000Z')
