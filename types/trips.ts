@@ -39,6 +39,24 @@ export const TRIP_ITEM_KINDS = ['flight', 'stay', 'activity', 'transfer', 'note'
 export type TripItemKind = (typeof TRIP_ITEM_KINDS)[number]
 
 /**
+ * Buchungsstatus eines Planpunkts. Werte wie in `trip_items.booking_status`.
+ *
+ * Ein gespeicherter Punkt ist damit nicht automatisch gebucht. `unconfirmed`
+ * ist ausgewählt/geplant. `booked` nur nach ausdrücklicher Bestätigung.
+ */
+export const TRIP_ITEM_BOOKING_STATUSES = ['unconfirmed', 'booked'] as const
+export type TripItemBookingStatus = (typeof TRIP_ITEM_BOOKING_STATUSES)[number]
+
+/**
+ * Wer den Buchungsstatus gesetzt hat. Werte wie in `trip_items.booking_source`.
+ *
+ * In dieser Phase nur `user`. Eine vertrauenswürdige Provider-Quelle kommt
+ * später serverseitig; der Browser darf sie nicht behaupten.
+ */
+export const TRIP_ITEM_BOOKING_SOURCES = ['user'] as const
+export type TripItemBookingSource = (typeof TRIP_ITEM_BOOKING_SOURCES)[number]
+
+/**
  * Woher eine Reise kommt.
  *
  * Der Unterschied ist für die Oberfläche wesentlich: Eine Gastreise liegt nur
@@ -69,6 +87,12 @@ export type TripItem = {
   provider: string | null
   externalRef: string | null
   bookingUrl: string | null
+  /** Ausgewählt/geplant oder ausdrücklich als gebucht bestätigt. */
+  bookingStatus: TripItemBookingStatus
+  /** `user` nach manueller Bestätigung. `null`, solange unbestätigt. */
+  bookingSource: TripItemBookingSource | null
+  /** Zeitpunkt der Bestätigung. `null`, solange unbestätigt. */
+  bookingConfirmedAt: string | null
 }
 
 /**
