@@ -133,8 +133,9 @@ export default function TripWorkspace({
     feld?.focus()
   }, [aenderungOffen, kompakt])
 
+  const ungeplantePunkte = ohneTag.length > 0 ? ohneTag : reise.ohneTag
   const aenderungSichtbar = aenderungIstSichtbar(kompakt, aenderungOffen)
-  const status = bereichStatus(reise, ohneTag)
+  const status = bereichStatus(reise, ungeplantePunkte)
   const aktivitaeten = sucheMitTag(aktivitaetensuche, aktiverTag, setAktiverTag)
 
   const bereichBereit = (ziel: Arbeitsbereich) =>
@@ -219,7 +220,7 @@ export default function TripWorkspace({
           <div hidden={verbergen('plan')}>
             <TripWorkspacePlan
               reise={reise}
-              ohneTag={ohneTag}
+              ohneTag={ungeplantePunkte}
               aktiverTag={aktiverTag}
               kompakt={kompakt}
               onTagWechseln={setAktiverTag}

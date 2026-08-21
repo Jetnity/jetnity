@@ -200,8 +200,8 @@ const ZUSTAENDE = {
     nutzlast: { reise: reise(), gastHinweis: true, quelle: 'guest' },
   },
   konto: {
-    kompakt: 'Im Konto gespeichert',
-    desktop: 'Im Konto gespeichert',
+    kompakt: 'Konto gespeichert',
+    desktop: 'Konto gespeichert',
     nutzlast: { reise: reise(), quelle: 'account' },
   },
   aenderung: {
@@ -229,8 +229,8 @@ const ZUSTAENDE = {
     nutzlast: { reise: reise(), mitSuche: true },
   },
   'ohne-tag': {
-    kompakt: 'Noch nicht eingeplant',
-    desktop: 'Noch nicht eingeplant',
+    kompakt: 'Offener Punkt',
+    desktop: 'Offener Punkt',
     tab: 'Plan',
     nutzlast: {
       reise: reise({
@@ -368,6 +368,11 @@ async function seiteVorbereiten(page, zustand) {
 
 async function zustandOeffnen(page, zustand, viewport) {
   const defin = ZUSTAENDE[zustand]
+  if (viewport.width < 1024) {
+    await page.getByRole('navigation', { name: 'Reisebereiche' }).waitFor({ timeout: 15000 })
+  } else {
+    await page.getByRole('heading', { level: 1 }).waitFor({ timeout: 15000 })
+  }
   if (defin.tab && viewport.width < 1024) {
     await page.getByRole('navigation', { name: 'Reisebereiche' }).getByRole('button', { name: defin.tab, exact: true }).click()
   }
@@ -481,10 +486,12 @@ async function interaktionPruefen(browser, name) {
   await page.keyboard.press('Escape')
   const geschlossen = await page.getByRole('button', { name: 'Reise ändern' }).getAttribute('aria-expanded')
 
+  const nav = page.getByRole('navigation', { name: 'Reisebereiche' }).locator('[tabindex="0"]')
+  await nav.focus()
+  await page.keyboard.press('Tab')
   const navFokus = await page.evaluate(() => {
-    const knopf = document.querySelector('[aria-label="Reisebereiche"] button')
-    knopf?.focus()
-    return Boolean(document.activeElement && document.activeElement.matches(':focus-visible'))
+    const el = document.activeElement
+    return Boolean(el && el.closest('[aria-label="Reisebereiche"]') && el.matches(':focus-visible'))
   })
 
   await kontext.close()

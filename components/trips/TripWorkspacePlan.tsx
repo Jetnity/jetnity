@@ -483,7 +483,7 @@ function Planpunkt({
         onClick={onEntfernen}
         disabled={gesperrt}
         aria-label={`${punkt.title} entfernen`}
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-600 opacity-70 transition hover:bg-surface-50 hover:text-danger-600 focus-visible:opacity-100 disabled:pointer-events-none disabled:opacity-40 group-hover:opacity-100 pointer-fine:h-9 pointer-fine:w-9"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-600 opacity-70 transition hover:bg-surface-50 hover:text-danger-600 focus-visible:opacity-100 disabled:pointer-events-none disabled:opacity-40 group-hover:opacity-100"
       >
         <Trash2 className="h-4 w-4" />
       </button>
