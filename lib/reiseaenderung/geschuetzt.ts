@@ -19,6 +19,9 @@ const GESCHUETZTE_FELDER = [
   'provider',
   'externalRef',
   'bookingUrl',
+  'bookingStatus',
+  'bookingSource',
+  'bookingConfirmedAt',
 ] as const
 
 type GeschuetztesFeld = (typeof GESCHUETZTE_FELDER)[number]
@@ -34,13 +37,20 @@ function handelswerte(punkt: TripItem): Pick<TripItem, GeschuetztesFeld> {
     provider: punkt.provider,
     externalRef: punkt.externalRef,
     bookingUrl: punkt.bookingUrl,
+    bookingStatus: punkt.bookingStatus,
+    bookingSource: punkt.bookingSource,
+    bookingConfirmedAt: punkt.bookingConfirmedAt,
   }
 }
 
-/** Ein Planpunkt mit Anbieter, Buchungslink, Fremdkennung oder Preis. */
+/** Ein Planpunkt mit Anbieter, Buchungslink, Fremdkennung, Preis oder Buchungsstatus. */
 export function istKommerziell(punkt: TripItem): boolean {
   return Boolean(
-    punkt.provider || punkt.bookingUrl || punkt.externalRef || punkt.priceAmount !== null,
+    punkt.provider ||
+      punkt.bookingUrl ||
+      punkt.externalRef ||
+      punkt.priceAmount !== null ||
+      punkt.bookingStatus === 'booked',
   )
 }
 
@@ -51,6 +61,9 @@ function leer(): Pick<TripItem, GeschuetztesFeld> {
     provider: null,
     externalRef: null,
     bookingUrl: null,
+    bookingStatus: 'unconfirmed',
+    bookingSource: null,
+    bookingConfirmedAt: null,
   }
 }
 

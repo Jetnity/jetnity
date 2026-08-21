@@ -182,6 +182,10 @@ const kennungenSchema = z.object({
   itemId: z.string().uuid(),
 })
 
+const buchungsstatusSchema = kennungenSchema.extend({
+  gebucht: z.boolean(),
+})
+
 /** Nimmt einen Planpunkt aus einer Reise im Konto. */
 export async function planpunktEntfernen(eingabe: unknown): Promise<Aktionsergebnis<null>> {
   const geprueft = kennungenSchema.safeParse(eingabe)
@@ -193,6 +197,50 @@ export async function planpunktEntfernen(eingabe: unknown): Promise<Aktionsergeb
   const { error, status } = await supabase
     .from('trip_items')
     .delete()
+    .eq('id', geprueft.data.itemId)
+    .eq('trip_id', geprueft.data.tripId)
+
+  if (error) return { ok: false, meldung: meldungAus(error, status) }
+
+  revalidatePath(`/reisen/${geprueft.data.tripId}`)
+  revalidatePath('/reisen')
+  return { ok: true, wert: null }
+}
+
+/**
+ * Setzt oder korrigiert den manuellen Buchungsstatus eines Flug- oder Stay-Punkts.
+ *
+ * Kein Service-Role-Weg. RLS prüft das Eigentum. Die Quelle ist immer `user`;
+ * der Client kann keine Provider-Bestätigung behaupten.
+ */
+export async function planpunktBuchungsstatusSetzen(eingabe: unknown): Promise<Aktionsergebnis<null>> {
+  const geprueft = buchungsstatusSchema.safeParse(eingabe)
+  if (!geprueft.success) return { ok: false, meldung: 'Dieser Planpunkt ist unbekannt.' }
+
+  const { supabase, benutzerId } = await konto()
+  if (!benutzerId) return { ok: false, meldung: NICHT_ANGEMELDET }
+
+  const { data, error: lesefehler, status: lesestatus } = await supabase
+    .from('trip_items')
+    .select('id, kind')
+    .eq('id', geprueft.data.itemId)
+    .eq('trip_id', geprueft.data.tripId)
+    .maybeSingle()
+
+  if (lesefehler) return { ok: false, meldung: meldungAus(lesefehler, lesestatus) }
+  if (!data) return { ok: false, meldung: 'Dieser Planpunkt ist unbekannt.' }
+  if (data.kind !== 'flight' && data.kind !== 'stay') {
+    return { ok: false, meldung: 'Nur Flüge und Unterkünfte können als gebucht markiert werden.' }
+  }
+
+  const gebucht = geprueft.data.gebucht
+  const { error, status } = await supabase
+    .from('trip_items')
+    .update({
+      booking_status: gebucht ? 'booked' : 'unconfirmed',
+      booking_source: gebucht ? 'user' : null,
+      booking_confirmed_at: gebucht ? new Date().toISOString() : null,
+    })
     .eq('id', geprueft.data.itemId)
     .eq('trip_id', geprueft.data.tripId)
 

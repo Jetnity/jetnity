@@ -213,6 +213,9 @@ export function vorschlagAlsReise(
       provider: null,
       externalRef: null,
       bookingUrl: null,
+      bookingStatus: 'unconfirmed',
+      bookingSource: null,
+      bookingConfirmedAt: null,
     }))
 
     return {

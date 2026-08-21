@@ -28,6 +28,7 @@ import {
   SCHLUESSEL,
   SpeicherFehler,
   gastAktivitaetUebernehmen,
+  gastBuchungsstatusSetzen,
   gastFlugUebernehmen,
   gastHotelUebernehmen,
   gastPlanpunktAnlegen,
@@ -354,7 +355,41 @@ describe('Bearbeiten einer Gastreise', () => {
     assert.equal(flug.priceAmount, 892.5)
     assert.equal(flug.provider, 'duffel')
     assert.equal(flug.bookingUrl, null)
+    assert.equal(flug.bookingStatus, 'unconfirmed')
     assert.equal(gastspeicherLaden().aktiv?.days[0]?.items[0]?.provider, 'duffel')
+  })
+
+  test('ein Flug kann manuell als gebucht markiert und korrigiert werden', () => {
+    const reise = gastreiseAnlegen(eingabe())
+    const aufnahme = alsFlugMomentaufnahme(OPTION_DIREKT)
+    assert.ok(aufnahme)
+    const mitFlug = gastFlugUebernehmen(reise, aufnahme, reise.days[0]!.id)
+    const flug = mitFlug.days[0]?.items.find((punkt) => punkt.kind === 'flight')
+    assert.ok(flug)
+    const gebucht = gastBuchungsstatusSetzen(mitFlug, flug.id, true, '2026-08-21T10:00:00.000Z')
+    const danach = gebucht.days[0]?.items.find((punkt) => punkt.id === flug.id)
+    assert.equal(danach?.bookingStatus, 'booked')
+    assert.equal(danach?.bookingSource, 'user')
+    assert.equal(danach?.bookingConfirmedAt, '2026-08-21T10:00:00.000Z')
+    const korrigiert = gastBuchungsstatusSetzen(gebucht, flug.id, false)
+    assert.equal(
+      korrigiert.days[0]?.items.find((punkt) => punkt.id === flug.id)?.bookingStatus,
+      'unconfirmed',
+    )
+  })
+
+  test('eine Notiz kann nicht als gebucht markiert werden', () => {
+    const angelegt = gastreiseAnlegen(eingabe())
+    const reise = gastPlanpunktAnlegen(angelegt, {
+      dayId: angelegt.days[0]!.id,
+      kind: 'note',
+      title: 'Notiz',
+      note: null,
+      startsAt: null,
+    })
+    const punkt = reise.days[0]?.items[0]
+    assert.ok(punkt)
+    assert.throws(() => gastBuchungsstatusSetzen(reise, punkt.id, true), /Nur Flüge und Unterkünfte/)
   })
 
   test('ein Punkt an einem fremden Tag wird abgelehnt', () => {
@@ -586,6 +621,9 @@ describe('Ungeplante Planpunkte im Gastspeicher', () => {
           provider: null,
           externalRef: null,
           bookingUrl: null,
+          bookingStatus: 'unconfirmed',
+          bookingSource: null,
+          bookingConfirmedAt: null,
         },
       ],
     })
@@ -617,6 +655,9 @@ describe('Ungeplante Planpunkte im Gastspeicher', () => {
           provider: null,
           externalRef: null,
           bookingUrl: null,
+          bookingStatus: 'unconfirmed',
+          bookingSource: null,
+          bookingConfirmedAt: null,
         },
       ],
     })
@@ -660,6 +701,9 @@ describe('Ungeplante Planpunkte im Gastspeicher', () => {
                   provider: 'getyourguide',
                   externalRef: 'gyg-1',
                   bookingUrl: 'https://example.com/dom',
+                  bookingStatus: 'unconfirmed',
+                  bookingSource: null,
+                  bookingConfirmedAt: null,
                 },
               ],
             }

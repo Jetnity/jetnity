@@ -67,6 +67,7 @@ import { hotelReisegraphPruefen } from '@/lib/hotels/reisegraph'
 import type { HotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import { hotelMomentaufnahmeAlsPunkt } from '@/lib/hotels/uebernahme'
 import { reiseLesen, type PlanpunktFormular } from '@/lib/trips/schema'
+import { buchungsstatusAnwenden } from '@/lib/trips/buchung'
 import { reisetageBauen } from '@/lib/trips/tage'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 import type { Ort } from '@/lib/places/domain'
@@ -252,6 +253,9 @@ function ausLegacy(wert: unknown): Trip | null {
               provider: null,
               externalRef: null,
               bookingUrl: null,
+              bookingStatus: 'unconfirmed',
+              bookingSource: null,
+              bookingConfirmedAt: null,
             } satisfies TripItem
           }),
         }
@@ -604,6 +608,9 @@ export function gastPlanpunktAnlegen(
     provider: null,
     externalRef: null,
     bookingUrl: null,
+    bookingStatus: 'unconfirmed',
+    bookingSource: null,
+    bookingConfirmedAt: null,
   }
 
   return gastreiseSpeichern({
@@ -738,6 +745,29 @@ export function gastPlanpunktEntfernen(reise: Trip, punktId: string): Trip {
     })),
     ohneTag: reise.ohneTag.filter((punkt) => punkt.id !== punktId),
   })
+}
+
+function punktErsetzen(reise: Trip, punktId: string, naechster: TripItem): Trip {
+  return {
+    ...reise,
+    revision: reise.revision + 1,
+    days: reise.days.map((tag) => ({
+      ...tag,
+      items: tag.items.map((punkt) => (punkt.id === punktId ? naechster : punkt)),
+    })),
+    ohneTag: reise.ohneTag.map((punkt) => (punkt.id === punktId ? naechster : punkt)),
+  }
+}
+
+/** Setzt oder korrigiert den manuellen Buchungsstatus eines Flug-/Stay-Punkts. */
+export function gastBuchungsstatusSetzen(reise: Trip, punktId: string, gebucht: boolean, zeit = new Date().toISOString()): Trip {
+  const alle = [...reise.days.flatMap((tag) => tag.items), ...reise.ohneTag]
+  const punkt = alle.find((eintrag) => eintrag.id === punktId)
+  if (!punkt) throw new Error('Dieser Planpunkt gehört nicht zur Reise.')
+
+  const ergebnis = buchungsstatusAnwenden(punkt, gebucht, zeit)
+  if (!ergebnis.ok) throw new Error(ergebnis.meldung)
+  return gastreiseSpeichern(punktErsetzen(reise, punktId, ergebnis.punkt))
 }
 
 /**

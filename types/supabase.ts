@@ -370,6 +370,9 @@ export type Database = {
       }
       trip_items: {
         Row: {
+          booking_confirmed_at: string | null
+          booking_source: string | null
+          booking_status: string
           booking_url: string | null
           created_at: string
           day_id: string | null
@@ -394,6 +397,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          booking_confirmed_at?: string | null
+          booking_source?: string | null
+          booking_status?: string
           booking_url?: string | null
           created_at?: string
           day_id?: string | null
@@ -418,6 +424,9 @@ export type Database = {
           user_id?: string
         }
         Update: {
+          booking_confirmed_at?: string | null
+          booking_source?: string | null
+          booking_status?: string
           booking_url?: string | null
           created_at?: string
           day_id?: string | null
