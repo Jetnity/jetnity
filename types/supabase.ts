@@ -374,8 +374,8 @@ export type Database = {
           booking_source: string | null
           booking_status: string
           booking_url: string | null
-          created_at: string
           connection_ref: string | null
+          created_at: string
           day_id: string | null
           destination_name: string | null
           destination_place_id: string | null
@@ -409,8 +409,8 @@ export type Database = {
           booking_source?: string | null
           booking_status?: string
           booking_url?: string | null
-          created_at?: string
           connection_ref?: string | null
+          created_at?: string
           day_id?: string | null
           destination_name?: string | null
           destination_place_id?: string | null
@@ -444,8 +444,8 @@ export type Database = {
           booking_source?: string | null
           booking_status?: string
           booking_url?: string | null
-          created_at?: string
           connection_ref?: string | null
+          created_at?: string
           day_id?: string | null
           destination_name?: string | null
           destination_place_id?: string | null

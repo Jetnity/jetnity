@@ -421,8 +421,8 @@ const ZUSTAENDE = {
     },
   },
   'mobilitaet-manuell': {
-    kompakt: 'Zürich Hauptbahnhof',
-    desktop: 'Zürich Hauptbahnhof',
+    kompakt: 'IC 890',
+    desktop: 'IC 890',
     tab: 'Mobilität',
     nutzlast: {
       anfangsBereich: 'mobilitaet',

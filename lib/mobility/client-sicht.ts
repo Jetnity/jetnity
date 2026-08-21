@@ -5,7 +5,9 @@
 
 import {
   MOBILITY_ABDECKUNGSHINWEIS,
+  MOBILITY_MARKE_TEXT,
   type MobilityEvidenz,
+  type MobilityMarke,
   type MobilitySuchergebnis,
   type MobilitySuchStatus,
 } from '@/lib/mobility/domain'
@@ -56,7 +58,7 @@ export function sucheFuerClient(ergebnis: MobilitySuchergebnis): MobilitySucheAn
       changes: option.changes,
       preis: option.preis,
       preisWaehrung: option.preisWaehrung,
-      labels: [...option.labels],
+      labels: option.labels.map((marke: MobilityMarke) => MOBILITY_MARKE_TEXT[marke]),
       reasons: [...option.reasons],
     })),
   }

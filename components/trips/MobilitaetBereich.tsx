@@ -17,7 +17,7 @@ import { mobilitaetsAbdeckung, type Bewegungskante } from '@/lib/mobility/kanten
 import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
 import { datumKurz } from '@/lib/trips/datum-anzeige'
-import type { MobilityMode, Trip, TripItem } from '@/types/trips'
+import { MOBILITY_MODES, type MobilityMode, type Trip, type TripItem } from '@/types/trips'
 
 function kanteTitel(kante: Bewegungskante): string {
   const route = `${kante.originName} → ${kante.destinationName}`
@@ -28,7 +28,7 @@ function modusText(punkt: TripItem): string {
   return punkt.mobilityMode ? MOBILITY_MODE_BEZEICHNUNG[punkt.mobilityMode] : 'Verbindung'
 }
 
-const MODI: MobilityMode[] = ['rail', 'bus', 'ferry', 'transfer']
+const MODI = MOBILITY_MODES
 
 export default function MobilitaetBereich({
   reise,

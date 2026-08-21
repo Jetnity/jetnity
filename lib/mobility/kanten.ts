@@ -8,6 +8,7 @@
 // Frei von React, Next und Providern.
 
 import { istGebucht } from '@/lib/trips/buchung'
+import { istMobilitaetspunkt } from '@/lib/trips/mobilitaet-felder'
 import type { Trip, TripItem, TripStage } from '@/types/trips'
 
 function allePunkte(reise: Trip, ohneTag: readonly TripItem[]): TripItem[] {
@@ -227,7 +228,7 @@ function einenNehmen(liste: TripItem[], treffer: TripItem[]): TripItem | null {
 
 export function mobilitaetsAbdeckung(reise: Trip, ohneTag: readonly TripItem[] = []): MobilitaetsAbdeckung {
   const alle = allePunkte(reise, ohneTag)
-  const transfers = alle.filter((punkt) => punkt.kind === 'transfer')
+  const transfers = alle.filter(istMobilitaetspunkt)
   const fluege = alle.filter((punkt) => punkt.kind === 'flight')
   const { bestimmbar, roh } = benoetigteKanten(reise)
 

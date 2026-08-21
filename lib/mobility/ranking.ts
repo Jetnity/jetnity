@@ -13,7 +13,7 @@ import type {
   MobilityOption,
 } from '@/lib/mobility/domain'
 
-export const MOBILITY_RANGLISTE_GEWICHTE = {
+const MOBILITY_RANGLISTE_GEWICHTE = {
   route: 24,
   zeit: 20,
   dauer: 16,

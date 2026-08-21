@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import type { MobilityKandidat, MobilityOption } from '@/lib/mobility/domain'
+import { MOBILITY_MARKEN, type MobilityKandidat, type MobilityOption } from '@/lib/mobility/domain'
 import { mobilityKandidatAus, mobilityOptionenBewerten } from '@/lib/mobility/ranking'
 
 function option(teil: Partial<MobilityOption> & Pick<MobilityOption, 'id'>): MobilityOption {
@@ -50,6 +50,15 @@ describe('Mobilitätsranking', () => {
     const leer = bewertet.find((option) => option.id === 'x')
     assert.ok(leer)
     assert.equal(leer.context.preisFit, null)
+  })
+
+  test('Marken stammen nur aus der festgelegten Menge', () => {
+    const bewertet = mobilityOptionenBewerten([
+      kandidat({ id: 'a', preis: 30, durationMinutes: 90, changes: 0, stornierbar: true }),
+    ])
+    for (const marke of bewertet[0]!.labels) {
+      assert.equal((MOBILITY_MARKEN as readonly string[]).includes(marke), true)
+    }
   })
 
   test('Provision oder Umsatz kommen im Ranking nicht vor', () => {

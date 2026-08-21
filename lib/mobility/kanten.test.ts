@@ -137,7 +137,8 @@ describe('Mobilitätsabdeckung', () => {
     })
     const lage = mobilitaetsAbdeckung(reise({ days: [{ ...reise().days[0], items: [flug] }] }))
     assert.equal(lage.kanten[0]?.status, 'covered_by_flight')
-    assert.match(lage.zusammenfassung, /Keine offene Bodenverbindung|über Flug|Keine Verbindung/)
+    assert.equal(lage.kanten.some((kante) => kante.status === 'open'), true)
+    assert.match(lage.zusammenfassung, /Noch keine Verbindung geplant|Keine offene Bodenverbindung|über Flug|Keine Verbindung/)
   })
 
   test('fehlendes Datum macht die Kante unbestimmt, nicht offen', () => {

@@ -6,7 +6,7 @@
 //
 // Frei von Next.
 
-export const MOBILITY_RATE_GRENZEN = {
+const MOBILITY_RATE_GRENZEN = {
   fensterMs: 10 * 60 * 1000,
   suchenJeFenster: 8,
   tagMs: 24 * 60 * 60 * 1000,

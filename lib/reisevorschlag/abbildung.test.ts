@@ -129,6 +129,13 @@ describe('Der Vorschlag als Nutzlast für public.reise_anlegen()', () => {
         booking_url: null,
         booking_status: 'unconfirmed',
         booking_confirmed_at: null,
+        mobility_mode: null,
+        origin_place_id: null,
+        destination_place_id: null,
+        origin_name: null,
+        destination_name: null,
+        connection_ref: null,
+        mobility_changes: null,
       },
     ])
   })

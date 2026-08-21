@@ -34,7 +34,12 @@ import {
 } from '@/types/trips'
 import type { ReiseNutzlast } from '@/lib/trips/schema'
 import { buchungsquelleLesen, buchungsstatusLesen, kannBuchungMarkieren } from '@/lib/trips/buchung'
-import { leereMobilitaet, mobilityEvidenceLesen, mobilityModeLesen } from '@/lib/trips/mobilitaet-felder'
+import {
+  leereMobilitaet,
+  mobilityEvidenceLesen,
+  mobilityModeLesen,
+  mobilitaetNormalisieren,
+} from '@/lib/trips/mobilitaet-felder'
 
 /** Nur die Spalten, die diese Datei liest. So bleibt sie von der Generierung unabhängig. */
 export type ReiseZeile = {
@@ -149,7 +154,7 @@ export function planpunktAus(zeile: PunktZeile): TripItem {
   const originPlaceId = transfer ? zeile.origin_place_id ?? null : null
   const destinationPlaceId = transfer ? zeile.destination_place_id ?? null : null
   const hatFakt = Boolean(mode || originName || destinationName || originPlaceId || destinationPlaceId)
-  return {
+  return mobilitaetNormalisieren({
     id: zeile.id,
     dayId: zeile.day_id,
     stageId: zeile.stage_id,
@@ -181,7 +186,7 @@ export function planpunktAus(zeile: PunktZeile): TripItem {
           mobilityEvidence: hatFakt ? 'user' as const : mobilityEvidenceLesen(zeile.mobility_evidence),
         }
       : leereMobilitaet()),
-  }
+  })
 }
 
 export function etappeAus(zeile: EtappeZeile): TripStage {

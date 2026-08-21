@@ -11,7 +11,7 @@ import {
   type TripItem,
 } from '@/types/trips'
 
-export const LEERE_MOBILITAET = {
+const LEERE_MOBILITAET = {
   mobilityMode: null,
   originPlaceId: null,
   destinationPlaceId: null,
