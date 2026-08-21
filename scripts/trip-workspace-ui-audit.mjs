@@ -136,12 +136,12 @@ const ACTIVITY_UNAVAILABLE = {
 
 const ZUSTAENDE = {
   'uebersicht-leer': {
-    kompakt: 'Noch kein Flug ausgewählt',
+    kompakt: '0 Punkte geplant',
     desktop: 'Tagesplan',
     nutzlast: { reise: reise(), mitSuche: true, mitAenderung: true },
   },
   'uebersicht-gefuellt': {
-    kompakt: '1 Flug ausgewählt',
+    kompakt: '3 Punkte geplant',
     desktop: 'ZRH–DPS',
     nutzlast: {
       reise: reise({
@@ -162,7 +162,6 @@ const ZUSTAENDE = {
   'plan-viele-tage': {
     kompakt: 'Tag 15',
     desktop: 'Tag 15',
-    tab: 'Plan',
     nutzlast: {
       reise: reise({
         startDate: '2026-09-12',
@@ -231,7 +230,6 @@ const ZUSTAENDE = {
   'ohne-tag': {
     kompakt: 'Offener Punkt',
     desktop: 'Offener Punkt',
-    tab: 'Plan',
     nutzlast: {
       reise: reise({
         ohneTag: [punkt({ id: 'offen-1', kind: 'note', title: 'Offener Punkt', dayId: null })],
@@ -266,9 +264,19 @@ function layoutPruefen() {
   const nav = document.querySelector('[aria-label="Reisebereiche"]')
   if (nav && window.innerWidth < 1024) {
     const tabs = [...nav.querySelectorAll('button')]
-    if (tabs.length < 5) fehler.push(`Bereichsnavigation hat ${tabs.length} Ziele`)
+    const labels = tabs.map((el) => (el.textContent || '').trim())
+    if (labels.includes('Plan')) fehler.push('separater Plan-Tab')
+    if (tabs.length !== 4) fehler.push(`Bereichsnavigation hat ${tabs.length} Ziele`)
     const aktuell = tabs.filter((el) => el.getAttribute('aria-current') === 'page')
     if (aktuell.length !== 1) fehler.push(`aktiver Bereich nicht eindeutig: ${aktuell.length}`)
+    const aktiv = aktuell[0]?.textContent?.trim()
+    const plan = document.querySelector('[aria-label="Tagesplan"]')
+    if (aktiv === 'Übersicht' && (!plan || plan.closest('[hidden]'))) {
+      fehler.push('Übersicht ohne sichtbaren Tagesplan')
+    }
+    if (aktiv && aktiv !== 'Übersicht' && plan && !plan.closest('[hidden]')) {
+      fehler.push('Tagesplan ausserhalb der Übersicht sichtbar')
+    }
   }
 
   const versteckt = [...document.querySelectorAll('[hidden]')]
@@ -462,32 +470,47 @@ async function interaktionPruefen(browser, name) {
 
   await page.goto(`${BASIS}${PFAD}`, { waitUntil: 'domcontentloaded' })
   await page.getByText('Noch kein Flug ausgewählt').waitFor({ timeout: 15000 })
+  const nav = page.getByRole('navigation', { name: 'Reisebereiche' })
+  const planTab = await nav.getByRole('button', { name: 'Plan', exact: true }).count()
+  const tagesplanInUebersicht = await page.getByLabel('Tagesplan').isVisible()
   const hotelNachUebersicht = hotel
   const activityNachUebersicht = activity
 
-  await page.getByRole('navigation', { name: 'Reisebereiche' }).getByRole('button', { name: 'Plan', exact: true }).click()
+  await page.getByRole('button', { name: 'Punkt hinzufügen' }).click()
+  const formular = await page.getByText('Ort oder Aktivität').isVisible()
+  await page.getByRole('button', { name: 'Abbrechen' }).click()
+
   await page.getByRole('button', { name: /Tag 3/ }).click()
-  await page.getByRole('navigation', { name: 'Reisebereiche' }).getByRole('button', { name: 'Aktivitäten', exact: true }).click()
+  await nav.getByRole('button', { name: 'Aktivitäten', exact: true }).click()
   await page.getByText('Antwort für day-3', { exact: false }).waitFor({ timeout: 15000 })
   const dritter = page.getByRole('radio').nth(2)
   const checked = await dritter.getAttribute('aria-checked')
 
-  await page.getByRole('navigation', { name: 'Reisebereiche' }).getByRole('button', { name: 'Unterkunft', exact: true }).click()
+  await nav.getByRole('button', { name: 'Übersicht', exact: true }).click()
+  await page.getByLabel('Tagesplan').waitFor({ timeout: 15000 })
+  const tagDreiZurueck = await page.getByRole('button', { name: /Tag 3/ }).getAttribute('aria-current')
+
+  await nav.getByRole('button', { name: 'Flüge', exact: true }).click()
+  await page.getByText('Verbindungen für diese Reise').waitFor({ timeout: 15000 })
+  await nav.getByRole('button', { name: 'Übersicht', exact: true }).click()
+  const planNachFluege = await page.getByLabel('Tagesplan').isVisible()
+
+  await nav.getByRole('button', { name: 'Unterkunft', exact: true }).click()
   await page.getByText('Die Hotelsuche ist in dieser Umgebung nicht verfügbar.').waitFor({ timeout: 15000 })
   const hotelNachErstbesuch = hotel
-  await page.getByRole('navigation', { name: 'Reisebereiche' }).getByRole('button', { name: 'Übersicht', exact: true }).click()
-  await page.getByRole('navigation', { name: 'Reisebereiche' }).getByRole('button', { name: 'Unterkunft', exact: true }).click()
+  await nav.getByRole('button', { name: 'Übersicht', exact: true }).click()
+  await nav.getByRole('button', { name: 'Unterkunft', exact: true }).click()
   await page.waitForTimeout(400)
   const hotelNachZweitemBesuch = hotel
 
-  await page.getByRole('navigation', { name: 'Reisebereiche' }).getByRole('button', { name: 'Übersicht', exact: true }).click()
+  await nav.getByRole('button', { name: 'Übersicht', exact: true }).click()
   await page.getByRole('button', { name: 'Reise ändern' }).click()
   const fokus = await page.evaluate(() => document.activeElement?.tagName === 'TEXTAREA')
   await page.keyboard.press('Escape')
   const geschlossen = await page.getByRole('button', { name: 'Reise ändern' }).getAttribute('aria-expanded')
 
-  const nav = page.getByRole('navigation', { name: 'Reisebereiche' }).locator('[tabindex="0"]')
-  await nav.focus()
+  const navScroller = nav.locator('[tabindex="0"]')
+  await navScroller.focus()
   await page.keyboard.press('Tab')
   const navFokus = await page.evaluate(() => {
     const el = document.activeElement
@@ -496,9 +519,14 @@ async function interaktionPruefen(browser, name) {
 
   await kontext.close()
   const fehler = []
+  if (planTab !== 0) fehler.push('Navigation enthält einen separaten Plan-Tab')
+  if (!tagesplanInUebersicht) fehler.push('Übersicht enthält keinen Tagesplan')
+  if (!formular) fehler.push('Punkt hinzufügen öffnete das Formular nicht')
   if (hotelNachUebersicht !== 0) fehler.push(`Hotelsuche startete in der Übersicht: ${hotelNachUebersicht}`)
   if (activityNachUebersicht !== 0) fehler.push(`Aktivitätensuche startete in der Übersicht: ${activityNachUebersicht}`)
-  if (checked !== 'true') fehler.push('gewählter Tag blieb zwischen Plan und Aktivitäten nicht erhalten')
+  if (checked !== 'true') fehler.push('gewählter Tag blieb zwischen Übersicht und Aktivitäten nicht erhalten')
+  if (tagDreiZurueck !== 'date') fehler.push('Tagesauswahl in der Übersicht blieb nach Aktivitäten nicht erhalten')
+  if (!planNachFluege) fehler.push('Rückkehr von Flügen zeigte den Tagesplan nicht')
   if (hotelNachErstbesuch < 1) fehler.push('Unterkunft löste keine Hotelsuche aus')
   if (hotelNachZweitemBesuch !== hotelNachErstbesuch) {
     fehler.push(`Tabwechsel löste Hotelsuche erneut aus: ${hotelNachErstbesuch} → ${hotelNachZweitemBesuch}`)

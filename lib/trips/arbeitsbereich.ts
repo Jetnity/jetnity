@@ -6,12 +6,15 @@
 // vorhandenen Graphen ableiten darf: welcher Bereich offen ist, welcher Tag
 // gewählt ist, und welche Statuszeilen ehrlich sind. Keine Providerzustände,
 // keine erfundenen Flüge, Hotels oder Aktivitäten.
+//
+// Iteration 2: sichtbare Mobile-Hauptbereiche sind Übersicht, Flüge,
+// Unterkunft und Aktivitäten. Der Tagesplan gehört zur Übersicht, nicht zu
+// einem eigenen Tab. Ein historischer Wert `plan` fällt auf die Übersicht.
 
 import type { Trip, TripItem, TripItemKind } from '@/types/trips'
 
 export const ARBEITSBEREICHE = [
   'uebersicht',
-  'plan',
   'fluege',
   'unterkunft',
   'aktivitaeten',
@@ -23,7 +26,6 @@ export const STANDARD_ARBEITSBEREICH: Arbeitsbereich = 'uebersicht'
 
 export const ARBEITSBEREICH_BEZEICHNUNG: Record<Arbeitsbereich, string> = {
   uebersicht: 'Übersicht',
-  plan: 'Plan',
   fluege: 'Flüge',
   unterkunft: 'Unterkunft',
   aktivitaeten: 'Aktivitäten',
@@ -38,11 +40,21 @@ export type BereichStatus = {
   text: string
 }
 
+export type PlanStatus = {
+  anzahl: number
+  text: string
+}
+
 export function istArbeitsbereich(wert: string): wert is Arbeitsbereich {
   return (ARBEITSBEREICHE as readonly string[]).includes(wert)
 }
 
+/**
+ * Liest einen Bereich. Unbekannte Werte und der frühere Mobile-Tab `plan`
+ * fallen auf die Übersicht – `plan` ist kein erreichbarer Bereich mehr.
+ */
 export function arbeitsbereichLesen(wert: string | null | undefined): Arbeitsbereich {
+  if (wert === 'plan') return STANDARD_ARBEITSBEREICH
   return wert && istArbeitsbereich(wert) ? wert : STANDARD_ARBEITSBEREICH
 }
 
@@ -61,17 +73,16 @@ function anzahlText(anzahl: number, singular: string, plural: string, leer: stri
 }
 
 /**
- * Kompakte Statuszeilen der Übersicht.
+ * Einleitung des eingebetteten Tagesplans.
  *
- * Zählt nur, was im Reisegraphen liegt. Eine deaktivierte Suche oder ein
- * fehlender Provider ist kein Reisetatbestand und erscheint hier nicht.
+ * Zählt denselben Graphen wie die Übersicht. Kein Link in einen eigenen Bereich.
  */
-export function bereichStatus(reise: Trip, ohneTag: readonly TripItem[] = []): BereichStatus[] {
+export function planStatus(reise: Trip, ohneTag: readonly TripItem[] = []): PlanStatus {
   const punkte = planpunkteSammeln(reise, ohneTag)
   const ungeplant = ohneTag.length
-  const planText =
+  const text =
     punkte.length === 0
-      ? 'Noch keine Punkte geplant'
+      ? '0 Punkte geplant'
       : ungeplant > 0
         ? `${anzahlText(punkte.length, 'Punkt geplant', 'Punkte geplant', '')}, davon ${anzahlText(
             ungeplant,
@@ -79,10 +90,21 @@ export function bereichStatus(reise: Trip, ohneTag: readonly TripItem[] = []): B
             'noch nicht eingeplant',
             '',
           )}`
-        : anzahlText(punkte.length, 'Punkt geplant', 'Punkte geplant', 'Noch keine Punkte geplant')
+        : anzahlText(punkte.length, 'Punkt geplant', 'Punkte geplant', '0 Punkte geplant')
+
+  return { anzahl: punkte.length, text }
+}
+
+/**
+ * Kompakte Statuszeilen der Übersicht für die übrigen Hauptbereiche.
+ *
+ * Der Planstatus gehört nicht hierher: er leitet den eingebetteten Tagesplan
+ * ein und darf keinen Bereichswechsel auslösen.
+ */
+export function bereichStatus(reise: Trip, ohneTag: readonly TripItem[] = []): BereichStatus[] {
+  const punkte = planpunkteSammeln(reise, ohneTag)
 
   return [
-    { bereich: 'plan', anzahl: punkte.length, text: planText },
     {
       bereich: 'fluege',
       anzahl: anzahlVon(punkte, 'flight'),
@@ -124,12 +146,21 @@ export function aenderungIstSichtbar(kompakt: boolean, offen: boolean): boolean 
 }
 
 /**
+ * Der Tagesplan liegt auf Mobile in der Übersicht und auf Desktop in der
+ * bisherigen breiten Arbeitsansicht. Er ist kein eigener Hauptbereich.
+ */
+export function tagesplanIstSichtbar(aktiv: Arbeitsbereich, kompakt: boolean): boolean {
+  return !kompakt || aktiv === 'uebersicht'
+}
+
+/**
  * Kommerzielle Suchbereiche werden auf Mobile erst beim ersten Besuch
  * eingehängt. So startet die Übersicht keine Hotel- oder Aktivitätsanfrage.
  * Ein einmal besuchter Bereich bleibt eingehängt, damit ein Tabwechsel keine
  * neue Suche auslöst.
  *
- * Plan und Übersicht haben keine Suche und dürfen immer da sein.
+ * Übersicht und der darin liegende Tagesplan haben keine Suche und dürfen
+ * immer da sein.
  */
 export function bereichSollMounten(
   bereich: Arbeitsbereich,
@@ -138,7 +169,7 @@ export function bereichSollMounten(
   kompakt: boolean,
 ): boolean {
   if (!kompakt) return bereich !== 'uebersicht'
-  if (bereich === 'uebersicht' || bereich === 'plan') return true
+  if (bereich === 'uebersicht') return true
   return bereich === aktiv || bereitsBesucht.has(bereich)
 }
 

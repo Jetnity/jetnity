@@ -14,6 +14,7 @@ import {
   Trash2,
 } from 'lucide-react'
 
+import { planStatus } from '@/lib/trips/arbeitsbereich'
 import {
   ART_BEZEICHNUNG,
   INTERESSE_BEZEICHNUNG,
@@ -56,6 +57,7 @@ export default function TripWorkspacePlan({
   ohneTag,
   aktiverTag,
   kompakt,
+  eingebettet = false,
   onTagWechseln,
   onPunktAnlegen,
   onPunktEntfernen,
@@ -64,6 +66,7 @@ export default function TripWorkspacePlan({
   ohneTag: TripItem[]
   aktiverTag: string
   kompakt: boolean
+  eingebettet?: boolean
   onTagWechseln: (tagId: string) => void
   onPunktAnlegen: (tagId: string, eingabe: PlanpunktFormular) => Promise<string | null>
   onPunktEntfernen: (tagId: string, punktId: string) => Promise<string | null>
@@ -77,7 +80,7 @@ export default function TripWorkspacePlan({
   const [laeuft, setLaeuft] = React.useState(false)
 
   const tag = reise.days.find((eintrag) => eintrag.id === aktiverTag) ?? reise.days[0]
-  const punkteGesamt = reise.days.reduce((summe, eintrag) => summe + eintrag.items.length, 0)
+  const status = planStatus(reise, ohneTag)
 
   React.useEffect(() => {
     setFormularOffen(false)
@@ -305,13 +308,11 @@ export default function TripWorkspacePlan({
 
   if (kompakt) {
     return (
-      <div aria-label="Tagesplan" className="mt-5 grid min-w-0 gap-4">
+      <div aria-label="Tagesplan" className={cn('grid min-w-0 gap-4', eingebettet ? 'mt-1' : 'mt-5')}>
         <div className="min-w-0 rounded-[26px] border border-black/5 bg-white p-3">
           <div className="px-2 pb-2 pt-1">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">Tagesplan</p>
-            <p className="mt-1 text-sm text-ink-900">
-              {punkteGesamt} {punkteGesamt === 1 ? 'Punkt' : 'Punkte'} geplant
-            </p>
+            <p className="mt-1 text-sm text-ink-900">{status.text}</p>
           </div>
           {reise.days.length === 0 ? (
             <p className="px-3 py-6 text-sm leading-6 text-ink-700">
@@ -362,9 +363,7 @@ export default function TripWorkspacePlan({
       <aside className="h-fit rounded-[26px] border border-black/5 bg-white p-3 lg:sticky lg:top-24">
         <div className="px-3 pb-3 pt-2">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">Tagesplan</p>
-          <p className="mt-1 text-sm text-ink-900">
-            {punkteGesamt} {punkteGesamt === 1 ? 'Punkt' : 'Punkte'} geplant
-          </p>
+          <p className="mt-1 text-sm text-ink-900">{status.text}</p>
         </div>
         <div className="max-h-[45dvh] space-y-1 overflow-y-auto pr-1 lg:max-h-[520px]">
           {reise.days.map((eintrag) => {

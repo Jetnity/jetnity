@@ -1,7 +1,7 @@
 'use client'
 
-import type { ComponentType, RefObject } from 'react'
-import { BedDouble, CalendarDays, Plane, Sparkles } from 'lucide-react'
+import type { ComponentType, ReactNode, RefObject } from 'react'
+import { BedDouble, Plane, Sparkles } from 'lucide-react'
 
 import {
   ARBEITSBEREICH_BEZEICHNUNG,
@@ -13,7 +13,6 @@ import { cn } from '@/lib/utils'
 import type { Trip } from '@/types/trips'
 
 const SYMBOL: Record<BereichStatus['bereich'], ComponentType<{ className?: string }>> = {
-  plan: CalendarDays,
   fluege: Plane,
   unterkunft: BedDouble,
   aktivitaeten: Sparkles,
@@ -26,6 +25,8 @@ export default function TripWorkspaceUebersicht({
   onBereich,
   onAenderung,
   aenderungKnopfRef,
+  plan,
+  aenderungFeld,
 }: {
   reise: Trip
   status: readonly BereichStatus[]
@@ -33,6 +34,8 @@ export default function TripWorkspaceUebersicht({
   onBereich: (bereich: Arbeitsbereich) => void
   onAenderung: () => void
   aenderungKnopfRef: RefObject<HTMLButtonElement | null>
+  plan?: ReactNode
+  aenderungFeld?: ReactNode
 }) {
   return (
     <section aria-label="Reiseübersicht" className="mt-5 grid gap-4">
@@ -77,6 +80,8 @@ export default function TripWorkspaceUebersicht({
         })}
       </ul>
 
+      {plan}
+
       <div className="flex flex-col gap-3 rounded-2xl border border-line-200 bg-white px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="min-w-0 text-sm leading-6 text-ink-800">
           Zeitraum, Etappen oder Tempo in eigenen Worten anpassen.
@@ -92,6 +97,8 @@ export default function TripWorkspaceUebersicht({
           {aenderungOffen ? 'Änderung schliessen' : 'Reise ändern'}
         </button>
       </div>
+
+      {aenderungFeld}
 
       <section className="rounded-2xl border border-line-200 bg-white px-4 py-4">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">Reiseprofil</p>

@@ -5,9 +5,9 @@
 // Der Reise-Arbeitsbereich. Eine Ansicht für beide Ablagen.
 //
 // Auf schmalen Viewports gilt zuerst Orientierung, dann Aktion: kompakter Kopf,
-// klebende Bereichsnavigation, nur der aktive Bereich. Desktop behält die
-// bisherige breite Arbeitsansicht. Der aktive Bereich ist Client-State, nicht
-// Teil der URL – Iteration 1 vermeidet Router-Komplexität ohne Produktnutzen.
+// klebende Bereichsnavigation, nur der aktive Bereich. Die Übersicht enthält
+// den Tagesplan. Desktop behält die bisherige breite Arbeitsansicht. Der aktive
+// Bereich ist Client-State, nicht Teil der URL.
 
 import * as React from 'react'
 import Link from 'next/link'
@@ -97,7 +97,7 @@ export default function TripWorkspace({
     arbeitsbereichLesen(anfangsBereich),
   )
   const [besucht, setBesucht] = React.useState<ReadonlySet<Arbeitsbereich>>(
-    () => new Set([STANDARD_ARBEITSBEREICH, 'plan', arbeitsbereichLesen(anfangsBereich)]),
+    () => new Set([STANDARD_ARBEITSBEREICH, arbeitsbereichLesen(anfangsBereich)]),
   )
   const [aktiverTag, setAktiverTag] = React.useState(reise.days[0]?.id ?? '')
   const [aenderungOffen, setAenderungOffen] = React.useState(false)
@@ -142,6 +142,37 @@ export default function TripWorkspace({
     bereichSollMounten(ziel, bereich, besucht, kompakt)
 
   const verbergen = (ziel: Arbeitsbereich) => !bereichSollSichtbar(ziel, bereich, kompakt)
+  const uebersichtVerborgen = verbergen('uebersicht')
+
+  const plan = (
+    <TripWorkspacePlan
+      reise={reise}
+      ohneTag={ungeplantePunkte}
+      aktiverTag={aktiverTag}
+      kompakt={kompakt}
+      eingebettet={kompakt}
+      onTagWechseln={setAktiverTag}
+      onPunktAnlegen={onPunktAnlegen}
+      onPunktEntfernen={onPunktEntfernen}
+    />
+  )
+
+  const aenderungFeld = aenderungBereit && aenderung && (
+    <div
+      id="reise-aenderung"
+      ref={aenderungFeldRef}
+      hidden={!aenderungSichtbar}
+      inert={!aenderungSichtbar || undefined}
+      onKeyDown={(ereignis) => {
+        if (ereignis.key !== 'Escape' || !kompakt || !aenderungOffen) return
+        ereignis.stopPropagation()
+        setAenderungOffen(false)
+        aenderungKnopfRef.current?.focus()
+      }}
+    >
+      {aenderung}
+    </div>
+  )
 
   return (
     <main className="min-h-screen bg-surface-75 pb-20">
@@ -161,7 +192,7 @@ export default function TripWorkspace({
         {kompakt && <TripWorkspaceNavigation aktiv={bereich} onWechsel={wechseln} />}
 
         {bereichBereit('uebersicht') && (
-          <div hidden={verbergen('uebersicht')}>
+          <div hidden={uebersichtVerborgen} inert={uebersichtVerborgen || undefined}>
             <TripWorkspaceUebersicht
               reise={reise}
               status={status}
@@ -169,26 +200,13 @@ export default function TripWorkspace({
               onBereich={wechseln}
               onAenderung={aenderungOeffnen}
               aenderungKnopfRef={aenderungKnopfRef}
+              plan={kompakt ? plan : null}
+              aenderungFeld={kompakt ? aenderungFeld : null}
             />
           </div>
         )}
 
-        {aenderungBereit && aenderung && (
-          <div
-            id="reise-aenderung"
-            ref={aenderungFeldRef}
-            hidden={!aenderungSichtbar}
-            inert={!aenderungSichtbar || undefined}
-            onKeyDown={(ereignis) => {
-              if (ereignis.key !== 'Escape' || !kompakt || !aenderungOffen) return
-              ereignis.stopPropagation()
-              setAenderungOffen(false)
-              aenderungKnopfRef.current?.focus()
-            }}
-          >
-            {aenderung}
-          </div>
-        )}
+        {!kompakt && aenderungFeld}
 
         {bereichBereit('fluege') && flugsuche && (
           <div hidden={verbergen('fluege')} inert={verbergen('fluege') || undefined} className="mt-6">
@@ -216,19 +234,7 @@ export default function TripWorkspace({
           </div>
         )}
 
-        {bereichBereit('plan') && (
-          <div hidden={verbergen('plan')}>
-            <TripWorkspacePlan
-              reise={reise}
-              ohneTag={ungeplantePunkte}
-              aktiverTag={aktiverTag}
-              kompakt={kompakt}
-              onTagWechseln={setAktiverTag}
-              onPunktAnlegen={onPunktAnlegen}
-              onPunktEntfernen={onPunktEntfernen}
-            />
-          </div>
-        )}
+        {!kompakt && plan}
       </div>
     </main>
   )
