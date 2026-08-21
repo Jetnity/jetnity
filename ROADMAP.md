@@ -127,8 +127,7 @@ Gezielte Mobile-IA für `/reisen/[tripId]`, parallel zu Phase 3.4, ohne Provider
 - kompakter Reisekopf, klebende Bereichsnavigation, Übersicht als Default
 - Iteration 2: sichtbare Mobile-Bereiche sind Übersicht, Flüge, Unterkunft, Aktivitäten; der Tagesplan liegt in der Übersicht
 - Desktop-Arbeitsansicht bleibt
-- Iteration-1-Nachweise: Typecheck, Lint, Hygiene, Production-Build, GitHub CI und Vercel Preview grün; Trip-Workspace-Audit 178/0, Activities-Audit 184/0
-- Iteration-2-Nachweise folgen nach dem Lauf auf diesem Branch
+- Iteration-2-Nachweise: `npm test` 1018/1018; Typecheck, Lint, Hygiene und Production-Build grün; Trip-Workspace-Audit 178/0; Activities-Audit 184/0
 - **nicht mergen**, keine Production-Änderung
 
 ### Während Booking.com noch offen ist

@@ -230,14 +230,13 @@ Was sich auf Mobile geändert hat:
 - Hotel- und Aktivitätssuche starten auf Mobile erst beim ersten Besuch des Bereichs
 - Desktop ab 1024 px bleibt die bisherige breite Arbeitsansicht
 
-Iteration-1-Nachweise (weiter gültig als Ausgangspunkt):
+Iteration-2-Nachweise auf diesem Branch:
 
-- `npm test`: **1014/1014**
+- `npm test`: **1018/1018**
 - Typecheck, Lint, Hygiene und Production-Build grün
-- Trip-Workspace-Audit: 178 Kombinationen, 0 Fehler
-- Activities-Regression-Audit: 184 Kombinationen, 0 Fehler
-
-Iteration-2-Nachweise werden nach dem Lauf auf diesem Branch eingetragen. Deep Link für den aktiven Bereich bleibt bewusst Client-State.
+- Trip-Workspace-Audit (WebKit + Chromium): **178 Kombinationen, 0 Fehler**
+- Activities-Regression-Audit: **184 Kombinationen, 0 Fehler**
+- Deep Link für den aktiven Bereich bleibt bewusst Client-State
 
 Provider und Production sind unverändert aus. Keine Migration, keine neuen Secrets.
 
