@@ -1,6 +1,6 @@
 # Jetnity – Reisen
 
-**Stand:** 20. August 2026 · Phase 3.3
+**Stand:** 21. August 2026 · Phase 3.3 plus Mobile-UX Iteration 1 (Preview)
 **Gilt für:** das Reisedatenmodell und die Wege, auf denen eine Reise entsteht, gespeichert und bearbeitet wird.
 
 Diese Datei beantwortet vier Fragen: Woraus besteht eine Reise, wo liegt sie, wie kommt sie aus dem Browser in ein Konto, und was ist bewusst noch nicht gebaut.
@@ -188,7 +188,7 @@ Drei Adressen, für Gast und Konto dieselben. Der Unterschied entsteht auf dem S
 | --- | --- | --- |
 | `/planen` | freie Beschreibung oder Formular; legt die eine Gastreise im Browser an | dieselben zwei Einstiege; ruft `reiseAnlegen()` bzw. `vorschlagUebernehmen()` und leitet auf die Reise weiter |
 | `/reisen` | zeigt den Entwurf mit dem Hinweis, dass er nur in diesem Browser liegt | zeigt die Reisen des Kontos, davor die Brücke |
-| `/reisen/[tripId]` | Arbeitsbereich auf dem Browserspeicher | Arbeitsbereich auf der Datenbank, mit Löschen |
+| `/reisen/[tripId]` | Arbeitsbereich auf dem Browserspeicher. Unterhalb 1024 px: Übersicht, Plan, Flüge, Unterkunft, Aktivitäten | dieselbe mobile IA; Persistenz weiter über Konto-Aktionen |
 
 Die Kennung entscheidet, wo `/reisen/[tripId]` nachsieht: `trip-<uuid>` ist ein Entwurf im Browser, eine UUID eine Reise im Konto (`istKontoKennung`). Eine Gastkennung bleibt eine Gastkennung, auch in einer angemeldeten Sitzung – sie stillschweigend gegen eine Reise im Konto zu tauschen wäre ein Rätsel für alle, die die Adresse gespeichert haben.
 
@@ -199,6 +199,8 @@ Die Kennung entscheidet, wo `/reisen/[tripId]` nachsieht: `trip-<uuid>` ist ein 
 **Nach jedem Vorgang im Konto folgt `router.refresh()`.** Den lokalen Zustand weiterzuschreiben wäre schneller und gleichzeitig eine zweite Wahrheit: Die Datenbank hat `position` gesetzt, `updated_at` nachgezogen und vielleicht eine Prüfbedingung angewandt. Was danach auf dem Bildschirm steht, soll das sein, was gespeichert ist.
 
 **Keine Beispieldaten.** Ein leeres Konto zeigt einen leeren Zustand mit dem Weg nach `/planen`. Eine erfundene Reise als Produktzustand wäre eine Behauptung über gespeicherte Daten.
+
+**Mobile-UX Iteration 1 (Preview, PR #27).** Unterhalb von 1024 px ist der Arbeitsbereich keine lange Kartenfolge mehr. Zuerst kommt ein kompakter Reisekopf, darunter eine klebende Bereichsnavigation: Übersicht, Plan, Flüge, Unterkunft, Aktivitäten. Die Übersicht zählt nur vorhandene Planpunkte und behauptet keinen Providerstatus. `Reise ändern` öffnet sich dort als kompakte Aktion. Der gewählte Reisetag gilt gemeinsam für Plan und Aktivitäten. Ab 1024 px bleibt die bisherige breite Arbeitsansicht. Der aktive Bereich ist Client-State, nicht Teil der URL. Siehe ADR-0087.
 
 ---
 

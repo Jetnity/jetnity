@@ -31,6 +31,8 @@ Phase 3.3 wurde als Pull Request #24 per Squash Merge abgeschlossen. Die Product
 
 Der Kontinuitätsstandard wurde als Pull Request #25 gemergt. Er verändert keine Produktlogik, macht aber Dokumentation/Übergabe verbindlich.
 
+Parallel liegt Draft-PR #27 für die Trip-Workspace Mobile-UX Iteration 1. Dieser Stand ist nicht auf `main` und nicht in Production.
+
 ## 2. Verbindlicher Produktkern
 
 Jetnity optimiert die **Gesamtreise**, nicht isoliert den billigsten Einzelbaustein.
@@ -204,6 +206,35 @@ Sobald Zugang vorliegt, zuerst nur Preview:
 
 Wenn Booking.com-Zugang nicht zeitnah möglich ist, HBX / Hotelbeds als dokumentierten Backup-Weg prüfen.
 
+## 6a. Querschnitt – Trip Workspace Mobile UX Iteration 1
+
+**In Arbeit auf Draft-PR #27. Nicht gemergt. Keine Production-Änderung.**
+
+Branch: `ux-trip-workspace-mobile-iteration-1`
+
+Auftrag: `docs/CURSOR_TRIP_WORKSPACE_MOBILE_UX_ITERATION_1.md`
+
+Was sich auf Mobile geändert hat:
+
+- kompakter Reisekopf statt großem Hero
+- klebende Bereichsnavigation: Übersicht, Plan, Flüge, Unterkunft, Aktivitäten
+- Default ist die Übersicht mit ehrlichen Statuszeilen aus dem Reisegraphen
+- auf schmalen Viewports ist nur der aktive Bereich sichtbar
+- `Reise ändern` ist eine kompakte Aktion in der Übersicht
+- der Tagesplan ist ein eigener Hauptbereich mit horizontaler Tagesleiste
+- Plan und Aktivitäten teilen dieselbe Tagesauswahl
+- Hotel- und Aktivitätssuche starten auf Mobile erst beim ersten Besuch des Bereichs
+
+Was bewusst für Iteration 2 offen bleibt:
+
+- Deep Link / URL für den aktiven Bereich
+- Feinschliff nach echtem iPhone-Feedback
+- kein Desktop-Redesign, keine Provideranbindung
+
+Provider und Production sind unverändert aus. Keine Migration, keine neuen Secrets.
+
+Nächster Schritt nach technischem Abschluss: Nutzer prüft die Vercel Preview auf einem echten iPhone und gibt Produktfeedback.
+
 ## 7. Arbeiten während wir auf Booking.com warten
 
 Es ist ausdrücklich sinnvoll, konkrete Probleme der echten Jetnity-Website parallel zu verbessern.
@@ -327,4 +358,5 @@ Eine Phase ist erst fertig, wenn Dokumentation und Handoff dem tatsächlichen St
 4. Phase 3.3 nicht erneut bauen: sie ist fertig und auf `main`.
 5. Phase 3.4 ist der nächste Hauptblock, aber der erste echte Hoteladapter wartet primär auf Booking.com-Zugang.
 6. Solange der Zugang fehlt, nur konkrete produktnahe Qualitätsverbesserungen oder andere ausdrücklich freigegebene provider-unabhängige Arbeiten durchführen.
-7. Keine Production-Aktivierung und keine Secrets ohne separate ausdrückliche Freigabe.
+7. Draft-PR #27 (Trip Workspace Mobile UX Iteration 1) bleibt Draft, bis Preview und iPhone-Feedback vorliegen. Nicht mergen.
+8. Keine Production-Aktivierung und keine Secrets ohne separate ausdrückliche Freigabe.

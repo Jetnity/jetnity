@@ -2139,6 +2139,32 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 
 ---
 
+## ADR-0087 – Mobile Trip Workspace: Bereiche statt langer Kartenfolge
+
+**Datum:** 21. August 2026
+**Status:** umgesetzt in Iteration 1, Preview/Draft
+
+**Entscheidung:** Unterhalb von 1024 px strukturiert `/reisen/[tripId]` die Reise in fünf Client-Bereiche: Übersicht, Plan, Flüge, Unterkunft, Aktivitäten. Default ist die Übersicht. Nur der aktive Bereich ist sichtbar. Der gewählte Reisetag bleibt eine gemeinsame Wahrheit für Plan und Aktivitäten. Desktop behält die bisherige breite Arbeitsansicht.
+
+**Kontext:** Die mobile Reiseansicht war fachlich vollständig, aber eine lange Folge großer Karten. Nach dem Scrollen verloren Nutzer die Orientierung. Der Auftrag ist eine gezielte UX-Iteration, kein Redesign der Startseite und keine Providerarbeit.
+
+**Alternativen:**
+
+1. *Anker-Navigation auf einer weiterhin langen Seite.* Würde das Scrollproblem nur abmildern.
+2. *ARIA-Tabs mit URL-Query.* Korrekt, aber für Iteration 1 unnötig komplex; ein Reload würde Suchzustände und den Modellweg neu anstoßen.
+3. *Eigenes Mobile-Workspace-Duplikat.* Würde Gast- und Konto-Ansicht sowie jede spätere Änderung verdoppeln.
+
+**Begründung:** Orientierung vor Aktion löst das gemeldete Mobile-Problem, ohne Desktop, Persistenz oder Trust Boundaries zu verändern. Der aktive Bereich bleibt Client-State, weil Deep Links auf einen Tab in Iteration 1 keinen Produktnutzen haben. Kommerzielle Suchbereiche werden auf Mobile erst beim ersten Besuch eingehängt und bleiben danach gemountet, damit die Übersicht keine Hotel-/Aktivitätsanfrage startet und ein Tabwechsel keine Schleife auslöst.
+
+**Konsequenzen:**
+
+- Logik in `lib/trips/arbeitsbereich.ts`, Darstellung weiter in `TripWorkspace`.
+- Keine Migration, keine neue API, keine Production-Aktivierung.
+- `Reise ändern` ist auf Mobile eine kompakte Aktion in der Übersicht.
+- Iteration 2 bleibt offen für echtes iPhone-Feedback, optionale URL-Persistenz und nicht gelöste Feinheiten.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
