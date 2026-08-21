@@ -91,7 +91,7 @@ export type RentalCarKandidat = RentalCarOption & {
   context: RentalCarKontext
 }
 
-export const RENTAL_MARKEN = ['jetnity', 'best_value', 'flexible', 'same_location'] as const
+const RENTAL_MARKEN = ['jetnity', 'best_value', 'flexible', 'same_location'] as const
 export type RentalCarMarke = (typeof RENTAL_MARKEN)[number]
 
 export type BewerteteRentalCarOption = RentalCarKandidat & {
