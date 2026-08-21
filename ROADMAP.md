@@ -17,7 +17,7 @@ Diese Datei ist die operative Roadmap. Historische Detailstände bleiben über G
 | Phase 3.2 | Hotel Foundation + Quartierlogik + 3.2b/3.2c-Härtung | **fertig, nach `main` gemergt; Production-Hotelsuche aus** |
 | Phase 3.3 | Activities Foundation + Tageskontext + Ranking + UI-Audit | **fertig, nach `main` gemergt; Production-Aktivitätensuche aus** |
 | Phase 3.4 | erster echter Hotel-Suchadapter | **als Nächstes; wartet primär auf Booking.com-Zugang** |
-| Querschnitt | Trip Workspace Mobile UX Iteration 1 | **in Arbeit, Draft-PR #27; nicht gemergt** |
+| Querschnitt | Trip Workspace Mobile UX Iteration 1–2 | **in Arbeit, Draft-PR #27; nicht gemergt** |
 | Phase 3.5 | erster echter Activity-Suchadapter | geplant nach 3.4 |
 | Phase 3.6 | Transfers Foundation / erster Integrationsweg | geplant |
 | Phase 4 | Launch-Reife, Monetarisierung, Production-Freigaben | geplant |
@@ -119,18 +119,17 @@ Sobald Zugang vorliegt:
 - Preview-End-to-End-Test und Mobile-/Browser-Audit durchführen
 - Production-Hotelsuche weiterhin aus lassen, bis separat freigegeben
 
-### Querschnitt – Trip Workspace Mobile UX Iteration 1
+### Querschnitt – Trip Workspace Mobile UX Iteration 1–2
 
 Gezielte Mobile-IA für `/reisen/[tripId]`, parallel zu Phase 3.4, ohne Provider- oder Production-Änderung.
 
 - Branch `ux-trip-workspace-mobile-iteration-1`, Draft-PR #27
 - kompakter Reisekopf, klebende Bereichsnavigation, Übersicht als Default
-- Plan, Flüge, Unterkunft, Aktivitäten als getrennte Mobile-Bereiche
+- Iteration 2: sichtbare Mobile-Bereiche sind Übersicht, Flüge, Unterkunft, Aktivitäten; der Tagesplan liegt in der Übersicht
 - Desktop-Arbeitsansicht bleibt
-- Typecheck, Lint, Hygiene, Production-Build, GitHub CI und Vercel Preview grün
-- Trip-Workspace-Audit: 178 Kombinationen, 0 Fehler
-- Activities-Regression-Audit: 184 Kombinationen, 0 Fehler
-- **nicht mergen**, bis der Nutzer den Preview auf einem echten iPhone beurteilt hat
+- Iteration-1-Nachweise: Typecheck, Lint, Hygiene, Production-Build, GitHub CI und Vercel Preview grün; Trip-Workspace-Audit 178/0, Activities-Audit 184/0
+- Iteration-2-Nachweise folgen nach dem Lauf auf diesem Branch
+- **nicht mergen**, keine Production-Änderung
 
 ### Während Booking.com noch offen ist
 

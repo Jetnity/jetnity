@@ -2142,9 +2142,9 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 ## ADR-0087 – Mobile Trip Workspace: Bereiche statt langer Kartenfolge
 
 **Datum:** 21. August 2026
-**Status:** umgesetzt in Iteration 1, Preview/Draft
+**Status:** umgesetzt in Iteration 1, für die Mobile-Hauptnavigation ergänzt durch ADR-0088
 
-**Entscheidung:** Unterhalb von 1024 px strukturiert `/reisen/[tripId]` die Reise in fünf Client-Bereiche: Übersicht, Plan, Flüge, Unterkunft, Aktivitäten. Default ist die Übersicht. Nur der aktive Bereich ist sichtbar. Der gewählte Reisetag bleibt eine gemeinsame Wahrheit für Plan und Aktivitäten. Desktop behält die bisherige breite Arbeitsansicht.
+**Entscheidung:** Unterhalb von 1024 px strukturiert `/reisen/[tripId]` die Reise nicht mehr als lange Kartenfolge, sondern in Client-Bereiche. Default ist die Übersicht. Nur der aktive Bereich ist sichtbar. Der gewählte Reisetag bleibt eine gemeinsame Wahrheit für Tagesplan und Aktivitäten. Desktop behält die bisherige breite Arbeitsansicht. Die sichtbaren Mobile-Hauptbereiche nach Iteration 2 stehen in ADR-0088.
 
 **Kontext:** Die mobile Reiseansicht war fachlich vollständig, aber eine lange Folge großer Karten. Nach dem Scrollen verloren Nutzer die Orientierung. Der Auftrag ist eine gezielte UX-Iteration, kein Redesign der Startseite und keine Providerarbeit.
 
@@ -2161,7 +2161,33 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 - Logik in `lib/trips/arbeitsbereich.ts`, Darstellung weiter in `TripWorkspace`.
 - Keine Migration, keine neue API, keine Production-Aktivierung.
 - `Reise ändern` ist auf Mobile eine kompakte Aktion in der Übersicht.
-- Iteration 2 bleibt offen für echtes iPhone-Feedback, optionale URL-Persistenz und nicht gelöste Feinheiten.
+- Iteration 2 hat den separaten Mobile-Tab `Plan` aufgehoben; siehe ADR-0088.
+
+---
+
+## ADR-0088 – Mobile Übersicht enthält den Tagesplan
+
+**Datum:** 21. August 2026
+**Status:** umgesetzt in Iteration 2, Preview/Draft
+
+**Entscheidung:** Auf Viewports unter 1024 px gehören Übersicht und Tagesplan zusammen. Die sichtbare Hauptnavigation enthält nur noch Übersicht, Flüge, Unterkunft und Aktivitäten. Der Tagesplan ist Teil von „Deine Reise auf einen Blick“, nicht ein eigener Hauptbereich. `plan` ist kein navigierbarer Client-Bereich mehr; ein historischer Wert fällt auf die Übersicht. Desktop ab 1024 px behält die bisherige breite Arbeitsansicht mit sichtbarem Tagesplan.
+
+**Kontext:** Iteration 1 (ADR-0087) hat die lange Kartenfolge in Bereiche zerlegt. Auf einem echten iPhone wirkte `Plan` als eigener Haupt-Tab zu schwer und trennte den Tagesplan von der Orientierung. Die fachliche Planlogik war bereits vollständig; nötig war eine Informationsarchitektur-Änderung, keine zweite Plan-Implementierung.
+
+**Alternativen:**
+
+1. *Plan als Tab behalten und nur die Labels kürzen.* Würde `Aktivitäten` auf 390 px etwas entlasten, aber die Trennung von Dashboard und Tagesplan bleiben lassen.
+2. *`plan` als versteckten Client-State weiterführen.* Würde Sonderfälle und Redirects erzeugen, ohne Produktnutzen.
+3. *Desktop ebenfalls auf vier Bereiche umbauen.* Kein Auftrag; die breite Arbeitsansicht zeigt Plan und Suchen bereits gleichzeitig.
+
+**Begründung:** „Deine Reise auf einen Blick“ ohne den Tagesplan ist unvollständig. Flüge, Unterkunft und Aktivitäten bleiben eigene Hauptbereiche, weil sie Suche und kommerzielle Zustände tragen. Der Planstatus ist Einleitung des eingebetteten Tagesplans, kein Sprungziel. Dieselbe `TripWorkspacePlan`-Quelle, dieselbe `aktiverTag`-Wahrheit, dieselben Persistenz- und Validierungswege.
+
+**Konsequenzen:**
+
+- `ARBEITSBEREICHE` in `lib/trips/arbeitsbereich.ts` enthält `plan` nicht mehr.
+- `TripWorkspace` bettet den Tagesplan auf Mobile in die Übersicht ein; auf Desktop bleibt er Teil der breiten Ansicht.
+- Keine Migration, keine neue API, keine URL-/Deep-Link-Änderung, keine Production-Aktivierung.
+- Deep Link für den aktiven Bereich bleibt bewusst Client-State (ADR-0087).
 
 ---
 

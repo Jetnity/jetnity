@@ -31,7 +31,7 @@ Phase 3.3 wurde als Pull Request #24 per Squash Merge abgeschlossen. Die Product
 
 Der Kontinuitätsstandard wurde als Pull Request #25 gemergt. Er verändert keine Produktlogik, macht aber Dokumentation/Übergabe verbindlich.
 
-Parallel liegt Draft-PR #27 für die Trip-Workspace Mobile-UX Iteration 1. Dieser Stand ist nicht auf `main` und nicht in Production.
+Parallel liegt Draft-PR #27 für die Trip-Workspace Mobile-UX Iterationen 1 und 2. Dieser Stand ist nicht auf `main` und nicht in Production.
 
 ## 2. Verbindlicher Produktkern
 
@@ -206,45 +206,42 @@ Sobald Zugang vorliegt, zuerst nur Preview:
 
 Wenn Booking.com-Zugang nicht zeitnah möglich ist, HBX / Hotelbeds als dokumentierten Backup-Weg prüfen.
 
-## 6a. Querschnitt – Trip Workspace Mobile UX Iteration 1
+## 6a. Querschnitt – Trip Workspace Mobile UX Iteration 1–2
 
 **In Arbeit auf Draft-PR #27. Nicht gemergt. Keine Production-Änderung.**
 
 Branch: `ux-trip-workspace-mobile-iteration-1`
 
-Auftrag: `docs/CURSOR_TRIP_WORKSPACE_MOBILE_UX_ITERATION_1.md`
+Aufträge: `docs/CURSOR_TRIP_WORKSPACE_MOBILE_UX_ITERATION_1.md`, `docs/CURSOR_TRIP_WORKSPACE_MOBILE_UX_ITERATION_2.md`
 
 Vercel Preview: https://jetnity-app-git-ux-trip-workspace-mobil-c58bb6-jetnity-e1b93c82.vercel.app
 
-Technischer Stand der Iteration:
-
-- `npm test`: **1014/1014**
-- Typecheck, Lint, Hygiene und Production-Build grün
-- GitHub CI grün
-- Vercel Preview grün
-- Trip-Workspace-Audit (WebKit + Chromium): **178 Kombinationen, 0 Fehler**
-- Activities-Regression-Audit: **184 Kombinationen, 0 Fehler**
+Iteration 1 bleibt die Basis. Iteration 2 setzt die Produktentscheidung um: auf Mobile gehören Übersicht und Tagesplan zusammen.
 
 Was sich auf Mobile geändert hat:
 
 - kompakter Reisekopf statt großem Hero
-- klebende Bereichsnavigation: Übersicht, Plan, Flüge, Unterkunft, Aktivitäten
-- Default ist die Übersicht mit ehrlichen Statuszeilen aus dem Reisegraphen
-- auf schmalen Viewports ist nur der aktive Bereich sichtbar
-- `Reise ändern` ist eine kompakte Aktion in der Übersicht
-- der Tagesplan ist ein eigener Hauptbereich mit horizontaler Tagesleiste
-- Plan und Aktivitäten teilen dieselbe Tagesauswahl
+- klebende Bereichsnavigation: Übersicht, Flüge, Unterkunft, Aktivitäten
+- Default bleibt die Übersicht
+- die Übersicht enthält Status zu Flügen, Unterkunft und Aktivitäten sowie den Tagesplan
+- `Plan` ist kein sichtbarer Haupt-Tab mehr
+- `Reise ändern` bleibt eine kompakte Aktion in der Übersicht
+- Übersicht und Aktivitäten teilen dieselbe Tagesauswahl
 - Hotel- und Aktivitätssuche starten auf Mobile erst beim ersten Besuch des Bereichs
+- Desktop ab 1024 px bleibt die bisherige breite Arbeitsansicht
 
-Was bewusst für Iteration 2 offen bleibt:
+Iteration-1-Nachweise (weiter gültig als Ausgangspunkt):
 
-- Deep Link / URL für den aktiven Bereich
-- Feinschliff nach echtem iPhone-Feedback
-- kein Desktop-Redesign, keine Provideranbindung
+- `npm test`: **1014/1014**
+- Typecheck, Lint, Hygiene und Production-Build grün
+- Trip-Workspace-Audit: 178 Kombinationen, 0 Fehler
+- Activities-Regression-Audit: 184 Kombinationen, 0 Fehler
+
+Iteration-2-Nachweise werden nach dem Lauf auf diesem Branch eingetragen. Deep Link für den aktiven Bereich bleibt bewusst Client-State.
 
 Provider und Production sind unverändert aus. Keine Migration, keine neuen Secrets.
 
-Nächster Schritt: Nutzer prüft die Vercel Preview auf einem echten iPhone und gibt Produktfeedback. Danach Iteration 2 oder Freigabe zum Merge.
+Nächster Schritt: Nutzer prüft die Preview auf einem echten iPhone. PR #27 bleibt Draft.
 
 ## 7. Arbeiten während wir auf Booking.com warten
 
@@ -369,5 +366,5 @@ Eine Phase ist erst fertig, wenn Dokumentation und Handoff dem tatsächlichen St
 4. Phase 3.3 nicht erneut bauen: sie ist fertig und auf `main`.
 5. Phase 3.4 ist der nächste Hauptblock, aber der erste echte Hoteladapter wartet primär auf Booking.com-Zugang.
 6. Solange der Zugang fehlt, nur konkrete produktnahe Qualitätsverbesserungen oder andere ausdrücklich freigegebene provider-unabhängige Arbeiten durchführen.
-7. Draft-PR #27 (Trip Workspace Mobile UX Iteration 1) bleibt Draft, bis Preview und iPhone-Feedback vorliegen. Nicht mergen.
+7. Draft-PR #27 (Trip Workspace Mobile UX Iteration 1–2) bleibt Draft. Nicht mergen. Keine Production-Änderung.
 8. Keine Production-Aktivierung und keine Secrets ohne separate ausdrückliche Freigabe.

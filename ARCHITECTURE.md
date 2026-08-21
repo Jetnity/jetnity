@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
 Stand: 21. August 2026
-Gültig für: Phase 3.3c plus Mobile-UX Iteration 1 des Trip Workspace (Preview)
+Gültig für: Phase 3.3c plus Mobile-UX Iteration 2 des Trip Workspace (Preview)
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -151,7 +151,7 @@ Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
 | `/` | Startseite mit Positionierung und Einstieg in die Reiseplanung |
 | `/planen` | Reisebeschreibung in eigenen Worten (`components/trips/Reiseidee.tsx`) und darunter das Formular (`components/trips/TripPlanner.tsx`). Feldfehler sitzen am Feld, nicht nur unter der Absenden-Taste (ADR-0068). |
 | `/reisen` | Übersicht der Reisen – im Konto aus Supabase, als Gast die eine Gastreise |
-| `/reisen/[tripId]` | Trip Workspace: auf schmalen Viewports kompakte Übersicht plus Bereiche Plan, Flüge, Unterkunft, Aktivitäten; ab 1024 px die bisherige breite Arbeitsansicht mit Tagesplanung, Flugsuche, Hotel-/Quartierbereich und Aktivitätsbereich |
+| `/reisen/[tripId]` | Trip Workspace: auf schmalen Viewports kompakte Übersicht mit eingebettetem Tagesplan plus Bereiche Flüge, Unterkunft, Aktivitäten; ab 1024 px die bisherige breite Arbeitsansicht mit Tagesplanung, Flugsuche, Hotel-/Quartierbereich und Aktivitätsbereich |
 
 **Seit Phase 1.5 gibt es zwei Wege, und sie unterscheiden sich nur im Speicher.** Fachliche Beschreibung: [docs/REISEN.md](docs/REISEN.md), Entscheidungen in [DECISIONS.md](DECISIONS.md) ADR-0041 bis ADR-0043.
 
@@ -164,7 +164,7 @@ Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
 | Lesen im Konto | `lib/trips/daten.ts` | `server-only`, Anon-Key, kein `eq('user_id', …)` – RLS filtert |
 | Schreiben im Konto | `lib/trips/aktionen.ts` | Server Actions, Identität über `auth.getUser()`, Rückgabe als Ergebnis statt als Ausnahme |
 | Übernahme | `lib/trips/uebernahme.ts` | Gastreise ins Konto, idempotent, ohne React und damit prüfbar |
-| Mobile-IA | `lib/trips/arbeitsbereich.ts` | Bereichsstatus, gemeinsame Tagesauswahl, Mount-/Sichtbarkeitsregeln; kein zweiter Reise-State |
+| Mobile-IA | `lib/trips/arbeitsbereich.ts` | sichtbare Hauptbereiche, Planstatus der Übersicht, gemeinsame Tagesauswahl, Mount-/Sichtbarkeitsregeln; kein zweiter Reise-State |
 
 Die serverseitigen Module benutzen ausschliesslich die Clients aus Abschnitt 3 und damit die Rechte des angemeldeten Kontos. Ein Filter auf `user_id` steht bewusst nirgends: Wer die Zugehörigkeit im Code filtert, hat sie in dem Moment nicht mehr durchgesetzt, in dem er den Filter vergisst.
 
