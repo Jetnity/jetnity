@@ -30,6 +30,9 @@ function punkt(teil: Partial<TripItem> & Pick<TripItem, 'id' | 'title'>): TripIt
     provider: null,
     externalRef: null,
     bookingUrl: null,
+    bookingStatus: 'unconfirmed',
+    bookingSource: null,
+    bookingConfirmedAt: null,
     ...teil,
   }
 }
@@ -87,6 +90,9 @@ function reise(abweichung: Partial<Reisegraph> = {}): Reisegraph {
           provider: 'getyourguide',
           externalRef: 'gyg-1',
           bookingUrl: 'https://example.com/dom',
+          bookingStatus: 'unconfirmed',
+          bookingSource: null,
+          bookingConfirmedAt: null,
         }),
       ],
     }),
@@ -456,6 +462,9 @@ describe('Geschützter kommerzieller stay', () => {
       provider: 'test-hotel',
       externalRef: 'ref-77',
       bookingUrl: null,
+      bookingStatus: 'unconfirmed',
+      bookingSource: null,
+      bookingConfirmedAt: null,
     })
     return basis
   }

@@ -28,6 +28,7 @@ import {
   type Trip,
 } from '@/types/trips'
 import { interesseLesen, tempoLesen } from '@/lib/trips/bezeichnungen'
+import { buchungsquelleLesen, buchungsstatusLesen } from '@/lib/trips/buchung'
 import { TAGE_MAXIMUM } from '@/lib/trips/tage'
 
 /** Höchstwerte, die auch die Datenbank kennt. An einer Stelle, damit sie gleich bleiben. */
@@ -158,7 +159,25 @@ const planpunktSchema = z.object({
     .max(2048)
     .nullable()
     .default(null),
+  bookingStatus: z.unknown().transform(buchungsstatusLesen).default('unconfirmed'),
+  bookingSource: z.unknown().transform(buchungsquelleLesen).nullable().default(null),
+  bookingConfirmedAt: zeitstempel.nullable().default(null),
 })
+  .transform((punkt) => {
+    const darfBuchen = punkt.kind === 'flight' || punkt.kind === 'stay'
+    if (!darfBuchen || punkt.bookingStatus !== 'booked') {
+      return {
+        ...punkt,
+        bookingStatus: 'unconfirmed' as const,
+        bookingSource: null,
+        bookingConfirmedAt: null,
+      }
+    }
+    return {
+      ...punkt,
+      bookingSource: 'user' as const,
+    }
+  })
 
 const reisetagSchema = z.object({
   id: z.string().min(1).max(80),
@@ -343,6 +362,8 @@ const nutzlastPunktSchema = z.object({
     .max(2048)
     .nullable()
     .default(null),
+  booking_status: z.unknown().transform(buchungsstatusLesen).default('unconfirmed'),
+  booking_confirmed_at: zeitstempel.nullable().default(null),
 })
   .superRefine((punkt, ctx) => {
     if ((punkt.price_amount === null) !== (punkt.price_currency === null)) {
@@ -352,6 +373,17 @@ const nutzlastPunktSchema = z.object({
         message: 'Preis und Währung gehören zusammen.',
       })
     }
+  })
+  .transform((punkt) => {
+    const darfBuchen = punkt.kind === 'flight' || punkt.kind === 'stay'
+    if (!darfBuchen || punkt.booking_status !== 'booked') {
+      return {
+        ...punkt,
+        booking_status: 'unconfirmed' as const,
+        booking_confirmed_at: null,
+      }
+    }
+    return punkt
   })
 
 const nutzlastTagSchema = z.object({

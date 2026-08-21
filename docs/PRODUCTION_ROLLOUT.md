@@ -63,7 +63,7 @@ Die Importer dürfen Production nicht mehr „aus Versehen“ beschreiben. Der D
 | Secrets | Token, JWT und Schlüssel werden nicht geloggt. |
 | CI / Build / Merge | rufen den Import nicht auf. `prebuild` und `npm test` enthalten keinen Import. |
 
-`npm run db:anwenden` ist ebenfalls geschützt: ohne Flags nur Development-Branch. Production-Schema nur mit `--produktion --projekt-ref <Ref> --bis 20260820130000`. Ohne `--bis` oder mit einem höheren Grenzwert bricht der Lauf ab. Migrationen nach `20260820130000` laufen in diesem Playbook nicht mit, auch wenn sie im Repository schon liegen.
+`npm run db:anwenden` ist ebenfalls geschützt: ohne Flags nur Development-Branch. Production-Schema nur mit `--produktion --projekt-ref <Ref> --bis 20260820130000`. Ohne `--bis` oder mit einem höheren Grenzwert bricht der Lauf ab. Migrationen nach `20260820130000` – einschliesslich `20260821100000_trip_items_booking_status.sql` – laufen in diesem Playbook nicht mit, auch wenn sie im Repository schon liegen. Diese Booking-Status-Migration darf **nicht** auf Production angewendet werden.
 
 `npm run production:pruefen` ist vollständig read-only: nur `SELECT` auf Bestand und PostgreSQL-Metadaten (Rechte, RLS, Policies). Kein HTTP-POST, kein INSERT/UPDATE/DELETE.
 

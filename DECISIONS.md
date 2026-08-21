@@ -2191,6 +2191,41 @@ Bestehende Kennungen unveränderter Zeilen bleiben: Upsert, danach Löschen der 
 
 ---
 
+## ADR-0089 – Persistenter Buchungsstatus ist nutzerbestätigt, nicht aus einem Planpunkt abgeleitet
+
+**Datum:** 21. August 2026
+**Status:** umgesetzt auf Draft-PR #29; Development-Migration angewendet am 21. August 2026; nicht auf Production angewendet
+
+**Entscheidung:** Ein gespeicherter `trip_item` ist ausgewählt/geplant, nicht gebucht. `Gebucht` entsteht nur durch eine ausdrückliche Nutzerbestätigung. Dafür trägt `trip_items` drei provider-neutrale Spalten:
+
+- `booking_status` `text not null default 'unconfirmed'` – `'unconfirmed' | 'booked'`
+- `booking_source` `text` – `null | 'user'`
+- `booking_confirmed_at` `timestamptz` – nur gesetzt, wenn gebucht
+
+Offene Flugabschnitte und fehlende Nächte sind abgeleitete Lücken, keine gespeicherten Datensätze. Der Browser darf keine Quelle `provider` oder `verified` behaupten. `public.reise_aendern()` schreibt die drei Spalten nicht. Historische Zeilen bleiben `unconfirmed`.
+
+**Kontext:** Der Trip Workspace zeigte Suche und Bestand nicht als zusammenhängendes Dashboard. Ohne persistente Bestätigung wäre jeder vorhandene Flug oder Stay stillschweigend „gebucht“ gewesen. Eine Provider-Buchungsbestätigung gibt es in dieser Phase nicht.
+
+**Alternativen:**
+
+1. *Nur UI-State / Local Storage.* Würde Konto-Reisen und Gast-Reisen spalten und den Status bei einem Gerätewechsel verlieren.
+2. *`metadata`-JSON.* Verstösst gegen die Schema-Regel: Was UI und Fachlogik abfragen, ist eine Spalte.
+3. *PostgreSQL-Enum.* Ein Enum lässt sich nicht kürzen; CHECKs entsprechen dem bestehenden Schema (ADR-0043).
+4. *Quelle `provider` schon jetzt zulassen.* Der Client könnte eine vertrauenswürdige Bestätigung vortäuschen.
+
+**Begründung:** Drei Spalten reichen für die heutige manuelle Bestätigung und lassen später eine serverseitige Provider-Quelle zu, ohne das Kernmodell zu wechseln. Die Quelle setzt nur der Server bzw. der Gastspeicher analog auf `user`. Coverage bleibt reine Domainlogik in `lib/trips/`, nicht im React-Rendering. Commercial Protection behandelt den Buchungsstatus wie Preis, Provider und Booking-URL.
+
+**Konsequenzen:**
+
+- Migration `20260821100000_trip_items_booking_status.sql` liegt im Repository. Development angewendet am 21. August 2026. **Nicht Production.**
+- `public.reise_anlegen()` übernimmt einen gebuchten Status nur für `flight`/`stay` und setzt die Quelle immer auf `user`.
+- Account-Aktion `planpunktBuchungsstatusSetzen` läuft über Anon-Key und RLS, ohne Service Role.
+- Gast und Konto teilen dieselbe `TripItem`-Form.
+- Natürliche Sprache darf den Status nicht erfinden, löschen oder still ändern.
+- `types/supabase.ts` entspricht nach dem Development-Lauf dem live Schema (`db:typen --pruefen`).
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

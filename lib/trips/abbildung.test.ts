@@ -166,6 +166,27 @@ describe('Ein unbekannter Wert macht eine Reise nicht unlesbar', () => {
     assert.equal(planpunktAus(punktzeile({ kind: 'restaurant' })).kind, 'note')
   })
 
+  test('ein historischer Planpunkt ohne Buchungsstatus ist unbestätigt', () => {
+    const punkt = planpunktAus(punktzeile())
+    assert.equal(punkt.bookingStatus, 'unconfirmed')
+    assert.equal(punkt.bookingSource, null)
+    assert.equal(punkt.bookingConfirmedAt, null)
+  })
+
+  test('eine behauptete Provider-Quelle wird nicht als bestätigt gelesen', () => {
+    const punkt = planpunktAus(
+      punktzeile({
+        kind: 'flight',
+        booking_status: 'booked',
+        booking_source: 'provider',
+        booking_confirmed_at: '2026-08-21T10:00:00.000Z',
+      }),
+    )
+    assert.equal(punkt.bookingStatus, 'booked')
+    assert.equal(punkt.bookingSource, 'user')
+    assert.equal(punkt.bookingConfirmedAt, '2026-08-21T10:00:00.000Z')
+  })
+
   test('ein unbekanntes Tempo fällt auf balanced zurück', () => {
     assert.equal(reiseAus(reisezeile({ pace: 'schnell' }), [], [], []).pace, 'balanced')
   })
@@ -337,6 +358,8 @@ describe('Aus einer Reise wird die Nutzlast für public.reise_anlegen()', () => 
     assert.equal(nutzlast.days[0].items.length, 1)
     assert.equal(nutzlast.days[0].items[0].title, 'Markt')
     assert.equal(nutzlast.days[0].items[0].starts_at, '09:30')
+    assert.equal(nutzlast.days[0].items[0].booking_status, 'unconfirmed')
+    assert.equal('booking_source' in nutzlast.days[0].items[0], false)
   })
 
   test('ungeplante Planpunkte gehen als eigene Liste mit', () => {

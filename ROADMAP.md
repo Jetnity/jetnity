@@ -16,10 +16,15 @@ Diese Datei ist die operative Roadmap. Historische Detailstände bleiben über G
 | Phase 3.1 | Flight Foundation + erster Duffel-Adapter | **fertig, nach `main` gemergt; Production-Flugsuche aus** |
 | Phase 3.2 | Hotel Foundation + Quartierlogik + 3.2b/3.2c-Härtung | **fertig, nach `main` gemergt; Production-Hotelsuche aus** |
 | Phase 3.3 | Activities Foundation + Tageskontext + Ranking + UI-Audit | **fertig, nach `main` gemergt; Production-Aktivitätensuche aus** |
-| Phase 3.4 | erster echter Hotel-Suchadapter | **als Nächstes; wartet primär auf Booking.com-Zugang** |
-| Querschnitt | Trip Workspace Mobile UX Iteration 1–3 | **in Arbeit, Draft-PR #27; nicht gemergt** |
-| Phase 3.5 | erster echter Activity-Suchadapter | geplant nach 3.4 |
-| Phase 3.6 | Transfers Foundation / erster Integrationsweg | geplant |
+| Phase 3.4 | erster echter Hotel-Suchadapter | **wartet / extern blockiert durch Booking.com-Zugang; HBX/Hotelbeds Backup** |
+| Querschnitt | Trip Workspace Mobile UX Iteration 1–3 | **fertig, nach `main` gemergt (PR #27)** |
+| Querschnitt | Trip Coverage & Booking Status | **Ready for Review auf PR #29; iPhone-Retest bestanden; Production-Migration angewendet/verifiziert** |
+| Foundation-Track A | Mobilität & Transfers – Bahn, Bus, Fähre, Transfers | **als Nächstes nach PR #29** |
+| Foundation-Track B | Mietwagen Foundation | geplant nach A |
+| Foundation-Track C | Travel Readiness & Dokumente Foundation | geplant nach B |
+| Foundation-Track D | Gesamt-Abdeckung im Reisegraphen erweitern | geplant nach C |
+| Phase 3.5 | erster echter Activity-Suchadapter | geplant; bei fehlendem Zugang extern blockiert |
+| Phase 3.6 | echte Mobilitäts-/Transferprovider auf Foundation A | geplant |
 | Phase 4 | Launch-Reife, Monetarisierung, Production-Freigaben | geplant |
 
 ## Aktueller stabiler Stand
@@ -100,9 +105,11 @@ Qualität vor Merge:
 
 ### Erster echter Hotel-Suchadapter
 
+**Status: WARTET / EXTERN BLOCKIERT.**
+
 Ziel: Die bereits fertige Hotelarchitektur erstmals mit echten Hotelpreisen, Verfügbarkeiten und Providerfakten verbinden.
 
-**Primärer externer Blocker:** gültiger Booking.com Demand API / Managed Affiliate Partner Zugang.
+**Primärer externer Blocker:** gültiger Booking.com Demand API / Managed Affiliate Partner Zugang. Dokumentierter Backup-Weg: HBX / Hotelbeds.
 
 Ohne gültigen Zugang wird kein Booking.com-Adapter simuliert und keine Fake-Integration gebaut.
 
@@ -121,28 +128,80 @@ Sobald Zugang vorliegt:
 
 ### Querschnitt – Trip Workspace Mobile UX Iteration 1–3
 
-Gezielte Mobile-IA für `/reisen/[tripId]`, parallel zu Phase 3.4, ohne Provider- oder Production-Änderung.
+**Auf `main` gemergt** als Pull Request #27, Merge-Commit `70e471b00c7505356fe13f8185b204200c4bb781`.
 
-- Branch `ux-trip-workspace-mobile-iteration-1`, Draft-PR #27
 - kompakter Reisekopf, klebende Bereichsnavigation, Übersicht als Default
-- Iteration 2: sichtbare Mobile-Bereiche sind Übersicht, Flüge, Unterkunft, Aktivitäten; der Tagesplan liegt in der Übersicht
-- Iteration 3: Tagesauswahl und Tagesinhalt sind auf Mobile ein Modul; nur die Chip-Zeile scrollt horizontal
+- sichtbare Mobile-Bereiche sind Übersicht, Flüge, Unterkunft, Aktivitäten; der Tagesplan liegt in der Übersicht
 - Desktop-Arbeitsansicht bleibt
-- Iteration-3-Nachweise: `npm test` 1018/1018; Typecheck, Lint, Hygiene und Production-Build grün; Trip-Workspace-Audit 210/0; Activities-Audit 184/0
-- **nicht mergen**, keine Production-Änderung
+- keine Production-Datenbankänderung, Provider-Suchen unverändert aus
 
-### Während Booking.com noch offen ist
+### Querschnitt – Trip Coverage & Booking Status
 
-Keine spekulative Providerintegration bauen.
+Gezielter Dashboard-Block auf PR #29, parallel zu Phase 3.4, ohne Provider-Aktivierung.
 
-Sinnvolle Arbeiten, die parallel erlaubt sind:
+- Branch `feat/trip-coverage-booking-status`
+- Status: **Ready for Review**
+- ehrliche Flug-/Nachtabdeckung aus dem Reisegraphen
+- expliziter manueller Buchungsstatus (`unconfirmed` / `booked`, Quelle nur `user`)
+- Bestand oberhalb der bestehenden Suche
+- Migration `20260821100000_trip_items_booking_status.sql` am 21. August 2026 nach ausdrücklicher Nutzerfreigabe auf Production angewendet und verifiziert
+- Production-Spalten `booking_status`, `booking_source`, `booking_confirmed_at` vorhanden
+- vier Booking-CHECK-Constraints vorhanden
+- `reise_anlegen(jsonb)` enthält Booking-Felder
+- bestehende Production-Zeilen korrekt als `unconfirmed`; Verifikationsabfrage: **0 ungültige Booking-Zeilen**
+- Trip-Workspace-Audit nach Visibility-Fix: **278 Kombinationen, 0 Fehler**, inklusive Wechselketten 390/430 px
+- Activities-Regression: **184 Kombinationen, 0 Fehler**
+- echter iPhone-Nachtest der Tab-Sichtbarkeit: **bestanden**
+- Provider-Suchen/Kill-Switches unverändert aus
+- Merge erst nach grünem finalen CI-/Preview-Stand und ausdrücklicher Nutzerfreigabe
 
-- konkrete UX-/Design-/Navigationsprobleme aus der echten Website korrigieren
-- Mobile-UX, Accessibility, Performance, Loading/Error States verbessern
-- kleine produktnahe Qualitätslücken schließen
-- Dokumentation und Tests aktuell halten
+## Provider-unabhängiger Foundation-Track während Phase 3.4 wartet
 
-Solche Änderungen müssen klar abgegrenzt bleiben und dürfen Phase 3.4 nicht vortäuschen.
+Die Wartezeit auf externe Providerzugänge wird genutzt, um Jetnity funktional bis zu dem Punkt vorzubereiten, an dem später nur noch echte Provider/Nachweise angeschlossen werden müssen. Keine Fake-Suchen, keine erfundenen Fahrpläne und keine überbreite Transportplattform.
+
+### Foundation A – Mobilität & Transfers
+
+Gemeinsames Reisegraph-Modell für:
+
+- Bahn
+- Bus
+- Fähre
+- lokale/gebuchte Transfers
+
+Berücksichtigen: Start/Ziel, Station/Hafen, Abfahrt/Ankunft, Dauer, Status und Anschlussbeziehungen zu Flug, Unterkunft und Tagesplan.
+
+### Foundation B – Mietwagen
+
+Provider-neutrales Modell für:
+
+- Abhol-/Rückgabeort
+- Abhol-/Rückgabezeit
+- Fahrer-/Reisendenbezug
+- Fahrzeugklasse/Anforderungen
+- Preis/Flexibilität nur als verifizierbare Provider-Fakten
+- Zusammenhang mit Etappen, Unterkünften und Transfers
+
+### Foundation C – Travel Readiness & Dokumente
+
+Zuerst nur Status/Checklisten/Referenzen für:
+
+- Einreise-/Visumthemen
+- Reisepass-/Dokumentstatus
+- Versicherungen
+- Tickets/Buchungsbestätigungen
+- wichtige Vorbereitungen vor Abreise
+
+Kein Pass-/Identitätsdokument-Tresor ohne separate Security-/Verschlüsselungsentscheidung und ausdrückliche Freigabe.
+
+### Foundation D – Gesamt-Abdeckung
+
+Die zentrale Reiseübersicht soll danach provider-neutral erkennen können, welche wichtigen Reisebestandteile abgedeckt, offen oder noch nicht bestimmbar sind – über Flug und Hotel hinaus auch Mobilität, Mietwagen und Reisevorbereitung, soweit belastbare Daten vorhanden sind.
+
+### Kreuzfahrten
+
+Bewusst später. Das Reisegraph-Modell soll mehrtägige Reisebausteine zulassen, aber keine große Kabinen-/Tarif-/Deck-/Routenfoundation ohne echten Produktbedarf und Providerzugang.
+
+Konkrete UX-/Design-/Performance-/Accessibility-Verbesserungen bleiben erlaubt, verdrängen diesen funktionalen Unterbau aber nicht ohne Grund.
 
 ## Danach
 
@@ -153,12 +212,14 @@ Solche Änderungen müssen klar abgegrenzt bleiben und dürfen Phase 3.4 nicht v
 - echter Affiliate-/Redirect-Weg
 - reale Preview-Verifikation
 - Production zunächst aus
+- wenn Zugang fehlt: extern blockiert, keine Fake-Integration
 
-### Phase 3.6 – Transfers
+### Phase 3.6 – echte Mobilitäts-/Transferprovider
 
-- nur bauen, wenn der konkrete Reisegraph davon profitiert
-- keine unnötige Transportplattform
+- auf Foundation A aufsetzen
+- echte Fahrplan-/Verfügbarkeits-/Providerdaten anbinden
 - Provider-/Routingdaten niemals erfinden
+- keine unnötige Transportplattform
 
 ### Phase 4 – Launch-Reife
 
@@ -171,7 +232,7 @@ Schwerpunkte:
 - Performance-Pass
 - reale Hardware-/Browser-Abnahme
 - observability und kontrollierte Production-Rollouts
-- Travel Readiness später nur mit belastbaren aktuellen Quellen
+- Travel Readiness nur mit belastbaren aktuellen Quellen
 
 ## Offene externe Abhängigkeiten
 
@@ -182,6 +243,7 @@ Diese Punkte bleiben sichtbar, bis sie nachweislich erledigt sind:
 - Duffel Sandbox-/Testtoken für echte Preview-Verifikation
 - Duffel Production-Zugang separat und später
 - erster echter Activity-Provider und dessen Zugang
+- echte Bahn-/Bus-/Fähre-/Transfer-/Mietwagenprovider nach den provider-unabhängigen Foundations
 
 ## Bekannte technische Punkte
 

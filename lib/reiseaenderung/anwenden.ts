@@ -12,6 +12,7 @@
 // Frei von Next, Supabase und `process.env`.
 
 import { GRENZEN, reiseLesen } from '@/lib/trips/schema'
+import { unbestaetigteBuchung } from '@/lib/trips/buchung'
 import { datumVerschieben } from '@/lib/trips/tage'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 import type { Reisegraph, TripDay, TripItem, TripStage } from '@/types/trips'
@@ -370,6 +371,7 @@ function punktHinzufuegen(reise: Reisegraph, op: Modelloperation, kennung: Kennu
     provider: null,
     externalRef: null,
     bookingUrl: null,
+    ...unbestaetigteBuchung(),
   }
   if (tag) tag.items.push(punkt)
   else reise.ohneTag.push(punkt)

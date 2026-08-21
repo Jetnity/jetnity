@@ -207,6 +207,9 @@ describe('Gast mit Reise – der Weg beim Login', () => {
                   provider: null,
                   externalRef: null,
                   bookingUrl: null,
+                  bookingStatus: 'unconfirmed',
+                  bookingSource: null,
+                  bookingConfirmedAt: null,
                 },
               ],
             }
@@ -233,6 +236,8 @@ describe('Gast mit Reise – der Weg beim Login', () => {
         provider: null,
         external_ref: null,
         booking_url: null,
+        booking_status: 'unconfirmed',
+        booking_confirmed_at: null,
       },
     ])
   })
@@ -259,6 +264,9 @@ describe('Gast mit Reise – der Weg beim Login', () => {
           provider: null,
           externalRef: null,
           bookingUrl: null,
+          bookingStatus: 'unconfirmed',
+          bookingSource: null,
+          bookingConfirmedAt: null,
         },
       ],
     })
@@ -281,6 +289,8 @@ describe('Gast mit Reise – der Weg beim Login', () => {
         provider: null,
         external_ref: null,
         booking_url: null,
+        booking_status: 'unconfirmed',
+        booking_confirmed_at: null,
       },
     ])
     assert.equal(

@@ -25,7 +25,7 @@ import { flugInReiseUebernehmen } from '@/lib/flights/aktionen'
 import type { FlugOptionSichtbar } from '@/lib/flights/client-sicht'
 import { hotelInReiseUebernehmen } from '@/lib/hotels/aktionen'
 import type { HotelOptionSichtbar } from '@/lib/hotels/client-sicht'
-import { planpunktAnlegen, planpunktEntfernen, reiseLoeschen } from '@/lib/trips/aktionen'
+import { planpunktAnlegen, planpunktBuchungsstatusSetzen, planpunktEntfernen, reiseLoeschen } from '@/lib/trips/aktionen'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
 import AktivitaetenBereich from '@/components/trips/AktivitaetenBereich'
 import FlugSuche from '@/components/trips/FlugSuche'
@@ -88,6 +88,16 @@ export default function KontoArbeitsbereich({
       ohneTag={ohneTag}
       onPunktAnlegen={anlegen}
       onPunktEntfernen={entfernen}
+      onBuchungsstatus={async (itemId, gebucht) => {
+        const ergebnis = await planpunktBuchungsstatusSetzen({
+          tripId: reise.id,
+          itemId,
+          gebucht,
+        })
+        if (!ergebnis.ok) return ergebnis.meldung
+        router.refresh()
+        return null
+      }}
       aenderung={
         <ReiseAenderung reise={reise} quelle="account" onGespeichert={() => router.refresh()} />
       }

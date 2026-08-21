@@ -28,6 +28,77 @@ describe('Geschützte kommerzielle Felder', () => {
     assert.equal(punkt?.priceAmount, 18)
     assert.equal(punkt?.provider, 'getyourguide')
     assert.equal(punkt?.bookingUrl, 'https://example.com/dom')
+    assert.equal(punkt?.bookingStatus, 'unconfirmed')
+  })
+
+  test('ein neues Element darf keinen Buchungsstatus erfinden', () => {
+    const vorher = beispielreise()
+    const nachher = beispielreise()
+    nachher.days[1]!.items.push({
+      id: 'item-erfunden',
+      dayId: 'day-2',
+      stageId: 'stage-1',
+      kind: 'flight',
+      title: 'Erfundener Flug',
+      note: null,
+      position: 2,
+      startsOn: '2026-09-13',
+      startsAt: null,
+      endsOn: null,
+      endsAt: null,
+      priceAmount: null,
+      priceCurrency: null,
+      provider: null,
+      externalRef: null,
+      bookingUrl: null,
+      bookingStatus: 'booked',
+      bookingSource: 'user',
+      bookingConfirmedAt: '2026-08-21T10:00:00.000Z',
+    })
+
+    const geschuetzt = kommerziellErhalten(vorher, nachher)
+    const neu = geschuetzt.days[1]?.items.find((punkt) => punkt.id === 'item-erfunden')
+    assert.equal(neu?.bookingStatus, 'unconfirmed')
+    assert.equal(neu?.bookingSource, null)
+    assert.equal(neu?.bookingConfirmedAt, null)
+  })
+
+  test('ein gebuchter Punkt ohne Preis bleibt kommerziell geschützt', () => {
+    const vorher = beispielreise()
+    vorher.days[0]!.items.push({
+      id: 'item-nur-status',
+      dayId: 'day-1',
+      stageId: 'stage-1',
+      kind: 'stay',
+      title: 'Manuell bestätigt',
+      note: null,
+      position: 2,
+      startsOn: '2026-09-12',
+      startsAt: null,
+      endsOn: '2026-09-14',
+      endsAt: null,
+      priceAmount: null,
+      priceCurrency: null,
+      provider: null,
+      externalRef: null,
+      bookingUrl: null,
+      bookingStatus: 'booked',
+      bookingSource: 'user',
+      bookingConfirmedAt: '2026-08-21T10:00:00.000Z',
+    })
+    const nachher = structuredClone(vorher)
+    nachher.days[0]!.items = nachher.days[0]!.items.filter((punkt) => punkt.id !== 'item-nur-status')
+    const erfunden = nachher.days[0]!.items[0]!
+    erfunden.bookingStatus = 'booked'
+    erfunden.bookingSource = 'user'
+    erfunden.bookingConfirmedAt = '2026-08-21T11:00:00.000Z'
+
+    const geschuetzt = kommerziellErhalten(vorher, nachher)
+    const bleibt = geschuetzt.days[0]?.items.find((punkt) => punkt.id === 'item-nur-status')
+    assert.equal(bleibt?.title, 'Manuell bestätigt')
+    assert.equal(bleibt?.bookingStatus, 'booked')
+    const original = geschuetzt.days[0]?.items.find((punkt) => punkt.id === 'item-1')
+    assert.equal(original?.bookingStatus, 'unconfirmed')
   })
 
   test('eine neue Kennung bleibt ohne Handelsfelder', () => {
@@ -46,6 +117,8 @@ describe('Geschützte kommerzielle Felder', () => {
     assert.equal(neu?.priceAmount, null)
     assert.equal(neu?.provider, null)
     assert.equal(neu?.bookingUrl, null)
+    assert.equal(neu?.bookingStatus, 'unconfirmed')
+    assert.equal(neu?.bookingSource, null)
   })
 
   test('ein verschwundener kommerzieller Punkt kehrt auf seinen Tag zurück', () => {
@@ -85,6 +158,9 @@ describe('Geschützte kommerzielle Felder', () => {
       provider: 'test-hotel',
       externalRef: 'ref-77',
       bookingUrl: null,
+      bookingStatus: 'unconfirmed',
+      bookingSource: null,
+      bookingConfirmedAt: null,
     })
     const nachher = structuredClone(vorher)
     const stay = nachher.days[0]!.items.find((punkt) => punkt.id === 'item-stay')
@@ -127,6 +203,9 @@ describe('Geschützte kommerzielle Felder', () => {
       provider: 'duffel',
       externalRef: '1:ZRH:BKK:20261101:LX180',
       bookingUrl: null,
+      bookingStatus: 'booked',
+      bookingSource: 'user',
+      bookingConfirmedAt: '2026-08-21T10:00:00.000Z',
     })
     const nachher = structuredClone(vorher)
     const flug = nachher.days[0]!.items.find((punkt) => punkt.id === 'item-flug')
@@ -135,6 +214,9 @@ describe('Geschützte kommerzielle Felder', () => {
     flug.priceAmount = 10
     flug.startsAt = '03:00'
     flug.provider = 'evil'
+    flug.bookingStatus = 'unconfirmed'
+    flug.bookingSource = null
+    flug.bookingConfirmedAt = null
 
     const geschuetzt = kommerziellErhalten(vorher, nachher)
     const bleibt = geschuetzt.days[0]?.items.find((punkt) => punkt.id === 'item-flug')
@@ -143,6 +225,9 @@ describe('Geschützte kommerzielle Felder', () => {
     assert.equal(bleibt?.startsAt, '09:15')
     assert.equal(bleibt?.provider, 'duffel')
     assert.equal(bleibt?.kind, 'flight')
+    assert.equal(bleibt?.bookingStatus, 'booked')
+    assert.equal(bleibt?.bookingSource, 'user')
+    assert.equal(bleibt?.bookingConfirmedAt, '2026-08-21T10:00:00.000Z')
   })
 
   test('ohne Tag oder Etappe bleibt der kommerzielle Punkt ungeplant und unverändert', () => {

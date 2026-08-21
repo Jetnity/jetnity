@@ -70,6 +70,7 @@ export default function TripWorkspaceAuditClient() {
       anfangsBereich={daten.anfangsBereich}
       onPunktAnlegen={async () => null}
       onPunktEntfernen={async () => null}
+      onBuchungsstatus={async () => null}
       hinweis={
         daten.gastHinweis ? (
           <p className="mt-5 rounded-2xl border border-line-200 bg-white px-4 py-3 text-sm leading-6 text-ink-800">

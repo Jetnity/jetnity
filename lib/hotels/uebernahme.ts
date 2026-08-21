@@ -8,6 +8,7 @@
 import type { HotelOption } from '@/lib/hotels/domain'
 import { hotelOptionLesen } from '@/lib/hotels/schema'
 import type { TripItem } from '@/types/trips'
+import { unbestaetigteBuchung } from '@/lib/trips/buchung'
 
 export type HotelMomentaufnahme = {
   kind: 'stay'
@@ -110,5 +111,6 @@ export function hotelMomentaufnahmeAlsPunkt(
     provider: aufnahme.provider,
     externalRef: aufnahme.externalRef,
     bookingUrl: null,
+    ...unbestaetigteBuchung(),
   }
 }

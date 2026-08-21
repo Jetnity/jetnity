@@ -9,6 +9,7 @@ import type { FlugOption, FlugSegment } from '@/lib/flights/domain'
 import { flugOptionLesen } from '@/lib/flights/schema'
 import type { TripItem } from '@/types/trips'
 import { dauerLesbar } from '@/lib/flights/zeit'
+import { unbestaetigteBuchung } from '@/lib/trips/buchung'
 
 export type FlugMomentaufnahme = {
   kind: 'flight'
@@ -112,6 +113,7 @@ export function momentaufnahmeAlsPunkt(
     provider: aufnahme.provider,
     externalRef: aufnahme.externalRef,
     bookingUrl: null,
+    ...unbestaetigteBuchung(),
   }
 }
 

@@ -226,6 +226,76 @@ describe('Was die Datenbank ablehnen würde, wird hier abgelehnt', () => {
     assert.equal(gelesen?.days.every((tag) => tag.items.length === 0), true)
   })
 
+  test('ein alter Planpunkt ohne Buchungsfelder gilt als unbestätigt', () => {
+    const gelesen = reiseLesen(
+      reise({
+        days: [
+          {
+            id: 'day-1',
+            dayIndex: 1,
+            dayDate: '2026-09-12',
+            items: [{ id: 'item-1', title: 'Flug', kind: 'flight' }],
+          },
+        ],
+      }),
+    )
+    assert.equal(gelesen?.days[0]?.items[0]?.bookingStatus, 'unconfirmed')
+    assert.equal(gelesen?.days[0]?.items[0]?.bookingSource, null)
+    assert.equal(gelesen?.days[0]?.items[0]?.bookingConfirmedAt, null)
+  })
+
+  test('eine behauptete Provider-Quelle wird zu user, nie provider', () => {
+    const gelesen = reiseLesen(
+      reise({
+        days: [
+          {
+            id: 'day-1',
+            dayIndex: 1,
+            dayDate: '2026-09-12',
+            items: [
+              {
+                id: 'item-1',
+                title: 'Flug',
+                kind: 'flight',
+                bookingStatus: 'booked',
+                bookingSource: 'provider',
+                bookingConfirmedAt: '2026-08-21T10:00:00.000Z',
+              },
+            ],
+          },
+        ],
+      }),
+    )
+    assert.equal(gelesen?.days[0]?.items[0]?.bookingStatus, 'booked')
+    assert.equal(gelesen?.days[0]?.items[0]?.bookingSource, 'user')
+  })
+
+  test('eine Notiz darf nicht als gebucht gelesen werden', () => {
+    const gelesen = reiseLesen(
+      reise({
+        days: [
+          {
+            id: 'day-1',
+            dayIndex: 1,
+            dayDate: '2026-09-12',
+            items: [
+              {
+                id: 'item-1',
+                title: 'Notiz',
+                kind: 'note',
+                bookingStatus: 'booked',
+                bookingSource: 'user',
+                bookingConfirmedAt: '2026-08-21T10:00:00.000Z',
+              },
+            ],
+          },
+        ],
+      }),
+    )
+    assert.equal(gelesen?.days[0]?.items[0]?.bookingStatus, 'unconfirmed')
+    assert.equal(gelesen?.days[0]?.items[0]?.bookingSource, null)
+  })
+
   test('ein Buchungslink ohne HTTPS – wie trip_items_booking_url_format', () => {
     const mitLink = (url: string) =>
       reise({

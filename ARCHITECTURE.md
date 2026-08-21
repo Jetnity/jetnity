@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
 Stand: 21. August 2026
-Gültig für: Phase 3.3c plus Mobile-UX Iteration 2 des Trip Workspace (Preview)
+Gültig für: Phase 3.3c plus Mobile-UX Iteration 1–3 auf `main` (PR #27) plus Trip Coverage & Booking Status (Draft-PR #29, nicht Production)
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -151,7 +151,7 @@ Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
 | `/` | Startseite mit Positionierung und Einstieg in die Reiseplanung |
 | `/planen` | Reisebeschreibung in eigenen Worten (`components/trips/Reiseidee.tsx`) und darunter das Formular (`components/trips/TripPlanner.tsx`). Feldfehler sitzen am Feld, nicht nur unter der Absenden-Taste (ADR-0068). |
 | `/reisen` | Übersicht der Reisen – im Konto aus Supabase, als Gast die eine Gastreise |
-| `/reisen/[tripId]` | Trip Workspace: auf schmalen Viewports kompakte Übersicht mit eingebettetem Tagesplan plus Bereiche Flüge, Unterkunft, Aktivitäten; ab 1024 px die bisherige breite Arbeitsansicht mit Tagesplanung, Flugsuche, Hotel-/Quartierbereich und Aktivitätsbereich |
+| `/reisen/[tripId]` | Trip Workspace: auf schmalen Viewports kompakte Übersicht mit eingebettetem Tagesplan plus Bereiche Flüge, Unterkunft, Aktivitäten; ab 1024 px die bisherige breite Arbeitsansicht. Flüge und Unterkunft zeigen zuerst Bestand/Abdeckung, erst darunter die bestehende Suche. Production-Suchen bleiben aus. |
 
 **Seit Phase 1.5 gibt es zwei Wege, und sie unterscheiden sich nur im Speicher.** Fachliche Beschreibung: [docs/REISEN.md](docs/REISEN.md), Entscheidungen in [DECISIONS.md](DECISIONS.md) ADR-0041 bis ADR-0043.
 
@@ -165,6 +165,9 @@ Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
 | Schreiben im Konto | `lib/trips/aktionen.ts` | Server Actions, Identität über `auth.getUser()`, Rückgabe als Ergebnis statt als Ausnahme |
 | Übernahme | `lib/trips/uebernahme.ts` | Gastreise ins Konto, idempotent, ohne React und damit prüfbar |
 | Mobile-IA | `lib/trips/arbeitsbereich.ts` | sichtbare Hauptbereiche, Planstatus der Übersicht, gemeinsame Tagesauswahl, Mount-/Sichtbarkeitsregeln; kein zweiter Reise-State |
+| Buchungsstatus | `lib/trips/buchung.ts` | `unconfirmed` vs. `booked`; Quelle nur `user`; keine Provider-Behauptung aus dem Browser |
+| Flugabdeckung | `lib/trips/flug-abdeckung.ts` | benötigte Abschnitte aus Origin und Etappen; Match nur bei eindeutigem Datum; sonst unbestimmt |
+| Nachtabdeckung | `lib/trips/naechte-abdeckung.ts` | halboffenes `[checkIn, checkOut)`; Überlappungen als Vereinigung; unbekannte Daten nicht als `0/14` |
 
 Die serverseitigen Module benutzen ausschliesslich die Clients aus Abschnitt 3 und damit die Rechte des angemeldeten Kontos. Ein Filter auf `user_id` steht bewusst nirgends: Wer die Zugehörigkeit im Code filtert, hat sie in dem Moment nicht mehr durchgesetzt, in dem er den Filter vergisst.
 
@@ -239,7 +242,7 @@ Vollständige Beschreibung: [docs/DATENBANK.md](docs/DATENBANK.md). Hier steht n
 
 **Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Die Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b, dem Reiseschema aus Phase 1.5, dem Kostenprotokoll aus Phase 2.1 und der Sprachänderung aus Phase 2.2 – **12 Tabellen, 32 Policies und 24 Funktionen**. Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
 
-Vier der zwölf Tabellen sind die Reisedaten: `trips`, `trip_stages`, `trip_days`, `trip_items`. Sie sind privat und tragen ihre Eigentümerkennung selbst; ein zusammengesetzter Fremdschlüssel `(trip_id, user_id) → trips (id, user_id)` verhindert, dass ein Kind an einer fremden Reise hängt. `trip_days.stage_id` bindet einen Tag an eine Etappe derselben Reise, auch ohne Kalenderdatum (ADR-0057). `trips.revision` und `trips.last_mutation_id` tragen Fassung und Idempotenz einer Sprachänderung (ADR-0058). Enum-Typen führt das Schema keine mehr – jeder Wertebereich steht in einer Prüfbedingung ([DECISIONS.md](DECISIONS.md) ADR-0043).
+Vier der zwölf Tabellen sind die Reisedaten: `trips`, `trip_stages`, `trip_days`, `trip_items`. Sie sind privat und tragen ihre Eigentümerkennung selbst; ein zusammengesetzter Fremdschlüssel `(trip_id, user_id) → trips (id, user_id)` verhindert, dass ein Kind an einer fremden Reise hängt. `trip_days.stage_id` bindet einen Tag an eine Etappe derselben Reise, auch ohne Kalenderdatum (ADR-0057). `trips.revision` und `trips.last_mutation_id` tragen Fassung und Idempotenz einer Sprachänderung (ADR-0058). `trip_items` trägt seit Draft-PR #29 die provider-neutralen Spalten `booking_status`, `booking_source` und `booking_confirmed_at` (ADR-0089). Die Migration ist am 21. August 2026 auf Development angewendet und nicht Teil des Production-Playbooks. Enum-Typen führt das Schema keine mehr – jeder Wertebereich steht in einer Prüfbedingung ([DECISIONS.md](DECISIONS.md) ADR-0043).
 
 Die zwölfte Tabelle ist `public.model_usage` aus Phase 2.1 – ein Kostenprotokoll, keine Nutzdaten. Sie ist die Stelle, an der die Kostenkontrolle für Modellaufrufe wirklich stattfindet: Ein Zähler in einem Serverprozess kennt nur seine eigene Instanz, und Vercel startet beliebig viele. Zwei `SECURITY DEFINER`-Funktionen buchen ein Kontingent, bevor ein Aufruf geschieht, und schliessen es danach ab; `pg_advisory_xact_lock` serialisiert Prüfung und Einfügung – dieselbe Bauweise wie die Missbrauchsschranke aus ADR-0049. Einzelheiten in [docs/MODELL.md](docs/MODELL.md), Begründung in ADR-0052.
 

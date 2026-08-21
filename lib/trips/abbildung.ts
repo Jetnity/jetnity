@@ -33,6 +33,7 @@ import {
   type TripStatus,
 } from '@/types/trips'
 import type { ReiseNutzlast } from '@/lib/trips/schema'
+import { buchungsquelleLesen, buchungsstatusLesen } from '@/lib/trips/buchung'
 
 /** Nur die Spalten, die diese Datei liest. So bleibt sie von der Generierung unabhängig. */
 export type ReiseZeile = {
@@ -94,6 +95,9 @@ export type PunktZeile = {
   provider: string | null
   external_ref: string | null
   booking_url: string | null
+  booking_status?: string | null
+  booking_source?: string | null
+  booking_confirmed_at?: string | null
   created_at: string
 }
 
@@ -126,6 +130,9 @@ function ausBereich<T extends string>(
 }
 
 export function planpunktAus(zeile: PunktZeile): TripItem {
+  const bookingStatus = buchungsstatusLesen(zeile.booking_status ?? 'unconfirmed')
+  const darfBuchen = zeile.kind === 'flight' || zeile.kind === 'stay'
+  const gebucht = darfBuchen && bookingStatus === 'booked'
   return {
     id: zeile.id,
     dayId: zeile.day_id,
@@ -143,6 +150,9 @@ export function planpunktAus(zeile: PunktZeile): TripItem {
     provider: zeile.provider,
     externalRef: zeile.external_ref,
     bookingUrl: zeile.booking_url,
+    bookingStatus: gebucht ? 'booked' : 'unconfirmed',
+    bookingSource: gebucht ? buchungsquelleLesen(zeile.booking_source) ?? 'user' : null,
+    bookingConfirmedAt: gebucht ? zeile.booking_confirmed_at ?? null : null,
   }
 }
 
@@ -302,6 +312,8 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
           provider: punkt.provider,
           external_ref: punkt.externalRef,
           booking_url: punkt.bookingUrl,
+          booking_status: punkt.bookingStatus,
+          booking_confirmed_at: punkt.bookingConfirmedAt,
         })),
       }
     }),
@@ -319,6 +331,8 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
       provider: punkt.provider,
       external_ref: punkt.externalRef,
       booking_url: punkt.bookingUrl,
+      booking_status: punkt.bookingStatus,
+      booking_confirmed_at: punkt.bookingConfirmedAt,
     })),
   }
 }

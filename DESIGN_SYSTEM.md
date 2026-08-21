@@ -228,6 +228,11 @@ Große Schriftgrade werden unterhalb `sm` (640 px) reduziert, darüber bleiben s
 - Primäraktionen, Menüpunkte und Icon-Buttons mindestens 44 px hoch
 - Icon-Buttons in Listen mindestens 40 px
 - freistehende Textlinks dürfen kleiner sein, brauchen aber Abstand: bei Zielen unter 24 px darf sich der 24-px-Radius um zwei Ziele nicht überschneiden (WCAG 2.2, SC 2.5.8, Ausnahme „Spacing“)
+- `Als gebucht markieren` / `Buchung korrigieren` sind Aktionen, keine Siegel: `min-h-11`, sichtbarer Fokusring in `brand-600`
+
+### 7.5a Status nicht nur über Farbe
+
+Buchungs- und Abdeckungsstatus im Trip Workspace tragen immer einen lesbaren Text (`Gebucht`, `Ausgewählt`, `Noch offen`, `Noch nicht vollständig bestimmbar`). Die Fläche darf den Status stützen, ersetzt die Worte aber nicht. Keine neuen Statusfarben ausserhalb der bestehenden Tokens. Siegel sind `span`, keine Buttons.
 
 ### 7.6 Eingabefelder
 
@@ -282,6 +287,12 @@ Im normalen Browser sind diese Werte 0, das Layout bleibt unverändert.
 Unterhalb von 1024 px hat `/reisen/[tripId]` eine klebende Bereichsnavigation direkt unter der öffentlichen Kopfzeile (`top: 72px + safe-area`). Sie nutzt `ScrollRow`, Pillen und `min-h-11`. Der aktive Bereich trägt `aria-current="page"` und dieselbe `brand-800`-Fläche wie andere gewählte Chips.
 
 Die sichtbaren Ziele sind Übersicht, Flüge, Unterkunft und Aktivitäten. Der Tagesplan gehört in die Übersicht und hat keinen eigenen Tab. Auf Mobile sind Tagesauswahl und Tagesinhalt ein Modul: eine Karte, nur die Chip-Zeile scrollt horizontal. Die Navigation ist eine robuste Button-Leiste, kein unvollständiges ARIA-Tabs-Muster. Auf Desktop (`lg`) entfällt sie; dort bleibt die bisherige breite Arbeitsansicht.
+
+### 7.12 Versteckte gemountete Bereiche
+
+Besuchte Mobile-Bereiche im Trip Workspace bleiben eingehängt, damit ein Tabwechsel keine neue Suche auslöst. Sie tragen `hidden` und `inert`.
+
+Die HTML-Eigenschaft `hidden` allein reicht nicht, wenn derselbe Knoten eine Tailwind-Display-Klasse trägt (`grid`, `flex`, `block`). Utilities überschreiben Preflight `[hidden] { display: none }`. Deshalb trägt ein verborgener Bereich nur `hidden`, niemals zusätzlich eine Display-Utility. Sichtbarkeit wird über `getComputedStyle` und Layoutbox geprüft, nicht nur über das Attribut.
 
 ---
 

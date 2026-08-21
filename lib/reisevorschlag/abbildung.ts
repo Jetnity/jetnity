@@ -164,6 +164,8 @@ export function vorschlagAlsNutzlast(
         provider: null,
         external_ref: null,
         booking_url: null,
+        booking_status: 'unconfirmed' as const,
+        booking_confirmed_at: null,
       })),
     })),
     ungeplante: [],
@@ -213,6 +215,9 @@ export function vorschlagAlsReise(
       provider: null,
       externalRef: null,
       bookingUrl: null,
+      bookingStatus: 'unconfirmed',
+      bookingSource: null,
+      bookingConfirmedAt: null,
     }))
 
     return {

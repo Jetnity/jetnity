@@ -25,6 +25,28 @@ const BREITEN = [
   { name: '1280', width: 1280, height: 800 },
 ]
 
+const TAB_ID = {
+  Übersicht: 'uebersicht',
+  Flüge: 'fluege',
+  Unterkunft: 'unterkunft',
+  Aktivitäten: 'aktivitaeten',
+}
+
+const TAB_NACHWEIS = {
+  Übersicht: 'Deine Reise auf einen Blick',
+  Flüge: 'Verbindungen für diese Reise',
+  Unterkunft: 'Die Hotelsuche ist in dieser Umgebung nicht verfügbar.',
+  Aktivitäten: 'Passende Aktivitäten werden vorbereitet.',
+}
+
+const TAB_SEQUENZEN = [
+  ['Übersicht', 'Flüge', 'Unterkunft', 'Aktivitäten', 'Übersicht'],
+  ['Unterkunft', 'Flüge', 'Aktivitäten', 'Unterkunft'],
+  ['Aktivitäten', 'Unterkunft', 'Flüge', 'Aktivitäten'],
+]
+
+const TABWECHSEL_BREITEN = BREITEN.filter((breite) => breite.name === '390' || breite.name === '430')
+
 const JETZT = '2026-08-21T10:00:00.000Z'
 
 function etappe(teil = {}) {
@@ -57,6 +79,9 @@ function punkt(teil) {
     provider: null,
     externalRef: null,
     bookingUrl: null,
+    bookingStatus: 'unconfirmed',
+    bookingSource: null,
+    bookingConfirmedAt: null,
     ...teil,
   }
 }
@@ -264,9 +289,140 @@ const ZUSTAENDE = {
     oeffnePunkt: true,
     nutzlast: { reise: reise() },
   },
+  'fluege-bestand': {
+    kompakt: 'Hinflug gebucht',
+    desktop: 'Deine Flüge',
+    tab: 'Flüge',
+    nutzlast: {
+      anfangsBereich: 'fluege',
+      reise: reise({
+        startDate: '2026-08-30',
+        endDate: '2026-09-13',
+        stages: [
+          etappe({
+            arrivalDate: '2026-08-30',
+            departureDate: '2026-09-13',
+          }),
+        ],
+        days: [tag(1), tag(2), tag(3), tag(4), tag(5)],
+        ohneTag: [
+          punkt({
+            id: 'flug-hin',
+            kind: 'flight',
+            title: 'ZRH → DPS · Swiss',
+            dayId: null,
+            startsOn: '2026-08-30',
+            endsOn: '2026-08-31',
+            priceAmount: 890,
+            priceCurrency: 'CHF',
+            provider: 'duffel',
+            externalRef: 'off_1',
+            bookingStatus: 'booked',
+            bookingSource: 'user',
+            bookingConfirmedAt: JETZT,
+          }),
+        ],
+      }),
+      mitSuche: true,
+    },
+  },
+  'unterkunft-luecken': {
+    kompakt: 'Nächte fehlen',
+    desktop: 'Nächte-Abdeckung',
+    tab: 'Unterkunft',
+    nutzlast: {
+      anfangsBereich: 'unterkunft',
+      reise: reise({
+        startDate: '2026-08-30',
+        endDate: '2026-09-13',
+        stages: [
+          etappe({
+            arrivalDate: '2026-08-30',
+            departureDate: '2026-09-13',
+          }),
+        ],
+        ohneTag: [
+          punkt({
+            id: 'stay-1',
+            kind: 'stay',
+            title: 'Ubud Inn',
+            dayId: null,
+            startsOn: '2026-08-30',
+            endsOn: '2026-09-05',
+            priceAmount: 800,
+            priceCurrency: 'CHF',
+            provider: 'test-hotel',
+            externalRef: 'stay-1',
+          }),
+        ],
+      }),
+      mitSuche: true,
+    },
+  },
+  'uebersicht-gebucht': {
+    kompakt: 'Hinflug gebucht · Rückflug offen',
+    desktop: 'Tagesplan',
+    nutzlast: {
+      reise: reise({
+        startDate: '2026-08-30',
+        endDate: '2026-09-13',
+        stages: [
+          etappe({
+            arrivalDate: '2026-08-30',
+            departureDate: '2026-09-13',
+          }),
+        ],
+        ohneTag: [
+          punkt({
+            id: 'flug-hin',
+            kind: 'flight',
+            title: 'ZRH → DPS · Swiss',
+            dayId: null,
+            startsOn: '2026-08-30',
+            priceAmount: 890,
+            priceCurrency: 'CHF',
+            provider: 'duffel',
+            externalRef: 'off_1',
+            bookingStatus: 'booked',
+            bookingSource: 'user',
+            bookingConfirmedAt: JETZT,
+          }),
+        ],
+      }),
+    },
+  },
+  'bestand-unbestimmt': {
+    kompakt: 'noch nicht vollständig bestimmbar',
+    desktop: 'noch nicht vollständig bestimmbar',
+    tab: 'Flüge',
+    nutzlast: {
+      anfangsBereich: 'fluege',
+      reise: reise({
+        origin: null,
+        originPlaceId: null,
+        startDate: null,
+        endDate: null,
+        stages: [etappe({ arrivalDate: null, departureDate: null, placeId: null })],
+        ohneTag: [
+          punkt({
+            id: 'flug-offen',
+            kind: 'flight',
+            title: 'ZRH → DPS',
+            dayId: null,
+            startsOn: null,
+            priceAmount: 890,
+            priceCurrency: 'CHF',
+            provider: 'duffel',
+            externalRef: 'off_1',
+          }),
+        ],
+      }),
+      mitSuche: true,
+    },
+  },
 }
 
-function layoutPruefen() {
+function layoutPruefen(erwartetBereich) {
   const fehler = []
   const seite = document.documentElement
   if (seite.scrollWidth > seite.clientWidth + 1) {
@@ -305,12 +461,49 @@ function layoutPruefen() {
     if (aktiv && aktiv !== 'Übersicht' && plan && !plan.closest('[hidden]')) {
       fehler.push('Tagesplan ausserhalb der Übersicht sichtbar')
     }
+
+    const bezeichnung = {
+      uebersicht: 'Übersicht',
+      fluege: 'Flüge',
+      unterkunft: 'Unterkunft',
+      aktivitaeten: 'Aktivitäten',
+    }
+    const huellen = [...document.querySelectorAll('[data-arbeitsbereich]')]
+    const sichtbare = []
+    for (const el of huellen) {
+      const id = el.getAttribute('data-arbeitsbereich') || '?'
+      const display = getComputedStyle(el).display
+      const box = el.getBoundingClientRect()
+      if (display === 'none') {
+        if (box.width > 0.5 || box.height > 0.5) {
+          fehler.push(`${id} bleibt im Layout ${Math.round(box.width)}×${Math.round(box.height)}`)
+        }
+        if (!el.hasAttribute('inert')) fehler.push(`${id} ohne inert`)
+      } else {
+        sichtbare.push(id)
+      }
+    }
+    if (huellen.length && sichtbare.length !== 1) {
+      fehler.push(`sichtbare Hauptbereiche: ${sichtbare.join(', ') || 'keine'}`)
+    }
+    if (erwartetBereich && sichtbare[0] && sichtbare[0] !== erwartetBereich) {
+      fehler.push(`sichtbar ${sichtbare[0]}, erwartet ${erwartetBereich}`)
+    }
+    if (erwartetBereich && aktiv !== bezeichnung[erwartetBereich]) {
+      fehler.push(`Navigation zeigt ${aktiv || 'nichts'}, erwartet ${bezeichnung[erwartetBereich]}`)
+    }
   }
 
   const versteckt = [...document.querySelectorAll('[hidden]')]
   for (const el of versteckt) {
+    if (el.parentElement?.closest('[hidden]')) continue
+    const stil = getComputedStyle(el)
+    if (stil.display !== 'none') {
+      const name = el.getAttribute('data-arbeitsbereich') || (el.textContent || '').trim().slice(0, 24)
+      fehler.push(`hidden ohne display:none (${name})`)
+    }
     const fokus = el.querySelector('button, a, input, textarea, [tabindex]')
-    if (fokus && !el.hasAttribute('inert') && getComputedStyle(el).display !== 'none') {
+    if (fokus && !el.hasAttribute('inert') && stil.display !== 'none') {
       fehler.push('versteckter Bereich bleibt bedienbar')
     }
   }
@@ -454,7 +647,14 @@ async function zustandPruefen(browser, name, viewport, zustand) {
   const nachweis = viewport.width >= 1024 ? defin.desktop : defin.kompakt
   try {
     await zustandOeffnen(page, zustand, viewport)
-    await page.getByText(nachweis, { exact: false }).first().waitFor({ timeout: 15000 })
+    // Die kompakte Übersicht bleibt eingehängt und `hidden`. Dieselben
+    // Statuszeilen stehen dort und im sichtbaren Bestand. `.first()` würde
+    // sonst auf den versteckten Knoten warten.
+    await page
+      .getByText(nachweis, { exact: false })
+      .filter({ visible: true })
+      .first()
+      .waitFor({ timeout: 15000 })
   } catch {
     await kontext.close()
     return {
@@ -465,7 +665,10 @@ async function zustandPruefen(browser, name, viewport, zustand) {
       fehler: [`Inhaltsnachweis fehlt: «${nachweis}»`],
     }
   }
-  const layout = await page.evaluate(layoutPruefen)
+  const layout = await page.evaluate(
+    layoutPruefen,
+    viewport.width < 1024 ? (defin.tab ? TAB_ID[defin.tab] : 'uebersicht') : undefined,
+  )
   await kontext.close()
   return {
     ok: layout.ok,
@@ -473,6 +676,87 @@ async function zustandPruefen(browser, name, viewport, zustand) {
     viewport: viewport.name,
     zustand,
     fehler: layout.fehler,
+  }
+}
+
+async function tabwechselPruefen(browser, name, viewport) {
+  const kontext = await browser.newContext({
+    viewport: { width: viewport.width, height: viewport.height },
+    hasTouch: viewport.width <= 430,
+  })
+  const page = await kontext.newPage()
+  await page.addInitScript(
+    ({ speicher, nutzlast }) => sessionStorage.setItem(speicher, JSON.stringify(nutzlast)),
+    {
+      speicher: SPEICHER,
+      nutzlast: {
+        reise: reise({
+          days: Array.from({ length: 5 }, (_, i) => tag(i + 1)),
+        }),
+        mitSuche: true,
+        mitAenderung: true,
+      },
+    },
+  )
+  await page.route('**/api/hotels/search', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(HOTEL_UNAVAILABLE),
+    })
+  })
+  await page.route('**/api/activities/search', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(ACTIVITY_UNAVAILABLE),
+    })
+  })
+  await page.route('**/api/flights/search', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'unavailable',
+        message: 'Die Flugsuche ist in dieser Umgebung nicht verfügbar.',
+        coverageNote: 'Kein Flugprovider.',
+        options: [],
+      }),
+    })
+  })
+
+  await page.goto(`${BASIS}${PFAD}`, { waitUntil: 'domcontentloaded' })
+  const nav = page.getByRole('navigation', { name: 'Reisebereiche' })
+  await nav.waitFor({ timeout: 15000 })
+  const fehler = []
+
+  for (const sequenz of TAB_SEQUENZEN) {
+    for (const tab of sequenz) {
+      await nav.getByRole('button', { name: tab, exact: true }).click()
+      try {
+        await page
+          .getByText(TAB_NACHWEIS[tab], { exact: false })
+          .filter({ visible: true })
+          .first()
+          .waitFor({ timeout: 15000 })
+      } catch {
+        fehler.push(`${sequenz.join('→')}: Inhaltsnachweis fehlt nach «${tab}»`)
+        continue
+      }
+      const layout = await page.evaluate(layoutPruefen, TAB_ID[tab])
+      if (!layout.ok) {
+        fehler.push(`${sequenz.join('→')} nach «${tab}»: ${layout.fehler.join('; ')}`)
+      }
+    }
+  }
+
+  await kontext.close()
+  return {
+    ok: fehler.length === 0,
+    engine: name,
+    viewport: `${viewport.name}-tabwechsel`,
+    zustand: 'tabwechsel',
+    fehler: [...new Set(fehler)].slice(0, 12),
   }
 }
 
@@ -620,6 +904,9 @@ async function main() {
           for (const zustand of Object.keys(ZUSTAENDE)) {
             ergebnisse.push(await zustandPruefen(browser, name, viewport, zustand))
           }
+        }
+        for (const viewport of TABWECHSEL_BREITEN) {
+          ergebnisse.push(await tabwechselPruefen(browser, name, viewport))
         }
         ergebnisse.push(await interaktionPruefen(browser, name))
       } finally {

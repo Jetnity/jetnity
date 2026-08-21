@@ -26,12 +26,13 @@ Wichtige aktuelle Merge-Commits:
 - Produktqualitätsstandard: `b8254783789bce0707ce2d35e8525ef5cdfb9743`
 - Phase 3.3 / 3.3b / 3.3c Activities Foundation: `2fa0f16a43ebb41c9e453013c38a6eb4979b00ce`
 - Kontinuitätsstandard: `29c0caabd49a563c051a7d8c9bdd3a3c3f016752`
+- Trip Workspace Mobile UX Iteration 1–3: `70e471b00c7505356fe13f8185b204200c4bb781`
 
 Phase 3.3 wurde als Pull Request #24 per Squash Merge abgeschlossen. Die Production-Aktivitätensuche bleibt hart deaktiviert.
 
 Der Kontinuitätsstandard wurde als Pull Request #25 gemergt. Er verändert keine Produktlogik, macht aber Dokumentation/Übergabe verbindlich.
 
-Parallel liegt Draft-PR #27 für die Trip-Workspace Mobile-UX Iterationen 1 bis 3. Dieser Stand ist nicht auf `main` und nicht in Production.
+PR #27 (Trip Workspace Mobile UX Iteration 1–3) ist nach `main` gemergt. Der aktuelle Produktblock **Trip Coverage & Booking Status** liegt auf PR #29, Branch `feat/trip-coverage-booking-status`, und ist **Ready for Review**. Der echte iPhone-Retest nach dem Visibility-Fix ist bestanden. Die zugehörige Booking-Status-Migration wurde am 21. August 2026 nach ausdrücklicher Nutzerfreigabe auf Production angewendet und verifiziert. Provider-Suchen/Kill-Switches bleiben unverändert aus. **Nicht mergen, bevor der letzte CI-/Preview-Lauf auf dem finalen Dokumentations-Head grün ist und der Nutzer den Merge ausdrücklich freigibt.**
 
 ## 2. Verbindlicher Produktkern
 
@@ -39,11 +40,19 @@ Jetnity optimiert die **Gesamtreise**, nicht isoliert den billigsten Einzelbaust
 
 Preis, Zeit, Komfort, Lage, Verbindungen, Transfers, Tagesplanung, Folgekosten und Reibung sollen gemeinsam bewertet und verständlich erklärt werden.
 
+Jetnity ist **kein Bündel einzelner Suchmaschinen**. Flug, Unterkunft, Aktivitäten, Transfers, Tagesplan, Budget, Reisende und Präferenzen sollen um denselben Reisegraphen herum zusammenarbeiten. Vorhandener Reisekontext soll wiederverwendet werden, statt den Nutzer dieselben Daten mehrfach eingeben oder Zusammenhänge selbst prüfen zu lassen.
+
+Verbindliches Nutzerziel: Jetnity soll so viel sinnvolle Arbeit, Suchaufwand, Doppelarbeit, Entscheidungsstress und organisatorische Reibung wie möglich abnehmen. Nutzerbindung soll aus realem Nutzen, Vertrauen, Zeitersparnis und geringerem Reisestress entstehen – nicht aus Dark Patterns.
+
+Die **erste vollständig mit Jetnity geplante und begleitete Reise** ist ein zentraler Produkttest. Der Nutzer soll spätestens dabei deutlich erleben, wie viel Arbeit Jetnity ihm abnimmt, und Jetnity bei der nächsten Reise als selbstverständlichen Ausgangspunkt wählen wollen.
+
 Affiliate-/Vermittlungsprovisionen oder der Providername dürfen die fachliche Rangfolge niemals manipulieren.
 
 Für Änderungen an einer bestehenden Reise gilt:
 
 `Änderung erkennen → Auswirkungen auf die Gesamtreise bestimmen → optimierte Anpassung vorschlagen → Vorher/Nachher zeigen → erst nach ausdrücklicher Nutzerfreigabe übernehmen`
+
+Langfristig soll Jetnity vor und während der Reise mitdenken: offene Flugabschnitte/Hotelnächte, Buchungsstatus, Konflikte, Provider-Änderungen und nächste sinnvolle Schritte erkennen und verständlich erklären. Dabei niemals Live-Fakten erfinden oder wichtige Buchungsänderungen still durchführen.
 
 Modellantworten sind untrusted input. Das Modell schreibt nicht direkt in die Datenbank und darf Preise, Provider, Booking-URLs oder External-Refs nicht erfinden.
 
@@ -178,17 +187,20 @@ Nicht erfinden:
 - Nähe nur wegen derselben Stadt
 - minutengenaue Lücken ohne echte Uhrzeit
 
-## 6. Nächster Produktblock – Phase 3.4
+## 6. Nächster Hauptblock – Phase 3.4
 
-**Erster echter Hotel-Suchadapter.**
+**Status: WARTET / EXTERN BLOCKIERT.**
 
-Primärer Blocker: Booking.com Demand API / Managed Affiliate Partner Zugang bzw. API-Key.
+Phase 3.4 bleibt der **erste echte Hotel-Suchadapter**.
+
+Primärer Blocker: Booking.com Demand API / Managed Affiliate Partner Zugang bzw. API-Key. Backup: HBX / Hotelbeds.
 
 Solange dieser Zugang fehlt:
 
 - keinen Fake-Booking-Adapter bauen
 - keine simulierten Preise/Verfügbarkeiten im Produktweg
 - Production-Hotelsuche nicht aktivieren
+- Phase 3.4 nicht künstlich als erledigt markieren
 
 Sobald Zugang vorliegt, zuerst nur Preview:
 
@@ -208,69 +220,126 @@ Wenn Booking.com-Zugang nicht zeitnah möglich ist, HBX / Hotelbeds als dokument
 
 ## 6a. Querschnitt – Trip Workspace Mobile UX Iteration 1–3
 
-**In Arbeit auf Draft-PR #27. Nicht gemergt. Keine Production-Änderung.**
+**Auf `main` gemergt** als Pull Request #27, Merge-Commit `70e471b00c7505356fe13f8185b204200c4bb781`.
 
-Branch: `ux-trip-workspace-mobile-iteration-1`
+Keine Production-Datenbankänderung. Provider-Suchen bleiben aus.
 
-Aufträge: `docs/CURSOR_TRIP_WORKSPACE_MOBILE_UX_ITERATION_1.md`, `docs/CURSOR_TRIP_WORKSPACE_MOBILE_UX_ITERATION_2.md`, `docs/CURSOR_TRIP_WORKSPACE_MOBILE_UX_ITERATION_3.md`
+## 6b. Querschnitt – Trip Coverage & Booking Status
 
-Vercel Preview: https://jetnity-app-git-ux-trip-workspace-mobil-c58bb6-jetnity-e1b93c82.vercel.app
+**Umgesetzt auf PR #29 und Ready for Review. Der echte iPhone-Retest nach dem Visibility-Fix ist bestanden. Die Production-Migration ist nach ausdrücklicher Nutzerfreigabe angewendet und verifiziert. Provider-Suchen/Kill-Switches bleiben unverändert.**
 
-Iteration 1 bleibt die Basis. Iteration 2 setzt die Produktentscheidung um: auf Mobile gehören Übersicht und Tagesplan zusammen. Iteration 3 fasst Tagesauswahl und Tagesinhalt visuell zu einem Modul zusammen.
+Branch: `feat/trip-coverage-booking-status`
 
-Was sich auf Mobile geändert hat:
+Hauptauftrag: `docs/CURSOR_TRIP_COVERAGE_BOOKING_STATUS_TASK.md`
 
-- kompakter Reisekopf statt großem Hero
-- klebende Bereichsnavigation: Übersicht, Flüge, Unterkunft, Aktivitäten
-- Default bleibt die Übersicht
-- die Übersicht enthält Status zu Flügen, Unterkunft und Aktivitäten sowie den Tagesplan
-- `Plan` ist kein sichtbarer Haupt-Tab mehr
-- der mobile Tagesplan ist eine Karte: Status, Chip-Zeile und gewählter Tag
-- nur die Tageschips scrollen horizontal
-- `Reise ändern` bleibt eine kompakte Aktion in der Übersicht
-- Übersicht und Aktivitäten teilen dieselbe Tagesauswahl
-- Hotel- und Aktivitätssuche starten auf Mobile erst beim ersten Besuch des Bereichs
-- Desktop ab 1024 px bleibt die bisherige breite Arbeitsansicht
+Real-Device-Fixauftrag: `docs/CURSOR_PR29_TAB_VISIBILITY_FIX.md`
 
-Iteration-3-Nachweise auf diesem Branch:
+Der frühere Trip-Workspace-Audit mit **274 Kombinationen, 0 Fehler** hat die iPhone-Regression nicht gefunden, weil er nur das `hidden`-Attribut prüfte. Nach dem Fix: **278 Kombinationen, 0 Fehler**, inklusive Wechselketten auf 390/430 px (WebKit + Chromium). Activities-Regression: **184 Kombinationen, 0 Fehler**. Local `npm test` **1059/1059**. Typecheck, Lint, Hygiene und Production-Build grün. GitHub CI und Vercel Preview für den Visibility-Fix SUCCESS.
 
-- `npm test`: **1018/1018**
-- Typecheck, Lint, Hygiene und Production-Build grün
-- Trip-Workspace-Audit (WebKit + Chromium): **210 Kombinationen, 0 Fehler**
-- Activities-Regression-Audit: **184 Kombinationen, 0 Fehler**
-- Deep Link für den aktiven Bereich bleibt bewusst Client-State
+### Visibility-Fix (iPhone-Stack)
 
-Provider und Production sind unverändert aus. Keine Migration, keine neuen Secrets. Keine neue ADR, weil sich nur die visuelle Gruppierung geändert hat.
+Ursache: inaktive gemountete Wrapper trugen HTML `hidden` und gleichzeitig Tailwind `grid`. Author-CSS `display: grid` überstimmt `[hidden] { display: none }`. Zusätzlich setzt React 18 `inert={true}` nicht ins DOM.
 
-Nächster Schritt: Nutzer prüft die Preview auf einem echten iPhone. PR #27 bleibt Draft.
+Umsetzung:
 
-## 7. Arbeiten während wir auf Booking.com warten
+- ein einheitlicher Wrapper `BereichHuelle` mit `data-arbeitsbereich`
+- verborgene Bereiche tragen nur die Klasse `hidden`, niemals `grid`/`flex`/`block`
+- `inert` wird per `setAttribute` gesetzt
+- besuchte Bereiche bleiben eingehängt, nehmen aber kein Layout mehr ein
 
-Es ist ausdrücklich sinnvoll, konkrete Probleme der echten Jetnity-Website parallel zu verbessern.
+Der automatisierte Audit prüft nach jeder Sequenz `getComputedStyle` und die Layoutbox, nicht nur das Attribut. Der anschließende Test auf einem echten iPhone hat die zuvor gemeldete Vermischung bei Tabwechseln nicht mehr reproduziert; die Wechsel funktionieren sauber.
 
-Erlaubte, gut abgegrenzte Arbeiten:
+Was dieser Block baut:
 
-- Design-/UX-Probleme aus realer Nutzung
-- Mobile-UX
-- Navigation
-- Sucherlebnis
-- Performance
-- Loading-/Empty-/Error-Zustände
-- Accessibility
-- verständlichere Texte und Empfehlungen
-- konkrete sichtbare Qualitätsmängel
+- ehrliche Flug- und Unterkunftsabdeckung aus dem echten Reisegraphen
+- explizites `Als gebucht markieren` / `Buchung korrigieren` für Flug- und Stay-Planpunkte
+- kompakte Statuszeilen in der Übersicht
+- Bestand/Abdeckung oberhalb der bestehenden Suche
+- persistenter, provider-neutraler Buchungsstatus auf `trip_items` (ADR-0089)
 
-Solche Arbeiten sollen anhand echter Beobachtungen/Screenshots priorisiert werden. Keine spekulativen Großumbauten und keine Fake-Providerintegration.
+Was dieser Block ausdrücklich nicht baut:
+
+- Provider-Buchungsbestätigung
+- Production-Provider-Aktivierung oder Änderung bestehender Provider-Kill-Switches
+- Collaboration / PR #28
+- Redesign von Startseite, `Meine Reisen` oder Reise-Erstellung
+
+Production-Migrationsstand für PR #29:
+
+- Migration `20260821100000_trip_items_booking_status` am 21. August 2026 nach ausdrücklicher Nutzerfreigabe von Development nach Production übernommen
+- Spalten `booking_status`, `booking_source`, `booking_confirmed_at` auf Production vorhanden
+- `booking_status` ist `NOT NULL DEFAULT 'unconfirmed'`
+- vier Booking-CHECK-Constraints auf Production vorhanden
+- `reise_anlegen(jsonb)` schreibt die drei Booking-Felder
+- bestehende Production-Zeilen wurden als `unconfirmed` übernommen
+- Verifikationsabfrage nach Migration: **0 ungültige Booking-Zeilen**
+
+Nächster Schritt auf PR #29:
+
+1. diesen finalen Dokumentations-Head durch GitHub CI und Vercel Preview laufen lassen
+2. bei grünem Stand finalen Merge-Check durchführen
+3. erst nach ausdrücklicher Nutzerfreigabe squash mergen
+4. Production-Deploy danach kontrollieren
+
+## 7. Provider-unabhängiger Foundation-Track während Phase 3.4 wartet
+
+Die Wartezeit auf externe Providerzugänge wird nicht nur für optische Optimierungen genutzt. Jetnity baut den fehlenden **provider-unabhängigen Reise-Unterbau** bis zu dem Punkt, an dem später nur noch echte Provider/Nachweise angeschlossen werden müssen.
+
+Reihenfolge:
+
+### A. Mobilität & Transfers Foundation
+
+Gemeinsames Reisegraph-Modell für:
+
+- Bahn
+- Bus
+- Fähre
+- lokale/gebuchte Transfers
+
+Ziel: Start/Ziel, Station/Hafen, Abfahrt/Ankunft, Dauer, Status und Anschlussbeziehungen zu Flug, Unterkunft und Tagesplan verstehen. Noch keine Fake-Suche und kein erfundener Fahrplan.
+
+### B. Mietwagen Foundation
+
+Separates Modell für:
+
+- Abholort und Rückgabeort
+- Abhol-/Rückgabezeit
+- Fahrer-/Reisendenbezug
+- Fahrzeugklasse bzw. Anforderungen
+- Preis/Flexibilität nur als verifizierbare Provider-Fakten
+- Zusammenhang mit Etappen, Unterkünften und anderen Transfers
+
+### C. Travel Readiness & Dokumente Foundation
+
+Zuerst Status/Checklisten/Referenzen für Dinge wie:
+
+- Einreise-/Visumthemen
+- Reisepass-/Dokumentstatus
+- Versicherungen
+- Tickets/Buchungsbestätigungen
+- wichtige Vorbereitungen vor Abreise
+
+Ein echter Tresor für Pass-/Identitätsdokumente wird **nicht nebenbei** gebaut. Dafür braucht es später eine separate Security-/Verschlüsselungsentscheidung und explizite Freigabe.
+
+### D. Gesamt-Abdeckung erweitern
+
+Die zentrale Reiseübersicht soll danach provider-neutral erkennen können, welche wichtigen Bestandteile der Reise abgedeckt, offen oder noch nicht bestimmbar sind – nicht nur Flüge und Hotelnächte, sondern auch Mobilität/Mietwagen/Reisevorbereitung, soweit belastbare Daten vorhanden sind.
+
+### Kreuzfahrten
+
+Kreuzfahrten werden bewusst **noch nicht als eigene große Foundation** gebaut. Das Reisegraph-Modell soll mehrtägige Reisebausteine später zulassen, aber Kabinen-/Tarif-/Deck-/Routenlogik wird erst bei echtem Produktbedarf und Providerzugang umgesetzt.
+
+Während dieses Foundation-Tracks sind weiterhin konkrete Design-/UX-/Performance-/Accessibility-Verbesserungen erlaubt, aber sie verdrängen den funktionalen Unterbau nicht ohne Grund.
 
 ## 8. Danach geplante Reihenfolge
 
 ### Phase 3.5 – erster echter Activity-Provider
 
-Genau einen Provider integrieren, serverseitigen Nachweis anbinden, echten Preview-Weg verifizieren; Production zunächst aus.
+Genau einen Provider integrieren, serverseitigen Nachweis anbinden, echten Preview-Weg verifizieren; Production zunächst aus. Wenn der erforderliche Zugang noch fehlt, bleibt auch diese Providerphase extern blockiert, ohne Fake-Integration.
 
-### Phase 3.6 – Transfers
+### Phase 3.6 – Transfers / echte Mobilitätsprovider
 
-Nur produktorientiert und auf Basis echter Reisebedürfnisse. Keine breite Transportplattform auf Vorrat.
+Die unter Abschnitt 7 vorbereitete Mobilitäts-/Transfer-Foundation erhält erst dann echte Provider-/Fahrplandaten. Keine breite Transportplattform auf Vorrat.
 
 ### Phase 4 – Launch-Reife
 
@@ -300,14 +369,23 @@ Bekannter bestätigter Referenzdatenstand nach Phase 3.1:
 - RLS auf `airports` und `places` aktiv
 - `anon` und `authenticated` dort nur `SELECT`
 
-Angewendete Phase-3.1-Migrationen:
+Angewendete relevante Migrationen:
 
 1. `20260820100000_reise_anlegen_handelsfelder`
 2. `20260820110000_airports_referenz`
 3. `20260820120000_places_referenz`
 4. `20260820130000_reise_aendern_places`
+5. `20260821100000_trip_items_booking_status` – am 21. August 2026 nach ausdrücklicher Nutzerfreigabe auf Production angewendet und verifiziert
 
 Phase 3.2 und 3.3 benötigten für ihre Foundations keine neue Production-Migration.
+
+Booking-Status-Production-Verifikation nach Migration:
+
+- drei neue Spalten vorhanden
+- vier CHECK-Constraints vorhanden
+- `reise_anlegen(jsonb)` enthält die Booking-Felder
+- bestehende Zeilen standardmäßig `unconfirmed`
+- 0 ungültige Booking-Zeilen
 
 Keine riskante Production-DB-Aktion ohne ausdrückliche Freigabe.
 
@@ -320,6 +398,7 @@ Diese Punkte dürfen nicht aus der Dokumentation verschwinden, bis sie nachweisl
 - Duffel Sandbox-/Testtoken für echte Preview-Verifikation
 - Duffel Production-Zugang später separat
 - erster echter Activity-Provider und Zugang
+- echte Bahn-/Bus-/Fähre-/Transfer-/Mietwagenprovider erst nach dem provider-unabhängigen Foundation-Track
 
 ## 11. Bekannte technische Punkte / Schulden
 
@@ -341,7 +420,10 @@ Größere Aufgabe:
 
 Verbindlich:
 
+- `JETNITY_VISION.md` als Produkt-Nordstern lesen und schützen
 - professionelle Architektur
+- ein zusammenhängendes Reisesystem statt isolierter Suchprodukte
+- maximale sinnvolle Nutzerentlastung und Stressreduktion
 - mobile-first
 - Design-/UX-Qualität
 - Geschwindigkeit
@@ -362,10 +444,11 @@ Eine Phase ist erst fertig, wenn Dokumentation und Handoff dem tatsächlichen St
 ## 13. Sofortiger Startpunkt für einen neuen Agenten
 
 1. `docs/CONTINUITY_STANDARD.md` lesen.
-2. `JETNITY_HANDOFF.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `DECISIONS.md`, `DESIGN_SYSTEM.md` und `docs/PRODUCT_QUALITY_STANDARD.md` lesen.
+2. `JETNITY_VISION.md`, `JETNITY_HANDOFF.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `DECISIONS.md`, `DESIGN_SYSTEM.md` und `docs/PRODUCT_QUALITY_STANDARD.md` lesen.
 3. Aktuellen `main`-/PR-/CI-Stand prüfen.
 4. Phase 3.3 nicht erneut bauen: sie ist fertig und auf `main`.
-5. Phase 3.4 ist der nächste Hauptblock, aber der erste echte Hoteladapter wartet primär auf Booking.com-Zugang.
-6. Solange der Zugang fehlt, nur konkrete produktnahe Qualitätsverbesserungen oder andere ausdrücklich freigegebene provider-unabhängige Arbeiten durchführen.
-7. Draft-PR #27 (Trip Workspace Mobile UX Iteration 1–3) bleibt Draft. Nicht mergen. Keine Production-Änderung.
-8. Keine Production-Aktivierung und keine Secrets ohne separate ausdrückliche Freigabe.
+5. PR #27 nicht erneut bauen: Trip Workspace Mobile UX Iteration 1–3 ist auf `main`.
+6. PR #29 ist Ready for Review; echter iPhone-Retest und Production-Migration sind erledigt. Vor Merge den finalen CI-/Preview-Stand auf dem aktuellen Head prüfen und nur nach ausdrücklicher Nutzerfreigabe mergen.
+7. Nach sauberem Abschluss von PR #29 bleibt Phase 3.4 der nächste Hauptblock, aber **wartet extern** auf Booking.com bzw. alternativ HBX/Hotelbeds.
+8. Während Phase 3.4 wartet, mit einem neuen Agenten den provider-unabhängigen Foundation-Track aus Abschnitt 7 beginnen: zuerst **A. Mobilität & Transfers Foundation**, danach Mietwagen, Travel Readiness/Dokumente und Gesamt-Abdeckung.
+9. Keine Fake-Providerdaten, keine Production-Provider-Aktivierung und keine Secrets ohne separate ausdrückliche Freigabe.
