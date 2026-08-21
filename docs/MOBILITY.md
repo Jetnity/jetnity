@@ -188,6 +188,7 @@ Route-Truth-Korrektur auf demselben Draft-PR: gleichdatiger Flug ohne strukturie
 - Development-Migration `20260821120000` angewendet; `db:typen --pruefen`, `db:rechte`, `db:rls`, `db:sicherheit` 169/169
 - Trip-Workspace-Audit WebKit+Chromium: 358 Kombinationen, 0 Fehler
 - Activities-Regression: 184 Kombinationen, 0 Fehler
+- Route-Truth-Fix erneut verifiziert: Workspace-Audit 358/0, Activities 184/0
 
 ## 11. Nächster Schritt
 

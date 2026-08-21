@@ -122,4 +122,12 @@ Umgesetzt:
 - Production-Stand (`20260821100000` angewendet) und Playbook-Grenze (`20260820130000`) sind getrennt dokumentiert, kein offener Widerspruch
 - `20260821120000` bleibt Development-only
 
-`npm test` **1100/1100**. Hygiene, Build, Audits und Preview folgen auf diesem Head.
+Verifikation auf diesem Head:
+
+- `npm test` **1100/1100**
+- Typecheck, Lint, Hygiene (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`) grün
+- Production-Build grün
+- Trip-Workspace-Audit WebKit+Chromium: **358 Kombinationen, 0 Fehler**
+- Activities-Regression: **184 Kombinationen, 0 Fehler**
+
+GitHub CI und Vercel Preview folgen auf dem gepushten Head. PR bleibt Draft. Kein Production-Schritt.
