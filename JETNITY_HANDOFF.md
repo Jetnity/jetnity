@@ -40,11 +40,19 @@ Jetnity optimiert die **Gesamtreise**, nicht isoliert den billigsten Einzelbaust
 
 Preis, Zeit, Komfort, Lage, Verbindungen, Transfers, Tagesplanung, Folgekosten und Reibung sollen gemeinsam bewertet und verständlich erklärt werden.
 
+Jetnity ist **kein Bündel einzelner Suchmaschinen**. Flug, Unterkunft, Aktivitäten, Transfers, Tagesplan, Budget, Reisende und Präferenzen sollen um denselben Reisegraphen herum zusammenarbeiten. Vorhandener Reisekontext soll wiederverwendet werden, statt den Nutzer dieselben Daten mehrfach eingeben oder Zusammenhänge selbst prüfen zu lassen.
+
+Verbindliches Nutzerziel: Jetnity soll so viel sinnvolle Arbeit, Suchaufwand, Doppelarbeit, Entscheidungsstress und organisatorische Reibung wie möglich abnehmen. Nutzerbindung soll aus realem Nutzen, Vertrauen, Zeitersparnis und geringerem Reisestress entstehen – nicht aus Dark Patterns.
+
+Die **erste vollständig mit Jetnity geplante und begleitete Reise** ist ein zentraler Produkttest. Der Nutzer soll spätestens dabei deutlich erleben, wie viel Arbeit Jetnity ihm abnimmt, und Jetnity bei der nächsten Reise als selbstverständlichen Ausgangspunkt wählen wollen.
+
 Affiliate-/Vermittlungsprovisionen oder der Providername dürfen die fachliche Rangfolge niemals manipulieren.
 
 Für Änderungen an einer bestehenden Reise gilt:
 
 `Änderung erkennen → Auswirkungen auf die Gesamtreise bestimmen → optimierte Anpassung vorschlagen → Vorher/Nachher zeigen → erst nach ausdrücklicher Nutzerfreigabe übernehmen`
+
+Langfristig soll Jetnity vor und während der Reise mitdenken: offene Flugabschnitte/Hotelnächte, Buchungsstatus, Konflikte, Provider-Änderungen und nächste sinnvolle Schritte erkennen und verständlich erklären. Dabei niemals Live-Fakten erfinden oder wichtige Buchungsänderungen still durchführen.
 
 Modellantworten sind untrusted input. Das Modell schreibt nicht direkt in die Datenbank und darf Preise, Provider, Booking-URLs oder External-Refs nicht erfinden.
 
@@ -215,13 +223,37 @@ Keine Production-Datenbankänderung. Provider-Suchen bleiben aus.
 
 ## 6b. Querschnitt – Trip Coverage & Booking Status
 
-**Umgesetzt auf Draft-PR #29. Nicht mergen. Keine Production-Migration, kein Production-Kill-Switch.**
+**Umgesetzt auf Draft-PR #29, aber wegen eines realen iPhone-Visibility-Bugs noch nicht freigabereif. Nicht mergen. Keine Production-Migration, kein Production-Kill-Switch.**
 
 Branch: `feat/trip-coverage-booking-status`
 
-Auftrag: `docs/CURSOR_TRIP_COVERAGE_BOOKING_STATUS_TASK.md`
+Hauptauftrag: `docs/CURSOR_TRIP_COVERAGE_BOOKING_STATUS_TASK.md`
 
-Trip-Workspace-Audit (WebKit + Chromium): **274 Kombinationen, 0 Fehler**, inklusive Bestand/gebucht/unbestimmt. Activities-Regression: **184 Kombinationen, 0 Fehler**.
+Real-Device-Fixauftrag: `docs/CURSOR_PR29_TAB_VISIBILITY_FIX.md`
+
+Der automatisierte Trip-Workspace-Audit war zunächst bei **274 Kombinationen, 0 Fehler** und die Activities-Regression bei **184 Kombinationen, 0 Fehler**. Ein anschließender echter iPhone-Test hat jedoch eine Tab-Visibility-Regression gefunden. Deshalb dürfen diese früheren grünen Audit-Zahlen nicht als Freigabe interpretiert werden.
+
+### Offener iPhone-Blocker
+
+Reproduktion auf kompakter Ansicht:
+
+- zuerst z. B. `Flüge` öffnen: zunächst korrekt
+- anschließend `Unterkunft` oder `Aktivitäten` öffnen
+- bereits besuchte Bereiche bleiben sichtbar und stapeln sich unter dem aktiven Bereich
+- umgekehrt reproduzierbar bei anderer Reihenfolge
+
+Gefundene Ursache im aktuellen `TripWorkspace.tsx`:
+
+- inaktive bereits gemountete Bereiche erhalten zwar HTML `hidden`
+- die Flüge-/Unterkunft-Wrapper tragen gleichzeitig Tailwind `grid`
+- die Display-Regel kann die erwartete `hidden`-Darstellung übersteuern
+- dadurch bleiben inaktive Bereiche visuell im Layout
+
+Der Fix muss alle kompakten Bereiche absichern und Browser-Regressionsprüfungen mit echten Wechselketten enthalten, z. B.:
+
+`Übersicht → Flüge → Unterkunft → Aktivitäten → Übersicht`
+
+Der Test darf nicht nur das Vorhandensein des `hidden`-Attributs prüfen, sondern muss verifizieren, dass inaktive Bereiche tatsächlich keinen sichtbaren Layoutplatz einnehmen.
 
 Was dieser Block baut:
 
@@ -238,7 +270,13 @@ Was dieser Block ausdrücklich nicht baut:
 - Collaboration / PR #28
 - Redesign von Startseite, `Meine Reisen` oder Reise-Erstellung
 
-Nächster Schritt nach Abschluss auf dem Branch: Preview/iPhone-Review. PR #29 bleibt Draft.
+Nächster Schritt auf PR #29:
+
+1. Visibility-Fix durch Cursor abschließen
+2. WebKit-/Chromium-Wechselketten und vollständige CI grün
+3. neue Preview erzeugen
+4. erneut auf echtem iPhone prüfen
+5. erst danach `Mark Ready` erwägen
 
 ## 7. Arbeiten während wir auf Booking.com warten
 
@@ -305,6 +343,8 @@ Angewendete Phase-3.1-Migrationen:
 
 Phase 3.2 und 3.3 benötigten für ihre Foundations keine neue Production-Migration.
 
+Die Booking-Status-Migration aus PR #29 ist Development-only und **nicht** auf Production angewendet.
+
 Keine riskante Production-DB-Aktion ohne ausdrückliche Freigabe.
 
 ## 10. Offene externe Abhängigkeiten
@@ -337,7 +377,10 @@ Größere Aufgabe:
 
 Verbindlich:
 
+- `JETNITY_VISION.md` als Produkt-Nordstern lesen und schützen
 - professionelle Architektur
+- ein zusammenhängendes Reisesystem statt isolierter Suchprodukte
+- maximale sinnvolle Nutzerentlastung und Stressreduktion
 - mobile-first
 - Design-/UX-Qualität
 - Geschwindigkeit
@@ -358,10 +401,11 @@ Eine Phase ist erst fertig, wenn Dokumentation und Handoff dem tatsächlichen St
 ## 13. Sofortiger Startpunkt für einen neuen Agenten
 
 1. `docs/CONTINUITY_STANDARD.md` lesen.
-2. `JETNITY_HANDOFF.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `DECISIONS.md`, `DESIGN_SYSTEM.md` und `docs/PRODUCT_QUALITY_STANDARD.md` lesen.
+2. `JETNITY_VISION.md`, `JETNITY_HANDOFF.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `DECISIONS.md`, `DESIGN_SYSTEM.md` und `docs/PRODUCT_QUALITY_STANDARD.md` lesen.
 3. Aktuellen `main`-/PR-/CI-Stand prüfen.
 4. Phase 3.3 nicht erneut bauen: sie ist fertig und auf `main`.
-5. Phase 3.4 ist der nächste Hauptblock, aber der erste echte Hoteladapter wartet primär auf Booking.com-Zugang.
-6. Solange der Zugang fehlt, nur konkrete produktnahe Qualitätsverbesserungen oder andere ausdrücklich freigegebene provider-unabhängige Arbeiten durchführen.
-7. Draft-PR #29 (Trip Coverage & Booking Status) bleibt Draft. Nicht mergen. Keine Production-Migration und keine Production-Aktivierung.
-8. Keine Production-Aktivierung und keine Secrets ohne separate ausdrückliche Freigabe.
+5. PR #27 nicht erneut bauen: Trip Workspace Mobile UX Iteration 1–3 ist auf `main`.
+6. Draft-PR #29 bleibt Draft. Vor jeder Freigabe zuerst den offenen iPhone-Visibility-Fix aus `docs/CURSOR_PR29_TAB_VISIBILITY_FIX.md` und den erneuten Real-Device-Test prüfen.
+7. Nach sauberem Abschluss des Querschnittsblocks ist Phase 3.4 der nächste Hauptblock; der erste echte Hoteladapter wartet primär auf Booking.com-Zugang.
+8. Solange der Zugang fehlt, nur konkrete produktnahe Qualitätsverbesserungen oder andere ausdrücklich freigegebene provider-unabhängige Arbeiten durchführen.
+9. Keine Production-Aktivierung und keine Secrets ohne separate ausdrückliche Freigabe.
