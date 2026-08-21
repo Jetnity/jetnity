@@ -177,6 +177,15 @@ Keine neuen laufenden Kosten. Keine bezahlte Mobilitäts-API. Der Kill Switch al
 
 ---
 
-## 10. Nächster Schritt
+## 10. Nachweis (21. August 2026)
+
+- `npm test` 1096/1096
+- Typecheck, Lint, Hygiene grün
+- Production-Build grün
+- Development-Migration `20260821120000` angewendet; `db:typen --pruefen`, `db:rechte`, `db:rls`, `db:sicherheit` 169/169
+- Trip-Workspace-Audit WebKit+Chromium: 358 Kombinationen, 0 Fehler
+- Activities-Regression: 184 Kombinationen, 0 Fehler
+
+## 11. Nächster Schritt
 
 Nicht automatisch ein Provider. Nach Review/Merge von PR #30 entscheidet die Roadmap zwischen Mietwagen-Foundation, Travel-Readiness-Foundation oder einem inzwischen verfügbaren echten Providerzugang. Phase 3.4 (Hotelprovider) bleibt extern blockiert.

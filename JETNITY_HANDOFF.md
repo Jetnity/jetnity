@@ -282,6 +282,15 @@ Nächster Schritt nach PR #29: nicht erneut bauen. Foundation A liegt auf Draft-
 
 **In Arbeit auf Draft-PR #30.** Branch `feat/mobility-transfers-foundation`. Auftrag: `docs/CURSOR_MOBILITY_TRANSFERS_FOUNDATION_TASK.md`. Fachdoku: `docs/MOBILITY.md`. ADRs: ADR-0090, ADR-0091.
 
+Lokaler Nachweis 21. August 2026:
+
+- `npm test` **1096/1096**
+- Typecheck, Lint, Hygiene und Production-Build grün
+- Development-Migration `20260821120000` angewendet; `db:typen --pruefen`, `db:rechte`, `db:rls`, `db:sicherheit` **169/169**
+- Trip-Workspace-Audit: **358 Kombinationen, 0 Fehler** (WebKit + Chromium, fünf Hauptbereiche)
+- Activities-Regression: **184 Kombinationen, 0 Fehler**
+- Historischer Development-Transfer bleibt ohne Modus und `unconfirmed`
+
 Was dieser Block baut:
 
 - `kind=transfer` als gemeinsamer persistenter Mobilitäts-Planpunkt

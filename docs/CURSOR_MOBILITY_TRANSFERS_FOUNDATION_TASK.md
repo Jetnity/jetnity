@@ -392,20 +392,27 @@ Der nächste Schritt nach diesem Foundation-Block ist **nicht automatisch ein Pr
 
 Stand: 21. August 2026 · Draft-PR #30 · Branch `feat/mobility-transfers-foundation`
 
-**Status:** Implementierung im Repository; Tests, Development-Migration, Audits, CI und Preview folgen in diesem Lauf und werden hier nachgezogen.
+**Status:** Foundation im Repository und auf Development verifiziert. PR bleibt Draft. Nicht mergen. Nicht Production.
 
-Umgesetzt im Code:
+Umgesetzt:
 
 - `kind=transfer` plus optionale Spalten (ADR-0090)
 - `lib/mobility/` Domäne, Abdeckung, Ranking, fail-closed Suche
 - Buchungsstatus für Transfer, manuelle Nutzerangabe
 - Workspace-Bereich Mobilität in der Fünfer-Navigation
-- Migration `20260821120000_trip_items_mobility.sql` nur für Development
+- Migration `20260821120000_trip_items_mobility.sql` am 21. August 2026 **nur auf Development** angewendet und verifiziert
+- `npm test` **1096/1096**
+- Typecheck, Lint, Hygiene (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`) grün
+- Production-Build grün; bekannte bestehende Supabase-Edge- und Browserslist-Warnungen, keine neuen
+- `db:rechte`, `db:rls`, `db:typen --pruefen`, `db:sicherheit` **169/169**
+- Trip-Workspace-Audit WebKit+Chromium: **358 Kombinationen, 0 Fehler**
+- Activities-Regression: **184 Kombinationen, 0 Fehler**
 
 Nicht umgesetzt und bewusst offen:
 
 - kein Provider
 - keine Production-Migration
 - keine Production-Aktivierung
+- kein echter iPhone-Preview-Test (ein grüner Audit ersetzt ihn nicht)
 - Phase 3.4 bleibt wartend
 - Mietwagen und Kreuzfahrten bleiben Folgeblöcke
