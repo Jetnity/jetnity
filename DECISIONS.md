@@ -2269,7 +2269,9 @@ Nicht-Transfer-Zeilen und historischer Transfer-Altbestand bleiben `null`. `book
 **Datum:** 21. August 2026
 **Status:** umgesetzt auf Draft-PR #30; kein Provider gewählt
 
-**Entscheidung:** Die Foundation leitet Verbindungsbedarf als `Bewegungskante` aus Origin und Etappen ab. Fehlende oder mehrdeutige Graphdaten bleiben `unknown`, nicht fälschlich `open` oder abgedeckt. Ein eindeutiger passender Transfer ist `selected` oder `booked`. Ein eindeutiger passender Flug am Kantendatum ist `covered_by_flight`. Mehrere Treffer oder Transfer plus Flug bleiben unbestimmt. Dauer in Minuten nur bei vollständigen lokalen Datums-/Zeitpaaren; keine Bewertung „knapp/genug“.
+**Entscheidung:** Die Foundation leitet Verbindungsbedarf als `Bewegungskante` aus Origin und Etappen ab. Fehlende oder mehrdeutige Graphdaten bleiben `unknown`, nicht fälschlich `open` oder abgedeckt. Ein eindeutiger Transfer mit passendem Start, Ziel und Datum ist `selected` oder `booked`. Ein gleichdatiger Flug ohne strukturierten Nachweis von Start **und** Ziel macht die Kante `unknown`, nicht `covered_by_flight`. Titel und Notiz eines Fluges dürfen nicht geparst werden. Mehrere Treffer oder Transfer plus gleichdatiger Flug bleiben unbestimmt. Ohne Transfer und ohne gleichdatigen Flug bleibt eine vollständige Kante `open`. Dauer in Minuten nur bei vollständigen lokalen Datums-/Zeitpaaren; keine Bewertung „knapp/genug“.
+
+Korrektur 21. August 2026 (PR #30 Review-Fix): Die erste Fassung markierte einen eindeutigen Flug am Kantendatum als `covered_by_flight`. Das verletzte die Wahrheitsregel, weil das heutige Flug-`TripItem` die Route nicht strukturiert trägt. Foundation A verwendet `covered_by_flight` deshalb vorerst nicht. Truth > scheinbare Vollständigkeit.
 
 Die Suchnaht folgt den bestehenden Foundations: `MobilityProvider.suchen()`, geschlossene Route `POST /api/mobility/search`, Production hart aus, Factory und Nachweis `null`. Kill Switch `JETNITY_MOBILITY_AKTIV` benennt keinen Anbieter und ist kein Secret. Ranking ist deterministisch und provisionsneutral.
 
@@ -2289,6 +2291,7 @@ Die Suchnaht folgt den bestehenden Foundations: `MobilityProvider.suchen()`, ges
 - `mobilityProviderAus()` und `mobilityNachweisAusUmgebung()` geben `null` zurück.
 - Preview/Development ohne Provider bleiben unavailable, auch wenn `JETNITY_MOBILITY_AKTIV=true`.
 - Keine Fake-Ergebnisse, keine manuelle Booking-URL, keine Browser-Providerbestätigung.
+- `covered_by_flight` bleibt als Status reserviert, wird in Foundation A aber nicht abgeleitet.
 - Nächster Schritt nach Review ist nicht automatisch ein Provider.
 
 ---

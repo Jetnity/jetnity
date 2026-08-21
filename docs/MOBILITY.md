@@ -109,14 +109,15 @@ Migration: `supabase/migrations/20260821120000_trip_items_mobility.sql`. **Nur D
 Regeln:
 
 - fehlendes Datum → `unknown`, nicht fälschlich `open`
-- eindeutiger passender Transfer → `selected` oder `booked`
-- eindeutiger passender Flug am Kantendatum → `covered_by_flight`
-- mehrere Treffer oder Transfer plus Flug → `unknown`
+- eindeutiger passender Transfer (Start, Ziel und Datum) → `selected` oder `booked`
+- ein gleichdatiger Flug ohne strukturierten Routennachweis → `unknown`, nicht `covered_by_flight`
+- mehrere Treffer oder Transfer plus gleichdatiger Flug → `unknown`
+- ohne Transfer und ohne gleichdatigen Flug bleibt eine vollständige Kante `open`
 - ein vorhandener Planpunkt ist ausgewählt, nicht automatisch gebucht
 - Dauer in Minuten nur bei vollständigen lokalen Datums-/Zeitpaaren
 - keine Bewertung „knapp/genug“
 
-Die bestehende Flugabdeckung in `lib/trips/flug-abdeckung.ts` bleibt unverändert.
+`covered_by_flight` bleibt als Statuswert reserviert, entsteht in Foundation A aber nicht. Persistierte Flüge speichern Start und Ziel nur in Titel/Notiz; Freitext ist keine Trust Boundary. Die Transfer-Routenspalten bleiben bei Nicht-Transfers `null`. Ein Datum allein ist kein Routennachweis. Die bestehende Flugabdeckung in `lib/trips/flug-abdeckung.ts` bleibt unverändert.
 
 ---
 
@@ -179,7 +180,9 @@ Keine neuen laufenden Kosten. Keine bezahlte Mobilitäts-API. Der Kill Switch al
 
 ## 10. Nachweis (21. August 2026)
 
-- `npm test` 1096/1096
+Route-Truth-Korrektur auf demselben Draft-PR: gleichdatiger Flug ohne strukturierte Route ist `unknown`, nicht `covered_by_flight`.
+
+- `npm test` 1100/1100
 - Typecheck, Lint, Hygiene grün
 - Production-Build grün
 - Development-Migration `20260821120000` angewendet; `db:typen --pruefen`, `db:rechte`, `db:rls`, `db:sicherheit` 169/169

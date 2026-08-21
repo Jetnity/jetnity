@@ -63,7 +63,14 @@ Die Importer dürfen Production nicht mehr „aus Versehen“ beschreiben. Der D
 | Secrets | Token, JWT und Schlüssel werden nicht geloggt. |
 | CI / Build / Merge | rufen den Import nicht auf. `prebuild` und `npm test` enthalten keinen Import. |
 
-`npm run db:anwenden` ist ebenfalls geschützt: ohne Flags nur Development-Branch. Production-Schema nur mit `--produktion --projekt-ref <Ref> --bis 20260820130000`. Ohne `--bis` oder mit einem höheren Grenzwert bricht der Lauf ab. Migrationen nach `20260820130000` – einschliesslich `20260821100000_trip_items_booking_status.sql` und `20260821120000_trip_items_mobility.sql` – laufen in diesem Playbook nicht mit, auch wenn sie im Repository schon liegen. Die Mobilitätsmigration darf **nicht** auf Production angewendet werden. Handoff zu PR #29 hält fest, dass die Booking-Status-Migration später nach ausdrücklicher Nutzerfreigabe dennoch auf Production lag; das ändert den Default dieses Playbooks nicht. Eine erneute Production-Anwendung späterer Migrationen braucht eine neue ausdrückliche Freigabe.
+`npm run db:anwenden` ist ebenfalls geschützt: ohne Flags nur Development-Branch. Production-Schema nur mit `--produktion --projekt-ref <Ref> --bis 20260820130000`. Ohne `--bis` oder mit einem höheren Grenzwert bricht der Lauf ab.
+
+Zwei getrennte Aussagen, kein Widerspruch:
+
+- **Tatsächlicher Production-Stand:** `20260821100000_trip_items_booking_status` ist nach ausdrücklicher Nutzerfreigabe (21. August 2026, PR #29) auf Production angewendet.
+- **Playbook-Grenze:** Automatische Production-Läufe stoppen bei `20260820130000`. Das ist eine Guardrail gegen unbeabsichtigtes Nachziehen späterer Dateien, kein Gegenbeweis zum realen Production-Stand.
+
+`20260821120000_trip_items_mobility.sql` bleibt Development-only und darf **nicht** auf Production angewendet werden. Eine Production-Anwendung späterer Migrationen braucht eine neue ausdrückliche Freigabe.
 
 `npm run production:pruefen` ist vollständig read-only: nur `SELECT` auf Bestand und PostgreSQL-Metadaten (Rechte, RLS, Policies). Kein HTTP-POST, kein INSERT/UPDATE/DELETE.
 

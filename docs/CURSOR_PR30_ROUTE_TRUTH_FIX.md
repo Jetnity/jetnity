@@ -103,3 +103,23 @@ Nach dem Fix vollständig ausführen:
 Der PR bleibt **Draft**. Nicht mergen. Kein Production-Schritt.
 
 Erst nach grünem Fix-Head folgt der echte iPhone-Preview-Test.
+
+---
+
+## Abschlussstatus
+
+Stand: 21. August 2026 · Draft-PR #30 · Branch `feat/mobility-transfers-foundation`
+
+**Status:** Route-Truth-Korrektur im Repository. PR bleibt Draft. Nicht mergen. Nicht Production.
+
+Umgesetzt:
+
+- `covered_by_flight` entsteht nicht mehr aus `startsOn === date`
+- gleichdatiger Flug ohne strukturierten Routennachweis → `unknown`
+- Titel/Notiz eines Fluges werden nicht als Route gelesen
+- eindeutiger Transfer mit Start + Ziel + Datum bleibt `selected` / `booked`
+- ohne Flug/Transfer bleibt eine vollständige Kante `open`
+- Production-Stand (`20260821100000` angewendet) und Playbook-Grenze (`20260820130000`) sind getrennt dokumentiert, kein offener Widerspruch
+- `20260821120000` bleibt Development-only
+
+`npm test` **1100/1100**. Hygiene, Build, Audits und Preview folgen auf diesem Head.

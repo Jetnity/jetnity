@@ -401,7 +401,7 @@ Umgesetzt:
 - Buchungsstatus für Transfer, manuelle Nutzerangabe
 - Workspace-Bereich Mobilität in der Fünfer-Navigation
 - Migration `20260821120000_trip_items_mobility.sql` am 21. August 2026 **nur auf Development** angewendet und verifiziert
-- `npm test` **1096/1096**
+- `npm test` **1100/1100** (inkl. Route-Truth-Korrektur: gleichdatiger Flug ohne strukturierte Route ist `unknown`)
 - Typecheck, Lint, Hygiene (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`) grün
 - Production-Build grün; bekannte bestehende Supabase-Edge- und Browserslist-Warnungen, keine neuen
 - `db:rechte`, `db:rls`, `db:typen --pruefen`, `db:sicherheit` **169/169**

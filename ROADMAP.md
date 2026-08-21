@@ -162,13 +162,13 @@ Die Wartezeit auf externe Providerzugänge wird genutzt, um Jetnity funktional b
 
 **In Arbeit auf Draft-PR #30**, Branch `feat/mobility-transfers-foundation`. Nicht mergen. Nicht auf Production migrieren oder aktivieren. Phase 3.4 bleibt wartend.
 
-Nachweis 21. August 2026: Tests **1096/1096**, Development-Migration angewendet und verifiziert, Workspace-Audit **358/0**, Activities-Regression **184/0**. Ein echter iPhone-Preview-Test steht vor Ready noch aus.
+Nachweis 21. August 2026: Tests **1100/1100**, Development-Migration angewendet und verifiziert, Workspace-Audit **358/0**, Activities-Regression **184/0**. Route-Truth-Korrektur: gleichdatiger Flug ohne strukturierte Route ist `unknown`, nicht `covered_by_flight`. Ein echter iPhone-Preview-Test steht vor Ready noch aus.
 
 Gemeinsames Reisegraph-Modell für Bahn, Bus, Fähre und Transfer:
 
 - persistenter Planpunkt bleibt `trip_items.kind = transfer`
 - strukturierte optionale Spalten statt JSON oder 1:1-Tabelle (ADR-0090)
-- konservative `Bewegungskante`-Abdeckung (ADR-0091)
+- konservative `Bewegungskante`-Abdeckung (ADR-0091): Transfer nur bei Start + Ziel + Datum; ein Datum allein macht keinen Flug zur Abdeckung
 - manueller Buchungsstatus analog zu Flug/Stay
 - geschlossene Suchnaht, Factory/Nachweis `null`, Kill Switch `JETNITY_MOBILITY_AKTIV`
 - ein Workspace-Bereich „Mobilität“, keine vier Tabs

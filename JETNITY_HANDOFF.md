@@ -32,7 +32,11 @@ Phase 3.3 wurde als Pull Request #24 per Squash Merge abgeschlossen. Die Product
 
 Der Kontinuitätsstandard wurde als Pull Request #25 gemergt. Er verändert keine Produktlogik, macht aber Dokumentation/Übergabe verbindlich.
 
-PR #27 (Trip Workspace Mobile UX Iteration 1–3) und PR #29 (Trip Coverage & Booking Status) sind nach `main` gemergt. Basis dieses Stands ist `211872c1`. Die Booking-Status-Migration `20260821100000` wurde laut diesem Handoff am 21. August 2026 nach ausdrücklicher Nutzerfreigabe auf Production angewendet; das Production-Playbook in `docs/PRODUCTION_ROLLOUT.md` erlaubt spätere Migrationen weiterhin nicht als Default.
+PR #27 (Trip Workspace Mobile UX Iteration 1–3) und PR #29 (Trip Coverage & Booking Status) sind nach `main` gemergt. Basis dieses Stands ist `211872c1`.
+
+**Tatsächlicher Production-Stand:** Die Booking-Status-Migration `20260821100000` ist am 21. August 2026 nach ausdrücklicher Nutzerfreigabe auf Production angewendet.
+
+**Playbook-Grenze:** `docs/PRODUCTION_ROLLOUT.md` stoppt automatische Production-Läufe weiterhin bei `20260820130000`. Das ist eine Guardrail gegen unbeabsichtigtes Nachziehen späterer Dateien, kein Gegenbeweis zum realen Production-Stand. `20260821120000_trip_items_mobility` bleibt Development-only.
 
 Der aktuelle Produktblock ist **Foundation A – Mobilität & Transfers** auf Draft-PR #30, Branch `feat/mobility-transfers-foundation`. **PR bleibt Draft, nicht mergen.** Die Mobilitätsmigration `20260821120000` darf nur auf Development angewendet werden, nicht auf Production. Kein Provider, keine Fake-Fahrpläne, keine Production-Aktivierung. Phase 3.4 bleibt extern blockiert.
 
@@ -284,7 +288,7 @@ Nächster Schritt nach PR #29: nicht erneut bauen. Foundation A liegt auf Draft-
 
 Lokaler Nachweis 21. August 2026:
 
-- `npm test` **1096/1096**
+- `npm test` **1100/1100**
 - Typecheck, Lint, Hygiene und Production-Build grün
 - Development-Migration `20260821120000` angewendet; `db:typen --pruefen`, `db:rechte`, `db:rls`, `db:sicherheit` **169/169**
 - Trip-Workspace-Audit: **358 Kombinationen, 0 Fehler** (WebKit + Chromium, fünf Hauptbereiche)
@@ -295,7 +299,7 @@ Was dieser Block baut:
 
 - `kind=transfer` als gemeinsamer persistenter Mobilitäts-Planpunkt
 - optionale strukturierte Spalten auf `trip_items`, nicht JSON und nicht 1:1-Tabelle
-- konservative Reisegraph-Abdeckung (`Bewegungskante`)
+- konservative Reisegraph-Abdeckung (`Bewegungskante`): Transfer nur bei Start + Ziel + Datum; gleichdatiger Flug ohne strukturierte Route bleibt `unknown`, nicht `covered_by_flight`
 - manueller Buchungsstatus für Transfers
 - manuelle Erfassung als Nutzerangabe
 - geschlossene `POST /api/mobility/search`, Factory/Nachweis fail closed
