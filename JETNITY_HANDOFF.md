@@ -230,6 +230,17 @@ Umgesetzt im Draft:
 - Mietwagen deckt keine Bewegungskante
 - Development-Migration `20260821200000` – **nicht Production**
 
+Qualitätsnachweis im Draft:
+
+- `npm test`: **1143/1143**
+- Typecheck, Lint, Hygiene, Production-Build grün
+- Development-Migration `20260821200000` angewendet und verifiziert
+- `db:rechte`, `db:rls`, `db:sicherheit` 169/169, `db:typen --pruefen`, `auth:pruefen`
+- Trip-Workspace-Audit WebKit + Chromium: **502 Kombinationen, 0 Fehler**
+- Activities-Regression: **184 Kombinationen, 0 Fehler**
+- GitHub CI und Vercel Preview grün auf dem geprüften Head
+- echter iPhone-Test **offen**
+
 Fachdoku: `docs/RENTAL_CARS.md`, ADR-0092 / ADR-0093.
 
 Kein Fake-Provider und keine Production-Aktivierung.

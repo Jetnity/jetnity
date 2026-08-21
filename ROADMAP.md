@@ -179,6 +179,8 @@ Nicht in diesem Block: Mietwagen, Kreuzfahrten, echter Provider, Fake-Fahrpläne
 
 **In Arbeit auf Draft-PR #31**, Branch `feat/rental-car-foundation`. Nicht mergen. Nicht auf Production migrieren oder aktivieren.
 
+Nachweis 21. August 2026: Tests **1143/1143**, Development-Migration angewendet und verifiziert, Workspace-Audit **502/0**, Activities-Regression **184/0**. Ein echter iPhone-Preview-Test steht vor Ready noch aus.
+
 Provider-neutrales Modell:
 
 - persistenter Planpunkt `trip_items.kind = rental_car`

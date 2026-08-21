@@ -3,7 +3,7 @@
 Stand: 21. August 2026  
 Branch: `feat/rental-car-foundation`  
 Basis: `main` @ `463360e64dae068e3d8eb9f3012890b94df4a75a`  
-Status: Umsetzung auf Draft-PR #31; Real-Device-iPhone-Test und Production-Migration bleiben offen
+Status: Draft-PR #31 umgesetzt; Development-Migration verifiziert; Real-Device-iPhone-Test und Production-Migration bleiben offen
 
 ## 0. Arbeitsmodus
 

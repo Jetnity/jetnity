@@ -133,13 +133,29 @@ Innerhalb von Mobilität gibt es die Unterbereiche **Verbindungen** und **Mietwa
 
 ---
 
-## 8. Kosten
+## 8. Qualität / Nachweis
+
+Stand Draft-PR #31, 21. August 2026:
+
+- `npm test` 1143/1143
+- Typecheck, Lint, Hygiene grün
+- Production-Build grün
+- Development-Migration angewendet und verifiziert
+- `db:rechte`, `db:rls`, `db:sicherheit` 169/169, `db:typen --pruefen`, `auth:pruefen` grün
+- Trip-Workspace-Audit WebKit + Chromium: 502 Kombinationen, 0 Fehler
+- Activities-Regression: 184 Kombinationen, 0 Fehler
+- GitHub CI und Vercel Preview grün auf dem geprüften Head
+- echter iPhone-Test **offen**
+
+---
+
+## 9. Kosten
 
 Keine neuen laufenden Kosten. Kein bezahlter Mietwagen-Account. Der Kill Switch allein erzeugt keine Providerkosten.
 
 ---
 
-## 9. Nächster Schritt
+## 10. Nächster Schritt
 
 Foundation B nicht um einen Fake-Provider erweitern. Real-Device-iPhone-Test bleibt offen, bis der Nutzer ihn bestätigt. Production-Migration und Production-Suche brauchen jeweils eine ausdrückliche Freigabe.
 
