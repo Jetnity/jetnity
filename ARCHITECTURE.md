@@ -151,7 +151,7 @@ Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
 | `/` | Startseite mit Positionierung und Einstieg in die Reiseplanung |
 | `/planen` | Reisebeschreibung in eigenen Worten (`components/trips/Reiseidee.tsx`) und darunter das Formular (`components/trips/TripPlanner.tsx`). Feldfehler sitzen am Feld, nicht nur unter der Absenden-Taste (ADR-0068). |
 | `/reisen` | Übersicht der Reisen – im Konto aus Supabase, als Gast die eine Gastreise |
-| `/reisen/[tripId]` | Trip Workspace: auf schmalen Viewports kompakte Übersicht mit eingebettetem Tagesplan plus Bereiche Flüge, Unterkunft, Aktivitäten; ab 1024 px die bisherige breite Arbeitsansicht. Flüge und Unterkunft zeigen zuerst Bestand/Abdeckung, erst darunter die bestehende Suche. Production-Suchen bleiben aus. |
+| `/reisen/[tripId]` | Trip Workspace: auf schmalen Viewports kompakte Übersicht mit eingebettetem Tagesplan plus Bereiche Flüge, Unterkunft, Aktivitäten, Mobilität; ab 1024 px die bisherige breite Arbeitsansicht. Flüge, Unterkunft und Mobilität zeigen zuerst Bestand/Abdeckung, erst darunter die bestehende Suche. Production-Suchen bleiben aus. |
 
 **Seit Phase 1.5 gibt es zwei Wege, und sie unterscheiden sich nur im Speicher.** Fachliche Beschreibung: [docs/REISEN.md](docs/REISEN.md), Entscheidungen in [DECISIONS.md](DECISIONS.md) ADR-0041 bis ADR-0043.
 
@@ -242,7 +242,7 @@ Vollständige Beschreibung: [docs/DATENBANK.md](docs/DATENBANK.md). Hier steht n
 
 **Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Die Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b, dem Reiseschema aus Phase 1.5, dem Kostenprotokoll aus Phase 2.1 und der Sprachänderung aus Phase 2.2 – **12 Tabellen, 32 Policies und 24 Funktionen**. Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
 
-Vier der zwölf Tabellen sind die Reisedaten: `trips`, `trip_stages`, `trip_days`, `trip_items`. Sie sind privat und tragen ihre Eigentümerkennung selbst; ein zusammengesetzter Fremdschlüssel `(trip_id, user_id) → trips (id, user_id)` verhindert, dass ein Kind an einer fremden Reise hängt. `trip_days.stage_id` bindet einen Tag an eine Etappe derselben Reise, auch ohne Kalenderdatum (ADR-0057). `trips.revision` und `trips.last_mutation_id` tragen Fassung und Idempotenz einer Sprachänderung (ADR-0058). `trip_items` trägt seit Draft-PR #29 die provider-neutralen Spalten `booking_status`, `booking_source` und `booking_confirmed_at` (ADR-0089). Die Migration ist am 21. August 2026 auf Development angewendet und nicht Teil des Production-Playbooks. Enum-Typen führt das Schema keine mehr – jeder Wertebereich steht in einer Prüfbedingung ([DECISIONS.md](DECISIONS.md) ADR-0043).
+Vier der zwölf Tabellen sind die Reisedaten: `trips`, `trip_stages`, `trip_days`, `trip_items`. Sie sind privat und tragen ihre Eigentümerkennung selbst; ein zusammengesetzter Fremdschlüssel `(trip_id, user_id) → trips (id, user_id)` verhindert, dass ein Kind an einer fremden Reise hängt. `trip_days.stage_id` bindet einen Tag an eine Etappe derselben Reise, auch ohne Kalenderdatum (ADR-0057). `trips.revision` und `trips.last_mutation_id` tragen Fassung und Idempotenz einer Sprachänderung (ADR-0058). `trip_items` trägt seit PR #29 die provider-neutralen Spalten `booking_status`, `booking_source` und `booking_confirmed_at` (ADR-0089). Foundation A (Draft-PR #30) ergänzt optionale Mobilitätsspalten auf derselben Tabelle, ohne neue `kind`-Werte (ADR-0090). Die Mobilitätsmigration `20260821120000` gilt nur für Development und ist nicht Teil des Production-Playbooks. Enum-Typen führt das Schema keine mehr – jeder Wertebereich steht in einer Prüfbedingung ([DECISIONS.md](DECISIONS.md) ADR-0043).
 
 Die zwölfte Tabelle ist `public.model_usage` aus Phase 2.1 – ein Kostenprotokoll, keine Nutzdaten. Sie ist die Stelle, an der die Kostenkontrolle für Modellaufrufe wirklich stattfindet: Ein Zähler in einem Serverprozess kennt nur seine eigene Instanz, und Vercel startet beliebig viele. Zwei `SECURITY DEFINER`-Funktionen buchen ein Kontingent, bevor ein Aufruf geschieht, und schliessen es danach ab; `pg_advisory_xact_lock` serialisiert Prüfung und Einfügung – dieselbe Bauweise wie die Missbrauchsschranke aus ADR-0049. Einzelheiten in [docs/MODELL.md](docs/MODELL.md), Begründung in ADR-0052.
 
@@ -272,7 +272,7 @@ Seit Phase 1.4b prüft `npm run db:rechte` eine vierte Regel: Keine Funktion nen
 
 ## 7. API-Schicht
 
-Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1, 3.2 und 3.3 existieren **15** Route Handler. Zuvor waren es 77.
+Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1, 3.2, 3.3 und Foundation A existieren **16** Route Handler. Zuvor waren es 77.
 
 | Endpunkt | Zweck | Status |
 | --- | --- | --- |
@@ -281,6 +281,7 @@ Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1, 3.2 und 3.3 existieren **15** Route Handler
 | `api/flights/search` | geschlossene Flugsuche | Phase 3.1, Production aus, nur Duffel-Test |
 | `api/hotels/search` | geschlossene Hotelsuche | Phase 3.2c, Production aus, noch kein Hotelprovider |
 | `api/activities/search` | geschlossene Aktivitätensuche | Phase 3.3, Production aus, noch kein Activity-Provider |
+| `api/mobility/search` | geschlossene Mobilitätssuche | Foundation A, Production aus, noch kein Mobility-Provider |
 | `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
 | `api/admin/security/*` (5) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
 
@@ -325,6 +326,14 @@ Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen 
 Phase 3.3 hat bewusst keinen Activity-Adapter. `activityProviderAus()` gibt `null` zurück. Production bleibt hart aus. Development/Preview brauchen `JETNITY_ACTIVITY_AKTIV` **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Der Tageskontext entsteht nur aus vorhandenen Reisedaten. Öffnungszeiten, Wegezeiten und minutengenaue Lücken werden nicht erfunden. Fehlende Uhrzeiten gelten nicht als konfliktfrei. Die interne Audit-Seite `/ui-audit/activities` ist in Production unabhängig von `JETNITY_UI_AUDIT` fail closed (ADR-0086).
 
 Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `ActivityNachweis` gegen Ziel, Datum, Teilnehmer, Währung und den Timeslot der Option. Heute ist der Nachweis `null` – fail closed. Gast-LocalStorage gilt nicht als serverseitig verifiziert. Fachlich: [docs/ACTIVITIES.md](docs/ACTIVITIES.md), ADR-0078 bis ADR-0085.
+
+### Mobilitätssuche (Foundation A)
+
+`POST /api/mobility/search` ist geschlossen: nur `application/json`, höchstens 16 KB UTF-8. `Content-Length` über dem Limit wird vor dem Lesen abgewiesen; der Body wird zusätzlich streamend mit hartem Cap gelesen. Optional Provider, Ranking, Client-Sicht. Kein Provider-Proxy. 429 setzt `Retry-After`. Die UI spricht `MobilityOption`, nicht einen Anbieter.
+
+Foundation A hat bewusst keinen Mobility-Adapter. `mobilityProviderAus()` gibt `null` zurück. Production bleibt hart aus. Development/Preview brauchen `JETNITY_MOBILITY_AKTIV` **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Es gibt keinen Providernamen und kein Provider-Secret. Abdeckung entsteht nur aus vorhandenen Reisedaten. Fahrpläne, Wegezeiten und Anschlussgarantien werden nicht erfunden. Fehlende Graphdaten bleiben unbestimmt.
+
+Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browseroption. Sie verlangt einen serverseitigen `MobilityNachweis`. Heute ist der Nachweis `null` – fail closed. Manuelle Verbindungen sind Nutzerangaben, keine Providerfakten. Fachlich: [docs/MOBILITY.md](docs/MOBILITY.md), ADR-0090 und ADR-0091.
 
 ### Ortsbasis (Phase 3.1)
 

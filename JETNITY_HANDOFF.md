@@ -32,7 +32,9 @@ Phase 3.3 wurde als Pull Request #24 per Squash Merge abgeschlossen. Die Product
 
 Der Kontinuitätsstandard wurde als Pull Request #25 gemergt. Er verändert keine Produktlogik, macht aber Dokumentation/Übergabe verbindlich.
 
-PR #27 (Trip Workspace Mobile UX Iteration 1–3) ist nach `main` gemergt. Der aktuelle Produktblock **Trip Coverage & Booking Status** liegt auf PR #29, Branch `feat/trip-coverage-booking-status`, und ist **Ready for Review**. Der echte iPhone-Retest nach dem Visibility-Fix ist bestanden. Die zugehörige Booking-Status-Migration wurde am 21. August 2026 nach ausdrücklicher Nutzerfreigabe auf Production angewendet und verifiziert. Provider-Suchen/Kill-Switches bleiben unverändert aus. **Nicht mergen, bevor der letzte CI-/Preview-Lauf auf dem finalen Dokumentations-Head grün ist und der Nutzer den Merge ausdrücklich freigibt.**
+PR #27 (Trip Workspace Mobile UX Iteration 1–3) und PR #29 (Trip Coverage & Booking Status) sind nach `main` gemergt. Basis dieses Stands ist `211872c1`. Die Booking-Status-Migration `20260821100000` wurde laut diesem Handoff am 21. August 2026 nach ausdrücklicher Nutzerfreigabe auf Production angewendet; das Production-Playbook in `docs/PRODUCTION_ROLLOUT.md` erlaubt spätere Migrationen weiterhin nicht als Default.
+
+Der aktuelle Produktblock ist **Foundation A – Mobilität & Transfers** auf Draft-PR #30, Branch `feat/mobility-transfers-foundation`. **PR bleibt Draft, nicht mergen.** Die Mobilitätsmigration `20260821120000` darf nur auf Development angewendet werden, nicht auf Production. Kein Provider, keine Fake-Fahrpläne, keine Production-Aktivierung. Phase 3.4 bleibt extern blockiert.
 
 ## 2. Verbindlicher Produktkern
 
@@ -226,7 +228,7 @@ Keine Production-Datenbankänderung. Provider-Suchen bleiben aus.
 
 ## 6b. Querschnitt – Trip Coverage & Booking Status
 
-**Umgesetzt auf PR #29 und Ready for Review. Der echte iPhone-Retest nach dem Visibility-Fix ist bestanden. Die Production-Migration ist nach ausdrücklicher Nutzerfreigabe angewendet und verifiziert. Provider-Suchen/Kill-Switches bleiben unverändert.**
+**Auf `main` gemergt** als Pull Request #29, Merge-Commit `211872c1aad0e002d81f5ea1fb2d7eef4490d4b7`. Der echte iPhone-Retest nach dem Visibility-Fix ist bestanden. Die Production-Booking-Migration ist nach ausdrücklicher Nutzerfreigabe angewendet und verifiziert. Provider-Suchen/Kill-Switches bleiben unverändert.
 
 Branch: `feat/trip-coverage-booking-status`
 
@@ -274,12 +276,31 @@ Production-Migrationsstand für PR #29:
 - bestehende Production-Zeilen wurden als `unconfirmed` übernommen
 - Verifikationsabfrage nach Migration: **0 ungültige Booking-Zeilen**
 
-Nächster Schritt auf PR #29:
+Nächster Schritt nach PR #29: nicht erneut bauen. Foundation A liegt auf Draft-PR #30.
 
-1. diesen finalen Dokumentations-Head durch GitHub CI und Vercel Preview laufen lassen
-2. bei grünem Stand finalen Merge-Check durchführen
-3. erst nach ausdrücklicher Nutzerfreigabe squash mergen
-4. Production-Deploy danach kontrollieren
+## 6c. Foundation A – Mobilität & Transfers
+
+**In Arbeit auf Draft-PR #30.** Branch `feat/mobility-transfers-foundation`. Auftrag: `docs/CURSOR_MOBILITY_TRANSFERS_FOUNDATION_TASK.md`. Fachdoku: `docs/MOBILITY.md`. ADRs: ADR-0090, ADR-0091.
+
+Was dieser Block baut:
+
+- `kind=transfer` als gemeinsamer persistenter Mobilitäts-Planpunkt
+- optionale strukturierte Spalten auf `trip_items`, nicht JSON und nicht 1:1-Tabelle
+- konservative Reisegraph-Abdeckung (`Bewegungskante`)
+- manueller Buchungsstatus für Transfers
+- manuelle Erfassung als Nutzerangabe
+- geschlossene `POST /api/mobility/search`, Factory/Nachweis fail closed
+- ein Workspace-Bereich „Mobilität“ in der bestehenden Fünfer-Navigation
+
+Was dieser Block ausdrücklich nicht baut:
+
+- Providerauswahl oder -anbindung
+- Fake-Preise, Fahrpläne, Verfügbarkeiten
+- Production-Migration oder Production-Suche
+- Mietwagen, Kreuzfahrten, Hotelprovider (Phase 3.4)
+- Redesign von Startseite, `Meine Reisen` oder Reise-Erstellung
+
+Migration `20260821120000_trip_items_mobility.sql` nur Development. Kill Switch `JETNITY_MOBILITY_AKTIV` ist kein Provider-Secret. PR bleibt Draft.
 
 ## 7. Provider-unabhängiger Foundation-Track während Phase 3.4 wartet
 
@@ -289,14 +310,7 @@ Reihenfolge:
 
 ### A. Mobilität & Transfers Foundation
 
-Gemeinsames Reisegraph-Modell für:
-
-- Bahn
-- Bus
-- Fähre
-- lokale/gebuchte Transfers
-
-Ziel: Start/Ziel, Station/Hafen, Abfahrt/Ankunft, Dauer, Status und Anschlussbeziehungen zu Flug, Unterkunft und Tagesplan verstehen. Noch keine Fake-Suche und kein erfundener Fahrplan.
+**In Arbeit auf Draft-PR #30.** Gemeinsames Reisegraph-Modell für Bahn, Bus, Fähre und Transfer. Ziel: Start/Ziel, Station/Hafen, Abfahrt/Ankunft, Dauer, Status und Anschlussbeziehungen zu Flug, Unterkunft und Tagesplan verstehen. Noch keine Fake-Suche und kein erfundener Fahrplan. Details in Abschnitt 6c und [docs/MOBILITY.md](docs/MOBILITY.md).
 
 ### B. Mietwagen Foundation
 
@@ -448,7 +462,8 @@ Eine Phase ist erst fertig, wenn Dokumentation und Handoff dem tatsächlichen St
 3. Aktuellen `main`-/PR-/CI-Stand prüfen.
 4. Phase 3.3 nicht erneut bauen: sie ist fertig und auf `main`.
 5. PR #27 nicht erneut bauen: Trip Workspace Mobile UX Iteration 1–3 ist auf `main`.
-6. PR #29 ist Ready for Review; echter iPhone-Retest und Production-Migration sind erledigt. Vor Merge den finalen CI-/Preview-Stand auf dem aktuellen Head prüfen und nur nach ausdrücklicher Nutzerfreigabe mergen.
-7. Nach sauberem Abschluss von PR #29 bleibt Phase 3.4 der nächste Hauptblock, aber **wartet extern** auf Booking.com bzw. alternativ HBX/Hotelbeds.
-8. Während Phase 3.4 wartet, mit einem neuen Agenten den provider-unabhängigen Foundation-Track aus Abschnitt 7 beginnen: zuerst **A. Mobilität & Transfers Foundation**, danach Mietwagen, Travel Readiness/Dokumente und Gesamt-Abdeckung.
-9. Keine Fake-Providerdaten, keine Production-Provider-Aktivierung und keine Secrets ohne separate ausdrückliche Freigabe.
+6. PR #29 nicht erneut bauen: Coverage/Booking Status ist auf `main`.
+7. Foundation A liegt auf Draft-PR #30. **Nicht mergen.** Keine Production-Migration, keine Production-Provider-Aktivierung.
+8. Phase 3.4 bleibt der nächste echte Provider-Hauptblock, **wartet extern** auf Booking.com bzw. alternativ HBX/Hotelbeds.
+9. Nach Review/Merge von PR #30 entscheidet die Roadmap den nächsten Foundation-Schritt (Mietwagen, Travel Readiness oder ein inzwischen verfügbarer Providerzugang) – nicht automatisch einen Mobilitätsprovider.
+10. Keine Fake-Providerdaten, keine Production-Provider-Aktivierung und keine Secrets ohne separate ausdrückliche Freigabe.

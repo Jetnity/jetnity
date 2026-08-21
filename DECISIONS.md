@@ -2223,6 +2223,73 @@ Offene Flugabschnitte und fehlende Nächte sind abgeleitete Lücken, keine gespe
 - Gast und Konto teilen dieselbe `TripItem`-Form.
 - Natürliche Sprache darf den Status nicht erfinden, löschen oder still ändern.
 - `types/supabase.ts` entspricht nach dem Development-Lauf dem live Schema (`db:typen --pruefen`).
+- Handoff zu PR #29 hält fest, dass dieselbe Migration später nach ausdrücklicher Nutzerfreigabe auch auf Production angewendet wurde. Das Production-Playbook in `docs/PRODUCTION_ROLLOUT.md` erlaubt das nicht als Default und stoppt weiter bei `20260820130000`. Das ist ein dokumentierter Widerspruch, kein stilles Auflösen: spätere Migrationen – einschliesslich Foundation A – bleiben vom automatischen Production-Lauf ausgeschlossen.
+
+---
+
+## ADR-0090 – Mobilität bleibt `kind=transfer` mit wenigen Spalten
+
+**Datum:** 21. August 2026
+**Status:** umgesetzt auf Draft-PR #30; Development-Migration vorgesehen, nicht Production
+
+**Entscheidung:** Bahn, Bus, Fähre und Transfer werden nicht als neue Top-Level-`trip_items.kind`-Werte fragmentiert. Der persistente Planpunkt bleibt `kind = 'transfer'`. Die fachliche Art und die Routingfakten liegen als optionale Spalten auf `trip_items`:
+
+- `mobility_mode` `rail | bus | ferry | transfer`
+- `origin_place_id`, `destination_place_id` (Text, max. 80, **ohne FK** auf `places`)
+- `origin_name`, `destination_name`
+- `connection_ref`
+- `mobility_changes` (0–20; 0 = direkt; null = unbekannt)
+- `mobility_evidence` (in dieser Foundation nur `user`)
+
+Nicht-Transfer-Zeilen und historischer Transfer-Altbestand bleiben `null`. `booked` darf für `kind='transfer'` gesetzt werden, Quelle weiterhin nur `user`. `public.reise_aendern()` wird nicht ersetzt.
+
+**Kontext:** Foundation A muss Mobilität im Reisegraphen vergleichbar machen, ohne vier Suchmaschinen oder eine speculative Enum-Explosion. `metadata` wäre für Abdeckung, Constraints und RLS die falsche Stelle. Eine 1:1-Tabelle verdoppelt Ownership und Join-Pfad, ohne heute mehr Semantik zu geben.
+
+**Alternativen:**
+
+1. *Neue `kind`-Werte `rail`/`bus`/`ferry`.* Zerteilt Buchung, Coverage, UI und Commercial Protection.
+2. *Eigene `trip_mobility`-Tabelle 1:1.* Mehr RLS- und Übernahmefläche, ohne dass Foundation A sie braucht.
+3. *Fakten in `trip_items.metadata`.* Verstösst gegen die Schema-Regel: was UI und Fachlogik abfragen, ist eine Spalte.
+4. *FK auf `places`.* Eine Gastreise-Übernahme würde an fehlenden Ortszeilen scheitern.
+
+**Begründung:** Ein Planpunkt, wenige optionale Spalten und vorhandene Zeitfelder reichen für manuelle Erfassung, Abdeckung und späteren Providerabgleich. Place-IDs bleiben Strings wie `geonames:2657896`. Die vorhandene, ungenutzte Spalte `time_zone` wird nicht in `TripItem` aufgenommen.
+
+**Konsequenzen:**
+
+- Migration `20260821120000_trip_items_mobility.sql` liegt im Repository. **Nur Development.** Nicht Production.
+- `public.reise_anlegen()` schreibt die Felder und erlaubt gebuchte Transfers nur als `user`.
+- Gast- und Konto-Übernahme tragen dieselben Felder.
+- Natürliche Sprache darf Mobilitäts- und Buchungsfakten nicht erfinden.
+- Keine neue RLS-Tabelle; vorhandene `trip_items`-Policies bleiben die Eigentumsgrenze.
+
+---
+
+## ADR-0091 – Konservative Mobilitätsabdeckung und fail-closed Suchnaht
+
+**Datum:** 21. August 2026
+**Status:** umgesetzt auf Draft-PR #30; kein Provider gewählt
+
+**Entscheidung:** Die Foundation leitet Verbindungsbedarf als `Bewegungskante` aus Origin und Etappen ab. Fehlende oder mehrdeutige Graphdaten bleiben `unknown`, nicht fälschlich `open` oder abgedeckt. Ein eindeutiger passender Transfer ist `selected` oder `booked`. Ein eindeutiger passender Flug am Kantendatum ist `covered_by_flight`. Mehrere Treffer oder Transfer plus Flug bleiben unbestimmt. Dauer in Minuten nur bei vollständigen lokalen Datums-/Zeitpaaren; keine Bewertung „knapp/genug“.
+
+Die Suchnaht folgt den bestehenden Foundations: `MobilityProvider.suchen()`, geschlossene Route `POST /api/mobility/search`, Production hart aus, Factory und Nachweis `null`. Kill Switch `JETNITY_MOBILITY_AKTIV` benennt keinen Anbieter und ist kein Secret. Ranking ist deterministisch und provisionsneutral.
+
+**Kontext:** Jetnity soll später verstehen, wie Reisende zwischen Etappen kommen – ohne Fahrpläne, Wegezeiten oder Preise zu erfinden. Die Flugabdeckung bleibt eine eigene Domaindatei; Foundation A refaktoriert sie nicht.
+
+**Alternativen:**
+
+1. *Flugabdeckung in eine universelle Movement-Engine ziehen.* Hohes Regressionsrisiko ohne heutigen Gewinn.
+2. *Fehlende Daten als offen behandeln.* Würde Lücken behaupten, die der Graph nicht kennt.
+3. *Providername oder Env-Token schon jetzt festlegen.* Verstösst gegen die Foundation-Regel: kein Anbieter, keine Secrets.
+
+**Begründung:** Konservative Kanten und eine geschlossene Naht lassen später einen echten Adapter zu, ohne Production oder Preview zu täuschen. Manuelle Eingaben bleiben sichtbar Nutzerangaben.
+
+**Konsequenzen:**
+
+- `lib/mobility/` ist frei von Provider-SDKs.
+- `mobilityProviderAus()` und `mobilityNachweisAusUmgebung()` geben `null` zurück.
+- Preview/Development ohne Provider bleiben unavailable, auch wenn `JETNITY_MOBILITY_AKTIV=true`.
+- Keine Fake-Ergebnisse, keine manuelle Booking-URL, keine Browser-Providerbestätigung.
+- Nächster Schritt nach Review ist nicht automatisch ein Provider.
 
 ---
 

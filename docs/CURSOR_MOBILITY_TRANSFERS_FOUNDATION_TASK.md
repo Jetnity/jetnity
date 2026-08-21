@@ -385,3 +385,27 @@ Cursor soll im PR klar berichten:
 12. nächster Schritt
 
 Der nächste Schritt nach diesem Foundation-Block ist **nicht automatisch ein Provider**. Nach Review/Merge wird anhand Roadmap entschieden: Mietwagen Foundation, Travel Readiness/Dokumente Foundation oder ein inzwischen verfügbar gewordener echter Providerzugang.
+
+---
+
+## Abschlussstatus
+
+Stand: 21. August 2026 · Draft-PR #30 · Branch `feat/mobility-transfers-foundation`
+
+**Status:** Implementierung im Repository; Tests, Development-Migration, Audits, CI und Preview folgen in diesem Lauf und werden hier nachgezogen.
+
+Umgesetzt im Code:
+
+- `kind=transfer` plus optionale Spalten (ADR-0090)
+- `lib/mobility/` Domäne, Abdeckung, Ranking, fail-closed Suche
+- Buchungsstatus für Transfer, manuelle Nutzerangabe
+- Workspace-Bereich Mobilität in der Fünfer-Navigation
+- Migration `20260821120000_trip_items_mobility.sql` nur für Development
+
+Nicht umgesetzt und bewusst offen:
+
+- kein Provider
+- keine Production-Migration
+- keine Production-Aktivierung
+- Phase 3.4 bleibt wartend
+- Mietwagen und Kreuzfahrten bleiben Folgeblöcke
