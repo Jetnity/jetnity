@@ -1247,7 +1247,11 @@ async function interaktionPruefen(browser, name) {
   const mobilityNachErstbesuch = mobility
   const rentalNachVerbindungen = rental
   await page.getByRole('tab', { name: 'Mietwagen', exact: true }).click()
-  await page.getByText('Kein Mietwagen eingetragen').waitFor({ timeout: 15000 })
+  await page
+    .getByText('Nicht jede Reise braucht ein Auto', { exact: false })
+    .filter({ visible: true })
+    .first()
+    .waitFor({ timeout: 15000 })
   const rentalNachErstbesuch = rental
   await page.getByRole('tab', { name: 'Verbindungen', exact: true }).click()
   await page.getByText('Bahn, Bus, Fähre und Transfer').waitFor({ timeout: 15000 })
