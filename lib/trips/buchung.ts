@@ -6,14 +6,16 @@
 // nur durch eine ausdrückliche Nutzerbestätigung. Der Browser darf keine
 // Provider-Quelle behaupten.
 
-import type {
-  TripItem,
-  TripItemBookingSource,
-  TripItemBookingStatus,
-  TripItemKind,
+import {
+  TRIP_ITEM_BOOKING_SOURCES,
+  TRIP_ITEM_BOOKING_STATUSES,
+  type TripItem,
+  type TripItemBookingSource,
+  type TripItemBookingStatus,
+  type TripItemKind,
 } from '@/types/trips'
 
-export const UNBESTAETIGTE_BUCHUNG = {
+const UNBESTAETIGTE_BUCHUNG = {
   bookingStatus: 'unconfirmed' as const,
   bookingSource: null,
   bookingConfirmedAt: null,
@@ -56,11 +58,15 @@ export function kannBuchungMarkieren(punkt: Pick<TripItem, 'kind'>): boolean {
 }
 
 export function buchungsstatusLesen(wert: unknown): TripItemBookingStatus {
-  return wert === 'booked' ? 'booked' : 'unconfirmed'
+  return (TRIP_ITEM_BOOKING_STATUSES as readonly string[]).includes(wert as string)
+    ? (wert as TripItemBookingStatus)
+    : 'unconfirmed'
 }
 
 export function buchungsquelleLesen(wert: unknown): TripItemBookingSource | null {
-  return wert === 'user' ? 'user' : null
+  return (TRIP_ITEM_BOOKING_SOURCES as readonly string[]).includes(wert as string)
+    ? (wert as TripItemBookingSource)
+    : null
 }
 
 /**
