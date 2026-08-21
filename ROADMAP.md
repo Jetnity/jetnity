@@ -127,7 +127,9 @@ Gezielte Mobile-IA für `/reisen/[tripId]`, parallel zu Phase 3.4, ohne Provider
 - kompakter Reisekopf, klebende Bereichsnavigation, Übersicht als Default
 - Plan, Flüge, Unterkunft, Aktivitäten als getrennte Mobile-Bereiche
 - Desktop-Arbeitsansicht bleibt
-- fertig für Review/Preview, sobald CI, Audit und iPhone-Gegenprobe vorliegen
+- Typecheck, Lint, Hygiene, Production-Build, GitHub CI und Vercel Preview grün
+- Trip-Workspace-Audit: 178 Kombinationen, 0 Fehler
+- Activities-Regression-Audit: 184 Kombinationen, 0 Fehler
 - **nicht mergen**, bis der Nutzer den Preview auf einem echten iPhone beurteilt hat
 
 ### Während Booking.com noch offen ist

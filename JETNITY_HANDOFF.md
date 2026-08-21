@@ -214,6 +214,17 @@ Branch: `ux-trip-workspace-mobile-iteration-1`
 
 Auftrag: `docs/CURSOR_TRIP_WORKSPACE_MOBILE_UX_ITERATION_1.md`
 
+Vercel Preview: https://jetnity-app-git-ux-trip-workspace-mobil-c58bb6-jetnity-e1b93c82.vercel.app
+
+Technischer Stand der Iteration:
+
+- `npm test`: **1014/1014**
+- Typecheck, Lint, Hygiene und Production-Build grün
+- GitHub CI grün
+- Vercel Preview grün
+- Trip-Workspace-Audit (WebKit + Chromium): **178 Kombinationen, 0 Fehler**
+- Activities-Regression-Audit: **184 Kombinationen, 0 Fehler**
+
 Was sich auf Mobile geändert hat:
 
 - kompakter Reisekopf statt großem Hero
@@ -233,7 +244,7 @@ Was bewusst für Iteration 2 offen bleibt:
 
 Provider und Production sind unverändert aus. Keine Migration, keine neuen Secrets.
 
-Nächster Schritt nach technischem Abschluss: Nutzer prüft die Vercel Preview auf einem echten iPhone und gibt Produktfeedback.
+Nächster Schritt: Nutzer prüft die Vercel Preview auf einem echten iPhone und gibt Produktfeedback. Danach Iteration 2 oder Freigabe zum Merge.
 
 ## 7. Arbeiten während wir auf Booking.com warten
 
