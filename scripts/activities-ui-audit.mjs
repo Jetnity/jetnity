@@ -467,7 +467,13 @@ async function zustandPruefen(browser, name, viewport, zustand) {
   }
   const nachweis = ZUSTAENDE[zustand].nachweis
   try {
-    await page.getByText(nachweis, { exact: false }).first().waitFor({ timeout: zustand === 'loading' ? 4000 : 15000 })
+    // Nur der Aktivitätsbereich zählt. Der eingebettete Tagesplan in der
+    // Übersicht kann dieselben Wörter tragen und ist auf Mobile versteckt.
+    await page
+      .getByLabel('Aktivitäten', { exact: true })
+      .getByText(nachweis, { exact: false })
+      .first()
+      .waitFor({ timeout: zustand === 'loading' ? 4000 : 15000 })
   } catch {
     await kontext.close()
     return {
