@@ -19,7 +19,6 @@ export function selberOrt(
 ): boolean | null {
   if (links.placeId && rechts.placeId) return links.placeId === rechts.placeId
   if (nameGleich(links.name, rechts.name)) return true
-  if (links.name?.trim() && rechts.name?.trim()) return false
   return null
 }
 

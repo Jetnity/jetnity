@@ -4,16 +4,19 @@ import assert from 'node:assert/strict'
 import { datumUeberlappt, rentalDecktKanteNicht, rentalKalendertage, rentalOneWay } from '@/lib/rental-cars/zeitraum'
 
 describe('Mietwagen-Zeitraum', () => {
-  test('gleicher Ort ist same_location, sonst one_way, sonst unknown', () => {
+  test('gleiche IDs bleiben same_location, auch bei verschiedenen Labels', () => {
     assert.equal(
       rentalOneWay({
         originPlaceId: 'geonames:1',
         originName: 'Zürich Flughafen',
         destinationPlaceId: 'geonames:1',
-        destinationName: 'Zürich Flughafen',
+        destinationName: 'Zurich Airport',
       }),
       'same_location',
     )
+  })
+
+  test('verschiedene IDs sind one_way', () => {
     assert.equal(
       rentalOneWay({
         originPlaceId: 'geonames:1',
@@ -23,6 +26,27 @@ describe('Mietwagen-Zeitraum', () => {
       }),
       'one_way',
     )
+  })
+
+  test('verschiedene Namen ohne zwei IDs bleiben unknown', () => {
+    assert.equal(
+      rentalOneWay({
+        originPlaceId: null,
+        originName: 'Zürich Flughafen',
+        destinationPlaceId: null,
+        destinationName: 'Zurich Airport',
+      }),
+      'unknown',
+    )
+    assert.equal(
+      rentalOneWay({
+        originPlaceId: 'geonames:1',
+        originName: 'Zürich Flughafen',
+        destinationPlaceId: null,
+        destinationName: 'Zurich Airport',
+      }),
+      'unknown',
+    )
     assert.equal(
       rentalOneWay({
         originPlaceId: null,
@@ -31,6 +55,18 @@ describe('Mietwagen-Zeitraum', () => {
         destinationName: null,
       }),
       'unknown',
+    )
+  })
+
+  test('exakt gleiche Namen ohne IDs sind same_location', () => {
+    assert.equal(
+      rentalOneWay({
+        originPlaceId: null,
+        originName: 'Zürich Flughafen',
+        destinationPlaceId: null,
+        destinationName: 'Zürich Flughafen',
+      }),
+      'same_location',
     )
   })
 

@@ -1,6 +1,6 @@
 # Jetnity – Roadmap
 
-Stand: 21. August 2026
+Stand: 22. August 2026
 
 Diese Datei ist die operative Roadmap. Historische Detailstände bleiben über Git, Pull Requests und `DECISIONS.md` nachvollziehbar. Für den aktuellen Übergabestand zusätzlich `JETNITY_HANDOFF.md` und `docs/CONTINUITY_STANDARD.md` lesen.
 
@@ -20,7 +20,7 @@ Diese Datei ist die operative Roadmap. Historische Detailstände bleiben über G
 | Querschnitt | Trip Workspace Mobile UX Iteration 1–3 | **fertig, nach `main` gemergt (PR #27)** |
 | Querschnitt | Trip Coverage & Booking Status | **auf `main` (PR #29, `211872c1`); Production-Booking-Migration nach Nutzerfreigabe angewendet** |
 | Foundation-Track A | Mobilität & Transfers – Bahn, Bus, Fähre, Transfers | **fertig, nach `main` gemergt (PR #30); Production-Schema angewendet, Suche aus** |
-| Foundation-Track B | Mietwagen Foundation | **in Arbeit auf Draft-PR #31**; Development-Migration, nicht Production |
+| Foundation-Track B | Mietwagen Foundation | **in Arbeit auf Draft-PR #31** (Logic-/Truth-Fix ADR-0094); Development-Migration, nicht Production |
 | Foundation-Track C | Travel Readiness & Dokumente Foundation | geplant nach B |
 | Foundation-Track D | Gesamt-Abdeckung im Reisegraphen erweitern | geplant nach C |
 | Phase 3.5 | erster echter Activity-Suchadapter | geplant; bei fehlendem Zugang extern blockiert |
@@ -179,7 +179,7 @@ Nicht in diesem Block: Mietwagen, Kreuzfahrten, echter Provider, Fake-Fahrpläne
 
 **In Arbeit auf Draft-PR #31**, Branch `feat/rental-car-foundation`. Nicht mergen. Nicht auf Production migrieren oder aktivieren.
 
-Nachweis 21. August 2026: Tests **1143/1143**, Development-Migration angewendet und verifiziert, Workspace-Audit **502/0**, Activities-Regression **184/0**. Ein echter iPhone-Preview-Test steht vor Ready noch aus.
+Nachweis 21. August 2026 galt für den Stand vor dem Review-Fix. Am 22. August 2026 behebt ADR-0094 vier Wahrheitsrisiken (keine erratene Suche, leere manuelle Defaults, konservatives One-way, Kalendertage und währungssicheres Ranking). Der Qualitätsnachweis wird auf dem neuen Head erneut geführt. Ein echter iPhone-Preview-Test steht vor Ready noch aus.
 
 Provider-neutrales Modell:
 

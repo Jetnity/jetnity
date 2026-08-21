@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { mietwagenBestand, mietwagenZeile } from '@/lib/rental-cars/bestand'
+import { mietwagenBestand, mietwagenDetails, mietwagenZeile } from '@/lib/rental-cars/bestand'
 import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 import { unbestaetigteBuchung } from '@/lib/trips/buchung'
 import type { Trip, TripItem } from '@/types/trips'
@@ -91,6 +91,13 @@ describe('Mietwagenbestand', () => {
     assert.match(lage.zusammenfassung, /geplant/)
     assert.doesNotMatch(lage.zusammenfassung, /gebucht/)
     assert.match(mietwagenZeile(punkt({ id: 'r-1' })), /geplant/)
+  })
+
+  test('Mietkalendertage heissen nicht Reisetage', () => {
+    const text = mietwagenDetails(punkt({ id: 'r-tage' }))
+    assert.match(text, /5 Kalendertage Mietzeitraum/)
+    assert.doesNotMatch(text, /Reisetage/)
+    assert.doesNotMatch(text, /deckt/)
   })
 
   test('ausdrücklich gebuchter Mietwagen heisst gebucht', () => {

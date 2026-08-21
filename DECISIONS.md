@@ -2363,6 +2363,38 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 
 ---
 
+## ADR-0094 – Mietwagen-Wahrheit: keine erratene Suche, konservatives One-way, währungssicheres Ranking
+
+**Datum:** 22. August 2026
+**Status:** umgesetzt auf Draft-PR #31; kein Provider, keine Production-Änderung
+
+**Entscheidung:** Foundation B darf Reisekontext nicht stillschweigend als Mietwagenfakt oder Suchabsicht verwenden.
+
+1. `POST /api/rental-cars/search` startet nicht durch Mount oder Tab-Öffnen. Ohne ausdrückliche Nutzeraktion und sichtbare Kriterien bleibt die Oberfläche `unavailable`/`vorbereitet`.
+2. Das manuelle Formular startet leer. Origin, Etappen und Reisedaten dürfen nur als unverbindlicher Platzhalter (`z. B. …`) erscheinen, nie als gespeicherter Ort, Datum, Place-ID oder `stageId`.
+3. `rentalOneWay()` ist `one_way` nur bei zwei vorhandenen, unterschiedlichen Place-IDs. Gleiche IDs oder eindeutig gleiche normalisierte Namen sind `same_location`. Verschiedene Labels ohne zwei belastbare IDs bleiben `unknown`. Die UI zeigt `One-way` nur bei `one_way`.
+4. `rentalKalendertage()` bleibt die inklusive Kalenderdauer des Mietzeitraums und wird als `Kalendertage Mietzeitraum` bezeichnet, nicht als Reisetage oder Abdeckung.
+5. Ranking und `Best Value` vergleichen numerische Gesamtpreise nur in derselben Währung und nur wenn `preisIstGesamt === true`. Gemischte oder fehlende Währungen ergeben kein Preissignal und kein `Best Value`. Es gibt keine FX-Umrechnung.
+
+**Kontext:** Der unabhängige Review von PR #31 fand vier Wahrheitsrisiken: automatisch erratene Suche, vorbelegte manuelle Fakten, textlich verschiedenes `one_way` und Cross-Currency-Ranking. Das widerspricht `docs/LOGIC_STANDARD.md`.
+
+**Alternativen:**
+
+1. *Suche mit Origin/letzter Etappe vorbereiten, aber nicht senden.* Würde dieselbe falsche Absicht in der UI zeigen.
+2. *Fuzzy-Ortsabgleich für One-way.* Keine stabile Identität, würde Orte erraten.
+3. *Implizite Wechselkursannahme 1:1.* Würde Preise erfinden.
+
+**Begründung:** Unbekannt bleibt unbekannt. Die Foundation bleibt provider-ready, ohne später die Such- und Rankinglogik wegen erfundener Defaults umbauen zu müssen.
+
+**Konsequenzen:**
+
+- `MietwagenBereich` ruft die Search-Route nicht mehr beim Öffnen auf.
+- `rentalManuellStartwerte()` ist leer; `rentalManuellHinweise()` ist nur Placeholder.
+- Workspace-Audit verlangt 0 Rental-Requests nach Mobilität → Mietwagen.
+- Keine Datenbank-, RLS- oder Production-Änderung.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

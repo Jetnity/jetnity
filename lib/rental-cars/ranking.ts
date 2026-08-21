@@ -48,7 +48,44 @@ function scoreAus(signale: Signal[]): number {
   return Math.round(roh * 1000) / 1000
 }
 
-function signaleFuer(option: RentalCarKandidat, preise: { min: number; max: number }): Signal[] {
+function vergleichbareGesamtpreise(kandidaten: RentalCarKandidat[]): {
+  waehrung: string
+  min: number
+  max: number
+} | null {
+  const vergleichbar = kandidaten.filter(
+    (option) =>
+      option.preis !== null &&
+      option.preisIstGesamt === true &&
+      Boolean(option.preisWaehrung),
+  )
+  if (vergleichbar.length === 0) return null
+  const waehrungen = new Set(vergleichbar.map((option) => option.preisWaehrung))
+  if (waehrungen.size !== 1) return null
+  const preise = vergleichbar.map((option) => option.preis as number)
+  return {
+    waehrung: vergleichbar[0]!.preisWaehrung as string,
+    min: Math.min(...preise),
+    max: Math.max(...preise),
+  }
+}
+
+function hatVergleichbarenGesamtpreis(
+  option: RentalCarKandidat,
+  vergleich: { waehrung: string } | null,
+): boolean {
+  return Boolean(
+    vergleich &&
+      option.preis !== null &&
+      option.preisIstGesamt === true &&
+      option.preisWaehrung === vergleich.waehrung,
+  )
+}
+
+function signaleFuer(
+  option: RentalCarKandidat,
+  vergleich: { waehrung: string; min: number; max: number } | null,
+): Signal[] {
   const signale: Signal[] = []
   if (option.context.ortFit !== null) {
     signale.push({ gewicht: RENTAL_RANGLISTE_GEWICHTE.ort, wert: option.context.ortFit })
@@ -56,8 +93,8 @@ function signaleFuer(option: RentalCarKandidat, preise: { min: number; max: numb
   if (option.context.zeitraumFit !== null) {
     signale.push({ gewicht: RENTAL_RANGLISTE_GEWICHTE.zeitraum, wert: option.context.zeitraumFit })
   }
-  if (option.preis !== null && option.preisIstGesamt === true) {
-    const preis = option.context.preisFit ?? lowerBetter(option.preis, preise.min, preise.max)
+  if (hatVergleichbarenGesamtpreis(option, vergleich) && option.preis !== null) {
+    const preis = option.context.preisFit ?? lowerBetter(option.preis, vergleich!.min, vergleich!.max)
     signale.push({ gewicht: RENTAL_RANGLISTE_GEWICHTE.preis, wert: preis })
   }
   if (option.context.fahrzeugFit !== null) {
@@ -75,12 +112,14 @@ function signaleFuer(option: RentalCarKandidat, preise: { min: number; max: numb
   return signale
 }
 
-function labelsFuer(option: RentalCarKandidat, beste: RentalCarKandidat | null): RentalCarMarke[] {
+function labelsFuer(
+  option: RentalCarKandidat,
+  beste: RentalCarKandidat | null,
+  bestValueIds: ReadonlySet<string>,
+): RentalCarMarke[] {
   const labels: RentalCarMarke[] = []
   if (beste && option.id === beste.id) labels.push('jetnity')
-  if (option.preis !== null && option.preisIstGesamt === true && option.context.preisFit !== null) {
-    labels.push('best_value')
-  }
+  if (bestValueIds.has(option.id)) labels.push('best_value')
   if (option.storno) labels.push('flexible')
   if (
     rentalOneWay({
@@ -122,16 +161,17 @@ export function rentalCarKandidatAus(option: RentalCarOption): RentalCarKandidat
 }
 
 export function rentalCarOptionenBewerten(kandidaten: RentalCarKandidat[]): BewerteteRentalCarOption[] {
-  const gesamtpreise = kandidaten
-    .map((option) => (option.preisIstGesamt === true ? option.preis : null))
-    .filter((wert): wert is number => wert !== null)
-  const preise = {
-    min: gesamtpreise.length ? Math.min(...gesamtpreise) : 0,
-    max: gesamtpreise.length ? Math.max(...gesamtpreise) : 0,
-  }
+  const vergleich = vergleichbareGesamtpreise(kandidaten)
+  const bestValueIds = new Set(
+    vergleich
+      ? kandidaten
+          .filter((option) => hatVergleichbarenGesamtpreis(option, vergleich) && option.preis === vergleich.min)
+          .map((option) => option.id)
+      : [],
+  )
 
   const bewertet = kandidaten.map((option) => {
-    const score = scoreAus(signaleFuer(option, preise))
+    const score = scoreAus(signaleFuer(option, vergleich))
     return { ...option, score, labels: [] as RentalCarMarke[], reasons: gruendeFuer(option) }
   })
 
@@ -139,6 +179,6 @@ export function rentalCarOptionenBewerten(kandidaten: RentalCarKandidat[]): Bewe
   const beste = bewertet[0] ?? null
   return bewertet.map((option) => ({
     ...option,
-    labels: labelsFuer(option, beste),
+    labels: labelsFuer(option, beste, bestValueIds),
   }))
 }

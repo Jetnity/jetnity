@@ -675,10 +675,11 @@ const ZUSTAENDE = {
     },
   },
   'mietwagen-ohne-uhrzeit': {
-    kompakt: 'zeitlich 5 Reisetage',
-    desktop: 'zeitlich 5 Reisetage',
+    kompakt: '5 Kalendertage Mietzeitraum',
+    desktop: '5 Kalendertage Mietzeitraum',
     tab: 'Mobilität',
     oeffneMietwagen: true,
+    ohneText: 'One-way',
     nutzlast: {
       anfangsBereich: 'mobilitaet',
       reise: reise({
@@ -735,6 +736,7 @@ const ZUSTAENDE = {
     desktop: 'Bekannten Mietwagen eintragen',
     tab: 'Mobilität',
     oeffneMietwagen: true,
+    formularLeer: true,
     nutzlast: { anfangsBereich: 'mobilitaet', reise: reise() },
   },
   'bestand-unbestimmt': {
@@ -1029,17 +1031,34 @@ async function zustandPruefen(browser, name, viewport, zustand) {
       fehler: [`Inhaltsnachweis fehlt: «${nachweis}»`],
     }
   }
+  const extra = []
+  if (defin.ohneText) {
+    const sichtbar = await page.getByText(defin.ohneText, { exact: false }).filter({ visible: true }).count()
+    if (sichtbar > 0) extra.push(`Unerwarteter Text sichtbar: «${defin.ohneText}»`)
+  }
+  if (defin.formularLeer) {
+    const abholung = await page.locator('label:has-text("Abholung") input').inputValue()
+    const rueckgabe = await page.locator('label:has-text("Rückgabe") input').inputValue()
+    const abholdatum = await page.locator('label:has-text("Abholdatum") input').inputValue()
+    const rueckgabedatum = await page.locator('label:has-text("Rückgabedatum") input').inputValue()
+    if (abholung || rueckgabe || abholdatum || rueckgabedatum) {
+      extra.push(
+        `Manuelles Formular war vorbelegt: Abholung=«${abholung}» Rückgabe=«${rueckgabe}» Abholdatum=«${abholdatum}» Rückgabedatum=«${rueckgabedatum}»`,
+      )
+    }
+  }
   const layout = await page.evaluate(
     layoutPruefen,
     viewport.width < 1024 ? (defin.tab ? TAB_ID[defin.tab] : 'uebersicht') : undefined,
   )
   await kontext.close()
+  const fehler = [...layout.fehler, ...extra]
   return {
-    ok: layout.ok,
+    ok: fehler.length === 0,
     engine: name,
     viewport: viewport.name,
     zustand,
-    fehler: layout.fehler,
+    fehler,
   }
 }
 
@@ -1302,9 +1321,11 @@ async function interaktionPruefen(browser, name) {
   if (mobilityNachZweitemBesuch !== mobilityNachErstbesuch) {
     fehler.push(`Tabwechsel löste Mobilitätssuche erneut aus: ${mobilityNachErstbesuch} → ${mobilityNachZweitemBesuch}`)
   }
-  if (rentalNachErstbesuch < 1) fehler.push('Mietwagen löste keine Suche aus')
-  if (rentalNachZweitemBesuch !== rentalNachErstbesuch) {
-    fehler.push(`Unterbereichwechsel löste Mietwagensuche erneut aus: ${rentalNachErstbesuch} → ${rentalNachZweitemBesuch}`)
+  if (rentalNachErstbesuch !== 0) {
+    fehler.push(`Mietwagen startete eine Suche ohne Nutzeraktion: ${rentalNachErstbesuch}`)
+  }
+  if (rentalNachZweitemBesuch !== 0) {
+    fehler.push(`Unterbereichwechsel löste Mietwagensuche aus: ${rentalNachZweitemBesuch}`)
   }
   if (!fokus) fehler.push('Fokus lag nach Reise ändern nicht im Feld')
   if (geschlossen !== 'false') fehler.push('Escape schloss Reise ändern nicht')

@@ -1,6 +1,6 @@
 # Jetnity – Mietwagen
 
-**Stand:** 21. August 2026 · Foundation B / Draft-PR #31  
+**Stand:** 22. August 2026 · Foundation B / Draft-PR #31, Logic-/Truth-Fix  
 **Gilt für:** Mietwagendomäne, Persistenz, Trip-Workspace-Unterbereich in Mobilität und geschlossene Suchnaht.
 
 Diese Datei beschreibt den tatsächlichen Mietwagenweg. Produktprinzip: [JETNITY_VISION.md](../JETNITY_VISION.md), operativer Stand: [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md), Logikstandard: [docs/LOGIC_STANDARD.md](LOGIC_STANDARD.md). Entscheidungen: ADR-0092 und ADR-0093 in [DECISIONS.md](../DECISIONS.md).
@@ -95,6 +95,10 @@ Verbindliche Invarianten:
 7. Manuelle Werte sind Nutzerangaben, keine Providerbestätigung.
 8. Mehrdeutige Orte werden nicht geraten.
 9. Ein vorhandener Mietwagen markiert eine `Bewegungskante` niemals als `covered`.
+10. Reise-Origin, Etappen oder Gesamtreisedaten sind keine bestätigte Mietwagen-Suchabsicht und keine gespeicherten Abhol-/Rückgabefakten.
+11. `one_way` gilt nur bei beweisbar unterschiedlichen Orten (zwei verschiedene Place-IDs). Verschiedene Labels ohne zwei IDs bleiben `unknown`.
+12. Kalendertage des Mietzeitraums sind keine Reisetage und keine Streckenabdeckung.
+13. Preisranking und `Best Value` nur für nachweislich vergleichbare Gesamtpreise in derselben Währung.
 
 Die Übersicht zeigt eine knappe Mietwagenzeile nur, wenn ein Mietwagen existiert. «Kein Mietwagen geplant» ist keine Pflichtlücke.
 
@@ -110,6 +114,8 @@ Rate Limit: 8 Anfragen / 10 Minuten und 24 / Tag je Kennung. `429` setzt `Retry-
 
 `rentalCarProviderAus()` gibt `null` zurück. Die Konto-Übernahme einer späteren Provideroption verlangt einen serverseitigen `RentalCarNachweis` und ist heute fail closed.
 
+Das Öffnen von Mobilität → Mietwagen startet **keine** Suche. Eine Provideranfrage darf erst nach ausdrücklicher Nutzeraktion mit sichtbaren, vom Nutzer gesetzten Kriterien laufen. Solange kein Suchformular existiert, bleibt der Bereich ehrlich `unavailable`/`vorbereitet`.
+
 ---
 
 ## 6. UX
@@ -118,7 +124,7 @@ Fünf Hauptbereiche bleiben:
 
 `Übersicht · Flüge · Unterkunft · Aktivitäten · Mobilität`
 
-Innerhalb von Mobilität gibt es die Unterbereiche **Verbindungen** und **Mietwagen**. Bestand und Status stehen vor der Suche. Ohne Provider erscheint ein ehrlicher Unavailable-Text. Die manuelle Erfassung ist als Nutzerangabe erkennbar.
+Innerhalb von Mobilität gibt es die Unterbereiche **Verbindungen** und **Mietwagen**. Bestand und Status stehen vor der Suche. Ohne Provider erscheint ein ehrlicher Unavailable-Text, ohne automatischen Request. Die manuelle Erfassung startet leer; Reiseorte dürfen höchstens als unverbindlicher Platzhalter (`z. B. …`) erscheinen, niemals als vorbelegter Fakt oder Place-ID. `One-way` wird nur bei `rentalOneWay() === 'one_way'` gezeigt. Mietdauer heisst `Kalendertage Mietzeitraum`, nicht `Reisetage`.
 
 ---
 
@@ -135,17 +141,10 @@ Innerhalb von Mobilität gibt es die Unterbereiche **Verbindungen** und **Mietwa
 
 ## 8. Qualität / Nachweis
 
-Stand Draft-PR #31, 21. August 2026:
+Stand Draft-PR #31 Logic-/Truth-Fix, 22. August 2026:
 
-- `npm test` 1143/1143
-- Typecheck, Lint, Hygiene grün
-- Production-Build grün
-- Development-Migration angewendet und verifiziert
-- `db:rechte`, `db:rls`, `db:sicherheit` 169/169, `db:typen --pruefen`, `auth:pruefen` grün
-- Trip-Workspace-Audit WebKit + Chromium: 502 Kombinationen, 0 Fehler
-- Activities-Regression: 184 Kombinationen, 0 Fehler
-- GitHub CI und Vercel Preview grün auf dem geprüften Head
-- echter iPhone-Test **offen**
+- Review-Fix der vier Wahrheitsbefunde ist im Code; vollständiger Qualitätsnachweis folgt auf dem neuen Head
+- echter iPhone-Test **offen**, erst nach diesem Review-Fix
 
 ---
 
@@ -157,6 +156,6 @@ Keine neuen laufenden Kosten. Kein bezahlter Mietwagen-Account. Der Kill Switch 
 
 ## 10. Nächster Schritt
 
-Foundation B nicht um einen Fake-Provider erweitern. Real-Device-iPhone-Test bleibt offen, bis der Nutzer ihn bestätigt. Production-Migration und Production-Suche brauchen jeweils eine ausdrückliche Freigabe.
+Foundation B nicht um einen Fake-Provider erweitern. Real-Device-iPhone-Test kommt nach diesem Review-Fix und bleibt offen, bis der Nutzer ihn bestätigt. Production-Migration und Production-Suche brauchen jeweils eine ausdrückliche Freigabe.
 
 Danach geplant: **Travel Readiness & Dokumente Foundation**. Phase 3.4 bleibt extern blockiert.

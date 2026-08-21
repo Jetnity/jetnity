@@ -338,11 +338,11 @@ Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browse
 
 ### Mietwagensuche (Foundation B)
 
-`POST /api/rental-cars/search` ist geschlossen: nur `application/json`, höchstens 16 KB UTF-8. `Content-Length` über dem Limit wird vor dem Lesen abgewiesen; der Body wird zusätzlich streamend mit hartem Cap gelesen. Optional Provider, Ranking, Client-Sicht. Kein Provider-Proxy. 429 setzt `Retry-After`. Die UI spricht eine clientseitige Mietwagenoption, nicht einen Anbieter.
+`POST /api/rental-cars/search` ist geschlossen: nur `application/json`, höchstens 16 KB UTF-8. `Content-Length` über dem Limit wird vor dem Lesen abgewiesen; der Body wird zusätzlich streamend mit hartem Cap gelesen. Optional Provider, Ranking, Client-Sicht. Kein Provider-Proxy. 429 setzt `Retry-After`. Die UI spricht eine clientseitige Mietwagenoption, nicht einen Anbieter. Das Öffnen von Mobilität → Mietwagen löst keine Suche aus; ohne ausdrückliche Nutzeraktion bleibt der Bereich `unavailable`/`vorbereitet`.
 
 Foundation B hat bewusst keinen Mietwagen-Adapter. `rentalCarProviderAus()` gibt `null` zurück. Production bleibt hart aus, auch wenn `JETNITY_RENTAL_CAR_AKTIV` gesetzt wäre. Development/Preview brauchen den Kill Switch **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Es gibt keinen Providernamen und kein Provider-Secret. Ein Mietwagen im Zeitraum ist kein Nachweis, dass eine konkrete Strecke damit gefahren wird. Unbekannte Klasse, Getriebe, Kaution oder Kilometerregel bleiben unbekannt.
 
-Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browseroption. Sie verlangt einen serverseitigen `RentalCarNachweis`. Heute ist der Nachweis `null` – fail closed. Manuelle Mietwagen sind Nutzerangaben, keine Providerfakten. Fachlich: [docs/RENTAL_CARS.md](docs/RENTAL_CARS.md), ADR-0092 und ADR-0093.
+Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browseroption. Sie verlangt einen serverseitigen `RentalCarNachweis`. Heute ist der Nachweis `null` – fail closed. Manuelle Mietwagen sind Nutzerangaben, keine Providerfakten. Das manuelle Formular startet leer; Reiseorte sind höchstens unverbindliche Platzhalter. `one_way` braucht zwei verschiedene Place-IDs. Ranking vergleicht Gesamtpreise nur in derselben Währung. Fachlich: [docs/RENTAL_CARS.md](docs/RENTAL_CARS.md), ADR-0092, ADR-0093 und ADR-0094.
 
 ### Ortsbasis (Phase 3.1)
 

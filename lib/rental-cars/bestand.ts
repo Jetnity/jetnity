@@ -54,7 +54,7 @@ export function mietwagenDetails(punkt: TripItem): string {
   if (route) teile.push(route)
   const tage = rentalKalendertage(punkt)
   if (tage !== null) {
-    teile.push(tage === 1 ? 'zeitlich 1 Reisetag' : `zeitlich ${tage} Reisetage`)
+    teile.push(tage === 1 ? '1 Kalendertag Mietzeitraum' : `${tage} Kalendertage Mietzeitraum`)
   }
   if (punkt.rentalSupplier) teile.push(punkt.rentalSupplier)
   if (teile.length === 0) return 'Als Nutzerangabe erfasst. Keine Providerbestätigung.'

@@ -1,6 +1,9 @@
 // lib/rental-cars/client-anfrage.ts
 //
 // Browser-Aufruf der geschlossenen Mietwagensuche.
+// Die Domain-, Ranking- und Providerlogik bleibt serverseitig.
+//
+// Frei von Next.
 
 import { LEERE_RENTAL_EVIDENZ } from '@/lib/rental-cars/domain'
 import type { RentalCarSucheAntwort } from '@/lib/rental-cars/client-sicht'
@@ -18,13 +21,14 @@ export function rentalCarSucheFehlerAntwort(message: string): RentalCarSucheAntw
 
 export async function rentalCarSucheVomClient(
   eingabe: RentalCarSucheEingabe,
-  signal?: AbortSignal,
+  optionen: { signal?: AbortSignal; fetchFn?: typeof fetch } = {},
 ): Promise<RentalCarSucheAntwort> {
-  const antwort = await fetch('/api/rental-cars/search', {
+  const fetchFn = optionen.fetchFn ?? fetch
+  const antwort = await fetchFn('/api/rental-cars/search', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(eingabe),
-    signal,
+    signal: optionen.signal,
   })
 
   try {

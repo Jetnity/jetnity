@@ -1,6 +1,6 @@
 # Jetnity – Handoff und nächste Schritte
 
-Stand: 21. August 2026
+Stand: 22. August 2026
 Status: verbindlicher operativer Übergabepunkt
 
 Dieser Handoff ist bewusst kompakt. Details stehen in den Fach- und Architekturdateien. Ein neuer Chat oder Coding Agent soll zuerst diese Quellen lesen:
@@ -229,19 +229,15 @@ Umgesetzt im Draft:
 - UX als Unterbereich in Mobilität, kein sechster Tab
 - Mietwagen deckt keine Bewegungskante
 - Development-Migration `20260821200000` – **nicht Production**
+- Review-Fix (ADR-0094): keine automatische Suche aus Reisekontext, leere manuelle Defaults, `one_way` nur bei bewiesenen Orten, Kalendertage statt Reisetage, währungssicheres Ranking
 
 Qualitätsnachweis im Draft:
 
-- `npm test`: **1143/1143**
-- Typecheck, Lint, Hygiene, Production-Build grün
-- Development-Migration `20260821200000` angewendet und verifiziert
-- `db:rechte`, `db:rls`, `db:sicherheit` 169/169, `db:typen --pruefen`, `auth:pruefen`
-- Trip-Workspace-Audit WebKit + Chromium: **502 Kombinationen, 0 Fehler**
-- Activities-Regression: **184 Kombinationen, 0 Fehler**
-- GitHub CI und Vercel Preview grün auf dem geprüften Head
-- echter iPhone-Test **offen**
+- Review-Fix der vier Wahrheitsbefunde ist im Code; vollständiger Test-/Audit-/CI-Nachweis folgt auf dem neuen Head
+- Development-Migration `20260821200000` bleibt Development-only, unverändert
+- echter iPhone-Test **offen**, erst nach diesem Review-Fix
 
-Fachdoku: `docs/RENTAL_CARS.md`, ADR-0092 / ADR-0093.
+Fachdoku: `docs/RENTAL_CARS.md`, ADR-0092 / ADR-0093 / ADR-0094.
 
 Kein Fake-Provider und keine Production-Aktivierung.
 
@@ -330,7 +326,7 @@ Verbindlich:
 2. Aktuellen `main`-, PR-, CI-, Vercel- und Production-Stand prüfen.
 3. PR #29 nicht erneut bauen: Coverage/Booking Status ist abgeschlossen.
 4. PR #30 ist gemergt: Foundation A nicht erneut bauen.
-5. PR #31 live prüfen. Foundation B bleibt Draft, bis Real-Device und Review abgeschlossen sind. Nicht mergen. Keine Production-Migration.
+5. PR #31 bleibt Draft. Logic-/Truth-Fix (ADR-0094) zuerst auf dem neuen Head prüfen, danach Real-Device-iPhone. Nicht mergen. Keine Production-Migration.
 6. Phase 3.4 bleibt extern blockiert, bis echter Hotelprovider-Zugang vorliegt.
 7. Nach sauberem Abschluss von PR #31 ist der nächste geplante provider-unabhängige Block **Travel Readiness & Dokumente Foundation**.
 8. Keine Fake-Providerdaten, keine Production-Provideraktivierung und keine Secrets ohne separate Freigabe.

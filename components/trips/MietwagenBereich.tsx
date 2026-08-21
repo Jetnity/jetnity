@@ -3,24 +3,22 @@
 // components/trips/MietwagenBereich.tsx
 //
 // Mietwagen innerhalb von Mobilität. Bestand zuerst, darunter ehrliche
-// Unavailable-Suche und manuelle Erfassung als Nutzerangabe.
-// Kein eigener Top-Level-Tab. Keine Fake-Angebote.
+// Unavailable-Anzeige ohne automatische Suche und manuelle Erfassung
+// mit leeren Startwerten. Kein eigener Top-Level-Tab. Keine Fake-Angebote.
 
 import * as React from 'react'
-import { Car, Loader2 } from 'lucide-react'
+import { Car } from 'lucide-react'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
 import { mietwagenBestand, mietwagenDetails } from '@/lib/rental-cars/bestand'
-import { rentalCarSucheFehlerAntwort, rentalCarSucheVomClient } from '@/lib/rental-cars/client-anfrage'
-import type { RentalCarSucheAntwort } from '@/lib/rental-cars/client-sicht'
 import {
   TRANSMISSION_BEZEICHNUNG,
   VEHICLE_CLASS_BEZEICHNUNG,
 } from '@/lib/rental-cars/domain'
+import { rentalManuellHinweise, rentalManuellStartwerte } from '@/lib/rental-cars/manuell-start'
 import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
 import { rentalOneWay } from '@/lib/rental-cars/zeitraum'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
-import { datumKurz } from '@/lib/trips/datum-anzeige'
 import {
   TRANSMISSIONS,
   VEHICLE_CLASSES,
@@ -43,8 +41,6 @@ export default function MietwagenBereich({
 }) {
   const [meldung, setMeldung] = React.useState('')
   const [laeuft, setLaeuft] = React.useState<string | null>(null)
-  const [suche, setSuche] = React.useState<RentalCarSucheAntwort | null>(null)
-  const [sucht, setSucht] = React.useState(false)
   const bestand = mietwagenBestand(reise, ohneTag)
 
   const setzen = async (itemId: string, gebucht: boolean) => {
@@ -55,45 +51,6 @@ export default function MietwagenBereich({
     setLaeuft(null)
     if (fehler) setMeldung(fehler)
   }
-
-  React.useEffect(() => {
-    const abholung = reise.origin || reise.stages[0]?.name
-    const rueckgabe = reise.stages[reise.stages.length - 1]?.name || reise.origin
-    if (!abholung || !rueckgabe) return
-    const steuer = new AbortController()
-    setSucht(true)
-    void rentalCarSucheVomClient(
-      {
-        pickupName: abholung,
-        dropoffName: rueckgabe,
-        pickupPlaceId: reise.originPlaceId,
-        dropoffPlaceId: reise.stages[reise.stages.length - 1]?.placeId ?? reise.originPlaceId,
-        pickupOn: reise.startDate,
-        pickupAt: null,
-        dropoffOn: reise.endDate,
-        dropoffAt: null,
-        vehicleClass: null,
-        transmission: null,
-        currency: reise.currency,
-      },
-      steuer.signal,
-    )
-      .then((antwort) => {
-        if (!steuer.signal.aborted) setSuche(antwort)
-      })
-      .catch((fehler) => {
-        if (steuer.signal.aborted) return
-        setSuche(
-          rentalCarSucheFehlerAntwort(
-            fehler instanceof Error ? fehler.message : 'Die Mietwagensuche ist gerade nicht verfügbar.',
-          ),
-        )
-      })
-      .finally(() => {
-        if (!steuer.signal.aborted) setSucht(false)
-      })
-    return () => steuer.abort()
-  }, [reise])
 
   return (
     <div className="grid gap-6">
@@ -167,17 +124,11 @@ export default function MietwagenBereich({
         <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
           Mietwagenangebote
         </h2>
-        {sucht ? (
-          <p className="mt-5 flex min-h-[4.5rem] items-center gap-2 text-sm leading-6 text-ink-800">
-            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-            Mietwagen werden geprüft …
-          </p>
-        ) : (
-          <p className="mt-5 min-h-[4.5rem] rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
-            {suche?.message ??
-              'Mietwagenangebote werden vorbereitet. Sobald ein Datenpartner angebunden ist, erscheinen hier echte Fahrzeuge – ohne erfundene Preise, Klassen oder Verfügbarkeiten.'}
-          </p>
-        )}
+        <p className="mt-5 min-h-[4.5rem] rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
+          Mietwagenangebote werden vorbereitet. Sobald ein Datenpartner angebunden ist, erscheinen
+          hier echte Fahrzeuge – ohne erfundene Preise, Klassen oder Verfügbarkeiten. Eine Suche
+          startet nicht automatisch aus dem Reisekontext.
+        </p>
       </section>
 
       {onManuellAnlegen ? <ManuellerMietwagen reise={reise} onAnlegen={onManuellAnlegen} /> : null}
@@ -192,12 +143,14 @@ function ManuellerMietwagen({
   reise: Trip
   onAnlegen: (eingabe: RentalCarManuellEingabe) => Promise<string | null>
 }) {
-  const [pickupName, setPickupName] = React.useState(reise.origin ?? '')
-  const [dropoffName, setDropoffName] = React.useState(reise.stages[0]?.name ?? reise.origin ?? '')
-  const [pickupOn, setPickupOn] = React.useState(reise.startDate ?? '')
-  const [pickupAt, setPickupAt] = React.useState('')
-  const [dropoffOn, setDropoffOn] = React.useState(reise.endDate ?? '')
-  const [dropoffAt, setDropoffAt] = React.useState('')
+  const startwerte = rentalManuellStartwerte()
+  const hinweise = rentalManuellHinweise(reise)
+  const [pickupName, setPickupName] = React.useState(startwerte.pickupName)
+  const [dropoffName, setDropoffName] = React.useState(startwerte.dropoffName)
+  const [pickupOn, setPickupOn] = React.useState(startwerte.pickupOn)
+  const [pickupAt, setPickupAt] = React.useState(startwerte.pickupAt)
+  const [dropoffOn, setDropoffOn] = React.useState(startwerte.dropoffOn)
+  const [dropoffAt, setDropoffAt] = React.useState(startwerte.dropoffAt)
   const [rentalSupplier, setRentalSupplier] = React.useState('')
   const [vehicleClass, setVehicleClass] = React.useState<VehicleClass | ''>('')
   const [transmission, setTransmission] = React.useState<Transmission | ''>('')
@@ -229,7 +182,7 @@ function ManuellerMietwagen({
       priceCurrency: null,
       note: note || null,
       dayId: null,
-      stageId: reise.stages[0]?.id ?? null,
+      stageId: null,
     })
     setLaeuft(false)
     if (fehler) {
@@ -237,7 +190,16 @@ function ManuellerMietwagen({
       return
     }
     setHinweis('Der Mietwagen ist als Nutzerangabe gespeichert – nicht als Providerbestätigung.')
+    const leer = rentalManuellStartwerte()
+    setPickupName(leer.pickupName)
+    setDropoffName(leer.dropoffName)
+    setPickupOn(leer.pickupOn)
+    setPickupAt(leer.pickupAt)
+    setDropoffOn(leer.dropoffOn)
+    setDropoffAt(leer.dropoffAt)
     setRentalSupplier('')
+    setVehicleClass('')
+    setTransmission('')
     setNote('')
   }
 
@@ -251,7 +213,9 @@ function ManuellerMietwagen({
         Bekannten Mietwagen eintragen
       </h2>
       <p className="mt-1 text-sm leading-6 text-ink-800">
-        Das sind deine Angaben, keine geprüften Preise, Verfügbarkeiten oder Mietbedingungen.
+        Felder bleiben leer, bis du sie selbst einträgst. Vorschläge in den Feldern sind keine
+        gespeicherten Orte, keine Place-IDs und keine geprüften Preise, Verfügbarkeiten oder
+        Mietbedingungen.
       </p>
 
       <form className="mt-5 grid gap-3" onSubmit={(ereignis) => void speichern(ereignis)}>
@@ -261,6 +225,7 @@ function ManuellerMietwagen({
             <input
               value={pickupName}
               onChange={(ereignis) => setPickupName(ereignis.target.value)}
+              placeholder={hinweise.pickupName}
               required
               maxLength={120}
               className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-base text-ink-900 sm:text-sm"
@@ -271,6 +236,7 @@ function ManuellerMietwagen({
             <input
               value={dropoffName}
               onChange={(ereignis) => setDropoffName(ereignis.target.value)}
+              placeholder={hinweise.dropoffName}
               required
               maxLength={120}
               className="min-h-11 rounded-2xl border border-line-200 bg-white px-3 text-base text-ink-900 sm:text-sm"
