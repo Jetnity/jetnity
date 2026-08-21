@@ -26,6 +26,7 @@ import {
   gastBuchungsstatusSetzen,
   gastFlugUebernehmen,
   gastHotelUebernehmen,
+  gastMobilitaetAnlegen,
   gastPlanpunktAnlegen,
   gastPlanpunktEntfernen,
   gastreiseEntfernen,
@@ -33,6 +34,7 @@ import {
 } from '@/lib/trips/gastspeicher'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
 import AktivitaetenBereich from '@/components/trips/AktivitaetenBereich'
+import MobilitaetBereich from '@/components/trips/MobilitaetBereich'
 import FlugSuche from '@/components/trips/FlugSuche'
 import HotelBereich from '@/components/trips/HotelBereich'
 import ReiseAenderung from '@/components/trips/ReiseAenderung'
@@ -201,6 +203,34 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
               return fehler instanceof Error
                 ? fehler.message
                 : 'Das Hotel konnte nicht in die Reise übernommen werden.'
+            }
+          }}
+        />
+      }
+      mobilitaetssuche={
+        <MobilitaetBereich
+          reise={reise}
+          ohneTag={reise.ohneTag}
+          onBuchungsstatus={async (itemId, gebucht) => {
+            if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
+            try {
+              setReise(gastBuchungsstatusSetzen(reise, itemId, gebucht))
+              return null
+            } catch (fehler) {
+              return fehler instanceof Error
+                ? fehler.message
+                : 'Der Buchungsstatus konnte nicht gespeichert werden.'
+            }
+          }}
+          onManuellAnlegen={async (eingabe) => {
+            if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
+            try {
+              setReise(gastMobilitaetAnlegen(reise, eingabe))
+              return null
+            } catch (fehler) {
+              return fehler instanceof Error
+                ? fehler.message
+                : 'Die Verbindung konnte nicht gespeichert werden.'
             }
           }}
         />

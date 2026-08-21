@@ -67,7 +67,9 @@ import { hotelReisegraphPruefen } from '@/lib/hotels/reisegraph'
 import type { HotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import { hotelMomentaufnahmeAlsPunkt } from '@/lib/hotels/uebernahme'
 import { reiseLesen, type PlanpunktFormular } from '@/lib/trips/schema'
+import { mobilityManuellLesen, mobilityManuellZuPunkt, mobilityZugehoerigkeitPruefen } from '@/lib/mobility/manuell'
 import { buchungsstatusAnwenden } from '@/lib/trips/buchung'
+import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 import { reisetageBauen } from '@/lib/trips/tage'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 import type { Ort } from '@/lib/places/domain'
@@ -256,6 +258,7 @@ function ausLegacy(wert: unknown): Trip | null {
               bookingStatus: 'unconfirmed',
               bookingSource: null,
               bookingConfirmedAt: null,
+              ...leereMobilitaet(),
             } satisfies TripItem
           }),
         }
@@ -611,6 +614,7 @@ export function gastPlanpunktAnlegen(
     bookingStatus: 'unconfirmed',
     bookingSource: null,
     bookingConfirmedAt: null,
+    ...leereMobilitaet(),
   }
 
   return gastreiseSpeichern({
@@ -759,7 +763,36 @@ function punktErsetzen(reise: Trip, punktId: string, naechster: TripItem): Trip 
   }
 }
 
-/** Setzt oder korrigiert den manuellen Buchungsstatus eines Flug-/Stay-Punkts. */
+/** Hängt eine manuell erfasste Verbindung an die aktive Gastreise. */
+export function gastMobilitaetAnlegen(reise: Trip, roh: unknown): Trip {
+  const gelesen = mobilityManuellLesen(roh)
+  if (!gelesen.ok) throw new Error(gelesen.meldung)
+  const zugehoerig = mobilityZugehoerigkeitPruefen(reise, gelesen.eingabe.dayId, gelesen.eingabe.stageId)
+  if (!zugehoerig.ok) throw new Error(zugehoerig.meldung)
+
+  const tag = gelesen.eingabe.dayId
+    ? reise.days.find((eintrag) => eintrag.id === gelesen.eingabe.dayId) ?? null
+    : null
+  const punkt = mobilityManuellZuPunkt(gelesen.eingabe, {
+    id: kennungErzeugen('item'),
+    dayId: tag?.id ?? null,
+    stageId: gelesen.eingabe.stageId ?? tag?.stageId ?? null,
+    position: tag ? tag.items.length + 1 : reise.ohneTag.length + 1,
+  })
+
+  return gastreiseSpeichern({
+    ...reise,
+    revision: reise.revision + 1,
+    days: tag
+      ? reise.days.map((eintrag) =>
+          eintrag.id === tag.id ? { ...eintrag, items: [...eintrag.items, punkt] } : eintrag,
+        )
+      : reise.days,
+    ohneTag: tag ? reise.ohneTag : [...reise.ohneTag, punkt],
+  })
+}
+
+/** Setzt oder korrigiert den manuellen Buchungsstatus eines Flug-/Stay-/Transfer-Punkts. */
 export function gastBuchungsstatusSetzen(reise: Trip, punktId: string, gebucht: boolean, zeit = new Date().toISOString()): Trip {
   const alle = [...reise.days.flatMap((tag) => tag.items), ...reise.ohneTag]
   const punkt = alle.find((eintrag) => eintrag.id === punktId)

@@ -33,7 +33,8 @@ import {
   type TripStatus,
 } from '@/types/trips'
 import type { ReiseNutzlast } from '@/lib/trips/schema'
-import { buchungsquelleLesen, buchungsstatusLesen } from '@/lib/trips/buchung'
+import { buchungsquelleLesen, buchungsstatusLesen, kannBuchungMarkieren } from '@/lib/trips/buchung'
+import { leereMobilitaet, mobilityEvidenceLesen, mobilityModeLesen } from '@/lib/trips/mobilitaet-felder'
 
 /** Nur die Spalten, die diese Datei liest. So bleibt sie von der Generierung unabhängig. */
 export type ReiseZeile = {
@@ -98,6 +99,14 @@ export type PunktZeile = {
   booking_status?: string | null
   booking_source?: string | null
   booking_confirmed_at?: string | null
+  mobility_mode?: string | null
+  origin_place_id?: string | null
+  destination_place_id?: string | null
+  origin_name?: string | null
+  destination_name?: string | null
+  connection_ref?: string | null
+  mobility_changes?: number | string | null
+  mobility_evidence?: string | null
   created_at: string
 }
 
@@ -131,13 +140,20 @@ function ausBereich<T extends string>(
 
 export function planpunktAus(zeile: PunktZeile): TripItem {
   const bookingStatus = buchungsstatusLesen(zeile.booking_status ?? 'unconfirmed')
-  const darfBuchen = zeile.kind === 'flight' || zeile.kind === 'stay'
-  const gebucht = darfBuchen && bookingStatus === 'booked'
+  const kind = ausBereich<TripItemKind>(zeile.kind, TRIP_ITEM_KINDS, 'note')
+  const gebucht = kannBuchungMarkieren({ kind }) && bookingStatus === 'booked'
+  const transfer = kind === 'transfer'
+  const mode = transfer ? mobilityModeLesen(zeile.mobility_mode) : null
+  const originName = transfer ? zeile.origin_name ?? null : null
+  const destinationName = transfer ? zeile.destination_name ?? null : null
+  const originPlaceId = transfer ? zeile.origin_place_id ?? null : null
+  const destinationPlaceId = transfer ? zeile.destination_place_id ?? null : null
+  const hatFakt = Boolean(mode || originName || destinationName || originPlaceId || destinationPlaceId)
   return {
     id: zeile.id,
     dayId: zeile.day_id,
     stageId: zeile.stage_id,
-    kind: ausBereich<TripItemKind>(zeile.kind, TRIP_ITEM_KINDS, 'note'),
+    kind,
     title: zeile.title,
     note: zeile.note,
     position: zeile.position,
@@ -153,6 +169,18 @@ export function planpunktAus(zeile: PunktZeile): TripItem {
     bookingStatus: gebucht ? 'booked' : 'unconfirmed',
     bookingSource: gebucht ? buchungsquelleLesen(zeile.booking_source) ?? 'user' : null,
     bookingConfirmedAt: gebucht ? zeile.booking_confirmed_at ?? null : null,
+    ...(transfer
+      ? {
+          mobilityMode: mode,
+          originPlaceId,
+          destinationPlaceId,
+          originName,
+          destinationName,
+          connectionRef: zeile.connection_ref ?? null,
+          mobilityChanges: zahl(zeile.mobility_changes ?? null),
+          mobilityEvidence: hatFakt ? 'user' as const : mobilityEvidenceLesen(zeile.mobility_evidence),
+        }
+      : leereMobilitaet()),
   }
 }
 
@@ -314,6 +342,13 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
           booking_url: punkt.bookingUrl,
           booking_status: punkt.bookingStatus,
           booking_confirmed_at: punkt.bookingConfirmedAt,
+          mobility_mode: punkt.mobilityMode,
+          origin_place_id: punkt.originPlaceId,
+          destination_place_id: punkt.destinationPlaceId,
+          origin_name: punkt.originName,
+          destination_name: punkt.destinationName,
+          connection_ref: punkt.connectionRef,
+          mobility_changes: punkt.mobilityChanges,
         })),
       }
     }),
@@ -333,6 +368,13 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
       booking_url: punkt.bookingUrl,
       booking_status: punkt.bookingStatus,
       booking_confirmed_at: punkt.bookingConfirmedAt,
+      mobility_mode: punkt.mobilityMode,
+      origin_place_id: punkt.originPlaceId,
+      destination_place_id: punkt.destinationPlaceId,
+      origin_name: punkt.originName,
+      destination_name: punkt.destinationName,
+      connection_ref: punkt.connectionRef,
+      mobility_changes: punkt.mobilityChanges,
     })),
   }
 }

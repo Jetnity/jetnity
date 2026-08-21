@@ -61,6 +61,7 @@ type TripWorkspaceProps = {
   flugsuche?: React.ReactNode
   hotelsuche?: React.ReactNode
   aktivitaetensuche?: React.ReactNode
+  mobilitaetssuche?: React.ReactNode
   onBuchungsstatus?: (itemId: string, gebucht: boolean) => Promise<string | null>
   /**
    * Nur für interne Audits: startet nicht in der Übersicht.
@@ -122,6 +123,7 @@ export default function TripWorkspace({
   flugsuche,
   hotelsuche,
   aktivitaetensuche,
+  mobilitaetssuche,
   onBuchungsstatus,
   anfangsBereich,
 }: TripWorkspaceProps) {
@@ -269,6 +271,12 @@ export default function TripWorkspace({
         {bereichBereit('aktivitaeten') && aktivitaeten && (
           <BereichHuelle bereich="aktivitaeten" verborgen={verbergen('aktivitaeten')} sichtbarKlasse="mt-6">
             {aktivitaeten}
+          </BereichHuelle>
+        )}
+
+        {bereichBereit('mobilitaet') && mobilitaetssuche && (
+          <BereichHuelle bereich="mobilitaet" verborgen={verbergen('mobilitaet')} sichtbarKlasse="mt-6">
+            {mobilitaetssuche}
           </BereichHuelle>
         )}
 

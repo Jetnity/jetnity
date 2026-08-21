@@ -28,7 +28,8 @@ import {
   type Trip,
 } from '@/types/trips'
 import { interesseLesen, tempoLesen } from '@/lib/trips/bezeichnungen'
-import { buchungsquelleLesen, buchungsstatusLesen } from '@/lib/trips/buchung'
+import { buchungsquelleLesen, buchungsstatusLesen, kannBuchungMarkieren } from '@/lib/trips/buchung'
+import { mobilityEvidenceLesen, mobilityModeLesen } from '@/lib/trips/mobilitaet-felder'
 import { TAGE_MAXIMUM } from '@/lib/trips/tage'
 
 /** Höchstwerte, die auch die Datenbank kennt. An einer Stelle, damit sie gleich bleiben. */
@@ -162,20 +163,36 @@ const planpunktSchema = z.object({
   bookingStatus: z.unknown().transform(buchungsstatusLesen).default('unconfirmed'),
   bookingSource: z.unknown().transform(buchungsquelleLesen).nullable().default(null),
   bookingConfirmedAt: zeitstempel.nullable().default(null),
+  mobilityMode: z.unknown().transform(mobilityModeLesen).nullable().default(null),
+  originPlaceId: z.string().min(1).max(80).nullable().default(null),
+  destinationPlaceId: z.string().min(1).max(80).nullable().default(null),
+  originName: optionalerText(GRENZEN.ort).nullable().default(null),
+  destinationName: optionalerText(GRENZEN.ort).nullable().default(null),
+  connectionRef: optionalerText(40).nullable().default(null),
+  mobilityChanges: z.number().int().min(0).max(20).nullable().default(null),
+  mobilityEvidence: z.unknown().transform(mobilityEvidenceLesen).nullable().default(null),
 })
   .transform((punkt) => {
-    const darfBuchen = punkt.kind === 'flight' || punkt.kind === 'stay'
-    if (!darfBuchen || punkt.bookingStatus !== 'booked') {
-      return {
-        ...punkt,
-        bookingStatus: 'unconfirmed' as const,
-        bookingSource: null,
-        bookingConfirmedAt: null,
-      }
-    }
+    const darfBuchen = kannBuchungMarkieren(punkt)
+    const gebucht = darfBuchen && punkt.bookingStatus === 'booked'
+    const transfer = punkt.kind === 'transfer'
+    const mode = transfer ? punkt.mobilityMode : null
+    const hatFakt =
+      transfer &&
+      Boolean(mode || punkt.originPlaceId || punkt.destinationPlaceId || punkt.originName || punkt.destinationName)
     return {
       ...punkt,
-      bookingSource: 'user' as const,
+      bookingStatus: gebucht ? ('booked' as const) : ('unconfirmed' as const),
+      bookingSource: gebucht ? ('user' as const) : null,
+      bookingConfirmedAt: gebucht ? punkt.bookingConfirmedAt : null,
+      mobilityMode: mode,
+      originPlaceId: transfer ? punkt.originPlaceId : null,
+      destinationPlaceId: transfer ? punkt.destinationPlaceId : null,
+      originName: transfer ? punkt.originName : null,
+      destinationName: transfer ? punkt.destinationName : null,
+      connectionRef: transfer ? punkt.connectionRef : null,
+      mobilityChanges: transfer ? punkt.mobilityChanges : null,
+      mobilityEvidence: hatFakt ? ('user' as const) : null,
     }
   })
 
@@ -364,6 +381,13 @@ const nutzlastPunktSchema = z.object({
     .default(null),
   booking_status: z.unknown().transform(buchungsstatusLesen).default('unconfirmed'),
   booking_confirmed_at: zeitstempel.nullable().default(null),
+  mobility_mode: z.unknown().transform(mobilityModeLesen).nullable().default(null),
+  origin_place_id: z.string().min(1).max(80).nullable().default(null),
+  destination_place_id: z.string().min(1).max(80).nullable().default(null),
+  origin_name: optionalerText(GRENZEN.ort).nullable().default(null),
+  destination_name: optionalerText(GRENZEN.ort).nullable().default(null),
+  connection_ref: optionalerText(40).nullable().default(null),
+  mobility_changes: z.number().int().min(0).max(20).nullable().default(null),
 })
   .superRefine((punkt, ctx) => {
     if ((punkt.price_amount === null) !== (punkt.price_currency === null)) {
@@ -375,15 +399,21 @@ const nutzlastPunktSchema = z.object({
     }
   })
   .transform((punkt) => {
-    const darfBuchen = punkt.kind === 'flight' || punkt.kind === 'stay'
-    if (!darfBuchen || punkt.booking_status !== 'booked') {
-      return {
-        ...punkt,
-        booking_status: 'unconfirmed' as const,
-        booking_confirmed_at: null,
-      }
+    const darfBuchen = punkt.kind === 'flight' || punkt.kind === 'stay' || punkt.kind === 'transfer'
+    const gebucht = darfBuchen && punkt.booking_status === 'booked'
+    const transfer = punkt.kind === 'transfer'
+    return {
+      ...punkt,
+      booking_status: gebucht ? ('booked' as const) : ('unconfirmed' as const),
+      booking_confirmed_at: gebucht ? punkt.booking_confirmed_at : null,
+      mobility_mode: transfer ? punkt.mobility_mode : null,
+      origin_place_id: transfer ? punkt.origin_place_id : null,
+      destination_place_id: transfer ? punkt.destination_place_id : null,
+      origin_name: transfer ? punkt.origin_name : null,
+      destination_name: transfer ? punkt.destination_name : null,
+      connection_ref: transfer ? punkt.connection_ref : null,
+      mobility_changes: transfer ? punkt.mobility_changes : null,
     }
-    return punkt
   })
 
 const nutzlastTagSchema = z.object({

@@ -27,6 +27,14 @@ function flug(teil: Partial<TripItem> & Pick<TripItem, 'id'>): TripItem {
     externalRef: 'off_1',
     bookingUrl: null,
     ...unbestaetigteBuchung(),
+    mobilityMode: null,
+    originPlaceId: null,
+    destinationPlaceId: null,
+    originName: null,
+    destinationName: null,
+    connectionRef: null,
+    mobilityChanges: null,
+    mobilityEvidence: null,
     ...teil,
   }
 }

@@ -10,6 +10,7 @@ import { flugOptionLesen } from '@/lib/flights/schema'
 import type { TripItem } from '@/types/trips'
 import { dauerLesbar } from '@/lib/flights/zeit'
 import { unbestaetigteBuchung } from '@/lib/trips/buchung'
+import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 
 export type FlugMomentaufnahme = {
   kind: 'flight'
@@ -114,6 +115,7 @@ export function momentaufnahmeAlsPunkt(
     externalRef: aufnahme.externalRef,
     bookingUrl: null,
     ...unbestaetigteBuchung(),
+    ...leereMobilitaet(),
   }
 }
 

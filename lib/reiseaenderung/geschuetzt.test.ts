@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 
 import { kommerziellErhalten } from '@/lib/reiseaenderung/geschuetzt'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
+import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 
 describe('Geschützte kommerzielle Felder', () => {
   test('gleiche Kennung stellt den kommerziellen Punkt vollständig wieder her', () => {
@@ -54,6 +55,7 @@ describe('Geschützte kommerzielle Felder', () => {
       bookingStatus: 'booked',
       bookingSource: 'user',
       bookingConfirmedAt: '2026-08-21T10:00:00.000Z',
+      ...leereMobilitaet(),
     })
 
     const geschuetzt = kommerziellErhalten(vorher, nachher)
@@ -85,6 +87,7 @@ describe('Geschützte kommerzielle Felder', () => {
       bookingStatus: 'booked',
       bookingSource: 'user',
       bookingConfirmedAt: '2026-08-21T10:00:00.000Z',
+      ...leereMobilitaet(),
     })
     const nachher = structuredClone(vorher)
     nachher.days[0]!.items = nachher.days[0]!.items.filter((punkt) => punkt.id !== 'item-nur-status')
@@ -161,6 +164,7 @@ describe('Geschützte kommerzielle Felder', () => {
       bookingStatus: 'unconfirmed',
       bookingSource: null,
       bookingConfirmedAt: null,
+      ...leereMobilitaet(),
     })
     const nachher = structuredClone(vorher)
     const stay = nachher.days[0]!.items.find((punkt) => punkt.id === 'item-stay')
@@ -206,6 +210,7 @@ describe('Geschützte kommerzielle Felder', () => {
       bookingStatus: 'booked',
       bookingSource: 'user',
       bookingConfirmedAt: '2026-08-21T10:00:00.000Z',
+      ...leereMobilitaet(),
     })
     const nachher = structuredClone(vorher)
     const flug = nachher.days[0]!.items.find((punkt) => punkt.id === 'item-flug')
@@ -225,6 +230,61 @@ describe('Geschützte kommerzielle Felder', () => {
     assert.equal(bleibt?.startsAt, '09:15')
     assert.equal(bleibt?.provider, 'duffel')
     assert.equal(bleibt?.kind, 'flight')
+    assert.equal(bleibt?.bookingStatus, 'booked')
+    assert.equal(bleibt?.bookingSource, 'user')
+    assert.equal(bleibt?.bookingConfirmedAt, '2026-08-21T10:00:00.000Z')
+  })
+
+  test('eine gebuchte Verbindung bleibt gegen Modellmutation geschützt', () => {
+    const vorher = beispielreise()
+    vorher.days[0]!.items.push({
+      id: 'item-zug',
+      dayId: 'day-1',
+      stageId: 'stage-1',
+      kind: 'transfer',
+      title: 'Zürich → Florenz',
+      note: 'IC 890',
+      position: 2,
+      startsOn: '2026-09-12',
+      startsAt: '08:10',
+      endsOn: '2026-09-12',
+      endsAt: '14:40',
+      priceAmount: 89,
+      priceCurrency: 'CHF',
+      provider: null,
+      externalRef: null,
+      bookingUrl: null,
+      bookingStatus: 'booked',
+      bookingSource: 'user',
+      bookingConfirmedAt: '2026-08-21T10:00:00.000Z',
+      mobilityMode: 'rail',
+      originPlaceId: 'geonames:2657896',
+      destinationPlaceId: 'geonames:3176959',
+      originName: 'Zürich',
+      destinationName: 'Florenz',
+      connectionRef: 'IC 890',
+      mobilityChanges: 1,
+      mobilityEvidence: 'user',
+    })
+    const nachher = structuredClone(vorher)
+    const zug = nachher.days[0]!.items.find((punkt) => punkt.id === 'item-zug')
+    assert.ok(zug)
+    zug.title = 'Geänderter Zug'
+    zug.priceAmount = 10
+    zug.originName = 'Basel'
+    zug.mobilityMode = 'bus'
+    zug.bookingStatus = 'unconfirmed'
+    zug.bookingSource = null
+    zug.bookingConfirmedAt = null
+
+    const geschuetzt = kommerziellErhalten(vorher, nachher)
+    const bleibt = geschuetzt.days[0]?.items.find((punkt) => punkt.id === 'item-zug')
+    assert.equal(bleibt?.title, 'Zürich → Florenz')
+    assert.equal(bleibt?.kind, 'transfer')
+    assert.equal(bleibt?.priceAmount, 89)
+    assert.equal(bleibt?.originName, 'Zürich')
+    assert.equal(bleibt?.mobilityMode, 'rail')
+    assert.equal(bleibt?.connectionRef, 'IC 890')
     assert.equal(bleibt?.bookingStatus, 'booked')
     assert.equal(bleibt?.bookingSource, 'user')
     assert.equal(bleibt?.bookingConfirmedAt, '2026-08-21T10:00:00.000Z')

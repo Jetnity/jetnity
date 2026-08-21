@@ -9,6 +9,7 @@ import type { ActivityOption } from '@/lib/activities/domain'
 import { activityOptionLesen } from '@/lib/activities/schema'
 import type { TripItem } from '@/types/trips'
 import { unbestaetigteBuchung } from '@/lib/trips/buchung'
+import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 
 export type ActivityMomentaufnahme = {
   kind: 'activity'
@@ -109,5 +110,6 @@ export function activityMomentaufnahmeAlsPunkt(
     externalRef: aufnahme.externalRef,
     bookingUrl: null,
     ...unbestaetigteBuchung(),
+    ...leereMobilitaet(),
   }
 }

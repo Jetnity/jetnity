@@ -375,14 +375,22 @@ export type Database = {
           booking_status: string
           booking_url: string | null
           created_at: string
+          connection_ref: string | null
           day_id: string | null
+          destination_name: string | null
+          destination_place_id: string | null
           ends_at: string | null
           ends_on: string | null
           external_ref: string | null
           id: string
           kind: string
           metadata: Json
+          mobility_changes: number | null
+          mobility_evidence: string | null
+          mobility_mode: string | null
           note: string | null
+          origin_name: string | null
+          origin_place_id: string | null
           position: number
           price_amount: number | null
           price_currency: string | null
@@ -402,14 +410,22 @@ export type Database = {
           booking_status?: string
           booking_url?: string | null
           created_at?: string
+          connection_ref?: string | null
           day_id?: string | null
+          destination_name?: string | null
+          destination_place_id?: string | null
           ends_at?: string | null
           ends_on?: string | null
           external_ref?: string | null
           id?: string
           kind: string
           metadata?: Json
+          mobility_changes?: number | null
+          mobility_evidence?: string | null
+          mobility_mode?: string | null
           note?: string | null
+          origin_name?: string | null
+          origin_place_id?: string | null
           position?: number
           price_amount?: number | null
           price_currency?: string | null
@@ -429,14 +445,22 @@ export type Database = {
           booking_status?: string
           booking_url?: string | null
           created_at?: string
+          connection_ref?: string | null
           day_id?: string | null
+          destination_name?: string | null
+          destination_place_id?: string | null
           ends_at?: string | null
           ends_on?: string | null
           external_ref?: string | null
           id?: string
           kind?: string
           metadata?: Json
+          mobility_changes?: number | null
+          mobility_evidence?: string | null
+          mobility_mode?: string | null
           note?: string | null
+          origin_name?: string | null
+          origin_place_id?: string | null
           position?: number
           price_amount?: number | null
           price_currency?: string | null

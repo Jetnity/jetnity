@@ -39,6 +39,22 @@ export const TRIP_ITEM_KINDS = ['flight', 'stay', 'activity', 'transfer', 'note'
 export type TripItemKind = (typeof TRIP_ITEM_KINDS)[number]
 
 /**
+ * Fachliche Mobilitätsart eines Transfer-Planpunkts.
+ * Keine eigenen Top-Level-`kind`-Werte: Bahn, Bus, Fähre und Transfer
+ * bleiben `trip_items.kind = transfer`.
+ */
+export const MOBILITY_MODES = ['rail', 'bus', 'ferry', 'transfer'] as const
+export type MobilityMode = (typeof MOBILITY_MODES)[number]
+
+/**
+ * Herkunft strukturierter Mobilitätsfakten.
+ * In dieser Foundation nur `user`. Eine Providerbestätigung kommt später
+ * serverseitig; der Browser darf sie nicht behaupten.
+ */
+export const MOBILITY_EVIDENCES = ['user'] as const
+export type MobilityEvidence = (typeof MOBILITY_EVIDENCES)[number]
+
+/**
  * Buchungsstatus eines Planpunkts. Werte wie in `trip_items.booking_status`.
  *
  * Ein gespeicherter Punkt ist damit nicht automatisch gebucht. `unconfirmed`
@@ -93,6 +109,21 @@ export type TripItem = {
   bookingSource: TripItemBookingSource | null
   /** Zeitpunkt der Bestätigung. `null`, solange unbestätigt. */
   bookingConfirmedAt: string | null
+  /**
+   * Bahn, Bus, Fähre oder allgemeiner Transfer.
+   * Nur bei `kind = transfer` gesetzt; sonst und bei Altbestand `null`.
+   */
+  mobilityMode: MobilityMode | null
+  originPlaceId: string | null
+  destinationPlaceId: string | null
+  originName: string | null
+  destinationName: string | null
+  /** Zug-/Bus-/Fahrnummer, nur wenn bekannt. */
+  connectionRef: string | null
+  /** Anzahl Umstiege. `0` = direkt. `null` = unbekannt. */
+  mobilityChanges: number | null
+  /** `user` bei manueller Erfassung. `null` ohne strukturierte Mobilitätsfakten. */
+  mobilityEvidence: MobilityEvidence | null
 }
 
 /**

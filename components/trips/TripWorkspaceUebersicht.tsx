@@ -1,7 +1,7 @@
 'use client'
 
 import type { ComponentType, ReactNode, RefObject } from 'react'
-import { BedDouble, Plane, Sparkles } from 'lucide-react'
+import { ArrowRightLeft, BedDouble, Plane, Sparkles } from 'lucide-react'
 
 import {
   ARBEITSBEREICH_BEZEICHNUNG,
@@ -16,6 +16,7 @@ const SYMBOL: Record<BereichStatus['bereich'], ComponentType<{ className?: strin
   fluege: Plane,
   unterkunft: BedDouble,
   aktivitaeten: Sparkles,
+  mobilitaet: ArrowRightLeft,
 }
 
 export default function TripWorkspaceUebersicht({

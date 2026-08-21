@@ -45,6 +45,14 @@ function punkt(teil: Partial<TripItem> & Pick<TripItem, 'id' | 'kind' | 'title'>
     bookingStatus: 'unconfirmed',
     bookingSource: null,
     bookingConfirmedAt: null,
+    mobilityMode: null,
+    originPlaceId: null,
+    destinationPlaceId: null,
+    originName: null,
+    destinationName: null,
+    connectionRef: null,
+    mobilityChanges: null,
+    mobilityEvidence: null,
     ...teil,
   }
 }
@@ -108,7 +116,7 @@ function reise(teil: Partial<Trip> = {}): Trip {
 describe('Arbeitsbereich-Kennungen', () => {
   test('der Default auf Mobile ist die Übersicht', () => {
     assert.equal(STANDARD_ARBEITSBEREICH, 'uebersicht')
-    assert.deepEqual(ARBEITSBEREICHE, ['uebersicht', 'fluege', 'unterkunft', 'aktivitaeten'])
+    assert.deepEqual(ARBEITSBEREICHE, ['uebersicht', 'fluege', 'unterkunft', 'aktivitaeten', 'mobilitaet'])
   })
 
   test('die Mobile-Navigation enthält keinen separaten Plan-Bereich', () => {
@@ -129,11 +137,16 @@ describe('Status der Übersicht', () => {
     const status = bereichStatus(reise())
     assert.deepEqual(
       status.map((eintrag) => eintrag.bereich),
-      ['fluege', 'unterkunft', 'aktivitaeten'],
+      ['fluege', 'unterkunft', 'aktivitaeten', 'mobilitaet'],
     )
     assert.deepEqual(
       status.map((eintrag) => eintrag.text),
-      ['Noch kein Flug ausgewählt', 'Noch keine Unterkunft ausgewählt', 'Noch keine Aktivität geplant'],
+      [
+        'Noch kein Flug ausgewählt',
+        'Noch keine Unterkunft ausgewählt',
+        'Noch keine Aktivität geplant',
+        'Noch keine Verbindung geplant',
+      ],
     )
   })
 
@@ -172,6 +185,7 @@ describe('Status der Übersicht', () => {
     assert.equal(status[0]?.text, 'noch nicht vollständig bestimmbar')
     assert.equal(status[1]?.text, 'Abdeckung noch nicht vollständig bestimmbar')
     assert.equal(status[2]?.text, '1 Aktivität geplant')
+    assert.equal(status[3]?.bereich, 'mobilitaet')
   })
 
   test('zeigt gebuchten Hinflug und offenen Rückflug ehrlich', () => {
@@ -246,6 +260,8 @@ describe('Sichtbarkeit und Mount', () => {
     assert.equal(bereichSollSichtbar('uebersicht', 'uebersicht', true), true)
     assert.equal(bereichSollSichtbar('fluege', 'uebersicht', true), false)
     assert.equal(bereichSollSichtbar('aktivitaeten', 'uebersicht', true), false)
+    assert.equal(bereichSollSichtbar('mobilitaet', 'uebersicht', true), false)
+    assert.equal(bereichSollSichtbar('mobilitaet', 'mobilitaet', true), true)
   })
 
   test('auf Mobile liegt der Tagesplan in der Übersicht, nicht in einem eigenen Tab', () => {

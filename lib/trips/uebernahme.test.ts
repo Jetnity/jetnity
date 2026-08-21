@@ -25,9 +25,20 @@ import { test, describe, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { SCHLUESSEL, gastreiseAnlegen, kennungErzeugen } from '@/lib/trips/gastspeicher'
+import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 import { gastreisenUebernehmen, type Uebernahmeantwort } from '@/lib/trips/uebernahme'
 import type { ReiseNutzlast } from '@/lib/trips/schema'
 import type { CreateTripInput } from '@/types/trips'
+
+const LEERE_MOBILITAET_NUTZLAST = {
+  mobility_mode: null,
+  origin_place_id: null,
+  destination_place_id: null,
+  origin_name: null,
+  destination_name: null,
+  connection_ref: null,
+  mobility_changes: null,
+} as const
 
 /** Ein `localStorage`, der sich wie einer verhält. */
 function speicherStellen() {
@@ -210,6 +221,7 @@ describe('Gast mit Reise – der Weg beim Login', () => {
                   bookingStatus: 'unconfirmed',
                   bookingSource: null,
                   bookingConfirmedAt: null,
+                  ...leereMobilitaet(),
                 },
               ],
             }
@@ -238,6 +250,7 @@ describe('Gast mit Reise – der Weg beim Login', () => {
         booking_url: null,
         booking_status: 'unconfirmed',
         booking_confirmed_at: null,
+        ...LEERE_MOBILITAET_NUTZLAST,
       },
     ])
   })
@@ -267,6 +280,7 @@ describe('Gast mit Reise – der Weg beim Login', () => {
           bookingStatus: 'unconfirmed',
           bookingSource: null,
           bookingConfirmedAt: null,
+          ...leereMobilitaet(),
         },
       ],
     })
@@ -291,12 +305,81 @@ describe('Gast mit Reise – der Weg beim Login', () => {
         booking_url: null,
         booking_status: 'unconfirmed',
         booking_confirmed_at: null,
+        ...LEERE_MOBILITAET_NUTZLAST,
       },
     ])
     assert.equal(
       server.empfangen[0].days.every((tag) => tag.items.every((punkt) => punkt.title !== 'Noch offen')),
       true,
     )
+  })
+
+  test('eine manuelle Verbindung nimmt strukturierte Mobilitätsfakten mit', async () => {
+    const entwurf = gastreiseAnlegen(eingabe())
+    speicher.setzen(SCHLUESSEL.aktiv, {
+      ...entwurf,
+      ohneTag: [
+        {
+          id: 'item-zug',
+          dayId: null,
+          stageId: null,
+          kind: 'transfer',
+          title: 'Zürich → Lugano',
+          note: null,
+          position: 1,
+          startsOn: '2026-09-12',
+          startsAt: '08:10',
+          endsOn: '2026-09-12',
+          endsAt: '10:40',
+          priceAmount: 42,
+          priceCurrency: 'CHF',
+          provider: null,
+          externalRef: null,
+          bookingUrl: null,
+          bookingStatus: 'unconfirmed',
+          bookingSource: null,
+          bookingConfirmedAt: null,
+          mobilityMode: 'rail',
+          originPlaceId: 'geonames:2657896',
+          destinationPlaceId: 'geonames:2659836',
+          originName: 'Zürich',
+          destinationName: 'Lugano',
+          connectionRef: 'IC 890',
+          mobilityChanges: 0,
+          mobilityEvidence: 'user',
+        },
+      ],
+    })
+
+    const server = attrappe()
+    await gastreisenUebernehmen(server.senden)
+
+    assert.deepEqual(server.empfangen[0].ungeplante, [
+      {
+        kind: 'transfer',
+        title: 'Zürich → Lugano',
+        note: null,
+        position: 1,
+        starts_on: '2026-09-12',
+        starts_at: '08:10',
+        ends_on: '2026-09-12',
+        ends_at: '10:40',
+        price_amount: 42,
+        price_currency: 'CHF',
+        provider: null,
+        external_ref: null,
+        booking_url: null,
+        booking_status: 'unconfirmed',
+        booking_confirmed_at: null,
+        mobility_mode: 'rail',
+        origin_place_id: 'geonames:2657896',
+        destination_place_id: 'geonames:2659836',
+        origin_name: 'Zürich',
+        destination_name: 'Lugano',
+        connection_ref: 'IC 890',
+        mobility_changes: 0,
+      },
+    ])
   })
 })
 

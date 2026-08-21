@@ -27,6 +27,14 @@ function stay(teil: Partial<TripItem> & Pick<TripItem, 'id'>): TripItem {
     externalRef: 'stay-1',
     bookingUrl: null,
     ...unbestaetigteBuchung(),
+    mobilityMode: null,
+    originPlaceId: null,
+    destinationPlaceId: null,
+    originName: null,
+    destinationName: null,
+    connectionRef: null,
+    mobilityChanges: null,
+    mobilityEvidence: null,
     ...teil,
   }
 }

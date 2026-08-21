@@ -25,6 +25,14 @@ function punkt(teil: Partial<TripItem> & Pick<TripItem, 'id' | 'title'>): TripIt
     bookingStatus: 'unconfirmed',
     bookingSource: null,
     bookingConfirmedAt: null,
+    mobilityMode: null,
+    originPlaceId: null,
+    destinationPlaceId: null,
+    originName: null,
+    destinationName: null,
+    connectionRef: null,
+    mobilityChanges: null,
+    mobilityEvidence: null,
     ...teil,
   }
 }

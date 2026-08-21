@@ -8,6 +8,7 @@
 import * as React from 'react'
 
 import AktivitaetenBereich from '@/components/trips/AktivitaetenBereich'
+import MobilitaetBereich from '@/components/trips/MobilitaetBereich'
 import FlugSuche from '@/components/trips/FlugSuche'
 import HotelBereich from '@/components/trips/HotelBereich'
 import TripWorkspace from '@/components/trips/TripWorkspace'
@@ -101,6 +102,9 @@ export default function TripWorkspaceAuditClient() {
       flugsuche={daten.mitSuche ? <FlugSuche reise={reise} tagId={reise.days[0]?.id ?? null} onUebernehmen={async () => null} /> : null}
       hotelsuche={daten.mitSuche ? <HotelBereich reise={reise} /> : null}
       aktivitaetensuche={daten.mitSuche ? <AktivitaetenBereich reise={reise} /> : null}
+      mobilitaetssuche={
+        <MobilitaetBereich reise={reise} ohneTag={reise.ohneTag} onBuchungsstatus={async () => null} />
+      }
     />
   )
 }
