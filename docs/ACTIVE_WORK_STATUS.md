@@ -8,7 +8,6 @@ Arbeitsblock: **Foundation D – Route & Transit Intelligence**
 - Branch: `feat/route-transit-intelligence`
 - Draft PR: **#34** https://github.com/Jetnity/jetnity/pull/34
 - Implementierungs-Head: `23dd548ae05016b2a1b5011e24c3bdd9d2018f8f`
-- Nachgezogener Docs-Head: `68bcb04984521beb24272e63027b93f67adf1c1e`
 - Status: **technisch umgesetzt und lokal/preview geprüft; wartet auf Human-/Architecture-Review und Product-Owner-Freigabe**
 - Merge: **nicht freigegeben**, PR bleibt Draft
 
@@ -36,17 +35,13 @@ Route Facts sind traveller-neutral. Sie setzen keine einzelne Staatsbürgerschaf
 - ausdrückliche Product-Owner-Merge-Freigabe
 - GitHub Actions Verify-Job für den Implementierungs-Head in der PR-Run-Liste nachziehen
 - kein Timatic, kein echter Provider, keine Production-Migration
-<<<<<<< HEAD
-- Multi-Citizenship-/Multi-Document-Readiness: eigener späterer Block, siehe `docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`
-=======
-- **separater zukünftiger Readiness-Schritt vor echter Requirements-Provider-Aktivierung:** Mehrfachstaatsbürgerschaften und mehrere Reisedokumente pro Traveller gemäß `docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`; nicht still in Foundation D hineinmigrieren
->>>>>>> origin/feat/route-transit-intelligence
+- **separater zukünftiger Readiness-Schritt vor echter Requirements-Provider-Aktivierung:** Mehrfachstaatsbürgerschaften und mehrere Reisedokumente gemäß `docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`; nicht still in Foundation D hineinmigrieren
 
 ## 5. Letzte relevanten Änderungen
 
-Foundation D implementiert. Anschließend Docs-Commit für Multi-Citizenship-Amendment (nicht implementiert, nur bindend dokumentiert).
+Foundation D implementiert. Multi-Citizenship ist verbindlich beschlossen, aber nicht in diesem PR implementiert.
 
-Neue verbindliche Product-Owner-Entscheidung: Ein Reisender kann mehrere Staatsbürgerschaften / Reisedokumente besitzen. Jetnity muss später für die konkrete Route die **rechtlich zulässigen** Dokumentoptionen getrennt prüfen und belegte Einreise-/Visa-/Transitvorteile verständlich vergleichen. Gesetzliche Dokumentpflichten haben Vorrang; kein LLM-/Pass-Hopping-Raten. Details: `docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`.
+Neue verbindliche Product-Owner-Entscheidung: Ein Reisender kann mehrere Staatsbürgerschaften / Reisedokumente besitzen. Jetnity muss später für die konkrete Route die rechtlich zulässigen Dokumentoptionen getrennt prüfen. Gesetzliche Dokumentpflichten haben Vorrang; kein LLM-/Pass-Hopping-Raten.
 
 ## 6. Tests / CI / Preview
 
@@ -62,12 +57,9 @@ Neue verbindliche Product-Owner-Entscheidung: Ein Reisender kann mehrere Staatsb
 
 - keine neue Migration
 - Production-Schema unverändert
-<<<<<<< HEAD
 - Traveller-Schema nicht angefasst
-=======
 - RLS bleibt Eigentümergrenze von `trip_items`
 - aktuelles Foundation-C-`trip_travellers`-Schema hat weiterhin nur ein singuläres `nationality_country_code` + ein Dokumentprofil; Multi-Citizenship benötigt später einen separat reviewten 1:n-Ansatz, nicht Teil des aktuellen PR-#34-DB-Scopes
->>>>>>> origin/feat/route-transit-intelligence
 
 ## 8. Kosten / Provider / Secrets
 
@@ -89,17 +81,10 @@ Neue verbindliche Product-Owner-Entscheidung: Ein Reisender kann mehrere Staatsb
 
 ## 11. Exakter nächster Schritt
 
-<<<<<<< HEAD
 1. Human-/Architecture-Review von PR #34
 2. Product Owner entscheidet über Änderungen oder Merge-Freigabe
 3. nicht mergen, nicht Mark Ready, keine Production-Migration
-=======
-1. Branch pushen, PR #34 Draft lassen
-2. DoD-Tests, Audits, CI und Vercel Preview ausführen und hier nachtragen
-3. auf Human-/Architecture-Review und Product-Owner-Entscheidung warten
-4. nicht mergen, nicht Mark Ready
-5. nach Foundation-D-Review die Multi-Citizenship-Erweiterung als eigenen Readiness-Arbeitsblock einplanen, bevor Timatic/Requirements produktiv aktiviert wird
->>>>>>> origin/feat/route-transit-intelligence
+4. nach Foundation-D-Review die Multi-Citizenship-Erweiterung als eigenen Readiness-Arbeitsblock einplanen, bevor Timatic/Requirements produktiv aktiviert wird
 
 ## 12. Pflichtlektüre
 
@@ -107,12 +92,7 @@ Neue verbindliche Product-Owner-Entscheidung: Ein Reisender kann mehrere Staatsb
 - `docs/ROUTE_TRANSIT_INTELLIGENCE.md`
 - `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md`
 - `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md`
-<<<<<<< HEAD
-- `docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`
-- `JETNITY_HANDOFF.md`, `ROADMAP.md`, ADR-0108/0112
-=======
 - `docs/CURSOR_ROUTE_TRANSIT_MERGE_APPROVAL_AMENDMENT.md`
 - `docs/CURSOR_ROUTE_TRANSIT_PROGRESS_PERSISTENCE_AMENDMENT.md`
 - `docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`
 - `JETNITY_HANDOFF.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `DECISIONS.md` ADR-0108/0112
->>>>>>> origin/feat/route-transit-intelligence
