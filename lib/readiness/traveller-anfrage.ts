@@ -7,7 +7,7 @@
 
 import { TRAVELLER_CONTEXT_GRENZEN, landescodeLesen } from '@/lib/readiness/domain'
 import { documentCitizenshipCode, travellerLegacyLesen } from '@/lib/readiness/traveller-kontext'
-import type { TravellerDocumentType, TripTraveller } from '@/types/trips'
+import { TRAVELLER_DOCUMENT_TYPES, type TravellerDocumentType, type TripTraveller } from '@/types/trips'
 
 const SENSIBLE_ZEICHEN = [
   /\bpass(nummer|nr|no|id)?\b/i,
@@ -101,6 +101,47 @@ function propertyVorhanden(objekt: Record<string, unknown>, name: string): boole
   return Object.prototype.hasOwnProperty.call(objekt, name)
 }
 
+function datumUnterstuetzt(wert: unknown): boolean {
+  return typeof wert === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(wert)
+}
+
+function legacyLandStrikt(wert: unknown): boolean {
+  if (wert == null || wert === '') return true
+  return landescodeLesen(wert) !== null
+}
+
+function legacyDokumenttypStrikt(wert: unknown): boolean {
+  if (wert == null || wert === '') return true
+  return typeof wert === 'string' && (TRAVELLER_DOCUMENT_TYPES as readonly string[]).includes(wert)
+}
+
+function legacyAblaufStrikt(wert: unknown): boolean {
+  if (wert == null || wert === '') return true
+  return datumUnterstuetzt(wert)
+}
+
+function legacySingularFelderStrikt(eintrag: Record<string, unknown>): boolean {
+  if (propertyVorhanden(eintrag, 'nationalityCountryCode') && !legacyLandStrikt(eintrag.nationalityCountryCode)) {
+    return false
+  }
+  if (propertyVorhanden(eintrag, 'residenceCountryCode') && !legacyLandStrikt(eintrag.residenceCountryCode)) {
+    return false
+  }
+  if (
+    propertyVorhanden(eintrag, 'documentIssuingCountryCode') &&
+    !legacyLandStrikt(eintrag.documentIssuingCountryCode)
+  ) {
+    return false
+  }
+  if (propertyVorhanden(eintrag, 'documentType') && !legacyDokumenttypStrikt(eintrag.documentType)) {
+    return false
+  }
+  if (propertyVorhanden(eintrag, 'documentExpiresOn') && !legacyAblaufStrikt(eintrag.documentExpiresOn)) {
+    return false
+  }
+  return true
+}
+
 function citizenshipStrikt(kind: unknown): { clientRef: string; countryCode: string } | null {
   if (!kind || typeof kind !== 'object' || Array.isArray(kind)) return null
   const zeile = kind as Record<string, unknown>
@@ -136,11 +177,10 @@ function documentStrikt(kind: unknown): {
     ? null
     : landescodeLesen(zeile.issuingCountryCode)
   if (zeile.issuingCountryCode != null && zeile.issuingCountryCode !== '' && !issuing) return null
-  if (zeile.expiresOn != null && zeile.expiresOn !== '' && (typeof zeile.expiresOn !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(zeile.expiresOn))) {
+  if (zeile.expiresOn != null && zeile.expiresOn !== '' && !datumUnterstuetzt(zeile.expiresOn)) {
     return null
   }
-  const expiresOn =
-    typeof zeile.expiresOn === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(zeile.expiresOn) ? zeile.expiresOn : null
+  const expiresOn = typeof zeile.expiresOn === 'string' && datumUnterstuetzt(zeile.expiresOn) ? zeile.expiresOn : null
   const citizenshipClientRef =
     zeile.citizenshipClientRef == null || zeile.citizenshipClientRef === ''
       ? null
@@ -201,6 +241,7 @@ export function travellerAnfrageStriktLesen(roh: unknown): TripTraveller | null 
     }
   }
 
+  if (!legacySingularFelderStrikt(eintrag)) return null
   const gelesen = travellerLegacyLesen(eintrag)
   if (!gelesen) return null
   const documentsRoh = Array.isArray(eintrag.documents) ? eintrag.documents : null

@@ -137,6 +137,57 @@ describe('Strikte Requirements-Traveller-Anfrage', () => {
     )
   })
 
+  test('malformed Legacy-Singularfelder sind fail-closed', () => {
+    assert.equal(
+      travellerAnfrageStriktLesen({
+        clientRef: 'traveller:1',
+        documentType: 'foobar',
+      }),
+      null,
+    )
+    assert.equal(
+      travellerAnfrageStriktLesen({
+        clientRef: 'traveller:1',
+        nationalityCountryCode: 'CH',
+        documentType: 'passport',
+        documentExpiresOn: 'kaputt',
+      }),
+      null,
+    )
+    assert.equal(
+      travellerAnfrageStriktLesen({
+        clientRef: 'traveller:1',
+        nationalityCountryCode: 'Schweiz',
+      }),
+      null,
+    )
+    assert.equal(
+      travellerAnfrageStriktLesen({
+        clientRef: 'traveller:1',
+        residenceCountryCode: 41,
+      }),
+      null,
+    )
+    assert.equal(
+      travellerAnfrageStriktLesen({
+        clientRef: 'traveller:1',
+        documentType: 'passport',
+        documentIssuingCountryCode: 'CHH',
+      }),
+      null,
+    )
+    const tolerant = travellerLegacyLesen({
+      clientRef: 'traveller:1',
+      documentType: 'foobar',
+      documentExpiresOn: 'kaputt',
+      nationalityCountryCode: 'Schweiz',
+    })
+    assert.equal(tolerant?.clientRef, 'traveller:1')
+    assert.equal(tolerant?.documents[0]?.documentType, 'foobar')
+    assert.equal(tolerant?.documents[0]?.expiresOn, 'kaputt')
+    assert.equal(tolerant?.citizenships.length, 0)
+  })
+
   test('Passnummer oder MRZ an der API-Grenze wird nicht still ignoriert', () => {
     assert.equal(
       travellerAnfrageStriktLesen({

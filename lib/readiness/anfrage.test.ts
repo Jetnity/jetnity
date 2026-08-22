@@ -12,6 +12,7 @@ import {
 } from '@/lib/readiness/anfrage'
 import { officialRequirementsPruefen, requirementsEvaluationsPruefen } from '@/lib/readiness/anforderungen'
 import { readinessAnfrageErlaubt, readinessRateLeeren } from '@/lib/readiness/rate-limit'
+import type { RequirementsAnfrage, RequirementsProvider } from '@/lib/readiness/provider'
 import { readinessAnforderungAnfrageSchema } from '@/lib/readiness/schema'
 
 describe('Readiness-API-Hülle', () => {
@@ -185,13 +186,76 @@ describe('Readiness-API-Hülle', () => {
     )
   })
 
+  test('malformed Legacy-Singularfelder bleiben fail-closed und erreichen den Provider nicht', async () => {
+    const gesehen: RequirementsAnfrage[] = []
+    const provider: RequirementsProvider = {
+      name: 'test-double',
+      async evaluate(anfrage) {
+        gesehen.push(anfrage)
+        return []
+      },
+    }
+    const faelle = [
+      { clientRef: 'traveller:1', documentType: 'foobar' },
+      { clientRef: 'traveller:1', nationalityCountryCode: 'CH', documentExpiresOn: 'kaputt' },
+      { clientRef: 'traveller:1', nationalityCountryCode: 'Schweiz' },
+      { clientRef: 'traveller:1', residenceCountryCode: 41 },
+      { clientRef: 'traveller:1', documentIssuingCountryCode: 'CHH' },
+    ]
+    for (const party of faelle) {
+      assert.equal(
+        readinessAnforderungAnfrageSchema.safeParse({
+          destinationCountryCode: 'TH',
+          party: [party],
+        }).success,
+        false,
+      )
+      gesehen.length = 0
+      await requirementsEvaluationsPruefen(
+        {
+          destinationCountryCode: 'TH',
+          party: [party],
+        },
+        provider,
+      )
+      for (const anfrage of gesehen) {
+        for (const traveller of anfrage.travellers) {
+          assert.equal(
+            traveller.documents.some((document) => (document.documentType as string) === 'foobar'),
+            false,
+          )
+          assert.equal(
+            traveller.documents.some((document) => document.expiresOn === 'kaputt'),
+            false,
+          )
+          assert.equal(traveller.citizenshipCountryCodes.includes('Schweiz'), false)
+          assert.equal(
+            traveller.credentialOptions.some((option) => (option.documentType as string) === 'foobar'),
+            false,
+          )
+        }
+      }
+    }
+  })
+
   test('Legacy-Form ohne Canonical-Properties bleibt an der API gültig', () => {
     const geprueft = readinessAnforderungAnfrageSchema.safeParse({
       destinationCountryCode: 'TH',
-      party: [{ clientRef: 'traveller:1', nationalityCountryCode: 'CH' }],
+      party: [
+        {
+          clientRef: 'traveller:1',
+          nationalityCountryCode: 'CH',
+          residenceCountryCode: 'CH',
+          documentType: 'passport',
+          documentIssuingCountryCode: 'CH',
+          documentExpiresOn: '2030-01-01',
+        },
+      ],
     })
     assert.equal(geprueft.success, true)
     assert.equal(geprueft.success ? geprueft.data.party[0]?.citizenships[0]?.countryCode : null, 'CH')
+    assert.equal(geprueft.success ? geprueft.data.party[0]?.documents[0]?.documentType : null, 'passport')
+    assert.equal(geprueft.success ? geprueft.data.party[0]?.documents[0]?.expiresOn : null, '2030-01-01')
   })
 
   test('malformed Party bleibt fail-closed', () => {
