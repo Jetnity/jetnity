@@ -22,18 +22,50 @@ Nach Foundation D ist **Traveller Context / Multi-Citizenship / Multi-Document**
 
 ## Abnahmeprotokoll
 
-### Abnahmepunkt 1 – Startseite / erster Bildschirm des Foundation-D-Preview
+### Abnahmepunkt 1 – Startseite und Planungsflow müssen mehrere Reiseziele unterstützen
 
-- Gerät/Kontext: iPhone, mobiler Preview-Aufruf
-- Seite: öffentliche Jetnity-Startseite
-- Screenshot vorhanden im Product-Owner-Review-Chat
-- Product Owner hat angekündigt, dass hier das **erste funktionale Problem** beginnt.
-- Konkrete Anforderung: **noch offen – wird im nächsten Product-Owner-Schritt präzisiert.**
+**Product-Owner-Entscheidung: bestätigt.**
+
+Aktueller Fehler:
+
+- Die öffentliche Startseite modelliert derzeit nur genau eine `OrtAuswahl`.
+- Der anschließende Planungsflow fragt ebenfalls nur genau ein Ziel ab.
+- Das widerspricht echten Reisen mit mehreren Zielen, obwohl der Reisegraph bereits korrekt mehrere `trip_stages` unterstützt.
+
+Verbindliche fachliche Richtung für den späteren Amendment:
+
+- Die Startseite bleibt für eine einfache Einzielreise genauso leicht wie heute.
+- Nach Auswahl des ersten Ziels erscheint progressiv eine Aktion wie `+ Weiteres Ziel hinzufügen`.
+- Es entsteht eine geordnete, dynamische Liste von Reisezielen/Etappen; keine starren Felder `Ziel 1/2/3`.
+- Alle ausgewählten Ziele werden verlustfrei in den nächsten Planungsbildschirm übernommen; keine erneute Eingabe derselben Facts.
+- Im Planungsflow können Ziele ergänzt, entfernt, ersetzt und in ihrer Reihenfolge geändert werden.
+- Derselbe Ort darf mehrfach als eigene Etappe vorkommen, z. B. `Tokyo → Kyoto → Osaka → Tokyo`.
+- Nutzergewählte Ziele/Etappen bleiben strikt getrennt von Route-/Transit-Facts aus Foundation D. Beispiel: `Bangkok → Chiang Mai → Phuket` sind Reiseetappen; `ZRH → DOH → BKK` enthält Doha als Transit, nicht als Nutzerziel.
+- Eine spätere Routenoptimierung darf nur vorgeschlagen werden; keine automatische Umordnung ohne ausdrückliche Nutzerbestätigung.
+- Bestehender Reisegraph mit `trip_stages` wird wiederverwendet und nicht durch ein zweites Multi-Destination-Modell ersetzt.
+
+### Abnahmepunkt 1b – Menü → „Meine Reisen“ bleibt zentraler Reise-Hub
+
+**Product-Owner-Beobachtung: Darstellung und Zwischenweg gefallen und sollen grundsätzlich erhalten bleiben.**
+
+Die Seite ist fachlich sinnvoll:
+
+- Menüpunkt `Meine Reisen` führt auf einen zentralen Ort für angefangene und gespeicherte Reisen.
+- Ohne Konto bleibt der aktive Gastentwurf lokal im Browser.
+- Mit Konto können mehrere Reisen dauerhaft gespeichert und wieder geöffnet werden.
+- Die bestehende Seite soll nicht wegen der Mehrziel-Erweiterung durch einen anderen Navigationsflow ersetzt werden.
+
+Professionelle Funktionsprüfung / Empfehlung für den späteren Amendment:
+
+1. **Gast mit bereits aktivem Entwurf:** Jetnity erlaubt ohne Konto bewusst nur eine aktive Gastreise. Der globale CTA `Neue Reise` darf deshalb nicht so wirken, als könne ein zweiter Gastentwurf parallel entstehen. In diesem Zustand bevorzugt `Reise fortsetzen` bzw. ein klarer, nicht-datenverlierender Weg; niemals still überschreiben. Falls der Nutzer wirklich neu beginnen will, muss Jetnity die bestehende Reise sichtbar behandeln (z. B. Konto für mehrere Reisen oder ausdrücklich bestätigtes Verwerfen/Löschen – endgültige UX noch mit Product Owner abzustimmen).
+2. **Mehrziel-Reisen in der Reisenliste:** Reisekarten sollen eine Mehrzielreise als solche verständlich erkennen lassen. Die Karte darf nicht implizit nur das erste Ziel repräsentieren. Bevorzugt eine kompakte geordnete Routenzusammenfassung wie `Bangkok → Chiang Mai → Phuket` bzw. bei vielen Etappen eine psychologisch ruhige Kurzform; genaue Darstellung in der späteren UX-Abnahme festlegen.
+
+Diese beiden Punkte verändern nicht die grundsätzliche Gestaltung der Seite, sondern sorgen dafür, dass ihre Funktion mit Gastregel und Multi-Destination-Graph konsistent bleibt.
 
 ## Noch nicht tun
 
-- keine Interpretation des Problems als bestätigte Anforderung, bevor der Product Owner es konkret beschreibt
 - keine eigenmächtige Implementierung aus diesem Sammeldokument
+- offene Detail-UX nicht ohne Product-Owner-Abstimmung festlegen
 - kein Merge
 - kein Mark Ready
 - keine Production-Migration
