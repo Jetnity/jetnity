@@ -20,9 +20,17 @@ Pflichtlektüre:
 - `docs/LOGIC_STANDARD.md`
 - `docs/CONTINUITY_STANDARD.md`
 - `docs/CHATGPT_CURSOR_WORKFLOW.md`
+- `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`
+- `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
 - relevante Fach-Dokumente unter `docs/`
 
 Wenn Erinnerung, Chat und Repository widersprechen: **nicht raten**, sondern aktuellen technischen Stand verifizieren.
+
+Verbindliche Kontinuitätsregel:
+
+> **Kein relevanter Fortschritt darf beim Wechsel von Chat, Agent oder Sitzung verloren gehen. Was für die Fortsetzung wichtig ist, gehört ins Repository.**
+
+Bei einem aktiven größeren Arbeitsblock muss zusätzlich `docs/ACTIVE_WORK_STATUS.md` im Feature-Branch gelesen und aktuell gehalten werden.
 
 ---
 
@@ -56,12 +64,12 @@ Das ist ein Entwicklungsziel, keine heutige Marktbehauptung.
 
 ## 2. Rollen / Arbeitsweise
 
-- **Product Owner / Nutzer:** verbindliche Produktentscheidungen und Freigaben.
-- **ChatGPT:** Produkt-, Architektur-, Logic-, Security-, Kosten- und Review-Steuerung; prüft Repository/Supabase/Vercel unabhängig.
-- **Cursor:** ausführender Hauptentwickler für größere Implementierungsblöcke nach versioniertem `docs/CURSOR_...TASK.md`.
+- **Product Owner / Nutzer:** verbindliche Produktentscheidungen und Freigaben; kein Merge ohne ausdrückliche aktuelle Freigabe.
+- **ChatGPT:** Produkt-, Architektur-, Logic-, Security-, Kosten- und Review-Steuerung; prüft Repository/Supabase/Vercel unabhängig und sichert relevante Fortschritts-Checkpoints dauerhaft.
+- **Cursor:** ausführender Hauptentwickler für größere Implementierungsblöcke nach versioniertem `docs/CURSOR_...TASK.md`; hält während aktiver Arbeit `docs/ACTIVE_WORK_STATUS.md` aktuell.
 - **GitHub:** dauerhaftes gemeinsames Gedächtnis / technische Source of Truth.
 
-Neue Produktentscheidungen dürfen nicht nur im Chat bleiben. Nach größeren Phasen müssen Handoff, Roadmap und Fach-/Acceptance-Dokumente aktualisiert sein.
+Neue Produktentscheidungen, relevante Implementierungsmeilensteine, Blocker, Review-Funde, Test-/CI-/Preview-Stände, DB-/Production-Grenzen und der exakte nächste Schritt dürfen nicht nur im Chat oder Agentenkontext bleiben.
 
 ---
 
@@ -89,6 +97,8 @@ Bereits auf `main` abgeschlossen:
 - verbindlicher ChatGPT/Cursor-Workflow
 - verbindliches Jetnity Product Mandate
 - verbindlicher websiteweiter `UX_INFORMATION_ARCHITECTURE_STANDARD`
+- verbindliche Product-Owner-Merge-Approval-Policy
+- verbindliche Project-Progress-Persistence-Policy
 
 Stabile öffentliche Production-URL:
 
@@ -182,7 +192,10 @@ Diese Lücke wird jetzt mit Foundation D bearbeitet.
 - Branch: `feat/route-transit-intelligence`
 - Draft PR: **#34**
 - verbindlicher Task: `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md`
+- aktiver Live-Handoff im Branch: `docs/ACTIVE_WORK_STATUS.md`
 - websiteweiter UX-/IA-Standard: `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
+- Progress-Persistence-Policy: `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`
+- Merge-Gate: `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
 
 Ziel:
 
@@ -198,17 +211,19 @@ Produkt-/UX-Regel:
 
 > **Der Nutzer sieht die Reise – nicht die Komplexität des Datenmodells dahinter.**
 
-Der neue websiteweite Standard ist verbindlich: Alle Besucherbereiche müssen psychologisch ruhig, logisch eindeutig und visuell priorisiert sein. Ein technisch grüner PR reicht nicht, wenn Nutzer unnötig suchen, denken oder Informationen zusammensetzen müssen.
+Der websiteweite Standard ist verbindlich: Alle Besucherbereiche müssen psychologisch ruhig, logisch eindeutig und visuell priorisiert sein. Ein technisch grüner PR reicht nicht, wenn Nutzer unnötig suchen, denken oder Informationen zusammensetzen müssen.
 
 Harte Grenzen für PR #34:
 
-- Draft bis Human-/Architecture-Review
-- nicht mergen
+- Draft bis Human-/Architecture-Review und Product-Owner-Entscheidung
+- **kein Merge ohne ausdrückliche aktuelle Nutzerfreigabe**
 - keine Production-Migration
 - kein echter Flight-/Requirements-Provider
 - kein Timatic-Vertrag
 - keine Secrets
 - keine Fake-Routen/Transitländer/Zeiten
+
+Aktueller operative Stand innerhalb des Branches darf nicht aus diesem Handoff allein geraten werden: **immer `docs/ACTIVE_WORK_STATUS.md` + PR/Head prüfen**.
 
 ---
 
@@ -247,6 +262,8 @@ Ein neuer Chat soll mit folgendem Satz übernehmen können:
 
 > „Wir machen mit Jetnity weiter. Lies den Handoff und den aktuellen Repository-/Production-Stand.“
 
-Dann zuerst diese Datei plus Produktmandat, Vision, Roadmap, UX-/Logic-/Continuity-/Workflow-Standards lesen, **PR #34 prüfen** und erst danach neue Arbeit planen.
+Dann zuerst diese Datei plus Produktmandat, Vision, Roadmap, UX-/Logic-/Continuity-/Workflow-/Progress-/Merge-Standards lesen, **PR #34 und dessen tatsächlichen Head prüfen**, im Feature-Branch `docs/ACTIVE_WORK_STATUS.md` lesen und erst danach neue Arbeit planen.
 
-Der Nutzer soll Jetnity, frühere Entscheidungen oder abgeschlossene Foundations nicht erneut erklären müssen.
+Ein neuer Cursor-Agent liest zusätzlich den aktuellen Cursor-Task und alle neueren Amendments/Review-Aufträge.
+
+Der Nutzer soll Jetnity, frühere Entscheidungen, abgeschlossene Foundations oder den letzten Arbeitsfortschritt **nicht erneut erklären müssen**.
