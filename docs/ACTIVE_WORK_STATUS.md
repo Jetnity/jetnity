@@ -10,15 +10,15 @@ Arbeitsblock: **Foundation D – Route & Transit Intelligence**
 - Implementierungs-Head: `23dd548ae05016b2a1b5011e24c3bdd9d2018f8f`
 - Persistenz-Fix-Head: `6cbe39f3a96fd425b2e0e60ef33c3c206432ed81`
 - Round-2-Fix-Head: `ab8a4910735b05c294f1060ce0f591afc3f25f4d`
-- letzter vor Round-3 verifizierter PR-Head: `314110bcd68c1570f56a0e7ecb321c8191920b84`
 - Round-3-Fix-Head: `be6112061a3429ecf8c8f4aaba595cb5913f3860`
+- letzter vor Round-4 verifizierter PR-Head: `86d507cd119bdeff947d85c2a7292d93a574b4ce`
 - aktuellen Branch-/PR-Head vor jeder weiteren Arbeit erneut über GitHub verifizieren
-- Status: **Round-3-DB-Trust-Boundary umgesetzt und lokal/CI/Preview geprüft; finaler Human-/Truth-Review offen**
+- Status: **Round-3-DB-Trust-Boundary umgesetzt und geprüft; finaler Review hat direkten `trip_items.metadata` INSERT/UPDATE als letzten Truth-Boundary-Blocker bestätigt; Round 4 offen**
 - Merge: **nicht freigegeben**, PR bleibt Draft
 
 ## 2. Ziel
 
-Eine Route, eine strukturierte Wahrheit. Länder nur aus belastbaren Airport-/Itinerary-Referenzen. Kein Raten aus Ortsnamen und keine Country-Truth aus Client-/Browserdaten – auch nicht über direkte RPC-Aufrufe.
+Eine Route, eine strukturierte Wahrheit. Länder nur aus belastbaren Airport-/Itinerary-Referenzen. Kein Raten aus Ortsnamen und keine Country-Truth aus Client-/Browserdaten – unabhängig davon, über welchen erlaubten Schreibweg die Flight-Metadata dauerhaft gespeichert wird.
 
 ## 3. Bereits umgesetzt
 
@@ -32,7 +32,8 @@ Eine Route, eine strukturierte Wahrheit. Länder nur aus belastbaren Airport-/It
 - UI-Audit-Fixtures für Direktflug / 1 Transit / 2 Transits
 - direkte Account-Flugübernahme löst Airport-/Country-Facts serverseitig über `public.airports` auf
 - Round 2: normaler Guest→Account-Pfad kanonisiert Browser-Itineraries vor RPC und Recovery über `public.airports`
-- Fachdokumente, ADR-0108-Nachzug, ADR-0112/0113/0114
+- Round 3: direkter `reise_anlegen`-RPC kanonisiert Country-/City-Facts in der Datenbank aus IATA + `public.airports`
+- Fachdokumente, ADR-0108-Nachzug, ADR-0112/0113/0114/0115
 
 Route Facts sind traveller-neutral. Sie setzen keine einzelne Staatsbürgerschaft voraus und können später dieselbe Route gegen mehrere Traveller-/Credential-Profile auswerten.
 
@@ -65,7 +66,7 @@ Umgesetzt in `ab8a4910` (ADR-0114):
 - Datum/Uhrzeit bleiben
 - `flugInReiseUebernehmen` bleibt referenzbasiert
 
-## 6. Human / Security / Truth Review Round 3 – DB-Trust-Boundary umgesetzt
+## 6. Human / Security / Truth Review Round 3 – RPC-DB-Trust-Boundary behoben
 
 Verbindlicher Review-Nachtrag:
 
@@ -81,15 +82,38 @@ Umgesetzt in `be611206` (ADR-0115):
 - Development-Migration `20260822140000_flug_route_itinerary_airport_truth.sql` angewendet
 - Production nicht migriert
 
-## 7. Noch offen
+## 7. Human / Security / Truth Review Round 4 – letzter persistenter Bypass offen
 
-- finalen Human-/Architecture-/UX-/Security-/Truth-Review gegen tatsächlichen Head durchführen
+Verbindlicher Review-Nachtrag:
+
+- `docs/CURSOR_PR34_HUMAN_REVIEW_ROUND4.md`
+
+Direkt auf Development verifiziert:
+
+- Rolle `authenticated` besitzt auf `public.trip_items` weiterhin `INSERT` und `UPDATE`
+- RLS-Policies begrenzen diese Operationen korrekt auf `user_id = auth.uid()`
+- RLS validiert aber den Inhalt von `metadata.routeItinerary` nicht
+- daher kann ein authentifizierter Eigentümer derzeit über direkten Tabellen-INSERT oder `metadata`-UPDATE den kanonischen `reise_anlegen`-Pfad umgehen
+
+Verbindliches Ziel Round 4:
+
+- jeder dauerhaft persistierte Flight-`routeItinerary`-Wert wird DB-seitig kanonisiert, unabhängig vom Schreibweg
+- bevorzugt enger BEFORE-Trigger auf `trip_items` für `INSERT` sowie `UPDATE OF metadata, kind`
+- andere Metadata-Schlüssel erhalten
+- Non-Flight-Felder und bestehende Buchungsstatus-/Mobility-Schreibwege nicht unnötig verändern
+- ungültige Route fail-closed entfernen; unbekannte Airport-Referenz → `null`, kein Client-Fallback
+
+## 8. Noch offen
+
+- Round-4-Guard implementieren und nur auf Development anwenden
+- vollständigen DoD-/DB-/CI-/Preview-Lauf wiederholen
+- danach finalen Human-/Architecture-/UX-/Security-/Truth-Re-Review gegen tatsächlichen Head durchführen
 - Product Owner erhält danach Ergebnis/Nutzerwirkung und kann weitere Änderungen verlangen
 - ausdrückliche Product-Owner-Merge-Freigabe bleibt erforderlich
 - kein Timatic, kein echter Provider, keine Production-Migration
 - **separater zukünftiger Readiness-/Traveller-Context-Schritt vor echter Requirements-Provider-Aktivierung:** Mehrfachstaatsbürgerschaften und mehrere Reisedokumente als 1:n-Modell
 
-## 8. Letzte relevante globale Entscheidungen
+## 9. Letzte relevante globale Entscheidungen
 
 ### Traveller Context Intelligence
 
@@ -113,42 +137,45 @@ Jeder relevante Fortschritt, Blocker, Review-Fund, Test-/CI-/Preview-Stand und n
 
 Global verbindlich: `docs/EXPERT_PROACTIVITY_POLICY.md`. Wichtige fachliche Chancen/Risiken werden proaktiv präsentiert und bei Relevanz versioniert.
 
-## 9. Tests / CI / Preview nach Round 3
+## 10. Letzter grüner Nachweis vor Round 4
 
-Nachweis auf Code-Head `be611206`:
+Nachweis auf Round-3-Code-Head `be611206` / Docs-Head `86d507cd`:
 
 - `npm test`: 1295 pass / 0 fail
 - Typecheck, Lint, Hygiene: grün
 - Production Build: grün (38/38 Seiten)
 - `auth:pruefen`: 55/55
 - `db:anwenden` Development: `20260822140000_flug_route_itinerary_airport_truth.sql` angewendet
-- `db:rechte`: OK (43 Tabellenrechte)
+- `db:rechte`: OK
 - `db:rls`: grün
-- `db:sicherheit`: **193/193** inkl. direkter RPC-Manipulation
+- `db:sicherheit`: 193/193 inkl. direkter RPC-Manipulation
 - Trip Workspace Audit: 726 Kombinationen, 0 Fehler, WebKit + Chromium
-- Vercel Preview READY: https://jetnity-530z7fkbv-jetnity-e1b93c82.vercel.app
-- GitHub Actions CI **success**: https://github.com/Jetnity/jetnity/actions/runs/32577656292
+- GitHub CI auf aktuellem Docs-Head grün
+- Vercel Preview READY
 - Draft-PR #34 mergeable / CLEAN; das ist keine Merge-Freigabe
 
-## 10. Datenbank / RLS / Production
+Round 4 verlangt danach einen neuen vollständigen Nachweis.
+
+## 11. Datenbank / RLS / Production
 
 Direkt verifiziert am 22.08.2026:
 
 - Development enthält `20260822130000 reise_anlegen_route_itinerary` und `20260822140000 flug_route_itinerary_airport_truth`
+- `authenticated` hat auf `trip_items` SELECT/INSERT/UPDATE/DELETE; Owner-RLS ist aktiv
 - Production endet weiterhin bei `20260822020000 trip_travellers`
 - Production ist **nicht** mit Foundation-D-RPC migriert
 - Traveller-Schema in Foundation D nicht angefasst
 - **Production nicht migrieren** ohne separate Freigabe
 
-## 11. Kosten / Provider / Secrets
+## 12. Kosten / Provider / Secrets
 
 - keine neuen Secrets
 - keine neuen laufenden Kosten
 - kein Flight-/Requirements-Provider aktiviert
 
-## 12. Bekannte spätere Expert-Funde
+## 13. Bekannte spätere Expert-Funde
 
-Kein Round-3-Blocker:
+Nicht Teil des Round-4-Blockers:
 
 - ohne Airport-Zeile bleibt Country `null`
 - mehrdeutige Flüge bekommen keine Itinerary
@@ -157,26 +184,29 @@ Kein Round-3-Blocker:
 - Gesamt-Destination-Regel vor First-Class-Multi-City/Open-Jaw explizit am Graphende definieren
 - zeitabhängiges Connection-Risk später in eigene Logik/Fingerprint aufnehmen
 
-## 13. Offene Nutzerentscheidungen / Freigaben
+## 14. Offene Nutzerentscheidungen / Freigaben
 
 - **Merge von PR #34 nicht freigegeben**
 - Production-/Provider-/Kostenfreigaben getrennt und nicht erteilt
 - Multi-Citizenship-/Multi-Document-Unterstützung ist verbindlich beschlossen
 - globale Traveller-Context-Relevanzprüfung gilt für jede relevante neue/geänderte Funktion
-- Round-3-Fix liegt innerhalb Foundation-D-Truth-/Security-Scope; keine Production-Freigabe daraus ableiten
+- Round-4-Guard liegt innerhalb der bereits geprüften Foundation-D-Truth-/Security-Grenze; keine Production-Freigabe daraus ableiten
 
-## 14. Exakter nächster Schritt
+## 15. Exakter nächster Schritt
 
-1. ChatGPT führt finalen Human-/Architecture-/UX-/Security-/Truth-Review gegen `be611206` bzw. den tatsächlichen Head durch
-2. Product Owner entscheidet über weitere Änderungen oder spätere Merge-Freigabe
-3. **nicht mergen, nicht Mark Ready, keine Production-Migration ohne Freigabe**
+1. Cursor liest `docs/CURSOR_PR34_HUMAN_REVIEW_ROUND4.md` und implementiert den persistenten Route-Metadata-Guard auf Development
+2. Cursor führt alle verlangten Tests/DB-/CI-/Preview-Prüfungen erneut aus und aktualisiert Acceptance/ADR/Handoff
+3. ChatGPT führt den finalen Re-Review gegen den tatsächlichen neuen Head durch
+4. Product Owner entscheidet danach über weitere Änderungen oder spätere Merge-Freigabe
+5. **nicht mergen, nicht Mark Ready, keine Production-Migration ohne Freigabe**
 
-## 15. Pflichtlektüre
+## 16. Pflichtlektüre
 
 - `docs/ACTIVE_WORK_STATUS.md`
 - `docs/CURSOR_PR34_HUMAN_REVIEW_FIXES.md`
 - `docs/CURSOR_PR34_HUMAN_REVIEW_ROUND2.md`
 - `docs/CURSOR_PR34_HUMAN_REVIEW_ROUND3.md`
+- `docs/CURSOR_PR34_HUMAN_REVIEW_ROUND4.md`
 - `docs/ROUTE_TRANSIT_INTELLIGENCE.md`
 - `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md`
 - `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md`
