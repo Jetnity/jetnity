@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 22. August 2026  
-Arbeitsblock: **Foundation E – Traveller Context / Multi-Citizenship / Multi-Document – Draft PR / Development verifiziert**
+Arbeitsblock: **Foundation E – Traveller Context – Review-Blocker-Fixes auf Draft PR #35**
 
 ## 1. Aktueller Zustand
 

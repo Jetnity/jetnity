@@ -80,11 +80,15 @@ Automatisiert nachgewiesen:
 7. Änderung an Traveller A ändert Traveller B nicht
 8. Route-/Transitänderung macht abhängige Entry-Checks stale
 9. ohne Provider kein `required` / `not_required` / `conditional`
-10. Vergleich ohne Evidence: `Noch nicht zuverlässig vergleichbar.`
+10. Vergleich ohne Evidence oder ohne option-level Semantik: `Noch nicht zuverlässig vergleichbar.`
 11. Guest-Form und Account-RPC teilen dieselbe fachliche Party-Form
 12. Cross-User-/Cross-Trip-INSERT auf Child-Tabellen abgewiesen
 13. fremde Citizenship-ID am Dokument abgewiesen
-14. Trip-Workspace-UI-Audit: 1/2 Citizenships, 2 Traveller, fehlendes Dokument, fehlende Citizenship, langes Label, Provider unavailable – WebKit + Chromium, 8 Viewports
+14. Ausstellerland wird nicht zur Staatsbürgerschaft; Relation nur bei gespeicherter Citizenship-Ref
+15. visa `required` gegen `not_required` ohne Eligibility ist kein Winner
+16. explizit mandatory / not-allowed Optionen sind vergleichbar; gleichwertige Optionen nicht
+17. Citizenship-Löschung nullt nur `citizenship_id`; Traveller-Löschung entfernt traveller-spezifische Readiness
+18. Trip-Workspace-UI-Audit: 1/2 Citizenships, 2 Traveller, fehlendes Dokument, fehlende Citizenship, langes Label, Provider unavailable – WebKit + Chromium, 8 Viewports
 
 ---
 

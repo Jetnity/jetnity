@@ -2992,6 +2992,37 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 - `unknown` bleibt `unknown`
 - späterer Provider kann Optionen anschließen, ohne das Modell neu zu bauen
 
+**Nachtrag, 22. August 2026:** Unabhängiges Review von PR #35 (Blocker 2 und 3). Das Ausstellerland eines Dokuments ist keine Staatsbürgerschaft. `relatedCitizenshipCountryCode` bleibt `null` ohne gespeicherte Relation. `officialClass=requirement` + `result=required` ist keine option-level Pflicht; ohne `optionMandate` / `optionEligibility` bleibt der Vergleich fail-closed.
+
+---
+
+## ADR-0121 – Composite-FK-Delete und Parent-Lock für Traveller-Children
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Development; Production nicht anwenden
+
+**Entscheidung:**
+
+- `trip_traveller_documents_citizenship_fk` nutzt `ON DELETE SET NULL (citizenship_id)`.
+- `trip_readiness_items_traveller_fk` nutzt `ON DELETE CASCADE`.
+- `trip_traveller_kinder_limit_pruefen()` sperrt die Parent-`trip_travellers`-Zeile (`FOR UPDATE`), bevor es zählt.
+
+**Kontext:** Unqualifiziertes `ON DELETE SET NULL` auf einem Composite-FK würde NOT-NULL-Spalten `trip_id`/`user_id`/`traveller_id` nullen und Delete-Pfade blockieren. AFTER INSERT + `count(*)` allein ist unter parallelen Direct-Writes ein klassisches MVCC-Fenster.
+
+**Alternativen:**
+
+1. *Readiness bei Traveller-Delete auf trip-level nullen (`SET NULL (traveller_id)`).* Würde traveller-spezifische Wahrheit still degradieren.
+2. *Nur Application-Layer-Cleanup.* Unvollständig, weil `authenticated` direkte Tabellenrechte hat.
+3. *Advisory Locks statt Parent-Row-Lock.* Mehr Mechanismus, dieselbe Serialisierung.
+
+**Begründung:** SET NULL nur der optionalen Relation hält das Dokument. CASCADE hält Readiness am Reisenden. Parent-Lock serialisiert Child-Inserts desselben Travellers.
+
+**Konsequenzen:**
+
+- Forward-Migration `20260822170000_traveller_context_fk_delete.sql`
+- `db:sicherheit` prüft Citizenship-Delete und Traveller-Delete
+- Production bleibt unverändert
+
 ---
 
 ## Offene Widersprüche

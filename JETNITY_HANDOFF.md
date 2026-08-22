@@ -416,11 +416,12 @@ Offener separater Security-Hardening-Track bleibt sichtbar (u. a. ältere `SECUR
 
 Solange der Foundation-E-Draft-PR offen ist:
 
-1. `docs/ACTIVE_WORK_STATUS.md` und `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md` lesen,
-2. Draft PR #35 reviewen, nicht mergen, nicht Mark Ready,
-3. UI-Audit ist erledigt (**838/0**, WebKit + Chromium). GitHub CI und Vercel Preview auf Head `913604fe` sind verifiziert.
-4. Product Owner separat um Merge-Freigabe fragen,
-5. Production-Migration erst nach Merge und separater Freigabe.
+1. `docs/ACTIVE_WORK_STATUS.md`, `docs/PR35_CHATGPT_INDEPENDENT_REVIEW.md` und `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md` lesen,
+2. Draft PR #35 bleibt Draft; nicht mergen, nicht Mark Ready,
+3. Review-Blocker 1–3 werden auf diesem Branch behoben (FK-Delete, Issuer≠Citizenship, Vergleichssemantik),
+4. danach erneuter unabhängiger ChatGPT-Review,
+5. Product Owner separat um Merge-Freigabe fragen,
+6. Production-Migration erst nach Merge und separater Freigabe.
 
 Nach Foundation E gilt die verbindliche Reihenfolge:
 

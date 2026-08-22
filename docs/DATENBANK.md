@@ -99,6 +99,8 @@ Die dreizehn Tabellen: `profiles`, `trips`, `trip_stages`, `trip_days`, `trip_it
 
 **Traveller Context `20260822160000`:** Child-Tabellen `trip_traveller_citizenships` und `trip_traveller_documents`, optionales `trip_readiness_items.traveller_id`, RPC `party_schreiben()`. Deterministischer Backfill der Foundation-C-Singularfelder. Legacy-Spalten bleiben. **Nur Development.** Nicht Production.
 
+**Traveller Context FK-Delete `20260822170000`:** Composite-FK `trip_traveller_documents_citizenship_fk` nullt nur `citizenship_id`. Traveller-spezifische Readiness folgt dem Reisenden (`ON DELETE CASCADE`). Child-Limits sperren die Parent-Zeile gegen parallele Direct-Writes. **Nur Development.** Nicht Production.
+
 Das Wachstum liegt vollständig bei den Reisedaten: Die vier neuen Tabellen tragen 61 Spalten, 43 CHECK-Bedingungen, 6 Fremdschlüssel, 5 Eindeutigkeitsbedingungen, 15 Indizes, 16 Policies und 5 Auslöser – vier für `updated_at`, einer für die Erzeugungsregeln von `public.trips` (Abschnitt 7a). Gleichzeitig sind mit `creator_sessions` 16 Spalten, 7 Indizes und 4 Policies sowie die neun Creator-Spalten des Profils entfallen – die Nettozahlen der Tabelle oben sind deshalb kleiner als die Zugänge.
 
 Dass die CHECK-Bedingungen von 4 auf 45 steigen, ist Absicht: Jeder Wertebereich, jede Länge, jede Reihenfolge und jede Zahlengrenze steht als Bedingung im Schema statt als Annahme im Anwendungscode ([DECISIONS.md](../DECISIONS.md) ADR-0043).

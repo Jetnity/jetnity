@@ -114,15 +114,13 @@ Eine Option entsteht nur aus vorhandenen Fakten:
 
 `requirementsProviderAus()` bleibt `null`. Ohne Provider darf Jetnity nicht behaupten, welcher Pass visumfrei, besser oder transitfähig ist.
 
-Vergleich (`lib/readiness/vergleich.ts`) arbeitet nur auf belegter Official Evidence. Reihenfolge:
+Vergleich (`lib/readiness/vergleich.ts`) trennt Requirement-Ergebnisse von option-level Eligibility/Mandate.
 
-1. regulatorische Pflicht
-2. Route-/Transit-Zulässigkeit
-3. belegte Provider-/Carrier-Pflicht
-4. geringere belegte regulatorische Reibung
-5. weitere belegte Faktoren
+- `result=required` bei `requirementType=visa` heisst: für diese Option ist ein Visum nötig – nicht, dass genau dieses Credential verwendet werden muss.
+- Ein Winner entsteht nur bei expliziter option-level Semantik (`optionMandate=mandatory` oder `optionEligibility=not_allowed`) oder, nach explizit erlaubter Eligibility, bei belegter Reibung (`not_required` vor `required`).
+- Ausstellerland ist kein Citizenship-Ersatz. `relatedCitizenshipCountryCode` bleibt `null`, solange keine gespeicherte Relation existiert.
 
-Ohne Evidence:
+Ohne Evidence oder ohne option-level Semantik:
 
 > Noch nicht zuverlässig vergleichbar.
 
@@ -147,7 +145,7 @@ Nicht erlaubt: `Schweizer Pass ist besser` oder vergleichbare Vorteilssprache oh
 
 | Umgebung | Stand |
 | --- | --- |
-| Development | Migration `20260822160000` angewendet |
+| Development | Migrationen `20260822160000` und `20260822170000` |
 | Production | unverändert; keine Foundation-E-Tabellen |
 
 Production-Migration braucht nach Merge eine **separate** Product-Owner-Freigabe.
