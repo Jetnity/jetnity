@@ -136,9 +136,7 @@ function partyKanonisieren(party = []) {
               clientRef: `document:${eintrag.documentType ?? 'unknown'}:${eintrag.documentIssuingCountryCode ?? 'xx'}`,
               documentType: eintrag.documentType ?? 'unknown',
               issuingCountryCode: eintrag.documentIssuingCountryCode ?? null,
-              citizenshipClientRef: eintrag.nationalityCountryCode
-                ? `citizenship:${eintrag.nationalityCountryCode}`
-                : null,
+              citizenshipClientRef: null,
               expiresOn: eintrag.documentExpiresOn ?? null,
               createdAt: eintrag.createdAt ?? JETZT,
               updatedAt: eintrag.updatedAt ?? JETZT,

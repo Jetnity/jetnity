@@ -18,6 +18,14 @@ import {
 import type { OfficialEvaluation } from '@/lib/readiness/official'
 import { gruppenUnterschiede, slotMissingFactsErgaenzen, travellerSlots } from '@/lib/readiness/party'
 import { readinessAnsicht, readinessZusammenfassungText } from '@/lib/readiness/status'
+import {
+  citizenshipClientRefFuer,
+  dokumenteAlsPayload,
+  dokumenteAusTraveller,
+  dokumenteNachCitizenships,
+  neueDokumentClientRef,
+  type DokumentFormularZeile,
+} from '@/lib/readiness/dokument-formular'
 import { VERGLEICH_NICHT_VERFUEGBAR } from '@/lib/readiness/vergleich'
 import type { ReadinessKind, ReadinessUserStatus, TravellerDocumentType, Trip } from '@/types/trips'
 import { cn } from '@/lib/utils'
@@ -379,16 +387,8 @@ function ReisendenKarte({
   const [citizenships, setCitizenships] = React.useState<string[]>(
     slot.traveller?.citizenships.map((eintrag) => eintrag.countryCode) ?? [''],
   )
-  const [documents, setDocuments] = React.useState<
-    Array<{ documentType: TravellerDocumentType | ''; issuingCountryCode: string; expiresOn: string }>
-  >(
-    slot.traveller?.documents.length
-      ? slot.traveller.documents.map((eintrag) => ({
-          documentType: eintrag.documentType,
-          issuingCountryCode: eintrag.issuingCountryCode ?? '',
-          expiresOn: eintrag.expiresOn ?? '',
-        }))
-      : [{ documentType: '', issuingCountryCode: '', expiresOn: '' }],
+  const [documents, setDocuments] = React.useState<DokumentFormularZeile[]>(
+    dokumenteAusTraveller(slot.traveller?.documents),
   )
 
   if (!onTravellerSetzen) {
@@ -414,18 +414,10 @@ function ReisendenKarte({
           label: slot.traveller?.label ?? slot.label,
           residenceCountryCode: residence || null,
           citizenships: laender.map((countryCode) => ({
-            clientRef: `citizenship:${countryCode}`,
+            clientRef: citizenshipClientRefFuer(countryCode),
             countryCode,
           })),
-          documents: documents
-            .filter((document) => document.documentType)
-            .map((document) => ({
-              clientRef: `document:${document.documentType}:${document.issuingCountryCode || 'xx'}`,
-              documentType: document.documentType as TravellerDocumentType,
-              issuingCountryCode: document.issuingCountryCode || null,
-              expiresOn: document.expiresOn || null,
-              citizenshipClientRef: null,
-            })),
+          documents: dokumenteAlsPayload(documents, laender),
         })
         if (fehler) onFehler(fehler)
       }}
@@ -455,7 +447,11 @@ function ReisendenKarte({
               <button
                 type="button"
                 className="min-h-11 shrink-0 rounded-full px-3 text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-                onClick={() => setCitizenships(citizenships.filter((_, i) => i !== index))}
+                onClick={() => {
+                  const naechste = citizenships.filter((_, i) => i !== index)
+                  setCitizenships(naechste)
+                  setDocuments(dokumenteNachCitizenships(documents, naechste))
+                }}
               >
                 Entfernen
               </button>
@@ -485,7 +481,7 @@ function ReisendenKarte({
       <fieldset className="grid gap-2">
         <legend className="text-xs font-medium text-brand-800">Reisedokumente</legend>
         {documents.map((document, index) => (
-          <div key={`doc-${index}`} className="grid gap-2 rounded-2xl bg-surface-25 px-3 py-3">
+          <div key={document.clientRef || `doc-${index}`} className="grid gap-2 rounded-2xl bg-surface-25 px-3 py-3">
             <label className="grid gap-1 text-xs font-medium text-brand-800">
               Dokument {index + 1}
               <select
@@ -533,6 +529,32 @@ function ReisendenKarte({
                     className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
                   />
                 </label>
+                {citizenships.some((code) => /^[A-Z]{2}$/.test(code.trim())) ? (
+                  <label className="grid gap-1 text-xs font-medium text-brand-800">
+                    Zugeordnete Staatsbürgerschaft
+                    <select
+                      value={document.citizenshipClientRef ?? ''}
+                      onChange={(event) => {
+                        const naechste = [...documents]
+                        naechste[index] = {
+                          ...document,
+                          citizenshipClientRef: event.target.value || null,
+                        }
+                        setDocuments(naechste)
+                      }}
+                      className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                    >
+                      <option value="">Noch nicht zugeordnet</option>
+                      {[...new Set(citizenships.map((code) => code.trim().toUpperCase()).filter((code) => /^[A-Z]{2}$/.test(code)))].map(
+                        (code) => (
+                          <option key={code} value={citizenshipClientRefFuer(code)}>
+                            {code}
+                          </option>
+                        ),
+                      )}
+                    </select>
+                  </label>
+                ) : null}
               </>
             ) : null}
             {documents.length > 1 ? (
@@ -550,7 +572,18 @@ function ReisendenKarte({
           <button
             type="button"
             className="min-h-11 justify-self-start rounded-full px-3 text-xs font-semibold text-brand-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-            onClick={() => setDocuments([...documents, { documentType: '', issuingCountryCode: '', expiresOn: '' }])}
+            onClick={() =>
+              setDocuments([
+                ...documents,
+                {
+                  clientRef: neueDokumentClientRef(),
+                  documentType: '',
+                  issuingCountryCode: '',
+                  expiresOn: '',
+                  citizenshipClientRef: null,
+                },
+              ])
+            }
           >
             Weiteres Dokument
           </button>
