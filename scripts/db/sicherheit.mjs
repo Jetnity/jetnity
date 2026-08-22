@@ -1512,6 +1512,38 @@ function reisenachweise() {
       erwartung: 'leer',
     },
     {
+      name: 'party_schreiben leert Citizenships trotz Legacy-Nationalität',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.party_schreiben(jsonb_build_object(
+              'tripId', '${REISE}',
+              'party', jsonb_build_array(jsonb_build_object(
+                'clientRef', 'traveller:1',
+                'citizenships', '[]'::jsonb,
+                'documents', '[]'::jsonb
+              ))
+            ));
+            select * from public.trip_traveller_citizenships
+             where traveller_id = '${TRAVELLER}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'party_schreiben leert Documents trotz Legacy-Passport',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.party_schreiben(jsonb_build_object(
+              'tripId', '${REISE}',
+              'party', jsonb_build_array(jsonb_build_object(
+                'clientRef', 'traveller:1',
+                'citizenships', '[]'::jsonb,
+                'documents', '[]'::jsonb
+              ))
+            ));
+            select * from public.trip_traveller_documents
+             where traveller_id = '${TRAVELLER}'`,
+      erwartung: 'leer',
+    },
+    {
       name: 'Legacy-Backfill verknüpft Dokument nicht über das Ausstellerland',
       rolle: 'authenticated',
       uid: NUTZER,
