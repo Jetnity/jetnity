@@ -2425,6 +2425,336 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 
 ---
 
+## ADR-0096 – Readiness als eigene Domäne statt `trip_items`
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32; Development-Migration; nicht Production
+
+**Entscheidung:** Reisevorbereitung ist eine eigene persistente Domäne `trip_readiness_items`, nicht ein neuer `trip_items.kind`.
+
+**Kontext:** Readiness ist kein Tagesplanpunkt und keine Buchung. Ein `kind` auf dem bestehenden Planpunkt würde Booking-, Preis- und Routing-Semantik mit Checklisten vermischen.
+
+**Alternativen:**
+
+1. *Neuer `trip_items.kind = readiness`.* Würde Coverage, Booking und den Tagesplan belasten.
+2. *JSON in `trips.metadata`.* Verstösst gegen die Schema-Regel: abgefragte Fakten sind Spalten.
+3. *Nur Client-State.* Keine Source of Truth, keine Guest→Account-Parität.
+
+**Begründung:** Eine kleine normalisierte Tabelle mit composite FK auf `trips (id, user_id)` hält Ownership, RLS und Idempotenz klar. `reise_anlegen()` und `reise_aendern()` bleiben unverändert.
+
+**Konsequenzen:**
+
+- Guest und Account teilen `Trip.readinessItems`.
+- Guest→Account läuft über eine separate Sync-Naht, nicht über eine ältere `reise_anlegen()`-Definition.
+- Production bleibt ohne diese Tabelle, bis separat freigegeben.
+
+---
+
+## ADR-0097 – Official Requirement Truth und User Preparation Truth getrennt
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** Persistiert wird nur User Evidence (`open` / `done` / `skipped`, Quelle `user`). Offizielle Visa-/Einreiseaussagen bleiben ohne Provider `unknown` und dürfen nicht aus einem Häkchen abgeleitet werden.
+
+**Kontext:** Ein Häkchen „Einreise geprüft“ ist keine behördliche Bestätigung. Mehrere Reisende haben keine individuellen Nationalitätsprofile.
+
+**Alternativen:**
+
+1. *User done als official not_required.* Irreführende Sicherheit.
+2. *Statische Country-Regeln im Repo.* Fake-Regeln, veralten still.
+3. *Modell als Quelle.* Verboten durch Logic Standard und diese Foundation.
+
+**Begründung:** Unbekannt bleibt unbekannt. Foundation C bereitet die Provider-Naht vor, täuscht sie aber nicht vor.
+
+**Konsequenzen:**
+
+- Kein globales „Reisebereit“.
+- UI trennt „Von dir erledigt“ und „Noch nicht offiziell geprüft“.
+- `POST /api/readiness/requirements` fail closed.
+
+---
+
+## ADR-0098 – Deterministischer Context-Fingerprint
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** Jeder persistierte Check trägt einen serverseitig berechneten `context_fingerprint`. Passt er nicht mehr zu den aktuellen Trip-Fakten, gilt der Check als `stale` oder `not_applicable`.
+
+**Kontext:** Ein Bangkok-Einreisecheck darf nach einem Zielwechsel nach Tokyo nicht grün bleiben. Ein Bestätigungscheck darf nach Entfernen oder `unconfirmed` des Planpunkts nicht weiter als Abdeckung zählen.
+
+**Alternativen:**
+
+1. *Checks bei jeder Reiseänderung löschen.* Verliert User Evidence und die Aufforderung „erneut prüfen“.
+2. *Browser setzt den Fingerprint.* Account-seitig untrusted.
+3. *Nur `trips.revision` vergleichen.* Zu grob: irrelevante Änderungen würden alle Checks invalidieren.
+
+**Begründung:** Die Felder je Art sind in `docs/TRAVEL_READINESS.md` und `lib/readiness/fingerprint.ts` festgelegt. Der Server berechnet sie aus der geladenen Reise.
+
+**Konsequenzen:**
+
+- Guest berechnet lokal aus dem Gastgraphen, Account nur serverseitig.
+- `reise_aendern()` schreibt Readiness nicht; der Fingerprint macht alte Checks sichtbar ungültig.
+
+---
+
+## ADR-0099 – Kein sensibler Dokumententresor
+
+**Datum:** 22. August 2026  
+**Status:** verbindlich für Foundation C
+
+**Entscheidung:** Foundation C speichert keine Pass-, ID-, Visa-, Gesundheits-, Geburts- oder Zahlungsdaten und öffnet keinen Storage-Bucket. Kein Upload, keine OCR, keine Encryption-Side-Quest.
+
+**Kontext:** Ein späterer echter Vault braucht eine eigene Security-/Encryption-ADR und ausdrückliche Freigabe.
+
+**Alternativen:**
+
+1. *Jetzt einen Tresor „klein“ mitbauen.* Sicherheits- und Compliance-Risiko ohne Produktnutzen.
+2. *Freitext für Passnummern erlauben.* Würde sensible Daten in Reisezeilen legen.
+
+**Begründung:** Datenminimierung. Custom-Titel sind längenbegrenzt, ohne HTML/URLs, und weisen sensible Muster zurück.
+
+**Konsequenzen:**
+
+- Custom-UI trägt den Hinweis, keine sensiblen Daten einzutragen.
+- Datenbank-CHECK lehnt sechs- und mehrstellige Ziffernfolgen im Titel ab.
+
+---
+
+## ADR-0100 – Reisevorbereitung in der Übersicht, kein sechster Tab
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** Die fünf Hauptbereiche bleiben `Übersicht · Flüge · Unterkunft · Aktivitäten · Mobilität`. Foundation C liegt als Bereich „Reisevorbereitung“ in der Übersicht.
+
+**Kontext:** Ein sechster Tab würde die gerade stabilisierte Mobile-Navigation wieder öffnen, bevor die Gesamt-Informationsarchitektur bewertet ist.
+
+**Alternativen:**
+
+1. *Sechster Top-Level-Tab.* Frühe IA-Entscheidung ohne Abnahme.
+2. *Eigene Seite ausserhalb des Workspace.* Würde Readiness vom Reisegraphen trennen.
+
+**Begründung:** Der Nutzer soll das Gesamtbild in der Übersicht sehen. Ein späterer UX-Pass darf die IA neu bewerten.
+
+**Konsequenzen:**
+
+- Workspace-Audit prüft weiter genau fünf Bereichsziele.
+- Auf Desktop ohne Übersicht-Tab erscheint dieselbe Karte nach dem Reisekopf, nicht als sechster Bereich.
+- Foundation D darf die Zusammenfassung erweitern, nicht diese Grenze still aufheben.
+
+---
+
+## ADR-0101 – Automatic Travel Requirements statt reiner Checkliste
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** Foundation C ist die Grundlage für automatische Travel Requirements, nicht nur eine manuelle Checkliste.
+
+**Kontext:** Der ursprüngliche Auftrag konnte so gelesen werden, als müssten Nutzer Visa- und Einreiseregeln selbst recherchieren. Der verbindliche Nachtrag verlangt eine Engine.
+
+**Alternativen:**
+
+1. *Nur Nutzer-Häkchen.* Würde den Nachtrag ignorieren.
+2. *Statische Visa-Matrix.* Fake-Regeln.
+
+**Begründung:** Jetnity soll Suchaufwand abnehmen, ohne unbekannte Regeln zu erfinden.
+
+**Konsequenzen:** Ohne Provider bleibt Official Truth `unknown`. Die UI sagt das ausdrücklich.
+
+---
+
+## ADR-0102 – Reisendenkontext trip-spezifisch
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32; Development-Migration `20260822020000`
+
+**Entscheidung:** Traveller-Fakten liegen an der Reise (`trip_travellers` / `Trip.party`), nicht accountweit.
+
+**Kontext:** Guest-Parität, keine Cross-Trip-Leaks, Datenminimierung.
+
+**Alternativen:**
+
+1. *Accountweite Traveller-Profile.* Später möglich, braucht eigene Consent-/Security-ADR.
+2. *Nur `trips.travellers` als Zahl.* Reicht nicht für individuelle Requirements.
+
+**Begründung:** Dieselbe Form für Gast und Konto. Keine stillen Verknüpfungen zwischen Reisen.
+
+**Konsequenzen:** Bekannte Fakten gelten nur in dieser Reise. Übernahme kopiert sie idempotent.
+
+---
+
+## ADR-0103 – Provider-neutrale Requirements-Engine
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** Eine injizierbare Engine-Naht normalisiert Provider-Output. Production-Factory ist `null`.
+
+**Kontext:** Später Timatic oder gleichwertig, ohne Architekturbindung.
+
+**Alternativen:**
+
+1. *Timatic-Typen im Kern.* Würde den ersten Anbieter festnageln.
+2. *Fake-Adapter mit erfundenen Regeln.* Verboten.
+
+**Begründung:** Komplexität muss verdient werden. Tests dürfen einen Double injizieren.
+
+---
+
+## ADR-0104 – Health-Requirement ist keine Gesundheitsakte
+
+**Datum:** 22. August 2026  
+**Status:** verbindlich für Foundation C
+
+**Entscheidung:** Offizielle Impf-/Health-Slots dürfen existieren. Persönliche Diagnosen, Impfpass-Uploads und Gesundheitsdaten werden nicht gespeichert.
+
+**Kontext:** Der Nachtrag verlangt Health-/Vaccination-Requirements, verbietet aber unnötige Gesundheitsdaten.
+
+**Begründung:** Pflicht, Empfehlung und allgemeiner Hinweis sind verschiedene Aussagen. Ohne Provider bleiben alle `unknown`.
+
+---
+
+## ADR-0105 – Freshness zusätzlich zum Context-Fingerprint
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** Official Evaluations tragen Freshness (`never_checked`, `current`, `recheck_needed`, `stale`, `provider_unavailable`, `source_temporarily_unavailable`) neben dem User-Fingerprint.
+
+**Begründung:** Eine alte Provider-Antwort darf nach Ablauf oder Kontextwechsel nicht als aktuell gelten. Ohne Provider ist Freshness immer `provider_unavailable`.
+
+---
+
+## ADR-0106 – Timatic als bevorzugter Kandidat ohne Bindung
+
+**Datum:** 22. August 2026  
+**Status:** dokumentiert, nicht integriert
+
+**Entscheidung:** IATA Timatic / Timatic AutoCheck ist der bevorzugte spätere Kandidat. Die Domain bleibt provider-neutral. Kein Vertrag, kein Secret, kein Fake-Adapter in diesem PR.
+
+---
+
+## ADR-0107 – Official Evidence muss vollständig vertrauenswürdig sein
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32; Trust-Felder präzisiert in ADR-0110
+
+**Entscheidung:** Ein Provider-Resultat darf nur dann `required`, `not_required` oder `conditional` werden, wenn die Official Evidence provider-neutral vertrauenswürdig ist und Freshness `current` ist. Fehlt die Trust-Grenze, gilt fail closed: `result = unknown`.
+
+**Kontext:** Human Review von PR #32. Ein Test- oder späterer Echtprovider darf keine regulatorische Aussage ohne belastbare Evidence erzeugen.
+
+**Alternativen:**
+
+1. *Nur Resultat übernehmen, Evidence später ergänzen.* Würde Scheinsicherheit erzeugen.
+2. *Teilweise Evidence akzeptieren.* Würde `unknown` und `required` vermischen.
+
+**Begründung:** Official Requirement Truth braucht eine klare Trust-Grenze. Unvollständige Evidence ist keine Aussage.
+
+**Konsequenzen:** `officialEvidenceVertrauenswuerdig()` bleibt die gemeinsame Schwelle. Die genaue Feldliste (Authority und/oder Rule Reference, optionale Source URL, Gültigkeitszeit) steht in ADR-0110. Temporär nicht erreichbare Quellen bleiben `unknown` mit Freshness `source_temporarily_unavailable`.
+
+---
+
+## ADR-0108 – Origin- und Transit-Ländercodes sind eine dokumentierte Route-Abhängigkeit
+
+**Datum:** 22. August 2026  
+**Status:** Naht vorhanden, Fakten noch leer
+
+**Entscheidung:** `routeFactsAusReise()` ist die einzige Naht für Origin- und Transit-Ländercodes. Sie liefert heute `{ originCountryCode: null, transitCountryCodes: [], quelle: 'none' }`. Ortsnamen, Place-IDs und Etappentitel dürfen diese Codes nicht raten.
+
+**Kontext:** Der aktuelle Reisegraph speichert Abreise oft als Freitext (`origin: 'Zürich'`) und Zwischenstopps nicht als belastbare Ländercodes. Automatische Transitprüfung braucht später strukturierte Flight-/Itinerary-Daten.
+
+**Alternativen:**
+
+1. *Aus Stadt- oder Flughafennamen raten.* Verboten; würde `unknown` durch Vermutung ersetzen.
+2. *Naht weglassen und nur dokumentieren.* Würde spätere Provideranbindung an verstreute Lesestellen binden.
+
+**Begründung:** Eine leere, explizite Naht macht die Lücke sichtbar und verhindert stilles Raten. Die nächste technische Abhängigkeit ist: Flight-/Itinerary-Ländercodes in `RequirementsAnfrage.originCountryCode` und `transitCountryCodes` füllen, sobald der Graph sie strukturiert trägt.
+
+**Konsequenzen:** Transit ohne belastbare Zwischenstopps bleibt `insufficient_context` (`transit_itinerary`). Ein Provider darf `origin_country` / `transit_itinerary` als Missing Facts zurückgeben; bekannte Codes werden nicht erneut verlangt. Die Foundation darf nicht so dokumentiert werden, als erkenne sie Transit bereits automatisch.
+
+---
+
+## ADR-0109 – Provider-Port ist async und fehlertolerant
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** `RequirementsProvider.evaluate` ist asynchron. Die Engine trennt reine Normalisierung (`requirementsAusZeilen`) von der Orchestrierung (`requirementsAuswerten`). Ein Throw, Timeout oder eine temporäre Nichterreichbarkeit wird gefangen und bleibt fail closed. `requirementsProviderAus()` bleibt in Foundation C `null`. Browser oder LLM können keinen Provider injizieren.
+
+**Kontext:** Final Architecture Review von PR #32. Ein echter Timatic- oder vergleichbarer Dienst ist ein Netzwerkaufruf. Ein synchroner Port hätte die Kernarchitektur bei der ersten Provider-Aktivierung erneut umbauen müssen. Ein ungefangener Throw hätte als HTTP 500 die API verlassen.
+
+**Alternativen:**
+
+1. *Port erst bei Provider-Aktivierung async machen.* Würde Foundation C und den ersten echten Adapter koppeln.
+2. *Throw als 500 durchreichen.* Würde einen Infrastrukturfehler als Produktabsturz ausgeben.
+
+**Begründung:** Die Foundation muss einen späteren Netzwerkprovider aufnehmen können, ohne Truth-Logik oder API-Vertrag umzubauen. Fehler bleiben ehrlich unbekannt.
+
+**Konsequenzen:**
+- Throw ohne `availability: 'unavailable'` → Freshness `source_temporarily_unavailable`
+- Throw mit `availability: 'unavailable'` → Freshness `provider_unavailable`
+- `requirementsLokalFuerReise()` bleibt synchron und providerlos für UI-Fallback
+- `requirementsFuerReise()` / `requirementsEvaluationsPruefen()` sind async
+- Die UI konsumiert optional gelieferte `OfficialEvaluation[]`; ohne Lieferung bleibt der lokale Fallback
+- `evaluations[]` ist die einzige kanonische neue Official-Truth. Legacy-`official` / `officialRequirementsPruefen` / `officialAusEvaluations` bleiben Compatibility und immer `result: 'unknown'`
+
+---
+
+## ADR-0110 – Provider-neutrale Evidence- und Gültigkeitsgrenze
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** Trust für ein offizielles Resultat verlangt:
+
+1. valide Provider-Identität
+2. valides, zeitlich plausibles `checkedAt` (Clock-Skew-Toleranz 5 Minuten)
+3. Authority **und/oder** Provider-Rule-Reference
+4. `sourceUrl` nur falls vorhanden: dann muss sie valide HTTPS sein; ungültige vorhandene URL macht Evidence untrusted
+5. Official Action nur bei valider HTTPS-`sourceUrl`
+6. `validFrom` / `validUntil`, falls vorhanden, als Datum oder ISO-DateTime
+7. zukünftiges `validFrom` → nicht `current`
+8. abgelaufenes `validUntil` → `recheck_needed`
+9. ungültige Gültigkeitsfelder oder `checkedAt` jenseits der Skew-Toleranz → fail closed
+
+Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
+
+**Kontext:** ADR-0107 verlangte zunächst zwingend eine Source URL. Der Automations-Auftrag definiert Source URL als „falls vorhanden“. Ein vertrauenswürdiger Provider kann eine Regel ohne klickbare Behörden-URL belegen. Gleichzeitig dürfen zukünftige oder ungültige Gültigkeitsfenster nicht als `current required` erscheinen.
+
+**Alternativen:**
+
+1. *Source URL weiter zwingend halten.* Würde belastbare Provider-Evidence ohne öffentliche URL blockieren.
+2. *Gültigkeitsfelder ignorieren.* Würde abgelaufene oder noch nicht gültige Regeln als aktuell ausgeben.
+
+**Begründung:** Official Action und Official Resultat sind verschiedene Dinge. Eine Action braucht eine sichere HTTPS-Quelle. Ein Resultat braucht belastbare Provider-Evidence und eine plausible Zeit. Die Trust-Grenze bleibt streng, aber nicht an eine einzelne URL gebunden.
+
+**Konsequenzen:** `officialEvidenceVertrauenswuerdig()` akzeptiert Authority oder Rule Reference. `officialFrische()` berücksichtigt `validFrom`. Teilweise fehlende Transit-Providerzeilen erzeugen für jedes angefragte Transitland eine Evaluation; unangefragte Transitländer werden ignoriert. Untrusted Evidence darf Freshness nicht `current` lassen (ADR-0111).
+
+---
+
+## ADR-0111 – Untrusted Official Evidence darf nicht current sein
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** Wenn Official Evidence für ein regulatorisches Resultat nicht vertrauenswürdig ist, darf Freshness niemals `current` bleiben. Untrusted Evidence wird auf `never_checked` gesetzt, ausser Freshness ist bereits ehrlich `stale`, `recheck_needed` oder `source_temporarily_unavailable`.
+
+**Kontext:** Endreview von PR #32. `zeileUebernehmen()` setzte `result` korrekt auf `unknown`, liess aber `freshness` auf `current`, sobald ein syntaktisch vorhandenes `checkedAt` existierte. Zukunfts-`checkedAt` oder eine ungültige vorhandene Source URL konnten so „Offizielle Anforderungen wurden geprüft“ auslösen.
+
+**Alternativen:**
+
+1. *Freshness unabhängig von Trust lassen.* Würde UI-Copy und Official Truth trennen.
+2. *Jede untrusted Zeile auf `provider_unavailable` setzen.* Würde abgelaufene oder temporär unerreichbare Quellen falsch umdeuten.
+
+**Begründung:** Freshness ist Teil der Official Truth. Eine verworfene Evidence ist keine geprüfte Anforderung.
+
+**Konsequenzen:** `freshnessNachTrust()` ist die gemeinsame Nachbehandlung. Zukunfts-`checkedAt` und ungültige vorhandene Source URL werden `never_checked`. Trusted Evidence ohne Source URL darf weiter `current` sein; Official Action bleibt dann leer.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
-Stand: 21. August 2026
-Gültig für: Phase 3.3c plus Mobile-UX Iteration 1–3, Coverage/Booking und Foundation A auf `main`; Foundation B (Mietwagen) auf PR #31, Schema auf Production, Suche aus
+Stand: 22. August 2026
+Gültig für: Phase 3.3c plus Mobile-UX Iteration 1–3, Coverage/Booking und Foundation A/B auf `main`; Foundation C (Travel Readiness) auf Draft-PR #32, Development-Schema, kein Production-Schema
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -240,9 +240,9 @@ Das Modell ändert die Datenbank nicht (ADR-0059). Account-Schreiben ist `SECURI
 
 Vollständige Beschreibung: [docs/DATENBANK.md](docs/DATENBANK.md). Hier steht nur, wie sie in die Architektur eingebunden ist.
 
-**Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Die Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b, dem Reiseschema aus Phase 1.5, dem Kostenprotokoll aus Phase 2.1 und der Sprachänderung aus Phase 2.2 – **12 Tabellen, 32 Policies und 24 Funktionen**. Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
+**Das Schema ist seit Phase 1.4 aus dem Repository reproduzierbar.** Die Migrationen in `supabase/migrations/` beschreiben – nach der Entfernung der Legacy-Struktur in Phase 1.4b, dem Reiseschema aus Phase 1.5, dem Kostenprotokoll aus Phase 2.1 und der Sprachänderung aus Phase 2.2 – **12 Tabellen auf Production**. Development-PR #32 ergänzt `trip_readiness_items` und `trip_travellers` als Development-Tabellen (ADR-0096, ADR-0102). Vorher erzeugten zehn Dateien zusammen zwei Tabellen, während real 39 existierten.
 
-Vier der zwölf Tabellen sind die Reisedaten: `trips`, `trip_stages`, `trip_days`, `trip_items`. Sie sind privat und tragen ihre Eigentümerkennung selbst; ein zusammengesetzter Fremdschlüssel `(trip_id, user_id) → trips (id, user_id)` verhindert, dass ein Kind an einer fremden Reise hängt. `trip_days.stage_id` bindet einen Tag an eine Etappe derselben Reise, auch ohne Kalenderdatum (ADR-0057). `trips.revision` und `trips.last_mutation_id` tragen Fassung und Idempotenz einer Sprachänderung (ADR-0058). `trip_items` trägt seit PR #29 die provider-neutralen Spalten `booking_status`, `booking_source` und `booking_confirmed_at` (ADR-0089). Foundation A (Draft-PR #30) ergänzt optionale Mobilitätsspalten auf derselben Tabelle, ohne neue `kind`-Werte (ADR-0090). Die Mobilitätsmigration `20260821120000` gilt nur für Development und ist nicht Teil des Production-Playbooks. Enum-Typen führt das Schema keine mehr – jeder Wertebereich steht in einer Prüfbedingung ([DECISIONS.md](DECISIONS.md) ADR-0043).
+Vier der Production-Reisetabellen sind `trips`, `trip_stages`, `trip_days`, `trip_items`. Sie sind privat und tragen ihre Eigentümerkennung selbst; ein zusammengesetzter Fremdschlüssel `(trip_id, user_id) → trips (id, user_id)` verhindert, dass ein Kind an einer fremden Reise hängt. `trip_days.stage_id` bindet einen Tag an eine Etappe derselben Reise, auch ohne Kalenderdatum (ADR-0057). `trips.revision` und `trips.last_mutation_id` tragen Fassung und Idempotenz einer Sprachänderung (ADR-0058). `trip_items` trägt seit PR #29 die provider-neutralen Spalten `booking_status`, `booking_source` und `booking_confirmed_at` (ADR-0089). Foundation A ergänzt optionale Mobilitätsspalten auf derselben Tabelle, ohne neue `kind`-Werte (ADR-0090). Foundation B ergänzt `kind = rental_car` (ADR-0092). Foundation C (Draft-PR #32) legt Readiness **nicht** als neuen `kind` an, sondern als eigene Tabelle `trip_readiness_items` plus trip-spezifischen Reisendenkontext `trip_travellers` nur auf Development (ADR-0096, ADR-0102). Die Requirements-Engine ist provider-neutral und ohne Adapter (ADR-0103). Official Evidence wird vor regulatorischen Resultaten streng validiert (ADR-0107). Origin- und Transit-Ländercodes kommen nur über `routeFactsAusReise()` und sind heute leer (ADR-0108). Die Migrationen `20260822010000` und `20260822020000` sind nicht Teil des Production-Playbooks. Enum-Typen führt das Schema keine mehr – jeder Wertebereich steht in einer Prüfbedingung ([DECISIONS.md](DECISIONS.md) ADR-0043).
 
 Die zwölfte Tabelle ist `public.model_usage` aus Phase 2.1 – ein Kostenprotokoll, keine Nutzdaten. Sie ist die Stelle, an der die Kostenkontrolle für Modellaufrufe wirklich stattfindet: Ein Zähler in einem Serverprozess kennt nur seine eigene Instanz, und Vercel startet beliebig viele. Zwei `SECURITY DEFINER`-Funktionen buchen ein Kontingent, bevor ein Aufruf geschieht, und schliessen es danach ab; `pg_advisory_xact_lock` serialisiert Prüfung und Einfügung – dieselbe Bauweise wie die Missbrauchsschranke aus ADR-0049. Einzelheiten in [docs/MODELL.md](docs/MODELL.md), Begründung in ADR-0052.
 
@@ -272,7 +272,7 @@ Seit Phase 1.4b prüft `npm run db:rechte` eine vierte Regel: Keine Funktion nen
 
 ## 7. API-Schicht
 
-Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1, 3.2, 3.3, Foundation A und Foundation B existieren **17** Route Handler. Zuvor waren es 77.
+Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1, 3.2, 3.3, Foundation A, Foundation B und Draft-Foundation C existieren **18** Route Handler. Zuvor waren es 77.
 
 | Endpunkt | Zweck | Status |
 | --- | --- | --- |
@@ -283,6 +283,7 @@ Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1, 3.2, 3.3, Foundation A und Foundation B exi
 | `api/activities/search` | geschlossene Aktivitätensuche | Phase 3.3, Production aus, noch kein Activity-Provider |
 | `api/mobility/search` | geschlossene Mobilitätssuche | Foundation A, Production aus, noch kein Mobility-Provider |
 | `api/rental-cars/search` | geschlossene Mietwagensuche | Foundation B, Production aus, noch kein Mietwagenprovider |
+| `api/readiness/requirements` | geschlossene Requirement-Naht | Foundation C Draft-PR #32, kein Provider, Production-Schema unverändert |
 | `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
 | `api/admin/security/*` (5) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
 
@@ -343,6 +344,14 @@ Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browse
 Foundation B hat bewusst keinen Mietwagen-Adapter. `rentalCarProviderAus()` gibt `null` zurück. Production bleibt hart aus, auch wenn `JETNITY_RENTAL_CAR_AKTIV` gesetzt wäre. Development/Preview brauchen den Kill Switch **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Es gibt keinen Providernamen und kein Provider-Secret. Ein Mietwagen im Zeitraum ist kein Nachweis, dass eine konkrete Strecke damit gefahren wird. Unbekannte Klasse, Getriebe, Kaution oder Kilometerregel bleiben unbekannt.
 
 Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browseroption. Sie verlangt einen serverseitigen `RentalCarNachweis`. Heute ist der Nachweis `null` – fail closed. Manuelle Mietwagen sind Nutzerangaben, keine Providerfakten. Das manuelle Formular startet leer; Reiseorte sind höchstens unverbindliche Platzhalter. `one_way` braucht zwei verschiedene Place-IDs. Ranking vergleicht Gesamtpreise nur in derselben Währung. `Best Value` braucht mindestens zwei vergleichbare Gesamtpreise; `Jetnity empfiehlt` nur einen eindeutigen Top-Score. Fachlich: [docs/RENTAL_CARS.md](docs/RENTAL_CARS.md), ADR-0092, ADR-0093, ADR-0094 und ADR-0095.
+
+### Travel Readiness (Foundation C)
+
+`POST /api/readiness/requirements` ist geschlossen: nur `application/json`, höchstens 8 KB UTF-8, Rate-Limit, `Cache-Control: private, no-store`. Browser- oder LLM-Felder werden ignoriert. Die kanonische Antwort ist `evaluations[]` (Traveller × Destination × Transit × Requirement Type). Das Feld `official` ist eine ausdrücklich reduzierte Legacy-Zusammenfassung und darf die Engine nicht auf den ersten Treffer reduzieren.
+
+`requirementsProviderAus()` gibt `null` zurück. Tests dürfen einen Port injizieren. `evaluate` ist async; Throw/Timeout bleibt fail closed (ADR-0109). Production-Schema bleibt unverändert; die Tabellen `trip_readiness_items` und `trip_travellers` existieren nur auf Development. Official Evidence braucht Provider-Identität, plausibles `checkedAt`, Authority und/oder Rule Reference; eine Source URL ist für das Resultat optional und für die Official Action zwingend (ADR-0107, ADR-0110). Untrusted Evidence darf Freshness nicht `current` lassen (ADR-0111). `evaluations[]` ist die einzige kanonische neue Official-Truth; Legacy-`official` bleibt immer `unknown`.
+
+`routeFactsAusReise()` ist die einzige Origin-/Transit-Naht und liefert heute leer (`quelle: 'none'`). Ortsnamen und Place-IDs werden nicht in Ländercodes geraten (ADR-0108). Fachlich: [docs/TRAVEL_READINESS.md](docs/TRAVEL_READINESS.md), ADR-0096 bis ADR-0111.
 
 ### Ortsbasis (Phase 3.1)
 

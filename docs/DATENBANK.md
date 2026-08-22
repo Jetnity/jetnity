@@ -93,6 +93,10 @@ Die dreizehn Tabellen: `profiles`, `trips`, `trip_stages`, `trip_days`, `trip_it
 
 **Mietwagen `20260821200000`:** Neuer `kind`-Wert `rental_car` plus vier optionale Spalten. Origin/Destination dürfen bei Transfer **oder** Mietwagen stehen; Transfer-Modusfelder bleiben transfer-only. `booked` ist für `flight|stay|transfer|rental_car` zulässig. `reise_anlegen()` schreibt die Felder und setzt Mietwagen-Evidenz nur auf `user`. `reise_aendern()` wird nicht ersetzt. **Development angewendet am 21. August 2026. Production angewendet am 22. August 2026** nach ausdrücklicher Nutzerfreigabe (PR #31, [PR31_PRODUCTION_MIGRATION_ACCEPTANCE.md](PR31_PRODUCTION_MIGRATION_ACCEPTANCE.md)). Production-Suche bleibt aus.
 
+**Readiness `20260822010000`:** Neue Tabelle `trip_readiness_items`. Kein neuer `trip_items.kind`. Speichert nur Nutzer-Vorbereitungsstand, keine offiziellen Visa-Regeln und keine sensiblen Dokumentdaten. `reise_anlegen()` und `reise_aendern()` bleiben unverändert. **Nur Development.** Nicht Production.
+
+**Reisendenkontext `20260822020000`:** Neue Tabelle `trip_travellers`. Trip-spezifisch, datensparsam. Keine Dokumentnummern, keine Gesundheitsakte. **Nur Development.** Nicht Production.
+
 Das Wachstum liegt vollständig bei den Reisedaten: Die vier neuen Tabellen tragen 61 Spalten, 43 CHECK-Bedingungen, 6 Fremdschlüssel, 5 Eindeutigkeitsbedingungen, 15 Indizes, 16 Policies und 5 Auslöser – vier für `updated_at`, einer für die Erzeugungsregeln von `public.trips` (Abschnitt 7a). Gleichzeitig sind mit `creator_sessions` 16 Spalten, 7 Indizes und 4 Policies sowie die neun Creator-Spalten des Profils entfallen – die Nettozahlen der Tabelle oben sind deshalb kleiner als die Zugänge.
 
 Dass die CHECK-Bedingungen von 4 auf 45 steigen, ist Absicht: Jeder Wertebereich, jede Länge, jede Reihenfolge und jede Zahlengrenze steht als Bedingung im Schema statt als Annahme im Anwendungscode ([DECISIONS.md](../DECISIONS.md) ADR-0043).

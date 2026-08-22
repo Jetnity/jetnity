@@ -1,6 +1,6 @@
 # Jetnity – verbindlicher Kontinuitätsstandard
 
-Stand: 21. August 2026
+Stand: 22. August 2026
 
 ## Status
 
@@ -58,7 +58,7 @@ Je nach Änderung müssen insbesondere aktuell gehalten werden:
 - `DESIGN_SYSTEM.md` – verbindliche UI-/UX-Regeln
 - `docs/PRODUCT_QUALITY_STANDARD.md` – Produktqualitätsanforderungen
 - `docs/LOGIC_STANDARD.md` – verbindliche Regeln für Datenwahrheit, Source of Truth, fachliche Invarianten, Zustände und bereichsübergreifende Konsistenz
-- fachliche Modul-Dokumente, z. B. `docs/HOTELS.md`, `docs/ACTIVITIES.md`, `docs/MOBILITY.md`, `docs/RENTAL_CARS.md`
+- fachliche Modul-Dokumente, z. B. `docs/HOTELS.md`, `docs/ACTIVITIES.md`, `docs/MOBILITY.md`, `docs/RENTAL_CARS.md`, `docs/TRAVEL_READINESS.md`
 - dieser `docs/CONTINUITY_STANDARD.md`
 
 Aufgaben für Coding Agents sollen diese Quellen passend zum Auftrag ausdrücklich einbeziehen.
@@ -213,3 +213,26 @@ Jetnity soll über Monate und Jahre konsistent weiterentwickelt werden können, 
 Verbindlicher Merksatz aus `docs/LOGIC_STANDARD.md`:
 
 > **Einfach für den Nutzer. Streng logisch im Inneren. Eine Reise, eine Wahrheit.**
+
+---
+
+## 13. Operativer Handoff zwischen ChatGPT und Cursor
+
+Für jeden größeren neuen Entwicklungsblock gilt zusätzlich verbindlich:
+
+1. **ChatGPT prüft zuerst den tatsächlichen Repository-/PR-/CI-/Production-Stand**, statt nur aus Gesprächserinnerung fortzusetzen.
+2. Der konkrete Arbeitsauftrag für Cursor wird **dauerhaft im Repository** auf dem zuständigen Feature-Branch hinterlegt, bevorzugt unter `docs/CURSOR_<THEMA>_TASK.md` bzw. als ausdrücklich verlinkter verbindlicher Nachtrag.
+3. Der Draft-PR verweist auf diesen Auftrag als maßgebliche Arbeitsgrundlage.
+4. Neue Produktentscheidungen des Nutzers, die den laufenden Auftrag verändern, werden **nicht nur im Chat belassen**, sondern als versionierter Nachtrag/ADR/Handoff im Repository gesichert. Bei Widerspruch muss klar dokumentiert sein, welche neuere Quelle gilt.
+5. Cursor soll bei einem laufenden Auftrag bereits begonnene valide Arbeit **nicht unnötig neu aufbauen**, sondern den Branch synchronisieren und gegen den neueren Auftrag prüfen/refactoren.
+6. Nach Abschluss oder vor einem Agent-/Chat-Wechsel müssen `JETNITY_HANDOFF.md`, `ROADMAP.md` und die relevanten Fach-/ADR-Dokumente den tatsächlichen Stand enthalten: Branch, PR, Head, Development/Production-Grenze, Tests, offene externe Abhängigkeiten, Kosten, Risiken und nächster Schritt.
+7. Ein neuer ChatGPT-Chat oder Cursor-Agent soll danach anhand des Repositorys feststellen können:
+   - **wo Jetnity steht**,
+   - **wie gearbeitet werden soll**,
+   - **welcher Auftrag aktuell gilt**,
+   - **was nicht erneut gebaut werden darf**,
+   - **welche Entscheidungen bereits verbindlich sind**,
+   - **welche Freigaben noch fehlen**,
+   ohne dass der Nutzer den Projektverlauf erneut erzählen muss.
+
+Dieser operative Handoff ist kein optionaler Komfort, sondern Teil der Definition of Done für größere Jetnity-Arbeiten.

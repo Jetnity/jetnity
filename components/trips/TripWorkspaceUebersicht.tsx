@@ -28,6 +28,7 @@ export default function TripWorkspaceUebersicht({
   aenderungKnopfRef,
   plan,
   aenderungFeld,
+  vorbereitung,
 }: {
   reise: Trip
   status: readonly BereichStatus[]
@@ -37,6 +38,7 @@ export default function TripWorkspaceUebersicht({
   aenderungKnopfRef: RefObject<HTMLButtonElement | null>
   plan?: ReactNode
   aenderungFeld?: ReactNode
+  vorbereitung?: ReactNode
 }) {
   return (
     <section aria-label="Reiseübersicht" className="mt-5 grid gap-4">
@@ -82,6 +84,8 @@ export default function TripWorkspaceUebersicht({
       </ul>
 
       {plan}
+
+      {vorbereitung}
 
       <div className="flex flex-col gap-3 rounded-2xl border border-line-200 bg-white px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="min-w-0 text-sm leading-6 text-ink-800">

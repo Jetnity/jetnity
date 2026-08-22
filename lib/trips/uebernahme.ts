@@ -35,6 +35,8 @@
 // Browserspeicher: Zwei gleichzeitige Durchläufe würden sich beim Aufräumen die
 // Liste gegenseitig unter den Füssen wegziehen.
 
+import { partyVon } from '@/lib/readiness/party'
+import { readinessAlsUebernahme } from '@/lib/readiness/uebernahme'
 import { alsNutzlast } from '@/lib/trips/abbildung'
 import { uebernommenStreichen, zurUebernahme } from '@/lib/trips/gastspeicher'
 import type { ReiseNutzlast } from '@/lib/trips/schema'
@@ -62,6 +64,14 @@ let laeuft = false
 export async function gastreisenUebernehmen(
   senden: (nutzlast: ReiseNutzlast) => Promise<Uebernahmeantwort>,
   beginn?: (anzahl: number) => void,
+  readinessSenden?: (
+    tripId: string,
+    items: ReturnType<typeof readinessAlsUebernahme>,
+  ) => Promise<Uebernahmeantwort>,
+  partySenden?: (
+    tripId: string,
+    party: ReturnType<typeof partyVon>,
+  ) => Promise<Uebernahmeantwort>,
 ): Promise<Uebernahmebericht> {
   if (laeuft) return { art: 'laeuft' }
 
@@ -86,6 +96,32 @@ export async function gastreisenUebernehmen(
           meldung: ergebnis.meldung,
           uebernommen,
           offen: entwuerfe.length - uebernommen,
+        }
+      }
+
+      const party = partyVon(entwurf)
+      if (partySenden && party.length > 0) {
+        const sync = await partySenden(ergebnis.wert, party)
+        if (!sync.ok) {
+          return {
+            art: 'fehler',
+            meldung: sync.meldung,
+            uebernommen,
+            offen: entwuerfe.length - uebernommen,
+          }
+        }
+      }
+
+      const readiness = readinessAlsUebernahme(entwurf)
+      if (readinessSenden && readiness.length > 0) {
+        const sync = await readinessSenden(ergebnis.wert, readiness)
+        if (!sync.ok) {
+          return {
+            art: 'fehler',
+            meldung: sync.meldung,
+            uebernommen,
+            offen: entwuerfe.length - uebernommen,
+          }
         }
       }
 

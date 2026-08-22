@@ -63,9 +63,9 @@ Leitsatz:
 
 ## 3. Aktueller `main`-Stand
 
-`main` enthält den Squash-Merge von Foundation A / PR #30:
+`main` enthält den Squash-Merge von Foundation B / PR #31:
 
-`463360e64dae068e3d8eb9f3012890b94df4a75a`
+`315d9b31e69fcd5fd40227f65aa97587efc3bec4`
 
 Bereits abgeschlossen und auf `main`:
 
@@ -75,6 +75,7 @@ Bereits abgeschlossen und auf `main`:
 - Trip Workspace Mobile UX Iteration 1–3 – PR #27
 - Trip Coverage & Booking Status – PR #29
 - Foundation A – Mobilität & Transfers – PR #30
+- Foundation B – Mietwagen – PR #31
 - Produktqualitäts- und Kontinuitätsstandards
 
 Stabile öffentliche Production-URL:
@@ -238,7 +239,7 @@ Auf `main` und Production-Schema. Suche bleibt aus. Nicht erneut bauen.
 
 ### B. Mietwagen – PR #31
 
-Branch `feat/rental-car-foundation`. **Ready for Review, nicht mergen.** Schema ist auf Production. Suche bleibt aus.
+**Gemergt nach `main`.** Foundation B nicht erneut bauen. Schema `20260821200000` liegt auf Production. Suche bleibt aus.
 
 Umgesetzt:
 
@@ -266,17 +267,45 @@ Fachdoku: `docs/RENTAL_CARS.md`, ADR-0092 / ADR-0093 / ADR-0094 / ADR-0095.
 
 Kein Fake-Provider und keine Production-Suche. Merge nur nach separater Freigabe.
 
-### C. Travel Readiness & Dokumente
+### C. Travel Readiness & Dokumente – PR #32
 
-Danach provider-neutral vorbereiten für:
+Branch `feat/travel-readiness-foundation`. **Draft, nicht mergen.** Ausgangsbasis ist `main` @ `315d9b31`.
 
-- Einreise-/Visumstatus
-- Reisepass-/Dokumentstatus
-- Versicherungen
-- Tickets / Buchungsbestätigungen
-- offene Reisevorbereitungen
+Human-Review-Fixes nach `docs/CURSOR_PR32_HUMAN_REVIEW_FIXES.md`. Final Architecture Review nach `docs/CURSOR_PR32_FINAL_ARCHITECTURE_REVIEW.md`.
 
-Ein echter sensibler Dokumententresor wird nicht nebenbei gebaut. Dafür braucht es später eine separate Security-/Verschlüsselungsentscheidung und ausdrückliche Freigabe.
+Umgesetzt auf dem Draft-PR:
+
+- eigene Domäne `trip_readiness_items`, kein neuer `trip_items.kind`
+- trip-spezifischer Reisendenkontext `trip_travellers` / `Trip.party`
+- provider-neutrale Requirements-Engine; Factory `null`
+- Trennung Official Requirement Truth vs User Preparation Truth
+- Context-Fingerprint, Freshness/Recheck und progressive Missing Facts
+- Guest- und Account-Parität plus idempotente Übernahme von Party und Readiness
+- geschlossene `POST /api/readiness/requirements` mit kanonischem `evaluations[]`; `official` ist Legacy-Zusammenfassung
+- strenge Official-Evidence-Trust-Grenze vor `required` / `not_required` / `conditional` (ADR-0107, ADR-0110)
+- untrusted Official Evidence darf Freshness nicht `current` lassen (ADR-0111)
+- Provider-Port async und fehlertolerant; Throw bleibt fail closed (ADR-0109)
+- `evaluations[]` ist die einzige kanonische neue Official-Truth; Legacy-`official` immer `unknown`
+- UI empfängt optional serverseitige Evaluations; Traveller-Copy unterscheidet required / not_required / conditional
+- Multi-Transit bleibt vollständig, auch wenn der Provider nur Teilzeilen liefert; unangefragte Transitländer werden ignoriert
+- Provider darf `insufficient_context` + `missingFacts` liefern
+- UX-Copy folgt Official Status/Freshness, kein hartcodiertes „nicht verfügbar“ nach späterer Provideranbindung
+- Origin-/Transit-Naht `routeFactsAusReise()` existiert, liefert heute leer (`quelle: 'none'`) – nächste Abhängigkeit, kein Raten aus Ortsnamen (ADR-0108)
+- UX als **Einreise & Reisevorbereitung** in der mobilen Übersicht und auf Desktop nach dem Reisekopf, kein sechster Tab
+- kein Dokumententresor, keine OCR, kein Storage-Bucket
+
+Development-Migrationen `20260822010000` und `20260822020000` nur Development. Production unverändert. Kein Provider, keine neuen Secrets, keine neuen Kosten.
+
+Qualitätsnachweis auf `64aa15a7` (Truth-Freshness-Fix ADR-0111):
+
+- `npm test`: **1252/1252**
+- Typecheck, Lint, Hygiene, Auth-Konfiguration und Production-Build grün
+- Trip-Workspace-Audit WebKit + Chromium: **678 Kombinationen, 0 Fehler**
+- Activities-Regression: **184 Kombinationen, 0 Fehler**
+- GitHub CI grün, Vercel Preview READY
+- Preview: `https://jetnity-app-git-feat-travel-readiness-f-f8117d-jetnity-e1b93c82.vercel.app`
+
+Fachdoku: `docs/TRAVEL_READINESS.md`, ADR-0096 bis ADR-0111. Verbindlicher Nachtrag: `docs/CURSOR_TRAVEL_READINESS_AUTOMATION_AMENDMENT.md`. Review-Fixes: `docs/CURSOR_PR32_HUMAN_REVIEW_FIXES.md`. Final Review: `docs/CURSOR_PR32_FINAL_ARCHITECTURE_REVIEW.md`. Truth-Fix: `docs/CURSOR_PR32_FINAL_TRUTH_FIX.md`.
 
 ### D. Gesamt-Abdeckung
 
@@ -298,6 +327,8 @@ Diese Punkte dürfen nicht aus der Dokumentation verschwinden:
 - Duffel Production-Zugang später separat
 - erster echter Activity-Provider und Zugang
 - echte Mobility-/Mietwagenprovider später nach Foundation und Providerwahl
+- erster echter Travel-Requirements-Provider (bevorzugt Timatic) ohne Vertrag/Secret in diesem PR
+- strukturierte Flight-/Itinerary-Ländercodes für Origin und Transit (`routeFactsAusReise` bleibt bewusst leer)
 
 Duffel-Testtoken nur Preview:
 
@@ -351,8 +382,8 @@ Verbindlich:
 2. Aktuellen `main`-, PR-, CI-, Vercel- und Production-Stand prüfen.
 3. PR #29 nicht erneut bauen: Coverage/Booking Status ist abgeschlossen.
 4. PR #30 ist gemergt: Foundation A nicht erneut bauen.
-5. PR #31 ist Ready for Review und **nicht mergen**. Mietwagen-Schema liegt auf Production; die Suche bleibt aus. Nächster Schritt ist der unabhängige Review plus separate Merge-Freigabe.
-6. Phase 3.4 bleibt extern blockiert, bis echter Hotelprovider-Zugang vorliegt.
-7. Nach sauberem Abschluss von PR #31 ist der nächste geplante provider-unabhängige Block **Travel Readiness & Dokumente Foundation**.
+5. PR #31 ist gemergt: Foundation B nicht erneut bauen. Mietwagen-Schema liegt auf Production; die Suche bleibt aus.
+6. PR #32 ist Draft und **nicht mergen**. Foundation C / Travel Readiness. Keine Production-Migration.
+7. Phase 3.4 bleibt extern blockiert, bis echter Hotelprovider-Zugang vorliegt.
 8. Keine Fake-Providerdaten, keine Production-Provideraktivierung und keine Secrets ohne separate Freigabe.
 9. Bei jeder neuen Funktion zuerst prüfen, wie sie logisch mit dem bestehenden Reisegraphen und den anderen Reisebereichen zusammenarbeitet.

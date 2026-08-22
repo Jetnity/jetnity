@@ -35,6 +35,8 @@ const ETAPPE = 'aaaaaaaa-0000-4000-8000-000000000002'
 const TAG = 'aaaaaaaa-0000-4000-8000-000000000003'
 const PUNKT = 'aaaaaaaa-0000-4000-8000-000000000004'
 const PUNKT_NEU = 'aaaaaaaa-0000-4000-8000-000000000005'
+const READINESS = 'aaaaaaaa-0000-4000-8000-000000000006'
+const TRAVELLER = 'aaaaaaaa-0000-4000-8000-000000000007'
 
 // Die Reise des zweiten Kontos.
 const FREMDE_REISE = 'bbbbbbbb-0000-4000-8000-000000000001'
@@ -1149,7 +1151,7 @@ function reisenachweise() {
             join pg_class c on c.oid = p.polrelid
             join pg_namespace n on n.oid = c.relnamespace
             where n.nspname = 'public'
-              and c.relname in ('trips', 'trip_stages', 'trip_days', 'trip_items')
+              and c.relname in ('trips', 'trip_stages', 'trip_days', 'trip_items', 'trip_readiness_items', 'trip_travellers')
               and (pg_get_expr(p.polqual, p.polrelid) like '%darf\\_%'
                 or pg_get_expr(p.polwithcheck, p.polrelid) like '%darf\\_%'
                 or pg_get_expr(p.polqual, p.polrelid) like '%hat\\_rolle%'
@@ -1293,6 +1295,134 @@ function reisenachweise() {
       grund:
         'trip_items_tag_fk bindet den Tag an dieselbe Reise. Ein Tag einer anderen Reise ' +
         'ist deshalb auch dann unerreichbar, wenn die eigene Reise stimmt.',
+    },
+    {
+      name: 'anon liest Reisevorbereitung',
+      rolle: 'anon',
+      sql: `select * from public.trip_readiness_items`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'Konto liest den eigenen Vorbereitungspunkt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select * from public.trip_readiness_items where trip_id = '${REISE}'`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'Konto legt einen Vorbereitungspunkt an der eigenen Reise an',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_readiness_items
+            (trip_id, client_ref, kind, user_status, context_fingerprint)
+            values ('${REISE}', 'entry_check:TH', 'entry_check', 'done', 'v1|kind=entry_check|cc=TH')`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'Konto legt keinen Vorbereitungspunkt an einer fremden Reise an',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `insert into public.trip_readiness_items
+            (trip_id, client_ref, kind, user_status, context_fingerprint)
+            values ('${REISE}', 'entry_check:TH', 'entry_check', 'done', 'v1|kind=entry_check|cc=TH')`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'Konto liest einen fremden Vorbereitungspunkt nicht',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `select * from public.trip_readiness_items where trip_id = '${REISE}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'Konto ändert einen fremden Vorbereitungspunkt nicht',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `update public.trip_readiness_items set user_status = 'skipped' where trip_id = '${REISE}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'Konto löscht einen fremden Vorbereitungspunkt nicht',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `delete from public.trip_readiness_items where trip_id = '${REISE}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'Vorbereitungspunkt mit fremder user_id an der eigenen Reise scheitert',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_readiness_items
+            (trip_id, user_id, client_ref, kind, user_status, context_fingerprint)
+            values ('${REISE}', '${ZWEITER}', 'entry_check:XX', 'entry_check', 'open', 'v1|x')`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'Vorbereitungspunkt darf nicht auf einen fremden Planpunkt zeigen',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `insert into public.trip_readiness_items
+            (trip_id, client_ref, kind, user_status, trip_item_id, context_fingerprint)
+            values ('${FREMDE_REISE}', 'booking_confirmation_check:x', 'booking_confirmation_check', 'done', '${PUNKT}', 'v1|x')`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'anon liest Reisendenkontext',
+      rolle: 'anon',
+      sql: `select * from public.trip_travellers`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'Konto liest den eigenen Reisendenkontext',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select * from public.trip_travellers where trip_id = '${REISE}'`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'Konto legt keinen Reisenden an einer fremden Reise an',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `insert into public.trip_travellers
+            (trip_id, client_ref, nationality_country_code)
+            values ('${REISE}', 'traveller:1', 'CH')`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'Konto liest einen fremden Reisendenkontext nicht',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `select * from public.trip_travellers where trip_id = '${REISE}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'Reisendenkontext mit fremder user_id an der eigenen Reise scheitert',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_travellers
+            (trip_id, user_id, client_ref, nationality_country_code)
+            values ('${REISE}', '${ZWEITER}', 'traveller:x', 'CH')`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'Reisendenkontext lehnt Passnummer-Label ab',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_travellers
+            (trip_id, client_ref, label)
+            values ('${REISE}', 'traveller:pass', 'Passnummer 1234567')`,
+      erwartung: 'abgelehnt',
+      code: '23514',
+    },
+    {
+      name: 'Vorbereitungspunkt lehnt Passnummer-Titel ab',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_readiness_items
+            (trip_id, client_ref, kind, user_status, title, context_fingerprint)
+            values ('${REISE}', 'preparation:pass', 'preparation', 'open', 'Passnummer 1234567', 'v1|x')`,
+      erwartung: 'abgelehnt',
+      code: '23514',
     },
     {
       name: 'Konto hängt eine Etappe mit fremder user_id an die eigene Reise',
@@ -1994,6 +2124,12 @@ function aufbau() {
     `insert into public.trip_items (id, trip_id, user_id, day_id, kind, title)
        values ('${PUNKT}', '${REISE}', '${NUTZER}', '${TAG}', 'activity', 'Fischmarkt');`,
     `select set_config('jetnity.graph_mutation', '', true);`,
+    `insert into public.trip_readiness_items
+       (id, trip_id, user_id, client_ref, kind, user_status, context_fingerprint)
+       values ('${READINESS}', '${REISE}', '${NUTZER}', 'insurance_check:trip', 'insurance_check', 'open', 'v1|kind=insurance_check');`,
+    `insert into public.trip_travellers
+       (id, trip_id, user_id, client_ref, nationality_country_code)
+       values ('${TRAVELLER}', '${REISE}', '${NUTZER}', 'traveller:1', 'CH');`,
     // Eine zweite Reise, die dem fremden Konto gehört. Ohne sie wäre „0 Zeilen“
     // beim Zugriff des fremden Kontos nicht von „nichts vorhanden“ zu trennen.
     `insert into public.trips (id, user_id, client_ref, title)

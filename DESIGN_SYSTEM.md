@@ -1,6 +1,6 @@
 # Jetnity – Design-System
 
-Stand: 21. August 2026
+Stand: 22. August 2026
 Status: Farbsystem und Responsive-Regeln verbindlich
 
 Die Jetnity-V2-Markenwirkung darf nicht stillschweigend verändert werden ([AGENTS.md](AGENTS.md) Regel 11). Neue Komponenten verwenden ausschließlich die hier definierten Tokens.
@@ -286,7 +286,7 @@ Im normalen Browser sind diese Werte 0, das Layout bleibt unverändert.
 
 Unterhalb von 1024 px hat `/reisen/[tripId]` eine klebende Bereichsnavigation direkt unter der öffentlichen Kopfzeile (`top: 72px + safe-area`). Sie nutzt `ScrollRow`, Pillen und `min-h-11`. Der aktive Bereich trägt `aria-current="page"` und dieselbe `brand-800`-Fläche wie andere gewählte Chips.
 
-Die sichtbaren Ziele sind Übersicht, Flüge, Unterkunft, Aktivitäten und Mobilität. Der Tagesplan gehört in die Übersicht und hat keinen eigenen Tab. Bahn, Bus, Fähre und Transfer teilen denselben Mobilitätsbereich. Auf Mobile sind Tagesauswahl und Tagesinhalt ein Modul: eine Karte, nur die Chip-Zeile scrollt horizontal. Die Navigation ist eine robuste Button-Leiste, kein unvollständiges ARIA-Tabs-Muster. Auf Desktop (`lg`) entfällt sie; dort bleibt die bisherige breite Arbeitsansicht.
+Die sichtbaren Ziele sind Übersicht, Flüge, Unterkunft, Aktivitäten und Mobilität. Der Tagesplan gehört in die Übersicht und hat keinen eigenen Tab. Reisevorbereitung (Foundation C) liegt ebenfalls in der Übersicht; sie bekommt keinen sechsten Haupt-Tab. Bahn, Bus, Fähre und Transfer teilen denselben Mobilitätsbereich. Auf Mobile sind Tagesauswahl und Tagesinhalt ein Modul: eine Karte, nur die Chip-Zeile scrollt horizontal. Die Navigation ist eine robuste Button-Leiste, kein unvollständiges ARIA-Tabs-Muster. Auf Desktop (`lg`) entfällt sie; dort bleibt die bisherige breite Arbeitsansicht.
 
 ### 7.12 Versteckte gemountete Bereiche
 

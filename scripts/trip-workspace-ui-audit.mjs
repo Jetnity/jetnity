@@ -739,6 +739,255 @@ const ZUSTAENDE = {
     formularLeer: true,
     nutzlast: { anfangsBereich: 'mobilitaet', reise: reise() },
   },
+  'readiness-leer': {
+    kompakt: 'Noch keine Vorbereitungspunkte',
+    desktop: 'Noch keine Vorbereitungspunkte',
+    nutzlast: {
+      reise: reise({
+        startDate: null,
+        endDate: null,
+        stages: [],
+        days: [tag(1, { stageId: null, dayDate: null })],
+      }),
+    },
+  },
+  'readiness-offen': {
+    kompakt: 'Automatische Einreiseprüfung derzeit nicht verfügbar',
+    desktop: 'Automatische Einreiseprüfung derzeit nicht verfügbar',
+    nutzlast: { reise: reise() },
+  },
+  'readiness-user-done': {
+    kompakt: 'Von dir erledigt',
+    desktop: 'Von dir erledigt',
+    oeffneVorbereitung: true,
+    nutzlast: {
+      reise: reise({
+        travellers: 1,
+        readinessItems: [
+          {
+            id: 'rdy-entry',
+            clientRef: 'entry_check:ID',
+            kind: 'entry_check',
+            userStatus: 'done',
+            evidence: 'user',
+            countryCode: 'ID',
+            tripItemId: null,
+            title: null,
+            contextFingerprint: 'v1|kind=entry_check|cc=ID|start=2026-09-12|end=2026-09-16|trav=1|dest=ID',
+            createdAt: JETZT,
+            updatedAt: JETZT,
+          },
+        ],
+      }),
+    },
+  },
+  'readiness-stale': {
+    kompakt: 'Erneut prüfen',
+    desktop: 'Erneut prüfen',
+    oeffneVorbereitung: true,
+    nutzlast: {
+      reise: reise({
+        readinessItems: [
+          {
+            id: 'rdy-ins',
+            clientRef: 'insurance_check:trip',
+            kind: 'insurance_check',
+            userStatus: 'done',
+            evidence: 'user',
+            countryCode: null,
+            tripItemId: null,
+            title: null,
+            contextFingerprint: 'alt',
+            createdAt: JETZT,
+            updatedAt: JETZT,
+          },
+        ],
+      }),
+    },
+  },
+  'readiness-lange-destination': {
+    kompakt: 'Krabi-Provinz Amphoe Mueang mit sehr langem Destinationsnamen ohne horizontales Abschneiden',
+    desktop: 'Krabi-Provinz Amphoe Mueang mit sehr langem Destinationsnamen ohne horizontales Abschneiden',
+    nutzlast: {
+      reise: reise({
+        title: 'Krabi-Provinz Amphoe Mueang mit sehr langem Destinationsnamen ohne horizontales Abschneiden',
+        stages: [
+          etappe({
+            name: 'Krabi-Provinz Amphoe Mueang mit sehr langem Destinationsnamen ohne horizontales Abschneiden',
+            countryCode: 'TH',
+          }),
+        ],
+      }),
+    },
+  },
+  'readiness-mehrere-laender': {
+    kompakt: 'Diese Reise hat mehrere Reisende',
+    desktop: 'Diese Reise hat mehrere Reisende',
+    oeffneVorbereitung: true,
+    nutzlast: {
+      reise: reise({
+        travellers: 3,
+        stages: [
+          etappe({ name: 'Bangkok', countryCode: 'TH' }),
+          etappe({
+            id: 'stage-2',
+            position: 2,
+            name: 'Tokio',
+            countryCode: 'JP',
+            placeId: 'geonames:1850147',
+          }),
+        ],
+      }),
+    },
+  },
+  'readiness-fehlende-fakten': {
+    kompakt: 'Staatsangehörigkeit fehlt',
+    desktop: 'Staatsangehörigkeit fehlt',
+    oeffneVorbereitung: true,
+    nutzlast: { reise: reise({ travellers: 1 }) },
+  },
+  'readiness-zwei-nationalitaeten': {
+    kompakt: 'Reisende 2',
+    desktop: 'Reisende 2',
+    oeffneVorbereitung: true,
+    nutzlast: {
+      reise: reise({
+        travellers: 2,
+        party: [
+          {
+            id: 'party-1',
+            clientRef: 'traveller:1',
+            label: 'Reisende 1',
+            nationalityCountryCode: 'CH',
+            residenceCountryCode: 'CH',
+            documentType: 'passport',
+            documentIssuingCountryCode: 'CH',
+            documentExpiresOn: '2030-01-01',
+            createdAt: JETZT,
+            updatedAt: JETZT,
+          },
+          {
+            id: 'party-2',
+            clientRef: 'traveller:2',
+            label: 'Reisende 2',
+            nationalityCountryCode: 'DE',
+            residenceCountryCode: 'DE',
+            documentType: 'passport',
+            documentIssuingCountryCode: 'DE',
+            documentExpiresOn: '2029-06-01',
+            createdAt: JETZT,
+            updatedAt: JETZT,
+          },
+        ],
+      }),
+    },
+  },
+  'readiness-transit-mehrere-laender': {
+    kompakt: 'Für die Prüfung fehlen noch Angaben',
+    desktop: 'Für die Prüfung fehlen noch Angaben',
+    oeffneVorbereitung: true,
+    nutzlast: {
+      reise: reise({
+        travellers: 1,
+        stages: [
+          etappe({ name: 'Bangkok', countryCode: 'TH' }),
+          etappe({
+            id: 'stage-2',
+            position: 2,
+            name: 'Tokio',
+            countryCode: 'JP',
+            placeId: 'geonames:1850147',
+          }),
+        ],
+        party: [
+          {
+            id: 'party-ch',
+            clientRef: 'traveller:1',
+            label: 'Reisende 1',
+            nationalityCountryCode: 'CH',
+            residenceCountryCode: 'CH',
+            documentType: 'passport',
+            documentIssuingCountryCode: 'CH',
+            documentExpiresOn: '2030-01-01',
+            createdAt: JETZT,
+            updatedAt: JETZT,
+          },
+        ],
+      }),
+    },
+  },
+  'readiness-official-current': {
+    kompakt: 'Offiziell nicht erforderlich',
+    desktop: 'Offiziell nicht erforderlich',
+    oeffneVorbereitung: true,
+    nutzlast: {
+      reise: reise({
+        travellers: 1,
+        party: [
+          {
+            id: 'party-ch',
+            clientRef: 'traveller:1',
+            label: 'Reisende 1',
+            nationalityCountryCode: 'CH',
+            residenceCountryCode: 'CH',
+            documentType: 'passport',
+            documentIssuingCountryCode: 'CH',
+            documentExpiresOn: '2030-01-01',
+            createdAt: JETZT,
+            updatedAt: JETZT,
+          },
+        ],
+      }),
+      officialEvaluations: [
+        {
+          travellerClientRef: 'traveller:1',
+          destinationCountryCode: 'ID',
+          transitCountryCode: null,
+          requirementType: 'visa',
+          result: 'not_required',
+          status: 'current',
+          freshness: 'current',
+          officialClass: 'requirement',
+          missingFacts: [],
+          evidence: {
+            provider: 'audit',
+            authority: 'Audit',
+            sourceUrl: null,
+            checkedAt: JETZT,
+            validFrom: null,
+            validUntil: null,
+            ruleReference: 'VISA-ID',
+            contextFingerprint: 'off',
+          },
+          action: null,
+        },
+      ],
+    },
+  },
+  'readiness-langer-titel': {
+    kompakt: 'Reiseadapter und lokale SIM-Karte vor der Abreise noch besorgen und die Unterlagen ordnen',
+    desktop: 'Reiseadapter und lokale SIM-Karte vor der Abreise noch besorgen und die Unterlagen ordnen',
+    oeffneVorbereitung: true,
+    nutzlast: {
+      reise: reise({
+        readinessItems: [
+          {
+            id: 'rdy-prep',
+            clientRef: 'preparation:adapter',
+            kind: 'preparation',
+            userStatus: 'open',
+            evidence: 'user',
+            countryCode: null,
+            tripItemId: null,
+            title: 'Reiseadapter und lokale SIM-Karte vor der Abreise noch besorgen und die Unterlagen ordnen',
+            contextFingerprint: 'v1|kind=preparation|title=reiseadapter und lokale sim-karte vor der abreise noch besorgen und die unterlagen ordnen|start=2026-09-12|end=2026-09-16|trav=2|dest=ID',
+            createdAt: JETZT,
+            updatedAt: JETZT,
+          },
+        ],
+      }),
+    },
+  },
   'bestand-unbestimmt': {
     kompakt: 'noch nicht vollständig bestimmbar',
     desktop: 'noch nicht vollständig bestimmbar',
@@ -998,6 +1247,9 @@ async function zustandOeffnen(page, zustand, viewport) {
   }
   if (defin.oeffneMietwagen) {
     await page.getByRole('tab', { name: 'Mietwagen', exact: true }).click()
+  }
+  if (defin.oeffneVorbereitung) {
+    await page.getByRole('button', { name: 'Vorbereitung öffnen' }).click()
   }
 }
 

@@ -207,6 +207,11 @@ describe('Was die Datenbank ablehnen würde, wird hier abgelehnt', () => {
     assert.deepEqual(gelesen?.ohneTag, [])
   })
 
+  test('eine Reise ohne readinessItems bleibt lesbar und leer', () => {
+    const gelesen = reiseLesen(reise())
+    assert.deepEqual(gelesen?.readinessItems, [])
+  })
+
   test('ungeplante Planpunkte gehören nicht zu einem Tag', () => {
     const gelesen = reiseLesen(
       reise({

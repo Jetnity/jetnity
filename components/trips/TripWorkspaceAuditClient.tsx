@@ -12,6 +12,7 @@ import MobilitaetBereich from '@/components/trips/MobilitaetBereich'
 import FlugSuche from '@/components/trips/FlugSuche'
 import HotelBereich from '@/components/trips/HotelBereich'
 import TripWorkspace from '@/components/trips/TripWorkspace'
+import type { OfficialEvaluation } from '@/lib/readiness/official'
 import type { Arbeitsbereich } from '@/lib/trips/arbeitsbereich'
 import type { Trip, TripSource } from '@/types/trips'
 
@@ -24,6 +25,7 @@ type AuditNutzlast = {
   mitSuche?: boolean
   mitAenderung?: boolean
   gastHinweis?: boolean
+  officialEvaluations?: OfficialEvaluation[]
 }
 
 export default function TripWorkspaceAuditClient() {
@@ -68,6 +70,7 @@ export default function TripWorkspaceAuditClient() {
       reise={reise}
       quelle={quelle}
       ohneTag={reise.ohneTag}
+      officialEvaluations={daten.officialEvaluations}
       anfangsBereich={daten.anfangsBereich}
       onPunktAnlegen={async () => null}
       onPunktEntfernen={async () => null}

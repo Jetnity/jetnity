@@ -30,10 +30,13 @@ import {
   besuchteBereicheErweitern,
   gewaehlterTagId,
 } from '@/lib/trips/arbeitsbereich'
+import type { OfficialEvaluation } from '@/lib/readiness/official'
+import type { ReadinessKind, ReadinessUserStatus, TravellerDocumentType } from '@/types/trips'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
 import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
 import TripWorkspaceNavigation from '@/components/trips/TripWorkspaceNavigation'
 import TripWorkspacePlan from '@/components/trips/TripWorkspacePlan'
+import Reisevorbereitung from '@/components/trips/Reisevorbereitung'
 import TripWorkspaceUebersicht from '@/components/trips/TripWorkspaceUebersicht'
 import FlugBestand from '@/components/trips/FlugBestand'
 import UnterkunftBestand from '@/components/trips/UnterkunftBestand'
@@ -63,6 +66,31 @@ type TripWorkspaceProps = {
   aktivitaetensuche?: React.ReactNode
   mobilitaetssuche?: React.ReactNode
   onBuchungsstatus?: (itemId: string, gebucht: boolean) => Promise<string | null>
+  onReadinessSetzen?: (eingabe: {
+    clientRef: string
+    kind: ReadinessKind
+    userStatus: ReadinessUserStatus
+    countryCode: string | null
+    tripItemId: string | null
+    title: string | null
+  }) => Promise<string | null>
+  onReadinessEntfernen?: (clientRef: string) => Promise<string | null>
+  onTravellerSetzen?: (eingabe: {
+    clientRef: string
+    label: string | null
+    nationalityCountryCode: string | null
+    residenceCountryCode: string | null
+    documentType: TravellerDocumentType | null
+    documentIssuingCountryCode: string | null
+    documentExpiresOn: string | null
+  }) => Promise<string | null>
+  onTravellerEntfernen?: (clientRef: string) => Promise<string | null>
+  /**
+   * Optionale serverseitige Official Evaluations.
+   * Ohne Lieferung bleibt der lokale fail-closed Fallback.
+   * Kein Provider-Call und kein Secret im Client.
+   */
+  officialEvaluations?: OfficialEvaluation[]
   /**
    * Nur für interne Audits: startet nicht in der Übersicht.
    * Der Produktweg lässt den Parameter weg.
@@ -125,6 +153,11 @@ export default function TripWorkspace({
   aktivitaetensuche,
   mobilitaetssuche,
   onBuchungsstatus,
+  onReadinessSetzen,
+  onReadinessEntfernen,
+  onTravellerSetzen,
+  onTravellerEntfernen,
+  officialEvaluations,
   anfangsBereich,
 }: TripWorkspaceProps) {
   const kompakt = React.useSyncExternalStore(
@@ -184,6 +217,17 @@ export default function TripWorkspace({
   const verbergen = (ziel: Arbeitsbereich) => !bereichSollSichtbar(ziel, bereich, kompakt)
   const uebersichtVerborgen = verbergen('uebersicht')
 
+  const vorbereitung = (
+    <Reisevorbereitung
+      reise={reise}
+      officialEvaluations={officialEvaluations}
+      onSetzen={onReadinessSetzen}
+      onEntfernen={onReadinessEntfernen}
+      onTravellerSetzen={onTravellerSetzen}
+      onTravellerEntfernen={onTravellerEntfernen}
+    />
+  )
+
   const plan = (
     <TripWorkspacePlan
       reise={reise}
@@ -231,6 +275,8 @@ export default function TripWorkspace({
 
         <TripWorkspaceKopf reise={reise} quelle={quelle} kompakt={kompakt} kopfzeile={kopfzeile} />
 
+        {!kompakt && <div className="mt-6">{vorbereitung}</div>}
+
         {kompakt && <TripWorkspaceNavigation aktiv={bereich} onWechsel={wechseln} />}
 
         {bereichBereit('uebersicht') && (
@@ -244,6 +290,7 @@ export default function TripWorkspace({
               aenderungKnopfRef={aenderungKnopfRef}
               plan={kompakt ? plan : null}
               aenderungFeld={kompakt ? aenderungFeld : null}
+              vorbereitung={kompakt ? vorbereitung : null}
             />
           </BereichHuelle>
         )}

@@ -46,6 +46,8 @@ import {
   VeralteteFassungFehler,
   zurUebernahme,
 } from '@/lib/trips/gastspeicher'
+import { gastReadinessEntfernen, gastReadinessSetzen } from '@/lib/readiness/gast'
+import { gastTravellerEntfernen, gastTravellerSetzen } from '@/lib/readiness/reisende-gast'
 import type { CreateTripInput } from '@/types/trips'
 import type { Modelloperation } from '@/lib/reiseaenderung/schema'
 import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
@@ -1208,6 +1210,62 @@ describe('Die Übernahme aus der alten Fassung löscht nichts auf Verdacht', () 
       'jede Reise genau einmal – die aktive steht nicht zusätzlich in der Warteschlange',
     )
     assert.equal(stand.aktiv?.title, 'Erste')
+  })
+})
+
+describe('Gastreise trägt dieselbe Readiness-Form', () => {
+  test('create/update/delete und Reload bleiben idempotent', () => {
+    const angelegt = gastreiseAnlegen(eingabe())
+    const danach = gastReadinessSetzen(angelegt, {
+      clientRef: 'entry_check:TH',
+      kind: 'entry_check',
+      userStatus: 'done',
+      countryCode: angelegt.stages[0]?.countryCode ?? null,
+    })
+    assert.equal(danach.readinessItems?.length, 1)
+    assert.equal(danach.readinessItems?.[0]?.userStatus, 'done')
+    assert.equal(danach.readinessItems?.[0]?.evidence, 'user')
+
+    const erneut = gastReadinessSetzen(danach, {
+      clientRef: 'entry_check:TH',
+      kind: 'entry_check',
+      userStatus: 'done',
+      countryCode: danach.stages[0]?.countryCode ?? null,
+    })
+    assert.equal(erneut.readinessItems?.length, 1)
+
+    const geladen = gastreiseLadenNach(erneut.id)
+    assert.equal(geladen?.readinessItems?.length, 1)
+
+    const ohne = gastReadinessEntfernen(erneut, 'entry_check:TH')
+    assert.equal(ohne.readinessItems?.length, 0)
+  })
+
+  test('Reisendenkontext bleibt nach Reload erhalten', () => {
+    const angelegt = gastreiseAnlegen(eingabe())
+    const danach = gastTravellerSetzen(angelegt, {
+      clientRef: 'traveller:1',
+      nationalityCountryCode: 'CH',
+      documentType: 'passport',
+    })
+    assert.equal(danach.party?.[0]?.nationalityCountryCode, 'CH')
+    const geladen = gastreiseLadenNach(danach.id)
+    assert.equal(geladen?.party?.[0]?.nationalityCountryCode, 'CH')
+    const ohne = gastTravellerEntfernen(danach, 'traveller:1')
+    assert.equal(ohne.party?.length, 0)
+  })
+
+  test('sensible Titel werden nicht gespeichert', () => {
+    const angelegt = gastreiseAnlegen(eingabe())
+    assert.throws(
+      () =>
+        gastReadinessSetzen(angelegt, {
+          kind: 'preparation',
+          userStatus: 'open',
+          title: 'Passnummer 1234567',
+        }),
+      /sensible Daten/,
+    )
   })
 })
 

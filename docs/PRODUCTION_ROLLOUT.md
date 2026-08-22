@@ -72,6 +72,8 @@ Zwei getrennte Aussagen, kein Widerspruch:
 
 Eine Production-Anwendung späterer Migrationen braucht eine neue ausdrückliche Freigabe. Die Production-Mietwagensuche bleibt aus.
 
+**Foundation C (Travel Readiness):** `20260822010000_trip_readiness_items` und `20260822020000_trip_travellers` bleiben ausschließlich Development. Diese Dateien aktivieren weder Production-Readiness noch einen Anforderungs-Provider. Keine Production-Migration ohne neue ausdrückliche Freigabe.
+
 `npm run production:pruefen` ist vollständig read-only: nur `SELECT` auf Bestand und PostgreSQL-Metadaten (Rechte, RLS, Policies). Kein HTTP-POST, kein INSERT/UPDATE/DELETE.
 
 ---
