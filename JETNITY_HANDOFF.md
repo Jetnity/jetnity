@@ -1,11 +1,27 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 22. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D auf Draft-PR #34 umgesetzt**
+Status: **verbindlicher operativer Übergabepunkt – Foundation D im Product-Owner-Closeout**
 
-Dieser Handoff ist bewusst kompakt. Ein neuer Chat oder Coding Agent muss zuerst die dauerhaften Projektquellen lesen und anschließend den realen Git-/CI-/Preview-/Production-Stand prüfen.
+Dieser Handoff ist die zentrale Einstiegspunkte-Datei für einen neuen Chat oder Coding Agent. Er ersetzt keine Fach- oder Statusdateien, sondern sagt **was Jetnity ist, was bereits gebaut wurde, was verbindlich entschieden ist, was aktuell läuft und was als Nächstes zu tun ist**.
 
-Pflichtlektüre:
+Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Preview-/Supabase-/Production-Stand verifizieren.**
+
+Verbindliche Kontinuitätsregel:
+
+> **Kein relevanter Fortschritt darf beim Wechsel von Chat, Agent oder Sitzung verloren gehen. Was für die Fortsetzung wichtig ist, gehört ins Repository.**
+
+Ein neuer Chat soll mit diesem Satz übernehmen können:
+
+> **„Wir machen mit Jetnity weiter. Lies den Handoff und den aktuellen Repository-/Production-Stand und übernimm exakt die bisherige Hauptentwickler-Rolle.“**
+
+Der Nutzer soll frühere Entscheidungen, Foundations oder den letzten Arbeitsfortschritt **nicht erneut erklären müssen**.
+
+---
+
+## 1. Pflichtlektüre
+
+Vor Produkt-/Architektur-/Implementierungsentscheidungen lesen:
 
 - `JETNITY_PRODUCT_MANDATE.md`
 - `JETNITY_VISION.md`
@@ -17,80 +33,80 @@ Pflichtlektüre:
 - `AGENTS.md`
 - `docs/PRODUCT_QUALITY_STANDARD.md`
 - `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
-- `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md`
 - `docs/LOGIC_STANDARD.md`
 - `docs/CONTINUITY_STANDARD.md`
 - `docs/CHATGPT_CURSOR_WORKFLOW.md`
 - `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`
 - `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
 - `docs/EXPERT_PROACTIVITY_POLICY.md`
-- relevante Fach-Dokumente unter `docs/`
+- `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md`
+- `docs/TRIP_WORKSPACE_FINAL_INTELLIGENCE_AUDIT_POLICY.md`
+- `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`
+- `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`
+- `docs/FINAL_HOMEPAGE_POSITIONING_OPTIMIZATION_POLICY.md`
+- relevante Fach-/Acceptance-/Review-Dokumente unter `docs/`
 
-Wenn Erinnerung, Chat und Repository widersprechen: **nicht raten**, sondern aktuellen technischen Stand verifizieren.
-
-Verbindliche Kontinuitätsregel:
-
-> **Kein relevanter Fortschritt darf beim Wechsel von Chat, Agent oder Sitzung verloren gehen. Was für die Fortsetzung wichtig ist, gehört ins Repository.**
-
-Bei einem aktiven größeren Arbeitsblock muss zusätzlich `docs/ACTIVE_WORK_STATUS.md` im Feature-Branch gelesen und aktuell gehalten werden.
+Bei einem aktiven größeren Arbeitsblock zusätzlich die **Branch-Version** von `docs/ACTIVE_WORK_STATUS.md` und den aktuellen `docs/CURSOR_...TASK.md` bzw. neueren Review-/Amendment-Auftrag lesen.
 
 ---
 
-## 1. Produktmandat
+## 2. Produktmandat / Rollen
 
-Jetnity soll zum **führenden intelligenten Reiseplanungs- und Reisebegleitungsprodukt seiner Kategorie** entwickelt werden.
-
-Das bedeutet verbindlich:
-
-- außergewöhnlich einfache Nutzererfahrung
-- moderne, sinnvolle Top-Web-Technologie
-- erstklassige, wartbare Architektur
-- hohe Security- und Datenschutzqualität
-- starke Performance und Mobile-Qualität
-- belastbare Datenwahrheit statt plausibler Erfindungen
-- ein zusammenhängender Reisegraph statt isolierter Suchmaschinen
-- so viel Suchaufwand, Doppelarbeit, Entscheidungsstress und organisatorische Reibung wie sinnvoll abnehmen
-- keine Feature-Sammlung ohne klaren Nutzer- oder Umsatznutzen
-- traveller-spezifische Funktionen müssen relevante Mehrfachkontexte wie mehrere Staatsbürgerschaften oder Reisedokumente korrekt berücksichtigen, wenn diese das Ergebnis verändern können
+Jetnity soll zum **führenden intelligenten Reiseplanungs- und Reisebegleitungsprodukt seiner Kategorie** entwickelt werden. „Nummer 1“ ist ein Entwicklungsziel, keine heutige Marktbehauptung.
 
 Leitsätze:
 
 > **Einfach für den Nutzer. Streng logisch im Inneren. Eine Reise, eine Wahrheit.**
 
-> **Jetnity soll die Nummer 1 werden, weil es Reisen einfacher, intelligenter, verlässlicher und ganzheitlicher macht.**
-
 > **Komplexität gehört ins System, nicht in den Kopf des Nutzers.**
 
-> **Wo Traveller-Kontext das Ergebnis ändern kann, prüft Jetnity die relevanten zulässigen Optionen individuell und evidenzbasiert.**
+> **Nicht mehrere getrennte Suchprodukte, sondern eine Reise, deren Bereiche sich gegenseitig verstehen.**
 
-Das ist ein Entwicklungsziel, keine heutige Marktbehauptung.
+Rollen:
+
+- **Product Owner / Nutzer:** verbindliche Produktentscheidungen; finale Freigaben.
+- **ChatGPT:** Hauptentwickler-/Product-/Architecture-/Logic-/Security-/Review-Steuerung; prüft tatsächlichen Repo-/Infra-Stand unabhängig.
+- **Cursor:** Implementierung größerer Blöcke nach versioniertem Auftrag.
+- **GitHub:** dauerhaftes gemeinsames Gedächtnis / Source of Truth für Kontinuität.
+
+### Merge-Gate
+
+**Kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.**
+
+Grüne Tests, CI, Preview, technisches „ready“ oder positives Review ersetzen die Product-Owner-Entscheidung nicht. Production-Migrationen, Provider-Aktivierung und Kostenfreigaben bleiben separate Gates.
+
+### Expert-Proaktivität
+
+ChatGPT und Cursor sollen wie Senior-Produkt-/Architektur-/Engineering-/Security-/UX-Profis handeln. Hochwirksame Lücken, Risiken oder bessere Lösungen müssen proaktiv vorgeschlagen und versioniert werden.
+
+### Kein Bestandsschutz alter Funktionen
+
+Früher gebaut oder früher grün getestet bedeutet **nicht**, dass eine Funktion unveränderlich ist.
+
+Wenn eine bestehende Funktion dem heutigen Jetnity-Standard nicht mehr entspricht oder das Gesamtsystem verschlechtert, darf/soll sie professionell refaktoriert, vereinfacht, ersetzt, migriert oder nach Product-Owner-Freigabe entfernt werden. Eine Funktion gilt nicht als fertig, wenn sie nur isoliert funktioniert; fachlich gekoppelte Funktionen müssen fehlerfrei zusammenspielen.
 
 ---
 
-## 2. Rollen / Arbeitsweise
+## 3. Bestehender technischer Produktkern
 
-- **Product Owner / Nutzer:** verbindliche Produktentscheidungen und Freigaben; kein Merge ohne ausdrückliche aktuelle Freigabe.
-- **ChatGPT:** Produkt-, Architektur-, Logic-, Security-, Kosten- und Review-Steuerung; prüft Repository/Supabase/Vercel unabhängig und sichert relevante Fortschritts-Checkpoints dauerhaft.
-- **Cursor:** ausführender Hauptentwickler für größere Implementierungsblöcke nach versioniertem `docs/CURSOR_...TASK.md`; hält während aktiver Arbeit `docs/ACTIVE_WORK_STATUS.md` aktuell.
-- **GitHub:** dauerhaftes gemeinsames Gedächtnis / technische Source of Truth.
+Stack:
 
-Neue Produktentscheidungen, relevante Implementierungsmeilensteine, Blocker, Review-Funde, Test-/CI-/Preview-Stände, DB-/Production-Grenzen und der exakte nächste Schritt dürfen nicht nur im Chat oder Agentenkontext bleiben.
+- Next.js App Router / TypeScript / Tailwind
+- Vercel
+- Supabase Postgres/Auth/Storage
+- gemeinsamer Reisegraph statt separater Schattenmodelle
+- Web/PWA zuerst, Native später
 
-Für jede neue oder geänderte relevante Funktion ist zusätzlich die Traveller-Context-Relevanz nach `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md` zu prüfen. Keine neue Funktion darf still eine einzelne Staatsbürgerschaft oder ein einzelnes Dokument als universelle Dauerannahme verhärten, wenn fachlich mehrere Optionen das Ergebnis verändern können.
+Production-URL:
 
----
+`https://jetnity-app.vercel.app`
 
-## 3. Aktueller `main`-Stand
+Supabase:
 
-Foundation C / PR #32 ist abgeschlossen.
+- Production: `qscbgcdmivbbnzrcyegn` (`eu-central-2`)
+- Development: `yfvbxvijcorffwxbxahl`
 
-- PR #32: `Foundation C – Travel Readiness & Dokumente`
-- finaler PR-Head vor Merge: `a5099b98c9456ce07c9b12443d5540843ef8f669`
-- Squash-Merge nach `main`: `b50d2ce9ebc4e50da858f67258f94f887b183f79`
-- Production-Acceptance: `docs/PR32_PRODUCTION_MIGRATION_ACCEPTANCE.md`
-- Vercel Production: **READY**
-
-Bereits auf `main` abgeschlossen / verbindlich:
+Bereits abgeschlossen / auf `main`:
 
 - Phase 3.1 – Flight Foundation
 - Phase 3.2 / 3.2c – Hotel Foundation
@@ -100,191 +116,324 @@ Bereits auf `main` abgeschlossen / verbindlich:
 - Foundation A – Mobilität & Transfers
 - Foundation B – Mietwagen
 - Foundation C – Automatic Travel Requirements & Readiness
-- Produktqualitäts-, Logic- und Kontinuitätsstandards
-- verbindlicher ChatGPT/Cursor-Workflow
-- verbindliches Jetnity Product Mandate
-- verbindlicher websiteweiter `UX_INFORMATION_ARCHITECTURE_STANDARD`
-- verbindliche `TRAVELLER_CONTEXT_INTELLIGENCE_POLICY`
-- verbindliche Product-Owner-Merge-Approval-Policy
-- verbindliche Project-Progress-Persistence-Policy
 
-Stabile öffentliche Production-URL:
-
-`https://jetnity-app.vercel.app`
-
----
-
-## 4. Foundation C – abgeschlossen
-
-Jetnity besitzt den technischen und fachlichen Unterbau für **Automatic Travel Requirements & Readiness**.
-
-Umgesetzt:
-
-- `trip_readiness_items` als eigene User-Readiness-Domäne
-- `trip_travellers` / `Trip.party` für individuellen, trip-spezifischen Traveller Context
-- Guest-/Account-Parität und idempotente Übernahme
-- UI-Bereich **Einreise & Reisevorbereitung** im Trip Workspace, kein sechster Haupt-Tab
-- provider-neutrale Travel Requirements Engine
-- async Provider-Port
-- kanonische `evaluations[]`-Official-Truth
-- strikte Trennung Official Requirement Truth vs User Readiness
-- `unknown` bleibt `unknown`
-- progressive `missingFacts`
-- Context Fingerprint / stale / recheck / freshness
-- Multi-Transit-Vollständigkeit
-- Evidence-Trust-/Validity-Grenzen
-- sichere Official Actions nur bei validierter HTTPS-Evidence
-- Requirement-Typen für Visa, ETA/eTA/ESTA, Pass, ID, Passgültigkeit, Transit, Health, Vaccination, Health Documents, Entry Forms, Insurance, Return/Onward Ticket, Booking Documents und weitere Anforderungen
-- keine regulatorischen Aussagen aus LLM-Text
-- kein Dokumententresor / keine OCR / keine Dokumentnummern / keine Gesundheitsakte
-
-Qualitätsnachweis des finalen Foundation-C-Standes vor Merge:
-
-- `npm test`: **1252/1252**
-- Typecheck / Lint / Hygiene / Auth-Konfiguration / Production-Build grün
-- Trip-Workspace-Audit WebKit + Chromium: **678 Kombinationen, 0 Fehler**
-- Activities-Regression: **184 Kombinationen, 0 Fehler**
-- GitHub CI grün
-- Vercel Preview READY
-
-Foundation C **nicht erneut bauen**.
-
-Wichtige spätere Erweiterung: Foundation C modelliert aktuell noch singuläre Traveller-Felder. Mehrfachstaatsbürgerschaften / mehrere Reisedokumente sind inzwischen verbindlich als zukünftiger 1:n-Traveller-Context beschlossen und müssen vor produktiver Requirements-Provider-Aktivierung separat umgesetzt und reviewed werden. Die bestehende Singularität ist kein langfristiges Architekturmandat.
-
----
-
-## 5. Supabase Production nach Foundation C
-
-Production-Projekt:
-
-`qscbgcdmivbbnzrcyegn` (`eu-central-2`)
-
-Development:
-
-`yfvbxvijcorffwxbxahl`
-
-Auf Production und verifiziert:
+Foundation C Production-Migrationen:
 
 - `20260822010000_trip_readiness_items`
 - `20260822020000_trip_travellers`
 
-Beide Tabellen:
+Foundation C ist abgeschlossen und darf nicht unnötig neu gebaut werden. Der dortige singuläre Traveller-Kontext ist jedoch ausdrücklich **nur transitional**; Foundation E ersetzt die langfristige Annahme durch belastbaren 1:n-Traveller Context.
 
-- RLS aktiv
-- SELECT/INSERT/UPDATE/DELETE nur für `authenticated`
-- Policies auf `user_id = auth.uid()` begrenzt
-- `anon` / `public` ohne Tabellenrechte
-
-Ältere Security-Advisor-Warnungen bei anderen Tabellen / `SECURITY DEFINER`-Funktionen bleiben als separater Hardening-Track offen.
+Provider-Suchen/Requirements bleiben produktiv deaktiviert, solange keine echten Provider, Secrets und separate Freigaben vorhanden sind. Keine Fake-Preise, Fake-Verfügbarkeit, Fake-Zeiten oder erfundenen regulatorischen Aussagen.
 
 ---
 
-## 6. Foundation C – externe/strukturelle Abhängigkeiten
+## 4. Aktiver Arbeitsblock – Foundation D / PR #34
 
-### Echter Travel-Requirements-Provider
-
-Noch **kein** Timatic-/Visa-/Health-Provider aktiviert.
-
-Daher produktiv weiterhin keine erfundenen Visa-, Impf-/Health-, Pass- oder Transit-Aussagen. Official Truth bleibt ohne belastbare Evidence `unknown` / `provider_unavailable` / `insufficient_context`.
-
-Aktuell bevorzugter Kandidat: **IATA Timatic / Timatic AutoCheck**, aber keine Architekturbindung und kein Vertrag ohne separate Kosten-/Lizenzprüfung.
-
-Vor produktiver Provider-Aktivierung muss zusätzlich die 1:n-Unterstützung für mehrere Staatsbürgerschaften / Credential-Profile fachlich, technisch und providerseitig geklärt und umgesetzt sein.
-
-### Strukturierte Origin-/Transit-Fakten
-
-Foundation D füllt diese Naht auf Draft-PR #34. `routeFactsAusReise()` liefert Origin-/Transit-Codes aus validierten Flight-Itineraries. Ohne Itinerary bleibt die Naht leer. Official Transit-Requirements brauchen weiterhin einen echten Provider.
-
----
-
-## 7. Aktiver Arbeitsblock – Foundation D
-
-**Foundation D – Route & Transit Intelligence** ist auf Draft-PR #34 umgesetzt, nicht gemergt.
+**Foundation D – Route & Transit Intelligence** ist technisch umgesetzt und befindet sich im Product-Owner-Closeout, noch nicht gemergt.
 
 - Branch: `feat/route-transit-intelligence`
 - Draft PR: **#34**
+- PR bleibt Draft
+- kein Merge ohne ausdrückliche Product-Owner-Freigabe
+- keine Foundation-D-Production-Migration ohne separates Gate
 - Fachdokument: `docs/ROUTE_TRANSIT_INTELLIGENCE.md`
 - Acceptance: `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md`
-- Merge-Nachtrag: `docs/CURSOR_ROUTE_TRANSIT_MERGE_APPROVAL_AMENDMENT.md`
-- verbindlicher Task: `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md`
-- aktiver Live-Handoff im Branch: `docs/ACTIVE_WORK_STATUS.md`
-- websiteweiter UX-/IA-Standard: `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
-- globaler Traveller-Context-Standard: `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md`
-- Progress-Persistence-Policy: `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`
-- Merge-Gate: `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
+- Live-Handoff im Branch: `docs/ACTIVE_WORK_STATUS.md`
 
-Umgesetzt:
+Foundation D liefert u. a.:
 
-- eine provider-neutrale Route-Facts-Domäne in `lib/route/`
-- persistierte Itinerary in vorhandenem `trip_items.metadata`; Development-RPC schreibt sie atomar (ADR-0113), Production-Schema unverändert
-- Guest- und Account-Parität über dasselbe Trip-Feld; stiller Route-Verlust ist kein Erfolg
-- Account-Route-Länder entstehen nur aus `public.airports`, nie aus Browser-Country-Facts (ADR-0114)
-- dieselbe Grenze gilt für direkte `reise_anlegen`-RPC-Aufrufe und für jeden `trip_items`-INSERT/UPDATE (ADR-0115, ADR-0116)
-- Readiness erhält Origin-/Transit-Codes und wird bei Transitänderung stale
-- Flugbereich zeigt Route progressiv; Übersicht eine dezente Zeile
-- Reiseänderung nennt Transitwechsel
-- Mobility rät Connection/Airport Change nicht aus Titeln
-- Route Truth bleibt traveller-neutral, damit dieselbe Route später gegen mehrere Traveller-/Credential-Profile ausgewertet werden kann
+- provider-neutrale Route-Facts-Domäne in `lib/route/`
+- persistierte Flight-Itinerary in vorhandenem `trip_items.metadata`
+- atomarer Development-RPC (ADR-0113) und fail-closed TypeScript-Recovery
+- Airport-/Country-Truth aus `public.airports` statt Browser-Feldern (ADR-0114)
+- dieselbe Grenze für direkten `reise_anlegen`-RPC und jeden `trip_items`-INSERT/UPDATE (ADR-0115, ADR-0116)
+- Guest→Account-Persistenz der Route; stiller Route-Verlust ist kein Erfolg
+- Readiness-Reevaluation bei Transitänderungen
+- traveller-neutrale Route Truth als Grundlage für spätere Traveller-Profile
 
-Produkt-/UX-Regel:
+Wichtige Development-Migrationen von Foundation D:
 
-> **Der Nutzer sieht die Reise – nicht die Komplexität des Datenmodells dahinter.**
+- `20260822130000...`
+- `20260822140000_flug_route_itinerary_airport_truth.sql`
+- `20260822150000...` Route-Metadata-Guard
 
-Der websiteweite Standard ist verbindlich: Alle Besucherbereiche müssen psychologisch ruhig, logisch eindeutig und visuell priorisiert sein. Ein technisch grüner PR reicht nicht, wenn Nutzer unnötig suchen, denken oder Informationen zusammensetzen müssen.
+Diese sind **nicht** auf Production, solange keine separate Freigabe erfolgt.
 
-Harte Grenzen für PR #34:
+### Product-Owner-Rundgang zu PR #34
 
-- Draft bis Human-/Architecture-Review und ausdrücklicher Product-Owner-Freigabe
-- **kein Merge ohne ausdrückliche aktuelle Nutzerfreigabe**
-- keine Production-Migration
-- kein echter Flight-/Requirements-Provider
-- kein Timatic-Vertrag
-- keine Secrets
-- keine Fake-Routen/Transitländer/Zeiten
+Der Product-Owner-Rundgang ist **abgeschlossen**. Die dabei bestätigten Anforderungen sollen nicht unkontrolliert in PR #34 hineingebaut werden, sondern sind als verbindliche nächste Produktwahrheit gesichert. PR #34 bleibt Draft; kein Merge, kein Mark Ready, keine Production-Migration, kein Provider, keine Secrets.
 
-Aktueller operative Stand innerhalb des Branches darf nicht aus diesem Handoff allein geraten werden: **immer `docs/ACTIVE_WORK_STATUS.md` + PR/Head prüfen**.
+Aktueller verbindlicher Closeout-Auftrag im Branch:
+
+`docs/CURSOR_PR34_PRODUCT_OWNER_CLOSEOUT_TASK.md`
+
+Cursor muss vor einer späteren Merge-Entscheidung:
+
+1. Branch mit aktuellem `main` synchronisieren,
+2. Konflikte semantisch sauber lösen,
+3. Tests/Build/Security/UI-Audits neu ausführen,
+4. CI und Vercel auf exakt finalem Head prüfen,
+5. `docs/ACTIVE_WORK_STATUS.md` / Handoff / Acceptance aktualisieren,
+6. Abschlussbericht erzeugen,
+7. **nicht mergen**, **nicht Mark Ready**, **keine Production-Migration**.
+
+Danach prüft ChatGPT den finalen Stand unabhängig. Erst dann kann der Product Owner separat über Merge entscheiden.
 
 ---
 
-## 8. Provider-Suchen / externe Blocker
+## 5. Verbindliche Product-Owner-Entscheidungen aus dem Rundgang
 
-Production-Suchen bleiben deaktiviert, bis echte Provider-Zugänge und separate Freigaben vorhanden sind.
+### 5.1 Multi-Destination ab Reiseeinstieg
 
-- Flights: Foundation vorhanden, Production-Provider separat
-- Hotels: Phase 3.4 echter Hotelprovider extern blockiert
-- Activities: Foundation vorhanden, echter Provider separat
+Die Startseite/Planung darf nicht nur genau ein Ziel modellieren.
+
+- Homepage für Einzielreise einfach halten.
+- Progressiv `+ Weiteres Ziel hinzufügen`.
+- geordnete dynamische Ziele/Etappen.
+- bestehende `trip_stages` wiederverwenden; kein zweites Multi-Destination-Modell.
+- Ziele verlustfrei in Planung übertragen.
+- hinzufügen / entfernen / ersetzen / reorder.
+- derselbe Ort darf mehrfach als eigene Etappe vorkommen.
+- Nutzerziele strikt von Flight-Transit trennen.
+- Jetnity darf bessere Reihenfolge vorschlagen, aber nicht still umsortieren.
+
+### 5.2 „Meine Reisen“ bleibt zentraler Hub
+
+- Seite bleibt bestehen.
+- Gast: aktuell genau eine aktive Reise.
+- Gast muss diese Grenze transparent verstehen.
+- Bei bestehender Gastreise primär eher `Reise fortsetzen` statt irreführendem `Neue Reise`.
+- niemals still überschreiben.
+- mehrere Ziele innerhalb einer Reise zählen weiterhin als eine Gastreise.
+- Mehrziel-Reisen sollen in Reisekarten als Route/Etappen erkennbar sein.
+
+### 5.3 Initiale Reiseerstellung vereinfachen
+
+- `Reisetempo`-Chips entfernen.
+- strukturierte Interessen-Chips aus dem Initialflow entfernen.
+- kein implizites `balanced` als user-confirmed Truth.
+- ein optionaler Freitext `Wünsche & Prioritäten` als weicher Planungskontext.
+- Hard Facts und Soft Preferences strikt trennen.
+- Freitext später im Workspace sichtbar und einfach editierbar.
+- bestehende `pace`-/`interests`-Felder später professionell auf Legacy/Nullable/Deprecation prüfen; kein stiller Bedeutungswechsel alter Daten.
+- Jetnity fragt Präferenzen später gezielt nur dann, wenn die Antwort eine konkrete Entscheidung wirklich verbessert.
+
+### 5.4 Trip Workspace ist wichtigste Produktoberfläche
+
+Der Trip Workspace / besonders die **Übersicht** ist das intelligente Kontrollzentrum der Reise.
+
+Die Übersicht muss aus Sicht des Besuchers schnell beantworten:
+
+1. Was ist diese Reise?
+2. Was ist bereits erledigt?
+3. Was fehlt noch?
+4. Gibt es Warnungen/Risiken/offene Entscheidungen?
+5. Was empfiehlt Jetnity jetzt als Nächstes?
+
+Sie darf nicht nur Karten sammeln, sondern muss Reise-Wahrheit, Status, Priorität, Empfehlungen, Warnungen und nächste Schritte intelligent zusammenführen.
+
+Bevorzugte mentale Struktur für den späteren Umbau:
+
+1. Reise-Kopf / Gesamtstatus
+2. `Jetzt wichtig` / nächste sinnvolle Schritte
+3. Warnungen / Risiken / relevante Hinweise
+4. Fortschritt pro Fachbereich
+5. Einreise & persönliche Vorbereitung
+6. Tagesplan, wenn die Grundlage ausreichend steht
+7. Wünsche & Prioritäten / Änderungen
+8. sekundäre Details progressiv
+
+Harte Facts, Booking-/Planstatus, weiche Wünsche, Empfehlungen, Warnungen und offene Entscheidungen müssen visuell und semantisch getrennt bleiben.
+
+### 5.5 Geräte-/Viewport-Parität
+
+Alle UX-/Logik-/Intelligence-Prinzipien gelten für Smartphone, Tablet, Laptop und Desktop.
+
+> **Gleiche Reise. Gleiche Wahrheit. Gleiche Nutzerkontrolle. Gleich verständlich auf jedem Gerät.**
+
+Responsiv darf die Dichte/Darstellung variieren, aber nicht fachliche Bedeutung, Kernfunktion, Nutzerkontrolle oder Entscheidungslogik.
+
+---
+
+## 6. Verbindliche nächste interne Priorität – Foundation E
+
+Nach Abschluss von Foundation D kommt **Foundation E – Traveller Context / Multi-Citizenship / Multi-Document**.
+
+Zielmodell:
+
+> **Ein Reisender → mehrere Staatsbürgerschaften → mehrere Reisedokumente / Credentials → kontextabhängige zulässige Optionen.**
+
+Verbindlich:
+
+- mehrere Citizenship-/Document-Kontexte korrekt modellieren
+- individuelle Auswertung je Traveller
+- Group-Travel korrekt
+- Legal/Regulatory zuerst, dann Route-/Transit-Kompatibilität, dann belegbare Vorteile
+- keine Passnummern, Scans, biometrischen Daten oder unnötigen sensiblen Daten
+- Guest/Account-Parität
+- RLS/Privacy/Security
+- Freshness/Fingerprints/Reevaluation
+- keine uncontrolled passport hopping
+- `unknown` ehrlich behandeln
+
+Ein konkreter Foundation-E-Cursor-Auftrag wird nach Foundation-D-Abschluss mit Schema/API/RLS/UX/Tests/Migration-Gates professionell erstellt. Das genaue DB-Schema ist **noch nicht blind vorwegzunehmen**.
+
+Erst auf belastbarer Foundation-E-Basis soll ein echter Travel-Requirements-Provider produktiv evaluiert/aktiviert werden.
+
+---
+
+## 7. Danach – großer Workspace-Umbau und kompletter Intelligence Audit
+
+Nach Foundation E wird der zentrale Trip Workspace mit Route Truth + Traveller Truth + bestehendem Reisegraphen umfassend optimiert.
+
+Wichtig: Frühere Funktionen dürfen dabei verändert werden, wenn sie dem heutigen Standard nicht entsprechen.
+
+Danach ist ein verbindlicher **Senior Product / Architecture / UX / Logic / Security / Intelligence Audit** vorgeschrieben:
+
+`docs/TRIP_WORKSPACE_FINAL_INTELLIGENCE_AUDIT_POLICY.md`
+
+Der Audit prüft u. a.:
+
+- komplette Informationsarchitektur: wo was liegen sollte
+- bestehende und neue Funktionen erneut gegen heutigen Standard
+- Cross-Domain-Zusammenspiel
+- doppelte/konkurrierende Sources of Truth
+- Änderungsketten und Folgeeffekte
+- Guest/Account/Guest→Account
+- Multi-Destination
+- Multi-Traveller/Multi-Citizenship
+- Truth/Evidence/Security
+- UX/Psychologie/Accessibility
+- Geräte-/Viewport-Matrix
+- realistische End-to-End-/Edge-Case-Szenarien
+- proaktive Experten-Funde, auch wenn der Product Owner sie nicht selbst genannt hat
+
+Erst nach behobenen Audit-Funden, erneuter technischer Verifikation und ausdrücklicher Product-Owner-Freigabe gilt die zentrale Workspace-Ausbaustufe als produktreif.
+
+---
+
+## 8. Travel Safety & Disruption Intelligence – verbindlich
+
+Diese Fähigkeit **wird gebaut**, aber nicht als Schnelllösung in Foundation D.
+
+Fachregel:
+
+`docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`
+
+Jetnity soll erkennen können, wenn aktuelle reale Ereignisse eine konkrete geplante/laufende Reise betreffen, z. B.:
+
+- Krieg/bewaffneter Konflikt
+- schwere politische Unruhen
+- Erdbeben/Tsunami/Vulkan
+- Hochwasser/Waldbrand
+- Hurrikan/Taifun/Zyklon
+- andere erhebliche belegte Störungen
+
+Verbindlich:
+
+- kein LLM erzeugt Safety-Truth
+- belastbare aktuelle Evidence/Authority
+- räumliche + zeitliche Relevanz zur konkreten Reise
+- keine pauschale Länderangst, wenn nur eine Region betroffen ist
+- kritische Warnung / wichtiger Hinweis / Information trennen
+- in der Workspace-Übersicht nach realer Relevanz priorisieren
+- Cross-Domain-Folgen auf Route/Flug/Unterkunft/Aktivitäten/Mobilität/Tagesplan/Readiness prüfen
+- sinnvolle nächste Aktion anbieten
+- niemals Reise/Etappe/Buchung still ändern
+
+---
+
+## 9. Travel Timing & Seasonal Intelligence – verbindlich
+
+Schwesterfunktion von Safety & Disruption mit **eigener Truth-Klasse**:
+
+`docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`
+
+Sie behandelt planbare/wiederkehrende saisonale Muster, z. B.:
+
+- Monsun-/starke Regenzeit
+- Hurrikan-/Taifun-/Zyklonsaison
+- extreme Hitze/Kälte
+- Waldbrand-/Rauchsaison
+- Hochwasser-/Starkregenperioden
+- saisonale Erreichbarkeit/Schließzeiten
+
+Wichtig:
+
+- saisonales Muster ist **nicht** gleich akute Gefahr
+- Region + konkrete Reisedaten berücksichtigen
+- historische/klimatologische Muster nicht als exakte Vorhersage verkaufen
+- mögliche Trade-offs/Vorteile sachlich erklären, wenn belegt
+- Alternative Reisezeiten vorschlagen dürfen
+- Nutzer darf bewusst bei seiner Reisezeit bleiben
+- Jetnity widerspricht der Entscheidung nicht und ändert nichts automatisch
+- wenn später eine konkrete aktive Warnung entsteht, übernimmt Safety & Disruption die akute Ebene
+
+Beide Funktionen werden später professionell in die Workspace-Priorisierung integriert und in den finalen Intelligence Audit aufgenommen.
+
+---
+
+## 10. Finale Startseiten-Optimierung – verbindlich
+
+Wenn die zentralen Jetnity-Fähigkeiten tatsächlich fertig integriert und geprüft sind, wird die öffentliche Startseite nochmals **grundlegend als finale Positionierungs-/Kommunikationsfläche optimiert**.
+
+Fachregel:
+
+`docs/FINAL_HOMEPAGE_POSITIONING_OPTIMIZATION_POLICY.md`
+
+Ein neuer Besucher muss innerhalb weniger Sekunden verstehen:
+
+1. Was ist Jetnity?
+2. Welches Problem löst es?
+3. Was kann es konkret?
+4. Was macht es anders als übliche Reiseplaner/Vergleichsportale/isolierte Suchmaschinen?
+5. Warum sollte ich meine Reise hier beginnen?
+6. Was ist mein nächster einfacher Schritt?
+
+Die Startseite soll nicht als Feature-Wand funktionieren, sondern Jetnity als **zusammenhängendes intelligentes Reisesystem** erklären.
+
+Keine zukünftige Fähigkeit darf als heute vorhanden verkauft werden. Keine unbelegbaren Marktführer-/Superlativ-Tatsachenbehauptungen. Intelligenz wird durch Nutzen/Verhalten erklärt, nicht permanent durch das Marketingwort „KI“.
+
+---
+
+## 11. Provider / Kosten / Production-Grenzen
+
+Production-Suchen bleiben bis zu echten Provider-Zugängen und separater Freigabe deaktiviert.
+
+- Flights: Foundation vorhanden; echter Production-Provider separat
+- Hotels: echter Provider extern blockiert; Präferenz Booking.com Demand → HBX/Hotelbeds → Expedia später
+- Activities: echter Provider separat
 - Mobility: Suche deaktiviert
 - Rental Cars: Suche deaktiviert
-- Travel Requirements: kein echter Provider
+- Travel Requirements: kein echter Provider; Timatic aktuell bevorzugter Kandidat, aber nicht gebunden/aktiv
+- Safety/Disruption/Seasonal Sources: später separat nach Authority, Coverage, Lizenz, Kosten, Freshness, Geo-Granularität und Datenschutz evaluieren
 
-Hotelprovider bevorzugt:
+Keine neuen laufenden Kosten/Verträge/Secrets außerhalb bestehender Freigaberegeln.
 
-1. Booking.com Demand API / Managed Affiliate Partner
-2. HBX / Hotelbeds
-3. Expedia Rapid später
-
-Keine Fake-Adapter, keine erfundenen Preise/Verfügbarkeiten.
+Offener separater Security-Hardening-Track bleibt sichtbar (u. a. ältere `SECURITY DEFINER`-/GraphQL-Warnungen). Keine pauschalen Berechtigungsänderungen ohne Review.
 
 ---
 
-## 9. Offene Security-Arbeit
+## 12. Exakter nächster Schritt
 
-Supabase Security Advisor zeigt ältere, nicht durch Foundation C eingeführte Warnungen u. a. bei einigen `SECURITY DEFINER`-Funktionen und GraphQL-Sichtbarkeit bestehender Tabellen.
+Solange PR #34 noch offen ist:
 
-Das ist kein Foundation-D-Scope, außer eine Änderung berührt diese Bereiche direkt. Der Hardening-Track bleibt sichtbar.
+1. tatsächlichen PR-#34-/Branch-/`main`-Stand prüfen,
+2. Branch-Version von `docs/ACTIVE_WORK_STATUS.md` lesen,
+3. `docs/CURSOR_PR34_PRODUCT_OWNER_CLOSEOUT_TASK.md` vollständig ausführen lassen,
+4. finalen synchronisierten Head mit Tests/CI/Vercel/DB-Grenzen verifizieren,
+5. ChatGPT führt unabhängigen Abschlussreview durch,
+6. erst danach Product Owner separat um Merge-Freigabe fragen.
 
----
+**Nicht** Foundation E starten, solange Foundation D nicht sauber abgeschlossen bzw. die Governance-Entscheidung dazu getroffen ist.
 
-## 10. Neustart in neuem Chat / Agent
+Nach Foundation D gilt als Reihenfolge:
 
-Ein neuer Chat soll mit folgendem Satz übernehmen können:
+1. **Foundation E – Traveller Context / Multi-Citizenship / Multi-Document**
+2. **zentraler Trip-Workspace-Umbau**
+3. **Travel Safety & Disruption + Travel Timing & Seasonal Intelligence professionell integrieren**
+4. **finaler kompletter Workspace Intelligence Audit**
+5. **später finale Homepage-Positionierungs-/Kommunikationsoptimierung**
 
-> „Wir machen mit Jetnity weiter. Lies den Handoff und den aktuellen Repository-/Production-Stand.“
-
-Dann zuerst diese Datei plus Produktmandat, Vision, Roadmap, UX-/Traveller-Context-/Logic-/Continuity-/Workflow-/Progress-/Merge-Standards lesen, **PR #34 und dessen tatsächlichen Head prüfen**, im Feature-Branch `docs/ACTIVE_WORK_STATUS.md` lesen und erst danach neue Arbeit planen.
-
-Ein neuer Cursor-Agent liest zusätzlich den aktuellen Cursor-Task und alle neueren Amendments/Review-Aufträge.
-
-Foundation D ist auf Draft-PR #34 technisch umgesetzt. Nächster Schritt ist Review/Freigabe, nicht eine zweite Route-Foundation. Multi-Citizenship-/Dokumentwahl ist ein späterer Readiness-Schritt (`docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`) und darf das Traveller-Production-Schema in diesem PR nicht migrieren.
-
-Der Nutzer soll Jetnity, frühere Entscheidungen, abgeschlossene Foundations oder den letzten Arbeitsfortschritt **nicht erneut erklären müssen**.
+Die Roadmap ist für spätere Phasen maßgeblich; vor jeder konkreten Arbeit den tatsächlichen Repo-/PR-/Production-Stand und im Feature-Branch `docs/ACTIVE_WORK_STATUS.md` neu prüfen. Foundation D darf nicht als zweite Route-Foundation neu gebaut werden. Traveller-Production-Schema in diesem PR nicht migrieren.

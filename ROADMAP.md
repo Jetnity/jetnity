@@ -227,11 +227,13 @@ Traveller Context / Multi-Citizenship muss vorher als belastbare Grundlage exist
 
 ---
 
-## 5. Verbindliche spätere Produktfähigkeit – Travel Safety & Disruption Intelligence
+## 5. Verbindliche spätere Produktfähigkeit – Travel Safety, Disruption & Seasonal Timing Intelligence
 
 Status: **PRODUKTENTSCHEIDUNG VERBINDLICH / IMPLEMENTIERUNG NOCH NICHT TERMINIERT**
 
-Product-Owner-Entscheidung vom 22.08.2026: Jetnity soll relevante Sicherheits- und Störungsereignisse erkennen können, wenn diese eine konkrete geplante oder laufende Reise betreffen.
+Product-Owner-Entscheidungen vom 22.08.2026: Jetnity soll sowohl akute Sicherheits-/Störungsereignisse als auch erhebliche saisonale Reisezeit-Nachteile erkennen können, wenn diese eine konkrete geplante oder laufende Reise betreffen.
+
+### Travel Safety & Disruption
 
 Beispiele:
 
@@ -251,17 +253,65 @@ Verbindlich:
 - relevante Cross-Domain-Auswirkungen auf Route, Flug, Unterkunft, Aktivitäten, Mobilität, Tagesplan und Readiness erkennen
 - keine automatische Änderung der Reise ohne ausdrückliche Nutzerfreigabe
 - stale/unknown korrekt behandeln
-- geeignete Quellen/Provider vor Aktivierung nach Authority, Coverage, Lizenz, Kosten, Freshness und Datenschutz prüfen
 
-Verbindliche Fachregel:
+### Travel Timing & Seasonal Intelligence
+
+Jetnity soll zusätzlich erkennen können, wenn ein gewählter Zeitraum typischerweise deutlich ungünstiger für ein konkretes Ziel oder eine Etappe ist, z. B.:
+
+- Monsun-/starke Regenzeit
+- Hurrikan-/Taifun-/Zyklonsaison
+- starke Hitze-/Kälteperioden
+- Waldbrand-/Rauchsaison
+- saisonale Hochwasser-/Starkregenphasen
+- relevante Schnee-/Lawinenbedingungen
+- saisonale Erreichbarkeits-/Schließzeiten
+
+Verbindlich:
+
+- saisonale Muster nicht mit einer akuten Warnung verwechseln
+- keine pauschale Behauptung `schlechteste Saison` ohne belastbare Kriterien
+- Region + konkrete Reisedaten berücksichtigen, soweit Daten verfügbar sind
+- historische/klimatologische Muster als typische Wahrscheinlichkeit behandeln, nicht als exakte Vorhersage
+- dem Nutzer erklären, was dies für seine konkrete Reise bedeuten kann
+- alternative Reisezeiten und Auswirkungen nur vorschlagen, nicht erzwingen
+- `Trotzdem so planen` muss eine legitime Nutzerentscheidung bleiben
+- bei Übergang in einen kurzfristigen Prognose-/Warnhorizont aktuelle Safety-/Forecast-Daten neu bewerten
+
+Verbindliche Fachregeln:
 
 - `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`
+- `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`
 
-Diese Fähigkeit wird **nicht** als Schnelllösung in Foundation D eingebaut und ändert die verbindliche unmittelbare Priorität Foundation E nicht. Die konkrete Implementierungsphase wird separat geplant.
+Diese Fähigkeiten werden **nicht** als Schnelllösung in Foundation D eingebaut und ändern die verbindliche unmittelbare Priorität Foundation E nicht. Die konkrete Implementierungsphase wird separat geplant und muss in die gemeinsame Reise-Wahrheit und Workspace-Priorisierung integriert werden.
 
 ---
 
-## 6. Extern blockiert / Provider-Zugänge fehlen
+## 6. Verbindliche spätere Abschlussphase – finale Startseiten-Positionierung
+
+Status: **PRODUKTENTSCHEIDUNG VERBINDLICH / NACH INTEGRATION DES KERNPRODUKTS**
+
+Wenn die komplette Jetnity-Website bzw. die zentralen Produktfähigkeiten in der vorgesehenen Ausbaustufe umgesetzt, integriert und geprüft sind, wird die öffentliche Startseite nochmals grundlegend optimiert.
+
+Ziel: Jeder erstmalige Besucher soll innerhalb weniger Sekunden verstehen:
+
+- was Jetnity ist
+- welches Problem Jetnity löst
+- was Jetnity konkret kann
+- was Jetnity von üblichen Reiseplanern, Vergleichsportalen und isolierten Suchmaschinen unterscheidet
+- warum die Reise als zusammenhängendes System behandelt wird
+- wie der Besucher sofort mit seiner eigenen Reise anfangen kann
+
+Die finale Startseite darf keine Feature-Wand werden. Sie muss die tatsächliche Produktleistung ruhig, glaubwürdig und differenziert erklären und nur Fähigkeiten als vorhanden darstellen, die zu diesem Zeitpunkt tatsächlich verfügbar sind.
+
+Verbindliche Fachregel:
+
+- `docs/FINAL_HOMEPAGE_POSITIONING_OPTIMIZATION_POLICY.md`
+
+Diese finale Kommunikations-/Positionierungsphase wird bewusst **nach** der Kernprodukt- und Workspace-Integration durchgeführt, damit Marketing und Produkterlebnis exakt dieselbe Wahrheit erzählen.
+
+---
+
+## 7. Extern blockiert / Provider-Zugänge fehlen
 
 ### Phase 3.4 – echter Hotelprovider
 
@@ -282,13 +332,13 @@ Keine Fake-Adapter, keine erfundenen Preise oder Verfügbarkeiten.
 - Mobility Provider: separat evaluieren/freigeben
 - Rental Car Provider: separat evaluieren/freigeben
 - Travel Requirements Provider: separat evaluieren/freigeben
-- Travel Safety / Disruption Sources oder Provider: separat evaluieren/freigeben
+- Travel Safety / Disruption / Seasonal Sources oder Provider: separat evaluieren/freigeben
 
 Production-Suchen bleiben bis dahin deaktiviert.
 
 ---
 
-## 7. Security-Hardening Track
+## 8. Security-Hardening Track
 
 Status: **offen, nicht durch Foundation C/D verursacht**
 
@@ -301,7 +351,7 @@ Diese Punkte separat prüfen und priorisieren. Keine pauschalen Berechtigungsän
 
 ---
 
-## 8. Bewusst nicht priorisiert
+## 9. Bewusst nicht priorisiert
 
 Jetnity nicht wieder mit Nebenmodulen aufblasen.
 
@@ -318,7 +368,7 @@ Neue Features müssen Reiseplanung/-begleitung klar verbessern, Zeit/Suchaufwand
 
 ---
 
-## 9. Production-Grenzen
+## 10. Production-Grenzen
 
 Bereits auf Production-Schema:
 
@@ -335,7 +385,7 @@ Weiterhin keine Production-Aktivierung von Provider-Suchen, Secrets oder kostenp
 
 ---
 
-## 10. Definition für den nächsten Agenten
+## 11. Definition für den nächsten Agenten
 
 Solange PR #34 offen ist:
 
@@ -350,7 +400,9 @@ Solange PR #34 offen ist:
 9. relevante Flight-/Trip-/Mobility-/Readiness-/Change-Dokumente lesen.
 10. nicht mergen, nicht Mark Ready, keine Production-Migration.
 11. bestehende Arbeit synchronisieren und fortsetzen statt neu anzufangen.
-12. Verbindliche Reihenfolge nach Foundation D: Foundation E Traveller Context / Multi-Citizenship → zentraler Workspace-Umbau → Travel Safety & Disruption Intelligence → finaler Workspace Intelligence Audit.
+12. Verbindliche Reihenfolge nach Foundation D: Foundation E Traveller Context / Multi-Citizenship → zentraler Workspace-Umbau → Travel Safety & Disruption plus Travel Timing & Seasonal Intelligence → finaler Workspace Intelligence Audit → finale Startseiten-Positionierung.
 13. Travel Safety & Disruption Intelligence ist eine verbindliche spätere Produktfähigkeit gemäß `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`.
+14. Travel Timing & Seasonal Intelligence ist eine verbindliche gekoppelte spätere Produktfähigkeit gemäß `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`.
+15. Nach Integration des Kernprodukts folgt eine verbindliche finale Startseiten-Positionierung gemäß `docs/FINAL_HOMEPAGE_POSITIONING_OPTIMIZATION_POLICY.md`.
 
 Kein abgeschlossener Block darf unnötig neu gebaut werden.
