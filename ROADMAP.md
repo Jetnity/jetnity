@@ -220,7 +220,7 @@ Automatic Travel Requirements & Readiness:
 - UX in der mobilen Übersicht und auf Desktop nach dem Reisekopf, fünf Hauptbereiche unverändert
 - kein Dokumententresor, keine OCR, kein Storage-Bucket
 
-Nachweis auf `4f546a1a`: Tests **1251/1251**, Workspace-Audit **678/0**, Activities **184/0**, Typecheck/Lint/Hygiene/Build/Auth/CI/Preview grün.
+Nachweis auf `64aa15a7`: Tests **1252/1252**, Workspace-Audit **678/0**, Activities **184/0**, Typecheck/Lint/Hygiene/Build/Auth/CI/Preview grün.
 
 Fachdoku: [docs/TRAVEL_READINESS.md](docs/TRAVEL_READINESS.md). Auftrag: [docs/CURSOR_TRAVEL_READINESS_FOUNDATION_TASK.md](docs/CURSOR_TRAVEL_READINESS_FOUNDATION_TASK.md).
 

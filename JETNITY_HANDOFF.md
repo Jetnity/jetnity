@@ -296,9 +296,9 @@ Umgesetzt auf dem Draft-PR:
 
 Development-Migrationen `20260822010000` und `20260822020000` nur Development. Production unverändert. Kein Provider, keine neuen Secrets, keine neuen Kosten.
 
-Qualitätsnachweis auf `4f546a1a`:
+Qualitätsnachweis auf `64aa15a7` (Truth-Freshness-Fix ADR-0111):
 
-- `npm test`: **1251/1251**
+- `npm test`: **1252/1252**
 - Typecheck, Lint, Hygiene, Auth-Konfiguration und Production-Build grün
 - Trip-Workspace-Audit WebKit + Chromium: **678 Kombinationen, 0 Fehler**
 - Activities-Regression: **184 Kombinationen, 0 Fehler**

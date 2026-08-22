@@ -112,11 +112,9 @@ Zuerst offizielle Prüfung und fehlende Angaben, danach die persönliche Vorbere
 
 ## Nachweis Draft-PR #32
 
-Truth-Freshness-Fix (ADR-0111) auf Draft-PR #32. Exakte Zahlen folgen der Verifikation dieses Heads.
+Truth-Freshness-Fix (ADR-0111) auf Head `64aa15a7`:
 
-Final-Architecture-Review (ADR-0107 bis ADR-0110) auf Head `4f546a1a`:
-
-- Tests **1251/1251**
+- Tests **1252/1252**
 - Typecheck, Lint, Hygiene, Auth-Konfiguration und Production-Build grün
 - Trip-Workspace-Audit WebKit + Chromium: **678 Kombinationen, 0 Fehler**
 - Activities-Regression: **184 Kombinationen, 0 Fehler**
