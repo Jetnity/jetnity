@@ -10,7 +10,7 @@ import {
   readinessInhaltstypOk,
   readinessKoerperLesen,
 } from '@/lib/readiness/anfrage'
-import { officialRequirementsPruefen } from '@/lib/readiness/anforderungen'
+import { officialRequirementsPruefen, requirementsEvaluationsPruefen } from '@/lib/readiness/anforderungen'
 import { readinessAnfrageErlaubt, readinessRateLeeren } from '@/lib/readiness/rate-limit'
 import { readinessAnforderungAnfrageSchema } from '@/lib/readiness/schema'
 
@@ -72,5 +72,37 @@ describe('Readiness-API-Hülle', () => {
     const official = officialRequirementsPruefen(geprueft.success ? geprueft.data : {})
     assert.equal(official.result, 'unknown')
     assert.equal(official.authority, null)
+    const evaluations = requirementsEvaluationsPruefen(geprueft.success ? geprueft.data : {})
+    assert.ok(evaluations.length > 1)
+    assert.ok(evaluations.every((eintrag) => eintrag.result === 'unknown'))
+  })
+
+  test('API-Evaluations kollabieren nicht auf den ersten Treffer', () => {
+    const evaluations = requirementsEvaluationsPruefen({
+      destinationCountryCodes: ['TH', 'JP'],
+      startDate: '2026-09-12',
+      party: [
+        { clientRef: 'traveller:1', nationalityCountryCode: 'CH' },
+        { clientRef: 'traveller:2', nationalityCountryCode: 'DE' },
+      ],
+    })
+    const visa = evaluations.filter((eintrag) => eintrag.requirementType === 'visa')
+    assert.equal(visa.length, 4)
+    assert.ok(evaluations.some((eintrag) => eintrag.requirementType === 'passport'))
+    assert.ok(evaluations.every((eintrag) => eintrag.result === 'unknown'))
+  })
+
+  test('Reisendenanzahl ohne Party erzeugt getrennte Slots', () => {
+    const evaluations = requirementsEvaluationsPruefen({
+      destinationCountryCodes: ['TH', 'JP'],
+      travellers: 2,
+      startDate: '2026-09-12',
+    })
+    const visa = evaluations.filter((eintrag) => eintrag.requirementType === 'visa')
+    assert.equal(visa.length, 4)
+    assert.deepEqual(
+      [...new Set(visa.map((eintrag) => eintrag.travellerClientRef))].sort(),
+      ['traveller:1', 'traveller:2'],
+    )
   })
 })

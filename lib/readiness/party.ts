@@ -53,12 +53,6 @@ function slotAus(
 ): TravellerSlot {
   const missingFacts: MissingFact[] = []
   if (!landescodeLesen(traveller?.nationalityCountryCode ?? null)) missingFacts.push('nationality')
-  if (!landescodeLesen(traveller?.residenceCountryCode ?? null)) missingFacts.push('residence')
-  if (!traveller?.documentType || traveller.documentType === 'unknown') missingFacts.push('document_type')
-  if (!landescodeLesen(traveller?.documentIssuingCountryCode ?? null)) {
-    missingFacts.push('document_issuing_country')
-  }
-  if (!traveller?.documentExpiresOn) missingFacts.push('document_expiry')
 
   return {
     clientRef,
@@ -68,6 +62,30 @@ function slotAus(
     missingFacts: applicable ? missingFacts : [],
     applicable,
   }
+}
+
+export function slotMissingFactsErgaenzen(
+  slot: TravellerSlot,
+  extra: readonly MissingFact[],
+): TravellerSlot {
+  if (!slot.applicable) return slot
+  const gesehen = new Set(slot.missingFacts)
+  for (const fakt of extra) {
+    if (fakt === 'residence' && !landescodeLesen(slot.traveller?.residenceCountryCode ?? null)) {
+      gesehen.add(fakt)
+    }
+    if (fakt === 'document_type' && (!slot.traveller?.documentType || slot.traveller.documentType === 'unknown')) {
+      gesehen.add(fakt)
+    }
+    if (fakt === 'document_issuing_country' && !landescodeLesen(slot.traveller?.documentIssuingCountryCode ?? null)) {
+      gesehen.add(fakt)
+    }
+    if (fakt === 'document_expiry' && !slot.traveller?.documentExpiresOn) gesehen.add(fakt)
+    if (fakt === 'nationality' && !landescodeLesen(slot.traveller?.nationalityCountryCode ?? null)) {
+      gesehen.add(fakt)
+    }
+  }
+  return { ...slot, missingFacts: [...gesehen] }
 }
 
 export function fehlendeFaktenFuerReise(reise: Pick<Trip, 'travellers' | 'party' | 'startDate' | 'endDate'> & {

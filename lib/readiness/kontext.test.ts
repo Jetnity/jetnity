@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 
 import { readinessChecksAbleiten } from '@/lib/readiness/ableitung'
 import { readinessFingerprint } from '@/lib/readiness/fingerprint'
-import { readinessReisekontext } from '@/lib/readiness/kontext'
+import { readinessReisekontext, routeFactsAusReise } from '@/lib/readiness/kontext'
 import { readinessAnsicht } from '@/lib/readiness/status'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import type { TripItem, TripReadinessItem } from '@/types/trips'
@@ -157,6 +157,10 @@ describe('Readiness-Kontext und Stale-Logik', () => {
     const kontext = readinessReisekontext(beispielreise({ origin: 'Zürich' }))
     assert.equal(kontext.originCountryCode, null)
     assert.deepEqual(kontext.transitCountryCodes, [])
+    const route = routeFactsAusReise(beispielreise({ origin: 'Zürich', originPlaceId: 'geonames:2657896' }))
+    assert.equal(route.originCountryCode, null)
+    assert.deepEqual(route.transitCountryCodes, [])
+    assert.equal(route.quelle, 'none')
   })
 
   test('fehlender Country Code → unknown, kein Guess', () => {

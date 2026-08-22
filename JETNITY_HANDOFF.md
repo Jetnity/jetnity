@@ -271,7 +271,7 @@ Kein Fake-Provider und keine Production-Suche. Merge nur nach separater Freigabe
 
 Branch `feat/travel-readiness-foundation`. **Draft, nicht mergen.** Ausgangsbasis ist `main` @ `315d9b31`.
 
-Audit-/CI-Head: `87bb85bde3c6e924ebd7dfe2c0af009960cd2009`
+Human-Review-Fixes nach `docs/CURSOR_PR32_HUMAN_REVIEW_FIXES.md` sind im Code. Der Head und die Qualitätszahlen werden nach der erneuten Verifikation gesetzt.
 
 Umgesetzt auf dem Draft-PR:
 
@@ -281,22 +281,17 @@ Umgesetzt auf dem Draft-PR:
 - Trennung Official Requirement Truth vs User Preparation Truth
 - Context-Fingerprint, Freshness/Recheck und progressive Missing Facts
 - Guest- und Account-Parität plus idempotente Übernahme von Party und Readiness
-- geschlossene `POST /api/readiness/requirements`
+- geschlossene `POST /api/readiness/requirements` mit kanonischem `evaluations[]`; `official` ist Legacy-Zusammenfassung
+- strenge Official-Evidence-Trust-Grenze vor `required` / `not_required` / `conditional` (ADR-0107)
+- Multi-Transit bleibt pro Transitland getrennt; Provider darf `insufficient_context` + `missingFacts` liefern
+- UX-Copy folgt Official Status/Freshness, kein hartcodiertes „nicht verfügbar“ nach späterer Provideranbindung
+- Origin-/Transit-Naht `routeFactsAusReise()` existiert, liefert heute leer (`quelle: 'none'`) – nächste Abhängigkeit, kein Raten aus Ortsnamen (ADR-0108)
 - UX als **Einreise & Reisevorbereitung** in der mobilen Übersicht und auf Desktop nach dem Reisekopf, kein sechster Tab
 - kein Dokumententresor, keine OCR, kein Storage-Bucket
 
 Development-Migrationen `20260822010000` und `20260822020000` nur Development. Production unverändert. Kein Provider, keine neuen Secrets, keine neuen Kosten.
 
-Qualitätsnachweis auf diesem Head:
-
-- `npm test`: **1230/1230**
-- Typecheck, Lint, Hygiene und Production-Build grün
-- Trip-Workspace-Audit WebKit + Chromium: **662 Kombinationen, 0 Fehler**
-- Activities-Regression: **184 Kombinationen, 0 Fehler**
-- GitHub CI grün, Vercel Preview READY
-- Preview: `https://jetnity-app-git-feat-travel-readiness-f-f8117d-jetnity-e1b93c82.vercel.app`
-
-Fachdoku: `docs/TRAVEL_READINESS.md`, ADR-0096 bis ADR-0106. Verbindlicher Nachtrag: `docs/CURSOR_TRAVEL_READINESS_AUTOMATION_AMENDMENT.md`.
+Fachdoku: `docs/TRAVEL_READINESS.md`, ADR-0096 bis ADR-0108. Verbindlicher Nachtrag: `docs/CURSOR_TRAVEL_READINESS_AUTOMATION_AMENDMENT.md`. Review-Fixes: `docs/CURSOR_PR32_HUMAN_REVIEW_FIXES.md`.
 
 ### D. Gesamt-Abdeckung
 

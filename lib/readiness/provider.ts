@@ -5,7 +5,7 @@
 // Kein Timatic-Fake, keine Visa-Matrix, kein Modell als Quelle.
 
 import type { OfficialRequirementType, TravellerDocumentType } from '@/types/trips'
-import type { OfficialClass, OfficialResult } from '@/lib/readiness/official'
+import type { MissingFact, OfficialClass, OfficialResult } from '@/lib/readiness/official'
 
 export type RequirementsTravellerInput = {
   clientRef: string
@@ -30,7 +30,7 @@ export type RequirementsProviderZeile = {
   destinationCountryCode: string | null
   transitCountryCode?: string | null
   requirementType: OfficialRequirementType
-  result: OfficialResult
+  result: OfficialResult | 'insufficient_context'
   officialClass?: OfficialClass
   authority?: string | null
   sourceUrl?: string | null
@@ -39,6 +39,7 @@ export type RequirementsProviderZeile = {
   validUntil?: string | null
   ruleReference?: string | null
   availability?: 'ok' | 'temporarily_unavailable'
+  missingFacts?: MissingFact[]
 }
 
 export type RequirementsProvider = {

@@ -2637,6 +2637,46 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 
 ---
 
+## ADR-0107 – Official Evidence muss vollständig vertrauenswürdig sein
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** Ein Provider-Resultat darf nur dann `required`, `not_required` oder `conditional` werden, wenn die Official Evidence vollständig validiert ist: Provider-Identität, gültiges ISO-`checkedAt`, Authority, validierte HTTPS-`sourceUrl` und passende Traveller-/Destination-Zuordnung. Freshness muss `current` sein. Fehlt eines davon, gilt fail closed: `result = unknown`, keine Official Action.
+
+**Kontext:** Human Review von PR #32. Ein Test- oder späterer Echtprovider darf keine regulatorische Aussage ohne belastbare Evidence erzeugen.
+
+**Alternativen:**
+
+1. *Nur Resultat übernehmen, Evidence später ergänzen.* Würde Scheinsicherheit erzeugen.
+2. *Teilweise Evidence akzeptieren.* Würde `unknown` und `required` vermischen.
+
+**Begründung:** Official Requirement Truth braucht eine klare Trust-Grenze. Unvollständige Evidence ist keine Aussage.
+
+**Konsequenzen:** `officialEvidenceVertrauenswuerdig()` ist die gemeinsame Schwelle. Temporär nicht erreichbare Quellen bleiben `unknown` mit Freshness `source_temporarily_unavailable`.
+
+---
+
+## ADR-0108 – Origin- und Transit-Ländercodes sind eine dokumentierte Route-Abhängigkeit
+
+**Datum:** 22. August 2026  
+**Status:** Naht vorhanden, Fakten noch leer
+
+**Entscheidung:** `routeFactsAusReise()` ist die einzige Naht für Origin- und Transit-Ländercodes. Sie liefert heute `{ originCountryCode: null, transitCountryCodes: [], quelle: 'none' }`. Ortsnamen, Place-IDs und Etappentitel dürfen diese Codes nicht raten.
+
+**Kontext:** Der aktuelle Reisegraph speichert Abreise oft als Freitext (`origin: 'Zürich'`) und Zwischenstopps nicht als belastbare Ländercodes. Automatische Transitprüfung braucht später strukturierte Flight-/Itinerary-Daten.
+
+**Alternativen:**
+
+1. *Aus Stadt- oder Flughafennamen raten.* Verboten; würde `unknown` durch Vermutung ersetzen.
+2. *Naht weglassen und nur dokumentieren.* Würde spätere Provideranbindung an verstreute Lesestellen binden.
+
+**Begründung:** Eine leere, explizite Naht macht die Lücke sichtbar und verhindert stilles Raten. Die nächste technische Abhängigkeit ist: Flight-/Itinerary-Ländercodes in `RequirementsAnfrage.originCountryCode` und `transitCountryCodes` füllen, sobald der Graph sie strukturiert trägt.
+
+**Konsequenzen:** Transit ohne belastbare Zwischenstopps bleibt `insufficient_context` (`transit_itinerary`). Ein Provider darf `origin_country` / `transit_itinerary` als Missing Facts zurückgeben; bekannte Codes werden nicht erneut verlangt. Die Foundation darf nicht so dokumentiert werden, als erkenne sie Transit bereits automatisch.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

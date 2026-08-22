@@ -7,9 +7,14 @@
 import { OFFICIAL_REQUIREMENT_TYPES } from '@/types/trips'
 import { landescodeLesen } from '@/lib/readiness/domain'
 import {
+  authorityLesen,
+  checkedAtLesen,
+  missingFactsLesen,
   officialAktionAusQuelle,
+  officialEvidenceVertrauenswuerdig,
   officialFrische,
   officialLeer,
+  providerNameLesen,
   quelleUrlLesen,
   type MissingFact,
   type OfficialEvaluation,
@@ -99,6 +104,7 @@ function leerFuer(
   destinationCountryCode: string | null,
   requirementType: OfficialEvaluation['requirementType'],
   extraMissing: MissingFact[] = [],
+  transitCountryCode: string | null = null,
 ): OfficialEvaluation {
   const missing = [...new Set([...fehlendeFakten(anfrage, traveller, requirementType), ...extraMissing])]
   const fingerprint = officialFingerprint({
@@ -110,7 +116,7 @@ function leerFuer(
     documentExpiresOn: traveller.documentExpiresOn,
     originCountryCode: anfrage.originCountryCode,
     destinationCountryCode,
-    transitCountryCodes: anfrage.transitCountryCodes,
+    transitCountryCodes: transitCountryCode ? [transitCountryCode] : anfrage.transitCountryCodes,
     startDate: anfrage.startDate,
     endDate: anfrage.endDate,
     requirementType,
@@ -118,6 +124,7 @@ function leerFuer(
   return officialLeer({
     travellerClientRef: traveller.clientRef,
     destinationCountryCode,
+    transitCountryCode,
     requirementType,
     status: missing.length > 0 ? 'insufficient_context' : 'unavailable',
     freshness: 'provider_unavailable',
@@ -130,11 +137,13 @@ function zeileUebernehmen(
   anfrage: RequirementsAnfrage,
   traveller: RequirementsTravellerInput,
   zeile: RequirementsProviderZeile,
-  providerName: string,
+  providerNameRoh: string,
 ): OfficialEvaluation | null {
   if (zeile.travellerClientRef !== traveller.clientRef) return null
   if (!OFFICIAL_REQUIREMENT_TYPES.includes(zeile.requirementType)) return null
-  if (!['required', 'not_required', 'conditional', 'unknown'].includes(zeile.result)) return null
+  if (!['required', 'not_required', 'conditional', 'unknown', 'insufficient_context'].includes(zeile.result)) {
+    return null
+  }
 
   const destination = landescodeLesen(zeile.destinationCountryCode)
   const transit = landescodeLesen(zeile.transitCountryCode ?? null)
@@ -152,30 +161,63 @@ function zeileUebernehmen(
     endDate: anfrage.endDate,
     requirementType: zeile.requirementType,
   })
+  const provider = providerNameLesen(providerNameRoh)
+  const checkedAt = checkedAtLesen(zeile.checkedAt ?? null)
+  const authority = authorityLesen(zeile.authority ?? null)
+  const sourceUrl = quelleUrlLesen(zeile.sourceUrl ?? null)
   const freshness = officialFrische({
     storedFingerprint: fingerprint,
     currentFingerprint: fingerprint,
-    checkedAt: zeile.checkedAt ?? null,
+    checkedAt,
     validUntil: zeile.validUntil ?? null,
     hasProvider: true,
     sourceAvailable: zeile.availability !== 'temporarily_unavailable',
   })
-  const missing = fehlendeFakten(anfrage, traveller, zeile.requirementType)
-  if (missing.length > 0) {
-    return leerFuer(anfrage, traveller, destination, zeile.requirementType, missing)
+  const providerMissing = missingFactsLesen(zeile.missingFacts).filter((fakt) => {
+    if (fakt === 'origin_country') return !anfrage.originCountryCode
+    if (fakt === 'transit_itinerary') return anfrage.transitCountryCodes.length === 0
+    if (fakt === 'residence') return !traveller.residenceCountryCode
+    if (fakt === 'document_type') return !traveller.documentType || traveller.documentType === 'unknown'
+    if (fakt === 'document_issuing_country') return !traveller.documentIssuingCountryCode
+    if (fakt === 'document_expiry') return !traveller.documentExpiresOn
+    if (fakt === 'nationality') return !traveller.nationalityCountryCode
+    if (fakt === 'destination_country') return anfrage.destinationCountryCodes.length === 0
+    if (fakt === 'travel_dates') return !anfrage.startDate && !anfrage.endDate
+    return true
+  })
+  const missing = [...new Set([...fehlendeFakten(anfrage, traveller, zeile.requirementType), ...providerMissing])]
+  if (missing.length > 0 || zeile.result === 'insufficient_context') {
+    return officialLeer({
+      travellerClientRef: traveller.clientRef,
+      destinationCountryCode: destination,
+      transitCountryCode: transit,
+      requirementType: zeile.requirementType,
+      status: 'insufficient_context',
+      freshness: freshness === 'provider_unavailable' ? 'never_checked' : freshness,
+      missingFacts: missing.length > 0 ? missing : missingFactsLesen(zeile.missingFacts),
+      contextFingerprint: fingerprint,
+    })
   }
 
-  const sourceUrl = quelleUrlLesen(zeile.sourceUrl ?? null)
-  const quelleFehlt = freshness === 'source_temporarily_unavailable' || freshness === 'stale' || freshness === 'recheck_needed'
+  const vertrauenswuerdig = officialEvidenceVertrauenswuerdig({
+    provider,
+    checkedAt,
+    authority,
+    sourceUrl,
+  })
+  const uebernehmbar =
+    vertrauenswuerdig &&
+    freshness === 'current' &&
+    (zeile.result === 'required' || zeile.result === 'not_required' || zeile.result === 'conditional')
 
   return {
     travellerClientRef: traveller.clientRef,
     destinationCountryCode: destination,
     transitCountryCode: transit,
     requirementType: zeile.requirementType,
-    result: quelleFehlt ? 'unknown' : zeile.result,
-    status: freshness === 'current' ? 'current' : 'unknown',
-    freshness,
+    result: uebernehmbar ? zeile.result : 'unknown',
+    status: uebernehmbar ? 'current' : 'unknown',
+    freshness: vertrauenswuerdig ? freshness : checkedAt ? freshness : 'never_checked',
     officialClass:
       zeile.requirementType === 'health' ||
       zeile.requirementType === 'vaccination' ||
@@ -186,16 +228,16 @@ function zeileUebernehmen(
           : 'unknown',
     missingFacts: [],
     evidence: {
-      provider: providerName,
-      authority: typeof zeile.authority === 'string' ? zeile.authority.slice(0, 80) : null,
+      provider,
+      authority,
       sourceUrl,
-      checkedAt: zeile.checkedAt ?? null,
+      checkedAt,
       validFrom: zeile.validFrom ?? null,
       validUntil: zeile.validUntil ?? null,
       ruleReference: typeof zeile.ruleReference === 'string' ? zeile.ruleReference.slice(0, 80) : null,
       contextFingerprint: fingerprint,
     },
-    action: quelleFehlt ? null : officialAktionAusQuelle(sourceUrl),
+    action: uebernehmbar ? officialAktionAusQuelle(sourceUrl) : null,
   }
 }
 
@@ -241,18 +283,28 @@ export function requirementsAuswerten(
   for (const traveller of travellers) {
     for (const destination of destinations) {
       for (const typ of KERN_TYPEN) {
-        const vomProvider = provider
-          ? providerZeilen.find(
+        const zeilen = provider
+          ? providerZeilen.filter(
               (zeile) =>
                 zeile.travellerClientRef === traveller.clientRef &&
                 landescodeLesen(zeile.destinationCountryCode) === destination &&
                 zeile.requirementType === typ,
             )
-          : undefined
-        if (vomProvider && provider) {
-          const uebernommen = zeileUebernehmen(anfrage, traveller, vomProvider, provider.name)
-          if (uebernommen) merken(uebernommen)
-          else merken(leerFuer(anfrage, traveller, destination, typ))
+          : []
+        if (zeilen.length > 0 && provider) {
+          let uebernommen = 0
+          for (const zeile of zeilen) {
+            const evaluation = zeileUebernehmen(anfrage, traveller, zeile, provider.name)
+            if (evaluation) {
+              merken(evaluation)
+              uebernommen += 1
+            }
+          }
+          if (uebernommen === 0) merken(leerFuer(anfrage, traveller, destination, typ))
+        } else if (typ === 'transit' && anfrage.transitCountryCodes.length > 0) {
+          for (const transit of anfrage.transitCountryCodes) {
+            merken(leerFuer(anfrage, traveller, destination, typ, [], transit))
+          }
         } else {
           merken(leerFuer(anfrage, traveller, destination, typ))
         }

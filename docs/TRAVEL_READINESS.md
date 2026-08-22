@@ -61,6 +61,12 @@ Gesundheit: Pflicht, Empfehlung und allgemeiner Hinweis bleiben getrennt. Keine 
 
 Transit ohne belastbare Zwischenstopps bleibt `insufficient_context` (`transit_itinerary`). Ein Abreiseort-Name allein ist kein Origin-Ländercode.
 
+`routeFactsAusReise()` ist die einzige Origin-/Transit-Naht. Sie liefert heute bewusst leer (`quelle: 'none'`). Strukturierte Flight-/Itinerary-Ländercodes sind die nächste technische Abhängigkeit, nicht eine bereits vorhandene Graph-Fähigkeit.
+
+Offizielle `required` / `not_required` / `conditional` Aussagen brauchen vollständige Official Evidence: Provider-Identität, gültiges `checkedAt`, Authority und validierte HTTPS-Quelle. Unvollständige Evidence bleibt `unknown` und erzeugt keine Official Action.
+
+Ein Provider darf `insufficient_context` mit strukturierten `missingFacts` zurückgeben. Nur tatsächlich fehlende Fakten werden übernommen; bekannte Angaben werden nicht erneut verlangt.
+
 ## Progressive Missing Facts
 
 Die Engine fragt nur fehlende, relevante Angaben. Bekannte Fakten werden nicht erneut verlangt. Keine Dokumentnummern.
@@ -77,6 +83,8 @@ Unverändert eigene Domäne `trip_readiness_items`, kein `trip_items.kind`. Cont
 - Browser- oder LLM-Felder (`officialResult`, `llmResult`) werden ignoriert
 - Source-URLs nur `https`, ohne Credentials
 - Factory gibt `null` zurück; Tests dürfen einen Port injizieren
+- Kanonische Antwort ist `evaluations[]` (Traveller × Destination × Transit × Requirement Type)
+- `official` bleibt eine explizit reduzierte Legacy-Zusammenfassung und kollabiert nicht die Engine-Wahrheit
 
 Bevorzugter späterer Kandidat: IATA Timatic / Timatic AutoCheck. Die Domain bleibt provider-neutral. Kein Vertrag, kein Secret, kein Fake-Adapter.
 
@@ -101,12 +109,8 @@ Zuerst offizielle Prüfung und fehlende Angaben, danach die persönliche Vorbere
 
 ## Nachweis Draft-PR #32
 
-Stand Audit-/CI-Head `87bb85bde3c6e924ebd7dfe2c0af009960cd2009`:
+Human-Review-Fixes (ADR-0107, ADR-0108) sind im Code; der neue Head und die aktuellen Test-/Audit-Zahlen stehen im Handoff nach der Verifikation.
 
-- Tests **1230/1230**
-- Typecheck, Lint, Hygiene und Production-Build grün
-- Trip-Workspace-Audit WebKit + Chromium: **662 Kombinationen, 0 Fehler**
-- Activities-Regression: **184 Kombinationen, 0 Fehler**
-- GitHub CI und Vercel Preview grün
-- Preview: `https://jetnity-app-git-feat-travel-readiness-f-f8117d-jetnity-e1b93c82.vercel.app`
+- Tests und Audits werden nach diesem Review-Fix erneut vollständig nachgewiesen
 - Development-Migration angewendet; Production-Schema unverändert
+- Preview-URL bleibt die Branch-Preview; neuer Head nach Push

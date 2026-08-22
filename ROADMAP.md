@@ -198,7 +198,7 @@ Nicht in diesem Block: echter Provider, Fake-Angebote, Führerschein-/Zahlungsda
 
 ### Foundation C – Travel Readiness & Dokumente
 
-**Draft-PR #32**, Branch `feat/travel-readiness-foundation`, Head `87bb85bd`. Nicht mergen. Keine Production-Migration.
+**Draft-PR #32**, Branch `feat/travel-readiness-foundation`. Nicht mergen. Keine Production-Migration. Human-Review-Fixes nach `docs/CURSOR_PR32_HUMAN_REVIEW_FIXES.md`.
 
 Automatic Travel Requirements & Readiness:
 
@@ -208,11 +208,15 @@ Automatic Travel Requirements & Readiness:
 - Nutzer-Häkchen sind User Evidence, keine Visa-Bestätigung
 - Context-Fingerprint und Freshness/Recheck
 - progressive Missing Facts, keine Dokumentnummern
+- API liefert strukturierte `evaluations[]`; Legacy-`official` kollabiert die Engine nicht
+- Official Evidence vor `required`/`not_required`/`conditional` streng validiert
+- Multi-Transit bleibt getrennt; Provider kann `insufficient_context` + `missingFacts` liefern
+- Origin-/Transit-Ländercodes sind eine leere Route-Naht, keine Ableitung aus Ortsnamen
 - Guest und Account dieselbe Form
 - UX in der mobilen Übersicht und auf Desktop nach dem Reisekopf, fünf Hauptbereiche unverändert
 - kein Dokumententresor, keine OCR, kein Storage-Bucket
 
-Nachweis: Tests **1230/1230**, Workspace-Audit **662/0**, Activities **184/0**, Typecheck/Lint/Hygiene/Build/CI/Preview grün.
+Nachweis und Head stehen nach der Review-Fix-Verifikation im Handoff.
 
 Fachdoku: [docs/TRAVEL_READINESS.md](docs/TRAVEL_READINESS.md). Auftrag: [docs/CURSOR_TRAVEL_READINESS_FOUNDATION_TASK.md](docs/CURSOR_TRAVEL_READINESS_FOUNDATION_TASK.md).
 

@@ -8,8 +8,10 @@ import { NextResponse } from 'next/server'
 
 import {
   officialRequirementsPruefen,
+  requirementsEvaluationsPruefen,
   type OfficialRequirementAnfrage,
 } from '@/lib/readiness/anforderungen'
+import { officialPruefungAusEvaluations } from '@/lib/readiness/bezeichnungen'
 import {
   readinessBegrenztLesen,
   readinessContentLengthUeberschritten,
@@ -93,14 +95,13 @@ export async function POST(req: Request) {
   }
 
   const anfrage: OfficialRequirementAnfrage = geprueft.data
+  const evaluations = requirementsEvaluationsPruefen(anfrage)
   const official = officialRequirementsPruefen(anfrage)
 
   return antwort(200, {
     status: official.status,
+    evaluations,
     official,
-    message:
-      official.status === 'unavailable'
-        ? 'Offizielle Einreise- und Visa-Anforderungen sind in dieser Umgebung nicht verfügbar.'
-        : 'Offizielle Einreise- und Visa-Anforderungen sind noch nicht geprüft.',
+    message: officialPruefungAusEvaluations(evaluations),
   })
 }

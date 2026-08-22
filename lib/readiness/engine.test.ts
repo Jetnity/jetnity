@@ -3,10 +3,15 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { officialRequirementsPruefen } from '@/lib/readiness/anforderungen'
+import { officialRequirementsPruefen, requirementsEvaluationsPruefen } from '@/lib/readiness/anforderungen'
 import { officialFingerprint, requirementsAuswerten, requirementsFuerReise, travellerGeloeschtPruefen } from '@/lib/readiness/engine'
-import { officialAktionAusQuelle, officialFrische, quelleUrlLesen } from '@/lib/readiness/official'
-import { fehlendeFaktenFuerReise, travellerSlots } from '@/lib/readiness/party'
+import {
+  officialAktionAusQuelle,
+  officialEvidenceVertrauenswuerdig,
+  officialFrische,
+  quelleUrlLesen,
+} from '@/lib/readiness/official'
+import { fehlendeFaktenFuerReise, slotMissingFactsErgaenzen, travellerSlots } from '@/lib/readiness/party'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import type { RequirementsProvider } from '@/lib/readiness/provider'
 import type { TripTraveller } from '@/types/trips'
@@ -181,6 +186,7 @@ describe('Travel Requirements Engine', () => {
             requirementType: 'vaccination',
             result: 'required',
             officialClass: 'requirement',
+            authority: 'Health',
             checkedAt: JETZT,
             sourceUrl: 'https://example.test/health',
           },
@@ -190,6 +196,7 @@ describe('Travel Requirements Engine', () => {
             requirementType: 'health',
             result: 'unknown',
             officialClass: 'recommendation',
+            authority: 'Health',
             checkedAt: JETZT,
             sourceUrl: 'https://example.test/health',
           },
@@ -454,5 +461,310 @@ describe('Travel Requirements Engine', () => {
       assert.notEqual(evaluation.result, 'required')
       assert.notEqual(evaluation.result, 'not_required')
     }
+  })
+
+  test('2 Traveller × 2 Destinationen bleiben getrennte Evaluations', () => {
+    const evaluations = requirementsEvaluationsPruefen(
+      {
+        destinationCountryCodes: ['TH', 'JP'],
+        startDate: '2026-09-12',
+        endDate: '2026-09-16',
+        party: [
+          { clientRef: 'traveller:1', nationalityCountryCode: 'CH' },
+          { clientRef: 'traveller:2', nationalityCountryCode: 'DE' },
+        ],
+      },
+      testProvider,
+    )
+    const visa = evaluations.filter((eintrag) => eintrag.requirementType === 'visa')
+    assert.equal(visa.length, 4)
+    assert.equal(
+      visa.find((eintrag) => eintrag.travellerClientRef === 'traveller:1' && eintrag.destinationCountryCode === 'TH')
+        ?.result,
+      'required',
+    )
+    assert.equal(
+      visa.find((eintrag) => eintrag.travellerClientRef === 'traveller:2' && eintrag.destinationCountryCode === 'TH')
+        ?.result,
+      'not_required',
+    )
+    assert.ok(evaluations.filter((eintrag) => eintrag.requirementType === 'passport').length >= 2)
+  })
+
+  test('required ohne belastbare Evidence bleibt unknown', () => {
+    const ohneZeit: RequirementsProvider = {
+      name: 'thin',
+      evaluate(anfrage) {
+        return [
+          {
+            travellerClientRef: anfrage.travellers[0]!.clientRef,
+            destinationCountryCode: anfrage.destinationCountryCodes[0] ?? null,
+            requirementType: 'visa',
+            result: 'required',
+            authority: 'Test',
+            sourceUrl: 'https://example.test/visa',
+          },
+        ]
+      },
+    }
+    const ungueltig: RequirementsProvider = {
+      name: 'thin',
+      evaluate(anfrage) {
+        return [
+          {
+            travellerClientRef: anfrage.travellers[0]!.clientRef,
+            destinationCountryCode: anfrage.destinationCountryCodes[0] ?? null,
+            requirementType: 'visa',
+            result: 'required',
+            authority: 'Test',
+            sourceUrl: 'https://example.test/visa',
+            checkedAt: 'gestern',
+          },
+        ]
+      },
+    }
+    const ohneUrl: RequirementsProvider = {
+      name: 'thin',
+      evaluate(anfrage) {
+        return [
+          {
+            travellerClientRef: anfrage.travellers[0]!.clientRef,
+            destinationCountryCode: anfrage.destinationCountryCodes[0] ?? null,
+            requirementType: 'visa',
+            result: 'required',
+            authority: 'Test',
+            sourceUrl: 'javascript:alert(1)',
+            checkedAt: JETZT,
+          },
+        ]
+      },
+    }
+    const anfrage = {
+      originCountryCode: 'CH',
+      destinationCountryCodes: ['US'],
+      transitCountryCodes: [] as string[],
+      startDate: '2026-09-12',
+      endDate: '2026-09-16',
+      travellers: [
+        {
+          clientRef: 'traveller:1',
+          nationalityCountryCode: 'FR',
+          residenceCountryCode: 'FR',
+          documentType: 'passport' as const,
+          documentIssuingCountryCode: 'FR',
+          documentExpiresOn: '2030-01-01',
+        },
+      ],
+    }
+    assert.equal(requirementsAuswerten(anfrage, ohneZeit).find((e) => e.requirementType === 'visa')?.result, 'unknown')
+    assert.equal(requirementsAuswerten(anfrage, ungueltig).find((e) => e.requirementType === 'visa')?.result, 'unknown')
+    const ohneQuelle = requirementsAuswerten(anfrage, ohneUrl).find((e) => e.requirementType === 'visa')
+    assert.equal(ohneQuelle?.result, 'unknown')
+    assert.equal(ohneQuelle?.action, null)
+  })
+
+  test('zwei Transitländer bleiben getrennte Evaluations', () => {
+    const provider: RequirementsProvider = {
+      name: 'transit-double',
+      evaluate(anfrage) {
+        return anfrage.transitCountryCodes.map((transit) => ({
+          travellerClientRef: anfrage.travellers[0]!.clientRef,
+          destinationCountryCode: anfrage.destinationCountryCodes[0] ?? null,
+          transitCountryCode: transit,
+          requirementType: 'transit' as const,
+          result: transit === 'QA' ? ('required' as const) : ('not_required' as const),
+          officialClass: 'requirement' as const,
+          authority: 'Transit',
+          sourceUrl: 'https://example.test/transit',
+          checkedAt: JETZT,
+        }))
+      },
+    }
+    const evaluations = requirementsAuswerten(
+      {
+        originCountryCode: 'CH',
+        destinationCountryCodes: ['TH', 'JP'],
+        transitCountryCodes: ['QA', 'SG'],
+        startDate: '2026-09-12',
+        endDate: '2026-09-16',
+        travellers: [
+          {
+            clientRef: 'traveller:1',
+            nationalityCountryCode: 'CH',
+            residenceCountryCode: 'CH',
+            documentType: 'passport',
+            documentIssuingCountryCode: 'CH',
+            documentExpiresOn: '2030-01-01',
+          },
+        ],
+      },
+      provider,
+    )
+    const transit = evaluations.filter((eintrag) => eintrag.requirementType === 'transit')
+    assert.equal(transit.length, 4)
+    assert.equal(
+      transit.find((eintrag) => eintrag.destinationCountryCode === 'TH' && eintrag.transitCountryCode === 'QA')?.result,
+      'required',
+    )
+    assert.equal(
+      transit.find((eintrag) => eintrag.destinationCountryCode === 'TH' && eintrag.transitCountryCode === 'SG')?.result,
+      'not_required',
+    )
+    const identisch = requirementsAuswerten(
+      {
+        originCountryCode: 'CH',
+        destinationCountryCodes: ['TH'],
+        transitCountryCodes: ['QA'],
+        startDate: '2026-09-12',
+        endDate: '2026-09-16',
+        travellers: [
+          {
+            clientRef: 'traveller:1',
+            nationalityCountryCode: 'CH',
+            residenceCountryCode: 'CH',
+            documentType: 'passport',
+            documentIssuingCountryCode: 'CH',
+            documentExpiresOn: '2030-01-01',
+          },
+        ],
+      },
+      {
+        name: 'dup',
+        evaluate(anfrage) {
+          const zeile = {
+            travellerClientRef: anfrage.travellers[0]!.clientRef,
+            destinationCountryCode: 'TH',
+            transitCountryCode: 'QA',
+            requirementType: 'transit' as const,
+            result: 'required' as const,
+            authority: 'Transit',
+            sourceUrl: 'https://example.test/transit',
+            checkedAt: JETZT,
+          }
+          return [zeile, zeile]
+        },
+      },
+    ).filter((eintrag) => eintrag.requirementType === 'transit')
+    assert.equal(identisch.length, 1)
+  })
+
+  test('Provider missingFacts bleiben strukturiert und blockieren required', () => {
+    const provider: RequirementsProvider = {
+      name: 'facts-double',
+      evaluate(anfrage) {
+        return [
+          {
+            travellerClientRef: anfrage.travellers[0]!.clientRef,
+            destinationCountryCode: anfrage.destinationCountryCodes[0] ?? null,
+            requirementType: 'visa',
+            result: 'insufficient_context',
+            missingFacts: ['residence', 'document_expiry', 'origin_country'],
+          },
+        ]
+      },
+    }
+    const evaluations = requirementsAuswerten(
+      {
+        originCountryCode: null,
+        destinationCountryCodes: ['TH'],
+        transitCountryCodes: [],
+        startDate: '2026-09-12',
+        endDate: '2026-09-16',
+        travellers: [
+          {
+            clientRef: 'traveller:1',
+            nationalityCountryCode: 'CH',
+            residenceCountryCode: null,
+            documentType: 'passport',
+            documentIssuingCountryCode: 'CH',
+            documentExpiresOn: null,
+          },
+        ],
+      },
+      provider,
+    )
+    const visa = evaluations.find((eintrag) => eintrag.requirementType === 'visa')
+    assert.equal(visa?.result, 'unknown')
+    assert.equal(visa?.status, 'insufficient_context')
+    assert.ok(visa?.missingFacts.includes('residence'))
+    assert.ok(visa?.missingFacts.includes('document_expiry'))
+    assert.ok(visa?.missingFacts.includes('origin_country'))
+    assert.ok(!visa?.missingFacts.includes('nationality'))
+    const slot = slotMissingFactsErgaenzen(travellerSlots({ travellers: 1, party: [] })[0]!, visa?.missingFacts ?? [])
+    assert.ok(slot.missingFacts.includes('residence'))
+    assert.ok(!slot.missingFacts.includes('origin_country'))
+  })
+
+  test('bekannte origin_country und transit_itinerary werden nicht erneut verlangt', () => {
+    const provider: RequirementsProvider = {
+      name: 'facts-double',
+      evaluate(anfrage) {
+        return [
+          {
+            travellerClientRef: anfrage.travellers[0]!.clientRef,
+            destinationCountryCode: anfrage.destinationCountryCodes[0] ?? null,
+            requirementType: 'visa',
+            result: 'insufficient_context',
+            missingFacts: ['origin_country', 'transit_itinerary', 'residence'],
+          },
+        ]
+      },
+    }
+    const evaluations = requirementsAuswerten(
+      {
+        originCountryCode: 'CH',
+        destinationCountryCodes: ['TH'],
+        transitCountryCodes: ['QA'],
+        startDate: '2026-09-12',
+        endDate: '2026-09-16',
+        travellers: [
+          {
+            clientRef: 'traveller:1',
+            nationalityCountryCode: 'CH',
+            residenceCountryCode: null,
+            documentType: 'passport',
+            documentIssuingCountryCode: 'CH',
+            documentExpiresOn: '2030-01-01',
+          },
+        ],
+      },
+      provider,
+    )
+    const visa = evaluations.find((eintrag) => eintrag.requirementType === 'visa')
+    assert.equal(visa?.status, 'insufficient_context')
+    assert.ok(!visa?.missingFacts.includes('origin_country'))
+    assert.ok(!visa?.missingFacts.includes('transit_itinerary'))
+    assert.ok(visa?.missingFacts.includes('residence'))
+    assert.ok(!visa?.missingFacts.includes('nationality'))
+  })
+
+  test('Official Evidence braucht Provider, Zeit, Authority und HTTPS-Quelle', () => {
+    assert.equal(
+      officialEvidenceVertrauenswuerdig({
+        provider: 'test-double',
+        checkedAt: JETZT,
+        authority: 'Test',
+        sourceUrl: 'https://example.test/visa',
+      }),
+      true,
+    )
+    assert.equal(
+      officialEvidenceVertrauenswuerdig({
+        provider: null,
+        checkedAt: JETZT,
+        authority: 'Test',
+        sourceUrl: 'https://example.test/visa',
+      }),
+      false,
+    )
+    assert.equal(
+      officialEvidenceVertrauenswuerdig({
+        provider: 'test-double',
+        checkedAt: null,
+        authority: 'Test',
+        sourceUrl: 'https://example.test/visa',
+      }),
+      false,
+    )
   })
 })

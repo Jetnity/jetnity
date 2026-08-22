@@ -8,6 +8,7 @@ import { readinessChecksAbleiten } from '@/lib/readiness/ableitung'
 import { officialRequirementsFuerReise } from '@/lib/readiness/anforderungen'
 import { requirementsFuerReise } from '@/lib/readiness/engine'
 import type { OfficialEvaluation, MissingFact } from '@/lib/readiness/official'
+import { officialPruefungAusLage } from '@/lib/readiness/bezeichnungen'
 import { fehlendeFaktenFuerReise, travellerSlots } from '@/lib/readiness/party'
 import {
   readinessItemsVon,
@@ -138,7 +139,12 @@ export function readinessAnsicht(reise: Trip): {
     destinationCountries: kontext.destinationCountries,
     unknownCountryContext: kontext.unknownCountryStages > 0,
     individualClaimsForbidden: kontext.travellers > 1 || travellerSlots(reise).some((slot) => slot.applicable && slot.missingFacts.includes('nationality')),
-    missingFacts: fehlendeFaktenFuerReise({ ...reise, stages: reise.stages }),
+    missingFacts: [
+      ...new Set([
+        ...fehlendeFaktenFuerReise({ ...reise, stages: reise.stages }),
+        ...evaluations.flatMap((eintrag) => eintrag.missingFacts),
+      ]),
+    ],
     officialFreshness: evaluations.every((eintrag) => eintrag.freshness === 'provider_unavailable')
       ? 'provider_unavailable'
       : evaluations.some((eintrag) => eintrag.freshness === 'stale')
@@ -164,6 +170,19 @@ export function readinessZusammenfassungText(summary: ReadinessSummary): string 
   if (summary.stale > 0) {
     teile.push(`${summary.stale} erneut prüfen`)
   }
-  teile.push('Automatische Einreiseprüfung derzeit nicht verfügbar')
+  teile.push(
+    officialPruefungAusLage([
+      {
+        freshness: summary.officialFreshness,
+        status:
+          summary.missingFacts.length > 0
+            ? 'insufficient_context'
+            : summary.officialStatus === 'unavailable'
+              ? 'unavailable'
+              : 'unknown',
+        missingFacts: summary.missingFacts,
+      },
+    ]),
+  )
   return teile.join(' · ')
 }

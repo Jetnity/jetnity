@@ -21,6 +21,20 @@ export type ReadinessReisekontext = {
 
 const BUCHBARE: ReadonlySet<TripItem['kind']> = new Set(['flight', 'stay', 'transfer', 'rental_car', 'activity'])
 
+export type ReadinessRouteFacts = {
+  originCountryCode: string | null
+  transitCountryCodes: string[]
+  quelle: 'none'
+}
+
+/**
+ * Spätere Naht für belastbare Flight-/Itinerary-Ländercodes.
+ * Heute bewusst leer: Ortsnamen, Place-IDs und Etappentitel sind kein Origin/Transit.
+ */
+export function routeFactsAusReise(_reise: Trip): ReadinessRouteFacts {
+  return { originCountryCode: null, transitCountryCodes: [], quelle: 'none' }
+}
+
 export function readinessReisekontext(reise: Trip): ReadinessReisekontext {
   const destinationCountries: string[] = []
   let unknownCountryStages = 0
@@ -46,9 +60,9 @@ export function readinessReisekontext(reise: Trip): ReadinessReisekontext {
     startDate: reise.startDate,
     endDate: reise.endDate,
     travellers: reise.travellers,
-    originCountryCode: null,
+    originCountryCode: routeFactsAusReise(reise).originCountryCode,
     destinationCountries,
-    transitCountryCodes: [],
+    transitCountryCodes: routeFactsAusReise(reise).transitCountryCodes,
     unknownCountryStages,
     rentalCarPresent,
     bookedItems,

@@ -11,7 +11,8 @@ import {
   type OfficialRequirementReason,
 } from '@/lib/readiness/domain'
 import { requirementsAuswerten } from '@/lib/readiness/engine'
-import { requirementsProviderAus } from '@/lib/readiness/provider'
+import type { OfficialEvaluation } from '@/lib/readiness/official'
+import { requirementsProviderAus, type RequirementsAnfrage, type RequirementsProvider } from '@/lib/readiness/provider'
 
 export type OfficialRequirementAnfrage = {
   originCountryCode?: string | null
@@ -66,13 +67,7 @@ function officialRequirementLeer(
   }
 }
 
-/**
- * Geschlossene Anforderungsnaht. Ohne Provider niemals required/not_required.
- * Ein Country Code allein erzeugt keine Visa-Aussage.
- */
-export function officialRequirementsPruefen(
-  anfrage: OfficialRequirementAnfrage = {},
-): OfficialRequirementEvidence {
+function anfrageAus(anfrage: OfficialRequirementAnfrage): RequirementsAnfrage {
   const destinations = [
     ...new Set(
       [
@@ -81,27 +76,54 @@ export function officialRequirementsPruefen(
       ].filter((code): code is string => Boolean(code)),
     ),
   ]
-  const evaluations = requirementsAuswerten(
-    {
-      originCountryCode: landescodeLesen(anfrage.originCountryCode ?? null),
-      destinationCountryCodes: destinations,
-      transitCountryCodes: (anfrage.transitCountryCodes ?? [])
-        .map((code) => landescodeLesen(code))
-        .filter((code): code is string => Boolean(code)),
-      startDate: anfrage.startDate ?? null,
-      endDate: anfrage.endDate ?? null,
-      travellers: (anfrage.party ?? []).map((eintrag, index) => ({
-        clientRef: eintrag.clientRef || `traveller:${index + 1}`,
-        nationalityCountryCode: landescodeLesen(eintrag.nationalityCountryCode ?? null),
-        residenceCountryCode: landescodeLesen(eintrag.residenceCountryCode ?? null),
-        documentType: eintrag.documentType ?? null,
-        documentIssuingCountryCode: landescodeLesen(eintrag.documentIssuingCountryCode ?? null),
-        documentExpiresOn: eintrag.documentExpiresOn ?? null,
-      })),
-    },
-    requirementsProviderAus(),
-    anfrage,
-  )
+  const gespeichert = anfrage.party ?? []
+  const nachRef = new Map(gespeichert.map((eintrag) => [eintrag.clientRef, eintrag]))
+  const anzahl = Math.min(Math.max(anfrage.travellers ?? 1, gespeichert.length, 1), 20)
+  const travellers: RequirementsAnfrage['travellers'] = []
+  for (let i = 1; i <= anzahl; i += 1) {
+    const clientRef = `traveller:${i}`
+    const eintrag = nachRef.get(clientRef)
+    travellers.push({
+      clientRef,
+      nationalityCountryCode: landescodeLesen(eintrag?.nationalityCountryCode ?? null),
+      residenceCountryCode: landescodeLesen(eintrag?.residenceCountryCode ?? null),
+      documentType: eintrag?.documentType ?? null,
+      documentIssuingCountryCode: landescodeLesen(eintrag?.documentIssuingCountryCode ?? null),
+      documentExpiresOn: eintrag?.documentExpiresOn ?? null,
+    })
+  }
+  return {
+    originCountryCode: landescodeLesen(anfrage.originCountryCode ?? null),
+    destinationCountryCodes: destinations,
+    transitCountryCodes: (anfrage.transitCountryCodes ?? [])
+      .map((code) => landescodeLesen(code))
+      .filter((code): code is string => Boolean(code)),
+    startDate: anfrage.startDate ?? null,
+    endDate: anfrage.endDate ?? null,
+    travellers,
+  }
+}
+
+/**
+ * Kanonische API-Antwort: alle strukturierten Evaluations.
+ * Legacy `officialRequirementsPruefen` bleibt eine reduzierte Zusammenfassung.
+ */
+export function requirementsEvaluationsPruefen(
+  anfrage: OfficialRequirementAnfrage = {},
+  provider: RequirementsProvider | null = requirementsProviderAus(),
+): OfficialEvaluation[] {
+  return requirementsAuswerten(anfrageAus(anfrage), provider, anfrage)
+}
+
+/**
+ * Geschlossene Anforderungsnaht. Ohne Provider niemals required/not_required.
+ * Ein Country Code allein erzeugt keine Visa-Aussage.
+ * Legacy-Zusammenfassung; die API-Wahrheit liegt in `requirementsEvaluationsPruefen`.
+ */
+export function officialRequirementsPruefen(
+  anfrage: OfficialRequirementAnfrage = {},
+): OfficialRequirementEvidence {
+  const evaluations = requirementsEvaluationsPruefen(anfrage)
   const erste = evaluations[0]
   if (erste) {
     return {

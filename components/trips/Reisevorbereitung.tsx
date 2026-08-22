@@ -10,9 +10,11 @@ import {
   READINESS_GRUPPE_TITEL,
   SENSITIVE_HINWEIS,
   nutzerstandText,
+  officialListeHinweis,
+  officialPruefungAusEvaluations,
   officialStatusText,
 } from '@/lib/readiness/bezeichnungen'
-import { travellerSlots } from '@/lib/readiness/party'
+import { slotMissingFactsErgaenzen, travellerSlots } from '@/lib/readiness/party'
 import { readinessAnsicht, readinessZusammenfassungText } from '@/lib/readiness/status'
 import type { ReadinessKind, ReadinessUserStatus, TravellerDocumentType, Trip } from '@/types/trips'
 import { cn } from '@/lib/utils'
@@ -51,7 +53,14 @@ export default function Reisevorbereitung({
   const [meldung, setMeldung] = React.useState('')
   const [titel, setTitel] = React.useState('')
   const { items, summary, evaluations } = readinessAnsicht(reise)
-  const slots = travellerSlots(reise)
+  const slots = travellerSlots(reise).map((slot) =>
+    slotMissingFactsErgaenzen(
+      slot,
+      evaluations
+        .filter((eintrag) => eintrag.travellerClientRef === slot.clientRef)
+        .flatMap((eintrag) => eintrag.missingFacts),
+    ),
+  )
 
   const setzen = async (
     item: {
@@ -101,8 +110,8 @@ export default function Reisevorbereitung({
       </dl>
 
       <p className="mt-3 rounded-xl bg-surface-25 px-3 py-2 text-xs leading-5 text-ink-800" role="status">
-        Automatische Einreiseprüfung derzeit nicht verfügbar. {officialStatusText(summary.officialStatus)}. Ein
-        Häkchen ist keine offizielle Visa- oder Einreisebestätigung.
+        {officialPruefungAusEvaluations(evaluations)}. {officialStatusText(summary.officialStatus)}. Ein Häkchen ist
+        keine offizielle Visa- oder Einreisebestätigung.
       </p>
 
       {summary.individualClaimsForbidden && (
@@ -148,11 +157,7 @@ export default function Reisevorbereitung({
 
         <section className="grid gap-2">
           <h4 className="text-sm font-semibold text-brand-800">Offizielle Anforderungen</h4>
-          <p className="text-xs leading-5 text-ink-800">
-            {evaluations.length === 0
-              ? 'Noch keine prüfbaren offiziellen Anforderungen.'
-              : 'Ohne Provider bleibt jede offizielle Aussage unknown. Unterschiedliche Reisende werden getrennt bewertet.'}
-          </p>
+          <p className="text-xs leading-5 text-ink-800">{officialListeHinweis(evaluations)}</p>
           <ul className="grid gap-2">
             {slots
               .filter((slot) => slot.applicable)

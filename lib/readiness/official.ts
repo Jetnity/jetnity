@@ -84,6 +84,48 @@ export function officialAktionAusQuelle(url: unknown): OfficialAction | null {
   return href ? { kind: 'open_official_source', href } : null
 }
 
+export function missingFactsLesen(wert: unknown): MissingFact[] {
+  if (!Array.isArray(wert)) return []
+  const gesehen = new Set<MissingFact>()
+  for (const eintrag of wert) {
+    if (typeof eintrag === 'string' && (MISSING_FACTS as readonly string[]).includes(eintrag)) {
+      gesehen.add(eintrag as MissingFact)
+    }
+  }
+  return [...gesehen]
+}
+
+export function checkedAtLesen(wert: unknown): string | null {
+  if (typeof wert !== 'string') return null
+  const zeit = wert.trim()
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/.test(zeit)) return null
+  const ms = Date.parse(zeit)
+  return Number.isFinite(ms) ? zeit : null
+}
+
+export function authorityLesen(wert: unknown): string | null {
+  if (typeof wert !== 'string') return null
+  const text = wert.trim()
+  if (text.length < 2 || text.length > 80) return null
+  return text
+}
+
+export function providerNameLesen(wert: unknown): string | null {
+  if (typeof wert !== 'string') return null
+  const name = wert.trim()
+  if (name.length < 2 || name.length > 40) return null
+  return name
+}
+
+export function officialEvidenceVertrauenswuerdig(opts: {
+  provider: string | null
+  checkedAt: string | null
+  authority: string | null
+  sourceUrl: string | null
+}): boolean {
+  return Boolean(opts.provider && opts.checkedAt && opts.authority && opts.sourceUrl)
+}
+
 export function quelleUrlLesen(wert: unknown): string | null {
   if (typeof wert !== 'string') return null
   const url = wert.trim()

@@ -33,7 +33,7 @@ Vier Tabellen, ein Graph. Der Anwendungstyp dazu steht in `types/trips.ts` und t
 | Tag | `trip_days` | Nummer im Reiseverlauf, optionales Datum, optionaler Titel, **Etappe** (`stage_id`) |
 | Planpunkt | `trip_items` | Flug, Unterkunft, Aktivität, Transfer, Mietwagen oder freie Notiz – mit Zeitfenster, Preis, Anbieter, Buchungsverweis und manuellem Buchungsstatus. Ohne Tag (`day_id` null) bleibt der Punkt ungeplant (`ohneTag`). |
 | Vorbereitung | `trip_readiness_items` | Nutzer-Vorbereitungsstand. Kein neuer `trip_items.kind`. Offizielle Visa-/Einreisewahrheit steht hier nicht. Nur Development (PR #32). |
-| Reisende | `trip_travellers` | Datensparsamer individueller Kontext (Nationalität, Wohnsitz, Dokumenttyp, Ablaufdatum). Keine Dokumentnummern. Nur Development (PR #32). |
+| Reisende | `trip_travellers` | Datensparsamer individueller Kontext (Nationalität, Wohnsitz, Dokumenttyp, Ablaufdatum). Keine Dokumentnummern. Nur Development (PR #32). Origin- und Transit-Ländercodes kommen nicht aus `origin`-Text oder Place-IDs; die Readiness-Naht `routeFactsAusReise()` bleibt leer, bis der Graph strukturierte Flight-/Itinerary-Codes trägt. |
 
 **Mehrere Ziele sind mehrere Etappen.** Ein Feld `destination` hätte die heutige Oberfläche abgedeckt und die zweite Station einer Reise nicht. Das Formular unter `/planen` fragt weiterhin ein Ziel und legt daraus eine Etappe an – dieselbe Struktur, nur mit einem Element.
 
