@@ -48,8 +48,8 @@ Foundation E läuft auf:
 | Production-Schema | unverändert |
 | UI-Audit-Lauf | **838/838, 0 Fehler**, WebKit + Chromium, 8 Viewports inkl. 280–430 / Tablet 768 / Landscape 844×390 / Desktop 1280 |
 | Foundation-E-Auditfälle | 1 Citizenship, 2 Citizenships, 2 Traveller, Dokument fehlt, Citizenship fehlt, langes Label (40 Zeichen), Provider unavailable |
-| GitHub CI | **success** auf Docs-Heads bis `b8a11be4`; Audit-Heads `02421f6d` / `17763238` nach dem Lauf, CI auf dem Docs-Nachzug ausstehend |
-| Vercel Preview | **pass** auf `16ddea63`, `ff4cb765`, `fef11a38` und `b8a11be4`; neuer Head nach Docs-Nachzug |
+| GitHub CI | **success** auf Head `913604fe` – Run https://github.com/Jetnity/jetnity/actions/runs/32595277670 (Typecheck/Lint/Build + Auth). Vorgänger inkl. Audit-Heads `02421f6d` / `17763238` ebenfalls success. |
+| Vercel Preview | **READY** auf `913604fe` – https://jetnity-hdr68cz3e-jetnity-e1b93c82.vercel.app |
 
 ## 4. Harte Grenzen
 
@@ -63,8 +63,9 @@ Foundation E läuft auf:
 ## 5. Exakter nächster Schritt
 
 1. Draft PR #35 reviewen. Nicht Mark Ready, nicht mergen.
-2. GitHub CI und Vercel Preview auf dem Head nach diesem Docs-Nachzug prüfen.
-3. Product Owner entscheidet separat über Merge.
-4. Production-Migration erst nach Merge und separater Freigabe.
+2. Product Owner entscheidet separat über Merge.
+3. Production-Migration erst nach Merge und separater Freigabe.
+
+GitHub CI und Vercel Preview auf dem Audit-Docs-Head `913604fe` sind verifiziert. Ein weiterer Docs-Commit, der nur diesen Nachweis festhält, startet ein neues CI; das wird **nicht** erneut dokumentiert, solange es nicht fehlschlägt.
 
 Kein zweiter Foundation-E-Block auf einem anderen Branch beginnen.

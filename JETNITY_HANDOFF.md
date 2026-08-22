@@ -417,8 +417,8 @@ Offener separater Security-Hardening-Track bleibt sichtbar (u. a. ältere `SECUR
 Solange der Foundation-E-Draft-PR offen ist:
 
 1. `docs/ACTIVE_WORK_STATUS.md` und `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md` lesen,
-2. Draft PR reviewen, nicht mergen, nicht Mark Ready,
-3. UI-Audit-Lauf nachziehen, sobald Playwright verfügbar ist,
+2. Draft PR #35 reviewen, nicht mergen, nicht Mark Ready,
+3. UI-Audit ist erledigt (**838/0**, WebKit + Chromium). GitHub CI und Vercel Preview auf Head `913604fe` sind verifiziert.
 4. Product Owner separat um Merge-Freigabe fragen,
 5. Production-Migration erst nach Merge und separater Freigabe.
 

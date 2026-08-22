@@ -62,8 +62,8 @@ Nachweise nach Anwendung:
 | Erster Audit-Lauf | 16 Fehler, alle `readiness-user-done`: v1-Fingerprint wurde nach Foundation E korrekt stale. Fixture auf v2 gesetzt. |
 | Zweiter Audit-Lauf | **838/0** nach Fixture-Korrektur auf Head `17763238` |
 | Foundation-E-Zustände im Audit | `eine-staatsbuergerschaft`, `zwei-staatsbuergerschaften`, `dokument-fehlt`, `staatsbuergerschaft-fehlt`, `zwei-reisende`, `langes-label`, `provider-unavailable` |
-| GitHub CI | **success** auf Docs-Heads bis `b8a11be4`; Audit-Heads danach, CI auf Docs-Nachzug ausstehend |
-| Vercel Preview | **pass** auf `16ddea63`, `ff4cb765`, `fef11a38`, `b8a11be4` |
+| GitHub CI | **success** auf Head `913604fe` – https://github.com/Jetnity/jetnity/actions/runs/32595277670 (Typecheck/Lint/Build + Auth). Audit-Heads `02421f6d` / `17763238` ebenfalls success. |
+| Vercel Preview | **READY** auf `913604fe` – https://jetnity-hdr68cz3e-jetnity-e1b93c82.vercel.app |
 
 ---
 
@@ -96,7 +96,7 @@ Automatisiert nachgewiesen:
 - keine Production-Migration
 - kein echter Requirements-Provider
 - Guest→Account bleibt für Readiness ein nachgelagerter Schritt; nur Party ist atomar
-- GitHub CI / Vercel auf dem Head nach dem UI-Audit-Docs-Nachzug noch bestätigen
+- GitHub CI / Vercel auf Audit-Docs-Head `913604fe` verifiziert; ein reiner Nachweis-Commit wird nicht erneut dokumentiert, solange CI nicht fehlschlägt
 
 ---
 
