@@ -17,6 +17,7 @@ Pflichtlektüre:
 - `AGENTS.md`
 - `docs/PRODUCT_QUALITY_STANDARD.md`
 - `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
+- `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md`
 - `docs/LOGIC_STANDARD.md`
 - `docs/CONTINUITY_STANDARD.md`
 - `docs/CHATGPT_CURSOR_WORKFLOW.md`
@@ -49,6 +50,7 @@ Das bedeutet verbindlich:
 - ein zusammenhängender Reisegraph statt isolierter Suchmaschinen
 - so viel Suchaufwand, Doppelarbeit, Entscheidungsstress und organisatorische Reibung wie sinnvoll abnehmen
 - keine Feature-Sammlung ohne klaren Nutzer- oder Umsatznutzen
+- traveller-spezifische Funktionen müssen relevante Mehrfachkontexte wie mehrere Staatsbürgerschaften oder Reisedokumente korrekt berücksichtigen, wenn diese das Ergebnis verändern können
 
 Leitsätze:
 
@@ -57,6 +59,8 @@ Leitsätze:
 > **Jetnity soll die Nummer 1 werden, weil es Reisen einfacher, intelligenter, verlässlicher und ganzheitlicher macht.**
 
 > **Komplexität gehört ins System, nicht in den Kopf des Nutzers.**
+
+> **Wo Traveller-Kontext das Ergebnis ändern kann, prüft Jetnity die relevanten zulässigen Optionen individuell und evidenzbasiert.**
 
 Das ist ein Entwicklungsziel, keine heutige Marktbehauptung.
 
@@ -71,6 +75,8 @@ Das ist ein Entwicklungsziel, keine heutige Marktbehauptung.
 
 Neue Produktentscheidungen, relevante Implementierungsmeilensteine, Blocker, Review-Funde, Test-/CI-/Preview-Stände, DB-/Production-Grenzen und der exakte nächste Schritt dürfen nicht nur im Chat oder Agentenkontext bleiben.
 
+Für jede neue oder geänderte relevante Funktion ist zusätzlich die Traveller-Context-Relevanz nach `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md` zu prüfen. Keine neue Funktion darf still eine einzelne Staatsbürgerschaft oder ein einzelnes Dokument als universelle Dauerannahme verhärten, wenn fachlich mehrere Optionen das Ergebnis verändern können.
+
 ---
 
 ## 3. Aktueller `main`-Stand
@@ -83,7 +89,7 @@ Foundation C / PR #32 ist abgeschlossen.
 - Production-Acceptance: `docs/PR32_PRODUCTION_MIGRATION_ACCEPTANCE.md`
 - Vercel Production: **READY**
 
-Bereits auf `main` abgeschlossen:
+Bereits auf `main` abgeschlossen / verbindlich:
 
 - Phase 3.1 – Flight Foundation
 - Phase 3.2 / 3.2c – Hotel Foundation
@@ -97,6 +103,7 @@ Bereits auf `main` abgeschlossen:
 - verbindlicher ChatGPT/Cursor-Workflow
 - verbindliches Jetnity Product Mandate
 - verbindlicher websiteweiter `UX_INFORMATION_ARCHITECTURE_STANDARD`
+- verbindliche `TRAVELLER_CONTEXT_INTELLIGENCE_POLICY`
 - verbindliche Product-Owner-Merge-Approval-Policy
 - verbindliche Project-Progress-Persistence-Policy
 
@@ -141,6 +148,8 @@ Qualitätsnachweis des finalen Foundation-C-Standes vor Merge:
 
 Foundation C **nicht erneut bauen**.
 
+Wichtige spätere Erweiterung: Foundation C modelliert aktuell noch singuläre Traveller-Felder. Mehrfachstaatsbürgerschaften / mehrere Reisedokumente sind inzwischen verbindlich als zukünftiger 1:n-Traveller-Context beschlossen und müssen vor produktiver Requirements-Provider-Aktivierung separat umgesetzt und reviewed werden. Die bestehende Singularität ist kein langfristiges Architekturmandat.
+
 ---
 
 ## 5. Supabase Production nach Foundation C
@@ -179,6 +188,8 @@ Daher produktiv weiterhin keine erfundenen Visa-, Impf-/Health-, Pass- oder Tran
 
 Aktuell bevorzugter Kandidat: **IATA Timatic / Timatic AutoCheck**, aber keine Architekturbindung und kein Vertrag ohne separate Kosten-/Lizenzprüfung.
 
+Vor produktiver Provider-Aktivierung muss zusätzlich die 1:n-Unterstützung für mehrere Staatsbürgerschaften / Credential-Profile fachlich, technisch und providerseitig geklärt und umgesetzt sein.
+
 ### Strukturierte Origin-/Transit-Fakten
 
 Diese Lücke wird jetzt mit Foundation D bearbeitet.
@@ -194,6 +205,7 @@ Diese Lücke wird jetzt mit Foundation D bearbeitet.
 - verbindlicher Task: `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md`
 - aktiver Live-Handoff im Branch: `docs/ACTIVE_WORK_STATUS.md`
 - websiteweiter UX-/IA-Standard: `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
+- globaler Traveller-Context-Standard: `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md`
 - Progress-Persistence-Policy: `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`
 - Merge-Gate: `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
 
@@ -206,6 +218,7 @@ Ziel:
 - Route im Flugbereich verständlich sichtbar machen
 - Reiseänderungen auf Transit-/Readiness-Auswirkungen prüfen
 - Mobility/Connections auf dieselbe Route Truth vorbereiten
+- Route Truth traveller-neutral halten, damit dieselbe Route später gegen mehrere Traveller-/Credential-Profile ausgewertet werden kann
 
 Produkt-/UX-Regel:
 
@@ -262,7 +275,7 @@ Ein neuer Chat soll mit folgendem Satz übernehmen können:
 
 > „Wir machen mit Jetnity weiter. Lies den Handoff und den aktuellen Repository-/Production-Stand.“
 
-Dann zuerst diese Datei plus Produktmandat, Vision, Roadmap, UX-/Logic-/Continuity-/Workflow-/Progress-/Merge-Standards lesen, **PR #34 und dessen tatsächlichen Head prüfen**, im Feature-Branch `docs/ACTIVE_WORK_STATUS.md` lesen und erst danach neue Arbeit planen.
+Dann zuerst diese Datei plus Produktmandat, Vision, Roadmap, UX-/Traveller-Context-/Logic-/Continuity-/Workflow-/Progress-/Merge-Standards lesen, **PR #34 und dessen tatsächlichen Head prüfen**, im Feature-Branch `docs/ACTIVE_WORK_STATUS.md` lesen und erst danach neue Arbeit planen.
 
 Ein neuer Cursor-Agent liest zusätzlich den aktuellen Cursor-Task und alle neueren Amendments/Review-Aufträge.
 
