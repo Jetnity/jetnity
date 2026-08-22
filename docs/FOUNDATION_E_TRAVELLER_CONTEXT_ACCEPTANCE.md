@@ -31,6 +31,7 @@ Alte Foundation-C-Singularfelder bleiben compatibility-only und sind nach Backfi
 ## Datenbankgrenze
 
 - Development-Migration `20260822160000_traveller_context_intelligence.sql` **angewendet**
+- Development-Nachtrag `20260822170000_traveller_context_fk_delete.sql` **angewendet**
 - neue Tabellen: `trip_traveller_citizenships`, `trip_traveller_documents`
 - optionales `trip_readiness_items.traveller_id` mit Composite-FK
 - RPC `public.party_schreiben(jsonb)` – `SECURITY INVOKER`, fester `search_path`
@@ -45,7 +46,7 @@ Nachweise nach Anwendung:
 | `npm run db:anwenden` | angewendet |
 | `npm run db:rechte` | OK – 51 Tabellenrechte, jedes durch eine Policy gedeckt; RLS aktiv |
 | `npm run db:rls` | grün, inkl. neuer Child-Tabellen; anon/fremd abgewiesen |
-| `npm run db:sicherheit` | **204/204** |
+| `npm run db:sicherheit` | **207/207** |
 
 ---
 
@@ -53,17 +54,17 @@ Nachweise nach Anwendung:
 
 | Nachweis | Stand |
 | --- | --- |
-| `npm test` | **1304 pass / 0 fail** |
+| `npm test` | **1310 pass / 0 fail** |
 | Typecheck | **grün** (`tsc --noEmit`) |
 | Lint | **grün** (`next lint`, 0 warnings/errors) |
 | Hygiene | **grün** – `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` |
 | Production Build | **grün** (`next build`, 38/38 Seiten) |
-| Trip-Workspace-UI-Audit | **838 Kombinationen, 0 Fehler**, WebKit + Chromium. Viewports: 280, 320, 360, 390, 430, 768, 844×390, 1280. Bericht: `/opt/cursor/artifacts/trip_workspace_ui_audit.json` |
-| Erster Audit-Lauf | 16 Fehler, alle `readiness-user-done`: v1-Fingerprint wurde nach Foundation E korrekt stale. Fixture auf v2 gesetzt. |
+| Trip-Workspace-UI-Audit nach Review-Fixes | **838 Kombinationen, 0 Fehler**, WebKit + Chromium. Viewports: 280, 320, 360, 390, 430, 768, 844×390, 1280. Bericht: `/opt/cursor/artifacts/trip_workspace_ui_audit.json` |
+| Erster Audit-Lauf (vor Review-Fixes) | 16 Fehler, alle `readiness-user-done`: v1-Fingerprint wurde nach Foundation E korrekt stale. Fixture auf v2 gesetzt. |
 | Zweiter Audit-Lauf | **838/0** nach Fixture-Korrektur auf Head `17763238` |
 | Foundation-E-Zustände im Audit | `eine-staatsbuergerschaft`, `zwei-staatsbuergerschaften`, `dokument-fehlt`, `staatsbuergerschaft-fehlt`, `zwei-reisende`, `langes-label`, `provider-unavailable` |
-| GitHub CI | **success** auf Head `913604fe` – https://github.com/Jetnity/jetnity/actions/runs/32595277670 (Typecheck/Lint/Build + Auth). Audit-Heads `02421f6d` / `17763238` ebenfalls success. |
-| Vercel Preview | **READY** auf `913604fe` – https://jetnity-hdr68cz3e-jetnity-e1b93c82.vercel.app |
+| GitHub CI | **success** auf Head `5cb207d3` – https://github.com/Jetnity/jetnity/actions/runs/32596833189 |
+| Vercel Preview | **READY** auf `5cb207d3` – https://jetnity-l6141bwaw-jetnity-e1b93c82.vercel.app |
 
 ---
 
@@ -100,7 +101,8 @@ Automatisiert nachgewiesen:
 - keine Production-Migration
 - kein echter Requirements-Provider
 - Guest→Account bleibt für Readiness ein nachgelagerter Schritt; nur Party ist atomar
-- GitHub CI / Vercel auf Audit-Docs-Head `913604fe` verifiziert; ein reiner Nachweis-Commit wird nicht erneut dokumentiert, solange CI nicht fehlschlägt
+- Unabhängiger ChatGPT-Re-Review der drei behobenen Blocker steht aus
+- GitHub CI / Vercel auf Review-Fix-Head `5cb207d3` verifiziert; ein reiner Nachweis-Commit wird nicht erneut dokumentiert, solange CI nicht fehlschlägt
 
 ---
 

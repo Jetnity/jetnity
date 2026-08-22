@@ -36,20 +36,21 @@ Foundation E läuft auf:
 
 | Nachweis | Ergebnis |
 | --- | --- |
-| `npm test` | 1304/1304 |
+| `npm test` | 1310/1310 |
 | Typecheck | grün |
 | Lint | grün |
 | Hygiene | grün |
 | Production-Build | grün, 38/38 Seiten |
 | Development-Migration `20260822160000` | angewendet |
+| Development-Migration `20260822170000` | angewendet; Live-FKs: Citizenship `SET NULL (citizenship_id)`, Readiness `CASCADE` |
 | `db:rechte` | OK, 51 Rechte |
 | `db:rls` | grün |
-| `db:sicherheit` | 204/204 |
+| `db:sicherheit` | **207/207** inkl. Citizenship-Unlink, Traveller-Delete, 9. Citizenship |
 | Production-Schema | unverändert |
-| UI-Audit-Lauf | **838/838, 0 Fehler**, WebKit + Chromium, 8 Viewports inkl. 280–430 / Tablet 768 / Landscape 844×390 / Desktop 1280 |
+| UI-Audit nach Review-Fixes | **838/838, 0 Fehler**, WebKit + Chromium, 8 Viewports |
 | Foundation-E-Auditfälle | 1 Citizenship, 2 Citizenships, 2 Traveller, Dokument fehlt, Citizenship fehlt, langes Label (40 Zeichen), Provider unavailable |
-| GitHub CI | **success** auf Head `913604fe` – Run https://github.com/Jetnity/jetnity/actions/runs/32595277670 (Typecheck/Lint/Build + Auth). Vorgänger inkl. Audit-Heads `02421f6d` / `17763238` ebenfalls success. |
-| Vercel Preview | **READY** auf `913604fe` – https://jetnity-hdr68cz3e-jetnity-e1b93c82.vercel.app |
+| GitHub CI | **success** auf Head `5cb207d3` – https://github.com/Jetnity/jetnity/actions/runs/32596833189 |
+| Vercel Preview | **READY** auf `5cb207d3` – https://jetnity-l6141bwaw-jetnity-e1b93c82.vercel.app |
 
 ## 4. Harte Grenzen
 
@@ -62,10 +63,11 @@ Foundation E läuft auf:
 
 ## 5. Exakter nächster Schritt
 
-1. Draft PR #35 reviewen. Nicht Mark Ready, nicht mergen.
-2. Product Owner entscheidet separat über Merge.
-3. Production-Migration erst nach Merge und separater Freigabe.
+1. Unabhängiger ChatGPT-Re-Review von PR #35 gegen `docs/PR35_CHATGPT_INDEPENDENT_REVIEW.md`.
+2. Draft bleibt Draft. Nicht Mark Ready, nicht mergen.
+3. Product Owner entscheidet separat über Merge.
+4. Production-Migration erst nach Merge und separater Freigabe.
 
-GitHub CI und Vercel Preview auf dem Audit-Docs-Head `913604fe` sind verifiziert. Ein weiterer Docs-Commit, der nur diesen Nachweis festhält, startet ein neues CI; das wird **nicht** erneut dokumentiert, solange es nicht fehlschlägt.
+Die drei Review-Blocker sind im Code behoben. Ein Docs-Nachzug, der nur diesen Nachweis festhält, startet neues CI; das wird nicht erneut dokumentiert, solange es nicht fehlschlägt.
 
 Kein zweiter Foundation-E-Block auf einem anderen Branch beginnen.
