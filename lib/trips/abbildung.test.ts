@@ -22,6 +22,7 @@ import {
   type ReiseZeile,
   type TagZeile,
 } from '@/lib/trips/abbildung'
+import { itineraryEinTransit } from '@/lib/route/fixtures'
 
 const JETZT = '2026-08-17T22:00:00.000Z'
 
@@ -400,5 +401,24 @@ describe('Aus einer Reise wird die Nutzlast für public.reise_anlegen()', () => 
     assert.equal(nutzlast.stages[0].position, 1)
     assert.equal(nutzlast.days[0].day_index, 1)
     assert.equal(nutzlast.days[0].items[0].position, 1)
+  })
+
+  test('eine Flug-Itinerary geht mit, andere Punkte nicht', () => {
+    const mitFlug = {
+      ...gastreise,
+      ohneTag: [
+        {
+          ...gastreise.days[0]!.items[0]!,
+          id: 'flug',
+          dayId: null,
+          kind: 'flight' as const,
+          title: 'ZRH → BKK',
+          routeItinerary: itineraryEinTransit(),
+        },
+      ],
+    }
+    const nutzlast = alsNutzlast(mitFlug)
+    assert.equal('route_itinerary' in nutzlast.days[0]!.items[0]!, false)
+    assert.deepEqual(nutzlast.ungeplante[0]?.route_itinerary, itineraryEinTransit())
   })
 })

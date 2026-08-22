@@ -398,7 +398,9 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
           rental_supplier: punkt.rentalSupplier,
           vehicle_class: punkt.vehicleClass,
           transmission: punkt.transmission,
-          route_itinerary: punkt.kind === 'flight' ? punkt.routeItinerary ?? null : null,
+          ...(punkt.kind === 'flight' && punkt.routeItinerary
+            ? { route_itinerary: punkt.routeItinerary }
+            : {}),
         })),
       }
     }),
@@ -428,7 +430,9 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
       rental_supplier: punkt.rentalSupplier,
       vehicle_class: punkt.vehicleClass,
       transmission: punkt.transmission,
-      route_itinerary: punkt.kind === 'flight' ? punkt.routeItinerary ?? null : null,
+      ...(punkt.kind === 'flight' && punkt.routeItinerary
+        ? { route_itinerary: punkt.routeItinerary }
+        : {}),
     })),
   }
 }
