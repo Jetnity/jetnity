@@ -58,12 +58,13 @@ Je nach Änderung müssen insbesondere aktuell gehalten werden:
 - `DESIGN_SYSTEM.md` – verbindliche UI-/UX-Regeln
 - `docs/PRODUCT_QUALITY_STANDARD.md` – Produktqualitätsanforderungen
 - `docs/LOGIC_STANDARD.md` – verbindliche Regeln für Datenwahrheit, Source of Truth, fachliche Invarianten, Zustände und bereichsübergreifende Konsistenz
+- `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` – verbindliche Tiefe für unabhängige Reviews, Re-Reviews, Merge- und Production-Empfehlungen
 - fachliche Modul-Dokumente, z. B. `docs/HOTELS.md`, `docs/ACTIVITIES.md`, `docs/MOBILITY.md`, `docs/RENTAL_CARS.md`, `docs/TRAVEL_READINESS.md`, `docs/ROUTE_TRANSIT_INTELLIGENCE.md`, `docs/TRAVELLER_CONTEXT.md`
 - dieser `docs/CONTINUITY_STANDARD.md`
 
 Aufgaben für Coding Agents sollen diese Quellen passend zum Auftrag ausdrücklich einbeziehen.
 
-Vor jeder größeren Produkt-, UX-, Logik- oder Architekturentscheidung müssen `JETNITY_VISION.md` und `docs/LOGIC_STANDARD.md` gelesen werden. Eine lokale technische Verbesserung darf den Produkt-Nordstern oder die fachliche Konsistenz nicht unbemerkt verschlechtern.
+Vor jeder größeren Produkt-, UX-, Logik- oder Architekturentscheidung müssen `JETNITY_VISION.md` und `docs/LOGIC_STANDARD.md` gelesen werden. Vor unabhängigen Abschlussreviews, Merge-/Production-Empfehlungen und Re-Reviews muss zusätzlich `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` gelesen und angewendet werden. Eine lokale technische Verbesserung darf den Produkt-Nordstern oder die fachliche Konsistenz nicht unbemerkt verschlechtern.
 
 ---
 
@@ -138,9 +139,11 @@ Wenn Erinnerung und Repository widersprechen, gilt nicht automatisch die Erinner
 
 Ein neuer Chat oder Agent soll Jetnity anhand der Repository-Dokumentation übernehmen können.
 
-Mindestens zu Beginn einer größeren Jetnity-Arbeit sollen `JETNITY_VISION.md`, `JETNITY_HANDOFF.md`, `ROADMAP.md`, `docs/PRODUCT_QUALITY_STANDARD.md`, `docs/LOGIC_STANDARD.md` und die für die Aufgabe relevanten Architektur-/Entscheidungs-/Moduldokumente gelesen werden.
+Mindestens zu Beginn einer größeren Jetnity-Arbeit sollen `JETNITY_VISION.md`, `JETNITY_HANDOFF.md`, `ROADMAP.md`, `docs/PRODUCT_QUALITY_STANDARD.md`, `docs/LOGIC_STANDARD.md`, `docs/CONTINUITY_STANDARD.md`, `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` und die für die Aufgabe relevanten Architektur-/Entscheidungs-/Moduldokumente gelesen werden.
 
-Der Nutzer soll dafür **nicht erneut sagen müssen**, dass sauber dokumentiert werden soll, welches übergeordnete Produktziel Jetnity verfolgt oder dass Logik und bereichsübergreifende Konsistenz höchste Priorität haben.
+Der Nutzer soll dafür **nicht erneut sagen müssen**, dass sauber dokumentiert werden soll, welches übergeordnete Produktziel Jetnity verfolgt, dass Logik und bereichsübergreifende Konsistenz höchste Priorität haben oder dass unabhängige Reviews kritisch und tief statt als bloße Bestätigung grüner Tests durchgeführt werden sollen.
+
+Jeder neue ChatGPT-Chat übernimmt ausdrücklich dieselbe Review-Verantwortung: tatsächlichen Head/Repo/CI/DB-/Production-Stand selbst prüfen, vorhandene Abschlussmeldungen nicht ungeprüft übernehmen, grüne Tests als Evidenz statt als Fehlerfreiheitsbeweis behandeln und aktiv nach Source-of-Truth-, Legacy-, Deployment-, Parallelitäts-, Provider-, Cross-Domain- und Edge-Case-Fehlern suchen.
 
 Diese Regel gilt dauerhaft als Teil des Jetnity-Entwicklungsprozesses.
 
@@ -170,8 +173,10 @@ Bei Jetnity soll ChatGPT dauerhaft:
 - als Produkt-/Architektursteuerung den Gesamtfaden halten
 - `JETNITY_VISION.md` als oberste Produktleitplanke bei neuen Funktionen und Architekturentscheidungen berücksichtigen
 - `docs/LOGIC_STANDARD.md` als verbindliche Leitplanke für fachliche Wahrheit, Source of Truth und bereichsübergreifende Konsistenz anwenden
+- `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` als verbindliche Mindesttiefe für Reviews, Re-Reviews und Merge-/Production-Empfehlungen anwenden
 - größere Cursor-Aufträge so formulieren, dass Dokumentation und Logic-/Truth-Prüfung Teil der Definition of Done sind
 - nach Cursor-Abschluss Code, Security, CI, Produktqualität und fachliche Annahmen unabhängig prüfen
+- dabei nicht nur kontrollieren, ob der Auftrag formal erfüllt ist, sondern aktiv versuchen, die Implementierung durch Gegenbeispiele, negative Fälle, alte Fallbacks, Lösch-/Reload-/Retry-/Parallelitäts- und Deployment-Szenarien zu widerlegen
 - wichtige offene Punkte in den dauerhaften Projektquellen sichern
 - neue verbindliche Produktprinzipien aus Nutzerentscheidungen in der Vision/Handoff-Dokumentation festhalten
 - vor Merge und Production den aktuellen technischen und fachlichen Stand erneut verifizieren
@@ -208,7 +213,7 @@ Wenn ein Punkt nicht zutrifft, ausdrücklich `keine` bzw. `nicht Teil dieser Pha
 
 Jetnity soll über Monate und Jahre konsistent weiterentwickelt werden können, auch wenn Chats gewechselt werden, Agenten neu gestartet werden oder einzelne Beteiligte den unmittelbaren Gesprächskontext verlieren.
 
-**Der Projektfaden, der Produkt-Nordstern und die fachlichen Wahrheitsregeln gehören ins Repository, nicht nur in den Kopf eines Agents oder in einen einzelnen Chat.**
+**Der Projektfaden, der Produkt-Nordstern, die fachlichen Wahrheitsregeln und die Review-Tiefe gehören ins Repository, nicht nur in den Kopf eines Agents oder in einen einzelnen Chat.**
 
 Verbindlicher Merksatz aus `docs/LOGIC_STANDARD.md`:
 
@@ -236,3 +241,23 @@ Für jeden größeren neuen Entwicklungsblock gilt zusätzlich verbindlich:
    ohne dass der Nutzer den Projektverlauf erneut erzählen muss.
 
 Dieser operative Handoff ist kein optionaler Komfort, sondern Teil der Definition of Done für größere Jetnity-Arbeiten.
+
+---
+
+## 14. Verbindliche Review-Tiefe über Chat-/Agent-Wechsel
+
+Der Product Owner hat ausdrücklich festgelegt, dass jeder neue Chat und Agent mindestens dieselbe kritische Gründlichkeit beibehalten muss wie ein guter unabhängiger Senior-Review.
+
+Verbindliche Detailregel: `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md`.
+
+Das bedeutet insbesondere:
+
+- Abschlussberichte und grüne Tests werden **nicht** als Ersatz für einen eigenen Review akzeptiert.
+- Der Reviewer prüft den exakten aktuellen Head und relevante Live-Grenzen selbst.
+- Er sucht aktiv nach Fehlern außerhalb der bestehenden Tests.
+- Source-of-Truth-/Legacy-Wiederauferstehung, Delete/Reload, Guest→Account, Cross-Domain, Provider-/Evidence-/Fingerprint, DB-/RLS-/Transaktion/Parallelität, Device-UX und Deployment-Reihenfolge gehören je nach Scope ausdrücklich zur Prüfung.
+- Fixes werden re-reviewed; dabei wird auch geprüft, ob sie neue oder tiefere Fehler derselben Problemklasse erzeugt haben.
+- Ein bekannter hochwirksamer Fehler darf nicht durch „alles grün“ überstimmt werden.
+- Relevante Findings werden versioniert, damit der nächste Chat nicht wieder bei null beginnt.
+
+> **Nicht nur bestätigen, dass es funktioniert. Aktiv prüfen, wo es noch brechen kann.**
