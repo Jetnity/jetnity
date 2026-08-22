@@ -1,14 +1,15 @@
-# Jetnity – Automatic Travel Requirements & Readiness (Foundation C)
+# Jetnity – Automatic Travel Requirements & Readiness
 
 Stand: 22. August 2026  
-Status: Draft-PR #32, nicht gemergt, kein Production-Schema  
-Branch: `feat/travel-readiness-foundation`
+Status: **Foundation C abgeschlossen, auf `main`, Production-Schema verifiziert**
+
+Abschlussnachweis: `docs/PR32_PRODUCTION_MIGRATION_ACCEPTANCE.md`
+
+---
 
 ## Ziel
 
 Jetnity soll automatisch erkennen, was ein konkreter Reisender für eine konkrete Reise benötigt – und getrennt davon, was der Nutzer selbst vorbereitet hat.
-
-Foundation C liefert den belastbaren Unterbau: Traveller-Kontext, provider-neutrale Requirements-Engine, Missing-Facts, Context-Stale und Freshness. Ohne echten Provider bleibt jede offizielle Aussage `unknown`.
 
 Verbindlicher Leitsatz:
 
@@ -16,108 +17,284 @@ Verbindlicher Leitsatz:
 
 Bei Unsicherheit gilt: `unknown` bleibt `unknown`. Ein LLM ist keine regulatorische Quelle.
 
+---
+
 ## Zwei Wahrheiten
 
-1. **Official Requirement Truth** – nur eine Engine mit Provider-Evidence darf `required`, `not_required` oder `conditional` setzen.
-2. **User Preparation Truth** – Nutzer-Häkchen in `trip_readiness_items`. Das ist User Evidence, keine Visa-Bestätigung.
+### Official Requirement Truth
 
-Ein Häkchen darf niemals als „Visum passt“ oder „Einreise geprüft“ erscheinen.
+Nur belastbare Provider-/Official-Evidence darf `required`, `not_required` oder `conditional` setzen.
 
-Zulässig:
+### User Readiness Truth
 
-> Automatische Einreiseprüfung derzeit nicht verfügbar
+Nutzer markieren ihren persönlichen Vorbereitungsstand, z. B. offen, erledigt oder nicht relevant.
 
-Unzulässig:
+Ein Nutzer-Häkchen ist **keine** Visa-, Impf-, Pass- oder Einreisebestätigung und verändert Official Evidence nie.
 
-> Deine Reise ist bereit
+---
 
-## Traveller-Kontext
+## Traveller Context
 
-Individuelle, datensparsame Profile in `trip_travellers` bzw. `Trip.party`.
+Jetnity besitzt trip-spezifische, individuelle Traveller-Profile in `trip_travellers` bzw. `Trip.party`.
 
-Erlaubt: Anzeigename/neutrale Bezeichnung, Staatsangehörigkeits-Code, Wohnsitz-Code, Dokumenttyp, ausstellendes Land, optionales Ablaufdatum.
+Erlaubte, datensparsame Fakten:
 
-Nicht erlaubt: Pass-/Ausweis-/Visa-Nummern, Scans, Geburtsdatum, Gesundheitsakte.
+- Anzeigename / neutrale Bezeichnung
+- Staatsangehörigkeits-Code
+- Wohnsitz-Code
+- Reisedokumenttyp
+- ausstellendes Land
+- optional Ablaufdatum des Dokuments.
 
-Die Profile sind **trip-spezifisch**, nicht accountweit. Guest und Konto teilen dieselbe Form. Unterschiedliche Nationalitäten werden nie automatisch gleichgesetzt.
+Nicht Teil dieser Foundation:
 
-`trips.travellers` bleibt die Anzahl. Slots `traveller:1` … `traveller:N` füllen fehlende Profile.
+- Pass-/Ausweis-/Visa-Nummern
+- Scans
+- Geburtsdaten
+- Gesundheitsakte
+- biometrische Rohdaten
+- Zahlungsdaten.
 
-## Requirements-Engine
+Mehrere Reisende werden getrennt ausgewertet; unterschiedliche Nationalitäten werden niemals automatisch gleichgesetzt.
 
-`Reisegraph + Reisendenkontext + Route/Transit + Datum + Provider → strukturierte Anforderungen`
+Guest und Account benutzen dieselbe fachliche Form. Guest-Daten liegen lokal und werden bei Kontoübernahme idempotent übertragen.
 
-Ohne Provider: `provider_unavailable` oder `insufficient_context`. Nie eine Visa-Matrix, nie Scraping, nie Modellantwort.
+---
 
-Anforderungsarten: Visa, eTA, Pass, ID, Passgültigkeit, Transit, Gesundheit, Impfung, Gesundheitsdokument, Einreiseformular, Versicherung, Rück-/Weiterflug, Buchungsdokument, sonstige Einreise.
+## Travel Requirements Engine
 
-Ergebnisse: `required` | `not_required` | `conditional` | `unknown`  
-Status `insufficient_context` und Freshness `provider_unavailable` / `source_temporarily_unavailable` bleiben eigene Achsen – sie werden nicht als `required`/`not_required` umgedeutet.  
-Freshness: `never_checked` | `current` | `recheck_needed` | `stale` | `provider_unavailable` | `source_temporarily_unavailable`
+Fachlicher Datenfluss:
 
-Sichere Official-Actions gibt es nur als `open_official_source` aus einer validierten HTTPS-Evidence-URL. Ohne Provider und bei veralteter oder temporär nicht erreichbarer Quelle bleibt `action` leer. Keine URLs aus Modelltext.
+`Reisegraph + Traveller Context + Route/Transit + Datum + Provider → strukturierte Requirements → Official Evaluations → User Readiness`
 
-Gesundheit: Pflicht, Empfehlung und allgemeiner Hinweis bleiben getrennt. Keine Impfpass-Uploads.
+Unterstützte Requirement-Kategorien umfassen:
 
-Transit ohne belastbare Zwischenstopps bleibt `insufficient_context` (`transit_itinerary`). Ein Abreiseort-Name allein ist kein Origin-Ländercode.
+- Visa
+- eVisa / ETA / eTA / ESTA / elektronische Reisegenehmigung
+- Reisepass
+- Identitätsdokument
+- Passgültigkeit
+- Transit
+- Health
+- Vaccination
+- Health Document
+- Entry Form
+- Insurance
+- Return / Onward Ticket
+- Booking / Travel Document
+- weitere Einreiseanforderungen.
 
-`routeFactsAusReise()` ist die einzige Origin-/Transit-Naht. Sie liefert heute bewusst leer (`quelle: 'none'`). Strukturierte Flight-/Itinerary-Ländercodes sind die nächste technische Abhängigkeit, nicht eine bereits vorhandene Graph-Fähigkeit.
+Kanonische Resultate:
 
-Offizielle `required` / `not_required` / `conditional` Aussagen brauchen provider-neutrale Official Evidence: Provider-Identität, zeitlich plausibles `checkedAt`, Authority und/oder Rule Reference. Eine Source URL ist für das Resultat optional; wenn vorhanden, muss sie valide HTTPS sein. Official Action gibt es nur aus einer validierten HTTPS-URL. `validFrom` in der Zukunft und abgelaufenes `validUntil` bleiben nicht `current`. Unvollständige oder ungültige Evidence bleibt `unknown`. Untrusted Evidence darf Freshness nicht `current` lassen (ADR-0111).
+- `required`
+- `not_required`
+- `conditional`
+- `unknown`
 
-Ein Provider darf `insufficient_context` mit strukturierten `missingFacts` zurückgeben. Nur tatsächlich fehlende Fakten werden übernommen; bekannte Angaben werden nicht erneut verlangt.
+Zusätzliche Zustände / Achsen:
 
-## Progressive Missing Facts
+- `insufficient_context`
+- `provider_unavailable`
+- `source_temporarily_unavailable`
+- `never_checked`
+- `current`
+- `recheck_needed`
+- `stale`.
 
-Die Engine fragt nur fehlende, relevante Angaben. Bekannte Fakten werden nicht erneut verlangt. Keine Dokumentnummern.
+---
 
-## User Readiness
+## Provider-Port
 
-Unverändert eigene Domäne `trip_readiness_items`, kein `trip_items.kind`. Context-Fingerprint macht alte Nutzer-Checks nach Reiseänderung `stale` / `not_applicable`.
+Die Provider-Grenze ist async und provider-neutral.
 
-## Offizielle Naht
+- Ein echter Provider darf fehlschlagen oder temporär nicht erreichbar sein, ohne dass Jetnity daraus regulatorische Aussagen erfindet.
+- Throw/Timeout bleibt fail closed.
+- Provider kann strukturierte `missingFacts` zurückgeben.
+- Bekannte Fakten werden nicht erneut angefragt.
+- `evaluations[]` ist die kanonische neue Official-Truth.
+- alte/Legacy-Zusammenfassungen dürfen keine neue Official-Entscheidung treffen.
 
-`POST /api/readiness/requirements` ist geschlossen.
+Aktuell bevorzugter späterer Kandidat: **IATA Timatic / Timatic AutoCheck**.
 
-- Body-Cap, Rate-Limit, `Cache-Control: private, no-store`
-- Browser- oder LLM-Felder (`officialResult`, `llmResult`) werden ignoriert
-- Source-URLs nur `https`, ohne Credentials
-- Factory gibt `null` zurück; Tests dürfen einen Port injizieren
-- Kanonische Antwort und einzige neue Official-Truth ist `evaluations[]` (Traveller × Destination × Transit × Requirement Type)
-- `official` bleibt eine explizit reduzierte Legacy-Zusammenfassung, immer `result: 'unknown'`, und darf keine neue Logikentscheidung treffen
-- Provider-Port ist async; Throw/Timeout bleibt fail closed (`source_temporarily_unavailable` bzw. `provider_unavailable`)
-- UI kann gelieferte Evaluations empfangen; ohne Lieferung bleibt der lokale fail-closed Fallback
-- Teilweise Transit-Providerzeilen bleiben vollständig: fehlendes angefragtes Transitland → `unknown`; unangefragtes Transitland wird ignoriert
+Es besteht noch **kein Vertrag**, kein Secret und keine aktive Provider-Anbindung.
 
-Bevorzugter späterer Kandidat: IATA Timatic / Timatic AutoCheck. Die Domain bleibt provider-neutral. Kein Vertrag, kein Secret, kein Fake-Adapter.
+---
 
-## Gast und Konto
+## Evidence Trust / Gültigkeit
 
-- Gast: `localStorage` (`readinessItems`, `party`)
-- Konto: `trip_readiness_items` und `trip_travellers` über RLS
-- Guest → Account: nach `reise_anlegen()` zuerst Party, dann Readiness
-- `reise_anlegen()` / `reise_aendern()` bleiben unverändert
+Für vertrauenswürdige Official Results gelten provider-neutrale Trust-Grenzen.
+
+Erforderlich sind u. a.:
+
+- Provider-Identität
+- zeitlich plausibles `checkedAt`
+- Authority und/oder Rule Reference
+- korrekter Traveller-/Destination-/Transit-Kontext
+- Context Fingerprint.
+
+Eine Source URL ist für das regulatorische Resultat nicht zwingend, aber falls vorhanden muss sie valide HTTPS sein.
+
+Eine klickbare Official Action wird nur aus validierter HTTPS-Evidence erzeugt. Keine URLs aus Modelltext.
+
+Zeitliche Regeln:
+
+- zukünftiges `validFrom` → nicht `current`
+- abgelaufenes `validUntil` → `recheck_needed`
+- deutlich unplausibles zukünftiges `checkedAt` → fail closed
+- untrusted Evidence darf Freshness nicht `current` lassen.
+
+---
+
+## Multi-Transit
+
+Mehrere Transitländer werden getrennt behandelt.
+
+Wenn der Provider für ein angefragtes Transitland keine Zeile liefert, bleibt dieses Transitland `unknown` statt aus der Liste zu verschwinden.
+
+Unangefragte Transitländer aus Provider-Antworten werden ignoriert.
+
+---
+
+## Route-/Transit-Naht
+
+`routeFactsAusReise()` ist die zentrale Naht für strukturierte Origin-/Transit-Fakten.
+
+Aktuell liefert sie bewusst `quelle: 'none'`, solange der Reisegraph keine belastbaren Flight-/Itinerary-Ländercodes bereitstellt.
+
+Jetnity rät **nicht** aus Ortsnamen oder Place-Namen auf Länder.
+
+Das ist die nächste strukturelle Abhängigkeit für vollautomatische Transitprüfung.
+
+---
+
+## Health / Vaccination
+
+Jetnity kann regulatorische Health-/Vaccination-Requirements als eigene Requirement-Typen behandeln.
+
+Strikte Trennung:
+
+- verpflichtende Einreiseanforderung
+- regulatorischer Gesundheitsnachweis
+- offizielle Empfehlung
+- allgemeiner Reisehinweis
+- unbekannt.
+
+Keine Impfpass-Uploads oder persönliche Gesundheitsakte in Foundation C.
+
+Ohne echten Provider macht Jetnity keine Behauptung, wer welche Impfung braucht.
+
+---
+
+## User Readiness / Reiseänderungen
+
+User-Readiness liegt in `trip_readiness_items`.
+
+Context Fingerprints sorgen dafür, dass alte Nutzer-Checks nach relevanten Änderungen nicht still weiter als aktuell gelten.
+
+Relevante Änderungen können u. a. sein:
+
+- Destination
+- Datum
+- Route / Transit
+- Traveller
+- Nationalität
+- Wohnsitz
+- Dokumenttyp
+- ausstellendes Land
+- Dokumentablauf.
+
+Je nach Änderung werden Punkte stale, recheck-needed oder nicht mehr relevant.
+
+---
 
 ## UX
 
-Kein sechster Haupt-Tab. In der mobilen Übersicht und auf Desktop nach dem Reisekopf: **Einreise & Reisevorbereitung**.
+Kein sechster Haupt-Tab.
 
-Zuerst offizielle Prüfung und fehlende Angaben, danach die persönliche Vorbereitung. Status nicht nur über Farbe.
+Im Trip Workspace erscheint:
 
-## Development vs Production
+**Einreise & Reisevorbereitung**
 
-- `20260822010000_trip_readiness_items` und `20260822020000_trip_travellers` nur Development
-- Production unverändert
-- keine neuen Secrets, keine neuen laufenden Kosten
+Die Oberfläche zeigt zuerst Official Status / fehlende Fakten und danach persönliche Vorbereitung.
 
-## Nachweis Draft-PR #32
+Der Nutzer sieht u. a.:
 
-Truth-Freshness-Fix (ADR-0111) auf Head `64aa15a7`:
+- offen
+- erledigt
+- erneut prüfen
+- nicht relevant
+- fehlende Traveller-Fakten
+- Official Requirement Status, sobald Evidence vorhanden ist.
 
-- Tests **1252/1252**
-- Typecheck, Lint, Hygiene, Auth-Konfiguration und Production-Build grün
+Status wird nicht nur über Farbe vermittelt.
+
+---
+
+## API / Security
+
+`POST /api/readiness/requirements` ist geschlossen und fail closed.
+
+Schutzmaßnahmen:
+
+- Body-Cap
+- Rate-Limit
+- `Cache-Control: private, no-store`
+- Browser-/LLM-Felder können Official Truth nicht setzen
+- kein Client-Secret
+- kein Service-Role-Weg im Browser
+- Official Source URLs nur HTTPS ohne Credentials.
+
+---
+
+## Persistenz / Supabase Production
+
+Production-Migrationen:
+
+- `20260822010000_trip_readiness_items`
+- `20260822020000_trip_travellers`
+
+Beide sind auf Production angewendet und verifiziert.
+
+RLS:
+
+- aktiv auf beiden Tabellen
+- Policies nur für `authenticated`
+- Owner-Grenze `user_id = auth.uid()`
+- `anon` / `public` ohne Tabellenrechte.
+
+---
+
+## Qualitätsnachweis
+
+Finaler Foundation-C-Stand vor Merge:
+
+- `npm test`: **1252/1252**
+- Typecheck grün
+- Lint grün
+- Hygiene grün
+- Auth-Konfiguration grün
+- Production-Build grün
 - Trip-Workspace-Audit WebKit + Chromium: **678 Kombinationen, 0 Fehler**
 - Activities-Regression: **184 Kombinationen, 0 Fehler**
-- GitHub CI und Vercel Preview grün
-- Preview: `https://jetnity-app-git-feat-travel-readiness-f-f8117d-jetnity-e1b93c82.vercel.app`
-- Development-Migration angewendet; Production-Schema unverändert
+- GitHub CI grün
+- Vercel Preview READY
+
+Nach Merge:
+
+- `main` Squash-Merge: `b50d2ce9ebc4e50da858f67258f94f887b183f79`
+- Vercel Production für diesen Merge-Commit: **READY**
+- Supabase Production-Schema: verifiziert.
+
+---
+
+## Noch offen
+
+Foundation C selbst ist abgeschlossen. Noch fehlen für das volle Nutzerziel:
+
+1. strukturierte Origin-/Transit-Ländercodes aus echten Flight-/Itinerary-Daten
+2. echter vertrauenswürdiger Travel-Requirements-Provider
+3. Preis-/Lizenz-/Datenschutzprüfung für Timatic oder gleichwertigen Provider.
+
+Bis dahin gilt:
+
+> **Keine Fake-Regeln. Keine regulatorischen Aussagen ohne Evidence. `unknown` bleibt `unknown`.**
