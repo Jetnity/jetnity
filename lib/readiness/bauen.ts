@@ -5,7 +5,7 @@
 
 import { READINESS_GRENZEN } from '@/lib/readiness/domain'
 import { readinessFingerprint } from '@/lib/readiness/fingerprint'
-import { punktFuerReadiness, readinessReisekontext } from '@/lib/readiness/kontext'
+import { punktFuerReadiness, readinessReisekontext, routeFingerprintFelder } from '@/lib/readiness/kontext'
 import { enthaltSensitiveDaten, type ReadinessEingabe } from '@/lib/readiness/schema'
 import type { Trip, TripReadinessItem } from '@/types/trips'
 
@@ -73,6 +73,7 @@ export function readinessItemBauen(
       originPlaceId: punkt?.originPlaceId ?? null,
       destinationPlaceId: punkt?.destinationPlaceId ?? null,
       title,
+      ...routeFingerprintFelder(reise),
     }),
     createdAt: bestehend?.createdAt ?? jetzt,
     updatedAt: jetzt,

@@ -37,6 +37,7 @@ import {
 } from '@/lib/trips/mietwagen-felder'
 import { TAGE_MAXIMUM } from '@/lib/trips/tage'
 import { partySchema, readinessItemsSchema } from '@/lib/readiness/schema'
+import { flugRouteItinerarySchema } from '@/lib/route/schema'
 
 /** Höchstwerte, die auch die Datenbank kennt. An einer Stelle, damit sie gleich bleiben. */
 export const GRENZEN = {
@@ -181,6 +182,7 @@ const planpunktSchema = z.object({
   vehicleClass: z.unknown().transform(vehicleClassLesen).nullable().default(null),
   transmission: z.unknown().transform(transmissionLesen).nullable().default(null),
   rentalEvidence: z.unknown().transform(rentalEvidenceLesen).nullable().default(null),
+  routeItinerary: flugRouteItinerarySchema.nullable().optional().default(null),
 })
   .transform((punkt) => {
     const darfBuchen = kannBuchungMarkieren(punkt)
@@ -222,6 +224,7 @@ const planpunktSchema = z.object({
       vehicleClass: mietwagen ? punkt.vehicleClass : null,
       transmission: mietwagen ? punkt.transmission : null,
       rentalEvidence: hatMietwagen ? ('user' as const) : null,
+      routeItinerary: punkt.kind === 'flight' ? punkt.routeItinerary : null,
     }
   })
 
@@ -403,6 +406,9 @@ export function reiseLesen(wert: unknown): Trip | null {
 // Sie ist keine Umschrift des Reisegraphen, sondern sein Ausschnitt: Was
 // `public.reise_anlegen()` liest, steht hier – und nur das. Ein Feld, das die
 // Funktion nicht liest, mitzuschicken wäre die Behauptung, es käme an.
+//
+// Ausnahme: `route_itinerary` liest die RPC nicht. Die App schreibt die
+// validierte Itinerary nach dem Insert in `trip_items.metadata`.
 
 const nutzlastPunktSchema = z.object({
   kind: z.enum(TRIP_ITEM_KINDS),
@@ -436,6 +442,7 @@ const nutzlastPunktSchema = z.object({
   rental_supplier: optionalerText(GRENZEN.titel).nullable().default(null),
   vehicle_class: z.unknown().transform(vehicleClassLesen).nullable().default(null),
   transmission: z.unknown().transform(transmissionLesen).nullable().default(null),
+  route_itinerary: flugRouteItinerarySchema.nullable().optional().default(null),
 })
   .superRefine((punkt, ctx) => {
     if ((punkt.price_amount === null) !== (punkt.price_currency === null)) {
@@ -470,6 +477,7 @@ const nutzlastPunktSchema = z.object({
       rental_supplier: mietwagen ? punkt.rental_supplier : null,
       vehicle_class: mietwagen ? punkt.vehicle_class : null,
       transmission: mietwagen ? punkt.transmission : null,
+      route_itinerary: punkt.kind === 'flight' ? punkt.route_itinerary : null,
     }
   })
 

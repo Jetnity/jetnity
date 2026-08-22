@@ -213,8 +213,8 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
         <FlugSuche
           reise={reise}
           tagId={reise.days[0]?.id ?? null}
-          onUebernehmen={async (tagId, option: FlugOptionSichtbar) => {
-            const aufnahme = alsFlugMomentaufnahme(option)
+          onUebernehmen={async (tagId, option: FlugOptionSichtbar, refs) => {
+            const aufnahme = alsFlugMomentaufnahme(option, refs)
             if (!aufnahme) return 'Diese Flugoption ist unvollständig.'
             try {
               setReise(gastFlugUebernehmen(reise, aufnahme, tagId))

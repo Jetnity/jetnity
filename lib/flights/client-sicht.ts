@@ -11,6 +11,7 @@
 import type { BewerteteFlugOption, FlugMarke, FlugOption } from '@/lib/flights/domain'
 import { FLUG_ABDECKUNGSHINWEIS, type FlugSuchStatus } from '@/lib/flights/domain'
 import { flugOptionLesen } from '@/lib/flights/schema'
+import type { FlughafenReferenzKarte } from '@/lib/route/domain'
 
 const VERBOTENE_SCHLUESSEL = [
   'access_token',
@@ -37,6 +38,7 @@ export type FlugSucheAntwort = {
   message: string
   coverageNote: string
   options: FlugOptionSichtbar[]
+  airportRefs?: FlughafenReferenzKarte
 }
 
 function hatVerbotenes(wert: unknown, pfad: string[] = []): string | null {
@@ -72,6 +74,7 @@ export function sucheFuerClient(ergebnis: {
   status: FlugSuchStatus
   message: string
   options: BewerteteFlugOption[]
+  airportRefs?: FlughafenReferenzKarte
 }): FlugSucheAntwort {
   const options = ergebnis.options
     .map(optionFuerClient)
@@ -82,6 +85,7 @@ export function sucheFuerClient(ergebnis: {
     message: ergebnis.message,
     coverageNote: FLUG_ABDECKUNGSHINWEIS,
     options,
+    airportRefs: ergebnis.airportRefs && Object.keys(ergebnis.airportRefs).length > 0 ? ergebnis.airportRefs : undefined,
   }
 
   const verboten = hatVerbotenes(koerper)

@@ -6,9 +6,14 @@
 
 import { Clock3, Plane } from 'lucide-react'
 
+import FlugRoute from '@/components/trips/FlugRoute'
 import type { FlugOptionSichtbar } from '@/lib/flights/client-sicht'
 import { stoppKurztext } from '@/lib/flights/uebernahme'
 import { dauerLesbar } from '@/lib/flights/zeit'
+import { routeAnzeigeAusOption } from '@/lib/route/anzeige'
+import type { FlughafenReferenzKarte } from '@/lib/route/domain'
+import { routeFactsAusItinerary } from '@/lib/route/ableitung'
+import { itineraryAusFlugOption } from '@/lib/route/itinerary'
 import { betragLesbar } from '@/lib/trips/bezeichnungen'
 import { cn } from '@/lib/utils'
 
@@ -28,13 +33,19 @@ function beinRoute(option: FlugOptionSichtbar, index: number) {
 
 export default function FlugKarte({
   option,
+  refs,
   laeuft,
   onUebernehmen,
 }: {
   option: FlugOptionSichtbar
+  refs?: FlughafenReferenzKarte
   laeuft: boolean
   onUebernehmen: () => void
 }) {
+  const anzeige = routeAnzeigeAusOption(option, refs)
+  const itinerary = itineraryAusFlugOption(option, refs)
+  const facts = itinerary ? routeFactsAusItinerary(itinerary, option.id) : null
+
   return (
     <article className="rounded-2xl border border-line-200 bg-white p-4 sm:p-5">
       <div className="flex flex-wrap items-center gap-2">
@@ -53,6 +64,12 @@ export default function FlugKarte({
         ))}
         <span className="text-xs text-ink-700">{option.airlineName}</span>
       </div>
+
+      {anzeige ? (
+        <div className="mt-4">
+          <FlugRoute facts={facts} anzeige={anzeige} />
+        </div>
+      ) : null}
 
       <div className="mt-4 grid gap-4">
         {option.legs.map((_, index) => {

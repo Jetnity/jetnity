@@ -34,6 +34,7 @@ const GESCHUETZTE_FELDER = [
   'vehicleClass',
   'transmission',
   'rentalEvidence',
+  'routeItinerary',
 ] as const
 
 type GeschuetztesFeld = (typeof GESCHUETZTE_FELDER)[number]
@@ -64,6 +65,7 @@ function handelswerte(punkt: TripItem): Pick<TripItem, GeschuetztesFeld> {
     vehicleClass: punkt.vehicleClass,
     transmission: punkt.transmission,
     rentalEvidence: punkt.rentalEvidence,
+    routeItinerary: punkt.routeItinerary ?? null,
   }
 }
 
@@ -100,6 +102,7 @@ function leer(): Pick<TripItem, GeschuetztesFeld> {
     vehicleClass: null,
     transmission: null,
     rentalEvidence: null,
+    routeItinerary: null,
   }
 }
 

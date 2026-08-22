@@ -5,6 +5,8 @@
 // Flughafen, Bahnhof, Hotel oder Hafen. Kein erfundener Mindestumstieg.
 //
 // Fehlende oder mehrdeutige Graphdaten bleiben unbestimmt.
+// Airport-Change und Connection Duration liegen in `lib/route`;
+// diese Datei rät sie nicht aus Flugtiteln.
 // Frei von React, Next und Providern.
 
 import { istGebucht } from '@/lib/trips/buchung'

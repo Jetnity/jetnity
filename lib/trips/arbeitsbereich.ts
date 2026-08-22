@@ -13,6 +13,8 @@
 
 import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
 import { mietwagenBestand } from '@/lib/rental-cars/bestand'
+import { routeFactsAusGraph } from '@/lib/route/ableitung'
+import { routeKompaktOhneCode } from '@/lib/route/anzeige'
 import { flugAbdeckung } from '@/lib/trips/flug-abdeckung'
 import { unterkunftAbdeckung } from '@/lib/trips/naechte-abdeckung'
 import type { Trip, TripItem, TripItemKind } from '@/types/trips'
@@ -110,6 +112,9 @@ export function planStatus(reise: Trip, ohneTag: readonly TripItem[] = []): Plan
 export function bereichStatus(reise: Trip, ohneTag: readonly TripItem[] = []): BereichStatus[] {
   const punkte = planpunkteSammeln(reise, ohneTag)
   const fluege = flugAbdeckung(reise, ohneTag)
+  const route = routeFactsAusGraph({ days: reise.days, ohneTag: [...ohneTag, ...reise.ohneTag] })
+  const routeText = routeKompaktOhneCode(route)
+  const fluegeText = routeText ? `${routeText} · ${fluege.zusammenfassung}` : fluege.zusammenfassung
   const unterkunft = unterkunftAbdeckung(reise, ohneTag)
   const mobilitaet = mobilitaetsAbdeckung(reise, ohneTag)
   const mietwagen = mietwagenBestand(reise, ohneTag)
@@ -123,7 +128,7 @@ export function bereichStatus(reise: Trip, ohneTag: readonly TripItem[] = []): B
     {
       bereich: 'fluege',
       anzahl: anzahlVon(punkte, 'flight'),
-      text: fluege.zusammenfassung,
+      text: fluegeText,
     },
     {
       bereich: 'unterkunft',

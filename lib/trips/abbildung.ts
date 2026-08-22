@@ -32,6 +32,7 @@ import {
   type TripStage,
   type TripStatus,
 } from '@/types/trips'
+import { itineraryAusMetadata } from '@/lib/route/metadata'
 import type { ReiseNutzlast } from '@/lib/trips/schema'
 import { buchungsquelleLesen, buchungsstatusLesen, kannBuchungMarkieren } from '@/lib/trips/buchung'
 import {
@@ -125,6 +126,7 @@ export type PunktZeile = {
   vehicle_class?: string | null
   transmission?: string | null
   rental_evidence?: string | null
+  metadata?: unknown
   created_at: string
 }
 
@@ -219,6 +221,7 @@ export function planpunktAus(zeile: PunktZeile): TripItem {
           }
         : leereMietwagen()),
       ...(transfer || mietwagen ? {} : leereMobilitaet()),
+      routeItinerary: kind === 'flight' ? itineraryAusMetadata(zeile.metadata) : null,
     }),
   )
 }
@@ -395,6 +398,7 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
           rental_supplier: punkt.rentalSupplier,
           vehicle_class: punkt.vehicleClass,
           transmission: punkt.transmission,
+          route_itinerary: punkt.kind === 'flight' ? punkt.routeItinerary ?? null : null,
         })),
       }
     }),
@@ -424,6 +428,7 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
       rental_supplier: punkt.rentalSupplier,
       vehicle_class: punkt.vehicleClass,
       transmission: punkt.transmission,
+      route_itinerary: punkt.kind === 'flight' ? punkt.routeItinerary ?? null : null,
     })),
   }
 }

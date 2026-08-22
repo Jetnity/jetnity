@@ -11,17 +11,20 @@ import { revalidatePath } from 'next/cache'
 
 import { alsFlugMomentaufnahme } from '@/lib/flights/uebernahme'
 import { ersteFlugmeldung, flugKontoUebernahmeSchema } from '@/lib/flights/schema'
+import { flughafenReferenzLesen, iatasAusOption } from '@/lib/route/flughafen-lesen'
+import { metadataAusItinerary } from '@/lib/route/metadata'
 import { NICHT_ANGEMELDET, konto, meldungAus, type Aktionsergebnis } from '@/lib/trips/anlegen'
 
 export async function flugInReiseUebernehmen(eingabe: unknown): Promise<Aktionsergebnis<null>> {
   const geprueft = flugKontoUebernahmeSchema.safeParse(eingabe)
   if (!geprueft.success) return { ok: false, meldung: ersteFlugmeldung(geprueft.error) }
 
-  const aufnahme = alsFlugMomentaufnahme(geprueft.data.option)
-  if (!aufnahme) return { ok: false, meldung: 'Diese Flugoption ist unvollständig.' }
-
   const { supabase, benutzerId } = await konto()
   if (!benutzerId) return { ok: false, meldung: NICHT_ANGEMELDET }
+
+  const refs = await flughafenReferenzLesen(iatasAusOption(geprueft.data.option), supabase)
+  const aufnahme = alsFlugMomentaufnahme(geprueft.data.option, refs)
+  if (!aufnahme) return { ok: false, meldung: 'Diese Flugoption ist unvollständig.' }
 
   let zaehlung = supabase
     .from('trip_items')
@@ -51,6 +54,7 @@ export async function flugInReiseUebernehmen(eingabe: unknown): Promise<Aktionse
     provider: aufnahme.provider,
     external_ref: aufnahme.externalRef,
     booking_url: null,
+    metadata: metadataAusItinerary(aufnahme.routeItinerary),
   })
 
   if (error) return { ok: false, meldung: meldungAus(error, status) }

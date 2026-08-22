@@ -10,11 +10,14 @@ import { optionenBewerten } from '@/lib/flights/ranking'
 import { flugSucheErlaubt } from '@/lib/flights/rate-limit'
 import { ersteFlugmeldung, flugSuchanfrageSchema } from '@/lib/flights/schema'
 import { flugZustand, flugZustandMeldung, type FlugUmgebung, type FlugZustand } from '@/lib/flights/zustand'
+import type { FlughafenReferenzKarte } from '@/lib/route/domain'
+import { iatasAusOption } from '@/lib/route/referenz'
 
 export type SuchePorts = {
   zustand: FlugZustand
   provider: FlugProvider | null
   kennung: string
+  flughafenReferenz?: (codes: readonly string[]) => Promise<FlughafenReferenzKarte>
 }
 
 function sucheOhneProvider(zustand: FlugZustand): FlugSucheAntwort {
@@ -70,10 +73,13 @@ export async function fluegeSuchen(
         : status === 'partial'
           ? 'Einige Angebote konnten nicht gelesen werden. Die übrigen Verbindungen siehst du unten.'
           : 'Verbindungen gefunden.'
+    const airportRefs = ports.flughafenReferenz
+      ? await ports.flughafenReferenz(bewertet.flatMap((option) => iatasAusOption(option)))
+      : {}
 
     return {
       httpStatus: 200,
-      koerper: sucheFuerClient({ status, message, options: bewertet }),
+      koerper: sucheFuerClient({ status, message, options: bewertet, airportRefs }),
     }
   } catch (fehler) {
     if (fehler instanceof FlugProviderFehler) {

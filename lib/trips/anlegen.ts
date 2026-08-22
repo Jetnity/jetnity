@@ -20,6 +20,7 @@ import 'server-only'
 import { revalidatePath } from 'next/cache'
 
 import { problemAus } from '@/lib/api/datenbank-lesen'
+import { flugRoutenInReiseSchreiben } from '@/lib/route/schreiben'
 import { createServerActionClient } from '@/lib/supabase/server'
 import type { ReiseNutzlast } from '@/lib/trips/schema'
 import type { Json } from '@/types/supabase'
@@ -90,6 +91,8 @@ export async function reiseAusNutzlastAnlegen(
         'Die Reise wurde angelegt, aber ohne Kennung gemeldet. Bitte lade „Meine Reisen" neu.',
     }
   }
+
+  await flugRoutenInReiseSchreiben(supabase, data, nutzlast)
 
   revalidatePath('/reisen')
   return { ok: true, wert: data }
