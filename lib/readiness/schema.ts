@@ -170,6 +170,7 @@ export const readinessUebernahmeSchema = z.object({
 })
 
 export const readinessAnforderungAnfrageSchema = z.object({
+  originCountryCode: landescode.nullable().optional().default(null),
   destinationCountryCode: landescode.nullable().optional().default(null),
   destinationCountryCodes: z
     .array(landescode)

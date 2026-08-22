@@ -846,6 +846,76 @@ const ZUSTAENDE = {
     oeffneVorbereitung: true,
     nutzlast: { reise: reise({ travellers: 1 }) },
   },
+  'readiness-zwei-nationalitaeten': {
+    kompakt: 'Reisende 2',
+    desktop: 'Reisende 2',
+    oeffneVorbereitung: true,
+    nutzlast: {
+      reise: reise({
+        travellers: 2,
+        party: [
+          {
+            id: 'party-1',
+            clientRef: 'traveller:1',
+            label: 'Reisende 1',
+            nationalityCountryCode: 'CH',
+            residenceCountryCode: 'CH',
+            documentType: 'passport',
+            documentIssuingCountryCode: 'CH',
+            documentExpiresOn: '2030-01-01',
+            createdAt: JETZT,
+            updatedAt: JETZT,
+          },
+          {
+            id: 'party-2',
+            clientRef: 'traveller:2',
+            label: 'Reisende 2',
+            nationalityCountryCode: 'DE',
+            residenceCountryCode: 'DE',
+            documentType: 'passport',
+            documentIssuingCountryCode: 'DE',
+            documentExpiresOn: '2029-06-01',
+            createdAt: JETZT,
+            updatedAt: JETZT,
+          },
+        ],
+      }),
+    },
+  },
+  'readiness-transit-mehrere-laender': {
+    kompakt: 'Noch nicht automatisch geprüft',
+    desktop: 'Noch nicht automatisch geprüft',
+    oeffneVorbereitung: true,
+    nutzlast: {
+      reise: reise({
+        travellers: 1,
+        stages: [
+          etappe({ name: 'Bangkok', countryCode: 'TH' }),
+          etappe({
+            id: 'stage-2',
+            position: 2,
+            name: 'Tokio',
+            countryCode: 'JP',
+            placeId: 'geonames:1850147',
+          }),
+        ],
+        party: [
+          {
+            id: 'party-ch',
+            clientRef: 'traveller:1',
+            label: 'Reisende 1',
+            nationalityCountryCode: 'CH',
+            residenceCountryCode: 'CH',
+            documentType: 'passport',
+            documentIssuingCountryCode: 'CH',
+            documentExpiresOn: '2030-01-01',
+            createdAt: JETZT,
+            updatedAt: JETZT,
+          },
+        ],
+      }),
+    },
+  },
   'readiness-langer-titel': {
     kompakt: 'Reiseadapter und lokale SIM-Karte vor der Abreise noch besorgen und die Unterlagen ordnen',
     desktop: 'Reiseadapter und lokale SIM-Karte vor der Abreise noch besorgen und die Unterlagen ordnen',

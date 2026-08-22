@@ -67,6 +67,8 @@ describe('Readiness-Schema', () => {
   test('keine sensiblen Dokumentfelder', () => {
     assert.equal(enthaltSensitiveDaten('Passnummer 1234567'), true)
     assert.equal(enthaltSensitiveDaten('Geburtsdatum 01.01.1990'), true)
+    assert.equal(enthaltSensitiveDaten('Visa-Nr 998877'), true)
+    assert.equal(enthaltSensitiveDaten('Impfpass gelb'), true)
     assert.equal(enthaltSensitiveDaten('Reiseadapter einpacken'), false)
     const geprueft = readinessEingabeSchema.safeParse({
       kind: 'preparation',
@@ -74,6 +76,12 @@ describe('Readiness-Schema', () => {
       title: 'Passport X1234567',
     })
     assert.equal(geprueft.success, false)
+    const label = readinessEingabeSchema.safeParse({
+      kind: 'preparation',
+      userStatus: 'open',
+      title: 'Kreditkarte 411111',
+    })
+    assert.equal(label.success, false)
   })
 
   test('Browser darf official evidence nicht setzen', () => {

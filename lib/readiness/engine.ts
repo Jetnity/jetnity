@@ -24,20 +24,7 @@ import {
 import { readinessReisekontext } from '@/lib/readiness/kontext'
 import type { Trip } from '@/types/trips'
 
-const KERN_TYPEN = [
-  'visa',
-  'electronic_travel_authorization',
-  'passport',
-  'identity_document',
-  'passport_validity',
-  'health',
-  'vaccination',
-  'health_document',
-  'entry_form',
-  'insurance',
-  'onward_or_return_ticket',
-  'other_entry_requirement',
-] as const
+const KERN_TYPEN = OFFICIAL_REQUIREMENT_TYPES
 
 export function officialFingerprint(anfrage: {
   travellerClientRef: string | null
@@ -46,6 +33,7 @@ export function officialFingerprint(anfrage: {
   documentType: string | null
   documentIssuingCountryCode: string | null
   documentExpiresOn: string | null
+  originCountryCode?: string | null
   destinationCountryCode: string | null
   transitCountryCodes: readonly string[]
   startDate: string | null
@@ -60,6 +48,7 @@ export function officialFingerprint(anfrage: {
     `doc=${anfrage.documentType ?? ''}`,
     `iss=${anfrage.documentIssuingCountryCode ?? ''}`,
     `exp=${anfrage.documentExpiresOn ?? ''}`,
+    `orig=${anfrage.originCountryCode ?? ''}`,
     `dest=${anfrage.destinationCountryCode ?? ''}`,
     `tr=${[...anfrage.transitCountryCodes].sort().join(',')}`,
     `start=${anfrage.startDate ?? ''}`,
@@ -72,9 +61,9 @@ function requirementsAnfrageAusReise(reise: Trip): RequirementsAnfrage {
   const kontext = readinessReisekontext(reise)
   const slots = travellerSlots(reise).filter((slot) => slot.applicable)
   return {
-    originCountryCode: null,
+    originCountryCode: kontext.originCountryCode,
     destinationCountryCodes: kontext.destinationCountries,
-    transitCountryCodes: [],
+    transitCountryCodes: kontext.transitCountryCodes,
     startDate: kontext.startDate,
     endDate: kontext.endDate,
     travellers: slots.map((slot): RequirementsTravellerInput => ({
@@ -88,11 +77,18 @@ function requirementsAnfrageAusReise(reise: Trip): RequirementsAnfrage {
   }
 }
 
-function fehlendeFakten(anfrage: RequirementsAnfrage, traveller: RequirementsTravellerInput): MissingFact[] {
+function fehlendeFakten(
+  anfrage: RequirementsAnfrage,
+  traveller: RequirementsTravellerInput,
+  requirementType?: OfficialEvaluation['requirementType'],
+): MissingFact[] {
   const fakten: MissingFact[] = []
   if (!traveller.nationalityCountryCode) fakten.push('nationality')
   if (anfrage.destinationCountryCodes.length === 0) fakten.push('destination_country')
   if (!anfrage.startDate && !anfrage.endDate) fakten.push('travel_dates')
+  if (requirementType === 'transit' && anfrage.transitCountryCodes.length === 0) {
+    fakten.push('transit_itinerary')
+  }
   return fakten
 }
 
@@ -103,7 +99,7 @@ function leerFuer(
   requirementType: OfficialEvaluation['requirementType'],
   extraMissing: MissingFact[] = [],
 ): OfficialEvaluation {
-  const missing = [...new Set([...fehlendeFakten(anfrage, traveller), ...extraMissing])]
+  const missing = [...new Set([...fehlendeFakten(anfrage, traveller, requirementType), ...extraMissing])]
   const fingerprint = officialFingerprint({
     travellerClientRef: traveller.clientRef,
     nationalityCountryCode: traveller.nationalityCountryCode,
@@ -111,6 +107,7 @@ function leerFuer(
     documentType: traveller.documentType,
     documentIssuingCountryCode: traveller.documentIssuingCountryCode,
     documentExpiresOn: traveller.documentExpiresOn,
+    originCountryCode: anfrage.originCountryCode,
     destinationCountryCode,
     transitCountryCodes: anfrage.transitCountryCodes,
     startDate: anfrage.startDate,
@@ -147,6 +144,7 @@ function zeileUebernehmen(
     documentType: traveller.documentType,
     documentIssuingCountryCode: traveller.documentIssuingCountryCode,
     documentExpiresOn: traveller.documentExpiresOn,
+    originCountryCode: anfrage.originCountryCode,
     destinationCountryCode: destination,
     transitCountryCodes: transit ? [transit] : anfrage.transitCountryCodes,
     startDate: anfrage.startDate,
@@ -160,7 +158,7 @@ function zeileUebernehmen(
     validUntil: zeile.validUntil ?? null,
     hasProvider: true,
   })
-  const missing = fehlendeFakten(anfrage, traveller)
+  const missing = fehlendeFakten(anfrage, traveller, zeile.requirementType)
   if (missing.length > 0) {
     return leerFuer(anfrage, traveller, destination, zeile.requirementType, missing)
   }
@@ -253,12 +251,6 @@ export function requirementsAuswerten(
           merken(leerFuer(anfrage, traveller, destination, typ))
         }
       }
-      merken(
-        leerFuer(anfrage, traveller, destination, 'transit', [
-          ...fehlendeFakten(anfrage, traveller),
-          'transit_itinerary',
-        ]),
-      )
     }
   }
 

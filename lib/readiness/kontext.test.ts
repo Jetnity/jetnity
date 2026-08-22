@@ -153,6 +153,12 @@ describe('Readiness-Kontext und Stale-Logik', () => {
     assert.equal(einreise[0]?.countryCode, 'TH')
   })
 
+  test('Abreiseort-Name ist kein Origin-Ländercode und kein Transit', () => {
+    const kontext = readinessReisekontext(beispielreise({ origin: 'Zürich' }))
+    assert.equal(kontext.originCountryCode, null)
+    assert.deepEqual(kontext.transitCountryCodes, [])
+  })
+
   test('fehlender Country Code → unknown, kein Guess', () => {
     const reise = beispielreise({
       stages: beispielreise().stages.map((etappe) => ({ ...etappe, countryCode: null })),

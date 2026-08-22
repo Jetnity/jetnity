@@ -14,6 +14,7 @@ import { requirementsAuswerten } from '@/lib/readiness/engine'
 import { requirementsProviderAus } from '@/lib/readiness/provider'
 
 export type OfficialRequirementAnfrage = {
+  originCountryCode?: string | null
   destinationCountryCode?: string | null
   destinationCountryCodes?: string[]
   transitCountryCodes?: string[]
@@ -82,7 +83,7 @@ export function officialRequirementsPruefen(
   ]
   const evaluations = requirementsAuswerten(
     {
-      originCountryCode: null,
+      originCountryCode: landescodeLesen(anfrage.originCountryCode ?? null),
       destinationCountryCodes: destinations,
       transitCountryCodes: (anfrage.transitCountryCodes ?? [])
         .map((code) => landescodeLesen(code))

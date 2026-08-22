@@ -56,7 +56,7 @@ Freshness: `never_checked` | `current` | `recheck_needed` | `stale` | `provider_
 
 Gesundheit: Pflicht, Empfehlung und allgemeiner Hinweis bleiben getrennt. Keine Impfpass-Uploads.
 
-Transit ohne belastbare Zwischenstopps bleibt `insufficient_context` (`transit_itinerary`).
+Transit ohne belastbare Zwischenstopps bleibt `insufficient_context` (`transit_itinerary`). Ein Abreiseort-Name allein ist kein Origin-Ländercode.
 
 ## Progressive Missing Facts
 

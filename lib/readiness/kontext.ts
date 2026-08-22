@@ -11,7 +11,9 @@ export type ReadinessReisekontext = {
   startDate: string | null
   endDate: string | null
   travellers: number
+  originCountryCode: string | null
   destinationCountries: string[]
+  transitCountryCodes: string[]
   unknownCountryStages: number
   rentalCarPresent: boolean
   bookedItems: TripItem[]
@@ -44,7 +46,9 @@ export function readinessReisekontext(reise: Trip): ReadinessReisekontext {
     startDate: reise.startDate,
     endDate: reise.endDate,
     travellers: reise.travellers,
+    originCountryCode: null,
     destinationCountries,
+    transitCountryCodes: [],
     unknownCountryStages,
     rentalCarPresent,
     bookedItems,

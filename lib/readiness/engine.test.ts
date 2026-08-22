@@ -275,4 +275,118 @@ describe('Travel Requirements Engine', () => {
     assert.equal(transit?.result, 'unknown')
     assert.ok(transit?.missingFacts.includes('transit_itinerary'))
   })
+
+  test('alle Pflicht-Requirement-Typen werden pro Reisendem und Ziel bewertet', () => {
+    const evaluations = requirementsFuerReise(
+      beispielreise({
+        travellers: 1,
+        party: [reisende({ clientRef: 'traveller:1', nationalityCountryCode: 'CH' })],
+      }),
+    )
+    const typen = new Set(evaluations.map((eintrag) => eintrag.requirementType))
+    for (const typ of [
+      'visa',
+      'electronic_travel_authorization',
+      'passport',
+      'identity_document',
+      'passport_validity',
+      'transit',
+      'health',
+      'vaccination',
+      'health_document',
+      'entry_form',
+      'insurance',
+      'onward_or_return_ticket',
+      'booking_or_travel_document',
+      'other_entry_requirement',
+    ] as const) {
+      assert.ok(typen.has(typ), typ)
+    }
+  })
+
+  test('Mehrländerreise erzeugt getrennte Destination-Evaluations', () => {
+    const reise = beispielreise({
+      travellers: 1,
+      stages: [
+        { ...beispielreise().stages[0]!, countryCode: 'TH', name: 'Bangkok' },
+        { ...beispielreise().stages[1]!, countryCode: 'JP', name: 'Tokio' },
+      ],
+      party: [reisende({ clientRef: 'traveller:1', nationalityCountryCode: 'CH' })],
+    })
+    const visa = requirementsFuerReise(reise).filter((eintrag) => eintrag.requirementType === 'visa')
+    const laender = visa.map((eintrag) => eintrag.destinationCountryCode).sort()
+    assert.deepEqual(laender, ['JP', 'TH'])
+  })
+
+  test('Destination-, Datums- oder Nationalitätswechsel ändert Official Fingerprint', () => {
+    const basis = {
+      travellerClientRef: 'traveller:1',
+      nationalityCountryCode: 'CH',
+      residenceCountryCode: 'CH',
+      documentType: 'passport',
+      documentIssuingCountryCode: 'CH',
+      documentExpiresOn: '2030-01-01',
+      originCountryCode: null,
+      destinationCountryCode: 'TH',
+      transitCountryCodes: [] as string[],
+      startDate: '2026-09-12',
+      endDate: '2026-09-16',
+      requirementType: 'visa',
+    }
+    const aktuell = officialFingerprint(basis)
+    assert.notEqual(aktuell, officialFingerprint({ ...basis, destinationCountryCode: 'JP' }))
+    assert.notEqual(aktuell, officialFingerprint({ ...basis, startDate: '2026-10-01' }))
+    assert.notEqual(aktuell, officialFingerprint({ ...basis, nationalityCountryCode: 'DE' }))
+    assert.notEqual(aktuell, officialFingerprint({ ...basis, transitCountryCodes: ['QA'] }))
+  })
+
+  test('Transit-Itinerary macht transit_itinerary nicht mehr missing', () => {
+    const evaluations = requirementsAuswerten({
+      originCountryCode: 'CH',
+      destinationCountryCodes: ['TH'],
+      transitCountryCodes: ['QA'],
+      startDate: '2026-09-12',
+      endDate: '2026-09-16',
+      travellers: [
+        {
+          clientRef: 'traveller:1',
+          nationalityCountryCode: 'CH',
+          residenceCountryCode: 'CH',
+          documentType: 'passport',
+          documentIssuingCountryCode: 'CH',
+          documentExpiresOn: '2030-01-01',
+        },
+      ],
+    })
+    const transit = evaluations.find((eintrag) => eintrag.requirementType === 'transit')
+    assert.ok(transit)
+    assert.ok(!transit?.missingFacts.includes('transit_itinerary'))
+    assert.equal(transit?.result, 'unknown')
+    assert.equal(transit?.freshness, 'provider_unavailable')
+  })
+
+  test('ohne Provider erfindet die Engine keine Transit- oder Health-Aussage', () => {
+    const evaluations = requirementsAuswerten({
+      originCountryCode: 'CH',
+      destinationCountryCodes: ['TH'],
+      transitCountryCodes: ['QA'],
+      startDate: '2026-09-12',
+      endDate: '2026-09-16',
+      travellers: [
+        {
+          clientRef: 'traveller:1',
+          nationalityCountryCode: 'CH',
+          residenceCountryCode: 'CH',
+          documentType: 'passport',
+          documentIssuingCountryCode: 'CH',
+          documentExpiresOn: '2030-01-01',
+        },
+      ],
+    })
+    for (const evaluation of evaluations) {
+      assert.equal(evaluation.result, 'unknown')
+      assert.notEqual(evaluation.result, 'required')
+      assert.notEqual(evaluation.result, 'not_required')
+    }
+  })
 })
