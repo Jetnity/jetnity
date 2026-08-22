@@ -131,6 +131,7 @@ export function beispielreise(abweichung: Partial<Reisegraph> = {}): Reisegraph 
     createdAt: JETZT,
     updatedAt: JETZT,
     ohneTag: [],
+    readinessItems: [],
     ...abweichung,
   }
 }

@@ -36,6 +36,7 @@ import {
   vehicleClassLesen,
 } from '@/lib/trips/mietwagen-felder'
 import { TAGE_MAXIMUM } from '@/lib/trips/tage'
+import { readinessItemsSchema } from '@/lib/readiness/schema'
 
 /** Höchstwerte, die auch die Datenbank kennt. An einer Stelle, damit sie gleich bleiben. */
 export const GRENZEN = {
@@ -273,6 +274,7 @@ export const reiseSchema = z
     stages: z.array(etappeSchema).max(GRENZEN.etappenJeReise).default([]),
     days: z.array(reisetagSchema).max(GRENZEN.reisetageJeReise).default([]),
     ohneTag: z.array(planpunktSchema).max(GRENZEN.punkteJeReise).default([]),
+    readinessItems: readinessItemsSchema,
     createdAt: zeitstempel,
     updatedAt: zeitstempel,
   })
@@ -345,6 +347,20 @@ export const reiseSchema = z
           code: z.ZodIssueCode.custom,
           path: ['ohneTag', ort, 'stageId'],
           message: 'Dieser Planpunkt verweist auf eine unbekannte Etappe',
+        })
+      }
+    }
+
+    const punktKennungen = new Set([
+      ...reise.days.flatMap((tag) => tag.items.map((punkt) => punkt.id)),
+      ...reise.ohneTag.map((punkt) => punkt.id),
+    ])
+    for (const [ort, item] of reise.readinessItems.entries()) {
+      if (item.tripItemId && !punktKennungen.has(item.tripItemId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['readinessItems', ort, 'tripItemId'],
+          message: 'Dieser Vorbereitungspunkt verweist auf einen unbekannten Planpunkt',
         })
       }
     }

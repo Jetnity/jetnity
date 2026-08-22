@@ -2425,6 +2425,126 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 
 ---
 
+## ADR-0096 – Readiness als eigene Domäne statt `trip_items`
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32; Development-Migration; nicht Production
+
+**Entscheidung:** Reisevorbereitung ist eine eigene persistente Domäne `trip_readiness_items`, nicht ein neuer `trip_items.kind`.
+
+**Kontext:** Readiness ist kein Tagesplanpunkt und keine Buchung. Ein `kind` auf dem bestehenden Planpunkt würde Booking-, Preis- und Routing-Semantik mit Checklisten vermischen.
+
+**Alternativen:**
+
+1. *Neuer `trip_items.kind = readiness`.* Würde Coverage, Booking und den Tagesplan belasten.
+2. *JSON in `trips.metadata`.* Verstösst gegen die Schema-Regel: abgefragte Fakten sind Spalten.
+3. *Nur Client-State.* Keine Source of Truth, keine Guest→Account-Parität.
+
+**Begründung:** Eine kleine normalisierte Tabelle mit composite FK auf `trips (id, user_id)` hält Ownership, RLS und Idempotenz klar. `reise_anlegen()` und `reise_aendern()` bleiben unverändert.
+
+**Konsequenzen:**
+
+- Guest und Account teilen `Trip.readinessItems`.
+- Guest→Account läuft über eine separate Sync-Naht, nicht über eine ältere `reise_anlegen()`-Definition.
+- Production bleibt ohne diese Tabelle, bis separat freigegeben.
+
+---
+
+## ADR-0097 – Official Requirement Truth und User Preparation Truth getrennt
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** Persistiert wird nur User Evidence (`open` / `done` / `skipped`, Quelle `user`). Offizielle Visa-/Einreiseaussagen bleiben ohne Provider `unknown` und dürfen nicht aus einem Häkchen abgeleitet werden.
+
+**Kontext:** Ein Häkchen „Einreise geprüft“ ist keine behördliche Bestätigung. Mehrere Reisende haben keine individuellen Nationalitätsprofile.
+
+**Alternativen:**
+
+1. *User done als official not_required.* Irreführende Sicherheit.
+2. *Statische Country-Regeln im Repo.* Fake-Regeln, veralten still.
+3. *Modell als Quelle.* Verboten durch Logic Standard und diese Foundation.
+
+**Begründung:** Unbekannt bleibt unbekannt. Foundation C bereitet die Provider-Naht vor, täuscht sie aber nicht vor.
+
+**Konsequenzen:**
+
+- Kein globales „Reisebereit“.
+- UI trennt „Von dir erledigt“ und „Noch nicht offiziell geprüft“.
+- `POST /api/readiness/requirements` fail closed.
+
+---
+
+## ADR-0098 – Deterministischer Context-Fingerprint
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** Jeder persistierte Check trägt einen serverseitig berechneten `context_fingerprint`. Passt er nicht mehr zu den aktuellen Trip-Fakten, gilt der Check als `stale` oder `not_applicable`.
+
+**Kontext:** Ein Bangkok-Einreisecheck darf nach einem Zielwechsel nach Tokyo nicht grün bleiben. Ein Bestätigungscheck darf nach Entfernen oder `unconfirmed` des Planpunkts nicht weiter als Abdeckung zählen.
+
+**Alternativen:**
+
+1. *Checks bei jeder Reiseänderung löschen.* Verliert User Evidence und die Aufforderung „erneut prüfen“.
+2. *Browser setzt den Fingerprint.* Account-seitig untrusted.
+3. *Nur `trips.revision` vergleichen.* Zu grob: irrelevante Änderungen würden alle Checks invalidieren.
+
+**Begründung:** Die Felder je Art sind in `docs/TRAVEL_READINESS.md` und `lib/readiness/fingerprint.ts` festgelegt. Der Server berechnet sie aus der geladenen Reise.
+
+**Konsequenzen:**
+
+- Guest berechnet lokal aus dem Gastgraphen, Account nur serverseitig.
+- `reise_aendern()` schreibt Readiness nicht; der Fingerprint macht alte Checks sichtbar ungültig.
+
+---
+
+## ADR-0099 – Kein sensibler Dokumententresor
+
+**Datum:** 22. August 2026  
+**Status:** verbindlich für Foundation C
+
+**Entscheidung:** Foundation C speichert keine Pass-, ID-, Visa-, Gesundheits-, Geburts- oder Zahlungsdaten und öffnet keinen Storage-Bucket. Kein Upload, keine OCR, keine Encryption-Side-Quest.
+
+**Kontext:** Ein späterer echter Vault braucht eine eigene Security-/Encryption-ADR und ausdrückliche Freigabe.
+
+**Alternativen:**
+
+1. *Jetzt einen Tresor „klein“ mitbauen.* Sicherheits- und Compliance-Risiko ohne Produktnutzen.
+2. *Freitext für Passnummern erlauben.* Würde sensible Daten in Reisezeilen legen.
+
+**Begründung:** Datenminimierung. Custom-Titel sind längenbegrenzt, ohne HTML/URLs, und weisen sensible Muster zurück.
+
+**Konsequenzen:**
+
+- Custom-UI trägt den Hinweis, keine sensiblen Daten einzutragen.
+- Datenbank-CHECK lehnt sechs- und mehrstellige Ziffernfolgen im Titel ab.
+
+---
+
+## ADR-0100 – Reisevorbereitung in der Übersicht, kein sechster Tab
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** Die fünf Hauptbereiche bleiben `Übersicht · Flüge · Unterkunft · Aktivitäten · Mobilität`. Foundation C liegt als Bereich „Reisevorbereitung“ in der Übersicht.
+
+**Kontext:** Ein sechster Tab würde die gerade stabilisierte Mobile-Navigation wieder öffnen, bevor die Gesamt-Informationsarchitektur bewertet ist.
+
+**Alternativen:**
+
+1. *Sechster Top-Level-Tab.* Frühe IA-Entscheidung ohne Abnahme.
+2. *Eigene Seite ausserhalb des Workspace.* Würde Readiness vom Reisegraphen trennen.
+
+**Begründung:** Der Nutzer soll das Gesamtbild in der Übersicht sehen. Ein späterer UX-Pass darf die IA neu bewerten.
+
+**Konsequenzen:**
+
+- Workspace-Audit prüft weiter genau fünf Bereichsziele.
+- Foundation D darf die Zusammenfassung erweitern, nicht diese Grenze still aufheben.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

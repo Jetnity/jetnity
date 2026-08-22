@@ -63,9 +63,9 @@ Leitsatz:
 
 ## 3. Aktueller `main`-Stand
 
-`main` enthält den Squash-Merge von Foundation A / PR #30:
+`main` enthält den Squash-Merge von Foundation B / PR #31:
 
-`463360e64dae068e3d8eb9f3012890b94df4a75a`
+`315d9b31e69fcd5fd40227f65aa97587efc3bec4`
 
 Bereits abgeschlossen und auf `main`:
 
@@ -75,6 +75,7 @@ Bereits abgeschlossen und auf `main`:
 - Trip Workspace Mobile UX Iteration 1–3 – PR #27
 - Trip Coverage & Booking Status – PR #29
 - Foundation A – Mobilität & Transfers – PR #30
+- Foundation B – Mietwagen – PR #31
 - Produktqualitäts- und Kontinuitätsstandards
 
 Stabile öffentliche Production-URL:
@@ -238,7 +239,7 @@ Auf `main` und Production-Schema. Suche bleibt aus. Nicht erneut bauen.
 
 ### B. Mietwagen – PR #31
 
-Branch `feat/rental-car-foundation`. **Ready for Review, nicht mergen.** Schema ist auf Production. Suche bleibt aus.
+**Gemergt nach `main`.** Foundation B nicht erneut bauen. Schema `20260821200000` liegt auf Production. Suche bleibt aus.
 
 Umgesetzt:
 
@@ -266,17 +267,23 @@ Fachdoku: `docs/RENTAL_CARS.md`, ADR-0092 / ADR-0093 / ADR-0094 / ADR-0095.
 
 Kein Fake-Provider und keine Production-Suche. Merge nur nach separater Freigabe.
 
-### C. Travel Readiness & Dokumente
+### C. Travel Readiness & Dokumente – PR #32
 
-Danach provider-neutral vorbereiten für:
+Branch `feat/travel-readiness-foundation`. **Draft, nicht mergen.** Ausgangsbasis ist `main` @ `315d9b31`.
 
-- Einreise-/Visumstatus
-- Reisepass-/Dokumentstatus
-- Versicherungen
-- Tickets / Buchungsbestätigungen
-- offene Reisevorbereitungen
+Umgesetzt auf dem Draft-PR:
 
-Ein echter sensibler Dokumententresor wird nicht nebenbei gebaut. Dafür braucht es später eine separate Security-/Verschlüsselungsentscheidung und ausdrückliche Freigabe.
+- eigene Domäne `trip_readiness_items`, kein neuer `trip_items.kind`
+- Trennung Official Requirement Truth vs User Preparation Truth
+- deterministischer Context-Fingerprint / Stale-Semantik
+- Guest- und Account-Parität plus idempotente Übernahme
+- geschlossene `POST /api/readiness/requirements`
+- UX als Reisevorbereitung in der Übersicht, kein sechster Tab
+- kein Dokumententresor, keine OCR, kein Storage-Bucket
+
+Development-Migration `20260822010000` nur Development. Production unverändert. Kein Provider, keine neuen Secrets, keine neuen Kosten.
+
+Fachdoku: `docs/TRAVEL_READINESS.md`, ADR-0096 bis ADR-0100.
 
 ### D. Gesamt-Abdeckung
 
@@ -351,8 +358,8 @@ Verbindlich:
 2. Aktuellen `main`-, PR-, CI-, Vercel- und Production-Stand prüfen.
 3. PR #29 nicht erneut bauen: Coverage/Booking Status ist abgeschlossen.
 4. PR #30 ist gemergt: Foundation A nicht erneut bauen.
-5. PR #31 ist Ready for Review und **nicht mergen**. Mietwagen-Schema liegt auf Production; die Suche bleibt aus. Nächster Schritt ist der unabhängige Review plus separate Merge-Freigabe.
-6. Phase 3.4 bleibt extern blockiert, bis echter Hotelprovider-Zugang vorliegt.
-7. Nach sauberem Abschluss von PR #31 ist der nächste geplante provider-unabhängige Block **Travel Readiness & Dokumente Foundation**.
+5. PR #31 ist gemergt: Foundation B nicht erneut bauen. Mietwagen-Schema liegt auf Production; die Suche bleibt aus.
+6. PR #32 ist Draft und **nicht mergen**. Foundation C / Travel Readiness. Keine Production-Migration.
+7. Phase 3.4 bleibt extern blockiert, bis echter Hotelprovider-Zugang vorliegt.
 8. Keine Fake-Providerdaten, keine Production-Provideraktivierung und keine Secrets ohne separate Freigabe.
 9. Bei jeder neuen Funktion zuerst prüfen, wie sie logisch mit dem bestehenden Reisegraphen und den anderen Reisebereichen zusammenarbeitet.

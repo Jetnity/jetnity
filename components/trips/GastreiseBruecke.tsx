@@ -23,6 +23,7 @@ import * as React from 'react'
 import { useRouter } from 'next/navigation'
 import { AlertCircle, Check, Loader2, RefreshCw } from 'lucide-react'
 
+import { readinessUebernehmen } from '@/lib/readiness/aktionen'
 import { gastreiseUebernehmen } from '@/lib/trips/aktionen'
 import { gastreisenUebernehmen } from '@/lib/trips/uebernahme'
 
@@ -37,8 +38,13 @@ export default function GastreiseBruecke() {
   const [stand, setStand] = React.useState<Stand>({ art: 'ruht' })
 
   const uebernehmen = React.useCallback(async () => {
-    const bericht = await gastreisenUebernehmen(gastreiseUebernehmen, (anzahl) =>
-      setStand({ art: 'laeuft', anzahl }),
+    const bericht = await gastreisenUebernehmen(
+      gastreiseUebernehmen,
+      (anzahl) => setStand({ art: 'laeuft', anzahl }),
+      async (tripId, items) => {
+        const ergebnis = await readinessUebernehmen({ tripId, items })
+        return ergebnis.ok ? { ok: true, wert: tripId } : ergebnis
+      },
     )
 
     if (bericht.art === 'nichts' || bericht.art === 'laeuft') {

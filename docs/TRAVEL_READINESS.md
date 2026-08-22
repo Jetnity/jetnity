@@ -1,165 +1,134 @@
-# Jetnity – Travel Readiness & Einreisebestimmungen
+# Jetnity – Travel Readiness (Foundation C)
 
-Stand: 20. August 2026
-Status: verbindliche Produktanforderung, Umsetzung bewusst für den passenden Zeitpunkt vorgemerkt
+Stand: 22. August 2026  
+Status: Draft-PR #32, nicht gemergt, kein Production-Schema  
+Branch: `feat/travel-readiness-foundation`
 
 ## Ziel
 
-Jetnity soll einen Nutzer nicht nur bei Flug, Hotel und Aktivitäten unterstützen, sondern ihm für **seine konkrete Reise** verständlich sagen, welche Einreise- und Vorbereitungsschritte noch nötig sind.
+Jetnity versteht nicht nur Flug, Unterkunft, Aktivitäten und Mobilität, sondern auch, ob eine Reise **vorbereitet** ist.
 
-Die Funktion soll aus einer Reise eine persönliche Vorbereitungsliste erzeugen und dabei den tatsächlich verwendeten Reisepass, Wohnsitz, Route, Transitländer, Aufenthaltsdauer und Reisezweck berücksichtigen.
+Foundation C liefert den belastbaren Unterbau dafür – ohne so zu tun, als seien Visa- oder Einreiseanforderungen bereits geprüft.
 
-Verbindlicher Grundsatz:
+Verbindlicher Leitsatz:
 
-> **Jetnity soll nicht nur sagen, wohin der Nutzer reist, sondern was er für genau diese Reise vor der Abreise noch erledigen muss und bis wann.**
+> **Einfach für den Nutzer. Streng logisch im Inneren. Eine Reise, eine Wahrheit.**
 
-## Reiseprofil
+Bei Unsicherheit gilt: `unknown` bleibt `unknown`.
 
-Für die reine Bestimmung von Einreisebedingungen soll Jetnity nur die Daten erheben, die wirklich benötigt werden.
+## Zwei Wahrheiten
 
-Vorgesehen sind insbesondere:
+Foundation C vermischt niemals:
 
-- Staatsangehörigkeit bzw. Ausstellungsland des tatsächlich verwendeten Reisepasses
-- optional mehrere Staatsangehörigkeiten/Reisepässe
-- bevorzugter Reisepass für eine Reise
-- Wohnsitzland, soweit für Regeln relevant
-- Reisezweck, z. B. Tourismus
-- Reisedauer und konkrete Route
+1. **Official Requirement Truth** – was eine vertrauenswürdige offizielle Quelle für diese Reise wirklich verlangt. Ohne Provider immer `unknown` / `unavailable` / `insufficient_context`.
+2. **User Preparation Truth** – was der Nutzer selbst als offen, erledigt oder nicht relevant markiert hat. Das ist User Evidence, keine Bestätigung.
 
-Passnummern, Passkopien oder andere hochsensible Dokumentdaten sind für diese Funktion **nicht standardmäßig erforderlich** und sollen nicht ohne klaren zusätzlichen Nutzen erhoben werden.
+Ein Nutzer-Häkchen darf niemals als „Visum passt“ oder „Einreise geprüft“ erscheinen.
 
-## Persönliche Einreiseprüfung
+Zulässig:
 
-Jetnity soll pro Reise und pro Grenzübertritt prüfen können:
+> 4 von 5 Vorbereitungspunkten erledigt · Einreiseanforderungen noch nicht offiziell geprüft
 
-- Visum / visumfreie Einreise / eVisa
-- digitale Einreise- oder Anmeldeformulare
-- Passgültigkeit und gegebenenfalls freie Passseiten
-- Weiter- oder Rückreisenachweis
-- Transitbestimmungen
-- verpflichtende Versicherungs- oder Dokumentnachweise, soweit relevant
-- verpflichtende Gesundheits-/Impfvorschriften für die Einreise
-- weitere behördliche Einreiseanforderungen
+Unzulässig:
 
-Mehrländer- und Transitstrecken müssen als **gesamte Route** verstanden werden. Ein Transitland darf nicht ignoriert werden, nur weil es nicht das eigentliche Reiseziel ist.
+> Deine Reise ist bereit
 
-Beispiel: Zürich → New York → Costa Rica muss auch mögliche Anforderungen des US-Transits berücksichtigen.
+solange offizielle Anforderungen unbekannt sind.
 
-## Pflicht vs. Empfehlung
+## Was Foundation C speichert
 
-Jetnity muss klar zwischen zwei Kategorien unterscheiden:
+Nur den Nutzer-Vorbereitungsstand in einer eigenen Tabelle `trip_readiness_items`.
 
-1. **Rechtliche bzw. behördliche Einreisevoraussetzungen** – z. B. Visum, Einreiseformular oder verpflichtender Impfnachweis.
-2. **Gesundheitliche oder praktische Empfehlungen** – z. B. Reiseimpfungen, Malariavorsorge oder freiwillige Versicherungen.
+Kein neuer `trip_items.kind`. Readiness ist kein Tagesplanpunkt und keine Buchung.
 
-Empfehlungen dürfen niemals so dargestellt werden, als seien sie gesetzlich vorgeschrieben.
+Felder:
 
-## Quellen und Vertrauensmodell
+- `client_ref` – idempotente Client-Identität
+- `kind` – `entry_check`, `visa_check`, `travel_document_check`, `insurance_check`, `ticket_confirmation_check`, `booking_confirmation_check`, `preparation`
+- `user_status` – `open`, `done`, `skipped`
+- `evidence` – nur `user`
+- `country_code` – nur ISO-3166-1-alpha-2, sonst null
+- `trip_item_id` – optional, dieselbe Reise / derselbe Eigentümer
+- `title` – nur bei `preparation`, max. 80 Zeichen
+- `context_fingerprint` – deterministischer Reisekontext
+- `created_at` / `updated_at`
 
-Ein Sprachmodell darf **nicht die maßgebliche Quelle** für Visa-, Pass-, Transit- oder Gesundheitsvorschriften sein.
+Keine Spalten für Passnummer, Ausweis, Geburtsdatum, Nationalität, Wohnsitz, Visumnummer, Gesundheit oder Dateipfade.
 
-Jetnity benötigt dafür eine professionelle, laufend aktualisierte und rechtlich geeignete Datenquelle bzw. Provider-Anbindung. Kandidaten wie IATA Timatic können später geprüft werden; die konkrete Providerentscheidung ist noch nicht festgelegt.
+## Context-Fingerprint
 
-Anforderungen an die spätere Datenquelle:
+Der Server berechnet den Fingerprint aus vertrauenswürdigen Trip-Fakten. Der Browser darf ihn im Konto nicht setzen.
 
-- personalisierte Regeln nach Reisepass/Nationalität, Wohnsitz und Route
-- Transit- und Multi-City-Unterstützung
-- Visa-, Pass- und Gesundheitsanforderungen
-- nachvollziehbare Aktualität
-- rechtlich und kommerziell für Jetnity nutzbar
-- möglichst offizielle/behördlich gespeiste Daten
+| Art | Felder im Fingerprint |
+| --- | --- |
+| `entry_check`, `visa_check`, `travel_document_check` | kind, countryCode, startDate, endDate, travellers, destinationCountries |
+| `insurance_check` | kind, startDate, endDate, travellers, destinationCountries, rentalCarPresent |
+| `ticket_confirmation_check`, `booking_confirmation_check` | kind, tripItemId, itemKind, bookingStatus, startsOn, endsOn, originPlaceId, destinationPlaceId |
+| `preparation` | kind, normalisierter title, startDate, endDate, travellers, destinationCountries |
 
-Wo sinnvoll, soll Jetnity zusätzlich auf die zuständige offizielle Behörde verlinken.
+Wenn der gespeicherte Fingerprint nicht mehr passt: `stale` / „Erneut prüfen“.  
+Wenn das Zielland oder der gebuchte Planpunkt fehlt: `not_applicable` / „Nicht mehr aktuell“.  
+Solche Checks zählen nicht weiter als aktuelle Abdeckung.
 
-Jede wichtige Aussage soll intern mit Quelle und Prüfzeitpunkt nachvollziehbar sein. Jetnity darf nicht so tun, als sei eine veraltete Regel aktuell.
+## Abgeleitete Prüfaufgaben
 
-## Travel-Readiness-Checkliste
+Das System darf Aufgaben ableiten, aber keine Anforderungen erfinden.
 
-Aus den Regeln entsteht eine persönliche, verständliche Vorbereitungsliste, zum Beispiel:
+- Bekanntes Zielland → Einreise, Visum, Reisedokument für genau dieses Land
+- Zeitraum, Land oder Mietwagen vorhanden → Versicherung prüfen
+- Gebuchter kommerzieller Planpunkt → Buchungsbestätigung prüfen
+- Gebuchter Flug → zusätzlich Ticket prüfen
 
-- Reisepass: geprüft
-- Visum: nicht erforderlich / erforderlich / beantragen
-- Einreiseformular: offen
-- verpflichtende Impfnachweise: geprüft
-- Weiterreisenachweis: erforderlich
-- Versicherung: Empfehlung oder Pflicht klar gekennzeichnet
+`booked` ist nicht Ticket vorhanden und nicht Bestätigung heruntergeladen.
 
-Die Oberfläche soll nicht mit Paragraphen überladen werden. Der Nutzer soll schnell erkennen:
+System-Checks werden nicht ungefragt persistiert. Persistiert wird erst die Nutzeraktion. Dieselben Länder werden nicht verdoppelt.
 
-- Was ist bereits in Ordnung?
-- Was fehlt noch?
-- Was ist verpflichtend?
-- Was ist nur empfohlen?
-- Bis wann muss etwas erledigt sein?
-- Wo ist der offizielle Antrag bzw. die offizielle Information?
+## Offizielle Naht
 
-Eine Fortschrittsdarstellung wie „4 von 6 erledigt“ oder „Reisevorbereitung 80 %“ ist vorgesehen, wenn sie verständlich und nicht irreführend umgesetzt werden kann.
+`POST /api/readiness/requirements` ist geschlossen.
 
-## Fristen und Erinnerungen
+- kein Provider → `unavailable` / `insufficient_context`
+- Ergebnis immer `unknown`
+- kein Country Code allein erzeugt eine Visa-Aussage
+- mehrere Reisende → keine individuelle Aussage „für alle“
+- keine Fake-Regeln, kein Scraping, keine Modellantwort als Quelle
+- Antworten `Cache-Control: private, no-store`
 
-Jetnity kennt die Reisedaten und soll daraus konkrete Fristen ableiten können.
+## Gast und Konto
 
-Beispiele:
+Dieselbe fachliche Form: `Trip.readinessItems`.
 
-- Einreiseformular frühestens bzw. spätestens X Stunden/Tage vor Einreise
-- Visum rechtzeitig vor Abflug beantragen
-- benötigte Dokumente vor dem ersten betroffenen Grenzübertritt erledigen
+- Gast: `localStorage`
+- Konto: `trip_readiness_items` über RLS
+- Guest → Account: nach `reise_anlegen()` idempotente Sync-Naht `readinessUebernehmen`
+- Confirmation-Checks werden über Art, Daten und Titel neu zugeordnet, nicht über Gast-IDs
+- `reise_aendern()` schreibt Readiness nicht und markiert nichts still als erledigt
 
-Später können daraus Erinnerungen und Pro-Funktionen entstehen. Free-/Pro-Grenzen werden hierfür noch nicht festgelegt; sie müssen über die zentrale spätere Entitlement-Schicht flexibel steuerbar sein.
+## UX
 
-## Verbindung mit dem Reisegraphen
+Kein sechster Haupt-Tab. Die fünf Bereiche bleiben:
 
-Travel Readiness ist kein isolierter Ratgeber. Die Funktion soll auf dem strukturierten Jetnity-Reisegraphen aufbauen.
+`Übersicht · Flüge · Unterkunft · Aktivitäten · Mobilität`
 
-Wenn sich ein Flug, Reisedatum oder eine Route ändert, muss Jetnity prüfen können, ob dadurch auch betroffen sind:
+Reisevorbereitung liegt in der Übersicht: kompakte Zusammenfassung, Zahlen offen / erledigt / erneut prüfen, Hinweis auf nicht verifizierte Einreiseanforderungen, aufklappbares Detail.
 
-- Visa-Gültigkeitszeiträume
-- Einreiseanmeldungen
-- Transitregeln
-- Fristen
-- Impfnachweise
-- andere Reisevorbereitungsaufgaben
+Kein Upload. Keine Felder für Pass, Geburt, Nationalität oder Gesundheit.  
+Custom-Titel tragen den Hinweis: keine sensiblen Daten eintragen.
 
-Das folgt dem bestehenden Jetnity-Grundsatz:
+## Bewusst nicht in Foundation C
 
-> Änderung erkennen → Auswirkungen bestimmen → neue Vorbereitungssituation erklären → Nutzer entscheiden lassen.
+- Dokumententresor, OCR, Storage-Bucket, Verschlüsselungsprodukt
+- individuelle Traveller-Profile mit Nationalität oder Geburtsdatum
+- echter Visa-/Einreiseprovider
+- Health-/Impfdaten
+- Production-Migration oder Production-Aktivierung
+- Foundation D Gesamt-Abdeckung
 
-## Datenschutz
+Die ältere Zielbild-Datei beschrieb eine spätere, personalisierte Einreiseprüfung mit belastbarer Quelle. Dieses Zielbild bleibt gültig als Zukunft, ist aber **nicht** der umgesetzte Stand von Foundation C.
 
-Da Staatsangehörigkeit und Reisedokumentinformationen personenbezogen und teilweise besonders sensibel für den Nutzer sind, gilt Datenminimierung.
+## Development vs Production
 
-- nur benötigte Attribute speichern
-- keine Passnummer oder Passkopie für die Basisfunktion
-- klare Transparenz, wofür Daten genutzt werden
-- mehrere Reisepässe nur auf Wunsch
-- sichere serverseitige Verarbeitung
-- keine unnötige Weitergabe an Drittanbieter
-
-Vor einer Provider-Anbindung müssen Datenschutz, Datenübermittlung, Auftragsverarbeitung und Schweizer DSG/DSGVO-Anforderungen geprüft werden.
-
-## Richtiger Implementierungszeitpunkt
-
-Diese Funktion soll **nicht während der aktuellen Phase 3.1 zusätzlich in die Flight-/Place-Arbeiten hineingemischt werden**.
-
-Der sinnvolle Startpunkt ist, sobald folgende Grundlagen stabil genug sind:
-
-1. kanonische reale Orte/Destinationen und Länderzuordnung
-2. strukturierter Reisegraph mit Etappen und Reisedaten
-3. belastbare Flug-/Routeninformationen inklusive Transit
-4. Nutzerprofil kann benötigte Reiseprofil-Angaben sicher speichern
-
-Danach soll Travel Readiness in Phase 3/4 vor der öffentlichen Launch-Reife umgesetzt werden, weil es dann echten Nutzen aus den bereits vorhandenen Reisedaten ziehen kann und nicht als paralleles Inselsystem gebaut werden muss.
-
-Die genaue Reihenfolge darf der Hauptentwickler anhand des tatsächlichen Projektstands anpassen. Die Funktion darf nicht vergessen oder unnötig vorgezogen werden.
-
-## Nicht jetzt bauen
-
-Aktuell noch nicht:
-
-- Timatic oder anderen Regelprovider vertraglich/API-seitig anbinden
-- Passdokumente speichern
-- Free-/Pro-Grenze festlegen
-- automatische Erinnerungen aktivieren
-- Production-Datenmodell erweitern
-
-Erst die laufende Flight-/Place-Grundlage sauber abschließen.
+- Migration `20260822010000_trip_readiness_items` nur Development
+- Production unverändert
+- keine neuen Secrets
+- keine neuen laufenden Kosten

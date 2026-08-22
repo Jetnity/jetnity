@@ -30,10 +30,12 @@ import {
   besuchteBereicheErweitern,
   gewaehlterTagId,
 } from '@/lib/trips/arbeitsbereich'
+import type { ReadinessKind, ReadinessUserStatus } from '@/types/trips'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
 import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
 import TripWorkspaceNavigation from '@/components/trips/TripWorkspaceNavigation'
 import TripWorkspacePlan from '@/components/trips/TripWorkspacePlan'
+import Reisevorbereitung from '@/components/trips/Reisevorbereitung'
 import TripWorkspaceUebersicht from '@/components/trips/TripWorkspaceUebersicht'
 import FlugBestand from '@/components/trips/FlugBestand'
 import UnterkunftBestand from '@/components/trips/UnterkunftBestand'
@@ -63,6 +65,15 @@ type TripWorkspaceProps = {
   aktivitaetensuche?: React.ReactNode
   mobilitaetssuche?: React.ReactNode
   onBuchungsstatus?: (itemId: string, gebucht: boolean) => Promise<string | null>
+  onReadinessSetzen?: (eingabe: {
+    clientRef: string
+    kind: ReadinessKind
+    userStatus: ReadinessUserStatus
+    countryCode: string | null
+    tripItemId: string | null
+    title: string | null
+  }) => Promise<string | null>
+  onReadinessEntfernen?: (clientRef: string) => Promise<string | null>
   /**
    * Nur für interne Audits: startet nicht in der Übersicht.
    * Der Produktweg lässt den Parameter weg.
@@ -125,6 +136,8 @@ export default function TripWorkspace({
   aktivitaetensuche,
   mobilitaetssuche,
   onBuchungsstatus,
+  onReadinessSetzen,
+  onReadinessEntfernen,
   anfangsBereich,
 }: TripWorkspaceProps) {
   const kompakt = React.useSyncExternalStore(
@@ -244,6 +257,13 @@ export default function TripWorkspace({
               aenderungKnopfRef={aenderungKnopfRef}
               plan={kompakt ? plan : null}
               aenderungFeld={kompakt ? aenderungFeld : null}
+              vorbereitung={
+                <Reisevorbereitung
+                  reise={reise}
+                  onSetzen={onReadinessSetzen}
+                  onEntfernen={onReadinessEntfernen}
+                />
+              }
             />
           </BereichHuelle>
         )}

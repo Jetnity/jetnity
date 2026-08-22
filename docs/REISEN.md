@@ -1,6 +1,6 @@
 # Jetnity – Reisen
 
-**Stand:** 21. August 2026 · Phase 3.3 plus Mobile-UX auf `main` plus Coverage/Booking Status (Draft-PR #29)
+**Stand:** 22. August 2026 · Phase 3.3 plus Coverage/Booking, Foundation A/B auf `main`; Foundation C Readiness auf Draft-PR #32
 **Gilt für:** das Reisedatenmodell und die Wege, auf denen eine Reise entsteht, gespeichert und bearbeitet wird.
 
 Diese Datei beantwortet vier Fragen: Woraus besteht eine Reise, wo liegt sie, wie kommt sie aus dem Browser in ein Konto, und was ist bewusst noch nicht gebaut.
@@ -31,7 +31,8 @@ Vier Tabellen, ein Graph. Der Anwendungstyp dazu steht in `types/trips.ts` und t
 | Reise | `trips` | Titel, Startort, optionaler kanonischer Abreiseort (`origin_place_id`), Zeitraum, Reisende, Währung, Budget, Status, Tempo, Interessen, Reisewunsch, technische Fassung (`revision`) |
 | Etappe | `trip_stages` | ein Aufenthalt an einem Ort: Name, Ländercode, An- und Abreise, Koordinaten, optionale Ortsreferenz (`place_id`), Reihenfolge |
 | Tag | `trip_days` | Nummer im Reiseverlauf, optionales Datum, optionaler Titel, **Etappe** (`stage_id`) |
-| Planpunkt | `trip_items` | Flug, Unterkunft, Aktivität, Transfer oder freie Notiz – mit Zeitfenster, Preis, Anbieter, Buchungsverweis und manuellem Buchungsstatus. Ohne Tag (`day_id` null) bleibt der Punkt ungeplant (`ohneTag`). |
+| Planpunkt | `trip_items` | Flug, Unterkunft, Aktivität, Transfer, Mietwagen oder freie Notiz – mit Zeitfenster, Preis, Anbieter, Buchungsverweis und manuellem Buchungsstatus. Ohne Tag (`day_id` null) bleibt der Punkt ungeplant (`ohneTag`). |
+| Vorbereitung | `trip_readiness_items` | Nutzer-Vorbereitungsstand. Kein neuer `trip_items.kind`. Offizielle Visa-/Einreisewahrheit steht hier nicht. Nur Development (PR #32). |
 
 **Mehrere Ziele sind mehrere Etappen.** Ein Feld `destination` hätte die heutige Oberfläche abgedeckt und die zweite Station einer Reise nicht. Das Formular unter `/planen` fragt weiterhin ein Ziel und legt daraus eine Etappe an – dieselbe Struktur, nur mit einem Element.
 

@@ -58,7 +58,7 @@ Je nach Änderung müssen insbesondere aktuell gehalten werden:
 - `DESIGN_SYSTEM.md` – verbindliche UI-/UX-Regeln
 - `docs/PRODUCT_QUALITY_STANDARD.md` – Produktqualitätsanforderungen
 - `docs/LOGIC_STANDARD.md` – verbindliche Regeln für Datenwahrheit, Source of Truth, fachliche Invarianten, Zustände und bereichsübergreifende Konsistenz
-- fachliche Modul-Dokumente, z. B. `docs/HOTELS.md`, `docs/ACTIVITIES.md`, `docs/MOBILITY.md`, `docs/RENTAL_CARS.md`
+- fachliche Modul-Dokumente, z. B. `docs/HOTELS.md`, `docs/ACTIVITIES.md`, `docs/MOBILITY.md`, `docs/RENTAL_CARS.md`, `docs/TRAVEL_READINESS.md`
 - dieser `docs/CONTINUITY_STANDARD.md`
 
 Aufgaben für Coding Agents sollen diese Quellen passend zum Auftrag ausdrücklich einbeziehen.

@@ -33,6 +33,7 @@ import {
   gastreiseEntfernen,
   gastreiseLadenNach,
 } from '@/lib/trips/gastspeicher'
+import { gastReadinessEntfernen, gastReadinessSetzen } from '@/lib/readiness/gast'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
 import AktivitaetenBereich from '@/components/trips/AktivitaetenBereich'
 import MobilitaetBereich from '@/components/trips/MobilitaetBereich'
@@ -153,6 +154,24 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
       quelle="guest"
       onPunktAnlegen={anlegen}
       onPunktEntfernen={entfernen}
+      onReadinessSetzen={async (eingabe) => {
+        if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
+        try {
+          setReise(gastReadinessSetzen(reise, eingabe))
+          return null
+        } catch (fehler) {
+          return fehler instanceof Error ? fehler.message : 'Die Vorbereitung konnte nicht gespeichert werden.'
+        }
+      }}
+      onReadinessEntfernen={async (clientRef) => {
+        if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
+        try {
+          setReise(gastReadinessEntfernen(reise, clientRef))
+          return null
+        } catch (fehler) {
+          return fehler instanceof Error ? fehler.message : 'Die Vorbereitung konnte nicht entfernt werden.'
+        }
+      }}
       onBuchungsstatus={async (itemId, gebucht) => {
         if (!reise) return 'Diese Reise ist auf diesem Gerät nicht mehr vorhanden.'
         try {

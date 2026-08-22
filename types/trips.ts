@@ -81,6 +81,59 @@ export const RENTAL_EVIDENCES = ['user'] as const
 export type RentalEvidence = (typeof RENTAL_EVIDENCES)[number]
 
 /**
+ * Fachliche Art eines Reisevorbereitungs-Checks.
+ * Eigene Domäne, kein `trip_items.kind`.
+ */
+export const READINESS_KINDS = [
+  'entry_check',
+  'visa_check',
+  'travel_document_check',
+  'insurance_check',
+  'ticket_confirmation_check',
+  'booking_confirmation_check',
+  'preparation',
+] as const
+export type ReadinessKind = (typeof READINESS_KINDS)[number]
+
+/**
+ * Nutzer-Vorbereitungsstand. Keine offizielle Visa-/Einreisebestätigung.
+ */
+export const READINESS_USER_STATUSES = ['open', 'done', 'skipped'] as const
+export type ReadinessUserStatus = (typeof READINESS_USER_STATUSES)[number]
+
+/**
+ * Herkunft der User-Evidence. In Foundation C nur `user`.
+ * Der Browser darf keine offizielle Quelle behaupten.
+ */
+export const READINESS_EVIDENCES = ['user'] as const
+export type ReadinessEvidence = (typeof READINESS_EVIDENCES)[number]
+
+/**
+ * Persistierter Nutzer-Vorbereitungsstand einer Reise.
+ *
+ * Speichert ausdrücklich keine offizielle Anforderungswahrheit.
+ * `contextFingerprint` macht alte Checks nach einer relevanten
+ * Reiseänderung als veraltet erkennbar.
+ */
+export type TripReadinessItem = {
+  id: string
+  /** Idempotente Client-Identität. Gast und Konto teilen dieselbe Form. */
+  clientRef: string
+  kind: ReadinessKind
+  userStatus: ReadinessUserStatus
+  evidence: ReadinessEvidence
+  /** ISO-3166-1-alpha-2, nur wenn wirklich bekannt. Kein freies Label. */
+  countryCode: string | null
+  /** Zugehöriger Planpunkt derselben Reise, sonst `null`. */
+  tripItemId: string | null
+  /** Nur bei `preparation`. Keine Pass-, Ausweis- oder Gesundheitsdaten. */
+  title: string | null
+  contextFingerprint: string
+  createdAt: string
+  updatedAt: string
+}
+
+/**
  * Buchungsstatus eines Planpunkts. Werte wie in `trip_items.booking_status`.
  *
  * Ein gespeicherter Punkt ist damit nicht automatisch gebucht. `unconfirmed`
@@ -243,6 +296,11 @@ export type Trip = {
    * letzten Reisetag – Konto und Gast speichern denselben Graphen.
    */
   ohneTag: TripItem[]
+  /**
+   * Nutzer-Vorbereitungsstand. Fehlt beim Altbestand; dann gilt leer.
+   * Offizielle Einreise-/Visa-Wahrheit steht hier bewusst nicht.
+   */
+  readinessItems?: TripReadinessItem[]
   createdAt: string
   updatedAt: string
 }

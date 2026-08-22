@@ -20,8 +20,8 @@ Diese Datei ist die operative Roadmap. Historische Detailstände bleiben über G
 | Querschnitt | Trip Workspace Mobile UX Iteration 1–3 | **fertig, nach `main` gemergt (PR #27)** |
 | Querschnitt | Trip Coverage & Booking Status | **auf `main` (PR #29, `211872c1`); Production-Booking-Migration nach Nutzerfreigabe angewendet** |
 | Foundation-Track A | Mobilität & Transfers – Bahn, Bus, Fähre, Transfers | **fertig, nach `main` gemergt (PR #30); Production-Schema angewendet, Suche aus** |
-| Foundation-Track B | Mietwagen Foundation | **PR #31 Ready for Review**; Schema auf Production; Suche aus; nicht mergen |
-| Foundation-Track C | Travel Readiness & Dokumente Foundation | geplant nach B |
+| Foundation-Track B | Mietwagen Foundation | **fertig, nach `main` gemergt (PR #31)**; Schema auf Production; Suche aus |
+| Foundation-Track C | Travel Readiness & Dokumente Foundation | **Draft-PR #32**; Development-Migration; nicht mergen; kein Production-Schema |
 | Foundation-Track D | Gesamt-Abdeckung im Reisegraphen erweitern | geplant nach C |
 | Phase 3.5 | erster echter Activity-Suchadapter | geplant; bei fehlendem Zugang extern blockiert |
 | Phase 3.6 | echte Mobilitäts-/Transferprovider auf Foundation A | geplant |
@@ -177,7 +177,7 @@ Nicht in diesem Block: Mietwagen, Kreuzfahrten, echter Provider, Fake-Fahrpläne
 
 ### Foundation B – Mietwagen
 
-**Ready for Review auf PR #31**, Branch `feat/rental-car-foundation`. Nicht mergen. Production-Schema `20260821200000` ist angewendet; Production-Suche bleibt aus.
+**Abgeschlossen und auf `main` (PR #31).** Production-Schema `20260821200000` ist angewendet; Production-Suche bleibt aus. Nicht erneut bauen.
 
 Nachweis 22. August 2026: Tests **1165/1165**, Typecheck/Lint/Hygiene/Production-Build grün, Development-DB-Checks grün, Workspace-Audit **502/0**, Activities-Regression **184/0**. ADR-0094 und ADR-0095 schließen die Truth- und Ranking-Label-Befunde. Echter iPhone-Preview-Test **bestanden** (`docs/PR31_REAL_DEVICE_ACCEPTANCE.md`). Production-Migration **verifiziert** (`docs/PR31_PRODUCTION_MIGRATION_ACCEPTANCE.md`). Merge nur nach separater Freigabe.
 
@@ -198,15 +198,19 @@ Nicht in diesem Block: echter Provider, Fake-Angebote, Führerschein-/Zahlungsda
 
 ### Foundation C – Travel Readiness & Dokumente
 
-Zuerst nur Status/Checklisten/Referenzen für:
+**Draft-PR #32**, Branch `feat/travel-readiness-foundation`. Nicht mergen. Keine Production-Migration.
 
-- Einreise-/Visumthemen
-- Reisepass-/Dokumentstatus
-- Versicherungen
-- Tickets/Buchungsbestätigungen
-- wichtige Vorbereitungen vor Abreise
+Provider-unabhängige Reisevorbereitung:
 
-Kein Pass-/Identitätsdokument-Tresor ohne separate Security-/Verschlüsselungsentscheidung und ausdrückliche Freigabe.
+- eigene Tabelle `trip_readiness_items`, kein neuer `trip_items.kind`
+- Official Requirement Truth bleibt ohne Provider `unknown`
+- Nutzer-Häkchen sind User Evidence, keine Visa-Bestätigung
+- Context-Fingerprint macht alte Checks nach Reiseänderung stale
+- Guest und Account dieselbe Form
+- UX in der Übersicht, fünf Hauptbereiche unverändert
+- kein Dokumententresor, keine OCR, kein Storage-Bucket
+
+Fachdoku: [docs/TRAVEL_READINESS.md](docs/TRAVEL_READINESS.md). Auftrag: [docs/CURSOR_TRAVEL_READINESS_FOUNDATION_TASK.md](docs/CURSOR_TRAVEL_READINESS_FOUNDATION_TASK.md).
 
 ### Foundation D – Gesamt-Abdeckung
 

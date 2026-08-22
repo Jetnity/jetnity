@@ -28,6 +28,7 @@ import {
   type ReiseZeile,
   type TagZeile,
 } from '@/lib/trips/abbildung'
+import type { ReadinessZeile } from '@/lib/readiness/persistenz'
 import { TRIP_STATUSES, type Reisegraph, type TripStatus, type TripSummary } from '@/types/trips'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 
@@ -68,6 +69,7 @@ type GraphZeile = ReiseZeile & {
   trip_stages: EtappeZeile[] | null
   trip_days: TagZeile[] | null
   trip_items: PunktZeile[] | null
+  trip_readiness_items: ReadinessZeile[] | null
 }
 
 /**
@@ -148,7 +150,7 @@ export async function reiseLaden(id: string): Promise<Lesung<Reisegraph>> {
 
   const ergebnis = await lese<GraphZeile>(() =>
     alsAntwort<GraphZeile>(
-      supabase.from('trips').select('*, trip_stages(*), trip_days(*), trip_items(*)').eq('id', id).limit(1),
+      supabase.from('trips').select('*, trip_stages(*), trip_days(*), trip_items(*), trip_readiness_items(*)').eq('id', id).limit(1),
     ),
   )
 
@@ -157,7 +159,13 @@ export async function reiseLaden(id: string): Promise<Lesung<Reisegraph>> {
   return {
     problem: null,
     zeilen: ergebnis.zeilen.map((zeile) => {
-      const graph = reiseAus(zeile, zeile.trip_stages ?? [], zeile.trip_days ?? [], zeile.trip_items ?? [])
+      const graph = reiseAus(
+        zeile,
+        zeile.trip_stages ?? [],
+        zeile.trip_days ?? [],
+        zeile.trip_items ?? [],
+        zeile.trip_readiness_items ?? [],
+      )
       const zugeordnet = tageEtappenZuordnen(graph)
       return { ...zugeordnet, ohneTag: graph.ohneTag }
     }),
