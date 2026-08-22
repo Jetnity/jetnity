@@ -125,7 +125,11 @@ export default function Reisevorbereitung({
         <ChevronDown className={cn('h-4 w-4', offen && 'rotate-180')} aria-hidden="true" />
       </button>
 
-      <div id="reisevorbereitung-detail" hidden={!offen} className="mt-4 grid gap-4">
+      <div
+        id="reisevorbereitung-detail"
+        hidden={!offen}
+        className={offen ? 'mt-4 grid gap-4' : 'hidden'}
+      >
         <section className="grid gap-2">
           <h4 className="text-sm font-semibold text-brand-800">Reisendenkontext</h4>
           <p className="text-xs leading-5 text-ink-800">

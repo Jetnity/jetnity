@@ -86,7 +86,7 @@ Bevorzugter späterer Kandidat: IATA Timatic / Timatic AutoCheck. Die Domain ble
 
 ## UX
 
-Kein sechster Haupt-Tab. In der Übersicht: **Einreise & Reisevorbereitung**.
+Kein sechster Haupt-Tab. In der mobilen Übersicht und auf Desktop nach dem Reisekopf: **Einreise & Reisevorbereitung**.
 
 Zuerst offizielle Prüfung und fehlende Angaben, danach die persönliche Vorbereitung. Status nicht nur über Farbe.
 

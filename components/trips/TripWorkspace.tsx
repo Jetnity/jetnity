@@ -209,6 +209,16 @@ export default function TripWorkspace({
   const verbergen = (ziel: Arbeitsbereich) => !bereichSollSichtbar(ziel, bereich, kompakt)
   const uebersichtVerborgen = verbergen('uebersicht')
 
+  const vorbereitung = (
+    <Reisevorbereitung
+      reise={reise}
+      onSetzen={onReadinessSetzen}
+      onEntfernen={onReadinessEntfernen}
+      onTravellerSetzen={onTravellerSetzen}
+      onTravellerEntfernen={onTravellerEntfernen}
+    />
+  )
+
   const plan = (
     <TripWorkspacePlan
       reise={reise}
@@ -256,6 +266,8 @@ export default function TripWorkspace({
 
         <TripWorkspaceKopf reise={reise} quelle={quelle} kompakt={kompakt} kopfzeile={kopfzeile} />
 
+        {!kompakt && <div className="mt-6">{vorbereitung}</div>}
+
         {kompakt && <TripWorkspaceNavigation aktiv={bereich} onWechsel={wechseln} />}
 
         {bereichBereit('uebersicht') && (
@@ -269,15 +281,7 @@ export default function TripWorkspace({
               aenderungKnopfRef={aenderungKnopfRef}
               plan={kompakt ? plan : null}
               aenderungFeld={kompakt ? aenderungFeld : null}
-              vorbereitung={
-                <Reisevorbereitung
-                  reise={reise}
-                  onSetzen={onReadinessSetzen}
-                  onEntfernen={onReadinessEntfernen}
-                  onTravellerSetzen={onTravellerSetzen}
-                  onTravellerEntfernen={onTravellerEntfernen}
-                />
-              }
+              vorbereitung={kompakt ? vorbereitung : null}
             />
           </BereichHuelle>
         )}

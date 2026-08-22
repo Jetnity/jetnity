@@ -2541,6 +2541,7 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 **Konsequenzen:**
 
 - Workspace-Audit prüft weiter genau fünf Bereichsziele.
+- Auf Desktop ohne Übersicht-Tab erscheint dieselbe Karte nach dem Reisekopf, nicht als sechster Bereich.
 - Foundation D darf die Zusammenfassung erweitern, nicht diese Grenze still aufheben.
 
 ---
