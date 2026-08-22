@@ -9,7 +9,26 @@ import {
 } from '@/lib/readiness/domain'
 import { readinessFingerprint } from '@/lib/readiness/fingerprint'
 import { readinessReisekontext, routeFingerprintFelder } from '@/lib/readiness/kontext'
-import type { Trip } from '@/types/trips'
+import { travellerSlots } from '@/lib/readiness/party'
+import { citizenshipCodesAus, documentFingerprintTeil, documentsSortieren } from '@/lib/readiness/traveller-kontext'
+import type { Trip, TripTraveller } from '@/types/trips'
+
+function travellerFingerprintFelder(traveller: TripTraveller | null) {
+  if (!traveller) {
+    return {
+      travellerClientRef: null as string | null,
+      citizenshipCountryCodes: [] as string[],
+      documentFingerprints: [] as string[],
+      residenceCountryCode: null as string | null,
+    }
+  }
+  return {
+    travellerClientRef: traveller.clientRef,
+    citizenshipCountryCodes: citizenshipCodesAus(traveller),
+    documentFingerprints: documentsSortieren(traveller.documents).map(documentFingerprintTeil),
+    residenceCountryCode: traveller.residenceCountryCode,
+  }
+}
 
 export function readinessChecksAbleiten(reise: Trip): ReadinessDerivedCheck[] {
   const kontext = readinessReisekontext(reise)
@@ -23,49 +42,60 @@ export function readinessChecksAbleiten(reise: Trip): ReadinessDerivedCheck[] {
     checks.push(check)
   }
 
-  for (const countryCode of kontext.destinationCountries) {
-    const basis = {
-      countryCode,
-      startDate: kontext.startDate,
-      endDate: kontext.endDate,
-      travellers: kontext.travellers,
-      destinationCountries: kontext.destinationCountries,
-      rentalCarPresent: kontext.rentalCarPresent,
-      tripItemId: null,
-      itemKind: null,
-      bookingStatus: null,
-      startsOn: null,
-      endsOn: null,
-      originPlaceId: null,
-      destinationPlaceId: null,
-      title: null,
-      ...routeFelder,
-    }
+  const slots = travellerSlots(reise).filter((slot) => slot.applicable)
+  const travellerFuerKarten = slots.length > 0 ? slots : [{ clientRef: 'traveller:1', traveller: null as TripTraveller | null }]
 
-    merken({
-      clientRef: clientRefFuerAbgeleitet('entry_check', countryCode),
-      kind: 'entry_check',
-      countryCode,
-      tripItemId: null,
-      title: null,
-      contextFingerprint: readinessFingerprint({ ...basis, kind: 'entry_check' }),
-    })
-    merken({
-      clientRef: clientRefFuerAbgeleitet('visa_check', countryCode),
-      kind: 'visa_check',
-      countryCode,
-      tripItemId: null,
-      title: null,
-      contextFingerprint: readinessFingerprint({ ...basis, kind: 'visa_check' }),
-    })
-    merken({
-      clientRef: clientRefFuerAbgeleitet('travel_document_check', countryCode),
-      kind: 'travel_document_check',
-      countryCode,
-      tripItemId: null,
-      title: null,
-      contextFingerprint: readinessFingerprint({ ...basis, kind: 'travel_document_check' }),
-    })
+  for (const countryCode of kontext.destinationCountries) {
+    for (const slot of travellerFuerKarten) {
+      const travellerFelder = travellerFingerprintFelder(slot.traveller ?? null)
+      const basis = {
+        countryCode,
+        startDate: kontext.startDate,
+        endDate: kontext.endDate,
+        travellers: kontext.travellers,
+        destinationCountries: kontext.destinationCountries,
+        rentalCarPresent: kontext.rentalCarPresent,
+        tripItemId: null,
+        itemKind: null,
+        bookingStatus: null,
+        startsOn: null,
+        endsOn: null,
+        originPlaceId: null,
+        destinationPlaceId: null,
+        title: null,
+        ...routeFelder,
+        ...travellerFelder,
+      }
+      const schluessel = `${countryCode}:${slot.clientRef}`
+
+      merken({
+        clientRef: clientRefFuerAbgeleitet('entry_check', schluessel),
+        kind: 'entry_check',
+        countryCode,
+        tripItemId: null,
+        title: null,
+        travellerClientRef: slot.clientRef,
+        contextFingerprint: readinessFingerprint({ ...basis, kind: 'entry_check' }),
+      })
+      merken({
+        clientRef: clientRefFuerAbgeleitet('visa_check', schluessel),
+        kind: 'visa_check',
+        countryCode,
+        tripItemId: null,
+        title: null,
+        travellerClientRef: slot.clientRef,
+        contextFingerprint: readinessFingerprint({ ...basis, kind: 'visa_check' }),
+      })
+      merken({
+        clientRef: clientRefFuerAbgeleitet('travel_document_check', schluessel),
+        kind: 'travel_document_check',
+        countryCode,
+        tripItemId: null,
+        title: null,
+        travellerClientRef: slot.clientRef,
+        contextFingerprint: readinessFingerprint({ ...basis, kind: 'travel_document_check' }),
+      })
+    }
   }
 
   if (
@@ -80,6 +110,7 @@ export function readinessChecksAbleiten(reise: Trip): ReadinessDerivedCheck[] {
       countryCode: null,
       tripItemId: null,
       title: null,
+      travellerClientRef: null,
       contextFingerprint: readinessFingerprint({
         kind: 'insurance_check',
         countryCode: null,
@@ -125,6 +156,7 @@ export function readinessChecksAbleiten(reise: Trip): ReadinessDerivedCheck[] {
       countryCode: null,
       tripItemId: punkt.id,
       title: null,
+      travellerClientRef: null,
       contextFingerprint: readinessFingerprint({
         ...itemBasis,
         kind: 'booking_confirmation_check',
@@ -138,6 +170,7 @@ export function readinessChecksAbleiten(reise: Trip): ReadinessDerivedCheck[] {
         countryCode: null,
         tripItemId: punkt.id,
         title: null,
+        travellerClientRef: null,
         contextFingerprint: readinessFingerprint({
           ...itemBasis,
           kind: 'ticket_confirmation_check',

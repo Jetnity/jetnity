@@ -149,7 +149,8 @@ describe('Readiness-Kontext und Stale-Logik', () => {
     })
     const checks = readinessChecksAbleiten(reise)
     const einreise = checks.filter((check) => check.kind === 'entry_check')
-    assert.equal(einreise.length, 1)
+    assert.ok(einreise.length >= 1)
+    assert.equal(new Set(einreise.map((check) => check.countryCode)).size, 1)
     assert.equal(einreise[0]?.countryCode, 'TH')
   })
 

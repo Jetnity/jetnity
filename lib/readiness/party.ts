@@ -5,6 +5,7 @@
 
 import { landescodeLesen } from '@/lib/readiness/domain'
 import type { MissingFact } from '@/lib/readiness/official'
+import { travellerFehlendeKernfakten } from '@/lib/readiness/traveller-kontext'
 import type { Trip, TripTraveller } from '@/types/trips'
 
 export const PARTY_GRENZEN = {
@@ -52,7 +53,7 @@ function slotAus(
   applicable: boolean,
 ): TravellerSlot {
   const missingFacts: MissingFact[] = []
-  if (!landescodeLesen(traveller?.nationalityCountryCode ?? null)) missingFacts.push('nationality')
+  if (travellerFehlendeKernfakten(traveller).includes('nationality')) missingFacts.push('nationality')
 
   return {
     clientRef,
@@ -70,20 +71,15 @@ export function slotMissingFactsErgaenzen(
 ): TravellerSlot {
   if (!slot.applicable) return slot
   const gesehen = new Set(slot.missingFacts)
+  const kern = travellerFehlendeKernfakten(slot.traveller)
   for (const fakt of extra) {
     if (fakt === 'residence' && !landescodeLesen(slot.traveller?.residenceCountryCode ?? null)) {
       gesehen.add(fakt)
     }
-    if (fakt === 'document_type' && (!slot.traveller?.documentType || slot.traveller.documentType === 'unknown')) {
-      gesehen.add(fakt)
-    }
-    if (fakt === 'document_issuing_country' && !landescodeLesen(slot.traveller?.documentIssuingCountryCode ?? null)) {
-      gesehen.add(fakt)
-    }
-    if (fakt === 'document_expiry' && !slot.traveller?.documentExpiresOn) gesehen.add(fakt)
-    if (fakt === 'nationality' && !landescodeLesen(slot.traveller?.nationalityCountryCode ?? null)) {
-      gesehen.add(fakt)
-    }
+    if (fakt === 'document_type' && kern.includes('document_type')) gesehen.add(fakt)
+    if (fakt === 'document_issuing_country' && kern.includes('document_issuing_country')) gesehen.add(fakt)
+    if (fakt === 'document_expiry' && kern.includes('document_expiry')) gesehen.add(fakt)
+    if (fakt === 'nationality' && kern.includes('nationality')) gesehen.add(fakt)
   }
   return { ...slot, missingFacts: [...gesehen] }
 }
@@ -102,4 +98,26 @@ export function fehlendeFaktenFuerReise(reise: Pick<Trip, 'travellers' | 'party'
   if (laender.length === 0) gesehen.add('destination_country')
   if (!reise.startDate && !reise.endDate) gesehen.add('travel_dates')
   return [...gesehen]
+}
+
+export function gruppenUnterschiede(reise: Pick<Trip, 'travellers' | 'party'>): {
+  mehrereTraveller: boolean
+  unterschiedlicheCitizenships: boolean
+  unterschiedlicheDokumente: boolean
+} {
+  const slots = travellerSlots(reise).filter((slot) => slot.applicable)
+  const citizenships = slots.map((slot) =>
+    (slot.traveller?.citizenships ?? []).map((eintrag) => eintrag.countryCode).sort().join(','),
+  )
+  const dokumente = slots.map((slot) =>
+    (slot.traveller?.documents ?? [])
+      .map((eintrag) => `${eintrag.documentType}:${eintrag.issuingCountryCode ?? ''}`)
+      .sort()
+      .join(','),
+  )
+  return {
+    mehrereTraveller: slots.length > 1,
+    unterschiedlicheCitizenships: new Set(citizenships).size > 1,
+    unterschiedlicheDokumente: new Set(dokumente).size > 1,
+  }
 }

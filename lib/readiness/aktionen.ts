@@ -57,6 +57,9 @@ export async function readinessSetzen(eingabe: unknown): Promise<Aktionsergebnis
     return { ok: false, meldung: `Eine Reise trägt höchstens ${READINESS_GRENZEN.itemsJeReise} Vorbereitungspunkte.` }
   }
 
+  const travellerId = gebaut.item.travellerClientRef
+    ? rahmen.reise.party?.find((eintrag) => eintrag.clientRef === gebaut.item.travellerClientRef)?.id ?? null
+    : null
   const zeile = {
     trip_id: geprueft.data.tripId,
     client_ref: gebaut.item.clientRef,
@@ -66,6 +69,7 @@ export async function readinessSetzen(eingabe: unknown): Promise<Aktionsergebnis
     country_code: gebaut.item.countryCode,
     trip_item_id: gebaut.item.tripItemId,
     title: gebaut.item.title,
+    traveller_id: travellerId && /^[0-9a-f-]{36}$/i.test(travellerId) ? travellerId : null,
     context_fingerprint: gebaut.item.contextFingerprint,
   }
 
@@ -78,6 +82,7 @@ export async function readinessSetzen(eingabe: unknown): Promise<Aktionsergebnis
           country_code: zeile.country_code,
           trip_item_id: zeile.trip_item_id,
           title: zeile.title,
+          traveller_id: zeile.traveller_id,
           context_fingerprint: zeile.context_fingerprint,
         })
         .eq('trip_id', geprueft.data.tripId)
@@ -129,6 +134,9 @@ export async function readinessUebernehmen(eingabe: unknown): Promise<Aktionserg
     country_code: item.countryCode,
     trip_item_id: item.tripItemId,
     title: item.title,
+    traveller_id: item.travellerClientRef
+      ? rahmen.reise.party?.find((eintrag) => eintrag.clientRef === item.travellerClientRef)?.id ?? null
+      : null,
     context_fingerprint: item.contextFingerprint,
   }))
 

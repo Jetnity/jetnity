@@ -4,7 +4,7 @@
 // gespeicherten Zeile ist der Stand zum Zeitpunkt der Nutzeraktion.
 
 import { readinessItemsLesen } from '@/lib/readiness/schema'
-import type { TripReadinessItem } from '@/types/trips'
+import type { TripReadinessItem, TripTraveller } from '@/types/trips'
 
 export type ReadinessZeile = {
   id: string
@@ -15,12 +15,16 @@ export type ReadinessZeile = {
   country_code?: string | null
   trip_item_id?: string | null
   title?: string | null
+  traveller_id?: string | null
   context_fingerprint: string
   created_at: string
   updated_at: string
 }
 
-function readinessAusZeile(zeile: ReadinessZeile): TripReadinessItem | null {
+function readinessAusZeile(zeile: ReadinessZeile, party: readonly TripTraveller[] = []): TripReadinessItem | null {
+  const travellerClientRef = zeile.traveller_id
+    ? party.find((eintrag) => eintrag.id === zeile.traveller_id)?.clientRef ?? null
+    : null
   return readinessItemsLesen([
     {
       id: zeile.id,
@@ -31,6 +35,7 @@ function readinessAusZeile(zeile: ReadinessZeile): TripReadinessItem | null {
       countryCode: zeile.country_code ?? null,
       tripItemId: zeile.trip_item_id ?? null,
       title: zeile.title ?? null,
+      travellerClientRef,
       contextFingerprint: zeile.context_fingerprint,
       createdAt: zeile.created_at,
       updatedAt: zeile.updated_at,
@@ -38,10 +43,12 @@ function readinessAusZeile(zeile: ReadinessZeile): TripReadinessItem | null {
   ])[0] ?? null
 }
 
-export function readinessAusZeilen(zeilen: ReadinessZeile[] | null | undefined): TripReadinessItem[] {
+export function readinessAusZeilen(
+  zeilen: ReadinessZeile[] | null | undefined,
+  party: readonly TripTraveller[] = [],
+): TripReadinessItem[] {
   if (!zeilen?.length) return []
   return zeilen
-    .map(readinessAusZeile)
+    .map((zeile) => readinessAusZeile(zeile, party))
     .filter((item): item is TripReadinessItem => item !== null)
 }
-

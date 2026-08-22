@@ -1247,10 +1247,14 @@ describe('Gastreise trägt dieselbe Readiness-Form', () => {
       clientRef: 'traveller:1',
       nationalityCountryCode: 'CH',
       documentType: 'passport',
+      citizenships: undefined,
+      documents: undefined,
     })
-    assert.equal(danach.party?.[0]?.nationalityCountryCode, 'CH')
+    assert.equal(danach.party?.[0]?.citizenships[0]?.countryCode, 'CH')
+    assert.equal(danach.party?.[0]?.documents[0]?.documentType, 'passport')
     const geladen = gastreiseLadenNach(danach.id)
-    assert.equal(geladen?.party?.[0]?.nationalityCountryCode, 'CH')
+    assert.equal(geladen?.party?.[0]?.citizenships[0]?.countryCode, 'CH')
+    assert.equal(geladen?.party?.[0]?.documents[0]?.documentType, 'passport')
     const ohne = gastTravellerEntfernen(danach, 'traveller:1')
     assert.equal(ohne.party?.length, 0)
   })
