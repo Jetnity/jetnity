@@ -40,6 +40,7 @@ Pflichtlektüre zusätzlich zum Nachtrag:
 - `docs/PRODUCT_QUALITY_STANDARD.md`
 - `docs/LOGIC_STANDARD.md`
 - `docs/CONTINUITY_STANDARD.md`
+- `docs/CHATGPT_CURSOR_WORKFLOW.md`
 - `docs/REISEN.md`
 - `docs/DATENBANK.md`
 - `docs/MOBILITY.md`
