@@ -7,7 +7,6 @@ Arbeitsblock: **Foundation D – Route & Transit Intelligence**
 
 - Branch: `feat/route-transit-intelligence`
 - Draft PR: **#34 – Foundation D – Route & Transit Intelligence**
-- letzter Head vor diesem Status-Checkpoint: `7b4c64d3fc2cdbc00759fd1c1e029d16ccbffab7`
 - tatsächlichen aktuellen Head vor Arbeit immer erneut über GitHub verifizieren
 - Status: **vor Implementierung / neuer Cursor-Agent soll übernehmen**
 - Merge: **nicht freigegeben**
@@ -47,6 +46,8 @@ Vor Implementierungsbeginn bereits vorhanden:
 - Product-Owner-Merge-Gate ist verbindlich: kein Merge ohne ausdrückliche aktuelle Nutzerfreigabe.
 - Progress-Persistence-Policy ist verbindlich: kein relevanter Fortschritt darf nur im Chat/Agenten-Kontext bleiben.
 - Foundation-D-spezifischer Merge-Amendment liegt im Branch.
+- Foundation-D-spezifischer Progress-Persistence-Amendment liegt im Branch.
+- Always-Apply-Cursor-Regel verlangt die Pflege dieses Live-Handoffs.
 
 **Noch keine Foundation-D-Fachimplementierung als abgeschlossen betrachten.** Die bisherigen PR-Änderungen sind Auftrag/Governance/Handoff-Vorbereitung.
 
@@ -154,6 +155,7 @@ Mindestens:
 - `docs/TRAVEL_READINESS.md`
 - `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md`
 - `docs/CURSOR_ROUTE_TRANSIT_MERGE_APPROVAL_AMENDMENT.md`
+- `docs/CURSOR_ROUTE_TRANSIT_PROGRESS_PERSISTENCE_AMENDMENT.md`
 - relevante Flight-/Trip-/Mobility-/Readiness-Dateien und Tests.
 
 Danach realen Git-/CI-/Preview-/Development-/Production-Stand prüfen, bevor Annahmen getroffen werden.
