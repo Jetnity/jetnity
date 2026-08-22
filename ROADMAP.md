@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 22. August 2026  
-Status: **operativer Stand nach Abschluss von Foundation C**
+Status: **Foundation D – Route & Transit Intelligence aktiv**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -10,12 +10,16 @@ Für Entscheidungen zusätzlich lesen:
 - `JETNITY_HANDOFF.md`
 - `ARCHITECTURE.md`
 - `DECISIONS.md`
+- `docs/PRODUCT_QUALITY_STANDARD.md`
+- `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
 - `docs/LOGIC_STANDARD.md`
 - `docs/CONTINUITY_STANDARD.md`
 
-Leitsatz:
+Leitsätze:
 
 > **Einfach für den Nutzer. Streng logisch im Inneren. Eine Reise, eine Wahrheit.**
+
+> **Komplexität gehört ins System, nicht in den Kopf des Nutzers.**
 
 ---
 
@@ -26,6 +30,7 @@ Leitsatz:
 - Jetnity V2 Produktvision
 - verbindliches Product Mandate: führendes intelligentes Reiseplanungs-/Reisebegleitungsprodukt anstreben
 - Product Quality Standard
+- **websiteweiter UX & Informationsarchitektur Standard**
 - Logic Standard
 - Continuity Standard
 - verbindlicher ChatGPT/Cursor-Workflow
@@ -66,26 +71,81 @@ Nicht erneut bauen.
 
 ---
 
-## 2. Foundation C – nächste Abhängigkeiten, nicht Teil des abgeschlossenen Blocks
+## 2. Aktiv – Foundation D: Route & Transit Intelligence
 
-### A. Strukturierte Origin-/Transit-Fakten
+Status: **GESTARTET / DRAFT PR #34**
 
-Status: **offen / wichtig**
+- Branch: `feat/route-transit-intelligence`
+- Task: `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md`
+- verbindlicher UX-Standard: `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
 
-Ziel:
+### Ziel
 
-- Flight-/Itinerary-Daten sollen strukturierte Origin-/Transit-Ländercodes in den gemeinsamen Reisegraphen liefern.
-- `routeFactsAusReise()` wird dadurch mit echter Evidence gespeist.
-- Kein Raten aus Ortsnamen.
+Jetnity erhält eine belastbare, provider-neutrale Route Truth für:
 
-Nutzen:
+- Origin
+- Destination
+- geordnete Flug-/Itinerary-Segmente
+- Transit-/Connection-Punkte
+- Airport-/Place- und Country-Kontext
+- Connection Duration, wenn aus echten Zeiten ableitbar
+- Evidence / Source
+- Änderungs-/Revisionsbezug
 
-- automatische Transit-Requirements
-- bessere Reiseänderungslogik
-- bessere Mobilitäts-/Connection-Prüfungen
-- Grundlage für spätere Timatic-Auswertung.
+Kein Raten aus Ortsnamen.
 
-### B. Echter Travel-Requirements-Provider
+### Produktwirkung
+
+**Flüge**
+
+- Route und Umstiege verständlich sichtbar
+- Direktflug einfacher als Multi-Segment-Verbindung
+- technische Providerdaten werden in menschlich lesbare Reiseinformation übersetzt
+
+**Einreise & Reisevorbereitung**
+
+- Foundation C erhält echte strukturierte Origin-/Transit-Ländercodes
+- Multi-Transit bleibt vollständig
+- Transitänderung löst korrekt stale/recheck aus
+
+**Mobilität / Connections**
+
+- spätere Transfer-, Airport-Change- und Connection-Logik kann dieselbe Route Truth verwenden
+
+**Reiseänderungen**
+
+- Änderungen wie `ZRH → DOH → BKK` zu `ZRH → SIN → BKK` werden als echte Kontextänderung verstanden
+
+### UX-Verbindlichkeit
+
+Foundation D ist gleichzeitig der erste aktive Block unter dem neuen websiteweiten UX-/Informationsarchitektur-Standard.
+
+Alle betroffenen Oberflächen müssen:
+
+- sofort Orientierung geben
+- klare visuelle Priorität haben
+- Status verständlich zeigen
+- einen nächsten sinnvollen Schritt erkennen lassen
+- Details progressiv öffnen
+- Mobile und Desktop logisch gleich behandeln
+- Cross-Domain-Auswirkungen verständlich statt redundant darstellen
+
+Ein technisch grüner PR ist nicht ausreichend, wenn die Oberfläche kognitiv unnötig belastet.
+
+### Harte Grenzen
+
+- PR #34 bleibt Draft bis Human-/Architecture-Review
+- nicht mergen
+- keine Production-Migration
+- kein echter Flight-/Requirements-Provider
+- kein Timatic-Vertrag
+- keine Secrets
+- keine Fake-Routen, Transitländer oder Zeiten
+- bestehende Foundations nicht neu bauen
+
+---
+
+## 3. Danach – echter Travel-Requirements-Provider
 
 Status: **offen / extern**
 
@@ -101,13 +161,13 @@ Vor Aktivierung zwingend prüfen:
 - Datenhaltung / Datenschutz
 - API-Eigenschaften
 - Health-/Vaccination-Abdeckung
-- offizielle Source-/Action-Möglichkeiten.
+- offizielle Source-/Action-Möglichkeiten
 
 Kein Vertrag und keine laufenden Kosten ohne separate Freigabe.
 
 ---
 
-## 3. Extern blockiert / Provider-Zugänge fehlen
+## 4. Extern blockiert / Provider-Zugänge fehlen
 
 ### Phase 3.4 – echter Hotelprovider
 
@@ -133,43 +193,14 @@ Production-Suchen bleiben bis dahin deaktiviert.
 
 ---
 
-## 4. Empfohlene nächste interne Priorität
-
-Solange externe Provider-Zugänge fehlen, bevorzugt ein Block mit hohem Produktwert und ohne Fake-Daten:
-
-### Priorität 1 – Route & Transit Intelligence Foundation
-
-- strukturierte Route-/Transit-Fakten im Reisegraphen
-- Flight-/Itinerary-Evidence statt Ortsnamen-Raten
-- Auswirkungen auf Readiness, Connections, Mobilität und Reiseänderungen
-- keine Provider-Erfindungen
-
-Warum hoch priorisiert:
-
-- schließt eine klare Foundation-C-Lücke
-- verbessert mehrere bestehende Domänen gleichzeitig
-- erhöht spätere Provider-Readiness
-- passt zum Prinzip „eine Reise, eine Wahrheit“.
-
-### Danach mögliche Tracks
-
-- echter Travel-Requirements-Provider, sobald Konditionen vorliegen
-- echter Hotelprovider, sobald Zugang vorliegt
-- weiterer Trip-Builder-/Workspace-Nutzen mit klarer Zeitersparnis
-- gezieltes Security-Hardening bestehender Supabase-Warnungen.
-
-Der nächste konkrete Block wird vor Start gegen Produktmandat, Nutzen, Kosten und aktuelle externe Abhängigkeiten entschieden.
-
----
-
 ## 5. Security-Hardening Track
 
-Status: **offen, nicht durch Foundation C verursacht**
+Status: **offen, nicht durch Foundation C/D verursacht**
 
 Supabase Security Advisor weist weiterhin auf ältere Punkte hin, insbesondere:
 
 - mehrere `SECURITY DEFINER`-Funktionen, die für `authenticated` ausführbar sind
-- GraphQL-Sichtbarkeit verschiedener bestehender Tabellen.
+- GraphQL-Sichtbarkeit verschiedener bestehender Tabellen
 
 Diese Punkte separat prüfen und priorisieren. Keine pauschalen Berechtigungsänderungen ohne Funktions-/Ownership-Review.
 
@@ -186,7 +217,7 @@ Nicht automatisch weiterbauen:
 - Media Studio
 - große Social-Funktionen
 - umfangreiche Blogging-/Render-Systeme
-- Enterprise-Nebenmodule ohne direkten Produktkern-Nutzen.
+- Enterprise-Nebenmodule ohne direkten Produktkern-Nutzen
 
 Neue Features müssen Reiseplanung/-begleitung klar verbessern, Zeit/Suchaufwand reduzieren, Nutzerbindung aus realem Nutzen erhöhen, Umsatzpotenzial stärken oder technisch für einen Kernbereich notwendig sein.
 
@@ -203,20 +234,24 @@ Bereits auf Production-Schema:
 
 Das bedeutet **nicht**, dass externe Provider-Suchen aktiv sind.
 
-Weiterhin keine Production-Aktivierung von Provider-Suchen, Secrets oder kostenpflichtigen Integrationen ohne die dokumentierte Freigabe.
+Foundation D darf bis zur separaten Freigabe keine Production-Schemaänderung ausrollen.
+
+Weiterhin keine Production-Aktivierung von Provider-Suchen, Secrets oder kostenpflichtigen Integrationen ohne dokumentierte Freigabe.
 
 ---
 
 ## 8. Definition für den nächsten Agenten
 
-Vor dem nächsten größeren Arbeitsblock:
+Solange PR #34 offen ist:
 
 1. `JETNITY_PRODUCT_MANDATE.md` lesen.
 2. `JETNITY_VISION.md` lesen.
 3. `JETNITY_HANDOFF.md` lesen.
 4. diese Roadmap lesen.
-5. aktuellen Git-/CI-/Vercel-/Supabase-Stand prüfen.
-6. relevante Fach-/ADR-/Logic-Dokumente lesen.
-7. vollständigen Cursor-Task im neuen Feature-Branch hinterlegen.
+5. `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md` lesen.
+6. `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md` vollständig lesen.
+7. aktuellen PR #34 / Git-/CI-/Vercel-/Supabase-Stand prüfen.
+8. relevante Flight-/Trip-/Mobility-/Readiness-/Change-Dokumente lesen.
+9. bestehende Arbeit synchronisieren und fortsetzen statt neu anzufangen.
 
 Kein abgeschlossener Block darf unnötig neu gebaut werden.
