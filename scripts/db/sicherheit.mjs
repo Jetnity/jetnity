@@ -1481,6 +1481,48 @@ function reisenachweise() {
       erwartung: 'abgelehnt',
     },
     {
+      name: 'Citizenship-Löschung nullt nur die Document-Relation',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `update public.trip_traveller_documents
+               set citizenship_id = (
+                 select id from public.trip_traveller_citizenships
+                  where traveller_id = '${TRAVELLER}'
+                  limit 1
+               )
+             where traveller_id = '${TRAVELLER}';
+            delete from public.trip_traveller_citizenships
+             where traveller_id = '${TRAVELLER}';
+            select * from public.trip_traveller_documents
+             where traveller_id = '${TRAVELLER}'
+               and citizenship_id is null
+               and trip_id is not null
+               and user_id is not null`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'Traveller-Löschung entfernt traveller-spezifische Readiness',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `update public.trip_readiness_items
+               set traveller_id = '${TRAVELLER}'
+             where id = '${READINESS}';
+            delete from public.trip_travellers where id = '${TRAVELLER}';
+            select * from public.trip_readiness_items where id = '${READINESS}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'Neunte Staatsbürgerschaft am selben Traveller wird abgelehnt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_traveller_citizenships
+              (traveller_id, trip_id, client_ref, country_code)
+            select '${TRAVELLER}', '${REISE}', 'citizenship:X' || g, 'X' || chr(64 + g)
+              from generate_series(1, 8) as g`,
+      erwartung: 'abgelehnt',
+      code: '23514',
+    },
+    {
       name: 'Vorbereitungspunkt lehnt Passnummer-Titel ab',
       rolle: 'authenticated',
       uid: NUTZER,
