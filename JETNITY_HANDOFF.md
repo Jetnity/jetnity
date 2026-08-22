@@ -218,6 +218,7 @@ Umgesetzt:
 - eine provider-neutrale Route-Facts-Domäne in `lib/route/`
 - persistierte Itinerary in vorhandenem `trip_items.metadata`; Development-RPC schreibt sie atomar (ADR-0113), Production-Schema unverändert
 - Guest- und Account-Parität über dasselbe Trip-Feld; stiller Route-Verlust ist kein Erfolg
+- Account-Route-Länder entstehen nur aus `public.airports`, nie aus Browser-Country-Facts (ADR-0114)
 - Readiness erhält Origin-/Transit-Codes und wird bei Transitänderung stale
 - Flugbereich zeigt Route progressiv; Übersicht eine dezente Zeile
 - Reiseänderung nennt Transitwechsel

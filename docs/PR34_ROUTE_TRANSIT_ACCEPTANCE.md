@@ -1,7 +1,7 @@
 # PR #34 – Foundation D Acceptance / Verification
 
 Stand: 22. August 2026  
-Status: **Review-Blocker Guest→Account-Route-Persistenz umgesetzt; lokal/CI/Preview/DB-Development geprüft; erneutes Human-Review und Product-Owner-Freigabe offen**
+Status: **Round-2-Trust-Boundary-Fix umgesetzt; lokal/CI/Preview geprüft; erneutes Human-Review und Product-Owner-Freigabe offen**
 
 Branch: `feat/route-transit-intelligence`  
 PR: https://github.com/Jetnity/jetnity/pull/34  
@@ -15,7 +15,7 @@ Merge-Approval: `docs/CURSOR_ROUTE_TRANSIT_MERGE_APPROVAL_AMENDMENT.md` und `doc
 
 Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Flight-Itineraries.
 
-`routeFactsAusReise()` liefert `quelle: 'flight_itinerary'`, sobald eine gültige Itinerary im Reisegraphen liegt. Titel, Notizen und Ortsnamen erzeugen keine Route.
+`routeFactsAusReise()` liefert `quelle: 'flight_itinerary'`, sobald eine gültige Itinerary im Reisegraphen liegt. Titel, Notizen, Ortsnamen und Browser-Country-Felder erzeugen keine Route. Account-Länder kommen nur aus `public.airports` (ADR-0114).
 
 ---
 
@@ -34,16 +34,16 @@ Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Fligh
 | --- | --- |
 | Arbeits-Head der Implementierung | `23dd548ae05016b2a1b5011e24c3bdd9d2018f8f` |
 | Persistenz-Fix-Head | `6cbe39f3a96fd425b2e0e60ef33c3c206432ed81` |
-| Verifizierter Branch-Head | `69f903e6b5f6717d381471aaa8f8ddd8724bdef2` |
-| `npm test` | **1284 pass / 0 fail** (Code-Head `6cbe39f3`) |
+| Round-2-Fix-Head | `ab8a4910735b05c294f1060ce0f591afc3f25f4d` |
+| `npm test` | **1295 pass / 0 fail** (Round-2-Head `ab8a4910`) |
 | Typecheck | **grün** (`tsc --noEmit`) |
 | Lint | **grün** (`next lint`, 0 warnings/errors) |
 | Hygiene | **grün** (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`) |
 | Production Build | **grün** (`next build`, 38/38 Seiten). Setup-Warnung: keine `.env`/`.local` in dieser Agent-Umgebung. |
 | Auth-Config-Checks | **grün** (`auth:pruefen`: 55/55 Werte) |
 | Trip Workspace Audit | **726 Kombinationen, 0 Fehler**, Engines WebKit + Chromium, inkl. `route-direkt` / `route-ein-transit` / `route-zwei-transits` |
-| Vercel Preview | **READY** für `69f903e6`: https://jetnity-hmdtw8ime-jetnity-e1b93c82.vercel.app |
-| GitHub Actions `CI` | **success** auf `69f903e6`: https://github.com/Jetnity/jetnity/actions/runs/32575412251 |
+| Vercel Preview | **READY** für `ab8a4910`: https://jetnity-fzcn04o7h-jetnity-e1b93c82.vercel.app |
+| GitHub Actions `CI` | **success** auf `ab8a4910`: https://github.com/Jetnity/jetnity/actions/runs/32576132461 |
 
 ---
 
@@ -112,6 +112,14 @@ Geprüft gegen `docs/CURSOR_ROUTE_TRANSIT_EXPERT_PROACTIVITY_AMENDMENT.md`. Rout
 - **Priorität:** später
 - **Scope:** außerhalb Foundation D
 - **Product-Owner-Entscheidung:** nicht jetzt
+
+### Fund 4 – Client-Country-Facts durften nicht Account-Truth werden
+
+- **Beobachtung:** Guest→Account hat strukturell gültige Browser-Länder persistiert. Readiness hätte sie als `flight_itinerary` gelesen.
+- **Status:** **behoben** in `ab8a4910` (ADR-0114). `reiseAusNutzlastAnlegen()` kanonisiert vor RPC und Recovery.
+- **Priorität:** Production-RPC bleibt unverändert strukturell; Country-Truth liegt in TypeScript
+- **Scope:** innerhalb Foundation D, umgesetzt
+- **Product-Owner-Entscheidung:** keine weitere Trust-Boundary in diesem PR
 
 Keine weiteren hochwirksamen Experten-Funde außerhalb dieser Punkte und der bereits dokumentierten Risiken.
 

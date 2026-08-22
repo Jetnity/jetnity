@@ -10,9 +10,9 @@ Arbeitsblock: **Foundation D – Route & Transit Intelligence**
 - Implementierungs-Head: `23dd548ae05016b2a1b5011e24c3bdd9d2018f8f`
 - Persistenz-Fix-Head: `6cbe39f3a96fd425b2e0e60ef33c3c206432ed81`
 - letzter vor Round-2 verifizierter Branch-/PR-Head: `69f903e6b5f6717d381471aaa8f8ddd8724bdef2`
-- Round-2-Review-Dokument: Commit `0837a9a1cab31b9788fdd0203b59a90d4851bd0b`
+- Round-2-Fix-Head: `ab8a4910735b05c294f1060ce0f591afc3f25f4d`
 - aktuellen Branch-/PR-Head vor jeder weiteren Arbeit erneut über GitHub verifizieren
-- Status: **erster Persistenz-Blocker behoben; erneutes Human-/Truth-Review hat einen zweiten Trust-Boundary-Blocker gefunden: Browser-/Local-Storage-Country-Facts dürfen nicht als Route Truth persistiert werden**
+- Status: **Round-2-Trust-Boundary-Fix umgesetzt und lokal/CI/Preview geprüft; erneutes Human-/Truth-Review offen**
 - Merge: **nicht freigegeben**, PR bleibt Draft
 
 ## 2. Ziel
@@ -49,38 +49,24 @@ Umgesetzt:
 - Development-Migration `20260822130000_reise_anlegen_route_itinerary.sql` angewendet
 - Production nicht migriert
 
-## 5. Human / Truth Review Round 2 – BLOCKER offen
+## 5. Human / Truth Review Round 2 – Trust-Boundary-Fix umgesetzt
 
 Verbindlicher Review-Nachtrag:
 
 - `docs/CURSOR_PR34_HUMAN_REVIEW_ROUND2.md`
 
-### Fund
+Umgesetzt in `ab8a4910` (ADR-0114):
 
-`gastreiseUebernehmen()` akzeptiert Browser-/Local-Storage-Nutzlasten. Das Route-Schema und die SQL-Helferfunktion prüfen `airportCode` / `countryCode` / `city` / `country` derzeit nur strukturell. Die Development-RPC kann deshalb formal gültige, aber fachlich falsche Client-Country-/Display-Facts in `trip_items.metadata` persistieren.
-
-`routeFactsAusGraph()` behandelt diese persistierte Itinerary anschließend als `quelle: 'flight_itinerary'` und speist Origin-/Destination-/Transit-Countries in Readiness.
-
-Das verletzt die Foundation-D-Truth-Boundary.
-
-### Verbindlicher Fix
-
-Vor Persistenz muss jede clientseitig kommende Route serverseitig kanonisiert werden:
-
-- alle IATA-Codes über alle Legs/Segmente sammeln;
-- ein Batch-Lookup gegen `public.airports`;
-- Route-Punkte aus IATA + serverseitiger Referenz neu bilden;
-- Clientwerte `countryCode`, `city`, `country` verwerfen;
-- unbekannte / nicht verfügbare Referenz → `null`/unknown, niemals Client-Fallback;
-- kanonisierte Nutzlast sowohl an RPC als auch Recovery übergeben;
-- kein N+1;
-- direkte Account-Flugübernahme darf nicht regressieren.
+- `reiseAusNutzlastAnlegen()` sammelt alle IATA-Codes, holt `public.airports` einmal und übergibt nur die kanonisierte Nutzlast an RPC und Recovery
+- `itineraryKanonisieren()` / `reiseNutzlastRouteKanonisieren()` bauen Punkte mit `flughafenPunkt()` neu
+- Clientwerte `countryCode`, `city`, `country` werden verworfen
+- fehlende Referenz oder Lookup-Fehler → `null`, kein Client-Fallback
+- Datum/Uhrzeit bleiben
+- `flugInReiseUebernehmen` unverändert referenzbasiert
+- SQL-Helfer bleibt strukturelle Schicht, nicht Country-Truth
 
 ## 6. Noch offen
 
-- Round-2-Truth-Boundary-Fix gemäß `docs/CURSOR_PR34_HUMAN_REVIEW_ROUND2.md`
-- Pflicht-Tests gegen manipulierte Client-Country-/City-Facts
-- kompletter DoD-Lauf nach dem Fix
 - erneutes Human-/Architecture-/UX-/Security-/Truth-Review gegen den tatsächlichen finalen Head
 - Product Owner erhält danach Ergebnis/Nutzerwirkung und kann weitere Änderungen verlangen
 - ausdrückliche Product-Owner-Merge-Freigabe bleibt erforderlich
@@ -111,23 +97,19 @@ Jeder relevante Fortschritt, Blocker, Review-Fund, Test-/CI-/Preview-Stand und n
 
 Global verbindlich: `docs/EXPERT_PROACTIVITY_POLICY.md`. Wichtige fachliche Chancen/Risiken werden proaktiv präsentiert und bei Relevanz versioniert.
 
-## 8. Letzter grüner Nachweis vor Round-2-Fix
+## 8. Tests / CI / Preview nach Round-2-Fix
 
-Auf Head `69f903e6` / Code-Fix `6cbe39f3`:
+Nachweis auf Code-Head `ab8a4910`:
 
-- `npm test`: 1284 pass / 0 fail
+- `npm test`: 1295 pass / 0 fail
 - Typecheck, Lint, Hygiene: grün
-- Production Build: grün
+- Production Build: grün (38/38 Seiten)
 - `auth:pruefen`: 55/55
-- Development-Migration `20260822130000_reise_anlegen_route_itinerary.sql` angewendet
-- `db:rechte`: OK (43 Tabellenrechte)
-- `db:rls`: grün
-- `db:sicherheit`: 185/185
 - Trip Workspace Audit: 726 Kombinationen, 0 Fehler, WebKit + Chromium
-- Vercel Preview READY
-- GitHub Actions CI success
-
-Diese Nachweise gelten **nicht automatisch** für den kommenden Round-2-Code-Fix. Danach vollständig neu verifizieren.
+- Vercel Preview READY: https://jetnity-fzcn04o7h-jetnity-e1b93c82.vercel.app
+- GitHub Actions CI **success**: https://github.com/Jetnity/jetnity/actions/runs/32576132461
+- Schema/RPC unverändert; Development-Migration und `db:rechte` / `db:rls` / `db:sicherheit` aus Round 1 bleiben gültig
+- Draft-PR #34 mergeable / CLEAN; das ist keine Merge-Freigabe
 
 ## 9. Datenbank / RLS / Production
 
@@ -166,12 +148,9 @@ Kein Round-2-Blocker:
 
 ## 13. Exakter nächster Schritt
 
-1. Cursor liest `docs/CURSOR_PR34_HUMAN_REVIEW_ROUND2.md` und diesen Status
-2. serverseitige Route-Kanonisierung implementieren und alle Pflicht-Tests ergänzen
-3. vollständigen DoD-Lauf / CI / Preview erneut durchführen und dokumentieren
-4. ChatGPT führt erneuten Human-/Architecture-/UX-/Security-/Truth-Review aus
-5. Product Owner sieht Ergebnis und entscheidet über weitere Änderungen oder spätere Merge-Freigabe
-6. **nicht mergen, nicht Mark Ready, keine Production-Migration ohne Freigabe**
+1. ChatGPT führt erneuten Human-/Architecture-/UX-/Security-/Truth-Review gegen `ab8a4910` bzw. den tatsächlichen Head aus
+2. Product Owner sieht Ergebnis und entscheidet über weitere Änderungen oder spätere Merge-Freigabe
+3. **nicht mergen, nicht Mark Ready, keine Production-Migration ohne Freigabe**
 
 ## 14. Pflichtlektüre
 
@@ -190,4 +169,4 @@ Kein Round-2-Blocker:
 - `docs/CURSOR_ROUTE_TRANSIT_EXPERT_PROACTIVITY_AMENDMENT.md`
 - `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`
 - `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
-- `JETNITY_HANDOFF.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `DECISIONS.md` ADR-0108/0112/0113
+- `JETNITY_HANDOFF.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `DECISIONS.md` ADR-0108/0112/0113/0114

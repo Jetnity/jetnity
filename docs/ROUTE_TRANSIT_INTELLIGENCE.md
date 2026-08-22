@@ -62,11 +62,12 @@ Provider-neutrale Typen leben in `lib/route/`.
 Länder kommen nur aus expliziten Airport-Referenzen:
 
 1. Suche: ein Batch-Lookup `public.airports` (`flughafenReferenzLesen`), kein N+1
-2. Konto-Übernahme: Server löst IATA erneut auf und vertraut Client-Ländern nicht
-3. Gast: übernimmt die in der Suchantwort mitgelieferte Referenzkarte in die lokale Itinerary
-4. Anzeige: City/Country nur, wenn die Referenz sie trägt
+2. Konto-Anlage aus Browser-/Local-Storage-Nutzlast: `reiseAusNutzlastAnlegen()` sammelt alle IATA-Codes, holt dieselben Referenzen einmal und baut jeden Route-Punkt mit `flughafenPunkt()` neu. Clientwerte für `countryCode`, `city` und `country` werden verworfen (ADR-0114)
+3. Direkte Account-Flugübernahme: weiterhin `itineraryAusFlugOption()` plus Batch-Referenz, unverändert
+4. Gast: übernimmt die in der Suchantwort mitgelieferte Referenzkarte in die lokale Itinerary; das ist nur lokaler Entwurf, keine Account-Truth
+5. Anzeige: City/Country nur, wenn die Referenz sie trägt
 
-Ohne Treffer in `airports` bleibt `countryCode` `null`. Die Route darf trotzdem IATA-Segmente zeigen.
+Ohne Treffer in `airports` oder bei Lookup-Fehler bleibt `countryCode` `null`. Es gibt keinen Fallback auf Client-Länder. Die Route darf trotzdem IATA-Segmente zeigen. Die SQL-Helferfunktion prüft nur Formate und Größe; sie ist keine Country-Truth.
 
 ---
 
@@ -91,7 +92,7 @@ Grenzen:
 - `public.reise_aendern()` lässt `metadata` unberührt
 - `routeItinerary` ist kommerziell geschützt (`lib/reiseaenderung/geschuetzt.ts`)
 
-Guest → Account: dieselbe Itinerary wandert in der Nutzlast mit. Item-IDs gehören nicht zum Route-Fingerprint, damit Readiness nach der Übernahme nicht stale wird.
+Guest → Account: die Browser-Itinerary ist Input. Persistiert wird nur die serverseitig kanonisierte Route. Item-IDs gehören nicht zum Route-Fingerprint, damit Readiness nach der Übernahme nicht stale wird.
 
 ---
 

@@ -2811,6 +2811,32 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0114 – Account-Route-Länder kommen nur aus der Airport-Referenz
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #34; keine Schemaänderung
+
+**Entscheidung:** Bevor `reiseAusNutzlastAnlegen()` eine `route_itinerary` an `reise_anlegen()` oder den Recovery-Nachlauf übergibt, werden alle Route-Punkte aus IATA plus einem Batch-Lookup gegen `public.airports` neu aufgebaut. Clientwerte für `countryCode`, `city` und `country` werden verworfen. Fehlt die Referenz, bleiben diese Felder `null`. Datum und Uhrzeit bleiben aus der strukturell geprüften Itinerary.
+
+**Kontext:** Der zweite Human-/Truth-Review zu PR #34 hat die Guest→Account-Nutzlast als Trust-Boundary-Lücke bewertet (`docs/CURSOR_PR34_HUMAN_REVIEW_ROUND2.md`). Zod und `flug_route_itinerary_metadata()` prüfen nur Formate. Ein Browser könnte `ZRH` mit einem falschen Land persistieren; `routeFactsAusReise()` würde das als `flight_itinerary` an Readiness weitergeben.
+
+**Alternativen:**
+
+1. *Lookup in SQL je Segment.* Würde eine zweite Referenzwahrheit und N+1 in der RPC erzeugen.
+2. *Gesamte Übernahme ablehnen, wenn ein Airport fehlt.* Strenger als die bestehende unknown-Regel und würde gültige IATA-Routen ohne Landzeile verlieren.
+3. *Nur `gastreiseUebernehmen` kanonisieren.* Retry und spätere Browser-Pfade über `reiseAusNutzlastAnlegen()` blieben offen.
+
+**Begründung:** Dieselbe Batch-Referenz wie die Flugsuche und die direkte Account-Flugübernahme. Ein zentraler Ort vor RPC und Recovery. Die SQL-Helferfunktion bleibt strukturelle letzte Schicht, nicht Country-Truth.
+
+**Konsequenzen:**
+
+- `lib/route/kanonisieren.ts` ist die reine Abbildung
+- `reiseAusNutzlastAnlegen()` holt Referenzen einmal und übergibt nur die kanonisierte Nutzlast
+- `flugInReiseUebernehmen` bleibt unverändert referenzbasiert
+- keine Production-Migration, keine neue Spalte
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
