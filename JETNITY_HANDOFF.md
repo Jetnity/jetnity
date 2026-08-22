@@ -35,6 +35,7 @@ Vor Produkt-/Architektur-/Implementierungsentscheidungen lesen:
 - `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
 - `docs/LOGIC_STANDARD.md`
 - `docs/CONTINUITY_STANDARD.md`
+- `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md`
 - `docs/CHATGPT_CURSOR_WORKFLOW.md`
 - `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`
 - `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
@@ -142,16 +143,18 @@ Provider-Suchen/Requirements bleiben produktiv deaktiviert, solange keine echten
 
 ## 4b. Aktiver Arbeitsblock – Foundation E
 
-**Foundation E – Traveller Context / Multi-Citizenship / Multi-Document** ist technisch umgesetzt und review-bereit, nicht gemergt.
+**Foundation E – Traveller Context / Multi-Citizenship / Multi-Document** ist technisch umgesetzt, mit `main` synchronisiert und lokal plus remote verifiziert. Nicht gemergt.
 
 - Branch: `feat/traveller-context-intelligence`
-- Draft PR: **#35**
-- Draft PR bleibt Draft
+- Head: `a0e71ca4a6c32f2ca279ad9d60901ee224c73207`
+- Basis: `origin/main` @ `c8dbe904`
+- Draft PR: **#35**, `MERGEABLE`, bleibt Draft
 - kein Merge ohne ausdrückliche Product-Owner-Freigabe
 - keine Foundation-E-Production-Migration ohne separates Gate
 - Fachdokument: `docs/TRAVELLER_CONTEXT.md`
 - Acceptance: `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md`
 - Live-Handoff: `docs/ACTIVE_WORK_STATUS.md`
+- Review-Tiefe: `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` plus `docs/PRODUCT_OWNER_REVIEW_DEPTH_MANDATE.md`
 
 Foundation D liefert u. a.:
 
@@ -416,12 +419,11 @@ Offener separater Security-Hardening-Track bleibt sichtbar (u. a. ältere `SECUR
 
 Solange der Foundation-E-Draft-PR offen ist:
 
-1. `docs/ACTIVE_WORK_STATUS.md`, `docs/PR35_CHATGPT_INDEPENDENT_REVIEW.md` und `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md` lesen,
+1. `docs/ACTIVE_WORK_STATUS.md`, `docs/PR35_CHATGPT_FINAL_DEPTH_REVIEW.md` und `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md` lesen,
 2. Draft PR #35 bleibt Draft; nicht mergen, nicht Mark Ready,
-3. Depth-Review-Blocker aus `docs/PR35_CHATGPT_FINAL_DEPTH_REVIEW.md` sind im Code behoben; `main`-Sync und komplettes Gate folgen danach,
-4. danach unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_FINAL_DEPTH_REVIEW.md` in der Tiefe von `docs/PRODUCT_OWNER_REVIEW_DEPTH_MANDATE.md`,
-5. Product Owner separat um Merge-Freigabe fragen,
-6. Production-Migration erst nach Merge und separater Freigabe.
+3. Unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_FINAL_DEPTH_REVIEW.md` in der Tiefe von `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` und `docs/PRODUCT_OWNER_REVIEW_DEPTH_MANDATE.md`,
+4. Product Owner separat um Merge-Freigabe fragen,
+5. Production-Migration erst nach Merge und separater Freigabe.
 
 Nach Foundation E gilt die verbindliche Reihenfolge:
 

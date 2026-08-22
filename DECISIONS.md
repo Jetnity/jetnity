@@ -3108,7 +3108,7 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 **Konsequenzen:**
 
 - Guest→Account-Readiness mit nicht auflösbarer Traveller-Ref bricht ab.
-- Branch muss danach noch mit aktuellem `main` synchronisiert werden; das ist ein separates Gate.
+- `origin/main` @ `c8dbe904` ist semantisch übernommen (globale Review-Tiefe plus Foundation-E-Addenda). Production-Schema bleibt unverändert.
 
 ---
 

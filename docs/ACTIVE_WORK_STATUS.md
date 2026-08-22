@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 22. August 2026  
-Arbeitsblock: **Foundation E – Traveller Context – Depth-Review-Blocker-Fixes auf Draft PR #35**
+Arbeitsblock: **Foundation E – Traveller Context – Depth-Review-Fixes + `main`-Sync auf Draft PR #35**
 
 ## 1. Aktueller Zustand
 
@@ -14,11 +14,13 @@ Foundation D – Route & Transit Intelligence ist vollständig abgeschlossen und
 Foundation E läuft auf:
 
 - Branch: `feat/traveller-context-intelligence`
-- Basis: `origin/main` @ `ae64e4ff88ddacf4bbb6d9521e003fb1cc9653aa`
+- Head: `a0e71ca4a6c32f2ca279ad9d60901ee224c73207`
+- Basis: `origin/main` @ `c8dbe904faac49745bd149e3d2e85ca30ebd384c` (0 hinter / 36 voraus)
 - Draft PR: https://github.com/Jetnity/jetnity/pull/35
 - Fachdokument: `docs/TRAVELLER_CONTEXT.md`
 - Acceptance: `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md`
 - Audit vor Schemaänderung: `docs/FOUNDATION_E_ARCHITECTURE_AUDIT.md`
+- Review-Tiefe: `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` plus Product-Owner-Nachtrag `docs/PRODUCT_OWNER_REVIEW_DEPTH_MANDATE.md`
 
 ## 2. Was bereits umgesetzt ist
 
@@ -32,24 +34,27 @@ Foundation E läuft auf:
 - Vergleich ohne Evidence: `Noch nicht zuverlässig vergleichbar.`
 - UX erfasst mehrere Citizenships/Documents, behauptet keine Visa-Vorteile
 
-## 3. Verifizierter Nachweis
+## 3. Verifizierter Nachweis auf `a0e71ca4`
 
 | Nachweis | Ergebnis |
 | --- | --- |
-| `npm test` | 1335/1335 |
+| `npm test` | **1335/1335** |
 | Typecheck | grün |
 | Lint | grün |
 | Hygiene | grün |
 | Production-Build | grün, 38/38 Seiten |
-| Development-Migrationen `20260822160000`–`20260822180000` | angewendet |
+| Development-Migrationen `20260822160000`–`20260822180000` | angewendet, `db:anwenden --probe` nichts offen |
 | Live-FKs | Citizenship `SET NULL (citizenship_id)`, Readiness `CASCADE` |
-| Live-Lock | `FOR NO KEY UPDATE`; Backfill-Relikte `citizenship_id` **0** |
+| Live-Lock | `trip_traveller_kinder_limit_pruefen` mit `FOR NO KEY UPDATE`; Backfill-Relikte **0** |
 | `db:rechte` | OK, 51 Rechte |
-| `db:rls` | grün |
+| `db:rls` | grün (Exit 0) |
 | `db:sicherheit` | **210/210** inkl. party_schreiben leert Children trotz Legacy-Spalten |
 | `db:parallelitaet` | **7/7**, inkl. parallele Citizenship-Inserts bei 7/8 ohne Deadlock |
-| Production-Schema | unverändert |
-| UI-Audit nach Final-Review-Fixes | **838/838, 0 Fehler**, WebKit + Chromium, 8 Viewports |
+| Production-Schema | endet bei `20260822150000`; Foundation-E-Tabellen **nicht** vorhanden |
+| UI-Audit | **838/838, 0 Fehler**, WebKit + Chromium, 8 Viewports |
+| GitHub Actions `ci.yml` | **success** – https://github.com/Jetnity/jetnity/actions/runs/32603178261 |
+| Vercel Preview | **SUCCESS** – https://jetnity-la1tupbak-jetnity-e1b93c82.vercel.app |
+| PR-Mergebarkeit | `MERGEABLE`; Draft bleibt Draft |
 
 ## 4. Harte Grenzen
 
@@ -62,12 +67,11 @@ Foundation E läuft auf:
 
 ## 5. Exakter nächster Schritt
 
-1. Depth-Review-Blocker aus `docs/PR35_CHATGPT_FINAL_DEPTH_REVIEW.md` sind im Code behoben (Dokumentidentität, Traveller-Readiness, Comparator, kanonisch leere Parser).
-2. Danach `origin/main` semantisch synchronisieren. Kein blinder ours/theirs.
-3. Auf dem synchronisierten Head komplettes Gate inkl. Actions-CI und UI-Audit.
-4. Draft bleibt Draft. Nicht Mark Ready, nicht mergen.
-5. Production-Migration erst nach Merge und separater Freigabe.
+1. Unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_FINAL_DEPTH_REVIEW.md` in der Tiefe von `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` und `docs/PRODUCT_OWNER_REVIEW_DEPTH_MANDATE.md`.
+2. Draft bleibt Draft. Nicht Mark Ready, nicht mergen.
+3. Merge nur nach ausdrücklicher aktueller Product-Owner-Freigabe.
+4. Production-Migration erst nach Merge und separater Freigabe.
 
-Die GitHub-Meldung „2 checks success“ auf Docs-Heads ist Vercel/Preview, nicht `.github/workflows/ci.yml`. Kein Docs-Commit nur zum Festhalten von Checks.
+`origin/main` @ `c8dbe904` ist semantisch übernommen: globale Review-Tiefe plus Foundation-E-`TRAVELLER_CONTEXT.md`. Kein Docs-Commit nur zum Festhalten von Checks.
 
 Kein zweiter Foundation-E-Block auf einem anderen Branch beginnen.

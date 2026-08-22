@@ -95,8 +95,8 @@ Status: **UMGESETZT AUF DRAFT-PR / DEVELOPMENT VERIFIZIERT / NICHT GEMERGT**
 - Acceptance: `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md`
 - Audit: `docs/FOUNDATION_E_ARCHITECTURE_AUDIT.md`
 - Merge erst nach Review und ausdrücklicher Product-Owner-Freigabe
-- Development-Migrationen `20260822160000` und `20260822170000`; Production unverändert
-- Reviews inkl. `docs/PR35_CHATGPT_FINAL_DEPTH_REVIEW.md`: Blocker-Fixes auf diesem Branch; `main`-Sync folgt nach dem Code-Pass
+- Development-Migrationen `20260822160000`–`20260822180000`; Production endet bei `20260822150000`
+- Depth-Review-Blocker behoben; `origin/main` @ `c8dbe904` semantisch synchronisiert auf Head `a0e71ca4`
 
 ### Harte Grenzen
 

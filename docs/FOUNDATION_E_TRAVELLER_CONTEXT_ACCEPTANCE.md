@@ -4,9 +4,10 @@ Stand: 22. August 2026
 Status: **technisch verifiziert auf Development; Draft PR; Merge- und Production-Gate offen**
 
 Branch: `feat/traveller-context-intelligence`  
+Head: `a0e71ca4a6c32f2ca279ad9d60901ee224c73207`  
 PR: https://github.com/Jetnity/jetnity/pull/35  
-PR-Zustand: **Draft**  
-Base: `main` @ `ae64e4ff88ddacf4bbb6d9521e003fb1cc9653aa`  
+PR-Zustand: **Draft**, `MERGEABLE`  
+Base: `main` @ `c8dbe904faac49745bd149e3d2e85ca30ebd384c`  
 Task: `docs/CURSOR_FOUNDATION_E_TRAVELLER_CONTEXT_TASK.md`  
 Fachdokument: `docs/TRAVELLER_CONTEXT.md`
 
@@ -56,17 +57,18 @@ Nachweise nach Anwendung:
 
 | Nachweis | Stand |
 | --- | --- |
-| `npm test` | **1335 pass / 0 fail** |
+| `npm test` | **1335 pass / 0 fail** auf `a0e71ca4` |
 | Typecheck | **grün** (`tsc --noEmit`) |
 | Lint | **grün** (`next lint`, 0 warnings/errors) |
 | Hygiene | **grün** – `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` |
 | Production Build | **grün** (`next build`, 38/38 Seiten) |
-| Trip-Workspace-UI-Audit nach Final-Review-Fixes | **838 Kombinationen, 0 Fehler**, WebKit + Chromium. Viewports: 280, 320, 360, 390, 430, 768, 844×390, 1280. Bericht: `/opt/cursor/artifacts/trip_workspace_ui_audit.json` |
+| Trip-Workspace-UI-Audit auf `a0e71ca4` | **838 Kombinationen, 0 Fehler**, WebKit + Chromium. Viewports: 280, 320, 360, 390, 430, 768, 844×390, 1280. Bericht: `/opt/cursor/artifacts/trip_workspace_ui_audit.json` |
+| GitHub Actions `ci.yml` | **success** auf `a0e71ca4` – https://github.com/Jetnity/jetnity/actions/runs/32603178261 |
+| Vercel Preview | **SUCCESS** auf `a0e71ca4` – https://jetnity-la1tupbak-jetnity-e1b93c82.vercel.app |
 | Erster Audit-Lauf (vor Review-Fixes) | 16 Fehler, alle `readiness-user-done`: v1-Fingerprint wurde nach Foundation E korrekt stale. Fixture auf v2 gesetzt. |
 | Zweiter Audit-Lauf | **838/0** nach Fixture-Korrektur auf Head `17763238` |
 | Foundation-E-Zustände im Audit | `eine-staatsbuergerschaft`, `zwei-staatsbuergerschaften`, `dokument-fehlt`, `staatsbuergerschaft-fehlt`, `zwei-reisende`, `langes-label`, `provider-unavailable` |
-| GitHub CI | **success** auf Head `5cb207d3` – https://github.com/Jetnity/jetnity/actions/runs/32596833189 |
-| Vercel Preview | **READY** auf `5cb207d3` – https://jetnity-l6141bwaw-jetnity-e1b93c82.vercel.app |
+| Historisches CI/Preview vor Depth-Review | success/READY auf älteren Heads, nicht mehr der aktuelle Nachweis |
 
 ---
 
@@ -114,8 +116,8 @@ Automatisiert nachgewiesen:
 - kein echter Requirements-Provider
 - Guest→Account bleibt für Readiness ein nachgelagerter Schritt; nur Party ist atomar
 - Unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_FINAL_DEPTH_REVIEW.md` steht aus
-- Branch ist noch nicht mit aktuellem `main` synchron; das folgt nach diesem Code-Pass
-- GitHub CI / Vercel auf dem Docs-Nachzug nach diesen Fixes folgt; ein reiner Nachweis-Commit wird nicht erneut dokumentiert, solange CI nicht fehlschlägt
+- `origin/main` @ `c8dbe904` ist semantisch synchronisiert; kein weiterer `main`-Sync nötig, solange `main` nicht erneut vorgeht
+- Nach diesem Status-Commit folgt kein weiterer Docs-Commit nur zum Festhalten von Checks
 
 ---
 
