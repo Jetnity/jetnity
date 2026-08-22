@@ -7,14 +7,13 @@ Arbeitsblock: **Foundation D – Route & Transit Intelligence**
 
 - Branch: `feat/route-transit-intelligence`
 - Draft PR: **#34** https://github.com/Jetnity/jetnity/pull/34
-- Implementierungs-Head: `23dd548ae05016b2a1b5011e24c3bdd9d2018f8f`
-- Aktueller Branch-Head: `1eb24d241d61985d54558e6b139e83b85c5343dd` (Merge von `origin/main` `4a8a4ea6`, Progress-Persistence-Policy)
-- Status: **technisch umgesetzt; Branch mit aktuellem `main` synchronisiert; GitHub Actions Verify für den Implementierungs-HEAD nachziehen**
+- aktuellen Branch-/PR-Head vor jeder weiteren Arbeit erneut über GitHub verifizieren
+- Status: **technisch umgesetzt; Human-/Architecture-Review offen; neue globale Traveller-Context-Policy muss im Review berücksichtigt werden**
 - Merge: **nicht freigegeben**, PR bleibt Draft
 
 ## 2. Ziel
 
-Eine Route, eine strukturierte Wahrheit. Länder nur aus Airport-Referenzen. Kein Raten aus Ortsnamen.
+Eine Route, eine strukturierte Wahrheit. Länder nur aus belastbaren Airport-/Itinerary-Referenzen. Kein Raten aus Ortsnamen.
 
 ## 3. Bereits umgesetzt
 
@@ -28,43 +27,71 @@ Eine Route, eine strukturierte Wahrheit. Länder nur aus Airport-Referenzen. Kei
 - UI-Audit-Fixtures für Direktflug / 1 Transit / 2 Transits
 - Fachdokumente, ADR-0108-Nachzug, ADR-0112
 
-Route Facts sind traveller-neutral. Sie setzen keine einzelne Staatsbürgerschaft voraus und können später mehrere Credential-Profile gegen dieselbe Route auswerten.
+Route Facts sind traveller-neutral. Sie setzen keine einzelne Staatsbürgerschaft voraus und können später dieselbe Route gegen mehrere Traveller-/Credential-Profile auswerten.
 
 ## 4. Noch offen
 
-- Human-/Architecture-Review
+- Human-/Architecture-/UX-Review
 - ausdrückliche Product-Owner-Merge-Freigabe
-- GitHub Actions Verify-Job für den aktuellen Branch-Head nachziehen (letzter grüner PR-Lauf bleibt `ea34163b`; Implementierungs-Pushes haben keinen neuen `pull_request`-Lauf erzeugt)
+- GitHub Actions / Preview gegen aktuellen finalen Branch-Head verifizieren
 - kein Timatic, kein echter Provider, keine Production-Migration
-- **separater zukünftiger Readiness-Schritt vor echter Requirements-Provider-Aktivierung:** Mehrfachstaatsbürgerschaften und mehrere Reisedokumente gemäß `docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`; nicht still in Foundation D hineinmigrieren
+- **separater zukünftiger Readiness-/Traveller-Context-Schritt vor echter Requirements-Provider-Aktivierung:** Mehrfachstaatsbürgerschaften und mehrere Reisedokumente als 1:n-Modell; nicht still in Foundation D hineinmigrieren
 
-## 5. Letzte relevanten Änderungen
+## 5. Letzte relevanten Änderungen / Entscheidungen
 
-Foundation D implementiert. Multi-Citizenship ist verbindlich beschlossen, aber nicht in diesem PR implementiert.
+### Globale Traveller Context Intelligence Policy
 
-Neue verbindliche Product-Owner-Entscheidung: Ein Reisender kann mehrere Staatsbürgerschaften / Reisedokumente besitzen. Jetnity muss später für die konkrete Route die rechtlich zulässigen Dokumentoptionen getrennt prüfen. Gesetzliche Dokumentpflichten haben Vorrang; kein LLM-/Pass-Hopping-Raten.
+Der Product Owner hat verbindlich entschieden:
+
+> **Traveller Context Intelligence muss bei jeder relevanten Jetnity-Funktion berücksichtigt werden.**
+
+Global verbindlich auf `main`:
+
+- `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md`
+- `.cursor/rules/jetnity-traveller-context.mdc`
+
+Foundation-D-spezifisch:
+
+- `docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`
+- `docs/CURSOR_ROUTE_TRANSIT_TRAVELLER_CONTEXT_AMENDMENT.md`
+
+Konsequenz: Keine relevante Funktion darf still nur eine Staatsbürgerschaft / einen Pass / ein Credential als universelle Dauerannahme verwenden, wenn mehrere rechtlich nutzbare Optionen das Ergebnis verändern können. Wo Traveller-Kontext nicht relevant ist, sollen keine unnötigen Daten erhoben werden.
+
+### Merge-Gate
+
+Technisch fertig = review-bereit. **Kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.**
+
+### Progress Persistence
+
+Jeder relevante Fortschritt, Blocker, Review-Fund, Test-/CI-/Preview-Stand und nächste Schritt muss versioniert werden.
 
 ## 6. Tests / CI / Preview
+
+Letzter dokumentierter Foundation-D-Nachweis:
 
 - `npm test`: 1271 pass / 0 fail
 - Typecheck, Lint, Hygiene: grün
 - Production Build: grün
 - `auth:pruefen`: 55/55
 - Trip Workspace Audit: 726 Kombinationen, 0 Fehler, WebKit + Chromium
-- Vercel Preview READY für Implementierungs-Commit `23dd548a`: https://jetnity-16l9pmw3e-jetnity-e1b93c82.vercel.app
-- GitHub Actions CI: letzter abgeschlossener PR-Lauf success auf Docs-Head `ea34163b` (https://github.com/Jetnity/jetnity/actions/runs/32571564738). Nach Rebase/Merge/Implementierung kein neuer `pull_request`-Lauf. Branch wurde mit `main` `4a8a4ea6` synchronisiert, um den dirty Merge-State zu heben und CI erneut anzustoßen.
+- Vercel Preview READY für Implementierungs-Commit `23dd548a`
+- GitHub Actions CI: letzter dokumentierter PR-Lauf success auf früherem Docs-Head; aktuellen Branch-Head erneut verifizieren
+
+Nach den neuen Governance-/Traveller-Context-Commits muss der finale technische Nachweis immer gegen den tatsächlichen aktuellen Head geprüft werden; alte grüne Runs nicht automatisch auf neue Heads übertragen.
 
 ## 7. Datenbank / RLS / Production
 
-- keine neue Migration
+- keine neue Foundation-D-Migration
 - Production-Schema unverändert
-- Traveller-Schema nicht angefasst
+- Traveller-Schema in Foundation D nicht angefasst
 - RLS bleibt Eigentümergrenze von `trip_items`
-- aktuelles Foundation-C-`trip_travellers`-Schema hat weiterhin nur ein singuläres `nationality_country_code` + ein Dokumentprofil; Multi-Citizenship benötigt später einen separat reviewten 1:n-Ansatz, nicht Teil des aktuellen PR-#34-DB-Scopes
+- aktuelles Foundation-C-`trip_travellers`-Schema hat weiterhin nur ein singuläres `nationality_country_code` + ein Dokumentprofil; das ist ein Übergangsmodell und **kein langfristiges Architekturmandat**
+- Multi-Citizenship / Multi-Document braucht später einen separat reviewten 1:n-Ansatz
 
 ## 8. Kosten / Provider / Secrets
 
-- keine neuen Secrets, keine neuen laufenden Kosten
+- keine neuen Secrets
+- keine neuen laufenden Kosten
 - kein Flight-/Requirements-Provider aktiviert
 
 ## 9. Bekannte Risiken
@@ -72,20 +99,24 @@ Neue verbindliche Product-Owner-Entscheidung: Ein Reisender kann mehrere Staatsb
 - ohne Airport-Zeile bleibt Country `null`
 - mehrdeutige Flüge bekommen keine Itinerary
 - Official Transit bleibt ohne Provider `unknown`
-- ein echter Requirements-Provider darf nicht produktiv aktiviert werden, bevor Mehrfachstaatsbürgerschaft / mehrere Dokumentprofile fachlich und providerseitig geklärt sind
+- echter Requirements-Provider darf nicht produktiv aktiviert werden, bevor Multi-Citizenship / mehrere Credential-Profile fachlich und providerseitig geklärt sind
+- neuer Foundation-D-Code muss im Review darauf geprüft werden, dass keine singuläre Traveller-/Passport-Annahme in Route-Schnittstellen verhärtet wurde
 
 ## 10. Offene Nutzerentscheidungen / Freigaben
 
 - **Merge von PR #34 nicht freigegeben**
 - Production-/Provider-/Kostenfreigaben getrennt und nicht erteilt
-- Multi-Citizenship-/Multi-Document-Unterstützung ist **verbindlich beschlossen**, aber die konkrete Schema-/Implementierungsfreigabe folgt in einem eigenen Readiness-Schritt vor echter Provider-Aktivierung
+- Multi-Citizenship-/Multi-Document-Unterstützung ist verbindlich beschlossen
+- globale Traveller-Context-Relevanzprüfung gilt ab jetzt für **jede relevante neue/geänderte Funktion**
 
 ## 11. Exakter nächster Schritt
 
-1. Human-/Architecture-Review von PR #34
-2. Product Owner entscheidet über Änderungen oder Merge-Freigabe
-3. nicht mergen, nicht Mark Ready, keine Production-Migration
-4. nach Foundation-D-Review die Multi-Citizenship-Erweiterung als eigenen Readiness-Arbeitsblock einplanen, bevor Timatic/Requirements produktiv aktiviert wird
+1. PR #34 gegen den tatsächlichen aktuellen Head Human-/Architecture-/UX-reviewen
+2. dabei ausdrücklich `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md` und `docs/CURSOR_ROUTE_TRANSIT_TRAVELLER_CONTEXT_AMENDMENT.md` prüfen
+3. CI / Vercel Preview gegen finalen Head verifizieren bzw. erneut laufen lassen
+4. dem Product Owner Ergebnis und Nutzerwirkung zeigen
+5. Product Owner entscheidet über weitere Änderungen oder spätere Merge-Freigabe
+6. **nicht mergen, nicht Mark Ready, keine Production-Migration ohne Freigabe**
 
 ## 12. Pflichtlektüre
 
@@ -95,5 +126,9 @@ Neue verbindliche Product-Owner-Entscheidung: Ein Reisender kann mehrere Staatsb
 - `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md`
 - `docs/CURSOR_ROUTE_TRANSIT_MERGE_APPROVAL_AMENDMENT.md`
 - `docs/CURSOR_ROUTE_TRANSIT_PROGRESS_PERSISTENCE_AMENDMENT.md`
+- `docs/CURSOR_ROUTE_TRANSIT_TRAVELLER_CONTEXT_AMENDMENT.md`
 - `docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`
+- `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md`
+- `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`
+- `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
 - `JETNITY_HANDOFF.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `DECISIONS.md` ADR-0108/0112
