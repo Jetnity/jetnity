@@ -248,6 +248,37 @@ describe('Credential-Vergleich', () => {
     assert.equal(vergleich.winnerOptionRef, null)
   })
 
+  test('drei Optionen ohne vollständige current Evidence der ersten Option ergeben keinen Winner', () => {
+    const vergleich = credentialOptionenVergleichen([
+      evaluation({
+        credentialOptionRef: 'traveller:1:document:passport:CH',
+        result: 'unknown',
+        status: 'unknown',
+        freshness: 'recheck_needed',
+        officialClass: 'unknown',
+        optionEligibility: 'unknown',
+      }),
+      evaluation({
+        credentialOptionRef: 'traveller:1:document:passport:RS',
+        result: 'not_required',
+        status: 'current',
+        freshness: 'current',
+        officialClass: 'requirement',
+        optionEligibility: 'allowed',
+      }),
+      evaluation({
+        credentialOptionRef: 'traveller:1:document:passport:DE',
+        result: 'required',
+        status: 'current',
+        freshness: 'current',
+        officialClass: 'requirement',
+        optionEligibility: 'allowed',
+      }),
+    ])
+    assert.equal(vergleich.comparable, false)
+    assert.equal(vergleich.winnerOptionRef, null)
+  })
+
   test('mandatory und not_allowed auf derselben Option sind nicht vergleichbar', () => {
     const vergleich = credentialOptionenVergleichen([
       evaluation({

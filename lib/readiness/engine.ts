@@ -445,6 +445,21 @@ export function requirementsAusZeilen(
   const konflikte = new Set<string>()
   const evaluationSchluessel = (evaluation: OfficialEvaluation) =>
     `${evaluation.travellerClientRef}|${evaluation.credentialOptionRef}|${evaluation.destinationCountryCode}|${evaluation.requirementType}|${evaluation.transitCountryCode}`
+  const konfliktAus = (evaluation: OfficialEvaluation): OfficialEvaluation => ({
+    ...officialLeer({
+      travellerClientRef: evaluation.travellerClientRef,
+      credentialOptionRef: evaluation.credentialOptionRef,
+      destinationCountryCode: evaluation.destinationCountryCode,
+      transitCountryCode: evaluation.transitCountryCode,
+      requirementType: evaluation.requirementType,
+      status: 'unknown',
+      freshness: 'recheck_needed',
+      missingFacts: evaluation.missingFacts,
+      contextFingerprint: evaluation.evidence.contextFingerprint,
+    }),
+    optionEligibility: 'unknown',
+    optionMandate: 'unknown',
+  })
   const merken = (evaluation: OfficialEvaluation) => {
     const key = evaluationSchluessel(evaluation)
     if (konflikte.has(key)) return
@@ -460,7 +475,7 @@ export function requirementsAusZeilen(
       vorher.optionEligibility !== evaluation.optionEligibility ||
       vorher.optionMandate !== evaluation.optionMandate
     ) {
-      gesehen.delete(key)
+      gesehen.set(key, konfliktAus(vorher))
       konflikte.add(key)
     }
   }
