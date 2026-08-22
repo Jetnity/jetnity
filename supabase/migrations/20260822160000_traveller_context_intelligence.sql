@@ -82,7 +82,7 @@ create table public.trip_traveller_documents (
   constraint trip_traveller_documents_citizenship_fk
     foreign key (citizenship_id, traveller_id, trip_id, user_id)
     references public.trip_traveller_citizenships (id, traveller_id, trip_id, user_id)
-    on delete set null,
+    on delete set null (citizenship_id),
   constraint trip_traveller_documents_client_eindeutig
     unique (user_id, trip_id, traveller_id, client_ref)
 );
@@ -105,6 +105,13 @@ security invoker
 set search_path = public, pg_temp
 as $$
 begin
+  perform 1
+  from public.trip_travellers
+  where id = new.traveller_id
+    and trip_id = new.trip_id
+    and user_id = new.user_id
+  for update;
+
   if tg_table_name = 'trip_traveller_citizenships' then
     if (
       select count(*) from public.trip_traveller_citizenships
@@ -153,14 +160,14 @@ alter table public.trip_readiness_items
   add constraint trip_readiness_items_traveller_fk
     foreign key (traveller_id, trip_id, user_id)
     references public.trip_travellers (id, trip_id, user_id)
-    on delete set null;
+    on delete cascade;
 
 create index if not exists trip_readiness_items_traveller_idx
   on public.trip_readiness_items (traveller_id, trip_id)
   where traveller_id is not null;
 
 comment on column public.trip_readiness_items.traveller_id is
-  'Optional. Nur für traveller-spezifische Vorbereitung. Trip-level bleibt null.';
+  'Optional. Nur für traveller-spezifische Vorbereitung. Trip-level bleibt null. Löschen des Reisenden entfernt diese Zeilen (CASCADE).';
 
 insert into public.trip_traveller_citizenships (
   traveller_id, trip_id, user_id, client_ref, country_code
