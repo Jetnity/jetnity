@@ -2893,6 +2893,107 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0117 – Traveller Context ist 1:n, nicht 1:1
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf `feat/traveller-context-intelligence`; Migration nur Development
+
+**Entscheidung:** Ein Reisender bleibt eine stabile Parent-Zeile in `trip_travellers`. Staatsbürgerschaften und Reisedokumente liegen in Child-Tabellen mit Composite-FKs `(traveller_id, trip_id, user_id)`.
+
+**Kontext:** Foundation C speicherte ein Nationalitäts-/Dokumentbündel je Traveller. Das reicht nicht für Mehrfachstaatsbürgerschaft. Das Phase-1-Audit (`docs/FOUNDATION_E_ARCHITECTURE_AUDIT.md`) zeigte keinen besseren Weg als Parent/Child.
+
+**Alternativen:**
+
+1. *Mehrere Traveller-Zeilen je Person.* Zerstört Gruppenstatus und Guest→Account-Identität.
+2. *JSON-Array auf `trip_travellers`.* Keine FK-/Limit-Invarianten, schlechte RLS-Prüfbarkeit.
+3. *Globales Nutzerprofil statt trip-spezifisch.* Würde Residence/Dokumente über Reisen vermischen und mehr PII anziehen.
+
+**Begründung:** Composite-FKs verhindern Cross-Trip- und Cross-User-Referenzen. Limits (8 Citizenships, 12 Documents) begrenzen Abuse. ISO-2 only, keine freien Labels.
+
+**Konsequenzen:**
+
+- neue Tabellen `trip_traveller_citizenships` und `trip_traveller_documents`
+- optionales `trip_readiness_items.traveller_id`
+- App-Domäne `TripTraveller.citizenships[]` / `documents[]`
+- Hotels/Flüge/Mobilität bleiben kopfzahlbasiert
+
+---
+
+## ADR-0118 – Expand/Contract ohne Drop der Legacy-Spalten
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt; Production nicht anwenden
+
+**Entscheidung:** Foundation-C-Spalten bleiben. Neue Leser/Schreiber nutzen Child-Tabellen. Neue Writes setzen Legacy-Credential-Spalten nicht mehr.
+
+**Kontext:** Production enthält echte Foundation-C-Zeilen. Ein Drop im selben Block wäre Datenverlust- oder Dual-Truth-Risiko.
+
+**Alternativen:**
+
+1. *Sofort droppen.* Bricht alte Leser und verhindert Rollback.
+2. *Parallel beide Quellen schreiben.* Erzeugt widersprüchliche Wahrheit.
+3. *Nur Application-Layer-Migration ohne DB-Children.* Keine Invarianten.
+
+**Begründung:** Backfill ist deterministisch (`citizenship:<ISO>`, `document:<type>:<iso|xx>`). Legacy bleibt Lesefallback, wenn Children leer sind.
+
+**Konsequenzen:**
+
+- Migration `20260822160000_traveller_context_intelligence.sql`
+- späterer Contract-Cleanup ist ein eigener Block nach Production-Backfill
+- Guest-Legacy-JSON wird expandiert, nicht verworfen
+
+---
+
+## ADR-0119 – Party-Schreiben ist atomar und SECURITY INVOKER
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Development
+
+**Entscheidung:** Account-Writes für Traveller + Citizenships + Documents laufen über `public.party_schreiben(jsonb)` in einer Transaktion. `SECURITY INVOKER`, `search_path = public, pg_temp`.
+
+**Kontext:** Guest→Account war drei sequentielle Schritte. Mehr Child-Tabellen erhöhen das Teilfehler-Risiko.
+
+**Alternativen:**
+
+1. *Mehrere Client-Upserts.* Kann Citizenships ohne Parent oder Documents ohne Citizenship hinterlassen.
+2. *SECURITY DEFINER.* Unnötige Rechteausweitung.
+3. *Service Role aus der Server Action.* Umgeht RLS.
+
+**Begründung:** INVOKER behält Owner-Isolation. Die Funktion löscht Children des Travellers und schreibt die neue Menge neu. Fremde Citizenship-Refs werden abgewiesen.
+
+**Konsequenzen:**
+
+- `authenticated` hat EXECUTE, `anon`/`public` nicht
+- neue Writes gehen nicht mehr direkt auf die Child-Tabellen aus der App
+- Readiness-Übernahme bleibt ein nachgelagerter Schritt
+
+---
+
+## ADR-0120 – Credential-Optionen ohne erfundene regulatorische Wahrheit
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt; kein echter Provider
+
+**Entscheidung:** Die Engine bewertet vorhandene Credential-Optionen getrennt. Eine Option entsteht nur aus vorhandenen Dokumenten oder als dokumentlose Option. Vergleich ohne Official Evidence ergibt `Noch nicht zuverlässig vergleichbar.`
+
+**Kontext:** Mehrere Pässe dürfen später verglichen werden, aber Foundation E hat keinen Timatic- oder anderen Adapter.
+
+**Alternativen:**
+
+1. *Erste Staatsbürgerschaft als universelle Wahrheit.* Verstößt gegen die Traveller-Context-Policy.
+2. *LLM-Vergleich.* Keine regulatorische Quelle.
+3. *Hardcodierte Visa-Matrix.* Erfundene Truth, Wartungsfalle.
+
+**Begründung:** Provider-Port trägt `credentialOptions[]`. Factory bleibt `null`. UI darf Angaben erfassen, aber keinen „besseren Pass“ behaupten.
+
+**Konsequenzen:**
+
+- Fingerprint v2 enthält sortierte Citizenship-/Document-Mengen
+- `unknown` bleibt `unknown`
+- späterer Provider kann Optionen anschließen, ohne das Modell neu zu bauen
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

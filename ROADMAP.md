@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 22. August 2026  
-Status: **Foundation D – Route & Transit Intelligence aktiv**
+Status: **Foundation E – Traveller Context aktiv (Draft PR)**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -71,87 +71,47 @@ Nicht erneut bauen.
 
 ---
 
-## 2. Aktiv – Foundation D: Route & Transit Intelligence
+## 2. Abgeschlossen – Foundation D: Route & Transit Intelligence
 
-Status: **UMGESETZT AUF DRAFT-PR #34 / PRODUCT-OWNER-CLOSEOUT / NICHT GEMERGT**
+Status: **GEMERGT, AUF `main` UND PRODUCTION VERIFIZIERT**
 
-- Branch: `feat/route-transit-intelligence`
-- Task: `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md`
+Nicht erneut bauen.
+
+- PR #34 gemergt
 - Fachdokument: `docs/ROUTE_TRANSIT_INTELLIGENCE.md`
-- Acceptance: `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md`
-- verbindlicher UX-Standard: `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
-- Merge erst nach finalem Human-/Architecture-/Truth-Re-Review und ausdrücklicher Product-Owner-Freigabe
-- Round-4-Metadata-Guard (ADR-0116) liegt auf Development; Production unverändert
-
-### Ziel
-
-Jetnity erhält eine belastbare, provider-neutrale Route Truth für:
-
-- Origin
-- Destination
-- geordnete Flug-/Itinerary-Segmente
-- Transit-/Connection-Punkte
-- Airport-/Place- und Country-Kontext
-- Connection Duration, wenn aus echten Zeiten ableitbar
-- Evidence / Source
-- Änderungs-/Revisionsbezug
-
-Kein Raten aus Ortsnamen.
-
-### Produktwirkung
-
-**Flüge**
-
-- Route und Umstiege verständlich sichtbar
-- Direktflug einfacher als Multi-Segment-Verbindung
-- technische Providerdaten werden in menschlich lesbare Reiseinformation übersetzt
-
-**Einreise & Reisevorbereitung**
-
-- Foundation C erhält echte strukturierte Origin-/Transit-Ländercodes
-- Multi-Transit bleibt vollständig
-- Transitänderung löst korrekt stale/recheck aus
-
-**Mobilität / Connections**
-
-- spätere Transfer-, Airport-Change- und Connection-Logik kann dieselbe Route Truth verwenden
-
-**Reiseänderungen**
-
-- Änderungen wie `ZRH → DOH → BKK` zu `ZRH → SIN → BKK` werden als echte Kontextänderung verstanden
-
-### UX-Verbindlichkeit
-
-Foundation D ist gleichzeitig der erste aktive Block unter dem neuen websiteweiten UX-/Informationsarchitektur-Standard.
-
-Alle betroffenen Oberflächen müssen:
-
-- sofort Orientierung geben
-- klare visuelle Priorität haben
-- Status verständlich zeigen
-- einen nächsten sinnvollen Schritt erkennen lassen
-- Details progressiv öffnen
-- Mobile und Desktop logisch gleich behandeln
-- Cross-Domain-Auswirkungen verständlich statt redundant darstellen
-
-Ein technisch grüner PR ist nicht ausreichend, wenn die Oberfläche kognitiv unnötig belastet.
-
-### Harte Grenzen
-
-- PR #34 bleibt Draft bis Human-/Architecture-Review
-- nicht mergen
-- keine Production-Migration
-- kein echter Flight-/Requirements-Provider
-- kein Timatic-Vertrag
-- keine Secrets
-- keine Fake-Routen, Transitländer oder Zeiten
-- bestehende Foundations nicht neu bauen
+- Acceptance: `docs/FOUNDATION_D_PRODUCTION_ACCEPTANCE.md`
+- Route Truth bleibt traveller-neutral und die einzige Origin-/Transit-Quelle
 
 ---
 
-## 3. Danach – Traveller Context & Multi-Citizenship
+## 2b. Aktiv – Foundation E: Traveller Context / Multi-Citizenship / Multi-Document
 
-Status: **VERBINDLICHE NÄCHSTE INTERNE PRIORITÄT NACH FOUNDATION D**
+Status: **UMGESETZT AUF DRAFT-PR / DEVELOPMENT VERIFIZIERT / NICHT GEMERGT**
+
+- Branch: `feat/traveller-context-intelligence`
+- Task: `docs/CURSOR_FOUNDATION_E_TRAVELLER_CONTEXT_TASK.md`
+- Fachdokument: `docs/TRAVELLER_CONTEXT.md`
+- Acceptance: `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md`
+- Audit: `docs/FOUNDATION_E_ARCHITECTURE_AUDIT.md`
+- Merge erst nach Review und ausdrücklicher Product-Owner-Freigabe
+- Development-Migration `20260822160000` angewendet; Production unverändert
+
+### Harte Grenzen
+
+- Draft PR bleibt Draft
+- nicht mergen
+- keine Production-Migration
+- kein echter Requirements-Provider
+- kein Timatic-Vertrag
+- keine Secrets oder neuen laufenden Kosten
+- keine Passnummern, Scans, MRZ oder Biometrie
+- `unknown` bleibt `unknown`
+
+---
+
+## 3. Foundation E – Ziel und Produktlogik
+
+Status: **IN ARBEIT AUF DEM DRAFT-PR; NACH MERGE FOLGT NICHT DER PROVIDER, SONDERN SAFETY-FOUNDATION**
 
 Product-Owner-Entscheidung vom 22.08.2026: Nach Abschluss von Foundation D wird als nächster Kernblock **Traveller Context / Multi-Citizenship / Multi-Document** umgesetzt, bevor ein echter Travel-Requirements-Provider produktiv aktiviert wird.
 
@@ -379,7 +339,7 @@ Bereits auf Production-Schema:
 
 Das bedeutet **nicht**, dass externe Provider-Suchen aktiv sind.
 
-Foundation D darf bis zur separaten Freigabe keine Production-Schemaänderung ausrollen.
+Foundation E darf bis zur separaten Freigabe keine Production-Schemaänderung ausrollen. Foundation D ist auf Production.
 
 Weiterhin keine Production-Aktivierung von Provider-Suchen, Secrets oder kostenpflichtigen Integrationen ohne dokumentierte Freigabe.
 
@@ -387,20 +347,18 @@ Weiterhin keine Production-Aktivierung von Provider-Suchen, Secrets oder kostenp
 
 ## 11. Definition für den nächsten Agenten
 
-Solange PR #34 offen ist:
+Solange der Foundation-E-Draft-PR offen ist:
 
 1. `JETNITY_PRODUCT_MANDATE.md` lesen.
 2. `JETNITY_VISION.md` lesen.
-3. `JETNITY_HANDOFF.md` lesen.
+3. `JETNITY_HANDOFF.md` und `docs/ACTIVE_WORK_STATUS.md` lesen.
 4. diese Roadmap lesen.
-5. `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md` lesen.
-6. `docs/ROUTE_TRANSIT_INTELLIGENCE.md` und `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md` lesen.
-7. `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md` und `docs/CURSOR_PR34_PRODUCT_OWNER_CLOSEOUT_TASK.md` vollständig lesen.
-8. `docs/ACTIVE_WORK_STATUS.md`, `docs/PRODUCT_OWNER_PR34_ACCEPTANCE_CLOSURE.md` und `docs/PR34_FINAL_HUMAN_REVIEW.md` lesen, dann aktuellen PR #34 / Git-/CI-/Vercel-/Supabase-Stand prüfen.
-9. relevante Flight-/Trip-/Mobility-/Readiness-/Change-Dokumente lesen.
-10. nicht mergen, nicht Mark Ready, keine Production-Migration.
-11. bestehende Arbeit synchronisieren und fortsetzen statt neu anzufangen.
-12. Verbindliche Reihenfolge nach Foundation D: Foundation E → provider-neutrale Safety-Foundation → provider-neutrale Seasonal-Foundation → Provider-Readiness-Lücken schließen → großer Workspace-Umbau → Workspace Intelligence Audit → echte Providerphase → Provider-backed Audit → finale Startseiten-Positionierung.
+5. `docs/TRAVELLER_CONTEXT.md`, `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md` und `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md` lesen.
+6. `docs/CURSOR_FOUNDATION_E_TRAVELLER_CONTEXT_TASK.md` vollständig lesen.
+7. aktuellen Branch-/PR-/CI-/Vercel-/Supabase-Stand prüfen.
+8. nicht mergen, nicht Mark Ready, keine Production-Migration.
+9. bestehende Foundation-E-Arbeit reviewen statt neu anzufangen.
+10. Verbindliche Reihenfolge nach Foundation E: provider-neutrale Safety-Foundation → provider-neutrale Seasonal-Foundation → Provider-Readiness-Lücken schließen → großer Workspace-Umbau → Workspace Intelligence Audit → echte Providerphase → Provider-backed Audit → finale Startseiten-Positionierung.
 13. Travel Safety & Disruption Intelligence ist eine verbindliche spätere Produktfähigkeit gemäß `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`.
 14. Travel Timing & Seasonal Intelligence ist eine verbindliche gekoppelte spätere Produktfähigkeit gemäß `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`.
 15. Provider werden erst in einer späteren finalen Phase angeschlossen; vorher muss Jetnity provider-ready sein (`docs/PROVIDER_INTEGRATION_READINESS_POLICY.md`, `docs/PRODUCT_OWNER_PR34_PROVIDER_READINESS_ADDENDUM.md`).

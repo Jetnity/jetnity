@@ -128,7 +128,7 @@ Konkreter echter Mietwagenadapter und produktiver Nachweis fehlen.
 
 ### Travel Requirements / Readiness
 
-Provider-neutrale Requirements-Engine und Provider-Port existieren. Echter regulatorischer Provider fehlt. Vor dessen Anschluss muss Foundation E / Traveller Context / Multi-Citizenship belastbar sein.
+Provider-neutrale Requirements-Engine und Provider-Port existieren. Foundation E erweitert den Port um `citizenshipCountryCodes[]`, `documents[]` und `credentialOptions[]`. `requirementsProviderAus()` bleibt `null`. Echter regulatorischer Provider fehlt. Foundation E muss gemergt und Production-migriert sein, bevor ein Timatic- oder gleichwertiger Adapter angeschlossen wird.
 
 ### Travel Safety & Disruption
 
