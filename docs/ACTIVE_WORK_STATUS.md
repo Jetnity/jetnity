@@ -47,8 +47,8 @@ Foundation E läuft auf:
 | `db:sicherheit` | 204/204 |
 | Production-Schema | unverändert |
 | UI-Audit-Lauf | Script erweitert, Lauf ausstehend |
-| GitHub CI | **success** auf `fef11a38` – https://github.com/Jetnity/jetnity/actions/runs/32592236126 |
-| Vercel Preview | **pass** auf `fef11a38` – Deployment completed |
+| GitHub CI | **success** auf `ff4cb765` – https://github.com/Jetnity/jetnity/actions/runs/32592432597; zuvor `fef11a38` |
+| Vercel Preview | **pass** auf `ff4cb765` und `fef11a38` |
 
 ## 4. Harte Grenzen
 
