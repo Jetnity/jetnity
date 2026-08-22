@@ -149,7 +149,61 @@ Ein technisch grüner PR ist nicht ausreichend, wenn die Oberfläche kognitiv un
 
 ---
 
-## 3. Danach – echter Travel-Requirements-Provider
+## 3. Danach – Traveller Context & Multi-Citizenship
+
+Status: **VERBINDLICHE NÄCHSTE INTERNE PRIORITÄT NACH FOUNDATION D**
+
+Product-Owner-Entscheidung vom 22.08.2026: Nach Abschluss von Foundation D wird als nächster Kernblock **Traveller Context / Multi-Citizenship / Multi-Document** umgesetzt, bevor ein echter Travel-Requirements-Provider produktiv aktiviert wird.
+
+### Ziel
+
+Jetnity muss einen Reisenden fachlich korrekt mit mehreren rechtlich relevanten Kontexten modellieren können, insbesondere:
+
+- mehrere Staatsbürgerschaften
+- mehrere Reisedokumente / Pässe
+- Wohnsitzkontext, wenn relevant
+- ausstellendes Land / Dokumenttyp / Gültigkeit nur soweit fachlich nötig
+- mehrere rechtlich zulässige Einreise-/Transitoptionen
+
+Grundmodell:
+
+> **Ein Reisender → mehrere Staatsbürgerschaften → mehrere Reisedokumente / Credentials → kontextabhängige zulässige Optionen.**
+
+Keine Passnummern, Scans, biometrischen Daten oder unnötige sensible Daten speichern.
+
+### Verbindliche Produktlogik
+
+Wo Traveller-Kontext ein Ergebnis ändern kann, darf Jetnity nicht still nur eine einzelne Staatsbürgerschaft oder einen einzelnen Pass als universelle Dauerannahme verwenden.
+
+Jetnity muss zuerst gesetzliche Pflichten respektieren und danach belegbare Vorteile zwischen zulässigen Optionen vergleichen können, z. B.:
+
+- visumfrei statt Visum
+- ETA/eVisa statt klassischem Visum
+- bessere Transitbedingungen
+- zulässige Aufenthaltsdauer
+- erforderliche Dokumente
+- andere belegte Einreise-/Reisevorteile
+
+Diese Traveller Context Intelligence ist nicht nur für Readiness gedacht, sondern muss von jeder relevanten zukünftigen Funktion berücksichtigt werden, wenn der Traveller-Kontext das Ergebnis verändern kann.
+
+### UX
+
+Der Nutzer soll nicht mit allen Varianten überlastet werden. Jetnity zeigt bevorzugt:
+
+- zwingende Option, falls rechtlich vorgeschrieben
+- sonst beste belegbare zulässige Option
+- kurze Begründung
+- Alternativen progressiv aufklappbar
+- `unknown` / „noch nicht zuverlässig vergleichbar“, wenn die Datenlage nicht reicht
+
+Verbindliche Grundlagen:
+
+- `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md`
+- `docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`
+
+---
+
+## 4. Danach – echter Travel-Requirements-Provider
 
 Status: **offen / extern**
 
@@ -169,11 +223,11 @@ Vor Aktivierung zwingend prüfen:
 
 Kein Vertrag und keine laufenden Kosten ohne separate Freigabe.
 
-Vor Provider-Aktivierung zusätzlich: Mehrfachstaatsbürgerschaft / mehrere Reisedokumente (`docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`). Das ist kein Foundation-D-Schema und keine Production-Migration in PR #34.
+Traveller Context / Multi-Citizenship muss vorher als belastbare Grundlage existieren.
 
 ---
 
-## 4. Extern blockiert / Provider-Zugänge fehlen
+## 5. Extern blockiert / Provider-Zugänge fehlen
 
 ### Phase 3.4 – echter Hotelprovider
 
@@ -199,7 +253,7 @@ Production-Suchen bleiben bis dahin deaktiviert.
 
 ---
 
-## 5. Security-Hardening Track
+## 6. Security-Hardening Track
 
 Status: **offen, nicht durch Foundation C/D verursacht**
 
@@ -212,7 +266,7 @@ Diese Punkte separat prüfen und priorisieren. Keine pauschalen Berechtigungsän
 
 ---
 
-## 6. Bewusst nicht priorisiert
+## 7. Bewusst nicht priorisiert
 
 Jetnity nicht wieder mit Nebenmodulen aufblasen.
 
@@ -229,7 +283,7 @@ Neue Features müssen Reiseplanung/-begleitung klar verbessern, Zeit/Suchaufwand
 
 ---
 
-## 7. Production-Grenzen
+## 8. Production-Grenzen
 
 Bereits auf Production-Schema:
 
@@ -246,7 +300,7 @@ Weiterhin keine Production-Aktivierung von Provider-Suchen, Secrets oder kostenp
 
 ---
 
-## 8. Definition für den nächsten Agenten
+## 9. Definition für den nächsten Agenten
 
 Solange PR #34 offen ist:
 
@@ -261,5 +315,6 @@ Solange PR #34 offen ist:
 9. relevante Flight-/Trip-/Mobility-/Readiness-/Change-Dokumente lesen.
 10. nicht mergen, nicht Mark Ready, keine Production-Migration.
 11. bestehende Arbeit synchronisieren und fortsetzen statt neu anzufangen.
+12. Nach Foundation D ist Traveller Context / Multi-Citizenship die verbindliche nächste interne Priorität.
 
 Kein abgeschlossener Block darf unnötig neu gebaut werden.
