@@ -31,7 +31,7 @@ export function flughafenPunkt(
   }
 }
 
-export function referenzAusZeile(zeile: {
+function referenzAusZeile(zeile: {
   iata?: string | null
   country_code?: string | null
   city?: string | null

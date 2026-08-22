@@ -8,8 +8,8 @@
 import type { FlugRouteItinerary } from '@/lib/route/domain'
 import { flugRouteItineraryLesen } from '@/lib/route/schema'
 
-export const ROUTE_METADATA_SCHLUESSEL = 'routeItinerary' as const
-export const ROUTE_METADATA_MAX = 8192
+const ROUTE_METADATA_SCHLUESSEL = 'routeItinerary' as const
+const ROUTE_METADATA_MAX = 8192
 
 export type RouteMetadata = {
   [ROUTE_METADATA_SCHLUESSEL]: FlugRouteItinerary

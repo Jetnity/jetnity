@@ -34,7 +34,7 @@ export function routeKompaktOhneCode(facts: RouteFacts): string {
   return punkte.map((punkt) => punktLesbar(punkt, false) || punkt.airportCode || '').filter(Boolean).join(' → ')
 }
 
-export function umstiegLesbar(verbindung: RouteVerbindung): string {
+function umstiegLesbar(verbindung: RouteVerbindung): string {
   const ort = verbindung.city || verbindung.airportCode
   const land = verbindung.country
   const dauer = verbindung.durationMinutes !== null ? dauerLesbar(verbindung.durationMinutes) : null

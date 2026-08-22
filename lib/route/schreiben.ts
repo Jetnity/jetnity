@@ -9,11 +9,12 @@ import { metadataAusItinerary } from '@/lib/route/metadata'
 import { eindeutigeFlugRoute, type FlugRouteUebergabe } from '@/lib/route/persistenz'
 import { flugRouteItineraryLesen } from '@/lib/route/schema'
 import type { ReiseNutzlast } from '@/lib/trips/schema'
-import type { createServerActionClient } from '@/lib/supabase/server'
+import type { SupabaseClient } from '@supabase/supabase-js'
+import type { Database, Json } from '@/types/supabase'
 
-type SchreibenClient = Awaited<ReturnType<typeof createServerActionClient>>
+type SchreibenClient = SupabaseClient<Database>
 
-export function flugRoutenAusNutzlast(nutzlast: ReiseNutzlast): FlugRouteUebergabe[] {
+function flugRoutenAusNutzlast(nutzlast: ReiseNutzlast): FlugRouteUebergabe[] {
   const uebergaben: FlugRouteUebergabe[] = []
 
   for (const tag of nutzlast.days) {
@@ -86,7 +87,7 @@ export async function flugRoutenInReiseSchreiben(
     if (!treffer) continue
     await client
       .from('trip_items')
-      .update({ metadata: metadataAusItinerary(treffer.itinerary) })
+      .update({ metadata: metadataAusItinerary(treffer.itinerary) as Json })
       .eq('id', item.id)
       .eq('trip_id', tripId)
   }

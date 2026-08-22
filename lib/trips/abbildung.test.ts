@@ -418,7 +418,7 @@ describe('Aus einer Reise wird die Nutzlast für public.reise_anlegen()', () => 
       ],
     }
     const nutzlast = alsNutzlast(mitFlug)
-    assert.equal('route_itinerary' in nutzlast.days[0]!.items[0]!, false)
+    assert.equal(nutzlast.days[0]!.items[0]!.route_itinerary, null)
     assert.deepEqual(nutzlast.ungeplante[0]?.route_itinerary, itineraryEinTransit())
   })
 })

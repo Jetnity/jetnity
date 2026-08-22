@@ -9,7 +9,7 @@
 
 export const ROUTE_FACTS_VERSION = 'route-v1' as const
 
-export const ROUTE_QUELLEN = ['none', 'flight_itinerary'] as const
+const ROUTE_QUELLEN = ['none', 'flight_itinerary'] as const
 export type RouteQuelle = (typeof ROUTE_QUELLEN)[number]
 
 export type FlughafenReferenz = {
@@ -51,7 +51,7 @@ export type RouteVerbindung = {
 export type FlugRouteItinerary = {
   v: 1
   type: 'flight_route_itinerary'
-  legs: readonly { segments: readonly RouteSegment[] }[]
+  legs: { segments: RouteSegment[] }[]
 }
 
 export type RouteItineraryMitQuelle = {

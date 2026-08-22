@@ -14,6 +14,7 @@ import { ersteFlugmeldung, flugKontoUebernahmeSchema } from '@/lib/flights/schem
 import { flughafenReferenzLesen, iatasAusOption } from '@/lib/route/flughafen-lesen'
 import { metadataAusItinerary } from '@/lib/route/metadata'
 import { NICHT_ANGEMELDET, konto, meldungAus, type Aktionsergebnis } from '@/lib/trips/anlegen'
+import type { Json } from '@/types/supabase'
 
 export async function flugInReiseUebernehmen(eingabe: unknown): Promise<Aktionsergebnis<null>> {
   const geprueft = flugKontoUebernahmeSchema.safeParse(eingabe)
@@ -54,7 +55,7 @@ export async function flugInReiseUebernehmen(eingabe: unknown): Promise<Aktionse
     provider: aufnahme.provider,
     external_ref: aufnahme.externalRef,
     booking_url: null,
-    metadata: metadataAusItinerary(aufnahme.routeItinerary),
+    metadata: metadataAusItinerary(aufnahme.routeItinerary) as Json,
   })
 
   if (error) return { ok: false, meldung: meldungAus(error, status) }

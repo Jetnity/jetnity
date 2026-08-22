@@ -42,7 +42,7 @@ export function verbindungenAusSegmenten(segmente: readonly RouteSegment[]): Rou
   return verbindungen
 }
 
-export function dauerAusZeiten(
+function dauerAusZeiten(
   ankunftDatum: string | null,
   ankunftZeit: string | null,
   abflugDatum: string | null,

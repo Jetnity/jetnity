@@ -18,7 +18,7 @@ import { flugRouteItineraryLesen } from '@/lib/route/schema'
 import { verbindungenAusSegmenten } from '@/lib/route/verbindung'
 import type { Trip, TripItem } from '@/types/trips'
 
-export function itinerariesAusReise(reise: Pick<Trip, 'days' | 'ohneTag'>): RouteItineraryMitQuelle[] {
+function itinerariesAusReise(reise: Pick<Trip, 'days' | 'ohneTag'>): RouteItineraryMitQuelle[] {
   const punkte = [...reise.days.flatMap((tag) => tag.items), ...reise.ohneTag]
   const itineraries: RouteItineraryMitQuelle[] = []
 
@@ -37,7 +37,7 @@ export function itinerariesAusReise(reise: Pick<Trip, 'days' | 'ohneTag'>): Rout
   return itineraries.sort(fruehesteZuerst)
 }
 
-export function routeFactsAusItineraries(itineraries: readonly RouteItineraryMitQuelle[]): RouteFacts {
+function routeFactsAusItineraries(itineraries: readonly RouteItineraryMitQuelle[]): RouteFacts {
   if (itineraries.length === 0) return leereRouteFacts()
 
   const primaer = itineraries[0]

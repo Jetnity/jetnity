@@ -38,6 +38,7 @@ const LEERE_MOBILITAET_NUTZLAST = {
   destination_name: null,
   connection_ref: null,
   mobility_changes: null,
+  route_itinerary: null,
   rental_supplier: null,
   vehicle_class: null,
   transmission: null,
@@ -384,6 +385,7 @@ describe('Gast mit Reise – der Weg beim Login', () => {
         rental_supplier: null,
         vehicle_class: null,
         transmission: null,
+        route_itinerary: null,
       },
     ])
   })
@@ -459,6 +461,7 @@ describe('Gast mit Reise – der Weg beim Login', () => {
         rental_supplier: 'Europcar',
         vehicle_class: 'compact',
         transmission: 'automatic',
+        route_itinerary: null,
       },
     ])
   })
