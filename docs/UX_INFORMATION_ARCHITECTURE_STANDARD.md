@@ -176,7 +176,28 @@ Eine typische Jetnity-Ansicht soll bevorzugt dieser Reihenfolge folgen:
 
 Nicht jede Seite muss exakt gleich aussehen. Die mentale Reihenfolge soll aber stabil bleiben.
 
-## 6. Mobile-first und Aufmerksamkeit
+## 6. Geräte-, Viewport- und Responsive-Parität
+
+Die psychologische, logische und fachliche Produktqualität von Jetnity gilt **für jede unterstützte Bildschirmgröße und jedes Gerät**. Mobile-first bedeutet nicht Mobile-only.
+
+Verbindlich:
+
+- Smartphone, kleines/großes Smartphone, Tablet, Laptop und Desktop verwenden dieselbe fachliche Wahrheit, dieselben Statusbegriffe, dieselben Freigabe-/Änderungsregeln und dieselbe Entscheidungslogik.
+- Unterschiedliche Viewports dürfen Layout, Dichte, Reihenfolge sekundärer Details oder Darstellungsform responsiv anpassen, **aber niemals Bedeutung, verfügbare Kernfunktion oder Nutzerkontrolle verändern**.
+- Eine Kernfunktion darf auf keinem unterstützten Gerät nur deshalb fehlen, unauffindbar werden oder anders entscheiden, weil weniger oder mehr Bildschirmfläche vorhanden ist.
+- Mobile darf Inhalte progressiver öffnen; Desktop darf mehr gleichzeitig zeigen. Beide müssen trotzdem dieselbe mentale Hierarchie besitzen: Orientierung → Kernaussage → Primäraktion → Arbeitsinhalt → Details.
+- Touch-, Maus-, Tastatur- und – soweit relevant – native/PWA-Interaktion müssen dieselben fachlichen Aktionen zuverlässig erreichbar machen. Keine Kernaktion darf ausschließlich von Hover abhängen.
+- Hoch-/Querformat und enge/breite Viewports dürfen keine Datenverluste, abgeschnittene Primäraktionen, überdeckte Inhalte oder widersprüchlichen Zustände erzeugen.
+- Safe Areas, Browser-Chrome, virtuelle Tastatur, Zoom/Textvergrößerung und dynamische Browserhöhen sind bei mobilen Oberflächen mitzudenken.
+- Responsiveness darf keine zweite Produktlogik erzeugen. Die Implementierung soll möglichst dieselben Domain-Komponenten und Zustandsmodelle wiederverwenden statt gerätespezifische Business-Logik zu duplizieren.
+- Relevante neue UI-Zustände müssen in einer geeigneten Viewport-Matrix geprüft werden. Ein grüner Desktop-Test ersetzt keinen schmalen Viewport-Test; ein grüner Mobile-Test ersetzt keinen Tablet-/Desktop-Check.
+- Wenn reale Hardware oder ein unterstützter Browser einen funktionalen oder hierarchischen Fehler zeigt, gilt die betroffene Funktion bis zum Fix und Re-Test als nicht vollständig abgenommen.
+
+Leitsatz:
+
+> **Gleiche Reise. Gleiche Wahrheit. Gleiche Nutzerkontrolle. Auf jedem Gerät.**
+
+## 7. Mobile-first und Aufmerksamkeit
 
 - wichtigste Information ohne unnötiges Scrollen früh sichtbar
 - Touch-Ziele mindestens nach bestehendem Design-System
@@ -186,7 +207,7 @@ Nicht jede Seite muss exakt gleich aussehen. Die mentale Reihenfolge soll aber s
 - Sticky-/Floating-Elemente nur wenn sie den nächsten Schritt wirklich erleichtern
 - Modals und Bottom Sheets nur für fokussierte Aufgaben, nicht als Ersatz für Informationsarchitektur
 
-## 7. Text und Microcopy
+## 8. Text und Microcopy
 
 - kurze, konkrete Sprache
 - Nutzerwirkung statt interner Technik erklären
@@ -195,7 +216,7 @@ Nicht jede Seite muss exakt gleich aussehen. Die mentale Reihenfolge soll aber s
 - keine Marketingfloskeln in funktionalen Zuständen
 - keine widersprüchlichen Begriffe für denselben Zustand
 
-## 8. Loading, Empty, Error und Unknown
+## 9. Loading, Empty, Error und Unknown
 
 Jeder wichtige Bereich benötigt bewusst gestaltete Zustände.
 
@@ -214,7 +235,7 @@ Wird nicht als Fehler dargestellt. Jetnity erklärt, welche Information fehlt od
 ### Provider unavailable
 Keine Fake-Ergebnisse. Nutzer sieht ehrlich, dass eine externe Prüfung oder Suche derzeit nicht verfügbar ist.
 
-## 9. Cross-Domain-Wirkung
+## 10. Cross-Domain-Wirkung
 
 Wenn eine Änderung mehrere Bereiche betrifft, darf Jetnity sie nicht isoliert behandeln.
 
@@ -226,7 +247,7 @@ Beispiele:
 
 Das UI muss relevante Auswirkungen dort sichtbar machen, wo der Nutzer sie versteht, ohne dieselbe Warnung fünfmal redundant zu zeigen.
 
-## 10. Review-Pflicht für größere Phasen
+## 11. Review-Pflicht für größere Phasen
 
 Vor `Ready for Review` muss bei jeder größeren nutzerseitigen Phase geprüft werden:
 
@@ -234,7 +255,8 @@ Vor `Ready for Review` muss bei jeder größeren nutzerseitigen Phase geprüft w
 - klare visuelle Priorität
 - eine eindeutige Primäraktion pro Kontext
 - progressive Disclosure statt Informationsüberlastung
-- Mobile und Desktop
+- Smartphone / Tablet / Desktop bzw. relevante Viewport-Matrix
+- gleiche fachliche Logik und Nutzerkontrolle auf allen unterstützten Geräten
 - Loading / Empty / Error / Unknown / Unavailable
 - Accessibility
 - konsistente Begriffe und Zustände
@@ -244,10 +266,10 @@ Vor `Ready for Review` muss bei jeder größeren nutzerseitigen Phase geprüft w
 
 Für wesentliche Trip-Workspace-Änderungen sind bestehende UI-Audits zu erweitern, wenn neue Zustände oder Kombinationen hinzukommen.
 
-## 11. Arbeitsregel
+## 12. Arbeitsregel
 
 Jeder größere Cursor-Auftrag muss diesen Standard als Pflichtlektüre nennen, sofern Nutzeroberfläche oder Informationsarchitektur betroffen sind.
 
-ChatGPT prüft bei Human-/Architecture-Review ausdrücklich nicht nur Codequalität, sondern auch psychologische Verständlichkeit, Informationshierarchie und bereichsübergreifende Konsistenz.
+ChatGPT prüft bei Human-/Architecture-Review ausdrücklich nicht nur Codequalität, sondern auch psychologische Verständlichkeit, Informationshierarchie, Geräte-/Viewport-Parität und bereichsübergreifende Konsistenz.
 
-Ein technisch grüner PR ist **nicht fertig**, wenn der Nutzer unnötig denken, suchen oder Informationen zusammensetzen muss.
+Ein technisch grüner PR ist **nicht fertig**, wenn der Nutzer unnötig denken, suchen oder Informationen zusammensetzen muss oder wenn dieselbe Funktion je Gerät fachlich anders wirkt.
