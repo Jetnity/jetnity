@@ -15,6 +15,12 @@ Leitsatz:
 
 > **Nicht nur jede Funktion muss richtig sein. Die gesamte Reise muss richtig zusammenspielen.**
 
+Zusätzlich gilt:
+
+> **Vergangene Implementierung ist Ausgangslage, nicht Qualitätsgrenze.**
+
+Früher gebaute, gemergte oder erfolgreich getestete Funktionen besitzen keinen Bestandsschutz, wenn sie dem heutigen Jetnity-Standard nicht mehr entsprechen oder das Zusammenspiel des Gesamtsystems beeinträchtigen.
+
 ## 2. Zeitpunkt
 
 Der Audit erfolgt erst, wenn die für den betreffenden Workspace-Umbau vorgesehenen Grundlagen vorhanden sind.
@@ -58,7 +64,7 @@ Jetnity muss prüfen können:
 
 Keine pseudo-intelligenten Hinweise ohne echten Entscheidungsnutzen.
 
-### 3.3 Cross-Domain-Intelligence
+### 3.3 Cross-Domain-Intelligence und fehlerfreies Zusammenspiel
 
 Alle bestehenden Kernbereiche werden gemeinsam geprüft:
 
@@ -80,7 +86,7 @@ Alle bestehenden Kernbereiche werden gemeinsam geprüft:
 
 Prüffrage:
 
-> Wenn sich ein wichtiger Fakt in einem Bereich ändert, erkennt Jetnity alle wirklich relevanten Auswirkungen in den anderen Bereichen?
+> Wenn sich ein wichtiger Fakt in einem Bereich ändert, erkennt Jetnity alle wirklich relevanten Auswirkungen in den anderen Bereichen und bleiben alle betroffenen Zustände fachlich konsistent?
 
 Beispiele:
 
@@ -92,9 +98,17 @@ Beispiele:
 
 Keine Änderung darf isoliert behandelt werden, wenn sie nachweislich die Gesamtreise beeinflusst.
 
-### 3.4 Frühere Foundations erneut überprüfen
+Verbindliche Interoperabilitätsregel:
 
-Der Audit prüft nicht nur neu gebauten Code. Alle bereits vorhandenen Foundation-Funktionen, die im Workspace sichtbar oder logisch beteiligt sind, werden erneut gegen den aktuellen Gesamtzustand geprüft.
+- Eine Funktion gilt nicht als fertig, wenn sie nur isoliert korrekt arbeitet.
+- Gemeinsame Facts müssen aus derselben kanonischen Source of Truth stammen.
+- Cross-Domain-Folgeeffekte müssen technisch geprüft und getestet werden.
+- Veraltete Zustände müssen korrekt invalidiert, stale gesetzt oder neu bewertet werden.
+- Ein grüner Unit-Test eines Moduls beweist nicht, dass seine Schnittstellen zum Gesamtsystem richtig funktionieren.
+
+### 3.4 Frühere Foundations und bestehende Funktionen erneut überprüfen
+
+Der Audit prüft nicht nur neu gebauten Code. Alle bereits vorhandenen Foundation-Funktionen, die im Workspace sichtbar oder logisch beteiligt sind, werden erneut gegen den **heute gültigen Jetnity-Standard** geprüft.
 
 Insbesondere:
 
@@ -103,8 +117,29 @@ Insbesondere:
 - Gibt es Legacy-Felder oder Defaults, die unbemerkt intelligente Entscheidungen verfälschen?
 - Gibt es doppelte Sources of Truth?
 - Gibt es Übergänge, an denen Daten verloren gehen oder semantisch falsch weitergegeben werden?
+- Ist eine bestehende Funktion fachlich richtig, aber heute psychologisch, logisch oder architektonisch schlechter als eine mögliche aktuelle Lösung?
+- Verhindert historische Kompatibilität eine sauberere gemeinsame Produktlogik?
 
-"Damals grün getestet" bedeutet nicht automatisch "heute im Gesamtsystem noch richtig".
+**„Damals grün getestet“ bedeutet nicht automatisch „heute im Gesamtsystem noch richtig“.**
+
+Der Audit darf und soll deshalb frühere Funktionen verändern, wenn dies nötig ist. Zulässige Ergebnisse sind insbesondere:
+
+- refaktorieren
+- vereinfachen
+- neu strukturieren
+- auf eine gemeinsame Source of Truth umstellen
+- Legacy-Defaults neutralisieren
+- doppelte Logik entfernen
+- Datenmodell oder API-Vertrag professionell migrieren
+- Funktion ersetzen
+- Funktion nach Product-Owner-Freigabe entfernen, wenn sie keinen ausreichenden Produktnutzen mehr hat oder das Gesamtsystem verschlechtert
+
+Dabei gelten harte Grenzen:
+
+- kein stiller Datenverlust
+- kein stiller Bedeutungswechsel bestehender Daten
+- Migrationen und Rückwärtskompatibilität bewusst planen
+- keine Entfernung oder grundlegende Produktänderung ohne notwendige Product-Owner-Freigabe
 
 ### 3.5 Truth / Evidence / Security
 
@@ -207,6 +242,8 @@ Mindestens Varianten wie:
 - unbekannte Fakten
 - Änderung von Datum, Ziel, Route, Traveller oder Wunschkontext
 
+Zusätzlich müssen Szenarien geprüft werden, in denen mehrere Änderungen nacheinander erfolgen. Jetnity darf nicht nur den ersten Zustand korrekt behandeln und danach durch kombinierte Änderungen inkonsistent werden.
+
 ## 4. Proaktiver Experten-Pass
 
 ChatGPT/Hauptentwickler und Coding Agent müssen im Audit ausdrücklich nach Dingen suchen, die der Product Owner nicht selbst genannt hat.
@@ -223,6 +260,14 @@ Jeder Fund wird bewertet nach:
 
 Wichtige Lücken dürfen nicht deshalb offen bleiben, weil sie nicht Teil des ursprünglichen Implementierungsauftrags waren.
 
+Der Experten-Pass soll ausdrücklich fragen:
+
+- Welche frühere Funktion würde ein Senior-Produkt-/Architekturteam heute anders bauen?
+- Welche Schnittstelle funktioniert nur zufällig statt durch klaren Vertrag?
+- Welche Information wird mehrfach modelliert?
+- Welche Funktion fehlt, damit zwei bestehende Bereiche wirklich zusammenarbeiten?
+- Welche bestehende Funktion macht Jetnity komplizierter, ohne ausreichend Nutzen zu liefern?
+
 ## 5. Technische Verifikation
 
 Zusätzlich zur Human-Abnahme:
@@ -237,6 +282,9 @@ Zusätzlich zur Human-Abnahme:
 - CI
 - Preview
 - Production-Grenzen und Migrationen separat prüfen
+- gezielte Cross-Domain-Integrationstests für fachlich gekoppelte Bereiche
+- End-to-End-Tests für zentrale Reiseänderungen und deren Folgeeffekte
+- Regressionstests für veränderte frühere Foundations/Funktionen
 
 Automatisierte Tests ersetzen nicht den Human Product-/UX-/Logic-Audit.
 
@@ -250,11 +298,12 @@ Der finale Audit muss einen versionierten Bericht erzeugen mit mindestens:
 - bestätigte Stärken
 - Blocker
 - wichtige Verbesserungen
+- veränderte/zu verändernde frühere Funktionen
+- Interoperabilitäts-/Cross-Domain-Funde
 - spätere Follow-ups
 - offene externe Abhängigkeiten
 - Security-/Truth-Funde
 - UX-/Psychologie-Funde
-- Cross-Domain-Funde
 - Geräte-/Viewport-Ergebnis
 - vollständiger Test-/CI-/Preview-Nachweis
 - Product-Owner-Gate
@@ -264,12 +313,14 @@ Der finale Audit muss einen versionierten Bericht erzeugen mit mindestens:
 Der Trip Workspace gilt erst dann als in dieser Ausbaustufe produktreif, wenn:
 
 - keine bekannten hochwirksamen Logic-/Truth-/Security-/UX-Blocker offen sind,
-- die Kernbereiche nachvollziehbar zusammenspielen,
-- relevante Auswirkungen bereichsübergreifend erkannt werden,
+- alle relevanten bestehenden und neuen Kernfunktionen den aktuellen Jetnity-Standard erfüllen,
+- die Kernbereiche nachvollziehbar und fehlerfrei zusammenspielen,
+- relevante Auswirkungen bereichsübergreifend erkannt und technisch korrekt weitergegeben werden,
+- keine relevanten doppelten oder widersprüchlichen Sources of Truth bestehen,
 - die Seite psychologisch klar und logisch durchschaubar ist,
 - die Intelligenz echte Arbeit und Entscheidungsstress reduziert,
 - alle unterstützten Geräteklassen dieselbe Produktqualität und Nutzerkontrolle bieten,
-- technische Nachweise grün sind,
+- technische Nachweise inklusive Cross-Domain-Regressionen grün sind,
 - und der Product Owner anschließend ausdrücklich freigibt.
 
 Kein technischer Agent darf dieses Gate durch `Mark Ready`, Merge oder Production-Rollout ersetzen.
