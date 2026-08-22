@@ -10,14 +10,20 @@ import * as React from 'react'
 import { ArrowRightLeft, Loader2 } from 'lucide-react'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
+import MietwagenBereich from '@/components/trips/MietwagenBereich'
 import { mobilitySucheFehlerAntwort, mobilitySucheVomClient } from '@/lib/mobility/client-anfrage'
 import type { MobilitySucheAntwort } from '@/lib/mobility/client-sicht'
 import { MOBILITY_MODE_BEZEICHNUNG } from '@/lib/mobility/domain'
 import { mobilitaetsAbdeckung, type Bewegungskante } from '@/lib/mobility/kanten'
 import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
+import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
+import { mietwagenBestand } from '@/lib/rental-cars/bestand'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
 import { datumKurz } from '@/lib/trips/datum-anzeige'
 import { MOBILITY_MODES, type MobilityMode, type Trip, type TripItem } from '@/types/trips'
+
+const UNTERBEREICHE = ['verbindungen', 'mietwagen'] as const
+type MobilitaetUnterbereich = (typeof UNTERBEREICHE)[number]
 
 function kanteTitel(kante: Bewegungskante): string {
   const route = `${kante.originName} → ${kante.destinationName}`
@@ -35,17 +41,31 @@ export default function MobilitaetBereich({
   ohneTag = [],
   onBuchungsstatus,
   onManuellAnlegen,
+  onMietwagenAnlegen,
 }: {
   reise: Trip
   ohneTag?: readonly TripItem[]
   onBuchungsstatus?: (itemId: string, gebucht: boolean) => Promise<string | null>
   onManuellAnlegen?: (eingabe: MobilityManuellEingabe) => Promise<string | null>
+  onMietwagenAnlegen?: (eingabe: RentalCarManuellEingabe) => Promise<string | null>
 }) {
   const [meldung, setMeldung] = React.useState('')
   const [laeuft, setLaeuft] = React.useState<string | null>(null)
   const [suche, setSuche] = React.useState<MobilitySucheAntwort | null>(null)
   const [sucht, setSucht] = React.useState(false)
   const abdeckung = mobilitaetsAbdeckung(reise, ohneTag)
+  const mietwagen = mietwagenBestand(reise, ohneTag)
+  const [unterbereich, setUnterbereich] = React.useState<MobilitaetUnterbereich>(() =>
+    mietwagen.items.length > 0 && abdeckung.kanten.every((kante) => !kante.mobilityItem) && abdeckung.unzugeordnet.length === 0
+      ? 'mietwagen'
+      : 'verbindungen',
+  )
+  const [mietwagenBesucht, setMietwagenBesucht] = React.useState(
+    () =>
+      mietwagen.items.length > 0 &&
+      abdeckung.kanten.every((kante) => !kante.mobilityItem) &&
+      abdeckung.unzugeordnet.length === 0,
+  )
 
   const setzen = async (itemId: string, gebucht: boolean) => {
     if (!onBuchungsstatus || laeuft) return
@@ -93,6 +113,57 @@ export default function MobilitaetBereich({
 
   return (
     <div className="grid gap-6">
+      <div
+        role="tablist"
+        aria-label="Mobilitätsbereiche"
+        className="flex min-h-11 gap-2 overflow-x-auto"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={unterbereich === 'verbindungen'}
+          onClick={() => setUnterbereich('verbindungen')}
+          className={`inline-flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 ${
+            unterbereich === 'verbindungen'
+              ? 'bg-brand-800 text-white'
+              : 'border border-line-300 bg-white text-brand-800 hover:border-line-400'
+          }`}
+        >
+          Verbindungen
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={unterbereich === 'mietwagen'}
+          onClick={() => {
+            setUnterbereich('mietwagen')
+            setMietwagenBesucht(true)
+          }}
+          className={`inline-flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 ${
+            unterbereich === 'mietwagen'
+              ? 'bg-brand-800 text-white'
+              : 'border border-line-300 bg-white text-brand-800 hover:border-line-400'
+          }`}
+        >
+          Mietwagen
+        </button>
+      </div>
+
+      {mietwagenBesucht ? (
+        <div
+          hidden={unterbereich !== 'mietwagen'}
+          className={unterbereich === 'mietwagen' ? 'grid gap-6' : 'hidden'}
+        >
+          <MietwagenBereich
+            reise={reise}
+            ohneTag={ohneTag}
+            onBuchungsstatus={onBuchungsstatus}
+            onManuellAnlegen={onMietwagenAnlegen}
+          />
+        </div>
+      ) : null}
+
+      <div hidden={unterbereich !== 'verbindungen'} className={unterbereich === 'verbindungen' ? 'grid gap-6' : 'hidden'}>
       <section
         aria-label="Deine Verbindungen"
         className="rounded-[28px] border border-black/5 bg-white p-5 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7"
@@ -210,6 +281,7 @@ export default function MobilitaetBereich({
       </section>
 
       {onManuellAnlegen ? <ManuelleVerbindung reise={reise} onAnlegen={onManuellAnlegen} /> : null}
+      </div>
     </div>
   )
 }

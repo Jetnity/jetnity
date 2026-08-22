@@ -395,14 +395,18 @@ export type Database = {
           price_amount: number | null
           price_currency: string | null
           provider: string | null
+          rental_evidence: string | null
+          rental_supplier: string | null
           stage_id: string | null
           starts_at: string | null
           starts_on: string | null
           time_zone: string | null
           title: string
+          transmission: string | null
           trip_id: string
           updated_at: string
           user_id: string
+          vehicle_class: string | null
         }
         Insert: {
           booking_confirmed_at?: string | null
@@ -430,14 +434,18 @@ export type Database = {
           price_amount?: number | null
           price_currency?: string | null
           provider?: string | null
+          rental_evidence?: string | null
+          rental_supplier?: string | null
           stage_id?: string | null
           starts_at?: string | null
           starts_on?: string | null
           time_zone?: string | null
           title: string
+          transmission?: string | null
           trip_id: string
           updated_at?: string
           user_id?: string
+          vehicle_class?: string | null
         }
         Update: {
           booking_confirmed_at?: string | null
@@ -465,14 +473,18 @@ export type Database = {
           price_amount?: number | null
           price_currency?: string | null
           provider?: string | null
+          rental_evidence?: string | null
+          rental_supplier?: string | null
           stage_id?: string | null
           starts_at?: string | null
           starts_on?: string | null
           time_zone?: string | null
           title?: string
+          transmission?: string | null
           trip_id?: string
           updated_at?: string
           user_id?: string
+          vehicle_class?: string | null
         }
         Relationships: [
           {

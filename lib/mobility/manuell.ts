@@ -5,6 +5,7 @@
 
 import { mobilityManuellSchema, mobilityTitelAus, type MobilityManuellEingabe } from '@/lib/mobility/schema'
 import { unbestaetigteBuchung } from '@/lib/trips/buchung'
+import { leereMietwagen } from '@/lib/trips/mietwagen-felder'
 import type { Trip, TripItem } from '@/types/trips'
 
 export function mobilityManuellLesen(wert: unknown):
@@ -47,6 +48,7 @@ export function mobilityManuellZuPunkt(
     connectionRef: eingabe.connectionRef,
     mobilityChanges: eingabe.mobilityChanges,
     mobilityEvidence: 'user',
+    ...leereMietwagen(),
   }
 }
 

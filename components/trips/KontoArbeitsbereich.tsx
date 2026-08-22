@@ -27,6 +27,8 @@ import { hotelInReiseUebernehmen } from '@/lib/hotels/aktionen'
 import type { HotelOptionSichtbar } from '@/lib/hotels/client-sicht'
 import { mobilityManuellInReiseAnlegen } from '@/lib/mobility/aktionen'
 import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
+import { rentalCarManuellInReiseAnlegen } from '@/lib/rental-cars/aktionen'
+import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
 import { planpunktAnlegen, planpunktBuchungsstatusSetzen, planpunktEntfernen, reiseLoeschen } from '@/lib/trips/aktionen'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
 import AktivitaetenBereich from '@/components/trips/AktivitaetenBereich'
@@ -152,6 +154,15 @@ export default function KontoArbeitsbereich({
           }}
           onManuellAnlegen={async (eingabe: MobilityManuellEingabe) => {
             const ergebnis = await mobilityManuellInReiseAnlegen({
+              ...eingabe,
+              tripId: reise.id,
+            })
+            if (!ergebnis.ok) return ergebnis.meldung
+            router.refresh()
+            return null
+          }}
+          onMietwagenAnlegen={async (eingabe: RentalCarManuellEingabe) => {
+            const ergebnis = await rentalCarManuellInReiseAnlegen({
               ...eingabe,
               tripId: reise.id,
             })

@@ -47,6 +47,7 @@ export const ART_BEZEICHNUNG: Record<TripItemKind, string> = {
   stay: 'Unterkunft',
   activity: 'Aktivität',
   transfer: 'Transfer',
+  rental_car: 'Mietwagen',
   note: 'Notiz',
 }
 

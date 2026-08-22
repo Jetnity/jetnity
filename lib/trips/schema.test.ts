@@ -335,6 +335,83 @@ describe('Was die Datenbank ablehnen würde, wird hier abgelehnt', () => {
     assert.equal(punkt?.mobilityEvidence, null)
   })
 
+  test('ein gebuchter Mietwagen bleibt gebucht und behält Abholung und Rückgabe', () => {
+    const gelesen = reiseLesen(
+      reise({
+        days: [
+          {
+            id: 'day-1',
+            dayIndex: 1,
+            dayDate: '2026-09-12',
+            items: [
+              {
+                id: 'item-1',
+                title: 'Mietwagen Zürich Flughafen → Lugano',
+                kind: 'rental_car',
+                bookingStatus: 'booked',
+                bookingSource: 'provider',
+                bookingConfirmedAt: '2026-08-21T10:00:00.000Z',
+                originName: 'Zürich Flughafen',
+                destinationName: 'Lugano',
+                originPlaceId: 'geonames:2657896',
+                destinationPlaceId: 'geonames:2659836',
+                rentalSupplier: 'Europcar',
+                vehicleClass: 'compact',
+                transmission: 'automatic',
+                mobilityMode: 'rail',
+                connectionRef: 'IC 890',
+              },
+            ],
+          },
+        ],
+      }),
+    )
+    const punkt = gelesen?.days[0]?.items[0]
+    assert.equal(punkt?.bookingStatus, 'booked')
+    assert.equal(punkt?.bookingSource, 'user')
+    assert.equal(punkt?.originName, 'Zürich Flughafen')
+    assert.equal(punkt?.destinationName, 'Lugano')
+    assert.equal(punkt?.rentalSupplier, 'Europcar')
+    assert.equal(punkt?.vehicleClass, 'compact')
+    assert.equal(punkt?.transmission, 'automatic')
+    assert.equal(punkt?.rentalEvidence, 'user')
+    assert.equal(punkt?.mobilityMode, null)
+    assert.equal(punkt?.connectionRef, null)
+    assert.equal(punkt?.mobilityEvidence, null)
+  })
+
+  test('Mietwagenfakten an einer Notiz werden verworfen', () => {
+    const gelesen = reiseLesen(
+      reise({
+        days: [
+          {
+            id: 'day-1',
+            dayIndex: 1,
+            dayDate: '2026-09-12',
+            items: [
+              {
+                id: 'item-1',
+                title: 'Notiz',
+                kind: 'note',
+                rentalSupplier: 'Europcar',
+                vehicleClass: 'compact',
+                transmission: 'automatic',
+                originName: 'Zürich',
+                destinationName: 'Lugano',
+              },
+            ],
+          },
+        ],
+      }),
+    )
+    const punkt = gelesen?.days[0]?.items[0]
+    assert.equal(punkt?.rentalSupplier, null)
+    assert.equal(punkt?.vehicleClass, null)
+    assert.equal(punkt?.transmission, null)
+    assert.equal(punkt?.rentalEvidence, null)
+    assert.equal(punkt?.originName, null)
+  })
+
   test('eine Notiz darf nicht als gebucht gelesen werden', () => {
     const gelesen = reiseLesen(
       reise({

@@ -300,4 +300,21 @@ describe('Mobilitätsabdeckung', () => {
     const lage = mobilitaetsAbdeckung(reise({ ohneTag: [lose] }))
     assert.equal(lage.unzugeordnet.some((punkt) => punkt.id === 'loose'), true)
   })
+
+  test('ein überlappender Mietwagen deckt keine Bewegungskante', () => {
+    const auto = punkt({
+      id: 'car-1',
+      kind: 'rental_car',
+      title: 'Mietwagen Zürich → Lugano',
+      originName: 'Zürich',
+      destinationName: 'Lugano',
+      startsOn: '2026-09-12',
+      endsOn: '2026-09-16',
+      rentalEvidence: 'user',
+    })
+    const lage = mobilitaetsAbdeckung(reise({ days: [{ ...reise().days[0], items: [auto] }] }))
+    assert.equal(lage.kanten[0]?.status, 'open')
+    assert.equal(lage.kanten[0]?.mobilityItem, null)
+    assert.equal(lage.unzugeordnet.some((eintrag) => eintrag.id === 'car-1'), false)
+  })
 })

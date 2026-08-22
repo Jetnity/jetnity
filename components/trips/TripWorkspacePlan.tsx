@@ -49,6 +49,7 @@ const ART_SYMBOL: Record<TripItemKind, React.ComponentType<{ className?: string 
   stay: BedDouble,
   activity: Sparkles,
   transfer: Car,
+  rental_car: Car,
   note: StickyNote,
 }
 

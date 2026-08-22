@@ -27,7 +27,7 @@ Nicht gebaut:
 - echter Mobilitätsprovider oder Affiliate-/Booking-Deeplink
 - produktiver Provider-Nachweis; `mobilityNachweisAusUmgebung()` gibt `null` zurück
 - Production-Mobilitätssuche
-- Mietwagen
+- Mietwagen als eigener Transportnachweis (siehe Foundation B / [docs/RENTAL_CARS.md](RENTAL_CARS.md); ein Mietwagen deckt keine Bewegungskante)
 - Kreuzfahrten
 - lokale ÖV-Komplettplattform
 - angenommene Wegezeiten zwischen Flughafen, Bahnhof, Hotel oder Hafen
@@ -234,11 +234,9 @@ Keine neuen laufenden Kosten. Keine bezahlte Mobilitäts-API. Der Kill Switch al
 
 ## 12. Nächster Schritt
 
-Foundation A nicht um einen Fake-Provider erweitern.
+Foundation A nicht um einen Fake-Provider erweitern. PR #30 ist auf `main`; das Production-Schema ist angewendet, die Suche bleibt aus.
 
-Nach sauberem Merge von PR #30 ist der geplante nächste provider-unabhängige Block:
-
-**Foundation B – Mietwagen**
+Mietwagen ist Foundation B auf PR #31 (Ready for Review). Schema liegt auf Production, Suche bleibt aus. Ein Mietwagen darf eine Bewegungskante nicht als `covered` markieren. Das Öffnen des Unterbereichs startet keine Suche. Siehe [docs/RENTAL_CARS.md](RENTAL_CARS.md) und ADR-0094.
 
 Danach:
 

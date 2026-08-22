@@ -40,6 +40,13 @@ import {
   mobilityModeLesen,
   mobilitaetNormalisieren,
 } from '@/lib/trips/mobilitaet-felder'
+import {
+  leereMietwagen,
+  mietwagenNormalisieren,
+  rentalEvidenceLesen,
+  transmissionLesen,
+  vehicleClassLesen,
+} from '@/lib/trips/mietwagen-felder'
 
 /** Nur die Spalten, die diese Datei liest. So bleibt sie von der Generierung unabhängig. */
 export type ReiseZeile = {
@@ -112,6 +119,10 @@ export type PunktZeile = {
   connection_ref?: string | null
   mobility_changes?: number | string | null
   mobility_evidence?: string | null
+  rental_supplier?: string | null
+  vehicle_class?: string | null
+  transmission?: string | null
+  rental_evidence?: string | null
   created_at: string
 }
 
@@ -148,45 +159,66 @@ export function planpunktAus(zeile: PunktZeile): TripItem {
   const kind = ausBereich<TripItemKind>(zeile.kind, TRIP_ITEM_KINDS, 'note')
   const gebucht = kannBuchungMarkieren({ kind }) && bookingStatus === 'booked'
   const transfer = kind === 'transfer'
+  const mietwagen = kind === 'rental_car'
+  const orteErlaubt = transfer || mietwagen
   const mode = transfer ? mobilityModeLesen(zeile.mobility_mode) : null
-  const originName = transfer ? zeile.origin_name ?? null : null
-  const destinationName = transfer ? zeile.destination_name ?? null : null
-  const originPlaceId = transfer ? zeile.origin_place_id ?? null : null
-  const destinationPlaceId = transfer ? zeile.destination_place_id ?? null : null
-  const hatFakt = Boolean(mode || originName || destinationName || originPlaceId || destinationPlaceId)
-  return mobilitaetNormalisieren({
-    id: zeile.id,
-    dayId: zeile.day_id,
-    stageId: zeile.stage_id,
-    kind,
-    title: zeile.title,
-    note: zeile.note,
-    position: zeile.position,
-    startsOn: zeile.starts_on,
-    startsAt: uhrzeit(zeile.starts_at),
-    endsOn: zeile.ends_on,
-    endsAt: uhrzeit(zeile.ends_at),
-    priceAmount: zahl(zeile.price_amount),
-    priceCurrency: zeile.price_currency,
-    provider: zeile.provider,
-    externalRef: zeile.external_ref,
-    bookingUrl: zeile.booking_url,
-    bookingStatus: gebucht ? 'booked' : 'unconfirmed',
-    bookingSource: gebucht ? buchungsquelleLesen(zeile.booking_source) ?? 'user' : null,
-    bookingConfirmedAt: gebucht ? zeile.booking_confirmed_at ?? null : null,
-    ...(transfer
-      ? {
-          mobilityMode: mode,
-          originPlaceId,
-          destinationPlaceId,
-          originName,
-          destinationName,
-          connectionRef: zeile.connection_ref ?? null,
-          mobilityChanges: zahl(zeile.mobility_changes ?? null),
-          mobilityEvidence: hatFakt ? 'user' as const : mobilityEvidenceLesen(zeile.mobility_evidence),
-        }
-      : leereMobilitaet()),
-  })
+  const originName = orteErlaubt ? zeile.origin_name ?? null : null
+  const destinationName = orteErlaubt ? zeile.destination_name ?? null : null
+  const originPlaceId = orteErlaubt ? zeile.origin_place_id ?? null : null
+  const destinationPlaceId = orteErlaubt ? zeile.destination_place_id ?? null : null
+  const hatMobilitaet = Boolean(mode || (transfer && (originName || destinationName || originPlaceId || destinationPlaceId)))
+  const hatMietwagen = Boolean(
+    mietwagen &&
+      (zeile.rental_supplier ||
+        zeile.vehicle_class ||
+        zeile.transmission ||
+        originName ||
+        destinationName ||
+        originPlaceId ||
+        destinationPlaceId ||
+        zeile.starts_on ||
+        zeile.ends_on),
+  )
+  return mietwagenNormalisieren(
+    mobilitaetNormalisieren({
+      id: zeile.id,
+      dayId: zeile.day_id,
+      stageId: zeile.stage_id,
+      kind,
+      title: zeile.title,
+      note: zeile.note,
+      position: zeile.position,
+      startsOn: zeile.starts_on,
+      startsAt: uhrzeit(zeile.starts_at),
+      endsOn: zeile.ends_on,
+      endsAt: uhrzeit(zeile.ends_at),
+      priceAmount: zahl(zeile.price_amount),
+      priceCurrency: zeile.price_currency,
+      provider: zeile.provider,
+      externalRef: zeile.external_ref,
+      bookingUrl: zeile.booking_url,
+      bookingStatus: gebucht ? 'booked' : 'unconfirmed',
+      bookingSource: gebucht ? buchungsquelleLesen(zeile.booking_source) ?? 'user' : null,
+      bookingConfirmedAt: gebucht ? zeile.booking_confirmed_at ?? null : null,
+      mobilityMode: mode,
+      originPlaceId,
+      destinationPlaceId,
+      originName,
+      destinationName,
+      connectionRef: transfer ? zeile.connection_ref ?? null : null,
+      mobilityChanges: transfer ? zahl(zeile.mobility_changes ?? null) : null,
+      mobilityEvidence: hatMobilitaet ? 'user' as const : mobilityEvidenceLesen(zeile.mobility_evidence),
+      ...(mietwagen
+        ? {
+            rentalSupplier: zeile.rental_supplier ?? null,
+            vehicleClass: vehicleClassLesen(zeile.vehicle_class),
+            transmission: transmissionLesen(zeile.transmission),
+            rentalEvidence: hatMietwagen ? 'user' as const : rentalEvidenceLesen(zeile.rental_evidence),
+          }
+        : leereMietwagen()),
+      ...(transfer || mietwagen ? {} : leereMobilitaet()),
+    }),
+  )
 }
 
 export function etappeAus(zeile: EtappeZeile): TripStage {
@@ -354,6 +386,9 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
           destination_name: punkt.destinationName,
           connection_ref: punkt.connectionRef,
           mobility_changes: punkt.mobilityChanges,
+          rental_supplier: punkt.rentalSupplier,
+          vehicle_class: punkt.vehicleClass,
+          transmission: punkt.transmission,
         })),
       }
     }),
@@ -380,6 +415,9 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
       destination_name: punkt.destinationName,
       connection_ref: punkt.connectionRef,
       mobility_changes: punkt.mobilityChanges,
+      rental_supplier: punkt.rentalSupplier,
+      vehicle_class: punkt.vehicleClass,
+      transmission: punkt.transmission,
     })),
   }
 }

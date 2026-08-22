@@ -30,6 +30,11 @@ import {
 import { interesseLesen, tempoLesen } from '@/lib/trips/bezeichnungen'
 import { buchungsquelleLesen, buchungsstatusLesen, kannBuchungMarkieren } from '@/lib/trips/buchung'
 import { mobilityEvidenceLesen, mobilityModeLesen } from '@/lib/trips/mobilitaet-felder'
+import {
+  rentalEvidenceLesen,
+  transmissionLesen,
+  vehicleClassLesen,
+} from '@/lib/trips/mietwagen-felder'
 import { TAGE_MAXIMUM } from '@/lib/trips/tage'
 
 /** Höchstwerte, die auch die Datenbank kennt. An einer Stelle, damit sie gleich bleiben. */
@@ -171,28 +176,51 @@ const planpunktSchema = z.object({
   connectionRef: optionalerText(40).nullable().default(null),
   mobilityChanges: z.number().int().min(0).max(20).nullable().default(null),
   mobilityEvidence: z.unknown().transform(mobilityEvidenceLesen).nullable().default(null),
+  rentalSupplier: optionalerText(GRENZEN.titel).nullable().default(null),
+  vehicleClass: z.unknown().transform(vehicleClassLesen).nullable().default(null),
+  transmission: z.unknown().transform(transmissionLesen).nullable().default(null),
+  rentalEvidence: z.unknown().transform(rentalEvidenceLesen).nullable().default(null),
 })
   .transform((punkt) => {
     const darfBuchen = kannBuchungMarkieren(punkt)
     const gebucht = darfBuchen && punkt.bookingStatus === 'booked'
     const transfer = punkt.kind === 'transfer'
+    const mietwagen = punkt.kind === 'rental_car'
     const mode = transfer ? punkt.mobilityMode : null
-    const hatFakt =
+    const hatMobilitaet =
       transfer &&
       Boolean(mode || punkt.originPlaceId || punkt.destinationPlaceId || punkt.originName || punkt.destinationName)
+    const hatMietwagen =
+      mietwagen &&
+      Boolean(
+        punkt.rentalSupplier ||
+          punkt.vehicleClass ||
+          punkt.transmission ||
+          punkt.originPlaceId ||
+          punkt.destinationPlaceId ||
+          punkt.originName ||
+          punkt.destinationName ||
+          punkt.startsOn ||
+          punkt.endsOn,
+      )
+    const orteErlaubt = transfer || mietwagen
     return {
       ...punkt,
       bookingStatus: gebucht ? ('booked' as const) : ('unconfirmed' as const),
       bookingSource: gebucht ? ('user' as const) : null,
       bookingConfirmedAt: gebucht ? punkt.bookingConfirmedAt : null,
       mobilityMode: mode,
-      originPlaceId: transfer ? punkt.originPlaceId : null,
-      destinationPlaceId: transfer ? punkt.destinationPlaceId : null,
-      originName: transfer ? punkt.originName : null,
-      destinationName: transfer ? punkt.destinationName : null,
+      originPlaceId: orteErlaubt ? punkt.originPlaceId : null,
+      destinationPlaceId: orteErlaubt ? punkt.destinationPlaceId : null,
+      originName: orteErlaubt ? punkt.originName : null,
+      destinationName: orteErlaubt ? punkt.destinationName : null,
       connectionRef: transfer ? punkt.connectionRef : null,
       mobilityChanges: transfer ? punkt.mobilityChanges : null,
-      mobilityEvidence: hatFakt ? ('user' as const) : null,
+      mobilityEvidence: hatMobilitaet ? ('user' as const) : null,
+      rentalSupplier: mietwagen ? punkt.rentalSupplier : null,
+      vehicleClass: mietwagen ? punkt.vehicleClass : null,
+      transmission: mietwagen ? punkt.transmission : null,
+      rentalEvidence: hatMietwagen ? ('user' as const) : null,
     }
   })
 
@@ -388,6 +416,9 @@ const nutzlastPunktSchema = z.object({
   destination_name: optionalerText(GRENZEN.ort).nullable().default(null),
   connection_ref: optionalerText(40).nullable().default(null),
   mobility_changes: z.number().int().min(0).max(20).nullable().default(null),
+  rental_supplier: optionalerText(GRENZEN.titel).nullable().default(null),
+  vehicle_class: z.unknown().transform(vehicleClassLesen).nullable().default(null),
+  transmission: z.unknown().transform(transmissionLesen).nullable().default(null),
 })
   .superRefine((punkt, ctx) => {
     if ((punkt.price_amount === null) !== (punkt.price_currency === null)) {
@@ -399,20 +430,29 @@ const nutzlastPunktSchema = z.object({
     }
   })
   .transform((punkt) => {
-    const darfBuchen = punkt.kind === 'flight' || punkt.kind === 'stay' || punkt.kind === 'transfer'
+    const darfBuchen =
+      punkt.kind === 'flight' ||
+      punkt.kind === 'stay' ||
+      punkt.kind === 'transfer' ||
+      punkt.kind === 'rental_car'
     const gebucht = darfBuchen && punkt.booking_status === 'booked'
     const transfer = punkt.kind === 'transfer'
+    const mietwagen = punkt.kind === 'rental_car'
+    const orteErlaubt = transfer || mietwagen
     return {
       ...punkt,
       booking_status: gebucht ? ('booked' as const) : ('unconfirmed' as const),
       booking_confirmed_at: gebucht ? punkt.booking_confirmed_at : null,
       mobility_mode: transfer ? punkt.mobility_mode : null,
-      origin_place_id: transfer ? punkt.origin_place_id : null,
-      destination_place_id: transfer ? punkt.destination_place_id : null,
-      origin_name: transfer ? punkt.origin_name : null,
-      destination_name: transfer ? punkt.destination_name : null,
+      origin_place_id: orteErlaubt ? punkt.origin_place_id : null,
+      destination_place_id: orteErlaubt ? punkt.destination_place_id : null,
+      origin_name: orteErlaubt ? punkt.origin_name : null,
+      destination_name: orteErlaubt ? punkt.destination_name : null,
       connection_ref: transfer ? punkt.connection_ref : null,
       mobility_changes: transfer ? punkt.mobility_changes : null,
+      rental_supplier: mietwagen ? punkt.rental_supplier : null,
+      vehicle_class: mietwagen ? punkt.vehicle_class : null,
+      transmission: mietwagen ? punkt.transmission : null,
     }
   })
 

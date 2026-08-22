@@ -2296,6 +2296,135 @@ Die Suchnaht folgt den bestehenden Foundations: `MobilityProvider.suchen()`, ges
 
 ---
 
+## ADR-0092 – Mietwagen als `trip_items.kind = rental_car`
+
+**Datum:** 21. August 2026
+**Status:** umgesetzt auf PR #31; Schema auf Development und Production; Suche aus
+
+**Entscheidung:** Ein Mietwagen ist ein eigener persistenter Planpunkt `trip_items.kind = rental_car` mit wenigen optionalen Spalten. Abholung und Rückgabe nutzen die vorhandenen Ortsfelder. Zeitraum und Preis/Booking bleiben die vorhandenen Spalten. One-way wird aus Ortsfakten abgeleitet. Es gibt keine 1:1-Tabelle und kein `metadata`-JSON.
+
+Neue Spalten:
+
+- `rental_supplier` (Nutzerfakt, nicht Such-Provider, max. 120)
+- `vehicle_class` (`economy | compact | intermediate | fullsize | suv | van | luxury`)
+- `transmission` (`automatic | manual`)
+- `rental_evidence` (in dieser Foundation nur `user`)
+
+Transfer-Felder `mobility_mode`, `connection_ref`, `mobility_changes` und `mobility_evidence` bleiben transfer-only. Origin/Destination sind für `transfer` **oder** `rental_car` erlaubt. `booked` ist für `flight | stay | transfer | rental_car` zulässig, Quelle weiterhin nur `user`. `public.reise_aendern()` wird nicht ersetzt.
+
+**Kontext:** Foundation B muss Mietwagen im selben Reisegraphen speichern wie Flug, Stay, Aktivität und Transfer, ohne einen Transfer zu fälschen und ohne Ownership/RLS/Gastreise-Übernahme zu verdoppeln. Ein Mietwagen überspannt Tage und Orte; er ist kein einzelner Transfer.
+
+**Alternativen:**
+
+1. *Mietwagen als `kind=transfer` mit einem Modus `rental`.* Würde Bewegungskanten, Booking-Constraints und UI-Wahrheit vermischen. Ein Auto ist keine nachgewiesene Verbindung.
+2. *Eigene `trip_rental_cars`-Tabelle 1:1.* Mehr RLS-, Übernahme- und Join-Fläche, ohne dass Foundation B mehr Semantik braucht.
+3. *Fakten in `trip_items.metadata`.* Verstösst gegen die Schema-Regel: was UI und Fachlogik abfragen, ist eine Spalte.
+
+**Begründung:** Ein klarer `kind`, wenige optionale Spalten und vorhandene Zeit-/Ortsfelder reichen für manuelle Erfassung, Booking und späteren Providerabgleich. Place-IDs bleiben Strings. Fahreralter, Führerschein und Zahlungsdaten werden nicht persistiert.
+
+**Konsequenzen:**
+
+- Migration `20260821200000_trip_items_rental_car.sql` liegt im Repository und ist nach ausdrücklicher Freigabe auf Development **und** Production. Production-Suche bleibt aus. Nachweis: [docs/PR31_PRODUCTION_MIGRATION_ACCEPTANCE.md](docs/PR31_PRODUCTION_MIGRATION_ACCEPTANCE.md).
+- `public.reise_anlegen()` schreibt die Felder und erlaubt gebuchte Mietwagen nur als `user`.
+- Gast- und Konto-Übernahme tragen dieselben Felder.
+- Natürliche Sprache darf Mietwagen- und Buchungsfakten nicht erfinden.
+- Keine neue RLS-Tabelle; vorhandene `trip_items`-Policies bleiben die Eigentumsgrenze.
+- Kein sechster Workspace-Tab. Mietwagen lebt im Bereich Mobilität.
+
+---
+
+## ADR-0093 – Mietwagen deckt keine Bewegungskante; Suche fail closed
+
+**Datum:** 21. August 2026
+**Status:** umgesetzt auf Draft-PR #31; kein Provider gewählt
+
+**Entscheidung:** Ein vorhandener Mietwagen darf eine `Bewegungskante` nicht als `covered` markieren, auch wenn Zeitraum und Städte plausibel überlappen. Foundation A bleibt unverändert die Source of Truth für Verbindungsabdeckung. Ein Mietwagen ist ein verfügbarer Reisebaustein im Zeitraum, kein Routennachweis.
+
+Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, geschlossene Route `POST /api/rental-cars/search`, Production hart aus, Factory und Nachweis `null`. Kill Switch `JETNITY_RENTAL_CAR_AKTIV` benennt keinen Anbieter und ist kein Secret. Ranking ist deterministisch und provisionsneutral. Providername, Provision oder Umsatz sind niemals Rankingfaktor.
+
+**Kontext:** `docs/LOGIC_STANDARD.md` verbietet, aus gleichem Datum oder ähnlichem Ort eine Verbindung zu erfinden. Ohne expliziten belastbaren Link zwischen Mietwagen und Kante wäre jede automatische Coverage eine Parallelwahrheit.
+
+**Alternativen:**
+
+1. *Überlappender Mietwagen macht die Kante `covered`.* Würde Transportabdeckung erfinden.
+2. *Eigene Link-Tabelle Mietwagen↔Kante schon jetzt.* Kein heutiger Nutzerweg erzeugt diesen Link bewusst; das wäre Vorratsmodellierung.
+3. *Providername oder Env-Token schon jetzt festlegen.* Verstösst gegen die Foundation-Regel: kein Anbieter, keine Secrets.
+
+**Begründung:** Konservative Graphwahrheit und eine geschlossene Naht lassen später einen echten Adapter zu, ohne Preview oder Production zu täuschen. Manuelle Eingaben bleiben sichtbar Nutzerangaben.
+
+**Konsequenzen:**
+
+- `lib/rental-cars/` ist frei von Provider-SDKs.
+- `rentalCarProviderAus()` und `rentalCarNachweisAusUmgebung()` geben `null` zurück.
+- Preview/Development ohne Provider bleiben unavailable, auch wenn `JETNITY_RENTAL_CAR_AKTIV=true`.
+- Production bleibt selbst bei gesetztem Kill Switch aus.
+- Keine Fake-Ergebnisse, keine manuelle Booking-URL, keine Browser-Providerbestätigung.
+- Nächster Schritt nach Review ist nicht automatisch ein Provider.
+
+---
+
+## ADR-0094 – Mietwagen-Wahrheit: keine erratene Suche, konservatives One-way, währungssicheres Ranking
+
+**Datum:** 22. August 2026
+**Status:** umgesetzt auf Draft-PR #31; kein Provider, keine Production-Änderung
+
+**Entscheidung:** Foundation B darf Reisekontext nicht stillschweigend als Mietwagenfakt oder Suchabsicht verwenden.
+
+1. `POST /api/rental-cars/search` startet nicht durch Mount oder Tab-Öffnen. Ohne ausdrückliche Nutzeraktion und sichtbare Kriterien bleibt die Oberfläche `unavailable`/`vorbereitet`.
+2. Das manuelle Formular startet leer. Origin, Etappen und Reisedaten dürfen nur als unverbindlicher Platzhalter (`z. B. …`) erscheinen, nie als gespeicherter Ort, Datum, Place-ID oder `stageId`.
+3. `rentalOneWay()` ist `one_way` nur bei zwei vorhandenen, unterschiedlichen Place-IDs. Gleiche IDs oder eindeutig gleiche normalisierte Namen sind `same_location`. Verschiedene Labels ohne zwei belastbare IDs bleiben `unknown`. Die UI zeigt `One-way` nur bei `one_way`.
+4. `rentalKalendertage()` bleibt die inklusive Kalenderdauer des Mietzeitraums und wird als `Kalendertage Mietzeitraum` bezeichnet, nicht als Reisetage oder Abdeckung.
+5. Ranking und `Best Value` vergleichen numerische Gesamtpreise nur in derselben Währung und nur wenn `preisIstGesamt === true`. Gemischte oder fehlende Währungen ergeben kein Preissignal und kein `Best Value`. Es gibt keine FX-Umrechnung.
+
+**Kontext:** Der unabhängige Review von PR #31 fand vier Wahrheitsrisiken: automatisch erratene Suche, vorbelegte manuelle Fakten, textlich verschiedenes `one_way` und Cross-Currency-Ranking. Das widerspricht `docs/LOGIC_STANDARD.md`.
+
+**Alternativen:**
+
+1. *Suche mit Origin/letzter Etappe vorbereiten, aber nicht senden.* Würde dieselbe falsche Absicht in der UI zeigen.
+2. *Fuzzy-Ortsabgleich für One-way.* Keine stabile Identität, würde Orte erraten.
+3. *Implizite Wechselkursannahme 1:1.* Würde Preise erfinden.
+
+**Begründung:** Unbekannt bleibt unbekannt. Die Foundation bleibt provider-ready, ohne später die Such- und Rankinglogik wegen erfundener Defaults umbauen zu müssen.
+
+**Konsequenzen:**
+
+- `MietwagenBereich` ruft die Search-Route nicht mehr beim Öffnen auf.
+- `rentalManuellStartwerte()` ist leer; `rentalManuellHinweise()` ist nur Placeholder.
+- Workspace-Audit verlangt 0 Rental-Requests nach Mobilität → Mietwagen.
+- Keine Datenbank-, RLS- oder Production-Änderung.
+
+---
+
+## ADR-0095 – Mietwagen-Ranking-Labels nur bei belastbarem Vergleich
+
+**Datum:** 22. August 2026
+**Status:** umgesetzt auf Draft-PR #31; kein Provider, keine Production-Änderung
+
+**Entscheidung:** Ranking-Labels und Reasons dürfen keine Empfehlung, Eigenschaft oder Passung behaupten, die der Nachweis nicht trägt.
+
+1. `Best Value` nur, wenn mindestens zwei bestätigte Gesamtpreise in derselben Währung vergleichbar sind. Ein einzelner Gesamtpreis, gemischte Währungen oder fehlende Gesamtpreisflagge ergeben kein `Best Value`. Mehrere echte Gleichgewinner des günstigsten Preises dürfen das Label teilen.
+2. `Jetnity empfiehlt` nur bei genau einem Kandidaten mit dem höchsten Score, und nur wenn dieser Score > 0 ist. Score 0 oder ein Gleichstand, den nur die ID-Sortierung bricht, ist keine Empfehlung. Die Sortierung bleibt deterministisch.
+3. `Flexibel` nur bei `context.flexibilitaetFit > 0`. Freier `storno`-Text, einschliesslich „nicht stornierbar“, erzeugt das Label nicht. „Stornoregel bekannt“ bleibt eine neutrale Fakt-Aussage.
+4. „Passende Fahrzeugklasse“ und „Gewünschtes Getriebe“ nur bei positivem `fahrzeugFit` / `getriebeFit`. Eine vorhandene Klasse oder ein vorhandenes Getriebe ohne Match wird höchstens faktisch benannt.
+
+**Kontext:** Der Abschlussreview von PR #31 fand vier Ranking-Wahrheitsfehler: Best Value ohne Vergleich, Empfehlung durch Tie-Break, Flexibel aus beliebigem Storno-Text und Passung aus bloßer Feldexistenz.
+
+**Alternativen:**
+
+1. *Best Value schon bei einem Preis.* Kein Vergleich, irreführende Superlative.
+2. *Immer den ersten Sortiereintrag empfehlen.* Technische Stabilität als fachliche Empfehlung.
+3. *Jedes nicht-leere `storno` als flexibel werten.* Würde „nicht stornierbar“ falsch markieren.
+
+**Begründung:** Unbekannt bleibt unbekannt. Labels sind Aussagen gegenüber dem Nutzer, keine Sortierhilfen.
+
+**Konsequenzen:**
+
+- Keine Datenbank-, RLS- oder Production-Änderung.
+- `flexible` bleibt als Marke reserviert, wird in Foundation B ohne strukturierten Fit nicht vergeben.
+- Real-Device-iPhone-Test ist am 22. August 2026 abgenommen. Nächster Schritt ist nicht automatisch ein Provider und nicht automatisch Ready/Merge.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
