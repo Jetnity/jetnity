@@ -883,8 +883,8 @@ const ZUSTAENDE = {
     },
   },
   'readiness-transit-mehrere-laender': {
-    kompakt: 'Noch nicht automatisch geprüft',
-    desktop: 'Noch nicht automatisch geprüft',
+    kompakt: 'Für die Prüfung fehlen noch Angaben',
+    desktop: 'Für die Prüfung fehlen noch Angaben',
     oeffneVorbereitung: true,
     nutzlast: {
       reise: reise({
