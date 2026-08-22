@@ -3,7 +3,7 @@
 Stand: 22. August 2026  
 Status: **dauerhaft verbindlich für größere Jetnity-Arbeiten**
 
-Dieser Workflow ergänzt `docs/CONTINUITY_STANDARD.md`, `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md` und `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`. Ziel ist, dass Jetnity bei einem Wechsel von Chat, Cursor-Agent oder Sitzung ohne Wissensverlust exakt weitergeführt wird.
+Dieser Workflow ergänzt `docs/CONTINUITY_STANDARD.md`, `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`, `docs/EXPERT_PROACTIVITY_POLICY.md` und `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`. Ziel ist, dass Jetnity bei einem Wechsel von Chat, Cursor-Agent oder Sitzung ohne Wissensverlust exakt weitergeführt wird.
 
 Pflichtquellen sind insbesondere:
 
@@ -17,9 +17,11 @@ Pflichtquellen sind insbesondere:
 - `AGENTS.md`
 - `docs/PRODUCT_QUALITY_STANDARD.md`
 - `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
+- `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md`
 - `docs/LOGIC_STANDARD.md`
 - `docs/CONTINUITY_STANDARD.md`
 - `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`
+- `docs/EXPERT_PROACTIVITY_POLICY.md`
 - `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
 - relevante Fach-/Acceptance-Dokumente und aktuelle `docs/CURSOR_..._TASK.md`.
 
@@ -40,8 +42,10 @@ ChatGPT muss insbesondere:
 - vor größeren Entscheidungen den tatsächlichen Repository-/PR-/CI-/Preview-/Development-/Production-Stand prüfen;
 - neue Nutzerentscheidungen dauerhaft im Repository sichern;
 - jeden relevanten Fortschritts-Checkpoint gemäß `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md` versionieren;
+- **wie ein erfahrener Produkt-/Architektur-/Security-/UX-Profi proaktiv mitdenken und wesentliche Chancen, Risiken, Lücken oder bessere Lösungen gemäß `docs/EXPERT_PROACTIVITY_POLICY.md` aktiv präsentieren, auch wenn der Nutzer nicht ausdrücklich danach gefragt hat**;
 - größere Cursor-Aufträge vollständig und reviewbar formulieren;
 - Cursor-Ergebnisse anschließend unabhängig auf Code, Logik, Security, DB/RLS, Tests, CI, Preview, Kosten und Produktqualität prüfen;
+- im Review nicht nur Task-Erfüllung prüfen, sondern auch aktiv fragen, welche wichtigen Verbesserungen oder Risiken ein Senior-Fachreview zusätzlich erkennen würde;
 - dem Nutzer vor einem Merge verständlich erklären, was gebaut wurde, was der Besucher sieht, welche Grenzen noch bestehen und welche Risiken/offenen Punkte verbleiben;
 - dem Nutzer ausdrücklich Gelegenheit geben, vor dem Merge Änderungen oder Ergänzungen zu verlangen;
 - **niemals einen PR ohne ausdrückliche aktuelle Merge-Freigabe des Product Owners mergen**;
@@ -57,6 +61,8 @@ Cursor muss:
 
 - Pflichtlektüre und aktuellen Branch-/PR-/CI-Stand zuerst prüfen;
 - vorhandene valide Architektur wiederverwenden und keine parallelen Mini-Systeme bauen;
+- **als Senior-Engineering-/Produkt-/Security-/UX-Agent proaktiv relevante Chancen, Risiken, Logic-/Truth-Lücken und bessere Lösungen erkennen und gemäß `docs/EXPERT_PROACTIVITY_POLICY.md` melden, statt nur auf Anweisungen zu warten**;
+- wichtige Funde außerhalb des Scopes versioniert dokumentieren und als Vorschlag mit Priorität melden, ohne den aktuellen Scope eigenmächtig aufzublasen;
 - Implementierung, Tests, Security, DB/RLS, Browser-Audits, Build, CI, Preview und Dokumentation gemäß Auftrag abschließen;
 - relevante Fortschritts-Checkpoints im Repository sichern und bei aktiver größerer Arbeit `docs/ACTIVE_WORK_STATUS.md` aktuell halten;
 - vor Pause, Agentenwechsel oder größerem Abschlussbericht den aktuellen Arbeitsstand persistieren;
@@ -68,19 +74,19 @@ Technisch fertig bedeutet für Cursor **review-bereit**, nicht „darf gemergt w
 
 ### GitHub-Repository
 
-Das Repository ist das gemeinsame dauerhafte Gedächtnis und die technische Source of Truth. Produktmandat, Vision, Handoff, Roadmap, Architektur, ADRs, Logic-/Quality-/Continuity-/UX-Standards, Progress-Persistence-Policy, Merge-Policy, Fachmodule, aktive Cursor-Aufträge, `docs/ACTIVE_WORK_STATUS.md`, Nachträge und Acceptance-/Production-Nachweise müssen dort versioniert sein.
+Das Repository ist das gemeinsame dauerhafte Gedächtnis und die technische Source of Truth. Produktmandat, Vision, Handoff, Roadmap, Architektur, ADRs, Logic-/Quality-/Continuity-/UX-Standards, Traveller-Context-Policy, Progress-Persistence-Policy, Expert-Proactivity-Policy, Merge-Policy, Fachmodule, aktive Cursor-Aufträge, `docs/ACTIVE_WORK_STATUS.md`, Nachträge und Acceptance-/Production-Nachweise müssen dort versioniert sein.
 
 ## 2. Start eines neuen größeren Arbeitsblocks
 
 Vor Implementierung gilt:
 
 1. ChatGPT prüft aktuellen Repository-, Branch-, PR-, CI-, Preview- und Production-Stand.
-2. ChatGPT berücksichtigt Produktmandat, Vision, Handoff, Roadmap, Progress-Persistence-Policy, Merge-Policy und relevante Logic-/Architektur-/UX-Quellen.
+2. ChatGPT berücksichtigt Produktmandat, Vision, Handoff, Roadmap, Progress-Persistence-Policy, Expert-Proactivity-Policy, Merge-Policy und relevante Logic-/Architektur-/UX-Quellen.
 3. Nutzer und ChatGPT legen den nächsten fachlichen Block fest.
 4. Der vollständige Cursor-Auftrag wird im Feature-Branch als `docs/CURSOR_<THEMA>_TASK.md` hinterlegt.
 5. Der Draft-PR verweist auf diesen Auftrag.
 6. Für den aktiven größeren Block wird `docs/ACTIVE_WORK_STATUS.md` angelegt und während der Arbeit aktuell gehalten.
-7. Cursor arbeitet selbstständig innerhalb der dokumentierten Grenzen.
+7. Cursor arbeitet selbstständig innerhalb der dokumentierten Grenzen und meldet proaktiv wesentliche zusätzliche Funde/Empfehlungen.
 
 ## 3. Neue Produktentscheidung während eines laufenden Jobs
 
@@ -157,6 +163,7 @@ Vor produktseitigem Abschluss müssen die dauerhaften Projektquellen den tatsäc
 - externe Provider/API/Key-Abhängigkeiten;
 - bekannte Risiken / technische Schulden;
 - verbindliche Logic-/Truth-Regeln;
+- wesentliche proaktive Vorschläge/Funde und deren Entscheidung/Status;
 - nächste konkrete Aufgabe;
 - noch erforderliche Nutzerfreigaben.
 
@@ -164,7 +171,7 @@ Eine Phase kann technisch review-bereit sein, ist aber **nicht als final abgesch
 
 ## 7. Wechsel in einen neuen Chat
 
-Ein neuer Chat muss zuerst aus dem Repository rekonstruieren, wo Jetnity steht. Er liest mindestens Produktmandat, Vision, Handoff, Roadmap, Architektur, Entscheidungen, Design-/Quality-/UX-/Logic-/Continuity-Standards, `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`, diesen Workflow und `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md` sowie den aktuellen offenen PR/Task und – bei aktiver Arbeit – `docs/ACTIVE_WORK_STATUS.md`.
+Ein neuer Chat muss zuerst aus dem Repository rekonstruieren, wo Jetnity steht. Er liest mindestens Produktmandat, Vision, Handoff, Roadmap, Architektur, Entscheidungen, Design-/Quality-/UX-/Traveller-Context-/Logic-/Continuity-Standards, `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`, `docs/EXPERT_PROACTIVITY_POLICY.md`, diesen Workflow und `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md` sowie den aktuellen offenen PR/Task und – bei aktiver Arbeit – `docs/ACTIVE_WORK_STATUS.md`.
 
 Danach muss er unterscheiden können:
 
@@ -174,7 +181,8 @@ Danach muss er unterscheiden können:
 - was im aktiven Block bereits umgesetzt wurde;
 - was im aktiven Block noch offen ist;
 - was noch fehlt oder blockiert ist;
-- welche Produkt-, Architektur-, Logic-, Security-, Kosten- und Merge-Regeln verbindlich sind;
+- welche Produkt-, Architektur-, Logic-, Security-, UX-, Traveller-Context-, Kosten-, Proaktivitäts- und Merge-Regeln verbindlich sind;
+- welche wesentlichen offenen Empfehlungen/Funde bestehen;
 - welcher exakte nächste Schritt gilt.
 
 Der Nutzer soll mit „Wir machen mit Jetnity weiter. Lies den Handoff.“ fortfahren können, ohne den Projektverlauf erneut zu erzählen.
@@ -185,7 +193,7 @@ Ein neuer Cursor-Agent übernimmt den aktuellen Feature-Branch und den dort hint
 
 Bei aktiver Arbeit liest er zusätzlich `docs/ACTIVE_WORK_STATUS.md`, bevor er Code verändert.
 
-Die Merge-Policy und Progress-Persistence-Policy sind für jeden neuen Agenten verbindlich. Zusätzlich existieren Always-Apply-Cursor-Regeln unter `.cursor/rules/`.
+Die Merge-, Progress-Persistence- und Expert-Proactivity-Policies sind für jeden neuen Agenten verbindlich. Zusätzlich existieren Always-Apply-Cursor-Regeln unter `.cursor/rules/`.
 
 ## 9. Source-of-Truth-Priorität
 
@@ -207,9 +215,25 @@ Bestehende Jetnity-Kosten- und Production-Grenzen bleiben verbindlich. Der Anspr
 
 Merge, Production und Kosten sind getrennte Gates. Eine Freigabe für einen Schritt impliziert keinen anderen.
 
-## 11. Leitprinzip
+## 11. Professionelles proaktives Mitdenken
 
-> **Der Nutzer entscheidet das Produkt und den Merge. ChatGPT hält Produkt, Architektur, Logik, Security und Review zusammen. Cursor implementiert größere Blöcke. Das Repository hält das gemeinsame Gedächtnis und den überprüfbaren Projektstand.**
+Die vollständige Regel steht in `docs/EXPERT_PROACTIVITY_POLICY.md`.
+
+Für ChatGPT und alle Coding-/Review-Agents gilt dauerhaft:
+
+- nicht nur fragen, was ausdrücklich beauftragt wurde;
+- während Analyse, Implementierung und Review selbst nach wesentlichen Produktchancen, UX-/Logic-/Security-Lücken, Architekturproblemen, Datenwahrheitsrisiken, Kosten-/Provider-Verbesserungen und Production-Reife-Lücken suchen;
+- hochwirksame Funde aktiv und verständlich präsentieren;
+- klare Empfehlung, Nutzen, Nachteile/Risiken, Aufwand/Kosten/Abhängigkeiten und Priorität nennen, soweit relevant;
+- kritische Funde nicht als spätere Optimierung verstecken;
+- wichtige Vorschläge/Funde für Kontinuität versionieren;
+- größere Produkt-/Scope-/Kosten-/Production-/Security-Entscheidungen trotzdem nicht eigenmächtig treffen.
+
+**Der Product Owner entscheidet. ChatGPT und Agents müssen professionell vorausdenken und wichtige Chancen und Risiken selbst sichtbar machen.**
+
+## 12. Leitprinzip
+
+> **Der Nutzer entscheidet das Produkt und den Merge. ChatGPT hält Produkt, Architektur, Logik, Security und Review zusammen. Cursor implementiert größere Blöcke. Beide denken professionell mit und präsentieren wichtige Chancen und Risiken proaktiv. Das Repository hält das gemeinsame Gedächtnis und den überprüfbaren Projektstand.**
 
 > **Kein relevanter Fortschritt darf beim Wechsel von Chat, Agent oder Sitzung verloren gehen.**
 
