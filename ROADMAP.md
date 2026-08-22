@@ -255,7 +255,8 @@ Solange PR #34 offen ist:
 6. `docs/ROUTE_TRANSIT_INTELLIGENCE.md` und `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md` lesen.
 7. `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md` vollständig lesen.
 8. aktuellen PR #34 / Git-/CI-/Vercel-/Supabase-Stand prüfen.
-9. nicht mergen, nicht Mark Ready, keine Production-Migration.
-9. bestehende Arbeit synchronisieren und fortsetzen statt neu anzufangen.
+9. relevante Flight-/Trip-/Mobility-/Readiness-/Change-Dokumente lesen.
+10. nicht mergen, nicht Mark Ready, keine Production-Migration.
+11. bestehende Arbeit synchronisieren und fortsetzen statt neu anzufangen.
 
 Kein abgeschlossener Block darf unnötig neu gebaut werden.

@@ -185,6 +185,7 @@ Foundation D füllt diese Naht auf Draft-PR #34. `routeFactsAusReise()` liefert 
 - Acceptance: `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md`
 - Merge-Nachtrag: `docs/CURSOR_ROUTE_TRANSIT_MERGE_APPROVAL_AMENDMENT.md`
 - verbindlicher Task: `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md`
+- websiteweiter UX-/IA-Standard: `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
 
 Umgesetzt:
 
@@ -199,6 +200,8 @@ Umgesetzt:
 Produkt-/UX-Regel:
 
 > **Der Nutzer sieht die Reise – nicht die Komplexität des Datenmodells dahinter.**
+
+Der neue websiteweite Standard ist verbindlich: Alle Besucherbereiche müssen psychologisch ruhig, logisch eindeutig und visuell priorisiert sein. Ein technisch grüner PR reicht nicht, wenn Nutzer unnötig suchen, denken oder Informationen zusammensetzen müssen.
 
 Harte Grenzen für PR #34:
 
