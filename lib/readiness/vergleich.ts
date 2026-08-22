@@ -1,19 +1,18 @@
 // lib/readiness/vergleich.ts
 //
 // Provider-neutrale Priorisierung mehrerer Credential-Optionen.
-// Ohne belastbare Official Evidence niemals ein „besserer Pass“.
-// Gesetzliche Pflicht steht über Convenience.
+// Requirement-Ergebnisse (visa/transit/passport required) sind keine
+// Aussage darüber, dass genau dieses Credential verwendet werden muss.
+// Ohne explizite option-level Eligibility/Mandate: fail-closed.
 
 import type { OfficialEvaluation } from '@/lib/readiness/official'
 
 export const VERGLEICH_NICHT_VERFUEGBAR = 'Noch nicht zuverlässig vergleichbar.'
 
 export type CredentialVergleichRang =
-  | 'required_or_not_allowed'
-  | 'route_or_transit'
-  | 'provider_or_carrier'
-  | 'lower_friction'
-  | 'other_evidence'
+  | 'option_mandatory'
+  | 'option_not_allowed'
+  | 'eligible_lower_friction'
   | 'not_comparable'
 
 export type CredentialVergleich = {
@@ -38,32 +37,33 @@ function evaluationSchluessel(evaluation: OfficialEvaluation): string {
   ].join('|')
 }
 
-function rangFuer(evaluation: OfficialEvaluation): CredentialVergleichRang {
-  if (evaluation.status !== 'current') return 'not_comparable'
-  if (evaluation.officialClass === 'requirement' && (evaluation.result === 'required' || evaluation.result === 'conditional')) {
-    return 'required_or_not_allowed'
-  }
-  if (evaluation.requirementType === 'transit' && evaluation.result === 'required') {
-    return 'route_or_transit'
-  }
-  if (evaluation.officialClass === 'requirement') return 'provider_or_carrier'
-  if (evaluation.result === 'not_required') return 'lower_friction'
-  if (evaluation.result === 'required' || evaluation.result === 'conditional') return 'other_evidence'
-  return 'not_comparable'
+function optionRefVon(evaluation: OfficialEvaluation): string {
+  return evaluation.credentialOptionRef ?? `${evaluation.travellerClientRef ?? 'traveller'}:none`
 }
 
-const RANG_ORDNUNG: Record<CredentialVergleichRang, number> = {
-  required_or_not_allowed: 1,
-  route_or_transit: 2,
-  provider_or_carrier: 3,
-  lower_friction: 4,
-  other_evidence: 5,
-  not_comparable: 99,
+function eligibilityVon(evaluation: OfficialEvaluation): 'allowed' | 'not_allowed' | 'unknown' {
+  return evaluation.optionEligibility === 'allowed' || evaluation.optionEligibility === 'not_allowed'
+    ? evaluation.optionEligibility
+    : 'unknown'
+}
+
+function mandateVon(evaluation: OfficialEvaluation): 'mandatory' | 'not_mandatory' | 'unknown' {
+  return evaluation.optionMandate === 'mandatory' || evaluation.optionMandate === 'not_mandatory'
+    ? evaluation.optionMandate
+    : 'unknown'
+}
+
+function rangFuer(evaluation: OfficialEvaluation): CredentialVergleichRang {
+  if (evaluation.status !== 'current') return 'not_comparable'
+  if (eligibilityVon(evaluation) === 'not_allowed') return 'option_not_allowed'
+  if (mandateVon(evaluation) === 'mandatory') return 'option_mandatory'
+  if (eligibilityVon(evaluation) === 'allowed') return 'eligible_lower_friction'
+  return 'not_comparable'
 }
 
 /**
  * Vergleicht belegte Optionen derselben Traveller-/Ziel-/Requirement-Gruppe.
- * Convenience darf required/not-allowed nicht überstimmen.
+ * `result=required` heisst nicht, dass dieses Credential zwingend ist.
  */
 export function credentialOptionenVergleichen(
   evaluations: readonly OfficialEvaluation[],
@@ -80,7 +80,7 @@ export function credentialOptionenVergleichen(
   for (const gruppe of gruppen.values()) {
     for (const evaluation of gruppe) {
       ranks.push({
-        optionRef: evaluation.credentialOptionRef ?? `${evaluation.travellerClientRef ?? 'traveller'}:none`,
+        optionRef: optionRefVon(evaluation),
         rank: rangFuer(evaluation),
         result: evaluation.result,
         officialClass: evaluation.officialClass,
@@ -88,8 +88,8 @@ export function credentialOptionenVergleichen(
     }
   }
 
-  const belegbar = ranks.filter((eintrag) => eintrag.rank !== 'not_comparable')
-  if (belegbar.length < 2) {
+  const aktuelle = evaluations.filter((evaluation) => evaluation.status === 'current')
+  if (aktuelle.length < 2) {
     return {
       comparable: false,
       reason: VERGLEICH_NICHT_VERFUEGBAR,
@@ -99,30 +99,38 @@ export function credentialOptionenVergleichen(
     }
   }
 
-  const pflicht = belegbar.filter((eintrag) => eintrag.rank === 'required_or_not_allowed')
-  if (pflicht.length === 1) {
-    return {
-      comparable: true,
-      reason: 'Für diese Reise gilt eine belegte regulatorische Pflicht.',
-      winnerOptionRef: pflicht[0].optionRef,
-      duty: 'required',
-      ranks,
-    }
-  }
-  if (pflicht.length > 1) {
-    return {
-      comparable: false,
-      reason: VERGLEICH_NICHT_VERFUEGBAR,
-      winnerOptionRef: null,
-      duty: 'required',
-      ranks,
-    }
+  const gruppenAktuell = new Map<string, OfficialEvaluation[]>()
+  for (const evaluation of aktuelle) {
+    const key = evaluationSchluessel(evaluation)
+    const liste = gruppenAktuell.get(key) ?? []
+    liste.push(evaluation)
+    gruppenAktuell.set(key, liste)
   }
 
-  const sortiert = [...belegbar].sort((a, b) => RANG_ORDNUNG[a.rank] - RANG_ORDNUNG[b.rank])
-  const bester = sortiert[0]
-  const gleich = sortiert.filter((eintrag) => eintrag.rank === bester.rank)
-  if (gleich.length !== 1) {
+  let winnerOptionRef: string | null = null
+  let duty: CredentialVergleich['duty'] = 'unknown'
+  let reason = VERGLEICH_NICHT_VERFUEGBAR
+  let vergleichbareGruppen = 0
+
+  for (const gruppe of gruppenAktuell.values()) {
+    if (gruppe.length < 2) continue
+    const entscheid = gruppeEntscheiden(gruppe)
+    if (!entscheid.comparable) {
+      return {
+        comparable: false,
+        reason: VERGLEICH_NICHT_VERFUEGBAR,
+        winnerOptionRef: null,
+        duty: entscheid.duty,
+        ranks,
+      }
+    }
+    vergleichbareGruppen += 1
+    winnerOptionRef = entscheid.winnerOptionRef
+    duty = entscheid.duty
+    reason = entscheid.reason
+  }
+
+  if (vergleichbareGruppen !== 1 || !winnerOptionRef) {
     return {
       comparable: false,
       reason: VERGLEICH_NICHT_VERFUEGBAR,
@@ -134,9 +142,87 @@ export function credentialOptionenVergleichen(
 
   return {
     comparable: true,
-    reason: 'Belegte Optionen unterscheiden sich in der regulatorischen Reibung.',
-    winnerOptionRef: bester.optionRef,
-    duty: 'recommendation',
+    reason,
+    winnerOptionRef,
+    duty,
     ranks,
+  }
+}
+
+function gruppeEntscheiden(gruppe: OfficialEvaluation[]): {
+  comparable: boolean
+  winnerOptionRef: string | null
+  duty: CredentialVergleich['duty']
+  reason: string
+} {
+  const nichtZulaessig = gruppe.filter((evaluation) => eligibilityVon(evaluation) === 'not_allowed')
+  const zulaessig = gruppe.filter((evaluation) => eligibilityVon(evaluation) !== 'not_allowed')
+
+  if (nichtZulaessig.length > 0) {
+    const explizitErlaubt = zulaessig.filter((evaluation) => eligibilityVon(evaluation) === 'allowed')
+    if (explizitErlaubt.length === 1 && explizitErlaubt.length === zulaessig.length) {
+      return {
+        comparable: true,
+        winnerOptionRef: optionRefVon(explizitErlaubt[0]),
+        duty: 'required',
+        reason: 'Andere belegte Optionen sind für diese Route nicht zulässig.',
+      }
+    }
+    return {
+      comparable: false,
+      winnerOptionRef: null,
+      duty: 'unknown',
+      reason: VERGLEICH_NICHT_VERFUEGBAR,
+    }
+  }
+
+  const zwingend = gruppe.filter((evaluation) => mandateVon(evaluation) === 'mandatory')
+  if (zwingend.length === 1) {
+    return {
+      comparable: true,
+      winnerOptionRef: optionRefVon(zwingend[0]),
+      duty: 'required',
+      reason: 'Für diese Reise gilt eine belegte option-level Pflicht.',
+    }
+  }
+  if (zwingend.length > 1) {
+    return {
+      comparable: false,
+      winnerOptionRef: null,
+      duty: 'required',
+      reason: VERGLEICH_NICHT_VERFUEGBAR,
+    }
+  }
+
+  const alleExplizitErlaubt = gruppe.every((evaluation) => eligibilityVon(evaluation) === 'allowed')
+  if (alleExplizitErlaubt) {
+    const reibung = gruppe.filter(
+      (evaluation) =>
+        evaluation.officialClass === 'requirement' &&
+        (evaluation.result === 'required' ||
+          evaluation.result === 'not_required' ||
+          evaluation.result === 'conditional'),
+    )
+    if (reibung.length === gruppe.length) {
+      const ohneVisum = reibung.filter((evaluation) => evaluation.result === 'not_required')
+      const mitReibung = reibung.filter(
+        (evaluation) => evaluation.result === 'required' || evaluation.result === 'conditional',
+      )
+      if (ohneVisum.length === 1 && mitReibung.length === reibung.length - 1) {
+        return {
+          comparable: true,
+          winnerOptionRef: optionRefVon(ohneVisum[0]),
+          duty: 'recommendation',
+          reason: 'Belegte Optionen unterscheiden sich in der regulatorischen Reibung.',
+        }
+      }
+    }
+  }
+
+  return {
+    comparable: false,
+    winnerOptionRef: null,
+    duty: 'unknown',
+    reason: VERGLEICH_NICHT_VERFUEGBAR,
   }
 }

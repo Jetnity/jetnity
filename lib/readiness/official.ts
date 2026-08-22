@@ -75,6 +75,8 @@ export type OfficialEvaluation = {
   status: OfficialStatus
   freshness: OfficialFreshness
   officialClass: OfficialClass
+  optionEligibility?: 'allowed' | 'not_allowed' | 'unknown' | null
+  optionMandate?: 'mandatory' | 'not_mandatory' | 'unknown' | null
   missingFacts: MissingFact[]
   evidence: OfficialEvidence
   action: OfficialAction | null
