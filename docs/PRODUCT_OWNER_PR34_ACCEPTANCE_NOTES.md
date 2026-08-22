@@ -133,6 +133,42 @@ Verbindliche fachliche Richtung für den späteren Amendment:
 
 Hauptentwickler-Empfehlung: Diese Änderung ist fachlich sinnvoll. Jetnitys Stärke soll darin liegen, aus wenigen belastbaren Facts und frei formulierten Wünschen breite Möglichkeiten zu analysieren und erst bei echter Entscheidungsrelevanz weitere Fragen zu stellen. Vorgegebene Interessen-/Tempo-Kategorien dürfen nicht unbemerkt zur langfristigen Optimierungsfunktion werden.
 
+### Abnahmepunkt 3 – Trip Workspace / Reise-Dashboard ist die primäre Produktoberfläche
+
+**Product-Owner-Entscheidung: verbindlich.**
+
+Kontext:
+
+- Nach dem Anlegen einer Reise befindet sich der Nutzer im zentralen Trip Workspace / Reise-Dashboard.
+- Auf dem aktuellen Screenshot ist der Bereich `Flüge` aktiv; darüber liegen Reise-Zusammenfassung und die Hauptbereiche `Übersicht`, `Flüge`, `Unterkunft`, `Aktivitäten` sowie weitere Workspace-Bereiche.
+- Diese Seite ist der Ort, an dem die Reise laufend geplant, ergänzt, bewertet, geändert und später begleitet wird.
+
+Verbindliche Qualitätsanforderung:
+
+- Der Trip Workspace ist die **wichtigste Produktfläche von Jetnity** und muss entsprechend als höchste UX-/Logic-/Intelligence-Priorität behandelt werden.
+- Jetnity muss hier nicht nur Daten anzeigen, sondern intelligent erkennen, **was für die konkrete Reise jetzt wichtig ist**, was fehlt, was unsicher ist, was bereits gut gelöst ist und was als Nächstes sinnvoll wäre.
+- Die Informationsarchitektur muss psychologisch ruhig, logisch eindeutig und mobile-first sein. Der Besucher darf trotz hoher funktionaler Tiefe nie das Gefühl bekommen, vor einem komplizierten Verwaltungssystem zu stehen.
+- Alles Relevante muss auffindbar sein, aber nicht alles gleichzeitig gleich laut erscheinen. Priorität vor Vollständigkeitsrauschen.
+- Harte Reise-Wahrheit, Buchungs-/Planungsstatus, weiche Wünsche, Empfehlungen, Warnungen und offene Entscheidungen müssen visuell und semantisch klar getrennt sein.
+- Jetnity soll über alle Bereiche hinweg eine gemeinsame Reise-Wahrheit verwenden; keine widersprüchlichen Einzelwelten pro Tab.
+- Änderungen in einem Bereich müssen ihre Auswirkungen auf andere relevante Bereiche erkennen können. Beispiel: eine neue Flugroute kann Transit-/Readiness-, Mobilitäts-, Zeit- oder Unterkunftsfolgen haben.
+- Intelligente Vorschläge müssen begründet und reversibel sein: Jetnity darf optimieren und proaktiv empfehlen, aber größere Reiseänderungen erst nach ausdrücklicher Nutzerfreigabe übernehmen.
+- Mobile Nutzung auf dem iPhone ist first-class. Horizontale Tabs, Karten, Statusblöcke, Aktionen und Warnungen müssen ohne Sucharbeit und unnötiges Scroll-/Orientierungschaos verständlich bleiben.
+
+Hauptentwickler-Prüfprinzip für die weitere Abnahme:
+
+Wir prüfen den Workspace ab jetzt Bereich für Bereich nicht nur auf Optik, sondern jeweils auf:
+
+1. **Informationshierarchie:** Sieht der Nutzer zuerst das, was jetzt wichtig ist?
+2. **Logik:** Stimmen Status, Route, Daten, Reisende und Abhängigkeiten über alle Bereiche überein?
+3. **Intelligenz:** Erkennt Jetnity fehlende Informationen, Risiken, bessere Optionen und sinnvolle nächste Schritte selbst?
+4. **Nutzerkontrolle:** Kann der Nutzer verstehen, ändern, verwerfen oder bestätigen, ohne dass Jetnity still Entscheidungen übernimmt?
+5. **Progressive Disclosure:** Werden Details erst dann gezeigt/erfragt, wenn sie relevant sind?
+6. **Cross-Domain-Auswirkungen:** Werden Folgen zwischen Flügen, Unterkunft, Aktivitäten, Mobilität, Readiness und weiteren Bereichen berücksichtigt?
+7. **Mobile Psychologie:** Bleibt der Workspace trotz Tiefe ruhig, übersichtlich und schnell erfassbar?
+
+Dieser Punkt ist keine einzelne UI-Korrektur, sondern eine verbindliche Qualitätslatte für **alle folgenden Product-Owner-Funde im Trip Workspace**.
+
 ## Noch nicht tun
 
 - keine eigenmächtige Implementierung aus diesem Sammeldokument
