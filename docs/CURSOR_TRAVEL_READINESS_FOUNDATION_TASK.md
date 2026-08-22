@@ -75,7 +75,7 @@ Die ursprünglichen Qualitäts-, Security- und Scope-Regeln bleiben weiterhin ve
 - Readiness als eigene fachliche Domäne, nicht als beliebiger Tagesplanpunkt
 - Official Requirement Truth und User Readiness strikt trennen
 - `unknown` bleibt `unknown`
-- keine Fake-Regeln oder erfundenen kommerziellen/regulatorischen Daten
+- keine Fake-Regeln oder erfundenen regulatorischen Daten
 - Guest/Account-Parität
 - idempotente Persistenz
 - Context-/Stale-Logik
