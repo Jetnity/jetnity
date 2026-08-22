@@ -1,7 +1,7 @@
 # PR #34 – Foundation D Acceptance / Verification
 
 Stand: 22. August 2026  
-Status: **technisch umgesetzt und lokal/preview geprüft; Human-/Architecture-Review und Product-Owner-Freigabe offen**
+Status: **Review-Blocker Guest→Account-Route-Persistenz umgesetzt; lokal/CI/Preview/DB-Development geprüft; erneutes Human-Review und Product-Owner-Freigabe offen**
 
 Branch: `feat/route-transit-intelligence`  
 PR: https://github.com/Jetnity/jetnity/pull/34  
@@ -21,11 +21,10 @@ Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Fligh
 
 ## Datenbankgrenze
 
-- **Keine neue Migration**
-- **Keine neue Tabelle oder Spalte**
-- Persistenz nutzt vorhandenes `trip_items.metadata`
+- Development-Migration `20260822130000_reise_anlegen_route_itinerary.sql` **angewendet**
+- Keine neue Tabelle oder Spalte; Persistenz bleibt `trip_items.metadata`
 - Production-Schema unverändert
-- `db:rechte` / `db:rls` / `db:sicherheit` nicht als neue Migrationsprüfung gefahren, weil das Schema nicht berührt wurde
+- `db:rechte` OK, `db:rls` grün, `db:sicherheit` 185/185 nach der Development-Migration
 
 ---
 
@@ -34,16 +33,16 @@ Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Fligh
 | Nachweis | Stand |
 | --- | --- |
 | Arbeits-Head der Implementierung | `23dd548ae05016b2a1b5011e24c3bdd9d2018f8f` |
-| Verifizierter Branch-Head | `be94305b22e8455ad3721f3bb1c5f72fe3d2635e` |
-| `npm test` | **1271 pass / 0 fail** (erneut 22.08.2026 nach Main-Sync `4a8a4ea6`; Code seit `23dd548a` unverändert) |
+| Persistenz-Fix-Head | `6cbe39f3a96fd425b2e0e60ef33c3c206432ed81` |
+| `npm test` | **1284 pass / 0 fail** |
 | Typecheck | **grün** (`tsc --noEmit`) |
 | Lint | **grün** (`next lint`, 0 warnings/errors) |
 | Hygiene | **grün** (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`) |
 | Production Build | **grün** (`next build`, 38/38 Seiten). Setup-Warnung: keine `.env`/`.local` in dieser Agent-Umgebung. |
 | Auth-Config-Checks | **grün** (`auth:pruefen`: 55/55 Werte) |
 | Trip Workspace Audit | **726 Kombinationen, 0 Fehler**, Engines WebKit + Chromium, inkl. `route-direkt` / `route-ein-transit` / `route-zwei-transits` |
-| Vercel Preview | **READY** für `be94305b`: https://jetnity-pzrwyzdix-jetnity-e1b93c82.vercel.app · Implementierung `23dd548a`: https://jetnity-16l9pmw3e-jetnity-e1b93c82.vercel.app |
-| GitHub Actions `CI` | **success** auf `be94305b` (Verify + Auth): https://github.com/Jetnity/jetnity/actions/runs/32573631017 · zuvor `a1110930`: https://github.com/Jetnity/jetnity/actions/runs/32573413959 · `d3c99335`: https://github.com/Jetnity/jetnity/actions/runs/32572835591 |
+| Vercel Preview | **READY** für `6cbe39f3`: https://jetnity-5jm79bevf-jetnity-e1b93c82.vercel.app |
+| GitHub Actions `CI` | **success** auf `6cbe39f3`: https://github.com/Jetnity/jetnity/actions/runs/32574349369 |
 
 ---
 
@@ -75,7 +74,7 @@ UI-Audit-Fixtures: `route-direkt`, `route-ein-transit`, `route-zwei-transits`.
 ## Risiken, die bewusst offen bleiben
 
 - Ohne Airport-Zeile in `public.airports` gibt es IATA ohne Land. Fail-closed, kein Guess.
-- `reise_anlegen()` schreibt die Itinerary nicht selbst; ein RPC-Fehler nach Insert ohne nachgelagertes Schreiben verlöre die Route.
+- Production kennt die RPC-Erweiterung noch nicht; dort bleibt der fail-closed TypeScript-Nachlauf die Recovery. Development schreibt atomar.
 - Mehrdeutige Flüge (identische Titel/Daten/Provider/Ref/Position) bekommen keine Itinerary.
 - Echter Connection-Risk- oder Transfer-Hinweis ist nicht gebaut.
 - Official Transit-Requirements bleiben ohne Timatic `unknown`.
@@ -87,14 +86,13 @@ UI-Audit-Fixtures: `route-direkt`, `route-ein-transit`, `route-zwei-transits`.
 
 Geprüft gegen `docs/CURSOR_ROUTE_TRANSIT_EXPERT_PROACTIVITY_AMENDMENT.md`. Route Facts sind traveller-neutral (`lib/route` enthält keine Staatsbürgerschaft/Passfelder). Dieselbe Route kann später gegen mehrere Credential-Profile ausgewertet werden, ohne dupliziert zu werden.
 
-### Fund 1 – Nachgelagertes Itinerary-Schreiben ist nicht fail-closed
+### Fund 1 – Nachgelagertes Itinerary-Schreiben war nicht fail-closed
 
-- **Beobachtung:** `reise_anlegen` persistiert `route_itinerary` nicht. `flugRoutenInReiseSchreiben()` aktualisiert `metadata` danach und ignoriert Select-/Update-Fehler.
-- **Relevanz:** Guest→Account kann eine Reise ohne Route Truth erzeugen, obwohl der Entwurf eine Itinerary hatte.
-- **Empfehlung:** Vor Production entweder die RPC `route_itinerary` lesen oder Schreibfehler sichtbar machen. Kein stilles `ok` bei verlorener Route.
-- **Priorität:** vor Production, nicht vor Draft-Review
-- **Scope:** Follow-up, keine eigenmächtige RPC-/Schemaänderung in PR #34
-- **Product-Owner-Entscheidung:** RPC erweitern vs. sichtbarer Folge-Write; Production-Migration bleibt separat
+- **Beobachtung:** Der stille Nachlauf konnte eine Guest-Route verlieren und trotzdem `ok` liefern.
+- **Status:** **behoben** in `6cbe39f3` (ADR-0113). RPC schreibt atomar auf Development; Nachlauf ist fail-closed Recovery.
+- **Priorität:** Production-Anwendung der Migration bleibt separate Freigabe
+- **Scope:** innerhalb Foundation D, umgesetzt
+- **Product-Owner-Entscheidung:** Production-Migration später, nicht jetzt
 
 ### Fund 2 – Gesamt-Destination folgt dem frühesten Itinerary
 

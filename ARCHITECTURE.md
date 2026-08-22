@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
 Stand: 22. August 2026
-Gültig für: Phase 3.3c plus Mobile-UX, Coverage/Booking und Foundation A/B/C auf `main` und Production-Schema; Foundation D (Route & Transit Intelligence) auf Draft-PR #34, keine Schemaänderung
+Gültig für: Phase 3.3c plus Mobile-UX, Coverage/Booking und Foundation A/B/C auf `main` und Production-Schema; Foundation D (Route & Transit Intelligence) auf Draft-PR #34; Development-RPC schreibt Route-Metadata, Production-Schema unverändert
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
