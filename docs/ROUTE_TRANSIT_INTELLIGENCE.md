@@ -67,7 +67,7 @@ Länder kommen nur aus expliziten Airport-Referenzen:
 4. Gast: übernimmt die in der Suchantwort mitgelieferte Referenzkarte in die lokale Itinerary; das ist nur lokaler Entwurf, keine Account-Truth
 5. Anzeige: City/Country nur, wenn die Referenz sie trägt
 
-Ohne Treffer in `airports` oder bei Lookup-Fehler bleibt `countryCode` `null`. Es gibt keinen Fallback auf Client-Länder. Die Route darf trotzdem IATA-Segmente zeigen. Die SQL-Helferfunktion prüft nur Formate und Größe; sie ist keine Country-Truth.
+Ohne Treffer in `airports` oder bei Lookup-Fehler bleibt `countryCode` `null`. Es gibt keinen Fallback auf Client-Länder. Die Route darf trotzdem IATA-Segmente zeigen. Die SQL-Helferfunktion `flug_route_itinerary_metadata()` ist die letzte Trust-Boundary: sie verwirft Client-`countryCode`/`city`/`country` und baut die Punkte aus `public.airports` neu (ADR-0115). Die TypeScript-Kanonisierung bleibt Defense in Depth.
 
 ---
 

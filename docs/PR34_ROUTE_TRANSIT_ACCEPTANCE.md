@@ -1,7 +1,7 @@
 # PR #34 – Foundation D Acceptance / Verification
 
 Stand: 22. August 2026  
-Status: **Round-2-Trust-Boundary-Fix umgesetzt; lokal/CI/Preview geprüft; erneutes Human-Review und Product-Owner-Freigabe offen**
+Status: **Round-3-DB-Trust-Boundary umgesetzt; lokal/CI/Preview/DB-Development geprüft; finaler Human-Review und Product-Owner-Freigabe offen**
 
 Branch: `feat/route-transit-intelligence`  
 PR: https://github.com/Jetnity/jetnity/pull/34  
@@ -15,16 +15,16 @@ Merge-Approval: `docs/CURSOR_ROUTE_TRANSIT_MERGE_APPROVAL_AMENDMENT.md` und `doc
 
 Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Flight-Itineraries.
 
-`routeFactsAusReise()` liefert `quelle: 'flight_itinerary'`, sobald eine gültige Itinerary im Reisegraphen liegt. Titel, Notizen, Ortsnamen und Browser-Country-Felder erzeugen keine Route. Account-Länder kommen nur aus `public.airports` (ADR-0114).
+`routeFactsAusReise()` liefert `quelle: 'flight_itinerary'`, sobald eine gültige Itinerary im Reisegraphen liegt. Titel, Notizen, Ortsnamen und Browser-Country-Felder erzeugen keine Route. Account-Länder kommen nur aus `public.airports` (ADR-0114, ADR-0115). Auch ein direkter `reise_anlegen`-RPC kann Client-Länder nicht persistieren.
 
 ---
 
 ## Datenbankgrenze
 
-- Development-Migration `20260822130000_reise_anlegen_route_itinerary.sql` **angewendet**
+- Development-Migrationen `20260822130000_reise_anlegen_route_itinerary.sql` und `20260822140000_flug_route_itinerary_airport_truth.sql` **angewendet**
 - Keine neue Tabelle oder Spalte; Persistenz bleibt `trip_items.metadata`
 - Production-Schema unverändert
-- `db:rechte` OK, `db:rls` grün, `db:sicherheit` 185/185 nach der Development-Migration
+- `db:rechte` OK, `db:rls` grün, `db:sicherheit` 193/193 nach der Airport-Truth-Migration
 
 ---
 
@@ -35,15 +35,17 @@ Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Fligh
 | Arbeits-Head der Implementierung | `23dd548ae05016b2a1b5011e24c3bdd9d2018f8f` |
 | Persistenz-Fix-Head | `6cbe39f3a96fd425b2e0e60ef33c3c206432ed81` |
 | Round-2-Fix-Head | `ab8a4910735b05c294f1060ce0f591afc3f25f4d` |
-| `npm test` | **1295 pass / 0 fail** (Round-2-Head `ab8a4910`) |
+| Round-3-Fix-Head | `be6112061a3429ecf8c8f4aaba595cb5913f3860` |
+| `npm test` | **1295 pass / 0 fail** |
 | Typecheck | **grün** (`tsc --noEmit`) |
 | Lint | **grün** (`next lint`, 0 warnings/errors) |
 | Hygiene | **grün** (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`) |
 | Production Build | **grün** (`next build`, 38/38 Seiten). Setup-Warnung: keine `.env`/`.local` in dieser Agent-Umgebung. |
 | Auth-Config-Checks | **grün** (`auth:pruefen`: 55/55 Werte) |
 | Trip Workspace Audit | **726 Kombinationen, 0 Fehler**, Engines WebKit + Chromium, inkl. `route-direkt` / `route-ein-transit` / `route-zwei-transits` |
-| Vercel Preview | **READY** für `ab8a4910`: https://jetnity-fzcn04o7h-jetnity-e1b93c82.vercel.app |
-| GitHub Actions `CI` | **success** auf `ab8a4910`: https://github.com/Jetnity/jetnity/actions/runs/32576132461 |
+| Vercel Preview | **READY** für `be611206`: https://jetnity-530z7fkbv-jetnity-e1b93c82.vercel.app |
+| GitHub Actions `CI` | **success** auf `be611206`: https://github.com/Jetnity/jetnity/actions/runs/32577656292 |
+| `db:sicherheit` | **193/193** nach `20260822140000_flug_route_itinerary_airport_truth.sql` |
 
 ---
 
@@ -117,9 +119,17 @@ Geprüft gegen `docs/CURSOR_ROUTE_TRANSIT_EXPERT_PROACTIVITY_AMENDMENT.md`. Rout
 
 - **Beobachtung:** Guest→Account hat strukturell gültige Browser-Länder persistiert. Readiness hätte sie als `flight_itinerary` gelesen.
 - **Status:** **behoben** in `ab8a4910` (ADR-0114). `reiseAusNutzlastAnlegen()` kanonisiert vor RPC und Recovery.
-- **Priorität:** Production-RPC bleibt unverändert strukturell; Country-Truth liegt in TypeScript
+- **Priorität:** Defense in Depth; letzte Grenze ist ADR-0115
 - **Scope:** innerhalb Foundation D, umgesetzt
-- **Product-Owner-Entscheidung:** keine weitere Trust-Boundary in diesem PR
+- **Product-Owner-Entscheidung:** keine weitere Anwendungsschicht in diesem PR
+
+### Fund 5 – direkter RPC umging die TypeScript-Kanonisierung
+
+- **Beobachtung:** `authenticated` kann `reise_anlegen(jsonb)` direkt aufrufen. Die SQL-Helferfunktion übernahm Client-Länder.
+- **Status:** **behoben** in `be611206` (ADR-0115). Die Datenbank baut Punkte aus `public.airports` neu.
+- **Priorität:** Production-Anwendung der Migration bleibt separate Freigabe
+- **Scope:** innerhalb Foundation D, umgesetzt
+- **Product-Owner-Entscheidung:** Production-Migration später, nicht jetzt
 
 Keine weiteren hochwirksamen Experten-Funde außerhalb dieser Punkte und der bereits dokumentierten Risiken.
 

@@ -11,8 +11,9 @@ Arbeitsblock: **Foundation D – Route & Transit Intelligence**
 - Persistenz-Fix-Head: `6cbe39f3a96fd425b2e0e60ef33c3c206432ed81`
 - Round-2-Fix-Head: `ab8a4910735b05c294f1060ce0f591afc3f25f4d`
 - letzter vor Round-3 verifizierter PR-Head: `314110bcd68c1570f56a0e7ecb321c8191920b84`
+- Round-3-Fix-Head: `be6112061a3429ecf8c8f4aaba595cb5913f3860`
 - aktuellen Branch-/PR-Head vor jeder weiteren Arbeit erneut über GitHub verifizieren
-- Status: **Round-2-Fix technisch grün; Human-/Security-/Truth-Re-Review hat einen letzten DB-Trust-Boundary-Blocker gefunden; Round-3-Fix offen**
+- Status: **Round-3-DB-Trust-Boundary umgesetzt und lokal/CI/Preview geprüft; finaler Human-/Truth-Review offen**
 - Merge: **nicht freigegeben**, PR bleibt Draft
 
 ## 2. Ziel
@@ -64,26 +65,24 @@ Umgesetzt in `ab8a4910` (ADR-0114):
 - Datum/Uhrzeit bleiben
 - `flugInReiseUebernehmen` bleibt referenzbasiert
 
-## 6. Human / Security / Truth Review Round 3 – letzter Trust-Boundary-Blocker offen
+## 6. Human / Security / Truth Review Round 3 – DB-Trust-Boundary umgesetzt
 
 Verbindlicher Review-Nachtrag:
 
 - `docs/CURSOR_PR34_HUMAN_REVIEW_ROUND3.md`
 
-Review-Fund:
+Umgesetzt in `be611206` (ADR-0115):
 
-- `public.reise_anlegen(jsonb)` ist weiterhin für `authenticated` direkt ausführbar
-- ein direkter RPC-Aufrufer kann die TypeScript-Kanonisierung umgehen
-- `public.flug_route_itinerary_metadata(text, jsonb)` validiert aktuell nur strukturell und kann dabei Client-`countryCode`/`city`/`country` persistieren
-- diese Metadata wird später als `flight_itinerary`-Truth gelesen
-- deshalb muss die **letzte Country-Truth-Grenze in der Datenbank selbst** gegen `public.airports` kanonisieren
-
-Verbindliches Ziel: direkter RPC mit z. B. `ZRH.countryCode = 'US'` darf niemals US persistieren. Unbekannte IATA-Referenz → `null`, kein Client-Fallback.
+- `flug_route_itinerary_metadata()` ist `STABLE` und baut Punkte aus IATA + `public.airports` neu
+- Helfer `flug_route_punkt_aus_iata()`; 0 oder mehrere Treffer → `null`
+- Clientwerte `countryCode`, `city`, `country` werden in der Datenbank verworfen
+- direkter `reise_anlegen`-RPC mit `ZRH.countryCode = 'US'` persistiert CH, nicht US
+- TypeScript-Kanonisierung bleibt Defense in Depth
+- Development-Migration `20260822140000_flug_route_itinerary_airport_truth.sql` angewendet
+- Production nicht migriert
 
 ## 7. Noch offen
 
-- Round-3-DB-Trust-Boundary-Fix vollständig umsetzen
-- Development-only anwenden und SQL-/RLS-/Security-Tests wiederholen
 - finalen Human-/Architecture-/UX-/Security-/Truth-Review gegen tatsächlichen Head durchführen
 - Product Owner erhält danach Ergebnis/Nutzerwirkung und kann weitere Änderungen verlangen
 - ausdrückliche Product-Owner-Merge-Freigabe bleibt erforderlich
@@ -114,27 +113,29 @@ Jeder relevante Fortschritt, Blocker, Review-Fund, Test-/CI-/Preview-Stand und n
 
 Global verbindlich: `docs/EXPERT_PROACTIVITY_POLICY.md`. Wichtige fachliche Chancen/Risiken werden proaktiv präsentiert und bei Relevanz versioniert.
 
-## 9. Letzter grüner Nachweis vor Round 3
+## 9. Tests / CI / Preview nach Round 3
 
-Code-Head `ab8a4910`, danach Docs-Head `314110bc`:
+Nachweis auf Code-Head `be611206`:
 
 - `npm test`: 1295 pass / 0 fail
 - Typecheck, Lint, Hygiene: grün
 - Production Build: grün (38/38 Seiten)
 - `auth:pruefen`: 55/55
+- `db:anwenden` Development: `20260822140000_flug_route_itinerary_airport_truth.sql` angewendet
+- `db:rechte`: OK (43 Tabellenrechte)
+- `db:rls`: grün
+- `db:sicherheit`: **193/193** inkl. direkter RPC-Manipulation
 - Trip Workspace Audit: 726 Kombinationen, 0 Fehler, WebKit + Chromium
-- GitHub Actions CI auf `314110bc`: success
-- Vercel Preview auf `314110bc`: READY
+- Vercel Preview READY: https://jetnity-530z7fkbv-jetnity-e1b93c82.vercel.app
+- GitHub Actions CI **success**: https://github.com/Jetnity/jetnity/actions/runs/32577656292
 - Draft-PR #34 mergeable / CLEAN; das ist keine Merge-Freigabe
-
-Diese Nachweise gelten **nicht automatisch** für einen kommenden Round-3-Code-Head; danach alles Relevante erneut prüfen.
 
 ## 10. Datenbank / RLS / Production
 
 Direkt verifiziert am 22.08.2026:
 
-- Development (`yfvbxvijcorffwxbxahl`) enthält `20260822130000 reise_anlegen_route_itinerary`
-- Production (`qscbgcdmivbbnzrcyegn`) endet weiterhin bei `20260822020000 trip_travellers`
+- Development enthält `20260822130000 reise_anlegen_route_itinerary` und `20260822140000 flug_route_itinerary_airport_truth`
+- Production endet weiterhin bei `20260822020000 trip_travellers`
 - Production ist **nicht** mit Foundation-D-RPC migriert
 - Traveller-Schema in Foundation D nicht angefasst
 - **Production nicht migrieren** ohne separate Freigabe
@@ -166,12 +167,9 @@ Kein Round-3-Blocker:
 
 ## 14. Exakter nächster Schritt
 
-1. Cursor liest `docs/CURSOR_PR34_HUMAN_REVIEW_ROUND3.md` und behebt die DB-level Trust Boundary
-2. Development-only anwenden; direkte RPC-Manipulationstests plus vollständigen DoD-Lauf durchführen
-3. Active Work Status / Acceptance / ADRs aktualisieren
-4. ChatGPT führt finalen Human-/Architecture-/UX-/Security-/Truth-Review durch
-5. Product Owner entscheidet über weitere Änderungen oder spätere Merge-Freigabe
-6. **nicht mergen, nicht Mark Ready, keine Production-Migration ohne Freigabe**
+1. ChatGPT führt finalen Human-/Architecture-/UX-/Security-/Truth-Review gegen `be611206` bzw. den tatsächlichen Head durch
+2. Product Owner entscheidet über weitere Änderungen oder spätere Merge-Freigabe
+3. **nicht mergen, nicht Mark Ready, keine Production-Migration ohne Freigabe**
 
 ## 15. Pflichtlektüre
 
@@ -191,4 +189,4 @@ Kein Round-3-Blocker:
 - `docs/CURSOR_ROUTE_TRANSIT_EXPERT_PROACTIVITY_AMENDMENT.md`
 - `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`
 - `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
-- `JETNITY_HANDOFF.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `DECISIONS.md` ADR-0108/0112/0113/0114
+- `JETNITY_HANDOFF.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `DECISIONS.md` ADR-0108/0112/0113/0114/0115

@@ -2835,6 +2835,34 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 - `flugInReiseUebernehmen` bleibt unverändert referenzbasiert
 - keine Production-Migration, keine neue Spalte
 
+**Nachtrag, 22. August 2026:** Round 3 stuft die direkte RPC-Umgehung nicht als Restrisiko ein. ADR-0115 macht `flug_route_itinerary_metadata()` zur letzten DB-Trust-Boundary. Die TypeScript-Kanonisierung bleibt Defense in Depth.
+
+---
+
+## ADR-0115 – letzte Route-Country-Truth liegt in der Datenbank
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #34; Migration nur Development; Production nicht anwenden
+
+**Entscheidung:** `public.flug_route_itinerary_metadata()` verwirft eingehende `countryCode`-/`city`-/`country`-Werte und baut jeden Route-Punkt aus IATA plus `public.airports` neu. Keine eindeutige Airport-Zeile ergibt `null`. Die Funktion ist `STABLE` / `SECURITY INVOKER`, nicht mehr `IMMUTABLE`. TypeScript-Kanonisierung (ADR-0114) bleibt die frühere Schicht.
+
+**Kontext:** Der dritte Human-/Security-/Truth-Review (`docs/CURSOR_PR34_HUMAN_REVIEW_ROUND3.md`) hat gezeigt, dass `authenticated` `reise_anlegen(jsonb)` direkt aufrufen und die TypeScript-Grenze umgehen kann. Eine regulatorisch folgenreiche Route Truth darf nicht vom freiwilligen Anwendungspfad abhängen.
+
+**Alternativen:**
+
+1. *Nur dokumentieren, den direkten RPC nicht zu nutzen.* Schliesst die Grenze nicht.
+2. *EXECUTE auf `reise_anlegen` entziehen.* Würde den normalen Anwendungspfad zerstören.
+3. *SECURITY DEFINER plus Service-Role.* Unnötig; `authenticated` darf `airports` bereits lesen.
+
+**Begründung:** Dieselbe Tabelle, dieselbe unknown-Regel, dieselbe Transaktion. Ein Lookup je eindeutigem IATA-Code, nicht ein zweites Schattenmodell.
+
+**Konsequenzen:**
+
+- Development-Migration `20260822140000_flug_route_itinerary_airport_truth.sql`
+- Helfer `public.flug_route_punkt_aus_iata(text)`
+- `db:sicherheit` prüft direkten RPC mit manipuliertem `ZRH.countryCode = 'US'`
+- Production-Schema unverändert, bis eine separate Freigabe die Migration erlaubt
+
 ---
 
 ## Offene Widersprüche
