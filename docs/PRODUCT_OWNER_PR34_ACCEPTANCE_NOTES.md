@@ -62,6 +62,27 @@ Professionelle Funktionsprüfung / Empfehlung für den späteren Amendment:
 
 Diese beiden Punkte verändern nicht die grundsätzliche Gestaltung der Seite, sondern sorgen dafür, dass ihre Funktion mit Gastregel und Multi-Destination-Graph konsistent bleibt.
 
+### Abnahmepunkt 1c – Gast muss die Ein-Reise-Grenze verstehen
+
+**Problem erkannt; konkrete UX-Formulierung noch mit Product Owner abzustimmen.**
+
+Aktuell sagt die Seite sinngemäß nur, dass „ein Reiseentwurf“ ohne Konto privat im Browser bleibt. Daraus ist nicht zuverlässig erkennbar, dass ohne Konto **maximal eine aktive Gastreise** möglich ist.
+
+Empfohlene Produkt-/UX-Richtung:
+
+- Die Einschränkung muss ausdrücklich und verständlich kommuniziert werden; nicht erst durch einen Fehler beim zweiten Versuch.
+- Auf der Startseite darf `Kein Konto nötig` als niedrige Einstiegshürde bestehen bleiben; die Ein-Reise-Grenze soll dort nicht aggressiv als negative Hauptbotschaft dominieren.
+- Spätestens beim Erstellen bzw. auf `Meine Reisen` soll eine klare, ruhige Erklärung stehen, z. B.: `Ohne Konto kannst du eine Reise privat auf diesem Gerät speichern. Für mehrere Reisen brauchst du ein kostenloses Konto.`
+- Solange noch keine Gastreise existiert, bleibt `Reise erstellen` korrekt.
+- Sobald eine aktive Gastreise existiert, soll der primäre CTA bevorzugt `Reise fortsetzen` lauten statt irreführend `Neue Reise`.
+- Wenn der Gast trotzdem eine weitere Reise beginnen möchte, soll Jetnity keine technische Fehlermeldung zeigen und niemals still überschreiben. Stattdessen soll ein verständlicher Entscheidungsdialog angeboten werden, z. B.:
+  - `Reise fortsetzen`
+  - `Kostenloses Konto erstellen` / `Anmelden`, um mehrere Reisen zu speichern
+  - optional als klar nachrangige Aktion: bestehende Gastreise ausdrücklich löschen/ersetzen, nur nach Bestätigung
+- Es muss deutlich sein, dass eine **Mehrzielreise weiterhin eine einzige Reise** ist. Mehrere Ziele/Etappen innerhalb derselben Reise zählen nicht als mehrere Gastreisen.
+
+Hauptentwickler-Empfehlung: Die Ein-Reise-Gastregel zunächst beibehalten, aber transparent und zum richtigen Zeitpunkt erklären. Sie reduziert Datenverlust-/Synchronisationskomplexität und schafft einen verständlichen Übergang zum Konto. Falls der Product Owner mehrere parallele Gastreisen ohne Konto wünscht, ist das technisch möglich, wäre aber eine eigene Produkt-/Persistenzentscheidung und sollte nicht beiläufig in PR #34 eingeführt werden.
+
 ## Noch nicht tun
 
 - keine eigenmächtige Implementierung aus diesem Sammeldokument
