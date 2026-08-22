@@ -73,7 +73,7 @@ Nicht erneut bauen.
 
 ## 2. Aktiv – Foundation D: Route & Transit Intelligence
 
-Status: **UMGESETZT AUF DRAFT-PR #34 / NICHT GEMERGT**
+Status: **UMGESETZT AUF DRAFT-PR #34 / PRODUCT-OWNER-CLOSEOUT / NICHT GEMERGT**
 
 - Branch: `feat/route-transit-intelligence`
 - Task: `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md`

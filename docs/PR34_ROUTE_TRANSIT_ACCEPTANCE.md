@@ -1,7 +1,7 @@
 # PR #34 – Foundation D Acceptance / Verification
 
 Stand: 22. August 2026  
-Status: **Round 4 vollständig umgesetzt; finaler Human-/Architecture-/UX-/Security-/Truth-Review bestanden; Product-Owner-Entscheidung offen**
+Status: **Product-Owner-Rundgang abgeschlossen; Branch mit `main` synchronisiert und lokal verifiziert; Merge-Freigabe offen**
 
 Branch: `feat/route-transit-intelligence`  
 PR: https://github.com/Jetnity/jetnity/pull/34  
@@ -39,16 +39,18 @@ Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Fligh
 | Round-3-Fix-Head | `be6112061a3429ecf8c8f4aaba595cb5913f3860` |
 | Round-4-/finaler Code-Head | `f55a8dcf1491575d5b0370bafec3934d9b7b884b` |
 | letzter vor Final-Review vollständig grüner Docs-Head | `472acdf83045b05211309c2fe28a61b01b9d9b9e` |
-| `npm test` | **1295 pass / 0 fail** |
-| Typecheck | **grün** (`tsc --noEmit`) |
-| Lint | **grün** (`next lint`, 0 warnings/errors) |
-| Hygiene | **grün** (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`) |
-| Production Build | **grün** (`next build`, 38/38 Seiten) |
-| Auth-Config-Checks | **grün** (`auth:pruefen`: 55/55 Werte) |
-| Trip Workspace Audit | **726 Kombinationen, 0 Fehler**, WebKit + Chromium |
-| GitHub Actions `CI` | **success** auf Code-Head und `472acdf8` |
-| Vercel | **READY/success** auf Code-Head und `472acdf8` |
-| `db:sicherheit` | **200/200** nach `20260822150000_trip_items_route_itinerary_guard.sql` |
+| Closeout-Sync-Head | `6098cf45` |
+| Closeout-Bericht | `docs/PR34_PRODUCT_OWNER_CLOSEOUT_REPORT.md` |
+| `npm test` | **1295 pass / 0 fail** – neu nach erstem `main`-Sync |
+| Typecheck | **grün** (`tsc --noEmit`) – neu |
+| Lint | **grün** (`next lint`, 0 warnings/errors) – neu |
+| Hygiene | **grün** – neu |
+| Production Build | **grün** (`next build`, 38/38 Seiten) – neu |
+| Auth-Config-Checks | **grün** (`auth:pruefen`: 55/55 Werte) – neu |
+| Trip Workspace Audit | **726 Kombinationen, 0 Fehler**, WebKit + Chromium – neu |
+| GitHub Actions `CI` | auf finalem Closeout-Head prüfen; ältere grüne Heads ersetzen das nicht |
+| Vercel | auf finalem Closeout-Head prüfen |
+| `db:sicherheit` | **200/200** nach `20260822150000_trip_items_route_itinerary_guard.sql` – neu |
 
 ---
 

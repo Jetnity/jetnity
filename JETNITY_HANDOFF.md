@@ -164,9 +164,10 @@ Diese sind **nicht** auf Production, solange keine separate Freigabe erfolgt.
 
 Der Product-Owner-Rundgang ist **abgeschlossen**. Die dabei bestätigten Anforderungen sollen nicht unkontrolliert in PR #34 hineingebaut werden, sondern sind als verbindliche nächste Produktwahrheit gesichert. PR #34 bleibt Draft; kein Merge, kein Mark Ready, keine Production-Migration, kein Provider, keine Secrets.
 
-Aktueller verbindlicher Closeout-Auftrag im Branch:
+Aktueller verbindlicher Closeout-Auftrag und Bericht im Branch:
 
-`docs/CURSOR_PR34_PRODUCT_OWNER_CLOSEOUT_TASK.md`
+- `docs/CURSOR_PR34_PRODUCT_OWNER_CLOSEOUT_TASK.md`
+- `docs/PR34_PRODUCT_OWNER_CLOSEOUT_REPORT.md`
 
 Cursor muss vor einer späteren Merge-Entscheidung:
 
