@@ -1,6 +1,6 @@
 # Jetnity – Produktqualitätsstandard
 
-Stand: 20. August 2026
+Stand: 22. August 2026
 Status: verbindlicher Qualitätsrahmen für neue Produktphasen und Reviews
 
 ## Grundsatz
@@ -90,6 +90,40 @@ Diese Zustände dürfen nicht wie kaputte Seiten wirken. Sie sollen dem Nutzer e
 - bei fehlender Evidenz lieber `unavailable`, `null` oder eine ehrliche Einschränkung als Scheingenauigkeit
 - Quelle, Aktualität und Abdeckung müssen dort sichtbar oder dokumentiert sein, wo sie für die Entscheidung relevant sind
 
+### 10. Kein Bestandsschutz für frühere Funktionen
+
+Eine bereits gebaute, gemergte oder früher erfolgreich getestete Funktion ist **nicht automatisch dauerhaft akzeptiert**.
+
+Verbindlich:
+
+- Jede bestehende Funktion muss bei relevanten späteren Produkt-, Architektur- oder Workspace-Reviews gegen den **heute gültigen Jetnity-Standard** neu bewertet werden können.
+- Wenn eine ältere Lösung heutigen Anforderungen an UX, Logik, Datenwahrheit, Security, Architektur, Performance oder Produktverständlichkeit nicht mehr genügt, darf und soll sie refaktoriert, vereinfacht, ersetzt oder – bei fehlendem echtem Produktnutzen – nach Product-Owner-Freigabe entfernt werden.
+- Historische Implementierungsentscheidungen dürfen keine bessere heutige Lösung blockieren.
+- Alte Defaults, Felder, Navigationsmuster oder isolierte Modulannahmen dürfen nicht aus Kompatibilitätsbequemlichkeit als fachliche Wahrheit fortgeschrieben werden.
+- Migration und Rückwärtskompatibilität müssen professionell geplant werden; Verbesserung rechtfertigt keinen Datenverlust oder stillen Bedeutungswechsel.
+
+Leitsatz:
+
+> **Vergangene Implementierung ist Ausgangslage, nicht Qualitätsgrenze.**
+
+### 11. Interoperabilität ist Teil der Funktion
+
+Eine Jetnity-Funktion gilt nicht als hochprofessionell, wenn sie nur isoliert korrekt arbeitet.
+
+Verbindlich:
+
+- Jede relevante Kernfunktion muss mit allen fachlich betroffenen Reisebereichen korrekt zusammenspielen.
+- Gemeinsame Facts müssen aus derselben kanonischen Source of Truth stammen; keine widersprüchlichen Parallelmodelle.
+- Änderungen müssen alle relevanten Folgeeffekte auslösen oder sichtbar als `stale`, `recheck`, `unknown` oder andere fachlich richtige Zustände markieren.
+- Ein Bereich darf nicht mit veralteten Annahmen weiterarbeiten, wenn ein anderer Bereich einen dafür relevanten Fakt geändert hat.
+- Cross-Domain-Auswirkungen müssen getestet werden, nicht nur dokumentiert.
+- Guest/Account, Multi-Destination, mehrere Reisende, Traveller Context, Route/Transit, Buchungsstatus und spätere Providerdaten müssen an ihren Schnittstellen konsistent bleiben.
+- Eine Funktion, die andere Kernbereiche fehlerhaft beeinflusst oder von ihnen fehlerhaft beeinflusst wird, ist **nicht fertig**, auch wenn ihre eigenen Unit-Tests grün sind.
+
+Leitsatz:
+
+> **Jetnity besteht nicht aus fertigen Einzelteilen. Fertig ist nur, was im Gesamtsystem richtig funktioniert.**
+
 ## Definition of Done für größere Produktphasen
 
 Eine größere Phase ist erst review-bereit, wenn mindestens geprüft wurde:
@@ -104,11 +138,15 @@ Eine größere Phase ist erst review-bereit, wenn mindestens geprüft wurde:
 8. Tests, Typecheck, Lint, Hygiene-Checks und Build
 9. Vercel Preview auf realistischen Bildschirmgrößen
 10. Dokumentation der offenen Risiken und noch fehlenden echten Datenquellen
+11. relevante bestehende Funktionen gegen den aktuellen Standard erneut bewertet
+12. betroffene Cross-Domain- und End-to-End-Schnittstellen nachweislich geprüft
 
 ## Arbeitsregel für Cursor und Reviews
 
 Cursor setzt große Implementierungsaufträge um. Jeder größere Cursor-Auftrag muss diese Qualitätsdimensionen berücksichtigen, soweit sie für die Phase relevant sind. Ein grüner Build allein reicht nicht als Qualitätsnachweis.
 
 ChatGPT steuert Produkt, Architektur, Security, Kosten und Review und prüft vor Merge insbesondere, ob die technische Umsetzung und die Nutzererfahrung gemeinsam den Jetnity-Standard erfüllen.
+
+Bei größeren Integrations- oder Workspace-Reviews müssen ChatGPT und Coding Agents ausdrücklich auch bestehende Funktionen hinterfragen und Cross-Domain-Fehler suchen. Sie dürfen nicht annehmen, dass früher gemergter Code außerhalb des Review-Scope liegt, wenn er das aktuelle Gesamtsystem relevant beeinflusst.
 
 Bestehende Detailregeln in `DESIGN_SYSTEM.md`, `AGENTS.md`, `ARCHITECTURE.md`, `JETNITY_VISION.md` und den jeweiligen Fachdokumentationen bleiben zusätzlich verbindlich.

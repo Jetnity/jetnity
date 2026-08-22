@@ -184,6 +184,11 @@ Verbindlich:
 
 - Smartphone, kleines/großes Smartphone, Tablet, Laptop und Desktop verwenden dieselbe fachliche Wahrheit, dieselben Statusbegriffe, dieselben Freigabe-/Änderungsregeln und dieselbe Entscheidungslogik.
 - Unterschiedliche Viewports dürfen Layout, Dichte, Reihenfolge sekundärer Details oder Darstellungsform responsiv anpassen, **aber niemals Bedeutung, verfügbare Kernfunktion oder Nutzerkontrolle verändern**.
+- **Auch Ansicht und Benutzererlebnis müssen auf jedem Gerät logisch und durchschaubar sein.** Der Nutzer muss unabhängig vom Viewport innerhalb weniger Sekunden erkennen können, wo er ist, was wichtig ist, welchen Status die Reise hat und was als Nächstes sinnvoll ist.
+- Responsive Anpassung darf nicht nur technisch „passen“, sondern muss die Informationshierarchie aktiv neu ordnen, wenn die Bildschirmfläche es verlangt. Eine auf Desktop gute Ansicht darf auf Mobile nicht einfach zusammengedrückt werden; eine auf Mobile gute Ansicht darf auf Desktop nicht unnötig leer oder zersplittert wirken.
+- Navigation, Gruppierung, Reihenfolge wichtiger Inhalte, Beschriftungen, Primäraktionen und Rückwege müssen je Gerät intuitiv auffindbar bleiben. Der Nutzer soll nicht lernen müssen, dass Jetnity auf Tablet oder Desktop „anders funktioniert“.
+- Auf jedem Gerät müssen zusammengehörige Informationen auch visuell als zusammengehörig erkennbar bleiben. Abstände, Karten, Tabs, Listen, Panels und Detailstufen dürfen keine falsche Priorität oder unklare Beziehung erzeugen.
+- Wichtige Aktionen dürfen weder unter Browser-Chrome, Sticky-Elementen, virtueller Tastatur noch in horizontalen Scrollbereichen verschwinden. Ebenso dürfen große Viewports keine Kernaktion durch zu breite oder zu verteilte Layouts psychologisch entwerten.
 - Eine Kernfunktion darf auf keinem unterstützten Gerät nur deshalb fehlen, unauffindbar werden oder anders entscheiden, weil weniger oder mehr Bildschirmfläche vorhanden ist.
 - Mobile darf Inhalte progressiver öffnen; Desktop darf mehr gleichzeitig zeigen. Beide müssen trotzdem dieselbe mentale Hierarchie besitzen: Orientierung → Kernaussage → Primäraktion → Arbeitsinhalt → Details.
 - Touch-, Maus-, Tastatur- und – soweit relevant – native/PWA-Interaktion müssen dieselben fachlichen Aktionen zuverlässig erreichbar machen. Keine Kernaktion darf ausschließlich von Hover abhängen.
@@ -191,11 +196,11 @@ Verbindlich:
 - Safe Areas, Browser-Chrome, virtuelle Tastatur, Zoom/Textvergrößerung und dynamische Browserhöhen sind bei mobilen Oberflächen mitzudenken.
 - Responsiveness darf keine zweite Produktlogik erzeugen. Die Implementierung soll möglichst dieselben Domain-Komponenten und Zustandsmodelle wiederverwenden statt gerätespezifische Business-Logik zu duplizieren.
 - Relevante neue UI-Zustände müssen in einer geeigneten Viewport-Matrix geprüft werden. Ein grüner Desktop-Test ersetzt keinen schmalen Viewport-Test; ein grüner Mobile-Test ersetzt keinen Tablet-/Desktop-Check.
-- Wenn reale Hardware oder ein unterstützter Browser einen funktionalen oder hierarchischen Fehler zeigt, gilt die betroffene Funktion bis zum Fix und Re-Test als nicht vollständig abgenommen.
+- Wenn reale Hardware oder ein unterstützter Browser einen funktionalen, hierarchischen **oder UX-/Orientierungsfehler** zeigt, gilt die betroffene Funktion bis zum Fix und Re-Test als nicht vollständig abgenommen.
 
 Leitsatz:
 
-> **Gleiche Reise. Gleiche Wahrheit. Gleiche Nutzerkontrolle. Auf jedem Gerät.**
+> **Gleiche Reise. Gleiche Wahrheit. Gleiche Nutzerkontrolle. Gleich verständlich auf jedem Gerät.**
 
 ## 7. Mobile-first und Aufmerksamkeit
 
@@ -257,6 +262,8 @@ Vor `Ready for Review` muss bei jeder größeren nutzerseitigen Phase geprüft w
 - progressive Disclosure statt Informationsüberlastung
 - Smartphone / Tablet / Desktop bzw. relevante Viewport-Matrix
 - gleiche fachliche Logik und Nutzerkontrolle auf allen unterstützten Geräten
+- **gleiche psychologische Klarheit, Durchschaubarkeit und Orientierung auf allen unterstützten Geräten**
+- Navigation, Rückwege und Primäraktionen je Viewport eindeutig auffindbar
 - Loading / Empty / Error / Unknown / Unavailable
 - Accessibility
 - konsistente Begriffe und Zustände
@@ -272,4 +279,4 @@ Jeder größere Cursor-Auftrag muss diesen Standard als Pflichtlektüre nennen, 
 
 ChatGPT prüft bei Human-/Architecture-Review ausdrücklich nicht nur Codequalität, sondern auch psychologische Verständlichkeit, Informationshierarchie, Geräte-/Viewport-Parität und bereichsübergreifende Konsistenz.
 
-Ein technisch grüner PR ist **nicht fertig**, wenn der Nutzer unnötig denken, suchen oder Informationen zusammensetzen muss oder wenn dieselbe Funktion je Gerät fachlich anders wirkt.
+Ein technisch grüner PR ist **nicht fertig**, wenn der Nutzer unnötig denken, suchen oder Informationen zusammensetzen muss, wenn dieselbe Funktion je Gerät fachlich anders wirkt **oder wenn Ansicht und Benutzererlebnis auf einem unterstützten Gerät nicht logisch und durchschaubar sind**.
