@@ -40,6 +40,7 @@ Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Fligh
 | Round-4-/finaler Code-Head | `f55a8dcf1491575d5b0370bafec3934d9b7b884b` |
 | letzter vor Final-Review vollständig grüner Docs-Head | `472acdf83045b05211309c2fe28a61b01b9d9b9e` |
 | Closeout-Sync-Head | `6098cf45` |
+| Finaler verifizierter Closeout-Head | `1c1e7a5d16a52c7df95342742813a5ba5f3164d5` |
 | Closeout-Bericht | `docs/PR34_PRODUCT_OWNER_CLOSEOUT_REPORT.md` |
 | `npm test` | **1295 pass / 0 fail** – neu nach erstem `main`-Sync |
 | Typecheck | **grün** (`tsc --noEmit`) – neu |
@@ -48,8 +49,8 @@ Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Fligh
 | Production Build | **grün** (`next build`, 38/38 Seiten) – neu |
 | Auth-Config-Checks | **grün** (`auth:pruefen`: 55/55 Werte) – neu |
 | Trip Workspace Audit | **726 Kombinationen, 0 Fehler**, WebKit + Chromium – neu |
-| GitHub Actions `CI` | auf finalem Closeout-Head prüfen; ältere grüne Heads ersetzen das nicht |
-| Vercel | auf finalem Closeout-Head prüfen |
+| GitHub Actions `CI` | **success** auf `1c1e7a5d`: https://github.com/Jetnity/jetnity/actions/runs/32589213750 |
+| Vercel | **READY** auf `1c1e7a5d`: https://jetnity-5h945i9ri-jetnity-e1b93c82.vercel.app |
 | `db:sicherheit` | **200/200** nach `20260822150000_trip_items_route_itinerary_guard.sql` – neu |
 
 ---

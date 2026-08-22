@@ -16,7 +16,7 @@ PR-Zustand: **Draft** – nicht mergen, nicht Mark Ready
 | Closeout-Task-Head vor Sync | `d0ef56c7403b6d1cdc2ddb55ccf83a92da7d8372` |
 | Erster `main`-Sync | `2555476df91bdf7a480af3c87ba357928782ce32` / Merge `380cdb83` |
 | Zweiter `main`-Sync | `6098cf45` |
-| Finaler Closeout-Head | nach dem Commit dieses Berichts erneut über GitHub prüfen |
+| Finaler verifizierter Closeout-Head | `1c1e7a5d16a52c7df95342742813a5ba5f3164d5` |
 
 Kein Foundation-D-Anwendungscode wurde in diesem Closeout geändert.
 
@@ -94,7 +94,13 @@ Nicht aus alten Dokumenten kopiert. Ausgeführt auf dem synchronisierten Arbeits
 
 ## 6. CI / Preview
 
-CI und Vercel Preview müssen auf dem **finalen Closeout-Head** grün sein. Zahlen und URLs für diesen Head werden nach Push nachgezogen; ein älterer grüner Head ersetzt das nicht.
+Auf Head `1c1e7a5d`:
+
+- GitHub Actions CI **success**: https://github.com/Jetnity/jetnity/actions/runs/32589213750
+- Vercel Preview **READY**: https://jetnity-5h945i9ri-jetnity-e1b93c82.vercel.app
+- Draft-PR #34 `mergeable` / `CLEAN`; das ist keine Merge-Freigabe
+
+Ein späterer reiner Evidence-Commit nach diesem Nachweis ändert den Code-Stand nicht.
 
 ## 7. Datenbank Development / Production
 
@@ -165,7 +171,7 @@ Offen bleibt nur Governance:
 
 ## 13. Technische Merge-Einschätzung
 
-Aus technischer Foundation-D-Sicht ist ein Merge-Entscheid **möglich**, sobald CI und Preview auf dem finalen Head grün sind und ChatGPT den Closeout unabhängig bestätigt.
+Aus technischer Foundation-D-Sicht ist ein Merge-Entscheid **möglich**: Branch ist mit aktuellem `main` synchronisiert, lokal verifiziert, CI und Preview auf `1c1e7a5d` grün. ChatGPT soll den Closeout unabhängig bestätigen.
 
 Das ist **keine Merge-Freigabe**.
 

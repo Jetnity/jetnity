@@ -8,9 +8,10 @@ Arbeitsblock: **Foundation D – Route & Transit Intelligence / Product-Owner-Cl
 - Branch: `feat/route-transit-intelligence`
 - Draft PR: **#34** https://github.com/Jetnity/jetnity/pull/34
 - Foundation-D-Code-Head: `f55a8dcf1491575d5b0370bafec3934d9b7b884b`
-- Closeout-Sync-Head vor diesem Status: `6098cf45`
+- Closeout-Sync-Head: `6098cf45`
+- Finaler verifizierter Closeout-Head: `1c1e7a5d16a52c7df95342742813a5ba5f3164d5`
 - finalen Branch-/PR-Head vor jeder weiteren Arbeit über GitHub prüfen
-- Status: **Product-Owner-Rundgang abgeschlossen; Branch mit aktuellem `main` synchronisiert und lokal verifiziert; Merge-Freigabe ausstehend**
+- Status: **Product-Owner-Rundgang abgeschlossen; Branch mit aktuellem `main` synchronisiert; lokal/CI/Preview verifiziert; Merge-Freigabe ausstehend**
 - Merge: **nicht freigegeben**, PR bleibt Draft
 
 ## 2. Ziel
@@ -58,7 +59,9 @@ Neu ausgeführt nach dem ersten `main`-Sync (`380cdb83`); danach nur Dokumentati
 - `db:rls`: grün
 - `db:sicherheit`: **200/200** inkl. direkter Route-Metadata-Manipulation
 - Trip Workspace Audit: 726 / 0 Fehler, WebKit + Chromium
-- CI/Preview auf dem finalen Closeout-Head: nach Push prüfen, nicht aus älteren Heads ableiten
+- GitHub Actions CI success auf `1c1e7a5d`: https://github.com/Jetnity/jetnity/actions/runs/32589213750
+- Vercel Preview READY auf `1c1e7a5d`: https://jetnity-5h945i9ri-jetnity-e1b93c82.vercel.app
+- Draft-PR #34 mergeable / CLEAN; das ist keine Merge-Freigabe
 
 ## 7. Datenbank / RLS / Production
 
