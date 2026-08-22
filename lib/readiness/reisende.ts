@@ -74,11 +74,19 @@ function documentAusZeile(
   }
 }
 
+function relationGeladen<T>(wert: T[] | null | undefined): wert is T[] {
+  return Array.isArray(wert)
+}
+
 function travellerAusZeile(zeile: TravellerZeile): TripTraveller | null {
-  const citizenships = (zeile.trip_traveller_citizenships ?? []).map(citizenshipAusZeile)
-  const documents = (zeile.trip_traveller_documents ?? []).map((eintrag) =>
-    documentAusZeile(eintrag, zeile.trip_traveller_citizenships ?? []),
-  )
+  const citizenshipZeilen = zeile.trip_traveller_citizenships
+  const documentZeilen = zeile.trip_traveller_documents
+  const citizenshipsGeladen = relationGeladen(citizenshipZeilen)
+  const documentsGeladen = relationGeladen(documentZeilen)
+  const citizenships = citizenshipsGeladen ? citizenshipZeilen.map(citizenshipAusZeile) : []
+  const documents = documentsGeladen
+    ? documentZeilen.map((eintrag) => documentAusZeile(eintrag, citizenshipsGeladen ? citizenshipZeilen : []))
+    : []
   return (
     partyLesen([
       {
@@ -86,10 +94,10 @@ function travellerAusZeile(zeile: TravellerZeile): TripTraveller | null {
         clientRef: zeile.client_ref,
         label: zeile.label ?? null,
         residenceCountryCode: zeile.residence_country_code ?? null,
-        nationalityCountryCode: citizenships.length === 0 ? zeile.nationality_country_code ?? null : null,
-        documentType: documents.length === 0 ? zeile.document_type ?? null : null,
-        documentIssuingCountryCode: documents.length === 0 ? zeile.document_issuing_country_code ?? null : null,
-        documentExpiresOn: documents.length === 0 ? zeile.document_expires_on ?? null : null,
+        nationalityCountryCode: citizenshipsGeladen ? null : zeile.nationality_country_code ?? null,
+        documentType: documentsGeladen ? null : zeile.document_type ?? null,
+        documentIssuingCountryCode: documentsGeladen ? null : zeile.document_issuing_country_code ?? null,
+        documentExpiresOn: documentsGeladen ? null : zeile.document_expires_on ?? null,
         citizenships,
         documents,
         createdAt: zeile.created_at,

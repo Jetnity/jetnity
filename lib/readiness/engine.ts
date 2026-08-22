@@ -50,6 +50,7 @@ export function officialFingerprint(anfrage: {
     documentType?: string | null
     issuingCountryCode?: string | null
     expiresOn?: string | null
+    relatedCitizenshipCountryCode?: string | null
   }[]
   documentType?: string | null
   documentIssuingCountryCode?: string | null
@@ -87,6 +88,7 @@ export function officialFingerprint(anfrage: {
         document.documentType ?? '',
         document.issuingCountryCode ?? '',
         document.expiresOn ?? '',
+        landescodeLesen(document.relatedCitizenshipCountryCode ?? null) ?? '',
       ].join(':'),
     )
     .sort()
@@ -235,6 +237,7 @@ function fingerprintFuer(
             documentType: option.documentType,
             issuingCountryCode: option.issuingCountryCode,
             expiresOn: option.expiresOn,
+            relatedCitizenshipCountryCode: option.relatedCitizenshipCountryCode,
           },
         ]
       : [],

@@ -20,6 +20,7 @@
 import 'server-only'
 
 import { lese, type Leseantwort, type Lesung } from '@/lib/api/datenbank-lesen'
+import { foundationERelationFehlt, TRIP_GRAPH_SELECT_KANONISCH, TRIP_GRAPH_SELECT_LEGACY } from '@/lib/trips/foundation-e-select'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import {
   reiseAus,
@@ -150,11 +151,17 @@ export async function reisenLaden(): Promise<Lesung<TripSummary>> {
 export async function reiseLaden(id: string): Promise<Lesung<Reisegraph>> {
   const supabase = createServerComponentClient()
 
-  const ergebnis = await lese<GraphZeile>(() =>
-    alsAntwort<GraphZeile>(
-      supabase.from('trips').select('*, trip_stages(*), trip_days(*), trip_items(*), trip_readiness_items(*), trip_travellers(*, trip_traveller_citizenships(*), trip_traveller_documents(*))').eq('id', id).limit(1),
-    ),
+  const kanonisch = await alsAntwort<GraphZeile>(
+    supabase.from('trips').select(TRIP_GRAPH_SELECT_KANONISCH).eq('id', id).limit(1),
   )
+  const ergebnis = await lese<GraphZeile>(() => {
+    if (kanonisch.error && foundationERelationFehlt(kanonisch.error)) {
+      return alsAntwort<GraphZeile>(
+        supabase.from('trips').select(TRIP_GRAPH_SELECT_LEGACY).eq('id', id).limit(1),
+      )
+    }
+    return Promise.resolve(kanonisch)
+  })
 
   if (ergebnis.problem) return ergebnis
 

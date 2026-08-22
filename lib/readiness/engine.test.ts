@@ -384,6 +384,47 @@ describe('Travel Requirements Engine', () => {
     assert.notEqual(aktuell, officialFingerprint({ ...basis, transitCountryCodes: ['QA'] }))
   })
 
+  test('explizite Document-Citizenship-Relation ändert den Official Fingerprint', () => {
+    const basis = {
+      travellerClientRef: 'traveller:1',
+      credentialOptionRef: 'traveller:1:document:passport:US',
+      citizenshipCountryCodes: ['CH', 'RS'],
+      residenceCountryCode: 'CH',
+      documents: [
+        {
+          documentType: 'passport',
+          issuingCountryCode: 'US',
+          expiresOn: '2030-01-01',
+          relatedCitizenshipCountryCode: 'CH',
+        },
+      ],
+      destinationCountryCode: 'TH',
+      transitCountryCodes: [] as string[],
+      startDate: '2026-09-12',
+      endDate: '2026-09-16',
+      requirementType: 'visa',
+    }
+    const nachCh = officialFingerprint(basis)
+    const nachRs = officialFingerprint({
+      ...basis,
+      documents: [{ ...basis.documents[0]!, relatedCitizenshipCountryCode: 'RS' }],
+    })
+    const ohneRelation = officialFingerprint({
+      ...basis,
+      documents: [{ ...basis.documents[0]!, relatedCitizenshipCountryCode: null }],
+    })
+    assert.notEqual(nachCh, nachRs)
+    assert.notEqual(nachCh, ohneRelation)
+    assert.notEqual(nachRs, ohneRelation)
+    assert.equal(
+      officialFingerprint({
+        ...basis,
+        citizenshipCountryCodes: ['RS', 'CH'],
+      }),
+      nachCh,
+    )
+  })
+
   test('Transit-Itinerary macht transit_itinerary nicht mehr missing', async () => {
     const evaluations = await requirementsAuswerten({
       originCountryCode: 'CH',
