@@ -2428,7 +2428,7 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 ## ADR-0096 – Readiness als eigene Domäne statt `trip_items`
 
 **Datum:** 22. August 2026  
-**Status:** umgesetzt auf Draft-PR #32; Development-Migration; nicht Production
+**Status:** umgesetzt, nach `main` gemergt via PR #32; Development-Migration; nicht Production
 
 **Entscheidung:** Reisevorbereitung ist eine eigene persistente Domäne `trip_readiness_items`, nicht ein neuer `trip_items.kind`.
 
@@ -2453,7 +2453,7 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 ## ADR-0097 – Official Requirement Truth und User Preparation Truth getrennt
 
 **Datum:** 22. August 2026  
-**Status:** umgesetzt auf Draft-PR #32
+**Status:** umgesetzt, nach `main` gemergt via PR #32
 
 **Entscheidung:** Persistiert wird nur User Evidence (`open` / `done` / `skipped`, Quelle `user`). Offizielle Visa-/Einreiseaussagen bleiben ohne Provider `unknown` und dürfen nicht aus einem Häkchen abgeleitet werden.
 
@@ -2478,7 +2478,7 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 ## ADR-0098 – Deterministischer Context-Fingerprint
 
 **Datum:** 22. August 2026  
-**Status:** umgesetzt auf Draft-PR #32
+**Status:** umgesetzt, nach `main` gemergt via PR #32
 
 **Entscheidung:** Jeder persistierte Check trägt einen serverseitig berechneten `context_fingerprint`. Passt er nicht mehr zu den aktuellen Trip-Fakten, gilt der Check als `stale` oder `not_applicable`.
 
@@ -2525,7 +2525,7 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 ## ADR-0100 – Reisevorbereitung in der Übersicht, kein sechster Tab
 
 **Datum:** 22. August 2026  
-**Status:** umgesetzt auf Draft-PR #32
+**Status:** umgesetzt, nach `main` gemergt via PR #32
 
 **Entscheidung:** Die fünf Hauptbereiche bleiben `Übersicht · Flüge · Unterkunft · Aktivitäten · Mobilität`. Foundation C liegt als Bereich „Reisevorbereitung“ in der Übersicht.
 
@@ -2549,7 +2549,7 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 ## ADR-0101 – Automatic Travel Requirements statt reiner Checkliste
 
 **Datum:** 22. August 2026  
-**Status:** umgesetzt auf Draft-PR #32
+**Status:** umgesetzt, nach `main` gemergt via PR #32
 
 **Entscheidung:** Foundation C ist die Grundlage für automatische Travel Requirements, nicht nur eine manuelle Checkliste.
 
@@ -2569,7 +2569,7 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 ## ADR-0102 – Reisendenkontext trip-spezifisch
 
 **Datum:** 22. August 2026  
-**Status:** umgesetzt auf Draft-PR #32; Development-Migration `20260822020000`
+**Status:** umgesetzt, nach `main` gemergt via PR #32; Development-Migration `20260822020000`
 
 **Entscheidung:** Traveller-Fakten liegen an der Reise (`trip_travellers` / `Trip.party`), nicht accountweit.
 
@@ -2589,7 +2589,7 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 ## ADR-0103 – Provider-neutrale Requirements-Engine
 
 **Datum:** 22. August 2026  
-**Status:** umgesetzt auf Draft-PR #32
+**Status:** umgesetzt, nach `main` gemergt via PR #32
 
 **Entscheidung:** Eine injizierbare Engine-Naht normalisiert Provider-Output. Production-Factory ist `null`.
 
@@ -2620,7 +2620,7 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 ## ADR-0105 – Freshness zusätzlich zum Context-Fingerprint
 
 **Datum:** 22. August 2026  
-**Status:** umgesetzt auf Draft-PR #32
+**Status:** umgesetzt, nach `main` gemergt via PR #32
 
 **Entscheidung:** Official Evaluations tragen Freshness (`never_checked`, `current`, `recheck_needed`, `stale`, `provider_unavailable`, `source_temporarily_unavailable`) neben dem User-Fingerprint.
 
@@ -2640,7 +2640,7 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 ## ADR-0107 – Official Evidence muss vollständig vertrauenswürdig sein
 
 **Datum:** 22. August 2026  
-**Status:** umgesetzt auf Draft-PR #32; Trust-Felder präzisiert in ADR-0110
+**Status:** umgesetzt, nach `main` gemergt via PR #32; Trust-Felder präzisiert in ADR-0110
 
 **Entscheidung:** Ein Provider-Resultat darf nur dann `required`, `not_required` oder `conditional` werden, wenn die Official Evidence provider-neutral vertrauenswürdig ist und Freshness `current` ist. Fehlt die Trust-Grenze, gilt fail closed: `result = unknown`.
 
@@ -2680,7 +2680,7 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 ## ADR-0109 – Provider-Port ist async und fehlertolerant
 
 **Datum:** 22. August 2026  
-**Status:** umgesetzt auf Draft-PR #32
+**Status:** umgesetzt, nach `main` gemergt via PR #32
 
 **Entscheidung:** `RequirementsProvider.evaluate` ist asynchron. Die Engine trennt reine Normalisierung (`requirementsAusZeilen`) von der Orchestrierung (`requirementsAuswerten`). Ein Throw, Timeout oder eine temporäre Nichterreichbarkeit wird gefangen und bleibt fail closed. `requirementsProviderAus()` bleibt in Foundation C `null`. Browser oder LLM können keinen Provider injizieren.
 
@@ -2706,7 +2706,7 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 ## ADR-0110 – Provider-neutrale Evidence- und Gültigkeitsgrenze
 
 **Datum:** 22. August 2026  
-**Status:** umgesetzt auf Draft-PR #32
+**Status:** umgesetzt, nach `main` gemergt via PR #32
 
 **Entscheidung:** Trust für ein offizielles Resultat verlangt:
 
@@ -2738,7 +2738,7 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 ## ADR-0111 – Untrusted Official Evidence darf nicht current sein
 
 **Datum:** 22. August 2026  
-**Status:** umgesetzt auf Draft-PR #32
+**Status:** umgesetzt, nach `main` gemergt via PR #32
 
 **Entscheidung:** Wenn Official Evidence für ein regulatorisches Resultat nicht vertrauenswürdig ist, darf Freshness niemals `current` bleiben. Untrusted Evidence wird auf `never_checked` gesetzt, ausser Freshness ist bereits ehrlich `stale`, `recheck_needed` oder `source_temporarily_unavailable`.
 

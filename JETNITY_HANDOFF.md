@@ -5,6 +5,7 @@ Status: verbindlicher operativer Übergabepunkt
 
 Dieser Handoff ist bewusst kompakt. Details stehen in den Fach- und Architekturdateien. Ein neuer Chat oder Coding Agent soll zuerst diese Quellen lesen:
 
+- `JETNITY_PRODUCT_MANDATE.md`
 - `JETNITY_VISION.md`
 - `JETNITY_HANDOFF.md`
 - `ROADMAP.md`
@@ -63,9 +64,9 @@ Leitsatz:
 
 ## 3. Aktueller `main`-Stand
 
-`main` enthält den Squash-Merge von Foundation B / PR #31:
+`main` enthält den Squash-Merge von Foundation C / PR #32:
 
-`315d9b31e69fcd5fd40227f65aa97587efc3bec4`
+`b50d2ce9ebc4e50da858f67258f94f887b183f79`
 
 Bereits abgeschlossen und auf `main`:
 
@@ -76,7 +77,9 @@ Bereits abgeschlossen und auf `main`:
 - Trip Coverage & Booking Status – PR #29
 - Foundation A – Mobilität & Transfers – PR #30
 - Foundation B – Mietwagen – PR #31
+- Foundation C – Travel Readiness & Dokumente – PR #32
 - Produktqualitäts- und Kontinuitätsstandards
+- verbindliches Produkt- und Technologie-Mandat (`JETNITY_PRODUCT_MANDATE.md`)
 
 Stabile öffentliche Production-URL:
 
@@ -269,11 +272,13 @@ Kein Fake-Provider und keine Production-Suche. Merge nur nach separater Freigabe
 
 ### C. Travel Readiness & Dokumente – PR #32
 
-Branch `feat/travel-readiness-foundation`. **Draft, nicht mergen.** Ausgangsbasis ist `main` @ `315d9b31`.
+**Gemergt nach `main`** am 22. August 2026 (`b50d2ce9`). Foundation C nicht erneut bauen.
 
-Human-Review-Fixes nach `docs/CURSOR_PR32_HUMAN_REVIEW_FIXES.md`. Final Architecture Review nach `docs/CURSOR_PR32_FINAL_ARCHITECTURE_REVIEW.md`.
+Pull Request: **#32 – Foundation C – Travel Readiness & Dokumente**
 
-Umgesetzt auf dem Draft-PR:
+Human-Review-Fixes nach `docs/CURSOR_PR32_HUMAN_REVIEW_FIXES.md`. Final Architecture Review nach `docs/CURSOR_PR32_FINAL_ARCHITECTURE_REVIEW.md`. Truth-Fix nach `docs/CURSOR_PR32_FINAL_TRUTH_FIX.md`.
+
+Umgesetzt:
 
 - eigene Domäne `trip_readiness_items`, kein neuer `trip_items.kind`
 - trip-spezifischer Reisendenkontext `trip_travellers` / `Trip.party`
@@ -294,7 +299,7 @@ Umgesetzt auf dem Draft-PR:
 - UX als **Einreise & Reisevorbereitung** in der mobilen Übersicht und auf Desktop nach dem Reisekopf, kein sechster Tab
 - kein Dokumententresor, keine OCR, kein Storage-Bucket
 
-Development-Migrationen `20260822010000` und `20260822020000` nur Development. Production unverändert. Kein Provider, keine neuen Secrets, keine neuen Kosten.
+Development-Migrationen `20260822010000` und `20260822020000` liegen im Repository. **Production-Schema bleibt unverändert**, bis eine separate Production-Migration ausdrücklich freigegeben wird. Kein Provider, keine neuen Secrets, keine neuen Kosten.
 
 Qualitätsnachweis auf `64aa15a7` (Truth-Freshness-Fix ADR-0111):
 
@@ -383,7 +388,8 @@ Verbindlich:
 3. PR #29 nicht erneut bauen: Coverage/Booking Status ist abgeschlossen.
 4. PR #30 ist gemergt: Foundation A nicht erneut bauen.
 5. PR #31 ist gemergt: Foundation B nicht erneut bauen. Mietwagen-Schema liegt auf Production; die Suche bleibt aus.
-6. PR #32 ist Draft und **nicht mergen**. Foundation C / Travel Readiness. Keine Production-Migration.
-7. Phase 3.4 bleibt extern blockiert, bis echter Hotelprovider-Zugang vorliegt.
-8. Keine Fake-Providerdaten, keine Production-Provideraktivierung und keine Secrets ohne separate Freigabe.
-9. Bei jeder neuen Funktion zuerst prüfen, wie sie logisch mit dem bestehenden Reisegraphen und den anderen Reisebereichen zusammenarbeitet.
+6. PR #32 ist **gemergt**. Foundation C nicht erneut bauen. Readiness-Tabellen nur Development; **keine Production-Migration** ohne separate Freigabe. Kein Requirements-Provider.
+7. Nächster Foundation-Track ist D – Gesamt-Abdeckung im Reisegraphen.
+8. Phase 3.4 bleibt extern blockiert, bis echter Hotelprovider-Zugang vorliegt.
+9. Keine Fake-Providerdaten, keine Production-Provideraktivierung und keine Secrets ohne separate Freigabe.
+10. Bei jeder neuen Funktion zuerst prüfen, wie sie logisch mit dem bestehenden Reisegraphen und den anderen Reisebereichen zusammenarbeitet.

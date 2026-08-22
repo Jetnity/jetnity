@@ -1,6 +1,6 @@
 # Jetnity – Reisen
 
-**Stand:** 22. August 2026 · Phase 3.3 plus Coverage/Booking, Foundation A/B auf `main`; Foundation C Readiness auf Draft-PR #32
+**Stand:** 22. August 2026 · Phase 3.3 plus Coverage/Booking, Foundation A/B/C auf `main`; Foundation C Readiness ohne Production-Schema
 **Gilt für:** das Reisedatenmodell und die Wege, auf denen eine Reise entsteht, gespeichert und bearbeitet wird.
 
 Diese Datei beantwortet vier Fragen: Woraus besteht eine Reise, wo liegt sie, wie kommt sie aus dem Browser in ein Konto, und was ist bewusst noch nicht gebaut.

@@ -21,7 +21,7 @@ Diese Datei ist die operative Roadmap. Historische Detailstände bleiben über G
 | Querschnitt | Trip Coverage & Booking Status | **auf `main` (PR #29, `211872c1`); Production-Booking-Migration nach Nutzerfreigabe angewendet** |
 | Foundation-Track A | Mobilität & Transfers – Bahn, Bus, Fähre, Transfers | **fertig, nach `main` gemergt (PR #30); Production-Schema angewendet, Suche aus** |
 | Foundation-Track B | Mietwagen Foundation | **fertig, nach `main` gemergt (PR #31)**; Schema auf Production; Suche aus |
-| Foundation-Track C | Travel Readiness & Dokumente Foundation | **Draft-PR #32**; reviewbar; Development-Migration; nicht mergen; kein Production-Schema |
+| Foundation-Track C | Travel Readiness & Dokumente Foundation | **fertig, nach `main` gemergt (PR #32)**; Development-Migration im Repo; kein Production-Schema; kein Provider |
 | Foundation-Track D | Gesamt-Abdeckung im Reisegraphen erweitern | geplant nach C |
 | Phase 3.5 | erster echter Activity-Suchadapter | geplant; bei fehlendem Zugang extern blockiert |
 | Phase 3.6 | echte Mobilitäts-/Transferprovider auf Foundation A | geplant |
@@ -198,7 +198,7 @@ Nicht in diesem Block: echter Provider, Fake-Angebote, Führerschein-/Zahlungsda
 
 ### Foundation C – Travel Readiness & Dokumente
 
-**Draft-PR #32**, Branch `feat/travel-readiness-foundation`. Nicht mergen. Keine Production-Migration. Final Architecture Review nach `docs/CURSOR_PR32_FINAL_ARCHITECTURE_REVIEW.md`.
+**Gemergt nach `main`** via PR #32 (`b50d2ce9`). Foundation C nicht erneut bauen. Keine Production-Migration ohne separate Freigabe. Kein Requirements-Provider.
 
 Automatic Travel Requirements & Readiness:
 

@@ -1,8 +1,8 @@
 # Jetnity – Automatic Travel Requirements & Readiness (Foundation C)
 
 Stand: 22. August 2026  
-Status: Draft-PR #32, nicht gemergt, kein Production-Schema  
-Branch: `feat/travel-readiness-foundation`
+Status: nach `main` gemergt via PR #32 (`b50d2ce9`); kein Production-Schema; kein Provider  
+Branch: `feat/travel-readiness-foundation` (historisch)
 
 ## Ziel
 
@@ -110,9 +110,9 @@ Zuerst offizielle Prüfung und fehlende Angaben, danach die persönliche Vorbere
 - Production unverändert
 - keine neuen Secrets, keine neuen laufenden Kosten
 
-## Nachweis Draft-PR #32
+## Nachweis PR #32
 
-Truth-Freshness-Fix (ADR-0111) auf Head `64aa15a7`:
+Gemergt nach `main` als `b50d2ce9`. Truth-Freshness-Fix (ADR-0111) verifiziert auf Head `64aa15a7`:
 
 - Tests **1252/1252**
 - Typecheck, Lint, Hygiene, Auth-Konfiguration und Production-Build grün

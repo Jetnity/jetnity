@@ -8,7 +8,9 @@ Sie definiert nicht die gesamte Produktvision, sondern die Arbeitsweise, mit der
 
 Vor jeder größeren Aufgabe müssen außerdem die folgenden Projektdateien gelesen werden, sofern vorhanden:
 
+- [JETNITY_PRODUCT_MANDATE.md](JETNITY_PRODUCT_MANDATE.md)
 - [JETNITY_VISION.md](JETNITY_VISION.md)
+- [JETNITY_HANDOFF.md](JETNITY_HANDOFF.md)
 - [ARCHITECTURE.md](ARCHITECTURE.md)
 - [ROADMAP.md](ROADMAP.md)
 - [DECISIONS.md](DECISIONS.md)
@@ -715,7 +717,7 @@ Wenn weiterhin unklar: Frage stellen.
 Priorität:
 
 1. explizit freigegebene aktuelle Produktentscheidung
-2. aktuelle JETNITY_VISION.md
+2. `JETNITY_PRODUCT_MANDATE.md` und aktuelle `JETNITY_VISION.md`
 3. DECISIONS.md
 4. ARCHITECTURE.md
 5. ROADMAP.md
