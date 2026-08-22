@@ -198,6 +198,8 @@ Verbindlich nach `docs/TRIP_WORKSPACE_FINAL_INTELLIGENCE_AUDIT_POLICY.md`:
 
 Erst danach finale Product-Owner-Abnahme dieser Workspace-Ausbaustufe.
 
+**Nachtrag, 22. August 2026:** Die neuere Product-Owner-Entscheidung `docs/PRODUCT_OWNER_PR34_PROVIDER_READINESS_ADDENDUM.md` ersetzt die Reihenfolge der Schritte C–E. Nach Foundation E kommen zuerst provider-neutrale Safety- und Seasonal-Foundations sowie das Schließen der Provider-Readiness-Lücken. Der große Workspace-Umbau, der Intelligence Audit, die echte Providerphase und die finale Startseite folgen danach. Der Inhalt der Schritte bleibt verbindlich; nur die zeitliche Einordnung ändert sich.
+
 ## 5. Aktueller Merge-Status
 
 Der Product Owner hat mit `Ich bin fertig` den Rundgang beendet, **aber keine ausdrückliche Merge-Freigabe für PR #34 erteilt**.

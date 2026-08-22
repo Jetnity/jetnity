@@ -143,14 +143,18 @@ Nicht in PR #34 implementiert, dauerhaft versioniert:
 - globale Policies auf `main` für Safety, Seasonality, Homepage, finalen Workspace-Audit
 - Reihenfolge in `ROADMAP.md` und `JETNITY_HANDOFF.md`
 
-Verbindliche spätere Reihenfolge:
+Verbindliche spätere Reihenfolge gemäß `docs/PRODUCT_OWNER_PR34_PROVIDER_READINESS_ADDENDUM.md`:
 
 1. Foundation D abschließen
 2. Foundation E Traveller Context / Multi-Citizenship
-3. zentraler Workspace-Umbau
-4. Travel Safety & Disruption plus Travel Timing & Seasonal Intelligence
-5. finaler Workspace Intelligence Audit
-6. finale Startseiten-Positionierung
+3. Travel Safety & Disruption provider-neutral
+4. Travel Timing & Seasonal Intelligence provider-neutral
+5. Provider-Readiness-Lücken schließen
+6. großer Workspace-Umbau
+7. finaler Workspace Intelligence Audit
+8. echte Providerphase
+9. Provider-backed End-to-End-/Truth-Audit
+10. finale Startseiten-Positionierung
 
 ## 11. Offene Blocker
 
@@ -165,9 +169,10 @@ Offen bleibt nur Governance:
 ## 12. Spätere Follow-ups
 
 - Foundation E vor Requirements-Provider
+- Safety / Seasonality provider-neutral vor dem großen Workspace-Umbau
+- Provider-Readiness-Lücken schließen, bevor konkrete Adapter gebaut werden
 - Multi-Destination / Guest-UX / Preference-Flow / Workspace-Übersicht im zentralen Workspace-Block
-- Safety / Seasonality als eigene Evidence-Domänen
-- Homepage erst nach integriertem Kernprodukt
+- echte Providerphase und Homepage erst danach
 
 ## 13. Technische Merge-Einschätzung
 

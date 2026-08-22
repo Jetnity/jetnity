@@ -29,7 +29,7 @@ Eine Route, eine strukturierte Wahrheit. Länder nur aus belastbaren Airport-/It
 - UI-Audit-Fixtures Direktflug / 1 Transit / 2 Transits
 - Final Review ohne weiteren Foundation-D-Codeblocker
 - Product-Owner-Rundgang abgeschlossen und versioniert
-- Branch mit `main` inklusive Safety-/Seasonality-/Homepage-/Audit-Policies synchronisiert
+- Branch mit `main` inklusive Safety-/Seasonality-/Homepage-/Audit-/Provider-Readiness-Policies synchronisiert
 
 Route Facts bleiben traveller-neutral.
 
@@ -79,14 +79,18 @@ Neu ausgeführt nach dem ersten `main`-Sync (`380cdb83`); danach nur Dokumentati
 
 ## 9. Bestätigte spätere Produktblöcke
 
-Gesichert in Acceptance-Closure, Addenda, Handoff, Roadmap und globalen Policies:
+Gesichert in Acceptance-Closure, Addenda, Handoff, Roadmap und globalen Policies. Neuere Reihenfolge gemäß `docs/PRODUCT_OWNER_PR34_PROVIDER_READINESS_ADDENDUM.md`:
 
 1. Foundation D abschließen
 2. Foundation E Traveller Context / Multi-Citizenship
-3. zentraler Workspace-Umbau inkl. Multi-Destination, Guest-UX, Preference-Flow, Übersicht
-4. Travel Safety & Disruption plus Travel Timing & Seasonal Intelligence
-5. finaler Workspace Intelligence Audit
-6. finale Startseiten-Positionierung
+3. Travel Safety & Disruption provider-neutral
+4. Travel Timing & Seasonal Intelligence provider-neutral
+5. Provider-Readiness-Lücken schließen (`docs/PROVIDER_INTEGRATION_READINESS_POLICY.md`)
+6. großer Workspace-/Übersicht-Umbau inkl. Multi-Destination, Guest-UX, Preference-Flow
+7. finaler Workspace Intelligence Audit
+8. echte Providerphase
+9. Provider-backed End-to-End-/Truth-Audit
+10. finale Startseiten-Positionierung
 
 ## 10. Exakter nächster Schritt
 
@@ -103,4 +107,6 @@ Gesichert in Acceptance-Closure, Addenda, Handoff, Roadmap und globalen Policies
 - `docs/PR34_FINAL_HUMAN_REVIEW.md`
 - `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md`
 - `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
+- `docs/PRODUCT_OWNER_PR34_PROVIDER_READINESS_ADDENDUM.md`
+- `docs/PROVIDER_INTEGRATION_READINESS_POLICY.md`
 - `JETNITY_HANDOFF.md`, `ROADMAP.md`

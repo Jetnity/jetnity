@@ -400,9 +400,10 @@ Solange PR #34 offen ist:
 9. relevante Flight-/Trip-/Mobility-/Readiness-/Change-Dokumente lesen.
 10. nicht mergen, nicht Mark Ready, keine Production-Migration.
 11. bestehende Arbeit synchronisieren und fortsetzen statt neu anzufangen.
-12. Verbindliche Reihenfolge nach Foundation D: Foundation E Traveller Context / Multi-Citizenship → zentraler Workspace-Umbau → Travel Safety & Disruption plus Travel Timing & Seasonal Intelligence → finaler Workspace Intelligence Audit → finale Startseiten-Positionierung.
+12. Verbindliche Reihenfolge nach Foundation D: Foundation E → provider-neutrale Safety-Foundation → provider-neutrale Seasonal-Foundation → Provider-Readiness-Lücken schließen → großer Workspace-Umbau → Workspace Intelligence Audit → echte Providerphase → Provider-backed Audit → finale Startseiten-Positionierung.
 13. Travel Safety & Disruption Intelligence ist eine verbindliche spätere Produktfähigkeit gemäß `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`.
 14. Travel Timing & Seasonal Intelligence ist eine verbindliche gekoppelte spätere Produktfähigkeit gemäß `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`.
-15. Nach Integration des Kernprodukts folgt eine verbindliche finale Startseiten-Positionierung gemäß `docs/FINAL_HOMEPAGE_POSITIONING_OPTIMIZATION_POLICY.md`.
+15. Provider werden erst in einer späteren finalen Phase angeschlossen; vorher muss Jetnity provider-ready sein (`docs/PROVIDER_INTEGRATION_READINESS_POLICY.md`, `docs/PRODUCT_OWNER_PR34_PROVIDER_READINESS_ADDENDUM.md`).
+16. Nach der Providerphase folgt eine verbindliche finale Startseiten-Positionierung gemäß `docs/FINAL_HOMEPAGE_POSITIONING_OPTIMIZATION_POLICY.md`.
 
 Kein abgeschlossener Block darf unnötig neu gebaut werden.
