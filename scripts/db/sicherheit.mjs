@@ -1512,6 +1512,29 @@ function reisenachweise() {
       erwartung: 'leer',
     },
     {
+      name: 'Legacy-Backfill verknüpft Dokument nicht über das Ausstellerland',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_travellers
+              (trip_id, client_ref, nationality_country_code, document_type, document_issuing_country_code, document_expires_on)
+            values ('${REISE}', 'traveller:legacy-ch', 'CH', 'passport', 'CH', '2030-01-01');
+            insert into public.trip_traveller_citizenships
+              (traveller_id, trip_id, client_ref, country_code)
+            select id, trip_id, 'citizenship:CH', 'CH'
+              from public.trip_travellers
+             where trip_id = '${REISE}' and client_ref = 'traveller:legacy-ch';
+            insert into public.trip_traveller_documents
+              (traveller_id, trip_id, client_ref, document_type, issuing_country_code, citizenship_id, expires_on)
+            select id, trip_id, 'document:passport:CH', 'passport', 'CH', null, '2030-01-01'
+              from public.trip_travellers
+             where trip_id = '${REISE}' and client_ref = 'traveller:legacy-ch';
+            select * from public.trip_traveller_documents
+             where trip_id = '${REISE}'
+               and client_ref = 'document:passport:CH'
+               and citizenship_id is null`,
+      erwartung: 'erlaubt',
+    },
+    {
       name: 'Neunte Staatsbürgerschaft am selben Traveller wird abgelehnt',
       rolle: 'authenticated',
       uid: NUTZER,

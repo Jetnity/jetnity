@@ -253,13 +253,124 @@ async function pruefe() {
   return ergebnisse
 }
 
+const TRAVELLER_REISE = 'ffffffff-0000-4000-8000-00000000f011'
+const TRAVELLER = 'ffffffff-0000-4000-8000-00000000f012'
+const KINDER_SITZUNGEN = 4
+
+async function saatTraveller(citizenshipsVorher) {
+  await aufraeumen()
+  await runSql(`
+insert into auth.users
+  (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, created_at, updated_at)
+  values ('${KONTO}', '${INSTANCE}', 'authenticated', 'authenticated',
+          'parallelitaet@example.invalid', 'x', now(), now(), now());
+insert into public.profiles (user_id, display_name, role, status)
+  values ('${KONTO}', 'parallelitaet', 'user', 'active');
+insert into public.trips (id, user_id, client_ref, title)
+  values ('${TRAVELLER_REISE}', '${KONTO}', 'parallel-traveller', 'Parallel Traveller');
+insert into public.trip_travellers (id, trip_id, user_id, client_ref)
+  values ('${TRAVELLER}', '${TRAVELLER_REISE}', '${KONTO}', 'traveller:1');
+insert into public.trip_traveller_citizenships
+  (traveller_id, trip_id, user_id, client_ref, country_code)
+select '${TRAVELLER}', '${TRAVELLER_REISE}', '${KONTO}',
+       'citizenship:X' || chr(65 + g),
+       'X' || chr(65 + g)
+  from generate_series(0, ${citizenshipsVorher} - 1) as g;
+`)
+}
+
+async function citizenshipBestand() {
+  const rows = await runSql(
+    `select count(*) as anzahl from public.trip_traveller_citizenships where traveller_id = '${TRAVELLER}'`,
+  )
+  return Number(rows[0].anzahl)
+}
+
+async function gleichzeitigKinder(ziel) {
+  const eine = async (nr) => {
+    const land = String.fromCharCode(81 + nr) + 'Z' // QZ, RZ, SZ, TZ
+    try {
+      await runSql(`
+begin;
+${claims}
+${warten(ziel)}
+insert into public.trip_traveller_citizenships
+  (traveller_id, trip_id, user_id, client_ref, country_code)
+values ('${TRAVELLER}', '${TRAVELLER_REISE}', '${KONTO}', 'citizenship:${land}', '${land}');
+select pg_sleep(${HALTEN_S});
+commit;`)
+      return { ok: true, code: null }
+    } catch (fehler) {
+      return { ok: false, code: sqlstate(fehler) }
+    }
+  }
+  return Promise.all(Array.from({ length: KINDER_SITZUNGEN }, (_, i) => eine(i)))
+}
+
+async function pruefeTravellerKinder() {
+  const faelle = [
+    {
+      name: 'parallele Citizenship-Inserts bei 7 – Limit 8',
+      bestandVorher: 7,
+      bestandNachher: 8,
+      erfolge: 1,
+      code: '23514',
+    },
+    {
+      name: 'parallele Citizenship-Inserts bei erreichtem Limit',
+      bestandVorher: 8,
+      bestandNachher: 8,
+      erfolge: 0,
+      code: '23514',
+    },
+  ]
+  const ergebnisse = []
+  try {
+    for (const fall of faelle) {
+      await saatTraveller(fall.bestandVorher)
+      const laeufe = await gleichzeitigKinder(await treffpunkt())
+      const nachher = await citizenshipBestand()
+      const erfolge = laeufe.filter((e) => e.ok)
+      const fehler = laeufe.filter((e) => !e.ok)
+      const codes = [...new Set(fehler.map((e) => e.code))]
+      const maengel = []
+      if (nachher !== fall.bestandNachher) {
+        maengel.push(`Bestand ${nachher}, erwartet ${fall.bestandNachher}`)
+      }
+      if (erfolge.length !== fall.erfolge) {
+        maengel.push(`${erfolge.length} Sitzungen erfolgreich, erwartet ${fall.erfolge}`)
+      }
+      if (codes.includes('40P01')) {
+        maengel.push('Deadlock 40P01 – Parent-Lock kollidiert mit FK KEY SHARE')
+      }
+      if (fall.code && codes.some((c) => c !== fall.code)) {
+        maengel.push(`Fehlercodes ${codes.join(', ')}, erwartet nur ${fall.code}`)
+      }
+      if (nachher > 8) {
+        maengel.push(`Limit überschritten: ${nachher}`)
+      }
+      const teile = [`Bestand ${fall.bestandVorher} → ${nachher}`, `${erfolge.length}× erfolgreich`]
+      if (fehler.length) teile.push(`${fehler.length}× ${codes.join('/')}`)
+      ergebnisse.push({
+        fall,
+        ok: maengel.length === 0,
+        detail: teile.join(', '),
+        maengel,
+      })
+    }
+  } finally {
+    await aufraeumen()
+  }
+  return ergebnisse
+}
+
 async function main() {
   console.log(
     `${SITZUNGEN} gleichzeitige Sitzungen je Fall, Treffpunkt auf der Uhr des Servers,\n` +
       `Transaktion nach dem Schreiben ${HALTEN_S} s offen gehalten.\n`,
   )
 
-  const ergebnisse = await pruefe()
+  const ergebnisse = [...(await pruefe()), ...(await pruefeTravellerKinder())]
   const fehler = ergebnisse.filter((e) => !e.ok)
 
   for (const e of ergebnisse) {
