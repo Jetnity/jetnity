@@ -7,6 +7,7 @@
 import { OFFICIAL_REQUIREMENT_TYPES } from '@/types/trips'
 import { landescodeLesen } from '@/lib/readiness/domain'
 import {
+  officialAktionAusQuelle,
   officialFrische,
   officialLeer,
   quelleUrlLesen,
@@ -157,18 +158,22 @@ function zeileUebernehmen(
     checkedAt: zeile.checkedAt ?? null,
     validUntil: zeile.validUntil ?? null,
     hasProvider: true,
+    sourceAvailable: zeile.availability !== 'temporarily_unavailable',
   })
   const missing = fehlendeFakten(anfrage, traveller, zeile.requirementType)
   if (missing.length > 0) {
     return leerFuer(anfrage, traveller, destination, zeile.requirementType, missing)
   }
 
+  const sourceUrl = quelleUrlLesen(zeile.sourceUrl ?? null)
+  const quelleFehlt = freshness === 'source_temporarily_unavailable' || freshness === 'stale' || freshness === 'recheck_needed'
+
   return {
     travellerClientRef: traveller.clientRef,
     destinationCountryCode: destination,
     transitCountryCode: transit,
     requirementType: zeile.requirementType,
-    result: freshness === 'stale' || freshness === 'recheck_needed' ? 'unknown' : zeile.result,
+    result: quelleFehlt ? 'unknown' : zeile.result,
     status: freshness === 'current' ? 'current' : 'unknown',
     freshness,
     officialClass:
@@ -183,13 +188,14 @@ function zeileUebernehmen(
     evidence: {
       provider: providerName,
       authority: typeof zeile.authority === 'string' ? zeile.authority.slice(0, 80) : null,
-      sourceUrl: quelleUrlLesen(zeile.sourceUrl ?? null),
+      sourceUrl,
       checkedAt: zeile.checkedAt ?? null,
       validFrom: zeile.validFrom ?? null,
       validUntil: zeile.validUntil ?? null,
       ruleReference: typeof zeile.ruleReference === 'string' ? zeile.ruleReference.slice(0, 80) : null,
       contextFingerprint: fingerprint,
     },
+    action: quelleFehlt ? null : officialAktionAusQuelle(sourceUrl),
   }
 }
 

@@ -60,6 +60,11 @@ export type OfficialEvidence = {
   contextFingerprint: string
 }
 
+export type OfficialAction = {
+  kind: 'open_official_source'
+  href: string
+}
+
 export type OfficialEvaluation = {
   travellerClientRef: string | null
   destinationCountryCode: string | null
@@ -71,6 +76,12 @@ export type OfficialEvaluation = {
   officialClass: OfficialClass
   missingFacts: MissingFact[]
   evidence: OfficialEvidence
+  action: OfficialAction | null
+}
+
+export function officialAktionAusQuelle(url: unknown): OfficialAction | null {
+  const href = quelleUrlLesen(url)
+  return href ? { kind: 'open_official_source', href } : null
 }
 
 export function quelleUrlLesen(wert: unknown): string | null {
@@ -119,6 +130,7 @@ export function officialLeer(teil: {
       ruleReference: null,
       contextFingerprint: teil.contextFingerprint,
     },
+    action: null,
   }
 }
 
@@ -129,8 +141,10 @@ export function officialFrische(opts: {
   validUntil: string | null
   now?: string
   hasProvider: boolean
+  sourceAvailable?: boolean
 }): OfficialFreshness {
   if (!opts.hasProvider) return 'provider_unavailable'
+  if (opts.sourceAvailable === false) return 'source_temporarily_unavailable'
   if (!opts.checkedAt) return 'never_checked'
   if (opts.storedFingerprint && opts.storedFingerprint !== opts.currentFingerprint) return 'stale'
   if (opts.validUntil && (opts.now ?? new Date().toISOString()) > opts.validUntil) return 'recheck_needed'

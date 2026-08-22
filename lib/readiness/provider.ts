@@ -38,6 +38,7 @@ export type RequirementsProviderZeile = {
   validFrom?: string | null
   validUntil?: string | null
   ruleReference?: string | null
+  availability?: 'ok' | 'temporarily_unavailable'
 }
 
 export type RequirementsProvider = {

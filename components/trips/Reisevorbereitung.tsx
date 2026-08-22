@@ -159,6 +159,14 @@ export default function Reisevorbereitung({
               .map((slot) => {
                 const eigene = evaluations.filter((eintrag) => eintrag.travellerClientRef === slot.clientRef)
                 const required = eigene.filter((eintrag) => eintrag.result === 'required').length
+                const aktionen = [
+                  ...new Map(
+                    eigene
+                      .map((eintrag) => eintrag.action)
+                      .filter((aktion): aktion is NonNullable<typeof aktion> => Boolean(aktion))
+                      .map((aktion) => [aktion.href, aktion]),
+                  ).values(),
+                ]
                 return (
                   <li key={`off-${slot.clientRef}`} className="rounded-2xl border border-line-200 px-3 py-3">
                     <p className="text-sm font-semibold text-brand-800">{slot.label}</p>
@@ -168,6 +176,17 @@ export default function Reisevorbereitung({
                         : 'Noch nicht automatisch geprüft'}
                       {slot.missingFacts.includes('nationality') ? ' · Staatsangehörigkeit fehlt' : ''}
                     </p>
+                    {aktionen.map((aktion) => (
+                      <a
+                        key={aktion.href}
+                        href={aktion.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-brand-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                      >
+                        Offizielle Information öffnen
+                      </a>
+                    ))}
                   </li>
                 )
               })}

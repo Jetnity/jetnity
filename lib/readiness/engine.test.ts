@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 
 import { officialRequirementsPruefen } from '@/lib/readiness/anforderungen'
 import { officialFingerprint, requirementsAuswerten, requirementsFuerReise, travellerGeloeschtPruefen } from '@/lib/readiness/engine'
-import { officialFrische, quelleUrlLesen } from '@/lib/readiness/official'
+import { officialAktionAusQuelle, officialFrische, quelleUrlLesen } from '@/lib/readiness/official'
 import { fehlendeFaktenFuerReise, travellerSlots } from '@/lib/readiness/party'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import type { RequirementsProvider } from '@/lib/readiness/provider'
@@ -363,6 +363,72 @@ describe('Travel Requirements Engine', () => {
     assert.ok(!transit?.missingFacts.includes('transit_itinerary'))
     assert.equal(transit?.result, 'unknown')
     assert.equal(transit?.freshness, 'provider_unavailable')
+  })
+
+  test('Official Action nur aus validierter HTTPS-Quelle', () => {
+    assert.equal(officialAktionAusQuelle('https://example.test/visa')?.href, 'https://example.test/visa')
+    assert.equal(officialAktionAusQuelle('javascript:alert(1)'), null)
+    assert.equal(officialAktionAusQuelle('http://example.test/visa'), null)
+    const ohneProvider = requirementsFuerReise(
+      beispielreise({
+        travellers: 1,
+        party: [reisende({ clientRef: 'traveller:1', nationalityCountryCode: 'CH' })],
+      }),
+    )
+    assert.ok(ohneProvider.every((eintrag) => eintrag.action === null))
+    const mitQuelle = requirementsAuswerten(
+      {
+        originCountryCode: 'CH',
+        destinationCountryCodes: ['US'],
+        transitCountryCodes: [],
+        startDate: '2026-09-12',
+        endDate: '2026-09-16',
+        travellers: [
+          {
+            clientRef: 'traveller:1',
+            nationalityCountryCode: 'FR',
+            residenceCountryCode: 'FR',
+            documentType: 'passport',
+            documentIssuingCountryCode: 'FR',
+            documentExpiresOn: '2030-01-01',
+          },
+        ],
+      },
+      testProvider,
+    )
+    const visa = mitQuelle.find((eintrag) => eintrag.requirementType === 'visa')
+    assert.equal(visa?.action?.kind, 'open_official_source')
+    assert.equal(visa?.action?.href, 'https://example.test/visa')
+  })
+
+  test('temporär nicht erreichbare Quelle bleibt unknown und nicht required', () => {
+    const provider: RequirementsProvider = {
+      name: 'down-double',
+      evaluate(anfrage) {
+        return [
+          {
+            travellerClientRef: anfrage.travellers[0]!.clientRef,
+            destinationCountryCode: anfrage.destinationCountryCodes[0] ?? null,
+            requirementType: 'visa',
+            result: 'required',
+            checkedAt: JETZT,
+            sourceUrl: 'https://example.test/visa',
+            availability: 'temporarily_unavailable',
+          },
+        ]
+      },
+    }
+    const evaluations = requirementsFuerReise(
+      beispielreise({
+        travellers: 1,
+        party: [reisende({ clientRef: 'traveller:1', nationalityCountryCode: 'CH' })],
+      }),
+      provider,
+    )
+    const visa = evaluations.find((eintrag) => eintrag.requirementType === 'visa')
+    assert.equal(visa?.result, 'unknown')
+    assert.equal(visa?.freshness, 'source_temporarily_unavailable')
+    assert.equal(visa?.action, null)
   })
 
   test('ohne Provider erfindet die Engine keine Transit- oder Health-Aussage', () => {

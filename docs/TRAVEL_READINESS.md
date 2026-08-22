@@ -52,7 +52,10 @@ Ohne Provider: `provider_unavailable` oder `insufficient_context`. Nie eine Visa
 Anforderungsarten: Visa, eTA, Pass, ID, Passgültigkeit, Transit, Gesundheit, Impfung, Gesundheitsdokument, Einreiseformular, Versicherung, Rück-/Weiterflug, Buchungsdokument, sonstige Einreise.
 
 Ergebnisse: `required` | `not_required` | `conditional` | `unknown`  
+Status `insufficient_context` und Freshness `provider_unavailable` / `source_temporarily_unavailable` bleiben eigene Achsen – sie werden nicht als `required`/`not_required` umgedeutet.  
 Freshness: `never_checked` | `current` | `recheck_needed` | `stale` | `provider_unavailable` | `source_temporarily_unavailable`
+
+Sichere Official-Actions gibt es nur als `open_official_source` aus einer validierten HTTPS-Evidence-URL. Ohne Provider und bei veralteter oder temporär nicht erreichbarer Quelle bleibt `action` leer. Keine URLs aus Modelltext.
 
 Gesundheit: Pflicht, Empfehlung und allgemeiner Hinweis bleiben getrennt. Keine Impfpass-Uploads.
 
@@ -100,7 +103,7 @@ Zuerst offizielle Prüfung und fehlende Angaben, danach die persönliche Vorbere
 
 Stand Audit-/CI-Head `87bb85bde3c6e924ebd7dfe2c0af009960cd2009`:
 
-- Tests **1228/1228**
+- Tests **1230/1230**
 - Typecheck, Lint, Hygiene und Production-Build grün
 - Trip-Workspace-Audit WebKit + Chromium: **662 Kombinationen, 0 Fehler**
 - Activities-Regression: **184 Kombinationen, 0 Fehler**

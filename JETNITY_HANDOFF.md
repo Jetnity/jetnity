@@ -289,7 +289,7 @@ Development-Migrationen `20260822010000` und `20260822020000` nur Development. P
 
 Qualitätsnachweis auf diesem Head:
 
-- `npm test`: **1228/1228**
+- `npm test`: **1230/1230**
 - Typecheck, Lint, Hygiene und Production-Build grün
 - Trip-Workspace-Audit WebKit + Chromium: **662 Kombinationen, 0 Fehler**
 - Activities-Regression: **184 Kombinationen, 0 Fehler**
