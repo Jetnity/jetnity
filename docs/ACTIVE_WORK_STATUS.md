@@ -8,9 +8,10 @@ Arbeitsblock: **Foundation D – Route & Transit Intelligence**
 - Branch: `feat/route-transit-intelligence`
 - Draft PR: **#34** https://github.com/Jetnity/jetnity/pull/34
 - Implementierungs-Head: `23dd548ae05016b2a1b5011e24c3bdd9d2018f8f`
+- Verifizierter Head: `be94305b22e8455ad3721f3bb1c5f72fe3d2635e`
 - Branch enthält Merge von `origin/main` `32af1cd6` (Expert-Proactivity-Policy)
 - aktuellen Branch-/PR-Head vor jeder weiteren Arbeit erneut über GitHub verifizieren
-- Status: **technisch umgesetzt; lokal und CI auf dem Implementierungsstand geprüft; Senior Expert Pass dokumentiert; Human-/Architecture-Review offen**
+- Status: **technisch umgesetzt; lokal, GitHub Actions und Vercel Preview auf `be94305b` grün; Senior Expert Pass dokumentiert; Human-/Architecture-Review offen**
 - Merge: **nicht freigegeben**, PR bleibt Draft
 
 ## 2. Ziel
@@ -35,7 +36,7 @@ Route Facts sind traveller-neutral. Sie setzen keine einzelne Staatsbürgerschaf
 
 - Human-/Architecture-/UX-Review
 - ausdrückliche Product-Owner-Merge-Freigabe
-- GitHub Actions Verify für Docs-/Policy-Heads nach `a1110930` nicht automatisch übertragen; letzter grüner Implementierungs-Verify ist `a1110930`
+- Human-/Architecture-/UX-Review gegen `be94305b` bzw. den tatsächlichen aktuellen Head
 - kein Timatic, kein echter Provider, keine Production-Migration
 - **separater zukünftiger Readiness-/Traveller-Context-Schritt vor echter Requirements-Provider-Aktivierung:** Mehrfachstaatsbürgerschaften und mehrere Reisedokumente als 1:n-Modell; nicht still in Foundation D hineinmigrieren
 
@@ -80,10 +81,9 @@ Letzter dokumentierter Foundation-D-Nachweis:
 - Production Build: grün
 - `auth:pruefen`: 55/55
 - Trip Workspace Audit: 726 Kombinationen, 0 Fehler, WebKit + Chromium
-- Vercel Preview READY für `23dd548a`: https://jetnity-16l9pmw3e-jetnity-e1b93c82.vercel.app
-- Vercel Preview READY für `c88f98a0`: https://jetnity-8f1xdoo8p-jetnity-e1b93c82.vercel.app
-- GitHub Actions CI **success** auf `d3c99335`: https://github.com/Jetnity/jetnity/actions/runs/32572835591
-- GitHub Actions CI **success** auf `a1110930` (Implementierung + Main-Merges inkl. Traveller-Context): https://github.com/Jetnity/jetnity/actions/runs/32573413959
+- Vercel Preview READY für `be94305b`: https://jetnity-pzrwyzdix-jetnity-e1b93c82.vercel.app
+- GitHub Actions CI **success** auf `be94305b`: https://github.com/Jetnity/jetnity/actions/runs/32573631017
+- Draft-PR #34 war auf diesem Head **mergeable / CLEAN**; Merge trotzdem nicht freigegeben
 
 Nach den neuen Governance-/Traveller-Context-Commits muss der finale technische Nachweis immer gegen den tatsächlichen aktuellen Head geprüft werden; alte grüne Runs nicht automatisch auf neue Heads übertragen.
 
