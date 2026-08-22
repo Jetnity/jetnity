@@ -47,7 +47,7 @@ Nachweise nach Anwendung:
 | `npm run db:anwenden` | angewendet |
 | `npm run db:rechte` | OK – 51 Tabellenrechte, jedes durch eine Policy gedeckt; RLS aktiv |
 | `npm run db:rls` | grün, inkl. neuer Child-Tabellen; anon/fremd abgewiesen |
-| `npm run db:sicherheit` | **208/208** |
+| `npm run db:sicherheit` | **210/210** |
 | `npm run db:parallelitaet` | **7/7**, parallele Citizenship-Inserts ohne Deadlock, Limit nie überschritten |
 
 ---
@@ -56,12 +56,12 @@ Nachweise nach Anwendung:
 
 | Nachweis | Stand |
 | --- | --- |
-| `npm test` | **1311 pass / 0 fail** |
+| `npm test` | **1317 pass / 0 fail** |
 | Typecheck | **grün** (`tsc --noEmit`) |
 | Lint | **grün** (`next lint`, 0 warnings/errors) |
 | Hygiene | **grün** – `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` |
 | Production Build | **grün** (`next build`, 38/38 Seiten) |
-| Trip-Workspace-UI-Audit nach Re-Review-Fixes | **838 Kombinationen, 0 Fehler**, WebKit + Chromium. Viewports: 280, 320, 360, 390, 430, 768, 844×390, 1280. Bericht: `/opt/cursor/artifacts/trip_workspace_ui_audit.json` |
+| Trip-Workspace-UI-Audit nach Final-Review-Fixes | **838 Kombinationen, 0 Fehler**, WebKit + Chromium. Viewports: 280, 320, 360, 390, 430, 768, 844×390, 1280. Bericht: `/opt/cursor/artifacts/trip_workspace_ui_audit.json` |
 | Erster Audit-Lauf (vor Review-Fixes) | 16 Fehler, alle `readiness-user-done`: v1-Fingerprint wurde nach Foundation E korrekt stale. Fixture auf v2 gesetzt. |
 | Zweiter Audit-Lauf | **838/0** nach Fixture-Korrektur auf Head `17763238` |
 | Foundation-E-Zustände im Audit | `eine-staatsbuergerschaft`, `zwei-staatsbuergerschaften`, `dokument-fehlt`, `staatsbuergerschaft-fehlt`, `zwei-reisende`, `langes-label`, `provider-unavailable` |
@@ -95,6 +95,9 @@ Automatisiert nachgewiesen:
 19. Legacy-Backfill (nationality=CH, issuer=CH) erzeugt Citizenship und Document, aber `citizenship_id` bleibt null
 20. Provider-Port transportiert `optionEligibility`/`optionMandate` nur über vertrauenswürdige current Evidence in die Engine
 21. Parallele Citizenship-Inserts deadlocken nicht und überschreiten Limit 8 nicht
+22. Kanonisch leere Child-Relationen bleiben leer trotz Legacy-Singularspalten
+23. Fehlende Foundation-E-Relation fällt lesend auf Legacy zurück; andere DB-Fehler nicht
+24. Explizite Document↔Citizenship-Relation ändert den Official Fingerprint; Issuer bleibt getrennt
 
 ---
 
@@ -106,7 +109,7 @@ Automatisiert nachgewiesen:
 - keine Production-Migration
 - kein echter Requirements-Provider
 - Guest→Account bleibt für Readiness ein nachgelagerter Schritt; nur Party ist atomar
-- Unabhängiger ChatGPT-Abschlussreview der drei Re-Review-Blocker steht aus
+- Unabhängiger ChatGPT-Abschlussreview der Final-Review-Blocker steht aus
 - GitHub CI / Vercel auf dem Docs-Nachzug nach diesen Fixes folgt; ein reiner Nachweis-Commit wird nicht erneut dokumentiert, solange CI nicht fehlschlägt
 
 ---

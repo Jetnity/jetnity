@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 22. August 2026  
-Arbeitsblock: **Foundation E – Traveller Context – Re-Review-Blocker-Fixes auf Draft PR #35**
+Arbeitsblock: **Foundation E – Traveller Context – Final-Review-Blocker-Fixes auf Draft PR #35**
 
 ## 1. Aktueller Zustand
 
@@ -36,7 +36,7 @@ Foundation E läuft auf:
 
 | Nachweis | Ergebnis |
 | --- | --- |
-| `npm test` | 1311/1311 |
+| `npm test` | 1317/1317 |
 | Typecheck | grün |
 | Lint | grün |
 | Hygiene | grün |
@@ -46,10 +46,10 @@ Foundation E läuft auf:
 | Live-Lock | `FOR NO KEY UPDATE`; Backfill-Relikte `citizenship_id` **0** |
 | `db:rechte` | OK, 51 Rechte |
 | `db:rls` | grün |
-| `db:sicherheit` | **208/208** |
+| `db:sicherheit` | **210/210** inkl. party_schreiben leert Children trotz Legacy-Spalten |
 | `db:parallelitaet` | **7/7**, inkl. parallele Citizenship-Inserts bei 7/8 ohne Deadlock |
 | Production-Schema | unverändert |
-| UI-Audit nach Re-Review-Fixes | **838/838, 0 Fehler**, WebKit + Chromium, 8 Viewports |
+| UI-Audit nach Final-Review-Fixes | **838/838, 0 Fehler**, WebKit + Chromium, 8 Viewports |
 
 ## 4. Harte Grenzen
 
@@ -62,11 +62,11 @@ Foundation E läuft auf:
 
 ## 5. Exakter nächster Schritt
 
-1. Unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_REREVIEW.md`.
+1. Unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_FINAL_REVIEW.md` in der Tiefe von `docs/PRODUCT_OWNER_REVIEW_DEPTH_MANDATE.md`.
 2. Draft bleibt Draft. Nicht Mark Ready, nicht mergen.
 3. Product Owner entscheidet separat über Merge.
 4. Production-Migration erst nach Merge und separater Freigabe.
 
-Die drei Re-Review-Blocker sind im Code behoben. Ein Docs-Nachzug, der nur diesen Nachweis festhält, startet neues CI; das wird nicht erneut dokumentiert, solange es nicht fehlschlägt.
+Die Final-Review-Blocker sind im Code behoben. Ein Docs-Nachzug, der nur diesen Nachweis festhält, startet neues CI; das wird nicht erneut dokumentiert, solange es nicht fehlschlägt.
 
 Kein zweiter Foundation-E-Block auf einem anderen Branch beginnen.

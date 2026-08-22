@@ -119,6 +119,7 @@ Vergleich (`lib/readiness/vergleich.ts`) trennt Requirement-Ergebnisse von optio
 - `result=required` bei `requirementType=visa` heisst: für diese Option ist ein Visum nötig – nicht, dass genau dieses Credential verwendet werden muss.
 - Ein Winner entsteht nur bei expliziter option-level Semantik (`optionMandate=mandatory` oder `optionEligibility=not_allowed`) oder, nach explizit erlaubter Eligibility, bei belegter Reibung (`not_required` vor `required`).
 - Ausstellerland ist kein Citizenship-Ersatz. `relatedCitizenshipCountryCode` bleibt `null`, solange keine gespeicherte Relation existiert.
+- Geladene leere Child-Relationen sind autoritativ. Legacy-Singularfelder dürfen sie nicht wieder befüllen.
 
 Ohne Evidence oder ohne option-level Semantik:
 

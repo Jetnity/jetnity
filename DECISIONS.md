@@ -3052,6 +3052,35 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0123 – Kanonisch leer bleibt leer; Production-Reads expand-kompatibel
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Development; Production-Schema unverändert
+
+**Entscheidung:**
+
+- Geladene Child-Relationen (`[]` eingeschlossen) sind autoritativ. Legacy-Singularfelder dürfen sie nicht wieder befüllen.
+- Legacy-Fallback nur, wenn die Relation strukturell nicht geladen ist.
+- `reiseLaden()` versucht zuerst den Foundation-E-Graph. Nur bei eindeutig fehlender Child-Relation (`PGRST200`/`PGRST205`/`42P01` plus Tabellenname) fällt der Read auf `trip_travellers(*)` zurück. Andere Fehler bleiben Fehler.
+- Der Official-Fingerprint enthält die explizite `relatedCitizenshipCountryCode`.
+
+**Kontext:** Final Review PR #35. `party_schreiben()` lässt Legacy-Spalten stehen. Ein leeres Child-Array plus Legacy-Fallback würde gelöschte Citizenships/Dokumente wiederauferstehen lassen. Production hat die Child-Tabellen vor der separaten Migration nicht.
+
+**Alternativen:**
+
+1. *Legacy immer als Fallback bei leeren Children.* Source-of-Truth-Fehler.
+2. *Kanonischen Select ohne Fallback mergen.* Bricht Production-Reads bis zur Migration.
+3. *Bei jedem DB-Fehler Legacy lesen.* Verdeckt echte Ausfälle.
+
+**Begründung:** Expand/Contract verlangt Code-vor-Schema für Reads und fail-closed Writes. Gelöschte Nutzerwahrheit darf nicht aus deprecated Spalten zurückkehren.
+
+**Konsequenzen:**
+
+- Writes bleiben vor Production-Migration fail-closed; kein stilles Reduzieren auf Singularfelder.
+- Nach der Production-Migration ist der kanonische Select die alleinige Account-Wahrheit.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
