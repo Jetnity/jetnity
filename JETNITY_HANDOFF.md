@@ -252,4 +252,6 @@ Ein neuer Chat soll mit folgendem Satz übernehmen können:
 
 Dann zuerst diese Datei plus Produktmandat, Vision, Roadmap, UX-/Logic-/Continuity-/Workflow-Standards lesen, **PR #34 prüfen** und erst danach neue Arbeit planen.
 
+Foundation D ist auf Draft-PR #34 technisch umgesetzt. Nächster Schritt ist Review/Freigabe, nicht eine zweite Route-Foundation. Multi-Citizenship-/Dokumentwahl ist ein späterer Readiness-Schritt (`docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`) und darf das Traveller-Production-Schema in diesem PR nicht migrieren.
+
 Der Nutzer soll Jetnity, frühere Entscheidungen oder abgeschlossene Foundations nicht erneut erklären müssen.
