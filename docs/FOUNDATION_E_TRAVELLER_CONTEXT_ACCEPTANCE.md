@@ -56,7 +56,7 @@ Nachweise nach Anwendung:
 
 | Nachweis | Stand |
 | --- | --- |
-| `npm test` | **1317 pass / 0 fail** |
+| `npm test` | **1335 pass / 0 fail** |
 | Typecheck | **grün** (`tsc --noEmit`) |
 | Lint | **grün** (`next lint`, 0 warnings/errors) |
 | Hygiene | **grün** – `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` |
@@ -98,6 +98,10 @@ Automatisiert nachgewiesen:
 22. Kanonisch leere Child-Relationen bleiben leer trotz Legacy-Singularspalten
 23. Fehlende Foundation-E-Relation fällt lesend auf Legacy zurück; andere DB-Fehler nicht
 24. Explizite Document↔Citizenship-Relation ändert den Official Fingerprint; Issuer bleibt getrennt
+25. Bestehende Document-`clientRef` und `citizenshipClientRef` überleben Edit/Save; neue Docs bekommen stabile UUID-Refs
+26. Unauflösbare Traveller-Ref wird abgewiesen und degradiert nicht zu trip-level
+27. Unvollständige/widersprüchliche option-level Evidence erzeugt keinen Winner
+28. Explizites `citizenships: []` / `documents: []` bleibt leer; ungültige Party-Einträge verschwinden nicht still
 
 ---
 
@@ -109,7 +113,8 @@ Automatisiert nachgewiesen:
 - keine Production-Migration
 - kein echter Requirements-Provider
 - Guest→Account bleibt für Readiness ein nachgelagerter Schritt; nur Party ist atomar
-- Unabhängiger ChatGPT-Abschlussreview der Final-Review-Blocker steht aus
+- Unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_FINAL_DEPTH_REVIEW.md` steht aus
+- Branch ist noch nicht mit aktuellem `main` synchron; das folgt nach diesem Code-Pass
 - GitHub CI / Vercel auf dem Docs-Nachzug nach diesen Fixes folgt; ein reiner Nachweis-Commit wird nicht erneut dokumentiert, solange CI nicht fehlschlägt
 
 ---

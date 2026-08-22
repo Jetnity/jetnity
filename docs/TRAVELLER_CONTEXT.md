@@ -120,6 +120,9 @@ Vergleich (`lib/readiness/vergleich.ts`) trennt Requirement-Ergebnisse von optio
 - Ein Winner entsteht nur bei expliziter option-level Semantik (`optionMandate=mandatory` oder `optionEligibility=not_allowed`) oder, nach explizit erlaubter Eligibility, bei belegter Reibung (`not_required` vor `required`).
 - Ausstellerland ist kein Citizenship-Ersatz. `relatedCitizenshipCountryCode` bleibt `null`, solange keine gespeicherte Relation existiert.
 - Geladene leere Child-Relationen sind autoritativ. Legacy-Singularfelder dürfen sie nicht wieder befüllen.
+- Explizites `citizenships: []` / `documents: []` bleibt auch im gemeinsamen Parser leer.
+- Document-`clientRef` ist eine stabile Identität. `citizenshipClientRef` wird nur bewusst gesetzt oder bei Citizenship-Löschung genullt.
+- Traveller-spezifische Readiness ohne auflösbare Ref wird nicht trip-level.
 
 Ohne Evidence oder ohne option-level Semantik:
 

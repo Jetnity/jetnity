@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 22. August 2026  
-Arbeitsblock: **Foundation E – Traveller Context – Final-Review-Blocker-Fixes auf Draft PR #35**
+Arbeitsblock: **Foundation E – Traveller Context – Depth-Review-Blocker-Fixes auf Draft PR #35**
 
 ## 1. Aktueller Zustand
 
@@ -36,7 +36,7 @@ Foundation E läuft auf:
 
 | Nachweis | Ergebnis |
 | --- | --- |
-| `npm test` | 1317/1317 |
+| `npm test` | 1335/1335 |
 | Typecheck | grün |
 | Lint | grün |
 | Hygiene | grün |
@@ -62,11 +62,12 @@ Foundation E läuft auf:
 
 ## 5. Exakter nächster Schritt
 
-1. Unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_FINAL_REVIEW.md` in der Tiefe von `docs/PRODUCT_OWNER_REVIEW_DEPTH_MANDATE.md`.
-2. Draft bleibt Draft. Nicht Mark Ready, nicht mergen.
-3. Product Owner entscheidet separat über Merge.
-4. Production-Migration erst nach Merge und separater Freigabe.
+1. Depth-Review-Blocker aus `docs/PR35_CHATGPT_FINAL_DEPTH_REVIEW.md` sind im Code behoben (Dokumentidentität, Traveller-Readiness, Comparator, kanonisch leere Parser).
+2. Danach `origin/main` semantisch synchronisieren. Kein blinder ours/theirs.
+3. Auf dem synchronisierten Head komplettes Gate inkl. Actions-CI und UI-Audit.
+4. Draft bleibt Draft. Nicht Mark Ready, nicht mergen.
+5. Production-Migration erst nach Merge und separater Freigabe.
 
-Die Final-Review-Blocker sind im Code behoben. Ein Docs-Nachzug, der nur diesen Nachweis festhält, startet neues CI; das wird nicht erneut dokumentiert, solange es nicht fehlschlägt.
+Die GitHub-Meldung „2 checks success“ auf Docs-Heads ist Vercel/Preview, nicht `.github/workflows/ci.yml`. Kein Docs-Commit nur zum Festhalten von Checks.
 
 Kein zweiter Foundation-E-Block auf einem anderen Branch beginnen.

@@ -3081,6 +3081,37 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0124 – Stabile Dokumentidentität, fail-closed Traveller-Readiness und option-level Evidence
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Development; Production-Schema unverändert
+
+**Entscheidung:**
+
+- Bestehende Document-`clientRef` bleiben stabil. Neue Dokumente bekommen eine UUID-basierte Ref, nicht `document:{typ}:{issuer}`.
+- `citizenshipClientRef` wird geladen, gespeichert und bei Citizenship-Löschung kontrolliert genullt. Issuer wird nie zur Citizenship.
+- `travellerClientRef !== null` muss genau einen Traveller derselben Reise mit UUID auflösen. Sonst kein Write, auch nicht `traveller_id = null`.
+- Credential-Vergleich bleibt fail-closed bei unvollständiger Gruppe, `mandatory + not_allowed` und widersprüchlichen current Provider-Zeilen.
+- `travellerLegacyLesen()` expandiert Legacy nur, wenn `citizenships`/`documents` strukturell fehlen. Explizites `[]` bleibt leer.
+- Die Requirements-API lehnt ungültige Party-Einträge ab; kein stilles Entfernen einer Person.
+
+**Kontext:** Final Depth Review PR #35. Edit/Save zerstörte Document-Identität und Relationen. Unauflösbare Traveller-Refs wurden trip-level. Teil-Evidence konnte einen Winner erzeugen.
+
+**Alternativen:**
+
+1. *clientRef weiter aus Typ/Issuer bauen.* Kollision und Identitätsverlust.
+2. *Unbekannte Traveller-Ref als trip-level schreiben.* Source-of-Truth-Fehler.
+3. *Unvollständige Gruppen überspringen.* Winner aus Teil-Evidence.
+
+**Begründung:** Provider-Readiness braucht stabile Option-Identität, echte Traveller-Zuordnung und nur vollständig belegte Vergleiche.
+
+**Konsequenzen:**
+
+- Guest→Account-Readiness mit nicht auflösbarer Traveller-Ref bricht ab.
+- Branch muss danach noch mit aktuellem `main` synchronisiert werden; das ist ein separates Gate.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
