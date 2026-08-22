@@ -13,7 +13,7 @@ create unique index if not exists trip_items_id_reise_uidx
 create table public.trip_readiness_items (
   id uuid primary key default gen_random_uuid(),
   trip_id uuid not null,
-  user_id uuid not null default (select auth.uid()),
+  user_id uuid not null default auth.uid(),
   client_ref text not null,
   kind text not null,
   user_status text not null default 'open',

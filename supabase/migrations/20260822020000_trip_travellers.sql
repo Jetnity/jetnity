@@ -6,7 +6,7 @@
 create table public.trip_travellers (
   id uuid primary key default gen_random_uuid(),
   trip_id uuid not null,
-  user_id uuid not null default (select auth.uid()),
+  user_id uuid not null default auth.uid(),
   client_ref text not null,
   label text,
   nationality_country_code text,
