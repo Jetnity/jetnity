@@ -96,7 +96,7 @@ Status: **UMGESETZT AUF DRAFT-PR / DEVELOPMENT VERIFIZIERT / NICHT GEMERGT**
 - Audit: `docs/FOUNDATION_E_ARCHITECTURE_AUDIT.md`
 - Merge erst nach Review und ausdrücklicher Product-Owner-Freigabe
 - Development-Migrationen `20260822160000` und `20260822170000`; Production unverändert
-- Unabhängiges Review `docs/PR35_CHATGPT_INDEPENDENT_REVIEW.md`: drei Blocker, Fixes auf diesem Branch
+- Unabhängiges Review `docs/PR35_CHATGPT_INDEPENDENT_REVIEW.md` und Re-Review `docs/PR35_CHATGPT_REREVIEW.md`: Blocker-Fixes auf diesem Branch
 
 ### Harte Grenzen
 

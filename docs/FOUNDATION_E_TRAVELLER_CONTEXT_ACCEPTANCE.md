@@ -32,6 +32,7 @@ Alte Foundation-C-Singularfelder bleiben compatibility-only und sind nach Backfi
 
 - Development-Migration `20260822160000_traveller_context_intelligence.sql` **angewendet**
 - Development-Nachtrag `20260822170000_traveller_context_fk_delete.sql` **angewendet**
+- Development-Nachtrag `20260822180000_traveller_context_rereview.sql` **angewendet**
 - neue Tabellen: `trip_traveller_citizenships`, `trip_traveller_documents`
 - optionales `trip_readiness_items.traveller_id` mit Composite-FK
 - RPC `public.party_schreiben(jsonb)` – `SECURITY INVOKER`, fester `search_path`
@@ -46,7 +47,8 @@ Nachweise nach Anwendung:
 | `npm run db:anwenden` | angewendet |
 | `npm run db:rechte` | OK – 51 Tabellenrechte, jedes durch eine Policy gedeckt; RLS aktiv |
 | `npm run db:rls` | grün, inkl. neuer Child-Tabellen; anon/fremd abgewiesen |
-| `npm run db:sicherheit` | **207/207** |
+| `npm run db:sicherheit` | **208/208** |
+| `npm run db:parallelitaet` | **7/7**, parallele Citizenship-Inserts ohne Deadlock, Limit nie überschritten |
 
 ---
 
@@ -54,12 +56,12 @@ Nachweise nach Anwendung:
 
 | Nachweis | Stand |
 | --- | --- |
-| `npm test` | **1310 pass / 0 fail** |
+| `npm test` | **1311 pass / 0 fail** |
 | Typecheck | **grün** (`tsc --noEmit`) |
 | Lint | **grün** (`next lint`, 0 warnings/errors) |
 | Hygiene | **grün** – `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` |
 | Production Build | **grün** (`next build`, 38/38 Seiten) |
-| Trip-Workspace-UI-Audit nach Review-Fixes | **838 Kombinationen, 0 Fehler**, WebKit + Chromium. Viewports: 280, 320, 360, 390, 430, 768, 844×390, 1280. Bericht: `/opt/cursor/artifacts/trip_workspace_ui_audit.json` |
+| Trip-Workspace-UI-Audit nach Re-Review-Fixes | **838 Kombinationen, 0 Fehler**, WebKit + Chromium. Viewports: 280, 320, 360, 390, 430, 768, 844×390, 1280. Bericht: `/opt/cursor/artifacts/trip_workspace_ui_audit.json` |
 | Erster Audit-Lauf (vor Review-Fixes) | 16 Fehler, alle `readiness-user-done`: v1-Fingerprint wurde nach Foundation E korrekt stale. Fixture auf v2 gesetzt. |
 | Zweiter Audit-Lauf | **838/0** nach Fixture-Korrektur auf Head `17763238` |
 | Foundation-E-Zustände im Audit | `eine-staatsbuergerschaft`, `zwei-staatsbuergerschaften`, `dokument-fehlt`, `staatsbuergerschaft-fehlt`, `zwei-reisende`, `langes-label`, `provider-unavailable` |
@@ -90,6 +92,9 @@ Automatisiert nachgewiesen:
 16. explizit mandatory / not-allowed Optionen sind vergleichbar; gleichwertige Optionen nicht
 17. Citizenship-Löschung nullt nur `citizenship_id`; Traveller-Löschung entfernt traveller-spezifische Readiness
 18. Trip-Workspace-UI-Audit: 1/2 Citizenships, 2 Traveller, fehlendes Dokument, fehlende Citizenship, langes Label, Provider unavailable – WebKit + Chromium, 8 Viewports
+19. Legacy-Backfill (nationality=CH, issuer=CH) erzeugt Citizenship und Document, aber `citizenship_id` bleibt null
+20. Provider-Port transportiert `optionEligibility`/`optionMandate` nur über vertrauenswürdige current Evidence in die Engine
+21. Parallele Citizenship-Inserts deadlocken nicht und überschreiten Limit 8 nicht
 
 ---
 
@@ -101,8 +106,8 @@ Automatisiert nachgewiesen:
 - keine Production-Migration
 - kein echter Requirements-Provider
 - Guest→Account bleibt für Readiness ein nachgelagerter Schritt; nur Party ist atomar
-- Unabhängiger ChatGPT-Re-Review der drei behobenen Blocker steht aus
-- GitHub CI / Vercel auf Review-Fix-Head `5cb207d3` verifiziert; ein reiner Nachweis-Commit wird nicht erneut dokumentiert, solange CI nicht fehlschlägt
+- Unabhängiger ChatGPT-Abschlussreview der drei Re-Review-Blocker steht aus
+- GitHub CI / Vercel auf dem Docs-Nachzug nach diesen Fixes folgt; ein reiner Nachweis-Commit wird nicht erneut dokumentiert, solange CI nicht fehlschlägt
 
 ---
 

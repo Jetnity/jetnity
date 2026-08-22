@@ -3023,6 +3023,33 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 - `db:sicherheit` prüft Citizenship-Delete und Traveller-Delete
 - Production bleibt unverändert
 
+**Nachtrag, 22. August 2026:** Re-Review Blocker 1 und 3. Legacy-Backfill darf `citizenship_id` nicht aus gleichem Ausstellerland setzen. Parent-Lock ist `FOR NO KEY UPDATE`, damit parallele Child-Inserts nicht mit FK `KEY SHARE` deadlocken.
+
+---
+
+## ADR-0122 – Provider-Port trägt option-level Eligibility/Mandate
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Development; kein echter Provider
+
+**Entscheidung:** `RequirementsProviderZeile` transportiert optional `optionEligibility` und `optionMandate`. Die Engine übernimmt sie nur, wenn dieselbe Trust-/Freshness-Grenze wie für Requirement-Resultate erfüllt ist. Unbekannte Werte werden fail-closed zu `unknown`. Vergleich entscheidet nur bei `status=current` und `freshness=current`.
+
+**Kontext:** Der erste Vergleichsfix modellierte option-level Semantik nur auf `OfficialEvaluation`. Ein späterer Adapter hätte sie über den Port nicht liefern können.
+
+**Alternativen:**
+
+1. *Felder nur in Tests/OfficialEvaluation.* Nicht provider-ready.
+2. *Option-Felder ohne Trust-Grenze übernehmen.* Untrusted Winner.
+3. *Advisory Locks statt FOR NO KEY UPDATE.* Unnötig, sobald der Parent-Lock deadlockfrei ist.
+
+**Begründung:** Dieselbe Naht muss später Timatic oder einen anderen Adapter anschließen können, ohne Truth zu erfinden.
+
+**Konsequenzen:**
+
+- Engine-Tests laufen `RequirementsProviderZeile → engine → OfficialEvaluation → vergleich`
+- Factory bleibt `null`
+- Production unverändert
+
 ---
 
 ## Offene Widersprüche

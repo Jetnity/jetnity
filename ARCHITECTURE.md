@@ -359,7 +359,7 @@ PR #34 ist gemergt und auf Production. `lib/route/` leitet `RouteFacts` nur aus 
 
 ### Traveller Context (Foundation E)
 
-Draft-PR auf `feat/traveller-context-intelligence`. `trip_travellers` bleibt der stabile Parent. Kanonische Wahrheit für Credentials liegt in `trip_traveller_citizenships` und `trip_traveller_documents`. Account-Writes gehen über `party_schreiben()` in einer Transaktion. Guest Local Storage trägt dieselbe `TripTraveller`-Form; Legacy-Singularobjekte werden nur gelesen. Die Engine bewertet vorhandene Credential-Optionen getrennt; `requirementsProviderAus()` bleibt `null`. Ausstellerland ist kein Citizenship-Ersatz. Vergleich braucht option-level Eligibility/Mandate und erfindet keine Visa-Vorteile (ADR-0119, ADR-0120, ADR-0121). Production-Schema unverändert. Fachlich: [docs/TRAVELLER_CONTEXT.md](docs/TRAVELLER_CONTEXT.md).
+Draft-PR auf `feat/traveller-context-intelligence`. `trip_travellers` bleibt der stabile Parent. Kanonische Wahrheit für Credentials liegt in `trip_traveller_citizenships` und `trip_traveller_documents`. Account-Writes gehen über `party_schreiben()` in einer Transaktion. Guest Local Storage trägt dieselbe `TripTraveller`-Form; Legacy-Singularobjekte werden nur gelesen. Die Engine bewertet vorhandene Credential-Optionen getrennt; `requirementsProviderAus()` bleibt `null`. Ausstellerland ist kein Citizenship-Ersatz. Vergleich braucht option-level Eligibility/Mandate über den Provider-Port und erfindet keine Visa-Vorteile (ADR-0119, ADR-0120, ADR-0121, ADR-0122). Production-Schema unverändert. Fachlich: [docs/TRAVELLER_CONTEXT.md](docs/TRAVELLER_CONTEXT.md).
 
 ### Ortsbasis (Phase 3.1)
 

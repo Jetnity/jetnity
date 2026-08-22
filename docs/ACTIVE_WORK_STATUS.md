@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 22. August 2026  
-Arbeitsblock: **Foundation E – Traveller Context – Review-Blocker-Fixes auf Draft PR #35**
+Arbeitsblock: **Foundation E – Traveller Context – Re-Review-Blocker-Fixes auf Draft PR #35**
 
 ## 1. Aktueller Zustand
 
@@ -36,21 +36,20 @@ Foundation E läuft auf:
 
 | Nachweis | Ergebnis |
 | --- | --- |
-| `npm test` | 1310/1310 |
+| `npm test` | 1311/1311 |
 | Typecheck | grün |
 | Lint | grün |
 | Hygiene | grün |
 | Production-Build | grün, 38/38 Seiten |
-| Development-Migration `20260822160000` | angewendet |
-| Development-Migration `20260822170000` | angewendet; Live-FKs: Citizenship `SET NULL (citizenship_id)`, Readiness `CASCADE` |
+| Development-Migrationen `20260822160000`–`20260822180000` | angewendet |
+| Live-FKs | Citizenship `SET NULL (citizenship_id)`, Readiness `CASCADE` |
+| Live-Lock | `FOR NO KEY UPDATE`; Backfill-Relikte `citizenship_id` **0** |
 | `db:rechte` | OK, 51 Rechte |
 | `db:rls` | grün |
-| `db:sicherheit` | **207/207** inkl. Citizenship-Unlink, Traveller-Delete, 9. Citizenship |
+| `db:sicherheit` | **208/208** |
+| `db:parallelitaet` | **7/7**, inkl. parallele Citizenship-Inserts bei 7/8 ohne Deadlock |
 | Production-Schema | unverändert |
-| UI-Audit nach Review-Fixes | **838/838, 0 Fehler**, WebKit + Chromium, 8 Viewports |
-| Foundation-E-Auditfälle | 1 Citizenship, 2 Citizenships, 2 Traveller, Dokument fehlt, Citizenship fehlt, langes Label (40 Zeichen), Provider unavailable |
-| GitHub CI | **success** auf Head `5cb207d3` – https://github.com/Jetnity/jetnity/actions/runs/32596833189 |
-| Vercel Preview | **READY** auf `5cb207d3` – https://jetnity-l6141bwaw-jetnity-e1b93c82.vercel.app |
+| UI-Audit nach Re-Review-Fixes | **838/838, 0 Fehler**, WebKit + Chromium, 8 Viewports |
 
 ## 4. Harte Grenzen
 
@@ -63,11 +62,11 @@ Foundation E läuft auf:
 
 ## 5. Exakter nächster Schritt
 
-1. Unabhängiger ChatGPT-Re-Review von PR #35 gegen `docs/PR35_CHATGPT_INDEPENDENT_REVIEW.md`.
+1. Unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_REREVIEW.md`.
 2. Draft bleibt Draft. Nicht Mark Ready, nicht mergen.
 3. Product Owner entscheidet separat über Merge.
 4. Production-Migration erst nach Merge und separater Freigabe.
 
-Die drei Review-Blocker sind im Code behoben. Ein Docs-Nachzug, der nur diesen Nachweis festhält, startet neues CI; das wird nicht erneut dokumentiert, solange es nicht fehlschlägt.
+Die drei Re-Review-Blocker sind im Code behoben. Ein Docs-Nachzug, der nur diesen Nachweis festhält, startet neues CI; das wird nicht erneut dokumentiert, solange es nicht fehlschlägt.
 
 Kein zweiter Foundation-E-Block auf einem anderen Branch beginnen.

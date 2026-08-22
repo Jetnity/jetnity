@@ -145,7 +145,7 @@ Nicht erlaubt: `Schweizer Pass ist besser` oder vergleichbare Vorteilssprache oh
 
 | Umgebung | Stand |
 | --- | --- |
-| Development | Migrationen `20260822160000` und `20260822170000` |
+| Development | Migrationen `20260822160000`–`20260822180000` |
 | Production | unverändert; keine Foundation-E-Tabellen |
 
 Production-Migration braucht nach Merge eine **separate** Product-Owner-Freigabe.

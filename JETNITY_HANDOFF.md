@@ -418,8 +418,8 @@ Solange der Foundation-E-Draft-PR offen ist:
 
 1. `docs/ACTIVE_WORK_STATUS.md`, `docs/PR35_CHATGPT_INDEPENDENT_REVIEW.md` und `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md` lesen,
 2. Draft PR #35 bleibt Draft; nicht mergen, nicht Mark Ready,
-3. Review-Blocker 1–3 sind im Code behoben (FK-Delete, Issuer≠Citizenship, Vergleichssemantik); UI-Audit 838/0 erneut grün,
-4. danach erneuter unabhängiger ChatGPT-Review,
+3. Re-Review-Blocker sind im Code behoben (Backfill ohne erfundene Relation, Provider-Port option-level, `FOR NO KEY UPDATE` + Paralleltest); UI-Audit 838/0 erneut grün,
+4. danach unabhängiger ChatGPT-Abschlussreview,
 5. Product Owner separat um Merge-Freigabe fragen,
 6. Production-Migration erst nach Merge und separater Freigabe.
 
