@@ -50,6 +50,8 @@ export type RequirementsProviderZeile = {
   requirementType: OfficialRequirementType
   result: OfficialResult | 'insufficient_context'
   officialClass?: OfficialClass
+  optionEligibility?: 'allowed' | 'not_allowed' | 'unknown'
+  optionMandate?: 'mandatory' | 'not_mandatory' | 'unknown'
   authority?: string | null
   sourceUrl?: string | null
   checkedAt?: string | null

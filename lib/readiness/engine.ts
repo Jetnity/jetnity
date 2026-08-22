@@ -16,6 +16,8 @@ import {
   officialEvidenceVertrauenswuerdig,
   officialFrische,
   officialLeer,
+  optionEligibilityLesen,
+  optionMandateLesen,
   providerNameLesen,
   quelleUrlLesen,
   regelReferenzLesen,
@@ -404,6 +406,8 @@ function zeileUebernehmen(
         : zeile.officialClass === 'requirement'
           ? 'requirement'
           : 'unknown',
+    optionEligibility: uebernehmbar ? optionEligibilityLesen(zeile.optionEligibility) : undefined,
+    optionMandate: uebernehmbar ? optionMandateLesen(zeile.optionMandate) : undefined,
     missingFacts: [],
     evidence: {
       provider,

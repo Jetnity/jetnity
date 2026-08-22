@@ -53,8 +53,12 @@ function mandateVon(evaluation: OfficialEvaluation): 'mandatory' | 'not_mandator
     : 'unknown'
 }
 
+function entscheidbar(evaluation: OfficialEvaluation): boolean {
+  return evaluation.status === 'current' && evaluation.freshness === 'current'
+}
+
 function rangFuer(evaluation: OfficialEvaluation): CredentialVergleichRang {
-  if (evaluation.status !== 'current') return 'not_comparable'
+  if (!entscheidbar(evaluation)) return 'not_comparable'
   if (eligibilityVon(evaluation) === 'not_allowed') return 'option_not_allowed'
   if (mandateVon(evaluation) === 'mandatory') return 'option_mandatory'
   if (eligibilityVon(evaluation) === 'allowed') return 'eligible_lower_friction'
@@ -88,7 +92,7 @@ export function credentialOptionenVergleichen(
     }
   }
 
-  const aktuelle = evaluations.filter((evaluation) => evaluation.status === 'current')
+  const aktuelle = evaluations.filter(entscheidbar)
   if (aktuelle.length < 2) {
     return {
       comparable: false,

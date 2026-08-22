@@ -5,6 +5,7 @@ import assert from 'node:assert/strict'
 
 import { officialRequirementsPruefen, requirementsEvaluationsPruefen } from '@/lib/readiness/anforderungen'
 import { officialFingerprint, requirementsAuswerten, requirementsFuerReise, travellerGeloeschtPruefen } from '@/lib/readiness/engine'
+import { VERGLEICH_NICHT_VERFUEGBAR, credentialOptionenVergleichen } from '@/lib/readiness/vergleich'
 import {
   officialAktionAusQuelle,
   officialEvidenceVertrauenswuerdig,
@@ -50,7 +51,7 @@ function reisende(
             clientRef: `document:${teil.documentType ?? 'unknown'}:${teil.documentIssuingCountryCode ?? 'xx'}`,
             documentType: teil.documentType ?? 'unknown',
             issuingCountryCode: teil.documentIssuingCountryCode ?? null,
-            citizenshipClientRef: teil.nationalityCountryCode ? `citizenship:${teil.nationalityCountryCode}` : null,
+            citizenshipClientRef: null,
             expiresOn: teil.documentExpiresOn ?? null,
             createdAt: jetzt,
             updatedAt: jetzt,
@@ -1257,5 +1258,170 @@ describe('Travel Requirements Engine', () => {
     const altVisa = (await requirementsAuswerten(anfrage, abgelaufen)).find((e) => e.requirementType === 'visa')
     assert.equal(altVisa?.result, 'unknown')
     assert.equal(altVisa?.freshness, 'recheck_needed')
+  })
+
+  test('Provider-Port trägt option-level Semantik nur über vertrauenswürdige current Evidence', async () => {
+    const anfrage = {
+      originCountryCode: 'CH',
+      destinationCountryCodes: ['TH'],
+      transitCountryCodes: [],
+      startDate: '2026-09-12',
+      endDate: '2026-09-16',
+      travellers: [
+        {
+          clientRef: 'traveller:1',
+          residenceCountryCode: 'CH',
+          citizenshipCountryCodes: ['CH', 'RS'],
+          documents: [
+            {
+              clientRef: 'document:passport:CH',
+              documentType: 'passport' as const,
+              issuingCountryCode: 'CH',
+              expiresOn: '2030-01-01',
+              citizenshipCountryCode: null,
+            },
+            {
+              clientRef: 'document:passport:RS',
+              documentType: 'passport' as const,
+              issuingCountryCode: 'RS',
+              expiresOn: '2029-01-01',
+              citizenshipCountryCode: null,
+            },
+          ],
+          credentialOptions: [
+            {
+              optionRef: 'traveller:1:document:passport:CH',
+              documentClientRef: 'document:passport:CH',
+              documentType: 'passport' as const,
+              issuingCountryCode: 'CH',
+              expiresOn: '2030-01-01',
+              relatedCitizenshipCountryCode: null,
+            },
+            {
+              optionRef: 'traveller:1:document:passport:RS',
+              documentClientRef: 'document:passport:RS',
+              documentType: 'passport' as const,
+              issuingCountryCode: 'RS',
+              expiresOn: '2029-01-01',
+              relatedCitizenshipCountryCode: null,
+            },
+          ],
+        },
+      ],
+    }
+
+    const trusted: RequirementsProvider = {
+      name: 'test-double',
+      async evaluate() {
+        return [
+          {
+            travellerClientRef: 'traveller:1',
+            credentialOptionRef: 'traveller:1:document:passport:CH',
+            destinationCountryCode: 'TH',
+            requirementType: 'visa',
+            result: 'not_required',
+            officialClass: 'requirement',
+            optionEligibility: 'allowed',
+            optionMandate: 'not_mandatory',
+            authority: 'Test',
+            sourceUrl: 'https://example.test/visa',
+            checkedAt: JETZT,
+            validUntil: '2026-12-31',
+          },
+          {
+            travellerClientRef: 'traveller:1',
+            credentialOptionRef: 'traveller:1:document:passport:RS',
+            destinationCountryCode: 'TH',
+            requirementType: 'visa',
+            result: 'required',
+            officialClass: 'requirement',
+            optionEligibility: 'not_allowed',
+            optionMandate: 'not_mandatory',
+            authority: 'Test',
+            sourceUrl: 'https://example.test/visa',
+            checkedAt: JETZT,
+            validUntil: '2026-12-31',
+          },
+        ]
+      },
+    }
+
+    const evaluations = await requirementsAuswerten(anfrage, trusted)
+    const visa = evaluations.filter((eintrag) => eintrag.requirementType === 'visa')
+    assert.equal(visa.find((eintrag) => eintrag.credentialOptionRef?.endsWith(':CH'))?.optionEligibility, 'allowed')
+    assert.equal(visa.find((eintrag) => eintrag.credentialOptionRef?.endsWith(':RS'))?.optionEligibility, 'not_allowed')
+    const vergleich = credentialOptionenVergleichen(visa)
+    assert.equal(vergleich.comparable, true)
+    assert.equal(vergleich.winnerOptionRef, 'traveller:1:document:passport:CH')
+
+    const untrusted: RequirementsProvider = {
+      name: 'test-double',
+      async evaluate() {
+        return [
+          {
+            travellerClientRef: 'traveller:1',
+            credentialOptionRef: 'traveller:1:document:passport:CH',
+            destinationCountryCode: 'TH',
+            requirementType: 'visa',
+            result: 'required',
+            optionEligibility: 'allowed',
+            optionMandate: 'mandatory',
+            checkedAt: JETZT,
+          },
+          {
+            travellerClientRef: 'traveller:1',
+            credentialOptionRef: 'traveller:1:document:passport:RS',
+            destinationCountryCode: 'TH',
+            requirementType: 'visa',
+            result: 'not_required',
+            optionEligibility: 'not_allowed',
+            checkedAt: JETZT,
+          },
+        ]
+      },
+    }
+    const unsicher = (await requirementsAuswerten(anfrage, untrusted)).filter((eintrag) => eintrag.requirementType === 'visa')
+    assert.equal(unsicher[0]?.optionEligibility, undefined)
+    assert.equal(unsicher[0]?.optionMandate, undefined)
+    assert.equal(credentialOptionenVergleichen(unsicher).comparable, false)
+    assert.equal(credentialOptionenVergleichen(unsicher).reason, VERGLEICH_NICHT_VERFUEGBAR)
+
+    const garbage: RequirementsProvider = {
+      name: 'test-double',
+      async evaluate() {
+        return [
+          {
+            travellerClientRef: 'traveller:1',
+            credentialOptionRef: 'traveller:1:document:passport:CH',
+            destinationCountryCode: 'TH',
+            requirementType: 'visa',
+            result: 'not_required',
+            officialClass: 'requirement',
+            optionEligibility: 'yes' as never,
+            optionMandate: 'must' as never,
+            authority: 'Test',
+            sourceUrl: 'https://example.test/visa',
+            checkedAt: JETZT,
+            validUntil: '2026-12-31',
+          },
+          {
+            travellerClientRef: 'traveller:1',
+            credentialOptionRef: 'traveller:1:document:passport:RS',
+            destinationCountryCode: 'TH',
+            requirementType: 'visa',
+            result: 'required',
+            officialClass: 'requirement',
+            optionEligibility: 'allowed',
+            authority: 'Test',
+            sourceUrl: 'https://example.test/visa',
+            checkedAt: JETZT,
+            validUntil: '2026-12-31',
+          },
+        ]
+      },
+    }
+    const normalisiert = (await requirementsAuswerten(anfrage, garbage)).filter((eintrag) => eintrag.requirementType === 'visa')
+    assert.equal(normalisiert.find((eintrag) => eintrag.credentialOptionRef?.endsWith(':CH'))?.optionEligibility, 'unknown')
+    assert.equal(credentialOptionenVergleichen(normalisiert).comparable, false)
   })
 })

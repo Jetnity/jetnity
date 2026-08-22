@@ -82,6 +82,16 @@ export type OfficialEvaluation = {
   action: OfficialAction | null
 }
 
+export function optionEligibilityLesen(wert: unknown): 'allowed' | 'not_allowed' | 'unknown' {
+  if (wert === 'allowed' || wert === 'not_allowed' || wert === 'unknown') return wert
+  return 'unknown'
+}
+
+export function optionMandateLesen(wert: unknown): 'mandatory' | 'not_mandatory' | 'unknown' {
+  if (wert === 'mandatory' || wert === 'not_mandatory' || wert === 'unknown') return wert
+  return 'unknown'
+}
+
 export function officialAktionAusQuelle(url: unknown): OfficialAction | null {
   const href = quelleUrlLesen(url)
   return href ? { kind: 'open_official_source', href } : null
