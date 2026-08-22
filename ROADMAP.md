@@ -168,6 +168,8 @@ Vor Aktivierung zwingend prüfen:
 
 Kein Vertrag und keine laufenden Kosten ohne separate Freigabe.
 
+Vor Provider-Aktivierung zusätzlich: Mehrfachstaatsbürgerschaft / mehrere Reisedokumente (`docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`). Das ist kein Foundation-D-Schema und keine Production-Migration in PR #34.
+
 ---
 
 ## 4. Extern blockiert / Provider-Zugänge fehlen
