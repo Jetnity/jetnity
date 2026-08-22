@@ -110,7 +110,7 @@ begin
   where id = new.traveller_id
     and trip_id = new.trip_id
     and user_id = new.user_id
-  for update;
+  for no key update;
 
   if tg_table_name = 'trip_traveller_citizenships' then
     if (
@@ -200,12 +200,9 @@ select
   'document:' || coalesce(t.document_type, 'unknown') || ':' || coalesce(t.document_issuing_country_code, 'xx'),
   coalesce(t.document_type, 'unknown'),
   t.document_issuing_country_code,
-  c.id,
+  null,
   t.document_expires_on
 from public.trip_travellers t
-left join public.trip_traveller_citizenships c
-  on c.traveller_id = t.id
- and c.country_code = t.document_issuing_country_code
 where
   t.document_type is not null
   or t.document_issuing_country_code is not null

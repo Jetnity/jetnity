@@ -40,7 +40,7 @@ begin
   where id = new.traveller_id
     and trip_id = new.trip_id
     and user_id = new.user_id
-  for update;
+  for no key update;
 
   if tg_table_name = 'trip_traveller_citizenships' then
     if (
