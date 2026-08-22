@@ -1,308 +1,222 @@
 # Jetnity – Roadmap
 
-Stand: 22. August 2026
-
-Diese Datei ist die operative Roadmap. Historische Detailstände bleiben über Git, Pull Requests und `DECISIONS.md` nachvollziehbar. Für den aktuellen Übergabestand zusätzlich `JETNITY_HANDOFF.md` und `docs/CONTINUITY_STANDARD.md` lesen.
-
-## Übersicht
-
-| Phase | Inhalt | Status |
-| --- | --- | --- |
-| Phase 0 | V2-Basis, Build, CI, Design-Tokens, Dokumentation | **fertig** |
-| Querschnitt | Mobile- und Responsive-Qualität der V2-Seiten | **abgeschlossen, in Production verifiziert** |
-| Phase 1.1–1.5 | V2-Sicherheit, Auth, Datenbank-Baseline, Reiseschema, Persistenz | **fertig** |
-| Phase 2.1 | natürliche Sprache → strukturierter Reisevorschlag | **fertig; Production-Modellweg aus** |
-| Phase 2.2 | bestehende Reise per Sprache ändern | **fertig, nach `main` gemergt; Production-Modellweg aus** |
-| Phase 3.1 | Flight Foundation + erster Duffel-Adapter | **fertig, nach `main` gemergt; Production-Flugsuche aus** |
-| Phase 3.2 | Hotel Foundation + Quartierlogik + 3.2b/3.2c-Härtung | **fertig, nach `main` gemergt; Production-Hotelsuche aus** |
-| Phase 3.3 | Activities Foundation + Tageskontext + Ranking + UI-Audit | **fertig, nach `main` gemergt; Production-Aktivitätensuche aus** |
-| Phase 3.4 | erster echter Hotel-Suchadapter | **wartet / extern blockiert durch Booking.com-Zugang; HBX/Hotelbeds Backup** |
-| Querschnitt | Trip Workspace Mobile UX Iteration 1–3 | **fertig, nach `main` gemergt (PR #27)** |
-| Querschnitt | Trip Coverage & Booking Status | **auf `main` (PR #29, `211872c1`); Production-Booking-Migration nach Nutzerfreigabe angewendet** |
-| Foundation-Track A | Mobilität & Transfers – Bahn, Bus, Fähre, Transfers | **fertig, nach `main` gemergt (PR #30); Production-Schema angewendet, Suche aus** |
-| Foundation-Track B | Mietwagen Foundation | **fertig, nach `main` gemergt (PR #31)**; Schema auf Production; Suche aus |
-| Foundation-Track C | Travel Readiness & Dokumente Foundation | **Draft-PR #32**; reviewbar; Development-Migration; nicht mergen; kein Production-Schema |
-| Foundation-Track D | Gesamt-Abdeckung im Reisegraphen erweitern | geplant nach C |
-| Phase 3.5 | erster echter Activity-Suchadapter | geplant; bei fehlendem Zugang extern blockiert |
-| Phase 3.6 | echte Mobilitäts-/Transferprovider auf Foundation A | geplant |
-| Phase 4 | Launch-Reife, Monetarisierung, Production-Freigaben | geplant |
-
-## Aktueller stabiler Stand
+Stand: 22. August 2026  
+Status: **operativer Stand nach Abschluss von Foundation C**
 
-### Phase 3.1 – Flight Foundation
+Für Entscheidungen zusätzlich lesen:
 
-Abgeschlossen und auf `main`.
+- `JETNITY_PRODUCT_MANDATE.md`
+- `JETNITY_VISION.md`
+- `JETNITY_HANDOFF.md`
+- `ARCHITECTURE.md`
+- `DECISIONS.md`
+- `docs/LOGIC_STANDARD.md`
+- `docs/CONTINUITY_STANDARD.md`
 
-- provider-neutrale Flugdomäne
-- Duffel als erster Adapter
-- deterministisches, provisionsneutrales Ranking
-- geschlossene Jetnity-Suchroute
-- lokale Airport-/Place-Basis
-- Production-Flugsuche bleibt hart aus
-- echter Duffel-Test mit Sandbox-Token wird separat nachgeholt
+Leitsatz:
 
-### Phase 3.2 – Hotel Foundation
+> **Einfach für den Nutzer. Streng logisch im Inneren. Eine Reise, eine Wahrheit.**
 
-Abgeschlossen und auf `main`.
+---
 
-- provider-neutrale Hotel-Domäne und Suchpipeline
-- Quartier-/Gegendlogik vor der konkreten Hotelwahl
-- deterministisches, provisionsneutrales Ranking
-- serverseitiger, kontextgebundener `HotelNachweis`
-- Browser darf kommerzielle Hotelfakten nicht selbst setzen
-- Request-Body wird vor großer Allokation begrenzt
-- echter Hotelprovider noch nicht angebunden
-- Production-Hotelsuche bleibt hart aus
-
-Providerstrategie: `docs/HOTEL_PROVIDER_STRATEGY.md`.
-
-Verbindliche Reihenfolge:
-
-1. Booking.com Demand API versuchen
-2. HBX / Hotelbeds als Backup
-3. Expedia Rapid später prüfen
-4. langfristig mehrere Quellen nur bei echtem Produktnutzen
+## 1. Abgeschlossen / auf `main`
 
-### Phase 3.3 – Activities Foundation
+### Produkt- und Qualitätsfundament
 
-**Abgeschlossen, gemergt und Production-deployt.**
+- Jetnity V2 Produktvision
+- verbindliches Product Mandate: führendes intelligentes Reiseplanungs-/Reisebegleitungsprodukt anstreben
+- Product Quality Standard
+- Logic Standard
+- Continuity Standard
+- verbindlicher ChatGPT/Cursor-Workflow
+- Mobile-first Design-System und Trip Workspace
 
-Pull Request #24 wurde am 20. August 2026 per Squash Merge nach `main` übernommen.
+### Reise-Kern
 
-Merge-Commit:
-
-`2fa0f16a43ebb41c9e453013c38a6eb4979b00ce`
+- Reiseidee / Trip Builder Foundation
+- Trip-Persistenz
+- Guest → Account Übernahme
+- Trip Workspace
+- natürliche Reiseänderung / Revisionslogik
+- gemeinsamer Reisegraph
+- Booking Status / Coverage
 
-Abschlussstand:
+### Reiseprodukte
 
-- provider-neutrale Activity-Domäne
-- geschlossene `POST /api/activities/search`
-- Tageskontext aus dem Reisegraphen
-- deterministisches, provisionsneutrales Ranking
-- explizite Zeit-/Konfliktlogik; unbekannt bleibt unbekannt
-- serverseitige `ActivityNachweis`-Naht
-- Konto-Übernahme fail closed, solange kein echter Provider-Nachweis existiert
-- Browser sendet bei kommerzieller Konto-Übernahme nur Kennungen
-- Speicherung auf bestehendem `trip_items.kind = activity`
-- keine Migration nötig
-- Production-Aktivitätensuche hart aus
-- kein Provider, kein Key/Secret, keine Fake-Aktivitäten im Produktweg
-- `/ui-audit/activities` in Production unabhängig vom Audit-Flag immer 404
+- Phase 3.1 – Flight Foundation
+- Phase 3.2 / 3.2c – Hotel Foundation
+- Phase 3.3 / 3.3b / 3.3c – Activities Foundation
+- Foundation A – Mobilität & Transfers
+- Foundation B – Mietwagen
 
-Qualität vor Merge:
+### Foundation C – Automatic Travel Requirements & Readiness
 
-- `npm test`: **1001/1001**
-- Typecheck grün
-- Lint grün
-- Hygiene grün
-- Production-Build grün
-- GitHub CI grün
-- Vercel Preview grün
-- WebKit + Chromium Activities-Audit: **184 Kombinationen, 0 Fehler**
-- 13 Zustände × 7 Viewports × 2 Engines plus Interaktions-/Race-Prüfungen
+**Abgeschlossen, gemergt und Production-Schema verifiziert.**
 
-## Nächster Hauptblock – Phase 3.4
+- PR #32 per Squash nach `main`
+- Merge-Commit: `b50d2ce9ebc4e50da858f67258f94f887b183f79`
+- Production-Migrationen:
+  - `20260822010000_trip_readiness_items`
+  - `20260822020000_trip_travellers`
+- RLS / Owner-Isolation verifiziert
+- Vercel Production READY
+- Acceptance: `docs/PR32_PRODUCTION_MIGRATION_ACCEPTANCE.md`
 
-### Erster echter Hotel-Suchadapter
+Nicht erneut bauen.
 
-**Status: WARTET / EXTERN BLOCKIERT.**
+---
 
-Ziel: Die bereits fertige Hotelarchitektur erstmals mit echten Hotelpreisen, Verfügbarkeiten und Providerfakten verbinden.
+## 2. Foundation C – nächste Abhängigkeiten, nicht Teil des abgeschlossenen Blocks
 
-**Primärer externer Blocker:** gültiger Booking.com Demand API / Managed Affiliate Partner Zugang. Dokumentierter Backup-Weg: HBX / Hotelbeds.
+### A. Strukturierte Origin-/Transit-Fakten
 
-Ohne gültigen Zugang wird kein Booking.com-Adapter simuliert und keine Fake-Integration gebaut.
+Status: **offen / wichtig**
 
-Sobald Zugang vorliegt:
+Ziel:
 
-- echten `HotelProvider` implementieren
-- Rohdaten in das neutrale Jetnity-Modell normalisieren
-- Preise/Verfügbarkeit/Stornierung serverseitig verifizieren
-- echten `HotelNachweis` anbinden
-- Search und Affiliate-/Redirect-Pfad getrennt halten
-- bestehendes Quartier- und Hotelranking unverändert provisionsneutral nutzen
-- echte Hotelkarten im Trip Workspace nur aus echten Providerantworten zeigen
-- Error/Timeout/Rate-Limit/Provider-Ausfall sauber behandeln
-- Preview-End-to-End-Test und Mobile-/Browser-Audit durchführen
-- Production-Hotelsuche weiterhin aus lassen, bis separat freigegeben
+- Flight-/Itinerary-Daten sollen strukturierte Origin-/Transit-Ländercodes in den gemeinsamen Reisegraphen liefern.
+- `routeFactsAusReise()` wird dadurch mit echter Evidence gespeist.
+- Kein Raten aus Ortsnamen.
 
-### Querschnitt – Trip Workspace Mobile UX Iteration 1–3
+Nutzen:
 
-**Auf `main` gemergt** als Pull Request #27, Merge-Commit `70e471b00c7505356fe13f8185b204200c4bb781`.
+- automatische Transit-Requirements
+- bessere Reiseänderungslogik
+- bessere Mobilitäts-/Connection-Prüfungen
+- Grundlage für spätere Timatic-Auswertung.
 
-- kompakter Reisekopf, klebende Bereichsnavigation, Übersicht als Default
-- sichtbare Mobile-Bereiche waren Übersicht, Flüge, Unterkunft, Aktivitäten; der Tagesplan liegt in der Übersicht. Foundation A ergänzt Mobilität als fünften Bereich.
-- Desktop-Arbeitsansicht bleibt
-- keine Production-Datenbankänderung, Provider-Suchen unverändert aus
+### B. Echter Travel-Requirements-Provider
 
-### Querschnitt – Trip Coverage & Booking Status
+Status: **offen / extern**
 
-Gezielter Dashboard-Block, parallel zu Phase 3.4, ohne Provider-Aktivierung. **Auf `main` gemergt** als Pull Request #29, Merge-Commit `211872c1aad0e002d81f5ea1fb2d7eef4490d4b7`.
+Bevorzugter aktueller Kandidat: IATA Timatic / Timatic AutoCheck.
 
-- Branch war `feat/trip-coverage-booking-status`
-- Status: **auf `main`**
-- ehrliche Flug-/Nachtabdeckung aus dem Reisegraphen
-- expliziter manueller Buchungsstatus (`unconfirmed` / `booked`, Quelle nur `user`)
-- Bestand oberhalb der bestehenden Suche
-- Migration `20260821100000_trip_items_booking_status.sql` am 21. August 2026 nach ausdrücklicher Nutzerfreigabe auf Production angewendet und verifiziert
-- Production-Spalten `booking_status`, `booking_source`, `booking_confirmed_at` vorhanden
-- vier Booking-CHECK-Constraints vorhanden
-- `reise_anlegen(jsonb)` enthält Booking-Felder
-- bestehende Production-Zeilen korrekt als `unconfirmed`; Verifikationsabfrage: **0 ungültige Booking-Zeilen**
-- Trip-Workspace-Audit nach Visibility-Fix: **278 Kombinationen, 0 Fehler**, inklusive Wechselketten 390/430 px
-- Activities-Regression: **184 Kombinationen, 0 Fehler**
-- echter iPhone-Nachtest der Tab-Sichtbarkeit: **bestanden**
-- Provider-Suchen/Kill-Switches unverändert aus
+Vor Aktivierung zwingend prüfen:
 
-## Provider-unabhängiger Foundation-Track während Phase 3.4 wartet
+- Preis / Vertragsmodell
+- Lizenz und erlaubte Nutzung
+- Coverage
+- Rate Limits
+- Caching-Regeln
+- Datenhaltung / Datenschutz
+- API-Eigenschaften
+- Health-/Vaccination-Abdeckung
+- offizielle Source-/Action-Möglichkeiten.
 
-Die Wartezeit auf externe Providerzugänge wird genutzt, um Jetnity funktional bis zu dem Punkt vorzubereiten, an dem später nur noch echte Provider/Nachweise angeschlossen werden müssen. Keine Fake-Suchen, keine erfundenen Fahrpläne und keine überbreite Transportplattform.
+Kein Vertrag und keine laufenden Kosten ohne separate Freigabe.
 
-### Foundation A – Mobilität & Transfers
+---
 
-**Abgeschlossen und auf `main` (PR #30).** Schema-Migration `20260821120000` ist auf Production angewendet. Die Mobilitätssuche bleibt hart aus. Phase 3.4 bleibt wartend.
+## 3. Extern blockiert / Provider-Zugänge fehlen
 
-Gemeinsames Reisegraph-Modell für Bahn, Bus, Fähre und Transfer:
+### Phase 3.4 – echter Hotelprovider
 
-- persistenter Planpunkt bleibt `trip_items.kind = transfer`
-- strukturierte optionale Spalten statt JSON oder 1:1-Tabelle (ADR-0090)
-- konservative `Bewegungskante`-Abdeckung (ADR-0091): Transfer nur bei Start + Ziel + Datum; ein Datum allein macht keinen Flug zur Abdeckung
-- manueller Buchungsstatus analog zu Flug/Stay
-- geschlossene Suchnaht, Factory/Nachweis `null`, Kill Switch `JETNITY_MOBILITY_AKTIV`
-- ein Workspace-Bereich „Mobilität“, keine vier Tabs
+Status: **WARTET / EXTERN BLOCKIERT**
 
-Fachdoku: [docs/MOBILITY.md](docs/MOBILITY.md). Auftrag: [docs/CURSOR_MOBILITY_TRANSFERS_FOUNDATION_TASK.md](docs/CURSOR_MOBILITY_TRANSFERS_FOUNDATION_TASK.md).
+Bevorzugte Reihenfolge:
 
-Nicht in diesem Block: Mietwagen, Kreuzfahrten, echter Provider, Fake-Fahrpläne/Preise, Production-Aktivierung.
+1. Booking.com Demand API / Managed Affiliate Partner
+2. HBX / Hotelbeds
+3. Expedia Rapid später
 
-### Foundation B – Mietwagen
+Keine Fake-Adapter, keine erfundenen Preise oder Verfügbarkeiten.
 
-**Abgeschlossen und auf `main` (PR #31).** Production-Schema `20260821200000` ist angewendet; Production-Suche bleibt aus. Nicht erneut bauen.
+### Weitere echte Provider
 
-Nachweis 22. August 2026: Tests **1165/1165**, Typecheck/Lint/Hygiene/Production-Build grün, Development-DB-Checks grün, Workspace-Audit **502/0**, Activities-Regression **184/0**. ADR-0094 und ADR-0095 schließen die Truth- und Ranking-Label-Befunde. Echter iPhone-Preview-Test **bestanden** (`docs/PR31_REAL_DEVICE_ACCEPTANCE.md`). Production-Migration **verifiziert** (`docs/PR31_PRODUCTION_MIGRATION_ACCEPTANCE.md`). Merge nur nach separater Freigabe.
+- Flight Production Provider: separat freigeben
+- Activities Provider: separat evaluieren/freigeben
+- Mobility Provider: separat evaluieren/freigeben
+- Rental Car Provider: separat evaluieren/freigeben
+- Travel Requirements Provider: separat evaluieren/freigeben
 
-Provider-neutrales Modell:
+Production-Suchen bleiben bis dahin deaktiviert.
 
-- persistenter Planpunkt `trip_items.kind = rental_car`
-- Abhol-/Rückgabeort über vorhandene Ortsfelder
-- Abhol-/Rückgabezeit über vorhandene Zeitfelder
-- Fahrzeugklasse/Getriebe/Vermieter nur als bekannte Fakten
-- Preis/Booking nur als Nutzerfakt; Quelle `user`
-- kein automatisches Covering einer Bewegungskante
-- geschlossene Suchnaht, Factory/Nachweis `null`, Kill Switch `JETNITY_RENTAL_CAR_AKTIV`
-- UX im bestehenden Bereich Mobilität, kein sechster Tab
+---
 
-Fachdoku: [docs/RENTAL_CARS.md](docs/RENTAL_CARS.md). Auftrag: [docs/CURSOR_RENTAL_CAR_FOUNDATION_TASK.md](docs/CURSOR_RENTAL_CAR_FOUNDATION_TASK.md).
+## 4. Empfohlene nächste interne Priorität
 
-Nicht in diesem Block: echter Provider, Fake-Angebote, Führerschein-/Zahlungsdaten, Production-Aktivierung.
+Solange externe Provider-Zugänge fehlen, bevorzugt ein Block mit hohem Produktwert und ohne Fake-Daten:
 
-### Foundation C – Travel Readiness & Dokumente
+### Priorität 1 – Route & Transit Intelligence Foundation
 
-**Draft-PR #32**, Branch `feat/travel-readiness-foundation`. Nicht mergen. Keine Production-Migration. Final Architecture Review nach `docs/CURSOR_PR32_FINAL_ARCHITECTURE_REVIEW.md`.
+- strukturierte Route-/Transit-Fakten im Reisegraphen
+- Flight-/Itinerary-Evidence statt Ortsnamen-Raten
+- Auswirkungen auf Readiness, Connections, Mobilität und Reiseänderungen
+- keine Provider-Erfindungen
 
-Automatic Travel Requirements & Readiness:
+Warum hoch priorisiert:
 
-- eigene Tabelle `trip_readiness_items`, kein neuer `trip_items.kind`
-- trip-spezifischer Reisendenkontext `trip_travellers`
-- Official Requirement Truth bleibt ohne Provider `unknown`
-- Nutzer-Häkchen sind User Evidence, keine Visa-Bestätigung
-- Context-Fingerprint und Freshness/Recheck
-- progressive Missing Facts, keine Dokumentnummern
-- API liefert strukturierte `evaluations[]`; Legacy-`official` kollabiert die Engine nicht
-- Official Evidence vor `required`/`not_required`/`conditional` provider-neutral validiert (Authority oder Rule Reference; Source URL optional)
-- untrusted Evidence darf Freshness nicht `current` lassen
-- Provider-Port async; Throw/Timeout fail closed
-- UI kann gelieferte `evaluations[]` empfangen; Legacy-`official` entscheidet nicht
-- Multi-Transit bleibt vollständig, auch bei Teilzeilen; unangefragte Transitländer werden ignoriert
-- Provider kann `insufficient_context` + `missingFacts` liefern
-- Origin-/Transit-Ländercodes sind eine leere Route-Naht, keine Ableitung aus Ortsnamen
-- Guest und Account dieselbe Form
-- UX in der mobilen Übersicht und auf Desktop nach dem Reisekopf, fünf Hauptbereiche unverändert
-- kein Dokumententresor, keine OCR, kein Storage-Bucket
+- schließt eine klare Foundation-C-Lücke
+- verbessert mehrere bestehende Domänen gleichzeitig
+- erhöht spätere Provider-Readiness
+- passt zum Prinzip „eine Reise, eine Wahrheit“.
 
-Nachweis auf `64aa15a7`: Tests **1252/1252**, Workspace-Audit **678/0**, Activities **184/0**, Typecheck/Lint/Hygiene/Build/Auth/CI/Preview grün.
+### Danach mögliche Tracks
 
-Fachdoku: [docs/TRAVEL_READINESS.md](docs/TRAVEL_READINESS.md). Auftrag: [docs/CURSOR_TRAVEL_READINESS_FOUNDATION_TASK.md](docs/CURSOR_TRAVEL_READINESS_FOUNDATION_TASK.md).
+- echter Travel-Requirements-Provider, sobald Konditionen vorliegen
+- echter Hotelprovider, sobald Zugang vorliegt
+- weiterer Trip-Builder-/Workspace-Nutzen mit klarer Zeitersparnis
+- gezieltes Security-Hardening bestehender Supabase-Warnungen.
 
-### Foundation D – Gesamt-Abdeckung
+Der nächste konkrete Block wird vor Start gegen Produktmandat, Nutzen, Kosten und aktuelle externe Abhängigkeiten entschieden.
 
-Die zentrale Reiseübersicht soll danach provider-neutral erkennen können, welche wichtigen Reisebestandteile abgedeckt, offen oder noch nicht bestimmbar sind – über Flug und Hotel hinaus auch Mobilität, Mietwagen und Reisevorbereitung, soweit belastbare Daten vorhanden sind.
+---
 
-### Kreuzfahrten
+## 5. Security-Hardening Track
 
-Bewusst später. Das Reisegraph-Modell soll mehrtägige Reisebausteine zulassen, aber keine große Kabinen-/Tarif-/Deck-/Routenfoundation ohne echten Produktbedarf und Providerzugang.
+Status: **offen, nicht durch Foundation C verursacht**
 
-Konkrete UX-/Design-/Performance-/Accessibility-Verbesserungen bleiben erlaubt, verdrängen diesen funktionalen Unterbau aber nicht ohne Grund.
+Supabase Security Advisor weist weiterhin auf ältere Punkte hin, insbesondere:
 
-## Danach
+- mehrere `SECURITY DEFINER`-Funktionen, die für `authenticated` ausführbar sind
+- GraphQL-Sichtbarkeit verschiedener bestehender Tabellen.
 
-### Phase 3.5 – erster echter Activity-Provider
+Diese Punkte separat prüfen und priorisieren. Keine pauschalen Berechtigungsänderungen ohne Funktions-/Ownership-Review.
 
-- genau einen passenden Provider anbinden
-- kommerzielle Fakten serverseitig nachweisen
-- echter Affiliate-/Redirect-Weg
-- reale Preview-Verifikation
-- Production zunächst aus
-- wenn Zugang fehlt: extern blockiert, keine Fake-Integration
+---
 
-### Phase 3.6 – echte Mobilitäts-/Transferprovider
+## 6. Bewusst nicht priorisiert
 
-- auf Foundation A aufsetzen
-- echte Fahrplan-/Verfügbarkeits-/Providerdaten anbinden
-- Provider-/Routingdaten niemals erfinden
-- keine unnötige Transportplattform
+Jetnity nicht wieder mit Nebenmodulen aufblasen.
 
-### Phase 4 – Launch-Reife
+Nicht automatisch weiterbauen:
 
-Schwerpunkte:
+- Creator Hub
+- Creator Feed
+- Media Studio
+- große Social-Funktionen
+- umfangreiche Blogging-/Render-Systeme
+- Enterprise-Nebenmodule ohne direkten Produktkern-Nutzen.
 
-- zentrale Free-/Pro-Entitlements vor erster echten Pro-Funktion
-- Monetarisierung/Affiliate-Flüsse
-- globale/gespeicherte Rate-Limits vor Production-Aktivierung kommerzieller Suchen
-- Security-/RLS-/Auth-Abnahme
-- Performance-Pass
-- reale Hardware-/Browser-Abnahme
-- observability und kontrollierte Production-Rollouts
-- Travel Readiness nur mit belastbaren aktuellen Quellen
+Neue Features müssen Reiseplanung/-begleitung klar verbessern, Zeit/Suchaufwand reduzieren, Nutzerbindung aus realem Nutzen erhöhen, Umsatzpotenzial stärken oder technisch für einen Kernbereich notwendig sein.
 
-## Offene externe Abhängigkeiten
+---
 
-Diese Punkte bleiben sichtbar, bis sie nachweislich erledigt sind:
+## 7. Production-Grenzen
 
-- Booking.com Demand API / Managed Affiliate Partner Zugang
-- HBX / Hotelbeds als Hotel-Backup
-- Duffel Sandbox-/Testtoken für echte Preview-Verifikation
-- Duffel Production-Zugang separat und später
-- erster echter Activity-Provider und dessen Zugang
-- echte Bahn-/Bus-/Fähre-/Transfer-/Mietwagenprovider nach den provider-unabhängigen Foundations
-- erster echter Travel-Requirements-Provider (bevorzugt Timatic); kein Vertrag in PR #32
-- strukturierte Origin-/Transit-Ländercodes aus Flight-/Itinerary-Daten; `routeFactsAusReise()` bleibt leer
+Bereits auf Production-Schema:
 
-## Bekannte technische Punkte
+- Booking Status
+- Mobility
+- Rental Cars
+- Travel Readiness / Travellers
 
-- Hotel-/Activity-/Flight-Rate-Limits sind aktuell teilweise In-Memory je Serverless-Instanz; vor Production-Aktivierung globalen/gespeicherten Schutz ergänzen
-- `trips.origin_place_id` und `trip_stages.place_id` benötigen bei späterem Performance-Pass mögliche Covering-Indizes
-- historische Production-Cron-Referenz auf `public.sync_creator_profile_core()` erzeugt Logfehler; Entfernung nur als separater ausdrücklich freigegebener Production-Cleanup
-- Production-Modellweg bleibt separat freigabepflichtig
-- Production-Flug-, Hotel- und Aktivitätensuche bleiben jeweils separat freigabepflichtig
+Das bedeutet **nicht**, dass externe Provider-Suchen aktiv sind.
 
-## Verbindliche Qualitätsregel
+Weiterhin keine Production-Aktivierung von Provider-Suchen, Secrets oder kostenpflichtigen Integrationen ohne die dokumentierte Freigabe.
 
-Eine Phase ist nicht fertig, nur weil der Code kompiliert.
+---
 
-Je nach Änderung gehören dazu:
+## 8. Definition für den nächsten Agenten
 
-- professionelle Architektur
-- Security / Trust Boundaries
-- Tests
-- Typecheck / Lint / Hygiene
-- Production-Build
-- Preview / CI
-- Mobile-UX
-- Accessibility
-- Performance
-- Loading / Empty / Error / Timeout / Rate-Limit States
-- echte/verifizierte Reisedaten statt Fake-Daten
-- aktualisierte Dokumentation
+Vor dem nächsten größeren Arbeitsblock:
 
-Details: `docs/PRODUCT_QUALITY_STANDARD.md` und `docs/CONTINUITY_STANDARD.md`.
+1. `JETNITY_PRODUCT_MANDATE.md` lesen.
+2. `JETNITY_VISION.md` lesen.
+3. `JETNITY_HANDOFF.md` lesen.
+4. diese Roadmap lesen.
+5. aktuellen Git-/CI-/Vercel-/Supabase-Stand prüfen.
+6. relevante Fach-/ADR-/Logic-Dokumente lesen.
+7. vollständigen Cursor-Task im neuen Feature-Branch hinterlegen.
+
+Kein abgeschlossener Block darf unnötig neu gebaut werden.
