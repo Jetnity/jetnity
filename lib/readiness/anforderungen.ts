@@ -18,10 +18,12 @@ import { requirementsAuswerten, requirementsAusZeilen } from '@/lib/readiness/en
 import type { OfficialEvaluation } from '@/lib/readiness/official'
 import { requirementsProviderAus, type RequirementsAnfrage, type RequirementsProvider } from '@/lib/readiness/provider'
 import {
+  travellerAnfrageStriktLesen,
+} from '@/lib/readiness/traveller-anfrage'
+import {
   citizenshipCodesAus,
   credentialOptionsAus,
   documentCitizenshipCode,
-  travellerLegacyLesen,
 } from '@/lib/readiness/traveller-kontext'
 
 export type OfficialRequirementAnfrage = {
@@ -80,9 +82,9 @@ function anfrageAus(anfrage: OfficialRequirementAnfrage): RequirementsAnfrage {
     ),
   ]
   const rohParty = anfrage.party ?? []
-  const gespeichert: NonNullable<ReturnType<typeof travellerLegacyLesen>>[] = []
+  const gespeichert: NonNullable<ReturnType<typeof travellerAnfrageStriktLesen>>[] = []
   for (const eintrag of rohParty) {
-    const gelesen = travellerLegacyLesen(eintrag)
+    const gelesen = travellerAnfrageStriktLesen(eintrag)
     if (!gelesen) {
       return {
         originCountryCode: landescodeLesen(anfrage.originCountryCode ?? null),

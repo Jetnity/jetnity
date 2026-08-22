@@ -115,6 +115,85 @@ describe('Readiness-API-Hülle', () => {
     )
   })
 
+  test('malformed Citizenship- oder Document-Child bleibt fail-closed', () => {
+    assert.equal(
+      readinessAnforderungAnfrageSchema.safeParse({
+        destinationCountryCode: 'TH',
+        party: [
+          {
+            clientRef: 'traveller:1',
+            citizenships: [{ countryCode: 'CH' }, { land: 'RS' }],
+          },
+        ],
+      }).success,
+      false,
+    )
+    assert.equal(
+      readinessAnforderungAnfrageSchema.safeParse({
+        destinationCountryCode: 'TH',
+        party: [
+          {
+            clientRef: 'traveller:1',
+            documents: [
+              { documentType: 'passport', issuingCountryCode: 'CH' },
+              { documentType: 'pass' },
+            ],
+          },
+        ],
+      }).success,
+      false,
+    )
+  })
+
+  test('falsch typisierte Canonical-Children lösen keinen Legacy-Fallback aus', () => {
+    const geprueft = readinessAnforderungAnfrageSchema.safeParse({
+      destinationCountryCode: 'TH',
+      party: [{ clientRef: 'traveller:1', nationalityCountryCode: 'CH', citizenships: 'kaputt' }],
+    })
+    assert.equal(geprueft.success, false)
+  })
+
+  test('überlange oder doppelte Children werden nicht still gekürzt', () => {
+    assert.equal(
+      readinessAnforderungAnfrageSchema.safeParse({
+        destinationCountryCode: 'TH',
+        party: [
+          {
+            clientRef: 'traveller:1',
+            citizenships: Array.from({ length: 9 }, (_, index) => ({
+              countryCode: `A${index}`,
+            })),
+          },
+        ],
+      }).success,
+      false,
+    )
+    assert.equal(
+      readinessAnforderungAnfrageSchema.safeParse({
+        destinationCountryCode: 'TH',
+        party: [
+          {
+            clientRef: 'traveller:1',
+            citizenships: [
+              { countryCode: 'CH' },
+              { countryCode: 'CH' },
+            ],
+          },
+        ],
+      }).success,
+      false,
+    )
+  })
+
+  test('Legacy-Form ohne Canonical-Properties bleibt an der API gültig', () => {
+    const geprueft = readinessAnforderungAnfrageSchema.safeParse({
+      destinationCountryCode: 'TH',
+      party: [{ clientRef: 'traveller:1', nationalityCountryCode: 'CH' }],
+    })
+    assert.equal(geprueft.success, true)
+    assert.equal(geprueft.success ? geprueft.data.party[0]?.citizenships[0]?.countryCode : null, 'CH')
+  })
+
   test('malformed Party bleibt fail-closed', () => {
     const geprueft = readinessAnforderungAnfrageSchema.safeParse({
       destinationCountryCode: 'TH',

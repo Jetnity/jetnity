@@ -14,6 +14,7 @@ import {
   type TripTraveller,
 } from '@/types/trips'
 import { READINESS_GRENZEN, TRAVELLER_CONTEXT_GRENZEN, landescodeLesen } from '@/lib/readiness/domain'
+import { travellerAnfrageStriktLesen } from '@/lib/readiness/traveller-anfrage'
 import { travellerLegacyLesen } from '@/lib/readiness/traveller-kontext'
 
 const zeitstempel = z.string().min(1).max(40)
@@ -201,7 +202,7 @@ export const readinessAnforderungAnfrageSchema = z.object({
     .transform((items, ctx) => {
       const gelesen: TripTraveller[] = []
       for (const item of items) {
-        const traveller = travellerLegacyLesen(item)
+        const traveller = travellerAnfrageStriktLesen(item)
         if (!traveller) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
