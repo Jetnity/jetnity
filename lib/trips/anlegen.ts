@@ -20,6 +20,8 @@ import 'server-only'
 import { revalidatePath } from 'next/cache'
 
 import { problemAus } from '@/lib/api/datenbank-lesen'
+import { flughafenReferenzLesen } from '@/lib/route/flughafen-lesen'
+import { iatasAusNutzlast, reiseNutzlastRouteKanonisieren } from '@/lib/route/kanonisieren'
 import {
   ROUTE_UEBERNAHME_UNVOLLSTAENDIG,
   flugRoutenInReiseSchreiben,
@@ -80,10 +82,14 @@ export async function reiseAusNutzlastAnlegen(
   const { supabase, benutzerId } = await konto()
   if (!benutzerId) return { ok: false, meldung: NICHT_ANGEMELDET }
 
+  const refs = await flughafenReferenzLesen(iatasAusNutzlast(nutzlast), supabase)
+  const kanonisch = reiseNutzlastRouteKanonisieren(nutzlast, refs)
+
   // Der geprüfte Reisegraph ist strukturell JSON; `ReiseNutzlast` sagt das
   // genauer als `Json`, nur beweist es der Typprüfung nichts.
+  // Country-/City-Facts kommen nur aus public.airports, nicht aus dem Browser.
   const { data, error, status } = await supabase.rpc('reise_anlegen', {
-    _reise: nutzlast as unknown as Json,
+    _reise: kanonisch as unknown as Json,
   })
 
   if (error) return { ok: false, meldung: meldungAus(error, status) }
@@ -95,7 +101,7 @@ export async function reiseAusNutzlastAnlegen(
     }
   }
 
-  const route = await flugRoutenInReiseSchreiben(supabase, data, nutzlast)
+  const route = await flugRoutenInReiseSchreiben(supabase, data, kanonisch)
   if (!route.ok) {
     return { ok: false, meldung: ROUTE_UEBERNAHME_UNVOLLSTAENDIG }
   }

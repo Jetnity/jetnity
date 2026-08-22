@@ -1,7 +1,7 @@
 // lib/route/itinerary.ts
 //
-// FlugOption → persistierbare Route-Itinerary.
-// Länder nur aus der übergebenen Flughafenreferenz, nie aus Segmenttext.
+// FlugOption → persistierbare Route-Itinerary, plus Kanonisierung vorhandener Itineraries.
+// Länder nur aus der übergebenen Flughafenreferenz, nie aus Segment- oder Clienttext.
 //
 // Frei von Next und Providern.
 
@@ -35,6 +35,30 @@ export function itineraryAusFlugOption(
 
 export function segmenteAusItinerary(itinerary: FlugRouteItinerary): RouteSegment[] {
   return itinerary.legs.flatMap((bein) => [...bein.segments])
+}
+
+/**
+ * Baut eine Itinerary aus IATA + serverseitiger Referenz neu.
+ * Clientwerte für Land, Stadt und Ländername werden verworfen.
+ */
+export function itineraryKanonisieren(
+  itinerary: FlugRouteItinerary,
+  refs: FlughafenReferenzKarte,
+): FlugRouteItinerary | null {
+  return flugRouteItineraryLesen({
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs: itinerary.legs.map((bein) => ({
+      segments: bein.segments.map((segment) => ({
+        origin: flughafenPunkt(segment.origin.airportCode, refs),
+        destination: flughafenPunkt(segment.destination.airportCode, refs),
+        departureDate: segment.departureDate,
+        departureTime: segment.departureTime,
+        arrivalDate: segment.arrivalDate,
+        arrivalTime: segment.arrivalTime,
+      })),
+    })),
+  })
 }
 
 function segmentAusOption(

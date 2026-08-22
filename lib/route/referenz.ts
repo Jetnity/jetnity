@@ -6,7 +6,12 @@
 // Frei von Next, Supabase und `process.env`.
 
 import { landescodeLesen } from '@/lib/readiness/domain'
-import type { FlughafenReferenz, FlughafenReferenzKarte, RoutePunkt } from '@/lib/route/domain'
+import type {
+  FlughafenReferenz,
+  FlughafenReferenzKarte,
+  FlugRouteItinerary,
+  RoutePunkt,
+} from '@/lib/route/domain'
 
 export function iataLesen(wert: string | null | undefined): string | null {
   if (!wert) return null
@@ -69,6 +74,20 @@ export function iatasAusOption(option: {
     for (const segment of bein.segments) {
       const origin = iataLesen(segment.origin)
       const destination = iataLesen(segment.destination)
+      if (origin) codes.push(origin)
+      if (destination) codes.push(destination)
+    }
+  }
+  return codes
+}
+
+/** IATA-Codes aus einer persistierten Itinerary. Display-/Country-Felder zählen nicht. */
+export function iatasAusItinerary(itinerary: FlugRouteItinerary): string[] {
+  const codes: string[] = []
+  for (const bein of itinerary.legs) {
+    for (const segment of bein.segments) {
+      const origin = iataLesen(segment.origin.airportCode)
+      const destination = iataLesen(segment.destination.airportCode)
       if (origin) codes.push(origin)
       if (destination) codes.push(destination)
     }
