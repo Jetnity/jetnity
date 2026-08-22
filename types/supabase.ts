@@ -573,59 +573,6 @@ export type Database = {
           },
         ]
       }
-      trip_travellers: {
-        Row: {
-          client_ref: string
-          created_at: string
-          document_expires_on: string | null
-          document_issuing_country_code: string | null
-          document_type: string | null
-          id: string
-          label: string | null
-          nationality_country_code: string | null
-          residence_country_code: string | null
-          trip_id: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          client_ref: string
-          created_at?: string
-          document_expires_on?: string | null
-          document_issuing_country_code?: string | null
-          document_type?: string | null
-          id?: string
-          label?: string | null
-          nationality_country_code?: string | null
-          residence_country_code?: string | null
-          trip_id: string
-          updated_at?: string
-          user_id?: string
-        }
-        Update: {
-          client_ref?: string
-          created_at?: string
-          document_expires_on?: string | null
-          document_issuing_country_code?: string | null
-          document_type?: string | null
-          id?: string
-          label?: string | null
-          nationality_country_code?: string | null
-          residence_country_code?: string | null
-          trip_id?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "trip_travellers_reise_fk"
-            columns: ["trip_id", "user_id"]
-            isOneToOne: false
-            referencedRelation: "trips"
-            referencedColumns: ["id", "user_id"]
-          },
-        ]
-      }
       trip_stages: {
         Row: {
           arrival_date: string | null
@@ -685,6 +632,59 @@ export type Database = {
           },
           {
             foreignKeyName: "trip_stages_reise_fk"
+            columns: ["trip_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id", "user_id"]
+          },
+        ]
+      }
+      trip_travellers: {
+        Row: {
+          client_ref: string
+          created_at: string
+          document_expires_on: string | null
+          document_issuing_country_code: string | null
+          document_type: string | null
+          id: string
+          label: string | null
+          nationality_country_code: string | null
+          residence_country_code: string | null
+          trip_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          client_ref: string
+          created_at?: string
+          document_expires_on?: string | null
+          document_issuing_country_code?: string | null
+          document_type?: string | null
+          id?: string
+          label?: string | null
+          nationality_country_code?: string | null
+          residence_country_code?: string | null
+          trip_id: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          client_ref?: string
+          created_at?: string
+          document_expires_on?: string | null
+          document_issuing_country_code?: string | null
+          document_type?: string | null
+          id?: string
+          label?: string | null
+          nationality_country_code?: string | null
+          residence_country_code?: string | null
+          trip_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_travellers_reise_fk"
             columns: ["trip_id", "user_id"]
             isOneToOne: false
             referencedRelation: "trips"
