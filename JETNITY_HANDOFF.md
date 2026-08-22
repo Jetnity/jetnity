@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 22. August 2026  
-Status: **verbindlicher operativer Übergabepunkt nach Abschluss von Foundation C**
+Status: **verbindlicher operativer Übergabepunkt – Foundation D aktiv**
 
 Dieser Handoff ist bewusst kompakt. Ein neuer Chat oder Coding Agent muss zuerst die dauerhaften Projektquellen lesen und anschließend den realen Git-/CI-/Preview-/Production-Stand prüfen.
 
@@ -16,6 +16,7 @@ Pflichtlektüre:
 - `DESIGN_SYSTEM.md`
 - `AGENTS.md`
 - `docs/PRODUCT_QUALITY_STANDARD.md`
+- `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
 - `docs/LOGIC_STANDARD.md`
 - `docs/CONTINUITY_STANDARD.md`
 - `docs/CHATGPT_CURSOR_WORKFLOW.md`
@@ -47,6 +48,8 @@ Leitsätze:
 
 > **Jetnity soll die Nummer 1 werden, weil es Reisen einfacher, intelligenter, verlässlicher und ganzheitlicher macht.**
 
+> **Komplexität gehört ins System, nicht in den Kopf des Nutzers.**
+
 Das ist ein Entwicklungsziel, keine heutige Marktbehauptung.
 
 ---
@@ -69,8 +72,8 @@ Foundation C / PR #32 ist abgeschlossen.
 - PR #32: `Foundation C – Travel Readiness & Dokumente`
 - finaler PR-Head vor Merge: `a5099b98c9456ce07c9b12443d5540843ef8f669`
 - Squash-Merge nach `main`: `b50d2ce9ebc4e50da858f67258f94f887b183f79`
-- Production-Acceptance-Doku danach: `docs/PR32_PRODUCTION_MIGRATION_ACCEPTANCE.md`
-- Vercel Production-Deployment des Merge-Commits: **READY**
+- Production-Acceptance: `docs/PR32_PRODUCTION_MIGRATION_ACCEPTANCE.md`
+- Vercel Production: **READY**
 
 Bereits auf `main` abgeschlossen:
 
@@ -85,6 +88,7 @@ Bereits auf `main` abgeschlossen:
 - Produktqualitäts-, Logic- und Kontinuitätsstandards
 - verbindlicher ChatGPT/Cursor-Workflow
 - verbindliches Jetnity Product Mandate
+- verbindlicher websiteweiter `UX_INFORMATION_ARCHITECTURE_STANDARD`
 
 Stabile öffentliche Production-URL:
 
@@ -94,7 +98,7 @@ Stabile öffentliche Production-URL:
 
 ## 4. Foundation C – abgeschlossen
 
-Jetnity besitzt jetzt den technischen und fachlichen Unterbau für **Automatic Travel Requirements & Readiness**.
+Jetnity besitzt den technischen und fachlichen Unterbau für **Automatic Travel Requirements & Readiness**.
 
 Umgesetzt:
 
@@ -125,12 +129,6 @@ Qualitätsnachweis des finalen Foundation-C-Standes vor Merge:
 - GitHub CI grün
 - Vercel Preview READY
 
-Fachdoku:
-
-- `docs/TRAVEL_READINESS.md`
-- `docs/PR32_PRODUCTION_MIGRATION_ACCEPTANCE.md`
-- relevante ADRs in `DECISIONS.md`
-
 Foundation C **nicht erneut bauen**.
 
 ---
@@ -145,7 +143,7 @@ Development:
 
 `yfvbxvijcorffwxbxahl`
 
-Neu auf Production und verifiziert:
+Auf Production und verifiziert:
 
 - `20260822010000_trip_readiness_items`
 - `20260822020000_trip_travellers`
@@ -157,77 +155,89 @@ Beide Tabellen:
 - Policies auf `user_id = auth.uid()` begrenzt
 - `anon` / `public` ohne Tabellenrechte
 
-Security Advisor wurde nach DDL erneut geprüft. Die neuen Tabellen erhalten den generischen GraphQL-Hinweis für `authenticated`, weil SELECT besteht; die Zeilen bleiben durch RLS geschützt. Ältere Security-Advisor-Warnungen bei anderen Tabellen / `SECURITY DEFINER`-Funktionen bleiben als separater Hardening-Track offen.
+Ältere Security-Advisor-Warnungen bei anderen Tabellen / `SECURITY DEFINER`-Funktionen bleiben als separater Hardening-Track offen.
 
 ---
 
-## 6. Was Foundation C noch bewusst nicht kann
-
-Die Architektur ist vorhanden, aber folgende externe/strukturelle Abhängigkeiten fehlen noch:
+## 6. Foundation C – externe/strukturelle Abhängigkeiten
 
 ### Echter Travel-Requirements-Provider
 
 Noch **kein** Timatic-/Visa-/Health-Provider aktiviert.
 
-Daher gilt produktiv weiterhin:
-
-- keine erfundenen Visa-Aussagen
-- keine erfundenen Impf-/Health-Aussagen
-- keine erfundenen Pass-/Transit-Aussagen
-- Official Truth bleibt ohne belastbare Evidence `unknown` / `provider_unavailable` / `insufficient_context`
+Daher produktiv weiterhin keine erfundenen Visa-, Impf-/Health-, Pass- oder Transit-Aussagen. Official Truth bleibt ohne belastbare Evidence `unknown` / `provider_unavailable` / `insufficient_context`.
 
 Aktuell bevorzugter Kandidat: **IATA Timatic / Timatic AutoCheck**, aber keine Architekturbindung und kein Vertrag ohne separate Kosten-/Lizenzprüfung.
 
 ### Strukturierte Origin-/Transit-Fakten
 
-`routeFactsAusReise()` ist vorbereitet, liefert aktuell bewusst `quelle: 'none'`.
-
-Jetnity rät nicht aus Ortsnamen wie „Doha“ automatisch ein Land. Origin-/Transit-Ländercodes müssen später aus strukturierten Flight-/Itinerary-Daten kommen.
+Diese Lücke wird jetzt mit Foundation D bearbeitet.
 
 ---
 
-## 7. Provider-Suchen / externe Blocker
+## 7. Aktiver Arbeitsblock – Foundation D
 
-Production-Suchen bleiben weiterhin deaktiviert, bis echte Provider-Zugänge und separate Freigaben vorhanden sind.
+**Foundation D – Route & Transit Intelligence** ist gestartet.
 
-Insbesondere:
+- Branch: `feat/route-transit-intelligence`
+- Draft PR: **#34**
+- verbindlicher Task: `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md`
+- websiteweiter UX-/IA-Standard: `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
 
-- Flights: Foundation vorhanden, Production-Provider nicht einfach aktivieren
-- Hotels: Phase 3.4 echter Hotelprovider weiterhin extern blockiert
+Ziel:
+
+- strukturierte Route-/Transit-Fakten im gemeinsamen Reisegraphen
+- Flight-/Itinerary-Evidence statt Ortsnamen-Raten
+- Origin, Destination, Segmente und Multi-Transit belastbar ableiten
+- Foundation C automatisch mit echter Route-/Transit-Struktur speisen
+- Route im Flugbereich verständlich sichtbar machen
+- Reiseänderungen auf Transit-/Readiness-Auswirkungen prüfen
+- Mobility/Connections auf dieselbe Route Truth vorbereiten
+
+Produkt-/UX-Regel:
+
+> **Der Nutzer sieht die Reise – nicht die Komplexität des Datenmodells dahinter.**
+
+Der neue websiteweite Standard ist verbindlich: Alle Besucherbereiche müssen psychologisch ruhig, logisch eindeutig und visuell priorisiert sein. Ein technisch grüner PR reicht nicht, wenn Nutzer unnötig suchen, denken oder Informationen zusammensetzen müssen.
+
+Harte Grenzen für PR #34:
+
+- Draft bis Human-/Architecture-Review
+- nicht mergen
+- keine Production-Migration
+- kein echter Flight-/Requirements-Provider
+- kein Timatic-Vertrag
+- keine Secrets
+- keine Fake-Routen/Transitländer/Zeiten
+
+---
+
+## 8. Provider-Suchen / externe Blocker
+
+Production-Suchen bleiben deaktiviert, bis echte Provider-Zugänge und separate Freigaben vorhanden sind.
+
+- Flights: Foundation vorhanden, Production-Provider separat
+- Hotels: Phase 3.4 echter Hotelprovider extern blockiert
 - Activities: Foundation vorhanden, echter Provider separat
 - Mobility: Suche deaktiviert
 - Rental Cars: Suche deaktiviert
 - Travel Requirements: kein echter Provider
 
-Phase 3.4 Hotelprovider bleibt bevorzugt:
+Hotelprovider bevorzugt:
 
-1. Booking.com Demand API / Managed Affiliate Partner, wenn echter Zugang vorhanden
-2. HBX / Hotelbeds als Backup
-3. Expedia Rapid späterer Kandidat
+1. Booking.com Demand API / Managed Affiliate Partner
+2. HBX / Hotelbeds
+3. Expedia Rapid später
 
 Keine Fake-Adapter, keine erfundenen Preise/Verfügbarkeiten.
 
 ---
 
-## 8. Offene Security-Arbeit
+## 9. Offene Security-Arbeit
 
 Supabase Security Advisor zeigt ältere, nicht durch Foundation C eingeführte Warnungen u. a. bei einigen `SECURITY DEFINER`-Funktionen und GraphQL-Sichtbarkeit bestehender Tabellen.
 
-Das ist **kein Foundation-C-Blocker**, aber ein sinnvoller eigener Security-Hardening-Track und darf langfristig nicht vergessen werden.
-
----
-
-## 9. Nächster Arbeitsblock
-
-Vor dem nächsten größeren Cursor-Job zuerst `ROADMAP.md` und den aktuellen Markt-/Provider-Blocker prüfen.
-
-Empfohlene nächste Richtung:
-
-1. **Strukturierte Route-/Transit-Fakten sauber in den gemeinsamen Reisegraphen integrieren**, damit Foundation C Transit automatisch aus echten Flight-/Itinerary-Daten speisen kann, und/oder
-2. **echten Travel-Requirements-Provider wirtschaftlich und technisch evaluieren** (Timatic bevorzugter Kandidat), ohne Vertrag vor Preis-/Lizenz-/Datenschutzprüfung, und/oder
-3. einen anderen provider-unabhängigen Kernblock aus der Roadmap priorisieren, solange externe Providerzugänge fehlen.
-
-Nicht einfach einen Provider oder neuen Produktbereich aktivieren, ohne den aktuellen Stand und Kosten zu prüfen.
+Das ist kein Foundation-D-Scope, außer eine Änderung berührt diese Bereiche direkt. Der Hardening-Track bleibt sichtbar.
 
 ---
 
@@ -237,6 +247,6 @@ Ein neuer Chat soll mit folgendem Satz übernehmen können:
 
 > „Wir machen mit Jetnity weiter. Lies den Handoff und den aktuellen Repository-/Production-Stand.“
 
-Dann zuerst diese Datei plus Produktmandat, Vision, Roadmap, Logic-/Continuity-/Workflow-Standards lesen und erst danach neue Arbeit planen.
+Dann zuerst diese Datei plus Produktmandat, Vision, Roadmap, UX-/Logic-/Continuity-/Workflow-Standards lesen, **PR #34 prüfen** und erst danach neue Arbeit planen.
 
 Der Nutzer soll Jetnity, frühere Entscheidungen oder abgeschlossene Foundations nicht erneut erklären müssen.
