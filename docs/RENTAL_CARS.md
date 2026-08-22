@@ -152,7 +152,7 @@ Stand Draft-PR #31 Ranking-Truth-Fix, 22. August 2026, Head `a1882b90`:
 - Development-Migration unverändert; `db:typen --pruefen`, `db:rechte`, `db:rls`, `db:sicherheit` 169/169, `auth:pruefen` grün
 - Trip-Workspace-Audit WebKit + Chromium: 502 Kombinationen, 0 Fehler
 - Activities-Regression: 184 Kombinationen, 0 Fehler
-- echter iPhone-Test **offen**, erst nach diesem Ranking-Fix
+- echter iPhone-Test **bestanden** am 22. August 2026, Preview-Head `1951f2ba`; Nachweis `docs/PR31_REAL_DEVICE_ACCEPTANCE.md`
 
 ---
 
@@ -164,6 +164,6 @@ Keine neuen laufenden Kosten. Kein bezahlter Mietwagen-Account. Der Kill Switch 
 
 ## 10. Nächster Schritt
 
-Foundation B nicht um einen Fake-Provider erweitern. Real-Device-iPhone-Test kommt nach diesem Review-Fix und bleibt offen, bis der Nutzer ihn bestätigt. Production-Migration und Production-Suche brauchen jeweils eine ausdrückliche Freigabe.
+Foundation B nicht um einen Fake-Provider erweitern. Der echte iPhone-Test ist abgenommen. Production-Migration und Production-Suche brauchen jeweils eine ausdrückliche Freigabe. PR #31 bleibt Draft, bis ein finales Head-/CI-/Preview-Review Ready erlaubt.
 
 Danach geplant: **Travel Readiness & Dokumente Foundation**. Phase 3.4 bleibt extern blockiert.

@@ -231,7 +231,7 @@ Umgesetzt im Draft:
 - Development-Migration `20260821200000` – **nicht Production**
 - Review-Fix (ADR-0094 / ADR-0095): keine automatische Suche, leere manuelle Defaults, konservatives One-way, Kalendertage, währungssicheres Ranking; Labels nur bei belastbarem Vergleich
 
-Qualitätsnachweis im Draft (Head `a1882b90`):
+Qualitätsnachweis im Draft (Abnahme-Head `1951f2ba`, Nachweis `207c99ec`):
 
 - `npm test`: **1165/1165**
 - Typecheck, Lint, Hygiene, Production-Build grün
@@ -239,8 +239,8 @@ Qualitätsnachweis im Draft (Head `a1882b90`):
 - `db:rechte`, `db:rls`, `db:sicherheit` 169/169, `db:typen --pruefen`, `auth:pruefen`
 - Trip-Workspace-Audit WebKit + Chromium: **502 Kombinationen, 0 Fehler**
 - Activities-Regression: **184 Kombinationen, 0 Fehler**
-- GitHub CI und Vercel Preview ziehen auf dem Dokumentations-Head nach
-- echter iPhone-Test **offen**, erst nach ADR-0095
+- GitHub CI und Vercel Preview auf `1951f2ba` / `207c99ec` grün
+- echter iPhone-Test **bestanden** (`docs/PR31_REAL_DEVICE_ACCEPTANCE.md`)
 
 Fachdoku: `docs/RENTAL_CARS.md`, ADR-0092 / ADR-0093 / ADR-0094 / ADR-0095.
 
@@ -331,7 +331,7 @@ Verbindlich:
 2. Aktuellen `main`-, PR-, CI-, Vercel- und Production-Stand prüfen.
 3. PR #29 nicht erneut bauen: Coverage/Booking Status ist abgeschlossen.
 4. PR #30 ist gemergt: Foundation A nicht erneut bauen.
-5. PR #31 bleibt Draft. Logic-/Truth-Fixes (ADR-0094 / ADR-0095) auf dem neuen Head prüfen, danach Real-Device-iPhone. Nicht mergen. Keine Production-Migration.
+5. PR #31 bleibt Draft. Real-Device-iPhone ist abgenommen. Ready erst nach finalem Head-/CI-/Preview-Review. Nicht mergen. Keine Production-Migration ohne ausdrückliche Freigabe.
 6. Phase 3.4 bleibt extern blockiert, bis echter Hotelprovider-Zugang vorliegt.
 7. Nach sauberem Abschluss von PR #31 ist der nächste geplante provider-unabhängige Block **Travel Readiness & Dokumente Foundation**.
 8. Keine Fake-Providerdaten, keine Production-Provideraktivierung und keine Secrets ohne separate Freigabe.

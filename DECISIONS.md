@@ -2421,7 +2421,7 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 
 - Keine Datenbank-, RLS- oder Production-Änderung.
 - `flexible` bleibt als Marke reserviert, wird in Foundation B ohne strukturierten Fit nicht vergeben.
-- Nächster Schritt bleibt der Real-Device-Test, nicht ein Provider.
+- Real-Device-iPhone-Test ist am 22. August 2026 abgenommen. Nächster Schritt ist nicht automatisch ein Provider und nicht automatisch Ready/Merge.
 
 ---
 
