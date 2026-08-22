@@ -274,16 +274,18 @@ Branch `feat/travel-readiness-foundation`. **Draft, nicht mergen.** Ausgangsbasi
 Umgesetzt auf dem Draft-PR:
 
 - eigene Domäne `trip_readiness_items`, kein neuer `trip_items.kind`
+- trip-spezifischer Reisendenkontext `trip_travellers` / `Trip.party`
+- provider-neutrale Requirements-Engine; Factory `null`
 - Trennung Official Requirement Truth vs User Preparation Truth
-- deterministischer Context-Fingerprint / Stale-Semantik
-- Guest- und Account-Parität plus idempotente Übernahme
+- Context-Fingerprint, Freshness/Recheck und progressive Missing Facts
+- Guest- und Account-Parität plus idempotente Übernahme von Party und Readiness
 - geschlossene `POST /api/readiness/requirements`
-- UX als Reisevorbereitung in der Übersicht, kein sechster Tab
+- UX als **Einreise & Reisevorbereitung** in der Übersicht, kein sechster Tab
 - kein Dokumententresor, keine OCR, kein Storage-Bucket
 
-Development-Migration `20260822010000` nur Development. Production unverändert. Kein Provider, keine neuen Secrets, keine neuen Kosten.
+Development-Migrationen `20260822010000` und `20260822020000` nur Development. Production unverändert. Kein Provider, keine neuen Secrets, keine neuen Kosten.
 
-Fachdoku: `docs/TRAVEL_READINESS.md`, ADR-0096 bis ADR-0100.
+Fachdoku: `docs/TRAVEL_READINESS.md`, ADR-0096 bis ADR-0106. Verbindlicher Nachtrag: `docs/CURSOR_TRAVEL_READINESS_AUTOMATION_AMENDMENT.md`.
 
 ### D. Gesamt-Abdeckung
 

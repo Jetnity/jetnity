@@ -752,8 +752,8 @@ const ZUSTAENDE = {
     },
   },
   'readiness-offen': {
-    kompakt: 'Einreiseanforderungen noch nicht offiziell geprüft',
-    desktop: 'Einreiseanforderungen noch nicht offiziell geprüft',
+    kompakt: 'Automatische Einreiseprüfung derzeit nicht verfügbar',
+    desktop: 'Automatische Einreiseprüfung derzeit nicht verfügbar',
     nutzlast: { reise: reise() },
   },
   'readiness-user-done': {
@@ -839,6 +839,12 @@ const ZUSTAENDE = {
         ],
       }),
     },
+  },
+  'readiness-fehlende-fakten': {
+    kompakt: 'Staatsangehörigkeit fehlt',
+    desktop: 'Staatsangehörigkeit fehlt',
+    oeffneVorbereitung: true,
+    nutzlast: { reise: reise({ travellers: 1 }) },
   },
   'readiness-langer-titel': {
     kompakt: 'Reiseadapter und lokale SIM-Karte vor der Abreise noch besorgen und die Unterlagen ordnen',

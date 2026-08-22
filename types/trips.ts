@@ -109,6 +109,53 @@ export const READINESS_EVIDENCES = ['user'] as const
 export type ReadinessEvidence = (typeof READINESS_EVIDENCES)[number]
 
 /**
+ * Reisedokumenttyp ohne Nummer, Scan oder biometrische Daten.
+ */
+export const TRAVELLER_DOCUMENT_TYPES = ['passport', 'national_id', 'unknown'] as const
+export type TravellerDocumentType = (typeof TRAVELLER_DOCUMENT_TYPES)[number]
+
+/**
+ * Offizielle Anforderungsarten. Nur eine Requirements-Engine / ein Provider
+ * darf `required` oder `not_required` setzen – nie der Browser und nie ein Modell.
+ */
+export const OFFICIAL_REQUIREMENT_TYPES = [
+  'visa',
+  'electronic_travel_authorization',
+  'passport',
+  'identity_document',
+  'passport_validity',
+  'transit',
+  'health',
+  'vaccination',
+  'health_document',
+  'entry_form',
+  'insurance',
+  'onward_or_return_ticket',
+  'booking_or_travel_document',
+  'other_entry_requirement',
+] as const
+export type OfficialRequirementType = (typeof OFFICIAL_REQUIREMENT_TYPES)[number]
+
+/**
+ * Datensparsamer Reisendenkontext einer Reise.
+ * Keine Pass-, Ausweis-, Visa- oder Gesundheitsdaten.
+ */
+export type TripTraveller = {
+  id: string
+  clientRef: string
+  /** Neutrale Bezeichnung, z. B. „Reisende 1“. Kein gesetzlicher Name nötig. */
+  label: string | null
+  nationalityCountryCode: string | null
+  residenceCountryCode: string | null
+  documentType: TravellerDocumentType | null
+  documentIssuingCountryCode: string | null
+  /** Nur Ablaufdatum, nie eine Dokumentnummer. */
+  documentExpiresOn: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+/**
  * Persistierter Nutzer-Vorbereitungsstand einer Reise.
  *
  * Speichert ausdrücklich keine offizielle Anforderungswahrheit.
@@ -301,6 +348,11 @@ export type Trip = {
    * Offizielle Einreise-/Visa-Wahrheit steht hier bewusst nicht.
    */
   readinessItems?: TripReadinessItem[]
+  /**
+   * Individueller Reisendenkontext. Fehlt beim Altbestand; dann gelten nur
+   * Slots aus `travellers` ohne Nationalität. Keine accountweiten Profile.
+   */
+  party?: TripTraveller[]
   createdAt: string
   updatedAt: string
 }

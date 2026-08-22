@@ -30,6 +30,7 @@ import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
 import { rentalCarManuellInReiseAnlegen } from '@/lib/rental-cars/aktionen'
 import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
 import { readinessEntfernen, readinessSetzen } from '@/lib/readiness/aktionen'
+import { travellerEntfernen, travellerSetzen } from '@/lib/readiness/reisende-aktionen'
 import { planpunktAnlegen, planpunktBuchungsstatusSetzen, planpunktEntfernen, reiseLoeschen } from '@/lib/trips/aktionen'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
 import AktivitaetenBereich from '@/components/trips/AktivitaetenBereich'
@@ -96,6 +97,18 @@ export default function KontoArbeitsbereich({
       onPunktEntfernen={entfernen}
       onReadinessSetzen={async (eingabe) => {
         const ergebnis = await readinessSetzen({ ...eingabe, tripId: reise.id })
+        if (!ergebnis.ok) return ergebnis.meldung
+        router.refresh()
+        return null
+      }}
+      onTravellerSetzen={async (eingabe) => {
+        const ergebnis = await travellerSetzen({ ...eingabe, tripId: reise.id })
+        if (!ergebnis.ok) return ergebnis.meldung
+        router.refresh()
+        return null
+      }}
+      onTravellerEntfernen={async (clientRef) => {
+        const ergebnis = await travellerEntfernen({ tripId: reise.id, clientRef })
         if (!ergebnis.ok) return ergebnis.meldung
         router.refresh()
         return null

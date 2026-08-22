@@ -48,6 +48,7 @@ import {
   vehicleClassLesen,
 } from '@/lib/trips/mietwagen-felder'
 import { readinessAusZeilen, type ReadinessZeile } from '@/lib/readiness/persistenz'
+import { partyAusZeilen, type TravellerZeile } from '@/lib/readiness/reisende'
 
 /** Nur die Spalten, die diese Datei liest. So bleibt sie von der Generierung unabhängig. */
 export type ReiseZeile = {
@@ -250,6 +251,7 @@ export function reiseAus(
   tage: TagZeile[],
   punkte: PunktZeile[],
   readiness: ReadinessZeile[] = [],
+  party: TravellerZeile[] = [],
 ): Reisegraph {
   const alle = [...punkte]
     .sort(
@@ -318,6 +320,7 @@ export function reiseAus(
     updatedAt: reise.updated_at,
     ohneTag,
     readinessItems: readinessAusZeilen(readiness),
+    party: partyAusZeilen(party),
   }
 }
 

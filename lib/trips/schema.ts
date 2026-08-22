@@ -36,7 +36,7 @@ import {
   vehicleClassLesen,
 } from '@/lib/trips/mietwagen-felder'
 import { TAGE_MAXIMUM } from '@/lib/trips/tage'
-import { readinessItemsSchema } from '@/lib/readiness/schema'
+import { partySchema, readinessItemsSchema } from '@/lib/readiness/schema'
 
 /** Höchstwerte, die auch die Datenbank kennt. An einer Stelle, damit sie gleich bleiben. */
 export const GRENZEN = {
@@ -275,6 +275,7 @@ export const reiseSchema = z
     days: z.array(reisetagSchema).max(GRENZEN.reisetageJeReise).default([]),
     ohneTag: z.array(planpunktSchema).max(GRENZEN.punkteJeReise).default([]),
     readinessItems: readinessItemsSchema,
+    party: partySchema,
     createdAt: zeitstempel,
     updatedAt: zeitstempel,
   })

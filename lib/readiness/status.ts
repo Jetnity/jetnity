@@ -6,6 +6,9 @@
 
 import { readinessChecksAbleiten } from '@/lib/readiness/ableitung'
 import { officialRequirementsFuerReise } from '@/lib/readiness/anforderungen'
+import { requirementsFuerReise } from '@/lib/readiness/engine'
+import type { OfficialEvaluation, MissingFact } from '@/lib/readiness/official'
+import { fehlendeFaktenFuerReise, travellerSlots } from '@/lib/readiness/party'
 import {
   readinessItemsVon,
   type OfficialRequirementEvidence,
@@ -65,6 +68,7 @@ function currentnessFuer(
 export function readinessAnsicht(reise: Trip): {
   items: ReadinessViewItem[]
   summary: ReadinessSummary
+  evaluations: OfficialEvaluation[]
 } {
   const kontext = readinessReisekontext(reise)
   const persistiert = readinessItemsVon(reise)
@@ -119,6 +123,7 @@ export function readinessAnsicht(reise: Trip): {
 
   const zaehlbar = items.filter((item) => item.currentness !== 'not_applicable')
   const official = officialFuer(kontext.destinationCountries[0] ?? null)
+  const evaluations = requirementsFuerReise(reise)
 
   const summary: ReadinessSummary = {
     open: zaehlbar.filter((item) => item.currentness === 'current' && item.userStatus === 'open').length,
@@ -132,10 +137,20 @@ export function readinessAnsicht(reise: Trip): {
     travellers: kontext.travellers,
     destinationCountries: kontext.destinationCountries,
     unknownCountryContext: kontext.unknownCountryStages > 0,
-    individualClaimsForbidden: kontext.travellers > 1,
+    individualClaimsForbidden: kontext.travellers > 1 || travellerSlots(reise).some((slot) => slot.applicable && slot.missingFacts.includes('nationality')),
+    missingFacts: fehlendeFaktenFuerReise({ ...reise, stages: reise.stages }),
+    officialFreshness: evaluations.every((eintrag) => eintrag.freshness === 'provider_unavailable')
+      ? 'provider_unavailable'
+      : evaluations.some((eintrag) => eintrag.freshness === 'stale')
+        ? 'stale'
+        : evaluations.some((eintrag) => eintrag.freshness === 'recheck_needed')
+          ? 'recheck_needed'
+          : evaluations.some((eintrag) => eintrag.freshness === 'current')
+            ? 'current'
+            : 'never_checked',
   }
 
-  return { items, summary }
+  return { items, summary, evaluations }
 }
 
 export function readinessZusammenfassungText(summary: ReadinessSummary): string {
@@ -149,6 +164,6 @@ export function readinessZusammenfassungText(summary: ReadinessSummary): string 
   if (summary.stale > 0) {
     teile.push(`${summary.stale} erneut prüfen`)
   }
-  teile.push('Einreiseanforderungen noch nicht offiziell geprüft')
+  teile.push('Automatische Einreiseprüfung derzeit nicht verfügbar')
   return teile.join(' · ')
 }

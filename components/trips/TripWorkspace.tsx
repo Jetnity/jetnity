@@ -30,7 +30,7 @@ import {
   besuchteBereicheErweitern,
   gewaehlterTagId,
 } from '@/lib/trips/arbeitsbereich'
-import type { ReadinessKind, ReadinessUserStatus } from '@/types/trips'
+import type { ReadinessKind, ReadinessUserStatus, TravellerDocumentType } from '@/types/trips'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
 import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
 import TripWorkspaceNavigation from '@/components/trips/TripWorkspaceNavigation'
@@ -74,6 +74,16 @@ type TripWorkspaceProps = {
     title: string | null
   }) => Promise<string | null>
   onReadinessEntfernen?: (clientRef: string) => Promise<string | null>
+  onTravellerSetzen?: (eingabe: {
+    clientRef: string
+    label: string | null
+    nationalityCountryCode: string | null
+    residenceCountryCode: string | null
+    documentType: TravellerDocumentType | null
+    documentIssuingCountryCode: string | null
+    documentExpiresOn: string | null
+  }) => Promise<string | null>
+  onTravellerEntfernen?: (clientRef: string) => Promise<string | null>
   /**
    * Nur für interne Audits: startet nicht in der Übersicht.
    * Der Produktweg lässt den Parameter weg.
@@ -138,6 +148,8 @@ export default function TripWorkspace({
   onBuchungsstatus,
   onReadinessSetzen,
   onReadinessEntfernen,
+  onTravellerSetzen,
+  onTravellerEntfernen,
   anfangsBereich,
 }: TripWorkspaceProps) {
   const kompakt = React.useSyncExternalStore(
@@ -262,6 +274,8 @@ export default function TripWorkspace({
                   reise={reise}
                   onSetzen={onReadinessSetzen}
                   onEntfernen={onReadinessEntfernen}
+                  onTravellerSetzen={onTravellerSetzen}
+                  onTravellerEntfernen={onTravellerEntfernen}
                 />
               }
             />

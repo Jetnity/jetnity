@@ -10,12 +10,24 @@ import {
   type OfficialRequirementEvidence,
   type OfficialRequirementReason,
 } from '@/lib/readiness/domain'
+import { requirementsAuswerten } from '@/lib/readiness/engine'
+import { requirementsProviderAus } from '@/lib/readiness/provider'
 
 export type OfficialRequirementAnfrage = {
   destinationCountryCode?: string | null
+  destinationCountryCodes?: string[]
+  transitCountryCodes?: string[]
   travellers?: number
   startDate?: string | null
   endDate?: string | null
+  party?: {
+    clientRef: string
+    nationalityCountryCode?: string | null
+    residenceCountryCode?: string | null
+    documentType?: 'passport' | 'national_id' | 'unknown' | null
+    documentIssuingCountryCode?: string | null
+    documentExpiresOn?: string | null
+  }[]
 }
 
 function officialRequirementLeer(
@@ -60,6 +72,57 @@ function officialRequirementLeer(
 export function officialRequirementsPruefen(
   anfrage: OfficialRequirementAnfrage = {},
 ): OfficialRequirementEvidence {
+  const destinations = [
+    ...new Set(
+      [
+        landescodeLesen(anfrage.destinationCountryCode ?? null),
+        ...(anfrage.destinationCountryCodes ?? []).map((code) => landescodeLesen(code)),
+      ].filter((code): code is string => Boolean(code)),
+    ),
+  ]
+  const evaluations = requirementsAuswerten(
+    {
+      originCountryCode: null,
+      destinationCountryCodes: destinations,
+      transitCountryCodes: (anfrage.transitCountryCodes ?? [])
+        .map((code) => landescodeLesen(code))
+        .filter((code): code is string => Boolean(code)),
+      startDate: anfrage.startDate ?? null,
+      endDate: anfrage.endDate ?? null,
+      travellers: (anfrage.party ?? []).map((eintrag, index) => ({
+        clientRef: eintrag.clientRef || `traveller:${index + 1}`,
+        nationalityCountryCode: landescodeLesen(eintrag.nationalityCountryCode ?? null),
+        residenceCountryCode: landescodeLesen(eintrag.residenceCountryCode ?? null),
+        documentType: eintrag.documentType ?? null,
+        documentIssuingCountryCode: landescodeLesen(eintrag.documentIssuingCountryCode ?? null),
+        documentExpiresOn: eintrag.documentExpiresOn ?? null,
+      })),
+    },
+    requirementsProviderAus(),
+    anfrage,
+  )
+  const erste = evaluations[0]
+  if (erste) {
+    return {
+      destinationCountryCode: erste.destinationCountryCode,
+      requiredTravellerFacts: LEERE_OFFICIAL_REQUIRED_FACTS,
+      requirementType: 'entry_or_visa',
+      result: 'unknown',
+      status: erste.status === 'current' ? 'unknown' : erste.status,
+      authority: erste.evidence.authority,
+      sourceUrl: erste.evidence.sourceUrl,
+      checkedAt: erste.evidence.checkedAt,
+      validityUntil: erste.evidence.validUntil,
+      reason:
+        erste.status === 'insufficient_context'
+          ? erste.missingFacts.includes('nationality')
+            ? 'missing_nationality'
+            : erste.missingFacts.includes('destination_country')
+              ? 'unknown_country_code'
+              : 'insufficient_context'
+          : 'no_provider',
+    }
+  }
   return officialRequirementLeer(anfrage, 'no_provider')
 }
 
@@ -67,11 +130,8 @@ export function officialRequirementsFuerReise(opts: {
   destinationCountryCode: string | null
   travellers: number
 }): OfficialRequirementEvidence {
-  return officialRequirementLeer(
-    {
-      destinationCountryCode: opts.destinationCountryCode,
-      travellers: opts.travellers,
-    },
-    'no_provider',
-  )
+  return officialRequirementsPruefen({
+    destinationCountryCode: opts.destinationCountryCode,
+    travellers: opts.travellers,
+  })
 }

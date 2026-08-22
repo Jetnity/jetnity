@@ -200,12 +200,14 @@ Nicht in diesem Block: echter Provider, Fake-Angebote, Führerschein-/Zahlungsda
 
 **Draft-PR #32**, Branch `feat/travel-readiness-foundation`. Nicht mergen. Keine Production-Migration.
 
-Provider-unabhängige Reisevorbereitung:
+Automatic Travel Requirements & Readiness:
 
 - eigene Tabelle `trip_readiness_items`, kein neuer `trip_items.kind`
+- trip-spezifischer Reisendenkontext `trip_travellers`
 - Official Requirement Truth bleibt ohne Provider `unknown`
 - Nutzer-Häkchen sind User Evidence, keine Visa-Bestätigung
-- Context-Fingerprint macht alte Checks nach Reiseänderung stale
+- Context-Fingerprint und Freshness/Recheck
+- progressive Missing Facts, keine Dokumentnummern
 - Guest und Account dieselbe Form
 - UX in der Übersicht, fünf Hauptbereiche unverändert
 - kein Dokumententresor, keine OCR, kein Storage-Bucket

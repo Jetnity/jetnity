@@ -95,6 +95,8 @@ export type ReadinessSummary = {
   destinationCountries: string[]
   unknownCountryContext: boolean
   individualClaimsForbidden: boolean
+  missingFacts: string[]
+  officialFreshness: 'never_checked' | 'current' | 'recheck_needed' | 'stale' | 'provider_unavailable' | 'source_temporarily_unavailable'
 }
 
 export const LEERE_OFFICIAL_REQUIRED_FACTS = [

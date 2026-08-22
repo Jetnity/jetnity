@@ -2545,6 +2545,97 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 
 ---
 
+## ADR-0101 – Automatic Travel Requirements statt reiner Checkliste
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** Foundation C ist die Grundlage für automatische Travel Requirements, nicht nur eine manuelle Checkliste.
+
+**Kontext:** Der ursprüngliche Auftrag konnte so gelesen werden, als müssten Nutzer Visa- und Einreiseregeln selbst recherchieren. Der verbindliche Nachtrag verlangt eine Engine.
+
+**Alternativen:**
+
+1. *Nur Nutzer-Häkchen.* Würde den Nachtrag ignorieren.
+2. *Statische Visa-Matrix.* Fake-Regeln.
+
+**Begründung:** Jetnity soll Suchaufwand abnehmen, ohne unbekannte Regeln zu erfinden.
+
+**Konsequenzen:** Ohne Provider bleibt Official Truth `unknown`. Die UI sagt das ausdrücklich.
+
+---
+
+## ADR-0102 – Reisendenkontext trip-spezifisch
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32; Development-Migration `20260822020000`
+
+**Entscheidung:** Traveller-Fakten liegen an der Reise (`trip_travellers` / `Trip.party`), nicht accountweit.
+
+**Kontext:** Guest-Parität, keine Cross-Trip-Leaks, Datenminimierung.
+
+**Alternativen:**
+
+1. *Accountweite Traveller-Profile.* Später möglich, braucht eigene Consent-/Security-ADR.
+2. *Nur `trips.travellers` als Zahl.* Reicht nicht für individuelle Requirements.
+
+**Begründung:** Dieselbe Form für Gast und Konto. Keine stillen Verknüpfungen zwischen Reisen.
+
+**Konsequenzen:** Bekannte Fakten gelten nur in dieser Reise. Übernahme kopiert sie idempotent.
+
+---
+
+## ADR-0103 – Provider-neutrale Requirements-Engine
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** Eine injizierbare Engine-Naht normalisiert Provider-Output. Production-Factory ist `null`.
+
+**Kontext:** Später Timatic oder gleichwertig, ohne Architekturbindung.
+
+**Alternativen:**
+
+1. *Timatic-Typen im Kern.* Würde den ersten Anbieter festnageln.
+2. *Fake-Adapter mit erfundenen Regeln.* Verboten.
+
+**Begründung:** Komplexität muss verdient werden. Tests dürfen einen Double injizieren.
+
+---
+
+## ADR-0104 – Health-Requirement ist keine Gesundheitsakte
+
+**Datum:** 22. August 2026  
+**Status:** verbindlich für Foundation C
+
+**Entscheidung:** Offizielle Impf-/Health-Slots dürfen existieren. Persönliche Diagnosen, Impfpass-Uploads und Gesundheitsdaten werden nicht gespeichert.
+
+**Kontext:** Der Nachtrag verlangt Health-/Vaccination-Requirements, verbietet aber unnötige Gesundheitsdaten.
+
+**Begründung:** Pflicht, Empfehlung und allgemeiner Hinweis sind verschiedene Aussagen. Ohne Provider bleiben alle `unknown`.
+
+---
+
+## ADR-0105 – Freshness zusätzlich zum Context-Fingerprint
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** Official Evaluations tragen Freshness (`never_checked`, `current`, `recheck_needed`, `stale`, `provider_unavailable`, `source_temporarily_unavailable`) neben dem User-Fingerprint.
+
+**Begründung:** Eine alte Provider-Antwort darf nach Ablauf oder Kontextwechsel nicht als aktuell gelten. Ohne Provider ist Freshness immer `provider_unavailable`.
+
+---
+
+## ADR-0106 – Timatic als bevorzugter Kandidat ohne Bindung
+
+**Datum:** 22. August 2026  
+**Status:** dokumentiert, nicht integriert
+
+**Entscheidung:** IATA Timatic / Timatic AutoCheck ist der bevorzugte spätere Kandidat. Die Domain bleibt provider-neutral. Kein Vertrag, kein Secret, kein Fake-Adapter in diesem PR.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

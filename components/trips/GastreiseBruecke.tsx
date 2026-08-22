@@ -24,6 +24,7 @@ import { useRouter } from 'next/navigation'
 import { AlertCircle, Check, Loader2, RefreshCw } from 'lucide-react'
 
 import { readinessUebernehmen } from '@/lib/readiness/aktionen'
+import { partyUebernehmen } from '@/lib/readiness/reisende-aktionen'
 import { gastreiseUebernehmen } from '@/lib/trips/aktionen'
 import { gastreisenUebernehmen } from '@/lib/trips/uebernahme'
 
@@ -43,6 +44,21 @@ export default function GastreiseBruecke() {
       (anzahl) => setStand({ art: 'laeuft', anzahl }),
       async (tripId, items) => {
         const ergebnis = await readinessUebernehmen({ tripId, items })
+        return ergebnis.ok ? { ok: true, wert: tripId } : ergebnis
+      },
+      async (tripId, party) => {
+        const ergebnis = await partyUebernehmen({
+          tripId,
+          party: party.map((eintrag) => ({
+            clientRef: eintrag.clientRef,
+            label: eintrag.label,
+            nationalityCountryCode: eintrag.nationalityCountryCode,
+            residenceCountryCode: eintrag.residenceCountryCode,
+            documentType: eintrag.documentType,
+            documentIssuingCountryCode: eintrag.documentIssuingCountryCode,
+            documentExpiresOn: eintrag.documentExpiresOn,
+          })),
+        })
         return ergebnis.ok ? { ok: true, wert: tripId } : ergebnis
       },
     )

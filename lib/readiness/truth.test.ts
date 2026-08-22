@@ -37,7 +37,7 @@ describe('Official Truth bleibt von User Evidence getrennt', () => {
     assert.equal(einreise?.userStatus, 'done')
     assert.equal(einreise?.official.result, 'unknown')
     assert.equal(summary.officialResult, 'unknown')
-    assert.match(readinessZusammenfassungText(summary), /noch nicht offiziell geprüft/)
+    assert.match(readinessZusammenfassungText(summary), /Automatische Einreiseprüfung derzeit nicht verfügbar/)
     assert.doesNotMatch(readinessZusammenfassungText(summary), /Reise ist bereit/)
   })
 

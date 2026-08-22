@@ -47,6 +47,7 @@ import {
   zurUebernahme,
 } from '@/lib/trips/gastspeicher'
 import { gastReadinessEntfernen, gastReadinessSetzen } from '@/lib/readiness/gast'
+import { gastTravellerEntfernen, gastTravellerSetzen } from '@/lib/readiness/reisende-gast'
 import type { CreateTripInput } from '@/types/trips'
 import type { Modelloperation } from '@/lib/reiseaenderung/schema'
 import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
@@ -1238,6 +1239,20 @@ describe('Gastreise trägt dieselbe Readiness-Form', () => {
 
     const ohne = gastReadinessEntfernen(erneut, 'entry_check:TH')
     assert.equal(ohne.readinessItems?.length, 0)
+  })
+
+  test('Reisendenkontext bleibt nach Reload erhalten', () => {
+    const angelegt = gastreiseAnlegen(eingabe())
+    const danach = gastTravellerSetzen(angelegt, {
+      clientRef: 'traveller:1',
+      nationalityCountryCode: 'CH',
+      documentType: 'passport',
+    })
+    assert.equal(danach.party?.[0]?.nationalityCountryCode, 'CH')
+    const geladen = gastreiseLadenNach(danach.id)
+    assert.equal(geladen?.party?.[0]?.nationalityCountryCode, 'CH')
+    const ohne = gastTravellerEntfernen(danach, 'traveller:1')
+    assert.equal(ohne.party?.length, 0)
   })
 
   test('sensible Titel werden nicht gespeichert', () => {

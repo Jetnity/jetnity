@@ -9,6 +9,7 @@ import {
   READINESS_EVIDENCES,
   READINESS_KINDS,
   READINESS_USER_STATUSES,
+  TRAVELLER_DOCUMENT_TYPES,
   type TripReadinessItem,
 } from '@/types/trips'
 import { READINESS_GRENZEN, landescodeLesen } from '@/lib/readiness/domain'
@@ -170,9 +171,117 @@ export const readinessUebernahmeSchema = z.object({
 
 export const readinessAnforderungAnfrageSchema = z.object({
   destinationCountryCode: landescode.nullable().optional().default(null),
+  destinationCountryCodes: z
+    .array(landescode)
+    .max(12)
+    .optional()
+    .default([])
+    .transform((codes) => codes.filter((code): code is string => Boolean(code))),
+  transitCountryCodes: z
+    .array(landescode)
+    .max(12)
+    .optional()
+    .default([])
+    .transform((codes) => codes.filter((code): code is string => Boolean(code))),
   travellers: z.number().int().min(1).max(20).optional().default(1),
   startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional().default(null),
   endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional().default(null),
+  party: z
+    .array(
+      z.object({
+        clientRef: z.string().min(1).max(READINESS_GRENZEN.clientRef),
+        nationalityCountryCode: landescode.nullable().optional().default(null),
+        residenceCountryCode: landescode.nullable().optional().default(null),
+        documentType: z.enum(TRAVELLER_DOCUMENT_TYPES).nullable().optional().default(null),
+        documentIssuingCountryCode: landescode.nullable().optional().default(null),
+        documentExpiresOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional().default(null),
+      }),
+    )
+    .max(20)
+    .optional()
+    .default([]),
+})
+
+const travellerLabel = z
+  .string()
+  .transform((wert) => wert.trim())
+  .pipe(z.string().min(1).max(40))
+  .refine((wert) => !enthaltSensitiveDaten(wert) && !/https?:\/\//i.test(wert) && !/<\/?[a-z][\s\S]*>/i.test(wert), {
+    message: 'Keine Passnummern, Ausweisdaten oder andere sensible Daten eintragen.',
+  })
+
+const travellerItemSchema = z.object({
+  id: z.string().min(1).max(80),
+  clientRef: z.string().min(1).max(READINESS_GRENZEN.clientRef),
+  label: travellerLabel.nullable().default(null),
+  nationalityCountryCode: landescode.nullable().default(null),
+  residenceCountryCode: landescode.nullable().default(null),
+  documentType: z.enum(TRAVELLER_DOCUMENT_TYPES).nullable().default(null),
+  documentIssuingCountryCode: landescode.nullable().default(null),
+  documentExpiresOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null),
+  createdAt: zeitstempel,
+  updatedAt: zeitstempel,
+})
+
+export const partySchema = z
+  .array(travellerItemSchema)
+  .max(20)
+  .default([])
+  .transform((items) => {
+    const gesehen = new Set<string>()
+    const eindeutig: z.infer<typeof travellerItemSchema>[] = []
+    for (const item of items) {
+      if (gesehen.has(item.clientRef)) continue
+      gesehen.add(item.clientRef)
+      eindeutig.push(item)
+    }
+    return eindeutig
+  })
+
+export const travellerEingabeSchema = z.object({
+  clientRef: z.string().min(1).max(READINESS_GRENZEN.clientRef),
+  label: z
+    .string()
+    .max(40)
+    .nullable()
+    .optional()
+    .transform((wert, ctx) => {
+      if (wert == null) return null
+      const label = wert.trim()
+      if (label === '') return null
+      if (enthaltSensitiveDaten(label) || /https?:\/\//i.test(label) || /<\/?[a-z][\s\S]*>/i.test(label)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Keine Passnummern, Ausweisdaten oder andere sensible Daten eintragen.',
+        })
+        return z.NEVER
+      }
+      return label
+    }),
+  nationalityCountryCode: landescode.nullable().optional().default(null),
+  residenceCountryCode: landescode.nullable().optional().default(null),
+  documentType: z.enum(TRAVELLER_DOCUMENT_TYPES).nullable().optional().default(null),
+  documentIssuingCountryCode: landescode.nullable().optional().default(null),
+  documentExpiresOn: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullable()
+    .optional()
+    .default(null),
+})
+
+export const travellerKontoEingabeSchema = travellerEingabeSchema.extend({
+  tripId: z.string().uuid(),
+})
+
+export const travellerKontoLoeschenSchema = z.object({
+  tripId: z.string().uuid(),
+  clientRef: z.string().min(1).max(READINESS_GRENZEN.clientRef),
+})
+
+export const partyUebernahmeSchema = z.object({
+  tripId: z.string().uuid(),
+  party: z.array(travellerEingabeSchema).max(20),
 })
 
 export function readinessItemLesen(wert: unknown): TripReadinessItem | null {
@@ -182,5 +291,10 @@ export function readinessItemLesen(wert: unknown): TripReadinessItem | null {
 
 export function readinessItemsLesen(wert: unknown): TripReadinessItem[] {
   const ergebnis = readinessItemsSchema.safeParse(wert ?? [])
+  return ergebnis.success ? ergebnis.data : []
+}
+
+export function partyLesen(wert: unknown): z.infer<typeof partySchema> {
+  const ergebnis = partySchema.safeParse(wert ?? [])
   return ergebnis.success ? ergebnis.data : []
 }

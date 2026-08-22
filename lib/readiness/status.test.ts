@@ -58,7 +58,7 @@ describe('Readiness-Gesamtstatus', () => {
     assert.ok(summary.open > 0)
     assert.equal(summary.done, 0)
     assert.equal(summary.officialResult, 'unknown')
-    assert.match(readinessZusammenfassungText(summary), /noch nicht offiziell geprüft/)
+    assert.match(readinessZusammenfassungText(summary), /Automatische Einreiseprüfung derzeit nicht verfügbar/)
   })
 
   test('nur User Items done + official unknown', () => {
