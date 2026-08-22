@@ -295,9 +295,14 @@ Umgesetzt auf dem Draft-PR:
 
 Development-Migrationen `20260822010000` und `20260822020000` nur Development. Production unverändert. Kein Provider, keine neuen Secrets, keine neuen Kosten.
 
-Qualitätsnachweis der Final-Architecture-Review folgt der Verifikation dieses Heads. Vorheriger Nachweis auf `5591e870`: Tests **1244/1244**, Workspace-Audit **662/0**, Activities **184/0**, Typecheck/Lint/Hygiene/Build/Auth/CI/Preview grün.
+Qualitätsnachweis auf `4f546a1a`:
 
-Preview: `https://jetnity-app-git-feat-travel-readiness-f-f8117d-jetnity-e1b93c82.vercel.app`
+- `npm test`: **1251/1251**
+- Typecheck, Lint, Hygiene, Auth-Konfiguration und Production-Build grün
+- Trip-Workspace-Audit WebKit + Chromium: **678 Kombinationen, 0 Fehler**
+- Activities-Regression: **184 Kombinationen, 0 Fehler**
+- GitHub CI grün, Vercel Preview READY
+- Preview: `https://jetnity-app-git-feat-travel-readiness-f-f8117d-jetnity-e1b93c82.vercel.app`
 
 Fachdoku: `docs/TRAVEL_READINESS.md`, ADR-0096 bis ADR-0110. Verbindlicher Nachtrag: `docs/CURSOR_TRAVEL_READINESS_AUTOMATION_AMENDMENT.md`. Review-Fixes: `docs/CURSOR_PR32_HUMAN_REVIEW_FIXES.md`. Final Review: `docs/CURSOR_PR32_FINAL_ARCHITECTURE_REVIEW.md`.
 

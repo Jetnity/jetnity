@@ -112,9 +112,12 @@ Zuerst offizielle Prüfung und fehlende Angaben, danach die persönliche Vorbere
 
 ## Nachweis Draft-PR #32
 
-Final-Architecture-Review (ADR-0107 bis ADR-0110) auf Draft-PR #32. Exakte Test-/Audit-/CI-Zahlen folgen der Verifikation dieses Heads.
+Final-Architecture-Review (ADR-0107 bis ADR-0110) auf Head `4f546a1a`:
 
-Zuvor Human-Review-Fixes auf `5591e870`: Tests **1244/1244**, Workspace-Audit **662/0**, Activities **184/0**, Typecheck/Lint/Hygiene/Build/Auth/CI/Preview grün.
-
-Preview bleibt: `https://jetnity-app-git-feat-travel-readiness-f-f8117d-jetnity-e1b93c82.vercel.app`  
-Development-Migration angewendet; Production-Schema unverändert.
+- Tests **1251/1251**
+- Typecheck, Lint, Hygiene, Auth-Konfiguration und Production-Build grün
+- Trip-Workspace-Audit WebKit + Chromium: **678 Kombinationen, 0 Fehler**
+- Activities-Regression: **184 Kombinationen, 0 Fehler**
+- GitHub CI und Vercel Preview grün
+- Preview: `https://jetnity-app-git-feat-travel-readiness-f-f8117d-jetnity-e1b93c82.vercel.app`
+- Development-Migration angewendet; Production-Schema unverändert
