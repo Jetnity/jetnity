@@ -83,6 +83,56 @@ Empfohlene Produkt-/UX-Richtung:
 
 Hauptentwickler-Empfehlung: Die Ein-Reise-Gastregel zunächst beibehalten, aber transparent und zum richtigen Zeitpunkt erklären. Sie reduziert Datenverlust-/Synchronisationskomplexität und schafft einen verständlichen Übergang zum Konto. Falls der Product Owner mehrere parallele Gastreisen ohne Konto wünscht, ist das technisch möglich, wäre aber eine eigene Produkt-/Persistenzentscheidung und sollte nicht beiläufig in PR #34 eingeführt werden.
 
+### Abnahmepunkt 2 – Reise anlegen: keine vorprägenden Auswahlchips; Wünsche als editierbarer Freitext
+
+**Product-Owner-Entscheidung: bestätigt.**
+
+Aktuelles Problem:
+
+- Der Planer zeigt `Reisetempo` mit `Ruhig / Ausgewogen / Intensiv` und setzt intern bereits standardmäßig `pace = balanced`, obwohl der Besucher diese Präferenz nicht zwingend bewusst gewählt hat.
+- Zusätzlich werden strukturierte Interessen wie `Kultur`, `Natur`, `Kulinarik`, `Strand`, `Abenteuer`, `Wellness` als dauerhafte Reise-Facts gespeichert.
+- Diese frühen strukturierten Signale können die intelligente Planung unnötig vorprägen und dazu führen, dass Jetnity Möglichkeiten zu früh einschränkt.
+- Auf Mobile entsteht außerdem kognitive Last durch viele Auswahlmöglichkeiten in einem Schritt, obwohl der Nutzer primär erst eine Reise anlegen möchte.
+- Das vorhandene Freitextfeld `Was ist dir bei dieser Reise besonders wichtig?` ist fachlich geeigneter, wird aber nach Erstellung nicht als einfach sichtbarer, direkt editierbarer Kernwunsch angeboten.
+
+Verbindliche fachliche Richtung für den späteren Amendment:
+
+1. **Initialen Planungsflow vereinfachen.**
+   - `Reisetempo`-Auswahl aus dem Reise-anlegen-Flow entfernen.
+   - Interessen-Chips aus dem Reise-anlegen-Flow entfernen.
+   - Keine implizite sichtbare oder unsichtbare Benutzerpräferenz aus einem Default wie `balanced` ableiten.
+   - Der Nutzer soll beim Start nur die wirklich nötigen Reise-Facts plus optionale eigene Wünsche angeben.
+
+2. **Freitext als primärer Wunsch-/Prioritäten-Kontext.**
+   - Ein einziges optionales Feld für eigene Wünsche/Prioritäten bleibt, z. B. `Was ist dir bei dieser Reise wichtig?`.
+   - Der Nutzer formuliert selbst, was tatsächlich relevant ist, statt aus vorgegebenen Kategorien wählen zu müssen.
+   - Der Text darf Jetnity intelligent beeinflussen, ist aber kein unveränderlicher Filter und keine globale Persönlichkeit des Reisenden.
+   - Jetnity darf aus diesem Text intern temporäre Bedeutungen ableiten, diese aber nicht ungefragt als dauerhafte strukturierte Nutzer-Wahrheit verhärten.
+
+3. **Hard Facts vs. Soft Preferences strikt trennen.**
+   - Harte Reise-Facts wie Ziele, Route, konkrete Daten, Reisende und ausdrücklich gesetzte Budgetgrenzen bleiben deterministische Facts.
+   - Freitext-Wünsche sind standardmäßig **weicher Planungskontext**, außer der Nutzer formuliert eindeutig eine Muss-Bedingung oder bestätigt eine harte Einschränkung.
+   - Ein Wunsch wie `gern Strand` darf andere sinnvolle Möglichkeiten nicht dauerhaft ausschließen.
+   - Ein klarer Satz wie `Ich möchte auf keinen Fall einen Mietwagen` kann als stärkere Vorgabe behandelt werden, muss aber bei späterer Änderung sofort neu bewertet werden.
+
+4. **Später jederzeit sichtbar bearbeitbar.**
+   - Im Trip Workspace / Dashboard braucht es einen klaren, einfachen Bereich wie `Wünsche & Prioritäten` statt eines starren `Reiseprofil`-Eindrucks.
+   - Der gespeicherte Freitext muss dort direkt sichtbar und einfach bearbeitbar sein.
+   - Änderungen müssen sowohl für Gast- als auch Kontoreisen funktionieren.
+   - Nach einer Änderung dürfen alte darauf basierende Vorschläge nicht still als unverändert gültig behandelt werden; betroffene intelligente Empfehlungen müssen den aktuellen Wunschkontext verwenden.
+
+5. **Bestehende Felder `pace` / `interests` nicht unkontrolliert weiter als Wahrheit verwenden.**
+   - Der spätere Implementierungs-Amendment muss prüfen, ob diese bestehenden Schemafelder deprecatet, nullable/neutral modelliert oder nur noch als Legacy-Kompatibilität behalten werden.
+   - Ein technischer Default `balanced` darf künftig nicht als vom Nutzer bestätigte Präferenz in intelligente Entscheidungen einfließen.
+   - Keine unnötige Production-Migration ohne Architektur-/Datenbestandsprüfung; bestehende Reisen dürfen nicht still semantisch umgedeutet werden.
+
+6. **Progressive Intelligence statt Fragebogen.**
+   - Jetnity soll fehlende Präferenzen später nur dann gezielt nachfragen, wenn sie für eine konkrete Entscheidung wirklich wichtig sind.
+   - Beispiel: Erst wenn zwei gleich gute Reisevarianten deutlich vom gewünschten Tempo abhängen, kann Jetnity gezielt fragen, ob der Nutzer lieber entspannter oder dichter plant.
+   - Dadurch bleibt der Einstieg einfach und die Intelligenz offen statt früh eingeschränkt.
+
+Hauptentwickler-Empfehlung: Diese Änderung ist fachlich sinnvoll. Jetnitys Stärke soll darin liegen, aus wenigen belastbaren Facts und frei formulierten Wünschen breite Möglichkeiten zu analysieren und erst bei echter Entscheidungsrelevanz weitere Fragen zu stellen. Vorgegebene Interessen-/Tempo-Kategorien dürfen nicht unbemerkt zur langfristigen Optimierungsfunktion werden.
+
 ## Noch nicht tun
 
 - keine eigenmächtige Implementierung aus diesem Sammeldokument
