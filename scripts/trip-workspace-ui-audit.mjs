@@ -1028,6 +1028,124 @@ const ZUSTAENDE = {
     oeffneVorbereitung: true,
     nutzlast: { reise: reise({ travellers: 1 }) },
   },
+  'readiness-foundation-e-zwei-reisende': {
+    kompakt: 'unterschiedliche Staatsbürgerschaften oder Dokumente',
+    desktop: 'unterschiedliche Staatsbürgerschaften oder Dokumente',
+    oeffneVorbereitung: true,
+    nutzlast: {
+      reise: reise({
+        travellers: 2,
+        party: [
+          {
+            id: 'party-1',
+            clientRef: 'traveller:1',
+            label: 'Reisende 1',
+            residenceCountryCode: 'CH',
+            citizenships: [
+              {
+                id: 'cit-ch',
+                clientRef: 'citizenship:CH',
+                countryCode: 'CH',
+                createdAt: JETZT,
+                updatedAt: JETZT,
+              },
+            ],
+            documents: [
+              {
+                id: 'doc-ch',
+                clientRef: 'document:passport:CH',
+                documentType: 'passport',
+                issuingCountryCode: 'CH',
+                citizenshipClientRef: 'citizenship:CH',
+                expiresOn: '2030-01-01',
+                createdAt: JETZT,
+                updatedAt: JETZT,
+              },
+            ],
+            createdAt: JETZT,
+            updatedAt: JETZT,
+          },
+          {
+            id: 'party-2',
+            clientRef: 'traveller:2',
+            label: 'Reisende 2',
+            residenceCountryCode: 'DE',
+            citizenships: [
+              {
+                id: 'cit-de',
+                clientRef: 'citizenship:DE',
+                countryCode: 'DE',
+                createdAt: JETZT,
+                updatedAt: JETZT,
+              },
+              {
+                id: 'cit-at',
+                clientRef: 'citizenship:AT',
+                countryCode: 'AT',
+                createdAt: JETZT,
+                updatedAt: JETZT,
+              },
+            ],
+            documents: [
+              {
+                id: 'doc-de',
+                clientRef: 'document:passport:DE',
+                documentType: 'passport',
+                issuingCountryCode: 'DE',
+                citizenshipClientRef: 'citizenship:DE',
+                expiresOn: '2028-03-01',
+                createdAt: JETZT,
+                updatedAt: JETZT,
+              },
+            ],
+            createdAt: JETZT,
+            updatedAt: JETZT,
+          },
+        ],
+      }),
+    },
+  },
+  'readiness-foundation-e-langes-label': {
+    kompakt: 'Reisende 1 langer erlaubter Anzeigename.',
+    desktop: 'Reisende 1 langer erlaubter Anzeigename.',
+    oeffneVorbereitung: true,
+    nutzlast: {
+      reise: reise({
+        travellers: 1,
+        party: [
+          {
+            id: 'party-label',
+            clientRef: 'traveller:1',
+            label: 'Reisende 1 langer erlaubter Anzeigename.',
+            residenceCountryCode: 'CH',
+            citizenships: [
+              {
+                id: 'cit-ch',
+                clientRef: 'citizenship:CH',
+                countryCode: 'CH',
+                createdAt: JETZT,
+                updatedAt: JETZT,
+              },
+            ],
+            documents: [
+              {
+                id: 'doc-ch',
+                clientRef: 'document:passport:CH',
+                documentType: 'passport',
+                issuingCountryCode: 'CH',
+                citizenshipClientRef: 'citizenship:CH',
+                expiresOn: '2030-01-01',
+                createdAt: JETZT,
+                updatedAt: JETZT,
+              },
+            ],
+            createdAt: JETZT,
+            updatedAt: JETZT,
+          },
+        ],
+      }),
+    },
+  },
   'readiness-foundation-e-provider-unavailable': {
     kompakt: 'Offizielle Prüfung noch nicht verfügbar',
     desktop: 'Offizielle Prüfung noch nicht verfügbar',
@@ -1039,7 +1157,7 @@ const ZUSTAENDE = {
           {
             id: 'party-ch',
             clientRef: 'traveller:1',
-            label: 'Reisende 1 mit sehr langem aber erlaubtem Label',
+            label: 'Reisende 1 langer erlaubter Anzeigename.',
             nationalityCountryCode: 'CH',
             documentType: 'passport',
             documentIssuingCountryCode: 'CH',

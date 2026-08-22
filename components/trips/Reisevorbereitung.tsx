@@ -435,6 +435,7 @@ function ReisendenKarte({
       <p className="text-sm font-semibold text-brand-800">{slot.label}</p>
       <p className="text-xs leading-5 text-ink-800">
         Offizielle Prüfung noch nicht verfügbar. Angaben werden nur erfasst, nicht bewertet.
+        {slot.missingFacts.length === 0 ? ' Angaben erfasst.' : ' Für eine zuverlässige Prüfung fehlen Angaben.'}
       </p>
       <fieldset className="grid gap-2">
         <legend className="text-xs font-medium text-brand-800">Staatsbürgerschaften (ISO-2)</legend>
