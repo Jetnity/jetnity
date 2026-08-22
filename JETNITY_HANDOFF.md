@@ -219,7 +219,7 @@ Umgesetzt:
 - persistierte Itinerary in vorhandenem `trip_items.metadata`; Development-RPC schreibt sie atomar (ADR-0113), Production-Schema unverändert
 - Guest- und Account-Parität über dasselbe Trip-Feld; stiller Route-Verlust ist kein Erfolg
 - Account-Route-Länder entstehen nur aus `public.airports`, nie aus Browser-Country-Facts (ADR-0114)
-- dieselbe Grenze gilt für direkte `reise_anlegen`-RPC-Aufrufe in der Datenbank (ADR-0115)
+- dieselbe Grenze gilt für direkte `reise_anlegen`-RPC-Aufrufe und für jeden `trip_items`-INSERT/UPDATE (ADR-0115, ADR-0116)
 - Readiness erhält Origin-/Transit-Codes und wird bei Transitänderung stale
 - Flugbereich zeigt Route progressiv; Übersicht eine dezente Zeile
 - Reiseänderung nennt Transitwechsel

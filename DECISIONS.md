@@ -2863,6 +2863,34 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 - `db:sicherheit` prüft direkten RPC mit manipuliertem `ZRH.countryCode = 'US'`
 - Production-Schema unverändert, bis eine separate Freigabe die Migration erlaubt
 
+**Nachtrag, 22. August 2026:** Direkte `trip_items`-INSERT/UPDATE umgingen die RPC-Grenze. ADR-0116 schützt jeden persistenten Schreibweg.
+
+---
+
+## ADR-0116 – Route-Metadata wird auf jedem `trip_items`-Schreibweg kanonisiert
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #34; Migration nur Development; Production nicht anwenden
+
+**Entscheidung:** Ein `BEFORE INSERT OR UPDATE OF metadata, kind`-Trigger auf `public.trip_items` kanonisiert `metadata.routeItinerary` für `kind = 'flight'` über `flug_route_itinerary_metadata()`. Ungültige Routen werden entfernt. Andere Metadata-Schlüssel bleiben. Nicht-Flight-Zeilen bleiben unverändert.
+
+**Kontext:** Round 4 (`docs/CURSOR_PR34_HUMAN_REVIEW_ROUND4.md`) hat bestätigt, dass `authenticated` eigene `trip_items` direkt schreiben darf. RLS schützt den Eigentümer, nicht die Route Truth.
+
+**Alternativen:**
+
+1. *INSERT/UPDATE auf `trip_items.metadata` entziehen.* Würde legitime Buchungs- und Mobility-Schreibwege brechen.
+2. *Nur Anwendungscode härten.* Ein direkter SQL-Client umgeht das.
+3. *Shadow-Tabelle für kanonische Routen.* Zweite Wahrheit, unnötige Komplexität.
+
+**Begründung:** Dieselbe kanonische Funktion wie der RPC. Ein enger Trigger, keine neue Spalte. RLS bleibt Eigentümergrenze; der Guard schützt die Wahrheit.
+
+**Konsequenzen:**
+
+- Development-Migration `20260822150000_trip_items_route_itinerary_guard.sql`
+- Funktion `public.trip_items_route_itinerary_schuetzen()` ohne EXECUTE für `authenticated`
+- `db:sicherheit` prüft direkten INSERT/UPDATE mit manipulierten Ländern
+- Production-Schema unverändert, bis eine separate Freigabe die Migration erlaubt
+
 ---
 
 ## Offene Widersprüche

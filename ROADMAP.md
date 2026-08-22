@@ -80,7 +80,8 @@ Status: **UMGESETZT AUF DRAFT-PR #34 / NICHT GEMERGT**
 - Fachdokument: `docs/ROUTE_TRANSIT_INTELLIGENCE.md`
 - Acceptance: `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md`
 - verbindlicher UX-Standard: `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
-- Merge erst nach Human-/Architecture-Review und ausdrücklicher Product-Owner-Freigabe
+- Merge erst nach finalem Human-/Architecture-/Truth-Re-Review und ausdrücklicher Product-Owner-Freigabe
+- Round-4-Metadata-Guard (ADR-0116) liegt auf Development; Production unverändert
 
 ### Ziel
 
@@ -256,7 +257,7 @@ Solange PR #34 offen ist:
 5. `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md` lesen.
 6. `docs/ROUTE_TRANSIT_INTELLIGENCE.md` und `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md` lesen.
 7. `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md` vollständig lesen.
-8. aktuellen PR #34 / Git-/CI-/Vercel-/Supabase-Stand prüfen.
+8. `docs/ACTIVE_WORK_STATUS.md` und `docs/CURSOR_PR34_HUMAN_REVIEW_ROUND4.md` lesen, dann aktuellen PR #34 / Git-/CI-/Vercel-/Supabase-Stand prüfen.
 9. relevante Flight-/Trip-/Mobility-/Readiness-/Change-Dokumente lesen.
 10. nicht mergen, nicht Mark Ready, keine Production-Migration.
 11. bestehende Arbeit synchronisieren und fortsetzen statt neu anzufangen.

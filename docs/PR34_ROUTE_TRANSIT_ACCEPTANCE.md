@@ -1,7 +1,7 @@
 # PR #34 – Foundation D Acceptance / Verification
 
 Stand: 22. August 2026  
-Status: **Round-3-DB-Trust-Boundary umgesetzt; lokal/CI/Preview/DB-Development geprüft; finaler Human-Review und Product-Owner-Freigabe offen**
+Status: **Round-4-Metadata-Guard umgesetzt; lokal/CI/Preview/DB-Development geprüft; finaler Human-Review und Product-Owner-Freigabe offen**
 
 Branch: `feat/route-transit-intelligence`  
 PR: https://github.com/Jetnity/jetnity/pull/34  
@@ -15,16 +15,16 @@ Merge-Approval: `docs/CURSOR_ROUTE_TRANSIT_MERGE_APPROVAL_AMENDMENT.md` und `doc
 
 Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Flight-Itineraries.
 
-`routeFactsAusReise()` liefert `quelle: 'flight_itinerary'`, sobald eine gültige Itinerary im Reisegraphen liegt. Titel, Notizen, Ortsnamen und Browser-Country-Felder erzeugen keine Route. Account-Länder kommen nur aus `public.airports` (ADR-0114, ADR-0115). Auch ein direkter `reise_anlegen`-RPC kann Client-Länder nicht persistieren.
+`routeFactsAusReise()` liefert `quelle: 'flight_itinerary'`, sobald eine gültige Itinerary im Reisegraphen liegt. Titel, Notizen, Ortsnamen und Browser-Country-Felder erzeugen keine Route. Account-Länder kommen nur aus `public.airports` (ADR-0114, ADR-0115, ADR-0116). Weder ein direkter `reise_anlegen`-RPC noch ein Eigentümer-INSERT/UPDATE auf `trip_items.metadata` kann Client-Länder persistieren.
 
 ---
 
 ## Datenbankgrenze
 
-- Development-Migrationen `20260822130000_reise_anlegen_route_itinerary.sql` und `20260822140000_flug_route_itinerary_airport_truth.sql` **angewendet**
+- Development-Migrationen `20260822130000_reise_anlegen_route_itinerary.sql`, `20260822140000_flug_route_itinerary_airport_truth.sql` und `20260822150000_trip_items_route_itinerary_guard.sql` **angewendet**
 - Keine neue Tabelle oder Spalte; Persistenz bleibt `trip_items.metadata`
 - Production-Schema unverändert
-- `db:rechte` OK, `db:rls` grün, `db:sicherheit` 193/193 nach der Airport-Truth-Migration
+- `db:rechte` OK, `db:rls` grün, `db:sicherheit` 200/200 nach dem Metadata-Guard
 
 ---
 
@@ -36,6 +36,7 @@ Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Fligh
 | Persistenz-Fix-Head | `6cbe39f3a96fd425b2e0e60ef33c3c206432ed81` |
 | Round-2-Fix-Head | `ab8a4910735b05c294f1060ce0f591afc3f25f4d` |
 | Round-3-Fix-Head | `be6112061a3429ecf8c8f4aaba595cb5913f3860` |
+| Round-4-Fix-Head | `f55a8dcf1491575d5b0370bafec3934d9b7b884b` |
 | `npm test` | **1295 pass / 0 fail** |
 | Typecheck | **grün** (`tsc --noEmit`) |
 | Lint | **grün** (`next lint`, 0 warnings/errors) |
@@ -43,9 +44,9 @@ Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Fligh
 | Production Build | **grün** (`next build`, 38/38 Seiten). Setup-Warnung: keine `.env`/`.local` in dieser Agent-Umgebung. |
 | Auth-Config-Checks | **grün** (`auth:pruefen`: 55/55 Werte) |
 | Trip Workspace Audit | **726 Kombinationen, 0 Fehler**, Engines WebKit + Chromium, inkl. `route-direkt` / `route-ein-transit` / `route-zwei-transits` |
-| Vercel Preview | **READY** für `be611206`: https://jetnity-530z7fkbv-jetnity-e1b93c82.vercel.app |
-| GitHub Actions `CI` | **success** auf `be611206`: https://github.com/Jetnity/jetnity/actions/runs/32577656292 |
-| `db:sicherheit` | **193/193** nach `20260822140000_flug_route_itinerary_airport_truth.sql` |
+| Vercel Preview | **READY** für `f55a8dcf`: https://jetnity-fm2luyy0k-jetnity-e1b93c82.vercel.app |
+| GitHub Actions `CI` | **success** auf `f55a8dcf`: https://github.com/Jetnity/jetnity/actions/runs/32578859981 |
+| `db:sicherheit` | **200/200** nach `20260822150000_trip_items_route_itinerary_guard.sql` |
 
 ---
 
@@ -77,7 +78,7 @@ UI-Audit-Fixtures: `route-direkt`, `route-ein-transit`, `route-zwei-transits`.
 ## Risiken, die bewusst offen bleiben
 
 - Ohne Airport-Zeile in `public.airports` gibt es IATA ohne Land. Fail-closed, kein Guess.
-- Production kennt die RPC-Erweiterung noch nicht; dort bleibt der fail-closed TypeScript-Nachlauf die Recovery. Development schreibt atomar.
+- Production kennt RPC-Kanonisierung und Metadata-Guard noch nicht; dort bleibt der fail-closed TypeScript-Nachlauf die Recovery. Development schreibt atomar und schützt jeden `trip_items`-Schreibweg.
 - Mehrdeutige Flüge (identische Titel/Daten/Provider/Ref/Position) bekommen keine Itinerary.
 - Echter Connection-Risk- oder Transfer-Hinweis ist nicht gebaut.
 - Official Transit-Requirements bleiben ohne Timatic `unknown`.
@@ -119,7 +120,7 @@ Geprüft gegen `docs/CURSOR_ROUTE_TRANSIT_EXPERT_PROACTIVITY_AMENDMENT.md`. Rout
 
 - **Beobachtung:** Guest→Account hat strukturell gültige Browser-Länder persistiert. Readiness hätte sie als `flight_itinerary` gelesen.
 - **Status:** **behoben** in `ab8a4910` (ADR-0114). `reiseAusNutzlastAnlegen()` kanonisiert vor RPC und Recovery.
-- **Priorität:** Defense in Depth; letzte Grenze ist ADR-0115
+- **Priorität:** Defense in Depth; DB-Grenzen sind ADR-0115 und ADR-0116
 - **Scope:** innerhalb Foundation D, umgesetzt
 - **Product-Owner-Entscheidung:** keine weitere Anwendungsschicht in diesem PR
 
@@ -127,6 +128,14 @@ Geprüft gegen `docs/CURSOR_ROUTE_TRANSIT_EXPERT_PROACTIVITY_AMENDMENT.md`. Rout
 
 - **Beobachtung:** `authenticated` kann `reise_anlegen(jsonb)` direkt aufrufen. Die SQL-Helferfunktion übernahm Client-Länder.
 - **Status:** **behoben** in `be611206` (ADR-0115). Die Datenbank baut Punkte aus `public.airports` neu.
+- **Priorität:** Production-Anwendung der Migration bleibt separate Freigabe
+- **Scope:** innerhalb Foundation D, umgesetzt
+- **Product-Owner-Entscheidung:** Production-Migration später, nicht jetzt
+
+### Fund 6 – Eigentümer-INSERT/UPDATE umging RPC und TypeScript
+
+- **Beobachtung:** `authenticated` darf eigene `trip_items` direkt schreiben. RLS schützt den Eigentümer, nicht `metadata.routeItinerary`. Ein direktes Flight-INSERT/UPDATE konnte Client-Länder persistieren.
+- **Status:** **behoben** in `f55a8dcf` (ADR-0116). BEFORE-Trigger `trip_items_route_itinerary_schuetzen` kanonisiert jeden INSERT/UPDATE von `metadata` oder `kind`.
 - **Priorität:** Production-Anwendung der Migration bleibt separate Freigabe
 - **Scope:** innerhalb Foundation D, umgesetzt
 - **Product-Owner-Entscheidung:** Production-Migration später, nicht jetzt
