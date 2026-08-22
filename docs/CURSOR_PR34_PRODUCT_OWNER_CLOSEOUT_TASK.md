@@ -30,6 +30,8 @@ Lies vor Beginn vollständig:
 - `docs/PRODUCT_OWNER_PR34_TRAVEL_SAFETY_ADDENDUM.md`
 - `docs/TRIP_WORKSPACE_FINAL_INTELLIGENCE_AUDIT_POLICY.md`
 - `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`
+- `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`
+- `docs/FINAL_HOMEPAGE_POSITIONING_OPTIMIZATION_POLICY.md`
 - alle Foundation-D-Review-/Acceptance-Dokumente.
 
 ## Ausgangslage
@@ -41,7 +43,7 @@ Lies vor Beginn vollständig:
 - Production-Migration ist **nicht** freigegeben.
 - Foundation-D-Code war vor den späteren Product-Owner-Dokumentationsänderungen technisch review-bestanden.
 - Während des Rundgangs wurden wichtige produktweite Anforderungen bestätigt. Diese sind für spätere Blöcke verbindlich, sollen aber nicht als unkontrollierter Workspace-Rewrite in PR #34 implementiert werden.
-- `main` wurde während der Abnahme um neue globale Produkt-/UX-/Audit-/Safety-Regeln erweitert. Der PR ist aktuell nicht sauber mergebar und muss vor einer späteren Merge-Entscheidung synchronisiert werden.
+- `main` wurde während der Abnahme um neue globale Produkt-/UX-/Audit-/Safety-/Seasonality-/Homepage-Regeln erweitert. Der PR ist aktuell nicht sauber mergebar und muss vor einer späteren Merge-Entscheidung synchronisiert werden.
 
 ## Ziel dieses Auftrags
 
@@ -85,7 +87,7 @@ Besonders auf Konflikte/Drift prüfen in:
 - `ARCHITECTURE.md`
 - `DECISIONS.md`
 - `AGENTS.md`
-- UX-/Quality-/Traveller-/Safety-/Audit-Dokumenten
+- UX-/Quality-/Traveller-/Safety-/Seasonality-/Homepage-/Audit-Dokumenten
 - `.cursor/rules/*`
 
 ## Phase 3 – Scope-Gate
@@ -97,9 +99,11 @@ Die folgenden bestätigten Product-Owner-Anforderungen **nicht** jetzt als groß
 - Entfernung/Neutralisierung des ganzen Pace-/Interest-Modells,
 - vollständiger Workspace-/Overview-Neuaufbau,
 - Foundation E,
-- Travel Safety & Disruption Intelligence.
+- Travel Safety & Disruption Intelligence,
+- Travel Timing & Seasonal Intelligence,
+- finale Startseiten-Positionierungs-/Kommunikationsoptimierung.
 
-Diese Anforderungen bleiben verbindlich und sind über `docs/PRODUCT_OWNER_PR34_ACCEPTANCE_CLOSURE.md` für die nächsten Blöcke gesichert.
+Diese Anforderungen bleiben verbindlich und sind über die Product-Owner-Dokumente auf dem Branch sowie die globalen Policies/Roadmap auf `main` für die nächsten Blöcke gesichert.
 
 Nur dann Code in PR #34 ändern, wenn die Synchronisierung einen echten Foundation-D-Regressions-/Integrationsfehler erzeugt oder ein bereits bestätigter Foundation-D-Truth-/Security-Blocker sichtbar wird. In diesem Fall Fund dokumentieren und sauber beheben.
 
@@ -170,8 +174,9 @@ Nur falls durch Sync/Closeout nötig. Reihenfolge muss weiterhin klar sein:
 1. Foundation D abschließen,
 2. Foundation E Traveller Context / Multi-Citizenship,
 3. zentraler Workspace-Umbau,
-4. Travel Safety & Disruption Intelligence professionell integrieren,
-5. finaler Workspace Intelligence Audit.
+4. Travel Safety & Disruption + Travel Timing & Seasonal Intelligence professionell integrieren,
+5. finaler Workspace Intelligence Audit,
+6. nach Integration des Kernprodukts finale Startseiten-Positionierung/-Kommunikation.
 
 ## Phase 8 – Abschlussbericht
 
@@ -205,7 +210,7 @@ Mindestens:
 - KEINE Production-Migration.
 - KEIN Provider aktivieren.
 - KEINE neuen laufenden Kosten.
-- KEINE spätere Workspace-/Foundation-E-/Safety-Funktion vorwegnehmen.
+- KEINE spätere Workspace-/Foundation-E-/Safety-/Seasonality-/Homepage-Funktion vorwegnehmen.
 - Wenn beim Sync ein neuer schwerer Foundation-D-Logic-/Truth-/Security-Blocker gefunden wird, stoppen, dokumentieren und als Blocker melden statt ihn zu verschweigen.
 
 ## Definition of Done dieses Closeouts
