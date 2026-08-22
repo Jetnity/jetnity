@@ -123,6 +123,8 @@ Vergleich (`lib/readiness/vergleich.ts`) trennt Requirement-Ergebnisse von optio
 - Explizites `citizenships: []` / `documents: []` bleibt auch im gemeinsamen Parser leer.
 - Document-`clientRef` ist eine stabile Identität. `citizenshipClientRef` wird nur bewusst gesetzt oder bei Citizenship-Löschung genullt.
 - Traveller-spezifische Readiness ohne auflösbare Ref wird nicht trip-level.
+- Widersprüchliche current Provider-Zeilen derselben Option, inklusive abweichender `officialClass`, bleiben sichtbar als `unknown` / `recheck_needed`. Evidence-URLs allein sind kein Konflikt.
+- Die Requirements-API validiert vorhandene Legacy-Singularfelder strikt. `travellerLegacyLesen()` bleibt nur für Guest-/Storage-Recovery tolerant.
 
 Ohne Evidence oder ohne option-level Semantik:
 

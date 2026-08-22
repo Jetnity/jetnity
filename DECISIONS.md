@@ -3141,6 +3141,35 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0126 – Konfliktsignatur enthält officialClass; API-Legacy-Singularfelder sind strikt
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Development; Production-Schema unverändert
+
+**Entscheidung:**
+
+- `requirementsAusZeilen()` vergleicht doppelte Provider-Zeilen über eine zentrale `entscheidungsSignatur`: `result`, `status`, `freshness`, `optionEligibility`, `optionMandate` und `officialClass`. Abweichende Evidence-URLs allein sind kein semantischer Konflikt.
+- Bei Konflikt bleibt die Option sichtbar als `unknown` / `recheck_needed` mit derselben `credentialOptionRef`. Der Comparator darf aus der Restmenge keinen Winner bilden.
+- `travellerLegacyLesen()` bleibt der tolerante Guest-/Storage-Lesepfad.
+- Die untrusted Requirements-API validiert vorhandene Legacy-Singularfelder (`nationalityCountryCode`, `residenceCountryCode`, `documentType`, `documentIssuingCountryCode`, `documentExpiresOn`) vor dem Legacy-Expand strikt. Malformed Werte oder falsche Runtime-Typen sind fail-closed und erreichen `RequirementsProvider.evaluate()` nicht. Valide Foundation-C-Legacy-Form bleibt kompatibel.
+
+**Kontext:** Final Closure Review PR #35. `officialClass` entschied Reibungs-Ranking, fehlte aber in der Konflikterkennung. `documentAusLegacy()` übernahm untrusted `documentType` und Ablaufdaten ohne Enum-/Datumscheck.
+
+**Alternativen:**
+
+1. *officialClass weiter nur im Comparator nutzen.* Reihenfolgeabhängige Winner.
+2. *Legacy-Singularfelder an der API weiter tolerant normalisieren.* Ungültige Credentials würden still fehlen oder als `foobar` weiterleben.
+3. *`travellerLegacyLesen()` selbst härten.* Würde Guest-/Storage-Recovery brechen.
+
+**Begründung:** Entscheidungsrelevante Semantik muss vollständig und reihenfolgeunabhängig konfliktieren. Untrusted API-Input darf nicht über den toleranten Storage-Reader in die regulatorische Engine gelangen.
+
+**Konsequenzen:**
+
+- Neue kleine Hilfe `lib/readiness/entscheidung.ts`, damit Comparator-relevante Felder nicht still auseinanderlaufen.
+- Production-Schema unverändert. Draft PR #35 bleibt Draft.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

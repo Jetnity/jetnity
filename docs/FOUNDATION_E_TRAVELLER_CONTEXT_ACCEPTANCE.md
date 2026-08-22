@@ -106,6 +106,8 @@ Automatisiert nachgewiesen:
 28. Explizites `citizenships: []` / `documents: []` bleibt leer; ungültige Party-Einträge verschwinden nicht still
 29. Drei Credential-Optionen: Konflikt auf A lässt B/C nicht gewinnen; A bleibt als unknown/recheck sichtbar; Reihenfolge der Konfliktzeilen ändert das Ergebnis nicht; drei konsistente Optionen bleiben nach Comparator-Regeln auswertbar
 30. Requirements-API: malformed Child, falsch typisierte Canonical-Property, Limit- oder Duplicate-Verletzung und erkennbare Passnummer/MRZ sind fail-closed; echte Legacy-Form ohne Canonical-Properties bleibt gültig
+31. Doppelte current Zeilen derselben Option mit gleichem Result/Eligibility/Mandate, aber abweichender `officialClass` (`requirement` vs. `unknown`/`recommendation`/`advisory`) bleiben konfliktierte `unknown`/`recheck_needed`; Reihenfolge ändert das Ergebnis nicht; eine zweite konsistente Option gewinnt nicht; identische Duplikate inkl. abweichender Evidence-URL bleiben deduplizierbar
+32. Requirements-API: vorhandene Legacy-Singularfelder (`documentType`, `documentExpiresOn`, Länder-Codes) werden vor `travellerLegacyLesen()` strikt validiert; `foobar` / `kaputt` / falscher Typ sind fail-closed und erreichen den Provider nicht; Guest-/Storage-Reader bleibt tolerant
 
 ---
 
@@ -117,7 +119,7 @@ Automatisiert nachgewiesen:
 - keine Production-Migration
 - kein echter Requirements-Provider
 - Guest→Account bleibt für Readiness ein nachgelagerter Schritt; nur Party ist atomar
-- Unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_FINAL_DEPTH_REREVIEW.md` steht aus
+- Unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_FINAL_CLOSURE_REVIEW.md` steht nach dem nächsten Gate aus
 - `origin/main` @ `c8dbe904` ist semantisch synchronisiert; kein weiterer `main`-Sync nötig, solange `main` nicht erneut vorgeht
 - Nach diesem Status-Commit folgt kein weiterer Docs-Commit nur zum Festhalten von Checks
 
