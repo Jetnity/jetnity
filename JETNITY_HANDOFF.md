@@ -23,6 +23,7 @@ Pflichtlektüre:
 - `docs/CHATGPT_CURSOR_WORKFLOW.md`
 - `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`
 - `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
+- `docs/EXPERT_PROACTIVITY_POLICY.md`
 - relevante Fach-Dokumente unter `docs/`
 
 Wenn Erinnerung, Chat und Repository widersprechen: **nicht raten**, sondern aktuellen technischen Stand verifizieren.

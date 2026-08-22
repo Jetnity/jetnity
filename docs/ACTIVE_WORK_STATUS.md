@@ -8,9 +8,9 @@ Arbeitsblock: **Foundation D – Route & Transit Intelligence**
 - Branch: `feat/route-transit-intelligence`
 - Draft PR: **#34** https://github.com/Jetnity/jetnity/pull/34
 - Implementierungs-Head: `23dd548ae05016b2a1b5011e24c3bdd9d2018f8f`
-- Branch enthält Merge von `origin/main` `608dfbe5` (Traveller-Context-Policy)
+- Branch enthält Merge von `origin/main` `32af1cd6` (Expert-Proactivity-Policy)
 - aktuellen Branch-/PR-Head vor jeder weiteren Arbeit erneut über GitHub verifizieren
-- Status: **technisch umgesetzt und lokal erneut geprüft; CI auf `d3c99335` grün; Human-/Architecture-Review offen**
+- Status: **technisch umgesetzt; lokal und CI auf dem Implementierungsstand geprüft; Senior Expert Pass dokumentiert; Human-/Architecture-Review offen**
 - Merge: **nicht freigegeben**, PR bleibt Draft
 
 ## 2. Ziel
@@ -35,7 +35,7 @@ Route Facts sind traveller-neutral. Sie setzen keine einzelne Staatsbürgerschaf
 
 - Human-/Architecture-/UX-Review
 - ausdrückliche Product-Owner-Merge-Freigabe
-- GitHub Actions Verify für den Head nach Merge von `main` `608dfbe5` nachziehen; letzter grüner Implementierungs-Lauf ist `d3c99335`
+- GitHub Actions Verify für Docs-/Policy-Heads nach `a1110930` nicht automatisch übertragen; letzter grüner Implementierungs-Verify ist `a1110930`
 - kein Timatic, kein echter Provider, keine Production-Migration
 - **separater zukünftiger Readiness-/Traveller-Context-Schritt vor echter Requirements-Provider-Aktivierung:** Mehrfachstaatsbürgerschaften und mehrere Reisedokumente als 1:n-Modell; nicht still in Foundation D hineinmigrieren
 
@@ -67,6 +67,10 @@ Technisch fertig = review-bereit. **Kein Merge ohne ausdrückliche aktuelle Prod
 
 Jeder relevante Fortschritt, Blocker, Review-Fund, Test-/CI-/Preview-Stand und nächste Schritt muss versioniert werden.
 
+### Expert Proactivity
+
+Global verbindlich: `docs/EXPERT_PROACTIVITY_POLICY.md`. Foundation-D-Nachtrag: `docs/CURSOR_ROUTE_TRANSIT_EXPERT_PROACTIVITY_AMENDMENT.md`. Senior Expert Pass siehe `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md`.
+
 ## 6. Tests / CI / Preview
 
 Letzter dokumentierter Foundation-D-Nachweis:
@@ -77,9 +81,9 @@ Letzter dokumentierter Foundation-D-Nachweis:
 - `auth:pruefen`: 55/55
 - Trip Workspace Audit: 726 Kombinationen, 0 Fehler, WebKit + Chromium
 - Vercel Preview READY für `23dd548a`: https://jetnity-16l9pmw3e-jetnity-e1b93c82.vercel.app
-- Vercel Preview READY für `d9771e0c`: https://jetnity-j54ocdgjm-jetnity-e1b93c82.vercel.app
+- Vercel Preview READY für `c88f98a0`: https://jetnity-8f1xdoo8p-jetnity-e1b93c82.vercel.app
 - GitHub Actions CI **success** auf `d3c99335`: https://github.com/Jetnity/jetnity/actions/runs/32572835591
-- Nachfolgende Docs-Pushes und der Merge von `main` `608dfbe5` brauchen einen eigenen Verify-Lauf; alte grüne Runs nicht automatisch übertragen
+- GitHub Actions CI **success** auf `a1110930` (Implementierung + Main-Merges inkl. Traveller-Context): https://github.com/Jetnity/jetnity/actions/runs/32573413959
 
 Nach den neuen Governance-/Traveller-Context-Commits muss der finale technische Nachweis immer gegen den tatsächlichen aktuellen Head geprüft werden; alte grüne Runs nicht automatisch auf neue Heads übertragen.
 
@@ -133,6 +137,8 @@ Nach den neuen Governance-/Traveller-Context-Commits muss der finale technische 
 - `docs/CURSOR_ROUTE_TRANSIT_TRAVELLER_CONTEXT_AMENDMENT.md`
 - `docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`
 - `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md`
+- `docs/EXPERT_PROACTIVITY_POLICY.md`
+- `docs/CURSOR_ROUTE_TRANSIT_EXPERT_PROACTIVITY_AMENDMENT.md`
 - `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`
 - `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
 - `JETNITY_HANDOFF.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `DECISIONS.md` ADR-0108/0112

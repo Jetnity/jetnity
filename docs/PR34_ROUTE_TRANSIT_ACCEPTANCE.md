@@ -34,7 +34,7 @@ Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Fligh
 | Nachweis | Stand |
 | --- | --- |
 | Arbeits-Head der Implementierung | `23dd548ae05016b2a1b5011e24c3bdd9d2018f8f` |
-| Nachgezogener Branch-Stand | Merge von `origin/main` `608dfbe5` (Traveller-Context-Policy). Exakten Head nach Push prüfen. |
+| Nachgezogener Branch-Stand | Merge von `origin/main` `32af1cd6` (Expert-Proactivity-Policy). Exakten Head nach Push prüfen. |
 | `npm test` | **1271 pass / 0 fail** (erneut 22.08.2026 nach Main-Sync `4a8a4ea6`; Code seit `23dd548a` unverändert) |
 | Typecheck | **grün** (`tsc --noEmit`) |
 | Lint | **grün** (`next lint`, 0 warnings/errors) |
@@ -42,8 +42,8 @@ Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Fligh
 | Production Build | **grün** (`next build`, 38/38 Seiten). Setup-Warnung: keine `.env`/`.local` in dieser Agent-Umgebung. |
 | Auth-Config-Checks | **grün** (`auth:pruefen`: 55/55 Werte) |
 | Trip Workspace Audit | **726 Kombinationen, 0 Fehler**, Engines WebKit + Chromium, inkl. `route-direkt` / `route-ein-transit` / `route-zwei-transits` |
-| Vercel Preview | **READY** für `23dd548a`: https://jetnity-16l9pmw3e-jetnity-e1b93c82.vercel.app · **READY** für `d9771e0c`: https://jetnity-j54ocdgjm-jetnity-e1b93c82.vercel.app |
-| GitHub Actions `CI` | **success** auf `d3c99335` (Implementierung + Main-Sync `4a8a4ea6` + Traveller-Context-Bindung): https://github.com/Jetnity/jetnity/actions/runs/32572835591. Spätere Docs-Pushes haben den parallelen Lauf `32572814864` per Concurrency cancelled. Der Merge von `main` `608dfbe5` braucht einen eigenen Verify-Lauf. |
+| Vercel Preview | **READY** für `23dd548a`: https://jetnity-16l9pmw3e-jetnity-e1b93c82.vercel.app · **READY** für `c88f98a0`: https://jetnity-8f1xdoo8p-jetnity-e1b93c82.vercel.app |
+| GitHub Actions `CI` | **success** auf `d3c99335`: https://github.com/Jetnity/jetnity/actions/runs/32572835591 · **success** auf `a1110930`: https://github.com/Jetnity/jetnity/actions/runs/32573413959. Docs-only-Heads danach nicht automatisch mitübertragen. |
 
 ---
 
@@ -80,6 +80,41 @@ UI-Audit-Fixtures: `route-direkt`, `route-ein-transit`, `route-zwei-transits`.
 - Echter Connection-Risk- oder Transfer-Hinweis ist nicht gebaut.
 - Official Transit-Requirements bleiben ohne Timatic `unknown`.
 - Multi-Citizenship/Multi-Document ist eine spätere Readiness-Erweiterung (`docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`), kein Foundation-D-Schema.
+
+---
+
+## Senior Expert Pass
+
+Geprüft gegen `docs/CURSOR_ROUTE_TRANSIT_EXPERT_PROACTIVITY_AMENDMENT.md`. Route Facts sind traveller-neutral (`lib/route` enthält keine Staatsbürgerschaft/Passfelder). Dieselbe Route kann später gegen mehrere Credential-Profile ausgewertet werden, ohne dupliziert zu werden.
+
+### Fund 1 – Nachgelagertes Itinerary-Schreiben ist nicht fail-closed
+
+- **Beobachtung:** `reise_anlegen` persistiert `route_itinerary` nicht. `flugRoutenInReiseSchreiben()` aktualisiert `metadata` danach und ignoriert Select-/Update-Fehler.
+- **Relevanz:** Guest→Account kann eine Reise ohne Route Truth erzeugen, obwohl der Entwurf eine Itinerary hatte.
+- **Empfehlung:** Vor Production entweder die RPC `route_itinerary` lesen oder Schreibfehler sichtbar machen. Kein stilles `ok` bei verlorener Route.
+- **Priorität:** vor Production, nicht vor Draft-Review
+- **Scope:** Follow-up, keine eigenmächtige RPC-/Schemaänderung in PR #34
+- **Product-Owner-Entscheidung:** RPC erweitern vs. sichtbarer Folge-Write; Production-Migration bleibt separat
+
+### Fund 2 – Gesamt-Destination folgt dem frühesten Itinerary
+
+- **Beobachtung:** `destination` kommt vom ersten zeitlich sortierten Itinerary. `destinationCountryCodes` sammelt alle Nicht-Rückkehr-Ziele.
+- **Relevanz:** Readiness-Länder sind vollständig; die eine Destinationsanzeige kann bei späteren Open-Jaw-/Mehrstrecken-Graphen zu früh enden.
+- **Empfehlung:** Solange Etappen die Zielwahrheit tragen, belassen. Vor echter Multi-City-UX Destinationsregel explizit am Graphende festlegen.
+- **Priorität:** nächster Block, falls Mehrstrecken-Reisen first-class werden
+- **Scope:** außerhalb Foundation D
+- **Product-Owner-Entscheidung:** nicht jetzt
+
+### Fund 3 – Route-Fingerprint ist pfadbezogen
+
+- **Beobachtung:** Fingerprint ist `route-v1|ZRH:CH>DOH:QA>BKK:TH` ohne Zeiten. Reisedaten liegen bereits im Readiness-Fingerprint.
+- **Relevanz:** Gleicher Pfad / andere Uhrzeit stale-t Official Transit nicht über die Route. Das ist für Länderregeln korrekt; Connection-Risk später nicht.
+- **Empfehlung:** Istzeiten erst in einem Connection-Risk-Block in den Fingerprint, nicht jetzt.
+- **Priorität:** später
+- **Scope:** außerhalb Foundation D
+- **Product-Owner-Entscheidung:** nicht jetzt
+
+Keine weiteren hochwirksamen Experten-Funde außerhalb dieser Punkte und der bereits dokumentierten Risiken.
 
 ---
 
