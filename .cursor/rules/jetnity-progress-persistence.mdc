@@ -1,0 +1,20 @@
+---
+description: Persist every relevant Jetnity project progress checkpoint for seamless agent and chat handoff
+alwaysApply: true
+---
+
+# Jetnity Progress Persistence – Always Apply
+
+`docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md` is mandatory.
+
+For every relevant Jetnity work block:
+
+- Do not keep important progress only in agent/session/chat context.
+- Persist product decisions, implementation milestones, blockers, review findings, test/CI/Preview state, DB/Production boundaries, risks, pending approvals and the exact next step in the repository.
+- During active larger work, keep `docs/ACTIVE_WORK_STATUS.md` in the feature branch current.
+- Before pausing, handing off, closing an agent, or reporting a major milestone, update the active work status and any affected durable docs.
+- A new agent must read the current handoff, roadmap, progress-persistence policy, merge-approval policy, active PR/branch, `docs/ACTIVE_WORK_STATUS.md`, current task and newer amendments before continuing.
+- Never claim progress, tests, Preview, Production or completion that was not verified.
+- Never merge without explicit current Product Owner approval. Progress persistence is not merge approval.
+
+Goal: no relevant Jetnity progress may be lost when a chat, agent or session changes.
