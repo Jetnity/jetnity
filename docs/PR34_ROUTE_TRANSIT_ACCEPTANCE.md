@@ -34,7 +34,7 @@ Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Fligh
 | Nachweis | Stand |
 | --- | --- |
 | Arbeits-Head der Implementierung | `23dd548ae05016b2a1b5011e24c3bdd9d2018f8f` |
-| Nachgezogener Branch-Head | `68bcb04984521beb24272e63027b93f67adf1c1e` (nur Docs: Multi-Citizenship-Amendment) |
+| Nachgezogener Branch-Stand | Merge von `origin/main` `4a8a4ea6` (Progress-Persistence-Policy); exakten Head nach Push prüfen |
 | `npm test` | **1271 pass / 0 fail** |
 | Typecheck | **grün** (`tsc --noEmit`) |
 | Lint | **grün** (`next lint`, 0 warnings/errors) |
@@ -43,7 +43,7 @@ Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Fligh
 | Auth-Config-Checks | **grün** (`auth:pruefen`: 55/55 Werte) |
 | Trip Workspace Audit | **726 Kombinationen, 0 Fehler**, Engines WebKit + Chromium, inkl. `route-direkt` / `route-ein-transit` / `route-zwei-transits` |
 | Vercel Preview | **READY** für `23dd548a`: https://jetnity-16l9pmw3e-jetnity-e1b93c82.vercel.app |
-| GitHub Actions `CI` | letzter abgeschlossener PR-Lauf **success** auf Docs-Head `ea34163b` (https://github.com/Jetnity/jetnity/actions/runs/32571564738). Für die Implementierungs-Commits war zum Prüfzeitpunkt Vercel READY, der Actions-Verify-Job für denselben Head noch nicht in der Run-Liste sichtbar. |
+| GitHub Actions `CI` | letzter abgeschlossener PR-Lauf **success** auf Docs-Head `ea34163b` (https://github.com/Jetnity/jetnity/actions/runs/32571564738). Implementierungs-Pushes danach haben keinen neuen `pull_request`-Lauf erzeugt. Der Branch ist mit `main` `4a8a4ea6` synchronisiert, um den dirty Merge-State zu heben und CI erneut anzustoßen. |
 
 ---
 

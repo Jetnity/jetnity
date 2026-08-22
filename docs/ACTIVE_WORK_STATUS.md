@@ -8,7 +8,8 @@ Arbeitsblock: **Foundation D – Route & Transit Intelligence**
 - Branch: `feat/route-transit-intelligence`
 - Draft PR: **#34** https://github.com/Jetnity/jetnity/pull/34
 - Implementierungs-Head: `23dd548ae05016b2a1b5011e24c3bdd9d2018f8f`
-- Status: **technisch umgesetzt und lokal/preview geprüft; wartet auf Human-/Architecture-Review und Product-Owner-Freigabe**
+- Aktueller Branch-Head: `1eb24d241d61985d54558e6b139e83b85c5343dd` (Merge von `origin/main` `4a8a4ea6`, Progress-Persistence-Policy)
+- Status: **technisch umgesetzt; Branch mit aktuellem `main` synchronisiert; GitHub Actions Verify für den Implementierungs-HEAD nachziehen**
 - Merge: **nicht freigegeben**, PR bleibt Draft
 
 ## 2. Ziel
@@ -33,7 +34,7 @@ Route Facts sind traveller-neutral. Sie setzen keine einzelne Staatsbürgerschaf
 
 - Human-/Architecture-Review
 - ausdrückliche Product-Owner-Merge-Freigabe
-- GitHub Actions Verify-Job für den Implementierungs-Head in der PR-Run-Liste nachziehen
+- GitHub Actions Verify-Job für den aktuellen Branch-Head nachziehen (letzter grüner PR-Lauf bleibt `ea34163b`; Implementierungs-Pushes haben keinen neuen `pull_request`-Lauf erzeugt)
 - kein Timatic, kein echter Provider, keine Production-Migration
 - **separater zukünftiger Readiness-Schritt vor echter Requirements-Provider-Aktivierung:** Mehrfachstaatsbürgerschaften und mehrere Reisedokumente gemäß `docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`; nicht still in Foundation D hineinmigrieren
 
@@ -50,8 +51,8 @@ Neue verbindliche Product-Owner-Entscheidung: Ein Reisender kann mehrere Staatsb
 - Production Build: grün
 - `auth:pruefen`: 55/55
 - Trip Workspace Audit: 726 Kombinationen, 0 Fehler, WebKit + Chromium
-- Vercel Preview READY: https://jetnity-16l9pmw3e-jetnity-e1b93c82.vercel.app
-- GitHub Actions CI: letzter abgeschlossener PR-Lauf success auf Docs-Head `ea34163b`; Implementierungs-Commits hatten zum Prüfzeitpunkt Vercel READY
+- Vercel Preview READY für Implementierungs-Commit `23dd548a`: https://jetnity-16l9pmw3e-jetnity-e1b93c82.vercel.app
+- GitHub Actions CI: letzter abgeschlossener PR-Lauf success auf Docs-Head `ea34163b` (https://github.com/Jetnity/jetnity/actions/runs/32571564738). Nach Rebase/Merge/Implementierung kein neuer `pull_request`-Lauf. Branch wurde mit `main` `4a8a4ea6` synchronisiert, um den dirty Merge-State zu heben und CI erneut anzustoßen.
 
 ## 7. Datenbank / RLS / Production
 
