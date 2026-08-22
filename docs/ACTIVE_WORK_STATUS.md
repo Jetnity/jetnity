@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 22. August 2026  
-Arbeitsblock: **Foundation E – Traveller Context – Depth-Review-Fixes + `main`-Sync auf Draft PR #35**
+Arbeitsblock: **Foundation E – Traveller Context – Depth-Re-Review-Blocker auf Draft PR #35**
 
 ## 1. Aktueller Zustand
 
@@ -67,10 +67,10 @@ Foundation E läuft auf:
 
 ## 5. Exakter nächster Schritt
 
-1. Unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_FINAL_DEPTH_REVIEW.md` in der Tiefe von `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` und `docs/PRODUCT_OWNER_REVIEW_DEPTH_MANDATE.md`.
-2. Draft bleibt Draft. Nicht Mark Ready, nicht mergen.
-3. Merge nur nach ausdrücklicher aktueller Product-Owner-Freigabe.
-4. Production-Migration erst nach Merge und separater Freigabe.
+1. Depth-Re-Review-Blocker aus `docs/PR35_CHATGPT_FINAL_DEPTH_REREVIEW.md` sind im Code behoben (sichtbarer Provider-Konflikt, strikte Requirements-API).
+2. Volles Abschluss-Gate auf dem finalen Head ausführen und hier nachziehen.
+3. Danach unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_FINAL_DEPTH_REREVIEW.md`.
+4. Draft bleibt Draft. Nicht Mark Ready, nicht mergen.
 
 `origin/main` @ `c8dbe904` ist semantisch übernommen: globale Review-Tiefe plus Foundation-E-`TRAVELLER_CONTEXT.md`. Kein Docs-Commit nur zum Festhalten von Checks.
 

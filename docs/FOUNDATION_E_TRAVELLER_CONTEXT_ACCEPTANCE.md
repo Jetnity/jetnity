@@ -104,6 +104,8 @@ Automatisiert nachgewiesen:
 26. Unauflösbare Traveller-Ref wird abgewiesen und degradiert nicht zu trip-level
 27. Unvollständige/widersprüchliche option-level Evidence erzeugt keinen Winner
 28. Explizites `citizenships: []` / `documents: []` bleibt leer; ungültige Party-Einträge verschwinden nicht still
+29. Drei Credential-Optionen: Konflikt auf A lässt B/C nicht gewinnen; A bleibt als unknown/recheck sichtbar; Reihenfolge der Konfliktzeilen ändert das Ergebnis nicht; drei konsistente Optionen bleiben nach Comparator-Regeln auswertbar
+30. Requirements-API: malformed Child, falsch typisierte Canonical-Property, Limit- oder Duplicate-Verletzung und erkennbare Passnummer/MRZ sind fail-closed; echte Legacy-Form ohne Canonical-Properties bleibt gültig
 
 ---
 
@@ -115,7 +117,7 @@ Automatisiert nachgewiesen:
 - keine Production-Migration
 - kein echter Requirements-Provider
 - Guest→Account bleibt für Readiness ein nachgelagerter Schritt; nur Party ist atomar
-- Unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_FINAL_DEPTH_REVIEW.md` steht aus
+- Unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_FINAL_DEPTH_REREVIEW.md` steht aus
 - `origin/main` @ `c8dbe904` ist semantisch synchronisiert; kein weiterer `main`-Sync nötig, solange `main` nicht erneut vorgeht
 - Nach diesem Status-Commit folgt kein weiterer Docs-Commit nur zum Festhalten von Checks
 

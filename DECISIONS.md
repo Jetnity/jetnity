@@ -3112,6 +3112,35 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0125 – Konfliktierte Credential-Optionen bleiben sichtbar; Requirements-API strikt
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Development; Production-Schema unverändert
+
+**Entscheidung:**
+
+- Widersprüchliche current Provider-Zeilen derselben Option erzeugen eine sichtbare `unknown`/`recheck_needed`-Evaluation mit derselben `credentialOptionRef`. Die Option verschwindet nicht aus der Menge.
+- Der Comparator darf aus einer Restmenge ohne die konfliktierte Option keinen Winner bilden.
+- `travellerLegacyLesen()` bleibt der tolerante Guest-/Storage-Lesepfad.
+- Die Requirements-API (`readinessAnforderungAnfrageSchema` und `anfrageAus`) nutzt `travellerAnfrageStriktLesen()`: vorhandene `citizenships`/`documents` müssen valide Arrays sein; jedes Child, Limits, Duplikate und erkennbare sensible Credential-Felder fail-closed. Echte Legacy-Form ohne Canonical-Properties bleibt expandierbar.
+
+**Kontext:** Final Depth Re-Review PR #35. Bei drei Optionen konnte ein Provider-Konflikt durch Verschwinden der Option zu einem Winner aus B/C führen. Die API filterte malformed Children still.
+
+**Alternativen:**
+
+1. *Konfliktierte Option weiter streichen und nur bei zwei Optionen fail-closed sein.* Teil-Evidence-Winner.
+2. *API weiter über `travellerLegacyLesen()` normalisieren.* Regulatorisch relevante Credentials verschwinden.
+3. *Comparator bekommt eine parallele erwartete Optionsmenge.* Möglich, aber die sichtbare Konflikt-Evaluation ist die klarere Source of Truth.
+
+**Begründung:** Fail-closed gilt für die gesamte angefragte Credential-Menge, nicht nur für die übrig gebliebenen vollständigen Zeilen.
+
+**Konsequenzen:**
+
+- Guest-/Formular-Parser bleiben tolerant.
+- Production-Schema unverändert. Draft PR #35 bleibt Draft.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

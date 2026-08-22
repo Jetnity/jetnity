@@ -421,7 +421,7 @@ Solange der Foundation-E-Draft-PR offen ist:
 
 1. `docs/ACTIVE_WORK_STATUS.md`, `docs/PR35_CHATGPT_FINAL_DEPTH_REVIEW.md` und `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md` lesen,
 2. Draft PR #35 bleibt Draft; nicht mergen, nicht Mark Ready,
-3. Unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_FINAL_DEPTH_REVIEW.md` in der Tiefe von `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` und `docs/PRODUCT_OWNER_REVIEW_DEPTH_MANDATE.md`,
+3. Depth-Re-Review-Blocker aus `docs/PR35_CHATGPT_FINAL_DEPTH_REREVIEW.md` sind im Code; volles Gate und danach unabhängiger Abschlussreview gegen dasselbe Dokument,
 4. Product Owner separat um Merge-Freigabe fragen,
 5. Production-Migration erst nach Merge und separater Freigabe.
 

@@ -96,7 +96,8 @@ Status: **UMGESETZT AUF DRAFT-PR / DEVELOPMENT VERIFIZIERT / NICHT GEMERGT**
 - Audit: `docs/FOUNDATION_E_ARCHITECTURE_AUDIT.md`
 - Merge erst nach Review und ausdrücklicher Product-Owner-Freigabe
 - Development-Migrationen `20260822160000`–`20260822180000`; Production endet bei `20260822150000`
-- Depth-Review-Blocker behoben; `origin/main` @ `c8dbe904` semantisch synchronisiert auf Head `a0e71ca4`
+- Depth-Review-Blocker behoben; `origin/main` @ `c8dbe904` semantisch synchronisiert
+- Depth-Re-Review-Blocker (Konflikt-Sichtbarkeit, strikte Requirements-API) im Code; Gate folgt
 
 ### Harte Grenzen
 
