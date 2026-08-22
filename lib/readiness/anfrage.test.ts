@@ -92,6 +92,37 @@ describe('Readiness-API-Hülle', () => {
     assert.ok(evaluations.every((eintrag) => eintrag.result === 'unknown'))
   })
 
+  test('gültiger plus ungültiger Traveller bleibt fail-closed', async () => {
+    const geprueft = readinessAnforderungAnfrageSchema.safeParse({
+      destinationCountryCode: 'TH',
+      party: [
+        { clientRef: 'traveller:1', nationalityCountryCode: 'CH' },
+        { label: 'ohne-ref' },
+      ],
+    })
+    assert.equal(geprueft.success, false)
+
+    const evaluations = await requirementsEvaluationsPruefen({
+      destinationCountryCode: 'TH',
+      party: [
+        { clientRef: 'traveller:1', nationalityCountryCode: 'CH' },
+        { label: 'ohne-ref' },
+      ],
+    })
+    assert.equal(
+      evaluations.some((eintrag) => (eintrag.evidence.contextFingerprint ?? '').includes('cit=CH')),
+      false,
+    )
+  })
+
+  test('malformed Party bleibt fail-closed', () => {
+    const geprueft = readinessAnforderungAnfrageSchema.safeParse({
+      destinationCountryCode: 'TH',
+      party: [null, { clientRef: 'traveller:1', nationalityCountryCode: 'CH' }],
+    })
+    assert.equal(geprueft.success, false)
+  })
+
   test('Reisendenanzahl ohne Party erzeugt getrennte Slots', async () => {
     const evaluations = await requirementsEvaluationsPruefen({
       destinationCountryCodes: ['TH', 'JP'],

@@ -92,8 +92,7 @@ export function credentialOptionenVergleichen(
     }
   }
 
-  const aktuelle = evaluations.filter(entscheidbar)
-  if (aktuelle.length < 2) {
+  if (evaluations.some((evaluation) => optionSemantikKonflikt(evaluation))) {
     return {
       comparable: false,
       reason: VERGLEICH_NICHT_VERFUEGBAR,
@@ -103,20 +102,43 @@ export function credentialOptionenVergleichen(
     }
   }
 
-  const gruppenAktuell = new Map<string, OfficialEvaluation[]>()
-  for (const evaluation of aktuelle) {
-    const key = evaluationSchluessel(evaluation)
-    const liste = gruppenAktuell.get(key) ?? []
-    liste.push(evaluation)
-    gruppenAktuell.set(key, liste)
+  const optionenGesamt = new Set(evaluations.map((evaluation) => optionRefVon(evaluation)))
+  if (optionenGesamt.size < 2) {
+    return {
+      comparable: false,
+      reason: VERGLEICH_NICHT_VERFUEGBAR,
+      winnerOptionRef: null,
+      duty: 'unknown',
+      ranks,
+    }
   }
 
   let winnerOptionRef: string | null = null
   let duty: CredentialVergleich['duty'] = 'unknown'
   let reason = VERGLEICH_NICHT_VERFUEGBAR
   let vergleichbareGruppen = 0
+  const winnerGesamt = new Set<string>()
 
-  for (const gruppe of gruppenAktuell.values()) {
+  for (const gruppe of gruppen.values()) {
+    if (gruppe.some((evaluation) => !entscheidbar(evaluation))) {
+      return {
+        comparable: false,
+        reason: VERGLEICH_NICHT_VERFUEGBAR,
+        winnerOptionRef: null,
+        duty: 'unknown',
+        ranks,
+      }
+    }
+    const aktuelleRefs = new Set(gruppe.map((evaluation) => optionRefVon(evaluation)))
+    if (aktuelleRefs.size !== optionenGesamt.size) {
+      return {
+        comparable: false,
+        reason: VERGLEICH_NICHT_VERFUEGBAR,
+        winnerOptionRef: null,
+        duty: 'unknown',
+        ranks,
+      }
+    }
     if (gruppe.length < 2) continue
     const entscheid = gruppeEntscheiden(gruppe)
     if (!entscheid.comparable) {
@@ -129,12 +151,13 @@ export function credentialOptionenVergleichen(
       }
     }
     vergleichbareGruppen += 1
+    if (entscheid.winnerOptionRef) winnerGesamt.add(entscheid.winnerOptionRef)
     winnerOptionRef = entscheid.winnerOptionRef
     duty = entscheid.duty
     reason = entscheid.reason
   }
 
-  if (vergleichbareGruppen !== 1 || !winnerOptionRef) {
+  if (vergleichbareGruppen < 1 || winnerGesamt.size !== 1 || !winnerOptionRef) {
     return {
       comparable: false,
       reason: VERGLEICH_NICHT_VERFUEGBAR,
@@ -153,12 +176,25 @@ export function credentialOptionenVergleichen(
   }
 }
 
+function optionSemantikKonflikt(evaluation: OfficialEvaluation): boolean {
+  return eligibilityVon(evaluation) === 'not_allowed' && mandateVon(evaluation) === 'mandatory'
+}
+
 function gruppeEntscheiden(gruppe: OfficialEvaluation[]): {
   comparable: boolean
   winnerOptionRef: string | null
   duty: CredentialVergleich['duty']
   reason: string
 } {
+  if (gruppe.some((evaluation) => optionSemantikKonflikt(evaluation))) {
+    return {
+      comparable: false,
+      winnerOptionRef: null,
+      duty: 'unknown',
+      reason: VERGLEICH_NICHT_VERFUEGBAR,
+    }
+  }
+
   const nichtZulaessig = gruppe.filter((evaluation) => eligibilityVon(evaluation) === 'not_allowed')
   const zulaessig = gruppe.filter((evaluation) => eligibilityVon(evaluation) !== 'not_allowed')
 

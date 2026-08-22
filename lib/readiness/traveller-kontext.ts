@@ -129,6 +129,8 @@ export function travellerLegacyLesen(roh: unknown): TripTraveller | null {
   if (!clientRef) return null
   const jetzt = zeitOderJetzt(eintrag.updatedAt, new Date().toISOString())
   const createdAt = zeitOderJetzt(eintrag.createdAt, jetzt)
+  const citizenshipsGeladen = Array.isArray(eintrag.citizenships)
+  const documentsGeladen = Array.isArray(eintrag.documents)
   const citizenshipsRoh = Array.isArray(eintrag.citizenships) ? eintrag.citizenships : []
   const documentsRoh = Array.isArray(eintrag.documents) ? eintrag.documents : []
 
@@ -158,7 +160,7 @@ export function travellerLegacyLesen(roh: unknown): TripTraveller | null {
     if (eindeutigeCitizenships.length >= TRAVELLER_CONTEXT_GRENZEN.citizenshipsJeTraveller) break
   }
 
-  if (eindeutigeCitizenships.length === 0) {
+  if (eindeutigeCitizenships.length === 0 && !citizenshipsGeladen) {
     const legacy = citizenshipAusLegacy(eintrag.nationalityCountryCode, jetzt)
     if (legacy) eindeutigeCitizenships.push(legacy)
   }
@@ -199,7 +201,7 @@ export function travellerLegacyLesen(roh: unknown): TripTraveller | null {
     if (eindeutigeDocuments.length >= TRAVELLER_CONTEXT_GRENZEN.documentsJeTraveller) break
   }
 
-  if (eindeutigeDocuments.length === 0) {
+  if (eindeutigeDocuments.length === 0 && !documentsGeladen) {
     const legacy = documentAusLegacy(eintrag, jetzt)
     if (legacy) eindeutigeDocuments.push(legacy)
   }

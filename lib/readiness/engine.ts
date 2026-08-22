@@ -441,12 +441,28 @@ export function requirementsAusZeilen(
   }
 
   const evaluations: OfficialEvaluation[] = []
-  const gesehen = new Set<string>()
+  const gesehen = new Map<string, OfficialEvaluation>()
+  const konflikte = new Set<string>()
+  const evaluationSchluessel = (evaluation: OfficialEvaluation) =>
+    `${evaluation.travellerClientRef}|${evaluation.credentialOptionRef}|${evaluation.destinationCountryCode}|${evaluation.requirementType}|${evaluation.transitCountryCode}`
   const merken = (evaluation: OfficialEvaluation) => {
-    const key = `${evaluation.travellerClientRef}|${evaluation.credentialOptionRef}|${evaluation.destinationCountryCode}|${evaluation.requirementType}|${evaluation.transitCountryCode}`
-    if (gesehen.has(key)) return
-    gesehen.add(key)
-    evaluations.push(evaluation)
+    const key = evaluationSchluessel(evaluation)
+    if (konflikte.has(key)) return
+    const vorher = gesehen.get(key)
+    if (!vorher) {
+      gesehen.set(key, evaluation)
+      return
+    }
+    if (
+      vorher.result !== evaluation.result ||
+      vorher.status !== evaluation.status ||
+      vorher.freshness !== evaluation.freshness ||
+      vorher.optionEligibility !== evaluation.optionEligibility ||
+      vorher.optionMandate !== evaluation.optionMandate
+    ) {
+      gesehen.delete(key)
+      konflikte.add(key)
+    }
   }
 
   const destinations =
@@ -517,6 +533,7 @@ export function requirementsAusZeilen(
     }
   }
 
+  for (const evaluation of gesehen.values()) evaluations.push(evaluation)
   return evaluations
 }
 

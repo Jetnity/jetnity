@@ -203,4 +203,70 @@ describe('Credential-Vergleich', () => {
     assert.equal(konflikt.comparable, false)
     assert.equal(konflikt.winnerOptionRef, null)
   })
+
+  test('VISA vollständig und TRANSIT stale ergibt keinen globalen Winner', () => {
+    const vergleich = credentialOptionenVergleichen([
+      evaluation({
+        credentialOptionRef: 'traveller:1:document:passport:CH',
+        requirementType: 'visa',
+        result: 'not_required',
+        status: 'current',
+        freshness: 'current',
+        officialClass: 'requirement',
+        optionEligibility: 'allowed',
+      }),
+      evaluation({
+        credentialOptionRef: 'traveller:1:document:passport:RS',
+        requirementType: 'visa',
+        result: 'required',
+        status: 'current',
+        freshness: 'current',
+        officialClass: 'requirement',
+        optionEligibility: 'not_allowed',
+      }),
+      evaluation({
+        credentialOptionRef: 'traveller:1:document:passport:CH',
+        requirementType: 'transit',
+        transitCountryCode: 'QA',
+        result: 'not_required',
+        status: 'current',
+        freshness: 'stale',
+        officialClass: 'requirement',
+        optionEligibility: 'allowed',
+      }),
+      evaluation({
+        credentialOptionRef: 'traveller:1:document:passport:RS',
+        requirementType: 'transit',
+        transitCountryCode: 'QA',
+        result: 'required',
+        status: 'unavailable',
+        freshness: 'provider_unavailable',
+        officialClass: 'requirement',
+      }),
+    ])
+    assert.equal(vergleich.comparable, false)
+    assert.equal(vergleich.winnerOptionRef, null)
+  })
+
+  test('mandatory und not_allowed auf derselben Option sind nicht vergleichbar', () => {
+    const vergleich = credentialOptionenVergleichen([
+      evaluation({
+        credentialOptionRef: 'traveller:1:document:passport:CH',
+        result: 'unknown',
+        status: 'current',
+        freshness: 'current',
+        optionMandate: 'mandatory',
+        optionEligibility: 'not_allowed',
+      }),
+      evaluation({
+        credentialOptionRef: 'traveller:1:document:passport:RS',
+        result: 'unknown',
+        status: 'current',
+        freshness: 'current',
+        optionEligibility: 'allowed',
+      }),
+    ])
+    assert.equal(vergleich.comparable, false)
+    assert.equal(vergleich.winnerOptionRef, null)
+  })
 })

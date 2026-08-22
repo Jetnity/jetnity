@@ -83,10 +83,10 @@ function travellerAusZeile(zeile: TravellerZeile): TripTraveller | null {
   const documentZeilen = zeile.trip_traveller_documents
   const citizenshipsGeladen = relationGeladen(citizenshipZeilen)
   const documentsGeladen = relationGeladen(documentZeilen)
-  const citizenships = citizenshipsGeladen ? citizenshipZeilen.map(citizenshipAusZeile) : []
+  const citizenships = citizenshipsGeladen ? citizenshipZeilen.map(citizenshipAusZeile) : undefined
   const documents = documentsGeladen
     ? documentZeilen.map((eintrag) => documentAusZeile(eintrag, citizenshipsGeladen ? citizenshipZeilen : []))
-    : []
+    : undefined
   return (
     partyLesen([
       {
@@ -98,8 +98,8 @@ function travellerAusZeile(zeile: TravellerZeile): TripTraveller | null {
         documentType: documentsGeladen ? null : zeile.document_type ?? null,
         documentIssuingCountryCode: documentsGeladen ? null : zeile.document_issuing_country_code ?? null,
         documentExpiresOn: documentsGeladen ? null : zeile.document_expires_on ?? null,
-        citizenships,
-        documents,
+        ...(citizenships ? { citizenships } : {}),
+        ...(documents ? { documents } : {}),
         createdAt: zeile.created_at,
         updatedAt: zeile.updated_at,
       },

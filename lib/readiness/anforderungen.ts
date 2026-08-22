@@ -79,9 +79,24 @@ function anfrageAus(anfrage: OfficialRequirementAnfrage): RequirementsAnfrage {
       ].filter((code): code is string => Boolean(code)),
     ),
   ]
-  const gespeichert = (anfrage.party ?? [])
-    .map((eintrag) => travellerLegacyLesen(eintrag))
-    .filter((eintrag): eintrag is NonNullable<typeof eintrag> => eintrag !== null)
+  const rohParty = anfrage.party ?? []
+  const gespeichert: NonNullable<ReturnType<typeof travellerLegacyLesen>>[] = []
+  for (const eintrag of rohParty) {
+    const gelesen = travellerLegacyLesen(eintrag)
+    if (!gelesen) {
+      return {
+        originCountryCode: landescodeLesen(anfrage.originCountryCode ?? null),
+        destinationCountryCodes: destinations,
+        transitCountryCodes: (anfrage.transitCountryCodes ?? [])
+          .map((code) => landescodeLesen(code))
+          .filter((code): code is string => Boolean(code)),
+        startDate: anfrage.startDate ?? null,
+        endDate: anfrage.endDate ?? null,
+        travellers: [],
+      }
+    }
+    gespeichert.push(gelesen)
+  }
   const nachRef = new Map(gespeichert.map((eintrag) => [eintrag.clientRef, eintrag]))
   const anzahl = Math.min(Math.max(anfrage.travellers ?? 1, gespeichert.length, 1), 20)
   const travellers: RequirementsAnfrage['travellers'] = []

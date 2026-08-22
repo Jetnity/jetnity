@@ -1465,4 +1465,113 @@ describe('Travel Requirements Engine', () => {
     assert.equal(normalisiert.find((eintrag) => eintrag.credentialOptionRef?.endsWith(':CH'))?.optionEligibility, 'unknown')
     assert.equal(credentialOptionenVergleichen(normalisiert).comparable, false)
   })
+
+  test('widersprüchliche current Provider-Zeilen gleicher Option werden nicht first-wins', async () => {
+    const anfrage = {
+      originCountryCode: 'CH',
+      destinationCountryCodes: ['TH'],
+      transitCountryCodes: [],
+      startDate: '2026-09-12',
+      endDate: '2026-09-16',
+      travellers: [
+        {
+          clientRef: 'traveller:1',
+          residenceCountryCode: 'CH',
+          citizenshipCountryCodes: ['CH', 'RS'],
+          documents: [
+            {
+              clientRef: 'document:passport:CH',
+              documentType: 'passport' as const,
+              issuingCountryCode: 'CH',
+              expiresOn: '2030-01-01',
+              citizenshipCountryCode: null,
+            },
+            {
+              clientRef: 'document:passport:RS',
+              documentType: 'passport' as const,
+              issuingCountryCode: 'RS',
+              expiresOn: '2029-01-01',
+              citizenshipCountryCode: null,
+            },
+          ],
+          credentialOptions: [
+            {
+              optionRef: 'traveller:1:document:passport:CH',
+              documentClientRef: 'document:passport:CH',
+              documentType: 'passport' as const,
+              issuingCountryCode: 'CH',
+              expiresOn: '2030-01-01',
+              relatedCitizenshipCountryCode: null,
+            },
+            {
+              optionRef: 'traveller:1:document:passport:RS',
+              documentClientRef: 'document:passport:RS',
+              documentType: 'passport' as const,
+              issuingCountryCode: 'RS',
+              expiresOn: '2029-01-01',
+              relatedCitizenshipCountryCode: null,
+            },
+          ],
+        },
+      ],
+    }
+    const widerspruch = (reihenfolge: 'required-first' | 'not-required-first'): RequirementsProvider => ({
+      name: 'test-double',
+      async evaluate() {
+        const chRequired = {
+          travellerClientRef: 'traveller:1',
+          credentialOptionRef: 'traveller:1:document:passport:CH',
+          destinationCountryCode: 'TH',
+          requirementType: 'visa' as const,
+          result: 'required' as const,
+          officialClass: 'requirement' as const,
+          optionEligibility: 'allowed' as const,
+          authority: 'Test',
+          sourceUrl: 'https://example.test/visa',
+          checkedAt: JETZT,
+          validUntil: '2026-12-31',
+        }
+        const chNotRequired = { ...chRequired, result: 'not_required' as const }
+        const rs = {
+          travellerClientRef: 'traveller:1',
+          credentialOptionRef: 'traveller:1:document:passport:RS',
+          destinationCountryCode: 'TH',
+          requirementType: 'visa' as const,
+          result: 'required' as const,
+          officialClass: 'requirement' as const,
+          optionEligibility: 'allowed' as const,
+          authority: 'Test',
+          sourceUrl: 'https://example.test/visa',
+          checkedAt: JETZT,
+          validUntil: '2026-12-31',
+        }
+        return reihenfolge === 'required-first' ? [chRequired, chNotRequired, rs] : [chNotRequired, chRequired, rs]
+      },
+    })
+    const erste = (await requirementsAuswerten(anfrage, widerspruch('required-first'))).filter(
+      (eintrag) => eintrag.requirementType === 'visa',
+    )
+    const zweite = (await requirementsAuswerten(anfrage, widerspruch('not-required-first'))).filter(
+      (eintrag) => eintrag.requirementType === 'visa',
+    )
+    assert.equal(
+      erste.some(
+        (eintrag) =>
+          eintrag.credentialOptionRef?.endsWith(':CH') && (eintrag.result === 'required' || eintrag.result === 'not_required'),
+      ),
+      false,
+    )
+    assert.equal(credentialOptionenVergleichen(erste).comparable, false)
+    assert.equal(credentialOptionenVergleichen(zweite).comparable, false)
+    assert.deepEqual(
+      erste
+        .filter((eintrag) => eintrag.credentialOptionRef?.endsWith(':CH'))
+        .map((eintrag) => eintrag.result)
+        .sort(),
+      zweite
+        .filter((eintrag) => eintrag.credentialOptionRef?.endsWith(':CH'))
+        .map((eintrag) => eintrag.result)
+        .sort(),
+    )
+  })
 })

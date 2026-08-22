@@ -203,6 +203,22 @@ describe('Traveller-Kontext', () => {
     assert.equal(credentialOptionsAus(legacy!)[0]?.document?.citizenshipCountryCode, null)
   })
 
+  test('kanonisch leere Arrays bleiben leer trotz Legacy-Singularfeldern', () => {
+    const leer = travellerLegacyLesen({
+      clientRef: 'traveller:1',
+      nationalityCountryCode: 'CH',
+      documentType: 'passport',
+      documentIssuingCountryCode: 'CH',
+      documentExpiresOn: '2030-01-01',
+      citizenships: [],
+      documents: [],
+      createdAt: JETZT,
+      updatedAt: JETZT,
+    })
+    assert.equal(leer?.citizenships.length, 0)
+    assert.equal(leer?.documents.length, 0)
+  })
+
   test('erfindet kein Dokument aus einer Staatsbürgerschaft', () => {
     const traveller = travellerLegacyLesen({
       clientRef: 'traveller:1',
