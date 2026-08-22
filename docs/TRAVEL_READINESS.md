@@ -63,7 +63,7 @@ Transit ohne belastbare Zwischenstopps bleibt `insufficient_context` (`transit_i
 
 `routeFactsAusReise()` ist die einzige Origin-/Transit-Naht. Sie liefert heute bewusst leer (`quelle: 'none'`). Strukturierte Flight-/Itinerary-Ländercodes sind die nächste technische Abhängigkeit, nicht eine bereits vorhandene Graph-Fähigkeit.
 
-Offizielle `required` / `not_required` / `conditional` Aussagen brauchen provider-neutrale Official Evidence: Provider-Identität, zeitlich plausibles `checkedAt`, Authority und/oder Rule Reference. Eine Source URL ist für das Resultat optional; wenn vorhanden, muss sie valide HTTPS sein. Official Action gibt es nur aus einer validierten HTTPS-URL. `validFrom` in der Zukunft und abgelaufenes `validUntil` bleiben nicht `current`. Unvollständige oder ungültige Evidence bleibt `unknown`.
+Offizielle `required` / `not_required` / `conditional` Aussagen brauchen provider-neutrale Official Evidence: Provider-Identität, zeitlich plausibles `checkedAt`, Authority und/oder Rule Reference. Eine Source URL ist für das Resultat optional; wenn vorhanden, muss sie valide HTTPS sein. Official Action gibt es nur aus einer validierten HTTPS-URL. `validFrom` in der Zukunft und abgelaufenes `validUntil` bleiben nicht `current`. Unvollständige oder ungültige Evidence bleibt `unknown`. Untrusted Evidence darf Freshness nicht `current` lassen (ADR-0111).
 
 Ein Provider darf `insufficient_context` mit strukturierten `missingFacts` zurückgeben. Nur tatsächlich fehlende Fakten werden übernommen; bekannte Angaben werden nicht erneut verlangt.
 
@@ -111,6 +111,8 @@ Zuerst offizielle Prüfung und fehlende Angaben, danach die persönliche Vorbere
 - keine neuen Secrets, keine neuen laufenden Kosten
 
 ## Nachweis Draft-PR #32
+
+Truth-Freshness-Fix (ADR-0111) auf Draft-PR #32. Exakte Zahlen folgen der Verifikation dieses Heads.
 
 Final-Architecture-Review (ADR-0107 bis ADR-0110) auf Head `4f546a1a`:
 

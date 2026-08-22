@@ -2731,7 +2731,27 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 **Begründung:** Official Action und Official Resultat sind verschiedene Dinge. Eine Action braucht eine sichere HTTPS-Quelle. Ein Resultat braucht belastbare Provider-Evidence und eine plausible Zeit. Die Trust-Grenze bleibt streng, aber nicht an eine einzelne URL gebunden.
 
-**Konsequenzen:** `officialEvidenceVertrauenswuerdig()` akzeptiert Authority oder Rule Reference. `officialFrische()` berücksichtigt `validFrom`. Teilweise fehlende Transit-Providerzeilen erzeugen für jedes angefragte Transitland eine Evaluation; unangefragte Transitländer werden ignoriert.
+**Konsequenzen:** `officialEvidenceVertrauenswuerdig()` akzeptiert Authority oder Rule Reference. `officialFrische()` berücksichtigt `validFrom`. Teilweise fehlende Transit-Providerzeilen erzeugen für jedes angefragte Transitland eine Evaluation; unangefragte Transitländer werden ignoriert. Untrusted Evidence darf Freshness nicht `current` lassen (ADR-0111).
+
+---
+
+## ADR-0111 – Untrusted Official Evidence darf nicht current sein
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** Wenn Official Evidence für ein regulatorisches Resultat nicht vertrauenswürdig ist, darf Freshness niemals `current` bleiben. Untrusted Evidence wird auf `never_checked` gesetzt, ausser Freshness ist bereits ehrlich `stale`, `recheck_needed` oder `source_temporarily_unavailable`.
+
+**Kontext:** Endreview von PR #32. `zeileUebernehmen()` setzte `result` korrekt auf `unknown`, liess aber `freshness` auf `current`, sobald ein syntaktisch vorhandenes `checkedAt` existierte. Zukunfts-`checkedAt` oder eine ungültige vorhandene Source URL konnten so „Offizielle Anforderungen wurden geprüft“ auslösen.
+
+**Alternativen:**
+
+1. *Freshness unabhängig von Trust lassen.* Würde UI-Copy und Official Truth trennen.
+2. *Jede untrusted Zeile auf `provider_unavailable` setzen.* Würde abgelaufene oder temporär unerreichbare Quellen falsch umdeuten.
+
+**Begründung:** Freshness ist Teil der Official Truth. Eine verworfene Evidence ist keine geprüfte Anforderung.
+
+**Konsequenzen:** `freshnessNachTrust()` ist die gemeinsame Nachbehandlung. Zukunfts-`checkedAt` und ungültige vorhandene Source URL werden `never_checked`. Trusted Evidence ohne Source URL darf weiter `current` sein; Official Action bleibt dann leer.
 
 ---
 

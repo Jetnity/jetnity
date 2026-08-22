@@ -210,6 +210,7 @@ Automatic Travel Requirements & Readiness:
 - progressive Missing Facts, keine Dokumentnummern
 - API liefert strukturierte `evaluations[]`; Legacy-`official` kollabiert die Engine nicht
 - Official Evidence vor `required`/`not_required`/`conditional` provider-neutral validiert (Authority oder Rule Reference; Source URL optional)
+- untrusted Evidence darf Freshness nicht `current` lassen
 - Provider-Port async; Throw/Timeout fail closed
 - UI kann gelieferte `evaluations[]` empfangen; Legacy-`official` entscheidet nicht
 - Multi-Transit bleibt vollständig, auch bei Teilzeilen; unangefragte Transitländer werden ignoriert

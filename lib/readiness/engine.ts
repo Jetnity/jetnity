@@ -151,6 +151,22 @@ function providerFehlerFreshness(fehler: unknown): OfficialFreshness {
   return 'source_temporarily_unavailable'
 }
 
+/**
+ * Untrusted Evidence darf niemals current bleiben.
+ * Bereits ehrliche stale / recheck / source-outage bleiben erhalten.
+ */
+function freshnessNachTrust(freshness: OfficialFreshness, vertrauenswuerdig: boolean): OfficialFreshness {
+  if (vertrauenswuerdig) return freshness
+  if (
+    freshness === 'stale' ||
+    freshness === 'recheck_needed' ||
+    freshness === 'source_temporarily_unavailable'
+  ) {
+    return freshness
+  }
+  return 'never_checked'
+}
+
 function zeileUebernehmen(
   anfrage: RequirementsAnfrage,
   traveller: RequirementsTravellerInput,
@@ -254,7 +270,7 @@ function zeileUebernehmen(
     requirementType: zeile.requirementType,
     result: uebernehmbar ? zeile.result : 'unknown',
     status: uebernehmbar ? 'current' : 'unknown',
-    freshness: vertrauenswuerdig ? freshness : checkedAt ? freshness : 'never_checked',
+    freshness: freshnessNachTrust(freshness, vertrauenswuerdig),
     officialClass:
       zeile.requirementType === 'health' ||
       zeile.requirementType === 'vaccination' ||

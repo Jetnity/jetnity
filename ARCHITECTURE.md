@@ -349,9 +349,9 @@ Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browse
 
 `POST /api/readiness/requirements` ist geschlossen: nur `application/json`, höchstens 8 KB UTF-8, Rate-Limit, `Cache-Control: private, no-store`. Browser- oder LLM-Felder werden ignoriert. Die kanonische Antwort ist `evaluations[]` (Traveller × Destination × Transit × Requirement Type). Das Feld `official` ist eine ausdrücklich reduzierte Legacy-Zusammenfassung und darf die Engine nicht auf den ersten Treffer reduzieren.
 
-`requirementsProviderAus()` gibt `null` zurück. Tests dürfen einen Port injizieren. `evaluate` ist async; Throw/Timeout bleibt fail closed (ADR-0109). Production-Schema bleibt unverändert; die Tabellen `trip_readiness_items` und `trip_travellers` existieren nur auf Development. Official Evidence braucht Provider-Identität, plausibles `checkedAt`, Authority und/oder Rule Reference; eine Source URL ist für das Resultat optional und für die Official Action zwingend (ADR-0107, ADR-0110). `evaluations[]` ist die einzige kanonische neue Official-Truth; Legacy-`official` bleibt immer `unknown`.
+`requirementsProviderAus()` gibt `null` zurück. Tests dürfen einen Port injizieren. `evaluate` ist async; Throw/Timeout bleibt fail closed (ADR-0109). Production-Schema bleibt unverändert; die Tabellen `trip_readiness_items` und `trip_travellers` existieren nur auf Development. Official Evidence braucht Provider-Identität, plausibles `checkedAt`, Authority und/oder Rule Reference; eine Source URL ist für das Resultat optional und für die Official Action zwingend (ADR-0107, ADR-0110). Untrusted Evidence darf Freshness nicht `current` lassen (ADR-0111). `evaluations[]` ist die einzige kanonische neue Official-Truth; Legacy-`official` bleibt immer `unknown`.
 
-`routeFactsAusReise()` ist die einzige Origin-/Transit-Naht und liefert heute leer (`quelle: 'none'`). Ortsnamen und Place-IDs werden nicht in Ländercodes geraten (ADR-0108). Fachlich: [docs/TRAVEL_READINESS.md](docs/TRAVEL_READINESS.md), ADR-0096 bis ADR-0110.
+`routeFactsAusReise()` ist die einzige Origin-/Transit-Naht und liefert heute leer (`quelle: 'none'`). Ortsnamen und Place-IDs werden nicht in Ländercodes geraten (ADR-0108). Fachlich: [docs/TRAVEL_READINESS.md](docs/TRAVEL_READINESS.md), ADR-0096 bis ADR-0111.
 
 ### Ortsbasis (Phase 3.1)
 

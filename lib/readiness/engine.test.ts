@@ -561,6 +561,8 @@ describe('Travel Requirements Engine', () => {
     const ohneQuelle = (await requirementsAuswerten(anfrage, ohneUrl)).find((e) => e.requirementType === 'visa')
     assert.equal(ohneQuelle?.result, 'unknown')
     assert.equal(ohneQuelle?.action, null)
+    assert.equal(ohneQuelle?.freshness, 'never_checked')
+    assert.notEqual(ohneQuelle?.freshness, 'current')
   })
 
   test('zwei Transitländer bleiben getrennte Evaluations', async () => {
@@ -1093,5 +1095,131 @@ describe('Travel Requirements Engine', () => {
     const zukunft = (await requirementsAuswerten(anfrage, zukunftsCheck)).find((e) => e.requirementType === 'visa')
     assert.equal(zukunft?.result, 'unknown')
     assert.notEqual(zukunft?.status, 'current')
+    assert.equal(zukunft?.freshness, 'never_checked')
+    assert.notEqual(zukunft?.freshness, 'current')
+    assert.equal(zukunft?.action, null)
+  })
+
+  test('untrusted Evidence darf freshness nicht current lassen', async () => {
+    const anfrage = {
+      originCountryCode: 'CH',
+      destinationCountryCodes: ['US'],
+      transitCountryCodes: [] as string[],
+      startDate: '2026-09-12',
+      endDate: '2026-09-16',
+      travellers: [
+        {
+          clientRef: 'traveller:1',
+          nationalityCountryCode: 'FR',
+          residenceCountryCode: 'FR',
+          documentType: 'passport' as const,
+          documentIssuingCountryCode: 'FR',
+          documentExpiresOn: '2030-01-01',
+        },
+      ],
+    }
+    const zukunft: RequirementsProvider = {
+      name: 'future-check',
+      async evaluate() {
+        return [
+          {
+            travellerClientRef: 'traveller:1',
+            destinationCountryCode: 'US',
+            requirementType: 'visa',
+            result: 'required',
+            authority: 'Test',
+            checkedAt: '2028-01-01T00:00:00.000Z',
+          },
+        ]
+      },
+    }
+    const ungueltigeUrl: RequirementsProvider = {
+      name: 'bad-url',
+      async evaluate() {
+        return [
+          {
+            travellerClientRef: 'traveller:1',
+            destinationCountryCode: 'US',
+            requirementType: 'visa',
+            result: 'required',
+            authority: 'Test',
+            sourceUrl: 'javascript:alert(1)',
+            checkedAt: JETZT,
+          },
+        ]
+      },
+    }
+    const ohneUrl: RequirementsProvider = {
+      name: 'no-url-trusted',
+      async evaluate() {
+        return [
+          {
+            travellerClientRef: 'traveller:1',
+            destinationCountryCode: 'US',
+            requirementType: 'visa',
+            result: 'not_required',
+            authority: 'Test',
+            checkedAt: JETZT,
+            ruleReference: 'VISA-US',
+          },
+        ]
+      },
+    }
+    const down: RequirementsProvider = {
+      name: 'down',
+      async evaluate() {
+        return [
+          {
+            travellerClientRef: 'traveller:1',
+            destinationCountryCode: 'US',
+            requirementType: 'visa',
+            result: 'required',
+            availability: 'temporarily_unavailable',
+            checkedAt: JETZT,
+            sourceUrl: 'https://example.test/visa',
+          },
+        ]
+      },
+    }
+    const abgelaufen: RequirementsProvider = {
+      name: 'expired',
+      async evaluate() {
+        return [
+          {
+            travellerClientRef: 'traveller:1',
+            destinationCountryCode: 'US',
+            requirementType: 'visa',
+            result: 'required',
+            authority: 'Test',
+            checkedAt: JETZT,
+            validUntil: '2026-01-01',
+          },
+        ]
+      },
+    }
+
+    const zukunftVisa = (await requirementsAuswerten(anfrage, zukunft)).find((e) => e.requirementType === 'visa')
+    assert.equal(zukunftVisa?.result, 'unknown')
+    assert.notEqual(zukunftVisa?.status, 'current')
+    assert.equal(zukunftVisa?.freshness, 'never_checked')
+    assert.equal(zukunftVisa?.action, null)
+
+    const urlVisa = (await requirementsAuswerten(anfrage, ungueltigeUrl)).find((e) => e.requirementType === 'visa')
+    assert.equal(urlVisa?.result, 'unknown')
+    assert.equal(urlVisa?.freshness, 'never_checked')
+    assert.equal(urlVisa?.action, null)
+
+    const trustedVisa = (await requirementsAuswerten(anfrage, ohneUrl)).find((e) => e.requirementType === 'visa')
+    assert.equal(trustedVisa?.result, 'not_required')
+    assert.equal(trustedVisa?.freshness, 'current')
+    assert.equal(trustedVisa?.action, null)
+
+    const downVisa = (await requirementsAuswerten(anfrage, down)).find((e) => e.requirementType === 'visa')
+    assert.equal(downVisa?.result, 'unknown')
+    assert.equal(downVisa?.freshness, 'source_temporarily_unavailable')
+
+    const altVisa = (await requirementsAuswerten(anfrage, abgelaufen)).find((e) => e.requirementType === 'visa')
+    assert.equal(altVisa?.result, 'unknown')
+    assert.equal(altVisa?.freshness, 'recheck_needed')
   })
 })

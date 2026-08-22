@@ -283,6 +283,7 @@ Umgesetzt auf dem Draft-PR:
 - Guest- und Account-Parität plus idempotente Übernahme von Party und Readiness
 - geschlossene `POST /api/readiness/requirements` mit kanonischem `evaluations[]`; `official` ist Legacy-Zusammenfassung
 - strenge Official-Evidence-Trust-Grenze vor `required` / `not_required` / `conditional` (ADR-0107, ADR-0110)
+- untrusted Official Evidence darf Freshness nicht `current` lassen (ADR-0111)
 - Provider-Port async und fehlertolerant; Throw bleibt fail closed (ADR-0109)
 - `evaluations[]` ist die einzige kanonische neue Official-Truth; Legacy-`official` immer `unknown`
 - UI empfängt optional serverseitige Evaluations; Traveller-Copy unterscheidet required / not_required / conditional
@@ -304,7 +305,7 @@ Qualitätsnachweis auf `4f546a1a`:
 - GitHub CI grün, Vercel Preview READY
 - Preview: `https://jetnity-app-git-feat-travel-readiness-f-f8117d-jetnity-e1b93c82.vercel.app`
 
-Fachdoku: `docs/TRAVEL_READINESS.md`, ADR-0096 bis ADR-0110. Verbindlicher Nachtrag: `docs/CURSOR_TRAVEL_READINESS_AUTOMATION_AMENDMENT.md`. Review-Fixes: `docs/CURSOR_PR32_HUMAN_REVIEW_FIXES.md`. Final Review: `docs/CURSOR_PR32_FINAL_ARCHITECTURE_REVIEW.md`.
+Fachdoku: `docs/TRAVEL_READINESS.md`, ADR-0096 bis ADR-0111. Verbindlicher Nachtrag: `docs/CURSOR_TRAVEL_READINESS_AUTOMATION_AMENDMENT.md`. Review-Fixes: `docs/CURSOR_PR32_HUMAN_REVIEW_FIXES.md`. Final Review: `docs/CURSOR_PR32_FINAL_ARCHITECTURE_REVIEW.md`. Truth-Fix: `docs/CURSOR_PR32_FINAL_TRUTH_FIX.md`.
 
 ### D. Gesamt-Abdeckung
 
