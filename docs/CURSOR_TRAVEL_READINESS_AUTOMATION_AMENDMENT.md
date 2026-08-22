@@ -7,15 +7,15 @@ Status: **verbindlicher Produkt- und Architektur-Nachtrag**
 
 Dieser Nachtrag ergänzt und überschreibt `docs/CURSOR_TRAVEL_READINESS_FOUNDATION_TASK.md` überall dort, wo der ursprüngliche Auftrag davon ausgeht, dass Nutzer Visa-, Einreise-, Impf-, Gesundheits- oder Dokumentanforderungen grundsätzlich selbst recherchieren müssen oder dass Foundation C dauerhaft nur eine manuelle Checkliste bleiben soll.
 
-Der bestehende Auftrag bleibt ansonsten verbindlich, insbesondere für Logic Standard, Security, Datenschutz, Development/Production-Grenzen, Tests, Browser-Audits, CI, Preview und Dokumentation.
+## Ziel
 
-## Verbindliche Zielrichtung
+Jetnity soll automatisch erkennen und auswerten, was ein konkreter Reisender für eine konkrete Reise benötigt. Dazu gehören Visa/eVisa/ETA/ESTA/Visa on Arrival, Pass/ID und Passgültigkeit, Transit, verpflichtende Impf-/Health-Nachweise, Einreiseformulare, Rück-/Weiterflugnachweise, Versicherungsnachweise und weitere verpflichtende Dokumente.
 
-Jetnity soll automatisch erkennen und auswerten, was ein konkreter Reisender für eine konkrete Reise benötigt. Das umfasst Visa/eVisa/ETA/ESTA/Visa on Arrival, Pass/ID und Passgültigkeit, Transit, verpflichtende Impf-/Health-Nachweise, Einreiseformulare, Rück-/Weiterflugnachweise, Versicherungsnachweise und weitere verpflichtende Dokumente.
+Der Nutzer soll diese Anforderungen nicht selbst im Internet zusammensuchen müssen.
 
-Der Nutzer soll diese Regeln nicht selbst im Internet zusammensuchen müssen.
+## Travel Requirements Engine
 
-Foundation C baut dafür eine provider-neutrale Travel Requirements Engine:
+Foundation C baut eine provider-neutrale Engine:
 
 `Reisegraph + Reisendenkontext + Route/Transit + Reisedatum + vertrauenswürdige Requirements-Datenquelle → strukturierte Anforderungen → Jetnity Readiness → konkrete Nutzeraktionen`
 
@@ -89,13 +89,11 @@ Datenminimierung, kein öffentlicher Cache, keine Cross-User-/Cross-Trip-Leaks, 
 
 Nur Development. Versioniert, Typen/Constraints/FKs/Indizes/RLS/Reproduzierbarkeit/Security-Checks vollständig. Keine Production-Migration ohne separate ausdrückliche Freigabe.
 
-## Zusätzliche Tests
+## Tests und Audits
 
-Mindestens: zwei Traveller unterschiedlicher Nationalität; keine Vermischung; unbekannte Nationalität → `insufficient_context`; bekannte Fakten nicht erneut fragen; Traveller gelöscht → Evaluation weg; Direktflug/Transit/Multi-Country; Destination/Datum geändert; Provider required/not_required/conditional; unavailable ohne Erfindung; LLM kann Official Truth nicht überschreiben; Pflicht vs Empfehlung Health; stale/freshness; Cross-user/Cross-trip; Browser kann Official Evidence nicht fälschen; Source URL validiert; keine Dokumentnummern oder sensitiven Logs.
+Zusätzlich zum ursprünglichen Auftrag mindestens: mehrere Traveller unterschiedlicher Nationalität; keine Vermischung; insufficient context; bekannte Fakten nicht erneut fragen; Traveller gelöscht → Evaluation weg; Direktflug/Transit/Multi-Country; Destination/Datum geändert; Provider required/not_required/conditional; unavailable ohne Erfindung; LLM kann Official Truth nicht überschreiben; Pflicht vs Empfehlung Health; stale/freshness; Cross-user/Cross-trip; Browser kann Official Evidence nicht fälschen; Source URL validiert; keine Dokumentnummern oder sensitiven Logs.
 
-## Browser / Mobile
-
-Bestehende WebKit-/Chromium-Audits plus mehrere Traveller, unterschiedliche Requirements, insufficient context, Missing-Facts, required/not_required/conditional/unknown, stale/recheck, lange Texte, mehrere Länder/Transit, 280–430 px, Landscape, Desktop. Keine horizontale Verschiebung; Status nie nur über Farbe.
+Bestehende WebKit-/Chromium-Audits plus mehrere Traveller, unterschiedliche Requirements, Missing-Facts, alle Result-Zustände, stale/recheck, lange Texte, mehrere Länder/Transit, 280–430 px, Landscape, Desktop. Keine horizontale Verschiebung; Status nie nur über Farbe.
 
 ## Dokumentation / ADR
 
