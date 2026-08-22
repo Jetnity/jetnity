@@ -424,9 +424,7 @@ function ReisendenKarte({
               documentType: document.documentType as TravellerDocumentType,
               issuingCountryCode: document.issuingCountryCode || null,
               expiresOn: document.expiresOn || null,
-              citizenshipClientRef: document.issuingCountryCode
-                ? `citizenship:${document.issuingCountryCode}`
-                : null,
+              citizenshipClientRef: null,
             })),
         })
         if (fehler) onFehler(fehler)

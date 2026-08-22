@@ -103,11 +103,7 @@ function citizenshipAusLegacy(code: string | null | undefined, jetzt: string): T
   }
 }
 
-function documentAusLegacy(
-  felder: LegacyTravellerFelder,
-  citizenship: TripTravellerCitizenship | null,
-  jetzt: string,
-): TripTravellerDocument | null {
+function documentAusLegacy(felder: LegacyTravellerFelder, jetzt: string): TripTravellerDocument | null {
   const documentType = felder.documentType ?? null
   const issuing = landescodeLesen(felder.documentIssuingCountryCode ?? null)
   const expiresOn = felder.documentExpiresOn ?? null
@@ -119,7 +115,7 @@ function documentAusLegacy(
     clientRef,
     documentType: typ,
     issuingCountryCode: issuing,
-    citizenshipClientRef: citizenship && issuing === citizenship.countryCode ? citizenship.clientRef : null,
+    citizenshipClientRef: null,
     expiresOn,
     createdAt: jetzt,
     updatedAt: jetzt,
@@ -204,7 +200,7 @@ export function travellerLegacyLesen(roh: unknown): TripTraveller | null {
   }
 
   if (eindeutigeDocuments.length === 0) {
-    const legacy = documentAusLegacy(eintrag, eindeutigeCitizenships[0] ?? null, jetzt)
+    const legacy = documentAusLegacy(eintrag, jetzt)
     if (legacy) eindeutigeDocuments.push(legacy)
   }
 
@@ -227,6 +223,16 @@ export function travellerLegacyLesen(roh: unknown): TripTraveller | null {
   }
 }
 
+export function documentCitizenshipCode(
+  traveller: Pick<TripTraveller, 'citizenships'>,
+  document: Pick<TripTravellerDocument, 'citizenshipClientRef'>,
+): string | null {
+  if (!document.citizenshipClientRef) return null
+  return (
+    traveller.citizenships.find((eintrag) => eintrag.clientRef === document.citizenshipClientRef)?.countryCode ?? null
+  )
+}
+
 export function credentialOptionsAus(traveller: TripTraveller): CredentialOption[] {
   const citizenshipCountryCodes = citizenshipCodesAus(traveller)
   const documents = documentsSortieren(traveller.documents)
@@ -243,7 +249,6 @@ export function credentialOptionsAus(traveller: TripTraveller): CredentialOption
   }
 
   return documents.map((document) => {
-    const zugehoerig = traveller.citizenships.find((eintrag) => eintrag.clientRef === document.citizenshipClientRef)
     return {
       optionRef: `${traveller.clientRef}:${document.clientRef}`,
       travellerClientRef: traveller.clientRef,
@@ -254,7 +259,7 @@ export function credentialOptionsAus(traveller: TripTraveller): CredentialOption
         documentType: document.documentType,
         issuingCountryCode: document.issuingCountryCode,
         expiresOn: document.expiresOn,
-        citizenshipCountryCode: zugehoerig?.countryCode ?? document.issuingCountryCode,
+        citizenshipCountryCode: documentCitizenshipCode(traveller, document),
       },
     }
   })

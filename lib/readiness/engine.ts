@@ -33,7 +33,7 @@ import {
   type RequirementsTravellerInput,
 } from '@/lib/readiness/provider'
 import { readinessReisekontext } from '@/lib/readiness/kontext'
-import { citizenshipCodesAus, credentialOptionsAus } from '@/lib/readiness/traveller-kontext'
+import { citizenshipCodesAus, credentialOptionsAus, documentCitizenshipCode } from '@/lib/readiness/traveller-kontext'
 import type { Trip } from '@/types/trips'
 
 const KERN_TYPEN = OFFICIAL_REQUIREMENT_TYPES
@@ -124,7 +124,7 @@ function travellerNormalisieren(roh: RequirementsTravellerInput | Record<string,
           documentType: (documents[0]?.documentType ?? eintrag.documentType ?? null) as RequirementsCredentialInput['documentType'],
           issuingCountryCode: documents[0]?.issuingCountryCode ?? eintrag.documentIssuingCountryCode ?? null,
           expiresOn: documents[0]?.expiresOn ?? eintrag.documentExpiresOn ?? null,
-          relatedCitizenshipCountryCode: documents[0]?.citizenshipCountryCode ?? citizenships[0] ?? null,
+          relatedCitizenshipCountryCode: documents[0]?.citizenshipCountryCode ?? null,
         },
       ]
   return {
@@ -152,9 +152,7 @@ function travellerAusSlot(slot: ReturnType<typeof travellerSlots>[number]): Requ
       documentType: document.documentType,
       issuingCountryCode: document.issuingCountryCode,
       expiresOn: document.expiresOn,
-      citizenshipCountryCode:
-        traveller?.citizenships.find((eintrag) => eintrag.clientRef === document.citizenshipClientRef)?.countryCode ??
-        document.issuingCountryCode,
+      citizenshipCountryCode: traveller ? documentCitizenshipCode(traveller, document) : null,
     })),
     credentialOptions: options.map((option) => ({
       optionRef: option.optionRef,

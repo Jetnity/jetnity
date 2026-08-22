@@ -17,7 +17,12 @@ import {
 import { requirementsAuswerten, requirementsAusZeilen } from '@/lib/readiness/engine'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
 import { requirementsProviderAus, type RequirementsAnfrage, type RequirementsProvider } from '@/lib/readiness/provider'
-import { citizenshipCodesAus, credentialOptionsAus, travellerLegacyLesen } from '@/lib/readiness/traveller-kontext'
+import {
+  citizenshipCodesAus,
+  credentialOptionsAus,
+  documentCitizenshipCode,
+  travellerLegacyLesen,
+} from '@/lib/readiness/traveller-kontext'
 
 export type OfficialRequirementAnfrage = {
   originCountryCode?: string | null
@@ -93,9 +98,7 @@ function anfrageAus(anfrage: OfficialRequirementAnfrage): RequirementsAnfrage {
         documentType: document.documentType,
         issuingCountryCode: document.issuingCountryCode,
         expiresOn: document.expiresOn,
-        citizenshipCountryCode:
-          eintrag?.citizenships.find((citizenship) => citizenship.clientRef === document.citizenshipClientRef)
-            ?.countryCode ?? document.issuingCountryCode,
+        citizenshipCountryCode: eintrag ? documentCitizenshipCode(eintrag, document) : null,
       })),
       credentialOptions: options.map((option) => ({
         optionRef: option.optionRef,

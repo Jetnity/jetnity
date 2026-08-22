@@ -5,6 +5,7 @@ import assert from 'node:assert/strict'
 
 import {
   credentialOptionsAus,
+  documentCitizenshipCode,
   partyCredentialFingerprint,
   travellerCredentialFingerprint,
   travellerLegacyLesen,
@@ -136,6 +137,70 @@ describe('Traveller-Kontext', () => {
       partyCredentialFingerprint([a!, b!]),
       partyCredentialFingerprint([a2!, b!]),
     )
+  })
+
+  test('Ausstellerland wird nicht zur Staatsbürgerschaft', () => {
+    const ohneRelation = travellerLegacyLesen({
+      clientRef: 'traveller:1',
+      citizenships: [
+        { clientRef: 'citizenship:CH', countryCode: 'CH', createdAt: JETZT, updatedAt: JETZT },
+        { clientRef: 'citizenship:RS', countryCode: 'RS', createdAt: JETZT, updatedAt: JETZT },
+      ],
+      documents: [
+        {
+          clientRef: 'document:passport:US',
+          documentType: 'passport',
+          issuingCountryCode: 'US',
+          expiresOn: '2030-01-01',
+          createdAt: JETZT,
+          updatedAt: JETZT,
+        },
+      ],
+      createdAt: JETZT,
+      updatedAt: JETZT,
+    })
+    assert.equal(ohneRelation?.documents[0]?.citizenshipClientRef, null)
+    assert.equal(documentCitizenshipCode(ohneRelation!, ohneRelation!.documents[0]!), null)
+    assert.equal(credentialOptionsAus(ohneRelation!)[0]?.document?.citizenshipCountryCode, null)
+    assert.equal(credentialOptionsAus(ohneRelation!)[0]?.document?.issuingCountryCode, 'US')
+    assert.deepEqual(credentialOptionsAus(ohneRelation!)[0]?.citizenshipCountryCodes, ['CH', 'RS'])
+
+    const mitRelation = travellerLegacyLesen({
+      clientRef: 'traveller:1',
+      citizenships: [
+        { clientRef: 'citizenship:CH', countryCode: 'CH', createdAt: JETZT, updatedAt: JETZT },
+        { clientRef: 'citizenship:RS', countryCode: 'RS', createdAt: JETZT, updatedAt: JETZT },
+      ],
+      documents: [
+        {
+          clientRef: 'document:passport:US',
+          documentType: 'passport',
+          issuingCountryCode: 'US',
+          citizenshipClientRef: 'citizenship:RS',
+          expiresOn: '2030-01-01',
+          createdAt: JETZT,
+          updatedAt: JETZT,
+        },
+      ],
+      createdAt: JETZT,
+      updatedAt: JETZT,
+    })
+    assert.equal(mitRelation?.documents[0]?.citizenshipClientRef, 'citizenship:RS')
+    assert.equal(documentCitizenshipCode(mitRelation!, mitRelation!.documents[0]!), 'RS')
+    assert.equal(credentialOptionsAus(mitRelation!)[0]?.document?.citizenshipCountryCode, 'RS')
+    assert.equal(credentialOptionsAus(mitRelation!)[0]?.document?.issuingCountryCode, 'US')
+
+    const legacy = travellerLegacyLesen({
+      clientRef: 'traveller:1',
+      nationalityCountryCode: 'CH',
+      documentType: 'passport',
+      documentIssuingCountryCode: 'CH',
+      documentExpiresOn: '2030-01-01',
+      createdAt: JETZT,
+      updatedAt: JETZT,
+    })
+    assert.equal(legacy?.documents[0]?.citizenshipClientRef, null)
+    assert.equal(credentialOptionsAus(legacy!)[0]?.document?.citizenshipCountryCode, null)
   })
 
   test('erfindet kein Dokument aus einer Staatsbürgerschaft', () => {
