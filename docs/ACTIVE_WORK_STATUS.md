@@ -15,7 +15,7 @@ Foundation E läuft auf:
 
 - Branch: `feat/traveller-context-intelligence`
 - Basis: `origin/main` @ `ae64e4ff88ddacf4bbb6d9521e003fb1cc9653aa`
-- Draft PR: siehe aktuelles GitHub-PR zum Branch
+- Draft PR: https://github.com/Jetnity/jetnity/pull/35
 - Fachdokument: `docs/TRAVELLER_CONTEXT.md`
 - Acceptance: `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md`
 - Audit vor Schemaänderung: `docs/FOUNDATION_E_ARCHITECTURE_AUDIT.md`

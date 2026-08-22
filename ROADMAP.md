@@ -89,6 +89,7 @@ Nicht erneut bauen.
 Status: **UMGESETZT AUF DRAFT-PR / DEVELOPMENT VERIFIZIERT / NICHT GEMERGT**
 
 - Branch: `feat/traveller-context-intelligence`
+- Draft PR: **#35**
 - Task: `docs/CURSOR_FOUNDATION_E_TRAVELLER_CONTEXT_TASK.md`
 - Fachdokument: `docs/TRAVELLER_CONTEXT.md`
 - Acceptance: `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md`

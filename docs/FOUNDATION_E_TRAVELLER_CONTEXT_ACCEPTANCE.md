@@ -4,6 +4,8 @@ Stand: 22. August 2026
 Status: **technisch verifiziert auf Development; Draft PR; Merge- und Production-Gate offen**
 
 Branch: `feat/traveller-context-intelligence`  
+PR: https://github.com/Jetnity/jetnity/pull/35  
+PR-Zustand: **Draft**  
 Base: `main` @ `ae64e4ff88ddacf4bbb6d9521e003fb1cc9653aa`  
 Task: `docs/CURSOR_FOUNDATION_E_TRAVELLER_CONTEXT_TASK.md`  
 Fachdokument: `docs/TRAVELLER_CONTEXT.md`

@@ -145,6 +145,7 @@ Provider-Suchen/Requirements bleiben produktiv deaktiviert, solange keine echten
 **Foundation E – Traveller Context / Multi-Citizenship / Multi-Document** ist technisch umgesetzt und review-bereit, nicht gemergt.
 
 - Branch: `feat/traveller-context-intelligence`
+- Draft PR: **#35**
 - Draft PR bleibt Draft
 - kein Merge ohne ausdrückliche Product-Owner-Freigabe
 - keine Foundation-E-Production-Migration ohne separates Gate
