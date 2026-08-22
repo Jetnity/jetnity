@@ -271,7 +271,7 @@ Kein Fake-Provider und keine Production-Suche. Merge nur nach separater Freigabe
 
 Branch `feat/travel-readiness-foundation`. **Draft, nicht mergen.** Ausgangsbasis ist `main` @ `315d9b31`.
 
-Human-Review-Fixes nach `docs/CURSOR_PR32_HUMAN_REVIEW_FIXES.md` sind im Code. Der Head und die Qualitätszahlen werden nach der erneuten Verifikation gesetzt.
+Human-Review-Fixes nach `docs/CURSOR_PR32_HUMAN_REVIEW_FIXES.md`. Verifizierter Implementierungs-Head: `5591e870`.
 
 Umgesetzt auf dem Draft-PR:
 
@@ -290,6 +290,15 @@ Umgesetzt auf dem Draft-PR:
 - kein Dokumententresor, keine OCR, kein Storage-Bucket
 
 Development-Migrationen `20260822010000` und `20260822020000` nur Development. Production unverändert. Kein Provider, keine neuen Secrets, keine neuen Kosten.
+
+Qualitätsnachweis auf `5591e870`:
+
+- `npm test`: **1244/1244**
+- Typecheck, Lint, Hygiene, Auth-Konfiguration und Production-Build grün
+- Trip-Workspace-Audit WebKit + Chromium: **662 Kombinationen, 0 Fehler**
+- Activities-Regression: **184 Kombinationen, 0 Fehler**
+- GitHub CI grün, Vercel Preview READY
+- Preview: `https://jetnity-app-git-feat-travel-readiness-f-f8117d-jetnity-e1b93c82.vercel.app`
 
 Fachdoku: `docs/TRAVEL_READINESS.md`, ADR-0096 bis ADR-0108. Verbindlicher Nachtrag: `docs/CURSOR_TRAVEL_READINESS_AUTOMATION_AMENDMENT.md`. Review-Fixes: `docs/CURSOR_PR32_HUMAN_REVIEW_FIXES.md`.
 
@@ -313,6 +322,8 @@ Diese Punkte dürfen nicht aus der Dokumentation verschwinden:
 - Duffel Production-Zugang später separat
 - erster echter Activity-Provider und Zugang
 - echte Mobility-/Mietwagenprovider später nach Foundation und Providerwahl
+- erster echter Travel-Requirements-Provider (bevorzugt Timatic) ohne Vertrag/Secret in diesem PR
+- strukturierte Flight-/Itinerary-Ländercodes für Origin und Transit (`routeFactsAusReise` bleibt bewusst leer)
 
 Duffel-Testtoken nur Preview:
 

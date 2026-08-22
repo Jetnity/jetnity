@@ -109,8 +109,12 @@ Zuerst offizielle Prüfung und fehlende Angaben, danach die persönliche Vorbere
 
 ## Nachweis Draft-PR #32
 
-Human-Review-Fixes (ADR-0107, ADR-0108) sind im Code; der neue Head und die aktuellen Test-/Audit-Zahlen stehen im Handoff nach der Verifikation.
+Human-Review-Fixes (ADR-0107, ADR-0108) auf Implementierungs-Head `5591e870`:
 
-- Tests und Audits werden nach diesem Review-Fix erneut vollständig nachgewiesen
+- Tests **1244/1244**
+- Typecheck, Lint, Hygiene, Auth-Konfiguration und Production-Build grün
+- Trip-Workspace-Audit WebKit + Chromium: **662 Kombinationen, 0 Fehler**
+- Activities-Regression: **184 Kombinationen, 0 Fehler**
+- GitHub CI und Vercel Preview grün
+- Preview: `https://jetnity-app-git-feat-travel-readiness-f-f8117d-jetnity-e1b93c82.vercel.app`
 - Development-Migration angewendet; Production-Schema unverändert
-- Preview-URL bleibt die Branch-Preview; neuer Head nach Push

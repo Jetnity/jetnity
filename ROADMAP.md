@@ -216,7 +216,7 @@ Automatic Travel Requirements & Readiness:
 - UX in der mobilen Übersicht und auf Desktop nach dem Reisekopf, fünf Hauptbereiche unverändert
 - kein Dokumententresor, keine OCR, kein Storage-Bucket
 
-Nachweis und Head stehen nach der Review-Fix-Verifikation im Handoff.
+Nachweis auf `5591e870`: Tests **1244/1244**, Workspace-Audit **662/0**, Activities **184/0**, Typecheck/Lint/Hygiene/Build/Auth/CI/Preview grün.
 
 Fachdoku: [docs/TRAVEL_READINESS.md](docs/TRAVEL_READINESS.md). Auftrag: [docs/CURSOR_TRAVEL_READINESS_FOUNDATION_TASK.md](docs/CURSOR_TRAVEL_READINESS_FOUNDATION_TASK.md).
 
@@ -271,6 +271,8 @@ Diese Punkte bleiben sichtbar, bis sie nachweislich erledigt sind:
 - Duffel Production-Zugang separat und später
 - erster echter Activity-Provider und dessen Zugang
 - echte Bahn-/Bus-/Fähre-/Transfer-/Mietwagenprovider nach den provider-unabhängigen Foundations
+- erster echter Travel-Requirements-Provider (bevorzugt Timatic); kein Vertrag in PR #32
+- strukturierte Origin-/Transit-Ländercodes aus Flight-/Itinerary-Daten; `routeFactsAusReise()` bleibt leer
 
 ## Bekannte technische Punkte
 
