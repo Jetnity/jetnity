@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 22. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D aktiv**
+Status: **verbindlicher operativer Übergabepunkt – Foundation D auf Draft-PR #34 umgesetzt**
 
 Dieser Handoff ist bewusst kompakt. Ein neuer Chat oder Coding Agent muss zuerst die dauerhaften Projektquellen lesen und anschließend den realen Git-/CI-/Preview-/Production-Stand prüfen.
 
@@ -171,38 +171,38 @@ Aktuell bevorzugter Kandidat: **IATA Timatic / Timatic AutoCheck**, aber keine A
 
 ### Strukturierte Origin-/Transit-Fakten
 
-Diese Lücke wird jetzt mit Foundation D bearbeitet.
+Foundation D füllt diese Naht auf Draft-PR #34. `routeFactsAusReise()` liefert Origin-/Transit-Codes aus validierten Flight-Itineraries. Ohne Itinerary bleibt die Naht leer. Official Transit-Requirements brauchen weiterhin einen echten Provider.
 
 ---
 
 ## 7. Aktiver Arbeitsblock – Foundation D
 
-**Foundation D – Route & Transit Intelligence** ist gestartet.
+**Foundation D – Route & Transit Intelligence** ist auf Draft-PR #34 umgesetzt, nicht gemergt.
 
 - Branch: `feat/route-transit-intelligence`
 - Draft PR: **#34**
+- Fachdokument: `docs/ROUTE_TRANSIT_INTELLIGENCE.md`
+- Acceptance: `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md`
+- Merge-Nachtrag: `docs/CURSOR_ROUTE_TRANSIT_MERGE_APPROVAL_AMENDMENT.md`
 - verbindlicher Task: `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md`
-- websiteweiter UX-/IA-Standard: `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
 
-Ziel:
+Umgesetzt:
 
-- strukturierte Route-/Transit-Fakten im gemeinsamen Reisegraphen
-- Flight-/Itinerary-Evidence statt Ortsnamen-Raten
-- Origin, Destination, Segmente und Multi-Transit belastbar ableiten
-- Foundation C automatisch mit echter Route-/Transit-Struktur speisen
-- Route im Flugbereich verständlich sichtbar machen
-- Reiseänderungen auf Transit-/Readiness-Auswirkungen prüfen
-- Mobility/Connections auf dieselbe Route Truth vorbereiten
+- eine provider-neutrale Route-Facts-Domäne in `lib/route/`
+- persistierte Itinerary in vorhandenem `trip_items.metadata`, keine neue Migration
+- Guest- und Account-Parität über dasselbe Trip-Feld
+- Readiness erhält Origin-/Transit-Codes und wird bei Transitänderung stale
+- Flugbereich zeigt Route progressiv; Übersicht eine dezente Zeile
+- Reiseänderung nennt Transitwechsel
+- Mobility rät Connection/Airport Change nicht aus Titeln
 
 Produkt-/UX-Regel:
 
 > **Der Nutzer sieht die Reise – nicht die Komplexität des Datenmodells dahinter.**
 
-Der neue websiteweite Standard ist verbindlich: Alle Besucherbereiche müssen psychologisch ruhig, logisch eindeutig und visuell priorisiert sein. Ein technisch grüner PR reicht nicht, wenn Nutzer unnötig suchen, denken oder Informationen zusammensetzen müssen.
-
 Harte Grenzen für PR #34:
 
-- Draft bis Human-/Architecture-Review
+- Draft bis Human-/Architecture-Review und ausdrücklicher Product-Owner-Freigabe
 - nicht mergen
 - keine Production-Migration
 - kein echter Flight-/Requirements-Provider

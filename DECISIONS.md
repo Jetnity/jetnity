@@ -2660,20 +2660,20 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 ## ADR-0108 – Origin- und Transit-Ländercodes sind eine dokumentierte Route-Abhängigkeit
 
 **Datum:** 22. August 2026  
-**Status:** Naht vorhanden, Fakten noch leer
+**Status:** Naht gefüllt durch Foundation D auf Draft-PR #34; ohne Itinerary weiter leer
 
-**Entscheidung:** `routeFactsAusReise()` ist die einzige Naht für Origin- und Transit-Ländercodes. Sie liefert heute `{ originCountryCode: null, transitCountryCodes: [], quelle: 'none' }`. Ortsnamen, Place-IDs und Etappentitel dürfen diese Codes nicht raten.
+**Entscheidung:** `routeFactsAusReise()` ist die einzige Naht für Origin- und Transit-Ländercodes. Sie liest ausschließlich validierte Flight-Itineraries. Ortsnamen, Place-IDs und Etappentitel dürfen diese Codes nicht raten.
 
-**Kontext:** Der aktuelle Reisegraph speichert Abreise oft als Freitext (`origin: 'Zürich'`) und Zwischenstopps nicht als belastbare Ländercodes. Automatische Transitprüfung braucht später strukturierte Flight-/Itinerary-Daten.
+**Kontext:** Der Reisegraph speichert Abreise oft als Freitext (`origin: 'Zürich'`). Foundation C ließ die Naht bewusst leer. Foundation D füllt sie, sobald `trip_items.metadata.routeItinerary` eine gültige Struktur trägt.
 
 **Alternativen:**
 
 1. *Aus Stadt- oder Flughafennamen raten.* Verboten; würde `unknown` durch Vermutung ersetzen.
 2. *Naht weglassen und nur dokumentieren.* Würde spätere Provideranbindung an verstreute Lesestellen binden.
 
-**Begründung:** Eine leere, explizite Naht macht die Lücke sichtbar und verhindert stilles Raten. Die nächste technische Abhängigkeit ist: Flight-/Itinerary-Ländercodes in `RequirementsAnfrage.originCountryCode` und `transitCountryCodes` füllen, sobald der Graph sie strukturiert trägt.
+**Begründung:** Eine explizite Naht verhindert stilles Raten. Die Fakten kommen jetzt aus derselben Route Truth wie Fluganzeige und Reiseänderung (ADR-0112).
 
-**Konsequenzen:** Transit ohne belastbare Zwischenstopps bleibt `insufficient_context` (`transit_itinerary`). Ein Provider darf `origin_country` / `transit_itinerary` als Missing Facts zurückgeben; bekannte Codes werden nicht erneut verlangt. Die Foundation darf nicht so dokumentiert werden, als erkenne sie Transit bereits automatisch.
+**Konsequenzen:** Mit Itinerary liefert die Naht `quelle: 'flight_itinerary'` plus Origin-/Transit-Codes. Ohne Itinerary bleibt sie `{ quelle: 'none' }`. Official Transit-Requirements bleiben ohne Provider `unknown`. Die Foundation darf nicht so dokumentiert werden, als prüfe sie Visa/Transit bereits automatisch.
 
 ---
 
@@ -2752,6 +2752,33 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 **Begründung:** Freshness ist Teil der Official Truth. Eine verworfene Evidence ist keine geprüfte Anforderung.
 
 **Konsequenzen:** `freshnessNachTrust()` ist die gemeinsame Nachbehandlung. Zukunfts-`checkedAt` und ungültige vorhandene Source URL werden `never_checked`. Trusted Evidence ohne Source URL darf weiter `current` sein; Official Action bleibt dann leer.
+
+---
+
+## ADR-0112 – Route-Itinerary liegt in vorhandenem `trip_items.metadata`
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #34; keine Production-Migration
+
+**Entscheidung:** Die strukturierte Flugroute ist ein First-Class-Feld `TripItem.routeItinerary`. Persistiert wird sie als validierte Hülle `{ routeItinerary: FlugRouteItinerary }` in der bestehenden Spalte `trip_items.metadata`. Keine neue Tabelle, keine neue Spalte. Die Hülle ist höchstens 8192 Zeichen und kein allgemeiner Jutesack.
+
+**Kontext:** Die Suchdomäne kannte bereits `FlugOption`-Segmente, verwarf sie aber bei der Übernahme. Foundation D braucht eine persistierte Route Truth, darf Production aber nicht migrieren. `public.reise_anlegen()` liest keine Metadata-Felder.
+
+**Alternativen:**
+
+1. *Neue Spalte oder Tabelle.* Semantisch klarer, aber Production-Migration und RPC-Änderung ohne Freigabe.
+2. *Route jedes Mal aus Titeln rekonstruieren.* Verboten; Titel sind keine Trust Boundary.
+3. *Itinerary nur im Browser halten.* Würde Guest→Account und Readiness-Fingerprints verlieren.
+
+**Begründung:** Vorhandene Architektur wiederverwenden. Metadata ist bereits da, RLS bleibt Eigentümergrenze, `reise_aendern()` fasst Metadata nicht an. Länder löst der Server bei der Konto-Übernahme erneut aus `public.airports`.
+
+**Konsequenzen:**
+
+- Gast speichert `routeItinerary` im Local Storage
+- Konto-Insert schreibt Metadata direkt
+- nach `reise_anlegen()` ordnet `flugRoutenInReiseSchreiben()` die Nutzlast nur eindeutig passenden Flügen zu
+- Route-Fingerprint enthält keine Item-IDs
+- Readiness-Fingerprints ohne Route bleiben bitgleich
 
 ---
 

@@ -159,11 +159,11 @@ Unangefragte Transitländer aus Provider-Antworten werden ignoriert.
 
 `routeFactsAusReise()` ist die zentrale Naht für strukturierte Origin-/Transit-Fakten.
 
-Aktuell liefert sie bewusst `quelle: 'none'`, solange der Reisegraph keine belastbaren Flight-/Itinerary-Ländercodes bereitstellt.
+Foundation D füllt sie aus validierten Flight-Itineraries (`quelle: 'flight_itinerary'`). Ohne Itinerary bleibt sie `quelle: 'none'`.
 
 Jetnity rät **nicht** aus Ortsnamen oder Place-Namen auf Länder.
 
-Das ist die nächste strukturelle Abhängigkeit für vollautomatische Transitprüfung.
+Fachlich: [docs/ROUTE_TRANSIT_INTELLIGENCE.md](ROUTE_TRANSIT_INTELLIGENCE.md). Official Transit-Requirements brauchen weiterhin einen echten Provider.
 
 ---
 
@@ -291,7 +291,7 @@ Nach Merge:
 
 Foundation C selbst ist abgeschlossen. Noch fehlen für das volle Nutzerziel:
 
-1. strukturierte Origin-/Transit-Ländercodes aus echten Flight-/Itinerary-Daten
+1. strukturierte Origin-/Transit-Ländercodes aus Flight-Itineraries: auf Draft-PR #34 umgesetzt, nicht gemergt
 2. echter vertrauenswürdiger Travel-Requirements-Provider
 3. Preis-/Lizenz-/Datenschutzprüfung für Timatic oder gleichwertigen Provider.
 

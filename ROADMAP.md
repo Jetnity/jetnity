@@ -73,11 +73,14 @@ Nicht erneut bauen.
 
 ## 2. Aktiv – Foundation D: Route & Transit Intelligence
 
-Status: **GESTARTET / DRAFT PR #34**
+Status: **UMGESETZT AUF DRAFT-PR #34 / NICHT GEMERGT**
 
 - Branch: `feat/route-transit-intelligence`
 - Task: `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md`
+- Fachdokument: `docs/ROUTE_TRANSIT_INTELLIGENCE.md`
+- Acceptance: `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md`
 - verbindlicher UX-Standard: `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
+- Merge erst nach Human-/Architecture-Review und ausdrücklicher Product-Owner-Freigabe
 
 ### Ziel
 
@@ -249,9 +252,10 @@ Solange PR #34 offen ist:
 3. `JETNITY_HANDOFF.md` lesen.
 4. diese Roadmap lesen.
 5. `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md` lesen.
-6. `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md` vollständig lesen.
-7. aktuellen PR #34 / Git-/CI-/Vercel-/Supabase-Stand prüfen.
-8. relevante Flight-/Trip-/Mobility-/Readiness-/Change-Dokumente lesen.
+6. `docs/ROUTE_TRANSIT_INTELLIGENCE.md` und `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md` lesen.
+7. `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md` vollständig lesen.
+8. aktuellen PR #34 / Git-/CI-/Vercel-/Supabase-Stand prüfen.
+9. nicht mergen, nicht Mark Ready, keine Production-Migration.
 9. bestehende Arbeit synchronisieren und fortsetzen statt neu anzufangen.
 
 Kein abgeschlossener Block darf unnötig neu gebaut werden.

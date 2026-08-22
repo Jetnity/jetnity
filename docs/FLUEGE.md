@@ -1,7 +1,7 @@
 # Jetnity – Flüge
 
-**Stand:** 21. August 2026 · Phase 3.1 plus Coverage/Booking Status (Draft-PR #29)  
-**Gilt für:** die interne Flugdomäne, den ersten Duffel-Adapter, das Ranking und die Übernahme in die Reise.
+**Stand:** 22. August 2026 · Phase 3.1 plus Coverage/Booking Status; Route-Itinerary auf Draft-PR #34  
+**Gilt für:** die interne Flugdomäne, den ersten Duffel-Adapter, das Ranking, die Übernahme in die Reise und die persistierte Route Truth.
 
 Diese Datei beschreibt den **tatsächlichen** Flugweg. Produktprinzip: [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md). Entscheidungen: ADR-0062 bis ADR-0066 in [DECISIONS.md](../DECISIONS.md). Die Flughafenbasis steht in [docs/FLUGHAFEN.md](FLUGHAFEN.md).
 
@@ -44,8 +44,9 @@ Suchanfrage (Browser)
 ```
 Nutzer wählt Option
   → Zod erneut
-    → Momentaufnahme (Route, Termin, Preis, Provider, Ref)
-      → Gast: localStorage  |  Konto: INSERT trip_items (RLS)
+    → Momentaufnahme (Route, Termin, Preis, Provider, Ref, Itinerary)
+      → Länder nur aus public.airports bzw. Such-Referenzkarte
+      → Gast: localStorage  |  Konto: INSERT trip_items inkl. metadata (RLS)
 ```
 
 | Schicht | Datei | Aufgabe |
@@ -58,7 +59,8 @@ Nutzer wählt Option
 | Gründe | `lib/flights/gruende.ts` | 2–4 Sätze für „Jetnity empfiehlt“ |
 | Orchestrierung | `lib/flights/suche.ts` | Zustand → Limit → Provider → Ranking |
 | Client-Sicht | `lib/flights/client-sicht.ts` | keine Tokens, kein Score, keine Rohfelder |
-| Übernahme | `lib/flights/uebernahme.ts` | Option → kommerzieller Planpunkt |
+| Übernahme | `lib/flights/uebernahme.ts` | Option → kommerzieller Planpunkt inkl. Itinerary |
+| Route Truth | `lib/route/` | Segmente, Transit, Fingerprint, Metadata-Hülle |
 | Duffel | `lib/flights/duffel/*` | erster Daten-/Entwicklungsadapter |
 
 Die UI (`components/trips/FlugSuche.tsx`) spricht nur die interne Domäne. Duffel-Typen kommen dort nicht vor.
