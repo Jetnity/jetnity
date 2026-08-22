@@ -4,6 +4,7 @@
 // ein Country-Label ohne Code ist kein Länderkontext.
 
 import { landescodeLesen } from '@/lib/readiness/domain'
+import { routeFactsAusGraph } from '@/lib/route/ableitung'
 import { planpunkteSammeln } from '@/lib/trips/arbeitsbereich'
 import type { Trip, TripItem } from '@/types/trips'
 
@@ -23,16 +24,27 @@ const BUCHBARE: ReadonlySet<TripItem['kind']> = new Set(['flight', 'stay', 'tran
 
 export type ReadinessRouteFacts = {
   originCountryCode: string | null
+  destinationCountryCode: string | null
   transitCountryCodes: string[]
-  quelle: 'none'
+  destinationCountryCodes: string[]
+  quelle: 'none' | 'flight_itinerary'
+  fingerprint: string | null
 }
 
 /**
- * Spätere Naht für belastbare Flight-/Itinerary-Ländercodes.
- * Heute bewusst leer: Ortsnamen, Place-IDs und Etappentitel sind kein Origin/Transit.
+ * Origin- und Transit-Ländercodes nur aus strukturierten Flight-Itineraries.
+ * Ortsnamen, Place-IDs und Etappentitel sind kein Origin/Transit.
  */
-export function routeFactsAusReise(_reise: Trip): ReadinessRouteFacts {
-  return { originCountryCode: null, transitCountryCodes: [], quelle: 'none' }
+export function routeFactsAusReise(reise: Trip): ReadinessRouteFacts {
+  const facts = routeFactsAusGraph(reise)
+  return {
+    originCountryCode: facts.origin.countryCode,
+    destinationCountryCode: facts.destination.countryCode,
+    transitCountryCodes: facts.transitCountryCodes,
+    destinationCountryCodes: facts.destinationCountryCodes,
+    quelle: facts.quelle,
+    fingerprint: facts.fingerprint,
+  }
 }
 
 export function readinessReisekontext(reise: Trip): ReadinessReisekontext {
@@ -48,6 +60,10 @@ export function readinessReisekontext(reise: Trip): ReadinessReisekontext {
     }
   }
 
+  const route = routeFactsAusReise(reise)
+  for (const code of route.destinationCountryCodes) {
+    if (!destinationCountries.includes(code)) destinationCountries.push(code)
+  }
   destinationCountries.sort()
 
   const punkte = planpunkteSammeln(reise, reise.ohneTag)
@@ -60,12 +76,25 @@ export function readinessReisekontext(reise: Trip): ReadinessReisekontext {
     startDate: reise.startDate,
     endDate: reise.endDate,
     travellers: reise.travellers,
-    originCountryCode: routeFactsAusReise(reise).originCountryCode,
+    originCountryCode: route.originCountryCode,
     destinationCountries,
-    transitCountryCodes: routeFactsAusReise(reise).transitCountryCodes,
+    transitCountryCodes: route.transitCountryCodes,
     unknownCountryStages,
     rentalCarPresent,
     bookedItems,
+  }
+}
+
+export function routeFingerprintFelder(reise: Trip): {
+  originCountryCode: string | null
+  transitCountryCodes: string[]
+  routeFingerprint: string | null
+} {
+  const route = routeFactsAusReise(reise)
+  return {
+    originCountryCode: route.originCountryCode,
+    transitCountryCodes: route.transitCountryCodes,
+    routeFingerprint: route.fingerprint,
   }
 }
 

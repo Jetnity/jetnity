@@ -43,6 +43,9 @@ export type ReadinessFingerprintKontext = {
   originPlaceId: string | null
   destinationPlaceId: string | null
   title: string | null
+  originCountryCode?: string | null
+  transitCountryCodes?: readonly string[]
+  routeFingerprint?: string | null
 }
 
 function teil(name: string, wert: string | number | boolean | null | undefined): string {
@@ -55,6 +58,14 @@ function laender(codes: readonly string[]): string {
   return [...new Set(codes.filter((code) => /^[A-Z]{2}$/.test(code)))].sort().join(',')
 }
 
+function routeFelderAus(kontext: ReadinessFingerprintKontext): string[] {
+  const origin = kontext.originCountryCode ?? null
+  const transits = (kontext.transitCountryCodes ?? []).filter((code) => /^[A-Z]{2}$/.test(code))
+  const route = kontext.routeFingerprint ?? null
+  if (!origin && transits.length === 0 && !route) return []
+  return [teil('orig', origin), teil('tr', transits.join(',')), teil('route', route)]
+}
+
 function titelNorm(wert: string | null): string {
   return (wert ?? '').trim().toLowerCase().replace(/\s+/g, ' ').slice(0, READINESS_GRENZEN.titel)
 }
@@ -62,6 +73,7 @@ function titelNorm(wert: string | null): string {
 export function readinessFingerprint(kontext: ReadinessFingerprintKontext): string {
   const dest = laender(kontext.destinationCountries)
   const teile = [READINESS_FINGERPRINT_VERSION, `kind=${kontext.kind}`]
+  const routeFelder = routeFelderAus(kontext)
 
   switch (kontext.kind) {
     case 'entry_check':
@@ -73,6 +85,7 @@ export function readinessFingerprint(kontext: ReadinessFingerprintKontext): stri
         teil('end', kontext.endDate),
         teil('trav', kontext.travellers),
         teil('dest', dest),
+        ...routeFelder,
       )
       break
     case 'insurance_check':
@@ -82,6 +95,7 @@ export function readinessFingerprint(kontext: ReadinessFingerprintKontext): stri
         teil('trav', kontext.travellers),
         teil('dest', dest),
         teil('rental', kontext.rentalCarPresent),
+        ...routeFelder,
       )
       break
     case 'ticket_confirmation_check':
@@ -103,6 +117,7 @@ export function readinessFingerprint(kontext: ReadinessFingerprintKontext): stri
         teil('end', kontext.endDate),
         teil('trav', kontext.travellers),
         teil('dest', dest),
+        ...routeFelder,
       )
       break
   }

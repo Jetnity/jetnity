@@ -8,6 +8,7 @@ import * as React from 'react'
 import { AlertCircle, Loader2, Plane, Search } from 'lucide-react'
 
 import type { FlugOptionSichtbar, FlugSucheAntwort } from '@/lib/flights/client-sicht'
+import type { FlughafenReferenzKarte } from '@/lib/route/domain'
 import { FLUG_ABDECKUNGSHINWEIS } from '@/lib/flights/domain'
 import type { FlugKabine, FlugStoppPraeferenz } from '@/lib/flights/domain'
 import FlugKarte from '@/components/trips/FlugKarte'
@@ -37,7 +38,11 @@ export default function FlugSuche({
 }: {
   reise: Trip
   tagId: string | null
-  onUebernehmen: (tagId: string | null, option: FlugOptionSichtbar) => Promise<string | null>
+  onUebernehmen: (
+    tagId: string | null,
+    option: FlugOptionSichtbar,
+    refs?: FlughafenReferenzKarte,
+  ) => Promise<string | null>
 }) {
   const tag = reise.days.find((eintrag) => eintrag.id === tagId) ?? reise.days[0]
   const [herkunft, setHerkunft] = React.useState(iataAus(reise.origin) || 'ZRH')
@@ -101,7 +106,7 @@ export default function FlugSuche({
     if (uebernimmt) return
     setUebernimmt(true)
     setMeldung('')
-    const fehler = await onUebernehmen(tag?.id ?? null, option)
+    const fehler = await onUebernehmen(tag?.id ?? null, option, antwort?.airportRefs)
     setUebernimmt(false)
     if (fehler) setMeldung(fehler)
   }
@@ -288,7 +293,12 @@ export default function FlugSuche({
               <ol className="mt-4 grid gap-3">
                 {sichtbar.map((option) => (
                   <li key={option.id}>
-                    <FlugKarte option={option} laeuft={uebernimmt} onUebernehmen={() => uebernehmen(option)} />
+                    <FlugKarte
+                      option={option}
+                      refs={antwort.airportRefs}
+                      laeuft={uebernimmt}
+                      onUebernehmen={() => uebernehmen(option)}
+                    />
                   </li>
                 ))}
               </ol>

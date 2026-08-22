@@ -8,11 +8,12 @@ import {
   type ReadinessDerivedCheck,
 } from '@/lib/readiness/domain'
 import { readinessFingerprint } from '@/lib/readiness/fingerprint'
-import { readinessReisekontext } from '@/lib/readiness/kontext'
+import { readinessReisekontext, routeFingerprintFelder } from '@/lib/readiness/kontext'
 import type { Trip } from '@/types/trips'
 
 export function readinessChecksAbleiten(reise: Trip): ReadinessDerivedCheck[] {
   const kontext = readinessReisekontext(reise)
+  const routeFelder = routeFingerprintFelder(reise)
   const checks: ReadinessDerivedCheck[] = []
   const gesehen = new Set<string>()
 
@@ -38,6 +39,7 @@ export function readinessChecksAbleiten(reise: Trip): ReadinessDerivedCheck[] {
       originPlaceId: null,
       destinationPlaceId: null,
       title: null,
+      ...routeFelder,
     }
 
     merken({
@@ -94,6 +96,7 @@ export function readinessChecksAbleiten(reise: Trip): ReadinessDerivedCheck[] {
         originPlaceId: null,
         destinationPlaceId: null,
         title: null,
+        ...routeFelder,
       }),
     })
   }

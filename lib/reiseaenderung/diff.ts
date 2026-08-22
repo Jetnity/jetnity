@@ -8,6 +8,7 @@
 //
 // Frei von Next, Supabase und `process.env`.
 
+import { routeAenderungZwischen } from '@/lib/route/vergleich'
 import { TEMPO_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import type { Reisegraph, TripDay, TripItem, TripStage } from '@/types/trips'
 
@@ -138,6 +139,20 @@ export function reiseDiff(vorher: Reisegraph, nachher: Reisegraph): DiffEintrag[
     if (!nachherPunkte.has(punkt.id)) {
       eintraege.push({ art: 'punkt', text: `Entfernt: ${punkt.title}` })
     }
+  }
+
+  const route = routeAenderungZwischen(vorher, nachher)
+  if (route.geaendert && (route.vorherKompakt || route.nachherKompakt)) {
+    const transits = [
+      ...route.entfernteTransitlaender.map((code) => `Transit ${code} entfernt`),
+      ...route.neueTransitlaender.map((code) => `Transit ${code} hinzugefügt`),
+    ]
+    eintraege.push({
+      art: 'punkt',
+      text: `Route: ${route.vorherKompakt ?? 'offen'} → ${route.nachherKompakt ?? 'offen'}${
+        transits.length ? ` · ${transits.join(', ')}` : ''
+      }`,
+    })
   }
 
   if (etappenNamen(vorher.stages) !== etappenNamen(nachher.stages) && eintraege.every((e) => e.art !== 'etappe')) {

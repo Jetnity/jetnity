@@ -177,6 +177,7 @@ export function vorschlagAlsNutzlast(
         rental_supplier: null,
         vehicle_class: null,
         transmission: null,
+        route_itinerary: null,
       })),
     })),
     ungeplante: [],

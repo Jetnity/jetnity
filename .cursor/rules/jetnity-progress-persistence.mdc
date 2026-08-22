@@ -7,7 +7,7 @@ alwaysApply: true
 
 `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md` is mandatory.
 
-For every relevant Jetnity work block:
+For every relevant Jetnity work block, including Foundation D:
 
 - Do not keep important progress only in agent/session/chat context.
 - Persist product decisions, implementation milestones, blockers, review findings, test/CI/Preview state, DB/Production boundaries, risks, pending approvals and the exact next step in the repository.

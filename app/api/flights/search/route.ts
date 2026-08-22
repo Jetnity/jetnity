@@ -9,6 +9,8 @@ import { duffelProviderAus } from '@/lib/flights/duffel/factory'
 import { flugRateKennungAus } from '@/lib/flights/rate-limit'
 import { fluegeSuchen, suchePortsAusUmgebung } from '@/lib/flights/suche'
 import { flugUmgebungAusProzess } from '@/lib/flights/zustand'
+import { flughafenReferenzLesen } from '@/lib/route/flughafen-lesen'
+import { createRouteHandlerClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 30
@@ -29,10 +31,15 @@ export async function POST(req: Request) {
     )
   }
 
-  const { httpStatus, koerper } = await fluegeSuchen(
-    eingabe,
-    suchePortsAusUmgebung(flugUmgebungAusProzess(), duffelProviderAus(), flugRateKennungAus(req.headers)),
+  const ports = suchePortsAusUmgebung(
+    flugUmgebungAusProzess(),
+    duffelProviderAus(),
+    flugRateKennungAus(req.headers),
   )
+  const { httpStatus, koerper } = await fluegeSuchen(eingabe, {
+    ...ports,
+    flughafenReferenz: (codes) => flughafenReferenzLesen(codes, createRouteHandlerClient()),
+  })
 
   return NextResponse.json(koerper, {
     status: httpStatus,

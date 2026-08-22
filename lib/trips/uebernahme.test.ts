@@ -24,11 +24,13 @@
 import { test, describe, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { itineraryDirekt, itineraryEinTransit, itineraryZweiTransits } from '@/lib/route/fixtures'
 import { SCHLUESSEL, gastreiseAnlegen, kennungErzeugen } from '@/lib/trips/gastspeicher'
 import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 import { gastreisenUebernehmen, type Uebernahmeantwort } from '@/lib/trips/uebernahme'
 import type { ReiseNutzlast } from '@/lib/trips/schema'
 import type { CreateTripInput } from '@/types/trips'
+import type { FlugRouteItinerary } from '@/lib/route/domain'
 
 const LEERE_MOBILITAET_NUTZLAST = {
   mobility_mode: null,
@@ -38,6 +40,7 @@ const LEERE_MOBILITAET_NUTZLAST = {
   destination_name: null,
   connection_ref: null,
   mobility_changes: null,
+  route_itinerary: null,
   rental_supplier: null,
   vehicle_class: null,
   transmission: null,
@@ -384,6 +387,7 @@ describe('Gast mit Reise – der Weg beim Login', () => {
         rental_supplier: null,
         vehicle_class: null,
         transmission: null,
+        route_itinerary: null,
       },
     ])
   })
@@ -459,6 +463,7 @@ describe('Gast mit Reise – der Weg beim Login', () => {
         rental_supplier: 'Europcar',
         vehicle_class: 'compact',
         transmission: 'automatic',
+        route_itinerary: null,
       },
     ])
   })
@@ -680,6 +685,74 @@ describe('bereits übernommene Reise', () => {
 
     assert.equal(server.empfangen.length, 1)
     assert.equal(server.vergeben.get(entwurf.clientRef ?? ''), 'uuid-1')
+  })
+})
+
+function gastflug(itinerary: FlugRouteItinerary) {
+  return {
+    id: 'item-flug',
+    dayId: null,
+    stageId: null,
+    kind: 'flight' as const,
+    title: 'ZRH → BKK · SWISS',
+    note: null,
+    position: 1,
+    startsOn: '2026-11-01',
+    startsAt: '09:15',
+    endsOn: '2026-11-01',
+    endsAt: '21:40',
+    priceAmount: 890,
+    priceCurrency: 'CHF',
+    provider: 'duffel',
+    externalRef: 'off_1',
+    bookingUrl: null,
+    bookingStatus: 'unconfirmed' as const,
+    bookingSource: null,
+    bookingConfirmedAt: null,
+    ...leereMobilitaet(),
+    routeItinerary: itinerary,
+  }
+}
+
+describe('Guest → Account behält die Flugroute', () => {
+  test('Direktflug geht als route_itinerary mit', async () => {
+    const entwurf = gastreiseAnlegen(eingabe())
+    speicher.setzen(SCHLUESSEL.aktiv, { ...entwurf, ohneTag: [gastflug(itineraryDirekt())] })
+    const server = attrappe()
+    await gastreisenUebernehmen(server.senden)
+    assert.deepEqual(server.empfangen[0]?.ungeplante[0]?.route_itinerary, itineraryDirekt())
+  })
+
+  test('ein Transit geht vollständig mit', async () => {
+    const entwurf = gastreiseAnlegen(eingabe())
+    speicher.setzen(SCHLUESSEL.aktiv, { ...entwurf, ohneTag: [gastflug(itineraryEinTransit())] })
+    const server = attrappe()
+    await gastreisenUebernehmen(server.senden)
+    assert.equal(server.empfangen[0]?.ungeplante[0]?.route_itinerary?.legs[0]?.segments.length, 2)
+  })
+
+  test('zwei Transits gehen vollständig mit', async () => {
+    const entwurf = gastreiseAnlegen(eingabe())
+    speicher.setzen(SCHLUESSEL.aktiv, { ...entwurf, ohneTag: [gastflug(itineraryZweiTransits())] })
+    const server = attrappe()
+    await gastreisenUebernehmen(server.senden)
+    assert.equal(server.empfangen[0]?.ungeplante[0]?.route_itinerary?.legs[0]?.segments.length, 3)
+  })
+
+  test('Retry nach fehlgeschlagener Route sendet dieselbe client_ref erneut', async () => {
+    const entwurf = gastreiseAnlegen(eingabe())
+    speicher.setzen(SCHLUESSEL.aktiv, { ...entwurf, ohneTag: [gastflug(itineraryEinTransit())] })
+    const server = attrappe(() => ({
+      ok: false,
+      meldung: 'Die Reise liegt im Konto, aber die Flugroute konnte nicht übernommen werden. Bitte versuche es erneut – es entsteht keine zweite Reise.',
+    }))
+    const erst = await gastreisenUebernehmen(server.senden)
+    const retry = await gastreisenUebernehmen(server.senden)
+    assert.equal(erst.art, 'fehler')
+    assert.equal(retry.art, 'fehler')
+    assert.equal(server.empfangen.length, 2)
+    assert.equal(server.empfangen[0]?.client_ref, server.empfangen[1]?.client_ref)
+    assert.deepEqual(server.empfangen[0]?.ungeplante[0]?.route_itinerary, itineraryEinTransit())
   })
 })
 

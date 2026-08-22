@@ -4,6 +4,8 @@ import * as React from 'react'
 import { Plane } from 'lucide-react'
 
 import BuchungsSiegel from '@/components/trips/BuchungsSiegel'
+import FlugRoute from '@/components/trips/FlugRoute'
+import { routeFactsFuerPunkt } from '@/lib/route/ableitung'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
 import { datumKurz } from '@/lib/trips/datum-anzeige'
 import { flugAbdeckung, type FlugAbschnitt } from '@/lib/trips/flug-abdeckung'
@@ -68,7 +70,9 @@ export default function FlugBestand({
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-brand-800 break-words">{abschnittTitel(abschnitt)}</p>
                 {abschnitt.item ? (
-                  <p className="mt-0.5 text-xs leading-5 text-ink-800 break-words">{abschnitt.item.title}</p>
+                  <div className="mt-2">
+                    <FlugRoute facts={routeFactsFuerPunkt(abschnitt.item)} />
+                  </div>
                 ) : null}
               </div>
               <div className="flex min-h-11 flex-wrap items-center gap-2">
@@ -96,6 +100,9 @@ export default function FlugBestand({
                 <p className="mt-0.5 text-xs leading-5 text-ink-800">
                   Noch keinem Reiseabschnitt sicher zuordenbar
                 </p>
+                <div className="mt-2">
+                  <FlugRoute facts={routeFactsFuerPunkt(item)} />
+                </div>
               </div>
               <div className="flex min-h-11 flex-wrap items-center gap-2">
                 <BuchungsSiegel status={item.bookingStatus === 'booked' ? 'booked' : 'selected'} />

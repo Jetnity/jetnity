@@ -7,6 +7,9 @@
 
 import type { FlugOption, FlugSegment } from '@/lib/flights/domain'
 import { flugOptionLesen } from '@/lib/flights/schema'
+import type { FlughafenReferenzKarte, FlugRouteItinerary } from '@/lib/route/domain'
+import { itineraryAusFlugOption } from '@/lib/route/itinerary'
+import { itineraryPasstInMetadata } from '@/lib/route/metadata'
 import type { TripItem } from '@/types/trips'
 import { dauerLesbar } from '@/lib/flights/zeit'
 import { unbestaetigteBuchung } from '@/lib/trips/buchung'
@@ -25,6 +28,7 @@ export type FlugMomentaufnahme = {
   provider: string
   externalRef: string
   bookingUrl: null
+  routeItinerary: FlugRouteItinerary | null
 }
 
 function routeKurz(option: FlugOption): string {
@@ -69,13 +73,17 @@ export function flugNotiz(option: FlugOption): string {
   return koepfe.filter(Boolean).join(' ').slice(0, 500)
 }
 
-export function alsFlugMomentaufnahme(wert: unknown): FlugMomentaufnahme | null {
+export function alsFlugMomentaufnahme(
+  wert: unknown,
+  refs: FlughafenReferenzKarte = {},
+): FlugMomentaufnahme | null {
   const option = flugOptionLesen(wert)
   if (!option) return null
   const start = option.legs[0]?.segments[0]
   const letztesBein = option.legs[option.legs.length - 1]
   const ende = letztesBein?.segments[letztesBein.segments.length - 1]
   if (!start || !ende) return null
+  const itinerary = itineraryAusFlugOption(option, refs)
 
   return {
     kind: 'flight',
@@ -90,6 +98,7 @@ export function alsFlugMomentaufnahme(wert: unknown): FlugMomentaufnahme | null 
     provider: option.provider,
     externalRef: option.externalRef,
     bookingUrl: null,
+    routeItinerary: itinerary && itineraryPasstInMetadata(itinerary) ? itinerary : null,
   }
 }
 
@@ -116,6 +125,7 @@ export function momentaufnahmeAlsPunkt(
     bookingUrl: null,
     ...unbestaetigteBuchung(),
     ...leereMobilitaet(),
+    routeItinerary: aufnahme.routeItinerary,
   }
 }
 

@@ -135,6 +135,9 @@ Diese Bereiche erzeugen besonders teure Fehler und benötigen explizite Regeln u
 - Namen nur nach definierter Normalisierung vergleichen
 - Freitext nie still als strukturierte Route behandeln
 - gleiche Daten oder ähnliche Namen sind kein Routennachweis
+- eine Flugroute entsteht nur aus einer validierten Itinerary, nie aus Titel, Notiz oder Ortsname
+- Country-, Transit- und Connection-Fakten ohne Evidence bleiben `unknown`/`null`
+- für dieselbe Route gibt es genau eine Truth (`lib/route`); Readiness, Flüge und Reiseänderung lesen sie, statt sie neu zu raten
 
 ### Geld
 

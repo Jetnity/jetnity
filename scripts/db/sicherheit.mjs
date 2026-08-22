@@ -849,6 +849,29 @@ function reisenachweise() {
   const reise = (kennung, weiteres = '') =>
     `'{"client_ref":"${kennung}","title":"Testreise"${weiteres}}'::jsonb`
 
+  const punkt = (code) =>
+    `{"airportCode":"${code}","countryCode":"US","city":"Clientstadt","country":"Clientland"}`
+  const segment = (von, nach, ab = '09:15', an = '16:40') =>
+    `{"origin":${punkt(von)},"destination":${punkt(nach)},"departureDate":"2026-11-01","departureTime":"${ab}","arrivalDate":"2026-11-01","arrivalTime":"${an}"}`
+  const itineraryObj = (segmente) =>
+    `{"v":1,"type":"flight_route_itinerary","legs":[{"segments":[${segmente}]}]}`
+  const asJsonb = (objekt) => `'${objekt}'::jsonb`
+  const ROUTE_DIREKT_OBJ = itineraryObj(segment('ZRH', 'BKK', '09:15', '21:40'))
+  const ROUTE_TRANSIT_OBJ = itineraryObj(
+    `${segment('ZRH', 'DOH', '09:15', '16:40')},${segment('DOH', 'BKK', '18:55', '07:10')}`,
+  )
+  const ROUTE_ZWEI_OBJ = itineraryObj(
+    `${segment('ZRH', 'FRA')},${segment('FRA', 'DOH')},${segment('DOH', 'BKK')}`,
+  )
+  const ROUTE_UNBEKANNT_OBJ = itineraryObj(segment('ZZZ', 'BKK'))
+  const ROUTE_DIREKT_US = asJsonb(ROUTE_DIREKT_OBJ)
+  const ROUTE_TRANSIT_US = asJsonb(ROUTE_TRANSIT_OBJ)
+  const ROUTE_ZWEI_TRANSITS = asJsonb(ROUTE_ZWEI_OBJ)
+  const ROUTE_UNBEKANNT = asJsonb(ROUTE_UNBEKANNT_OBJ)
+  const FLUG_PUNKT = (objekt) =>
+    `{"kind":"flight","title":"ZRH BKK","position":1,"route_itinerary":${objekt}}`
+  const META = (routeObj, extra = '') => `'{"routeItinerary":${routeObj}${extra}}'::jsonb`
+
   return [
     // --- trips: Eigentum ---------------------------------------------------
     {
@@ -1563,6 +1586,194 @@ function reisenachweise() {
       erwartung: 'erlaubt',
       grund: 'Der positive Gegenfall zur Schranke.',
     },
+
+    // --- Route Truth: letzte Grenze in der Datenbank ----------------------
+    {
+      name: 'flug_route_itinerary_metadata setzt ZRH aus airports auf CH',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select 1
+            where public.flug_route_itinerary_metadata('flight', ${ROUTE_DIREKT_US})
+              #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' = 'CH'`,
+      erwartung: 'erlaubt',
+      grund: 'Ein direktes RPC darf ZRH nicht mit einem Client-Land persistieren.',
+    },
+    {
+      name: 'flug_route_itinerary_metadata übernimmt kein US für ZRH',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select 1
+            where public.flug_route_itinerary_metadata('flight', ${ROUTE_DIREKT_US})
+              #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' = 'US'`,
+      erwartung: 'leer',
+      grund: 'Die Gegenprobe: das manipulierte Client-Land darf nicht in der Hülle stehen.',
+    },
+    {
+      name: 'flug_route_itinerary_metadata setzt DOH-Transit aus airports auf QA',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select 1
+            where public.flug_route_itinerary_metadata('flight', ${ROUTE_TRANSIT_US})
+              #>> '{routeItinerary,legs,0,segments,0,destination,countryCode}' = 'QA'
+              and public.flug_route_itinerary_metadata('flight', ${ROUTE_TRANSIT_US})
+              #>> '{routeItinerary,legs,0,segments,1,destination,countryCode}' = 'TH'`,
+      erwartung: 'erlaubt',
+      grund: 'Transit- und Zielland kommen aus public.airports, nicht aus dem JSON.',
+    },
+    {
+      name: 'flug_route_itinerary_metadata verwirft Client-Stadt und -Landname',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select 1
+            where public.flug_route_itinerary_metadata('flight', ${ROUTE_DIREKT_US})
+              #>> '{routeItinerary,legs,0,segments,0,origin,city}' = 'Clientstadt'
+               or public.flug_route_itinerary_metadata('flight', ${ROUTE_DIREKT_US})
+              #>> '{routeItinerary,legs,0,segments,0,origin,country}' = 'Clientland'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'unbekannter IATA behält kein Client-Land',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select 1
+            where public.flug_route_itinerary_metadata('flight', ${ROUTE_UNBEKANNT})
+              #>> '{routeItinerary,legs,0,segments,0,origin,airportCode}' = 'ZZZ'
+              and public.flug_route_itinerary_metadata('flight', ${ROUTE_UNBEKANNT})
+              #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' is null
+              and public.flug_route_itinerary_metadata('flight', ${ROUTE_UNBEKANNT})
+              #>> '{routeItinerary,legs,0,segments,0,origin,city}' is null
+              and public.flug_route_itinerary_metadata('flight', ${ROUTE_UNBEKANNT})
+              #>> '{routeItinerary,legs,0,segments,0,origin,country}' is null`,
+      erwartung: 'erlaubt',
+      grund: 'Ohne Airport-Zeile bleibt Country unknown. Kein Fallback auf US.',
+    },
+    {
+      name: 'zwei Transits bleiben nach DB-Kanonisierung vollständig',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select 1
+            where jsonb_array_length(
+              public.flug_route_itinerary_metadata('flight', ${ROUTE_ZWEI_TRANSITS})
+              #> '{routeItinerary,legs,0,segments}'
+            ) = 3`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'direktes reise_anlegen persistiert keine Client-Länder',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise('route-us-1', `,"ungeplante":[${FLUG_PUNKT(ROUTE_TRANSIT_OBJ)}]`)});
+            select 1 from public.trip_items
+              where user_id = '${NUTZER}'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' = 'CH'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,destination,countryCode}' = 'QA'
+                and metadata #>> '{routeItinerary,legs,0,segments,1,destination,countryCode}' = 'TH'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' is distinct from 'US'`,
+      erwartung: 'erlaubt',
+      grund: 'Die letzte Grenze sitzt in reise_anlegen, nicht nur im TypeScript-Pfad.',
+    },
+    {
+      name: 'Guest→Account-Retry über reise_anlegen bleibt idempotent',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise('route-retry-1', `,"ungeplante":[${FLUG_PUNKT(ROUTE_DIREKT_OBJ)}]`)});
+            select public.reise_anlegen(${reise('route-retry-1', `,"ungeplante":[${FLUG_PUNKT(ROUTE_DIREKT_OBJ)}]`)});
+            select id from public.trips
+              where user_id = '${NUTZER}' and client_ref = 'route-retry-1' offset 1`,
+      erwartung: 'leer',
+      grund: 'Zwei direkte RPC-Aufrufe mit derselben client_ref erzeugen keine zweite Reise.',
+    },
+    {
+      name: 'direkter trip_items-INSERT speichert ZRH als CH, nicht US',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (trip_id, kind, title, metadata)
+              values ('${REISE}', 'flight', 'Guard Insert', ${META(ROUTE_DIREKT_OBJ, `,"keepMe":true`)});
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'Guard Insert'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' = 'CH'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' is distinct from 'US'
+                and (metadata ->> 'keepMe') = 'true'`,
+      erwartung: 'erlaubt',
+      grund: 'Der BEFORE-Trigger kanonisiert jeden direkten Flight-INSERT.',
+    },
+    {
+      name: 'direkter metadata-UPDATE speichert DOH-Transit als QA',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (trip_id, kind, title, metadata)
+              values ('${REISE}', 'flight', 'Guard Update', ${META(ROUTE_DIREKT_OBJ)});
+            update public.trip_items
+              set metadata = ${META(ROUTE_TRANSIT_OBJ, `,"keepMe":true`)}
+              where trip_id = '${REISE}' and title = 'Guard Update';
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'Guard Update'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,destination,countryCode}' = 'QA'
+                and (metadata ->> 'keepMe') = 'true'`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'direkter INSERT übernimmt keine Client-Stadt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (trip_id, kind, title, metadata)
+              values ('${REISE}', 'flight', 'Guard City', ${META(ROUTE_DIREKT_OBJ)});
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'Guard City'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,city}' = 'Clientstadt'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'unbekannter IATA bleibt nach direktem INSERT ohne Client-Land',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (trip_id, kind, title, metadata)
+              values ('${REISE}', 'flight', 'Guard Unknown', ${META(ROUTE_UNBEKANNT_OBJ)});
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'Guard Unknown'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,airportCode}' = 'ZZZ'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' is null`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'ungültige routeItinerary wird fail-closed entfernt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (trip_id, kind, title, metadata)
+              values ('${REISE}', 'flight', 'Guard Invalid',
+                '{"routeItinerary":{"v":2,"type":"nope"},"keepMe":true}'::jsonb);
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'Guard Invalid'
+                and (metadata ->> 'keepMe') = 'true'
+                and not (metadata ? 'routeItinerary')`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'Nicht-Flight-Metadata bleibt unverändert',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (trip_id, kind, title, metadata)
+              values ('${REISE}', 'note', 'Guard Note', ${META(ROUTE_DIREKT_OBJ)});
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'Guard Note'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' = 'US'`,
+      erwartung: 'erlaubt',
+      grund: 'routeFacts liest nur Flight-Items. Note-Metadata wird nicht umgeschrieben.',
+    },
+    {
+      name: 'kind-Wechsel zu flight kanonisiert vorhandene Metadata',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (trip_id, kind, title, metadata)
+              values ('${REISE}', 'note', 'Guard Kind', ${META(ROUTE_DIREKT_OBJ)});
+            update public.trip_items set kind = 'flight'
+              where trip_id = '${REISE}' and title = 'Guard Kind';
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'Guard Kind'
+                and kind = 'flight'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' = 'CH'`,
+      erwartung: 'erlaubt',
+    },
   ]
 }
 
@@ -2143,8 +2354,14 @@ function aufbau() {
     `insert into public.refunds (payment_id, amount_chf, created_at) values ('pay_1', 10, now());`,
     `insert into public.security_events (type, ip) values ('login_failed', '203.0.113.1');`,
     `insert into public.blocked_ips (ip, reason) values ('203.0.113.2', 'Test');`,
-    `insert into public.airports (iata, name, city, country) values ('ZRH', 'Zürich', 'Zürich', 'CH')
-       on conflict (iata) do nothing;`,
+    `insert into public.airports (iata, name, city, country, country_code) values
+       ('ZRH', 'Zurich', 'Zürich', 'Switzerland', 'CH'),
+       ('DOH', 'Hamad International', 'Doha', 'Qatar', 'QA'),
+       ('BKK', 'Suvarnabhumi', 'Bangkok', 'Thailand', 'TH')
+       on conflict (iata) do update
+         set city = excluded.city,
+             country = excluded.country,
+             country_code = excluded.country_code;`,
     `insert into public.places (id, source, source_id, name, typ, country, country_code)
        values ('test', 'geonames', '1', 'Testort', 'city', 'Schweiz', 'CH')
        on conflict (id) do nothing;`,

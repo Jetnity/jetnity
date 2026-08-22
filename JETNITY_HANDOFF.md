@@ -44,6 +44,8 @@ Vor Produkt-/Architektur-/Implementierungsentscheidungen lesen:
 - `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`
 - `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`
 - `docs/FINAL_HOMEPAGE_POSITIONING_OPTIMIZATION_POLICY.md`
+- `docs/PROVIDER_INTEGRATION_READINESS_POLICY.md`
+- `docs/TRIP_WORKSPACE_TRANSFORMATION_SCOPE_POLICY.md`
 - relevante Fach-/Acceptance-/Review-Dokumente unter `docs/`
 
 Bei einem aktiven größeren Arbeitsblock zusätzlich die **Branch-Version** von `docs/ACTIVE_WORK_STATUS.md` und den aktuellen `docs/CURSOR_...TASK.md` bzw. neueren Review-/Amendment-Auftrag lesen.
@@ -137,14 +139,18 @@ Provider-Suchen/Requirements bleiben produktiv deaktiviert, solange keine echten
 - PR bleibt Draft
 - kein Merge ohne ausdrückliche Product-Owner-Freigabe
 - keine Foundation-D-Production-Migration ohne separates Gate
+- Fachdokument: `docs/ROUTE_TRANSIT_INTELLIGENCE.md`
+- Acceptance: `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md`
+- Live-Handoff im Branch: `docs/ACTIVE_WORK_STATUS.md`
 
 Foundation D liefert u. a.:
 
-- provider-neutrale Route-Facts-Domäne
-- strukturierte Flight-Itinerary / Segmente / Transit
-- Airport-/Country-Truth aus kanonischen Referenzen statt Browser-Feldern
-- Schutz auch über direkte DB-/RPC-Schreibwege
-- Guest→Account-Persistenz der Route
+- provider-neutrale Route-Facts-Domäne in `lib/route/`
+- persistierte Flight-Itinerary in vorhandenem `trip_items.metadata`
+- atomarer Development-RPC (ADR-0113) und fail-closed TypeScript-Recovery
+- Airport-/Country-Truth aus `public.airports` statt Browser-Feldern (ADR-0114)
+- dieselbe Grenze für direkten `reise_anlegen`-RPC und jeden `trip_items`-INSERT/UPDATE (ADR-0115, ADR-0116)
+- Guest→Account-Persistenz der Route; stiller Route-Verlust ist kein Erfolg
 - Readiness-Reevaluation bei Transitänderungen
 - traveller-neutrale Route Truth als Grundlage für spätere Traveller-Profile
 
@@ -158,11 +164,12 @@ Diese sind **nicht** auf Production, solange keine separate Freigabe erfolgt.
 
 ### Product-Owner-Rundgang zu PR #34
 
-Der Product-Owner-Rundgang ist **abgeschlossen**. Die dabei bestätigten Anforderungen sollen nicht unkontrolliert in PR #34 hineingebaut werden, sondern sind als verbindliche nächste Produktwahrheit gesichert.
+Der Product-Owner-Rundgang ist **abgeschlossen**. Die dabei bestätigten Anforderungen sollen nicht unkontrolliert in PR #34 hineingebaut werden, sondern sind als verbindliche nächste Produktwahrheit gesichert. PR #34 bleibt Draft; kein Merge, kein Mark Ready, keine Production-Migration, kein Provider, keine Secrets.
 
-Aktueller verbindlicher Closeout-Auftrag im Branch:
+Aktueller verbindlicher Closeout-Auftrag und Bericht im Branch:
 
-`docs/CURSOR_PR34_PRODUCT_OWNER_CLOSEOUT_TASK.md`
+- `docs/CURSOR_PR34_PRODUCT_OWNER_CLOSEOUT_TASK.md`
+- `docs/PR34_PRODUCT_OWNER_CLOSEOUT_REPORT.md`
 
 Cursor muss vor einer späteren Merge-Entscheidung:
 
@@ -281,7 +288,7 @@ Erst auf belastbarer Foundation-E-Basis soll ein echter Travel-Requirements-Prov
 
 ## 7. Danach – großer Workspace-Umbau und kompletter Intelligence Audit
 
-Nach Foundation E wird der zentrale Trip Workspace mit Route Truth + Traveller Truth + bestehendem Reisegraphen umfassend optimiert.
+Nach der neueren Product-Owner-Reihenfolge (`docs/PRODUCT_OWNER_PR34_PROVIDER_READINESS_ADDENDUM.md`) kommt der große Workspace-Umbau **nach** Foundation E sowie nach provider-neutraler Safety-/Seasonality-Foundation und dem Schließen der Provider-Readiness-Lücken. Route Truth + Traveller Truth + bestehender Reisegraph bleiben die fachliche Grundlage.
 
 Wichtig: Frühere Funktionen dürfen dabei verändert werden, wenn sie dem heutigen Standard nicht entsprechen.
 
@@ -424,12 +431,18 @@ Solange PR #34 noch offen ist:
 
 **Nicht** Foundation E starten, solange Foundation D nicht sauber abgeschlossen bzw. die Governance-Entscheidung dazu getroffen ist.
 
-Nach Foundation D gilt als Reihenfolge:
+Nach Foundation D gilt die neuere verbindliche Reihenfolge:
 
 1. **Foundation E – Traveller Context / Multi-Citizenship / Multi-Document**
-2. **zentraler Trip-Workspace-Umbau**
-3. **Travel Safety & Disruption + Travel Timing & Seasonal Intelligence professionell integrieren**
-4. **finaler kompletter Workspace Intelligence Audit**
-5. **später finale Homepage-Positionierungs-/Kommunikationsoptimierung**
+2. **Travel Safety & Disruption Intelligence provider-neutral bauen**
+3. **Travel Timing & Seasonal Intelligence provider-neutral bauen**
+4. **Provider-Readiness-Lücken inventarisieren und Jetnity-seitige Ports/Verträge schließen**
+5. **großer Trip-Workspace-/Übersicht-Umbau**
+6. **finaler Workspace Intelligence / Cross-Domain Audit**
+7. **finale echte Providerphase**
+8. **Provider-backed End-to-End-/Truth-Audit**
+9. **finale Startseiten-Positionierung/-Kommunikation**
 
-Die Roadmap ist für spätere Phasen maßgeblich; vor jeder konkreten Arbeit den tatsächlichen Repo-/PR-/Production-Stand neu prüfen.
+Grundlagen: `docs/PRODUCT_OWNER_PR34_PROVIDER_READINESS_ADDENDUM.md`, `docs/PROVIDER_INTEGRATION_READINESS_POLICY.md`.
+
+Die Roadmap ist für spätere Phasen maßgeblich; vor jeder konkreten Arbeit den tatsächlichen Repo-/PR-/Production-Stand und im Feature-Branch `docs/ACTIVE_WORK_STATUS.md` neu prüfen. Foundation D darf nicht als zweite Route-Foundation neu gebaut werden. Traveller-Production-Schema in diesem PR nicht migrieren.

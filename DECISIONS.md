@@ -2660,20 +2660,20 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 ## ADR-0108 – Origin- und Transit-Ländercodes sind eine dokumentierte Route-Abhängigkeit
 
 **Datum:** 22. August 2026  
-**Status:** Naht vorhanden, Fakten noch leer
+**Status:** Naht gefüllt durch Foundation D auf Draft-PR #34; ohne Itinerary weiter leer
 
-**Entscheidung:** `routeFactsAusReise()` ist die einzige Naht für Origin- und Transit-Ländercodes. Sie liefert heute `{ originCountryCode: null, transitCountryCodes: [], quelle: 'none' }`. Ortsnamen, Place-IDs und Etappentitel dürfen diese Codes nicht raten.
+**Entscheidung:** `routeFactsAusReise()` ist die einzige Naht für Origin- und Transit-Ländercodes. Sie liest ausschließlich validierte Flight-Itineraries. Ortsnamen, Place-IDs und Etappentitel dürfen diese Codes nicht raten.
 
-**Kontext:** Der aktuelle Reisegraph speichert Abreise oft als Freitext (`origin: 'Zürich'`) und Zwischenstopps nicht als belastbare Ländercodes. Automatische Transitprüfung braucht später strukturierte Flight-/Itinerary-Daten.
+**Kontext:** Der Reisegraph speichert Abreise oft als Freitext (`origin: 'Zürich'`). Foundation C ließ die Naht bewusst leer. Foundation D füllt sie, sobald `trip_items.metadata.routeItinerary` eine gültige Struktur trägt.
 
 **Alternativen:**
 
 1. *Aus Stadt- oder Flughafennamen raten.* Verboten; würde `unknown` durch Vermutung ersetzen.
 2. *Naht weglassen und nur dokumentieren.* Würde spätere Provideranbindung an verstreute Lesestellen binden.
 
-**Begründung:** Eine leere, explizite Naht macht die Lücke sichtbar und verhindert stilles Raten. Die nächste technische Abhängigkeit ist: Flight-/Itinerary-Ländercodes in `RequirementsAnfrage.originCountryCode` und `transitCountryCodes` füllen, sobald der Graph sie strukturiert trägt.
+**Begründung:** Eine explizite Naht verhindert stilles Raten. Die Fakten kommen jetzt aus derselben Route Truth wie Fluganzeige und Reiseänderung (ADR-0112).
 
-**Konsequenzen:** Transit ohne belastbare Zwischenstopps bleibt `insufficient_context` (`transit_itinerary`). Ein Provider darf `origin_country` / `transit_itinerary` als Missing Facts zurückgeben; bekannte Codes werden nicht erneut verlangt. Die Foundation darf nicht so dokumentiert werden, als erkenne sie Transit bereits automatisch.
+**Konsequenzen:** Mit Itinerary liefert die Naht `quelle: 'flight_itinerary'` plus Origin-/Transit-Codes. Ohne Itinerary bleibt sie `{ quelle: 'none' }`. Official Transit-Requirements bleiben ohne Provider `unknown`. Die Foundation darf nicht so dokumentiert werden, als prüfe sie Visa/Transit bereits automatisch.
 
 ---
 
@@ -2752,6 +2752,144 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 **Begründung:** Freshness ist Teil der Official Truth. Eine verworfene Evidence ist keine geprüfte Anforderung.
 
 **Konsequenzen:** `freshnessNachTrust()` ist die gemeinsame Nachbehandlung. Zukunfts-`checkedAt` und ungültige vorhandene Source URL werden `never_checked`. Trusted Evidence ohne Source URL darf weiter `current` sein; Official Action bleibt dann leer.
+
+---
+
+## ADR-0112 – Route-Itinerary liegt in vorhandenem `trip_items.metadata`
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #34; keine Production-Migration
+
+**Entscheidung:** Die strukturierte Flugroute ist ein First-Class-Feld `TripItem.routeItinerary`. Persistiert wird sie als validierte Hülle `{ routeItinerary: FlugRouteItinerary }` in der bestehenden Spalte `trip_items.metadata`. Keine neue Tabelle, keine neue Spalte. Die Hülle ist höchstens 8192 Zeichen und kein allgemeiner Jutesack.
+
+**Kontext:** Die Suchdomäne kannte bereits `FlugOption`-Segmente, verwarf sie aber bei der Übernahme. Foundation D braucht eine persistierte Route Truth, darf Production aber nicht migrieren.
+
+**Nachtrag, 22. August 2026:** Human-Review hat den stillen Nachlauf als Blocker gewertet. ADR-0113 lässt `reise_anlegen()` die validierte Itinerary in derselben Transaktion schreiben. Die Metadata-Hülle bleibt.
+
+**Alternativen:**
+
+1. *Neue Spalte oder Tabelle.* Semantisch klarer, aber Production-Migration und RPC-Änderung ohne Freigabe.
+2. *Route jedes Mal aus Titeln rekonstruieren.* Verboten; Titel sind keine Trust Boundary.
+3. *Itinerary nur im Browser halten.* Würde Guest→Account und Readiness-Fingerprints verlieren.
+
+**Begründung:** Vorhandene Architektur wiederverwenden. Metadata ist bereits da, RLS bleibt Eigentümergrenze, `reise_aendern()` fasst Metadata nicht an. Länder löst der Server bei der Konto-Übernahme erneut aus `public.airports`.
+
+**Konsequenzen:**
+
+- Gast speichert `routeItinerary` im Local Storage
+- Konto-Insert schreibt Metadata direkt
+- `reise_anlegen()` schreibt die validierte Hülle atomar (ADR-0113)
+- der TypeScript-Nachlauf ist fail-closed Recovery, kein stilles `ok`
+- Route-Fingerprint enthält keine Item-IDs
+- Readiness-Fingerprints ohne Route bleiben bitgleich
+
+---
+
+## ADR-0113 – Route-Itinerary entsteht atomar in `reise_anlegen()`
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #34; Migration nur Development; Production nicht anwenden
+
+**Entscheidung:** `public.reise_anlegen()` persistiert eine validierte `route_itinerary` in derselben Transaktion nach `trip_items.metadata`. Ungültige oder übergrosse Nutzlasten werden zu `{}`. Der Anwendung-Nachlauf darf einen Route-Verlust nicht als erfolgreiche Übernahme ausgeben. Retry bleibt über `client_ref` idempotent.
+
+**Kontext:** Der Human-/Architecture-Review zu PR #34 hat den stillen Nachlauf `flugRoutenInReiseSchreiben()` als DoD-Verstoss gegen Guest→Account-Parität bewertet (`docs/CURSOR_PR34_HUMAN_REVIEW_FIXES.md`). Ein bloßes `throw` nach bereits angelegter Reise ohne Recovery reicht nicht.
+
+**Alternativen:**
+
+1. *Nur fail-closed Nachlauf, RPC unverändert.* Behebt das stille `ok`, bleibt aber zwei Schreibschritte.
+2. *Neue Spalte `route_itinerary`.* Semantisch klarer, unnötige Production-Migration.
+3. *Reise löschen und neu anlegen bei Fehler.* Verlöre IDs und zählte gegen die Missbrauchsschranke.
+
+**Begründung:** Dieselbe Transaktion ist die bevorzugte Architektur. Der Nachlauf bleibt als Recovery, falls Production die RPC noch nicht kennt oder ein früherer Versuch die Route verloren hat. `on conflict do nothing` + dieselbe `client_ref` verhindert Dubletten.
+
+**Konsequenzen:**
+
+- Development-Migration `20260822130000_reise_anlegen_route_itinerary.sql`
+- Helper `public.flug_route_itinerary_metadata(text, jsonb)` ist fail-closed
+- `authenticated` behält EXECUTE; `anon` nicht
+- Production-Schema unverändert, bis eine separate Freigabe die Migration erlaubt
+
+---
+
+## ADR-0114 – Account-Route-Länder kommen nur aus der Airport-Referenz
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #34; keine Schemaänderung
+
+**Entscheidung:** Bevor `reiseAusNutzlastAnlegen()` eine `route_itinerary` an `reise_anlegen()` oder den Recovery-Nachlauf übergibt, werden alle Route-Punkte aus IATA plus einem Batch-Lookup gegen `public.airports` neu aufgebaut. Clientwerte für `countryCode`, `city` und `country` werden verworfen. Fehlt die Referenz, bleiben diese Felder `null`. Datum und Uhrzeit bleiben aus der strukturell geprüften Itinerary.
+
+**Kontext:** Der zweite Human-/Truth-Review zu PR #34 hat die Guest→Account-Nutzlast als Trust-Boundary-Lücke bewertet (`docs/CURSOR_PR34_HUMAN_REVIEW_ROUND2.md`). Zod und `flug_route_itinerary_metadata()` prüfen nur Formate. Ein Browser könnte `ZRH` mit einem falschen Land persistieren; `routeFactsAusReise()` würde das als `flight_itinerary` an Readiness weitergeben.
+
+**Alternativen:**
+
+1. *Lookup in SQL je Segment.* Würde eine zweite Referenzwahrheit und N+1 in der RPC erzeugen.
+2. *Gesamte Übernahme ablehnen, wenn ein Airport fehlt.* Strenger als die bestehende unknown-Regel und würde gültige IATA-Routen ohne Landzeile verlieren.
+3. *Nur `gastreiseUebernehmen` kanonisieren.* Retry und spätere Browser-Pfade über `reiseAusNutzlastAnlegen()` blieben offen.
+
+**Begründung:** Dieselbe Batch-Referenz wie die Flugsuche und die direkte Account-Flugübernahme. Ein zentraler Ort vor RPC und Recovery. Die SQL-Helferfunktion bleibt strukturelle letzte Schicht, nicht Country-Truth.
+
+**Konsequenzen:**
+
+- `lib/route/kanonisieren.ts` ist die reine Abbildung
+- `reiseAusNutzlastAnlegen()` holt Referenzen einmal und übergibt nur die kanonisierte Nutzlast
+- `flugInReiseUebernehmen` bleibt unverändert referenzbasiert
+- keine Production-Migration, keine neue Spalte
+
+**Nachtrag, 22. August 2026:** Round 3 stuft die direkte RPC-Umgehung nicht als Restrisiko ein. ADR-0115 macht `flug_route_itinerary_metadata()` zur letzten DB-Trust-Boundary. Die TypeScript-Kanonisierung bleibt Defense in Depth.
+
+---
+
+## ADR-0115 – letzte Route-Country-Truth liegt in der Datenbank
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #34; Migration nur Development; Production nicht anwenden
+
+**Entscheidung:** `public.flug_route_itinerary_metadata()` verwirft eingehende `countryCode`-/`city`-/`country`-Werte und baut jeden Route-Punkt aus IATA plus `public.airports` neu. Keine eindeutige Airport-Zeile ergibt `null`. Die Funktion ist `STABLE` / `SECURITY INVOKER`, nicht mehr `IMMUTABLE`. TypeScript-Kanonisierung (ADR-0114) bleibt die frühere Schicht.
+
+**Kontext:** Der dritte Human-/Security-/Truth-Review (`docs/CURSOR_PR34_HUMAN_REVIEW_ROUND3.md`) hat gezeigt, dass `authenticated` `reise_anlegen(jsonb)` direkt aufrufen und die TypeScript-Grenze umgehen kann. Eine regulatorisch folgenreiche Route Truth darf nicht vom freiwilligen Anwendungspfad abhängen.
+
+**Alternativen:**
+
+1. *Nur dokumentieren, den direkten RPC nicht zu nutzen.* Schliesst die Grenze nicht.
+2. *EXECUTE auf `reise_anlegen` entziehen.* Würde den normalen Anwendungspfad zerstören.
+3. *SECURITY DEFINER plus Service-Role.* Unnötig; `authenticated` darf `airports` bereits lesen.
+
+**Begründung:** Dieselbe Tabelle, dieselbe unknown-Regel, dieselbe Transaktion. Ein Lookup je eindeutigem IATA-Code, nicht ein zweites Schattenmodell.
+
+**Konsequenzen:**
+
+- Development-Migration `20260822140000_flug_route_itinerary_airport_truth.sql`
+- Helfer `public.flug_route_punkt_aus_iata(text)`
+- `db:sicherheit` prüft direkten RPC mit manipuliertem `ZRH.countryCode = 'US'`
+- Production-Schema unverändert, bis eine separate Freigabe die Migration erlaubt
+
+**Nachtrag, 22. August 2026:** Direkte `trip_items`-INSERT/UPDATE umgingen die RPC-Grenze. ADR-0116 schützt jeden persistenten Schreibweg.
+
+---
+
+## ADR-0116 – Route-Metadata wird auf jedem `trip_items`-Schreibweg kanonisiert
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #34; Migration nur Development; Production nicht anwenden
+
+**Entscheidung:** Ein `BEFORE INSERT OR UPDATE OF metadata, kind`-Trigger auf `public.trip_items` kanonisiert `metadata.routeItinerary` für `kind = 'flight'` über `flug_route_itinerary_metadata()`. Ungültige Routen werden entfernt. Andere Metadata-Schlüssel bleiben. Nicht-Flight-Zeilen bleiben unverändert.
+
+**Kontext:** Round 4 (`docs/CURSOR_PR34_HUMAN_REVIEW_ROUND4.md`) hat bestätigt, dass `authenticated` eigene `trip_items` direkt schreiben darf. RLS schützt den Eigentümer, nicht die Route Truth.
+
+**Alternativen:**
+
+1. *INSERT/UPDATE auf `trip_items.metadata` entziehen.* Würde legitime Buchungs- und Mobility-Schreibwege brechen.
+2. *Nur Anwendungscode härten.* Ein direkter SQL-Client umgeht das.
+3. *Shadow-Tabelle für kanonische Routen.* Zweite Wahrheit, unnötige Komplexität.
+
+**Begründung:** Dieselbe kanonische Funktion wie der RPC. Ein enger Trigger, keine neue Spalte. RLS bleibt Eigentümergrenze; der Guard schützt die Wahrheit.
+
+**Konsequenzen:**
+
+- Development-Migration `20260822150000_trip_items_route_itinerary_guard.sql`
+- Funktion `public.trip_items_route_itinerary_schuetzen()` ohne EXECUTE für `authenticated`
+- `db:sicherheit` prüft direkten INSERT/UPDATE mit manipulierten Ländern
+- Production-Schema unverändert, bis eine separate Freigabe die Migration erlaubt
 
 ---
 

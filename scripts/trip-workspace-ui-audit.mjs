@@ -988,6 +988,157 @@ const ZUSTAENDE = {
       }),
     },
   },
+  'route-direkt': {
+    kompakt: 'Direktflug',
+    desktop: 'Zürich ZRH → Bangkok BKK',
+    tab: 'Flüge',
+    nutzlast: {
+      anfangsBereich: 'fluege',
+      reise: reise({
+        stages: [etappe({ name: 'Bangkok', countryCode: 'TH' })],
+        ohneTag: [
+          punkt({
+            id: 'flug-direkt',
+            kind: 'flight',
+            title: 'ZRH → BKK · SWISS',
+            dayId: null,
+            startsOn: '2026-09-12',
+            endsOn: '2026-09-12',
+            priceAmount: 890,
+            priceCurrency: 'CHF',
+            provider: 'duffel',
+            externalRef: 'route_direkt',
+            routeItinerary: {
+              v: 1,
+              type: 'flight_route_itinerary',
+              legs: [
+                {
+                  segments: [
+                    {
+                      origin: { airportCode: 'ZRH', countryCode: 'CH', city: 'Zürich', country: 'Switzerland' },
+                      destination: { airportCode: 'BKK', countryCode: 'TH', city: 'Bangkok', country: 'Thailand' },
+                      departureDate: '2026-09-12',
+                      departureTime: '09:15',
+                      arrivalDate: '2026-09-12',
+                      arrivalTime: '21:40',
+                    },
+                  ],
+                },
+              ],
+            },
+          }),
+        ],
+      }),
+    },
+  },
+  'route-ein-transit': {
+    kompakt: '1 Umstieg',
+    desktop: 'Doha DOH',
+    tab: 'Flüge',
+    nutzlast: {
+      anfangsBereich: 'fluege',
+      reise: reise({
+        stages: [etappe({ name: 'Bangkok', countryCode: 'TH' })],
+        ohneTag: [
+          punkt({
+            id: 'flug-transit',
+            kind: 'flight',
+            title: 'ZRH → BKK · QR',
+            dayId: null,
+            startsOn: '2026-09-12',
+            endsOn: '2026-09-13',
+            priceAmount: 720,
+            priceCurrency: 'CHF',
+            provider: 'duffel',
+            externalRef: 'route_transit',
+            routeItinerary: {
+              v: 1,
+              type: 'flight_route_itinerary',
+              legs: [
+                {
+                  segments: [
+                    {
+                      origin: { airportCode: 'ZRH', countryCode: 'CH', city: 'Zürich', country: 'Switzerland' },
+                      destination: { airportCode: 'DOH', countryCode: 'QA', city: 'Doha', country: 'Qatar' },
+                      departureDate: '2026-09-12',
+                      departureTime: '09:15',
+                      arrivalDate: '2026-09-12',
+                      arrivalTime: '16:40',
+                    },
+                    {
+                      origin: { airportCode: 'DOH', countryCode: 'QA', city: 'Doha', country: 'Qatar' },
+                      destination: { airportCode: 'BKK', countryCode: 'TH', city: 'Bangkok', country: 'Thailand' },
+                      departureDate: '2026-09-12',
+                      departureTime: '18:55',
+                      arrivalDate: '2026-09-13',
+                      arrivalTime: '07:10',
+                    },
+                  ],
+                },
+              ],
+            },
+          }),
+        ],
+      }),
+    },
+  },
+  'route-zwei-transits': {
+    kompakt: '2 Umstiege',
+    desktop: 'Verbindung im Detail',
+    tab: 'Flüge',
+    nutzlast: {
+      anfangsBereich: 'fluege',
+      reise: reise({
+        stages: [etappe({ name: 'Bangkok', countryCode: 'TH' })],
+        ohneTag: [
+          punkt({
+            id: 'flug-zwei',
+            kind: 'flight',
+            title: 'ZRH → BKK',
+            dayId: null,
+            startsOn: '2026-09-12',
+            endsOn: '2026-09-13',
+            provider: 'duffel',
+            externalRef: 'route_zwei',
+            routeItinerary: {
+              v: 1,
+              type: 'flight_route_itinerary',
+              legs: [
+                {
+                  segments: [
+                    {
+                      origin: { airportCode: 'ZRH', countryCode: 'CH', city: 'Zürich', country: 'Switzerland' },
+                      destination: { airportCode: 'FRA', countryCode: 'DE', city: 'Frankfurt', country: 'Germany' },
+                      departureDate: '2026-09-12',
+                      departureTime: '07:10',
+                      arrivalDate: '2026-09-12',
+                      arrivalTime: '08:20',
+                    },
+                    {
+                      origin: { airportCode: 'FRA', countryCode: 'DE', city: 'Frankfurt', country: 'Germany' },
+                      destination: { airportCode: 'DOH', countryCode: 'QA', city: 'Doha', country: 'Qatar' },
+                      departureDate: '2026-09-12',
+                      departureTime: '10:05',
+                      arrivalDate: '2026-09-12',
+                      arrivalTime: '18:40',
+                    },
+                    {
+                      origin: { airportCode: 'DOH', countryCode: 'QA', city: 'Doha', country: 'Qatar' },
+                      destination: { airportCode: 'BKK', countryCode: 'TH', city: 'Bangkok', country: 'Thailand' },
+                      departureDate: '2026-09-12',
+                      departureTime: '20:55',
+                      arrivalDate: '2026-09-13',
+                      arrivalTime: '07:10',
+                    },
+                  ],
+                },
+              ],
+            },
+          }),
+        ],
+      }),
+    },
+  },
   'bestand-unbestimmt': {
     kompakt: 'noch nicht vollständig bestimmbar',
     desktop: 'noch nicht vollständig bestimmbar',

@@ -51,6 +51,26 @@ describe('Context-Fingerprint', () => {
     assert.equal(fingerprintAktuell(a, b), false)
   })
 
+  test('Transitänderung ändert Einreise-Fingerprint, nicht Buchungsbestätigung', () => {
+    const ohne = readinessFingerprint({ ...basis, kind: 'entry_check' })
+    const mit = readinessFingerprint({
+      ...basis,
+      kind: 'entry_check',
+      originCountryCode: 'CH',
+      transitCountryCodes: ['QA'],
+      routeFingerprint: 'route-v1|ZRH:CH>DOH:QA>BKK:TH',
+    })
+    assert.notEqual(ohne, mit)
+    const buchungOhne = readinessFingerprint({ ...basis, kind: 'booking_confirmation_check' })
+    const buchungMit = readinessFingerprint({
+      ...basis,
+      kind: 'booking_confirmation_check',
+      originCountryCode: 'CH',
+      transitCountryCodes: ['QA'],
+    })
+    assert.equal(buchungOhne, buchungMit)
+  })
+
   test('Mietwagen ändert nur den Versicherungs-Fingerprint', () => {
     const ohne = readinessFingerprint({ ...basis, kind: 'insurance_check', rentalCarPresent: false })
     const mit = readinessFingerprint({ ...basis, kind: 'insurance_check', rentalCarPresent: true })

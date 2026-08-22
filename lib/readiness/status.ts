@@ -21,7 +21,7 @@ import {
   type ReadinessViewItem,
 } from '@/lib/readiness/domain'
 import { fingerprintAktuell, readinessFingerprint } from '@/lib/readiness/fingerprint'
-import { punktFuerReadiness, readinessReisekontext } from '@/lib/readiness/kontext'
+import { punktFuerReadiness, readinessReisekontext, routeFingerprintFelder } from '@/lib/readiness/kontext'
 import type { Trip, TripReadinessItem } from '@/types/trips'
 
 function aktuellerFingerprint(reise: Trip, item: Pick<TripReadinessItem, 'kind' | 'countryCode' | 'tripItemId' | 'title'>): string {
@@ -43,6 +43,7 @@ function aktuellerFingerprint(reise: Trip, item: Pick<TripReadinessItem, 'kind' 
     originPlaceId: punkt?.originPlaceId ?? null,
     destinationPlaceId: punkt?.destinationPlaceId ?? null,
     title: item.title,
+    ...routeFingerprintFelder(reise),
   })
 }
 

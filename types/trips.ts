@@ -15,6 +15,8 @@
 // sind ebenfalls die der Datenbank. Was Reisende lesen, steht an einer Stelle:
 // `lib/trips/bezeichnungen.ts`.
 
+import type { FlugRouteItinerary } from '@/lib/route/domain'
+
 /** Reisetempo. Werte wie in `trips.pace`. */
 export const TRIP_PACES = ['calm', 'balanced', 'intense'] as const
 export type TripPace = (typeof TRIP_PACES)[number]
@@ -259,6 +261,11 @@ export type TripItem = {
   transmission: Transmission | null
   /** `user` bei manueller Erfassung. `null` ohne strukturierte Mietwagenfakten. */
   rentalEvidence: RentalEvidence | null
+  /**
+   * Strukturierte Flugroute. Nur bei `kind = flight` und nur aus einer
+   * geprüften Itinerary. Titel und Notiz sind keine Quelle.
+   */
+  routeItinerary?: FlugRouteItinerary | null
 }
 
 /**

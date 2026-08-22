@@ -139,6 +139,7 @@ describe('Der Vorschlag als Nutzlast für public.reise_anlegen()', () => {
         rental_supplier: null,
         vehicle_class: null,
         transmission: null,
+        route_itinerary: null,
       },
     ])
   })

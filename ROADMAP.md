@@ -73,11 +73,15 @@ Nicht erneut bauen.
 
 ## 2. Aktiv – Foundation D: Route & Transit Intelligence
 
-Status: **GESTARTET / DRAFT PR #34**
+Status: **UMGESETZT AUF DRAFT-PR #34 / PRODUCT-OWNER-CLOSEOUT / NICHT GEMERGT**
 
 - Branch: `feat/route-transit-intelligence`
 - Task: `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md`
+- Fachdokument: `docs/ROUTE_TRANSIT_INTELLIGENCE.md`
+- Acceptance: `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md`
 - verbindlicher UX-Standard: `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
+- Merge erst nach finalem Human-/Architecture-/Truth-Re-Review und ausdrücklicher Product-Owner-Freigabe
+- Round-4-Metadata-Guard (ADR-0116) liegt auf Development; Production unverändert
 
 ### Ziel
 
@@ -390,13 +394,16 @@ Solange PR #34 offen ist:
 3. `JETNITY_HANDOFF.md` lesen.
 4. diese Roadmap lesen.
 5. `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md` lesen.
-6. `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md` vollständig lesen.
-7. aktuellen PR #34 / Git-/CI-/Vercel-/Supabase-Stand prüfen.
-8. relevante Flight-/Trip-/Mobility-/Readiness-/Change-Dokumente lesen.
-9. bestehende Arbeit synchronisieren und fortsetzen statt neu anzufangen.
-10. Nach Foundation D ist Traveller Context / Multi-Citizenship die verbindliche nächste interne Priorität.
-11. Travel Safety & Disruption Intelligence ist eine verbindliche spätere Produktfähigkeit gemäß `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`.
-12. Travel Timing & Seasonal Intelligence ist eine verbindliche gekoppelte spätere Produktfähigkeit gemäß `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`.
-13. Nach Integration des Kernprodukts folgt eine verbindliche finale Startseiten-Positionierung gemäß `docs/FINAL_HOMEPAGE_POSITIONING_OPTIMIZATION_POLICY.md`.
+6. `docs/ROUTE_TRANSIT_INTELLIGENCE.md` und `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md` lesen.
+7. `docs/CURSOR_ROUTE_TRANSIT_INTELLIGENCE_TASK.md` und `docs/CURSOR_PR34_PRODUCT_OWNER_CLOSEOUT_TASK.md` vollständig lesen.
+8. `docs/ACTIVE_WORK_STATUS.md`, `docs/PRODUCT_OWNER_PR34_ACCEPTANCE_CLOSURE.md` und `docs/PR34_FINAL_HUMAN_REVIEW.md` lesen, dann aktuellen PR #34 / Git-/CI-/Vercel-/Supabase-Stand prüfen.
+9. relevante Flight-/Trip-/Mobility-/Readiness-/Change-Dokumente lesen.
+10. nicht mergen, nicht Mark Ready, keine Production-Migration.
+11. bestehende Arbeit synchronisieren und fortsetzen statt neu anzufangen.
+12. Verbindliche Reihenfolge nach Foundation D: Foundation E → provider-neutrale Safety-Foundation → provider-neutrale Seasonal-Foundation → Provider-Readiness-Lücken schließen → großer Workspace-Umbau → Workspace Intelligence Audit → echte Providerphase → Provider-backed Audit → finale Startseiten-Positionierung.
+13. Travel Safety & Disruption Intelligence ist eine verbindliche spätere Produktfähigkeit gemäß `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`.
+14. Travel Timing & Seasonal Intelligence ist eine verbindliche gekoppelte spätere Produktfähigkeit gemäß `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`.
+15. Provider werden erst in einer späteren finalen Phase angeschlossen; vorher muss Jetnity provider-ready sein (`docs/PROVIDER_INTEGRATION_READINESS_POLICY.md`, `docs/PRODUCT_OWNER_PR34_PROVIDER_READINESS_ADDENDUM.md`).
+16. Nach der Providerphase folgt eine verbindliche finale Startseiten-Positionierung gemäß `docs/FINAL_HOMEPAGE_POSITIONING_OPTIMIZATION_POLICY.md`.
 
 Kein abgeschlossener Block darf unnötig neu gebaut werden.
