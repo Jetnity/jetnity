@@ -2762,7 +2762,9 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 **Entscheidung:** Die strukturierte Flugroute ist ein First-Class-Feld `TripItem.routeItinerary`. Persistiert wird sie als validierte Hülle `{ routeItinerary: FlugRouteItinerary }` in der bestehenden Spalte `trip_items.metadata`. Keine neue Tabelle, keine neue Spalte. Die Hülle ist höchstens 8192 Zeichen und kein allgemeiner Jutesack.
 
-**Kontext:** Die Suchdomäne kannte bereits `FlugOption`-Segmente, verwarf sie aber bei der Übernahme. Foundation D braucht eine persistierte Route Truth, darf Production aber nicht migrieren. `public.reise_anlegen()` liest keine Metadata-Felder.
+**Kontext:** Die Suchdomäne kannte bereits `FlugOption`-Segmente, verwarf sie aber bei der Übernahme. Foundation D braucht eine persistierte Route Truth, darf Production aber nicht migrieren.
+
+**Nachtrag, 22. August 2026:** Human-Review hat den stillen Nachlauf als Blocker gewertet. ADR-0113 lässt `reise_anlegen()` die validierte Itinerary in derselben Transaktion schreiben. Die Metadata-Hülle bleibt.
 
 **Alternativen:**
 
@@ -2776,9 +2778,36 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 - Gast speichert `routeItinerary` im Local Storage
 - Konto-Insert schreibt Metadata direkt
-- nach `reise_anlegen()` ordnet `flugRoutenInReiseSchreiben()` die Nutzlast nur eindeutig passenden Flügen zu
+- `reise_anlegen()` schreibt die validierte Hülle atomar (ADR-0113)
+- der TypeScript-Nachlauf ist fail-closed Recovery, kein stilles `ok`
 - Route-Fingerprint enthält keine Item-IDs
 - Readiness-Fingerprints ohne Route bleiben bitgleich
+
+---
+
+## ADR-0113 – Route-Itinerary entsteht atomar in `reise_anlegen()`
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #34; Migration nur Development; Production nicht anwenden
+
+**Entscheidung:** `public.reise_anlegen()` persistiert eine validierte `route_itinerary` in derselben Transaktion nach `trip_items.metadata`. Ungültige oder übergrosse Nutzlasten werden zu `{}`. Der Anwendung-Nachlauf darf einen Route-Verlust nicht als erfolgreiche Übernahme ausgeben. Retry bleibt über `client_ref` idempotent.
+
+**Kontext:** Der Human-/Architecture-Review zu PR #34 hat den stillen Nachlauf `flugRoutenInReiseSchreiben()` als DoD-Verstoss gegen Guest→Account-Parität bewertet (`docs/CURSOR_PR34_HUMAN_REVIEW_FIXES.md`). Ein bloßes `throw` nach bereits angelegter Reise ohne Recovery reicht nicht.
+
+**Alternativen:**
+
+1. *Nur fail-closed Nachlauf, RPC unverändert.* Behebt das stille `ok`, bleibt aber zwei Schreibschritte.
+2. *Neue Spalte `route_itinerary`.* Semantisch klarer, unnötige Production-Migration.
+3. *Reise löschen und neu anlegen bei Fehler.* Verlöre IDs und zählte gegen die Missbrauchsschranke.
+
+**Begründung:** Dieselbe Transaktion ist die bevorzugte Architektur. Der Nachlauf bleibt als Recovery, falls Production die RPC noch nicht kennt oder ein früherer Versuch die Route verloren hat. `on conflict do nothing` + dieselbe `client_ref` verhindert Dubletten.
+
+**Konsequenzen:**
+
+- Development-Migration `20260822130000_reise_anlegen_route_itinerary.sql`
+- Helper `public.flug_route_itinerary_metadata(text, jsonb)` ist fail-closed
+- `authenticated` behält EXECUTE; `anon` nicht
+- Production-Schema unverändert, bis eine separate Freigabe die Migration erlaubt
 
 ---
 

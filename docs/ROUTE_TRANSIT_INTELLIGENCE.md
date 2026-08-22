@@ -85,8 +85,9 @@ Grenzen:
 - Zod-Schema, max. 6 Legs, max. 8 Segmente je Leg
 - Hülle höchstens 8192 Zeichen; darüber wird nichts geschrieben
 - `metadata` ist kein allgemeiner Jutesack
-- `public.reise_anlegen()` liest `route_itinerary` nicht
-- nach dem Insert schreibt `flugRoutenInReiseSchreiben()` die Hülle nur auf eindeutig passende Flüge
+- `public.reise_anlegen()` schreibt eine validierte `route_itinerary` atomar nach `trip_items.metadata` (ADR-0113, nur Development)
+- der TypeScript-Nachlauf ist fail-closed Recovery: Lesen-/Schreibfehler oder fehlende Route sind kein vollständiger Erfolg
+- Retry über dieselbe `client_ref` erzeugt keine zweite Reise
 - `public.reise_aendern()` lässt `metadata` unberührt
 - `routeItinerary` ist kommerziell geschützt (`lib/reiseaenderung/geschuetzt.ts`)
 

@@ -407,8 +407,9 @@ export function reiseLesen(wert: unknown): Trip | null {
 // `public.reise_anlegen()` liest, steht hier – und nur das. Ein Feld, das die
 // Funktion nicht liest, mitzuschicken wäre die Behauptung, es käme an.
 //
-// Ausnahme: `route_itinerary` liest die RPC nicht. Die App schreibt die
-// validierte Itinerary nach dem Insert in `trip_items.metadata`.
+// `route_itinerary` liest `reise_anlegen()` und schreibt die validierte
+// Itinerary in derselben Transaktion nach `trip_items.metadata`. Der
+// Anwendung-Nachlauf bleibt fail-closed Recovery, kein stilles ok.
 
 const nutzlastPunktSchema = z.object({
   kind: z.enum(TRIP_ITEM_KINDS),
