@@ -3,6 +3,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { entscheidungenGleich, entscheidungsSignatur } from '@/lib/readiness/entscheidung'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
 import { VERGLEICH_NICHT_VERFUEGBAR, credentialOptionenVergleichen } from '@/lib/readiness/vergleich'
 
@@ -277,6 +278,40 @@ describe('Credential-Vergleich', () => {
     ])
     assert.equal(vergleich.comparable, false)
     assert.equal(vergleich.winnerOptionRef, null)
+  })
+
+  test('entscheidungsSignatur unterscheidet officialClass, nicht Evidence-URLs', () => {
+    const basis = evaluation({
+      credentialOptionRef: 'traveller:1:document:passport:CH',
+      result: 'not_required',
+      status: 'current',
+      freshness: 'current',
+      officialClass: 'requirement',
+      optionEligibility: 'allowed',
+      optionMandate: 'not_mandatory',
+    })
+    assert.equal(entscheidungsSignatur(basis).officialClass, 'requirement')
+    assert.equal(
+      entscheidungenGleich(basis, {
+        ...basis,
+        evidence: { ...basis.evidence, sourceUrl: 'https://example.test/andere' },
+      }),
+      true,
+    )
+    assert.equal(
+      entscheidungenGleich(basis, {
+        ...basis,
+        officialClass: 'unknown',
+      }),
+      false,
+    )
+    assert.equal(
+      entscheidungenGleich(basis, {
+        ...basis,
+        officialClass: 'recommendation',
+      }),
+      false,
+    )
   })
 
   test('mandatory und not_allowed auf derselben Option sind nicht vergleichbar', () => {

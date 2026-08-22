@@ -1699,4 +1699,150 @@ describe('Travel Requirements Engine', () => {
     assert.equal(vergleich.comparable, true)
     assert.equal(vergleich.winnerOptionRef, 'traveller:1:document:passport:CH')
   })
+
+  test('widersprüchliche officialClass derselben Option erzeugt keinen Winner', async () => {
+    const anfrage = {
+      originCountryCode: 'CH',
+      destinationCountryCodes: ['TH'],
+      transitCountryCodes: [],
+      startDate: '2026-09-12',
+      endDate: '2026-09-16',
+      travellers: [
+        {
+          clientRef: 'traveller:1',
+          residenceCountryCode: 'CH',
+          citizenshipCountryCodes: ['CH', 'RS'],
+          documents: [
+            {
+              clientRef: 'document:passport:CH',
+              documentType: 'passport' as const,
+              issuingCountryCode: 'CH',
+              expiresOn: '2030-01-01',
+              citizenshipCountryCode: null,
+            },
+            {
+              clientRef: 'document:passport:RS',
+              documentType: 'passport' as const,
+              issuingCountryCode: 'RS',
+              expiresOn: '2029-01-01',
+              citizenshipCountryCode: null,
+            },
+          ],
+          credentialOptions: [
+            {
+              optionRef: 'traveller:1:document:passport:CH',
+              documentClientRef: 'document:passport:CH',
+              documentType: 'passport' as const,
+              issuingCountryCode: 'CH',
+              expiresOn: '2030-01-01',
+              relatedCitizenshipCountryCode: null,
+            },
+            {
+              optionRef: 'traveller:1:document:passport:RS',
+              documentClientRef: 'document:passport:RS',
+              documentType: 'passport' as const,
+              issuingCountryCode: 'RS',
+              expiresOn: '2029-01-01',
+              relatedCitizenshipCountryCode: null,
+            },
+          ],
+        },
+      ],
+    }
+    const visaZeile = (
+      land: 'CH' | 'RS',
+      result: 'required' | 'not_required',
+      officialClass: 'requirement' | 'unknown' | 'recommendation' | 'advisory',
+      sourceUrl = 'https://example.test/visa',
+    ) => ({
+      travellerClientRef: 'traveller:1',
+      credentialOptionRef: `traveller:1:document:passport:${land}`,
+      destinationCountryCode: 'TH',
+      requirementType: 'visa' as const,
+      result,
+      officialClass,
+      optionEligibility: 'allowed' as const,
+      optionMandate: 'not_mandatory' as const,
+      authority: 'Test',
+      sourceUrl,
+      checkedAt: JETZT,
+      validUntil: '2026-12-31',
+    })
+    const healthZeile = (
+      land: 'CH' | 'RS',
+      officialClass: 'requirement' | 'unknown' | 'recommendation' | 'advisory',
+    ) => ({
+      travellerClientRef: 'traveller:1',
+      credentialOptionRef: `traveller:1:document:passport:${land}`,
+      destinationCountryCode: 'TH',
+      requirementType: 'health' as const,
+      result: 'required' as const,
+      officialClass,
+      optionEligibility: 'allowed' as const,
+      optionMandate: 'not_mandatory' as const,
+      authority: 'Test',
+      sourceUrl: 'https://example.test/health',
+      checkedAt: JETZT,
+      validUntil: '2026-12-31',
+    })
+    const auswerten = async (zeilen: Awaited<ReturnType<RequirementsProvider['evaluate']>>) => {
+      const provider: RequirementsProvider = {
+        name: 'test-double',
+        async evaluate() {
+          return zeilen
+        },
+      }
+      return requirementsAuswerten(anfrage, provider)
+    }
+    const klassen = ['unknown', 'recommendation', 'advisory'] as const
+    for (const andereKlasse of klassen) {
+      const erste = (await auswerten([
+        visaZeile('CH', 'not_required', 'requirement'),
+        visaZeile('CH', 'not_required', andereKlasse),
+        visaZeile('RS', 'required', 'requirement'),
+      ])).filter((eintrag) => eintrag.requirementType === 'visa')
+      const zweite = (await auswerten([
+        visaZeile('CH', 'not_required', andereKlasse),
+        visaZeile('CH', 'not_required', 'requirement'),
+        visaZeile('RS', 'required', 'requirement'),
+      ])).filter((eintrag) => eintrag.requirementType === 'visa')
+      const ch = erste.filter((eintrag) => eintrag.credentialOptionRef?.endsWith(':CH'))
+      assert.equal(ch.length, 1)
+      assert.equal(ch[0]?.result, 'unknown')
+      assert.equal(ch[0]?.status, 'unknown')
+      assert.equal(ch[0]?.freshness, 'recheck_needed')
+      assert.equal(erste.some((eintrag) => eintrag.credentialOptionRef?.endsWith(':RS')), true)
+      assert.equal(credentialOptionenVergleichen(erste).comparable, false)
+      assert.equal(credentialOptionenVergleichen(erste).winnerOptionRef, null)
+      assert.equal(credentialOptionenVergleichen(zweite).comparable, false)
+      assert.deepEqual(
+        erste.filter((eintrag) => eintrag.credentialOptionRef?.endsWith(':CH')).map((eintrag) => eintrag.result),
+        zweite.filter((eintrag) => eintrag.credentialOptionRef?.endsWith(':CH')).map((eintrag) => eintrag.result),
+      )
+    }
+
+    const healthKonflikt = (await auswerten([
+      healthZeile('CH', 'requirement'),
+      healthZeile('CH', 'recommendation'),
+      healthZeile('RS', 'advisory'),
+    ])).filter((eintrag) => eintrag.requirementType === 'health')
+    const healthCh = healthKonflikt.filter((eintrag) => eintrag.credentialOptionRef?.endsWith(':CH'))
+    assert.equal(healthCh.length, 1)
+    assert.equal(healthCh[0]?.result, 'unknown')
+    assert.equal(healthCh[0]?.freshness, 'recheck_needed')
+    assert.equal(credentialOptionenVergleichen(healthKonflikt).comparable, false)
+
+    const identisch = (await auswerten([
+      visaZeile('CH', 'not_required', 'requirement', 'https://example.test/visa-a'),
+      visaZeile('CH', 'not_required', 'requirement', 'https://example.test/visa-b'),
+      visaZeile('RS', 'required', 'requirement'),
+    ])).filter((eintrag) => eintrag.requirementType === 'visa')
+    const identischCh = identisch.filter((eintrag) => eintrag.credentialOptionRef?.endsWith(':CH'))
+    assert.equal(identischCh.length, 1)
+    assert.equal(identischCh[0]?.result, 'not_required')
+    assert.equal(identischCh[0]?.status, 'current')
+    const vergleich = credentialOptionenVergleichen(identisch)
+    assert.equal(vergleich.comparable, true)
+    assert.equal(vergleich.winnerOptionRef, 'traveller:1:document:passport:CH')
+  })
 })

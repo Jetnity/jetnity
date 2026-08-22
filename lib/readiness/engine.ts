@@ -34,6 +34,7 @@ import {
   type RequirementsProviderZeile,
   type RequirementsTravellerInput,
 } from '@/lib/readiness/provider'
+import { entscheidungenGleich } from '@/lib/readiness/entscheidung'
 import { readinessReisekontext } from '@/lib/readiness/kontext'
 import { citizenshipCodesAus, credentialOptionsAus, documentCitizenshipCode } from '@/lib/readiness/traveller-kontext'
 import type { Trip } from '@/types/trips'
@@ -468,13 +469,7 @@ export function requirementsAusZeilen(
       gesehen.set(key, evaluation)
       return
     }
-    if (
-      vorher.result !== evaluation.result ||
-      vorher.status !== evaluation.status ||
-      vorher.freshness !== evaluation.freshness ||
-      vorher.optionEligibility !== evaluation.optionEligibility ||
-      vorher.optionMandate !== evaluation.optionMandate
-    ) {
+    if (!entscheidungenGleich(vorher, evaluation)) {
       gesehen.set(key, konfliktAus(vorher))
       konflikte.add(key)
     }
