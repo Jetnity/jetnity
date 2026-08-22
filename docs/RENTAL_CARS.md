@@ -144,15 +144,15 @@ Innerhalb von Mobilität gibt es die Unterbereiche **Verbindungen** und **Mietwa
 
 ## 8. Qualität / Nachweis
 
-Stand Draft-PR #31 Logic-/Truth-Fix, 22. August 2026, Head `b65341a8`:
+Stand Draft-PR #31 Ranking-Truth-Fix, 22. August 2026, Head `a1882b90`:
 
-- `npm test` 1157/1157
+- `npm test` 1165/1165
 - Typecheck, Lint, Hygiene grün
 - Production-Build grün
-- Development-Migration unverändert angewendet; `db:typen --pruefen`, `db:rechte`, `db:rls`, `db:sicherheit` 169/169, `auth:pruefen` grün
-- Trip-Workspace-Audit WebKit + Chromium: 502 Kombinationen, 0 Fehler; Öffnen von Mietwagen löst keine Suche aus; manuelles Formular startet leer; `One-way` fehlt bei unbekannten Orten
+- Development-Migration unverändert; `db:typen --pruefen`, `db:rechte`, `db:rls`, `db:sicherheit` 169/169, `auth:pruefen` grün
+- Trip-Workspace-Audit WebKit + Chromium: 502 Kombinationen, 0 Fehler
 - Activities-Regression: 184 Kombinationen, 0 Fehler
-- echter iPhone-Test **offen**, erst nach diesem Review-Fix
+- echter iPhone-Test **offen**, erst nach diesem Ranking-Fix
 
 ---
 

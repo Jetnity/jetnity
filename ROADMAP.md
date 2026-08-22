@@ -179,7 +179,7 @@ Nicht in diesem Block: Mietwagen, Kreuzfahrten, echter Provider, Fake-Fahrpläne
 
 **In Arbeit auf Draft-PR #31**, Branch `feat/rental-car-foundation`. Nicht mergen. Nicht auf Production migrieren oder aktivieren.
 
-Nachweis 22. August 2026 auf Head `b65341a8`: Tests **1157/1157**, Typecheck/Lint/Hygiene/Production-Build grün, Development-DB-Checks unverändert grün, Workspace-Audit **502/0**, Activities-Regression **184/0**. ADR-0094 behebt die vier Wahrheitsrisiken. ADR-0095 schärft Ranking-Labels (`Best Value`, Empfehlung, Flexibel, Passung); der Nachweis dafür folgt auf dem neuen Head. Ein echter iPhone-Preview-Test steht vor Ready noch aus.
+Nachweis 22. August 2026 auf Head `a1882b90`: Tests **1165/1165**, Typecheck/Lint/Hygiene/Production-Build grün, Development-DB-Checks unverändert grün, Workspace-Audit **502/0**, Activities-Regression **184/0**. ADR-0094 und ADR-0095 schließen die Truth- und Ranking-Label-Befunde. Ein echter iPhone-Preview-Test steht vor Ready noch aus.
 
 Provider-neutrales Modell:
 

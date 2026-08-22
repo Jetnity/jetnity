@@ -231,16 +231,16 @@ Umgesetzt im Draft:
 - Development-Migration `20260821200000` – **nicht Production**
 - Review-Fix (ADR-0094 / ADR-0095): keine automatische Suche, leere manuelle Defaults, konservatives One-way, Kalendertage, währungssicheres Ranking; Labels nur bei belastbarem Vergleich
 
-Qualitätsnachweis im Draft (Head `b65341a8`):
+Qualitätsnachweis im Draft (Head `a1882b90`):
 
-- `npm test`: **1157/1157**
+- `npm test`: **1165/1165**
 - Typecheck, Lint, Hygiene, Production-Build grün
 - Development-Migration `20260821200000` unverändert, nur Development
 - `db:rechte`, `db:rls`, `db:sicherheit` 169/169, `db:typen --pruefen`, `auth:pruefen`
 - Trip-Workspace-Audit WebKit + Chromium: **502 Kombinationen, 0 Fehler**
 - Activities-Regression: **184 Kombinationen, 0 Fehler**
-- GitHub CI und Vercel Preview waren auf `b65341a8` grün; dieser Dokumentations-Head zieht sie erneut
-- echter iPhone-Test **offen**, erst nach diesem Review-Fix
+- GitHub CI und Vercel Preview ziehen auf dem Dokumentations-Head nach
+- echter iPhone-Test **offen**, erst nach ADR-0095
 
 Fachdoku: `docs/RENTAL_CARS.md`, ADR-0092 / ADR-0093 / ADR-0094 / ADR-0095.
 
