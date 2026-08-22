@@ -58,9 +58,12 @@ Nachweise nach Anwendung:
 | Lint | **grün** (`next lint`, 0 warnings/errors) |
 | Hygiene | **grün** – `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` |
 | Production Build | **grün** (`next build`, 38/38 Seiten) |
-| Trip-Workspace-UI-Audit | Script um Foundation-E-Varianten erweitert; **Lauf in dieser Umgebung noch nicht ausgeführt** |
-| GitHub CI | **success** auf aktuellem Head `16ddea63` – https://github.com/Jetnity/jetnity/actions/runs/32592591185; zuvor `ff4cb765`, `fef11a38` |
-| Vercel Preview | **pass** auf `16ddea63`, `ff4cb765` und `fef11a38` |
+| Trip-Workspace-UI-Audit | **838 Kombinationen, 0 Fehler**, WebKit + Chromium. Viewports: 280, 320, 360, 390, 430, 768, 844×390, 1280. Bericht: `/opt/cursor/artifacts/trip_workspace_ui_audit.json` |
+| Erster Audit-Lauf | 16 Fehler, alle `readiness-user-done`: v1-Fingerprint wurde nach Foundation E korrekt stale. Fixture auf v2 gesetzt. |
+| Zweiter Audit-Lauf | **838/0** nach Fixture-Korrektur auf Head `17763238` |
+| Foundation-E-Zustände im Audit | `eine-staatsbuergerschaft`, `zwei-staatsbuergerschaften`, `dokument-fehlt`, `staatsbuergerschaft-fehlt`, `zwei-reisende`, `langes-label`, `provider-unavailable` |
+| GitHub CI | **success** auf Docs-Heads bis `b8a11be4`; Audit-Heads danach, CI auf Docs-Nachzug ausstehend |
+| Vercel Preview | **pass** auf `16ddea63`, `ff4cb765`, `fef11a38`, `b8a11be4` |
 
 ---
 
@@ -81,6 +84,7 @@ Automatisiert nachgewiesen:
 11. Guest-Form und Account-RPC teilen dieselbe fachliche Party-Form
 12. Cross-User-/Cross-Trip-INSERT auf Child-Tabellen abgewiesen
 13. fremde Citizenship-ID am Dokument abgewiesen
+14. Trip-Workspace-UI-Audit: 1/2 Citizenships, 2 Traveller, fehlendes Dokument, fehlende Citizenship, langes Label, Provider unavailable – WebKit + Chromium, 8 Viewports
 
 ---
 
@@ -91,8 +95,8 @@ Automatisiert nachgewiesen:
 - kein Merge
 - keine Production-Migration
 - kein echter Requirements-Provider
-- Trip-Workspace-UI-Audit auf der Device-Matrix nachziehen, sobald Playwright in der Zielumgebung läuft
 - Guest→Account bleibt für Readiness ein nachgelagerter Schritt; nur Party ist atomar
+- GitHub CI / Vercel auf dem Head nach dem UI-Audit-Docs-Nachzug noch bestätigen
 
 ---
 
