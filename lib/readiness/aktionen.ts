@@ -14,6 +14,7 @@ import {
   readinessKontoLoeschenSchema,
   readinessUebernahmeSchema,
 } from '@/lib/readiness/schema'
+import { travellerIdAufloesen } from '@/lib/readiness/traveller-zuordnung'
 import { readinessNachUebernahmeBauen } from '@/lib/readiness/uebernahme'
 import { NICHT_ANGEMELDET, konto, meldungAus, type Aktionsergebnis } from '@/lib/trips/anlegen'
 import { reiseLaden } from '@/lib/trips/daten'
@@ -57,9 +58,8 @@ export async function readinessSetzen(eingabe: unknown): Promise<Aktionsergebnis
     return { ok: false, meldung: `Eine Reise trägt höchstens ${READINESS_GRENZEN.itemsJeReise} Vorbereitungspunkte.` }
   }
 
-  const travellerId = gebaut.item.travellerClientRef
-    ? rahmen.reise.party?.find((eintrag) => eintrag.clientRef === gebaut.item.travellerClientRef)?.id ?? null
-    : null
+  const zugeordnet = travellerIdAufloesen(rahmen.reise.party, gebaut.item.travellerClientRef)
+  if (!zugeordnet.ok) return { ok: false, meldung: zugeordnet.meldung }
   const zeile = {
     trip_id: geprueft.data.tripId,
     client_ref: gebaut.item.clientRef,
@@ -69,7 +69,7 @@ export async function readinessSetzen(eingabe: unknown): Promise<Aktionsergebnis
     country_code: gebaut.item.countryCode,
     trip_item_id: gebaut.item.tripItemId,
     title: gebaut.item.title,
-    traveller_id: travellerId && /^[0-9a-f-]{36}$/i.test(travellerId) ? travellerId : null,
+    traveller_id: zugeordnet.travellerId,
     context_fingerprint: gebaut.item.contextFingerprint,
   }
 
@@ -125,20 +125,34 @@ export async function readinessUebernehmen(eingabe: unknown): Promise<Aktionserg
   const items = readinessNachUebernahmeBauen(rahmen.reise, geprueft.data.items)
   if (items.length === 0) return { ok: true, wert: null }
 
-  const zeilen = items.map((item) => ({
-    trip_id: geprueft.data.tripId,
-    client_ref: item.clientRef,
-    kind: item.kind,
-    user_status: item.userStatus,
-    evidence: 'user' as const,
-    country_code: item.countryCode,
-    trip_item_id: item.tripItemId,
-    title: item.title,
-    traveller_id: item.travellerClientRef
-      ? rahmen.reise.party?.find((eintrag) => eintrag.clientRef === item.travellerClientRef)?.id ?? null
-      : null,
-    context_fingerprint: item.contextFingerprint,
-  }))
+  const zeilen: Array<{
+    trip_id: string
+    client_ref: string
+    kind: (typeof items)[number]['kind']
+    user_status: (typeof items)[number]['userStatus']
+    evidence: 'user'
+    country_code: string | null
+    trip_item_id: string | null
+    title: string | null
+    traveller_id: string | null
+    context_fingerprint: string
+  }> = []
+  for (const item of items) {
+    const zugeordnet = travellerIdAufloesen(rahmen.reise.party, item.travellerClientRef)
+    if (!zugeordnet.ok) return { ok: false, meldung: zugeordnet.meldung }
+    zeilen.push({
+      trip_id: geprueft.data.tripId,
+      client_ref: item.clientRef,
+      kind: item.kind,
+      user_status: item.userStatus,
+      evidence: 'user',
+      country_code: item.countryCode,
+      trip_item_id: item.tripItemId,
+      title: item.title,
+      traveller_id: zugeordnet.travellerId,
+      context_fingerprint: item.contextFingerprint,
+    })
+  }
 
   const { error, status } = await rahmen.supabase.from('trip_readiness_items').upsert(zeilen, {
     onConflict: 'user_id,trip_id,client_ref',

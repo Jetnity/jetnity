@@ -161,6 +161,7 @@ const readinessUebernahmeItemSchema = z.object({
   userStatus: z.enum(READINESS_USER_STATUSES),
   countryCode: landescode.nullable().default(null),
   title: titel.nullable().default(null),
+  travellerClientRef: z.string().min(1).max(READINESS_GRENZEN.clientRef).nullable().optional().default(null),
   itemKind: z.string().min(1).max(40).nullable().optional().default(null),
   itemStartsOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional().default(null),
   itemEndsOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional().default(null),
@@ -197,7 +198,21 @@ export const readinessAnforderungAnfrageSchema = z.object({
     .max(TRAVELLER_CONTEXT_GRENZEN.travellersJeReise)
     .optional()
     .default([])
-    .transform((items) => items.map((item) => travellerLegacyLesen(item)).filter((item): item is TripTraveller => item !== null)),
+    .transform((items, ctx) => {
+      const gelesen: TripTraveller[] = []
+      for (const item of items) {
+        const traveller = travellerLegacyLesen(item)
+        if (!traveller) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Mindestens eine Reisendenangabe ist ungültig.',
+          })
+          return z.NEVER
+        }
+        gelesen.push(traveller)
+      }
+      return gelesen
+    }),
 })
 
 const citizenshipEingabeSchema = z.object({
