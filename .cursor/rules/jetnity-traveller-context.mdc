@@ -1,0 +1,30 @@
+---
+description: Traveller context intelligence must be considered in every relevant Jetnity feature
+globs:
+alwaysApply: true
+---
+
+# Jetnity Traveller Context Intelligence – Always Apply
+
+For every new or changed Jetnity feature, explicitly check whether the result can materially differ by traveller context such as multiple citizenships, multiple travel documents/credentials, issuing country, residence, route/transit, or other necessary traveller-specific facts.
+
+If relevant:
+
+- do not silently use only one citizenship/pass/document when multiple legal options may exist;
+- evaluate per traveller and per necessary legal credential option;
+- keep Route Truth traveller-neutral and reusable;
+- prefer legal/regulatory obligations over convenience;
+- never invent visa, transit, health, carrier, eligibility or document rules;
+- preserve `unknown` when evidence is insufficient;
+- use progressive missing facts and data minimization;
+- trigger stale/recheck only for domains actually affected by changed context;
+- keep UX simple: primary valid/required option first, alternatives progressively disclosed;
+- do not create product-specific shadow identity models.
+
+If not relevant, do not collect or propagate traveller credentials unnecessarily.
+
+Binding source:
+
+`docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md`
+
+This rule supplements `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md` and `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`.
