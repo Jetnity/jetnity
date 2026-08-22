@@ -1174,7 +1174,7 @@ function reisenachweise() {
             join pg_class c on c.oid = p.polrelid
             join pg_namespace n on n.oid = c.relnamespace
             where n.nspname = 'public'
-              and c.relname in ('trips', 'trip_stages', 'trip_days', 'trip_items', 'trip_readiness_items', 'trip_travellers')
+              and c.relname in ('trips', 'trip_stages', 'trip_days', 'trip_items', 'trip_readiness_items', 'trip_travellers', 'trip_traveller_citizenships', 'trip_traveller_documents')
               and (pg_get_expr(p.polqual, p.polrelid) like '%darf\\_%'
                 or pg_get_expr(p.polwithcheck, p.polrelid) like '%darf\\_%'
                 or pg_get_expr(p.polqual, p.polrelid) like '%hat\\_rolle%'
@@ -1436,6 +1436,49 @@ function reisenachweise() {
             values ('${REISE}', 'traveller:pass', 'Passnummer 1234567')`,
       erwartung: 'abgelehnt',
       code: '23514',
+    },
+    {
+      name: 'Staatsbürgerschaft fremder Reise ist unsichtbar',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `select * from public.trip_traveller_citizenships where trip_id = '${REISE}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'Dokument fremder Reise ist unsichtbar',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `select * from public.trip_traveller_documents where trip_id = '${REISE}'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'Staatsbürgerschaft mit fremder Traveller-ID wird abgelehnt',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `insert into public.trip_traveller_citizenships
+            (traveller_id, trip_id, user_id, client_ref, country_code)
+            values (
+              (select id from public.trip_travellers where trip_id = '${REISE}' limit 1),
+              '${REISE}',
+              '${ZWEITER}',
+              'citizenship:DE',
+              'DE'
+            )`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'Doppelte Staatsbürgerschaft je Traveller wird abgelehnt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_traveller_citizenships
+            (traveller_id, trip_id, client_ref, country_code)
+            values (
+              (select id from public.trip_travellers where trip_id = '${REISE}' and client_ref = 'traveller:1' limit 1),
+              '${REISE}',
+              'citizenship:CH-dup',
+              'CH'
+            )`,
+      erwartung: 'abgelehnt',
     },
     {
       name: 'Vorbereitungspunkt lehnt Passnummer-Titel ab',
@@ -2341,6 +2384,12 @@ function aufbau() {
     `insert into public.trip_travellers
        (id, trip_id, user_id, client_ref, nationality_country_code)
        values ('${TRAVELLER}', '${REISE}', '${NUTZER}', 'traveller:1', 'CH');`,
+    `insert into public.trip_traveller_citizenships
+       (traveller_id, trip_id, user_id, client_ref, country_code)
+       values ('${TRAVELLER}', '${REISE}', '${NUTZER}', 'citizenship:CH', 'CH');`,
+    `insert into public.trip_traveller_documents
+       (traveller_id, trip_id, user_id, client_ref, document_type, issuing_country_code)
+       values ('${TRAVELLER}', '${REISE}', '${NUTZER}', 'document:passport:CH', 'passport', 'CH');`,
     // Eine zweite Reise, die dem fremden Konto gehört. Ohne sie wäre „0 Zeilen“
     // beim Zugriff des fremden Kontos nicht von „nichts vorhanden“ zu trennen.
     `insert into public.trips (id, user_id, client_ref, title)

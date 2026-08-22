@@ -15,6 +15,7 @@ export type ReadinessUebernahmeItemEingabe = {
   userStatus: TripReadinessItem['userStatus']
   countryCode: string | null
   title: string | null
+  travellerClientRef?: string | null
   itemKind?: string | null
   itemStartsOn?: string | null
   itemEndsOn?: string | null
@@ -31,6 +32,7 @@ export function readinessAlsUebernahme(reise: Trip): ReadinessUebernahmeItemEing
       userStatus: item.userStatus,
       countryCode: item.countryCode,
       title: item.title,
+      travellerClientRef: item.travellerClientRef ?? null,
       itemKind: punkt?.kind ?? null,
       itemStartsOn: punkt?.startsOn ?? null,
       itemEndsOn: punkt?.endsOn ?? null,
@@ -77,6 +79,7 @@ export function readinessNachUebernahmeBauen(
       countryCode: item.countryCode,
       tripItemId,
       title: item.title,
+      travellerClientRef: item.travellerClientRef ?? null,
     })
     if (gebaut.ok) ergebnis.push(gebaut.item)
   }

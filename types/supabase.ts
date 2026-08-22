@@ -523,6 +523,7 @@ export type Database = {
           trip_id: string
           trip_item_id: string | null
           updated_at: string
+          traveller_id: string | null
           user_id: string
           user_status: string
         }
@@ -537,6 +538,7 @@ export type Database = {
           title?: string | null
           trip_id: string
           trip_item_id?: string | null
+          traveller_id?: string | null
           updated_at?: string
           user_id?: string
           user_status?: string
@@ -552,6 +554,7 @@ export type Database = {
           title?: string | null
           trip_id?: string
           trip_item_id?: string | null
+          traveller_id?: string | null
           updated_at?: string
           user_id?: string
           user_status?: string
@@ -689,6 +692,97 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "trips"
             referencedColumns: ["id", "user_id"]
+          },
+        ]
+      }
+      trip_traveller_citizenships: {
+        Row: {
+          client_ref: string
+          country_code: string
+          created_at: string
+          id: string
+          traveller_id: string
+          trip_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          client_ref: string
+          country_code: string
+          created_at?: string
+          id?: string
+          traveller_id: string
+          trip_id: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          client_ref?: string
+          country_code?: string
+          created_at?: string
+          id?: string
+          traveller_id?: string
+          trip_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_traveller_citizenships_traveller_fk"
+            columns: ["traveller_id", "trip_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "trip_travellers"
+            referencedColumns: ["id", "trip_id", "user_id"]
+          },
+        ]
+      }
+      trip_traveller_documents: {
+        Row: {
+          citizenship_id: string | null
+          client_ref: string
+          created_at: string
+          document_type: string
+          expires_on: string | null
+          id: string
+          issuing_country_code: string | null
+          traveller_id: string
+          trip_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          citizenship_id?: string | null
+          client_ref: string
+          created_at?: string
+          document_type: string
+          expires_on?: string | null
+          id?: string
+          issuing_country_code?: string | null
+          traveller_id: string
+          trip_id: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          citizenship_id?: string | null
+          client_ref?: string
+          created_at?: string
+          document_type?: string
+          expires_on?: string | null
+          id?: string
+          issuing_country_code?: string | null
+          traveller_id?: string
+          trip_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_traveller_documents_traveller_fk"
+            columns: ["traveller_id", "trip_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "trip_travellers"
+            referencedColumns: ["id", "trip_id", "user_id"]
           },
         ]
       }
@@ -842,6 +936,7 @@ export type Database = {
           eingabe_gecacht: number
         }[]
       }
+      party_schreiben: { Args: { _payload: Json }; Returns: Json }
       reise_aendern: { Args: { _aenderung: Json }; Returns: Json }
       reise_anlegen: { Args: { _reise: Json }; Returns: string }
       rollenrang: { Args: { rolle: string }; Returns: number }

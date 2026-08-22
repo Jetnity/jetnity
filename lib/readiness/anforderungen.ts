@@ -17,6 +17,7 @@ import {
 import { requirementsAuswerten, requirementsAusZeilen } from '@/lib/readiness/engine'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
 import { requirementsProviderAus, type RequirementsAnfrage, type RequirementsProvider } from '@/lib/readiness/provider'
+import { citizenshipCodesAus, credentialOptionsAus, travellerLegacyLesen } from '@/lib/readiness/traveller-kontext'
 
 export type OfficialRequirementAnfrage = {
   originCountryCode?: string | null
@@ -26,14 +27,7 @@ export type OfficialRequirementAnfrage = {
   travellers?: number
   startDate?: string | null
   endDate?: string | null
-  party?: {
-    clientRef: string
-    nationalityCountryCode?: string | null
-    residenceCountryCode?: string | null
-    documentType?: 'passport' | 'national_id' | 'unknown' | null
-    documentIssuingCountryCode?: string | null
-    documentExpiresOn?: string | null
-  }[]
+  party?: unknown[]
 }
 
 function officialRequirementLeer(
@@ -80,20 +74,37 @@ function anfrageAus(anfrage: OfficialRequirementAnfrage): RequirementsAnfrage {
       ].filter((code): code is string => Boolean(code)),
     ),
   ]
-  const gespeichert = anfrage.party ?? []
+  const gespeichert = (anfrage.party ?? [])
+    .map((eintrag) => travellerLegacyLesen(eintrag))
+    .filter((eintrag): eintrag is NonNullable<typeof eintrag> => eintrag !== null)
   const nachRef = new Map(gespeichert.map((eintrag) => [eintrag.clientRef, eintrag]))
   const anzahl = Math.min(Math.max(anfrage.travellers ?? 1, gespeichert.length, 1), 20)
   const travellers: RequirementsAnfrage['travellers'] = []
   for (let i = 1; i <= anzahl; i += 1) {
     const clientRef = `traveller:${i}`
     const eintrag = nachRef.get(clientRef)
+    const options = eintrag ? credentialOptionsAus(eintrag) : []
     travellers.push({
       clientRef,
-      nationalityCountryCode: landescodeLesen(eintrag?.nationalityCountryCode ?? null),
       residenceCountryCode: landescodeLesen(eintrag?.residenceCountryCode ?? null),
-      documentType: eintrag?.documentType ?? null,
-      documentIssuingCountryCode: landescodeLesen(eintrag?.documentIssuingCountryCode ?? null),
-      documentExpiresOn: eintrag?.documentExpiresOn ?? null,
+      citizenshipCountryCodes: eintrag ? citizenshipCodesAus(eintrag) : [],
+      documents: (eintrag?.documents ?? []).map((document) => ({
+        clientRef: document.clientRef,
+        documentType: document.documentType,
+        issuingCountryCode: document.issuingCountryCode,
+        expiresOn: document.expiresOn,
+        citizenshipCountryCode:
+          eintrag?.citizenships.find((citizenship) => citizenship.clientRef === document.citizenshipClientRef)
+            ?.countryCode ?? document.issuingCountryCode,
+      })),
+      credentialOptions: options.map((option) => ({
+        optionRef: option.optionRef,
+        documentClientRef: option.document?.clientRef ?? null,
+        documentType: option.document?.documentType ?? null,
+        issuingCountryCode: option.document?.issuingCountryCode ?? null,
+        expiresOn: option.document?.expiresOn ?? null,
+        relatedCitizenshipCountryCode: option.document?.citizenshipCountryCode ?? null,
+      })),
     })
   }
   return {

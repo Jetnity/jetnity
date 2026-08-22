@@ -22,7 +22,9 @@
 //     kind, title (normalisiert), startDate, endDate, travellers,
 //     destinationCountries
 //
-// Nicht enthalten: Pass, Nationalität, Wohnsitz, Preise, URLs, Notizen.
+// Traveller-spezifische Einreise-/Visum-/Dokumentkarten enthalten
+// sortierte Citizenship-/Document-Mengen. Reihenfolge ist irrelevant.
+// Nicht enthalten: Passnummern, Preise, URLs, Notizen.
 
 import { READINESS_FINGERPRINT_VERSION, READINESS_GRENZEN } from '@/lib/readiness/domain'
 import type { ReadinessKind } from '@/types/trips'
@@ -46,6 +48,10 @@ export type ReadinessFingerprintKontext = {
   originCountryCode?: string | null
   transitCountryCodes?: readonly string[]
   routeFingerprint?: string | null
+  travellerClientRef?: string | null
+  citizenshipCountryCodes?: readonly string[]
+  documentFingerprints?: readonly string[]
+  residenceCountryCode?: string | null
 }
 
 function teil(name: string, wert: string | number | boolean | null | undefined): string {
@@ -64,6 +70,17 @@ function routeFelderAus(kontext: ReadinessFingerprintKontext): string[] {
   const route = kontext.routeFingerprint ?? null
   if (!origin && transits.length === 0 && !route) return []
   return [teil('orig', origin), teil('tr', transits.join(',')), teil('route', route)]
+}
+
+function travellerFelderAus(kontext: ReadinessFingerprintKontext): string[] {
+  const traveller = kontext.travellerClientRef ?? null
+  const citizenships = [...new Set((kontext.citizenshipCountryCodes ?? []).filter((code) => /^[A-Z]{2}$/.test(code)))]
+    .sort()
+    .join(',')
+  const documents = [...(kontext.documentFingerprints ?? [])].sort().join(',')
+  const residence = kontext.residenceCountryCode ?? null
+  if (!traveller && !citizenships && !documents && !residence) return []
+  return [teil('t', traveller), teil('cit', citizenships), teil('docs', documents), teil('res', residence)]
 }
 
 function titelNorm(wert: string | null): string {
@@ -86,6 +103,7 @@ export function readinessFingerprint(kontext: ReadinessFingerprintKontext): stri
         teil('trav', kontext.travellers),
         teil('dest', dest),
         ...routeFelder,
+        ...travellerFelderAus(kontext),
       )
       break
     case 'insurance_check':

@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 22. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D im Product-Owner-Closeout**
+Status: **verbindlicher operativer Übergabepunkt – Foundation E Draft PR / Development verifiziert**
 
 Dieser Handoff ist die zentrale Einstiegspunkte-Datei für einen neuen Chat oder Coding Agent. Er ersetzt keine Fach- oder Statusdateien, sondern sagt **was Jetnity ist, was bereits gebaut wurde, was verbindlich entschieden ist, was aktuell läuft und was als Nächstes zu tun ist**.
 
@@ -130,18 +130,28 @@ Provider-Suchen/Requirements bleiben produktiv deaktiviert, solange keine echten
 
 ---
 
-## 4. Aktiver Arbeitsblock – Foundation D / PR #34
+## 4. Abgeschlossen – Foundation D / PR #34
 
-**Foundation D – Route & Transit Intelligence** ist technisch umgesetzt und befindet sich im Product-Owner-Closeout, noch nicht gemergt.
+**Foundation D – Route & Transit Intelligence** ist gemergt und auf Production verifiziert. Nicht erneut bauen.
 
-- Branch: `feat/route-transit-intelligence`
-- Draft PR: **#34**
-- PR bleibt Draft
-- kein Merge ohne ausdrückliche Product-Owner-Freigabe
-- keine Foundation-D-Production-Migration ohne separates Gate
+- Merge-Commit: `5bc93bcd35421e3763dc8a3515f254c209b63d6a`
+- Acceptance: `docs/FOUNDATION_D_PRODUCTION_ACCEPTANCE.md`
 - Fachdokument: `docs/ROUTE_TRANSIT_INTELLIGENCE.md`
-- Acceptance: `docs/PR34_ROUTE_TRANSIT_ACCEPTANCE.md`
-- Live-Handoff im Branch: `docs/ACTIVE_WORK_STATUS.md`
+
+---
+
+## 4b. Aktiver Arbeitsblock – Foundation E
+
+**Foundation E – Traveller Context / Multi-Citizenship / Multi-Document** ist technisch umgesetzt und review-bereit, nicht gemergt.
+
+- Branch: `feat/traveller-context-intelligence`
+- Draft PR: **#35**
+- Draft PR bleibt Draft
+- kein Merge ohne ausdrückliche Product-Owner-Freigabe
+- keine Foundation-E-Production-Migration ohne separates Gate
+- Fachdokument: `docs/TRAVELLER_CONTEXT.md`
+- Acceptance: `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md`
+- Live-Handoff: `docs/ACTIVE_WORK_STATUS.md`
 
 Foundation D liefert u. a.:
 
@@ -154,32 +164,24 @@ Foundation D liefert u. a.:
 - Readiness-Reevaluation bei Transitänderungen
 - traveller-neutrale Route Truth als Grundlage für spätere Traveller-Profile
 
-Wichtige Development-Migrationen von Foundation D:
+Foundation-D-Migrationen sind nach separater Freigabe auf Production:
 
-- `20260822130000...`
-- `20260822140000_flug_route_itinerary_airport_truth.sql`
-- `20260822150000...` Route-Metadata-Guard
+- `20260822130000_reise_anlegen_route_itinerary`
+- `20260822140000_flug_route_itinerary_airport_truth`
+- `20260822150000_trip_items_route_itinerary_guard`
 
-Diese sind **nicht** auf Production, solange keine separate Freigabe erfolgt.
+Historischer Closeout: `docs/PR34_PRODUCT_OWNER_CLOSEOUT_REPORT.md`, `docs/FOUNDATION_D_PRODUCTION_ACCEPTANCE.md`.
 
 ### Product-Owner-Rundgang zu PR #34
 
-Der Product-Owner-Rundgang ist **abgeschlossen**. Die dabei bestätigten Anforderungen sollen nicht unkontrolliert in PR #34 hineingebaut werden, sondern sind als verbindliche nächste Produktwahrheit gesichert. PR #34 bleibt Draft; kein Merge, kein Mark Ready, keine Production-Migration, kein Provider, keine Secrets.
+Der Product-Owner-Rundgang, Merge und Production-Abnahme sind **abgeschlossen**. PR #34 nicht erneut öffnen oder neu bauen.
 
-Aktueller verbindlicher Closeout-Auftrag und Bericht im Branch:
+Cursor muss vor einer Foundation-E-Merge-Entscheidung:
 
-- `docs/CURSOR_PR34_PRODUCT_OWNER_CLOSEOUT_TASK.md`
-- `docs/PR34_PRODUCT_OWNER_CLOSEOUT_REPORT.md`
-
-Cursor muss vor einer späteren Merge-Entscheidung:
-
-1. Branch mit aktuellem `main` synchronisieren,
-2. Konflikte semantisch sauber lösen,
-3. Tests/Build/Security/UI-Audits neu ausführen,
-4. CI und Vercel auf exakt finalem Head prüfen,
-5. `docs/ACTIVE_WORK_STATUS.md` / Handoff / Acceptance aktualisieren,
-6. Abschlussbericht erzeugen,
-7. **nicht mergen**, **nicht Mark Ready**, **keine Production-Migration**.
+1. Draft PR reviewen,
+2. CI und Vercel auf exakt finalem Head prüfen,
+3. `docs/ACTIVE_WORK_STATUS.md` / Handoff / Acceptance aktuell halten,
+4. **nicht mergen**, **nicht Mark Ready**, **keine Production-Migration**.
 
 Danach prüft ChatGPT den finalen Stand unabhängig. Erst dann kann der Product Owner separat über Merge entscheiden.
 
@@ -259,30 +261,22 @@ Responsiv darf die Dichte/Darstellung variieren, aber nicht fachliche Bedeutung,
 
 ---
 
-## 6. Verbindliche nächste interne Priorität – Foundation E
-
-Nach Abschluss von Foundation D kommt **Foundation E – Traveller Context / Multi-Citizenship / Multi-Document**.
+## 6. Foundation E – umgesetztes Modell
 
 Zielmodell:
 
 > **Ein Reisender → mehrere Staatsbürgerschaften → mehrere Reisedokumente / Credentials → kontextabhängige zulässige Optionen.**
 
-Verbindlich:
+Umgesetzt auf Development:
 
-- mehrere Citizenship-/Document-Kontexte korrekt modellieren
-- individuelle Auswertung je Traveller
-- Group-Travel korrekt
-- Legal/Regulatory zuerst, dann Route-/Transit-Kompatibilität, dann belegbare Vorteile
-- keine Passnummern, Scans, biometrischen Daten oder unnötigen sensiblen Daten
-- Guest/Account-Parität
-- RLS/Privacy/Security
-- Freshness/Fingerprints/Reevaluation
-- keine uncontrolled passport hopping
-- `unknown` ehrlich behandeln
+- Parent/Child-Schema mit Composite-FKs
+- Expand/Contract inkl. Backfill, ohne Legacy-Drop
+- atomare `party_schreiben`-RPC
+- Guest/Account-Parität und Legacy-Expand
+- Fingerprint v2, traveller-spezifische Readiness
+- provider-neutrale Credential-Naht; Factory bleibt `null`
 
-Ein konkreter Foundation-E-Cursor-Auftrag wird nach Foundation-D-Abschluss mit Schema/API/RLS/UX/Tests/Migration-Gates professionell erstellt. Das genaue DB-Schema ist **noch nicht blind vorwegzunehmen**.
-
-Erst auf belastbarer Foundation-E-Basis soll ein echter Travel-Requirements-Provider produktiv evaluiert/aktiviert werden.
+Ein echter Travel-Requirements-Provider bleibt nach Foundation E bewusst aus.
 
 ---
 
@@ -420,18 +414,15 @@ Offener separater Security-Hardening-Track bleibt sichtbar (u. a. ältere `SECUR
 
 ## 12. Exakter nächster Schritt
 
-Solange PR #34 noch offen ist:
+Solange der Foundation-E-Draft-PR offen ist:
 
-1. tatsächlichen PR-#34-/Branch-/`main`-Stand prüfen,
-2. Branch-Version von `docs/ACTIVE_WORK_STATUS.md` lesen,
-3. `docs/CURSOR_PR34_PRODUCT_OWNER_CLOSEOUT_TASK.md` vollständig ausführen lassen,
-4. finalen synchronisierten Head mit Tests/CI/Vercel/DB-Grenzen verifizieren,
-5. ChatGPT führt unabhängigen Abschlussreview durch,
-6. erst danach Product Owner separat um Merge-Freigabe fragen.
+1. `docs/ACTIVE_WORK_STATUS.md` und `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md` lesen,
+2. Draft PR #35 reviewen, nicht mergen, nicht Mark Ready,
+3. UI-Audit ist erledigt (**838/0**, WebKit + Chromium). GitHub CI und Vercel Preview auf Head `913604fe` sind verifiziert.
+4. Product Owner separat um Merge-Freigabe fragen,
+5. Production-Migration erst nach Merge und separater Freigabe.
 
-**Nicht** Foundation E starten, solange Foundation D nicht sauber abgeschlossen bzw. die Governance-Entscheidung dazu getroffen ist.
-
-Nach Foundation D gilt die neuere verbindliche Reihenfolge:
+Nach Foundation E gilt die verbindliche Reihenfolge:
 
 1. **Foundation E – Traveller Context / Multi-Citizenship / Multi-Document**
 2. **Travel Safety & Disruption Intelligence provider-neutral bauen**
@@ -445,4 +436,4 @@ Nach Foundation D gilt die neuere verbindliche Reihenfolge:
 
 Grundlagen: `docs/PRODUCT_OWNER_PR34_PROVIDER_READINESS_ADDENDUM.md`, `docs/PROVIDER_INTEGRATION_READINESS_POLICY.md`.
 
-Die Roadmap ist für spätere Phasen maßgeblich; vor jeder konkreten Arbeit den tatsächlichen Repo-/PR-/Production-Stand und im Feature-Branch `docs/ACTIVE_WORK_STATUS.md` neu prüfen. Foundation D darf nicht als zweite Route-Foundation neu gebaut werden. Traveller-Production-Schema in diesem PR nicht migrieren.
+Die Roadmap ist für spätere Phasen maßgeblich; vor jeder konkreten Arbeit den tatsächlichen Repo-/PR-/Production-Stand und im Feature-Branch `docs/ACTIVE_WORK_STATUS.md` neu prüfen. Foundation D nicht neu bauen. Foundation-E-Production-Schema nicht ohne separates Gate migrieren.

@@ -322,8 +322,8 @@ export function reiseAus(
     createdAt: reise.created_at,
     updatedAt: reise.updated_at,
     ohneTag,
-    readinessItems: readinessAusZeilen(readiness),
     party: partyAusZeilen(party),
+    readinessItems: readinessAusZeilen(readiness, partyAusZeilen(party)),
   }
 }
 

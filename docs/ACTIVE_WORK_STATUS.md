@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 22. August 2026  
-Arbeitsblock: **Foundation E – Traveller Context / Multi-Citizenship / Multi-Document – Auftrag bereit**
+Arbeitsblock: **Foundation E – Traveller Context / Multi-Citizenship / Multi-Document – Draft PR / Development verifiziert**
 
 ## 1. Aktueller Zustand
 
@@ -9,119 +9,63 @@ Foundation D – Route & Transit Intelligence ist vollständig abgeschlossen und
 
 - PR #34: gemergt
 - Merge-Commit auf `main`: `5bc93bcd35421e3763dc8a3515f254c209b63d6a`
-- final geprüfter PR-Head: `11bfc958aba54486148fa756f5f8d4616ff86c8a`
-- finaler CI-Lauf: success
-- Vercel finaler PR-Head: success
-- Vercel Production nach Merge: success
 - Production-Abnahme: `docs/FOUNDATION_D_PRODUCTION_ACCEPTANCE.md`
 
-Nach separater Product-Owner-Freigabe sind die drei Foundation-D-Migrationen auf Production und verifiziert:
+Foundation E läuft auf:
 
-- `20260822130000_reise_anlegen_route_itinerary`
-- `20260822140000_flug_route_itinerary_airport_truth`
-- `20260822150000_trip_items_route_itinerary_guard`
+- Branch: `feat/traveller-context-intelligence`
+- Basis: `origin/main` @ `ae64e4ff88ddacf4bbb6d9521e003fb1cc9653aa`
+- Draft PR: https://github.com/Jetnity/jetnity/pull/35
+- Fachdokument: `docs/TRAVELLER_CONTEXT.md`
+- Acceptance: `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md`
+- Audit vor Schemaänderung: `docs/FOUNDATION_E_ARCHITECTURE_AUDIT.md`
 
-Production ist gesund. Keine externen Provider, Secrets oder neuen laufenden Providerkosten wurden aktiviert.
+## 2. Was bereits umgesetzt ist
 
-## 2. Jetzt aktiv – Foundation E
+- 1:n-Modell `trip_travellers` → `trip_traveller_citizenships` / `trip_traveller_documents`
+- Expand/Contract-Migration mit Backfill; Legacy-Spalten bleiben
+- atomare Account-Writes über `party_schreiben` (`SECURITY INVOKER`)
+- Guest/Account-Parität derselben Party-Form; Legacy-Guest wird expandiert
+- traveller-spezifische Readiness-Items (`traveller_id` optional)
+- Fingerprint v2: sortierte Citizenship-/Document-Mengen, isoliert je Traveller
+- provider-neutrale Credential-Optionen; Factory bleibt `null`
+- Vergleich ohne Evidence: `Noch nicht zuverlässig vergleichbar.`
+- UX erfasst mehrere Citizenships/Documents, behauptet keine Visa-Vorteile
 
-**Foundation E – Traveller Context / Multi-Citizenship / Multi-Document** ist der nächste verbindliche Kernblock.
+## 3. Verifizierter Nachweis
 
-Verbindlicher Implementierungsauftrag:
+| Nachweis | Ergebnis |
+| --- | --- |
+| `npm test` | 1304/1304 |
+| Typecheck | grün |
+| Lint | grün |
+| Hygiene | grün |
+| Production-Build | grün, 38/38 Seiten |
+| Development-Migration `20260822160000` | angewendet |
+| `db:rechte` | OK, 51 Rechte |
+| `db:rls` | grün |
+| `db:sicherheit` | 204/204 |
+| Production-Schema | unverändert |
+| UI-Audit-Lauf | **838/838, 0 Fehler**, WebKit + Chromium, 8 Viewports inkl. 280–430 / Tablet 768 / Landscape 844×390 / Desktop 1280 |
+| Foundation-E-Auditfälle | 1 Citizenship, 2 Citizenships, 2 Traveller, Dokument fehlt, Citizenship fehlt, langes Label (40 Zeichen), Provider unavailable |
+| GitHub CI | **success** auf Head `913604fe` – Run https://github.com/Jetnity/jetnity/actions/runs/32595277670 (Typecheck/Lint/Build + Auth). Vorgänger inkl. Audit-Heads `02421f6d` / `17763238` ebenfalls success. |
+| Vercel Preview | **READY** auf `913604fe` – https://jetnity-hdr68cz3e-jetnity-e1b93c82.vercel.app |
 
-`docs/CURSOR_FOUNDATION_E_TRAVELLER_CONTEXT_TASK.md`
+## 4. Harte Grenzen
 
-Der Auftrag ist auf `main` versioniert und muss vom neuen Cursor-Agenten vollständig gelesen und exakt ausgeführt werden.
-
-Der neue Agent startet von frischem `origin/main` und erstellt:
-
-`feat/traveller-context-intelligence`
-
-sowie früh einen **Draft PR**.
-
-Keine Implementierung auf dem alten Foundation-D-Branch fortsetzen.
-
-## 3. Foundation-E-Ziel
-
-Langfristiges kanonisches Grundmodell:
-
-> **Ein stabiler Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente / Credentials → kontextabhängige zulässige Optionen.**
-
-Foundation C besitzt noch transitionale singuläre Felder auf `trip_travellers`. Foundation E muss diese professionell in ein 1:n-Modell überführen, mit:
-
-- sicherem Expand/Contract-Übergang,
-- Backfill ohne Datenverlust,
-- klarer kanonischer Source of Truth,
-- Guest/Account-Parität,
-- verlustfreier/idempotenter Guest→Account-Übernahme,
-- traveller-spezifischer Readiness,
-- Multi-Credential-Fingerprint/Freshness,
-- Gruppenreisen,
-- provider-neutraler Credential-Evaluationsnaht,
-- RLS/FK/Owner-Security,
-- Mobile/Tablet/Desktop-UX,
-- vollständiger Test-/Audit-Matrix.
-
-Foundation-D-Route-Truth wird wiederverwendet und bleibt traveller-neutral.
-
-## 4. Harte Grenzen Foundation E
-
-- kein echter Travel-Requirements-Provider
-- kein Timatic-Vertrag
-- keine Provider-Secrets
-- keine Production-Migration ohne separates Product-Owner-Gate
 - kein Merge ohne ausdrückliche Product-Owner-Freigabe
-- keine Pass-/Ausweisnummern
-- keine Scans/MRZ/Biometrie/Dokumentvault
+- keine Production-Migration
+- kein echter Travel-Requirements-Provider
+- keine Passnummern, Scans, MRZ, Biometrie
 - kein LLM als regulatorische Truth-Quelle
-- `unknown` bleibt `unknown`
-- keine breite Workspace-Neugestaltung in Foundation E
-- keine Safety-/Seasonality-Implementierung vorwegnehmen.
+- keine Workspace-Neugestaltung, keine Safety-/Seasonality-Implementierung
 
-## 5. Pflichtlektüre für den neuen Agenten
+## 5. Exakter nächster Schritt
 
-Mindestens:
+1. Draft PR #35 reviewen. Nicht Mark Ready, nicht mergen.
+2. Product Owner entscheidet separat über Merge.
+3. Production-Migration erst nach Merge und separater Freigabe.
 
-- `docs/CURSOR_FOUNDATION_E_TRAVELLER_CONTEXT_TASK.md`
-- `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md`
-- `docs/MULTI_CITIZENSHIP_READINESS_AMENDMENT.md`
-- `docs/FOUNDATION_D_PRODUCTION_ACCEPTANCE.md`
-- `docs/TRAVEL_READINESS.md`
-- `docs/PROVIDER_INTEGRATION_READINESS_POLICY.md`
-- `docs/TRIP_WORKSPACE_TRANSFORMATION_SCOPE_POLICY.md`
-- `docs/TRIP_WORKSPACE_FINAL_INTELLIGENCE_AUDIT_POLICY.md`
-- `JETNITY_HANDOFF.md`
-- `ROADMAP.md`
-- `ARCHITECTURE.md`
-- `DECISIONS.md`
-- Quality/Logic/UX/Continuity/Merge-/Progress-Policies.
+GitHub CI und Vercel Preview auf dem Audit-Docs-Head `913604fe` sind verifiziert. Ein weiterer Docs-Commit, der nur diesen Nachweis festhält, startet ein neues CI; das wird **nicht** erneut dokumentiert, solange es nicht fehlschlägt.
 
-Wenn ältere Passagen in `ROADMAP.md` oder `JETNITY_HANDOFF.md` Foundation D noch als offen darstellen, sind diese operativ historisch überholt. **Diese Datei, `docs/FOUNDATION_D_PRODUCTION_ACCEPTANCE.md` und der Foundation-E-Task enthalten den neueren Arbeitsstand.** Der neue Agent soll die zentralen Dokumente im Foundation-E-Branch entsprechend nachziehen.
-
-## 6. Danach verbindliche Reihenfolge
-
-Nach Foundation E:
-
-1. Travel Safety & Disruption Intelligence – provider-neutrale Foundation
-2. Travel Timing & Seasonal Intelligence – provider-neutrale Foundation
-3. Provider-Readiness-Pass über alle relevanten Bereiche
-4. großer End-to-End Trip-Workspace-/Übersicht-Umbau inklusive Weg dorthin
-5. finaler Workspace Intelligence Audit
-6. echte Providerphase
-7. Provider-backed End-to-End-/Truth-Audit
-8. finale Startseiten-Positionierung.
-
-## 7. Großer Workspace-Umbau – späterer verbindlicher Scope
-
-Der spätere Umbau umfasst den kompletten Nutzerweg, nicht nur die Übersicht: funktionaler Reiseeinstieg, Multi-Destination, Planungsflow, Gast-/Account-Weg, `Meine Reisen`, Übergang in den Workspace, Fachbereiche und deren Zusammenspiel sowie die Übersicht als intelligentes Kontrollzentrum für Status, offene Punkte, Warnungen, Empfehlungen und nächste Schritte.
-
-Fachregel: `docs/TRIP_WORKSPACE_TRANSFORMATION_SCOPE_POLICY.md`.
-
-## 8. Exakter nächster Schritt
-
-1. **Neuen Cursor-Agenten starten.**
-2. Ihm ausschließlich den Startauftrag geben, `docs/CURSOR_FOUNDATION_E_TRAVELLER_CONTEXT_TASK.md` und die dort genannte Pflichtlektüre vollständig zu lesen.
-3. Agent prüft frisches `main`, tatsächliche DB-/Code-Wahrheit und erstellt `feat/traveller-context-intelligence`.
-4. Agent führt zuerst Phase 1 Architektur-/Security-/Migration-Audit aus und dokumentiert den Stand.
-5. Danach Foundation E gemäß Task implementieren.
-6. Draft PR bleibt bis Review und Product-Owner-Gate ungemergt.
+Kein zweiter Foundation-E-Block auf einem anderen Branch beginnen.

@@ -152,7 +152,7 @@ export async function reiseLaden(id: string): Promise<Lesung<Reisegraph>> {
 
   const ergebnis = await lese<GraphZeile>(() =>
     alsAntwort<GraphZeile>(
-      supabase.from('trips').select('*, trip_stages(*), trip_days(*), trip_items(*), trip_readiness_items(*), trip_travellers(*)').eq('id', id).limit(1),
+      supabase.from('trips').select('*, trip_stages(*), trip_days(*), trip_items(*), trip_readiness_items(*), trip_travellers(*, trip_traveller_citizenships(*), trip_traveller_documents(*))').eq('id', id).limit(1),
     ),
   )
 

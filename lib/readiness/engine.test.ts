@@ -18,18 +18,54 @@ import type { TripTraveller } from '@/types/trips'
 
 const JETZT = '2026-08-22T08:00:00.000Z'
 
-function reisende(teil: Partial<TripTraveller> & Pick<TripTraveller, 'clientRef'>): TripTraveller {
+function reisende(
+  teil: Partial<TripTraveller> &
+    Pick<TripTraveller, 'clientRef'> & {
+      nationalityCountryCode?: string | null
+      documentType?: TripTraveller['documents'][number]['documentType'] | null
+      documentIssuingCountryCode?: string | null
+      documentExpiresOn?: string | null
+    },
+): TripTraveller {
+  const jetzt = teil.createdAt ?? JETZT
+  const citizenships =
+    teil.citizenships ??
+    (teil.nationalityCountryCode
+      ? [
+          {
+            id: `citizenship:${teil.nationalityCountryCode}`,
+            clientRef: `citizenship:${teil.nationalityCountryCode}`,
+            countryCode: teil.nationalityCountryCode,
+            createdAt: jetzt,
+            updatedAt: jetzt,
+          },
+        ]
+      : [])
+  const documents =
+    teil.documents ??
+    (teil.documentType || teil.documentIssuingCountryCode || teil.documentExpiresOn
+      ? [
+          {
+            id: `document:${teil.documentType ?? 'unknown'}:${teil.documentIssuingCountryCode ?? 'xx'}`,
+            clientRef: `document:${teil.documentType ?? 'unknown'}:${teil.documentIssuingCountryCode ?? 'xx'}`,
+            documentType: teil.documentType ?? 'unknown',
+            issuingCountryCode: teil.documentIssuingCountryCode ?? null,
+            citizenshipClientRef: teil.nationalityCountryCode ? `citizenship:${teil.nationalityCountryCode}` : null,
+            expiresOn: teil.documentExpiresOn ?? null,
+            createdAt: jetzt,
+            updatedAt: jetzt,
+          },
+        ]
+      : [])
   return {
-    id: teil.clientRef,
+    id: teil.id ?? teil.clientRef,
+    clientRef: teil.clientRef,
     label: teil.label ?? null,
-    nationalityCountryCode: null,
-    residenceCountryCode: null,
-    documentType: null,
-    documentIssuingCountryCode: null,
-    documentExpiresOn: null,
-    createdAt: JETZT,
-    updatedAt: JETZT,
-    ...teil,
+    residenceCountryCode: teil.residenceCountryCode ?? null,
+    citizenships,
+    documents,
+    createdAt: jetzt,
+    updatedAt: teil.updatedAt ?? JETZT,
   }
 }
 
@@ -42,9 +78,9 @@ const testProvider: RequirementsProvider = {
         destinationCountryCode: destination,
         requirementType: 'visa' as const,
         result:
-          traveller.nationalityCountryCode === 'CH' && destination === 'TH'
+          traveller.citizenshipCountryCodes.includes('CH') && destination === 'TH'
             ? ('required' as const)
-            : traveller.nationalityCountryCode === 'DE' && destination === 'TH'
+            : traveller.citizenshipCountryCodes.includes('DE') && destination === 'TH'
               ? ('not_required' as const)
               : ('conditional' as const),
         officialClass: 'requirement' as const,

@@ -139,7 +139,34 @@ export const OFFICIAL_REQUIREMENT_TYPES = [
 export type OfficialRequirementType = (typeof OFFICIAL_REQUIREMENT_TYPES)[number]
 
 /**
+ * Eine Staatsbürgerschaft eines Reisenden. Kein freies Länderlabel.
+ */
+export type TripTravellerCitizenship = {
+  id: string
+  clientRef: string
+  countryCode: string
+  createdAt: string
+  updatedAt: string
+}
+
+/**
+ * Ein Reisedokument-/Credential-Profil. Keine Nummer, kein Scan, keine MRZ.
+ */
+export type TripTravellerDocument = {
+  id: string
+  clientRef: string
+  documentType: TravellerDocumentType
+  issuingCountryCode: string | null
+  citizenshipClientRef: string | null
+  /** Nur Ablaufdatum, nie eine Dokumentnummer. */
+  expiresOn: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+/**
  * Datensparsamer Reisendenkontext einer Reise.
+ * Ein Traveller kann mehrere Staatsbürgerschaften und Dokumente besitzen.
  * Keine Pass-, Ausweis-, Visa- oder Gesundheitsdaten.
  */
 export type TripTraveller = {
@@ -147,12 +174,9 @@ export type TripTraveller = {
   clientRef: string
   /** Neutrale Bezeichnung, z. B. „Reisende 1“. Kein gesetzlicher Name nötig. */
   label: string | null
-  nationalityCountryCode: string | null
   residenceCountryCode: string | null
-  documentType: TravellerDocumentType | null
-  documentIssuingCountryCode: string | null
-  /** Nur Ablaufdatum, nie eine Dokumentnummer. */
-  documentExpiresOn: string | null
+  citizenships: TripTravellerCitizenship[]
+  documents: TripTravellerDocument[]
   createdAt: string
   updatedAt: string
 }
@@ -177,6 +201,8 @@ export type TripReadinessItem = {
   tripItemId: string | null
   /** Nur bei `preparation`. Keine Pass-, Ausweis- oder Gesundheitsdaten. */
   title: string | null
+  /** Traveller-spezifische Karte, sonst trip-level. */
+  travellerClientRef?: string | null
   contextFingerprint: string
   createdAt: string
   updatedAt: string

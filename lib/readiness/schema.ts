@@ -11,8 +11,10 @@ import {
   READINESS_USER_STATUSES,
   TRAVELLER_DOCUMENT_TYPES,
   type TripReadinessItem,
+  type TripTraveller,
 } from '@/types/trips'
-import { READINESS_GRENZEN, landescodeLesen } from '@/lib/readiness/domain'
+import { READINESS_GRENZEN, TRAVELLER_CONTEXT_GRENZEN, landescodeLesen } from '@/lib/readiness/domain'
+import { travellerLegacyLesen } from '@/lib/readiness/traveller-kontext'
 
 const zeitstempel = z.string().min(1).max(40)
 
@@ -75,6 +77,7 @@ const readinessItemSchema = z
     tripItemId: z.string().min(1).max(80).nullable().default(null),
     title: titel.nullable().default(null),
     contextFingerprint: z.string().min(1).max(READINESS_GRENZEN.fingerprint),
+    travellerClientRef: z.string().min(1).max(READINESS_GRENZEN.clientRef).nullable().optional().default(null),
     createdAt: zeitstempel,
     updatedAt: zeitstempel,
   })
@@ -85,6 +88,7 @@ const readinessItemSchema = z
       evidence: 'user' as const,
       title: preparation ? item.title : null,
       countryCode: item.countryCode,
+      travellerClientRef: item.travellerClientRef ?? null,
     } satisfies TripReadinessItem
   })
   .superRefine((item, ctx) => {
@@ -118,7 +122,8 @@ export const readinessEingabeSchema = z.object({
   userStatus: z.enum(READINESS_USER_STATUSES),
   countryCode: landescode.nullable().optional().default(null),
   tripItemId: z.string().min(1).max(80).nullable().optional().default(null),
-  title: z
+    travellerClientRef: z.string().min(1).max(READINESS_GRENZEN.clientRef).nullable().optional().default(null),
+    title: z
     .string()
     .max(READINESS_GRENZEN.titel)
     .nullable()
@@ -188,92 +193,152 @@ export const readinessAnforderungAnfrageSchema = z.object({
   startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional().default(null),
   endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional().default(null),
   party: z
-    .array(
-      z.object({
-        clientRef: z.string().min(1).max(READINESS_GRENZEN.clientRef),
-        nationalityCountryCode: landescode.nullable().optional().default(null),
-        residenceCountryCode: landescode.nullable().optional().default(null),
-        documentType: z.enum(TRAVELLER_DOCUMENT_TYPES).nullable().optional().default(null),
-        documentIssuingCountryCode: landescode.nullable().optional().default(null),
-        documentExpiresOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional().default(null),
-      }),
-    )
-    .max(20)
+    .array(z.unknown())
+    .max(TRAVELLER_CONTEXT_GRENZEN.travellersJeReise)
     .optional()
-    .default([]),
+    .default([])
+    .transform((items) => items.map((item) => travellerLegacyLesen(item)).filter((item): item is TripTraveller => item !== null)),
 })
 
-const travellerLabel = z
-  .string()
-  .transform((wert) => wert.trim())
-  .pipe(z.string().min(1).max(40))
-  .refine((wert) => !enthaltSensitiveDaten(wert) && !/https?:\/\//i.test(wert) && !/<\/?[a-z][\s\S]*>/i.test(wert), {
-    message: 'Keine Passnummern, Ausweisdaten oder andere sensible Daten eintragen.',
+const citizenshipEingabeSchema = z.object({
+  clientRef: z.string().min(1).max(READINESS_GRENZEN.clientRef).optional(),
+  countryCode: landescode,
+})
+
+const documentEingabeSchema = z.object({
+  clientRef: z.string().min(1).max(READINESS_GRENZEN.clientRef).optional(),
+  documentType: z.enum(TRAVELLER_DOCUMENT_TYPES),
+  issuingCountryCode: landescode.nullable().optional().default(null),
+  expiresOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional().default(null),
+  citizenshipClientRef: z.string().min(1).max(READINESS_GRENZEN.clientRef).nullable().optional().default(null),
+})
+
+export const travellerEingabeSchema = z
+  .object({
+    clientRef: z.string().min(1).max(READINESS_GRENZEN.clientRef),
+    label: z
+      .string()
+      .max(40)
+      .nullable()
+      .optional()
+      .transform((wert, ctx) => {
+        if (wert == null) return null
+        const label = wert.trim()
+        if (label === '') return null
+        if (enthaltSensitiveDaten(label) || /https?:\/\//i.test(label) || /<\/?[a-z][\s\S]*>/i.test(label)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Keine Passnummern, Ausweisdaten oder andere sensible Daten eintragen.',
+          })
+          return z.NEVER
+        }
+        return label
+      }),
+    residenceCountryCode: landescode.nullable().optional().default(null),
+    citizenships: z.array(citizenshipEingabeSchema).max(TRAVELLER_CONTEXT_GRENZEN.citizenshipsJeTraveller).optional(),
+    documents: z.array(documentEingabeSchema).max(TRAVELLER_CONTEXT_GRENZEN.documentsJeTraveller).optional(),
+    nationalityCountryCode: landescode.nullable().optional(),
+    documentType: z.enum(TRAVELLER_DOCUMENT_TYPES).nullable().optional(),
+    documentIssuingCountryCode: landescode.nullable().optional(),
+    documentExpiresOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
+  })
+  .transform((eingabe, ctx) => {
+    const gelesen = travellerLegacyLesen({
+      ...eingabe,
+      id: eingabe.clientRef,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    })
+    if (!gelesen) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Diese Reisendenangabe ist ungültig.',
+      })
+      return z.NEVER
+    }
+    return {
+      clientRef: gelesen.clientRef,
+      label: eingabe.label ?? gelesen.label,
+      residenceCountryCode: gelesen.residenceCountryCode,
+      citizenships: gelesen.citizenships.map((eintrag) => ({
+        clientRef: eintrag.clientRef,
+        countryCode: eintrag.countryCode,
+      })),
+      documents: gelesen.documents.map((eintrag) => ({
+        clientRef: eintrag.clientRef,
+        documentType: eintrag.documentType,
+        issuingCountryCode: eintrag.issuingCountryCode,
+        expiresOn: eintrag.expiresOn,
+        citizenshipClientRef: eintrag.citizenshipClientRef,
+      })),
+    }
+  })
+  .superRefine((eingabe, ctx) => {
+    const laender = new Set<string>()
+    for (const citizenship of eingabe.citizenships) {
+      if (laender.has(citizenship.countryCode)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['citizenships'],
+          message: 'Dieselbe Staatsbürgerschaft kann nur einmal erfasst werden.',
+        })
+      }
+      laender.add(citizenship.countryCode)
+    }
+    const citizenshipRefs = new Set(eingabe.citizenships.map((eintrag) => eintrag.clientRef))
+    for (const document of eingabe.documents) {
+      if (document.citizenshipClientRef && !citizenshipRefs.has(document.citizenshipClientRef)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['documents'],
+          message: 'Das Dokument muss zu einer Staatsbürgerschaft derselben Person gehören.',
+        })
+      }
+    }
   })
 
-const travellerItemSchema = z.object({
-  id: z.string().min(1).max(80),
-  clientRef: z.string().min(1).max(READINESS_GRENZEN.clientRef),
-  label: travellerLabel.nullable().default(null),
-  nationalityCountryCode: landescode.nullable().default(null),
-  residenceCountryCode: landescode.nullable().default(null),
-  documentType: z.enum(TRAVELLER_DOCUMENT_TYPES).nullable().default(null),
-  documentIssuingCountryCode: landescode.nullable().default(null),
-  documentExpiresOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null),
-  createdAt: zeitstempel,
-  updatedAt: zeitstempel,
+const travellerItemSchema = z.unknown().transform((wert, ctx) => {
+  const gelesen = travellerLegacyLesen(wert)
+  if (!gelesen) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Diese Reisendenangabe ist ungültig.',
+    })
+    return z.NEVER
+  }
+  return gelesen
 })
 
 export const partySchema = z
-  .array(travellerItemSchema)
-  .max(20)
+  .array(z.unknown())
+  .max(TRAVELLER_CONTEXT_GRENZEN.travellersJeReise)
   .default([])
   .transform((items) => {
     const gesehen = new Set<string>()
-    const eindeutig: z.infer<typeof travellerItemSchema>[] = []
-    for (const item of items) {
-      if (gesehen.has(item.clientRef)) continue
+    const eindeutig: TripTraveller[] = []
+    for (const roh of items) {
+      const item = travellerLegacyLesen(roh)
+      if (!item || gesehen.has(item.clientRef)) continue
       gesehen.add(item.clientRef)
       eindeutig.push(item)
     }
     return eindeutig
   })
 
-export const travellerEingabeSchema = z.object({
-  clientRef: z.string().min(1).max(READINESS_GRENZEN.clientRef),
-  label: z
-    .string()
-    .max(40)
-    .nullable()
-    .optional()
-    .transform((wert, ctx) => {
-      if (wert == null) return null
-      const label = wert.trim()
-      if (label === '') return null
-      if (enthaltSensitiveDaten(label) || /https?:\/\//i.test(label) || /<\/?[a-z][\s\S]*>/i.test(label)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Keine Passnummern, Ausweisdaten oder andere sensible Daten eintragen.',
-        })
-        return z.NEVER
-      }
-      return label
-    }),
-  nationalityCountryCode: landescode.nullable().optional().default(null),
-  residenceCountryCode: landescode.nullable().optional().default(null),
-  documentType: z.enum(TRAVELLER_DOCUMENT_TYPES).nullable().optional().default(null),
-  documentIssuingCountryCode: landescode.nullable().optional().default(null),
-  documentExpiresOn: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/)
-    .nullable()
-    .optional()
-    .default(null),
-})
-
-export const travellerKontoEingabeSchema = travellerEingabeSchema.extend({
-  tripId: z.string().uuid(),
-})
+export const travellerKontoEingabeSchema = z
+  .object({ tripId: z.string().uuid() })
+  .passthrough()
+  .transform((wert, ctx) => {
+    const geprueft = travellerEingabeSchema.safeParse(wert)
+    if (!geprueft.success) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: geprueft.error.issues[0]?.message ?? 'Diese Reisendenangabe ist ungültig.',
+      })
+      return z.NEVER
+    }
+    return { ...geprueft.data, tripId: wert.tripId }
+  })
 
 export const travellerKontoLoeschenSchema = z.object({
   tripId: z.string().uuid(),

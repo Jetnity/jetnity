@@ -30,7 +30,7 @@ function check(teil: Partial<TripReadinessItem> & Pick<TripReadinessItem, 'clien
 describe('Official Truth bleibt von User Evidence getrennt', () => {
   test('User done + official unknown → official bleibt unknown', () => {
     const reise = beispielreise({
-      readinessItems: [check({ clientRef: 'entry_check:IT', kind: 'entry_check', userStatus: 'done' })],
+      readinessItems: [check({ clientRef: 'entry_check:IT:traveller:1', kind: 'entry_check', userStatus: 'done', travellerClientRef: 'traveller:1' })],
     })
     const { items, summary } = readinessAnsicht(reise)
     const einreise = items.find((item) => item.kind === 'entry_check')
@@ -43,7 +43,7 @@ describe('Official Truth bleibt von User Evidence getrennt', () => {
 
   test('User skipped wird nicht als offiziell not_required ausgegeben', () => {
     const reise = beispielreise({
-      readinessItems: [check({ clientRef: 'visa_check:IT', kind: 'visa_check', userStatus: 'skipped' })],
+      readinessItems: [check({ clientRef: 'visa_check:IT:traveller:1', kind: 'visa_check', userStatus: 'skipped', travellerClientRef: 'traveller:1' })],
     })
     const { items } = readinessAnsicht(reise)
     const visum = items.find((item) => item.kind === 'visa_check')

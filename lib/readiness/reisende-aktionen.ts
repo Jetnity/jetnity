@@ -1,6 +1,7 @@
 // lib/readiness/reisende-aktionen.ts
 //
-// Schreibweg für Reisendenkontext im Konto. Kein Service-Role.
+// Schreibweg für Reisendenkontext im Konto. Atomar über party_schreiben.
+// Kein Service-Role. Keine parallelen Legacy-Credential-Spalten.
 
 'use server'
 
@@ -12,7 +13,7 @@ import {
   travellerKontoEingabeSchema,
   travellerKontoLoeschenSchema,
 } from '@/lib/readiness/schema'
-import { travellerAlsZeile, travellerBauen } from '@/lib/readiness/reisende'
+import { travellerAlsPayload, travellerBauen } from '@/lib/readiness/reisende'
 import { NICHT_ANGEMELDET, konto, meldungAus, type Aktionsergebnis } from '@/lib/trips/anlegen'
 import { reiseLaden } from '@/lib/trips/daten'
 
@@ -40,6 +41,18 @@ async function reiseDesKontos(tripId: string) {
   return { ok: true as const, supabase, reise }
 }
 
+async function partySchreiben(
+  supabase: Awaited<ReturnType<typeof konto>>['supabase'],
+  tripId: string,
+  party: ReturnType<typeof travellerAlsPayload>[],
+): Promise<{ ok: true } | { ok: false; meldung: string }> {
+  const { error, status } = await supabase.rpc('party_schreiben', {
+    _payload: { tripId, party },
+  })
+  if (error) return { ok: false, meldung: meldungAus(error, status) }
+  return { ok: true }
+}
+
 export async function travellerSetzen(eingabe: unknown): Promise<Aktionsergebnis<null>> {
   const geprueft = travellerKontoEingabeSchema.safeParse(eingabe)
   if (!geprueft.success) return { ok: false, meldung: ersteMeldung(geprueft.error) }
@@ -55,16 +68,8 @@ export async function travellerSetzen(eingabe: unknown): Promise<Aktionsergebnis
     return { ok: false, meldung: `Eine Reise trägt höchstens ${PARTY_GRENZEN.slots} Reisendenprofile.` }
   }
 
-  const zeile = travellerAlsZeile(gebaut.item, geprueft.data.tripId)
-  const { error, status } = bestehend
-    ? await rahmen.supabase
-        .from('trip_travellers')
-        .update(zeile)
-        .eq('trip_id', geprueft.data.tripId)
-        .eq('client_ref', gebaut.item.clientRef)
-    : await rahmen.supabase.from('trip_travellers').insert(zeile)
-
-  if (error) return { ok: false, meldung: meldungAus(error, status) }
+  const geschrieben = await partySchreiben(rahmen.supabase, geprueft.data.tripId, [travellerAlsPayload(gebaut.item)])
+  if (!geschrieben.ok) return geschrieben
   revalidatePath(`/reisen/${geprueft.data.tripId}`)
   return { ok: true, wert: null }
 }
@@ -98,16 +103,12 @@ export async function partyUebernehmen(eingabe: unknown): Promise<Aktionsergebni
   const items = geprueft.data.party
     .map((eintrag) => travellerBauen(rahmen.reise, eintrag))
     .filter((gebaut): gebaut is { ok: true; item: import('@/types/trips').TripTraveller } => gebaut.ok)
-    .map((gebaut) => travellerAlsZeile(gebaut.item, geprueft.data.tripId))
+    .map((gebaut) => travellerAlsPayload(gebaut.item))
 
   if (items.length === 0) return { ok: true, wert: null }
 
-  const { error, status } = await rahmen.supabase.from('trip_travellers').upsert(items, {
-    onConflict: 'user_id,trip_id,client_ref',
-    ignoreDuplicates: false,
-  })
-
-  if (error) return { ok: false, meldung: meldungAus(error, status) }
+  const geschrieben = await partySchreiben(rahmen.supabase, geprueft.data.tripId, items)
+  if (!geschrieben.ok) return geschrieben
   revalidatePath(`/reisen/${geprueft.data.tripId}`)
   return { ok: true, wert: null }
 }

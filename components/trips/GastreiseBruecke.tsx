@@ -52,11 +52,18 @@ export default function GastreiseBruecke() {
           party: party.map((eintrag) => ({
             clientRef: eintrag.clientRef,
             label: eintrag.label,
-            nationalityCountryCode: eintrag.nationalityCountryCode,
             residenceCountryCode: eintrag.residenceCountryCode,
-            documentType: eintrag.documentType,
-            documentIssuingCountryCode: eintrag.documentIssuingCountryCode,
-            documentExpiresOn: eintrag.documentExpiresOn,
+            citizenships: eintrag.citizenships.map((citizenship) => ({
+              clientRef: citizenship.clientRef,
+              countryCode: citizenship.countryCode,
+            })),
+            documents: eintrag.documents.map((document) => ({
+              clientRef: document.clientRef,
+              documentType: document.documentType,
+              issuingCountryCode: document.issuingCountryCode,
+              expiresOn: document.expiresOn,
+              citizenshipClientRef: document.citizenshipClientRef,
+            })),
           })),
         })
         return ergebnis.ok ? { ok: true, wert: tripId } : ergebnis
