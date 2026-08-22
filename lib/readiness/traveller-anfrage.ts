@@ -203,13 +203,13 @@ export function travellerAnfrageStriktLesen(roh: unknown): TripTraveller | null 
 
   const gelesen = travellerLegacyLesen(eintrag)
   if (!gelesen) return null
+  const documentsRoh = Array.isArray(eintrag.documents) ? eintrag.documents : null
   if (Array.isArray(eintrag.citizenships) && gelesen.citizenships.length !== eintrag.citizenships.length) return null
-  if (Array.isArray(eintrag.documents) && gelesen.documents.length !== eintrag.documents.length) return null
+  if (documentsRoh && gelesen.documents.length !== documentsRoh.length) return null
   if (
-    Array.isArray(eintrag.documents) &&
+    documentsRoh &&
     gelesen.documents.some(
-      (document, index) =>
-        document.citizenshipClientRef !== documentStrikt(eintrag.documents?.[index] as unknown)?.citizenshipClientRef,
+      (document, index) => document.citizenshipClientRef !== documentStrikt(documentsRoh[index])?.citizenshipClientRef,
     )
   ) {
     return null
