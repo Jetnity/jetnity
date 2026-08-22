@@ -59,8 +59,8 @@ Nachweise nach Anwendung:
 | Hygiene | **grün** – `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` |
 | Production Build | **grün** (`next build`, 38/38 Seiten) |
 | Trip-Workspace-UI-Audit | Script um Foundation-E-Varianten erweitert; **Lauf in dieser Umgebung noch nicht ausgeführt** |
-| GitHub CI | **success** auf `ff4cb765` – https://github.com/Jetnity/jetnity/actions/runs/32592432597; zuvor `fef11a38` |
-| Vercel Preview | **pass** auf `ff4cb765` und `fef11a38` |
+| GitHub CI | **success** auf aktuellem Head `16ddea63` – https://github.com/Jetnity/jetnity/actions/runs/32592591185; zuvor `ff4cb765`, `fef11a38` |
+| Vercel Preview | **pass** auf `16ddea63`, `ff4cb765` und `fef11a38` |
 
 ---
 
