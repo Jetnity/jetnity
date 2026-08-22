@@ -1,0 +1,20 @@
+---
+description: Jetnity Product Owner merge approval gate
+alwaysApply: true
+---
+
+# Jetnity Merge Approval – verbindlich
+
+Für Jetnity gilt dauerhaft:
+
+- **Keinen Pull Request ohne ausdrückliche aktuelle Freigabe des Product Owners / Nutzers mergen.**
+- Technisch fertig, grüne Tests, grüne CI, READY Preview, positives Review oder `mergeable=true` sind keine Merge-Freigabe.
+- Während Implementierung und Review bleibt der PR standardmäßig Draft.
+- Nach technischem Abschluss muss der Product Owner Gelegenheit erhalten, Produkt-/UX-Änderungen zu verlangen.
+- Bei Änderungswünschen: nicht mergen, Änderung versionieren, implementieren, erneut testen/reviewen und wieder auf ausdrückliche Freigabe warten.
+- Eine Freigabe gilt nur für den konkret besprochenen PR/Arbeitsblock.
+- Merge-Freigabe ist keine automatische Freigabe für Production-Migration, Provider-Aktivierung, Secrets, Verträge oder neue Kosten.
+
+Vollständige Policy: `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`.
+
+Merksatz: **Technisch fertig bedeutet review-bereit. Gemergt wird erst nach ausdrücklicher Freigabe des Product Owners.**
