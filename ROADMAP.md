@@ -20,7 +20,7 @@ Diese Datei ist die operative Roadmap. Historische Detailstände bleiben über G
 | Querschnitt | Trip Workspace Mobile UX Iteration 1–3 | **fertig, nach `main` gemergt (PR #27)** |
 | Querschnitt | Trip Coverage & Booking Status | **auf `main` (PR #29, `211872c1`); Production-Booking-Migration nach Nutzerfreigabe angewendet** |
 | Foundation-Track A | Mobilität & Transfers – Bahn, Bus, Fähre, Transfers | **fertig, nach `main` gemergt (PR #30); Production-Schema angewendet, Suche aus** |
-| Foundation-Track B | Mietwagen Foundation | **in Arbeit auf Draft-PR #31** (Logic-/Truth-Fix ADR-0094); Development-Migration, nicht Production |
+| Foundation-Track B | Mietwagen Foundation | **PR #31 Ready for Review**; Schema auf Production; Suche aus; nicht mergen |
 | Foundation-Track C | Travel Readiness & Dokumente Foundation | geplant nach B |
 | Foundation-Track D | Gesamt-Abdeckung im Reisegraphen erweitern | geplant nach C |
 | Phase 3.5 | erster echter Activity-Suchadapter | geplant; bei fehlendem Zugang extern blockiert |
@@ -177,9 +177,9 @@ Nicht in diesem Block: Mietwagen, Kreuzfahrten, echter Provider, Fake-Fahrpläne
 
 ### Foundation B – Mietwagen
 
-**In Arbeit auf Draft-PR #31**, Branch `feat/rental-car-foundation`. Nicht mergen. Nicht auf Production migrieren oder aktivieren.
+**Ready for Review auf PR #31**, Branch `feat/rental-car-foundation`. Nicht mergen. Production-Schema `20260821200000` ist angewendet; Production-Suche bleibt aus.
 
-Nachweis 22. August 2026 auf Head `1951f2ba`: Tests **1165/1165**, Typecheck/Lint/Hygiene/Production-Build grün, Development-DB-Checks unverändert grün, Workspace-Audit **502/0**, Activities-Regression **184/0**. ADR-0094 und ADR-0095 schließen die Truth- und Ranking-Label-Befunde. Echter iPhone-Preview-Test **bestanden** (`docs/PR31_REAL_DEVICE_ACCEPTANCE.md`). PR bleibt Draft; Ready erst nach finalem Head-/CI-/Preview-Review. Production-Migration weiter gesperrt.
+Nachweis 22. August 2026: Tests **1165/1165**, Typecheck/Lint/Hygiene/Production-Build grün, Development-DB-Checks grün, Workspace-Audit **502/0**, Activities-Regression **184/0**. ADR-0094 und ADR-0095 schließen die Truth- und Ranking-Label-Befunde. Echter iPhone-Preview-Test **bestanden** (`docs/PR31_REAL_DEVICE_ACCEPTANCE.md`). Production-Migration **verifiziert** (`docs/PR31_PRODUCTION_MIGRATION_ACCEPTANCE.md`). Merge nur nach separater Freigabe.
 
 Provider-neutrales Modell:
 

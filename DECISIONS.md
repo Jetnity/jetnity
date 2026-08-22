@@ -2299,7 +2299,7 @@ Die Suchnaht folgt den bestehenden Foundations: `MobilityProvider.suchen()`, ges
 ## ADR-0092 – Mietwagen als `trip_items.kind = rental_car`
 
 **Datum:** 21. August 2026
-**Status:** umgesetzt auf Draft-PR #31; Development-Migration, nicht Production
+**Status:** umgesetzt auf PR #31; Schema auf Development und Production; Suche aus
 
 **Entscheidung:** Ein Mietwagen ist ein eigener persistenter Planpunkt `trip_items.kind = rental_car` mit wenigen optionalen Spalten. Abholung und Rückgabe nutzen die vorhandenen Ortsfelder. Zeitraum und Preis/Booking bleiben die vorhandenen Spalten. One-way wird aus Ortsfakten abgeleitet. Es gibt keine 1:1-Tabelle und kein `metadata`-JSON.
 
@@ -2324,7 +2324,7 @@ Transfer-Felder `mobility_mode`, `connection_ref`, `mobility_changes` und `mobil
 
 **Konsequenzen:**
 
-- Migration `20260821200000_trip_items_rental_car.sql` liegt im Repository. **Nur Development.** Nicht Production.
+- Migration `20260821200000_trip_items_rental_car.sql` liegt im Repository und ist nach ausdrücklicher Freigabe auf Development **und** Production. Production-Suche bleibt aus. Nachweis: [docs/PR31_PRODUCTION_MIGRATION_ACCEPTANCE.md](docs/PR31_PRODUCTION_MIGRATION_ACCEPTANCE.md).
 - `public.reise_anlegen()` schreibt die Felder und erlaubt gebuchte Mietwagen nur als `user`.
 - Gast- und Konto-Übernahme tragen dieselben Felder.
 - Natürliche Sprache darf Mietwagen- und Buchungsfakten nicht erfinden.

@@ -2,7 +2,8 @@
 
 Stand: 22. August 2026  
 Branch: `feat/rental-car-foundation`  
-PR: #31 – Foundation B – Mietwagen
+PR: #31 – Foundation B – Mietwagen  
+Status: **Dokumentation synchronisiert**; keine Code- oder Migrationsänderung; PR Ready for Review, nicht mergen
 
 ## Zweck
 

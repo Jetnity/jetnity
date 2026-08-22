@@ -4,7 +4,7 @@ Stand: 22. August 2026
 Branch: `feat/rental-car-foundation`  
 PR: #31 – Foundation B – Mietwagen  
 Basis vor Review-Fix: `e58d42f09d95f326c7f686ebeee52a6c5d6d3b9a`  
-Status: **umgesetzt und lokal nachgewiesen**; nachfolgender Ranking-Fix und Real-Device-iPhone **bestanden**; keine Production-Migration
+Status: **umgesetzt und lokal nachgewiesen**; Ranking-Fix und Real-Device-iPhone **bestanden**; Production-Schema später separat übernommen; Suche aus
 
 ## Ziel
 

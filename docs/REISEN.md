@@ -208,7 +208,7 @@ Die Kennung entscheidet, wo `/reisen/[tripId]` nachsieht: `trip-<uuid>` ist ein 
 
 **Mobilität (PR #30 auf `main`, Production-Schema angewendet).** Bahn, Bus, Fähre und Transfer bleiben `kind = transfer` mit optionalen Spalten. Ein Transfer darf manuell gebucht werden. Abdeckung kommt aus `Bewegungskante`n; fehlende Graphdaten bleiben unbestimmt. Die Suche ist geschlossen und fail closed. Siehe [docs/MOBILITY.md](MOBILITY.md), ADR-0090 und ADR-0091.
 
-**Mietwagen (Draft-PR #31, nicht Production).** Ein Mietwagen ist `kind = rental_car` und lebt als Unterbereich in Mobilität, nicht als sechster Tab. Abholung/Rückgabe nutzen die Ortsfelder. Ein überlappender Mietwagen deckt keine Bewegungskante. Die Suche ist geschlossen und fail closed. Siehe [docs/RENTAL_CARS.md](RENTAL_CARS.md), ADR-0092 und ADR-0093.
+**Mietwagen (PR #31 Ready for Review, Production-Schema angewendet).** Ein Mietwagen ist `kind = rental_car` und lebt als Unterbereich in Mobilität, nicht als sechster Tab. Abholung/Rückgabe nutzen die Ortsfelder. Ein überlappender Mietwagen deckt keine Bewegungskante. Die Suche ist geschlossen und fail closed. Siehe [docs/RENTAL_CARS.md](RENTAL_CARS.md), ADR-0092 und ADR-0093.
 
 ---
 
@@ -223,7 +223,7 @@ Die Kennung entscheidet, wo `/reisen/[tripId]` nachsieht: `trip-<uuid>` ist ein 
 | ~~Hotels suchen und in die Reise übernehmen~~ | **Foundation in Phase 3.2 / 3.2c.** Quartier zuerst, Pipeline, `stay`-Abbildung, Nachweis an Suchkontext gebunden. Noch kein Hotelprovider, Konto-Übernahme fail closed, keine Production-Suche ([docs/HOTELS.md](HOTELS.md), ADR-0070 bis ADR-0077). |
 | ~~Aktivitäten suchen und in die Reise übernehmen~~ | **Foundation in Phase 3.3.** Tageskontext, Pipeline, `activity`-Abbildung, Nachweis an Ziel/Datum/Teilnehmer/Währung/Timeslot gebunden. Noch kein Activity-Provider, Konto-Übernahme fail closed, keine Production-Suche ([docs/ACTIVITIES.md](ACTIVITIES.md), ADR-0078 bis ADR-0085). Ein Vorschlag aus Phase 2.1 lässt Handelsfelder leer (ADR-0054). |
 | ~~Mobilität als vier Suchmaschinen~~ | **Foundation A auf `main` (PR #30).** Ein Bereich, `kind=transfer`, optionale Spalten, konservative Abdeckung, fail-closed Suche. Production-Schema angewendet, Suche aus ([docs/MOBILITY.md](MOBILITY.md), ADR-0090, ADR-0091). |
-| ~~Mietwagen als eigene Suchmaschine / sechster Tab~~ | **Foundation B auf Draft-PR #31.** `kind=rental_car`, Unterbereich in Mobilität, keine automatische Kantenabdeckung, fail-closed Suche. Development-Migration, nicht Production ([docs/RENTAL_CARS.md](RENTAL_CARS.md), ADR-0092, ADR-0093). |
+| ~~Mietwagen als eigene Suchmaschine / sechster Tab~~ | **Foundation B auf PR #31.** `kind=rental_car`, Unterbereich in Mobilität, keine automatische Kantenabdeckung, fail-closed Suche. Production-Schema angewendet, Suche aus ([docs/RENTAL_CARS.md](RENTAL_CARS.md), ADR-0092, ADR-0093). |
 | eigene Flugbuchung / Affiliate-Deeplink | getrennte Verantwortlichkeit, nicht der Suchadapter |
 | Anbieter-Plattform für zehn Provider | ein zweiter Suchadapter (Skyscanner, Aviasales) muss dasselbe Interface erfüllen; kein Framework auf Vorrat ([AGENTS.md](../AGENTS.md) Regel 19) |
 | Preisoptimierung, Preishistorie | braucht Anbieterpreise, die es noch nicht gibt |

@@ -67,10 +67,10 @@ Die Importer dürfen Production nicht mehr „aus Versehen“ beschreiben. Der D
 
 Zwei getrennte Aussagen, kein Widerspruch:
 
-- **Tatsächlicher Production-Stand:** `20260821100000_trip_items_booking_status` (PR #29) und `20260821120000_trip_items_mobility` (PR #30) sind nach ausdrücklicher Nutzerfreigabe (21. August 2026) auf Production angewendet.
-- **Playbook-Grenze:** Automatische Production-Läufe stoppen bei `20260820130000`. Das ist eine Guardrail gegen unbeabsichtigtes Nachziehen späterer Dateien, kein Gegenbeweis zum realen Production-Stand.
+- **Tatsächlicher Production-Stand:** `20260821100000_trip_items_booking_status` (PR #29), `20260821120000_trip_items_mobility` (PR #30) und `20260821200000_trip_items_rental_car` (PR #31) sind nach ausdrücklicher Nutzerfreigabe auf Production angewendet. Mietwagen-Nachweis: [PR31_PRODUCTION_MIGRATION_ACCEPTANCE.md](PR31_PRODUCTION_MIGRATION_ACCEPTANCE.md).
+- **Playbook-Grenze:** Automatische Production-Läufe von `npm run db:anwenden` stoppen bei `20260820130000`. Das ist eine Guardrail gegen unbeabsichtigtes Nachziehen späterer Dateien, kein Gegenbeweis zum realen Production-Stand. Die Mietwagen-Migration wurde über den freigegebenen Supabase-Branch-Migrationsweg übernommen, nicht über diese Guardrail.
 
-`20260821200000_trip_items_rental_car.sql` bleibt Development-only und darf **nicht** auf Production angewendet werden. Eine Production-Anwendung späterer Migrationen braucht eine neue ausdrückliche Freigabe.
+Eine Production-Anwendung späterer Migrationen braucht eine neue ausdrückliche Freigabe. Die Production-Mietwagensuche bleibt aus.
 
 `npm run production:pruefen` ist vollständig read-only: nur `SELECT` auf Bestand und PostgreSQL-Metadaten (Rechte, RLS, Policies). Kein HTTP-POST, kein INSERT/UPDATE/DELETE.
 

@@ -161,6 +161,7 @@ Relevante Production-Migrationen:
 4. `20260820130000_reise_aendern_places`
 5. `20260821100000_trip_items_booking_status`
 6. `20260821120000_trip_items_mobility`
+7. `20260821200000_trip_items_rental_car`
 
 ### Booking Status
 
@@ -182,6 +183,25 @@ Verifiziert auf Production:
 - Migrationshistorie ist auf Production, Development und Repository wieder auf der kanonischen Version `20260821120000` ausgerichtet
 
 Wichtig: Die Production-Migration aktiviert **keine** Mobility-Suche und keinen Provider. Sie stellt nur das persistente Schema bereit, damit nach Merge der Anwendungscode nicht auf fehlende Spalten trifft.
+
+### Mietwagen
+
+`20260821200000_trip_items_rental_car` wurde am 22. August 2026 nach ausdrücklicher Nutzerfreigabe über den Supabase-Branch-Migrationsweg nach Production übernommen und verifiziert. Nachweis: `docs/PR31_PRODUCTION_MIGRATION_ACCEPTANCE.md`.
+
+Verifiziert auf Production:
+
+- vier Spalten `rental_supplier`, `vehicle_class`, `transmission`, `rental_evidence` vorhanden
+- neun relevanten Rental-/Mobility-/Booking-CHECKs vorhanden
+- 0 ungültige Mietwagenfelder auf Nicht-Mietwagen
+- 0 ungültige `rental_evidence`
+- 0 Transfer-spezifische Mobility-Felder auf `rental_car`
+- 0 ungültige gebuchte Kinds
+- 0 gebuchte Mietwagen mit anderer Quelle als `user`
+- zum Migrationszeitpunkt 0 bestehende `rental_car`-Zeilen
+- `reise_anlegen(jsonb)` bleibt `SECURITY INVOKER`, `search_path=public, pg_temp`, schreibt Mietwagenfelder
+- `reise_aendern(jsonb)` bleibt unverändert und schreibt keine Mietwagenfelder
+
+Die Production-Migration aktiviert **keine** Mietwagensuche und keinen Provider.
 
 Keine weitere riskante Production-DB-Aktion ohne ausdrückliche Freigabe.
 
@@ -216,35 +236,35 @@ Während Phase 3.4 auf externen Zugang wartet, wird der fehlende Reise-Unterbau 
 
 Auf `main` und Production-Schema. Suche bleibt aus. Nicht erneut bauen.
 
-### B. Mietwagen – Draft-PR #31
+### B. Mietwagen – PR #31
 
-Branch `feat/rental-car-foundation`. **Draft lassen, nicht mergen.**
+Branch `feat/rental-car-foundation`. **Ready for Review, nicht mergen.** Schema ist auf Production. Suche bleibt aus.
 
-Umgesetzt im Draft:
+Umgesetzt:
 
 - `trip_items.kind = rental_car` plus wenige optionale Spalten
 - Domäne `lib/rental-cars/`, geschlossene `POST /api/rental-cars/search`
-- Kill Switch `JETNITY_RENTAL_CAR_AKTIV`; Production hart aus
+- Kill Switch `JETNITY_RENTAL_CAR_AKTIV`; Production-Suche hart aus
 - manuelle Erfassung als Nutzerangabe; Booking nur `user`
 - UX als Unterbereich in Mobilität, kein sechster Tab
 - Mietwagen deckt keine Bewegungskante
-- Development-Migration `20260821200000` – **nicht Production**
+- Migration `20260821200000` auf Development **und** Production
 - Review-Fix (ADR-0094 / ADR-0095): keine automatische Suche, leere manuelle Defaults, konservatives One-way, Kalendertage, währungssicheres Ranking; Labels nur bei belastbarem Vergleich
 
-Qualitätsnachweis im Draft (Abnahme-Head `1951f2ba`, Nachweis `207c99ec`):
+Qualitätsnachweis:
 
 - `npm test`: **1165/1165**
 - Typecheck, Lint, Hygiene, Production-Build grün
-- Development-Migration `20260821200000` unverändert, nur Development
+- Development- und Production-Schema `20260821200000` verifiziert
 - `db:rechte`, `db:rls`, `db:sicherheit` 169/169, `db:typen --pruefen`, `auth:pruefen`
 - Trip-Workspace-Audit WebKit + Chromium: **502 Kombinationen, 0 Fehler**
 - Activities-Regression: **184 Kombinationen, 0 Fehler**
-- GitHub CI und Vercel Preview auf `1951f2ba` / `207c99ec` grün
 - echter iPhone-Test **bestanden** (`docs/PR31_REAL_DEVICE_ACCEPTANCE.md`)
+- Production-Migrationsabnahme: `docs/PR31_PRODUCTION_MIGRATION_ACCEPTANCE.md`
 
 Fachdoku: `docs/RENTAL_CARS.md`, ADR-0092 / ADR-0093 / ADR-0094 / ADR-0095.
 
-Kein Fake-Provider und keine Production-Aktivierung.
+Kein Fake-Provider und keine Production-Suche. Merge nur nach separater Freigabe.
 
 ### C. Travel Readiness & Dokumente
 
@@ -331,7 +351,7 @@ Verbindlich:
 2. Aktuellen `main`-, PR-, CI-, Vercel- und Production-Stand prüfen.
 3. PR #29 nicht erneut bauen: Coverage/Booking Status ist abgeschlossen.
 4. PR #30 ist gemergt: Foundation A nicht erneut bauen.
-5. PR #31 bleibt Draft. Real-Device-iPhone ist abgenommen. Ready erst nach finalem Head-/CI-/Preview-Review. Nicht mergen. Keine Production-Migration ohne ausdrückliche Freigabe.
+5. PR #31 ist Ready for Review und **nicht mergen**. Mietwagen-Schema liegt auf Production; die Suche bleibt aus. Nächster Schritt ist der unabhängige Review plus separate Merge-Freigabe.
 6. Phase 3.4 bleibt extern blockiert, bis echter Hotelprovider-Zugang vorliegt.
 7. Nach sauberem Abschluss von PR #31 ist der nächste geplante provider-unabhängige Block **Travel Readiness & Dokumente Foundation**.
 8. Keine Fake-Providerdaten, keine Production-Provideraktivierung und keine Secrets ohne separate Freigabe.

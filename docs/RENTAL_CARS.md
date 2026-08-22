@@ -1,6 +1,6 @@
 # Jetnity – Mietwagen
 
-**Stand:** 22. August 2026 · Foundation B / Draft-PR #31, Logic-/Truth-Fix  
+**Stand:** 22. August 2026 · Foundation B / PR #31 Ready for Review; Schema auf Production, Suche aus  
 **Gilt für:** Mietwagendomäne, Persistenz, Trip-Workspace-Unterbereich in Mobilität und geschlossene Suchnaht.
 
 Diese Datei beschreibt den tatsächlichen Mietwagenweg. Produktprinzip: [JETNITY_VISION.md](../JETNITY_VISION.md), operativer Stand: [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md), Logikstandard: [docs/LOGIC_STANDARD.md](LOGIC_STANDARD.md). Entscheidungen: ADR-0092 und ADR-0093 in [DECISIONS.md](../DECISIONS.md).
@@ -78,7 +78,7 @@ One-way vs. gleiche Station ist abgeleitet (`rentalOneWay()`). Transfer-Felder `
 
 `public.reise_anlegen()` schreibt die Mietwagenfelder und erlaubt `booked` für `rental_car` nur als `user`. `public.reise_aendern()` wird nicht ersetzt; sie schreibt keine Handels-, Mobilitäts- oder Mietwagenfelder. TypeScript-seitig schützt `lib/reiseaenderung/geschuetzt.ts` gebuchte Mietwagen gegen stille Modellmutation.
 
-Migration `20260821200000_trip_items_rental_car.sql` gilt **nur Development**. Nicht Production.
+Migration `20260821200000_trip_items_rental_car.sql` liegt auf Development **und** Production. Nachweis: [docs/PR31_PRODUCTION_MIGRATION_ACCEPTANCE.md](PR31_PRODUCTION_MIGRATION_ACCEPTANCE.md). Die Production-Suche bleibt aus.
 
 ---
 
@@ -144,7 +144,7 @@ Innerhalb von Mobilität gibt es die Unterbereiche **Verbindungen** und **Mietwa
 
 ## 8. Qualität / Nachweis
 
-Stand Draft-PR #31 Ranking-Truth-Fix, 22. August 2026, Head `a1882b90`:
+Stand PR #31 Ready for Review, 22. August 2026:
 
 - `npm test` 1165/1165
 - Typecheck, Lint, Hygiene grün
@@ -164,6 +164,6 @@ Keine neuen laufenden Kosten. Kein bezahlter Mietwagen-Account. Der Kill Switch 
 
 ## 10. Nächster Schritt
 
-Foundation B nicht um einen Fake-Provider erweitern. Der echte iPhone-Test ist abgenommen. Production-Migration und Production-Suche brauchen jeweils eine ausdrückliche Freigabe. PR #31 bleibt Draft, bis ein finales Head-/CI-/Preview-Review Ready erlaubt.
+Foundation B nicht um einen Fake-Provider erweitern. Der echte iPhone-Test ist abgenommen. Die Production-Migration ist verifiziert. Production-Suche bleibt aus. PR #31 ist Ready for Review und wartet auf den unabhängigen Review plus separate Merge-Freigabe.
 
 Danach geplant: **Travel Readiness & Dokumente Foundation**. Phase 3.4 bleibt extern blockiert.

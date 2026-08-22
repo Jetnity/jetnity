@@ -236,7 +236,7 @@ Keine neuen laufenden Kosten. Keine bezahlte Mobilitäts-API. Der Kill Switch al
 
 Foundation A nicht um einen Fake-Provider erweitern. PR #30 ist auf `main`; das Production-Schema ist angewendet, die Suche bleibt aus.
 
-Mietwagen ist Foundation B auf Draft-PR #31 und lebt als Unterbereich im Mobilitäts-Workspace. Ein Mietwagen darf eine Bewegungskante nicht als `covered` markieren. Das Öffnen des Unterbereichs startet keine Suche. Siehe [docs/RENTAL_CARS.md](RENTAL_CARS.md) und ADR-0094.
+Mietwagen ist Foundation B auf PR #31 (Ready for Review). Schema liegt auf Production, Suche bleibt aus. Ein Mietwagen darf eine Bewegungskante nicht als `covered` markieren. Das Öffnen des Unterbereichs startet keine Suche. Siehe [docs/RENTAL_CARS.md](RENTAL_CARS.md) und ADR-0094.
 
 Danach:
 

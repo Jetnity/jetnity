@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
 Stand: 21. August 2026
-Gültig für: Phase 3.3c plus Mobile-UX Iteration 1–3, Coverage/Booking und Foundation A auf `main`; Foundation B (Mietwagen) auf Draft-PR #31
+Gültig für: Phase 3.3c plus Mobile-UX Iteration 1–3, Coverage/Booking und Foundation A auf `main`; Foundation B (Mietwagen) auf PR #31, Schema auf Production, Suche aus
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 

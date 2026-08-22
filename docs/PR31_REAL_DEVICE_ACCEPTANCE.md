@@ -38,7 +38,7 @@ Vor der Real-Device-Abnahme waren auf Head `1951f2ba…` bereits grün:
 
 Diese Abnahme ändert keine Production-Daten und aktiviert keinen Provider.
 
-- Migration `20260821200000_trip_items_rental_car` bleibt bis zu separater ausdrücklicher Freigabe Development-only.
+- Die spätere Production-Übernahme von `20260821200000_trip_items_rental_car` ist in `docs/PR31_PRODUCTION_MIGRATION_ACCEPTANCE.md` festgehalten. Die Production-Suche bleibt aus.
 - Mietwagensuche bleibt auf Production aus.
 - PR #31 darf erst nach finalem Head-/CI-/Preview-Review auf Ready gesetzt werden.
 - Merge erst nach separater Production-Migrationsfreigabe und anschließender Verifikation.

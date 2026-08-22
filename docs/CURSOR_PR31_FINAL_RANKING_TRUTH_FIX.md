@@ -3,7 +3,7 @@
 Stand: 22. August 2026
 Branch: `feat/rental-car-foundation`
 PR: #31
-Status: **umgesetzt und lokal nachgewiesen**; CI/Preview grün; Real-Device-iPhone **bestanden**; keine Production-Migration; kein Provider
+Status: **umgesetzt und lokal nachgewiesen**; CI/Preview grün; Real-Device-iPhone **bestanden**; Production-Schema später separat übernommen; Suche aus; kein Provider
 
 ## Ziel
 
