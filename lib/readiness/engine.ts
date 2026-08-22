@@ -9,6 +9,7 @@ import { landescodeLesen } from '@/lib/readiness/domain'
 import {
   authorityLesen,
   checkedAtLesen,
+  gültigkeitszeitLesen,
   missingFactsLesen,
   officialAktionAusQuelle,
   officialEvidenceVertrauenswuerdig,
@@ -16,8 +17,10 @@ import {
   officialLeer,
   providerNameLesen,
   quelleUrlLesen,
+  regelReferenzLesen,
   type MissingFact,
   type OfficialEvaluation,
+  type OfficialFreshness,
 } from '@/lib/readiness/official'
 import { partyVon, travellerSlots } from '@/lib/readiness/party'
 import {
@@ -105,6 +108,7 @@ function leerFuer(
   requirementType: OfficialEvaluation['requirementType'],
   extraMissing: MissingFact[] = [],
   transitCountryCode: string | null = null,
+  freshness: OfficialFreshness = 'provider_unavailable',
 ): OfficialEvaluation {
   const missing = [...new Set([...fehlendeFakten(anfrage, traveller, requirementType), ...extraMissing])]
   const fingerprint = officialFingerprint({
@@ -126,11 +130,25 @@ function leerFuer(
     destinationCountryCode,
     transitCountryCode,
     requirementType,
-    status: missing.length > 0 ? 'insufficient_context' : 'unavailable',
-    freshness: 'provider_unavailable',
+    status: missing.length > 0 ? 'insufficient_context' : freshness === 'provider_unavailable' ? 'unavailable' : 'unknown',
+    freshness,
     missingFacts: missing,
     contextFingerprint: fingerprint,
   })
+}
+
+function gültigkeitsfeld(roh: unknown): { ok: true; wert: string | null } | { ok: false } {
+  if (roh == null || roh === '') return { ok: true, wert: null }
+  const wert = gültigkeitszeitLesen(roh)
+  return wert ? { ok: true, wert } : { ok: false }
+}
+
+function providerFehlerFreshness(fehler: unknown): OfficialFreshness {
+  if (fehler && typeof fehler === 'object' && 'availability' in fehler) {
+    const art = (fehler as { availability?: unknown }).availability
+    if (art === 'unavailable') return 'provider_unavailable'
+  }
+  return 'source_temporarily_unavailable'
 }
 
 function zeileUebernehmen(
@@ -164,12 +182,29 @@ function zeileUebernehmen(
   const provider = providerNameLesen(providerNameRoh)
   const checkedAt = checkedAtLesen(zeile.checkedAt ?? null)
   const authority = authorityLesen(zeile.authority ?? null)
-  const sourceUrl = quelleUrlLesen(zeile.sourceUrl ?? null)
+  const ruleReference = regelReferenzLesen(zeile.ruleReference ?? null)
+  const sourceUrlRoh = zeile.sourceUrl ?? null
+  const sourceUrl = quelleUrlLesen(sourceUrlRoh)
+  const validFromFeld = gültigkeitsfeld(zeile.validFrom)
+  const validUntilFeld = gültigkeitsfeld(zeile.validUntil)
+  if (!validFromFeld.ok || !validUntilFeld.ok) {
+    return officialLeer({
+      travellerClientRef: traveller.clientRef,
+      destinationCountryCode: destination,
+      transitCountryCode: transit,
+      requirementType: zeile.requirementType,
+      status: 'unknown',
+      freshness: 'never_checked',
+      missingFacts: [],
+      contextFingerprint: fingerprint,
+    })
+  }
   const freshness = officialFrische({
     storedFingerprint: fingerprint,
     currentFingerprint: fingerprint,
     checkedAt,
-    validUntil: zeile.validUntil ?? null,
+    validFrom: validFromFeld.wert,
+    validUntil: validUntilFeld.wert,
     hasProvider: true,
     sourceAvailable: zeile.availability !== 'temporarily_unavailable',
   })
@@ -203,7 +238,9 @@ function zeileUebernehmen(
     provider,
     checkedAt,
     authority,
+    ruleReference,
     sourceUrl,
+    sourceUrlRoh,
   })
   const uebernehmbar =
     vertrauenswuerdig &&
@@ -232,19 +269,24 @@ function zeileUebernehmen(
       authority,
       sourceUrl,
       checkedAt,
-      validFrom: zeile.validFrom ?? null,
-      validUntil: zeile.validUntil ?? null,
-      ruleReference: typeof zeile.ruleReference === 'string' ? zeile.ruleReference.slice(0, 80) : null,
+      validFrom: validFromFeld.wert,
+      validUntil: validUntilFeld.wert,
+      ruleReference,
       contextFingerprint: fingerprint,
     },
     action: uebernehmbar ? officialAktionAusQuelle(sourceUrl) : null,
   }
 }
 
-export function requirementsAuswerten(
+/**
+ * Reine Normalisierung. Kein Netzwerk, keine Provider-Ausführung.
+ */
+export function requirementsAusZeilen(
   anfrage: RequirementsAnfrage,
-  provider: RequirementsProvider | null = requirementsProviderAus(),
+  providerZeilen: readonly RequirementsProviderZeile[],
+  providerName: string | null,
   roh: unknown = null,
+  leerFreshness: OfficialFreshness = 'provider_unavailable',
 ): OfficialEvaluation[] {
   if (roh && typeof roh === 'object' && roh !== null) {
     const behauptung = roh as { officialResult?: unknown; llmResult?: unknown; result?: unknown }
@@ -277,36 +319,63 @@ export function requirementsAuswerten(
             documentExpiresOn: null,
           },
         ]
-
-  const providerZeilen = provider ? provider.evaluate(anfrage) : []
+  const angefragteTransits = [
+    ...new Set(
+      anfrage.transitCountryCodes
+        .map((code) => landescodeLesen(code))
+        .filter((code): code is string => Boolean(code)),
+    ),
+  ]
+  const hatProvider = Boolean(providerName)
 
   for (const traveller of travellers) {
     for (const destination of destinations) {
       for (const typ of KERN_TYPEN) {
-        const zeilen = provider
-          ? providerZeilen.filter(
-              (zeile) =>
-                zeile.travellerClientRef === traveller.clientRef &&
-                landescodeLesen(zeile.destinationCountryCode) === destination &&
-                zeile.requirementType === typ,
-            )
+        const zeilen = hatProvider
+          ? providerZeilen.filter((zeile) => {
+              if (zeile.travellerClientRef !== traveller.clientRef) return false
+              if (landescodeLesen(zeile.destinationCountryCode) !== destination) return false
+              if (zeile.requirementType !== typ) return false
+              if (typ === 'transit') {
+                const transit = landescodeLesen(zeile.transitCountryCode ?? null)
+                return Boolean(transit && angefragteTransits.includes(transit))
+              }
+              return true
+            })
           : []
-        if (zeilen.length > 0 && provider) {
+
+        if (typ === 'transit' && angefragteTransits.length > 0) {
+          for (const transit of angefragteTransits) {
+            const passende = zeilen.filter((zeile) => landescodeLesen(zeile.transitCountryCode ?? null) === transit)
+            let uebernommen = 0
+            if (hatProvider) {
+              for (const zeile of passende) {
+                const evaluation = zeileUebernehmen(anfrage, traveller, zeile, providerName as string)
+                if (evaluation) {
+                  merken(evaluation)
+                  uebernommen += 1
+                }
+              }
+            }
+            if (uebernommen === 0) {
+              merken(leerFuer(anfrage, traveller, destination, typ, [], transit, leerFreshness))
+            }
+          }
+          continue
+        }
+
+        if (zeilen.length > 0 && hatProvider) {
           let uebernommen = 0
           for (const zeile of zeilen) {
-            const evaluation = zeileUebernehmen(anfrage, traveller, zeile, provider.name)
+            const evaluation = zeileUebernehmen(anfrage, traveller, zeile, providerName as string)
             if (evaluation) {
               merken(evaluation)
               uebernommen += 1
             }
           }
-          if (uebernommen === 0) merken(leerFuer(anfrage, traveller, destination, typ))
-        } else if (typ === 'transit' && anfrage.transitCountryCodes.length > 0) {
-          for (const transit of anfrage.transitCountryCodes) {
-            merken(leerFuer(anfrage, traveller, destination, typ, [], transit))
-          }
+          if (uebernommen === 0) merken(leerFuer(anfrage, traveller, destination, typ, [], null, leerFreshness))
         } else {
-          merken(leerFuer(anfrage, traveller, destination, typ))
+          merken(leerFuer(anfrage, traveller, destination, typ, [], null, leerFreshness))
         }
       }
     }
@@ -315,10 +384,28 @@ export function requirementsAuswerten(
   return evaluations
 }
 
-export function requirementsFuerReise(
+export async function requirementsAuswerten(
+  anfrage: RequirementsAnfrage,
+  provider: RequirementsProvider | null = requirementsProviderAus(),
+  roh: unknown = null,
+): Promise<OfficialEvaluation[]> {
+  if (!provider) return requirementsAusZeilen(anfrage, [], null, roh)
+  try {
+    const zeilen = await provider.evaluate(anfrage)
+    return requirementsAusZeilen(anfrage, zeilen, provider.name, roh)
+  } catch (fehler) {
+    return requirementsAusZeilen(anfrage, [], provider.name, roh, providerFehlerFreshness(fehler))
+  }
+}
+
+export function requirementsLokalFuerReise(reise: Trip): OfficialEvaluation[] {
+  return requirementsAusZeilen(requirementsAnfrageAusReise(reise), [], null)
+}
+
+export async function requirementsFuerReise(
   reise: Trip,
   provider: RequirementsProvider | null = requirementsProviderAus(),
-): OfficialEvaluation[] {
+): Promise<OfficialEvaluation[]> {
   return requirementsAuswerten(requirementsAnfrageAusReise(reise), provider)
 }
 

@@ -13,7 +13,9 @@ import {
   officialListeHinweis,
   officialPruefungAusEvaluations,
   officialStatusText,
+  officialTravellerErgebnisText,
 } from '@/lib/readiness/bezeichnungen'
+import type { OfficialEvaluation } from '@/lib/readiness/official'
 import { slotMissingFactsErgaenzen, travellerSlots } from '@/lib/readiness/party'
 import { readinessAnsicht, readinessZusammenfassungText } from '@/lib/readiness/status'
 import type { ReadinessKind, ReadinessUserStatus, TravellerDocumentType, Trip } from '@/types/trips'
@@ -23,12 +25,14 @@ const GRUPPEN = ['einreise', 'dokumente', 'versicherung', 'bestaetigung', 'sonst
 
 export default function Reisevorbereitung({
   reise,
+  officialEvaluations,
   onSetzen,
   onEntfernen,
   onTravellerSetzen,
   onTravellerEntfernen,
 }: {
   reise: Trip
+  officialEvaluations?: OfficialEvaluation[]
   onSetzen?: (eingabe: {
     clientRef: string
     kind: ReadinessKind
@@ -52,7 +56,7 @@ export default function Reisevorbereitung({
   const [offen, setOffen] = React.useState(false)
   const [meldung, setMeldung] = React.useState('')
   const [titel, setTitel] = React.useState('')
-  const { items, summary, evaluations } = readinessAnsicht(reise)
+  const { items, summary, evaluations } = readinessAnsicht(reise, officialEvaluations)
   const slots = travellerSlots(reise).map((slot) =>
     slotMissingFactsErgaenzen(
       slot,
@@ -163,7 +167,6 @@ export default function Reisevorbereitung({
               .filter((slot) => slot.applicable)
               .map((slot) => {
                 const eigene = evaluations.filter((eintrag) => eintrag.travellerClientRef === slot.clientRef)
-                const required = eigene.filter((eintrag) => eintrag.result === 'required').length
                 const aktionen = [
                   ...new Map(
                     eigene
@@ -176,9 +179,7 @@ export default function Reisevorbereitung({
                   <li key={`off-${slot.clientRef}`} className="rounded-2xl border border-line-200 px-3 py-3">
                     <p className="text-sm font-semibold text-brand-800">{slot.label}</p>
                     <p className="mt-0.5 text-xs leading-5 text-ink-800">
-                      {required > 0
-                        ? `${required} offiziell erforderlich`
-                        : 'Noch nicht automatisch geprüft'}
+                      {officialTravellerErgebnisText(eigene)}
                       {slot.missingFacts.includes('nationality') ? ' · Staatsangehörigkeit fehlt' : ''}
                     </p>
                     {aktionen.map((aktion) => (

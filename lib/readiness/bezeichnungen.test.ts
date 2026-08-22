@@ -7,7 +7,32 @@ import {
   officialFreshnessText,
   officialListeHinweis,
   officialPruefungAusLage,
+  officialTravellerErgebnisText,
 } from '@/lib/readiness/bezeichnungen'
+import type { OfficialEvaluation } from '@/lib/readiness/official'
+
+function evaluation(teil: Partial<OfficialEvaluation> & Pick<OfficialEvaluation, 'result' | 'status' | 'freshness'>): OfficialEvaluation {
+  return {
+    travellerClientRef: 'traveller:1',
+    destinationCountryCode: 'TH',
+    transitCountryCode: null,
+    requirementType: 'visa',
+    officialClass: 'requirement',
+    missingFacts: [],
+    evidence: {
+      provider: 'test',
+      authority: 'Test',
+      sourceUrl: null,
+      checkedAt: '2026-08-22T08:00:00.000Z',
+      validFrom: null,
+      validUntil: null,
+      ruleReference: null,
+      contextFingerprint: 'off',
+    },
+    action: null,
+    ...teil,
+  }
+}
 
 describe('Official-Copy folgt Status und Freshness', () => {
   test('Provider unavailable bleibt ehrlich', () => {
@@ -77,5 +102,33 @@ describe('Official-Copy folgt Status und Freshness', () => {
     ])
     assert.match(text, /geprüft/)
     assert.doesNotMatch(text, /nicht verfügbar|Ohne Provider/i)
+  })
+
+  test('Traveller-Ergebnis unterscheidet required, not_required und conditional', () => {
+    assert.match(officialTravellerErgebnisText([evaluation({ result: 'required', status: 'current', freshness: 'current' })]), /erforderlich/)
+    assert.equal(
+      officialTravellerErgebnisText([evaluation({ result: 'not_required', status: 'current', freshness: 'current' })]),
+      'Offiziell nicht erforderlich',
+    )
+    assert.equal(
+      officialTravellerErgebnisText([evaluation({ result: 'conditional', status: 'current', freshness: 'current' })]),
+      'Offiziell bedingt',
+    )
+    assert.equal(
+      officialTravellerErgebnisText([
+        evaluation({ result: 'unknown', status: 'insufficient_context', freshness: 'never_checked', missingFacts: ['residence'] }),
+      ]),
+      'Für die Prüfung fehlen noch Angaben',
+    )
+    assert.equal(
+      officialTravellerErgebnisText([
+        evaluation({ result: 'unknown', status: 'unavailable', freshness: 'provider_unavailable' }),
+      ]),
+      'Noch nicht automatisch geprüft',
+    )
+    assert.doesNotMatch(
+      officialTravellerErgebnisText([evaluation({ result: 'not_required', status: 'current', freshness: 'current' })]),
+      /ungeprüft|Reise ist bereit/i,
+    )
   })
 })

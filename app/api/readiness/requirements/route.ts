@@ -7,6 +7,7 @@
 import { NextResponse } from 'next/server'
 
 import {
+  officialAusEvaluations,
   officialRequirementsPruefen,
   requirementsEvaluationsPruefen,
   type OfficialRequirementAnfrage,
@@ -95,8 +96,8 @@ export async function POST(req: Request) {
   }
 
   const anfrage: OfficialRequirementAnfrage = geprueft.data
-  const evaluations = requirementsEvaluationsPruefen(anfrage)
-  const official = officialRequirementsPruefen(anfrage)
+  const evaluations = await requirementsEvaluationsPruefen(anfrage)
+  const official = officialAusEvaluations(evaluations, anfrage)
 
   return antwort(200, {
     status: official.status,

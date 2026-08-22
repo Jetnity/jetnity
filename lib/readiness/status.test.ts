@@ -129,4 +129,35 @@ describe('Readiness-Gesamtstatus', () => {
     const { summary } = readinessAnsicht(beispielreise())
     assert.ok(summary.officialStatus === 'unavailable' || summary.officialStatus === 'insufficient_context')
   })
+
+  test('gelieferte Evaluations erreichen die Ansicht ohne Client-Provider', () => {
+    const { evaluations, summary } = readinessAnsicht(beispielreise({ travellers: 1 }), [
+      {
+        travellerClientRef: 'traveller:1',
+        destinationCountryCode: 'IT',
+        transitCountryCode: null,
+        requirementType: 'visa',
+        result: 'not_required',
+        status: 'current',
+        freshness: 'current',
+        officialClass: 'requirement',
+        missingFacts: [],
+        evidence: {
+          provider: 'test',
+          authority: 'Test',
+          sourceUrl: null,
+          checkedAt: JETZT,
+          validFrom: null,
+          validUntil: null,
+          ruleReference: 'VISA-IT',
+          contextFingerprint: 'off',
+        },
+        action: null,
+      },
+    ])
+    assert.equal(evaluations[0]?.result, 'not_required')
+    assert.equal(summary.officialFreshness, 'current')
+    assert.equal(summary.officialResult, 'unknown')
+    assert.doesNotMatch(readinessZusammenfassungText(summary), /Reise ist bereit/)
+  })
 })

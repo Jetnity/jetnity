@@ -3,6 +3,10 @@
 // Provider-neutrale Naht für offizielle Anforderungen.
 // Foundation C hat keinen Provider: fail closed, unknown bleibt unknown.
 // Keine Fake-Regeln, keine Modellantwort als Quelle.
+//
+// Kanonische neue Wahrheit: OfficialEvaluation[] aus der Engine.
+// `official` / officialRequirementsPruefen ist Legacy-Compatibility
+// und bleibt immer result: 'unknown'.
 
 import {
   LEERE_OFFICIAL_REQUIRED_FACTS,
@@ -10,7 +14,7 @@ import {
   type OfficialRequirementEvidence,
   type OfficialRequirementReason,
 } from '@/lib/readiness/domain'
-import { requirementsAuswerten } from '@/lib/readiness/engine'
+import { requirementsAuswerten, requirementsAusZeilen } from '@/lib/readiness/engine'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
 import { requirementsProviderAus, type RequirementsAnfrage, type RequirementsProvider } from '@/lib/readiness/provider'
 
@@ -104,57 +108,58 @@ function anfrageAus(anfrage: OfficialRequirementAnfrage): RequirementsAnfrage {
   }
 }
 
+function reasonAusEvaluation(evaluation: OfficialEvaluation): OfficialRequirementReason {
+  if (evaluation.status === 'insufficient_context') {
+    if (evaluation.missingFacts.includes('nationality')) return 'missing_nationality'
+    if (evaluation.missingFacts.includes('destination_country')) return 'unknown_country_code'
+    return 'insufficient_context'
+  }
+  return 'no_provider'
+}
+
+/**
+ * Legacy-Compatibility. Immer `result: 'unknown'`.
+ * Neue Logik entscheidet aus `evaluations[]`, nicht aus diesem Objekt.
+ */
+export function officialAusEvaluations(
+  evaluations: readonly OfficialEvaluation[],
+  anfrage: OfficialRequirementAnfrage = {},
+): OfficialRequirementEvidence {
+  const erste = evaluations[0]
+  if (!erste) return officialRequirementLeer(anfrage, 'no_provider')
+  return {
+    destinationCountryCode: erste.destinationCountryCode,
+    requiredTravellerFacts: LEERE_OFFICIAL_REQUIRED_FACTS,
+    requirementType: 'entry_or_visa',
+    result: 'unknown',
+    status: erste.status === 'current' ? 'unknown' : erste.status,
+    authority: erste.evidence.authority,
+    sourceUrl: erste.evidence.sourceUrl,
+    checkedAt: erste.evidence.checkedAt,
+    validityUntil: erste.evidence.validUntil,
+    reason: reasonAusEvaluation(erste),
+  }
+}
+
 /**
  * Kanonische API-Antwort: alle strukturierten Evaluations.
- * Legacy `officialRequirementsPruefen` bleibt eine reduzierte Zusammenfassung.
+ * Async, damit ein späterer Netzwerkprovider ohne Kernumbau anbindbar ist.
  */
-export function requirementsEvaluationsPruefen(
+export async function requirementsEvaluationsPruefen(
   anfrage: OfficialRequirementAnfrage = {},
   provider: RequirementsProvider | null = requirementsProviderAus(),
-): OfficialEvaluation[] {
+): Promise<OfficialEvaluation[]> {
   return requirementsAuswerten(anfrageAus(anfrage), provider, anfrage)
 }
 
 /**
- * Geschlossene Anforderungsnaht. Ohne Provider niemals required/not_required.
- * Ein Country Code allein erzeugt keine Visa-Aussage.
- * Legacy-Zusammenfassung; die API-Wahrheit liegt in `requirementsEvaluationsPruefen`.
+ * Geschlossene Legacy-Zusammenfassung. Immer fail closed, immer `result: 'unknown'`.
+ * Nutzt nur lokale Normalisierung ohne Provider-Ausführung.
+ * Die API-Wahrheit liegt in `requirementsEvaluationsPruefen`.
  */
 export function officialRequirementsPruefen(
   anfrage: OfficialRequirementAnfrage = {},
 ): OfficialRequirementEvidence {
-  const evaluations = requirementsEvaluationsPruefen(anfrage)
-  const erste = evaluations[0]
-  if (erste) {
-    return {
-      destinationCountryCode: erste.destinationCountryCode,
-      requiredTravellerFacts: LEERE_OFFICIAL_REQUIRED_FACTS,
-      requirementType: 'entry_or_visa',
-      result: 'unknown',
-      status: erste.status === 'current' ? 'unknown' : erste.status,
-      authority: erste.evidence.authority,
-      sourceUrl: erste.evidence.sourceUrl,
-      checkedAt: erste.evidence.checkedAt,
-      validityUntil: erste.evidence.validUntil,
-      reason:
-        erste.status === 'insufficient_context'
-          ? erste.missingFacts.includes('nationality')
-            ? 'missing_nationality'
-            : erste.missingFacts.includes('destination_country')
-              ? 'unknown_country_code'
-              : 'insufficient_context'
-          : 'no_provider',
-    }
-  }
-  return officialRequirementLeer(anfrage, 'no_provider')
-}
-
-export function officialRequirementsFuerReise(opts: {
-  destinationCountryCode: string | null
-  travellers: number
-}): OfficialRequirementEvidence {
-  return officialRequirementsPruefen({
-    destinationCountryCode: opts.destinationCountryCode,
-    travellers: opts.travellers,
-  })
+  const evaluations = requirementsAusZeilen(anfrageAus(anfrage), [], null, anfrage)
+  return officialAusEvaluations(evaluations, anfrage)
 }

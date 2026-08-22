@@ -62,7 +62,7 @@ describe('Readiness-API-Hülle', () => {
     readinessRateLeeren()
   })
 
-  test('Browser kann official Evidence nicht vortäuschen', () => {
+  test('Browser kann official Evidence nicht vortäuschen', async () => {
     const geprueft = readinessAnforderungAnfrageSchema.safeParse({
       destinationCountryCode: 'TH',
       officialResult: 'not_required',
@@ -72,13 +72,13 @@ describe('Readiness-API-Hülle', () => {
     const official = officialRequirementsPruefen(geprueft.success ? geprueft.data : {})
     assert.equal(official.result, 'unknown')
     assert.equal(official.authority, null)
-    const evaluations = requirementsEvaluationsPruefen(geprueft.success ? geprueft.data : {})
+    const evaluations = await requirementsEvaluationsPruefen(geprueft.success ? geprueft.data : {})
     assert.ok(evaluations.length > 1)
     assert.ok(evaluations.every((eintrag) => eintrag.result === 'unknown'))
   })
 
-  test('API-Evaluations kollabieren nicht auf den ersten Treffer', () => {
-    const evaluations = requirementsEvaluationsPruefen({
+  test('API-Evaluations kollabieren nicht auf den ersten Treffer', async () => {
+    const evaluations = await requirementsEvaluationsPruefen({
       destinationCountryCodes: ['TH', 'JP'],
       startDate: '2026-09-12',
       party: [
@@ -92,8 +92,8 @@ describe('Readiness-API-Hülle', () => {
     assert.ok(evaluations.every((eintrag) => eintrag.result === 'unknown'))
   })
 
-  test('Reisendenanzahl ohne Party erzeugt getrennte Slots', () => {
-    const evaluations = requirementsEvaluationsPruefen({
+  test('Reisendenanzahl ohne Party erzeugt getrennte Slots', async () => {
+    const evaluations = await requirementsEvaluationsPruefen({
       destinationCountryCodes: ['TH', 'JP'],
       travellers: 2,
       startDate: '2026-09-12',

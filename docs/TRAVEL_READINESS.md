@@ -63,7 +63,7 @@ Transit ohne belastbare Zwischenstopps bleibt `insufficient_context` (`transit_i
 
 `routeFactsAusReise()` ist die einzige Origin-/Transit-Naht. Sie liefert heute bewusst leer (`quelle: 'none'`). Strukturierte Flight-/Itinerary-Ländercodes sind die nächste technische Abhängigkeit, nicht eine bereits vorhandene Graph-Fähigkeit.
 
-Offizielle `required` / `not_required` / `conditional` Aussagen brauchen vollständige Official Evidence: Provider-Identität, gültiges `checkedAt`, Authority und validierte HTTPS-Quelle. Unvollständige Evidence bleibt `unknown` und erzeugt keine Official Action.
+Offizielle `required` / `not_required` / `conditional` Aussagen brauchen provider-neutrale Official Evidence: Provider-Identität, zeitlich plausibles `checkedAt`, Authority und/oder Rule Reference. Eine Source URL ist für das Resultat optional; wenn vorhanden, muss sie valide HTTPS sein. Official Action gibt es nur aus einer validierten HTTPS-URL. `validFrom` in der Zukunft und abgelaufenes `validUntil` bleiben nicht `current`. Unvollständige oder ungültige Evidence bleibt `unknown`.
 
 Ein Provider darf `insufficient_context` mit strukturierten `missingFacts` zurückgeben. Nur tatsächlich fehlende Fakten werden übernommen; bekannte Angaben werden nicht erneut verlangt.
 
@@ -83,8 +83,11 @@ Unverändert eigene Domäne `trip_readiness_items`, kein `trip_items.kind`. Cont
 - Browser- oder LLM-Felder (`officialResult`, `llmResult`) werden ignoriert
 - Source-URLs nur `https`, ohne Credentials
 - Factory gibt `null` zurück; Tests dürfen einen Port injizieren
-- Kanonische Antwort ist `evaluations[]` (Traveller × Destination × Transit × Requirement Type)
-- `official` bleibt eine explizit reduzierte Legacy-Zusammenfassung und kollabiert nicht die Engine-Wahrheit
+- Kanonische Antwort und einzige neue Official-Truth ist `evaluations[]` (Traveller × Destination × Transit × Requirement Type)
+- `official` bleibt eine explizit reduzierte Legacy-Zusammenfassung, immer `result: 'unknown'`, und darf keine neue Logikentscheidung treffen
+- Provider-Port ist async; Throw/Timeout bleibt fail closed (`source_temporarily_unavailable` bzw. `provider_unavailable`)
+- UI kann gelieferte Evaluations empfangen; ohne Lieferung bleibt der lokale fail-closed Fallback
+- Teilweise Transit-Providerzeilen bleiben vollständig: fehlendes angefragtes Transitland → `unknown`; unangefragtes Transitland wird ignoriert
 
 Bevorzugter späterer Kandidat: IATA Timatic / Timatic AutoCheck. Die Domain bleibt provider-neutral. Kein Vertrag, kein Secret, kein Fake-Adapter.
 
@@ -109,12 +112,9 @@ Zuerst offizielle Prüfung und fehlende Angaben, danach die persönliche Vorbere
 
 ## Nachweis Draft-PR #32
 
-Human-Review-Fixes (ADR-0107, ADR-0108) auf Implementierungs-Head `5591e870`:
+Final-Architecture-Review (ADR-0107 bis ADR-0110) auf Draft-PR #32. Exakte Test-/Audit-/CI-Zahlen folgen der Verifikation dieses Heads.
 
-- Tests **1244/1244**
-- Typecheck, Lint, Hygiene, Auth-Konfiguration und Production-Build grün
-- Trip-Workspace-Audit WebKit + Chromium: **662 Kombinationen, 0 Fehler**
-- Activities-Regression: **184 Kombinationen, 0 Fehler**
-- GitHub CI und Vercel Preview grün
-- Preview: `https://jetnity-app-git-feat-travel-readiness-f-f8117d-jetnity-e1b93c82.vercel.app`
-- Development-Migration angewendet; Production-Schema unverändert
+Zuvor Human-Review-Fixes auf `5591e870`: Tests **1244/1244**, Workspace-Audit **662/0**, Activities **184/0**, Typecheck/Lint/Hygiene/Build/Auth/CI/Preview grün.
+
+Preview bleibt: `https://jetnity-app-git-feat-travel-readiness-f-f8117d-jetnity-e1b93c82.vercel.app`  
+Development-Migration angewendet; Production-Schema unverändert.

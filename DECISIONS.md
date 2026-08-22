@@ -2640,9 +2640,9 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 ## ADR-0107 – Official Evidence muss vollständig vertrauenswürdig sein
 
 **Datum:** 22. August 2026  
-**Status:** umgesetzt auf Draft-PR #32
+**Status:** umgesetzt auf Draft-PR #32; Trust-Felder präzisiert in ADR-0110
 
-**Entscheidung:** Ein Provider-Resultat darf nur dann `required`, `not_required` oder `conditional` werden, wenn die Official Evidence vollständig validiert ist: Provider-Identität, gültiges ISO-`checkedAt`, Authority, validierte HTTPS-`sourceUrl` und passende Traveller-/Destination-Zuordnung. Freshness muss `current` sein. Fehlt eines davon, gilt fail closed: `result = unknown`, keine Official Action.
+**Entscheidung:** Ein Provider-Resultat darf nur dann `required`, `not_required` oder `conditional` werden, wenn die Official Evidence provider-neutral vertrauenswürdig ist und Freshness `current` ist. Fehlt die Trust-Grenze, gilt fail closed: `result = unknown`.
 
 **Kontext:** Human Review von PR #32. Ein Test- oder späterer Echtprovider darf keine regulatorische Aussage ohne belastbare Evidence erzeugen.
 
@@ -2653,7 +2653,7 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 
 **Begründung:** Official Requirement Truth braucht eine klare Trust-Grenze. Unvollständige Evidence ist keine Aussage.
 
-**Konsequenzen:** `officialEvidenceVertrauenswuerdig()` ist die gemeinsame Schwelle. Temporär nicht erreichbare Quellen bleiben `unknown` mit Freshness `source_temporarily_unavailable`.
+**Konsequenzen:** `officialEvidenceVertrauenswuerdig()` bleibt die gemeinsame Schwelle. Die genaue Feldliste (Authority und/oder Rule Reference, optionale Source URL, Gültigkeitszeit) steht in ADR-0110. Temporär nicht erreichbare Quellen bleiben `unknown` mit Freshness `source_temporarily_unavailable`.
 
 ---
 
@@ -2674,6 +2674,64 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 **Begründung:** Eine leere, explizite Naht macht die Lücke sichtbar und verhindert stilles Raten. Die nächste technische Abhängigkeit ist: Flight-/Itinerary-Ländercodes in `RequirementsAnfrage.originCountryCode` und `transitCountryCodes` füllen, sobald der Graph sie strukturiert trägt.
 
 **Konsequenzen:** Transit ohne belastbare Zwischenstopps bleibt `insufficient_context` (`transit_itinerary`). Ein Provider darf `origin_country` / `transit_itinerary` als Missing Facts zurückgeben; bekannte Codes werden nicht erneut verlangt. Die Foundation darf nicht so dokumentiert werden, als erkenne sie Transit bereits automatisch.
+
+---
+
+## ADR-0109 – Provider-Port ist async und fehlertolerant
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** `RequirementsProvider.evaluate` ist asynchron. Die Engine trennt reine Normalisierung (`requirementsAusZeilen`) von der Orchestrierung (`requirementsAuswerten`). Ein Throw, Timeout oder eine temporäre Nichterreichbarkeit wird gefangen und bleibt fail closed. `requirementsProviderAus()` bleibt in Foundation C `null`. Browser oder LLM können keinen Provider injizieren.
+
+**Kontext:** Final Architecture Review von PR #32. Ein echter Timatic- oder vergleichbarer Dienst ist ein Netzwerkaufruf. Ein synchroner Port hätte die Kernarchitektur bei der ersten Provider-Aktivierung erneut umbauen müssen. Ein ungefangener Throw hätte als HTTP 500 die API verlassen.
+
+**Alternativen:**
+
+1. *Port erst bei Provider-Aktivierung async machen.* Würde Foundation C und den ersten echten Adapter koppeln.
+2. *Throw als 500 durchreichen.* Würde einen Infrastrukturfehler als Produktabsturz ausgeben.
+
+**Begründung:** Die Foundation muss einen späteren Netzwerkprovider aufnehmen können, ohne Truth-Logik oder API-Vertrag umzubauen. Fehler bleiben ehrlich unbekannt.
+
+**Konsequenzen:**
+- Throw ohne `availability: 'unavailable'` → Freshness `source_temporarily_unavailable`
+- Throw mit `availability: 'unavailable'` → Freshness `provider_unavailable`
+- `requirementsLokalFuerReise()` bleibt synchron und providerlos für UI-Fallback
+- `requirementsFuerReise()` / `requirementsEvaluationsPruefen()` sind async
+- Die UI konsumiert optional gelieferte `OfficialEvaluation[]`; ohne Lieferung bleibt der lokale Fallback
+- `evaluations[]` ist die einzige kanonische neue Official-Truth. Legacy-`official` / `officialRequirementsPruefen` / `officialAusEvaluations` bleiben Compatibility und immer `result: 'unknown'`
+
+---
+
+## ADR-0110 – Provider-neutrale Evidence- und Gültigkeitsgrenze
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Draft-PR #32
+
+**Entscheidung:** Trust für ein offizielles Resultat verlangt:
+
+1. valide Provider-Identität
+2. valides, zeitlich plausibles `checkedAt` (Clock-Skew-Toleranz 5 Minuten)
+3. Authority **und/oder** Provider-Rule-Reference
+4. `sourceUrl` nur falls vorhanden: dann muss sie valide HTTPS sein; ungültige vorhandene URL macht Evidence untrusted
+5. Official Action nur bei valider HTTPS-`sourceUrl`
+6. `validFrom` / `validUntil`, falls vorhanden, als Datum oder ISO-DateTime
+7. zukünftiges `validFrom` → nicht `current`
+8. abgelaufenes `validUntil` → `recheck_needed`
+9. ungültige Gültigkeitsfelder oder `checkedAt` jenseits der Skew-Toleranz → fail closed
+
+Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
+
+**Kontext:** ADR-0107 verlangte zunächst zwingend eine Source URL. Der Automations-Auftrag definiert Source URL als „falls vorhanden“. Ein vertrauenswürdiger Provider kann eine Regel ohne klickbare Behörden-URL belegen. Gleichzeitig dürfen zukünftige oder ungültige Gültigkeitsfenster nicht als `current required` erscheinen.
+
+**Alternativen:**
+
+1. *Source URL weiter zwingend halten.* Würde belastbare Provider-Evidence ohne öffentliche URL blockieren.
+2. *Gültigkeitsfelder ignorieren.* Würde abgelaufene oder noch nicht gültige Regeln als aktuell ausgeben.
+
+**Begründung:** Official Action und Official Resultat sind verschiedene Dinge. Eine Action braucht eine sichere HTTPS-Quelle. Ein Resultat braucht belastbare Provider-Evidence und eine plausible Zeit. Die Trust-Grenze bleibt streng, aber nicht an eine einzelne URL gebunden.
+
+**Konsequenzen:** `officialEvidenceVertrauenswuerdig()` akzeptiert Authority oder Rule Reference. `officialFrische()` berücksichtigt `validFrom`. Teilweise fehlende Transit-Providerzeilen erzeugen für jedes angefragte Transitland eine Evaluation; unangefragte Transitländer werden ignoriert.
 
 ---
 

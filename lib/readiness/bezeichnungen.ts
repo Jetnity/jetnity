@@ -95,6 +95,31 @@ export function officialListeHinweis(evaluations: readonly OfficialEvaluation[])
   return `${officialPruefungAusEvaluations(evaluations)}. Unterschiedliche Reisende werden getrennt bewertet.`
 }
 
+/**
+ * Traveller-Karte: Resultat vor Freshness, nie pauschal „ungeprüft“ bei current not_required.
+ */
+export function officialTravellerErgebnisText(evaluations: readonly OfficialEvaluation[]): string {
+  const aktuell = evaluations.filter((eintrag) => eintrag.status === 'current' && eintrag.freshness === 'current')
+  const required = aktuell.filter((eintrag) => eintrag.result === 'required').length
+  if (required > 0) return `${required} offiziell erforderlich`
+  if (aktuell.some((eintrag) => eintrag.result === 'conditional')) return 'Offiziell bedingt'
+  if (aktuell.some((eintrag) => eintrag.result === 'not_required')) return 'Offiziell nicht erforderlich'
+  if (
+    evaluations.some(
+      (eintrag) => eintrag.status === 'insufficient_context' || eintrag.missingFacts.length > 0,
+    )
+  ) {
+    return 'Für die Prüfung fehlen noch Angaben'
+  }
+  if (evaluations.some((eintrag) => eintrag.freshness === 'stale' || eintrag.freshness === 'recheck_needed')) {
+    return officialFreshnessText('stale')
+  }
+  if (evaluations.some((eintrag) => eintrag.freshness === 'source_temporarily_unavailable')) {
+    return officialFreshnessText('source_temporarily_unavailable')
+  }
+  return 'Noch nicht automatisch geprüft'
+}
+
 export const SENSITIVE_HINWEIS =
   'Keine Passnummern, Ausweisdaten, Geburtsdaten oder andere sensible Daten eintragen.'
 

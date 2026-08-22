@@ -117,13 +117,56 @@ export function providerNameLesen(wert: unknown): string | null {
   return name
 }
 
+/** Clock-Skew-Toleranz für Provider-Uhren: 5 Minuten. */
+const CHECKED_AT_SKEW_MS = 5 * 60 * 1000
+
+export function regelReferenzLesen(wert: unknown): string | null {
+  if (typeof wert !== 'string') return null
+  const text = wert.trim()
+  if (text.length < 2 || text.length > 80) return null
+  return text
+}
+
+export function gültigkeitszeitLesen(wert: unknown): string | null {
+  if (typeof wert !== 'string') return null
+  const text = wert.trim()
+  if (/^\d{4}-\d{2}-\d{2}$/.test(text)) {
+    return Number.isFinite(Date.parse(`${text}T00:00:00.000Z`)) ? text : null
+  }
+  return checkedAtLesen(text)
+}
+
+function gültigkeitszeitMs(wert: string): number {
+  return Date.parse(/^\d{4}-\d{2}-\d{2}$/.test(wert) ? `${wert}T00:00:00.000Z` : wert)
+}
+
+function checkedAtPlausibel(checkedAt: string | null, nowMs = Date.now()): boolean {
+  if (!checkedAt) return false
+  const ms = Date.parse(checkedAt)
+  return Number.isFinite(ms) && ms <= nowMs + CHECKED_AT_SKEW_MS
+}
+
+/**
+ * Provider-neutrale Trust-Grenze.
+ * Source URL ist optional für das Resultat; wenn vorhanden, muss sie valide HTTPS sein.
+ * Official Action braucht zusätzlich eine validierte Source URL.
+ */
 export function officialEvidenceVertrauenswuerdig(opts: {
   provider: string | null
   checkedAt: string | null
   authority: string | null
+  ruleReference?: string | null
   sourceUrl: string | null
+  sourceUrlRoh?: unknown
+  nowMs?: number
 }): boolean {
-  return Boolean(opts.provider && opts.checkedAt && opts.authority && opts.sourceUrl)
+  if (!opts.provider || !opts.checkedAt) return false
+  if (!checkedAtPlausibel(opts.checkedAt, opts.nowMs ?? Date.now())) return false
+  if (!opts.authority && !opts.ruleReference) return false
+  if (typeof opts.sourceUrlRoh === 'string' && opts.sourceUrlRoh.trim() !== '' && !opts.sourceUrl) {
+    return false
+  }
+  return true
 }
 
 export function quelleUrlLesen(wert: unknown): string | null {
@@ -180,6 +223,7 @@ export function officialFrische(opts: {
   storedFingerprint: string | null
   currentFingerprint: string
   checkedAt: string | null
+  validFrom?: string | null
   validUntil: string | null
   now?: string
   hasProvider: boolean
@@ -189,6 +233,12 @@ export function officialFrische(opts: {
   if (opts.sourceAvailable === false) return 'source_temporarily_unavailable'
   if (!opts.checkedAt) return 'never_checked'
   if (opts.storedFingerprint && opts.storedFingerprint !== opts.currentFingerprint) return 'stale'
-  if (opts.validUntil && (opts.now ?? new Date().toISOString()) > opts.validUntil) return 'recheck_needed'
+  const jetzt = opts.now ? Date.parse(opts.now) : Date.now()
+  if (opts.validFrom && Number.isFinite(jetzt) && jetzt < gültigkeitszeitMs(opts.validFrom)) {
+    return 'never_checked'
+  }
+  if (opts.validUntil && Number.isFinite(jetzt) && jetzt > gültigkeitszeitMs(opts.validUntil)) {
+    return 'recheck_needed'
+  }
   return 'current'
 }

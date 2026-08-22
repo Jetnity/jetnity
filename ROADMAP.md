@@ -198,7 +198,7 @@ Nicht in diesem Block: echter Provider, Fake-Angebote, Führerschein-/Zahlungsda
 
 ### Foundation C – Travel Readiness & Dokumente
 
-**Draft-PR #32**, Branch `feat/travel-readiness-foundation`. Nicht mergen. Keine Production-Migration. Human-Review-Fixes nach `docs/CURSOR_PR32_HUMAN_REVIEW_FIXES.md`.
+**Draft-PR #32**, Branch `feat/travel-readiness-foundation`. Nicht mergen. Keine Production-Migration. Final Architecture Review nach `docs/CURSOR_PR32_FINAL_ARCHITECTURE_REVIEW.md`.
 
 Automatic Travel Requirements & Readiness:
 
@@ -209,14 +209,17 @@ Automatic Travel Requirements & Readiness:
 - Context-Fingerprint und Freshness/Recheck
 - progressive Missing Facts, keine Dokumentnummern
 - API liefert strukturierte `evaluations[]`; Legacy-`official` kollabiert die Engine nicht
-- Official Evidence vor `required`/`not_required`/`conditional` streng validiert
-- Multi-Transit bleibt getrennt; Provider kann `insufficient_context` + `missingFacts` liefern
+- Official Evidence vor `required`/`not_required`/`conditional` provider-neutral validiert (Authority oder Rule Reference; Source URL optional)
+- Provider-Port async; Throw/Timeout fail closed
+- UI kann gelieferte `evaluations[]` empfangen; Legacy-`official` entscheidet nicht
+- Multi-Transit bleibt vollständig, auch bei Teilzeilen; unangefragte Transitländer werden ignoriert
+- Provider kann `insufficient_context` + `missingFacts` liefern
 - Origin-/Transit-Ländercodes sind eine leere Route-Naht, keine Ableitung aus Ortsnamen
 - Guest und Account dieselbe Form
 - UX in der mobilen Übersicht und auf Desktop nach dem Reisekopf, fünf Hauptbereiche unverändert
 - kein Dokumententresor, keine OCR, kein Storage-Bucket
 
-Nachweis auf `5591e870`: Tests **1244/1244**, Workspace-Audit **662/0**, Activities **184/0**, Typecheck/Lint/Hygiene/Build/Auth/CI/Preview grün.
+Final-Architecture-Review-Nachweis folgt der Verifikation dieses Heads. Vorheriger Nachweis auf `5591e870`: Tests **1244/1244**, Workspace-Audit **662/0**, Activities **184/0**.
 
 Fachdoku: [docs/TRAVEL_READINESS.md](docs/TRAVEL_READINESS.md). Auftrag: [docs/CURSOR_TRAVEL_READINESS_FOUNDATION_TASK.md](docs/CURSOR_TRAVEL_READINESS_FOUNDATION_TASK.md).
 

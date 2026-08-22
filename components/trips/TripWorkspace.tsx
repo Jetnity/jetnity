@@ -30,6 +30,7 @@ import {
   besuchteBereicheErweitern,
   gewaehlterTagId,
 } from '@/lib/trips/arbeitsbereich'
+import type { OfficialEvaluation } from '@/lib/readiness/official'
 import type { ReadinessKind, ReadinessUserStatus, TravellerDocumentType } from '@/types/trips'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
 import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
@@ -84,6 +85,12 @@ type TripWorkspaceProps = {
     documentExpiresOn: string | null
   }) => Promise<string | null>
   onTravellerEntfernen?: (clientRef: string) => Promise<string | null>
+  /**
+   * Optionale serverseitige Official Evaluations.
+   * Ohne Lieferung bleibt der lokale fail-closed Fallback.
+   * Kein Provider-Call und kein Secret im Client.
+   */
+  officialEvaluations?: OfficialEvaluation[]
   /**
    * Nur für interne Audits: startet nicht in der Übersicht.
    * Der Produktweg lässt den Parameter weg.
@@ -150,6 +157,7 @@ export default function TripWorkspace({
   onReadinessEntfernen,
   onTravellerSetzen,
   onTravellerEntfernen,
+  officialEvaluations,
   anfangsBereich,
 }: TripWorkspaceProps) {
   const kompakt = React.useSyncExternalStore(
@@ -212,6 +220,7 @@ export default function TripWorkspace({
   const vorbereitung = (
     <Reisevorbereitung
       reise={reise}
+      officialEvaluations={officialEvaluations}
       onSetzen={onReadinessSetzen}
       onEntfernen={onReadinessEntfernen}
       onTravellerSetzen={onTravellerSetzen}

@@ -3,11 +3,14 @@
 // Führt abgeleitete Prüfaufgaben mit persistiertem Nutzerstand zusammen.
 // User done + official unknown bleibt official unknown.
 // Kein globales „Reisebereit“.
+//
+// Official Evaluations kommen optional von aussen (serverseitig).
+// Ohne Lieferung: lokaler fail-closed Fallback, kein Client-Provider.
 
+import { officialAusEvaluations } from '@/lib/readiness/anforderungen'
 import { readinessChecksAbleiten } from '@/lib/readiness/ableitung'
-import { officialRequirementsFuerReise } from '@/lib/readiness/anforderungen'
-import { requirementsFuerReise } from '@/lib/readiness/engine'
-import type { OfficialEvaluation, MissingFact } from '@/lib/readiness/official'
+import { requirementsLokalFuerReise } from '@/lib/readiness/engine'
+import type { OfficialEvaluation } from '@/lib/readiness/official'
 import { officialPruefungAusLage } from '@/lib/readiness/bezeichnungen'
 import { fehlendeFaktenFuerReise, travellerSlots } from '@/lib/readiness/party'
 import {
@@ -66,7 +69,22 @@ function currentnessFuer(
   return abgeleitet || item.kind === 'preparation' ? 'current' : 'current'
 }
 
-export function readinessAnsicht(reise: Trip): {
+function freshnessAusEvaluations(evaluations: readonly OfficialEvaluation[]): ReadinessSummary['officialFreshness'] {
+  if (evaluations.length === 0) return 'never_checked'
+  if (evaluations.every((eintrag) => eintrag.freshness === 'provider_unavailable')) return 'provider_unavailable'
+  if (evaluations.some((eintrag) => eintrag.freshness === 'source_temporarily_unavailable')) {
+    return 'source_temporarily_unavailable'
+  }
+  if (evaluations.some((eintrag) => eintrag.freshness === 'stale')) return 'stale'
+  if (evaluations.some((eintrag) => eintrag.freshness === 'recheck_needed')) return 'recheck_needed'
+  if (evaluations.some((eintrag) => eintrag.freshness === 'current')) return 'current'
+  return 'never_checked'
+}
+
+export function readinessAnsicht(
+  reise: Trip,
+  evaluationsGeliefert?: readonly OfficialEvaluation[],
+): {
   items: ReadinessViewItem[]
   summary: ReadinessSummary
   evaluations: OfficialEvaluation[]
@@ -75,12 +93,17 @@ export function readinessAnsicht(reise: Trip): {
   const persistiert = readinessItemsVon(reise)
   const abgeleitet = readinessChecksAbleiten(reise)
   const nachRef = new Map(persistiert.map((item) => [item.clientRef, item]))
+  const evaluations = [...(evaluationsGeliefert ?? requirementsLokalFuerReise(reise))]
 
-  const officialFuer = (countryCode: string | null): OfficialRequirementEvidence =>
-    officialRequirementsFuerReise({
+  const officialFuer = (countryCode: string | null): OfficialRequirementEvidence => {
+    const passend = evaluations.filter(
+      (eintrag) => !countryCode || eintrag.destinationCountryCode === countryCode,
+    )
+    return officialAusEvaluations(passend.length > 0 ? passend : evaluations, {
       destinationCountryCode: countryCode ?? kontext.destinationCountries[0] ?? null,
       travellers: kontext.travellers,
     })
+  }
 
   const items: ReadinessViewItem[] = []
   const gesehen = new Set<string>()
@@ -123,8 +146,10 @@ export function readinessAnsicht(reise: Trip): {
   }
 
   const zaehlbar = items.filter((item) => item.currentness !== 'not_applicable')
-  const official = officialFuer(kontext.destinationCountries[0] ?? null)
-  const evaluations = requirementsFuerReise(reise)
+  const official = officialAusEvaluations(evaluations, {
+    destinationCountryCode: kontext.destinationCountries[0] ?? null,
+    travellers: kontext.travellers,
+  })
 
   const summary: ReadinessSummary = {
     open: zaehlbar.filter((item) => item.currentness === 'current' && item.userStatus === 'open').length,
@@ -145,15 +170,7 @@ export function readinessAnsicht(reise: Trip): {
         ...evaluations.flatMap((eintrag) => eintrag.missingFacts),
       ]),
     ],
-    officialFreshness: evaluations.every((eintrag) => eintrag.freshness === 'provider_unavailable')
-      ? 'provider_unavailable'
-      : evaluations.some((eintrag) => eintrag.freshness === 'stale')
-        ? 'stale'
-        : evaluations.some((eintrag) => eintrag.freshness === 'recheck_needed')
-          ? 'recheck_needed'
-          : evaluations.some((eintrag) => eintrag.freshness === 'current')
-            ? 'current'
-            : 'never_checked',
+    officialFreshness: freshnessAusEvaluations(evaluations),
   }
 
   return { items, summary, evaluations }
