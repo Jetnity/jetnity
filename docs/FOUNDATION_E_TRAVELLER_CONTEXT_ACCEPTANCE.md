@@ -4,7 +4,7 @@ Stand: 22. August 2026
 Status: **technisch verifiziert auf Development; Draft PR; Merge- und Production-Gate offen**
 
 Branch: `feat/traveller-context-intelligence`  
-Head: `a0e71ca4a6c32f2ca279ad9d60901ee224c73207`  
+Head: `08716228d2e6a5404730276843374cf7d3f9e066`  
 PR: https://github.com/Jetnity/jetnity/pull/35  
 PR-Zustand: **Draft**, `MERGEABLE`  
 Base: `main` @ `c8dbe904faac49745bd149e3d2e85ca30ebd384c`  
@@ -57,14 +57,14 @@ Nachweise nach Anwendung:
 
 | Nachweis | Stand |
 | --- | --- |
-| `npm test` | **1335 pass / 0 fail** auf `a0e71ca4` |
+| `npm test` | **1349 pass / 0 fail** auf `08716228` |
 | Typecheck | **grün** (`tsc --noEmit`) |
 | Lint | **grün** (`next lint`, 0 warnings/errors) |
 | Hygiene | **grün** – `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` |
 | Production Build | **grün** (`next build`, 38/38 Seiten) |
-| Trip-Workspace-UI-Audit auf `a0e71ca4` | **838 Kombinationen, 0 Fehler**, WebKit + Chromium. Viewports: 280, 320, 360, 390, 430, 768, 844×390, 1280. Bericht: `/opt/cursor/artifacts/trip_workspace_ui_audit.json` |
-| GitHub Actions `ci.yml` | **success** auf `a0e71ca4` – https://github.com/Jetnity/jetnity/actions/runs/32603178261 |
-| Vercel Preview | **SUCCESS** auf `a0e71ca4` – https://jetnity-la1tupbak-jetnity-e1b93c82.vercel.app |
+| Trip-Workspace-UI-Audit auf `08716228` | **838 Kombinationen, 0 Fehler**, WebKit + Chromium. Viewports: 280, 320, 360, 390, 430, 768, 844×390, 1280. Bericht: `/opt/cursor/artifacts/trip_workspace_ui_audit_08716228.json` |
+| GitHub Actions `ci.yml` | **success** auf `08716228` – https://github.com/Jetnity/jetnity/actions/runs/32604932045 |
+| Vercel Preview | **SUCCESS** auf `08716228` – https://jetnity-du5dlqhww-jetnity-e1b93c82.vercel.app |
 | Erster Audit-Lauf (vor Review-Fixes) | 16 Fehler, alle `readiness-user-done`: v1-Fingerprint wurde nach Foundation E korrekt stale. Fixture auf v2 gesetzt. |
 | Zweiter Audit-Lauf | **838/0** nach Fixture-Korrektur auf Head `17763238` |
 | Foundation-E-Zustände im Audit | `eine-staatsbuergerschaft`, `zwei-staatsbuergerschaften`, `dokument-fehlt`, `staatsbuergerschaft-fehlt`, `zwei-reisende`, `langes-label`, `provider-unavailable` |

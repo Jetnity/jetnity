@@ -97,7 +97,7 @@ Status: **UMGESETZT AUF DRAFT-PR / DEVELOPMENT VERIFIZIERT / NICHT GEMERGT**
 - Merge erst nach Review und ausdrücklicher Product-Owner-Freigabe
 - Development-Migrationen `20260822160000`–`20260822180000`; Production endet bei `20260822150000`
 - Depth-Review-Blocker behoben; `origin/main` @ `c8dbe904` semantisch synchronisiert
-- Depth-Re-Review-Blocker (Konflikt-Sichtbarkeit, strikte Requirements-API) im Code; Gate folgt
+- Depth-Re-Review-Blocker (Konflikt-Sichtbarkeit, strikte Requirements-API) auf `08716228` verifiziert; Draft bleibt Draft
 
 ### Harte Grenzen
 

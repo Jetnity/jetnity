@@ -14,8 +14,8 @@ Foundation D – Route & Transit Intelligence ist vollständig abgeschlossen und
 Foundation E läuft auf:
 
 - Branch: `feat/traveller-context-intelligence`
-- Head: `a0e71ca4a6c32f2ca279ad9d60901ee224c73207`
-- Basis: `origin/main` @ `c8dbe904faac49745bd149e3d2e85ca30ebd384c` (0 hinter / 36 voraus)
+- Code-Head des Abschluss-Gates: `08716228d2e6a5404730276843374cf7d3f9e066`
+- Basis: `origin/main` @ `c8dbe904faac49745bd149e3d2e85ca30ebd384c` (0 hinter)
 - Draft PR: https://github.com/Jetnity/jetnity/pull/35
 - Fachdokument: `docs/TRAVELLER_CONTEXT.md`
 - Acceptance: `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md`
@@ -34,11 +34,11 @@ Foundation E läuft auf:
 - Vergleich ohne Evidence: `Noch nicht zuverlässig vergleichbar.`
 - UX erfasst mehrere Citizenships/Documents, behauptet keine Visa-Vorteile
 
-## 3. Verifizierter Nachweis auf `a0e71ca4`
+## 3. Verifizierter Nachweis auf `08716228`
 
 | Nachweis | Ergebnis |
 | --- | --- |
-| `npm test` | **1335/1335** |
+| `npm test` | **1349/1349** |
 | Typecheck | grün |
 | Lint | grün |
 | Hygiene | grün |
@@ -52,8 +52,8 @@ Foundation E läuft auf:
 | `db:parallelitaet` | **7/7**, inkl. parallele Citizenship-Inserts bei 7/8 ohne Deadlock |
 | Production-Schema | endet bei `20260822150000`; Foundation-E-Tabellen **nicht** vorhanden |
 | UI-Audit | **838/838, 0 Fehler**, WebKit + Chromium, 8 Viewports |
-| GitHub Actions `ci.yml` | **success** – https://github.com/Jetnity/jetnity/actions/runs/32603178261 |
-| Vercel Preview | **SUCCESS** – https://jetnity-la1tupbak-jetnity-e1b93c82.vercel.app |
+| GitHub Actions `ci.yml` | **success** – https://github.com/Jetnity/jetnity/actions/runs/32604932045 |
+| Vercel Preview | **SUCCESS** – https://jetnity-du5dlqhww-jetnity-e1b93c82.vercel.app |
 | PR-Mergebarkeit | `MERGEABLE`; Draft bleibt Draft |
 
 ## 4. Harte Grenzen
@@ -67,10 +67,10 @@ Foundation E läuft auf:
 
 ## 5. Exakter nächster Schritt
 
-1. Depth-Re-Review-Blocker aus `docs/PR35_CHATGPT_FINAL_DEPTH_REREVIEW.md` sind im Code behoben (sichtbarer Provider-Konflikt, strikte Requirements-API).
-2. Volles Abschluss-Gate auf dem finalen Head ausführen und hier nachziehen.
-3. Danach unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_FINAL_DEPTH_REREVIEW.md`.
-4. Draft bleibt Draft. Nicht Mark Ready, nicht mergen.
+1. Unabhängiger ChatGPT-Abschlussreview gegen `docs/PR35_CHATGPT_FINAL_DEPTH_REREVIEW.md`.
+2. Draft bleibt Draft. Nicht Mark Ready, nicht mergen.
+3. Merge nur nach ausdrücklicher aktueller Product-Owner-Freigabe.
+4. Production-Migration erst nach Merge und separater Freigabe.
 
 `origin/main` @ `c8dbe904` ist semantisch übernommen: globale Review-Tiefe plus Foundation-E-`TRAVELLER_CONTEXT.md`. Kein Docs-Commit nur zum Festhalten von Checks.
 
