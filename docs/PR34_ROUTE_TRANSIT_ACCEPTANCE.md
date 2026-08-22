@@ -34,15 +34,16 @@ Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Fligh
 | --- | --- |
 | Arbeits-Head der Implementierung | `23dd548ae05016b2a1b5011e24c3bdd9d2018f8f` |
 | Persistenz-Fix-Head | `6cbe39f3a96fd425b2e0e60ef33c3c206432ed81` |
-| `npm test` | **1284 pass / 0 fail** |
+| Verifizierter Branch-Head | `69f903e6b5f6717d381471aaa8f8ddd8724bdef2` |
+| `npm test` | **1284 pass / 0 fail** (Code-Head `6cbe39f3`) |
 | Typecheck | **grün** (`tsc --noEmit`) |
 | Lint | **grün** (`next lint`, 0 warnings/errors) |
 | Hygiene | **grün** (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`) |
 | Production Build | **grün** (`next build`, 38/38 Seiten). Setup-Warnung: keine `.env`/`.local` in dieser Agent-Umgebung. |
 | Auth-Config-Checks | **grün** (`auth:pruefen`: 55/55 Werte) |
 | Trip Workspace Audit | **726 Kombinationen, 0 Fehler**, Engines WebKit + Chromium, inkl. `route-direkt` / `route-ein-transit` / `route-zwei-transits` |
-| Vercel Preview | **READY** für `6cbe39f3`: https://jetnity-5jm79bevf-jetnity-e1b93c82.vercel.app |
-| GitHub Actions `CI` | **success** auf `6cbe39f3`: https://github.com/Jetnity/jetnity/actions/runs/32574349369 |
+| Vercel Preview | **READY** für `69f903e6`: https://jetnity-hmdtw8ime-jetnity-e1b93c82.vercel.app |
+| GitHub Actions `CI` | **success** auf `69f903e6`: https://github.com/Jetnity/jetnity/actions/runs/32575412251 |
 
 ---
 

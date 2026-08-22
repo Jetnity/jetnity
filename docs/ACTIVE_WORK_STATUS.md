@@ -9,8 +9,9 @@ Arbeitsblock: **Foundation D – Route & Transit Intelligence**
 - Draft PR: **#34** https://github.com/Jetnity/jetnity/pull/34
 - Implementierungs-Head: `23dd548ae05016b2a1b5011e24c3bdd9d2018f8f`
 - Persistenz-Fix-Head: `6cbe39f3a96fd425b2e0e60ef33c3c206432ed81`
+- verifizierter Branch-/PR-Head: `69f903e6b5f6717d381471aaa8f8ddd8724bdef2`
 - aktuellen Branch-/PR-Head vor jeder weiteren Arbeit erneut über GitHub verifizieren
-- Status: **Review-Blocker Guest→Account-Route-Persistenz umgesetzt und lokal/CI/Preview geprüft; erneutes Human-Review offen**
+- Status: **Review-Blocker Guest→Account-Route-Persistenz umgesetzt; CI/Preview auf `69f903e6` grün; erneutes Human-Review offen**
 - Merge: **nicht freigegeben**, PR bleibt Draft
 
 ## 2. Ziel
@@ -48,7 +49,7 @@ Umgesetzt:
 
 ## 5. Noch offen
 
-- Human-/Architecture-/UX-/Security-Re-Review gegen `6cbe39f3` bzw. den tatsächlichen aktuellen Head
+- Human-/Architecture-/UX-/Security-Re-Review gegen `69f903e6` bzw. den tatsächlichen aktuellen Head
 - Product Owner erhält danach erneut Ergebnis/Nutzerwirkung und kann weitere Änderungen verlangen
 - ausdrückliche Product-Owner-Merge-Freigabe bleibt erforderlich
 - kein Timatic, kein echter Provider, keine Production-Migration
@@ -94,9 +95,9 @@ Senior-Expert-Fund 2 (Gesamt-Destination bei späterem Open-Jaw/Multi-City) und 
 
 ## 7. Tests / CI / Preview
 
-Nachweis nach Persistenz-Fix (`6cbe39f3`):
+Nachweis nach Persistenz-Fix und Architektur-Nachzug (`69f903e6`):
 
-- `npm test`: 1284 pass / 0 fail
+- `npm test` auf Code-Head `6cbe39f3`: 1284 pass / 0 fail
 - Typecheck, Lint, Hygiene: grün
 - Production Build: grün
 - `auth:pruefen`: 55/55
@@ -105,8 +106,8 @@ Nachweis nach Persistenz-Fix (`6cbe39f3`):
 - `db:rls`: grün
 - `db:sicherheit`: 185/185
 - Trip Workspace Audit: 726 Kombinationen, 0 Fehler, WebKit + Chromium
-- Vercel Preview READY: https://jetnity-5jm79bevf-jetnity-e1b93c82.vercel.app
-- GitHub Actions CI **success**: https://github.com/Jetnity/jetnity/actions/runs/32574349369
+- Vercel Preview READY für `69f903e6`: https://jetnity-hmdtw8ime-jetnity-e1b93c82.vercel.app
+- GitHub Actions CI **success** auf `69f903e6`: https://github.com/Jetnity/jetnity/actions/runs/32575412251
 - Draft-PR #34 mergeable / CLEAN; das ist keine Merge-Freigabe
 
 ## 8. Datenbank / RLS / Production
@@ -144,7 +145,7 @@ Aktuelles Foundation-C-`trip_travellers`-Schema hat weiterhin nur ein singuläre
 
 ## 12. Exakter nächster Schritt
 
-1. ChatGPT führt den erneuten Human-/Architecture-/UX-/Security-Review gegen `6cbe39f3` bzw. den tatsächlichen Head durch
+1. ChatGPT führt den erneuten Human-/Architecture-/UX-/Security-Review gegen `69f903e6` bzw. den tatsächlichen Head durch
 2. Product Owner sieht Ergebnis/Nutzerwirkung und kann Änderungen verlangen
 3. **nicht mergen, nicht Mark Ready, keine Production-Migration ohne Freigabe**
 
@@ -164,4 +165,4 @@ Aktuelles Foundation-C-`trip_travellers`-Schema hat weiterhin nur ein singuläre
 - `docs/CURSOR_ROUTE_TRANSIT_EXPERT_PROACTIVITY_AMENDMENT.md`
 - `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`
 - `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
-- `JETNITY_HANDOFF.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `DECISIONS.md` ADR-0108/0112
+- `JETNITY_HANDOFF.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `DECISIONS.md` ADR-0108/0112/0113

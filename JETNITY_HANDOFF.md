@@ -216,8 +216,8 @@ Foundation D füllt diese Naht auf Draft-PR #34. `routeFactsAusReise()` liefert 
 Umgesetzt:
 
 - eine provider-neutrale Route-Facts-Domäne in `lib/route/`
-- persistierte Itinerary in vorhandenem `trip_items.metadata`, keine neue Migration
-- Guest- und Account-Parität über dasselbe Trip-Feld
+- persistierte Itinerary in vorhandenem `trip_items.metadata`; Development-RPC schreibt sie atomar (ADR-0113), Production-Schema unverändert
+- Guest- und Account-Parität über dasselbe Trip-Feld; stiller Route-Verlust ist kein Erfolg
 - Readiness erhält Origin-/Transit-Codes und wird bei Transitänderung stale
 - Flugbereich zeigt Route progressiv; Übersicht eine dezente Zeile
 - Reiseänderung nennt Transitwechsel
