@@ -98,7 +98,10 @@ Verbindliche Invarianten:
 10. Reise-Origin, Etappen oder Gesamtreisedaten sind keine bestätigte Mietwagen-Suchabsicht und keine gespeicherten Abhol-/Rückgabefakten.
 11. `one_way` gilt nur bei beweisbar unterschiedlichen Orten (zwei verschiedene Place-IDs). Verschiedene Labels ohne zwei IDs bleiben `unknown`.
 12. Kalendertage des Mietzeitraums sind keine Reisetage und keine Streckenabdeckung.
-13. Preisranking und `Best Value` nur für nachweislich vergleichbare Gesamtpreise in derselben Währung.
+13. Preisranking nur für nachweislich vergleichbare Gesamtpreise in derselben Währung. `Best Value` nur bei mindestens zwei solchen Preisen.
+14. `Jetnity empfiehlt` nur bei einem eindeutigen Top-Score aus belastbaren Ranking-Signalen, nie bei Score 0 oder ID-Gleichstand.
+15. `Flexibel` nur bei positivem strukturiertem Flexibilitäts-Fit, nie aus freiem Storno-Text.
+16. „Passende Fahrzeugklasse“ / „Gewünschtes Getriebe“ nur bei positivem Match; sonst höchstens der bekannte Fakt.
 
 Die Übersicht zeigt eine knappe Mietwagenzeile nur, wenn ein Mietwagen existiert. «Kein Mietwagen geplant» ist keine Pflichtlücke.
 

@@ -229,7 +229,7 @@ Umgesetzt im Draft:
 - UX als Unterbereich in Mobilität, kein sechster Tab
 - Mietwagen deckt keine Bewegungskante
 - Development-Migration `20260821200000` – **nicht Production**
-- Review-Fix (ADR-0094): keine automatische Suche aus Reisekontext, leere manuelle Defaults, `one_way` nur bei bewiesenen Orten, Kalendertage statt Reisetage, währungssicheres Ranking
+- Review-Fix (ADR-0094 / ADR-0095): keine automatische Suche, leere manuelle Defaults, konservatives One-way, Kalendertage, währungssicheres Ranking; Labels nur bei belastbarem Vergleich
 
 Qualitätsnachweis im Draft (Head `b65341a8`):
 
@@ -242,7 +242,7 @@ Qualitätsnachweis im Draft (Head `b65341a8`):
 - GitHub CI und Vercel Preview waren auf `b65341a8` grün; dieser Dokumentations-Head zieht sie erneut
 - echter iPhone-Test **offen**, erst nach diesem Review-Fix
 
-Fachdoku: `docs/RENTAL_CARS.md`, ADR-0092 / ADR-0093 / ADR-0094.
+Fachdoku: `docs/RENTAL_CARS.md`, ADR-0092 / ADR-0093 / ADR-0094 / ADR-0095.
 
 Kein Fake-Provider und keine Production-Aktivierung.
 
@@ -331,7 +331,7 @@ Verbindlich:
 2. Aktuellen `main`-, PR-, CI-, Vercel- und Production-Stand prüfen.
 3. PR #29 nicht erneut bauen: Coverage/Booking Status ist abgeschlossen.
 4. PR #30 ist gemergt: Foundation A nicht erneut bauen.
-5. PR #31 bleibt Draft. Logic-/Truth-Fix (ADR-0094) zuerst auf dem neuen Head prüfen, danach Real-Device-iPhone. Nicht mergen. Keine Production-Migration.
+5. PR #31 bleibt Draft. Logic-/Truth-Fixes (ADR-0094 / ADR-0095) auf dem neuen Head prüfen, danach Real-Device-iPhone. Nicht mergen. Keine Production-Migration.
 6. Phase 3.4 bleibt extern blockiert, bis echter Hotelprovider-Zugang vorliegt.
 7. Nach sauberem Abschluss von PR #31 ist der nächste geplante provider-unabhängige Block **Travel Readiness & Dokumente Foundation**.
 8. Keine Fake-Providerdaten, keine Production-Provideraktivierung und keine Secrets ohne separate Freigabe.

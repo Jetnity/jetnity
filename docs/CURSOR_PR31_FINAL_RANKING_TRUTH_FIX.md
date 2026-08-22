@@ -3,7 +3,7 @@
 Stand: 22. August 2026
 Branch: `feat/rental-car-foundation`
 PR: #31
-Status: Draft; keine Production-Migration; kein Provider
+Status: **im Code umgesetzt** auf Draft-PR #31; Qualitätsnachweis auf dem neuen Head folgt; keine Production-Migration; kein Provider
 
 ## Ziel
 

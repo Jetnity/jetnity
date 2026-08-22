@@ -2,7 +2,7 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { rentalCarKandidatAus, rentalCarOptionenBewerten } from '@/lib/rental-cars/ranking'
-import type { RentalCarOption } from '@/lib/rental-cars/domain'
+import type { RentalCarKandidat, RentalCarKontext, RentalCarOption } from '@/lib/rental-cars/domain'
 
 function option(id: string, teil: Partial<RentalCarOption> = {}): RentalCarOption {
   return {
@@ -79,13 +79,15 @@ describe('Mietwagen-Ranking', () => {
     )
   })
 
-  test('fehlende Gesamtpreisflagge ergibt kein Preisranking', () => {
+  test('fehlende Gesamtpreisflagge ergibt kein Preisranking und kein Best Value', () => {
     const bewertet = rentalCarOptionenBewerten([
       rentalCarKandidatAus(option('ohne-flagge', { preis: 80, preisIstGesamt: null, preisWaehrung: 'CHF' })),
       rentalCarKandidatAus(option('mit-flagge', { preis: 200, preisIstGesamt: true, preisWaehrung: 'CHF' })),
     ])
-    assert.equal(bewertet.find((eintrag) => eintrag.id === 'ohne-flagge')?.labels.includes('best_value'), false)
-    assert.ok(bewertet.find((eintrag) => eintrag.id === 'mit-flagge')?.labels.includes('best_value'))
+    assert.equal(
+      bewertet.some((eintrag) => eintrag.labels.includes('best_value')),
+      false,
+    )
   })
 
   test('Best Value nur bei vergleichbarer Grundlage', () => {
@@ -98,4 +100,94 @@ describe('Mietwagen-Ranking', () => {
       false,
     )
   })
+
+  test('ein einzelner Gesamtpreis ist kein Best Value', () => {
+    const bewertet = rentalCarOptionenBewerten([
+      rentalCarKandidatAus(option('einzeln', { preis: 200, preisIstGesamt: true, preisWaehrung: 'CHF' })),
+    ])
+    assert.equal(bewertet[0]?.labels.includes('best_value'), false)
+  })
+
+  test('zwei gleiche günstigste Gesamtpreise dürfen beide Best Value tragen', () => {
+    const bewertet = rentalCarOptionenBewerten([
+      rentalCarKandidatAus(option('links', { preis: 200, preisIstGesamt: true, preisWaehrung: 'CHF' })),
+      rentalCarKandidatAus(option('rechts', { preis: 200, preisIstGesamt: true, preisWaehrung: 'CHF' })),
+    ])
+    assert.equal(bewertet.filter((eintrag) => eintrag.labels.includes('best_value')).length, 2)
+    assert.equal(
+      bewertet.some((eintrag) => eintrag.labels.includes('jetnity')),
+      false,
+    )
+  })
+
+  test('ohne Ranking-Signale gibt es keine Jetnity-Empfehlung', () => {
+    const bewertet = rentalCarOptionenBewerten([
+      rentalCarKandidatAus(option('beta')),
+      rentalCarKandidatAus(option('alpha')),
+    ])
+    assert.equal(bewertet.every((eintrag) => eintrag.score === 0), true)
+    assert.equal(
+      bewertet.some((eintrag) => eintrag.labels.includes('jetnity')),
+      false,
+    )
+  })
+
+  test('Top-Score-Gleichstand ist keine Empfehlung', () => {
+    const bewertet = rentalCarOptionenBewerten([
+      mitKontext(option('eins', { preis: 200, preisIstGesamt: true, preisWaehrung: 'CHF' }), { ortFit: 1 }),
+      mitKontext(option('zwei', { preis: 200, preisIstGesamt: true, preisWaehrung: 'CHF' }), { ortFit: 1 }),
+    ])
+    assert.equal(bewertet[0]?.score, bewertet[1]?.score)
+    assert.equal(
+      bewertet.some((eintrag) => eintrag.labels.includes('jetnity')),
+      false,
+    )
+  })
+
+  test('eindeutiger Top-Kandidat darf empfohlen werden', () => {
+    const bewertet = rentalCarOptionenBewerten([
+      mitKontext(option('passend'), { ortFit: 1 }),
+      mitKontext(option('schwach'), { ortFit: 0.2 }),
+    ])
+    const empfohlen = bewertet.filter((eintrag) => eintrag.labels.includes('jetnity'))
+    assert.deepEqual(empfohlen.map((eintrag) => eintrag.id), ['passend'])
+    assert.ok((empfohlen[0]?.score ?? 0) > 0)
+  })
+
+  test('nicht stornierbar ist nicht Flexibel', () => {
+    const bewertet = rentalCarOptionenBewerten([
+      rentalCarKandidatAus(option('hart', { storno: 'nicht stornierbar' })),
+    ])
+    assert.equal(bewertet[0]?.labels.includes('flexible'), false)
+    assert.ok(bewertet[0]?.reasons.includes('Stornoregel bekannt'))
+  })
+
+  test('vorhandene Klasse oder Getriebe ohne Match sind keine Passung', () => {
+    const bewertet = rentalCarOptionenBewerten([
+      rentalCarKandidatAus(option('fakt', { vehicleClass: 'compact', transmission: 'automatic' })),
+    ])
+    assert.ok(bewertet[0]?.reasons.includes('Kompakt'))
+    assert.ok(bewertet[0]?.reasons.includes('Automatik'))
+    assert.equal(bewertet[0]?.reasons.includes('Passende Fahrzeugklasse'), false)
+    assert.equal(bewertet[0]?.reasons.includes('Gewünschtes Getriebe'), false)
+  })
+
+  test('Passung nur bei positivem Match', () => {
+    const bewertet = rentalCarOptionenBewerten([
+      mitKontext(option('treffer', { vehicleClass: 'suv', transmission: 'manual' }), {
+        fahrzeugFit: 1,
+        getriebeFit: 1,
+      }),
+    ])
+    assert.ok(bewertet[0]?.reasons.includes('Passende Fahrzeugklasse'))
+    assert.ok(bewertet[0]?.reasons.includes('Gewünschtes Getriebe'))
+  })
 })
+
+function mitKontext(basis: RentalCarOption, context: Partial<RentalCarKontext>): RentalCarKandidat {
+  const kandidat = rentalCarKandidatAus(basis)
+  return {
+    ...kandidat,
+    context: { ...kandidat.context, ...context },
+  }
+}

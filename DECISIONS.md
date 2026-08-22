@@ -2395,6 +2395,36 @@ Die Suchnaht folgt den bestehenden Foundations: `RentalCarProvider.suchen()`, ge
 
 ---
 
+## ADR-0095 – Mietwagen-Ranking-Labels nur bei belastbarem Vergleich
+
+**Datum:** 22. August 2026
+**Status:** umgesetzt auf Draft-PR #31; kein Provider, keine Production-Änderung
+
+**Entscheidung:** Ranking-Labels und Reasons dürfen keine Empfehlung, Eigenschaft oder Passung behaupten, die der Nachweis nicht trägt.
+
+1. `Best Value` nur, wenn mindestens zwei bestätigte Gesamtpreise in derselben Währung vergleichbar sind. Ein einzelner Gesamtpreis, gemischte Währungen oder fehlende Gesamtpreisflagge ergeben kein `Best Value`. Mehrere echte Gleichgewinner des günstigsten Preises dürfen das Label teilen.
+2. `Jetnity empfiehlt` nur bei genau einem Kandidaten mit dem höchsten Score, und nur wenn dieser Score > 0 ist. Score 0 oder ein Gleichstand, den nur die ID-Sortierung bricht, ist keine Empfehlung. Die Sortierung bleibt deterministisch.
+3. `Flexibel` nur bei `context.flexibilitaetFit > 0`. Freier `storno`-Text, einschliesslich „nicht stornierbar“, erzeugt das Label nicht. „Stornoregel bekannt“ bleibt eine neutrale Fakt-Aussage.
+4. „Passende Fahrzeugklasse“ und „Gewünschtes Getriebe“ nur bei positivem `fahrzeugFit` / `getriebeFit`. Eine vorhandene Klasse oder ein vorhandenes Getriebe ohne Match wird höchstens faktisch benannt.
+
+**Kontext:** Der Abschlussreview von PR #31 fand vier Ranking-Wahrheitsfehler: Best Value ohne Vergleich, Empfehlung durch Tie-Break, Flexibel aus beliebigem Storno-Text und Passung aus bloßer Feldexistenz.
+
+**Alternativen:**
+
+1. *Best Value schon bei einem Preis.* Kein Vergleich, irreführende Superlative.
+2. *Immer den ersten Sortiereintrag empfehlen.* Technische Stabilität als fachliche Empfehlung.
+3. *Jedes nicht-leere `storno` als flexibel werten.* Würde „nicht stornierbar“ falsch markieren.
+
+**Begründung:** Unbekannt bleibt unbekannt. Labels sind Aussagen gegenüber dem Nutzer, keine Sortierhilfen.
+
+**Konsequenzen:**
+
+- Keine Datenbank-, RLS- oder Production-Änderung.
+- `flexible` bleibt als Marke reserviert, wird in Foundation B ohne strukturierten Fit nicht vergeben.
+- Nächster Schritt bleibt der Real-Device-Test, nicht ein Provider.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

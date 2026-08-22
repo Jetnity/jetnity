@@ -6,13 +6,15 @@
 // Unbekannt bleibt unbekannt: fehlende Signale bekommen keinen Neutralwert.
 // Providername, Affiliate-Provision und Umsatz sind keine Rankingdimension.
 
-import { rentalOneWay } from '@/lib/rental-cars/zeitraum'
-import type {
-  BewerteteRentalCarOption,
-  RentalCarKandidat,
-  RentalCarMarke,
-  RentalCarOption,
+import {
+  TRANSMISSION_BEZEICHNUNG,
+  VEHICLE_CLASS_BEZEICHNUNG,
+  type BewerteteRentalCarOption,
+  type RentalCarKandidat,
+  type RentalCarMarke,
+  type RentalCarOption,
 } from '@/lib/rental-cars/domain'
+import { rentalOneWay } from '@/lib/rental-cars/zeitraum'
 
 const RENTAL_RANGLISTE_GEWICHTE = {
   ort: 26,
@@ -112,15 +114,40 @@ function signaleFuer(
   return signale
 }
 
+function positiv(fit: number | null): boolean {
+  return fit !== null && fit > 0
+}
+
+function bestValueIdsAus(
+  kandidaten: RentalCarKandidat[],
+  vergleich: { waehrung: string; min: number } | null,
+): Set<string> {
+  if (!vergleich) return new Set()
+  const vergleichbar = kandidaten.filter((option) => hatVergleichbarenGesamtpreis(option, vergleich))
+  if (vergleichbar.length < 2) return new Set()
+  return new Set(
+    vergleichbar.filter((option) => option.preis === vergleich.min).map((option) => option.id),
+  )
+}
+
+function eindeutigeEmpfehlungId(bewertet: ReadonlyArray<{ id: string; score: number }>): string | null {
+  if (bewertet.length === 0) return null
+  const top = bewertet[0]!.score
+  if (top <= 0) return null
+  const sieger = bewertet.filter((option) => option.score === top)
+  if (sieger.length !== 1) return null
+  return sieger[0]!.id
+}
+
 function labelsFuer(
   option: RentalCarKandidat,
-  beste: RentalCarKandidat | null,
+  empfehlungId: string | null,
   bestValueIds: ReadonlySet<string>,
 ): RentalCarMarke[] {
   const labels: RentalCarMarke[] = []
-  if (beste && option.id === beste.id) labels.push('jetnity')
+  if (empfehlungId && option.id === empfehlungId) labels.push('jetnity')
   if (bestValueIds.has(option.id)) labels.push('best_value')
-  if (option.storno) labels.push('flexible')
+  if (positiv(option.context.flexibilitaetFit)) labels.push('flexible')
   if (
     rentalOneWay({
       originPlaceId: option.pickupPlaceId,
@@ -139,8 +166,16 @@ function gruendeFuer(option: RentalCarKandidat): string[] {
   if (option.preis !== null && option.preisIstGesamt === true && option.preisWaehrung) {
     gruende.push(`Gesamtpreis ${option.preisWaehrung} ${option.preis}`)
   }
-  if (option.vehicleClass) gruende.push('Passende Fahrzeugklasse')
-  if (option.transmission) gruende.push('Gewünschtes Getriebe')
+  if (positiv(option.context.fahrzeugFit)) {
+    gruende.push('Passende Fahrzeugklasse')
+  } else if (option.vehicleClass) {
+    gruende.push(VEHICLE_CLASS_BEZEICHNUNG[option.vehicleClass])
+  }
+  if (positiv(option.context.getriebeFit)) {
+    gruende.push('Gewünschtes Getriebe')
+  } else if (option.transmission) {
+    gruende.push(TRANSMISSION_BEZEICHNUNG[option.transmission])
+  }
   if (option.storno) gruende.push('Stornoregel bekannt')
   return gruende.slice(0, 4)
 }
@@ -162,13 +197,7 @@ export function rentalCarKandidatAus(option: RentalCarOption): RentalCarKandidat
 
 export function rentalCarOptionenBewerten(kandidaten: RentalCarKandidat[]): BewerteteRentalCarOption[] {
   const vergleich = vergleichbareGesamtpreise(kandidaten)
-  const bestValueIds = new Set(
-    vergleich
-      ? kandidaten
-          .filter((option) => hatVergleichbarenGesamtpreis(option, vergleich) && option.preis === vergleich.min)
-          .map((option) => option.id)
-      : [],
-  )
+  const bestValueIds = bestValueIdsAus(kandidaten, vergleich)
 
   const bewertet = kandidaten.map((option) => {
     const score = scoreAus(signaleFuer(option, vergleich))
@@ -176,9 +205,9 @@ export function rentalCarOptionenBewerten(kandidaten: RentalCarKandidat[]): Bewe
   })
 
   bewertet.sort((a, b) => b.score - a.score || a.id.localeCompare(b.id))
-  const beste = bewertet[0] ?? null
+  const empfehlungId = eindeutigeEmpfehlungId(bewertet)
   return bewertet.map((option) => ({
     ...option,
-    labels: labelsFuer(option, beste, bestValueIds),
+    labels: labelsFuer(option, empfehlungId, bestValueIds),
   }))
 }
