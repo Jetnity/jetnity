@@ -34,16 +34,16 @@ Jetnity besitzt eine gemeinsame, strukturierte Route Truth aus validierten Fligh
 | Nachweis | Stand |
 | --- | --- |
 | Arbeits-Head der Implementierung | `23dd548ae05016b2a1b5011e24c3bdd9d2018f8f` |
-| Nachgezogener Branch-Stand | Merge von `origin/main` `4a8a4ea6` (Progress-Persistence-Policy); exakten Head nach Push prüfen |
-| `npm test` | **1271 pass / 0 fail** |
+| Nachgezogener Branch-Stand | Merge von `origin/main` `608dfbe5` (Traveller-Context-Policy). Exakten Head nach Push prüfen. |
+| `npm test` | **1271 pass / 0 fail** (erneut 22.08.2026 nach Main-Sync `4a8a4ea6`; Code seit `23dd548a` unverändert) |
 | Typecheck | **grün** (`tsc --noEmit`) |
 | Lint | **grün** (`next lint`, 0 warnings/errors) |
 | Hygiene | **grün** (`check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`) |
-| Production Build | **grün** (`next build`, 38/38 Seiten) |
+| Production Build | **grün** (`next build`, 38/38 Seiten). Setup-Warnung: keine `.env`/`.local` in dieser Agent-Umgebung. |
 | Auth-Config-Checks | **grün** (`auth:pruefen`: 55/55 Werte) |
 | Trip Workspace Audit | **726 Kombinationen, 0 Fehler**, Engines WebKit + Chromium, inkl. `route-direkt` / `route-ein-transit` / `route-zwei-transits` |
-| Vercel Preview | **READY** für `23dd548a`: https://jetnity-16l9pmw3e-jetnity-e1b93c82.vercel.app |
-| GitHub Actions `CI` | letzter abgeschlossener PR-Lauf **success** auf Docs-Head `ea34163b` (https://github.com/Jetnity/jetnity/actions/runs/32571564738). Implementierungs-Pushes danach haben keinen neuen `pull_request`-Lauf erzeugt. Der Branch ist mit `main` `4a8a4ea6` synchronisiert, um den dirty Merge-State zu heben und CI erneut anzustoßen. |
+| Vercel Preview | **READY** für `23dd548a`: https://jetnity-16l9pmw3e-jetnity-e1b93c82.vercel.app · **READY** für `d9771e0c`: https://jetnity-j54ocdgjm-jetnity-e1b93c82.vercel.app |
+| GitHub Actions `CI` | **success** auf `d3c99335` (Implementierung + Main-Sync `4a8a4ea6` + Traveller-Context-Bindung): https://github.com/Jetnity/jetnity/actions/runs/32572835591. Spätere Docs-Pushes haben den parallelen Lauf `32572814864` per Concurrency cancelled. Der Merge von `main` `608dfbe5` braucht einen eigenen Verify-Lauf. |
 
 ---
 

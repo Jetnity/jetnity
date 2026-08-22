@@ -7,8 +7,10 @@ Arbeitsblock: **Foundation D – Route & Transit Intelligence**
 
 - Branch: `feat/route-transit-intelligence`
 - Draft PR: **#34** https://github.com/Jetnity/jetnity/pull/34
+- Implementierungs-Head: `23dd548ae05016b2a1b5011e24c3bdd9d2018f8f`
+- Branch enthält Merge von `origin/main` `608dfbe5` (Traveller-Context-Policy)
 - aktuellen Branch-/PR-Head vor jeder weiteren Arbeit erneut über GitHub verifizieren
-- Status: **technisch umgesetzt; Human-/Architecture-Review offen; neue globale Traveller-Context-Policy muss im Review berücksichtigt werden**
+- Status: **technisch umgesetzt und lokal erneut geprüft; CI auf `d3c99335` grün; Human-/Architecture-Review offen**
 - Merge: **nicht freigegeben**, PR bleibt Draft
 
 ## 2. Ziel
@@ -33,7 +35,7 @@ Route Facts sind traveller-neutral. Sie setzen keine einzelne Staatsbürgerschaf
 
 - Human-/Architecture-/UX-Review
 - ausdrückliche Product-Owner-Merge-Freigabe
-- GitHub Actions / Preview gegen aktuellen finalen Branch-Head verifizieren
+- GitHub Actions Verify für den Head nach Merge von `main` `608dfbe5` nachziehen; letzter grüner Implementierungs-Lauf ist `d3c99335`
 - kein Timatic, kein echter Provider, keine Production-Migration
 - **separater zukünftiger Readiness-/Traveller-Context-Schritt vor echter Requirements-Provider-Aktivierung:** Mehrfachstaatsbürgerschaften und mehrere Reisedokumente als 1:n-Modell; nicht still in Foundation D hineinmigrieren
 
@@ -74,8 +76,10 @@ Letzter dokumentierter Foundation-D-Nachweis:
 - Production Build: grün
 - `auth:pruefen`: 55/55
 - Trip Workspace Audit: 726 Kombinationen, 0 Fehler, WebKit + Chromium
-- Vercel Preview READY für Implementierungs-Commit `23dd548a`
-- GitHub Actions CI: letzter dokumentierter PR-Lauf success auf früherem Docs-Head; aktuellen Branch-Head erneut verifizieren
+- Vercel Preview READY für `23dd548a`: https://jetnity-16l9pmw3e-jetnity-e1b93c82.vercel.app
+- Vercel Preview READY für `d9771e0c`: https://jetnity-j54ocdgjm-jetnity-e1b93c82.vercel.app
+- GitHub Actions CI **success** auf `d3c99335`: https://github.com/Jetnity/jetnity/actions/runs/32572835591
+- Nachfolgende Docs-Pushes und der Merge von `main` `608dfbe5` brauchen einen eigenen Verify-Lauf; alte grüne Runs nicht automatisch übertragen
 
 Nach den neuen Governance-/Traveller-Context-Commits muss der finale technische Nachweis immer gegen den tatsächlichen aktuellen Head geprüft werden; alte grüne Runs nicht automatisch auf neue Heads übertragen.
 
