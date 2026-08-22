@@ -271,6 +271,8 @@ Kein Fake-Provider und keine Production-Suche. Merge nur nach separater Freigabe
 
 Branch `feat/travel-readiness-foundation`. **Draft, nicht mergen.** Ausgangsbasis ist `main` @ `315d9b31`.
 
+Audit-/CI-Head: `87bb85bde3c6e924ebd7dfe2c0af009960cd2009`
+
 Umgesetzt auf dem Draft-PR:
 
 - eigene Domäne `trip_readiness_items`, kein neuer `trip_items.kind`
@@ -280,10 +282,19 @@ Umgesetzt auf dem Draft-PR:
 - Context-Fingerprint, Freshness/Recheck und progressive Missing Facts
 - Guest- und Account-Parität plus idempotente Übernahme von Party und Readiness
 - geschlossene `POST /api/readiness/requirements`
-- UX als **Einreise & Reisevorbereitung** in der Übersicht, kein sechster Tab
+- UX als **Einreise & Reisevorbereitung** in der mobilen Übersicht und auf Desktop nach dem Reisekopf, kein sechster Tab
 - kein Dokumententresor, keine OCR, kein Storage-Bucket
 
 Development-Migrationen `20260822010000` und `20260822020000` nur Development. Production unverändert. Kein Provider, keine neuen Secrets, keine neuen Kosten.
+
+Qualitätsnachweis auf diesem Head:
+
+- `npm test`: **1228/1228**
+- Typecheck, Lint, Hygiene und Production-Build grün
+- Trip-Workspace-Audit WebKit + Chromium: **662 Kombinationen, 0 Fehler**
+- Activities-Regression: **184 Kombinationen, 0 Fehler**
+- GitHub CI grün, Vercel Preview READY
+- Preview: `https://jetnity-app-git-feat-travel-readiness-f-f8117d-jetnity-e1b93c82.vercel.app`
 
 Fachdoku: `docs/TRAVEL_READINESS.md`, ADR-0096 bis ADR-0106. Verbindlicher Nachtrag: `docs/CURSOR_TRAVEL_READINESS_AUTOMATION_AMENDMENT.md`.
 

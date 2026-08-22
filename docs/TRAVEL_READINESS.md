@@ -95,3 +95,15 @@ Zuerst offizielle Prüfung und fehlende Angaben, danach die persönliche Vorbere
 - `20260822010000_trip_readiness_items` und `20260822020000_trip_travellers` nur Development
 - Production unverändert
 - keine neuen Secrets, keine neuen laufenden Kosten
+
+## Nachweis Draft-PR #32
+
+Stand Audit-/CI-Head `87bb85bde3c6e924ebd7dfe2c0af009960cd2009`:
+
+- Tests **1228/1228**
+- Typecheck, Lint, Hygiene und Production-Build grün
+- Trip-Workspace-Audit WebKit + Chromium: **662 Kombinationen, 0 Fehler**
+- Activities-Regression: **184 Kombinationen, 0 Fehler**
+- GitHub CI und Vercel Preview grün
+- Preview: `https://jetnity-app-git-feat-travel-readiness-f-f8117d-jetnity-e1b93c82.vercel.app`
+- Development-Migration angewendet; Production-Schema unverändert

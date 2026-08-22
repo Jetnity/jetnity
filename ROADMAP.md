@@ -21,7 +21,7 @@ Diese Datei ist die operative Roadmap. Historische Detailstände bleiben über G
 | Querschnitt | Trip Coverage & Booking Status | **auf `main` (PR #29, `211872c1`); Production-Booking-Migration nach Nutzerfreigabe angewendet** |
 | Foundation-Track A | Mobilität & Transfers – Bahn, Bus, Fähre, Transfers | **fertig, nach `main` gemergt (PR #30); Production-Schema angewendet, Suche aus** |
 | Foundation-Track B | Mietwagen Foundation | **fertig, nach `main` gemergt (PR #31)**; Schema auf Production; Suche aus |
-| Foundation-Track C | Travel Readiness & Dokumente Foundation | **Draft-PR #32**; Development-Migration; nicht mergen; kein Production-Schema |
+| Foundation-Track C | Travel Readiness & Dokumente Foundation | **Draft-PR #32**; reviewbar; Development-Migration; nicht mergen; kein Production-Schema |
 | Foundation-Track D | Gesamt-Abdeckung im Reisegraphen erweitern | geplant nach C |
 | Phase 3.5 | erster echter Activity-Suchadapter | geplant; bei fehlendem Zugang extern blockiert |
 | Phase 3.6 | echte Mobilitäts-/Transferprovider auf Foundation A | geplant |
@@ -198,7 +198,7 @@ Nicht in diesem Block: echter Provider, Fake-Angebote, Führerschein-/Zahlungsda
 
 ### Foundation C – Travel Readiness & Dokumente
 
-**Draft-PR #32**, Branch `feat/travel-readiness-foundation`. Nicht mergen. Keine Production-Migration.
+**Draft-PR #32**, Branch `feat/travel-readiness-foundation`, Head `87bb85bd`. Nicht mergen. Keine Production-Migration.
 
 Automatic Travel Requirements & Readiness:
 
@@ -209,8 +209,10 @@ Automatic Travel Requirements & Readiness:
 - Context-Fingerprint und Freshness/Recheck
 - progressive Missing Facts, keine Dokumentnummern
 - Guest und Account dieselbe Form
-- UX in der Übersicht, fünf Hauptbereiche unverändert
+- UX in der mobilen Übersicht und auf Desktop nach dem Reisekopf, fünf Hauptbereiche unverändert
 - kein Dokumententresor, keine OCR, kein Storage-Bucket
+
+Nachweis: Tests **1228/1228**, Workspace-Audit **662/0**, Activities **184/0**, Typecheck/Lint/Hygiene/Build/CI/Preview grün.
 
 Fachdoku: [docs/TRAVEL_READINESS.md](docs/TRAVEL_READINESS.md). Auftrag: [docs/CURSOR_TRAVEL_READINESS_FOUNDATION_TASK.md](docs/CURSOR_TRAVEL_READINESS_FOUNDATION_TASK.md).
 
