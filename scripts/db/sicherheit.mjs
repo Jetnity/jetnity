@@ -870,6 +870,7 @@ function reisenachweise() {
   const ROUTE_UNBEKANNT = asJsonb(ROUTE_UNBEKANNT_OBJ)
   const FLUG_PUNKT = (objekt) =>
     `{"kind":"flight","title":"ZRH BKK","position":1,"route_itinerary":${objekt}}`
+  const META = (routeObj, extra = '') => `'{"routeItinerary":${routeObj}${extra}}'::jsonb`
 
   return [
     // --- trips: Eigentum ---------------------------------------------------
@@ -1681,6 +1682,97 @@ function reisenachweise() {
               where user_id = '${NUTZER}' and client_ref = 'route-retry-1' offset 1`,
       erwartung: 'leer',
       grund: 'Zwei direkte RPC-Aufrufe mit derselben client_ref erzeugen keine zweite Reise.',
+    },
+    {
+      name: 'direkter trip_items-INSERT speichert ZRH als CH, nicht US',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (trip_id, kind, title, metadata)
+              values ('${REISE}', 'flight', 'Guard Insert', ${META(ROUTE_DIREKT_OBJ, `,"keepMe":true`)});
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'Guard Insert'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' = 'CH'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' is distinct from 'US'
+                and (metadata ->> 'keepMe') = 'true'`,
+      erwartung: 'erlaubt',
+      grund: 'Der BEFORE-Trigger kanonisiert jeden direkten Flight-INSERT.',
+    },
+    {
+      name: 'direkter metadata-UPDATE speichert DOH-Transit als QA',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (trip_id, kind, title, metadata)
+              values ('${REISE}', 'flight', 'Guard Update', ${META(ROUTE_DIREKT_OBJ)});
+            update public.trip_items
+              set metadata = ${META(ROUTE_TRANSIT_OBJ, `,"keepMe":true`)}
+              where trip_id = '${REISE}' and title = 'Guard Update';
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'Guard Update'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,destination,countryCode}' = 'QA'
+                and (metadata ->> 'keepMe') = 'true'`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'direkter INSERT übernimmt keine Client-Stadt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (trip_id, kind, title, metadata)
+              values ('${REISE}', 'flight', 'Guard City', ${META(ROUTE_DIREKT_OBJ)});
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'Guard City'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,city}' = 'Clientstadt'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'unbekannter IATA bleibt nach direktem INSERT ohne Client-Land',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (trip_id, kind, title, metadata)
+              values ('${REISE}', 'flight', 'Guard Unknown', ${META(ROUTE_UNBEKANNT_OBJ)});
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'Guard Unknown'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,airportCode}' = 'ZZZ'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' is null`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'ungültige routeItinerary wird fail-closed entfernt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (trip_id, kind, title, metadata)
+              values ('${REISE}', 'flight', 'Guard Invalid',
+                '{"routeItinerary":{"v":2,"type":"nope"},"keepMe":true}'::jsonb);
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'Guard Invalid'
+                and (metadata ->> 'keepMe') = 'true'
+                and not (metadata ? 'routeItinerary')`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'Nicht-Flight-Metadata bleibt unverändert',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (trip_id, kind, title, metadata)
+              values ('${REISE}', 'note', 'Guard Note', ${META(ROUTE_DIREKT_OBJ)});
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'Guard Note'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' = 'US'`,
+      erwartung: 'erlaubt',
+      grund: 'routeFacts liest nur Flight-Items. Note-Metadata wird nicht umgeschrieben.',
+    },
+    {
+      name: 'kind-Wechsel zu flight kanonisiert vorhandene Metadata',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (trip_id, kind, title, metadata)
+              values ('${REISE}', 'note', 'Guard Kind', ${META(ROUTE_DIREKT_OBJ)});
+            update public.trip_items set kind = 'flight'
+              where trip_id = '${REISE}' and title = 'Guard Kind';
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'Guard Kind'
+                and kind = 'flight'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' = 'CH'`,
+      erwartung: 'erlaubt',
     },
   ]
 }
