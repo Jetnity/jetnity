@@ -112,6 +112,52 @@ function tag(index, teil = {}) {
   }
 }
 
+function partyKanonisieren(party = []) {
+  return party.map((eintrag) => {
+    const citizenships =
+      eintrag.citizenships ??
+      (eintrag.nationalityCountryCode
+        ? [
+            {
+              id: `citizenship:${eintrag.nationalityCountryCode}`,
+              clientRef: `citizenship:${eintrag.nationalityCountryCode}`,
+              countryCode: eintrag.nationalityCountryCode,
+              createdAt: eintrag.createdAt ?? JETZT,
+              updatedAt: eintrag.updatedAt ?? JETZT,
+            },
+          ]
+        : [])
+    const documents =
+      eintrag.documents ??
+      (eintrag.documentType || eintrag.documentIssuingCountryCode || eintrag.documentExpiresOn
+        ? [
+            {
+              id: `document:${eintrag.documentType ?? 'unknown'}:${eintrag.documentIssuingCountryCode ?? 'xx'}`,
+              clientRef: `document:${eintrag.documentType ?? 'unknown'}:${eintrag.documentIssuingCountryCode ?? 'xx'}`,
+              documentType: eintrag.documentType ?? 'unknown',
+              issuingCountryCode: eintrag.documentIssuingCountryCode ?? null,
+              citizenshipClientRef: eintrag.nationalityCountryCode
+                ? `citizenship:${eintrag.nationalityCountryCode}`
+                : null,
+              expiresOn: eintrag.documentExpiresOn ?? null,
+              createdAt: eintrag.createdAt ?? JETZT,
+              updatedAt: eintrag.updatedAt ?? JETZT,
+            },
+          ]
+        : [])
+    return {
+      id: eintrag.id ?? eintrag.clientRef,
+      clientRef: eintrag.clientRef,
+      label: eintrag.label ?? null,
+      residenceCountryCode: eintrag.residenceCountryCode ?? null,
+      citizenships,
+      documents,
+      createdAt: eintrag.createdAt ?? JETZT,
+      updatedAt: eintrag.updatedAt ?? JETZT,
+    }
+  })
+}
+
 function reise(teil = {}) {
   return {
     id: 'trip-audit-workspace',
@@ -136,6 +182,7 @@ function reise(teil = {}) {
     createdAt: JETZT,
     updatedAt: JETZT,
     ...teil,
+    party: partyKanonisieren(teil.party ?? []),
   }
 }
 
@@ -845,6 +892,163 @@ const ZUSTAENDE = {
     desktop: 'Staatsangehörigkeit fehlt',
     oeffneVorbereitung: true,
     nutzlast: { reise: reise({ travellers: 1 }) },
+  },
+  'readiness-foundation-e-eine-staatsbuergerschaft': {
+    kompakt: 'Angaben erfasst',
+    desktop: 'Angaben erfasst',
+    oeffneVorbereitung: true,
+    nutzlast: {
+      reise: reise({
+        travellers: 1,
+        party: [
+          {
+            id: 'party-ch',
+            clientRef: 'traveller:1',
+            label: 'Reisende 1',
+            residenceCountryCode: 'CH',
+            citizenships: [
+              {
+                id: 'cit-ch',
+                clientRef: 'citizenship:CH',
+                countryCode: 'CH',
+                createdAt: JETZT,
+                updatedAt: JETZT,
+              },
+            ],
+            documents: [
+              {
+                id: 'doc-ch',
+                clientRef: 'document:passport:CH',
+                documentType: 'passport',
+                issuingCountryCode: 'CH',
+                citizenshipClientRef: 'citizenship:CH',
+                expiresOn: '2030-01-01',
+                createdAt: JETZT,
+                updatedAt: JETZT,
+              },
+            ],
+            createdAt: JETZT,
+            updatedAt: JETZT,
+          },
+        ],
+      }),
+    },
+  },
+  'readiness-foundation-e-zwei-staatsbuergerschaften': {
+    kompakt: 'Weitere Staatsbürgerschaft',
+    desktop: 'Weitere Staatsbürgerschaft',
+    oeffneVorbereitung: true,
+    nutzlast: {
+      reise: reise({
+        travellers: 1,
+        party: [
+          {
+            id: 'party-dual',
+            clientRef: 'traveller:1',
+            label: 'Reisende 1',
+            residenceCountryCode: 'CH',
+            citizenships: [
+              {
+                id: 'cit-ch',
+                clientRef: 'citizenship:CH',
+                countryCode: 'CH',
+                createdAt: JETZT,
+                updatedAt: JETZT,
+              },
+              {
+                id: 'cit-rs',
+                clientRef: 'citizenship:RS',
+                countryCode: 'RS',
+                createdAt: JETZT,
+                updatedAt: JETZT,
+              },
+            ],
+            documents: [
+              {
+                id: 'doc-ch',
+                clientRef: 'document:passport:CH',
+                documentType: 'passport',
+                issuingCountryCode: 'CH',
+                citizenshipClientRef: 'citizenship:CH',
+                expiresOn: '2030-01-01',
+                createdAt: JETZT,
+                updatedAt: JETZT,
+              },
+              {
+                id: 'doc-rs',
+                clientRef: 'document:passport:RS',
+                documentType: 'passport',
+                issuingCountryCode: 'RS',
+                citizenshipClientRef: 'citizenship:RS',
+                expiresOn: '2029-06-01',
+                createdAt: JETZT,
+                updatedAt: JETZT,
+              },
+            ],
+            createdAt: JETZT,
+            updatedAt: JETZT,
+          },
+        ],
+      }),
+    },
+  },
+  'readiness-foundation-e-dokument-fehlt': {
+    kompakt: 'Weiteres Dokument',
+    desktop: 'Weiteres Dokument',
+    oeffneVorbereitung: true,
+    nutzlast: {
+      reise: reise({
+        travellers: 1,
+        party: [
+          {
+            id: 'party-nodoc',
+            clientRef: 'traveller:1',
+            label: 'Reisende 1',
+            residenceCountryCode: 'CH',
+            citizenships: [
+              {
+                id: 'cit-ch',
+                clientRef: 'citizenship:CH',
+                countryCode: 'CH',
+                createdAt: JETZT,
+                updatedAt: JETZT,
+              },
+            ],
+            documents: [],
+            createdAt: JETZT,
+            updatedAt: JETZT,
+          },
+        ],
+      }),
+    },
+  },
+  'readiness-foundation-e-staatsbuergerschaft-fehlt': {
+    kompakt: 'Staatsangehörigkeit fehlt',
+    desktop: 'Staatsangehörigkeit fehlt',
+    oeffneVorbereitung: true,
+    nutzlast: { reise: reise({ travellers: 1 }) },
+  },
+  'readiness-foundation-e-provider-unavailable': {
+    kompakt: 'Offizielle Prüfung noch nicht verfügbar',
+    desktop: 'Offizielle Prüfung noch nicht verfügbar',
+    oeffneVorbereitung: true,
+    nutzlast: {
+      reise: reise({
+        travellers: 1,
+        party: [
+          {
+            id: 'party-ch',
+            clientRef: 'traveller:1',
+            label: 'Reisende 1 mit sehr langem aber erlaubtem Label',
+            nationalityCountryCode: 'CH',
+            documentType: 'passport',
+            documentIssuingCountryCode: 'CH',
+            createdAt: JETZT,
+            updatedAt: JETZT,
+          },
+        ],
+      }),
+    },
   },
   'readiness-zwei-nationalitaeten': {
     kompakt: 'Reisende 2',
