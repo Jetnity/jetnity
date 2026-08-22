@@ -171,7 +171,6 @@ Nur fachlich notwendige Informationen speichern. Mögliche Foundation-Felder nac
 - Reisedokumenttyp
 - ausstellendes Land des Reisedokuments
 - optional Ablaufdatum des verwendeten Dokuments, falls für Requirements wirklich nötig
-- sinnvolle Alterskategorie nur falls regulatorisch erforderlich
 - weitere Requirement-Fakten nur bei klarer fachlicher Begründung.
 
 Explizit **nicht** speichern:
@@ -180,8 +179,7 @@ Explizit **nicht** speichern:
 - Ausweisnummer
 - Visa-Nummer
 - Kreditkartendaten
-- Pass-/ID-/Visa-Scans
-- Führerschein-Scans
+- Pass-/ID-/Visa-/Führerschein-Scans
 - biometrische Rohdaten.
 
 Keinen Dokumententresor in Foundation C.
@@ -313,21 +311,6 @@ Was verlangt eine belastbare Quelle für diesen Traveller und diese konkrete Rei
 
 Was hat der Nutzer bereits erledigt?
 
-Beispiel:
-
-Requirements Engine erkennt später:
-
-- eVisa erforderlich
-- Reisepass erforderlich
-- Passgültigkeit mindestens X
-- Einreiseformular erforderlich.
-
-Jetnity erzeugt daraus Handlungsbedarf:
-
-- eVisa beantragen
-- Passgültigkeit prüfen
-- Einreiseformular ausfüllen.
-
 Der Nutzerstatus `done` verändert nie die zugrunde liegende offizielle Requirement-Evidence.
 
 ---
@@ -363,31 +346,15 @@ Zusätzlich braucht die Architektur **zeitliche Freshness**:
 
 Einreisebestimmungen ändern sich. Alte Evidence darf nicht dauerhaft als aktuell gelten.
 
-Konkrete spätere Recheck-Frequenzen bleiben provider- und lizenzabhängig.
-
 ---
 
 ## 11. Provider Interface
 
 Die Adaptergrenze soll so gestaltet sein, dass später z. B. ein `TimaticRequirementsProvider` implementiert werden kann.
 
-Provider Input darf nicht nur ein Country Code sein.
+Provider Input darf nicht nur ein Country Code sein. Er muss relevante strukturierte Fakten aufnehmen können, z. B. Origin, Destinations, Transit Itinerary, Travel Dates, Traveller Nationality, Residence, Document Type, Issuing Country und weitere tatsächlich erforderliche Fakten.
 
-Er muss relevante strukturierte Fakten aufnehmen können, z. B.:
-
-- Origin
-- Destinations
-- Transit Itinerary
-- Travel Dates
-- Traveller Nationality
-- Residence
-- Document Type
-- Issuing Country
-- weitere tatsächlich erforderliche Provider-Fakten.
-
-Provider Output wird in Jetnitys eigene Requirement-Domain normalisiert.
-
-Keine provider-spezifischen Typen durch die gesamte Anwendung ziehen.
+Provider Output wird in Jetnitys eigene Requirement-Domain normalisiert. Keine provider-spezifischen Typen durch die gesamte Anwendung ziehen.
 
 Solange kein echter Providerzugang vorhanden ist, bleibt die Integration ehrlich bei `provider_unavailable` oder `insufficient_context`.
 
@@ -401,39 +368,17 @@ Die fünf Hauptbereiche bleiben vorerst:
 
 Keinen sechsten Top-Level-Tab erzwingen.
 
-Der Bereich in der Übersicht soll fachlich aber nicht wie eine manuelle Checkliste wirken, sondern als **Einreise & Reisevorbereitung** oder ähnlich verständlich konzipiert werden.
-
-Spätere evidenzbasierte Darstellung pro Traveller kann z. B. zeigen:
-
-- Visum
-- Reisepass / ID
-- Passgültigkeit
-- Transit
-- Gesundheit / Pflichtnachweise
-- Einreiseformular
-- weitere Dokumente
-- offene Schritte.
+Der Bereich in der Übersicht soll fachlich nicht wie eine manuelle Checkliste wirken, sondern als **Einreise & Reisevorbereitung** oder ähnlich verständlich konzipiert werden.
 
 Nur belastbar belegte Aussagen dürfen konkret `required` / `not_required` anzeigen.
 
-Fehlt der Providerzugang, ehrlich anzeigen:
+Fehlt Providerzugang, ehrlich anzeigen:
 
 > „Automatische Einreiseprüfung derzeit nicht verfügbar.“
 
-Die langfristige Produkterfahrung soll dennoch klar darauf ausgerichtet sein, dass Jetnity diese Recherche übernimmt.
+Die langfristige Produkterfahrung bleibt darauf ausgerichtet, dass Jetnity diese Recherche übernimmt.
 
-### Handlung statt bloßer Information
-
-Die Domain/UX soll spätere sichere Actions unterstützen:
-
-- offizielle Information öffnen
-- offiziellen Antrag öffnen
-- ETA/eVisa-Antragsseite öffnen
-- Formular öffnen
-- Deadline anzeigen
-- offenen Vorbereitungspunkt erzeugen.
-
-Keine URL aus freiem Modelltext. Keine Fake-Links. Keine offenen Redirects.
+Sichere Actions später unterstützen: offizielle Information öffnen, offiziellen Antrag/ETA/eVisa/Formular öffnen, Deadline anzeigen, offenen Vorbereitungspunkt erzeugen. Keine URL aus freiem Modelltext, keine Fake-Links, keine offenen Redirects.
 
 ---
 
@@ -441,24 +386,9 @@ Keine URL aus freiem Modelltext. Keine Fake-Links. Keine offenen Redirects.
 
 Gast und Konto bleiben dieselbe fachliche Reiseform.
 
-Wenn Traveller Context für Gäste gespeichert wird:
+Guest-Daten nur lokal, gleiche validierte Domain, idempotente Übernahme. Accountdaten privat mit RLS, kein öffentlicher Cache, keine Cross-User-Leaks.
 
-- nur lokal
-- gleiche Domain-Form
-- streng validiert
-- Guest → Account idempotent übernehmbar.
-
-Accountdaten:
-
-- privat
-- RLS
-- kein öffentlicher Cache
-- keine Cross-User-Leaks
-- kein Admin-Zugriff auf private Traveller-Inhalte nur aus Bequemlichkeit.
-
-Prüfe per ADR, ob Traveller-Fakten zunächst tripspezifisch oder sicher accountweit wiederverwendbar sein sollen.
-
-Produktziel bleibt: bekannte Informationen nicht bei jeder Reise erneut abfragen.
+Prüfe per ADR, ob Traveller-Fakten zunächst tripspezifisch oder sicher accountweit wiederverwendbar sein sollen. Produktziel bleibt: bekannte Informationen nicht bei jeder Reise erneut abfragen.
 
 ---
 
@@ -503,51 +433,26 @@ Production erst nach separater ausdrücklicher Freigabe des Nutzers.
 
 Zusätzlich zum ursprünglichen Foundation-C-Testauftrag mindestens:
 
-### Traveller Logic
-
 - zwei Traveller mit unterschiedlicher Nationalität
 - Requirements niemals zwischen Travellern vermischen
 - unbekannte Nationalität → `insufficient_context`
 - bekannte Angaben nicht erneut anfordern
-- Traveller gelöscht → alte Evaluation nicht weiter verwenden.
-
-### Route Logic
-
+- Traveller gelöscht → alte Evaluation nicht weiter verwenden
 - Direktflug vs. Transit
 - Transit hinzugefügt/entfernt
 - Multi-Country
 - Land mehrfach besucht
-- Destination geändert
-- Reisezeitraum geändert.
-
-### Requirement Truth
-
-- Provider `required` → required
-- Provider `not_required` → not_required
-- conditional bleibt conditional
+- Destination/Reisezeitraum geändert
+- Provider `required` / `not_required` / `conditional` korrekt normalisieren
 - Provider unavailable → keine erfundene Antwort
-- insufficient context → fehlende Fakten präzise
-- LLM kann Official Truth nicht überschreiben.
-
-### Health
-
-- verpflichtende Requirement und Empfehlung getrennt
-- Route kann Health Requirement erzeugen
-- keine persönliche Gesundheitsakte entsteht.
-
-### Freshness
-
+- LLM kann Official Truth nicht überschreiben
+- verpflichtende Health Requirement und Empfehlung getrennt
 - alter Context Fingerprint → stale
 - Traveller-Fakt geändert → stale
 - alte Provider-Evidence → recheck
-- neue Evidence ersetzt alte sauber.
-
-### Security
-
-- Cross-user Traveller blockiert
-- Cross-trip Relation blockiert
+- Cross-user/Cross-trip blockiert
 - Browser kann Official Evidence nicht fälschen
-- Provider Source URL validiert
+- Source URL validiert
 - keine Dokumentnummern im Schema/Payload
 - keine sensitiven Werte in Logs.
 
@@ -555,21 +460,7 @@ Zusätzlich zum ursprünglichen Foundation-C-Testauftrag mindestens:
 
 ## 17. Browser / Mobile
 
-Bestehende WebKit-/Chromium-Audits bleiben Pflicht.
-
-Zusätzlich prüfen:
-
-- mehrere Traveller
-- unterschiedliche Requirements je Traveller
-- insufficient context
-- progressive Fragen nach fehlenden Traveller-Fakten
-- required / not_required / conditional / unknown
-- stale / recheck
-- lange Requirement-Texte
-- mehrere Länder / Transit
-- Mobile 280–430 px
-- Landscape
-- Desktop.
+Bestehende WebKit-/Chromium-Audits bleiben Pflicht. Zusätzlich mehrere Traveller, unterschiedliche Requirements, insufficient context, progressive Missing-Facts, required/not_required/conditional/unknown, stale/recheck, lange Requirement-Texte, mehrere Länder/Transit, Mobile 280–430 px, Landscape und Desktop prüfen.
 
 Keine horizontale Seitenverschiebung; Status nie nur über Farbe.
 
@@ -579,9 +470,8 @@ Keine horizontale Seitenverschiebung; Status nie nur über Farbe.
 
 Diese Produktentscheidung muss dauerhaft im Repository stehen.
 
-Aktualisieren/ergänzen:
+Aktualisieren/ergänzen mindestens:
 
-- `docs/CURSOR_TRAVEL_READINESS_FOUNDATION_TASK.md` oder klarer Verweis auf diesen Nachtrag
 - `docs/TRAVEL_READINESS.md`
 - `JETNITY_HANDOFF.md`
 - `ROADMAP.md`
@@ -599,7 +489,7 @@ ADRs mindestens für:
 4. Official Requirement Truth vs User Readiness
 5. Health Requirement vs persönliche Gesundheitsdaten
 6. Context Fingerprint + Freshness/Recheck
-7. Timatic als bevorzugter aktueller Provider-Kandidat ohne Architekturbindung.
+7. Timatic als bevorzugten aktuellen Provider-Kandidaten ohne Architekturbindung.
 
 ---
 
