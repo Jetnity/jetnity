@@ -223,7 +223,41 @@ Traveller Context / Multi-Citizenship muss vorher als belastbare Grundlage exist
 
 ---
 
-## 5. Extern blockiert / Provider-Zugänge fehlen
+## 5. Verbindliche spätere Produktfähigkeit – Travel Safety & Disruption Intelligence
+
+Status: **PRODUKTENTSCHEIDUNG VERBINDLICH / IMPLEMENTIERUNG NOCH NICHT TERMINIERT**
+
+Product-Owner-Entscheidung vom 22.08.2026: Jetnity soll relevante Sicherheits- und Störungsereignisse erkennen können, wenn diese eine konkrete geplante oder laufende Reise betreffen.
+
+Beispiele:
+
+- Krieg / bewaffneter Konflikt
+- schwere politische Unruhen
+- Erdbeben / Tsunami / Vulkanaktivität
+- Hochwasser / Waldbrände / Wirbelstürme
+- weitere erhebliche, belastbar belegte Reisebeeinträchtigungen
+
+Verbindlich:
+
+- keine pauschale Alarmierung ohne konkreten Reisebezug
+- Safety-/Disruption-Truth nur aus belastbarer aktueller Evidence, nicht aus LLM-Erfindung
+- räumliche und zeitliche Relevanz zur konkreten Etappe/Route prüfen
+- kritische Warnung, wichtiger Hinweis und Information semantisch trennen
+- Warnungen in der Workspace-Übersicht intelligent priorisieren
+- relevante Cross-Domain-Auswirkungen auf Route, Flug, Unterkunft, Aktivitäten, Mobilität, Tagesplan und Readiness erkennen
+- keine automatische Änderung der Reise ohne ausdrückliche Nutzerfreigabe
+- stale/unknown korrekt behandeln
+- geeignete Quellen/Provider vor Aktivierung nach Authority, Coverage, Lizenz, Kosten, Freshness und Datenschutz prüfen
+
+Verbindliche Fachregel:
+
+- `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`
+
+Diese Fähigkeit wird **nicht** als Schnelllösung in Foundation D eingebaut und ändert die verbindliche unmittelbare Priorität Foundation E nicht. Die konkrete Implementierungsphase wird separat geplant.
+
+---
+
+## 6. Extern blockiert / Provider-Zugänge fehlen
 
 ### Phase 3.4 – echter Hotelprovider
 
@@ -244,12 +278,13 @@ Keine Fake-Adapter, keine erfundenen Preise oder Verfügbarkeiten.
 - Mobility Provider: separat evaluieren/freigeben
 - Rental Car Provider: separat evaluieren/freigeben
 - Travel Requirements Provider: separat evaluieren/freigeben
+- Travel Safety / Disruption Sources oder Provider: separat evaluieren/freigeben
 
 Production-Suchen bleiben bis dahin deaktiviert.
 
 ---
 
-## 6. Security-Hardening Track
+## 7. Security-Hardening Track
 
 Status: **offen, nicht durch Foundation C/D verursacht**
 
@@ -262,7 +297,7 @@ Diese Punkte separat prüfen und priorisieren. Keine pauschalen Berechtigungsän
 
 ---
 
-## 7. Bewusst nicht priorisiert
+## 8. Bewusst nicht priorisiert
 
 Jetnity nicht wieder mit Nebenmodulen aufblasen.
 
@@ -279,7 +314,7 @@ Neue Features müssen Reiseplanung/-begleitung klar verbessern, Zeit/Suchaufwand
 
 ---
 
-## 8. Production-Grenzen
+## 9. Production-Grenzen
 
 Bereits auf Production-Schema:
 
@@ -296,7 +331,7 @@ Weiterhin keine Production-Aktivierung von Provider-Suchen, Secrets oder kostenp
 
 ---
 
-## 9. Definition für den nächsten Agenten
+## 10. Definition für den nächsten Agenten
 
 Solange PR #34 offen ist:
 
@@ -310,5 +345,6 @@ Solange PR #34 offen ist:
 8. relevante Flight-/Trip-/Mobility-/Readiness-/Change-Dokumente lesen.
 9. bestehende Arbeit synchronisieren und fortsetzen statt neu anzufangen.
 10. Nach Foundation D ist Traveller Context / Multi-Citizenship die verbindliche nächste interne Priorität.
+11. Travel Safety & Disruption Intelligence ist eine verbindliche spätere Produktfähigkeit gemäß `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`.
 
 Kein abgeschlossener Block darf unnötig neu gebaut werden.
