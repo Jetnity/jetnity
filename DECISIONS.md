@@ -3580,6 +3580,28 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0145 – Intra-Itinerary-Chronologie, Surface-Route-ID, Connection-Dauer und Credential-v4
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R10 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Eindeutige Segmentzeiten sind die Source of Truth für die Leg-Reihenfolge innerhalb einer Itinerary. Origin, Länderrollen, Fingerprint und Anzeige lesen dieselbe umgeordnete Wahrheit. Ties oder fehlende Zeiten bleiben fail-closed.
+- Route-Fingerprints versionieren Surface-/Airport-Change (`~`) getrennt von kontinuierlichem Segmentkontakt (`>`). `ROUTE_FACTS_VERSION` ist `route-v2`. Fehlende IATA ist unknown, nicht gleich.
+- Connection-`airportChange` ist nur bei zwei bekannten, verschiedenen IATA `true`. Lokale Uhrzeiten erzeugen eine Layover-Dauer nur am selben bewiesenen Airport.
+- Readiness-Fingerprints sind `v4|sha256:…` über eine kanonische JSON-Struktur. Pro Dokument geht die aufgelöste Citizenship-Country-Bedeutung ein, nicht nur die opaque Ref. Persistierte v2/v3-Werte werden stale.
+
+**Kontext:** `docs/PR38_CHATGPT_R10_REVIEW.md` gegen Runtime `263c2f84`; Fixes auf `fdcc5c88`.
+
+**Alternativen:** Nur fail-closed ohne Umsortierung; Surface nur in der Anzeige belassen; Cross-Airport-Dauer mit Zeitzonen raten; Citizenship-Menge ohne Dokument-Bindung hashen.
+
+**Begründung:** Dieselbe semantische Reise darf als Multi-Leg-Itinerary und als zwei datierte Flight-Items nicht verschiedene Country-Truth erzeugen. Sichtbare Topologie, Stale-Erkennung und Credential-Eligibility müssen dieselbe Identität lesen.
+
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R11 und Product-Owner-Merge-Freigabe.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

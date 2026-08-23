@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 23. August 2026  
-Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence (Draft PR #38, R9-Fixes + Exact-Head-Gate grün, R10-Re-Review offen)**
+Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence (Draft PR #38, R10-Fixes + Exact-Head-Gate grün, R11-Re-Review offen)**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -162,7 +162,7 @@ Verbindliche Truth-Logik:
 
 ## 6. NÄCHSTE PRIORITÄT – Travel Timing & Seasonal Intelligence
 
-Status: **Draft PR #38; R9-Fixes auf Runtime `263c2f84` geschlossen; Exact-Head-Gate grün; R10-Re-Review offen; kein Live-Provider**
+Status: **Draft PR #38; R10-Fixes auf Runtime `fdcc5c88` geschlossen; Exact-Head-Gate grün; R11-Re-Review offen; kein Live-Provider**
 
 Policy:
 
@@ -205,8 +205,10 @@ Verbindlich:
 10. ✅ ChatGPT-Re-Review R6: Blocker 12 geschlossen, Exact-Head-Gate grün
 11. ✅ ChatGPT-Re-Review R7: Blocker 13 geschlossen, Exact-Head-Gate grün
 12. ✅ ChatGPT-Re-Review R8: Blocker 14 und 15 geschlossen, Exact-Head-Gate grün
-13. **→ unabhängiger ChatGPT-Re-Review R9 nach Stop-Kriterium**
-14. Product-Owner-Merge-Gate
+13. ✅ ChatGPT-Re-Review R9: Blocker 16–19 geschlossen, Exact-Head-Gate grün
+14. ✅ ChatGPT-Re-Review R10: Blocker 20–23 geschlossen, Exact-Head-Gate grün
+15. **→ unabhängiger ChatGPT-Re-Review R11 nach Stop-Kriterium**
+16. Product-Owner-Merge-Gate
 
 ---
 
@@ -332,7 +334,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. **→ Travel Timing & Seasonal – provider-neutrale Foundation (Draft PR #38, R9-Fixes + Exact-Head-Gate grün, R10-Re-Review offen)**
+5. **→ Travel Timing & Seasonal – provider-neutrale Foundation (Draft PR #38, R10-Fixes + Exact-Head-Gate grün, R11-Re-Review offen)**
 6. Provider-Readiness-/Adapter-Lücken schließen
 7. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 8. finaler Workspace Intelligence Audit

@@ -101,11 +101,11 @@ Guest → Account: die Browser-Itinerary ist Input. Persistiert wird nur die ser
 - Direktflug: Origin/Destination des einen Segments, keine Connection
 - Ein oder mehrere Transits: Zwischenländer in Segmentreihenfolge, ohne das letzte Zielland
 - Connections nur innerhalb einer Itinerary, nicht über Hinflug→Rückflug hinweg
-- Connection Duration nur aus vollständigen, nicht-negativen Zeiten (`umstiegMinuten`)
-- Airport Change nur, wenn beide IATA-Codes vorliegen und verschieden sind
+- Connection Duration nur aus vollständigen, nicht-negativen Zeiten am selben bewiesenen Airport (`umstiegMinuten`)
+- Airport Change nur, wenn beide IATA-Codes vorliegen und verschieden sind; ein bekannter Code bleibt `unknown`
 - Destination Countries für Readiness: Etappen-Codes plus Itinerary-Ziel, wenn es nicht der Origin derselben Itinerary ist
 
-Fingerprint: `route-v1|ZRH:CH>DOH:QA>BKK:TH`. Airport-Change-Origins bleiben in der Kette, z. B. `ZRH:CH>CDG:FR>ORY:FR>BKK:TH`. Readiness-Fingerprints sind `v3|sha256:…` über den vollen Kontext, nicht über ein 800-Zeichen-Präfix.
+Fingerprint: `route-v2|ZRH:CH>DOH:QA>BKK:TH`. Surface-/Airport-Change bleibt als `~` erhalten, z. B. `ZRH:CH>CDG:FR~ORY:FR>BKK:TH` gegenüber kontinuierlich `ZRH:CH>CDG:FR>ORY:FR>BKK:TH`. Readiness-Fingerprints sind `v4|sha256:…` über kanonisches JSON, nicht über ein 800-Zeichen-Präfix.
 
 ---
 

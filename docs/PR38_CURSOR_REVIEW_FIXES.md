@@ -1,7 +1,7 @@
 # PR #38 – Cursor-Fixes zum unabhängigen Review
 
 Stand: 23. August 2026  
-Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11, R6-Blocker 12, R7-Blocker 13, R8-Blocker 14–15 und R9-Blocker 16–19 geschlossen; R10-Re-Review offen**
+Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11, R6-Blocker 12, R7-Blocker 13, R8-Blocker 14–15, R9-Blocker 16–19 und R10-Blocker 20–23 geschlossen; R11-Re-Review offen**
 
 Review R1/R2: `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md`  
 Review R3: `docs/PR38_CHATGPT_R3_REVIEW.md`  
@@ -19,7 +19,8 @@ Runtime-Head R5-Fixes: `249d4b9b24fed89070adfbd0bcaaacaeb481ba46`
 Runtime-Head R6-Fixes: `e790a7d224473df2cf999fe7c058a81a5a8e8679`  
 Runtime-Head R7-Fixes: `ece075e702c491454c553a9fc931b26308cab1a9`  
 Runtime-Head R8-Fixes: `de83d0269e1910ef82a596dd6e7005001f1cb860`  
-Runtime-Head R9-Fixes: `263c2f842d2287da652b27cc9660c28db68c6750`
+Runtime-Head R9-Fixes: `263c2f842d2287da652b27cc9660c28db68c6750`  
+Runtime-Head R10-Fixes: `fdcc5c882b4fb8598b3eb0956b9bdeeb0ef94072`
 
 ## 1. Gemischte Unsicherheit
 
@@ -119,8 +120,24 @@ Item-Datum ohne Zeit degradiert keine Segmentzeit auf `00:00`. Item- und Segment
 
 ## 19. Readiness-Fingerprint ohne Prefix-Truncation
 
-`readinessFingerprint()` hasht den vollständigen kanonischen Kontext als `v3|sha256:…`. Änderungen hinter Zeichen 800, an Citizenships, späten Dokumenten oder Residence bleiben sichtbar. Persistierte v2-Werte werden stale. Das Ergebnis bleibt im 800-Zeichen-DB-Limit. Keine Passnummern.
+`readinessFingerprint()` hasht den vollständigen kanonischen Kontext als versionierten SHA-256-Digest. Prefix-Truncation entfällt. Persistierte ältere Versionen werden stale. Das Ergebnis bleibt im 800-Zeichen-DB-Limit. Keine Passnummern.
 
-## 20. Nicht geändert
+## 20. Intra-Itinerary-Leg-Chronologie
+
+`itinerariesFuerWahrheit()` ordnet Legs einer Itinerary nur dann um, wenn Segmentstarts eine eindeutige Totalordnung tragen. Dieselbe SoT gilt für Origin, Länderrollen, Fingerprint und Anzeige. Umgekehrt gespeicherte `BKK→ZRH` / `ZRH→BKK`-Legs erzeugen keinen TH-Origin. Ties oder fehlende Zeiten bleiben fail-closed und zeigen `Reihenfolge unbekannt`. Lexikalische Airport-Pfade reparieren keine Chronologie.
+
+## 21. Surface-Grenze in der Route-ID
+
+`pfadAusSegmenten()` serialisiert `surfaceChange` als `~` und kontinuierlichen Kontakt als `>`. `ROUTE_FACTS_VERSION` ist `route-v2`. `ZRH→CDG` danach `ORY→BKK` und `ZRH→CDG→ORY→BKK` sind unterschiedliche Identitäten. Fehlende IATA auf beiden Seiten ist unknown, nicht gleich.
+
+## 22. Connection Airport-Change und Duration
+
+`airportChange=true` nur bei zwei bekannten, verschiedenen IATA. Ein oder kein bekannter Code bleibt `null`. `durationMinutes` aus lokalen Segmentzeiten nur am selben bewiesenen Airport. Cross-Airport- oder Surface-Gaps erzeugen keine naive Uhrzeitdifferenz.
+
+## 23. Credential-Bedeutung in Readiness v4
+
+`documentFingerprintTeil()` enthält die aufgelöste Citizenship, nicht nur `citizenshipClientRef`. `readinessFingerprint()` hasht eine kanonische JSON-Struktur. Ref→Country-Tausch ändert die Identität; reine Array-Reihenfolge nicht. Opaque Refs mit `,` / `:` / `|` erzeugen keine strukturelle Kollision. Persistierte v2- und v3-Werte werden stale.
+
+## 24. Nicht geändert
 
 Kein Provider, keine Migration, keine Secrets, PR bleibt Draft.
