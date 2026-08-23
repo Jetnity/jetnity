@@ -1,7 +1,7 @@
 # Jetnity – Multi-Agent Workstreams
 
 Stand: 24. August 2026  
-Status: **Vorbereitungsphase – Audit-Agenten dürfen starten; parallele Kernimplementierung bleibt bis technischem Closure von PR #38 gesperrt**
+Status: **Account- und Admin-Audits abgeschlossen und gemeinsam geschnitten; Kernimplementierung bleibt bis technischem Closure von PR #38 gesperrt**
 
 ## 1. Koordinationsprinzip
 
@@ -9,82 +9,82 @@ Status: **Vorbereitungsphase – Audit-Agenten dürfen starten; parallele Kernim
 
 GitHub ist dauerhaftes Teamgedächtnis. Jeder Cursor-Agent wird ausschließlich mit seinem **exakten sichtbaren Cursor-Anzeigenamen** referenziert, sobald dieser bekannt ist.
 
-## 2. Aktive / vorbereitete Workstreams
+Verbindlicher gemeinsamer Schnitt Account/Admin: `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md`.
 
-| Cursor-Anzeigename | Workstream | Phase | Basis | Erlaubt | Gesperrt | Nächster Schritt |
-| --- | --- | --- | --- | --- | --- | --- |
-| wird nach Start eingetragen | Travel Timing & Seasonal / PR #38 | Runtime-Fix + Review | `feat/travel-timing-seasonal-intelligence` | R11-Blocker 24–26 schließen, Tests/Gates/Handoff | Mark Ready/Merge ohne Product Owner | Fix 24–26 → Exact-Head-Gate → ChatGPT R12 |
-| `Account platform audit vorbereitung` | Account Platform | Audit / Vorbereitung | `audit/account-platform` | Code-/DB-/UX-Audit, Architektur, Evidence-Matrix, Implementierungsplan, Doku | unkoordinierte Auth/RLS/DB/Truth-Implementierung, Migration, Production | `docs/CURSOR_ACCOUNT_PLATFORM_AUDIT_TASK.md` ausführen |
-| `Admin plattform audit` | Admin Platform | Audit / Vorbereitung | `audit/admin-platform` | Admin-/Security-/Finance-/Ops-Audit, Architektur, Permission-Matrix, Plan, Doku | Rollen/RLS/Service-Role/Payment/Bexio/Ads/Provider/Infomaniak Live-Änderungen | `docs/CURSOR_ADMIN_PLATFORM_AUDIT_TASK.md` ausführen |
+## 2. Aktive Workstreams
 
-## 3. Ownership-Grenzen während der Auditphase
+| Cursor-Anzeigename | Workstream | Phase | Branch / PR | Status | Nächster Schritt |
+| --- | --- | --- | --- | --- | --- |
+| vollständiger Anzeigename weiterhin nicht bekannt; Cursor zeigt nur `Reisezeitpunkt saisonale intellig...` | Travel Timing & Seasonal | Runtime-Fix + Independent Review | `feat/travel-timing-seasonal-intelligence` / PR #38 | R14 fand Persistenz-Blocker 29; Draft, nicht gemergt | Blocker 29 schließen → Exact-Head-Gate → ChatGPT R15 |
+| `Account plattform audit vorbereitung` | Account Platform | Audit abgeschlossen | `audit/account-platform` / PR #39 | Audit als Planungsgrundlage akzeptiert; keine Implementierung | auf PR-#38-Closure warten; danach AP-1/AP-2/AP-3 freigabefähig schneiden |
+| `Admin platform audit` | Admin Platform / Control Center | Audit abgeschlossen | `audit/admin-platform` / PR #40 | Audit als Planungsgrundlage akzeptiert; keine Implementierung | auf PR-#38-Closure warten; danach zuerst Admin Slice A, anschließend read-only System Health |
 
-### Travel Timing & Seasonal Agent
+Alle drei PRs/Workstreams bleiben ohne ausdrückliche Product-Owner-Freigabe **nicht Mark Ready und nicht gemergt**.
 
-Owns aktuell nur den laufenden PR-#38-Härtungszyklus und dessen direkt notwendige Route-/Seasonal-/Readiness-Fixes.
+## 3. Ownership nach gemeinsamem Account/Admin-Review
 
-Account/Admin-Audit-Agenten dürfen diesen Runtime-Workstream nicht verändern.
+### Account Platform – `Account plattform audit vorbereitung`
 
-### Account Platform Audit Agent
-
-Owns Analyse und Zielplanung für:
+Owns später primär:
 
 - Benutzerkonto-IA/UX
 - Meine Reisen als Account-Hub
-- Traveller-Verwaltung aus Account-Sicht
-- Auth-/Security-Audit
-- Guest→Account-Audit
-- Privacy/Data/Notifications/Subscription-Readiness
+- Account-Security-UX
+- Nutzerseitige Privacy-/Consent-/Export-/Delete-Flows
+- Account-Traveller-Registry nach separatem Shared-ADR
+- Favoriten, Preferences, User Notifications und Subscription-Sicht
 
-Darf gemeinsame Auth/RLS/DB/Traveller-Contracts in dieser Phase nur analysieren, nicht verändern.
+Darf keine zweite Trip-/Traveller-/Billing-/Auth-Truth bauen.
 
-### Admin Platform Audit Agent
+### Admin Platform – `Admin platform audit`
 
-Exakter Cursor-Anzeigename: **`Admin plattform audit`**.
+Owns später primär:
 
-Owns Analyse und Zielplanung für:
-
-- Admin/Backoffice IA/UX
-- Admin Auth/Permissions/Security
+- Admin/Backoffice IA/UX und Jetnity Control Center
+- Admin Permissions/Security-Ops
 - Copilot Pro Governance
 - Provider-/Cost-Control
-- Finance/Bexio-Readiness
-- Ads/Marketing-Ops-Readiness
+- Finance-/Bexio-Operations-Sicht
+- Ads/Marketing-/SEO-Ops
 - Analytics/Support/System Operations
-- System Health / Infrastructure Observability für Supabase, Vercel und weitere betriebsrelevante Systeme
+- System Health / Infrastructure Observability für Supabase, Vercel, GitHub und weitere betriebsrelevante Systeme
 - Domains/DNS/E-Mail/Infomaniak-Readiness
 
-Darf gemeinsame Auth/RLS/DB/Service-Role-/Payment-/Provider-Contracts in dieser Phase nur analysieren, nicht verändern.
+Darf keine zweite Account-, Trip-, Traveller-, Billing- oder Travel-Truth bauen.
 
-## 4. Gemeinsame Contracts – vorerst Lead-geschützt
+### Travel Timing & Seasonal
 
-Folgende Bereiche sind bis zur späteren Integrationsplanung **nicht parallel frei editierbar**:
+Owns weiterhin nur PR #38 und dessen direkt notwendige Route-/Seasonal-/Readiness-Persistenzkorrekturen. Account/Admin dürfen diesen Runtime-Workstream nicht verändern.
 
-- Auth / Account Identity / Sessions
-- Admin Role / Permission Model
+## 4. Gemeinsame Contracts – Technical-Lead-geschützt
+
+Verbindliche Entscheidungen stehen in `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md`.
+
+Seriell/zentral bleiben insbesondere:
+
+- Auth / Account Identity / Sessions / MFA / AAL
+- `profiles`, Rollen und Capabilities
 - RLS / Ownership / Service Role
+- Support-Sicht auf fremde Reisen
 - Trip Graph / Guest→Account Persistenz
-- Traveller Context / Credentials
-- Readiness / Entry
-- Route Truth
-- Safety / Seasonal gemeinsame Route-/Zeitdaten
-- Subscription / Payment / Refund / Accounting Truth
+- Traveller Context / Credentials / Readiness
+- Privacy Export / Delete
+- Subscription / Billing / Payment / Refund / Bexio Truth
+- Admin Audit Trail
 - Provider Activation / Secrets / Cost Gates
 
-Wenn ein Audit dort einen Defekt findet, dokumentiert der Agent ihn mit konkretem Pfad, Auswirkung und vorgeschlagener Lösung. Implementierung wartet auf Technical-Lead-Slicing.
+## 5. Verbindliche Integrationsreihenfolge
 
-## 5. Integrationsreihenfolge
-
-Aktuell verbindlich:
-
-1. PR #38 R11-Blocker 24–26 schließen.
-2. Exact-Head-Gate.
-3. Unabhängiger ChatGPT R12.
-4. Bei Stop-Kriterium technisches Closure/PASS; PR bleibt Draft bis Product-Owner-Freigabe.
-5. Account- und Admin-Audit-Ergebnisse gemeinsam gegen Architektur/Dependencies prüfen.
-6. Implementierung in kleine, konfliktarme Workstreams/PRs schneiden.
-7. Auth/RLS/Shared-Contract-Änderungen zentral/seriell integrieren.
-8. Post-Integration Cross-Domain-Review.
+1. PR #38 Blocker 29 schließen.
+2. Exact-Head-Gate und unabhängiger ChatGPT R15.
+3. Wenn R15 nach Stop-Kriterium keinen neuen konkreten relevanten Defekt findet: technisches Closure/PASS für PR #38 dokumentieren; PR bleibt trotzdem Draft bis Product-Owner-Freigabe.
+4. Danach konfliktarme UI-Slices freigeben:
+   - Account AP-1 / AP-2 / AP-3
+   - Admin Slice A (ehrliche Control-Center-IA / Legacy-Lügen entfernen)
+5. Read-only Admin System Health kann danach als eigener konfliktarmer Slice folgen.
+6. Shared Auth/RLS/DB/Privacy/Billing/Support/Traveller-Slices nur seriell nach dem zentralen Contract-Schnitt.
+7. Post-Integration Cross-Domain-Review.
+8. Mark Ready / Merge immer nur nach aktueller Product-Owner-Freigabe.
 
 ## 6. Pflichtstatus pro Agent
 
@@ -93,7 +93,7 @@ Jeder Agent dokumentiert spätestens bei Meilenstein, Blockierung, Unterbrechung
 - exakter Cursor-Anzeigename
 - Workstream
 - Branch
-- PR (falls vorhanden)
+- PR
 - aktueller Runtime-/Docs-Head
 - Status: geplant / arbeitet / blockiert / Review / fertig / integriert
 - Scope / erlaubte und gesperrte Bereiche
@@ -106,14 +106,14 @@ Jeder Agent dokumentiert spätestens bei Meilenstein, Blockierung, Unterbrechung
 
 Eine Cursor-Session darf verloren gehen, ohne dass dadurch relevanter Projektfortschritt verloren geht.
 
-## 7. Aktuelle Produktentscheidung Account vs Workspace
+## 7. Produkttrennung
 
 Verbindliches Detailmodell: `docs/ACCOUNT_TRIP_WORKSPACE_PRODUCT_MODEL.md`.
-
-Kurzform:
 
 > **Account = persönliches dauerhaftes Zuhause des Kunden.**
 
 > **Trip Workspace = operative Kommandozentrale einer einzelnen Reise.**
 
-Keine zwei konkurrierenden Dashboards.
+> **Admin = interne intelligente Steuerzentrale von Jetnity.**
+
+Keine zwei konkurrierenden Dashboards und keine doppelte Source of Truth.
