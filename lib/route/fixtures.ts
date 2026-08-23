@@ -19,6 +19,8 @@ export const TEST_FLUGHAFEN_REFS: FlughafenReferenzKarte = {
   NRT: { countryCode: 'JP', city: 'Tokio', country: 'Japan', name: 'Narita' },
   HNL: { countryCode: 'US', city: 'Honolulu', country: 'United States', name: 'Daniel K. Inouye' },
   LAX: { countryCode: 'US', city: 'Los Angeles', country: 'United States', name: 'Los Angeles' },
+  JFK: { countryCode: 'US', city: 'New York', country: 'United States', name: 'John F. Kennedy' },
+  SFO: { countryCode: 'US', city: 'San Francisco', country: 'United States', name: 'San Francisco' },
 }
 
 function segment(
@@ -29,6 +31,7 @@ function segment(
   anDatum: string,
   anZeit: string,
   mitLand = true,
+  surfaceFrom: keyof typeof TEST_FLUGHAFEN_REFS | null = null,
 ): RouteSegment {
   const originRef = TEST_FLUGHAFEN_REFS[von]
   const destRef = TEST_FLUGHAFEN_REFS[nach]
@@ -49,6 +52,7 @@ function segment(
     departureTime: abZeit,
     arrivalDate: anDatum,
     arrivalTime: anZeit,
+    ...(surfaceFrom ? { surfaceFromAirportCode: surfaceFrom } : {}),
   }
 }
 
@@ -119,7 +123,7 @@ export function itineraryAirportChange(
       {
         segments: [
           segment('ZRH', 'CDG', '2026-11-01', '07:10', '2026-11-01', '08:30'),
-          segment(weiter, 'BKK', '2026-11-01', '12:40', '2026-11-02', '06:10'),
+          segment(weiter, 'BKK', '2026-11-01', '12:40', '2026-11-02', '06:10', true, weiter === 'ORY' ? 'CDG' : null),
         ],
       },
     ],
@@ -188,7 +192,7 @@ export function itineraryAirportChangeZweitesLeg(): FlugRouteItinerary {
       {
         segments: [
           segment('BKK', 'CDG', '2026-11-12', '08:10', '2026-11-12', '15:40'),
-          segment('ORY', 'ZRH', '2026-11-12', '18:20', '2026-11-12', '19:40'),
+          segment('ORY', 'ZRH', '2026-11-12', '18:20', '2026-11-12', '19:40', true, 'CDG'),
         ],
       },
     ],
@@ -297,9 +301,56 @@ export function itineraryGemischtSurfaceScrambled(): FlugRouteItinerary {
     legs: [
       {
         segments: [
-          segment('ORY', 'BKK', '2026-11-01', '12:40', '2026-11-02', '06:10'),
+          segment('ORY', 'BKK', '2026-11-01', '12:40', '2026-11-02', '06:10', true, 'CDG'),
           segment('BKK', 'SIN', '2026-11-02', '08:10', '2026-11-02', '11:30'),
           segment('ZRH', 'CDG', '2026-11-01', '07:10', '2026-11-01', '08:30'),
+        ],
+      },
+    ],
+  }
+}
+
+export function itineraryUsGapOhneSurface(): FlugRouteItinerary {
+  return {
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs: [
+      {
+        segments: [
+          segment('LAX', 'JFK', '2026-11-01', '08:00', '2026-11-01', '16:20'),
+          segment('SFO', 'NRT', '2026-11-02', '11:00', '2026-11-03', '15:40'),
+        ],
+      },
+    ],
+  }
+}
+
+export function itineraryUsGapOhneSurfaceUmgekehrt(): FlugRouteItinerary {
+  return {
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs: [
+      {
+        segments: [
+          segment('SFO', 'NRT', '2026-11-02', '11:00', '2026-11-03', '15:40'),
+          segment('LAX', 'JFK', '2026-11-01', '08:00', '2026-11-01', '16:20'),
+        ],
+      },
+    ],
+  }
+}
+
+export function itineraryAirportChangeOhneEvidence(
+  weiter: 'ORY' | 'LCY' | 'AMS' = 'ORY',
+): FlugRouteItinerary {
+  return {
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs: [
+      {
+        segments: [
+          segment('ZRH', 'CDG', '2026-11-01', '07:10', '2026-11-01', '08:30'),
+          segment(weiter, 'BKK', '2026-11-01', '12:40', '2026-11-02', '06:10'),
         ],
       },
     ],

@@ -10,12 +10,11 @@
 //   - eine eindeutige azyklische Airport-Kette, die die deklarierte Reihenfolge bestätigt
 // Eine andere eindeutige Kette darf Open-Jaw/Home-Arrival nicht zur Origin-Wahrheit umdrehen.
 // Segmente innerhalb eines Legs dürfen bei genau einem kontinuierlichen Hamiltonian
-// oder genau einem gemischten Hamiltonian mit same-country Surface-Kante rekonstruiert werden.
-// Bekannte IATA-Codes allein beweisen keine Reihenfolge.
+// oder genau einem gemischten Hamiltonian mit expliziter Surface-Evidence rekonstruiert werden.
+// Country-Gleichheit und bekannte IATA-Codes allein beweisen keine Reihenfolge.
 // Lexikalische Pfade und Date-Line-Uhrzeiten erfinden keine Business-Truth.
 
 import { tageZwischen } from '@/lib/flights/zeit'
-import { landescodeLesen } from '@/lib/readiness/domain'
 import type { FlugRouteItinerary, RouteItineraryMitQuelle, RouteSegment } from '@/lib/route/domain'
 import { pfadAusItinerary } from '@/lib/route/pfad'
 import { iataLesen } from '@/lib/route/referenz'
@@ -217,10 +216,9 @@ function kontinuitaet(vorher: RouteSegment, nachher: RouteSegment): boolean {
 function oberflaechenKante(vorher: RouteSegment, nachher: RouteSegment): boolean {
   const dest = airportCode(vorher.destination)
   const orig = airportCode(nachher.origin)
-  if (!dest || !orig || dest === orig) return false
-  const destLand = landescodeLesen(vorher.destination.countryCode)
-  const origLand = landescodeLesen(nachher.origin.countryCode)
-  return Boolean(destLand && origLand && destLand === origLand)
+  const von = iataLesen(nachher.surfaceFromAirportCode ?? null)
+  if (!dest || !orig || !von || dest === orig) return false
+  return dest === von
 }
 
 function hamiltonPfade(

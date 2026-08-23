@@ -8,7 +8,7 @@
 import type { FlugOption } from '@/lib/flights/domain'
 import { flugOptionLesen } from '@/lib/flights/schema'
 import type { FlughafenReferenzKarte, FlugRouteItinerary, RouteSegment } from '@/lib/route/domain'
-import { flughafenPunkt } from '@/lib/route/referenz'
+import { flughafenPunkt, iataLesen } from '@/lib/route/referenz'
 import { flugRouteItineraryLesen } from '@/lib/route/schema'
 
 export function itineraryAusFlugOption(
@@ -20,9 +20,11 @@ export function itineraryAusFlugOption(
 
   const legs = option.legs
     .map((bein) => ({
-      segments: bein.segments
-        .map((segment) => segmentAusOption(segment, refs))
-        .filter((segment): segment is RouteSegment => segment !== null),
+      segments: surfaceEvidenceSetzen(
+        bein.segments
+          .map((segment) => segmentAusOption(segment, refs))
+          .filter((segment): segment is RouteSegment => segment !== null),
+      ),
     }))
     .filter((bein) => bein.segments.length > 0)
 
@@ -56,6 +58,9 @@ export function itineraryKanonisieren(
         departureTime: segment.departureTime,
         arrivalDate: segment.arrivalDate,
         arrivalTime: segment.arrivalTime,
+        ...(segment.surfaceFromAirportCode
+          ? { surfaceFromAirportCode: iataLesen(segment.surfaceFromAirportCode) }
+          : {}),
       })),
     })),
   })
@@ -76,4 +81,14 @@ function segmentAusOption(
     arrivalDate: segment.arrivalDate,
     arrivalTime: segment.arrivalTime,
   }
+}
+
+function surfaceEvidenceSetzen(segmente: RouteSegment[]): RouteSegment[] {
+  return segmente.map((segment, index) => {
+    if (index === 0) return segment
+    const dest = iataLesen(segmente[index - 1]?.destination.airportCode ?? null)
+    const orig = iataLesen(segment.origin.airportCode)
+    if (!dest || !orig || dest === orig) return segment
+    return { ...segment, surfaceFromAirportCode: dest }
+  })
 }

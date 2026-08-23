@@ -58,6 +58,7 @@ const segmentSchema = z.object({
   departureTime: uhrzeit.nullable().default(null),
   arrivalDate: datum.nullable().default(null),
   arrivalTime: uhrzeit.nullable().default(null),
+  surfaceFromAirportCode: iata.nullable().optional(),
 })
 
 export const flugRouteItinerarySchema = z.object({

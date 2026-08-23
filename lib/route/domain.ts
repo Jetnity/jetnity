@@ -35,6 +35,8 @@ export type RouteSegment = {
   departureTime: string | null
   arrivalDate: string | null
   arrivalTime: string | null
+  /** Explizite Surface-Evidence: IATA, von dem dieser Segment-Origin per Ground-Transfer kommt. */
+  surfaceFromAirportCode?: string | null
 }
 
 export type RouteVerbindung = {
