@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 23. August 2026  
-Status: **Foundation D und E vollständig abgeschlossen inkl. Production; nächster Block: Travel Safety & Disruption Intelligence – provider-neutrale Foundation**
+Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; nächste Priorität: Travel Timing & Seasonal Intelligence**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -71,7 +71,7 @@ Production-Migrationen:
 - `20260822010000_trip_readiness_items`
 - `20260822020000_trip_travellers`
 
-Die Requirements-Engine bleibt provider-neutral. Ohne echten Provider wird keine regulatorische Wahrheit erfunden.
+Requirements bleiben provider-neutral. Ohne echten Provider wird keine regulatorische Wahrheit erfunden.
 
 ---
 
@@ -90,7 +90,7 @@ Production-Migrationen:
 - `20260822140000_flug_route_itinerary_airport_truth`
 - `20260822150000_trip_items_route_itinerary_guard`
 
-Route Truth bleibt traveller-neutral, provider-neutral und die einzige kanonische Origin-/Transit-Naht für relevante spätere Funktionen.
+Route Truth bleibt traveller-neutral, provider-neutral und die kanonische Origin-/Transit-Naht.
 
 ---
 
@@ -101,7 +101,6 @@ Route Truth bleibt traveller-neutral, provider-neutral und die einzige kanonisch
 - PR #35
 - Squash-Merge-Commit: `3bf1eaaa78ef6ac33bb3baff84650a143720e91d`
 - Fachdokument: `docs/TRAVELLER_CONTEXT.md`
-- Closure: `docs/PR35_CHATGPT_INDEPENDENT_CLOSURE_CHECK.md` – PASS
 - Production-Acceptance: `docs/FOUNDATION_E_PRODUCTION_ACCEPTANCE.md`
 
 Production-Migrationen:
@@ -114,70 +113,54 @@ Kanonisches Modell:
 
 > **Ein Reisender → mehrere Staatsbürgerschaften → mehrere Reisedokumente / Credentials → kontextabhängig bewertete zulässige Optionen.**
 
-Keine Passnummern, Scans, MRZ oder Biometrie. Ausstellerland ist keine automatische Staatsbürgerschaft. `unknown` bleibt `unknown` ohne belastbare Evidence.
+Neue verbindliche Regel: `docs/TRAVELLER_CITIZENSHIP_REQUIREMENT_POLICY.md`.
+
+- Citizenship bleibt beim einfachen Reise-Start optional.
+- Sie wird zwingend, sobald eine Official-/Regulatory-Funktion davon abhängt.
+- keine stille Citizenship-Annahme aus Residence/Standort/Abflugland/Sprache/Domain.
+- fehlender notwendiger Kontext bleibt `unknown` / `insufficient_context`.
 
 ---
 
-## 5. NÄCHSTE PRIORITÄT – Travel Safety & Disruption Intelligence
+## 5. Travel Safety & Disruption Intelligence – provider-neutrale Foundation
 
-Status: **Stop-Criterion-Truth-Blocker auf Draft-PR #37 behoben; nächster Check zielt auf Closure/Pass; `main` und Production unverändert**
+**Abgeschlossen, technisch Closure/PASS und auf `main` gemergt. Nicht erneut bauen.**
 
-Verbindliche Policy:
+- PR #37
+- finaler PR-Head: `11976ed734b62ec906abd65581f309b1a38362f1`
+- gelockter finaler Runtime-Head: `985cae72ef5abac4012c75c739fa00412189ad48`
+- Squash-Merge-Commit: `2cceee0658cc426d66974779b525c8bf9a623534`
+- Closure: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_CLOSURE.md`
+- Fachdokument: `docs/TRAVEL_SAFETY_DISRUPTION.md`
+- Acceptance: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ACCEPTANCE.md`
 
-- `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`
+Finaler Runtime-Nachweis:
 
-Ziel: Jetnity soll relevante akute Sicherheits-/Störungsereignisse für eine konkrete geplante oder laufende Reise erkennen und in den Reisekontext einordnen können, z. B.:
+- 1481/1481 Tests
+- Production-Build 38/38
+- UI-Audit 886/886, 0 Fehler, WebKit + Chromium / 8 Viewports
+- GitHub Actions SUCCESS
+- Vercel Preview READY/SUCCESS
+- 0 behind vor Merge
+- Vercel auf Merge-Commit SUCCESS
 
-- Krieg / bewaffneter Konflikt
-- schwere politische Unruhen
-- Erdbeben / Tsunami / Vulkanaktivität
-- Hochwasser / Waldbrände
-- Hurrikane / Taifune / andere erhebliche Naturereignisse
-- andere belastbar belegte, erhebliche Reisebeeinträchtigungen
+Keine Safety-Tabelle, keine DB-/Production-Migration, kein Live-Provider, keine Secrets, keine neuen laufenden Kosten.
 
-### Verbindliche Truth-Logik
+Verbindliche Truth-Logik:
 
 - kein allgemeiner Newsfeed
-- nur anzeigen, wenn Ereignis räumlich/zeitlich/fachlich zur konkreten Reise, Etappe oder Route relevant ist
-- Safety Truth nur aus geeigneter belastbarer Evidence; LLM darf erklären, nicht Wahrheit erzeugen
-- Source/Authority, Freshness, räumlicher Scope und Event-/Warning-Kontext müssen modellierbar sein
-- `unknown` / unzureichende Evidence bleibt unknown
-- keine landesweite Warnung, wenn Evidence nur eine Region betrifft und feinere Granularität möglich ist
-- semantische Stufen: kritische Warnung / wichtiger Reisehinweis / Information-Watch
+- nur räumlich/zeitlich/fachlich relevante Events
+- Source/Authority/Freshness/Scope getrennt modelliert
+- `unknown` / stale / conflict / timeout / malformed bleiben fail-closed
+- keine pauschale Landeswarnung bei feinerer Evidence
+- Route/Transit/Stage-Zeitfenster berücksichtigen
+- keine erfundene UTC-Semantik für zonenlose lokale Zeiten oder Date-only-Tage
 - keine automatische Reiseänderung
-
-### Cross-Domain
-
-Safety muss Auswirkungen auf relevante Teile derselben Reise erkennen können:
-
-- Destination / Etappe
-- Flug / Route / Transit
-- Unterkunft
-- Aktivitäten
-- Mobilität / Transfers
-- Mietwagen / Straßen
-- Tagesplan
-- Readiness, wenn fachlich betroffen
-
-Die Funktion darf kein isoliertes Warnungsmodul werden. Sie muss Route Truth, Traveller Context und den bestehenden Reisegraphen wiederverwenden.
-
-### Auftrag / Arbeitsstand
-
-Versionierter Cursor-Auftrag liegt auf `main` und ist auf dem Feature-Branch umgesetzt:
-
-- Branch: `feat/travel-safety-disruption-intelligence`
-- Draft PR: https://github.com/Jetnity/jetnity/pull/37
-- `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`
-- Acceptance: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ACCEPTANCE.md`
-- Fachdokument: `docs/TRAVEL_SAFETY_DISRUPTION.md`
-- Ist-Audit: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ARCHITECTURE_AUDIT.md`
-- Live-Status: `docs/ACTIVE_WORK_STATUS.md`
-
-Kein echter Safety-Provider in diesem Block. Keine Production-Migration, kein Mark Ready, kein Merge. Der Date-only↔Instant-Blocker aus `docs/PR37_CHATGPT_TIMEZONE_REREVIEW.md` ist behoben. Der nächste unabhängige Check soll auf Closure/Pass zielen.
+- Seasonal bleibt getrennte Wahrheit
 
 ---
 
-## 6. Danach – Travel Timing & Seasonal Intelligence
+## 6. NÄCHSTE PRIORITÄT – Travel Timing & Seasonal Intelligence
 
 Status: **verbindliche Produktentscheidung / noch nicht begonnen**
 
@@ -185,26 +168,47 @@ Policy:
 
 - `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`
 
-Ziel: erkennen, wenn konkrete Reisedaten typischerweise in eine deutlich ungünstigere saisonale Phase fallen, z. B. Monsun, Hurrikan-/Taifunsaison, starke Hitze/Kälte, Waldbrand-/Rauchperiode, saisonale Hochwasser, relevante Schnee-/Lawinenperioden oder saisonale Schließ-/Erreichbarkeitsprobleme.
+Ziel: Jetnity erkennt, wenn konkrete Reisedaten typischerweise in eine deutlich ungünstigere saisonale Phase fallen, z. B.:
+
+- Monsun
+- Hurrikan-/Taifunsaison
+- starke Hitze/Kälte
+- Waldbrand-/Rauchperiode
+- saisonale Hochwasser
+- relevante Schnee-/Lawinenperioden
+- saisonale Schließ-/Erreichbarkeitsprobleme
 
 Verbindlich:
 
-- saisonales Muster ≠ akute Warnung
+- saisonales Muster ≠ akute Safety-Warnung
 - typische/statistische Bedingungen ≠ exakte Wettervorhersage
-- Region und konkrete Reisedaten berücksichtigen
-- nicht pauschal „schlecht“ oder „gefährlich“ behaupten
-- mögliche Auswirkungen erklären
-- Alternativen vorschlagen, niemals automatisch Datum/Ziel ändern
+- Region + konkrete Reisedaten berücksichtigen
+- keine pauschalen „schlecht“-/„gefährlich“-Behauptungen
+- Auswirkungen erklären
+- bessere Zeitfenster/Alternativen vorschlagen, niemals automatisch ändern
 - Nutzer kann `Trotzdem so planen`
-- Safety und Seasonal teilen keine unscharfe Wahrheit, können aber im Workspace koordiniert priorisiert werden
+- Evidence/Freshness/Source nachvollziehbar
+- keine erfundenen Wahrscheinlichkeiten
+- kein echter Seasonal-Provider im ersten Foundation-Block
+
+### Nächster Implementierungsablauf
+
+1. Ist-Audit gegen Safety, Route, Traveller Context, Readiness und Workspace
+2. provider-neutrales Domain-/Evidence-/Seasonality-Modell
+3. klare Trennung zu akutem Safety
+4. Cross-Domain-Impact und Reevaluation
+5. minimale, ruhige Workspace-Naht
+6. Pflicht-Testmatrix + Device-Matrix
+7. unabhängiger ChatGPT-Review
+8. Product-Owner-Merge-Gate
 
 ---
 
-## 7. Provider-Readiness / Adapter-Grenzen vor dem großen Workspace-Umbau
+## 7. Provider-Readiness / Adapter-Grenzen
 
 **Echte Provider bleiben bis zur späteren Providerphase deaktiviert.**
 
-Vorher müssen die provider-neutralen Ports/Adapter-Grenzen professionell vorhanden sein, wo noch Lücken bestehen – insbesondere bei:
+Vorher müssen provider-neutrale Ports/Adapter-Grenzen professionell geschlossen werden, insbesondere bei:
 
 - Flights
 - Hotels
@@ -214,8 +218,6 @@ Vorher müssen die provider-neutralen Ports/Adapter-Grenzen professionell vorhan
 - Travel Requirements / Readiness
 - Safety & Disruption
 - Timing & Seasonal
-
-Ziel: reale Provider später anschließen, ohne fachliche Modelle umzubauen oder neue Schattenwahrheiten einzuführen.
 
 Zu prüfen/vereinheitlichen:
 
@@ -234,78 +236,61 @@ Keine Verträge, Secrets oder laufenden Providerkosten ohne separate Freigabe.
 
 ## 8. Großer End-to-End Trip-Workspace-/Übersicht-Umbau
 
-Status: **verbindlich geplant / erst nach D + E + Safety + Seasonal + Provider-Readiness**
+Status: **verbindlich geplant / erst nach Safety + Seasonal + Provider-Readiness**
 
-Der Trip Workspace ist die wichtigste Produktoberfläche.
+Der Workspace ist die wichtigste Produktoberfläche und wird **nicht nur umgebaut**, sondern vollständig funktional generalinspiziert.
 
-Die Übersicht soll schnell beantworten:
-
-1. Was ist diese Reise?
-2. Was ist erledigt?
-3. Was fehlt?
-4. Was ist unsicher / riskant / offen?
-5. Was empfiehlt Jetnity jetzt als Nächstes?
-
-Verbindliche Punkte aus dem Product-Owner-Rundgang sind vollständig einzubeziehen:
+Pflichtumfang:
 
 - Multi-Destination ab Reiseeinstieg über `trip_stages`
 - „Meine Reisen“ als zentraler Hub
-- klare Gast-One-Trip-Regel
-- `Reise fortsetzen` statt irreführendem Neu-Anlegen bei aktivem Gasttrip
-- Reisetempo-/Interessen-Chips aus Initialflow entfernen
-- optionaler Freitext `Wünsche & Prioritäten`
-- kein hidden `balanced` als Nutzerwahrheit
-- harte Facts vs weiche Preferences strikt trennen
+- Gast-One-Trip-Regel / `Reise fortsetzen`
+- Initialflow vereinfachen
+- `Wünsche & Prioritäten`
+- harte Facts vs weiche Preferences
 - Reise-Kopf / Gesamtstatus
 - `Jetzt wichtig`
 - Warnungen / Risiken
 - Fortschritt pro Fachbereich
 - Readiness / Traveller Context
-- Tagesplan erst bei ausreichender Grundlage
-- Cross-Domain-Auswirkungen sichtbar
-- Empfehlungen begründet / reversibel
-- wichtige Änderungen nur nach Nutzerfreigabe
+- Safety / Seasonal
+- Tagesplan bei ausreichender Grundlage
+- Cross-Domain-Auswirkungen
+- begründete/reversible Empfehlungen
+- Nutzerfreigabe für relevante Änderungen
 - Device-/Viewport-Parität
-- relevante alte Funktionen nach aktuellem Standard re-evaluieren
 
-Leitsatz:
+### Function-by-Function-Generalinspektion
 
-> **Komplexität gehört ins System, nicht in den Kopf des Nutzers.**
+Jede bestehende und neue Workspace-Funktion wird einzeln erneut geprüft auf:
+
+- fachliche Logik / Source of Truth
+- Persistenz / Datenverlust / Stale / Unknown / Error
+- Security / RLS / Ownership
+- Guest / Account
+- Cross-Domain-Interoperabilität
+- reale sequentielle E2E-Szenarien
+- Smartphone / Tablet / Laptop / Desktop
+- Unit-/Integration-/Regression-/E2E-Nachweise
+
+Frühere Merges und grüne Tests sind **kein Bestandsschutz**. Evidence-Matrix pro Funktion ist Pflicht.
 
 ---
 
 ## 9. Verbindlicher finaler Workspace Intelligence Audit
 
-Nach dem großen Umbau ist ein kompletter Senior Product / Architecture / UX / Logic / Security / Intelligence Audit zwingend:
+Nach dem großen Umbau zwingend:
 
 - `docs/TRIP_WORKSPACE_FINAL_INTELLIGENCE_AUDIT_POLICY.md`
-- `docs/TRIP_WORKSPACE_FUNCTION_BY_FUNCTION_AUDIT_MANDATE.md` (auf `main` seit `91e644b2`)
+- `docs/TRIP_WORKSPACE_FUNCTION_BY_FUNCTION_AUDIT_MANDATE.md`
 
-Er muss alte und neue Funktionen zusammen prüfen, nicht nur einzelne Module. Das Function-by-Function-Mandat gilt für den späteren großen Workspace-Block, nicht als Nacharbeit dieser Safety-Foundation.
-
-Insbesondere:
-
-- kanonische Wahrheiten
-- sequential multi-change scenarios
-- Cross-Domain-Auswirkungen
-- Stale/Invalidation
-- Guest/Account
-- Multi-Destination
-- Traveller Context
-- Route/Transit
-- Readiness
-- Safety
-- Seasonal
-- User Approval
-- Device-Matrix
-- Security / RLS / Data Loss
-- technische Regressionen
+Senior Product / Architecture / UX / Logic / Security / Intelligence Audit über alte und neue Funktionen zusammen.
 
 ---
 
 ## 10. Echte Providerphase – bewusst spät
 
-Erst nach den provider-neutralen Foundations, dem Workspace-Umbau und dessen Audit werden echte Provider aktiviert.
+Erst nach provider-neutralen Foundations, Workspace-Umbau und Audit werden echte Provider aktiviert.
 
 Vor jedem Provider:
 
@@ -316,14 +301,12 @@ Vor jedem Provider:
 - Reliability / Health
 - Datenschutz
 - Datenfrische
-- Source-/Evidence-Eigenschaften
+- Evidence-Eigenschaften
 - Secrets
 - Failure-/Fallback-Verhalten
 - Product-Owner-Freigabe
 
-Kein Provider darf eine separate fachliche Wahrheit neben dem Jetnity-Domainmodell erzeugen.
-
-Nach Provider-Aktivierung folgt ein eigener **provider-backed End-to-End-/Truth-Audit**.
+Danach eigener provider-backed End-to-End-/Truth-Audit.
 
 ---
 
@@ -332,15 +315,6 @@ Nach Provider-Aktivierung folgt ein eigener **provider-backed End-to-End-/Truth-
 Erst wenn der Kern tatsächlich integriert ist:
 
 - `docs/FINAL_HOMEPAGE_POSITIONING_OPTIMIZATION_POLICY.md`
-
-Die Startseite muss einem neuen Besucher in Sekunden erklären:
-
-- was Jetnity ist
-- welches Problem es löst
-- was es konkret kann
-- warum es sich von klassischen Reiseplanern / Metasuchen unterscheidet
-- warum die Reise als zusammenhängendes System einen Vorteil bringt
-- wie man einfach startet
 
 Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Versprechen.
 
@@ -351,13 +325,13 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 1. ✅ Foundation C – Readiness
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
-4. **→ Travel Safety & Disruption – provider-neutrale Foundation**
-5. Travel Timing & Seasonal – provider-neutrale Foundation
+4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
+5. **→ Travel Timing & Seasonal – provider-neutrale Foundation**
 6. Provider-Readiness-/Adapter-Lücken schließen
-7. großer Trip-Workspace-/Übersicht-Umbau
+7. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 8. finaler Workspace Intelligence Audit
 9. echte Providerphase
 10. provider-backed End-to-End-/Truth-Audit
 11. finale Startseiten-Positionierung
 
-Der nächste Agent darf **nicht** Foundation D oder E neu bauen und darf **nicht** direkt einen echten Provider integrieren.
+Der nächste Agent darf D/E/Safety **nicht neu bauen** und darf **nicht direkt einen echten Provider integrieren**.
