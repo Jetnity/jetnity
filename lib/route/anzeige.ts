@@ -7,6 +7,7 @@
 import { dauerLesbar } from '@/lib/flights/zeit'
 import type { FlugOption } from '@/lib/flights/domain'
 import { routeFactsAusItinerary } from '@/lib/route/ableitung'
+import { segmenteOrdnungBewiesen } from '@/lib/route/chronologie'
 import type { FlughafenReferenzKarte, RouteFacts, RoutePunkt, RouteVerbindung } from '@/lib/route/domain'
 import { itineraryAusFlugOption } from '@/lib/route/itinerary'
 import { pfadSchritteAusSegmenten } from '@/lib/route/pfad'
@@ -93,9 +94,16 @@ function beinKompakt(segmente: RouteFacts['segments'], mitCode: boolean): string
 
 function routeKompaktAusBeinen(facts: RouteFacts, mitCode: boolean): string {
   const beine = facts.legs.length > 0 ? facts.legs : [{ segments: facts.segments }]
-  const teile = beine.map((bein) => beinKompakt(bein.segments, mitCode)).filter(Boolean)
-  if (!facts.chronologieBewiesen && teile.length > 1) {
-    return `Reihenfolge unbekannt · ${teile.join(' · ')}`
+  if (!facts.chronologieBewiesen) {
+    const teile = beine
+      .flatMap((bein) =>
+        segmenteOrdnungBewiesen(bein.segments)
+          ? [beinKompakt(bein.segments, mitCode)]
+          : bein.segments.map((segment) => beinKompakt([segment], mitCode)),
+      )
+      .filter(Boolean)
+    if (teile.length > 1) return `Reihenfolge unbekannt · ${teile.join(' · ')}`
+    return teile[0] ?? ''
   }
-  return teile.join(' | ')
+  return beine.map((bein) => beinKompakt(bein.segments, mitCode)).filter(Boolean).join(' | ')
 }

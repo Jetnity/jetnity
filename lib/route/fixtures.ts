@@ -249,6 +249,63 @@ export function itineraryTransitUmgekehrt(): FlugRouteItinerary {
   }
 }
 
+export function itineraryUnverbundeneSegmente(): FlugRouteItinerary {
+  return {
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs: [
+      {
+        segments: [
+          segment('BKK', 'SIN', '2026-11-01', '08:10', '2026-11-01', '11:30'),
+          segment('ZRH', 'DOH', '2026-11-01', '09:15', '2026-11-01', '16:40'),
+        ],
+      },
+    ],
+  }
+}
+
+export function itineraryUnverbundeneSegmenteUmgekehrt(): FlugRouteItinerary {
+  return {
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs: [
+      {
+        segments: [
+          segment('ZRH', 'DOH', '2026-11-01', '09:15', '2026-11-01', '16:40'),
+          segment('BKK', 'SIN', '2026-11-01', '08:10', '2026-11-01', '11:30'),
+        ],
+      },
+    ],
+  }
+}
+
+export function itineraryAirportChangeUmgekehrt(
+  weiter: 'ORY' | 'LCY' | 'AMS' = 'ORY',
+): FlugRouteItinerary {
+  const basis = itineraryAirportChange(weiter)
+  const segmente = [...(basis.legs[0]?.segments ?? [])].reverse()
+  return {
+    ...basis,
+    legs: [{ segments: segmente }],
+  }
+}
+
+export function itineraryGemischtSurfaceScrambled(): FlugRouteItinerary {
+  return {
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs: [
+      {
+        segments: [
+          segment('ORY', 'BKK', '2026-11-01', '12:40', '2026-11-02', '06:10'),
+          segment('BKK', 'SIN', '2026-11-02', '08:10', '2026-11-02', '11:30'),
+          segment('ZRH', 'CDG', '2026-11-01', '07:10', '2026-11-01', '08:30'),
+        ],
+      },
+    ],
+  }
+}
+
 export function itineraryKontinuierlichCdgOry(): FlugRouteItinerary {
   return {
     v: 1,

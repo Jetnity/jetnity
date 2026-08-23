@@ -7,6 +7,7 @@
 // Frei von Next und Providern.
 
 import { umstiegMinuten } from '@/lib/flights/zeit'
+import { segmenteOrdnungBewiesen } from '@/lib/route/chronologie'
 import type { RouteSegment, RouteVerbindung } from '@/lib/route/domain'
 import { iataLesen } from '@/lib/route/referenz'
 
@@ -54,7 +55,9 @@ export function verbindungenAusLegs(legs: readonly { segments: RouteSegment[] }[
   const verbindungen: RouteVerbindung[] = []
   let offset = 0
   for (const [legIndex, bein] of legs.entries()) {
-    verbindungen.push(...verbindungenAusSegmenten(bein.segments, { legIndex, segmentOffset: offset }))
+    if (segmenteOrdnungBewiesen(bein.segments)) {
+      verbindungen.push(...verbindungenAusSegmenten(bein.segments, { legIndex, segmentOffset: offset }))
+    }
     offset += bein.segments.length
   }
   return verbindungen

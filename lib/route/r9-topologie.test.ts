@@ -181,8 +181,9 @@ describe('R9 Blocker 16 – Airport-Change- und Segment-Origin', () => {
   test('Cross-Country-Gap behält das zweite Origin-Land in Seasonal/Readiness/Safety', () => {
     const reise = reiseMit(itineraryAirportChange('AMS'))
     const facts = routeFactsAusGraph(reise)
+    assert.equal(facts.chronologieBewiesen, false)
     assert.equal(facts.destinationCountryCodes.includes('NL'), true)
-    assert.equal(facts.transitCountryCodes.includes('FR'), true)
+    assert.equal(facts.transitCountryCodes.includes('FR'), false)
     assert.equal(seasonalReisekontext(reise).countryCodes.includes('NL'), true)
     assert.equal(readinessReisekontext(reise).destinationCountries.includes('NL'), true)
     assert.equal(safetyReisekontext(reise).countryCodes.includes('NL'), true)

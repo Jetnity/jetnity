@@ -9,10 +9,13 @@
 //   - Kalenderabstände, die ohne Offset-Wissen eindeutig bleiben
 //   - eine eindeutige azyklische Airport-Kette, die die deklarierte Reihenfolge bestätigt
 // Eine andere eindeutige Kette darf Open-Jaw/Home-Arrival nicht zur Origin-Wahrheit umdrehen.
-// Segmente innerhalb eines Legs dürfen bei genau einem kontinuierlichen Hamiltonian rekonstruiert werden.
+// Segmente innerhalb eines Legs dürfen bei genau einem kontinuierlichen Hamiltonian
+// oder genau einem gemischten Hamiltonian mit same-country Surface-Kante rekonstruiert werden.
+// Bekannte IATA-Codes allein beweisen keine Reihenfolge.
 // Lexikalische Pfade und Date-Line-Uhrzeiten erfinden keine Business-Truth.
 
 import { tageZwischen } from '@/lib/flights/zeit'
+import { landescodeLesen } from '@/lib/readiness/domain'
 import type { FlugRouteItinerary, RouteItineraryMitQuelle, RouteSegment } from '@/lib/route/domain'
 import { pfadAusItinerary } from '@/lib/route/pfad'
 import { iataLesen } from '@/lib/route/referenz'
@@ -211,13 +214,19 @@ function kontinuitaet(vorher: RouteSegment, nachher: RouteSegment): boolean {
   return Boolean(dest && orig && dest === orig)
 }
 
-function alleIataBekannt(segmente: readonly RouteSegment[]): boolean {
-  return segmente.every(
-    (segment) => Boolean(airportCode(segment.origin)) && Boolean(airportCode(segment.destination)),
-  )
+function oberflaechenKante(vorher: RouteSegment, nachher: RouteSegment): boolean {
+  const dest = airportCode(vorher.destination)
+  const orig = airportCode(nachher.origin)
+  if (!dest || !orig || dest === orig) return false
+  const destLand = landescodeLesen(vorher.destination.countryCode)
+  const origLand = landescodeLesen(nachher.origin.countryCode)
+  return Boolean(destLand && origLand && destLand === origLand)
 }
 
-function kontinuierlichePfade(segmente: readonly RouteSegment[]): number[][] {
+function hamiltonPfade(
+  segmente: readonly RouteSegment[],
+  kante: (vorher: RouteSegment, nachher: RouteSegment) => boolean,
+): number[][] {
   const pfade: number[][] = []
   const n = segmente.length
   if (n === 0 || n > MAX_SEGMENT_REKONSTRUKTION) return pfade
@@ -230,7 +239,7 @@ function kontinuierlichePfade(segmente: readonly RouteSegment[]): number[][] {
     for (let index = 0; index < n; index += 1) {
       if (genutzt.has(index)) continue
       const letztes = pfad[pfad.length - 1]
-      if (letztes !== undefined && !kontinuitaet(segmente[letztes]!, segmente[index]!)) continue
+      if (letztes !== undefined && !kante(segmente[letztes]!, segmente[index]!)) continue
       genutzt.add(index)
       pfad.push(index)
       suche(genutzt, pfad)
@@ -243,20 +252,35 @@ function kontinuierlichePfade(segmente: readonly RouteSegment[]): number[][] {
   return pfade
 }
 
-function segmenteKanonisieren(segmente: readonly RouteSegment[]): RouteSegment[] {
-  if (segmente.length <= 1) return [...segmente]
-  const pfade = kontinuierlichePfade(segmente)
-  if (pfade.length !== 1) return [...segmente]
-  return pfade[0]!.map((index) => segmente[index]!)
+function kontinuierlichePfade(segmente: readonly RouteSegment[]): number[][] {
+  return hamiltonPfade(segmente, kontinuitaet)
 }
 
-function segmenteOrdnungBewiesen(segmente: readonly RouteSegment[]): boolean {
-  if (segmente.length <= 1) return true
-  if (segmente.length > MAX_SEGMENT_REKONSTRUKTION) return false
+function mischPfade(segmente: readonly RouteSegment[]): number[][] {
+  return hamiltonPfade(
+    segmente,
+    (vorher, nachher) => kontinuitaet(vorher, nachher) || oberflaechenKante(vorher, nachher),
+  )
+}
+
+function eindeutigeSegmentKette(segmente: readonly RouteSegment[]): number[] | null {
+  if (segmente.length <= 1) return segmente.map((_, index) => index)
+  if (segmente.length > MAX_SEGMENT_REKONSTRUKTION) return null
   const pfade = kontinuierlichePfade(segmente)
-  if (pfade.length === 1) return true
-  if (pfade.length > 1) return false
-  return alleIataBekannt(segmente)
+  if (pfade.length === 1) return pfade[0]!
+  if (pfade.length > 1) return null
+  const misch = mischPfade(segmente)
+  return misch.length === 1 ? misch[0]! : null
+}
+
+export function segmenteOrdnungBewiesen(segmente: readonly RouteSegment[]): boolean {
+  return eindeutigeSegmentKette(segmente) !== null
+}
+
+function segmenteKanonisieren(segmente: readonly RouteSegment[]): RouteSegment[] {
+  const kette = eindeutigeSegmentKette(segmente)
+  if (!kette) return [...segmente]
+  return kette.map((index) => segmente[index]!)
 }
 
 function paarRelationenKonsistent<T>(

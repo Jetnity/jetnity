@@ -316,8 +316,10 @@ describe('R10 Blocker 21 – Surface-Grenze in der Route-ID', () => {
       ],
     }
     const facts = routeFactsAusGraph(reiseMit(unbekannt))
-    assert.match(facts.fingerprint ?? '', /~/)
-    assert.match(routeKompakt(facts), /⇢/)
+    assert.equal(facts.chronologieBewiesen, false)
+    assert.match(facts.fingerprint ?? '', /&/)
+    assert.match(routeKompakt(facts), /Reihenfolge unbekannt/)
+    assert.equal(facts.connections.length, 0)
   })
 
   test('Open-Jaw- und Leg-Grenzen bleiben unterscheidbar', () => {
@@ -341,11 +343,11 @@ describe('R10 Blocker 22 – Connection Airport-Change und Duration', () => {
     assert.equal(ory.connections[0]?.durationMinutes, null)
 
     const lcy = routeFactsAusGraph(reiseMit(itineraryAirportChange('LCY')))
-    assert.equal(lcy.connections[0]?.airportChange, true)
-    assert.equal(lcy.connections[0]?.durationMinutes, null)
+    assert.equal(lcy.chronologieBewiesen, false)
+    assert.equal(lcy.connections.length, 0)
     const html = renderToStaticMarkup(createElement(FlugRoute, { facts: lcy }))
     assert.equal(html.includes('4 h 10 min'), false)
-    assert.equal(html.includes('Flughafenwechsel'), true)
+    assert.equal(html.includes('Flughafenwechsel'), false)
   })
 
   test('ein oder kein bekannter IATA bleibt airportChange=null', () => {
@@ -415,10 +417,12 @@ describe('R10 Blocker 22 – Connection Airport-Change und Duration', () => {
         },
       ],
     }
-    assert.equal(routeFactsAusItinerary(nurAnkunft).connections[0]?.airportChange, null)
-    assert.equal(routeFactsAusItinerary(nurAbflug).connections[0]?.airportChange, null)
-    assert.equal(routeFactsAusItinerary(beide).connections[0]?.airportChange, null)
-    assert.equal(routeFactsAusItinerary(nurAnkunft).connections[0]?.durationMinutes, null)
+    assert.equal(routeFactsAusItinerary(nurAnkunft).chronologieBewiesen, false)
+    assert.equal(routeFactsAusItinerary(nurAbflug).chronologieBewiesen, false)
+    assert.equal(routeFactsAusItinerary(beide).chronologieBewiesen, false)
+    assert.equal(routeFactsAusItinerary(nurAnkunft).connections.length, 0)
+    assert.equal(routeFactsAusItinerary(nurAbflug).connections.length, 0)
+    assert.equal(routeFactsAusItinerary(beide).connections.length, 0)
     const html = renderToStaticMarkup(createElement(FlugRoute, { facts: routeFactsAusItinerary(nurAbflug) }))
     assert.equal(html.includes('Flughafenwechsel'), false)
   })

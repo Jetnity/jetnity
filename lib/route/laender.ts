@@ -5,6 +5,7 @@
 // Reise-Origin sind. Transit bleibt ein Zwischenpunkt im selben Leg.
 
 import { landescodeLesen } from '@/lib/readiness/domain'
+import { segmenteOrdnungBewiesen } from '@/lib/route/chronologie'
 import type { FlugRouteItinerary } from '@/lib/route/domain'
 
 export type RouteLaenderrollen = {
@@ -33,6 +34,7 @@ function transitlaenderAus(itineraries: readonly RouteItineraryFuerRollen[]): st
   for (const eintrag of itineraries) {
     for (const bein of eintrag.itinerary.legs) {
       const segmente = bein.segments
+      if (!segmenteOrdnungBewiesen(segmente)) continue
       for (const [index, segment] of segmente.entries()) {
         if (index === segmente.length - 1) continue
         merken(laender, segment.destination.countryCode)
@@ -51,6 +53,13 @@ function ziellaenderAus(
   for (const eintrag of itineraries) {
     for (const bein of eintrag.itinerary.legs) {
       const segmente = bein.segments
+      if (!segmenteOrdnungBewiesen(segmente)) {
+        for (const segment of segmente) {
+          merken(laender, segment.origin.countryCode)
+          merken(laender, segment.destination.countryCode)
+        }
+        continue
+      }
       const start = landescodeLesen(segmente[0]?.origin.countryCode ?? null)
       const ende = landescodeLesen(segmente[segmente.length - 1]?.destination.countryCode ?? null)
       if (start && start !== ursprung) merken(laender, start)
