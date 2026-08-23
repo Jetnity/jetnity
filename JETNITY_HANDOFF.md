@@ -150,7 +150,7 @@ Provider-Suchen/Requirements bleiben produktiv deaktiviert, solange keine echten
 - Unabhängiger Closure-Check: **PASS** – `docs/PR35_CHATGPT_INDEPENDENT_CLOSURE_CHECK.md`
 - Technische Merge-Empfehlung liegt vor; ausdrückliche Product-Owner-Freigabe fehlt
 - Basis: `origin/main` @ `c8dbe904`
-- Draft PR: **#35**, `MERGEABLE`, bleibt Draft
+- PR: **#35**, `MERGEABLE`, **Ready for Review** durch Product-Owner-Konto `Jetnity`; nicht gemergt
 - kein Merge ohne ausdrückliche Product-Owner-Freigabe
 - keine Foundation-E-Production-Migration ohne separates Gate
 - Fachdokument: `docs/TRAVELLER_CONTEXT.md`

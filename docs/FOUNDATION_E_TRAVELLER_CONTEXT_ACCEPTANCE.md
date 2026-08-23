@@ -6,7 +6,7 @@ Status: **technisch verifiziert; unabhängiger Closure-Check PASS; Draft PR; Mer
 Branch: `feat/traveller-context-intelligence`  
 Head: `b1f9d6543aa153bacaa126f71d39c6a434dfbebb`  
 PR: https://github.com/Jetnity/jetnity/pull/35  
-PR-Zustand: **Draft**, `MERGEABLE`  
+PR-Zustand: **Ready for Review**, `MERGEABLE`, nicht gemergt  
 Base: `main` @ `c8dbe904faac49745bd149e3d2e85ca30ebd384c`  
 Task: `docs/CURSOR_FOUNDATION_E_TRAVELLER_CONTEXT_TASK.md`  
 Fachdokument: `docs/TRAVELLER_CONTEXT.md`
@@ -113,8 +113,7 @@ Automatisiert nachgewiesen:
 
 ## Offene Gates
 
-- Draft PR bleibt Draft
-- kein Mark Ready ohne Product-Owner-Entscheidung
+- Product Owner hat den PR auf Ready for Review gesetzt; das ist keine Merge-Freigabe
 - kein Merge
 - keine Production-Migration
 - kein echter Requirements-Provider

@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 23. August 2026  
-Arbeitsblock: **Foundation E – Traveller Context – unabhängiger Closure-Check PASS; wartet auf Merge-Freigabe**
+Arbeitsblock: **Foundation E – Traveller Context – Closure-Check PASS; PR Ready for Review; wartet auf Merge-Freigabe**
 
 ## 1. Aktueller Zustand
 
@@ -17,7 +17,7 @@ Foundation E läuft auf:
 - Code-Head des Closure-Gates: `b1f9d6543aa153bacaa126f71d39c6a434dfbebb`
 - Vorheriger voller Gate-Head (Depth-Re-Review): `08716228d2e6a5404730276843374cf7d3f9e066`
 - Basis: `origin/main` @ `c8dbe904faac49745bd149e3d2e85ca30ebd384c` (0 hinter)
-- Draft PR: https://github.com/Jetnity/jetnity/pull/35
+- PR: https://github.com/Jetnity/jetnity/pull/35 – **Ready for Review** seit 23. August 2026 durch Product-Owner-Konto `Jetnity`; nicht gemergt
 - Fachdokument: `docs/TRAVELLER_CONTEXT.md`
 - Acceptance: `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md`
 - Audit vor Schemaänderung: `docs/FOUNDATION_E_ARCHITECTURE_AUDIT.md`
@@ -57,7 +57,7 @@ Foundation E läuft auf:
 | UI-Audit | **838/838, 0 Fehler**, WebKit + Chromium, 8 Viewports – `/opt/cursor/artifacts/trip_workspace_ui_audit_b1f9d654.json` |
 | GitHub Actions `ci.yml` | **success** – https://github.com/Jetnity/jetnity/actions/runs/32606428866 |
 | Vercel Preview | **SUCCESS** – https://jetnity-hkscn5xjt-jetnity-e1b93c82.vercel.app |
-| PR-Mergebarkeit | `MERGEABLE`; Draft bleibt Draft |
+| PR-Mergebarkeit | `MERGEABLE`; Ready for Review; nicht gemergt |
 
 Historischer voller Gate auf `08716228`: 1349/1349, Actions `32604932045`, Vercel `jetnity-du5dlqhww-...`. Nicht mehr der aktuelle Nachweis.
 
@@ -72,8 +72,8 @@ Historischer voller Gate auf `08716228`: 1349/1349, Actions `32604932045`, Verce
 
 ## 5. Exakter nächster Schritt
 
-1. Product Owner entscheidet über Merge von Draft PR #35. Technische Empfehlung des unabhängigen Closure-Checks: merge-bereit nach ausdrücklicher aktueller Freigabe.
-2. Draft bleibt Draft. Nicht Mark Ready, nicht mergen, solange keine ausdrückliche Freigabe vorliegt.
+1. Product Owner hat PR #35 auf **Ready for Review** gesetzt. Das ist noch keine Merge-Freigabe.
+2. Merge nur nach ausdrücklicher aktueller Formulierung wie „freigegeben“, „du kannst mergen“ oder „merge jetzt“.
 3. Production-Migration erst nach Merge und separater Freigabe.
 4. Kein zweiter Foundation-E-Block auf einem anderen Branch beginnen.
 
