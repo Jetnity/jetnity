@@ -17,6 +17,7 @@ Status: **Audit-Workstream fertig nach adversariellem Self-Review; Implementieru
 - **Tracking:** `origin/audit/admin-platform`
 - **Basis `origin/main`:** `cd220beb44d90ae376feeb8de9db8a3afb808d60`
 - **Prep-Head vor Audit-Dokumenten:** `2da365f72331259ccdb546182f99e122381dd62d`
+- **Docs-Head dieses Audits:** `f2262034e12cc8258d23001bbbf87f9a56e8414a`
 - **PR:** Draft, siehe GitHub nach Push
 - **Mark Ready / Merge:** nein
 
