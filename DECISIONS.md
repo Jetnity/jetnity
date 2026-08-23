@@ -3421,6 +3421,29 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0138 – Rejected Acute und reverse Date Ranges bleiben fail-closed
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R3 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Abgewiesene Acute-/Safety-Klassen (`active_warning`, `acute`, `acute_event`) tragen intern und in `SeasonalEvaluation` die Klasse `rejected_acute` plus `acuteRejected=true`. Sie dürfen nirgendwo als `seasonal_pattern` erscheinen.
+- Eine Providerantwort, die ausschließlich solche Facts enthält, ist fail-closed `unknown` und nicht `checked_empty` / vollständiges `ok`.
+- Kommt ein gültiger Seasonal-Fact zusammen mit einem Acute-Fact, bleibt der Seasonal-Fact sichtbar; das Acute-Fact bleibt rejected-domain.
+- Untrusted Seasonal-Requests mit `startDate > endDate` oder Stage-`arrivalDate > departureDate` sind Schemafehler (HTTP 400). Grenzen werden nicht still getauscht.
+- Ein unerwartet rückwärts laufendes Kontaktintervall bleibt in Kalender-/Relevanzhelfern `insufficient` und darf nicht zu `before`/`after`/`not_applies` hochgestuft werden.
+
+**Kontext:** `docs/PR38_CHATGPT_R3_REVIEW.md` gegen Runtime `4f9eb1e8`.
+
+**Alternativen:** Acute intern als `seasonal_pattern` plus Flag; reverse Dates still tauschen; Top-Level-`not_applies` vor Stage-Kontakt behalten.
+
+**Begründung:** Eine als falsche Domain erkannte Safety-Klasse darf keine Seasonal-Truth behaupten. Malformed Reisedaten dürfen eine tatsächlich überlappende Stage nicht in eine Negativaussage verwandeln.
+
+**Konsequenzen:** Kein Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R4 und Product-Owner-Merge-Freigabe.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

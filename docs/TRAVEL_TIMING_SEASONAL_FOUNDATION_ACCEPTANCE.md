@@ -1,7 +1,7 @@
 # Travel Timing & Seasonal Intelligence – Foundation Acceptance
 
 Stand: 23. August 2026  
-Status: **verbindliche Acceptance für die provider-neutrale Foundation – Draft-PR #38, R2-Fixes auf Runtime `aa6cafa2`, R3-Re-Review offen**
+Status: **verbindliche Acceptance für die provider-neutrale Foundation – Draft-PR #38, R3-Fixes auf Runtime `4f9eb1e8`, R4-Re-Review offen**
 
 Policy: `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`  
 Ist-Audit: `docs/TRAVEL_TIMING_SEASONAL_FOUNDATION_ARCHITECTURE_AUDIT.md`
@@ -32,7 +32,7 @@ Nicht Teil dieses Blocks:
 - keine Umdeutung von `SafetyEvaluation`
 - Safety bleibt für acute/active warnings zuständig
 - Seasonal bleibt für wiederkehrende/historische/offizielle Seasonal Windows und geeignete Forecast-Outlooks zuständig
-- `active_warning` / akute Event-Truth darf Seasonal nicht als Seasonal-Hinweis anzeigen
+- `active_warning` / akute Event-Truth darf Seasonal nicht als Seasonal-Hinweis anzeigen und darf intern/API-sichtbar nicht als `seasonal_pattern` materialisiert werden; die sichtbare Klasse ist `rejected_acute`
 - `seasonal_pattern` darf Safety weiterhin nicht als Safety-Warnung anzeigen
 
 ### B. Source-/Evidence-Klassen
@@ -241,6 +241,21 @@ Vor Review auf **exakt finalem Runtime-Head**:
 - Branch **0 behind** aktuellem `origin/main`
 - GitHub Actions SUCCESS auf exakt finalem Head
 - Vercel Preview READY/SUCCESS auf exakt finalem Head
+
+### Gate-Lock Runtime `4f9eb1e8` nach R3-Fixes (23. August 2026)
+
+R3-Blocker 5-Residual und 7 aus `docs/PR38_CHATGPT_R3_REVIEW.md` sind geschlossen. Nachweis: `docs/PR38_CURSOR_REVIEW_FIXES.md`.
+
+| Gate | Ergebnis |
+| --- | --- |
+| `origin/main` | `cd220beb`, Branch **0 behind** |
+| `npm test` | **1557/1557** |
+| Typecheck / Lint / Hygiene | grün |
+| Production-Build | Exit 0 |
+| DB | Rechte 51 OK, RLS Exit 0, Sicherheit **210/210**, Parallelität **7/7** |
+| UI-Audit | **1014/1014**, 0 Fehler, WebKit + Chromium, 8 Viewports |
+| GitHub Actions | SUCCESS https://github.com/Jetnity/jetnity/actions/runs/32643429557 |
+| Vercel Preview | READY https://vercel.com/jetnity-e1b93c82/jetnity-app/ERBqeUKG7NWQ2agr4GiR5JpAxxit |
 
 ### Gate-Lock Runtime `aa6cafa2` nach R2-Fixes (23. August 2026)
 
