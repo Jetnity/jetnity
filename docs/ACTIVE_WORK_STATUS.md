@@ -5,7 +5,7 @@ Arbeitsblock: **Travel Safety & Disruption Intelligence – provider-neutrale Fo
 
 ## 1. Arbeitsblock / Ziel
 
-Provider-neutrale Safety-/Disruption-Foundation. Die vier Re-Review-Blocker aus `docs/PR37_CHATGPT_REREVIEW.md` sind im Code umgesetzt. Lokale und Preview-Verifikation folgt.
+Provider-neutrale Safety-/Disruption-Foundation. Die vier Re-Review-Blocker aus `docs/PR37_CHATGPT_REREVIEW.md` sind behoben (ADR-0130). Nächster Schritt: unabhängiger ChatGPT-Re-Re-Review.
 
 Auftrag: `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`  
 Review: `docs/PR37_CHATGPT_INDEPENDENT_REVIEW.md`  
@@ -16,13 +16,14 @@ Re-Review: `docs/PR37_CHATGPT_REREVIEW.md`
 - Basis: `origin/main` = `91e644b279c802c5a5d7a88135ed8ab9c4229a34`
 - Branch: `feat/travel-safety-disruption-intelligence`
 - Draft PR: https://github.com/Jetnity/jetnity/pull/37
-- Letzter verifizierter Runtime-Head: `01096bb3dc2969d7372b71fc9ab6eae16e3ea4c4`
-- Re-Review-Fixes lokal, Verifikation noch offen
+- Verifizierter Runtime-Head: `cace9408` (Re-Review-Fixes)
+- Verifizierter Docs-/PR-Head vor diesem Nachzug: `883ddefb0d122566e1d1dea7f739fdbbd01737c1`
+- Ahead/behind vor diesem Nachzug: **15 ahead / 0 behind**
 - Draft. Kein Mark Ready, kein Merge.
 
 ## 3. Status
 
-**Re-Review-Fixes implementiert; Gates und Preview-Lock folgen**
+**Re-Review-Fixes verifiziert; Draft-PR #37 wartet auf unabhängigen Re-Re-Review**
 
 ## 4. Bereits umgesetzt
 
@@ -30,12 +31,11 @@ Re-Review: `docs/PR37_CHATGPT_REREVIEW.md`
 - Review-Fixes ADR-0129: Freshness, Geo-Unknown, Order-Independence, Provider-Timeout
 - Re-Review-Fixes ADR-0130: checked-empty, runtime-fail-closed Normalize, Transit-Unknown, Traveller-Slots/Fingerprints
 - Pflicht-, Review- und Re-Review-Tests
+- UI-Audit 886/886 nach Re-Review-Fix
 
 ## 5. Gerade offen
 
-- lokale Gates + UI-Audit auf dem neuen Runtime-Head
-- GitHub Actions / Vercel Preview auf dem neuen Head
-- unabhängiger ChatGPT-Re-Re-Review gegen den neuen Head
+- unabhängiger ChatGPT-Re-Re-Review gegen den tatsächlichen PR-Head
 - Product-Owner-Merge-Freigabe
 - echter Safety-Provider (separates Gate)
 - Account-`tripId`-Serverload
@@ -44,19 +44,32 @@ Re-Review: `docs/PR37_CHATGPT_REREVIEW.md`
 
 ## 6. Letzte relevanten Änderungen
 
-- Review-Dokument: `02984b83`
-- Review-Fixes: `a548b936`
-- Timeout-Typ: `01096bb3`
 - Re-Review-Dokument: `e3aa4f6f`
+- Re-Review-Fixes: `cace9408`
+- ADR-0130: `883ddefb`
 
 ## 7. Tests / CI / Preview
 
-Letzter gelockter Runtime-Stand bleibt `01096bb3` (1410 Tests, Build 38/38, UI-Audit 886/886, Actions `32612980450`, Vercel `6043592490`), bis der neue Head verifiziert ist.
+Runtime `cace9408` lokal:
+
+- `npm test`: **1429/1429**
+- Typecheck, Lint, Hygiene grün
+- Production-Build: **38/38**, inkl. `/api/safety/evaluate`
+- UI-Audit: **886/886**, 0 Fehler, WebKit + Chromium, 8 Viewports
+
+PR-Head `883ddefb` (Runtime + ADR-0130):
+
+- GitHub Actions `32614331364`: **SUCCESS**
+- Vercel Preview `6043804484`: **READY/SUCCESS**
+- Preview: https://jetnity-app-git-feat-travel-safety-disr-914f66-jetnity-e1b93c82.vercel.app
+
+Dieser Dokumentations-Nachzug ändert keine Runtime.
 
 ## 8. DB / Production
 
 - keine Safety-Migration
 - Production unverändert
+- letzte bekannte DB-Gates unverändert: `db:rechte` 51, `db:rls` 0, `db:sicherheit` 210/210, `db:parallelitaet` 7/7
 
 ## 9. Kosten / Provider / Secrets
 
@@ -76,7 +89,7 @@ Letzter gelockter Runtime-Stand bleibt `01096bb3` (1410 Tests, Build 38/38, UI-A
 
 ## 12. Exakter nächster Schritt
 
-Gates, Production-Build und UI-Audit auf dem Re-Review-Fix-Head ausführen, CI/Preview locken, danach unabhängigen ChatGPT-Re-Re-Review starten. Draft bleibt Draft.
+Unabhängigen ChatGPT-Re-Re-Review gegen den tatsächlichen PR-Head starten. Draft bleibt Draft. Stop-Kriterium: nur konkrete Safety-Truth-/Security-/SoT-/Rollout-Defekte bleiben merge-blocking.
 
 ## 13. Zuerst zu lesen
 
