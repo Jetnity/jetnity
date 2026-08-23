@@ -133,6 +133,7 @@ Nach vollständiger Cursor-Umsetzung folgt ein unabhängiger ChatGPT-Review nach
 
 - Cursor-Anzeigename: `Admin platform audit`
 - Branch: `audit/admin-platform`
+- Draft-PR: #40
 - Status: Audit fertig nach Self-Review; Implementierung nicht freigegeben
 - Handoff: `docs/ADMIN_PLATFORM_HANDOFF.md`
 - Gesperrt: Rollen/RLS/Service-Role/Live-Integrationen/Mark Ready/Merge ohne Product Owner

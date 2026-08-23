@@ -17,7 +17,8 @@ Status: **Audit fertig – adversarieller Self-Review abgeschlossen; Implementie
 - **Basis:** `origin/main` @ `cd220beb44d90ae376feeb8de9db8a3afb808d60`
 - **Vorbereiteter Prep-Head vor diesem Audit:** `2da365f72331259ccdb546182f99e122381dd62d`
 - **Docs-Head:** `f2262034e12cc8258d23001bbbf87f9a56e8414a`
-- **PR:** Draft-PR wird nach Push dieses Audit-Stands eröffnet
+- **Branch-Head nach Push:** `c150c079`
+- **PR:** Draft [#40](https://github.com/Jetnity/jetnity/pull/40)
 - **Merge:** nicht beantragt, nicht erlaubt
 
 ## Phase

@@ -18,7 +18,8 @@ Status: **Audit-Workstream fertig nach adversariellem Self-Review; Implementieru
 - **Basis `origin/main`:** `cd220beb44d90ae376feeb8de9db8a3afb808d60`
 - **Prep-Head vor Audit-Dokumenten:** `2da365f72331259ccdb546182f99e122381dd62d`
 - **Docs-Head dieses Audits:** `f2262034e12cc8258d23001bbbf87f9a56e8414a`
-- **PR:** Draft, siehe GitHub nach Push
+- **Branch-Head nach Push:** `c150c079`
+- **PR:** Draft [#40](https://github.com/Jetnity/jetnity/pull/40)
 - **Mark Ready / Merge:** nein
 
 ## Phase / Scope
