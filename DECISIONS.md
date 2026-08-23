@@ -3170,6 +3170,66 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0127 – Travel Safety ist eine abgeleitete, provider-neutrale Domäne ohne Persistenz
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #37; Production-Schema unverändert
+
+**Entscheidung:**
+
+- Safety-/Disruption-Truth lebt in `lib/safety/` und wird compute-on-read erzeugt.
+- `safetyProviderAus()` bleibt `null`. Tests dürfen einen Port injizieren.
+- External Fact, Freshness, räumliche/zeitliche Relevanz, Trip-Impact und UI-Präsentationsklasse bleiben getrennte Ebenen.
+- Es gibt keine Safety-Tabelle und keine Official-Evidence im Reisegraphen.
+- `POST /api/safety/evaluate` akzeptiert nur validierten Trip-Kontext. Browser- oder LLM-Felder setzen keine Evidence.
+
+**Kontext:** Nach Foundation D und E folgt die provider-neutrale Safety-Foundation. Official Readiness und Route Facts werden bereits abgeleitet, nicht materialisiert. Events veralten schnell; eine DB-Kopie ohne TTL/Revocation würde Schein-Aktualität erzeugen.
+
+**Alternativen:**
+
+1. *Safety-Facts in neuen Tabellen persistieren.* Lizenz-, Freshness- und Cross-User-Risiko ohne Live-Provider.
+2. *Safety in Readiness mischen.* Vermischt Einreiseanforderungen mit Ereigniswarnungen.
+3. *LLM erzeugt Warnungen aus Freitext.* Verboten durch die Safety-Policy.
+
+**Begründung:** Dieselbe Trust-Grenze wie Official Readiness: ohne Provider keine Wahrheit, `unknown` bleibt sichtbar, keine Fake-Entwarnung.
+
+**Konsequenzen:**
+
+- Production unverändert.
+- Workspace zeigt Safety nur bei übergebenen Evaluations, nicht als permanente leere Karte.
+- Ein späterer echter Adapter braucht ein separates Product-Owner-Gate.
+
+---
+
+## ADR-0128 – Räumliche Relevanz darf keine feinere Präzision erfinden als die Quelle
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #37
+
+**Entscheidung:**
+
+- Country-Level Evidence erzeugt höchstens Country-Level-Relevanz.
+- Eine regionale Quelle im selben Land, aber ausserhalb der belegten Reisezone, erzeugt keine pauschale Landeswarnung.
+- Fehlen Orts- oder Koordinatenfakten für einen präzisen Abgleich, gilt `insufficient_context`.
+- Ein betroffener Transit-Airport markiert Route/Flight, nicht pauschal das Reiseziel.
+- `seasonal_pattern` wird verworfen und erzeugt keine Safety-Warnung.
+
+**Kontext:** Die Policy verbietet Länder-Pauschalisierung und die Vermischung mit Seasonal Intelligence.
+
+**Alternativen:**
+
+1. *Jedes Event im Reiseland als Warnung.* Alarmmüdigkeit und falsche Betroffenheit.
+2. *Titeltexte für Geo-Matching nutzen.* Untrusted Freitext.
+
+**Begründung:** Warnen nur bei konkret belegtem Schnitt mit der Reise-Wahrheit.
+
+**Konsequenzen:**
+
+- Foundation-D Route Facts bleiben die einzige Transit-/Airport-Wahrheit.
+- Seasonal Foundation bleibt der nächste getrennte Block.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

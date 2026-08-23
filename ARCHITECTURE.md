@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
-Stand: 22. August 2026
-Gültig für: Phase 3.3c plus Mobile-UX, Coverage/Booking und Foundation A/B/C auf `main` und Production-Schema; Foundation D (Route & Transit Intelligence) auf Draft-PR #34; Development-RPC schreibt Route-Metadata, Production-Schema unverändert
+Stand: 23. August 2026
+Gültig für: Foundation D und E auf `main` und Production; Travel Safety & Disruption Intelligence als provider-neutrale Foundation auf Draft-PR #37. Production-Schema unverändert durch diesen Block.
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -359,7 +359,15 @@ PR #34 ist gemergt und auf Production. `lib/route/` leitet `RouteFacts` nur aus 
 
 ### Traveller Context (Foundation E)
 
-Draft-PR auf `feat/traveller-context-intelligence`. `trip_travellers` bleibt der stabile Parent. Kanonische Wahrheit für Credentials liegt in `trip_traveller_citizenships` und `trip_traveller_documents`. Account-Writes gehen über `party_schreiben()` in einer Transaktion. Guest Local Storage trägt dieselbe `TripTraveller`-Form; Legacy-Singularobjekte werden nur gelesen. Die Engine bewertet vorhandene Credential-Optionen getrennt; `requirementsProviderAus()` bleibt `null`. Ausstellerland ist kein Citizenship-Ersatz. Vergleich braucht option-level Eligibility/Mandate über den Provider-Port und erfindet keine Visa-Vorteile. Geladene leere Child-Relationen bleiben leer; Production-Reads fallen nur bei fehlendem Foundation-E-Schema auf Legacy zurück. Document-Identität und Traveller-Readiness bleiben fail-closed (ADR-0119–ADR-0124). Production-Schema unverändert. Fachlich: [docs/TRAVELLER_CONTEXT.md](docs/TRAVELLER_CONTEXT.md).
+PR #35 ist gemergt und auf Production. `trip_travellers` bleibt der stabile Parent. Kanonische Wahrheit für Credentials liegt in `trip_traveller_citizenships` und `trip_traveller_documents`. Account-Writes gehen über `party_schreiben()` in einer Transaktion. Guest Local Storage trägt dieselbe `TripTraveller`-Form. Die Engine bewertet vorhandene Credential-Optionen getrennt; `requirementsProviderAus()` bleibt `null`. Ausstellerland ist kein Citizenship-Ersatz. Fachlich: [docs/TRAVELLER_CONTEXT.md](docs/TRAVELLER_CONTEXT.md).
+
+### Travel Safety & Disruption (provider-neutrale Foundation)
+
+Draft-PR #37 auf `feat/travel-safety-disruption-intelligence`. `lib/safety/` ist eine eigene Truth-Domäne. `safetyProviderAus()` gibt `null` zurück. Tests dürfen einen Port injizieren. External Fact, Freshness, räumliche/zeitliche Relevanz, Trip-Impact und Präsentationsklasse bleiben getrennt (ADR-0127, ADR-0128).
+
+`POST /api/safety/evaluate` ist geschlossen: nur `application/json`, höchstens 24 KB UTF-8, Rate-Limit, `Cache-Control: private, no-store`. Browser- oder LLM-Felder setzen keine Evidence. Route Truth kommt nur aus `routeFactsAusGraph`. Ein Transit-Ereignis markiert nicht pauschal das Reiseziel. `seasonal_pattern` erzeugt keine Safety-Warnung. Keine Safety-Tabelle. Die Übersicht zeigt den Block nur bei übergebenen Evaluations, nicht als permanente leere Karte. Keine automatische Reiseänderung.
+
+Fachlich: [docs/TRAVEL_SAFETY_DISRUPTION.md](docs/TRAVEL_SAFETY_DISRUPTION.md).
 
 ### Ortsbasis (Phase 3.1)
 

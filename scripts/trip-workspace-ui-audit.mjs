@@ -1489,8 +1489,8 @@ const ZUSTAENDE = {
     },
   },
   'safety-kein-provider': {
-    kompakt: 'Deine Reise auf einen Blick',
-    desktop: 'Deine Reise auf einen Blick',
+    kompakt: 'Einreise & Reisevorbereitung',
+    desktop: 'Einreise & Reisevorbereitung',
     ohneText: 'Kritische Warnung',
     nutzlast: { reise: reise() },
   },
