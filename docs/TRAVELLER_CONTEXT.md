@@ -1,11 +1,15 @@
 # Jetnity – Traveller Context / Multi-Citizenship / Multi-Document
 
-Stand: 22. August 2026  
-Status: **Foundation E im Draft-PR / Development-Migration angewendet / Production unverändert**
+Stand: 23. August 2026  
+Status: **Foundation E abgeschlossen, auf `main` und Production verifiziert**
 
-Verbindliche Regeln: `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md`  
-Auftrag: `docs/CURSOR_FOUNDATION_E_TRAVELLER_CONTEXT_TASK.md`  
-Acceptance: `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md`
+Verbindliche Regeln:
+
+- `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md`
+- `docs/TRAVELLER_CITIZENSHIP_REQUIREMENT_POLICY.md`
+
+Acceptance: `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md`  
+Production-Acceptance: `docs/FOUNDATION_E_PRODUCTION_ACCEPTANCE.md`
 
 ---
 
@@ -28,9 +32,9 @@ Foundation E baut die provider-neutrale Traveller Truth und die Evaluationsnaht.
 | Documents | `public.trip_traveller_documents` – 1:n Credential-Profile ohne Nummer/Scan/MRZ |
 | App-Domäne | `TripTraveller.citizenships[]` + `documents[]` |
 | Guest | dieselbe fachliche Form in `jetnity:reise:v3` |
-| Route / Transit | bleibt Foundation-D-`routeFactsAusReise()`, traveller-neutral |
+| Route / Transit | Foundation-D-Route Truth, traveller-neutral |
 
-Neue Writes schreiben **nicht** mehr in die Legacy-Credential-Spalten `nationality_country_code`, `document_type`, `document_issuing_country_code`, `document_expires_on`. Diese Spalten bleiben compatibility-only nach Backfill.
+Legacy-Credential-Spalten bleiben compatibility-only; kanonische neue Truth liegt in den Child-Relationen.
 
 ---
 
@@ -53,24 +57,31 @@ Grenzen gegen Abuse/Payload:
 
 ---
 
-## Expand / Contract
+## Production-Stand
 
-Migration: `supabase/migrations/20260822160000_traveller_context_intelligence.sql`
+Foundation E ist vollständig gemergt und auf Production verifiziert.
 
-1. Child-Tabellen und optionales `trip_readiness_items.traveller_id` anlegen
-2. vorhandene `nationality_country_code`-Werte deterministisch als Citizenship backfillen
-3. vorhandenes Dokumentprofil deterministisch als Document backfillen
-4. `residence_country_code` unverändert behalten
-5. Leser auf Child-Tabellen umstellen; Legacy nur noch, wenn Children leer sind
-6. Legacy-Spalten **nicht droppen**
+Production-Migrationen:
 
-Späterer Contract-Cleanup (nicht in diesem Block): Legacy-Spalten entfernen, sobald Production backfilled ist und keine Leser mehr die alten Spalten brauchen.
+- `20260822160000_traveller_context_intelligence`
+- `20260822170000_traveller_context_fk_delete`
+- `20260822180000_traveller_context_rereview`
+
+Verifiziert wurden unter anderem:
+
+- Child-Tabellen und RLS
+- Composite-FKs und Delete-Semantik
+- `party_schreiben(jsonb)` als atomarer, owner-isolierter Write-Pfad
+- `SECURITY INVOKER`
+- `FOR NO KEY UPDATE` für Child-Limits
+- vollständiger Legacy-Nationalitäts-Backfill
+- **0** erfundene Document↔Citizenship-Backfill-Relationen
 
 ---
 
 ## Guest / Account
 
-Guest und Account teilen `TripTraveller`. Alte Singular-Guest-Objekte werden über `travellerLegacyLesen()` expandiert, nicht verworfen.
+Guest und Account teilen `TripTraveller`. Alte Singular-Guest-Objekte werden über den Legacy-Leser expandiert, nicht verworfen.
 
 Account-Writes laufen atomar über `public.party_schreiben(jsonb)`:
 
@@ -80,23 +91,44 @@ Account-Writes laufen atomar über `public.party_schreiben(jsonb)`:
 - Composite-FKs verhindern Cross-Trip-/Cross-User-/Cross-Traveller-Referenzen
 - fremde Citizenship-ID an einem Dokument wird abgewiesen
 
-Guest→Account übernimmt Party (Traveller + Citizenships + Documents) über dieselbe RPC. Readiness bleibt ein nachgelagerter, fail-closed Schritt. Ein Fehler nach `reise_anlegen` hinterlässt weiterhin eine Konto-Reise ohne Party; der Browser-Entwurf bleibt erhalten.
+Guest→Account übernimmt Party (Traveller + Citizenships + Documents) über dieselbe RPC. Readiness bleibt ein nachgelagerter, fail-closed Schritt. Bei einem späteren Sync-Fehler bleibt der lokale Guest-Entwurf erhalten und die Schritte sind retry-fähig.
+
+---
+
+## Citizenship – progressive Pflicht statt globale Pflicht
+
+Verbindliche Product-Owner-Entscheidung: `docs/TRAVELLER_CITIZENSHIP_REQUIREMENT_POLICY.md`.
+
+Die Staatsbürgerschaft ist **beim einfachen Reise-Start nicht global verpflichtend**. Sie wird jedoch zur **harten fachlichen Pflichtvoraussetzung**, sobald Jetnity eine Official-/Regulatory-Funktion ausführen soll, deren Ergebnis von Citizenship abhängt.
+
+Beispiele:
+
+- Visum / Visa-Befreiung
+- ETA / eTA / ESTA / elektronische Reisegenehmigung
+- Einreiseberechtigung
+- Transitbestimmungen
+- staatsbürgerschaftsabhängige Dokumentanforderungen
+- staatsbürgerschaftsabhängige Health-/Vaccination-/Health-Document-Anforderungen
+
+Fehlt die erforderliche Citizenship-Truth, darf Jetnity keine definitive Official-Entscheidung erzeugen. Ergebnis bleibt `insufficient_context` / `unknown`, und die UI fragt gezielt die fehlenden Angaben ab.
+
+Jetnity darf Staatsbürgerschaft niemals still aus Wohnsitz, aktuellem Standort, Abflugland, Sprache, Domain oder Profilmarkt ableiten.
+
+Mehrere Staatsbürgerschaften pro Traveller bleiben kanonisch unterstützt.
 
 ---
 
 ## Fingerprint / Freshness
 
-`READINESS_FINGERPRINT_VERSION = v2`.
+Traveller-spezifische Einreise-/Visum-/Dokumentkarten berücksichtigen im Context Fingerprint:
 
-Traveller-spezifische Einreise-/Visum-/Dokumentkarten enthalten:
-
-- Traveller-`clientRef`
+- Traveller-Identität
 - sortierte Citizenship-Menge
 - sortierte Document-Menge (Typ / Aussteller / Expiry / Citizenship-Bezug)
 - Residence
 - Foundation-D-Route / Transit / Destinationen / Reisedaten
 
-Array-Reihenfolge ändert den Fingerprint nicht. Änderung an Traveller A invalidiert Traveller B nicht. Ticket-/Buchungsbestätigungen bleiben item-bezogen.
+Array-Reihenfolge ändert den Fingerprint nicht. Relevante Traveller-/Credential-/Route-Änderungen invalidieren Official-/Readiness-Kontext fail-closed.
 
 ---
 
@@ -109,55 +141,49 @@ Konzeptionell:
 Eine Option entsteht nur aus vorhandenen Fakten:
 
 - ein vorhandenes Dokument → eine Option
-- Traveller ohne Dokument → eine Option mit `document: null` (`optionRef=…:none`)
+- Traveller ohne Dokument → eine Option mit `document: null`
 - keine erfundenen Pässe aus Staatsbürgerschaften
 
 `requirementsProviderAus()` bleibt `null`. Ohne Provider darf Jetnity nicht behaupten, welcher Pass visumfrei, besser oder transitfähig ist.
 
-Vergleich (`lib/readiness/vergleich.ts`) trennt Requirement-Ergebnisse von option-level Eligibility/Mandate.
+Vergleich trennt Requirement-Ergebnisse von option-level Eligibility/Mandate.
 
-- `result=required` bei `requirementType=visa` heisst: für diese Option ist ein Visum nötig – nicht, dass genau dieses Credential verwendet werden muss.
-- Ein Winner entsteht nur bei expliziter option-level Semantik (`optionMandate=mandatory` oder `optionEligibility=not_allowed`) oder, nach explizit erlaubter Eligibility, bei belegter Reibung (`not_required` vor `required`).
-- Ausstellerland ist kein Citizenship-Ersatz. `relatedCitizenshipCountryCode` bleibt `null`, solange keine gespeicherte Relation existiert.
-- Geladene leere Child-Relationen sind autoritativ. Legacy-Singularfelder dürfen sie nicht wieder befüllen.
-- Explizites `citizenships: []` / `documents: []` bleibt auch im gemeinsamen Parser leer.
-- Document-`clientRef` ist eine stabile Identität. `citizenshipClientRef` wird nur bewusst gesetzt oder bei Citizenship-Löschung genullt.
-- Traveller-spezifische Readiness ohne auflösbare Ref wird nicht trip-level.
-- Widersprüchliche current Provider-Zeilen derselben Option, inklusive abweichender `officialClass`, bleiben sichtbar als `unknown` / `recheck_needed`. Evidence-URLs allein sind kein Konflikt.
-- Die Requirements-API validiert vorhandene Legacy-Singularfelder strikt. `travellerLegacyLesen()` bleibt nur für Guest-/Storage-Recovery tolerant.
+- `required` bei `visa` heißt: für diese Option ist ein Visum nötig – nicht, dass genau dieses Credential verwendet werden muss.
+- Ein Winner entsteht nur bei expliziter option-level Semantik bzw. belastbarer Official Evidence.
+- Ausstellerland ist kein Citizenship-Ersatz.
+- `relatedCitizenshipCountryCode` bleibt `null`, solange keine gespeicherte Relation existiert.
+- Geladene leere Child-Relationen sind autoritativ; Legacy-Singularfelder dürfen sie nicht wieder befüllen.
+- Document-`clientRef` ist stabile Identität.
+- Traveller-spezifische Readiness ohne auflösbare Ref wird nicht trip-level degradiert.
+- widersprüchliche current Provider-Zeilen derselben Option bleiben sichtbar als `unknown` / `recheck_needed`.
+- Evidence-URL-Unterschied allein ist kein semantischer Konflikt.
+- Requirements-API validiert kontrollierte Legacy-Singularfelder strikt; toleranter Legacy-Leser bleibt nur für Guest-/Storage-Recovery.
 
 Ohne Evidence oder ohne option-level Semantik:
 
-> Noch nicht zuverlässig vergleichbar.
+> **Noch nicht zuverlässig vergleichbar.**
 
 ---
 
 ## UX
 
-Kein Workspace-Umbau. Nur `Einreise & Reisevorbereitung` erfasst mehrere Staatsbürgerschaften und Dokumente.
+Citizenship und Credentials werden progressiv abgefragt – nicht pauschal am ersten Screen.
 
-Erlaubte Copy ohne Provider:
+Erlaubte Copy ohne Provider bzw. bei fehlendem Kontext:
 
 - `Angaben erfasst`
 - `Offizielle Prüfung noch nicht verfügbar`
 - `Für eine zuverlässige Prüfung fehlen Angaben`
 - `Noch nicht zuverlässig vergleichbar.`
 
-Nicht erlaubt: `Schweizer Pass ist besser` oder vergleichbare Vorteilssprache ohne Evidence.
+Empfohlene Citizenship-Copy, sobald sie fachlich benötigt wird:
 
----
+> **Damit wir deine Einreise-, Transit- und Gesundheitsanforderungen zuverlässig prüfen können, benötigen wir die Staatsbürgerschaft der betroffenen Reisenden.**
 
-## Dev / Production-Grenze
-
-| Umgebung | Stand |
-| --- | --- |
-| Development | Migrationen `20260822160000`–`20260822180000` |
-| Production | unverändert; keine Foundation-E-Tabellen |
-
-Production-Migration braucht nach Merge eine **separate** Product-Owner-Freigabe.
+Nicht erlaubt: stille Default-Staatsbürgerschaft oder Vorteilssprache wie `Schweizer Pass ist besser` ohne Evidence.
 
 ---
 
 ## Provider-Gate
 
-Kein Timatic-Vertrag, kein Secret, keine laufenden Providerkosten. Die Factory bleibt fail-closed. Ein späterer Provider muss `credentialOptions[]` getrennt bewerten können, ohne die UI oder den Reisegraphen neu zu bauen.
+Kein Timatic-Vertrag, kein Secret, keine laufenden Providerkosten. Die Factory bleibt fail-closed. Ein späterer Provider muss mehrere Traveller/Citizenships/Credential-Optionen getrennt bewerten können, ohne UI oder Reisegraph neu zu bauen.
