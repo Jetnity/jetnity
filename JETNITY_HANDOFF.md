@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 23. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D und E vollständig abgeschlossen inkl. Production; nächster Block noch nicht begonnen**
+Status: **verbindlicher operativer Übergabepunkt – Foundation D und E vollständig abgeschlossen inkl. Production; Travel Safety Foundation auf Feature-Branch in Arbeit**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Er sagt, was Jetnity ist, was bereits gebaut wurde, welche Regeln verbindlich sind und was als Nächstes zu tun ist.
 
@@ -245,7 +245,12 @@ Smartphone, Tablet, Laptop und Desktop dürfen sich layoutseitig unterscheiden, 
 
 ## 8. Nächste verbindliche Reihenfolge
 
-Der nächste neue Produktblock wurde **noch nicht begonnen**.
+Der nächste neue Produktblock ist **auf dem Feature-Branch gestartet**, nicht auf `main`.
+
+Aktiver Branch: `feat/travel-safety-disruption-intelligence`  
+Auftrag: `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`  
+Ist-Audit: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ARCHITECTURE_AUDIT.md`  
+Live-Handoff: `docs/ACTIVE_WORK_STATUS.md`
 
 Aktuelle Reihenfolge:
 
@@ -266,17 +271,16 @@ Echte Provider kommen am Schluss. **Vorher müssen die provider-neutralen Ports/
 
 ## 9. Nächster operativer Schritt
 
-Noch **keinen alten Agenten weiterarbeiten lassen** und noch **keinen Safety-Code ohne neuen Auftrag beginnen**.
+Cursor setzt `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md` auf `feat/travel-safety-disruption-intelligence` um.
 
-ChatGPT soll zuerst:
+Harte Gates bleiben:
 
-1. aktuellen `main`-/Production-Stand nochmals prüfen,
-2. `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`, Route Truth, Traveller Context, UX-/Truth-/Provider-Readiness-Regeln lesen,
-3. einen vollständigen versionierten Cursor-Auftrag für **Travel Safety & Disruption Intelligence – provider-neutrale Foundation** erstellen,
-4. darin Datenmodell, Truth/Evidence/Freshness, Geo-/Zeit-Relevanz, Cross-Domain-Auswirkungen, stale/unknown, Guest/Account, Security, Adapter-Port, UX, Device-Matrix, Tests, DoD und harte Provider-/Production-Gates festlegen,
-5. danach einen **neuen Cursor-Agenten** mit neuem Feature-Branch / Draft PR starten.
+- kein Merge
+- kein Mark Ready
+- keine Production-Migration
+- kein echter Safety-/Disruption-Provider
 
-Kein Merge, keine Production-Migration und keine Provider-Aktivierung ohne die jeweiligen separaten Product-Owner-Gates.
+Nach Cursor-Abschluss prüft ChatGPT den **tatsächlichen finalen PR-Head**.
 
 Leitsatz:
 

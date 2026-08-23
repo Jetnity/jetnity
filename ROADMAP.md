@@ -120,7 +120,7 @@ Keine Passnummern, Scans, MRZ oder Biometrie. Ausstellerland ist keine automatis
 
 ## 5. NÄCHSTE PRIORITÄT – Travel Safety & Disruption Intelligence
 
-Status: **verbindliche Produktentscheidung / provider-neutrale Foundation noch nicht begonnen**
+Status: **in Arbeit auf `feat/travel-safety-disruption-intelligence`; `main` unverändert**
 
 Verbindliche Policy:
 
@@ -161,26 +161,15 @@ Safety muss Auswirkungen auf relevante Teile derselben Reise erkennen können:
 
 Die Funktion darf kein isoliertes Warnungsmodul werden. Sie muss Route Truth, Traveller Context und den bestehenden Reisegraphen wiederverwenden.
 
-### Auftrag vor Implementierung
+### Auftrag / Arbeitsstand
 
-Vor Cursor-Code muss ChatGPT einen vollständigen versionierten Safety-Task erstellen, inklusive:
+Versionierter Cursor-Auftrag liegt auf `main` und wird jetzt implementiert:
 
-- Domainmodell
-- Truth-/Evidence-/Freshness-Modell
-- Geo-/Zeit-Relevanz
-- Invalidation / stale / withdrawn
-- Cross-Domain-Auswirkungen
-- User-Control / Vorher-Nachher / keine stille Änderung
-- Guest/Account
-- RLS/Security, falls persistiert
-- provider-neutraler Port / Adapter-Grenze
-- UX / `Jetzt wichtig` / Warnhierarchie
-- Device-/Viewport-Matrix
-- Unit-/Integration-/E2E-/Truth-/Security-Tests
-- Production-/Provider-Gates
-- DoD und unabhängiger Review
+- `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`
+- Ist-Audit: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ARCHITECTURE_AUDIT.md`
+- Live-Status: `docs/ACTIVE_WORK_STATUS.md`
 
-Kein echter Safety-Provider in diesem Block.
+Kein echter Safety-Provider in diesem Block. Keine Production-Migration, kein Mark Ready, kein Merge.
 
 ---
 

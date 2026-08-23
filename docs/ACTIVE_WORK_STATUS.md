@@ -1,167 +1,97 @@
 # Jetnity – Active Work Status
 
 Stand: 23. August 2026  
-Arbeitsblock: **Travel Safety & Disruption Intelligence – Phase-1-Ist-Audit abgeschlossen; Implementierung noch nicht begonnen**
+Arbeitsblock: **Travel Safety & Disruption Intelligence – provider-neutrale Foundation**
 
-## 1. Aktueller Zustand
+## 1. Arbeitsblock / Ziel
 
-### Foundation D – Route & Transit Intelligence
+Provider-neutrale Safety-/Disruption-Foundation auf der bestehenden Reise-Wahrheit:
 
-**Vollständig abgeschlossen und nicht erneut zu bauen.**
-
-- PR #34: gemergt
-- Merge-Commit auf `main`: `5bc93bcd35421e3763dc8a3515f254c209b63d6a`
-- Production-Migrationen `20260822130000`–`20260822150000`: angewendet und verifiziert
-- Production-Acceptance: `docs/FOUNDATION_D_PRODUCTION_ACCEPTANCE.md`
-
-### Foundation E – Traveller Context / Multi-Citizenship / Multi-Document
-
-**Vollständig abgeschlossen, auf `main` und auf Production verifiziert. Nicht erneut bauen.**
-
-- PR #35: gemergt
-- Squash-Merge-Commit auf `main`: `3bf1eaaa78ef6ac33bb3baff84650a143720e91d`
-- finaler PR-Head: `52601ea0f770cf4265a5bdf5cb2356557ef7dcde`
-- finaler Runtime-/DB-Code-Head des Closure-Gates: `b1f9d6543aa153bacaa126f71d39c6a434dfbebb`
-- unabhängiger Closure-Check: `docs/PR35_CHATGPT_INDEPENDENT_CLOSURE_CHECK.md` – PASS
-- Product-Owner-Merge-Freigabe: erteilt am 23.08.2026
-- Product-Owner-Production-Migrationsfreigabe: erteilt am 23.08.2026
-- Production-Acceptance: `docs/FOUNDATION_E_PRODUCTION_ACCEPTANCE.md`
-
-## 2. Foundation-E-Ergebnis
-
-Kanonisches Modell:
-
-> **Ein stabiler Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente / Credentials → kontextabhängig bewertete zulässige Optionen.**
-
-Umgesetzt und produktiv vorhanden:
-
-- `trip_travellers` als stabiler Parent
-- `trip_traveller_citizenships` als 1:n Citizenship-Truth
-- `trip_traveller_documents` als 1:n Document-Truth
-- optionales `trip_readiness_items.traveller_id`
-- atomare Account-Writes über `public.party_schreiben(jsonb)` (`SECURITY INVOKER`)
-- Guest/Account-Parität derselben Party-Form
-- traveller-spezifische Readiness
-- Fingerprint v2 für Citizenship-/Document-Kontext
-- provider-neutrale Credential-Optionen und Vergleichsnaht
-- fail-closed Requirements-API und Provider-Konfliktbehandlung
-- keine Passnummern, Scans, MRZ oder Biometrie
-- kein LLM als regulatorische Truth-Quelle
-- echter Travel-Requirements-Provider weiterhin deaktiviert
-
-## 3. Verifizierter Code-/UX-/Security-Nachweis
-
-Auf dem final geprüften Runtime-/DB-Code-Head `b1f9d654`:
-
-| Nachweis | Ergebnis |
-| --- | --- |
-| `npm test` | **1353/1353** |
-| Typecheck | grün |
-| Lint | grün |
-| Hygiene | grün |
-| Production-Build | grün, 38/38 Seiten |
-| `db:rechte` | OK, 51 Rechte |
-| `db:rls` | Exit 0 |
-| `db:sicherheit` | **210/210** |
-| `db:parallelitaet` | **7/7** |
-| UI-Audit | **838/838, 0 Fehler**, WebKit + Chromium, 8 Viewports |
-| finaler PR-CI | success |
-| finaler PR-Vercel | success |
-| Vercel Production nach Merge | success |
-
-## 4. Production-Datenbank – Foundation E
-
-Production enthält jetzt exakt:
-
-- `20260822160000_traveller_context_intelligence`
-- `20260822170000_traveller_context_fk_delete`
-- `20260822180000_traveller_context_rereview`
-
-Direkt auf Production verifiziert:
-
-- Supabase nach Apply wieder `FUNCTIONS_DEPLOYED` / `ACTIVE_HEALTHY`
-- beide Child-Tabellen vorhanden
-- `trip_readiness_items.traveller_id` vorhanden
-- RLS auf neuen Child-Tabellen aktiv
-- je Child-Tabelle vier Owner-Policies für `authenticated` mit `user_id = auth.uid()`
-- Citizenship → Traveller: `ON DELETE CASCADE`
-- Document → Traveller: `ON DELETE CASCADE`
-- Document → Citizenship: `ON DELETE SET NULL (citizenship_id)`
-- Readiness → Traveller: `ON DELETE CASCADE`
-- `party_schreiben(jsonb)`: `SECURITY INVOKER`, `search_path=public, pg_temp`, EXECUTE nur für `authenticated`
-- Child-Limit-Lock: `FOR NO KEY UPDATE`
-- erwartete Legacy-Backfills fehlen: **0**
-- erfundene Document↔Citizenship-Backfill-Relationen: **0**
-
-Vollständige Acceptance: `docs/FOUNDATION_E_PRODUCTION_ACCEPTANCE.md`.
-
-## 5. Harte Grenzen bleiben bestehen
-
-Bis zu separaten späteren Product-Owner-Gates:
-
-- kein echter Travel-Requirements-Provider / Timatic
-- keine Safety-/Seasonality-Live-Provider
-- keine Flug-/Hotel-/Aktivitäten-/Mobilitäts-/Mietwagen-Provider-Aktivierung
-- keine neuen Provider-Secrets
-- keine Providerkosten ohne Freigabe
-- keine Passnummern, Scans, MRZ oder Biometrie
-- keine erfundene regulatorische, Safety- oder Seasonal-Truth
-
-Provider werden erst in der späteren echten Providerphase aktiviert. Vorher müssen die provider-neutralen Adapter-/Port-Grenzen in allen relevanten Bereichen professionell fertig sein.
-
-## 6. Aktiver nächster Produktblock
-
-Gemäß aktueller Product-Owner-Reihenfolge folgt jetzt:
-
-**Travel Safety & Disruption Intelligence – provider-neutrale Foundation**
-
-Verbindlicher Implementierungsauftrag ist auf `main` vorbereitet:
-
-- `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`
-- Task-Erstellungscommit: `2c39d488b4ffca7fd718fdc3238b9cfbece0c9dd`
-
-Status: **Auftrag vorbereitet, Implementierung noch nicht begonnen.**
-
-Der Task verlangt unter anderem:
-
-- eigenen frischen Branch `feat/travel-safety-disruption-intelligence`
-- frühen Draft PR
-- vollständigen Ist-Architektur-Audit vor Implementierung
-- provider-neutrale Safety-Domäne und Provider-Port
-- strikte Evidence-/Freshness-/Conflict-Grenzen
-- räumlich und zeitlich konkrete Relevance Engine
-- Wiederverwendung der Foundation-D Route Truth
-- Cross-Domain Impact-/Recheck-Naht ohne automatische Reiseänderung
-- klare Trennung Safety vs Seasonal
-- minimale Workspace-Integration ohne den späteren großen Workspace-Umbau vorzuziehen
-- umfassende Truth-/Security-/UX-/Device-Testmatrix
+- External Event / Source Fact getrennt von Jetnity-Evaluation
+- räumlich und zeitlich konkrete Relevanz, keine Länder-Pauschalisierung
+- Foundation-D Route Truth wiederverwenden, Foundation E nicht duplizieren
+- Cross-Domain Impact-/Recheck ohne automatische Reiseänderung
+- Safety vs Seasonal getrennt
 - kein echter Provider, keine Production-Migration, kein Mark Ready, kein Merge
 
-## 7. Reihenfolge danach
+Auftrag: `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`
 
-Nach erfolgreichem Safety-Block:
+## 2. Branch / PR / aktueller Head
 
-1. **Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
-2. verbleibende Provider-Readiness-/Adapter-Lücken über alle relevanten Bereiche schließen
-3. großer End-to-End Trip-Workspace-/Übersicht-Umbau inklusive des besprochenen Wegs dorthin
-4. finaler Workspace Intelligence Audit
-5. echte Providerphase
-6. Provider-backed End-to-End-/Truth-Audit
-7. finale Startseiten-Positionierung
+- Basis: aktuelles `origin/main` = `cc3c6abc7a34a58642182013657eb10194978f96`
+- Branch: `feat/travel-safety-disruption-intelligence`
+- Draft PR: wird mit diesem Checkpoint eröffnet
+- Head: siehe aktuellen Branch-Commit; nach jedem Push hier nachziehen
 
-## 7. Phase-1-Ist-Audit (23.08.2026)
+## 3. Status
 
-- Ergebnis versioniert: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ARCHITECTURE_AUDIT.md`
-- Safety-Implementierung (`lib/safety/`) existiert im Repository **noch nicht**
-- Wiederverwendbare Anker: `Trip`-Graph-IDs, `lib/route/ableitung.ts`, Readiness Evidence/Freshness-Muster in `lib/readiness/`
+**in Arbeit**
 
-## 8. Exakter nächster operativer Schritt
+Foundation D und E bleiben abgeschlossen und werden nicht erneut gebaut.
 
-1. Branch `feat/travel-safety-disruption-intelligence` von frischem `origin/main`.
-2. Phase 2 gemäß `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md` – provider-neutrale Domäne unter `lib/safety/`.
-3. PR bleibt Draft; kein Mark Ready, kein Merge, keine Production-Migration.
-4. Nach Implementierung: unabhängiger Review auf finalen PR-Head.
+## 4. Bereits umgesetzt
 
-Leitsatz für die Fortsetzung:
+- `origin/main` frisch synchronisiert
+- Feature-Branch vom aktuellen `main` erstellt
+- Phase-1-Ist-Audit versioniert: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ARCHITECTURE_AUDIT.md`
+- Persistenz-Empfehlung des Audits: **keine neue Safety-DB** in dieser Foundation
 
-> **Foundation D und E sind fertig. Jetzt bauen wir Safety als belastbare provider-neutrale Reise-Intelligence – nicht als Newsfeed, nicht als LLM-Warnung und nicht als isolierte Karte.**
+## 5. Gerade offen / noch nicht umgesetzt
+
+- `lib/safety/` Domäne, Port, Relevance, Impact, Fingerprint
+- fail-closed API-Grenze
+- minimale Workspace-/Audit-Naht
+- Pflicht-Testmatrix und bestehende Gates
+- Acceptance-/ADR-/Architektur-/Handoff-Abschluss
+
+## 6. Letzte relevanten Änderungen
+
+- Audit-Commit auf diesem Branch: `e245d50f493bf02d4899ef1eca1f8ea01dfe8743`
+
+## 7. Tests / CI / Preview
+
+Noch nicht für diesen Block gelaufen. Foundation-E-Nachweis auf `main` bleibt der letzte verifizierte Stand (1353 Tests, UI-Audit 838/838). Neue Zahlen erst nach Ausführung dokumentieren.
+
+## 8. DB / RLS / Production-Grenze
+
+- Production unverändert
+- keine Safety-Migration geplant
+- keine Production-Migration in diesem Block
+
+## 9. Kosten / Provider / Secrets
+
+- kein echter Safety-/Disruption-Provider
+- keine Provider-Secrets
+- keine neuen laufenden Providerkosten
+- Factory bleibt `null` / disabled
+
+## 10. Bekannte Risiken / Review-Funde
+
+- Activities/Stays oft title-only: Safety darf daraus keine Geo-Betroffenheit raten
+- Etappen ohne `countryCode` bleiben `insufficient_context`
+- `Jetzt wichtig` existiert noch nicht; Foundation darf den späteren Workspace-Umbau nicht vorwegnehmen
+- ohne Live-Provider darf die Übersicht keine permanente leere Safety-Karte zeigen
+
+## 11. Offene Nutzerentscheidungen / Freigaben
+
+- kein Merge
+- kein Mark Ready
+- keine Production-Migration
+- unabhängiger ChatGPT-Review erst nach finalem PR-Head
+
+## 12. Exakter nächster Schritt
+
+1. Provider-neutrale Safety-Domäne und Relevance Engine implementieren
+2. API- und UX-Naht anschliessen
+3. Pflicht-Testmatrix und Hygiene/Build/UI-Audit ausführen
+4. Dokumente mit echten Nachweisen schliessen
+5. Draft PR auf finalem Head belassen
+
+## 13. Zuerst zu lesen
+
+1. `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`
+2. `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ARCHITECTURE_AUDIT.md`
+3. `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`
+4. `docs/ACTIVE_WORK_STATUS.md`
+5. `JETNITY_HANDOFF.md`
+6. `lib/route/*`, `lib/readiness/*`, `components/trips/TripWorkspace.tsx`
