@@ -1,10 +1,11 @@
 # PR #38 – Cursor-Fixes zum unabhängigen Review
 
 Stand: 23. August 2026  
-Status: **vier Review-Blocker geschlossen; Re-Review offen**
+Status: **Erst-Review-Blocker 1–4 und R2-Blocker 5–6 geschlossen; R3-Re-Review offen**
 
 Review: `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md`  
-Runtime-Head der Fixes: `89290effba61602a71418ab3904b4dc42e76709d`
+Runtime-Head R1-Fixes: `89290effba61602a71418ab3904b4dc42e76709d`  
+Runtime-Head R2-Fixes: `aa6cafa2f4997c22081dff35fe950a18190e7886`
 
 ## 1. Gemischte Unsicherheit
 
@@ -27,6 +28,14 @@ Gültige Nachteile bleiben sichtbar. Die Copy für reines `information` lautet b
 - anderer Availability-Wert oder falscher Typ → Fact ungültig
 - `route.airportCodes` mit ungültigem Kind → Scope `insufficient`, keine stille Kürzung auf gültige Codes
 
-## 5. Nicht geändert
+## 5. Explizite evidenceClass
+
+Fehlende, leere, `null` oder falsch typisierte `evidenceClass` wird nicht mehr zu `seasonal_pattern` erfunden. Nur explizite erlaubte Klassen oder ausdrücklich abgewiesene Acute-Klassen (`active_warning` / `acute` / `acute_event`) werden akzeptiert.
+
+## 6. API-Tripgraph
+
+`seasonalAnfrageSchema` verlangt eindeutige Stage-/Day-/Item-IDs und gültige Referenzen. `tripAusSeasonalAnfrage()` repariert unbekannte `stageId` nicht mehr und droppt keine dangling `dayId`-Items.
+
+## 7. Nicht geändert
 
 Kein Provider, keine Migration, keine Secrets, PR bleibt Draft.

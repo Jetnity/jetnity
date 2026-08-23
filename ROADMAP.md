@@ -199,7 +199,7 @@ Verbindlich:
 4. ✅ Cross-Domain-Impact und Reevaluation
 5. ✅ minimale, ruhige Workspace-Naht
 6. ✅ Pflicht-Testmatrix + Device-Matrix (1540/1540 Tests, UI-Audit 1014/1014)
-7. **→ ChatGPT-Re-Review der vier geschlossenen Blocker**
+7. **→ ChatGPT-Re-Review R3 der geschlossenen R2-Blocker**
 8. Product-Owner-Merge-Gate
 
 ---

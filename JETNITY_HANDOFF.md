@@ -313,13 +313,13 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 Aktiver Branch: `feat/travel-timing-seasonal-intelligence`  
 Draft PR: `#38`  
 Basis: `origin/main` @ `cd220beb`  
-Runtime-Head: `89290eff`
+Runtime-Head: `aa6cafa2`
 
 1. Ist-Audit ist gegen den tatsächlichen Code verifiziert.
-2. Seasonal-Runtime und die vier Review-Blocker aus `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md` sind geschlossen.
-3. Full Gate auf Runtime `89290eff` ist lokal und remote grün (1550/1550 Tests, UI-Audit 1014/1014, Build Exit 0, GitHub Actions SUCCESS, Vercel Preview READY).
+2. Seasonal-Runtime sowie Review-Blocker 1–6 sind geschlossen.
+3. Full Gate auf Runtime `aa6cafa2` ist lokal und remote grün (1553/1553 Tests, UI-Audit 1014/1014, Build Exit 0, GitHub Actions SUCCESS, Vercel Preview READY).
 4. PR bleibt Draft. Kein echter Seasonal-Provider, kein Secret, keine unfreigegebenen Kosten, kein Merge ohne aktuelle Product-Owner-Freigabe.
-5. **Exakter nächster Schritt:** ChatGPT-Re-Review der vier geschlossenen Blocker.
+5. **Exakter nächster Schritt:** ChatGPT-Re-Review R3 der zwei geschlossenen R2-Blocker.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

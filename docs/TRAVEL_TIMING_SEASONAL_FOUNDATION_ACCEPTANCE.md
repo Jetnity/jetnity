@@ -1,7 +1,7 @@
 # Travel Timing & Seasonal Intelligence – Foundation Acceptance
 
 Stand: 23. August 2026  
-Status: **verbindliche Acceptance für die provider-neutrale Foundation – Draft-PR #38, Review-Fixes auf Runtime `89290eff`, Re-Review offen**
+Status: **verbindliche Acceptance für die provider-neutrale Foundation – Draft-PR #38, R2-Fixes auf Runtime `aa6cafa2`, R3-Re-Review offen**
 
 Policy: `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`  
 Ist-Audit: `docs/TRAVEL_TIMING_SEASONAL_FOUNDATION_ARCHITECTURE_AUDIT.md`
@@ -241,6 +241,21 @@ Vor Review auf **exakt finalem Runtime-Head**:
 - Branch **0 behind** aktuellem `origin/main`
 - GitHub Actions SUCCESS auf exakt finalem Head
 - Vercel Preview READY/SUCCESS auf exakt finalem Head
+
+### Gate-Lock Runtime `aa6cafa2` nach R2-Fixes (23. August 2026)
+
+R2-Blocker 5–6 aus `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md` sind geschlossen.
+
+| Gate | Ergebnis |
+| --- | --- |
+| `origin/main` | `cd220beb`, Branch **0 behind** |
+| `npm test` | **1553/1553** |
+| Typecheck / Lint / Hygiene | grün |
+| Production-Build | Exit 0 |
+| DB | Rechte 51 OK, RLS Exit 0, Sicherheit **210/210**, Parallelität **7/7** |
+| UI-Audit | **1014/1014**, 0 Fehler |
+| GitHub Actions | SUCCESS https://github.com/Jetnity/jetnity/actions/runs/32640978237 |
+| Vercel Preview | READY https://vercel.com/jetnity-e1b93c82/jetnity-app/vuUyJdg9F5qRiFWL5h7xb5MLfpua |
 
 ### Gate-Lock Runtime `89290eff` nach Review-Fixes (23. August 2026)
 
