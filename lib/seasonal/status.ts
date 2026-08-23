@@ -59,7 +59,11 @@ function nurAbgewieseneAcute(liste: readonly SeasonalEvaluation[]): boolean {
 }
 
 function entscheidungsrelevant(eintrag: SeasonalEvaluation): boolean {
-  if (istAbgewieseneAcute(eintrag)) return false
+  if (istAbgewieseneAcute(eintrag)) {
+    return (
+      eintrag.freshness === 'source_temporarily_unavailable' || eintrag.evidenceStatus === 'unavailable'
+    )
+  }
   if (eintrag.factKey === 'checked_empty') return false
   if (eintrag.relevance === 'not_applies' && !eintrag.conflict) return false
   return true
@@ -75,6 +79,7 @@ function istQuelleWeg(eintrag: SeasonalEvaluation): boolean {
 }
 
 function istWahrheitsluecke(eintrag: SeasonalEvaluation): boolean {
+  if (istAbgewieseneAcute(eintrag) && entscheidungsrelevant(eintrag)) return true
   if (!entscheidungsrelevant(eintrag) || istQuelleWeg(eintrag)) return false
   return (
     eintrag.conflict ||

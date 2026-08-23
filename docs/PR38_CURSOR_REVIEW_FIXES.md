@@ -1,7 +1,7 @@
 # PR #38 – Cursor-Fixes zum unabhängigen Review
 
 Stand: 23. August 2026  
-Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7 und R4-Blocker 8–9 geschlossen; R5-Re-Review offen**
+Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9 und R5-Blocker 10–11 geschlossen; R6-Re-Review offen**
 
 Review R1/R2: `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md`  
 Review R3: `docs/PR38_CHATGPT_R3_REVIEW.md`  
@@ -60,6 +60,21 @@ Acute-only ist fail-closed `unknown` / `complete=false` / API-`unknown`, kein sa
 
 `effektiveItemStageId()` verwendet zuerst eine gültige direkte `item.stageId`. Fehlt sie, gilt `item.dayId → day.stageId`. Widersprüchliche Doppelbeziehungen werden nicht still entschieden.
 
-## 11. Nicht geändert
+## 11. Provider-Request trägt konkrete Stage-/Route-Zeitkontakte
+
+`SeasonalProviderAnfrage` enthält neben der groben Top-Level-Hülle und den flachen Country-/Airport-/Place-Mengen jetzt kanonische:
+
+- `stages[]` mit stabiler ID, Country/Place/Geo und `arrivalDate`/`departureDate`
+- `routeContacts[]` mit Airport, Land und getrennten Start-/Endkontakten
+
+`providerAnfrageAusKontext()` sortiert beides deterministisch. Wiederholte Places/Airports bleiben getrennte Kontakte und werden nicht zu Min/Max verschmolzen. Labels, Citizenship, Dokumente und LLM-Felder gehören nicht in den Port.
+
+## 12. Acute plus temporarily_unavailable bleibt rejected-domain
+
+`seasonalFactNormalisieren()` prüft abgewiesene Acute-/Safety-Klassen vor `availability`. `active_warning` / `acute` / `acute_event` bleiben `rejected_acute` mit `acuteRejected=true`, auch wenn `availability='temporarily_unavailable'` gesetzt ist. Die kombinierte Zeile darf `sourceTemporarilyUnavailable` zusätzlich tragen, aber niemals `seasonal_pattern` werden.
+
+Die Engine behandelt Acute vor dem generischen Seasonal-unavailable-Pfad. Acute-only + unavailable bleibt fail-closed ohne `checked_empty` / API-`ok`. Ein gültiger Seasonal-Fact darf sichtbar bleiben; der Gesamtstatus wird durch die abgewiesene/fehlende Truth nicht clean/favorable.
+
+## 13. Nicht geändert
 
 Kein Provider, keine Migration, keine Secrets, PR bleibt Draft.

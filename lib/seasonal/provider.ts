@@ -11,6 +11,23 @@ import type {
   SeasonalOutcome,
 } from '@/lib/seasonal/domain'
 
+export type SeasonalProviderStageKontakt = {
+  id: string
+  countryCode: string | null
+  placeId: string | null
+  latitude: number | null
+  longitude: number | null
+  arrivalDate: string | null
+  departureDate: string | null
+}
+
+export type SeasonalProviderRouteKontakt = {
+  airportCode: string
+  countryCode: string | null
+  start: string | null
+  end: string | null
+}
+
 export type SeasonalProviderAnfrage = {
   contextFingerprint: string
   startDate: string | null
@@ -18,6 +35,8 @@ export type SeasonalProviderAnfrage = {
   countryCodes: string[]
   airportCodes: string[]
   placeIds: string[]
+  stages: SeasonalProviderStageKontakt[]
+  routeContacts: SeasonalProviderRouteKontakt[]
 }
 
 export type SeasonalProviderFact = {

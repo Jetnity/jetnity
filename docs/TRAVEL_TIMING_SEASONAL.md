@@ -32,7 +32,7 @@ Diese Ebenen dürfen nicht in ein Severity-Feld fallen:
 8. Trip-Impact
 9. Präsentationsklasse (`timing_check` / `timing_notice` / `information` / `unknown`)
 
-Akute Warnungen (`active_warning`) gehören zur Safety-Domäne und erscheinen nicht als Seasonal-Hinweis. Safety filtert `seasonal_pattern` weiterhin aus.
+Akute Warnungen (`active_warning`) gehören zur Safety-Domäne und erscheinen nicht als Seasonal-Hinweis. `temporarily_unavailable` darf eine explizite Acute-/Safety-Klasse nicht zu `seasonal_pattern` umschreiben. Safety filtert `seasonal_pattern` weiterhin aus.
 
 ---
 
@@ -51,7 +51,7 @@ Akute Warnungen (`active_warning`) gehören zur Safety-Domäne und erscheinen ni
 | API | `POST /api/seasonal/evaluate` | Rate-Limit, Zod, Body-Cap, `private, no-store` |
 | Ansicht | `components/trips/ReisezeitHinweise.tsx` | nur bei übergebenen Evaluations sichtbar |
 
-Route Truth kommt ausschließlich aus `routeFactsAusGraph`. Seasonal bleibt traveller-neutral. Citizenship gehört nicht in den Foundation-Fingerprint.
+Route Truth kommt ausschließlich aus `routeFactsAusGraph`. Seasonal bleibt traveller-neutral. Citizenship gehört nicht in den Foundation-Fingerprint. Der provider-neutrale Request enthält kanonische Stage-Targets und getrennte Route-/Airport-Zeitkontakte; flache Mengen und Top-Level-Daten bleiben nur grobe Hülle.
 
 ---
 
@@ -77,7 +77,7 @@ Ohne belastbaren `freshUntil`-Vertrag gibt es kein `current`. Safety-7-Tage-Defa
 
 Keine Seasonal-Tabelle. Seasonal Truth bleibt compute-on-read. Production-Schema unverändert.
 
-Lokal und remote auf Runtime `f077d4d1` verifiziert: 1559 Tests, UI-Audit 1014/1014, Production-Build Exit 0, GitHub Actions SUCCESS, Vercel Preview READY. Review-Blocker 1–9 sind geschlossen. R5-Re-Review ist offen. Live-Provider bleibt `null`.
+R5-Blocker 10–11 sind im Code geschlossen. Das Exact-Head-Gate auf dem neuen Runtime-Head folgt; ältere Gate-Zahlen auf `f077d4d1` gelten nicht als R5-Closure. Live-Provider bleibt `null`.
 
 ---
 

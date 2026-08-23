@@ -4,7 +4,7 @@
 
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import { bangkokRouteReise, mehrzielreise } from '@/lib/safety/fixtures'
-import type { SeasonalProvider, SeasonalProviderFact } from '@/lib/seasonal/provider'
+import type { SeasonalProvider, SeasonalProviderAnfrage, SeasonalProviderFact } from '@/lib/seasonal/provider'
 import type { Trip } from '@/types/trips'
 
 export const SEASONAL_NOW_MS = Date.parse('2026-08-21T10:00:00.000Z')
@@ -215,13 +215,13 @@ export function seasonalFact(
 }
 
 export function testSeasonalProvider(
-  facts: SeasonalProviderFact[] | (() => Promise<SeasonalProviderFact[]>),
+  facts: SeasonalProviderFact[] | ((anfrage: SeasonalProviderAnfrage) => Promise<SeasonalProviderFact[]>),
   name = 'audit-seasonal',
 ): SeasonalProvider {
   return {
     name,
-    async evaluate() {
-      return typeof facts === 'function' ? facts() : facts
+    async evaluate(anfrage) {
+      return typeof facts === 'function' ? facts(anfrage) : facts
     },
   }
 }

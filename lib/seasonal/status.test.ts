@@ -68,6 +68,29 @@ describe('Seasonal-Statusaggregation', () => {
     assert.equal(seasonalApiStatus(ansicht.summary), 'unknown')
   })
 
+  test('gültiger Timing-Hinweis plus acute/unavailable bleibt unvollständig', () => {
+    const evaluations = seasonalAusFacts(
+      bangkokMonsunReise(),
+      [
+        seasonalFact({ factKey: 'rain-th', category: 'monsoon', outcome: 'less_favorable' }),
+        seasonalFact({
+          factKey: 'warn-th',
+          category: 'monsoon',
+          evidenceClass: 'active_warning',
+          availability: 'temporarily_unavailable',
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: SEASONAL_NOW_MS },
+    )
+    const ansicht = seasonalAnsicht(bangkokMonsunReise(), evaluations)
+    assert.equal(ansicht.sichtbare.some((eintrag) => eintrag.factKey === 'rain-th'), true)
+    assert.equal(ansicht.summary.complete, false)
+    assert.equal(ansicht.summary.checkState, 'unknown')
+    assert.equal(seasonalApiStatus(ansicht.summary), 'unknown')
+    assert.doesNotMatch(seasonalZusammenfassungText(ansicht.summary), /Reisezeit ist gut|Reisezeit ist optimal/)
+  })
+
   test('zwei aktuelle konsistente Facts behalten den bestehenden Status', () => {
     const evaluations = seasonalAusFacts(
       bangkokMonsunReise(),

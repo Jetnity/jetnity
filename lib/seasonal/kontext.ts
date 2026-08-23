@@ -6,6 +6,8 @@
 import { routeFactsAusGraph } from '@/lib/route/ableitung'
 import type { RouteFacts } from '@/lib/route/domain'
 import { iataLesen, seasonalLandescode } from '@/lib/seasonal/domain'
+import type { SeasonalProviderAnfrage } from '@/lib/seasonal/provider'
+import { providerRouteKontakte } from '@/lib/seasonal/route-kontakte'
 import { planpunkteSammeln } from '@/lib/trips/arbeitsbereich'
 import type { Trip, TripItem, TripStage } from '@/types/trips'
 
@@ -126,14 +128,7 @@ export function seasonalReisekontext(reise: Trip): SeasonalReisekontext {
 export function providerAnfrageAusKontext(
   kontext: SeasonalReisekontext,
   contextFingerprint: string,
-): {
-  contextFingerprint: string
-  startDate: string | null
-  endDate: string | null
-  countryCodes: string[]
-  airportCodes: string[]
-  placeIds: string[]
-} {
+): SeasonalProviderAnfrage {
   return {
     contextFingerprint,
     startDate: kontext.startDate,
@@ -141,5 +136,17 @@ export function providerAnfrageAusKontext(
     countryCodes: kontext.countryCodes,
     airportCodes: kontext.airportCodes,
     placeIds: kontext.placeIds,
+    stages: [...kontext.stages]
+      .map((etappe) => ({
+        id: etappe.id,
+        countryCode: etappe.countryCode,
+        placeId: etappe.placeId,
+        latitude: etappe.latitude,
+        longitude: etappe.longitude,
+        arrivalDate: etappe.arrivalDate,
+        departureDate: etappe.departureDate,
+      }))
+      .sort((a, b) => a.id.localeCompare(b.id)),
+    routeContacts: providerRouteKontakte(kontext.route),
   }
 }

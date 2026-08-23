@@ -2,23 +2,14 @@
 //
 // Geo + Travel Window + Source Validity. Keine Titel-Geo-Truth.
 
-import type { RouteFacts } from '@/lib/route/domain'
 import type { SeasonalRelevance, SeasonalSpatialPrecision, SeasonalTripRef } from '@/lib/seasonal/domain'
 import type { SeasonalTravelWindow } from '@/lib/seasonal/fenster'
 import { kontaktImTravelWindow } from '@/lib/seasonal/fenster'
 import type { SeasonalReisekontext, SeasonalStageKontext } from '@/lib/seasonal/kontext'
-
-function routeKontaktZeit(date: string | null, time: string | null): string | null {
-  if (!date) return null
-  if (time && /^\d{2}:\d{2}$/.test(time)) return `${date}T${time}`
-  return date
-}
+import { airportKontakte, type SeasonalZeitkontakt } from '@/lib/seasonal/route-kontakte'
 import { entfernungKm, type SeasonalSpatialScope } from '@/lib/seasonal/scope'
 
-export type SeasonalKontakt = {
-  start: string | null
-  end: string | null
-}
+export type SeasonalKontakt = SeasonalZeitkontakt
 
 export type SeasonalRelevanzErgebnis = {
   relevance: SeasonalRelevance
@@ -66,40 +57,6 @@ function routeBeruehrtLand(kontext: SeasonalReisekontext, countryCode: string | 
     kontext.route.transitCountryCodes.includes(countryCode) ||
     kontext.route.destinationCountryCodes.includes(countryCode)
   )
-}
-
-function airportKontakte(route: RouteFacts, code: string): SeasonalKontakt[] {
-  const segmente = route.segments
-  const pairedInbound = new Set<number>()
-  const pairedOutbound = new Set<number>()
-  const kontakte: SeasonalKontakt[] = []
-
-  for (let i = 0; i < segmente.length - 1; i += 1) {
-    const ankunft = segmente[i]
-    const abflug = segmente[i + 1]
-    if (ankunft?.destination.airportCode !== code || abflug?.origin.airportCode !== code) continue
-    kontakte.push({
-      start: routeKontaktZeit(ankunft.arrivalDate, ankunft.arrivalTime),
-      end: routeKontaktZeit(abflug.departureDate, abflug.departureTime),
-    })
-    pairedInbound.add(i)
-    pairedOutbound.add(i + 1)
-  }
-
-  for (let i = 0; i < segmente.length; i += 1) {
-    const segment = segmente[i]
-    if (!segment) continue
-    if (segment.destination.airportCode === code && !pairedInbound.has(i)) {
-      const at = routeKontaktZeit(segment.arrivalDate, segment.arrivalTime)
-      kontakte.push({ start: at, end: at })
-    }
-    if (segment.origin.airportCode === code && !pairedOutbound.has(i)) {
-      const at = routeKontaktZeit(segment.departureDate, segment.departureTime)
-      kontakte.push({ start: at, end: at })
-    }
-  }
-
-  return kontakte
 }
 
 function routeAirportsImLand(kontext: SeasonalReisekontext, countryCode: string | null): string[] {

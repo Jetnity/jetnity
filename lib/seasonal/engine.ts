@@ -15,7 +15,12 @@ import { seasonalReisekontext, providerAnfrageAusKontext } from '@/lib/seasonal/
 import { seasonalFactsDeduplizieren } from '@/lib/seasonal/konflikt'
 import { seasonalFactNormalisieren, type SeasonalFact } from '@/lib/seasonal/normalisieren'
 import { praesentationsklasseAus } from '@/lib/seasonal/praesentation'
-import { seasonalProviderAus, type SeasonalProvider, type SeasonalProviderFact } from '@/lib/seasonal/provider'
+import {
+  seasonalProviderAus,
+  type SeasonalProvider,
+  type SeasonalProviderAnfrage,
+  type SeasonalProviderFact,
+} from '@/lib/seasonal/provider'
 import { räumlichZeitlicheRelevanz } from '@/lib/seasonal/relevanz'
 import type { Trip } from '@/types/trips'
 
@@ -72,8 +77,8 @@ function evaluationAusFact(opts: {
   if (opts.fact.acuteRejected) {
     return leerEvaluation({
       contextFingerprint: opts.contextFingerprint,
-      freshness: 'never_checked',
-      status: 'unknown',
+      freshness: opts.fact.sourceTemporarilyUnavailable ? 'source_temporarily_unavailable' : 'never_checked',
+      status: opts.fact.sourceTemporarilyUnavailable ? 'unavailable' : 'unknown',
       reason: 'Akute Warnungen gehören zur Safety-Domäne und erscheinen nicht als saisonaler Hinweis.',
       factKey: opts.fact.factKey,
       evidenceClass: 'rejected_acute',
@@ -219,7 +224,7 @@ export function seasonalAusFacts(
   })
   const valide = normalisiert.filter((fact): fact is SeasonalFact => Boolean(fact))
   const acute = valide.filter((fact) => fact.acuteRejected)
-  const temporarily = valide.filter((fact) => fact.sourceTemporarilyUnavailable)
+  const temporarily = valide.filter((fact) => fact.sourceTemporarilyUnavailable && !fact.acuteRejected)
   const saisonal = valide.filter((fact) => !fact.acuteRejected && !fact.sourceTemporarilyUnavailable)
   const ungueltig = providerFacts.length - valide.length
 
@@ -234,6 +239,20 @@ export function seasonalAusFacts(
         }),
       ]
     }
+    if (acute.length > 0) {
+      const acuteUnavailable = acute.some((fact) => fact.sourceTemporarilyUnavailable)
+      return [
+        leerEvaluation({
+          contextFingerprint,
+          freshness: acuteUnavailable ? 'source_temporarily_unavailable' : 'never_checked',
+          status: acuteUnavailable ? 'unavailable' : 'unknown',
+          reason: 'Akute Warnungen gehören zur Safety-Domäne und erscheinen nicht als saisonaler Hinweis.',
+          factKey: 'acute_rejected',
+          evidenceClass: 'rejected_acute',
+          acuteRejected: true,
+        }),
+      ]
+    }
     if (temporarily.length > 0) {
       return [
         leerEvaluation({
@@ -242,19 +261,6 @@ export function seasonalAusFacts(
           status: 'unavailable',
           reason: 'Die saisonale Quelle ist vorübergehend nicht erreichbar. Es wird keine Reisezeit-Aussage erfunden.',
           factKey: temporarily[0]?.factKey,
-        }),
-      ]
-    }
-    if (acute.length > 0) {
-      return [
-        leerEvaluation({
-          contextFingerprint,
-          freshness: 'never_checked',
-          status: 'unknown',
-          reason: 'Akute Warnungen gehören zur Safety-Domäne und erscheinen nicht als saisonaler Hinweis.',
-          factKey: 'acute_rejected',
-          evidenceClass: 'rejected_acute',
-          acuteRejected: true,
         }),
       ]
     }
@@ -331,7 +337,7 @@ export function seasonalAusFacts(
 
 async function seasonalProviderAbrufen(
   provider: SeasonalProvider,
-  anfrage: ReturnType<typeof providerAnfrageAusKontext>,
+  anfrage: SeasonalProviderAnfrage,
   timeoutMs: number,
 ): Promise<
   | { ok: true; facts: SeasonalProviderFact[] }

@@ -3466,6 +3466,29 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0140 – Seasonal-Provider-Request trägt Zeitkontakte; Acute überschreibt Availability nicht
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R5 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Der provider-neutrale Seasonal-Request enthält neben Top-Level-Daten und flachen Mengen kanonische Stage-Targets und getrennte Route-/Airport-Zeitkontakte.
+- Konkrete Stage-/Route-Zeiten bleiben einzeln addressierbar. Wiederholte Places/Airports werden nicht zu Min/Max verschmolzen. Die Reihenfolge identischer Trip-Facts ändert den Request nicht.
+- Citizenship, Dokumente, Labels und LLM-Felder gehören nicht in den Seasonal-Port.
+- Eine explizite Acute-/Safety-Klasse bleibt `rejected_acute` / `acuteRejected=true`, auch kombiniert mit `temporarily_unavailable`. `availability` darf die Domain-Klasse nicht zu `seasonal_pattern` umschreiben.
+- Acute-only + unavailable bleibt honest unknown/unavailable ohne Seasonal-Hinweis. Gültige Seasonal-Facts dürfen sichtbar bleiben; der Gesamtstatus wird dadurch nicht clean/favorable/`ok`.
+
+**Kontext:** `docs/PR38_CHATGPT_R5_REVIEW.md` gegen Runtime `14c39467` / nachfolgenden R5-Fix-Head.
+
+**Alternativen:** Adapter später selbst gegen den Tripgraphen rückrechnen lassen; `temporarily_unavailable` weiter zuerst auswerten und Acute verwerfen.
+
+**Begründung:** R4 hat konkrete Zeitkontakte zur lokalen Source of Truth gemacht. Ein späterer Adapter muss dieselben Kontakte schon im Request sehen. Eine als Safety erkannte Klasse darf durch ein zweites erlaubtes Feld nicht wieder Seasonal-Truth werden.
+
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R6 und Product-Owner-Merge-Freigabe.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

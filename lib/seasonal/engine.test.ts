@@ -22,6 +22,7 @@ import {
   wiederholteGoaReise,
   winterJahreswechselReise,
 } from '@/lib/seasonal/fixtures'
+import { seasonalFactNormalisieren } from '@/lib/seasonal/normalisieren'
 import { seasonalAnsicht, seasonalApiStatus } from '@/lib/seasonal/status'
 import type { SeasonalProviderFact } from '@/lib/seasonal/provider'
 import type { TripTraveller } from '@/types/trips'
@@ -1319,6 +1320,100 @@ describe('Seasonal-Engine', () => {
       gast.map((eintrag) => eintrag.factFingerprint),
       konto.map((eintrag) => eintrag.factFingerprint),
     )
+  })
+
+  test('acute plus temporarily_unavailable materialisiert niemals seasonal_pattern', () => {
+    for (const evidenceClass of ['active_warning', 'acute', 'acute_event'] as const) {
+      const intern = seasonalFactNormalisieren(
+        seasonalFact({
+          factKey: `warn-${evidenceClass}`,
+          category: 'monsoon',
+          evidenceClass,
+          availability: 'temporarily_unavailable',
+        }),
+        'audit-seasonal',
+        JETZT,
+      )
+      assert.equal(intern?.evidenceClass, 'rejected_acute', evidenceClass)
+      assert.equal(intern?.acuteRejected, true, evidenceClass)
+      assert.equal(intern?.sourceTemporarilyUnavailable, true, evidenceClass)
+      assert.notEqual(intern?.evidenceClass, 'seasonal_pattern', evidenceClass)
+
+      const evaluations = seasonalAusFacts(
+        bangkokMonsunReise(),
+        [
+          seasonalFact({
+            factKey: `warn-${evidenceClass}`,
+            category: 'monsoon',
+            evidenceClass,
+            availability: 'temporarily_unavailable',
+          }),
+        ],
+        'audit-seasonal',
+        { nowMs: JETZT },
+      )
+      assert.equal(evaluations.length, 1, evidenceClass)
+      assert.equal(evaluations[0]?.evidenceClass, 'rejected_acute', evidenceClass)
+      assert.equal(evaluations[0]?.acuteRejected, true, evidenceClass)
+      assert.equal(evaluations[0]?.freshness, 'source_temporarily_unavailable', evidenceClass)
+      assert.equal(evaluations[0]?.evidenceStatus, 'unavailable', evidenceClass)
+      assert.notEqual(evaluations[0]?.evidenceClass, 'seasonal_pattern', evidenceClass)
+      assert.notEqual(evaluations[0]?.factKey, 'checked_empty', evidenceClass)
+      assert.equal(hinweise(evaluations).length, 0, evidenceClass)
+      const ansicht = seasonalAnsicht(bangkokMonsunReise(), evaluations)
+      assert.equal(ansicht.summary.sichtbar, false, evidenceClass)
+      assert.equal(ansicht.summary.complete, false, evidenceClass)
+      assert.notEqual(ansicht.summary.checkState, 'checked_empty', evidenceClass)
+      assert.notEqual(seasonalApiStatus(ansicht.summary), 'ok', evidenceClass)
+    }
+
+    const gemischt = seasonalAusFacts(
+      bangkokMonsunReise(),
+      [
+        seasonalFact({ factKey: 'rain-th', category: 'monsoon', evidenceClass: 'seasonal_pattern' }),
+        seasonalFact({
+          factKey: 'warn-th',
+          category: 'monsoon',
+          evidenceClass: 'active_warning',
+          availability: 'temporarily_unavailable',
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    const saisonal = gemischt.find((eintrag) => eintrag.factKey === 'rain-th')
+    const acute = gemischt.find((eintrag) => eintrag.acuteRejected || eintrag.evidenceClass === 'rejected_acute')
+    assert.equal(saisonal?.evidenceClass, 'seasonal_pattern')
+    assert.equal(saisonal?.relevance, 'applies')
+    assert.equal(hinweise(gemischt).some((eintrag) => eintrag.factKey === 'rain-th'), true)
+    assert.equal(acute?.evidenceClass, 'rejected_acute')
+    assert.equal(acute?.acuteRejected, true)
+    assert.equal(acute?.freshness, 'source_temporarily_unavailable')
+    assert.equal(
+      gemischt.some(
+        (eintrag) =>
+          eintrag.freshness === 'source_temporarily_unavailable' && eintrag.evidenceClass === 'seasonal_pattern',
+      ),
+      false,
+    )
+    const ansicht = seasonalAnsicht(bangkokMonsunReise(), gemischt)
+    assert.equal(ansicht.sichtbare.some((eintrag) => eintrag.factKey === 'rain-th'), true)
+    assert.equal(ansicht.summary.complete, false)
+    assert.notEqual(ansicht.summary.checkState, 'checked_empty')
+    assert.notEqual(seasonalApiStatus(ansicht.summary), 'ok')
+    assert.doesNotMatch(seasonalZusammenfassungText(ansicht.summary), /Reisezeit ist gut|Reisezeit ist optimal/)
+
+    const nurQuelle = seasonalAusFacts(
+      bangkokMonsunReise(),
+      [seasonalFact({ factKey: 'rain-th', category: 'monsoon', availability: 'temporarily_unavailable' })],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.equal(nurQuelle[0]?.evidenceClass, 'seasonal_pattern')
+    assert.equal(nurQuelle[0]?.acuteRejected, false)
+    assert.equal(nurQuelle[0]?.freshness, 'source_temporarily_unavailable')
+    assert.equal(hinweise(nurQuelle).length, 0)
+    assert.equal(seasonalApiStatus(seasonalAnsicht(bangkokMonsunReise(), nurQuelle).summary), 'unavailable')
   })
 })
 

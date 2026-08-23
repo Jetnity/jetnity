@@ -81,36 +81,11 @@ export function seasonalFactNormalisieren(
   const category = enumLesen(zeile.category, SEASONAL_CATEGORIES)
   const factKey = factSchluesselLesen(zeile.factKey)
   if (!category || !factKey) return null
-  if (zeile.availability != null && zeile.availability !== '') {
-    if (zeile.availability === 'temporarily_unavailable') {
-      return {
-        factKey,
-        category,
-        evidenceClass: 'seasonal_pattern',
-        outcome: 'unknown',
-        spatialScope: { kind: 'insufficient' },
-        travelWindow: { kind: 'insufficient' },
-        affectedDomains: [],
-        evidence: {
-          provider: providerNameLesen(providerNameRoh),
-          authority: null,
-          authorityClass: 'unknown',
-          sourceUrl: null,
-          publishedAt: null,
-          updatedAt: null,
-          checkedAt: null,
-          freshUntil: null,
-          headline: null,
-          summary: null,
-          referencePeriod: null,
-        },
-        vertrauenswuerdig: false,
-        acuteRejected: false,
-        sourceTemporarilyUnavailable: true,
-      }
-    }
-    if (zeile.availability !== 'ok') return null
+  const availabilityRoh = zeile.availability
+  if (availabilityRoh != null && availabilityRoh !== '' && availabilityRoh !== 'ok' && availabilityRoh !== 'temporarily_unavailable') {
+    return null
   }
+  const sourceTemporarilyUnavailable = availabilityRoh === 'temporarily_unavailable'
 
   if (enumLesen(zeile.evidenceClass, SEASONAL_ABGEWIESENE_KLASSEN)) {
     return {
@@ -136,7 +111,35 @@ export function seasonalFactNormalisieren(
       },
       vertrauenswuerdig: false,
       acuteRejected: true,
-      sourceTemporarilyUnavailable: false,
+      sourceTemporarilyUnavailable,
+    }
+  }
+
+  if (sourceTemporarilyUnavailable) {
+    return {
+      factKey,
+      category,
+      evidenceClass: 'seasonal_pattern',
+      outcome: 'unknown',
+      spatialScope: { kind: 'insufficient' },
+      travelWindow: { kind: 'insufficient' },
+      affectedDomains: [],
+      evidence: {
+        provider: providerNameLesen(providerNameRoh),
+        authority: null,
+        authorityClass: 'unknown',
+        sourceUrl: null,
+        publishedAt: null,
+        updatedAt: null,
+        checkedAt: null,
+        freshUntil: null,
+        headline: null,
+        summary: null,
+        referencePeriod: null,
+      },
+      vertrauenswuerdig: false,
+      acuteRejected: false,
+      sourceTemporarilyUnavailable: true,
     }
   }
 

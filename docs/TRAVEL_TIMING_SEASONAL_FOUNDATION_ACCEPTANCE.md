@@ -1,7 +1,7 @@
 # Travel Timing & Seasonal Intelligence – Foundation Acceptance
 
 Stand: 23. August 2026  
-Status: **verbindliche Acceptance für die provider-neutrale Foundation – Draft-PR #38, R4-Fixes auf Runtime `f077d4d1`, R5-Re-Review offen**
+Status: **verbindliche Acceptance für die provider-neutrale Foundation – Draft-PR #38, R5-Blocker 10–11 im Code geschlossen, Exact-Head-Gate und R6 offen**
 
 Policy: `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`  
 Ist-Audit: `docs/TRAVEL_TIMING_SEASONAL_FOUNDATION_ARCHITECTURE_AUDIT.md`
@@ -32,7 +32,7 @@ Nicht Teil dieses Blocks:
 - keine Umdeutung von `SafetyEvaluation`
 - Safety bleibt für acute/active warnings zuständig
 - Seasonal bleibt für wiederkehrende/historische/offizielle Seasonal Windows und geeignete Forecast-Outlooks zuständig
-- `active_warning` / akute Event-Truth darf Seasonal nicht als Seasonal-Hinweis anzeigen und darf intern/API-sichtbar nicht als `seasonal_pattern` materialisiert werden; die sichtbare Klasse ist `rejected_acute`
+- `active_warning` / akute Event-Truth darf Seasonal nicht als Seasonal-Hinweis anzeigen und darf intern/API-sichtbar nicht als `seasonal_pattern` materialisiert werden, auch nicht kombiniert mit `temporarily_unavailable`; die sichtbare Klasse ist `rejected_acute`
 - `seasonal_pattern` darf Safety weiterhin nicht als Safety-Warnung anzeigen
 
 ### B. Source-/Evidence-Klassen
@@ -97,8 +97,9 @@ Keine pauschale Ableitung `schlecht`, `gefährlich`, `ungeeignet`.
 - eigener `SeasonalProvider`-Port
 - Production/Preview Factory bleibt `null`
 - Test-Doubles dürfen injiziert werden
-- Provider Request enthält nur kanonische Trip-/Stage-/Route-/Datums-Facts
-- keine unnötigen Citizenship-/Document-Daten im Foundation-Port
+- Provider Request enthält nur kanonische Trip-/Stage-/Route-/Datums-Facts, inklusive Stage-ID + arrival/departure und getrennter Airport-/Route-Zeitkontakte
+- flache Country-/Airport-/Place-Mengen und Top-Level-Daten bleiben nur grobe Hülle, nicht die einzige Zeitwahrheit
+- keine unnötigen Citizenship-/Document-/LLM-Daten im Foundation-Port
 - Provider Timeout mit AbortSignal
 - Throw, Timeout, unavailable, malformed, partial malformed und conflict jeweils explizit fail-closed
 - `[]` von einem erfolgreich geprüften Provider ist **nicht** automatisch Provider unavailable
