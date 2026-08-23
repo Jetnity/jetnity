@@ -1048,5 +1048,277 @@ describe('Seasonal-Engine', () => {
       }),
     )
   })
+
+  test('widersprüchliche Top-Level-Hülle überstimmt konkrete Stage-/Route-Kontakte nicht', () => {
+    const reise = beispielreise({
+      title: 'Bangkok ausserhalb der groben Hülle',
+      startDate: '2026-09-01',
+      endDate: '2026-09-05',
+      stages: [
+        {
+          id: 'stage-bkk',
+          position: 1,
+          name: 'Bangkok',
+          countryCode: 'TH',
+          placeId: 'geonames:1609350',
+          latitude: 13.7563,
+          longitude: 100.5018,
+          arrivalDate: '2026-09-12',
+          departureDate: '2026-09-16',
+        },
+      ],
+      days: [],
+      ohneTag: [],
+    })
+    const evaluations = seasonalAusFacts(
+      reise,
+      [
+        seasonalFact({
+          factKey: 'rain-th',
+          category: 'monsoon',
+          travelWindow: { kind: 'absolute', start: '2026-09-12', end: '2026-09-16' },
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.relevance, 'applies')
+    assert.notEqual(evaluations[0]?.relevance, 'not_applies')
+
+    const routeReise = {
+      ...bangkokRouteReise(),
+      startDate: '2026-09-01',
+      endDate: '2026-09-05',
+    }
+    const routeEval = seasonalAusFacts(
+      routeReise,
+      [
+        seasonalFact({
+          factKey: 'heat-doh',
+          category: 'heat',
+          spatialScope: { kind: 'airport', airportCode: 'DOH', countryCode: 'QA' },
+          travelWindow: { kind: 'absolute', start: '2026-09-12', end: '2026-09-12' },
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.equal(routeEval[0]?.relevance, 'applies')
+    assert.equal(routeEval[0]?.affectedRefs.some((ref) => ref.id === 'DOH'), true)
+
+    const ohneKontakt = beispielreise({
+      title: 'Thailand ohne Stage-Daten',
+      startDate: '2026-01-01',
+      endDate: '2026-01-05',
+      stages: [
+        {
+          id: 'stage-bkk',
+          position: 1,
+          name: 'Bangkok',
+          countryCode: 'TH',
+          placeId: 'geonames:1609350',
+          latitude: 13.7563,
+          longitude: 100.5018,
+          arrivalDate: null,
+          departureDate: null,
+        },
+      ],
+      days: [],
+      ohneTag: [],
+    })
+    const unklar = seasonalAusFacts(
+      ohneKontakt,
+      [
+        seasonalFact({
+          factKey: 'rain-th',
+          category: 'monsoon',
+          travelWindow: { kind: 'absolute', start: '2026-09-12', end: '2026-09-16' },
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.equal(unklar[0]?.relevance, 'insufficient_context')
+    assert.notEqual(unklar[0]?.relevance, 'not_applies')
+
+    const klarAusserhalb = beispielreise({
+      title: 'Thailand im Januar',
+      startDate: '2026-01-01',
+      endDate: '2026-01-05',
+      stages: [
+        {
+          id: 'stage-bkk',
+          position: 1,
+          name: 'Bangkok',
+          countryCode: 'TH',
+          placeId: 'geonames:1609350',
+          latitude: 13.7563,
+          longitude: 100.5018,
+          arrivalDate: '2026-01-01',
+          departureDate: '2026-01-05',
+        },
+      ],
+      days: [],
+      ohneTag: [],
+    })
+    const ausserhalb = seasonalAusFacts(
+      klarAusserhalb,
+      [
+        seasonalFact({
+          factKey: 'rain-th',
+          category: 'monsoon',
+          travelWindow: { kind: 'absolute', start: '2026-09-12', end: '2026-09-16' },
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.equal(ausserhalb[0]?.relevance, 'not_applies')
+
+    const ohneRefs = beispielreise({
+      title: 'Ohne Etappen',
+      startDate: '2026-01-01',
+      endDate: '2026-01-05',
+      stages: [],
+      days: [],
+      ohneTag: [],
+    })
+    const leer = seasonalAusFacts(
+      ohneRefs,
+      [
+        seasonalFact({
+          factKey: 'rain-th',
+          category: 'monsoon',
+          travelWindow: { kind: 'absolute', start: '2026-09-12', end: '2026-09-16' },
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.equal(leer[0]?.relevance, 'not_applies')
+  })
+
+  test('belegte Day→Stage-Beziehung erzeugt konservativen Item-Impact', () => {
+    const basisItem = beispielreise().days[0]!.items[0]!
+    const reise = beispielreise({
+      title: 'Goa nur über Tag',
+      startDate: '2026-07-10',
+      endDate: '2026-07-14',
+      stages: [
+        {
+          id: 'stage-goa',
+          position: 1,
+          name: 'Goa',
+          countryCode: 'IN',
+          placeId: 'geonames:1271157',
+          latitude: 15.2993,
+          longitude: 74.124,
+          arrivalDate: '2026-07-10',
+          departureDate: '2026-07-14',
+        },
+        {
+          id: 'stage-kerala',
+          position: 2,
+          name: 'Kochi',
+          countryCode: 'IN',
+          placeId: 'geonames:1273874',
+          latitude: 9.9312,
+          longitude: 76.2673,
+          arrivalDate: '2026-07-15',
+          departureDate: '2026-07-20',
+        },
+      ],
+      days: [
+        {
+          id: 'day-goa-1',
+          stageId: 'stage-goa',
+          dayIndex: 1,
+          dayDate: '2026-07-11',
+          title: null,
+          items: [
+            { ...basisItem, id: 'act-goa', kind: 'activity', title: 'Bootstour', dayId: 'day-goa-1', stageId: null, startsOn: '2026-07-11', endsOn: '2026-07-11' },
+            { ...basisItem, id: 'stay-goa', kind: 'stay', title: 'Hotel Goa', dayId: 'day-goa-1', stageId: null, startsOn: '2026-07-11', endsOn: '2026-07-11' },
+            { ...basisItem, id: 'transfer-goa', kind: 'transfer', title: 'Transfer', dayId: 'day-goa-1', stageId: null, startsOn: '2026-07-11', endsOn: '2026-07-11' },
+            { ...basisItem, id: 'car-goa', kind: 'rental_car', title: 'Mietwagen', dayId: 'day-goa-1', stageId: null, startsOn: '2026-07-11', endsOn: '2026-07-11' },
+          ],
+        },
+        {
+          id: 'day-kerala-1',
+          stageId: 'stage-kerala',
+          dayIndex: 2,
+          dayDate: '2026-07-16',
+          title: null,
+          items: [
+            { ...basisItem, id: 'act-kerala', kind: 'activity', title: 'Backwater', dayId: 'day-kerala-1', stageId: null, startsOn: '2026-07-16', endsOn: '2026-07-16' },
+          ],
+        },
+      ],
+      ohneTag: [
+        { ...basisItem, id: 'act-ohne', kind: 'activity', title: 'Ohne Bezug', dayId: null, stageId: null },
+      ],
+    })
+    const goaScope = {
+      kind: 'place' as const,
+      countryCode: 'IN',
+      placeId: 'geonames:1271157',
+    }
+    const activity = seasonalAusFacts(
+      reise,
+      [
+        seasonalFact({
+          factKey: 'rain-goa',
+          category: 'monsoon',
+          spatialScope: goaScope,
+          affectedDomains: ['activity'],
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.equal(activity[0]?.impact.some((eintrag) => eintrag.domain === 'activity' && eintrag.ref.id === 'act-goa' && eintrag.status === 'needs_recheck'), true)
+    assert.equal(activity[0]?.impact.some((eintrag) => eintrag.domain === 'stay'), false)
+    assert.equal(activity[0]?.impact.some((eintrag) => eintrag.ref.id === 'act-kerala'), false)
+    assert.equal(activity[0]?.impact.some((eintrag) => eintrag.ref.id === 'act-ohne'), false)
+    assert.equal(activity[0]?.nextAction, 'check_activity')
+
+    const gemischt = seasonalAusFacts(
+      reise,
+      [
+        seasonalFact({
+          factKey: 'rain-goa-all',
+          category: 'monsoon',
+          spatialScope: goaScope,
+          affectedDomains: ['activity', 'stay', 'mobility', 'rental_car'],
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.equal(gemischt[0]?.impact.some((eintrag) => eintrag.domain === 'stay' && eintrag.ref.id === 'stay-goa'), true)
+    assert.equal(gemischt[0]?.impact.some((eintrag) => eintrag.domain === 'mobility' && eintrag.ref.id === 'transfer-goa'), true)
+    assert.equal(gemischt[0]?.impact.some((eintrag) => eintrag.domain === 'rental_car' && eintrag.ref.id === 'car-goa'), true)
+
+    const direkt = seasonalAusFacts(
+      goaKeralaReise(),
+      [
+        seasonalFact({
+          factKey: 'rain-goa-direct',
+          category: 'monsoon',
+          spatialScope: goaScope,
+          affectedDomains: ['activity'],
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.equal(direkt[0]?.impact.some((eintrag) => eintrag.domain === 'activity' && eintrag.ref.id === 'act-goa'), true)
+
+    const gast = seasonalAusFacts(reise, [seasonalFact({ factKey: 'rain-goa-parity', category: 'monsoon', spatialScope: goaScope, affectedDomains: ['activity'] })], 'audit-seasonal', { nowMs: JETZT })
+    const konto = seasonalAusFacts(reise, [seasonalFact({ factKey: 'rain-goa-parity', category: 'monsoon', spatialScope: goaScope, affectedDomains: ['activity'] })], 'audit-seasonal', { nowMs: JETZT })
+    assert.deepEqual(
+      gast.map((eintrag) => eintrag.factFingerprint),
+      konto.map((eintrag) => eintrag.factFingerprint),
+    )
+  })
 })
 

@@ -404,17 +404,18 @@ function zeitAufRefsAnwenden(
     kontext.startDate && kontext.endDate && kontext.startDate > kontext.endDate,
   )
   const trip = kontaktImTravelWindow(kontext.startDate, kontext.endDate, fenster)
-  if (!tripUmgekehrt && (trip === 'before' || trip === 'after')) {
-    return {
-      ...raum,
-      relevance: 'not_applies',
-      affectedRefs: [],
-      reason: 'Das saisonale Fenster liegt ausserhalb des konkreten Reisezeitraums.',
-    }
-  }
+  const hatKonkreteRefs = raum.relevance === 'applies' && raum.affectedRefs.length > 0
 
-  if (raum.relevance !== 'applies' || raum.affectedRefs.length === 0) {
-    if (trip === 'insufficient') {
+  if (!hatKonkreteRefs) {
+    if (!tripUmgekehrt && (trip === 'before' || trip === 'after')) {
+      return {
+        ...raum,
+        relevance: 'not_applies',
+        affectedRefs: [],
+        reason: 'Das saisonale Fenster liegt ausserhalb des konkreten Reisezeitraums.',
+      }
+    }
+    if (trip === 'insufficient' || tripUmgekehrt) {
       return {
         ...raum,
         relevance: 'insufficient_context',

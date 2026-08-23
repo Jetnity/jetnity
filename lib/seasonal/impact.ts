@@ -10,7 +10,7 @@ import type {
   SeasonalSpatialPrecision,
   SeasonalTripRef,
 } from '@/lib/seasonal/domain'
-import type { SeasonalItemKontext, SeasonalReisekontext } from '@/lib/seasonal/kontext'
+import { effektiveItemStageId, type SeasonalItemKontext, type SeasonalReisekontext } from '@/lib/seasonal/kontext'
 
 function itemRef(item: SeasonalItemKontext): SeasonalTripRef {
   return { kind: 'item', id: item.id, label: item.title }
@@ -71,7 +71,8 @@ export function seasonalImpactAus(opts: {
     if (!domain) continue
     const sourceWill = opts.sourceDomains.length === 0 || opts.sourceDomains.includes(domain)
     if (!sourceWill) continue
-    if (item.stageId && stageIds.has(item.stageId)) {
+    const effektiveStageId = effektiveItemStageId(item, opts.kontext.days)
+    if (effektiveStageId && stageIds.has(effektiveStageId)) {
       impacts.push({
         domain,
         ref: itemRef(item),

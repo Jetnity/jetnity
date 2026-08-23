@@ -57,6 +57,16 @@ function etappeVon(etappe: TripStage): SeasonalStageKontext {
   }
 }
 
+export function effektiveItemStageId(
+  item: Pick<SeasonalItemKontext, 'stageId' | 'dayId'>,
+  days: readonly { id: string; stageId: string | null }[],
+): string | null {
+  const tag = item.dayId ? days.find((eintrag) => eintrag.id === item.dayId) : undefined
+  const dayStageId = tag?.stageId ?? null
+  if (item.stageId && dayStageId && item.stageId !== dayStageId) return null
+  return item.stageId ?? dayStageId
+}
+
 export function seasonalReisekontext(reise: Trip): SeasonalReisekontext {
   const stages = reise.stages.map(etappeVon)
   const items = planpunkteSammeln(reise, reise.ohneTag).map((punkt) => ({
