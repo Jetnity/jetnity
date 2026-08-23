@@ -124,3 +124,16 @@ Nach vollständiger Cursor-Umsetzung folgt ein unabhängiger ChatGPT-Review nach
 5. echte Providerphase
 6. provider-backed End-to-End-/Truth-Audit
 7. finale Startseiten-Positionierung
+
+---
+
+## 8. Paralleler Workstream – Admin Platform Audit
+
+**Ersetzt Seasonal nicht.** Nur Dokumentation / Vorbereitung.
+
+- Cursor-Anzeigename: `Admin platform audit`
+- Branch: `audit/admin-platform`
+- Status: Audit fertig nach Self-Review; Implementierung nicht freigegeben
+- Handoff: `docs/ADMIN_PLATFORM_HANDOFF.md`
+- Gesperrt: Rollen/RLS/Service-Role/Live-Integrationen/Mark Ready/Merge ohne Product Owner
+- Nächster Schritt: unabhängiger ChatGPT-/Technical-Lead-Review; Slice 0 Shared Contracts; erst danach ggf. Slice A

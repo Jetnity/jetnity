@@ -335,3 +335,18 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 11. finale Startseiten-Positionierung
 
 Der nächste Agent darf D/E/Safety **nicht neu bauen** und darf **nicht direkt einen echten Provider integrieren**.
+
+---
+
+## 13. Parallele Plattform-Audits (kein Travel-Ersatz)
+
+Status: **Admin-Audit fertig auf `audit/admin-platform`; Account-Audit separat; keine Control-Center-Implementierung ohne Freigabe**
+
+Diese Arbeit ersetzt Seasonal nicht und darf Shared Travel-Contracts nicht ändern.
+
+- Produktziel Admin: `docs/ADMIN_PLATFORM_PRODUCT_MODEL.md`
+- Ist-Audit: `docs/ADMIN_PLATFORM_AUDIT.md`
+- Zielarchitektur / Plan: `docs/ADMIN_PLATFORM_TARGET_ARCHITECTURE.md`, `docs/ADMIN_PLATFORM_IMPLEMENTATION_PLAN.md`
+- Handoff: `docs/ADMIN_PLATFORM_HANDOFF.md`
+
+Nächster Admin-Schritt: unabhängiger Review, danach Slice 0 (Shared Contracts) durch Technical Lead. Kein Mark Ready, kein Merge ohne Product Owner.

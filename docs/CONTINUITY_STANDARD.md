@@ -60,6 +60,7 @@ Je nach Änderung müssen insbesondere aktuell gehalten werden:
 - `docs/LOGIC_STANDARD.md` – verbindliche Regeln für Datenwahrheit, Source of Truth, fachliche Invarianten, Zustände und bereichsübergreifende Konsistenz
 - `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` – verbindliche Tiefe für unabhängige Reviews, Re-Reviews, Merge- und Production-Empfehlungen
 - fachliche Modul-Dokumente, z. B. `docs/HOTELS.md`, `docs/ACTIVITIES.md`, `docs/MOBILITY.md`, `docs/RENTAL_CARS.md`, `docs/TRAVEL_READINESS.md`, `docs/ROUTE_TRANSIT_INTELLIGENCE.md`, `docs/TRAVELLER_CONTEXT.md`, `docs/TRAVEL_SAFETY_DISRUPTION.md`
+- Admin-Control-Center-Vorbereitung: `docs/ADMIN_PLATFORM_PRODUCT_MODEL.md`, `docs/ADMIN_PLATFORM_AUDIT.md`, `docs/ADMIN_PLATFORM_HANDOFF.md`
 - dieser `docs/CONTINUITY_STANDARD.md`
 
 Aufgaben für Coding Agents sollen diese Quellen passend zum Auftrag ausdrücklich einbeziehen.

@@ -320,3 +320,17 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 Leitsatz:
 
 > **Safety ist fertig als akute Truth-Domäne. Seasonal wird als getrennte, evidenzbasierte saisonale Wahrheit gebaut – beide verstehen dieselbe Reise, vermischen ihre Aussagen aber nicht.**
+
+---
+
+## 11. Paralleler Admin-Platform-Audit (kein Travel-Block)
+
+Der Workstream **Admin Platform / Control Center** läuft auf `audit/admin-platform` als **Audit/Vorbereitung**. Er ersetzt Seasonal nicht und ändert keine Route-/Traveller-/Readiness-/Safety-/Seasonal-Contracts.
+
+- Cursor-Anzeigename: `Admin platform audit`
+- Cloud-Run: https://cursor.com/agents/bc-01a030e0-e1a9-7f01-9c90-2404e23a6eed
+- Einstieg: `docs/ADMIN_PLATFORM_HANDOFF.md`
+- Produktziel: `docs/ADMIN_PLATFORM_PRODUCT_MODEL.md`
+- Ist-Audit: `docs/ADMIN_PLATFORM_AUDIT.md`
+
+Keine Control-Center-Implementierung ohne ausdrückliche Technical-Lead-/Product-Owner-Freigabe. Kein Mark Ready, kein Merge ohne aktuelle Product-Owner-Freigabe.
