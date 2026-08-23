@@ -5,31 +5,40 @@ Arbeitsblock: **Travel Timing & Seasonal Intelligence – provider-neutrale Foun
 
 ## 1. Arbeitsblock / Ziel
 
-Eigene provider-neutrale Seasonal-Domäne. R3-Merge-Blocker sind im Code geschlossen; unabhängiger R4-Re-Review ist der nächste Schritt.
+Eigene provider-neutrale Seasonal-Domäne. R3-Merge-Blocker sind im Code geschlossen; unabhängiger R4-Re-Review hat zwei weitere konkrete Merge-Blocker gefunden.
 
 Verbindlicher Auftrag: `docs/CURSOR_TRAVEL_TIMING_SEASONAL_FOUNDATION_TASK.md`  
 R1/R2 Review: `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md`  
 R3 Review: `docs/PR38_CHATGPT_R3_REVIEW.md`  
+R4 Review: `docs/PR38_CHATGPT_R4_REVIEW.md`  
 Cursor-Fixes: `docs/PR38_CURSOR_REVIEW_FIXES.md`
 
 ## 2. Branch / PR / Review-Lock
 
 - Branch: `feat/travel-timing-seasonal-intelligence`
 - Draft PR: https://github.com/Jetnity/jetnity/pull/38
-- Main: `cd220beb44d90ae376feeb8de9db8a3afb808d60`
+- Main zu R4-Beginn: `cd220beb44d90ae376feeb8de9db8a3afb808d60`
 - R3-Runtime-Head: `4f9eb1e8c524494fa8ab300bdfe24ec372e9e109`
-- Docs-Lock: `426f7220ea9f1606b7f917947920aa1fdf763ab9` (keine Runtime-Änderung)
-- Sync: **19 ahead, 0 behind** `main`
-- PR-Zustand: **open, Draft, nicht gemergt**
+- PR-Head zu R4-Beginn: `218961b337b585da691d6b310dda24b9653d4568`
+- R4-Review-Commit: `3a3e7d645cf53d4234b338afd11eedc38249401b`
+- Sync zu R4-Beginn: **20 ahead, 0 behind** `main`
+- PR-Zustand zu R4-Beginn: **open, mergeable, Draft, nicht gemergt**
 
 ## 3. Status
 
-**R3-Fixes umgesetzt. Kein Closure/PASS ohne R4.**
+**R4: REQUEST CHANGES. Kein Closure/PASS.**
 
-Geschlossen auf `4f9eb1e8`:
+Bestätigt geschlossen auf Runtime `4f9eb1e8`:
 
-1. Residual Blocker 5: `active_warning` / `acute` / `acute_event` tragen intern und API-sichtbar `rejected_acute` mit `acuteRejected=true`. Acute-only ist fail-closed `unknown`, kein sauberes `checked_empty` / vollständiges `ok`.
-2. Blocker 7: rückwärts laufende Top-Level- und Stage-Datumsbereiche werden an der untrusted API-Grenze abgelehnt; Relevanz-/Kalenderhelfer erzeugen daraus kein falsches `not_applies`.
+1. Residual Blocker 5: `active_warning` / `acute` / `acute_event` bleiben `rejected_acute` mit `acuteRejected=true`; acute-only ist fail-closed `unknown`.
+2. Blocker 7: rückwärts laufende Top-Level- und Stage-Datumsbereiche werden abgelehnt bzw. zu `insufficient` degradiert; kein falsches `not_applies`.
+
+Neu offen aus R4:
+
+3. **Blocker 8 – konkrete Stage-/Route-Zeit darf nicht von widersprüchlicher Top-Level-Hülle überstimmt werden.** Ein formal geordnetes Top-Level-Fenster kann derzeit vor Prüfung konkreter `affectedRefs` zu `not_applies` abbrechen, obwohl eine konkret betroffene Stage/Route das Seasonal Window überlappt.
+4. **Blocker 9 – belegte `item.dayId → day.stageId`-Beziehung fehlt in der Item-Impact-Ableitung.** Ein gültiges Item mit `stageId=null`, das über seinen Tag eindeutig an einer betroffenen Stage hängt, erhält derzeit keinen passenden Activity/Stay/Mobility/Rental-Car-Impact; dadurch kann auch `nextAction` zu unspezifisch werden.
+
+Details und Pflicht-Regressionen: `docs/PR38_CHATGPT_R4_REVIEW.md`.
 
 PR bleibt **Draft**. Kein Mark Ready, kein Merge ohne ausdrückliche Product-Owner-Freigabe.
 
@@ -39,32 +48,36 @@ PR bleibt **Draft**. Kein Mark Ready, kein Merge ohne ausdrückliche Product-Own
 - Erst-Review-Blocker 1–4 auf `89290eff`
 - R2 Missing-Class-Kernfix und API-ID-/Referenzintegrität auf `aa6cafa2`
 - R3 rejected-acute- und Reverse-Date-Fixes auf `4f9eb1e8`
+- R4 bestätigt diese R3-Fixes unabhängig
 - `seasonalProviderAus()` bleibt `null`
 - keine DB-Migration, keine Secrets, keine neuen Kosten
 
 ## 5. Gerade offen
 
-- unabhängiger R4-Re-Review / Closure nach Stop-Kriterium
+- Blocker 8 aus R4 schließen
+- Blocker 9 aus R4 schließen
+- adversarial Regressionen aus `docs/PR38_CHATGPT_R4_REVIEW.md`
+- danach kompletter Exact-Head-Gate auf neuem Runtime-Head
+- danach unabhängiger R5-Closure-Re-Review
 - keine Merge-Freigabe
-- kein echter Seasonal-Provider
 
 ## 6. R3 Exact-Head-Gate auf `4f9eb1e8`
 
-Lokal und remote verifiziert:
+Lokal von Cursor dokumentiert und remote unabhängig bestätigt:
 
-- PR open / Draft / nicht gemergt
-- `main` = `cd220beb`
-- Branch = **0 behind**
 - `npm test` **1557/1557**
 - Typecheck / Lint / Hygiene grün
 - Production-Build Exit 0, `/api/seasonal/evaluate` enthalten
 - UI-Audit **1014/1014**, 0 Fehler, WebKit + Chromium, 8 Viewports
 - DB: Rechte 51 OK, RLS Exit 0, Sicherheit **210/210**, Parallelität **7/7**
-- GitHub Actions SUCCESS auf Runtime `4f9eb1e8`: https://github.com/Jetnity/jetnity/actions/runs/32643429557
-- Vercel Preview READY auf Runtime `4f9eb1e8`: https://vercel.com/jetnity-e1b93c82/jetnity-app/ERBqeUKG7NWQ2agr4GiR5JpAxxit
-- GitHub Actions SUCCESS auf Docs-Lock `426f7220`: https://github.com/Jetnity/jetnity/actions/runs/32644372675
-- Vercel Preview READY auf Docs-Lock `426f7220`: https://vercel.com/jetnity-e1b93c82/jetnity-app/GtKAPMLaiqxrGwuB5snDkgPZez5d
-- Production/Main unverändert `cd220beb`
+- GitHub Actions SUCCESS auf Runtime `4f9eb1e8`: Run `32643429557`
+- Vercel Preview READY auf Runtime `4f9eb1e8`: Deployment `dpl_ERBqeUKG7NWQ2agr4GiR5JpAxxit`, Commit exakt `4f9eb1e8`
+- GitHub Actions SUCCESS auf Docs-/Evidence-Head `218961b3`: Run `32644542681`
+- Vercel Preview READY auf `218961b3`: Deployment `dpl_D5XUmap2LVproLHT1MBSkvwzFuHc`
+- Diff `4f9eb1e8 → 218961b3`: ausschließlich Dokumentation, keine Seasonal-Runtime-Änderung
+- Production/Main zu R4-Beginn unverändert `cd220beb`
+
+Diese grünen Gates sind Evidenz, aber kein Fehlerfreiheitsbeweis; R4-Blocker 8–9 bleiben merge-blocking.
 
 ## 7. DB / Kosten / Provider
 
@@ -89,7 +102,9 @@ Lokal und remote verifiziert:
 
 ## 10. Exakter nächster Schritt
 
-Unabhängiger ChatGPT-Re-Review R4 nach `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` und Stop-Kriterium gegen Runtime `4f9eb1e8` plus Docs-Lock `426f7220`. Ein PASS nur, wenn keine konkrete merge-blocking Truth-/Security-/Data-Loss-/Release-Lücke bleibt.
+Cursor soll ausschließlich die beiden R4-Blocker nach `docs/PR38_CHATGPT_R4_REVIEW.md` schließen, die verlangten Regressionen ergänzen und danach den vollständigen Exact-Head-Gate inklusive **0 behind** ausführen.
+
+Danach unabhängiger ChatGPT-Re-Review **R5** nach `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` und Stop-Kriterium. Ein PASS nur, wenn keine konkrete merge-blocking Truth-/Security-/Data-Loss-/Release-/zentrale Foundation-Lücke mehr verbleibt.
 
 PR bleibt Draft. Kein Mark Ready. Kein Merge.
 
@@ -98,12 +113,13 @@ PR bleibt Draft. Kein Mark Ready. Kein Merge.
 1. `JETNITY_HANDOFF.md`
 2. `docs/ACTIVE_WORK_STATUS.md`
 3. `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md`
-4. `docs/PR38_CHATGPT_R3_REVIEW.md`
-5. `docs/PR38_CURSOR_REVIEW_FIXES.md`
-6. `docs/CURSOR_TRAVEL_TIMING_SEASONAL_FOUNDATION_TASK.md`
-7. `lib/seasonal/normalisieren.ts`
-8. `lib/seasonal/engine.ts`
-9. `lib/seasonal/status.ts`
-10. `lib/seasonal/schema.ts`
-11. `lib/seasonal/relevanz.ts`
+4. `docs/PR38_CHATGPT_R4_REVIEW.md`
+5. `docs/PR38_CHATGPT_R3_REVIEW.md`
+6. `docs/PR38_CURSOR_REVIEW_FIXES.md`
+7. `docs/CURSOR_TRAVEL_TIMING_SEASONAL_FOUNDATION_TASK.md`
+8. `lib/seasonal/relevanz.ts`
+9. `lib/seasonal/impact.ts`
+10. `lib/seasonal/kontext.ts`
+11. `lib/seasonal/schema.ts`
 12. `lib/seasonal/kalender.ts`
+13. `lib/seasonal/engine.test.ts`
