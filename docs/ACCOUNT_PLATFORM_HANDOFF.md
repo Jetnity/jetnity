@@ -15,9 +15,10 @@ Ein neuer Agent muss hier weiterarbeiten können, ohne diese Cursor-Session.
 | Agent-URL | https://cursor.com/agents/bc-01a030a0-d97f-782b-8bd0-acb906563518 |
 | Workstream | Jetnity Account Platform – Benutzerkonto Audit & Vorbereitung |
 | Branch | `audit/account-platform` |
-| Basis | `origin/main` @ `cd220beb` plus Prep-Commits bis `e6b3e62c`, danach Audit-Doku-Commits |
+| Basis | `origin/main` @ `cd220beb` plus Prep-Commits bis `e6b3e62c` |
+| Audit-Artefakte-Commit | `028309bb` |
 | PR | Draft, siehe GitHub-PR dieses Branchs |
-| Runtime-/Docs-Head | nach letztem Push dieses Workstreams; immer `git rev-parse HEAD` prüfen |
+| Runtime-/Docs-Head | nach Status-Commit/Push; immer `git rev-parse HEAD` und Remote prüfen |
 | Status | Audit fertig / Review |
 
 ## Scope
