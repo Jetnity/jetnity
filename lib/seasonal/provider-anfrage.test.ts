@@ -81,24 +81,25 @@ describe('Seasonal-Provider-Anfrage', () => {
       days: [],
       ohneTag: [],
     })
-    let gesehen: SeasonalProviderAnfrage | null = null
+    const gesehen: SeasonalProviderAnfrage[] = []
     await seasonalAuswerten(
       reise,
       testSeasonalProvider(async (anfrage) => {
-        gesehen = anfrage
+        gesehen.push(anfrage)
         return []
       }),
       null,
       SEASONAL_NOW_MS,
     )
-    assert.ok(gesehen)
-    assert.equal(gesehen.startDate, '2026-09-01')
-    assert.equal(gesehen.endDate, '2026-09-05')
-    assert.equal(gesehen.stages[0]?.id, 'stage-bkk')
-    assert.equal(gesehen.stages[0]?.placeId, 'geonames:1609350')
-    assert.equal(gesehen.stages[0]?.countryCode, 'TH')
-    assert.equal(gesehen.stages[0]?.arrivalDate, '2026-09-12')
-    assert.equal(gesehen.stages[0]?.departureDate, '2026-09-16')
+    assert.equal(gesehen.length, 1)
+    assert.equal(gesehen[0]?.startDate, '2026-09-01')
+    assert.equal(gesehen[0]?.endDate, '2026-09-05')
+    assert.equal(gesehen[0]?.stages[0]?.id, 'stage-bkk')
+    assert.equal(gesehen[0]?.stages[0]?.placeId, 'geonames:1609350')
+    assert.equal(gesehen[0]?.stages[0]?.countryCode, 'TH')
+    assert.equal(gesehen[0]?.stages[0]?.arrivalDate, '2026-09-12')
+    assert.equal(gesehen[0]?.stages[0]?.departureDate, '2026-09-16')
+    assert.deepEqual(gesehen[0], anfrageFuer(reise))
   })
 
   test('zwei Destinationen bleiben mit eigenen Stage-Fenstern getrennt zuordenbar', () => {
