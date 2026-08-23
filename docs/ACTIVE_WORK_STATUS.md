@@ -21,8 +21,8 @@ Auftrag: `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`
 - Basis: aktuelles `origin/main` = `91e644b279c802c5a5d7a88135ed8ab9c4229a34`
 - Branch: `feat/travel-safety-disruption-intelligence`
 - Draft PR: https://github.com/Jetnity/jetnity/pull/37
-- Implementierungs-Head inkl. `main`-Sync: `71f02c4eddb80d227c651d911228015c4d8f5ad6`
-- Ahead/behind zu `origin/main` vor diesem Dokumentations-Commit: **5 ahead / 0 behind**
+- Verifizierter Head: `45b11615d7cde22eff223d0001a6ab6b814d4e51`
+- Ahead/behind zu `origin/main` auf diesem Head: **6 ahead / 0 behind**
 - Branch bleibt Draft. Kein Mark Ready, kein Merge.
 
 ## 3. Status
@@ -55,6 +55,7 @@ Foundation D und E bleiben abgeschlossen und werden nicht erneut gebaut.
 - Implementierung: `f48f0cb3`
 - Architektur/Acceptance/UI-Audit-Fixture: `695b1b48`
 - `origin/main` Sync (Function-by-Function-Audit-Mandat): `71f02c4e`
+- Verifikations-Handoff: `45b11615`
 
 ## 7. Tests / CI / Preview
 
@@ -66,12 +67,13 @@ Lokal auf dem Feature-Branch verifiziert:
 - UI-Audit: **886/886**, 0 Fehler, WebKit + Chromium, 8 Viewports
 - DB unverändert: `db:rechte` 51, `db:rls` Exit 0, `db:sicherheit` 210/210, `db:parallelitaet` 7/7
 
-Auf Head `71f02c4e` zusätzlich remote:
+Auf Head `45b11615` zusätzlich remote:
 
-- GitHub Actions Run `32610279898`: **SUCCESS**
-- Vercel Preview Deployment `6043181714`: **success** → `https://jetnity-q14jlyh8o-jetnity-e1b93c82.vercel.app`
+- GitHub Actions Run `32610803493`: **SUCCESS**
+- Vercel Preview Deployment `6043267479`: **READY/SUCCESS**
+- Preview: `https://jetnity-app-git-feat-travel-safety-disr-914f66-jetnity-e1b93c82.vercel.app`
 
-CI/Preview für den nachfolgenden Dokumentations-Commit werden nach dem Push nachgezogen. Nicht als bereits grün auf einem neueren SHA behaupten.
+Ein reiner Dokumentations-Nachzug nach `45b11615` ändert keine Runtime. Neue CI/Preview-Zahlen nur behaupten, wenn sie für den dann aktuellen Head verifiziert sind.
 
 ## 8. DB / RLS / Production-Grenze
 
@@ -100,14 +102,13 @@ CI/Preview für den nachfolgenden Dokumentations-Commit werden nach dem Push nac
 - kein Merge
 - kein Mark Ready
 - keine Production-Migration
-- unabhängiger ChatGPT-Review erst nach finalem PR-Head inkl. Abschlussdokumentation
+- unabhängiger ChatGPT-Review gegen den tatsächlichen PR-Head; Merge erst nach ausdrücklicher Product-Owner-Freigabe
 
 ## 12. Exakter nächster Schritt
 
-1. Diesen Dokumentationsstand pushen
-2. CI und Vercel Preview auf dem dann aktuellen Head verifizieren
-3. Unabhängigen ChatGPT-Review gegen den tatsächlichen finalen PR-Head starten
-4. Draft PR Draft lassen, bis der Product Owner ausdrücklich freigibt
+1. Unabhängigen ChatGPT-Review gegen den tatsächlichen PR-Head starten
+2. Draft PR Draft lassen
+3. Kein Merge, kein Mark Ready, keine Production-Migration ohne neue Product-Owner-Freigabe
 
 ## 13. Zuerst zu lesen
 

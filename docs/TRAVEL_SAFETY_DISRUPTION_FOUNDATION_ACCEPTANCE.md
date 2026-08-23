@@ -7,8 +7,8 @@ Branch: `feat/travel-safety-disruption-intelligence`
 PR: https://github.com/Jetnity/jetnity/pull/37  
 PR-Zustand: **Draft**  
 Base: `main` @ `91e644b279c802c5a5d7a88135ed8ab9c4229a34`  
-Implementierungs-Head inkl. `main`-Sync: `71f02c4eddb80d227c651d911228015c4d8f5ad6`  
-Ahead/behind zu `origin/main` auf diesem Implementierungs-Head: **5 ahead / 0 behind**  
+Verifizierter Head: `45b11615d7cde22eff223d0001a6ab6b814d4e51`  
+Ahead/behind zu `origin/main` auf diesem Head: **6 ahead / 0 behind**  
 Task: `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`  
 Audit: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ARCHITECTURE_AUDIT.md`  
 Fachdokument: `docs/TRAVEL_SAFETY_DISRUPTION.md`
@@ -54,10 +54,11 @@ Jetnity besitzt eine provider-neutrale Safety-Domäne, die:
 | `check:schema-bezug` | grün |
 | Production-Build | grün, 38/38 Seiten, inkl. `/api/safety/evaluate` |
 | UI-Audit | **886/886**, 0 Fehler, WebKit + Chromium, Viewports 280 / 320 / 360 / 390 / 430 / 768 / 844x390 / 1280; inkl. `safety-kein-provider`, `safety-unavailable`, `safety-kritisch-eine-etappe` |
-| GitHub Actions auf `71f02c4e` | Run [`32610279898`](https://github.com/Jetnity/jetnity/actions/runs/32610279898) **SUCCESS** |
-| Vercel Preview auf `71f02c4e` | Deployment `6043181714` **success** → https://jetnity-q14jlyh8o-jetnity-e1b93c82.vercel.app |
+| GitHub Actions auf `45b11615` | Run [`32610803493`](https://github.com/Jetnity/jetnity/actions/runs/32610803493) **SUCCESS** (Typecheck/Lint/Build, Auth-Konfiguration, Vercel Preview Comments) |
+| Vercel Commit-Status auf `45b11615` | **success** / Deployment completed |
+| Vercel Preview auf `45b11615` | Deployment `6043267479` **READY/SUCCESS** → https://jetnity-app-git-feat-travel-safety-disr-914f66-jetnity-e1b93c82.vercel.app |
 
-Der nachfolgende Dokumentations-Commit ändert keine Runtime-Logik. Dessen CI/Preview wird nach dem Push separat festgehalten und nicht vorab als grün behauptet.
+Ein eventueller reiner Dokumentations-Nachzug nach diesem Stand ändert keine Runtime. Review und Gates beziehen sich auf `45b11615`, solange kein Runtime-Commit folgt.
 
 ---
 

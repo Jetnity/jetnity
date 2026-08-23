@@ -283,7 +283,7 @@ Harte Gates bleiben:
 - keine Production-Migration
 - kein echter Safety-/Disruption-Provider
 
-Lokal verifiziert: 1393/1393 Tests, UI-Audit 886/886 (WebKit + Chromium, 8 Viewports), Production-Build 38/38, DB-Gates unverändert. Production-Schema unverändert.
+Lokal verifiziert: 1393/1393 Tests, UI-Audit 886/886 (WebKit + Chromium, 8 Viewports), Production-Build 38/38, DB-Gates unverändert. Production-Schema unverändert. Head `45b11615`: GitHub Actions `32610803493` SUCCESS, Vercel Preview READY/SUCCESS.
 
 Leitsatz:
 
