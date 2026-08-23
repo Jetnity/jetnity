@@ -14,7 +14,7 @@ GitHub ist dauerhaftes Teamgedächtnis. Jeder Cursor-Agent wird ausschließlich 
 | Cursor-Anzeigename | Workstream | Phase | Basis | Erlaubt | Gesperrt | Nächster Schritt |
 | --- | --- | --- | --- | --- | --- | --- |
 | wird nach Start eingetragen | Travel Timing & Seasonal / PR #38 | Runtime-Fix + Review | `feat/travel-timing-seasonal-intelligence` | R11-Blocker 24–26 schließen, Tests/Gates/Handoff | Mark Ready/Merge ohne Product Owner | Fix 24–26 → Exact-Head-Gate → ChatGPT R12 |
-| wird nach Start eingetragen | Account Platform | Audit / Vorbereitung | eigener Branch von `main` bzw. freigegebener Prep-Basis | Code-/DB-/UX-Audit, Architektur, Evidence-Matrix, Implementierungsplan, Doku | unkoordinierte Auth/RLS/DB/Truth-Implementierung, Migration, Production | `docs/CURSOR_ACCOUNT_PLATFORM_AUDIT_TASK.md` ausführen |
+| `Account platform audit vorbereitung` | Account Platform | Audit / Vorbereitung | `audit/account-platform` | Code-/DB-/UX-Audit, Architektur, Evidence-Matrix, Implementierungsplan, Doku | unkoordinierte Auth/RLS/DB/Truth-Implementierung, Migration, Production | `docs/CURSOR_ACCOUNT_PLATFORM_AUDIT_TASK.md` ausführen |
 | wird nach Start eingetragen | Admin Platform | Audit / Vorbereitung | eigener Branch von `main` bzw. freigegebener Prep-Basis | Admin-/Security-/Finance-/Ops-Audit, Architektur, Permission-Matrix, Plan, Doku | Rollen/RLS/Service-Role/Payment/Bexio/Ads/Provider Live-Änderungen | `docs/CURSOR_ADMIN_PLATFORM_AUDIT_TASK.md` ausführen |
 
 ## 3. Ownership-Grenzen während der Auditphase
