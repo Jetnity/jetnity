@@ -281,7 +281,7 @@ export async function safetyAuswerten(
   provider: SafetyProvider | null = safetyProviderAus(),
   roh: unknown = null,
   nowMs = Date.now(),
-  timeoutMs = SAFETY_GRENZEN.providerTimeoutMs,
+  timeoutMs: number = SAFETY_GRENZEN.providerTimeoutMs,
 ): Promise<SafetyEvaluation[]> {
   const contextFingerprint = safetyContextFingerprint(reise)
   if (!provider) return safetyAusFacts(reise, [], null, { nowMs, roh })
