@@ -46,10 +46,21 @@ function hatTiming(liste: readonly SeasonalEvaluation[]): boolean {
   )
 }
 
+function istAbgewieseneAcute(eintrag: SeasonalEvaluation): boolean {
+  return (
+    eintrag.acuteRejected ||
+    eintrag.evidenceClass === 'rejected_acute' ||
+    eintrag.factKey === 'acute_rejected'
+  )
+}
+
+function nurAbgewieseneAcute(liste: readonly SeasonalEvaluation[]): boolean {
+  return liste.length > 0 && liste.every(istAbgewieseneAcute)
+}
+
 function entscheidungsrelevant(eintrag: SeasonalEvaluation): boolean {
-  if (eintrag.acuteRejected) return false
+  if (istAbgewieseneAcute(eintrag)) return false
   if (eintrag.factKey === 'checked_empty') return false
-  if (eintrag.factKey === 'acute_rejected') return false
   if (eintrag.relevance === 'not_applies' && !eintrag.conflict) return false
   return true
 }
@@ -81,6 +92,7 @@ function istWahrheitsluecke(eintrag: SeasonalEvaluation): boolean {
 function checkStateAus(liste: readonly SeasonalEvaluation[], vorhanden: boolean): SeasonalCheckState {
   if (liste.length === 0) return vorhanden ? 'unknown' : 'unavailable'
   if (liste.length === 1 && liste[0]?.factKey === 'checked_empty') return 'checked_empty'
+  if (nurAbgewieseneAcute(liste)) return 'unknown'
   if (liste.some(istWahrheitsluecke)) return 'unknown'
   if (hatTiming(liste)) return 'has_timing'
   if (liste.some(istQuelleWeg)) return 'unavailable'
@@ -91,12 +103,13 @@ export function seasonalAnsicht(reise: Trip, evaluations?: SeasonalEvaluation[])
   const liste = evaluations ?? seasonalLokalFuerReise(reise)
   const vorhanden = evaluations !== undefined
   const checkState = checkStateAus(liste, vorhanden)
-  const complete = !liste.some((eintrag) => istWahrheitsluecke(eintrag) || istQuelleWeg(eintrag))
+  const complete =
+    !liste.some((eintrag) => istWahrheitsluecke(eintrag) || istQuelleWeg(eintrag)) &&
+    !nurAbgewieseneAcute(liste)
   const sichtbare = vorhanden
     ? liste.filter((eintrag) => {
-        if (eintrag.acuteRejected) return false
+        if (istAbgewieseneAcute(eintrag)) return false
         if (eintrag.factKey === 'checked_empty') return false
-        if (eintrag.factKey === 'acute_rejected') return false
         if (eintrag.relevance === 'not_applies' && !eintrag.conflict) return false
         return true
       })

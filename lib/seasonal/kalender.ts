@@ -113,12 +113,20 @@ function clockUnsicherheit(
   const startTag = kalendertagAus(von)
   const endeTag = kalendertagAus(bis)
   if (!startTag || !endeTag) return null
+  if (start && ende && startTag > endeTag) return null
   const startUhr = ziviluhrAus(von) ?? '00:00'
   const endeUhr = ziviluhrAus(bis) ?? '23:59'
   const minMs = zivilRechenwert(startTag, startUhr) - MAX_OST_OFFSET_MS
   const maxMs = zivilRechenwert(endeTag, endeUhr) + MAX_WEST_OFFSET_MS
   if (!Number.isFinite(minMs) || !Number.isFinite(maxMs)) return null
   return { minMs, maxMs }
+}
+
+function umgekehrtesKalenderintervall(start: string | null, ende: string | null): boolean {
+  if (!start || !ende) return false
+  const startTag = kalendertagAus(start)
+  const endeTag = kalendertagAus(ende)
+  return Boolean(startTag && endeTag && startTag > endeTag)
 }
 
 function kalendertageVergleichen(
@@ -130,8 +138,10 @@ function kalendertageVergleichen(
   const tripStart = kalendertagAus(reiseStart ?? reiseEnde ?? '')
   const tripEnd = kalendertagAus(reiseEnde ?? reiseStart ?? '')
   if (!tripStart || !tripEnd) return 'insufficient'
+  if (tripStart > tripEnd) return 'insufficient'
   const eventStartTag = eventStart ? kalendertagAus(eventStart) : null
   const eventEndeTag = eventEnde ? kalendertagAus(eventEnde) : eventStartTag
+  if (eventStartTag && eventEndeTag && eventStartTag > eventEndeTag) return 'insufficient'
   if (eventEndeTag && eventEndeTag < tripStart) return 'before'
   if (eventStartTag && eventStartTag > tripEnd) return 'after'
   return 'overlaps'
@@ -147,6 +157,7 @@ function dateUnsicherheit(
   const startTag = kalendertagAus(von)
   const endeTag = kalendertagAus(bis)
   if (!startTag || !endeTag) return null
+  if (start && ende && startTag > endeTag) return null
   const minMs = Date.parse(`${startTag}T00:00:00.000Z`) - MAX_OST_OFFSET_MS
   const maxMs = Date.parse(`${endeTag}T23:59:59.999Z`) + MAX_WEST_OFFSET_MS
   if (!Number.isFinite(minMs) || !Number.isFinite(maxMs)) return null
@@ -172,6 +183,26 @@ export function zeitraeumeUeberschneiden(
   eventEnde: string | null,
 ): 'overlaps' | 'before' | 'after' | 'insufficient' {
   if (!reiseStart && !reiseEnde) return 'insufficient'
+  if (umgekehrtesKalenderintervall(reiseStart, reiseEnde)) return 'insufficient'
+  if (umgekehrtesKalenderintervall(eventStart, eventEnde)) return 'insufficient'
+  if (
+    reiseStart &&
+    reiseEnde &&
+    zeitForm(reiseStart) === 'instant' &&
+    zeitForm(reiseEnde) === 'instant' &&
+    Date.parse(reiseStart) > Date.parse(reiseEnde)
+  ) {
+    return 'insufficient'
+  }
+  if (
+    eventStart &&
+    eventEnde &&
+    zeitForm(eventStart) === 'instant' &&
+    zeitForm(eventEnde) === 'instant' &&
+    Date.parse(eventStart) > Date.parse(eventEnde)
+  ) {
+    return 'insufficient'
+  }
   const tripHatUhr = seiteHat(reiseStart, 'clock') || seiteHat(reiseEnde, 'clock')
   const eventHatInstant = seiteHat(eventStart, 'instant') || seiteHat(eventEnde, 'instant')
   const eventNurDatum =
@@ -197,8 +228,18 @@ export function zeitraeumeUeberschneiden(
   if (tripStart == null || tripEnd == null || !Number.isFinite(tripStart) || !Number.isFinite(tripEnd)) {
     return 'insufficient'
   }
+  if (tripStart > tripEnd) return 'insufficient'
   const eventStartMs = eventStart ? zeitgrenzeMs(eventStart, 'start') : null
   const eventEndMs = eventEnde ? zeitgrenzeMs(eventEnde, 'end') : null
+  if (
+    eventStartMs != null &&
+    eventEndMs != null &&
+    Number.isFinite(eventStartMs) &&
+    Number.isFinite(eventEndMs) &&
+    eventStartMs > eventEndMs
+  ) {
+    return 'insufficient'
+  }
   if (eventEndMs != null && Number.isFinite(eventEndMs) && eventEndMs < tripStart) return 'before'
   if (eventStartMs != null && Number.isFinite(eventStartMs) && eventStartMs > tripEnd) return 'after'
   return 'overlaps'

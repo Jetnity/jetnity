@@ -454,6 +454,9 @@ describe('Seasonal-Engine', () => {
     )
     assert.equal(hinweise(evaluations).length, 0)
     assert.match(evaluations[0]?.reason ?? '', /Safety/)
+    assert.equal(evaluations[0]?.evidenceClass, 'rejected_acute')
+    assert.equal(evaluations[0]?.acuteRejected, true)
+    assert.notEqual(evaluations[0]?.evidenceClass, 'seasonal_pattern')
   })
 
   test('21 seasonal_pattern bleibt in Safety ausgeschlossen', () => {
@@ -754,6 +757,8 @@ describe('Seasonal-Engine', () => {
     )
     assert.equal(hinweise(acute).length, 0)
     assert.equal(acute[0]?.factKey, 'acute_rejected')
+    assert.equal(acute[0]?.evidenceClass, 'rejected_acute')
+    assert.equal(acute[0]?.acuteRejected, true)
 
     const gemischt = seasonalAusFacts(
       bangkokMonsunReise(),
@@ -779,6 +784,121 @@ describe('Seasonal-Engine', () => {
       assert.equal(evaluations[0]?.evidenceClass, evidenceClass)
       assert.equal(evaluations[0]?.relevance, 'applies')
     }
+  })
+
+  test('abgewiesene Acute-Klassen bleiben rejected_acute und nicht checked_empty', () => {
+    for (const evidenceClass of ['active_warning', 'acute', 'acute_event'] as const) {
+      const evaluations = seasonalAusFacts(
+        bangkokMonsunReise(),
+        [seasonalFact({ factKey: `warn-${evidenceClass}`, category: 'monsoon', evidenceClass })],
+        'audit-seasonal',
+        { nowMs: JETZT },
+      )
+      assert.equal(hinweise(evaluations).length, 0, evidenceClass)
+      assert.equal(evaluations[0]?.evidenceClass, 'rejected_acute', evidenceClass)
+      assert.equal(evaluations[0]?.acuteRejected, true, evidenceClass)
+      assert.notEqual(evaluations[0]?.factKey, 'checked_empty', evidenceClass)
+      const ansicht = seasonalAnsicht(bangkokMonsunReise(), evaluations)
+      assert.equal(ansicht.summary.sichtbar, false, evidenceClass)
+      assert.equal(ansicht.summary.complete, false, evidenceClass)
+      assert.notEqual(ansicht.summary.checkState, 'checked_empty', evidenceClass)
+      assert.equal(seasonalApiStatus(ansicht.summary), 'unknown', evidenceClass)
+    }
+
+    const gemischt = seasonalAusFacts(
+      bangkokMonsunReise(),
+      [
+        seasonalFact({ factKey: 'rain-th', category: 'monsoon', evidenceClass: 'seasonal_pattern' }),
+        seasonalFact({ factKey: 'warn-th', category: 'monsoon', evidenceClass: 'active_warning' }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    const saisonal = gemischt.find((eintrag) => eintrag.factKey === 'rain-th')
+    const acute = gemischt.find((eintrag) => eintrag.acuteRejected || eintrag.evidenceClass === 'rejected_acute')
+    assert.equal(saisonal?.evidenceClass, 'seasonal_pattern')
+    assert.equal(saisonal?.relevance, 'applies')
+    assert.equal(saisonal?.acuteRejected, false)
+    assert.equal(acute?.evidenceClass, 'rejected_acute')
+    assert.equal(acute?.acuteRejected, true)
+    assert.equal(
+      gemischt.some((eintrag) => eintrag.acuteRejected && eintrag.evidenceClass === 'seasonal_pattern'),
+      false,
+    )
+    assert.equal(hinweise(gemischt).some((eintrag) => eintrag.factKey === 'rain-th'), true)
+    assert.equal(hinweise(gemischt).some((eintrag) => eintrag.evidenceClass === 'rejected_acute'), false)
+  })
+
+  test('rückwärts laufender Trip-Datumsbereich erzeugt kein falsches not_applies', () => {
+    const reise = beispielreise({
+      title: 'Bangkok rückwärts',
+      startDate: '2026-09-20',
+      endDate: '2026-09-10',
+      stages: [
+        {
+          id: 'stage-bkk',
+          position: 1,
+          name: 'Bangkok',
+          countryCode: 'TH',
+          placeId: 'geonames:1609350',
+          latitude: 13.7563,
+          longitude: 100.5018,
+          arrivalDate: '2026-09-12',
+          departureDate: '2026-09-16',
+        },
+      ],
+      days: [],
+      ohneTag: [],
+    })
+    const evaluations = seasonalAusFacts(
+      reise,
+      [
+        seasonalFact({
+          factKey: 'rain-th',
+          category: 'monsoon',
+          travelWindow: { kind: 'absolute', start: '2026-09-12', end: '2026-09-16' },
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.notEqual(evaluations[0]?.relevance, 'not_applies')
+    assert.equal(evaluations[0]?.relevance, 'applies')
+
+    const etappeRueckwaerts = beispielreise({
+      title: 'Bangkok Stage rückwärts',
+      startDate: '2026-09-01',
+      endDate: '2026-09-30',
+      stages: [
+        {
+          id: 'stage-bkk',
+          position: 1,
+          name: 'Bangkok',
+          countryCode: 'TH',
+          placeId: 'geonames:1609350',
+          latitude: 13.7563,
+          longitude: 100.5018,
+          arrivalDate: '2026-09-16',
+          departureDate: '2026-09-12',
+        },
+      ],
+      days: [],
+      ohneTag: [],
+    })
+    const etappeEval = seasonalAusFacts(
+      etappeRueckwaerts,
+      [
+        seasonalFact({
+          factKey: 'rain-th',
+          category: 'monsoon',
+          travelWindow: { kind: 'absolute', start: '2026-09-12', end: '2026-09-16' },
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.notEqual(etappeEval[0]?.relevance, 'not_applies')
+    assert.equal(etappeEval[0]?.relevance, 'insufficient_context')
   })
 
   test('sourceUrl mit falschem Runtime-Typ erzeugt keine trusted Timing-Aussage', () => {

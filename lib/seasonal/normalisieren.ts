@@ -39,7 +39,7 @@ import { scopeIdentitaet, spatialScopeLesen, type SeasonalSpatialScope } from '@
 export type SeasonalFact = {
   factKey: string
   category: SeasonalCategory
-  evidenceClass: SeasonalEvidenceClass
+  evidenceClass: SeasonalEvidenceClass | 'rejected_acute'
   outcome: SeasonalOutcome
   spatialScope: SeasonalSpatialScope
   travelWindow: SeasonalTravelWindow
@@ -116,7 +116,7 @@ export function seasonalFactNormalisieren(
     return {
       factKey,
       category,
-      evidenceClass: 'seasonal_pattern',
+      evidenceClass: 'rejected_acute',
       outcome: 'unknown',
       spatialScope: { kind: 'insufficient' },
       travelWindow: { kind: 'insufficient' },

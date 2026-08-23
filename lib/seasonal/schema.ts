@@ -88,6 +88,14 @@ export const seasonalAnfrageSchema = z
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Die Anfrage ist zu gross.' })
     }
 
+    if (wert.startDate && wert.endDate && wert.startDate > wert.endDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['endDate'],
+        message: 'Die Rückreise liegt vor der Abreise',
+      })
+    }
+
     const stageIds = new Set<string>()
     for (const etappe of wert.stages) {
       if (stageIds.has(etappe.id)) {
@@ -95,6 +103,13 @@ export const seasonalAnfrageSchema = z
         break
       }
       stageIds.add(etappe.id)
+      if (etappe.arrivalDate && etappe.departureDate && etappe.arrivalDate > etappe.departureDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['stages'],
+          message: 'Die Abreise der Etappe liegt vor der Ankunft',
+        })
+      }
     }
 
     const dayIds = new Set<string>()

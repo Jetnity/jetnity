@@ -400,8 +400,11 @@ function zeitAufRefsAnwenden(
 ): SeasonalRelevanzErgebnis {
   if (raum.relevance === 'not_applies') return raum
 
+  const tripUmgekehrt = Boolean(
+    kontext.startDate && kontext.endDate && kontext.startDate > kontext.endDate,
+  )
   const trip = kontaktImTravelWindow(kontext.startDate, kontext.endDate, fenster)
-  if (trip === 'before' || trip === 'after') {
+  if (!tripUmgekehrt && (trip === 'before' || trip === 'after')) {
     return {
       ...raum,
       relevance: 'not_applies',

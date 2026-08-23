@@ -67,6 +67,71 @@ describe('Seasonal-API-Hülle', () => {
     assert.equal(geprueft.success, false)
   })
 
+  test('rückwärts laufende Trip- und Stage-Daten werden fail-closed abgelehnt', () => {
+    assert.equal(
+      seasonalAnfrageSchema.safeParse({
+        startDate: '2026-09-20',
+        endDate: '2026-09-10',
+        stages: [{ id: 'stage-1', name: 'Bangkok', countryCode: 'TH' }],
+      }).success,
+      false,
+    )
+    assert.equal(
+      seasonalAnfrageSchema.safeParse({
+        startDate: '2026-09-16',
+        endDate: '2026-09-16',
+        stages: [{ id: 'stage-1', name: 'Bangkok', countryCode: 'TH' }],
+      }).success,
+      true,
+    )
+    assert.equal(
+      seasonalAnfrageSchema.safeParse({
+        startDate: '2026-09-10',
+        endDate: '2026-09-20',
+        stages: [
+          {
+            id: 'stage-1',
+            name: 'Bangkok',
+            countryCode: 'TH',
+            arrivalDate: '2026-09-16',
+            departureDate: '2026-09-12',
+          },
+        ],
+      }).success,
+      false,
+    )
+    assert.equal(
+      seasonalAnfrageSchema.safeParse({
+        startDate: '2026-09-10',
+        endDate: '2026-09-20',
+        stages: [
+          {
+            id: 'stage-1',
+            name: 'Bangkok',
+            countryCode: 'TH',
+            arrivalDate: '2026-09-12',
+          },
+        ],
+      }).success,
+      true,
+    )
+    assert.equal(
+      seasonalAnfrageSchema.safeParse({
+        startDate: '2026-09-10',
+        endDate: '2026-09-20',
+        stages: [
+          {
+            id: 'stage-1',
+            name: 'Bangkok',
+            countryCode: 'TH',
+            departureDate: '2026-09-16',
+          },
+        ],
+      }).success,
+      true,
+    )
+  })
+
   test('Tripgraph mit doppelten oder dangling Referenzen wird abgelehnt', () => {
     const basis = {
       startDate: '2026-09-12',

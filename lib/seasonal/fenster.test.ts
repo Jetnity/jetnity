@@ -9,6 +9,7 @@ import {
   travelWindowLesen,
   wiederkehrendProjizieren,
 } from '@/lib/seasonal/fenster'
+import { zeitraeumeUeberschneiden } from '@/lib/seasonal/kalender'
 
 describe('Seasonal Travel Window', () => {
   test('ungültige Month/Day-Werte fail-closed', () => {
@@ -120,5 +121,15 @@ describe('Seasonal Travel Window', () => {
     const fenster = travelWindowLesen({ kind: 'annual_recurring', start: '06-01', end: '09-30' })
     assert.equal(kontaktImTravelWindow('2026-07-01', '2026-07-10', fenster), 'overlaps')
     assert.equal(kontaktImTravelWindow('1995-07-01', '1995-07-10', fenster), 'overlaps')
+  })
+
+  test('rückwärts laufender Kontakt bleibt fail-closed insufficient', () => {
+    const fenster = travelWindowLesen({ kind: 'absolute', start: '2026-09-12', end: '2026-09-16' })
+    assert.equal(fenster.kind, 'absolute')
+    assert.equal(kontaktImTravelWindow('2026-09-20', '2026-09-10', fenster), 'insufficient')
+    assert.notEqual(kontaktImTravelWindow('2026-09-20', '2026-09-10', fenster), 'before')
+    assert.notEqual(kontaktImTravelWindow('2026-09-20', '2026-09-10', fenster), 'after')
+    assert.equal(zeitraeumeUeberschneiden('2026-09-20', '2026-09-10', '2026-09-12', '2026-09-16'), 'insufficient')
+    assert.equal(kontaktImTravelWindow('2026-09-16', '2026-09-16', fenster), 'overlaps')
   })
 })

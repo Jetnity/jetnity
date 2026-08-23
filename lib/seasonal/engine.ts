@@ -29,12 +29,16 @@ function leerEvaluation(opts: {
   factKey?: string
   conflict?: boolean
   checkedEmpty?: boolean
+  evidenceClass?: SeasonalEvaluation['evidenceClass']
+  acuteRejected?: boolean
 }): SeasonalEvaluation {
+  const evidenceClass = opts.evidenceClass ?? 'seasonal_pattern'
+  const acuteRejected = opts.acuteRejected === true
   return {
     factId: opts.factKey ?? 'seasonal:unavailable',
     factKey: opts.factKey ?? 'unavailable',
     category: 'unknown',
-    evidenceClass: 'seasonal_pattern',
+    evidenceClass,
     outcome: 'unknown',
     evidenceStatus: opts.status,
     freshness: opts.freshness,
@@ -51,7 +55,7 @@ function leerEvaluation(opts: {
     reason: opts.reason,
     nextAction: 'observe',
     conflict: opts.conflict === true,
-    acuteRejected: false,
+    acuteRejected,
     evidence: leereSeasonalEvidence(),
     contextFingerprint: opts.contextFingerprint,
     factFingerprint: opts.contextFingerprint,
@@ -72,6 +76,8 @@ function evaluationAusFact(opts: {
       status: 'unknown',
       reason: 'Akute Warnungen gehören zur Safety-Domäne und erscheinen nicht als saisonaler Hinweis.',
       factKey: opts.fact.factKey,
+      evidenceClass: 'rejected_acute',
+      acuteRejected: true,
     })
   }
   if (opts.fact.sourceTemporarilyUnavailable) {
@@ -247,6 +253,8 @@ export function seasonalAusFacts(
           status: 'unknown',
           reason: 'Akute Warnungen gehören zur Safety-Domäne und erscheinen nicht als saisonaler Hinweis.',
           factKey: 'acute_rejected',
+          evidenceClass: 'rejected_acute',
+          acuteRejected: true,
         }),
       ]
     }
@@ -293,6 +301,17 @@ export function seasonalAusFacts(
         status: 'unavailable',
         reason: 'Die saisonale Quelle ist vorübergehend nicht erreichbar. Es wird keine Reisezeit-Aussage erfunden.',
         factKey: temporarily[0]?.factKey,
+      }),
+    )
+  }
+  for (const fact of acute) {
+    evaluations.push(
+      evaluationAusFact({
+        reise,
+        fact,
+        contextFingerprint,
+        conflict: false,
+        nowMs,
       }),
     )
   }
