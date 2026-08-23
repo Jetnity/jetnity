@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 23. August 2026  
-Arbeitsblock: **Foundation E vollständig abgeschlossen inkl. Production; nächster Block: Travel Safety & Disruption Intelligence – provider-neutrale Foundation**
+Arbeitsblock: **Travel Safety & Disruption Intelligence – provider-neutrale Foundation vorbereitet; Cursor-Implementierung noch nicht begonnen**
 
 ## 1. Aktueller Zustand
 
@@ -109,29 +109,54 @@ Bis zu separaten späteren Product-Owner-Gates:
 
 Provider werden erst in der späteren echten Providerphase aktiviert. Vorher müssen die provider-neutralen Adapter-/Port-Grenzen in allen relevanten Bereichen professionell fertig sein.
 
-## 6. Exakter nächster Produktblock
+## 6. Aktiver nächster Produktblock
 
-Gemäß aktueller Product-Owner-Reihenfolge folgt nach Foundation E:
+Gemäß aktueller Product-Owner-Reihenfolge folgt jetzt:
 
-1. **Travel Safety & Disruption Intelligence – provider-neutrale Foundation**
-2. **Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
-3. verbleibende Provider-Readiness-/Adapter-Lücken über alle relevanten Bereiche schließen
-4. großer End-to-End Trip-Workspace-/Übersicht-Umbau inklusive des besprochenen Wegs dorthin
-5. finaler Workspace Intelligence Audit
-6. echte Providerphase
-7. Provider-backed End-to-End-/Truth-Audit
-8. finale Startseiten-Positionierung
+**Travel Safety & Disruption Intelligence – provider-neutrale Foundation**
 
-### Nächster operativer Schritt
+Verbindlicher Implementierungsauftrag ist auf `main` vorbereitet:
 
-Vor Cursor-Implementierung des Safety-Blocks:
+- `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`
+- Task-Erstellungscommit: `2c39d488b4ffca7fd718fdc3238b9cfbece0c9dd`
 
-- tatsächlichen aktuellen `main`-/Production-Stand prüfen
-- globale Safety-/UX-/Truth-/Traveller-/Route-/Provider-Readiness-Policies lesen
-- vollständigen versionierten Cursor-Auftrag für **Travel Safety & Disruption Intelligence – provider-neutrale Foundation** erstellen
-- neuen Feature-Branch / Draft PR verwenden
-- kein echter Provider, keine Production-Migration, kein Merge ohne separates Product-Owner-Gate
+Status: **Auftrag vorbereitet, Implementierung noch nicht begonnen.**
+
+Der Task verlangt unter anderem:
+
+- eigenen frischen Branch `feat/travel-safety-disruption-intelligence`
+- frühen Draft PR
+- vollständigen Ist-Architektur-Audit vor Implementierung
+- provider-neutrale Safety-Domäne und Provider-Port
+- strikte Evidence-/Freshness-/Conflict-Grenzen
+- räumlich und zeitlich konkrete Relevance Engine
+- Wiederverwendung der Foundation-D Route Truth
+- Cross-Domain Impact-/Recheck-Naht ohne automatische Reiseänderung
+- klare Trennung Safety vs Seasonal
+- minimale Workspace-Integration ohne den späteren großen Workspace-Umbau vorzuziehen
+- umfassende Truth-/Security-/UX-/Device-Testmatrix
+- kein echter Provider, keine Production-Migration, kein Mark Ready, kein Merge
+
+## 7. Reihenfolge danach
+
+Nach erfolgreichem Safety-Block:
+
+1. **Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
+2. verbleibende Provider-Readiness-/Adapter-Lücken über alle relevanten Bereiche schließen
+3. großer End-to-End Trip-Workspace-/Übersicht-Umbau inklusive des besprochenen Wegs dorthin
+4. finaler Workspace Intelligence Audit
+5. echte Providerphase
+6. Provider-backed End-to-End-/Truth-Audit
+7. finale Startseiten-Positionierung
+
+## 8. Exakter nächster operativer Schritt
+
+1. Neuen Cursor-Agenten starten.
+2. Ihm ausschließlich den Auftrag geben, `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md` vollständig zu lesen und exakt umzusetzen.
+3. Cursor muss vor Code `origin/main` frisch synchronisieren und den Ist-Audit durchführen.
+4. PR bleibt Draft; kein Mark Ready, kein Merge, keine Production-Migration.
+5. Nach Cursor-Abschluss führt ChatGPT den unabhängigen Review auf exakt dem finalen PR-Head durch.
 
 Leitsatz für die Fortsetzung:
 
-> **Foundation D und E sind fertig. Als Nächstes bauen wir die provider-neutrale Safety-Intelligence auf derselben Reise-Wahrheit – nicht als isoliertes Warnungsmodul.**
+> **Foundation D und E sind fertig. Jetzt bauen wir Safety als belastbare provider-neutrale Reise-Intelligence – nicht als Newsfeed, nicht als LLM-Warnung und nicht als isolierte Karte.**
