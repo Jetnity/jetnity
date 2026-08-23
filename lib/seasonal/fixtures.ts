@@ -108,6 +108,166 @@ export function bangkokGetrennteLegsReise(): Trip {
   ])
 }
 
+const BKK_SIN = {
+  origin: { airportCode: 'BKK', countryCode: 'TH', city: 'Bangkok', country: 'Thailand' },
+  destination: { airportCode: 'SIN', countryCode: 'SG', city: 'Singapore', country: 'Singapore' },
+  departureDate: '2026-09-16',
+  departureTime: '11:00',
+  arrivalDate: '2026-09-16',
+  arrivalTime: '14:20',
+}
+
+const SIN_RUECK = {
+  origin: { airportCode: 'SIN', countryCode: 'SG', city: 'Singapore', country: 'Singapore' },
+  destination: { airportCode: 'ZRH', countryCode: 'CH', city: 'Zürich', country: 'Switzerland' },
+  departureDate: '2026-09-20',
+  departureTime: '23:00',
+  arrivalDate: '2026-09-21',
+  arrivalTime: '06:40',
+}
+
+const DOH_HIN_1 = {
+  origin: { airportCode: 'ZRH', countryCode: 'CH', city: 'Zürich', country: 'Switzerland' },
+  destination: { airportCode: 'DOH', countryCode: 'QA', city: 'Doha', country: 'Qatar' },
+  departureDate: '2026-09-12',
+  departureTime: '09:15',
+  arrivalDate: '2026-09-12',
+  arrivalTime: '17:40',
+}
+
+const DOH_HIN_2 = {
+  origin: { airportCode: 'DOH', countryCode: 'QA', city: 'Doha', country: 'Qatar' },
+  destination: { airportCode: 'BKK', countryCode: 'TH', city: 'Bangkok', country: 'Thailand' },
+  departureDate: '2026-09-12',
+  departureTime: '19:10',
+  arrivalDate: '2026-09-13',
+  arrivalTime: '06:20',
+}
+
+const SIN_RUECK_1 = {
+  origin: { airportCode: 'BKK', countryCode: 'TH', city: 'Bangkok', country: 'Thailand' },
+  destination: { airportCode: 'SIN', countryCode: 'SG', city: 'Singapore', country: 'Singapore' },
+  departureDate: '2026-09-20',
+  departureTime: '08:00',
+  arrivalDate: '2026-09-20',
+  arrivalTime: '11:20',
+}
+
+const SIN_RUECK_2 = {
+  origin: { airportCode: 'SIN', countryCode: 'SG', city: 'Singapore', country: 'Singapore' },
+  destination: { airportCode: 'ZRH', countryCode: 'CH', city: 'Zürich', country: 'Switzerland' },
+  departureDate: '2026-09-20',
+  departureTime: '23:40',
+  arrivalDate: '2026-09-21',
+  arrivalTime: '06:50',
+}
+
+function bangkokMehrzielreise(ohneTag: Trip['ohneTag']): Trip {
+  return beispielreise({
+    title: 'Bangkok und Singapur',
+    startDate: '2026-09-12',
+    endDate: '2026-09-21',
+    stages: [
+      {
+        id: 'stage-bkk',
+        position: 1,
+        name: 'Bangkok',
+        countryCode: 'TH',
+        placeId: 'geonames:1609350',
+        latitude: 13.7563,
+        longitude: 100.5018,
+        arrivalDate: '2026-09-13',
+        departureDate: '2026-09-16',
+      },
+      {
+        id: 'stage-sin',
+        position: 2,
+        name: 'Singapore',
+        countryCode: 'SG',
+        placeId: 'geonames:1880252',
+        latitude: 1.3521,
+        longitude: 103.8198,
+        arrivalDate: '2026-09-16',
+        departureDate: '2026-09-20',
+      },
+    ],
+    days: [],
+    ohneTag,
+  })
+}
+
+export function bangkokMehrzielFluegeReise(): Trip {
+  return bangkokMehrzielreise([
+    flugPunkt({
+      id: 'flug-hin',
+      title: 'ZRH → BKK',
+      startsOn: '2026-09-12',
+      endsOn: '2026-09-13',
+      legs: [{ segments: [BKK_HIN] }],
+    }),
+    flugPunkt({
+      id: 'flug-weiter',
+      title: 'BKK → SIN',
+      startsOn: '2026-09-16',
+      endsOn: '2026-09-16',
+      legs: [{ segments: [BKK_SIN] }],
+    }),
+    flugPunkt({
+      id: 'flug-rueck',
+      title: 'SIN → ZRH',
+      startsOn: '2026-09-20',
+      endsOn: '2026-09-21',
+      legs: [{ segments: [SIN_RUECK] }],
+    }),
+  ])
+}
+
+export function bangkokMehrzielLegsReise(): Trip {
+  return bangkokMehrzielreise([
+    flugPunkt({
+      id: 'flug-mehrziel',
+      title: 'ZRH → BKK → SIN → ZRH',
+      startsOn: '2026-09-12',
+      endsOn: '2026-09-21',
+      legs: [{ segments: [BKK_HIN] }, { segments: [BKK_SIN] }, { segments: [SIN_RUECK] }],
+    }),
+  ])
+}
+
+export function bangkokRundreiseTransitFluege(): Trip {
+  return bangkokRundreise([
+    flugPunkt({
+      id: 'flug-hin',
+      title: 'ZRH → BKK',
+      startsOn: '2026-09-12',
+      endsOn: '2026-09-13',
+      legs: [{ segments: [DOH_HIN_1, DOH_HIN_2] }],
+    }),
+    flugPunkt({
+      id: 'flug-rueck',
+      title: 'BKK → ZRH',
+      startsOn: '2026-09-20',
+      endsOn: '2026-09-21',
+      legs: [{ segments: [SIN_RUECK_1, SIN_RUECK_2] }],
+    }),
+  ])
+}
+
+export function bangkokRundreiseTransitLegs(): Trip {
+  return bangkokRundreise([
+    flugPunkt({
+      id: 'flug-roundtrip-transit',
+      title: 'ZRH ↔ BKK mit Transit',
+      startsOn: '2026-09-12',
+      endsOn: '2026-09-21',
+      legs: [
+        { segments: [DOH_HIN_1, DOH_HIN_2] },
+        { segments: [SIN_RUECK_1, SIN_RUECK_2] },
+      ],
+    }),
+  ])
+}
+
 export function goaKeralaReise(): Trip {
   return beispielreise({
     title: 'Goa und Kerala',

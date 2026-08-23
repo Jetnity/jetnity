@@ -5,7 +5,6 @@
 //
 // Frei von Next und Providern.
 
-import { landescodeLesen } from '@/lib/readiness/domain'
 import {
   LEERER_ROUTE_PUNKT,
   leereRouteFacts,
@@ -14,6 +13,7 @@ import {
 } from '@/lib/route/domain'
 import { pfadAusSegmenten, routeFingerprintAus } from '@/lib/route/fingerprint'
 import { airportZeitkontakteAusItineraries } from '@/lib/route/kontakte'
+import { laenderrollenAus } from '@/lib/route/laender'
 import { segmenteAusItinerary } from '@/lib/route/itinerary'
 import { flugRouteItineraryLesen } from '@/lib/route/schema'
 import { verbindungenAusSegmenten } from '@/lib/route/verbindung'
@@ -50,6 +50,7 @@ function routeFactsAusItineraries(itineraries: readonly RouteItineraryMitQuelle[
   const primaerSegmente = segmenteAusItinerary(primaer.itinerary)
   const origin = primaerSegmente[0]?.origin ?? { ...LEERER_ROUTE_PUNKT }
   const destination = primaerSegmente[primaerSegmente.length - 1]?.destination ?? { ...LEERER_ROUTE_PUNKT }
+  const laender = laenderrollenAus(itineraries)
 
   return {
     quelle: 'flight_itinerary',
@@ -60,8 +61,8 @@ function routeFactsAusItineraries(itineraries: readonly RouteItineraryMitQuelle[
       eintrag.itinerary.legs.flatMap((bein) => verbindungenAusSegmenten(bein.segments)),
     ),
     airportContacts: airportZeitkontakteAusItineraries(itineraries),
-    transitCountryCodes: transitlaenderAus(itineraries),
-    destinationCountryCodes: ziellaenderAus(itineraries),
+    transitCountryCodes: laender.transitCountryCodes,
+    destinationCountryCodes: laender.destinationCountryCodes,
     sourceItemIds: itineraries
       .map((eintrag) => eintrag.sourceItemId)
       .filter((id): id is string => Boolean(id)),
@@ -94,34 +95,6 @@ export function routeFactsFuerPunkt(punkt: TripItem): RouteFacts {
       itinerary,
     },
   ])
-}
-
-function transitlaenderAus(itineraries: readonly RouteItineraryMitQuelle[]): string[] {
-  const laender: string[] = []
-  for (const eintrag of itineraries) {
-    const segmente = segmenteAusItinerary(eintrag.itinerary)
-    for (const [index, segment] of segmente.entries()) {
-      if (index === segmente.length - 1) continue
-      merken(laender, segment.destination.countryCode)
-    }
-  }
-  return laender
-}
-
-function ziellaenderAus(itineraries: readonly RouteItineraryMitQuelle[]): string[] {
-  const laender: string[] = []
-  for (const eintrag of itineraries) {
-    const segmente = segmenteAusItinerary(eintrag.itinerary)
-    const start = landescodeLesen(segmente[0]?.origin.countryCode ?? null)
-    const ende = landescodeLesen(segmente[segmente.length - 1]?.destination.countryCode ?? null)
-    if (ende && ende !== start) merken(laender, ende)
-  }
-  return laender
-}
-
-function merken(laender: string[], code: string | null): void {
-  const gelesen = landescodeLesen(code)
-  if (gelesen && !laender.includes(gelesen)) laender.push(gelesen)
 }
 
 function fruehesteZuerst(a: RouteItineraryMitQuelle, b: RouteItineraryMitQuelle): number {
