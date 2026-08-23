@@ -3644,7 +3644,30 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 **Begründung:** Untrusted Segmentarrays aus Browser/Local Storage/Metadata dürfen Seasonal, Safety und Readiness keine erfundenen Origin-/Connection-/Country-Wahrheiten liefern. Same-country Topologie unterscheidet den echten Paris-Flughafenwechsel von unverbundenen Hops, ohne eine neue persistierte Spalte zu brauchen.
 
-**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. `CDG ⇢ LCY` / `AMS` sind konservativ unknown. PR #38 bleibt Draft bis R13 und Product-Owner-Merge-Freigabe.
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. Die same-country-Heuristik ist durch ADR-0148 ersetzt. PR #38 bleibt Draft bis R14 und Product-Owner-Merge-Freigabe.
+
+---
+
+## ADR-0148 – Surface-Kante nur mit explizitem `surfaceFromAirportCode`
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R13 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Country-Gleichheit beweist keine Ground-/Surface-Verbindung.
+- Eine Surface-Kante existiert nur, wenn das Folgesegment ein gültiges `surfaceFromAirportCode` trägt und dieses dem Destination-IATA des Vorgängers entspricht. Beide IATA müssen bekannt und verschieden sein.
+- Das Feld ist optional im bestehenden Itinerary-JSON (`v: 1`). Fehlendes oder ungültiges Feld bleibt fail-closed. Keine neue Tabelle, keine Migration.
+- `itineraryAusFlugOption()` schreibt die Evidence beim Persistieren eines provider-validierten Legs mit Airport-Wechsel. `itineraryKanonisieren()` erhält sie.
+- `CDG ⇢ ORY` bleibt bewiesen, wenn die Evidence gespeichert ist. `LAX→JFK` + `SFO→NRT` ohne Evidence bleibt unknown.
+
+**Kontext:** `docs/PR38_CHATGPT_R13_REVIEW.md` gegen Runtime `1c14e804`; Fixes auf `2ba32449`.
+
+**Alternativen:** Pauschales Fail-closed jeder Surface-Lücke inklusive echter Provider-Airport-Changes; Distanz-/Stadt-Heuristik; neues persistiertes Tabellenfeld.
+
+**Begründung:** Große Länder machen same-country zu einer erfundenen Reisebewegung. Explizite, provider-neutrale Sequence-Evidence trennt den echten Flughafenwechsel von unverbundenen Segmenten, ohne Live-Provider oder Schema-Migration.
+
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. Ältere Itineraries ohne das Feld werden für Surface-Lücken konservativ unknown. PR #38 bleibt Draft bis R14 und Product-Owner-Merge-Freigabe.
 
 ---
 

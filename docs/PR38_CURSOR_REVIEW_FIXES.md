@@ -1,7 +1,7 @@
 # PR #38 – Cursor-Fixes zum unabhängigen Review
 
 Stand: 23. August 2026  
-Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11, R6-Blocker 12, R7-Blocker 13, R8-Blocker 14–15, R9-Blocker 16–19, R10-Blocker 20–23, R11-Blocker 24–26 und R12-Blocker 27 geschlossen; R13-Re-Review offen**
+Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11, R6-Blocker 12, R7-Blocker 13, R8-Blocker 14–15, R9-Blocker 16–19, R10-Blocker 20–23, R11-Blocker 24–26, R12-Blocker 27 und R13-Blocker 28 geschlossen; R14-Re-Review offen**
 
 Review R1/R2: `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md`  
 Review R3: `docs/PR38_CHATGPT_R3_REVIEW.md`  
@@ -23,6 +23,7 @@ Runtime-Head R9-Fixes: `263c2f842d2287da652b27cc9660c28db68c6750`
 Runtime-Head R10-Fixes: `fdcc5c882b4fb8598b3eb0956b9bdeeb0ef94072`  
 Runtime-Head R11-Fixes: `ba5bcd7634eb3a561c54eb1eb63908fe43fcd71b`
 Runtime-Head R12-Fixes: `1c14e80477b7bea083d722238165c97720442c1d`
+Runtime-Head R13-Fixes: `2ba324495bcbe0acf9c106a68d7d004f69279930`
 
 ## 1. Gemischte Unsicherheit
 
@@ -154,10 +155,14 @@ Bei bewiesener Chronologie ist `origin` das erste Segment der ersten kanonischen
 
 ## 27. Bekannte IATA beweisen keine Segmentreihenfolge
 
-`alleIataBekannt` ist kein Reihenfolgebeweis. Ein eindeutiger gemischter Hamiltonian darf eine Surface-Kante nur nutzen, wenn beide IATA bekannt, verschieden und im **gleichen kanonischen `countryCode`** liegen. Dadurch bleibt `ZRH→CDG ⇢ ORY→BKK` bewiesen und rekonstruierbar; `BKK→SIN` + `ZRH→DOH` sowie Cross-Country-Gaps ohne unique Kante bleiben fail-closed.
+`alleIataBekannt` ist kein Reihenfolgebeweis. Die R12-same-country-Surface-Kante ist durch R13-Blocker 28 ersetzt: Surface braucht explizites `surfaceFromAirportCode`. Unverbundene Mengen bleiben fail-closed.
 
 Unbewiesene Intra-Leg-Ordnung leert Origin/Destination, erzeugt keine Connection-/Airport-Change-Truth aus Array-Nachbarschaft, erfindet keine Transit-Rolle und serialisiert den Fingerprint als sortierte Segment-Multimenge (`&`). Anzeige zeigt `Reihenfolge unbekannt` auch bei einem einzelnen unbewiesenen Mehrsegment-Leg. Guest/Account sowie Seasonal/Safety/Readiness lesen dieselbe Truth.
 
-## 28. Nicht geändert
+## 28. Same-country ist keine Surface-Evidence
+
+`oberflaechenKante()` prüft nur noch explizites `surfaceFromAirportCode` am Folgesegment gegen den Destination-IATA des Vorgängers. `LAX→JFK` + `SFO→NRT` und `CDG⇢ORY` ohne dieses Feld bleiben fail-closed. `CDG⇢ORY` mit `surfaceFromAirportCode: 'CDG'` bleibt bewiesen und rekonstruierbar. `itineraryAusFlugOption()` schreibt die Evidence, wenn ein provider-validiertes Leg einen Airport-Wechsel enthält. JSON-optional, keine DB-Migration.
+
+## 29. Nicht geändert
 
 Kein Provider, keine Migration, keine Secrets, PR bleibt Draft.
