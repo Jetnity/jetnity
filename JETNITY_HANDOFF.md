@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 23. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D, Foundation E und Travel Safety & Disruption Foundation abgeschlossen; nächster neuer Block: Travel Timing & Seasonal Intelligence**
+Status: **verbindlicher operativer Übergabepunkt – Foundation D, Foundation E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -288,13 +288,13 @@ Frühere grüne Tests oder frühere Merges geben keinen Bestandsschutz. Evidence
 
 ## 9. Nächste verbindliche Reihenfolge
 
-Der nächste neue Entwicklungsblock hat **noch nicht begonnen**.
+Der nächste neue Entwicklungsblock ist **gestartet**.
 
 1. ✅ Foundation C – Readiness
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. **→ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
+5. **→ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (in Arbeit, Draft PR)**
 6. Provider-Readiness-/Adapter-Lücken schließen
 7. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 8. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
@@ -310,12 +310,15 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-1. aktuellen `main`-/CI-/Vercel-/Production-Stand erneut prüfen
-2. `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md` vollständig lesen
-3. Ist-Architektur-Audit für Seasonal gegen Safety, Route, Traveller Context, Readiness und Workspace erstellen
-4. vollständigen versionierten Cursor-Auftrag für die provider-neutrale Seasonal Foundation erstellen
-5. neuen Feature-Branch + frühen Draft PR starten
-6. kein echter Seasonal-Provider, kein Secret, keine unfreigegebenen Kosten, kein Merge ohne aktuelle Product-Owner-Freigabe
+Aktiver Branch: `feat/travel-timing-seasonal-intelligence` von `origin/main` @ `cd220beb`.
+
+1. Ist-Audit ist gegen den tatsächlichen Code verifiziert (`docs/TRAVEL_TIMING_SEASONAL_FOUNDATION_ARCHITECTURE_AUDIT.md` §14).
+2. Seasonal-Runtime `lib/seasonal/`, API und minimale Workspace-Naht implementieren.
+3. Pflicht-Testmatrix + UI-Audit + Full Gate auf finalem Runtime-Head.
+4. PR bleibt Draft. Kein echter Seasonal-Provider, kein Secret, keine unfreigegebenen Kosten, kein Merge ohne aktuelle Product-Owner-Freigabe.
+5. Nach Cursor-Abschluss: unabhängiger ChatGPT-Review nach `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md`.
+
+Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
 Leitsatz:
 

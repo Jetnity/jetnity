@@ -1,126 +1,87 @@
 # Jetnity – Active Work Status
 
 Stand: 23. August 2026
-Arbeitsstand: **Travel Safety & Disruption abgeschlossen; Travel Timing & Seasonal Foundation vollständig vorbereitet, Implementierung noch nicht begonnen**
+Arbeitsblock: **Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
 
-## 1. Zuletzt abgeschlossener Block
+## 1. Arbeitsblock / Ziel
 
-**Travel Safety & Disruption Intelligence – provider-neutrale Foundation**
+Eigene provider-neutrale Seasonal-Domäne: kanonischer Trip-/Stage-/Route-/Datums-Kontext gegen source-backed saisonale Facts, fail-closed, geo-/zeitpräzise, ohne Safety-Vermischung, ohne echten Provider, ohne Fake-Daten, ohne automatische Reiseänderung, ohne DB-Migration.
 
-- PR #37: gemergt und geschlossen
-- Product-Owner-Merge-Freigabe: 23.08.2026
-- Squash-Merge auf `main`: `2cceee0658cc426d66974779b525c8bf9a623534`
-- finaler PR-Head: `11976ed734b62ec906abd65581f309b1a38362f1`
-- gelockter finaler Runtime-Head: `985cae72ef5abac4012c75c739fa00412189ad48`
-- Closure-Nachweis: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_CLOSURE.md`
-- final vor Merge: 1481/1481 Tests, Build 38/38, UI-Audit 886/886, CI + Vercel grün
-- keine Safety-DB-/Production-Migration
-- kein Live-Safety-Provider
+Verbindlicher Auftrag: `docs/CURSOR_TRAVEL_TIMING_SEASONAL_FOUNDATION_TASK.md`
 
-Safety nicht erneut als Foundation bauen.
+## 2. Branch / PR / aktueller Head
 
----
+- Branch: `feat/travel-timing-seasonal-intelligence`
+- Basis: `origin/main` @ `cd220beb44d90ae376feeb8de9db8a3afb808d60`
+- Draft PR: wird mit diesem Start-Commit geöffnet
+- Head: Feature-Branch, noch vor Runtime-Implementierung
 
-## 2. Nächster Block – vorbereitet, noch nicht gestartet
+## 3. Status
 
-**Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
+**in Arbeit** – Ist-Audit gegen aktuellen Code verifiziert; Implementierung beginnt. PR bleibt Draft. Kein Mark Ready, kein Merge.
 
-Verbindliche Dokumente auf `main`:
+## 4. Bereits umgesetzt
 
-- Policy: `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`
-- Ist-Audit: `docs/TRAVEL_TIMING_SEASONAL_FOUNDATION_ARCHITECTURE_AUDIT.md`
-- Acceptance: `docs/TRAVEL_TIMING_SEASONAL_FOUNDATION_ACCEPTANCE.md`
-- Cursor-Auftrag: `docs/CURSOR_TRAVEL_TIMING_SEASONAL_FOUNDATION_TASK.md`
-- globale Provider-Regel: `docs/PROVIDER_INTEGRATION_READINESS_POLICY.md`
+- `git fetch origin` ausgeführt
+- Feature-Branch von aktuellem `origin/main` erstellt
+- Pflichtdokumente gelesen
+- versionierter Ist-Audit gegen tatsächlichen Code verifiziert (siehe Audit §14)
+- Safety PR #37 als Ancestor bestätigt
+- `lib/seasonal/` existiert noch nicht; kein bestehendes Seasonal-Runtime
 
-Die Implementierung hat **noch nicht begonnen**. Es existiert bewusst noch kein Seasonal-Feature-Branch und kein Seasonal-PR aus diesem Auftrag.
+## 5. Gerade offen / noch nicht umgesetzt
 
-Empfohlener Branch:
+- Domain `lib/seasonal/`
+- Provider-Port `seasonalProviderAus() → null`
+- Recurring-/Absolute-Window-Engine
+- Evidence/Freshness/Reference-Period-Trennung
+- API `POST /api/seasonal/evaluate`
+- minimale Workspace-Naht `ReisezeitHinweise`
+- Pflicht-Testmatrix + UI-Audit-Zustände
+- ADRs, Fachdokument, Acceptance-Nachzug
+- Full Gate auf finalem Runtime-Head
 
-`feat/travel-timing-seasonal-intelligence`
+## 6. Letzte relevanten Änderungen
 
-Draft-PR-Titel:
+Audit-Verifikation dokumentiert: seit Audit-SHA `211f8b2e` nur Docs, kein Runtime-Diff. Architektur-Empfehlung bleibt gültig.
 
-`Travel Timing & Seasonal Intelligence – provider-neutrale Foundation`
+## 7. Tests / CI / Preview
 
----
+Noch nicht gelaufen für diesen Branch. Baseline auf `main`: 1481/1481 Tests, Build 38/38, UI-Audit 886/886. Neue Zahlen erst nach Implementierung und Gate.
 
-## 3. Verbindliche Architekturgrenzen für Seasonal
+## 8. DB / RLS / Production-Grenze
 
-- eigene Truth-Domäne `lib/seasonal/`
-- Seasonal Pattern / Official Seasonal Risk Window / Forecast Outlook getrennt
-- Active Warning/Event bleibt Safety-Domäne
-- Safety darf `seasonal_pattern` weiterhin nicht als Safety-Warnung anzeigen
-- kanonischer Trip-/Stage-/Route-Kontext wiederverwenden
-- Foundation-D-Route Truth nicht duplizieren
-- Date-only und Foundation-D-Ortszeiten nicht als erfundene UTC-Instants lesen
-- feinere Geo-Scopes nicht auf ganzes Land hochstufen
-- Evidence, Freshness, Reference Period und Travel Window getrennt
-- jährliche recurring windows inkl. Jahreswechsel deterministisch
-- keine erfundenen Wetterwahrscheinlichkeiten oder „beste Monate“
-- keine automatische Reiseänderung
-- Guest/Account fachlich identisch
-- standardmäßig compute-on-read, **keine DB-Migration**
-- `seasonalProviderAus()` bleibt `null`
-- kein echter Provider, keine Secrets, keine neuen laufenden Kosten
+- keine Seasonal-Tabelle geplant
+- keine Development-/Production-Migration
+- Production-Schema unverändert
 
----
+## 9. Kosten / Provider / Secrets
 
-## 4. Workspace-Grenze
+- `seasonalProviderAus()` wird `null`
+- kein Live-Provider, kein Secret, keine neuen laufenden Kosten
 
-Dieser Block baut nur die minimale provider-neutrale Seasonal-Naht:
+## 10. Bekannte Risiken / Review-Funde
 
-- optionale Seasonal Evaluations
-- ruhige, semantisch von Safety getrennte Darstellung
-- keine permanente leere Karte
-- kein vorgezogener großer `Jetzt wichtig`-/Workspace-Umbau
-- keine improvisierte Persistenz für `Trotzdem so planen`
+- Recurring Windows über Jahreswechsel und Leap-Day müssen explizit getestet werden
+- Freshness darf Safety-7-Tage-Default nicht kopieren
+- Active Warning darf nicht als Seasonal erscheinen; `seasonal_pattern` bleibt in Safety verworfen
+- `ARCHITECTURE.md` auf `main` ist für Safety-PR-Status veraltet; wird in diesem Branch korrigiert
 
-Der große Function-by-Function-Workspace-Umbau bleibt später ein eigener Block.
+## 11. Offene Nutzerentscheidungen / Freigaben
 
----
+- keine Merge-Freigabe
+- keine Provider-/Kosten-/Secret-Freigabe
+- keine Migrationsfreigabe nötig, solange compute-on-read bleibt
 
-## 5. Neue verbindliche Product-Owner-Entscheidung – Citizenship
+## 12. Exakter nächster Schritt
 
-Citizenship ist beim einfachen Reise-Start **nicht global verpflichtend**, wird aber zur **harten Pflichtvoraussetzung für jede Funktion, deren Official-/Regulatory-Ergebnis von Citizenship abhängt**.
+Seasonal-Runtime implementieren: Domain, Fenster, Engine, API, Tests, minimale Workspace-Naht. Danach Full Gate, Docs-Lock, unabhängiger ChatGPT-Review.
 
-- keine stille Default-Staatsbürgerschaft
-- Residence / Standort / Abflugland ≠ Citizenship
-- mehrere Staatsbürgerschaften pro Traveller bleiben unterstützt
-- fehlen notwendige Citizenship-/Traveller-Fakten: `insufficient_context` / `unknown`
+## 13. Welche Dateien zuerst gelesen werden müssen
 
-Policy: `docs/TRAVELLER_CITIZENSHIP_REQUIREMENT_POLICY.md`
-
-Seasonal bleibt im aktuellen Foundation-Vertrag traveller-neutral und soll Citizenship nicht unnötig anfordern.
-
----
-
-## 6. Exakter nächster Schritt
-
-Einen **neuen Cursor-Agenten** starten, weil Safety vollständig abgeschlossen ist.
-
-Der Agent soll:
-
-1. mit `git fetch origin` beginnen
-2. `docs/CURSOR_TRAVEL_TIMING_SEASONAL_FOUNDATION_TASK.md` vollständig lesen
-3. alle dort genannten Pflichtdokumente lesen
-4. neuen Feature-Branch von aktuellem `origin/main` erstellen
-5. früh einen Draft PR öffnen
-6. Architektur-Audit gegen tatsächlichen aktuellen Code verifizieren
-7. Auftrag professionell und vollständig implementieren
-8. währenddessen Handoff/Active/Acceptance/ADRs aktuell halten
-9. keinen echten Provider, kein Mark Ready, kein Merge, keine Migration ausführen
-
-Nach vollständiger Cursor-Umsetzung folgt ein unabhängiger ChatGPT-Review nach `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md`.
-
----
-
-## 7. Danach laut Roadmap
-
-1. Travel Timing & Seasonal – provider-neutrale Foundation
-2. Provider-Readiness-/Adapter-Lücken über relevante Domänen schließen
-3. großer Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Audit
-4. finaler Workspace Intelligence Audit
-5. echte Providerphase
-6. provider-backed End-to-End-/Truth-Audit
-7. finale Startseiten-Positionierung
+1. `docs/CURSOR_TRAVEL_TIMING_SEASONAL_FOUNDATION_TASK.md`
+2. `docs/TRAVEL_TIMING_SEASONAL_FOUNDATION_ARCHITECTURE_AUDIT.md`
+3. `docs/TRAVEL_TIMING_SEASONAL_FOUNDATION_ACCEPTANCE.md`
+4. `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`
+5. `docs/TRAVEL_SAFETY_DISRUPTION.md`
+6. `lib/safety/` als Schwesterarchitektur, nicht als zu kopierende Wahrheit

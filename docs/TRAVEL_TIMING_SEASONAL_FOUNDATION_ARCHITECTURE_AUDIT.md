@@ -1,8 +1,9 @@
 # Travel Timing & Seasonal Intelligence – Foundation Architecture Audit
 
 Stand: 23. August 2026  
-Status: **Ist-Audit gegen `main` vor Implementierung der Seasonal Foundation**  
-Geprüfte Basis: `main` @ `211f8b2e176127ec7cb7be370bd52c5b6c94b42c`
+Status: **Ist-Audit gegen aktuellen `origin/main` verifiziert; Implementierung auf Feature-Branch gestartet**  
+Ursprüngliche Audit-Basis: `main` @ `211f8b2e176127ec7cb7be370bd52c5b6c94b42c`  
+Verifizierte Arbeitsbasis: `origin/main` @ `cd220beb44d90ae376feeb8de9db8a3afb808d60`
 
 Verbindlich:
 
@@ -312,3 +313,29 @@ Aber Jetnity soll vollständig provider-ready sein für:
 > **Trip/Stage/Route + konkrete Reisedaten + source-backed Seasonal Fact → deterministische, evidence-backed, geo-/zeitpräzise, fail-closed Seasonal Evaluation → ruhige Workspace-Darstellung + nachvollziehbare mögliche Auswirkungen.**
 
 Damit kann später ein seriöser Climate-/Seasonal-/Forecast-Provider angeschlossen werden, ohne Domain, Workspace oder Truth-Grenzen neu zu bauen.
+
+---
+
+## 14. Cursor-Verifikation gegen aktuellen Code (23. August 2026)
+
+Vor Runtime-Code wurde das versionierte Audit gegen den tatsächlichen Stand von `origin/main` @ `cd220beb` geprüft.
+
+| Prüfung | Ergebnis |
+| --- | --- |
+| `git fetch origin` | ausgeführt |
+| Branch-Basis | `feat/travel-timing-seasonal-intelligence` von `origin/main` @ `cd220beb` |
+| Safety PR #37 auf `main` | ja; Squash-Merge `2cceee0658cc426d66974779b525c8bf9a623534` ist Ancestor |
+| Commits `211f8b2e..cd220beb` | nur Dokumente: Acceptance, Cursor-Task, Active-Work-/Handoff-Vorbereitung |
+| Runtime-Diff seit Audit-SHA | **leer** – keine Änderung an `lib/`, `app/`, `components/`, `types/` oder Tests |
+| `lib/seasonal/` | existiert nicht |
+| `lib/safety/` | vollständig vorhanden, `safetyProviderAus()` bleibt `null` |
+| `app/api/safety/evaluate/route.ts` | geschlossen, `private, no-store`, Rate-Limit, Body-Cap |
+| `seasonal_pattern`-Guard | `engine.ts` filtert `nature === 'seasonal_pattern'` vor Evaluation; Tests 31 / Re-Review / Final belegen Ablehnung |
+| Route Truth | `routeFactsAusGraph` in `lib/route/ableitung.ts`; Safety konsumiert sie, dupliziert sie nicht |
+| Workspace | optionale `safetyEvaluations` in `TripWorkspace`; Guest/Account übergeben sie nicht; `ReiseSicherheit` bleibt ohne Prop unsichtbar |
+| UI-Audit | Safety-Zustände `safety-kein-provider`, `safety-unavailable`, `safety-kritisch-eine-etappe` vorhanden |
+| DB | keine Safety-Tabelle; keine Seasonal-Migration nötig oder vorhanden |
+
+**Abweichung Audit ↔ Code:** keine fachliche Runtime-Abweichung. `ARCHITECTURE.md` auf `main` nennt Safety noch als Draft-PR #37; Handoff/Roadmap/Active Work sind bereits auf den gemergten Stand nachgezogen. Dieser Docs-Widerspruch wird im Seasonal-Branch korrigiert, nicht als fehlende Safety-Implementierung missverstanden.
+
+**Konsequenz:** Das Audit bleibt gültig. Seasonal wird als eigene Domäne `lib/seasonal/` gebaut, ohne Safety-Evaluation umzudeuten und ohne Safety-Refactor.

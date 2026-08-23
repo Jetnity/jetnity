@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 23. August 2026  
-Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; nächste Priorität: Travel Timing & Seasonal Intelligence**
+Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -162,7 +162,7 @@ Verbindliche Truth-Logik:
 
 ## 6. NÄCHSTE PRIORITÄT – Travel Timing & Seasonal Intelligence
 
-Status: **verbindliche Produktentscheidung / noch nicht begonnen**
+Status: **in Arbeit auf `feat/travel-timing-seasonal-intelligence`; Draft PR; kein Live-Provider**
 
 Policy:
 
@@ -193,7 +193,7 @@ Verbindlich:
 
 ### Nächster Implementierungsablauf
 
-1. Ist-Audit gegen Safety, Route, Traveller Context, Readiness und Workspace
+1. ✅ Ist-Audit gegen Safety, Route, Traveller Context, Readiness und Workspace – gegen aktuellen Code verifiziert
 2. provider-neutrales Domain-/Evidence-/Seasonality-Modell
 3. klare Trennung zu akutem Safety
 4. Cross-Domain-Impact und Reevaluation
