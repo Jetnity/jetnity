@@ -5,33 +5,31 @@ Arbeitsblock: **Travel Safety & Disruption Intelligence – provider-neutrale Fo
 
 ## 1. Arbeitsblock / Ziel
 
-Provider-neutrale Safety-/Disruption-Foundation. Der Timezone-Closure-Blocker aus `docs/PR37_CHATGPT_TIMEZONE_CLOSURE_REVIEW.md` ist behoben (ADR-0132 korrigiert). Der nächste unabhängige Check soll auf Closure/Pass zielen.
+Provider-neutrale Safety-/Disruption-Foundation. Der Date-only↔Instant-Blocker aus `docs/PR37_CHATGPT_TIMEZONE_REREVIEW.md` ist behoben. Der nächste unabhängige Check soll auf Closure/Pass zielen.
 
 Auftrag: `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`  
-Timezone Closure: `docs/PR37_CHATGPT_TIMEZONE_CLOSURE_REVIEW.md`
+Timezone Re-Review: `docs/PR37_CHATGPT_TIMEZONE_REREVIEW.md`
 
 ## 2. Branch / PR / aktueller Head
 
 - Basis: `origin/main` = `91e644b279c802c5a5d7a88135ed8ab9c4229a34`
 - Branch: `feat/travel-safety-disruption-intelligence`
 - Draft PR: https://github.com/Jetnity/jetnity/pull/37
-- Verifizierter Runtime-Head: `09fedc4f`
+- Verifizierter Runtime-Head: `985cae72`
 - Dieser Docs-Nachzug ändert keine Runtime.
-- Ahead/behind auf Runtime `09fedc4f`: **25 ahead / 0 behind**
+- Ahead/behind auf Runtime `985cae72`: **28 ahead / 0 behind**
 - Draft. Kein Mark Ready, kein Merge.
 
 ## 3. Status
 
-**Timezone-Closure-Blocker behoben und lokal plus remote auf dem Runtime-Head verifiziert; Draft-PR #37**
+**Timezone-Re-Review-Blocker behoben und lokal plus remote auf dem Runtime-Head verifiziert; Draft-PR #37**
 
 ## 4. Bereits umgesetzt
 
 - Foundation inkl. ADR-0127/0128
-- Review-Fixes ADR-0129
-- Re-Review-Fixes ADR-0130
-- Final-Closure-Fixes ADR-0131
-- Stop-Criterion-Fixes ADR-0132
-- Timezone-Closure: Foundation-D-Ortszeiten bleiben zonenlos; UTC-Eventinstanten ohne Zone ergeben keine Minuten-Wahrheit
+- Review-Fixes ADR-0129–0131
+- Stop-Criterion- und Timezone-Closure-Fixes ADR-0132
+- Date-only↔Instant: zonenlose Kalendertage nutzen dieselbe Offset-Hülle wie zonenlose Uhren
 
 ## 5. Gerade offen
 
@@ -43,22 +41,22 @@ Timezone Closure: `docs/PR37_CHATGPT_TIMEZONE_CLOSURE_REVIEW.md`
 
 ## 6. Letzte relevanten Änderungen
 
-- Timezone Closure Review: `10340ef5`
-- Timezone-Closure-Fix: `09fedc4f`
+- Timezone Re-Review: `15278217`
+- Date-only↔Instant-Fix: `985cae72`
 
 ## 7. Tests / CI / Preview
 
-Lokal auf Runtime `09fedc4f`:
+Lokal auf Runtime `985cae72`:
 
-- `npm test`: **1478/1478**
+- `npm test`: **1481/1481**
 - Typecheck, Lint, Hygiene grün
 - Production-Build: **38/38**, inkl. `/api/safety/evaluate`
 - UI-Audit: **886/886**, 0 Fehler, WebKit + Chromium, 8 Viewports
 
-Auf Runtime `09fedc4f`:
+Auf Runtime `985cae72`:
 
-- GitHub Actions `32633024648`: **SUCCESS**
-- Vercel Preview `6046827157`: **READY/SUCCESS**
+- GitHub Actions `32634082891`: **SUCCESS**
+- Vercel Preview `6047003785`: **READY/SUCCESS**
 - Preview: https://jetnity-app-git-feat-travel-safety-disr-914f66-jetnity-e1b93c82.vercel.app
 
 Dieser Dokumentations-Nachzug ändert keine Runtime.
@@ -87,10 +85,10 @@ Dieser Dokumentations-Nachzug ändert keine Runtime.
 
 ## 12. Exakter nächster Schritt
 
-Draft bleibt Draft. Nächster ChatGPT-Check zielt auf Closure/Pass. Kein weiterer Foundation-Pass ohne konkreten Truth-/Security-/SoT-/Rollout-Defekt. Product-Owner entscheidet über Merge.
+Draft bleibt Draft. Nächster ChatGPT-Check zielt auf Closure/Pass. Wenn kein neuer konkreter Truth-/Security-/SoT-/Rollout-Defekt erscheint, ist PR #37 technisch Closure/PASS und kann dem Product Owner zur ausdrücklichen Merge-Freigabe empfohlen werden.
 
 ## 13. Zuerst zu lesen
 
-1. `docs/PR37_CHATGPT_TIMEZONE_CLOSURE_REVIEW.md`
+1. `docs/PR37_CHATGPT_TIMEZONE_REREVIEW.md`
 2. `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ACCEPTANCE.md`
-3. `lib/safety/relevanz.ts`, `lib/safety/scope.ts`, `lib/flights/zeit.ts`
+3. `lib/safety/scope.ts`, `lib/safety/relevanz.ts`

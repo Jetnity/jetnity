@@ -3308,7 +3308,7 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 **Entscheidung:**
 
 - Eine teilweise malformed Providerantwort darf den Gesamtcheck nicht `checked_clean` machen. Gültige Warnungen bleiben sichtbar; `summary.complete=false` und API-Status `unknown` halten die Unvollständigkeit fest. Vollständig gültige `[]` und gültige nur-not-affected Antworten bleiben checked-clean.
-- Date-only-Werte sind ein Kalendertag (`00:00:00.000Z`–`23:59:59.999Z`), kein Mitternachts-Instant. Foundation-D `departureTime`/`arrivalTime` bleiben zonenlose Ortszeiten; Safety hängt kein `Z` und keinen Offset an. Ein UTC-Eventinstant gegen eine lokale Routeuhr ohne Zone ergibt keine Minuten-`affected`/`not_affected`-Wahrheit, sondern `insufficient_context`, sofern der Kalendertag nicht klar außerhalb jeder möglichen Offset-Spanne liegt.
+- Date-only-Werte und Foundation-D-`HH:mm` bleiben zonenlos. Safety hängt kein `Z` und keinen Offset an. `date ↔ date` bleibt kalenderbasiert. `date ↔ instant` und `clock ↔ instant` nutzen dieselbe weltweite Offset-Hülle (UTC+14 bis UTC−12). Innerhalb der Hülle entsteht `insufficient_context`, keine Minuten-`affected`/`not_affected`-Wahrheit. UTC-Minutenwahrheit entsteht erst mit belastbarer Zone oder Offset.
 - Routekontakte sind eine Menge echter Fenster: aufeinanderfolgende Ankunft+Abflug desselben Airports bilden ein Layover, sonst Punktkontakte. Kein Min/Max über wiederholte Airport-Codes.
 - Country-Scope behält Stage-Refs **und** alle Route-Airports im Land. Feinere City/Place-Matches behalten unresolved Routekontakt, wenn ein späterer Landkontakt ohne feinere Membership zeitlich überlappt.
 
