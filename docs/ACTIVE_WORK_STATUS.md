@@ -1,99 +1,126 @@
 # Jetnity – Active Work Status
 
 Stand: 23. August 2026
-Arbeitsstand: **Travel Safety & Disruption Foundation abgeschlossen; nächster neuer Block noch nicht begonnen**
+Arbeitsstand: **Travel Safety & Disruption abgeschlossen; Travel Timing & Seasonal Foundation vollständig vorbereitet, Implementierung noch nicht begonnen**
 
 ## 1. Zuletzt abgeschlossener Block
 
 **Travel Safety & Disruption Intelligence – provider-neutrale Foundation**
 
-- PR #37: gemergt
+- PR #37: gemergt und geschlossen
 - Product-Owner-Merge-Freigabe: 23.08.2026
 - Squash-Merge auf `main`: `2cceee0658cc426d66974779b525c8bf9a623534`
 - finaler PR-Head: `11976ed734b62ec906abd65581f309b1a38362f1`
 - gelockter finaler Runtime-Head: `985cae72ef5abac4012c75c739fa00412189ad48`
 - Closure-Nachweis: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_CLOSURE.md`
-- Fachdokument: `docs/TRAVEL_SAFETY_DISRUPTION.md`
-- Acceptance: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ACCEPTANCE.md`
+- final vor Merge: 1481/1481 Tests, Build 38/38, UI-Audit 886/886, CI + Vercel grün
+- keine Safety-DB-/Production-Migration
+- kein Live-Safety-Provider
 
-## 2. Technischer Abschlussnachweis
+Safety nicht erneut als Foundation bauen.
 
-Finaler Runtime-Stand vor Merge:
+---
 
-- `npm test`: **1481/1481**
-- Typecheck, Lint, Hygiene: grün
-- Production-Build: **38/38**, inkl. `/api/safety/evaluate`
-- Trip-Workspace-UI-Audit: **886/886**, 0 Fehler
-- WebKit + Chromium, 8 Viewports
-- GitHub Actions: **SUCCESS**
-- Vercel Preview: **READY/SUCCESS**
-- Branch vor Merge: **0 behind** zu `main`
+## 2. Nächster Block – vorbereitet, noch nicht gestartet
 
-Nach Merge:
+**Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
 
-- Vercel auf Merge-Commit `2cceee06…`: **SUCCESS**
-- keine Safety-Datenbankmigration
-- keine Production-Migration erforderlich
-- Production-Schema unverändert
+Verbindliche Dokumente auf `main`:
 
-## 3. Safety-Produktgrenzen
+- Policy: `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`
+- Ist-Audit: `docs/TRAVEL_TIMING_SEASONAL_FOUNDATION_ARCHITECTURE_AUDIT.md`
+- Acceptance: `docs/TRAVEL_TIMING_SEASONAL_FOUNDATION_ACCEPTANCE.md`
+- Cursor-Auftrag: `docs/CURSOR_TRAVEL_TIMING_SEASONAL_FOUNDATION_TASK.md`
+- globale Provider-Regel: `docs/PROVIDER_INTEGRATION_READINESS_POLICY.md`
 
-- `safetyProviderAus()` bleibt `null`
-- kein Live-Safety-/Disruption-Provider
-- keine neuen Secrets oder laufenden Providerkosten
-- kein Browser-/LLM-Pfad darf Official Safety Evidence erzeugen
+Die Implementierung hat **noch nicht begonnen**. Es existiert bewusst noch kein Seasonal-Feature-Branch und kein Seasonal-PR aus diesem Auftrag.
+
+Empfohlener Branch:
+
+`feat/travel-timing-seasonal-intelligence`
+
+Draft-PR-Titel:
+
+`Travel Timing & Seasonal Intelligence – provider-neutrale Foundation`
+
+---
+
+## 3. Verbindliche Architekturgrenzen für Seasonal
+
+- eigene Truth-Domäne `lib/seasonal/`
+- Seasonal Pattern / Official Seasonal Risk Window / Forecast Outlook getrennt
+- Active Warning/Event bleibt Safety-Domäne
+- Safety darf `seasonal_pattern` weiterhin nicht als Safety-Warnung anzeigen
+- kanonischer Trip-/Stage-/Route-Kontext wiederverwenden
+- Foundation-D-Route Truth nicht duplizieren
+- Date-only und Foundation-D-Ortszeiten nicht als erfundene UTC-Instants lesen
+- feinere Geo-Scopes nicht auf ganzes Land hochstufen
+- Evidence, Freshness, Reference Period und Travel Window getrennt
+- jährliche recurring windows inkl. Jahreswechsel deterministisch
+- keine erfundenen Wetterwahrscheinlichkeiten oder „beste Monate“
 - keine automatische Reiseänderung
-- `seasonal_pattern` bleibt getrennt von akuter Safety
+- Guest/Account fachlich identisch
+- standardmäßig compute-on-read, **keine DB-Migration**
+- `seasonalProviderAus()` bleibt `null`
+- kein echter Provider, keine Secrets, keine neuen laufenden Kosten
 
-Bekannte Nicht-Blocker / spätere Gates:
+---
 
-- persistentes globales Rate-Limit vor echtem kostenpflichtigem Production-Provider
-- Account-`tripId`-Serverload als spätere Integrationsnaht
-- title-only Geo bleibt `unknown`
-- minutengenaue lokale Route-Truth braucht später belastbare IANA-Zone oder UTC-Offset in Foundation D
+## 4. Workspace-Grenze
 
-## 4. Neue verbindliche Product-Owner-Entscheidung
+Dieser Block baut nur die minimale provider-neutrale Seasonal-Naht:
+
+- optionale Seasonal Evaluations
+- ruhige, semantisch von Safety getrennte Darstellung
+- keine permanente leere Karte
+- kein vorgezogener großer `Jetzt wichtig`-/Workspace-Umbau
+- keine improvisierte Persistenz für `Trotzdem so planen`
+
+Der große Function-by-Function-Workspace-Umbau bleibt später ein eigener Block.
+
+---
+
+## 5. Neue verbindliche Product-Owner-Entscheidung – Citizenship
 
 Citizenship ist beim einfachen Reise-Start **nicht global verpflichtend**, wird aber zur **harten Pflichtvoraussetzung für jede Funktion, deren Official-/Regulatory-Ergebnis von Citizenship abhängt**.
 
 - keine stille Default-Staatsbürgerschaft
 - Residence / Standort / Abflugland ≠ Citizenship
 - mehrere Staatsbürgerschaften pro Traveller bleiben unterstützt
-- fehlen notwendige Citizenship-/Traveller-Fakten: `insufficient_context` / `unknown`, keine erfundene regulatorische Wahrheit
+- fehlen notwendige Citizenship-/Traveller-Fakten: `insufficient_context` / `unknown`
 
 Policy: `docs/TRAVELLER_CITIZENSHIP_REQUIREMENT_POLICY.md`
 
-## 5. Aktuell offen
+Seasonal bleibt im aktuellen Foundation-Vertrag traveller-neutral und soll Citizenship nicht unnötig anfordern.
 
-Der nächste neue Entwicklungsblock hat **noch nicht begonnen**.
-
-Nächste Priorität gemäß `ROADMAP.md`:
-
-**Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
-
-Danach:
-
-1. Provider-Readiness-/Adapter-Lücken über relevante Domänen schließen
-2. großer Trip-Workspace-/Übersicht-Umbau inklusive vollständigem Function-by-Function-Audit aller bestehenden und neuen Funktionen
-3. finaler Workspace Intelligence Audit
-4. echte Providerphase
-5. provider-backed End-to-End-/Truth-Audit
-6. finale Startseiten-Positionierung
+---
 
 ## 6. Exakter nächster Schritt
 
-Vor neuer Implementierung:
+Einen **neuen Cursor-Agenten** starten, weil Safety vollständig abgeschlossen ist.
 
-1. aktuellen `main`-/CI-/Vercel-/Production-Stand erneut prüfen
-2. `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md` vollständig lesen
-3. Architektur-/Ist-Audit für Seasonal gegen Safety, Route, Traveller Context, Readiness und Workspace erstellen
-4. versionierten Cursor-Auftrag für die provider-neutrale Seasonal Foundation erstellen
-5. neuer Feature-Branch + Draft PR; kein echter Provider, kein Merge ohne Product-Owner-Freigabe
+Der Agent soll:
 
-## 7. Zuerst zu lesen
+1. mit `git fetch origin` beginnen
+2. `docs/CURSOR_TRAVEL_TIMING_SEASONAL_FOUNDATION_TASK.md` vollständig lesen
+3. alle dort genannten Pflichtdokumente lesen
+4. neuen Feature-Branch von aktuellem `origin/main` erstellen
+5. früh einen Draft PR öffnen
+6. Architektur-Audit gegen tatsächlichen aktuellen Code verifizieren
+7. Auftrag professionell und vollständig implementieren
+8. währenddessen Handoff/Active/Acceptance/ADRs aktuell halten
+9. keinen echten Provider, kein Mark Ready, kein Merge, keine Migration ausführen
 
-1. `JETNITY_HANDOFF.md`
-2. `ROADMAP.md`
-3. `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_CLOSURE.md`
-4. `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`
-5. `docs/TRAVELLER_CITIZENSHIP_REQUIREMENT_POLICY.md`
+Nach vollständiger Cursor-Umsetzung folgt ein unabhängiger ChatGPT-Review nach `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md`.
+
+---
+
+## 7. Danach laut Roadmap
+
+1. Travel Timing & Seasonal – provider-neutrale Foundation
+2. Provider-Readiness-/Adapter-Lücken über relevante Domänen schließen
+3. großer Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Audit
+4. finaler Workspace Intelligence Audit
+5. echte Providerphase
+6. provider-backed End-to-End-/Truth-Audit
+7. finale Startseiten-Positionierung
