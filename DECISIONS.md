@@ -3444,6 +3444,28 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0139 – Konkrete Seasonal-Refs schlagen grobe Hüllen; Day→Stage gilt für Item-Impact
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R4 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Wenn räumliche Relevanz konkrete Stage-/Airport-/Route-Refs geliefert hat, bestimmen deren eigenen Zeitkontakte die zeitliche Relevanz.
+- Ein grobes Top-Level-`before`/`after` darf diese konkreten Refs nicht vorzeitig zu `not_applies` löschen.
+- Fehlen belastbare konkrete Kontakte bei feststehender räumlicher Betroffenheit, bleibt `insufficient_context`.
+- Für Item-Impact gilt zuerst eine gültige direkte `item.stageId`. Fehlt sie, gilt die belegte Beziehung `item.dayId → day.stageId`. Widersprüchliche Doppelbeziehungen werden nicht still entschieden.
+
+**Kontext:** `docs/PR38_CHATGPT_R4_REVIEW.md` gegen Runtime `f077d4d1`.
+
+**Alternativen:** globale Canonical-Invariante „alle Stage-Zeiten liegen im Tripfenster“; Item-Impact nur bei direkter `stageId`.
+
+**Begründung:** Feinere kanonische Trip-Facts dürfen nicht durch eine gröbere widersprüchliche Hülle falsifiziert werden. Eine vorhandene Day→Stage-Beziehung ist keine Heuristik.
+
+**Konsequenzen:** Kein Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R5 und Product-Owner-Merge-Freigabe.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 23. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D, Foundation E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence – Draft PR #38, R3-Fixes geschlossen, R4-Re-Review offen**
+Status: **verbindlicher operativer Übergabepunkt – Foundation D, Foundation E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence – Draft PR #38, R4-Fixes geschlossen, R5-Re-Review offen**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -294,7 +294,7 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. **→ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (Draft PR #38, R3-Fixes + Exact-Head-Gate grün, R4-Re-Review offen)**
+5. **→ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (Draft PR #38, R4-Fixes + Exact-Head-Gate grün, R5-Re-Review offen)**
 6. Provider-Readiness-/Adapter-Lücken schließen
 7. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 8. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
@@ -313,13 +313,13 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 Aktiver Branch: `feat/travel-timing-seasonal-intelligence`  
 Draft PR: `#38`  
 Basis: `origin/main` @ `cd220beb`  
-Runtime-Head: `4f9eb1e8`
+Runtime-Head: `f077d4d1`
 
 1. Ist-Audit ist gegen den tatsächlichen Code verifiziert.
-2. Seasonal-Runtime sowie Review-Blocker 1–6 und die R3-Blocker 5-Residual/7 sind geschlossen.
-3. Full Gate auf Runtime `4f9eb1e8` ist lokal und remote grün (1557/1557 Tests, UI-Audit 1014/1014, Build Exit 0). Docs-Lock `426f7220` hat eigene GitHub-Actions-SUCCESS- und Vercel-READY-Evidenz ohne Runtime-Änderung.
+2. Seasonal-Runtime sowie Review-Blocker 1–9 sind geschlossen, inklusive R4 Top-Level-Hülle und Day→Stage-Impact.
+3. Full Gate auf Runtime `f077d4d1` ist lokal und remote grün (1559/1559 Tests, UI-Audit 1014/1014, Build Exit 0, GitHub Actions SUCCESS, Vercel Preview READY).
 4. PR bleibt Draft. Kein echter Seasonal-Provider, kein Secret, keine unfreigegebenen Kosten, kein Merge ohne aktuelle Product-Owner-Freigabe.
-5. **Exakter nächster Schritt:** unabhängiger ChatGPT-Re-Review R4 nach Stop-Kriterium.
+5. **Exakter nächster Schritt:** unabhängiger ChatGPT-Re-Review R5 nach Stop-Kriterium.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

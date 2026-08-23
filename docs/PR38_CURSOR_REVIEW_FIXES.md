@@ -1,13 +1,15 @@
 # PR #38 – Cursor-Fixes zum unabhängigen Review
 
 Stand: 23. August 2026  
-Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6 und R3-Blocker 5-Residual/7 geschlossen; R4-Re-Review offen**
+Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7 und R4-Blocker 8–9 geschlossen; R5-Re-Review offen**
 
 Review R1/R2: `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md`  
 Review R3: `docs/PR38_CHATGPT_R3_REVIEW.md`  
+Review R4: `docs/PR38_CHATGPT_R4_REVIEW.md`  
 Runtime-Head R1-Fixes: `89290effba61602a71418ab3904b4dc42e76709d`  
 Runtime-Head R2-Fixes: `aa6cafa2f4997c22081dff35fe950a18190e7886`  
-Runtime-Head R3-Fixes: `4f9eb1e8c524494fa8ab300bdfe24ec372e9e109`
+Runtime-Head R3-Fixes: `4f9eb1e8c524494fa8ab300bdfe24ec372e9e109`  
+Runtime-Head R4-Fixes: `f077d4d1e45366dd7dfa50bf2f98461d71b8279c`
 
 ## 1. Gemischte Unsicherheit
 
@@ -50,6 +52,14 @@ Acute-only ist fail-closed `unknown` / `complete=false` / API-`unknown`, kein sa
 
 `zeitraeumeUeberschneiden()` / `kontaktImTravelWindow()` stufen ein unerwartet umgekehrtes Intervall zu `insufficient` herab, niemals zu `before`/`after`. `zeitAufRefsAnwenden()` macht daraus kein falsches `not_applies`; eine tatsächlich überlappende Stage bleibt entscheidbar.
 
-## 9. Nicht geändert
+## 9. Konkrete Stage-/Route-Zeit schlägt grobe Top-Level-Hülle
+
+`zeitAufRefsAnwenden()` bricht bei Top-Level `before`/`after` nicht mehr ab, wenn bereits konkrete `affectedRefs` feststehen. Deren eigenen Kontakte entscheiden. Fehlen belastbare Ref-Kontakte bei feststehender räumlicher Betroffenheit, bleibt `insufficient_context`. Nur ohne konkrete Refs bleibt die grobe Hülle der Fallback.
+
+## 10. Day→Stage-Item-Impact
+
+`effektiveItemStageId()` verwendet zuerst eine gültige direkte `item.stageId`. Fehlt sie, gilt `item.dayId → day.stageId`. Widersprüchliche Doppelbeziehungen werden nicht still entschieden.
+
+## 11. Nicht geändert
 
 Kein Provider, keine Migration, keine Secrets, PR bleibt Draft.
