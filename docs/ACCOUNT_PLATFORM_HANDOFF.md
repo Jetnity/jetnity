@@ -17,8 +17,9 @@ Ein neuer Agent muss hier weiterarbeiten können, ohne diese Cursor-Session.
 | Branch | `audit/account-platform` |
 | Basis | `origin/main` @ `cd220beb` plus Prep-Commits bis `e6b3e62c` |
 | Audit-Artefakte-Commit | `028309bb` |
-| PR | Draft, siehe GitHub-PR dieses Branchs |
-| Runtime-/Docs-Head | nach Status-Commit/Push; immer `git rev-parse HEAD` und Remote prüfen |
+| PR | Draft https://github.com/Jetnity/jetnity/pull/39 |
+| Status-Commit | `bd734cc1` |
+| Runtime-/Docs-Head | nach Push dieses Branchs; `git fetch` + `git rev-parse HEAD` |
 | Status | Audit fertig / Review |
 
 ## Scope

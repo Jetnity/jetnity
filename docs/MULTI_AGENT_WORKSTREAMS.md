@@ -14,7 +14,7 @@ GitHub ist dauerhaftes Teamgedächtnis. Jeder Cursor-Agent wird ausschließlich 
 | Cursor-Anzeigename | Workstream | Phase | Basis | Erlaubt | Gesperrt | Nächster Schritt |
 | --- | --- | --- | --- | --- | --- | --- |
 | Reisezeitpunkt saisonale intelligenz | Travel Timing & Seasonal / PR #38 | Runtime / Review (dieser Account-Agent reviewed den Seasonal-Code nicht) | `feat/travel-timing-seasonal-intelligence` | nur der Seasonal-Agent: R11-Blocker, Tests/Gates/Handoff | Account/Admin dürfen PR #38 nicht ändern; Mark Ready/Merge ohne Product Owner | Seasonal-Agent: eigener Handoff; Account wartet auf Closure |
-| **Account plattform audit vorbereitung** | Account Platform | Audit fertig / Review | `audit/account-platform` | Audit-Doku, Evidence, Plan, Handoff | Auth/RLS/DB/Truth-Implementierung, Migration, Production, PR #38, Ready/Merge | unabhängiger Lead-Review; Implementierung erst nach Freigabe |
+| **Account plattform audit vorbereitung** | Account Platform | Audit fertig / Review | `audit/account-platform` · Draft PR #39 | Audit-Doku, Evidence, Plan, Handoff | Auth/RLS/DB/Truth-Implementierung, Migration, Production, PR #38, Ready/Merge | unabhängiger Lead-Review von PR #39; Implementierung erst nach Freigabe |
 | wird nach Start eingetragen | Admin Platform | Audit / Vorbereitung | eigener Branch von `main` bzw. freigegebener Prep-Basis | Admin-/Security-/Finance-/Ops-Audit, Architektur, Permission-Matrix, Plan, Doku | Rollen/RLS/Service-Role/Payment/Bexio/Ads/Provider Live-Änderungen | `docs/CURSOR_ADMIN_PLATFORM_AUDIT_TASK.md` ausführen |
 
 ## 3. Ownership-Grenzen während der Auditphase

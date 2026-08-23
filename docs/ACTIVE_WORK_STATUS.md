@@ -24,7 +24,7 @@ Produktregel: Benutzerkonto = dauerhaftes Zuhause; Trip Workspace = eine Reise. 
 - Tracking: `origin/audit/account-platform`
 - Prep-Head vor diesem Audit: `e6b3e62c`
 - Aktueller Docs-Head: nach dem letzten Commit dieses Workstreams (`git rev-parse HEAD`)
-- Draft-PR: der PR dieses Branchs gegen `main`
+- Draft-PR: https://github.com/Jetnity/jetnity/pull/39
 - Basis `origin/main`: `cd220beb`
 
 Unabhängig verifiziert, **nicht owned**:
