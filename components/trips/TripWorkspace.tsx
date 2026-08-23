@@ -31,6 +31,8 @@ import {
   gewaehlterTagId,
 } from '@/lib/trips/arbeitsbereich'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
+import type { SafetyEvaluation } from '@/lib/safety/domain'
+import ReiseSicherheit from '@/components/trips/ReiseSicherheit'
 import type { ReadinessKind, ReadinessUserStatus, TravellerDocumentType } from '@/types/trips'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
 import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
@@ -95,6 +97,7 @@ type TripWorkspaceProps = {
    * Kein Provider-Call und kein Secret im Client.
    */
   officialEvaluations?: OfficialEvaluation[]
+  safetyEvaluations?: SafetyEvaluation[]
   /**
    * Nur für interne Audits: startet nicht in der Übersicht.
    * Der Produktweg lässt den Parameter weg.
@@ -162,6 +165,7 @@ export default function TripWorkspace({
   onTravellerSetzen,
   onTravellerEntfernen,
   officialEvaluations,
+  safetyEvaluations,
   anfangsBereich,
 }: TripWorkspaceProps) {
   const kompakt = React.useSyncExternalStore(
@@ -221,6 +225,8 @@ export default function TripWorkspace({
   const verbergen = (ziel: Arbeitsbereich) => !bereichSollSichtbar(ziel, bereich, kompakt)
   const uebersichtVerborgen = verbergen('uebersicht')
 
+  const sicherheit = <ReiseSicherheit reise={reise} evaluations={safetyEvaluations} />
+
   const vorbereitung = (
     <Reisevorbereitung
       reise={reise}
@@ -279,7 +285,12 @@ export default function TripWorkspace({
 
         <TripWorkspaceKopf reise={reise} quelle={quelle} kompakt={kompakt} kopfzeile={kopfzeile} />
 
-        {!kompakt && <div className="mt-6">{vorbereitung}</div>}
+        {!kompakt && (
+          <div className="mt-6 grid gap-4">
+            {sicherheit}
+            {vorbereitung}
+          </div>
+        )}
 
         {kompakt && <TripWorkspaceNavigation aktiv={bereich} onWechsel={wechseln} />}
 
@@ -295,6 +306,7 @@ export default function TripWorkspace({
               plan={kompakt ? plan : null}
               aenderungFeld={kompakt ? aenderungFeld : null}
               vorbereitung={kompakt ? vorbereitung : null}
+              sicherheit={kompakt ? sicherheit : null}
             />
           </BereichHuelle>
         )}

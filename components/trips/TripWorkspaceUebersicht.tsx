@@ -29,6 +29,7 @@ export default function TripWorkspaceUebersicht({
   plan,
   aenderungFeld,
   vorbereitung,
+  sicherheit,
 }: {
   reise: Trip
   status: readonly BereichStatus[]
@@ -39,6 +40,7 @@ export default function TripWorkspaceUebersicht({
   plan?: ReactNode
   aenderungFeld?: ReactNode
   vorbereitung?: ReactNode
+  sicherheit?: ReactNode
 }) {
   return (
     <section aria-label="Reiseübersicht" className="mt-5 grid gap-4">
@@ -84,6 +86,8 @@ export default function TripWorkspaceUebersicht({
       </ul>
 
       {plan}
+
+      {sicherheit}
 
       {vorbereitung}
 
