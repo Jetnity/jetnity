@@ -24,7 +24,12 @@
 import { test, describe, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { itineraryDirekt, itineraryEinTransit, itineraryZweiTransits } from '@/lib/route/fixtures'
+import {
+  itineraryAirportChange,
+  itineraryDirekt,
+  itineraryEinTransit,
+  itineraryZweiTransits,
+} from '@/lib/route/fixtures'
 import { SCHLUESSEL, gastreiseAnlegen, kennungErzeugen } from '@/lib/trips/gastspeicher'
 import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 import { gastreisenUebernehmen, type Uebernahmeantwort } from '@/lib/trips/uebernahme'
@@ -729,6 +734,18 @@ describe('Guest → Account behält die Flugroute', () => {
     const server = attrappe()
     await gastreisenUebernehmen(server.senden)
     assert.equal(server.empfangen[0]?.ungeplante[0]?.route_itinerary?.legs[0]?.segments.length, 2)
+  })
+
+  test('Airport-Change-Evidence geht vollständig mit', async () => {
+    const entwurf = gastreiseAnlegen(eingabe())
+    speicher.setzen(SCHLUESSEL.aktiv, { ...entwurf, ohneTag: [gastflug(itineraryAirportChange('ORY'))] })
+    const server = attrappe()
+    await gastreisenUebernehmen(server.senden)
+    assert.deepEqual(server.empfangen[0]?.ungeplante[0]?.route_itinerary, itineraryAirportChange('ORY'))
+    assert.equal(
+      server.empfangen[0]?.ungeplante[0]?.route_itinerary?.legs[0]?.segments[1]?.surfaceFromAirportCode,
+      'CDG',
+    )
   })
 
   test('zwei Transits gehen vollständig mit', async () => {

@@ -6,6 +6,7 @@ import assert from 'node:assert/strict'
 import { routeFingerprintAus } from '@/lib/route/fingerprint'
 import {
   TEST_FLUGHAFEN_REFS,
+  itineraryAirportChange,
   itineraryDirekt,
   itineraryEinTransit,
   itineraryZweiTransits,
@@ -213,6 +214,16 @@ describe('reiseNutzlastRouteKanonisieren', () => {
     assert.deepEqual(einmal.ungeplante, erneut.ungeplante)
     assert.deepEqual(einmal.days[0]?.items[0]?.route_itinerary, erneut.days[0]?.items[0]?.route_itinerary)
     assert.equal(einmal.client_ref, nutzlast.client_ref)
+  })
+
+  test('Surface-Evidence bleibt bei Guest-Kanonisierung erhalten', () => {
+    const nutzlast = flugNutzlast(mitClientFacts(itineraryAirportChange('ORY'), 'US'))
+    const kanonisch = reiseNutzlastRouteKanonisieren(nutzlast, TEST_FLUGHAFEN_REFS)
+    const itinerary = kanonisch.days[0]?.items[0]?.route_itinerary
+    assert.equal(itinerary?.legs[0]?.segments[1]?.surfaceFromAirportCode, 'CDG')
+    assert.equal(itinerary?.legs[0]?.segments[0]?.origin.countryCode, 'CH')
+    assert.equal(itinerary?.legs[0]?.segments[1]?.origin.countryCode, 'FR')
+    assert.notEqual(itinerary?.legs[0]?.segments[0]?.origin.countryCode, 'US')
   })
 
   test('sammelt IATA-Codes nur aus der Itinerary', () => {

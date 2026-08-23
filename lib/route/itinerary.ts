@@ -47,22 +47,28 @@ export function itineraryKanonisieren(
   itinerary: FlugRouteItinerary,
   refs: FlughafenReferenzKarte,
 ): FlugRouteItinerary | null {
-  return flugRouteItineraryLesen({
-    v: 1,
-    type: 'flight_route_itinerary',
-    legs: itinerary.legs.map((bein) => ({
-      segments: bein.segments.map((segment) => ({
+  const legs: { segments: RouteSegment[] }[] = []
+  for (const bein of itinerary.legs) {
+    const segments: RouteSegment[] = []
+    for (const segment of bein.segments) {
+      const surface = surfaceEvidenceLesen(segment.surfaceFromAirportCode)
+      if (surface === false) return null
+      segments.push({
         origin: flughafenPunkt(segment.origin.airportCode, refs),
         destination: flughafenPunkt(segment.destination.airportCode, refs),
         departureDate: segment.departureDate,
         departureTime: segment.departureTime,
         arrivalDate: segment.arrivalDate,
         arrivalTime: segment.arrivalTime,
-        ...(segment.surfaceFromAirportCode
-          ? { surfaceFromAirportCode: iataLesen(segment.surfaceFromAirportCode) }
-          : {}),
-      })),
-    })),
+        ...(surface ? { surfaceFromAirportCode: surface } : {}),
+      })
+    }
+    legs.push({ segments })
+  }
+  return flugRouteItineraryLesen({
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs,
   })
 }
 
@@ -81,6 +87,11 @@ function segmentAusOption(
     arrivalDate: segment.arrivalDate,
     arrivalTime: segment.arrivalTime,
   }
+}
+
+function surfaceEvidenceLesen(wert: string | null | undefined): string | null | false {
+  if (wert == null || wert === '') return null
+  return iataLesen(wert) ?? false
 }
 
 function surfaceEvidenceSetzen(segmente: RouteSegment[]): RouteSegment[] {
