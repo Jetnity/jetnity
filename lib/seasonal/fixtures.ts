@@ -8,7 +8,7 @@ import type { SeasonalProvider, SeasonalProviderFact } from '@/lib/seasonal/prov
 import type { Trip } from '@/types/trips'
 
 export const SEASONAL_NOW_MS = Date.parse('2026-08-21T10:00:00.000Z')
-export const SEASONAL_FRESH_UNTIL = '2026-12-31T00:00:00.000Z'
+const SEASONAL_FRESH_UNTIL = '2026-12-31T00:00:00.000Z'
 
 export { bangkokRouteReise, mehrzielreise }
 

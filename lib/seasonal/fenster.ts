@@ -50,11 +50,11 @@ export function monatTagLesen(wert: unknown): SeasonalMonthDay | null {
   return { month, day }
 }
 
-export function monatTagSchluessel(wert: SeasonalMonthDay): string {
+function monatTagSchluessel(wert: SeasonalMonthDay): string {
   return `${String(wert.month).padStart(2, '0')}-${String(wert.day).padStart(2, '0')}`
 }
 
-export function monatTagZahl(wert: SeasonalMonthDay): number {
+function monatTagZahl(wert: SeasonalMonthDay): number {
   return wert.month * 100 + wert.day
 }
 
