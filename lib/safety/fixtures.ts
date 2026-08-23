@@ -331,6 +331,28 @@ export function delhiStageMitIndienRouteReise(): Trip {
   })
 }
 
+export function dohaLokalTransitReise(): Trip {
+  const reise = bangkokRouteReise()
+  const flug = reise.ohneTag[0]
+  if (flug?.routeItinerary) {
+    flug.routeItinerary = {
+      ...flug.routeItinerary,
+      legs: flug.routeItinerary.legs.map((leg) => ({
+        segments: leg.segments.map((segment) =>
+          segment.origin.airportCode === 'DOH' || segment.destination.airportCode === 'DOH'
+            ? {
+                ...segment,
+                arrivalTime: segment.destination.airportCode === 'DOH' ? '18:00' : segment.arrivalTime,
+                departureTime: segment.origin.airportCode === 'DOH' ? '20:00' : segment.departureTime,
+              }
+            : segment,
+        ),
+      })),
+    }
+  }
+  return reise
+}
+
 export function eintagFlorenzReise(): Trip {
   return mehrzielreise({
     startDate: '2026-09-12',

@@ -4,11 +4,13 @@ import assert from 'node:assert/strict'
 import { safetyZusammenfassungText } from '@/lib/safety/anzeige'
 import { safetyAuswerten, safetyAusFacts, safetyLokalFuerReise } from '@/lib/safety/engine'
 import { safetyContextFingerprint } from '@/lib/safety/fingerprint'
+import { routeKontaktZeit } from '@/lib/safety/relevanz'
 import {
   SAFETY_NOW_MS,
   bangkokRouteReise,
   delhiStageMitIndienRouteReise,
   dohaHinUndRueckReise,
+  dohaLokalTransitReise,
   dubaiAbuDhabiReise,
   eintagFlorenzReise,
   mehrzielreise,
@@ -1557,74 +1559,68 @@ describe('Safety-Engine', () => {
     assert.equal(evaluations[0]?.relevance, 'affected')
   })
 
-  test('Stop: Transit 18:00–20:00 und Event ab 10:00 bleibt affected', () => {
-    const reise = bangkokRouteReise()
-    const flug = reise.ohneTag[0]
-    if (flug?.routeItinerary) {
-      flug.routeItinerary = {
-        ...flug.routeItinerary,
-        legs: flug.routeItinerary.legs.map((leg) => ({
-          segments: leg.segments.map((segment) =>
-            segment.origin.airportCode === 'DOH' || segment.destination.airportCode === 'DOH'
-              ? {
-                  ...segment,
-                  arrivalTime: segment.destination.airportCode === 'DOH' ? '18:00' : segment.arrivalTime,
-                  departureTime: segment.origin.airportCode === 'DOH' ? '20:00' : segment.departureTime,
-                }
-              : segment,
-          ),
-        })),
-      }
-    }
+  test('Timezone: lokale Routezeit wird nicht zu einem Z-Instant', () => {
+    const marke = routeKontaktZeit('2026-09-12', '18:00')
+    assert.equal(marke, '2026-09-12T18:00')
+    assert.equal(marke?.endsWith('Z'), false)
+    assert.equal(marke?.includes('Z'), false)
+  })
+
+  test('Timezone: DOH lokal 18:00–20:00 und Event 16:00Z punktuell bleibt insufficient', () => {
     const evaluations = safetyAusFacts(
-      reise,
+      dohaLokalTransitReise(),
       [
         safetyFact({
           factKey: 'doh-disrupt',
           category: 'infrastructure_disruption',
           spatialScope: { kind: 'airport', airportCode: 'DOH', countryCode: 'QA' },
-          validFrom: '2026-09-12T10:00:00Z',
+          validFrom: '2026-09-12T16:00:00Z',
+          validUntil: '2026-09-12T16:00:00Z',
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.notEqual(evaluations[0]?.relevance, 'not_affected')
+    assert.notEqual(evaluations[0]?.relevance, 'affected')
+    assert.equal(evaluations[0]?.relevance, 'insufficient_context')
+  })
+
+  test('Timezone: DOH lokal 18:00–20:00 und Event 19:00Z punktuell ist nicht affected', () => {
+    const evaluations = safetyAusFacts(
+      dohaLokalTransitReise(),
+      [
+        safetyFact({
+          factKey: 'doh-disrupt',
+          category: 'infrastructure_disruption',
+          spatialScope: { kind: 'airport', airportCode: 'DOH', countryCode: 'QA' },
+          validFrom: '2026-09-12T19:00:00Z',
+          validUntil: '2026-09-12T19:00:00Z',
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.notEqual(evaluations[0]?.relevance, 'affected')
+    assert.equal(evaluations[0]?.relevance, 'insufficient_context')
+  })
+
+  test('Timezone: Date-only Event am 12.09 gegen lokalen DOH-Kontakt bleibt Overlap', () => {
+    const evaluations = safetyAusFacts(
+      dohaLokalTransitReise(),
+      [
+        safetyFact({
+          factKey: 'doh-disrupt',
+          category: 'infrastructure_disruption',
+          spatialScope: { kind: 'airport', airportCode: 'DOH', countryCode: 'QA' },
+          validFrom: '2026-09-12',
+          validUntil: '2026-09-12',
         }),
       ],
       'audit-safety',
       { nowMs: JETZT },
     )
     assert.equal(evaluations[0]?.relevance, 'affected')
-  })
-
-  test('Stop: Transit 18:00–20:00 und Event danach bleibt not_affected', () => {
-    const reise = bangkokRouteReise()
-    const flug = reise.ohneTag[0]
-    if (flug?.routeItinerary) {
-      flug.routeItinerary = {
-        ...flug.routeItinerary,
-        legs: flug.routeItinerary.legs.map((leg) => ({
-          segments: leg.segments.map((segment) =>
-            segment.origin.airportCode === 'DOH' || segment.destination.airportCode === 'DOH'
-              ? {
-                  ...segment,
-                  arrivalTime: segment.destination.airportCode === 'DOH' ? '18:00' : segment.arrivalTime,
-                  departureTime: segment.origin.airportCode === 'DOH' ? '20:00' : segment.departureTime,
-                }
-              : segment,
-          ),
-        })),
-      }
-    }
-    const evaluations = safetyAusFacts(
-      reise,
-      [
-        safetyFact({
-          factKey: 'doh-disrupt',
-          category: 'infrastructure_disruption',
-          spatialScope: { kind: 'airport', airportCode: 'DOH', countryCode: 'QA' },
-          validFrom: '2026-09-12T21:00:00Z',
-        }),
-      ],
-      'audit-safety',
-      { nowMs: JETZT },
-    )
-    assert.equal(evaluations[0]?.relevance, 'not_affected')
   })
 
   test('Stop: Date-only Event am selben Stage-Tag bleibt Overlap', () => {

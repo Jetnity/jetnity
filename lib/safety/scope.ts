@@ -4,7 +4,7 @@
 
 import { istOrtId } from '@/lib/places/domain'
 import { iataLesen, safetyLandescode } from '@/lib/safety/domain'
-import { zeitgrenzeMs } from '@/lib/safety/evidence'
+import { kalendertagAus, zeitForm, zeitgrenzeMs, ziviluhrAus } from '@/lib/safety/evidence'
 
 const SAFETY_SCOPE_KINDS = [
   'country',
@@ -179,6 +179,66 @@ export function punktInPolygon(
   return innen
 }
 
+const MAX_OST_OFFSET_MS = 14 * 60 * 60 * 1000
+const MAX_WEST_OFFSET_MS = 12 * 60 * 60 * 1000
+
+function seiteHat(wert: string | null, form: 'clock' | 'instant' | 'date'): boolean {
+  return Boolean(wert && zeitForm(wert) === form)
+}
+
+function zivilRechenwert(tag: string, uhr: string): number {
+  return Date.parse(`${tag}T${uhr}:00.000Z`)
+}
+
+function clockUnsicherheit(
+  start: string | null,
+  ende: string | null,
+): { minMs: number; maxMs: number } | null {
+  const von = start ?? ende
+  const bis = ende ?? start
+  if (!von || !bis) return null
+  const startTag = kalendertagAus(von)
+  const endeTag = kalendertagAus(bis)
+  if (!startTag || !endeTag) return null
+  const startUhr = ziviluhrAus(von) ?? '00:00'
+  const endeUhr = ziviluhrAus(bis) ?? '23:59'
+  const minMs = zivilRechenwert(startTag, startUhr) - MAX_OST_OFFSET_MS
+  const maxMs = zivilRechenwert(endeTag, endeUhr) + MAX_WEST_OFFSET_MS
+  if (!Number.isFinite(minMs) || !Number.isFinite(maxMs)) return null
+  return { minMs, maxMs }
+}
+
+function kalendertageVergleichen(
+  reiseStart: string | null,
+  reiseEnde: string | null,
+  eventStart: string | null,
+  eventEnde: string | null,
+): 'overlaps' | 'before' | 'after' | 'insufficient' {
+  const tripStart = kalendertagAus(reiseStart ?? reiseEnde ?? '')
+  const tripEnd = kalendertagAus(reiseEnde ?? reiseStart ?? '')
+  if (!tripStart || !tripEnd) return 'insufficient'
+  const eventStartTag = eventStart ? kalendertagAus(eventStart) : null
+  const eventEndeTag = eventEnde ? kalendertagAus(eventEnde) : eventStartTag
+  if (eventEndeTag && eventEndeTag < tripStart) return 'before'
+  if (eventStartTag && eventStartTag > tripEnd) return 'after'
+  return 'overlaps'
+}
+
+function clockGegenInstant(
+  reiseStart: string | null,
+  reiseEnde: string | null,
+  eventStart: string | null,
+  eventEnde: string | null,
+): 'overlaps' | 'before' | 'after' | 'insufficient' {
+  const fenster = clockUnsicherheit(reiseStart, reiseEnde)
+  if (!fenster) return 'insufficient'
+  const eventStartMs = eventStart && zeitForm(eventStart) === 'instant' ? Date.parse(eventStart) : null
+  const eventEndMs = eventEnde && zeitForm(eventEnde) === 'instant' ? Date.parse(eventEnde) : eventStartMs
+  if (eventEndMs != null && Number.isFinite(eventEndMs) && eventEndMs < fenster.minMs) return 'before'
+  if (eventStartMs != null && Number.isFinite(eventStartMs) && eventStartMs > fenster.maxMs) return 'after'
+  return 'insufficient'
+}
+
 export function zeitraeumeUeberschneiden(
   reiseStart: string | null,
   reiseEnde: string | null,
@@ -186,6 +246,19 @@ export function zeitraeumeUeberschneiden(
   eventEnde: string | null,
 ): 'overlaps' | 'before' | 'after' | 'insufficient' {
   if (!reiseStart && !reiseEnde) return 'insufficient'
+  const tripHatUhr = seiteHat(reiseStart, 'clock') || seiteHat(reiseEnde, 'clock')
+  const eventHatInstant = seiteHat(eventStart, 'instant') || seiteHat(eventEnde, 'instant')
+  const eventNurDatum =
+    !eventHatInstant &&
+    (seiteHat(eventStart, 'date') || seiteHat(eventEnde, 'date') || (!eventStart && !eventEnde))
+
+  if (tripHatUhr && eventHatInstant) {
+    return clockGegenInstant(reiseStart, reiseEnde, eventStart, eventEnde)
+  }
+  if (tripHatUhr && eventNurDatum) {
+    return kalendertageVergleichen(reiseStart, reiseEnde, eventStart, eventEnde)
+  }
+
   const tripStart = reiseStart ? zeitgrenzeMs(reiseStart, 'start') : reiseEnde ? zeitgrenzeMs(reiseEnde, 'start') : null
   const tripEnd = reiseEnde ? zeitgrenzeMs(reiseEnde, 'end') : reiseStart ? zeitgrenzeMs(reiseStart, 'end') : null
   if (tripStart == null || tripEnd == null || !Number.isFinite(tripStart) || !Number.isFinite(tripEnd)) {

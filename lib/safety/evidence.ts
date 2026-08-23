@@ -76,7 +76,25 @@ export function zeitgrenzeMs(wert: string, kante: 'start' | 'end'): number {
   if (/^\d{4}-\d{2}-\d{2}$/.test(wert)) {
     return Date.parse(kante === 'start' ? `${wert}T00:00:00.000Z` : `${wert}T23:59:59.999Z`)
   }
+  if (zeitForm(wert) === 'clock') return Number.NaN
   return Date.parse(wert)
+}
+
+export function zeitForm(wert: string): 'date' | 'clock' | 'instant' | 'invalid' {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(wert)) return 'date'
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?Z$/.test(wert)) return 'instant'
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(wert)) return 'clock'
+  return 'invalid'
+}
+
+export function kalendertagAus(wert: string): string | null {
+  const treffer = /^(\d{4}-\d{2}-\d{2})/.exec(wert)
+  return treffer?.[1] ?? null
+}
+
+export function ziviluhrAus(wert: string): string | null {
+  const treffer = /T(\d{2}:\d{2})/.exec(wert)
+  return treffer?.[1] ?? null
 }
 
 export function quelleUrlLesen(wert: unknown): string | null {

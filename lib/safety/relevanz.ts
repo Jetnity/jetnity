@@ -75,9 +75,9 @@ function routeBeruehrtLand(kontext: SafetyReisekontext, countryCode: string | nu
   )
 }
 
-function kontaktZeit(date: string | null, time: string | null): string | null {
+export function routeKontaktZeit(date: string | null, time: string | null): string | null {
   if (!date) return null
-  if (time && /^\d{2}:\d{2}$/.test(time)) return `${date}T${time}:00.000Z`
+  if (time && /^\d{2}:\d{2}$/.test(time)) return `${date}T${time}`
   return date
 }
 
@@ -92,8 +92,8 @@ function airportKontakte(route: RouteFacts, code: string): SafetyKontakt[] {
     const abflug = segmente[i + 1]
     if (ankunft?.destination.airportCode !== code || abflug?.origin.airportCode !== code) continue
     kontakte.push({
-      start: kontaktZeit(ankunft.arrivalDate, ankunft.arrivalTime),
-      end: kontaktZeit(abflug.departureDate, abflug.departureTime),
+      start: routeKontaktZeit(ankunft.arrivalDate, ankunft.arrivalTime),
+      end: routeKontaktZeit(abflug.departureDate, abflug.departureTime),
     })
     pairedInbound.add(i)
     pairedOutbound.add(i + 1)
@@ -103,11 +103,11 @@ function airportKontakte(route: RouteFacts, code: string): SafetyKontakt[] {
     const segment = segmente[i]
     if (!segment) continue
     if (segment.destination.airportCode === code && !pairedInbound.has(i)) {
-      const at = kontaktZeit(segment.arrivalDate, segment.arrivalTime)
+      const at = routeKontaktZeit(segment.arrivalDate, segment.arrivalTime)
       kontakte.push({ start: at, end: at })
     }
     if (segment.origin.airportCode === code && !pairedOutbound.has(i)) {
-      const at = kontaktZeit(segment.departureDate, segment.departureTime)
+      const at = routeKontaktZeit(segment.departureDate, segment.departureTime)
       kontakte.push({ start: at, end: at })
     }
   }
