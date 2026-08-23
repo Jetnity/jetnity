@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 23. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D und E vollständig abgeschlossen inkl. Production; Travel Safety Foundation Re-Review-Fixes auf Draft-PR #37, Re-Re-Review offen**
+Status: **verbindlicher operativer Übergabepunkt – Foundation D und E vollständig abgeschlossen inkl. Production; Travel Safety Foundation Final-Closure-Fixes auf Draft-PR #37, Stop-Kriterium gilt**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Er sagt, was Jetnity ist, was bereits gebaut wurde, welche Regeln verbindlich sind und was als Nächstes zu tun ist.
 
@@ -274,7 +274,7 @@ Echte Provider kommen am Schluss. **Vorher müssen die provider-neutralen Ports/
 
 ## 9. Nächster operativer Schritt
 
-Cursor hat die provider-neutrale Safety-Foundation umgesetzt, die Review-Blocker aus `docs/PR37_CHATGPT_INDEPENDENT_REVIEW.md` (ADR-0129) und die Re-Review-Blocker aus `docs/PR37_CHATGPT_REREVIEW.md` (ADR-0130) behoben. Nächster Schritt: **unabhängiger ChatGPT-Re-Re-Review gegen den tatsächlichen neuen PR-Head**.
+Cursor hat die provider-neutrale Safety-Foundation umgesetzt und die Blocker aus Review, Re-Review und Final Closure Review behoben (ADR-0129, ADR-0130, ADR-0131). Danach gilt das **Stop-Kriterium** aus `docs/PR37_CHATGPT_FINAL_CLOSURE_REVIEW.md`.
 
 Harte Gates bleiben:
 
@@ -283,7 +283,7 @@ Harte Gates bleiben:
 - keine Production-Migration
 - kein echter Safety-/Disruption-Provider
 
-Lokal nach Re-Review-Fix verifiziert: 1429/1429 Tests, UI-Audit 886/886 (WebKit + Chromium, 8 Viewports), Production-Build 38/38, DB-Gates unverändert. Runtime-Head `cace9408`; CI/Preview auf `883ddefb`: GitHub Actions `32614331364` SUCCESS, Vercel Preview `6043804484` READY/SUCCESS.
+Lokal nach Final-Closure-Fix verifiziert: 1459/1459 Tests, UI-Audit 886/886 (WebKit + Chromium, 8 Viewports), Production-Build 38/38, DB-Gates unverändert. Runtime-Head `b20b3999`; CI/Preview auf `d3614602`: GitHub Actions `32630094994` SUCCESS, Vercel Preview `6046331762` READY/SUCCESS.
 
 Leitsatz:
 
