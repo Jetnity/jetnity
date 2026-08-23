@@ -274,7 +274,7 @@ Echte Provider kommen am Schluss. **Vorher müssen die provider-neutralen Ports/
 
 ## 9. Nächster operativer Schritt
 
-Cursor hat die provider-neutrale Safety-Foundation auf `feat/travel-safety-disruption-intelligence` umgesetzt. Nächster Schritt: **unabhängiger ChatGPT-Review gegen den tatsächlichen finalen PR-Head**.
+Cursor hat die provider-neutrale Safety-Foundation umgesetzt und die vier REQUEST-CHANGES-Blocker aus `docs/PR37_CHATGPT_INDEPENDENT_REVIEW.md` behoben. Nächster Schritt: **unabhängiger ChatGPT-Re-Review gegen den tatsächlichen neuen PR-Head**.
 
 Harte Gates bleiben:
 
@@ -283,7 +283,7 @@ Harte Gates bleiben:
 - keine Production-Migration
 - kein echter Safety-/Disruption-Provider
 
-Lokal verifiziert: 1393/1393 Tests, UI-Audit 886/886 (WebKit + Chromium, 8 Viewports), Production-Build 38/38, DB-Gates unverändert. Production-Schema unverändert. Head `45b11615`: GitHub Actions `32610803493` SUCCESS, Vercel Preview READY/SUCCESS.
+Lokal nach Review-Fix verifiziert: 1410/1410 Tests, UI-Audit 886/886 (WebKit + Chromium, 8 Viewports), Production-Build 38/38, DB-Gates unverändert. Runtime-Head `01096bb3`: GitHub Actions `32612980450` SUCCESS, Vercel Preview READY/SUCCESS.
 
 Leitsatz:
 
