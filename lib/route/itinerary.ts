@@ -2,6 +2,7 @@
 //
 // FlugOption → persistierbare Route-Itinerary, plus Kanonisierung vorhandener Itineraries.
 // Länder nur aus der übergebenen Flughafenreferenz, nie aus Segment- oder Clienttext.
+// Eine FlugOption ist untrusted Browser-Input: Segmentlücken werden nicht zu Surface-Evidence.
 //
 // Frei von Next und Providern.
 
@@ -20,11 +21,9 @@ export function itineraryAusFlugOption(
 
   const legs = option.legs
     .map((bein) => ({
-      segments: surfaceEvidenceSetzen(
-        bein.segments
-          .map((segment) => segmentAusOption(segment, refs))
-          .filter((segment): segment is RouteSegment => segment !== null),
-      ),
+      segments: bein.segments
+        .map((segment) => segmentAusOption(segment, refs))
+        .filter((segment): segment is RouteSegment => segment !== null),
     }))
     .filter((bein) => bein.segments.length > 0)
 
@@ -92,14 +91,4 @@ function segmentAusOption(
 function surfaceEvidenceLesen(wert: string | null | undefined): string | null | false {
   if (wert == null || wert === '') return null
   return iataLesen(wert) ?? false
-}
-
-function surfaceEvidenceSetzen(segmente: RouteSegment[]): RouteSegment[] {
-  return segmente.map((segment, index) => {
-    if (index === 0) return segment
-    const dest = iataLesen(segmente[index - 1]?.destination.airportCode ?? null)
-    const orig = iataLesen(segment.origin.airportCode)
-    if (!dest || !orig || dest === orig) return segment
-    return { ...segment, surfaceFromAirportCode: dest }
-  })
 }
