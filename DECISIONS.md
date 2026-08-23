@@ -3602,6 +3602,29 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0146 – Airport-lokale Chronologie, Segmentkanon und kanonisches Route-Ende
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R11 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Airport-lokale Abflugzeiten sind nur am selben bewiesenen IATA oder über Kalenderabstände von mindestens drei Tagen vergleichbar. Cross-Airport-Wanduhren, inklusive Date-Line, erzeugen keine absolute Reihenfolge.
+- Eine eindeutige azyklische Airport-Kette darf die deklarierte Leg-Reihenfolge bestätigen. Sie darf getrennte Flight-Items nicht so umdrehen, dass ein Open-Jaw-Home-Arrival zum Origin wird.
+- Der Chronologie-Beweis wird vor einem Lex-Sort der Fingerprint-Stabilisierung ausgewertet. Lexikalische Pfade bleiben Anzeige-/Fingerprint-Fallback, nicht Business-Truth.
+- Eine eindeutige kontinuierliche Segmentkette innerhalb eines Legs wird rekonstruiert. Surface-Change ohne IATA-Kontinuität bleibt erklärt. Zyklen und fehlende IATA bleiben fail-closed.
+- Bei bewiesener Chronologie ist `RouteFacts.destination` das letzte Segment der letzten kanonischen Itinerary. Unbewiesene Reihenfolge leert Origin und Destination.
+
+**Kontext:** `docs/PR38_CHATGPT_R11_REVIEW.md` gegen Runtime `fdcc5c88`; Fixes auf `ba5bcd76`.
+
+**Alternativen:** Zeitzonen-DB/UTC-Offsets; Cross-Item-Hamiltonian als Origin; Destination weiter aus der ersten Itinerary.
+
+**Begründung:** Dieselbe strukturierte Reise darf durch lokale Uhren, verdrehte Segmentarrays oder das erste Flight-Item keine falsche Origin-/Destination-Wahrheit für Seasonal, Safety und Readiness erzeugen.
+
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R12 und Product-Owner-Merge-Freigabe.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

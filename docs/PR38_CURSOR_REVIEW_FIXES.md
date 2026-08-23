@@ -1,7 +1,7 @@
 # PR #38 – Cursor-Fixes zum unabhängigen Review
 
 Stand: 23. August 2026  
-Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11, R6-Blocker 12, R7-Blocker 13, R8-Blocker 14–15, R9-Blocker 16–19 und R10-Blocker 20–23 geschlossen; R11-Re-Review offen**
+Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11, R6-Blocker 12, R7-Blocker 13, R8-Blocker 14–15, R9-Blocker 16–19, R10-Blocker 20–23 und R11-Blocker 24–26 geschlossen; R12-Re-Review offen**
 
 Review R1/R2: `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md`  
 Review R3: `docs/PR38_CHATGPT_R3_REVIEW.md`  
@@ -20,7 +20,8 @@ Runtime-Head R6-Fixes: `e790a7d224473df2cf999fe7c058a81a5a8e8679`
 Runtime-Head R7-Fixes: `ece075e702c491454c553a9fc931b26308cab1a9`  
 Runtime-Head R8-Fixes: `de83d0269e1910ef82a596dd6e7005001f1cb860`  
 Runtime-Head R9-Fixes: `263c2f842d2287da652b27cc9660c28db68c6750`  
-Runtime-Head R10-Fixes: `fdcc5c882b4fb8598b3eb0956b9bdeeb0ef94072`
+Runtime-Head R10-Fixes: `fdcc5c882b4fb8598b3eb0956b9bdeeb0ef94072`  
+Runtime-Head R11-Fixes: `ba5bcd7634eb3a561c54eb1eb63908fe43fcd71b`
 
 ## 1. Gemischte Unsicherheit
 
@@ -124,7 +125,7 @@ Item-Datum ohne Zeit degradiert keine Segmentzeit auf `00:00`. Item- und Segment
 
 ## 20. Intra-Itinerary-Leg-Chronologie
 
-`itinerariesFuerWahrheit()` ordnet Legs einer Itinerary nur dann um, wenn Segmentstarts eine eindeutige Totalordnung tragen. Dieselbe SoT gilt für Origin, Länderrollen, Fingerprint und Anzeige. Umgekehrt gespeicherte `BKK→ZRH` / `ZRH→BKK`-Legs erzeugen keinen TH-Origin. Ties oder fehlende Zeiten bleiben fail-closed und zeigen `Reihenfolge unbekannt`. Lexikalische Airport-Pfade reparieren keine Chronologie.
+`itinerariesFuerWahrheit()` ordnet Legs einer Itinerary nur dann zeitlich um, wenn Starts am selben IATA oder über sichere Kalenderabstände vergleichbar sind. Dieselbe SoT gilt für Origin, Länderrollen, Fingerprint und Anzeige. Umgekehrt gespeicherte `BKK→ZRH` / `ZRH→BKK`-Legs mit Tagen Abstand erzeugen keinen TH-Origin. Ties oder fehlende Zeiten bleiben fail-closed und zeigen `Reihenfolge unbekannt`. Lexikalische Airport-Pfade reparieren keine Chronologie.
 
 ## 21. Surface-Grenze in der Route-ID
 
@@ -138,6 +139,18 @@ Item-Datum ohne Zeit degradiert keine Segmentzeit auf `00:00`. Item- und Segment
 
 `documentFingerprintTeil()` enthält die aufgelöste Citizenship, nicht nur `citizenshipClientRef`. `readinessFingerprint()` hasht eine kanonische JSON-Struktur. Ref→Country-Tausch ändert die Identität; reine Array-Reihenfolge nicht. Opaque Refs mit `,` / `:` / `|` erzeugen keine strukturelle Kollision. Persistierte v2- und v3-Werte werden stale.
 
-## 24. Nicht geändert
+## 24. Lokale Flughafenuhren sind keine absolute Chronologie
+
+`departureDate` / `departureTime` bleiben airport-lokal. Cross-Airport-Wanduhren beweisen keine Reihenfolge. Vergleichbar sind lokale Zeiten am selben IATA und Kalenderabstände ≥ 3 Tage. Eine eindeutige azyklische Airport-Kette darf die **deklarierte** Leg-Reihenfolge bestätigen, getrennte Flight-Items aber nicht zur Open-Jaw-Home-Arrival umdrehen. Date-Line `NRT→HNL` / `HNL→LAX` mit lokal `20:00` / `10:00` bleibt NRT-Ursprung. Same-Day-Roundtrips bleiben fail-closed. Der Chronologie-Beweis gilt vor einem eventuellen Lex-Sort; Lex-Order wird nicht nachträglich zur Business-Truth.
+
+## 25. Segmentordnung innerhalb eines Legs
+
+Eine eindeutige kontinuierliche Hamiltonian-Kette wird kanonisiert (`DOH→BKK`, `ZRH→DOH` → `ZRH>DOH>BKK`). 0 kontinuierliche Pfade mit bekannten IATA bleiben die erklärte Surface-Reihenfolge. Mehrere Pfade, Zyklen oder fehlende IATA bleiben fail-closed. Cross-Airport-Uhren rekonstruieren keine Segmente.
+
+## 26. Globales Routenziel
+
+Bei bewiesener Chronologie ist `origin` das erste Segment der ersten kanonischen Itinerary und `destination` das letzte Segment der letzten. Unbewiesene Reihenfolge leert beide. Country-Rollen, Fingerprint, Anzeige, Readiness, Safety und Seasonal lesen dieselbe `wahrheit` plus denselben Beweisstatus.
+
+## 27. Nicht geändert
 
 Kein Provider, keine Migration, keine Secrets, PR bleibt Draft.

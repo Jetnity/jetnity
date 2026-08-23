@@ -104,6 +104,8 @@ Guest → Account: die Browser-Itinerary ist Input. Persistiert wird nur die ser
 - Connection Duration nur aus vollständigen, nicht-negativen Zeiten am selben bewiesenen Airport (`umstiegMinuten`)
 - Airport Change nur, wenn beide IATA-Codes vorliegen und verschieden sind; ein bekannter Code bleibt `unknown`
 - Destination Countries für Readiness: Etappen-Codes plus Itinerary-Ziel, wenn es nicht der Origin derselben Itinerary ist
+- Airport-lokale Abflugzeiten sind keine absolute Cross-Airport-Chronologie. Vergleichbar sind lokale Zeiten am selben IATA und Kalenderabstände ≥ 3 Tage. Eine eindeutige Segmentkette innerhalb eines Legs darf rekonstruiert werden; Open-Jaw-Home-Arrival über getrennte Items nicht.
+- Bei bewiesener Chronologie ist `RouteFacts.destination` das letzte Segment der letzten kanonischen Itinerary. Unbewiesene Reihenfolge leert Origin und Destination.
 
 Fingerprint: `route-v2|ZRH:CH>DOH:QA>BKK:TH`. Surface-/Airport-Change bleibt als `~` erhalten, z. B. `ZRH:CH>CDG:FR~ORY:FR>BKK:TH` gegenüber kontinuierlich `ZRH:CH>CDG:FR>ORY:FR>BKK:TH`. Readiness-Fingerprints sind `v4|sha256:…` über kanonisches JSON, nicht über ein 800-Zeichen-Präfix.
 
