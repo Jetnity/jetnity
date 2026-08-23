@@ -1,18 +1,18 @@
 # Foundation E – Traveller Context Acceptance
 
-Stand: 22. August 2026  
-Status: **technisch verifiziert; unabhängiger Closure-Check PASS; Draft PR; Merge- und Production-Gate offen**
+Stand: 23. August 2026  
+Status: **auf `main` gemergt; Production-Migration offen**
 
-Branch: `feat/traveller-context-intelligence`  
-Head: `b1f9d6543aa153bacaa126f71d39c6a434dfbebb`  
 PR: https://github.com/Jetnity/jetnity/pull/35  
-PR-Zustand: **Draft**, `MERGEABLE`  
-Base: `main` @ `c8dbe904faac49745bd149e3d2e85ca30ebd384c`  
+PR-Zustand: **MERGED** durch Product-Owner-Konto `Jetnity` am 23. August 2026, 00:30 UTC  
+Merge-Commit: `3bf1eaaa78ef6ac33bb3baff84650a143720e91d`  
+Gemergter Head: `52601ea0f770cf4265a5bdf5cb2356557ef7dcde`  
+Code-Head des Closure-Gates: `b1f9d6543aa153bacaa126f71d39c6a434dfbebb`  
 Task: `docs/CURSOR_FOUNDATION_E_TRAVELLER_CONTEXT_TASK.md`  
 Fachdokument: `docs/TRAVELLER_CONTEXT.md`
 
 Merge-Approval: `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`  
-Kein Merge und keine Production-Migration ohne ausdrückliche aktuelle Freigabe.
+Der Merge von PR #35 ist **keine** Production-Migrationsfreigabe.
 
 ---
 
@@ -113,16 +113,11 @@ Automatisiert nachgewiesen:
 
 ## Offene Gates
 
-- Draft PR bleibt Draft
-- kein Mark Ready ohne Product-Owner-Entscheidung
-- kein Merge
-- keine Production-Migration
+- PR #35 ist gemergt
+- keine Production-Migration ohne ausdrückliche aktuelle Product-Owner-Freigabe
 - kein echter Requirements-Provider
 - Guest→Account bleibt für Readiness ein nachgelagerter Schritt; nur Party ist atomar
 - Unabhängiger ChatGPT-Closure-Check: **PASS** – `docs/PR35_CHATGPT_INDEPENDENT_CLOSURE_CHECK.md`
-- Technische Merge-Empfehlung liegt vor; ausdrückliche Product-Owner-Freigabe fehlt
-- `origin/main` @ `c8dbe904` ist semantisch synchronisiert; kein weiterer `main`-Sync nötig, solange `main` nicht erneut vorgeht
-- Nach diesem Status-Commit folgt kein weiterer Docs-Commit nur zum Festhalten von Checks
 
 ---
 

@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 22. August 2026  
-Status: **Foundation E – Traveller Context aktiv (Draft PR)**
+Status: **Foundation E auf `main` gemergt; Production-Migration offen**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -84,27 +84,23 @@ Nicht erneut bauen.
 
 ---
 
-## 2b. Aktiv – Foundation E: Traveller Context / Multi-Citizenship / Multi-Document
+## 2b. Abgeschlossen auf `main` – Foundation E: Traveller Context / Multi-Citizenship / Multi-Document
 
-Status: **UMGESETZT AUF DRAFT-PR / DEVELOPMENT VERIFIZIERT / NICHT GEMERGT**
+Status: **GEMERGT AUF `main` / DEVELOPMENT VERIFIZIERT / PRODUCTION-MIGRATION OFFEN**
 
-- Branch: `feat/traveller-context-intelligence`
-- Draft PR: **#35**
+- PR #35: **MERGED** – https://github.com/Jetnity/jetnity/pull/35
+- Merge-Commit: `3bf1eaaa78ef6ac33bb3baff84650a143720e91d`
 - Task: `docs/CURSOR_FOUNDATION_E_TRAVELLER_CONTEXT_TASK.md`
 - Fachdokument: `docs/TRAVELLER_CONTEXT.md`
 - Acceptance: `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md`
 - Audit: `docs/FOUNDATION_E_ARCHITECTURE_AUDIT.md`
-- Merge erst nach Review und ausdrücklicher Product-Owner-Freigabe
 - Development-Migrationen `20260822160000`–`20260822180000`; Production endet bei `20260822150000`
-- Depth-Review-Blocker behoben; `origin/main` @ `c8dbe904` semantisch synchronisiert
-- Depth-Re-Review-Blocker (Konflikt-Sichtbarkeit, strikte Requirements-API) auf `08716228` verifiziert
-- Closure-Review-Blocker auf `b1f9d654` verifiziert; unabhängiger Closure-Check **PASS**; Draft bleibt Draft; wartet auf Product-Owner-Merge-Freigabe
+- Unabhängiger Closure-Check **PASS**
 
 ### Harte Grenzen
 
-- Draft PR bleibt Draft
-- nicht mergen
-- keine Production-Migration
+- Production-Migration nur nach ausdrücklicher Product-Owner-Freigabe
+- keine Production-Migration ohne diese Freigabe
 - kein echter Requirements-Provider
 - kein Timatic-Vertrag
 - keine Secrets oder neuen laufenden Kosten
@@ -115,7 +111,7 @@ Status: **UMGESETZT AUF DRAFT-PR / DEVELOPMENT VERIFIZIERT / NICHT GEMERGT**
 
 ## 3. Foundation E – Ziel und Produktlogik
 
-Status: **IN ARBEIT AUF DEM DRAFT-PR; NACH MERGE FOLGT NICHT DER PROVIDER, SONDERN SAFETY-FOUNDATION**
+Status: **AUF `main` GEMERGT; PRODUCTION-MIGRATION OFFEN; DANACH SAFETY-FOUNDATION, NICHT DER PROVIDER**
 
 Product-Owner-Entscheidung vom 22.08.2026: Nach Abschluss von Foundation D wird als nächster Kernblock **Traveller Context / Multi-Citizenship / Multi-Document** umgesetzt, bevor ein echter Travel-Requirements-Provider produktiv aktiviert wird.
 
@@ -351,18 +347,17 @@ Weiterhin keine Production-Aktivierung von Provider-Suchen, Secrets oder kostenp
 
 ## 11. Definition für den nächsten Agenten
 
-Solange der Foundation-E-Draft-PR offen ist:
+Nach dem Merge von Foundation E:
 
 1. `JETNITY_PRODUCT_MANDATE.md` lesen.
 2. `JETNITY_VISION.md` lesen.
 3. `JETNITY_HANDOFF.md` und `docs/ACTIVE_WORK_STATUS.md` lesen.
 4. diese Roadmap lesen.
 5. `docs/TRAVELLER_CONTEXT.md`, `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md` und `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md` lesen.
-6. `docs/CURSOR_FOUNDATION_E_TRAVELLER_CONTEXT_TASK.md` vollständig lesen.
-7. aktuellen Branch-/PR-/CI-/Vercel-/Supabase-Stand prüfen.
-8. nicht mergen, nicht Mark Ready, keine Production-Migration.
-9. bestehende Foundation-E-Arbeit reviewen statt neu anzufangen.
-10. Verbindliche Reihenfolge nach Foundation E: provider-neutrale Safety-Foundation → provider-neutrale Seasonal-Foundation → Provider-Readiness-Lücken schließen → großer Workspace-Umbau → Workspace Intelligence Audit → echte Providerphase → Provider-backed Audit → finale Startseiten-Positionierung.
+6. aktuellen `main`-/CI-/Supabase-/Production-Stand prüfen.
+7. keine Production-Migration ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+8. Foundation E nicht erneut implementieren.
+9. Verbindliche Reihenfolge nach Foundation-E-Production-Abnahme: provider-neutrale Safety-Foundation → provider-neutrale Seasonal-Foundation → Provider-Readiness-Lücken schließen → großer Workspace-Umbau → Workspace Intelligence Audit → echte Providerphase → Provider-backed Audit → finale Startseiten-Positionierung.
 13. Travel Safety & Disruption Intelligence ist eine verbindliche spätere Produktfähigkeit gemäß `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`.
 14. Travel Timing & Seasonal Intelligence ist eine verbindliche gekoppelte spätere Produktfähigkeit gemäß `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`.
 15. Provider werden erst in einer späteren finalen Phase angeschlossen; vorher muss Jetnity provider-ready sein (`docs/PROVIDER_INTEGRATION_READINESS_POLICY.md`, `docs/PRODUCT_OWNER_PR34_PROVIDER_READINESS_ADDENDUM.md`).

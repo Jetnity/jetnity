@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 22. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation E Draft PR / Development verifiziert**
+Status: **verbindlicher operativer Übergabepunkt – Foundation E auf main gemergt; Production-Migration offen**
 
 Dieser Handoff ist die zentrale Einstiegspunkte-Datei für einen neuen Chat oder Coding Agent. Er ersetzt keine Fach- oder Statusdateien, sondern sagt **was Jetnity ist, was bereits gebaut wurde, was verbindlich entschieden ist, was aktuell läuft und was als Nächstes zu tun ist**.
 
@@ -141,22 +141,19 @@ Provider-Suchen/Requirements bleiben produktiv deaktiviert, solange keine echten
 
 ---
 
-## 4b. Aktiver Arbeitsblock – Foundation E
+## 4b. Aktiver Arbeitsblock – Foundation E Production-Gate
 
-**Foundation E – Traveller Context / Multi-Citizenship / Multi-Document** ist technisch umgesetzt, mit `main` synchronisiert und lokal plus remote verifiziert. Nicht gemergt.
+**Foundation E – Traveller Context / Multi-Citizenship / Multi-Document** ist auf `main` gemergt. Production-Schema ist unverändert.
 
-- Branch: `feat/traveller-context-intelligence`
+- PR #35: **MERGED** durch Product-Owner-Konto `Jetnity` am 23. August 2026, 00:30 UTC
+- Merge-Commit: `3bf1eaaa78ef6ac33bb3baff84650a143720e91d`
+- Gemergter Head: `52601ea0f770cf4265a5bdf5cb2356557ef7dcde`
 - Closure-Gate-Head: `b1f9d6543aa153bacaa126f71d39c6a434dfbebb`
 - Unabhängiger Closure-Check: **PASS** – `docs/PR35_CHATGPT_INDEPENDENT_CLOSURE_CHECK.md`
-- Technische Merge-Empfehlung liegt vor; ausdrückliche Product-Owner-Freigabe fehlt
-- Basis: `origin/main` @ `c8dbe904`
-- Draft PR: **#35**, `MERGEABLE`, bleibt Draft
-- kein Merge ohne ausdrückliche Product-Owner-Freigabe
 - keine Foundation-E-Production-Migration ohne separates Gate
 - Fachdokument: `docs/TRAVELLER_CONTEXT.md`
 - Acceptance: `docs/FOUNDATION_E_TRAVELLER_CONTEXT_ACCEPTANCE.md`
 - Live-Handoff: `docs/ACTIVE_WORK_STATUS.md`
-- Review-Tiefe: `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` plus `docs/PRODUCT_OWNER_REVIEW_DEPTH_MANDATE.md`
 
 Foundation D liefert u. a.:
 
@@ -181,14 +178,7 @@ Historischer Closeout: `docs/PR34_PRODUCT_OWNER_CLOSEOUT_REPORT.md`, `docs/FOUND
 
 Der Product-Owner-Rundgang, Merge und Production-Abnahme sind **abgeschlossen**. PR #34 nicht erneut öffnen oder neu bauen.
 
-Cursor muss vor einer Foundation-E-Merge-Entscheidung:
-
-1. Draft PR reviewen,
-2. CI und Vercel auf exakt finalem Head prüfen,
-3. `docs/ACTIVE_WORK_STATUS.md` / Handoff / Acceptance aktuell halten,
-4. **nicht mergen**, **nicht Mark Ready**, **keine Production-Migration**.
-
-Der unabhängige ChatGPT-Closure-Check ist **PASS** (`docs/PR35_CHATGPT_INDEPENDENT_CLOSURE_CHECK.md`). Erst der Product Owner entscheidet separat über Merge.
+PR #35 ist gemergt. Cursor darf die Foundation-E-Production-Migration **nicht** anwenden, solange keine ausdrückliche aktuelle Product-Owner-Freigabe vorliegt.
 
 ---
 
