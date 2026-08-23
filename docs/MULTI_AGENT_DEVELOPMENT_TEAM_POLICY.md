@@ -86,6 +86,27 @@ Dauerhaft im Repository festzuhalten sind mindestens:
 
 Ein neuer Chat muss das bestehende Entwicklungsteam anhand von `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md` und der Multi-Agent-Übersicht vollständig rekonstruieren können, ohne dass der Product Owner den Projektzustand neu erklären muss.
 
+### Verbindliche Agenten-Dokumentationspflicht
+
+Jeder Cursor-Agent ist selbst dafür verantwortlich, seinen Workstream dauerhaft und übergabefähig zu dokumentieren. Das gilt auch dann, wenn seine Cursor-Session beendet wird, ein Chat voll wird, ein Gerät gewechselt wird oder ein anderer Agent die Arbeit übernimmt.
+
+Spätestens bei jedem relevanten Meilenstein, vor einer längeren Unterbrechung und vor jeder Fertigmeldung muss der Agent im Repository dokumentieren:
+
+- exakter Cursor-Anzeigename;
+- Auftrag und Scope;
+- Branch, PR und aktueller Runtime-Head;
+- was tatsächlich umgesetzt oder geprüft wurde;
+- geänderte zentrale Dateien/Contracts;
+- Tests, CI-/Preview-/DB-/Security-Nachweise soweit relevant;
+- offene Fehler, Risiken, Annahmen und Abhängigkeiten;
+- Entscheidungen und bewusst nicht umgesetzte Punkte;
+- exakter nächster Schritt;
+- Handoff-Hinweis für den nächsten Chat oder Agenten.
+
+Ein Agent darf einen Workstream nicht als „fertig“ melden, wenn dieser Übergabestand fehlt oder veraltet ist. Relevante Erkenntnisse dürfen nicht nur in Cursor-Chattext, Terminalausgabe, Screenshots oder einem ChatGPT-Chat verbleiben. Unwichtige Zwischenversuche und reine Terminalgeräusche müssen dagegen nicht archiviert werden.
+
+Ziel ist **vollständige Fortsetzbarkeit ohne Wissensverlust bei gleichzeitig übersichtlicher Dokumentation**.
+
 ## 6. Startzeitpunkt
 
 **Nicht während des laufenden R10/R11-Härtungszyklus von PR #38.**
