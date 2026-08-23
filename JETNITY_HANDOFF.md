@@ -317,7 +317,7 @@ Runtime-Head: `4f9eb1e8`
 
 1. Ist-Audit ist gegen den tatsächlichen Code verifiziert.
 2. Seasonal-Runtime sowie Review-Blocker 1–6 und die R3-Blocker 5-Residual/7 sind geschlossen.
-3. Full Gate auf Runtime `4f9eb1e8` ist lokal und remote grün (1557/1557 Tests, UI-Audit 1014/1014, Build Exit 0, GitHub Actions SUCCESS, Vercel Preview READY).
+3. Full Gate auf Runtime `4f9eb1e8` ist lokal und remote grün (1557/1557 Tests, UI-Audit 1014/1014, Build Exit 0). Docs-Lock `426f7220` hat eigene GitHub-Actions-SUCCESS- und Vercel-READY-Evidenz ohne Runtime-Änderung.
 4. PR bleibt Draft. Kein echter Seasonal-Provider, kein Secret, keine unfreigegebenen Kosten, kein Merge ohne aktuelle Product-Owner-Freigabe.
 5. **Exakter nächster Schritt:** unabhängiger ChatGPT-Re-Review R4 nach Stop-Kriterium.
 

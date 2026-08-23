@@ -18,7 +18,8 @@ Cursor-Fixes: `docs/PR38_CURSOR_REVIEW_FIXES.md`
 - Draft PR: https://github.com/Jetnity/jetnity/pull/38
 - Main: `cd220beb44d90ae376feeb8de9db8a3afb808d60`
 - R3-Runtime-Head: `4f9eb1e8c524494fa8ab300bdfe24ec372e9e109`
-- Sync: **0 behind** `main`
+- Docs-Lock: `426f7220ea9f1606b7f917947920aa1fdf763ab9` (keine Runtime-Änderung)
+- Sync: **19 ahead, 0 behind** `main`
 - PR-Zustand: **open, Draft, nicht gemergt**
 
 ## 3. Status
@@ -59,8 +60,10 @@ Lokal und remote verifiziert:
 - Production-Build Exit 0, `/api/seasonal/evaluate` enthalten
 - UI-Audit **1014/1014**, 0 Fehler, WebKit + Chromium, 8 Viewports
 - DB: Rechte 51 OK, RLS Exit 0, Sicherheit **210/210**, Parallelität **7/7**
-- GitHub Actions SUCCESS: https://github.com/Jetnity/jetnity/actions/runs/32643429557
-- Vercel Preview READY: https://vercel.com/jetnity-e1b93c82/jetnity-app/ERBqeUKG7NWQ2agr4GiR5JpAxxit
+- GitHub Actions SUCCESS auf Runtime `4f9eb1e8`: https://github.com/Jetnity/jetnity/actions/runs/32643429557
+- Vercel Preview READY auf Runtime `4f9eb1e8`: https://vercel.com/jetnity-e1b93c82/jetnity-app/ERBqeUKG7NWQ2agr4GiR5JpAxxit
+- GitHub Actions SUCCESS auf Docs-Lock `426f7220`: https://github.com/Jetnity/jetnity/actions/runs/32644372675
+- Vercel Preview READY auf Docs-Lock `426f7220`: https://vercel.com/jetnity-e1b93c82/jetnity-app/GtKAPMLaiqxrGwuB5snDkgPZez5d
 - Production/Main unverändert `cd220beb`
 
 ## 7. DB / Kosten / Provider
@@ -86,7 +89,7 @@ Lokal und remote verifiziert:
 
 ## 10. Exakter nächster Schritt
 
-Unabhängiger ChatGPT-Re-Review R4 nach `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` und Stop-Kriterium gegen Head `4f9eb1e8` plus nachfolgenden Docs-Lock. Ein PASS nur, wenn keine konkrete merge-blocking Truth-/Security-/Data-Loss-/Release-Lücke bleibt.
+Unabhängiger ChatGPT-Re-Review R4 nach `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` und Stop-Kriterium gegen Runtime `4f9eb1e8` plus Docs-Lock `426f7220`. Ein PASS nur, wenn keine konkrete merge-blocking Truth-/Security-/Data-Loss-/Release-Lücke bleibt.
 
 PR bleibt Draft. Kein Mark Ready. Kein Merge.
 

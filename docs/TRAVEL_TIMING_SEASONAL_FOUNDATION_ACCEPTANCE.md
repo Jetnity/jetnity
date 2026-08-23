@@ -254,8 +254,8 @@ R3-Blocker 5-Residual und 7 aus `docs/PR38_CHATGPT_R3_REVIEW.md` sind geschlosse
 | Production-Build | Exit 0 |
 | DB | Rechte 51 OK, RLS Exit 0, Sicherheit **210/210**, Parallelität **7/7** |
 | UI-Audit | **1014/1014**, 0 Fehler, WebKit + Chromium, 8 Viewports |
-| GitHub Actions | SUCCESS https://github.com/Jetnity/jetnity/actions/runs/32643429557 |
-| Vercel Preview | READY https://vercel.com/jetnity-e1b93c82/jetnity-app/ERBqeUKG7NWQ2agr4GiR5JpAxxit |
+| GitHub Actions | SUCCESS auf Runtime `4f9eb1e8` https://github.com/Jetnity/jetnity/actions/runs/32643429557; SUCCESS auf Docs-Lock `426f7220` https://github.com/Jetnity/jetnity/actions/runs/32644372675 |
+| Vercel Preview | READY auf Runtime `4f9eb1e8` https://vercel.com/jetnity-e1b93c82/jetnity-app/ERBqeUKG7NWQ2agr4GiR5JpAxxit; READY auf Docs-Lock `426f7220` https://vercel.com/jetnity-e1b93c82/jetnity-app/GtKAPMLaiqxrGwuB5snDkgPZez5d |
 
 ### Gate-Lock Runtime `aa6cafa2` nach R2-Fixes (23. August 2026)
 
