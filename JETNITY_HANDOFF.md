@@ -310,11 +310,13 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-Aktiver Branch: `feat/travel-timing-seasonal-intelligence` von `origin/main` @ `cd220beb`.
+Aktiver Branch: `feat/travel-timing-seasonal-intelligence`  
+Draft PR: `#38`  
+Basis: `origin/main` @ `cd220beb`
 
-1. Ist-Audit ist gegen den tatsächlichen Code verifiziert (`docs/TRAVEL_TIMING_SEASONAL_FOUNDATION_ARCHITECTURE_AUDIT.md` §14).
-2. Seasonal-Runtime `lib/seasonal/`, API und minimale Workspace-Naht implementieren.
-3. Pflicht-Testmatrix + UI-Audit + Full Gate auf finalem Runtime-Head.
+1. Ist-Audit ist gegen den tatsächlichen Code verifiziert.
+2. Seasonal-Runtime `lib/seasonal/`, API und minimale Workspace-Naht sind implementiert.
+3. Full Gate + UI-Audit auf finalem Runtime-Head ausführen.
 4. PR bleibt Draft. Kein echter Seasonal-Provider, kein Secret, keine unfreigegebenen Kosten, kein Merge ohne aktuelle Product-Owner-Freigabe.
 5. Nach Cursor-Abschluss: unabhängiger ChatGPT-Review nach `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md`.
 

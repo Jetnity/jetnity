@@ -3320,6 +3320,107 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0133 – Seasonal ist eine eigene Truth-Domäne neben Safety
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38
+
+**Entscheidung:**
+
+- Travel Timing & Seasonal Intelligence lebt in `lib/seasonal/` und besitzt eigene Evaluation-, Presentation- und Status-Typen.
+- `SafetyEvaluation` und Safety-Präsentationsklassen (`critical_warning`, `do_not_travel`) werden nicht umetikettiert.
+- `seasonal_pattern` bleibt in Safety verworfen. `active_warning` / `acute` wird in Seasonal verworfen.
+- `seasonalProviderAus()` bleibt `null`. Tests dürfen einen Port injizieren.
+
+**Kontext:** Policy und Ist-Audit verlangen eine Schwesterarchitektur, keine Vermischung akuter Warnungen mit historischen/saisonalen Mustern.
+
+**Alternativen:** Seasonal in Safety-Nature weiterbauen; Seasonal nur als UI-Copy über Safety-Facts.
+
+**Begründung:** Dieselbe Reise, zwei Wahrheiten. Vermischung erzeugt falsche Warnung oder falsche Entwarnung.
+
+**Konsequenzen:** Zwei geschlossene APIs, zwei optionale Workspace-Nähte, getrennte Fingerprints.
+
+---
+
+## ADR-0134 – Seasonal bleibt compute-on-read ohne DB-Persistenz
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38; Production-Schema unverändert
+
+**Entscheidung:**
+
+- Keine Seasonal-Tabelle und keine Migration in diesem Block.
+- Official Seasonal-Truth wird zur Laufzeit aus kanonischem Trip-Kontext plus Providerfacts berechnet.
+- `Trotzdem so planen` wird nicht improvisiert persistiert.
+
+**Kontext:** Safety hat denselben Weg gewählt. Saisonale Facts sind freshness-sensitiv und providergebunden.
+
+**Alternativen:** eigene Tabelle; Local-Storage-Wahrheit; Account-only Persistenz.
+
+**Begründung:** Ohne Live-Provider entstünde nur Scheinpersistenz. Guest/Account-Parität bleibt über denselben Trip-Graph.
+
+**Konsequenzen:** Workspace zeigt Seasonal nur bei übergebenen Evaluations. Spätere Nutzerentscheidungen brauchen einen eigenen Decision-Flow.
+
+---
+
+## ADR-0135 – Recurring Windows sind inklusiv und jahressensitiv
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38
+
+**Entscheidung:**
+
+- `annual_recurring` ist Month/Day → Month/Day, Grenzen inklusiv.
+- Start > Ende wrappt über den Jahreswechsel (`11-01` → `03-31`, `12-15` → `01-15`).
+- Das Fenster wird auf jedes berührte Reisejahr projiziert. Naive `month in []`-Logik ist keine Wahrheit.
+- `02-29` ist als Definition gültig und trifft nur echte Schalttage. `02-30` und andere ungültige Kalenderwerte fail-closed.
+- `absolute` Fenster bleiben date-only oder Instant, ohne stilles Mischen.
+
+**Begründung:** Monsun, Hurrikansaison und Winterfenster liegen oft über den Jahreswechsel. Leap-Day darf nicht still auf den 28. Februar umgedeutet werden, wenn die Quelle den 29. meint.
+
+**Konsequenzen:** Tests decken Wrap, Leap-Day, Multi-Jahr und repeated destinations getrennt ab.
+
+---
+
+## ADR-0136 – Freshness, Reference Period und Travel Window bleiben getrennte Achsen
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38
+
+**Entscheidung:**
+
+- Travel Window bestimmt zeitliche Relevanz.
+- Reference Period (z. B. Klimanormal 1991–2020) ist nur Metadatum der Datenbasis.
+- Freshness braucht `checkedAt` plus explizites `freshUntil`. Ohne Freshness-Vertrag gibt es kein `current`.
+- Der Safety-Default von 7 Tagen wird nicht auf Seasonal kopiert.
+- `freshUntil` vor `checkedAt` oder zukünftiges `checkedAt` ist fail-closed.
+
+**Begründung:** Eine Klimanormal darf nicht so gelesen werden, als müsse die Reise 1991–2020 liegen. Eine alte Climatology ohne Prüfvertrag darf keine clean/favorable Zusammenfassung erzeugen.
+
+**Konsequenzen:** Stale/recheck bleibt sichtbar. Checked-empty sagt ausdrücklich, dass das keine optimale Reisezeit beweist.
+
+---
+
+## ADR-0137 – Seasonal übernimmt die fail-closed Geo-/Zeitzonenregeln von Safety, ohne deren Domain
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38
+
+**Entscheidung:**
+
+- Date-only bleibt zonenloser Kalendertag. Foundation-D-`HH:mm` bleibt Ortszeit ohne Zone. Kein stilles `Z`.
+- Date/clock ↔ UTC-Instant innerhalb der weltweiten Offset-Hülle (UTC+14 bis UTC−12) bleibt `insufficient_context`.
+- Feinere Geo-Scopes ohne kanonische Membership bleiben `insufficient_context` und werden nicht auf das ganze Land hochgestuft.
+- Title-only Items erzeugen keine Geo-Truth.
+- Route-/Airport-Wahrheit kommt nur aus Foundation D. Wiederholte Routekontakte bleiben getrennte Fenster.
+- Es wurde kein Safety-Refactor extrahiert; Seasonal besitzt eigene Kalender-/Geo-Primitiven mit derselben Fail-closed-Semantik.
+
+**Begründung:** Dieselben Truth-Fallen wie bei Safety, aber andere Aussage. Ein Shared-Modul mit Domain-Leck wäre riskanter als eine kleine, getestete Seasonal-Kopie der Primitiven.
+
+**Konsequenzen:** Safety-Regressionen müssen grün bleiben. Seasonal-Fingerprints enthalten keine Citizenship.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
 Stand: 23. August 2026
-Gültig für: Foundation D und E auf `main` und Production; Travel Safety & Disruption Intelligence als provider-neutrale Foundation auf Draft-PR #37. Production-Schema unverändert durch diesen Block.
+Gültig für: Foundation D und E auf `main` und Production; Travel Safety & Disruption Intelligence gemergt auf `main`; Travel Timing & Seasonal Intelligence als provider-neutrale Foundation auf Draft-PR #38. Production-Schema unverändert durch diesen Block.
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -363,11 +363,19 @@ PR #35 ist gemergt und auf Production. `trip_travellers` bleibt der stabile Pare
 
 ### Travel Safety & Disruption (provider-neutrale Foundation)
 
-Draft-PR #37 auf `feat/travel-safety-disruption-intelligence`. `lib/safety/` ist eine eigene Truth-Domäne. `safetyProviderAus()` gibt `null` zurück. Tests dürfen einen Port injizieren. External Fact, Freshness, räumliche/zeitliche Relevanz, Trip-Impact und Präsentationsklasse bleiben getrennt (ADR-0127, ADR-0128, ADR-0129, ADR-0130, ADR-0131, ADR-0132).
+PR #37 ist auf `main` gemergt. `lib/safety/` ist eine eigene Truth-Domäne. `safetyProviderAus()` gibt `null` zurück. Tests dürfen einen Port injizieren. External Fact, Freshness, räumliche/zeitliche Relevanz, Trip-Impact und Präsentationsklasse bleiben getrennt (ADR-0127, ADR-0128, ADR-0129, ADR-0130, ADR-0131, ADR-0132).
 
 `POST /api/safety/evaluate` ist geschlossen: nur `application/json`, höchstens 24 KB UTF-8, Rate-Limit, `Cache-Control: private, no-store`. Browser- oder LLM-Felder setzen keine Evidence. Route Truth kommt nur aus `routeFactsAusGraph`. Ein Transit-Ereignis markiert nicht pauschal das Reiseziel. `seasonal_pattern` erzeugt keine Safety-Warnung. Evidence-Freshness ist vom Event-Zeitfenster getrennt. Zeitliche Relevanz gilt für konkrete Kontaktfenster, nicht für ein Min/Max über wiederholte Airports. Date-only-Kalendertage und Foundation-D-Ortszeiten bleiben zonenlos; gegen UTC-Instanten gilt eine weltweite Offset-Hülle statt erfundener UTC-Tagesgrenzen. Country-Scope behält Stage und alle Land-Routekontakte. Feinere Geo-Scopes ohne belegbare Membership bleiben `insufficient_context`, auch wenn eine Stage im selben Land liegt oder später zeitlich herausfällt. Teilweise malformed Providerantworten setzen `summary.complete=false` und dürfen nicht `checked_clean` oder generisches API-`ok` erzeugen. Ein erfolgreicher Provider mit 0 akuten Facts ist geprüft, nicht unavailable. Timeout, Unknown und Konflikt erzeugen keine Entwarnungs-Copy. Travellerabhängige Facts bewerten alle anwendbaren Slots fail-closed. Der Provider-Aufruf hat ein Timeout. Keine Safety-Tabelle. Die Übersicht zeigt den Block nur bei übergebenen Evaluations, nicht als permanente leere Karte. Keine automatische Reiseänderung.
 
 Fachlich: [docs/TRAVEL_SAFETY_DISRUPTION.md](docs/TRAVEL_SAFETY_DISRUPTION.md).
+
+### Travel Timing & Seasonal Intelligence (provider-neutrale Foundation)
+
+Draft-PR #38 auf `feat/travel-timing-seasonal-intelligence`. `lib/seasonal/` ist eine eigene Truth-Domäne neben Safety. `seasonalProviderAus()` gibt `null` zurück. Tests dürfen einen Port injizieren. Kategorie, Evidence-Klasse, Outcome, Freshness, Reference Period, Travel Window, räumliche Relevanz, Impact und Präsentationsklasse bleiben getrennt (ADR-0133, ADR-0134, ADR-0135, ADR-0136, ADR-0137).
+
+`POST /api/seasonal/evaluate` ist geschlossen: nur `application/json`, höchstens 24 KB UTF-8, Rate-Limit, `Cache-Control: private, no-store`. Browser- oder LLM-Felder setzen keine Evidence. Route Truth kommt nur aus `routeFactsAusGraph`. Seasonal bleibt traveller-neutral. Recurring Windows sind inklusiv und jahressensitiv, inklusive Jahreswechsel und Leap-Day. Ohne explizites `freshUntil` gibt es kein `current`. `active_warning` erscheint nicht als Seasonal-Hinweis. `seasonal_pattern` erzeugt weiterhin keine Safety-Warnung. Date-only und Foundation-D-Ortszeiten bleiben zonenlos. Feinere Geo-Scopes ohne Membership bleiben `insufficient_context`. Teilweise malformed Antworten setzen `summary.complete=false`. Ein erfolgreicher Provider mit `[]` ist geprüftes Leergebnis, nicht unavailable, und keine optimale Reisezeit. Keine Seasonal-Tabelle. Die Übersicht zeigt den Block nur bei übergebenen Evaluations, nicht als permanente leere Karte. Keine automatische Reiseänderung.
+
+Fachlich: [docs/TRAVEL_TIMING_SEASONAL.md](docs/TRAVEL_TIMING_SEASONAL.md).
 
 ### Ortsbasis (Phase 3.1)
 
