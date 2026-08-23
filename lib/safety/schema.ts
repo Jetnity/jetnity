@@ -6,11 +6,12 @@ import { z } from 'zod'
 
 import { flugRouteItinerarySchema } from '@/lib/route/schema'
 import { SAFETY_GRENZEN, safetyLandescode } from '@/lib/safety/domain'
+import { istKalenderdatum } from '@/lib/safety/evidence'
 import { TRIP_ITEM_KINDS } from '@/types/trips'
 
 const datum = z
   .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/)
+  .refine(istKalenderdatum, { message: 'Datum muss ein gültiges Kalenderdatum sein.' })
   .nullable()
 
 const id = z.string().trim().min(1).max(80)

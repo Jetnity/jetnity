@@ -31,7 +31,15 @@ export default function ReiseSicherheit({
     <section
       aria-labelledby="reise-sicherheit-titel"
       data-safety-foundation="ein"
-      data-safety-status={summary.unavailable ? 'unavailable' : summary.critical > 0 ? 'critical' : 'notice'}
+      data-safety-status={
+        summary.checkState === 'unavailable'
+          ? 'unavailable'
+          : summary.checkState === 'unknown'
+            ? 'unknown'
+            : summary.critical > 0
+              ? 'critical'
+              : 'notice'
+      }
       className="rounded-2xl border border-line-200 bg-white px-4 py-4"
     >
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Sicherheit & Störungen</p>

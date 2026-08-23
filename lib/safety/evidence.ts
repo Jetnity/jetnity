@@ -4,14 +4,41 @@
 // Browser- oder LLM-Felder setzen niemals Official Evidence.
 
 import {
-  SAFETY_AUTHORITY_CLASSES,
   SAFETY_GRENZEN,
-  enumLesen,
   type SafetyAuthorityClass,
   type SafetyFreshness,
 } from '@/lib/safety/domain'
 
 const CHECKED_AT_SKEW_MS = 5 * 60 * 1000
+
+function kalenderteileGueltig(jahr: number, monat: number, tag: number): boolean {
+  if (!Number.isInteger(jahr) || !Number.isInteger(monat) || !Number.isInteger(tag)) return false
+  const geprueft = new Date(Date.UTC(jahr, monat - 1, tag))
+  return (
+    geprueft.getUTCFullYear() === jahr &&
+    geprueft.getUTCMonth() === monat - 1 &&
+    geprueft.getUTCDate() === tag
+  )
+}
+
+export function istKalenderdatum(wert: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(wert)) return false
+  const [jahr, monat, tag] = wert.split('-').map(Number)
+  return kalenderteileGueltig(jahr ?? 0, monat ?? 0, tag ?? 0)
+}
+
+function istIsoZeit(wert: string): boolean {
+  const treffer = wert.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,3})?Z$/)
+  if (!treffer) return false
+  const jahr = Number(treffer[1])
+  const monat = Number(treffer[2])
+  const tag = Number(treffer[3])
+  const stunde = Number(treffer[4])
+  const minute = Number(treffer[5])
+  const sekunde = Number(treffer[6])
+  if (!kalenderteileGueltig(jahr, monat, tag)) return false
+  return stunde <= 23 && minute <= 59 && sekunde <= 59
+}
 
 export type SafetyEvidence = {
   provider: string | null
@@ -31,16 +58,13 @@ export type SafetyEvidence = {
 export function isoZeitLesen(wert: unknown): string | null {
   if (typeof wert !== 'string') return null
   const zeit = wert.trim()
-  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/.test(zeit)) return null
-  return Number.isFinite(Date.parse(zeit)) ? zeit : null
+  return istIsoZeit(zeit) ? zeit : null
 }
 
 export function isoDatumLesen(wert: unknown): string | null {
   if (typeof wert !== 'string') return null
   const text = wert.trim()
-  if (/^\d{4}-\d{2}-\d{2}$/.test(text)) {
-    return Number.isFinite(Date.parse(`${text}T00:00:00.000Z`)) ? text : null
-  }
+  if (istKalenderdatum(text)) return text
   return isoZeitLesen(text)
 }
 
@@ -88,9 +112,6 @@ export function factSchluesselLesen(wert: unknown): string | null {
   return key
 }
 
-export function authorityClassLesen(wert: unknown): SafetyAuthorityClass {
-  return enumLesen(wert, SAFETY_AUTHORITY_CLASSES) ?? 'unknown'
-}
 
 export function safetyEvidenceVertrauenswuerdig(opts: {
   provider: string | null

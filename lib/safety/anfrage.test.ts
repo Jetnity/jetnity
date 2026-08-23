@@ -58,6 +58,15 @@ describe('Safety-API-Hülle', () => {
     safetyRateLeeren()
   })
 
+  test('unmögliches Kalenderdatum in der Safety-Anfrage wird verworfen', () => {
+    const geprueft = safetyAnfrageSchema.safeParse({
+      startDate: '2026-02-31',
+      endDate: '2026-09-16',
+      stages: [{ id: 'stage-1', name: 'Florenz', countryCode: 'IT' }],
+    })
+    assert.equal(geprueft.success, false)
+  })
+
   test('Browser kann Safety-Evidence nicht setzen', async () => {
     const geprueft = safetyAnfrageSchema.safeParse({
       startDate: '2026-09-12',

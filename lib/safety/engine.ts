@@ -18,7 +18,7 @@ import { safetyFactsDeduplizieren } from '@/lib/safety/konflikt'
 import { safetyFactNormalisieren, type SafetyFact } from '@/lib/safety/normalisieren'
 import { praesentationsklasseAus } from '@/lib/safety/praesentation'
 import { safetyProviderAus, type SafetyProvider, type SafetyProviderFact } from '@/lib/safety/provider'
-import { relevanzVerbinden, räumlicheRelevanz, zeitlicheRelevanz } from '@/lib/safety/relevanz'
+import { räumlichZeitlicheRelevanz } from '@/lib/safety/relevanz'
 import type { Trip } from '@/types/trips'
 
 export type { SafetyEvaluation } from '@/lib/safety/domain'
@@ -83,14 +83,13 @@ function evaluationAusFact(opts: {
   nowMs: number
 }): SafetyEvaluation {
   const kontext = safetyReisekontext(opts.reise)
-  const raum = räumlicheRelevanz(kontext, opts.fact.spatialScope)
-  const zeit = zeitlicheRelevanz(
+  const relevanz = räumlichZeitlicheRelevanz(
     kontext,
+    opts.fact.spatialScope,
     opts.fact.temporal.start,
     opts.fact.temporal.end,
     opts.fact.status,
   )
-  const relevanz = relevanzVerbinden(raum, zeit)
   const traveller = travellerRelevant(opts.reise, opts.fact)
   const relevance =
     traveller === 'insufficient'
@@ -100,8 +99,11 @@ function evaluationAusFact(opts: {
         : relevanz.relevance
   const eventFingerprint = safetyEventFingerprint({
     factKey: opts.fact.factKey,
+    category: opts.fact.category,
     status: opts.fact.status,
+    nature: opts.fact.nature,
     updatedAt: opts.fact.evidence.updatedAt,
+    checkedAt: opts.fact.evidence.checkedAt,
     validFrom: opts.fact.temporal.start,
     validUntil: opts.fact.temporal.end,
     freshUntil: opts.fact.evidence.freshUntil,
@@ -109,6 +111,7 @@ function evaluationAusFact(opts: {
     advisoryClass: opts.fact.advisoryClass,
     travellerDependent: opts.fact.travellerDependent,
     travellerCitizenshipCodes: opts.fact.travellerCitizenshipCodes,
+    vertrauenswuerdig: opts.fact.vertrauenswuerdig,
     scope: opts.fact.spatialScope,
   })
   const freshness = safetyFrische({

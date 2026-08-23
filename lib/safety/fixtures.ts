@@ -98,6 +98,63 @@ export function bangkokRouteReise(): Trip {
   })
 }
 
+export function mumbaiDelhiRouteReise(reverse = false): Trip {
+  const hin = [
+    {
+      origin: { airportCode: 'ZRH', countryCode: 'CH', city: 'Zürich', country: 'Switzerland' },
+      destination: { airportCode: 'DEL', countryCode: 'IN', city: 'Delhi', country: 'India' },
+      departureDate: '2026-09-12',
+      departureTime: '09:15',
+      arrivalDate: '2026-09-12',
+      arrivalTime: '22:40',
+    },
+    {
+      origin: { airportCode: 'DEL', countryCode: 'IN', city: 'Delhi', country: 'India' },
+      destination: { airportCode: 'BOM', countryCode: 'IN', city: 'Mumbai', country: 'India' },
+      departureDate: '2026-09-13',
+      departureTime: '01:10',
+      arrivalDate: '2026-09-13',
+      arrivalTime: '03:20',
+    },
+  ] as const
+  return beispielreise({
+    title: 'Mumbai',
+    startDate: '2026-09-12',
+    endDate: '2026-09-16',
+    stages: [
+      {
+        id: 'stage-bom',
+        position: 1,
+        name: 'Mumbai',
+        countryCode: 'IN',
+        placeId: 'geonames:1275339',
+        latitude: 19.076,
+        longitude: 72.8777,
+        arrivalDate: '2026-09-13',
+        departureDate: '2026-09-16',
+      },
+    ],
+    days: [],
+    ohneTag: [
+      {
+        ...beispielreise().days[0]!.items[0]!,
+        id: 'flug-del',
+        kind: 'flight',
+        title: reverse ? 'BOM → ZRH' : 'ZRH → BOM',
+        dayId: null,
+        stageId: 'stage-bom',
+        startsOn: '2026-09-12',
+        endsOn: '2026-09-13',
+        routeItinerary: {
+          v: 1,
+          type: 'flight_route_itinerary',
+          legs: [{ segments: reverse ? [...hin].reverse().map((segment) => ({ ...segment })) : [...hin] }],
+        },
+      },
+    ],
+  })
+}
+
 export function safetyFact(teil: Partial<SafetyProviderFact> & Pick<SafetyProviderFact, 'factKey' | 'category'>): SafetyProviderFact {
   return {
     status: 'active',

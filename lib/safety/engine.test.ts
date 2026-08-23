@@ -1,17 +1,19 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { safetyZusammenfassungText } from '@/lib/safety/anzeige'
 import { safetyAuswerten, safetyAusFacts, safetyLokalFuerReise } from '@/lib/safety/engine'
 import { safetyContextFingerprint } from '@/lib/safety/fingerprint'
 import {
   SAFETY_NOW_MS,
   bangkokRouteReise,
   mehrzielreise,
+  mumbaiDelhiRouteReise,
   safetyFact,
   testSafetyProvider,
 } from '@/lib/safety/fixtures'
 import type { SafetyProviderFact } from '@/lib/safety/provider'
-import { safetyAnsicht } from '@/lib/safety/status'
+import { safetyAnsicht, safetyApiStatus } from '@/lib/safety/status'
 import type { TripTraveller } from '@/types/trips'
 
 const JETZT = SAFETY_NOW_MS
@@ -966,5 +968,485 @@ describe('Safety-Engine', () => {
     assert.notEqual(basis[0]?.eventFingerprint, validFrom[0]?.eventFingerprint)
     assert.notEqual(basis[0]?.eventFingerprint, freshUntil[0]?.eventFingerprint)
     assert.notEqual(basis[0]?.eventFingerprint, severity[0]?.eventFingerprint)
+  })
+
+  test('Final: Timeout ist nicht clean/ok und enthält keine Entwarnung', async () => {
+    const evaluations = await safetyAuswerten(
+      mehrzielreise(),
+      testSafetyProvider(() => new Promise(() => {})),
+      null,
+      JETZT,
+      30,
+    )
+    const ansicht = safetyAnsicht(mehrzielreise(), evaluations)
+    const text = safetyZusammenfassungText(ansicht.summary)
+    assert.equal(safetyApiStatus(ansicht.summary), 'unavailable')
+    assert.notEqual(ansicht.summary.checkState, 'checked_clean')
+    assert.match(text, /keine Entwarnung/)
+    assert.equal(text.includes('Keine aktuelle Safety-Warnung'), false)
+  })
+
+  test('Final: Throw ist nicht clean/ok', async () => {
+    const evaluations = await safetyAuswerten(
+      mehrzielreise(),
+      testSafetyProvider(async () => {
+        throw new Error('boom')
+      }),
+      null,
+      JETZT,
+    )
+    const ansicht = safetyAnsicht(mehrzielreise(), evaluations)
+    assert.equal(safetyApiStatus(ansicht.summary), 'unavailable')
+    assert.equal(safetyZusammenfassungText(ansicht.summary).includes('Keine aktuelle Safety-Warnung'), false)
+  })
+
+  test('Final: malformed Response ist unknown ohne Clean-Copy', () => {
+    const evaluations = safetyAusFacts(mehrzielreise(), [null, 1], 'audit-safety', { nowMs: JETZT })
+    const ansicht = safetyAnsicht(mehrzielreise(), evaluations)
+    assert.equal(ansicht.summary.checkState, 'unknown')
+    assert.equal(safetyApiStatus(ansicht.summary), 'unknown')
+    assert.equal(safetyZusammenfassungText(ansicht.summary).includes('Keine aktuelle Safety-Warnung'), false)
+  })
+
+  test('Final: stale/recheck ohne Warnung hat keine Clean-Copy', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake', checkedAt: '2026-01-01T09:00:00.000Z' })],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    const ansicht = safetyAnsicht(mehrzielreise(), evaluations)
+    assert.equal(evaluations[0]?.freshness, 'recheck_needed')
+    assert.equal(ansicht.summary.checkState, 'unknown')
+    assert.equal(safetyZusammenfassungText(ansicht.summary).includes('Keine aktuelle Safety-Warnung'), false)
+  })
+
+  test('Final: Konflikt ohne current Warning hat keine Clean-Copy', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [
+        safetyFact({ factKey: 'eq-firenze', category: 'earthquake', status: 'active' }),
+        safetyFact({ factKey: 'eq-firenze', category: 'earthquake', status: 'resolved' }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    const ansicht = safetyAnsicht(mehrzielreise(), evaluations)
+    assert.equal(evaluations[0]?.conflict, true)
+    assert.equal(ansicht.summary.checkState, 'unknown')
+    assert.equal(safetyZusammenfassungText(ansicht.summary).includes('Keine aktuelle Safety-Warnung'), false)
+  })
+
+  test('Final: leerer Provider bleibt checked-clean', async () => {
+    const evaluations = await safetyAuswerten(mehrzielreise(), testSafetyProvider([]), null, JETZT)
+    const ansicht = safetyAnsicht(mehrzielreise(), evaluations)
+    assert.equal(ansicht.summary.checkState, 'checked_clean')
+    assert.equal(safetyApiStatus(ansicht.summary), 'ok')
+    assert.equal(ansicht.summary.unavailable, false)
+    assert.match(safetyZusammenfassungText(ansicht.summary), /Keine aktuelle Safety-Warnung/)
+    assert.equal(safetyZusammenfassungText(ansicht.summary).includes('Reise ist sicher'), false)
+  })
+
+  test('Final: Seasonal-only ist geprüft, nicht unavailable, keine globale Sicherheit', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [safetyFact({ factKey: 'monsoon-it', category: 'flood', nature: 'seasonal_pattern' })],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    const ansicht = safetyAnsicht(mehrzielreise(), evaluations)
+    assert.equal(ansicht.summary.checkState, 'checked_clean')
+    assert.equal(ansicht.summary.unavailable, false)
+    assert.equal(warnungen(evaluations).length, 0)
+    assert.equal(safetyZusammenfassungText(ansicht.summary).includes('Reise ist sicher'), false)
+  })
+
+  test('Final: Florenz-Event nach Abreise bleibt not_affected', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [
+        safetyFact({
+          factKey: 'eq-firenze',
+          category: 'earthquake',
+          validFrom: '2026-09-15',
+          validUntil: '2026-09-16',
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.relevance, 'not_affected')
+  })
+
+  test('Final: Florenz-Event während der Etappe bleibt affected', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [
+        safetyFact({
+          factKey: 'eq-firenze',
+          category: 'earthquake',
+          validFrom: '2026-09-13',
+          validUntil: '2026-09-13',
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.relevance, 'affected')
+    assert.deepEqual(evaluations[0]?.affectedRefs.map((ref) => ref.id), ['stage-1'])
+  })
+
+  test('Final: Country-Event betrifft nur die zeitlich passende Stage', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [
+        safetyFact({
+          factKey: 'unrest-it',
+          category: 'civil_unrest',
+          spatialScope: { kind: 'country', countryCode: 'IT' },
+          validFrom: '2026-09-12',
+          validUntil: '2026-09-14',
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.relevance, 'affected')
+    assert.deepEqual(evaluations[0]?.affectedRefs.map((ref) => ref.id), ['stage-1'])
+  })
+
+  test('Final: DOH-Event nach Transit bleibt not_affected', () => {
+    const evaluations = safetyAusFacts(
+      bangkokRouteReise(),
+      [
+        safetyFact({
+          factKey: 'doh-disrupt',
+          category: 'infrastructure_disruption',
+          spatialScope: { kind: 'airport', airportCode: 'DOH', countryCode: 'QA' },
+          validFrom: '2026-09-15',
+          validUntil: '2026-09-16',
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.relevance, 'not_affected')
+  })
+
+  test('Final: DOH-Event während Transit bleibt affected', () => {
+    const evaluations = safetyAusFacts(
+      bangkokRouteReise(),
+      [
+        safetyFact({
+          factKey: 'doh-disrupt',
+          category: 'infrastructure_disruption',
+          spatialScope: { kind: 'airport', airportCode: 'DOH', countryCode: 'QA' },
+          validFrom: '2026-09-12',
+          validUntil: '2026-09-12',
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.relevance, 'affected')
+  })
+
+  test('Final: fehlendes Route-Datum bleibt insufficient, nie erfundene Entwarnung', () => {
+    const reise = bangkokRouteReise()
+    const flug = reise.ohneTag[0]
+    if (flug?.routeItinerary) {
+      flug.routeItinerary = {
+        ...flug.routeItinerary,
+        legs: flug.routeItinerary.legs.map((leg) => ({
+          segments: leg.segments.map((segment) => ({
+            ...segment,
+            departureDate: null,
+            arrivalDate: null,
+          })),
+        })),
+      }
+    }
+    const evaluations = safetyAusFacts(
+      reise,
+      [
+        safetyFact({
+          factKey: 'doh-disrupt',
+          category: 'infrastructure_disruption',
+          spatialScope: { kind: 'airport', airportCode: 'DOH', countryCode: 'QA' },
+          validFrom: '2026-09-15',
+          validUntil: '2026-09-16',
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.notEqual(evaluations[0]?.relevance, 'not_affected')
+    assert.equal(evaluations[0]?.relevance, 'insufficient_context')
+  })
+
+  test('Final: Route-Segmentdatum ändert Context-Fingerprint', () => {
+    const vorher = bangkokRouteReise()
+    const nachher = bangkokRouteReise()
+    const flug = nachher.ohneTag[0]
+    if (flug?.routeItinerary) {
+      flug.routeItinerary = {
+        ...flug.routeItinerary,
+        legs: flug.routeItinerary.legs.map((leg) => ({
+          segments: leg.segments.map((segment) =>
+            segment.destination.airportCode === 'DOH'
+              ? { ...segment, arrivalDate: '2026-09-13' }
+              : segment,
+          ),
+        })),
+      }
+    }
+    assert.notEqual(safetyContextFingerprint(vorher), safetyContextFingerprint(nachher))
+  })
+
+  test('Final: Mumbai-Stage + DEL-Transit + City Delhi bleibt insufficient', () => {
+    const evaluations = safetyAusFacts(
+      mumbaiDelhiRouteReise(),
+      [
+        safetyFact({
+          factKey: 'delhi-city',
+          category: 'civil_unrest',
+          spatialScope: { kind: 'city', countryCode: 'IN', placeId: 'geonames:1273294', cityName: 'Delhi' },
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.relevance, 'insufficient_context')
+  })
+
+  test('Final: Mumbai-Stage + DEL-Transit + Place Delhi bleibt insufficient', () => {
+    const evaluations = safetyAusFacts(
+      mumbaiDelhiRouteReise(),
+      [
+        safetyFact({
+          factKey: 'delhi-place',
+          category: 'civil_unrest',
+          spatialScope: { kind: 'place', countryCode: 'IN', placeId: 'geonames:1273294' },
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.relevance, 'insufficient_context')
+  })
+
+  test('Final: Mumbai-Koordinaten ausserhalb Delhi-Polygon + DEL ohne Route-Koordinaten bleibt insufficient', () => {
+    const evaluations = safetyAusFacts(
+      mumbaiDelhiRouteReise(),
+      [
+        safetyFact({
+          factKey: 'delhi-poly',
+          category: 'flood',
+          spatialScope: {
+            kind: 'polygon',
+            countryCode: 'IN',
+            coordinates: [
+              [28.4, 76.9],
+              [28.8, 76.9],
+              [28.8, 77.4],
+              [28.4, 77.4],
+            ],
+          },
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.relevance, 'insufficient_context')
+  })
+
+  test('Final: anderes Land ohne Stage/Route bleibt not_affected', () => {
+    const evaluations = safetyAusFacts(
+      mumbaiDelhiRouteReise(),
+      [
+        safetyFact({
+          factKey: 'fr-region',
+          category: 'civil_unrest',
+          spatialScope: { kind: 'admin_region', countryCode: 'FR', regionName: 'Île-de-France' },
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.relevance, 'not_affected')
+  })
+
+  test('Final: Airport DEL bleibt affected, Reihenfolge ändert Semantik nicht', () => {
+    const fact = safetyFact({
+      factKey: 'del-disrupt',
+      category: 'infrastructure_disruption',
+      spatialScope: { kind: 'airport', airportCode: 'DEL', countryCode: 'IN' },
+    })
+    const vor = safetyAusFacts(mumbaiDelhiRouteReise(), [fact], 'audit-safety', { nowMs: JETZT })
+    const nach = safetyAusFacts(mumbaiDelhiRouteReise(true), [fact], 'audit-safety', { nowMs: JETZT })
+    assert.equal(vor[0]?.relevance, 'affected')
+    assert.equal(nach[0]?.relevance, 'affected')
+  })
+
+  test('Final: unterschiedliches freshUntil bleibt reihenfolgeunabhängig fail-closed', () => {
+    const alt = safetyFact({
+      factKey: 'eq-firenze',
+      category: 'earthquake',
+      freshUntil: '2026-08-20T10:00:00.000Z',
+    })
+    const neu = safetyFact({
+      factKey: 'eq-firenze',
+      category: 'earthquake',
+      freshUntil: '2026-08-28T10:00:00.000Z',
+    })
+    const vor = safetyAusFacts(mehrzielreise(), [alt, neu], 'audit-safety', { nowMs: JETZT })
+    const nach = safetyAusFacts(mehrzielreise(), [neu, alt], 'audit-safety', { nowMs: JETZT })
+    assert.deepEqual(vor, nach)
+    assert.equal(warnungen(vor).length, 0)
+    assert.equal(vor[0]?.conflict, true)
+  })
+
+  test('Final: unterschiedliches Scope-countryCode bleibt konfliktstabil', () => {
+    const a = safetyFact({
+      factKey: 'poly-1',
+      category: 'flood',
+      spatialScope: {
+        kind: 'polygon',
+        countryCode: 'IT',
+        coordinates: [
+          [43.7, 11.2],
+          [43.8, 11.2],
+          [43.8, 11.3],
+        ],
+      },
+    })
+    const b = {
+      ...a,
+      spatialScope: { ...a.spatialScope as object, countryCode: 'FR' },
+    }
+    const vor = safetyAusFacts(mehrzielreise(), [a, b], 'audit-safety', { nowMs: JETZT })
+    const nach = safetyAusFacts(mehrzielreise(), [b, a], 'audit-safety', { nowMs: JETZT })
+    assert.deepEqual(vor, nach)
+    assert.equal(vor[0]?.conflict, true)
+  })
+
+  test('Final: Category-Wechsel ändert Event-Fingerprint', () => {
+    const erdbeben = safetyAusFacts(
+      mehrzielreise(),
+      [safetyFact({ factKey: 'lage', category: 'earthquake', sourceSeverity: null, advisoryClass: null })],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    const sonst = safetyAusFacts(
+      mehrzielreise(),
+      [safetyFact({ factKey: 'lage', category: 'other', sourceSeverity: null, advisoryClass: null })],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.notEqual(erdbeben[0]?.presentationClass, sonst[0]?.presentationClass)
+    assert.notEqual(erdbeben[0]?.eventFingerprint, sonst[0]?.eventFingerprint)
+  })
+
+  test('Final: checkedAt-Wechsel ändert Event-Fingerprint', () => {
+    const aktuell = safetyAusFacts(
+      mehrzielreise(),
+      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake' })],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    const alt = safetyAusFacts(
+      mehrzielreise(),
+      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake', checkedAt: '2026-01-01T09:00:00.000Z' })],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.notEqual(aktuell[0]?.freshness, alt[0]?.freshness)
+    assert.notEqual(aktuell[0]?.eventFingerprint, alt[0]?.eventFingerprint)
+  })
+
+  test('Final: trusted vs untrusted ändert Event-Fingerprint', () => {
+    const trusted = safetyAusFacts(
+      mehrzielreise(),
+      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake' })],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    const untrusted = safetyAusFacts(
+      mehrzielreise(),
+      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake', authority: null })],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.notEqual(trusted[0]?.eventFingerprint, untrusted[0]?.eventFingerprint)
+  })
+
+  test('Final: unmögliches Kalenderdatum bleibt fail-closed', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake', validFrom: '2026-02-31' })],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(warnungen(evaluations).length, 0)
+    assert.notEqual(evaluations[0]?.factKey, 'eq-firenze')
+  })
+
+  test('Final: validFrom nach validUntil bleibt fail-closed', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [
+        safetyFact({
+          factKey: 'eq-firenze',
+          category: 'earthquake',
+          validFrom: '2026-09-16',
+          validUntil: '2026-09-12',
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(warnungen(evaluations).length, 0)
+    assert.notEqual(evaluations[0]?.factKey, 'eq-firenze')
+  })
+
+  test('Final: travellerDependent als String bleibt fail-closed', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [
+        {
+          ...safetyFact({ factKey: 'eq-firenze', category: 'earthquake' }),
+          travellerDependent: 'true' as unknown as boolean,
+        },
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(warnungen(evaluations).length, 0)
+    assert.notEqual(evaluations[0]?.relevance, 'affected')
+  })
+
+  test('Final: ungültiges decision-Enum wird nicht zum Default-Warnen', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [
+        {
+          ...safetyFact({ factKey: 'eq-firenze', category: 'earthquake', sourceSeverity: null }),
+          sourceSeverity: 'super-bad' as unknown as 'severe',
+        },
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(warnungen(evaluations).length, 0)
+    assert.notEqual(evaluations[0]?.factKey, 'eq-firenze')
+  })
+
+  test('Final: konsistente Duplikate bleiben deterministisch eine Evaluation', () => {
+    const fact = safetyFact({ factKey: 'eq-firenze', category: 'earthquake' })
+    const vor = safetyAusFacts(mehrzielreise(), [fact, { ...fact }], 'audit-safety', { nowMs: JETZT })
+    const nach = safetyAusFacts(mehrzielreise(), [{ ...fact }, fact], 'audit-safety', { nowMs: JETZT })
+    assert.equal(vor.length, 1)
+    assert.deepEqual(vor, nach)
+    assert.equal(vor[0]?.relevance, 'affected')
   })
 })

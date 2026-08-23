@@ -59,8 +59,12 @@ export const SAFETY_FRISCHE_TEXT: Record<SafetyFreshness, string> = {
 }
 
 export function safetyZusammenfassungText(summary: SafetySummary): string {
-  if (summary.unavailable && summary.critical + summary.important + summary.information === 0) {
+  const warnungen = summary.critical + summary.important + summary.information
+  if (summary.checkState === 'unavailable' && warnungen === 0) {
     return 'Sicherheitshinweise können derzeit nicht geprüft werden. Das ist keine Entwarnung.'
+  }
+  if (summary.checkState === 'unknown' && warnungen === 0) {
+    return 'Die Sicherheitslage für diese Reise ist derzeit nicht belastbar prüfbar. Das ist keine Entwarnung.'
   }
   if (summary.critical > 0) {
     return `${summary.critical === 1 ? 'Eine kritische Warnung' : `${summary.critical} kritische Warnungen`} betrifft diese Reise.`
@@ -69,5 +73,8 @@ export function safetyZusammenfassungText(summary: SafetySummary): string {
     return `${summary.important === 1 ? 'Ein wichtiger Reisehinweis' : `${summary.important} wichtige Reisehinweise`} sollte geprüft werden.`
   }
   if (summary.information > 0) return 'Es gibt beobachtenswerte Hinweise ohne belastbare stärkere Warnung.'
-  return 'Keine aktuelle Safety-Warnung für den geprüften Reiseausschnitt.'
+  if (summary.checkState === 'checked_clean') {
+    return 'Keine aktuelle Safety-Warnung für den geprüften Reiseausschnitt.'
+  }
+  return 'Die Sicherheitslage für diese Reise ist derzeit nicht belastbar prüfbar. Das ist keine Entwarnung.'
 }

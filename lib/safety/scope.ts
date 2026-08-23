@@ -59,13 +59,13 @@ export function scopeIdentitaet(scope: SafetySpatialScope): string {
     case 'city':
       return `city:${scope.countryCode}:${scope.placeId ?? scope.cityName ?? ''}`
     case 'place':
-      return `place:${scope.placeId}`
+      return `place:${scope.placeId}:${scope.countryCode ?? ''}`
     case 'airport':
       return `airport:${scope.airportCode}`
     case 'point_radius':
-      return `point:${scope.latitude.toFixed(4)},${scope.longitude.toFixed(4)},${scope.radiusKm}`
+      return `point:${scope.latitude.toFixed(4)},${scope.longitude.toFixed(4)},${scope.radiusKm}:${scope.countryCode ?? ''}`
     case 'polygon':
-      return `polygon:${scope.coordinates.map((punkt) => punkt.join(',')).join(';')}`
+      return `polygon:${scope.coordinates.map((punkt) => punkt.join(',')).join(';')}:${scope.countryCode ?? ''}`
     case 'route_corridor':
       return `corridor:${[...scope.airportCodes].sort().join(',')}`
     case 'insufficient':

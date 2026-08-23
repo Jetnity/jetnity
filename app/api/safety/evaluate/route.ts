@@ -15,7 +15,7 @@ import {
 import { safetyEvaluationsPruefen, tripAusSafetyAnfrage } from '@/lib/safety/auswerten'
 import { safetyAnfrageErlaubt, safetyRateKennungAus } from '@/lib/safety/rate-limit'
 import { safetyAnfrageSchema } from '@/lib/safety/schema'
-import { safetyAnsicht } from '@/lib/safety/status'
+import { safetyAnsicht, safetyApiStatus } from '@/lib/safety/status'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 10
@@ -86,12 +86,16 @@ export async function POST(req: Request) {
   const evaluations = await safetyEvaluationsPruefen(geprueft.data)
   const ansicht = safetyAnsicht(tripAusSafetyAnfrage(geprueft.data), evaluations)
 
+  const apiStatus = safetyApiStatus(ansicht.summary)
   return antwort(200, {
-    status: ansicht.summary.unavailable ? 'unavailable' : 'ok',
+    status: apiStatus,
     evaluations,
     summary: ansicht.summary,
-    message: ansicht.summary.unavailable
-      ? 'Sicherheitshinweise können derzeit nicht geprüft werden. Das ist keine Entwarnung.'
-      : 'Safety-Evaluation abgeschlossen.',
+    message:
+      apiStatus === 'unavailable'
+        ? 'Sicherheitshinweise können derzeit nicht geprüft werden. Das ist keine Entwarnung.'
+        : apiStatus === 'unknown'
+          ? 'Die Sicherheitslage für diese Reise ist derzeit nicht belastbar prüfbar. Das ist keine Entwarnung.'
+          : 'Safety-Evaluation abgeschlossen.',
   })
 }

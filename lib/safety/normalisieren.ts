@@ -5,6 +5,7 @@
 
 import {
   SAFETY_ADVISORY_CLASSES,
+  SAFETY_AUTHORITY_CLASSES,
   SAFETY_EVENT_CATEGORIES,
   SAFETY_EVENT_STATUSES,
   SAFETY_GRENZEN,
@@ -17,7 +18,6 @@ import {
   type SafetyNature,
 } from '@/lib/safety/domain'
 import {
-  authorityClassLesen,
   authorityLesen,
   factSchluesselLesen,
   isoDatumLesen,
@@ -26,6 +26,7 @@ import {
   quelleUrlLesen,
   safetyEvidenceVertrauenswuerdig,
   sicherheitstextLesen,
+  zeitMs,
   type SafetyEvidence,
 } from '@/lib/safety/evidence'
 import { scopeIdentitaet, spatialScopeLesen, type SafetySpatialScope } from '@/lib/safety/scope'
@@ -77,8 +78,40 @@ export function safetyFactNormalisieren(
   const validUntil = optionalesFeld(zeile.validUntil, isoDatumLesen)
   const freshUntil = optionalesFeld(zeile.freshUntil, isoZeitLesen)
   const checkedAtFeld = optionalesFeld(zeile.checkedAt, isoZeitLesen)
-  if (!validFrom.ok || !validUntil.ok || !freshUntil.ok || !checkedAtFeld.ok) return null
+  const sourceSeverity = optionalesFeld(zeile.sourceSeverity, (wert) =>
+    enumLesen(wert, SAFETY_SOURCE_SEVERITIES),
+  )
+  const advisoryClass = optionalesFeld(zeile.advisoryClass, (wert) =>
+    enumLesen(wert, SAFETY_ADVISORY_CLASSES),
+  )
+  const authorityClass = optionalesFeld(zeile.authorityClass, (wert) =>
+    enumLesen(wert, SAFETY_AUTHORITY_CLASSES),
+  )
+  if (
+    !validFrom.ok ||
+    !validUntil.ok ||
+    !freshUntil.ok ||
+    !checkedAtFeld.ok ||
+    !sourceSeverity.ok ||
+    !advisoryClass.ok ||
+    !authorityClass.ok
+  ) {
+    return null
+  }
+  if (validFrom.wert && validUntil.wert && zeitMs(validFrom.wert) > zeitMs(validUntil.wert)) {
+    return null
+  }
 
+  let status: (typeof SAFETY_EVENT_STATUSES)[number] = 'unknown'
+  if (zeile.status != null && zeile.status !== '') {
+    const gelesen = enumLesen(zeile.status, SAFETY_EVENT_STATUSES)
+    if (!gelesen) return null
+    status = gelesen
+  }
+
+  if (zeile.travellerDependent != null && typeof zeile.travellerDependent !== 'boolean') {
+    return null
+  }
   if (zeile.travellerCitizenshipCodes != null && !Array.isArray(zeile.travellerCitizenshipCodes)) {
     return null
   }
@@ -102,10 +135,10 @@ export function safetyFactNormalisieren(
   return {
     factKey,
     category,
-    status: enumLesen(zeile.status, SAFETY_EVENT_STATUSES) ?? 'unknown',
+    status,
     nature,
-    sourceSeverity: enumLesen(zeile.sourceSeverity, SAFETY_SOURCE_SEVERITIES),
-    advisoryClass: enumLesen(zeile.advisoryClass, SAFETY_ADVISORY_CLASSES),
+    sourceSeverity: sourceSeverity.wert,
+    advisoryClass: advisoryClass.wert,
     spatialScope,
     temporal,
     travellerDependent: zeile.travellerDependent === true,
@@ -119,7 +152,7 @@ export function safetyFactNormalisieren(
     evidence: {
       provider,
       authority,
-      authorityClass: authorityClassLesen(zeile.authorityClass),
+      authorityClass: authorityClass.wert ?? 'unknown',
       sourceUrl,
       publishedAt: isoZeitLesen(zeile.publishedAt ?? null),
       updatedAt: isoZeitLesen(zeile.updatedAt ?? null),
@@ -144,6 +177,7 @@ export function entscheidungsSignatur(fact: SafetyFact): string {
     scopeIdentitaet(fact.spatialScope),
     fact.temporal.start ?? '',
     fact.temporal.end ?? '',
+    fact.evidence.freshUntil ?? '',
     fact.travellerDependent ? 'traveller' : 'trip',
     fact.travellerCitizenshipCodes.join(','),
   ].join('|')
@@ -157,5 +191,11 @@ export function evidenceBevorzugen(a: SafetyFact, b: SafetyFact): SafetyFact {
   const aUrl = a.evidence.sourceUrl ?? ''
   const bUrl = b.evidence.sourceUrl ?? ''
   if (aUrl !== bUrl) return aUrl < bUrl ? a : b
-  return a
+  const aUpdated = a.evidence.updatedAt ?? ''
+  const bUpdated = b.evidence.updatedAt ?? ''
+  if (aUpdated !== bUpdated) return aUpdated > bUpdated ? a : b
+  const aFresh = a.evidence.freshUntil ?? ''
+  const bFresh = b.evidence.freshUntil ?? ''
+  if (aFresh !== bFresh) return aFresh < bFresh ? a : b
+  return a.factKey <= b.factKey ? a : b
 }
