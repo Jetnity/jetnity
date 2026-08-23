@@ -291,17 +291,16 @@ describe('R9 Blocker 17 – Connection-Leg-Zuordnung', () => {
 })
 
 describe('R9 Blocker 18 – Chronologie-Präzision', () => {
-  test('gleicher Tag, Item-Zeiten null, Segmentzeiten 09:00/18:00 bestimmen Origin', () => {
+  test('gleicher Tag an verschiedenen Flughäfen erfindet keine Cross-Airport-Uhrzeit-Reihenfolge', () => {
     const reise = twoFlights(
       { id: 'hin', itinerary: hinItem('2026-09-12', '09:00'), startsOn: '2026-09-12', startsAt: null },
       { id: 'rueck', itinerary: rueckItem('2026-09-12', '18:00'), startsOn: '2026-09-12', startsAt: null },
     )
     const facts = routeFactsAusGraph(reise)
-    assert.equal(facts.chronologieBewiesen, true)
-    assert.equal(facts.origin.airportCode, 'ZRH')
-    assert.deepEqual(facts.destinationCountryCodes, ['TH'])
+    assert.equal(facts.chronologieBewiesen, false)
+    assert.equal(facts.origin.airportCode, null)
+    assert.match(routeKompakt(facts), /Reihenfolge unbekannt/)
     const umgestellt = { ...reise, ohneTag: [...reise.ohneTag].reverse() }
-    assert.equal(routeFactsAusGraph(umgestellt).origin.airportCode, 'ZRH')
     assert.equal(routeFactsAusGraph(umgestellt).fingerprint, facts.fingerprint)
   })
 
@@ -311,11 +310,11 @@ describe('R9 Blocker 18 – Chronologie-Präzision', () => {
       { id: 'frueh', itinerary: hinItem('2026-09-12', '09:00'), startsOn: '2026-09-12', startsAt: '09:00' },
     )
     const facts = routeFactsAusGraph(reise)
-    assert.equal(facts.origin.airportCode, 'ZRH')
-    assert.equal(facts.chronologieBewiesen, true)
+    assert.equal(facts.chronologieBewiesen, false)
+    assert.equal(facts.origin.airportCode, null)
   })
 
-  test('identische Item-Starts, unterschiedliche Segmentstarts werden disambiguiert', () => {
+  test('identische Same-Day-Starts an verschiedenen Airports bleiben unknown', () => {
     const reise = twoFlights(
       { id: 'hin', itinerary: hinItem('2026-09-12', '09:00'), startsOn: '2026-09-12', startsAt: null },
       { id: 'rueck', itinerary: rueckItem('2026-09-12', '18:00'), startsOn: '2026-09-12', startsAt: null },
@@ -325,9 +324,8 @@ describe('R9 Blocker 18 – Chronologie-Präzision', () => {
       startsAt: punkt.startsAt,
       itinerary: punkt.routeItinerary!,
     }))
-    assert.equal(routeChronologieBewiesen(evidenzen), true)
-    assert.equal(routeFactsAusGraph(reise).origin.airportCode, 'ZRH')
-    assert.equal(routeFactsAusGraph({ ...reise, ohneTag: [...reise.ohneTag].reverse() }).origin.airportCode, 'ZRH')
+    assert.equal(routeChronologieBewiesen(evidenzen), false)
+    assert.equal(routeFactsAusGraph(reise).origin.airportCode, null)
   })
 
   test('echte gleiche Starts ohne weitere Evidenz bleiben unknown', () => {

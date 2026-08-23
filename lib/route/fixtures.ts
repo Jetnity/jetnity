@@ -16,6 +16,9 @@ export const TEST_FLUGHAFEN_REFS: FlughafenReferenzKarte = {
   ORY: { countryCode: 'FR', city: 'Paris', country: 'France', name: 'Orly' },
   LCY: { countryCode: 'GB', city: 'London', country: 'United Kingdom', name: 'London City' },
   AMS: { countryCode: 'NL', city: 'Amsterdam', country: 'Netherlands', name: 'Schiphol' },
+  NRT: { countryCode: 'JP', city: 'Tokio', country: 'Japan', name: 'Narita' },
+  HNL: { countryCode: 'US', city: 'Honolulu', country: 'United States', name: 'Daniel K. Inouye' },
+  LAX: { countryCode: 'US', city: 'Los Angeles', country: 'United States', name: 'Los Angeles' },
 }
 
 function segment(
@@ -216,6 +219,32 @@ export function itineraryReverseRoundtrip(): FlugRouteItinerary {
     legs: [
       { segments: [segment('BKK', 'ZRH', '2026-11-12', '23:00', '2026-11-13', '06:00')] },
       { segments: [segment('ZRH', 'BKK', '2026-11-01', '09:15', '2026-11-01', '21:40')] },
+    ],
+  }
+}
+
+export function itineraryDateLineNrtHnlLax(): FlugRouteItinerary {
+  return {
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs: [
+      { segments: [segment('NRT', 'HNL', '2026-01-02', '20:00', '2026-01-02', '08:00')] },
+      { segments: [segment('HNL', 'LAX', '2026-01-02', '10:00', '2026-01-02', '17:20')] },
+    ],
+  }
+}
+
+export function itineraryTransitUmgekehrt(): FlugRouteItinerary {
+  return {
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs: [
+      {
+        segments: [
+          segment('DOH', 'BKK', '2026-11-01', '18:55', '2026-11-02', '07:10'),
+          segment('ZRH', 'DOH', '2026-11-01', '09:15', '2026-11-01', '16:40'),
+        ],
+      },
     ],
   }
 }

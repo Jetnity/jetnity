@@ -5,7 +5,6 @@
 // Reise-Origin sind. Transit bleibt ein Zwischenpunkt im selben Leg.
 
 import { landescodeLesen } from '@/lib/readiness/domain'
-import { itinerariesFuerWahrheit, routeChronologieBewiesen } from '@/lib/route/chronologie'
 import type { FlugRouteItinerary } from '@/lib/route/domain'
 
 export type RouteLaenderrollen = {
@@ -21,11 +20,11 @@ export type RouteItineraryFuerRollen = {
 
 export function laenderrollenAus(
   itineraries: readonly RouteItineraryFuerRollen[],
+  bewiesen: boolean,
 ): RouteLaenderrollen {
-  const wahrheit = itinerariesFuerWahrheit(itineraries)
   return {
-    transitCountryCodes: transitlaenderAus(wahrheit),
-    destinationCountryCodes: ziellaenderAus(wahrheit),
+    transitCountryCodes: transitlaenderAus(itineraries),
+    destinationCountryCodes: ziellaenderAus(itineraries, bewiesen),
   }
 }
 
@@ -43,8 +42,11 @@ function transitlaenderAus(itineraries: readonly RouteItineraryFuerRollen[]): st
   return laender
 }
 
-function ziellaenderAus(itineraries: readonly RouteItineraryFuerRollen[]): string[] {
-  const ursprung = ursprungslandAus(itineraries)
+function ziellaenderAus(
+  itineraries: readonly RouteItineraryFuerRollen[],
+  bewiesen: boolean,
+): string[] {
+  const ursprung = ursprungslandAus(itineraries, bewiesen)
   const laender: string[] = []
   for (const eintrag of itineraries) {
     for (const bein of eintrag.itinerary.legs) {
@@ -63,8 +65,11 @@ function ziellaenderAus(itineraries: readonly RouteItineraryFuerRollen[]): strin
   return laender
 }
 
-function ursprungslandAus(itineraries: readonly RouteItineraryFuerRollen[]): string | null {
-  if (!routeChronologieBewiesen(itineraries)) return null
+function ursprungslandAus(
+  itineraries: readonly RouteItineraryFuerRollen[],
+  bewiesen: boolean,
+): string | null {
+  if (!bewiesen) return null
   const start = itineraries[0]?.itinerary.legs[0]?.segments[0]?.origin.countryCode ?? null
   return landescodeLesen(start)
 }

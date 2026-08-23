@@ -2,13 +2,22 @@
 //
 // Belegte Route-Reihenfolge. Item-Datum+Zeit und Segmentdaten bleiben getrennt.
 // Date-only darf eine vorhandene Segmentzeit nicht auf 00:00 degradieren.
-// Eine Reihenfolge gilt nur dann als bewiesen, wenn keine Quelle widerspricht
-// und mindestens eine Quelle eindeutig ordnet. Das gilt auch innerhalb einer
-// Multi-Leg-Itinerary: eindeutige Segmentzeiten sind die Source of Truth,
-// nicht die deklarierte Array-Reihenfolge und nicht der lexikalische Pfad.
+//
+// departureDate/departureTime sind Ortszeiten des jeweiligen Flughafens.
+// Cross-Airport-Wanduhren sind keine absolute Chronologie. Vergleichbar sind:
+//   - lokale Zeiten am selben bewiesenen Airport
+//   - Kalenderabstände, die ohne Offset-Wissen eindeutig bleiben
+//   - eine eindeutige azyklische Airport-Kette, die die deklarierte Reihenfolge bestätigt
+// Eine andere eindeutige Kette darf Open-Jaw/Home-Arrival nicht zur Origin-Wahrheit umdrehen.
+// Segmente innerhalb eines Legs dürfen bei genau einem kontinuierlichen Hamiltonian rekonstruiert werden.
+// Lexikalische Pfade und Date-Line-Uhrzeiten erfinden keine Business-Truth.
 
-import type { FlugRouteItinerary, RouteItineraryMitQuelle } from '@/lib/route/domain'
+import { tageZwischen } from '@/lib/flights/zeit'
+import type { FlugRouteItinerary, RouteItineraryMitQuelle, RouteSegment } from '@/lib/route/domain'
 import { pfadAusItinerary } from '@/lib/route/pfad'
+import { iataLesen } from '@/lib/route/referenz'
+
+const SICHERE_KALENDERTAGE = 3
 
 type StartKorn = 'datetime' | 'date'
 
@@ -21,6 +30,8 @@ type StartKandidaten = {
   item: StartWert | null
   segment: StartWert | null
 }
+
+type Ordnung = 'before' | 'after' | 'unknown'
 
 function kalendertag(wert: string | null | undefined): string | null {
   if (!wert || !/^\d{4}-\d{2}-\d{2}$/.test(wert)) return null
@@ -46,6 +57,24 @@ function startWert(tag: string | null, zeit: string | null): StartWert | null {
   return { instant: tag, korn: 'date' }
 }
 
+function airportCode(punkt: { airportCode: string | null } | undefined): string | null {
+  return iataLesen(punkt?.airportCode ?? null)
+}
+
+function beinAnfang(bein: FlugRouteItinerary['legs'][number]): string | null {
+  return airportCode(bein.segments[0]?.origin)
+}
+
+function beinEnde(bein: FlugRouteItinerary['legs'][number]): string | null {
+  const segmente = bein.segments
+  return airportCode(segmente[segmente.length - 1]?.destination)
+}
+
+function itineraryAnfang(itinerary: FlugRouteItinerary): string | null {
+  const erstes = itinerary.legs[0]
+  return erstes ? beinAnfang(erstes) : null
+}
+
 function startKandidaten(eintrag: {
   startsOn?: string | null
   startsAt?: string | null
@@ -58,7 +87,7 @@ function startKandidaten(eintrag: {
   }
 }
 
-function vergleichStart(links: StartWert | null, rechts: StartWert | null): 'before' | 'after' | 'tie' | 'unknown' {
+function vergleichLokal(links: StartWert | null, rechts: StartWert | null): 'before' | 'after' | 'tie' | 'unknown' {
   if (!links || !rechts) return 'unknown'
 
   const linksTag = links.instant.slice(0, 10)
@@ -74,17 +103,28 @@ function vergleichStart(links: StartWert | null, rechts: StartWert | null): 'bef
   return 'unknown'
 }
 
-function orderAus(
-  quelle: 'item' | 'segment',
-  links: StartKandidaten,
-  rechts: StartKandidaten,
+function vergleichStartSicher(
+  links: StartWert | null,
+  rechts: StartWert | null,
+  gleichesAirport: boolean,
 ): 'before' | 'after' | 'tie' | 'unknown' {
-  return vergleichStart(links[quelle], rechts[quelle])
+  if (!links || !rechts) return 'unknown'
+  if (gleichesAirport) return vergleichLokal(links, rechts)
+
+  const differenz = tageZwischen(links.instant.slice(0, 10), rechts.instant.slice(0, 10))
+  if (differenz === null || Math.abs(differenz) < SICHERE_KALENDERTAGE) return 'unknown'
+  return differenz > 0 ? 'before' : 'after'
 }
 
-function paarOrdnung(links: StartKandidaten, rechts: StartKandidaten): 'before' | 'after' | 'unknown' {
-  const item = orderAus('item', links, rechts)
-  const segment = orderAus('segment', links, rechts)
+function paarOrdnung(
+  links: StartKandidaten,
+  rechts: StartKandidaten,
+  linksAirport: string | null,
+  rechtsAirport: string | null,
+): Ordnung {
+  const gleich = Boolean(linksAirport && rechtsAirport && linksAirport === rechtsAirport)
+  const item = vergleichStartSicher(links.item, rechts.item, gleich)
+  const segment = vergleichStartSicher(links.segment, rechts.segment, gleich)
   const itemKlar = item === 'before' || item === 'after'
   const segmentKlar = segment === 'before' || segment === 'after'
 
@@ -94,32 +134,198 @@ function paarOrdnung(links: StartKandidaten, rechts: StartKandidaten): 'before' 
   return 'unknown'
 }
 
-function beinStart(bein: FlugRouteItinerary['legs'][number]): StartWert | null {
-  const erstes = bein.segments[0]
-  return startWert(kalendertag(erstes?.departureDate ?? null), uhrzeit(erstes?.departureTime ?? null))
+const MAX_SEGMENT_REKONSTRUKTION = 8
+
+function kantenKontinuitaet(vonEnde: string | null, nachStart: string | null): boolean {
+  return Boolean(vonEnde && nachStart && vonEnde === nachStart)
 }
 
-function beineHabenEindeutigeOrdnung(beine: readonly FlugRouteItinerary['legs'][number][]): boolean {
-  if (beine.length <= 1) return true
-  const starts = beine.map(beinStart)
-  for (let i = 0; i < starts.length; i += 1) {
-    for (let j = i + 1; j < starts.length; j += 1) {
-      const vergleich = vergleichStart(starts[i] ?? null, starts[j] ?? null)
-      if (vergleich === 'unknown' || vergleich === 'tie') return false
+function eindeutigeIndexKette<T>(
+  items: readonly T[],
+  ende: (item: T) => string | null,
+  anfang: (item: T) => string | null,
+): number[] | null {
+  const n = items.length
+  if (n === 0) return []
+  if (n === 1) return [0]
+  if (n > MAX_SEGMENT_REKONSTRUKTION) return null
+
+  const kanten: boolean[][] = Array.from({ length: n }, () => Array.from({ length: n }, () => false))
+  for (let i = 0; i < n; i += 1) {
+    for (let j = 0; j < n; j += 1) {
+      if (i === j) continue
+      kanten[i]![j] = kantenKontinuitaet(ende(items[i]!), anfang(items[j]!))
+    }
+  }
+
+  const pfade: number[][] = []
+  function suche(genutzt: Set<number>, pfad: number[]): void {
+    if (pfade.length > 1) return
+    if (pfad.length === n) {
+      pfade.push([...pfad])
+      return
+    }
+    for (let index = 0; index < n; index += 1) {
+      if (genutzt.has(index)) continue
+      const letztes = pfad[pfad.length - 1]
+      if (letztes !== undefined && !kanten[letztes]![index]) continue
+      genutzt.add(index)
+      pfad.push(index)
+      suche(genutzt, pfad)
+      pfad.pop()
+      genutzt.delete(index)
+    }
+  }
+  suche(new Set(), [])
+  return pfade.length === 1 ? pfade[0]! : null
+}
+
+function deklarierteKetteStimmt<T>(
+  items: readonly T[],
+  ende: (item: T) => string | null,
+  anfang: (item: T) => string | null,
+  zeitOrdnung: (links: T, rechts: T) => Ordnung,
+): boolean {
+  const kette = eindeutigeIndexKette(items, ende, anfang)
+  if (!kette || !kette.every((index, position) => index === position)) return false
+  for (let i = 0; i < items.length; i += 1) {
+    for (let j = i + 1; j < items.length; j += 1) {
+      if (zeitOrdnung(items[i]!, items[j]!) === 'after') return false
     }
   }
   return true
 }
 
+function mengeOrdnung(
+  zeitTotal: boolean,
+  deklariert: boolean,
+): 'time' | 'declared' | null {
+  if (zeitTotal) return 'time'
+  if (deklariert) return 'declared'
+  return null
+}
+
+function kontinuitaet(vorher: RouteSegment, nachher: RouteSegment): boolean {
+  const dest = airportCode(vorher.destination)
+  const orig = airportCode(nachher.origin)
+  return Boolean(dest && orig && dest === orig)
+}
+
+function alleIataBekannt(segmente: readonly RouteSegment[]): boolean {
+  return segmente.every(
+    (segment) => Boolean(airportCode(segment.origin)) && Boolean(airportCode(segment.destination)),
+  )
+}
+
+function kontinuierlichePfade(segmente: readonly RouteSegment[]): number[][] {
+  const pfade: number[][] = []
+  const n = segmente.length
+  if (n === 0 || n > MAX_SEGMENT_REKONSTRUKTION) return pfade
+
+  function suche(genutzt: Set<number>, pfad: number[]): void {
+    if (pfad.length === n) {
+      pfade.push([...pfad])
+      return
+    }
+    for (let index = 0; index < n; index += 1) {
+      if (genutzt.has(index)) continue
+      const letztes = pfad[pfad.length - 1]
+      if (letztes !== undefined && !kontinuitaet(segmente[letztes]!, segmente[index]!)) continue
+      genutzt.add(index)
+      pfad.push(index)
+      suche(genutzt, pfad)
+      pfad.pop()
+      genutzt.delete(index)
+    }
+  }
+
+  suche(new Set(), [])
+  return pfade
+}
+
+function segmenteKanonisieren(segmente: readonly RouteSegment[]): RouteSegment[] {
+  if (segmente.length <= 1) return [...segmente]
+  const pfade = kontinuierlichePfade(segmente)
+  if (pfade.length !== 1) return [...segmente]
+  return pfade[0]!.map((index) => segmente[index]!)
+}
+
+function segmenteOrdnungBewiesen(segmente: readonly RouteSegment[]): boolean {
+  if (segmente.length <= 1) return true
+  if (segmente.length > MAX_SEGMENT_REKONSTRUKTION) return false
+  const pfade = kontinuierlichePfade(segmente)
+  if (pfade.length === 1) return true
+  if (pfade.length > 1) return false
+  return alleIataBekannt(segmente)
+}
+
+function paarRelationenKonsistent<T>(
+  items: readonly T[],
+  ordnung: (links: T, rechts: T) => Ordnung,
+): boolean {
+  const n = items.length
+  if (n <= 1) return true
+  const nachfolger: number[][] = Array.from({ length: n }, () => [])
+  for (let i = 0; i < n; i += 1) {
+    for (let j = i + 1; j < n; j += 1) {
+      const vergleich = ordnung(items[i]!, items[j]!)
+      if (vergleich === 'unknown') return false
+      if (vergleich === 'before') nachfolger[i]!.push(j)
+      else nachfolger[j]!.push(i)
+    }
+  }
+  const farbe = new Array<number>(n).fill(0)
+  function dfs(knoten: number): boolean {
+    farbe[knoten] = 1
+    for (const next of nachfolger[knoten]!) {
+      if (farbe[next] === 1) return true
+      if (farbe[next] === 0 && dfs(next)) return true
+    }
+    farbe[knoten] = 2
+    return false
+  }
+  for (let i = 0; i < n; i += 1) {
+    if (farbe[i] === 0 && dfs(i)) return false
+  }
+  return true
+}
+
+function beinStart(bein: FlugRouteItinerary['legs'][number]): StartWert | null {
+  const erstes = bein.segments[0]
+  return startWert(kalendertag(erstes?.departureDate ?? null), uhrzeit(erstes?.departureTime ?? null))
+}
+
+function beinPaarOrdnung(
+  links: FlugRouteItinerary['legs'][number],
+  rechts: FlugRouteItinerary['legs'][number],
+): Ordnung {
+  const kandidatenLinks: StartKandidaten = { item: null, segment: beinStart(links) }
+  const kandidatenRechts: StartKandidaten = { item: null, segment: beinStart(rechts) }
+  return paarOrdnung(kandidatenLinks, kandidatenRechts, beinAnfang(links), beinAnfang(rechts))
+}
+
+function beineOrdnungQuelle(
+  beine: readonly FlugRouteItinerary['legs'][number][],
+): 'time' | 'declared' | null {
+  return mengeOrdnung(
+    paarRelationenKonsistent(beine, beinPaarOrdnung),
+    deklarierteKetteStimmt(beine, beinEnde, beinAnfang, beinPaarOrdnung),
+  )
+}
+
+function beineHabenEindeutigeOrdnung(beine: readonly FlugRouteItinerary['legs'][number][]): boolean {
+  return beineOrdnungQuelle(beine) !== null
+}
+
 function itineraryBeineOrdnen(itinerary: FlugRouteItinerary): FlugRouteItinerary {
-  if (!beineHabenEindeutigeOrdnung(itinerary.legs)) return itinerary
-  const starts = itinerary.legs.map(beinStart)
+  const quelle = beineOrdnungQuelle(itinerary.legs)
+  if (quelle !== 'time') return itinerary
   return {
     ...itinerary,
     legs: itinerary.legs
       .map((bein, index) => ({ bein, index }))
       .sort((a, b) => {
-        const vergleich = vergleichStart(starts[a.index] ?? null, starts[b.index] ?? null)
+        const vergleich = beinPaarOrdnung(a.bein, b.bein)
         if (vergleich === 'before') return -1
         if (vergleich === 'after') return 1
         return a.index - b.index
@@ -128,21 +334,43 @@ function itineraryBeineOrdnen(itinerary: FlugRouteItinerary): FlugRouteItinerary
   }
 }
 
+function itineraryFuerWahrheit(itinerary: FlugRouteItinerary): FlugRouteItinerary {
+  return itineraryBeineOrdnen({
+    ...itinerary,
+    legs: itinerary.legs.map((bein) => ({
+      segments: segmenteKanonisieren(bein.segments),
+    })),
+  })
+}
+
+function itineraryPaarOrdnung(
+  links: { startsOn?: string | null; startsAt?: string | null; itinerary: FlugRouteItinerary },
+  rechts: { startsOn?: string | null; startsAt?: string | null; itinerary: FlugRouteItinerary },
+): Ordnung {
+  return paarOrdnung(
+    startKandidaten(links),
+    startKandidaten(rechts),
+    itineraryAnfang(links.itinerary),
+    itineraryAnfang(rechts.itinerary),
+  )
+}
+
+function itinerariesOrdnungQuelle(
+  itineraries: readonly { startsOn?: string | null; startsAt?: string | null; itinerary: FlugRouteItinerary }[],
+): 'time' | 'declared' | null {
+  return paarRelationenKonsistent(itineraries, itineraryPaarOrdnung) ? 'time' : null
+}
+
 export function routeChronologieBewiesen(
   itineraries: readonly { startsOn?: string | null; startsAt?: string | null; itinerary: FlugRouteItinerary }[],
 ): boolean {
   for (const eintrag of itineraries) {
+    for (const bein of eintrag.itinerary.legs) {
+      if (!segmenteOrdnungBewiesen(bein.segments)) return false
+    }
     if (!beineHabenEindeutigeOrdnung(eintrag.itinerary.legs)) return false
   }
-  if (itineraries.length <= 1) return true
-  const kandidaten = itineraries.map(startKandidaten)
-
-  for (let i = 0; i < kandidaten.length; i += 1) {
-    for (let j = i + 1; j < kandidaten.length; j += 1) {
-      if (paarOrdnung(kandidaten[i]!, kandidaten[j]!) === 'unknown') return false
-    }
-  }
-  return true
+  return itinerariesOrdnungQuelle(itineraries) !== null
 }
 
 function itinerariesSortieren<
@@ -150,20 +378,38 @@ function itinerariesSortieren<
     startsOn?: string | null
     startsAt?: string | null
   },
->(itineraries: readonly T[]): T[] {
-  const bewiesen = routeChronologieBewiesen(itineraries)
-  const kandidaten = itineraries.map(startKandidaten)
+>(itineraries: readonly T[], bewiesen: boolean): T[] {
+  const zeitSort = bewiesen && itinerariesOrdnungQuelle(itineraries) === 'time'
   return itineraries
     .map((eintrag, index) => ({ eintrag, index }))
     .sort((a, b) => {
-      if (bewiesen) {
-        const ordnung = paarOrdnung(kandidaten[a.index]!, kandidaten[b.index]!)
+      if (zeitSort) {
+        const ordnung = itineraryPaarOrdnung(a.eintrag, b.eintrag)
         if (ordnung === 'before') return -1
         if (ordnung === 'after') return 1
+        return a.index - b.index
       }
+      if (bewiesen) return a.index - b.index
       return pfadAusItinerary(a.eintrag.itinerary).localeCompare(pfadAusItinerary(b.eintrag.itinerary))
     })
     .map((eintrag) => eintrag.eintrag)
+}
+
+export function itinerariesWahrheit<
+  T extends Pick<RouteItineraryMitQuelle, 'itinerary'> & {
+    startsOn?: string | null
+    startsAt?: string | null
+  },
+>(itineraries: readonly T[]): { wahrheit: T[]; bewiesen: boolean } {
+  const kanonisch = itineraries.map((eintrag) => ({
+    ...eintrag,
+    itinerary: itineraryFuerWahrheit(eintrag.itinerary),
+  }))
+  const bewiesen = routeChronologieBewiesen(kanonisch)
+  return {
+    wahrheit: itinerariesSortieren(kanonisch, bewiesen),
+    bewiesen,
+  }
 }
 
 export function itinerariesFuerWahrheit<
@@ -172,10 +418,5 @@ export function itinerariesFuerWahrheit<
     startsAt?: string | null
   },
 >(itineraries: readonly T[]): T[] {
-  return itinerariesSortieren(
-    itineraries.map((eintrag) => ({
-      ...eintrag,
-      itinerary: itineraryBeineOrdnen(eintrag.itinerary),
-    })),
-  )
+  return itinerariesWahrheit(itineraries).wahrheit
 }
