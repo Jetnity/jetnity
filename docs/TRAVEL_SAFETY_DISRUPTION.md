@@ -34,7 +34,7 @@ Diese Ebenen dürfen nicht in ein Severity-Feld fallen:
 
 Die Präsentationsklasse entsteht nur aus belegbaren Facts plus konkreter Relevanz. Ohne source-backed Extreme/Do-not-travel gibt es keine kritische Warnung.
 
-Evidence-Freshness (`checkedAt`, optionales `freshUntil`, sonst Max-Age 7 Tage) ist getrennt vom Event-Zeitfenster. Eine Admin-Region ohne kanonische Membership und eine Stadt ohne gemeinsame Place-ID bleiben `insufficient_context`. Mehr als 40 Providerzeilen werden als Integrity-Fehler verworfen. Der Provider-Port hat ein Abort/Timeout.
+Evidence-Freshness (`checkedAt`, optionales `freshUntil`, sonst Max-Age 7 Tage) ist getrennt vom Event-Zeitfenster. Eine Admin-Region ohne kanonische Membership und eine Stadt ohne gemeinsame Place-ID bleiben `insufficient_context`. Eine Transit-Route im selben Land ohne belegbare Feingeometrie bleibt `insufficient_context`. Erfolgreicher Provider mit 0 akuten Facts ist geprüft, nicht unavailable. Travellerabhängige Hinweise bleiben fail-closed, solange ein relevanter Slot unvollständig ist. Mehr als 40 Providerzeilen werden als Integrity-Fehler verworfen. Der Provider-Port hat ein Abort/Timeout.
 
 ---
 

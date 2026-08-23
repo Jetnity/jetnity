@@ -3257,6 +3257,28 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0130 – Checked-empty, Transit-Unknown und Traveller-Fail-Closed nach PR-37-Re-Review
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #37 nach unabhängigem Re-Review REQUEST CHANGES
+
+**Entscheidung:**
+
+- Erfolgreicher Provider mit 0 validen akuten Facts ist `checked_empty`, nicht `unavailable`. Das ist keine Entwarnung.
+- Vollständig malformed Zeilen sind unknown/fail-closed, nicht checked-clean.
+- Vorhandene, aber ungültige Temporal-/Freshness-Felder verwerfen die Zeile.
+- Feinere Geo-Scopes: berührt die Route das Land ohne belegbare Membership, gilt `insufficient_context`.
+- Travellerabhängige Facts bewerten alle anwendbaren Slots fail-closed.
+- Context-/Event-Fingerprints enthalten die tatsächlich entscheidungsrelevanten Party- und Eventfelder, ohne Dokumentnummern.
+
+**Kontext:** `docs/PR37_CHATGPT_REREVIEW.md` gegen Head `31678cd8`.
+
+**Begründung:** Leere Providerantworten, Transit ohne Feingeometrie und unvollständige Party dürfen weder Entwarnung noch Unavailable vortäuschen.
+
+**Konsequenzen:** Production unverändert, kein Live-Provider, keine Safety-DB.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
