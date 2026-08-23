@@ -31,7 +31,7 @@ function startAusSegmenten(itinerary: FlugRouteItinerary): string | null {
   return `${tag}T${uhrzeit(erstes?.departureTime ?? null) ?? '00:00'}`
 }
 
-export function itineraryStartBelegt(eintrag: {
+function itineraryStartBelegt(eintrag: {
   startsOn?: string | null
   startsAt?: string | null
   itinerary: FlugRouteItinerary
