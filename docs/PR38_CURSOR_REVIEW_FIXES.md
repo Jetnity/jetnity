@@ -1,7 +1,7 @@
 # PR #38 – Cursor-Fixes zum unabhängigen Review
 
-Stand: 23. August 2026  
-Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11, R6-Blocker 12, R7-Blocker 13, R8-Blocker 14–15, R9-Blocker 16–19, R10-Blocker 20–23, R11-Blocker 24–26, R12-Blocker 27 und R13-Blocker 28 geschlossen; R14-Re-Review offen**
+Stand: 24. August 2026  
+Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11, R6-Blocker 12, R7-Blocker 13, R8-Blocker 14–15, R9-Blocker 16–19, R10-Blocker 20–23, R11-Blocker 24–26, R12-Blocker 27, R13-Blocker 28 und R14-Blocker 29 geschlossen; R15-Re-Review offen**
 
 Review R1/R2: `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md`  
 Review R3: `docs/PR38_CHATGPT_R3_REVIEW.md`  
@@ -24,6 +24,7 @@ Runtime-Head R10-Fixes: `fdcc5c882b4fb8598b3eb0956b9bdeeb0ef94072`
 Runtime-Head R11-Fixes: `ba5bcd7634eb3a561c54eb1eb63908fe43fcd71b`
 Runtime-Head R12-Fixes: `1c14e80477b7bea083d722238165c97720442c1d`
 Runtime-Head R13-Fixes: `2ba324495bcbe0acf9c106a68d7d004f69279930`
+Runtime-Head R14-Fixes: `771c63a97f93f442dbc3856dc4218ce458dfecdf`
 
 ## 1. Gemischte Unsicherheit
 
@@ -161,8 +162,12 @@ Unbewiesene Intra-Leg-Ordnung leert Origin/Destination, erzeugt keine Connection
 
 ## 28. Same-country ist keine Surface-Evidence
 
-`oberflaechenKante()` prüft nur noch explizites `surfaceFromAirportCode` am Folgesegment gegen den Destination-IATA des Vorgängers. `LAX→JFK` + `SFO→NRT` und `CDG⇢ORY` ohne dieses Feld bleiben fail-closed. `CDG⇢ORY` mit `surfaceFromAirportCode: 'CDG'` bleibt bewiesen und rekonstruierbar. `itineraryAusFlugOption()` schreibt die Evidence, wenn ein provider-validiertes Leg einen Airport-Wechsel enthält. JSON-optional, keine DB-Migration.
+`oberflaechenKante()` prüft nur noch explizites `surfaceFromAirportCode` am Folgesegment gegen den Destination-IATA des Vorgängers. `LAX→JFK` + `SFO→NRT` und `CDG⇢ORY` ohne dieses Feld bleiben fail-closed. `CDG⇢ORY` mit `surfaceFromAirportCode: 'CDG'` bleibt bewiesen und rekonstruierbar. `itineraryAusFlugOption()` schreibt die Evidence, wenn ein provider-validiertes Leg einen Airport-Wechsel enthält. JSON-optional. Die persistente Kanonisierung folgt ADR-0149.
 
-## 29. Nicht geändert
+## 29. Surface-Evidence überlebt die kanonische Persistenz
 
-Kein Provider, keine Migration, keine Secrets, PR bleibt Draft.
+`public.flug_route_itinerary_metadata` übernimmt gültiges `surfaceFromAirportCode` als IATA und weist ungültige Werte fail-closed mit `{}` ab. Der bestehende Trigger `trip_items_route_itinerary_schuetzen` und `reise_anlegen()` nutzen dieselbe Funktion. Client-Länder bleiben verworfen. `CDG⇢ORY` bleibt nach Speichern/Reload und Guest→Account bewiesen; Fingerprint, Connections, Readiness, Safety und Seasonal ändern sich durch Persistenz nicht. `LAX→JFK + SFO→NRT` ohne Evidence bleibt fail-closed. Development-Migration `20260824120000_flug_route_itinerary_surface_evidence`; keine Production-Migration.
+
+## 30. Nicht geändert
+
+Kein Seasonal-Provider, keine Seasonal-Tabelle, keine Secrets, keine neuen laufenden Kosten. PR bleibt Draft.

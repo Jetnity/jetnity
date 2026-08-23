@@ -3657,7 +3657,7 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 - Country-Gleichheit beweist keine Ground-/Surface-Verbindung.
 - Eine Surface-Kante existiert nur, wenn das Folgesegment ein gültiges `surfaceFromAirportCode` trägt und dieses dem Destination-IATA des Vorgängers entspricht. Beide IATA müssen bekannt und verschieden sein.
-- Das Feld ist optional im bestehenden Itinerary-JSON (`v: 1`). Fehlendes oder ungültiges Feld bleibt fail-closed. Keine neue Tabelle, keine Migration.
+- Das Feld ist optional im bestehenden Itinerary-JSON (`v: 1`). Fehlendes oder ungültiges Feld bleibt fail-closed. Keine neue Tabelle. Die persistente Function-Grenze folgt ADR-0149.
 - `itineraryAusFlugOption()` schreibt die Evidence beim Persistieren eines provider-validierten Legs mit Airport-Wechsel. `itineraryKanonisieren()` erhält sie.
 - `CDG ⇢ ORY` bleibt bewiesen, wenn die Evidence gespeichert ist. `LAX→JFK` + `SFO→NRT` ohne Evidence bleibt unknown.
 
@@ -3667,7 +3667,30 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 **Begründung:** Große Länder machen same-country zu einer erfundenen Reisebewegung. Explizite, provider-neutrale Sequence-Evidence trennt den echten Flughafenwechsel von unverbundenen Segmenten, ohne Live-Provider oder Schema-Migration.
 
-**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. Ältere Itineraries ohne das Feld werden für Surface-Lücken konservativ unknown. PR #38 bleibt Draft bis R14 und Product-Owner-Merge-Freigabe.
+**Konsequenzen:** Kein Live-Provider, keine neue Tabelle, keine Secrets. Ältere Itineraries ohne das Feld werden für Surface-Lücken konservativ unknown. Die Persistenzgrenze ist durch ADR-0149 nachgezogen. PR #38 bleibt Draft bis R15 und Product-Owner-Merge-Freigabe.
+
+---
+
+## ADR-0149 – Persistenz erhält gültiges `surfaceFromAirportCode`
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R14 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Die kanonische Funktion `public.flug_route_itinerary_metadata(text,jsonb)` übernimmt gültiges `surfaceFromAirportCode` als IATA.
+- Fehlendes oder JSON-`null` Feld bleibt weggelassen. Vorhandenes, aber ungültiges Feld weist die gesamte Route fail-closed mit `{}` ab.
+- Client-`countryCode`/`city`/`country` bleiben verworfen und werden weiter aus `public.airports` gebaut.
+- Bereits angewandte Migrationen werden nicht umgeschrieben. Die Änderung liegt in der neuen Development-Migration `20260824120000_flug_route_itinerary_surface_evidence`.
+- Production bleibt gesperrt, bis der Product Owner eine eigene Migrationsfreigabe erteilt.
+
+**Kontext:** `docs/PR38_CHATGPT_R14_REVIEW.md` gegen Runtime `2ba32449`; Fixes auf `771c63a9`. ADR-0148 hat die Runtime-Evidence eingeführt, die aktive Development-Funktion hat sie beim Neuaufbau der Segmente verworfen.
+
+**Alternativen:** Evidence nur im TypeScript-Pfad belassen (bricht Save/Reload); neue Tabellenspalte; Production-Migration ohne Freigabe; gleiche-Länder-Heuristik wieder öffnen.
+
+**Begründung:** Route Truth, Fingerprint, Connections, Readiness, Safety und Seasonal dürfen sich nicht allein durch Persistieren derselben Reise ändern. Guest→Account und Account-Reload müssen dieselbe Evidence sehen wie der Runtime-Graph.
+
+**Konsequenzen:** Kein Live-Provider, keine Seasonal-Tabelle, keine Secrets, keine neuen laufenden Kosten. Development-Funktion ist aktualisiert. Production-Funktion bleibt die ältere Fassung, bis separat freigegeben. PR #38 bleibt Draft bis R15 und Product-Owner-Merge-Freigabe.
 
 ---
 
