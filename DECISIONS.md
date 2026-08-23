@@ -3558,6 +3558,28 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0144 – Segment-Origins, Connection-Ownership, Chronologie-Präzision und Readiness-Digest
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R9 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Ein belegter späterer Segment-Origin gehört zu Pfad, Fingerprint und Kompaktanzeige, wenn er vom vorherigen Segmentziel abweicht. Dieselbe Airport-Change-Grenze gilt für Country-Truth bei einem Cross-Country-Gap.
+- `RouteVerbindung` ist nach Flattening global eindeutig (`legIndex` + globale Segmentindizes). Die UI darf Umstiege nicht über Array-Index gegen die flache Segmentliste legen.
+- Chronologie ist nur bewiesen, wenn Item- und Segmentquellen eine eindeutige Reihenfolge tragen und sich nicht widersprechen. Date-only darf keine Segmentzeit auf `00:00` degradieren. Unbewiesene Chronologie zeigt keine erfundene Reihenfolge.
+- Readiness-Fingerprints hashen den vollständigen kanonischen Kontext als versionierten SHA-256-Digest. Prefix-Truncation ist keine Identität. `READINESS_FINGERPRINT_VERSION` ist `v3`.
+
+**Kontext:** `docs/PR38_CHATGPT_R9_REVIEW.md` gegen Runtime `263c2f84`.
+
+**Alternativen:** Airport-Change nur in Connections belassen; lokale Connection-Indizes plus UI-Heuristik; Item-`startsOn` immer auf Mitternacht; Klartext-Fingerprint mit höherem DB-Limit.
+
+**Begründung:** Eine Reise, eine Wahrheit. Sichtbare Route, Stale-Erkennung und Country-Scope dürfen keine belegte Topologie, keinen Umstiegsort und keine Traveller-Änderung hinter einer Längengrenze verlieren.
+
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R10 und Product-Owner-Merge-Freigabe.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

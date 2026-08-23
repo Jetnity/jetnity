@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 23. August 2026  
-Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence (Draft PR #38, R8-Fixes + Exact-Head-Gate grün, R9-Re-Review offen)**
+Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence (Draft PR #38, R9-Fixes + Exact-Head-Gate grün, R10-Re-Review offen)**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -162,7 +162,7 @@ Verbindliche Truth-Logik:
 
 ## 6. NÄCHSTE PRIORITÄT – Travel Timing & Seasonal Intelligence
 
-Status: **Draft PR #38; R8-Fixes auf Runtime `de83d026` geschlossen; Exact-Head-Gate grün; R9-Re-Review offen; kein Live-Provider**
+Status: **Draft PR #38; R9-Fixes auf Runtime `263c2f84` geschlossen; Exact-Head-Gate grün; R10-Re-Review offen; kein Live-Provider**
 
 Policy:
 
@@ -332,7 +332,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. **→ Travel Timing & Seasonal – provider-neutrale Foundation (Draft PR #38, R8-Fixes + Exact-Head-Gate grün, R9-Re-Review offen)**
+5. **→ Travel Timing & Seasonal – provider-neutrale Foundation (Draft PR #38, R9-Fixes + Exact-Head-Gate grün, R10-Re-Review offen)**
 6. Provider-Readiness-/Adapter-Lücken schließen
 7. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 8. finaler Workspace Intelligence Audit

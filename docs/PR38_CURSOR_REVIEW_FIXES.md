@@ -1,7 +1,7 @@
 # PR #38 – Cursor-Fixes zum unabhängigen Review
 
 Stand: 23. August 2026  
-Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11, R6-Blocker 12, R7-Blocker 13 und R8-Blocker 14–15 geschlossen; R9-Re-Review offen**
+Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11, R6-Blocker 12, R7-Blocker 13, R8-Blocker 14–15 und R9-Blocker 16–19 geschlossen; R10-Re-Review offen**
 
 Review R1/R2: `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md`  
 Review R3: `docs/PR38_CHATGPT_R3_REVIEW.md`  
@@ -10,6 +10,7 @@ Review R5: `docs/PR38_CHATGPT_R5_REVIEW.md`
 Review R6: `docs/PR38_CHATGPT_R6_REVIEW.md`  
 Review R7: `docs/PR38_CHATGPT_R7_REVIEW.md`  
 Review R8: `docs/PR38_CHATGPT_R8_REVIEW.md`  
+Review R9: `docs/PR38_CHATGPT_R9_REVIEW.md`  
 Runtime-Head R1-Fixes: `89290effba61602a71418ab3904b4dc42e76709d`  
 Runtime-Head R2-Fixes: `aa6cafa2f4997c22081dff35fe950a18190e7886`  
 Runtime-Head R3-Fixes: `4f9eb1e8c524494fa8ab300bdfe24ec372e9e109`  
@@ -17,7 +18,8 @@ Runtime-Head R4-Fixes: `f077d4d1e45366dd7dfa50bf2f98461d71b8279c`
 Runtime-Head R5-Fixes: `249d4b9b24fed89070adfbd0bcaaacaeb481ba46`  
 Runtime-Head R6-Fixes: `e790a7d224473df2cf999fe7c058a81a5a8e8679`  
 Runtime-Head R7-Fixes: `ece075e702c491454c553a9fc931b26308cab1a9`  
-Runtime-Head R8-Fixes: `de83d0269e1910ef82a596dd6e7005001f1cb860`
+Runtime-Head R8-Fixes: `de83d0269e1910ef82a596dd6e7005001f1cb860`  
+Runtime-Head R9-Fixes: `263c2f842d2287da652b27cc9660c28db68c6750`
 
 ## 1. Gemischte Unsicherheit
 
@@ -103,6 +105,22 @@ Item-Chronologie ohne `startsOn` nutzt Segmentdaten. Fehlt jede beweisbare Chron
 
 Fingerprint und `routeKompakt` serialisieren jedes Leg getrennt. `ZRH→BKK | SIN→ZRH` und `ZRH→BKK | HKG→ZRH` sind unterschiedliche Identitäten. Dieselbe Open-Jaw-Route als eine Itinerary oder als getrennte Items teilt die Identität.
 
-## 16. Nicht geändert
+## 16. Airport-Change- und Segment-Origins bleiben in der Route-Identität
+
+`pfadAusSegmenten()` und `routeKompakt()` behalten den Origin eines späteren Segments, wenn er vom vorherigen Segmentziel abweicht. `ZRH→CDG` danach `ORY→BKK` erscheint als `… CDG ⇢ … ORY …` und enthält beide Codes im Fingerprint. Ein anderer Transfer-Abflug ändert Route-Change und Readiness. Ein Cross-Country-Gap trägt das zweite Origin-Land in Seasonal, Readiness und Safety. Kontinuierliche Legs bleiben eine Kette.
+
+## 17. Connections sind eindeutig einem Leg und Segment zugeordnet
+
+`RouteVerbindung` trägt `legIndex` und globale `fromSegmentIndex`/`toSegmentIndex` nach Flattening. `FlugRoute` sucht den Umstieg über `verbindungNachSegment()`, nicht über `umstiege[index]`. Hinflug direkt + Rückflug mit Transit zeigt den Umstieg nur am Rückflugsegment. `FlugKarte` und `FlugBestand` lesen dieselbe Ableitung.
+
+## 18. Chronologie nur bei eindeutiger, widerspruchsfreier Evidenz
+
+Item-Datum ohne Zeit degradiert keine Segmentzeit auf `00:00`. Item- und Segmentquellen werden getrennt verglichen: eine eindeutige Quelle darf ordnen; widersprüchliche Reihenfolgen bleiben fail-closed. Echte Ties ohne weitere Evidenz setzen `chronologieBewiesen=false`, leeren Origin und zeigen `Reihenfolge unbekannt` statt einer erfundenen Abfolge.
+
+## 19. Readiness-Fingerprint ohne Prefix-Truncation
+
+`readinessFingerprint()` hasht den vollständigen kanonischen Kontext als `v3|sha256:…`. Änderungen hinter Zeichen 800, an Citizenships, späten Dokumenten oder Residence bleiben sichtbar. Persistierte v2-Werte werden stale. Das Ergebnis bleibt im 800-Zeichen-DB-Limit. Keine Passnummern.
+
+## 20. Nicht geändert
 
 Kein Provider, keine Migration, keine Secrets, PR bleibt Draft.

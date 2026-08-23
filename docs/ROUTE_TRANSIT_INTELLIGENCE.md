@@ -105,7 +105,7 @@ Guest → Account: die Browser-Itinerary ist Input. Persistiert wird nur die ser
 - Airport Change nur, wenn beide IATA-Codes vorliegen und verschieden sind
 - Destination Countries für Readiness: Etappen-Codes plus Itinerary-Ziel, wenn es nicht der Origin derselben Itinerary ist
 
-Fingerprint: `route-v1|ZRH:CH>DOH:QA>BKK:TH`. Ohne Route bleiben bestehende Readiness-Fingerprints unverändert.
+Fingerprint: `route-v1|ZRH:CH>DOH:QA>BKK:TH`. Airport-Change-Origins bleiben in der Kette, z. B. `ZRH:CH>CDG:FR>ORY:FR>BKK:TH`. Readiness-Fingerprints sind `v3|sha256:…` über den vollen Kontext, nicht über ein 800-Zeichen-Präfix.
 
 ---
 
