@@ -26,6 +26,7 @@
 // sortierte Citizenship-/Document-Mengen. Reihenfolge ist irrelevant.
 // Nicht enthalten: Passnummern, Preise, URLs, Notizen.
 
+import { sha256Hex } from '@/lib/readiness/digest'
 import { READINESS_FINGERPRINT_VERSION, READINESS_GRENZEN } from '@/lib/readiness/domain'
 import type { ReadinessKind } from '@/types/trips'
 
@@ -140,7 +141,9 @@ export function readinessFingerprint(kontext: ReadinessFingerprintKontext): stri
       break
   }
 
-  return teile.join('|').slice(0, READINESS_GRENZEN.fingerprint)
+  const roh = teile.join('|')
+  const digest = `${READINESS_FINGERPRINT_VERSION}|sha256:${sha256Hex(roh)}`
+  return digest.slice(0, READINESS_GRENZEN.fingerprint)
 }
 
 export function fingerprintAktuell(gespeichert: string, aktuell: string): boolean {

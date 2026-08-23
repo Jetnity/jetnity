@@ -52,6 +52,11 @@ function ziellaenderAus(itineraries: readonly RouteItineraryFuerRollen[]): strin
       const ende = landescodeLesen(segmente[segmente.length - 1]?.destination.countryCode ?? null)
       if (start && start !== ursprung) merken(laender, start)
       if (ende && ende !== ursprung) merken(laender, ende)
+      for (let index = 1; index < segmente.length; index += 1) {
+        const vorher = landescodeLesen(segmente[index - 1]?.destination.countryCode ?? null)
+        const weiter = landescodeLesen(segmente[index]?.origin.countryCode ?? null)
+        if (weiter && weiter !== ursprung && weiter !== vorher) merken(laender, weiter)
+      }
     }
   }
   return laender

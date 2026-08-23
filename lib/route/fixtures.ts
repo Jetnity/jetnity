@@ -14,6 +14,8 @@ export const TEST_FLUGHAFEN_REFS: FlughafenReferenzKarte = {
   LHR: { countryCode: 'GB', city: 'London', country: 'United Kingdom', name: 'Heathrow' },
   CDG: { countryCode: 'FR', city: 'Paris', country: 'France', name: 'Charles de Gaulle' },
   ORY: { countryCode: 'FR', city: 'Paris', country: 'France', name: 'Orly' },
+  LCY: { countryCode: 'GB', city: 'London', country: 'United Kingdom', name: 'London City' },
+  AMS: { countryCode: 'NL', city: 'Amsterdam', country: 'Netherlands', name: 'Schiphol' },
 }
 
 function segment(
@@ -104,7 +106,9 @@ export function itineraryOhneLaender(): FlugRouteItinerary {
   }
 }
 
-export function itineraryAirportChange(): FlugRouteItinerary {
+export function itineraryAirportChange(
+  weiter: 'ORY' | 'LCY' | 'AMS' = 'ORY',
+): FlugRouteItinerary {
   return {
     v: 1,
     type: 'flight_route_itinerary',
@@ -112,9 +116,95 @@ export function itineraryAirportChange(): FlugRouteItinerary {
       {
         segments: [
           segment('ZRH', 'CDG', '2026-11-01', '07:10', '2026-11-01', '08:30'),
-          segment('ORY', 'BKK', '2026-11-01', '12:40', '2026-11-02', '06:10'),
+          segment(weiter, 'BKK', '2026-11-01', '12:40', '2026-11-02', '06:10'),
         ],
       },
+    ],
+  }
+}
+
+export function itineraryHinDirektRueckTransit(): FlugRouteItinerary {
+  return {
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs: [
+      { segments: [segment('ZRH', 'BKK', '2026-11-01', '09:15', '2026-11-01', '21:40')] },
+      {
+        segments: [
+          segment('BKK', 'SIN', '2026-11-12', '08:10', '2026-11-12', '11:30'),
+          segment('SIN', 'ZRH', '2026-11-12', '13:20', '2026-11-12', '20:40'),
+        ],
+      },
+    ],
+  }
+}
+
+export function itineraryHinTransitRueckDirekt(): FlugRouteItinerary {
+  return {
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs: [
+      {
+        segments: [
+          segment('ZRH', 'DOH', '2026-11-01', '09:15', '2026-11-01', '16:40'),
+          segment('DOH', 'BKK', '2026-11-01', '18:55', '2026-11-02', '07:10'),
+        ],
+      },
+      { segments: [segment('BKK', 'ZRH', '2026-11-12', '23:00', '2026-11-13', '06:00')] },
+    ],
+  }
+}
+
+export function itineraryBeideLegsTransit(): FlugRouteItinerary {
+  return {
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs: [
+      {
+        segments: [
+          segment('ZRH', 'DOH', '2026-11-01', '09:15', '2026-11-01', '16:40'),
+          segment('DOH', 'BKK', '2026-11-01', '18:55', '2026-11-02', '07:10'),
+        ],
+      },
+      {
+        segments: [
+          segment('BKK', 'SIN', '2026-11-12', '08:10', '2026-11-12', '11:30'),
+          segment('SIN', 'ZRH', '2026-11-12', '13:20', '2026-11-12', '20:40'),
+        ],
+      },
+    ],
+  }
+}
+
+export function itineraryAirportChangeZweitesLeg(): FlugRouteItinerary {
+  return {
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs: [
+      { segments: [segment('ZRH', 'BKK', '2026-11-01', '09:15', '2026-11-01', '21:40')] },
+      {
+        segments: [
+          segment('BKK', 'CDG', '2026-11-12', '08:10', '2026-11-12', '15:40'),
+          segment('ORY', 'ZRH', '2026-11-12', '18:20', '2026-11-12', '19:40'),
+        ],
+      },
+    ],
+  }
+}
+
+export function itineraryDreiMehrzielGemischt(): FlugRouteItinerary {
+  return {
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs: [
+      { segments: [segment('ZRH', 'BKK', '2026-11-01', '09:15', '2026-11-01', '21:40')] },
+      {
+        segments: [
+          segment('BKK', 'DOH', '2026-11-06', '08:10', '2026-11-06', '11:40'),
+          segment('DOH', 'SIN', '2026-11-06', '13:20', '2026-11-06', '21:10'),
+        ],
+      },
+      { segments: [segment('SIN', 'ZRH', '2026-11-12', '23:00', '2026-11-13', '06:40')] },
     ],
   }
 }

@@ -17,7 +17,7 @@ import { airportZeitkontakteAusItineraries } from '@/lib/route/kontakte'
 import { laenderrollenAus } from '@/lib/route/laender'
 import { segmenteAusItinerary } from '@/lib/route/itinerary'
 import { flugRouteItineraryLesen } from '@/lib/route/schema'
-import { verbindungenAusSegmenten } from '@/lib/route/verbindung'
+import { verbindungenAusLegs } from '@/lib/route/verbindung'
 import type { Trip, TripItem } from '@/types/trips'
 
 function itinerariesAusReise(reise: Pick<Trip, 'days' | 'ohneTag'>): RouteItineraryMitQuelle[] {
@@ -63,9 +63,7 @@ function routeFactsAusItineraries(itineraries: readonly RouteItineraryMitQuelle[
     destination,
     segments: segmente,
     legs,
-    connections: itineraries.flatMap((eintrag) =>
-      eintrag.itinerary.legs.flatMap((bein) => verbindungenAusSegmenten(bein.segments)),
-    ),
+    connections: verbindungenAusLegs(legs),
     airportContacts: airportZeitkontakteAusItineraries(itineraries),
     transitCountryCodes: laender.transitCountryCodes,
     destinationCountryCodes: laender.destinationCountryCodes,
@@ -73,6 +71,7 @@ function routeFactsAusItineraries(itineraries: readonly RouteItineraryMitQuelle[
       .map((eintrag) => eintrag.sourceItemId)
       .filter((id): id is string => Boolean(id)),
     fingerprint: routeFingerprintAus(itineraries),
+    chronologieBewiesen: bewiesen,
   }
 }
 

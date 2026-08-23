@@ -29,7 +29,7 @@ export const TRAVELLER_CONTEXT_GRENZEN = {
   travellersJeReise: 20,
 } as const
 
-export const READINESS_FINGERPRINT_VERSION = 'v2'
+export const READINESS_FINGERPRINT_VERSION = 'v3'
 
 export type OfficialRequirementResult = 'required' | 'not_required' | 'unknown'
 

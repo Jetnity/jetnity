@@ -3,7 +3,11 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { READINESS_GRENZEN } from '@/lib/readiness/domain'
 import { fingerprintAktuell, readinessFingerprint } from '@/lib/readiness/fingerprint'
+import { readinessAnsicht } from '@/lib/readiness/status'
+import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
+import type { TripReadinessItem } from '@/types/trips'
 
 const basis = {
   countryCode: 'TH' as string | null,
@@ -27,7 +31,8 @@ describe('Context-Fingerprint', () => {
     const a = readinessFingerprint({ ...basis, kind: 'entry_check' })
     const b = readinessFingerprint({ ...basis, kind: 'entry_check' })
     assert.equal(a, b)
-    assert.match(a, /^v2\|kind=entry_check/)
+    assert.match(a, /^v3\|sha256:[0-9a-f]{64}$/)
+    assert.ok(a.length <= READINESS_GRENZEN.fingerprint)
   })
 
   test('Länderreihenfolge ist irrelevant', () => {
@@ -141,4 +146,86 @@ describe('Context-Fingerprint', () => {
     const einreiseMit = readinessFingerprint({ ...basis, kind: 'entry_check', rentalCarPresent: true })
     assert.equal(einreiseOhne, einreiseMit)
   })
+
+  test('Unterschied nach Zeichen 800 der Rohroute bleibt sichtbar', () => {
+    const langA = `${'ZRH:CH>BKK:TH|'.repeat(70)}AAA:AA`
+    const langB = `${'ZRH:CH>BKK:TH|'.repeat(70)}BBB:BB`
+    assert.ok(langA.length > 800)
+    const a = readinessFingerprint({ ...basis, kind: 'entry_check', routeFingerprint: langA })
+    const b = readinessFingerprint({ ...basis, kind: 'entry_check', routeFingerprint: langB })
+    assert.notEqual(a, b)
+    assert.ok(a.length <= READINESS_GRENZEN.fingerprint)
+    assert.ok(b.length <= READINESS_GRENZEN.fingerprint)
+  })
+
+  test('Citizenship, spätes Dokument und Residence bleiben bei langer Route sichtbar', () => {
+    const route = `${'ZRH:CH>BKK:TH|'.repeat(60)}SIN:SG`
+    const citizenships = ['AT', 'CH', 'DE', 'FR', 'IT', 'NL', 'RS', 'US']
+    const documents = Array.from({ length: 12 }, (_, index) => {
+      const land = citizenships[index % citizenships.length]
+      return `passport:${land}:203${index}-01-01:citizenship:${land}:${'x'.repeat(40)}`
+    })
+    const basisLang = {
+      ...basis,
+      kind: 'entry_check' as const,
+      routeFingerprint: route,
+      travellerClientRef: 'traveller:1',
+      citizenshipCountryCodes: citizenships,
+      documentFingerprints: documents,
+      residenceCountryCode: 'CH',
+    }
+    const citAndere = readinessFingerprint({
+      ...basisLang,
+      citizenshipCountryCodes: [...citizenships.slice(0, 7), 'GB'],
+    })
+    const docsUmgestellt = readinessFingerprint({
+      ...basisLang,
+      documentFingerprints: [...documents].reverse(),
+    })
+    const docsSpaet = readinessFingerprint({
+      ...basisLang,
+      documentFingerprints: documents.map((eintrag, index) =>
+        index === documents.length - 1 ? 'passport:US:2040-12-31:citizenship:US:yyyy' : eintrag,
+      ),
+    })
+    const resAndere = readinessFingerprint({
+      ...basisLang,
+      residenceCountryCode: 'DE',
+    })
+    const citUmgestellt = readinessFingerprint({
+      ...basisLang,
+      citizenshipCountryCodes: [...citizenships].reverse(),
+    })
+    const original = readinessFingerprint(basisLang)
+    assert.equal(original, citUmgestellt)
+    assert.equal(original, docsUmgestellt)
+    assert.notEqual(original, citAndere)
+    assert.notEqual(original, docsSpaet)
+    assert.notEqual(original, resAndere)
+    assert.ok(original.length <= READINESS_GRENZEN.fingerprint)
+  })
+
+  test('persistierter v2-Fingerprint macht done nicht fälschlich current', () => {
+    const reise = beispielreise({
+      readinessItems: [
+        {
+          id: 'entry_check:IT',
+          clientRef: 'entry_check:IT',
+          kind: 'entry_check',
+          userStatus: 'done',
+          evidence: 'user',
+          countryCode: 'IT',
+          tripItemId: null,
+          title: null,
+          travellerClientRef: null,
+          contextFingerprint: 'v2|kind=entry_check|cc=IT|start=2026-09-12|end=2026-09-16|trav=2|dest=IT',
+          createdAt: '2026-08-22T08:00:00.000Z',
+          updatedAt: '2026-08-22T08:00:00.000Z',
+        } satisfies TripReadinessItem,
+      ],
+    })
+    const { items } = readinessAnsicht(reise)
+    assert.equal(items.find((item) => item.kind === 'entry_check')?.currentness, 'stale')
+  })
 })
+

@@ -1,10 +1,24 @@
 // lib/route/chronologie.ts
 //
-// Belegte Route-Reihenfolge. Item-Daten zuerst, sonst Segmentdaten.
-// Ohne beweisbare Chronologie keine Country-Truth aus lexikographischen Pfaden.
+// Belegte Route-Reihenfolge. Item-Datum+Zeit und Segmentdaten bleiben getrennt.
+// Date-only darf eine vorhandene Segmentzeit nicht auf 00:00 degradieren.
+// Eine Reihenfolge gilt nur dann als bewiesen, wenn keine Quelle widerspricht
+// und mindestens eine Quelle eindeutig ordnet.
 
 import type { FlugRouteItinerary, RouteItineraryMitQuelle } from '@/lib/route/domain'
 import { pfadAusItinerary } from '@/lib/route/pfad'
+
+type StartKorn = 'datetime' | 'date'
+
+type StartWert = {
+  instant: string
+  korn: StartKorn
+}
+
+type StartKandidaten = {
+  item: StartWert | null
+  segment: StartWert | null
+}
 
 function kalendertag(wert: string | null | undefined): string | null {
   if (!wert || !/^\d{4}-\d{2}-\d{2}$/.test(wert)) return null
@@ -24,37 +38,91 @@ function uhrzeit(wert: string | null | undefined): string | null {
   return wert && /^\d{2}:\d{2}$/.test(wert) ? wert : null
 }
 
-function startAusSegmenten(itinerary: FlugRouteItinerary): string | null {
-  const erstes = itinerary.legs[0]?.segments[0]
-  const tag = kalendertag(erstes?.departureDate ?? null)
+function startWert(tag: string | null, zeit: string | null): StartWert | null {
   if (!tag) return null
-  return `${tag}T${uhrzeit(erstes?.departureTime ?? null) ?? '00:00'}`
+  if (zeit) return { instant: `${tag}T${zeit}`, korn: 'datetime' }
+  return { instant: tag, korn: 'date' }
 }
 
-function itineraryStartBelegt(eintrag: {
+function startKandidaten(eintrag: {
   startsOn?: string | null
   startsAt?: string | null
   itinerary: FlugRouteItinerary
-}): string | null {
-  const itemTag = kalendertag(eintrag.startsOn ?? null)
-  if (itemTag) return `${itemTag}T${uhrzeit(eintrag.startsAt ?? null) ?? '00:00'}`
-  return startAusSegmenten(eintrag.itinerary)
+}): StartKandidaten {
+  const erstes = eintrag.itinerary.legs[0]?.segments[0]
+  return {
+    item: startWert(kalendertag(eintrag.startsOn ?? null), uhrzeit(eintrag.startsAt ?? null)),
+    segment: startWert(kalendertag(erstes?.departureDate ?? null), uhrzeit(erstes?.departureTime ?? null)),
+  }
+}
+
+function vergleichStart(links: StartWert | null, rechts: StartWert | null): 'before' | 'after' | 'tie' | 'unknown' {
+  if (!links || !rechts) return 'unknown'
+
+  const linksTag = links.instant.slice(0, 10)
+  const rechtsTag = rechts.instant.slice(0, 10)
+
+  if (links.korn === 'datetime' && rechts.korn === 'datetime') {
+    if (links.instant < rechts.instant) return 'before'
+    if (links.instant > rechts.instant) return 'after'
+    return 'tie'
+  }
+
+  if (linksTag !== rechtsTag) return linksTag < rechtsTag ? 'before' : 'after'
+  return 'unknown'
+}
+
+function orderAus(
+  quelle: 'item' | 'segment',
+  links: StartKandidaten,
+  rechts: StartKandidaten,
+): 'before' | 'after' | 'tie' | 'unknown' {
+  return vergleichStart(links[quelle], rechts[quelle])
+}
+
+function paarOrdnung(links: StartKandidaten, rechts: StartKandidaten): 'before' | 'after' | 'unknown' {
+  const item = orderAus('item', links, rechts)
+  const segment = orderAus('segment', links, rechts)
+  const itemKlar = item === 'before' || item === 'after'
+  const segmentKlar = segment === 'before' || segment === 'after'
+
+  if (itemKlar && segmentKlar && item !== segment) return 'unknown'
+  if (itemKlar) return item
+  if (segmentKlar) return segment
+  return 'unknown'
 }
 
 export function routeChronologieBewiesen(
   itineraries: readonly { startsOn?: string | null; startsAt?: string | null; itinerary: FlugRouteItinerary }[],
 ): boolean {
   if (itineraries.length <= 1) return true
-  return itineraries.every((eintrag) => itineraryStartBelegt(eintrag) !== null)
+  const kandidaten = itineraries.map(startKandidaten)
+
+  for (let i = 0; i < kandidaten.length; i += 1) {
+    for (let j = i + 1; j < kandidaten.length; j += 1) {
+      if (paarOrdnung(kandidaten[i]!, kandidaten[j]!) === 'unknown') return false
+    }
+  }
+  return true
 }
 
-export function itinerariesSortieren<T extends RouteItineraryMitQuelle>(itineraries: readonly T[]): T[] {
-  return [...itineraries].sort((a, b) => {
-    const aStart = itineraryStartBelegt(a)
-    const bStart = itineraryStartBelegt(b)
-    if (aStart && bStart && aStart !== bStart) return aStart < bStart ? -1 : 1
-    if (aStart && !bStart) return -1
-    if (!aStart && bStart) return 1
-    return pfadAusItinerary(a.itinerary).localeCompare(pfadAusItinerary(b.itinerary))
-  })
+export function itinerariesSortieren<
+  T extends Pick<RouteItineraryMitQuelle, 'itinerary'> & {
+    startsOn?: string | null
+    startsAt?: string | null
+  },
+>(itineraries: readonly T[]): T[] {
+  const bewiesen = routeChronologieBewiesen(itineraries)
+  const kandidaten = itineraries.map(startKandidaten)
+  return itineraries
+    .map((eintrag, index) => ({ eintrag, index }))
+    .sort((a, b) => {
+      if (bewiesen) {
+        const ordnung = paarOrdnung(kandidaten[a.index]!, kandidaten[b.index]!)
+        if (ordnung === 'before') return -1
+        if (ordnung === 'after') return 1
+      }
+      return pfadAusItinerary(a.eintrag.itinerary).localeCompare(pfadAusItinerary(b.eintrag.itinerary))
+    })
+    .map((eintrag) => eintrag.eintrag)
 }

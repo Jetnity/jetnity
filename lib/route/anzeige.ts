@@ -10,7 +10,8 @@ import type { FlughafenReferenzKarte, RouteFacts, RoutePunkt, RouteVerbindung } 
 import { airportZeitkontakteAusItineraries } from '@/lib/route/kontakte'
 import { laenderrollenAus } from '@/lib/route/laender'
 import { itineraryAusFlugOption, segmenteAusItinerary } from '@/lib/route/itinerary'
-import { verbindungenAusSegmenten } from '@/lib/route/verbindung'
+import { pfadSchritteAusSegmenten } from '@/lib/route/pfad'
+import { verbindungenAusLegs } from '@/lib/route/verbindung'
 
 export type RouteAnzeige = {
   kompakt: string
@@ -91,34 +92,38 @@ export function routeAnzeigeAusOption(
     },
     segments,
     legs: itinerary.legs,
-    connections: itinerary.legs.flatMap((bein) => verbindungenAusSegmenten(bein.segments)),
+    connections: verbindungenAusLegs(itinerary.legs),
     airportContacts: airportZeitkontakteAusItineraries([{ itinerary }]),
     transitCountryCodes: laender.transitCountryCodes,
     destinationCountryCodes: laender.destinationCountryCodes,
     sourceItemIds: [],
     fingerprint: null,
+    chronologieBewiesen: true,
   }
   return routeAnzeigeAusFacts(facts)
 }
 
-function punkteImBein(segmente: RouteFacts['segments']): RoutePunkt[] {
-  const punkte: RoutePunkt[] = []
-  for (const [index, segment] of segmente.entries()) {
-    if (index === 0) punkte.push(segment.origin)
-    punkte.push(segment.destination)
+function beinKompakt(segmente: RouteFacts['segments'], mitCode: boolean): string {
+  const teile: string[] = []
+  for (const schritt of pfadSchritteAusSegmenten(segmente)) {
+    const text = mitCode
+      ? punktLesbar(schritt.punkt)
+      : punktLesbar(schritt.punkt, false) || schritt.punkt.airportCode || ''
+    if (!text) continue
+    if (teile.length === 0) {
+      teile.push(text)
+      continue
+    }
+    teile.push(`${schritt.surfaceChange ? ' ⇢ ' : ' → '}${text}`)
   }
-  return punkte.filter((punkt) => punkt.airportCode || punkt.city)
+  return teile.join('')
 }
 
 function routeKompaktAusBeinen(facts: RouteFacts, mitCode: boolean): string {
   const beine = facts.legs.length > 0 ? facts.legs : [{ segments: facts.segments }]
-  const teile = beine
-    .map((bein) =>
-      punkteImBein(bein.segments)
-        .map((punkt) => (mitCode ? punktLesbar(punkt) : punktLesbar(punkt, false) || punkt.airportCode || ''))
-        .filter(Boolean)
-        .join(' → '),
-    )
-    .filter(Boolean)
+  const teile = beine.map((bein) => beinKompakt(bein.segments, mitCode)).filter(Boolean)
+  if (!facts.chronologieBewiesen && teile.length > 1) {
+    return `Reihenfolge unbekannt · ${teile.join(' · ')}`
+  }
   return teile.join(' | ')
 }

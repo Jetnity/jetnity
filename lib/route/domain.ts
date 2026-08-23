@@ -44,6 +44,7 @@ export type RouteVerbindung = {
   country: string | null
   durationMinutes: number | null
   airportChange: boolean | null
+  legIndex: number
   fromSegmentIndex: number
   toSegmentIndex: number
 }
@@ -80,6 +81,7 @@ export type RouteFacts = {
   destinationCountryCodes: string[]
   sourceItemIds: string[]
   fingerprint: string | null
+  chronologieBewiesen: boolean
 }
 
 export const LEERER_ROUTE_PUNKT: RoutePunkt = {
@@ -102,5 +104,6 @@ export function leereRouteFacts(): RouteFacts {
     destinationCountryCodes: [],
     sourceItemIds: [],
     fingerprint: null,
+    chronologieBewiesen: true,
   }
 }
