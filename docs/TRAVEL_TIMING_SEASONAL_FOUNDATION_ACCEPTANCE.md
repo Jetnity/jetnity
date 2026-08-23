@@ -1,7 +1,7 @@
 # Travel Timing & Seasonal Intelligence – Foundation Acceptance
 
 Stand: 23. August 2026  
-Status: **verbindliche Acceptance für die provider-neutrale Foundation – Implementierung im Draft-PR #38, Full Gate noch offen**
+Status: **verbindliche Acceptance für die provider-neutrale Foundation – Draft-PR #38, Full Gate auf Runtime `2dfec9bc` grün, Review offen**
 
 Policy: `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`  
 Ist-Audit: `docs/TRAVEL_TIMING_SEASONAL_FOUNDATION_ARCHITECTURE_AUDIT.md`
@@ -241,6 +241,22 @@ Vor Review auf **exakt finalem Runtime-Head**:
 - Branch **0 behind** aktuellem `origin/main`
 - GitHub Actions SUCCESS auf exakt finalem Head
 - Vercel Preview READY/SUCCESS auf exakt finalem Head
+
+### Gate-Lock Runtime `2dfec9bc` (23. August 2026)
+
+| Gate | Ergebnis |
+| --- | --- |
+| `origin/main` | `cd220beb`, Branch **0 behind**, 5 ahead zum Lock-Zeitpunkt |
+| `npm test` | **1540/1540** (Baseline 1481) |
+| Typecheck / Lint | grün, 0 Warnungen |
+| Hygiene | dead/exports/deps/API-Schutz/schema-bezug grün; CookieConsent bewusst verwaist |
+| Production-Build | Exit 0, `/api/seasonal/evaluate` enthalten |
+| DB | Rechte 51 OK, RLS Exit 0, Sicherheit **210/210**, Parallelität **7/7** |
+| UI-Audit | **1014/1014**, 0 Fehler, WebKit + Chromium, 8 Viewports |
+| GitHub Actions | SUCCESS https://github.com/Jetnity/jetnity/actions/runs/32636986916 |
+| Vercel Preview | READY https://vercel.com/jetnity-e1b93c82/jetnity-app/9PGmTy7EdXDpPXVy1PL8TXnE5hYU |
+
+Keine DB-Migration, kein Secret, keine neuen laufenden Kosten. `seasonalProviderAus()` bleibt `null`.
 
 ---
 

@@ -77,6 +77,8 @@ Ohne belastbaren `freshUntil`-Vertrag gibt es kein `current`. Safety-7-Tage-Defa
 
 Keine Seasonal-Tabelle. Seasonal Truth bleibt compute-on-read. Production-Schema unverändert.
 
+Lokal und remote auf Runtime `2dfec9bc` verifiziert: 1540 Tests, UI-Audit 1014/1014, Production-Build Exit 0, GitHub Actions SUCCESS, Vercel Preview READY. Live-Provider bleibt `null`.
+
 ---
 
 ## Was diese Foundation nicht tut

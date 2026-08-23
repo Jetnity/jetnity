@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 23. August 2026  
-Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence**
+Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence (Draft PR #38 reviewbereit)**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -162,7 +162,7 @@ Verbindliche Truth-Logik:
 
 ## 6. NÄCHSTE PRIORITÄT – Travel Timing & Seasonal Intelligence
 
-Status: **in Arbeit auf `feat/travel-timing-seasonal-intelligence`; Draft PR; kein Live-Provider**
+Status: **Draft PR #38 reviewbereit; Full Gate auf Runtime `2dfec9bc` grün; kein Live-Provider**
 
 Policy:
 
@@ -194,12 +194,12 @@ Verbindlich:
 ### Nächster Implementierungsablauf
 
 1. ✅ Ist-Audit gegen Safety, Route, Traveller Context, Readiness und Workspace – gegen aktuellen Code verifiziert
-2. provider-neutrales Domain-/Evidence-/Seasonality-Modell
-3. klare Trennung zu akutem Safety
-4. Cross-Domain-Impact und Reevaluation
-5. minimale, ruhige Workspace-Naht
-6. Pflicht-Testmatrix + Device-Matrix
-7. unabhängiger ChatGPT-Review
+2. ✅ provider-neutrales Domain-/Evidence-/Seasonality-Modell
+3. ✅ klare Trennung zu akutem Safety
+4. ✅ Cross-Domain-Impact und Reevaluation
+5. ✅ minimale, ruhige Workspace-Naht
+6. ✅ Pflicht-Testmatrix + Device-Matrix (1540/1540 Tests, UI-Audit 1014/1014)
+7. **→ unabhängiger ChatGPT-Review**
 8. Product-Owner-Merge-Gate
 
 ---
@@ -326,7 +326,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. **→ Travel Timing & Seasonal – provider-neutrale Foundation**
+5. **→ Travel Timing & Seasonal – provider-neutrale Foundation (Draft PR #38, Full Gate grün, Review offen)**
 6. Provider-Readiness-/Adapter-Lücken schließen
 7. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 8. finaler Workspace Intelligence Audit

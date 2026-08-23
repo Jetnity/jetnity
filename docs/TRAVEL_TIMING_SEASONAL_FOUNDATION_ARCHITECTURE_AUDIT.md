@@ -339,3 +339,20 @@ Vor Runtime-Code wurde das versionierte Audit gegen den tatsächlichen Stand von
 **Abweichung Audit ↔ Code:** keine fachliche Runtime-Abweichung. `ARCHITECTURE.md` auf `main` nennt Safety noch als Draft-PR #37; Handoff/Roadmap/Active Work sind bereits auf den gemergten Stand nachgezogen. Dieser Docs-Widerspruch wird im Seasonal-Branch korrigiert, nicht als fehlende Safety-Implementierung missverstanden.
 
 **Konsequenz:** Das Audit bleibt gültig. Seasonal wird als eigene Domäne `lib/seasonal/` gebaut, ohne Safety-Evaluation umzudeuten und ohne Safety-Refactor.
+
+---
+
+## 15. Gate-Lock nach Implementierung (23. August 2026)
+
+Runtime-Head: `2dfec9bc` auf `feat/travel-timing-seasonal-intelligence`. Draft PR #38.
+
+Umgesetzt und gegen diesen Head verifiziert:
+
+- eigene Domain `lib/seasonal/`, Factory bleibt `null`
+- `POST /api/seasonal/evaluate` geschlossen
+- minimale Workspace-Naht `ReisezeitHinweise`
+- UI-Audit-Zustände inkl. der acht Seasonal-Fälle
+- ADRs 0133–0137
+- `ARCHITECTURE.md` korrigiert: Safety PR #37 ist gemergt, nicht Draft
+
+Full Gate: `npm test` 1540/1540, UI-Audit 1014/1014, Build Exit 0, DB-Gates unverändert, GitHub Actions SUCCESS, Vercel Preview READY. Keine Seasonal-Tabelle, keine Production-Migration.
