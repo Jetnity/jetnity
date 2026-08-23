@@ -120,7 +120,7 @@ Keine Passnummern, Scans, MRZ oder Biometrie. Ausstellerland ist keine automatis
 
 ## 5. NÄCHSTE PRIORITÄT – Travel Safety & Disruption Intelligence
 
-Status: **Final-Closure-Blocker auf Draft-PR #37 behoben; Stop-Kriterium gilt; `main` und Production unverändert**
+Status: **Stop-Criterion-Truth-Blocker auf Draft-PR #37 behoben; nächster Check zielt auf Closure/Pass; `main` und Production unverändert**
 
 Verbindliche Policy:
 
@@ -173,7 +173,7 @@ Versionierter Cursor-Auftrag liegt auf `main` und ist auf dem Feature-Branch umg
 - Ist-Audit: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ARCHITECTURE_AUDIT.md`
 - Live-Status: `docs/ACTIVE_WORK_STATUS.md`
 
-Kein echter Safety-Provider in diesem Block. Keine Production-Migration, kein Mark Ready, kein Merge. Nach den Final-Closure-Fixes gilt das Stop-Kriterium aus `docs/PR37_CHATGPT_FINAL_CLOSURE_REVIEW.md`.
+Kein echter Safety-Provider in diesem Block. Keine Production-Migration, kein Mark Ready, kein Merge. Die drei Stop-Criterion-Truth-Blocker aus `docs/PR37_CHATGPT_STOP_CRITERION_RECHECK.md` sind behoben (ADR-0132). Der nächste unabhängige Check soll auf Closure/Pass zielen.
 
 ---
 

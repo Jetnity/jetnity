@@ -3300,6 +3300,26 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0132 – Vollständigkeit, Date-only-Präzision und Routekontakt-Fenster nach PR-37-Stop-Criterion-Recheck
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #37 nach Stop-Criterion Recheck REQUEST CHANGES
+
+**Entscheidung:**
+
+- Eine teilweise malformed Providerantwort darf den Gesamtcheck nicht `checked_clean` machen. Gültige Warnungen bleiben sichtbar; `summary.complete=false` und API-Status `unknown` halten die Unvollständigkeit fest. Vollständig gültige `[]` und gültige nur-not-affected Antworten bleiben checked-clean.
+- Date-only-Werte sind ein Kalendertag (`00:00:00.000Z`–`23:59:59.999Z`), kein Mitternachts-Instant. Foundation-D `departureTime`/`arrivalTime` werden als Wanduhr-Instant mit Label `Z` gelesen, ohne erfundene Zeitzone.
+- Routekontakte sind eine Menge echter Fenster: aufeinanderfolgende Ankunft+Abflug desselben Airports bilden ein Layover, sonst Punktkontakte. Kein Min/Max über wiederholte Airport-Codes.
+- Country-Scope behält Stage-Refs **und** alle Route-Airports im Land. Feinere City/Place-Matches behalten unresolved Routekontakt, wenn ein späterer Landkontakt ohne feinere Membership zeitlich überlappt.
+
+**Kontext:** `docs/PR37_CHATGPT_STOP_CRITERION_RECHECK.md` gegen Runtime `b20b3999` / Docs `57f34ecf`.
+
+**Begründung:** Stille Verwerfung, Mitternachtskollaps und zusammengezogene oder verworfene Routekontakte erzeugen konkret falsche Entwarnung oder falsche Warnung.
+
+**Konsequenzen:** Production unverändert, kein Live-Provider, keine Safety-DB. Der nächste unabhängige Check soll auf Closure/Pass zielen, sofern kein neuer konkreter Truth-/Security-/SoT-/Rollout-Defekt erscheint.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

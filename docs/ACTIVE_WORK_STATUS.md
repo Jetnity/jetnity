@@ -5,31 +5,32 @@ Arbeitsblock: **Travel Safety & Disruption Intelligence – provider-neutrale Fo
 
 ## 1. Arbeitsblock / Ziel
 
-Provider-neutrale Safety-/Disruption-Foundation. Die vier letzten Closure-Blocker aus `docs/PR37_CHATGPT_FINAL_CLOSURE_REVIEW.md` sind behoben (ADR-0131). Es gilt das Stop-Kriterium dieses Reviews.
+Provider-neutrale Safety-/Disruption-Foundation. Die drei Stop-Criterion-Truth-Blocker aus `docs/PR37_CHATGPT_STOP_CRITERION_RECHECK.md` sind behoben (ADR-0132). Der nächste unabhängige Check soll auf Closure/Pass zielen.
 
 Auftrag: `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`  
-Final Closure: `docs/PR37_CHATGPT_FINAL_CLOSURE_REVIEW.md`
+Stop-Criterion Recheck: `docs/PR37_CHATGPT_STOP_CRITERION_RECHECK.md`
 
 ## 2. Branch / PR / aktueller Head
 
 - Basis: `origin/main` = `91e644b279c802c5a5d7a88135ed8ab9c4229a34`
 - Branch: `feat/travel-safety-disruption-intelligence`
 - Draft PR: https://github.com/Jetnity/jetnity/pull/37
-- Verifizierter Runtime-Head: `b20b3999`
-- Verifizierter Docs-/PR-Head vor diesem Nachzug: `d36146021715f99dd332ac143d7f0819b8918d74`
-- Ahead/behind auf `d3614602`: **19 ahead / 0 behind**
+- Verifizierter Runtime-Head: `8d78da98`
+- Dieser Docs-Nachzug ändert keine Runtime.
+- Ahead/behind auf Runtime `8d78da98`: **22 ahead / 0 behind**
 - Draft. Kein Mark Ready, kein Merge.
 
 ## 3. Status
 
-**Final-Closure-Fixes verifiziert; Draft-PR #37; Stop-Kriterium gilt**
+**Stop-Criterion-Truth-Blocker behoben und lokal plus remote auf dem Runtime-Head verifiziert; Draft-PR #37**
 
 ## 4. Bereits umgesetzt
 
 - Foundation inkl. ADR-0127/0128
 - Review-Fixes ADR-0129
 - Re-Review-Fixes ADR-0130
-- Final-Closure-Fixes ADR-0131: checked-clean vs unknown, Teil-Zeitrelevanz, Route-Land trotz Stage, vollständige Signatur/Datenvalidierung
+- Final-Closure-Fixes ADR-0131
+- Stop-Criterion-Fixes ADR-0132: Teil-Malformed nicht clean, Date-only voller Kalendertag, Routekontakt-Fenster, Country- und unresolved Route-Refs
 
 ## 5. Gerade offen
 
@@ -41,23 +42,22 @@ Final Closure: `docs/PR37_CHATGPT_FINAL_CLOSURE_REVIEW.md`
 
 ## 6. Letzte relevanten Änderungen
 
-- Final Closure Review: `35dbc75f`
-- Final-Closure-Fixes: `b20b3999`
-- ADR-0131: `d3614602`
+- Stop-Criterion Recheck: `00331143`
+- Stop-Criterion-Fixes: `8d78da98`
 
 ## 7. Tests / CI / Preview
 
-Lokal auf Runtime `b20b3999`:
+Lokal auf Runtime `8d78da98`:
 
-- `npm test`: **1459/1459**
+- `npm test`: **1476/1476**
 - Typecheck, Lint, Hygiene grün
 - Production-Build: **38/38**, inkl. `/api/safety/evaluate`
 - UI-Audit: **886/886**, 0 Fehler, WebKit + Chromium, 8 Viewports
 
-Auf `d3614602` (Runtime + ADR-0131):
+Auf Runtime `8d78da98`:
 
-- GitHub Actions `32630094994`: **SUCCESS**
-- Vercel Preview `6046331762`: **READY/SUCCESS**
+- GitHub Actions `32631778057`: **SUCCESS**
+- Vercel Preview `6046614518`: **READY/SUCCESS**
 - Preview: https://jetnity-app-git-feat-travel-safety-disr-914f66-jetnity-e1b93c82.vercel.app
 
 Dieser Dokumentations-Nachzug ändert keine Runtime.
@@ -86,10 +86,10 @@ Dieser Dokumentations-Nachzug ändert keine Runtime.
 
 ## 12. Exakter nächster Schritt
 
-Draft bleibt Draft. Kein weiterer Safety-Foundation-Pass ohne konkreten Truth-/Security-/SoT-/Rollout-Defekt. Product-Owner entscheidet über Merge.
+Draft bleibt Draft. Nächster ChatGPT-Check zielt auf Closure/Pass. Kein weiterer Foundation-Pass ohne konkreten Truth-/Security-/SoT-/Rollout-Defekt. Product-Owner entscheidet über Merge.
 
 ## 13. Zuerst zu lesen
 
-1. `docs/PR37_CHATGPT_FINAL_CLOSURE_REVIEW.md`
+1. `docs/PR37_CHATGPT_STOP_CRITERION_RECHECK.md`
 2. `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ACCEPTANCE.md`
-3. `lib/safety/status.ts`, `lib/safety/relevanz.ts`, `lib/safety/normalisieren.ts`
+3. `lib/safety/status.ts`, `lib/safety/relevanz.ts`, `lib/safety/engine.ts`
