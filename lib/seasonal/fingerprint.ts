@@ -6,7 +6,7 @@
 import { routeFactsAusGraph } from '@/lib/route/ableitung'
 import { seasonalLandescode } from '@/lib/seasonal/domain'
 import { travelWindowIdentitaet, type SeasonalTravelWindow } from '@/lib/seasonal/fenster'
-import { scopeIdentitaet, type SeasonalSpatialScope } from '@/lib/seasonal/scope'
+import { kanonZahl, scopeIdentitaet, type SeasonalSpatialScope } from '@/lib/seasonal/scope'
 import { planpunkteSammeln } from '@/lib/trips/arbeitsbereich'
 import type { Trip } from '@/types/trips'
 
@@ -14,7 +14,7 @@ const SEASONAL_CONTEXT_VERSION = 'seasonal-context-v1'
 const SEASONAL_FACT_VERSION = 'seasonal-fact-v1'
 
 function zahl(wert: number | null | undefined): string {
-  return wert == null || !Number.isFinite(wert) ? '' : wert.toFixed(4)
+  return wert == null || !Number.isFinite(wert) ? '' : kanonZahl(wert)
 }
 
 export function seasonalContextFingerprint(reise: Trip): string {

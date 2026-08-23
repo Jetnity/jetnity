@@ -46,35 +46,44 @@ function hatTiming(liste: readonly SeasonalEvaluation[]): boolean {
   )
 }
 
+function entscheidungsrelevant(eintrag: SeasonalEvaluation): boolean {
+  if (eintrag.acuteRejected) return false
+  if (eintrag.factKey === 'checked_empty') return false
+  if (eintrag.factKey === 'acute_rejected') return false
+  if (eintrag.relevance === 'not_applies' && !eintrag.conflict) return false
+  return true
+}
+
+function istQuelleWeg(eintrag: SeasonalEvaluation): boolean {
+  if (!entscheidungsrelevant(eintrag)) return false
+  return (
+    eintrag.freshness === 'provider_unavailable' ||
+    eintrag.freshness === 'source_temporarily_unavailable' ||
+    eintrag.evidenceStatus === 'unavailable'
+  )
+}
+
+function istWahrheitsluecke(eintrag: SeasonalEvaluation): boolean {
+  if (!entscheidungsrelevant(eintrag) || istQuelleWeg(eintrag)) return false
+  return (
+    eintrag.conflict ||
+    eintrag.factKey === 'partial_invalid' ||
+    eintrag.freshness === 'never_checked' ||
+    eintrag.freshness === 'stale' ||
+    eintrag.freshness === 'recheck_needed' ||
+    eintrag.evidenceStatus === 'unknown' ||
+    eintrag.evidenceStatus === 'insufficient_context' ||
+    eintrag.relevance === 'insufficient_context' ||
+    eintrag.relevance === 'unknown'
+  )
+}
+
 function checkStateAus(liste: readonly SeasonalEvaluation[], vorhanden: boolean): SeasonalCheckState {
-  if (hatTiming(liste)) return 'has_timing'
   if (liste.length === 0) return vorhanden ? 'unknown' : 'unavailable'
   if (liste.length === 1 && liste[0]?.factKey === 'checked_empty') return 'checked_empty'
-  if (
-    liste.some(
-      (eintrag) =>
-        eintrag.freshness === 'provider_unavailable' ||
-        eintrag.freshness === 'source_temporarily_unavailable' ||
-        eintrag.evidenceStatus === 'unavailable',
-    )
-  ) {
-    return 'unavailable'
-  }
-  if (
-    liste.some(
-      (eintrag) =>
-        eintrag.conflict ||
-        eintrag.freshness === 'never_checked' ||
-        eintrag.freshness === 'stale' ||
-        eintrag.freshness === 'recheck_needed' ||
-        eintrag.evidenceStatus === 'unknown' ||
-        eintrag.evidenceStatus === 'insufficient_context' ||
-        eintrag.relevance === 'insufficient_context' ||
-        eintrag.relevance === 'unknown',
-    )
-  ) {
-    return 'unknown'
-  }
+  if (liste.some(istWahrheitsluecke)) return 'unknown'
+  if (hatTiming(liste)) return 'has_timing'
+  if (liste.some(istQuelleWeg)) return 'unavailable'
   return 'checked_empty'
 }
 
@@ -82,7 +91,7 @@ export function seasonalAnsicht(reise: Trip, evaluations?: SeasonalEvaluation[])
   const liste = evaluations ?? seasonalLokalFuerReise(reise)
   const vorhanden = evaluations !== undefined
   const checkState = checkStateAus(liste, vorhanden)
-  const complete = !liste.some((eintrag) => eintrag.factKey === 'partial_invalid')
+  const complete = !liste.some((eintrag) => istWahrheitsluecke(eintrag) || istQuelleWeg(eintrag))
   const sichtbare = vorhanden
     ? liste.filter((eintrag) => {
         if (eintrag.acuteRejected) return false

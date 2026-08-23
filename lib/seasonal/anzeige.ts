@@ -77,8 +77,10 @@ export function seasonalZusammenfassungText(summary: SeasonalSummary): string {
     return summary.complete ? text : `${text} Die Prüfung ist unvollständig.`
   }
   if (summary.information > 0) {
-    const text = 'Es gibt beobachtenswerten saisonalen Kontext ohne belastbaren Nachteil.'
-    return summary.complete ? text : `${text} Die Prüfung ist unvollständig.`
+    if (!summary.complete) {
+      return 'Der saisonale Kontext für diese Reise ist derzeit nicht belastbar vollständig prüfbar. Das ist keine Aussage über eine gute Reisezeit.'
+    }
+    return 'Es gibt beobachtenswerten saisonalen Kontext ohne belastbaren Nachteil.'
   }
   if (summary.checkState === 'checked_empty') {
     return 'Im geprüften Ausschnitt wurden keine belastbaren relevanten saisonalen Hinweise geliefert. Das ist keine Aussage, dass die Reisezeit optimal ist.'

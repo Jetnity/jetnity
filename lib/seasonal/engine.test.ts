@@ -1,11 +1,14 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import { safetyAusFacts } from '@/lib/safety/engine'
 import { mehrzielreise as safetyMehrziel, safetyFact } from '@/lib/safety/fixtures'
 import { seasonalZusammenfassungText } from '@/lib/seasonal/anzeige'
 import { seasonalAuswerten, seasonalAusFacts } from '@/lib/seasonal/engine'
-import { seasonalContextFingerprint } from '@/lib/seasonal/fingerprint'
+import { seasonalContextFingerprint, seasonalFactFingerprint } from '@/lib/seasonal/fingerprint'
+import { scopeIdentitaet } from '@/lib/seasonal/scope'
+import { travelWindowLesen } from '@/lib/seasonal/fenster'
 import {
   SEASONAL_NOW_MS,
   bangkokMonsunReise,
@@ -730,4 +733,153 @@ describe('Seasonal-Engine', () => {
     assert.equal(evaluations[0]?.outcome, 'less_favorable')
     assert.notEqual(evaluations[0]?.presentationClass, 'information')
   })
+
+  test('sourceUrl mit falschem Runtime-Typ erzeugt keine trusted Timing-Aussage', () => {
+    for (const sourceUrl of [123, { href: 'https://example.org/x' }, ['https://example.org/x']]) {
+      const evaluations = seasonalAusFacts(
+        bangkokMonsunReise(),
+        [seasonalFact({ factKey: 'rain-th', category: 'monsoon', sourceUrl: sourceUrl as never })],
+        'audit-seasonal',
+        { nowMs: JETZT },
+      )
+      assert.equal(hinweise(evaluations).length, 0)
+      assert.equal(evaluations[0]?.evidenceStatus, 'unknown')
+    }
+    const gültig = seasonalAusFacts(
+      bangkokMonsunReise(),
+      [seasonalFact({ factKey: 'rain-th', category: 'monsoon', sourceUrl: 'https://example.org/seasonal' })],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.equal(gültig[0]?.presentationClass, 'timing_check')
+  })
+
+  test('availability temporarily_unavailable bleibt explizit unavailable', () => {
+    const evaluations = seasonalAusFacts(
+      bangkokMonsunReise(),
+      [seasonalFact({ factKey: 'rain-th', category: 'monsoon', availability: 'temporarily_unavailable' })],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.freshness, 'source_temporarily_unavailable')
+    assert.equal(hinweise(evaluations).length, 0)
+    const ungültig = seasonalAusFacts(
+      bangkokMonsunReise(),
+      [seasonalFact({ factKey: 'rain-th', category: 'monsoon', availability: 'maybe' as never })],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.equal(ungültig[0]?.evidenceStatus, 'unknown')
+    assert.notEqual(ungültig[0]?.freshness, 'source_temporarily_unavailable')
+    const typ = seasonalAusFacts(
+      bangkokMonsunReise(),
+      [seasonalFact({ factKey: 'rain-th', category: 'monsoon', availability: 1 as never })],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.equal(typ[0]?.evidenceStatus, 'unknown')
+  })
+
+  test('route.airportCodes mit malformed Kind wird nicht still gekürzt', () => {
+    const evaluations = seasonalAusFacts(
+      bangkokRouteReise(),
+      [
+        seasonalFact({
+          factKey: 'storm-route',
+          category: 'tropical_cyclone_season',
+          spatialScope: { kind: 'route', airportCodes: ['DOH', 123] },
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.notEqual(evaluations[0]?.relevance, 'applies')
+    const gültig = seasonalAusFacts(
+      bangkokRouteReise(),
+      [
+        seasonalFact({
+          factKey: 'storm-route',
+          category: 'tropical_cyclone_season',
+          spatialScope: { kind: 'route', airportCodes: ['ZRH', 'BKK'] },
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.equal(gültig[0]?.relevance, 'applies')
+  })
+
+  test('point_radius-Grenze ändert Fingerprint und Relevanz innerhalb desselben toFixed(4)-Buckets', () => {
+    const innen = beispielreise({
+      startDate: '2026-09-10',
+      endDate: '2026-09-12',
+      stages: [
+        {
+          id: 'stage-eq',
+          position: 1,
+          name: 'Equator',
+          countryCode: 'EC',
+          placeId: null,
+          latitude: 0.000895,
+          longitude: 0,
+          arrivalDate: '2026-09-10',
+          departureDate: '2026-09-12',
+        },
+      ],
+      days: [],
+      ohneTag: [],
+    })
+    const aussen = {
+      ...innen,
+      stages: innen.stages.map((etappe) => ({ ...etappe, latitude: 0.000904 })),
+    }
+    const scope = { kind: 'point_radius' as const, latitude: 0, longitude: 0, radiusKm: 0.1, countryCode: 'EC' }
+    assert.equal(0.000895.toFixed(4), 0.000904.toFixed(4))
+    assert.notEqual(seasonalContextFingerprint(innen), seasonalContextFingerprint(aussen))
+    assert.notEqual(
+      scopeIdentitaet({ ...scope, latitude: 0.000895 }),
+      scopeIdentitaet({ ...scope, latitude: 0.000904 }),
+    )
+    const fact = seasonalFact({
+      factKey: 'heat-eq',
+      category: 'heat',
+      spatialScope: scope,
+      travelWindow: { kind: 'annual_recurring', start: '01-01', end: '12-31' },
+    })
+    const innenEval = seasonalAusFacts(innen, [fact], 'audit-seasonal', { nowMs: JETZT })
+    const aussenEval = seasonalAusFacts(aussen, [fact], 'audit-seasonal', { nowMs: JETZT })
+    assert.equal(innenEval[0]?.relevance, 'applies')
+    assert.equal(aussenEval[0]?.relevance, 'not_applies')
+    assert.equal(
+      seasonalFactFingerprint({
+        factKey: 'heat-eq',
+        category: 'heat',
+        evidenceClass: 'seasonal_pattern',
+        outcome: 'less_favorable',
+        updatedAt: null,
+        checkedAt: '2026-08-21T09:00:00.000Z',
+        freshUntil: null,
+        referencePeriod: null,
+        vertrauenswuerdig: true,
+        scope,
+        travelWindow: travelWindowLesen({ kind: 'annual_recurring', start: '01-01', end: '12-31' }),
+        affectedDomains: [],
+      }),
+      seasonalFactFingerprint({
+        factKey: 'heat-eq',
+        category: 'heat',
+        evidenceClass: 'seasonal_pattern',
+        outcome: 'less_favorable',
+        updatedAt: null,
+        checkedAt: '2026-08-21T09:00:00.000Z',
+        freshUntil: null,
+        referencePeriod: null,
+        vertrauenswuerdig: true,
+        scope,
+        travelWindow: travelWindowLesen({ kind: 'annual_recurring', start: '01-01', end: '12-31' }),
+        affectedDomains: [],
+      }),
+    )
+  })
 })
+

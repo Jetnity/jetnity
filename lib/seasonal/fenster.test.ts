@@ -71,6 +71,49 @@ describe('Seasonal Travel Window', () => {
     assert.equal(travelWindowLesen({ kind: 'absolute', start: '2026-09-30', end: '2026-09-01' }).kind, 'insufficient')
   })
 
+  test('unmögliche absolute Kalenderdaten werden nicht normalisiert', () => {
+    assert.equal(
+      travelWindowLesen({
+        kind: 'absolute',
+        start: '2026-02-30T00:00:00.000Z',
+        end: '2026-03-02T00:00:00.000Z',
+      }).kind,
+      'insufficient',
+    )
+    assert.equal(
+      travelWindowLesen({
+        kind: 'absolute',
+        start: '2026-04-31T00:00:00.000Z',
+        end: '2026-05-02T00:00:00.000Z',
+      }).kind,
+      'insufficient',
+    )
+    assert.equal(
+      travelWindowLesen({
+        kind: 'absolute',
+        start: '2027-02-29T00:00:00.000Z',
+        end: '2027-03-01T00:00:00.000Z',
+      }).kind,
+      'insufficient',
+    )
+    assert.equal(
+      travelWindowLesen({
+        kind: 'absolute',
+        start: '2028-02-29T00:00:00.000Z',
+        end: '2028-03-01T00:00:00.000Z',
+      }).kind,
+      'absolute',
+    )
+    assert.equal(
+      travelWindowLesen({
+        kind: 'absolute',
+        start: '2026-09-01T00:00:00.000Z',
+        end: '2026-09-10T00:00:00.000Z',
+      }).kind,
+      'absolute',
+    )
+  })
+
   test('Reference Period ist kein Travel Window', () => {
     assert.deepEqual(referencePeriodLesen({ startYear: 1991, endYear: 2020 }), { startYear: 1991, endYear: 2020 })
     assert.equal(referencePeriodLesen({ startYear: 2020, endYear: 1991 }), null)

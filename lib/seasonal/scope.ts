@@ -43,6 +43,11 @@ export type SeasonalSpatialScope =
   | { kind: 'route'; airportCodes: string[] }
   | { kind: 'insufficient' }
 
+export function kanonZahl(wert: number): string {
+  if (!Number.isFinite(wert)) return ''
+  return Object.is(wert, -0) ? '0' : String(wert)
+}
+
 export function scopeIdentitaet(scope: SeasonalSpatialScope): string {
   switch (scope.kind) {
     case 'country':
@@ -56,7 +61,7 @@ export function scopeIdentitaet(scope: SeasonalSpatialScope): string {
     case 'airport':
       return `airport:${scope.airportCode}`
     case 'point_radius':
-      return `point:${scope.latitude.toFixed(4)},${scope.longitude.toFixed(4)},${scope.radiusKm}:${scope.countryCode ?? ''}`
+      return `point:${kanonZahl(scope.latitude)},${kanonZahl(scope.longitude)},${kanonZahl(scope.radiusKm)}:${scope.countryCode ?? ''}`
     case 'route':
       return `route:${[...scope.airportCodes].sort().join(',')}`
     case 'insufficient':
@@ -116,11 +121,14 @@ export function spatialScopeLesen(roh: unknown): SeasonalSpatialScope {
     return { kind: 'point_radius', latitude, longitude, radiusKm, countryCode }
   }
   if (kind === 'route') {
-    if (!Array.isArray(wert.airportCodes)) return { kind: 'insufficient' }
-    const airportCodes = [
-      ...new Set(wert.airportCodes.map((code) => iataLesen(code)).filter((code): code is string => Boolean(code))),
-    ].sort()
-    return airportCodes.length > 0 ? { kind: 'route', airportCodes } : { kind: 'insufficient' }
+    if (!Array.isArray(wert.airportCodes) || wert.airportCodes.length === 0) return { kind: 'insufficient' }
+    const airportCodes: string[] = []
+    for (const code of wert.airportCodes) {
+      const gelesen = iataLesen(code)
+      if (!gelesen) return { kind: 'insufficient' }
+      airportCodes.push(gelesen)
+    }
+    return { kind: 'route', airportCodes: [...new Set(airportCodes)].sort() }
   }
   return { kind: 'insufficient' }
 }

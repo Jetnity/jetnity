@@ -33,6 +33,29 @@ describe('Seasonal-Anzeige', () => {
     assert.equal(SEASONAL_KLASSE_TEXT.timing_notice, 'Saisonaler Hinweis')
   })
 
+  test('favorable plus stale ergibt keine saubere Gesamtaussage', () => {
+    const evaluations = seasonalAusFacts(
+      bangkokMonsunReise(),
+      [
+        seasonalFact({ factKey: 'dry-th', category: 'other', outcome: 'favorable_context' }),
+        seasonalFact({
+          factKey: 'rain-th',
+          category: 'monsoon',
+          outcome: 'less_favorable',
+          freshUntil: '2026-08-21T09:30:00.000Z',
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: SEASONAL_NOW_MS },
+    )
+    const ansicht = seasonalAnsicht(bangkokMonsunReise(), evaluations)
+    const text = seasonalZusammenfassungText(ansicht.summary)
+    assert.equal(ansicht.summary.complete, false)
+    assert.equal(ansicht.summary.checkState, 'unknown')
+    assert.match(text, /nicht belastbar vollständig prüfbar/)
+    assert.doesNotMatch(text, /ohne belastbaren Nachteil/)
+  })
+
   test('Präsentationsklassen enthalten kein Safety-Vokabular', () => {
     assert.equal('critical_warning' in SEASONAL_KLASSE_TEXT, false)
     assert.equal('do_not_travel' in SEASONAL_KLASSE_TEXT, false)

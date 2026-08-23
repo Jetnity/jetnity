@@ -7,9 +7,11 @@
 import {
   datumFormatieren,
   datumTeile,
+  isoZeitLesen,
   istKalenderdatum,
   istSchaltjahr,
   kalenderteileGueltig,
+  zeitMs,
   zeitraeumeUeberschneiden,
 } from '@/lib/seasonal/kalender'
 
@@ -103,19 +105,20 @@ export function travelWindowLesen(roh: unknown): SeasonalTravelWindow {
     return { kind: 'annual_recurring', start, end }
   }
   if (wert.kind === 'absolute') {
-    const start = typeof wert.start === 'string' ? wert.start.trim() : ''
-    const end = typeof wert.end === 'string' ? wert.end.trim() : ''
-    if (!start || !end) return { kind: 'insufficient' }
-    if (istKalenderdatum(start) && istKalenderdatum(end)) {
-      return start <= end ? { kind: 'absolute', start, end } : { kind: 'insufficient' }
+    if (typeof wert.start !== 'string' || typeof wert.end !== 'string') return { kind: 'insufficient' }
+    const startRoh = wert.start.trim()
+    const endRoh = wert.end.trim()
+    const startDatum = istKalenderdatum(startRoh) ? startRoh : null
+    const endDatum = istKalenderdatum(endRoh) ? endRoh : null
+    const startInstant = isoZeitLesen(startRoh)
+    const endInstant = isoZeitLesen(endRoh)
+    if (startDatum && endDatum) {
+      return startDatum <= endDatum ? { kind: 'absolute', start: startDatum, end: endDatum } : { kind: 'insufficient' }
     }
-    if (/Z$/.test(start) && /Z$/.test(end)) {
-      const startMs = Date.parse(start)
-      const endMs = Date.parse(end)
-      if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || startMs > endMs) {
-        return { kind: 'insufficient' }
-      }
-      return { kind: 'absolute', start, end }
+    if (startInstant && endInstant) {
+      return zeitMs(startInstant) <= zeitMs(endInstant)
+        ? { kind: 'absolute', start: startInstant, end: endInstant }
+        : { kind: 'insufficient' }
     }
     return { kind: 'insufficient' }
   }

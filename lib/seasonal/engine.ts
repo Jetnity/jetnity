@@ -74,6 +74,15 @@ function evaluationAusFact(opts: {
       factKey: opts.fact.factKey,
     })
   }
+  if (opts.fact.sourceTemporarilyUnavailable) {
+    return leerEvaluation({
+      contextFingerprint: opts.contextFingerprint,
+      freshness: 'source_temporarily_unavailable',
+      status: 'unavailable',
+      reason: 'Die saisonale Quelle ist vorübergehend nicht erreichbar. Es wird keine Reisezeit-Aussage erfunden.',
+      factKey: opts.fact.factKey,
+    })
+  }
 
   const kontext = seasonalReisekontext(opts.reise)
   const relevanz = räumlichZeitlicheRelevanz(kontext, opts.fact.spatialScope, opts.fact.travelWindow)
@@ -204,7 +213,8 @@ export function seasonalAusFacts(
   })
   const valide = normalisiert.filter((fact): fact is SeasonalFact => Boolean(fact))
   const acute = valide.filter((fact) => fact.acuteRejected)
-  const saisonal = valide.filter((fact) => !fact.acuteRejected)
+  const temporarily = valide.filter((fact) => fact.sourceTemporarilyUnavailable)
+  const saisonal = valide.filter((fact) => !fact.acuteRejected && !fact.sourceTemporarilyUnavailable)
   const ungueltig = providerFacts.length - valide.length
 
   if (saisonal.length === 0) {
@@ -215,6 +225,17 @@ export function seasonalAusFacts(
           freshness: 'never_checked',
           status: 'unknown',
           reason: 'Die Providerantwort war ungültig und wurde verworfen.',
+        }),
+      ]
+    }
+    if (temporarily.length > 0) {
+      return [
+        leerEvaluation({
+          contextFingerprint,
+          freshness: 'source_temporarily_unavailable',
+          status: 'unavailable',
+          reason: 'Die saisonale Quelle ist vorübergehend nicht erreichbar. Es wird keine Reisezeit-Aussage erfunden.',
+          factKey: temporarily[0]?.factKey,
         }),
       ]
     }
@@ -261,6 +282,17 @@ export function seasonalAusFacts(
         reason: 'Widersprüchliche belegte saisonale Hinweise. Keine eindeutige Timing-Aussage.',
         factKey: key,
         conflict: true,
+      }),
+    )
+  }
+  if (temporarily.length > 0) {
+    evaluations.push(
+      leerEvaluation({
+        contextFingerprint,
+        freshness: 'source_temporarily_unavailable',
+        status: 'unavailable',
+        reason: 'Die saisonale Quelle ist vorübergehend nicht erreichbar. Es wird keine Reisezeit-Aussage erfunden.',
+        factKey: temporarily[0]?.factKey,
       }),
     )
   }

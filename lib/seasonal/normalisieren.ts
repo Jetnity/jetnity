@@ -47,6 +47,7 @@ export type SeasonalFact = {
   evidence: SeasonalEvidence
   vertrauenswuerdig: boolean
   acuteRejected: boolean
+  sourceTemporarilyUnavailable: boolean
 }
 
 function optionalesFeld<T>(
@@ -80,7 +81,36 @@ export function seasonalFactNormalisieren(
   const category = enumLesen(zeile.category, SEASONAL_CATEGORIES)
   const factKey = factSchluesselLesen(zeile.factKey)
   if (!category || !factKey) return null
-  if (zeile.availability === 'temporarily_unavailable') return null
+  if (zeile.availability != null && zeile.availability !== '') {
+    if (zeile.availability === 'temporarily_unavailable') {
+      return {
+        factKey,
+        category,
+        evidenceClass: 'seasonal_pattern',
+        outcome: 'unknown',
+        spatialScope: { kind: 'insufficient' },
+        travelWindow: { kind: 'insufficient' },
+        affectedDomains: [],
+        evidence: {
+          provider: providerNameLesen(providerNameRoh),
+          authority: null,
+          authorityClass: 'unknown',
+          sourceUrl: null,
+          publishedAt: null,
+          updatedAt: null,
+          checkedAt: null,
+          freshUntil: null,
+          headline: null,
+          summary: null,
+          referencePeriod: null,
+        },
+        vertrauenswuerdig: false,
+        acuteRejected: false,
+        sourceTemporarilyUnavailable: true,
+      }
+    }
+    if (zeile.availability !== 'ok') return null
+  }
 
   if (zeile.evidenceClass != null && zeile.evidenceClass !== '') {
     if (enumLesen(zeile.evidenceClass, SEASONAL_ABGEWIESENE_KLASSEN)) {
@@ -107,6 +137,7 @@ export function seasonalFactNormalisieren(
         },
         vertrauenswuerdig: false,
         acuteRejected: true,
+        sourceTemporarilyUnavailable: false,
       }
     }
   }
@@ -148,6 +179,9 @@ export function seasonalFactNormalisieren(
   const provider = providerNameLesen(providerNameRoh)
   const checkedAt = checkedAtFeld.wert
   const authority = authorityLesen(zeile.authority ?? null)
+  if (zeile.sourceUrl != null && zeile.sourceUrl !== '' && typeof zeile.sourceUrl !== 'string') {
+    return null
+  }
   const sourceUrlRoh = zeile.sourceUrl ?? null
   const sourceUrl = quelleUrlLesen(sourceUrlRoh)
   const vertrauenswuerdig = seasonalEvidenceVertrauenswuerdig({
@@ -182,6 +216,7 @@ export function seasonalFactNormalisieren(
     },
     vertrauenswuerdig,
     acuteRejected: false,
+    sourceTemporarilyUnavailable: false,
   }
 }
 
