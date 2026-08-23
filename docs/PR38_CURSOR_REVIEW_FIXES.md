@@ -9,7 +9,8 @@ Review R4: `docs/PR38_CHATGPT_R4_REVIEW.md`
 Runtime-Head R1-Fixes: `89290effba61602a71418ab3904b4dc42e76709d`  
 Runtime-Head R2-Fixes: `aa6cafa2f4997c22081dff35fe950a18190e7886`  
 Runtime-Head R3-Fixes: `4f9eb1e8c524494fa8ab300bdfe24ec372e9e109`  
-Runtime-Head R4-Fixes: `f077d4d1e45366dd7dfa50bf2f98461d71b8279c`
+Runtime-Head R4-Fixes: `f077d4d1e45366dd7dfa50bf2f98461d71b8279c`  
+Runtime-Head R5-Fixes: `249d4b9b24fed89070adfbd0bcaaacaeb481ba46`
 
 ## 1. Gemischte Unsicherheit
 

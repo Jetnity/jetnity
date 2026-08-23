@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 23. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D, Foundation E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence – Draft PR #38, R5-Blocker 10–11 im Code geschlossen, Exact-Head-Gate und R6 offen**
+Status: **verbindlicher operativer Übergabepunkt – Foundation D, Foundation E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence – Draft PR #38, R5-Fixes + Exact-Head-Gate grün, R6-Re-Review offen**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -294,7 +294,7 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. **→ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (Draft PR #38, R5-Blocker 10–11 im Code geschlossen, Exact-Head-Gate und R6 offen)**
+5. **→ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (Draft PR #38, R5-Fixes + Exact-Head-Gate grün, R6-Re-Review offen)**
 6. Provider-Readiness-/Adapter-Lücken schließen
 7. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 8. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
@@ -313,14 +313,13 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 Aktiver Branch: `feat/travel-timing-seasonal-intelligence`  
 Draft PR: `#38`  
 Basis: `origin/main` @ `cd220beb`  
-R5-Review-Docs-Head: `14c39467`
+Runtime-Head: `249d4b9b`
 
 1. Ist-Audit ist gegen den tatsächlichen Code verifiziert.
-2. Seasonal-Runtime sowie Review-Blocker 1–9 sind geschlossen, inklusive R4 Top-Level-Hülle und Day→Stage-Impact.
-3. R5-Blocker 10–11 sind im Code geschlossen: Provider-Request trägt Stage-/Route-Zeitkontakte; Acute plus `temporarily_unavailable` bleibt `rejected_acute`.
-4. Das Exact-Head-Gate auf dem neuen Runtime-Head und der R6-Re-Review stehen noch aus. Ältere Gate-Zahlen auf `f077d4d1` gelten nicht als R5-Closure.
-5. PR bleibt Draft. Kein echter Seasonal-Provider, kein Secret, keine unfreigegebenen Kosten, kein Merge ohne aktuelle Product-Owner-Freigabe.
-6. **Exakter nächster Schritt:** Exact-Head-Gate auf dem R5-Fix-Head, danach unabhängiger ChatGPT-Re-Review R6 nach Stop-Kriterium.
+2. Seasonal-Runtime sowie Review-Blocker 1–11 sind geschlossen, inklusive Provider-Zeitkontakte und Acute plus `temporarily_unavailable`.
+3. Full Gate auf Runtime `249d4b9b` ist lokal und remote grün (1567/1567 Tests, UI-Audit 1014/1014, Build Exit 0, GitHub Actions SUCCESS, Vercel Preview READY).
+4. PR bleibt Draft. Kein echter Seasonal-Provider, kein Secret, keine unfreigegebenen Kosten, kein Merge ohne aktuelle Product-Owner-Freigabe.
+5. **Exakter nächster Schritt:** unabhängiger ChatGPT-Re-Review R6 nach Stop-Kriterium.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

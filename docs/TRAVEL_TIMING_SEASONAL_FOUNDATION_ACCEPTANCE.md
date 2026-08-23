@@ -1,7 +1,7 @@
 # Travel Timing & Seasonal Intelligence – Foundation Acceptance
 
 Stand: 23. August 2026  
-Status: **verbindliche Acceptance für die provider-neutrale Foundation – Draft-PR #38, R5-Blocker 10–11 im Code geschlossen, Exact-Head-Gate und R6 offen**
+Status: **verbindliche Acceptance für die provider-neutrale Foundation – Draft-PR #38, R5-Blocker 10–11 auf Runtime `249d4b9b` geschlossen, Exact-Head-Gate grün, R6 offen**
 
 Policy: `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`  
 Ist-Audit: `docs/TRAVEL_TIMING_SEASONAL_FOUNDATION_ARCHITECTURE_AUDIT.md`

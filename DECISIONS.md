@@ -3479,7 +3479,7 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 - Eine explizite Acute-/Safety-Klasse bleibt `rejected_acute` / `acuteRejected=true`, auch kombiniert mit `temporarily_unavailable`. `availability` darf die Domain-Klasse nicht zu `seasonal_pattern` umschreiben.
 - Acute-only + unavailable bleibt honest unknown/unavailable ohne Seasonal-Hinweis. Gültige Seasonal-Facts dürfen sichtbar bleiben; der Gesamtstatus wird dadurch nicht clean/favorable/`ok`.
 
-**Kontext:** `docs/PR38_CHATGPT_R5_REVIEW.md` gegen Runtime `14c39467` / nachfolgenden R5-Fix-Head.
+**Kontext:** `docs/PR38_CHATGPT_R5_REVIEW.md` gegen Runtime `249d4b9b`.
 
 **Alternativen:** Adapter später selbst gegen den Tripgraphen rückrechnen lassen; `temporarily_unavailable` weiter zuerst auswerten und Acute verwerfen.
 

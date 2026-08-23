@@ -77,7 +77,7 @@ Ohne belastbaren `freshUntil`-Vertrag gibt es kein `current`. Safety-7-Tage-Defa
 
 Keine Seasonal-Tabelle. Seasonal Truth bleibt compute-on-read. Production-Schema unverändert.
 
-R5-Blocker 10–11 sind im Code geschlossen. Das Exact-Head-Gate auf dem neuen Runtime-Head folgt; ältere Gate-Zahlen auf `f077d4d1` gelten nicht als R5-Closure. Live-Provider bleibt `null`.
+Lokal und remote auf Runtime `249d4b9b` verifiziert: 1567 Tests, UI-Audit 1014/1014, Production-Build Exit 0, GitHub Actions SUCCESS, Vercel Preview READY. Review-Blocker 1–11 sind im Code geschlossen. R6-Re-Review ist offen. Live-Provider bleibt `null`.
 
 ---
 
