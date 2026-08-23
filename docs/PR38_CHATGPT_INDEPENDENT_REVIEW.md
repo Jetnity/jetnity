@@ -1,226 +1,272 @@
 # PR #38 – ChatGPT Independent Review
 
 Stand: 23. August 2026  
-Status: **REQUEST CHANGES – vier konkrete Merge-Blocker**
+Status: **REQUEST CHANGES – Re-Review R2: vier ursprüngliche Blocker geschlossen, zwei neue Merge-Blocker offen**
 
 PR: `#38 – Travel Timing & Seasonal Intelligence`  
 Branch: `feat/travel-timing-seasonal-intelligence`  
-Base bei Reviewbeginn: `cd220beb44d90ae376feeb8de9db8a3afb808d60`  
-Runtime-Head laut Gate-Lock: `2dfec9bc2ae7336d7ca4e918a25c186efa2cecab`  
-Docs-/PR-Head bei Reviewbeginn: `8df39f7b647e800a9938b15471693893cbd2a6e3`
+Base/Main bei R2: `cd220beb44d90ae376feeb8de9db8a3afb808d60`  
+Geprüfter Runtime-Head R2: `89290effba61602a71418ab3904b4dc42e76709d`  
+Sync bei R2: **8 ahead, 0 behind** `main`  
+PR-Zustand bei R2: **open, mergeable, Draft, nicht gemergt**
 
-## 1. Review-Urteil
+## 1. Review-Urteil R2
 
-Die Foundation ist insgesamt stark aufgebaut: eigene `lib/seasonal/`-Truth-Domäne, klare Trennung von akuter Safety, provider-neutraler Port, Evidence/Freshness, wiederkehrende und absolute Reisezeitfenster, Geo-/Zeit-Fail-closed-Logik, getrennte Presentation-/Impact-Schicht, geschützte API-Naht, Guest/Account-Modellparität, kein Live-Provider und keine DB-Migration.
+Der unabhängige Re-Review wurde nach `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` auf dem tatsächlichen Head `89290effba61602a71418ab3904b4dc42e76709d` fortgeführt. Dabei wurden nicht nur die vier gemeldeten Fixes geprüft, sondern die betroffenen Truth-/Trust-Boundaries erneut adversarial gegen Providerdaten, API-Tripgraph, Source-of-Truth, Geo-/Zeit-Relevanz, Fingerprints und Safety-vs-Seasonal-Trennung gelesen.
 
-Der formale Gate-Stand ist ebenfalls stark: 1540/1540 Tests, Typecheck/Lint/Hygiene grün, Production-Build grün, UI-Audit 1014/1014 auf WebKit + Chromium und acht Viewports, DB-Gates unverändert sowie GitHub Actions/Vercel auf Runtime- und Docs-Head grün.
+Die vier Blocker des ersten Reviews sind auf `89290eff` substanziell geschlossen:
 
-**Trotzdem ist PR #38 noch nicht mergefähig.** Der unabhängige Code-Review hat vier konkrete, direkt aus dem Runtime-Code ableitbare Truth-/Fail-closed-Defekte gefunden. Sie können falsche oder zu saubere Seasonal-Aussagen erzeugen und fallen damit unter das verbindliche Merge-Blocking-Kriterium.
+1. gemischte Unsicherheit kann nicht mehr von einem gültigen Seasonal-Fact zu einer vollständigen/sauberen Gesamtwahrheit überstimmt werden;
+2. absolute Travel Windows verwenden strikte Kalender-/Instant-Validierung;
+3. Geo-/Scope-Fingerprints verlieren keine entscheidungsrelevante Koordinatenpräzision mehr;
+4. die konkret gemeldeten malformed Providerfelder (`sourceUrl`, `availability`, `route.airportCodes[]`) werden fail-closed behandelt.
 
----
+**Es gibt trotzdem noch kein PASS.** Der verpflichtende zweite adversarielle Durchgang hat zwei weitere direkt code-abgeleitete Defekte an untrusted Truth-Grenzen gefunden. Beide können belastbare Seasonal-Aussagen bzw. `not_applies`/Route-Relevanz aus unvollständiger oder semantisch veränderter Wahrheit erzeugen und sind deshalb Merge-Blocker.
 
-## 2. Merge-Blocker 1 – gemischte Unsicherheit kann von einem gültigen Seasonal-Fact überdeckt werden
-
-### Betroffene Dateien
-
-- `lib/seasonal/status.ts`
-- `lib/seasonal/anzeige.ts`
-- indirekt `lib/seasonal/praesentation.ts`
-- Tests in `lib/seasonal/status.test.ts`, `lib/seasonal/anzeige.test.ts` und/oder `lib/seasonal/engine.test.ts`
-
-### Problem
-
-Die Aggregation entscheidet derzeit zuerst, ob irgendein sichtbarer Seasonal-Hinweis existiert (`has_timing`), und prüft erst danach `unknown`/unaufgelöste Zustände. Gleichzeitig wird `summary.complete` im Wesentlichen nur durch den speziellen `partial_invalid`-Sentinel auf `false` gesetzt.
-
-Dadurch kann ein gültiger Fact eine separate unsichere Wahrheit überdecken.
-
-Konkretes Beispiel:
-
-1. Fact A ist aktuell, vertrauenswürdig und `favorable_context` → Presentation `information`.
-2. Fact B betrifft einen anderen Seasonal-Key, ist aber `stale`, konfliktbehaftet, `recheck_needed` oder anderweitig `unknown` und könnte einen Nachteil darstellen.
-3. Die Gesamtansicht kann dennoch `has_timing`, `complete=true` und API-Status `ok` liefern.
-4. Die UI kann daraus sinngemäß ableiten: „beobachtenswerter saisonaler Kontext ohne belastbaren Nachteil“, obwohl ein zweiter entscheidungsrelevanter Fact gerade **nicht belastbar aufgelöst** ist.
-
-Das widerspricht ausdrücklich der Acceptance-Regel, dass ein stale/unresolved Fact keine saubere bzw. günstige Gesamtaussage erzeugen darf.
-
-### Erforderliche Korrektur
-
-Die Summary muss alle entscheidungsrelevanten Evaluation-Zustände aggregieren. Mindestens `stale`, `recheck_needed`, `unknown`, `insufficient_context`, Konflikte und unvollständige Providerantworten dürfen nicht von einem anderen gültigen Fact zu einer clean/favorable Gesamtwahrheit überstimmt werden.
-
-Ein vorhandener gültiger Nachteil darf weiterhin sichtbar bleiben. Die Gesamtaussage muss dann aber neutral/incomplete bleiben, wenn parallel ein weiterer relevanter Fact ungeklärt ist.
-
-### Pflicht-Regressionen
-
-Mindestens:
-
-- aktueller `favorable_context` + separater stale `less_favorable` → **kein** clean/favorable Gesamtstatus, kein irreführendes API-`ok`.
-- aktueller Timing-Hinweis + separater Konflikt → Hinweis bleibt sichtbar, Gesamtstatus bleibt unvollständig/unknown.
-- aktueller Timing-Hinweis + separater `insufficient_context` → keine vollständige Gesamtwahrheit.
-- zwei vollständig aktuelle, konsistente Facts → normaler bestehender Status bleibt erhalten.
+PR #38 bleibt Draft. Kein Mark Ready und kein Merge ohne ausdrückliche Freigabe des Product Owners.
 
 ---
 
-## 3. Merge-Blocker 2 – absolute Travel Windows akzeptieren unmögliche Kalenderdaten
+## 2. Historischer Erst-Review – Closure der vier ursprünglichen Blocker
 
-### Betroffene Dateien
+### 2.1 Mixed uncertainty / Summary Truth – **GESCHLOSSEN auf `89290eff`**
 
-- `lib/seasonal/fenster.ts`
-- ggf. gemeinsame strikte ISO-Helfer in `lib/seasonal/evidence.ts`
-- `lib/seasonal/fenster.test.ts`
+Betroffen: `lib/seasonal/status.ts` sowie Regressionen in `status.test.ts`/`engine.test.ts`.
 
-### Problem
+Der neue Statuspfad aggregiert entscheidungsrelevante Truth-Gaps vor einer vollständigen Gesamtwahrheit. Stale, conflict, untrusted und sonstige unresolved Zustände können nicht mehr durch einen parallelen gültigen Timing-Hinweis zu `complete=true`/sauberem API-Status verdeckt werden.
 
-Absolute Travel Windows werden aktuell im Wesentlichen über `Date.parse(...)` validiert, solange ein `Z` vorhanden ist.
+### 2.2 Unmögliche absolute Kalenderdaten – **GESCHLOSSEN auf `89290eff`**
 
-JavaScript normalisiert jedoch bestimmte unmögliche Kalenderdaten statt sie abzulehnen. Beispielsweise wird ein Datum wie `2026-02-30T00:00:00.000Z` von `Date.parse` als gültiger Zeitpunkt Anfang März interpretiert.
+Betroffen: `lib/seasonal/fenster.ts`, `lib/seasonal/kalender.ts`, `lib/seasonal/fenster.test.ts`.
 
-Damit kann malformed Provider-Truth ein anderes reales Zeitfenster bekommen und anschließend eine scheinbar belastbare zeitliche Relevanz erzeugen.
+Absolute Fenster laufen nun über strikte ISO-/Kalenderprüfung statt `Date.parse` als Akzeptanzgrenze. Unmögliche Daten wie 30. Februar bzw. nicht existente Leap-Days werden verworfen; gültige Leap-Days bleiben erlaubt.
 
-Für Seasonal-Truth ist das nicht zulässig. Die vorhandene striktere Kalender-/ISO-Prüfung darf hier nicht umgangen werden.
+### 2.3 Verlustbehaftete Geo-Fingerprint-Rundung – **GESCHLOSSEN auf `89290eff`**
 
-### Erforderliche Korrektur
+Betroffen: `lib/seasonal/fingerprint.ts`, `lib/seasonal/scope.ts`, Regressionen in `engine.test.ts`.
 
-- Start und Ende eines absoluten Seasonal-Fensters müssen mit einer **strikten Kalender-/Instant-Validierung** gelesen werden.
-- unmögliche Daten, falsche Laufzeitformen und nicht unterstützte Zeitzonenformen müssen fail-closed verworfen werden.
-- danach weiterhin `start <= end` prüfen.
-- keine stille Normalisierung durch `Date.parse` als Validierungsmechanismus.
+Entscheidungsrelevante Koordinaten werden nicht mehr per `toFixed(4)` zusammengezogen. Die Scope-/Context-Identität kann jetzt Änderungen unterscheiden, die die Point-Radius-Relevanz verändern.
 
-### Pflicht-Regressionen
+### 2.4 Tolerante Provider-Normalisierung – **GESCHLOSSEN für die gemeldeten Fälle auf `89290eff`**
 
-Mindestens:
+Betroffen: `lib/seasonal/normalisieren.ts`, `lib/seasonal/engine.test.ts`.
 
-- `2026-02-30T...Z` → invalid / kein Seasonal-Fact.
-- unmöglicher 31. April → invalid.
-- gültiger Leap-Day 2028-02-29 → gültig.
-- 2027-02-29 → invalid.
-- gültiges absolutes Fenster bleibt unverändert funktional.
+Die gemeldeten Fälle sind gehärtet: falsch typisiertes `sourceUrl`, ungültiges `availability` und teilweise malformed `route.airportCodes[]` werden nicht mehr still zu belastbarer Truth normalisiert; `temporarily_unavailable` bleibt als unavailable-Semantik erhalten.
+
+Diese Closure gilt **nur** für die vier ursprünglichen Findings. Der zweite adversarielle Durchgang hat die folgenden zusätzlichen Blocker ergeben.
 
 ---
 
-## 4. Merge-Blocker 3 – Geo-Fingerprints runden stärker als die Entscheidungslogik
+## 3. Merge-Blocker 5 – fehlende `evidenceClass` wird zu erfundener `seasonal_pattern`-Truth normalisiert
 
 ### Betroffene Dateien
 
-- `lib/seasonal/fingerprint.ts`
-- `lib/seasonal/scope.ts`
-- indirekt `lib/seasonal/relevanz.ts`
-- Tests für Context-/Fact-Fingerprint, Conflict/Dedup und Point-Radius-Relevanz
-
-### Problem
-
-Die Relevanzberechnung für `point_radius` arbeitet mit der vollen Latitude-/Longitude-Präzision. Die Fingerprints bzw. Scope-Identität serialisieren Koordinaten jedoch mit nur vier Dezimalstellen (`toFixed(4)`).
-
-Damit sind Fingerprint-Gleichheit und Entscheidungs-Gleichheit nicht äquivalent.
-
-Konkrete reproduzierbare Grenzsituation bei 0,0 und Radius 0,1 km:
-
-- Latitude `0.000895` liegt ungefähr 99,5 m vom Zentrum entfernt.
-- Latitude `0.000904` liegt ungefähr 100,5 m entfernt.
-- beide werden bei vier Dezimalstellen zu `0.0009`.
-
-Die fachliche Entscheidung kann also von `applies` zu `not_applies` wechseln, während der Context-/Scope-Fingerprint gleich bleibt. Dasselbe kann Conflict-/Dedup-Semantik für punktbasierte Facts verfälschen.
-
-Das verletzt die verbindliche Regel, dass Entscheidung-relevante Änderungen den Fingerprint ändern müssen.
-
-### Erforderliche Korrektur
-
-Koordinaten in Context-/Fact-/Scope-Identität müssen so kanonisiert werden, dass **jede Änderung, die die Relevanzentscheidung ändern kann, auch die Identität/Fingerprint ändern kann**. Keine gröbere Rundung als die Entscheidungslogik.
-
-Empfohlen: deterministische kanonische Serialisierung der validierten numerischen Werte ohne verlustbehaftete Vier-Dezimal-Rundung.
-
-### Pflicht-Regressionen
-
-Mindestens:
-
-- zwei Koordinaten innerhalb desselben bisherigen `toFixed(4)`-Buckets, die eine 0,1-km-Grenze auf unterschiedlichen Seiten liegen, erzeugen unterschiedliche Context-Fingerprints und unterschiedliche Relevanz.
-- dasselbe für `point_radius`-Fact-/Scope-Identität.
-- identische Koordinaten bleiben deterministisch identisch.
-- bestehende order-independent Conflict-/Dedup-Tests bleiben grün.
-
----
-
-## 5. Merge-Blocker 4 – Provider-Normalisierung ist bei mehreren untrusted Runtime-Feldern noch tolerant statt strikt
-
-### Betroffene Dateien
-
+- `lib/seasonal/provider.ts`
 - `lib/seasonal/normalisieren.ts`
-- `lib/seasonal/evidence.ts`
-- `lib/seasonal/scope.ts`
-- ggf. `lib/seasonal/engine.ts`
-- Provider-/Normalisierungs-/Engine-Tests
+- Provider-/Normalisierungs-/Engine-Regressionen
 
-### 5.1 `sourceUrl` mit falschem Runtime-Typ
+### Verbindlicher Vertrag
 
-Ein ungültiger nichtleerer **String** wird korrekt als nicht vertrauenswürdig behandelt. Wenn `sourceUrl` aber als Zahl/Objekt/Array geliefert wird, normalisiert der URL-Parser auf `null`; die Trust-Prüfung betrachtet den Rohwert nur dann als Fehler, wenn er ein String war.
+Der Auftrag trennt ausdrücklich:
 
-Damit kann ein malformed Provider-Fact trotz falsch typisierter Evidence noch `vertrauenswuerdig=true` werden und eine Seasonal-Aussage tragen.
+- Seasonal Pattern = typische/historische/wiederkehrende Bedingungen;
+- Official Seasonal Window = offiziell/fachlich definierte saisonale Periode;
+- Forecast Outlook = Prognose, aber keine Active Warning;
+- Active Warning = Safety-Domäne.
 
-**Erforderlich:** Wenn ein Evidence-Feld vorhanden ist, muss sein Runtime-Typ strikt zum Vertrag passen. Falscher Typ → Fact fail-closed ungültig/unknown, niemals trusted Truth.
+Der provider-neutrale `SeasonalProviderFact` verlangt mindestens eine `evidenceClass / truthClass`. Die Klassifikation ist entscheidungsrelevante Provider-Truth und darf nicht vom Adapter-/Normalisierungscode erfunden werden.
 
-### 5.2 `availability` ist nicht vollständig als Enum-Grenze validiert
+### Problem
 
-Der Code behandelt exakt `temporarily_unavailable` speziell. Andere unerlaubte Strings bzw. falsche Runtime-Typen werden nicht als Vertragsverletzung erkannt und können normal weiterlaufen.
+`SeasonalProviderFact.evidenceClass` ist aktuell untrusted/optional. In `normalisieren.ts` wird ein fehlender, `null`- oder leerer Wert nicht abgelehnt, sondern automatisch zu:
 
-Zusätzlich sollte ein explizites `temporarily_unavailable` semantisch als **Source temporarily unavailable** erhalten bleiben und nicht nur wie eine beliebige malformed Zeile verschwinden.
+```ts
+'seasonal_pattern'
+```
 
-**Erforderlich:** striktes Enum-Verhalten und klarer unavailable-Pfad.
+normalisiert.
 
-### 5.3 `route.airportCodes[]` verwirft malformed Kinder still
+Damit wird aus **fehlender Klassifikation** eine konkrete Seasonal-Wahrheitsklasse. Der Code kann danach eine Zeile als Seasonal-Fact weiterverarbeiten, obwohl der Provider nie bestätigt hat, dass es sich um ein saisonales Muster handelt.
 
-Bei Route-Scopes werden einzelne ungültige Array-Elemente gefiltert. Eine Providerantwort wie sinngemäß `['DOH', 123]` kann dadurch zu `['DOH']` werden und anschließend eine belastbare Route-Relevanz erzeugen.
+Das ist besonders kritisch an der Safety-vs-Seasonal-Grenze: Ohne explizite Klassifikation ist nicht beweisbar, ob eine Quelle Seasonal Pattern, Forecast Outlook, Active Warning, Acute Event oder etwas Unklassifiziertes liefert. `unknown/missing` darf hier nicht zu `seasonal_pattern` aufgewertet werden.
 
-Das ist eine semantische Veränderung untrusted Providerdaten.
+### Warum merge-blocking
 
-**Erforderlich:** Wenn ein strukturierter Entscheidungs-Array vorhanden ist, müssen alle Elemente den Vertrag erfüllen. Teilweise malformed → keine still verkürzte authoritative Truth.
+- Truth wird aus Abwesenheit erfunden.
+- Die Safety-vs-Seasonal-Klassifikation ist ein zentraler Domain-Invariant.
+- Der Fehler liegt direkt an der untrusted Provider-Grenze.
+- Ein späterer echter Provider könnte bei ausgelassener Klassifikation eine belastbar wirkende Seasonal-Aussage erzeugen.
+
+### Erforderliche Korrektur
+
+- `evidenceClass` muss für normale Providerfacts **explizit vorhanden** und eine erlaubte Seasonal-Klasse sein.
+- `undefined`, `null`, `''`, falscher Runtime-Typ oder unbekannter Enum-Wert → Fact fail-closed ungültig; keine Default-Klasse.
+- `active_warning` / `acute_event` bleiben aus der Seasonal-Truth ausgeschlossen bzw. werden ausschließlich als abgewiesene falsche Domain-Klasse behandelt; niemals in Seasonal Pattern umklassifizieren.
+- Die Normalisierung darf keine Truth-Klasse aus fehlender Providerinformation ableiten.
 
 ### Pflicht-Regressionen
 
 Mindestens:
 
-- `sourceUrl: 123`, Objekt und Array → keine trusted Timing-Aussage.
-- gültige HTTPS-URL → weiterhin trusted, sofern übrige Trust-Kriterien erfüllt.
-- `availability: 'temporarily_unavailable'` → expliziter Source-unavailable-Zustand.
-- unerlaubter Availability-String und falscher Typ → fail-closed.
-- `route.airportCodes: ['DOH', 123]` → nicht still zu `['DOH']` normalisieren.
-- vollständig gültige Airport-Code-Liste → bestehende Route-Relevanz bleibt korrekt.
+- fehlende `evidenceClass` → kein belastbarer Seasonal-Fact;
+- `evidenceClass: null` → kein belastbarer Seasonal-Fact;
+- `evidenceClass: ''` → kein belastbarer Seasonal-Fact;
+- numerischer/Objekt-/Array-Wert → fail-closed;
+- `active_warning` / `acute_event` → keine Seasonal-Truth;
+- explizite gültige `seasonal_pattern`, `official_seasonal_risk_window` und `forecast_outlook` bleiben funktional;
+- gemischte Antwort aus gültigem Fact + classless/malformed Fact → `partial_invalid` bzw. fachlich gleichwertig, `complete=false`, keine clean/favorable Gesamtwahrheit.
 
 ---
 
-## 6. Was ausdrücklich **kein** aktueller Merge-Blocker ist
+## 4. Merge-Blocker 6 – untrusted API-Tripgraph akzeptiert ungültige IDs/Referenzen und repariert bzw. verwirft sie still
 
-Diese Punkte sind dokumentierte spätere Nähte und werden durch diesen Review nicht künstlich in den Foundation-Scope gezogen:
+### Betroffene Dateien
 
-- kein echter Seasonal-Provider; `seasonalProviderAus()` bleibt `null`.
-- Guest-/Account-Produktpfad lädt noch keine echten Seasonal-Evaluations; die optionale Workspace-Karte bleibt ohne Evaluation unsichtbar.
-- `Trotzdem so planen` wird in dieser Foundation noch nicht persistiert.
-- Title-only Geo bleibt `unknown`/`insufficient_context` statt geraten zu werden.
-- In-process Rate-Limit ist für Preview/Development akzeptiert; kommerzieller Provider braucht später ein separates globales Gate.
-- keine Seasonal-DB-Tabelle und keine Production-Migration.
+- `lib/seasonal/schema.ts`
+- `lib/seasonal/auswerten.ts`
+- indirekt `lib/seasonal/relevanz.ts`
+- indirekt Foundation-D-Route-Ableitung
+- API-/Schema-/Engine-Regressionen
 
-Ebenfalls kein Grund für einen endlosen Foundation-Pass sind Stilfragen, kosmetische Refactors oder provider-spezifische Details, die erst mit einem real gewählten Adapter belastbar geprüft werden können.
+### Verbindlicher Invariant
+
+Der Seasonal Context darf ausschließlich aus kanonischen Trip Facts entstehen. Stage-/Day-/Item-IDs und ihre Referenzen sind Teil dieses kanonischen Graphen und beeinflussen Geo-, Zeit-, Route- und Impact-Relevanz. Incomplete Context darf niemals still zu `not_applies` bzw. einer scheinbar vollständigeren Wahrheit werden.
+
+### Problem A – fehlende Referenzintegrität
+
+`seasonalAnfrageSchema` validiert Form, Längen, Kalenderdaten und Mengenlimits, aber aktuell nicht:
+
+- eindeutige `stage.id`;
+- eindeutige `day.id`;
+- eindeutige `item.id`;
+- ob `day.stageId` auf eine existierende Stage zeigt;
+- ob `item.stageId` auf eine existierende Stage zeigt;
+- ob `item.dayId` auf einen existierenden Day zeigt;
+- ob `item.stageId` und die Stage des referenzierten Days konsistent sind.
+
+### Problem B – `tripAusSeasonalAnfrage()` verändert malformed Graphen still
+
+Der Builder repariert einen unbekannten `day.stageId` zu `null`:
+
+```ts
+stageId: tag.stageId && stageIds.has(tag.stageId) ? tag.stageId : null
+```
+
+Noch kritischer: Items werden pro Day nur über `punkt.dayId === tag.id` aufgenommen. `ohneTag` nimmt nur Items ohne `dayId` auf. Ein Item mit **nichtleerem, aber dangling `dayId`** landet deshalb weder in einem Day noch in `ohneTag` und verschwindet vollständig aus dem kanonisierten Trip.
+
+Das kann z. B. ein Flight-Item mitsamt `routeItinerary` eliminieren. Damit kann echte Route-/Airport-Relevanz verschwinden und ein Seasonal-Fact fälschlich `not_applies` werden.
+
+### Problem C – Duplicate IDs können Zeitkontakt auf das falsche Objekt auflösen
+
+Die Relevanz löst Stage-/Day-/Item-Refs über `.find(candidate => candidate.id === ref.id)` auf. Bei doppelten IDs wird damit nur der erste Treffer als Zeitkontakt verwendet.
+
+Reproduzierbarer Fall:
+
+1. Stage A und Stage B haben dieselbe ID, aber unterschiedliche Reisezeiträume.
+2. Beide liegen im räumlich betroffenen Land.
+3. Der räumliche Matcher erzeugt Refs mit derselben ID.
+4. Der Zeitresolver findet für beide Refs nur die erste Stage.
+5. Ein saisonales Fenster, das nur Stage B trifft, kann dadurch als außerhalb bzw. unzureichend statt zutreffend bewertet werden.
+
+Das ist kein kosmetischer Datenqualitätsfehler, sondern verändert fachliche Relevanz.
+
+### Warum merge-blocking
+
+- untrusted Clientgraph wird semantisch verändert statt abgelehnt;
+- Route-/Zeit-/Geo-Truth kann verloren gehen;
+- `not_applies` kann aus einem malformed/incomplete Graph entstehen;
+- Duplicate IDs brechen die eindeutige Source-of-Truth-Auflösung;
+- der Fehler liegt an der öffentlichen API-/Trust-Boundary.
+
+### Erforderliche Korrektur
+
+`seasonalAnfrageSchema` muss den Graphen fail-closed validieren, bevor `tripAusSeasonalAnfrage()` ihn verwendet:
+
+- IDs innerhalb `stages`, `days`, `items` jeweils eindeutig;
+- jeder nichtleere `day.stageId` existiert;
+- jeder nichtleere `item.stageId` existiert;
+- jeder nichtleere `item.dayId` existiert;
+- wenn Item und referenzierter Day beide eine Stage festlegen, müssen die Stage-Referenzen konsistent sein;
+- malformed Referenzen → Request `400`, nicht stille Reparatur/Drop;
+- Builder darf nach erfolgreicher Schema-Prüfung nicht mehr notwendig sein, ungültige Graphwahrheit zu „heilen“.
+
+### Pflicht-Regressionen
+
+Mindestens:
+
+- doppelte Stage-ID mit unterschiedlichen Datumsfenstern → Request ungültig;
+- doppelte Day-ID → Request ungültig;
+- doppelte Item-ID → Request ungültig;
+- unbekannte `day.stageId` → Request ungültig;
+- unbekannte `item.stageId` → Request ungültig;
+- dangling `item.dayId` mit Flight-`routeItinerary` → Request ungültig; Item darf nicht still verschwinden;
+- widersprüchliche Item-/Day-Stage-Zuordnung → Request ungültig;
+- gültiger Graph bleibt unverändert funktional;
+- Guest und Account mit identischem gültigem Trip Graph bleiben fachlich identisch.
 
 ---
 
-## 7. Stop-Kriterium für den nächsten Re-Review
+## 5. Exact-Head Gates bei R2
 
-Nach Behebung der vier oben genannten Gruppen blockiert der nächste Review nur noch bei einem **konkreten reproduzierbaren oder direkt code-abgeleiteten Defekt** mit relevantem Einfluss auf:
+Für den geprüften Runtime-Head `89290effba61602a71418ab3904b4dc42e76709d` wurde unabhängig verifiziert:
 
-- Seasonal Truth / Travel-Window-Wahrheit,
-- Evidence / Provenance / Freshness / Fail-closed,
-- Geo-/Zeit-Relevanz,
-- Context-/Fact-/Decision-Fingerprints,
-- Safety-vs-Seasonal-Trennung,
-- Security / untrusted Providerdaten,
-- Source-of-Truth / Guest-Account-Parität,
-- Production-/Provider-Rollout,
+- GitHub Actions CI #390: **SUCCESS** auf exakt diesem SHA;
+- CI-Job `test`: **SUCCESS**; Checkout, Node-Setup, `npm ci`, Repo-Struktur, Typecheck, Lint, Tests, Artifact-Check und Branch-Hygiene erfolgreich;
+- Vercel Preview für exakt `89290eff`: **READY**;
+- Production/Main blieb `cd220beb44d90ae376feeb8de9db8a3afb808d60`;
+- Branch-Sync beim R2-Lock: **8 ahead, 0 behind**;
+- keine Seasonal-DB-Tabelle, keine Migration, kein Live-Provider, keine Secrets, keine neue Kostenfreigabe.
+
+Der frühere umfangreiche Production-Build-/UI-Audit-Lock mit `1540/1540` Tests und `1014/1014` UI-Audits stammt vom vorherigen Runtime-Lock und ist **kein Ersatz für einen finalen Exact-Head-Gate-Lock nach den noch nötigen R2-Fixes**.
+
+Vor einem späteren PASS müssen deshalb auf dem finalen Runtime-Head erneut vollständig belegt sein:
+
+- Typecheck / Lint / vollständige Tests;
+- Production-Build bzw. exakter Vercel-Preview-Build;
+- UI-Audit auf dem finalen Runtime-Head;
+- Branch weiterhin 0 behind `main`;
+- Preview SHA = finaler Head;
+- keine ungeprüfte DB-/Provider-/Secret-/Kostenänderung.
+
+Grüne Gates allein ersetzen weiterhin keinen unabhängigen Code-Review.
+
+---
+
+## 6. Was R2 ausdrücklich nicht als Merge-Blocker hochstuft
+
+- `seasonalProviderAus()` bleibt absichtlich `null`; kein echter Provider gehört in diesen Foundation-Block.
+- Die Verwendung von `beispielreise()` als Struktur-Basis in `tripAusSeasonalAnfrage()` wurde geprüft; für die aktuell genutzten Seasonal-Truth-Felder wurde in R2 kein reproduzierbarer Demo-/Fixture-Truth-Leak nachgewiesen.
+- In-process Rate-Limit bleibt für Preview/Development eine dokumentierte Naht; kommerzieller Provider braucht später ein separates globales Gate.
+- Title-only Geo bleibt fail-closed/unknown.
+- Keine persistierte Nutzerentscheidung `Trotzdem so planen` und kein Account-`tripId`-Serverload werden nicht künstlich in diesen Foundation-Scope gezogen.
+- Stilfragen, kosmetische Refactors oder provider-spezifische Details ohne konkreten Truth-/Security-Defekt sind kein Grund für weitere Perfektionsschleifen.
+
+---
+
+## 7. R2 Stop-Kriterium / nächster Re-Review
+
+Nach Behebung **nur der zwei neuen Blocker 5 und 6** wird der tatsächliche neue Runtime-/PR-Head erneut gegen den vollständigen Impact-Bereich geprüft.
+
+Der nächste Review blockiert nur noch bei einem konkreten reproduzierbaren oder direkt code-abgeleiteten Defekt mit relevantem Einfluss auf:
+
+- Seasonal Truth / Travel-Window-Wahrheit;
+- Evidence / Provenance / Freshness / Fail-closed;
+- Geo-/Zeit-Relevanz;
+- Context-/Fact-/Decision-Fingerprints;
+- Safety-vs-Seasonal-Trennung;
+- Security / untrusted Provider- oder Clientdaten;
+- Source-of-Truth / Trip-Graph-Integrität / Guest-Account-Parität;
+- Production-/Provider-Rollout;
 - oder zentrale Foundation-Funktionalität.
 
-Keine weiteren theoretischen Perfektionsschleifen.
+Keine theoretische Perfektionsschleife nach Erreichen dieses Stop-Kriteriums.
 
 ---
 
-## 8. Erforderlicher nächster Schritt
+## 8. Exakter nächster Schritt
 
-Cursor soll **ausschließlich diese vier Merge-Blocker** professionell schließen, die verlangten adversarial Regressionen ergänzen und danach das vollständige Gate auf exakt dem finalen Runtime-/PR-Head ausführen. Vor Abschluss erneut `origin/main` synchronisieren und 0 behind verifizieren.
+Cursor soll **ausschließlich die zwei R2-Merge-Blocker** professionell schließen, die beschriebenen adversarial Regressionen ergänzen und danach das vollständige Gate auf exakt dem finalen Runtime-/PR-Head ausführen.
 
-PR #38 bleibt Draft. Kein Mark Ready, kein Merge, kein echter Provider, keine Development-/Production-Migration.
+Danach folgt ein unabhängiger ChatGPT-Re-Review des tatsächlichen finalen Patches und des gesamten betroffenen Systems. Erst wenn dieser Re-Review keine konkrete merge-blocking Regression oder neue relevante Truth-/Security-Lücke mehr findet, darf ein fachliches Closure/PASS ausgesprochen werden.
+
+PR #38 bleibt bis dahin **Draft**. Kein Mark Ready, kein Merge. Kein echter Provider, keine Secrets, keine Development-/Production-Migration und keine neue Kostenaktivierung ohne separates Gate.
