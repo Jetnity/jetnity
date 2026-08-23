@@ -16,10 +16,33 @@ import {
   officialTravellerErgebnisText,
 } from '@/lib/readiness/bezeichnungen'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
-import { slotMissingFactsErgaenzen, travellerSlots } from '@/lib/readiness/party'
+import { gruppenUnterschiede, slotMissingFactsErgaenzen, travellerSlots } from '@/lib/readiness/party'
 import { readinessAnsicht, readinessZusammenfassungText } from '@/lib/readiness/status'
+import {
+  citizenshipClientRefFuer,
+  dokumenteAlsPayload,
+  dokumenteAusTraveller,
+  dokumenteNachCitizenships,
+  neueDokumentClientRef,
+  type DokumentFormularZeile,
+} from '@/lib/readiness/dokument-formular'
+import { VERGLEICH_NICHT_VERFUEGBAR } from '@/lib/readiness/vergleich'
 import type { ReadinessKind, ReadinessUserStatus, TravellerDocumentType, Trip } from '@/types/trips'
 import { cn } from '@/lib/utils'
+
+type TravellerEingabe = {
+  clientRef: string
+  label: string | null
+  residenceCountryCode: string | null
+  citizenships: Array<{ clientRef?: string; countryCode: string }>
+  documents: Array<{
+    clientRef?: string
+    documentType: TravellerDocumentType
+    issuingCountryCode: string | null
+    expiresOn: string | null
+    citizenshipClientRef: string | null
+  }>
+}
 
 const GRUPPEN = ['einreise', 'dokumente', 'versicherung', 'bestaetigung', 'sonstiges'] as const
 
@@ -42,15 +65,7 @@ export default function Reisevorbereitung({
     title: string | null
   }) => Promise<string | null>
   onEntfernen?: (clientRef: string) => Promise<string | null>
-  onTravellerSetzen?: (eingabe: {
-    clientRef: string
-    label: string | null
-    nationalityCountryCode: string | null
-    residenceCountryCode: string | null
-    documentType: TravellerDocumentType | null
-    documentIssuingCountryCode: string | null
-    documentExpiresOn: string | null
-  }) => Promise<string | null>
+  onTravellerSetzen?: (eingabe: TravellerEingabe) => Promise<string | null>
   onTravellerEntfernen?: (clientRef: string) => Promise<string | null>
 }) {
   const [offen, setOffen] = React.useState(false)
@@ -65,6 +80,7 @@ export default function Reisevorbereitung({
         .flatMap((eintrag) => eintrag.missingFacts),
     ),
   )
+  const unterschiede = gruppenUnterschiede(reise)
 
   const setzen = async (
     item: {
@@ -146,8 +162,15 @@ export default function Reisevorbereitung({
         <section className="grid gap-2">
           <h4 className="text-sm font-semibold text-brand-800">Reisendenkontext</h4>
           <p className="text-xs leading-5 text-ink-800">
-            Jetnity fragt nur fehlende Angaben. Keine Passnummern, keine Gesundheitsdaten.
+            Mehrere Staatsbürgerschaften und Reisedokumente sind möglich. Jetnity fragt nur notwendige Angaben.
+            Keine Passnummern, keine Gesundheitsdaten.
           </p>
+          {unterschiede.mehrereTraveller && (unterschiede.unterschiedlicheCitizenships || unterschiede.unterschiedlicheDokumente) ? (
+            <p className="text-xs leading-5 text-ink-800">
+              Diese Reisenden haben unterschiedliche Staatsbürgerschaften oder Dokumente. Jede Person wird einzeln
+              betrachtet.
+            </p>
+          ) : null}
           {slots.filter((slot) => slot.applicable).map((slot) => (
             <ReisendenKarte
               key={slot.clientRef}
@@ -180,6 +203,7 @@ export default function Reisevorbereitung({
                     <p className="text-sm font-semibold text-brand-800">{slot.label}</p>
                     <p className="mt-0.5 text-xs leading-5 text-ink-800">
                       {officialTravellerErgebnisText(eigene)}
+                      {slot.traveller && slot.traveller.documents.length > 1 ? ` · ${VERGLEICH_NICHT_VERFUEGBAR}` : ''}
                       {slot.missingFacts.includes('nationality') ? ' · Staatsangehörigkeit fehlt' : ''}
                     </p>
                     {aktionen.map((aktion) => (
@@ -223,6 +247,9 @@ export default function Reisevorbereitung({
                         <p className="text-sm font-semibold text-brand-800">
                           {item.title ?? READINESS_ART_BEZEICHNUNG[item.kind]}
                           {item.countryCode ? ` · ${item.countryCode}` : ''}
+                          {item.travellerClientRef
+                            ? ` · ${slots.find((slot) => slot.clientRef === item.travellerClientRef)?.label ?? item.travellerClientRef}`
+                            : ''}
                         </p>
                         <p className="mt-0.5 text-xs leading-5 text-ink-800">
                           {nutzerstandText(item.userStatus, item.currentness)}
@@ -352,31 +379,25 @@ function ReisendenKarte({
   onFehler,
 }: {
   slot: ReturnType<typeof travellerSlots>[number]
-  onTravellerSetzen?: (eingabe: {
-    clientRef: string
-    label: string | null
-    nationalityCountryCode: string | null
-    residenceCountryCode: string | null
-    documentType: TravellerDocumentType | null
-    documentIssuingCountryCode: string | null
-    documentExpiresOn: string | null
-  }) => Promise<string | null>
+  onTravellerSetzen?: (eingabe: TravellerEingabe) => Promise<string | null>
   onTravellerEntfernen?: (clientRef: string) => Promise<string | null>
   onFehler: (meldung: string) => void
 }) {
-  const [nationality, setNationality] = React.useState(slot.traveller?.nationalityCountryCode ?? '')
   const [residence, setResidence] = React.useState(slot.traveller?.residenceCountryCode ?? '')
-  const [documentType, setDocumentType] = React.useState<TravellerDocumentType | ''>(
-    slot.traveller?.documentType ?? '',
+  const [citizenships, setCitizenships] = React.useState<string[]>(
+    slot.traveller?.citizenships.map((eintrag) => eintrag.countryCode) ?? [''],
   )
-  const [issuing, setIssuing] = React.useState(slot.traveller?.documentIssuingCountryCode ?? '')
-  const [expires, setExpires] = React.useState(slot.traveller?.documentExpiresOn ?? '')
+  const [documents, setDocuments] = React.useState<DokumentFormularZeile[]>(
+    dokumenteAusTraveller(slot.traveller?.documents),
+  )
 
   if (!onTravellerSetzen) {
+    const anzahl = slot.traveller?.citizenships.length ?? 0
     return (
       <p className="text-xs leading-5 text-ink-800">
         {slot.label}
-        {slot.missingFacts.length > 0 ? ` · fehlend: ${slot.missingFacts.join(', ')}` : ' · Angaben vollständig'}
+        {anzahl > 0 ? ` · ${anzahl} Staatsbürgerschaft${anzahl === 1 ? '' : 'en'}` : ''}
+        {slot.missingFacts.length > 0 ? ` · fehlend: ${slot.missingFacts.join(', ')}` : ' · Angaben erfasst'}
       </p>
     )
   }
@@ -387,77 +408,187 @@ function ReisendenKarte({
       onSubmit={async (event) => {
         event.preventDefault()
         onFehler('')
+        const laender = citizenships.map((code) => code.trim().toUpperCase()).filter((code) => /^[A-Z]{2}$/.test(code))
         const fehler = await onTravellerSetzen({
           clientRef: slot.clientRef,
           label: slot.traveller?.label ?? slot.label,
-          nationalityCountryCode: nationality || null,
           residenceCountryCode: residence || null,
-          documentType: documentType || null,
-          documentIssuingCountryCode: issuing || null,
-          documentExpiresOn: expires || null,
+          citizenships: laender.map((countryCode) => ({
+            clientRef: citizenshipClientRefFuer(countryCode),
+            countryCode,
+          })),
+          documents: dokumenteAlsPayload(documents, laender),
         })
         if (fehler) onFehler(fehler)
       }}
     >
       <p className="text-sm font-semibold text-brand-800">{slot.label}</p>
+      <p className="text-xs leading-5 text-ink-800">
+        Offizielle Prüfung noch nicht verfügbar. Angaben werden nur erfasst, nicht bewertet.
+        {slot.missingFacts.length === 0 ? ' Angaben erfasst.' : ' Für eine zuverlässige Prüfung fehlen Angaben.'}
+      </p>
+      <fieldset className="grid gap-2">
+        <legend className="text-xs font-medium text-brand-800">Staatsbürgerschaften (ISO-2)</legend>
+        {citizenships.map((code, index) => (
+          <div key={`cit-${index}`} className="flex gap-2">
+            <input
+              value={code}
+              onChange={(event) => {
+                const naechste = [...citizenships]
+                naechste[index] = event.target.value.toUpperCase()
+                setCitizenships(naechste)
+              }}
+              maxLength={2}
+              className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+              placeholder="z. B. CH"
+              aria-label={`Staatsbürgerschaft ${index + 1}`}
+            />
+            {citizenships.length > 1 ? (
+              <button
+                type="button"
+                className="min-h-11 shrink-0 rounded-full px-3 text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                onClick={() => {
+                  const naechste = citizenships.filter((_, i) => i !== index)
+                  setCitizenships(naechste)
+                  setDocuments(dokumenteNachCitizenships(documents, naechste))
+                }}
+              >
+                Entfernen
+              </button>
+            ) : null}
+          </div>
+        ))}
+        {citizenships.length < 8 ? (
+          <button
+            type="button"
+            className="min-h-11 justify-self-start rounded-full px-3 text-xs font-semibold text-brand-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+            onClick={() => setCitizenships([...citizenships, ''])}
+          >
+            Weitere Staatsbürgerschaft
+          </button>
+        ) : null}
+      </fieldset>
       <label className="grid gap-1 text-xs font-medium text-brand-800">
-        Staatsangehörigkeit (ISO-2)
+        Wohnsitzland, falls relevant (ISO-2)
         <input
-          value={nationality}
-          onChange={(event) => setNationality(event.target.value.toUpperCase())}
+          value={residence}
+          onChange={(event) => setResidence(event.target.value.toUpperCase())}
           maxLength={2}
           className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
           placeholder="z. B. CH"
         />
       </label>
-      {slot.missingFacts.includes('residence') && (
-        <label className="grid gap-1 text-xs font-medium text-brand-800">
-          Wohnsitzland (ISO-2)
-          <input
-            value={residence}
-            onChange={(event) => setResidence(event.target.value.toUpperCase())}
-            maxLength={2}
-            className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-            placeholder="z. B. CH"
-          />
-        </label>
-      )}
-      {slot.missingFacts.includes('document_type') && (
-        <label className="grid gap-1 text-xs font-medium text-brand-800">
-          Reisedokument
-          <select
-            value={documentType}
-            onChange={(event) => setDocumentType(event.target.value as TravellerDocumentType | '')}
-            className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+      <fieldset className="grid gap-2">
+        <legend className="text-xs font-medium text-brand-800">Reisedokumente</legend>
+        {documents.map((document, index) => (
+          <div key={document.clientRef || `doc-${index}`} className="grid gap-2 rounded-2xl bg-surface-25 px-3 py-3">
+            <label className="grid gap-1 text-xs font-medium text-brand-800">
+              Dokument {index + 1}
+              <select
+                value={document.documentType}
+                onChange={(event) => {
+                  const naechste = [...documents]
+                  naechste[index] = {
+                    ...document,
+                    documentType: event.target.value as TravellerDocumentType | '',
+                  }
+                  setDocuments(naechste)
+                }}
+                className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+              >
+                <option value="">Noch nicht angegeben</option>
+                <option value="passport">Reisepass</option>
+                <option value="national_id">Personalausweis</option>
+              </select>
+            </label>
+            {document.documentType ? (
+              <>
+                <label className="grid gap-1 text-xs font-medium text-brand-800">
+                  Ausstellendes Land (ISO-2)
+                  <input
+                    value={document.issuingCountryCode}
+                    onChange={(event) => {
+                      const naechste = [...documents]
+                      naechste[index] = { ...document, issuingCountryCode: event.target.value.toUpperCase() }
+                      setDocuments(naechste)
+                    }}
+                    maxLength={2}
+                    className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                  />
+                </label>
+                <label className="grid gap-1 text-xs font-medium text-brand-800">
+                  Ablaufdatum, falls bekannt
+                  <input
+                    type="date"
+                    value={document.expiresOn}
+                    onChange={(event) => {
+                      const naechste = [...documents]
+                      naechste[index] = { ...document, expiresOn: event.target.value }
+                      setDocuments(naechste)
+                    }}
+                    className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                  />
+                </label>
+                {citizenships.some((code) => /^[A-Z]{2}$/.test(code.trim())) ? (
+                  <label className="grid gap-1 text-xs font-medium text-brand-800">
+                    Zugeordnete Staatsbürgerschaft
+                    <select
+                      value={document.citizenshipClientRef ?? ''}
+                      onChange={(event) => {
+                        const naechste = [...documents]
+                        naechste[index] = {
+                          ...document,
+                          citizenshipClientRef: event.target.value || null,
+                        }
+                        setDocuments(naechste)
+                      }}
+                      className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                    >
+                      <option value="">Noch nicht zugeordnet</option>
+                      {[...new Set(citizenships.map((code) => code.trim().toUpperCase()).filter((code) => /^[A-Z]{2}$/.test(code)))].map(
+                        (code) => (
+                          <option key={code} value={citizenshipClientRefFuer(code)}>
+                            {code}
+                          </option>
+                        ),
+                      )}
+                    </select>
+                  </label>
+                ) : null}
+              </>
+            ) : null}
+            {documents.length > 1 ? (
+              <button
+                type="button"
+                className="min-h-11 justify-self-start rounded-full px-3 text-xs font-semibold text-ink-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                onClick={() => setDocuments(documents.filter((_, i) => i !== index))}
+              >
+                Dokument entfernen
+              </button>
+            ) : null}
+          </div>
+        ))}
+        {documents.length < 12 ? (
+          <button
+            type="button"
+            className="min-h-11 justify-self-start rounded-full px-3 text-xs font-semibold text-brand-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+            onClick={() =>
+              setDocuments([
+                ...documents,
+                {
+                  clientRef: neueDokumentClientRef(),
+                  documentType: '',
+                  issuingCountryCode: '',
+                  expiresOn: '',
+                  citizenshipClientRef: null,
+                },
+              ])
+            }
           >
-            <option value="">Noch nicht angegeben</option>
-            <option value="passport">Reisepass</option>
-            <option value="national_id">Personalausweis</option>
-          </select>
-        </label>
-      )}
-      {slot.missingFacts.includes('document_issuing_country') && documentType && (
-        <label className="grid gap-1 text-xs font-medium text-brand-800">
-          Ausstellendes Land (ISO-2)
-          <input
-            value={issuing}
-            onChange={(event) => setIssuing(event.target.value.toUpperCase())}
-            maxLength={2}
-            className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-          />
-        </label>
-      )}
-      {slot.missingFacts.includes('document_expiry') && documentType && (
-        <label className="grid gap-1 text-xs font-medium text-brand-800">
-          Ablaufdatum
-          <input
-            type="date"
-            value={expires}
-            onChange={(event) => setExpires(event.target.value)}
-            className="min-h-11 w-full min-w-0 rounded-2xl border border-line-200 px-3 text-base text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
-          />
-        </label>
-      )}
+            Weiteres Dokument
+          </button>
+        ) : null}
+      </fieldset>
       <p className="text-xs leading-5 text-ink-800">{SENSITIVE_HINWEIS}</p>
       <div className="flex flex-wrap gap-2">
         <button

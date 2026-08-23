@@ -67,6 +67,7 @@ export type OfficialAction = {
 
 export type OfficialEvaluation = {
   travellerClientRef: string | null
+  credentialOptionRef?: string | null
   destinationCountryCode: string | null
   transitCountryCode: string | null
   requirementType: OfficialRequirementType
@@ -74,9 +75,21 @@ export type OfficialEvaluation = {
   status: OfficialStatus
   freshness: OfficialFreshness
   officialClass: OfficialClass
+  optionEligibility?: 'allowed' | 'not_allowed' | 'unknown' | null
+  optionMandate?: 'mandatory' | 'not_mandatory' | 'unknown' | null
   missingFacts: MissingFact[]
   evidence: OfficialEvidence
   action: OfficialAction | null
+}
+
+export function optionEligibilityLesen(wert: unknown): 'allowed' | 'not_allowed' | 'unknown' {
+  if (wert === 'allowed' || wert === 'not_allowed' || wert === 'unknown') return wert
+  return 'unknown'
+}
+
+export function optionMandateLesen(wert: unknown): 'mandatory' | 'not_mandatory' | 'unknown' {
+  if (wert === 'mandatory' || wert === 'not_mandatory' || wert === 'unknown') return wert
+  return 'unknown'
 }
 
 export function officialAktionAusQuelle(url: unknown): OfficialAction | null {
@@ -187,6 +200,7 @@ export function quelleUrlLesen(wert: unknown): string | null {
 
 export function officialLeer(teil: {
   travellerClientRef?: string | null
+  credentialOptionRef?: string | null
   destinationCountryCode?: string | null
   transitCountryCode?: string | null
   requirementType: OfficialRequirementType
@@ -197,6 +211,7 @@ export function officialLeer(teil: {
 }): OfficialEvaluation {
   return {
     travellerClientRef: teil.travellerClientRef ?? null,
+    credentialOptionRef: teil.credentialOptionRef ?? null,
     destinationCountryCode: landescodeLesen(teil.destinationCountryCode ?? null),
     transitCountryCode: landescodeLesen(teil.transitCountryCode ?? null),
     requirementType: teil.requirementType,

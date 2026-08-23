@@ -114,7 +114,7 @@ describe('Readiness-Gesamtstatus', () => {
     })
     const { summary, items } = readinessAnsicht(reise)
     assert.deepEqual(summary.destinationCountries, ['JP', 'TH'])
-    assert.equal(items.filter((eintrag) => eintrag.kind === 'entry_check').length, 2)
+    assert.equal(new Set(items.filter((eintrag) => eintrag.kind === 'entry_check').map((eintrag) => eintrag.countryCode)).size, 2)
   })
 
   test('mehrere Reisende verbieten individuelle Aussagen', () => {

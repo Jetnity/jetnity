@@ -78,11 +78,15 @@ type TripWorkspaceProps = {
   onTravellerSetzen?: (eingabe: {
     clientRef: string
     label: string | null
-    nationalityCountryCode: string | null
     residenceCountryCode: string | null
-    documentType: TravellerDocumentType | null
-    documentIssuingCountryCode: string | null
-    documentExpiresOn: string | null
+    citizenships: Array<{ clientRef?: string; countryCode: string }>
+    documents: Array<{
+      clientRef?: string
+      documentType: TravellerDocumentType
+      issuingCountryCode: string | null
+      expiresOn: string | null
+      citizenshipClientRef: string | null
+    }>
   }) => Promise<string | null>
   onTravellerEntfernen?: (clientRef: string) => Promise<string | null>
   /**

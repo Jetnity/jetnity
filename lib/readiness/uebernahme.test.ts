@@ -114,4 +114,41 @@ describe('Guest → Account Readiness-Übernahme', () => {
     ])
     assert.equal(gebaut[0]?.tripItemId, null)
   })
+
+  test('travellerClientRef überlebt Guest→Account-Bau', () => {
+    const gast = beispielreise({
+      party: [
+        {
+          id: 'traveller:1',
+          clientRef: 'traveller:1',
+          label: 'Sasa',
+          residenceCountryCode: 'CH',
+          citizenships: [
+            {
+              id: 'citizenship:CH',
+              clientRef: 'citizenship:CH',
+              countryCode: 'CH',
+              createdAt: JETZT,
+              updatedAt: JETZT,
+            },
+          ],
+          documents: [],
+          createdAt: JETZT,
+          updatedAt: JETZT,
+        },
+      ],
+      readinessItems: [
+        check({
+          clientRef: 'entry_check:TH',
+          kind: 'entry_check',
+          travellerClientRef: 'traveller:1',
+          countryCode: 'TH',
+        }),
+      ],
+    })
+    const payload = readinessAlsUebernahme(gast)
+    assert.equal(payload[0]?.travellerClientRef, 'traveller:1')
+    const gebaut = readinessNachUebernahmeBauen(beispielreise({ id: 'aaaaaaaa-0000-4000-8000-000000000099' }), payload)
+    assert.equal(gebaut[0]?.travellerClientRef, 'traveller:1')
+  })
 })

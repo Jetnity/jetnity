@@ -1,37 +1,105 @@
 // lib/readiness/reisende.ts
 //
 // Persistenz und Form des Reisendenkontexts. Dieselbe fachliche Form
-// für Gast und Konto. Keine Dokumentnummern.
+// für Gast und Konto. Child-Tabellen sind Source of Truth.
 
 import { partyLesen, travellerEingabeSchema } from '@/lib/readiness/schema'
 import { READINESS_GRENZEN } from '@/lib/readiness/domain'
-import type { Trip, TripTraveller } from '@/types/trips'
+import { travellerLegacyLesen } from '@/lib/readiness/traveller-kontext'
+import type { Trip, TripTraveller, TripTravellerCitizenship, TripTravellerDocument } from '@/types/trips'
+
+export type CitizenshipZeile = {
+  id: string
+  client_ref: string
+  country_code: string
+  created_at: string
+  updated_at: string
+}
+
+export type DocumentZeile = {
+  id: string
+  client_ref: string
+  document_type: string
+  issuing_country_code?: string | null
+  citizenship_id?: string | null
+  expires_on?: string | null
+  created_at: string
+  updated_at: string
+}
 
 export type TravellerZeile = {
   id: string
   client_ref: string
   label?: string | null
-  nationality_country_code?: string | null
   residence_country_code?: string | null
+  nationality_country_code?: string | null
   document_type?: string | null
   document_issuing_country_code?: string | null
   document_expires_on?: string | null
   created_at: string
   updated_at: string
+  trip_traveller_citizenships?: CitizenshipZeile[] | null
+  trip_traveller_documents?: DocumentZeile[] | null
+}
+
+function citizenshipAusZeile(zeile: CitizenshipZeile): TripTravellerCitizenship {
+  return {
+    id: zeile.id,
+    clientRef: zeile.client_ref,
+    countryCode: zeile.country_code,
+    createdAt: zeile.created_at,
+    updatedAt: zeile.updated_at,
+  }
+}
+
+function documentAusZeile(
+  zeile: DocumentZeile,
+  citizenships: readonly CitizenshipZeile[],
+): TripTravellerDocument {
+  const zugehoerig = zeile.citizenship_id
+    ? citizenships.find((eintrag) => eintrag.id === zeile.citizenship_id)
+    : null
+  return {
+    id: zeile.id,
+    clientRef: zeile.client_ref,
+    documentType:
+      zeile.document_type === 'passport' || zeile.document_type === 'national_id' || zeile.document_type === 'unknown'
+        ? zeile.document_type
+        : 'unknown',
+    issuingCountryCode: zeile.issuing_country_code ?? null,
+    citizenshipClientRef: zugehoerig?.client_ref ?? null,
+    expiresOn: zeile.expires_on ?? null,
+    createdAt: zeile.created_at,
+    updatedAt: zeile.updated_at,
+  }
+}
+
+function relationGeladen<T>(wert: T[] | null | undefined): wert is T[] {
+  return Array.isArray(wert)
 }
 
 function travellerAusZeile(zeile: TravellerZeile): TripTraveller | null {
+  const citizenshipZeilen = zeile.trip_traveller_citizenships
+  const documentZeilen = zeile.trip_traveller_documents
+  const citizenshipsGeladen = relationGeladen(citizenshipZeilen)
+  const documentsGeladen = relationGeladen(documentZeilen)
+  const citizenships = citizenshipsGeladen ? citizenshipZeilen.map(citizenshipAusZeile) : undefined
+  const documents = documentsGeladen
+    ? documentZeilen.map((eintrag) => documentAusZeile(eintrag, citizenshipsGeladen ? citizenshipZeilen : []))
+    : undefined
   return (
     partyLesen([
       {
         id: zeile.id,
         clientRef: zeile.client_ref,
         label: zeile.label ?? null,
-        nationalityCountryCode: zeile.nationality_country_code ?? null,
         residenceCountryCode: zeile.residence_country_code ?? null,
-        documentType: zeile.document_type ?? null,
-        documentIssuingCountryCode: zeile.document_issuing_country_code ?? null,
-        documentExpiresOn: zeile.document_expires_on ?? null,
+        nationalityCountryCode: citizenshipsGeladen ? null : zeile.nationality_country_code ?? null,
+        documentType: documentsGeladen ? null : zeile.document_type ?? null,
+        documentIssuingCountryCode: documentsGeladen ? null : zeile.document_issuing_country_code ?? null,
+        documentExpiresOn: documentsGeladen ? null : zeile.document_expires_on ?? null,
+        ...(citizenships ? { citizenships } : {}),
+        ...(documents ? { documents } : {}),
         createdAt: zeile.created_at,
         updatedAt: zeile.updated_at,
       },
@@ -56,30 +124,42 @@ export function travellerBauen(
     return { ok: false, meldung: geprueft.error.issues[0]?.message ?? 'Diese Reisendenangabe ist ungültig.' }
   }
   const jetzt = new Date().toISOString()
-  const item: TripTraveller = {
+  const gelesen = travellerLegacyLesen({
+    ...geprueft.data,
     id: bestehend?.id ?? geprueft.data.clientRef,
+    createdAt: bestehend?.createdAt ?? jetzt,
+    updatedAt: jetzt,
+  })
+  if (!gelesen) {
+    return { ok: false, meldung: 'Diese Reisendenangabe ist ungültig.' }
+  }
+  const item: TripTraveller = {
+    ...gelesen,
+    id: bestehend?.id ?? gelesen.id,
     clientRef: geprueft.data.clientRef.slice(0, READINESS_GRENZEN.clientRef),
     label: geprueft.data.label,
-    nationalityCountryCode: geprueft.data.nationalityCountryCode,
-    residenceCountryCode: geprueft.data.residenceCountryCode,
-    documentType: geprueft.data.documentType,
-    documentIssuingCountryCode: geprueft.data.documentIssuingCountryCode,
-    documentExpiresOn: geprueft.data.documentExpiresOn,
     createdAt: bestehend?.createdAt ?? jetzt,
     updatedAt: jetzt,
   }
+  void reise
   return { ok: true, item }
 }
 
-export function travellerAlsZeile(item: TripTraveller, tripId: string) {
+export function travellerAlsPayload(item: TripTraveller) {
   return {
-    trip_id: tripId,
-    client_ref: item.clientRef,
+    clientRef: item.clientRef,
     label: item.label,
-    nationality_country_code: item.nationalityCountryCode,
-    residence_country_code: item.residenceCountryCode,
-    document_type: item.documentType,
-    document_issuing_country_code: item.documentIssuingCountryCode,
-    document_expires_on: item.documentExpiresOn,
+    residenceCountryCode: item.residenceCountryCode,
+    citizenships: item.citizenships.map((eintrag) => ({
+      clientRef: eintrag.clientRef,
+      countryCode: eintrag.countryCode,
+    })),
+    documents: item.documents.map((eintrag) => ({
+      clientRef: eintrag.clientRef,
+      documentType: eintrag.documentType,
+      issuingCountryCode: eintrag.issuingCountryCode,
+      expiresOn: eintrag.expiresOn,
+      citizenshipClientRef: eintrag.citizenshipClientRef,
+    })),
   }
 }

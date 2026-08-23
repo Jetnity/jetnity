@@ -27,7 +27,7 @@ describe('Context-Fingerprint', () => {
     const a = readinessFingerprint({ ...basis, kind: 'entry_check' })
     const b = readinessFingerprint({ ...basis, kind: 'entry_check' })
     assert.equal(a, b)
-    assert.match(a, /^v1\|kind=entry_check/)
+    assert.match(a, /^v2\|kind=entry_check/)
   })
 
   test('Länderreihenfolge ist irrelevant', () => {
@@ -69,6 +69,68 @@ describe('Context-Fingerprint', () => {
       transitCountryCodes: ['QA'],
     })
     assert.equal(buchungOhne, buchungMit)
+  })
+
+  test('Citizenship-Menge ändert Einreise-Fingerprint, Reihenfolge nicht', () => {
+    const basisTraveller = {
+      ...basis,
+      kind: 'entry_check' as const,
+      travellerClientRef: 'traveller:1',
+      residenceCountryCode: 'CH',
+    }
+    const a = readinessFingerprint({
+      ...basisTraveller,
+      citizenshipCountryCodes: ['CH', 'RS'],
+      documentFingerprints: ['passport:CH:2030-01-01:citizenship:CH'],
+    })
+    const b = readinessFingerprint({
+      ...basisTraveller,
+      citizenshipCountryCodes: ['RS', 'CH'],
+      documentFingerprints: ['passport:CH:2030-01-01:citizenship:CH'],
+    })
+    const ohne = readinessFingerprint({
+      ...basisTraveller,
+      citizenshipCountryCodes: ['CH'],
+      documentFingerprints: ['passport:CH:2030-01-01:citizenship:CH'],
+    })
+    const anderer = readinessFingerprint({
+      ...basisTraveller,
+      travellerClientRef: 'traveller:2',
+      citizenshipCountryCodes: ['CH', 'RS'],
+      documentFingerprints: ['passport:CH:2030-01-01:citizenship:CH'],
+    })
+    assert.equal(a, b)
+    assert.notEqual(a, ohne)
+    assert.notEqual(a, anderer)
+  })
+
+  test('Dokumentänderung ändert Einreise-Fingerprint, Buchungsbestätigung nicht', () => {
+    const mit = readinessFingerprint({
+      ...basis,
+      kind: 'entry_check',
+      travellerClientRef: 'traveller:1',
+      documentFingerprints: ['passport:CH:2030-01-01:citizenship:CH'],
+    })
+    const ohne = readinessFingerprint({
+      ...basis,
+      kind: 'entry_check',
+      travellerClientRef: 'traveller:1',
+      documentFingerprints: ['passport:RS:2029-01-01:citizenship:RS'],
+    })
+    assert.notEqual(mit, ohne)
+    const buchung = readinessFingerprint({
+      ...basis,
+      kind: 'booking_confirmation_check',
+      travellerClientRef: 'traveller:1',
+      documentFingerprints: ['passport:CH:2030-01-01:citizenship:CH'],
+    })
+    const buchungAnders = readinessFingerprint({
+      ...basis,
+      kind: 'booking_confirmation_check',
+      travellerClientRef: 'traveller:1',
+      documentFingerprints: ['passport:RS:2029-01-01:citizenship:RS'],
+    })
+    assert.equal(buchung, buchungAnders)
   })
 
   test('Mietwagen ändert nur den Versicherungs-Fingerprint', () => {

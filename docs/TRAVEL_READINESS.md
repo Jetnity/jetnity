@@ -35,29 +35,27 @@ Ein Nutzer-Häkchen ist **keine** Visa-, Impf-, Pass- oder Einreisebestätigung 
 
 ## Traveller Context
 
-Jetnity besitzt trip-spezifische, individuelle Traveller-Profile in `trip_travellers` bzw. `Trip.party`.
+Foundation E ersetzt die singuläre Foundation-C-Form. Fachdokument: [docs/TRAVELLER_CONTEXT.md](TRAVELLER_CONTEXT.md).
 
-Erlaubte, datensparsame Fakten:
+Kanonisch:
 
-- Anzeigename / neutrale Bezeichnung
-- Staatsangehörigkeits-Code
-- Wohnsitz-Code
-- Reisedokumenttyp
-- ausstellendes Land
-- optional Ablaufdatum des Dokuments.
+- ein stabiler Traveller
+- `citizenships[]` (ISO-2)
+- `documents[]` (Typ, Aussteller, optionales Ablaufdatum, optionale Citizenship-Relation)
+- optionaler Wohnsitzcode
 
-Nicht Teil dieser Foundation:
+Nicht gespeichert:
 
 - Pass-/Ausweis-/Visa-Nummern
-- Scans
+- Scans / MRZ / Bilder
 - Geburtsdaten
 - Gesundheitsakte
 - biometrische Rohdaten
-- Zahlungsdaten.
+- Zahlungsdaten
 
-Mehrere Reisende werden getrennt ausgewertet; unterschiedliche Nationalitäten werden niemals automatisch gleichgesetzt.
+Mehrere Reisende und mehrere Credential-Optionen werden getrennt ausgewertet. Ohne Official Evidence vergleicht Jetnity nicht und setzt Nationalitäten nicht gleich.
 
-Guest und Account benutzen dieselbe fachliche Form. Guest-Daten liegen lokal und werden bei Kontoübernahme idempotent übertragen.
+Guest und Account benutzen dieselbe fachliche Form. Alte Singular-Guest-Daten werden expandiert, nicht verworfen. Account-Writes laufen atomar über `party_schreiben`.
 
 ---
 
@@ -291,9 +289,10 @@ Nach Merge:
 
 Foundation C selbst ist abgeschlossen. Noch fehlen für das volle Nutzerziel:
 
-1. strukturierte Origin-/Transit-Ländercodes aus Flight-Itineraries: auf Draft-PR #34 umgesetzt, nicht gemergt
-2. echter vertrauenswürdiger Travel-Requirements-Provider
-3. Preis-/Lizenz-/Datenschutzprüfung für Timatic oder gleichwertigen Provider.
+1. strukturierte Origin-/Transit-Ländercodes aus Flight-Itineraries: Foundation D, auf `main` und Production
+2. 1:n Traveller Context: Foundation E, Draft PR, Development-Migration angewendet, Production unverändert
+3. echter vertrauenswürdiger Travel-Requirements-Provider
+4. Preis-/Lizenz-/Datenschutzprüfung für Timatic oder gleichwertigen Provider.
 
 Bis dahin gilt:
 

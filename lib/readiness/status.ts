@@ -21,10 +21,10 @@ import {
   type ReadinessViewItem,
 } from '@/lib/readiness/domain'
 import { fingerprintAktuell, readinessFingerprint } from '@/lib/readiness/fingerprint'
-import { punktFuerReadiness, readinessReisekontext, routeFingerprintFelder } from '@/lib/readiness/kontext'
+import { punktFuerReadiness, readinessReisekontext, routeFingerprintFelder, travellerFingerprintFelderFuer } from '@/lib/readiness/kontext'
 import type { Trip, TripReadinessItem } from '@/types/trips'
 
-function aktuellerFingerprint(reise: Trip, item: Pick<TripReadinessItem, 'kind' | 'countryCode' | 'tripItemId' | 'title'>): string {
+function aktuellerFingerprint(reise: Trip, item: Pick<TripReadinessItem, 'kind' | 'countryCode' | 'tripItemId' | 'title' | 'travellerClientRef'>): string {
   const kontext = readinessReisekontext(reise)
   const punkt = punktFuerReadiness(reise, item.tripItemId)
   return readinessFingerprint({
@@ -44,6 +44,7 @@ function aktuellerFingerprint(reise: Trip, item: Pick<TripReadinessItem, 'kind' 
     destinationPlaceId: punkt?.destinationPlaceId ?? null,
     title: item.title,
     ...routeFingerprintFelder(reise),
+    ...travellerFingerprintFelderFuer(reise, item.travellerClientRef),
   })
 }
 
@@ -96,9 +97,11 @@ export function readinessAnsicht(
   const nachRef = new Map(persistiert.map((item) => [item.clientRef, item]))
   const evaluations = [...(evaluationsGeliefert ?? requirementsLokalFuerReise(reise))]
 
-  const officialFuer = (countryCode: string | null): OfficialRequirementEvidence => {
+  const officialFuer = (countryCode: string | null, travellerClientRef: string | null): OfficialRequirementEvidence => {
     const passend = evaluations.filter(
-      (eintrag) => !countryCode || eintrag.destinationCountryCode === countryCode,
+      (eintrag) =>
+        (!countryCode || eintrag.destinationCountryCode === countryCode) &&
+        (!travellerClientRef || eintrag.travellerClientRef === travellerClientRef),
     )
     return officialAusEvaluations(passend.length > 0 ? passend : evaluations, {
       destinationCountryCode: countryCode ?? kontext.destinationCountries[0] ?? null,
@@ -109,9 +112,18 @@ export function readinessAnsicht(
   const items: ReadinessViewItem[] = []
   const gesehen = new Set<string>()
 
+  const gespeichertFuer = (check: (typeof abgeleitet)[number]) => {
+    const direkt = nachRef.get(check.clientRef)
+    if (direkt) return direkt
+    if (!check.travellerClientRef) return undefined
+    const legacyRef = check.clientRef.replace(new RegExp(`:${check.travellerClientRef.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`), '')
+    return legacyRef !== check.clientRef ? nachRef.get(legacyRef) : undefined
+  }
+
   for (const check of abgeleitet) {
-    const gespeichert = nachRef.get(check.clientRef)
+    const gespeichert = gespeichertFuer(check)
     gesehen.add(check.clientRef)
+    if (gespeichert) gesehen.add(gespeichert.clientRef)
     const userStatus = gespeichert?.userStatus ?? 'open'
     const currentness = gespeichert
       ? currentnessFuer(reise, { ...gespeichert, tripItemId: check.tripItemId }, true)
@@ -125,8 +137,9 @@ export function readinessAnsicht(
       countryCode: check.countryCode,
       tripItemId: check.tripItemId,
       title: check.title,
+      travellerClientRef: check.travellerClientRef,
       persisted: Boolean(gespeichert),
-      official: officialFuer(check.countryCode),
+      official: officialFuer(check.countryCode, check.travellerClientRef),
     })
   }
 
@@ -141,8 +154,9 @@ export function readinessAnsicht(
       countryCode: gespeichert.countryCode,
       tripItemId: gespeichert.tripItemId,
       title: gespeichert.title,
+      travellerClientRef: gespeichert.travellerClientRef ?? null,
       persisted: true,
-      official: officialFuer(gespeichert.countryCode),
+      official: officialFuer(gespeichert.countryCode, gespeichert.travellerClientRef ?? null),
     })
   }
 

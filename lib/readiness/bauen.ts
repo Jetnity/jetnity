@@ -5,7 +5,7 @@
 
 import { READINESS_GRENZEN } from '@/lib/readiness/domain'
 import { readinessFingerprint } from '@/lib/readiness/fingerprint'
-import { punktFuerReadiness, readinessReisekontext, routeFingerprintFelder } from '@/lib/readiness/kontext'
+import { punktFuerReadiness, readinessReisekontext, routeFingerprintFelder, travellerFingerprintFelderFuer } from '@/lib/readiness/kontext'
 import { enthaltSensitiveDaten, type ReadinessEingabe } from '@/lib/readiness/schema'
 import type { Trip, TripReadinessItem } from '@/types/trips'
 
@@ -57,6 +57,7 @@ export function readinessItemBauen(
     countryCode,
     tripItemId: punkt?.id ?? null,
     title,
+    travellerClientRef: eingabe.travellerClientRef ?? bestehend?.travellerClientRef ?? null,
     contextFingerprint: readinessFingerprint({
       kind: eingabe.kind,
       countryCode,
@@ -74,6 +75,7 @@ export function readinessItemBauen(
       destinationPlaceId: punkt?.destinationPlaceId ?? null,
       title,
       ...routeFingerprintFelder(reise),
+      ...travellerFingerprintFelderFuer(reise, eingabe.travellerClientRef ?? bestehend?.travellerClientRef ?? null),
     }),
     createdAt: bestehend?.createdAt ?? jetzt,
     updatedAt: jetzt,

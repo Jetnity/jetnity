@@ -2893,6 +2893,283 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0117 – Traveller Context ist 1:n, nicht 1:1
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf `feat/traveller-context-intelligence`; Migration nur Development
+
+**Entscheidung:** Ein Reisender bleibt eine stabile Parent-Zeile in `trip_travellers`. Staatsbürgerschaften und Reisedokumente liegen in Child-Tabellen mit Composite-FKs `(traveller_id, trip_id, user_id)`.
+
+**Kontext:** Foundation C speicherte ein Nationalitäts-/Dokumentbündel je Traveller. Das reicht nicht für Mehrfachstaatsbürgerschaft. Das Phase-1-Audit (`docs/FOUNDATION_E_ARCHITECTURE_AUDIT.md`) zeigte keinen besseren Weg als Parent/Child.
+
+**Alternativen:**
+
+1. *Mehrere Traveller-Zeilen je Person.* Zerstört Gruppenstatus und Guest→Account-Identität.
+2. *JSON-Array auf `trip_travellers`.* Keine FK-/Limit-Invarianten, schlechte RLS-Prüfbarkeit.
+3. *Globales Nutzerprofil statt trip-spezifisch.* Würde Residence/Dokumente über Reisen vermischen und mehr PII anziehen.
+
+**Begründung:** Composite-FKs verhindern Cross-Trip- und Cross-User-Referenzen. Limits (8 Citizenships, 12 Documents) begrenzen Abuse. ISO-2 only, keine freien Labels.
+
+**Konsequenzen:**
+
+- neue Tabellen `trip_traveller_citizenships` und `trip_traveller_documents`
+- optionales `trip_readiness_items.traveller_id`
+- App-Domäne `TripTraveller.citizenships[]` / `documents[]`
+- Hotels/Flüge/Mobilität bleiben kopfzahlbasiert
+
+---
+
+## ADR-0118 – Expand/Contract ohne Drop der Legacy-Spalten
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt; Production nicht anwenden
+
+**Entscheidung:** Foundation-C-Spalten bleiben. Neue Leser/Schreiber nutzen Child-Tabellen. Neue Writes setzen Legacy-Credential-Spalten nicht mehr.
+
+**Kontext:** Production enthält echte Foundation-C-Zeilen. Ein Drop im selben Block wäre Datenverlust- oder Dual-Truth-Risiko.
+
+**Alternativen:**
+
+1. *Sofort droppen.* Bricht alte Leser und verhindert Rollback.
+2. *Parallel beide Quellen schreiben.* Erzeugt widersprüchliche Wahrheit.
+3. *Nur Application-Layer-Migration ohne DB-Children.* Keine Invarianten.
+
+**Begründung:** Backfill ist deterministisch (`citizenship:<ISO>`, `document:<type>:<iso|xx>`). Legacy bleibt Lesefallback, wenn Children leer sind.
+
+**Konsequenzen:**
+
+- Migration `20260822160000_traveller_context_intelligence.sql`
+- späterer Contract-Cleanup ist ein eigener Block nach Production-Backfill
+- Guest-Legacy-JSON wird expandiert, nicht verworfen
+
+---
+
+## ADR-0119 – Party-Schreiben ist atomar und SECURITY INVOKER
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Development
+
+**Entscheidung:** Account-Writes für Traveller + Citizenships + Documents laufen über `public.party_schreiben(jsonb)` in einer Transaktion. `SECURITY INVOKER`, `search_path = public, pg_temp`.
+
+**Kontext:** Guest→Account war drei sequentielle Schritte. Mehr Child-Tabellen erhöhen das Teilfehler-Risiko.
+
+**Alternativen:**
+
+1. *Mehrere Client-Upserts.* Kann Citizenships ohne Parent oder Documents ohne Citizenship hinterlassen.
+2. *SECURITY DEFINER.* Unnötige Rechteausweitung.
+3. *Service Role aus der Server Action.* Umgeht RLS.
+
+**Begründung:** INVOKER behält Owner-Isolation. Die Funktion löscht Children des Travellers und schreibt die neue Menge neu. Fremde Citizenship-Refs werden abgewiesen.
+
+**Konsequenzen:**
+
+- `authenticated` hat EXECUTE, `anon`/`public` nicht
+- neue Writes gehen nicht mehr direkt auf die Child-Tabellen aus der App
+- Readiness-Übernahme bleibt ein nachgelagerter Schritt
+
+---
+
+## ADR-0120 – Credential-Optionen ohne erfundene regulatorische Wahrheit
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt; kein echter Provider
+
+**Entscheidung:** Die Engine bewertet vorhandene Credential-Optionen getrennt. Eine Option entsteht nur aus vorhandenen Dokumenten oder als dokumentlose Option. Vergleich ohne Official Evidence ergibt `Noch nicht zuverlässig vergleichbar.`
+
+**Kontext:** Mehrere Pässe dürfen später verglichen werden, aber Foundation E hat keinen Timatic- oder anderen Adapter.
+
+**Alternativen:**
+
+1. *Erste Staatsbürgerschaft als universelle Wahrheit.* Verstößt gegen die Traveller-Context-Policy.
+2. *LLM-Vergleich.* Keine regulatorische Quelle.
+3. *Hardcodierte Visa-Matrix.* Erfundene Truth, Wartungsfalle.
+
+**Begründung:** Provider-Port trägt `credentialOptions[]`. Factory bleibt `null`. UI darf Angaben erfassen, aber keinen „besseren Pass“ behaupten.
+
+**Konsequenzen:**
+
+- Fingerprint v2 enthält sortierte Citizenship-/Document-Mengen
+- `unknown` bleibt `unknown`
+- späterer Provider kann Optionen anschließen, ohne das Modell neu zu bauen
+
+**Nachtrag, 22. August 2026:** Unabhängiges Review von PR #35 (Blocker 2 und 3). Das Ausstellerland eines Dokuments ist keine Staatsbürgerschaft. `relatedCitizenshipCountryCode` bleibt `null` ohne gespeicherte Relation. `officialClass=requirement` + `result=required` ist keine option-level Pflicht; ohne `optionMandate` / `optionEligibility` bleibt der Vergleich fail-closed.
+
+---
+
+## ADR-0121 – Composite-FK-Delete und Parent-Lock für Traveller-Children
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Development; Production nicht anwenden
+
+**Entscheidung:**
+
+- `trip_traveller_documents_citizenship_fk` nutzt `ON DELETE SET NULL (citizenship_id)`.
+- `trip_readiness_items_traveller_fk` nutzt `ON DELETE CASCADE`.
+- `trip_traveller_kinder_limit_pruefen()` sperrt die Parent-`trip_travellers`-Zeile (`FOR UPDATE`), bevor es zählt.
+
+**Kontext:** Unqualifiziertes `ON DELETE SET NULL` auf einem Composite-FK würde NOT-NULL-Spalten `trip_id`/`user_id`/`traveller_id` nullen und Delete-Pfade blockieren. AFTER INSERT + `count(*)` allein ist unter parallelen Direct-Writes ein klassisches MVCC-Fenster.
+
+**Alternativen:**
+
+1. *Readiness bei Traveller-Delete auf trip-level nullen (`SET NULL (traveller_id)`).* Würde traveller-spezifische Wahrheit still degradieren.
+2. *Nur Application-Layer-Cleanup.* Unvollständig, weil `authenticated` direkte Tabellenrechte hat.
+3. *Advisory Locks statt Parent-Row-Lock.* Mehr Mechanismus, dieselbe Serialisierung.
+
+**Begründung:** SET NULL nur der optionalen Relation hält das Dokument. CASCADE hält Readiness am Reisenden. Parent-Lock serialisiert Child-Inserts desselben Travellers.
+
+**Konsequenzen:**
+
+- Forward-Migration `20260822170000_traveller_context_fk_delete.sql`
+- `db:sicherheit` prüft Citizenship-Delete und Traveller-Delete
+- Production bleibt unverändert
+
+**Nachtrag, 22. August 2026:** Re-Review Blocker 1 und 3. Legacy-Backfill darf `citizenship_id` nicht aus gleichem Ausstellerland setzen. Parent-Lock ist `FOR NO KEY UPDATE`, damit parallele Child-Inserts nicht mit FK `KEY SHARE` deadlocken.
+
+---
+
+## ADR-0122 – Provider-Port trägt option-level Eligibility/Mandate
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Development; kein echter Provider
+
+**Entscheidung:** `RequirementsProviderZeile` transportiert optional `optionEligibility` und `optionMandate`. Die Engine übernimmt sie nur, wenn dieselbe Trust-/Freshness-Grenze wie für Requirement-Resultate erfüllt ist. Unbekannte Werte werden fail-closed zu `unknown`. Vergleich entscheidet nur bei `status=current` und `freshness=current`.
+
+**Kontext:** Der erste Vergleichsfix modellierte option-level Semantik nur auf `OfficialEvaluation`. Ein späterer Adapter hätte sie über den Port nicht liefern können.
+
+**Alternativen:**
+
+1. *Felder nur in Tests/OfficialEvaluation.* Nicht provider-ready.
+2. *Option-Felder ohne Trust-Grenze übernehmen.* Untrusted Winner.
+3. *Advisory Locks statt FOR NO KEY UPDATE.* Unnötig, sobald der Parent-Lock deadlockfrei ist.
+
+**Begründung:** Dieselbe Naht muss später Timatic oder einen anderen Adapter anschließen können, ohne Truth zu erfinden.
+
+**Konsequenzen:**
+
+- Engine-Tests laufen `RequirementsProviderZeile → engine → OfficialEvaluation → vergleich`
+- Factory bleibt `null`
+- Production unverändert
+
+---
+
+## ADR-0123 – Kanonisch leer bleibt leer; Production-Reads expand-kompatibel
+
+**Datum:** 22. August 2026  
+**Status:** umgesetzt auf Development; Production-Schema unverändert
+
+**Entscheidung:**
+
+- Geladene Child-Relationen (`[]` eingeschlossen) sind autoritativ. Legacy-Singularfelder dürfen sie nicht wieder befüllen.
+- Legacy-Fallback nur, wenn die Relation strukturell nicht geladen ist.
+- `reiseLaden()` versucht zuerst den Foundation-E-Graph. Nur bei eindeutig fehlender Child-Relation (`PGRST200`/`PGRST205`/`42P01` plus Tabellenname) fällt der Read auf `trip_travellers(*)` zurück. Andere Fehler bleiben Fehler.
+- Der Official-Fingerprint enthält die explizite `relatedCitizenshipCountryCode`.
+
+**Kontext:** Final Review PR #35. `party_schreiben()` lässt Legacy-Spalten stehen. Ein leeres Child-Array plus Legacy-Fallback würde gelöschte Citizenships/Dokumente wiederauferstehen lassen. Production hat die Child-Tabellen vor der separaten Migration nicht.
+
+**Alternativen:**
+
+1. *Legacy immer als Fallback bei leeren Children.* Source-of-Truth-Fehler.
+2. *Kanonischen Select ohne Fallback mergen.* Bricht Production-Reads bis zur Migration.
+3. *Bei jedem DB-Fehler Legacy lesen.* Verdeckt echte Ausfälle.
+
+**Begründung:** Expand/Contract verlangt Code-vor-Schema für Reads und fail-closed Writes. Gelöschte Nutzerwahrheit darf nicht aus deprecated Spalten zurückkehren.
+
+**Konsequenzen:**
+
+- Writes bleiben vor Production-Migration fail-closed; kein stilles Reduzieren auf Singularfelder.
+- Nach der Production-Migration ist der kanonische Select die alleinige Account-Wahrheit.
+
+---
+
+## ADR-0124 – Stabile Dokumentidentität, fail-closed Traveller-Readiness und option-level Evidence
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Development; Production-Schema unverändert
+
+**Entscheidung:**
+
+- Bestehende Document-`clientRef` bleiben stabil. Neue Dokumente bekommen eine UUID-basierte Ref, nicht `document:{typ}:{issuer}`.
+- `citizenshipClientRef` wird geladen, gespeichert und bei Citizenship-Löschung kontrolliert genullt. Issuer wird nie zur Citizenship.
+- `travellerClientRef !== null` muss genau einen Traveller derselben Reise mit UUID auflösen. Sonst kein Write, auch nicht `traveller_id = null`.
+- Credential-Vergleich bleibt fail-closed bei unvollständiger Gruppe, `mandatory + not_allowed` und widersprüchlichen current Provider-Zeilen.
+- `travellerLegacyLesen()` expandiert Legacy nur, wenn `citizenships`/`documents` strukturell fehlen. Explizites `[]` bleibt leer.
+- Die Requirements-API lehnt ungültige Party-Einträge ab; kein stilles Entfernen einer Person.
+
+**Kontext:** Final Depth Review PR #35. Edit/Save zerstörte Document-Identität und Relationen. Unauflösbare Traveller-Refs wurden trip-level. Teil-Evidence konnte einen Winner erzeugen.
+
+**Alternativen:**
+
+1. *clientRef weiter aus Typ/Issuer bauen.* Kollision und Identitätsverlust.
+2. *Unbekannte Traveller-Ref als trip-level schreiben.* Source-of-Truth-Fehler.
+3. *Unvollständige Gruppen überspringen.* Winner aus Teil-Evidence.
+
+**Begründung:** Provider-Readiness braucht stabile Option-Identität, echte Traveller-Zuordnung und nur vollständig belegte Vergleiche.
+
+**Konsequenzen:**
+
+- Guest→Account-Readiness mit nicht auflösbarer Traveller-Ref bricht ab.
+- `origin/main` @ `c8dbe904` ist semantisch übernommen (globale Review-Tiefe plus Foundation-E-Addenda). Production-Schema bleibt unverändert.
+
+---
+
+## ADR-0125 – Konfliktierte Credential-Optionen bleiben sichtbar; Requirements-API strikt
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Development; Production-Schema unverändert
+
+**Entscheidung:**
+
+- Widersprüchliche current Provider-Zeilen derselben Option erzeugen eine sichtbare `unknown`/`recheck_needed`-Evaluation mit derselben `credentialOptionRef`. Die Option verschwindet nicht aus der Menge.
+- Der Comparator darf aus einer Restmenge ohne die konfliktierte Option keinen Winner bilden.
+- `travellerLegacyLesen()` bleibt der tolerante Guest-/Storage-Lesepfad.
+- Die Requirements-API (`readinessAnforderungAnfrageSchema` und `anfrageAus`) nutzt `travellerAnfrageStriktLesen()`: vorhandene `citizenships`/`documents` müssen valide Arrays sein; jedes Child, Limits, Duplikate und erkennbare sensible Credential-Felder fail-closed. Echte Legacy-Form ohne Canonical-Properties bleibt expandierbar.
+
+**Kontext:** Final Depth Re-Review PR #35. Bei drei Optionen konnte ein Provider-Konflikt durch Verschwinden der Option zu einem Winner aus B/C führen. Die API filterte malformed Children still.
+
+**Alternativen:**
+
+1. *Konfliktierte Option weiter streichen und nur bei zwei Optionen fail-closed sein.* Teil-Evidence-Winner.
+2. *API weiter über `travellerLegacyLesen()` normalisieren.* Regulatorisch relevante Credentials verschwinden.
+3. *Comparator bekommt eine parallele erwartete Optionsmenge.* Möglich, aber die sichtbare Konflikt-Evaluation ist die klarere Source of Truth.
+
+**Begründung:** Fail-closed gilt für die gesamte angefragte Credential-Menge, nicht nur für die übrig gebliebenen vollständigen Zeilen.
+
+**Konsequenzen:**
+
+- Guest-/Formular-Parser bleiben tolerant.
+- Production-Schema unverändert. Draft PR #35 bleibt Draft.
+
+---
+
+## ADR-0126 – Konfliktsignatur enthält officialClass; API-Legacy-Singularfelder sind strikt
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Development; Production-Schema unverändert
+
+**Entscheidung:**
+
+- `requirementsAusZeilen()` vergleicht doppelte Provider-Zeilen über eine zentrale `entscheidungsSignatur`: `result`, `status`, `freshness`, `optionEligibility`, `optionMandate` und `officialClass`. Abweichende Evidence-URLs allein sind kein semantischer Konflikt.
+- Bei Konflikt bleibt die Option sichtbar als `unknown` / `recheck_needed` mit derselben `credentialOptionRef`. Der Comparator darf aus der Restmenge keinen Winner bilden.
+- `travellerLegacyLesen()` bleibt der tolerante Guest-/Storage-Lesepfad.
+- Die untrusted Requirements-API validiert vorhandene Legacy-Singularfelder (`nationalityCountryCode`, `residenceCountryCode`, `documentType`, `documentIssuingCountryCode`, `documentExpiresOn`) vor dem Legacy-Expand strikt. Malformed Werte oder falsche Runtime-Typen sind fail-closed und erreichen `RequirementsProvider.evaluate()` nicht. Valide Foundation-C-Legacy-Form bleibt kompatibel.
+
+**Kontext:** Final Closure Review PR #35. `officialClass` entschied Reibungs-Ranking, fehlte aber in der Konflikterkennung. `documentAusLegacy()` übernahm untrusted `documentType` und Ablaufdaten ohne Enum-/Datumscheck.
+
+**Alternativen:**
+
+1. *officialClass weiter nur im Comparator nutzen.* Reihenfolgeabhängige Winner.
+2. *Legacy-Singularfelder an der API weiter tolerant normalisieren.* Ungültige Credentials würden still fehlen oder als `foobar` weiterleben.
+3. *`travellerLegacyLesen()` selbst härten.* Würde Guest-/Storage-Recovery brechen.
+
+**Begründung:** Entscheidungsrelevante Semantik muss vollständig und reihenfolgeunabhängig konfliktieren. Untrusted API-Input darf nicht über den toleranten Storage-Reader in die regulatorische Engine gelangen.
+
+**Konsequenzen:**
+
+- Neue kleine Hilfe `lib/readiness/entscheidung.ts`, damit Comparator-relevante Felder nicht still auseinanderlaufen.
+- Production-Schema unverändert. Draft PR #35 bleibt Draft.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

@@ -18,12 +18,18 @@ import {
 export const READINESS_GRENZEN = {
   titel: 80,
   clientRef: 64,
-  fingerprint: 500,
+  fingerprint: 800,
   itemsJeReise: 50,
   maxAnfrageBytes: 8_192,
 } as const
 
-export const READINESS_FINGERPRINT_VERSION = 'v1'
+export const TRAVELLER_CONTEXT_GRENZEN = {
+  citizenshipsJeTraveller: 8,
+  documentsJeTraveller: 12,
+  travellersJeReise: 20,
+} as const
+
+export const READINESS_FINGERPRINT_VERSION = 'v2'
 
 export type OfficialRequirementResult = 'required' | 'not_required' | 'unknown'
 
@@ -66,6 +72,7 @@ export type ReadinessDerivedCheck = {
   countryCode: string | null
   tripItemId: string | null
   title: string | null
+  travellerClientRef: string | null
   contextFingerprint: string
 }
 
@@ -78,6 +85,7 @@ export type ReadinessViewItem = {
   countryCode: string | null
   tripItemId: string | null
   title: string | null
+  travellerClientRef: string | null
   persisted: boolean
   official: OfficialRequirementEvidence
 }

@@ -4,6 +4,8 @@
 // ein Country-Label ohne Code ist kein Länderkontext.
 
 import { landescodeLesen } from '@/lib/readiness/domain'
+import { partyVon } from '@/lib/readiness/party'
+import { citizenshipCodesAus, documentFingerprintTeil, documentsSortieren } from '@/lib/readiness/traveller-kontext'
 import { routeFactsAusGraph } from '@/lib/route/ableitung'
 import { planpunkteSammeln } from '@/lib/trips/arbeitsbereich'
 import type { Trip, TripItem } from '@/types/trips'
@@ -101,4 +103,38 @@ export function routeFingerprintFelder(reise: Trip): {
 export function punktFuerReadiness(reise: Trip, tripItemId: string | null): TripItem | null {
   if (!tripItemId) return null
   return planpunkteSammeln(reise, reise.ohneTag).find((punkt) => punkt.id === tripItemId) ?? null
+}
+
+export function travellerFingerprintFelderFuer(
+  reise: Trip,
+  travellerClientRef: string | null | undefined,
+): {
+  travellerClientRef: string | null
+  citizenshipCountryCodes: string[]
+  documentFingerprints: string[]
+  residenceCountryCode: string | null
+} {
+  if (!travellerClientRef) {
+    return {
+      travellerClientRef: null,
+      citizenshipCountryCodes: [],
+      documentFingerprints: [],
+      residenceCountryCode: null,
+    }
+  }
+  const traveller = partyVon(reise).find((eintrag) => eintrag.clientRef === travellerClientRef) ?? null
+  if (!traveller) {
+    return {
+      travellerClientRef,
+      citizenshipCountryCodes: [],
+      documentFingerprints: [],
+      residenceCountryCode: null,
+    }
+  }
+  return {
+    travellerClientRef: traveller.clientRef,
+    citizenshipCountryCodes: citizenshipCodesAus(traveller),
+    documentFingerprints: documentsSortieren(traveller.documents).map(documentFingerprintTeil),
+    residenceCountryCode: traveller.residenceCountryCode,
+  }
 }

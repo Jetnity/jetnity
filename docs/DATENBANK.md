@@ -95,7 +95,13 @@ Die dreizehn Tabellen: `profiles`, `trips`, `trip_stages`, `trip_days`, `trip_it
 
 **Readiness `20260822010000`:** Neue Tabelle `trip_readiness_items`. Kein neuer `trip_items.kind`. Speichert nur Nutzer-Vorbereitungsstand, keine offiziellen Visa-Regeln und keine sensiblen Dokumentdaten. `reise_anlegen()` und `reise_aendern()` bleiben unverändert. **Nur Development.** Nicht Production.
 
-**Reisendenkontext `20260822020000`:** Neue Tabelle `trip_travellers`. Trip-spezifisch, datensparsam. Keine Dokumentnummern, keine Gesundheitsakte. **Nur Development.** Nicht Production.
+**Reisendenkontext `20260822020000`:** Neue Tabelle `trip_travellers`. Trip-spezifisch, datensparsam. Keine Dokumentnummern, keine Gesundheitsakte. **Development und Production** nach Foundation-C-Freigabe.
+
+**Traveller Context `20260822160000`:** Child-Tabellen `trip_traveller_citizenships` und `trip_traveller_documents`, optionales `trip_readiness_items.traveller_id`, RPC `party_schreiben()`. Deterministischer Backfill der Foundation-C-Singularfelder. Legacy-Spalten bleiben. **Nur Development.** Nicht Production.
+
+**Traveller Context FK-Delete `20260822170000`:** Composite-FK `trip_traveller_documents_citizenship_fk` nullt nur `citizenship_id`. Traveller-spezifische Readiness folgt dem Reisenden (`ON DELETE CASCADE`). Child-Limits sperren die Parent-Zeile gegen parallele Direct-Writes. **Nur Development.** Nicht Production.
+
+**Traveller Context Re-Review `20260822180000`:** Legacy-Backfill-Relationen Document↔Citizenship, die nur aus gleichem Ausstellerland entstanden, werden neutralisiert. Child-Limits nutzen `FOR NO KEY UPDATE`. **Nur Development.** Nicht Production.
 
 Das Wachstum liegt vollständig bei den Reisedaten: Die vier neuen Tabellen tragen 61 Spalten, 43 CHECK-Bedingungen, 6 Fremdschlüssel, 5 Eindeutigkeitsbedingungen, 15 Indizes, 16 Policies und 5 Auslöser – vier für `updated_at`, einer für die Erzeugungsregeln von `public.trips` (Abschnitt 7a). Gleichzeitig sind mit `creator_sessions` 16 Spalten, 7 Indizes und 4 Policies sowie die neun Creator-Spalten des Profils entfallen – die Nettozahlen der Tabelle oben sind deshalb kleiner als die Zugänge.
 

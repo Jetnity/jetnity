@@ -1,19 +1,36 @@
 // lib/readiness/provider.ts
 //
-// Provider-neutrale Adaptergrenze. Foundation C hat keinen Adapter.
+// Provider-neutrale Adaptergrenze. Foundation E hat keinen Adapter.
 // Tests dürfen einen Port injizieren. Production/Preview: immer null.
+// Ein späterer Provider bewertet Credential-Optionen getrennt.
 // Kein Timatic-Fake, keine Visa-Matrix, kein Modell als Quelle.
 
 import type { OfficialRequirementType, TravellerDocumentType } from '@/types/trips'
 import type { MissingFact, OfficialClass, OfficialResult } from '@/lib/readiness/official'
 
+export type RequirementsCredentialInput = {
+  optionRef: string
+  documentClientRef: string | null
+  documentType: TravellerDocumentType | null
+  issuingCountryCode: string | null
+  expiresOn: string | null
+  relatedCitizenshipCountryCode: string | null
+}
+
+export type RequirementsDocumentInput = {
+  clientRef: string
+  documentType: TravellerDocumentType
+  issuingCountryCode: string | null
+  expiresOn: string | null
+  citizenshipCountryCode: string | null
+}
+
 export type RequirementsTravellerInput = {
   clientRef: string
-  nationalityCountryCode: string | null
   residenceCountryCode: string | null
-  documentType: TravellerDocumentType | null
-  documentIssuingCountryCode: string | null
-  documentExpiresOn: string | null
+  citizenshipCountryCodes: string[]
+  documents: RequirementsDocumentInput[]
+  credentialOptions: RequirementsCredentialInput[]
 }
 
 export type RequirementsAnfrage = {
@@ -27,11 +44,14 @@ export type RequirementsAnfrage = {
 
 export type RequirementsProviderZeile = {
   travellerClientRef: string
+  credentialOptionRef?: string | null
   destinationCountryCode: string | null
   transitCountryCode?: string | null
   requirementType: OfficialRequirementType
   result: OfficialResult | 'insufficient_context'
   officialClass?: OfficialClass
+  optionEligibility?: 'allowed' | 'not_allowed' | 'unknown'
+  optionMandate?: 'mandatory' | 'not_mandatory' | 'unknown'
   authority?: string | null
   sourceUrl?: string | null
   checkedAt?: string | null
