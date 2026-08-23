@@ -2,11 +2,12 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
-import type { RouteFacts } from '@/lib/route/domain'
 import { seasonalAuswerten } from '@/lib/seasonal/engine'
 import { seasonalContextFingerprint } from '@/lib/seasonal/fingerprint'
 import {
   SEASONAL_NOW_MS,
+  bangkokGetrennteFluegeReise,
+  bangkokGetrennteLegsReise,
   bangkokRouteReise,
   goaKeralaReise,
   testSeasonalProvider,
@@ -14,7 +15,6 @@ import {
 } from '@/lib/seasonal/fixtures'
 import { providerAnfrageAusKontext, seasonalReisekontext } from '@/lib/seasonal/kontext'
 import type { SeasonalProviderAnfrage } from '@/lib/seasonal/provider'
-import { providerRouteKontakte } from '@/lib/seasonal/route-kontakte'
 import type { Trip, TripTraveller } from '@/types/trips'
 
 function reisender(opts: { clientRef: string; codes: string[] }): TripTraveller {
@@ -135,47 +135,22 @@ describe('Seasonal-Provider-Anfrage', () => {
     assert.equal(doh[0]?.start, '2026-09-12T17:40')
     assert.equal(doh[0]?.end, '2026-09-12T19:10')
 
-    const route: RouteFacts = {
-      quelle: 'flight_itinerary',
-      origin: { airportCode: 'ZRH', countryCode: 'CH', city: null, country: null },
-      destination: { airportCode: 'ZRH', countryCode: 'CH', city: null, country: null },
-      segments: [
-        {
-          origin: { airportCode: 'ZRH', countryCode: 'CH', city: null, country: null },
-          destination: { airportCode: 'BKK', countryCode: 'TH', city: null, country: null },
-          departureDate: '2026-09-12',
-          departureTime: '09:15',
-          arrivalDate: '2026-09-13',
-          arrivalTime: '06:20',
-        },
-        {
-          origin: { airportCode: 'BKK', countryCode: 'TH', city: null, country: null },
-          destination: { airportCode: 'ZRH', countryCode: 'CH', city: null, country: null },
-          departureDate: '2026-09-20',
-          departureTime: '23:00',
-          arrivalDate: '2026-09-21',
-          arrivalTime: '06:00',
-        },
-      ],
-      connections: [],
-      transitCountryCodes: ['TH'],
-      destinationCountryCodes: ['TH'],
-      sourceItemIds: [],
-      fingerprint: 'audit-roundtrip',
-    }
-    const kontakte = providerRouteKontakte(route)
-    const zrh = kontakte.filter((kontakt) => kontakt.airportCode === 'ZRH')
-    assert.equal(zrh.length, 2)
+    const getrennte = anfrageFuer(bangkokGetrennteFluegeReise())
+    const bkk = getrennte.routeContacts.filter((kontakt) => kontakt.airportCode === 'BKK')
     assert.deepEqual(
-      zrh.map((kontakt) => [kontakt.start, kontakt.end]),
+      bkk.map((kontakt) => [kontakt.start, kontakt.end]),
       [
-        ['2026-09-12T09:15', '2026-09-12T09:15'],
-        ['2026-09-21T06:00', '2026-09-21T06:00'],
+        ['2026-09-13T06:20', '2026-09-13T06:20'],
+        ['2026-09-20T23:00', '2026-09-20T23:00'],
       ],
     )
     assert.equal(
-      zrh.some((kontakt) => kontakt.start === '2026-09-12T09:15' && kontakt.end === '2026-09-21T06:00'),
+      bkk.some((kontakt) => kontakt.start === '2026-09-13T06:20' && kontakt.end === '2026-09-20T23:00'),
       false,
+    )
+    assert.deepEqual(
+      anfrageFuer(bangkokGetrennteLegsReise()).routeContacts.filter((kontakt) => kontakt.airportCode === 'BKK'),
+      bkk,
     )
   })
 
@@ -193,6 +168,10 @@ describe('Seasonal-Provider-Anfrage', () => {
     assert.deepEqual(a.routeContacts, b.routeContacts)
     assert.deepEqual(a.countryCodes, b.countryCodes)
     assert.deepEqual(a.placeIds, b.placeIds)
+
+    const fluege = bangkokGetrennteFluegeReise()
+    const fluegeUmgestellt = { ...fluege, ohneTag: [...fluege.ohneTag].reverse() }
+    assert.deepEqual(anfrageFuer(fluege).routeContacts, anfrageFuer(fluegeUmgestellt).routeContacts)
   })
 
   test('keine Citizenship-/Document-/LLM-Felder gelangen in den Seasonal-Port', () => {

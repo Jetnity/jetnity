@@ -51,7 +51,7 @@ Akute Warnungen (`active_warning`) gehören zur Safety-Domäne und erscheinen ni
 | API | `POST /api/seasonal/evaluate` | Rate-Limit, Zod, Body-Cap, `private, no-store` |
 | Ansicht | `components/trips/ReisezeitHinweise.tsx` | nur bei übergebenen Evaluations sichtbar |
 
-Route Truth kommt ausschließlich aus `routeFactsAusGraph`. Seasonal bleibt traveller-neutral. Citizenship gehört nicht in den Foundation-Fingerprint. Der provider-neutrale Request enthält kanonische Stage-Targets und getrennte Route-/Airport-Zeitkontakte; flache Mengen und Top-Level-Daten bleiben nur grobe Hülle.
+Route Truth kommt ausschließlich aus `routeFactsAusGraph`. Seasonal bleibt traveller-neutral. Citizenship gehört nicht in den Foundation-Fingerprint. Der provider-neutrale Request enthält kanonische Stage-Targets und getrennte Route-/Airport-Zeitkontakte aus der Foundation-D-Projektion; flache Mengen und Top-Level-Daten bleiben nur grobe Hülle. Getrennte Flight-Items oder Legs werden nicht über den Zielaufenthalt verbunden.
 
 ---
 
@@ -77,7 +77,7 @@ Ohne belastbaren `freshUntil`-Vertrag gibt es kein `current`. Safety-7-Tage-Defa
 
 Keine Seasonal-Tabelle. Seasonal Truth bleibt compute-on-read. Production-Schema unverändert.
 
-Lokal und remote auf Runtime `249d4b9b` verifiziert: 1567 Tests, UI-Audit 1014/1014, Production-Build Exit 0, GitHub Actions SUCCESS, Vercel Preview READY. Review-Blocker 1–11 sind im Code geschlossen. R6-Re-Review ist offen. Live-Provider bleibt `null`.
+R6-Blocker 12 ist im Code geschlossen. Das Exact-Head-Gate auf dem neuen Runtime-Head folgt; ältere Gate-Zahlen auf `249d4b9b` gelten nicht als R6-Closure. Live-Provider bleibt `null`.
 
 ---
 

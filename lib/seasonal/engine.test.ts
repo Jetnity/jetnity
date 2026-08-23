@@ -11,6 +11,7 @@ import { scopeIdentitaet } from '@/lib/seasonal/scope'
 import { travelWindowLesen } from '@/lib/seasonal/fenster'
 import {
   SEASONAL_NOW_MS,
+  bangkokGetrennteFluegeReise,
   bangkokMonsunReise,
   bangkokRouteReise,
   goaKeralaReise,
@@ -22,6 +23,7 @@ import {
   wiederholteGoaReise,
   winterJahreswechselReise,
 } from '@/lib/seasonal/fixtures'
+import { providerAnfrageAusKontext, seasonalReisekontext } from '@/lib/seasonal/kontext'
 import { seasonalFactNormalisieren } from '@/lib/seasonal/normalisieren'
 import { seasonalAnsicht, seasonalApiStatus } from '@/lib/seasonal/status'
 import type { SeasonalProviderFact } from '@/lib/seasonal/provider'
@@ -1319,6 +1321,65 @@ describe('Seasonal-Engine', () => {
     assert.deepEqual(
       gast.map((eintrag) => eintrag.factFingerprint),
       konto.map((eintrag) => eintrag.factFingerprint),
+    )
+  })
+
+  test('getrennte BKK-Airportbesuche erzeugen keinen Dauer-Kontakt über den Aufenthalt', () => {
+    const reise = bangkokGetrennteFluegeReise()
+    const mitte = seasonalAusFacts(
+      reise,
+      [
+        seasonalFact({
+          factKey: 'heat-bkk-15',
+          category: 'heat',
+          spatialScope: { kind: 'airport', airportCode: 'BKK', countryCode: 'TH' },
+          travelWindow: { kind: 'absolute', start: '2026-09-15', end: '2026-09-15' },
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.notEqual(mitte[0]?.relevance, 'applies')
+    assert.equal(mitte[0]?.relevance, 'not_applies')
+
+    const ankunft = seasonalAusFacts(
+      reise,
+      [
+        seasonalFact({
+          factKey: 'heat-bkk-13',
+          category: 'heat',
+          spatialScope: { kind: 'airport', airportCode: 'BKK', countryCode: 'TH' },
+          travelWindow: { kind: 'absolute', start: '2026-09-13', end: '2026-09-13' },
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.equal(ankunft[0]?.relevance, 'applies')
+
+    const abflug = seasonalAusFacts(
+      reise,
+      [
+        seasonalFact({
+          factKey: 'heat-bkk-20',
+          category: 'heat',
+          spatialScope: { kind: 'airport', airportCode: 'BKK', countryCode: 'TH' },
+          travelWindow: { kind: 'absolute', start: '2026-09-20', end: '2026-09-20' },
+        }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.equal(abflug[0]?.relevance, 'applies')
+
+    const anfrage = providerAnfrageAusKontext(seasonalReisekontext(reise), seasonalContextFingerprint(reise))
+    const bkk = anfrage.routeContacts.filter((kontakt) => kontakt.airportCode === 'BKK')
+    assert.deepEqual(
+      bkk.map((kontakt) => [kontakt.start, kontakt.end]),
+      [
+        ['2026-09-13T06:20', '2026-09-13T06:20'],
+        ['2026-09-20T23:00', '2026-09-20T23:00'],
+      ],
     )
   })
 

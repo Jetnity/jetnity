@@ -13,6 +13,7 @@ import {
   type RouteItineraryMitQuelle,
 } from '@/lib/route/domain'
 import { pfadAusSegmenten, routeFingerprintAus } from '@/lib/route/fingerprint'
+import { airportZeitkontakteAusItineraries } from '@/lib/route/kontakte'
 import { segmenteAusItinerary } from '@/lib/route/itinerary'
 import { flugRouteItineraryLesen } from '@/lib/route/schema'
 import { verbindungenAusSegmenten } from '@/lib/route/verbindung'
@@ -56,8 +57,9 @@ function routeFactsAusItineraries(itineraries: readonly RouteItineraryMitQuelle[
     destination,
     segments: segmente,
     connections: itineraries.flatMap((eintrag) =>
-      verbindungenAusSegmenten(segmenteAusItinerary(eintrag.itinerary)),
+      eintrag.itinerary.legs.flatMap((bein) => verbindungenAusSegmenten(bein.segments)),
     ),
+    airportContacts: airportZeitkontakteAusItineraries(itineraries),
     transitCountryCodes: transitlaenderAus(itineraries),
     destinationCountryCodes: ziellaenderAus(itineraries),
     sourceItemIds: itineraries

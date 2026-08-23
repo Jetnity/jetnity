@@ -1,7 +1,7 @@
 # Travel Timing & Seasonal Intelligence – Foundation Acceptance
 
 Stand: 23. August 2026  
-Status: **verbindliche Acceptance für die provider-neutrale Foundation – Draft-PR #38, R5-Blocker 10–11 auf Runtime `249d4b9b` geschlossen, Exact-Head-Gate grün, R6 offen**
+Status: **verbindliche Acceptance für die provider-neutrale Foundation – Draft-PR #38, R6-Blocker 12 im Code geschlossen, Exact-Head-Gate und R7 offen**
 
 Policy: `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`  
 Ist-Audit: `docs/TRAVEL_TIMING_SEASONAL_FOUNDATION_ARCHITECTURE_AUDIT.md`
@@ -97,7 +97,7 @@ Keine pauschale Ableitung `schlecht`, `gefährlich`, `ungeeignet`.
 - eigener `SeasonalProvider`-Port
 - Production/Preview Factory bleibt `null`
 - Test-Doubles dürfen injiziert werden
-- Provider Request enthält nur kanonische Trip-/Stage-/Route-/Datums-Facts, inklusive Stage-ID + arrival/departure und getrennter Airport-/Route-Zeitkontakte
+- Provider Request enthält nur kanonische Trip-/Stage-/Route-/Datums-Facts, inklusive Stage-ID + arrival/departure und getrennter Airport-/Route-Zeitkontakte aus der Foundation-D-Projektion; getrennte Legs/Flight-Items bleiben getrennte Airport-Kontakte
 - flache Country-/Airport-/Place-Mengen und Top-Level-Daten bleiben nur grobe Hülle, nicht die einzige Zeitwahrheit
 - keine unnötigen Citizenship-/Document-/LLM-Daten im Foundation-Port
 - Provider Timeout mit AbortSignal

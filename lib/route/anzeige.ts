@@ -7,6 +7,7 @@
 import { dauerLesbar } from '@/lib/flights/zeit'
 import type { FlugOption } from '@/lib/flights/domain'
 import type { FlughafenReferenzKarte, RouteFacts, RoutePunkt, RouteVerbindung } from '@/lib/route/domain'
+import { airportZeitkontakteAusItineraries } from '@/lib/route/kontakte'
 import { itineraryAusFlugOption, segmenteAusItinerary } from '@/lib/route/itinerary'
 import { verbindungenAusSegmenten } from '@/lib/route/verbindung'
 
@@ -89,7 +90,8 @@ export function routeAnzeigeAusOption(
       country: null,
     },
     segments,
-    connections: verbindungenAusSegmenten(segments),
+    connections: itinerary.legs.flatMap((bein) => verbindungenAusSegmenten(bein.segments)),
+    airportContacts: airportZeitkontakteAusItineraries([{ itinerary }]),
     transitCountryCodes: [],
     destinationCountryCodes: [],
     sourceItemIds: [],

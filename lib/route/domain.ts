@@ -61,12 +61,20 @@ export type RouteItineraryMitQuelle = {
   itinerary: FlugRouteItinerary
 }
 
+export type RouteAirportKontakt = {
+  airportCode: string
+  countryCode: string | null
+  start: string | null
+  end: string | null
+}
+
 export type RouteFacts = {
   quelle: RouteQuelle
   origin: RoutePunkt
   destination: RoutePunkt
   segments: RouteSegment[]
   connections: RouteVerbindung[]
+  airportContacts: RouteAirportKontakt[]
   transitCountryCodes: string[]
   destinationCountryCodes: string[]
   sourceItemIds: string[]
@@ -87,6 +95,7 @@ export function leereRouteFacts(): RouteFacts {
     destination: { ...LEERER_ROUTE_PUNKT },
     segments: [],
     connections: [],
+    airportContacts: [],
     transitCountryCodes: [],
     destinationCountryCodes: [],
     sourceItemIds: [],

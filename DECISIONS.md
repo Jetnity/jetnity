@@ -3489,6 +3489,29 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0141 – Airport-Zeitkontakte nur innerhalb eines belegten Legs
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R6 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Foundation D projiziert kanonische `RouteFacts.airportContacts` pro Leg und Flight-Item.
+- Adjacent `destination(code) → origin(code)` in der abgeflachten Segmentliste ist keine Connection-Wahrheit.
+- Getrennte Flight-Items und getrennte Legs erzeugen getrennte Airport-Kontakte. Nur ein belegter Transit im selben Leg darf ein Intervall bilden.
+- Seasonal-Relevanz, Seasonal-Provider-Request und Safety-Relevanz lesen dieselbe Projektion.
+- `connections` werden ebenfalls nur noch innerhalb eines Legs abgeleitet.
+
+**Kontext:** `docs/PR38_CHATGPT_R6_REVIEW.md` gegen Runtime `249d4b9b`.
+
+**Alternativen:** Heuristische Max-Layover-Zeit; Pairing weiter über die flache Segmentliste; fail-closed ohne Layover-Kontakte.
+
+**Begründung:** Ein mehrtägiger Zielaufenthalt zwischen Hin- und Rückflug ist kein belegter Airport-Kontakt. Dieselbe falsche Hülle darf weder lokale Relevanz noch einen späteren Adapter steuern.
+
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R7 und Product-Owner-Merge-Freigabe.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

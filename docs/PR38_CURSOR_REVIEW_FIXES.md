@@ -1,11 +1,12 @@
 # PR #38 – Cursor-Fixes zum unabhängigen Review
 
 Stand: 23. August 2026  
-Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9 und R5-Blocker 10–11 geschlossen; R6-Re-Review offen**
+Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11 und R6-Blocker 12 geschlossen; R7-Re-Review offen**
 
 Review R1/R2: `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md`  
 Review R3: `docs/PR38_CHATGPT_R3_REVIEW.md`  
 Review R4: `docs/PR38_CHATGPT_R4_REVIEW.md`  
+Review R6: `docs/PR38_CHATGPT_R6_REVIEW.md`  
 Runtime-Head R1-Fixes: `89290effba61602a71418ab3904b4dc42e76709d`  
 Runtime-Head R2-Fixes: `aa6cafa2f4997c22081dff35fe950a18190e7886`  
 Runtime-Head R3-Fixes: `4f9eb1e8c524494fa8ab300bdfe24ec372e9e109`  
@@ -76,6 +77,12 @@ Acute-only ist fail-closed `unknown` / `complete=false` / API-`unknown`, kein sa
 
 Die Engine behandelt Acute vor dem generischen Seasonal-unavailable-Pfad. Acute-only + unavailable bleibt fail-closed ohne `checked_empty` / API-`ok`. Ein gültiger Seasonal-Fact darf sichtbar bleiben; der Gesamtstatus wird durch die abgewiesene/fehlende Truth nicht clean/favorable.
 
-## 13. Nicht geändert
+## 13. Getrennte Airport-Besuche bleiben getrennte Kontakte
+
+Foundation D projiziert `RouteFacts.airportContacts` nur innerhalb eines belegten Legs. Getrennte Flight-Items und getrennte Legs werden nicht über den Zielaufenthalt zu einem Dauerfenster verbunden. Ein echter Transit im selben Leg bleibt ein Layover-Kontakt.
+
+Seasonal-Relevanz und Provider-Request lesen dieselbe Projektion. Safety nutzt dieselbe Kontaktliste. Verbindungen (`connections`) entstehen ebenfalls nur noch innerhalb eines Legs.
+
+## 14. Nicht geändert
 
 Kein Provider, keine Migration, keine Secrets, PR bleibt Draft.
