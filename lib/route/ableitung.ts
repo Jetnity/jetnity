@@ -11,7 +11,8 @@ import {
   type RouteFacts,
   type RouteItineraryMitQuelle,
 } from '@/lib/route/domain'
-import { pfadAusSegmenten, routeFingerprintAus } from '@/lib/route/fingerprint'
+import { itinerariesSortieren, routeChronologieBewiesen } from '@/lib/route/chronologie'
+import { routeFingerprintAus } from '@/lib/route/fingerprint'
 import { airportZeitkontakteAusItineraries } from '@/lib/route/kontakte'
 import { laenderrollenAus } from '@/lib/route/laender'
 import { segmenteAusItinerary } from '@/lib/route/itinerary'
@@ -35,7 +36,7 @@ function itinerariesAusReise(reise: Pick<Trip, 'days' | 'ohneTag'>): RouteItiner
     })
   }
 
-  return itineraries.sort(fruehesteZuerst)
+  return itinerariesSortieren(itineraries)
 }
 
 function routeFactsAusItineraries(itineraries: readonly RouteItineraryMitQuelle[]): RouteFacts {
@@ -48,15 +49,20 @@ function routeFactsAusItineraries(itineraries: readonly RouteItineraryMitQuelle[
   if (segmente.length === 0) return leereRouteFacts()
 
   const primaerSegmente = segmenteAusItinerary(primaer.itinerary)
-  const origin = primaerSegmente[0]?.origin ?? { ...LEERER_ROUTE_PUNKT }
-  const destination = primaerSegmente[primaerSegmente.length - 1]?.destination ?? { ...LEERER_ROUTE_PUNKT }
+  const bewiesen = routeChronologieBewiesen(itineraries)
+  const origin = bewiesen ? (primaerSegmente[0]?.origin ?? { ...LEERER_ROUTE_PUNKT }) : { ...LEERER_ROUTE_PUNKT }
+  const destination = bewiesen
+    ? (primaerSegmente[primaerSegmente.length - 1]?.destination ?? { ...LEERER_ROUTE_PUNKT })
+    : { ...LEERER_ROUTE_PUNKT }
   const laender = laenderrollenAus(itineraries)
+  const legs = itineraries.flatMap((eintrag) => eintrag.itinerary.legs)
 
   return {
     quelle: 'flight_itinerary',
     origin,
     destination,
     segments: segmente,
+    legs,
     connections: itineraries.flatMap((eintrag) =>
       eintrag.itinerary.legs.flatMap((bein) => verbindungenAusSegmenten(bein.segments)),
     ),
@@ -97,11 +103,3 @@ export function routeFactsFuerPunkt(punkt: TripItem): RouteFacts {
   ])
 }
 
-function fruehesteZuerst(a: RouteItineraryMitQuelle, b: RouteItineraryMitQuelle): number {
-  const aStart = `${a.startsOn ?? ''}T${a.startsAt ?? ''}`
-  const bStart = `${b.startsOn ?? ''}T${b.startsAt ?? ''}`
-  if (aStart !== bStart) return aStart < bStart ? -1 : 1
-  return pfadAusSegmenten(segmenteAusItinerary(a.itinerary)).localeCompare(
-    pfadAusSegmenten(segmenteAusItinerary(b.itinerary)),
-  )
-}

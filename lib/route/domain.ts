@@ -73,6 +73,7 @@ export type RouteFacts = {
   origin: RoutePunkt
   destination: RoutePunkt
   segments: RouteSegment[]
+  legs: { segments: RouteSegment[] }[]
   connections: RouteVerbindung[]
   airportContacts: RouteAirportKontakt[]
   transitCountryCodes: string[]
@@ -94,6 +95,7 @@ export function leereRouteFacts(): RouteFacts {
     origin: { ...LEERER_ROUTE_PUNKT },
     destination: { ...LEERER_ROUTE_PUNKT },
     segments: [],
+    legs: [],
     connections: [],
     airportContacts: [],
     transitCountryCodes: [],

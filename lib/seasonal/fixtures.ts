@@ -96,6 +96,58 @@ export function bangkokGetrennteFluegeReise(): Trip {
   ])
 }
 
+const HKG_RUECK = {
+  origin: { airportCode: 'HKG', countryCode: 'HK', city: 'Hong Kong', country: 'Hong Kong' },
+  destination: { airportCode: 'ZRH', countryCode: 'CH', city: 'Zürich', country: 'Switzerland' },
+  departureDate: '2026-09-20',
+  departureTime: '23:00',
+  arrivalDate: '2026-09-21',
+  arrivalTime: '06:10',
+}
+
+export function bangkokOpenJawFluegeReise(): Trip {
+  return bangkokRundreise([
+    flugPunkt({
+      id: 'flug-hin',
+      title: 'ZRH → BKK',
+      startsOn: '2026-09-12',
+      endsOn: '2026-09-13',
+      legs: [{ segments: [BKK_HIN] }],
+    }),
+    flugPunkt({
+      id: 'flug-openjaw',
+      title: 'SIN → ZRH',
+      startsOn: '2026-09-20',
+      endsOn: '2026-09-21',
+      legs: [{ segments: [SIN_RUECK] }],
+    }),
+  ])
+}
+
+export function bangkokOpenJawLegsReise(): Trip {
+  return bangkokRundreise([
+    flugPunkt({
+      id: 'flug-openjaw',
+      title: 'ZRH → BKK | SIN → ZRH',
+      startsOn: '2026-09-12',
+      endsOn: '2026-09-21',
+      legs: [{ segments: [BKK_HIN] }, { segments: [SIN_RUECK] }],
+    }),
+  ])
+}
+
+export function bangkokOpenJawHkgLegsReise(): Trip {
+  return bangkokRundreise([
+    flugPunkt({
+      id: 'flug-openjaw-hkg',
+      title: 'ZRH → BKK | HKG → ZRH',
+      startsOn: '2026-09-12',
+      endsOn: '2026-09-21',
+      legs: [{ segments: [BKK_HIN] }, { segments: [HKG_RUECK] }],
+    }),
+  ])
+}
+
 export function bangkokGetrennteLegsReise(): Trip {
   return bangkokRundreise([
     flugPunkt({

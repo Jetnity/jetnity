@@ -27,13 +27,11 @@ export function punktLesbar(punkt: RoutePunkt, mitCode = true): string {
 }
 
 export function routeKompakt(facts: RouteFacts): string {
-  const punkte = routenpunkte(facts)
-  return punkte.map((punkt) => punktLesbar(punkt)).filter(Boolean).join(' → ')
+  return routeKompaktAusBeinen(facts, true)
 }
 
 export function routeKompaktOhneCode(facts: RouteFacts): string {
-  const punkte = routenpunkte(facts)
-  return punkte.map((punkt) => punktLesbar(punkt, false) || punkt.airportCode || '').filter(Boolean).join(' → ')
+  return routeKompaktAusBeinen(facts, false)
 }
 
 function umstiegLesbar(verbindung: RouteVerbindung): string {
@@ -92,6 +90,7 @@ export function routeAnzeigeAusOption(
       country: null,
     },
     segments,
+    legs: itinerary.legs,
     connections: itinerary.legs.flatMap((bein) => verbindungenAusSegmenten(bein.segments)),
     airportContacts: airportZeitkontakteAusItineraries([{ itinerary }]),
     transitCountryCodes: laender.transitCountryCodes,
@@ -102,12 +101,24 @@ export function routeAnzeigeAusOption(
   return routeAnzeigeAusFacts(facts)
 }
 
-function routenpunkte(facts: RouteFacts): RoutePunkt[] {
-  if (facts.segments.length === 0) return [facts.origin, facts.destination]
+function punkteImBein(segmente: RouteFacts['segments']): RoutePunkt[] {
   const punkte: RoutePunkt[] = []
-  for (const [index, segment] of facts.segments.entries()) {
+  for (const [index, segment] of segmente.entries()) {
     if (index === 0) punkte.push(segment.origin)
     punkte.push(segment.destination)
   }
   return punkte.filter((punkt) => punkt.airportCode || punkt.city)
+}
+
+function routeKompaktAusBeinen(facts: RouteFacts, mitCode: boolean): string {
+  const beine = facts.legs.length > 0 ? facts.legs : [{ segments: facts.segments }]
+  const teile = beine
+    .map((bein) =>
+      punkteImBein(bein.segments)
+        .map((punkt) => (mitCode ? punktLesbar(punkt) : punktLesbar(punkt, false) || punkt.airportCode || ''))
+        .filter(Boolean)
+        .join(' → '),
+    )
+    .filter(Boolean)
+  return teile.join(' | ')
 }
