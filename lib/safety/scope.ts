@@ -224,6 +224,45 @@ function kalendertageVergleichen(
   return 'overlaps'
 }
 
+function dateUnsicherheit(
+  start: string | null,
+  ende: string | null,
+): { minMs: number; maxMs: number } | null {
+  const von = start ?? ende
+  const bis = ende ?? start
+  if (!von || !bis) return null
+  const startTag = kalendertagAus(von)
+  const endeTag = kalendertagAus(bis)
+  if (!startTag || !endeTag) return null
+  const minMs = Date.parse(`${startTag}T00:00:00.000Z`) - MAX_OST_OFFSET_MS
+  const maxMs = Date.parse(`${endeTag}T23:59:59.999Z`) + MAX_WEST_OFFSET_MS
+  if (!Number.isFinite(minMs) || !Number.isFinite(maxMs)) return null
+  return { minMs, maxMs }
+}
+
+function instantGegenHuelle(
+  fenster: { minMs: number; maxMs: number },
+  eventStart: string | null,
+  eventEnde: string | null,
+): 'before' | 'after' | 'insufficient' {
+  const eventStartMs = eventStart && zeitForm(eventStart) === 'instant' ? Date.parse(eventStart) : null
+  const eventEndMs = eventEnde && zeitForm(eventEnde) === 'instant' ? Date.parse(eventEnde) : eventStartMs
+  if (eventEndMs != null && Number.isFinite(eventEndMs) && eventEndMs < fenster.minMs) return 'before'
+  if (eventStartMs != null && Number.isFinite(eventStartMs) && eventStartMs > fenster.maxMs) return 'after'
+  return 'insufficient'
+}
+
+function dateGegenInstant(
+  reiseStart: string | null,
+  reiseEnde: string | null,
+  eventStart: string | null,
+  eventEnde: string | null,
+): 'overlaps' | 'before' | 'after' | 'insufficient' {
+  const fenster = dateUnsicherheit(reiseStart, reiseEnde)
+  if (!fenster) return 'insufficient'
+  return instantGegenHuelle(fenster, eventStart, eventEnde)
+}
+
 function clockGegenInstant(
   reiseStart: string | null,
   reiseEnde: string | null,
@@ -232,11 +271,7 @@ function clockGegenInstant(
 ): 'overlaps' | 'before' | 'after' | 'insufficient' {
   const fenster = clockUnsicherheit(reiseStart, reiseEnde)
   if (!fenster) return 'insufficient'
-  const eventStartMs = eventStart && zeitForm(eventStart) === 'instant' ? Date.parse(eventStart) : null
-  const eventEndMs = eventEnde && zeitForm(eventEnde) === 'instant' ? Date.parse(eventEnde) : eventStartMs
-  if (eventEndMs != null && Number.isFinite(eventEndMs) && eventEndMs < fenster.minMs) return 'before'
-  if (eventStartMs != null && Number.isFinite(eventStartMs) && eventStartMs > fenster.maxMs) return 'after'
-  return 'insufficient'
+  return instantGegenHuelle(fenster, eventStart, eventEnde)
 }
 
 export function zeitraeumeUeberschneiden(
@@ -255,7 +290,10 @@ export function zeitraeumeUeberschneiden(
   if (tripHatUhr && eventHatInstant) {
     return clockGegenInstant(reiseStart, reiseEnde, eventStart, eventEnde)
   }
-  if (tripHatUhr && eventNurDatum) {
+  if (!tripHatUhr && eventHatInstant) {
+    return dateGegenInstant(reiseStart, reiseEnde, eventStart, eventEnde)
+  }
+  if (eventNurDatum) {
     return kalendertageVergleichen(reiseStart, reiseEnde, eventStart, eventEnde)
   }
 

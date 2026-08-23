@@ -1550,13 +1550,14 @@ describe('Safety-Engine', () => {
           factKey: 'eq-firenze',
           category: 'earthquake',
           validFrom: '2026-09-12T10:00:00Z',
+          validUntil: '2026-09-12T10:00:00Z',
         }),
       ],
       'audit-safety',
       { nowMs: JETZT },
     )
     assert.notEqual(evaluations[0]?.relevance, 'not_affected')
-    assert.equal(evaluations[0]?.relevance, 'affected')
+    assert.equal(evaluations[0]?.relevance, 'insufficient_context')
   })
 
   test('Timezone: lokale Routezeit wird nicht zu einem Z-Instant', () => {
@@ -1640,19 +1641,74 @@ describe('Safety-Engine', () => {
     assert.equal(evaluations[0]?.relevance, 'affected')
   })
 
-  test('Stop: Event am Folgetag nach belegtem Stage- und Transit-Tag bleibt not_affected', () => {
-    const stage = safetyAusFacts(
+  test('Timezone: Date-only Stage 12.09 und Event 11.09 18:00Z ist nicht not_affected', () => {
+    const evaluations = safetyAusFacts(
+      eintagFlorenzReise(),
+      [
+        safetyFact({
+          factKey: 'eq-firenze',
+          category: 'earthquake',
+          validFrom: '2026-09-11T18:00:00Z',
+          validUntil: '2026-09-11T18:00:00Z',
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.notEqual(evaluations[0]?.relevance, 'not_affected')
+    assert.equal(evaluations[0]?.relevance, 'insufficient_context')
+  })
+
+  test('Timezone: Date-only Stage 12.09 und Event 13.09 08:00Z ist nicht not_affected', () => {
+    const evaluations = safetyAusFacts(
       eintagFlorenzReise(),
       [
         safetyFact({
           factKey: 'eq-firenze',
           category: 'earthquake',
           validFrom: '2026-09-13T08:00:00Z',
+          validUntil: '2026-09-13T08:00:00Z',
         }),
       ],
       'audit-safety',
       { nowMs: JETZT },
     )
+    assert.notEqual(evaluations[0]?.relevance, 'not_affected')
+    assert.equal(evaluations[0]?.relevance, 'insufficient_context')
+  })
+
+  test('Timezone: Instant klar außerhalb der Date-only-Hülle bleibt not_affected', () => {
+    const vorher = safetyAusFacts(
+      eintagFlorenzReise(),
+      [
+        safetyFact({
+          factKey: 'eq-firenze',
+          category: 'earthquake',
+          validFrom: '2026-09-11T09:00:00Z',
+          validUntil: '2026-09-11T09:00:00Z',
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    const nachher = safetyAusFacts(
+      eintagFlorenzReise(),
+      [
+        safetyFact({
+          factKey: 'eq-firenze',
+          category: 'earthquake',
+          validFrom: '2026-09-13T13:00:00Z',
+          validUntil: '2026-09-13T13:00:00Z',
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(vorher[0]?.relevance, 'not_affected')
+    assert.equal(nachher[0]?.relevance, 'not_affected')
+  })
+
+  test('Stop: Event am Folgetag nach belegtem Transit-Uhrfenster bleibt not_affected', () => {
     const transit = safetyAusFacts(
       bangkokRouteReise(),
       [
@@ -1661,12 +1717,12 @@ describe('Safety-Engine', () => {
           category: 'infrastructure_disruption',
           spatialScope: { kind: 'airport', airportCode: 'DOH', countryCode: 'QA' },
           validFrom: '2026-09-13T08:00:00Z',
+          validUntil: '2026-09-13T08:00:00Z',
         }),
       ],
       'audit-safety',
       { nowMs: JETZT },
     )
-    assert.equal(stage[0]?.relevance, 'not_affected')
     assert.equal(transit[0]?.relevance, 'not_affected')
   })
 
