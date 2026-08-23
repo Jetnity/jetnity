@@ -3,7 +3,7 @@
 // Provider-neutrale Safety-Engine.
 // Ohne Provider niemals eine Warnung. LLM-Felder in der Anfrage werden ignoriert.
 
-import { partyVon } from '@/lib/readiness/party'
+import { travellerSlots } from '@/lib/readiness/party'
 import { citizenshipCodesAus } from '@/lib/readiness/traveller-kontext'
 import {
   SAFETY_GRENZEN,
@@ -30,6 +30,7 @@ function leerEvaluation(opts: {
   reason: string
   factKey?: string
   conflict?: boolean
+  checkedEmpty?: boolean
 }): SafetyEvaluation {
   return {
     factId: opts.factKey ?? 'safety:unavailable',
@@ -38,7 +39,11 @@ function leerEvaluation(opts: {
     eventStatus: 'unknown',
     evidenceStatus: opts.status,
     freshness: opts.freshness,
-    relevance: opts.status === 'unavailable' ? 'unknown' : 'insufficient_context',
+    relevance: opts.checkedEmpty
+      ? 'not_affected'
+      : opts.status === 'unavailable'
+        ? 'unknown'
+        : 'insufficient_context',
     spatialPrecision: 'unknown',
     presentationClass: 'unknown',
     sourceSeverity: null,
@@ -59,9 +64,15 @@ function leerEvaluation(opts: {
 function travellerRelevant(reise: Trip, fact: SafetyFact): 'ok' | 'insufficient' | 'skip' {
   if (!fact.travellerDependent) return 'ok'
   if (fact.travellerCitizenshipCodes.length === 0) return 'insufficient'
-  const codes = partyVon(reise).flatMap((traveller) => citizenshipCodesAus(traveller))
-  if (codes.length === 0) return 'insufficient'
-  return fact.travellerCitizenshipCodes.some((code) => codes.includes(code)) ? 'ok' : 'skip'
+  const slots = travellerSlots(reise).filter((slot) => slot.applicable)
+  if (slots.length === 0) return 'insufficient'
+  let unvollstaendig = false
+  for (const slot of slots) {
+    const codes = slot.traveller ? citizenshipCodesAus(slot.traveller) : []
+    if (codes.some((code) => fact.travellerCitizenshipCodes.includes(code))) return 'ok'
+    if (!slot.traveller || codes.length === 0) unvollstaendig = true
+  }
+  return unvollstaendig ? 'insufficient' : 'skip'
 }
 
 function evaluationAusFact(opts: {
@@ -91,7 +102,13 @@ function evaluationAusFact(opts: {
     factKey: opts.fact.factKey,
     status: opts.fact.status,
     updatedAt: opts.fact.evidence.updatedAt,
+    validFrom: opts.fact.temporal.start,
     validUntil: opts.fact.temporal.end,
+    freshUntil: opts.fact.evidence.freshUntil,
+    sourceSeverity: opts.fact.sourceSeverity,
+    advisoryClass: opts.fact.advisoryClass,
+    travellerDependent: opts.fact.travellerDependent,
+    travellerCitizenshipCodes: opts.fact.travellerCitizenshipCodes,
     scope: opts.fact.spatialScope,
   })
   const freshness = safetyFrische({
@@ -169,7 +186,7 @@ function evaluationsSortieren(liste: SafetyEvaluation[]): SafetyEvaluation[] {
 
 export function safetyAusFacts(
   reise: Trip,
-  providerFacts: readonly SafetyProviderFact[],
+  providerFacts: readonly unknown[],
   providerName: string | null,
   opts: { nowMs?: number; roh?: unknown } = {},
 ): SafetyEvaluation[] {
@@ -203,10 +220,39 @@ export function safetyAusFacts(
       }),
     ]
   }
-  const facts = providerFacts
-    .map((zeile) => safetyFactNormalisieren(zeile, providerName, nowMs))
-    .filter((fact): fact is SafetyFact => Boolean(fact))
-    .filter((fact) => fact.nature !== 'seasonal_pattern')
+  const normalisiert = providerFacts.map((zeile) => {
+    try {
+      return safetyFactNormalisieren(zeile, providerName, nowMs)
+    } catch {
+      return null
+    }
+  })
+  const valide = normalisiert.filter((fact): fact is SafetyFact => Boolean(fact))
+  const ungueltig = providerFacts.length - valide.length
+  const facts = valide.filter((fact) => fact.nature !== 'seasonal_pattern')
+  if (facts.length === 0) {
+    if (ungueltig > 0) {
+      return [
+        leerEvaluation({
+          contextFingerprint,
+          freshness: 'never_checked',
+          status: 'unknown',
+          reason: 'Die Providerantwort war ungültig und wurde verworfen.',
+        }),
+      ]
+    }
+    return [
+      leerEvaluation({
+        contextFingerprint,
+        freshness: 'current',
+        status: 'current',
+        reason:
+          'Im geprüften Reiseausschnitt liegen keine belastbaren akuten Safety-Hinweise vor. Das ist keine Entwarnung.',
+        factKey: 'checked_empty',
+        checkedEmpty: true,
+      }),
+    ]
+  }
 
   const menge = safetyFactsDeduplizieren(facts)
   const evaluations = menge.facts.map((fact) =>

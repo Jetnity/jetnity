@@ -28,9 +28,11 @@ function zaehlen(evaluations: readonly SafetyEvaluation[], klasse: SafetyPresent
 export function safetyAnsicht(reise: Trip, evaluations?: SafetyEvaluation[]): SafetyView {
   const liste = evaluations ?? safetyLokalFuerReise(reise)
   const vorhanden = evaluations !== undefined
-  const unavailable = liste.every(
-    (eintrag) => eintrag.freshness === 'provider_unavailable' || eintrag.evidenceStatus === 'unavailable',
-  )
+  const unavailable =
+    liste.length > 0 &&
+    liste.every(
+      (eintrag) => eintrag.freshness === 'provider_unavailable' || eintrag.evidenceStatus === 'unavailable',
+    )
   const sichtbare = vorhanden
     ? liste.filter((eintrag) => {
         if (eintrag.seasonalRejected) return false

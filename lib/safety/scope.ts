@@ -4,7 +4,7 @@
 
 import { istOrtId } from '@/lib/places/domain'
 import { iataLesen, safetyLandescode } from '@/lib/safety/domain'
-import { isoDatumLesen, zeitMs } from '@/lib/safety/evidence'
+import { zeitMs } from '@/lib/safety/evidence'
 
 const SAFETY_SCOPE_KINDS = [
   'country',
@@ -49,11 +49,6 @@ export type SafetySpatialScope =
     }
   | { kind: 'route_corridor'; airportCodes: string[] }
   | { kind: 'insufficient' }
-
-export type SafetyTemporalScope = {
-  start: string | null
-  end: string | null
-}
 
 export function scopeIdentitaet(scope: SafetySpatialScope): string {
   switch (scope.kind) {
@@ -151,16 +146,6 @@ export function spatialScopeLesen(roh: unknown): SafetySpatialScope {
     return airportCodes.length > 0 ? { kind: 'route_corridor', airportCodes } : { kind: 'insufficient' }
   }
   return { kind: 'insufficient' }
-}
-
-export function temporalScopeLesen(roh: {
-  validFrom?: unknown
-  validUntil?: unknown
-}): SafetyTemporalScope {
-  return {
-    start: isoDatumLesen(roh.validFrom),
-    end: isoDatumLesen(roh.validUntil),
-  }
 }
 
 export function entfernungKm(

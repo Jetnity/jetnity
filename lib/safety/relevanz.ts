@@ -53,6 +53,16 @@ function routeAirports(kontext: SafetyReisekontext): string[] {
   return kontext.airportCodes
 }
 
+function stageImLand(kontext: SafetyReisekontext, countryCode: string | null): boolean {
+  return Boolean(countryCode && kontext.stages.some((etappe) => etappe.countryCode === countryCode))
+}
+
+function routeLandOhneStage(kontext: SafetyReisekontext, countryCode: string | null): boolean {
+  if (!countryCode) return false
+  if (stageImLand(kontext, countryCode)) return false
+  return kontext.countryCodes.includes(countryCode)
+}
+
 export function räumlicheRelevanz(
   kontext: SafetyReisekontext,
   scope: SafetySpatialScope,
@@ -149,6 +159,14 @@ export function räumlicheRelevanz(
         reason: 'Das Ereignis liegt im selben Land, aber ausserhalb der konkreten Reisezone.',
       }
     }
+    if (routeLandOhneStage(kontext, scope.countryCode)) {
+      return {
+        relevance: 'insufficient_context',
+        precision: 'unknown',
+        affectedRefs: [],
+        reason: 'Die Route berührt das Land, die feinere Ortszugehörigkeit ist aber nicht belegt.',
+      }
+    }
     return {
       relevance: 'not_affected',
       precision: 'place',
@@ -158,26 +176,25 @@ export function räumlicheRelevanz(
   }
 
   if (scope.kind === 'admin_region') {
-    const gleichesLand = kontext.stages.filter(imSelbenLand)
-    if (gleichesLand.length === 0) {
+    if (stageImLand(kontext, scope.countryCode) || routeLandOhneStage(kontext, scope.countryCode)) {
       return {
-        relevance: 'not_affected',
-        precision: 'admin_region',
+        relevance: 'insufficient_context',
+        precision: 'unknown',
         affectedRefs: [],
-        reason: 'Keine Etappe liegt im belegten Land der Region.',
+        reason: 'Die Quelle nennt eine Region, Jetnity besitzt aber keine kanonische Regionszugehörigkeit.',
       }
     }
     return {
-      relevance: 'insufficient_context',
-      precision: 'unknown',
+      relevance: 'not_affected',
+      precision: 'admin_region',
       affectedRefs: [],
-      reason: 'Die Quelle nennt eine Region, Jetnity besitzt aber keine kanonische Regionszugehörigkeit.',
+      reason: 'Keine Etappe oder Route liegt im belegten Land der Region.',
     }
   }
 
   if (scope.kind === 'city') {
     if (!scope.placeId) {
-      return kontext.stages.some(imSelbenLand)
+      return stageImLand(kontext, scope.countryCode) || routeLandOhneStage(kontext, scope.countryCode)
         ? {
             relevance: 'insufficient_context',
             precision: 'unknown',
@@ -188,7 +205,7 @@ export function räumlicheRelevanz(
             relevance: 'not_affected',
             precision: 'city',
             affectedRefs: [],
-            reason: 'Keine Etappe liegt im belegten Land der Stadt.',
+            reason: 'Keine Etappe oder Route liegt im belegten Land der Stadt.',
           }
     }
     const exakt = kontext.stages.filter((etappe) => gleicheStadt(etappe, scope))
@@ -217,6 +234,14 @@ export function räumlicheRelevanz(
         reason: 'Das Ereignis liegt im selben Land, aber klar ausserhalb der konkreten Reisezone.',
       }
     }
+    if (routeLandOhneStage(kontext, scope.countryCode)) {
+      return {
+        relevance: 'insufficient_context',
+        precision: 'unknown',
+        affectedRefs: [],
+        reason: 'Die Route berührt das Land, die Stadtzugehörigkeit ist aber nicht belegt.',
+      }
+    }
     return {
       relevance: 'not_affected',
       precision: 'city',
@@ -243,12 +268,12 @@ export function räumlicheRelevanz(
         reason: 'Die belegte Geometrie der Quelle schneidet eine konkrete Etappe.',
       }
     }
-    if (unklar) {
+    if (unklar || routeLandOhneStage(kontext, scope.countryCode)) {
       return {
         relevance: 'insufficient_context',
         precision: 'unknown',
         affectedRefs: [],
-        reason: 'Für einen präzisen Abgleich fehlen Koordinaten der Etappe.',
+        reason: 'Für einen präzisen Abgleich fehlen Koordinaten der Etappe oder der Route.',
       }
     }
     return {

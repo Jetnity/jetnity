@@ -20,6 +20,7 @@ import {
   authorityClassLesen,
   authorityLesen,
   factSchluesselLesen,
+  isoDatumLesen,
   isoZeitLesen,
   providerNameLesen,
   quelleUrlLesen,
@@ -27,8 +28,7 @@ import {
   sicherheitstextLesen,
   type SafetyEvidence,
 } from '@/lib/safety/evidence'
-import type { SafetyProviderFact } from '@/lib/safety/provider'
-import { scopeIdentitaet, spatialScopeLesen, temporalScopeLesen, type SafetySpatialScope } from '@/lib/safety/scope'
+import { scopeIdentitaet, spatialScopeLesen, type SafetySpatialScope } from '@/lib/safety/scope'
 
 export type SafetyFact = {
   factKey: string
@@ -45,30 +45,50 @@ export type SafetyFact = {
   vertrauenswuerdig: boolean
 }
 
+function optionalesFeld<T>(
+  wert: unknown,
+  lesen: (eingabe: unknown) => T | null,
+): { ok: true; wert: T | null } | { ok: false } {
+  if (wert == null || wert === '') return { ok: true, wert: null }
+  const gelesen = lesen(wert)
+  return gelesen == null ? { ok: false } : { ok: true, wert: gelesen }
+}
+
 export function safetyFactNormalisieren(
-  roh: SafetyProviderFact,
+  roh: unknown,
   providerNameRoh: string,
   nowMs = Date.now(),
 ): SafetyFact | null {
-  const category = enumLesen(roh.category, SAFETY_EVENT_CATEGORIES)
-  const factKey = factSchluesselLesen(roh.factKey)
+  if (!roh || typeof roh !== 'object' || Array.isArray(roh)) return null
+  const zeile = roh as Record<string, unknown>
+  const category = enumLesen(zeile.category, SAFETY_EVENT_CATEGORIES)
+  const factKey = factSchluesselLesen(zeile.factKey)
   if (!category || !factKey) return null
-  if (roh.availability === 'temporarily_unavailable') return null
+  if (zeile.availability === 'temporarily_unavailable') return null
 
   let nature: (typeof SAFETY_NATURES)[number] = 'acute'
-  if (roh.nature != null && roh.nature !== '') {
-    const gelesen = enumLesen(roh.nature, SAFETY_NATURES)
+  if (zeile.nature != null && zeile.nature !== '') {
+    const gelesen = enumLesen(zeile.nature, SAFETY_NATURES)
     if (!gelesen) return null
     nature = gelesen
   }
 
-  const spatialScope = spatialScopeLesen(roh.spatialScope)
-  const temporal = temporalScopeLesen(roh)
+  const validFrom = optionalesFeld(zeile.validFrom, isoDatumLesen)
+  const validUntil = optionalesFeld(zeile.validUntil, isoDatumLesen)
+  const freshUntil = optionalesFeld(zeile.freshUntil, isoZeitLesen)
+  const checkedAtFeld = optionalesFeld(zeile.checkedAt, isoZeitLesen)
+  if (!validFrom.ok || !validUntil.ok || !freshUntil.ok || !checkedAtFeld.ok) return null
+
+  if (zeile.travellerCitizenshipCodes != null && !Array.isArray(zeile.travellerCitizenshipCodes)) {
+    return null
+  }
+
+  const spatialScope = spatialScopeLesen(zeile.spatialScope)
+  const temporal = { start: validFrom.wert, end: validUntil.wert }
   const provider = providerNameLesen(providerNameRoh)
-  const checkedAt = isoZeitLesen(roh.checkedAt ?? null)
-  const freshUntil = isoZeitLesen(roh.freshUntil ?? null)
-  const authority = authorityLesen(roh.authority ?? null)
-  const sourceUrlRoh = roh.sourceUrl ?? null
+  const checkedAt = checkedAtFeld.wert
+  const authority = authorityLesen(zeile.authority ?? null)
+  const sourceUrlRoh = zeile.sourceUrl ?? null
   const sourceUrl = quelleUrlLesen(sourceUrlRoh)
   const vertrauenswuerdig = safetyEvidenceVertrauenswuerdig({
     provider,
@@ -82,16 +102,16 @@ export function safetyFactNormalisieren(
   return {
     factKey,
     category,
-    status: enumLesen(roh.status, SAFETY_EVENT_STATUSES) ?? 'unknown',
+    status: enumLesen(zeile.status, SAFETY_EVENT_STATUSES) ?? 'unknown',
     nature,
-    sourceSeverity: enumLesen(roh.sourceSeverity, SAFETY_SOURCE_SEVERITIES),
-    advisoryClass: enumLesen(roh.advisoryClass, SAFETY_ADVISORY_CLASSES),
+    sourceSeverity: enumLesen(zeile.sourceSeverity, SAFETY_SOURCE_SEVERITIES),
+    advisoryClass: enumLesen(zeile.advisoryClass, SAFETY_ADVISORY_CLASSES),
     spatialScope,
     temporal,
-    travellerDependent: roh.travellerDependent === true,
+    travellerDependent: zeile.travellerDependent === true,
     travellerCitizenshipCodes: [
       ...new Set(
-        (roh.travellerCitizenshipCodes ?? [])
+        (Array.isArray(zeile.travellerCitizenshipCodes) ? zeile.travellerCitizenshipCodes : [])
           .map((code) => safetyLandescode(code))
           .filter((code): code is string => Boolean(code)),
       ),
@@ -99,16 +119,16 @@ export function safetyFactNormalisieren(
     evidence: {
       provider,
       authority,
-      authorityClass: authorityClassLesen(roh.authorityClass),
+      authorityClass: authorityClassLesen(zeile.authorityClass),
       sourceUrl,
-      publishedAt: isoZeitLesen(roh.publishedAt ?? null),
-      updatedAt: isoZeitLesen(roh.updatedAt ?? null),
+      publishedAt: isoZeitLesen(zeile.publishedAt ?? null),
+      updatedAt: isoZeitLesen(zeile.updatedAt ?? null),
       checkedAt,
-      freshUntil,
+      freshUntil: freshUntil.wert,
       validFrom: null,
       validUntil: null,
-      headline: sicherheitstextLesen(roh.headline, SAFETY_GRENZEN.headline),
-      summary: sicherheitstextLesen(roh.summary, SAFETY_GRENZEN.summary),
+      headline: sicherheitstextLesen(zeile.headline, SAFETY_GRENZEN.headline),
+      summary: sicherheitstextLesen(zeile.summary, SAFETY_GRENZEN.summary),
     },
     vertrauenswuerdig,
   }
