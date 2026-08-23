@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
 Stand: 23. August 2026
-Gültig für: Foundation D und E auf `main` und Production; Travel Safety & Disruption Intelligence gemergt auf `main`; Travel Timing & Seasonal Intelligence als provider-neutrale Foundation auf Draft-PR #38, Runtime `f077d4d1`. Production-Schema unverändert durch diesen Block.
+Gültig für: Foundation D und E auf `main` und Production; Travel Safety & Disruption Intelligence gemergt auf `main`; Travel Timing & Seasonal Intelligence als provider-neutrale Foundation auf Draft-PR #38, Runtime `ece075e7`. Production-Schema unverändert durch diesen Block.
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -355,7 +355,7 @@ Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browse
 
 ### Route & Transit Intelligence (Foundation D)
 
-PR #34 ist gemergt und auf Production. `lib/route/` leitet `RouteFacts` nur aus validierten Flight-Itineraries ab. `airportContacts` und `connections` entstehen nur innerhalb eines belegten Legs; getrennte Flight-Items oder Legs werden nicht über den Zielaufenthalt verbunden. Persistenz nutzt vorhandenes `trip_items.metadata` als `{ routeItinerary }` (max. 8192 Zeichen). `reiseAusNutzlastAnlegen()` kanonisiert jede clientseitige Itinerary vor RPC und Recovery (ADR-0114). `flug_route_itinerary_metadata()` baut Punkte aus `public.airports` neu (ADR-0115). Ein BEFORE-Trigger auf `trip_items` wendet dieselbe Kanonisierung auf jeden INSERT/UPDATE von `metadata` oder `kind` an (ADR-0116). `reise_anlegen()` schreibt die validierte Itinerary atomar in derselben Transaktion (ADR-0113); der TypeScript-Nachlauf ist fail-closed Recovery. Die Flugsuche löst IATA-Länder in einem Batch gegen `public.airports` auf; die direkte Account-Flugübernahme bleibt referenzbasiert. Guest und Account teilen dasselbe `TripItem.routeItinerary`. Production-Suche und Timatic bleiben aus.
+PR #34 ist gemergt und auf Production. `lib/route/` leitet `RouteFacts` nur aus validierten Flight-Itineraries ab. `airportContacts`, `connections`, `transitCountryCodes` und `destinationCountryCodes` entstehen nur innerhalb eines belegten Legs; getrennte Flight-Items oder Legs werden nicht über den Zielaufenthalt verbunden, und ein Hinflugziel wird nicht durch ein späteres Rück-Leg zum Transit. Persistenz nutzt vorhandenes `trip_items.metadata` als `{ routeItinerary }` (max. 8192 Zeichen). `reiseAusNutzlastAnlegen()` kanonisiert jede clientseitige Itinerary vor RPC und Recovery (ADR-0114). `flug_route_itinerary_metadata()` baut Punkte aus `public.airports` neu (ADR-0115). Ein BEFORE-Trigger auf `trip_items` wendet dieselbe Kanonisierung auf jeden INSERT/UPDATE von `metadata` oder `kind` an (ADR-0116). `reise_anlegen()` schreibt die validierte Itinerary atomar in derselben Transaktion (ADR-0113); der TypeScript-Nachlauf ist fail-closed Recovery. Die Flugsuche löst IATA-Länder in einem Batch gegen `public.airports` auf; die direkte Account-Flugübernahme bleibt referenzbasiert. Guest und Account teilen dasselbe `TripItem.routeItinerary`. Production-Suche und Timatic bleiben aus.
 
 ### Traveller Context (Foundation E)
 

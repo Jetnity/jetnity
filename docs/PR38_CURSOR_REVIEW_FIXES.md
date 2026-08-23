@@ -1,19 +1,21 @@
 # PR #38 – Cursor-Fixes zum unabhängigen Review
 
 Stand: 23. August 2026  
-Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11 und R6-Blocker 12 geschlossen; R7-Re-Review offen**
+Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11, R6-Blocker 12 und R7-Blocker 13 geschlossen; R8-Re-Review offen**
 
 Review R1/R2: `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md`  
 Review R3: `docs/PR38_CHATGPT_R3_REVIEW.md`  
 Review R4: `docs/PR38_CHATGPT_R4_REVIEW.md`  
 Review R5: `docs/PR38_CHATGPT_R5_REVIEW.md`  
 Review R6: `docs/PR38_CHATGPT_R6_REVIEW.md`  
+Review R7: `docs/PR38_CHATGPT_R7_REVIEW.md`  
 Runtime-Head R1-Fixes: `89290effba61602a71418ab3904b4dc42e76709d`  
 Runtime-Head R2-Fixes: `aa6cafa2f4997c22081dff35fe950a18190e7886`  
 Runtime-Head R3-Fixes: `4f9eb1e8c524494fa8ab300bdfe24ec372e9e109`  
 Runtime-Head R4-Fixes: `f077d4d1e45366dd7dfa50bf2f98461d71b8279c`  
 Runtime-Head R5-Fixes: `249d4b9b24fed89070adfbd0bcaaacaeb481ba46`  
-Runtime-Head R6-Fixes: `e790a7d224473df2cf999fe7c058a81a5a8e8679`
+Runtime-Head R6-Fixes: `e790a7d224473df2cf999fe7c058a81a5a8e8679`  
+Runtime-Head R7-Fixes: `ece075e702c491454c553a9fc931b26308cab1a9`
 
 ## 1. Gemischte Unsicherheit
 
@@ -85,6 +87,12 @@ Foundation D projiziert `RouteFacts.airportContacts` nur innerhalb eines belegte
 
 Seasonal-Relevanz und Provider-Request lesen dieselbe Projektion. Safety nutzt dieselbe Kontaktliste. Verbindungen (`connections`) entstehen ebenfalls nur noch innerhalb eines Legs.
 
-## 14. Nicht geändert
+## 14. Multi-Leg-Länderrollen bleiben leg-bewusst
+
+Foundation D projiziert `transitCountryCodes` und `destinationCountryCodes` nur innerhalb eines belegten Legs. Das letzte Segmentziel eines Legs ist kein Transit. Zielstaaten kommen aus belegten Leg-Endpunkten; das globale Origin-/Rückkehrland wird nicht allein durch ein Rück-Leg zum Reiseziel. Multi-City-Ziele bleiben Ziele. Echter Transit im selben Leg bleibt Transit.
+
+Readiness liest dieselbe Route Truth. Guest/Account und Flight-Item-Reihenfolge ändern die Rollenmenge nicht.
+
+## 15. Nicht geändert
 
 Kein Provider, keine Migration, keine Secrets, PR bleibt Draft.

@@ -3512,6 +3512,29 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0142 – Länderrollen nur innerhalb eines belegten Legs
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R7 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Foundation D projiziert `transitCountryCodes` und `destinationCountryCodes` kanonisch pro Leg.
+- Transitländer entstehen nur aus Zwischen-Segmenten desselben Legs. Das letzte Segmentziel eines Legs ist kein Transit.
+- Zielstaaten entstehen aus belegten Leg-Endpunkten. Das globale Origin-/Rückkehrland wird nicht allein durch ein Rück-Leg zum Reiseziel.
+- Multi-City-Ziele bleiben Ziele. Echter Transit im selben Leg bleibt Transit.
+- Readiness, Seasonal und Safety lesen dieselbe Foundation-D-Rollenmenge.
+
+**Kontext:** `docs/PR38_CHATGPT_R7_REVIEW.md` gegen Runtime `ece075e7`.
+
+**Alternativen:** Flatten weiter über die Itinerary; Heuristik nach Aufenthaltsdauer; getrennte Readiness-Wahrheit.
+
+**Begründung:** Ein Hinflugziel zwischen Hin- und Rückflug ist kein Transitland. Falsche Transit-/Destination-Rollen würden spätere Visa-/Entry-/Transit-Provider falsch steuern.
+
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R8 und Product-Owner-Merge-Freigabe.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
