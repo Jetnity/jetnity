@@ -18,8 +18,9 @@ Status: **Audit-Workstream fertig nach adversariellem Self-Review; Implementieru
 - **Basis `origin/main`:** `cd220beb44d90ae376feeb8de9db8a3afb808d60`
 - **Prep-Head vor Audit-Dokumenten:** `2da365f72331259ccdb546182f99e122381dd62d`
 - **Docs-Head dieses Audits:** `f2262034e12cc8258d23001bbbf87f9a56e8414a`
-- **Branch-Head nach Push:** `c150c079`
+- **Branch-Head nach Push:** `518f5856dcb486ba3f78dc7a884597361965f8eb`
 - **PR:** Draft [#40](https://github.com/Jetnity/jetnity/pull/40)
+- **CI auf diesem Head:** SUCCESS, 4 Checks, kein Failure
 - **Mark Ready / Merge:** nein
 
 ## Phase / Scope
@@ -71,8 +72,9 @@ In dieser Phase keine Product-Code-Änderung. Ist-Nachweis:
 
 - 85/85 Admin-nahe Unit-Tests grün (`admin-access`, `roles`, `roles-datenbank`, `faehigkeiten-datenbank`, `ladezustand`, `kennzahlen`)
 - `check:api-schutz`: 10/10 Admin-Routen mit `requireAdminApi()`
+- GitHub CI auf Head `518f5856`: SUCCESS, 4 Checks
 
-Kein Production-Build als „Control Center fertig“ behauptet. `db:sicherheit` gegen Live-Development nicht ausgeführt.
+Kein Production-Build als „Control Center fertig“ behauptet. `db:sicherheit` gegen Live-Development nicht ausgeführt. Kein Mark Ready.
 
 ## Lieferobjekte
 
