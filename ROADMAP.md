@@ -120,7 +120,7 @@ Keine Passnummern, Scans, MRZ oder Biometrie. Ausstellerland ist keine automatis
 
 ## 5. NÄCHSTE PRIORITÄT – Travel Safety & Disruption Intelligence
 
-Status: **in Arbeit auf `feat/travel-safety-disruption-intelligence`; `main` unverändert**
+Status: **technisch reviewbereit auf Draft-PR #37; `main` und Production unverändert**
 
 Verbindliche Policy:
 
@@ -163,13 +163,17 @@ Die Funktion darf kein isoliertes Warnungsmodul werden. Sie muss Route Truth, Tr
 
 ### Auftrag / Arbeitsstand
 
-Versionierter Cursor-Auftrag liegt auf `main` und wird jetzt implementiert:
+Versionierter Cursor-Auftrag liegt auf `main` und ist auf dem Feature-Branch umgesetzt:
 
+- Branch: `feat/travel-safety-disruption-intelligence`
+- Draft PR: https://github.com/Jetnity/jetnity/pull/37
 - `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`
+- Acceptance: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ACCEPTANCE.md`
+- Fachdokument: `docs/TRAVEL_SAFETY_DISRUPTION.md`
 - Ist-Audit: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ARCHITECTURE_AUDIT.md`
 - Live-Status: `docs/ACTIVE_WORK_STATUS.md`
 
-Kein echter Safety-Provider in diesem Block. Keine Production-Migration, kein Mark Ready, kein Merge.
+Kein echter Safety-Provider in diesem Block. Keine Production-Migration, kein Mark Ready, kein Merge. Unabhängiger ChatGPT-Review folgt gegen den finalen PR-Head.
 
 ---
 
@@ -275,8 +279,9 @@ Leitsatz:
 Nach dem großen Umbau ist ein kompletter Senior Product / Architecture / UX / Logic / Security / Intelligence Audit zwingend:
 
 - `docs/TRIP_WORKSPACE_FINAL_INTELLIGENCE_AUDIT_POLICY.md`
+- `docs/TRIP_WORKSPACE_FUNCTION_BY_FUNCTION_AUDIT_MANDATE.md` (auf `main` seit `91e644b2`)
 
-Er muss alte und neue Funktionen zusammen prüfen, nicht nur einzelne Module.
+Er muss alte und neue Funktionen zusammen prüfen, nicht nur einzelne Module. Das Function-by-Function-Mandat gilt für den späteren großen Workspace-Block, nicht als Nacharbeit dieser Safety-Foundation.
 
 Insbesondere:
 

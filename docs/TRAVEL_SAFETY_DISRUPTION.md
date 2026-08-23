@@ -58,6 +58,8 @@ Route Truth kommt ausschließlich aus `routeFactsAusGraph`. Traveller Context wi
 
 Keine Safety-Tabelle. Official Safety-Truth bleibt compute-on-read, analog Official Readiness. Production-Schema unverändert.
 
+Lokal auf Draft-PR #37 verifiziert: 1393 Tests, UI-Audit 886/886, Production-Build 38/38. Live-Provider bleibt `null`.
+
 ---
 
 ## Was diese Foundation nicht tut

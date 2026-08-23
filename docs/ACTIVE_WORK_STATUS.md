@@ -18,80 +18,103 @@ Auftrag: `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`
 
 ## 2. Branch / PR / aktueller Head
 
-- Basis: aktuelles `origin/main` = `cc3c6abc7a34a58642182013657eb10194978f96`
+- Basis: aktuelles `origin/main` = `91e644b279c802c5a5d7a88135ed8ab9c4229a34`
 - Branch: `feat/travel-safety-disruption-intelligence`
-- Draft PR: wird mit diesem Checkpoint eröffnet
-- Head: siehe aktuellen Branch-Commit; nach jedem Push hier nachziehen
+- Draft PR: https://github.com/Jetnity/jetnity/pull/37
+- Implementierungs-Head inkl. `main`-Sync: `71f02c4eddb80d227c651d911228015c4d8f5ad6`
+- Ahead/behind zu `origin/main` vor diesem Dokumentations-Commit: **5 ahead / 0 behind**
+- Branch bleibt Draft. Kein Mark Ready, kein Merge.
 
 ## 3. Status
 
-**in Arbeit**
+**technisch reviewbereit auf dem Feature-Branch; unabhängiger ChatGPT-Review als Nächstes**
 
 Foundation D und E bleiben abgeschlossen und werden nicht erneut gebaut.
 
 ## 4. Bereits umgesetzt
 
-- `origin/main` frisch synchronisiert
-- Feature-Branch vom aktuellen `main` erstellt
-- Phase-1-Ist-Audit versioniert: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ARCHITECTURE_AUDIT.md`
-- Persistenz-Empfehlung des Audits: **keine neue Safety-DB** in dieser Foundation
+- Phase-1-Ist-Audit: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ARCHITECTURE_AUDIT.md`
+- `lib/safety/` Domäne, Port, Relevance, Impact, Fingerprint
+- fail-closed API `POST /api/safety/evaluate`
+- minimale Workspace-/Audit-Naht ohne permanente leere Karte
+- Pflicht-Testmatrix 1–31
+- ADR-0127 / ADR-0128, Fachdokument, Acceptance
+- UI-Audit inkl. Safety-Zustände
 
 ## 5. Gerade offen / noch nicht umgesetzt
 
-- `lib/safety/` Domäne, Port, Relevance, Impact, Fingerprint
-- fail-closed API-Grenze
-- minimale Workspace-/Audit-Naht
-- Pflicht-Testmatrix und bestehende Gates
-- Acceptance-/ADR-/Architektur-/Handoff-Abschluss
+- unabhängiger ChatGPT-Review gegen den finalen PR-Head
+- Product-Owner-Merge-Freigabe
+- echter Safety-Provider (separates Gate)
+- Account-`tripId`-Serverload der API (Foundation nutzt validierte Trip-Facts)
+- persistentes globales Rate-Limit vor kostenpflichtigem Production-Provider
+- `Jetzt wichtig` / großer Workspace-Umbau
 
 ## 6. Letzte relevanten Änderungen
 
-- Audit-Commit auf diesem Branch: `e245d50f493bf02d4899ef1eca1f8ea01dfe8743`
+- Implementierung: `f48f0cb3`
+- Architektur/Acceptance/UI-Audit-Fixture: `695b1b48`
+- `origin/main` Sync (Function-by-Function-Audit-Mandat): `71f02c4e`
 
 ## 7. Tests / CI / Preview
 
-Noch nicht für diesen Block gelaufen. Foundation-E-Nachweis auf `main` bleibt der letzte verifizierte Stand (1353 Tests, UI-Audit 838/838). Neue Zahlen erst nach Ausführung dokumentieren.
+Lokal auf dem Feature-Branch verifiziert:
+
+- `npm test`: **1393/1393**
+- Typecheck, Lint, Hygiene grün
+- Production-Build: **38/38** Seiten, inkl. `/api/safety/evaluate`
+- UI-Audit: **886/886**, 0 Fehler, WebKit + Chromium, 8 Viewports
+- DB unverändert: `db:rechte` 51, `db:rls` Exit 0, `db:sicherheit` 210/210, `db:parallelitaet` 7/7
+
+Auf Head `71f02c4e` zusätzlich remote:
+
+- GitHub Actions Run `32610279898`: **SUCCESS**
+- Vercel Preview Deployment `6043181714`: **success** → `https://jetnity-q14jlyh8o-jetnity-e1b93c82.vercel.app`
+
+CI/Preview für den nachfolgenden Dokumentations-Commit werden nach dem Push nachgezogen. Nicht als bereits grün auf einem neueren SHA behaupten.
 
 ## 8. DB / RLS / Production-Grenze
 
-- Production unverändert
-- keine Safety-Migration geplant
+- keine Safety-Migration
+- Production-Schema unverändert
 - keine Production-Migration in diesem Block
 
 ## 9. Kosten / Provider / Secrets
 
 - kein echter Safety-/Disruption-Provider
+- `safetyProviderAus()` bleibt `null`
 - keine Provider-Secrets
 - keine neuen laufenden Providerkosten
-- Factory bleibt `null` / disabled
 
 ## 10. Bekannte Risiken / Review-Funde
 
-- Activities/Stays oft title-only: Safety darf daraus keine Geo-Betroffenheit raten
+- Activities/Stays oft title-only: Safety rät daraus keine Geo-Betroffenheit
 - Etappen ohne `countryCode` bleiben `insufficient_context`
-- `Jetzt wichtig` existiert noch nicht; Foundation darf den späteren Workspace-Umbau nicht vorwegnehmen
-- ohne Live-Provider darf die Übersicht keine permanente leere Safety-Karte zeigen
+- `Jetzt wichtig` existiert noch nicht
+- API lädt keinen Account-Trip per `tripId`; Guest- und Audit-Kontext sind validierte Trip-Facts
+- In-Process-Rate-Limit gilt nur Preview/Dev
+- ohne übergebene Evaluations bleibt die Safety-Karte bewusst unsichtbar
 
 ## 11. Offene Nutzerentscheidungen / Freigaben
 
 - kein Merge
 - kein Mark Ready
 - keine Production-Migration
-- unabhängiger ChatGPT-Review erst nach finalem PR-Head
+- unabhängiger ChatGPT-Review erst nach finalem PR-Head inkl. Abschlussdokumentation
 
 ## 12. Exakter nächster Schritt
 
-1. Provider-neutrale Safety-Domäne und Relevance Engine implementieren
-2. API- und UX-Naht anschliessen
-3. Pflicht-Testmatrix und Hygiene/Build/UI-Audit ausführen
-4. Dokumente mit echten Nachweisen schliessen
-5. Draft PR auf finalem Head belassen
+1. Diesen Dokumentationsstand pushen
+2. CI und Vercel Preview auf dem dann aktuellen Head verifizieren
+3. Unabhängigen ChatGPT-Review gegen den tatsächlichen finalen PR-Head starten
+4. Draft PR Draft lassen, bis der Product Owner ausdrücklich freigibt
 
 ## 13. Zuerst zu lesen
 
 1. `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`
-2. `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ARCHITECTURE_AUDIT.md`
-3. `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`
-4. `docs/ACTIVE_WORK_STATUS.md`
-5. `JETNITY_HANDOFF.md`
-6. `lib/route/*`, `lib/readiness/*`, `components/trips/TripWorkspace.tsx`
+2. `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ACCEPTANCE.md`
+3. `docs/TRAVEL_SAFETY_DISRUPTION.md`
+4. `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ARCHITECTURE_AUDIT.md`
+5. `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`
+6. `JETNITY_HANDOFF.md`
+7. `lib/safety/*`, `components/trips/ReiseSicherheit.tsx`

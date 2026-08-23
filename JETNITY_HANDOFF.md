@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 23. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D und E vollständig abgeschlossen inkl. Production; Travel Safety Foundation auf Feature-Branch in Arbeit**
+Status: **verbindlicher operativer Übergabepunkt – Foundation D und E vollständig abgeschlossen inkl. Production; Travel Safety Foundation technisch reviewbereit auf Draft-PR #37**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Er sagt, was Jetnity ist, was bereits gebaut wurde, welche Regeln verbindlich sind und was als Nächstes zu tun ist.
 
@@ -245,10 +245,13 @@ Smartphone, Tablet, Laptop und Desktop dürfen sich layoutseitig unterscheiden, 
 
 ## 8. Nächste verbindliche Reihenfolge
 
-Der nächste neue Produktblock ist **auf dem Feature-Branch gestartet**, nicht auf `main`.
+Der nächste neue Produktblock ist **technisch reviewbereit auf dem Feature-Branch**, nicht auf `main`.
 
 Aktiver Branch: `feat/travel-safety-disruption-intelligence`  
+Draft PR: https://github.com/Jetnity/jetnity/pull/37  
 Auftrag: `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`  
+Acceptance: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ACCEPTANCE.md`  
+Fachdokument: `docs/TRAVEL_SAFETY_DISRUPTION.md`  
 Ist-Audit: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ARCHITECTURE_AUDIT.md`  
 Live-Handoff: `docs/ACTIVE_WORK_STATUS.md`
 
@@ -271,7 +274,7 @@ Echte Provider kommen am Schluss. **Vorher müssen die provider-neutralen Ports/
 
 ## 9. Nächster operativer Schritt
 
-Cursor setzt `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md` auf `feat/travel-safety-disruption-intelligence` um.
+Cursor hat die provider-neutrale Safety-Foundation auf `feat/travel-safety-disruption-intelligence` umgesetzt. Nächster Schritt: **unabhängiger ChatGPT-Review gegen den tatsächlichen finalen PR-Head**.
 
 Harte Gates bleiben:
 
@@ -280,8 +283,8 @@ Harte Gates bleiben:
 - keine Production-Migration
 - kein echter Safety-/Disruption-Provider
 
-Nach Cursor-Abschluss prüft ChatGPT den **tatsächlichen finalen PR-Head**.
+Lokal verifiziert: 1393/1393 Tests, UI-Audit 886/886 (WebKit + Chromium, 8 Viewports), Production-Build 38/38, DB-Gates unverändert. Production-Schema unverändert.
 
 Leitsatz:
 
-> **Foundation D und E sind fertig. Als Nächstes bauen wir Safety als Teil derselben Reise-Wahrheit – nicht als isolierten Warnungsfeed.**
+> **Foundation D und E sind fertig. Safety ist jetzt eine eigene Truth-Domäne derselben Reise – nicht als isolierter Warnungsfeed und nicht als Live-Provider.**
