@@ -1,7 +1,7 @@
 # Jetnity – Multi-Agent Workstreams
 
 Stand: 23. August 2026  
-Status: **Vorbereitungsphase – Audit-Agenten dürfen starten; parallele Kernimplementierung bleibt bis technischem Closure von PR #38 gesperrt**
+Status: **Account-Audit fertig (Agent: Account plattform audit vorbereitung); parallele Kernimplementierung bleibt bis technischem Closure von PR #38 gesperrt**
 
 ## 1. Koordinationsprinzip
 
@@ -13,8 +13,8 @@ GitHub ist dauerhaftes Teamgedächtnis. Jeder Cursor-Agent wird ausschließlich 
 
 | Cursor-Anzeigename | Workstream | Phase | Basis | Erlaubt | Gesperrt | Nächster Schritt |
 | --- | --- | --- | --- | --- | --- | --- |
-| wird nach Start eingetragen | Travel Timing & Seasonal / PR #38 | Runtime-Fix + Review | `feat/travel-timing-seasonal-intelligence` | R11-Blocker 24–26 schließen, Tests/Gates/Handoff | Mark Ready/Merge ohne Product Owner | Fix 24–26 → Exact-Head-Gate → ChatGPT R12 |
-| wird nach Start eingetragen | Account Platform | Audit / Vorbereitung | eigener Branch von `main` bzw. freigegebener Prep-Basis | Code-/DB-/UX-Audit, Architektur, Evidence-Matrix, Implementierungsplan, Doku | unkoordinierte Auth/RLS/DB/Truth-Implementierung, Migration, Production | `docs/CURSOR_ACCOUNT_PLATFORM_AUDIT_TASK.md` ausführen |
+| Reisezeitpunkt saisonale intelligenz | Travel Timing & Seasonal / PR #38 | Runtime / Review (dieser Account-Agent reviewed den Seasonal-Code nicht) | `feat/travel-timing-seasonal-intelligence` | nur der Seasonal-Agent: R11-Blocker, Tests/Gates/Handoff | Account/Admin dürfen PR #38 nicht ändern; Mark Ready/Merge ohne Product Owner | Seasonal-Agent: eigener Handoff; Account wartet auf Closure |
+| **Account plattform audit vorbereitung** | Account Platform | Audit fertig / Review | `audit/account-platform` | Audit-Doku, Evidence, Plan, Handoff | Auth/RLS/DB/Truth-Implementierung, Migration, Production, PR #38, Ready/Merge | unabhängiger Lead-Review; Implementierung erst nach Freigabe |
 | wird nach Start eingetragen | Admin Platform | Audit / Vorbereitung | eigener Branch von `main` bzw. freigegebener Prep-Basis | Admin-/Security-/Finance-/Ops-Audit, Architektur, Permission-Matrix, Plan, Doku | Rollen/RLS/Service-Role/Payment/Bexio/Ads/Provider Live-Änderungen | `docs/CURSOR_ADMIN_PLATFORM_AUDIT_TASK.md` ausführen |
 
 ## 3. Ownership-Grenzen während der Auditphase
@@ -101,6 +101,10 @@ Jeder Agent dokumentiert spätestens bei Meilenstein, Blockierung, Unterbrechung
 - exakter nächster Schritt
 
 Eine Cursor-Session darf verloren gehen, ohne dass dadurch relevanter Projektfortschritt verloren geht.
+
+Account-Audit-Handoff: `docs/ACCOUNT_PLATFORM_HANDOFF.md`.
+
+Hinweis: `docs/MULTI_AGENT_DEVELOPMENT_TEAM_POLICY.md` wird von den Audit-Tasks referenziert, liegt im Repository aber nicht vor. Verbindlich für Koordination ist diese Datei.
 
 ## 7. Aktuelle Produktentscheidung Account vs Workspace
 

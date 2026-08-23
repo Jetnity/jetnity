@@ -288,7 +288,9 @@ Frühere grüne Tests oder frühere Merges geben keinen Bestandsschutz. Evidence
 
 ## 9. Nächste verbindliche Reihenfolge
 
-Der nächste neue Entwicklungsblock hat **noch nicht begonnen**.
+Der nächste **Kern**-Entwicklungsblock ist Travel Timing & Seasonal Intelligence. PR #38 existiert als Draft auf `feat/travel-timing-seasonal-intelligence` (unabhängig verifiziert, nicht von diesem Account-Workstream bearbeitet).
+
+Parallel und **ohne Kernimplementierung**: Account-Platform-Audit auf `audit/account-platform` (Agent **Account plattform audit vorbereitung**). Siehe `docs/ACCOUNT_PLATFORM_HANDOFF.md` und `docs/MULTI_AGENT_WORKSTREAMS.md`.
 
 1. ✅ Foundation C – Readiness
 2. ✅ Foundation D – Route & Transit
@@ -310,12 +312,11 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-1. aktuellen `main`-/CI-/Vercel-/Production-Stand erneut prüfen
-2. `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md` vollständig lesen
-3. Ist-Architektur-Audit für Seasonal gegen Safety, Route, Traveller Context, Readiness und Workspace erstellen
-4. vollständigen versionierten Cursor-Auftrag für die provider-neutrale Seasonal Foundation erstellen
-5. neuen Feature-Branch + frühen Draft PR starten
-6. kein echter Seasonal-Provider, kein Secret, keine unfreigegebenen Kosten, kein Merge ohne aktuelle Product-Owner-Freigabe
+Zwei parallele Stränge, nicht vermischen:
+
+**Seasonal (PR #38, anderer Agent):** eigenen Seasonal-Handoff auf `feat/travel-timing-seasonal-intelligence` lesen. Dieser Account-Agent ändert PR #38 nicht.
+
+**Account Platform:** Audit ist dokumentiert. Nächster Schritt ist unabhängiger Lead-Review, danach geschnittene UI-PRs erst nach ausdrücklicher Implementierungsfreigabe. Kein Ready, kein Merge, keine Auth/RLS/DB-Änderung aus dem Audit.
 
 Leitsatz:
 

@@ -1,7 +1,7 @@
 # Cursor Task – Jetnity Account Platform Audit
 
 Stand: 23. August 2026  
-Status: **Audit-/Vorbereitungsauftrag – keine unkoordinierte Kernimplementierung vor technischem Closure von PR #38**
+Status: **Audit durch Agent „Account plattform audit vorbereitung“ ausgeführt – Lieferobjekte im Branch; keine Kernimplementierung vor technischem Closure von PR #38**
 
 ## 1. Rolle
 
@@ -146,14 +146,14 @@ Kleine rein dokumentarische Audit-Artefakte sind erlaubt.
 
 Im eigenen Workstream-Branch dokumentieren:
 
-1. `docs/ACCOUNT_PLATFORM_AUDIT.md`
-2. `docs/ACCOUNT_PLATFORM_TARGET_ARCHITECTURE.md`
-3. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`
-4. Evidence-Matrix: heutiger Pfad → Befund → Risiko → Ziel → betroffene Dateien/DB → Testbedarf
-5. klare Liste `Must fix / Should improve / Later`
-6. Dependency-/Conflict-Liste mit Admin-Workstream und PR #38
-7. vorgeschlagene Branch-/PR-Scope-Grenzen für die spätere Implementierung
-8. vollständiges Handoff
+1. `docs/ACCOUNT_PLATFORM_AUDIT.md` – vorhanden
+2. `docs/ACCOUNT_PLATFORM_TARGET_ARCHITECTURE.md` – vorhanden
+3. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` – vorhanden
+4. Evidence-Matrix: `docs/ACCOUNT_PLATFORM_EVIDENCE_MATRIX.md` – vorhanden
+5. klare Liste `Must fix / Should improve / Later` – in Audit §11
+6. Dependency-/Conflict-Liste mit Admin-Workstream und PR #38 – in Plan §4
+7. vorgeschlagene Branch-/PR-Scope-Grenzen für die spätere Implementierung – Plan §2 (AP-0–AP-12)
+8. vollständiges Handoff – `docs/ACCOUNT_PLATFORM_HANDOFF.md`
 
 ## 8. Handoff-Pflicht
 
