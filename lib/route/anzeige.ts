@@ -6,12 +6,10 @@
 
 import { dauerLesbar } from '@/lib/flights/zeit'
 import type { FlugOption } from '@/lib/flights/domain'
+import { routeFactsAusItinerary } from '@/lib/route/ableitung'
 import type { FlughafenReferenzKarte, RouteFacts, RoutePunkt, RouteVerbindung } from '@/lib/route/domain'
-import { airportZeitkontakteAusItineraries } from '@/lib/route/kontakte'
-import { laenderrollenAus } from '@/lib/route/laender'
-import { itineraryAusFlugOption, segmenteAusItinerary } from '@/lib/route/itinerary'
+import { itineraryAusFlugOption } from '@/lib/route/itinerary'
 import { pfadSchritteAusSegmenten } from '@/lib/route/pfad'
-import { verbindungenAusLegs } from '@/lib/route/verbindung'
 
 export type RouteAnzeige = {
   kompakt: string
@@ -74,33 +72,7 @@ export function routeAnzeigeAusOption(
 ): RouteAnzeige | null {
   const itinerary = itineraryAusFlugOption(option, refs)
   if (!itinerary) return null
-  const segments = segmenteAusItinerary(itinerary)
-  const laender = laenderrollenAus([{ itinerary }])
-  const facts: RouteFacts = {
-    quelle: 'flight_itinerary',
-    origin: segments[0]?.origin ?? {
-      airportCode: null,
-      countryCode: null,
-      city: null,
-      country: null,
-    },
-    destination: segments[segments.length - 1]?.destination ?? {
-      airportCode: null,
-      countryCode: null,
-      city: null,
-      country: null,
-    },
-    segments,
-    legs: itinerary.legs,
-    connections: verbindungenAusLegs(itinerary.legs),
-    airportContacts: airportZeitkontakteAusItineraries([{ itinerary }]),
-    transitCountryCodes: laender.transitCountryCodes,
-    destinationCountryCodes: laender.destinationCountryCodes,
-    sourceItemIds: [],
-    fingerprint: null,
-    chronologieBewiesen: true,
-  }
-  return routeAnzeigeAusFacts(facts)
+  return routeAnzeigeAusFacts(routeFactsAusItinerary(itinerary))
 }
 
 function beinKompakt(segmente: RouteFacts['segments'], mitCode: boolean): string {

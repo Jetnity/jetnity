@@ -231,4 +231,51 @@ describe('Traveller-Kontext', () => {
     assert.equal(optionen[0]?.document, null)
     assert.equal(optionen[0]?.optionRef, 'traveller:1:none')
   })
+
+  test('Ref→Country-Tausch ändert die Dokument-Bedeutung, Reihenfolge nicht', () => {
+    const chDannRs = travellerLegacyLesen({
+      clientRef: 'traveller:1',
+      citizenships: [
+        { clientRef: 'c1', countryCode: 'CH', createdAt: JETZT, updatedAt: JETZT },
+        { clientRef: 'c2', countryCode: 'RS', createdAt: JETZT, updatedAt: JETZT },
+      ],
+      documents: [
+        {
+          clientRef: 'document:passport:bound',
+          documentType: 'passport',
+          issuingCountryCode: 'CH',
+          citizenshipClientRef: 'c1',
+          expiresOn: '2030-01-01',
+          createdAt: JETZT,
+          updatedAt: JETZT,
+        },
+      ],
+      createdAt: JETZT,
+      updatedAt: JETZT,
+    })!
+    const getauscht = travellerLegacyLesen({
+      clientRef: 'traveller:1',
+      citizenships: [
+        { clientRef: 'c1', countryCode: 'RS', createdAt: JETZT, updatedAt: JETZT },
+        { clientRef: 'c2', countryCode: 'CH', createdAt: JETZT, updatedAt: JETZT },
+      ],
+      documents: chDannRs.documents,
+      createdAt: JETZT,
+      updatedAt: JETZT,
+    })!
+    const nurReihenfolge = travellerLegacyLesen({
+      clientRef: 'traveller:1',
+      citizenships: [
+        { clientRef: 'c2', countryCode: 'RS', createdAt: JETZT, updatedAt: JETZT },
+        { clientRef: 'c1', countryCode: 'CH', createdAt: JETZT, updatedAt: JETZT },
+      ],
+      documents: chDannRs.documents,
+      createdAt: JETZT,
+      updatedAt: JETZT,
+    })!
+    assert.notEqual(travellerCredentialFingerprint(chDannRs), travellerCredentialFingerprint(getauscht))
+    assert.equal(travellerCredentialFingerprint(chDannRs), travellerCredentialFingerprint(nurReihenfolge))
+    assert.equal(documentCitizenshipCode(chDannRs, chDannRs.documents[0]!), 'CH')
+    assert.equal(documentCitizenshipCode(getauscht, getauscht.documents[0]!), 'RS')
+  })
 })

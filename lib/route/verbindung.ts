@@ -24,15 +24,16 @@ function verbindungenAusSegmenten(
 
     const ankunftCode = iataLesen(vorher.destination.airportCode)
     const abflugCode = iataLesen(nachher.origin.airportCode)
-    const airportChange =
-      ankunftCode && abflugCode ? ankunftCode !== abflugCode : ankunftCode || abflugCode ? true : null
-
-    const durationMinutes = dauerAusZeiten(
-      vorher.arrivalDate,
-      vorher.arrivalTime,
-      nachher.departureDate,
-      nachher.departureTime,
-    )
+    const airportChange = airportWechsel(ankunftCode, abflugCode)
+    const durationMinutes =
+      airportChange === false
+        ? dauerAusZeiten(
+            vorher.arrivalDate,
+            vorher.arrivalTime,
+            nachher.departureDate,
+            nachher.departureTime,
+          )
+        : null
 
     verbindungen.push({
       airportCode: ankunftCode,
@@ -64,6 +65,11 @@ export function verbindungNachSegment(
   fromSegmentIndex: number,
 ): RouteVerbindung | null {
   return verbindungen.find((eintrag) => eintrag.fromSegmentIndex === fromSegmentIndex) ?? null
+}
+
+function airportWechsel(ankunftCode: string | null, abflugCode: string | null): boolean | null {
+  if (!ankunftCode || !abflugCode) return null
+  return ankunftCode !== abflugCode
 }
 
 function dauerAusZeiten(

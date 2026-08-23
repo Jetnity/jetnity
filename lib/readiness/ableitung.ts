@@ -25,7 +25,9 @@ function travellerFingerprintFelder(traveller: TripTraveller | null) {
   return {
     travellerClientRef: traveller.clientRef,
     citizenshipCountryCodes: citizenshipCodesAus(traveller),
-    documentFingerprints: documentsSortieren(traveller.documents).map(documentFingerprintTeil),
+    documentFingerprints: documentsSortieren(traveller.documents).map((document) =>
+      documentFingerprintTeil(document, traveller),
+    ),
     residenceCountryCode: traveller.residenceCountryCode,
   }
 }

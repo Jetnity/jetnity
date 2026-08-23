@@ -69,19 +69,27 @@ export function citizenshipCodesAus(traveller: Pick<TripTraveller, 'citizenships
   return [...new Set(citizenshipsSortieren(traveller.citizenships).map((eintrag) => eintrag.countryCode))]
 }
 
-export function documentFingerprintTeil(document: TripTravellerDocument): string {
-  return [
-    document.documentType,
-    document.issuingCountryCode ?? '',
-    document.expiresOn ?? '',
-    document.citizenshipClientRef ?? '',
-  ].join(':')
+export function documentFingerprintTeil(
+  document: TripTravellerDocument,
+  traveller?: Pick<TripTraveller, 'citizenships'>,
+): string {
+  return JSON.stringify({
+    documentType: document.documentType,
+    issuingCountryCode: document.issuingCountryCode ?? '',
+    expiresOn: document.expiresOn ?? '',
+    citizenshipCountryCode: traveller ? documentCitizenshipCode(traveller, document) ?? '' : '',
+  })
 }
 
 export function travellerCredentialFingerprint(traveller: TripTraveller): string {
-  const citizenships = citizenshipCodesAus(traveller).join(',')
-  const documents = documentsSortieren(traveller.documents).map(documentFingerprintTeil).join(',')
-  return `t=${traveller.clientRef}|cit=${citizenships}|docs=${documents}|res=${traveller.residenceCountryCode ?? ''}`
+  return JSON.stringify({
+    travellerClientRef: traveller.clientRef,
+    citizenshipCountryCodes: citizenshipCodesAus(traveller),
+    documents: documentsSortieren(traveller.documents)
+      .map((document) => JSON.parse(documentFingerprintTeil(document, traveller)) as object)
+      .sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))),
+    residenceCountryCode: traveller.residenceCountryCode ?? '',
+  })
 }
 
 export function partyCredentialFingerprint(party: readonly TripTraveller[]): string {

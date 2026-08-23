@@ -11,7 +11,7 @@ import {
   type RouteFacts,
   type RouteItineraryMitQuelle,
 } from '@/lib/route/domain'
-import { itinerariesSortieren, routeChronologieBewiesen } from '@/lib/route/chronologie'
+import { itinerariesFuerWahrheit, routeChronologieBewiesen } from '@/lib/route/chronologie'
 import { routeFingerprintAus } from '@/lib/route/fingerprint'
 import { airportZeitkontakteAusItineraries } from '@/lib/route/kontakte'
 import { laenderrollenAus } from '@/lib/route/laender'
@@ -36,26 +36,27 @@ function itinerariesAusReise(reise: Pick<Trip, 'days' | 'ohneTag'>): RouteItiner
     })
   }
 
-  return itinerariesSortieren(itineraries)
+  return itineraries
 }
 
 function routeFactsAusItineraries(itineraries: readonly RouteItineraryMitQuelle[]): RouteFacts {
   if (itineraries.length === 0) return leereRouteFacts()
 
-  const primaer = itineraries[0]
+  const wahrheit = itinerariesFuerWahrheit(itineraries)
+  const primaer = wahrheit[0]
   if (!primaer) return leereRouteFacts()
 
-  const segmente = itineraries.flatMap((eintrag) => segmenteAusItinerary(eintrag.itinerary))
+  const segmente = wahrheit.flatMap((eintrag) => segmenteAusItinerary(eintrag.itinerary))
   if (segmente.length === 0) return leereRouteFacts()
 
   const primaerSegmente = segmenteAusItinerary(primaer.itinerary)
-  const bewiesen = routeChronologieBewiesen(itineraries)
+  const bewiesen = routeChronologieBewiesen(wahrheit)
   const origin = bewiesen ? (primaerSegmente[0]?.origin ?? { ...LEERER_ROUTE_PUNKT }) : { ...LEERER_ROUTE_PUNKT }
   const destination = bewiesen
     ? (primaerSegmente[primaerSegmente.length - 1]?.destination ?? { ...LEERER_ROUTE_PUNKT })
     : { ...LEERER_ROUTE_PUNKT }
-  const laender = laenderrollenAus(itineraries)
-  const legs = itineraries.flatMap((eintrag) => eintrag.itinerary.legs)
+  const laender = laenderrollenAus(wahrheit)
+  const legs = wahrheit.flatMap((eintrag) => eintrag.itinerary.legs)
 
   return {
     quelle: 'flight_itinerary',
@@ -67,10 +68,10 @@ function routeFactsAusItineraries(itineraries: readonly RouteItineraryMitQuelle[
     airportContacts: airportZeitkontakteAusItineraries(itineraries),
     transitCountryCodes: laender.transitCountryCodes,
     destinationCountryCodes: laender.destinationCountryCodes,
-    sourceItemIds: itineraries
+    sourceItemIds: wahrheit
       .map((eintrag) => eintrag.sourceItemId)
       .filter((id): id is string => Boolean(id)),
-    fingerprint: routeFingerprintAus(itineraries),
+    fingerprint: routeFingerprintAus(wahrheit),
     chronologieBewiesen: bewiesen,
   }
 }

@@ -3,7 +3,9 @@
 // Belegte Route-Reihenfolge. Item-Datum+Zeit und Segmentdaten bleiben getrennt.
 // Date-only darf eine vorhandene Segmentzeit nicht auf 00:00 degradieren.
 // Eine Reihenfolge gilt nur dann als bewiesen, wenn keine Quelle widerspricht
-// und mindestens eine Quelle eindeutig ordnet.
+// und mindestens eine Quelle eindeutig ordnet. Das gilt auch innerhalb einer
+// Multi-Leg-Itinerary: eindeutige Segmentzeiten sind die Source of Truth,
+// nicht die deklarierte Array-Reihenfolge und nicht der lexikalische Pfad.
 
 import type { FlugRouteItinerary, RouteItineraryMitQuelle } from '@/lib/route/domain'
 import { pfadAusItinerary } from '@/lib/route/pfad'
@@ -92,9 +94,46 @@ function paarOrdnung(links: StartKandidaten, rechts: StartKandidaten): 'before' 
   return 'unknown'
 }
 
+function beinStart(bein: FlugRouteItinerary['legs'][number]): StartWert | null {
+  const erstes = bein.segments[0]
+  return startWert(kalendertag(erstes?.departureDate ?? null), uhrzeit(erstes?.departureTime ?? null))
+}
+
+function beineHabenEindeutigeOrdnung(beine: readonly FlugRouteItinerary['legs'][number][]): boolean {
+  if (beine.length <= 1) return true
+  const starts = beine.map(beinStart)
+  for (let i = 0; i < starts.length; i += 1) {
+    for (let j = i + 1; j < starts.length; j += 1) {
+      const vergleich = vergleichStart(starts[i] ?? null, starts[j] ?? null)
+      if (vergleich === 'unknown' || vergleich === 'tie') return false
+    }
+  }
+  return true
+}
+
+function itineraryBeineOrdnen(itinerary: FlugRouteItinerary): FlugRouteItinerary {
+  if (!beineHabenEindeutigeOrdnung(itinerary.legs)) return itinerary
+  const starts = itinerary.legs.map(beinStart)
+  return {
+    ...itinerary,
+    legs: itinerary.legs
+      .map((bein, index) => ({ bein, index }))
+      .sort((a, b) => {
+        const vergleich = vergleichStart(starts[a.index] ?? null, starts[b.index] ?? null)
+        if (vergleich === 'before') return -1
+        if (vergleich === 'after') return 1
+        return a.index - b.index
+      })
+      .map((eintrag) => eintrag.bein),
+  }
+}
+
 export function routeChronologieBewiesen(
   itineraries: readonly { startsOn?: string | null; startsAt?: string | null; itinerary: FlugRouteItinerary }[],
 ): boolean {
+  for (const eintrag of itineraries) {
+    if (!beineHabenEindeutigeOrdnung(eintrag.itinerary.legs)) return false
+  }
   if (itineraries.length <= 1) return true
   const kandidaten = itineraries.map(startKandidaten)
 
@@ -106,7 +145,7 @@ export function routeChronologieBewiesen(
   return true
 }
 
-export function itinerariesSortieren<
+function itinerariesSortieren<
   T extends Pick<RouteItineraryMitQuelle, 'itinerary'> & {
     startsOn?: string | null
     startsAt?: string | null
@@ -125,4 +164,18 @@ export function itinerariesSortieren<
       return pfadAusItinerary(a.eintrag.itinerary).localeCompare(pfadAusItinerary(b.eintrag.itinerary))
     })
     .map((eintrag) => eintrag.eintrag)
+}
+
+export function itinerariesFuerWahrheit<
+  T extends Pick<RouteItineraryMitQuelle, 'itinerary'> & {
+    startsOn?: string | null
+    startsAt?: string | null
+  },
+>(itineraries: readonly T[]): T[] {
+  return itinerariesSortieren(
+    itineraries.map((eintrag) => ({
+      ...eintrag,
+      itinerary: itineraryBeineOrdnen(eintrag.itinerary),
+    })),
+  )
 }

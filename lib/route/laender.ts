@@ -5,7 +5,7 @@
 // Reise-Origin sind. Transit bleibt ein Zwischenpunkt im selben Leg.
 
 import { landescodeLesen } from '@/lib/readiness/domain'
-import { routeChronologieBewiesen } from '@/lib/route/chronologie'
+import { itinerariesFuerWahrheit, routeChronologieBewiesen } from '@/lib/route/chronologie'
 import type { FlugRouteItinerary } from '@/lib/route/domain'
 
 export type RouteLaenderrollen = {
@@ -22,9 +22,10 @@ export type RouteItineraryFuerRollen = {
 export function laenderrollenAus(
   itineraries: readonly RouteItineraryFuerRollen[],
 ): RouteLaenderrollen {
+  const wahrheit = itinerariesFuerWahrheit(itineraries)
   return {
-    transitCountryCodes: transitlaenderAus(itineraries),
-    destinationCountryCodes: ziellaenderAus(itineraries),
+    transitCountryCodes: transitlaenderAus(wahrheit),
+    destinationCountryCodes: ziellaenderAus(wahrheit),
   }
 }
 

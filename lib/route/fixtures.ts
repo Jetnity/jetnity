@@ -209,6 +209,33 @@ export function itineraryDreiMehrzielGemischt(): FlugRouteItinerary {
   }
 }
 
+export function itineraryReverseRoundtrip(): FlugRouteItinerary {
+  return {
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs: [
+      { segments: [segment('BKK', 'ZRH', '2026-11-12', '23:00', '2026-11-13', '06:00')] },
+      { segments: [segment('ZRH', 'BKK', '2026-11-01', '09:15', '2026-11-01', '21:40')] },
+    ],
+  }
+}
+
+export function itineraryKontinuierlichCdgOry(): FlugRouteItinerary {
+  return {
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs: [
+      {
+        segments: [
+          segment('ZRH', 'CDG', '2026-11-01', '07:10', '2026-11-01', '08:30'),
+          segment('CDG', 'ORY', '2026-11-01', '09:20', '2026-11-01', '09:50'),
+          segment('ORY', 'BKK', '2026-11-01', '12:40', '2026-11-02', '06:10'),
+        ],
+      },
+    ],
+  }
+}
+
 export function itineraryOhneZeiten(): FlugRouteItinerary {
   const basis = itineraryEinTransit()
   const erstes = basis.legs[0]

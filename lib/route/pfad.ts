@@ -1,6 +1,8 @@
 // lib/route/pfad.ts
 //
 // Leg-bewusste Pfadserialisierung. Jeder belegte Segment-Origin bleibt erhalten.
+// Kontinuierlicher Segmentkontakt und Surface-/Airport-Change bleiben
+// unterscheidbare Tokens. Fehlende IATA ist unknown, nicht gleich.
 // Keine Städte, keine Anzeigenamen.
 
 import type { FlugRouteItinerary, RoutePunkt, RouteSegment } from '@/lib/route/domain'
@@ -11,11 +13,11 @@ export type RoutePfadSchritt = {
   surfaceChange: boolean
 }
 
-function airportGleich(links: RoutePunkt | undefined, rechts: RoutePunkt | undefined): boolean {
+function airportIdentitaetGleich(links: RoutePunkt | undefined, rechts: RoutePunkt | undefined): boolean {
   const a = iataLesen(links?.airportCode ?? null)
   const b = iataLesen(rechts?.airportCode ?? null)
-  if (a && b) return a === b
-  return !a && !b
+  if (!a || !b) return false
+  return a === b
 }
 
 export function pfadSchritteAusSegmenten(segmente: readonly RouteSegment[]): RoutePfadSchritt[] {
@@ -23,7 +25,7 @@ export function pfadSchritteAusSegmenten(segmente: readonly RouteSegment[]): Rou
   for (const [index, segment] of segmente.entries()) {
     if (index === 0) {
       schritte.push({ punkt: segment.origin, surfaceChange: false })
-    } else if (!airportGleich(segmente[index - 1]?.destination, segment.origin)) {
+    } else if (!airportIdentitaetGleich(segmente[index - 1]?.destination, segment.origin)) {
       schritte.push({ punkt: segment.origin, surfaceChange: true })
     }
     schritte.push({ punkt: segment.destination, surfaceChange: false })
@@ -33,8 +35,12 @@ export function pfadSchritteAusSegmenten(segmente: readonly RouteSegment[]): Rou
 
 export function pfadAusSegmenten(segmente: readonly RouteSegment[]): string {
   return pfadSchritteAusSegmenten(segmente)
-    .map((schritt) => punktSchluessel(schritt.punkt))
-    .join('>')
+    .map((schritt, index) => {
+      const punkt = punktSchluessel(schritt.punkt)
+      if (index === 0) return punkt
+      return `${schritt.surfaceChange ? '~' : '>'}${punkt}`
+    })
+    .join('')
 }
 
 export function pfadAusItinerary(itinerary: FlugRouteItinerary): string {
