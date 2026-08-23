@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 23. August 2026  
-Arbeitsblock: **Travel Safety & Disruption Intelligence – provider-neutrale Foundation vorbereitet; Cursor-Implementierung noch nicht begonnen**
+Arbeitsblock: **Travel Safety & Disruption Intelligence – Phase-1-Ist-Audit abgeschlossen; Implementierung noch nicht begonnen**
 
 ## 1. Aktueller Zustand
 
@@ -149,13 +149,18 @@ Nach erfolgreichem Safety-Block:
 6. Provider-backed End-to-End-/Truth-Audit
 7. finale Startseiten-Positionierung
 
+## 7. Phase-1-Ist-Audit (23.08.2026)
+
+- Ergebnis versioniert: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ARCHITECTURE_AUDIT.md`
+- Safety-Implementierung (`lib/safety/`) existiert im Repository **noch nicht**
+- Wiederverwendbare Anker: `Trip`-Graph-IDs, `lib/route/ableitung.ts`, Readiness Evidence/Freshness-Muster in `lib/readiness/`
+
 ## 8. Exakter nächster operativer Schritt
 
-1. Neuen Cursor-Agenten starten.
-2. Ihm ausschließlich den Auftrag geben, `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md` vollständig zu lesen und exakt umzusetzen.
-3. Cursor muss vor Code `origin/main` frisch synchronisieren und den Ist-Audit durchführen.
-4. PR bleibt Draft; kein Mark Ready, kein Merge, keine Production-Migration.
-5. Nach Cursor-Abschluss führt ChatGPT den unabhängigen Review auf exakt dem finalen PR-Head durch.
+1. Branch `feat/travel-safety-disruption-intelligence` von frischem `origin/main`.
+2. Phase 2 gemäß `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md` – provider-neutrale Domäne unter `lib/safety/`.
+3. PR bleibt Draft; kein Mark Ready, kein Merge, keine Production-Migration.
+4. Nach Implementierung: unabhängiger Review auf finalen PR-Head.
 
 Leitsatz für die Fortsetzung:
 
