@@ -1,7 +1,7 @@
 # PR #38 – Cursor-Fixes zum unabhängigen Review
 
 Stand: 23. August 2026  
-Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11, R6-Blocker 12, R7-Blocker 13, R8-Blocker 14–15, R9-Blocker 16–19, R10-Blocker 20–23 und R11-Blocker 24–26 geschlossen; R12-Re-Review offen**
+Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11, R6-Blocker 12, R7-Blocker 13, R8-Blocker 14–15, R9-Blocker 16–19, R10-Blocker 20–23, R11-Blocker 24–26 und R12-Blocker 27 geschlossen; R13-Re-Review offen**
 
 Review R1/R2: `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md`  
 Review R3: `docs/PR38_CHATGPT_R3_REVIEW.md`  
@@ -22,6 +22,7 @@ Runtime-Head R8-Fixes: `de83d0269e1910ef82a596dd6e7005001f1cb860`
 Runtime-Head R9-Fixes: `263c2f842d2287da652b27cc9660c28db68c6750`  
 Runtime-Head R10-Fixes: `fdcc5c882b4fb8598b3eb0956b9bdeeb0ef94072`  
 Runtime-Head R11-Fixes: `ba5bcd7634eb3a561c54eb1eb63908fe43fcd71b`
+Runtime-Head R12-Fixes: `1c14e80477b7bea083d722238165c97720442c1d`
 
 ## 1. Gemischte Unsicherheit
 
@@ -145,12 +146,18 @@ Item-Datum ohne Zeit degradiert keine Segmentzeit auf `00:00`. Item- und Segment
 
 ## 25. Segmentordnung innerhalb eines Legs
 
-Eine eindeutige kontinuierliche Hamiltonian-Kette wird kanonisiert (`DOH→BKK`, `ZRH→DOH` → `ZRH>DOH>BKK`). 0 kontinuierliche Pfade mit bekannten IATA bleiben die erklärte Surface-Reihenfolge. Mehrere Pfade, Zyklen oder fehlende IATA bleiben fail-closed. Cross-Airport-Uhren rekonstruieren keine Segmente.
+Eine eindeutige kontinuierliche Hamiltonian-Kette wird kanonisiert (`DOH→BKK`, `ZRH→DOH` → `ZRH>DOH>BKK`). Der R11-Fallback „alle IATA bekannt ⇒ erklärte Reihenfolge“ ist durch R12-Blocker 27 ersetzt. Mehrere kontinuierliche Pfade, Zyklen oder fehlende IATA bleiben fail-closed. Cross-Airport-Uhren rekonstruieren keine Segmente.
 
 ## 26. Globales Routenziel
 
 Bei bewiesener Chronologie ist `origin` das erste Segment der ersten kanonischen Itinerary und `destination` das letzte Segment der letzten. Unbewiesene Reihenfolge leert beide. Country-Rollen, Fingerprint, Anzeige, Readiness, Safety und Seasonal lesen dieselbe `wahrheit` plus denselben Beweisstatus.
 
-## 27. Nicht geändert
+## 27. Bekannte IATA beweisen keine Segmentreihenfolge
+
+`alleIataBekannt` ist kein Reihenfolgebeweis. Ein eindeutiger gemischter Hamiltonian darf eine Surface-Kante nur nutzen, wenn beide IATA bekannt, verschieden und im **gleichen kanonischen `countryCode`** liegen. Dadurch bleibt `ZRH→CDG ⇢ ORY→BKK` bewiesen und rekonstruierbar; `BKK→SIN` + `ZRH→DOH` sowie Cross-Country-Gaps ohne unique Kante bleiben fail-closed.
+
+Unbewiesene Intra-Leg-Ordnung leert Origin/Destination, erzeugt keine Connection-/Airport-Change-Truth aus Array-Nachbarschaft, erfindet keine Transit-Rolle und serialisiert den Fingerprint als sortierte Segment-Multimenge (`&`). Anzeige zeigt `Reihenfolge unbekannt` auch bei einem einzelnen unbewiesenen Mehrsegment-Leg. Guest/Account sowie Seasonal/Safety/Readiness lesen dieselbe Truth.
+
+## 28. Nicht geändert
 
 Kein Provider, keine Migration, keine Secrets, PR bleibt Draft.

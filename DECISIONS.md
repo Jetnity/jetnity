@@ -3621,7 +3621,30 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 **Begründung:** Dieselbe strukturierte Reise darf durch lokale Uhren, verdrehte Segmentarrays oder das erste Flight-Item keine falsche Origin-/Destination-Wahrheit für Seasonal, Safety und Readiness erzeugen.
 
-**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R12 und Product-Owner-Merge-Freigabe.
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. Der IATA-Fallback aus Blocker 25 ist durch ADR-0147 ersetzt. PR #38 bleibt Draft bis R13 und Product-Owner-Merge-Freigabe.
+
+---
+
+## ADR-0147 – Segmentordnung nur bei eindeutiger kontinuierlicher oder same-country Surface-Kette
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R12 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Bekannte IATA-Codes identifizieren Endpunkte. Sie beweisen keine Intra-Leg-Reihenfolge.
+- `segmenteOrdnungBewiesen()` akzeptiert genau einen kontinuierlichen Hamiltonian oder genau einen gemischten Hamiltonian, dessen zusätzliche Kanten nur same-country Surface-Wechsel mit zwei bekannten, verschiedenen IATA sind. Country kommt aus dem strukturierten `countryCode` am Punkt, nicht aus Städtenamen.
+- Null oder mehrere solche Pfade bleiben fail-closed. Cross-Airport-Wanduhren bleiben ausgeschlossen.
+- Unbewiesene Segmentmengen leeren globalen Origin/Destination, erzeugen keine Connections aus Array-Nachbarschaft, erfinden keine Transit-Rolle und bekommen einen permutationsstabilen Fingerprint als sortierte Segment-Multimenge.
+- Echte `CDG ⇢ ORY`-Surface-Changes bleiben unterstützt. Cross-Country-Gaps ohne unique Surface-Kante bleiben unknown, bis eine explizite Surface-Boundary-Evidence existiert.
+
+**Kontext:** `docs/PR38_CHATGPT_R12_REVIEW.md` gegen Runtime `ba5bcd76`; Fixes auf `1c14e804`.
+
+**Alternativen:** Pauschales Fail-closed jedes 0-Pfad-Falls (zerbricht echten CDG⇢ORY); erneuter IATA-Fallback; neues persistiertes Surface-Flag; Cross-Airport-Uhren.
+
+**Begründung:** Untrusted Segmentarrays aus Browser/Local Storage/Metadata dürfen Seasonal, Safety und Readiness keine erfundenen Origin-/Connection-/Country-Wahrheiten liefern. Same-country Topologie unterscheidet den echten Paris-Flughafenwechsel von unverbundenen Hops, ohne eine neue persistierte Spalte zu brauchen.
+
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. `CDG ⇢ LCY` / `AMS` sind konservativ unknown. PR #38 bleibt Draft bis R13 und Product-Owner-Merge-Freigabe.
 
 ---
 

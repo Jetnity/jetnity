@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 23. August 2026  
-Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence (Draft PR #38, R11-Fixes + Exact-Head-Gate grün, R12-Re-Review offen)**
+Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence (Draft PR #38, R12-Fixes + Exact-Head-Gate grün, R13-Re-Review offen)**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -162,7 +162,7 @@ Verbindliche Truth-Logik:
 
 ## 6. NÄCHSTE PRIORITÄT – Travel Timing & Seasonal Intelligence
 
-Status: **Draft PR #38; R11-Fixes auf Runtime `ba5bcd76` geschlossen; Exact-Head-Gate grün; R12-Re-Review offen; kein Live-Provider**
+Status: **Draft PR #38; R12-Fixes auf Runtime `1c14e804` geschlossen; Exact-Head-Gate grün; R13-Re-Review offen; kein Live-Provider**
 
 Policy:
 
@@ -208,8 +208,9 @@ Verbindlich:
 13. ✅ ChatGPT-Re-Review R9: Blocker 16–19 geschlossen, Exact-Head-Gate grün
 14. ✅ ChatGPT-Re-Review R10: Blocker 20–23 geschlossen, Exact-Head-Gate grün
 15. ✅ ChatGPT-Re-Review R11: Blocker 24–26 geschlossen, Exact-Head-Gate grün
-16. **→ unabhängiger ChatGPT-Re-Review R12 nach Stop-Kriterium**
-17. Product-Owner-Merge-Gate
+16. ✅ ChatGPT-Re-Review R12: Blocker 27 geschlossen, Exact-Head-Gate grün
+17. **→ unabhängiger ChatGPT-Re-Review R13 nach Stop-Kriterium**
+18. Product-Owner-Merge-Gate
 
 ---
 
@@ -335,7 +336,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. **→ Travel Timing & Seasonal – provider-neutrale Foundation (Draft PR #38, R11-Fixes + Exact-Head-Gate grün, R12-Re-Review offen)**
+5. **→ Travel Timing & Seasonal – provider-neutrale Foundation (Draft PR #38, R12-Fixes + Exact-Head-Gate grün, R13-Re-Review offen)**
 6. Provider-Readiness-/Adapter-Lücken schließen
 7. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 8. finaler Workspace Intelligence Audit
