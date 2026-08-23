@@ -99,3 +99,23 @@ Leitsatz:
 > **Parallel entwickeln, zentral koordinieren, unabhängig prüfen, kontrolliert integrieren.**
 
 Das Multi-Agent-Modell ändert keine bestehenden Governance-Gates: kein Mark Ready/Merge, keine Provider-/Kosten-/Secret-/Production-Freigabe ohne die jeweils erforderliche ausdrückliche Product-Owner-Entscheidung.
+
+## 8. Team-Excellence-Contract
+
+Das Entwicklungsteam wird nicht an der Anzahl abgeschlossener Tasks gemessen, sondern an der Qualität des gemeinsam integrierten Jetnity-Systems.
+
+Verbindlich gilt:
+
+- Jeder Agent arbeitet als proaktiver Senior-Entwickler und prüft angrenzende Auswirkungen, statt nur den wörtlichen Auftrag minimal zu erfüllen.
+- Kein Agent darf eine lokale Optimierung als Erfolg behandeln, wenn dadurch Architektur, gemeinsame Truth, Security, Datenintegrität, UX oder eine abhängige Funktion schlechter wird.
+- Eine Fertigmeldung eines Agenten ist niemals automatisch eine technische Freigabe. Vor Integration sind Self-Review, relevante Gates und unabhängiger Review erforderlich.
+- Gemeinsame Contracts werden vor paralleler Nutzung eindeutig definiert; bei Konflikten hat die kanonische Source of Truth Vorrang vor Workstream-Einzelinteressen.
+- Nach Integration werden reale Cross-Domain-Szenarien geprüft. Mehrere einzeln grüne Funktionen gelten erst dann als erfolgreich, wenn sie zusammen korrekt arbeiten.
+- Unsicherheit, Widerspruch oder fehlende Evidenz werden sichtbar gemacht und nicht durch Annahmen kaschiert.
+- Schlechte, widersprüchliche oder nur scheinbar fertige Arbeit wird nicht übernommen, nur um Geschwindigkeit zu gewinnen.
+- Jeder relevante Fehlerfund, Architekturentscheid und Integrationsstatus wird so dokumentiert, dass ein neuer Chat oder Agent die Teamarbeit ohne Wissensverlust fortsetzen kann.
+- Das Stop-Kriterium bleibt verbindlich: hohe Review-Tiefe ja, künstliche Perfektionsschleifen ohne neuen konkreten relevanten Defekt nein.
+
+Zielzustand:
+
+> **Ein hervorragend koordiniertes Entwicklerteam, das unabhängig denken kann, aber gemeinsam genau eine Jetnity-Architektur, eine kanonische Wahrheit und einen einheitlichen Qualitätsstandard liefert.**
