@@ -23,7 +23,7 @@ export type SeasonalProviderAnfrage = {
 export type SeasonalProviderFact = {
   factKey: string
   category: SeasonalCategory
-  evidenceClass?: SeasonalEvidenceClass | string | null
+  evidenceClass?: SeasonalEvidenceClass | string | null // untrusted; fehlend/leer ist ungültig, kein Default
   outcome?: SeasonalOutcome | string | null
   authority?: string | null
   authorityClass?: SeasonalAuthorityClass
