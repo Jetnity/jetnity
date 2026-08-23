@@ -58,6 +58,16 @@ Bevor mehrere Implementierungsagenten gleichzeitig gestartet werden, müssen im 
 10. **unabhängiger ChatGPT-Review** vor technischer Closure/Integration;
 11. nach Integration zusätzlicher **Cross-Workstream-/Cross-Domain-Review** für gemeinsam wirkende Funktionen.
 
+### Verbindliche Agent-Namensregel
+
+Damit der Product Owner jederzeit eindeutig erkennt, welcher Cursor-Agent gemeint ist, gilt verbindlich:
+
+- ChatGPT nennt bei jeder Zuweisung, Statusmeldung, Rückfrage, Review-Anweisung oder Integrationsentscheidung **immer den exakten Namen, der beim betreffenden Agenten in Cursor sichtbar ist**.
+- Interne Bezeichnungen wie „Agent 1“, „Frontend-Agent“, „Route-Agent“ oder ähnliche Kurzformen dürfen höchstens zusätzlich verwendet werden, niemals anstelle des sichtbaren Cursor-Agent-Namens.
+- Die zentrale Workstream-/Agent-Übersicht speichert für jeden Agenten den **exakten Cursor-Anzeigenamen** zusammen mit Workstream, Branch, PR, Status und Ownership.
+- Wird ein Cursor-Agent umbenannt oder durch einen neuen Agenten ersetzt, muss die Übersicht sofort aktualisiert werden; alte und neue Zuordnung dürfen nicht verwechselt werden.
+- Auch nach Chatwechseln muss ein neuer Chat die Agenten anhand dieser sichtbaren Cursor-Namen eindeutig referenzieren.
+
 ## 5. Persistenz-/Chatwechsel-Regel
 
 > **Keine wichtige Multi-Agent-Information darf nur in einem Chat oder einer Cursor-Session existieren.**
@@ -65,6 +75,7 @@ Bevor mehrere Implementierungsagenten gleichzeitig gestartet werden, müssen im 
 Dauerhaft im Repository festzuhalten sind mindestens:
 
 - welcher Agent welchen Workstream besitzt;
+- exakter Cursor-Anzeigename des Agenten;
 - Branch/PR/aktueller Runtime-Head;
 - Status: geplant / arbeitet / blockiert / Review / fertig / integriert;
 - Abhängigkeiten und gemeinsame Contracts;
