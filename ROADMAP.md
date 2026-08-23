@@ -120,7 +120,7 @@ Keine Passnummern, Scans, MRZ oder Biometrie. Ausstellerland ist keine automatis
 
 ## 5. NÄCHSTE PRIORITÄT – Travel Safety & Disruption Intelligence
 
-Status: **technisch reviewbereit auf Draft-PR #37; `main` und Production unverändert**
+Status: **Review-Blocker auf Draft-PR #37 behoben; Re-Review offen; `main` und Production unverändert**
 
 Verbindliche Policy:
 
