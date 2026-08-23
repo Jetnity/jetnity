@@ -1652,6 +1652,9 @@ const ZUSTAENDE = {
       seasonalEvaluations: [
         seasonalEvaluation({
           outcome: 'mixed_tradeoff',
+          evidenceStatus: 'current',
+          freshness: 'current',
+          relevance: 'applies',
           presentationClass: 'timing_notice',
           evidence: {
             provider: 'audit',
