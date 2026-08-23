@@ -26,13 +26,14 @@ export type SafetyProviderFact = {
   factKey: string
   category: SafetyEventCategory
   status?: SafetyEventStatus
-  nature?: SafetyNature
+  nature?: SafetyNature | string | null
   authority?: string | null
   authorityClass?: SafetyAuthorityClass
   sourceUrl?: string | null
   publishedAt?: string | null
   updatedAt?: string | null
   checkedAt?: string | null
+  freshUntil?: string | null
   validFrom?: string | null
   validUntil?: string | null
   spatialScope: unknown
@@ -47,7 +48,7 @@ export type SafetyProviderFact = {
 
 export type SafetyProvider = {
   name: string
-  evaluate(anfrage: SafetyProviderAnfrage): Promise<SafetyProviderFact[]>
+  evaluate(anfrage: SafetyProviderAnfrage, signal?: AbortSignal): Promise<SafetyProviderFact[]>
 }
 
 export function safetyProviderAus(): SafetyProvider | null {

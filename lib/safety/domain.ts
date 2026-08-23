@@ -22,6 +22,8 @@ export const SAFETY_GRENZEN = {
   maxAnfrageBytes: 24_576,
   maxFacts: 40,
   maxRefs: 40,
+  maxEvidenceAgeMs: 7 * 24 * 60 * 60 * 1000,
+  providerTimeoutMs: 4_000,
 } as const
 
 export const SAFETY_EVENT_CATEGORIES = [

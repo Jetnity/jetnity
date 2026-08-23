@@ -21,6 +21,7 @@ export type SafetyEvidence = {
   publishedAt: string | null
   updatedAt: string | null
   checkedAt: string | null
+  freshUntil: string | null
   validFrom: string | null
   validUntil: string | null
   headline: string | null
@@ -112,21 +113,25 @@ export function safetyFrische(opts: {
   storedFingerprint: string | null
   currentFingerprint: string
   checkedAt: string | null
-  validFrom?: string | null
-  validUntil: string | null
+  freshUntil?: string | null
   nowMs?: number
   hasProvider: boolean
   sourceAvailable?: boolean
-  eventStatus?: string | null
+  timedOut?: boolean
 }): SafetyFreshness {
   if (!opts.hasProvider) return 'provider_unavailable'
-  if (opts.sourceAvailable === false) return 'source_temporarily_unavailable'
+  if (opts.timedOut || opts.sourceAvailable === false) return 'source_temporarily_unavailable'
   if (!opts.checkedAt) return 'never_checked'
   if (opts.storedFingerprint && opts.storedFingerprint !== opts.currentFingerprint) return 'stale'
   const jetzt = opts.nowMs ?? Date.now()
-  if (opts.validFrom && jetzt < zeitMs(opts.validFrom)) return 'never_checked'
-  if (opts.validUntil && jetzt > zeitMs(opts.validUntil)) return 'recheck_needed'
-  if (opts.eventStatus === 'resolved' || opts.eventStatus === 'withdrawn') return 'stale'
+  const geprueft = zeitMs(opts.checkedAt)
+  if (!Number.isFinite(geprueft)) return 'never_checked'
+  if (opts.freshUntil) {
+    const bis = zeitMs(opts.freshUntil)
+    if (!Number.isFinite(bis) || jetzt > bis) return 'recheck_needed'
+  } else if (jetzt - geprueft > SAFETY_GRENZEN.maxEvidenceAgeMs) {
+    return 'recheck_needed'
+  }
   return 'current'
 }
 
@@ -139,6 +144,7 @@ export function leereSafetyEvidence(fingerprint: string): SafetyEvidence {
     publishedAt: null,
     updatedAt: null,
     checkedAt: null,
+    freshUntil: null,
     validFrom: null,
     validUntil: null,
     headline: null,

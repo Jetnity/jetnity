@@ -3230,6 +3230,33 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0129 – Safety-Freshness, Geo-Unknown und Order-Independence nach PR-37-Review
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #37 nach unabhängigem REQUEST CHANGES
+
+**Entscheidung:**
+
+- Event-Zeitfenster und Evidence-Freshness sind getrennte Achsen. `checkedAt` plus optionales `freshUntil` oder eine konservative Max-Age-Grenze (7 Tage) bestimmen Freshness. `validFrom`/`validUntil` gelten nur für zeitliche Relevanz.
+- `not_affected` nur bei belegter Nicht-Betroffenheit. Admin-Region ohne kanonische Membership und Stadt ohne gemeinsame Place-ID bleiben `insufficient_context`.
+- Decision-Signatur umfasst Traveller-Abhängigkeit. Evidence-URL allein ist kein Konflikt; bei identischer Signatur gewinnt deterministisch die vertrauenswürdigere Zeile.
+- Mehr als `maxFacts` Rohzeilen werden als Integrity-Fehler verworfen, nicht positionsabhängig abgeschnitten.
+- Explizit malformed `nature` wird verworfen, nicht zu `acute` umgedeutet.
+- Provider-Aufrufe haben ein Abort/Timeout; Timeout und Throw erzeugen keine Warn-Truth.
+
+**Kontext:** Unabhängiger Review `docs/PR37_CHATGPT_INDEPENDENT_REVIEW.md` gegen Head `caa6f7dd`.
+
+**Alternativen:** Region-Membership-DB, first-row-wins, Route-`maxDuration` als einziges Timeout.
+
+**Begründung:** Fail closed statt Scheingenauigkeit, Scheinaktualität oder Reihenfolge-Truth.
+
+**Konsequenzen:**
+
+- Keine neue Geo- oder Safety-Tabelle.
+- Production unverändert, kein Live-Provider.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

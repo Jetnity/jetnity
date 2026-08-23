@@ -55,10 +55,18 @@ export function safetyFactNormalisieren(
   if (!category || !factKey) return null
   if (roh.availability === 'temporarily_unavailable') return null
 
+  let nature: (typeof SAFETY_NATURES)[number] = 'acute'
+  if (roh.nature != null && roh.nature !== '') {
+    const gelesen = enumLesen(roh.nature, SAFETY_NATURES)
+    if (!gelesen) return null
+    nature = gelesen
+  }
+
   const spatialScope = spatialScopeLesen(roh.spatialScope)
   const temporal = temporalScopeLesen(roh)
   const provider = providerNameLesen(providerNameRoh)
   const checkedAt = isoZeitLesen(roh.checkedAt ?? null)
+  const freshUntil = isoZeitLesen(roh.freshUntil ?? null)
   const authority = authorityLesen(roh.authority ?? null)
   const sourceUrlRoh = roh.sourceUrl ?? null
   const sourceUrl = quelleUrlLesen(sourceUrlRoh)
@@ -75,7 +83,7 @@ export function safetyFactNormalisieren(
     factKey,
     category,
     status: enumLesen(roh.status, SAFETY_EVENT_STATUSES) ?? 'unknown',
-    nature: enumLesen(roh.nature, SAFETY_NATURES) ?? 'acute',
+    nature,
     sourceSeverity: enumLesen(roh.sourceSeverity, SAFETY_SOURCE_SEVERITIES),
     advisoryClass: enumLesen(roh.advisoryClass, SAFETY_ADVISORY_CLASSES),
     spatialScope,
@@ -96,8 +104,9 @@ export function safetyFactNormalisieren(
       publishedAt: isoZeitLesen(roh.publishedAt ?? null),
       updatedAt: isoZeitLesen(roh.updatedAt ?? null),
       checkedAt,
-      validFrom: temporal.start,
-      validUntil: temporal.end,
+      freshUntil,
+      validFrom: null,
+      validUntil: null,
       headline: sicherheitstextLesen(roh.headline, SAFETY_GRENZEN.headline),
       summary: sicherheitstextLesen(roh.summary, SAFETY_GRENZEN.summary),
     },
@@ -115,5 +124,18 @@ export function entscheidungsSignatur(fact: SafetyFact): string {
     scopeIdentitaet(fact.spatialScope),
     fact.temporal.start ?? '',
     fact.temporal.end ?? '',
+    fact.travellerDependent ? 'traveller' : 'trip',
+    fact.travellerCitizenshipCodes.join(','),
   ].join('|')
+}
+
+export function evidenceBevorzugen(a: SafetyFact, b: SafetyFact): SafetyFact {
+  if (a.vertrauenswuerdig !== b.vertrauenswuerdig) return a.vertrauenswuerdig ? a : b
+  const aCheck = a.evidence.checkedAt ?? ''
+  const bCheck = b.evidence.checkedAt ?? ''
+  if (aCheck !== bCheck) return aCheck > bCheck ? a : b
+  const aUrl = a.evidence.sourceUrl ?? ''
+  const bUrl = b.evidence.sourceUrl ?? ''
+  if (aUrl !== bUrl) return aUrl < bUrl ? a : b
+  return a
 }

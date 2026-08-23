@@ -67,7 +67,7 @@ describe('Safety-Engine', () => {
   test('4 stale Evidence => nicht als current Warning', async () => {
     const evaluations = safetyAusFacts(
       mehrzielreise(),
-      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake', validUntil: '2026-08-01' })],
+      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake', checkedAt: '2026-01-01T09:00:00.000Z' })],
       'audit-safety',
       { nowMs: JETZT },
     )
@@ -336,7 +336,7 @@ describe('Safety-Engine', () => {
     )
     const stale = safetyAusFacts(
       mehrzielreise(),
-      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake', validUntil: '2026-08-01' })],
+      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake', checkedAt: '2026-01-01T09:00:00.000Z' })],
       'audit-safety',
       { nowMs: JETZT },
     )
@@ -374,5 +374,272 @@ describe('Safety-Engine', () => {
   test('lokale Auswertung bleibt fail-closed', () => {
     const evaluations = safetyLokalFuerReise(mehrzielreise())
     assert.equal(evaluations[0]?.evidenceStatus, 'unavailable')
+  })
+
+  test('Review Freshness: altes checkedAt ohne Event-Ende ist nicht current', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake', validUntil: null })],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    const alt = safetyAusFacts(
+      mehrzielreise(),
+      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake', checkedAt: '2020-04-01T09:00:00.000Z', validUntil: null })],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.freshness, 'current')
+    assert.equal(alt[0]?.freshness, 'recheck_needed')
+    assert.equal(warnungen(alt).length, 0)
+  })
+
+  test('Review Freshness: aktuelles checkedAt bei zukünftigem Event bleibt current', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake', validFrom: '2026-09-13', validUntil: '2026-09-14' })],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.freshness, 'current')
+    assert.equal(evaluations[0]?.relevance, 'affected')
+    assert.notEqual(evaluations[0]?.presentationClass, 'unknown')
+  })
+
+  test('Review Freshness: Event-Fenster ändert Relevanz, nicht Evidence-Frische', () => {
+    const current = safetyAusFacts(
+      mehrzielreise(),
+      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake', validFrom: '2026-09-13' })],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    const danach = safetyAusFacts(
+      mehrzielreise(),
+      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake', validFrom: '2026-10-01' })],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(current[0]?.freshness, danach[0]?.freshness)
+    assert.equal(current[0]?.freshness, 'current')
+    assert.equal(current[0]?.relevance, 'affected')
+    assert.equal(danach[0]?.relevance, 'not_affected')
+  })
+
+  test('Review Freshness: fehlendes checkedAt bleibt fail-closed', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake', checkedAt: null })],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.freshness, 'never_checked')
+    assert.equal(warnungen(evaluations).length, 0)
+  })
+
+  test('Review Geo: Region ohne Membership bleibt insufficient', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [
+        safetyFact({
+          factKey: 'unrest-lombardy',
+          category: 'civil_unrest',
+          spatialScope: { kind: 'admin_region', countryCode: 'IT', regionName: 'Lombardei' },
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.relevance, 'insufficient_context')
+    assert.equal(warnungen(evaluations).length, 0)
+  })
+
+  test('Review Geo: andere belegte Stadt bleibt not_affected', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [
+        safetyFact({
+          factKey: 'eq-milano',
+          category: 'earthquake',
+          spatialScope: { kind: 'city', countryCode: 'IT', placeId: 'geonames:3173435', cityName: 'Mailand' },
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.relevance, 'not_affected')
+  })
+
+  test('Review Geo: Stadt nur per Name ergibt kein not_affected', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [
+        safetyFact({
+          factKey: 'eq-firenze-name',
+          category: 'earthquake',
+          spatialScope: { kind: 'city', countryCode: 'IT', cityName: 'Firenze' },
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.relevance, 'insufficient_context')
+    assert.equal(warnungen(evaluations).length, 0)
+  })
+
+  test('Review Geo: Polygon ohne Land und ohne Koordinaten bleibt insufficient', () => {
+    const reise = mehrzielreise({
+      stages: mehrzielreise().stages.map((etappe) => ({ ...etappe, latitude: null, longitude: null })),
+    })
+    const evaluations = safetyAusFacts(
+      reise,
+      [
+        safetyFact({
+          factKey: 'poly-unklar',
+          category: 'flood',
+          spatialScope: {
+            kind: 'polygon',
+            coordinates: [
+              [43.7, 11.2],
+              [43.8, 11.2],
+              [43.8, 11.3],
+            ],
+          },
+        }),
+      ],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.relevance, 'insufficient_context')
+  })
+
+  test('Review Geo: kanonischer City-Place-Match bleibt affected', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake' })],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(evaluations[0]?.relevance, 'affected')
+    assert.deepEqual(evaluations[0]?.affectedRefs.map((ref) => ref.id), ['stage-1'])
+  })
+
+  test('Review Dedup: traveller-dependent vs trip-level ist order-independent', () => {
+    const trip = safetyFact({ factKey: 'eq-firenze', category: 'earthquake', travellerDependent: false })
+    const traveller = safetyFact({
+      factKey: 'eq-firenze',
+      category: 'earthquake',
+      travellerDependent: true,
+      travellerCitizenshipCodes: ['RS'],
+    })
+    const vor = safetyAusFacts(mehrzielreise(), [trip, traveller], 'audit-safety', { nowMs: JETZT })
+    const nach = safetyAusFacts(mehrzielreise(), [traveller, trip], 'audit-safety', { nowMs: JETZT })
+    assert.deepEqual(vor, nach)
+    assert.equal(vor[0]?.conflict, true)
+    assert.equal(warnungen(vor).length, 0)
+  })
+
+  test('Review Dedup: unterschiedliche Citizenship-Mengen sind order-independent', () => {
+    const a = safetyFact({
+      factKey: 'eq-firenze',
+      category: 'earthquake',
+      travellerDependent: true,
+      travellerCitizenshipCodes: ['RS'],
+    })
+    const b = safetyFact({
+      factKey: 'eq-firenze',
+      category: 'earthquake',
+      travellerDependent: true,
+      travellerCitizenshipCodes: ['CH'],
+    })
+    const vor = safetyAusFacts(mehrzielreise(), [a, b], 'audit-safety', { nowMs: JETZT })
+    const nach = safetyAusFacts(mehrzielreise(), [b, a], 'audit-safety', { nowMs: JETZT })
+    assert.deepEqual(vor, nach)
+    assert.equal(vor[0]?.conflict, true)
+  })
+
+  test('Review Dedup: trusted und untrusted Evidence bleibt order-independent', () => {
+    const trusted = safetyFact({ factKey: 'eq-firenze', category: 'earthquake' })
+    const untrusted = safetyFact({
+      factKey: 'eq-firenze',
+      category: 'earthquake',
+      sourceUrl: 'http://example.org/advisory',
+    })
+    const vor = safetyAusFacts(mehrzielreise(), [untrusted, trusted], 'audit-safety', { nowMs: JETZT })
+    const nach = safetyAusFacts(mehrzielreise(), [trusted, untrusted], 'audit-safety', { nowMs: JETZT })
+    assert.deepEqual(vor, nach)
+    assert.equal(vor[0]?.evidence.sourceUrl, 'https://example.org/advisory')
+    assert.notEqual(vor[0]?.presentationClass, 'unknown')
+  })
+
+  test('Review Dedup: 41 Facts vorn oder hinten ergeben dasselbe fail-closed Resultat', () => {
+    const kritisch = safetyFact({
+      factKey: 'eq-firenze',
+      category: 'earthquake',
+      sourceSeverity: 'extreme',
+      advisoryClass: 'do_not_travel',
+    })
+    const fueller = Array.from({ length: 40 }, (_, index) =>
+      safetyFact({
+        factKey: `info-${index}`,
+        category: 'other',
+        spatialScope: { kind: 'country', countryCode: 'FR' },
+        sourceSeverity: 'minor',
+      }),
+    )
+    const vor = safetyAusFacts(mehrzielreise(), [kritisch, ...fueller], 'audit-safety', { nowMs: JETZT })
+    const nach = safetyAusFacts(mehrzielreise(), [...fueller, kritisch], 'audit-safety', { nowMs: JETZT })
+    assert.deepEqual(vor, nach)
+    assert.equal(warnungen(vor).length, 0)
+    assert.match(vor[0]?.reason ?? '', /zu viele Zeilen/)
+  })
+
+  test('Review Dedup: malformed nature erzeugt keine akute Warnung', () => {
+    const evaluations = safetyAusFacts(
+      mehrzielreise(),
+      [safetyFact({ factKey: 'eq-firenze', category: 'earthquake', nature: 'monsoon_vibes' })],
+      'audit-safety',
+      { nowMs: JETZT },
+    )
+    assert.equal(warnungen(evaluations).length, 0)
+  })
+
+  test('Review Timeout: hängender Provider bleibt fail-closed', async () => {
+    const evaluations = await safetyAuswerten(
+      mehrzielreise(),
+      testSafetyProvider(() => new Promise(() => {})),
+      null,
+      JETZT,
+      30,
+    )
+    assert.equal(evaluations[0]?.freshness, 'source_temporarily_unavailable')
+    assert.match(evaluations[0]?.reason ?? '', /nicht rechtzeitig/)
+    assert.equal(warnungen(evaluations).length, 0)
+  })
+
+  test('Review Timeout: schneller Provider bleibt unverändert', async () => {
+    const evaluations = await safetyAuswerten(
+      mehrzielreise(),
+      testSafetyProvider([safetyFact({ factKey: 'eq-firenze', category: 'earthquake' })]),
+      null,
+      JETZT,
+      200,
+    )
+    assert.equal(evaluations[0]?.relevance, 'affected')
+    assert.equal(evaluations[0]?.freshness, 'current')
+  })
+
+  test('Review Timeout: Throw bleibt ohne Warn-Truth', async () => {
+    const evaluations = await safetyAuswerten(
+      mehrzielreise(),
+      testSafetyProvider(async () => {
+        throw new Error('boom')
+      }),
+      null,
+      JETZT,
+      200,
+    )
+    assert.equal(evaluations[0]?.freshness, 'source_temporarily_unavailable')
+    assert.match(evaluations[0]?.reason ?? '', /nicht erreichbar/)
+    assert.equal(warnungen(evaluations).length, 0)
   })
 })

@@ -156,10 +156,9 @@ export function spatialScopeLesen(roh: unknown): SafetySpatialScope {
 export function temporalScopeLesen(roh: {
   validFrom?: unknown
   validUntil?: unknown
-  publishedAt?: unknown
 }): SafetyTemporalScope {
   return {
-    start: isoDatumLesen(roh.validFrom) ?? isoDatumLesen(roh.publishedAt),
+    start: isoDatumLesen(roh.validFrom),
     end: isoDatumLesen(roh.validUntil),
   }
 }

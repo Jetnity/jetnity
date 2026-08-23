@@ -32,11 +32,7 @@ function routePunktRef(code: string): SafetyTripRef {
 }
 
 function gleicheStadt(etappe: SafetyStageKontext, scope: Extract<SafetySpatialScope, { kind: 'city' }>): boolean {
-  if (scope.placeId && etappe.placeId) return etappe.placeId === scope.placeId
-  if (scope.cityName && etappe.name.trim().toLowerCase() === scope.cityName.trim().toLowerCase()) {
-    return Boolean(etappe.placeId || etappe.latitude != null)
-  }
-  return false
+  return Boolean(scope.placeId && etappe.placeId && etappe.placeId === scope.placeId)
 }
 
 function etappeImRadius(
@@ -137,6 +133,14 @@ export function räumlicheRelevanz(
       }
     }
     const gleichesLand = kontext.stages.filter(imSelbenLand)
+    if (gleichesLand.some((etappe) => !etappe.placeId)) {
+      return {
+        relevance: 'insufficient_context',
+        precision: 'unknown',
+        affectedRefs: [],
+        reason: 'Der Ereignisort ist belegt, die Etappe hat aber keinen vergleichbaren Ortsbezug.',
+      }
+    }
     if (gleichesLand.length > 0) {
       return {
         relevance: 'not_affected',
@@ -153,48 +157,71 @@ export function räumlicheRelevanz(
     }
   }
 
-  if (scope.kind === 'city' || scope.kind === 'admin_region') {
-    const exakt = kontext.stages.filter((etappe) => {
-      if (!imSelbenLand(etappe)) return false
-      if (scope.kind === 'city') return gleicheStadt(etappe, scope)
-      if (scope.regionCode && etappe.placeId && etappe.placeId.endsWith(scope.regionCode)) return true
-      return scope.regionName
-        ? etappe.name.trim().toLowerCase() === scope.regionName.trim().toLowerCase() && Boolean(etappe.placeId)
-        : false
-    })
+  if (scope.kind === 'admin_region') {
+    const gleichesLand = kontext.stages.filter(imSelbenLand)
+    if (gleichesLand.length === 0) {
+      return {
+        relevance: 'not_affected',
+        precision: 'admin_region',
+        affectedRefs: [],
+        reason: 'Keine Etappe liegt im belegten Land der Region.',
+      }
+    }
+    return {
+      relevance: 'insufficient_context',
+      precision: 'unknown',
+      affectedRefs: [],
+      reason: 'Die Quelle nennt eine Region, Jetnity besitzt aber keine kanonische Regionszugehörigkeit.',
+    }
+  }
+
+  if (scope.kind === 'city') {
+    if (!scope.placeId) {
+      return kontext.stages.some(imSelbenLand)
+        ? {
+            relevance: 'insufficient_context',
+            precision: 'unknown',
+            affectedRefs: [],
+            reason: 'Die Stadt ist nur namentlich belegt und nicht kanonisch vergleichbar.',
+          }
+        : {
+            relevance: 'not_affected',
+            precision: 'city',
+            affectedRefs: [],
+            reason: 'Keine Etappe liegt im belegten Land der Stadt.',
+          }
+    }
+    const exakt = kontext.stages.filter((etappe) => gleicheStadt(etappe, scope))
     if (exakt.length > 0) {
       return {
         relevance: 'affected',
-        precision: scope.kind === 'city' ? 'city' : 'admin_region',
+        precision: 'city',
         affectedRefs: exakt.map(etappenRef),
         reason: 'Die belegte Region oder Stadt entspricht einer konkreten Etappe.',
       }
     }
-    const gleichesLandOhneOrt = kontext.stages.filter(
-      (etappe) => imSelbenLand(etappe) && !etappe.placeId && etappe.latitude == null,
-    )
-    if (gleichesLandOhneOrt.length > 0) {
+    const gleichesLand = kontext.stages.filter(imSelbenLand)
+    if (gleichesLand.some((etappe) => !etappe.placeId)) {
       return {
         relevance: 'insufficient_context',
         precision: 'unknown',
         affectedRefs: [],
-        reason: 'Die Quelle ist regional, die Etappe hat aber keinen belastbaren Ortsbezug.',
+        reason: 'Die Quelle ist städtisch, die Etappe hat aber keinen vergleichbaren Ortsbezug.',
       }
     }
-    const gleichesLand = kontext.stages.filter(imSelbenLand)
     if (gleichesLand.length > 0) {
       return {
         relevance: 'not_affected',
-        precision: scope.kind === 'city' ? 'city' : 'admin_region',
+        precision: 'city',
         affectedRefs: [],
         reason: 'Das Ereignis liegt im selben Land, aber klar ausserhalb der konkreten Reisezone.',
       }
     }
     return {
       relevance: 'not_affected',
-      precision: scope.kind === 'city' ? 'city' : 'admin_region',
+      precision: 'city',
       affectedRefs: [],
-      reason: 'Keine Etappe liegt in der belegten Region.',
+      reason: 'Keine Etappe liegt in der belegten Stadt.',
     }
   }
 
@@ -204,7 +231,9 @@ export function räumlicheRelevanz(
     for (const etappe of kontext.stages) {
       const treffer = etappeImRadius(etappe, scope)
       if (treffer === true) betroffen.push(etappe)
-      if (treffer === null && imSelbenLand(etappe)) unklar = true
+      if (treffer === null) {
+        if (!scope.countryCode || imSelbenLand(etappe)) unklar = true
+      }
     }
     if (betroffen.length > 0) {
       return {

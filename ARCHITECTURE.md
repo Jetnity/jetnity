@@ -365,7 +365,7 @@ PR #35 ist gemergt und auf Production. `trip_travellers` bleibt der stabile Pare
 
 Draft-PR #37 auf `feat/travel-safety-disruption-intelligence`. `lib/safety/` ist eine eigene Truth-Domäne. `safetyProviderAus()` gibt `null` zurück. Tests dürfen einen Port injizieren. External Fact, Freshness, räumliche/zeitliche Relevanz, Trip-Impact und Präsentationsklasse bleiben getrennt (ADR-0127, ADR-0128).
 
-`POST /api/safety/evaluate` ist geschlossen: nur `application/json`, höchstens 24 KB UTF-8, Rate-Limit, `Cache-Control: private, no-store`. Browser- oder LLM-Felder setzen keine Evidence. Route Truth kommt nur aus `routeFactsAusGraph`. Ein Transit-Ereignis markiert nicht pauschal das Reiseziel. `seasonal_pattern` erzeugt keine Safety-Warnung. Keine Safety-Tabelle. Die Übersicht zeigt den Block nur bei übergebenen Evaluations, nicht als permanente leere Karte. Keine automatische Reiseänderung.
+`POST /api/safety/evaluate` ist geschlossen: nur `application/json`, höchstens 24 KB UTF-8, Rate-Limit, `Cache-Control: private, no-store`. Browser- oder LLM-Felder setzen keine Evidence. Route Truth kommt nur aus `routeFactsAusGraph`. Ein Transit-Ereignis markiert nicht pauschal das Reiseziel. `seasonal_pattern` erzeugt keine Safety-Warnung. Evidence-Freshness ist vom Event-Zeitfenster getrennt. Admin-Region und namenlose Stadt-Matches bleiben unknown, wenn keine kanonische Identität existiert. Der Provider-Aufruf hat ein Timeout. Keine Safety-Tabelle. Die Übersicht zeigt den Block nur bei übergebenen Evaluations, nicht als permanente leere Karte. Keine automatische Reiseänderung.
 
 Fachlich: [docs/TRAVEL_SAFETY_DISRUPTION.md](docs/TRAVEL_SAFETY_DISRUPTION.md).
 

@@ -98,11 +98,9 @@ function evaluationAusFact(opts: {
     storedFingerprint: opts.contextFingerprint,
     currentFingerprint: opts.contextFingerprint,
     checkedAt: opts.fact.evidence.checkedAt,
-    validFrom: opts.fact.temporal.start,
-    validUntil: opts.fact.temporal.end,
+    freshUntil: opts.fact.evidence.freshUntil,
     nowMs: opts.nowMs,
     hasProvider: true,
-    eventStatus: opts.fact.status,
   })
   const presentationClass = praesentationsklasseAus({
     relevance,
@@ -195,8 +193,17 @@ export function safetyAusFacts(
   }
 
   const nowMs = opts.nowMs ?? Date.now()
+  if (providerFacts.length > SAFETY_GRENZEN.maxFacts) {
+    return [
+      leerEvaluation({
+        contextFingerprint,
+        freshness: 'never_checked',
+        status: 'unknown',
+        reason: 'Die Providerantwort enthält zu viele Zeilen und wurde verworfen.',
+      }),
+    ]
+  }
   const facts = providerFacts
-    .slice(0, SAFETY_GRENZEN.maxFacts)
     .map((zeile) => safetyFactNormalisieren(zeile, providerName, nowMs))
     .filter((fact): fact is SafetyFact => Boolean(fact))
     .filter((fact) => fact.nature !== 'seasonal_pattern')
@@ -226,38 +233,80 @@ export function safetyAusFacts(
   return evaluationsSortieren(evaluations)
 }
 
+async function safetyProviderAbrufen(
+  provider: SafetyProvider,
+  anfrage: ReturnType<typeof providerAnfrageAusKontext>,
+  timeoutMs: number,
+): Promise<
+  | { ok: true; facts: SafetyProviderFact[] }
+  | { ok: false; art: 'timeout' | 'throw' | 'malformed' }
+> {
+  const stopper = new AbortController()
+  const timer = setTimeout(() => stopper.abort(), timeoutMs)
+  const onAbort = () => {
+    /* AbortSignal bricht den Adapter ab; die Race-Ablehnung folgt separat. */
+  }
+  stopper.signal.addEventListener('abort', onAbort, { once: true })
+  try {
+    const zeilen = await new Promise<SafetyProviderFact[]>((resolve, reject) => {
+      const timeoutFehler = Object.assign(new Error('safety-timeout'), { name: 'SafetyProviderTimeout' })
+      const timeoutId = setTimeout(() => reject(timeoutFehler), timeoutMs)
+      provider.evaluate(anfrage, stopper.signal).then(
+        (wert) => {
+          clearTimeout(timeoutId)
+          resolve(wert)
+        },
+        (fehler) => {
+          clearTimeout(timeoutId)
+          reject(fehler)
+        },
+      )
+    })
+    if (!Array.isArray(zeilen)) return { ok: false, art: 'malformed' }
+    return { ok: true, facts: zeilen }
+  } catch (fehler) {
+    if (fehler && typeof fehler === 'object' && 'name' in fehler && fehler.name === 'SafetyProviderTimeout') {
+      return { ok: false, art: 'timeout' }
+    }
+    return { ok: false, art: 'throw' }
+  } finally {
+    clearTimeout(timer)
+    stopper.abort()
+    stopper.signal.removeEventListener('abort', onAbort)
+  }
+}
+
 export async function safetyAuswerten(
   reise: Trip,
   provider: SafetyProvider | null = safetyProviderAus(),
   roh: unknown = null,
   nowMs = Date.now(),
+  timeoutMs = SAFETY_GRENZEN.providerTimeoutMs,
 ): Promise<SafetyEvaluation[]> {
   const contextFingerprint = safetyContextFingerprint(reise)
   if (!provider) return safetyAusFacts(reise, [], null, { nowMs, roh })
-  try {
-    const kontext = safetyReisekontext(reise)
-    const zeilen = await provider.evaluate(providerAnfrageAusKontext(kontext, contextFingerprint))
-    if (!Array.isArray(zeilen)) {
-      return [
-        leerEvaluation({
-          contextFingerprint,
-          freshness: 'never_checked',
-          status: 'unknown',
-          reason: 'Die Providerantwort war ungültig und wurde verworfen.',
-        }),
-      ]
-    }
-    return safetyAusFacts(reise, zeilen, provider.name, { nowMs, roh })
-  } catch {
+  const kontext = safetyReisekontext(reise)
+  const gelesen = await safetyProviderAbrufen(
+    provider,
+    providerAnfrageAusKontext(kontext, contextFingerprint),
+    timeoutMs,
+  )
+  if (!gelesen.ok) {
     return [
       leerEvaluation({
         contextFingerprint,
         freshness: 'source_temporarily_unavailable',
         status: 'unknown',
-        reason: 'Die Safety-Quelle ist vorübergehend nicht erreichbar. Es wird keine Lage erfunden.',
+        reason:
+          gelesen.art === 'malformed'
+            ? 'Die Providerantwort war ungültig und wurde verworfen.'
+            : gelesen.art === 'timeout'
+              ? 'Die Safety-Quelle hat nicht rechtzeitig geantwortet. Es wird keine Lage erfunden.'
+              : 'Die Safety-Quelle ist vorübergehend nicht erreichbar. Es wird keine Lage erfunden.',
       }),
     ]
   }
+  return safetyAusFacts(reise, gelesen.facts, provider.name, { nowMs, roh })
 }
 
 export function safetyLokalFuerReise(reise: Trip): SafetyEvaluation[] {

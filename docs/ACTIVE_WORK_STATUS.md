@@ -27,7 +27,7 @@ Auftrag: `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`
 
 ## 3. Status
 
-**technisch reviewbereit auf dem Feature-Branch; unabhängiger ChatGPT-Review als Nächstes**
+**unabhängiger Review REQUEST CHANGES; vier Truth-Blocker in Arbeit**
 
 Foundation D und E bleiben abgeschlossen und werden nicht erneut gebaut.
 

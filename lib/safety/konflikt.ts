@@ -4,7 +4,7 @@
 // Widersprüchliche decision-relevante Semantik bleibt konfliktbehaftet.
 // Evidence-URL allein ist kein Konflikt. Input-Reihenfolge ändert nichts.
 
-import { entscheidungsSignatur, type SafetyFact } from '@/lib/safety/normalisieren'
+import { entscheidungsSignatur, evidenceBevorzugen, type SafetyFact } from '@/lib/safety/normalisieren'
 
 export type SafetyFactMenge = {
   facts: SafetyFact[]
@@ -35,6 +35,7 @@ export function safetyFactsDeduplizieren(facts: readonly SafetyFact[]): SafetyFa
       konflikte.add(fact.factKey)
       continue
     }
+    gesehen.set(fact.factKey, evidenceBevorzugen(vorher, fact))
   }
 
   return {
