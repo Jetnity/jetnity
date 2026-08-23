@@ -134,8 +134,10 @@ Nach vollständiger Cursor-Umsetzung folgt ein unabhängiger ChatGPT-Review nach
 - Cursor-Anzeigename: `Admin platform audit`
 - Branch: `audit/admin-platform`
 - Draft-PR: #40
-- CI auf `518f5856`: SUCCESS, 4 Checks
-- Status: Audit fertig nach Self-Review; Implementierung nicht freigegeben
+- Unabhängiger Review: AUDIT-PASS (`docs/PR40_CHATGPT_ADMIN_AUDIT_REVIEW.md`)
+- CI: SUCCESS auf `3585809c` und `5236c37f`
+- Status: Audit als Planungsgrundlage akzeptiert; Implementierung nicht freigegeben
 - Handoff: `docs/ADMIN_PLATFORM_HANDOFF.md`
+- Shared Contracts: `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md` auf `chore/account-admin-team-prep`
 - Gesperrt: Rollen/RLS/Service-Role/Live-Integrationen/Mark Ready/Merge ohne Product Owner
-- Nächster Schritt: unabhängiger ChatGPT-/Technical-Lead-Review; Slice 0 Shared Contracts; erst danach ggf. Slice A
+- Nächster Schritt: PR #38 Blocker 29 / R15; danach Freigabe für Admin Slice A

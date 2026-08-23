@@ -340,7 +340,7 @@ Der nächste Agent darf D/E/Safety **nicht neu bauen** und darf **nicht direkt e
 
 ## 13. Parallele Plattform-Audits (kein Travel-Ersatz)
 
-Status: **Admin-Audit fertig auf `audit/admin-platform`; Account-Audit separat; keine Control-Center-Implementierung ohne Freigabe**
+Status: **Admin-Audit AUDIT-PASS auf Draft-PR #40; Account-Audit separat; keine Control-Center-Implementierung ohne Freigabe**
 
 Diese Arbeit ersetzt Seasonal nicht und darf Shared Travel-Contracts nicht ändern.
 

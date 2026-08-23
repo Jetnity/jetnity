@@ -333,4 +333,4 @@ Der Workstream **Admin Platform / Control Center** läuft auf `audit/admin-platf
 - Produktziel: `docs/ADMIN_PLATFORM_PRODUCT_MODEL.md`
 - Ist-Audit: `docs/ADMIN_PLATFORM_AUDIT.md`
 
-Keine Control-Center-Implementierung ohne ausdrückliche Technical-Lead-/Product-Owner-Freigabe. Kein Mark Ready, kein Merge ohne aktuelle Product-Owner-Freigabe.
+Unabhängiger Review: **AUDIT-PASS** (`docs/PR40_CHATGPT_ADMIN_AUDIT_REVIEW.md`). Shared Contracts: `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md` auf `chore/account-admin-team-prep`. Keine Control-Center-Implementierung ohne ausdrückliche Technical-Lead-/Product-Owner-Freigabe. Kein Mark Ready, kein Merge ohne aktuelle Product-Owner-Freigabe.

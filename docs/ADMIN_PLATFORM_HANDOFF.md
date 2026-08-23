@@ -1,7 +1,7 @@
 # Admin Platform Audit – Handoff
 
 Stand: 24. August 2026  
-Status: **Audit-Workstream fertig nach adversariellem Self-Review; Implementierung nicht gestartet und nicht freigegeben**
+Status: **AUDIT-PASS nach unabhängigem ChatGPT-Review; Implementierung nicht gestartet und nicht freigegeben**
 
 ## Identität
 
@@ -18,9 +18,10 @@ Status: **Audit-Workstream fertig nach adversariellem Self-Review; Implementieru
 - **Basis `origin/main`:** `cd220beb44d90ae376feeb8de9db8a3afb808d60`
 - **Prep-Head vor Audit-Dokumenten:** `2da365f72331259ccdb546182f99e122381dd62d`
 - **Docs-Head dieses Audits:** `f2262034e12cc8258d23001bbbf87f9a56e8414a`
-- **Branch-Head nach Push:** `518f5856dcb486ba3f78dc7a884597361965f8eb`
+- **Unabhängiger Review:** `docs/PR40_CHATGPT_ADMIN_AUDIT_REVIEW.md` – **AUDIT-PASS** gegen Head `3585809c`
+- **Review-Commit auf diesem Branch:** `5236c37fbb16961b563ae496978fef814eff686c`
+- **CI:** SUCCESS auf `3585809c` und `5236c37f` (je 4 Checks)
 - **PR:** Draft [#40](https://github.com/Jetnity/jetnity/pull/40)
-- **CI auf diesem Head:** SUCCESS, 4 Checks, kein Failure
 - **Mark Ready / Merge:** nein
 
 ## Phase / Scope
@@ -49,22 +50,24 @@ Admin-Shell/Auth/RLS/Capabilities, Users, Payments, Security, Dashboard-RPCs, St
 - Bestehenden Admin weiterverwenden, nicht parallel neu bauen.
 - Keine Implementierung ohne spätere ausdrückliche Freigabe.
 - PR #38 bleibt Seasonal-Owner; Admin fasst ihn nicht an.
-- Account teilt `profiles`/Privacy/Billing; Lead schneidet Shared Contracts.
+- Account teilt `profiles`/Privacy/Billing.
+- Verbindlicher Shared-Contract-Schnitt (Vorrang bei Widerspruch): `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md` auf `chore/account-admin-team-prep`.
 - Infomaniak-/Bexio-/Ads-Scopes aus öffentlicher Doku; Live-Konto nicht verifiziert.
+- Vor einem späteren Merge von PR #40 rebase/reconcile gegen den dann aktuellen Integrationsstand; keine neueren PR-#38-/Account-/Multi-Agent-Informationen zurückdrehen.
 
 ## Offene Risiken / Blocker
 
-- Implementierung gesperrt bis Lead/PO-Freigabe und sinnvollerweise #38-Closure.
-- Account-Audit kann Shared-Contract-Empfehlungen ändern.
+- Implementierung gesperrt bis technischem Closure/PASS von PR #38 und ausdrücklicher Slice-Freigabe.
 - Live-Leere von `payments`/`security_events` in Production nicht in dieser Session gemessen.
 - Exakte Infomaniak-Scope-Strings am Jetnity-Token nicht eingesehen (kein Token erzeugt).
+- Dieser Audit-Branch basiert auf älterem `main`; zentrale Doku kann veralten.
 
 ## Abhängigkeiten
 
-- Product Owner: Zielmodell bleibt verbindlich; Implementierungsstart ist ein neues Gate.
-- Technical Lead: Slice 0 Shared Contracts.
-- Account-Workstream: `docs/CURSOR_ACCOUNT_PLATFORM_AUDIT_TASK.md`.
-- Seasonal: PR #38.
+- Product Owner: Implementierungsstart und Merge bleiben eigene Gates.
+- Technical Lead: Shared Contracts in `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md`.
+- Account-Workstream: Draft-PR #39, Cursor-Anzeigename `Account plattform audit vorbereitung`.
+- Seasonal: PR #38, als Nächstes Blocker 29 und R15.
 
 ## Tests / Gates
 
@@ -72,7 +75,8 @@ In dieser Phase keine Product-Code-Änderung. Ist-Nachweis:
 
 - 85/85 Admin-nahe Unit-Tests grün (`admin-access`, `roles`, `roles-datenbank`, `faehigkeiten-datenbank`, `ladezustand`, `kennzahlen`)
 - `check:api-schutz`: 10/10 Admin-Routen mit `requireAdminApi()`
-- GitHub CI auf Head `518f5856`: SUCCESS, 4 Checks
+- GitHub CI SUCCESS auf `518f5856`, `3585809c` und `5236c37f` (je 4 Checks)
+- Unabhängiger Review: AUDIT-PASS (`docs/PR40_CHATGPT_ADMIN_AUDIT_REVIEW.md`)
 
 Kein Production-Build als „Control Center fertig“ behauptet. `db:sicherheit` gegen Live-Development nicht ausgeführt. Kein Mark Ready.
 
@@ -90,12 +94,12 @@ Kein Production-Build als „Control Center fertig“ behauptet. `db:sicherheit`
 - `docs/ADMIN_PLATFORM_SYSTEM_HEALTH_REQUIREMENTS.md` (bereits vorher verbindlich)
 - `docs/ADMIN_PLATFORM_WORKSTREAM_STATUS.md`
 - `docs/ADMIN_PLATFORM_AUDIT_SELF_REVIEW.md`
+- `docs/PR40_CHATGPT_ADMIN_AUDIT_REVIEW.md`
 - dieser Handoff
 
 ## Exakter nächster Schritt
 
-1. Unabhängiger ChatGPT-/Technical-Lead-Review dieser Dokumente nach `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md`.
-2. Account-Audit danebenlegen.
-3. Slice 0 entscheiden.
-4. Erst nach ausdrücklicher Freigabe Slice A (`feat/admin-control-center-ia`) starten.
-5. Kein Mark Ready, kein Merge dieses Audit-PRs ohne Product-Owner-Freigabe; Merge wäre nur Doku.
+1. PR #38 Blocker 29 schließen und R15 durchführen (nicht dieser Workstream).
+2. Bei technischem Closure/PASS von PR #38 konfliktarmen **Admin Slice A** zur Freigabe vorlegen: ehrliche Steuerzentralen-IA, Legacy-Lügen entfernen.
+3. Shared Auth/RLS/DB/Privacy/Billing/Support/Traveller-Änderungen nur seriell nach `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md`.
+4. Kein Mark Ready, kein Merge von PR #40 ohne Product-Owner-Freigabe; Merge wäre nur Doku nach Rebase.
