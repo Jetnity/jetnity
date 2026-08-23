@@ -43,7 +43,7 @@ export const SEASONAL_EVIDENCE_CLASSES = [
 ] as const
 export type SeasonalEvidenceClass = (typeof SEASONAL_EVIDENCE_CLASSES)[number]
 
-export const SEASONAL_ABGEWIESENE_KLASSEN = ['active_warning', 'acute'] as const
+export const SEASONAL_ABGEWIESENE_KLASSEN = ['active_warning', 'acute', 'acute_event'] as const
 
 export const SEASONAL_OUTCOMES = [
   'less_favorable',

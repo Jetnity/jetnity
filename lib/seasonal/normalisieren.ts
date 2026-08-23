@@ -112,40 +112,35 @@ export function seasonalFactNormalisieren(
     if (zeile.availability !== 'ok') return null
   }
 
-  if (zeile.evidenceClass != null && zeile.evidenceClass !== '') {
-    if (enumLesen(zeile.evidenceClass, SEASONAL_ABGEWIESENE_KLASSEN)) {
-      return {
-        factKey,
-        category,
-        evidenceClass: 'seasonal_pattern',
-        outcome: 'unknown',
-        spatialScope: { kind: 'insufficient' },
-        travelWindow: { kind: 'insufficient' },
-        affectedDomains: [],
-        evidence: {
-          provider: providerNameLesen(providerNameRoh),
-          authority: null,
-          authorityClass: 'unknown',
-          sourceUrl: null,
-          publishedAt: null,
-          updatedAt: null,
-          checkedAt: null,
-          freshUntil: null,
-          headline: null,
-          summary: null,
-          referencePeriod: null,
-        },
-        vertrauenswuerdig: false,
-        acuteRejected: true,
-        sourceTemporarilyUnavailable: false,
-      }
+  if (enumLesen(zeile.evidenceClass, SEASONAL_ABGEWIESENE_KLASSEN)) {
+    return {
+      factKey,
+      category,
+      evidenceClass: 'seasonal_pattern',
+      outcome: 'unknown',
+      spatialScope: { kind: 'insufficient' },
+      travelWindow: { kind: 'insufficient' },
+      affectedDomains: [],
+      evidence: {
+        provider: providerNameLesen(providerNameRoh),
+        authority: null,
+        authorityClass: 'unknown',
+        sourceUrl: null,
+        publishedAt: null,
+        updatedAt: null,
+        checkedAt: null,
+        freshUntil: null,
+        headline: null,
+        summary: null,
+        referencePeriod: null,
+      },
+      vertrauenswuerdig: false,
+      acuteRejected: true,
+      sourceTemporarilyUnavailable: false,
     }
   }
 
-  const evidenceClass =
-    zeile.evidenceClass == null || zeile.evidenceClass === ''
-      ? 'seasonal_pattern'
-      : enumLesen(zeile.evidenceClass, SEASONAL_EVIDENCE_CLASSES)
+  const evidenceClass = enumLesen(zeile.evidenceClass, SEASONAL_EVIDENCE_CLASSES)
   if (!evidenceClass) return null
 
   const outcome =

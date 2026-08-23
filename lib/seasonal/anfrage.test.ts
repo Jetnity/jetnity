@@ -67,6 +67,115 @@ describe('Seasonal-API-Hülle', () => {
     assert.equal(geprueft.success, false)
   })
 
+  test('Tripgraph mit doppelten oder dangling Referenzen wird abgelehnt', () => {
+    const basis = {
+      startDate: '2026-09-12',
+      endDate: '2026-09-16',
+      stages: [
+        { id: 'stage-a', name: 'Bangkok', countryCode: 'TH', arrivalDate: '2026-09-12', departureDate: '2026-09-13' },
+        { id: 'stage-b', name: 'Chiang Mai', countryCode: 'TH', arrivalDate: '2026-09-14', departureDate: '2026-09-16' },
+      ],
+      days: [
+        { id: 'day-a', stageId: 'stage-a', dayDate: '2026-09-12' },
+        { id: 'day-b', stageId: 'stage-b', dayDate: '2026-09-14' },
+      ],
+      items: [
+        { id: 'item-a', kind: 'activity', title: 'Tempel', stageId: 'stage-a', dayId: 'day-a', startsOn: '2026-09-12' },
+      ],
+    }
+    assert.equal(seasonalAnfrageSchema.safeParse(basis).success, true)
+    assert.equal(
+      seasonalAnfrageSchema.safeParse({
+        ...basis,
+        stages: [
+          { id: 'stage-x', name: 'A', countryCode: 'TH', arrivalDate: '2026-06-01', departureDate: '2026-06-05' },
+          { id: 'stage-x', name: 'B', countryCode: 'TH', arrivalDate: '2026-09-01', departureDate: '2026-09-05' },
+        ],
+      }).success,
+      false,
+    )
+    assert.equal(
+      seasonalAnfrageSchema.safeParse({
+        ...basis,
+        days: [
+          { id: 'day-a', stageId: 'stage-a', dayDate: '2026-09-12' },
+          { id: 'day-a', stageId: 'stage-b', dayDate: '2026-09-14' },
+        ],
+      }).success,
+      false,
+    )
+    assert.equal(
+      seasonalAnfrageSchema.safeParse({
+        ...basis,
+        items: [
+          { id: 'item-a', kind: 'activity', title: 'Tempel', stageId: 'stage-a', dayId: 'day-a' },
+          { id: 'item-a', kind: 'activity', title: 'Markt', stageId: 'stage-b', dayId: 'day-b' },
+        ],
+      }).success,
+      false,
+    )
+    assert.equal(
+      seasonalAnfrageSchema.safeParse({
+        ...basis,
+        days: [{ id: 'day-a', stageId: 'fehlt', dayDate: '2026-09-12' }],
+      }).success,
+      false,
+    )
+    assert.equal(
+      seasonalAnfrageSchema.safeParse({
+        ...basis,
+        items: [{ id: 'item-a', kind: 'activity', title: 'Tempel', stageId: 'fehlt', dayId: 'day-a' }],
+      }).success,
+      false,
+    )
+    assert.equal(
+      seasonalAnfrageSchema.safeParse({
+        ...basis,
+        items: [
+          {
+            id: 'flug-1',
+            kind: 'flight',
+            title: 'ZRH → BKK',
+            stageId: 'stage-a',
+            dayId: 'day-fehlt',
+            routeItinerary: {
+              v: 1,
+              type: 'flight_route_itinerary',
+              legs: [{ segments: [{ origin: { airportCode: 'ZRH' }, destination: { airportCode: 'BKK' } }] }],
+            },
+          },
+        ],
+      }).success,
+      false,
+    )
+    assert.equal(
+      seasonalAnfrageSchema.safeParse({
+        ...basis,
+        items: [{ id: 'item-a', kind: 'activity', title: 'Tempel', stageId: 'stage-b', dayId: 'day-a' }],
+      }).success,
+      false,
+    )
+  })
+
+  test('gültiger Graph bleibt unverändert funktional und guest/account-paritätisch', async () => {
+    const anfrage = {
+      startDate: '2026-09-12',
+      endDate: '2026-09-16',
+      stages: [{ id: 'stage-1', name: 'Bangkok', countryCode: 'TH' }],
+      days: [{ id: 'day-1', stageId: 'stage-1', dayDate: '2026-09-12' }],
+      items: [{ id: 'item-1', kind: 'activity', title: 'Tempel', stageId: 'stage-1', dayId: 'day-1' }],
+    }
+    const geprueft = seasonalAnfrageSchema.safeParse(anfrage)
+    assert.equal(geprueft.success, true)
+    if (!geprueft.success) throw new Error('Anfrage sollte gültig sein')
+    const gast = await seasonalEvaluationsPruefen(geprueft.data)
+    const konto = await seasonalEvaluationsPruefen(geprueft.data)
+    assert.deepEqual(
+      gast.map((eintrag) => eintrag.factFingerprint),
+      konto.map((eintrag) => eintrag.factFingerprint),
+    )
+  })
+
   test('Browser kann Seasonal-Evidence nicht setzen', async () => {
     const geprueft = seasonalAnfrageSchema.safeParse({
       startDate: '2026-09-12',

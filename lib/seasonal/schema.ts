@@ -87,6 +87,64 @@ export const seasonalAnfrageSchema = z
     if (JSON.stringify(wert).length > SEASONAL_GRENZEN.maxAnfrageBytes) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Die Anfrage ist zu gross.' })
     }
+
+    const stageIds = new Set<string>()
+    for (const etappe of wert.stages) {
+      if (stageIds.has(etappe.id)) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['stages'], message: 'Stage-IDs müssen eindeutig sein.' })
+        break
+      }
+      stageIds.add(etappe.id)
+    }
+
+    const dayIds = new Set<string>()
+    for (const tag of wert.days) {
+      if (dayIds.has(tag.id)) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['days'], message: 'Day-IDs müssen eindeutig sein.' })
+        break
+      }
+      dayIds.add(tag.id)
+      if (tag.stageId && !stageIds.has(tag.stageId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['days'],
+          message: 'day.stageId muss auf eine vorhandene Stage zeigen.',
+        })
+      }
+    }
+
+    const itemIds = new Set<string>()
+    for (const punkt of wert.items) {
+      if (itemIds.has(punkt.id)) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['items'], message: 'Item-IDs müssen eindeutig sein.' })
+        break
+      }
+      itemIds.add(punkt.id)
+      if (punkt.stageId && !stageIds.has(punkt.stageId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['items'],
+          message: 'item.stageId muss auf eine vorhandene Stage zeigen.',
+        })
+      }
+      if (punkt.dayId && !dayIds.has(punkt.dayId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['items'],
+          message: 'item.dayId muss auf einen vorhandenen Tag zeigen.',
+        })
+      }
+      if (punkt.dayId && punkt.stageId) {
+        const tag = wert.days.find((eintrag) => eintrag.id === punkt.dayId)
+        if (tag?.stageId && tag.stageId !== punkt.stageId) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['items'],
+            message: 'item.stageId und day.stageId müssen übereinstimmen.',
+          })
+        }
+      }
+    }
   })
 
 export type SeasonalAnfrage = z.infer<typeof seasonalAnfrageSchema>

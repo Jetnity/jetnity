@@ -734,6 +734,53 @@ describe('Seasonal-Engine', () => {
     assert.notEqual(evaluations[0]?.presentationClass, 'information')
   })
 
+  test('fehlende oder malformed evidenceClass erzeugt keine Seasonal-Truth', () => {
+    const fälle = [undefined, null, '', 1, { kind: 'seasonal_pattern' }, ['seasonal_pattern']]
+    for (const evidenceClass of fälle) {
+      const evaluations = seasonalAusFacts(
+        bangkokMonsunReise(),
+        [seasonalFact({ factKey: 'rain-th', category: 'monsoon', evidenceClass: evidenceClass as never })],
+        'audit-seasonal',
+        { nowMs: JETZT },
+      )
+      assert.equal(hinweise(evaluations).length, 0, String(evidenceClass))
+      assert.equal(evaluations[0]?.evidenceStatus, 'unknown')
+    }
+    const acute = seasonalAusFacts(
+      bangkokMonsunReise(),
+      [seasonalFact({ factKey: 'warn-th', category: 'monsoon', evidenceClass: 'acute_event' })],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    assert.equal(hinweise(acute).length, 0)
+    assert.equal(acute[0]?.factKey, 'acute_rejected')
+
+    const gemischt = seasonalAusFacts(
+      bangkokMonsunReise(),
+      [
+        seasonalFact({ factKey: 'rain-th', category: 'monsoon', evidenceClass: 'seasonal_pattern' }),
+        seasonalFact({ factKey: 'classless', category: 'monsoon', evidenceClass: null }),
+      ],
+      'audit-seasonal',
+      { nowMs: JETZT },
+    )
+    const ansicht = seasonalAnsicht(bangkokMonsunReise(), gemischt)
+    assert.equal(gemischt.some((eintrag) => eintrag.factKey === 'partial_invalid'), true)
+    assert.equal(ansicht.summary.complete, false)
+    assert.equal(seasonalApiStatus(ansicht.summary), 'unknown')
+
+    for (const evidenceClass of ['seasonal_pattern', 'official_seasonal_risk_window', 'forecast_outlook'] as const) {
+      const evaluations = seasonalAusFacts(
+        bangkokMonsunReise(),
+        [seasonalFact({ factKey: `ok-${evidenceClass}`, category: 'monsoon', evidenceClass })],
+        'audit-seasonal',
+        { nowMs: JETZT },
+      )
+      assert.equal(evaluations[0]?.evidenceClass, evidenceClass)
+      assert.equal(evaluations[0]?.relevance, 'applies')
+    }
+  })
+
   test('sourceUrl mit falschem Runtime-Typ erzeugt keine trusted Timing-Aussage', () => {
     for (const sourceUrl of [123, { href: 'https://example.org/x' }, ['https://example.org/x']]) {
       const evaluations = seasonalAusFacts(

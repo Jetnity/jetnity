@@ -48,7 +48,6 @@ function leererPunkt(teil: SeasonalAnfrage['items'][number], position: number): 
 
 export function tripAusSeasonalAnfrage(anfrage: SeasonalAnfrage): Trip {
   const items = anfrage.items.map((punkt, index) => leererPunkt(punkt, index + 1))
-  const stageIds = new Set(anfrage.stages.map((etappe) => etappe.id))
   return {
     ...beispielreise(),
     id: 'trip-anfrage',
@@ -70,7 +69,7 @@ export function tripAusSeasonalAnfrage(anfrage: SeasonalAnfrage): Trip {
     })),
     days: anfrage.days.map((tag, index) => ({
       id: tag.id,
-      stageId: tag.stageId && stageIds.has(tag.stageId) ? tag.stageId : null,
+      stageId: tag.stageId,
       dayIndex: index + 1,
       dayDate: tag.dayDate,
       title: null,
