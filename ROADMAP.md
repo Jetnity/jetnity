@@ -173,7 +173,7 @@ Versionierter Cursor-Auftrag liegt auf `main` und ist auf dem Feature-Branch umg
 - Ist-Audit: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ARCHITECTURE_AUDIT.md`
 - Live-Status: `docs/ACTIVE_WORK_STATUS.md`
 
-Kein echter Safety-Provider in diesem Block. Keine Production-Migration, kein Mark Ready, kein Merge. Die drei Stop-Criterion-Truth-Blocker aus `docs/PR37_CHATGPT_STOP_CRITERION_RECHECK.md` sind behoben (ADR-0132). Der nächste unabhängige Check soll auf Closure/Pass zielen.
+Kein echter Safety-Provider in diesem Block. Keine Production-Migration, kein Mark Ready, kein Merge. Der Timezone-Closure-Blocker aus `docs/PR37_CHATGPT_TIMEZONE_CLOSURE_REVIEW.md` ist behoben. Der nächste unabhängige Check soll auf Closure/Pass zielen.
 
 ---
 

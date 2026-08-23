@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 23. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D und E vollständig abgeschlossen inkl. Production; Travel Safety Foundation Stop-Criterion-Fixes auf Draft-PR #37, nächster Check zielt auf Closure/Pass**
+Status: **verbindlicher operativer Übergabepunkt – Foundation D und E vollständig abgeschlossen inkl. Production; Travel Safety Foundation Timezone-Closure-Fix auf Draft-PR #37, nächster Check zielt auf Closure/Pass**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Er sagt, was Jetnity ist, was bereits gebaut wurde, welche Regeln verbindlich sind und was als Nächstes zu tun ist.
 
@@ -274,7 +274,7 @@ Echte Provider kommen am Schluss. **Vorher müssen die provider-neutralen Ports/
 
 ## 9. Nächster operativer Schritt
 
-Cursor hat die provider-neutrale Safety-Foundation umgesetzt und die Blocker aus Review, Re-Review, Final Closure und Stop-Criterion Recheck behoben (ADR-0129, ADR-0130, ADR-0131, ADR-0132). Der nächste unabhängige Check soll auf **Closure/Pass** zielen.
+Cursor hat die provider-neutrale Safety-Foundation umgesetzt und die Blocker aus Review, Re-Review, Final Closure, Stop-Criterion und Timezone Closure behoben (ADR-0129–0132). Der nächste unabhängige Check soll auf **Closure/Pass** zielen.
 
 Harte Gates bleiben:
 
@@ -283,7 +283,7 @@ Harte Gates bleiben:
 - keine Production-Migration
 - kein echter Safety-/Disruption-Provider
 
-Lokal nach Stop-Criterion-Fix verifiziert: 1476/1476 Tests, UI-Audit 886/886 (WebKit + Chromium, 8 Viewports), Production-Build 38/38, DB-Gates unverändert. Runtime-Head `8d78da98`; CI/Preview auf demselben Runtime-Head: GitHub Actions `32631778057` SUCCESS, Vercel Preview `6046614518` READY/SUCCESS. Dieser Docs-Nachzug ändert keine Runtime.
+Lokal nach Timezone-Closure-Fix verifiziert: 1478/1478 Tests, UI-Audit 886/886 (WebKit + Chromium, 8 Viewports), Production-Build 38/38, DB-Gates unverändert. Runtime-Head `09fedc4f`; CI/Preview auf demselben Runtime-Head: GitHub Actions `32633024648` SUCCESS, Vercel Preview `6046827157` READY/SUCCESS. Dieser Docs-Nachzug ändert keine Runtime.
 
 Leitsatz:
 

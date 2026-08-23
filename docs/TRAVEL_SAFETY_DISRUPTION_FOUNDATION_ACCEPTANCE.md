@@ -1,20 +1,21 @@
 # Travel Safety & Disruption Foundation – Acceptance
 
 Stand: 23. August 2026  
-Status: **Stop-Criterion-Truth-Blocker behoben; Draft-PR #37; Merge-, Mark-Ready- und Production-Gate offen**
+Status: **Timezone-Closure-Blocker behoben; Draft-PR #37; Merge-, Mark-Ready- und Production-Gate offen**
 
 Branch: `feat/travel-safety-disruption-intelligence`  
 PR: https://github.com/Jetnity/jetnity/pull/37  
 PR-Zustand: **Draft**  
 Base: `main` @ `91e644b279c802c5a5d7a88135ed8ab9c4229a34`  
-Verifizierter Runtime-Head nach Stop-Criterion-Fix: `8d78da98`  
+Verifizierter Runtime-Head nach Timezone-Closure-Fix: `09fedc4f`  
 Dieser Docs-Nachzug ändert keine Runtime.  
-Ahead/behind zu `origin/main` auf Runtime `8d78da98`: **22 ahead / 0 behind**  
+Ahead/behind zu `origin/main` auf Runtime `09fedc4f`: **25 ahead / 0 behind**  
 Task: `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`  
 Unabhängiger Review: `docs/PR37_CHATGPT_INDEPENDENT_REVIEW.md`  
 Unabhängiger Re-Review: `docs/PR37_CHATGPT_REREVIEW.md`  
 Final Closure Review: `docs/PR37_CHATGPT_FINAL_CLOSURE_REVIEW.md`  
 Stop-Criterion Recheck: `docs/PR37_CHATGPT_STOP_CRITERION_RECHECK.md`  
+Timezone Closure Review: `docs/PR37_CHATGPT_TIMEZONE_CLOSURE_REVIEW.md`  
 Fachdokument: `docs/TRAVEL_SAFETY_DISRUPTION.md`
 
 Kein Merge, kein Mark Ready und keine Production-Migration ohne ausdrückliche aktuelle Product-Owner-Freigabe.
@@ -32,6 +33,12 @@ Der Stop-Criterion Recheck gegen `57f34ecf` / Runtime `b20b3999` war **REQUEST C
 1. Teilweise malformed Providerantworten können nicht `checked_clean` oder generisches API-`ok` erzeugen. `summary.complete` bleibt fail-closed; gültige Warnungen bleiben sichtbar.
 2. Date-only gilt als voller Kalendertag. Route-Segmentzeiten erzeugen echte Kontaktfenster. Derselbe Tag wird nicht wegen Mitternacht `not_affected`.
 3. Routekontakte sind einzelne Fenster. Country-Scope behält Stage und alle Land-Routekontakte. Feinere City/Place-Matches behalten unresolved Routekontakt, wenn die Stage zeitlich herausfällt.
+
+Der Timezone Closure Review gegen `784c0a55` / Runtime `8d78da98` war **REQUEST CHANGES**. Der Blocker ist im Runtime-Head `09fedc4f` behoben:
+
+- Foundation-D-`HH:mm` bleibt zonenlose Ortszeit. Safety hängt kein `Z` an.
+- UTC-Eventinstanten gegen lokale Routeuhren ohne Zone ergeben `insufficient_context`, keine Minuten-`affected`/`not_affected`-Wahrheit, sofern der Kalendertag nicht klar außerhalb jeder möglichen Offset-Spanne liegt.
+- Date-only bleibt kalendertagbasiert vergleichbar. Wiederholte Routekontakte und unresolved Country-/City-/Place-Fälle bleiben erhalten.
 
 Der nächste unabhängige Check soll auf Closure/Pass zielen, sofern kein neuer konkreter Truth-/Security-/SoT-/Rollout-Defekt erscheint.
 
@@ -62,11 +69,11 @@ Jetnity besitzt eine provider-neutrale Safety-Domäne, die:
 
 ## Verifizierte Nachweise
 
-Lokal auf Runtime `8d78da98`:
+Lokal auf Runtime `09fedc4f`:
 
 | Nachweis | Ergebnis |
 | --- | --- |
-| `npm test` | **1476/1476** |
+| `npm test` | **1478/1478** |
 | Typecheck | grün |
 | Lint | grün |
 | `check:exports` | 0 unbegründete Exporte |
@@ -77,14 +84,14 @@ Lokal auf Runtime `8d78da98`:
 | Production-Build | grün, 38/38 Seiten, inkl. `/api/safety/evaluate` |
 | UI-Audit | **886/886**, 0 Fehler, WebKit + Chromium, Viewports 280 / 320 / 360 / 390 / 430 / 768 / 844x390 / 1280 |
 
-Auf Runtime `8d78da98`:
+Auf Runtime `09fedc4f`:
 
 | Nachweis | Ergebnis |
 | --- | --- |
-| GitHub Actions | Run [`32631778057`](https://github.com/Jetnity/jetnity/actions/runs/32631778057) **SUCCESS** |
-| Vercel Preview | Deployment `6046614518` **READY/SUCCESS** → https://jetnity-app-git-feat-travel-safety-disr-914f66-jetnity-e1b93c82.vercel.app |
+| GitHub Actions | Run [`32633024648`](https://github.com/Jetnity/jetnity/actions/runs/32633024648) **SUCCESS** |
+| Vercel Preview | Deployment `6046827157` **READY/SUCCESS** → https://jetnity-app-git-feat-travel-safety-disr-914f66-jetnity-e1b93c82.vercel.app |
 
-Ein reiner Dokumentations-Nachzug nach `8d78da98` ändert keine Runtime.
+Ein reiner Dokumentations-Nachzug nach `09fedc4f` ändert keine Runtime.
 
 ---
 

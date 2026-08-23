@@ -34,7 +34,7 @@ Diese Ebenen dürfen nicht in ein Severity-Feld fallen:
 
 Die Präsentationsklasse entsteht nur aus belegbaren Facts plus konkreter Relevanz. Ohne source-backed Extreme/Do-not-travel gibt es keine kritische Warnung.
 
-Evidence-Freshness (`checkedAt`, optionales `freshUntil`, sonst Max-Age 7 Tage) ist getrennt vom Event-Zeitfenster. Eine Admin-Region ohne kanonische Membership und eine Stadt ohne gemeinsame Place-ID bleiben `insufficient_context`. Eine Transit-Route im selben Land ohne belegbare Feingeometrie bleibt `insufficient_context`, auch wenn zusätzlich eine Stage in diesem Land existiert oder diese Stage zeitlich herausfällt. Zeitliche Relevanz gilt für konkrete Kontaktfenster, nicht für ein künstliches Min/Max über wiederholte Airports. Date-only ist ein Kalendertag, kein Mitternachts-Instant. Nur ein vollständiger checked-clean-Zustand darf «keine aktuelle Warnung im geprüften Scope» sagen; teilweise malformed Antworten bleiben `complete=false` / unknown. Travellerabhängige Hinweise bleiben fail-closed, solange ein relevanter Slot unvollständig ist. Mehr als 40 Providerzeilen werden als Integrity-Fehler verworfen. Der Provider-Port hat ein Abort/Timeout. Kalenderdaten werden strikt validiert.
+Evidence-Freshness (`checkedAt`, optionales `freshUntil`, sonst Max-Age 7 Tage) ist getrennt vom Event-Zeitfenster. Eine Admin-Region ohne kanonische Membership und eine Stadt ohne gemeinsame Place-ID bleiben `insufficient_context`. Eine Transit-Route im selben Land ohne belegbare Feingeometrie bleibt `insufficient_context`, auch wenn zusätzlich eine Stage in diesem Land existiert oder diese Stage zeitlich herausfällt. Zeitliche Relevanz gilt für konkrete Kontaktfenster, nicht für ein künstliches Min/Max über wiederholte Airports. Date-only ist ein Kalendertag, kein Mitternachts-Instant. Foundation-D-`HH:mm` bleibt lokale Ortszeit ohne Zone; ein `…Z`-Event dagegen liefert ohne belastbare Zone keine Minuten-Wahrheit. Nur ein vollständiger checked-clean-Zustand darf «keine aktuelle Warnung im geprüften Scope» sagen; teilweise malformed Antworten bleiben `complete=false` / unknown. Travellerabhängige Hinweise bleiben fail-closed, solange ein relevanter Slot unvollständig ist. Mehr als 40 Providerzeilen werden als Integrity-Fehler verworfen. Der Provider-Port hat ein Abort/Timeout. Kalenderdaten werden strikt validiert.
 
 ---
 
@@ -60,7 +60,7 @@ Route Truth kommt ausschließlich aus `routeFactsAusGraph`. Traveller Context wi
 
 Keine Safety-Tabelle. Official Safety-Truth bleibt compute-on-read, analog Official Readiness. Production-Schema unverändert.
 
-Lokal auf Runtime `8d78da98` verifiziert: 1476 Tests, UI-Audit 886/886, Production-Build 38/38. Live-Provider bleibt `null`. Dieser Docs-Nachzug ändert keine Runtime.
+Lokal auf Runtime `09fedc4f` verifiziert: 1478 Tests, UI-Audit 886/886, Production-Build 38/38. Live-Provider bleibt `null`. Dieser Docs-Nachzug ändert keine Runtime.
 
 ---
 

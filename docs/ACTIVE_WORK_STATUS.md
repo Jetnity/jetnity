@@ -5,24 +5,24 @@ Arbeitsblock: **Travel Safety & Disruption Intelligence – provider-neutrale Fo
 
 ## 1. Arbeitsblock / Ziel
 
-Provider-neutrale Safety-/Disruption-Foundation. Die drei Stop-Criterion-Truth-Blocker aus `docs/PR37_CHATGPT_STOP_CRITERION_RECHECK.md` sind behoben (ADR-0132). Der nächste unabhängige Check soll auf Closure/Pass zielen.
+Provider-neutrale Safety-/Disruption-Foundation. Der Timezone-Closure-Blocker aus `docs/PR37_CHATGPT_TIMEZONE_CLOSURE_REVIEW.md` ist behoben (ADR-0132 korrigiert). Der nächste unabhängige Check soll auf Closure/Pass zielen.
 
 Auftrag: `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`  
-Stop-Criterion Recheck: `docs/PR37_CHATGPT_STOP_CRITERION_RECHECK.md`
+Timezone Closure: `docs/PR37_CHATGPT_TIMEZONE_CLOSURE_REVIEW.md`
 
 ## 2. Branch / PR / aktueller Head
 
 - Basis: `origin/main` = `91e644b279c802c5a5d7a88135ed8ab9c4229a34`
 - Branch: `feat/travel-safety-disruption-intelligence`
 - Draft PR: https://github.com/Jetnity/jetnity/pull/37
-- Verifizierter Runtime-Head: `8d78da98`
+- Verifizierter Runtime-Head: `09fedc4f`
 - Dieser Docs-Nachzug ändert keine Runtime.
-- Ahead/behind auf Runtime `8d78da98`: **22 ahead / 0 behind**
+- Ahead/behind auf Runtime `09fedc4f`: **25 ahead / 0 behind**
 - Draft. Kein Mark Ready, kein Merge.
 
 ## 3. Status
 
-**Stop-Criterion-Truth-Blocker behoben und lokal plus remote auf dem Runtime-Head verifiziert; Draft-PR #37**
+**Timezone-Closure-Blocker behoben und lokal plus remote auf dem Runtime-Head verifiziert; Draft-PR #37**
 
 ## 4. Bereits umgesetzt
 
@@ -30,7 +30,8 @@ Stop-Criterion Recheck: `docs/PR37_CHATGPT_STOP_CRITERION_RECHECK.md`
 - Review-Fixes ADR-0129
 - Re-Review-Fixes ADR-0130
 - Final-Closure-Fixes ADR-0131
-- Stop-Criterion-Fixes ADR-0132: Teil-Malformed nicht clean, Date-only voller Kalendertag, Routekontakt-Fenster, Country- und unresolved Route-Refs
+- Stop-Criterion-Fixes ADR-0132
+- Timezone-Closure: Foundation-D-Ortszeiten bleiben zonenlos; UTC-Eventinstanten ohne Zone ergeben keine Minuten-Wahrheit
 
 ## 5. Gerade offen
 
@@ -42,22 +43,22 @@ Stop-Criterion Recheck: `docs/PR37_CHATGPT_STOP_CRITERION_RECHECK.md`
 
 ## 6. Letzte relevanten Änderungen
 
-- Stop-Criterion Recheck: `00331143`
-- Stop-Criterion-Fixes: `8d78da98`
+- Timezone Closure Review: `10340ef5`
+- Timezone-Closure-Fix: `09fedc4f`
 
 ## 7. Tests / CI / Preview
 
-Lokal auf Runtime `8d78da98`:
+Lokal auf Runtime `09fedc4f`:
 
-- `npm test`: **1476/1476**
+- `npm test`: **1478/1478**
 - Typecheck, Lint, Hygiene grün
 - Production-Build: **38/38**, inkl. `/api/safety/evaluate`
 - UI-Audit: **886/886**, 0 Fehler, WebKit + Chromium, 8 Viewports
 
-Auf Runtime `8d78da98`:
+Auf Runtime `09fedc4f`:
 
-- GitHub Actions `32631778057`: **SUCCESS**
-- Vercel Preview `6046614518`: **READY/SUCCESS**
+- GitHub Actions `32633024648`: **SUCCESS**
+- Vercel Preview `6046827157`: **READY/SUCCESS**
 - Preview: https://jetnity-app-git-feat-travel-safety-disr-914f66-jetnity-e1b93c82.vercel.app
 
 Dieser Dokumentations-Nachzug ändert keine Runtime.
@@ -90,6 +91,6 @@ Draft bleibt Draft. Nächster ChatGPT-Check zielt auf Closure/Pass. Kein weitere
 
 ## 13. Zuerst zu lesen
 
-1. `docs/PR37_CHATGPT_STOP_CRITERION_RECHECK.md`
+1. `docs/PR37_CHATGPT_TIMEZONE_CLOSURE_REVIEW.md`
 2. `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ACCEPTANCE.md`
-3. `lib/safety/status.ts`, `lib/safety/relevanz.ts`, `lib/safety/engine.ts`
+3. `lib/safety/relevanz.ts`, `lib/safety/scope.ts`, `lib/flights/zeit.ts`
