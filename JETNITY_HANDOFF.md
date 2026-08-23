@@ -146,8 +146,8 @@ Provider-Suchen/Requirements bleiben produktiv deaktiviert, solange keine echten
 **Foundation E – Traveller Context / Multi-Citizenship / Multi-Document** ist technisch umgesetzt, mit `main` synchronisiert und lokal plus remote verifiziert. Nicht gemergt.
 
 - Branch: `feat/traveller-context-intelligence`
-- Letzter voll verifizierter Code-Head: `08716228d2e6a5404730276843374cf7d3f9e066`
-- Closure-Blocker aus `docs/PR35_CHATGPT_FINAL_CLOSURE_REVIEW.md` im Code; vollständiges Gate folgt
+- Closure-Gate-Head: `b1f9d6543aa153bacaa126f71d39c6a434dfbebb`
+- Closure-Blocker aus `docs/PR35_CHATGPT_FINAL_CLOSURE_REVIEW.md` / ADR-0126 verifiziert
 - Basis: `origin/main` @ `c8dbe904`
 - Draft PR: **#35**, `MERGEABLE`, bleibt Draft
 - kein Merge ohne ausdrückliche Product-Owner-Freigabe
