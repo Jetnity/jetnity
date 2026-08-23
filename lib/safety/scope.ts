@@ -4,7 +4,7 @@
 
 import { istOrtId } from '@/lib/places/domain'
 import { iataLesen, safetyLandescode } from '@/lib/safety/domain'
-import { zeitMs } from '@/lib/safety/evidence'
+import { zeitgrenzeMs } from '@/lib/safety/evidence'
 
 const SAFETY_SCOPE_KINDS = [
   'country',
@@ -186,10 +186,14 @@ export function zeitraeumeUeberschneiden(
   eventEnde: string | null,
 ): 'overlaps' | 'before' | 'after' | 'insufficient' {
   if (!reiseStart && !reiseEnde) return 'insufficient'
-  const tripStart = reiseStart ? zeitMs(reiseStart) : null
-  const tripEnd = reiseEnde ? zeitMs(reiseEnde) : tripStart
-  if (eventEnde && tripStart != null && zeitMs(eventEnde) < tripStart) return 'before'
-  if (eventStart && tripEnd != null && zeitMs(eventStart) > tripEnd) return 'after'
-  if (!eventStart && !eventEnde) return 'overlaps'
+  const tripStart = reiseStart ? zeitgrenzeMs(reiseStart, 'start') : reiseEnde ? zeitgrenzeMs(reiseEnde, 'start') : null
+  const tripEnd = reiseEnde ? zeitgrenzeMs(reiseEnde, 'end') : reiseStart ? zeitgrenzeMs(reiseStart, 'end') : null
+  if (tripStart == null || tripEnd == null || !Number.isFinite(tripStart) || !Number.isFinite(tripEnd)) {
+    return 'insufficient'
+  }
+  const eventStartMs = eventStart ? zeitgrenzeMs(eventStart, 'start') : null
+  const eventEndMs = eventEnde ? zeitgrenzeMs(eventEnde, 'end') : null
+  if (eventEndMs != null && Number.isFinite(eventEndMs) && eventEndMs < tripStart) return 'before'
+  if (eventStartMs != null && Number.isFinite(eventStartMs) && eventStartMs > tripEnd) return 'after'
   return 'overlaps'
 }

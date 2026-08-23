@@ -13,10 +13,17 @@ import {
   type SafetySpatialScope,
 } from '@/lib/safety/scope'
 
+export type SafetyKontakt = {
+  start: string | null
+  end: string | null
+}
+
 export type SafetyRelevanzErgebnis = {
   relevance: SafetyRelevance
   precision: SafetySpatialPrecision
   affectedRefs: SafetyTripRef[]
+  unresolvedRefs?: SafetyTripRef[]
+  unresolvedRoute?: boolean
   reason: string
 }
 
@@ -68,47 +75,113 @@ function routeBeruehrtLand(kontext: SafetyReisekontext, countryCode: string | nu
   )
 }
 
-function airportZeitfenster(
-  route: RouteFacts,
-  code: string,
-): { start: string | null; end: string | null } | null {
-  const zeiten: string[] = []
-  for (const segment of route.segments) {
-    if (segment.origin.airportCode === code && segment.departureDate) zeiten.push(segment.departureDate)
-    if (segment.destination.airportCode === code && segment.arrivalDate) zeiten.push(segment.arrivalDate)
-  }
-  if (zeiten.length === 0) return null
-  const sortiert = [...zeiten].sort()
-  return { start: sortiert[0] ?? null, end: sortiert[sortiert.length - 1] ?? null }
+function kontaktZeit(date: string | null, time: string | null): string | null {
+  if (!date) return null
+  if (time && /^\d{2}:\d{2}$/.test(time)) return `${date}T${time}:00.000Z`
+  return date
 }
 
-function refZeitfenster(
-  kontext: SafetyReisekontext,
-  ref: SafetyTripRef,
-): { start: string | null; end: string | null } | null {
+function airportKontakte(route: RouteFacts, code: string): SafetyKontakt[] {
+  const segmente = route.segments
+  const pairedInbound = new Set<number>()
+  const pairedOutbound = new Set<number>()
+  const kontakte: SafetyKontakt[] = []
+
+  for (let i = 0; i < segmente.length - 1; i += 1) {
+    const ankunft = segmente[i]
+    const abflug = segmente[i + 1]
+    if (ankunft?.destination.airportCode !== code || abflug?.origin.airportCode !== code) continue
+    kontakte.push({
+      start: kontaktZeit(ankunft.arrivalDate, ankunft.arrivalTime),
+      end: kontaktZeit(abflug.departureDate, abflug.departureTime),
+    })
+    pairedInbound.add(i)
+    pairedOutbound.add(i + 1)
+  }
+
+  for (let i = 0; i < segmente.length; i += 1) {
+    const segment = segmente[i]
+    if (!segment) continue
+    if (segment.destination.airportCode === code && !pairedInbound.has(i)) {
+      const at = kontaktZeit(segment.arrivalDate, segment.arrivalTime)
+      kontakte.push({ start: at, end: at })
+    }
+    if (segment.origin.airportCode === code && !pairedOutbound.has(i)) {
+      const at = kontaktZeit(segment.departureDate, segment.departureTime)
+      kontakte.push({ start: at, end: at })
+    }
+  }
+
+  return kontakte
+}
+
+function routeAirportsImLand(kontext: SafetyReisekontext, countryCode: string | null): string[] {
+  if (!countryCode) return []
+  const codes = new Set<string>()
+  const add = (airportCode: string | null, land: string | null) => {
+    if (land === countryCode && airportCode) codes.add(airportCode)
+  }
+  add(kontext.route.origin.airportCode, kontext.route.origin.countryCode)
+  add(kontext.route.destination.airportCode, kontext.route.destination.countryCode)
+  for (const segment of kontext.route.segments) {
+    add(segment.origin.airportCode, segment.origin.countryCode)
+    add(segment.destination.airportCode, segment.destination.countryCode)
+  }
+  for (const verbindung of kontext.route.connections) {
+    add(verbindung.airportCode, verbindung.countryCode)
+  }
+  return [...codes].sort()
+}
+
+function refKontakte(kontext: SafetyReisekontext, ref: SafetyTripRef): SafetyKontakt[] | null {
   if (ref.kind === 'stage') {
     const etappe = kontext.stages.find((eintrag) => eintrag.id === ref.id)
     if (!etappe) return null
     if (!etappe.arrivalDate && !etappe.departureDate) return null
-    return {
-      start: etappe.arrivalDate ?? etappe.departureDate,
-      end: etappe.departureDate ?? etappe.arrivalDate,
-    }
+    return [
+      {
+        start: etappe.arrivalDate ?? etappe.departureDate,
+        end: etappe.departureDate ?? etappe.arrivalDate,
+      },
+    ]
   }
   if (ref.kind === 'airport' || ref.kind === 'route_point') {
-    return airportZeitfenster(kontext.route, ref.id)
+    const kontakte = airportKontakte(kontext.route, ref.id)
+    return kontakte.length > 0 ? kontakte : null
   }
   if (ref.kind === 'day') {
     const tag = kontext.days.find((eintrag) => eintrag.id === ref.id)
-    return tag?.dayDate ? { start: tag.dayDate, end: tag.dayDate } : null
+    return tag?.dayDate ? [{ start: tag.dayDate, end: tag.dayDate }] : null
   }
   if (ref.kind === 'item') {
     const punkt = kontext.items.find((eintrag) => eintrag.id === ref.id)
     if (!punkt) return null
     if (!punkt.startsOn && !punkt.endsOn) return null
-    return { start: punkt.startsOn ?? punkt.endsOn, end: punkt.endsOn ?? punkt.startsOn }
+    return [{ start: punkt.startsOn ?? punkt.endsOn, end: punkt.endsOn ?? punkt.startsOn }]
   }
   return null
+}
+
+function kontakteGegenEvent(
+  kontakte: SafetyKontakt[] | null,
+  start: string | null,
+  end: string | null,
+): 'overlaps' | 'outside' | 'insufficient' {
+  if (!kontakte || kontakte.length === 0) return 'insufficient'
+  let trifft = false
+  let unklar = false
+  for (const fenster of kontakte) {
+    if (!fenster.start && !fenster.end) {
+      unklar = true
+      continue
+    }
+    const lage = zeitraeumeUeberschneiden(fenster.start, fenster.end, start, end)
+    if (lage === 'overlaps') trifft = true
+    else if (lage === 'insufficient') unklar = true
+  }
+  if (trifft) return 'overlaps'
+  if (unklar) return 'insufficient'
+  return 'outside'
 }
 
 function räumlicheRelevanz(
@@ -126,10 +199,7 @@ function räumlicheRelevanz(
 
   if (scope.kind === 'country') {
     const etappen = kontext.stages.filter((etappe) => etappe.countryCode === scope.countryCode)
-    const routeImLand =
-      kontext.route.origin.countryCode === scope.countryCode ||
-      kontext.route.destination.countryCode === scope.countryCode ||
-      kontext.route.transitCountryCodes.includes(scope.countryCode)
+    const routeImLand = routeBeruehrtLand(kontext, scope.countryCode)
     if (etappen.length === 0 && !routeImLand) {
       return {
         relevance: 'not_affected',
@@ -138,20 +208,12 @@ function räumlicheRelevanz(
         reason: 'Das Ereignis betrifft ein anderes Land als diese Reise.',
       }
     }
-    const refs = etappen.map(etappenRef)
-    if (routeImLand && etappen.length === 0) {
-      const code =
-        kontext.route.transitCountryCodes.includes(scope.countryCode)
-          ? kontext.route.connections.find((punkt) => punkt.countryCode === scope.countryCode)?.airportCode
-          : kontext.route.origin.countryCode === scope.countryCode
-            ? kontext.route.origin.airportCode
-            : kontext.route.destination.airportCode
-      if (code) refs.push(routePunktRef(code))
-    }
+    const airports = routeAirportsImLand(kontext, scope.countryCode)
     return {
       relevance: 'affected',
       precision: 'country',
-      affectedRefs: refs,
+      affectedRefs: [...etappen.map(etappenRef), ...airports.map((code) => routePunktRef(code))],
+      unresolvedRoute: routeImLand && airports.length === 0,
       reason: 'Offizielle Lage auf Landesebene, ohne erfundene regionale Präzision.',
     }
   }
@@ -187,6 +249,8 @@ function räumlicheRelevanz(
         relevance: 'affected',
         precision: 'place',
         affectedRefs: exakt.map(etappenRef),
+        unresolvedRefs: routeAirportsImLand(kontext, scope.countryCode).map((code) => routePunktRef(code)),
+        unresolvedRoute: routeBeruehrtLand(kontext, scope.countryCode),
         reason: 'Der belegte Ort der Quelle entspricht einer konkreten Etappe.',
       }
     }
@@ -262,6 +326,8 @@ function räumlicheRelevanz(
         relevance: 'affected',
         precision: 'city',
         affectedRefs: exakt.map(etappenRef),
+        unresolvedRefs: routeAirportsImLand(kontext, scope.countryCode).map((code) => routePunktRef(code)),
+        unresolvedRoute: routeBeruehrtLand(kontext, scope.countryCode),
         reason: 'Die belegte Region oder Stadt entspricht einer konkreten Etappe.',
       }
     }
@@ -381,14 +447,17 @@ function zeitAufRefsAnwenden(
   const passende: SafetyTripRef[] = []
   let unklar = false
   for (const ref of raum.affectedRefs) {
-    const fenster = refZeitfenster(kontext, ref)
-    if (!fenster) {
-      unklar = true
-      continue
-    }
-    const lage = zeitraeumeUeberschneiden(fenster.start, fenster.end, start, end)
+    const lage = kontakteGegenEvent(refKontakte(kontext, ref), start, end)
     if (lage === 'overlaps') passende.push(ref)
     else if (lage === 'insufficient') unklar = true
+  }
+
+  let unresolvedHit = raum.unresolvedRoute === true && (raum.unresolvedRefs?.length ?? 0) === 0
+  let unresolvedUnklar = false
+  for (const ref of raum.unresolvedRefs ?? []) {
+    const lage = kontakteGegenEvent(refKontakte(kontext, ref), start, end)
+    if (lage === 'overlaps') unresolvedHit = true
+    else if (lage === 'insufficient') unresolvedUnklar = true
   }
 
   if (passende.length > 0) {
@@ -401,12 +470,14 @@ function zeitAufRefsAnwenden(
           : 'Nur der zeitlich überschneidende Reiseteil ist betroffen.',
     }
   }
-  if (unklar) {
+  if (unklar || unresolvedUnklar || unresolvedHit) {
     return {
       ...raum,
       relevance: 'insufficient_context',
       affectedRefs: [],
-      reason: 'Für einen zeitlichen Abgleich des betroffenen Reiseteils fehlen belastbare Daten.',
+      reason: unresolvedHit
+        ? 'Die Route berührt das Land erneut, die feinere Ortszugehörigkeit ist aber nicht belegt.'
+        : 'Für einen zeitlichen Abgleich des betroffenen Reiseteils fehlen belastbare Daten.',
     }
   }
   return {

@@ -21,6 +21,7 @@ export type SafetySummary = {
   information: number
   unknown: number
   unavailable: boolean
+  complete: boolean
   checkState: SafetyCheckState
   sichtbar: boolean
 }
@@ -81,6 +82,7 @@ export function safetyAnsicht(reise: Trip, evaluations?: SafetyEvaluation[]): Sa
   const liste = evaluations ?? safetyLokalFuerReise(reise)
   const vorhanden = evaluations !== undefined
   const checkState = checkStateAus(liste, vorhanden)
+  const complete = !liste.some((eintrag) => eintrag.factKey === 'partial_invalid')
   const sichtbare = vorhanden
     ? liste.filter((eintrag) => {
         if (eintrag.seasonalRejected) return false
@@ -99,6 +101,7 @@ export function safetyAnsicht(reise: Trip, evaluations?: SafetyEvaluation[]): Sa
       information: zaehlen(liste, 'information'),
       unknown: liste.filter((eintrag) => eintrag.presentationClass === 'unknown').length,
       unavailable: checkState === 'unavailable',
+      complete,
       checkState,
       sichtbar: vorhanden && sichtbare.length > 0,
     },
@@ -108,5 +111,6 @@ export function safetyAnsicht(reise: Trip, evaluations?: SafetyEvaluation[]): Sa
 export function safetyApiStatus(summary: SafetySummary): 'ok' | 'unavailable' | 'unknown' {
   if (summary.checkState === 'unavailable') return 'unavailable'
   if (summary.checkState === 'unknown') return 'unknown'
+  if (!summary.complete) return 'unknown'
   return 'ok'
 }

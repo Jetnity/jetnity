@@ -72,6 +72,13 @@ export function zeitMs(wert: string): number {
   return Date.parse(/^\d{4}-\d{2}-\d{2}$/.test(wert) ? `${wert}T00:00:00.000Z` : wert)
 }
 
+export function zeitgrenzeMs(wert: string, kante: 'start' | 'end'): number {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(wert)) {
+    return Date.parse(kante === 'start' ? `${wert}T00:00:00.000Z` : `${wert}T23:59:59.999Z`)
+  }
+  return Date.parse(wert)
+}
+
 export function quelleUrlLesen(wert: unknown): string | null {
   if (typeof wert !== 'string') return null
   const url = wert.trim()

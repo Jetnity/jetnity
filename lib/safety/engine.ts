@@ -279,6 +279,17 @@ export function safetyAusFacts(
       }),
     )
   }
+  if (ungueltig > 0) {
+    evaluations.push(
+      leerEvaluation({
+        contextFingerprint,
+        freshness: 'never_checked',
+        status: 'unknown',
+        reason: 'Ein Teil der Providerantwort war ungültig und wurde verworfen. Die Prüfung ist unvollständig.',
+        factKey: 'partial_invalid',
+      }),
+    )
+  }
   return evaluationsSortieren(evaluations)
 }
 
