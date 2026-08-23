@@ -3279,6 +3279,27 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0131 – Checked-clean, Teil-Zeitrelevanz und vollständige Decision-Signatur nach PR-37-Final-Closure
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #37 nach Final Closure Review REQUEST CHANGES
+
+**Entscheidung:**
+
+- Summary/API unterscheiden `checked_clean`, `unavailable`, `unknown` und aktuelle Warnungen. Nur checked-clean darf die Copy «keine aktuelle Warnung im geprüften Scope» erzeugen. Timeout/Throw sind nicht `status: ok`.
+- Zeitliche Relevanz gilt für die räumlich betroffenen Refs (Stage-Daten, Route-Segmentdaten). Fehlen feinere Zeiten, gilt insufficient oder ein breiterer konservativer Fallback, niemals erfundene Entwarnung.
+- Feinere Geo-Scopes: eine Stage im Land schliesst eine Route im selben Land nicht aus. Ohne belastbare Route-Membership bleibt `insufficient_context`.
+- Decision-Signatur, Scope-Identität und Event-Fingerprint decken die evaluation-relevanten Felder ab, inklusive `freshUntil`, `countryCode`, `category`, `checkedAt`, Trust und Nature.
+- Kalenderdaten werden strikt validiert. `validFrom > validUntil` und vorhandene malformed Boolean/Enums sind fail-closed.
+
+**Kontext:** `docs/PR37_CHATGPT_FINAL_CLOSURE_REVIEW.md` gegen Head `7efd9d04`.
+
+**Begründung:** Unknown darf keine Scheinsicherheit erzeugen. Betroffenheit folgt dem konkreten Reiseteil, nicht nur der Gesamtreise. Reihenfolge und still normalisierte Daten dürfen Safety-Truth nicht ändern.
+
+**Konsequenzen:** Production unverändert, kein Live-Provider, keine Safety-DB. Nach diesem Pass gilt das Stop-Kriterium des Final Closure Reviews.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
