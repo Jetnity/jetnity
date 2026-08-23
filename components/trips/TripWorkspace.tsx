@@ -32,7 +32,9 @@ import {
 } from '@/lib/trips/arbeitsbereich'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
 import type { SafetyEvaluation } from '@/lib/safety/domain'
+import type { SeasonalEvaluation } from '@/lib/seasonal/domain'
 import ReiseSicherheit from '@/components/trips/ReiseSicherheit'
+import ReisezeitHinweise from '@/components/trips/ReisezeitHinweise'
 import type { ReadinessKind, ReadinessUserStatus, TravellerDocumentType } from '@/types/trips'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
 import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
@@ -98,6 +100,7 @@ type TripWorkspaceProps = {
    */
   officialEvaluations?: OfficialEvaluation[]
   safetyEvaluations?: SafetyEvaluation[]
+  seasonalEvaluations?: SeasonalEvaluation[]
   /**
    * Nur für interne Audits: startet nicht in der Übersicht.
    * Der Produktweg lässt den Parameter weg.
@@ -166,6 +169,7 @@ export default function TripWorkspace({
   onTravellerEntfernen,
   officialEvaluations,
   safetyEvaluations,
+  seasonalEvaluations,
   anfangsBereich,
 }: TripWorkspaceProps) {
   const kompakt = React.useSyncExternalStore(
@@ -226,6 +230,7 @@ export default function TripWorkspace({
   const uebersichtVerborgen = verbergen('uebersicht')
 
   const sicherheit = <ReiseSicherheit reise={reise} evaluations={safetyEvaluations} />
+  const reisezeit = <ReisezeitHinweise reise={reise} evaluations={seasonalEvaluations} />
 
   const vorbereitung = (
     <Reisevorbereitung
@@ -288,6 +293,7 @@ export default function TripWorkspace({
         {!kompakt && (
           <div className="mt-6 grid gap-4">
             {sicherheit}
+            {reisezeit}
             {vorbereitung}
           </div>
         )}
@@ -307,6 +313,7 @@ export default function TripWorkspace({
               aenderungFeld={kompakt ? aenderungFeld : null}
               vorbereitung={kompakt ? vorbereitung : null}
               sicherheit={kompakt ? sicherheit : null}
+              reisezeit={kompakt ? reisezeit : null}
             />
           </BereichHuelle>
         )}
