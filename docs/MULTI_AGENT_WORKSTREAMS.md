@@ -1,6 +1,6 @@
 # Jetnity – Multi-Agent Workstreams
 
-Stand: 23. August 2026  
+Stand: 24. August 2026  
 Status: **Vorbereitungsphase – Audit-Agenten dürfen starten; parallele Kernimplementierung bleibt bis technischem Closure von PR #38 gesperrt**
 
 ## 1. Koordinationsprinzip
@@ -15,7 +15,7 @@ GitHub ist dauerhaftes Teamgedächtnis. Jeder Cursor-Agent wird ausschließlich 
 | --- | --- | --- | --- | --- | --- | --- |
 | wird nach Start eingetragen | Travel Timing & Seasonal / PR #38 | Runtime-Fix + Review | `feat/travel-timing-seasonal-intelligence` | R11-Blocker 24–26 schließen, Tests/Gates/Handoff | Mark Ready/Merge ohne Product Owner | Fix 24–26 → Exact-Head-Gate → ChatGPT R12 |
 | `Account platform audit vorbereitung` | Account Platform | Audit / Vorbereitung | `audit/account-platform` | Code-/DB-/UX-Audit, Architektur, Evidence-Matrix, Implementierungsplan, Doku | unkoordinierte Auth/RLS/DB/Truth-Implementierung, Migration, Production | `docs/CURSOR_ACCOUNT_PLATFORM_AUDIT_TASK.md` ausführen |
-| wird nach Start eingetragen | Admin Platform | Audit / Vorbereitung | eigener Branch von `main` bzw. freigegebener Prep-Basis | Admin-/Security-/Finance-/Ops-Audit, Architektur, Permission-Matrix, Plan, Doku | Rollen/RLS/Service-Role/Payment/Bexio/Ads/Provider Live-Änderungen | `docs/CURSOR_ADMIN_PLATFORM_AUDIT_TASK.md` ausführen |
+| `Admin plattform audit` | Admin Platform | Audit / Vorbereitung | `audit/admin-platform` | Admin-/Security-/Finance-/Ops-Audit, Architektur, Permission-Matrix, Plan, Doku | Rollen/RLS/Service-Role/Payment/Bexio/Ads/Provider/Infomaniak Live-Änderungen | `docs/CURSOR_ADMIN_PLATFORM_AUDIT_TASK.md` ausführen |
 
 ## 3. Ownership-Grenzen während der Auditphase
 
@@ -40,6 +40,8 @@ Darf gemeinsame Auth/RLS/DB/Traveller-Contracts in dieser Phase nur analysieren,
 
 ### Admin Platform Audit Agent
 
+Exakter Cursor-Anzeigename: **`Admin plattform audit`**.
+
 Owns Analyse und Zielplanung für:
 
 - Admin/Backoffice IA/UX
@@ -49,6 +51,8 @@ Owns Analyse und Zielplanung für:
 - Finance/Bexio-Readiness
 - Ads/Marketing-Ops-Readiness
 - Analytics/Support/System Operations
+- System Health / Infrastructure Observability für Supabase, Vercel und weitere betriebsrelevante Systeme
+- Domains/DNS/E-Mail/Infomaniak-Readiness
 
 Darf gemeinsame Auth/RLS/DB/Service-Role-/Payment-/Provider-Contracts in dieser Phase nur analysieren, nicht verändern.
 
