@@ -10,7 +10,8 @@ Eigene provider-neutrale Seasonal-Domäne. R9-Merge-Blocker 16–19 sind auf Run
 Verbindlicher Auftrag: `docs/CURSOR_TRAVEL_TIMING_SEASONAL_FOUNDATION_TASK.md`  
 R9 Review: `docs/PR38_CHATGPT_R9_REVIEW.md`  
 R10 Review: `docs/PR38_CHATGPT_R10_REVIEW.md`  
-Cursor-Fixes: `docs/PR38_CURSOR_REVIEW_FIXES.md`
+Cursor-Fixes: `docs/PR38_CURSOR_REVIEW_FIXES.md`  
+Multi-Agent-Folgeentscheidung: `docs/MULTI_AGENT_DEVELOPMENT_TEAM_POLICY.md`
 
 ## 2. Branch / PR / Review-Lock
 
@@ -101,3 +102,15 @@ PR bleibt Draft. Kein Mark Ready. Kein Merge.
 10. `lib/readiness/traveller-kontext.ts`
 11. `lib/readiness/kontext.ts`
 12. `lib/readiness/fingerprint.ts`
+
+## 8. Verbindliche Folgeentscheidung – Multi-Agent-Entwicklungsteam
+
+Nach technischem Closure/PASS von PR #38 wird Jetnity kontrolliert auf ein Multi-Agent-Entwicklungsteam umgestellt. Verbindliche Policy: `docs/MULTI_AGENT_DEVELOPMENT_TEAM_POLICY.md`.
+
+Grundprinzip:
+
+> **Parallel entwickeln, zentral koordinieren, unabhängig prüfen, kontrolliert integrieren.**
+
+Vor dem ersten parallelen Implementierungsblock werden Workstream-/Agent-Übersicht, Ownership-Matrix, Branch-/PR-Trennung, Allowed/Forbidden Touch Areas, Abhängigkeiten, Integrationsreihenfolge, Handoff- und Review-Regeln im Repository angelegt. Zunächst sollen ungefähr **2–3 Cursor-Agenten** kontrolliert parallel starten. Gemeinsame Truth-/Security-/Persistenz-Contracts werden nicht unkoordiniert von mehreren Agenten gleichzeitig verändert.
+
+Die Teamstruktur und jeder Workstream-Status müssen repository-basiert rekonstruierbar sein, damit ein Chatwechsel keinen organisatorischen oder technischen Wissensverlust verursacht.
