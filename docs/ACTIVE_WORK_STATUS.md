@@ -1,162 +1,94 @@
 # Jetnity – Active Work Status
 
 Stand: 23. August 2026  
-Arbeitsblock: **Travel Safety & Disruption Intelligence – provider-neutrale Foundation vorbereitet; Cursor-Implementierung noch nicht begonnen**
+Arbeitsblock: **Travel Safety & Disruption Intelligence – provider-neutrale Foundation**
 
-## 1. Aktueller Zustand
+## 1. Arbeitsblock / Ziel
 
-### Foundation D – Route & Transit Intelligence
+Provider-neutrale Safety-/Disruption-Foundation. Der Date-only↔Instant-Blocker aus `docs/PR37_CHATGPT_TIMEZONE_REREVIEW.md` ist behoben. Der nächste unabhängige Check soll auf Closure/Pass zielen.
 
-**Vollständig abgeschlossen und nicht erneut zu bauen.**
+Auftrag: `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`  
+Timezone Re-Review: `docs/PR37_CHATGPT_TIMEZONE_REREVIEW.md`
 
-- PR #34: gemergt
-- Merge-Commit auf `main`: `5bc93bcd35421e3763dc8a3515f254c209b63d6a`
-- Production-Migrationen `20260822130000`–`20260822150000`: angewendet und verifiziert
-- Production-Acceptance: `docs/FOUNDATION_D_PRODUCTION_ACCEPTANCE.md`
+## 2. Branch / PR / aktueller Head
 
-### Foundation E – Traveller Context / Multi-Citizenship / Multi-Document
+- Basis: `origin/main` = `91e644b279c802c5a5d7a88135ed8ab9c4229a34`
+- Branch: `feat/travel-safety-disruption-intelligence`
+- Draft PR: https://github.com/Jetnity/jetnity/pull/37
+- Verifizierter Runtime-Head: `985cae72`
+- Dieser Docs-Nachzug ändert keine Runtime.
+- Ahead/behind auf Runtime `985cae72`: **28 ahead / 0 behind**
+- Draft. Kein Mark Ready, kein Merge.
 
-**Vollständig abgeschlossen, auf `main` und auf Production verifiziert. Nicht erneut bauen.**
+## 3. Status
 
-- PR #35: gemergt
-- Squash-Merge-Commit auf `main`: `3bf1eaaa78ef6ac33bb3baff84650a143720e91d`
-- finaler PR-Head: `52601ea0f770cf4265a5bdf5cb2356557ef7dcde`
-- finaler Runtime-/DB-Code-Head des Closure-Gates: `b1f9d6543aa153bacaa126f71d39c6a434dfbebb`
-- unabhängiger Closure-Check: `docs/PR35_CHATGPT_INDEPENDENT_CLOSURE_CHECK.md` – PASS
-- Product-Owner-Merge-Freigabe: erteilt am 23.08.2026
-- Product-Owner-Production-Migrationsfreigabe: erteilt am 23.08.2026
-- Production-Acceptance: `docs/FOUNDATION_E_PRODUCTION_ACCEPTANCE.md`
+**Timezone-Re-Review-Blocker behoben und lokal plus remote auf dem Runtime-Head verifiziert; Draft-PR #37**
 
-## 2. Foundation-E-Ergebnis
+## 4. Bereits umgesetzt
 
-Kanonisches Modell:
+- Foundation inkl. ADR-0127/0128
+- Review-Fixes ADR-0129–0131
+- Stop-Criterion- und Timezone-Closure-Fixes ADR-0132
+- Date-only↔Instant: zonenlose Kalendertage nutzen dieselbe Offset-Hülle wie zonenlose Uhren
 
-> **Ein stabiler Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente / Credentials → kontextabhängig bewertete zulässige Optionen.**
+## 5. Gerade offen
 
-Umgesetzt und produktiv vorhanden:
+- Product-Owner-Merge-Freigabe
+- echter Safety-Provider (separates Gate)
+- Account-`tripId`-Serverload
+- persistentes Rate-Limit vor Production-Provider
+- `Jetzt wichtig`
 
-- `trip_travellers` als stabiler Parent
-- `trip_traveller_citizenships` als 1:n Citizenship-Truth
-- `trip_traveller_documents` als 1:n Document-Truth
-- optionales `trip_readiness_items.traveller_id`
-- atomare Account-Writes über `public.party_schreiben(jsonb)` (`SECURITY INVOKER`)
-- Guest/Account-Parität derselben Party-Form
-- traveller-spezifische Readiness
-- Fingerprint v2 für Citizenship-/Document-Kontext
-- provider-neutrale Credential-Optionen und Vergleichsnaht
-- fail-closed Requirements-API und Provider-Konfliktbehandlung
-- keine Passnummern, Scans, MRZ oder Biometrie
-- kein LLM als regulatorische Truth-Quelle
-- echter Travel-Requirements-Provider weiterhin deaktiviert
+## 6. Letzte relevanten Änderungen
 
-## 3. Verifizierter Code-/UX-/Security-Nachweis
+- Timezone Re-Review: `15278217`
+- Date-only↔Instant-Fix: `985cae72`
 
-Auf dem final geprüften Runtime-/DB-Code-Head `b1f9d654`:
+## 7. Tests / CI / Preview
 
-| Nachweis | Ergebnis |
-| --- | --- |
-| `npm test` | **1353/1353** |
-| Typecheck | grün |
-| Lint | grün |
-| Hygiene | grün |
-| Production-Build | grün, 38/38 Seiten |
-| `db:rechte` | OK, 51 Rechte |
-| `db:rls` | Exit 0 |
-| `db:sicherheit` | **210/210** |
-| `db:parallelitaet` | **7/7** |
-| UI-Audit | **838/838, 0 Fehler**, WebKit + Chromium, 8 Viewports |
-| finaler PR-CI | success |
-| finaler PR-Vercel | success |
-| Vercel Production nach Merge | success |
+Lokal auf Runtime `985cae72`:
 
-## 4. Production-Datenbank – Foundation E
+- `npm test`: **1481/1481**
+- Typecheck, Lint, Hygiene grün
+- Production-Build: **38/38**, inkl. `/api/safety/evaluate`
+- UI-Audit: **886/886**, 0 Fehler, WebKit + Chromium, 8 Viewports
 
-Production enthält jetzt exakt:
+Auf Runtime `985cae72`:
 
-- `20260822160000_traveller_context_intelligence`
-- `20260822170000_traveller_context_fk_delete`
-- `20260822180000_traveller_context_rereview`
+- GitHub Actions `32634082891`: **SUCCESS**
+- Vercel Preview `6047003785`: **READY/SUCCESS**
+- Preview: https://jetnity-app-git-feat-travel-safety-disr-914f66-jetnity-e1b93c82.vercel.app
 
-Direkt auf Production verifiziert:
+Dieser Dokumentations-Nachzug ändert keine Runtime.
 
-- Supabase nach Apply wieder `FUNCTIONS_DEPLOYED` / `ACTIVE_HEALTHY`
-- beide Child-Tabellen vorhanden
-- `trip_readiness_items.traveller_id` vorhanden
-- RLS auf neuen Child-Tabellen aktiv
-- je Child-Tabelle vier Owner-Policies für `authenticated` mit `user_id = auth.uid()`
-- Citizenship → Traveller: `ON DELETE CASCADE`
-- Document → Traveller: `ON DELETE CASCADE`
-- Document → Citizenship: `ON DELETE SET NULL (citizenship_id)`
-- Readiness → Traveller: `ON DELETE CASCADE`
-- `party_schreiben(jsonb)`: `SECURITY INVOKER`, `search_path=public, pg_temp`, EXECUTE nur für `authenticated`
-- Child-Limit-Lock: `FOR NO KEY UPDATE`
-- erwartete Legacy-Backfills fehlen: **0**
-- erfundene Document↔Citizenship-Backfill-Relationen: **0**
+## 8. DB / Production
 
-Vollständige Acceptance: `docs/FOUNDATION_E_PRODUCTION_ACCEPTANCE.md`.
+- keine Safety-Migration
+- Production unverändert
+- letzte bekannte DB-Gates unverändert: `db:rechte` 51, `db:rls` 0, `db:sicherheit` 210/210, `db:parallelitaet` 7/7
 
-## 5. Harte Grenzen bleiben bestehen
+## 9. Kosten / Provider / Secrets
 
-Bis zu separaten späteren Product-Owner-Gates:
+- `safetyProviderAus()` bleibt `null`
+- keine Secrets, keine neuen Providerkosten
 
-- kein echter Travel-Requirements-Provider / Timatic
-- keine Safety-/Seasonality-Live-Provider
-- keine Flug-/Hotel-/Aktivitäten-/Mobilitäts-/Mietwagen-Provider-Aktivierung
-- keine neuen Provider-Secrets
-- keine Providerkosten ohne Freigabe
-- keine Passnummern, Scans, MRZ oder Biometrie
-- keine erfundene regulatorische, Safety- oder Seasonal-Truth
+## 10. Bekannte Nicht-Blocker
 
-Provider werden erst in der späteren echten Providerphase aktiviert. Vorher müssen die provider-neutralen Adapter-/Port-Grenzen in allen relevanten Bereichen professionell fertig sein.
+- In-process Rate-Limit
+- kein Account-`tripId`-Load
+- title-only Geo bleibt unknown
+- `Jetzt wichtig` nicht vorgebaut
 
-## 6. Aktiver nächster Produktblock
+## 11. Offene Freigaben
 
-Gemäß aktueller Product-Owner-Reihenfolge folgt jetzt:
+- kein Merge, kein Mark Ready, keine Production-Migration
 
-**Travel Safety & Disruption Intelligence – provider-neutrale Foundation**
+## 12. Exakter nächster Schritt
 
-Verbindlicher Implementierungsauftrag ist auf `main` vorbereitet:
+Draft bleibt Draft. Nächster ChatGPT-Check zielt auf Closure/Pass. Wenn kein neuer konkreter Truth-/Security-/SoT-/Rollout-Defekt erscheint, ist PR #37 technisch Closure/PASS und kann dem Product Owner zur ausdrücklichen Merge-Freigabe empfohlen werden.
 
-- `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`
-- Task-Erstellungscommit: `2c39d488b4ffca7fd718fdc3238b9cfbece0c9dd`
+## 13. Zuerst zu lesen
 
-Status: **Auftrag vorbereitet, Implementierung noch nicht begonnen.**
-
-Der Task verlangt unter anderem:
-
-- eigenen frischen Branch `feat/travel-safety-disruption-intelligence`
-- frühen Draft PR
-- vollständigen Ist-Architektur-Audit vor Implementierung
-- provider-neutrale Safety-Domäne und Provider-Port
-- strikte Evidence-/Freshness-/Conflict-Grenzen
-- räumlich und zeitlich konkrete Relevance Engine
-- Wiederverwendung der Foundation-D Route Truth
-- Cross-Domain Impact-/Recheck-Naht ohne automatische Reiseänderung
-- klare Trennung Safety vs Seasonal
-- minimale Workspace-Integration ohne den späteren großen Workspace-Umbau vorzuziehen
-- umfassende Truth-/Security-/UX-/Device-Testmatrix
-- kein echter Provider, keine Production-Migration, kein Mark Ready, kein Merge
-
-## 7. Reihenfolge danach
-
-Nach erfolgreichem Safety-Block:
-
-1. **Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
-2. verbleibende Provider-Readiness-/Adapter-Lücken über alle relevanten Bereiche schließen
-3. großer End-to-End Trip-Workspace-/Übersicht-Umbau inklusive des besprochenen Wegs dorthin
-4. finaler Workspace Intelligence Audit
-5. echte Providerphase
-6. Provider-backed End-to-End-/Truth-Audit
-7. finale Startseiten-Positionierung
-
-## 8. Exakter nächster operativer Schritt
-
-1. Neuen Cursor-Agenten starten.
-2. Ihm ausschließlich den Auftrag geben, `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md` vollständig zu lesen und exakt umzusetzen.
-3. Cursor muss vor Code `origin/main` frisch synchronisieren und den Ist-Audit durchführen.
-4. PR bleibt Draft; kein Mark Ready, kein Merge, keine Production-Migration.
-5. Nach Cursor-Abschluss führt ChatGPT den unabhängigen Review auf exakt dem finalen PR-Head durch.
-
-Leitsatz für die Fortsetzung:
-
-> **Foundation D und E sind fertig. Jetzt bauen wir Safety als belastbare provider-neutrale Reise-Intelligence – nicht als Newsfeed, nicht als LLM-Warnung und nicht als isolierte Karte.**
+1. `docs/PR37_CHATGPT_TIMEZONE_REREVIEW.md`
+2. `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ACCEPTANCE.md`
+3. `lib/safety/scope.ts`, `lib/safety/relevanz.ts`

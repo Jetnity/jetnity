@@ -3170,6 +3170,156 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0127 – Travel Safety ist eine abgeleitete, provider-neutrale Domäne ohne Persistenz
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #37; Production-Schema unverändert
+
+**Entscheidung:**
+
+- Safety-/Disruption-Truth lebt in `lib/safety/` und wird compute-on-read erzeugt.
+- `safetyProviderAus()` bleibt `null`. Tests dürfen einen Port injizieren.
+- External Fact, Freshness, räumliche/zeitliche Relevanz, Trip-Impact und UI-Präsentationsklasse bleiben getrennte Ebenen.
+- Es gibt keine Safety-Tabelle und keine Official-Evidence im Reisegraphen.
+- `POST /api/safety/evaluate` akzeptiert nur validierten Trip-Kontext. Browser- oder LLM-Felder setzen keine Evidence.
+
+**Kontext:** Nach Foundation D und E folgt die provider-neutrale Safety-Foundation. Official Readiness und Route Facts werden bereits abgeleitet, nicht materialisiert. Events veralten schnell; eine DB-Kopie ohne TTL/Revocation würde Schein-Aktualität erzeugen.
+
+**Alternativen:**
+
+1. *Safety-Facts in neuen Tabellen persistieren.* Lizenz-, Freshness- und Cross-User-Risiko ohne Live-Provider.
+2. *Safety in Readiness mischen.* Vermischt Einreiseanforderungen mit Ereigniswarnungen.
+3. *LLM erzeugt Warnungen aus Freitext.* Verboten durch die Safety-Policy.
+
+**Begründung:** Dieselbe Trust-Grenze wie Official Readiness: ohne Provider keine Wahrheit, `unknown` bleibt sichtbar, keine Fake-Entwarnung.
+
+**Konsequenzen:**
+
+- Production unverändert.
+- Workspace zeigt Safety nur bei übergebenen Evaluations, nicht als permanente leere Karte.
+- Ein späterer echter Adapter braucht ein separates Product-Owner-Gate.
+
+---
+
+## ADR-0128 – Räumliche Relevanz darf keine feinere Präzision erfinden als die Quelle
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #37
+
+**Entscheidung:**
+
+- Country-Level Evidence erzeugt höchstens Country-Level-Relevanz.
+- Eine regionale Quelle im selben Land, aber ausserhalb der belegten Reisezone, erzeugt keine pauschale Landeswarnung.
+- Fehlen Orts- oder Koordinatenfakten für einen präzisen Abgleich, gilt `insufficient_context`.
+- Ein betroffener Transit-Airport markiert Route/Flight, nicht pauschal das Reiseziel.
+- `seasonal_pattern` wird verworfen und erzeugt keine Safety-Warnung.
+
+**Kontext:** Die Policy verbietet Länder-Pauschalisierung und die Vermischung mit Seasonal Intelligence.
+
+**Alternativen:**
+
+1. *Jedes Event im Reiseland als Warnung.* Alarmmüdigkeit und falsche Betroffenheit.
+2. *Titeltexte für Geo-Matching nutzen.* Untrusted Freitext.
+
+**Begründung:** Warnen nur bei konkret belegtem Schnitt mit der Reise-Wahrheit.
+
+**Konsequenzen:**
+
+- Foundation-D Route Facts bleiben die einzige Transit-/Airport-Wahrheit.
+- Seasonal Foundation bleibt der nächste getrennte Block.
+
+---
+
+## ADR-0129 – Safety-Freshness, Geo-Unknown und Order-Independence nach PR-37-Review
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #37 nach unabhängigem REQUEST CHANGES
+
+**Entscheidung:**
+
+- Event-Zeitfenster und Evidence-Freshness sind getrennte Achsen. `checkedAt` plus optionales `freshUntil` oder eine konservative Max-Age-Grenze (7 Tage) bestimmen Freshness. `validFrom`/`validUntil` gelten nur für zeitliche Relevanz.
+- `not_affected` nur bei belegter Nicht-Betroffenheit. Admin-Region ohne kanonische Membership und Stadt ohne gemeinsame Place-ID bleiben `insufficient_context`.
+- Decision-Signatur umfasst Traveller-Abhängigkeit. Evidence-URL allein ist kein Konflikt; bei identischer Signatur gewinnt deterministisch die vertrauenswürdigere Zeile.
+- Mehr als `maxFacts` Rohzeilen werden als Integrity-Fehler verworfen, nicht positionsabhängig abgeschnitten.
+- Explizit malformed `nature` wird verworfen, nicht zu `acute` umgedeutet.
+- Provider-Aufrufe haben ein Abort/Timeout; Timeout und Throw erzeugen keine Warn-Truth.
+
+**Kontext:** Unabhängiger Review `docs/PR37_CHATGPT_INDEPENDENT_REVIEW.md` gegen Head `caa6f7dd`.
+
+**Alternativen:** Region-Membership-DB, first-row-wins, Route-`maxDuration` als einziges Timeout.
+
+**Begründung:** Fail closed statt Scheingenauigkeit, Scheinaktualität oder Reihenfolge-Truth.
+
+**Konsequenzen:**
+
+- Keine neue Geo- oder Safety-Tabelle.
+- Production unverändert, kein Live-Provider.
+
+---
+
+## ADR-0130 – Checked-empty, Transit-Unknown und Traveller-Fail-Closed nach PR-37-Re-Review
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #37 nach unabhängigem Re-Review REQUEST CHANGES
+
+**Entscheidung:**
+
+- Erfolgreicher Provider mit 0 validen akuten Facts ist `checked_empty`, nicht `unavailable`. Das ist keine Entwarnung.
+- Vollständig malformed Zeilen sind unknown/fail-closed, nicht checked-clean.
+- Vorhandene, aber ungültige Temporal-/Freshness-Felder verwerfen die Zeile.
+- Feinere Geo-Scopes: berührt die Route das Land ohne belegbare Membership, gilt `insufficient_context`.
+- Travellerabhängige Facts bewerten alle anwendbaren Slots fail-closed.
+- Context-/Event-Fingerprints enthalten die tatsächlich entscheidungsrelevanten Party- und Eventfelder, ohne Dokumentnummern.
+
+**Kontext:** `docs/PR37_CHATGPT_REREVIEW.md` gegen Head `31678cd8`.
+
+**Begründung:** Leere Providerantworten, Transit ohne Feingeometrie und unvollständige Party dürfen weder Entwarnung noch Unavailable vortäuschen.
+
+**Konsequenzen:** Production unverändert, kein Live-Provider, keine Safety-DB.
+
+---
+
+## ADR-0131 – Checked-clean, Teil-Zeitrelevanz und vollständige Decision-Signatur nach PR-37-Final-Closure
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #37 nach Final Closure Review REQUEST CHANGES
+
+**Entscheidung:**
+
+- Summary/API unterscheiden `checked_clean`, `unavailable`, `unknown` und aktuelle Warnungen. Nur checked-clean darf die Copy «keine aktuelle Warnung im geprüften Scope» erzeugen. Timeout/Throw sind nicht `status: ok`.
+- Zeitliche Relevanz gilt für die räumlich betroffenen Refs (Stage-Daten, Route-Segmentdaten). Fehlen feinere Zeiten, gilt insufficient oder ein breiterer konservativer Fallback, niemals erfundene Entwarnung.
+- Feinere Geo-Scopes: eine Stage im Land schliesst eine Route im selben Land nicht aus. Ohne belastbare Route-Membership bleibt `insufficient_context`.
+- Decision-Signatur, Scope-Identität und Event-Fingerprint decken die evaluation-relevanten Felder ab, inklusive `freshUntil`, `countryCode`, `category`, `checkedAt`, Trust und Nature.
+- Kalenderdaten werden strikt validiert. `validFrom > validUntil` und vorhandene malformed Boolean/Enums sind fail-closed.
+
+**Kontext:** `docs/PR37_CHATGPT_FINAL_CLOSURE_REVIEW.md` gegen Head `7efd9d04`.
+
+**Begründung:** Unknown darf keine Scheinsicherheit erzeugen. Betroffenheit folgt dem konkreten Reiseteil, nicht nur der Gesamtreise. Reihenfolge und still normalisierte Daten dürfen Safety-Truth nicht ändern.
+
+**Konsequenzen:** Production unverändert, kein Live-Provider, keine Safety-DB. Nach diesem Pass gilt das Stop-Kriterium des Final Closure Reviews.
+
+---
+
+## ADR-0132 – Vollständigkeit, Date-only-Präzision und Routekontakt-Fenster nach PR-37-Stop-Criterion-Recheck
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #37 nach Stop-Criterion Recheck REQUEST CHANGES
+
+**Entscheidung:**
+
+- Eine teilweise malformed Providerantwort darf den Gesamtcheck nicht `checked_clean` machen. Gültige Warnungen bleiben sichtbar; `summary.complete=false` und API-Status `unknown` halten die Unvollständigkeit fest. Vollständig gültige `[]` und gültige nur-not-affected Antworten bleiben checked-clean.
+- Date-only-Werte und Foundation-D-`HH:mm` bleiben zonenlos. Safety hängt kein `Z` und keinen Offset an. `date ↔ date` bleibt kalenderbasiert. `date ↔ instant` und `clock ↔ instant` nutzen dieselbe weltweite Offset-Hülle (UTC+14 bis UTC−12). Innerhalb der Hülle entsteht `insufficient_context`, keine Minuten-`affected`/`not_affected`-Wahrheit. UTC-Minutenwahrheit entsteht erst mit belastbarer Zone oder Offset.
+- Routekontakte sind eine Menge echter Fenster: aufeinanderfolgende Ankunft+Abflug desselben Airports bilden ein Layover, sonst Punktkontakte. Kein Min/Max über wiederholte Airport-Codes.
+- Country-Scope behält Stage-Refs **und** alle Route-Airports im Land. Feinere City/Place-Matches behalten unresolved Routekontakt, wenn ein späterer Landkontakt ohne feinere Membership zeitlich überlappt.
+
+**Kontext:** `docs/PR37_CHATGPT_STOP_CRITERION_RECHECK.md` gegen Runtime `b20b3999` / Docs `57f34ecf`.
+
+**Begründung:** Stille Verwerfung, Mitternachtskollaps und zusammengezogene oder verworfene Routekontakte erzeugen konkret falsche Entwarnung oder falsche Warnung.
+
+**Konsequenzen:** Production unverändert, kein Live-Provider, keine Safety-DB. Der nächste unabhängige Check soll auf Closure/Pass zielen, sofern kein neuer konkreter Truth-/Security-/SoT-/Rollout-Defekt erscheint.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

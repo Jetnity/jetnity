@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 23. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D und E vollständig abgeschlossen inkl. Production; nächster Block noch nicht begonnen**
+Status: **verbindlicher operativer Übergabepunkt – Foundation D und E vollständig abgeschlossen inkl. Production; Travel Safety Foundation Timezone-Re-Review-Fix auf Draft-PR #37, nächster Check zielt auf Closure/Pass**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Er sagt, was Jetnity ist, was bereits gebaut wurde, welche Regeln verbindlich sind und was als Nächstes zu tun ist.
 
@@ -245,7 +245,15 @@ Smartphone, Tablet, Laptop und Desktop dürfen sich layoutseitig unterscheiden, 
 
 ## 8. Nächste verbindliche Reihenfolge
 
-Der nächste neue Produktblock wurde **noch nicht begonnen**.
+Der nächste neue Produktblock ist **technisch reviewbereit auf dem Feature-Branch**, nicht auf `main`.
+
+Aktiver Branch: `feat/travel-safety-disruption-intelligence`  
+Draft PR: https://github.com/Jetnity/jetnity/pull/37  
+Auftrag: `docs/CURSOR_TRAVEL_SAFETY_DISRUPTION_FOUNDATION_TASK.md`  
+Acceptance: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ACCEPTANCE.md`  
+Fachdokument: `docs/TRAVEL_SAFETY_DISRUPTION.md`  
+Ist-Audit: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ARCHITECTURE_AUDIT.md`  
+Live-Handoff: `docs/ACTIVE_WORK_STATUS.md`
 
 Aktuelle Reihenfolge:
 
@@ -266,18 +274,17 @@ Echte Provider kommen am Schluss. **Vorher müssen die provider-neutralen Ports/
 
 ## 9. Nächster operativer Schritt
 
-Noch **keinen alten Agenten weiterarbeiten lassen** und noch **keinen Safety-Code ohne neuen Auftrag beginnen**.
+Cursor hat die provider-neutrale Safety-Foundation umgesetzt und die Blocker aus Review, Re-Review, Final Closure, Stop-Criterion, Timezone Closure und Timezone Re-Review behoben (ADR-0129–0132). Der nächste unabhängige Check soll auf **Closure/Pass** zielen. Wenn kein neuer konkreter Truth-/Security-/SoT-/Rollout-Defekt erscheint, ist PR #37 technisch Closure/PASS und kann dem Product Owner zur ausdrücklichen Merge-Freigabe empfohlen werden.
 
-ChatGPT soll zuerst:
+Harte Gates bleiben:
 
-1. aktuellen `main`-/Production-Stand nochmals prüfen,
-2. `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`, Route Truth, Traveller Context, UX-/Truth-/Provider-Readiness-Regeln lesen,
-3. einen vollständigen versionierten Cursor-Auftrag für **Travel Safety & Disruption Intelligence – provider-neutrale Foundation** erstellen,
-4. darin Datenmodell, Truth/Evidence/Freshness, Geo-/Zeit-Relevanz, Cross-Domain-Auswirkungen, stale/unknown, Guest/Account, Security, Adapter-Port, UX, Device-Matrix, Tests, DoD und harte Provider-/Production-Gates festlegen,
-5. danach einen **neuen Cursor-Agenten** mit neuem Feature-Branch / Draft PR starten.
+- kein Merge
+- kein Mark Ready
+- keine Production-Migration
+- kein echter Safety-/Disruption-Provider
 
-Kein Merge, keine Production-Migration und keine Provider-Aktivierung ohne die jeweiligen separaten Product-Owner-Gates.
+Lokal nach Timezone-Re-Review-Fix verifiziert: 1481/1481 Tests, UI-Audit 886/886 (WebKit + Chromium, 8 Viewports), Production-Build 38/38, DB-Gates unverändert. Runtime-Head `985cae72`; CI/Preview auf demselben Runtime-Head: GitHub Actions `32634082891` SUCCESS, Vercel Preview `6047003785` READY/SUCCESS. Dieser Docs-Nachzug ändert keine Runtime.
 
 Leitsatz:
 
-> **Foundation D und E sind fertig. Als Nächstes bauen wir Safety als Teil derselben Reise-Wahrheit – nicht als isolierten Warnungsfeed.**
+> **Foundation D und E sind fertig. Safety ist jetzt eine eigene Truth-Domäne derselben Reise – nicht als isolierter Warnungsfeed und nicht als Live-Provider.**
