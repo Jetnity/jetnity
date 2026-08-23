@@ -18,6 +18,7 @@ import {
   bangkokRouteReise,
   seasonalFact,
 } from '@/lib/seasonal/fixtures'
+import { seasonalContextFingerprint } from '@/lib/seasonal/fingerprint'
 import { providerAnfrageAusKontext, seasonalReisekontext } from '@/lib/seasonal/kontext'
 import type { Trip, TripItem } from '@/types/trips'
 
@@ -127,7 +128,10 @@ describe('Route-Topologie Open Jaw und Leg-Grenzen', () => {
       { nowMs: SEASONAL_NOW_MS },
     )
     assert.equal(evaluations[0]?.relevance, 'applies')
-    const anfrage = providerAnfrageAusKontext(seasonalReisekontext(reise))
+    const anfrage = providerAnfrageAusKontext(
+      seasonalReisekontext(reise),
+      seasonalContextFingerprint(reise),
+    )
     assert.equal(anfrage.countryCodes.includes('SG'), true)
   })
 
