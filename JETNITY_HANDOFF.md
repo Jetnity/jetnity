@@ -147,7 +147,8 @@ Provider-Suchen/Requirements bleiben produktiv deaktiviert, solange keine echten
 
 - Branch: `feat/traveller-context-intelligence`
 - Closure-Gate-Head: `b1f9d6543aa153bacaa126f71d39c6a434dfbebb`
-- Closure-Blocker aus `docs/PR35_CHATGPT_FINAL_CLOSURE_REVIEW.md` / ADR-0126 verifiziert
+- Unabhängiger Closure-Check: **PASS** – `docs/PR35_CHATGPT_INDEPENDENT_CLOSURE_CHECK.md`
+- Technische Merge-Empfehlung liegt vor; ausdrückliche Product-Owner-Freigabe fehlt
 - Basis: `origin/main` @ `c8dbe904`
 - Draft PR: **#35**, `MERGEABLE`, bleibt Draft
 - kein Merge ohne ausdrückliche Product-Owner-Freigabe
@@ -187,7 +188,7 @@ Cursor muss vor einer Foundation-E-Merge-Entscheidung:
 3. `docs/ACTIVE_WORK_STATUS.md` / Handoff / Acceptance aktuell halten,
 4. **nicht mergen**, **nicht Mark Ready**, **keine Production-Migration**.
 
-Danach prüft ChatGPT den finalen Stand unabhängig. Erst dann kann der Product Owner separat über Merge entscheiden.
+Der unabhängige ChatGPT-Closure-Check ist **PASS** (`docs/PR35_CHATGPT_INDEPENDENT_CLOSURE_CHECK.md`). Erst der Product Owner entscheidet separat über Merge.
 
 ---
 

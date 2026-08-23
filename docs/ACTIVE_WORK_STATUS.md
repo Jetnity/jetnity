@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 23. August 2026  
-Arbeitsblock: **Foundation E – Traveller Context – Closure-Blocker auf Draft PR #35 verifiziert**
+Arbeitsblock: **Foundation E – Traveller Context – unabhängiger Closure-Check PASS; wartet auf Merge-Freigabe**
 
 ## 1. Aktueller Zustand
 
@@ -23,6 +23,7 @@ Foundation E läuft auf:
 - Audit vor Schemaänderung: `docs/FOUNDATION_E_ARCHITECTURE_AUDIT.md`
 - Review-Tiefe: `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` plus Product-Owner-Nachtrag `docs/PRODUCT_OWNER_REVIEW_DEPTH_MANDATE.md`
 - Closure-Review: `docs/PR35_CHATGPT_FINAL_CLOSURE_REVIEW.md` / ADR-0126
+- Unabhängiger Closure-Check: `docs/PR35_CHATGPT_INDEPENDENT_CLOSURE_CHECK.md` – **PASS**
 
 ## 2. Was bereits umgesetzt ist
 
@@ -71,11 +72,9 @@ Historischer voller Gate auf `08716228`: 1349/1349, Actions `32604932045`, Verce
 
 ## 5. Exakter nächster Schritt
 
-1. Unabhängiger ChatGPT-Closure-Check gegen `docs/PR35_CHATGPT_FINAL_CLOSURE_REVIEW.md` auf Head `b1f9d654`.
-2. Draft bleibt Draft. Nicht Mark Ready, nicht mergen.
-3. Merge nur nach ausdrücklicher aktueller Product-Owner-Freigabe.
-4. Production-Migration erst nach Merge und separater Freigabe.
+1. Product Owner entscheidet über Merge von Draft PR #35. Technische Empfehlung des unabhängigen Closure-Checks: merge-bereit nach ausdrücklicher aktueller Freigabe.
+2. Draft bleibt Draft. Nicht Mark Ready, nicht mergen, solange keine ausdrückliche Freigabe vorliegt.
+3. Production-Migration erst nach Merge und separater Freigabe.
+4. Kein zweiter Foundation-E-Block auf einem anderen Branch beginnen.
 
-`origin/main` @ `c8dbe904` bleibt 0 hinter. Dieser Status-Commit hält das Gate fest; kein weiterer Docs-Commit nur zum Festhalten von Checks.
-
-Kein zweiter Foundation-E-Block auf einem anderen Branch beginnen.
+`origin/main` @ `c8dbe904` bleibt 0 hinter. Dieser Commit hält nur den PASS-Review fest; kein weiterer Docs-Commit nur zum Festhalten von Checks.
