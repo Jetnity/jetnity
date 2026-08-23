@@ -6,12 +6,14 @@ Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, 
 Review R1/R2: `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md`  
 Review R3: `docs/PR38_CHATGPT_R3_REVIEW.md`  
 Review R4: `docs/PR38_CHATGPT_R4_REVIEW.md`  
+Review R5: `docs/PR38_CHATGPT_R5_REVIEW.md`  
 Review R6: `docs/PR38_CHATGPT_R6_REVIEW.md`  
 Runtime-Head R1-Fixes: `89290effba61602a71418ab3904b4dc42e76709d`  
 Runtime-Head R2-Fixes: `aa6cafa2f4997c22081dff35fe950a18190e7886`  
 Runtime-Head R3-Fixes: `4f9eb1e8c524494fa8ab300bdfe24ec372e9e109`  
 Runtime-Head R4-Fixes: `f077d4d1e45366dd7dfa50bf2f98461d71b8279c`  
-Runtime-Head R5-Fixes: `249d4b9b24fed89070adfbd0bcaaacaeb481ba46`
+Runtime-Head R5-Fixes: `249d4b9b24fed89070adfbd0bcaaacaeb481ba46`  
+Runtime-Head R6-Fixes: `e790a7d224473df2cf999fe7c058a81a5a8e8679`
 
 ## 1. Gemischte Unsicherheit
 

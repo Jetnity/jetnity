@@ -3502,7 +3502,7 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 - Seasonal-Relevanz, Seasonal-Provider-Request und Safety-Relevanz lesen dieselbe Projektion.
 - `connections` werden ebenfalls nur noch innerhalb eines Legs abgeleitet.
 
-**Kontext:** `docs/PR38_CHATGPT_R6_REVIEW.md` gegen Runtime `249d4b9b`.
+**Kontext:** `docs/PR38_CHATGPT_R6_REVIEW.md` gegen Runtime `e790a7d2`.
 
 **Alternativen:** Heuristische Max-Layover-Zeit; Pairing weiter über die flache Segmentliste; fail-closed ohne Layover-Kontakte.
 

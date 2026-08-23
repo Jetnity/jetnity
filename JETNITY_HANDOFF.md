@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 23. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D, Foundation E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence – Draft PR #38, R6-Blocker 12 im Code geschlossen, Exact-Head-Gate und R7 offen**
+Status: **verbindlicher operativer Übergabepunkt – Foundation D, Foundation E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence – Draft PR #38, R6-Fixes + Exact-Head-Gate grün, R7-Re-Review offen**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -294,7 +294,7 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. **→ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (Draft PR #38, R6-Blocker 12 im Code geschlossen, Exact-Head-Gate und R7 offen)**
+5. **→ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (Draft PR #38, R6-Fixes + Exact-Head-Gate grün, R7-Re-Review offen)**
 6. Provider-Readiness-/Adapter-Lücken schließen
 7. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 8. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
@@ -313,13 +313,13 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 Aktiver Branch: `feat/travel-timing-seasonal-intelligence`  
 Draft PR: `#38`  
 Basis: `origin/main` @ `cd220beb`  
-Letzter bestätigter Runtime-Head vor Blocker 12: `249d4b9b`
+Runtime-Head: `e790a7d2`
 
 1. Ist-Audit ist gegen den tatsächlichen Code verifiziert.
-2. Seasonal-Runtime sowie Review-Blocker 1–12 sind im Code geschlossen, inklusive getrennter Airport-Kontakte pro Leg/Flight-Item.
-3. Das Exact-Head-Gate auf dem Blocker-12-Runtime-Head und der R7-Re-Review stehen noch aus. Ältere Gate-Zahlen auf `249d4b9b` gelten nicht als R6-Closure.
+2. Seasonal-Runtime sowie Review-Blocker 1–12 sind geschlossen, inklusive getrennter Airport-Kontakte pro Leg/Flight-Item.
+3. Full Gate auf Runtime `e790a7d2` ist lokal und remote grün (1572/1572 Tests, UI-Audit 1014/1014, Build Exit 0, GitHub Actions SUCCESS, Vercel Preview READY).
 4. PR bleibt Draft. Kein echter Seasonal-Provider, kein Secret, keine unfreigegebenen Kosten, kein Merge ohne aktuelle Product-Owner-Freigabe.
-5. **Exakter nächster Schritt:** Exact-Head-Gate auf dem R6-Fix-Head, danach unabhängiger ChatGPT-Re-Review R7 nach Stop-Kriterium.
+5. **Exakter nächster Schritt:** unabhängiger ChatGPT-Re-Review R7 nach Stop-Kriterium.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
