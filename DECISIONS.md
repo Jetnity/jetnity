@@ -3535,6 +3535,29 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0143 – Open-Jaw-Leg-Ursprünge in Country-Truth und Route-Identität
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R8 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Ein Leg-Origin, der nicht das bewiesene Reise-Origin ist, ist ein belegter Besuch und gehört zu `destinationCountryCodes`.
+- Transit bleibt ausschließlich ein Zwischenpunkt innerhalb desselben Legs.
+- Item-Chronologie ohne `startsOn` nutzt Segmentdaten. Fehlt jede beweisbare Chronologie, bleibt das Origin leer.
+- Route-Fingerprint und menschliche Darstellung serialisieren jedes Leg getrennt, inklusive jedes Leg-Origins.
+- Dieselbe Open-Jaw-Route als eine Itinerary oder als getrennte Flight-Items teilt Country-Rollen und Identität.
+
+**Kontext:** `docs/PR38_CHATGPT_R8_REVIEW.md` gegen Runtime `de83d026`.
+
+**Alternativen:** Nur Leg-Endpunkte als Ziele; lexikographische Pfadsortierung als Origin; getrennte Fingerprints für Item- vs. Itinerary-Form.
+
+**Begründung:** Ein strukturierter Rückflug ab Singapur beweist den Aufenthalt dort. Dieselbe Lücke darf Seasonal, Readiness und Safety nicht unterschiedlich treffen, und zwei verschiedene Rückflug-Origins dürfen nicht dieselbe Route-Identität erzeugen.
+
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R9 und Product-Owner-Merge-Freigabe.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

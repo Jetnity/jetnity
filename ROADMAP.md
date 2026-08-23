@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 23. August 2026  
-Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence (Draft PR #38, R7-Fixes + Exact-Head-Gate grün, R8-Re-Review offen)**
+Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence (Draft PR #38, R8-Fixes + Exact-Head-Gate grün, R9-Re-Review offen)**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -162,7 +162,7 @@ Verbindliche Truth-Logik:
 
 ## 6. NÄCHSTE PRIORITÄT – Travel Timing & Seasonal Intelligence
 
-Status: **Draft PR #38; R7-Fixes auf Runtime `ece075e7` geschlossen; Exact-Head-Gate grün; R8-Re-Review offen; kein Live-Provider**
+Status: **Draft PR #38; R8-Fixes auf Runtime `de83d026` geschlossen; Exact-Head-Gate grün; R9-Re-Review offen; kein Live-Provider**
 
 Policy:
 
@@ -198,14 +198,15 @@ Verbindlich:
 3. ✅ klare Trennung zu akutem Safety
 4. ✅ Cross-Domain-Impact und Reevaluation
 5. ✅ minimale, ruhige Workspace-Naht
-6. ✅ Pflicht-Testmatrix + Device-Matrix (1580/1580 Tests, UI-Audit 1014/1014)
+6. ✅ Pflicht-Testmatrix + Device-Matrix (1593/1593 Tests, UI-Audit 1014/1014)
 7. ✅ ChatGPT-Re-Review R3: Residual Blocker 5 und Blocker 7 geschlossen
 8. ✅ ChatGPT-Re-Review R4: Blocker 8 und 9 geschlossen
 9. ✅ ChatGPT-Re-Review R5: Blocker 10 und 11 geschlossen, Exact-Head-Gate grün
 10. ✅ ChatGPT-Re-Review R6: Blocker 12 geschlossen, Exact-Head-Gate grün
 11. ✅ ChatGPT-Re-Review R7: Blocker 13 geschlossen, Exact-Head-Gate grün
-12. **→ unabhängiger ChatGPT-Re-Review R8 nach Stop-Kriterium**
-13. Product-Owner-Merge-Gate
+12. ✅ ChatGPT-Re-Review R8: Blocker 14 und 15 geschlossen, Exact-Head-Gate grün
+13. **→ unabhängiger ChatGPT-Re-Review R9 nach Stop-Kriterium**
+14. Product-Owner-Merge-Gate
 
 ---
 
@@ -331,7 +332,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. **→ Travel Timing & Seasonal – provider-neutrale Foundation (Draft PR #38, R7-Fixes + Exact-Head-Gate grün, R8-Re-Review offen)**
+5. **→ Travel Timing & Seasonal – provider-neutrale Foundation (Draft PR #38, R8-Fixes + Exact-Head-Gate grün, R9-Re-Review offen)**
 6. Provider-Readiness-/Adapter-Lücken schließen
 7. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 8. finaler Workspace Intelligence Audit
