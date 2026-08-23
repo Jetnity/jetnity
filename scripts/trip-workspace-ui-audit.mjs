@@ -818,7 +818,7 @@ const ZUSTAENDE = {
             countryCode: 'ID',
             tripItemId: null,
             title: null,
-            contextFingerprint: 'v2|kind=entry_check|cc=ID|start=2026-09-12|end=2026-09-16|trav=1|dest=ID',
+            contextFingerprint: 'v3|sha256:33490f56f753d5c070e99dbb5aeac1919668ad634dd330e3844b7db96d32f364',
             createdAt: JETZT,
             updatedAt: JETZT,
           },
