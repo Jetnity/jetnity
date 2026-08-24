@@ -1,7 +1,7 @@
 # Jetnity Account Platform – AP-1 Implementierungsauftrag
 
 Stand: 24. August 2026
-Status: **zur Implementierung freigegeben**
+Status: **AP-1 umgesetzt auf `feat/account-ap1` – Draft, wartet auf Review**
 Verantwortlicher Cursor-Agent: `Account plattform audit vorbereitung`
 Implementierungsbranch: `feat/account-ap1`
 Audit-Referenz: PR #39 / `audit/account-platform`

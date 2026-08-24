@@ -40,17 +40,15 @@ Keine Seasonal-Tabelle, kein Live-Seasonal-Provider, keine neuen Secrets und kei
 
 ## 3. Aktive nächste Workstreams
 
-### Account Platform – PR #39
+### Account Platform – AP-1
 
 Cursor-Anzeigename: `Account plattform audit vorbereitung`  
-Branch: `audit/account-platform`  
-Audit: **AUDIT-PASS**
+Audit: PR #39 **AUDIT-PASS**  
+Implementierung: Branch `feat/account-ap1`, Draft-PR #43  
+Auftrag: `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`  
+Handoff: `docs/ACCOUNT_AP1_HANDOFF.md`
 
-Nächster konfliktarmer Implementierungsslice:
-
-**AP-1 – Account-Shell + persönliche Übersicht / „Meine Reisen“ als Account-Hub.**
-
-Der Agent darf keine zweite Auth-/Trip-/Traveller-/Billing-/Route-Truth bauen. Shared Contracts bleiben Technical-Lead-koordiniert.
+AP-1 (Shell + persönliche Übersicht) ist auf diesem Branch umgesetzt. Shared Contracts bleiben unberührt. Kein Mark Ready, kein Merge.
 
 ### Admin Platform – PR #40
 
@@ -104,4 +102,4 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-Die ersten konfliktarmen Implementierungsslices für **Account AP-1** und **Admin Slice A** können vorbereitet und gestartet werden. Nach jedem Slice folgt ein unabhängiger Review, bevor der jeweilige nächste Slice beginnt.
+Account AP-1 ist implementiert und wartet auf unabhängigen Review von Draft-PR #43. Admin Slice A bleibt der parallele Admin-Strang. Kein Ready, kein Merge ohne Product-Owner-Freigabe.
