@@ -3742,10 +3742,85 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
-## ADR-0152 – Admin Slice A bleibt ehrliche Steuerzentralen-IA ohne neue Autorität
+## ADR-0152 – Account-Übersicht ist Zuhause, kein zweites Workspace-Dashboard
 
 **Datum:** 24. August 2026  
-**Status:** umgesetzt auf Draft-PR #44 / `feat/admin-control-center-ia`
+**Status:** umgesetzt auf Draft-PR #43 / `feat/account-ap1`
+
+**Entscheidung:**
+
+- `/account` ist das persönliche dauerhafte Zuhause eines angemeldeten Kontos.
+- Der Trip Workspace bleibt die operative Kommandozentrale einer einzelnen Reise.
+- Die Übersicht liest ausschliesslich vorhandene `reisenLaden()`-Daten. Empty und Error bleiben getrennt.
+- Die öffentliche Leiste zeigt **Konto** nur bei `sitzung === konto`.
+- `/account/security` wird unter `/account/settings` auffindbar; MFA-/AAL-Verträge ändern sich nicht.
+- AP-1 ändert keine Tabelle, kein RLS, kein Guest→Account und keine Traveller-Registry.
+
+**Kontext:** Account-Audit PR #39. Auftrag `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`.
+
+**Alternativen:** Workspace-Karten auf `/account` spiegeln; Konto-Link auch für Gäste; neue Persistenz für „nächste Reise“.
+
+**Begründung:** Ohne Zuhause bleibt `/account/security` verwaist und `/reisen` wirkt wie der einzige Einstieg. Ein zweites Dashboard würde operative Wahrheit verdoppeln.
+
+**Konsequenzen:** Orientierung und Fortsetzen liegen im Konto. Fachliche Reiseoperationen bleiben im Workspace. AP-2+ erst nach Review/Freigabe. PR #43 bleibt Draft.
+
+---
+
+## ADR-0153 – Account aktiv/kommend braucht einen Geräte-Kalendertag
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #43 nach Technical-Lead REQUEST CHANGES
+
+**Entscheidung:**
+
+- `aktiv` / `kommend` entstehen nur gegen einen belegten Geräte-Kalendertag (`Date#getTimezoneOffset`).
+- Der Server klassifiziert diese Lagen nicht. Unbekannter Kalendertag bleibt `fortsetzen`.
+- Keine IANA-Zone, kein stilles UTC-Kalenderdatum aus `toISOString()`.
+- Ein 503 von `reisenLaden()` beweist keinen Speicherstand. Der Text sagt nur, dass der aktuelle Stand nicht geprüft werden konnte.
+
+**Kontext:** Independent Technical-Lead Review an PR #43 gegen Head `62868d2c`.
+
+**Alternativen:** Server-UTC als „heute“ (Review-Blocker); IANA aus IP/Browser raten; aktiv/kommend ganz entfernen.
+
+**Begründung:** Date-only darf nicht still UTC werden. Ein Ladefehler ist keine Persistenzaussage.
+
+**Konsequenzen:** Kurz nach dem ersten Client-Render kann die Lage von Fortsetzen auf aktiv/kommend wechseln. Das ist ehrlicher als eine Server-UTC-Behauptung. PR #43 bleibt Draft.
+
+---
+
+## ADR-0154 – Minimaler gemeinsamer Provider-Operationsvertrag
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt und Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`; kein Mark Ready / kein Merge
+
+**Entscheidung:**
+
+- Technische Provider-Operations liegen in `lib/provider-ops/*`.
+- Die gemeinsame Taxonomie ist nur `ok | partial | empty | checked_empty | unavailable | timeout | invalid | rate_limited | error`.
+- Fachzustände wie Readiness `recheck_needed` / `insufficient_context` und Seasonal `rejected_acute` gehören nicht in diesen Basistyp.
+- Request-Härtung, Kill-Switch-Form, In-Memory-Cost-Guard und ein Observability-Event-Typ ohne Persistenz sind erlaubt.
+- `providerOpsEvent()` konstruiert das Event nur aus der Allowlist. Input darf nicht per Spread kopiert werden.
+- `ProviderOpsCostGuard.erlaubt()` ist async, damit PR-S6 I/O einhängen kann, ohne Domain-Hüllen erneut umzuschneiden. S1 implementiert nur den In-Memory-Port.
+- Bestehende Domain-Hüllen bleiben dünne Wrapper. Es gibt keinen `UniversalProvider` und kein gemeinsames Offer-Schema.
+- Flights-Search erhält dieselbe Request-Härtung wie Hotels. Mobility-/Rental-Timeout-HTTP 504 bleibt unverändert, weil eine stille 200-Umstellung den Public Contract bricht.
+- Persistenter Cost Guard, Nachweis-Verträge, Offer-Provenance und Admin-Health sind spätere Slices.
+
+**Identifier:** `ADR-0154` ist der einzige Identifier dieser Implementierungsentscheidung. Parallel existieren auf anderen Draft-Branches andere `ADR-0152`/`ADR-0153` (Audit-Planung auf PR #45, Account AP-1 auf PR #43). Diese Nummern werden hier nicht wiederverwendet.
+
+**Kontext:** Product-Owner-/Technical-Lead-Freigabe für S1 als eigenen Draft-Workstream nach dem Provider-Readiness-Audit (PR #45). Review REQUEST CHANGES auf PR #47 (S1-B1, S1-B2, ADR-Kollision). Auftrag: `docs/PROVIDER_OPS_S1_TASK.md`.
+
+**Alternativen:** Domains weiter kopieren; eine universelle Provider-Abstraktion; HTTP 504 überall auf 200 ziehen; persistente Kostenschranke sofort bauen; synces Cost-Guard-Interface belassen.
+
+**Begründung:** Die Audit-Befunde lagen in kopierter Operationshülle, nicht in fehlender Fachwahrheit. Eine schmale gemeinsame Form verhindert weitere Drift, ohne Search-, Truth- oder Adaptergrenzen zu vermischen. Ein synces Interface hätte S6 gezwungen, jede Domain erneut umzubauen. Ein Spread hätte Observability-Zusatzfelder durchgelassen.
+
+**Konsequenzen:** S2+ und S6 können dieselben Hüllen nutzen. Production bleibt fail-closed. Keine neuen Kosten, keine Secrets, keine Migration. Technical Closure ist dokumentiert in `docs/PROVIDER_OPS_S1_TECHNICAL_CLOSURE.md`. Draft-PR #47 wartet auf Product-Owner-Entscheidung. S1 ist keine Freigabe für S2, Mark Ready oder Merge.
+
+---
+
+## ADR-0155 – Admin Slice A bleibt ehrliche Steuerzentralen-IA ohne neue Autorität
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #44 / `feat/admin-control-center-ia`; Nummer von ADR-0152 auf ADR-0155 gehoben, weil `main` ADR-0152 bereits an Account AP-1 vergeben hat
 
 **Entscheidung:**
 
@@ -3755,11 +3830,11 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 - Refunds und IP-Blockliste werden als lokale/operative Sicht gekennzeichnet. Es gibt keine Provider-Geldbewegung und keine Enforcement der Blockliste.
 - Copilot-Auto, erfundene Notifications/Badges und der Setup-Guide mit toten Control-Center-Zielen entfallen. Stub-Seiten heissen ausdrücklich `folgt`.
 
-**Kontext:** Auftrag `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`. Das bestehende Admin war ein gehärtetes unvollständiges Backoffice mit Legacy-Scheinzuständen (toter Copilot-Execute, Badge `3`, Setup-Guide auf `/admin/control-center`).
+**Kontext:** Auftrag `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`. Das bestehende Admin war ein gehärtetes unvollständiges Backoffice mit Legacy-Scheinzuständen (toter Copilot-Execute, Badge `3`, Setup-Guide auf `/admin/control-center`). Beim Main-Sync nach AP-1-Merge kollidierte die ursprüngliche Draft-Nummer ADR-0152 mit der gemergten Account-Entscheidung.
 
-**Alternativen:** Zweites Control-Center bauen; Capability-Nav als Autorisierung behandeln; Break-Glass weiter in die Datenbank laufen lassen und 500 als Ablehnung belassen; Refund/IP als fertige Provider-Steuerung präsentieren.
+**Alternativen:** Zweites Control-Center bauen; Capability-Nav als Autorisierung behandeln; Break-Glass weiter in die Datenbank laufen lassen und 500 als Ablehnung belassen; Refund/IP als fertige Provider-Steuerung präsentieren; die Account-ADR auf `main` umnummerieren.
 
-**Begründung:** `unknown` / `nicht enforced` / `folgt` ist besser als erfundenes Grün. Slice A darf keine neue Datenwahrheit und keine neue Autorität einführen. Der bestehende Break-Glass-Vertrag verlangt bereits, dass Notzugang nicht persistiert.
+**Begründung:** `unknown` / `nicht enforced` / `folgt` ist besser als erfundenes Grün. Slice A darf keine neue Datenwahrheit und keine neue Autorität einführen. Der bestehende Break-Glass-Vertrag verlangt bereits, dass Notzugang nicht persistiert. Account-ADR-0152 auf `main` hat Vorrang vor der Draft-Nummer.
 
 **Konsequenzen:** System Health, Copilot-Pro-Execute, Infomaniak, Bexio, Ads und Payment-Provider bleiben spätere Slices. Account-/Trip-/Traveller-/Route-/Safety-/Seasonal-Verträge bleiben unberührt. PR bleibt Draft.
 

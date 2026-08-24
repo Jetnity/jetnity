@@ -7,12 +7,12 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/44
 
 ## Wo die Arbeit steht
 
-**Technical Closure / PASS** auf Exact Head `5632a3cac1301d2d649fcb1d2b9552d3763c8b9f`.  
-CI `32683942810` SUCCESS. Vercel Preview READY `dpl_czE3XJXw3qx3sXMrh7LTgMV94zBL`.
+**Main-Sync mit `main` `084f7c87` in Arbeit.**  
+Bisheriger Technical Closure / PASS gilt nur für Exact Head `5632a3cac1301d2d649fcb1d2b9552d3763c8b9f` (CI `32683942810`, Preview `dpl_czE3XJXw3qx3sXMrh7LTgMV94zBL`) und ersetzt das neue Integrationsgate nicht.
 
-Der PR bleibt Draft. Technical Closure ist keine Mark-Ready- oder Merge-Freigabe. Keine Production-Migration, keine Provider-/Secret-Aktivierung.
+Der PR bleibt Draft. Kein Mark Ready, keine Merge-Freigabe, keine Production-Migration, keine Provider-/Secret-Aktivierung.
 
-Slice B / System Health nicht in diesen abgeschlossenen Head mischen.
+Slice B / System Health / PR #46 bleibt Draft und unangetastet. Admin-Entscheidung ist ADR-0155.
 
 ## Pflichtquellen
 
@@ -21,7 +21,7 @@ Slice B / System Health nicht in diesen abgeschlossenen Head mischen.
 - `docs/ADMIN_PLATFORM_SLICE_A_TECHNICAL_CLOSURE.md`
 - `docs/ADMIN_PLATFORM_SLICE_A_SELF_REVIEW.md`
 - `docs/ACTIVE_WORK_STATUS.md`
-- ADR-0036, ADR-0040, ADR-0152
+- ADR-0036, ADR-0040, ADR-0155
 - Audit-Referenz bleibt PR #40 / `audit/admin-platform`
 
 ## Was der nächste Agent nicht tun darf
@@ -34,4 +34,4 @@ Slice B / System Health nicht in diesen abgeschlossenen Head mischen.
 
 ## Exakter nächster Schritt
 
-Product-Owner-Entscheidung zu Mark Ready / Merge von Draft PR #44. Account AP-1 darf parallel auf PR #43 bleiben.
+Merge mit `main` `084f7c87` abschließen, Exact-Head-Gates belegen, dann unabhängigen Technical-Lead-Integrationsreview abwarten. Account AP-1 ist auf `main`. Slice B / PR #46 bleibt unangetastet.

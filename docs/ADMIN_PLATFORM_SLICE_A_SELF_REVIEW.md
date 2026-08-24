@@ -13,7 +13,7 @@ Branch: `feat/admin-control-center-ia`
 5. **Behauptet die Blockliste Enforcement?** Nein. Banner und Toasts sagen `nicht enforced`.
 6. **Wird Break-Glass als Schreibrecht behandelt?** Nein. `adminWriteErlaubt` lässt nur `grant === 'role'` durch; Schreibrouten antworten 403.
 7. **Neue Autorität oder Schema?** Nein. Keine Migration, keine neue Capability, keine RLS-Änderung, keine Service-Role-Ausweitung.
-8. **Fremde Workstreams berührt?** Nein. Account/Trip/Traveller/Route/Safety/Seasonal/Homepage unverändert.
+8. **Fremde Workstreams berührt?** Main-Sync übernimmt Account AP-1, Provider Readiness und Provider Ops S1 aus `main` unverändert. Slice-A-Adminverhalten bleibt. Keine Account-/Trip-/Traveller-/Route-/Safety-/Seasonal-/Homepage-Änderung durch Slice A. Admin-ADR ist ADR-0155, weil `main` ADR-0152 an AP-1 vergeben hat.
 9. **Stub-Seiten als fertig lesbar?** Nein. Gemeinsame `AdminFolgtSeite` mit ausdrücklichem Platzhaltertext.
 
 ## Offene Risiken
@@ -29,4 +29,4 @@ Branch: `feat/admin-control-center-ia`
 
 Vercel Preview ist READY für den Implementierungs-Push. Der GitHub-Actions-Workflow `CI` ist auf dem Implementierungs-Head nicht erneut belegt; der letzte Branch-Lauf gilt `9aed6a88`. `db:sicherheit` und Production wurden nicht behauptet.
 
-Unabhängiger Final Recheck: **PASS / TECHNICAL CLOSURE** auf `5632a3ca`. Dieser Self-Review ersetzt keine Product-Owner-Freigabe.
+Unabhängiger Final Recheck: **PASS / TECHNICAL CLOSURE** auf `5632a3ca` gilt nur für den alten Head. Main-Sync-Gates nach `084f7c87` sind noch nicht belegt. Dieser Self-Review ersetzt keine Product-Owner-Freigabe.

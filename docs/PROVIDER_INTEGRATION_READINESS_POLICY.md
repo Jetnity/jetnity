@@ -68,7 +68,7 @@ Die internen Verträge müssen diese Trennung erlauben, wenn fachlich sinnvoll.
 
 ## 5. Aktueller Readiness-Stand der Kernbereiche
 
-Stand 22.08.2026, vor einem späteren vollständigen Audit:
+Stand 24.08.2026. Der vollständige Ist-Audit liegt in `docs/PROVIDER_READINESS_AUDIT.md` und `docs/PROVIDER_READINESS_MATRIX.md`. Kurzfassung:
 
 ### Flüge
 
@@ -80,7 +80,7 @@ Bereits stark provider-ready:
 - Production bleibt gesperrt
 - Search und Booking/Affiliate bewusst getrennt
 
-Vor finaler Production trotzdem erneut prüfen: global persistentes Rate-Limit, Provider-/Affiliate-Entscheidung, Sandbox/Live-Vertrag, Offer-Freshness, Monitoring und vollständige Provider-End-to-End-Verifikation.
+Audit-Befund: Development-Adapter ready; **kein `FlugNachweis`** – Kontoübernahme vertraut der Browser-`FlugOption`. Das ist der höchste kommerzielle P0 vor jeder Persistenz mit Preview- oder Live-Suche. Zusätzlich prüfen: global persistentes Rate-Limit, Currency-Durchreichung, Offer-Freshness, Monitoring, Sandbox/Live-Vertrag.
 
 ### Hotels
 
@@ -113,7 +113,7 @@ Provider-neutrale Schicht vorhanden:
 - `MobilityNachweis`
 - Factory aktuell bewusst `null`
 
-Konkreter echter Mobility-Adapter und produktiver Nachweis fehlen.
+`MobilityNachweis` ist nur ein fail-closed Stub, kein Hotel-artiger async-Vertrag. Workspace Auto-Search würde mit Live-Adapter Kosten erzeugen. Konkreter Adapter fehlt bewusst.
 
 ### Mietwagen
 
@@ -124,11 +124,11 @@ Provider-neutrale Schicht vorhanden:
 - `RentalCarNachweis`
 - Factory aktuell bewusst `null`
 
-Konkreter echter Mietwagenadapter und produktiver Nachweis fehlen.
+`RentalCarNachweis` ist nur ein fail-closed Stub. Such-UI fehlt bewusst. Konkreter Adapter fehlt bewusst.
 
 ### Travel Requirements / Readiness
 
-Provider-neutrale Requirements-Engine und Provider-Port existieren. Foundation E erweitert den Port um `citizenshipCountryCodes[]`, `documents[]` und `credentialOptions[]`. `requirementsProviderAus()` bleibt `null`. Echter regulatorischer Provider fehlt. Foundation E muss gemergt und Production-migriert sein, bevor ein Timatic- oder gleichwertiger Adapter angeschlossen wird.
+Provider-neutrale Requirements-Engine und Provider-Port existieren inkl. Multi-Citizenship/Documents. `requirementsProviderAus()` bleibt `null`. Foundation E ist gemergt. Vor einem Regulatory-Adapter fehlen explizites Timeout/`AbortSignal` und ein Domain-Kill-Switch.
 
 ### Travel Safety & Disruption
 
@@ -136,11 +136,11 @@ Provider-neutrale Schicht vorhanden: `lib/safety/`, `safetyProviderAus()` bleibt
 
 ### Travel Timing & Seasonal Intelligence
 
-Provider-neutrale Schicht auf Draft-PR #38: `lib/seasonal/`, `seasonalProviderAus()` bleibt `null`. Echter Climate-/Seasonal-/Forecast-Provider fehlt.
+Provider-neutrale Schicht auf `main` (PR #38): `lib/seasonal/`, `seasonalProviderAus()` bleibt `null`. Echter Climate-/Seasonal-/Forecast-Provider fehlt.
 
 ### Weitere externe Datenabhängigkeiten
 
-Der spätere Provider-Readiness-Audit muss zusätzlich alle anderen externen Datenabhängigkeiten inventarisieren, z. B.:
+Inventarisiert im Audit vom 24.08.2026, ohne Port und ohne Aktivierung:
 
 - Routing / reale Wegezeiten
 - POI / Öffnungszeiten

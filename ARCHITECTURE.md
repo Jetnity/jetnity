@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
-Stand: 23. August 2026
-Gültig für: Foundation D und E auf `main` und Production; Travel Safety & Disruption Intelligence gemergt auf `main`; Travel Timing & Seasonal Intelligence als provider-neutrale Foundation auf Draft-PR #38, Runtime `263c2f84`. Production-Schema unverändert durch diesen Block.
+Stand: 24. August 2026
+Gültig für: Foundation D/E, Travel Safety und Travel Timing & Seasonal Intelligence auf `main`; Account Platform AP-1 als UI-/IA-Slice auf Draft-PR #43 / `feat/account-ap1`. AP-1 ändert kein Schema.
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -32,6 +32,7 @@ Ein Framework-Wechsel ist nicht vorgesehen und benötigt Freigabe.
 app/                Routing, Server Components, Route Handler, Server Actions
 components/         Präsentation und Interaktion
 lib/                Business-Logik, Datenzugriff, Integrationen
+lib/provider-ops/   gemeinsamer technischer Operationsvertrag (Request-Härtung, Kill-Switch-Form, In-Memory-Cost-Guard, Outcome-Taxonomie); keine Fachwahrheit, kein UniversalProvider
 lib/auth/           Rollenmodell und Zugangsentscheidung (siehe Abschnitt 4)
 types/              Datenbank- und Domänentypen; types/supabase.ts wird erzeugt
 supabase/migrations Datenbankschema, vollständig und reproduzierbar (Abschnitt 6)
@@ -121,7 +122,7 @@ Seit Phase 1.4 gilt dasselbe Modell auch in der Datenbank: `public.rollenrang()`
 
 Die Entscheidung unterscheidet drei Zustände der Rollenabfrage: Rolle vorhanden, keine Rolle hinterlegt, Abfrage fehlgeschlagen. Ein Ausfall führt nie zu einer Freigabe. Reguläre Quelle ist die Datenbankrolle; `ADMIN_ALLOWED_EMAILS` ist ein Notzugang aus exakten Adressen, dessen Nutzung protokolliert wird. Eine Domain erteilt keine Berechtigung ([DECISIONS.md](DECISIONS.md) ADR-0027).
 
-Der Notzugang öffnet die Oberfläche, nicht die Datenbank. Die Policies kennen die Liste nicht und sollen sie nicht kennen – sonst stünde neben `creator_profiles.role` wieder eine zweite Autorität. Eine solche Sitzung sieht deshalb einen Hinweis über der gesamten Administrations-Shell, statt leere Übersichten, die sich als Entwarnung lesen liessen. `reachesDatabase()` in `lib/auth/admin-access.ts` hält den Satz als prüfbare Funktion fest ([DECISIONS.md](DECISIONS.md) ADR-0036). Persistente Admin-Writes prüfen denselben Vertrag zusätzlich in `lib/auth/admin-write-gate.ts` und antworten bei Break-Glass mit 403, bevor die Datenbank erreicht wird (ADR-0152).
+Der Notzugang öffnet die Oberfläche, nicht die Datenbank. Die Policies kennen die Liste nicht und sollen sie nicht kennen – sonst stünde neben `creator_profiles.role` wieder eine zweite Autorität. Eine solche Sitzung sieht deshalb einen Hinweis über der gesamten Administrations-Shell, statt leere Übersichten, die sich als Entwarnung lesen liessen. `reachesDatabase()` in `lib/auth/admin-access.ts` hält den Satz als prüfbare Funktion fest ([DECISIONS.md](DECISIONS.md) ADR-0036). Persistente Admin-Writes prüfen denselben Vertrag zusätzlich in `lib/auth/admin-write-gate.ts` und antworten bei Break-Glass mit 403, bevor die Datenbank erreicht wird (ADR-0155).
 
 Die Admin-Sidebar filtert Einträge nach Rolle nur als UX (`lib/admin/navigation.ts`). Ausblenden ist keine Autorisierung. Stub-Flächen (Analytics, Content, Marketing, Einstellungen, Lokalisierung) sind als `folgt` gekennzeichnet und enthalten keine operative Steuerung.
 
@@ -141,6 +142,23 @@ Weitere Punkte:
 **Die Rolle liegt seit Phase 1.5 in `public.profiles`.** Die Tabelle hiess bis dahin `creator_profiles` – ein Name aus der alten Produktidee. Weil er nur in `ROLE_TABLE` in `lib/auth/admin-guard.ts` stand, war die Umstellung eine einzelne Änderung im Anwendungscode. Mit der Umbenennung sind die neun Spalten der öffentlichen Creator-Identität entfallen; was bleibt, ist das, was ein Reisekonto braucht: Kennung, E-Mail, Anzeigename, Avatar, Rolle, Status, Zeitstempel. Persönliche Reisepräferenzen bekommen eigene Spalten oder eine eigene Tabelle, wenn sie fällig sind – nicht die freigewordenen ([DECISIONS.md](DECISIONS.md) ADR-0044).
 
 **Nach Anmeldung und Registrierung führt der Weg über eine Übernahme.** Liegt im Browser eine Gastreise, überträgt `lib/trips/uebernahme.ts` sie in das Konto, bevor „Meine Reisen" etwas anzeigt; der lokale Entwurf verschwindet erst, wenn der Server die Kennung der gespeicherten Reise gemeldet hat. Einzelheiten in Abschnitt 5 und in [docs/REISEN.md](docs/REISEN.md).
+
+---
+
+## 4a. Account-Shell (AP-1, Draft)
+
+AP-1 legt das persönliche Account-Zuhause an, ohne eine zweite Source of Truth zu schaffen. Begründung: [DECISIONS.md](DECISIONS.md) ADR-0152, ADR-0153.
+
+| Fläche | Datei | Aufgabe |
+| --- | --- | --- |
+| Shell | `app/account/layout.tsx` | PublicNavbar, kompakte Konto-Nav, Skip-Link, Footer |
+| Übersicht | `app/account/page.tsx` + `AccountUebersichtLive` | Begrüssung und nächste Reise nur aus `reisenLaden()`; aktiv/kommend am Geräte-Kalendertag |
+| Einstellungen | `app/account/settings/page.tsx` | macht vorhandenes `/account/security` auffindbar |
+| Navigation | `lib/account/navigation.ts` | Übersicht, Reisen, Einstellungen; Security zählt zu Einstellungen |
+| Nächste Reise | `lib/account/naechste-reise.ts` | mit Geräte-Kalendertag: aktiv → kommend → Fortsetzen; ohne Kalendertag nur Fortsetzen |
+| Navbar-Ziel | `sitzungseintraege('konto')` | Link **Konto** nur bei bestehender Sitzung |
+
+Die Übersicht ist Orientierung, kein Trip-Workspace. Flug-, Hotel-, Readiness-, Safety- und Seasonal-Karten gehören nicht hierher. Auth-/MFA-/AAL-, RLS- und Traveller-Verträge bleiben unverändert.
 
 ---
 
@@ -289,7 +307,7 @@ Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1, 3.2, 3.3, Foundation A, Foundation B und Dr
 | `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
 | `api/admin/security/*` (5) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
 
-Alle zehn Endpunkte unter `api/admin` prüfen die Berechtigung über `requireAdminApi()`; `npm run check:api-schutz` erzwingt das in der CI. Lesende Endpunkte verlangen die Fähigkeit `betrieb-lesen` (ab `moderator`), eingreifende – lokale Refund-Notiz, Sperren, Entsperren – `betrieb-eingreifen` (ab `operator`). Dieselben Fähigkeiten gelten in den Policies, sodass ein Endpunkt, der jemanden durchlässt, ihm auch die Daten zeigen kann. Die drei Schreibrouten lehnen Break-Glass zusätzlich mit 403 ab (`adminWriteErlaubt`), statt einen RLS-Fehler als 500 auszuliefern. Die Oberflächen kennzeichnen Refunds als lokale Notiz und die IP-Blockliste als nicht enforced (ADR-0152).
+Alle zehn Endpunkte unter `api/admin` prüfen die Berechtigung über `requireAdminApi()`; `npm run check:api-schutz` erzwingt das in der CI. Lesende Endpunkte verlangen die Fähigkeit `betrieb-lesen` (ab `moderator`), eingreifende – lokale Refund-Notiz, Sperren, Entsperren – `betrieb-eingreifen` (ab `operator`). Dieselben Fähigkeiten gelten in den Policies, sodass ein Endpunkt, der jemanden durchlässt, ihm auch die Daten zeigen kann. Die drei Schreibrouten lehnen Break-Glass zusätzlich mit 403 ab (`adminWriteErlaubt`), statt einen RLS-Fehler als 500 auszuliefern. Die Oberflächen kennzeichnen Refunds als lokale Notiz und die IP-Blockliste als nicht enforced (ADR-0155).
 
 Was die Datenbank nicht liefert, meldet der Endpunkt, statt es zu verschweigen: Eine Ablehnung wird 500, ein Ausfall 503, jeweils mit `{ message }`; eine erfolgreiche Abfrage ohne Zeilen bleibt eine leere Liste mit 200. Die Unterscheidung steht einmal in `lese()` in `lib/api/datenbank-lesen.ts` und nicht in den Routen ([DECISIONS.md](DECISIONS.md) ADR-0037). Von RLS weggefilterte Zeilen sind bewusst kein Fehler – das ist der Fall einer Notzugangs-Sitzung, den der Hinweisbalken erklärt.
 
@@ -305,7 +323,7 @@ Entfernt wurden 63 Endpunkte: alle KI- und Modell-Endpunkte, die Media- und Vide
 
 ### Flugsuche (Phase 3.1)
 
-`POST /api/flights/search` ist geschlossen: nur die Jetnity-Suchanfrage, nur die normalisierte Antwort. Kein Provider-Proxy. UI, Ranking und Reisegraph sprechen `FlugOption`, nicht Duffel.
+`POST /api/flights/search` ist geschlossen: nur `application/json`, höchstens 16 KB UTF-8. `Content-Length` über dem Limit wird vor dem Lesen abgewiesen; der Body wird zusätzlich streamend mit hartem Cap gelesen. Nur die Jetnity-Suchanfrage, nur die normalisierte Antwort. Kein Provider-Proxy. 429 setzt `Retry-After`. UI, Ranking und Reisegraph sprechen `FlugOption`, nicht Duffel. Die HTTP-Hülle teilt `lib/provider-ops` mit den übrigen Provider-Nähten (ADR-0154, Draft-PR #47).
 
 Duffel ist der erste Datenadapter, nicht die Produktarchitektur. Search und Booking/Affiliate sind getrennt; `booking_url` bleibt `null`. Ein späterer Skyscanner- oder Aviasales-Adapter implementiert dasselbe `FlightProvider`-Interface. Amadeus Self-Service ist eingestellt und nicht angebunden.
 

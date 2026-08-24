@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 vollständig integriert; Account AP-1 aktiv auf Draft PR #43; Admin Slice A Technical Closure / PASS auf Draft PR #44**
+Status: **PR #38 und Account AP-1 auf `main`; Admin Slice A Main-Sync auf Draft PR #44; Provider Ops S1 Draft PR #47**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -43,14 +43,15 @@ Keine Seasonal-Tabelle, kein Live-Seasonal-Provider, keine neuen Secrets und kei
 Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`  
 Audit-Referenz: Draft-PR #39 / `audit/account-platform` – **AUDIT-PASS**  
 Implementierungsbranch: `feat/account-ap1`  
-Implementierungs-Draft-PR: **#43**  
-Auftrag: `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`
+Implementierungs-PR: **#43 – gemergt nach `main` `084f7c87`**  
+Auftrag: `docs/ACCOUNT_AP1_MAIN_SYNC_TASK.md`  
+Handoff: `docs/ACCOUNT_AP1_HANDOFF.md`  
+Status: `docs/ACCOUNT_AP1_STATUS.md`  
+Review: `docs/ACCOUNT_AP1_CHATGPT_REVIEW.md`
 
-Aktiver Slice:
+**AP-1 ist auf `main`.** Account-Shell + persönliche Übersicht; ADR-0152, ADR-0153.
 
-**AP-1 – Account-Shell + persönliche Übersicht / „Meine Reisen“ als Account-Hub.**
-
-Grenze: UI/IA und bestehende `reisenLaden()`-Truth. Keine neue Auth-/Trip-/Traveller-/Billing-/Route-Truth, keine DB-Migration, keine Homepage-Änderung.
+Grenze bleibt: UI/IA und bestehende `reisenLaden()`-Truth. AP-2 braucht eine neue ausdrückliche Freigabe.
 
 ### Admin Platform – Slice A
 
@@ -58,22 +59,36 @@ Verantwortlicher Cursor-Anzeigename: `Admin platform audit`
 Audit-Referenz: Draft-PR #40 / `audit/admin-platform` – **AUDIT-PASS**  
 Implementierungsbranch: `feat/admin-control-center-ia`  
 Implementierungs-Draft-PR: **#44**  
-Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`
+Auftrag: `docs/ADMIN_SLICE_A_MAIN_SYNC_TASK.md`
 
 Aktiver Slice:
 
-**Admin Slice A – ehrliche professionelle Control-Center-IA / bestehende Legacy-Scheinzustände entfernen.**
+**Admin Slice A Main-Sync mit `main` `084f7c87`.** Bisheriger Technical Closure / PASS gilt nur für den alten Exact Head `5632a3cac1301d2d649fcb1d2b9552d3763c8b9f` (CI `32683942810`, Preview `dpl_czE3XJXw3qx3sXMrh7LTgMV94zBL`). Das ersetzt das neue Integrationsgate nicht.
 
-Unabhängiger Technical-Lead Final Recheck: **PASS / TECHNICAL CLOSURE** auf Exact Head `5632a3cac1301d2d649fcb1d2b9552d3763c8b9f`.  
-CI `32683942810` SUCCESS. Vercel Preview READY `dpl_czE3XJXw3qx3sXMrh7LTgMV94zBL`. Nachweise: `docs/ADMIN_PLATFORM_SLICE_A_TECHNICAL_CLOSURE.md`.
+Admin-ADR auf diesem Branch: **ADR-0155** (nicht mehr ADR-0152; `main` hat ADR-0152 an Account AP-1 vergeben).
 
 Grenze: Admin-UI/IA, ehrliche Zustände und vorhandene Security-Gates. Keine neue DB/Migration, keine Capability-/RLS-Neudefinition, kein System Health in diesem Slice, keine Provider-/Secret-/Kosten-Aktivierung.
 
-Technical Closure ist keine Mark-Ready-/Merge-Freigabe. Slice B / System Health ist ein separater Block und gehört nicht in den abgeschlossenen Slice-A-Head.
+PR #44 bleibt Draft. Slice B / PR #46 bleibt Draft und unangetastet.
+
+### Provider Readiness – S1 Shared Operational Contract
+
+Verantwortlicher Cursor-Anzeigename: `Jetnity provider readiness audit`  
+Audit-Referenz: Draft-PR #45 / `audit/provider-readiness` – bleibt Audit-Draft  
+Implementierungsbranch: `feat/provider-ops-s1`  
+Implementierungs-Draft-PR: **#47**  
+Auftrag: `docs/PROVIDER_OPS_S1_TASK.md`  
+Status: `docs/PROVIDER_OPS_S1_STATUS.md`
+
+Aktiver Slice:
+
+**S1 – gemeinsamer technischer Operationsvertrag.** Technical Closure / PASS auf Exact Head `b74096a9`. Draft-PR #47 wartet auf Product-Owner-Entscheidung.
+
+Grenze: keine Fachwahrheit, kein `UniversalProvider`, kein `FlugNachweis`, keine persistente Kostenschranke, keine Provideraktivierung, keine Secrets, keine DB-/Production-Migration. S2 nur mit neuem Auftrag.
 
 ## 4. Parallelitätsregel
 
-Account AP-1 und Admin Slice A dürfen parallel arbeiten.
+Account AP-1, Admin Slice A und Provider Ops S1 dürfen parallel arbeiten, dürfen ihre Dateien aber nicht mischen.
 
 Seriell/zentral bleiben insbesondere:
 
@@ -106,7 +121,7 @@ Wenn sie gestartet wird:
 
 ## 6. Governance
 
-- PR #43 und PR #44 bleiben Draft.
+- PR #43 ist gemergt. PR #44, PR #45, PR #46 und PR #47 bleiben Draft.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
@@ -114,8 +129,8 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
-2. Admin Slice A ist Technical Closure / PASS. Draft PR #44 wartet auf ausdrückliche Product-Owner-Freigabe für Mark Ready / Merge.
-3. Slice B / System Health nicht in PR #44 mischen.
-4. PR #43 und PR #44 bleiben Draft, bis der Product Owner jeweils ausdrücklich freigibt.
-5. AP-2 bzw. Admin Slice B erst als eigene Blöcke.
+1. `Admin platform audit` synchronisiert Slice A / PR #44 mit `main` `084f7c87` und belegt Exact-Head-Gates.
+2. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung; kein Mark Ready / kein Merge / kein S2.
+3. PR #46 / Slice B bleibt Draft und unangetastet.
+4. AP-2, Admin Slice B und Provider S2 brauchen jeweils eine neue ausdrückliche Freigabe.
+5. PR #44, #45, #46 und #47 bleiben Draft. Kein Ready, kein Merge ohne Product-Owner-Freigabe.
