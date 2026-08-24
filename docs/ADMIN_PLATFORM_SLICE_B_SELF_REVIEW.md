@@ -28,10 +28,10 @@ Branch: `feat/admin-system-health`
 
 Lokal: 1729/1729 Tests, Typecheck, Lint, `check:api-schutz` (11/11), Hygiene, Production-Build, UI-Audit 8/8.
 
-Exact Head `dd1c469c115931346027e7639e2e22cd16b47345`:
+Exact Heads:
 
-- GitHub Actions `CI` SUCCESS `32686411130`
-- Vercel Preview READY Inspector `2e8Vaovdsh4fjdm11WxDmwRgTJk7`
+- `dd1c469c`: Actions CI `32686411130`, Preview `2e8Vaovdsh4fjdm11WxDmwRgTJk7`
+- `fb193316` (Docs-only): Actions CI `32686617286`, Preview `EPCWfPDe22jvFKkqmMmkEjmK9vX7`
 
 `db:sicherheit` und Production wurden nicht behauptet.
 

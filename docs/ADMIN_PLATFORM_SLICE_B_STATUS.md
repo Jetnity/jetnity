@@ -10,23 +10,28 @@ Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
 
 **Exact-Head-Gates grün. Wartet auf unabhängigen Technical-Lead-Review.** Draft, nicht gemergt. Kein Mark Ready, kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe. Kein Technical Closure / PASS – das entscheidet der unabhängige Review.
 
-Exact Head der Gates: `dd1c469c115931346027e7639e2e22cd16b47345`
+Letzter Runtime-Head: `285022e2`.  
+Erster voll gegateter Handoff-Head: `dd1c469c115931346027e7639e2e22cd16b47345`.  
+Docs-Evidence-Head danach ebenfalls voll gegatet: `fb193316e39dee171a1c7a72cffdb586b5f473d1` (Runtime unverändert).
 
-## Belegte Gates auf Exact Head `dd1c469c`
+## Belegte Gates
 
-- GitHub Actions `CI` **SUCCESS**: `32686411130`  
-  https://github.com/Jetnity/jetnity/actions/runs/32686411130
-- Vercel Preview **READY**: Inspector `2e8Vaovdsh4fjdm11WxDmwRgTJk7`  
-  https://vercel.com/jetnity-e1b93c82/jetnity-app/2e8Vaovdsh4fjdm11WxDmwRgTJk7  
-  Preview: https://jetnity-app-git-feat-admin-system-health-jetnity-e1b93c82.vercel.app  
-  GitHub Deployment `6056004966` state `success`
-- Commit-Status `Vercel` auf demselben SHA: `success` / „Deployment has completed“
+Auf `dd1c469c`:
 
-Lokal auf Runtime-Head `285022e2` (danach nur Docs-Handoff `dd1c469c`): 1729/1729 Tests, Typecheck, Lint, Hygiene, `check:api-schutz` 11/11, Production-Build, UI-Audit 8/8.
+- GitHub Actions `CI` **SUCCESS**: `32686411130`
+- Vercel Preview **READY**: Inspector `2e8Vaovdsh4fjdm11WxDmwRgTJk7`
+
+Auf Docs-Head `fb193316` (nur Evidence-Text, Runtime unverändert):
+
+- GitHub Actions `CI` **SUCCESS**: `32686617286`
+- Vercel Preview **READY**: Inspector `EPCWfPDe22jvFKkqmMmkEjmK9vX7`
+- GitHub Deployment `6056037660` state `success`
+
+Lokal auf Runtime-Head `285022e2`: 1729/1729 Tests, Typecheck, Lint, Hygiene, `check:api-schutz` 11/11, Production-Build, UI-Audit 8/8.
 
 Nicht behauptet: `db:sicherheit`, Production-Migration, eingeloggte Admin-Browserprüfung, Product-Owner-Merge-Freigabe, Technical Closure.
 
-Ein späterer Docs-only-Commit auf diesem Branch ändert die Runtime nicht und ist kein neues Gate-Ergebnis.
+Ein weiterer Docs-only-Commit nach `fb193316` ändert die Runtime nicht und wird hier nicht als neues Produkt-Gate ausgegeben.
 
 ## Ziel
 
@@ -52,4 +57,4 @@ Traveller Context ist für System Health nicht relevant; es werden keine Reise-C
 
 ## Nächster Schritt
 
-Unabhängiger ChatGPT/Technical-Lead-Review auf Exact Head `dd1c469c`. Kein Slice C. Kein Mark Ready. Kein Merge.
+Unabhängiger ChatGPT/Technical-Lead-Review. Maßgeblicher Runtime-Stand bleibt `285022e2` / gegateter Handoff `dd1c469c` bzw. docs-identisches `fb193316`. Kein Slice C. Kein Mark Ready. Kein Merge.

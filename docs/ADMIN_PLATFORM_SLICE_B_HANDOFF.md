@@ -10,14 +10,14 @@ Basis: `feat/admin-control-center-ia` / Draft PR #44
 
 Read-only System Health ist implementiert.
 
-Exact-Head-Gates auf `dd1c469c115931346027e7639e2e22cd16b47345`:
+Exact-Head-Gates:
 
-- GitHub Actions `CI` SUCCESS: `32686411130`
-- Vercel Preview READY: Inspector `2e8Vaovdsh4fjdm11WxDmwRgTJk7`
+- `dd1c469c`: Actions CI `32686411130` SUCCESS, Vercel Preview READY `2e8Vaovdsh4fjdm11WxDmwRgTJk7`
+- `fb193316` (Docs-only, Runtime unverändert): Actions CI `32686617286` SUCCESS, Vercel Preview READY `EPCWfPDe22jvFKkqmMmkEjmK9vX7`
 
 Der PR bleibt Draft. Keine Mark-Ready- oder Merge-Freigabe. Keine Production-Migration, keine Provider-/Secret-Aktivierung. Technical Closure / PASS ist Sache des unabhängigen Reviews, nicht dieses Agenten.
 
-Ein Docs-Commit nach diesem Handoff ändert die Runtime nicht.
+Ein weiterer Docs-Commit nach `fb193316` ändert die Runtime nicht und wird nicht als neues Produkt-Gate ausgegeben.
 
 ## Pflichtquellen
 

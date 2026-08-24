@@ -320,7 +320,7 @@ Agent: `Admin platform audit`
 3. Admin Slice B (read-only System Health) ist auf Draft PR #46 implementiert.
 4. Status/Handoff: `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`, `docs/ADMIN_PLATFORM_SLICE_B_HANDOFF.md`.
 5. PR #44 und PR #46 bleiben Draft. Kein Mark Ready, kein Merge, keine Production-Migration, keine Provider-/Secret-Aktivierung, kein Slice C.
-6. **Exakter nächster Schritt:** Unabhängigen Technical-Lead-Review von Draft PR #46 auf Exact Head `dd1c469c` abwarten. Account AP-1 darf parallel auf PR #43 bleiben. Kein Mark Ready, kein Merge, kein Slice C.
+6. **Exakter nächster Schritt:** Unabhängigen Technical-Lead-Review von Draft PR #46 abwarten. Gegatete Heads: `dd1c469c` und docs-identisch `fb193316`. Account AP-1 darf parallel auf PR #43 bleiben. Kein Mark Ready, kein Merge, kein Slice C.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
