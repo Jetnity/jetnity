@@ -2,7 +2,7 @@
 
 Stand: 24. August 2026
 
-Status: **DONE – Exact-Head `de5ffd8a` gegated; Technical Integration Closure / PASS; Ready durch Product Owner, wartet auf Merge-Freigabe**
+Status: **DONE – Exact-Head `de5ffd8a` gegated; Technical Integration Closure / PASS; PR #48 von `Jetnity` nach `main` gemergt (`2827d1cb`)**
 
 Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`
 

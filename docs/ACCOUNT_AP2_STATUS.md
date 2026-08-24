@@ -1,28 +1,30 @@
 # Jetnity Account AP-2 – Status
 
 Stand: 24. August 2026  
-Status: **TECHNICAL INTEGRATION CLOSURE / PASS – Ready durch Product Owner, kein Merge, kein AP-3**
+Status: **auf `main` gemergt – kein AP-3, keine Production-Migration, keine Provider-Aktivierung**
 
 | Feld | Wert |
 | --- | --- |
 | Cursor-Anzeigename | **Account plattform audit vorbereitung** |
 | Branch | `feat/account-ap2` |
-| Draft-PR | https://github.com/Jetnity/jetnity/pull/48 |
-| Base | `main` @ `084f7c87f36f9929f3e4a9deb9d3fedef6e96982` |
-| Auftrag | `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md` |
-| Produktauftrag | `docs/ACCOUNT_AP2_AUTH_UX_TASK.md` + `docs/ACCOUNT_AP2_B1_FIX_TASK.md` |
+| PR | https://github.com/Jetnity/jetnity/pull/48 – **MERGED** |
+| Gemergt von | `Jetnity` |
+| Gemergt | 24. August 2026, 13:02:36 UTC |
+| Squash-Merge auf `main` | `2827d1cbb674498f504ba1810c73c8dc5d43ca24` |
+| Gemergter PR-Head | `b820f8ce38082ebe1859514625120805c232c521` |
 | **Runtime-Head** | `de5ffd8a91576a2281b6d5eda75338504a43b7a7` |
-| Letzter Code-Commit der neuen Serie | `bec064eb` (`fix(auth): align register success state for existing and new signups`) |
-| Vorheriger gestapelter Runtime-Head | `e9b2f834edc925b12e8b5a667f0e4382642eae8f` (gilt nicht mehr) |
 | Technical Closure | `docs/ACCOUNT_AP2_TECHNICAL_CLOSURE.md` – Integrationsreview PASS auf `de5ffd8a` |
 
-## Main-Sync
+## Merge
 
-- `origin/main` zum Gate-Zeitpunkt: `084f7c87f36f9929f3e4a9deb9d3fedef6e96982` (Squash-Merge von AP-1 / PR #43). `main` ist danach nicht weitergelaufen.
-- `feat/account-ap2` wurde mit `git rebase --onto origin/main 9cc9b052` auf diesen `main` rebase; AP-1 kommt nur noch einmal aus `main`.
-- PR #48 ist auf `main` retargetet und bleibt Draft.
-- Konflikte nur in `JETNITY_HANDOFF.md`, `ROADMAP.md`, `docs/ACTIVE_WORK_STATUS.md`; jeweils der aktuelle `main`-Stand behalten, danach hier nachgezogen.
-- Diff gegen `main` trägt nur AP-2-Scope. Keine Account-AP-1-, Provider-Ops-, Seasonal-/Route-/Safety-Wahrheit zurückgedreht.
+`Jetnity` hat PR #48 nach Ready selbst gemergt. Der Implementierungsagent hat **nicht** gemergt.
+
+Timeline:
+
+1. 12:52 UTC – Technical Integration Closure / PASS
+2. 12:59 UTC – Ready, 13:00:18 UTC wieder Draft
+3. 13:00:59 UTC – erneut Ready durch `Jetnity`
+4. 13:02:36 UTC – Squash-Merge nach `main` durch `Jetnity`
 
 ## Remote-Gates auf dem Runtime-Head
 
@@ -30,49 +32,15 @@ Genau `de5ffd8a91576a2281b6d5eda75338504a43b7a7`:
 
 - GitHub Actions CI: **SUCCESS** – https://github.com/Jetnity/jetnity/actions/runs/32727253862
 - Vercel Preview: **success / completed** – https://vercel.com/jetnity-e1b93c82/jetnity-app/AAYbSDBt4p636mxY1aWuPgq9gUSS
-- Preview-URL: https://jetnity-m244nhepk-jetnity-e1b93c82.vercel.app
 
-Ein nachfolgender Docs-only-Commit ist **kein** neues Runtime-Gate.
+## Scope auf `main`
 
-PR #48 ist seit 24. August 2026, 13:00:59 UTC, durch `Jetnity` **Ready**. Das ist keine Merge-Freigabe.
+OAuth fail-closed, `next`-Allowlist, `getUser()`-Gates, Register-Neutralisierung inkl. AP2-B1, Gast-/Footer-Navigation, MFA-A11y. Keine DB/Migration/RLS.
 
-## Lokale Gates auf dem Runtime-Head
+## Nicht enthalten / nicht freigegeben
 
-- AP-2-Regressionen inklusive AP2-B1-Outcome-Tests: grün
-- `npm test`: 1780/1780 grün
-- `npm run typecheck`: grün
-- `npm run lint`: keine Warnungen/Fehler
-- `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`: grün
-- `npm run auth:pruefen`: 55 erwartete Werte stimmen
-- `npm run build`: Production-Build grün
-- `npm run audit:account`: 48/48 grün (`AUDIT_PORT=3465`)
-
-## Scope-Ergebnis (unverändert)
-
-| Slice | Ergebnis |
-| --- | --- |
-| A OAuth nur bei Enablement | Schaltflächen nur bei `auth.external.{google,apple}.enabled === true`. Repository-`config.toml` bleibt aus. |
-| B `next`-Allowlist | Zentral in `erlaubtesNaechstesZiel()`. Fail-closed auf `/reisen`. |
-| C Login/Register-Gate | `getUser()` + `anmeldeSeiteZiel()`. Kein `getSession()` auf den Server-Seiten. |
-| D Register-Enumeration | Neutrale Public-Copy **und** identischer öffentlicher Post-Submit-Zustand; AP2-B1 geschlossen. |
-| E Gast `/reisen` | Primär **Reise fortsetzen** nur bei `gastspeicher.aktiv`. |
-| F Footer | `sitzungseintraege()` statt hartem Anmelden/Registrieren. |
-| G MFA-Dialog | Name/Beschreibung, Fokus, Tab-Falle, Escape schliesst nicht, 44px-Ziele. Kein MFA-/AAL-Vertragswechsel. |
-
-## Nicht enthalten
-
-Keine DB/Migration/RLS, keine Consent-Persistenz, keine Traveller-Registry, keine Guest→Account-Vertragsänderung, keine Provider-Aktivierung, keine Legal-Texte, kein AP-3, kein Homepage-Redesign, kein Merge.
-
-## Technical-Lead-Verdict
-
-Unabhängiger Integrationsreview nach AP-1-Merge und AP-2-Main-Sync: **PASS / TECHNICAL INTEGRATION CLOSURE**.  
-Quelle: https://github.com/Jetnity/jetnity/pull/48#pullrequestreview-5007976065
-
-Kein neuer konkreter Integrations-, Auth-, Security-, Truth- oder Scope-Defekt. Das Verdict war keine Ready-/Merge-Freigabe. Ready wurde danach separat durch `Jetnity` gesetzt.
+Kein AP-3. Keine Production-Migration. Keine Provider-/Secret-/Kosten-Aktivierung. Ein Production-Deploy von AP-2 ist hier nicht behauptet.
 
 ## Nächster Schritt
 
-Ausdrückliche Product-Owner-Merge-Freigabe für PR #48. Ready ist keine Merge-Freigabe.  
-STOPP. Kein Merge. Kein AP-3.
-
-Timeline: 12:59 UTC Ready, 13:00:18 UTC wieder Draft, 13:00:59 UTC erneut Ready durch `Jetnity`. Der zweite Ready-Stand bleibt.
+Kein AP-3 ohne neuen ausdrücklichen Auftrag. Admin Slice A und Provider Ops S1 bleiben eigene Draft-Workstreams.

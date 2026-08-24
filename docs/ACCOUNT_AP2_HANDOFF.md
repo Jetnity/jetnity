@@ -1,7 +1,7 @@
 # Jetnity Account Platform – AP-2 Handoff
 
 Stand: 24. August 2026  
-Status: **TECHNICAL INTEGRATION CLOSURE / PASS – Ready durch Product Owner; wartet auf Merge-Freigabe; kein Merge, kein AP-3**
+Status: **PR #48 auf `main` gemergt – kein AP-3, keine Production-Migration, keine Provider-Aktivierung**
 
 | Feld | Wert |
 | --- | --- |
@@ -9,69 +9,33 @@ Status: **TECHNICAL INTEGRATION CLOSURE / PASS – Ready durch Product Owner; wa
 | Agent | https://cursor.com/agents/bc-01a030a0-d97f-782b-8bd0-acb906563518 |
 | Workstream | Account Platform AP-2 |
 | Branch | `feat/account-ap2` |
-| Draft-PR | https://github.com/Jetnity/jetnity/pull/48 |
-| Base | `main` @ `084f7c87f36f9929f3e4a9deb9d3fedef6e96982` |
-| Auftrag | `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md` |
-| Produktauftrag | `docs/ACCOUNT_AP2_AUTH_UX_TASK.md` + `docs/ACCOUNT_AP2_B1_FIX_TASK.md` |
+| PR | https://github.com/Jetnity/jetnity/pull/48 – **MERGED** |
+| Squash-Merge | `2827d1cbb674498f504ba1810c73c8dc5d43ca24` |
 | Runtime-Head | `de5ffd8a91576a2281b6d5eda75338504a43b7a7` |
-| Self-Review | `docs/ACCOUNT_AP2_SELF_REVIEW.md` |
-| Technical Closure | `docs/ACCOUNT_AP2_TECHNICAL_CLOSURE.md` – Integrationsreview PASS auf `de5ffd8a` |
+| Technical Closure | `docs/ACCOUNT_AP2_TECHNICAL_CLOSURE.md` |
 
 ## Was ein neuer Agent zuerst liest
 
-1. `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md`
-2. `docs/ACCOUNT_AP2_STATUS.md`
-3. `docs/ACCOUNT_AP2_SELF_REVIEW.md`
-4. `docs/ACCOUNT_AP2_TECHNICAL_CLOSURE.md`
-5. `docs/ACCOUNT_AP2_B1_FIX_TASK.md`
-6. `docs/ACCOUNT_AP2_AUTH_UX_TASK.md`
-7. Draft-PR #48 gegen `main`
+1. `docs/ACCOUNT_AP2_STATUS.md`
+2. `docs/ACCOUNT_AP2_TECHNICAL_CLOSURE.md`
+3. `docs/ACTIVE_WORK_STATUS.md`
+4. `JETNITY_HANDOFF.md`
 
-## Main-Sync
+## Merge-Nachweis
 
-- AP-1 / PR #43 ist nach `main` gemergt: Squash `084f7c87f36f9929f3e4a9deb9d3fedef6e96982`.
-- AP-2 wurde auf genau diesen `main` rebase; die alte AP-1-Historie liegt nicht mehr als Produktänderung im PR.
-- PR #48 ist auf `main` retargetet und bleibt Draft.
-- `main` ist Ancestor von `de5ffd8a`.
+- Gemergt von `Jetnity` am 24. August 2026, 13:02:36 UTC.
+- Squash-Merge: `2827d1cbb674498f504ba1810c73c8dc5d43ca24` – `feat(account): harden auth UX and session navigation (#48)`.
+- Gemergter PR-Head: `b820f8ce`. Runtime-Head `de5ffd8a` liegt in diesem Squash.
+- Der Implementierungsagent hat nicht gemergt.
 
-## Runtime-Nachweis
+## Produktstand AP-2 auf `main`
 
-- **Gegates Runtime-Head:** `de5ffd8a91576a2281b6d5eda75338504a43b7a7`
-  - GitHub Actions: **SUCCESS** (`32727253862`)
-  - Vercel Preview: **success / READY** (`AAYbSDBt4p636mxY1aWuPgq9gUSS`)
-  - Preview-URL: https://jetnity-m244nhepk-jetnity-e1b93c82.vercel.app
-- Letzter produktiver Code-Commit der neuen Serie: `bec064eb`. `de5ffd8a` ist der Exact-Head nach Rebase inklusive leerem CI-Retrigger; derselbe Runtime-Baum.
-- Nachfolgende Docs-Commits ändern diesen Runtime-Nachweis nicht.
-- Der frühere Head `e9b2f834` gilt nicht mehr.
+AP2-B1 geschlossen. OAuth nur bei belegtem Enablement. `next` fail-closed `/reisen`. Login/Register über `getUser()`. Gast `/reisen` Fortsetzen nur bei `gastspeicher.aktiv`. Footer aus `sitzungseintraege()`. MFA-Dialog a11y-gehärtet ohne MFA-/AAL-Vertragswechsel.
 
-## Produktstand AP-2 (unverändert)
+## Nicht angefasst / nicht freigegeben
 
-AP2-B1 bleibt geschlossen. `registerSignupOeffentlichAuswerten()` führt Bestandskonto-neutralisiert und neuen Signup ohne Session auf denselben `registerOeffentlicherErfolg()`.
-
-Öffentlich identisch sind:
-
-- neutrale Success-Copy,
-- geleerte Name-/E-Mail-/Passwortfelder,
-- keine Feldfehler,
-- gleicher Success-State,
-- gleicher Fokus auf `#register-erfolg`.
-
-OAuth-Schaltflächen nur bei belegtem `config.toml`-Enablement. `next` nur `/account*` und `/reisen*`, sonst fail-closed `/reisen`. Login/Register über `getUser()`. Gast `/reisen` zeigt Fortsetzen nur bei `gastspeicher.aktiv`. Footer nutzt `sitzungseintraege()`. MFA-Dialog bleibt a11y-gehärtet ohne MFA-/AAL-Vertragswechsel.
-
-## Nicht angefasst
-
-DB/Migration/RLS, Consent-Write, Traveller-Registry, Guest→Account-Persistenz, Payment, Provider-Aktivierung, OAuth-Secrets, Production-Redirect-Push, Admin, Homepage, Route/Readiness/Safety/Seasonal, AP-3, neue AGB-/Datenschutztexte.
-
-## Offene, ehrliche Restpunkte
-
-- Gastübernahme bleibt auf `/reisen`; das ist der bestehende Vertrag.
-- MFA-Dialog hat keinen separaten Browser-/Screenreader-Lauf; der Quellvertrag und Account-UI-Audit bleiben der vorhandene Nachweis.
-- OAuth-Anbieter bleiben in `config.toml` aus.
-- Technical Integration Closure / PASS liegt vor. Das ist keine Product-Owner-Freigabe für Mark Ready oder Merge.
+DB/Migration/RLS, Traveller-Registry, Guest→Account-Vertragsänderung, Provider-Aktivierung, Secrets, Production-Migration, AP-3.
 
 ## Nächster Schritt
 
-Ausdrückliche Product-Owner-Merge-Freigabe für PR #48. Ready ist keine Merge-Freigabe.  
-STOPP. Kein Merge. Kein AP-3. Keine Production-Migration. Keine Provider-/Secret-/Kosten-Aktivierung.
-
-`Jetnity` setzte PR #48 um 13:00:59 UTC auf Ready (nach einem 20-Sekunden-Flicker 12:59–13:00). Der Ready-Stand bleibt.
+Kein AP-3 ohne neuen ausdrücklichen Auftrag. Keine Production-Migration. Keine Provider-/Secret-/Kosten-Aktivierung.

@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal und Account AP-1 auf `main`; Account AP-2 (PR #48) Ready, wartet auf Merge-Freigabe; Admin Slice A und Provider Ops S1 bleiben Draft**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1 und Account AP-2 auf `main`; aktive Draft-Workstreams: Admin Slice A und Provider Ops S1**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -298,7 +298,7 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation
 6. ✅ Account Platform AP-1 – Squash-Merge nach `main` (`084f7c87`, PR #43)
-6a. **→ Account Platform AP-2 (PR #48) Technical Integration Closure / PASS auf `de5ffd8a`; Ready durch Product Owner, wartet auf Merge-Freigabe; parallel Admin Slice A und Provider Ops S1**
+6a. ✅ Account Platform AP-2 – Squash-Merge nach `main` (`2827d1cb`, PR #48)
 7. Provider-Readiness-/Adapter-Lücken schließen – S1 Shared Operational Contract Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`; wartet auf Product-Owner-Entscheidung
 8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
@@ -314,17 +314,16 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-Aktiver Account-Branch: `feat/account-ap2`  
-PR: `#48` (Ready)  
-Auftrag: `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md`  
-Handoff: `docs/ACCOUNT_AP2_HANDOFF.md`  
+Account AP-2 ist auf `main`.  
+PR: `#48` – **MERGED** durch `Jetnity`  
+Squash-Merge: `2827d1cbb674498f504ba1810c73c8dc5d43ca24`  
 Runtime-Head: `de5ffd8a91576a2281b6d5eda75338504a43b7a7`
 
-1. AP-1 ist mit ausdrücklicher Product-Owner-Freigabe nach `main` gemergt (`084f7c87`, PR #43).
-2. AP-2 ist auf genau diesen `main` rebase und PR #48 ist auf `main` retargetet.
-3. Exact Runtime-Head `de5ffd8a` ist lokal und remote gegated (Actions `32727253862`, Vercel `AAYbSDBt4p636mxY1aWuPgq9gUSS`).
-4. Technical Integration Closure / PASS liegt vor. `Jetnity` hat PR #48 Ready gesetzt.
-5. **Exakter nächster Schritt:** Ausdrückliche Product-Owner-Merge-Freigabe. Ready ist keine Merge-Freigabe. Kein AP-3.
+1. AP-1 ist nach `main` gemergt (`084f7c87`, PR #43).
+2. AP-2 ist nach `main` gemergt (`2827d1cb`, PR #48) durch `Jetnity`.
+3. Exact Runtime-Head `de5ffd8a` war vor dem Merge gegated und reviewed.
+4. Der Implementierungsagent hat nicht gemergt.
+5. **Exakter nächster Schritt:** Kein AP-3 ohne neuen Auftrag. Admin Slice A (PR #44) und Provider Ops S1 (PR #47) bleiben eigene Draft-Workstreams. Keine Production-Migration. Keine Provider-Aktivierung.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

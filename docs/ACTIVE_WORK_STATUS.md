@@ -1,9 +1,21 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 und Account AP-1 auf `main`; Account AP-2 (PR #48) Ready, wartet auf Merge-Freigabe; Admin Slice A und Provider Ops S1 bleiben Draft**
+Status: **PR #38, Account AP-1 und Account AP-2 auf `main`; aktive Draft-Workstreams: Admin Slice A und Provider Ops S1**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
+
+**Account Platform AP-2 – Auth-UX-Hygiene**
+
+- PR #48: **gemergt und geschlossen**
+- Gemergt von: `Jetnity`
+- gemergt: 24. August 2026, 13:02:36 UTC
+- Squash-Merge auf `main`: `2827d1cbb674498f504ba1810c73c8dc5d43ca24`
+- Runtime-Head: `de5ffd8a91576a2281b6d5eda75338504a43b7a7`
+- Technical Integration Closure / PASS: https://github.com/Jetnity/jetnity/pull/48#pullrequestreview-5007976065
+- Der Implementierungsagent hat nicht gemergt.
+
+Davor vollständig abgeschlossen:
 
 **Account Platform AP-1 – Account-Shell + persönliche Übersicht**
 
@@ -12,17 +24,12 @@ Status: **PR #38 und Account AP-1 auf `main`; Account AP-2 (PR #48) Ready, warte
 - gemergt: 24. August 2026, 11:37 UTC
 - ADR-0152, ADR-0153 bleiben verbindlich
 
-Davor vollständig abgeschlossen:
-
 **Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
 
 - PR #38: **gemergt und geschlossen**
 - unabhängiger ChatGPT-Review R17: **PASS / Technical Closure**
-- final geprüfter Runtime-Head: `5782401943b41ddd1eea1337c93cb37163210362`
-- finaler PR-Head vor Merge: `1a61d21fe853c77faa1109ae0828e39f3629098a`
 - Squash-Merge auf `main`: `ee988bbe46a8dd63d4001c42825fc0159453f811`
 - Production-Integration: `docs/PR38_PRODUCTION_INTEGRATION.md`
-- R17-Review: `docs/PR38_CHATGPT_R17_REVIEW.md`
 
 Der PR-#38-Review-Loop ist beendet. Kein neuer Review-Rundlauf ohne konkrete neue Runtime-Änderung oder neuen belegbaren Defekt.
 
@@ -31,6 +38,7 @@ Der PR-#38-Review-Loop ist beendet. Kein neuer Review-Rundlauf ohne konkrete neu
 Vercel:
 
 - Production Deployment nach PR-#38-Integration: **READY**
+- Ein Production-Deploy nach AP-2 ist hier **nicht** behauptet.
 
 Supabase Production `qscbgcdmivbbnzrcyegn`:
 
@@ -45,31 +53,9 @@ Supabase Production `qscbgcdmivbbnzrcyegn`:
 
 Keine Seasonal-Tabelle, kein Live-Seasonal-Provider, keine neuen Secrets und keine neuen laufenden Providerkosten.
 
-Account AP-1 liegt auf `main`. Eine separate Account-Production-Migration war nicht Teil von AP-1 und ist nicht behauptet.
+AP-1 und AP-2 liegen auf `main`. AP-2 enthielt keine DB-Migration. Eine Production-Migration ist nicht fällig und nicht freigegeben.
 
 ## 3. Aktive Workstreams
-
-### Account Platform – AP-2
-
-Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`  
-Audit-Referenz: Draft-PR #39 / `audit/account-platform` – **AUDIT-PASS**  
-Implementierungsbranch: `feat/account-ap2`  
-Implementierungs-PR: **#48** (Base: `main`, Ready)  
-Auftrag: `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md`  
-Handoff: `docs/ACCOUNT_AP2_HANDOFF.md`  
-Status: `docs/ACCOUNT_AP2_STATUS.md`
-
-Aktiver Slice:
-
-**AP-2 – Auth-UX-Hygiene; auf aktuellen `main` `084f7c87` rebase und retargetet; Technical Integration Closure / PASS.**
-
-Gegates Runtime-Head: `de5ffd8a91576a2281b6d5eda75338504a43b7a7`  
-GitHub Actions CI **SUCCESS** (`32727253862`) und Vercel Preview **success** (`AAYbSDBt4p636mxY1aWuPgq9gUSS`) auf genau diesem Head.  
-Review: https://github.com/Jetnity/jetnity/pull/48#pullrequestreview-5007976065
-
-AP2-B1 bleibt geschlossen. Keine Scope-Erweiterung in diesem Sync. Technical Closure war keine Ready-/Merge-Freigabe. Ready wurde danach durch `Jetnity` gesetzt.
-
-Grenze: bestehender AP-2-Auth-UX-Scope. Keine DB/Migration/RLS, keine Traveller-/Guest→Account-Vertragsänderung, keine Provider-Aktivierung, kein AP-3.
 
 ### Admin Platform – Slice A
 
@@ -104,7 +90,7 @@ Grenze: keine Fachwahrheit, kein `UniversalProvider`, kein `FlugNachweis`, keine
 
 ## 4. Parallelitätsregel
 
-Account AP-2, Admin Slice A und Provider Ops S1 dürfen parallel arbeiten, dürfen ihre Dateien aber nicht mischen.
+Admin Slice A und Provider Ops S1 dürfen parallel arbeiten, dürfen ihre Dateien aber nicht mischen.
 
 Seriell/zentral bleiben insbesondere:
 
@@ -137,19 +123,17 @@ Wenn sie gestartet wird:
 
 ## 6. Governance
 
-- PR #48 ist Ready durch `Jetnity`; Ready ist keine Merge-Freigabe.
+- PR #43 und PR #48 sind gemergt.
 - PR #44, PR #45 und PR #47 bleiben Draft.
-- PR #43 ist gemergt.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
 - Fortschritt und Entscheidungen müssen im Repository dokumentiert werden.
+- AP-3 braucht einen neuen ausdrücklichen Auftrag.
 
 ## 7. Exakter nächster Schritt
 
-1. Ausdrückliche Product-Owner-Merge-Freigabe für PR #48 auf Runtime-Head `de5ffd8a`. Ready ersetzt diese Freigabe nicht.
+1. Kein Account AP-3 ohne neuen ausdrücklichen Auftrag.
 2. `Admin platform audit` arbeitet weiter ausschließlich Slice A auf PR #44.
 3. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung; kein Mark Ready / kein Merge / kein S2.
-4. ChatGPT/Technical Lead prüft jeden Slice unabhängig.
-5. AP-3, Admin Slice B und Provider S2 brauchen jeweils eine neue ausdrückliche Freigabe.
-6. PR #44, #45 und #47 bleiben Draft. PR #48 nicht mergen ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+4. Keine Production-Migration und keine Provider-/Secret-/Kosten-Aktivierung aus diesem AP-2-Merge.
