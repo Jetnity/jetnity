@@ -115,6 +115,7 @@ Nach PR-#38-Closure dürfen konfliktarme UI-Slices parallel starten:
 
 ## Nächster Schritt
 
-1. PR #38 Blocker 29 schließen und unabhängig R15 durchführen.
-2. Bei technischem Closure/PASS Implementierungsfreigabe für konfliktarme erste Slices vorbereiten.
-3. Vor jedem Shared-Contract-PR diesen Entscheidungsstand erneut lesen.
+1. PR #38 R15-Blocker 30 schließen und anschließend unabhängig R16 durchführen.
+2. Wenn R16 nach strengem Stop-Kriterium keinen neuen konkreten relevanten Defekt findet: technisches Closure/PASS dokumentieren.
+3. Danach Implementierungsfreigabe für die konfliktarmen ersten Account-/Admin-Slices vorbereiten.
+4. Vor jedem Shared-Contract-PR diesen Entscheidungsstand erneut lesen.
