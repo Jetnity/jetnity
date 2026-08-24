@@ -10,6 +10,17 @@ Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`
 
 **Implementiert, Draft, nicht merge-bereit.** Unabhängiger Review folgt. Kein Mark Ready, kein Merge.
 
+Lokal verifizierte Gates auf Head `86c69a55` (plus nachgezogener Doku-Nachtrag, falls vorhanden):
+
+- `npm test`: 1715/1715
+- `npm run typecheck`: Exit 0
+- `npm run lint`: keine Warnungen/Fehler
+- `npm run check:api-schutz`: 10 Admin-Routen, alle `requireAdminApi()`
+- Hygiene: `check:dead`, `check:exports`, `check:deps`, `check:schema-bezug` grün
+- Production-Build: Exit 0, 38/38 Seiten
+
+Nicht gelaufen / nicht behauptet: `db:sicherheit`, `db:rls`, Preview, Production-Migration. GitHub-CI zum Push folgt separat.
+
 ## Ziel
 
 Aus dem vorhandenen gehärteten Admin-Backoffice eine ehrliche Steuerzentrale auf IA-/UI-Ebene machen. Keine neuen Integrationen, keine neue Datenwahrheit, keine neue Autorität.

@@ -23,6 +23,8 @@ Branch: `feat/admin-control-center-ia`
 - Capability-Nav kann Break-Glass-Nutzer von `/admin/users` wegführen; die Seite lehnt ohne Rolle weiterhin selbst ab.
 - System Health fehlt bewusst. Die RLS-Karten dürfen nicht als Infrastruktur-Grün gelesen werden; der Titel sagt das jetzt.
 
-## Nicht behauptet
+## Lokal gelaufene Gates
 
-CI, Preview und Production-Build gelten erst nach tatsächlich gelaufenen Gates. Dieser Self-Review ersetzt keinen unabhängigen Review und keine Product-Owner-Freigabe.
+1715/1715 Tests, Typecheck, Lint, `check:api-schutz`, Hygiene und Production-Build sind lokal grün. `db:sicherheit` / Preview / Production wurden nicht behauptet.
+
+Dieser Self-Review ersetzt keinen unabhängigen Review und keine Product-Owner-Freigabe.
