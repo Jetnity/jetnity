@@ -888,6 +888,16 @@ function reisenachweise() {
   const ROUTE_SURFACE_INVALID = asJsonb(ROUTE_SURFACE_INVALID_OBJ)
   const FLUG_PUNKT = (objekt) =>
     `{"kind":"flight","title":"ZRH BKK","position":1,"route_itinerary":${objekt}}`
+  const FLUG_HANDEL = (objekt) =>
+    `{"kind":"flight","title":"ZRH BKK","note":"Fenster","position":1,"starts_on":"2026-11-01","starts_at":"09:15","ends_on":"2026-11-01","ends_at":"21:40","booking_status":"booked","price_amount":999,"price_currency":"USD","provider":"evil","external_ref":"drop","booking_url":"https://evil.example/x","route_itinerary":${objekt}}`
+  const STAY_HANDEL =
+    `{"kind":"stay","title":"Hotel Test","position":2,"price_amount":180,"price_currency":"CHF","provider":"booking","external_ref":"htl-1","booking_url":"https://hotel.example/x"}`
+  const ACTIVITY_HANDEL =
+    `{"kind":"activity","title":"Tour Test","position":3,"price_amount":45,"price_currency":"EUR","provider":"gyg","external_ref":"act-1","booking_url":"https://activity.example/x"}`
+  const TRANSFER_HANDEL =
+    `{"kind":"transfer","title":"Zug Test","position":4,"price_amount":32,"price_currency":"CHF","provider":"sbb","external_ref":"rail-1","booking_url":"https://sbb.example/x","mobility_mode":"rail","origin_name":"Zuerich","destination_name":"Bern"}`
+  const RENTAL_HANDEL =
+    `{"kind":"rental_car","title":"Mietwagen Test","position":5,"price_amount":90,"price_currency":"EUR","provider":"sixt","external_ref":"car-1","booking_url":"https://sixt.example/x","rental_supplier":"Sixt","vehicle_class":"compact","transmission":"automatic","origin_name":"ZRH"}`
   const META = (routeObj, extra = '') => `'{"routeItinerary":${routeObj}${extra}}'::jsonb`
 
   return [
@@ -2008,6 +2018,102 @@ function reisenachweise() {
                 and metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' is distinct from 'US'`,
       erwartung: 'erlaubt',
       grund: 'Guest→Account über reise_anlegen darf Client-Surface nicht adeln.',
+    },
+    {
+      name: 'direktes reise_anlegen persistiert keine Flug-Handelsfelder',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        's2b1-handel-1',
+        `,"ungeplante":[${FLUG_HANDEL(ROUTE_DIREKT_OBJ)},${STAY_HANDEL},${ACTIVITY_HANDEL},${TRANSFER_HANDEL},${RENTAL_HANDEL}]`,
+      )});
+            select 1 from public.trip_items i
+              join public.trips t on t.id = i.trip_id
+             where t.user_id = '${NUTZER}'
+               and t.client_ref = 's2b1-handel-1'
+               and i.kind = 'flight'
+               and i.title = 'ZRH BKK'
+               and i.note = 'Fenster'
+               and i.starts_on = '2026-11-01'
+               and i.starts_at = '09:15'
+               and i.booking_status = 'booked'
+               and i.booking_source = 'user'
+               and i.price_amount is null
+               and i.price_currency is null
+               and i.provider is null
+               and i.external_ref is null
+               and i.booking_url is null
+               and i.metadata #>> '{routeItinerary,legs,0,segments,0,origin,airportCode}' = 'ZRH'
+               and i.metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' = 'CH'`,
+      erwartung: 'erlaubt',
+      grund: 'S2-B1: Browser-JSON darf über den öffentlichen RPC keine kommerzielle Flugwahrheit setzen.',
+    },
+    {
+      name: 'direktes reise_anlegen behält Hotel- und Aktivitäts-Handelsfelder',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        's2b1-fremd-1',
+        `,"ungeplante":[${FLUG_HANDEL(ROUTE_DIREKT_OBJ)},${STAY_HANDEL},${ACTIVITY_HANDEL},${TRANSFER_HANDEL},${RENTAL_HANDEL}]`,
+      )});
+            select 1
+              where exists (
+                select 1 from public.trip_items i
+                  join public.trips t on t.id = i.trip_id
+                 where t.client_ref = 's2b1-fremd-1' and i.kind = 'stay'
+                   and i.price_amount = 180 and i.price_currency = 'CHF'
+                   and i.provider = 'booking' and i.external_ref = 'htl-1'
+                   and i.booking_url = 'https://hotel.example/x'
+              )
+              and exists (
+                select 1 from public.trip_items i
+                  join public.trips t on t.id = i.trip_id
+                 where t.client_ref = 's2b1-fremd-1' and i.kind = 'activity'
+                   and i.price_amount = 45 and i.price_currency = 'EUR'
+                   and i.provider = 'gyg' and i.external_ref = 'act-1'
+                   and i.booking_url = 'https://activity.example/x'
+              )
+              and exists (
+                select 1 from public.trip_items i
+                  join public.trips t on t.id = i.trip_id
+                 where t.client_ref = 's2b1-fremd-1' and i.kind = 'transfer'
+                   and i.price_amount = 32 and i.provider = 'sbb'
+                   and i.mobility_mode = 'rail' and i.mobility_evidence = 'user'
+                   and i.origin_name = 'Zuerich'
+              )
+              and exists (
+                select 1 from public.trip_items i
+                  join public.trips t on t.id = i.trip_id
+                 where t.client_ref = 's2b1-fremd-1' and i.kind = 'rental_car'
+                   and i.price_amount = 90 and i.provider = 'sixt'
+                   and i.rental_supplier = 'Sixt' and i.vehicle_class = 'compact'
+                   and i.transmission = 'automatic' and i.rental_evidence = 'user'
+              )`,
+      erwartung: 'erlaubt',
+      grund: 'S2-B1 darf Hotel-, Aktivitäts-, Mobilitäts- und Mietwagenverträge nicht pauschal nullen.',
+    },
+    {
+      name: 'direktes reise_anlegen nullt Flug-Handelsfelder auch im Tagespunkt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        's2b1-tag-1',
+        `,"stages":[{"position":1,"name":"Bangkok"}],"days":[{"day_index":1,"stage_position":1,"items":[${FLUG_HANDEL(ROUTE_DIREKT_OBJ)}]}]`,
+      )});
+            select 1 from public.trip_items i
+              join public.trips t on t.id = i.trip_id
+             where t.client_ref = 's2b1-tag-1'
+               and i.kind = 'flight'
+               and i.day_id is not null
+               and i.title = 'ZRH BKK'
+               and i.note = 'Fenster'
+               and i.price_amount is null
+               and i.provider is null
+               and i.external_ref is null
+               and i.booking_url is null
+               and i.metadata #>> '{routeItinerary,legs,0,segments,0,destination,airportCode}' = 'BKK'`,
+      erwartung: 'erlaubt',
+      grund: 'Beide INSERT-Pfade von reise_anlegen müssen dieselbe Flug-Handelsgrenze erzwingen.',
     },
     {
       name: 'ungültige Surface-Evidence bleibt beim direkten INSERT ohne Evidence',

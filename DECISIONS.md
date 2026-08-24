@@ -3788,7 +3788,28 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 **Begründung:** Dieselbe Trust-Grenze wie `HotelNachweis` muss stehen, bevor ein Flugadapter aktiv wird. Tests injizieren einen Fake-Katalog. Ein persistenter Suchkontext-Speicher oder Offer-Provenance wäre S5 und braucht einen eigenen Auftrag.
 
-**Konsequenzen:** `flugNachweisAusUmgebung()` gibt heute `null` zurück. Die Server Action übergibt keinen Client-Suchkontext. Der erste Nachweis-Adapter muss optionId gegen Legs, Passagiere, Kabine, Währung und Gültigkeit binden. Keine DB-Migration, keine Secrets, keine Provideraktivierung.
+**Konsequenzen:** `flugNachweisAusUmgebung()` gibt heute `null` zurück. Die Server Action übergibt keinen Client-Suchkontext. Der erste Nachweis-Adapter muss optionId gegen Legs, Passagiere, Kabine, Währung und Gültigkeit binden. Die App-Grenze allein reicht nicht; der öffentliche RPC braucht ADR-0156.
+
+---
+
+## ADR-0156 – reise_anlegen verwirft unbewiesene Flug-Handelsfelder
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #51 / S2-B1; nur Supabase Development; Production unverändert
+
+**Entscheidung:** `public.reise_anlegen(jsonb)` übernimmt für `kind='flight'` keine kommerziellen Felder aus der JSON-Nutzlast. `price_amount`, `price_currency`, `provider`, `external_ref` und `booking_url` werden in beiden INSERT-Pfaden (Tagespunkte und Ungeplante) auf `null` gesetzt. Nichtkommerzielle Flight-User-Intake-Felder, Foundation-D-Itinerary sowie Hotel-/Aktivitäts-/Mobilitäts-/Mietwagenverträge bleiben unverändert. Ein späterer vertrauenswürdiger Flugnachweis braucht einen getrennten Schreibvertrag; der heute für `authenticated` erreichbare JSON-RPC ist keine Providerquelle.
+
+**Kontext:** Der TypeScript-Pfad von S2 (ADR-0155) war korrekt fail-closed. Der unabhängige Technical-Lead-Review fand den Direct-RPC-Bypass: `reise_anlegen` ist `SECURITY INVOKER` mit EXECUTE für `authenticated`. Ein Browser kann die RPC direkt über PostgREST aufrufen und damit die App-Grenze umgehen. RLS schützt weiter das Eigentum, nicht die Provenienz.
+
+**Alternativen:**
+
+1. *EXECUTE für authenticated entziehen.* Würde den normalen Konto-Anlagepfad zerstören.
+2. *BEFORE-Trigger auf trip_items, der alle Flug-Handelsfelder nullt.* Würde auch einen späteren nachgewiesenen Server-INSERT treffen.
+3. *Service Role oder neuer SECURITY DEFINER-Vertrag.* Ausserhalb des S2-B1-Scopes und ohne Product-Owner-Freigabe.
+
+**Begründung:** Die minimale, freigegebene Lösung härtet genau den browser-erreichbaren JSON-Vertrag. Additive Migration `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis.sql`, nur Development.
+
+**Konsequenzen:** Production bleibt bis zu einer separaten Product-Owner-Freigabe unverändert. Keine Service-Role-, Auth-, MFA-, AAL- oder Capability-Änderung. Kein S3. Kein Mark Ready / Merge.
 
 ---
 
