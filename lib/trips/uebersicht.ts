@@ -58,12 +58,12 @@ function alsDatum(wert: string) {
   return new Date(`${wert}T00:00:00Z`)
 }
 
-export function uebersichtOrte(reise: Pick<Trip, 'origin' | 'stages'>): string {
+function uebersichtOrte(reise: Pick<Trip, 'origin' | 'stages'>): string {
   const orte = reise.stages.length > 0 ? reise.stages.map((etappe) => etappe.name).join(' · ') : 'Ziel noch offen'
   return reise.origin ? `${orte} · ab ${reise.origin}` : orte
 }
 
-export function uebersichtZeitraum(reise: Pick<Trip, 'startDate' | 'endDate'>): string {
+function uebersichtZeitraum(reise: Pick<Trip, 'startDate' | 'endDate'>): string {
   if (!reise.startDate || !reise.endDate) return 'Zeitraum noch offen'
   return `${KURZES_DATUM.format(alsDatum(reise.startDate))} – ${KURZES_DATUM.format(alsDatum(reise.endDate))}`
 }
@@ -76,7 +76,7 @@ export function uebersichtLage(
   return reiseGruppe(reise, heute)
 }
 
-export function uebersichtLageText(lage: UebersichtLage | null): string {
+function uebersichtLageText(lage: UebersichtLage | null): string {
   if (!lage) return 'Zeitliche Lage noch nicht bestimmbar'
   return LAGE_TEXT[lage]
 }
