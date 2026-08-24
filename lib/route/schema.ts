@@ -86,7 +86,9 @@ function itinerarySchema(segment: typeof segmentSchema | typeof trustedSegmentSc
   })
 }
 
-export const flugRouteItinerarySchema = itinerarySchema(segmentSchema)
+export const flugRouteItinerarySchema = itinerarySchema(segmentSchema).transform(
+  (wert): FlugRouteItinerary => wert,
+)
 const flugRouteItineraryTrustedSchema = itinerarySchema(trustedSegmentSchema)
 
 export function flugRouteItineraryLesen(wert: unknown): FlugRouteItinerary | null {
