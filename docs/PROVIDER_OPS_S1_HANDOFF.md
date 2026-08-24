@@ -1,7 +1,7 @@
 # Jetnity – Provider Ops S1 Handoff
 
 Stand: 24. August 2026  
-Status: **S1 implementiert und lokal gegatet; Draft-PR #47 wartet auf Exact-Head CI/Vercel und unabhängigen Technical-Lead-Review**
+Status: **S1 Review-Fixes S1-B1/S1-B2/ADR-0154; Draft-PR #47 bleibt Draft**
 
 ## 1. Übernahme
 
@@ -11,7 +11,7 @@ Ein neuer Agent liest zuerst:
 2. `docs/PROVIDER_OPS_S1_STATUS.md`
 3. diesen Handoff
 4. `docs/ACTIVE_WORK_STATUS.md`
-5. ADR-0152 in `DECISIONS.md`
+5. ADR-0154 in `DECISIONS.md`
 6. Audit-Quellen auf `audit/provider-readiness` (PR #45 bleibt Audit-Draft)
 
 Nicht auf `audit/provider-readiness` implementieren. S1 lebt nur auf `feat/provider-ops-s1`.
@@ -42,6 +42,12 @@ Noch offen, bis gegen den **Dokumentations-Head** belegt:
 - Vercel Preview READY auf demselben Exact Head
 
 Keine UI-Änderung. Kein neuer visueller Produktslice.
+
+## 3a. Review-Fixes nach REQUEST CHANGES
+
+- **S1-B1:** `providerOpsEvent()` kopiert kein Input-Spread mehr. Nur Allowlist-Felder. Regression: Zusatzfelder (`payload`, `token`, Route) überleben nicht.
+- **S1-B2:** `ProviderOpsCostGuard.erlaubt()` ist `Promise`. Domain-Hüllen sind async und rufen nur noch diesen Port. S6 kann I/O einhängen, ohne die Hüllen erneut umzuschneiden. Keine DB in S1.
+- **ADR:** Implementierungsentscheidung trägt eindeutig `ADR-0154`. `ADR-0152` bleibt dem Audit-Plan (PR #45) bzw. Account AP-1 vorbehalten.
 
 ## 4. Geänderte Domains
 

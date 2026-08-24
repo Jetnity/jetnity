@@ -19,10 +19,10 @@ const guard = providerOpsInMemoryCostGuard({
   anfragenJeTag: FLUG_RATE_GRENZEN.suchenJeTag,
 })
 
-export function flugSucheErlaubt(
+export async function flugSucheErlaubt(
   kennung: string,
   uhr?: () => number,
-): { ok: true } | { ok: false; retryAfterSec: number } {
+): Promise<{ ok: true } | { ok: false; retryAfterSec: number }> {
   return guard.erlaubt(kennung.trim() || 'unbekannt', uhr)
 }
 

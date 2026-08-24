@@ -33,6 +33,7 @@ export {
   type ProviderOpsCostGuardGrenzen,
 } from '@/lib/provider-ops/cost-guard'
 export {
+  PROVIDER_OPS_EVENT_FELDER,
   PROVIDER_OPS_OPERATIONEN,
   providerOpsEvent,
   type ProviderOpsEvent,

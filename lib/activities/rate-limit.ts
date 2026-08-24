@@ -18,10 +18,10 @@ const guard = providerOpsInMemoryCostGuard({
   anfragenJeTag: ACTIVITY_RATE_GRENZEN.suchenJeTag,
 })
 
-export function activitySucheErlaubt(
+export async function activitySucheErlaubt(
   kennung: string,
   uhr?: () => number,
-): { ok: true } | { ok: false; retryAfterSec: number } {
+): Promise<{ ok: true } | { ok: false; retryAfterSec: number }> {
   return guard.erlaubt(kennung.trim() || 'unbekannt', uhr)
 }
 

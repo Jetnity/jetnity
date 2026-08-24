@@ -18,10 +18,10 @@ const guard = providerOpsInMemoryCostGuard({
   anfragenJeTag: HOTEL_RATE_GRENZEN.suchenJeTag,
 })
 
-export function hotelSucheErlaubt(
+export async function hotelSucheErlaubt(
   kennung: string,
   uhr?: () => number,
-): { ok: true } | { ok: false; retryAfterSec: number } {
+): Promise<{ ok: true } | { ok: false; retryAfterSec: number }> {
   return guard.erlaubt(kennung.trim() || 'unbekannt', uhr)
 }
 

@@ -18,10 +18,10 @@ const guard = providerOpsInMemoryCostGuard({
   anfragenJeTag: SAFETY_RATE_GRENZEN.anfragenJeTag,
 })
 
-export function safetyAnfrageErlaubt(
+export async function safetyAnfrageErlaubt(
   kennung: string,
   uhr?: () => number,
-): { ok: true } | { ok: false; retryAfterSec: number } {
+): Promise<{ ok: true } | { ok: false; retryAfterSec: number }> {
   return guard.erlaubt(kennung.trim() || 'unbekannt', uhr)
 }
 

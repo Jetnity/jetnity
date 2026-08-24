@@ -18,10 +18,10 @@ const guard = providerOpsInMemoryCostGuard({
   anfragenJeTag: READINESS_RATE_GRENZEN.anfragenJeTag,
 })
 
-export function readinessAnfrageErlaubt(
+export async function readinessAnfrageErlaubt(
   kennung: string,
   uhr?: () => number,
-): { ok: true } | { ok: false; retryAfterSec: number } {
+): Promise<{ ok: true } | { ok: false; retryAfterSec: number }> {
   return guard.erlaubt(kennung.trim() || 'unbekannt', uhr)
 }
 

@@ -18,10 +18,10 @@ const guard = providerOpsInMemoryCostGuard({
   anfragenJeTag: RENTAL_RATE_GRENZEN.suchenJeTag,
 })
 
-export function rentalCarSucheErlaubt(
+export async function rentalCarSucheErlaubt(
   kennung: string,
   uhr?: () => number,
-): { ok: true } | { ok: false; retryAfterSec: number } {
+): Promise<{ ok: true } | { ok: false; retryAfterSec: number }> {
   return guard.erlaubt(kennung.trim() || 'unbekannt', uhr)
 }
 

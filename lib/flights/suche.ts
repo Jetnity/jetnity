@@ -50,7 +50,7 @@ export async function fluegeSuchen(
     }
   }
 
-  const quota = flugSucheErlaubt(ports.kennung)
+  const quota = await flugSucheErlaubt(ports.kennung)
   if (!quota.ok) {
     return {
       httpStatus: 429,

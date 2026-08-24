@@ -1,7 +1,7 @@
 # Jetnity – Provider Ops S1 Status
 
 Stand: 24. August 2026  
-Status: **IMPLEMENTIERT / lokal gegatet / Draft-PR #47 / wartet auf Exact-Head CI + Vercel + unabhängigen Technical-Lead-Review**  
+Status: **REVIEW-FIXES S1-B1/S1-B2/ADR-0154 in Arbeit / Draft-PR #47 / kein Mark Ready / kein Merge**  
 Branch: `feat/provider-ops-s1`  
 Auftrag: `docs/PROVIDER_OPS_S1_TASK.md`
 
@@ -20,7 +20,7 @@ Kein Mark Ready. Kein Merge. Keine Provideraktivierung. Keine Secrets. Keine kos
 
 ## 3. Umgesetzt
 
-- `lib/provider-ops/*`: Outcome-Taxonomie, JSON-Request-Härtung, Kill-Switch-Form, In-Memory-Cost-Guard, Observability-Typ ohne Persistenz
+- `lib/provider-ops/*`: Outcome-Taxonomie, JSON-Request-Härtung, Kill-Switch-Form, async Cost-Guard-Port plus In-Memory-Implementierung, Observability-Allowlist ohne Spread
 - dünne Domain-Wrapper in Flights, Hotels, Activities, Mobility, Rental Cars, Readiness, Safety, Seasonal
 - Flights-Search auf Hotel-Request-Härtung gehoben: Content-Type 415, Content-Length 413, Stream-Cap, JSON-Parse, `Retry-After` bei 429, `cache-control: no-store`
 - Seasonal-Rate-Limit-Algorithmus unverändert (nur gemeinsame IP-Kennung)
