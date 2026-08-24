@@ -28,16 +28,17 @@ Danach verifiziere live:
 
 Zuletzt dokumentierter Stand:
 
-- `main` = `e3bad749c8e03512001e7bccd5e08467f10a7134`
+- `main` = `78192ab775165d08bb357140c2d04b865b8cc049`
 - Admin Slice A / PR #44 = merged
 - Admin Slice B / PR #46 = merged
-- Vercel Production `dpl_GpE7FWRcDGvVqhRyrZUvMDQDvG1n` = READY auf `e3bad749...`
+- Admin Slice C / PR #49 = merged
+- Vercel Production `dpl_EkQorDSGW1JyHa4DYqzZRhngYFFa` = READY auf `78192ab...`
 - Supabase Production endet bei `20260824140000`
 - `20260824160000` und `20260824180000` bleiben Development-only
-- Account AP-3 / PR #53 = Draft, implementiert/gegatet, Review pending, ADR-0160
-- Provider S3 / PR #54 = Draft, implementiert/gegatet, Review pending, ADR-0161
-- Trip Workspace Audit / PR #55 = Draft/docs-only, Review pending
-- Admin nächster Block = PR #49 / Slice C; zuerst gegen den neuen `main` synchronisieren/retargeten, dann kontrolliert fortsetzen
+- Agent `Admin platform audit` wartet; nächster möglicher Block ist Slice D, aber nur mit neuem kontrollierten Auftrag
+- Agent `Account plattform audit vorbereitung` / PR #53 = Draft; 200er-Truth-Korrektur und vorherige Re-Gates erledigt, aber durch Merge #49 erneut hinter neuem `main`; zuerst Sync/Re-Gates auf `78192ab...`, dann Re-Review
+- Agent `Jetnity provider readiness audit` / PR #54 = Draft; S3 vorher sauber gegatet, aber durch Merge #49 erneut hinter neuem `main`; zuerst Sync/Re-Gates auf `78192ab...`, kein S4 vorher
+- Agent `Trip workspace audit architecture` / PR #55 = Draft/docs-only; Audit vorbereitet und vorher gegatet, aber durch Merge #49 erneut hinter neuem `main`; nur docs-only Reconciliation/Re-Gates, kein TW-1
 
 Verbindliche Governance:
 
