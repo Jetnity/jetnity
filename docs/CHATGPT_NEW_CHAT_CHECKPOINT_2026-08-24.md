@@ -1,6 +1,6 @@
 # Jetnity – New Chat Technical Lead Checkpoint
 
-Stand: **24. August 2026, ca. 23:00 Europe/Zurich**  
+Stand: **25. August 2026, ca. 00:15 Europe/Zurich**  
 Status: **aktueller kanonischer Chat-Wechsel-Checkpoint**
 
 Ein neuer Chat übernimmt die Rolle als Hauptentwickler / Technical Lead / Product-, Architecture-, Logic-, Security- und Review-Steuerung.
@@ -18,15 +18,16 @@ Danach GitHub, CI, Vercel und Supabase live verifizieren. Nicht blind auf diesen
 
 ## Verifizierter Übergabestand
 
-- `main`: `b7f027ec448639fe3399512d401a7789b24e52a6`
-- letzter Merge: Provider Readiness S3 / PR #54 / ADR-0161
+- aktueller `main`: `f8e252880d31fe462537f33be4496044951ae4a9`
+- letzter PR-Merge: Trip Workspace Audit / PR #55
+- Merge-Commit #55: `08fd7748ace072544e189c94880562e050971811`
+- danach nur docs-only Kontinuitätsupdates auf `main`: `c42017f5...`, `f8e25288...`
 - #44 Admin A: merged
 - #46 Admin B: merged
 - #49 Admin C: merged
 - #53 Account AP-3: merged
 - #54 Provider S3: merged / closed
-- finaler PR-Head #54: `2bb94ac5e7888b182d32e143e9d75c24b6917303`
-- Merge-Commit #54 / `main`: `b7f027ec448639fe3399512d401a7789b24e52a6`
+- #55 Trip Workspace Audit: merged / closed, docs-only
 - Supabase Production endet bei `20260824140000`
 - S2-Guards `20260824160000` / `20260824180000`: nur Development, nicht Production-approved
 - `main` Branch Protection technisch weiterhin nicht umgesetzt
@@ -53,28 +54,26 @@ Danach GitHub, CI, Vercel und Supabase live verifizieren. Nicht blind auf diesen
 
 - PR #54 / S3 / ADR-0161: **merged / closed**
 - Independent Runtime/Security/Truth Review: **PASS / Technical Integration Closure**
-- Runtime-Head vor docs-only Follow-up: `2cb9a830f4fdaced5551022de6ddb1a7a9aa25a6`
-- finaler PR-Head: `2bb94ac5e7888b182d32e143e9d75c24b6917303`
-- GitHub Actions `32775510115`: SUCCESS
-- Vercel Preview `9bwWMA4YiVAh6rvK6ZojpR5j2ZHS`: success/READY
+- Merge-Commit: `b7f027ec448639fe3399512d401a7789b24e52a6`
 - `Jetnity provider readiness audit` wartet; **kein S4 ohne neuen kontrollierten Auftrag**
 
 ### Trip Workspace – Agent `Trip workspace audit architecture`
 
-PR #55:
-
-- Draft / docs-only, nicht gemergt
-- Audit & Zielarchitektur inhaltlich plausibel und scope-treu; kein Runtime-Umbau
-- Provider #54 ist integriert
-- **jetzt nächster aktiver Workstream:** #55 ausschließlich docs-only gegen `main` `b7f027ec...` reconciliieren, zentrale Wahrheit aktualisieren, Exact-Head-Gates belegen und danach STOP für Technical-Lead-Re-Review
-- kein TW-1 in diesem Schritt
+- PR #55 / Audit & Zielarchitektur: **merged / closed**, docs-only
+- Exact Head vor Merge: `842797b8f7ab20742b51c54669e9f73acb44241e`
+- Merge-Commit: `08fd7748ace072544e189c94880562e050971811`
+- kein Runtime-Umbau
+- vorgeschlagene Ziel-IA bleibt **nicht Product-Owner-angenommen**
+- `Trip workspace audit architecture` **wartet; kein TW-1 ohne neuen kontrollierten Auftrag**
 
 ## Kontrollierte Integrationsreihenfolge
 
-1. **Account #53: integriert / erledigt**
-2. **Provider #54: integriert / erledigt**
-3. **jetzt Trip-Workspace-Audit #55:** finale Docs-Reconciliation → Re-Gates → Re-Review → PO-Ready-Gate → separates PO-Merge-Gate
-4. danach neue kontrollierte Admin-/TW-Aufträge
+1. Account #53: integriert / erledigt
+2. Provider #54: integriert / erledigt
+3. Trip-Workspace-Audit #55: integriert / erledigt, docs-only
+4. **jetzt:** Technical-Lead-Gesamtbewertung der Ziel-IA und ausdrückliche Product-Owner-Entscheidung über Annahme/Änderungen und TW-1
+5. nur bei Freigabe: neuer kontrollierter Auftrag an `Trip workspace audit architecture` für TW-1
+6. Admin/Account/Provider bleiben bis zu eigenen neuen Aufträgen stehen
 
 ## Verbindliche ADR-Allokation
 
@@ -83,13 +82,14 @@ PR #55:
 - ADR-0160 = Account AP-3 / `main`
 - ADR-0161 = Provider S3 / `main`
 - ADR-0162 = Admin C / `main`
+- Trip-Workspace-Ziel-IA: Vorschlag ohne angenommene ADR-Nummer
 
 Neue ADR-Nummern nur nach Technical-Lead-Reservierung.
 
 ## Verbindliche große Reihenfolge
 
-1. Account + Admin sauber aufbauen; Provider Readiness vollständig weiterführen.
-2. Danach Trip Workspace / Reiseübersicht.
+1. Account + Admin sauber weiterführen; Provider Readiness vollständig weiterführen.
+2. Trip Workspace / Reiseübersicht als Runtime-Block nur nach ausdrücklicher IA-/TW-1-Entscheidung.
 3. Danach Homepage.
 
 Weltkarte, Matching, Reisebuch, Trends/Hotspots usw. sind optionale Wünsche, keine automatische Pflicht.
@@ -112,8 +112,8 @@ Nach jedem relevanten Merge oder größeren Statuswechsel PR #52 sowie `JETNITY_
 
 ## Nächster Arbeitsstand
 
-- `Trip workspace audit architecture` / #55: **jetzt docs-only auf `main` `b7f027ec...` reconciliieren, re-gaten und unabhängig re-reviewen.**
+- `Trip workspace audit architecture`: wartet; kein TW-1 bis ausdrückliche IA-/TW-1-Entscheidung.
 - `Jetnity provider readiness audit`: wartet; kein S4.
 - `Account plattform audit vorbereitung`: wartet; kein AP-4.
 - `Admin platform audit`: wartet; kein Slice D.
-- PR #52 bleibt Draft; kein Ready/Merge ohne PO-Freigabe.
+- PR #52 bleibt Draft und historisch hinter `main`; vor späterer Integration erst synchronisieren/re-gaten. Kein Ready/Merge ohne PO-Freigabe.
