@@ -318,15 +318,15 @@ Aktiver Branch: `feat/provider-mobility-rental-evidence-s3`
 Basis: `origin/main` @ `1ec93cc9`
 Auftrag: `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` PR-S3
 Status: `docs/PROVIDER_READINESS_S3_STATUS.md`
-ADR: ADR-0159
+ADR: ADR-0161
 
 1. S3 hebt Mobility- und Rental-Nachweis auf die Hotel-/S2-Grenze: async `nachweisen({ optionId, kontext })`.
 2. `mobilityNachweisAusUmgebung()` und `rentalCarNachweisAusUmgebung()` bleiben `null`; Übernahme fail-closed.
 3. Der Browser darf nur identifiers senden. Keine `booking_url`.
 4. Mobility-Suche im Workspace startet nicht automatisch; nur «Verbindungen prüfen».
 5. Keine neue Migration. S2 Development-Guards bleiben nicht Production-approved.
-6. Draft-PR #54. Exact Head `e284af55`. GitHub Actions SUCCESS `32750893324`. Vercel READY `GWiY7wxgazEfqL2PZSP2eWskoVcK`.
-7. **Exakter nächster Schritt:** Unabhängiger Technical-Lead-Review gegen `e284af55`. Kein Mark Ready, kein Merge, kein S4, keine Production-Migration.
+6. Draft-PR #54. Functional runtime head `e284af55`. S3-Nummer ist ADR-0161; ADR-0159 bleibt Admin Slice B.
+7. **Exakter nächster Schritt:** Exact-Head-Gates auf dem Tip nach ADR-0161 neu beweisen, danach unabhängiger Technical-Lead-Review. Kein Mark Ready, kein Merge, kein S4, keine Production-Migration.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

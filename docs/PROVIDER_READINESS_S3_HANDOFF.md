@@ -1,14 +1,14 @@
 # Jetnity – Provider Readiness S3 Handoff
 
 Stand: 24. August 2026
-Status: **S3 lokal und remote auf Exact Head `e284af55` gegatet; Draft-PR #54; STOPP für Technical-Lead-Review; kein Mark Ready / kein Merge / kein S4**
+Status: **S3 auf ADR-0161 umnummeriert; Functional Runtime Head bleibt `e284af55`; Exact-Head-Gates auf dem neuen Tip neu beweisen; Draft-PR #54; kein Mark Ready / kein Merge / kein S4**
 
 ## 1. Übernahme
 
 1. `docs/PROVIDER_READINESS_S3_STATUS.md`
 2. diesen Handoff
 3. `docs/PROVIDER_READINESS_S3_SELF_REVIEW.md`
-4. ADR-0159
+4. ADR-0161
 5. `docs/ACTIVE_WORK_STATUS.md`
 6. aktueller Code unter `lib/mobility/nachweis.ts`, `lib/rental-cars/nachweis.ts`, `components/trips/MobilitaetBereich.tsx`
 
@@ -16,12 +16,14 @@ S3 lebt nur auf `feat/provider-mobility-rental-evidence-s3`.
 
 ## 2. Exact Head
 
-- Functional Exact Head: `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`
+- Functional runtime head: `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`
+- Vorheriger docs-only Tip: `b230104b58fd2096b0ff8c2576324cc8655d9bc4`
+- Review-Tip nach ADR-0161: aktueller Branch-HEAD / PR #54
 - Draft-PR: https://github.com/Jetnity/jetnity/pull/54
 - Basis: `origin/main` @ `1ec93cc9`
 - PR: Draft
 
-## 3. Gate-Ergebnisse auf `e284af55`
+## 3. Gate-Ergebnisse auf Functional Runtime Head `e284af55`
 
 - `npm test` 1849/1849
 - Typecheck, Lint, Hygiene, API-Schutz, Schema-Bezug, Production-Build Exit 0
@@ -56,4 +58,4 @@ S3 lebt nur auf `feat/provider-mobility-rental-evidence-s3`.
 
 ## 7. Nächster Schritt
 
-Unabhängiger Technical-Lead-Review gegen Exact Head `e284af55`. Danach erst S4, und nur mit neuem Auftrag.
+Exact-Head-Gates auf dem Tip nach ADR-0161 neu beweisen. Danach unabhängiger Technical-Lead-Review. Danach erst S4, und nur mit neuem Auftrag.

@@ -288,7 +288,7 @@ Zu prüfen/vereinheitlichen:
 
 Keine Verträge, Secrets oder laufenden Providerkosten ohne separate Freigabe.
 
-S1 Shared Operational Contract ist auf `main` (PR #47). S2 FlugNachweis ist auf `main` (PR #51). S2 Development-Migrationen `20260824160000` und `20260824180000` sind **nicht** Production-approved; Production endet bei `20260824140000`. S3 Mobility/Rental-Nachweis läuft auf `feat/provider-mobility-rental-evidence-s3` (ADR-0159). Kein echter Provider, keine Secrets, keine Production-Migration. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
+S1 Shared Operational Contract ist auf `main` (PR #47). S2 FlugNachweis ist auf `main` (PR #51). S2 Development-Migrationen `20260824160000` und `20260824180000` sind **nicht** Production-approved; Production endet bei `20260824140000`. S3 Mobility/Rental-Nachweis läuft auf `feat/provider-mobility-rental-evidence-s3` (ADR-0161). Kein echter Provider, keine Secrets, keine Production-Migration. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
 
 ---
 

@@ -3,6 +3,7 @@
 Stand: 24. August 2026
 Branch: `feat/provider-mobility-rental-evidence-s3`
 Draft-PR: `#54`
+ADR: ADR-0161  
 Functional Exact Head: `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`
 Basis: `origin/main` @ `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267`
 

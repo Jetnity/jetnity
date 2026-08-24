@@ -103,7 +103,7 @@ Account AP-1 (PR #43) und Admin Slice A (PR #44) bleiben parallel und unberührt
 
 **Ziel:** Stubs durch async `nachweisen({ optionId, kontext })` ersetzen. Übernahme bleibt fail-closed, bis ein Adapter existiert.
 
-**Status 24. August 2026:** Implementierung auf `feat/provider-mobility-rental-evidence-s3`. ADR-0159. Kein echter Adapter. Keine Migration.
+**Status 24. August 2026:** Implementierung auf `feat/provider-mobility-rental-evidence-s3`. ADR-0161. Kein echter Adapter. Keine Migration.
 
 **Umfang:**
 
@@ -267,6 +267,6 @@ Review-bereit ist nicht Mark Ready und nicht Merge.
 ## 7. Empfohlener nächster operativer Schritt
 
 1. S1 und S2 liegen auf `main`.
-2. S3 läuft auf `feat/provider-mobility-rental-evidence-s3` / ADR-0159.
+2. S3 läuft auf `feat/provider-mobility-rental-evidence-s3` / ADR-0161.
 3. S4 startet nicht ohne neuen Auftrag und Technical-Lead-Review von S3.
 4. Kein Mark Ready, kein Merge, keine Secrets, keine Provideraktivierung, keine Production-Migration.

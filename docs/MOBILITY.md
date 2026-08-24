@@ -152,7 +152,7 @@ Manuelle Mobilität ist eine **Nutzerangabe**:
 
 Kill Switch: `JETNITY_MOBILITY_AKTIV` (`true` oder `1`). Das ist kein Provider-Secret und benennt keinen Anbieter.
 
-`mobilityProviderAus()` gibt `null` zurück. `mobilityNachweisAusUmgebung()` gibt `null` zurück. Eine spätere Konto-Übernahme aus Providerergebnissen bleibt fail closed. Der Browser darf nur `tripId` und `optionId` senden. Die Workspace-Suche startet nicht automatisch; nur «Verbindungen prüfen» darf `/api/mobility/search` anfassen (ADR-0159).
+`mobilityProviderAus()` gibt `null` zurück. `mobilityNachweisAusUmgebung()` gibt `null` zurück. Eine spätere Konto-Übernahme aus Providerergebnissen bleibt fail closed. Der Browser darf nur `tripId` und `optionId` senden. Die Workspace-Suche startet nicht automatisch; nur «Verbindungen prüfen» darf `/api/mobility/search` anfassen (ADR-0161).
 
 Ranking ist deterministisch und provisionsneutral. Providername, Affiliate oder Umsatz sind keine Faktoren. Fehlende Fakten bleiben `null`.
 

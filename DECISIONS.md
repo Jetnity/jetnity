@@ -3883,10 +3883,36 @@ Ein späterer vertrauenswürdiger Flugnachweis braucht einen **getrennten SECURI
 
 ---
 
-## ADR-0159 – Mobility- und Rental-Nachweis folgen Hotel/S2, nicht dem Flugschema
+## ADR-0159 – reserviert für Admin Slice B / PR #46
+
+**Datum:** 24. August 2026  
+**Status:** Nummer gebunden; Inhalt gehört nicht zu Provider S3
+
+**Entscheidung:** ADR-0159 bleibt Admin Slice B / PR #46 vorbehalten. Provider Readiness S3 darf diese Nummer nicht verwenden.
+
+**Kontext:** Technical-Lead Cross-Agent Gate zu PR #54 am 24. August 2026. Verbindliche Allokation: Admin A = ADR-0158, Admin B / PR #46 = ADR-0159, Account AP-3 / PR #53 = ADR-0160, Provider S3 / PR #54 = ADR-0161.
+
+**Alternativen:** S3 hätte ADR-0159 behalten. Das würde eine bereits geschlossene Admin-B-Integration überschreiben.
+
+**Begründung:** ADR-Nummern sind global. Eine zweite ADR-0159 auf dem Provider-Branch ist ein Cross-Workstream-Konflikt.
+
+**Konsequenzen:** S3-Nachweisentscheidung steht unter ADR-0161. Diese Datei beschreibt Admin B hier nicht nach.
+
+---
+
+## ADR-0160 – reserviert für Account AP-3 / PR #53
+
+**Datum:** 24. August 2026  
+**Status:** Nummer gebunden; Inhalt gehört nicht zu Provider S3
+
+**Entscheidung:** ADR-0160 bleibt Account AP-3 / PR #53 vorbehalten. Provider S3 verwendet ADR-0161.
+
+---
+
+## ADR-0161 – Mobility- und Rental-Nachweis folgen Hotel/S2, nicht dem Flugschema
 
 **Datum:** 24. August 2026
-**Status:** umgesetzt auf `feat/provider-mobility-rental-evidence-s3`; kein echter Adapter; keine Production-Migration
+**Status:** umgesetzt auf `feat/provider-mobility-rental-evidence-s3`; kein echter Adapter; keine Production-Migration; Nummer nach Technical-Lead-Allokation, nicht ADR-0159
 
 **Entscheidung:** Mobility und Rental bekommen denselben async Nachweisvertrag wie Hotel und S2 FlugNachweis: `nachweisen({ optionId, kontext })`. Der Browser darf nur `tripId` und `optionId` senden. Kommerzielle Felder kommen aus einem serverseitigen Nachweis plus Suchkontext – oder die Übernahme fällt fail closed. Die fachliche Form bleibt domain-spezifisch (Orte/Modus/Reisende bzw. Stationen/Zeitraum/Klasse/Getriebe). Ein Testkatalog darf nur injiziert werden. `*NachweisAusUmgebung()` bleibt `null`. `booking_url` wird nicht erzeugt. Die Workspace-Mobilitätssuche startet nicht mehr automatisch; nur «Verbindungen prüfen» darf `/api/mobility/search` anfassen.
 

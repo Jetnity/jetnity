@@ -74,7 +74,7 @@ Basis: `origin/main` @ `1ec93cc9`
 Auftrag: dieser Chat / `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` PR-S3  
 Status: `docs/PROVIDER_READINESS_S3_STATUS.md`  
 Handoff: `docs/PROVIDER_READINESS_S3_HANDOFF.md`  
-ADR: ADR-0159
+ADR: ADR-0161
 
 Aktiver Slice:
 
@@ -106,6 +106,7 @@ Die neue Homepage-Produktseiten-Idee bleibt **pausiert**. Siehe `docs/HOMEPAGE_P
 
 ## 7. Exakter nächster Schritt
 
-1. S3 Draft-PR #54, Exact Head `e284af55`, lokale Gates, GitHub Actions SUCCESS `32750893324`, Vercel READY `GWiY7wxgazEfqL2PZSP2eWskoVcK`.
-2. STOPP für unabhängigen Technical-Lead-Review.
-3. Nicht Mark Ready, nicht mergen, nicht S4, Production nicht migrieren.
+1. S3 Draft-PR #54 auf ADR-0161 umnummeriert. ADR-0159 bleibt Admin Slice B / PR #46.
+2. Exact-Head-Gates auf dem Tip nach der Umnummerierung neu beweisen (lokal + GitHub Actions SUCCESS + Vercel READY, dieselbe SHA).
+3. STOPP für unabhängigen Technical-Lead-Review.
+4. Nicht Mark Ready, nicht mergen, nicht S4, Production nicht migrieren.

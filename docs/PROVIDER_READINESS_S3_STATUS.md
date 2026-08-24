@@ -1,9 +1,10 @@
 # Jetnity – Provider Readiness S3 Status
 
 Stand: 24. August 2026
-Status: **technisch review-bereit auf Exact Head; Draft-PR #54; STOPP für unabhängigen Technical-Lead-Review; kein Mark Ready / kein Merge**
+Status: **ADR-0161-Umnummerierung auf dem Branch; Draft-PR #54; Exact-Head-Gates müssen auf dem neuen Tip neu bewiesen werden; kein Mark Ready / kein Merge**
 Branch: `feat/provider-mobility-rental-evidence-s3`
 Draft-PR: `#54`
+ADR: ADR-0161  
 Basis: `origin/main` @ `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267`
 
 ## 1. Was S3 ist
@@ -21,7 +22,9 @@ Kein echter Mobility- oder Rental-Provider. Keine Secrets. Keine kostenpflichtig
 
 ## 2. Runtime-Head
 
-- Functional Exact Head: `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`
+- Functional runtime head: `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`
+- Vorheriger docs-only Tip: `b230104b58fd2096b0ff8c2576324cc8655d9bc4`
+- Review-Tip nach ADR-0161-Umnummerierung: aktueller Branch-HEAD / PR #54
 - Draft-PR: https://github.com/Jetnity/jetnity/pull/54
 - Basis: `origin/main` @ `1ec93cc9`
 
@@ -44,7 +47,7 @@ Kein echter Mobility- oder Rental-Provider. Keine Secrets. Keine kostenpflichtig
 - Universal-Offer-Modell
 - S2-artige DB-Guards für transfer/rental_car
 
-## 5. Gates auf Exact Head `e284af55`
+## 5. Gates auf Functional Runtime Head `e284af55`
 
 | Gate | Ergebnis |
 | --- | --- |
@@ -67,4 +70,6 @@ S2 Development-Migrationen `20260824160000` und `20260824180000` bleiben nicht P
 
 ## 7. Nächster Schritt
 
-STOPP für unabhängigen Technical-Lead-Review gegen Exact Head `e284af55`. Nicht Mark Ready, nicht mergen, nicht S4, Production nicht migrieren.
+1. ADR-0161 ist die verbindliche S3-Nummer. ADR-0159 bleibt Admin Slice B / PR #46 vorbehalten.
+2. Exact-Head-Gates auf dem Tip nach dieser Umnummerierung neu beweisen (lokal + GitHub Actions + Vercel READY, dieselbe SHA).
+3. Danach STOPP für unabhängigen Technical-Lead-Review. Nicht Mark Ready, nicht mergen, nicht S4, Production nicht migrieren.
