@@ -15,7 +15,7 @@ GitHub ist dauerhaftes Teamgedächtnis. Jeder Cursor-Agent wird ausschließlich 
 | --- | --- | --- | --- | --- | --- | --- |
 | wird nach Start eingetragen | Travel Timing & Seasonal / PR #38 | Runtime-Fix + Review | `feat/travel-timing-seasonal-intelligence` | R11-Blocker 24–26 schließen, Tests/Gates/Handoff | Mark Ready/Merge ohne Product Owner | Fix 24–26 → Exact-Head-Gate → ChatGPT R12 |
 | wird nach Start eingetragen | Account Platform | Audit / Vorbereitung | eigener Branch von `main` bzw. freigegebener Prep-Basis | Code-/DB-/UX-Audit, Architektur, Evidence-Matrix, Implementierungsplan, Doku | unkoordinierte Auth/RLS/DB/Truth-Implementierung, Migration, Production | `docs/CURSOR_ACCOUNT_PLATFORM_AUDIT_TASK.md` ausführen |
-| Admin platform audit | Admin Platform | AUDIT-PASS, Draft PR #40 | `audit/admin-platform` | nur dokumentarische Audit-Artefakte | Rollen/RLS/Service-Role/Payment/Bexio/Ads/Provider/Infomaniak Live, kein Mark Ready/Merge, keine Control-Center-Implementierung | PR #38 Closure abwarten; danach Freigabe für Slice A; Shared Contracts aus `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md` |
+| Admin platform audit | Admin Platform | AUDIT-PASS, Draft PR #40; bleibt für Implementierungs-Slices | `audit/admin-platform` | aktuell nur Doku; nach #38-Closure + Freigabe Slice A | Rollen/RLS/Service-Role/Payment/Bexio/Ads/Provider/Infomaniak Live, kein Mark Ready/Merge ohne PO | PR #38 Closure; danach Slice A durch denselben Agenten; Shared Contracts aus `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md` |
 
 ## 3. Ownership-Grenzen während der Auditphase
 

@@ -20,7 +20,8 @@ Status: **AUDIT-PASS nach unabhängigem ChatGPT-Review; Implementierung nicht ge
 - **Docs-Head dieses Audits:** `f2262034e12cc8258d23001bbbf87f9a56e8414a`
 - **Unabhängiger Review:** `docs/PR40_CHATGPT_ADMIN_AUDIT_REVIEW.md` – **AUDIT-PASS** gegen Head `3585809c`
 - **Review-Commit auf diesem Branch:** `5236c37fbb16961b563ae496978fef814eff686c`
-- **CI:** SUCCESS auf `3585809c` und `5236c37f` (je 4 Checks)
+- **Plan-Update (gleicher Agent sequentiell):** `4a7c749278686e35c90f9c14b8f79afb090cbfb6`
+- **CI:** SUCCESS auf `3585809c`, `5236c37f`, `b2785d64` und `4a7c7492` (je 4 Checks)
 - **PR:** Draft [#40](https://github.com/Jetnity/jetnity/pull/40)
 - **Mark Ready / Merge:** nein
 
@@ -100,6 +101,7 @@ Kein Production-Build als „Control Center fertig“ behauptet. `db:sicherheit`
 ## Exakter nächster Schritt
 
 1. PR #38 Blocker 29 schließen und R15 durchführen (nicht dieser Workstream).
-2. Bei technischem Closure/PASS von PR #38 konfliktarmen **Admin Slice A** zur Freigabe vorlegen: ehrliche Steuerzentralen-IA, Legacy-Lügen entfernen.
-3. Shared Auth/RLS/DB/Privacy/Billing/Support/Traveller-Änderungen nur seriell nach `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md`.
-4. Kein Mark Ready, kein Merge von PR #40 ohne Product-Owner-Freigabe; Merge wäre nur Doku nach Rebase.
+2. Nach technischem Closure/PASS von PR #38 **Slice A durch denselben Agenten `Admin platform audit`** starten, sobald ausdrücklich freigegeben: ehrliche Steuerzentralen-IA, Legacy-Lügen entfernen, eigener Branch `feat/admin-control-center-ia`.
+3. Danach Self-Review, Gates und unabhängiger Technical-Lead-Review, erst dann Slice B an denselben Agenten.
+4. Shared Auth/RLS/DB/Privacy/Billing/Support/Traveller-Änderungen nur seriell nach `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md`.
+5. Kein Mark Ready, kein Merge von PR #40 ohne Product-Owner-Freigabe; Merge wäre nur Doku nach Rebase.

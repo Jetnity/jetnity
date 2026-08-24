@@ -71,6 +71,10 @@ Ergebnis: **85/85 pass**.
 
 Nicht ausgeführt (nicht nötig für reinen Doku-Audit, Secrets/Dauer): Production-Build, `db:sicherheit` gegen Live-Development.
 
+## Ausführungsmodell
+
+`Admin platform audit` bleibt der verantwortliche Agent für die späteren Slices A → B → C …, jeweils nach Review/Gates. Kein Agentwechsel nur wegen eines neuen Blocks. CI auf Plan-Update `4a7c7492`: SUCCESS.
+
 ## Exakter nächster Schritt
 
-PR #38 Blocker 29 / R15 abwarten. Danach ggf. Freigabe für Admin Slice A. Keine Implementierung ohne ausdrückliche spätere Freigabe. Shared Contracts aus `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md` nicht lokal überstimmen.
+PR #38 Closure/PASS abwarten. Danach Slice A durch denselben Agenten, sobald ausdrücklich freigegeben. Shared Contracts aus `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md` nicht lokal überstimmen.
