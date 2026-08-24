@@ -1,7 +1,7 @@
 # Jetnity – Multi-Agent Workstreams
 
 Stand: 24. August 2026  
-Status: **Account- und Admin-Audits abgeschlossen und gemeinsam geschnitten; Kernimplementierung bleibt bis technischem Closure von PR #38 gesperrt**
+Status: **PR #38 hat R17 Technical Closure/PASS; erste konfliktarme Account-/Admin-Slices sind technisch entblockt**
 
 ## 1. Koordinationsprinzip
 
@@ -15,22 +15,22 @@ Verbindlicher gemeinsamer Schnitt Account/Admin: `docs/ACCOUNT_ADMIN_SHARED_CONT
 
 | Cursor-Anzeigename | Workstream | Phase | Branch / PR | Status | Nächster Schritt |
 | --- | --- | --- | --- | --- | --- |
-| vollständiger Anzeigename weiterhin nicht bekannt; Cursor zeigt nur `Reisezeitpunkt saisonale intellig...` | Travel Timing & Seasonal | Runtime-Fix + Independent Review | `feat/travel-timing-seasonal-intelligence` / PR #38 | R16 fand Truth-/Provenance-Blocker 31; Draft, nicht gemergt | Blocker 31 schließen → neues Exact-Head-Gate → ChatGPT R17 |
-| `Account plattform audit vorbereitung` | Account Platform | Audit abgeschlossen | `audit/account-platform` / PR #39 | **AUDIT-PASS** als Planungsgrundlage; keine Implementierung | auf PR-#38-Closure warten; danach AP-1/AP-2/AP-3 freigabefähig schneiden |
-| `Admin platform audit` | Admin Platform / Control Center | Audit abgeschlossen | `audit/admin-platform` / PR #40 | **AUDIT-PASS** als Planungsgrundlage; keine Implementierung | auf PR-#38-Closure warten; danach zuerst Admin Slice A, anschließend read-only System Health |
+| Cursor zeigt `Reisezeitpunkt saisonale intellig...` | Travel Timing & Seasonal | Technical Closure | `feat/travel-timing-seasonal-intelligence` / PR #38 | **R17 PASS / Technical Closure**; Draft, nicht gemergt | auf Product-Owner-Entscheidung zu Mark Ready/Merge warten; Production-Migration separates Gate |
+| `Account plattform audit vorbereitung` | Account Platform | Audit abgeschlossen / Implementierung entblockt | `audit/account-platform` / PR #39 | **AUDIT-PASS** als Planungsgrundlage | erster konfliktarmer Slice: AP-1 Account-Shell + persönliche Übersicht / Meine Reisen als Account-Hub |
+| `Admin platform audit` | Admin Platform / Control Center | Audit abgeschlossen / Implementierung entblockt | `audit/admin-platform` / PR #40 | **AUDIT-PASS** als Planungsgrundlage | erster konfliktarmer Slice: Admin Slice A – ehrliche Control-Center-IA; danach read-only System Health |
 
-Alle drei PRs/Workstreams bleiben ohne ausdrückliche Product-Owner-Freigabe **nicht Mark Ready und nicht gemergt**.
+Alle PRs/Workstreams bleiben ohne ausdrückliche Product-Owner-Freigabe **nicht Mark Ready und nicht gemergt**.
 
-## 3. Ownership nach gemeinsamem Account/Admin-Review
+## 3. Ownership
 
 ### Account Platform – `Account plattform audit vorbereitung`
 
-Owns später primär:
+Owns primär:
 
 - Benutzerkonto-IA/UX
 - Meine Reisen als Account-Hub
 - Account-Security-UX
-- Nutzerseitige Privacy-/Consent-/Export-/Delete-Flows
+- nutzerseitige Privacy-/Consent-/Export-/Delete-Flows
 - Account-Traveller-Registry nach separatem Shared-ADR
 - Favoriten, Preferences, User Notifications und Subscription-Sicht
 
@@ -38,7 +38,7 @@ Darf keine zweite Trip-/Traveller-/Billing-/Auth-Truth bauen.
 
 ### Admin Platform – `Admin platform audit`
 
-Owns später primär:
+Owns primär:
 
 - Admin/Backoffice IA/UX und Jetnity Control Center
 - Admin Permissions/Security-Ops
@@ -54,9 +54,9 @@ Darf keine zweite Account-, Trip-, Traveller-, Billing- oder Travel-Truth bauen.
 
 ### Travel Timing & Seasonal
 
-Owns weiterhin nur PR #38 und dessen direkt notwendige Route-/Seasonal-/Readiness-Persistenz- und Trust-Grenzen-Korrekturen. Account/Admin dürfen diesen Runtime-Workstream nicht verändern.
+PR #38 ist technisch geschlossen. Der final unabhängig geprüfte Runtime-Head ist `5782401943b41ddd1eea1337c93cb37163210362`; R17-Dokument: `docs/PR38_CHATGPT_R17_REVIEW.md`.
 
-Aktueller Blocker 31 betrifft die gemeinsame Route-Truth-Grenze Browser/LocalStorage/Guest → Server → DB. Solange PR #38 offen ist, bleibt die Korrektur im PR-#38-Workstream; Account/Admin dürfen hierzu keinen parallelen Contract bauen.
+Der PR bleibt Draft. Keine weiteren Runtime-Änderungen ohne neuen konkreten Bedarf; jede relevante neue Runtime-Änderung würde vor Integration erneut geprüft.
 
 ## 4. Gemeinsame Contracts – Technical-Lead-geschützt
 
@@ -70,35 +70,40 @@ Seriell/zentral bleiben insbesondere:
 - Support-Sicht auf fremde Reisen
 - Trip Graph / Guest→Account Persistenz
 - Traveller Context / Credentials / Readiness
+- Route / Safety / Seasonal Truth-Verträge
 - Privacy Export / Delete
 - Subscription / Billing / Payment / Refund / Bexio Truth
 - Admin Audit Trail
 - Provider Activation / Secrets / Cost Gates
 
-## 5. Verbindliche Integrationsreihenfolge
+## 5. Verbindliche Integrationsreihenfolge ab R17
 
-1. PR #38 **R16-Blocker 31** kohärent schließen: untrusted Browser-/LocalStorage-/Guest-`routeItinerary` darf `surfaceFromAirportCode` nicht allein durch syntaktische Plausibilität zu belegter Surface-Truth machen.
-2. Neues Exact-Head-Gate auf dem korrigierten Runtime-Head.
-3. Unabhängiger ChatGPT-Re-Review **R17** über Evidence-Provenance, Save→Reload, Guest/Account-Parität, Cross-Domain-Truth und prior blockers.
-4. Wenn R17 nach Stop-Kriterium keinen neuen konkreten relevanten Defekt findet: technisches Closure/PASS für PR #38 dokumentieren; PR bleibt trotzdem Draft bis Product-Owner-Freigabe.
-5. Danach konfliktarme UI-Slices freigeben:
-   - Account AP-1 / AP-2 / AP-3
-   - Admin Slice A (ehrliche Control-Center-IA / Legacy-Lügen entfernen)
-6. Read-only Admin System Health kann danach als eigener konfliktarmer Slice folgen.
-7. Shared Auth/RLS/DB/Privacy/Billing/Support/Traveller-Slices nur seriell nach dem zentralen Contract-Schnitt.
-8. Post-Integration Cross-Domain-Review.
-9. Mark Ready / Merge immer nur nach aktueller Product-Owner-Freigabe.
+1. PR #38 bleibt Draft und technisch unverändert, bis der Product Owner über Mark Ready/Merge entscheidet.
+2. Account darf mit AP-1 als konfliktarmem UI-/IA-Slice beginnen.
+3. Admin darf parallel mit Slice A als konfliktarmem UI-/IA-Slice beginnen.
+4. Nach jedem Slice unabhängiger Review vor dem nächsten Slice.
+5. Read-only Admin System Health folgt als eigener konfliktarmer Slice.
+6. Shared Auth/RLS/DB/Privacy/Billing/Support/Traveller-/Route-Verträge nur seriell nach zentralem Contract-Schnitt.
+7. Post-Integration Cross-Domain-Review.
+8. Mark Ready / Merge immer nur nach aktueller Product-Owner-Freigabe.
+9. Production-Migrationen und Provider-/Secret-/Kosten-Aktivierung bleiben separate Product-Owner-Gates.
 
-## 6. R16-Status / Infra-Grenzen
+## 6. R17-Status / Infra-Grenzen
 
-- letzter gegateter PR-#38-Runtime-Head: `5cc4488e3b30aeb3c8afe1eb2ff7bc9627987e88`
-- R16 Review: `docs/PR38_CHATGPT_R16_REVIEW.md`
-- R16-Urteil: **REQUEST CHANGES / Blocker 31**
-- Supabase Route-Surface-Migration `20260824120000_flug_route_itinerary_surface_evidence`: Development ja, Production nein
-- keine Production-Migration durch R16
+- final geprüfter PR-#38-Runtime-Head: `5782401943b41ddd1eea1337c93cb37163210362`
+- R17 Review: `docs/PR38_CHATGPT_R17_REVIEW.md`
+- R17-Urteil: **PASS / Technical Closure**
+- GitHub Actions Runtime Run `32677741683`: SUCCESS
+- Vercel Runtime Preview `dpl_74A67UxWrCLWviihrsn9hfYqqZDQ`: READY
+- Supabase Development: `20260824120000` + `20260824140000`
+- Supabase Production: keine dieser Route-Surface-Migrationen
 - kein Live-Seasonal-Provider, keine neuen Secrets, keine neuen laufenden Providerkosten
 
-## 7. Pflichtstatus pro Agent
+## 7. Homepage-Workstream
+
+Die geplante neue Startseiten-Richtung ist in `docs/HOMEPAGE_PRODUCT_PAGE_DIRECTION.md` gespeichert und bleibt pausiert. Sie ist als eigener konfliktarmer visueller Workstream vorgesehen, aber **noch nicht zur Implementierung freigegeben**. Header-/Footer-Funktionalität sowie Account/Admin/Seasonal/Auth/DB-Verträge dürfen dabei nicht verändert werden; zuerst ist eine separate visuelle Preview vorgesehen.
+
+## 8. Pflichtstatus pro Agent
 
 Jeder Agent dokumentiert spätestens bei Meilenstein, Blockierung, Unterbrechung und Fertigmeldung:
 
@@ -107,7 +112,7 @@ Jeder Agent dokumentiert spätestens bei Meilenstein, Blockierung, Unterbrechung
 - Branch
 - PR
 - aktueller Runtime-/Docs-Head
-- Status: geplant / arbeitet / blockiert / Review / fertig / integriert
+- Status
 - Scope / erlaubte und gesperrte Bereiche
 - erledigte Arbeit
 - konkrete Findings
@@ -118,7 +123,7 @@ Jeder Agent dokumentiert spätestens bei Meilenstein, Blockierung, Unterbrechung
 
 Eine Cursor-Session darf verloren gehen, ohne dass dadurch relevanter Projektfortschritt verloren geht.
 
-## 8. Produkttrennung
+## 9. Produkttrennung
 
 Verbindliches Detailmodell: `docs/ACCOUNT_TRIP_WORKSPACE_PRODUCT_MODEL.md`.
 
