@@ -29,4 +29,13 @@ describe('Account-Übersicht bleibt kein Workspace', () => {
       assert.equal(quelle.includes(verboten), false, `unerlaubter Bezug: ${verboten}`)
     }
   })
+
+  test('behauptet bei 503 keinen geprüften Speicherstand', () => {
+    const quelle = readFileSync(join(hier, '../../components/account/AccountUebersicht.tsx'), 'utf8')
+    assert.equal(quelle.includes('Deine Reisen sind gespeichert'), false)
+    assert.equal(
+      quelle.includes('Wir konnten deinen aktuellen Speicherstand gerade nicht prüfen; bitte lade später neu.'),
+      true,
+    )
+  })
 })

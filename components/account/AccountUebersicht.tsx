@@ -64,7 +64,7 @@ export default function AccountUebersicht({
           <h2 className="mt-5 text-xl font-semibold text-red-800">Deine Reisen konnten nicht geladen werden.</h2>
           <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-red-700">
             {problem.status === 503
-              ? 'Die Datenbank war gerade nicht erreichbar. Deine Reisen sind gespeichert – bitte lade die Seite in einem Moment neu.'
+              ? 'Wir konnten deinen aktuellen Speicherstand gerade nicht prüfen; bitte lade später neu.'
               : 'Das ist ein Fehler auf unserer Seite, nicht in deinen Daten. Bitte lade die Seite neu.'}
           </p>
         </section>
