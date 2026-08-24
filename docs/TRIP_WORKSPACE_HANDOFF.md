@@ -26,7 +26,24 @@ Erhaltene gemergte Wahrheit:
 - Account AP-3 / PR #53 / ADR-0160 / `8326e72f`
 - Provider S3 / PR #54 / ADR-0161 / `b7f027ec`
 
-Der neue Exact Head wird nach Commit/Push dieser Reconciliation erneut gegatet. Historische Heads `76ef850f`, `ae98fb19`, `536ed50f` und `0ccd38df` sind nur Evidence früherer Läufe.
+Reconciliation-Head, auf dem die lokalen Gates dieser finalen Sync liefen:
+
+`c96923ad4b16e0582b8f555f88a37f202f1c0459`
+
+Lokale Exact-Head-Gates auf `c96923ad`, alle grün:
+
+- `check:setup:ci` (1 Warning: keine `.env` im Cloud-Agent)
+- `typecheck`
+- `lint`
+- `npm test` – **1901/1901 pass, 0 fail**
+- `check:api-schutz` – 12 Admin-Routen
+- `check:schema-bezug`
+- `check:dead` / `check:exports` / `check:deps`
+- `npm run build` – Production-Build 45/45 Seiten, Compiled successfully
+
+Dieser Evidence-Nachzug ist docs-only. Nach Commit/Push ist der Branch-Head der Exact Head für das Re-Review. Lokale Gates werden auf diesem neuen Head erneut ausgeführt, bevor STOPP gilt.
+
+Historische Heads `76ef850f`, `ae98fb19`, `536ed50f` und `0ccd38df` sind nur Evidence früherer Läufe.
 
 Historische Code-Evidence-Basis des Workspace-Audits:
 
