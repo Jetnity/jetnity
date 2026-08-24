@@ -1,12 +1,25 @@
-# Jetnity – Trip Workspace Audit Handoff
+# Jetnity – Trip Workspace Handoff
 
-Stand: 24. August 2026  
-Status: **Audit und Zielarchitektur vorbereitet; Review-Korrektur nach Technical-Lead-Review `5012729847`; STOPP für erneuten unabhängigen Re-Review**  
+Stand: 25. August 2026  
+Status: **TW-1 Runtime in Draft-PR #56; STOPP für unabhängigen Technical-Lead-Re-Review. Kein Ready, kein Merge, kein TW-2.**  
 Agent: `Trip workspace audit architecture`  
-Branch: `audit/trip-workspace`  
-Draft-PR: **#55**, docs-only, kein TW-1
+Aktueller Branch: `feat/trip-workspace-tw1-shell-device-parity`  
+Draft-PR: **#56**
 
-Die Ziel-IA bleibt ein nicht angenommener Product-Owner-Vorschlag. Ein späterer Merge dieses Audit-PRs gibt weder die IA noch TW-1 frei.
+Die Ziel-IA ist als ADR-0163 angenommen. Der historische Audit-Handoff von PR #55 bleibt unten als Evidence.
+
+Aktueller Slice-Status: `docs/TRIP_WORKSPACE_TW1_STATUS.md`  
+Auftrag: `docs/TRIP_WORKSPACE_TW1_TASK.md`
+
+---
+
+## Historische Evidence – Audit-Handoff PR #55
+
+Stand damals: 24. August 2026  
+Branch damals: `audit/trip-workspace`  
+Draft-PR damals: **#55**, docs-only
+
+Die folgenden Abschnitte beschreiben den Audit-Stand vor der IA-Annahme. Sie dürfen den aktuellen TW-1-Status nicht überschreiben.
 
 ---
 
@@ -132,11 +145,6 @@ S3/AP-3/Admin C bleiben erhalten und werden nicht fachlich ersetzt.
 
 ---
 
-## 7. Exakter nächster Schritt
+## 7. Historischer nächster Schritt des Audit-Handoffs
 
-1. Dieser Draft-PR bleibt Draft.
-2. Erneuter unabhängiger ChatGPT / Technical-Lead-Re-Review der Review-Korrekturen (`5012729847`) gegen Code und `main` `b7f027ec`.
-3. Product Owner entscheidet gemeinsam mit dem Technical Lead, **ob und wann** die Ziel-IA angenommen wird und TW-1 Runtime beginnt. Docs-Merge reicht dafür nicht.
-4. **Kein** Mark Ready, **kein** Merge, **kein** TW-1, **kein** Workspace-Umbau ohne neuen ausdrücklichen Auftrag.
-
-Empfohlene erste Runtime nach Freigabe: **TW-1 Shell/Geräteparität** und **TW-2 Reiseübersicht**, danach **TW-4 Aufmerksamkeit**. Siehe `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`.
+Dieser Abschnitt gehört zu PR #55. Der aktuelle nächste Schritt steht oben und in `docs/TRIP_WORKSPACE_TW1_STATUS.md`: unabhängiger Technical-Lead-Re-Review von TW-1 / Draft-PR #56. Kein Ready, kein Merge, kein TW-2.

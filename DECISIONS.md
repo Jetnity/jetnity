@@ -4016,6 +4016,25 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 **Konsequenzen:** Runtime erst nach unabhängigem Review **und** ausdrücklicher Product-Owner-Freigabe als eigener Schnitt TW-1/TW-2. Dieser PR implementiert nichts, ändert keine Shared Contracts und startet kein TW-1. Docs-Merge ≠ IA-Annahme.
 
+**Nachtrag 25. August 2026:** Der Product Owner hat die Ziel-IA angenommen und nur TW-1 zum Start freigegeben. Verbindlich ist ADR-0163. Dieser historische Vorschlagstext bleibt Evidence des Docs-only-Stands von PR #55.
+
+---
+
+## ADR-0163 – Trip Workspace Ziel-IA angenommen; nur TW-1 gestartet
+
+**Datum:** 25. August 2026  
+**Status:** Product-Owner-angenommen. TW-1 Runtime liegt in Draft-PR #56. Kein Ready-/Merge-Gate. Volltext: `docs/ADR_0163_TRIP_WORKSPACE_TARGET_IA.md`.
+
+**Entscheidung:** Dieselbe Workspace-Produktlogik gilt auf Mobile und Desktop. Eine Reise, eine Oberfläche. TW-1 und TW-2 werden nicht in einem Runtime-PR vermischt. Reihenfolge: TW-1 Shell/Geräteparität, danach TW-2, bevorzugt TW-4, dann TW-3.
+
+**Kontext:** Der docs-only Audit #55 hat Desktop ohne Übersicht als P0 dokumentiert. Die Product-Owner-Freigabe vom 25. August 2026 gilt nur für IA-Annahme und Start von TW-1.
+
+**Alternativen:** Desktop-Übersicht optional belassen; TW-1 und TW-2 in einem PR; Attention zuerst.
+
+**Begründung:** Zwei IAs sind ein Produktfehler, kein Layoutunterschied. Kleine Slices halten Review- und Truth-Risiko begrenzt.
+
+**Konsequenzen:** Keine DB-/RLS-/Auth-/Provider-/Secret-Änderung durch TW-1. Safety-/Seasonal-Stille bleibt ein späterer Slice. Mark Ready und Merge brauchen neue ausdrückliche Product-Owner-Gates.
+
 ---
 
 ## Offene Widersprüche

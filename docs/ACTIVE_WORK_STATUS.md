@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 25. August 2026  
-Status: **aktueller operativer Stand nach dem docs-only Merge von Trip-Workspace-Audit PR #55. Letzter Merge-Commit: `08fd7748ace072544e189c94880562e050971811`; danach wurde nur die zentrale Kontinuitätsdokumentation nachgezogen. Admin A–C, Account AP-1–AP-3, Provider S1–S3 und der Trip-Workspace-Audit liegen auf `main`. Kein Runtime-Slice ist aktuell gestartet. Die Ziel-IA aus #55 bleibt Vorschlag; kein TW-1 ohne neuen kontrollierten Auftrag.**
+Status: **aktueller operativer Stand. Letzter Merge auf `main`: PR #55 (`08fd7748ace072544e189c94880562e050971811`). Admin A–C, Account AP-1–AP-3, Provider S1–S3 und der Trip-Workspace-Audit liegen auf `main`. Die Ziel-IA ist als ADR-0163 angenommen. TW-1 Runtime liegt in Draft-PR #56 und wartet auf unabhängigen Technical-Lead-Re-Review. Kein Ready, kein Merge, kein TW-2.**
 
 ## 0. Git-Wahrheit
 
@@ -26,8 +26,8 @@ Nicht gemergte Governance-Evidence: Draft-PR #52. Nicht als `main` ausgeben; PR 
 - Branch: `audit/trip-workspace`
 - Audit/Zielarchitektur technisch vorbereitet und nach Review-Korrektur erneut gegatet
 - **keine Runtime-Implementierung**
-- **Docs-Merge ≠ Product-Owner-Annahme der Ziel-IA**
-- **kein TW-1 freigegeben**
+- **Docs-Merge ≠ Product-Owner-Annahme der Ziel-IA** – die spätere Annahme steht in ADR-0163
+- **TW-1 danach ausdrücklich gestartet** in Draft-PR #56; nicht gemergt
 
 Davor vollständig abgeschlossen:
 
@@ -128,21 +128,23 @@ Keine neuen Secrets und keine neuen laufenden Providerkosten.
 
 ## 3. Workstreams
 
-### Trip Workspace – Audit abgeschlossen, Runtime noch nicht gestartet
+### Trip Workspace – TW-1 Runtime in Draft-PR #56
 
 Verantwortlicher Cursor-Anzeigename: `Trip workspace audit architecture`  
-PR #55: **merged / closed**, docs-only  
+PR #55: **merged / closed**, docs-only Audit  
+PR #56: **Draft**, TW-1 Shell & Geräteparität, kein Ready, kein Merge  
 Dokumente:
 
+- `docs/ADR_0163_TRIP_WORKSPACE_TARGET_IA.md`
+- `docs/TRIP_WORKSPACE_TW1_TASK.md`
+- `docs/TRIP_WORKSPACE_TW1_STATUS.md`
 - `docs/TRIP_WORKSPACE_AUDIT.md`
 - `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`
 - `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`
 - `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`
 - `docs/TRIP_WORKSPACE_HANDOFF.md`
 
-Die Ziel-IA bleibt ein **nicht angenommener Product-Owner-Vorschlag**. Der Merge von PR #55 hat IA und TW-1 nicht freigegeben.
-
-Nächster möglicher Runtime-Slice laut Auditplan: TW-1 Shell/Geräteparität. Er darf erst nach ausdrücklicher neuer Product-Owner-/Technical-Lead-Entscheidung beauftragt werden.
+Die Ziel-IA ist als ADR-0163 angenommen. Nur TW-1 ist gestartet. Safety-/Seasonal-Stille und `Jetzt wichtig` bleiben spätere Slices.
 
 ### Admin Platform – abgeschlossene Slices auf `main`
 
@@ -167,21 +169,21 @@ Nächster möglicher Runtime-Slice laut Auditplan: TW-1 Shell/Geräteparität. E
 
 ## 4. Parallelitätsregel
 
-Aktuell wartet **jeder bestehende Cursor-Agent** auf einen neuen kontrollierten Auftrag:
+Aktuell aktiv ist nur TW-1 durch `Trip workspace audit architecture`. Die übrigen Agenten warten:
 
-- `Trip workspace audit architecture`
+- `Trip workspace audit architecture` – STOPP für Technical-Lead-Re-Review von #56
 - `Admin platform audit`
 - `Account plattform audit vorbereitung`
 - `Jetnity provider readiness audit`
 
-Kein Agent darf aus einem historischen Handoff eigenmächtig TW-1, Slice D, AP-4 oder S4 starten.
+Kein Agent startet eigenmächtig TW-2, Slice D, AP-4 oder S4.
 
 Kontrollierte nächste Reihenfolge:
 
-1. Technical Lead bewertet die in #55 vorgeschlagene Trip-Workspace-Ziel-IA als Ganzes.
-2. Product Owner entscheidet ausdrücklich über IA-Annahme/Änderungen und darüber, ob TW-1 gestartet wird.
-3. Nur bei Freigabe: neuer kontrollierter Auftrag an **Agent `Trip workspace audit architecture`** für TW-1.
-4. Danach weiterhin Slice-für-Slice mit Self-Review, Exact-Head-Gates, unabhängiger Technical-Lead-Prüfung und getrennten Ready-/Merge-Gates.
+1. Unabhängiger Technical-Lead-Re-Review von TW-1 / Draft-PR #56.
+2. Danach erst eine neue ausdrückliche Product-Owner-Entscheidung zu Mark Ready.
+3. Merge bleibt ein separates Gate.
+4. TW-2 erst nach eigenem Auftrag.
 
 Seriell/zentral bleiben insbesondere:
 
@@ -205,7 +207,7 @@ Die neue Homepage-Produktseiten-Idee bleibt **pausiert**. Siehe `docs/HOMEPAGE_P
 - PR #43, #44, #45, #46, #47, #48, #49, #51, #53, #54 und #55 sind gemergt.
 - PR #52 bleibt Draft und ungemergt.
 - ADR-Allokation: Admin A = ADR-0158, Admin B = ADR-0159, Account AP-3 = ADR-0160, Provider S3 = ADR-0161, Admin C = ADR-0162.
-- Trip-Workspace-Ziel-IA hat weiterhin **keine angenommene ADR-Nummer**; der Vorschlag in `DECISIONS.md` bleibt Vorschlag.
+- Trip-Workspace-Ziel-IA ist ADR-0163; TW-1 liegt in Draft-PR #56.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
@@ -214,10 +216,9 @@ Die neue Homepage-Produktseiten-Idee bleibt **pausiert**. Siehe `docs/HOMEPAGE_P
 
 ## 7. Exakter nächster Schritt
 
-1. PR #55 ist erledigt: docs-only Audit/Zielarchitektur gemergt; **kein Runtime-Umbau**.
-2. Kein Agent startet automatisch weiter.
-3. **Nächster Technical-Lead-Schritt:** die vorgeschlagene Ziel-IA aus #55 fachlich als Ganzes bewerten und dem Product Owner eine klare Empfehlung zur Annahme oder zu notwendigen Änderungen geben.
-4. Erst nach ausdrücklicher Product-Owner-Entscheidung darf `Trip workspace audit architecture` TW-1 beginnen.
-5. `Admin platform audit`, `Account plattform audit vorbereitung` und `Jetnity provider readiness audit` warten bis zu eigenen neuen Aufträgen.
+1. PR #55 ist erledigt: docs-only Audit/Zielarchitektur gemergt.
+2. ADR-0163 nimmt die Ziel-IA an und gibt nur TW-1 frei.
+3. **Nächster Technical-Lead-Schritt:** unabhängiger Re-Review von Draft-PR #56. Kein Ready, kein Merge, kein TW-2.
+4. `Admin platform audit`, `Account plattform audit vorbereitung` und `Jetnity provider readiness audit` warten bis zu eigenen neuen Aufträgen.
 
 Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag.

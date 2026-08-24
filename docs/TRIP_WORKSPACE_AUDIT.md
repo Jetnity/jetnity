@@ -1,7 +1,8 @@
 # Jetnity – Trip Workspace / Reiseübersicht Audit
 
 Stand: 24. August 2026  
-Status: **docs-only Audit; Review-Korrektur nach Technical-Lead-Review `5012729847`; kein Runtime-Umbau, kein Mark Ready, kein Merge**  
+Status: **docs-only Audit-Evidence; Review-Korrektur nach Technical-Lead-Review `5012729847`.**  
+Nachtrag 25. August 2026: Die Ziel-IA ist als ADR-0163 angenommen. TW-1 Runtime liegt in Draft-PR #56. Dieser Audittext bleibt historische Evidence und wird nicht als aktueller Runtime-Stand gelesen.  
 Code-Evidence-Basis (historisch): `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267` (Admin Slice A)  
 Aktueller Integrations-`main` nach Sync: `b7f027ec448639fe3399512d401a7789b24e52a6` (Provider S3)  
 Agent: `Trip workspace audit architecture`  

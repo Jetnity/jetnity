@@ -1,6 +1,6 @@
 // lib/trips/arbeitsbereich.test.ts
 //
-// Die mobile Übersicht darf nur zählen, was im Reisegraphen liegt.
+// Die Übersicht darf nur zählen, was im Reisegraphen liegt.
 // Eine zweite Tageswahrheit oder ein gemutmasster Providerstatus wäre ein
 // Produktdefekt, auch wenn die Seite nicht abstürzt.
 
@@ -254,58 +254,77 @@ describe('Tagesauswahl', () => {
   test('derselbe aktive Tag gilt für Übersicht/Tagesplan und Aktivitäten', () => {
     const aktiv = gewaehlterTagId(reise(), 'day-2')
     assert.equal(aktiv, 'day-2')
-    assert.equal(tagesplanIstSichtbar('uebersicht', true), true)
-    assert.equal(tagesplanIstSichtbar('aktivitaeten', true), false)
+    assert.equal(tagesplanIstSichtbar('uebersicht'), true)
+    assert.equal(tagesplanIstSichtbar('aktivitaeten'), false)
   })
 })
 
 describe('Sichtbarkeit und Mount', () => {
-  test('auf Mobile ist nur der aktive Bereich sichtbar', () => {
-    assert.equal(bereichSollSichtbar('uebersicht', 'uebersicht', true), true)
-    assert.equal(bereichSollSichtbar('fluege', 'uebersicht', true), false)
-    assert.equal(bereichSollSichtbar('aktivitaeten', 'uebersicht', true), false)
-    assert.equal(bereichSollSichtbar('mobilitaet', 'uebersicht', true), false)
-    assert.equal(bereichSollSichtbar('mobilitaet', 'mobilitaet', true), true)
+  test('auf allen Geräten ist nur der aktive Bereich sichtbar', () => {
+    assert.equal(bereichSollSichtbar('uebersicht', 'uebersicht'), true)
+    assert.equal(bereichSollSichtbar('fluege', 'uebersicht'), false)
+    assert.equal(bereichSollSichtbar('aktivitaeten', 'uebersicht'), false)
+    assert.equal(bereichSollSichtbar('mobilitaet', 'uebersicht'), false)
+    assert.equal(bereichSollSichtbar('mobilitaet', 'mobilitaet'), true)
   })
 
-  test('auf Mobile liegt der Tagesplan in der Übersicht, nicht in einem eigenen Tab', () => {
-    assert.equal(tagesplanIstSichtbar('uebersicht', true), true)
-    assert.equal(tagesplanIstSichtbar('fluege', true), false)
-    assert.equal(tagesplanIstSichtbar('unterkunft', true), false)
-    assert.equal(tagesplanIstSichtbar('aktivitaeten', true), false)
+  test('der Tagesplan liegt in der Übersicht, nicht in einem eigenen Tab', () => {
+    assert.equal(tagesplanIstSichtbar('uebersicht'), true)
+    assert.equal(tagesplanIstSichtbar('fluege'), false)
+    assert.equal(tagesplanIstSichtbar('unterkunft'), false)
+    assert.equal(tagesplanIstSichtbar('aktivitaeten'), false)
+    assert.equal(tagesplanIstSichtbar('mobilitaet'), false)
   })
 
-  test('auf Desktop bleibt die Übersicht weg und Plan sowie Suchen sichtbar', () => {
-    assert.equal(bereichSollSichtbar('uebersicht', 'uebersicht', false), false)
-    assert.equal(bereichSollSichtbar('fluege', 'uebersicht', false), true)
-    assert.equal(tagesplanIstSichtbar('uebersicht', false), true)
-    assert.equal(tagesplanIstSichtbar('fluege', false), true)
+  test('Desktop behält die Reise-Ebene und zeigt nicht alle Domains parallel', () => {
+    assert.equal(bereichSollSichtbar('uebersicht', 'uebersicht'), true)
+    assert.equal(bereichSollSichtbar('fluege', 'uebersicht'), false)
+    assert.equal(bereichSollSichtbar('unterkunft', 'uebersicht'), false)
+    assert.equal(bereichSollSichtbar('aktivitaeten', 'uebersicht'), false)
+    assert.equal(bereichSollSichtbar('mobilitaet', 'uebersicht'), false)
+    assert.equal(tagesplanIstSichtbar('uebersicht'), true)
+    assert.equal(tagesplanIstSichtbar('fluege'), false)
   })
 
-  test('Mobile hängt Hotel und Aktivitäten erst beim Besuch ein', () => {
+  test('Hotel und Aktivitäten hängen erst beim Besuch ein', () => {
     const leer = new Set<'uebersicht'>()
-    assert.equal(bereichSollMounten('unterkunft', 'uebersicht', leer, true), false)
-    assert.equal(bereichSollMounten('aktivitaeten', 'uebersicht', leer, true), false)
-    assert.equal(bereichSollMounten('fluege', 'fluege', leer, true), true)
-    assert.equal(bereichSollMounten('uebersicht', 'fluege', leer, true), true)
+    assert.equal(bereichSollMounten('unterkunft', 'uebersicht', leer), false)
+    assert.equal(bereichSollMounten('aktivitaeten', 'uebersicht', leer), false)
+    assert.equal(bereichSollMounten('fluege', 'fluege', leer), true)
+    assert.equal(bereichSollMounten('uebersicht', 'fluege', leer), true)
   })
 
   test('ein einmal besuchter Suchbereich bleibt eingehängt', () => {
     const besucht = besuchteBereicheErweitern(new Set(), 'unterkunft')
-    assert.equal(bereichSollMounten('unterkunft', 'uebersicht', besucht, true), true)
+    assert.equal(bereichSollMounten('unterkunft', 'uebersicht', besucht), true)
     assert.equal(besuchteBereicheErweitern(besucht, 'unterkunft'), besucht)
   })
 
-  test('Desktop hängt die Arbeitsbereiche ein, nicht die mobile Übersicht', () => {
-    assert.equal(bereichSollMounten('uebersicht', 'uebersicht', new Set(), false), false)
-    assert.equal(bereichSollMounten('unterkunft', 'uebersicht', new Set(), false), true)
-    assert.equal(bereichSollMounten('aktivitaeten', 'fluege', new Set(), false), true)
+  test('Desktop mountet die Übersicht und hängt Domains erst bei Besuch ein', () => {
+    const leer = new Set<never>()
+    assert.equal(bereichSollMounten('uebersicht', 'uebersicht', leer), true)
+    assert.equal(bereichSollMounten('uebersicht', 'fluege', leer), true)
+    assert.equal(bereichSollMounten('unterkunft', 'uebersicht', leer), false)
+    assert.equal(bereichSollMounten('aktivitaeten', 'fluege', leer), false)
+    assert.equal(bereichSollMounten('fluege', 'fluege', leer), true)
+    assert.equal(bereichSollSichtbar('uebersicht', 'uebersicht'), true)
+    assert.equal(bereichSollSichtbar('fluege', 'fluege'), true)
   })
 
-  test('Reise ändern ist auf Desktop immer da, auf Mobile nur geöffnet', () => {
-    assert.equal(aenderungIstSichtbar(false, false), true)
-    assert.equal(aenderungIstSichtbar(true, false), false)
-    assert.equal(aenderungIstSichtbar(true, true), true)
+  test('Domain-Bereiche bleiben nach Besuch erreichbar und gemountet', () => {
+    let besucht: ReadonlySet<(typeof ARBEITSBEREICHE)[number]> = new Set([STANDARD_ARBEITSBEREICH])
+    for (const bereich of ['fluege', 'unterkunft', 'aktivitaeten', 'mobilitaet'] as const) {
+      assert.equal(bereichSollMounten(bereich, 'uebersicht', besucht), false)
+      besucht = besuchteBereicheErweitern(besucht, bereich)
+      assert.equal(bereichSollMounten(bereich, 'uebersicht', besucht), true)
+      assert.equal(bereichSollSichtbar(bereich, bereich), true)
+      assert.equal(bereichSollSichtbar(bereich, 'uebersicht'), false)
+    }
+  })
+
+  test('Reise ändern ist nur sichtbar, wenn es geöffnet ist', () => {
+    assert.equal(aenderungIstSichtbar(false), false)
+    assert.equal(aenderungIstSichtbar(true), true)
   })
 
   test('ein verborgener Bereich trägt keine Display-Utility neben hidden', () => {
