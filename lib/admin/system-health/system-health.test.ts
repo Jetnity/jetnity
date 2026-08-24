@@ -24,21 +24,30 @@ import {
   SYSTEM_HEALTH_TTL_MS,
   SYSTEM_HEALTH_WRITE_ACTIONS,
   healthKarteIstGruen,
+  istUeberzogenerGesamtClaim,
+  sichtbarerKartenClaim,
 } from './typen'
 
 const JETZT = Date.parse('2026-08-24T03:00:00.000Z')
 
 describe('System Health Bewertung', () => {
-  test('echte frische Success-Evidence wird healthy und grün', () => {
+  test('Prozess-Antwort macht nur den App-Prozess-Sub-Check healthy, nicht App / Deployment', () => {
     const app = bewerteApp(
       { vercelEnv: 'preview', commitSha: 'abc1234', deploymentId: 'dpl_1', region: 'fra1' },
       JETZT,
     )
-    assert.equal(app.status, 'healthy')
-    assert.equal(app.freshness.state, 'fresh')
-    assert.equal(healthKarteIstGruen(app), true)
-    assert.match(app.summary, /beantwortet/)
-    assert.match(app.doesNotProve, /Vercel-Plattform/)
+    const prozess = app.checks?.find((teil) => teil.id === 'app-prozess')
+    const deployment = app.checks?.find((teil) => teil.id === 'app-deployment')
+    assert.equal(app.status, 'unknown')
+    assert.equal(app.name, 'App / Deployment')
+    assert.equal(sichtbarerKartenClaim(app), 'App / Deployment – Unbekannt')
+    assert.equal(healthKarteIstGruen(app), false)
+    assert.equal(istUeberzogenerGesamtClaim(app), false)
+    assert.equal(prozess?.status, 'healthy')
+    assert.equal(healthKarteIstGruen(prozess!), true)
+    assert.equal(deployment?.status, 'unknown')
+    assert.equal(healthKarteIstGruen(deployment!), false)
+    assert.match(app.doesNotProve, /Deployment-Health/)
   })
 
   test('fehlende Quelle ist not_configured und niemals healthy', () => {
@@ -50,7 +59,7 @@ describe('System Health Bewertung', () => {
     assert.equal(healthKarteIstGruen(github), false)
   })
 
-  test('Timeout und Fehler werden unavailable, nicht healthy', () => {
+  test('Timeout und Fehler machen nur den App-Datenzugriff unavailable', () => {
     const timeout = bewerteSupabaseAppZugriff({
       configured: true,
       ping: { ok: false, timeout: true, message: 'timeout' },
@@ -61,10 +70,18 @@ describe('System Health Bewertung', () => {
       ping: { ok: false, message: 'connection refused' },
       nowMs: JETZT,
     })
-    assert.equal(timeout.status, 'unavailable')
-    assert.equal(fehler.status, 'unavailable')
+    assert.equal(timeout.status, 'not_configured')
+    assert.equal(fehler.status, 'not_configured')
     assert.equal(healthKarteIstGruen(timeout), false)
     assert.equal(healthKarteIstGruen(fehler), false)
+    assert.equal(
+      timeout.checks?.find((teil) => teil.id === 'supabase-app-datenzugriff')?.status,
+      'unavailable',
+    )
+    assert.equal(
+      fehler.checks?.find((teil) => teil.id === 'supabase-app-datenzugriff')?.status,
+      'unavailable',
+    )
   })
 
   test('alte Evidence ist stale und nicht grün', () => {
@@ -100,8 +117,14 @@ describe('System Health Bewertung', () => {
     const app = bericht.items.find((item) => item.id === 'app')
     const supabase = bericht.items.find((item) => item.id === 'supabase')
     const vercel = bericht.items.find((item) => item.id === 'vercel')
-    assert.equal(app?.status, 'healthy')
-    assert.equal(supabase?.status, 'unavailable')
+    assert.equal(app?.status, 'unknown')
+    assert.equal(healthKarteIstGruen(app!), false)
+    assert.equal(app?.checks?.find((teil) => teil.id === 'app-prozess')?.status, 'healthy')
+    assert.equal(supabase?.status, 'not_configured')
+    assert.equal(
+      supabase?.checks?.find((teil) => teil.id === 'supabase-app-datenzugriff')?.status,
+      'unavailable',
+    )
     assert.equal(vercel?.status, 'not_configured')
     assert.equal(healthKarteIstGruen(vercel!), false)
   })
@@ -131,19 +154,28 @@ describe('System Health Bewertung', () => {
     assert.equal(bericht.items.find((item) => item.id === 'supabase')?.status, 'not_configured')
   })
 
-  test('Supabase-Success belegt nur App-Datenquellen-Zugriff, nicht Management', () => {
+  test('airports-Read erzeugt nicht Supabase – Gesund', () => {
     const supabase = bewerteSupabaseAppZugriff({
       configured: true,
       ping: { ok: true },
       nowMs: JETZT,
     })
-    assert.equal(supabase.status, 'healthy')
-    assert.equal(healthKarteIstGruen(supabase), true)
-    assert.match(supabase.doesNotProve, /Management/)
-    assert.match(supabase.proves, /airports/)
+    const zugriff = supabase.checks?.find((teil) => teil.id === 'supabase-app-datenzugriff')
+    const management = supabase.checks?.find((teil) => teil.id === 'supabase-management')
+    assert.equal(supabase.name, 'Supabase')
+    assert.equal(supabase.status, 'not_configured')
+    assert.equal(sichtbarerKartenClaim(supabase), 'Supabase – Nicht konfiguriert')
+    assert.equal(healthKarteIstGruen(supabase), false)
+    assert.equal(istUeberzogenerGesamtClaim(supabase), false)
+    assert.equal(zugriff?.name, 'Supabase App-Datenzugriff')
+    assert.equal(zugriff?.status, 'healthy')
+    assert.equal(healthKarteIstGruen(zugriff!), true)
+    assert.equal(management?.status, 'not_configured')
+    assert.match(zugriff!.proves, /airports/)
+    assert.match(zugriff!.doesNotProve, /Management/)
   })
 
-  test('VERCEL_ENV allein macht Vercel-Plattform nicht healthy', () => {
+  test('VERCEL_ENV allein macht weder App/Deployment noch Vercel healthy', () => {
     const runtime = leseAppRuntime({
       VERCEL_ENV: 'preview',
       VERCEL_GIT_COMMIT_SHA: 'abc1234',
@@ -152,8 +184,10 @@ describe('System Health Bewertung', () => {
     const app = bewerteApp(runtime, JETZT)
     const vercel = vercelNichtKonfiguriert(JETZT)
     assert.equal(runtime.vercelEnv, 'preview')
-    assert.equal(app.status, 'healthy')
+    assert.equal(app.status, 'unknown')
+    assert.equal(healthKarteIstGruen(app), false)
     assert.equal(app.metadata?.vercelEnv, 'preview')
+    assert.equal(app.checks?.find((teil) => teil.id === 'app-deployment')?.status, 'unknown')
     assert.equal(vercel.status, 'not_configured')
     assert.equal(healthKarteIstGruen(vercel), false)
     assert.match(vercel.summary, /kein freigegebenes Vercel-Management-Token/i)

@@ -22,6 +22,17 @@ export type HealthFreshness = {
   ttlMs: number
 }
 
+export type SystemHealthCheck = {
+  id: string
+  name: string
+  status: HealthStatus
+  source: string
+  freshness: HealthFreshness
+  summary: string
+  proves: string
+  doesNotProve: string
+}
+
 export type SystemHealthItem = {
   id: SystemHealthId
   name: string
@@ -35,6 +46,7 @@ export type SystemHealthItem = {
   proves: string
   doesNotProve: string
   metadata?: Record<string, string | null>
+  checks?: SystemHealthCheck[]
 }
 
 export type SystemHealthBericht = {
@@ -73,9 +85,18 @@ export const FRESHNESS_LABEL: Record<FreshnessState, string> = {
   unknown: 'Alter unbekannt',
 }
 
-/** Sichtbares Grün nur bei frischer, realer Bestätigung. */
+/** Sichtbares Grün nur bei frischer, realer Bestätigung genau dieser Aussage. */
 export function healthKarteIstGruen(item: Pick<SystemHealthItem, 'status' | 'freshness'>): boolean {
   return item.status === 'healthy' && item.freshness.state === 'fresh'
+}
+
+export function sichtbarerKartenClaim(item: Pick<SystemHealthItem, 'name' | 'status'>): string {
+  return `${item.name} – ${HEALTH_STATUS_LABEL[item.status]}`
+}
+
+/** Generischer Gesamt-Claim, der ohne belegte System-Health nicht grün sein darf. */
+export function istUeberzogenerGesamtClaim(item: Pick<SystemHealthItem, 'id' | 'status'>): boolean {
+  return (item.id === 'app' || item.id === 'supabase') && item.status === 'healthy'
 }
 
 export const SYSTEM_HEALTH_WRITE_ACTIONS: readonly never[] = []

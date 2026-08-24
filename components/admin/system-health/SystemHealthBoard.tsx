@@ -6,12 +6,14 @@ import {
   HEALTH_STATUS_LABEL,
   SYSTEM_HEALTH_API_PFAD,
   healthKarteIstGruen,
+  sichtbarerKartenClaim,
   type SystemHealthBericht,
+  type SystemHealthCheck,
   type SystemHealthItem,
 } from '@/lib/admin/system-health'
 import { cn } from '@/lib/utils'
 
-function statusKlassen(item: SystemHealthItem): string {
+function statusKlassen(item: Pick<SystemHealthItem, 'status' | 'freshness'>): string {
   if (healthKarteIstGruen(item)) {
     return 'border-emerald-400/30 bg-emerald-400/10 text-emerald-800 dark:text-emerald-200'
   }
@@ -24,11 +26,37 @@ function statusKlassen(item: SystemHealthItem): string {
   return 'border-border bg-muted text-foreground'
 }
 
+function CheckZeile({ check }: { check: SystemHealthCheck }) {
+  const statusText = HEALTH_STATUS_LABEL[check.status]
+  const frischeText = FRESHNESS_LABEL[check.freshness.state]
+  return (
+    <li
+      className="rounded-xl border border-border bg-background px-3 py-2"
+      data-health-check={check.id}
+      data-health-status={check.status}
+      data-health-green={healthKarteIstGruen(check) ? 'true' : 'false'}
+    >
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <p className="text-sm font-medium">{check.name}</p>
+        <p className={cn('rounded-md border px-2 py-0.5 text-xs font-medium', statusKlassen(check))}>
+          <span>{statusText}</span>
+          <span className="mx-1" aria-hidden>
+            ·
+          </span>
+          <span>{frischeText}</span>
+        </p>
+      </div>
+      <p className="mt-1 text-xs text-muted-foreground">{check.summary}</p>
+    </li>
+  )
+}
+
 function HealthKarte({ item }: { item: SystemHealthItem }) {
   const [offen, setOffen] = useState(false)
   const statusText = HEALTH_STATUS_LABEL[item.status]
   const frischeText = FRESHNESS_LABEL[item.freshness.state]
-  const beschriftung = `${item.name}: ${statusText}, Quelle ${item.source}, ${frischeText}`
+  const claim = sichtbarerKartenClaim(item)
+  const beschriftung = `${claim}, Quelle ${item.source}, ${frischeText}`
   const gruen = healthKarteIstGruen(item)
 
   return (
@@ -39,6 +67,7 @@ function HealthKarte({ item }: { item: SystemHealthItem }) {
       data-health-status={item.status}
       data-health-freshness={item.freshness.state}
       data-health-green={gruen ? 'true' : 'false'}
+      data-health-claim={claim}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
@@ -53,6 +82,13 @@ function HealthKarte({ item }: { item: SystemHealthItem }) {
           <span>{frischeText}</span>
         </p>
       </div>
+      {item.checks?.length ? (
+        <ul className="mt-3 grid gap-2" aria-label={`Teilprüfungen ${item.name}`}>
+          {item.checks.map((teil) => (
+            <CheckZeile key={teil.id} check={teil} />
+          ))}
+        </ul>
+      ) : null}
       <dl className="mt-3 grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
         <div>
           <dt className="font-medium text-foreground">Quelle</dt>

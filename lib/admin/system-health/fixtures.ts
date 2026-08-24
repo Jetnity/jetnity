@@ -1,6 +1,7 @@
 import type { SystemHealthBericht, SystemHealthItem } from './typen'
 
 const JETZT = '2026-08-24T03:00:00.000Z'
+const FRISCH = { state: 'fresh' as const, ageMs: 0, ttlMs: 60_000 }
 
 function item(teil: SystemHealthItem): SystemHealthItem {
   return teil
@@ -13,14 +14,36 @@ export const SYSTEM_HEALTH_AUDIT_BERICHT: SystemHealthBericht = {
     item({
       id: 'app',
       name: 'App / Deployment',
-      status: 'healthy',
+      status: 'unknown',
       source: 'process-runtime',
       checkedAt: JETZT,
-      freshness: { state: 'fresh', ageMs: 0, ttlMs: 60_000 },
-      summary: 'Dieser Prozess hat die Health-Abfrage beantwortet und liefert Deployment-Metadaten.',
-      proves: 'Dieser Next.js-Prozess ist in diesem Moment erreichbar.',
-      doesNotProve: 'Vercel-Plattform oder Datenbank.',
+      freshness: FRISCH,
+      summary: 'Deployment-Health ist nicht belegt. Nur die Prozess-Erreichbarkeit ist geprüft.',
+      proves: 'Nur den Sub-Check App-Prozess, nicht App/Deployment insgesamt.',
+      doesNotProve: 'Deployment-Health oder Vercel-Plattform.',
       metadata: { vercelEnv: 'preview', commitSha: 'abc1234', deploymentId: 'dpl_audit', region: 'fra1' },
+      checks: [
+        {
+          id: 'app-prozess',
+          name: 'App-Prozess',
+          status: 'healthy',
+          source: 'process-runtime',
+          freshness: FRISCH,
+          summary: 'Dieser Next.js-Prozess hat die Health-Abfrage beantwortet.',
+          proves: 'Dieser Next.js-Prozess ist in diesem Moment erreichbar.',
+          doesNotProve: 'Deployment-Health.',
+        },
+        {
+          id: 'app-deployment',
+          name: 'Deployment-Health',
+          status: 'unknown',
+          source: 'none',
+          freshness: FRISCH,
+          summary: 'Deployment-Health ist nicht belegt. VERCEL_* sind nur Metadaten.',
+          proves: 'Nichts zur aktuellen Deployment-Gesundheit.',
+          doesNotProve: 'Ob dieses Deployment healthy ist.',
+        },
+      ],
     }),
     item({
       id: 'vercel',
@@ -36,13 +59,36 @@ export const SYSTEM_HEALTH_AUDIT_BERICHT: SystemHealthBericht = {
     item({
       id: 'supabase',
       name: 'Supabase',
-      status: 'unavailable',
+      status: 'not_configured',
       source: 'supabase-postgrest-airports',
       checkedAt: JETZT,
-      freshness: { state: 'fresh', ageMs: 0, ttlMs: 60_000 },
-      summary: 'Die Prüfung der Datenquelle ist fehlgeschlagen.',
-      proves: 'Die App-Datenquelle hat diese Anfrage nicht erfolgreich beantwortet.',
+      freshness: FRISCH,
+      summary:
+        'Supabase-Gesamtzustand bleibt unbelegt. Der airports-Read beweist nur App-Datenzugriff, nicht die Plattform.',
+      proves: 'Nur den Sub-Check Supabase App-Datenzugriff, nicht Supabase insgesamt.',
       doesNotProve: 'Supabase-Management-Plattform-Health.',
+      checks: [
+        {
+          id: 'supabase-app-datenzugriff',
+          name: 'Supabase App-Datenzugriff',
+          status: 'unavailable',
+          source: 'supabase-postgrest-airports',
+          freshness: FRISCH,
+          summary: 'Die Prüfung der Datenquelle ist fehlgeschlagen.',
+          proves: 'Die App-Datenquelle hat diese Anfrage nicht erfolgreich beantwortet.',
+          doesNotProve: 'Supabase-Management-Plattform-Health.',
+        },
+        {
+          id: 'supabase-management',
+          name: 'Supabase Management / Plattform',
+          status: 'not_configured',
+          source: 'none',
+          freshness: FRISCH,
+          summary: 'Kein freigegebenes Supabase-Management-Token.',
+          proves: 'Nur, dass Management-Health nicht angebunden ist.',
+          doesNotProve: 'Projektzustand.',
+        },
+      ],
     }),
     item({
       id: 'github',

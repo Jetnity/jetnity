@@ -6,7 +6,7 @@ Branch: `feat/admin-system-health`
 
 ## Adversarielle Prüfung
 
-1. **Wird Fake-Green behauptet?** Nein. `healthKarteIstGruen` verlangt `healthy` und `fresh`. Vercel/GitHub/Infomaniak sind `not_configured`. Stale-Fixtures im UI-Audit dürfen nicht grün sein.
+1. **Wird Fake-Green behauptet?** Nein. `healthKarteIstGruen` verlangt `healthy` und `fresh` genau für diese Aussage. `App / Deployment` und `Supabase` bleiben non-green; nur die scoped Sub-Checks `App-Prozess` bzw. `Supabase App-Datenzugriff` dürfen bei belegter enger Evidenz grün sein.
 2. **Wird ENV-Präsenz als Plattform-Health gelesen?** Nein. `VERCEL_*` erscheint nur als App-Metadaten. Vercel-Karte bleibt ohne Management-Token `not_configured`.
 3. **Wird App-DB-Ping als Supabase-Management verkauft?** Nein. Success-Text und `doesNotProve` trennen App-Datenquellen-Zugriff von Management.
 4. **Gibt es Writes oder Mutationen?** Nein. Nur `GET`. `writeActions: []`. Kein Restart/Redeploy/Repair.

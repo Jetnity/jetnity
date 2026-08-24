@@ -93,12 +93,37 @@ async function kombinierenPruefen(browser, engine, viewport) {
       fehler.push('Infomaniak-Freshness ist nicht stale')
     }
 
+    const app = page.locator('[data-health-id="app"]')
+    if ((await app.getAttribute('data-health-green')) !== 'false') {
+      fehler.push('App / Deployment darf nicht grün sein')
+    }
+    if ((await app.getAttribute('data-health-claim')) === 'App / Deployment – Gesund') {
+      fehler.push('App / Deployment darf nicht Gesund claimen')
+    }
+    if ((await app.getAttribute('data-health-status')) !== 'unknown') {
+      fehler.push('App / Deployment-Gesamtstatus ist nicht unknown')
+    }
+    const prozess = page.locator('[data-health-check="app-prozess"]')
+    if ((await prozess.getAttribute('data-health-status')) !== 'healthy') {
+      fehler.push('App-Prozess-Sub-Check ist nicht healthy')
+    }
+
     const supabase = page.locator('[data-health-id="supabase"]')
-    if ((await supabase.getAttribute('data-health-status')) !== 'unavailable') {
-      fehler.push('Supabase-Fixture ist nicht unavailable')
+    if ((await supabase.getAttribute('data-health-status')) !== 'not_configured') {
+      fehler.push('Supabase-Gesamtstatus ist nicht not_configured')
     }
     if ((await supabase.getAttribute('data-health-green')) !== 'false') {
-      fehler.push('unavailable darf nicht grün sein')
+      fehler.push('Supabase-Gesamtkarte darf nicht grün sein')
+    }
+    if ((await supabase.getAttribute('data-health-claim')) === 'Supabase – Gesund') {
+      fehler.push('Supabase darf nicht Gesund claimen')
+    }
+    const zugriff = page.locator('[data-health-check="supabase-app-datenzugriff"]')
+    if ((await zugriff.getAttribute('data-health-status')) !== 'unavailable') {
+      fehler.push('Supabase App-Datenzugriff-Fixture ist nicht unavailable')
+    }
+    if ((await zugriff.getAttribute('data-health-green')) !== 'false') {
+      fehler.push('unavailable App-Datenzugriff darf nicht grün sein')
     }
 
     const details = page.locator('[data-health-id="app"]').getByRole('button', { name: 'Details' })

@@ -7,9 +7,12 @@ export {
   SYSTEM_HEALTH_TTL_MS,
   SYSTEM_HEALTH_WRITE_ACTIONS,
   healthKarteIstGruen,
+  istUeberzogenerGesamtClaim,
+  sichtbarerKartenClaim,
   type HealthFreshness,
   type HealthStatus,
   type SystemHealthBericht,
+  type SystemHealthCheck,
   type SystemHealthId,
   type SystemHealthItem,
 } from './typen'

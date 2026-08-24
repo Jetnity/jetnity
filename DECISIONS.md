@@ -3790,6 +3790,8 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 **Konsequenzen:** Copilot Pro erklärt Health nicht in diesem Slice. Domain-/Mail-/DNS-Health bleibt später. Account-/Trip-/Traveller-/Route-/Safety-/Seasonal-Verträge bleiben unberührt. Draft PR #46 bleibt Draft.
 
+**Nachtrag 24. August 2026 – Blocker B1:** Der sichtbare Gesamtclaim einer Systemkarte darf nur das behaupten, was die Quelle trägt. `App / Deployment` bleibt `unknown`/non-green, weil eine Prozessantwort keine Deployment-Health ist; der enge Nachweis erscheint als Sub-Check `App-Prozess`. `Supabase` bleibt `not_configured`/non-green, weil `public.airports` nur App→PostgREST-Datenzugriff beweist; der enge Nachweis erscheint als Sub-Check `Supabase App-Datenzugriff`. `VERCEL_*` bleibt Metadaten, kein Deployment-Grün.
+
 ---
 
 ## Offene Widersprüche

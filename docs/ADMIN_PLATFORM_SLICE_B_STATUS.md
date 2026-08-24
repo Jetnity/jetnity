@@ -8,11 +8,12 @@ Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
 
 ## Status
 
-**Exact-Head-Gates grün. Wartet auf unabhängigen Technical-Lead-Review.** Draft, nicht gemergt. Kein Mark Ready, kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe. Kein Technical Closure / PASS – das entscheidet der unabhängige Review.
+**Blocker B1 umgesetzt: sichtbarer Gesamtclaim nur so weit wie die Evidenz.** Draft, nicht gemergt. Kein Mark Ready, kein Merge. Kein Technical Closure / PASS.
 
-Letzter Runtime-Head: `285022e2`.  
-Erster voll gegateter Handoff-Head: `dd1c469c115931346027e7639e2e22cd16b47345`.  
-Docs-Evidence-Head danach ebenfalls voll gegatet: `fb193316e39dee171a1c7a72cffdb586b5f473d1` (Runtime unverändert).
+`App / Deployment` bleibt `unknown`/non-green; enge Evidenz ist der Sub-Check `App-Prozess`.  
+`Supabase` bleibt `not_configured`/non-green; enge Evidenz ist der Sub-Check `Supabase App-Datenzugriff`.
+
+Neue Exact-Head-Gates stehen nach diesem Runtime-Fix noch aus.
 
 ## Belegte Gates
 

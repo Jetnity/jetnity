@@ -82,7 +82,7 @@ Aktiver Slice:
 
 **Admin Slice B – read-only System Health ohne Fake-Green.**
 
-Exact-Head-Gates grün auf `dd1c469c` (CI `32686411130`, Preview `2e8Vaovdsh4fjdm11WxDmwRgTJk7`) und docs-identisch auf `fb193316` (CI `32686617286`, Preview `EPCWfPDe22jvFKkqmMmkEjmK9vX7`). Runtime zuletzt `285022e2`. Unabhängiger Technical-Lead-Review steht aus. Kein Technical Closure durch diesen Agenten.
+Technical-Lead-Review REQUEST CHANGES: Blocker **B1** (sichtbares Grün überzog App/Deployment und Supabase). Fix umgesetzt: Gesamtclaim non-green, enge Evidenz als Sub-Check. Neue Exact-Head-Gates stehen aus.
 
 Grenze: vorhandene read-only Evidence, ehrliche `unknown`/`not_configured`-Zustände, bestehende Admin-Gates. Keine neue DB/Migration, keine Capability-/RLS-Neudefinition, keine neuen Secrets/Tokens/Verträge/Kosten, keine Writes.
 
@@ -131,6 +131,6 @@ Wenn sie gestartet wird:
 
 1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
 2. Admin Slice A bleibt Technical Closure / PASS auf Draft PR #44. Keine Slice-B-Mischung in #44.
-3. Admin Slice B ist auf Draft PR #46 implementiert. Exact-Head-Gates sind grün auf `dd1c469c` und docs-identisch auf `fb193316`. Unabhängiger Technical-Lead-Review steht aus.
+3. Admin Slice B auf Draft PR #46: Blocker B1 ist umgesetzt. Nächster Schritt sind vollständige Gates plus Actions CI und Vercel auf dem neuen Exact Head.
 4. PR #43, PR #44 und PR #46 bleiben Draft, bis der Product Owner jeweils ausdrücklich freigibt.
 5. Kein Mark Ready, kein Merge, kein Admin Slice C ohne ausdrückliche aktuelle Freigabe.

@@ -8,9 +8,9 @@ Basis: `feat/admin-control-center-ia` / Draft PR #44
 
 ## Wo die Arbeit steht
 
-Read-only System Health ist implementiert.
+Read-only System Health ist implementiert. Technical-Lead-Blocker **B1** ist behoben: Gesamtclaim von App/Deployment und Supabase bleibt non-green; enge Evidenz liegt in Sub-Checks.
 
-Exact-Head-Gates:
+Ältere Exact-Head-Gates (vor B1):
 
 - `dd1c469c`: Actions CI `32686411130` SUCCESS, Vercel Preview READY `2e8Vaovdsh4fjdm11WxDmwRgTJk7`
 - `fb193316` (Docs-only, Runtime unverändert): Actions CI `32686617286` SUCCESS, Vercel Preview READY `EPCWfPDe22jvFKkqmMmkEjmK9vX7`
@@ -39,4 +39,4 @@ Ein weiterer Docs-Commit nach `fb193316` ändert die Runtime nicht und wird nich
 
 ## Exakter nächster Schritt
 
-Unabhängigen ChatGPT/Technical-Lead-Review abwarten. Account AP-1 darf parallel auf PR #43 bleiben. PR #44 bleibt die Stack-Basis.
+B1-Fix gegaten (Tests, Hygiene, Build, UI-Audit, Actions CI, Vercel Preview auf demselben neuen Exact Head), danach erneuten unabhängigen Technical-Lead-Review abwarten. Kein Slice C.

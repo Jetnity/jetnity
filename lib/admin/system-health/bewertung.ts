@@ -3,6 +3,7 @@ import {
   SYSTEM_HEALTH_NAMEN,
   SYSTEM_HEALTH_TTL_MS,
   type HealthStatus,
+  type SystemHealthCheck,
   type SystemHealthId,
   type SystemHealthItem,
 } from './typen'
@@ -44,24 +45,64 @@ function basis(
   }
 }
 
+function check(
+  id: string,
+  name: string,
+  nowMs: number,
+  ttlId: SystemHealthId,
+  checkedAt: string,
+  status: HealthStatus,
+  rest: Omit<SystemHealthCheck, 'id' | 'name' | 'status' | 'freshness'>,
+): SystemHealthCheck {
+  return {
+    id,
+    name,
+    status,
+    freshness: berechneFreshness({
+      checkedAt,
+      nowMs,
+      ttlMs: SYSTEM_HEALTH_TTL_MS[ttlId],
+    }),
+    ...rest,
+  }
+}
+
 export function bewerteApp(snapshot: AppRuntimeSnapshot, nowMs: number): SystemHealthItem {
   const checkedAt = iso(nowMs)
-  const hatDeploymentHinweis = Boolean(snapshot.vercelEnv || snapshot.commitSha || snapshot.deploymentId)
-  return basis('app', nowMs, checkedAt, 'healthy', {
+  const prozess = check('app-prozess', 'App-Prozess', nowMs, 'app', checkedAt, 'healthy', {
     source: 'process-runtime',
-    summary: hatDeploymentHinweis
-      ? 'Dieser Prozess hat die Health-Abfrage beantwortet und liefert Deployment-Metadaten.'
-      : 'Dieser Prozess hat die Health-Abfrage beantwortet. Es liegen keine Vercel-Deployment-Metadaten vor.',
-    detail:
-      'Das ist Prozess-Wahrheit, keine Plattform-Health. Ein lokaler oder einzelner Server beweist nicht Vercel, Datenbank oder CI.',
+    summary: 'Dieser Next.js-Prozess hat die Health-Abfrage beantwortet.',
     proves: 'Dieser Next.js-Prozess ist in diesem Moment erreichbar und hat den Check ausgeführt.',
-    doesNotProve: 'Vercel-Plattform, Supabase-Projekt, GitHub-CI oder Infomaniak.',
+    doesNotProve: 'Deployment-Health, Vercel-Plattform, Datenbank oder CI.',
+  })
+  const deployment = check(
+    'app-deployment',
+    'Deployment-Health',
+    nowMs,
+    'app',
+    checkedAt,
+    'unknown',
+    {
+      source: 'none',
+      summary: 'Deployment-Health ist nicht belegt. VERCEL_* sind nur Metadaten.',
+      proves: 'Nichts zur aktuellen Deployment- oder Plattform-Gesundheit.',
+      doesNotProve: 'Ob dieses Deployment oder die Vercel-Plattform healthy ist.',
+    },
+  )
+  return basis('app', nowMs, checkedAt, 'unknown', {
+    source: 'process-runtime',
+    summary: 'Deployment-Health ist nicht belegt. Nur die Prozess-Erreichbarkeit ist geprüft.',
+    detail:
+      'Eine Prozessantwort und vorhandene VERCEL_* Felder beweisen keine Deployment-Health. Der Gesamtzustand bleibt unbekannt.',
+    proves: 'Nur den Sub-Check App-Prozess, nicht App/Deployment insgesamt.',
+    doesNotProve: 'Deployment-Health, Vercel-Plattform, Supabase, GitHub-CI oder Infomaniak.',
     metadata: {
       vercelEnv: snapshot.vercelEnv,
       commitSha: snapshot.commitSha,
       deploymentId: snapshot.deploymentId,
       region: snapshot.region,
     },
+    checks: [prozess, deployment],
   })
 }
 
@@ -85,49 +126,109 @@ export function bewerteSupabaseAppZugriff(input: {
   nowMs: number
 }): SystemHealthItem {
   const now = iso(input.nowMs)
+  const management = check(
+    'supabase-management',
+    'Supabase Management / Plattform',
+    input.nowMs,
+    'supabase',
+    now,
+    'not_configured',
+    {
+      source: 'none',
+      summary: 'Kein freigegebenes Supabase-Management-Token. Plattform-Health bleibt unbelegt.',
+      proves: 'Nur, dass Management-Health nicht angebunden ist.',
+      doesNotProve: 'Projektzustand, Billing oder Auth-Infrastruktur.',
+    },
+  )
+
+  let zugriff: SystemHealthCheck
   if (!input.configured) {
-    return basis('supabase', input.nowMs, now, 'not_configured', {
-      source: 'supabase-app-client',
-      summary: 'Keine App-Datenquelle konfiguriert.',
-      detail: 'NEXT_PUBLIC_SUPABASE_URL oder der Anon-Key fehlen. Das ist kein Management-Health.',
-      proves: 'Nur, dass in dieser Runtime keine App-Supabase-Quelle gesetzt ist.',
-      doesNotProve: 'Ob ein Supabase-Projekt existiert oder die Management-Plattform healthy ist.',
-    })
+    zugriff = check(
+      'supabase-app-datenzugriff',
+      'Supabase App-Datenzugriff',
+      input.nowMs,
+      'supabase',
+      now,
+      'not_configured',
+      {
+        source: 'supabase-app-client',
+        summary: 'Keine App-Datenquelle konfiguriert.',
+        proves: 'Nur, dass in dieser Runtime keine App-Supabase-Quelle gesetzt ist.',
+        doesNotProve: 'Ob ein Supabase-Projekt existiert oder die Management-Plattform healthy ist.',
+      },
+    )
+  } else if (!input.ping) {
+    zugriff = check(
+      'supabase-app-datenzugriff',
+      'Supabase App-Datenzugriff',
+      input.nowMs,
+      'supabase',
+      now,
+      'unknown',
+      {
+        source: 'supabase-app-client',
+        summary: 'Keine belastbare Prüfung der Datenquelle.',
+        proves: 'Nichts. Es liegt keine Ping-Antwort vor.',
+        doesNotProve: 'Erreichbarkeit oder Management-Health.',
+      },
+    )
+  } else if (input.ping.ok) {
+    zugriff = check(
+      'supabase-app-datenzugriff',
+      'Supabase App-Datenzugriff',
+      input.nowMs,
+      'supabase',
+      now,
+      'healthy',
+      {
+        source: 'supabase-postgrest-airports',
+        summary: 'Die App erreicht ihre Datenquelle (öffentliche airports-Referenz).',
+        proves: 'PostgREST hat eine lesende Anfrage auf public.airports in dieser Sitzung beantwortet.',
+        doesNotProve: 'Supabase-Management, Dashboard, Billing oder die Plattform insgesamt.',
+      },
+    )
+  } else if (input.ping.timeout) {
+    zugriff = check(
+      'supabase-app-datenzugriff',
+      'Supabase App-Datenzugriff',
+      input.nowMs,
+      'supabase',
+      now,
+      'unavailable',
+      {
+        source: 'supabase-postgrest-airports',
+        summary: 'Die Prüfung der Datenquelle ist in der Zeitgrenze nicht zurückgekommen.',
+        proves: 'Nur, dass dieser App→PostgREST-Ping nicht rechtzeitig geantwortet hat.',
+        doesNotProve: 'Management-Health oder dass das Projekt dauerhaft down ist.',
+      },
+    )
+  } else {
+    zugriff = check(
+      'supabase-app-datenzugriff',
+      'Supabase App-Datenzugriff',
+      input.nowMs,
+      'supabase',
+      now,
+      'unavailable',
+      {
+        source: 'supabase-postgrest-airports',
+        summary: 'Die Prüfung der Datenquelle ist fehlgeschlagen.',
+        proves: 'Die App-Datenquelle hat diese Anfrage nicht erfolgreich beantwortet.',
+        doesNotProve: 'Supabase-Management-Plattform-Health.',
+      },
+    )
   }
-  if (!input.ping) {
-    return basis('supabase', input.nowMs, now, 'unknown', {
-      source: 'supabase-app-client',
-      summary: 'Keine belastbare Prüfung der Datenquelle.',
-      proves: 'Nichts. Es liegt keine Ping-Antwort vor.',
-      doesNotProve: 'Erreichbarkeit oder Management-Health.',
-    })
-  }
-  if (input.ping.ok) {
-    return basis('supabase', input.nowMs, now, 'healthy', {
-      source: 'supabase-postgrest-airports',
-      sourceUpdatedAt: input.ping.sourceUpdatedAt,
-      summary: 'Die App erreicht ihre Datenquelle (öffentliche airports-Referenz).',
-      detail:
-        'Das beweist App-Datenquellen-Zugriff, nicht die Supabase-Management-Plattform. Management bleibt nicht konfiguriert.',
-      proves: 'PostgREST hat eine lesende Anfrage auf public.airports in dieser Sitzung beantwortet.',
-      doesNotProve: 'Supabase-Management, Dashboard, Billing, Auth-Infrastruktur insgesamt oder andere Regionen.',
-    })
-  }
-  if (input.ping.timeout) {
-    return basis('supabase', input.nowMs, now, 'unavailable', {
-      source: 'supabase-postgrest-airports',
-      summary: 'Die Prüfung der Datenquelle ist in der Zeitgrenze nicht zurückgekommen.',
-      detail: input.ping.message,
-      proves: 'Nur, dass dieser Ping nicht rechtzeitig geantwortet hat.',
-      doesNotProve: 'Management-Health oder dass das Projekt dauerhaft down ist.',
-    })
-  }
-  return basis('supabase', input.nowMs, now, 'unavailable', {
-    source: 'supabase-postgrest-airports',
-    summary: 'Die Prüfung der Datenquelle ist fehlgeschlagen.',
-    detail: input.ping.message,
-    proves: 'Die App-Datenquelle hat diese Anfrage nicht erfolgreich beantwortet.',
-    doesNotProve: 'Supabase-Management-Plattform-Health.',
+
+  return basis('supabase', input.nowMs, now, 'not_configured', {
+    source: zugriff.source,
+    sourceUpdatedAt: input.ping && input.ping.ok ? input.ping.sourceUpdatedAt : undefined,
+    summary:
+      'Supabase-Gesamtzustand bleibt unbelegt. Der airports-Read beweist nur App-Datenzugriff, nicht die Plattform.',
+    detail:
+      'Management/Plattform ist nicht konfiguriert. Ein erfolgreicher public.airports-Read darf den Gesamtstatus nicht auf Gesund setzen.',
+    proves: 'Nur den Sub-Check Supabase App-Datenzugriff, nicht Supabase insgesamt.',
+    doesNotProve: 'Supabase-Projekt, Management, Billing, Auth-Infrastruktur oder andere Regionen.',
+    checks: [zugriff, management],
   })
 }
 
@@ -136,7 +237,7 @@ export function vercelNichtKonfiguriert(nowMs: number): SystemHealthItem {
     source: 'none',
     summary: 'Kein freigegebenes Vercel-Management-Token. Plattform-Health bleibt unbelegt.',
     detail:
-      'Vorhandene VERCEL_* Runtime-Felder gehören zur App-/Deployment-Karte. Sie beweisen nicht, dass das Vercel-Projekt aktuell healthy ist.',
+      'Vorhandene VERCEL_* Runtime-Felder sind nur App-Metadaten. Sie beweisen weder Deployment-Health noch, dass das Vercel-Projekt aktuell healthy ist.',
     proves: 'Nur, dass in Slice B keine Vercel-Management-API angebunden ist.',
     doesNotProve: 'Deployment-Zustand, Build-Queue oder Vercel-Plattform.',
   })
@@ -170,5 +271,13 @@ export function wendeEvidenceAlterAn(item: SystemHealthItem, nowMs: number): Sys
     nowMs,
     ttlMs: item.freshness.ttlMs,
   })
-  return { ...item, freshness }
+  const checks = item.checks?.map((teil) => ({
+    ...teil,
+    freshness: berechneFreshness({
+      checkedAt: item.checkedAt,
+      nowMs,
+      ttlMs: teil.freshness.ttlMs,
+    }),
+  }))
+  return { ...item, freshness, checks }
 }
