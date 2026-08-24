@@ -2,20 +2,19 @@
 
 Stand: 24. August 2026  
 Cursor-Anzeigename: `Admin platform audit`  
-Branch: `feat/admin-system-health`  
-Draft-PR: https://github.com/Jetnity/jetnity/pull/46  
-Base: `main` `1ec93cc9`  
-Exact Runtime Head: `1715640bffc36d7ebe1a25de7aeb569632b7811f`
+Branch: historisch `feat/admin-system-health`  
+PR: **#46 gemergt nach `main` `e3bad749`**  
+Historischer Exact Runtime Head vor Merge: `1715640bffc36d7ebe1a25de7aeb569632b7811f`
 
-## Wo die Arbeit steht
+## Integrationsstand
 
-**Unabhängiger Technical-Lead-Review: PASS / Technical Integration Closure.** Lokale und Remote-Gates auf Exact Runtime Head `1715640b` sind belegt. Review: `docs/ADMIN_PLATFORM_SLICE_B_TECHNICAL_LEAD_REVIEW.md`.
+Slice B ist auf `main` integriert. Der untenstehende Text ist der historische Review-Stand. Aktiver Admin-Slice: Draft PR #49 / Slice C.
+
+## Historischer Review-Stand
+
+**Unabhängiger Technical-Lead-Review: PASS / Technical Integration Closure.** Lokale und Remote-Gates auf Exact Runtime Head `1715640b` waren vor dem Merge belegt. Review: `docs/ADMIN_PLATFORM_SLICE_B_TECHNICAL_LEAD_REVIEW.md`.
 
 Read-only System Health bleibt fail-closed. ADR-0159. Slice A auf `main` ist ADR-0158. Provider S2 auf `main` bleibt erhalten.
-
-Der PR bleibt Draft. Kein Mark Ready, kein Merge, kein Slice C.
-
-Ein späterer docs-only Commit, der genau diese Evidence festhält, ist kein neues Runtime-Gate.
 
 ## Pflichtquellen
 
@@ -54,5 +53,5 @@ Historischer B1-PASS auf `cc1d06bd` bleibt historische Evidence.
 
 ## Exakter nächster Schritt
 
-Ausdrückliche Product-Owner-Entscheidung zu Mark Ready, danach separate Merge-Freigabe.  
-Nach erfolgreicher Integration von B und neuem Auftrag denselben Admin-Plan bei Slice C fortsetzen.
+Slice B ist integriert. Fortsetzung ist Draft PR #49 / Slice C.  
+Kein Mark Ready / Merge von Slice C ohne ausdrückliche aktuelle Product-Owner-Freigabe.

@@ -1,6 +1,6 @@
 export const ADMIN_EHRLICHE_TEXTE = {
   steuerzentraleLage:
-    'Operative Lage aus vorhandenen lokalen Daten. System Health ist read-only und nur so weit belegt, wie eine frische Quelle reicht. Kein Copilot-Execute, keine Provider-Steuerung.',
+    'Operative Lage aus vorhandenen lokalen Daten. System Health und Provider & Kosten sind read-only und nur so weit belegt, wie eine frische Quelle reicht. Kein Copilot-Execute, keine Provider-Steuerung.',
   kennzahlenHinweis: 'Lokale Kennzahlen aus vorhandenen Aggregaten. Keine Provider-Health.',
   rlsKatalogTitel: 'Datenbank-RLS-Katalog',
   rlsKatalogHinweis:
@@ -59,6 +59,12 @@ export const ADMIN_NAECHSTE_SCHRITTE: readonly AdminNaechsterSchritt[] = [
     titel: 'System Health',
     satz: 'Read-only. Nur belegte Quellen. Fehlt eine Quelle, bleibt unknown oder not_configured.',
     href: '/admin/system-health',
+    stand: 'ready',
+  },
+  {
+    titel: 'Provider & Kosten',
+    satz: 'Read-only S1-Vertrag und belegte Modellnutzung. Kein Aktivieren, kein erfundenes Budget.',
+    href: '/admin/provider-ops',
     stand: 'ready',
   },
   {

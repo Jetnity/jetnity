@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety, Seasonal, Account AP-1/AP-2, Provider S2 und Admin Slice A auf `main`; Admin Slice B Technical-Lead PASS auf Draft PR #46 / `1715640b`, wartet auf Product-Owner-Entscheidung**
+Status: **Foundation C/D/E, Travel Safety, Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B auf `main` `e3bad749`; Admin Slice C Technical Closure / PASS, PR #49 Ready for Review, wartet auf separate Merge-Freigabe**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -269,17 +269,23 @@ Status: **auf `main` gemergt (PR #44, `1ec93cc9`). Entscheidung: ADR-0158.**
 
 ---
 
-## 6d. In Arbeit – Admin Control Center Slice B
+## 6d. Fertig – Admin Control Center Slice B
 
-Status: **Technical-Lead PASS / Technical Integration Closure auf Exact Head `1715640b`. Wartet auf Product-Owner-Entscheidung. Entscheidung: ADR-0159.**
+Status: **auf `main` `e3bad749` (PR #46). Entscheidung: ADR-0159.**
 
 - read-only System Health ohne Fake-Green
 - Parent App/Deployment = `unknown`; Parent Supabase = `not_configured`
-- keine neuen Secrets, Tokens, Verträge oder Kosten
-- keine DB-/RLS-/Capability-Änderung, keine Writes
-- kein Mark Ready / Merge und kein Slice C ohne ausdrückliche Product-Owner-Freigabe
 
-Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
+## 6e. In Arbeit – Admin Control Center Slice C
+
+Status: **Technical Closure / PASS, PR #49 Ready for Review, wartet auf separate Merge-Freigabe. Entscheidung: ADR-0162.**
+
+- read-only Provider- und Kostenboard
+- konsumiert gemergten S1-Vertrag, ohne ihn zu verändern
+- keine Provideraktivierung, keine Secrets, keine Fake-Kosten
+- kein Mark Ready / Merge und kein Slice D ohne ausdrückliche Product-Owner-Freigabe
+
+Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
 
 ---
 
@@ -411,7 +417,8 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 6. ✅ Account Platform AP-1 auf `main` (PR #43)
 6a. ✅ Account Platform AP-2 auf `main` (PR #48)
 6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`)
-7. **→ Admin Slice B** Draft PR #46 / `1715640b` hat Technical-Lead PASS und wartet auf Product-Owner-Entscheidung
+6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`)
+7. **→ Admin Slice C** PR #49 Technical Closure / PASS, Ready for Review, wartet auf separate Merge-Freigabe
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit
 10. echte Providerphase

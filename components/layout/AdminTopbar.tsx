@@ -22,6 +22,7 @@ const PFAD_LABEL: Record<string, string> = {
   payments: 'Zahlungen',
   security: 'Security',
   'system-health': 'System Health',
+  'provider-ops': 'Provider & Kosten',
   analytics: 'Analytics',
   content: 'Content',
   marketing: 'Marketing',

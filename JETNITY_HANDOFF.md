@@ -1,11 +1,11 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1, Account AP-2, Provider S2 und Admin Slice A auf `main`; Admin Slice B Technical-Lead PASS auf Draft PR #46 / `1715640b`, wartet auf Product-Owner-Entscheidung**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B auf `main` `e3bad749`; Admin Slice C Technical Closure / PASS, PR #49 Ready for Review, wartet auf separate Merge-Freigabe**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
-Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Admin Slice B zusätzlich in `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md` und `docs/ADMIN_PLATFORM_SLICE_B_HANDOFF.md`. Provider Readiness S2 in `docs/PROVIDER_READINESS_S2_STATUS.md`. Provider Ops S1 in `docs/PROVIDER_OPS_S1_STATUS.md`.
+Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Admin Slice C zusätzlich in `docs/ADMIN_PLATFORM_SLICE_C_STATUS.md`. Admin Slice B in `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`. Provider Readiness S2 in `docs/PROVIDER_READINESS_S2_STATUS.md`. Provider Ops S1 in `docs/PROVIDER_OPS_S1_STATUS.md`.
 
 > **Kein relevanter Fortschritt darf beim Wechsel von Chat, Agent oder Sitzung verloren gehen. Was für die Fortsetzung wichtig ist, gehört ins Repository.**
 
@@ -300,7 +300,8 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 6. ✅ Account Platform AP-1 auf `main` (PR #43, `084f7c87`)
 6a. ✅ Account Platform AP-2 auf `main` (PR #48, `2827d1cb`)
 6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`, ADR-0158)
-7. **→ Admin Slice B** Draft PR #46 / Exact Head `1715640b` hat Technical-Lead PASS und wartet auf Product-Owner-Entscheidung. Provider S1 Technical Closure auf Draft-PR #47. Provider S2 liegt auf `main`.
+6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`, ADR-0159)
+7. **→ Admin Slice C** PR #49 / `feat/admin-provider-cost-board` Technical Closure / PASS, Ready for Review, wartet auf separate Merge-Freigabe. Provider S1/S2 liegen auf `main`.
 8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 10. echte Providerphase
@@ -315,18 +316,16 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-Admin-Implementierungsbranch Slice B: `feat/admin-system-health`  
-Draft PR: `#46` (Base: `main`)  
+Admin-Implementierungsbranch Slice C: `feat/admin-provider-cost-board`  
+Draft PR: `#49` (Base: `main`)  
 Agent: `Admin platform audit`  
-Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
+Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
 
-1. Seasonal, Account AP-1/AP-2, Provider S2 und Admin Slice A sind auf `main` `1ec93cc9`.
-2. Slice B ist auf `main` `1ec93cc9` synchronisiert. Exact Runtime Head `1715640b`. Scope bleibt read-only System Health, fail-closed, ADR-0159.
-3. Lokale und Remote-Gates auf diesem Head sind belegt: CI `32750112312` SUCCESS, Preview `6HzJRdg4NWnGRQb8jpLC1k2jUHms` READY.
-4. Der historische B1-PASS auf `cc1d06bd` bleibt historische Evidence.
-5. PR #46 bleibt Draft. Kein Mark Ready, kein Merge, kein Slice C, keine Production-Migration, keine Provider-/Secret-Aktivierung.
-6. Unabhängiger Technical-Lead-Review: PASS / Technical Integration Closure. Siehe `docs/ADMIN_PLATFORM_SLICE_B_TECHNICAL_LEAD_REVIEW.md`.
-7. **Exakter nächster Schritt:** ausdrückliche Product-Owner-Entscheidung zu Mark Ready, danach separate Merge-Freigabe. Kein Slice C vor Integration.
+1. Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B sind auf `main` `e3bad749`.
+2. Slice C wird auf diesen `main` synchronisiert. Scope bleibt read-only Provider- und Kostenboard, fail-closed, ADR-0162.
+3. S1-Vertrag wird nur aus `lib/provider-ops` auf `main` gelesen, nicht kopiert oder verändert.
+4. PR #49 ist Ready for Review. Kein Merge ohne separate ausdrückliche aktuelle Product-Owner-Freigabe. Kein Slice D, keine Production-Migration, keine Provider-/Secret-Aktivierung.
+5. **Exakter nächster Schritt:** Separate ausdrückliche aktuelle Product-Owner-Merge-Freigabe für PR #49 abwarten. Nicht mergen ohne diese Freigabe.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
