@@ -44,11 +44,19 @@ Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`
 Audit-Referenz: Draft-PR #39 / `audit/account-platform` – **AUDIT-PASS**  
 Implementierungsbranch: `feat/account-ap1`  
 Implementierungs-Draft-PR: **#43**  
-Auftrag: `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`
+Auftrag: `docs/ACCOUNT_AP1_MAIN_SYNC_TASK.md`  
+Handoff: `docs/ACCOUNT_AP1_HANDOFF.md`  
+Status: `docs/ACCOUNT_AP1_STATUS.md`  
+Review: `docs/ACCOUNT_AP1_CHATGPT_REVIEW.md`
 
 Aktiver Slice:
 
-**AP-1 – Account-Shell + persönliche Übersicht / „Meine Reisen“ als Account-Hub.**
+**AP-1 – Account-Shell + persönliche Übersicht; mit `main` `f92e0c9e` synchronisiert.**
+
+Gegates Runtime-Head: `19f939698233cfd99b828f4c0aa14d64ca0f4ac5`  
+GitHub Actions CI **SUCCESS** und Vercel Preview **success** auf genau diesem Head.
+
+Technical-Lead REQUEST CHANGES (Kalendertag + 503) bleiben umgesetzt (ADR-0153). Keine Scope-Erweiterung in diesem Sync.
 
 Grenze: UI/IA und bestehende `reisenLaden()`-Truth. Keine neue Auth-/Trip-/Traveller-/Billing-/Route-Truth, keine DB-Migration, keine Homepage-Änderung.
 
@@ -126,8 +134,9 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
+1. Unabhängiger Technical-Lead-Integrationsreview von Draft-PR #43 auf Runtime-Head `19f939698233cfd99b828f4c0aa14d64ca0f4ac5`.
 2. `Admin platform audit` implementiert ausschließlich Slice A auf PR #44.
 3. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung; kein Mark Ready / kein Merge / kein S2.
 4. ChatGPT/Technical Lead prüft jeden Slice unabhängig.
 5. AP-2, Admin Slice B und Provider S2 brauchen jeweils eine neue ausdrückliche Freigabe.
+6. PR #43, #44, #45 und #47 bleiben Draft. Kein Ready, kein Merge ohne Product-Owner-Freigabe.

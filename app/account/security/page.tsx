@@ -1,48 +1,47 @@
 // app/account/security/page.tsx
-import type { Metadata } from "next";
-import { Suspense } from "react";
-import SecurityMFA from "@/components/account/SecurityMFA";
+import type { Metadata } from 'next'
+import { Suspense } from 'react'
 
-// Diese Seite zeigt user-spezifische Inhalte → niemals statisch cachen
-export const dynamic = "force-dynamic";
+import SecurityMFA from '@/components/account/SecurityMFA'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: "Sicherheit & Anmeldung – Jetnity",
-  description:
-    "MFA-Einstellungen (TOTP & Passkeys) für deinen Jetnity-Account.",
+  title: 'Sicherheit',
+  description: 'Zwei-Faktor-Anmeldung für deinen Jetnity-Account.',
   robots: { index: false, follow: false },
-  openGraph: {
-    title: "Sicherheit & Anmeldung",
-    description: "MFA-Einstellungen für deinen Account.",
-  },
-};
+}
 
 export default function SecurityPage() {
-  // Server-Komponente, rendert das geschützte Client-Widget
   return (
-    <main id="content" className="container mx-auto max-w-3xl px-4 py-10">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Kontosicherheit</h1>
-        <p className="text-muted-foreground mt-2">
-          Richte eine Zwei-Faktor-Authentifizierung ein, um deinen Account
-          besser zu schützen.
+    <main className="px-4 py-10 sm:px-6 sm:py-14">
+      <div className="mx-auto max-w-3xl">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Einstellungen</p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-brand-800 sm:text-5xl">
+          Sicherheit
+        </h1>
+        <p className="mt-3 max-w-xl text-sm leading-6 text-ink-700">
+          Richte eine Zwei-Faktor-Anmeldung ein, um dein Konto besser zu schützen. Passkeys sind
+          vorbereitet und nur verfügbar, wenn sie in der Anmeldung aktiviert sind.
         </p>
-      </header>
 
-      <Suspense
-        fallback={
-          <div className="rounded-xl border p-6">
-            <div className="h-4 w-40 bg-muted rounded mb-4" />
-            <div className="space-y-2">
-              <div className="h-3 w-3/4 bg-muted rounded" />
-              <div className="h-3 w-2/3 bg-muted rounded" />
-              <div className="h-10 w-48 bg-muted rounded mt-4" />
-            </div>
-          </div>
-        }
-      >
-        <SecurityMFA />
-      </Suspense>
+        <div className="mt-10">
+          <Suspense
+            fallback={
+              <div className="rounded-[26px] border border-black/5 bg-white p-6">
+                <div className="mb-4 h-4 w-40 rounded bg-surface-100" />
+                <div className="space-y-2">
+                  <div className="h-3 w-3/4 rounded bg-surface-100" />
+                  <div className="h-3 w-2/3 rounded bg-surface-100" />
+                  <div className="mt-4 h-10 w-48 rounded-full bg-surface-100" />
+                </div>
+              </div>
+            }
+          >
+            <SecurityMFA />
+          </Suspense>
+        </div>
+      </div>
     </main>
-  );
+  )
 }
