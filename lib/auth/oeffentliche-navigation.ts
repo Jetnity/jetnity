@@ -76,7 +76,11 @@ export const HAUPTNAVIGATION = [
 export function sitzungseintraege(stand: Sitzungsstand): Navigationseintrag[] {
   switch (stand) {
     case 'konto':
-      return [{ art: 'aktion', label: 'Abmelden', aktion: 'abmelden' }]
+      // AP-1: Das persönliche Zuhause ist nur mit Sitzung erreichbar.
+      return [
+        { art: 'link', label: 'Konto', href: '/account' },
+        { art: 'aktion', label: 'Abmelden', aktion: 'abmelden' },
+      ]
     case 'gast':
       return [{ art: 'link', label: 'Anmelden', href: '/login' }]
     case 'unbekannt':

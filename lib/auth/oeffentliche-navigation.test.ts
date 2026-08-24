@@ -20,9 +20,10 @@ describe('Ein Gast', () => {
     assert.deepEqual(beschriftungen(sitzungseintraege('gast')), ['Anmelden'])
   })
 
-  test('bekommt kein Abmelden angeboten', () => {
+  test('bekommt kein Abmelden und kein Konto angeboten', () => {
     // Ein Ausweg aus einer Sitzung, die es nicht gibt, wäre eine Sackgasse.
     assert.ok(!beschriftungen(sitzungseintraege('gast')).includes('Abmelden'))
+    assert.ok(!beschriftungen(sitzungseintraege('gast')).includes('Konto'))
   })
 
   test('erreicht Anmelden als Ziel', () => {
@@ -33,8 +34,14 @@ describe('Ein Gast', () => {
 })
 
 describe('Ein angemeldetes Konto', () => {
-  test('bekommt Abmelden angeboten', () => {
-    assert.deepEqual(beschriftungen(sitzungseintraege('konto')), ['Abmelden'])
+  test('bekommt Konto und Abmelden angeboten', () => {
+    assert.deepEqual(beschriftungen(sitzungseintraege('konto')), ['Konto', 'Abmelden'])
+  })
+
+  test('erreicht das Konto als Ziel', () => {
+    const konto = sitzungseintraege('konto').find((eintrag) => eintrag.label === 'Konto')
+    assert.equal(konto?.art, 'link')
+    assert.equal(konto?.art === 'link' ? konto.href : null, '/account')
   })
 
   test('bekommt kein Anmelden mehr angeboten', () => {
@@ -57,6 +64,7 @@ describe('Solange die Sitzung unbekannt ist', () => {
     // Das Layout wird statisch ausgeliefert; die Sitzung liest der Browser
     // nach. In diesem Moment ist jede der beiden Aussagen möglicherweise falsch.
     assert.deepEqual(sitzungseintraege('unbekannt'), [])
+    assert.ok(!beschriftungen(sitzungseintraege('unbekannt')).includes('Konto'))
   })
 })
 
@@ -76,7 +84,7 @@ describe('Nach einem Abmelden', () => {
     // gescheiterten Abmelden sagt, die Sitzung sei beendet, während sie offen ist.
     const stand = standAusSitzung(true)
     assert.equal(stand, 'konto')
-    assert.deepEqual(beschriftungen(sitzungseintraege(stand)), ['Abmelden'])
+    assert.deepEqual(beschriftungen(sitzungseintraege(stand)), ['Konto', 'Abmelden'])
   })
 })
 
