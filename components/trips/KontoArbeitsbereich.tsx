@@ -140,7 +140,7 @@ export default function KontoArbeitsbereich({
             const ergebnis = await flugInReiseUebernehmen({
               tripId: reise.id,
               dayId: tagId,
-              option,
+              optionId: option.id,
             })
             if (!ergebnis.ok) return ergebnis.meldung
             router.refresh()

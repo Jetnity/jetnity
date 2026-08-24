@@ -2,9 +2,9 @@
 //
 // Laufzeitprüfung der Flugsuche und der übernommenen Momentaufnahme.
 //
-// Die Suchanfrage kommt aus dem Browser. Die Flugoption, die in die Reise
-// wandert, ebenfalls: Sie hat den Client durchlaufen. Beides ist untrusted
-// input. Der Adapter prüft Providerantworten extra; hier steht die Jetnity-Form.
+// Die Suchanfrage kommt aus dem Browser. Die Konto-Übernahme trägt nur
+// identifiers; kommerzielle Flugfakten kommen serverseitig aus dem Nachweis.
+// Der Adapter prüft Providerantworten extra; hier steht die Jetnity-Form.
 //
 // Frei von Next, Supabase und `process.env`.
 
@@ -179,8 +179,12 @@ export function ersteFlugmeldung(fehler: z.ZodError): string {
   return fehler.issues[0]?.message ?? 'Die Flugangaben sind unvollständig.'
 }
 
+/**
+ * Konto-Übernahme: nur identifiers. Kommerzielle Fakten, Zeiten und der
+ * Suchkontext kommen serverseitig aus Nachweis und Reisegraph.
+ */
 export const flugKontoUebernahmeSchema = z.object({
   tripId: z.string().uuid(),
-  dayId: z.string().uuid().nullable(),
-  option: flugOptionSchema,
+  dayId: z.string().uuid().nullable().default(null),
+  optionId: z.string().trim().min(1).max(200),
 })

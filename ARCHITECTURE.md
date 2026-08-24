@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
 Stand: 24. August 2026
-Gültig für: Foundation D/E, Travel Safety und Travel Timing & Seasonal Intelligence auf `main`; Account Platform AP-1 als UI-/IA-Slice auf Draft-PR #43 / `feat/account-ap1`. AP-1 ändert kein Schema.
+Gültig für: Foundation D/E, Travel Safety, Travel Timing & Seasonal Intelligence sowie Account AP-1/AP-2 auf `main`; Provider Readiness S2 FlugNachweis auf Draft-PR #51 / `feat/provider-flight-evidence-s2`. Account-Slices ändern kein Schema. S2-B1/B2-Migrationen liegen nur auf Development.
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -122,9 +122,7 @@ Seit Phase 1.4 gilt dasselbe Modell auch in der Datenbank: `public.rollenrang()`
 
 Die Entscheidung unterscheidet drei Zustände der Rollenabfrage: Rolle vorhanden, keine Rolle hinterlegt, Abfrage fehlgeschlagen. Ein Ausfall führt nie zu einer Freigabe. Reguläre Quelle ist die Datenbankrolle; `ADMIN_ALLOWED_EMAILS` ist ein Notzugang aus exakten Adressen, dessen Nutzung protokolliert wird. Eine Domain erteilt keine Berechtigung ([DECISIONS.md](DECISIONS.md) ADR-0027).
 
-Der Notzugang öffnet die Oberfläche, nicht die Datenbank. Die Policies kennen die Liste nicht und sollen sie nicht kennen – sonst stünde neben `creator_profiles.role` wieder eine zweite Autorität. Eine solche Sitzung sieht deshalb einen Hinweis über der gesamten Administrations-Shell, statt leere Übersichten, die sich als Entwarnung lesen liessen. `reachesDatabase()` in `lib/auth/admin-access.ts` hält den Satz als prüfbare Funktion fest ([DECISIONS.md](DECISIONS.md) ADR-0036). Persistente Admin-Writes prüfen denselben Vertrag zusätzlich in `lib/auth/admin-write-gate.ts` und antworten bei Break-Glass mit 403, bevor die Datenbank erreicht wird (ADR-0155).
-
-Die Admin-Sidebar filtert Einträge nach Rolle nur als UX (`lib/admin/navigation.ts`). Ausblenden ist keine Autorisierung. Stub-Flächen (Analytics, Content, Marketing, Einstellungen, Lokalisierung) sind als `folgt` gekennzeichnet und enthalten keine operative Steuerung.
+Der Notzugang öffnet die Oberfläche, nicht die Datenbank. Die Policies kennen die Liste nicht und sollen sie nicht kennen – sonst stünde neben `creator_profiles.role` wieder eine zweite Autorität. Eine solche Sitzung sieht deshalb einen Hinweis über der gesamten Administrations-Shell, statt leere Übersichten, die sich als Entwarnung lesen liessen. `reachesDatabase()` in `lib/auth/admin-access.ts` hält den Satz als prüfbare Funktion fest ([DECISIONS.md](DECISIONS.md) ADR-0036).
 
 **Die Einstellungen des Auth-Servers stehen im Repository.** Die Anmeldung ist der Weg *in* die Anwendung, ihre Konfiguration liegt aber nicht in der Datenbank, sondern beim Auth-Server – ein Klick im Dashboard ändert sie ohne Migration und ohne Commit. Seit Phase 1.4c beschreibt der Abschnitt `[auth]` in `supabase/config.toml` deshalb den Development-Branch, nicht die CLI-Vorlage. Was die Datei nicht ausdrücken kann – voran der Schutz vor kompromittierten Passwörtern –, steht mit Begründung in `lib/supabase/auth-erwartung.ts`.
 
@@ -145,7 +143,7 @@ Weitere Punkte:
 
 ---
 
-## 4a. Account-Shell (AP-1, Draft)
+## 4a. Account-Shell (AP-1, auf `main`)
 
 AP-1 legt das persönliche Account-Zuhause an, ohne eine zweite Source of Truth zu schaffen. Begründung: [DECISIONS.md](DECISIONS.md) ADR-0152, ADR-0153.
 
@@ -307,7 +305,7 @@ Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1, 3.2, 3.3, Foundation A, Foundation B und Dr
 | `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
 | `api/admin/security/*` (5) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
 
-Alle zehn Endpunkte unter `api/admin` prüfen die Berechtigung über `requireAdminApi()`; `npm run check:api-schutz` erzwingt das in der CI. Lesende Endpunkte verlangen die Fähigkeit `betrieb-lesen` (ab `moderator`), eingreifende – lokale Refund-Notiz, Sperren, Entsperren – `betrieb-eingreifen` (ab `operator`). Dieselben Fähigkeiten gelten in den Policies, sodass ein Endpunkt, der jemanden durchlässt, ihm auch die Daten zeigen kann. Die drei Schreibrouten lehnen Break-Glass zusätzlich mit 403 ab (`adminWriteErlaubt`), statt einen RLS-Fehler als 500 auszuliefern. Die Oberflächen kennzeichnen Refunds als lokale Notiz und die IP-Blockliste als nicht enforced (ADR-0155).
+Alle zehn Endpunkte unter `api/admin` prüfen die Berechtigung über `requireAdminApi()`; `npm run check:api-schutz` erzwingt das in der CI. Lesende Endpunkte verlangen die Fähigkeit `betrieb-lesen` (ab `moderator`), eingreifende – Rückerstattung, Sperren, Entsperren – `betrieb-eingreifen` (ab `operator`). Dieselben Fähigkeiten gelten in den Policies, sodass ein Endpunkt, der jemanden durchlässt, ihm auch die Daten zeigen kann.
 
 Was die Datenbank nicht liefert, meldet der Endpunkt, statt es zu verschweigen: Eine Ablehnung wird 500, ein Ausfall 503, jeweils mit `{ message }`; eine erfolgreiche Abfrage ohne Zeilen bleibt eine leere Liste mit 200. Die Unterscheidung steht einmal in `lese()` in `lib/api/datenbank-lesen.ts` und nicht in den Routen ([DECISIONS.md](DECISIONS.md) ADR-0037). Von RLS weggefilterte Zeilen sind bewusst kein Fehler – das ist der Fall einer Notzugangs-Sitzung, den der Hinweisbalken erklärt.
 
@@ -327,7 +325,9 @@ Entfernt wurden 63 Endpunkte: alle KI- und Modell-Endpunkte, die Media- und Vide
 
 Duffel ist der erste Datenadapter, nicht die Produktarchitektur. Search und Booking/Affiliate sind getrennt; `booking_url` bleibt `null`. Ein späterer Skyscanner- oder Aviasales-Adapter implementiert dasselbe `FlightProvider`-Interface. Amadeus Self-Service ist eingestellt und nicht angebunden.
 
-Production bleibt hart aus. Development/Preview brauchen `JETNITY_FLIGHT_AKTIV` und `DUFFEL_ACCESS_TOKEN` (`duffel_test_…`). Fehlende Credentials sind Feature-unavailable, kein Buildfehler. Fachlich: [docs/FLUEGE.md](docs/FLUEGE.md), ADR-0062 bis ADR-0065.
+Production bleibt hart aus. Development/Preview brauchen `JETNITY_FLIGHT_AKTIV` und `DUFFEL_ACCESS_TOKEN` (`duffel_test_…`). Fehlende Credentials sind Feature-unavailable, kein Buildfehler.
+
+Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `FlugNachweis` gegen Legs, Passagiere, Kabine und Währung. Heute sind Nachweis und Suchkontext-Speicher `null` – fail closed. Guest-LocalStorage und Guest → Account stufen unbewiesene Flugoptionen nicht zu belegter kommerzieller Wahrheit hoch. Route Truth bleibt Foundation D. Fachlich: [docs/FLUEGE.md](docs/FLUEGE.md), ADR-0062 bis ADR-0065 und ADR-0155.
 
 ### Flughafenbasis (Phase 3.1)
 
@@ -375,7 +375,7 @@ Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browse
 
 ### Route & Transit Intelligence (Foundation D)
 
-PR #34 ist gemergt und auf Production. `lib/route/` leitet `RouteFacts` nur aus validierten Flight-Itineraries ab. `airportContacts`, `connections`, `transitCountryCodes` und `destinationCountryCodes` entstehen nur innerhalb eines belegten Legs; getrennte Flight-Items oder Legs werden nicht über den Zielaufenthalt verbunden. Ein Hinflugziel wird nicht durch ein späteres Rück-Leg zum Transit. Ein späterer Leg-Origin, der nicht das bewiesene Reise-Origin ist, bleibt ein belegter Besuch. Fingerprint und Anzeige behalten jede Leg-Grenze. Persistenz nutzt vorhandenes `trip_items.metadata` als `{ routeItinerary }` (max. 8192 Zeichen). `reiseAusNutzlastAnlegen()` kanonisiert jede clientseitige Itinerary vor RPC und Recovery (ADR-0114). `flug_route_itinerary_metadata()` baut Punkte aus `public.airports` neu (ADR-0115) und verwirft Client-`surfaceFromAirportCode` (ADR-0151, Development). `itineraryAusFlugOption()` erfindet diese Evidence nicht aus untrusted Segmentnachbarschaft (ADR-0150). `flugRouteItineraryLesen()` und Guest-`reiseLesen()` akzeptieren das Feld nicht. Ein BEFORE-Trigger auf `trip_items` wendet dieselbe Kanonisierung auf jeden INSERT/UPDATE von `metadata` oder `kind` an (ADR-0116). `reise_anlegen()` schreibt die validierte Itinerary atomar in derselben Transaktion (ADR-0113); der TypeScript-Nachlauf ist fail-closed Recovery. Die Flugsuche löst IATA-Länder in einem Batch gegen `public.airports` auf; die direkte Account-Flugübernahme bleibt referenzbasiert. Guest und Account teilen dasselbe `TripItem.routeItinerary`. Production-Suche und Timatic bleiben aus.
+PR #34 ist gemergt und auf Production. `lib/route/` leitet `RouteFacts` nur aus validierten Flight-Itineraries ab. `airportContacts`, `connections`, `transitCountryCodes` und `destinationCountryCodes` entstehen nur innerhalb eines belegten Legs; getrennte Flight-Items oder Legs werden nicht über den Zielaufenthalt verbunden. Ein Hinflugziel wird nicht durch ein späteres Rück-Leg zum Transit. Ein späterer Leg-Origin, der nicht das bewiesene Reise-Origin ist, bleibt ein belegter Besuch. Fingerprint und Anzeige behalten jede Leg-Grenze. Persistenz nutzt vorhandenes `trip_items.metadata` als `{ routeItinerary }` (max. 8192 Zeichen). `reiseAusNutzlastAnlegen()` kanonisiert jede clientseitige Itinerary vor RPC und Recovery (ADR-0114). `flug_route_itinerary_metadata()` baut Punkte aus `public.airports` neu (ADR-0115) und verwirft Client-`surfaceFromAirportCode` (ADR-0151, Development). `itineraryAusFlugOption()` erfindet diese Evidence nicht aus untrusted Segmentnachbarschaft (ADR-0150). `flugRouteItineraryLesen()` und Guest-`reiseLesen()` akzeptieren das Feld nicht. Ein BEFORE-Trigger auf `trip_items` wendet dieselbe Kanonisierung auf jeden INSERT/UPDATE von `metadata` oder `kind` an (ADR-0116). `reise_anlegen()` schreibt die validierte Itinerary atomar in derselben Transaktion (ADR-0113); der TypeScript-Nachlauf ist fail-closed Recovery. Für `kind='flight'` übernimmt derselbe RPC keine kommerziellen Felder aus Browser-JSON (ADR-0156, Development). Direkte `authenticated`-Writes auf `trip_items` können dieselben Flug-Handelsfelder ebenfalls nicht setzen oder ändern (ADR-0157, Development). Die Flugsuche löst IATA-Länder in einem Batch gegen `public.airports` auf; die direkte Account-Flugübernahme bleibt referenzbasiert. Guest und Account teilen dasselbe `TripItem.routeItinerary`. Production-Suche und Timatic bleiben aus.
 
 ### Traveller Context (Foundation E)
 

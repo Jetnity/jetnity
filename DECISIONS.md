@@ -3817,26 +3817,69 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
-## ADR-0155 – Admin Slice A bleibt ehrliche Steuerzentralen-IA ohne neue Autorität
+## ADR-0155 – Konto-Flugübernahme nur über serverseitigen FlugNachweis
 
 **Datum:** 24. August 2026  
-**Status:** umgesetzt auf Draft-PR #44 / `feat/admin-control-center-ia`; Nummer von ADR-0152 auf ADR-0155 gehoben, weil `main` ADR-0152 bereits an Account AP-1 vergeben hat
+**Status:** umgesetzt auf Draft-PR #51 / Provider Readiness S2; kein echter Provider, kein Mark Ready / kein Merge
 
-**Entscheidung:**
+**Entscheidung:** Eine kommerzielle Flugübernahme speichert keine Browseroption. Der Client liefert nur identifiers (`tripId`, `dayId`, `optionId`). Preis, Zeiten, Provider, External-Ref, Kabine und Legs kommen aus einem serverseitigen `FlugNachweis` plus dem per RLS geladenen Reisegraphen und einem serverseitig belegten Suchkontext. Solange Nachweis oder Suchkontext fehlen, fällt die Übernahme fail closed. `booking_url` bleibt `null`. Guest persistiert keine kommerzielle Provider-Flugoption. Guest → Account streicht unbewiesene Flug-Handelsfelder und darf sie nicht zu belegter Wahrheit hochstufen. Route Truth bleibt Foundation D; S2 baut keine zweite Route und keine Route-Heuristik.
 
-- Das vorhandene gehärtete Admin-Backoffice wird zur ehrlichen Steuerzentrale auf IA-/UI-Ebene weiterverwendet. Es entsteht kein zweites Admin.
-- Capability-aware Navigation ist nur UX. Autorisierung bleibt ausschliesslich bei `requireAdminPage` / `requireAdminApi` und RLS.
-- Persistente Admin-Writes (lokale Refund-Notiz, IP-Blockliste schreiben/entfernen) antworten bei Break-Glass mit **403**, bevor die Datenbank erreicht wird. Das folgt ADR-0036 (`reachesDatabase()` / nur `grant === 'role'`). Keine neue Capability und keine RLS-Änderung.
-- Refunds und IP-Blockliste werden als lokale/operative Sicht gekennzeichnet. Es gibt keine Provider-Geldbewegung und keine Enforcement der Blockliste.
-- Copilot-Auto, erfundene Notifications/Badges und der Setup-Guide mit toten Control-Center-Zielen entfallen. Stub-Seiten heissen ausdrücklich `folgt`.
+**Kontext:** Nach S1 (ADR-0154) war die Flug-Kontoübernahme der offene P0-Trust-Gap: Zod prüfte die volle Browser-`FlugOption` und persistierte Preis, Zeiten und Refs. Hotels und Aktivitäten hatten die Nachweisgrenze bereits.
 
-**Kontext:** Auftrag `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`. Das bestehende Admin war ein gehärtetes unvollständiges Backoffice mit Legacy-Scheinzuständen (toter Copilot-Execute, Badge `3`, Setup-Guide auf `/admin/control-center`). Beim Main-Sync nach AP-1-Merge kollidierte die ursprüngliche Draft-Nummer ADR-0152 mit der gemergten Account-Entscheidung.
+**Alternativen:**
 
-**Alternativen:** Zweites Control-Center bauen; Capability-Nav als Autorisierung behandeln; Break-Glass weiter in die Datenbank laufen lassen und 500 als Ablehnung belassen; Refund/IP als fertige Provider-Steuerung präsentieren; die Account-ADR auf `main` umnummerieren.
+1. *HMAC-Signatur der Suchergebnisse.* Zweckentfremdet Secrets und schützt nicht vor späteren Preisänderungen.
+2. *Suchkontext aus Origin-/Etappennamen ableiten.* Wäre eine Route-Heuristik und eine zweite Route Truth.
+3. *Guest weiter kommerziell persistieren und nur das Konto sperren.* Guest → Account würde unbewiesene Optionen nachträglich adeln.
 
-**Begründung:** `unknown` / `nicht enforced` / `folgt` ist besser als erfundenes Grün. Slice A darf keine neue Datenwahrheit und keine neue Autorität einführen. Der bestehende Break-Glass-Vertrag verlangt bereits, dass Notzugang nicht persistiert. Account-ADR-0152 auf `main` hat Vorrang vor der Draft-Nummer.
+**Begründung:** Dieselbe Trust-Grenze wie `HotelNachweis` muss stehen, bevor ein Flugadapter aktiv wird. Tests injizieren einen Fake-Katalog. Ein persistenter Suchkontext-Speicher oder Offer-Provenance wäre S5 und braucht einen eigenen Auftrag.
 
-**Konsequenzen:** System Health, Copilot-Pro-Execute, Infomaniak, Bexio, Ads und Payment-Provider bleiben spätere Slices. Account-/Trip-/Traveller-/Route-/Safety-/Seasonal-Verträge bleiben unberührt. PR bleibt Draft.
+**Konsequenzen:** `flugNachweisAusUmgebung()` gibt heute `null` zurück. Die Server Action übergibt keinen Client-Suchkontext. Der erste Nachweis-Adapter muss optionId gegen Legs, Passagiere, Kabine, Währung und Gültigkeit binden. Die App-Grenze allein reicht nicht; der öffentliche RPC braucht ADR-0156.
+
+---
+
+## ADR-0156 – reise_anlegen verwirft unbewiesene Flug-Handelsfelder
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #51 / S2-B1; nur Supabase Development; Production unverändert
+
+**Entscheidung:** `public.reise_anlegen(jsonb)` übernimmt für `kind='flight'` keine kommerziellen Felder aus der JSON-Nutzlast. `price_amount`, `price_currency`, `provider`, `external_ref` und `booking_url` werden in beiden INSERT-Pfaden (Tagespunkte und Ungeplante) auf `null` gesetzt. Nichtkommerzielle Flight-User-Intake-Felder, Foundation-D-Itinerary sowie Hotel-/Aktivitäts-/Mobilitäts-/Mietwagenverträge bleiben unverändert. Ein späterer vertrauenswürdiger Flugnachweis braucht einen getrennten Schreibvertrag; der heute für `authenticated` erreichbare JSON-RPC ist keine Providerquelle.
+
+**Kontext:** Der TypeScript-Pfad von S2 (ADR-0155) war korrekt fail-closed. Der unabhängige Technical-Lead-Review fand den Direct-RPC-Bypass: `reise_anlegen` ist `SECURITY INVOKER` mit EXECUTE für `authenticated`. Ein Browser kann die RPC direkt über PostgREST aufrufen und damit die App-Grenze umgehen. RLS schützt weiter das Eigentum, nicht die Provenienz.
+
+**Alternativen:**
+
+1. *EXECUTE für authenticated entziehen.* Würde den normalen Konto-Anlagepfad zerstören.
+2. *BEFORE-Trigger auf trip_items, der alle Flug-Handelsfelder nullt.* Würde auch einen späteren nachgewiesenen Server-INSERT treffen.
+3. *Service Role oder neuer SECURITY DEFINER-Vertrag.* Ausserhalb des S2-B1-Scopes und ohne Product-Owner-Freigabe.
+
+**Begründung:** Die minimale, freigegebene Lösung härtet genau den browser-erreichbaren JSON-Vertrag. Additive Migration `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis.sql`, nur Development.
+
+**Konsequenzen:** Production bleibt bis zu einer separaten Product-Owner-Freigabe unverändert. Keine Service-Role-, Auth-, MFA-, AAL- oder Capability-Änderung. Kein S3. Kein Mark Ready / Merge. Der direkte Tabellenvertrag braucht ADR-0157.
+
+---
+
+## ADR-0157 – Direkte trip_items-Writes verwerfen untrusted Flug-Handelsfelder
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #51 / S2-B2; nur Supabase Development; Production unverändert
+
+**Entscheidung:** Ein BEFORE-Trigger auf `public.trip_items` verwirft für `kind='flight'` die fünf Handelsfelder, wenn `current_user` `authenticated` oder `anon` ist. INSERT setzt sie auf `null`. UPDATE kann sie nicht ändern und erbt sie nicht bei einem `kind`-Wechsel zu `flight`. Hotel-/Aktivitäts-/Mobilitäts-/Mietwagenfelder bleiben unberührt. User-Intake und Foundation-D-Itinerary bleiben möglich.
+
+Ein späterer vertrauenswürdiger Flugnachweis braucht einen **getrennten SECURITY DEFINER-Schreibvertrag**. Der heutige `authenticated`-Tabellenvertrag, inklusive eines künftigen direkten App-INSERTs als `authenticated`, ist keine Providerquelle. `current_user` ist die Grenze, kein Client-Flag und keine Service Role.
+
+**Kontext:** S2-B1 (ADR-0156) schloss `reise_anlegen`. Der Technical-Lead-Re-Review reproduzierte danach einen direkten `authenticated` UPDATE auf `trip_items`, der Preis, Währung, Provider, External-Ref und Booking-URL persistierte. RLS prüft Eigentum, nicht Provenienz.
+
+**Alternativen:**
+
+1. *Tabellenrechte auf die fünf Spalten entziehen.* Nicht kind-spezifisch; würde Hotel/Activity und `SECURITY INVOKER`-Pfade mitreissen.
+2. *Session-GUC `jetnity.trusted_flight_write`.* Von `authenticated` per `set_config` spoofbar.
+3. *Service Role als Schreibweg.* Ausdrücklich ausgeschlossen.
+4. *Pauschales Nullen unabhängig von `current_user`.* Würde auch einen späteren SECURITY DEFINER-Nachweis treffen.
+
+**Begründung:** Minimaler additiver Guard, der den Browservertrag fail-closed macht und den späteren getrennten trusted Vertrag offenlässt. Migration `20260824180000_trip_items_flug_handelsfelder_guard.sql`, nur Development.
+
+**Konsequenzen:** `flugInReiseUebernehmen` bleibt heute fail-closed. Sobald ein Nachweis existiert, darf er kommerzielle Felder nicht mehr über den `authenticated`-Tabellen-INSERT adeln; dafür ist ein eigener SECURITY DEFINER-Vertrag nötig. Production unverändert. Kein S3. Kein Mark Ready / Merge.
 
 ---
 

@@ -104,6 +104,10 @@ export default function FlugSuche({
 
   const uebernehmen = async (option: FlugOptionSichtbar) => {
     if (uebernimmt) return
+    if (!antwort?.options.some((sichtbar) => sichtbar.id === option.id)) {
+      setMeldung('Diese Flugoption stammt nicht aus der aktuellen Suche.')
+      return
+    }
     setUebernimmt(true)
     setMeldung('')
     const fehler = await onUebernehmen(tag?.id ?? null, option, antwort?.airportRefs)

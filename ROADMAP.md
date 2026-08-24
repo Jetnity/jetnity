@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety, Seasonal, Account AP-1 und Account AP-2 auf `main`; Admin Slice A Re-Sync auf Draft PR #44 nach `2827d1cb`; Provider Ops S1 Draft PR #47**
+Status: **Foundation C/D/E, Travel Safety, Travel Timing & Seasonal, Account AP-1 und Account AP-2 auf `main`; Provider Readiness S2-B2 auf Draft-PR #51 nach `main`-Sync**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -240,7 +240,7 @@ Auftrag: `docs/ACCOUNT_AP1_MAIN_SYNC_TASK.md`. Entscheidung: ADR-0152, ADR-0153.
 
 ## 6b. Account Platform AP-2 – Auth-UX-Hygiene
 
-Status: **auf `main` gemergt (PR #48, `2827d1cb`)**
+Status: **auf `main` – Squash-Merge `2827d1cb` (PR #48), 24. August 2026**
 
 Ziel: Login, Register, Callback, OAuth-Sichtbarkeit, Gast-/Session-Navigation und MFA-Dialog-Accessibility härten, ohne Auth-/MFA-/AAL-Vertrag oder Provider zu ändern.
 
@@ -257,19 +257,6 @@ Umgesetzt in AP-2:
 Nicht in AP-2: DB/Migration/RLS, Traveller-Registry, Guest→Account-Vertragsänderung, Provider-Aktivierung, AP-3.
 
 Auftrag: `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md`.
-
----
-
-## 6c. In Arbeit – Admin Control Center Slice A
-
-Status: **Re-Sync mit `main` `2827d1cb` auf Draft PR #44. Bisheriger Integration Closure / PASS gilt nur gegen `084f7c87` / `ed839d3e`. Product-Owner-Freigabe für Ready/Merge liegt vor; neues Exact-Head-Gate und Technical-Lead-Re-Check stehen aus.**
-
-- ehrliche Steuerzentralen-IA auf dem vorhandenen gehärteten Backoffice
-- keine neue Datenwahrheit, keine neue Autorität, keine Migration
-- kein System Health in diesem Branch
-- kein Merge vor neuem Exact-Head-Gate und kurzem Technical-Lead-Re-Check
-
-Auftrag: `docs/ADMIN_SLICE_A_MAIN_SYNC_TASK.md`. Entscheidung: ADR-0155.
 
 ---
 
@@ -301,7 +288,7 @@ Zu prüfen/vereinheitlichen:
 
 Keine Verträge, Secrets oder laufenden Providerkosten ohne separate Freigabe.
 
-S1 Shared Operational Contract ist Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`. Es zentralisiert nur technische Hüllen. Audit-PR #45 bleibt Draft. S1 aktiviert keine Provider und schließt nicht `FlugNachweis`, persistente Kostenschranken oder Admin-Health. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
+S1 Shared Operational Contract ist Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`. Es zentralisiert nur technische Hüllen. Audit-PR #45 bleibt Draft. S2 inkl. B1/B2 liegt auf Draft-PR #51 / `feat/provider-flight-evidence-s2`, Integrations-Head `e2fcffde` (auf `origin/main` @ `2827d1cb` synchronisiert). Development-Migrationen `20260824160000` und `20260824180000` sind angewendet, Production unverändert. GitHub Actions und Vercel auf `e2fcffde` sind grün. STOPP für Technical-Lead-Re-Review. S1/S2 aktivieren keine Provider. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
 
 ---
 
@@ -397,10 +384,10 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation (PR #38 gemergt)
-6. ✅ Account Platform AP-1 auf `main` (PR #43)
-6a. ✅ Account Platform AP-2 auf `main` (PR #48, `2827d1cb`)
-7. **→ Admin Slice A Re-Sync** mit `2827d1cb` (Draft PR #44); Provider-Readiness S1 Technical Closure auf Draft PR #47, wartet auf Product-Owner-Entscheidung
+5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation
+6. ✅ Account Platform AP-1 – auf `main` (`084f7c87`, PR #43)
+6a. ✅ Account Platform AP-2 – auf `main` (`2827d1cb`, PR #48)
+7. Provider-Readiness-/Adapter-Lücken schließen – S2-B2 auf Draft-PR #51, Integrations-Head `e2fcffde`, STOPP für Technical-Lead-Re-Review
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit
 10. echte Providerphase
