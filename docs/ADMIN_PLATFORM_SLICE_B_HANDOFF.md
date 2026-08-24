@@ -10,6 +10,11 @@ Basis: `feat/admin-control-center-ia` / Draft PR #44
 
 Read-only System Health ist implementiert. Technical-Lead-Blocker **B1** ist behoben: Gesamtclaim von App/Deployment und Supabase bleibt non-green; enge Evidenz liegt in Sub-Checks.
 
+B1 Exact-Head-Gates auf `cc1d06bd427a9682343a5435e5d5c70509510cc3`:
+
+- Actions CI SUCCESS `32709302128`
+- Vercel Preview READY `3zoy92pYr1RabYcMKztGMCgYhgCH`
+
 Ältere Exact-Head-Gates (vor B1):
 
 - `dd1c469c`: Actions CI `32686411130` SUCCESS, Vercel Preview READY `2e8Vaovdsh4fjdm11WxDmwRgTJk7`
@@ -39,4 +44,4 @@ Ein weiterer Docs-Commit nach `fb193316` ändert die Runtime nicht und wird nich
 
 ## Exakter nächster Schritt
 
-B1-Fix gegaten (Tests, Hygiene, Build, UI-Audit, Actions CI, Vercel Preview auf demselben neuen Exact Head), danach erneuten unabhängigen Technical-Lead-Review abwarten. Kein Slice C.
+Erneuten unabhängigen Technical-Lead-Review auf B1-Head `cc1d06bd` abwarten. Kein Slice C. Kein Mark Ready. Kein Merge.

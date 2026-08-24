@@ -8,12 +8,18 @@ Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
 
 ## Status
 
-**Blocker B1 umgesetzt: sichtbarer Gesamtclaim nur so weit wie die Evidenz.** Draft, nicht gemergt. Kein Mark Ready, kein Merge. Kein Technical Closure / PASS.
+**Blocker B1 umgesetzt und auf Exact Head gegatet.** Draft, nicht gemergt. Kein Mark Ready, kein Merge. Kein Technical Closure / PASS.
 
 `App / Deployment` bleibt `unknown`/non-green; enge Evidenz ist der Sub-Check `App-Prozess`.  
 `Supabase` bleibt `not_configured`/non-green; enge Evidenz ist der Sub-Check `Supabase App-Datenzugriff`.
 
-Neue Exact-Head-Gates stehen nach diesem Runtime-Fix noch aus.
+B1 Exact Head: `cc1d06bd427a9682343a5435e5d5c70509510cc3`
+
+- GitHub Actions `CI` SUCCESS `32709302128`
+- Vercel Preview READY Inspector `3zoy92pYr1RabYcMKztGMCgYhgCH`
+- GitHub Deployment `6059599135` state `success`
+
+Lokal auf demselben Head: 1729/1729 Tests, Typecheck, Lint, Hygiene, `check:api-schutz` 11/11, Production-Build, UI-Audit 8/8.
 
 ## Belegte Gates
 

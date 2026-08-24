@@ -233,7 +233,7 @@ Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`
 
 ## 6b. In Arbeit – Admin Control Center Slice B
 
-Status: **Draft PR #46; Blocker B1 (sichtbarer Gesamtclaim) umgesetzt; neue Exact-Head-Gates ausstehend**
+Status: **Draft PR #46; Blocker B1 umgesetzt und auf `cc1d06bd` gegatet; wartet auf erneuten Technical-Lead-Review**
 
 - read-only System Health ohne Fake-Green
 - keine neuen Secrets, Tokens, Verträge oder Kosten
