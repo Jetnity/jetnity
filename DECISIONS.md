@@ -3658,7 +3658,7 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 - Country-Gleichheit beweist keine Ground-/Surface-Verbindung.
 - Eine Surface-Kante existiert nur, wenn das Folgesegment ein gültiges `surfaceFromAirportCode` trägt und dieses dem Destination-IATA des Vorgängers entspricht. Beide IATA müssen bekannt und verschieden sein.
 - Das Feld ist optional im bestehenden Itinerary-JSON (`v: 1`). Fehlendes oder ungültiges Feld bleibt fail-closed. Keine neue Tabelle. Die persistente Function-Grenze folgt ADR-0149.
-- `itineraryAusFlugOption()` schreibt die Evidence beim Persistieren eines provider-validierten Legs mit Airport-Wechsel. `itineraryKanonisieren()` erhält sie.
+- `itineraryKanonisieren()` erhält vorhandene gültige Evidence. `itineraryAusFlugOption()` darf sie nicht aus untrusted Segmentnachbarschaft erfinden (ADR-0150).
 - `CDG ⇢ ORY` bleibt bewiesen, wenn die Evidence gespeichert ist. `LAX→JFK` + `SFO→NRT` ohne Evidence bleibt unknown.
 
 **Kontext:** `docs/PR38_CHATGPT_R13_REVIEW.md` gegen Runtime `1c14e804`; Fixes auf `2ba32449`.
@@ -3690,7 +3690,30 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 **Begründung:** Route Truth, Fingerprint, Connections, Readiness, Safety und Seasonal dürfen sich nicht allein durch Persistieren derselben Reise ändern. Guest→Account und Account-Reload müssen dieselbe Evidence sehen wie der Runtime-Graph.
 
-**Konsequenzen:** Kein Live-Provider, keine Seasonal-Tabelle, keine Secrets, keine neuen laufenden Kosten. Development-Funktion ist aktualisiert. Production-Funktion bleibt die ältere Fassung, bis separat freigegeben. PR #38 bleibt Draft bis R15 und Product-Owner-Merge-Freigabe.
+**Konsequenzen:** Kein Live-Provider, keine Seasonal-Tabelle, keine Secrets, keine neuen laufenden Kosten. Development-Funktion ist aktualisiert. Production-Funktion bleibt die ältere Fassung, bis separat freigegeben. PR #38 bleibt Draft bis R16 und Product-Owner-Merge-Freigabe.
+
+---
+
+## ADR-0150 – FlugOption erzeugt keine Surface-Evidence aus Array-Lücken
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R15 REQUEST CHANGES
+
+**Entscheidung:**
+
+- `itineraryAusFlugOption()` schreibt kein `surfaceFromAirportCode` aus Segment-Array-Nachbarschaft.
+- Eine `FlugOption` aus dem Browser bleibt untrusted. Zod prüft Form, nicht belegte Surface-Truth.
+- `provider`, `externalRef` und unbekannte Extra-Felder sind kein Provider-Beweis.
+- Vorhandene explizite Itinerary-Evidence bleibt erhalten und persistiert (ADR-0148/0149).
+- Diskontinuierliche Segmente ohne diese Evidence bleiben chronology unknown.
+
+**Kontext:** `docs/PR38_CHATGPT_R15_REVIEW.md` gegen Runtime `771c63a9`; Fixes auf `5cc4488e`. ADR-0148 hatte die Evidence beim Flugübernahmepfad noch aus Airport-Wechsel-Nachbarschaft gesetzt.
+
+**Alternativen:** Signed/opaque Provider-Snapshot (noch nicht vorhanden); explizite Nutzerdeklaration als eigene Evidence-Klasse; Country-/Distanz-Heuristik.
+
+**Begründung:** Ohne serverseitig belegte Surface-Quelle würde Persistenz (ADR-0149) erfundene Array-Lücken dauerhaft adeln. Foundation bleibt fail-closed, bis ein echter Trust-Contract existiert.
+
+**Konsequenzen:** Echte Airport-Changes, die nur als Browser-`FlugOption` ankommen, bleiben unknown, bis eine zulässige Evidence-Quelle existiert. Kein Live-Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R16 und Product-Owner-Merge-Freigabe.
 
 ---
 
