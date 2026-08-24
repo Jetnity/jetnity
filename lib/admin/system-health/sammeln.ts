@@ -20,7 +20,9 @@ export type SystemHealthAbhaengigkeiten = {
 const CACHE_MS = 30_000
 let cache: { bis: number; bericht: SystemHealthBericht } | null = null
 
-export function leseAppRuntime(env: NodeJS.ProcessEnv = process.env): AppRuntimeSnapshot {
+export function leseAppRuntime(
+  env: Record<string, string | undefined> = process.env,
+): AppRuntimeSnapshot {
   return {
     vercelEnv: env.VERCEL_ENV?.trim() || null,
     commitSha: env.VERCEL_GIT_COMMIT_SHA?.trim() || null,
@@ -29,7 +31,9 @@ export function leseAppRuntime(env: NodeJS.ProcessEnv = process.env): AppRuntime
   }
 }
 
-export function supabaseAppIstKonfiguriert(env: NodeJS.ProcessEnv = process.env): boolean {
+export function supabaseAppIstKonfiguriert(
+  env: Record<string, string | undefined> = process.env,
+): boolean {
   return Boolean(env.NEXT_PUBLIC_SUPABASE_URL?.trim() && env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim())
 }
 

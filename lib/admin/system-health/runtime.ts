@@ -16,7 +16,7 @@ import type { SystemHealthBericht } from './typen'
 const PING_TIMEOUT_MS = 8_000
 
 async function pingAirports(client: SupabaseClient<Database>): Promise<PingErgebnis> {
-  const antwort = await mitTimeout(PING_TIMEOUT_MS, () =>
+  const antwort = await mitTimeout(PING_TIMEOUT_MS, async () =>
     client.from('airports').select('iata').limit(1),
   )
   if (antwort.error) {
