@@ -320,7 +320,7 @@ Agent: `Admin platform audit`
 3. Admin Slice B (read-only System Health) ist auf Draft PR #46 implementiert.
 4. Status/Handoff: `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`, `docs/ADMIN_PLATFORM_SLICE_B_HANDOFF.md`.
 5. PR #44 und PR #46 bleiben Draft. Kein Mark Ready, kein Merge, keine Production-Migration, keine Provider-/Secret-Aktivierung, kein Slice C.
-6. **Exakter nächster Schritt:** Pflicht-Gates und Exact-Head-CI/Preview belegen, dann unabhängigen Technical-Lead-Review abwarten. Account AP-1 darf parallel auf PR #43 bleiben.
+6. **Exakter nächster Schritt:** Exact-Head CI und Vercel Preview auf dem gepushten Handoff-Head belegen, dann unabhängigen Technical-Lead-Review abwarten. Account AP-1 darf parallel auf PR #43 bleiben.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

@@ -233,7 +233,7 @@ Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`
 
 ## 6b. In Arbeit – Admin Control Center Slice B
 
-Status: **Implementierung auf Draft PR #46 / `feat/admin-system-health`, gestapelt auf PR #44; wartet auf lokale Gates, Exact-Head-CI/Preview und unabhängigen Technical-Lead-Review**
+Status: **Implementierung auf Draft PR #46 / `feat/admin-system-health`, gestapelt auf PR #44; lokale Gates grün auf `285022e2`; wartet auf Exact-Head-CI/Preview und unabhängigen Technical-Lead-Review**
 
 - read-only System Health ohne Fake-Green
 - keine neuen Secrets, Tokens, Verträge oder Kosten

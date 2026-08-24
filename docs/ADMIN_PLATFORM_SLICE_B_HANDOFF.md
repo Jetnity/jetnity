@@ -8,7 +8,9 @@ Basis: `feat/admin-control-center-ia` / Draft PR #44
 
 ## Wo die Arbeit steht
 
-Read-only System Health ist implementiert. Exact-Head-Gates (Actions CI + Vercel Preview) und der unabhängige Technical-Lead-Review stehen noch aus.
+Read-only System Health ist implementiert. Lokale Pflicht-Gates sind grün auf Runtime-Head `285022e26ced1ce5561f1324f31461a9f9246ec4`.
+
+Exact-Head GitHub Actions CI und Vercel Preview stehen auf dem nach diesem Handoff gepushten Head noch aus. Der unabhängige Technical-Lead-Review wartet auf diese Exact-Head-Belege.
 
 Der PR bleibt Draft. Keine Mark-Ready- oder Merge-Freigabe. Keine Production-Migration, keine Provider-/Secret-Aktivierung.
 
@@ -31,6 +33,6 @@ Der PR bleibt Draft. Keine Mark-Ready- oder Merge-Freigabe. Keine Production-Mig
 
 ## Exakter nächster Schritt
 
-1. Pflicht-Gates auf dem Implementierungs-Head ausführen und belegen.
+1. Exact-Head CI und Preview auf dem gepushten Handoff-Head belegen und hier nachtragen.
 2. Unabhängigen ChatGPT/Technical-Lead-Review abwarten.
 3. Account AP-1 darf parallel auf PR #43 bleiben. PR #44 bleibt die Stack-Basis.

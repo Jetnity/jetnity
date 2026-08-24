@@ -129,6 +129,6 @@ Wenn sie gestartet wird:
 
 1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
 2. Admin Slice A bleibt Technical Closure / PASS auf Draft PR #44. Keine Slice-B-Mischung in #44.
-3. Admin Slice B ist auf Draft PR #46 implementiert und wartet auf Pflicht-Gates plus unabhängigen Technical-Lead-Review.
+3. Admin Slice B ist auf Draft PR #46 implementiert. Lokale Gates sind grün auf `285022e2`. Exact-Head CI/Preview und unabhängiger Technical-Lead-Review stehen aus.
 4. PR #43, PR #44 und PR #46 bleiben Draft, bis der Product Owner jeweils ausdrücklich freigibt.
 5. Kein Mark Ready, kein Merge, kein Admin Slice C ohne ausdrückliche aktuelle Freigabe.

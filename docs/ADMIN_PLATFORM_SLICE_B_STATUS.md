@@ -8,7 +8,7 @@ Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
 
 ## Status
 
-**Implementierung vorhanden, Gates noch nicht auf Exact Head geschlossen.** Draft, nicht gemergt. Kein Mark Ready, kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+**Lokale Pflicht-Gates grün auf Runtime-Head `285022e26ced1ce5561f1324f31461a9f9246ec4`.** Draft, nicht gemergt. Exact-Head GitHub Actions CI und Vercel Preview werden auf dem nach diesem Status-Update gepushten Head belegt. Kein Mark Ready, kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 
 ## Ziel
 
@@ -26,6 +26,18 @@ Erster professioneller, rein lesender System-Health-Bereich. Ein Dienst erschein
 
 Server-Cache 30s. Manueller Refresh über `GET /api/admin/system-health`. Kein Sekunden-Polling. Sichtbares Grün nur bei `healthy` und `fresh`.
 
+## Lokal belegte Gates auf `285022e2`
+
+- `npm test`: **1729/1729** pass
+- `npm run typecheck`: grün
+- `npm run lint`: keine Warnungen/Fehler
+- `check:api-schutz`: **11/11** Admin-Routen, alle `requireAdminApi()`
+- `check:dead`, `check:exports`, `check:deps`, `check:schema-bezug`: grün
+- `npm run build`: Production-Build grün; Routen `/admin/system-health` und `/api/admin/system-health` vorhanden
+- `npm run audit:admin-system-health`: 8/8 Kombinationen (WebKit+Chromium × 320/390/768/1280), 0 Fehler
+
+Nicht behauptet: `db:sicherheit`, Production-Migration, eingeloggte Admin-Browserprüfung, GitHub Actions CI auf diesem Docs-Head, Vercel Preview auf diesem Docs-Head, Product-Owner-Merge-Freigabe.
+
 ## Explizit nicht in Slice B
 
 Keine Migration, keine RLS-/Capability-Neudefinition, keine Service-Role, keine neuen Secrets/Tokens/Verträge/Kosten, keine Writes, kein Copilot-Execute, keine Account-/Trip-/Traveller-/Route-/Readiness-/Safety-/Seasonal-/Homepage-Änderung.
@@ -34,4 +46,4 @@ Traveller Context ist für System Health nicht relevant; es werden keine Reise-C
 
 ## Nächster Schritt
 
-Lokale Pflicht-Gates, danach GitHub Actions CI und Vercel Preview auf demselben Exact Head. Anschließend unabhängiger Technical-Lead-Review. Kein Slice C.
+Exact-Head GitHub Actions CI und Vercel Preview auf dem gepushten Docs-/Handoff-Head belegen. Danach unabhängiger Technical-Lead-Review. Kein Slice C.
