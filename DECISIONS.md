@@ -3742,6 +3742,29 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0152 – Admin Slice A bleibt ehrliche Steuerzentralen-IA ohne neue Autorität
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #44 / `feat/admin-control-center-ia`
+
+**Entscheidung:**
+
+- Das vorhandene gehärtete Admin-Backoffice wird zur ehrlichen Steuerzentrale auf IA-/UI-Ebene weiterverwendet. Es entsteht kein zweites Admin.
+- Capability-aware Navigation ist nur UX. Autorisierung bleibt ausschliesslich bei `requireAdminPage` / `requireAdminApi` und RLS.
+- Persistente Admin-Writes (lokale Refund-Notiz, IP-Blockliste schreiben/entfernen) antworten bei Break-Glass mit **403**, bevor die Datenbank erreicht wird. Das folgt ADR-0036 (`reachesDatabase()` / nur `grant === 'role'`). Keine neue Capability und keine RLS-Änderung.
+- Refunds und IP-Blockliste werden als lokale/operative Sicht gekennzeichnet. Es gibt keine Provider-Geldbewegung und keine Enforcement der Blockliste.
+- Copilot-Auto, erfundene Notifications/Badges und der Setup-Guide mit toten Control-Center-Zielen entfallen. Stub-Seiten heissen ausdrücklich `folgt`.
+
+**Kontext:** Auftrag `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`. Das bestehende Admin war ein gehärtetes unvollständiges Backoffice mit Legacy-Scheinzuständen (toter Copilot-Execute, Badge `3`, Setup-Guide auf `/admin/control-center`).
+
+**Alternativen:** Zweites Control-Center bauen; Capability-Nav als Autorisierung behandeln; Break-Glass weiter in die Datenbank laufen lassen und 500 als Ablehnung belassen; Refund/IP als fertige Provider-Steuerung präsentieren.
+
+**Begründung:** `unknown` / `nicht enforced` / `folgt` ist besser als erfundenes Grün. Slice A darf keine neue Datenwahrheit und keine neue Autorität einführen. Der bestehende Break-Glass-Vertrag verlangt bereits, dass Notzugang nicht persistiert.
+
+**Konsequenzen:** System Health, Copilot-Pro-Execute, Infomaniak, Bexio, Ads und Payment-Provider bleiben spätere Slices. Account-/Trip-/Traveller-/Route-/Safety-/Seasonal-Verträge bleiben unberührt. PR bleibt Draft.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

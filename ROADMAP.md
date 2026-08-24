@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
+Status: **Foundation C/D/E, Travel Safety und Seasonal Foundation auf `main`; aktive parallele Workstreams: Account AP-1 und Admin Slice A (Draft PR #44)**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -160,9 +160,9 @@ Verbindliche Truth-Logik:
 
 ---
 
-## 6. NÄCHSTE PRIORITÄT – Travel Timing & Seasonal Intelligence
+## 6. Travel Timing & Seasonal Intelligence
 
-Status: **Draft PR #38; R17 Technical Closure / PASS auf Runtime `57824019`; wartet auf Product-Owner-Merge-Freigabe; kein Live-Provider**
+Status: **auf `main` gemergt (PR #38, Squash `ee988bbe`); kein Live-Provider**
 
 Policy:
 
@@ -214,7 +214,20 @@ Verbindlich:
 19. ✅ ChatGPT-Re-Review R15: Blocker 30 geschlossen, Exact-Head-Gate grün
 20. ✅ ChatGPT-Re-Review R16: Blocker 31 geschlossen, Exact-Head-Gate grün
 21. ✅ ChatGPT-Re-Review R17: Technical Closure / PASS, kein neuer konkreter Defekt
-22. **→ Product-Owner-Merge-Gate** (Draft bleibt; kein Mark Ready / Merge ohne ausdrückliche Freigabe)
+22. ✅ Product-Owner-Merge und Integration auf `main`
+
+---
+
+## 6a. In Arbeit – Admin Control Center Slice A
+
+Status: **implementiert auf Draft PR #44 / `feat/admin-control-center-ia`; wartet auf unabhängigen Review**
+
+- ehrliche Steuerzentralen-IA auf dem vorhandenen gehärteten Backoffice
+- keine neue Datenwahrheit, keine neue Autorität, keine Migration
+- danach eigener Slice B: read-only System Health
+- kein Mark Ready / Merge ohne ausdrückliche Product-Owner-Freigabe
+
+Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`
 
 ---
 
@@ -340,12 +353,13 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. **→ Travel Timing & Seasonal – provider-neutrale Foundation (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
-6. Provider-Readiness-/Adapter-Lücken schließen
-7. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
-8. finaler Workspace Intelligence Audit
-9. echte Providerphase
-10. provider-backed End-to-End-/Truth-Audit
-11. finale Startseiten-Positionierung
+5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation (PR #38 gemergt)
+6. **→ parallele konfliktarme Slices: Admin Slice A (Draft PR #44) und Account AP-1; danach Admin Slice B System Health**
+7. Provider-Readiness-/Adapter-Lücken schließen
+8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
+9. finaler Workspace Intelligence Audit
+10. echte Providerphase
+11. provider-backed End-to-End-/Truth-Audit
+12. finale Startseiten-Positionierung
 
 Der nächste Agent darf D/E/Safety **nicht neu bauen** und darf **nicht direkt einen echten Provider integrieren**.

@@ -1,7 +1,7 @@
 # Jetnity Admin Platform – Slice A Implementierungsauftrag
 
 Stand: 24. August 2026
-Status: **zur Implementierung freigegeben**
+Status: **implementiert auf Draft PR #44; wartet auf unabhängigen Review**
 Verantwortlicher Cursor-Agent: `Admin platform audit`
 Implementierungsbranch: `feat/admin-control-center-ia`
 Audit-Referenz: PR #40 / `audit/admin-platform`

@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 vollständig integriert; Account und Admin als nächste aktive Workstreams technisch freigegeben**
+Status: **PR #38 vollständig integriert; Admin Slice A implementiert auf Draft PR #44; Account AP-1 bleibt paralleler Workstream**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -52,15 +52,16 @@ Nächster konfliktarmer Implementierungsslice:
 
 Der Agent darf keine zweite Auth-/Trip-/Traveller-/Billing-/Route-Truth bauen. Shared Contracts bleiben Technical-Lead-koordiniert.
 
-### Admin Platform – PR #40
+### Admin Platform – Slice A auf Draft PR #44
 
 Cursor-Anzeigename: `Admin platform audit`  
-Branch: `audit/admin-platform`  
-Audit: **AUDIT-PASS**
+Audit-Referenz: PR #40 / `audit/admin-platform` (**AUDIT-PASS**)  
+Implementierungsbranch: `feat/admin-control-center-ia`  
+Draft-PR: #44  
+Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`  
+Status: **Slice A implementiert, Draft, wartet auf unabhängigen Review**
 
-Nächster konfliktarmer Implementierungsslice:
-
-**Admin Slice A – ehrliche professionelle Control-Center-IA / bestehende Legacy-Scheinzustände entfernen.**
+Slice A macht das vorhandene gehärtete Backoffice zur ehrlichen Steuerzentrale (IA/UI). Keine neue Datenwahrheit, keine neue Autorität.
 
 Danach als eigener Slice: read-only System Health für Vercel, Supabase, GitHub, App und später Infomaniak.
 
@@ -104,4 +105,4 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-Die ersten konfliktarmen Implementierungsslices für **Account AP-1** und **Admin Slice A** können vorbereitet und gestartet werden. Nach jedem Slice folgt ein unabhängiger Review, bevor der jeweilige nächste Slice beginnt.
+Admin Slice A auf Draft PR #44 ist implementiert und wartet auf unabhängigen ChatGPT/Technical-Lead-Review. Account AP-1 darf parallel weiterlaufen, ohne Auth/RLS/Billing/Traveller anzufassen. Slice B (System Health) startet erst nach Review von Slice A. Kein Mark Ready und kein Merge ohne ausdrückliche Product-Owner-Freigabe.
