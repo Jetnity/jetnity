@@ -144,15 +144,15 @@ Weitere Punkte:
 
 ## 4a. Account-Shell (AP-1, Draft)
 
-AP-1 legt das persönliche Account-Zuhause an, ohne eine zweite Source of Truth zu schaffen. Begründung: [DECISIONS.md](DECISIONS.md) ADR-0152.
+AP-1 legt das persönliche Account-Zuhause an, ohne eine zweite Source of Truth zu schaffen. Begründung: [DECISIONS.md](DECISIONS.md) ADR-0152, ADR-0153.
 
 | Fläche | Datei | Aufgabe |
 | --- | --- | --- |
 | Shell | `app/account/layout.tsx` | PublicNavbar, kompakte Konto-Nav, Skip-Link, Footer |
-| Übersicht | `app/account/page.tsx` | Begrüssung und nächste/aktive Reise nur aus `reisenLaden()` |
+| Übersicht | `app/account/page.tsx` + `AccountUebersichtLive` | Begrüssung und nächste Reise nur aus `reisenLaden()`; aktiv/kommend am Geräte-Kalendertag |
 | Einstellungen | `app/account/settings/page.tsx` | macht vorhandenes `/account/security` auffindbar |
 | Navigation | `lib/account/navigation.ts` | Übersicht, Reisen, Einstellungen; Security zählt zu Einstellungen |
-| Nächste Reise | `lib/account/naechste-reise.ts` | aktiv → kommend → zuletzt geändert; Archiv nie Fortsetzen |
+| Nächste Reise | `lib/account/naechste-reise.ts` | mit Geräte-Kalendertag: aktiv → kommend → Fortsetzen; ohne Kalendertag nur Fortsetzen |
 | Navbar-Ziel | `sitzungseintraege('konto')` | Link **Konto** nur bei bestehender Sitzung |
 
 Die Übersicht ist Orientierung, kein Trip-Workspace. Flug-, Hotel-, Readiness-, Safety- und Seasonal-Karten gehören nicht hierher. Auth-/MFA-/AAL-, RLS- und Traveller-Verträge bleiben unverändert.

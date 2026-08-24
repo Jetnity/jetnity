@@ -1,7 +1,7 @@
 # Jetnity Account Platform – AP-1 Handoff
 
 Stand: 24. August 2026  
-Status: **AP-1 implementiert, lokal gegated, Vercel Preview grün – Draft, kein Mark Ready, kein Merge**
+Status: **AP-1 Review-Fixes umgesetzt – Draft, kein Mark Ready, kein Merge**
 
 | Feld | Wert |
 | --- | --- |
@@ -10,36 +10,20 @@ Status: **AP-1 implementiert, lokal gegated, Vercel Preview grün – Draft, kei
 | Workstream | Account Platform AP-1 |
 | Branch | `feat/account-ap1` |
 | Draft-PR | https://github.com/Jetnity/jetnity/pull/43 |
-| Head | `c00e11bc315f91a20aa5e2fdfe4e697aced1916e` |
 | Auftrag | `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md` |
-| Entscheidung | ADR-0152 |
+| Review | `docs/ACCOUNT_AP1_CHATGPT_REVIEW.md` |
+| Entscheidungen | ADR-0152, ADR-0153 |
 
-## Umgesetzt
+## Review-Fixes
 
-- Account-Shell: `app/account/layout.tsx` mit PublicNavbar, kompakter Konto-Nav, Footer, Skip-Link
-- `/account` Übersicht aus `reisenLaden()`: Begrüssung, nächste/aktive Reise, Fortsetzen, Empty ≠ Error
-- Navbar-Link **Konto** nur bei `sitzung === konto`
-- `/account/settings` macht `/account/security` auffindbar
-- Security-Seite an Jetnity-V2-Chrome angeglichen
-- UI-Audit-Harness `/ui-audit/account`
+- aktiv/kommend nur gegen Geräte-Kalendertag; Server klassifiziert diese Lagen nicht
+- 503-Text behauptet keinen Speicherstand
+- Datumsgrenztests um UTC/lokalen Tageswechsel
 
 ## Nicht angefasst
 
-Auth/MFA/AAL, RLS, Migrationen, Guest→Account, Traveller-Registry, Privacy/Billing, Route/Readiness/Safety/Seasonal, Homepage, Workspace-Karten.
-
-## Lokale Nachweise
-
-- Account-Logiktests in `lib/account/` und Navbar-Sitzungstests: grün
-- `npm run audit:account`: **48/48 grün** (WebKit + Chromium, 8 Viewports × 3 Zustände `reise` / `leer` / `fehler`)
-- Bericht: `/opt/cursor/artifacts/account_ui_audit.json`
-- Keine neue Migration, keine DB-Evidence
-
-## Remote auf Head `c00e11bc`
-
-- Vercel Preview: **SUCCESS** (`FnNG6xjnA3eNya8UX6K4pnPgQbat`)
-- Vercel Preview Comments: **SUCCESS**
-- GitHub Actions `CI` ist auf diesem Head **nicht erneut gelaufen**. Der letzte Actions-Lauf auf dem Branch ist `32681645182` gegen den früheren Task-Commit `78285920` (SUCCESS). Das ist kein Ersatz für CI auf dem Implementierungs-Head.
+Auth/MFA/AAL, RLS, Migrationen, Guest→Account, Traveller-Registry, Privacy/Billing, Route/Readiness/Safety/Seasonal, Homepage, Workspace-Karten, AP-2.
 
 ## Nächster Schritt
 
-Unabhängiger Lead-Review von PR #43. AP-2 erst nach Freigabe. Kein Ready, kein Merge.
+Unabhängiger Re-Review von PR #43 auf dem Exact Head mit GitHub Actions CI **und** Vercel Preview. Kein Ready, kein Merge.

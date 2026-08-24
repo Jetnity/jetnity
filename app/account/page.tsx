@@ -1,7 +1,8 @@
 // app/account/page.tsx
 //
 // Persönliche Account-Übersicht. Reisen kommen ausschliesslich aus
-// `reisenLaden()`. Empty und Error bleiben getrennt.
+// `reisenLaden()`. Empty und Error bleiben getrennt. aktiv/kommend
+// klassifiziert der Client am Geräte-Kalendertag, nicht der Server.
 
 import type { Metadata } from 'next'
 

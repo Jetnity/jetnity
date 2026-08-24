@@ -3766,6 +3766,28 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0153 – Account aktiv/kommend braucht einen Geräte-Kalendertag
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #43 nach Technical-Lead REQUEST CHANGES
+
+**Entscheidung:**
+
+- `aktiv` / `kommend` entstehen nur gegen einen belegten Geräte-Kalendertag (`Date#getTimezoneOffset`).
+- Der Server klassifiziert diese Lagen nicht. Unbekannter Kalendertag bleibt `fortsetzen`.
+- Keine IANA-Zone, kein stilles UTC-Kalenderdatum aus `toISOString()`.
+- Ein 503 von `reisenLaden()` beweist keinen Speicherstand. Der Text sagt nur, dass der aktuelle Stand nicht geprüft werden konnte.
+
+**Kontext:** Independent Technical-Lead Review an PR #43 gegen Head `62868d2c`.
+
+**Alternativen:** Server-UTC als „heute“ (Review-Blocker); IANA aus IP/Browser raten; aktiv/kommend ganz entfernen.
+
+**Begründung:** Date-only darf nicht still UTC werden. Ein Ladefehler ist keine Persistenzaussage.
+
+**Konsequenzen:** Kurz nach dem ersten Client-Render kann die Lage von Fortsetzen auf aktiv/kommend wechseln. Das ist ehrlicher als eine Server-UTC-Behauptung. PR #43 bleibt Draft.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
