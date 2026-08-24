@@ -1,6 +1,6 @@
 # Jetnity – Handoff und nächste Schritte
 
-Stand: **25. August 2026, ca. 00:15 Europe/Zurich**  
+Stand: **25. August 2026, ca. 00:20 Europe/Zurich**  
 Status: **kanonischer operativer Einstieg für neue Chats/Agenten**
 
 > Vor jeder neuen Aktion GitHub/CI/Vercel/Supabase live verifizieren. Historische Handoffs bleiben Evidence ihres damaligen Zeitpunkts und dürfen neuere zentrale Wahrheit nicht überschreiben.
@@ -9,9 +9,9 @@ Status: **kanonischer operativer Einstieg für neue Chats/Agenten**
 
 Repository: `Jetnity/jetnity`
 
-- aktueller `main`: `f8e252880d31fe462537f33be4496044951ae4a9`
+- `main`-Tip an diesem Checkpoint: `1bc1e1f492ea30710840b4a38d96437d56b73d77`
 - letzter PR-Merge: **Trip Workspace Audit / PR #55**, Merge-Commit `08fd7748ace072544e189c94880562e050971811`
-- die danach folgenden `main`-Commits `c42017f5...` und `f8e25288...` sind **docs-only Kontinuitätsupdates**, keine Runtime-Änderungen
+- die danach folgenden `main`-Commits `c42017f5...`, `f8e25288...` und `1bc1e1f4...` sind **docs-only Kontinuitätsupdates**, keine Runtime-Änderungen
 - PR #55: **merged / closed** nach ausdrücklicher PO-Ready- und separater PO-Merge-Freigabe
 - PR #55 war docs-only; **Merge ≠ Annahme der vorgeschlagenen Ziel-IA und ≠ TW-1-Freigabe**
 - Supabase Production endet bei `20260824140000_flug_route_itinerary_untrusted_surface`
