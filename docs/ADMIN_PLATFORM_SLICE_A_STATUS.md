@@ -8,7 +8,9 @@ Auftrag: `docs/ADMIN_SLICE_A_MAIN_SYNC_TASK.md`
 
 ## Status
 
-**Main-Sync mit `main` `084f7c87` gegatet. STOPP für unabhängigen Technical-Lead-Integrationsreview.** Draft, nicht gemergt. Kein Mark Ready, kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+**Main-Sync mit aktuellem `main` `084f7c87` gegatet und erneut verifiziert. STOPP für unabhängigen Technical-Lead-Integrationsreview.** Draft, nicht gemergt. Kein Mark Ready, kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+
+`origin/main` wurde erneut geholt und ist unverändert `084f7c87`. Branch ist 0 behind; kein neuer Merge.
 
 Exact Runtime Head: `ed839d3e6ee2605beef65d66fa1555ddabb52138`  
 Gate-Nachweis: `docs/ADMIN_PLATFORM_SLICE_A_MAIN_SYNC_GATE.md`
@@ -26,7 +28,9 @@ Admin-Entscheidung nach ADR-Kollision mit Account AP-1: **ADR-0155**.
 - Vercel Preview **READY**: Inspector `DgCMj6BFKkAZaUBU4HyQb6fZbm4i`
 - gegen `main` `084f7c87`
 
-Ein Docs-only-Folgecommit ist kein neues Runtime-Gate.
+Ein Docs-only-Folgecommit ist kein neues Runtime-Gate. Docs-only-Head `02f583b2` hat CI `32724080308` SUCCESS.
+
+Lokale Gates wurden nach Re-Verifikation von `main` erneut vollständig ausgeführt: 1764/1764, Typecheck, Lint, Hygiene, `check:api-schutz`, Production-Build grün. Runtime unverändert.
 
 ## Belegte Gates auf altem Head `5632a3ca` (vor Main-Sync)
 

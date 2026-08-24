@@ -44,6 +44,23 @@ Nicht behauptet: `db:sicherheit`, Production-Migration, eingeloggte Admin-Browse
 - Slice-A-Adminverhalten unverändert: ehrliche IA, keine Fake-Notifications/Auto-Execution, Refund lokal, IP-Block nicht enforced, Capability-Nav nur UX, Break-Glass-Writes 403.
 - Kein Slice B/C, keine System-Health-Dateien in diesem Branch.
 
+## Re-Verifikation nach Fortsetzungsauftrag
+
+`origin/main` wurde erneut geholt und ist **unverändert** `084f7c87f36f9929f3e4a9deb9d3fedef6e96982`.  
+`feat/admin-control-center-ia` ist **0 behind** `main`; Merge-Base ist `084f7c87`. Ein weiterer Merge wäre leer und wurde nicht erzeugt.
+
+Lokale Gates wurden vollständig erneut ausgeführt (aktueller Tree = Docs-Head `02f583b2`, Runtime unverändert zu `ed839d3e`):
+
+- `npm test`: **1764/1764 pass**
+- Typecheck, Lint, Hygiene, `check:schema-bezug`, `check:api-schutz` (10 Admin-Routen), Production-Build: grün
+
+Remote Exact-Head-Gate bleibt `ed839d3e`:
+
+- GitHub Actions `CI` **SUCCESS**: `32723815715`
+- Vercel Preview **READY**: Inspector `DgCMj6BFKkAZaUBU4HyQb6fZbm4i`
+
+Docs-only-Head `02f583b2` hat zusätzlich CI `32724080308` SUCCESS. Das ist **kein** neues Runtime-Gate.
+
 ## Nächster Schritt
 
 Unabhängiger Technical-Lead-Integrationsreview. PR #44 bleibt Draft. Kein Mark Ready, kein Merge.

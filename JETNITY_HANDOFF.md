@@ -319,7 +319,7 @@ Agent: `Admin platform audit`
 Auftrag: `docs/ADMIN_SLICE_A_MAIN_SYNC_TASK.md`
 
 1. Seasonal Foundation (PR #38) und Account AP-1 (PR #43) sind auf `main` `084f7c87`.
-2. Admin Slice A ist mit diesem `main` synchronisiert. Exact Runtime Head `ed839d3e`. CI `32723815715` SUCCESS, Vercel Preview READY. Bisheriger Technical Closure bleibt für den alten Head gültig und ersetzt das Integrationsgate nicht.
+2. Admin Slice A ist mit diesem `main` synchronisiert und erneut verifiziert (`origin/main` unverändert `084f7c87`, 0 behind). Exact Runtime Head `ed839d3e`. CI `32723815715` SUCCESS, Vercel Preview READY. Bisheriger Technical Closure bleibt für den alten Head gültig und ersetzt das Integrationsgate nicht.
 3. Status/Handoff/Gate: `docs/ADMIN_PLATFORM_SLICE_A_STATUS.md`, `docs/ADMIN_PLATFORM_SLICE_A_HANDOFF.md`, `docs/ADMIN_PLATFORM_SLICE_A_MAIN_SYNC_GATE.md`.
 4. PR #44 bleibt Draft. Kein Mark Ready, kein Merge, keine Production-Migration, keine Provider-/Secret-Aktivierung.
 5. **Exakter nächster Schritt:** unabhängigen Technical-Lead-Integrationsreview auf `ed839d3e` abwarten. Slice B / PR #46 bleibt unangetastet.

@@ -7,7 +7,9 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/44
 
 ## Wo die Arbeit steht
 
-**Main-Sync mit `main` `084f7c87` gegatet. STOPP für unabhängigen Technical-Lead-Integrationsreview.**
+**Main-Sync mit aktuellem `main` `084f7c87` gegatet und erneut verifiziert. STOPP für unabhängigen Technical-Lead-Integrationsreview.**
+
+`origin/main` unverändert `084f7c87`; Branch 0 behind, kein neuer Merge. Lokale Gates erneut vollständig grün. Runtime-Gate bleibt `ed839d3e`.
 
 Exact Runtime Head: `ed839d3e6ee2605beef65d66fa1555ddabb52138`  
 CI `32723815715` SUCCESS. Vercel Preview READY Inspector `DgCMj6BFKkAZaUBU4HyQb6fZbm4i`.  

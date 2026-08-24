@@ -63,7 +63,7 @@ Auftrag: `docs/ADMIN_SLICE_A_MAIN_SYNC_TASK.md`
 
 Aktiver Slice:
 
-**Admin Slice A Main-Sync mit `main` `084f7c87` gegatet.** Exact Runtime Head `ed839d3e6ee2605beef65d66fa1555ddabb52138`. CI `32723815715` SUCCESS. Vercel Preview READY `DgCMj6BFKkAZaUBU4HyQb6fZbm4i`. Nachweis: `docs/ADMIN_PLATFORM_SLICE_A_MAIN_SYNC_GATE.md`.
+**Admin Slice A Main-Sync mit aktuellem `main` `084f7c87` gegatet und erneut verifiziert.** Exact Runtime Head `ed839d3e6ee2605beef65d66fa1555ddabb52138`. CI `32723815715` SUCCESS. Vercel Preview READY `DgCMj6BFKkAZaUBU4HyQb6fZbm4i`. Nachweis: `docs/ADMIN_PLATFORM_SLICE_A_MAIN_SYNC_GATE.md`. `origin/main` unverändert; Branch 0 behind.
 
 Bisheriger Technical Closure / PASS gilt nur für den alten Exact Head `5632a3cac1301d2d649fcb1d2b9552d3763c8b9f` (CI `32683942810`, Preview `dpl_czE3XJXw3qx3sXMrh7LTgMV94zBL`). Das ersetzt das neue Integrationsgate nicht. STOPP für unabhängigen Technical-Lead-Integrationsreview.
 

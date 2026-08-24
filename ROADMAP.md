@@ -240,7 +240,7 @@ Auftrag: `docs/ACCOUNT_AP1_MAIN_SYNC_TASK.md`. Entscheidung: ADR-0152, ADR-0153.
 
 ## 6b. In Arbeit – Admin Control Center Slice A
 
-Status: **Main-Sync mit `084f7c87` gegatet auf Draft PR #44, Exact Runtime Head `ed839d3e`; STOPP für Technical-Lead-Integrationsreview. Bisheriger Technical Closure gilt nur für den alten Head `5632a3ca`**
+Status: **Main-Sync mit aktuellem `084f7c87` gegatet und erneut verifiziert auf Draft PR #44, Exact Runtime Head `ed839d3e`; STOPP für Technical-Lead-Integrationsreview. Bisheriger Technical Closure gilt nur für den alten Head `5632a3ca`**
 
 - ehrliche Steuerzentralen-IA auf dem vorhandenen gehärteten Backoffice
 - keine neue Datenwahrheit, keine neue Autorität, keine Migration
