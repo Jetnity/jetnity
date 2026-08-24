@@ -16,6 +16,7 @@ import type { MobilitySucheAntwort } from '@/lib/mobility/client-sicht'
 import { MOBILITY_MODE_BEZEICHNUNG } from '@/lib/mobility/domain'
 import { mobilitaetsAbdeckung, type Bewegungskante } from '@/lib/mobility/kanten'
 import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
+import { mobilitySucheStartetAutomatisch } from '@/lib/mobility/suche-ausloeser'
 import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
 import { mietwagenBestand } from '@/lib/rental-cars/bestand'
 import { kannBuchungMarkieren } from '@/lib/trips/buchung'
@@ -76,9 +77,17 @@ export default function MobilitaetBereich({
     if (fehler) setMeldung(fehler)
   }
 
-  React.useEffect(() => {
+  const sucheStarten = () => {
+    if (sucht || mobilitySucheStartetAutomatisch()) return
     const erste = reise.stages[0]
-    if (!reise.origin || !erste) return
+    if (!reise.origin || !erste) {
+      setSuche(
+        mobilitySucheFehlerAntwort(
+          'Start und Ziel der Verbindung sind aus den Reisedaten noch nicht bestimmbar.',
+        ),
+      )
+      return
+    }
     const steuer = new AbortController()
     setSucht(true)
     void mobilitySucheVomClient(
@@ -95,10 +104,9 @@ export default function MobilitaetBereich({
       steuer.signal,
     )
       .then((antwort) => {
-        if (!steuer.signal.aborted) setSuche(antwort)
+        setSuche(antwort)
       })
       .catch((fehler) => {
-        if (steuer.signal.aborted) return
         setSuche(
           mobilitySucheFehlerAntwort(
             fehler instanceof Error ? fehler.message : 'Die Mobilitätssuche ist gerade nicht verfügbar.',
@@ -106,10 +114,9 @@ export default function MobilitaetBereich({
         )
       })
       .finally(() => {
-        if (!steuer.signal.aborted) setSucht(false)
+        setSucht(false)
       })
-    return () => steuer.abort()
-  }, [reise])
+  }
 
   return (
     <div className="grid gap-6">
@@ -275,9 +282,17 @@ export default function MobilitaetBereich({
         ) : (
           <p className="mt-5 min-h-[4.5rem] rounded-2xl bg-surface-25 px-4 py-3 text-sm leading-6 text-ink-800">
             {suche?.message ??
-              'Verbindungen per Bahn, Bus, Fähre oder Transfer werden vorbereitet. Sobald ein Datenpartner angebunden ist, erscheinen hier echte Angebote – ohne erfundene Fahrpläne oder Preise.'}
+              'Verbindungen per Bahn, Bus, Fähre oder Transfer werden vorbereitet. Sobald ein Datenpartner angebunden ist, erscheinen hier echte Angebote – ohne erfundene Fahrpläne oder Preise. Eine Suche startet nicht automatisch.'}
           </p>
         )}
+        <button
+          type="button"
+          onClick={sucheStarten}
+          disabled={sucht}
+          className="mt-4 inline-flex min-h-11 items-center justify-center rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:opacity-50"
+        >
+          {sucht ? 'Wird geprüft …' : 'Verbindungen prüfen'}
+        </button>
       </section>
 
       {onManuellAnlegen ? <ManuelleVerbindung reise={reise} onAnlegen={onManuellAnlegen} /> : null}

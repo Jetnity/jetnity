@@ -200,3 +200,67 @@ export function rentalTitelAus(
   if (eingabe.pickupName === eingabe.dropoffName) return `Mietwagen ${eingabe.pickupName}`
   return `Mietwagen ${eingabe.pickupName} → ${eingabe.dropoffName}`
 }
+
+const optionalerBetrag = z
+  .number()
+  .finite()
+  .nonnegative()
+  .max(9_999_999_999.99)
+  .nullable()
+  .default(null)
+
+const optionalerHinweis = z
+  .string()
+  .transform((wert) => wert.trim())
+  .pipe(z.string().max(160))
+  .transform((wert) => (wert === '' ? null : wert))
+  .nullable()
+  .default(null)
+
+const rentalCarOptionSchema = z.object({
+  id: z.string().trim().min(1).max(120),
+  provider: z.string().trim().min(1).max(40),
+  externalRef: z.string().trim().min(1).max(200),
+  title: z.string().trim().min(1).max(RENTAL_SUCHE_GRENZEN.titel),
+  pickupName: ortsname,
+  dropoffName: ortsname,
+  pickupPlaceId: optionalerOrt.nullable().default(null),
+  dropoffPlaceId: optionalerOrt.nullable().default(null),
+  pickupOn: datum.nullable().default(null),
+  pickupAt: uhrzeit.nullable().default(null),
+  dropoffOn: datum.nullable().default(null),
+  dropoffAt: uhrzeit.nullable().default(null),
+  vehicleClass: z.enum(VEHICLE_CLASSES).nullable().default(null),
+  transmission: z.enum(TRANSMISSIONS).nullable().default(null),
+  supplierName: z
+    .string()
+    .transform((wert) => wert.trim())
+    .pipe(z.string().max(RENTAL_SUCHE_GRENZEN.supplier))
+    .transform((wert) => (wert === '' ? null : wert))
+    .nullable()
+    .default(null),
+  preis: optionalerBetrag,
+  preisIstGesamt: z.boolean().nullable().default(null),
+  preisWaehrung: waehrung.nullable().default(null),
+  kilometerRegel: optionalerHinweis,
+  tankRegel: optionalerHinweis,
+  storno: optionalerHinweis,
+  kaution: optionalerBetrag,
+  kautionWaehrung: waehrung.nullable().default(null),
+})
+
+export type GepruefteRentalCarOption = z.infer<typeof rentalCarOptionSchema>
+
+export function rentalCarOptionLesen(wert: unknown): GepruefteRentalCarOption | null {
+  const ergebnis = rentalCarOptionSchema.safeParse(wert)
+  return ergebnis.success ? ergebnis.data : null
+}
+
+/**
+ * Konto-Übernahme: nur identifiers. Kommerzielle Fakten und der Suchkontext
+ * kommen serverseitig aus Nachweis und Reise, nicht aus dem Browser.
+ */
+export const rentalCarKontoUebernahmeSchema = z.object({
+  tripId: z.string().uuid(),
+  optionId: z.string().trim().min(1).max(200),
+})
