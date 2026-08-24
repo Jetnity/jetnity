@@ -1,6 +1,6 @@
 # Jetnity – Handoff und nächste Schritte
 
-Stand: **24. August 2026, ca. 22:00 Europe/Zurich**  
+Stand: **24. August 2026, ca. 22:10 Europe/Zurich**  
 Status: **kanonischer operativer Einstieg für neue Chats/Agenten**
 
 > Vor jeder neuen Aktion GitHub/CI/Vercel/Supabase live verifizieren. Historische Handoffs bleiben Evidence ihres damaligen Zeitpunkts und dürfen neuere zentrale Wahrheit nicht überschreiben.
@@ -33,7 +33,8 @@ Repository: `Jetnity/jetnity`
 
 PR #53 / AP-3 / ADR-0160:
 
-- Draft, offen, nicht gemergt, mergeable
+- **Ready for Review**, offen, nicht gemergt, mergeable
+- Product Owner hat Mark Ready ausdrücklich freigegeben; Ready wurde am 24. August 2026 ausgeführt
 - Base und Merge-Base: aktueller `main` `78192ab...`
 - Runtime-/Sync-Head: `c5e4a51feff80b94b9bb9b153ee5211d49fa4375`
 - 200er-Truth-Fund fail-honest korrigiert
@@ -44,8 +45,8 @@ PR #53 / AP-3 / ADR-0160:
 - aktueller PR-Head: `3222d8bc2624f940f5e904774de62d242fdac5fb`
 - GitHub Actions `32770952175`: **SUCCESS** auf exakt `3222d8bc...`
 - Vercel auf exakt `3222d8bc...`: **success / READY** (`7bh88WLuDRnxQYqHLsbgZFy7Y6wN`)
-- **Technical Integration Closure / PASS erreicht. Nächster Gate: ausdrückliche Product-Owner-Freigabe für Mark Ready.**
-- kein Merge ohne danach separate ausdrückliche PO-Freigabe; kein AP-4 vorher
+- **Technical Integration Closure / PASS erreicht.**
+- **Nächster Gate: separate ausdrückliche Product-Owner-Freigabe für Merge.** Kein Merge vorher. Kein AP-4 vor Integration und neuem kontrollierten Auftrag.
 
 ### Provider Readiness – Agent `Jetnity provider readiness audit`
 
@@ -69,7 +70,7 @@ PR #55:
 
 ## Kontrollierte Integrationsreihenfolge
 
-1. Account #53: Technical Closure erreicht → PO-Ready-Gate → danach separates PO-Merge-Gate
+1. Account #53: Technical Closure erreicht und Ready ausgeführt → **separates PO-Merge-Gate**
 2. nach Account-Integration: Provider #54 finaler Sync / Re-Review / Integration
 3. danach Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration
 4. danach neue kontrollierte Admin-/TW-Aufträge
@@ -114,7 +115,7 @@ Neue Nummern erst durch Technical-Lead-Reservierung pro Slice.
 
 ## Nächste Schritte
 
-- `Account plattform audit vorbereitung` / #53: wartet auf ausdrückliche Product-Owner-Entscheidung zu Mark Ready.
+- `Account plattform audit vorbereitung` / #53: **Ready for Review; wartet ausschließlich auf separate Product-Owner-Merge-Entscheidung.**
 - `Jetnity provider readiness audit`: wartet.
 - `Trip workspace audit architecture`: wartet.
 - `Admin platform audit`: wartet.
