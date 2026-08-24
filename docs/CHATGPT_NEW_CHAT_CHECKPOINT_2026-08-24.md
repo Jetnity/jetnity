@@ -1,6 +1,6 @@
 # Jetnity – New Chat Technical Lead Checkpoint
 
-Stand: **24. August 2026, 20:36 Europe/Zurich**  
+Stand: **24. August 2026, ca. 20:52 Europe/Zurich**  
 Status: **aktueller kanonischer Chat-Wechsel-Checkpoint**
 
 Ein neuer Chat übernimmt die Rolle als Hauptentwickler / Technical Lead / Product-, Architecture-, Logic-, Security- und Review-Steuerung.
@@ -18,52 +18,57 @@ Danach GitHub, CI, Vercel und Supabase live verifizieren. Nicht blind auf diesen
 
 ## Verifizierter Übergabestand
 
-- `main`: `e3bad749c8e03512001e7bccd5e08467f10a7134`
-- letzter Merge: Admin Slice B / PR #46
+- `main`: `78192ab775165d08bb357140c2d04b865b8cc049`
+- letzter Merge: Admin Slice C / PR #49
 - #44 Admin A: merged
 - #46 Admin B: merged
-- Vercel Production `dpl_GpE7FWRcDGvVqhRyrZUvMDQDvG1n`: READY auf exakt `e3bad749...`
+- #49 Admin C: merged
+- Vercel Production `dpl_EkQorDSGW1JyHa4DYqzZRhngYFFa`: READY auf exakt `78192ab...`
 - Supabase Production endet bei `20260824140000`
 - S2-Guards `20260824160000` / `20260824180000`: nur Development, nicht Production-approved
-- kein DB-/RLS-/Capability-/Provider-/Secret-/Kosten-Delta durch #46
+- kein Production-DB-/RLS-/Capability-/Provider-/Secret-/Kosten-/Finance-Live-Delta durch #49
 
-## Aktive Workstreams
+## Workstreams
 
 ### Admin – Agent `Admin platform audit`
 
-PR #49 / Slice C:
-
-- Draft / Current-Main synchronisiert / implementiert
-- ADR-0162
-- Runtime `965034d6c5ac412472ceca38be97863bf072e9c0`
-- Remote-Gate-Head `bc60120f953508ede0410c26c9384f20d380738d`
-- aktueller PR-Head nach Independent-TL-Review-Dokument `82f31bdced347ec5e6488fd81c16562f8653f491`
-- Independent Technical-Lead Review: **PASS / Technical Integration Closure**
-- read-only Provider & Cost Board; keine Provideraktivierung/Secrets/Verträge/paid calls/Migration/RLS/Capability/Finance-Live
-- `model_usage` begrenzt, kein vollständiger Monatsabschluss
-- Billing-/Refund-P1 bleibt separater Pflichtblock
-- **Nächster Schritt: ausdrückliche PO-Entscheidung zu Mark Ready; Merge danach separat. Kein Slice D vor Integration von C.**
+- Slice C / PR #49 ist gemergt, ADR-0162
+- Independent Technical-Lead Review: PASS / Technical Integration Closure
+- `Admin platform audit` **wartet jetzt**
+- nächster möglicher Admin-Block: Slice D; nur nach neuem kontrollierten Auftrag
+- Admin-Programm läuft danach weiter bis K; kein automatischer Stop bei C
+- Billing-/Refund-P1 bleibt separater Pflichtblock vor Finance-/Payment-Live
 
 ### Account – Agent `Account plattform audit vorbereitung`
 
-PR #53 / AP-3: Draft. Independent Technical-Lead Review bereits erfolgt. AP-3-Grundlogik ist grundsätzlich sauber, aber zwei Abschlussbedingungen waren im zuletzt verifizierten Stand offen:
+PR #53 / AP-3:
 
-1. Current-Main-Sync auf `e3bad749...` + vollständige Re-Gates.
-2. 200er-Hinweis fail-honest korrigieren; bei exakt 200 geladenen Reisen ist nicht bewiesen, dass weitere Reisen gespeichert sind.
-
-Runtime `612d819e...`, zuletzt zentral beobachteter PR/docs Head `5fb879f5...`, ADR-0160. Kein Ready/Merge/AP-4 vor Re-Review.
+- Draft, Head `3863df7c7fbc0853b0e0a3c618096251fa595e2d`, ADR-0160
+- Technical-Lead-Fund zum 200er-Hinweis wurde fail-honest korrigiert
+- vorheriger Sync/Re-Gates auf `e3bad749...` waren grün (`c1ccfb6e...`, CI `32761572610`, Vercel `dpl_ERFzEa9dMQHncNJ9shajiPQrcMzj` READY)
+- wegen Merge #49 ist #53 jetzt erneut hinter/divergiert und aktuell nicht mergeable
+- nächster Schritt: nur auf `78192ab...` synchronisieren, Re-Gates, dann unabhängiger Technical-Lead-Re-Review
+- kein Ready/Merge/AP-4 vorher
 
 ### Provider – Agent `Jetnity provider readiness audit`
 
-PR #54 / S3: Draft. Independent Technical-Lead Review bereits erfolgt. S3-Code hält die vorgesehene Trust-Grenze; kein zusätzlicher Runtime-/Security-/Truth-Fix im Scope gefunden. Runtime `e284af55...`, zuletzt zentral beobachteter Head `2e9a1a7f...`, ADR-0161.
+PR #54 / S3:
 
-Offen im zuletzt verifizierten Stand: Current-Main-Sync + Re-Gates, keine neue S3-Funktion, kein S4. Kein echter Provider/Secret/Vertrag/paid call/Production-Migration.
+- Draft, Head `f6b85570049a20146544e4f85503d6ff2c9703b4`, ADR-0161
+- Independent Review: S3-Code hält die Trust-Grenzen; kein zusätzlicher Runtime-/Security-/Truth-Fix im Scope gefunden
+- vorheriger Sync/Re-Gates auf `e3bad749...` waren grün (CI `32762113958`, Vercel `dpl_EreSw6u5vc1GKnojDNGbWnNtvzG5` READY)
+- wegen Merge #49 ist #54 jetzt erneut hinter/divergiert und aktuell nicht mergeable
+- nächster Schritt: nur auf `78192ab...` synchronisieren + Re-Gates; kein S4; danach Technical-Lead-Re-Review
 
 ### Trip Workspace – Agent `Trip workspace audit architecture`
 
-PR #55: Draft/docs-only. Independent Technical-Lead Review bereits erfolgt. Audit & Zielarchitektur sind inhaltlich plausibel und scope-treu; kein Runtime-Umbau. Zuletzt zentral beobachteter Head `536ed50f...`.
+PR #55:
 
-Offen im zuletzt verifizierten Stand: Current-Main-/Docs-Reconciliation + Re-Gates; kein TW-1. Kernfunde für späteren Umbau bleiben dokumentiert: Safety/Seasonal-Orchestrierung unsichtbar, Mobile/Desktop unterschiedliche mentale Produktlogik, fehlende `Jetzt wichtig`-Schicht, Domain-lastige IA, Create-Flow/Pace-Default u. a.
+- Draft/docs-only, Head `76ef850fa43fa9a97bafeb6077940b37eec56d9e`
+- Audit & Zielarchitektur sind inhaltlich plausibel und scope-treu; kein Runtime-Umbau
+- vorherige Reconciliation/Gates auf `e3bad749...` waren grün (CI `32763440821`, Vercel `dpl_2vRPwAD8rktAkTCwirP4Lg5Aw38o` READY)
+- wegen Merge #49 ist #55 jetzt erneut hinter/divergiert und aktuell nicht mergeable
+- nächster Schritt: docs-only auf `78192ab...` reconciliieren + Re-Gates; kein TW-1; danach Technical-Lead-Re-Review
 
 ## Verbindliche ADR-Allokation
 
@@ -72,6 +77,8 @@ Offen im zuletzt verifizierten Stand: Current-Main-/Docs-Reconciliation + Re-Gat
 - ADR-0160 = Account AP-3
 - ADR-0161 = Provider S3
 - ADR-0162 = Admin C
+
+Neue ADR-Nummern nur nach Technical-Lead-Reservierung.
 
 ## Verbindliche große Reihenfolge
 
@@ -99,8 +106,8 @@ Nach jedem relevanten Merge oder größeren Statuswechsel PR #52 sowie `JETNITY_
 
 ## Nächster Arbeitsstand
 
-- `Admin platform audit` / #49: wartet nach Technical-Lead PASS auf PO-Entscheidung zu Mark Ready.
-- `Account plattform audit vorbereitung` / #53: Agent-Fix/Sync/Re-Gates abwarten, dann Re-Review.
-- `Jetnity provider readiness audit` / #54: Agent-Sync/Re-Gates abwarten, dann Re-Review.
-- `Trip workspace audit architecture` / #55: Agent-Docs-Reconciliation/Re-Gates abwarten, dann Re-Review.
+- `Admin platform audit`: wartet; Slice D nur mit neuem Auftrag.
+- `Account plattform audit vorbereitung` / #53: Current-Main-Sync auf `78192ab...` + Re-Gates, dann Re-Review.
+- `Jetnity provider readiness audit` / #54: Current-Main-Sync auf `78192ab...` + Re-Gates, dann Re-Review.
+- `Trip workspace audit architecture` / #55: docs-only Current-Main-Reconciliation auf `78192ab...` + Re-Gates, dann Re-Review.
 - PR #52 bleibt Draft; kein Ready/Merge ohne PO-Freigabe.
