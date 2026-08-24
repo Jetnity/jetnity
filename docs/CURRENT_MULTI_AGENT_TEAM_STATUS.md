@@ -1,6 +1,6 @@
 # Jetnity – Current Multi-Agent Team Status
 
-Stand: **24. August 2026, ca. 22:00 Europe/Zurich**  
+Stand: **24. August 2026, ca. 22:10 Europe/Zurich**  
 Status: **kanonische operative Team-Wahrheit für Chat-/Agent-Wechsel**
 
 > Diese Datei ist die bevorzugte kompakte Einstiegsquelle. Sie liegt auf `docs/chatgpt-technical-lead-handoff-2026-08-24` / Draft-PR #52 und ist bis zu einem Merge von #52 nicht automatisch `main`-Inhalt. Vor Eingriffen GitHub/CI/Vercel/Supabase live verifizieren.
@@ -43,7 +43,8 @@ Neue ADR-Nummern werden erst durch den Technical Lead für den jeweiligen nächs
 
 PR #53 / AP-3 / ADR-0160:
 
-- Draft, offen, nicht gemergt, mergeable
+- **Ready for Review**, offen, nicht gemergt, mergeable
+- Product Owner hat **Mark Ready ausdrücklich freigegeben**; Ready wurde am 24. August 2026 ausgeführt
 - Base / Merge-Base: aktueller `main` `78192ab...`
 - Runtime-/Sync-Head: `c5e4a51feff80b94b9bb9b153ee5211d49fa4375`
 - Runtime/AP-3 Independent Technical-Lead Re-Review: **PASS**
@@ -51,11 +52,11 @@ PR #53 / AP-3 / ADR-0160:
 - keine AP-4-, Migration-, RLS-, Auth-, Traveller-, Privacy-, Billing- oder Shared-Contract-Erweiterung
 - Docs-Follow-up korrigierte doppelte AP-3-Roadmap-Sektion und stellte #54/#55 sowie wartenden Admin-Workstream wieder vollständig her
 - finale Technical-Lead-Klarstellung: Runtime `c5e4a51f` ist nicht docs-only; nur der nachgelagerte Follow-up ist docs-only
-- aktueller PR-Head nach dieser Klarstellung: `3222d8bc2624f940f5e904774de62d242fdac5fb`
+- aktueller PR-Head: `3222d8bc2624f940f5e904774de62d242fdac5fb`
 - GitHub Actions CI `32770952175`: **SUCCESS** auf exakt `3222d8bc...`
 - Vercel auf exakt `3222d8bc...`: **success / READY** (`7bh88WLuDRnxQYqHLsbgZFy7Y6wN`)
-- **Technical Integration Closure / PASS erreicht. Nächster Gate: ausdrückliche Product-Owner-Freigabe für Mark Ready.**
-- kein Ready ohne PO-Freigabe; kein Merge ohne danach separate PO-Freigabe; kein AP-4 vorher
+- **Technical Integration Closure / PASS erreicht.**
+- **Nächster Gate: separate ausdrückliche Product-Owner-Freigabe für Merge.** Kein Merge vorher. Kein AP-4 vor Integration und neuem kontrollierten Auftrag.
 
 ### Provider – Agent `Jetnity provider readiness audit`
 
@@ -81,7 +82,7 @@ PR #55 / Audit & Architecture:
 
 ## 4. Kontrollierte Integrationsreihenfolge
 
-1. Account #53: Technical Closure erreicht → PO-Ready-Gate → danach separates PO-Merge-Gate
+1. Account #53: Technical Closure erreicht und Ready ausgeführt → **separates PO-Merge-Gate**
 2. nach Account-Integration: Provider #54 finaler Sync / Re-Review / Integration
 3. danach Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration
 4. danach neue kontrollierte Admin-/TW-Aufträge
@@ -125,7 +126,7 @@ Nach jedem relevanten Merge oder größeren Statuswechsel müssen PR #52 sowie `
 
 ## 9. Exakter nächster Technical-Lead-Schritt
 
-- `Account plattform audit vorbereitung` / PR #53: **wartet auf Product-Owner-Entscheidung zu Mark Ready.**
+- `Account plattform audit vorbereitung` / PR #53: **Ready for Review und wartet ausschließlich auf separate Product-Owner-Merge-Entscheidung.**
 - `Jetnity provider readiness audit`: wartet.
 - `Trip workspace audit architecture`: wartet.
 - `Admin platform audit`: wartet.
