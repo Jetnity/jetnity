@@ -71,7 +71,11 @@ Auth, RLS, `trips.status`, Guest→Account, Traveller, Privacy, Billing, Admin, 
 - 200 ist last-updated, keine vollständige Inventur und kein Count.
 - Erster Client-Paint ist ungruppiert, bis der Geräte-Kalendertag da ist.
 
+## Docs-only Follow-up nach Runtime-PASS
+
+Runtime bleibt `c5e4a51f`. Dieser Stand korrigiert nur Dokumentation: doppelte AP-3-Sektion in `ROADMAP.md` entfernt; parallele Drafts #54/#55 und wartendes Admin-Programm in `docs/ACTIVE_WORK_STATUS.md` wieder sichtbar; Handoff/Roadmap suggerieren kein TW-1 direkt nach AP-3.
+
 ## Nächster Schritt
 
-Unabhängiger Technical-Lead-Re-Review von Draft-PR #53 auf `c5e4a51f`.  
+Unabhängiger Technical-Lead Docs-Re-Check von Draft-PR #53.  
 STOPP. Kein AP-4. Kein Mark Ready. Kein Merge.

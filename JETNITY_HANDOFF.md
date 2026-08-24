@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A, Admin Slice B und Admin Slice C auf `main` `78192ab`; Account AP-3 Draft PR #53 nach Sync auf diesen main, STOPP für Technical-Lead-Re-Review**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A–C auf `main` `78192ab`; Account AP-3 Draft PR #53 Runtime PASS, docs-only Follow-up; #54/#55 bleiben Draft; kein TW-1 direkt nach AP-3**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -302,12 +302,15 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`, ADR-0158)
 6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`, ADR-0159)
 6d. ✅ Admin Slice C auf `main` (PR #49, `78192ab`, ADR-0162)
-7. **→ Account AP-3** Draft PR #53 / Exact Head `c5e4a51f` nach Sync auf `main` `78192ab`. STOPP für unabhängigen Technical-Lead-Re-Review. Provider S1/S2 liegen auf `main`. Kein AP-4.
-8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
-9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
-10. echte Providerphase
-11. provider-backed End-to-End-/Truth-Audit
-12. finale Startseiten-Positionierung / Kommunikation
+7. **→ Account AP-3** Draft PR #53 / Exact Head `c5e4a51f` nach Sync auf `main` `78192ab`. Docs-Re-Check, dann Integration. Provider S1/S2 liegen auf `main`. Kein AP-4.
+8. Provider #54 finaler Sync / Re-Review / Integration nach Account-Integration
+9. Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration nach Provider-Integration
+10. danach neue kontrollierte Admin-/TW-Aufträge; kein Slice D und kein TW-1 ohne neuen Auftrag
+11. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
+12. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
+13. echte Providerphase
+14. provider-backed End-to-End-/Truth-Audit
+15. finale Startseiten-Positionierung / Kommunikation
 
 ### Provider-Regel
 
@@ -327,7 +330,9 @@ Auftrag: `docs/ACCOUNT_AP3_TASK.md`
 3. Entscheidung bleibt ADR-0160. ADR-0158 bleibt Admin Slice A. ADR-0159 bleibt Admin Slice B. ADR-0162 bleibt Admin Slice C.
 4. PR #53 bleibt Draft. Kein Mark Ready, kein Merge, kein AP-4, keine Production-Migration, keine Provider-/Secret-Aktivierung.
 5. Exact Head `c5e4a51f`: lokale Gates 1870/1870, GitHub Actions `32766099353` SUCCESS, Vercel `62QioKqqL8rwXBHmxLrnXFqAck7j` READY.
-6. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review von Draft-PR #53 auf `c5e4a51f`. STOPP.
+6. Runtime/AP-3 ist PASS. Dieser Stand ist ein docs-only Follow-up: doppelte AP-3-Roadmap-Sektion entfernt, parallele Drafts #54/#55 und wartendes Admin-Programm wieder sichtbar.
+7. Nach AP-3-Integration startet nicht TW-1. Kontrollierte Reihenfolge: Account #53 → Provider #54 → Trip-Workspace-Audit #55 → danach neue kontrollierte Admin-/TW-Aufträge.
+8. **Exakter nächster Schritt:** unabhängiger Technical-Lead Docs-Re-Check von Draft-PR #53. STOPP.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

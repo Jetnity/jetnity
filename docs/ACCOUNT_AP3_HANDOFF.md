@@ -52,4 +52,4 @@ Ein späterer Docs-only-Commit ist kein neues Runtime-Gate.
 
 ## Nächster Schritt
 
-Unabhängiger Technical-Lead-Re-Review von Draft-PR #53 auf `c5e4a51f`. Kein AP-4. Kein Ready. Kein Merge.
+Unabhängiger Technical-Lead Docs-Re-Check von Draft-PR #53. Runtime bleibt `c5e4a51f`. Kein AP-4. Kein Ready. Kein Merge. Nach Account-Integration folgt Provider #54, nicht TW-1.

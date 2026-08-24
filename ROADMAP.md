@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety, Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A, Admin Slice B und Admin Slice C auf `main` `78192ab`; Account AP-3 Draft PR #53 nach Sync auf diesen main, STOPP für Technical-Lead-Re-Review**
+Status: **Foundation C/D/E, Travel Safety, Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A–C auf `main` `78192ab`; Account AP-3 Draft PR #53 Runtime PASS, docs-only Follow-up; #54/#55 bleiben Draft; kein TW-1 direkt nach AP-3**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -276,6 +276,8 @@ Status: **auf `main` `e3bad749` (PR #46). Entscheidung: ADR-0159.**
 - read-only System Health ohne Fake-Green
 - Parent App/Deployment = `unknown`; Parent Supabase = `not_configured`
 
+---
+
 ## 6e. Admin Control Center Slice C
 
 Status: **auf `main` gemergt (PR #49, `78192ab`). Entscheidung: ADR-0162.**
@@ -299,16 +301,7 @@ Status: **Draft PR #53, Exact Head `c5e4a51f`, synchronisiert auf `main` `78192a
 
 Auftrag: `docs/ACCOUNT_AP3_TASK.md`. Entscheidung: ADR-0160.
 
----
-
-## 6e. In Arbeit – Account Platform AP-3
-
-Status: **Draft PR #53 auf `feat/account-ap3`. Entscheidung: ADR-0160.**
-
-- Meine Reisen gruppiert ableitend nach Aktiv / Kommend / Vergangen / Ohne Datum
-- kein Archiv-Write, keine Pagination-Architektur, kein AP-4
-
-Auftrag: `docs/ACCOUNT_AP3_TASK.md`. Entscheidung: ADR-0160.
+Nach AP-3-Integration folgt nicht der große Trip-Workspace-Umbau. Kontrollierte Reihenfolge: Account #53 Integration → Provider #54 finaler Sync/Integration → Trip-Workspace-Audit #55 finale Docs-Reconciliation/Integration → danach neue kontrollierte Admin-/TW-Aufträge. Kein Slice D und kein TW-1 ohne neuen Auftrag.
 
 ---
 
@@ -442,11 +435,14 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`)
 6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`)
 6d. ✅ Admin Slice C auf `main` (PR #49, `78192ab`)
-7. **→ Account AP-3** Draft PR #53 / Exact Head `c5e4a51f` nach Sync auf `main` `78192ab`; STOPP für Technical-Lead-Re-Review
-8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
-9. finaler Workspace Intelligence Audit
-10. echte Providerphase
-11. provider-backed End-to-End-/Truth-Audit
-12. finale Startseiten-Positionierung
+7. **→ Account AP-3** Draft PR #53 / Exact Head `c5e4a51f` nach Sync auf `main` `78192ab`; Docs-Re-Check, dann Integration
+8. Provider #54 finaler Sync / Re-Review / Integration nach Account-Integration
+9. Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration nach Provider-Integration
+10. danach neue kontrollierte Admin-/TW-Aufträge; kein Slice D und kein TW-1 ohne neuen Auftrag
+11. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
+12. finaler Workspace Intelligence Audit
+13. echte Providerphase
+14. provider-backed End-to-End-/Truth-Audit
+15. finale Startseiten-Positionierung
 
 Der nächste Agent darf D/E/Safety **nicht neu bauen** und darf **nicht direkt einen echten Provider integrieren**.

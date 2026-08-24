@@ -26,4 +26,4 @@ Branch `feat/account-ap3` ist auf `main` `78192ab` rebased. Merge-Base ist genau
 
 ## Empfehlung
 
-Unabhängiger Technical-Lead-Re-Review von Draft-PR #53 auf `c5e4a51f`. Danach erst Product-Owner-Entscheidung. AP-4 nicht starten.
+Unabhängiger Technical-Lead Docs-Re-Check von Draft-PR #53. Runtime bleibt PASS auf `c5e4a51f`. AP-4 nicht starten. Nach Account-Integration folgt Provider #54, nicht TW-1.
