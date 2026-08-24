@@ -12,6 +12,7 @@ Status: **gegated auf Runtime-Head `612d819e` – Draft, wartet auf Integrations
 | Auftrag | `docs/ACCOUNT_AP3_TASK.md` |
 | Draft-PR | https://github.com/Jetnity/jetnity/pull/53 |
 | Runtime-Head | `612d819ed9691f93cbab97128e301b0b7744721b` |
+| ADR-0160-Head | `bdd56d32a967d103f2d4aed651338df014b54308` |
 | Status | `docs/ACCOUNT_AP3_STATUS.md` |
 | Self-Review | `docs/ACCOUNT_AP3_SELF_REVIEW.md` |
 | Entscheidung | ADR-0160 |
@@ -34,9 +35,10 @@ Auth, RLS, `trips.status`, Guest→Account, Traveller, Privacy, Billing, Admin, 
 
 ## Runtime-Nachweis
 
-- GitHub Actions **SUCCESS** (`32750420663`)
-- Vercel **success / READY** (`ChAxmb8ygS6NjwT5PrCNmSUo7wi7`)
-- Docs-only danach ist kein neues Runtime-Gate.
+- GitHub Actions **SUCCESS** (`32750420663`) auf Runtime-Head `612d819e`
+- Vercel **success / READY** (`ChAxmb8ygS6NjwT5PrCNmSUo7wi7`) auf demselben Runtime-Head
+- ADR-0160-Nachzug `bdd56d32`: Actions `32752626159`, Vercel `473TSrmR2xP9ttGaGkggqKYVCw2g`
+- Weiterer Docs-only-Commit ist kein neues Runtime-Gate.
 
 ## Offene Risiken
 

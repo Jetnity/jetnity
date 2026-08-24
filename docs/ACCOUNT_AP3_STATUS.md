@@ -11,6 +11,7 @@ Status: **lokal und remote gegatet – Draft, kein Ready, kein Merge, kein AP-4*
 | Base | `main` @ `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267` |
 | Auftrag | `docs/ACCOUNT_AP3_TASK.md` |
 | **Runtime-Head** | `612d819ed9691f93cbab97128e301b0b7744721b` |
+| ADR-0160-Head | `bdd56d32a967d103f2d4aed651338df014b54308` |
 | Entscheidung | ADR-0160 (nicht ADR-0158; das bleibt Admin Slice A) |
 | Self-Review | `docs/ACCOUNT_AP3_SELF_REVIEW.md` |
 
@@ -22,7 +23,12 @@ Genau `612d819ed9691f93cbab97128e301b0b7744721b`:
 - Vercel Preview: **success / completed** – https://vercel.com/jetnity-e1b93c82/jetnity-app/ChAxmb8ygS6NjwT5PrCNmSUo7wi7
 - Preview-URL: https://jetnity-isvjotl2a-jetnity-e1b93c82.vercel.app
 
-Ein nachfolgender Docs-only-Commit ist **kein** neues Runtime-Gate.
+ADR-Umnummerierung auf genau `bdd56d32a967d103f2d4aed651338df014b54308`:
+
+- GitHub Actions CI: **SUCCESS** – https://github.com/Jetnity/jetnity/actions/runs/32752626159
+- Vercel Preview: **success** – https://vercel.com/jetnity-e1b93c82/jetnity-app/473TSrmR2xP9ttGaGkggqKYVCw2g
+
+Produktcode unverändert seit `612d819e`. Ein späterer Docs-only-Commit ist kein neues Runtime-Gate.
 
 PR #53 bleibt Draft. Kein Mark Ready. Kein Merge.
 
