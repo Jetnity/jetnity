@@ -2121,11 +2121,11 @@ function reisenachweise() {
       uid: NUTZER,
       sql: `insert into public.trip_items (
               trip_id, kind, title, note, starts_on, starts_at, ends_on, ends_at,
-              booking_status, booking_source, price_amount, price_currency,
-              provider, external_ref, booking_url, metadata
+              booking_status, booking_source, booking_confirmed_at,
+              price_amount, price_currency, provider, external_ref, booking_url, metadata
             ) values (
               '${REISE}', 'flight', 'S2B2 Insert', 'Fenster', '2026-11-01', '09:15',
-              '2026-11-01', '21:40', 'booked', 'user', 777, 'USD',
+              '2026-11-01', '21:40', 'booked', 'user', now(), 777, 'USD',
               'browser-direct', 'direct-ref', 'https://browser.example/x',
               ${META(ROUTE_DIREKT_OBJ)}
             );
