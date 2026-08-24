@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
 Stand: 24. August 2026
-Gültig für: Foundation D/E, Travel Safety, Travel Timing & Seasonal Intelligence sowie Account AP-1/AP-2 auf `main`; Provider Readiness S2 FlugNachweis auf Draft-PR #51 / `feat/provider-flight-evidence-s2`. Account-Slices ändern kein Schema. S2-B1/B2-Migrationen liegen nur auf Development.
+Gültig für: Foundation D/E, Travel Safety, Travel Timing & Seasonal Intelligence, Account AP-1/AP-2, Provider Readiness S2 und Admin Slice A auf `main`; Admin Slice B read-only System Health auf Draft-PR #46 / `feat/admin-system-health`. Account-Slices ändern kein Schema. S2-B1/B2-Migrationen liegen nur auf Development.
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 

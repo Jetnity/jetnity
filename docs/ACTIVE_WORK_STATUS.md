@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38, Account AP-1/AP-2, Provider S2 und Admin Slice A auf `main` `1ec93cc9`; Admin Slice B Re-Sync auf Draft PR #46**
+Status: **PR #38, Account AP-1/AP-2, Provider S2 und Admin Slice A auf `main` `1ec93cc9`; Admin Slice B Current-Main-Gates auf Draft PR #46 / `1715640b`, STOPP für unabhängigen Review**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -76,9 +76,11 @@ Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
 
 Aktiver Slice:
 
-**Admin Slice B Re-Sync mit `main` `1ec93cc9`.** Read-only System Health ohne Fake-Green. Entscheidung: ADR-0159.
+**Admin Slice B Current-Main-Re-Sync ist gegatet.** Read-only System Health ohne Fake-Green. Entscheidung: ADR-0159. Exact Runtime Head `1715640b`. CI `32750112312` SUCCESS. Preview `6HzJRdg4NWnGRQb8jpLC1k2jUHms` READY.
 
-Bisheriger B1-Stand gilt nur für den alten Stack-Head `cc1d06bd` und ersetzt das neue Integrationsgate nicht. Parent `App / Deployment` bleibt `unknown`. Parent `Supabase` bleibt `not_configured`. Vercel/GitHub/Infomaniak bleiben ohne Management-Quelle `not_configured`.
+STOPP für unabhängigen Technical-Lead-Review. Kein Mark Ready, kein Merge, kein Slice C.
+
+Parent `App / Deployment` bleibt `unknown`. Parent `Supabase` bleibt `not_configured`. Vercel/GitHub/Infomaniak bleiben ohne Management-Quelle `not_configured`. Historischer B1-PASS auf `cc1d06bd` bleibt historische Evidence.
 
 Grenze: vorhandene read-only Evidence, ehrliche `unknown`/`not_configured`-Zustände, bestehende Admin-Gates. Keine neue DB/Migration, keine Capability-/RLS-Neudefinition, keine neuen Secrets/Tokens/Verträge/Kosten, keine Writes.
 
@@ -149,7 +151,7 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-1. `Admin platform audit` synchronisiert Slice B / Draft PR #46 auf `main` `1ec93cc9` und belegt Exact-Head-Gates. Kein Mark Ready, kein Merge, kein Slice C.
+1. `Admin platform audit` hat Slice B / Draft PR #46 auf `main` `1ec93cc9` synchronisiert und Exact-Head-Gates auf `1715640b` belegt. STOPP für unabhängigen Technical-Lead-Review. Kein Mark Ready, kein Merge, kein Slice C.
 2. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung.
 3. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag (`docs/ADMIN_BILLING_LOCAL_REFUND_INTEGRITY_TASK.md`), nicht Slice B.
 4. AP-3, Admin Slice C und Provider S3 brauchen jeweils eine neue ausdrückliche Freigabe.

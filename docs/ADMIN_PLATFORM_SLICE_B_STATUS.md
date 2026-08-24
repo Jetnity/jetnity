@@ -8,10 +8,12 @@ Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
 
 ## Status
 
-**Current-Main-Re-Sync mit `main` `1ec93cc9` in Arbeit.** Draft, nicht gemergt. Kein Mark Ready, kein Merge. Kein Technical Closure auf dem neuen Head.
+**Current-Main-Re-Sync und Exact-Head-Gates auf `1715640b` belegt. STOPP für unabhängigen Technical-Lead-Review.**
 
-Bisheriger B1-PASS gilt nur für den alten Stack-Head `cc1d06bd427a9682343a5435e5d5c70509510cc3`.  
-Admin-Entscheidung nach ADR-Kollision: **ADR-0159** (nicht ADR-0153). Slice A auf `main` ist ADR-0158.
+Draft, nicht gemergt. Kein Mark Ready, kein Merge, kein Slice C.  
+Kein unabhängiger Technical-Lead-PASS und keine Product-Owner-Freigabe werden behauptet.
+
+Admin-Entscheidung: **ADR-0159**. Slice A auf `main` ist ADR-0158.
 
 ## Fail-closed Wahrheit
 
@@ -20,11 +22,32 @@ Admin-Entscheidung nach ADR-Kollision: **ADR-0159** (nicht ADR-0153). Slice A au
 - Vercel, GitHub/CI und Infomaniak bleiben ohne Management-Quelle `not_configured` / non-green.
 - Sichtbares Grün nur bei `healthy + fresh` genau dieser Aussage.
 
+## Exact Runtime Head
+
+`1715640bffc36d7ebe1a25de7aeb569632b7811f`
+
+Zwei-Eltern-Merge:
+
+- Parent 1: `83c66842` (bisheriger Slice-B-Docs-Head)
+- Parent 2: `main` `1ec93cc9` (Admin Slice A / PR #44)
+- gegen `main`: 0 behind / 19 ahead
+
+### Lokale Gates auf diesem Head
+
+- Tests 1832/1832
+- Typecheck, Lint, Hygiene, `check:api-schutz` 11/11, `auth:pruefen` 55/55, Production Build
+- `audit:admin-system-health` 8/8, 0 Fehler
+
+### Remote Gates auf demselben Head
+
+- GitHub Actions CI `32750112312`: SUCCESS
+- Vercel Preview Inspector `6HzJRdg4NWnGRQb8jpLC1k2jUHms`: READY
+
 ## Historische Gates (alter Stack)
 
 - B1 Runtime `cc1d06bd`: CI `32709302128` SUCCESS, Preview `3zoy92pYr1RabYcMKztGMCgYhgCH`
 
-Neues Exact-Head-Gate nach Merge mit `1ec93cc9`: **noch nicht belegt.**
+Dieser historische PASS ersetzt das Current-Main-Integrationsgate nicht.
 
 ## Explizit nicht in Slice B
 
@@ -34,4 +57,5 @@ Traveller Context ist nicht relevant.
 
 ## Nächster Schritt
 
-Lokale und Remote-Gates auf dem neuen Exact Runtime Head belegen, dann STOPP für unabhängigen Technical-Lead-Review. Kein Slice C.
+Unabhängigen ChatGPT/Technical-Lead-Review auf Exact Head `1715640b` abwarten.  
+Kein Mark Ready, kein Merge, kein Slice C ohne ausdrückliche aktuelle Product-Owner-Freigabe.

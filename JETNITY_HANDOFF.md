@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1, Account AP-2, Provider S2 und Admin Slice A auf `main`; Admin Slice B Re-Sync auf Draft PR #46 nach `1ec93cc9`**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1, Account AP-2, Provider S2 und Admin Slice A auf `main`; Admin Slice B Exact-Head-Gates auf Draft PR #46 / `1715640b`, STOPP für unabhängigen Review**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -300,7 +300,7 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 6. ✅ Account Platform AP-1 auf `main` (PR #43, `084f7c87`)
 6a. ✅ Account Platform AP-2 auf `main` (PR #48, `2827d1cb`)
 6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`, ADR-0158)
-7. **→ Admin Slice B Re-Sync** mit `main` `1ec93cc9` auf Draft PR #46. Provider S1 Technical Closure auf Draft-PR #47. Provider S2 liegt auf `main`.
+7. **→ Admin Slice B** auf Draft PR #46 / Exact Head `1715640b` wartet auf unabhängigen Technical-Lead-Review. Provider S1 Technical Closure auf Draft-PR #47. Provider S2 liegt auf `main`.
 8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 10. echte Providerphase
@@ -321,10 +321,11 @@ Agent: `Admin platform audit`
 Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
 
 1. Seasonal, Account AP-1/AP-2, Provider S2 und Admin Slice A sind auf `main` `1ec93cc9`.
-2. Der bisherige Slice-B-PASS gilt nur für den alten Stack auf `cc1d06bd` und ersetzt das neue Integrationsgate nicht.
-3. Slice B wird auf aktuellen `main` synchronisiert. Scope bleibt read-only System Health, fail-closed, ADR-0159.
-4. PR #46 bleibt Draft. Kein Mark Ready, kein Merge, kein Slice C, keine Production-Migration, keine Provider-/Secret-Aktivierung.
-5. **Exakter nächster Schritt:** neuen Exact Runtime Head gegen `1ec93cc9` gaten, dann STOPP für unabhängigen Technical-Lead-Review.
+2. Slice B ist auf `main` `1ec93cc9` synchronisiert. Exact Runtime Head `1715640b`. Scope bleibt read-only System Health, fail-closed, ADR-0159.
+3. Lokale und Remote-Gates auf diesem Head sind belegt: CI `32750112312` SUCCESS, Preview `6HzJRdg4NWnGRQb8jpLC1k2jUHms` READY.
+4. Der historische B1-PASS auf `cc1d06bd` bleibt historische Evidence.
+5. PR #46 bleibt Draft. Kein Mark Ready, kein Merge, kein Slice C, keine Production-Migration, keine Provider-/Secret-Aktivierung.
+6. **Exakter nächster Schritt:** unabhängigen Technical-Lead-Review auf `1715640b` abwarten.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
