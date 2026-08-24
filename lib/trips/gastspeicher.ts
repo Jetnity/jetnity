@@ -61,8 +61,8 @@ import {
 } from '@/lib/activities/reisegraph'
 import type { ActivityMomentaufnahme } from '@/lib/activities/uebernahme'
 import { activityMomentaufnahmeAlsPunkt } from '@/lib/activities/uebernahme'
+import { flugNachweisFehler } from '@/lib/flights/nachweis'
 import type { FlugMomentaufnahme } from '@/lib/flights/uebernahme'
-import { momentaufnahmeAlsPunkt } from '@/lib/flights/uebernahme'
 import { hotelReisegraphPruefen } from '@/lib/hotels/reisegraph'
 import type { HotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import { hotelMomentaufnahmeAlsPunkt } from '@/lib/hotels/uebernahme'
@@ -627,32 +627,17 @@ export function gastPlanpunktAnlegen(
   })
 }
 
-/** Übernimmt eine geprüfte Flugoption als kommerziellen Planpunkt. */
+/**
+ * Guest darf keine kommerzielle Provider-Flugoption aus Browser- oder
+ * LocalStorage-Daten als belegte Wahrheit persistieren. Derselbe Nachweisvertrag
+ * wie im Konto ist hier nicht erfüllbar – fail closed.
+ */
 export function gastFlugUebernehmen(
-  reise: Trip,
-  aufnahme: FlugMomentaufnahme,
-  dayId: string | null,
+  _reise: Trip,
+  _aufnahme: FlugMomentaufnahme,
+  _dayId: string | null,
 ): Trip {
-  const tag = dayId ? reise.days.find((eintrag) => eintrag.id === dayId) : undefined
-  if (dayId && !tag) throw new Error('Dieser Tag gehört nicht zur Reise.')
-
-  const punkt = momentaufnahmeAlsPunkt(aufnahme, {
-    id: kennungErzeugen('item'),
-    dayId: tag?.id ?? null,
-    stageId: tag?.stageId ?? null,
-    position: tag ? tag.items.length + 1 : reise.ohneTag.length + 1,
-  })
-
-  return gastreiseSpeichern({
-    ...reise,
-    revision: reise.revision + 1,
-    days: tag
-      ? reise.days.map((eintrag) =>
-          eintrag.id === tag.id ? { ...eintrag, items: [...eintrag.items, punkt] } : eintrag,
-        )
-      : reise.days,
-    ohneTag: tag ? reise.ohneTag : [...reise.ohneTag, punkt],
-  })
+  throw new Error(flugNachweisFehler('unavailable').message)
 }
 
 /**

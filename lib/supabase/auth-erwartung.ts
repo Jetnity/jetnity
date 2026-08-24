@@ -187,9 +187,8 @@ export const AUTH_ABBILDUNG: Abbildung[] = [
   { toml: 'auth.sms.max_frequency', api: 'sms_max_frequency', wandel: inSekunden },
   { toml: 'auth.sms.template', api: 'sms_template' },
 
-  // Fremde Anmeldedienste. Beide Schaltflächen stehen in den Formularen, beide
-  // Dienste sind auf dem Branch aus – festgehalten, damit die Abweichung
-  // zwischen Oberfläche und Konfiguration nicht wieder unbemerkt bleibt.
+  // Fremde Anmeldedienste. Die Oberfläche zeigt einen Anbieter nur, wenn
+  // config.toml ihn explizit aktiviert. Beide Dienste sind auf dem Branch aus.
   { toml: 'auth.external.google.enabled', api: 'external_google_enabled' },
   { toml: 'auth.external.apple.enabled', api: 'external_apple_enabled' },
 ]

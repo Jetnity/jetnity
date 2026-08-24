@@ -108,8 +108,11 @@ export default function PublicNavbar() {
     return () => beobachter.subscription.unsubscribe()
   }, [])
 
-  const isActive = (href: string) =>
-    href === '/reisen' && (pathname === '/reisen' || pathname.startsWith('/reisen/'))
+  const isActive = (href: string) => {
+    if (href === '/reisen') return pathname === '/reisen' || pathname.startsWith('/reisen/')
+    if (href === '/account') return pathname === '/account' || pathname.startsWith('/account/')
+    return false
+  }
 
   // Sprungmarken wie /#entdecken aendern den Pfad nicht, das Menue muss sich
   // trotzdem schliessen, damit das Ziel sichtbar wird.

@@ -4,10 +4,8 @@
 import * as React from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
+import { erlaubtesNaechstesZiel } from '@/lib/auth/naechstes-ziel'
 import { Loader2, CheckCircle2, AlertTriangle } from 'lucide-react'
-
-/** Nach der Anmeldung landen Reisende bei ihren Reisen. */
-const AFTER_LOGIN_ROUTE = '/reisen'
 
 export default function CallbackClient() {
   const router = useRouter()
@@ -29,6 +27,9 @@ export default function CallbackClient() {
 
     ;(async () => {
       try {
+        const qs = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null
+        const nachAnmeldung = erlaubtesNaechstesZiel(qs?.get('next'))
+
         // 1) Prüfe Magic-Link / Recovery (Token im Hash-Fragment #access_token=…)
         const hash = typeof window !== 'undefined' ? window.location.hash : ''
         if (hash?.startsWith('#')) {
@@ -48,13 +49,12 @@ export default function CallbackClient() {
 
             const redirect = type === 'recovery'
               ? '/auth/update-password'
-              : AFTER_LOGIN_ROUTE
+              : nachAnmeldung
             return finish('ok', 'Erfolgreich angemeldet.', redirect)
           }
         }
 
         // 2) OAuth Code Flow (?code=…)
-        const qs = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null
         const code = qs?.get('code')
         const oauthError = qs?.get('error') || qs?.get('error_description')
         if (oauthError) {
@@ -64,14 +64,14 @@ export default function CallbackClient() {
         if (code) {
           const { error } = await supabase.auth.exchangeCodeForSession(code)
           if (error) throw error
-          return finish('ok', 'Erfolgreich angemeldet.', AFTER_LOGIN_ROUTE)
+          return finish('ok', 'Erfolgreich angemeldet.', nachAnmeldung)
         }
 
         // 3) Fallback: gibt es bereits eine Session?
         const { data, error } = await supabase.auth.getSession()
         if (error) throw error
         if (data.session) {
-          return finish('ok', 'Erfolgreich angemeldet.', AFTER_LOGIN_ROUTE)
+          return finish('ok', 'Erfolgreich angemeldet.', nachAnmeldung)
         }
 
         // Nichts gefunden → Fehler

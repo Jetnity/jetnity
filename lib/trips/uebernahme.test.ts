@@ -729,6 +729,20 @@ describe('Guest → Account behält die Flugroute', () => {
     assert.deepEqual(server.empfangen[0]?.ungeplante[0]?.route_itinerary, itineraryDirekt())
   })
 
+  test('unbewiesene kommerzielle Flugfelder werden nicht ins Konto hochgestuft', async () => {
+    const entwurf = gastreiseAnlegen(eingabe())
+    speicher.setzen(SCHLUESSEL.aktiv, { ...entwurf, ohneTag: [gastflug(itineraryDirekt())] })
+    const server = attrappe()
+    await gastreisenUebernehmen(server.senden)
+    const flug = server.empfangen[0]?.ungeplante[0]
+    assert.equal(flug?.kind, 'flight')
+    assert.equal(flug?.price_amount, null)
+    assert.equal(flug?.price_currency, null)
+    assert.equal(flug?.provider, null)
+    assert.equal(flug?.external_ref, null)
+    assert.equal(flug?.booking_url, null)
+  })
+
   test('ein Transit geht vollständig mit', async () => {
     const entwurf = gastreiseAnlegen(eingabe())
     speicher.setzen(SCHLUESSEL.aktiv, { ...entwurf, ohneTag: [gastflug(itineraryEinTransit())] })

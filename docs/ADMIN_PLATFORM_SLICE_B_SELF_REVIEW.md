@@ -13,7 +13,7 @@ Branch: `feat/admin-system-health`
 5. **Neue Secrets oder Management-Calls?** Nein. Runtime und Client enthalten keine `VERCEL_TOKEN`/`GITHUB_TOKEN`/`SUPABASE_ACCESS_TOKEN`-Nutzung. Kein Browser-Call zu Management-APIs.
 6. **Admin-Schutz erhalten?** Ja. Seite: `requireAdminPage({ capability: 'betrieb-lesen' })`. API: `requireAdminApi` derselben Capability. `check:api-schutz` sieht 11 Routen.
 7. **Neue Autorität oder Schema?** Nein. Keine Migration, keine Capability, keine RLS, keine Service-Role.
-8. **Fremde Workstreams berührt?** Nein. Account/Trip/Traveller/Route/Safety/Seasonal/Homepage unverändert.
+8. **Fremde Workstreams berührt?** Main-Sync übernimmt Slice A und Provider S2 aus `main` unverändert. Slice B ändert keine Account-/Trip-/Traveller-/Route-/Safety-/Seasonal-/Homepage-Truth. Admin-ADR ist ADR-0159.
 9. **Teilfehler reißt die Fläche?** Isolierte Promises; ein Supabase-Timeout belässt App/Vercel/GitHub/Infomaniak.
 10. **Slice-A-Verträge?** Navigation bleibt UX-only. Break-Glass-Writes bleiben 403. Copilot bleibt `folgt` ohne Execute.
 

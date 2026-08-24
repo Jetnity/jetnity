@@ -38,6 +38,7 @@
     "places:importieren": "node --import tsx scripts/places/importieren.ts",
     "audit:activities": "node scripts/activities-ui-audit.mjs",
     "audit:trip-workspace": "node scripts/trip-workspace-ui-audit.mjs",
+    "audit:account": "node scripts/account-ui-audit.mjs",
     "audit:admin-system-health": "node scripts/admin-system-health-ui-audit.mjs"
   },
   "dependencies": {

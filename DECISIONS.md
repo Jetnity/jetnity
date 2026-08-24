@@ -3742,55 +3742,181 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
-## ADR-0152 – Admin Slice A bleibt ehrliche Steuerzentralen-IA ohne neue Autorität
+## ADR-0152 – Account-Übersicht ist Zuhause, kein zweites Workspace-Dashboard
 
 **Datum:** 24. August 2026  
-**Status:** umgesetzt auf Draft-PR #44 / `feat/admin-control-center-ia`
+**Status:** umgesetzt auf Draft-PR #43 / `feat/account-ap1`
 
 **Entscheidung:**
 
-- Das vorhandene gehärtete Admin-Backoffice wird zur ehrlichen Steuerzentrale auf IA-/UI-Ebene weiterverwendet. Es entsteht kein zweites Admin.
-- Capability-aware Navigation ist nur UX. Autorisierung bleibt ausschliesslich bei `requireAdminPage` / `requireAdminApi` und RLS.
-- Persistente Admin-Writes (lokale Refund-Notiz, IP-Blockliste schreiben/entfernen) antworten bei Break-Glass mit **403**, bevor die Datenbank erreicht wird. Das folgt ADR-0036 (`reachesDatabase()` / nur `grant === 'role'`). Keine neue Capability und keine RLS-Änderung.
-- Refunds und IP-Blockliste werden als lokale/operative Sicht gekennzeichnet. Es gibt keine Provider-Geldbewegung und keine Enforcement der Blockliste.
-- Copilot-Auto, erfundene Notifications/Badges und der Setup-Guide mit toten Control-Center-Zielen entfallen. Stub-Seiten heissen ausdrücklich `folgt`.
+- `/account` ist das persönliche dauerhafte Zuhause eines angemeldeten Kontos.
+- Der Trip Workspace bleibt die operative Kommandozentrale einer einzelnen Reise.
+- Die Übersicht liest ausschliesslich vorhandene `reisenLaden()`-Daten. Empty und Error bleiben getrennt.
+- Die öffentliche Leiste zeigt **Konto** nur bei `sitzung === konto`.
+- `/account/security` wird unter `/account/settings` auffindbar; MFA-/AAL-Verträge ändern sich nicht.
+- AP-1 ändert keine Tabelle, kein RLS, kein Guest→Account und keine Traveller-Registry.
 
-**Kontext:** Auftrag `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`. Das bestehende Admin war ein gehärtetes unvollständiges Backoffice mit Legacy-Scheinzuständen (toter Copilot-Execute, Badge `3`, Setup-Guide auf `/admin/control-center`).
+**Kontext:** Account-Audit PR #39. Auftrag `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`.
 
-**Alternativen:** Zweites Control-Center bauen; Capability-Nav als Autorisierung behandeln; Break-Glass weiter in die Datenbank laufen lassen und 500 als Ablehnung belassen; Refund/IP als fertige Provider-Steuerung präsentieren.
+**Alternativen:** Workspace-Karten auf `/account` spiegeln; Konto-Link auch für Gäste; neue Persistenz für „nächste Reise“.
 
-**Begründung:** `unknown` / `nicht enforced` / `folgt` ist besser als erfundenes Grün. Slice A darf keine neue Datenwahrheit und keine neue Autorität einführen. Der bestehende Break-Glass-Vertrag verlangt bereits, dass Notzugang nicht persistiert.
+**Begründung:** Ohne Zuhause bleibt `/account/security` verwaist und `/reisen` wirkt wie der einzige Einstieg. Ein zweites Dashboard würde operative Wahrheit verdoppeln.
 
-**Konsequenzen:** System Health, Copilot-Pro-Execute, Infomaniak, Bexio, Ads und Payment-Provider bleiben spätere Slices. Account-/Trip-/Traveller-/Route-/Safety-/Seasonal-Verträge bleiben unberührt. PR bleibt Draft.
+**Konsequenzen:** Orientierung und Fortsetzen liegen im Konto. Fachliche Reiseoperationen bleiben im Workspace. AP-2+ erst nach Review/Freigabe. PR #43 bleibt Draft.
 
 ---
 
-## ADR-0153 – Admin Slice B bleibt read-only System Health ohne Fake-Green
+## ADR-0153 – Account aktiv/kommend braucht einen Geräte-Kalendertag
 
 **Datum:** 24. August 2026  
-**Status:** umgesetzt auf Draft-PR #46 / `feat/admin-system-health`, gestapelt auf Slice A / PR #44
+**Status:** umgesetzt auf Draft-PR #43 nach Technical-Lead REQUEST CHANGES
+
+**Entscheidung:**
+
+- `aktiv` / `kommend` entstehen nur gegen einen belegten Geräte-Kalendertag (`Date#getTimezoneOffset`).
+- Der Server klassifiziert diese Lagen nicht. Unbekannter Kalendertag bleibt `fortsetzen`.
+- Keine IANA-Zone, kein stilles UTC-Kalenderdatum aus `toISOString()`.
+- Ein 503 von `reisenLaden()` beweist keinen Speicherstand. Der Text sagt nur, dass der aktuelle Stand nicht geprüft werden konnte.
+
+**Kontext:** Independent Technical-Lead Review an PR #43 gegen Head `62868d2c`.
+
+**Alternativen:** Server-UTC als „heute“ (Review-Blocker); IANA aus IP/Browser raten; aktiv/kommend ganz entfernen.
+
+**Begründung:** Date-only darf nicht still UTC werden. Ein Ladefehler ist keine Persistenzaussage.
+
+**Konsequenzen:** Kurz nach dem ersten Client-Render kann die Lage von Fortsetzen auf aktiv/kommend wechseln. Das ist ehrlicher als eine Server-UTC-Behauptung. PR #43 bleibt Draft.
+
+---
+
+## ADR-0154 – Minimaler gemeinsamer Provider-Operationsvertrag
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt und Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`; kein Mark Ready / kein Merge
+
+**Entscheidung:**
+
+- Technische Provider-Operations liegen in `lib/provider-ops/*`.
+- Die gemeinsame Taxonomie ist nur `ok | partial | empty | checked_empty | unavailable | timeout | invalid | rate_limited | error`.
+- Fachzustände wie Readiness `recheck_needed` / `insufficient_context` und Seasonal `rejected_acute` gehören nicht in diesen Basistyp.
+- Request-Härtung, Kill-Switch-Form, In-Memory-Cost-Guard und ein Observability-Event-Typ ohne Persistenz sind erlaubt.
+- `providerOpsEvent()` konstruiert das Event nur aus der Allowlist. Input darf nicht per Spread kopiert werden.
+- `ProviderOpsCostGuard.erlaubt()` ist async, damit PR-S6 I/O einhängen kann, ohne Domain-Hüllen erneut umzuschneiden. S1 implementiert nur den In-Memory-Port.
+- Bestehende Domain-Hüllen bleiben dünne Wrapper. Es gibt keinen `UniversalProvider` und kein gemeinsames Offer-Schema.
+- Flights-Search erhält dieselbe Request-Härtung wie Hotels. Mobility-/Rental-Timeout-HTTP 504 bleibt unverändert, weil eine stille 200-Umstellung den Public Contract bricht.
+- Persistenter Cost Guard, Nachweis-Verträge, Offer-Provenance und Admin-Health sind spätere Slices.
+
+**Identifier:** `ADR-0154` ist der einzige Identifier dieser Implementierungsentscheidung. Parallel existieren auf anderen Draft-Branches andere `ADR-0152`/`ADR-0153` (Audit-Planung auf PR #45, Account AP-1 auf PR #43). Diese Nummern werden hier nicht wiederverwendet.
+
+**Kontext:** Product-Owner-/Technical-Lead-Freigabe für S1 als eigenen Draft-Workstream nach dem Provider-Readiness-Audit (PR #45). Review REQUEST CHANGES auf PR #47 (S1-B1, S1-B2, ADR-Kollision). Auftrag: `docs/PROVIDER_OPS_S1_TASK.md`.
+
+**Alternativen:** Domains weiter kopieren; eine universelle Provider-Abstraktion; HTTP 504 überall auf 200 ziehen; persistente Kostenschranke sofort bauen; synces Cost-Guard-Interface belassen.
+
+**Begründung:** Die Audit-Befunde lagen in kopierter Operationshülle, nicht in fehlender Fachwahrheit. Eine schmale gemeinsame Form verhindert weitere Drift, ohne Search-, Truth- oder Adaptergrenzen zu vermischen. Ein synces Interface hätte S6 gezwungen, jede Domain erneut umzubauen. Ein Spread hätte Observability-Zusatzfelder durchgelassen.
+
+**Konsequenzen:** S2+ und S6 können dieselben Hüllen nutzen. Production bleibt fail-closed. Keine neuen Kosten, keine Secrets, keine Migration. Technical Closure ist dokumentiert in `docs/PROVIDER_OPS_S1_TECHNICAL_CLOSURE.md`. Draft-PR #47 wartet auf Product-Owner-Entscheidung. S1 ist keine Freigabe für S2, Mark Ready oder Merge.
+
+---
+
+## ADR-0155 – Konto-Flugübernahme nur über serverseitigen FlugNachweis
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #51 / Provider Readiness S2; kein echter Provider, kein Mark Ready / kein Merge
+
+**Entscheidung:** Eine kommerzielle Flugübernahme speichert keine Browseroption. Der Client liefert nur identifiers (`tripId`, `dayId`, `optionId`). Preis, Zeiten, Provider, External-Ref, Kabine und Legs kommen aus einem serverseitigen `FlugNachweis` plus dem per RLS geladenen Reisegraphen und einem serverseitig belegten Suchkontext. Solange Nachweis oder Suchkontext fehlen, fällt die Übernahme fail closed. `booking_url` bleibt `null`. Guest persistiert keine kommerzielle Provider-Flugoption. Guest → Account streicht unbewiesene Flug-Handelsfelder und darf sie nicht zu belegter Wahrheit hochstufen. Route Truth bleibt Foundation D; S2 baut keine zweite Route und keine Route-Heuristik.
+
+**Kontext:** Nach S1 (ADR-0154) war die Flug-Kontoübernahme der offene P0-Trust-Gap: Zod prüfte die volle Browser-`FlugOption` und persistierte Preis, Zeiten und Refs. Hotels und Aktivitäten hatten die Nachweisgrenze bereits.
+
+**Alternativen:**
+
+1. *HMAC-Signatur der Suchergebnisse.* Zweckentfremdet Secrets und schützt nicht vor späteren Preisänderungen.
+2. *Suchkontext aus Origin-/Etappennamen ableiten.* Wäre eine Route-Heuristik und eine zweite Route Truth.
+3. *Guest weiter kommerziell persistieren und nur das Konto sperren.* Guest → Account würde unbewiesene Optionen nachträglich adeln.
+
+**Begründung:** Dieselbe Trust-Grenze wie `HotelNachweis` muss stehen, bevor ein Flugadapter aktiv wird. Tests injizieren einen Fake-Katalog. Ein persistenter Suchkontext-Speicher oder Offer-Provenance wäre S5 und braucht einen eigenen Auftrag.
+
+**Konsequenzen:** `flugNachweisAusUmgebung()` gibt heute `null` zurück. Die Server Action übergibt keinen Client-Suchkontext. Der erste Nachweis-Adapter muss optionId gegen Legs, Passagiere, Kabine, Währung und Gültigkeit binden. Die App-Grenze allein reicht nicht; der öffentliche RPC braucht ADR-0156.
+
+---
+
+## ADR-0156 – reise_anlegen verwirft unbewiesene Flug-Handelsfelder
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #51 / S2-B1; nur Supabase Development; Production unverändert
+
+**Entscheidung:** `public.reise_anlegen(jsonb)` übernimmt für `kind='flight'` keine kommerziellen Felder aus der JSON-Nutzlast. `price_amount`, `price_currency`, `provider`, `external_ref` und `booking_url` werden in beiden INSERT-Pfaden (Tagespunkte und Ungeplante) auf `null` gesetzt. Nichtkommerzielle Flight-User-Intake-Felder, Foundation-D-Itinerary sowie Hotel-/Aktivitäts-/Mobilitäts-/Mietwagenverträge bleiben unverändert. Ein späterer vertrauenswürdiger Flugnachweis braucht einen getrennten Schreibvertrag; der heute für `authenticated` erreichbare JSON-RPC ist keine Providerquelle.
+
+**Kontext:** Der TypeScript-Pfad von S2 (ADR-0155) war korrekt fail-closed. Der unabhängige Technical-Lead-Review fand den Direct-RPC-Bypass: `reise_anlegen` ist `SECURITY INVOKER` mit EXECUTE für `authenticated`. Ein Browser kann die RPC direkt über PostgREST aufrufen und damit die App-Grenze umgehen. RLS schützt weiter das Eigentum, nicht die Provenienz.
+
+**Alternativen:**
+
+1. *EXECUTE für authenticated entziehen.* Würde den normalen Konto-Anlagepfad zerstören.
+2. *BEFORE-Trigger auf trip_items, der alle Flug-Handelsfelder nullt.* Würde auch einen späteren nachgewiesenen Server-INSERT treffen.
+3. *Service Role oder neuer SECURITY DEFINER-Vertrag.* Ausserhalb des S2-B1-Scopes und ohne Product-Owner-Freigabe.
+
+**Begründung:** Die minimale, freigegebene Lösung härtet genau den browser-erreichbaren JSON-Vertrag. Additive Migration `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis.sql`, nur Development.
+
+**Konsequenzen:** Production bleibt bis zu einer separaten Product-Owner-Freigabe unverändert. Keine Service-Role-, Auth-, MFA-, AAL- oder Capability-Änderung. Kein S3. Kein Mark Ready / Merge. Der direkte Tabellenvertrag braucht ADR-0157.
+
+---
+
+## ADR-0157 – Direkte trip_items-Writes verwerfen untrusted Flug-Handelsfelder
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #51 / S2-B2; nur Supabase Development; Production unverändert
+
+**Entscheidung:** Ein BEFORE-Trigger auf `public.trip_items` verwirft für `kind='flight'` die fünf Handelsfelder, wenn `current_user` `authenticated` oder `anon` ist. INSERT setzt sie auf `null`. UPDATE kann sie nicht ändern und erbt sie nicht bei einem `kind`-Wechsel zu `flight`. Hotel-/Aktivitäts-/Mobilitäts-/Mietwagenfelder bleiben unberührt. User-Intake und Foundation-D-Itinerary bleiben möglich.
+
+Ein späterer vertrauenswürdiger Flugnachweis braucht einen **getrennten SECURITY DEFINER-Schreibvertrag**. Der heutige `authenticated`-Tabellenvertrag, inklusive eines künftigen direkten App-INSERTs als `authenticated`, ist keine Providerquelle. `current_user` ist die Grenze, kein Client-Flag und keine Service Role.
+
+**Kontext:** S2-B1 (ADR-0156) schloss `reise_anlegen`. Der Technical-Lead-Re-Review reproduzierte danach einen direkten `authenticated` UPDATE auf `trip_items`, der Preis, Währung, Provider, External-Ref und Booking-URL persistierte. RLS prüft Eigentum, nicht Provenienz.
+
+**Alternativen:**
+
+1. *Tabellenrechte auf die fünf Spalten entziehen.* Nicht kind-spezifisch; würde Hotel/Activity und `SECURITY INVOKER`-Pfade mitreissen.
+2. *Session-GUC `jetnity.trusted_flight_write`.* Von `authenticated` per `set_config` spoofbar.
+3. *Service Role als Schreibweg.* Ausdrücklich ausgeschlossen.
+4. *Pauschales Nullen unabhängig von `current_user`.* Würde auch einen späteren SECURITY DEFINER-Nachweis treffen.
+
+**Begründung:** Minimaler additiver Guard, der den Browservertrag fail-closed macht und den späteren getrennten trusted Vertrag offenlässt. Migration `20260824180000_trip_items_flug_handelsfelder_guard.sql`, nur Development.
+
+**Konsequenzen:** `flugInReiseUebernehmen` bleibt heute fail-closed. Sobald ein Nachweis existiert, darf er kommerzielle Felder nicht mehr über den `authenticated`-Tabellen-INSERT adeln; dafür ist ein eigener SECURITY DEFINER-Vertrag nötig. Production unverändert. Kein S3. Kein Mark Ready / Merge.
+
+---
+
+## ADR-0158 – Admin Slice A bleibt ehrliche Steuerzentralen-IA ohne neue Autorität
+
+**Datum:** 24. August 2026  
+**Status:** auf `main` gemergt (PR #44, `1ec93cc9`). Authoritative Datei: `docs/ADR_0158_ADMIN_SLICE_A.md`.
+
+**Entscheidung:** Siehe `docs/ADR_0158_ADMIN_SLICE_A.md`. Historische Draft-Nummern ADR-0152/0155 für Slice A gelten nicht gegen aktuellen `main`.
+
+---
+
+## ADR-0159 – Admin Slice B bleibt read-only System Health ohne Fake-Green
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #46 / `feat/admin-system-health`; Nummer von ADR-0153 auf ADR-0159 gehoben, weil `main` ADR-0153 an Account AP-1 und ADR-0155–0157 an Provider S2 vergeben hat. Admin Slice A ist ADR-0158.
 
 **Entscheidung:**
 
 - Das Admin Control Center bekommt eine eigene read-only Fläche `/admin/system-health` mit zentralem Health-Modell: `healthy | degraded | unavailable | unknown | not_configured` plus Freshness `fresh | stale | unknown`.
 - Sichtbares Grün gilt nur bei `healthy` **und** `fresh`. Stale, unknown, not_configured und unavailable dürfen nicht grün aussehen.
 - Jede Karte nennt Quelle, Prüfzeit, was die Quelle beweist und was sie nicht beweist.
+- Parent-Status und Sub-Checks bleiben getrennt.
 - Zulässige Live-Evidence in Slice B ohne neues Secret:
-  - **App / Deployment:** der Prozess hat den Check beantwortet; vorhandene `VERCEL_*`-Runtimefelder sind nur Deployment-Metadaten.
-  - **Supabase App-Datenquelle:** user-scoped `select iata from public.airports limit 1` mit 8s Timeout. Das beweist App-Datenquellen-Zugriff, nicht Management-Health.
-- **Vercel-Plattform, GitHub/CI, Infomaniak und Supabase-Management** bleiben `not_configured`, solange kein freigegebenes read-only Token existiert. Vorhandene Cloud-Tokens werden im Webpfad nicht benutzt.
+  - **App / Deployment** bleibt `unknown`/non-green. Nur der Sub-Check `App-Prozess` darf bei einer aktuellen Prozessantwort `healthy` sein. `VERCEL_*` sind Metadaten und beweisen keine Deployment-Health.
+  - **Supabase** bleibt `not_configured`/non-green. Ein erfolgreicher Read auf `public.airports` darf nur den Sub-Check `Supabase App-Datenzugriff` auf `healthy` setzen, nicht die Plattform.
+- **Vercel-Plattform, GitHub/CI und Infomaniak** bleiben `not_configured`, solange kein freigegebenes read-only Token existiert. Vorhandene Cloud-Tokens werden im Webpfad nicht benutzt.
 - Der GET-Endpunkt `api/admin/system-health` verlangt `requireAdminApi({ capability: 'betrieb-lesen' })`. `writeActions` bleibt leer. Keine Service-Role, keine Migration, keine Capability-/RLS-Änderung.
 - Server-Cache 30s. Ein manueller Refresh, kein Sekunden-Polling. Ein Teilfehler isoliert die anderen Karten.
 
-**Kontext:** Auftrag `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`. Slice A hat System Health bewusst ausgelassen, damit die Steuerzentrale keine erfundene Infrastruktur-Lage zeigt.
+**Kontext:** Auftrag `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`. Slice A hat System Health bewusst ausgelassen. Beim Current-Main-Sync nach PR #44 kollidierte die Draft-Nummer ADR-0153 mit Account AP-1.
 
-**Alternativen:** Management-APIs mit vorhandenen Cloud-Tokens heimlich anbinden; ENV-Präsenz als healthy werten; letzten CI-Lauf als aktuelle Plattform-Health zeigen; HTTP-200 einer Jetnity-Seite als Gesamtgrün.
+**Alternativen:** Management-APIs mit vorhandenen Cloud-Tokens heimlich anbinden; ENV-Präsenz als healthy werten; letzten CI-Lauf als aktuelle Plattform-Health zeigen; HTTP-200 einer Jetnity-Seite als Gesamtgrün; Account-/Provider-ADRs auf `main` umnummerieren.
 
-**Begründung:** `unknown` / `not_configured` ist belastbarer als erfundenes Grün. Ein neues Secret, ein Vertrag oder eine Management-Berechtigung braucht ein separates Product-Owner-Gate. App-Prozess und App-DB-Ping sind bereits vorhandene, konservative Reads.
+**Begründung:** `unknown` / `not_configured` ist belastbarer als erfundenes Grün. Ein neues Secret, ein Vertrag oder eine Management-Berechtigung braucht ein separates Product-Owner-Gate. Account- und Provider-ADRs auf `main` haben Vorrang vor Draft-Nummern.
 
-**Konsequenzen:** Copilot Pro erklärt Health nicht in diesem Slice. Domain-/Mail-/DNS-Health bleibt später. Account-/Trip-/Traveller-/Route-/Safety-/Seasonal-Verträge bleiben unberührt. Draft PR #46 bleibt Draft.
-
-**Nachtrag 24. August 2026 – Blocker B1:** Der sichtbare Gesamtclaim einer Systemkarte darf nur das behaupten, was die Quelle trägt. `App / Deployment` bleibt `unknown`/non-green, weil eine Prozessantwort keine Deployment-Health ist; der enge Nachweis erscheint als Sub-Check `App-Prozess`. `Supabase` bleibt `not_configured`/non-green, weil `public.airports` nur App→PostgREST-Datenzugriff beweist; der enge Nachweis erscheint als Sub-Check `Supabase App-Datenzugriff`. `VERCEL_*` bleibt Metadaten, kein Deployment-Grün.
+**Konsequenzen:** Copilot Pro erklärt Health nicht in diesem Slice. Domain-/Mail-/DNS-Health bleibt später. Account-/Trip-/Traveller-/Route-/Safety-/Seasonal- und Provider-S2-Verträge bleiben unberührt. Draft PR #46 bleibt Draft. Kein Slice C ohne neuen Auftrag.
 
 ---
 

@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety und Seasonal Foundation auf `main`; Account AP-1 aktiv; Admin Slice A Technical Closure / PASS (Draft PR #44); Admin Slice B Implementierung (Draft PR #46)**
+Status: **Foundation C/D/E, Travel Safety, Seasonal, Account AP-1/AP-2, Provider S2 und Admin Slice A auf `main`; Admin Slice B Re-Sync auf Draft PR #46**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -162,7 +162,7 @@ Verbindliche Truth-Logik:
 
 ## 6. Travel Timing & Seasonal Intelligence
 
-Status: **auf `main` gemergt (PR #38, Squash `ee988bbe`); kein Live-Provider**
+Status: **abgeschlossen und auf `main` gemergt (PR #38, Squash `ee988bbe`); kein Live-Provider**
 
 Policy:
 
@@ -214,28 +214,67 @@ Verbindlich:
 19. ✅ ChatGPT-Re-Review R15: Blocker 30 geschlossen, Exact-Head-Gate grün
 20. ✅ ChatGPT-Re-Review R16: Blocker 31 geschlossen, Exact-Head-Gate grün
 21. ✅ ChatGPT-Re-Review R17: Technical Closure / PASS, kein neuer konkreter Defekt
-22. ✅ Product-Owner-Merge und Integration auf `main`
+22. ✅ Product-Owner-Merge und Production-Integration
 
 ---
 
-## 6a. In Arbeit – Admin Control Center Slice A
+## 6a. Account Platform AP-1 – persönliches Zuhause
 
-Status: **Technical Closure / PASS auf Exact Head `5632a3ca`; Draft PR #44 wartet auf Product-Owner-Merge-Freigabe**
+Status: **auf `main` – Squash-Merge `084f7c87` (PR #43), 24. August 2026**
+
+Ziel: das persönliche Account-Zuhause anlegen, ohne den Trip Workspace zu verdoppeln.
+
+Umgesetzt in AP-1:
+
+- Account-Shell mit kompakter Navigation
+- `/account` aus bestehenden `reisenLaden()`-Daten
+- **Konto**-Link nur bei `sitzung === konto`
+- `/account/security` unter Einstellungen auffindbar
+- UI-Audit 48/48 grün
+
+Nicht in AP-1: Auth/MFA/AAL, RLS, Traveller-Registry, Privacy/Billing, Guest→Account, Homepage.
+
+Auftrag: `docs/ACCOUNT_AP1_MAIN_SYNC_TASK.md`. Entscheidung: ADR-0152, ADR-0153.
+
+---
+
+## 6b. Account Platform AP-2 – Auth-UX-Hygiene
+
+Status: **auf `main` – Squash-Merge `2827d1cb` (PR #48), 24. August 2026**
+
+Ziel: Login, Register, Callback, OAuth-Sichtbarkeit, Gast-/Session-Navigation und MFA-Dialog-Accessibility härten, ohne Auth-/MFA-/AAL-Vertrag oder Provider zu ändern.
+
+Umgesetzt in AP-2:
+
+- OAuth-Schaltflächen nur bei belegtem `config.toml`-Enablement
+- zentrale `next`-Allowlist, fail-closed `/reisen`
+- Login/Register über `getUser()`
+- öffentliche Register-Enumeration inkl. AP2-B1 geschlossen
+- Gast `/reisen`: Fortsetzen nur bei aktivem Entwurf
+- Footer aus `sitzungseintraege()`
+- MFA-Dialog a11y gehärtet
+
+Nicht in AP-2: DB/Migration/RLS, Traveller-Registry, Guest→Account-Vertragsänderung, Provider-Aktivierung, AP-3.
+
+Auftrag: `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md`.
+
+---
+
+## 6c. Admin Control Center Slice A
+
+Status: **auf `main` gemergt (PR #44, `1ec93cc9`). Entscheidung: ADR-0158.**
 
 - ehrliche Steuerzentralen-IA auf dem vorhandenen gehärteten Backoffice
 - keine neue Datenwahrheit, keine neue Autorität, keine Migration
-- danach eigener Slice B: read-only System Health
-- kein Mark Ready / Merge ohne ausdrückliche Product-Owner-Freigabe
-
-Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`
 
 ---
 
-## 6b. In Arbeit – Admin Control Center Slice B
+## 6d. In Arbeit – Admin Control Center Slice B
 
-Status: **Draft PR #46; Blocker B1 umgesetzt und auf `cc1d06bd` gegatet; wartet auf erneuten Technical-Lead-Review**
+Status: **Re-Sync mit `main` `1ec93cc9` auf Draft PR #46. Bisheriger B1-PASS gilt nur für den alten Stack `cc1d06bd`. Entscheidung: ADR-0159.**
 
 - read-only System Health ohne Fake-Green
+- Parent App/Deployment = `unknown`; Parent Supabase = `not_configured`
 - keine neuen Secrets, Tokens, Verträge oder Kosten
 - keine DB-/RLS-/Capability-Änderung, keine Writes
 - kein Mark Ready / Merge und kein Slice C ohne ausdrückliche Product-Owner-Freigabe
@@ -271,6 +310,8 @@ Zu prüfen/vereinheitlichen:
 - keine Browser-/LLM-Felder als Provider Truth
 
 Keine Verträge, Secrets oder laufenden Providerkosten ohne separate Freigabe.
+
+S1 Shared Operational Contract ist Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`. Es zentralisiert nur technische Hüllen. Audit-PR #45 bleibt Draft. S2 inkl. B1/B2 liegt auf Draft-PR #51 / `feat/provider-flight-evidence-s2`, Integrations-Head `e2fcffde` (auf `origin/main` @ `2827d1cb` synchronisiert). Development-Migrationen `20260824160000` und `20260824180000` sind angewendet, Production unverändert. GitHub Actions und Vercel auf `e2fcffde` sind grün. STOPP für Technical-Lead-Re-Review. S1/S2 aktivieren keine Provider. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
 
 ---
 
@@ -366,9 +407,11 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation (PR #38 gemergt)
-6. **→ Account AP-1 (Draft PR #43) aktiv; Admin Slice A Technical Closure / PASS (Draft PR #44); Admin Slice B Implementierung (Draft PR #46), danach unabhängiger Technical-Lead-Review**
-7. Provider-Readiness-/Adapter-Lücken schließen
+5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation
+6. ✅ Account Platform AP-1 auf `main` (PR #43)
+6a. ✅ Account Platform AP-2 auf `main` (PR #48)
+6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`)
+7. **→ Admin Slice B Re-Sync** mit `1ec93cc9` (Draft PR #46)
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit
 10. echte Providerphase
