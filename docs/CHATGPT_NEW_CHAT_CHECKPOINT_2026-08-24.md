@@ -1,6 +1,6 @@
 # Jetnity – New Chat Technical Lead Checkpoint
 
-Stand: **25. August 2026, ca. 00:15 Europe/Zurich**  
+Stand: **25. August 2026, ca. 00:20 Europe/Zurich**  
 Status: **aktueller kanonischer Chat-Wechsel-Checkpoint**
 
 Ein neuer Chat übernimmt die Rolle als Hauptentwickler / Technical Lead / Product-, Architecture-, Logic-, Security- und Review-Steuerung.
@@ -18,10 +18,10 @@ Danach GitHub, CI, Vercel und Supabase live verifizieren. Nicht blind auf diesen
 
 ## Verifizierter Übergabestand
 
-- aktueller `main`: `f8e252880d31fe462537f33be4496044951ae4a9`
+- `main`-Tip an diesem Checkpoint: `1bc1e1f492ea30710840b4a38d96437d56b73d77`
 - letzter PR-Merge: Trip Workspace Audit / PR #55
 - Merge-Commit #55: `08fd7748ace072544e189c94880562e050971811`
-- danach nur docs-only Kontinuitätsupdates auf `main`: `c42017f5...`, `f8e25288...`
+- danach nur docs-only Kontinuitätsupdates auf `main`: `c42017f5...`, `f8e25288...`, `1bc1e1f4...`
 - #44 Admin A: merged
 - #46 Admin B: merged
 - #49 Admin C: merged
