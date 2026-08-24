@@ -50,6 +50,7 @@ async function serverStarten() {
       NEXT_PUBLIC_APP_URL: BASIS,
     },
     stdio: ['ignore', 'pipe', 'pipe'],
+    detached: true,
   })
   let bereit = false
   const ausgabe = []
@@ -64,10 +65,19 @@ async function serverStarten() {
     await new Promise((r) => setTimeout(r, 250))
   }
   if (!bereit) {
-    kind.kill()
+    serverStoppen(kind)
     throw new Error(`Next.js startete nicht:\n${ausgabe.join('')}`)
   }
   return kind
+}
+
+function serverStoppen(kind) {
+  if (!kind.pid) return
+  try {
+    process.kill(-kind.pid, 'SIGTERM')
+  } catch {
+    kind.kill('SIGTERM')
+  }
 }
 
 async function messen(page) {
@@ -175,5 +185,5 @@ try {
   }
   console.log(`Account-UI-Audit ${ergebnisse.length}/${ergebnisse.length} grün`)
 } finally {
-  server.kill()
+  serverStoppen(server)
 }
