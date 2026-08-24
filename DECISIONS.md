@@ -3745,7 +3745,7 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 ## ADR-0154 – Minimaler gemeinsamer Provider-Operationsvertrag
 
 **Datum:** 24. August 2026  
-**Status:** umgesetzt auf Draft-PR #47 / `feat/provider-ops-s1`; kein Mark Ready / kein Merge
+**Status:** umgesetzt und Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`; kein Mark Ready / kein Merge
 
 **Entscheidung:**
 
@@ -3767,7 +3767,7 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 **Begründung:** Die Audit-Befunde lagen in kopierter Operationshülle, nicht in fehlender Fachwahrheit. Eine schmale gemeinsame Form verhindert weitere Drift, ohne Search-, Truth- oder Adaptergrenzen zu vermischen. Ein synces Interface hätte S6 gezwungen, jede Domain erneut umzubauen. Ein Spread hätte Observability-Zusatzfelder durchgelassen.
 
-**Konsequenzen:** S2+ und S6 können dieselben Hüllen nutzen. Production bleibt fail-closed. Keine neuen Kosten, keine Secrets, keine Migration. Draft-PR #47 wartet auf erneuten unabhängigen Technical-Lead-Review. S1 ist keine Freigabe für S2, Mark Ready oder Merge.
+**Konsequenzen:** S2+ und S6 können dieselben Hüllen nutzen. Production bleibt fail-closed. Keine neuen Kosten, keine Secrets, keine Migration. Technical Closure ist dokumentiert in `docs/PROVIDER_OPS_S1_TECHNICAL_CLOSURE.md`. Draft-PR #47 wartet auf Product-Owner-Entscheidung. S1 ist keine Freigabe für S2, Mark Ready oder Merge.
 
 ---
 

@@ -79,9 +79,9 @@ Status: `docs/PROVIDER_OPS_S1_STATUS.md`
 
 Aktiver Slice:
 
-**S1 – gemeinsamer technischer Operationsvertrag** in `lib/provider-ops/*` plus dünne Domain-Wrapper. Flights-Search auf Hotel-Request-Härtung gehoben.
+**S1 – gemeinsamer technischer Operationsvertrag.** Technical Closure / PASS auf Exact Head `b74096a9`. Draft-PR #47 wartet auf Product-Owner-Entscheidung.
 
-Grenze: keine Fachwahrheit, kein `UniversalProvider`, kein `FlugNachweis`, keine persistente Kostenschranke, keine Provideraktivierung, keine Secrets, keine DB-/Production-Migration.
+Grenze: keine Fachwahrheit, kein `UniversalProvider`, kein `FlugNachweis`, keine persistente Kostenschranke, keine Provideraktivierung, keine Secrets, keine DB-/Production-Migration. S2 nur mit neuem Auftrag.
 
 ## 4. Parallelitätsregel
 
@@ -128,6 +128,6 @@ Wenn sie gestartet wird:
 
 1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
 2. `Admin platform audit` implementiert ausschließlich Slice A auf PR #44.
-3. Dieser Workstream liefert S1 auf PR #47 bis zum unabhängigen Technical-Lead-Review; kein Mark Ready / kein Merge / kein S2.
+3. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung; kein Mark Ready / kein Merge / kein S2.
 4. ChatGPT/Technical Lead prüft jeden Slice unabhängig.
 5. AP-2, Admin Slice B und Provider S2 brauchen jeweils eine neue ausdrückliche Freigabe.

@@ -246,7 +246,7 @@ Zu prüfen/vereinheitlichen:
 
 Keine Verträge, Secrets oder laufenden Providerkosten ohne separate Freigabe.
 
-S1 Shared Operational Contract ist als eigener Draft-Workstream gestartet: PR #47 / `feat/provider-ops-s1`. Es zentralisiert nur technische Hüllen. Audit-PR #45 bleibt Draft. S1 aktiviert keine Provider und schließt nicht `FlugNachweis`, persistente Kostenschranken oder Admin-Health.
+S1 Shared Operational Contract ist Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`. Es zentralisiert nur technische Hüllen. Audit-PR #45 bleibt Draft. S1 aktiviert keine Provider und schließt nicht `FlugNachweis`, persistente Kostenschranken oder Admin-Health. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
 
 ---
 

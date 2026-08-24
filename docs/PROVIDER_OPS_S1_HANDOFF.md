@@ -1,116 +1,63 @@
 # Jetnity – Provider Ops S1 Handoff
 
 Stand: 24. August 2026  
-Status: **S1 Review-Fixes S1-B1/S1-B2/ADR-0154; Draft-PR #47 bleibt Draft**
+Status: **S1 TECHNICAL CLOSURE / PASS; Draft-PR #47 wartet auf Product-Owner-Entscheidung**
 
 ## 1. Übernahme
 
 Ein neuer Agent liest zuerst:
 
-1. `docs/PROVIDER_OPS_S1_TASK.md`
+1. `docs/PROVIDER_OPS_S1_TECHNICAL_CLOSURE.md`
 2. `docs/PROVIDER_OPS_S1_STATUS.md`
 3. diesen Handoff
 4. `docs/ACTIVE_WORK_STATUS.md`
 5. ADR-0154 in `DECISIONS.md`
 6. Audit-Quellen auf `audit/provider-readiness` (PR #45 bleibt Audit-Draft)
 
-Nicht auf `audit/provider-readiness` implementieren. S1 lebt nur auf `feat/provider-ops-s1`.
+Nicht auf `audit/provider-readiness` implementieren. S1 lebt nur auf `feat/provider-ops-s1`. S2 nicht ohne neuen Auftrag starten.
 
 ## 2. Exact Runtime Head
 
 - Branch: `feat/provider-ops-s1`
 - Draft-PR: https://github.com/Jetnity/jetnity/pull/47
 - Base: `main` @ `e4f4cca75e55028fab231c1827abf6236ae30eec`
-- Implementierungs-Commit: `66413cf9`
-- Dokumentations-Head: der Commit, der diese Datei trägt
-- Account AP-1 PR #43 und Admin Slice A PR #44 sind parallele Workstreams und nicht Teil dieses Heads
+- Reviewed Exact Head: `b74096a9cda1382e4974d95f1a40da0b27ba1b2c`
+- Account AP-1 PR #43 und Admin Slice A PR #44 sind parallele Workstreams
 
-## 3. Gate-Ergebnisse
+## 3. Gate-Ergebnisse auf `b74096a9`
 
-Lokal gegen `66413cf9` verifiziert:
-
-- `npm test`: 1726/1726 pass
-- Typecheck: pass
-- Lint: pass
-- `check:dead` / `check:exports` / `check:deps` / `check:schema-bezug`: pass
-- Production-Build: pass (Exit 0)
-- `check:api-schutz`: pass
-
-Noch offen, bis gegen den **Dokumentations-Head** belegt:
-
-- GitHub Actions SUCCESS auf Exact Head
-- Vercel Preview READY auf demselben Exact Head
+- `npm test`: 1729/1729 pass
+- Typecheck, Lint, Hygiene, API-Schutz, Production-Build: pass
+- GitHub Actions: **SUCCESS** – https://github.com/Jetnity/jetnity/actions/runs/32712731964
+- Vercel Preview: **READY** – https://vercel.com/jetnity-e1b93c82/jetnity-app/EBDpxxCVSQfccVQAGNnHpprKg398
+- Technical-Lead Re-Review: **PASS / Technical Closure**
 
 Keine UI-Änderung. Kein neuer visueller Produktslice.
 
-## 3a. Review-Fixes nach REQUEST CHANGES
-
-- **S1-B1:** `providerOpsEvent()` kopiert kein Input-Spread mehr. Nur Allowlist-Felder. Regression: Zusatzfelder (`payload`, `token`, Route) überleben nicht.
-- **S1-B2:** `ProviderOpsCostGuard.erlaubt()` ist `Promise`. Domain-Hüllen sind async und rufen nur noch diesen Port. S6 kann I/O einhängen, ohne die Hüllen erneut umzuschneiden. Keine DB in S1.
-- **ADR:** Implementierungsentscheidung trägt eindeutig `ADR-0154`. `ADR-0152` bleibt dem Audit-Plan (PR #45) bzw. Account AP-1 vorbehalten.
-
 ## 4. Geänderte Domains
 
-Nur Operationshüllen und die Flights-Route:
-
-- neu: `lib/provider-ops/*`
-- Wrapper: `lib/{flights,hotels,activities,mobility,rental-cars,readiness,safety,seasonal}/{anfrage,rate-limit,zustand}.ts`
-- Flights: `lib/flights/anfrage.ts`, `lib/flights/domain.ts` (`maxAnfrageBytes`), `lib/flights/suche.ts` (`retryAfterSec`), `app/api/flights/search/route.ts`
-
-Öffentliche Domain-Funktionsnamen und deutsche Fehlermeldungen der bestehenden Hüllen bleiben erhalten.
-
-Kleine Härtungs-Konsistenz der Flugsuche: Request-Fehler nutzen jetzt dieselbe Client-Antwortform wie Hotels (`sucheFuerClient`), inklusive `coverageNote`. Zuvor war `coverageNote` auf dem JSON-Parse-Fehlerpfad leer.
+Nur Operationshüllen und die Flights-Route. Öffentliche Domain-Funktionsnamen und Fehlermeldungen bleiben erhalten. Cost-Guard-Aufrufer sind async. Observability kopiert kein Input-Spread.
 
 ## 5. Bewusst unveränderte Domain-Truth
 
-Unverändert bleiben:
+Route-/Traveller-/Official-/Safety-/Seasonal-Truth, Duffel-`currency`, `FlugNachweis`, Mobility-/Rental-Nachweis-Stubs, Safety `party: []`, Mobility Auto-Search, Seasonal-Rate-Limit-Algorithmus, Mobility-/Rental-HTTP 504.
 
-- Route Truth / Traveller Registry / Official / Safety / Seasonal Fact Truth
-- Duffel-Adapter und fehlendes Request-`currency`
-- Flug-Kontoübernahme ohne `FlugNachweis`
-- Mobility-/Rental-Nachweis-Stubs
-- Safety-HTTP-Rekonstruktion `party: []`
-- Mobility Auto-Search im Workspace
-- Seasonal-Rate-Limit-Algorithmus (Fensterzähler, nicht Sliding-Window)
-- Mobility-/Rental-Timeout-HTTP **504**
+## 6. Datenbank / Security / Kosten
 
-## 6. Datenbank
+Keine Migration. Kein Service Role in `lib/provider-ops`. Keine Secrets. Keine neuen laufenden Kosten. In-Memory-Limits sind kein globales Production-Cost-Guard.
 
-Keine Migration. Keine RLS-Änderung. Keine Typenänderung. Kein Service Role in `lib/provider-ops`.
+## 7. Offene P0/P1 aus PR #45, die S1 nicht schließt
 
-## 7. Security
-
-- Request-Härtung fail-closed: nur `application/json`, Content-Length-Precheck, Stream-Cap, kein Request-Rohtext in Fehlern
-- Cost Guard fail-closed bei leerer Kennung; Domain-Wrapper normalisieren leer weiter auf `unbekannt`, wie bisher
-- Production-Kill-Switch bleibt hart aus
-- keine Secrets, keine Client-Bundles mit Provider-Keys
-- Observability-Typ ohne Tokens, Namen, Dokumente, Routen, Preise oder Rohpayloads
-- öffentliche Guest-Suche bleibt öffentlich; S1 macht daraus kein Auth-Feature
-
-## 8. Kosten
-
-Keine neuen laufenden Kosten. Keine Live-Provider-Calls. Keine neue SaaS. In-Memory-Limits bleiben prozesslokal und sind **kein** globales Production-Kostenschutz.
-
-## 9. Offene P0/P1 aus PR #45, die S1 nicht schließt
-
-Aus dem Audit auf `audit/provider-readiness` (Exact Head `172ff5eb`), hier nicht erneut implementiert:
-
-- **P0** Flug-Kontoübernahme persistiert Browser-`FlugOption` ohne `FlugNachweis` → S2
-- **P0** In-Memory-Limits sind kein globales Production-Cost-Guard → S6
+- **P0** Flug-Kontoübernahme ohne `FlugNachweis` → S2
+- **P0** In-Memory-Limits nicht global → S6
 - **P1** keine Provider-Telemetrie / Admin-Health → S7
-- **P1** kommerzielle Optionen ohne `retrievedAt` / Stale-Label → S5
-- **P1** Mobility-/Rental-Nachweis sind Stubs → S3
-- **P1** Readiness `evaluate` ohne `AbortSignal` / explizites Timeout → S4
-- **P1** Safety-HTTP-Rekonstruktion setzt `party: []` → S4
-- **P1** Mobility sucht beim Workspace-Mount automatisch → S3
-- **P1** Duffel-Request sendet kein `currency` → S5
+- **P1** keine Offer-Provenance / Duffel-`currency` → S5
+- **P1** Mobility-/Rental-Nachweis-Stubs und Auto-Search → S3
+- **P1** Readiness-Timeout / Safety `party: []` → S4
 
-S1-Restpunkt: Mobility-/Rental-Timeout bleibt HTTP 504, weil eine stille Umstellung auf 200 den Public Contract brechen würde.
+## 8. Nächster Schritt
 
-## 10. Nächster Schritt
-
-1. GitHub Actions und Vercel Preview auf dem Exact Head dieses Branches belegen.
-2. Unabhängigen Technical-Lead-Review von Draft-PR #47 anstoßen.
-3. **Nicht** Mark Ready, **nicht** mergen, **nicht** S2 starten, **nicht** Provider aktivieren.
+1. Product Owner entscheidet über Draft-PR #47.
+2. **Nicht** Mark Ready, **nicht** mergen, **nicht** S2 starten, **nicht** Provider aktivieren.
 
 PR #45 bleibt Audit-Draft.
