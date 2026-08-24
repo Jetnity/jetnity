@@ -9,9 +9,24 @@ Branch: `audit/trip-workspace`
 
 ## 1. Exact Head
 
-Branch-Head nach dem Audit-Commit:
+Branch-Head vor diesem Gates-Nachzug:
 
-`7be104f4ffe77614070bd08d29f94ec29484b911`
+`0ccd38df1614b615cbdccc48d3a9b05a67d41df6`
+
+Lokale CI-äquivalente Gates auf diesem Head, alle grün:
+
+- `check:setup:ci` (1 Warning: keine `.env` im Cloud-Agent)
+- `typecheck`
+- `lint`
+- `npm test` – **1818/1818 pass, 0 fail**
+- `check:api-schutz` – 10 Admin-Routen
+- `check:schema-bezug`
+- `check:dead` / `check:exports` / `check:deps`
+- `npm run build` – Production-Build 41/41 Seiten, Compiled successfully
+
+Remote auf `0ccd38df` (vor diesem Nachzug): Vercel Preview **pass**, Auth-Konfiguration **pass**, GitHub `Typecheck, Lint & Build` war noch pending.
+
+Grün ≠ Produktkorrektheit. Docs-only.
 
 Audit-Basis `origin/main`:
 
