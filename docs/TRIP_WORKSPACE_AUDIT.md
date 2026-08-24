@@ -1,9 +1,12 @@
 # Jetnity – Trip Workspace / Reiseübersicht Audit
 
 Stand: 24. August 2026  
-Status: **docs-only Audit auf `audit/trip-workspace`; kein Runtime-Umbau, kein Mark Ready, kein Merge**  
-Audit-Basis: `origin/main` @ `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267`  
-Verantwortlicher Cursor-Anzeigename: dieser Workstream (`audit/trip-workspace`)
+Status: **docs-only Audit auf `audit/trip-workspace`; nach Current-Main-Sync; kein Runtime-Umbau, kein Mark Ready, kein Merge**  
+Code-Evidence-Basis (historisch): `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267` (Admin Slice A)  
+Aktueller Integrations-`main` nach Sync: `e3bad749c8e03512001e7bccd5e08467f10a7134` (Admin Slice B)  
+Verantwortlicher Cursor-Workstream: `audit/trip-workspace`
+
+`1ec93cc9` ist **nicht** mehr aktueller `main`. Der Workspace-Code-Audit wurde gegen diesen SHA erhoben. Admin Slice B auf `e3bad749` ist Admin-Health, keine Workspace-Runtime. Die Workspace-Befunde bleiben gültig, bis ein späterer Code-Re-Scan sie widerlegt.
 
 > **Dies ist kein fertiger Trip Workspace.**  
 > Abschluss dieses Auftrags: Audit und Zielarchitektur sind technisch vorbereitet.
@@ -18,7 +21,8 @@ Leitfrage:
 
 ### 1.1 Was geprüft wurde
 
-- aktueller `main` per `git fetch origin main` (SHA unten)
+- Workspace-Code und Reise-IA gegen `main` @ `1ec93cc9` (historische Evidence-Basis)
+- Current-Main-Reconciliation gegen `e3bad749` (Admin Slice B gemergt; keine Workspace-Runtime-Änderung)
 - Pflichtlektüre auf `main`
 - Governance-Evidence aus **nicht gemergtem** Draft-PR #52, ausdrücklich **nicht** als `main`-Zustand
 - vollständiger heutiger Workspace-Code unter `components/trips/`, `lib/trips/`, `app/(public)/reisen*`, `app/(public)/planen`, zugehörige Domain-Module
@@ -36,14 +40,14 @@ Leitfrage:
 
 | Aussage | Quelle | Tatsächlicher Code / Git auf diesem Audit |
 | --- | --- | --- |
-| `main` = Admin Slice A | `git rev-parse origin/main` | `1ec93cc9` `Admin Control Center Slice A (#44)` |
-| Provider S2 noch Draft #51 | `JETNITY_HANDOFF.md` / `docs/ACTIVE_WORK_STATUS.md` auf `main` | S2 liegt **unter** aktuellem `main` (`52e665ac`, Parent von `1ec93cc9`) |
-| Admin Slice A noch in Arbeit auf #44 | dieselbe `main`-Statusdatei | #44 ist gemergt; offene Admin-Arbeit ist u. a. #46 Slice B |
+| `main` = Admin Slice A | ursprünglicher Audit-Start / ältere Statusdateien | historisch `1ec93cc9`; **aktueller** `main` ist `e3bad749` (Slice B #46 gemergt) |
+| Provider S2 noch Draft #51 | ältere Handoff-/Statusdateien | S2 liegt auf `main` (`52e665ac`) |
+| Admin Slice B noch Draft #46 | Statusdateien, die mit Slice B gemergt wurden | #46 ist gemergt als `e3bad749`; Slice-C-Draft #49 bleibt fremd |
 | Safety/Seasonal sind im Workspace sichtbar | Foundation-Acceptance-/Handoff-Texte | Production-Pfad übergibt **keine** Evaluations; Karten bleiben unsichtbar |
 | Foundation C Readiness nur Development / PR #32 | `docs/REISEN.md` | Readiness/Traveller liegen auf `main` und Production; `docs/REISEN.md` ist veraltet |
 | Pace-Chips entfernt | Product-Owner-Handoff §8 | `TripPlanner` speichert weiter `pace` und defaultet auf `balanced` |
 | `Jetzt wichtig` existiert | Zielhierarchie im Handoff | **nicht implementiert** |
-| PR #52 = aktueller `main` | PR-#52-Body nennt älteren Main-SHA `52e665ac` | #52 ist offener Draft; aktueller `main` ist `1ec93cc9` |
+| PR #52 = aktueller `main` | PR-#52-Body nennt älteren Main-SHA | #52 ist offener Draft; aktueller `main` ist `e3bad749` |
 
 Historische Dokumente bleiben Evidence ihrer damaligen Lage. Sie sind keine heutige Runtime-Wahrheit.
 
@@ -58,9 +62,9 @@ PR #52 (`docs/chatgpt-technical-lead-handoff-2026-08-24`) ist Governance-/Handof
 ### 2.1 Git
 
 - Repository: `Jetnity/jetnity`
-- Audit-Start-SHA laut Auftrag: `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267`
-- Nach `git fetch origin main`: **identisch**
-- Dieser Branch: `audit/trip-workspace` von genau diesem `main`
+- Historische Code-Evidence-Basis: `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267`
+- Aktueller Integrations-`main`: `e3bad749c8e03512001e7bccd5e08467f10a7134`
+- Dieser Branch: `audit/trip-workspace`, rebase auf diesen `main`
 
 ### 2.2 Parallele Workstreams – nicht überschreiben
 
@@ -69,7 +73,7 @@ Beobachtet über GitHub, nicht als Eigentum dieses Audits:
 | Workstream | Sichtbarer Cursor-Name | Beobachteter Stand am 24.08.2026 |
 | --- | --- | --- |
 | Account Platform | `Account plattform audit vorbereitung` | Audit-PR #39; AP-1/AP-2 auf `main`; AP-3 Draft-PR #53 |
-| Admin / Control Center | `Admin platform audit` | Slice A auf `main` (#44); Slice B Draft-PR #46; Slice C Draft-PR #49 |
+| Admin / Control Center | `Admin platform audit` | Slice A+B auf `main` (#44, #46 / `e3bad749`); Slice C Draft-PR #49 |
 | Provider Readiness | `Jetnity provider readiness audit` | S1/S2 auf `main`; S3 Draft-PR #54 |
 | Technical-Lead-Handoff | – | Draft-PR #52, nicht gemergt |
 

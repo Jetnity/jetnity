@@ -2,7 +2,8 @@
 
 Stand: 24. August 2026  
 Status: **verbindlich für den Workspace-Workstream; überschreibt keine fremden Pläne**  
-Basis: `main` @ `1ec93cc9` plus beobachtete parallele Draft-PRs
+Code-Evidence-Basis (historisch): `1ec93cc9`  
+Aktueller Integrations-`main`: `e3bad749` plus beobachtete parallele Draft-PRs
 
 Zweck: verhindern, dass der Workspace gegen unfertige Contracts implementiert wird.
 

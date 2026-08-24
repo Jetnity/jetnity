@@ -1,40 +1,38 @@
 # Jetnity – Trip Workspace Audit Handoff
 
 Stand: 24. August 2026  
-Status: **Audit und Zielarchitektur vorbereitet; STOPP für unabhängigen Technical-Lead-Review**  
+Status: **Audit und Zielarchitektur vorbereitet; nach Current-Main-Sync auf `e3bad749`; STOPP für unabhängigen Technical-Lead-Re-Review**  
 Cursor-Workstream: Trip Workspace / Reiseübersicht – Product, UX & Technical Architecture Audit  
-Branch: `audit/trip-workspace`
+Branch: `audit/trip-workspace`  
+Draft-PR: **#55**, docs-only, kein TW-1
 
 ---
 
 ## 1. Exact Head
 
-Branch-Head vor diesem Gates-Nachzug:
+Historischer erster Exact Head vor Current-Main-Sync (nicht mehr Branch-Head):
 
 `0ccd38df1614b615cbdccc48d3a9b05a67d41df6`
 
-Lokale CI-äquivalente Gates auf diesem Head, alle grün:
+Dieser SHA ist **Evidence des ersten Gates-Laufs**, nicht aktueller Head und nicht aktueller `main`.
 
-- `check:setup:ci` (1 Warning: keine `.env` im Cloud-Agent)
-- `typecheck`
-- `lint`
-- `npm test` – **1818/1818 pass, 0 fail**
-- `check:api-schutz` – 10 Admin-Routen
-- `check:schema-bezug`
-- `check:dead` / `check:exports` / `check:deps`
-- `npm run build` – Production-Build 41/41 Seiten, Compiled successfully
+Aktueller Integrations-`main`:
 
-Remote auf `0ccd38df` (vor diesem Nachzug): Vercel Preview **pass**, Auth-Konfiguration **pass**, GitHub `Typecheck, Lint & Build` war noch pending.
+`e3bad749c8e03512001e7bccd5e08467f10a7134`
 
-Grün ≠ Produktkorrektheit. Docs-only.
+`Admin Control Center Slice B – read-only System Health (#46)`
 
-Audit-Basis `origin/main`:
+Der Branch `audit/trip-workspace` ist darauf rebased. Der neue Exact Head wird nach Commit/Push dieses Reconciliation-Schnitts erneut gegatet.
+
+Historische Code-Evidence-Basis des Workspace-Audits:
 
 `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267`
 
 `Admin Control Center Slice A (#44)`
 
-Der Auftrag nannte genau diesen SHA. `git fetch origin main` bestätigte ihn.
+`1ec93cc9` ist **nicht** aktueller `main`. Slice B auf `e3bad749` ändert keine Workspace-Runtime. Die Audit-Befunde bleiben gültig, bis ein späterer Code-Re-Scan sie widerlegt.
+
+Grün ≠ Produktkorrektheit. Docs-only.
 
 ---
 
@@ -76,7 +74,7 @@ Vollständige Inventare und P-Listen: `docs/TRIP_WORKSPACE_AUDIT.md`.
 Nicht überschreiben:
 
 - Account `Account plattform audit vorbereitung` – AP-3 Draft-PR #53 und weiterer Plan AP-4–AP-12
-- Admin `Admin platform audit` – Slice B #46 und weiterer Plan
+- Admin `Admin platform audit` – Slice A+B auf `main`; Slice C Draft #49 und weiterer Plan
 - Provider `Jetnity provider readiness audit` – S3 #54 und S4–S8
 
 Workspace darf Commercial-Freshness erst nach **S5**, Mobility-Nachweis-Parität erst nach **S3**, accountweite Traveller erst nach **AP-7**, Hub-Lebenszyklus nicht vor/gegen **AP-3**.

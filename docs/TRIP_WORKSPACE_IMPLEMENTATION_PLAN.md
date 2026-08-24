@@ -8,6 +8,8 @@ Abhängigkeiten: `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`
 
 Kein Monster-PR. Jeder Slice ist klein, reviewbar und konfliktarm gegenüber Account, Admin und Provider.
 
+Integrationsbasis nach Current-Main-Sync: `e3bad749`. Code-Evidence-Basis des Audits bleibt historisch `1ec93cc9`. Dieser Plan startet trotzdem kein TW-1.
+
 ---
 
 ## 1. Sperre
