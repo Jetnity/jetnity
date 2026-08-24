@@ -1,9 +1,35 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **Account AP-3 liegt auf `main` `8326e72f`; aktiver Provider-Slice ist S3 Mobility/Rental-Nachweis auf Current-Main Exact Head `2cb9a830`; Draft-PR #54; STOPP für Technical-Lead Docs-Re-Check**
+Status: **verifizierter `main` ist `b7f027ec` (Provider S3 #54 gemergt). Admin A–C, Account AP-1–AP-3 und Provider S1–S3 liegen auf `main`. Dieser Branch trägt die finale docs-only Reconciliation von Draft-PR #55. Kein TW-1, keine Runtime.**
+
+## 0. Git-Wahrheit dieses Branches
+
+Verifiziert per `git fetch origin main` und GitHub:
+
+- `origin/main`: `b7f027ec448639fe3399512d401a7789b24e52a6`
+- Commit: `Merge pull request #54 from Jetnity/feat/provider-mobility-rental-evidence-s3`
+- darunter auf `main`: Account AP-3 `8326e72f` (#53, ADR-0160), Admin Slice C `78192ab7` (#49, ADR-0162), Admin Slice B `e3bad749` (#46, ADR-0159), Admin Slice A `1ec93cc9` (#44, ADR-0158)
+
+Die mit S3 gemergten Statusabschnitte, die #54 noch als Draft oder `8326e72f` als aktuellen `main` beschreiben, sind **pre-merge Evidence**, keine aktuelle Git-Lage.
+
+Nicht gemergte Governance-Evidence: Draft-PR #52. Nicht als `main` ausgeben.
+
+Agent: `Trip workspace audit architecture`  
+Branch: `audit/trip-workspace`, rebase auf `b7f027ec`.
 
 ## 1. Zuletzt vollständig abgeschlossener Block
+
+**Provider Readiness S3 – Mobility/Rental Nachweis**
+
+- PR #54: **gemergt und geschlossen**
+- Merge auf `main`: `b7f027ec448639fe3399512d401a7789b24e52a6`
+- gemergt: 24. August 2026, 20:56 UTC
+- ADR-0161 bleibt verbindlich
+- Historischer Current-Main Exact Head `2cb9a830` bleibt Evidence vor dem Merge
+- Umgebung bleibt `null` → Übernahme fail-closed. Kein echter Provider. Keine Production-Migration.
+
+Davor vollständig abgeschlossen:
 
 **Account Platform AP-3 – Meine Reisen Lebenslage**
 
@@ -95,18 +121,14 @@ Keine neuen Secrets und keine neuen laufenden Providerkosten.
 ### Provider Readiness – S3 Mobility/Rental Nachweis
 
 Verantwortlicher Cursor-Anzeigename: `Jetnity provider readiness audit`  
-Implementierungsbranch: `feat/provider-mobility-rental-evidence-s3`  
-Basis: `origin/main` @ `8326e72f`  
+Implementierungs-PR: **#54 – gemergt nach `main` `b7f027ec`**  
 Auftrag: `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` PR-S3  
 Status: `docs/PROVIDER_READINESS_S3_STATUS.md`  
-Handoff: `docs/PROVIDER_READINESS_S3_HANDOFF.md`  
 ADR: ADR-0161
 
-Aktiver Slice:
+**S3 liegt auf `main`.** Hotel-/S2-gleiche Nachweisgrenze für Mobility und Rental. `*NachweisAusUmgebung()` bleibt `null`. Mobility-Suche startet nicht automatisch. Kein echter Provider. Keine Production-Migration.
 
-**S3 – Mobility- und Rental-Nachweis auf Hotel-/S2-Trust-Grenze.** Async `nachweisen({ optionId, kontext })`. Testkatalog nur injiziert. Umgebung `null` → fail-closed. Mobility Auto-Search nur nach «Verbindungen prüfen». Keine Migration. Kein echter Provider. Current-Main Exact Head `2cb9a830` ist lokal und remote gegatet. Runtime/Security/Truth PASS. Dieser Stand ist ein docs-only Follow-up.
-
-Grenze: kein Mark Ready, kein Merge, keine Production-Migration, keine Provideraktivierung, kein S4–S8.
+Danach folgen erst S4–S8, jeweils mit eigenem Auftrag. Dieser Audit startet S4 nicht.
 
 ### Admin Platform – abgeschlossene Slices auf `main`
 
@@ -128,22 +150,35 @@ Danach folgen erst S4–S8, jeweils mit eigenem Auftrag.
 
 ### Trip Workspace Audit – PR #55
 
-Verantwortlicher Cursor-Anzeigename: `Trip workspace audit architecture`  
-Implementierungs-Draft-PR: **#55** (docs-only)
+Agent: `Trip workspace audit architecture`  
+Branch: `audit/trip-workspace`  
+Draft-PR: **#55**, docs-only  
+Auftrag: Product/UX/Technical Architecture Audit plus Review-Korrektur. Kein Runtime-Umbau, kein TW-1.
 
-**PR #55 bleibt Draft / docs-only.** Folgt nach #54-Integration als finale docs-only Reconciliation. Startet keinen TW-1-Umbau und keine Runtime-Änderung. Agent `Trip workspace audit architecture` wartet bis dahin.
+Die Ziel-IA bleibt ein nicht angenommener Product-Owner-Vorschlag. Ein späterer Merge von PR #55 gibt die IA und TW-1 nicht frei.
+
+Dokumente:
+
+- `docs/TRIP_WORKSPACE_AUDIT.md`
+- `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`
+- `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`
+- `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`
+- `docs/TRIP_WORKSPACE_HANDOFF.md`
+
+Code-Evidence-Basis bleibt historisch `1ec93cc9`. Integrationsbasis nach Sync: `b7f027ec`. S3/AP-3/Admin C ändern die P0-Workspace-Befunde (Safety-Stille, Desktop ohne Übersicht) nicht.
+
+Grenze: keine DB/RLS/Auth, keine Traveller-Registry, keine Provideraktivierung, keine Homepage, keine Account-/Admin-/Provider-Fachimplementierung.
 
 ## 4. Parallelitätsregel
 
-S3 darf Account-/Admin-Dateien nicht mischen. Admin A–C und Account AP-1–AP-3 auf `main` bleiben erhalten.
+Admin A–C, Account AP-1–AP-3 und Provider S1–S3 liegen auf `main` und bleiben erhalten. Dieser Audit darf deren Dateien nicht fachlich ersetzen.
 
-Kontrollierte Reihenfolge der offenen Drafts:
+Kontrollierte Reihenfolge der offenen Arbeit:
 
-1. Provider #54 Docs-Re-Check / danach Product-Owner-Ready-Gate / Integration
-2. Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration
-3. danach neue kontrollierte Admin-/TW-Aufträge
+1. Trip-Workspace-Audit #55 finale Docs-Reconciliation – **dieser Branch, Draft bleibt Draft**
+2. danach neue kontrollierte Admin-/TW-/Provider-Aufträge nur nach neuem Auftrag
 
-`Admin platform audit` wartet. `Account plattform audit vorbereitung` wartet. Kein Slice D. Kein TW-1 ohne neuen Auftrag.
+`Admin platform audit` wartet. `Account plattform audit vorbereitung` wartet. Kein Slice D. Kein S4. Kein TW-1 ohne neuen Auftrag.
 
 Seriell/zentral bleiben insbesondere:
 
@@ -164,7 +199,7 @@ Die neue Homepage-Produktseiten-Idee bleibt **pausiert**. Siehe `docs/HOMEPAGE_P
 
 ## 6. Governance
 
-- PR #43, #44, #45, #46, #47, #48, #49, #51 und #53 sind gemergt. Draft-PR #54 und #55 bleiben Draft.
+- PR #43, #44, #45, #46, #47, #48, #49, #51, #53 und #54 sind gemergt. Draft-PR #55 und #52 bleiben Draft.
 - ADR-Allokation: Admin A = ADR-0158, Admin B = ADR-0159, Account AP-3 = ADR-0160, Provider S3 = ADR-0161, Admin C = ADR-0162.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
@@ -173,7 +208,11 @@ Die neue Homepage-Produktseiten-Idee bleibt **pausiert**. Siehe `docs/HOMEPAGE_P
 
 ## 7. Exakter nächster Schritt
 
-1. STOPP für unabhängigen Technical-Lead Docs-Re-Check von Draft-PR #54. Current-Main Exact Head `2cb9a830` ist gegatet.
-2. Nicht Mark Ready, nicht mergen, nicht S4, Production nicht migrieren.
-3. Nach #54-Integration: Trip-Workspace-Audit #55 finale Docs-Reconciliation.
-4. Danach erst neue kontrollierte Admin-/TW-Aufträge. `Admin platform audit` wartet. `Account plattform audit vorbereitung` wartet. Kein Slice D. Kein TW-1. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag.
+Dieser Workspace-Audit:
+
+1. Draft-PR #55 auf `main` `b7f027ec` synchronisiert, bleibt Draft.
+2. Review-Korrektur `5012729847` (Vier-Zustände-Vertrag, Proposal-Governance, Agentenname).
+3. Erneuter unabhängiger ChatGPT/Technical-Lead-Re-Review.
+4. Kein Mark Ready, kein Merge, kein TW-1, keine Runtime, keine Production-Migration, keine Provideraktivierung, kein S4, kein Slice D, kein AP-4. Docs-Merge ≠ IA-Annahme.
+
+Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag.

@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1–AP-3, Admin Slice A–C, Provider S1 und S2 liegen auf `main` `8326e72f`; aktiver Block ist Provider Readiness S3 Mobility/Rental-Nachweis; #55 bleibt Draft; kein TW-1 ohne neuen Auftrag**
+Status: **verbindlicher operativer Übergabepunkt auf `main` @ `b7f027ec` (Provider S3 #54 gemergt). Account AP-1–AP-3, Admin Slice A–C und Provider S1–S3 liegen auf `main`. Trip-Workspace-Audit ist docs-only Draft-PR #55. Kein TW-1 ohne neuen Auftrag.**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -303,14 +303,14 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`, ADR-0159)
 6d. ✅ Admin Slice C auf `main` (PR #49, `78192ab`, ADR-0162)
 6e. ✅ Account AP-3 auf `main` (PR #53, `8326e72f`, ADR-0160)
-7. Provider-Readiness-/Adapter-Lücken schließen – **S1/S2 auf `main`; aktiver Slice S3 Mobility/Rental-Nachweis (ADR-0161)**
-8. Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration nach Provider-Integration
-9. danach neue kontrollierte Admin-/TW-Aufträge; kein Slice D und kein TW-1 ohne neuen Auftrag
-10. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
-11. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
-12. echte Providerphase
-13. provider-backed End-to-End-/Truth-Audit
-14. finale Startseiten-Positionierung / Kommunikation
+7. ✅ Provider-Readiness S1–S3 auf `main` (S3 = PR #54, `b7f027ec`, ADR-0161)
+7a. Trip-Workspace-Audit / Zielarchitektur – docs-only Draft-PR #55, STOPP für Technical-Lead-Re-Review; kein TW-1
+8. danach neue kontrollierte Admin-/TW-/Provider-Aufträge; kein Slice D, kein S4 und kein TW-1 ohne neuen Auftrag
+9. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
+10. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
+11. echte Providerphase
+12. provider-backed End-to-End-/Truth-Audit
+13. finale Startseiten-Positionierung / Kommunikation
 
 ### Provider-Regel
 
@@ -320,22 +320,15 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-Aktiver Branch: `feat/provider-mobility-rental-evidence-s3`
-Basis: `origin/main` @ `8326e72f`
-Auftrag: `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` PR-S3
-Status: `docs/PROVIDER_READINESS_S3_STATUS.md`
-ADR: ADR-0161
+`main`: `b7f027ec448639fe3399512d401a7789b24e52a6` (Provider S3 #54 gemergt).
 
-1. Account AP-3 liegt auf `main` `8326e72f` (PR #53, ADR-0160). Admin A–C bleiben ADR-0158 / 0159 / 0162.
-2. S3 hebt Mobility- und Rental-Nachweis auf die Hotel-/S2-Grenze: async `nachweisen({ optionId, kontext })`.
-3. `mobilityNachweisAusUmgebung()` und `rentalCarNachweisAusUmgebung()` bleiben `null`; Übernahme fail-closed.
-4. Der Browser darf nur identifiers senden. Keine `booking_url`.
-5. Mobility-Suche im Workspace startet nicht automatisch; nur «Verbindungen prüfen».
-6. Keine neue Migration. S2 Development-Guards bleiben nicht Production-approved.
-7. Draft-PR #54. Functional runtime head `e284af55`. S3-Nummer ist ADR-0161.
-8. **Exakter nächster Schritt:** Exact-Head-Gates auf dem Current-Main-Sync-Tip beweisen, danach unabhängiger Technical-Lead-Re-Review. Kein Mark Ready, kein Merge, kein S4, keine Production-Migration.
+1. Admin A–C (ADR-0158 / 0159 / 0162), Account AP-1–AP-3 (ADR-0160) und Provider S1–S3 (ADR-0161) liegen auf `main`.
+2. Historischer S3-PASS auf `2cb9a830` bleibt Evidence; der Merge-Commit ist `b7f027ec`.
+3. `mobilityNachweisAusUmgebung()` und `rentalCarNachweisAusUmgebung()` bleiben `null`; Übernahme fail-closed. Das ändert S3 nicht nachträglich.
+4. Dieser Audit: Agent `Trip workspace audit architecture`, Branch `audit/trip-workspace`, Draft-PR #55, docs-only, rebase auf aktuellen `main`. Kein TW-1, keine Runtime. Die Ziel-IA bleibt Vorschlag; Merge von #55 gibt sie nicht frei.
+5. **Exakter nächster Schritt dieses Audits:** erneuter unabhängiger ChatGPT/Technical-Lead-Re-Review von #55 nach Review-Korrektur `5012729847`. Kein Mark Ready, kein Merge.
 
-Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
+Live-Status: `docs/ACTIVE_WORK_STATUS.md`. Workspace-Audit: `docs/TRIP_WORKSPACE_HANDOFF.md`.
 
 Leitsatz:
 

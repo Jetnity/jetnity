@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety, Travel Timing & Seasonal, Account AP-1–AP-3, Admin Slice A–C, Provider S1 und S2 auf `main` `8326e72f`; aktiver Provider-Slice ist S3 Mobility/Rental-Nachweis; #55 bleibt Draft**
+Status: **Foundation C/D/E, Travel Safety, Travel Timing & Seasonal, Account AP-1–AP-3, Admin Slice A–C, Provider S1–S3 auf `main` `b7f027ec`. Trip-Workspace-Audit ist docs-only Draft-PR #55; Runtime bleibt nachgelagert.**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -303,7 +303,7 @@ Status: **auf `main` gemergt (PR #53, `8326e72f`). Entscheidung: ADR-0160.**
 
 Auftrag: `docs/ACCOUNT_AP3_TASK.md`. Entscheidung: ADR-0160.
 
-Nach AP-3 folgt nicht der große Trip-Workspace-Umbau. Kontrollierte Reihenfolge: Provider #54 finaler Sync/Re-Review → Trip-Workspace-Audit #55 finale Docs-Reconciliation → danach neue kontrollierte Admin-/TW-Aufträge. Kein Slice D und kein TW-1 ohne neuen Auftrag.
+Nach AP-3 und S3 folgt nicht der große Trip-Workspace-Umbau. #54 ist gemergt. Offener Docs-only-Schritt: Trip-Workspace-Audit #55 finale Reconciliation / Re-Review. Danach neue kontrollierte Admin-/TW-/Provider-Aufträge. Kein Slice D und kein TW-1 ohne neuen Auftrag.
 
 ---
 
@@ -335,15 +335,15 @@ Zu prüfen/vereinheitlichen:
 
 Keine Verträge, Secrets oder laufenden Providerkosten ohne separate Freigabe.
 
-S1 Shared Operational Contract ist auf `main` (PR #47). S2 FlugNachweis ist auf `main` (PR #51). S2 Development-Migrationen `20260824160000` und `20260824180000` sind **nicht** Production-approved; Production endet bei `20260824140000`. S3 Mobility/Rental-Nachweis läuft auf `feat/provider-mobility-rental-evidence-s3` (ADR-0161), synchronisiert auf Current Main `8326e72f`. Kein echter Provider, keine Secrets, keine Production-Migration. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
+S1 Shared Operational Contract ist auf `main` (PR #47). S2 FlugNachweis ist auf `main` (PR #51). S2 Development-Migrationen `20260824160000` und `20260824180000` sind **nicht** Production-approved; Production endet bei `20260824140000`. S3 Mobility/Rental-Nachweis liegt auf `main` (PR #54, `b7f027ec`, ADR-0161). Kein echter Provider, keine Secrets, keine Production-Migration. S4–S8 bleiben eigene Aufträge.
 
 ---
 
 ## 8. Großer End-to-End Trip-Workspace-/Übersicht-Umbau
 
-Status: **verbindlich geplant / erst nach Safety + Seasonal + Provider-Readiness**
+Status: **Audit/IA docs-only vorbereitet auf Draft-PR #55 (`audit/trip-workspace`, Basis `b7f027ec`). Runtime-Umbau bleibt gesperrt bis Review + ausdrückliche Product-Owner-Freigabe. Kein TW-1 in diesem PR.**
 
-Der Workspace ist die wichtigste Produktoberfläche und wird **nicht nur umgebaut**, sondern vollständig funktional generalinspiziert.
+Der Workspace ist die wichtigste Produktoberfläche und wird **nicht nur umgebaut**, sondern vollständig funktional generalinspiziert. Dieser PR liefert nur die Vorbereitung.
 
 Pflichtumfang:
 
@@ -438,13 +438,13 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`, ADR-0159)
 6d. ✅ Admin Slice C auf `main` (PR #49, `78192ab`, ADR-0162)
 6e. ✅ Account AP-3 auf `main` (PR #53, `8326e72f`, ADR-0160)
-7. Provider-Readiness-/Adapter-Lücken schließen – S1/S2 auf `main`; aktiver Slice S3 Mobility/Rental-Nachweis (ADR-0161)
-8. Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration nach Provider-Integration
-9. danach neue kontrollierte Admin-/TW-Aufträge; kein Slice D und kein TW-1 ohne neuen Auftrag
-10. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
-11. finaler Workspace Intelligence Audit
-12. echte Providerphase
-13. provider-backed End-to-End-/Truth-Audit
-14. finale Startseiten-Positionierung
+7. ✅ Provider-Readiness S1–S3 auf `main` (S3 = PR #54, `b7f027ec`, ADR-0161)
+7a. **→ Trip-Workspace-Audit / Zielarchitektur** – docs-only Draft-PR #55, STOPP für Technical-Lead-Re-Review; kein TW-1
+8. danach neue kontrollierte Admin-/TW-/Provider-Aufträge; kein Slice D, kein S4 und kein TW-1 ohne neuen Auftrag
+9. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
+10. finaler Workspace Intelligence Audit
+11. echte Providerphase
+12. provider-backed End-to-End-/Truth-Audit
+13. finale Startseiten-Positionierung
 
 Der nächste Agent darf D/E/Safety **nicht neu bauen** und darf **nicht direkt einen echten Provider integrieren**.
