@@ -1,11 +1,11 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1 und Account AP-2 liegen auf `main`; dieser Branch ist Provider Readiness S2-B2, Draft-PR #51, auf `main` synchronisiert, Gates grün, STOPP für Technical-Lead-Re-Review**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1/AP-2, Admin Slice A, Provider S1 und S2 liegen auf `main`; aktiver Block ist Provider Readiness S3 Mobility/Rental-Nachweis**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
-Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Provider Readiness S2 (dieser Branch) zusätzlich in `docs/PROVIDER_READINESS_S2_STATUS.md` und `docs/PROVIDER_READINESS_S2_HANDOFF.md`. Provider Ops S1 zusätzlich in `docs/PROVIDER_OPS_S1_STATUS.md` und `docs/PROVIDER_OPS_S1_HANDOFF.md`.
+Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Provider Readiness S3 zusätzlich in `docs/PROVIDER_READINESS_S3_STATUS.md` und `docs/PROVIDER_READINESS_S3_HANDOFF.md`. S1/S2-Historie bleibt in den jeweiligen S1/S2-Dateien.
 
 > **Kein relevanter Fortschritt darf beim Wechsel von Chat, Agent oder Sitzung verloren gehen. Was für die Fortsetzung wichtig ist, gehört ins Repository.**
 
@@ -299,7 +299,7 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 5. ✅ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation
 6. ✅ Account Platform AP-1 – Squash-Merge nach `main` (`084f7c87`, PR #43)
 6a. ✅ Account Platform AP-2 – Squash-Merge nach `main` (`2827d1cb`, PR #48)
-7. Provider-Readiness-/Adapter-Lücken schließen – **S1 Technical Closure / PASS auf Draft-PR #47; S2-B2 auf Draft-PR #51, Integrations-Head `e2fcffde`, STOPP für Technical-Lead-Re-Review**
+7. Provider-Readiness-/Adapter-Lücken schließen – **S1/S2 auf `main`; aktiver Slice S3 Mobility/Rental-Nachweis**
 8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 10. echte Providerphase
@@ -314,27 +314,23 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-Aktiver Branch: `feat/provider-flight-evidence-s2`
-Draft PR: `#51`
-Basis: `origin/main` @ `2827d1cb`
-Integrations-Exact-Head: `e2fcffde`
-Vorheriger Functional Exact Head: `1b06b284`
-Auftrag: `docs/PROVIDER_READINESS_S2_FLUGNACHWEIS_TASK.md`
-B2-Auftrag: `docs/PROVIDER_READINESS_S2_B2_DIRECT_TABLE_TRUST_FIX_TASK.md`
+Aktiver Branch: `feat/provider-mobility-rental-evidence-s3`
+Basis: `origin/main` @ `1ec93cc9`
+Auftrag: `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` PR-S3
+Status: `docs/PROVIDER_READINESS_S3_STATUS.md`
+ADR: ADR-0159
 
-1. S2 hebt die Flug-Kontoübernahme auf dieselbe Trust-Grenze wie Hotels: Browser sendet nur identifiers.
-2. `flugNachweisAusUmgebung()` ist `null`; ohne serverseitigen Suchkontext bleibt die Übernahme fail-closed.
-3. Guest persistiert keine kommerzielle Provider-Flugoption. Guest → Account streicht unbewiesene Flug-Handelsfelder.
-4. S2-B1: `reise_anlegen` verwirft unbewiesene Flug-Handelsfelder. S2-B2: direkte `trip_items`-Writes tun dasselbe für `authenticated`/`anon`.
-5. Development-Migrationen `20260824160000` und `20260824180000` sind angewendet. **Production unverändert.**
-6. PR #51 ist auf `origin/main` @ `2827d1cb` synchronisiert, `MERGEABLE` / `CLEAN`, bleibt Draft.
-7. GitHub Actions `32732334063` und Vercel `4uQEc9GNFnBYqjoxSpSkw7sQ6pow` sind auf `e2fcffde` grün.
-8. **Exakter nächster Schritt:** Unabhängiger Technical-Lead-Re-Review gegen `e2fcffde`. Kein Mark Ready, kein Merge, kein S3, keine Production-Migration.
+1. S3 hebt Mobility- und Rental-Nachweis auf die Hotel-/S2-Grenze: async `nachweisen({ optionId, kontext })`.
+2. `mobilityNachweisAusUmgebung()` und `rentalCarNachweisAusUmgebung()` bleiben `null`; Übernahme fail-closed.
+3. Der Browser darf nur identifiers senden. Keine `booking_url`.
+4. Mobility-Suche im Workspace startet nicht automatisch; nur «Verbindungen prüfen».
+5. Keine neue Migration. S2 Development-Guards bleiben nicht Production-approved.
+6. **Exakter nächster Schritt:** Draft-PR, volle Gates, STOPP für unabhängigen Technical-Lead-Review. Kein Mark Ready, kein Merge, kein S4, keine Production-Migration.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
 Leitsatz:
 
-> **Browserdaten dürfen keine kommerzielle Flugwahrheit persistieren. Nachweis oder fail-closed – keine dritte Wahrheit.**
+> **Browserdaten dürfen keine kommerzielle Provider-Wahrheit persistieren. Nachweis oder fail-closed – keine dritte Wahrheit.**
 >
 > **Account ist das dauerhafte Zuhause. Der Trip Workspace bleibt die Kommandozentrale einer einzelnen Reise.**

@@ -3879,7 +3879,28 @@ Ein späterer vertrauenswürdiger Flugnachweis braucht einen **getrennten SECURI
 
 **Begründung:** Minimaler additiver Guard, der den Browservertrag fail-closed macht und den späteren getrennten trusted Vertrag offenlässt. Migration `20260824180000_trip_items_flug_handelsfelder_guard.sql`, nur Development.
 
-**Konsequenzen:** `flugInReiseUebernehmen` bleibt heute fail-closed. Sobald ein Nachweis existiert, darf er kommerzielle Felder nicht mehr über den `authenticated`-Tabellen-INSERT adeln; dafür ist ein eigener SECURITY DEFINER-Vertrag nötig. Production unverändert. Kein S3. Kein Mark Ready / Merge.
+**Konsequenzen:** `flugInReiseUebernehmen` bleibt heute fail-closed. Sobald ein Nachweis existiert, darf er kommerzielle Felder nicht mehr über den `authenticated`-Tabellen-INSERT adeln; dafür ist ein eigener SECURITY DEFINER-Vertrag nötig. Production unverändert. S2 Development-Migrationen bleiben nicht Production-approved. Kein Mark Ready / Merge ohne Product-Owner-Freigabe.
+
+---
+
+## ADR-0159 – Mobility- und Rental-Nachweis folgen Hotel/S2, nicht dem Flugschema
+
+**Datum:** 24. August 2026
+**Status:** umgesetzt auf `feat/provider-mobility-rental-evidence-s3`; kein echter Adapter; keine Production-Migration
+
+**Entscheidung:** Mobility und Rental bekommen denselben async Nachweisvertrag wie Hotel und S2 FlugNachweis: `nachweisen({ optionId, kontext })`. Der Browser darf nur `tripId` und `optionId` senden. Kommerzielle Felder kommen aus einem serverseitigen Nachweis plus Suchkontext – oder die Übernahme fällt fail closed. Die fachliche Form bleibt domain-spezifisch (Orte/Modus/Reisende bzw. Stationen/Zeitraum/Klasse/Getriebe). Ein Testkatalog darf nur injiziert werden. `*NachweisAusUmgebung()` bleibt `null`. `booking_url` wird nicht erzeugt. Die Workspace-Mobilitätssuche startet nicht mehr automatisch; nur «Verbindungen prüfen» darf `/api/mobility/search` anfassen.
+
+**Kontext:** Der Provider-Readiness-Audit fand zwei P1-Lücken: Nachweis-Stubs ohne Hotel-Vertrag (PR-P1-04) und Auto-Search bei jedem Mobilitäts-Bereichsbesuch (PR-P1-07). S1 lieferte die Ops-Hülle, S2 die Qualitätsreferenz. Ein Copy-Paste des Flugschemas wäre falsch, weil Mobility/Rental andere Fakten binden.
+
+**Alternativen:**
+
+1. *Stubs belassen.* Würde den nächsten Adapter ohne Trust-Grenze aktivierbar machen.
+2. *Flug-Kontext wiederverwenden.* Vermischt Domänen und bindet die falschen Fakten.
+3. *S2-artige DB-Guards für transfer/rental_car.* Braucht eine eigene DB-/RLS-Entscheidung. S3 stoppt hier und dokumentiert den Residual.
+
+**Begründung:** App-Grenze und Kostengrenze zuerst, ohne Provider, Secrets oder Migration. User-Intake bleibt Nutzerangabe. Provider-Übernahme bleibt geschlossen, bis ein Adapter existiert.
+
+**Konsequenzen:** Keine Production-Migration. S2 Development-Guards bleiben unberührt. `reise_anlegen` kann transfer/rental Handelsfelder weiter als User-Intake schreiben; das ist kein Provider-Nachweis. S4–S8 bleiben eigene Slices.
 
 ---
 

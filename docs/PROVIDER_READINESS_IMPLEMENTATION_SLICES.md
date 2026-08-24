@@ -1,7 +1,7 @@
 # Jetnity – Provider-Readiness Implementation Slices
 
 Stand: 24. August 2026  
-Status: **priorisierter Plan nach Audit; S1 als Draft-PR #47 beauftragt / kein Mark Ready / kein Merge**  
+Status: **S1 und S2 auf `main`; S3 auf `feat/provider-mobility-rental-evidence-s3` / kein Mark Ready / kein Merge**  
 Quelle: `docs/PROVIDER_READINESS_AUDIT.md`, `docs/PROVIDER_READINESS_MATRIX.md`, `docs/PROVIDER_READINESS_SHARED_CONTRACT_PROPOSAL.md`
 
 ## 1. Zweck
@@ -103,12 +103,14 @@ Account AP-1 (PR #43) und Admin Slice A (PR #44) bleiben parallel und unberührt
 
 **Ziel:** Stubs durch async `nachweisen({ optionId, kontext })` ersetzen. Übernahme bleibt fail-closed, bis ein Adapter existiert.
 
+**Status 24. August 2026:** Implementierung auf `feat/provider-mobility-rental-evidence-s3`. ADR-0159. Kein echter Adapter. Keine Migration.
+
 **Umfang:**
 
 - Interface-Upgrade
 - Katalog-Doubles für Tests
 - keine Auto-Aktivierung
-- Mobility Auto-Search im Workspace **abschalten** oder hinter explizite Nutzeraktion legen (P1 Kostenleck)
+- Mobility Auto-Search im Workspace **hinter ausdrückliche Nutzeraktion** gelegt (P1 Kostenleck geschlossen)
 
 **Nicht:** Such-UI für Mietwagen, echter Adapter, Graph-Rewrite.
 
@@ -264,7 +266,7 @@ Review-bereit ist nicht Mark Ready und nicht Merge.
 
 ## 7. Empfohlener nächster operativer Schritt
 
-1. S1 läuft auf Draft-PR #47 / `feat/provider-ops-s1` nach `docs/PROVIDER_OPS_S1_TASK.md`.
-2. PR #45 bleibt Audit-Draft.
-3. S2 startet nicht ohne neuen Auftrag.
-4. Kein Mark Ready, kein Merge, keine Secrets, keine Provideraktivierung aus dem Audit-PR.
+1. S1 und S2 liegen auf `main`.
+2. S3 läuft auf `feat/provider-mobility-rental-evidence-s3` / ADR-0159.
+3. S4 startet nicht ohne neuen Auftrag und Technical-Lead-Review von S3.
+4. Kein Mark Ready, kein Merge, keine Secrets, keine Provideraktivierung, keine Production-Migration.

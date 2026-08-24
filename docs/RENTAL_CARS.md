@@ -28,7 +28,7 @@ Gebaut:
 Nicht gebaut:
 
 - echter Mietwagenprovider oder Affiliate-/Booking-Deeplink
-- produktiver Provider-Nachweis; `rentalCarNachweisAusUmgebung()` gibt `null` zurück
+- produktiver Provider-Nachweis; `rentalCarNachweisAusUmgebung()` gibt `null` zurück. Der Vertrag ist async `nachweisen({ optionId, kontext })`; ein Testkatalog darf nur injiziert werden.
 - Production-Mietwagensuche
 - Führerschein-, Pass-, Zahlungs- oder Kreditkartendaten
 - Fahreralter als persistentes Feld
