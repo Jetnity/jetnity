@@ -3,7 +3,7 @@
 **Stand:** 22. August 2026 · Foundation B / PR #31 Ready for Review; Schema auf Production, Suche aus  
 **Gilt für:** Mietwagendomäne, Persistenz, Trip-Workspace-Unterbereich in Mobilität und geschlossene Suchnaht.
 
-Diese Datei beschreibt den tatsächlichen Mietwagenweg. Produktprinzip: [JETNITY_VISION.md](../JETNITY_VISION.md), operativer Stand: [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md), Logikstandard: [docs/LOGIC_STANDARD.md](LOGIC_STANDARD.md). Entscheidungen: ADR-0092 und ADR-0093 in [DECISIONS.md](../DECISIONS.md).
+Diese Datei beschreibt den tatsächlichen Mietwagenweg. Produktprinzip: [JETNITY_VISION.md](../JETNITY_VISION.md), operativer Stand: [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md), Logikstandard: [docs/LOGIC_STANDARD.md](LOGIC_STANDARD.md). Entscheidungen: ADR-0092, ADR-0093 und ADR-0161 in [DECISIONS.md](../DECISIONS.md).
 
 ---
 
@@ -28,7 +28,7 @@ Gebaut:
 Nicht gebaut:
 
 - echter Mietwagenprovider oder Affiliate-/Booking-Deeplink
-- produktiver Provider-Nachweis; `rentalCarNachweisAusUmgebung()` gibt `null` zurück
+- produktiver Provider-Nachweis; `rentalCarNachweisAusUmgebung()` gibt `null` zurück. Der Vertrag ist async `nachweisen({ optionId, kontext })`; ein Testkatalog darf nur injiziert werden.
 - Production-Mietwagensuche
 - Führerschein-, Pass-, Zahlungs- oder Kreditkartendaten
 - Fahreralter als persistentes Feld
@@ -115,7 +115,7 @@ Kill Switch: `JETNITY_RENTAL_CAR_AKTIV` (`true` oder `1`). Das ist kein Provider
 
 Rate Limit: 8 Anfragen / 10 Minuten und 24 / Tag je Kennung. `429` setzt `Retry-After`.
 
-`rentalCarProviderAus()` gibt `null` zurück. Die Konto-Übernahme einer späteren Provideroption verlangt einen serverseitigen `RentalCarNachweis` und ist heute fail closed.
+`rentalCarProviderAus()` gibt `null` zurück. `rentalCarNachweisAusUmgebung()` gibt `null` zurück. Die Konto-Übernahme einer späteren Provideroption verlangt einen serverseitigen `RentalCarNachweis` gegen Stationen, Zeitraum, Klasse, Getriebe und Währung (`nachweisen({ optionId, kontext })`) und ist heute fail closed. Der Browser darf nur `tripId` und `optionId` senden (ADR-0161).
 
 Das Öffnen von Mobilität → Mietwagen startet **keine** Suche. Eine Provideranfrage darf erst nach ausdrücklicher Nutzeraktion mit sichtbaren, vom Nutzer gesetzten Kriterien laufen. Solange kein Suchformular existiert, bleibt der Bereich ehrlich `unavailable`/`vorbereitet`.
 

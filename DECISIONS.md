@@ -3879,7 +3879,7 @@ Ein späterer vertrauenswürdiger Flugnachweis braucht einen **getrennten SECURI
 
 **Begründung:** Minimaler additiver Guard, der den Browservertrag fail-closed macht und den späteren getrennten trusted Vertrag offenlässt. Migration `20260824180000_trip_items_flug_handelsfelder_guard.sql`, nur Development.
 
-**Konsequenzen:** `flugInReiseUebernehmen` bleibt heute fail-closed. Sobald ein Nachweis existiert, darf er kommerzielle Felder nicht mehr über den `authenticated`-Tabellen-INSERT adeln; dafür ist ein eigener SECURITY DEFINER-Vertrag nötig. Production unverändert. Kein S3. Kein Mark Ready / Merge.
+**Konsequenzen:** `flugInReiseUebernehmen` bleibt heute fail-closed. Sobald ein Nachweis existiert, darf er kommerzielle Felder nicht mehr über den `authenticated`-Tabellen-INSERT adeln; dafür ist ein eigener SECURITY DEFINER-Vertrag nötig. Production unverändert. S2 Development-Migrationen bleiben nicht Production-approved. Kein Mark Ready / Merge ohne Product-Owner-Freigabe.
 
 ---
 
@@ -3918,14 +3918,14 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 **Begründung:** `unknown` / `not_configured` ist belastbarer als erfundenes Grün. Ein neues Secret, ein Vertrag oder eine Management-Berechtigung braucht ein separates Product-Owner-Gate. Account- und Provider-ADRs auf `main` haben Vorrang vor Draft-Nummern.
 
-**Konsequenzen:** Copilot Pro erklärt Health nicht in diesem Slice. Domain-/Mail-/DNS-Health bleibt später. Account-/Trip-/Traveller-/Route-/Safety-/Seasonal- und Provider-S2-Verträge bleiben unberührt. Slice B liegt auf `main` `e3bad749`. Slice C ist ein eigener Draft-PR.
+**Konsequenzen:** Copilot Pro erklärt Health nicht in diesem Slice. Domain-/Mail-/DNS-Health bleibt später. Account-/Trip-/Traveller-/Route-/Safety-/Seasonal- und Provider-S2-Verträge bleiben unberührt. Slice B liegt auf `main` `e3bad749`. Slice C liegt auf `main` `78192ab`.
 
 ---
 
 ## ADR-0162 – Admin Slice C bleibt read-only Provider- und Kostenboard
 
 **Datum:** 24. August 2026  
-**Status:** umgesetzt auf Draft-PR #49 / `feat/admin-provider-cost-board`; Nummer 0162, weil 0160 Account AP-3 und 0161 Provider S3 vorbehalten sind.
+**Status:** auf `main` gemergt (PR #49, `78192ab`). Nummer 0162, weil 0160 Account AP-3 und 0161 Provider S3 vorbehalten sind.
 
 **Entscheidung:**
 
@@ -3942,14 +3942,14 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 **Begründung:** Foundation sichtbar machen ohne Fake-Aktivierung oder Fake-Kosten. Shared Contracts bleiben beim Provider-Workstream.
 
-**Konsequenzen:** Kein Slice D, kein Finance-Live, kein Billing-P1 in diesem PR. Draft PR #49 bleibt Draft.
+**Konsequenzen:** Kein Slice D, kein Finance-Live, kein Billing-P1 in diesem PR. PR #49 liegt auf `main`.
 
 ---
 
 ## ADR-0160 – Meine Reisen Lebenslage ist abgeleitet, nicht gespeichert
 
 **Datum:** 24. August 2026  
-**Status:** umgesetzt auf `feat/account-ap3` (AP-3), Draft bis Product-Owner-Freigabe
+**Status:** auf `main` gemergt (PR #53, `8326e72f`)
 
 **Entscheidung:**
 
@@ -3967,6 +3967,27 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 **Begründung:** Ein zweites Reisenmodell oder ein stiller UTC-Tag würde Übersicht und Liste auseinanderlaufen. Archivieren bleibt AP-4 / Shared Trip-Status.
 
 **Konsequenzen:** Kurz nach dem ersten Client-Render erscheinen die Gruppen. Bereits in der DB gesetztes `archived` bleibt in der Datumsgruppe sichtbar, weil AP-3 nicht filtert und nicht schreibt.
+
+---
+
+## ADR-0161 – Mobility- und Rental-Nachweis folgen Hotel/S2, nicht dem Flugschema
+
+**Datum:** 24. August 2026
+**Status:** umgesetzt auf `feat/provider-mobility-rental-evidence-s3`; Current-Main-Sync auf `8326e72f`; kein echter Adapter; keine Production-Migration; Nummer nach Technical-Lead-Allokation, nicht ADR-0159/0160
+
+**Entscheidung:** Mobility und Rental bekommen denselben async Nachweisvertrag wie Hotel und S2 FlugNachweis: `nachweisen({ optionId, kontext })`. Der Browser darf nur `tripId` und `optionId` senden. Kommerzielle Felder kommen aus einem serverseitigen Nachweis plus Suchkontext – oder die Übernahme fällt fail closed. Die fachliche Form bleibt domain-spezifisch (Orte/Modus/Reisende bzw. Stationen/Zeitraum/Klasse/Getriebe). Ein Testkatalog darf nur injiziert werden. `*NachweisAusUmgebung()` bleibt `null`. `booking_url` wird nicht erzeugt. Die Workspace-Mobilitätssuche startet nicht mehr automatisch; nur «Verbindungen prüfen» darf `/api/mobility/search` anfassen.
+
+**Kontext:** Der Provider-Readiness-Audit fand zwei P1-Lücken: Nachweis-Stubs ohne Hotel-Vertrag (PR-P1-04) und Auto-Search bei jedem Mobilitäts-Bereichsbesuch (PR-P1-07). S1 lieferte die Ops-Hülle, S2 die Qualitätsreferenz. Ein Copy-Paste des Flugschemas wäre falsch, weil Mobility/Rental andere Fakten binden.
+
+**Alternativen:**
+
+1. *Stubs belassen.* Würde den nächsten Adapter ohne Trust-Grenze aktivierbar machen.
+2. *Flug-Kontext wiederverwenden.* Vermischt Domänen und bindet die falschen Fakten.
+3. *S2-artige DB-Guards für transfer/rental_car.* Braucht eine eigene DB-/RLS-Entscheidung. S3 stoppt hier und dokumentiert den Residual.
+
+**Begründung:** App-Grenze und Kostengrenze zuerst, ohne Provider, Secrets oder Migration. User-Intake bleibt Nutzerangabe. Provider-Übernahme bleibt geschlossen, bis ein Adapter existiert.
+
+**Konsequenzen:** Keine Production-Migration. S2 Development-Guards bleiben unberührt. `reise_anlegen` kann transfer/rental Handelsfelder weiter als User-Intake schreiben; das ist kein Provider-Nachweis. S4–S8 bleiben eigene Slices.
 
 ---
 

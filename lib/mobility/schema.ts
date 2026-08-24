@@ -158,3 +158,68 @@ export function mobilityTitelAus(eingabe: Pick<MobilityManuellEingabe, 'title' |
   if (eingabe.title) return eingabe.title
   return `${eingabe.originName} → ${eingabe.destinationName}`
 }
+
+const optionalerBetrag = z
+  .number()
+  .finite()
+  .nonnegative()
+  .max(9_999_999_999.99)
+  .nullable()
+  .default(null)
+
+const mobilityOptionSchema = z.object({
+  id: z.string().trim().min(1).max(120),
+  provider: z.string().trim().min(1).max(40),
+  externalRef: z.string().trim().min(1).max(200),
+  mode: z.enum(MOBILITY_MODES),
+  title: z.string().trim().min(1).max(MOBILITY_SUCHE_GRENZEN.titel),
+  originName: ortsname,
+  destinationName: ortsname,
+  originPlaceId: optionalerOrt.nullable().default(null),
+  destinationPlaceId: optionalerOrt.nullable().default(null),
+  startsOn: datum.nullable().default(null),
+  startsAt: uhrzeit.nullable().default(null),
+  endsOn: datum.nullable().default(null),
+  endsAt: uhrzeit.nullable().default(null),
+  durationMinutes: z.number().int().min(1).max(20_000).nullable().default(null),
+  changes: z
+    .number()
+    .int()
+    .min(MOBILITY_SUCHE_GRENZEN.umstiege.min)
+    .max(MOBILITY_SUCHE_GRENZEN.umstiege.max)
+    .nullable()
+    .default(null),
+  preis: optionalerBetrag,
+  preisWaehrung: waehrung.nullable().default(null),
+  stornierbar: z.boolean().nullable().default(null),
+  connectionRef: z
+    .string()
+    .trim()
+    .max(MOBILITY_SUCHE_GRENZEN.verbindung)
+    .nullable()
+    .default(null)
+    .transform((wert) => (wert === '' ? null : wert)),
+  operatorName: z
+    .string()
+    .trim()
+    .max(120)
+    .nullable()
+    .default(null)
+    .transform((wert) => (wert === '' ? null : wert)),
+})
+
+export type GepruefteMobilityOption = z.infer<typeof mobilityOptionSchema>
+
+export function mobilityOptionLesen(wert: unknown): GepruefteMobilityOption | null {
+  const ergebnis = mobilityOptionSchema.safeParse(wert)
+  return ergebnis.success ? ergebnis.data : null
+}
+
+/**
+ * Konto-Übernahme: nur identifiers. Kommerzielle Fakten und der Suchkontext
+ * kommen serverseitig aus Nachweis und Reise, nicht aus dem Browser.
+ */
+export const mobilityKontoUebernahmeSchema = z.object({
+  tripId: z.string().uuid(),
+  optionId: z.string().trim().min(1).max(200),
+})

@@ -61,6 +61,10 @@ Je nach Änderung müssen insbesondere aktuell gehalten werden:
 - `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` – verbindliche Tiefe für unabhängige Reviews, Re-Reviews, Merge- und Production-Empfehlungen
 - fachliche Modul-Dokumente, z. B. `docs/HOTELS.md`, `docs/ACTIVITIES.md`, `docs/MOBILITY.md`, `docs/RENTAL_CARS.md`, `docs/TRAVEL_READINESS.md`, `docs/ROUTE_TRANSIT_INTELLIGENCE.md`, `docs/TRAVELLER_CONTEXT.md`, `docs/TRAVEL_SAFETY_DISRUPTION.md`, `docs/TRAVEL_TIMING_SEASONAL.md`
 - Provider-Readiness-Audit: `docs/PROVIDER_READINESS_AUDIT.md`, `docs/PROVIDER_READINESS_MATRIX.md`, `docs/PROVIDER_READINESS_SHARED_CONTRACT_PROPOSAL.md`, `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md`
+- Admin Slice B: `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`, `docs/ADMIN_PLATFORM_SLICE_B_HANDOFF.md`, `docs/ADR_0159_ADMIN_SLICE_B.md`
+- Admin Slice C: `docs/ADMIN_PLATFORM_SLICE_C_STATUS.md`, `docs/ADMIN_PLATFORM_SLICE_C_HANDOFF.md`, `docs/ADR_0162_ADMIN_SLICE_C.md`
+- Account AP-3: `docs/ACCOUNT_AP3_STATUS.md`, `docs/ACCOUNT_AP3_HANDOFF.md`
+- Provider-Readiness S3: `docs/PROVIDER_READINESS_S3_STATUS.md`, `docs/PROVIDER_READINESS_S3_HANDOFF.md`, `docs/PROVIDER_READINESS_S3_SELF_REVIEW.md`
 - dieser `docs/CONTINUITY_STANDARD.md`
 
 Aufgaben für Coding Agents sollen diese Quellen passend zum Auftrag ausdrücklich einbeziehen.

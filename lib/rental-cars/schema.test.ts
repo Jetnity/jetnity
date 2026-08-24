@@ -1,7 +1,13 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { rentalCarManuellSchema, rentalCarSucheEingabeSchema, rentalTitelAus } from '@/lib/rental-cars/schema'
+import {
+  rentalCarKontoUebernahmeSchema,
+  rentalCarManuellSchema,
+  rentalCarOptionLesen,
+  rentalCarSucheEingabeSchema,
+  rentalTitelAus,
+} from '@/lib/rental-cars/schema'
 
 describe('Mietwagen-Schema', () => {
   test('gleicher Abhol- und Rückgabeort ist erlaubt', () => {
@@ -118,5 +124,32 @@ describe('Mietwagen-Schema', () => {
   test('eine Suchanfrage ohne Namen scheitert', () => {
     const geprueft = rentalCarSucheEingabeSchema.safeParse({ pickupName: '', dropoffName: 'Lugano' })
     assert.equal(geprueft.success, false)
+  })
+
+  test('eine Konto-Übernahme akzeptiert nur identifiers', () => {
+    const geparst = rentalCarKontoUebernahmeSchema.safeParse({
+      tripId: '11111111-1111-4111-8111-111111111111',
+      optionId: 'opt-1',
+      option: { preis: 1 },
+      booking_url: 'https://evil.example',
+    })
+    assert.equal(geparst.success, true)
+    if (!geparst.success) return
+    assert.deepEqual(Object.keys(geparst.data).sort(), ['optionId', 'tripId'])
+  })
+
+  test('eine Option ohne booking_url bleibt ohne Deeplink', () => {
+    const option = rentalCarOptionLesen({
+      id: 'car-1',
+      provider: 'test-rental',
+      externalRef: 'ref-1',
+      title: 'Kompakt',
+      pickupName: 'Zürich',
+      dropoffName: 'Lugano',
+      booking_url: 'https://evil.example/book',
+    })
+    assert.ok(option)
+    assert.equal('booking_url' in option, false)
+    assert.equal(option.preis, null)
   })
 })

@@ -25,8 +25,8 @@ Fehlende konkrete Anbieter-Adapter sind `blocked` (Reihenfolge/Zugang), nicht `m
 | Flights | `partial` | `partial` | `missing` | `partial` | `missing` | `partial` | `partial` | `missing` |
 | Hotels | `ready` | `ready` | `partial` | `ready` | `missing` | `partial` | `ready` | `missing` |
 | Activities | `ready` | `ready` | `partial` | `ready` | `missing` | `partial` | `ready` | `missing` |
-| Mobility | `partial` | `partial` | `missing` | `partial` | `missing` | `partial` | `partial` | `missing` |
-| Rental Cars | `partial` | `partial` | `missing` | `partial` | `missing` | `partial` | `ready` | `missing` |
+| Mobility | `partial` | `partial` | `partial` | `partial` | `missing` | `partial` | `partial` | `missing` |
+| Rental Cars | `partial` | `partial` | `partial` | `partial` | `missing` | `partial` | `ready` | `missing` |
 | Readiness | `ready` | `ready` | `ready` | `partial` | `missing` | `partial` | `ready` | `missing` |
 | Safety | `partial` | `ready` | `ready` | `ready` | `missing` | `partial` | `ready` | `missing` |
 | Seasonal | `ready` | `ready` | `ready` | `ready` | `missing` | `partial` | `ready` | `missing` |
@@ -84,12 +84,12 @@ Fehlende konkrete Anbieter-Adapter sind `blocked` (Reihenfolge/Zugang), nicht `m
 
 | Dimension | Wert | Begründung |
 | --- | --- | --- |
-| Request | `partial` | Port existiert. API vertraut Client-Origin/Destination. Auto-Suche im Workspace. |
-| Response / Truth | `partial` | Domain-Typen und Abdeckungskanten ready. Kein Option-Zod. Ranking ohne Graph-Anreicherung. |
-| Evidence / Provenance | `missing` | Nachweis-Stub; keine async Kontextbindung. |
-| Failure | `partial` | Status-Taxonomie da; Timeout HTTP 504 weicht ab; Übernahme immer fail-closed. |
+| Request | `partial` | Port existiert. API vertraut Client-Origin/Destination. Workspace-Suche nur nach Nutzeraktion. |
+| Response / Truth | `partial` | Domain-Typen, Abdeckungskanten und Option-Zod ready. Ranking ohne Graph-Anreicherung. |
+| Evidence / Provenance | `partial` | Async `MobilityNachweis` inkl. Kontextbindung. Umgebung `null`. Keine Offer-Freshness. |
+| Failure | `partial` | Status-Taxonomie da; Timeout HTTP 504 weicht ab; Übernahme fail-closed ohne Adapter. |
 | Cache / Lizenz | `missing` | `no-store`; keine Attribution. |
-| Cost Guard | `partial` | In-Memory; Auto-Suche würde Limits und spätere Kosten verbrennen. |
+| Cost Guard | `partial` | In-Memory; Auto-Search geschlossen, daher kein unsichtbarer Kostenpfad mehr. |
 | Security | `partial` | Keine PII; Client darf Suchparameter setzen; Client-Sicht streicht Provider-IDs. |
 | Observability | `missing` | keine. |
 
@@ -100,8 +100,8 @@ Fehlende konkrete Anbieter-Adapter sind `blocked` (Reihenfolge/Zugang), nicht `m
 | Dimension | Wert | Begründung |
 | --- | --- | --- |
 | Request | `partial` | Schema vorhanden. Keine Such-UI, daher kein produktiver Request-Pfad. |
-| Response / Truth | `partial` | Starke Preis-/Zeitraum-Invarianten. Kein Option-Zod. |
-| Evidence / Provenance | `missing` | Nachweis-Stub. |
+| Response / Truth | `partial` | Starke Preis-/Zeitraum-Invarianten. Option-Zod für Nachweis. |
+| Evidence / Provenance | `partial` | Async `RentalCarNachweis` inkl. Kontextbindung. Umgebung `null`. |
 | Failure | `partial` | Orchestrierung wie Mobility; UI zeigt nur unavailable. |
 | Cache / Lizenz | `missing` | wie Mobility. |
 | Cost Guard | `partial` | In-Memory; keine Auto-Suche (besser als Mobility). |

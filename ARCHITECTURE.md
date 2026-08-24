@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
 Stand: 24. August 2026
-Gültig für: Foundation D/E, Travel Safety, Travel Timing & Seasonal Intelligence, Account AP-1/AP-2, Provider Readiness S1/S2 und Admin Slice A+B auf `main` `e3bad749`; Admin Slice C Provider- und Kostenboard auf Draft-PR #49 / `feat/admin-provider-cost-board`. Account-Slices ändern kein Schema. S2-B1/B2-Migrationen liegen nur auf Development.
+Gültig für: Foundation D/E, Travel Safety, Travel Timing & Seasonal Intelligence sowie Account AP-1–AP-3, Admin Slice A–C, Provider S1 und S2 auf `main` `8326e72f`; Provider Readiness S3 auf `feat/provider-mobility-rental-evidence-s3`. Account-Slices ändern kein Schema. S2-B1/B2-Migrationen liegen nur auf Development und sind nicht Production-approved.
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -359,7 +359,7 @@ Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen 
 
 Foundation A hat bewusst keinen Mobility-Adapter. `mobilityProviderAus()` gibt `null` zurück. Production bleibt hart aus. Development/Preview brauchen `JETNITY_MOBILITY_AKTIV` **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Es gibt keinen Providernamen und kein Provider-Secret. Abdeckung entsteht nur aus vorhandenen Reisedaten. Fahrpläne, Wegezeiten und Anschlussgarantien werden nicht erfunden. Fehlende Graphdaten bleiben unbestimmt.
 
-Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browseroption. Sie verlangt einen serverseitigen `MobilityNachweis`. Heute ist der Nachweis `null` – fail closed. Manuelle Verbindungen sind Nutzerangaben, keine Providerfakten. Fachlich: [docs/MOBILITY.md](docs/MOBILITY.md), ADR-0090 und ADR-0091.
+Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browseroption. Sie verlangt einen serverseitigen `MobilityNachweis` gegen Orte, Datum, Modus, Reisende und Währung (`nachweisen({ optionId, kontext })`). Heute ist der Nachweis `null` – fail closed. Der Browser darf nur identifiers senden. Die Workspace-Suche startet nicht automatisch; nur eine ausdrückliche Nutzeraktion darf die geschlossene Suche anfassen. Manuelle Verbindungen sind Nutzerangaben, keine Providerfakten. Fachlich: [docs/MOBILITY.md](docs/MOBILITY.md), ADR-0090, ADR-0091 und ADR-0161.
 
 ### Mietwagensuche (Foundation B)
 
@@ -367,7 +367,7 @@ Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browse
 
 Foundation B hat bewusst keinen Mietwagen-Adapter. `rentalCarProviderAus()` gibt `null` zurück. Production bleibt hart aus, auch wenn `JETNITY_RENTAL_CAR_AKTIV` gesetzt wäre. Development/Preview brauchen den Kill Switch **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Es gibt keinen Providernamen und kein Provider-Secret. Ein Mietwagen im Zeitraum ist kein Nachweis, dass eine konkrete Strecke damit gefahren wird. Unbekannte Klasse, Getriebe, Kaution oder Kilometerregel bleiben unbekannt.
 
-Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browseroption. Sie verlangt einen serverseitigen `RentalCarNachweis`. Heute ist der Nachweis `null` – fail closed. Manuelle Mietwagen sind Nutzerangaben, keine Providerfakten. Das manuelle Formular startet leer; Reiseorte sind höchstens unverbindliche Platzhalter. `one_way` braucht zwei verschiedene Place-IDs. Ranking vergleicht Gesamtpreise nur in derselben Währung. `Best Value` braucht mindestens zwei vergleichbare Gesamtpreise; `Jetnity empfiehlt` nur einen eindeutigen Top-Score. Fachlich: [docs/RENTAL_CARS.md](docs/RENTAL_CARS.md), ADR-0092, ADR-0093, ADR-0094 und ADR-0095.
+Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browseroption. Sie verlangt einen serverseitigen `RentalCarNachweis` gegen Stationen, Zeitraum, Klasse, Getriebe und Währung (`nachweisen({ optionId, kontext })`). Heute ist der Nachweis `null` – fail closed. Der Browser darf nur identifiers senden. Das Öffnen von Mobilität → Mietwagen löst keine Suche aus; eine Rental-Such-UI gibt es bewusst nicht. Manuelle Mietwagen sind Nutzerangaben, keine Providerfakten. Das manuelle Formular startet leer; Reiseorte sind höchstens unverbindliche Platzhalter. `one_way` braucht zwei verschiedene Place-IDs. Ranking vergleicht Gesamtpreise nur in derselben Währung. `Best Value` braucht mindestens zwei vergleichbare Gesamtpreise; `Jetnity empfiehlt` nur einen eindeutigen Top-Score. Fachlich: [docs/RENTAL_CARS.md](docs/RENTAL_CARS.md), ADR-0092, ADR-0093, ADR-0094, ADR-0095 und ADR-0161.
 
 ### Travel Readiness (Foundation C)
 

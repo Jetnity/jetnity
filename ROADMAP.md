@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety, Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A–C auf `main` `78192ab`; Account AP-3 Draft PR #53 Runtime PASS, docs-only Follow-up; #54/#55 bleiben Draft; kein TW-1 direkt nach AP-3**
+Status: **Foundation C/D/E, Travel Safety, Travel Timing & Seasonal, Account AP-1–AP-3, Admin Slice A–C, Provider S1 und S2 auf `main` `8326e72f`; aktiver Provider-Slice ist S3 Mobility/Rental-Nachweis; #55 bleibt Draft**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -271,10 +271,12 @@ Status: **auf `main` gemergt (PR #44, `1ec93cc9`). Entscheidung: ADR-0158.**
 
 ## 6d. Fertig – Admin Control Center Slice B
 
-Status: **auf `main` `e3bad749` (PR #46). Entscheidung: ADR-0159.**
+Status: **auf `main` gemergt (PR #46, `e3bad749`). Entscheidung: ADR-0159.**
 
 - read-only System Health ohne Fake-Green
 - Parent App/Deployment = `unknown`; Parent Supabase = `not_configured`
+- keine neuen Secrets, Tokens, Verträge oder Kosten
+- keine DB-/RLS-/Capability-Änderung, keine Writes
 
 ---
 
@@ -291,17 +293,17 @@ Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
 
 ---
 
-## 6f. In Arbeit – Account Platform AP-3
+## 6f. Fertig – Account Platform AP-3
 
-Status: **Draft PR #53, Exact Head `c5e4a51f`, synchronisiert auf `main` `78192ab`. Entscheidung: ADR-0160.**
+Status: **auf `main` gemergt (PR #53, `8326e72f`). Entscheidung: ADR-0160.**
 
 - Meine Reisen gruppiert ableitend nach Aktiv / Kommend / Vergangen / Ohne Datum
-- 200er-Hinweis fail-closed; Runtime-Scope gegenüber dem letzten AP-3-Stand unverändert
+- 200er-Hinweis fail-closed
 - kein Archiv-Write, keine Pagination-Architektur, kein AP-4
 
 Auftrag: `docs/ACCOUNT_AP3_TASK.md`. Entscheidung: ADR-0160.
 
-Nach AP-3-Integration folgt nicht der große Trip-Workspace-Umbau. Kontrollierte Reihenfolge: Account #53 Integration → Provider #54 finaler Sync/Integration → Trip-Workspace-Audit #55 finale Docs-Reconciliation/Integration → danach neue kontrollierte Admin-/TW-Aufträge. Kein Slice D und kein TW-1 ohne neuen Auftrag.
+Nach AP-3 folgt nicht der große Trip-Workspace-Umbau. Kontrollierte Reihenfolge: Provider #54 finaler Sync/Re-Review → Trip-Workspace-Audit #55 finale Docs-Reconciliation → danach neue kontrollierte Admin-/TW-Aufträge. Kein Slice D und kein TW-1 ohne neuen Auftrag.
 
 ---
 
@@ -333,7 +335,7 @@ Zu prüfen/vereinheitlichen:
 
 Keine Verträge, Secrets oder laufenden Providerkosten ohne separate Freigabe.
 
-S1 Shared Operational Contract ist Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`. Es zentralisiert nur technische Hüllen. Audit-PR #45 bleibt Draft. S2 inkl. B1/B2 liegt auf Draft-PR #51 / `feat/provider-flight-evidence-s2`, Integrations-Head `e2fcffde` (auf `origin/main` @ `2827d1cb` synchronisiert). Development-Migrationen `20260824160000` und `20260824180000` sind angewendet, Production unverändert. GitHub Actions und Vercel auf `e2fcffde` sind grün. STOPP für Technical-Lead-Re-Review. S1/S2 aktivieren keine Provider. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
+S1 Shared Operational Contract ist auf `main` (PR #47). S2 FlugNachweis ist auf `main` (PR #51). S2 Development-Migrationen `20260824160000` und `20260824180000` sind **nicht** Production-approved; Production endet bei `20260824140000`. S3 Mobility/Rental-Nachweis läuft auf `feat/provider-mobility-rental-evidence-s3` (ADR-0161), synchronisiert auf Current Main `8326e72f`. Kein echter Provider, keine Secrets, keine Production-Migration. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
 
 ---
 
@@ -430,19 +432,19 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation
-6. ✅ Account Platform AP-1 auf `main` (PR #43)
-6a. ✅ Account Platform AP-2 auf `main` (PR #48)
-6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`)
-6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`)
-6d. ✅ Admin Slice C auf `main` (PR #49, `78192ab`)
-7. **→ Account AP-3** Draft PR #53 / Exact Head `c5e4a51f` nach Sync auf `main` `78192ab`; Docs-Re-Check, dann Integration
-8. Provider #54 finaler Sync / Re-Review / Integration nach Account-Integration
-9. Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration nach Provider-Integration
-10. danach neue kontrollierte Admin-/TW-Aufträge; kein Slice D und kein TW-1 ohne neuen Auftrag
-11. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
-12. finaler Workspace Intelligence Audit
-13. echte Providerphase
-14. provider-backed End-to-End-/Truth-Audit
-15. finale Startseiten-Positionierung
+6. ✅ Account Platform AP-1 – auf `main` (`084f7c87`, PR #43)
+6a. ✅ Account Platform AP-2 – auf `main` (`2827d1cb`, PR #48)
+6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`, ADR-0158)
+6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`, ADR-0159)
+6d. ✅ Admin Slice C auf `main` (PR #49, `78192ab`, ADR-0162)
+6e. ✅ Account AP-3 auf `main` (PR #53, `8326e72f`, ADR-0160)
+7. Provider-Readiness-/Adapter-Lücken schließen – S1/S2 auf `main`; aktiver Slice S3 Mobility/Rental-Nachweis (ADR-0161)
+8. Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration nach Provider-Integration
+9. danach neue kontrollierte Admin-/TW-Aufträge; kein Slice D und kein TW-1 ohne neuen Auftrag
+10. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
+11. finaler Workspace Intelligence Audit
+12. echte Providerphase
+13. provider-backed End-to-End-/Truth-Audit
+14. finale Startseiten-Positionierung
 
 Der nächste Agent darf D/E/Safety **nicht neu bauen** und darf **nicht direkt einen echten Provider integrieren**.

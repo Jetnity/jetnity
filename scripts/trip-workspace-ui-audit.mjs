@@ -2300,6 +2300,9 @@ async function interaktionPruefen(browser, name) {
   await nav.getByRole('button', { name: 'Mobilität', exact: true }).click()
   await page.getByText('Bahn, Bus, Fähre und Transfer').waitFor({ timeout: 15000 })
   const mobilityNachErstbesuch = mobility
+  await page.getByRole('button', { name: 'Verbindungen prüfen', exact: true }).click()
+  await page.waitForTimeout(400)
+  const mobilityNachNutzeraktion = mobility
   const rentalNachVerbindungen = rental
   await page.getByRole('tab', { name: 'Mietwagen', exact: true }).click()
   await page
@@ -2353,9 +2356,16 @@ async function interaktionPruefen(browser, name) {
   if (hotelNachZweitemBesuch !== hotelNachErstbesuch) {
     fehler.push(`Tabwechsel löste Hotelsuche erneut aus: ${hotelNachErstbesuch} → ${hotelNachZweitemBesuch}`)
   }
-  if (mobilityNachErstbesuch < 1) fehler.push('Mobilität löste keine Suche aus')
-  if (mobilityNachZweitemBesuch !== mobilityNachErstbesuch) {
-    fehler.push(`Tabwechsel löste Mobilitätssuche erneut aus: ${mobilityNachErstbesuch} → ${mobilityNachZweitemBesuch}`)
+  if (mobilityNachErstbesuch !== 0) {
+    fehler.push(`Mobilität startete eine Suche ohne Nutzeraktion: ${mobilityNachErstbesuch}`)
+  }
+  if (mobilityNachNutzeraktion < 1) {
+    fehler.push('Ausdrückliches «Verbindungen prüfen» löste keine Mobilitätssuche aus')
+  }
+  if (mobilityNachZweitemBesuch !== mobilityNachNutzeraktion) {
+    fehler.push(
+      `Tabwechsel löste Mobilitätssuche erneut aus: ${mobilityNachNutzeraktion} → ${mobilityNachZweitemBesuch}`,
+    )
   }
   if (rentalNachErstbesuch !== 0) {
     fehler.push(`Mietwagen startete eine Suche ohne Nutzeraktion: ${rentalNachErstbesuch}`)

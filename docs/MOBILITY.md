@@ -25,7 +25,7 @@ Gebaut:
 Nicht gebaut:
 
 - echter Mobilitätsprovider oder Affiliate-/Booking-Deeplink
-- produktiver Provider-Nachweis; `mobilityNachweisAusUmgebung()` gibt `null` zurück
+- produktiver Provider-Nachweis; `mobilityNachweisAusUmgebung()` gibt `null` zurück. Der Vertrag ist async `nachweisen({ optionId, kontext })`; ein Testkatalog darf nur injiziert werden.
 - Production-Mobilitätssuche
 - Mietwagen als eigener Transportnachweis (siehe Foundation B / [docs/RENTAL_CARS.md](RENTAL_CARS.md); ein Mietwagen deckt keine Bewegungskante)
 - Kreuzfahrten
@@ -152,7 +152,7 @@ Manuelle Mobilität ist eine **Nutzerangabe**:
 
 Kill Switch: `JETNITY_MOBILITY_AKTIV` (`true` oder `1`). Das ist kein Provider-Secret und benennt keinen Anbieter.
 
-`mobilityProviderAus()` gibt `null` zurück. `mobilityNachweisAusUmgebung()` gibt `null` zurück. Eine spätere Konto-Übernahme aus Providerergebnissen bleibt fail closed.
+`mobilityProviderAus()` gibt `null` zurück. `mobilityNachweisAusUmgebung()` gibt `null` zurück. Eine spätere Konto-Übernahme aus Providerergebnissen bleibt fail closed. Der Browser darf nur `tripId` und `optionId` senden. Die Workspace-Suche startet nicht automatisch; nur «Verbindungen prüfen» darf `/api/mobility/search` anfassen (ADR-0161).
 
 Ranking ist deterministisch und provisionsneutral. Providername, Affiliate oder Umsatz sind keine Faktoren. Fehlende Fakten bleiben `null`.
 

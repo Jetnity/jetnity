@@ -1,15 +1,66 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38, Account AP-1/AP-2, Provider S1/S2, Admin Slice A–C auf `main` `78192ab`; Account AP-3 Draft PR #53 Runtime PASS, docs-only Follow-up; PR #54 und PR #55 bleiben Draft; Admin wartet, kein Slice D**
+Status: **Account AP-3 liegt auf `main` `8326e72f`; aktiver Provider-Slice ist S3 Mobility/Rental-Nachweis auf Current-Main Exact Head `2cb9a830`; Draft-PR #54; STOPP für Technical-Lead Docs-Re-Check**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
+
+**Account Platform AP-3 – Meine Reisen Lebenslage**
+
+- PR #53: **gemergt und geschlossen**
+- Merge auf `main`: `8326e72f9557a8b9b200e680b0be24aefa0bdfa8`
+- ADR-0160 bleibt verbindlich
+- Aktiv / Kommend / Vergangen / Ohne Datum nur abgeleitet. Kein Lifecycle-Write. 200er-Hinweis fail-closed.
+
+Davor vollständig abgeschlossen:
 
 **Admin Control Center Slice C – read-only Provider- und Kostenboard**
 
 - PR #49: **gemergt und geschlossen**
 - Merge auf `main`: `78192ab775165d08bb357140c2d04b865b8cc049`
-- Entscheidung: ADR-0162
+- ADR-0162 bleibt verbindlich
+
+Davor vollständig abgeschlossen:
+
+**Admin Control Center Slice B**
+
+- PR #46: **gemergt und geschlossen**
+- Squash-Merge auf `main`: `e3bad749c8e03512001e7bccd5e08467f10a7134`
+- ADR-0159 bleibt verbindlich
+- Read-only System Health ohne Fake-Green. Parent `App / Deployment` bleibt `unknown`. Parent `Supabase` bleibt `not_configured`.
+
+Davor vollständig abgeschlossen:
+
+**Admin Control Center Slice A**
+
+- PR #44: **gemergt und geschlossen**
+- Squash-Merge auf `main`: `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267`
+- ADR-0158 bleibt verbindlich
+
+Davor vollständig abgeschlossen:
+
+**Provider Readiness S2 – FlugNachweis**
+
+- PR #51: **gemergt und geschlossen**
+- Squash-Merge auf `main`: `52e665ac`
+- ADR-0155, ADR-0156, ADR-0157 bleiben verbindlich
+- Development-only Migrationen `20260824160000` und `20260824180000` sind **nicht** Production-approved
+- Production endet weiterhin bei `20260824140000`
+
+Davor vollständig abgeschlossen:
+
+**Provider Readiness S1 – Shared Operational Contract**
+
+- PR #47: **gemergt und geschlossen**
+- Squash-Merge auf `main`: `01761eb9`
+- ADR-0154 bleibt verbindlich
+
+Davor vollständig abgeschlossen:
+
+**Provider Readiness Audit**
+
+- PR #45: **gemergt und geschlossen**
+- Squash-Merge auf `main`: `f92e0c9e`
 
 Davor vollständig abgeschlossen:
 
@@ -17,141 +68,82 @@ Davor vollständig abgeschlossen:
 
 - PR #48: **gemergt und geschlossen**
 - Squash-Merge auf `main`: `2827d1cbb674498f504ba1810c73c8dc5d43ca24`
-- gemergt: 24. August 2026, 13:02 UTC
-
-Davor vollständig abgeschlossen:
 
 **Account Platform AP-1 – Account-Shell + persönliche Übersicht**
 
 - PR #43: **gemergt und geschlossen**
 - Squash-Merge auf `main`: `084f7c87f36f9929f3e4a9deb9d3fedef6e96982`
-- gemergt: 24. August 2026, 11:37 UTC
 - ADR-0152, ADR-0153 bleiben verbindlich
-
-Davor vollständig abgeschlossen:
 
 **Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
 
 - PR #38: **gemergt und geschlossen**
 - unabhängiger ChatGPT-Review R17: **PASS / Technical Closure**
-- final geprüfter Runtime-Head: `5782401943b41ddd1eea1337c93cb37163210362`
-- finaler PR-Head vor Merge: `1a61d21fe853c77faa1109ae0828e39f3629098a`
-- Squash-Merge auf `main`: `ee988bbe46a8dd63d4001c42825fc0159453f811`
-- Production-Integration: `docs/PR38_PRODUCTION_INTEGRATION.md`
-- R17-Review: `docs/PR38_CHATGPT_R17_REVIEW.md`
-
-Der PR-#38-Review-Loop ist beendet. Kein neuer Review-Rundlauf ohne konkrete neue Runtime-Änderung oder neuen belegbaren Defekt.
 
 ## 2. Production-Status
 
-Vercel:
+Vercel Production und Supabase Production `qscbgcdmivbbnzrcyegn` bleiben unverändert durch S3.
 
-- Production Deployment nach PR-#38-Integration: **READY**
-
-Supabase Production `qscbgcdmivbbnzrcyegn`:
-
-- Status: **ACTIVE_HEALTHY**
 - `20260824120000_flug_route_itinerary_surface_evidence`: angewendet
 - `20260824140000_flug_route_itinerary_untrusted_surface`: angewendet
-- Migration-History ist auf die Repository-Versionen ausgerichtet.
-- `public.flug_route_itinerary_metadata(text,jsonb)` ist SECURITY INVOKER.
-- `anon`: kein EXECUTE.
-- `authenticated`: EXECUTE.
-- manipuliertes Client-`surfaceFromAirportCode` wird live auf Production verworfen.
+- S2 Development-Migrationen `20260824160000` und `20260824180000` **fehlen auf Production** und dürfen nicht eigenmächtig dorthin.
 
-Keine Seasonal-Tabelle, kein Live-Seasonal-Provider, keine neuen Secrets und keine neuen laufenden Providerkosten.
-
-Account AP-1 und AP-2 liegen auf `main`. Eine separate Account-Production-Migration war nicht Teil dieser Slices und ist nicht behauptet.
-
-S2-B1/B2-Migrationen `20260824160000` und `20260824180000` liegen nur auf Supabase Development. **Production unverändert.**
+Keine neuen Secrets und keine neuen laufenden Providerkosten.
 
 ## 3. Aktive Workstreams
 
-### Admin Platform – Slice A
+### Provider Readiness – S3 Mobility/Rental Nachweis
 
-Verantwortlicher Cursor-Anzeigename: `Admin platform audit`  
-Implementierungs-PR: **#44 – gemergt nach `main` `1ec93cc9`**  
-Entscheidung: ADR-0158
-
-**Slice A ist auf `main`.** Ehrliche Steuerzentralen-IA. System Health war bewusst nicht Teil von Slice A.
-
-### Admin Platform – Slice B
-
-Verantwortlicher Cursor-Anzeigename: `Admin platform audit`  
-Implementierungs-PR: **#46 – gemergt nach `main` `e3bad749`**  
-Entscheidung: ADR-0159
-
-**Slice B ist auf `main`.** Read-only System Health ohne Fake-Green. Parent `App / Deployment` bleibt `unknown`. Parent `Supabase` bleibt `not_configured`.
-
-### Admin Platform – Slice C
-
-Verantwortlicher Cursor-Anzeigename: `Admin platform audit`  
-Implementierungs-PR: **#49 – gemergt nach `main` `78192ab`**  
-Entscheidung: ADR-0162
-
-**Slice C ist auf `main`.** Read-only Provider- und Kostenboard. Konsumiert den gemergten S1-Vertrag (`lib/provider-ops`), ohne ihn zu kopieren oder zu verändern.
-
-Agent `Admin platform audit` **wartet**. Kein Slice D ohne neuen kontrollierten Auftrag.
-
-### Account Platform – AP-3
-
-Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`  
-Implementierungsbranch: `feat/account-ap3`  
-Implementierungs-Draft-PR: **#53** (Base: `main` `78192ab`)  
-Auftrag: `docs/ACCOUNT_AP3_TASK.md`  
-Status: `docs/ACCOUNT_AP3_STATUS.md`
+Verantwortlicher Cursor-Anzeigename: `Jetnity provider readiness audit`  
+Implementierungsbranch: `feat/provider-mobility-rental-evidence-s3`  
+Basis: `origin/main` @ `8326e72f`  
+Auftrag: `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` PR-S3  
+Status: `docs/PROVIDER_READINESS_S3_STATUS.md`  
+Handoff: `docs/PROVIDER_READINESS_S3_HANDOFF.md`  
+ADR: ADR-0161
 
 Aktiver Slice:
 
-**AP-3 ist auf aktuellen `main` `78192ab` synchronisiert.** Ableitende Gruppen Aktiv / Kommend / Vergangen / Ohne Datum. Der 200er-Hinweis bleibt fail-closed. Runtime-Scope unverändert. Entscheidung: ADR-0160. Exact Head `c5e4a51f` lokal und remote gegatet. STOPP für unabhängigen Technical-Lead-Re-Review. Kein AP-4.
+**S3 – Mobility- und Rental-Nachweis auf Hotel-/S2-Trust-Grenze.** Async `nachweisen({ optionId, kontext })`. Testkatalog nur injiziert. Umgebung `null` → fail-closed. Mobility Auto-Search nur nach «Verbindungen prüfen». Keine Migration. Kein echter Provider. Current-Main Exact Head `2cb9a830` ist lokal und remote gegatet. Runtime/Security/Truth PASS. Dieser Stand ist ein docs-only Follow-up.
 
-### Provider Readiness – S1 Shared Operational Contract
+Grenze: kein Mark Ready, kein Merge, keine Production-Migration, keine Provideraktivierung, kein S4–S8.
 
-Verantwortlicher Cursor-Anzeigename: `Jetnity provider readiness audit`  
-Implementierungs-PR: **#47 – gemergt nach `main` `01761eb9`**  
-Auftrag: `docs/PROVIDER_OPS_S1_TASK.md`  
-Status: `docs/PROVIDER_OPS_S1_STATUS.md`
+### Admin Platform – abgeschlossene Slices auf `main`
 
-**S1 ist auf `main`.** Gemeinsamer technischer Operationsvertrag. Keine Provideraktivierung.
+- Slice A: gemergt, PR #44, ADR-0158
+- Slice B: gemergt, PR #46, ADR-0159. Status: `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`
+- Slice C: gemergt, PR #49, ADR-0162. Status: `docs/ADMIN_PLATFORM_SLICE_C_STATUS.md`. Agent `Admin platform audit` wartet. Kein Slice D ohne neuen Auftrag.
 
-### Provider Readiness – S2 FlugNachweis
+### Account Platform – abgeschlossene Slices auf `main`
 
-Implementierungsbranch: `feat/provider-flight-evidence-s2`  
-Implementierungs-PR: **#51 – gemergt nach `main` `52e665ac`**  
-Auftrag: `docs/PROVIDER_READINESS_S2_FLUGNACHWEIS_TASK.md`  
-Status: `docs/PROVIDER_READINESS_S2_STATUS.md`
+- AP-1 / AP-2: gemergt
+- AP-3: gemergt, PR #53, ADR-0160. Status: `docs/ACCOUNT_AP3_STATUS.md`. Agent `Account plattform audit vorbereitung` wartet. Kein AP-4 ohne neuen Auftrag.
 
-Aktiver Slice:
+### Provider Readiness – abgeschlossene Slices auf `main`
 
-**S2 ist auf `main` (`52e665ac`).** `FlugNachweis` plus S2-B1-RPC- und S2-B2-Tabellengrenze. Development-Migrationen `20260824160000` und `20260824180000` liegen nur auf Development. **Production unverändert.**
+- S1 Shared Ops Contract: gemergt, PR #47
+- S2 FlugNachweis: gemergt, PR #51; Development-Guards nicht Production-approved
 
-Grenze: kein Live-Duffel, keine Provideraktivierung, keine Secrets, keine Production-Migration, kein S3–S6, kein Offer-Booking. `booking_url` bleibt `null`. Route Truth bleibt Foundation D.
-
-### Provider Readiness – S3 / PR #54
-
-Verantwortlicher Cursor-Anzeigename: `Jetnity provider readiness audit`  
-Implementierungs-Draft-PR: **#54**  
-Entscheidung vorgesehen: ADR-0161
-
-**PR #54 bleibt Draft.** Wartet auf finalen Sync / Re-Review nach Account-Integration von PR #53. Keine Provideraktivierung, keine Secrets, keine Production-Migration.
+Danach folgen erst S4–S8, jeweils mit eigenem Auftrag.
 
 ### Trip Workspace Audit – PR #55
 
 Verantwortlicher Cursor-Anzeigename: `Trip workspace audit architecture`  
 Implementierungs-Draft-PR: **#55** (docs-only)
 
-**PR #55 bleibt Draft / docs-only.** Wartet auf finale Reconciliation nach Provider-Integration von PR #54. Startet keinen TW-1-Umbau und keine Runtime-Änderung.
+**PR #55 bleibt Draft / docs-only.** Folgt nach #54-Integration als finale docs-only Reconciliation. Startet keinen TW-1-Umbau und keine Runtime-Änderung. Agent `Trip workspace audit architecture` wartet bis dahin.
 
 ## 4. Parallelitätsregel
 
+S3 darf Account-/Admin-Dateien nicht mischen. Admin A–C und Account AP-1–AP-3 auf `main` bleiben erhalten.
+
 Kontrollierte Reihenfolge der offenen Drafts:
 
-1. Account #53 Integration
-2. Provider #54 finaler Sync / Re-Review / Integration
-3. Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration
-4. danach neue kontrollierte Admin-/TW-Aufträge
+1. Provider #54 Docs-Re-Check / danach Product-Owner-Ready-Gate / Integration
+2. Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration
+3. danach neue kontrollierte Admin-/TW-Aufträge
 
-Admin Slice C darf parallel nicht in Shared-Contract-Dateien der Provider-Workstreams schreiben. Slice A+B+C, Account AP-1/AP-2 und Provider S1/S2 auf `main` bleiben erhalten. Agent `Admin platform audit` wartet; kein Slice D. TW-1 startet nicht direkt nach AP-3.
+`Admin platform audit` wartet. `Account plattform audit vorbereitung` wartet. Kein Slice D. Kein TW-1 ohne neuen Auftrag.
 
 Seriell/zentral bleiben insbesondere:
 
@@ -166,33 +158,22 @@ Seriell/zentral bleiben insbesondere:
 - Admin Audit Trail
 - Provider Activation / Secrets / Kosten
 
-Nach jedem Implementierungsslice: Self-Review + technische Gates + unabhängiger ChatGPT/Technical-Lead-Review, bevor der jeweilige nächste Slice beginnt.
-
 ## 5. Homepage
 
-Die neue Homepage-Produktseiten-Idee ist dauerhaft in `docs/HOMEPAGE_PRODUCT_PAGE_DIRECTION.md` gespeichert und bleibt derzeit **pausiert**.
-
-Wenn sie gestartet wird:
-
-- eigener konfliktarmer visueller Workstream;
-- zuerst separate visuelle Preview;
-- bestehende starke Texte selektiv behalten;
-- moderne Tech-Produktseite mit großen Bildern, viel Weißraum, hochwertiger Typografie und Animationen;
-- keine neue Funktionslogik;
-- Header-/Footer-Funktionalität nicht verändern;
-- bestehende Homepage erst nach ausdrücklicher Product-Owner-Freigabe ersetzen.
+Die neue Homepage-Produktseiten-Idee bleibt **pausiert**. Siehe `docs/HOMEPAGE_PRODUCT_PAGE_DIRECTION.md`.
 
 ## 6. Governance
 
-- PR #43, PR #44, PR #45, PR #46, PR #47, PR #48, PR #49 und PR #51 sind gemergt. PR #53, PR #54 und PR #55 bleiben Draft.
+- PR #43, #44, #45, #46, #47, #48, #49, #51 und #53 sind gemergt. Draft-PR #54 und #55 bleiben Draft.
+- ADR-Allokation: Admin A = ADR-0158, Admin B = ADR-0159, Account AP-3 = ADR-0160, Provider S3 = ADR-0161, Admin C = ADR-0162.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
-- Fortschritt und Entscheidungen müssen im Repository dokumentiert werden.
+- S2 Development-Migrationen dürfen nicht eigenmächtig auf Production.
 
 ## 7. Exakter nächster Schritt
 
-1. Account AP-3 / Draft PR #53: Runtime PASS auf `c5e4a51f`. Der nachgelagerte Follow-up ist docs-only. Nächster Gate: Technical-Lead Docs-Re-Check. Kein AP-4. Kein Mark Ready. Kein Merge.
-2. Nach Account-Integration: PR #54 finaler Sync / Re-Review. Danach PR #55 finale Docs-Reconciliation. Danach erst neue kontrollierte Admin-/TW-Aufträge. Kein Slice D. Kein TW-1 ohne neuen Auftrag.
-3. ADR-Allokation: 0158=Slice A, 0159=Slice B, 0160=AP-3, 0161=S3, 0162=Admin Slice C.
-4. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag (`docs/ADMIN_BILLING_LOCAL_REFUND_INTEGRITY_TASK.md`), nicht AP-3.
+1. STOPP für unabhängigen Technical-Lead Docs-Re-Check von Draft-PR #54. Current-Main Exact Head `2cb9a830` ist gegatet.
+2. Nicht Mark Ready, nicht mergen, nicht S4, Production nicht migrieren.
+3. Nach #54-Integration: Trip-Workspace-Audit #55 finale Docs-Reconciliation.
+4. Danach erst neue kontrollierte Admin-/TW-Aufträge. `Admin platform audit` wartet. `Account plattform audit vorbereitung` wartet. Kein Slice D. Kein TW-1. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag.
