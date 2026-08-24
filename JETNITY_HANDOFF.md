@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 25. August 2026  
-Status: **verbindlicher operativer Übergabepunkt nach dem docs-only Merge von Trip-Workspace-Audit PR #55. Letzter Merge-Commit: `08fd7748ace072544e189c94880562e050971811`. Account AP-1–AP-3, Admin Slice A–C, Provider S1–S3 und der Trip-Workspace-Audit liegen auf `main`. Die vorgeschlagene Trip-Workspace-Ziel-IA ist durch den Docs-Merge ausdrücklich nicht angenommen; kein TW-1 ohne neuen kontrollierten Auftrag.**
+Status: **verbindlicher operativer Übergabepunkt. Letzter Merge auf `main`: Trip-Workspace-Audit PR #55 (`08fd7748ace072544e189c94880562e050971811`). Account AP-1–AP-3, Admin Slice A–C, Provider S1–S3 und der Audit liegen auf `main`. Die Ziel-IA ist als ADR-0163 angenommen. TW-1 Runtime liegt in Draft-PR #56 und wartet auf unabhängigen Technical-Lead-Re-Review. Kein Ready, kein Merge, kein TW-2.**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -290,7 +290,7 @@ Frühere grüne Tests oder frühere Merges geben keinen Bestandsschutz. Evidence
 
 ## 9. Nächste verbindliche Reihenfolge
 
-Der vorbereitende Audit-Block ist abgeschlossen; **noch kein neuer Runtime-Slice ist gestartet**.
+Der vorbereitende Audit-Block ist auf `main`. TW-1 ist der aktive Runtime-Slice und bleibt Draft.
 
 1. ✅ Foundation C – Readiness
 2. ✅ Foundation D – Route & Transit
@@ -304,9 +304,9 @@ Der vorbereitende Audit-Block ist abgeschlossen; **noch kein neuer Runtime-Slice
 6d. ✅ Admin Slice C auf `main` (PR #49, `78192ab`, ADR-0162)
 6e. ✅ Account AP-3 auf `main` (PR #53, `8326e72f`, ADR-0160)
 7. ✅ Provider-Readiness S1–S3 auf `main` (S3 = PR #54, `b7f027ec`, ADR-0161)
-7a. ✅ Trip-Workspace-Audit / Zielarchitektur – docs-only PR #55 gemergt (`08fd7748`); **Docs-Merge ≠ IA-Annahme und ≠ TW-1-Freigabe**
-8. **Jetzt:** Product Owner + Technical Lead entscheiden ausdrücklich, ob die vorgeschlagene Ziel-IA angenommen wird und ob TW-1 als eigener Runtime-Slice beauftragt wird.
-9. Danach – nur nach neuem Auftrag – TW-1 Shell/Geräteparität; anschließend kontrolliert TW-2 Reiseübersicht → TW-4 Aufmerksamkeit → TW-3 Timeline.
+7a. ✅ Trip-Workspace-Audit / Zielarchitektur – docs-only PR #55 gemergt (`08fd7748`); danach IA-Annahme als ADR-0163
+8. **Jetzt:** TW-1 Shell/Geräteparität in Draft-PR #56 – unabhängiger Technical-Lead-Re-Review. Kein Ready, kein Merge, kein TW-2.
+9. Danach – nur nach neuen Gates – TW-2 Reiseübersicht → bevorzugt TW-4 Aufmerksamkeit → TW-3 Timeline.
 10. Account/Admin/Provider-Programme bleiben offen: kein AP-4, Slice D oder S4 ohne eigenen kontrollierten Auftrag / Shared-Gate.
 11. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 12. echte Providerphase
@@ -321,15 +321,16 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-Letzter Merge auf `main`: `08fd7748ace072544e189c94880562e050971811` (Trip-Workspace-Audit #55, docs-only).
+Letzter Merge auf `main`: `08fd7748ace072544e189c94880562e050971811` (Trip-Workspace-Audit #55, docs-only). Aktiver Runtime-Slice: Draft-PR #56 / TW-1.
 
 1. Admin A–C (ADR-0158 / 0159 / 0162), Account AP-1–AP-3 (ADR-0160), Provider S1–S3 (ADR-0161) und der Trip-Workspace-Audit #55 liegen auf `main`.
-2. PR #55 ist **merged / closed**. Historische Aussagen wie „Draft #55 wartet“ oder ältere `main`-SHAs in Slice-Handoffs sind **pre-merge Evidence** und dürfen den zentralen aktuellen Status nicht überschreiben.
-3. Die in #55 dokumentierte Trip-Workspace-Ziel-IA bleibt **Vorschlag ohne Product-Owner-Annahme**. Der Merge selbst hat weder IA noch TW-1 freigegeben.
-4. Die Agenten `Admin platform audit`, `Account plattform audit vorbereitung`, `Jetnity provider readiness audit` und `Trip workspace audit architecture` warten bis zum nächsten kontrollierten Auftrag.
-5. **Exakter nächster Schritt:** Technical Lead bewertet die vorgeschlagene Ziel-IA als Ganzes und legt dem Product Owner eine klare Annahme-/Änderungs-Empfehlung vor. Erst nach ausdrücklicher Entscheidung darf `Trip workspace audit architecture` TW-1 beginnen.
+2. PR #55 ist **merged / closed**. Historische Aussagen wie „Draft #55 wartet“ sind **pre-merge Evidence**.
+3. Die Ziel-IA ist als ADR-0163 angenommen. Nur TW-1 wurde zum Start freigegeben.
+4. `Trip workspace audit architecture` hat TW-1 in Draft-PR #56 umgesetzt und stoppt für den unabhängigen Technical-Lead-Re-Review.
+5. `Admin platform audit`, `Account plattform audit vorbereitung` und `Jetnity provider readiness audit` warten weiter auf eigene Aufträge. Kein Slice D, AP-4 oder S4.
+6. **Exakter nächster Schritt:** unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #56. Kein Mark Ready, kein Merge, kein TW-2.
 
-Live-Status: `docs/ACTIVE_WORK_STATUS.md`. Workspace-Audit: `docs/TRIP_WORKSPACE_HANDOFF.md`.
+Live-Status: `docs/ACTIVE_WORK_STATUS.md`. TW-1: `docs/TRIP_WORKSPACE_TW1_STATUS.md`.
 
 Leitsatz:
 

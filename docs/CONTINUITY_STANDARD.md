@@ -60,7 +60,7 @@ Je nach Änderung müssen insbesondere aktuell gehalten werden:
 - `docs/LOGIC_STANDARD.md` – verbindliche Regeln für Datenwahrheit, Source of Truth, fachliche Invarianten, Zustände und bereichsübergreifende Konsistenz
 - `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` – verbindliche Tiefe für unabhängige Reviews, Re-Reviews, Merge- und Production-Empfehlungen
 - fachliche Modul-Dokumente, z. B. `docs/HOTELS.md`, `docs/ACTIVITIES.md`, `docs/MOBILITY.md`, `docs/RENTAL_CARS.md`, `docs/TRAVEL_READINESS.md`, `docs/ROUTE_TRANSIT_INTELLIGENCE.md`, `docs/TRAVELLER_CONTEXT.md`, `docs/TRAVEL_SAFETY_DISRUPTION.md`, `docs/TRAVEL_TIMING_SEASONAL.md`
-- Trip-Workspace-Audit (docs-only, nicht Runtime-fertig): `docs/TRIP_WORKSPACE_AUDIT.md`, `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`, `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`, `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`, `docs/TRIP_WORKSPACE_HANDOFF.md`
+- Trip Workspace: `docs/ADR_0163_TRIP_WORKSPACE_TARGET_IA.md`, `docs/TRIP_WORKSPACE_TW1_TASK.md`, `docs/TRIP_WORKSPACE_TW1_STATUS.md`, plus Audit-Evidence `docs/TRIP_WORKSPACE_AUDIT.md`, `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`, `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`, `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`, `docs/TRIP_WORKSPACE_HANDOFF.md`
 - Provider-Readiness-Audit: `docs/PROVIDER_READINESS_AUDIT.md`, `docs/PROVIDER_READINESS_MATRIX.md`, `docs/PROVIDER_READINESS_SHARED_CONTRACT_PROPOSAL.md`, `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md`
 - Admin Slice B: `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`, `docs/ADMIN_PLATFORM_SLICE_B_HANDOFF.md`, `docs/ADR_0159_ADMIN_SLICE_B.md`
 - Admin Slice C: `docs/ADMIN_PLATFORM_SLICE_C_STATUS.md`, `docs/ADMIN_PLATFORM_SLICE_C_HANDOFF.md`, `docs/ADR_0162_ADMIN_SLICE_C.md`

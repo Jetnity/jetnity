@@ -4,7 +4,7 @@ Stand: 25. August 2026
 Agent: `Trip workspace audit architecture`  
 Branch: `feat/trip-workspace-tw1-shell-device-parity`  
 Ziel-ADR: `docs/ADR_0163_TRIP_WORKSPACE_TARGET_IA.md`  
-Status: **zum Start freigegeben; Draft-Workflow; kein Mark Ready, kein Merge**
+Status: **Runtime umgesetzt in Draft-PR #56; STOPP für Technical-Lead-Re-Review; kein Mark Ready, kein Merge**
 
 ## 1. Auftrag
 

@@ -1,22 +1,22 @@
 # Jetnity – Trip Workspace Implementierungsplan
 
-Stand: 24. August 2026  
-Status: **vorbereitet / Vorschlag; Runtime gesperrt bis ausdrücklicher neuer Auftrag. Ein Merge von PR #55 ist keine Freigabe für TW-1 und keine Annahme der Ziel-IA.**  
+Stand: 25. August 2026  
+Status: **Ziel-IA angenommen (ADR-0163). TW-1 Runtime in Draft-PR #56; STOPP für unabhängigen Technical-Lead-Re-Review. Kein Ready, kein Merge, kein TW-2.**  
 Audit: `docs/TRIP_WORKSPACE_AUDIT.md`  
 Ziel: `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`  
 Abhängigkeiten: `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`
 
 Kein Monster-PR. Jeder Slice ist klein, reviewbar und konfliktarm gegenüber Account, Admin und Provider.
 
-Integrationsbasis nach Current-Main-Sync: `b7f027ec`. Code-Evidence-Basis des Audits bleibt historisch `1ec93cc9`. S3/AP-3/Admin C liegen auf `main`. Dieser Plan startet trotzdem kein TW-1.
+Historische Audit-Basis bleibt `1ec93cc9` / Integrationsnachzug `b7f027ec`. Aktueller `main` nach #55: `1bc1e1f4`. TW-1 läuft nur auf `feat/trip-workspace-tw1-shell-device-parity`.
 
 ---
 
 ## 1. Sperre
 
-Dieser Plan startet **keine** Implementation.
+Dieser Plan startete als docs-only Vorbereitung **keine** Implementation. Die Product-Owner-Freigabe vom 25. August 2026 (ADR-0163) hebt die Sperre **nur für TW-1** auf. TW-2+ bleiben gesperrt.
 
-Vor TW-1 Runtime braucht es:
+Vor TW-1 Runtime brauchte es:
 
 1. unabhängigen ChatGPT / Technical-Lead-Review dieses Audits
 2. Product-Owner-Richtung (mindestens: IA-Modell, `Jetzt wichtig`, Create-Flow-Schnitt)
@@ -85,6 +85,8 @@ Deliverable: die fünf Pflichtdateien plus persistierter Workstream-Status.
 Gates: Repo-Hygiene, CI auf Exact Head, Vercel Preview falls erzeugt. Grün ≠ Produktkorrektheit.
 
 ### TW-1 – Shell und Geräteparität
+
+**Status:** Runtime umgesetzt in Draft-PR #56; wartet auf unabhängigen Technical-Lead-Re-Review. Nicht gemergt.
 
 **Ziel:** Eine Produktlogik auf Mobile und Desktop. Desktop bekommt wieder eine Reise-Ebene.
 

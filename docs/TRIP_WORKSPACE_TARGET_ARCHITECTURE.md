@@ -1,12 +1,12 @@
 # Jetnity – Trip Workspace Zielarchitektur
 
 Stand: 24. August 2026  
-Status: **Vorschlag aus dem Workspace-Audit; nicht Product-Owner-angenommen, nicht implementiert**  
+Status: **historischer Ziel-IA-Text aus dem Workspace-Audit.**  
+Nachtrag 25. August 2026: Product-Owner-angenommen als ADR-0163; verbindliche Freigabegrenze und Slice-Reihenfolge stehen dort. TW-1 Runtime liegt in Draft-PR #56. Dieser Dateitext bleibt die fachliche Zielbeschreibung und wird nicht als bereits vollständig umgesetzt gelesen.  
 Code-Evidence-Basis (historisch): `docs/TRIP_WORKSPACE_AUDIT.md` gegen `1ec93cc9`  
-Aktueller Integrations-`main`: `b7f027ec` (S3/AP-3/Admin C auf `main`; P0-Workspace-Befunde unverändert)
+Aktueller Integrations-`main` zum Auditzeitpunkt: `b7f027ec`
 
-Diese Datei ist die vorgeschlagene Ziel-IA für den **späteren** Implementierungsblock.  
-Ein späterer Merge von Draft-PR #55 ist **keine** implizite Product-Owner-Freigabe dieser IA und **keine** Freigabe für TW-1.  
+Ein Merge von PR #55 war **keine** implizite Product-Owner-Freigabe. Die spätere Annahme steht in ADR-0163.  
 Sie ändert keine Shared Contracts und keine Traveller-/Route-/Provider-Truth.
 
 ---
