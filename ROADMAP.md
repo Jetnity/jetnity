@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
+Status: **Foundation C/D/E, Travel Safety & Disruption und Travel Timing & Seasonal Intelligence auf `main` (PR #38 gemergt, `ee988bbe`); nächster Block: Provider-Readiness-/Adapter-Lücken oder erste konfliktarme Account-/Admin-Slices**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -162,7 +162,7 @@ Verbindliche Truth-Logik:
 
 ## 6. NÄCHSTE PRIORITÄT – Travel Timing & Seasonal Intelligence
 
-Status: **Draft PR #38; R17 Technical Closure / PASS auf Runtime `57824019`; wartet auf Product-Owner-Merge-Freigabe; kein Live-Provider**
+Status: **auf `main` gemergt (PR #38 Squash `ee988bbe`); R17 Technical Closure / PASS; kein Live-Provider**
 
 Policy:
 
@@ -214,7 +214,8 @@ Verbindlich:
 19. ✅ ChatGPT-Re-Review R15: Blocker 30 geschlossen, Exact-Head-Gate grün
 20. ✅ ChatGPT-Re-Review R16: Blocker 31 geschlossen, Exact-Head-Gate grün
 21. ✅ ChatGPT-Re-Review R17: Technical Closure / PASS, kein neuer konkreter Defekt
-22. **→ Product-Owner-Merge-Gate** (Draft bleibt; kein Mark Ready / Merge ohne ausdrückliche Freigabe)
+22. ✅ Product-Owner-Merge-Gate: PR #38 am 24. August 2026 durch `Jetnity` gemergt (`ee988bbe`)
+23. **→ Main-CI / Vercel-Production-Deploy auf `ee988bbe` bestätigen; danach Provider-Readiness oder erste Account-/Admin-Slices**
 
 ---
 
@@ -340,8 +341,8 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. **→ Travel Timing & Seasonal – provider-neutrale Foundation (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
-6. Provider-Readiness-/Adapter-Lücken schließen
+5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation (PR #38 gemergt)
+6. **→ Provider-Readiness-/Adapter-Lücken schließen** oder erste konfliktarme Account-/Admin-Slices
 7. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 8. finaler Workspace Intelligence Audit
 9. echte Providerphase

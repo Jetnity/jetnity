@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D, Foundation E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence – Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe**
+Status: **verbindlicher operativer Übergabepunkt – Foundation D, Foundation E, Travel Safety & Disruption und Travel Timing & Seasonal Intelligence auf `main`; PR #38 gemergt (`ee988bbe`); kein Live-Seasonal-Provider**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -294,8 +294,8 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. **→ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
-6. Provider-Readiness-/Adapter-Lücken schließen
+5. ✅ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (PR #38 gemergt, `main` `ee988bbe`)
+6. **→ Provider-Readiness-/Adapter-Lücken schließen** oder erste konfliktarme Account-/Admin-Slices
 7. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 8. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 9. echte Providerphase
@@ -310,16 +310,14 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-Aktiver Branch: `feat/travel-timing-seasonal-intelligence`  
-Draft PR: `#38`  
-Basis: `origin/main` @ `cd220beb`  
-Runtime-Head: `57824019`
+`main`: `ee988bbe` (Squash-Merge von PR #38 durch `Jetnity`)  
+Unabhängig geprüfter Runtime-Head vor Squash: `57824019`
 
-1. Ist-Audit ist gegen den tatsächlichen Code verifiziert.
-2. Seasonal-Runtime sowie Review-Blocker 1–31 sind geschlossen. Untrusted Intake persistiert keine Client-Surface; `FlugOption` erfindet keine Evidence aus Segmentnachbarschaft.
-3. Full Gate auf Runtime `57824019` ist lokal und remote grün (1703/1703 Tests, UI-Audit 1014/1014, Build Exit 0, GitHub Actions SUCCESS, Vercel Preview READY).
-4. PR bleibt Draft. Kein echter Seasonal-Provider, kein Secret, keine unfreigegebenen Kosten, keine Production-Migration, kein Merge ohne aktuelle Product-Owner-Freigabe.
-5. **Exakter nächster Schritt:** Product-Owner-Entscheidung zu Mark Ready / Merge. Technical Closure ersetzt diese Freigabe nicht. Production-Migration bleibt ein separates Gate.
+1. Seasonal-Runtime und Review-Blocker 1–31 sind auf `main`.
+2. Untrusted Intake persistiert keine Client-Surface; `FlugOption` erfindet keine Evidence aus Segmentnachbarschaft.
+3. Production-DB hat `20260824120000` und `20260824140000`. Read-only Probe verwirft Client-`surfaceFromAirportCode='JFK'`.
+4. `seasonalProviderAus()` bleibt `null`. Keine neuen Secrets, keine neuen laufenden Providerkosten.
+5. **Exakter nächster Schritt:** Main-CI und Vercel-Production-Deploy auf `ee988bbe` bestätigen. Danach Provider-Readiness-/Adapter-Lücken oder erste konfliktarme Account-/Admin-Slices. Shared Contracts bleiben seriell.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

@@ -5,57 +5,55 @@ Arbeitsblock: **Travel Timing & Seasonal Intelligence – provider-neutrale Foun
 
 ## 1. Arbeitsblock / Ziel
 
-PR #38 hat nach dem unabhängigen ChatGPT-Re-Review **R17 Technical Closure / PASS** erreicht. R16-Merge-/Truth-Blocker 31 ist auf Runtime `5782401943b41ddd1eea1337c93cb37163210362` kohärent geschlossen. Es wurde in R17 kein neuer konkreter relevanter Truth-, Security-, Source-of-Truth-, Cross-Domain-, Provider- oder Release-Defekt gefunden.
+PR #38 ist **gemergt**. Unabhängiges R17 = PASS / Technical Closure. Die provider-neutrale Seasonal-Foundation und die Route-Truth-Härte bis Blocker 31 liegen auf `main`.
 
 R17 Review: `docs/PR38_CHATGPT_R17_REVIEW.md`  
 R16 Review: `docs/PR38_CHATGPT_R16_REVIEW.md`  
-R16 Cursor-Auftrag: `docs/PR38_CURSOR_R16_BLOCKER31_TASK.md`  
 Cursor-Fixes: `docs/PR38_CURSOR_REVIEW_FIXES.md`  
 Multi-Agent-Folgeentscheidung: `docs/MULTI_AGENT_DEVELOPMENT_TEAM_POLICY.md`
 
 ## 2. Branch / PR / Review-Lock
 
-- Branch: `feat/travel-timing-seasonal-intelligence`
-- Draft PR: https://github.com/Jetnity/jetnity/pull/38
-- Main: `cd220beb44d90ae376feeb8de9db8a3afb808d60`
-- final geprüfter Runtime-Head für R17: `5782401943b41ddd1eea1337c93cb37163210362`
-- Docs-Lock vor R17: `865d29e85be1a4d3c3d83679cad4d1dc383f3adf`
-- R17 Review-Commit: `bb9eda8212c24a8064939c8addd7fe0311943295`
-- PR-Zustand: **open, Draft, nicht gemergt**
+- Gemergter PR: https://github.com/Jetnity/jetnity/pull/38
+- Merge durch: `Jetnity` am 24. August 2026, 01:52 UTC
+- Merge-Art: Squash auf `main`
+- `main`: `ee988bbe46a8dd63d4001c42825fc0159453f811`
+- Unabhängig geprüfter Runtime-Head vor Squash: `5782401943b41ddd1eea1337c93cb37163210362`
+- PR-Zustand: **MERGED**
+
+Squash bedeutet: der Review-Runtime-SHA `57824019` ist kein Ancestor von `main`. Der Codeinhalt ist auf `main` enthalten.
 
 ## 3. Status
 
-**R17 = PASS / Technical Closure. Review-Loop gestoppt.**
+**PR #38 gemergt. R17 Technical Closure bleibt gültig. Kein Live-Seasonal-Provider.**
 
-30. **`itineraryAusFlugOption()` erfindet keine Surface-Evidence mehr.** Untrusted Browser-`FlugOption` mit `LAX→JFK` + `SFO→NRT` bleibt ohne Surface-Evidence chronology unknown. Extra-Felder, `provider` und `externalRef` aus dem Browser sind kein Surface-Beweis.
+30. `itineraryAusFlugOption()` erfindet keine Surface-Evidence.
+31. Untrusted `routeItinerary` adelt keine Client-Surface. Parser, Guest-Load, Guest→Account, Safety/Seasonal-Requests und DB-Metadata-Read strippen `surfaceFromAirportCode`.
 
-31. **Untrusted `routeItinerary` adelt keine Client-Surface mehr.** Browser-/LocalStorage-/Guest-/API-Nutzlasten verwenden den untrusted Parser, Guest→Account strippt Surface vor Server-Kanonisierung, der normale DB-Read verwendet den untrusted Metadata-Parser und die Development-DB-Funktion schreibt Client-`surfaceFromAirportCode` nicht mehr in die kanonische Route.
+Der Trusted Reader bleibt nur für bereits typisierte bzw. später serverseitig belegte Objekte zulässig.
 
-Der Trusted Reader bleibt nur für bereits typisierte bzw. später explizit serverseitig belegte Objekte zulässig. R17 fand keinen aktuellen Produktions-Mapper, der rohe Client-JSON direkt an diesen Pfad hängt. Das bleibt ein zukünftiger Architektur-Invariant und ist kein aktueller Blocker.
+`seasonalProviderAus()` bleibt `null`. Keine Seasonal-Tabelle. Keine neuen Secrets. Keine neuen laufenden Providerkosten.
 
-**Technical Closure ersetzt keine Product-Owner-Freigabe.** PR bleibt Draft. Kein Mark Ready, kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+## 4. Exact-Head-Evidence des unabhängig geprüften Runtime-Heads
 
-## 4. Exact-Head-Evidence des final geprüften Runtime-Heads
-
-Auf exakt `5782401943b41ddd1eea1337c93cb37163210362`:
+Auf exakt `5782401943b41ddd1eea1337c93cb37163210362` vor dem Squash:
 
 - `npm test` **1703/1703**
 - Typecheck / Lint / Hygiene grün
 - Production-Build Exit 0, `/api/seasonal/evaluate` enthalten
-- UI-Audit **1014/1014**, 0 Fehler, WebKit + Chromium, 8 Viewports (`AUDIT_PORT=3485`)
+- UI-Audit **1014/1014**, 0 Fehler, WebKit + Chromium, 8 Viewports
 - DB: Rechte 51 / RLS Exit 0 / Sicherheit **216/216** / Parallelität **7/7**
 - GitHub Actions Run `32677741683`: **SUCCESS**
-- Vercel Preview `dpl_74A67UxWrCLWviihrsn9hfYqqZDQ`: **READY** auf exakt diesem SHA
+- Vercel Preview `dpl_74A67UxWrCLWviihrsn9hfYqqZDQ`: **READY**
 
-Der Docs-Lock `865d29e8` war ebenfalls CI SUCCESS / Vercel READY und ist kein zweites Runtime-Gate.
+## 5. Live Infra / DB nach Merge
 
-## 5. R17 Live-Infra-/DB-Nachweis
-
-- Vercel Production `jetnity-app.vercel.app`: **READY** auf `main` `cd220beb44d90ae376feeb8de9db8a3afb808d60`.
-- Supabase Production `qscbgcdmivbbnzrcyegn`: **ACTIVE_HEALTHY**; Route-Surface-Migrationen nicht angewendet.
-- Supabase Development `yfvbxvijcorffwxbxahl`: **ACTIVE_HEALTHY**; `20260824120000` und `20260824140000` angewendet.
-- R17 read-only DB-Reproduktion mit manipuliertem `LAX→JFK`, `SFO→NRT`, `surfaceFromAirportCode='JFK'`: kanonisches Resultat enthält die Route, aber **keine Surface-Claim**.
-- Development-Funktion `public.flug_route_itinerary_metadata(text,jsonb)`: SECURITY INVOKER; `anon` kein EXECUTE; `authenticated` EXECUTE.
+- GitHub Actions auf `main` `ee988bbe`: Run `32681199019` war zum Zeitpunkt dieser Persistenz **in_progress**. Nicht als SUCCESS behaupten, bevor der Lauf endet.
+- Vercel Production `jetnity-app.vercel.app` antwortete HTTP 200. Der genaue Production-Deploy-SHA war in dieser Session nicht unabhängig als `ee988bbe` bestätigt.
+- Supabase Production `qscbgcdmivbbnzrcyegn`: Route-Surface-Migrationen **sind angewendet**: `20260824120000` und `20260824140000`. Dieser Agent hat sie nicht selbst ausgeführt; sie lagen nach dem Merge bereits vor. Die Merge-Message nennt sie als separates Gate.
+- Read-only Production-Probe `LAX→JFK` + `SFO→NRT` + `surfaceFromAirportCode='JFK'`: Funktion liefert Route, **ohne** Client-Surface (`claimed_surface=null`, `hat_route=true`).
+- Production-Funktion `public.flug_route_itinerary_metadata(text,jsonb)`: SECURITY INVOKER (`prosecdef=false`); `anon` kein EXECUTE; `authenticated` EXECUTE.
+- Supabase Development: dieselben beiden Migrationen bereits zuvor angewendet.
 
 ## 6. DB / Kosten / Provider
 
@@ -64,31 +62,28 @@ Der Docs-Lock `865d29e8` war ebenfalls CI SUCCESS / Vercel READY und ist kein zw
 - keine Live-Provider-Aktivierung
 - keine neuen Secrets
 - keine neuen laufenden Kosten
-- Route-Persistenzmigrationen nur auf Development
-- **keine Production-Migration**
+- Route-Surface-Funktion auf Development **und** Production aktiv; Vertrag ist Strip, nicht Persistenz von Client-Surface
 
 ## 7. Exakter nächster Schritt
 
-Der PR-#38-Review-Loop ist nach dem vereinbarten Stop-Kriterium beendet. Ein neuer Review-Rundlauf wird nur bei einer konkreten neuen Runtime-Änderung oder einem neuen belegbaren Defekt eröffnet.
+1. Main-CI `32681199019` und Vercel-Production-Deploy auf `ee988bbe` unabhängig bestätigen.
+2. Danach der nächste ROADMAP-Schritt: Provider-Readiness-/Adapter-Lücken **oder** erste konfliktarme Account-/Admin-Slices. Shared Auth/RLS/DB/Traveller-/Route-/Readiness-/Safety-/Seasonal-Contracts bleiben zentral koordiniert und seriell.
+3. Keinen echten Seasonal-Provider aktivieren.
 
-PR #38 bleibt **Draft** und wartet auf die ausdrückliche Product-Owner-Entscheidung zu Mark Ready / Merge. Production-Migration bleibt ein separates Gate.
-
-Mit dem R17 Technical Closure ist die technische Sperre für die konfliktarmen ersten Account- und Admin-Implementierungsslices aufgehoben. Shared Auth/RLS/DB/Privacy/Billing/Traveller-/Route-/Readiness-/Safety-/Seasonal-Contracts bleiben weiterhin zentral Technical-Lead-koordiniert und seriell.
+Ein neuer PR-#38-Review-Rundlauf ist nur bei einem konkreten neuen Defekt oder einer neuen Runtime-Änderung gerechtfertigt.
 
 ## 8. Welche Dateien bei Fortsetzung zuerst gelesen werden müssen
 
-1. `docs/PR38_CHATGPT_R17_REVIEW.md`
-2. `docs/ACTIVE_WORK_STATUS.md`
-3. `docs/PR38_CHATGPT_R16_REVIEW.md`
-4. `docs/PR38_CURSOR_REVIEW_FIXES.md`
+1. `docs/ACTIVE_WORK_STATUS.md`
+2. `docs/PR38_CHATGPT_R17_REVIEW.md`
+3. `JETNITY_HANDOFF.md`
+4. `ROADMAP.md`
 5. `docs/MULTI_AGENT_DEVELOPMENT_TEAM_POLICY.md`
 
 ## 9. Agent-Handoff dieser Session
 
-- Branch/PR: `feat/travel-timing-seasonal-intelligence` / `#38`
-- final geprüfter Runtime-Head: `57824019`
-- R17: **PASS / Technical Closure**
-- PR: Draft, nicht gemergt
-- nicht autorisiert: Mark Ready, Merge, Production-Migration, Provider-Live-Aktivierung
-- Account/Admin: erste konfliktarme Slices technisch entblockt; Shared Contracts weiter serialisiert
-- Continuity: `ROADMAP.md` / `JETNITY_HANDOFF.md` auf R17 PASS + Product-Owner-Merge-Gate ausgerichtet
+- `main`: `ee988bbe` (Squash von PR #38)
+- R17: PASS / Technical Closure
+- Production-DB: Route-Surface-Migrationen angewendet, Client-Surface wird verworfen
+- nicht autorisiert: Live-Provider, neue Secrets, neue laufende Kosten
+- Cursor-Anzeigename dieser Session: Reisezeitpunkt saisonale intelligenz

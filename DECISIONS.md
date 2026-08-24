@@ -3713,7 +3713,7 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 **Begründung:** Ohne serverseitig belegte Surface-Quelle würde Persistenz (ADR-0149) erfundene Array-Lücken dauerhaft adeln. Foundation bleibt fail-closed, bis ein echter Trust-Contract existiert.
 
-**Konsequenzen:** Echte Airport-Changes, die nur als Browser-`FlugOption` ankommen, bleiben unknown, bis eine zulässige Evidence-Quelle existiert. Kein Live-Provider, keine Migration, keine Secrets. Untrusted `routeItinerary` folgt ADR-0151. PR #38 bleibt Draft bis zur Product-Owner-Merge-Freigabe.
+**Konsequenzen:** Echte Airport-Changes, die nur als Browser-`FlugOption` ankommen, bleiben unknown, bis eine zulässige Evidence-Quelle existiert. Kein Live-Provider, keine Secrets. Untrusted `routeItinerary` folgt ADR-0151. PR #38 ist auf `main` gemergt (`ee988bbe`).
 
 ---
 
@@ -3738,7 +3738,7 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 **Begründung:** Ohne Provenance wäre jedes syntaktisch gültige Client-IATA Surface-Truth. In dieser Foundation existiert kein serverseitig belegter Surface-Schreiber. Fail-closed unknown ist konservativer als eine geadelte Lücke.
 
-**Konsequenzen:** Echte Airport-Changes, die nur als Browser-/Guest-JSON ankommen, bleiben unknown, bis ein trusted Contract existiert. Development-Funktion ist aktualisiert. Production bleibt ohne die Migration. Kein Live-Provider, keine Secrets, keine neuen laufenden Kosten. R17 Technical Closure ist dokumentiert. PR #38 bleibt Draft bis zur Product-Owner-Merge-Freigabe.
+**Konsequenzen:** Echte Airport-Changes, die nur als Browser-/Guest-JSON ankommen, bleiben unknown, bis ein trusted Contract existiert. Development- und Production-Funktion verwerfen Client-Surface. Kein Live-Provider, keine Secrets, keine neuen laufenden Kosten. R17 Technical Closure ist dokumentiert. PR #38 ist auf `main` gemergt (`ee988bbe`).
 
 ---
 
