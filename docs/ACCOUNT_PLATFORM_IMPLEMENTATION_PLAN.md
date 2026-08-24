@@ -1,12 +1,12 @@
 # Jetnity Account Platform – Implementierungsplan
 
-Stand: 23. August 2026  
+Stand: 24. August 2026  
 Status: **vorbereitet – Implementierung gesperrt bis Technical-Lead-Freigabe nach PR-#38-Closure**  
 Workstream: Jetnity Account Platform  
 Cursor-Anzeigename: **Account plattform audit vorbereitung**  
 Branch dieses Audits: `audit/account-platform`
 
-Dieser Plan schneidet **kleine, konfliktarme PRs**. Shared Contracts bleiben serial.
+Dieser Plan schneidet **kleine, konfliktarme PRs**. Shared Contracts bleiben serial. Derselbe Cursor-Agent **`Account plattform audit vorbereitung`** führt den Account-Workstream grundsätzlich über die Implementierungsblöcke hinweg weiter; nach jedem Slice folgen Self-Review, Gates und unabhängiger Technical-Lead-Review, bevor derselbe Agent den nächsten Slice erhält. Kein Agentwechsel nur wegen eines neuen Blocks.
 
 ---
 
@@ -168,7 +168,7 @@ Explizit vs. abgeleitet trennen. Keine Hard-Truth im Workspace.
 ### AP-9 – Favoriten
 
 Neue Tabellen + RLS. Keine Vermischung mit Trip-Items.  
-Kann nach AP-1 parallel geplant, nicht vor PO-Nutzenfrage gebaut werden.
+Kann nach AP-1 geplant, aber nicht vor PO-Nutzenfrage gebaut werden.
 
 **Shared:** neue Persistenz, aber isolierbar
 
@@ -195,12 +195,16 @@ Shared mit Admin/Finance. `payments` nicht wiederverwenden.
 
 Empfohlen:
 
-1. Lead prüft dieses Audit gegen Admin-Audit
-2. AP-1 + AP-2 + AP-3 (parallel möglich, geringe Konflikte)
-3. AP-5 UI-Teile
-4. AP-6a Legal
-5. Shared-Schnitte serial: AP-4, AP-6b, AP-7, AP-8, AP-12
-6. AP-9 / AP-10 / AP-11 nach Produktnutzen
+1. Lead prüft dieses Audit gegen Admin-Audit (erledigt; Shared-Contract-Schnitt zentral dokumentiert)
+2. `Account plattform audit vorbereitung` baut AP-1, danach Review/Gates
+3. derselbe Agent baut AP-2, danach Review/Gates
+4. derselbe Agent baut AP-3, danach Review/Gates
+5. AP-5 UI-Teile
+6. AP-6a Legal
+7. Shared-Schnitte serial: AP-4, AP-6b, AP-7, AP-8, AP-12
+8. AP-9 / AP-10 / AP-11 nach Produktnutzen
+
+Account und Admin dürfen als getrennte Produktdomänen parallel voranschreiten, aber **innerhalb des Account-Workstreams ist der Default sequenziell mit demselben Agenten und einem kontrollierten Review-Gate pro Slice**.
 
 ---
 
