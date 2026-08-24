@@ -349,26 +349,26 @@ describe('Bearbeiten einer Gastreise', () => {
     assert.equal(hotel.endsOn, '2026-09-16')
   })
 
-  test('ein übernommener Flug bleibt kommerziell gespeichert', () => {
+  test('eine Browser-Flugoption darf nicht als kommerzielle Wahrheit persistiert werden', () => {
     const reise = gastreiseAnlegen(eingabe())
     const aufnahme = alsFlugMomentaufnahme(OPTION_DIREKT)
     assert.ok(aufnahme)
-    const danach = gastFlugUebernehmen(reise, aufnahme, reise.days[0]!.id)
-    const flug = danach.days[0]?.items.find((punkt) => punkt.kind === 'flight')
-    assert.ok(flug)
-    assert.equal(istKommerziell(flug), true)
-    assert.equal(flug.priceAmount, 892.5)
-    assert.equal(flug.provider, 'duffel')
-    assert.equal(flug.bookingUrl, null)
-    assert.equal(flug.bookingStatus, 'unconfirmed')
-    assert.equal(gastspeicherLaden().aktiv?.days[0]?.items[0]?.provider, 'duffel')
+    assert.throws(
+      () => gastFlugUebernehmen(reise, aufnahme, reise.days[0]!.id),
+      /noch nicht verbindlich/,
+    )
+    assert.equal(gastspeicherLaden().aktiv?.days[0]?.items.some((punkt) => punkt.kind === 'flight'), false)
   })
 
   test('ein Flug kann manuell als gebucht markiert und korrigiert werden', () => {
-    const reise = gastreiseAnlegen(eingabe())
-    const aufnahme = alsFlugMomentaufnahme(OPTION_DIREKT)
-    assert.ok(aufnahme)
-    const mitFlug = gastFlugUebernehmen(reise, aufnahme, reise.days[0]!.id)
+    const angelegt = gastreiseAnlegen(eingabe())
+    const mitFlug = gastPlanpunktAnlegen(angelegt, {
+      dayId: angelegt.days[0]!.id,
+      kind: 'flight',
+      title: 'ZRH → BKK',
+      note: null,
+      startsAt: '09:15',
+    })
     const flug = mitFlug.days[0]?.items.find((punkt) => punkt.kind === 'flight')
     assert.ok(flug)
     const gebucht = gastBuchungsstatusSetzen(mitFlug, flug.id, true, '2026-08-21T10:00:00.000Z')

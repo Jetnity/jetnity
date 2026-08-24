@@ -1,11 +1,11 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal und Account AP-1 auf `main`; aktive Draft-Workstreams: Account AP-2 (PR #48), Admin Slice A und Provider Ops S1**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1 und Account AP-2 liegen auf `main`; dieser Branch ist Provider Readiness S2-B2, Draft-PR #51, auf `main` synchronisiert, Gates grün, STOPP für Technical-Lead-Re-Review**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
-Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Provider Ops S1 zusätzlich in `docs/PROVIDER_OPS_S1_STATUS.md` und `docs/PROVIDER_OPS_S1_HANDOFF.md`.
+Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Provider Readiness S2 (dieser Branch) zusätzlich in `docs/PROVIDER_READINESS_S2_STATUS.md` und `docs/PROVIDER_READINESS_S2_HANDOFF.md`. Provider Ops S1 zusätzlich in `docs/PROVIDER_OPS_S1_STATUS.md` und `docs/PROVIDER_OPS_S1_HANDOFF.md`.
 
 > **Kein relevanter Fortschritt darf beim Wechsel von Chat, Agent oder Sitzung verloren gehen. Was für die Fortsetzung wichtig ist, gehört ins Repository.**
 
@@ -92,7 +92,7 @@ Production:
 
 - URL: `https://jetnity-app.vercel.app`
 - Supabase Production: `qscbgcdmivbbnzrcyegn` (`eu-central-2`)
-- Supabase Development: `yfvbxvijcorffwxbxahl`
+- Supabase Development: `[REDACTED]`
 
 Echte Travel-Provider bleiben derzeit deaktiviert. Keine Fake-Preise, Fake-Verfügbarkeit, Fake-Zeiten, erfundene Visa-/Safety-/Seasonal-Aussagen oder unfreigegebene Providerkosten.
 
@@ -298,8 +298,8 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation
 6. ✅ Account Platform AP-1 – Squash-Merge nach `main` (`084f7c87`, PR #43)
-6a. **→ Account Platform AP-2 (Draft-PR #48) Technical Integration Closure / PASS auf `de5ffd8a`; wartet auf Product-Owner-Entscheidung; parallel Admin Slice A und Provider Ops S1**
-7. Provider-Readiness-/Adapter-Lücken schließen – S1 Shared Operational Contract Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`; wartet auf Product-Owner-Entscheidung
+6a. ✅ Account Platform AP-2 – Squash-Merge nach `main` (`2827d1cb`, PR #48)
+7. Provider-Readiness-/Adapter-Lücken schließen – **S1 Technical Closure / PASS auf Draft-PR #47; S2-B2 auf Draft-PR #51, Integrations-Head `e2fcffde`, STOPP für Technical-Lead-Re-Review**
 8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 10. echte Providerphase
@@ -314,20 +314,27 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-Aktiver Account-Branch: `feat/account-ap2`  
-Draft PR: `#48`  
-Auftrag: `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md`  
-Handoff: `docs/ACCOUNT_AP2_HANDOFF.md`  
-Runtime-Head: `de5ffd8a91576a2281b6d5eda75338504a43b7a7`
+Aktiver Branch: `feat/provider-flight-evidence-s2`
+Draft PR: `#51`
+Basis: `origin/main` @ `2827d1cb`
+Integrations-Exact-Head: `e2fcffde`
+Vorheriger Functional Exact Head: `1b06b284`
+Auftrag: `docs/PROVIDER_READINESS_S2_FLUGNACHWEIS_TASK.md`
+B2-Auftrag: `docs/PROVIDER_READINESS_S2_B2_DIRECT_TABLE_TRUST_FIX_TASK.md`
 
-1. AP-1 ist mit ausdrücklicher Product-Owner-Freigabe nach `main` gemergt (`084f7c87`, PR #43).
-2. AP-2 ist auf genau diesen `main` rebase und PR #48 ist auf `main` retargetet.
-3. Exact Runtime-Head `de5ffd8a` ist lokal und remote gegated (Actions `32727253862`, Vercel `AAYbSDBt4p636mxY1aWuPgq9gUSS`).
-4. PR #48 bleibt Draft. Kein Mark Ready, kein Merge ohne aktuelle Product-Owner-Freigabe.
-5. **Exakter nächster Schritt:** Product-Owner-Entscheidung über Mark Ready / Merge von Draft-PR #48. Technical Integration Closure / PASS auf `de5ffd8a` ist keine Ready-/Merge-Freigabe. Kein AP-3.
+1. S2 hebt die Flug-Kontoübernahme auf dieselbe Trust-Grenze wie Hotels: Browser sendet nur identifiers.
+2. `flugNachweisAusUmgebung()` ist `null`; ohne serverseitigen Suchkontext bleibt die Übernahme fail-closed.
+3. Guest persistiert keine kommerzielle Provider-Flugoption. Guest → Account streicht unbewiesene Flug-Handelsfelder.
+4. S2-B1: `reise_anlegen` verwirft unbewiesene Flug-Handelsfelder. S2-B2: direkte `trip_items`-Writes tun dasselbe für `authenticated`/`anon`.
+5. Development-Migrationen `20260824160000` und `20260824180000` sind angewendet. **Production unverändert.**
+6. PR #51 ist auf `origin/main` @ `2827d1cb` synchronisiert, `MERGEABLE` / `CLEAN`, bleibt Draft.
+7. GitHub Actions `32732334063` und Vercel `4uQEc9GNFnBYqjoxSpSkw7sQ6pow` sind auf `e2fcffde` grün.
+8. **Exakter nächster Schritt:** Unabhängiger Technical-Lead-Re-Review gegen `e2fcffde`. Kein Mark Ready, kein Merge, kein S3, keine Production-Migration.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
 Leitsatz:
 
+> **Browserdaten dürfen keine kommerzielle Flugwahrheit persistieren. Nachweis oder fail-closed – keine dritte Wahrheit.**
+>
 > **Account ist das dauerhafte Zuhause. Der Trip Workspace bleibt die Kommandozentrale einer einzelnen Reise.**
