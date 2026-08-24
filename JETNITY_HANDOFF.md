@@ -1,340 +1,143 @@
 # Jetnity – Handoff und nächste Schritte
 
-Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1 und Account AP-2 liegen auf `main`; dieser Branch ist Provider Readiness S2-B2, Draft-PR #51, auf `main` synchronisiert, Gates grün, STOPP für Technical-Lead-Re-Review**
+Stand: **24. August 2026, Live-Abgleich ab 18:50 Europe/Zurich**  
+Status: **kanonischer operativer Einstieg; Admin Slice A auf `main`; vier parallele Workstreams bis zu ihren Review-Gates fortgeschritten**
 
-Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
+> **Vor jeder neuen Arbeit GitHub, CI, Vercel und Supabase live verifizieren. Historische Handoffs sind Evidence ihres damaligen Zeitpunkts, keine automatisch aktuelle operative Wahrheit.**
 
-Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Provider Readiness S2 (dieser Branch) zusätzlich in `docs/PROVIDER_READINESS_S2_STATUS.md` und `docs/PROVIDER_READINESS_S2_HANDOFF.md`. Provider Ops S1 zusätzlich in `docs/PROVIDER_OPS_S1_STATUS.md` und `docs/PROVIDER_OPS_S1_HANDOFF.md`.
+## 1. Zuerst lesen
 
-> **Kein relevanter Fortschritt darf beim Wechsel von Chat, Agent oder Sitzung verloren gehen. Was für die Fortsetzung wichtig ist, gehört ins Repository.**
+Für einen neuen Chat/Agent gilt diese Reihenfolge:
 
-Ein neuer Chat soll mit folgendem Satz übernehmen können:
+1. `docs/CURRENT_MULTI_AGENT_TEAM_STATUS.md` – **aktuellste kompakte operative Wahrheit**
+2. `docs/ACTIVE_WORK_STATUS.md`
+3. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-08-24.md`
+4. `docs/CHATGPT_TECHNICAL_LEAD_CONTINUITY.md`
+5. `docs/DOMAIN_PROGRAM_COMPLETION_POLICY.md`
+6. `docs/NEW_CHAT_START_PROMPT_2026-08-24.md`
+7. die dort genannten aktuellen Slice-Handoffs / PRs
 
-> **„Wir machen mit Jetnity weiter. Lies `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md` und den aktuellen Repository-/Production-Stand und übernimm exakt die bisherige Hauptentwickler-Rolle.“**
+Wenn diese Dokumente später hinter den Live-Systemen liegen: **nicht raten; live verifizieren und den neueren belegten Stand wieder zentral persistieren.**
 
----
+## 2. Aktueller `main` / Production
 
-## 1. Pflichtlektüre
+Repository: `Jetnity/jetnity`
 
-Vor größeren Produkt-/Architektur-/Implementierungsentscheidungen lesen:
+- `main`: `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267`
+- letzter Merge: **PR #44 – Admin Control Center Slice A**
+- PR #44: merged / closed
+- Vercel Production: `dpl_83gKPm2vWETL7Jq1osdzcuTp4QP7` = READY auf exakt `1ec93cc9...`
+- Supabase Production endet weiterhin bei `20260824140000_flug_route_itinerary_untrusted_surface`
+- `20260824160000` und `20260824180000` bleiben **nur Development** und sind nicht Production-approved.
 
-- `JETNITY_PRODUCT_MANDATE.md`
-- `JETNITY_VISION.md`
-- `JETNITY_HANDOFF.md`
-- `ROADMAP.md`
-- `ARCHITECTURE.md`
-- `DECISIONS.md`
-- `DESIGN_SYSTEM.md`
-- `AGENTS.md`
-- `docs/ACTIVE_WORK_STATUS.md`
-- `docs/PRODUCT_QUALITY_STANDARD.md`
-- `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
-- `docs/LOGIC_STANDARD.md`
-- `docs/CONTINUITY_STANDARD.md`
-- `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md`
-- `docs/CHATGPT_CURSOR_WORKFLOW.md`
-- `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`
-- `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
-- `docs/EXPERT_PROACTIVITY_POLICY.md`
-- `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md`
-- `docs/TRAVELLER_CITIZENSHIP_REQUIREMENT_POLICY.md`
-- `docs/TRIP_WORKSPACE_FINAL_INTELLIGENCE_AUDIT_POLICY.md`
-- `docs/TRIP_WORKSPACE_FUNCTION_BY_FUNCTION_AUDIT_MANDATE.md`
-- `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`
-- `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`
-- `docs/FINAL_HOMEPAGE_POSITIONING_OPTIMIZATION_POLICY.md`
-- `docs/PROVIDER_INTEGRATION_READINESS_POLICY.md`
-- relevante Fach-/Acceptance-/Review-Dokumente unter `docs/`
+GitHub meldet `main` weiterhin `protected: false`. Der Product Owner hat Branch-Protection-/Ruleset-Härtung freigegeben; die verbundene GitHub-Schnittstelle kann sie aktuell nicht mutieren. **Nicht als umgesetzt behaupten.**
 
----
+## 3. Aktuelle Workstreams
 
-## 2. Produktmandat und Rollen
+### Admin – PR #46 / Slice B
 
-Jetnity soll zum **führenden intelligenten Reiseplanungs- und Reisebegleitungsprodukt seiner Kategorie** entwickelt werden. „Nummer 1“ ist Entwicklungsziel, keine heutige Marktbehauptung.
+Agent: `Admin platform audit`
 
-Leitsätze:
+- open / **Ready for Review** / mergeable / unmerged
+- Ready wurde vom Product Owner ausdrücklich freigegeben
+- **Merge nicht freigegeben**
+- Runtime Head `1715640bffc36d7ebe1a25de7aeb569632b7811f`
+- aktueller docs-only Head `2ca916e91dbf53f9c5cad9a980cc141938fbebe6`
+- Independent Technical-Lead Review: **PASS / Technical Integration Closure**
+- aktueller docs-only CI `32752819622` SUCCESS
+- aktueller Vercel `dpl_8brgbYwJ7datm1uURAmuaooki72G` READY
+- ADR-0159
+- kein weiterer bekannter Runtime-Fix vor Merge-Entscheidung
+- PR #49 / Slice C bleibt vorbereitet; nicht starten, bis B integriert und C neu auf aktuellen `main` synchronisiert/gegatet wurde.
 
-> **Einfach für den Nutzer. Streng logisch im Inneren. Eine Reise, eine Wahrheit.**
+### Account – PR #53 / AP-3
 
-> **Komplexität gehört ins System, nicht in den Kopf des Nutzers.**
+Agent: `Account plattform audit vorbereitung`
 
-> **Nicht mehrere getrennte Suchprodukte, sondern eine Reise, deren Bereiche sich gegenseitig verstehen.**
+- open Draft
+- implementiert und gegatet
+- wartet auf unabhängigen Technical-Lead-Review
+- Runtime Head `612d819ed9691f93cbab97128e301b0b7744721b`
+- aktueller docs-only Head `5fb879f5556012ab5a34584b4ba8a319ce6754a1`
+- ADR-0160
+- aktueller CI `32753032302` SUCCESS
+- Vercel `dpl_83ReRsDgZoyGga19arfyC8L3WWtb` READY
+- kein Archiv-Write / keine Migration / kein RLS-/Auth-/Traveller-Contract
+- kein Ready / Merge / AP-4 vor Review und PO-Gates.
 
-Rollen:
+### Provider – PR #54 / S3
 
-- Product Owner / Nutzer: verbindliche Produktentscheidungen und finale Gates
-- ChatGPT: Hauptentwickler-/Product-/Architecture-/Logic-/Security-/Review-Steuerung; prüft tatsächlichen Repo-/Infra-Stand unabhängig
-- Cursor: Implementierung größerer Blöcke nach versioniertem Auftrag
-- GitHub: dauerhaftes gemeinsames Gedächtnis / Source of Truth
+Agent: `Jetnity provider readiness audit`
 
-### Harte Governance
+- open Draft
+- implementiert und gegatet
+- wartet auf unabhängigen Technical-Lead-Review
+- Runtime Head `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`
+- aktueller docs-only Head `2e9a1a7ff0d8ccef6945cbc70aa3833743d076f1`
+- ADR-0161
+- aktueller CI `32752931378` SUCCESS
+- Vercel `dpl_HErGVCe9HAKP1o9ymraV5xDd8i9P` READY
+- kein echter Provider / kein Secret / keine kostenpflichtigen Calls / keine Production-Migration
+- kein Ready / Merge / S4 vor Review und PO-Gates.
 
-- **Kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.**
+### Trip Workspace – PR #55 / Audit & Architecture
+
+Agent: `Trip workspace audit architecture`
+
+- open Draft
+- docs-only Audit/Zielarchitektur vorbereitet
+- wartet auf unabhängigen Technical-Lead-Review
+- Exact Head `536ed50ffda0279973058f7a2b78ee98217e7aad`
+- CI `32752434172` SUCCESS
+- Vercel `dpl_4adqadJzbDwHJMWg4jVs2ZrjDJy9` READY
+- **kein Runtime-Umbau**
+- Audit ist Vorbereitung des nächsten großen Produktblocks, nicht dessen Fertigstellung.
+
+## 4. ADR-Allokation
+
+- ADR-0158 = Admin Slice A / #44 / `main`
+- ADR-0159 = Admin Slice B / #46
+- ADR-0160 = Account AP-3 / #53
+- ADR-0161 = Provider S3 / #54
+
+Parallel entstandene Kollisionen wurden auf #53/#54 docs-only korrigiert und neu gegatet.
+
+## 5. Große Reihenfolge
+
+1. Account + Admin sauber aufbauen; Provider Readiness parallel weiterführen.
+2. Danach Trip Workspace / Reiseübersicht grundlegend überarbeiten – auf Basis des Audits #55.
+3. Danach Homepage weiterentwickeln.
+
+Weltkarte, Matching, Reisebuch, Trends/Hotspots usw. bleiben Wünsche/Optionen und sind nicht automatisch der nächste Pflichtblock.
+
+## 6. Bereichsprogramme enden nicht am aktuellen Slice
+
+- Account: vollständiger Plan bis AP-12.
+- Admin: vollständiger Plan A–K.
+- Provider Readiness: vollständiger Plan S1–S8; echte Providerphase danach separat gegatet.
+
+Authoritativ: `docs/DOMAIN_PROGRAM_COMPLETION_POLICY.md`.
+
+## 7. Harte Governance
+
+- Kein Mark Ready ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+- Kein Merge ohne danach separate ausdrückliche aktuelle Product-Owner-Freigabe.
+- CI/Vercel/Technical Closure ersetzen keine Freigabe.
 - Production-Migrationen sind separate Gates.
-- Provider-Aktivierung, Secrets, Verträge und Kosten sind separate Gates.
-- Grüne Tests/CI/Vercel ersetzen keine fachliche Review-Tiefe.
-- Jeder neue Chat/Agent muss nach `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md` aktiv nach unbekannten Truth-/Security-/Datenverlust-/Release-/Cross-Domain-Fehlern suchen.
-- Frühere Implementierung hat keinen Bestandsschutz; relevante Alt-Funktionen dürfen refaktoriert/ersetzt werden, wenn sie heutigen Standards nicht genügen.
-- Stop-Kriterien respektieren: keine endlosen Perfektionsschleifen ohne konkret reproduzierbaren hochwirksamen Defekt.
-
----
-
-## 3. Technischer Kern
-
-- Next.js App Router / TypeScript / Tailwind
-- Vercel
-- Supabase Postgres/Auth/Storage
-- gemeinsamer Reisegraph statt separater Schattenmodelle
-- Web/PWA zuerst, Native später
-
-Production:
-
-- URL: `https://jetnity-app.vercel.app`
-- Supabase Production: `qscbgcdmivbbnzrcyegn` (`eu-central-2`)
-- Supabase Development: `[REDACTED]`
-
-Echte Travel-Provider bleiben derzeit deaktiviert. Keine Fake-Preise, Fake-Verfügbarkeit, Fake-Zeiten, erfundene Visa-/Safety-/Seasonal-Aussagen oder unfreigegebene Providerkosten.
-
----
-
-## 4. Abgeschlossen – Reise-Fundament und Fachbereiche
-
-Bereits abgeschlossen / auf `main`:
-
-- Flight Foundation
-- Hotel Foundation
-- Activities Foundation
-- Trip Workspace Mobile UX Iterationen
-- Trip Coverage & Booking Status
-- Foundation A – Mobilität & Transfers
-- Foundation B – Mietwagen
-- Foundation C – Automatic Travel Requirements & Readiness
-
-Foundation C Production-Migrationen:
-
-- `20260822010000_trip_readiness_items`
-- `20260822020000_trip_travellers`
-
-Requirements bleiben provider-neutral. Ohne Official Evidence keine erfundene regulatorische Wahrheit.
-
----
-
-## 5. Abgeschlossen – Foundation D / Route & Transit Intelligence
-
-**Vollständig abgeschlossen, gemergt und auf Production verifiziert. Nicht erneut bauen.**
-
-- PR #34
-- Merge-Commit: `5bc93bcd35421e3763dc8a3515f254c209b63d6a`
-- Production-Acceptance: `docs/FOUNDATION_D_PRODUCTION_ACCEPTANCE.md`
-- Fachdokument: `docs/ROUTE_TRANSIT_INTELLIGENCE.md`
-
-Production-Migrationen:
-
-- `20260822130000_reise_anlegen_route_itinerary`
-- `20260822140000_flug_route_itinerary_airport_truth`
-- `20260822150000_trip_items_route_itinerary_guard`
-
-Route Truth bleibt traveller-neutral, provider-neutral und kanonische Origin-/Transit-Grundlage. Browser-Orts-/Länderfelder dürfen keine Route Truth erfinden.
-
----
-
-## 6. Abgeschlossen – Foundation E / Traveller Context
-
-**Vollständig abgeschlossen, gemergt und auf Production verifiziert. Nicht erneut bauen.**
-
-- PR #35
-- Squash-Merge-Commit: `3bf1eaaa78ef6ac33bb3baff84650a143720e91d`
-- Fachdokument: `docs/TRAVELLER_CONTEXT.md`
-- Production-Acceptance: `docs/FOUNDATION_E_PRODUCTION_ACCEPTANCE.md`
-
-Production-Migrationen:
-
-- `20260822160000_traveller_context_intelligence`
-- `20260822170000_traveller_context_fk_delete`
-- `20260822180000_traveller_context_rereview`
-
-Kanonisches Modell:
-
-> **Ein stabiler Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente / Credentials → kontextabhängig bewertete zulässige Optionen.**
-
-Truth-/Security-Grenzen:
-
-- Child-Tabellen sind kanonische Citizenship-/Document-Truth.
-- Guest und Account verwenden dieselbe fachliche Traveller-Form.
-- Ausstellerland ist niemals automatisch Staatsbürgerschaft.
-- Document↔Citizenship-Zuordnung nur aus expliziter Relation.
-- `unknown` bleibt `unknown` ohne belastbare Provider-Evidence.
-- keine Passnummern, Scans, MRZ oder Biometrie.
-
-### Neue verbindliche Citizenship-Regel
-
-Policy: `docs/TRAVELLER_CITIZENSHIP_REQUIREMENT_POLICY.md`
-
-- Citizenship ist beim einfachen Reise-Start **nicht global verpflichtend**.
-- Sie wird zur **harten Pflichtvoraussetzung**, sobald eine Official-/Regulatory-Funktion davon abhängt (z. B. Visa, Transit, staatsbürgerschaftsabhängige Health/Vaccination-Anforderungen).
-- keine stille Default-Citizenship aus Wohnsitz, Standort, Abflugland, Sprache oder Domain.
-- mehrere Citizenship-Optionen pro Traveller bleiben unterstützt.
-- fehlen notwendige Fakten: `insufficient_context` / `unknown`, keine erfundene Official-Entscheidung.
-
----
-
-## 7. Abgeschlossen – Travel Safety & Disruption Intelligence Foundation
-
-**Vollständig technisch Closure/PASS, vom Product Owner freigegeben und auf `main` gemergt. Nicht erneut bauen.**
-
-- PR #37
-- finaler PR-Head: `11976ed734b62ec906abd65581f309b1a38362f1`
-- gelockter finaler Runtime-Head: `985cae72ef5abac4012c75c739fa00412189ad48`
-- Squash-Merge-Commit: `2cceee0658cc426d66974779b525c8bf9a623534`
-- Closure-Nachweis: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_CLOSURE.md`
-- Fachlogik: `docs/TRAVEL_SAFETY_DISRUPTION.md`
-- Acceptance: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ACCEPTANCE.md`
-
-Finaler Qualitätsnachweis:
-
-- 1481/1481 Tests
-- Production-Build 38/38
-- UI-Audit 886/886, 0 Fehler, WebKit + Chromium / 8 Viewports
-- GitHub Actions auf gelocktem Runtime-Head SUCCESS
-- Vercel Preview READY/SUCCESS
-- vor Merge 0 behind zu `main`
-- Vercel auf Squash-Merge-Commit SUCCESS
-
-Architekturgrenzen:
-
-- `lib/safety/` eigene Truth-Domäne
-- `safetyProviderAus()` bleibt `null`
-- kein Live-Provider / keine Secrets / keine neuen laufenden Providerkosten
-- keine Safety-Tabelle
-- **keine DB-/Production-Migration erforderlich**
-- fail-closed bei unknown/stale/conflict/timeout/malformed/insufficient context
-- Route-/Stage-/Transit-/Zeit-/Geo-Relevanz deterministisch und provider-neutral
-- keine automatische Reiseänderung
-- Seasonal bleibt getrennte Wahrheit
-
-Bekannte spätere Gates: persistentes globales Rate-Limit vor echtem Provider, Account-`tripId`-Serverload, title-only Geo bleibt unknown, minutengenaue lokale Routezeit braucht später belastbare IANA-Zone/UTC-Offset.
-
----
-
-## 8. Verbindliche Product-Owner-Entscheidungen für den späteren Workspace
-
-### Multi-Destination ab Reiseeinstieg
-
-- Homepage für Einzielreise einfach halten.
-- progressiv `+ Weiteres Ziel hinzufügen`.
-- bestehende `trip_stages` wiederverwenden; kein zweites Multi-Destination-Modell.
-- hinzufügen / entfernen / ersetzen / reorder.
-- derselbe Ort darf mehrfach vorkommen.
-- Nutzerziele strikt von Flight-Transit trennen.
-- Jetnity darf bessere Reihenfolge vorschlagen, aber nicht still umsortieren.
-
-### „Meine Reisen“ bleibt zentraler Hub
-
-- Seite bleibt bestehen.
-- Gast: genau eine aktive Reise.
-- bei aktiver Gastreise primär `Reise fortsetzen`.
-- zweite Reise erfordert Konto oder ausdrückliches Verwerfen/Ersetzen; niemals still überschreiben.
-- Multi-Destination ist weiterhin eine Reise.
-
-### Initiale Reiseerstellung vereinfachen
-
-- Reisetempo-Chips entfernen.
-- Interessen-Chips aus Initialflow entfernen.
-- kein implizites `balanced` als bestätigte Nutzerwahrheit.
-- optionaler Freitext `Wünsche & Prioritäten`.
-- Hard Facts und Soft Preferences strikt trennen.
-- gezielte Rückfragen erst dann, wenn sie eine echte Entscheidung verbessern.
-
-### Trip Workspace ist wichtigste Produktoberfläche
-
-Die Übersicht muss schnell beantworten:
-
-1. Was ist diese Reise?
-2. Was ist erledigt?
-3. Was fehlt?
-4. Gibt es Warnungen/Risiken/offene Entscheidungen?
-5. Was empfiehlt Jetnity als Nächstes?
-
-Bevorzugte Hierarchie:
-
-1. Reise-Kopf / Gesamtstatus
-2. `Jetzt wichtig`
-3. Warnungen / Risiken
-4. Fortschritt pro Fachbereich
-5. Einreise & persönliche Vorbereitung
-6. Tagesplan bei ausreichender Grundlage
-7. Wünsche & Prioritäten / Änderungen
-8. sekundäre Details progressiv
-
-### Function-by-Function-Generalinspektion
-
-Der spätere große Workspace-Block ist **kein reines Redesign**. Jede bestehende und neue Funktion wird einzeln erneut geprüft auf:
-
-- fachliche Logik / Source of Truth
-- Datenfluss / Persistenz / Stale/Unknown/Error
-- Security / RLS / Ownership
-- Guest/Account
-- Cross-Domain-Verhalten
-- sequential realistische End-to-End-Szenarien
-- Smartphone / Tablet / Laptop / Desktop
-- Unit-/Integration-/Regression-/E2E-Nachweis
-
-Frühere grüne Tests oder frühere Merges geben keinen Bestandsschutz. Evidence-Matrix pro Funktion ist Pflicht.
-
-### Geräteparität
-
-> **Gleiche Reise. Gleiche Wahrheit. Gleiche Nutzerkontrolle. Gleich verständlich auf jedem Gerät.**
-
----
-
-## 9. Nächste verbindliche Reihenfolge
-
-Der nächste neue Entwicklungsblock ist **gestartet**.
-
-1. ✅ Foundation C – Readiness
-2. ✅ Foundation D – Route & Transit
-3. ✅ Foundation E – Traveller Context inkl. Production
-4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. ✅ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation
-6. ✅ Account Platform AP-1 – Squash-Merge nach `main` (`084f7c87`, PR #43)
-6a. ✅ Account Platform AP-2 – Squash-Merge nach `main` (`2827d1cb`, PR #48)
-7. Provider-Readiness-/Adapter-Lücken schließen – **S1 Technical Closure / PASS auf Draft-PR #47; S2-B2 auf Draft-PR #51, Integrations-Head `e2fcffde`, STOPP für Technical-Lead-Re-Review**
-8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
-9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
-10. echte Providerphase
-11. provider-backed End-to-End-/Truth-Audit
-12. finale Startseiten-Positionierung / Kommunikation
-
-### Provider-Regel
-
-Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Adapter-Grenzen professionell fertig sein. Jeder echte Provider braucht separates Kosten-/Vertrags-/Lizenz-/Security-/Privacy-/Secret-/Product-Owner-Gate.
-
----
-
-## 10. Exakter nächster operativer Schritt
-
-Aktiver Branch: `feat/provider-flight-evidence-s2`
-Draft PR: `#51`
-Basis: `origin/main` @ `2827d1cb`
-Integrations-Exact-Head: `e2fcffde`
-Vorheriger Functional Exact Head: `1b06b284`
-Auftrag: `docs/PROVIDER_READINESS_S2_FLUGNACHWEIS_TASK.md`
-B2-Auftrag: `docs/PROVIDER_READINESS_S2_B2_DIRECT_TABLE_TRUST_FIX_TASK.md`
-
-1. S2 hebt die Flug-Kontoübernahme auf dieselbe Trust-Grenze wie Hotels: Browser sendet nur identifiers.
-2. `flugNachweisAusUmgebung()` ist `null`; ohne serverseitigen Suchkontext bleibt die Übernahme fail-closed.
-3. Guest persistiert keine kommerzielle Provider-Flugoption. Guest → Account streicht unbewiesene Flug-Handelsfelder.
-4. S2-B1: `reise_anlegen` verwirft unbewiesene Flug-Handelsfelder. S2-B2: direkte `trip_items`-Writes tun dasselbe für `authenticated`/`anon`.
-5. Development-Migrationen `20260824160000` und `20260824180000` sind angewendet. **Production unverändert.**
-6. PR #51 ist auf `origin/main` @ `2827d1cb` synchronisiert, `MERGEABLE` / `CLEAN`, bleibt Draft.
-7. GitHub Actions `32732334063` und Vercel `4uQEc9GNFnBYqjoxSpSkw7sQ6pow` sind auf `e2fcffde` grün.
-8. **Exakter nächster Schritt:** Unabhängiger Technical-Lead-Re-Review gegen `e2fcffde`. Kein Mark Ready, kein Merge, kein S3, keine Production-Migration.
-
-Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
-
-Leitsatz:
-
-> **Browserdaten dürfen keine kommerzielle Flugwahrheit persistieren. Nachweis oder fail-closed – keine dritte Wahrheit.**
->
-> **Account ist das dauerhafte Zuhause. Der Trip Workspace bleibt die Kommandozentrale einer einzelnen Reise.**
+- Provideraktivierung, Secrets/API-Keys, Verträge und kostenpflichtige Calls sind separate Gates.
+- laufende Infrastruktur-/Providerkosten > USD 100/Monat nur nach PO-Freigabe.
+- Shared Auth/Identity/Sessions/MFA/AAL/RLS/Ownership/Guest→Account/Traveller/Route/Privacy/Billing/Admin-Audit/Provider-Activation seriell unter Technical-Lead-Steuerung.
+- Multi-Citizenship / mehrere Reisedokumente bei relevanten Funktionen berücksichtigen.
+- `unknown` bleibt `unknown`; LLM ist nie Hard-Truth-Quelle für regulatorische, Safety-, Preis-, Verfügbarkeits- oder Providerwahrheit.
+- keine stillen Scope-Erweiterungen.
+
+## 8. Exakter nächster operativer Stand
+
+- #46 wartet nach Ready auf **separate Merge-Entscheidung des Product Owners**.
+- #53 unabhängig reviewen.
+- #54 unabhängig reviewen.
+- #55 unabhängig reviewen.
+- #49 nicht starten, bevor #46 integriert und #49 neu synchronisiert/gegatet ist.
+- nach jedem relevanten Merge oder größeren Statuswechsel PR #52 + zentrale Handoff-/Checkpoint-/Active-Work-Dokumente zeitnah aktualisieren.
+
+Keine Runtime-, Production-, Provider-, Secret- oder Kostenänderung ist durch diesen Handoff autorisiert.
