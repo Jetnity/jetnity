@@ -3704,7 +3704,7 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 - `itineraryAusFlugOption()` schreibt kein `surfaceFromAirportCode` aus Segment-Array-Nachbarschaft.
 - Eine `FlugOption` aus dem Browser bleibt untrusted. Zod prüft Form, nicht belegte Surface-Truth.
 - `provider`, `externalRef` und unbekannte Extra-Felder sind kein Provider-Beweis.
-- Vorhandene explizite Itinerary-Evidence bleibt erhalten und persistiert (ADR-0148/0149).
+- Vorhandene explizite Itinerary-Evidence bleibt in typisierten Objekten lesbar; untrusted Persistenz folgt ADR-0151.
 - Diskontinuierliche Segmente ohne diese Evidence bleiben chronology unknown.
 
 **Kontext:** `docs/PR38_CHATGPT_R15_REVIEW.md` gegen Runtime `771c63a9`; Fixes auf `5cc4488e`. ADR-0148 hatte die Evidence beim Flugübernahmepfad noch aus Airport-Wechsel-Nachbarschaft gesetzt.
