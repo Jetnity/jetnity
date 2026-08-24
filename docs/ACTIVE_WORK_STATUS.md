@@ -1,13 +1,13 @@
 # Jetnity – Active Work Status
 
-Stand: **24. August 2026, ca. 22:10 Europe/Zurich**  
-Status: **Admin C auf `main`; Account #53 ist Ready for Review und wartet auf separates PO-Merge-Gate; Provider #54, Trip #55 und Admin warten**
+Stand: **24. August 2026, ca. 22:20 Europe/Zurich**  
+Status: **Account #53 gemergt; Provider #54 ist nächster aktiver Sync-/Re-Review-Workstream; Trip #55 und Admin warten**
 
 ## Main / Production
 
-- `main`: `78192ab775165d08bb357140c2d04b865b8cc049`
-- letzter Merge: PR #49 – Admin Control Center Slice C
-- Vercel Production: `dpl_EkQorDSGW1JyHa4DYqzZRhngYFFa` = READY auf exakt `78192ab...`
+- `main`: `8326e72f9557a8b9b200e680b0be24aefa0bdfa8`
+- letzter Merge: PR #53 – Account AP-3 / Meine Reisen Lebenszyklus
+- Vercel auf Merge-Commit `8326e72f...`: **success** (`QsCzDYvqigyCV2DaVMStrVvXUmBh`)
 - Supabase Production endet bei `20260824140000`
 - `20260824160000` und `20260824180000` bleiben Development-only
 
@@ -15,7 +15,7 @@ Status: **Admin C auf `main`; Account #53 ist Ready for Review und wartet auf se
 
 - Slice A / PR #44: merged
 - Slice B / PR #46: merged
-- Slice C / PR #49: merged auf `main` `78192ab...`
+- Slice C / PR #49: merged
 - ADR-0162
 - Independent Technical-Lead Review: PASS / Technical Integration Closure
 - Billing-/Refund-P1 bleibt separater Pflichtblock
@@ -25,20 +25,14 @@ Status: **Admin C auf `main`; Account #53 ist Ready for Review und wartet auf se
 
 PR #53 / AP-3 / ADR-0160:
 
-- **Ready for Review**, offen, nicht gemergt, mergeable
-- Product Owner hat Mark Ready ausdrücklich freigegeben; Ready wurde am 24. August 2026 ausgeführt
-- Base und Merge-Base: `main` `78192ab...`
-- Runtime-/Sync-Head: `c5e4a51feff80b94b9bb9b153ee5211d49fa4375`
-- Runtime/AP-3 Independent Re-Review: **PASS**
-- 200er-Truth-Korrektur fail-honest
+- **merged / closed**
+- finaler PR-Head `3222d8bc2624f940f5e904774de62d242fdac5fb`
+- Merge-Commit / aktueller `main`: `8326e72f9557a8b9b200e680b0be24aefa0bdfa8`
+- Exact-Head CI `32770952175`: **SUCCESS**
+- Vercel finaler PR-Head: **success / READY** (`7bh88WLuDRnxQYqHLsbgZFy7Y6wN`)
+- Independent Re-Review: **PASS / Technical Integration Closure**
 - keine AP-4-, Migration-, RLS-, Auth-, Traveller-, Privacy-, Billing- oder Shared-Contract-Erweiterung
-- Docs-Follow-up: doppelte AP-3-Roadmap-Sektion entfernt; #54/#55 und wartender Admin-Workstream wieder vollständig sichtbar; kein direkter TW-1
-- finale Technical-Lead-Klarstellung: Runtime `c5e4a51f` ist nicht docs-only; nur der nachgelagerte Follow-up ist docs-only
-- aktueller PR-Head: `3222d8bc2624f940f5e904774de62d242fdac5fb`
-- GitHub Actions CI `32770952175`: **SUCCESS**
-- Vercel auf exakt `3222d8bc...`: **success / READY** (`7bh88WLuDRnxQYqHLsbgZFy7Y6wN`)
-- **Technical Integration Closure / PASS.**
-- **Nächster Gate: separate ausdrückliche PO-Freigabe für Merge.** Kein Merge vorher. Kein AP-4 vor Integration und neuem kontrollierten Auftrag.
+- **Agent `Account plattform audit vorbereitung` wartet. Kein AP-4 ohne neuen kontrollierten Auftrag.**
 
 ## Provider – Agent `Jetnity provider readiness audit`
 
@@ -46,8 +40,8 @@ PR #54 / S3 / ADR-0161:
 
 - Draft, nicht gemergt
 - S3-Code hielt im Independent Review die Trust-Grenzen; kein zusätzlicher Runtime-/Security-/Truth-Fix gefunden
-- letzter gegateter Stand basierte auf früherem `main` `e3bad749...`
-- **Agent wartet auf Account-#53-Integration.** Danach einmaliger finaler Sync auf den dann aktuellen `main`, Re-Gates und Technical-Lead-Re-Review
+- letzter gegateter Stand basierte auf älterem `main`
+- **Nächster aktiver Schritt:** final auf `main` `8326e72f...` synchronisieren, danach Re-Gates und Technical-Lead-Re-Review
 - keine neue S3-Funktionalität, kein S4
 
 ## Trip Workspace – Agent `Trip workspace audit architecture`
@@ -56,14 +50,13 @@ PR #55:
 
 - Draft / docs-only, nicht gemergt
 - Audit/Zielarchitektur inhaltlich plausibel und scope-treu; kein Runtime-Umbau
-- letzter gegateter Stand basierte auf früherem `main` `e3bad749...`
 - **Agent wartet auf Provider-#54-Integration.** Danach finale docs-only Reconciliation auf den dann aktuellen `main`, Re-Gates und Technical-Lead-Re-Review
 - kein TW-1
 
 ## Kontrollierte Reihenfolge
 
-1. Account #53: Ready ausgeführt → **separates PO-Merge-Gate**
-2. nach Account-Integration: Provider #54 finaler Sync / Re-Review / Integration
+1. **Account #53: integriert / erledigt**
+2. Provider #54: finaler Sync / Re-Gates / Re-Review / danach separate PO-Gates
 3. danach Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration
 4. danach neue kontrollierte Admin-/TW-Aufträge
 
@@ -79,8 +72,8 @@ Kein Ready ohne aktuelle PO-Freigabe. Kein Merge ohne separate aktuelle PO-Freig
 
 ## Exakter nächster Schritt
 
-- `Account plattform audit vorbereitung` / #53: **Ready for Review; wartet ausschließlich auf separate Product-Owner-Merge-Freigabe.**
-- `Jetnity provider readiness audit`: wartet.
+- `Jetnity provider readiness audit` / #54: **jetzt final auf aktuellen `main` synchronisieren, re-gaten und unabhängig re-reviewen.**
+- `Account plattform audit vorbereitung`: wartet; kein AP-4.
 - `Trip workspace audit architecture`: wartet.
 - `Admin platform audit`: wartet.
 - PR #52 und zentrale Kontinuitätsdokumente nach jedem relevanten Statuswechsel aktuell halten.
