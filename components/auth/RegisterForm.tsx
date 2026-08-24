@@ -14,7 +14,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import OauthAnbieter from '@/components/auth/OauthAnbieter';
 import { erlaubtesNaechstesZiel } from '@/lib/auth/naechstes-ziel';
 import type { OauthAnbieter as OauthName, OauthFreigabe } from '@/lib/auth/oauth-anbieter';
-import { REGISTER_NEUTRALE_ANTWORT, registerOeffentlicheFehlercopy } from '@/lib/auth/register-meldung';
+import {
+  REGISTER_ERFOLG_ID,
+  REGISTER_NEUTRALE_ANTWORT,
+  registerSignupOeffentlichAuswerten,
+} from '@/lib/auth/register-meldung';
 import {
   PASSWORT_RICHTLINIE,
   RICHTLINIE_PUNKTE,
@@ -78,10 +82,16 @@ export default function RegisterForm({
   const passwordRef = React.useRef<HTMLInputElement>(null);
   const password2Ref = React.useRef<HTMLInputElement>(null);
   const termsRef = React.useRef<HTMLDivElement>(null);
+  const erfolgRef = React.useRef<HTMLDivElement>(null);
   const [infoMsg, setInfoMsg] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [oauthLoading, setOauthLoading] = React.useState<null | OauthName>(null);
+
+  React.useEffect(() => {
+    if (!success) return
+    feldInSichtNehmen(erfolgRef.current)
+  }, [success])
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,29 +133,28 @@ export default function RegisterForm({
         },
       });
 
-      if (error) {
-        const oeffentlich = registerOeffentlicheFehlercopy(error.message)
-        if (!oeffentlich) {
-          setSuccess(true)
-          setInfoMsg(REGISTER_NEUTRALE_ANTWORT)
-          return
-        }
-        setErrorMsg(mapAuthError(oeffentlich));
-        return;
-      }
-
-      // Falls E-Mail-Verification deaktiviert wäre, gibt es ggf. schon eine Session
-      if (data?.session) {
+      const ergebnis = registerSignupOeffentlichAuswerten({
+        errorMessage: error?.message,
+        sessionVorhanden: Boolean(data?.session),
+      })
+      if (ergebnis.art === 'session') {
         router.replace(nachErfolg);
         return;
       }
+      if (ergebnis.art === 'fehler') {
+        setErrorMsg(mapAuthError(ergebnis.meldung));
+        return;
+      }
 
-      setSuccess(true);
-      setInfoMsg(REGISTER_NEUTRALE_ANTWORT);
-      setName('');
-      setEmail('');
-      setPassword('');
-      setPassword2('');
+      const stand = ergebnis.stand
+      setSuccess(stand.success)
+      setInfoMsg(stand.infoMsg)
+      setErrorMsg(stand.errorMsg)
+      setFeldfehler(stand.feldfehler)
+      setName(stand.name)
+      setEmail(stand.email)
+      setPassword(stand.password)
+      setPassword2(stand.password2)
     } catch (err: any) {
       setErrorMsg(mapAuthError(err?.message));
     } finally {
@@ -200,23 +209,26 @@ export default function RegisterForm({
             <p>{errorMsg ?? 'Bitte prüfe die markierten Angaben.'}</p>
           </div>
         )}
-        {infoMsg && (
+        {success ? (
+          <div
+            id={REGISTER_ERFOLG_ID}
+            ref={erfolgRef}
+            tabIndex={-1}
+            className="flex items-start gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-700"
+            role="status"
+            aria-live="polite"
+          >
+            <CheckCircle2 className="h-4 w-4 mt-0.5" aria-hidden="true" />
+            <p>{REGISTER_NEUTRALE_ANTWORT}</p>
+          </div>
+        ) : infoMsg ? (
           <div
             className="rounded-xl border border-primary/30 bg-primary/10 p-3 text-sm text-primary"
             role="status"
           >
             {infoMsg}
           </div>
-        )}
-        {success && (
-          <div
-            className="flex items-start gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-700"
-            role="status"
-          >
-            <CheckCircle2 className="h-4 w-4 mt-0.5" />
-            <p>{REGISTER_NEUTRALE_ANTWORT}</p>
-          </div>
-        )}
+        ) : null}
 
         {/* Name (optional) */}
         <div className="space-y-2">
