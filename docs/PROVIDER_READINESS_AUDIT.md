@@ -1,8 +1,9 @@
 # Jetnity – Provider-Readiness Audit
 
 Stand: 24. August 2026  
-Status: **AUDIT-PASS / unabhängiger Technical-Lead-Review PASS / planning accepted / keine Implementierungs-, Provider- oder Merge-Freigabe**  
-Branch: `audit/provider-readiness`  
+Status: **AUDIT-PASS; PR #45 von Product Owner auf `main` gemergt (`f92e0c9e`); keine Provider- oder S2-Freigabe**  
+Branch zum Review: `audit/provider-readiness`  
+Merge-Commit: `f92e0c9e2e6ddbe73b1cc2c59d7ba5521a0115c5`  
 Auftrag: `docs/PROVIDER_READINESS_AUDIT_TASK.md`  
 Geprüfter Head: aktueller Branch-Head nach diesem Audit  
 Basis: `origin/main` @ `e4f4cca7` plus Task-Commit `f53bafcf`

@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 vollständig integriert; Account AP-1, Admin Slice A und Provider Ops S1 als parallele Draft-Workstreams aktiv**
+Status: **PR #38, Provider-Readiness-Audit (#45) und Provider Ops S1 (#47) auf `main`; Account AP-1 und Admin Slice A bleiben parallele Draft-Workstreams**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -71,21 +71,20 @@ Danach als eigener Slice: read-only System Health für Vercel, Supabase, GitHub,
 ### Provider Readiness – S1 Shared Operational Contract
 
 Verantwortlicher Cursor-Anzeigename: `Jetnity provider readiness audit`  
-Audit-Referenz: Draft-PR #45 / `audit/provider-readiness` – bleibt Audit-Draft  
-Implementierungsbranch: `feat/provider-ops-s1`  
-Implementierungs-Draft-PR: **#47**  
+Audit-Referenz: PR #45 / `audit/provider-readiness` – **MERGED** (`f92e0c9e`)  
+Implementierung: PR #47 – **MERGED** (`01761eb9`)  
 Auftrag: `docs/PROVIDER_OPS_S1_TASK.md`  
 Status: `docs/PROVIDER_OPS_S1_STATUS.md`
 
-Aktiver Slice:
+Status dieses Slices:
 
-**S1 – gemeinsamer technischer Operationsvertrag.** Technical Closure / PASS auf Exact Head `b74096a9`. Draft-PR #47 wartet auf Product-Owner-Entscheidung.
+**Audit und S1 liegen auf `main`.** Technical Closure für S1 galt für Exact Head `b74096a9`. S2 ist nicht gestartet und braucht einen neuen Auftrag.
 
-Grenze: keine Fachwahrheit, kein `UniversalProvider`, kein `FlugNachweis`, keine persistente Kostenschranke, keine Provideraktivierung, keine Secrets, keine DB-/Production-Migration. S2 nur mit neuem Auftrag.
+Grenze bleibt: keine Provideraktivierung, keine Secrets, keine persistente Kostenschranke, keine DB-/Production-Migration aus diesem Merge.
 
 ## 4. Parallelitätsregel
 
-Account AP-1, Admin Slice A und Provider Ops S1 dürfen parallel arbeiten, dürfen ihre Dateien aber nicht mischen.
+Account AP-1 und Admin Slice A dürfen parallel arbeiten, dürfen ihre Dateien aber nicht mischen. S1 ist auf `main` abgeschlossen. S2 ist kein stiller Folgeschritt.
 
 Seriell/zentral bleiben insbesondere:
 
@@ -118,7 +117,7 @@ Wenn sie gestartet wird:
 
 ## 6. Governance
 
-- PR #43, PR #44, PR #45 und PR #47 bleiben Draft.
+- PR #43 und PR #44 bleiben Draft. PR #45 und PR #47 sind gemergt.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
@@ -128,6 +127,6 @@ Wenn sie gestartet wird:
 
 1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
 2. `Admin platform audit` implementiert ausschließlich Slice A auf PR #44.
-3. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung; kein Mark Ready / kein Merge / kein S2.
+3. Provider-Readiness-Audit (`f92e0c9e`) und S1 (`01761eb9`) liegen auf `main`. Kein S2 ohne neuen ausdrücklichen Auftrag.
 4. ChatGPT/Technical Lead prüft jeden Slice unabhängig.
 5. AP-2, Admin Slice B und Provider S2 brauchen jeweils eine neue ausdrückliche Freigabe.

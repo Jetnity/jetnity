@@ -246,7 +246,7 @@ Zu prüfen/vereinheitlichen:
 
 Keine Verträge, Secrets oder laufenden Providerkosten ohne separate Freigabe.
 
-S1 Shared Operational Contract ist Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`. Es zentralisiert nur technische Hüllen. Audit-PR #45 bleibt Draft. S1 aktiviert keine Provider und schließt nicht `FlugNachweis`, persistente Kostenschranken oder Admin-Health. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
+S1 Shared Operational Contract ist auf `main` gemergt: PR #47 / `01761eb9`. Das Provider-Readiness-Audit ist auf `main` gemergt: PR #45 / `f92e0c9e`. Technical Closure für S1 galt für Exact Head `b74096a9`. Es zentralisiert nur technische Hüllen. S1 aktiviert keine Provider und schließt nicht `FlugNachweis`, persistente Kostenschranken oder Admin-Health. S2 nur mit neuem Auftrag.
 
 ---
 

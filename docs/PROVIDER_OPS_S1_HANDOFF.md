@@ -1,7 +1,7 @@
 # Jetnity – Provider Ops S1 Handoff
 
 Stand: 24. August 2026  
-Status: **S1 TECHNICAL CLOSURE / PASS; Draft-PR #47 wartet auf Product-Owner-Entscheidung**
+Status: **S1 GEMERGT AUF MAIN** – PR #47 / `01761eb9`; S2 nicht gestartet
 
 ## 1. Übernahme
 
@@ -12,17 +12,16 @@ Ein neuer Agent liest zuerst:
 3. diesen Handoff
 4. `docs/ACTIVE_WORK_STATUS.md`
 5. ADR-0154 in `DECISIONS.md`
-6. Audit-Quellen auf `audit/provider-readiness` (PR #45 bleibt Audit-Draft)
+6. Audit-Quellen jetzt auf `main` (PR #45 gemergt als `f92e0c9e`)
 
 Nicht auf `audit/provider-readiness` implementieren. S1 lebt nur auf `feat/provider-ops-s1`. S2 nicht ohne neuen Auftrag starten.
 
 ## 2. Exact Runtime Head
 
-- Branch: `feat/provider-ops-s1`
-- Draft-PR: https://github.com/Jetnity/jetnity/pull/47
-- Base: `main` @ `e4f4cca75e55028fab231c1827abf6236ae30eec`
-- Reviewed Exact Head: `b74096a9cda1382e4974d95f1a40da0b27ba1b2c`
-- Account AP-1 PR #43 und Admin Slice A PR #44 sind parallele Workstreams
+- `main` Merge-Commit: `01761eb9ba80828e87ca2da201901e0e211e1719`
+- PR: https://github.com/Jetnity/jetnity/pull/47 – **MERGED**
+- Reviewed Exact Head vor Merge: `b74096a9cda1382e4974d95f1a40da0b27ba1b2c`
+- Account AP-1 PR #43 und Admin Slice A PR #44 bleiben parallele Workstreams
 
 ## 3. Gate-Ergebnisse auf `b74096a9`
 
@@ -57,7 +56,7 @@ Keine Migration. Kein Service Role in `lib/provider-ops`. Keine Secrets. Keine n
 
 ## 8. Nächster Schritt
 
-1. Product Owner entscheidet über Draft-PR #47.
-2. **Nicht** Mark Ready, **nicht** mergen, **nicht** S2 starten, **nicht** Provider aktivieren.
+1. S1 ist auf `main`. Kein S2 ohne neuen ausdrücklichen Auftrag.
+2. **Nicht** Provider aktivieren, **nicht** Secrets anlegen, **nicht** Production-Migrationen aus S1 ableiten.
 
-PR #45 bleibt Audit-Draft.
+PR #45 ist auf `main` gemergt (`f92e0c9e`). S2 bleibt ein separater Auftrag.

@@ -2,14 +2,15 @@
 
 Stand: 24. August 2026  
 Status: **PASS / Technical Closure für S1**  
-Draft-PR: https://github.com/Jetnity/jetnity/pull/47  
-Reviewed Exact Head: `b74096a9cda1382e4974d95f1a40da0b27ba1b2c`
+PR: https://github.com/Jetnity/jetnity/pull/47 – später **MERGED** durch Product Owner  
+Reviewed Exact Head: `b74096a9cda1382e4974d95f1a40da0b27ba1b2c`  
+Merge-Commit: `01761eb9ba80828e87ca2da201901e0e211e1719`
 
 ## 1. Entscheidung
 
 Unabhängiger Technical-Lead Re-Review: **PASS / Technical Closure**.
 
-Kein Mark Ready. Kein Merge. Kein Start von S2. Keine Provideraktivierung, keine Secrets, keine Kosten, keine DB-/Production-Migration.
+Technical Closure galt vor der Product-Owner-Merge-Freigabe. Der spätere Merge von PR #47 ist eine separate Product-Owner-Handlung und keine Freigabe für S2, Provideraktivierung, Secrets, Kosten oder DB-/Production-Migration.
 
 ## 2. Verifizierte Blocker
 
@@ -29,4 +30,4 @@ S2–S8 und die Audit-P0/P1 aus PR #45 bleiben außerhalb dieses PRs. Mobility-/
 
 ## 5. Nächster Schritt
 
-Product-Owner-Entscheidung zu Draft-PR #47. Technical Closure ersetzt Mark Ready und Merge nicht.
+S1 liegt auf `main` (`01761eb9`). S2 nur mit neuem ausdrücklichen Auftrag.
