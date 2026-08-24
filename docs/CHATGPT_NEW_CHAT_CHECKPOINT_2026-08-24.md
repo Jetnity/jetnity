@@ -1,6 +1,6 @@
 # Jetnity – New Chat Technical Lead Checkpoint
 
-Stand: **24. August 2026, ca. 20:52 Europe/Zurich**  
+Stand: **24. August 2026, ca. 22:00 Europe/Zurich**  
 Status: **aktueller kanonischer Chat-Wechsel-Checkpoint**
 
 Ein neuer Chat übernimmt die Rolle als Hauptentwickler / Technical Lead / Product-, Architecture-, Logic-, Security- und Review-Steuerung.
@@ -26,7 +26,6 @@ Danach GitHub, CI, Vercel und Supabase live verifizieren. Nicht blind auf diesen
 - Vercel Production `dpl_EkQorDSGW1JyHa4DYqzZRhngYFFa`: READY auf exakt `78192ab...`
 - Supabase Production endet bei `20260824140000`
 - S2-Guards `20260824160000` / `20260824180000`: nur Development, nicht Production-approved
-- kein Production-DB-/RLS-/Capability-/Provider-/Secret-/Kosten-/Finance-Live-Delta durch #49
 
 ## Workstreams
 
@@ -34,41 +33,55 @@ Danach GitHub, CI, Vercel und Supabase live verifizieren. Nicht blind auf diesen
 
 - Slice C / PR #49 ist gemergt, ADR-0162
 - Independent Technical-Lead Review: PASS / Technical Integration Closure
-- `Admin platform audit` **wartet jetzt**
+- `Admin platform audit` **wartet**
 - nächster möglicher Admin-Block: Slice D; nur nach neuem kontrollierten Auftrag
-- Admin-Programm läuft danach weiter bis K; kein automatischer Stop bei C
+- Admin-Programm läuft danach weiter bis K
 - Billing-/Refund-P1 bleibt separater Pflichtblock vor Finance-/Payment-Live
 
 ### Account – Agent `Account plattform audit vorbereitung`
 
-PR #53 / AP-3:
+PR #53 / AP-3 / ADR-0160:
 
-- Draft, Head `3863df7c7fbc0853b0e0a3c618096251fa595e2d`, ADR-0160
-- Technical-Lead-Fund zum 200er-Hinweis wurde fail-honest korrigiert
-- vorheriger Sync/Re-Gates auf `e3bad749...` waren grün (`c1ccfb6e...`, CI `32761572610`, Vercel `dpl_ERFzEa9dMQHncNJ9shajiPQrcMzj` READY)
-- wegen Merge #49 ist #53 jetzt erneut hinter/divergiert und aktuell nicht mergeable
-- nächster Schritt: nur auf `78192ab...` synchronisieren, Re-Gates, dann unabhängiger Technical-Lead-Re-Review
-- kein Ready/Merge/AP-4 vorher
+- Draft, offen, nicht gemergt, mergeable
+- Base / Merge-Base: aktueller `main` `78192ab...`
+- Runtime-/Sync-Head: `c5e4a51feff80b94b9bb9b153ee5211d49fa4375`
+- 200er-Truth-Hinweis fail-honest korrigiert
+- Independent Runtime/Re-Review: **PASS**
+- Docs-Follow-up: doppelte AP-3-Roadmap-Sektion entfernt; #54/#55 und wartender Admin-Workstream vollständig erhalten; kein direkter TW-1
+- finale Technical-Lead-Klarstellung: Runtime `c5e4a51f` ist nicht docs-only; nur der nachgelagerte Follow-up ist docs-only
+- aktueller PR-Head: `3222d8bc2624f940f5e904774de62d242fdac5fb`
+- GitHub Actions `32770952175`: **SUCCESS** auf exakt `3222d8bc...`
+- Vercel auf exakt `3222d8bc...`: **success / READY** (`7bh88WLuDRnxQYqHLsbgZFy7Y6wN`)
+- **Technical Integration Closure / PASS erreicht**
+- nächster Gate: ausdrückliche Product-Owner-Freigabe für Mark Ready
+- kein Merge ohne danach separate PO-Freigabe; kein AP-4 vorher
 
 ### Provider – Agent `Jetnity provider readiness audit`
 
-PR #54 / S3:
+PR #54 / S3 / ADR-0161:
 
-- Draft, Head `f6b85570049a20146544e4f85503d6ff2c9703b4`, ADR-0161
+- Draft, nicht gemergt
 - Independent Review: S3-Code hält die Trust-Grenzen; kein zusätzlicher Runtime-/Security-/Truth-Fix im Scope gefunden
-- vorheriger Sync/Re-Gates auf `e3bad749...` waren grün (CI `32762113958`, Vercel `dpl_EreSw6u5vc1GKnojDNGbWnNtvzG5` READY)
-- wegen Merge #49 ist #54 jetzt erneut hinter/divergiert und aktuell nicht mergeable
-- nächster Schritt: nur auf `78192ab...` synchronisieren + Re-Gates; kein S4; danach Technical-Lead-Re-Review
+- **wartet bewusst auf Account-#53-Integration**
+- danach einmaliger finaler Sync auf den dann aktuellen `main`, Re-Gates, Technical-Lead-Re-Review
+- keine neue S3-Funktionalität, kein S4
 
 ### Trip Workspace – Agent `Trip workspace audit architecture`
 
 PR #55:
 
-- Draft/docs-only, Head `76ef850fa43fa9a97bafeb6077940b37eec56d9e`
-- Audit & Zielarchitektur sind inhaltlich plausibel und scope-treu; kein Runtime-Umbau
-- vorherige Reconciliation/Gates auf `e3bad749...` waren grün (CI `32763440821`, Vercel `dpl_2vRPwAD8rktAkTCwirP4Lg5Aw38o` READY)
-- wegen Merge #49 ist #55 jetzt erneut hinter/divergiert und aktuell nicht mergeable
-- nächster Schritt: docs-only auf `78192ab...` reconciliieren + Re-Gates; kein TW-1; danach Technical-Lead-Re-Review
+- Draft / docs-only, nicht gemergt
+- Audit & Zielarchitektur inhaltlich plausibel und scope-treu; kein Runtime-Umbau
+- **wartet bewusst auf Provider-#54-Integration**
+- danach finale docs-only Reconciliation auf den dann aktuellen `main`, Re-Gates, Technical-Lead-Re-Review
+- kein TW-1
+
+## Kontrollierte Integrationsreihenfolge
+
+1. Account #53: PO-Ready-Gate → danach separates PO-Merge-Gate
+2. nach Account-Integration: Provider #54 finaler Sync / Re-Review / Integration
+3. danach Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration
+4. danach neue kontrollierte Admin-/TW-Aufträge
 
 ## Verbindliche ADR-Allokation
 
@@ -82,7 +95,7 @@ Neue ADR-Nummern nur nach Technical-Lead-Reservierung.
 
 ## Verbindliche große Reihenfolge
 
-1. Account + Admin sauber aufbauen; Provider Readiness parallel weiterführen.
+1. Account + Admin sauber aufbauen; Provider Readiness vollständig weiterführen.
 2. Danach Trip Workspace / Reiseübersicht.
 3. Danach Homepage.
 
@@ -106,8 +119,8 @@ Nach jedem relevanten Merge oder größeren Statuswechsel PR #52 sowie `JETNITY_
 
 ## Nächster Arbeitsstand
 
-- `Admin platform audit`: wartet; Slice D nur mit neuem Auftrag.
-- `Account plattform audit vorbereitung` / #53: Current-Main-Sync auf `78192ab...` + Re-Gates, dann Re-Review.
-- `Jetnity provider readiness audit` / #54: Current-Main-Sync auf `78192ab...` + Re-Gates, dann Re-Review.
-- `Trip workspace audit architecture` / #55: docs-only Current-Main-Reconciliation auf `78192ab...` + Re-Gates, dann Re-Review.
+- `Account plattform audit vorbereitung` / #53: **wartet auf ausdrückliche Product-Owner-Entscheidung zu Mark Ready.**
+- `Jetnity provider readiness audit`: wartet.
+- `Trip workspace audit architecture`: wartet.
+- `Admin platform audit`: wartet.
 - PR #52 bleibt Draft; kein Ready/Merge ohne PO-Freigabe.
