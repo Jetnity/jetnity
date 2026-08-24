@@ -220,7 +220,7 @@ Verbindlich:
 
 ## 6a. Account Platform AP-1 – persönliches Zuhause
 
-Status: **in Arbeit auf `feat/account-ap1`, Draft-PR #43; lokal gegated, wartet auf unabhängigen Review**
+Status: **mit `main` `f92e0c9e` synchronisiert auf `feat/account-ap1`, Draft-PR #43; Runtime-Head `19f93969` gegated, wartet auf Integrationsreview**
 
 Ziel: das persönliche Account-Zuhause anlegen, ohne den Trip Workspace zu verdoppeln.
 
@@ -234,7 +234,7 @@ Umgesetzt in AP-1:
 
 Nicht in AP-1: Auth/MFA/AAL, RLS, Traveller-Registry, Privacy/Billing, Guest→Account, Homepage.
 
-Auftrag: `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`. Entscheidung: ADR-0152.
+Auftrag: `docs/ACCOUNT_AP1_MAIN_SYNC_TASK.md`. Entscheidung: ADR-0152, ADR-0153.
 
 ---
 
