@@ -3890,7 +3890,7 @@ Ein späterer vertrauenswürdiger Flugnachweis braucht einen **getrennten SECURI
 
 **Entscheidung:** Siehe `docs/ADR_0158_ADMIN_SLICE_A.md`. Historische Draft-Nummern ADR-0152/0155 für Slice A gelten nicht gegen aktuellen `main`.
 
-Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = ADR-0158, Admin B = ADR-0159, Account AP-3 = ADR-0160, Provider S3 = ADR-0161.
+Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = ADR-0158, Admin B = ADR-0159, Account AP-3 = ADR-0160, Provider S3 = ADR-0161, Admin C = ADR-0162.
 
 ---
 

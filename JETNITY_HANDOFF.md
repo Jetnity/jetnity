@@ -1,11 +1,11 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B auf `main` `e3bad749`; Admin Slice C Technical Closure / PASS, PR #49 Ready for Review, wartet auf separate Merge-Freigabe**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A, Admin Slice B und Admin Slice C auf `main` `78192ab`; Account AP-3 Draft PR #53 nach Sync auf diesen main, STOPP für Technical-Lead-Re-Review**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
-Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Admin Slice C zusätzlich in `docs/ADMIN_PLATFORM_SLICE_C_STATUS.md`. Admin Slice B in `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`. Provider Readiness S2 in `docs/PROVIDER_READINESS_S2_STATUS.md`. Provider Ops S1 in `docs/PROVIDER_OPS_S1_STATUS.md`.
+Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Account AP-3 zusätzlich in `docs/ACCOUNT_AP3_STATUS.md` und `docs/ACCOUNT_AP3_HANDOFF.md`. Admin Slice C zusätzlich in `docs/ADMIN_PLATFORM_SLICE_C_STATUS.md`. Admin Slice B in `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`. Provider Readiness S2 in `docs/PROVIDER_READINESS_S2_STATUS.md`. Provider Ops S1 in `docs/PROVIDER_OPS_S1_STATUS.md`.
 
 > **Kein relevanter Fortschritt darf beim Wechsel von Chat, Agent oder Sitzung verloren gehen. Was für die Fortsetzung wichtig ist, gehört ins Repository.**
 
@@ -301,7 +301,8 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 6a. ✅ Account Platform AP-2 auf `main` (PR #48, `2827d1cb`)
 6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`, ADR-0158)
 6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`, ADR-0159)
-7. **→ Admin Slice C** PR #49 / `feat/admin-provider-cost-board` Technical Closure / PASS, Ready for Review, wartet auf separate Merge-Freigabe. Provider S1/S2 liegen auf `main`.
+6d. ✅ Admin Slice C auf `main` (PR #49, `78192ab`, ADR-0162)
+7. **→ Account AP-3** Draft PR #53 / `feat/account-ap3` nach Sync auf `main` `78192ab`. STOPP für unabhängigen Technical-Lead-Re-Review. Provider S1/S2 liegen auf `main`. Kein AP-4.
 8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 10. echte Providerphase
@@ -316,16 +317,16 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-Admin-Implementierungsbranch Slice C: `feat/admin-provider-cost-board`  
-Draft PR: `#49` (Base: `main`)  
-Agent: `Admin platform audit`  
-Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
+Account-Implementierungsbranch AP-3: `feat/account-ap3`  
+Draft PR: `#53` (Base: `main` `78192ab`)  
+Agent: `Account plattform audit vorbereitung`  
+Auftrag: `docs/ACCOUNT_AP3_TASK.md`
 
-1. Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B sind auf `main` `e3bad749`.
-2. Slice C wird auf diesen `main` synchronisiert. Scope bleibt read-only Provider- und Kostenboard, fail-closed, ADR-0162.
-3. S1-Vertrag wird nur aus `lib/provider-ops` auf `main` gelesen, nicht kopiert oder verändert.
-4. PR #49 ist Ready for Review. Kein Merge ohne separate ausdrückliche aktuelle Product-Owner-Freigabe. Kein Slice D, keine Production-Migration, keine Provider-/Secret-Aktivierung.
-5. **Exakter nächster Schritt:** Separate ausdrückliche aktuelle Product-Owner-Merge-Freigabe für PR #49 abwarten. Nicht mergen ohne diese Freigabe.
+1. Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A, Admin Slice B und Admin Slice C sind auf `main` `78192ab`.
+2. AP-3 ist auf diesen `main` rebased. Runtime-Scope unverändert: ableitende Gruppen, fail-closed 200-Hinweis. Keine neue AP-3-Funktionalität.
+3. Entscheidung bleibt ADR-0160. ADR-0158 bleibt Admin Slice A. ADR-0159 bleibt Admin Slice B. ADR-0162 bleibt Admin Slice C.
+4. PR #53 bleibt Draft. Kein Mark Ready, kein Merge, kein AP-4, keine Production-Migration, keine Provider-/Secret-Aktivierung.
+5. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review von Draft-PR #53 auf dem neuen current-main-integrierten Head. STOPP.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

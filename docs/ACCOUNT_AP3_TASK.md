@@ -2,14 +2,14 @@
 
 Stand: 24. August 2026
 
-Status: **Current-Main-Sync und fail-closed 200-Hinweis auf Exact Head `c1ccfb6e` gegatet; Draft bleibt Draft, wartet auf Technical-Lead-Re-Review**
+Status: **auf `main` `78192ab` synchronisiert; Runtime unverändert; Draft bleibt Draft, wartet auf Exact-Head-Gates und Technical-Lead-Re-Review**
 
 Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`
 
 ## Ausgangslage
 
 - AP-1 und AP-2 liegen auf `main`.
-- Admin Slice A / PR #44 und Admin Slice B / PR #46 liegen auf `main` (`e3bad749`).
+- Admin Slice A / PR #44, Admin Slice B / PR #46 und Admin Slice C / PR #49 liegen auf `main` (`78192ab`).
 - `Meine Reisen` zeigt Kontoreisen bisher als eine flache Kartenliste.
 - Die Account-Übersicht klassifiziert aktiv/kommend bereits date-only gegen den Geräte-Kalendertag (ADR-0153).
 

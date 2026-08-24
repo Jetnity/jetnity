@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety, Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B auf `main` `e3bad749`; Admin Slice C Technical Closure / PASS, PR #49 Ready for Review, wartet auf separate Merge-Freigabe**
+Status: **Foundation C/D/E, Travel Safety, Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A, Admin Slice B und Admin Slice C auf `main` `78192ab`; Account AP-3 Draft PR #53 nach Sync auf diesen main, STOPP für Technical-Lead-Re-Review**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -276,16 +276,28 @@ Status: **auf `main` `e3bad749` (PR #46). Entscheidung: ADR-0159.**
 - read-only System Health ohne Fake-Green
 - Parent App/Deployment = `unknown`; Parent Supabase = `not_configured`
 
-## 6e. In Arbeit – Admin Control Center Slice C
+## 6e. Admin Control Center Slice C
 
-Status: **Technical Closure / PASS, PR #49 Ready for Review, wartet auf separate Merge-Freigabe. Entscheidung: ADR-0162.**
+Status: **auf `main` gemergt (PR #49, `78192ab`). Entscheidung: ADR-0162.**
 
 - read-only Provider- und Kostenboard
 - konsumiert gemergten S1-Vertrag, ohne ihn zu verändern
 - keine Provideraktivierung, keine Secrets, keine Fake-Kosten
-- kein Mark Ready / Merge und kein Slice D ohne ausdrückliche Product-Owner-Freigabe
+- kein Slice D ohne ausdrückliche Product-Owner-Freigabe
 
 Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
+
+---
+
+## 6f. In Arbeit – Account Platform AP-3
+
+Status: **Draft PR #53 auf `feat/account-ap3`, synchronisiert auf `main` `78192ab`. Entscheidung: ADR-0160.**
+
+- Meine Reisen gruppiert ableitend nach Aktiv / Kommend / Vergangen / Ohne Datum
+- 200er-Hinweis fail-closed; Runtime-Scope gegenüber dem letzten AP-3-Stand unverändert
+- kein Archiv-Write, keine Pagination-Architektur, kein AP-4
+
+Auftrag: `docs/ACCOUNT_AP3_TASK.md`. Entscheidung: ADR-0160.
 
 ---
 
@@ -429,7 +441,8 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 6a. ✅ Account Platform AP-2 auf `main` (PR #48)
 6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`)
 6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`)
-7. **→ Admin Slice C** PR #49 Technical Closure / PASS, Ready for Review, wartet auf separate Merge-Freigabe
+6d. ✅ Admin Slice C auf `main` (PR #49, `78192ab`)
+7. **→ Account AP-3** Draft PR #53 nach Sync auf `main` `78192ab`; STOPP für Technical-Lead-Re-Review
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit
 10. echte Providerphase
