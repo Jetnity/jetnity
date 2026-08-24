@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38, Account AP-1 und Account AP-2 liegen auf `main`; Provider Readiness S2-B2 auf Draft-PR #51 ist auf aktuellen `main` synchronisiert, lokal und remote gegatet, und wartet auf Technical-Lead-Re-Review**
+Status: **PR #38, Account AP-1/AP-2, Provider S2 und Admin Slice A auf `main` `1ec93cc9`; Admin Slice B Technical-Lead PASS auf Draft PR #46 / `1715640b`, wartet auf Product-Owner-Entscheidung**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -62,18 +62,27 @@ S2-B1/B2-Migrationen `20260824160000` und `20260824180000` liegen nur auf Supaba
 ### Admin Platform – Slice A
 
 Verantwortlicher Cursor-Anzeigename: `Admin platform audit`  
-Audit-Referenz: Draft-PR #40 / `audit/admin-platform` – **AUDIT-PASS**  
-Implementierungsbranch: `feat/admin-control-center-ia`  
-Implementierungs-Draft-PR: **#44**  
-Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`
+Implementierungs-PR: **#44 – gemergt nach `main` `1ec93cc9`**  
+Entscheidung: ADR-0158
+
+**Slice A ist auf `main`.** Ehrliche Steuerzentralen-IA. System Health war bewusst nicht Teil von Slice A.
+
+### Admin Platform – Slice B
+
+Verantwortlicher Cursor-Anzeigename: `Admin platform audit`  
+Implementierungsbranch: `feat/admin-system-health`  
+Implementierungs-Draft-PR: **#46** (Base: `main`)  
+Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
 
 Aktiver Slice:
 
-**Admin Slice A – ehrliche professionelle Control-Center-IA / bestehende Legacy-Scheinzustände entfernen.**
+**Admin Slice B hat unabhängigen Technical-Lead PASS / Technical Integration Closure.** Read-only System Health ohne Fake-Green. Entscheidung: ADR-0159. Exact Runtime Head `1715640b`. CI `32750112312` SUCCESS. Preview `6HzJRdg4NWnGRQb8jpLC1k2jUHms` READY. Review: `docs/ADMIN_PLATFORM_SLICE_B_TECHNICAL_LEAD_REVIEW.md`.
 
-Grenze: Admin-UI/IA, ehrliche Zustände und vorhandene Security-Gates. Keine neue DB/Migration, keine Capability-/RLS-Neudefinition, kein System Health in diesem Slice, keine Provider-/Secret-/Kosten-Aktivierung.
+Wartet auf ausdrückliche Product-Owner-Entscheidung zu Mark Ready und danach separat zum Merge. Kein Slice C vor Integration von B.
 
-Danach als eigener Slice: read-only System Health für Vercel, Supabase, GitHub, App und später Infomaniak.
+Parent `App / Deployment` bleibt `unknown`. Parent `Supabase` bleibt `not_configured`. Vercel/GitHub/Infomaniak bleiben ohne Management-Quelle `not_configured`. Historischer B1-PASS auf `cc1d06bd` bleibt historische Evidence.
+
+Grenze: vorhandene read-only Evidence, ehrliche `unknown`/`not_configured`-Zustände, bestehende Admin-Gates. Keine neue DB/Migration, keine Capability-/RLS-Neudefinition, keine neuen Secrets/Tokens/Verträge/Kosten, keine Writes.
 
 ### Provider Readiness – S1 Shared Operational Contract
 
@@ -89,19 +98,19 @@ Status: `docs/PROVIDER_OPS_S1_STATUS.md`
 ### Provider Readiness – S2 FlugNachweis
 
 Implementierungsbranch: `feat/provider-flight-evidence-s2`  
-Implementierungs-Draft-PR: **#51**  
+Implementierungs-PR: **#51 – gemergt nach `main` `52e665ac`**  
 Auftrag: `docs/PROVIDER_READINESS_S2_FLUGNACHWEIS_TASK.md`  
 Status: `docs/PROVIDER_READINESS_S2_STATUS.md`
 
 Aktiver Slice:
 
-**S2 – `FlugNachweis` plus S2-B1-RPC- und S2-B2-Tabellengrenze, auf `origin/main` @ `2827d1cb` synchronisiert.** Integrations-Exact-Head `e2fcffde`. Browser sendet nur identifiers. Guest und Guest → Account bleiben fail-closed. `reise_anlegen` und direkte `trip_items`-Writes verwerfen unbewiesene Flug-Handelsfelder. Development-Migrationen `20260824160000` und `20260824180000` sind angewendet. **Production unverändert.** GitHub Actions `32732334063` und Vercel `4uQEc9GNFnBYqjoxSpSkw7sQ6pow` sind auf diesem Head grün. STOPP für Technical-Lead-Re-Review.
+**S2 ist auf `main` (`52e665ac`).** `FlugNachweis` plus S2-B1-RPC- und S2-B2-Tabellengrenze. Development-Migrationen `20260824160000` und `20260824180000` liegen nur auf Development. **Production unverändert.**
 
 Grenze: kein Live-Duffel, keine Provideraktivierung, keine Secrets, keine Production-Migration, kein S3–S6, kein Offer-Booking. `booking_url` bleibt `null`. Route Truth bleibt Foundation D.
 
 ## 4. Parallelitätsregel
 
-Admin Slice A und Provider Ops S1 dürfen parallel zu diesem S2-Branch arbeiten, dürfen ihre Dateien aber nicht mischen.
+Admin Slice B darf parallel zu Provider-Workstreams arbeiten, darf deren Dateien aber nicht mischen. Slice A und Provider S2 auf `main` bleiben erhalten.
 
 Seriell/zentral bleiben insbesondere:
 
@@ -134,8 +143,7 @@ Wenn sie gestartet wird:
 
 ## 6. Governance
 
-- PR #44, PR #45, PR #47 und PR #51 bleiben Draft.
-- PR #43 und PR #48 sind gemergt; das ist keine Freigabe für PR #51, S3 oder Production-Migration.
+- PR #43, PR #44, PR #48 und PR #51 sind gemergt. PR #45, PR #46 und PR #47 bleiben Draft.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
@@ -143,7 +151,7 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-1. S2 auf Draft-PR #51 hat Integrations-Head `e2fcffde`, lokale Gates, GitHub Actions SUCCESS und Vercel READY. STOPP für unabhängigen Technical-Lead-Re-Review. Production unverändert. Kein Mark Ready, kein Merge, kein S3, keine Production-Migration.
-3. `Admin platform audit` arbeitet weiter ausschließlich Slice A auf PR #44.
-4. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung.
-5. AP-3, Admin Slice B und Provider S3 brauchen jeweils eine neue ausdrückliche Freigabe.
+1. Admin Slice B / Draft PR #46 hat Technical-Lead PASS auf Runtime-Head `1715640b`. Nächster Gate: ausdrückliche Product-Owner-Entscheidung zu Mark Ready, danach separate Merge-Freigabe. Kein Slice C vor Integration.
+2. Parallele ADR-Kollision vor späteren Merges: AP-3 / PR #53 darf nicht ADR-0158 behalten; Provider S3 / PR #54 darf nicht ADR-0159 behalten. Allokation: 0158=Slice A, 0159=Slice B, 0160=AP-3, 0161=S3.
+3. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung.
+4. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag (`docs/ADMIN_BILLING_LOCAL_REFUND_INTEGRITY_TASK.md`), nicht Slice B.

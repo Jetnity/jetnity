@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety, Travel Timing & Seasonal, Account AP-1 und Account AP-2 auf `main`; Provider Readiness S2-B2 auf Draft-PR #51 nach `main`-Sync**
+Status: **Foundation C/D/E, Travel Safety, Seasonal, Account AP-1/AP-2, Provider S2 und Admin Slice A auf `main`; Admin Slice B Technical-Lead PASS auf Draft PR #46 / `1715640b`, wartet auf Product-Owner-Entscheidung**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -260,6 +260,29 @@ Auftrag: `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md`.
 
 ---
 
+## 6c. Admin Control Center Slice A
+
+Status: **auf `main` gemergt (PR #44, `1ec93cc9`). Entscheidung: ADR-0158.**
+
+- ehrliche Steuerzentralen-IA auf dem vorhandenen gehärteten Backoffice
+- keine neue Datenwahrheit, keine neue Autorität, keine Migration
+
+---
+
+## 6d. In Arbeit – Admin Control Center Slice B
+
+Status: **Technical-Lead PASS / Technical Integration Closure auf Exact Head `1715640b`. Wartet auf Product-Owner-Entscheidung. Entscheidung: ADR-0159.**
+
+- read-only System Health ohne Fake-Green
+- Parent App/Deployment = `unknown`; Parent Supabase = `not_configured`
+- keine neuen Secrets, Tokens, Verträge oder Kosten
+- keine DB-/RLS-/Capability-Änderung, keine Writes
+- kein Mark Ready / Merge und kein Slice C ohne ausdrückliche Product-Owner-Freigabe
+
+Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
+
+---
+
 ## 7. Provider-Readiness / Adapter-Grenzen
 
 **Echte Provider bleiben bis zur späteren Providerphase deaktiviert.**
@@ -385,9 +408,10 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation
-6. ✅ Account Platform AP-1 – auf `main` (`084f7c87`, PR #43)
-6a. ✅ Account Platform AP-2 – auf `main` (`2827d1cb`, PR #48)
-7. Provider-Readiness-/Adapter-Lücken schließen – S2-B2 auf Draft-PR #51, Integrations-Head `e2fcffde`, STOPP für Technical-Lead-Re-Review
+6. ✅ Account Platform AP-1 auf `main` (PR #43)
+6a. ✅ Account Platform AP-2 auf `main` (PR #48)
+6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`)
+7. **→ Admin Slice B** Draft PR #46 / `1715640b` hat Technical-Lead PASS und wartet auf Product-Owner-Entscheidung
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit
 10. echte Providerphase

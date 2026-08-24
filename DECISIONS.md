@@ -3883,6 +3883,43 @@ Ein späterer vertrauenswürdiger Flugnachweis braucht einen **getrennten SECURI
 
 ---
 
+## ADR-0158 – Admin Slice A bleibt ehrliche Steuerzentralen-IA ohne neue Autorität
+
+**Datum:** 24. August 2026  
+**Status:** auf `main` gemergt (PR #44, `1ec93cc9`). Authoritative Datei: `docs/ADR_0158_ADMIN_SLICE_A.md`.
+
+**Entscheidung:** Siehe `docs/ADR_0158_ADMIN_SLICE_A.md`. Historische Draft-Nummern ADR-0152/0155 für Slice A gelten nicht gegen aktuellen `main`.
+
+---
+
+## ADR-0159 – Admin Slice B bleibt read-only System Health ohne Fake-Green
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #46 / `feat/admin-system-health`; Nummer von ADR-0153 auf ADR-0159 gehoben, weil `main` ADR-0153 an Account AP-1 und ADR-0155–0157 an Provider S2 vergeben hat. Admin Slice A ist ADR-0158.
+
+**Entscheidung:**
+
+- Das Admin Control Center bekommt eine eigene read-only Fläche `/admin/system-health` mit zentralem Health-Modell: `healthy | degraded | unavailable | unknown | not_configured` plus Freshness `fresh | stale | unknown`.
+- Sichtbares Grün gilt nur bei `healthy` **und** `fresh`. Stale, unknown, not_configured und unavailable dürfen nicht grün aussehen.
+- Jede Karte nennt Quelle, Prüfzeit, was die Quelle beweist und was sie nicht beweist.
+- Parent-Status und Sub-Checks bleiben getrennt.
+- Zulässige Live-Evidence in Slice B ohne neues Secret:
+  - **App / Deployment** bleibt `unknown`/non-green. Nur der Sub-Check `App-Prozess` darf bei einer aktuellen Prozessantwort `healthy` sein. `VERCEL_*` sind Metadaten und beweisen keine Deployment-Health.
+  - **Supabase** bleibt `not_configured`/non-green. Ein erfolgreicher Read auf `public.airports` darf nur den Sub-Check `Supabase App-Datenzugriff` auf `healthy` setzen, nicht die Plattform.
+- **Vercel-Plattform, GitHub/CI und Infomaniak** bleiben `not_configured`, solange kein freigegebenes read-only Token existiert. Vorhandene Cloud-Tokens werden im Webpfad nicht benutzt.
+- Der GET-Endpunkt `api/admin/system-health` verlangt `requireAdminApi({ capability: 'betrieb-lesen' })`. `writeActions` bleibt leer. Keine Service-Role, keine Migration, keine Capability-/RLS-Änderung.
+- Server-Cache 30s. Ein manueller Refresh, kein Sekunden-Polling. Ein Teilfehler isoliert die anderen Karten.
+
+**Kontext:** Auftrag `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`. Slice A hat System Health bewusst ausgelassen. Beim Current-Main-Sync nach PR #44 kollidierte die Draft-Nummer ADR-0153 mit Account AP-1.
+
+**Alternativen:** Management-APIs mit vorhandenen Cloud-Tokens heimlich anbinden; ENV-Präsenz als healthy werten; letzten CI-Lauf als aktuelle Plattform-Health zeigen; HTTP-200 einer Jetnity-Seite als Gesamtgrün; Account-/Provider-ADRs auf `main` umnummerieren.
+
+**Begründung:** `unknown` / `not_configured` ist belastbarer als erfundenes Grün. Ein neues Secret, ein Vertrag oder eine Management-Berechtigung braucht ein separates Product-Owner-Gate. Account- und Provider-ADRs auf `main` haben Vorrang vor Draft-Nummern.
+
+**Konsequenzen:** Copilot Pro erklärt Health nicht in diesem Slice. Domain-/Mail-/DNS-Health bleibt später. Account-/Trip-/Traveller-/Route-/Safety-/Seasonal- und Provider-S2-Verträge bleiben unberührt. Draft PR #46 bleibt Draft. Kein Slice C ohne neuen Auftrag.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
