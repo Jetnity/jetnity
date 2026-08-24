@@ -16,7 +16,7 @@ import { routeFingerprintAus } from '@/lib/route/fingerprint'
 import { airportZeitkontakteAusItineraries } from '@/lib/route/kontakte'
 import { laenderrollenAus } from '@/lib/route/laender'
 import { segmenteAusItinerary } from '@/lib/route/itinerary'
-import { flugRouteItineraryLesen } from '@/lib/route/schema'
+import { flugRouteItineraryTrustedLesen } from '@/lib/route/schema'
 import { verbindungenAusLegs } from '@/lib/route/verbindung'
 import type { Trip, TripItem } from '@/types/trips'
 
@@ -26,7 +26,7 @@ function itinerariesAusReise(reise: Pick<Trip, 'days' | 'ohneTag'>): RouteItiner
 
   for (const punkt of punkte) {
     if (punkt.kind !== 'flight') continue
-    const itinerary = flugRouteItineraryLesen(punkt.routeItinerary ?? null)
+    const itinerary = flugRouteItineraryTrustedLesen(punkt.routeItinerary ?? null)
     if (!itinerary) continue
     itineraries.push({
       sourceItemId: punkt.id,
@@ -92,7 +92,7 @@ export function routeFactsAusItinerary(
 
 export function routeFactsFuerPunkt(punkt: TripItem): RouteFacts {
   if (punkt.kind !== 'flight') return leereRouteFacts()
-  const itinerary = flugRouteItineraryLesen(punkt.routeItinerary ?? null)
+  const itinerary = flugRouteItineraryTrustedLesen(punkt.routeItinerary ?? null)
   if (!itinerary) return leereRouteFacts()
   return routeFactsAusItineraries([
     {

@@ -17,6 +17,7 @@ import {
   itineraryHinTransitRueckDirekt,
 } from '@/lib/route/fixtures'
 import { metadataAusItinerary, itineraryAusMetadata } from '@/lib/route/metadata'
+import { flugRouteItineraryLesen } from '@/lib/route/schema'
 import { verbindungNachSegment } from '@/lib/route/verbindung'
 import { routeAenderungZwischen } from '@/lib/route/vergleich'
 import { readinessReisekontext } from '@/lib/readiness/kontext'
@@ -191,12 +192,13 @@ describe('R9 Blocker 16 – Airport-Change- und Segment-Origin', () => {
 
   test('Guest- und Account-Parität plus Eingabereihenfolge', () => {
     const itinerary = itineraryAirportChange()
-    const gast = flug({ routeItinerary: itinerary })
+    const gast = flug({ routeItinerary: flugRouteItineraryLesen(itinerary) })
     const konto = flug({
       id: 'konto-flug',
       routeItinerary: itineraryAusMetadata(metadataAusItinerary(itinerary)) ?? itinerary,
     })
     assert.equal(routeFactsFuerPunkt(gast).fingerprint, routeFactsFuerPunkt(konto).fingerprint)
+    assert.equal(routeFactsFuerPunkt(gast).chronologieBewiesen, false)
     assert.match(routeKompakt(routeFactsFuerPunkt(gast)), /ORY/)
     const basis = twoFlights(
       { id: 'a', itinerary, startsOn: '2026-11-01', startsAt: '07:10' },

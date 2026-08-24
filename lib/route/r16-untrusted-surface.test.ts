@@ -22,7 +22,7 @@ import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
 import { safetyReisekontext } from '@/lib/safety/kontext'
 import { seasonalReisekontext } from '@/lib/seasonal/kontext'
 import type { FlugRouteItinerary } from '@/lib/route/domain'
-import { reiseNutzlastSchema } from '@/lib/trips/schema'
+import { reiseLesen, reiseNutzlastSchema } from '@/lib/trips/schema'
 import type { Trip, TripItem } from '@/types/trips'
 
 function flug(teil: Partial<TripItem> = {}): TripItem {
@@ -208,6 +208,11 @@ describe('R16 Blocker 31 – untrusted routeItinerary adelt keine Surface-Eviden
   })
 
   test('2. Guest→Account adelt dieselbe Clientbehauptung nicht', () => {
+    const gastLaden = reiseLesen(reiseMit(browserUsGapMitSurface() as FlugRouteItinerary))
+    assert.equal(
+      gastLaden?.ohneTag[0]?.routeItinerary?.legs[0]?.segments[1]?.surfaceFromAirportCode,
+      undefined,
+    )
     const nutzlast = gastNutzlast(browserUsGapMitSurface())
     assert.equal(nutzlast.ungeplante[0]?.route_itinerary?.legs[0]?.segments[1]?.surfaceFromAirportCode, undefined)
     const konto = reiseNutzlastRouteKanonisieren(nutzlast, TEST_FLUGHAFEN_REFS).ungeplante[0]?.route_itinerary
