@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
-Stand: **24. August 2026, ca. 22:00 Europe/Zurich**  
-Status: **Admin C auf `main`; Account #53 Technical Closure / PASS und wartet auf PO-Ready-Gate; Provider #54, Trip #55 und Admin warten**
+Stand: **24. August 2026, ca. 22:10 Europe/Zurich**  
+Status: **Admin C auf `main`; Account #53 ist Ready for Review und wartet auf separates PO-Merge-Gate; Provider #54, Trip #55 und Admin warten**
 
 ## Main / Production
 
@@ -25,7 +25,8 @@ Status: **Admin C auf `main`; Account #53 Technical Closure / PASS und wartet au
 
 PR #53 / AP-3 / ADR-0160:
 
-- Draft, offen, nicht gemergt, mergeable
+- **Ready for Review**, offen, nicht gemergt, mergeable
+- Product Owner hat Mark Ready ausdrücklich freigegeben; Ready wurde am 24. August 2026 ausgeführt
 - Base und Merge-Base: `main` `78192ab...`
 - Runtime-/Sync-Head: `c5e4a51feff80b94b9bb9b153ee5211d49fa4375`
 - Runtime/AP-3 Independent Re-Review: **PASS**
@@ -36,8 +37,8 @@ PR #53 / AP-3 / ADR-0160:
 - aktueller PR-Head: `3222d8bc2624f940f5e904774de62d242fdac5fb`
 - GitHub Actions CI `32770952175`: **SUCCESS**
 - Vercel auf exakt `3222d8bc...`: **success / READY** (`7bh88WLuDRnxQYqHLsbgZFy7Y6wN`)
-- **Technical Integration Closure / PASS. Nächster Gate: ausdrückliche PO-Freigabe für Mark Ready.**
-- kein Merge ohne danach separate PO-Freigabe; kein AP-4 vorher
+- **Technical Integration Closure / PASS.**
+- **Nächster Gate: separate ausdrückliche PO-Freigabe für Merge.** Kein Merge vorher. Kein AP-4 vor Integration und neuem kontrollierten Auftrag.
 
 ## Provider – Agent `Jetnity provider readiness audit`
 
@@ -61,7 +62,7 @@ PR #55:
 
 ## Kontrollierte Reihenfolge
 
-1. Account #53: PO-Ready-Gate → danach separates PO-Merge-Gate
+1. Account #53: Ready ausgeführt → **separates PO-Merge-Gate**
 2. nach Account-Integration: Provider #54 finaler Sync / Re-Review / Integration
 3. danach Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration
 4. danach neue kontrollierte Admin-/TW-Aufträge
@@ -78,7 +79,7 @@ Kein Ready ohne aktuelle PO-Freigabe. Kein Merge ohne separate aktuelle PO-Freig
 
 ## Exakter nächster Schritt
 
-- `Account plattform audit vorbereitung` / #53: **wartet auf ausdrückliche Product-Owner-Freigabe für Mark Ready.**
+- `Account plattform audit vorbereitung` / #53: **Ready for Review; wartet ausschließlich auf separate Product-Owner-Merge-Freigabe.**
 - `Jetnity provider readiness audit`: wartet.
 - `Trip workspace audit architecture`: wartet.
 - `Admin platform audit`: wartet.
