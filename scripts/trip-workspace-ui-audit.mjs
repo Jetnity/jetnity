@@ -47,7 +47,13 @@ const TAB_SEQUENZEN = [
   ['Aktivitäten', 'Mobilität', 'Flüge', 'Unterkunft', 'Aktivitäten'],
 ]
 
-const TABWECHSEL_BREITEN = BREITEN.filter((breite) => breite.name === '390' || breite.name === '430')
+const TABWECHSEL_BREITEN = BREITEN.filter(
+  (breite) =>
+    breite.name === '390' ||
+    breite.name === '430' ||
+    breite.name === '768' ||
+    breite.name === '1280',
+)
 
 const JETZT = '2026-08-21T10:00:00.000Z'
 
@@ -1827,7 +1833,7 @@ function layoutPruefen(erwartetBereich) {
   }
 
   const nav = document.querySelector('[aria-label="Reisebereiche"]')
-  if (nav && window.innerWidth < 1024) {
+  if (nav) {
     const tabs = [...nav.querySelectorAll('button')]
     const labels = tabs.map((el) => (el.textContent || '').trim())
     if (labels.includes('Plan')) fehler.push('separater Plan-Tab')
@@ -1901,12 +1907,12 @@ function layoutPruefen(erwartetBereich) {
   }
 
   const planScroller = document.querySelector('[aria-label="Tagesplan"] .overflow-y-auto')
-  if (planScroller && window.innerWidth < 1024) {
-    fehler.push('vertikaler Tageslisten-Scroller auf Mobile')
+  if (planScroller && !planScroller.closest('[hidden]')) {
+    fehler.push('vertikaler Tageslisten-Scroller')
   }
 
   const plan = document.querySelector('[aria-label="Tagesplan"]')
-  if (plan && window.innerWidth < 1024 && !plan.closest('[hidden]')) {
+  if (plan && !plan.closest('[hidden]')) {
     if (plan.getAttribute('data-tagesplan-modul') !== 'ein') {
       fehler.push('Tagesplan ist kein gemeinsames Modul')
     }
@@ -2015,15 +2021,14 @@ async function seiteVorbereiten(page, zustand) {
 
 async function zustandOeffnen(page, zustand, viewport) {
   const defin = ZUSTAENDE[zustand]
-  if (viewport.width < 1024) {
-    await page.getByRole('navigation', { name: 'Reisebereiche' }).waitFor({ timeout: 15000 })
-  } else {
+  await page.getByRole('navigation', { name: 'Reisebereiche' }).waitFor({ timeout: 15000 })
+  if (viewport.width >= 1024) {
     await page.getByRole('heading', { level: 1 }).waitFor({ timeout: 15000 })
   }
-  if (defin.tab && viewport.width < 1024) {
+  if (defin.tab) {
     await page.getByRole('navigation', { name: 'Reisebereiche' }).getByRole('button', { name: defin.tab, exact: true }).click()
   }
-  if (defin.oeffneAenderung && viewport.width < 1024) {
+  if (defin.oeffneAenderung) {
     await page.getByRole('button', { name: 'Reise ändern' }).click()
   }
   if (defin.oeffnePunkt) {
@@ -2085,7 +2090,7 @@ async function zustandPruefen(browser, name, viewport, zustand) {
   }
   const layout = await page.evaluate(
     layoutPruefen,
-    viewport.width < 1024 ? (defin.tab ? TAB_ID[defin.tab] : 'uebersicht') : undefined,
+    defin.tab ? TAB_ID[defin.tab] : defin.nutzlast?.anfangsBereich || 'uebersicht',
   )
   await kontext.close()
   const fehler = [...layout.fehler, ...extra]
