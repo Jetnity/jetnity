@@ -7,9 +7,9 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/44
 
 ## Wo die Arbeit steht
 
-**Technical Integration Closure / PASS auf Exact Runtime Head `ed839d3e`.** Das ist keine Product-Owner-Freigabe für Mark Ready oder Merge.
+**Re-Sync mit `main` `2827d1cb` (Account AP-2).** Product-Owner-Freigabe für Mark Ready/Merge liegt vor. Bisheriger Integration Closure / PASS auf `ed839d3e` gilt nur gegen `084f7c87`.
 
-`origin/main` unverändert `084f7c87`; Branch 0 behind. Runtime-Gate bleibt `ed839d3e`. Docs-only/Re-Verifikation-Head zum Review: `ad74ff51`.
+PR bleibt Draft bis zum neuen Exact-Head-Gate. Danach Branch einfrieren, keine Docs-Commits als Reaktion auf Ready/Draft/Merge-Status. STOPP für kurzen Technical-Lead-Re-Check. Slice B / PR #46 bleibt unangetastet.
 
 Exact Runtime Head: `ed839d3e6ee2605beef65d66fa1555ddabb52138`  
 CI `32723815715` SUCCESS. Vercel Preview READY Inspector `DgCMj6BFKkAZaUBU4HyQb6fZbm4i`.  
@@ -45,4 +45,4 @@ Slice B / System Health / PR #46 bleibt Draft und unangetastet. Admin-Entscheidu
 
 ## Exakter nächster Schritt
 
-Product-Owner-Entscheidung zu Mark Ready / Merge von Draft PR #44. Account AP-1 ist auf `main`. Slice B / PR #46 bleibt unangetastet. Kein Mark Ready, kein Merge, kein Slice B/C ohne separate Freigabe.
+Neuen Exact Runtime Head gegen `main` `2827d1cb` gaten, Branch einfrieren, STOPP für Technical-Lead-Re-Check. Account AP-2 ist auf `main`. Slice B / PR #46 bleibt unangetastet. Kein Slice B/C. Keine Production-Migration.

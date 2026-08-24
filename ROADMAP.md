@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety, Seasonal und Account AP-1 auf `main`; Admin Slice A Integration Closure / PASS auf Draft PR #44; Provider Ops S1 Draft PR #47**
+Status: **Foundation C/D/E, Travel Safety, Seasonal, Account AP-1 und Account AP-2 auf `main`; Admin Slice A Re-Sync auf Draft PR #44 nach `2827d1cb`; Provider Ops S1 Draft PR #47**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -220,7 +220,7 @@ Verbindlich:
 
 ## 6a. Account Platform AP-1 – persönliches Zuhause
 
-Status: **auf `main` gemergt (PR #43, `084f7c87`)**
+Status: **auf `main` – Squash-Merge `084f7c87` (PR #43), 24. August 2026**
 
 Ziel: das persönliche Account-Zuhause anlegen, ohne den Trip Workspace zu verdoppeln.
 
@@ -238,14 +238,36 @@ Auftrag: `docs/ACCOUNT_AP1_MAIN_SYNC_TASK.md`. Entscheidung: ADR-0152, ADR-0153.
 
 ---
 
-## 6b. In Arbeit – Admin Control Center Slice A
+## 6b. Account Platform AP-2 – Auth-UX-Hygiene
 
-Status: **Technical Integration Closure / PASS auf Draft PR #44, Exact Runtime Head `ed839d3e`; wartet auf Product-Owner-Entscheidung. Kein Mark Ready / Merge ohne ausdrückliche Freigabe. Alter Technical Closure gilt nur für `5632a3ca`**
+Status: **auf `main` gemergt (PR #48, `2827d1cb`)**
+
+Ziel: Login, Register, Callback, OAuth-Sichtbarkeit, Gast-/Session-Navigation und MFA-Dialog-Accessibility härten, ohne Auth-/MFA-/AAL-Vertrag oder Provider zu ändern.
+
+Umgesetzt in AP-2:
+
+- OAuth-Schaltflächen nur bei belegtem `config.toml`-Enablement
+- zentrale `next`-Allowlist, fail-closed `/reisen`
+- Login/Register über `getUser()`
+- öffentliche Register-Enumeration inkl. AP2-B1 geschlossen
+- Gast `/reisen`: Fortsetzen nur bei aktivem Entwurf
+- Footer aus `sitzungseintraege()`
+- MFA-Dialog a11y gehärtet
+
+Nicht in AP-2: DB/Migration/RLS, Traveller-Registry, Guest→Account-Vertragsänderung, Provider-Aktivierung, AP-3.
+
+Auftrag: `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md`.
+
+---
+
+## 6c. In Arbeit – Admin Control Center Slice A
+
+Status: **Re-Sync mit `main` `2827d1cb` auf Draft PR #44. Bisheriger Integration Closure / PASS gilt nur gegen `084f7c87` / `ed839d3e`. Product-Owner-Freigabe für Ready/Merge liegt vor; neues Exact-Head-Gate und Technical-Lead-Re-Check stehen aus.**
 
 - ehrliche Steuerzentralen-IA auf dem vorhandenen gehärteten Backoffice
 - keine neue Datenwahrheit, keine neue Autorität, keine Migration
 - kein System Health in diesem Branch
-- kein Mark Ready / Merge ohne ausdrückliche Product-Owner-Freigabe
+- kein Merge vor neuem Exact-Head-Gate und kurzem Technical-Lead-Re-Check
 
 Auftrag: `docs/ADMIN_SLICE_A_MAIN_SYNC_TASK.md`. Entscheidung: ADR-0155.
 
@@ -377,7 +399,8 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation (PR #38 gemergt)
 6. ✅ Account Platform AP-1 auf `main` (PR #43)
-7. **→ Admin Slice A Technical Integration Closure / PASS (Draft PR #44, `ed839d3e`)** – wartet auf Product-Owner-Entscheidung; Provider-Readiness S1 Technical Closure auf Draft PR #47, wartet auf Product-Owner-Entscheidung
+6a. ✅ Account Platform AP-2 auf `main` (PR #48, `2827d1cb`)
+7. **→ Admin Slice A Re-Sync** mit `2827d1cb` (Draft PR #44); Provider-Readiness S1 Technical Closure auf Draft PR #47, wartet auf Product-Owner-Entscheidung
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit
 10. echte Providerphase

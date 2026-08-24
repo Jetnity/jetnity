@@ -8,7 +8,9 @@ Auftrag: `docs/ADMIN_SLICE_A_MAIN_SYNC_TASK.md`
 
 ## Status
 
-**Technical Integration Closure / PASS auf Exact Runtime Head `ed839d3e`.** Draft, nicht gemergt. Das ist keine Product-Owner-Freigabe für Mark Ready oder Merge.
+**Re-Sync mit `main` `2827d1cb` (Account AP-2).** Product-Owner-Freigabe für Mark Ready/Merge liegt vor. Der bisherige Integration Closure / PASS auf `ed839d3e` gilt nur gegen `084f7c87` und ist nicht mehr das letzte Integrationsgate.
+
+Draft, nicht gemergt, bis der neue Exact Runtime Head lokal und remote gegatet ist. Danach Branch einfrieren und STOPP für kurzen Technical-Lead-Re-Check.
 
 `origin/main` wurde erneut geholt und ist unverändert `084f7c87`. Branch ist 0 behind; kein neuer Merge.
 

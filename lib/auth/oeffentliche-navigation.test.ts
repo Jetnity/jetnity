@@ -3,8 +3,11 @@
 // Die Leiste soll über die Sitzung nur sagen, was stimmt – und einen Ausweg
 // anbieten, der nicht versehentlich benutzt wird.
 
+import { readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
+import { fileURLToPath } from 'node:url'
 
 import {
   HAUPTNAVIGATION,
@@ -12,6 +15,8 @@ import {
   standAusSitzung,
   type Navigationseintrag,
 } from '@/lib/auth/oeffentliche-navigation'
+
+const hier = dirname(fileURLToPath(import.meta.url))
 
 const beschriftungen = (eintraege: Navigationseintrag[]) => eintraege.map((e) => e.label)
 
@@ -85,6 +90,17 @@ describe('Nach einem Abmelden', () => {
     const stand = standAusSitzung(true)
     assert.equal(stand, 'konto')
     assert.deepEqual(beschriftungen(sitzungseintraege(stand)), ['Konto', 'Abmelden'])
+  })
+})
+
+describe('Der Footer', () => {
+  test('verwendet dieselbe Session-Navigation wie die Leiste', () => {
+    const footer = readFileSync(join(hier, '../../components/layout/Footer.tsx'), 'utf8')
+    const sitzung = readFileSync(join(hier, '../../components/layout/FooterSitzung.tsx'), 'utf8')
+    assert.equal(footer.includes('FooterSitzung'), true)
+    assert.equal(sitzung.includes('sitzungseintraege'), true)
+    assert.equal(/href=["']\/login["']/.test(footer), false)
+    assert.equal(/href=["']\/register["']/.test(footer), false)
   })
 })
 

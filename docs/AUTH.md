@@ -279,14 +279,14 @@ Seit Phase 1.5 hat eine Anmeldung eine Folge, die über die Sitzung hinausgeht: 
 
 **Ein Gast hat keine serverseitige Identität.** Kein Gastkonto, kein anonymer Login (`enable_anonymous_sign_ins` bleibt aus, Abschnitt 3), keine Zeile in `trips`. Sein Entwurf liegt im `localStorage`. Die Entscheidung ist ausdrücklich ([DECISIONS.md](../DECISIONS.md) ADR-0042): Eine serverseitige Gastidentität wäre ein Schreibweg ohne Konto, und zusammenführen müsste man ihn beim Login trotzdem.
 
-**Jeder Weg in eine angemeldete Sitzung endet auf `/reisen`**, und dort steht die Übernahme – einmal, nicht fünfmal:
+**Ohne erlaubtes `next` endet jeder Weg in eine angemeldete Sitzung auf `/reisen`**, und dort steht die Übernahme – einmal, nicht fünfmal. Ein `next` darf nur relative Pfade unter `/account*` oder `/reisen*` setzen; alles andere fällt auf `/reisen`.
 
 | Weg | Ziel |
 | --- | --- |
-| Anmeldung mit Passwort | `/reisen` (`AFTER_LOGIN_ROUTE`) |
-| Anmeldung mit zweitem Faktor | `/reisen`, nach dem TOTP-Dialog |
-| Registrierung mit E-Mail-Bestätigung | Bestätigungslink → `/auth/callback` → `/reisen` |
-| OAuth (vorbereitet, Anbieter aus) | `/auth/callback` → `/reisen` |
+| Anmeldung mit Passwort | erlaubtes `next`, sonst `/reisen` |
+| Anmeldung mit zweitem Faktor | erlaubtes `next` nach dem TOTP-Dialog, sonst `/reisen` |
+| Registrierung mit E-Mail-Bestätigung | Bestätigungslink → `/auth/callback` → erlaubtes `next`, sonst `/reisen` |
+| OAuth (Schaltfläche nur bei `auth.external.*.enabled = true`) | `/auth/callback` → erlaubtes `next`, sonst `/reisen` |
 | Rücksetzung des Passworts | `/auth/callback` → `/auth/update-password` → `/reisen` |
 
 Die Übernahme in jedes Formular zu bauen wären fünf Stellen, an denen sie fehlen kann. Auf `/reisen` greift sie zusätzlich in Fällen, in denen keiner dieser Wege beteiligt war: bei einer Sitzung, die in einem anderen Tab entstanden ist, und nach einem Versuch, der beim letzten Mal an der Datenbank gescheitert ist.

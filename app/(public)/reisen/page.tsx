@@ -52,13 +52,15 @@ export default async function ReisenSeite() {
                 : 'Ohne Konto bleibt ein Reiseentwurf privat in diesem Browser. Mit einem Konto werden deine Reisen dauerhaft gespeichert.'}
             </p>
           </div>
-          <Link
-            href="/planen"
-            className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900"
-          >
-            <Plus className="h-4 w-4" />
-            Neue Reise
-          </Link>
+          {angemeldet ? (
+            <Link
+              href="/planen"
+              className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900"
+            >
+              <Plus className="h-4 w-4" />
+              Neue Reise
+            </Link>
+          ) : null}
         </div>
 
         {angemeldet ? <KontoReisen /> : <GastReisen />}
