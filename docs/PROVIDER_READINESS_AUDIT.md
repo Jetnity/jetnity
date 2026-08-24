@@ -1,7 +1,7 @@
 # Jetnity – Provider-Readiness Audit
 
 Stand: 24. August 2026  
-Status: **AUDIT-PASS / keine Implementierungs-, Provider- oder Merge-Freigabe**  
+Status: **AUDIT-PASS / unabhängiger Technical-Lead-Review PASS / planning accepted / keine Implementierungs-, Provider- oder Merge-Freigabe**  
 Branch: `audit/provider-readiness`  
 Auftrag: `docs/PROVIDER_READINESS_AUDIT_TASK.md`  
 Geprüfter Head: aktueller Branch-Head nach diesem Audit  
@@ -387,4 +387,6 @@ Diese zusätzlichen Ports sind **kein** aktueller Aktivierungsblocker. Sie dürf
 | `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` | priorisierte, konfliktarme Slices |
 | `docs/ACTIVE_WORK_STATUS.md` | Live-Handoff dieses Blocks |
 
-**Nächster Schritt:** Unabhängiger ChatGPT-/Technical-Lead-Review dieses Audits. Keine Runtime-Implementierung ohne neuen, versionierten Auftrag. PR #45 bleibt Draft.
+Unabhängiger Review: `docs/PR45_TECHNICAL_LEAD_REVIEW.md`. Bevorzugter nächster Block nach eigenem Auftrag: PR-S1, dann `FlugNachweis`.
+
+**Nächster Schritt:** Product Owner entscheidet über einen neuen Implementierungsauftrag. Keine Runtime-Implementierung in PR #45. PR bleibt Draft.

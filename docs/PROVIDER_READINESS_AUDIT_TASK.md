@@ -1,7 +1,7 @@
 # Jetnity – Provider-Readiness Audit Auftrag
 
 Stand: 24. August 2026
-Status: **Audit ausgeführt / AUDIT-PASS dokumentiert / keine Implementierungsfreigabe**
+Status: **Audit ausgeführt / unabhängiger Technical-Lead-Review PASS / planning accepted / keine Implementierungsfreigabe**
 Branch: `audit/provider-readiness`
 Draft-PR: `#45`
 Verantwortlicher Cursor-Anzeigename: `Jetnity provider readiness audit`

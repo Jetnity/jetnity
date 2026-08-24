@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D/E, Safety und Seasonal abgeschlossen; parallele aktive Blöcke: Account AP-1 (PR #43), Admin Slice A (PR #44), Provider-Readiness Audit (Draft PR #45, AUDIT-PASS)**
+Status: **verbindlicher operativer Übergabepunkt – Foundation D/E, Safety und Seasonal abgeschlossen; Provider-Readiness Audit Draft-PR #45 Technical-Lead PASS / planning accepted; Account AP-1 (PR #43) und Admin Slice A (PR #44) eigene Workstreams**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -295,8 +295,8 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (PR #38 gemergt)
-6. **→ Provider-Readiness Audit (Draft PR #45, AUDIT-PASS) parallel zu Account AP-1 und Admin Slice A**
-7. Jetnity-seitige Provider-Readiness-Slices (PR-S1 ff., erst nach Review/Auftrag)
+6. **→ Provider-Readiness Audit (Draft PR #45, unabhängiger Technical-Lead-Review PASS / planning accepted; keine Implementierungsfreigabe)**
+7. Jetnity-seitige Provider-Readiness-Slices (bevorzugt PR-S1, dann `FlugNachweis`) erst nach eigenem Auftrag
 8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 10. echte Providerphase
@@ -323,11 +323,11 @@ Pflichtlektüre für diesen Block:
 - `docs/PROVIDER_READINESS_SHARED_CONTRACT_PROPOSAL.md`
 - `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md`
 
-1. Der Audit ist gegen den tatsächlichen Code verifiziert. Keine Runtime-Änderung.
-2. Höchste belegte Jetnity-seitige Lücken: fehlender `FlugNachweis` (P0) und fehlender globaler Cost Guard (P0 vor bezahlter Production-Aktivierung).
-3. Ein minimaler Shared Operationsvertrag ist vorgeschlagen; keine Provider-Plattform.
-4. PR #45 bleibt Draft. Kein Mark Ready, kein Merge, kein echter Provider, keine Secrets, keine Kosten, keine Migration.
-5. **Exakter nächster Schritt:** unabhängiger ChatGPT-/Technical-Lead-Review von PR #45. Account AP-1 und Admin Slice A laufen parallel weiter.
+1. Der Audit ist gegen den tatsächlichen Code verifiziert. Unabhängiger Technical-Lead-Review: **PASS / planning accepted** (`docs/PR45_TECHNICAL_LEAD_REVIEW.md`).
+2. Höchste belegte Jetnity-seitige Lücken bleiben: fehlender `FlugNachweis` (P0) und fehlender globaler Cost Guard (P0 vor bezahlter Production-Aktivierung).
+3. Ein minimaler Shared Operationsvertrag ist angenommen; keine Provider-Plattform.
+4. PR #45 bleibt Draft. Review ist keine Implementierungs-, Mark-Ready-, Merge- oder Providerfreigabe.
+5. **Exakter nächster Schritt:** Product Owner entscheidet, ob ein neuer versionierter Auftrag für PR-S1 erteilt wird. Dieser Branch implementiert nichts.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

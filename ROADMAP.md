@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Safety und Seasonal abgeschlossen; aktive parallele Blöcke: Account AP-1, Admin Slice A, Provider-Readiness Audit (Draft PR #45)**
+Status: **Foundation C/D/E, Safety und Seasonal abgeschlossen; Provider-Readiness Audit Draft-PR #45 Technical-Lead PASS / planning accepted; Account AP-1 und Admin Slice A eigene Draft-PRs**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -220,7 +220,7 @@ Verbindlich:
 
 ## 7. IN ARBEIT – Provider-Readiness / Adapter-Grenzen
 
-Status: **Draft PR #45 / AUDIT-PASS / wartet auf unabhängigen Review; keine Implementierungsfreigabe**
+Status: **Draft PR #45 / unabhängiger Technical-Lead-Review PASS / planning accepted; keine Implementierungsfreigabe**
 
 Audit-Artefakte:
 
@@ -233,7 +233,7 @@ Audit-Artefakte:
 
 Der Audit vom 24.08.2026 hat die acht Kernbereiche und zusätzliche Abhängigkeiten (Routing/POI/Live-Status/Monitoring, Airport-/Places-Dumps) inventarisiert.
 
-Nächster Implementierungsblock nach Review: Jetnity-seitige Slices PR-S1 bis PR-S7 in `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md`. Höchste P0: `FlugNachweis` und persistenter Cost Guard. Konkrete Adapter bleiben in der späteren Providerphase.
+Unabhängiger Review: `docs/PR45_TECHNICAL_LEAD_REVIEW.md`. Bevorzugter nächster Implementierungsblock **nach eigenem Auftrag**: PR-S1 Shared Operational Contract, danach `FlugNachweis`. Höchste P0: `FlugNachweis` und persistenter Cost Guard. Konkrete Adapter bleiben in der späteren Providerphase.
 
 Keine Verträge, Secrets oder laufenden Providerkosten ohne separate Freigabe.
 
@@ -332,8 +332,8 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation
-6. **→ Provider-Readiness Audit (Draft PR #45) + parallele Account AP-1 / Admin Slice A**
-7. Jetnity-seitige Provider-Readiness-Slices nach Review
+6. **→ Provider-Readiness Audit (Draft PR #45, Technical-Lead PASS / planning accepted)**
+7. Jetnity-seitige Provider-Readiness-Slices nach eigenem Auftrag (bevorzugt PR-S1, dann `FlugNachweis`)
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit
 10. echte Providerphase

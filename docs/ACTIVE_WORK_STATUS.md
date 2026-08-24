@@ -1,118 +1,93 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 integriert; Account AP-1 und Admin Slice A parallel aktiv; Provider-Readiness Audit auf Draft-PR #45 – AUDIT-PASS, wartet auf unabhängigen Review**
+Status: **Provider-Readiness Audit Draft-PR #45 – unabhängiger Technical-Lead-Review PASS / planning accepted; keine Implementierungsfreigabe**
 
-## 1. Zuletzt vollständig abgeschlossener Block
+## 1. Arbeitsblock / Ziel
 
-**Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
+Provider-Readiness Audit: Jetnity-seitige Ports, Evidence, Failure, Cost Guard, Cache/Lizenz, Security und Observability prüfen – ohne echte Provider, Secrets, Kosten oder Runtime-Fixes.
 
-- PR #38: **gemergt und geschlossen**
-- unabhängiger ChatGPT-Review R17: **PASS / Technical Closure**
-- Squash-Merge auf `main`: `ee988bbe46a8dd63d4001c42825fc0159453f811`
-- Production-Integration: `docs/PR38_PRODUCTION_INTEGRATION.md`
+## 2. Branch / PR / Head
 
-Safety und Seasonal nicht erneut als Foundation bauen.
+- Branch: `audit/provider-readiness`
+- Draft-PR: **#45**
+- Review-Head: `172ff5ebec5969c56217f3d900708ff46970cb36`
+- Review: `docs/PR45_TECHNICAL_LEAD_REVIEW.md`
+- Basis `origin/main`: `e4f4cca7` (PR #38 integriert; Account/Admin-Implementierung nicht auf `main`)
 
-## 2. Aktive Workstreams
+## 3. Status
 
-### Provider-Readiness Audit
+**technisch review-akzeptiert (Audit/Planung) / wartet auf Product Owner für den nächsten Implementierungsauftrag**
 
-Verantwortlicher Cursor-Anzeigename: `Jetnity provider readiness audit`  
-Branch: `audit/provider-readiness`  
-Draft-PR: **#45**  
-Auftrag: `docs/PROVIDER_READINESS_AUDIT_TASK.md`  
-Status: **AUDIT-PASS / dokumentiert / keine Implementierungsfreigabe**
+Kein Mark Ready. Kein Merge. Keine Runtime-Implementierung in diesem PR.
 
-Deliverables auf diesem Branch:
+## 4. Bereits umgesetzt
 
-- `docs/PROVIDER_READINESS_AUDIT.md`
-- `docs/PROVIDER_READINESS_MATRIX.md`
-- `docs/PROVIDER_READINESS_SHARED_CONTRACT_PROPOSAL.md`
-- `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md`
+- Audit-Deliverables: `docs/PROVIDER_READINESS_AUDIT.md`, Matrix, Shared-Contract-Vorschlag, Implementation Slices
+- Unabhängiger Technical-Lead-Review: **AUDIT-PASS / planning accepted**
+- Review bestätigt die zentralen Code-Funde (FlugNachweis-Lücke, prozesslokale Rate-Limits, Readiness-Timeout, Safety `party: []`, Mobility Auto-Search, Duffel-Currency)
+- Richtung angenommen: minimaler Operationsvertrag, keine Provider-Plattform
 
-Harte Grenze: keine Runtime-Implementierung, keine echten Provider, keine Secrets, keine kostenpflichtigen Calls, keine Verträge, keine Production-Migration, kein Mark Ready, kein Merge.
+## 5. Gerade offen / noch nicht umgesetzt
 
-### Account Platform – AP-1
+- PR-S1 Shared Operational Contract: **nicht autorisiert**
+- PR-S2 `FlugNachweis` und weitere Slices: nicht gestartet
+- keine Adapter, Secrets, Verträge, Kosten, Migrationen
 
-Implementierungs-Draft-PR: **#43**  
-Auftrag: `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`  
-Grenze: UI/IA und bestehende `reisenLaden()`-Truth.
+## 6. Letzte relevanten Änderungen
 
-### Admin Platform – Slice A
+- Review persistiert
+- Operativer Parallelstand aufgefrischt, damit dieser Docs-PR spätere Account-/Admin-Closures nicht zurückschreibt
 
-Implementierungs-Draft-PR: **#44**  
-Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`  
-Grenze: Admin-UI/IA. Kein System Health in Slice A. Keine Provider-/Secret-/Kosten-Aktivierung.
+## 7. Tests / CI / Preview
 
-## 3. Parallelitätsregel
+- Lokale Contract-Tests zur Audit-Verifikation: **86/86 pass**
+- Review-Exact-Head `172ff5eb`: GitHub Actions SUCCESS (`32684851005`); Vercel Preview READY (`dpl_DvRWt9Pub3KuMAa5VUBsMsNnZKrN`)
+- Docs-only gegenüber `main`
+- Grüne CI ersetzt weder Implementierungsauftrag noch Mark Ready noch Merge
 
-Account AP-1, Admin Slice A und dieser **dokumentierende** Audit dürfen parallel laufen.
-
-Seriell/zentral bleiben:
-
-- Shared Provider-Ops-Contract (PR-S1), sobald implementiert
-- Auth / RLS / Capabilities
-- Traveller / Route / Safety / Seasonal Truth
-- Billing
-- Provider Activation / Secrets / Kosten
-- persistenter Cost Guard (PR-S6, DB-Gate)
-
-## 4. Tests / CI / Preview
-
-- Dieser Block ändert nur Dokumentation. Keine Runtime-Änderung, daher kein neuer Product-Build als Abschlussbehauptung.
-- Bestehende Provider-Contract-Tests zur Verifikation der Audit-Befunde, unverändert: **86/86 pass** (`lib/flights/zustand.test.ts`, `lib/flights/duffel/adapter.test.ts`, `lib/hotels/nachweis.test.ts`, `lib/hotels/zustand.test.ts`, `lib/activities/nachweis.test.ts`, `lib/readiness/engine.test.ts`, `lib/safety/anfrage.test.ts`, `lib/seasonal/provider-anfrage.test.ts`, `lib/mobility/suche.test.ts`, `lib/rental-cars/zustand.test.ts`).
-- CI von PR #45 vor den Audit-Docs: Typecheck/Lint/Build SUCCESS, Auth-Check SUCCESS, Vercel SUCCESS (Task-Commit `f53bafcf`).
-- Vercel Preview für den Audit-Docs-Stand `87dc3b73`: **Ready** (`79fydgbf6gbB2AGFYsbxEegHtvrd`).
-- CI für Head `8ade16bb`: **SUCCESS**, 4/4 Checks (Typecheck/Lint/Build, Auth-Check, Vercel, Vercel Preview Comments). Vercel Deployment `BygqXADCcyBUj8UVKKS9rfw96ih4`.
-- Rebase-Konfliktmarken in `docs/PROVIDER_READINESS_AUDIT_TASK.md` waren irrtümlich im Audit-Commit und sind in `b1c874b2` entfernt.
-- Grüne CI ersetzt weder Review noch Mark Ready noch Merge.
-
-## 5. DB / RLS / Production-Grenze
+## 8. DB / RLS / Production-Grenze
 
 Keine Migration, keine RLS-Änderung, keine Production-Änderung durch diesen Audit.
 
-Production-Flight-Kill-Switch und alle `*ProviderAus() === null` bleiben unverändert.
-
-## 6. Kosten / Provider / Secrets
+## 9. Kosten / Provider / Secrets
 
 Keine neuen laufenden Kosten. Keine Secrets. Keine Provideraktivierung.
 
-Belegte Aktivierungsblocker, falls jemand trotzdem einschalten würde:
+P0 bleiben Aktivierungsblocker: fehlender `FlugNachweis`; In-Memory-Rate-Limits sind kein globaler Production-Cost-Guard.
 
-- P0: Flugübernahme ohne `FlugNachweis`
-- P0: In-Memory-Rate-Limits sind kein globaler Production-Cost-Guard
+## 10. Bekannte Risiken / Review-Funde
 
-## 7. Bekannte Risiken / Review-Funde
+Siehe `docs/PR45_TECHNICAL_LEAD_REVIEW.md` und Audit-Katalog PR-P0-01 bis PR-P1-09.
 
-Siehe Audit-Katalog PR-P0-01 bis PR-P1-09. Wichtigste proaktive Punkte:
+Non-blocking Review-Note: Statusformulierungen müssen bei späterer Sync/Merge mit den parallelen Account-/Admin-Ständen aktuell bleiben.
 
-- Flights ist der einzige Pfad, der Browser-Preise persistieren kann.
-- Mobility Auto-Search wäre mit Live-Adapter ein Kostenleck.
-- Safety-API setzt `party: []`.
-- Handoff/Roadmap hingen vor diesem Update noch an PR #38.
+## 11. Offene Nutzerentscheidungen / Freigaben
 
-## 8. Offene Nutzerentscheidungen / Freigaben
-
-- Unabhängiger Review von PR #45
-- Ob PR-S1 als nächster Provider-Readiness-Implementierungsblock beauftragt wird
-- Keine Merge-Freigabe erteilt
+- Ob und wann PR-S1 als eigener Implementierungsblock beauftragt wird
+- Keine Merge-Freigabe für PR #45
 - Provider/Secrets/Verträge/Kosten bleiben eigene Gates
 
-## 9. Exakter nächster Schritt
+## 12. Exakter nächster Schritt
 
-1. ChatGPT/Technical Lead reviewed PR #45 nach `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md`.
-2. Account AP-1 und Admin Slice A laufen ungestört weiter.
-3. Kein Mark Ready und kein Merge von #45 ohne ausdrückliche aktuelle Product-Owner-Freigabe.
-4. Keine Runtime-Slices aus diesem Audit starten, bevor ein neuer versionierter Auftrag existiert.
+1. Product Owner / Technical Lead entscheidet, ob ein **neuer** versionierter Auftrag für PR-S1 erteilt wird.
+2. Dieser Audit-PR bleibt Draft und implementiert nichts.
+3. Account AP-1 (Draft PR #43) und Admin Slice A (Draft PR #44, Technical Closure auf jenem Branch) bleiben eigene Workstreams.
+4. Kein Mark Ready und kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 
-## 10. Welche Dateien zuerst gelesen werden müssen
+## 13. Welche Dateien zuerst gelesen werden müssen
 
-1. `docs/PROVIDER_READINESS_AUDIT_TASK.md`
+1. `docs/PR45_TECHNICAL_LEAD_REVIEW.md`
 2. `docs/PROVIDER_READINESS_AUDIT.md`
-3. `docs/PROVIDER_READINESS_MATRIX.md`
+3. `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md`
 4. `docs/PROVIDER_READINESS_SHARED_CONTRACT_PROPOSAL.md`
-5. `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md`
-6. `docs/PROVIDER_INTEGRATION_READINESS_POLICY.md`
+5. `docs/PROVIDER_READINESS_MATRIX.md`
+6. `docs/PROVIDER_READINESS_AUDIT_TASK.md`
 7. `docs/ACTIVE_WORK_STATUS.md`
-8. aktueller PR #45 / Branch-Head
+
+## 14. Verifizierter Parallelstand anderer Workstreams
+
+Nicht auf `main`, nicht durch diesen PR gemergt, nur damit der Status nicht zurückschreibt:
+
+- **Admin Slice A** / Draft PR #44: Technical-Lead Final Recheck **PASS / TECHNICAL CLOSURE** auf `5632a3cac1301d2d649fcb1d2b9552d3763c8b9f`. Nachweis auf jenem Branch: `docs/ADMIN_PLATFORM_SLICE_A_TECHNICAL_CLOSURE.md`. Keine Mark-Ready-/Merge-Freigabe. Slice B / System Health ist ein separater Block.
+- **Account AP-1** / Draft PR #43: Implementierung aktiv. REQUEST CHANGES zu Geräte-Kalendertag und evidentem 503-Text laut jenem Branch umgesetzt (ADR-0153). Noch kein AP-2.

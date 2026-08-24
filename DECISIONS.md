@@ -3745,7 +3745,7 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 ## ADR-0152 – Provider-Readiness: minimaler Operationsvertrag, getrennte Fachports
 
 **Datum:** 24. August 2026  
-**Status:** Audit-Entscheidung auf Draft-PR #45 / nicht implementiert
+**Status:** Audit-Entscheidung auf Draft-PR #45; unabhängiger Technical-Lead-Review PASS / planning accepted; nicht implementiert
 
 **Entscheidung:**
 
