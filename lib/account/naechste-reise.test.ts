@@ -1,7 +1,11 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { heutigesDatum, naechsteReiseAus } from '@/lib/account/naechste-reise'
+import { readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+import { heutigesDatum, kalendertagAusInstant, naechsteReiseAus } from '@/lib/account/naechste-reise'
 import type { TripSummary } from '@/types/trips'
 
 function reise(teil: Partial<TripSummary> & Pick<TripSummary, 'id' | 'title'>): TripSummary {
@@ -22,10 +26,27 @@ function reise(teil: Partial<TripSummary> & Pick<TripSummary, 'id' | 'title'>): 
 }
 
 const HEUTE = '2026-08-24'
+const NACH_UTC_MITTERNACHT = new Date('2026-08-24T00:30:00.000Z')
+const VOR_UTC_MITTERNACHT = new Date('2026-08-23T23:30:00.000Z')
+
+describe('kalendertagAusInstant', () => {
+  test('nimmt nicht still den UTC-Kalendertag', () => {
+    assert.equal(kalendertagAusInstant(NACH_UTC_MITTERNACHT, 0), '2026-08-24')
+    assert.equal(kalendertagAusInstant(NACH_UTC_MITTERNACHT, 120), '2026-08-23')
+  })
+
+  test('dreht vor UTC-Mitternacht in östlicher Lage auf den nächsten Kalendertag', () => {
+    assert.equal(kalendertagAusInstant(VOR_UTC_MITTERNACHT, 0), '2026-08-23')
+    assert.equal(kalendertagAusInstant(VOR_UTC_MITTERNACHT, -180), '2026-08-24')
+  })
+})
 
 describe('heutigesDatum', () => {
-  test('nimmt den UTC-Kalendertag', () => {
-    assert.equal(heutigesDatum(new Date('2026-08-24T01:30:00.000Z')), '2026-08-24')
+  test('folgt dem Geräte-Offset des Instant, nicht toISOString', () => {
+    const instant = new Date('2026-08-24T01:30:00.000Z')
+    assert.equal(heutigesDatum(instant), kalendertagAusInstant(instant, instant.getTimezoneOffset()))
+    const quelle = readFileSync(join(dirname(fileURLToPath(import.meta.url)), 'naechste-reise.ts'), 'utf8')
+    assert.equal(quelle.includes('.toISOString('), false)
   })
 })
 
@@ -91,5 +112,67 @@ describe('Account-Übersicht: Empty, Error-Trennung und nächste Reise', () => {
       status: 'archived',
     })
     assert.equal(naechsteReiseAus([archiv], HEUTE), null)
+  })
+
+  test('ohne Geräte-Kalendertag behauptet sie weder aktiv noch kommend', () => {
+    const geplant = reise({
+      id: 'lisbon',
+      title: 'Lisbon',
+      startDate: '2026-08-24',
+      endDate: '2026-08-28',
+      status: 'planned',
+    })
+    const gewählt = naechsteReiseAus([geplant], null)
+    assert.equal(gewählt?.lage, 'fortsetzen')
+    assert.equal(gewählt?.reise.id, 'lisbon')
+  })
+})
+
+describe('UTC/lokaler Tageswechsel an der aktiv/kommend-Grenze', () => {
+  const startetAmUtcTag = reise({
+    id: 'start',
+    title: 'Start heute',
+    startDate: '2026-08-24',
+    endDate: '2026-08-28',
+    status: 'planned',
+  })
+  const endetAmVortag = reise({
+    id: 'ende',
+    title: 'Ende gestern',
+    startDate: '2026-08-20',
+    endDate: '2026-08-23',
+    status: 'planned',
+  })
+
+  test('kurz nach UTC-Mitternacht bleibt die Reise kommend, solange der Geräte-Tag der Vortag ist', () => {
+    const geraetetag = kalendertagAusInstant(NACH_UTC_MITTERNACHT, 120)
+    assert.equal(geraetetag, '2026-08-23')
+    const gewählt = naechsteReiseAus([startetAmUtcTag], geraetetag)
+    assert.equal(gewählt?.lage, 'kommend')
+    assert.equal(gewählt?.reise.id, 'start')
+  })
+
+  test('dieselbe UTC-Minute ist aktiv, sobald der Geräte-Tag der Reisetag ist', () => {
+    const geraetetag = kalendertagAusInstant(NACH_UTC_MITTERNACHT, 0)
+    assert.equal(geraetetag, '2026-08-24')
+    const gewählt = naechsteReiseAus([startetAmUtcTag], geraetetag)
+    assert.equal(gewählt?.lage, 'aktiv')
+    assert.equal(gewählt?.reise.id, 'start')
+  })
+
+  test('kurz vor UTC-Mitternacht bleibt die Reise aktiv, solange der Geräte-Tag der Endtag ist', () => {
+    const geraetetag = kalendertagAusInstant(VOR_UTC_MITTERNACHT, 0)
+    assert.equal(geraetetag, '2026-08-23')
+    const gewählt = naechsteReiseAus([endetAmVortag], geraetetag)
+    assert.equal(gewählt?.lage, 'aktiv')
+    assert.equal(gewählt?.reise.id, 'ende')
+  })
+
+  test('dieselbe UTC-Minute ist nach dem lokalen Tageswechsel nicht mehr aktiv', () => {
+    const geraetetag = kalendertagAusInstant(VOR_UTC_MITTERNACHT, -180)
+    assert.equal(geraetetag, '2026-08-24')
+    const gewählt = naechsteReiseAus([endetAmVortag], geraetetag)
+    assert.equal(gewählt?.lage, 'fortsetzen')
+    assert.equal(gewählt?.reise.id, 'ende')
   })
 })

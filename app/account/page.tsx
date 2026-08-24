@@ -5,9 +5,8 @@
 
 import type { Metadata } from 'next'
 
-import AccountUebersicht from '@/components/account/AccountUebersicht'
+import AccountUebersichtLive from '@/components/account/AccountUebersichtLive'
 import { begruessungName } from '@/lib/account/begruessung'
-import { heutigesDatum, naechsteReiseAus } from '@/lib/account/naechste-reise'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import { reisenLaden } from '@/lib/trips/daten'
 
@@ -30,17 +29,11 @@ export default async function AccountSeite() {
 
   const { zeilen, problem } = await reisenLaden()
   const reisen = zeilen ?? []
-  const naechste = problem ? null : naechsteReiseAus(reisen, heutigesDatum())
 
   return (
     <main className="px-4 py-10 sm:px-6 sm:py-14">
       <div className="mx-auto max-w-6xl">
-        <AccountUebersicht
-          name={name}
-          problem={problem}
-          naechste={naechste}
-          hatReisen={reisen.length > 0}
-        />
+        <AccountUebersichtLive name={name} problem={problem} reisen={reisen} />
       </div>
     </main>
   )
