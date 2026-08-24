@@ -1,7 +1,7 @@
 # Jetnity Account Platform – AP-2 Handoff
 
 Stand: 24. August 2026  
-Status: **AP2-B1 behoben und gegated – Draft, kein Mark Ready, kein Merge, kein AP-3**
+Status: **PASS / TECHNICAL CLOSURE – Draft, kein Mark Ready, kein Merge, kein AP-3**
 
 | Feld | Wert |
 | --- | --- |
@@ -14,33 +14,37 @@ Status: **AP2-B1 behoben und gegated – Draft, kein Mark Ready, kein Merge, kei
 | Auftrag | `docs/ACCOUNT_AP2_AUTH_UX_TASK.md` + `docs/ACCOUNT_AP2_B1_FIX_TASK.md` |
 | Runtime-Head | `e9b2f834edc925b12e8b5a667f0e4382642eae8f` |
 | Self-Review | `docs/ACCOUNT_AP2_SELF_REVIEW.md` |
+| Technical Closure | `docs/ACCOUNT_AP2_TECHNICAL_CLOSURE.md` |
 
 ## Was ein neuer Agent zuerst liest
 
-1. `docs/ACCOUNT_AP2_B1_FIX_TASK.md`
-2. `docs/ACCOUNT_AP2_AUTH_UX_TASK.md`
-3. `docs/ACCOUNT_AP2_STATUS.md`
-4. `docs/ACCOUNT_AP2_SELF_REVIEW.md`
-5. `docs/ACTIVE_WORK_STATUS.md` auf diesem Branch
-6. Draft-PR #48, Base `feat/account-ap1`
+1. `docs/ACCOUNT_AP2_TECHNICAL_CLOSURE.md`
+2. `docs/ACCOUNT_AP2_STATUS.md`
+3. `docs/ACCOUNT_AP2_B1_FIX_TASK.md`
+4. `docs/ACCOUNT_AP2_AUTH_UX_TASK.md`
+5. `docs/ACCOUNT_AP2_SELF_REVIEW.md`
+6. Draft-PR #48 und Stack-Basis PR #43
 
-## Runtime vs. Docs-Head
+## Runtime-Nachweis
 
 - **Gegates Runtime-Head:** `e9b2f834edc925b12e8b5a667f0e4382642eae8f`
-  - GitHub Actions: SUCCESS (`32714001669`)
-  - Vercel Preview: success (`G9JnPhBkhejRetPcTMJm82AXeAZn`)
-- Ein nachfolgender Docs-Commit ist **docs-only** und darf nicht als neues CI-/Preview-Gate ausgegeben werden.
+  - GitHub Actions: **SUCCESS** (`32714001669`)
+  - Vercel Preview: **success / READY** (`G9JnPhBkhejRetPcTMJm82AXeAZn`)
+- Nachfolgende Docs-Commits ändern diesen Runtime-Nachweis nicht.
 
-## Umgesetzt
+## Technical-Lead-Re-Review
 
-- OAuth-UI folgt nur `config.toml` `auth.external.*.enabled === true`.
-- `next` nur unter `/account*` und `/reisen*`; sonst `/reisen`.
-- Login/Register-Serverseiten nutzen `getUser()`.
-- Register-Public-Copy leakt Kontoexistenz nicht und behauptet keinen unbewiesenen Mailversand.
-- AP2-B1: Bestandskonto-neutralisiert und neuer Signup ohne Session teilen denselben geleerten Feldzustand, dieselbe Success-Copy und denselben Fokus auf `#register-erfolg`.
-- Gast mit aktivem Local-Draft sieht **Reise fortsetzen** als primären CTA.
-- Footer nutzt `sitzungseintraege()`.
-- MFA-TOTP-Dialog ist benannt, fokussierbar und per Tastatur bedienbar; Escape schliesst den Sicherheitsflow nicht.
+AP2-B1 ist geschlossen. `registerSignupOeffentlichAuswerten()` führt Bestandskonto-neutralisiert und neuen Signup ohne Session auf denselben `registerOeffentlicherErfolg()`.
+
+Öffentlich identisch sind:
+
+- neutrale Success-Copy,
+- geleerte Name-/E-Mail-/Passwortfelder,
+- keine Feldfehler,
+- gleicher Success-State,
+- gleicher Fokus auf `#register-erfolg`.
+
+Damit besteht der zuvor belegte sichtbare Enumeration-Kanal nicht mehr. Der Session-Pfad leitet separat weiter und echte fachliche Fehler bleiben Fehler.
 
 ## Nicht angefasst
 
@@ -48,12 +52,11 @@ DB/Migration/RLS, Consent-Write, Traveller-Registry, Guest→Account-Persistenz,
 
 ## Offene, ehrliche Restpunkte
 
-- Gastübernahme bleibt auf `/reisen`. Ein erlaubtes `next=/account` verschiebt die Übernahme, bis `/reisen` besucht wird. Das ist der bestehende Übernahmeort, kein neuer Vertrag.
-- Footer zeigt für Gäste nur **Anmelden** (`sitzungseintraege('gast')`), nicht mehr hartes Registrieren.
-- MFA-Dialog hat keinen separaten Browser-/Screenreader-Lauf. Geprüft: Quellvertrag + Account-UI-Audit der Shell.
-- OAuth-Anbieter bleiben in `config.toml` aus. Es wurde kein Provider aktiviert.
+- Gastübernahme bleibt auf `/reisen`; das ist der bestehende Vertrag.
+- MFA-Dialog hat keinen separaten Browser-/Screenreader-Lauf; der Quellvertrag und Account-UI-Audit bleiben der vorhandene Nachweis.
+- OAuth-Anbieter bleiben in `config.toml` aus.
+- AP-2 ist auf AP-1 gestapelt; PR #43 ist weiterhin Draft und ungemergt.
 
 ## Nächster Schritt
 
-Unabhängiger Technical-Lead-Re-Review von PR #48 auf Runtime-Head `e9b2f834`.  
-PR bleibt Draft. Kein Ready, kein Merge, kein Start von AP-3.
+Keine weitere AP-2-Runtime-Arbeit ohne neuen konkreten Defekt. Product Owner entscheidet separat über Mark Ready / Merge und die notwendige Integrationsreihenfolge von AP-1 vor AP-2. AP-3 nicht starten.
