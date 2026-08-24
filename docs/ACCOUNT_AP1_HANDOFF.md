@@ -1,7 +1,7 @@
 # Jetnity Account Platform – AP-1 Handoff
 
 Stand: 24. August 2026  
-Status: **AP-1 implementiert – Draft, kein Mark Ready, kein Merge**
+Status: **AP-1 implementiert und lokal gegated – Draft, kein Mark Ready, kein Merge**
 
 | Feld | Wert |
 | --- | --- |
@@ -11,6 +11,7 @@ Status: **AP-1 implementiert – Draft, kein Mark Ready, kein Merge**
 | Branch | `feat/account-ap1` |
 | Draft-PR | https://github.com/Jetnity/jetnity/pull/43 |
 | Auftrag | `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md` |
+| Entscheidung | ADR-0152 |
 
 ## Umgesetzt
 
@@ -24,6 +25,13 @@ Status: **AP-1 implementiert – Draft, kein Mark Ready, kein Merge**
 ## Nicht angefasst
 
 Auth/MFA/AAL, RLS, Migrationen, Guest→Account, Traveller-Registry, Privacy/Billing, Route/Readiness/Safety/Seasonal, Homepage, Workspace-Karten.
+
+## Lokale Nachweise
+
+- Account-Logiktests in `lib/account/` und Navbar-Sitzungstests: grün
+- `npm run audit:account`: **48/48 grün** (WebKit + Chromium, 8 Viewports × 3 Zustände `reise` / `leer` / `fehler`)
+- Bericht: `/opt/cursor/artifacts/account_ui_audit.json`
+- Keine neue Migration, keine DB-Evidence
 
 ## Nächster Schritt
 

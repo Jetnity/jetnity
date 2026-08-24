@@ -48,7 +48,7 @@ Implementierung: Branch `feat/account-ap1`, Draft-PR #43
 Auftrag: `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`  
 Handoff: `docs/ACCOUNT_AP1_HANDOFF.md`
 
-AP-1 (Shell + persönliche Übersicht) ist auf diesem Branch umgesetzt. Shared Contracts bleiben unberührt. Kein Mark Ready, kein Merge.
+AP-1 (Shell + persönliche Übersicht) ist auf diesem Branch umgesetzt. Account-UI-Audit **48/48 grün**. Shared Contracts bleiben unberührt. Kein Mark Ready, kein Merge.
 
 ### Admin Platform – PR #40
 

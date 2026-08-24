@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
-Stand: 23. August 2026
-Gültig für: Foundation D und E auf `main` und Production; Travel Safety & Disruption Intelligence gemergt auf `main`; Travel Timing & Seasonal Intelligence als provider-neutrale Foundation auf Draft-PR #38, Runtime `263c2f84`. Production-Schema unverändert durch diesen Block.
+Stand: 24. August 2026
+Gültig für: Foundation D/E, Travel Safety und Travel Timing & Seasonal Intelligence auf `main`; Account Platform AP-1 als UI-/IA-Slice auf Draft-PR #43 / `feat/account-ap1`. AP-1 ändert kein Schema.
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -139,6 +139,23 @@ Weitere Punkte:
 **Die Rolle liegt seit Phase 1.5 in `public.profiles`.** Die Tabelle hiess bis dahin `creator_profiles` – ein Name aus der alten Produktidee. Weil er nur in `ROLE_TABLE` in `lib/auth/admin-guard.ts` stand, war die Umstellung eine einzelne Änderung im Anwendungscode. Mit der Umbenennung sind die neun Spalten der öffentlichen Creator-Identität entfallen; was bleibt, ist das, was ein Reisekonto braucht: Kennung, E-Mail, Anzeigename, Avatar, Rolle, Status, Zeitstempel. Persönliche Reisepräferenzen bekommen eigene Spalten oder eine eigene Tabelle, wenn sie fällig sind – nicht die freigewordenen ([DECISIONS.md](DECISIONS.md) ADR-0044).
 
 **Nach Anmeldung und Registrierung führt der Weg über eine Übernahme.** Liegt im Browser eine Gastreise, überträgt `lib/trips/uebernahme.ts` sie in das Konto, bevor „Meine Reisen" etwas anzeigt; der lokale Entwurf verschwindet erst, wenn der Server die Kennung der gespeicherten Reise gemeldet hat. Einzelheiten in Abschnitt 5 und in [docs/REISEN.md](docs/REISEN.md).
+
+---
+
+## 4a. Account-Shell (AP-1, Draft)
+
+AP-1 legt das persönliche Account-Zuhause an, ohne eine zweite Source of Truth zu schaffen. Begründung: [DECISIONS.md](DECISIONS.md) ADR-0152.
+
+| Fläche | Datei | Aufgabe |
+| --- | --- | --- |
+| Shell | `app/account/layout.tsx` | PublicNavbar, kompakte Konto-Nav, Skip-Link, Footer |
+| Übersicht | `app/account/page.tsx` | Begrüssung und nächste/aktive Reise nur aus `reisenLaden()` |
+| Einstellungen | `app/account/settings/page.tsx` | macht vorhandenes `/account/security` auffindbar |
+| Navigation | `lib/account/navigation.ts` | Übersicht, Reisen, Einstellungen; Security zählt zu Einstellungen |
+| Nächste Reise | `lib/account/naechste-reise.ts` | aktiv → kommend → zuletzt geändert; Archiv nie Fortsetzen |
+| Navbar-Ziel | `sitzungseintraege('konto')` | Link **Konto** nur bei bestehender Sitzung |
+
+Die Übersicht ist Orientierung, kein Trip-Workspace. Flug-, Hotel-, Readiness-, Safety- und Seasonal-Karten gehören nicht hierher. Auth-/MFA-/AAL-, RLS- und Traveller-Verträge bleiben unverändert.
 
 ---
 
