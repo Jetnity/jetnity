@@ -317,7 +317,7 @@ Auftrag: `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`
 Handoff: `docs/ACCOUNT_AP1_HANDOFF.md`
 
 1. AP-1 (Account-Shell + persönliche Übersicht) ist implementiert.
-2. Account-UI-Audit 48/48 grün. Keine Migration, keine Auth-/RLS-Änderung.
+2. Account-UI-Audit 48/48 grün. Vercel Preview auf Head `c00e11bc` SUCCESS. GitHub Actions `CI` ist auf dem Implementierungs-Head nicht erneut gelaufen. Keine Migration, keine Auth-/RLS-Änderung.
 3. PR bleibt Draft. Kein Mark Ready, kein Merge ohne aktuelle Product-Owner-Freigabe.
 4. **Exakter nächster Schritt:** unabhängiger Lead-Review von PR #43. AP-2 erst nach Freigabe.
 

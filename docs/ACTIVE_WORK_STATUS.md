@@ -48,7 +48,7 @@ Implementierung: Branch `feat/account-ap1`, Draft-PR #43
 Auftrag: `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`  
 Handoff: `docs/ACCOUNT_AP1_HANDOFF.md`
 
-AP-1 (Shell + persönliche Übersicht) ist auf diesem Branch umgesetzt. Account-UI-Audit **48/48 grün**. Shared Contracts bleiben unberührt. Kein Mark Ready, kein Merge.
+AP-1 (Shell + persönliche Übersicht) ist auf diesem Branch umgesetzt. Head `c00e11bc`. Account-UI-Audit **48/48 grün**. Vercel Preview auf diesem Head **SUCCESS**. GitHub Actions `CI` ist auf dem Implementierungs-Head nicht erneut gelaufen (letzter Actions-Lauf: Task-Commit `78285920`). Shared Contracts bleiben unberührt. Kein Mark Ready, kein Merge.
 
 ### Admin Platform – PR #40
 

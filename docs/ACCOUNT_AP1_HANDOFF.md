@@ -1,7 +1,7 @@
 # Jetnity Account Platform – AP-1 Handoff
 
 Stand: 24. August 2026  
-Status: **AP-1 implementiert und lokal gegated – Draft, kein Mark Ready, kein Merge**
+Status: **AP-1 implementiert, lokal gegated, Vercel Preview grün – Draft, kein Mark Ready, kein Merge**
 
 | Feld | Wert |
 | --- | --- |
@@ -10,6 +10,7 @@ Status: **AP-1 implementiert und lokal gegated – Draft, kein Mark Ready, kein 
 | Workstream | Account Platform AP-1 |
 | Branch | `feat/account-ap1` |
 | Draft-PR | https://github.com/Jetnity/jetnity/pull/43 |
+| Head | `c00e11bc315f91a20aa5e2fdfe4e697aced1916e` |
 | Auftrag | `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md` |
 | Entscheidung | ADR-0152 |
 
@@ -32,6 +33,12 @@ Auth/MFA/AAL, RLS, Migrationen, Guest→Account, Traveller-Registry, Privacy/Bil
 - `npm run audit:account`: **48/48 grün** (WebKit + Chromium, 8 Viewports × 3 Zustände `reise` / `leer` / `fehler`)
 - Bericht: `/opt/cursor/artifacts/account_ui_audit.json`
 - Keine neue Migration, keine DB-Evidence
+
+## Remote auf Head `c00e11bc`
+
+- Vercel Preview: **SUCCESS** (`FnNG6xjnA3eNya8UX6K4pnPgQbat`)
+- Vercel Preview Comments: **SUCCESS**
+- GitHub Actions `CI` ist auf diesem Head **nicht erneut gelaufen**. Der letzte Actions-Lauf auf dem Branch ist `32681645182` gegen den früheren Task-Commit `78285920` (SUCCESS). Das ist kein Ersatz für CI auf dem Implementierungs-Head.
 
 ## Nächster Schritt
 
