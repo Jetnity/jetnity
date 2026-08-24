@@ -32,6 +32,16 @@ Geöffnet gegen aktuellen `main`:
 
 Keine Provideraktivierung, keine Secrets/Tokens/Verträge/kostenpflichtigen Calls, keine Migration/RLS/Capability, keine Service-Role, kein Finance-Live, kein Billing-P1, keine Account-/Trip-/Traveller-/Route-/Readiness-/Safety-/Seasonal-Änderung.
 
+## Lokale Gates
+
+Auf dem Implementierungs-Head vor dem Evidence-Commit:
+
+- Tests 1846/1846
+- Typecheck, Lint, Hygiene, `check:api-schutz` 12/12, `auth:pruefen` 55/55, Production Build
+- `audit:admin-provider-ops` 8/8
+
+Remote Exact-Head-Gates folgen nach dem Push.
+
 ## Nächster Schritt
 
-Read-only Board implementieren, lokale und Remote-Gates auf Exact Head belegen, dann STOPP für unabhängigen Technical-Lead-Review.
+GitHub Actions SUCCESS und Vercel Preview READY auf Exact Head belegen, dann STOPP für unabhängigen Technical-Lead-Review.
