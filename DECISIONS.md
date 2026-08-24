@@ -3890,12 +3890,14 @@ Ein späterer vertrauenswürdiger Flugnachweis braucht einen **getrennten SECURI
 
 **Entscheidung:** Siehe `docs/ADR_0158_ADMIN_SLICE_A.md`. Historische Draft-Nummern ADR-0152/0155 für Slice A gelten nicht gegen aktuellen `main`.
 
+Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = ADR-0158, Admin B = ADR-0159, Account AP-3 = ADR-0160, Provider S3 = ADR-0161, Admin C = ADR-0162.
+
 ---
 
 ## ADR-0159 – Admin Slice B bleibt read-only System Health ohne Fake-Green
 
 **Datum:** 24. August 2026  
-**Status:** auf `main` gemergt (PR #46, `e3bad749`). Nummer von ADR-0153 auf ADR-0159 gehoben, weil `main` ADR-0153 an Account AP-1 und ADR-0155–0157 an Provider S2 vergeben hat. Admin Slice A ist ADR-0158.
+**Status:** auf `main` gemergt (PR #46, `e3bad749`). Authoritative Datei: `docs/ADR_0159_ADMIN_SLICE_B.md`. Historische Draft-Nummer ADR-0153 für Slice B gilt nicht gegen aktuellen `main`.
 
 **Entscheidung:**
 
@@ -3916,23 +3918,62 @@ Ein späterer vertrauenswürdiger Flugnachweis braucht einen **getrennten SECURI
 
 **Begründung:** `unknown` / `not_configured` ist belastbarer als erfundenes Grün. Ein neues Secret, ein Vertrag oder eine Management-Berechtigung braucht ein separates Product-Owner-Gate. Account- und Provider-ADRs auf `main` haben Vorrang vor Draft-Nummern.
 
-**Konsequenzen:** Copilot Pro erklärt Health nicht in diesem Slice. Domain-/Mail-/DNS-Health bleibt später. Account-/Trip-/Traveller-/Route-/Safety-/Seasonal- und Provider-S2-Verträge bleiben unberührt. PR #46 liegt auf `main`. Kein Slice C ohne neuen Auftrag.
+**Konsequenzen:** Copilot Pro erklärt Health nicht in diesem Slice. Domain-/Mail-/DNS-Health bleibt später. Account-/Trip-/Traveller-/Route-/Safety-/Seasonal- und Provider-S2-Verträge bleiben unberührt. Slice B liegt auf `main` `e3bad749`. Slice C liegt auf `main` `78192ab`.
 
 ---
 
-## ADR-0160 – reserviert für Account AP-3 / PR #53
+## ADR-0162 – Admin Slice C bleibt read-only Provider- und Kostenboard
 
 **Datum:** 24. August 2026  
-**Status:** Nummer gebunden; Inhalt gehört nicht zu Provider S3
+**Status:** auf `main` gemergt (PR #49, `78192ab`). Nummer 0162, weil 0160 Account AP-3 und 0161 Provider S3 vorbehalten sind.
 
-**Entscheidung:** ADR-0160 bleibt Account AP-3 / PR #53 vorbehalten. Provider S3 verwendet ADR-0161.
+**Entscheidung:**
+
+- Das Admin Control Center bekommt `/admin/provider-ops` als read-only Provider- und Kostenboard.
+- Der gemergte S1-Vertrag `lib/provider-ops` auf `main` wird nur gelesen, nicht kopiert oder verändert.
+- Parent Provider-Ops bleibt `foundation_only`. Ein Domain-Zustand `available` gilt nur für die belegte Test-Capability und färbt den Parent nicht grün.
+- Kill-Switch und Cost Guard bleiben Foundation: keine persistente Enforcement, kein globales Budget, kein Toggle.
+- `public.model_usage` darf nur über den bestehenden `darf_betrieb_lesen`-Pfad gelesen werden. Empty, Error und Unknown bleiben getrennt. Keine 0-USD-/CHF-Lüge, keine nachträgliche Preisannahme.
+- GET-only `api/admin/provider-ops` mit `betrieb-lesen`. `writeActions` bleibt leer. Keine Service-Role, keine Migration, keine Capability-/RLS-Änderung.
+
+**Kontext:** Auftrag `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md` nach Merge von Admin Slice B und Provider S1. Cross-Agent-Allokation: 0158=A, 0159=B, 0160=AP-3, 0161=S3, 0162=C.
+
+**Alternativen:** S1-Vertrag in Admin neu implementieren; ENV-Flag als Live-Provider verkaufen; In-Memory-Guard als Budgetschutz; leere Usage als 0 USD darstellen; ADR-0160/0161 erneut belegen.
+
+**Begründung:** Foundation sichtbar machen ohne Fake-Aktivierung oder Fake-Kosten. Shared Contracts bleiben beim Provider-Workstream.
+
+**Konsequenzen:** Kein Slice D, kein Finance-Live, kein Billing-P1 in diesem PR. PR #49 liegt auf `main`.
+
+---
+
+## ADR-0160 – Meine Reisen Lebenslage ist abgeleitet, nicht gespeichert
+
+**Datum:** 24. August 2026  
+**Status:** auf `main` gemergt (PR #53, `8326e72f`)
+
+**Entscheidung:**
+
+- Aktiv / Kommend / Vergangen / Ohne Datum entstehen nur aus vorhandenen `startDate`/`endDate` gegen den Geräte-Kalendertag.
+- Dieselbe date-only-Funktion wie die Account-Übersicht (`istAktiv` / `istKommend` in `lib/account/reise-lage.ts`).
+- Kein gespeicherter Lifecycle, kein `status = archived` Write, keine neue Tabelle.
+- Undatierte Reisen sind niemals Vergangen.
+- Der Server gruppiert nicht. Unbekannter Kalendertag zeigt Karten ohne Gruppenbehauptung.
+- Die 200-Grenze von `reisenLaden()` wird sichtbar, wenn die Liste voll ist. Der Hinweis behauptet nicht, dass weitere Reisen existieren.
+
+**Kontext:** Account-Audit AP-3; bestehende flache `/reisen`-Liste. Die zuerst verwendete Kennung ADR-0158 war bereits durch Admin Slice A auf `main` belegt.
+
+**Alternativen:** Server-UTC als „heute“; gespeichertes `lifecycle`; Archiv-Filter in AP-3.
+
+**Begründung:** Ein zweites Reisenmodell oder ein stiller UTC-Tag würde Übersicht und Liste auseinanderlaufen. Archivieren bleibt AP-4 / Shared Trip-Status.
+
+**Konsequenzen:** Kurz nach dem ersten Client-Render erscheinen die Gruppen. Bereits in der DB gesetztes `archived` bleibt in der Datumsgruppe sichtbar, weil AP-3 nicht filtert und nicht schreibt.
 
 ---
 
 ## ADR-0161 – Mobility- und Rental-Nachweis folgen Hotel/S2, nicht dem Flugschema
 
 **Datum:** 24. August 2026
-**Status:** umgesetzt auf `feat/provider-mobility-rental-evidence-s3`; Current-Main-Sync auf `e3bad749`; kein echter Adapter; keine Production-Migration; Nummer nach Technical-Lead-Allokation, nicht ADR-0159
+**Status:** umgesetzt auf `feat/provider-mobility-rental-evidence-s3`; Current-Main-Sync auf `8326e72f`; kein echter Adapter; keine Production-Migration; Nummer nach Technical-Lead-Allokation, nicht ADR-0159/0160
 
 **Entscheidung:** Mobility und Rental bekommen denselben async Nachweisvertrag wie Hotel und S2 FlugNachweis: `nachweisen({ optionId, kontext })`. Der Browser darf nur `tripId` und `optionId` senden. Kommerzielle Felder kommen aus einem serverseitigen Nachweis plus Suchkontext – oder die Übernahme fällt fail closed. Die fachliche Form bleibt domain-spezifisch (Orte/Modus/Reisende bzw. Stationen/Zeitraum/Klasse/Getriebe). Ein Testkatalog darf nur injiziert werden. `*NachweisAusUmgebung()` bleibt `null`. `booking_url` wird nicht erzeugt. Die Workspace-Mobilitätssuche startet nicht mehr automatisch; nur «Verbindungen prüfen» darf `/api/mobility/search` anfassen.
 

@@ -1,7 +1,7 @@
 # ADR-0159 – Admin Slice B bleibt read-only System Health ohne Fake-Green
 
 Stand: 24. August 2026  
-Status: **verbindliche Integrationsentscheidung für Draft-PR #46**
+Status: **verbindliche Integrationsentscheidung; auf `main` gemergt (PR #46, `e3bad749`)**
 
 Vollständige Entscheidung: [DECISIONS.md](../DECISIONS.md) ADR-0159.
 

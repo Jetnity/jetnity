@@ -22,8 +22,7 @@ import { createServerComponentClient } from '@/lib/supabase/server'
 import { reisenLaden } from '@/lib/trips/daten'
 import GastReisen from '@/components/trips/GastReisen'
 import GastreiseBruecke from '@/components/trips/GastreiseBruecke'
-import Reisekarte from '@/components/trips/Reisekarte'
-import type { Route } from 'next'
+import KontoReisenGruppen from '@/components/trips/KontoReisenGruppen'
 
 export const metadata: Metadata = {
   title: 'Meine Reisen',
@@ -123,16 +122,7 @@ async function KontoReisen() {
           </Link>
         </section>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {zeilen.map((reise) => (
-            <Reisekarte
-              key={reise.id}
-              reise={reise}
-              href={`/reisen/${reise.id}` as Route}
-              quelle="account"
-            />
-          ))}
-        </div>
+        <KontoReisenGruppen reisen={zeilen} />
       )}
     </>
   )

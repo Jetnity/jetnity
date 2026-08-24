@@ -2,15 +2,23 @@
 
 Stand: 24. August 2026  
 Verantwortlicher Cursor-Agent: `Admin platform audit`  
-Branch: `feat/admin-system-health`  
-PR: Draft #46, Base `main`  
+Branch: historisch `feat/admin-system-health`  
+PR: **#46 gemergt nach `main` `e3bad749`**  
 Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
 
-## Status
+## Integrationsstand
+
+**Slice B ist auf `main` `e3bad749c8e03512001e7bccd5e08467f10a7134` gemergt.**  
+Unabhängiger Technical-Lead-Review war PASS. Danach ausdrückliche Product-Owner-Merge-Freigabe.
+
+Der untenstehende Text bleibt der historische Review-Stand vor dem Merge. Er ist keine aktuelle globale Wahrheit und blockiert Slice C nicht.
+
+Aktiver Admin-Slice: Draft PR #49 / Slice C.
+
+## Historischer Review-Status
 
 **Unabhängiger Technical-Lead-Review: PASS / Technical Integration Closure auf `1715640b`.**
 
-Draft, nicht gemergt. Kein Mark Ready, kein Merge, kein Slice C ohne ausdrückliche aktuelle Product-Owner-Freigabe.  
 Review: `docs/ADMIN_PLATFORM_SLICE_B_TECHNICAL_LEAD_REVIEW.md`.
 
 Admin-Entscheidung: **ADR-0159**. Slice A auf `main` ist ADR-0158.
@@ -62,5 +70,5 @@ Traveller Context ist nicht relevant.
 
 ## Nächster Schritt
 
-Ausdrückliche Product-Owner-Entscheidung zu Mark Ready abwarten, danach separate Merge-Freigabe.  
-Kein Slice C vor erfolgreicher Integration von Slice B.
+Slice B ist integriert. Der aktive Admin-Slice ist Draft PR #49 / Slice C.  
+Kein Mark Ready / Merge von Slice C ohne ausdrückliche aktuelle Product-Owner-Freigabe.

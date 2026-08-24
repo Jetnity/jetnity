@@ -1,11 +1,11 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1/AP-2, Admin Slice A+B, Provider S1 und S2 liegen auf `main` `e3bad749`; aktiver Block ist Provider Readiness S3 Mobility/Rental-Nachweis**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1–AP-3, Admin Slice A–C, Provider S1 und S2 liegen auf `main` `8326e72f`; aktiver Block ist Provider Readiness S3 Mobility/Rental-Nachweis; #55 bleibt Draft; kein TW-1 ohne neuen Auftrag**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
-Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Admin Slice B in `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md` und `docs/ADMIN_PLATFORM_SLICE_B_HANDOFF.md`. Provider Readiness S3 in `docs/PROVIDER_READINESS_S3_STATUS.md` und `docs/PROVIDER_READINESS_S3_HANDOFF.md`. S1/S2-Historie bleibt in den jeweiligen S1/S2-Dateien.
+Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Account AP-3 in `docs/ACCOUNT_AP3_STATUS.md` und `docs/ACCOUNT_AP3_HANDOFF.md`. Admin Slice C in `docs/ADMIN_PLATFORM_SLICE_C_STATUS.md`. Admin Slice B in `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`. Provider Readiness S3 in `docs/PROVIDER_READINESS_S3_STATUS.md` und `docs/PROVIDER_READINESS_S3_HANDOFF.md`. S1/S2-Historie bleibt in den jeweiligen S1/S2-Dateien.
 
 > **Kein relevanter Fortschritt darf beim Wechsel von Chat, Agent oder Sitzung verloren gehen. Was für die Fortsetzung wichtig ist, gehört ins Repository.**
 
@@ -301,12 +301,16 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 6a. ✅ Account Platform AP-2 – Squash-Merge nach `main` (`2827d1cb`, PR #48)
 6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`, ADR-0158)
 6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`, ADR-0159)
-7. Provider-Readiness-/Adapter-Lücken schließen – **S1/S2 auf `main`; aktiver Slice S3 Mobility/Rental-Nachweis**
-8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
-9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
-10. echte Providerphase
-11. provider-backed End-to-End-/Truth-Audit
-12. finale Startseiten-Positionierung / Kommunikation
+6d. ✅ Admin Slice C auf `main` (PR #49, `78192ab`, ADR-0162)
+6e. ✅ Account AP-3 auf `main` (PR #53, `8326e72f`, ADR-0160)
+7. Provider-Readiness-/Adapter-Lücken schließen – **S1/S2 auf `main`; aktiver Slice S3 Mobility/Rental-Nachweis (ADR-0161)**
+8. Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration nach Provider-Integration
+9. danach neue kontrollierte Admin-/TW-Aufträge; kein Slice D und kein TW-1 ohne neuen Auftrag
+10. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
+11. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
+12. echte Providerphase
+13. provider-backed End-to-End-/Truth-Audit
+14. finale Startseiten-Positionierung / Kommunikation
 
 ### Provider-Regel
 
@@ -317,18 +321,18 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 ## 10. Exakter nächster operativer Schritt
 
 Aktiver Branch: `feat/provider-mobility-rental-evidence-s3`
-Basis: `origin/main` @ `e3bad749`
+Basis: `origin/main` @ `8326e72f`
 Auftrag: `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` PR-S3
 Status: `docs/PROVIDER_READINESS_S3_STATUS.md`
 ADR: ADR-0161
 
-1. Admin Slice B liegt auf `main` `e3bad749` (PR #46, ADR-0159). Admin Slice A bleibt ADR-0158.
+1. Account AP-3 liegt auf `main` `8326e72f` (PR #53, ADR-0160). Admin A–C bleiben ADR-0158 / 0159 / 0162.
 2. S3 hebt Mobility- und Rental-Nachweis auf die Hotel-/S2-Grenze: async `nachweisen({ optionId, kontext })`.
 3. `mobilityNachweisAusUmgebung()` und `rentalCarNachweisAusUmgebung()` bleiben `null`; Übernahme fail-closed.
 4. Der Browser darf nur identifiers senden. Keine `booking_url`.
 5. Mobility-Suche im Workspace startet nicht automatisch; nur «Verbindungen prüfen».
 6. Keine neue Migration. S2 Development-Guards bleiben nicht Production-approved.
-7. Draft-PR #54. Functional runtime head `e284af55`. S3-Nummer ist ADR-0161. ADR-0160 bleibt Account AP-3.
+7. Draft-PR #54. Functional runtime head `e284af55`. S3-Nummer ist ADR-0161.
 8. **Exakter nächster Schritt:** Exact-Head-Gates auf dem Current-Main-Sync-Tip beweisen, danach unabhängiger Technical-Lead-Re-Review. Kein Mark Ready, kein Merge, kein S4, keine Production-Migration.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.

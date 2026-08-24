@@ -1,9 +1,26 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **Admin Slice B liegt auf `main` `e3bad749`; aktiver Provider-Slice ist S3 Mobility/Rental-Nachweis auf Current-Main-Sync von `feat/provider-mobility-rental-evidence-s3`**
+Status: **Account AP-3 liegt auf `main` `8326e72f`; aktiver Provider-Slice ist S3 Mobility/Rental-Nachweis auf Current-Main-Sync von `feat/provider-mobility-rental-evidence-s3`**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
+
+**Account Platform AP-3 – Meine Reisen Lebenslage**
+
+- PR #53: **gemergt und geschlossen**
+- Merge auf `main`: `8326e72f9557a8b9b200e680b0be24aefa0bdfa8`
+- ADR-0160 bleibt verbindlich
+- Aktiv / Kommend / Vergangen / Ohne Datum nur abgeleitet. Kein Lifecycle-Write. 200er-Hinweis fail-closed.
+
+Davor vollständig abgeschlossen:
+
+**Admin Control Center Slice C – read-only Provider- und Kostenboard**
+
+- PR #49: **gemergt und geschlossen**
+- Merge auf `main`: `78192ab775165d08bb357140c2d04b865b8cc049`
+- ADR-0162 bleibt verbindlich
+
+Davor vollständig abgeschlossen:
 
 **Admin Control Center Slice B**
 
@@ -79,7 +96,7 @@ Keine neuen Secrets und keine neuen laufenden Providerkosten.
 
 Verantwortlicher Cursor-Anzeigename: Provider-Readiness Senior Agent  
 Implementierungsbranch: `feat/provider-mobility-rental-evidence-s3`  
-Basis: `origin/main` @ `e3bad749`  
+Basis: `origin/main` @ `8326e72f`  
 Auftrag: `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` PR-S3  
 Status: `docs/PROVIDER_READINESS_S3_STATUS.md`  
 Handoff: `docs/PROVIDER_READINESS_S3_HANDOFF.md`  
@@ -87,14 +104,20 @@ ADR: ADR-0161
 
 Aktiver Slice:
 
-**S3 – Mobility- und Rental-Nachweis auf Hotel-/S2-Trust-Grenze.** Async `nachweisen({ optionId, kontext })`. Testkatalog nur injiziert. Umgebung `null` → fail-closed. Mobility Auto-Search nur nach «Verbindungen prüfen». Keine Migration. Kein echter Provider. Branch ist auf Current Main `e3bad749` synchronisiert.
+**S3 – Mobility- und Rental-Nachweis auf Hotel-/S2-Trust-Grenze.** Async `nachweisen({ optionId, kontext })`. Testkatalog nur injiziert. Umgebung `null` → fail-closed. Mobility Auto-Search nur nach «Verbindungen prüfen». Keine Migration. Kein echter Provider. Branch ist auf Current Main `8326e72f` synchronisiert.
 
 Grenze: kein Mark Ready, kein Merge, keine Production-Migration, keine Provideraktivierung, kein S4–S8.
 
 ### Admin Platform – abgeschlossene Slices auf `main`
 
 - Slice A: gemergt, PR #44, ADR-0158
-- Slice B: gemergt, PR #46, ADR-0159. Status/Handoff: `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`, `docs/ADMIN_PLATFORM_SLICE_B_HANDOFF.md`. Kein Slice C ohne neuen Auftrag.
+- Slice B: gemergt, PR #46, ADR-0159. Status: `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`
+- Slice C: gemergt, PR #49, ADR-0162. Status: `docs/ADMIN_PLATFORM_SLICE_C_STATUS.md`. Agent `Admin platform audit` wartet. Kein Slice D ohne neuen Auftrag.
+
+### Account Platform – abgeschlossene Slices auf `main`
+
+- AP-1 / AP-2: gemergt
+- AP-3: gemergt, PR #53, ADR-0160. Status: `docs/ACCOUNT_AP3_STATUS.md`. Kein AP-4 ohne neuen Auftrag.
 
 ### Provider Readiness – abgeschlossene Slices auf `main`
 
@@ -103,9 +126,24 @@ Grenze: kein Mark Ready, kein Merge, keine Production-Migration, keine Providera
 
 Danach folgen erst S4–S8, jeweils mit eigenem Auftrag.
 
+### Trip Workspace Audit – PR #55
+
+Verantwortlicher Cursor-Anzeigename: `Trip workspace audit architecture`  
+Implementierungs-Draft-PR: **#55** (docs-only)
+
+**PR #55 bleibt Draft / docs-only.** Wartet auf finale Reconciliation nach Provider-Integration von PR #54. Startet keinen TW-1-Umbau und keine Runtime-Änderung.
+
 ## 4. Parallelitätsregel
 
-S3 darf Account-/Admin-Dateien nicht mischen. Admin A+B auf `main` bleiben erhalten.
+S3 darf Account-/Admin-Dateien nicht mischen. Admin A–C und Account AP-1–AP-3 auf `main` bleiben erhalten.
+
+Kontrollierte Reihenfolge der offenen Drafts:
+
+1. Provider #54 finaler Sync / Re-Review / Integration
+2. Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration
+3. danach neue kontrollierte Admin-/TW-Aufträge
+
+Kein Slice D. Kein TW-1 ohne neuen Auftrag.
 
 Seriell/zentral bleiben insbesondere:
 
@@ -126,8 +164,8 @@ Die neue Homepage-Produktseiten-Idee bleibt **pausiert**. Siehe `docs/HOMEPAGE_P
 
 ## 6. Governance
 
-- PR #43, #44, #45, #46, #47, #48 und #51 sind gemergt. Draft-PR #54 bleibt Draft.
-- ADR-Allokation: Admin A = ADR-0158, Admin B = ADR-0159, Account AP-3 = ADR-0160, Provider S3 = ADR-0161.
+- PR #43, #44, #45, #46, #47, #48, #49, #51 und #53 sind gemergt. Draft-PR #54 und #55 bleiben Draft.
+- ADR-Allokation: Admin A = ADR-0158, Admin B = ADR-0159, Account AP-3 = ADR-0160, Provider S3 = ADR-0161, Admin C = ADR-0162.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
@@ -135,7 +173,7 @@ Die neue Homepage-Produktseiten-Idee bleibt **pausiert**. Siehe `docs/HOMEPAGE_P
 
 ## 7. Exakter nächster Schritt
 
-1. S3 Draft-PR #54 auf Current Main `e3bad749` synchronisieren und Exact-Head-Gates auf dem neuen Tip beweisen.
+1. S3 Draft-PR #54 auf Current Main `8326e72f` synchronisieren und Exact-Head-Gates auf dem neuen Tip beweisen.
 2. STOPP für unabhängigen Technical-Lead-Re-Review.
 3. Nicht Mark Ready, nicht mergen, nicht S4, Production nicht migrieren.
-4. Account AP-3 / PR #53 bleibt ADR-0160. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag.
+4. Danach erst PR #55 Docs-Reconciliation. Kein Slice D. Kein TW-1. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag.

@@ -1,7 +1,7 @@
 # Jetnity – Provider Readiness S3 Handoff
 
 Stand: 24. August 2026
-Status: **S3 auf Current Main `e3bad749` synchronisiert; ADR-0161; Functional S3 Runtime Head bleibt `e284af55`; Exact-Head-Gates auf dem Sync-Tip neu beweisen; Draft-PR #54; kein Mark Ready / kein Merge / kein S4**
+Status: **S3 auf Current Main `8326e72f` synchronisiert; ADR-0161; Functional S3 Runtime Head bleibt `e284af55`; Exact-Head-Gates auf dem Sync-Tip neu beweisen; Draft-PR #54; kein Mark Ready / kein Merge / kein S4**
 
 ## 1. Übernahme
 
@@ -10,31 +10,24 @@ Status: **S3 auf Current Main `e3bad749` synchronisiert; ADR-0161; Functional S3
 3. `docs/PROVIDER_READINESS_S3_SELF_REVIEW.md`
 4. ADR-0161
 5. `docs/ACTIVE_WORK_STATUS.md`
-6. Admin B auf `main`: `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`, ADR-0159
-7. aktueller Code unter `lib/mobility/nachweis.ts`, `lib/rental-cars/nachweis.ts`, `components/trips/MobilitaetBereich.tsx`
+6. Account AP-3 auf `main`: `docs/ACCOUNT_AP3_STATUS.md`, ADR-0160
+7. Admin C auf `main`: `docs/ADMIN_PLATFORM_SLICE_C_STATUS.md`, ADR-0162
+8. aktueller Code unter `lib/mobility/nachweis.ts`, `lib/rental-cars/nachweis.ts`, `components/trips/MobilitaetBereich.tsx`
 
 S3 lebt nur auf `feat/provider-mobility-rental-evidence-s3`.
 
 ## 2. Exact Head
 
 - Functional S3 runtime head: `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`
-- ADR-0161-Umnummerierung: `2e9a1a7ff0d8ccef6945cbc70aa3833743d076f1`
-- Current-Main-Sync-Tip: aktueller Branch-HEAD / PR #54 nach Merge von `e3bad749`
+- Vorheriger Sync auf Admin B: `f6b85570049a20146544e4f85503d6ff2c9703b4`
+- Current-Main-Sync-Tip: aktueller Branch-HEAD / PR #54 nach Merge von `8326e72f`
 - Draft-PR: https://github.com/Jetnity/jetnity/pull/54
-- Basis: `origin/main` @ `e3bad749`
+- Basis: `origin/main` @ `8326e72f`
 - PR: Draft
 
 S3-Runtime unverändert durch den Sync. Konflikte nur in zentraler Doku. UI-Audit nicht erneut.
 
-## 3. Gate-Ergebnisse auf Functional S3 Runtime Head `e284af55`
-
-- `npm test` 1849/1849
-- Typecheck, Lint, Hygiene, API-Schutz, Schema-Bezug, Production-Build Exit 0
-- UI-Audit 1014/1014, 0 Fehler
-- GitHub Actions SUCCESS: https://github.com/Jetnity/jetnity/actions/runs/32750893324
-- Vercel READY: https://vercel.com/jetnity-e1b93c82/jetnity-app/GWiY7wxgazEfqL2PZSP2eWskoVcK
-
-## 4. Harte Grenzen
+## 3. Harte Grenzen
 
 - Kein Mark Ready ohne ausdrückliche aktuelle Product-Owner-Freigabe
 - Kein Merge ohne separate ausdrückliche Product-Owner-Freigabe
@@ -43,14 +36,14 @@ S3-Runtime unverändert durch den Sync. Konflikte nur in zentraler Doku. UI-Audi
 - Production endet weiterhin bei `20260824140000`
 - Keine Provideraktivierung, Secrets, Verträge oder kostenpflichtigen Calls
 - Kein stilles Ziehen von S4–S8
-- Admin A+B auf `main` nicht zurückschreiben
+- Admin A–C und Account AP-1–AP-3 auf `main` nicht zurückschreiben
 
-## 5. Geschlossene Audit-Funde
+## 4. Geschlossene Audit-Funde
 
 - PR-P1-04: Mobility-/Rental-Nachweis sind kein Stub mehr, sondern async Hotel-/S2-Vertrag. Umgebung `null`.
 - PR-P1-07: Mobility Auto-Search im Workspace ist aus. Suche nur über «Verbindungen prüfen».
 
-## 6. Offene Provider-Risiken
+## 5. Offene Provider-Risiken
 
 - Persistenter Cost Guard fehlt weiter (S6)
 - Offer-Provenance fehlt weiter (S5)
@@ -60,6 +53,6 @@ S3-Runtime unverändert durch den Sync. Konflikte nur in zentraler Doku. UI-Audi
 - Mobility/Rental Timeout bleibt HTTP 504 (S1-Residual)
 - `reise_anlegen` / direkte `trip_items`-Writes können User-Intake-Handelsfelder für transfer/rental_car weiter aus JSON setzen. Keine S3-Migration.
 
-## 7. Nächster Schritt
+## 6. Nächster Schritt
 
 Exact-Head-Gates auf dem Current-Main-Sync-Tip beweisen. Danach unabhängiger Technical-Lead-Re-Review. Danach erst S4, und nur mit neuem Auftrag.

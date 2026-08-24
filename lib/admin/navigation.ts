@@ -20,6 +20,7 @@ export const ADMIN_NAV_ITEMS: readonly AdminNavItem[] = [
   { href: '/admin/payments', label: 'Zahlungen', kind: 'ready', capability: 'betrieb-lesen' },
   { href: '/admin/security', label: 'Security', kind: 'ready', capability: 'betrieb-lesen' },
   { href: '/admin/system-health', label: 'System Health', kind: 'ready', capability: 'betrieb-lesen' },
+  { href: '/admin/provider-ops', label: 'Provider & Kosten', kind: 'ready', capability: 'betrieb-lesen' },
   { href: '/admin/analytics', label: 'Analytics', kind: 'later', capability: null },
   { href: '/admin/content', label: 'Content', kind: 'later', capability: null },
   { href: '/admin/marketing', label: 'Marketing', kind: 'later', capability: null },

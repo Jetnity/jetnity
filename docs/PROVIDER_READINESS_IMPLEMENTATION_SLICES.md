@@ -1,7 +1,7 @@
 # Jetnity – Provider-Readiness Implementation Slices
 
 Stand: 24. August 2026  
-Status: **S1 und S2 auf `main`; Admin Slice B auf `main` `e3bad749`; S3 auf `feat/provider-mobility-rental-evidence-s3` (ADR-0161, Current-Main-Sync) / kein Mark Ready / kein Merge**  
+Status: **S1 und S2 auf `main`; Admin A–C und Account AP-3 auf `main` `8326e72f`; S3 auf `feat/provider-mobility-rental-evidence-s3` (ADR-0161, Current-Main-Sync) / kein Mark Ready / kein Merge**  
 Quelle: `docs/PROVIDER_READINESS_AUDIT.md`, `docs/PROVIDER_READINESS_MATRIX.md`, `docs/PROVIDER_READINESS_SHARED_CONTRACT_PROPOSAL.md`
 
 ## 1. Zweck
@@ -103,7 +103,7 @@ Account AP-1 (PR #43) und Admin Slice A (PR #44) bleiben parallel und unberührt
 
 **Ziel:** Stubs durch async `nachweisen({ optionId, kontext })` ersetzen. Übernahme bleibt fail-closed, bis ein Adapter existiert.
 
-**Status 24. August 2026:** Implementierung auf `feat/provider-mobility-rental-evidence-s3`, synchronisiert auf Current Main `e3bad749`. ADR-0161. Kein echter Adapter. Keine Migration.
+**Status 24. August 2026:** Implementierung auf `feat/provider-mobility-rental-evidence-s3`, synchronisiert auf Current Main `8326e72f`. ADR-0161. Kein echter Adapter. Keine Migration.
 
 **Umfang:**
 
