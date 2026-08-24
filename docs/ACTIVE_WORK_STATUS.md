@@ -91,3 +91,4 @@ Nicht auf `main`, nicht durch diesen PR gemergt, nur damit der Status nicht zur√
 
 - **Admin Slice A** / Draft PR #44: Technical-Lead Final Recheck **PASS / TECHNICAL CLOSURE** auf `5632a3cac1301d2d649fcb1d2b9552d3763c8b9f`. Nachweis auf jenem Branch: `docs/ADMIN_PLATFORM_SLICE_A_TECHNICAL_CLOSURE.md`. Keine Mark-Ready-/Merge-Freigabe. Slice B / System Health ist ein separater Block.
 - **Account AP-1** / Draft PR #43: Implementierung aktiv. REQUEST CHANGES zu Ger√§te-Kalendertag und evidentem 503-Text laut jenem Branch umgesetzt (ADR-0153). Noch kein AP-2.
+- **Provider Ops S1** / Draft PR #47 / `feat/provider-ops-s1`: Product-Owner-Implementierungsauftrag `docs/PROVIDER_OPS_S1_TASK.md`. Keine Provideraktivierung, keine Secrets, keine Kosten, keine Migration. S2 nicht enthalten.
