@@ -3,45 +3,29 @@
 Stand: 24. August 2026  
 Branch: `feat/provider-flight-evidence-s2`  
 Draft-PR: `#51`  
-Exact Runtime Head: `f8af2059181e1f47d686893a1b5538441c6e2554`
+Functional Exact Head: `1b06b28494086ab24569f48e83978f77543dfc89`
 
 ## Auftragstreue
 
-S2 bleibt auf den Flug-Nachweis begrenzt. S2-B1 ist der freigegebene DB-Contract-Fix für den Direct-RPC-Bypass. Kein Live-Duffel, kein S3–S7, keine Production-Migration, keine Homepage-/Account-/Admin-Arbeit, keine Service-Role-/Auth-Änderung.
+Nur S2-B2. Additive Development-Migration. Production unverändert. Kein S3, keine Service Role, keine spoofbaren Trusted-Flags, keine Tabellenrechte entzogen.
 
 ## Trust-Grenze
 
-- Browser darf für die Kontoübernahme nur `tripId`, `dayId`, `optionId` senden.
-- Kommerzielle Felder aus dem Request werden vom Schema verworfen.
-- Nachweis bindet Legs, Passagiere, Kabine, Währung und Gültigkeit.
-- Ohne Nachweis oder Suchkontext: fail-closed.
-- Guest persistiert keine kommerzielle Provider-Flugoption.
-- Guest → Account adelt unbewiesene Flugfelder nicht.
-- `public.reise_anlegen(jsonb)` übernimmt für `kind='flight'` keine Handelsfelder aus JSON. `booking_url` bleibt null.
+- App und `reise_anlegen` bleiben fail-closed (S2 / S2-B1).
+- Direkte `trip_items`-Writes als `authenticated`/`anon` können Flug-Handelsfelder nicht setzen oder ändern.
+- `current_user` ist die Grenze, kein GUC und kein Client-Feld.
+- Ein späterer Nachweis darf kommerzielle Felder nicht über denselben `authenticated`-INSERT adeln.
 
 ## Pflichtregressionen
 
-Die 14 App-Fälle bleiben in `lib/flights/nachweis.test.ts`, `lib/flights/konto-uebernahme.test.ts`, `lib/flights/nutzlast.test.ts`, `lib/trips/gastspeicher.test.ts` und `lib/trips/uebernahme.test.ts` belegt.
+`scripts/db/sicherheit.mjs` enthält direkte INSERT-, UPDATE-, kind-Wechsel- und Stay-Kontrollfälle. B1-RPC-Fälle bleiben grün. `db:sicherheit` 223/223.
 
-S2-B1 ergänzt in `scripts/db/sicherheit.mjs`:
+## Offener Remote-Gate
 
-- direkter RPC mit manipuliertem Flugpreis/Provider/Ref/Booking-URL persistiert diese Felder nicht und behält User-Intake plus Foundation-D-Itinerary;
-- derselbe RPC behält Hotel-/Aktivitäts-/Mobilitäts-/Mietwagen-Handelsfelder;
-- der Tagespunkt-INSERT-Pfad nullt dieselben Flug-Handelsfelder.
-
-Hotel-Nachweis- und Provider-Ops-Regressionen bleiben im vollen `npm test` grün. `db:sicherheit` ist 219/219.
-
-## Foundation-D / Traveller
-
-Keine zweite Route Truth. Keine Route-Heuristik als Nachweisersatz. Traveller-Zusammensetzung kommt aus dem Reisegraphen (`travellers` → adults, children/infants 0), nicht aus Browserfeldern. `flug_route_itinerary_metadata` bleibt der einzige Itinerary-Kanonisierer.
-
-## Bewusste Grenze dieses Fixes
-
-Kein `BEFORE`-Trigger auf `trip_items`, der alle Flug-Handelsfelder nullt. Ein späterer nachgewiesener Server-INSERT (`flugInReiseUebernehmen`) soll nicht pauschal blockiert werden. Gehärtet ist nur der browser-erreichbare JSON-RPC.
+`ci.yml` hat auf `34a87e9f`, `1b06b284` und `1063f279` keine Check-Suite erzeugt. Vercel auf diesen Heads ist READY. Das ist kein stiller Erfolg; der Technical Lead muss den Gap bewerten.
 
 ## Offene Review-Fragen
 
-1. Ist fail-closed ohne Suchkontext-Speicher die richtige S2-Grenze, oder wäre ein minimaler In-Memory-Store schon S5?
-2. Soll Guest → Account Flug-Handelsfelder nur streichen oder Flugpunkte ganz verwerfen?
-
-Diese Fragen sind keine stillen Scope-Erweiterungen. Der Technical Lead entscheidet, ob sie S2 blockieren oder spätere Slices bleiben.
+1. Ist fail-closed ohne Suchkontext-Speicher die richtige S2-Grenze?
+2. Soll Guest → Account Flugpunkte ganz verwerfen statt nur Handelsfelder zu streichen?
+3. Soll der spätere Nachweis-Schreibvertrag jetzt skizziert werden, oder erst mit Provider-Gate?

@@ -2,7 +2,7 @@
 
 Stand: 24. August 2026
 
-Status: **PRODUCT-OWNER FREIGEGEBEN – Implementierung darf starten; neue additive Migration nur auf Supabase Development; Production unverändert**
+Status: **IMPLEMENTIERT AUF SUPABASE DEVELOPMENT – lokale Gates und Vercel grün; GitHub Actions auf dem neuen Head nicht gestartet; STOPP für Technical-Lead-Re-Review; Production unverändert**
 
 Cursor-Agent: `Provider S2 flugnachweis`
 Draft-PR: `#51`

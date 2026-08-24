@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 vollständig integriert; Account AP-1, Admin Slice A und Provider Ops S1 bleiben parallele Draft-Workstreams; dieser Branch hat Provider Readiness S2/S2-B1 auf Draft-PR #51 umgesetzt und wartet auf Technical-Lead-Re-Review**
+Status: **PR #38 vollständig integriert; Account AP-1, Admin Slice A und Provider Ops S1 bleiben parallele Draft-Workstreams; dieser Branch hat Provider Readiness S2-B2 auf Draft-PR #51 umgesetzt und wartet auf Technical-Lead-Re-Review**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -88,7 +88,7 @@ Status: `docs/PROVIDER_READINESS_S2_STATUS.md`
 
 Aktiver Slice:
 
-**S2 – serverseitiger `FlugNachweis` plus S2-B1-DB-Grenze für `reise_anlegen`.** Exact Runtime Head `f8af2059`. Browser sendet nur `tripId`, `dayId`, `optionId`. Guest und Guest → Account bleiben fail-closed bzw. stufen unbewiesene Flugoptionen nicht hoch. Der authentifizierte RPC verwirft unbewiesene Flug-Handelsfelder. Additive Migration `20260824160000` ist auf Supabase Development angewendet. **Production unverändert.** Lokale und Remote-Gates auf diesem Head sind grün. STOPP für unabhängigen Technical-Lead-Re-Review.
+**S2 – `FlugNachweis` plus S2-B1-RPC- und S2-B2-Tabellengrenze.** Functional Exact Head `1b06b284`. Browser sendet nur identifiers. Guest und Guest → Account bleiben fail-closed. `reise_anlegen` und direkte `trip_items`-Writes verwerfen unbewiesene Flug-Handelsfelder. Development-Migrationen `20260824160000` und `20260824180000` sind angewendet. **Production unverändert.** Lokale Gates und Vercel sind grün. GitHub Actions startete auf dem neuen Head nicht. STOPP für Technical-Lead-Re-Review.
 
 Grenze: kein Live-Duffel, keine Provideraktivierung, keine Secrets, keine Production-Migration, kein S3–S6, kein Offer-Booking. `booking_url` bleibt `null`. Route Truth bleibt Foundation D.
 
@@ -138,5 +138,5 @@ Wenn sie gestartet wird:
 1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
 2. `Admin platform audit` implementiert ausschließlich Slice A auf PR #44.
 3. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung.
-4. S2-B1 auf Draft-PR #51 hat Exact-Head-Gates auf `f8af2059` und wartet auf den unabhängigen Technical-Lead-Re-Review. Production unverändert. Kein Mark Ready, kein Merge, kein S3, keine Production-Migration.
+4. S2-B2 auf Draft-PR #51 hat Functional Head `1b06b284`, lokale Gates und Vercel READY; GitHub Actions auf diesem Head startete nicht. STOPP für Technical-Lead-Re-Review. Production unverändert. Kein Mark Ready, kein Merge, kein S3, keine Production-Migration.
 5. AP-2, Admin Slice B und Provider S3 brauchen jeweils eine neue ausdrückliche Freigabe.
