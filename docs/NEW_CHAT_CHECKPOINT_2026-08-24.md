@@ -10,6 +10,7 @@ Status: verbindlicher operativer Übergabepunkt für den nächsten Haupt-Chat
 - `docs/CHATGPT_TECHNICAL_LEAD_CONTINUITY.md`
 - `docs/MULTI_AGENT_WORKSTREAMS.md`
 - `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md`
+- `docs/HOMEPAGE_PRODUCT_PAGE_DIRECTION.md`
 - Reviews/Handoffs der aktuell offenen PRs
 
 Danach tatsächlichen GitHub-/CI-/Vercel-/Supabase-Stand unabhängig verifizieren. Kein Mark Ready und kein Merge ohne ausdrückliche Product-Owner-Freigabe.
@@ -17,54 +18,66 @@ Danach tatsächlichen GitHub-/CI-/Vercel-/Supabase-Stand unabhängig verifiziere
 ## PR #38 – Travel Timing & Seasonal
 
 - Branch: `feat/travel-timing-seasonal-intelligence`
-- PR #38: open, Draft, nicht gemergt
-- letzter gegateter Runtime-Head: `5cc4488e3b30aeb3c8afe1eb2ff7bc9627987e88`
-- R15-Blocker 30 ist im `FlugOption`-Pfad implementiert und gegated.
-- Unabhängiger ChatGPT-Review **R16**: **REQUEST CHANGES / Blocker 31**.
-- Review-Dokument: `docs/PR38_CHATGPT_R16_REVIEW.md` auf dem PR-Branch.
-- Kernbefund: untrusted Browser-/LocalStorage-`routeItinerary` kann `surfaceFromAirportCode` weiterhin selbst behaupten; Server-Kanonisierung und Development-DB erhalten die syntaktisch gültige Angabe, obwohl keine serverseitig belegte Evidence existiert.
-- R16-Review-Commit: `3a77fcdd14e321b440213f635c093283722ceb48`.
-- Active-Status-Update nach R16: Commit `b52038716479d04a3720077d66fe68872aa8ef38`.
-- Production enthält die Route-Surface-Migration weiterhin **nicht**; Development enthält `20260824120000_flug_route_itinerary_surface_evidence`.
-- Nächster Schritt: Blocker 31 durch denselben PR-#38-Workstream schließen → neues Exact-Head-Gate → unabhängiger ChatGPT-Review **R17**.
-- Wenn R17 keinen neuen konkreten relevanten Defekt findet: technisches Closure/PASS nach Stop-Kriterium dokumentieren.
-- Danach erst Product-Owner-Entscheidung zu Mark Ready/Merge; Production-Migration bleibt separates Gate.
+- PR #38: **open, Draft, nicht gemergt**
+- final unabhängig geprüfter Runtime-Head: `5782401943b41ddd1eea1337c93cb37163210362`
+- R16-Blocker 31 ist geschlossen: untrusted Browser-/Guest-/LocalStorage-/Request-`routeItinerary` kann `surfaceFromAirportCode` nicht mehr selbst zu belegter Surface-Truth machen.
+- Unabhängiger ChatGPT-Review **R17: PASS / Technical Closure**.
+- Review-Dokument: `docs/PR38_CHATGPT_R17_REVIEW.md` auf dem PR-Branch.
+- R17 Review-Commit: `bb9eda8212c24a8064939c8addd7fe0311943295`.
+- Active-Status-Update nach R17: `12876274081d96155e8d78ae89333ca2b4523a97`.
+- Runtime-Gate: `npm test` 1703/1703; Typecheck/Lint/Hygiene grün; Build Exit 0; UI Audit 1014/1014; DB Security 216/216; GitHub Actions Run `32677741683` SUCCESS; Vercel `dpl_74A67UxWrCLWviihrsn9hfYqqZDQ` READY.
+- R17 live DB probe: manipuliertes `LAX→JFK`, `SFO→NRT`, `surfaceFromAirportCode='JFK'` wird in Development kanonisiert **ohne** Client-Surface-Claim.
+- Development enthält `20260824120000` und `20260824140000`; Production enthält **keine** der beiden Route-Surface-Migrationen.
+- Der Review-Loop ist nach dem Stop-Kriterium beendet. Ein weiterer Review nur bei konkreter neuer Runtime-Änderung oder neu belegtem Defekt.
+- **Kein Mark Ready, kein Merge, keine Production-Migration** ohne die jeweils erforderliche ausdrückliche Product-Owner-Freigabe.
 
 ## Account
 
 - Exakter Cursor-Anzeigename: `Account plattform audit vorbereitung`
 - Audit: Draft-PR #39 / `audit/account-platform`
-- Audit-Urteil: **AUDIT-PASS**, aber keine Implementierungsfreigabe.
-- Implementierung startet erst nach technischem Closure/PASS von PR #38.
+- Audit-Urteil: **AUDIT-PASS** als Planungsgrundlage.
+- Die technische Sperre durch PR #38 ist mit R17 Technical Closure aufgehoben.
 - Derselbe Agent bleibt zuständig.
-- Erster Block: AP-1 Account-Shell + Übersicht.
+- Erster konfliktarmer Block: **AP-1 Account-Shell + persönliche Übersicht / Meine Reisen als Account-Hub**.
 - Danach Review → AP-2 → Review → AP-3 usw.
+- Shared Auth/RLS/DB/Privacy/Billing/Traveller-/Route-Verträge nicht parallel neu definieren.
 
 ## Admin
 
 - Exakter Cursor-Anzeigename: `Admin platform audit`
 - Audit: Draft-PR #40 / `audit/admin-platform`
-- Audit-Urteil: **AUDIT-PASS**, aber keine Implementierungsfreigabe.
-- Implementierung startet erst nach technischem Closure/PASS von PR #38.
+- Audit-Urteil: **AUDIT-PASS** als Planungsgrundlage.
+- Die technische Sperre durch PR #38 ist mit R17 Technical Closure aufgehoben.
 - Derselbe Agent bleibt zuständig.
-- Erster Block: Slice A – ehrliche Control-Center-/Steuerzentralen-IA.
-- Danach Review; anschließend u. a. read-only System Health für Vercel/Supabase/GitHub/App.
+- Erster konfliktarmer Block: **Slice A – ehrliche Control-Center-/Steuerzentralen-IA**.
+- Danach Review; anschließend read-only System Health für Vercel/Supabase/GitHub/App.
+- Shared Auth/RLS/DB/Privacy/Billing/Support-/Traveller-Verträge bleiben zentral koordiniert.
+
+## Startseite
+
+- Neue Produktseiten-Richtung ist dauerhaft gespeichert in `docs/HOMEPAGE_PRODUCT_PAGE_DIRECTION.md`.
+- Ziel: hochprofessionelle moderne Tech-Produktseite, die Jetnity klar erklärt; große hochwertige Bilder, viel Weißraum, moderne Typografie, hochwertige Animationen und präzise kurze Texte.
+- Starke bestehende Texte selektiv erhalten.
+- Header-/Footer-Funktionalität nicht verändern; keine Account/Admin/Seasonal/Auth/DB-Logik im Homepage-Workstream.
+- Neue Idee zuerst als separate visuelle Preview; bestehende Homepage erst nach ausdrücklicher Product-Owner-Entscheidung ersetzen.
+- **Aktuell pausiert; noch keine Implementierungsfreigabe.**
 
 ## Parallelität
 
-Nach PR-#38-Closure dürfen Account und Admin als getrennte Domänen parallel arbeiten. Innerhalb jedes Workstreams arbeitet derselbe Agent Slice für Slice mit Review dazwischen. Shared Auth/RLS/DB/Privacy/Billing/Support/Traveller-Verträge bleiben seriell unter Technical-Lead-Ownership.
+Nach R17 Technical Closure dürfen Account und Admin als getrennte konfliktarme Domänen parallel arbeiten. Innerhalb jedes Workstreams arbeitet derselbe Agent Slice für Slice mit Review dazwischen. Shared Auth/RLS/DB/Privacy/Billing/Support/Traveller-/Route-/Readiness-/Safety-/Seasonal-Verträge bleiben seriell unter Technical-Lead-Ownership.
 
-## Verifizierter Infra-Stand bei R16
+## Verifizierter Infra-Stand bei R17
 
 - `main`: `cd220beb44d90ae376feeb8de9db8a3afb808d60`.
 - Vercel Production `jetnity-app.vercel.app`: READY auf diesem `main`-Commit.
-- Vercel: aktuelle Previews für #38, #39 und #40 READY; letzte 24h keine Runtime-Error-Cluster gefunden.
+- PR-#38 Runtime-Preview `dpl_74A67UxWrCLWviihrsn9hfYqqZDQ`: READY auf `57824019`.
 - Supabase Production `qscbgcdmivbbnzrcyegn`: ACTIVE_HEALTHY.
-- Supabase Development `yfvbxvijcorffwxbxahl`: ACTIVE_HEALTHY.
+- Supabase Development Branch `yfvbxvijcorffwxbxahl`: ACTIVE_HEALTHY.
 - Production-Migrationsstand endet bei `20260822180000_traveller_context_rereview`.
-- Development enthält zusätzlich `20260824120000_flug_route_itinerary_surface_evidence`.
-- Supabase Security Advisor meldet bestehende WARNs zu GraphQL-Exponierung und mehreren SECURITY-DEFINER-RPCs; diese sind separate Security-Evidence und nicht automatisch ein bestätigtes Datenleck.
+- Development enthält zusätzlich `20260824120000_flug_route_itinerary_surface_evidence` und `20260824140000_flug_route_itinerary_untrusted_surface`.
+- Development-RPC: SECURITY INVOKER; anon kein EXECUTE; authenticated EXECUTE.
+- Supabase Security Advisor-WARNs zu GraphQL-Exponierung und mehreren SECURITY-DEFINER-RPCs bleiben separate Security-Evidence und sind nicht automatisch ein bestätigtes Datenleck.
 
 ## Danach weiterhin geplant
 
-Provider-Readiness/Adapter-Grenzen; großer Trip-Workspace-/Übersicht-Umbau mit Function-by-Function-Generalinspektion; finaler Workspace Intelligence Audit; echte Providerphase mit separaten Kosten-/Vertrags-/Secret-Gates; provider-backed End-to-End-/Truth-Audit; finale Startseiten-Positionierung.
+Account/Admin erste Slices; Homepage-Preview erst nach Product-Owner-Startsignal; Provider-Readiness/Adapter-Grenzen; großer Trip-Workspace-/Übersicht-Umbau mit Function-by-Function-Generalinspektion; finaler Workspace Intelligence Audit; echte Providerphase mit separaten Kosten-/Vertrags-/Secret-Gates; provider-backed End-to-End-/Truth-Audit.
