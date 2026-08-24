@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal und Account AP-1 auf `main`; Admin Slice A Main-Sync gegatet auf Draft PR #44 (`ed839d3e`); Provider Ops S1 Draft PR #47**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal und Account AP-1 auf `main`; Admin Slice A Integration Closure / PASS auf Draft PR #44 (`ed839d3e`); Provider Ops S1 Draft PR #47**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -298,7 +298,7 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (PR #38 gemergt)
 6. ✅ Account Platform AP-1 auf `main` (PR #43, `084f7c87`)
-7. Provider-Readiness-/Adapter-Lücken schließen – S1 Shared Operational Contract Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`; wartet auf Product-Owner-Entscheidung. **Admin Slice A** Main-Sync gegatet auf Draft PR #44, Exact Runtime Head `ed839d3e`; STOPP für Technical-Lead-Integrationsreview.
+7. Provider-Readiness-/Adapter-Lücken schließen – S1 Shared Operational Contract Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`; wartet auf Product-Owner-Entscheidung. **Admin Slice A** Technical Integration Closure / PASS auf Draft PR #44, Exact Runtime Head `ed839d3e`; wartet auf Product-Owner-Entscheidung.
 8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 10. echte Providerphase
@@ -319,10 +319,10 @@ Agent: `Admin platform audit`
 Auftrag: `docs/ADMIN_SLICE_A_MAIN_SYNC_TASK.md`
 
 1. Seasonal Foundation (PR #38) und Account AP-1 (PR #43) sind auf `main` `084f7c87`.
-2. Admin Slice A ist mit diesem `main` synchronisiert und erneut verifiziert (`origin/main` unverändert `084f7c87`, 0 behind). Exact Runtime Head `ed839d3e`. CI `32723815715` SUCCESS, Vercel Preview READY. Bisheriger Technical Closure bleibt für den alten Head gültig und ersetzt das Integrationsgate nicht.
-3. Status/Handoff/Gate: `docs/ADMIN_PLATFORM_SLICE_A_STATUS.md`, `docs/ADMIN_PLATFORM_SLICE_A_HANDOFF.md`, `docs/ADMIN_PLATFORM_SLICE_A_MAIN_SYNC_GATE.md`.
+2. Admin Slice A hat Technical Integration Closure / PASS auf Exact Runtime Head `ed839d3e` nach Sync mit `main` `084f7c87`. CI `32723815715` SUCCESS, Vercel Preview READY. Alter Technical Closure gilt nur für `5632a3ca`.
+3. Status/Handoff/Closure: `docs/ADMIN_PLATFORM_SLICE_A_STATUS.md`, `docs/ADMIN_PLATFORM_SLICE_A_HANDOFF.md`, `docs/ADMIN_PLATFORM_SLICE_A_INTEGRATION_CLOSURE.md`.
 4. PR #44 bleibt Draft. Kein Mark Ready, kein Merge, keine Production-Migration, keine Provider-/Secret-Aktivierung.
-5. **Exakter nächster Schritt:** unabhängigen Technical-Lead-Integrationsreview auf `ed839d3e` abwarten. Slice B / PR #46 bleibt unangetastet.
+5. **Exakter nächster Schritt:** Product-Owner-Entscheidung zu Mark Ready / Merge von Draft PR #44. Slice B / PR #46 bleibt unangetastet.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

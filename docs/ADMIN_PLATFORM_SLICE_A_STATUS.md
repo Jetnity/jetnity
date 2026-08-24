@@ -8,16 +8,16 @@ Auftrag: `docs/ADMIN_SLICE_A_MAIN_SYNC_TASK.md`
 
 ## Status
 
-**Main-Sync mit aktuellem `main` `084f7c87` gegatet und erneut verifiziert. STOPP für unabhängigen Technical-Lead-Integrationsreview.** Draft, nicht gemergt. Kein Mark Ready, kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+**Technical Integration Closure / PASS auf Exact Runtime Head `ed839d3e`.** Draft, nicht gemergt. Das ist keine Product-Owner-Freigabe für Mark Ready oder Merge.
 
 `origin/main` wurde erneut geholt und ist unverändert `084f7c87`. Branch ist 0 behind; kein neuer Merge.
 
 Exact Runtime Head: `ed839d3e6ee2605beef65d66fa1555ddabb52138`  
-Gate-Nachweis: `docs/ADMIN_PLATFORM_SLICE_A_MAIN_SYNC_GATE.md`
+Gate-Nachweis: `docs/ADMIN_PLATFORM_SLICE_A_MAIN_SYNC_GATE.md`  
+Integrations-Closure: `docs/ADMIN_PLATFORM_SLICE_A_INTEGRATION_CLOSURE.md`
 
 Bisheriger Technical Closure / PASS gilt nur für den alten Exact Head `5632a3cac1301d2d649fcb1d2b9552d3763c8b9f`.  
-Closure-Nachweis: `docs/ADMIN_PLATFORM_SLICE_A_TECHNICAL_CLOSURE.md`.  
-Dieser alte Head ersetzt das neue Integrationsgate nicht.
+Closure-Nachweis: `docs/ADMIN_PLATFORM_SLICE_A_TECHNICAL_CLOSURE.md`.
 
 Admin-Entscheidung nach ADR-Kollision mit Account AP-1: **ADR-0155**.
 
@@ -37,7 +37,7 @@ Lokale Gates wurden nach Re-Verifikation von `main` erneut vollständig ausgefü
 - GitHub Actions `CI` **SUCCESS**: `32683942810`
 - Vercel Preview **READY**: `dpl_czE3XJXw3qx3sXMrh7LTgMV94zBL`
 
-Nicht behauptet: `db:sicherheit`, Production-Migration, eingeloggte Admin-Browserprüfung, Technical-Lead-PASS auf `ed839d3e`, Product-Owner-Merge-Freigabe.
+Nicht behauptet: `db:sicherheit`, Production-Migration, eingeloggte Admin-Browserprüfung, Product-Owner-Merge-Freigabe.
 
 ## Ziel
 
@@ -63,4 +63,4 @@ Traveller Context ist für Slice A nicht relevant; es werden keine Reise-Credent
 
 ## Nächster Schritt
 
-Unabhängigen Technical-Lead-Integrationsreview auf Exact Runtime Head `ed839d3e` abwarten. Slice B / PR #46 bleibt unangetastet. Kein Mark Ready, kein Merge.
+Product-Owner-Entscheidung zu Mark Ready / Merge von Draft PR #44. Slice B / PR #46 bleibt unangetastet. Kein Mark Ready, kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe. Kein Slice B/C ohne separate Freigabe.

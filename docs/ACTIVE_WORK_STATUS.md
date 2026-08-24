@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 und Account AP-1 auf `main`; Admin Slice A Main-Sync gegatet auf Draft PR #44 (`ed839d3e`); Provider Ops S1 Draft PR #47**
+Status: **PR #38 und Account AP-1 auf `main`; Admin Slice A Integration Closure / PASS auf Draft PR #44 (`ed839d3e`); Provider Ops S1 Draft PR #47**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -63,9 +63,9 @@ Auftrag: `docs/ADMIN_SLICE_A_MAIN_SYNC_TASK.md`
 
 Aktiver Slice:
 
-**Admin Slice A Main-Sync mit aktuellem `main` `084f7c87` gegatet und erneut verifiziert.** Exact Runtime Head `ed839d3e6ee2605beef65d66fa1555ddabb52138`. CI `32723815715` SUCCESS. Vercel Preview READY `DgCMj6BFKkAZaUBU4HyQb6fZbm4i`. Nachweis: `docs/ADMIN_PLATFORM_SLICE_A_MAIN_SYNC_GATE.md`. `origin/main` unverändert; Branch 0 behind.
+**Admin Slice A Technical Integration Closure / PASS** auf Exact Runtime Head `ed839d3e6ee2605beef65d66fa1555ddabb52138`. CI `32723815715` SUCCESS. Vercel Preview READY `DgCMj6BFKkAZaUBU4HyQb6fZbm4i`. Nachweis: `docs/ADMIN_PLATFORM_SLICE_A_INTEGRATION_CLOSURE.md`. `origin/main` unverändert `084f7c87`; Branch 0 behind.
 
-Bisheriger Technical Closure / PASS gilt nur für den alten Exact Head `5632a3cac1301d2d649fcb1d2b9552d3763c8b9f` (CI `32683942810`, Preview `dpl_czE3XJXw3qx3sXMrh7LTgMV94zBL`). Das ersetzt das neue Integrationsgate nicht. STOPP für unabhängigen Technical-Lead-Integrationsreview.
+Das ist keine Product-Owner-Freigabe für Mark Ready oder Merge. Alter Technical Closure gilt nur für `5632a3ca`.
 
 Admin-ADR auf diesem Branch: **ADR-0155** (nicht mehr ADR-0152; `main` hat ADR-0152 an Account AP-1 vergeben).
 
@@ -131,7 +131,7 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-1. Unabhängiger Technical-Lead-Integrationsreview von Admin Slice A / Draft PR #44 auf Exact Runtime Head `ed839d3e`.
+1. Product-Owner-Entscheidung zu Mark Ready / Merge von Admin Slice A / Draft PR #44 auf Exact Runtime Head `ed839d3e`. Technical Integration Closure / PASS liegt vor und ist keine Merge-Freigabe.
 2. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung; kein Mark Ready / kein Merge / kein S2.
 3. PR #46 / Slice B bleibt Draft und unangetastet.
 4. AP-2, Admin Slice B und Provider S2 brauchen jeweils eine neue ausdrückliche Freigabe.

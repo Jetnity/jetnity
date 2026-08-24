@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety, Seasonal und Account AP-1 auf `main`; Admin Slice A Main-Sync auf Draft PR #44; Provider Ops S1 Draft PR #47**
+Status: **Foundation C/D/E, Travel Safety, Seasonal und Account AP-1 auf `main`; Admin Slice A Integration Closure / PASS auf Draft PR #44; Provider Ops S1 Draft PR #47**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -240,7 +240,7 @@ Auftrag: `docs/ACCOUNT_AP1_MAIN_SYNC_TASK.md`. Entscheidung: ADR-0152, ADR-0153.
 
 ## 6b. In Arbeit – Admin Control Center Slice A
 
-Status: **Main-Sync mit aktuellem `084f7c87` gegatet und erneut verifiziert auf Draft PR #44, Exact Runtime Head `ed839d3e`; STOPP für Technical-Lead-Integrationsreview. Bisheriger Technical Closure gilt nur für den alten Head `5632a3ca`**
+Status: **Technical Integration Closure / PASS auf Draft PR #44, Exact Runtime Head `ed839d3e`; wartet auf Product-Owner-Entscheidung. Kein Mark Ready / Merge ohne ausdrückliche Freigabe. Alter Technical Closure gilt nur für `5632a3ca`**
 
 - ehrliche Steuerzentralen-IA auf dem vorhandenen gehärteten Backoffice
 - keine neue Datenwahrheit, keine neue Autorität, keine Migration
