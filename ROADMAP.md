@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 23. August 2026  
-Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; nächste Priorität: Travel Timing & Seasonal Intelligence**
+Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; nächste Kernpriorität: Travel Timing & Seasonal Intelligence (PR #38). Parallel: Account-Platform-Audit vorbereitet, keine Kernimplementierung.**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -335,3 +335,10 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 11. finale Startseiten-Positionierung
 
 Der nächste Agent darf D/E/Safety **nicht neu bauen** und darf **nicht direkt einen echten Provider integrieren**.
+
+### Parallel vorbereitet – keine Kernimplementierung
+
+- **Account Platform Audit** auf `audit/account-platform`, Agent **Account plattform audit vorbereitung**. Handoff: `docs/ACCOUNT_PLATFORM_HANDOFF.md`. Implementierung erst nach PR-#38-Closure und Lead-Freigabe.
+- **Admin Platform Audit** vorbereitet (`docs/CURSOR_ADMIN_PLATFORM_AUDIT_TASK.md`), Agent zum Zeitpunkt des Account-Audits noch nicht eingetragen.
+
+Parallele Account-/Admin-Kernänderungen an Auth/RLS/Traveller/Payment bleiben gesperrt.
