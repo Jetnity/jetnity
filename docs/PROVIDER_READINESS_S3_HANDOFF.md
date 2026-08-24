@@ -1,7 +1,7 @@
 # Jetnity – Provider Readiness S3 Handoff
 
 Stand: 24. August 2026
-Status: **S3 Implementierung auf `feat/provider-mobility-rental-evidence-s3`; Draft-PR folgt; kein Mark Ready / kein Merge / kein S4**
+Status: **S3 lokal und remote auf Exact Head `e284af55` gegatet; Draft-PR #54; STOPP für Technical-Lead-Review; kein Mark Ready / kein Merge / kein S4**
 
 ## 1. Übernahme
 
@@ -16,9 +16,20 @@ S3 lebt nur auf `feat/provider-mobility-rental-evidence-s3`.
 
 ## 2. Exact Head
 
-Wird nach Push auf den Commit dieses Branches gesetzt. Basis ist `origin/main` @ `1ec93cc9`.
+- Functional Exact Head: `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`
+- Draft-PR: https://github.com/Jetnity/jetnity/pull/54
+- Basis: `origin/main` @ `1ec93cc9`
+- PR: Draft
 
-## 3. Harte Grenzen
+## 3. Gate-Ergebnisse auf `e284af55`
+
+- `npm test` 1849/1849
+- Typecheck, Lint, Hygiene, API-Schutz, Schema-Bezug, Production-Build Exit 0
+- UI-Audit 1014/1014, 0 Fehler
+- GitHub Actions SUCCESS: https://github.com/Jetnity/jetnity/actions/runs/32750893324
+- Vercel READY: https://vercel.com/jetnity-e1b93c82/jetnity-app/GWiY7wxgazEfqL2PZSP2eWskoVcK
+
+## 4. Harte Grenzen
 
 - Kein Mark Ready ohne ausdrückliche aktuelle Product-Owner-Freigabe
 - Kein Merge ohne separate ausdrückliche Product-Owner-Freigabe
@@ -28,12 +39,12 @@ Wird nach Push auf den Commit dieses Branches gesetzt. Basis ist `origin/main` @
 - Keine Provideraktivierung, Secrets, Verträge oder kostenpflichtigen Calls
 - Kein stilles Ziehen von S4–S8
 
-## 4. Geschlossene Audit-Funde
+## 5. Geschlossene Audit-Funde
 
 - PR-P1-04: Mobility-/Rental-Nachweis sind kein Stub mehr, sondern async Hotel-/S2-Vertrag. Umgebung `null`.
 - PR-P1-07: Mobility Auto-Search im Workspace ist aus. Suche nur über «Verbindungen prüfen».
 
-## 5. Offene Provider-Risiken
+## 6. Offene Provider-Risiken
 
 - Persistenter Cost Guard fehlt weiter (S6)
 - Offer-Provenance fehlt weiter (S5)
@@ -43,6 +54,6 @@ Wird nach Push auf den Commit dieses Branches gesetzt. Basis ist `origin/main` @
 - Mobility/Rental Timeout bleibt HTTP 504 (S1-Residual)
 - `reise_anlegen` / direkte `trip_items`-Writes können User-Intake-Handelsfelder für transfer/rental_car weiter aus JSON setzen. Keine S3-Migration.
 
-## 6. Nächster Schritt
+## 7. Nächster Schritt
 
-Unabhängiger Technical-Lead-Review gegen den Exact Head dieses PRs. Danach erst S4, und nur mit neuem Auftrag.
+Unabhängiger Technical-Lead-Review gegen Exact Head `e284af55`. Danach erst S4, und nur mit neuem Auftrag.

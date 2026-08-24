@@ -325,7 +325,8 @@ ADR: ADR-0159
 3. Der Browser darf nur identifiers senden. Keine `booking_url`.
 4. Mobility-Suche im Workspace startet nicht automatisch; nur «Verbindungen prüfen».
 5. Keine neue Migration. S2 Development-Guards bleiben nicht Production-approved.
-6. **Exakter nächster Schritt:** Draft-PR, volle Gates, STOPP für unabhängigen Technical-Lead-Review. Kein Mark Ready, kein Merge, kein S4, keine Production-Migration.
+6. Draft-PR #54. Exact Head `e284af55`. GitHub Actions SUCCESS `32750893324`. Vercel READY `GWiY7wxgazEfqL2PZSP2eWskoVcK`.
+7. **Exakter nächster Schritt:** Unabhängiger Technical-Lead-Review gegen `e284af55`. Kein Mark Ready, kein Merge, kein S4, keine Production-Migration.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
