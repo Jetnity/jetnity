@@ -1,9 +1,26 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 vollständig integriert; Account AP-1, Admin Slice A und Provider Ops S1 bleiben parallele Draft-Workstreams; dieser Branch hat Provider Readiness S2-B2 auf Draft-PR #51 umgesetzt und wartet auf Technical-Lead-Re-Review**
+Status: **PR #38, Account AP-1 und Account AP-2 liegen auf `main`; dieser Branch hat Provider Readiness S2-B2 auf Draft-PR #51 mit aktuellem `main` synchronisiert, um GitHub Actions wieder zu ermöglichen, und stoppt danach für Technical-Lead-Re-Review**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
+
+**Account Platform AP-2 – Auth-UX-Hygiene**
+
+- PR #48: **gemergt und geschlossen**
+- Squash-Merge auf `main`: `2827d1cbb674498f504ba1810c73c8dc5d43ca24`
+- gemergt: 24. August 2026, 13:02 UTC
+
+Davor vollständig abgeschlossen:
+
+**Account Platform AP-1 – Account-Shell + persönliche Übersicht**
+
+- PR #43: **gemergt und geschlossen**
+- Squash-Merge auf `main`: `084f7c87f36f9929f3e4a9deb9d3fedef6e96982`
+- gemergt: 24. August 2026, 11:37 UTC
+- ADR-0152, ADR-0153 bleiben verbindlich
+
+Davor vollständig abgeschlossen:
 
 **Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
 
@@ -36,21 +53,11 @@ Supabase Production `qscbgcdmivbbnzrcyegn`:
 
 Keine Seasonal-Tabelle, kein Live-Seasonal-Provider, keine neuen Secrets und keine neuen laufenden Providerkosten.
 
+Account AP-1 und AP-2 liegen auf `main`. Eine separate Account-Production-Migration war nicht Teil dieser Slices und ist nicht behauptet.
+
+S2-B1/B2-Migrationen `20260824160000` und `20260824180000` liegen nur auf Supabase Development. **Production unverändert.**
+
 ## 3. Aktive Workstreams
-
-### Account Platform – AP-1
-
-Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`  
-Audit-Referenz: Draft-PR #39 / `audit/account-platform` – **AUDIT-PASS**  
-Implementierungsbranch: `feat/account-ap1`  
-Implementierungs-Draft-PR: **#43**  
-Auftrag: `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`
-
-Aktiver Slice:
-
-**AP-1 – Account-Shell + persönliche Übersicht / „Meine Reisen“ als Account-Hub.**
-
-Grenze: UI/IA und bestehende `reisenLaden()`-Truth. Keine neue Auth-/Trip-/Traveller-/Billing-/Route-Truth, keine DB-Migration, keine Homepage-Änderung.
 
 ### Admin Platform – Slice A
 
@@ -88,13 +95,13 @@ Status: `docs/PROVIDER_READINESS_S2_STATUS.md`
 
 Aktiver Slice:
 
-**S2 – `FlugNachweis` plus S2-B1-RPC- und S2-B2-Tabellengrenze.** Functional Exact Head `1b06b284`. Browser sendet nur identifiers. Guest und Guest → Account bleiben fail-closed. `reise_anlegen` und direkte `trip_items`-Writes verwerfen unbewiesene Flug-Handelsfelder. Development-Migrationen `20260824160000` und `20260824180000` sind angewendet. **Production unverändert.** Lokale Gates und Vercel sind grün. GitHub Actions startete auf dem neuen Head nicht. STOPP für Technical-Lead-Re-Review.
+**S2 – `FlugNachweis` plus S2-B1-RPC- und S2-B2-Tabellengrenze, jetzt auf aktuellen `main` (`2827d1cb`) synchronisiert.** Vorheriger Functional Exact Head `1b06b284`. Browser sendet nur identifiers. Guest und Guest → Account bleiben fail-closed. `reise_anlegen` und direkte `trip_items`-Writes verwerfen unbewiesene Flug-Handelsfelder. Development-Migrationen `20260824160000` und `20260824180000` sind angewendet. **Production unverändert.** Der `main`-Sync ist kein PR-Merge und kein S3. Ziel: GitHub Actions `ci.yml` wieder auf einem mergebaren Head starten, danach STOPP für Technical-Lead-Re-Review.
 
 Grenze: kein Live-Duffel, keine Provideraktivierung, keine Secrets, keine Production-Migration, kein S3–S6, kein Offer-Booking. `booking_url` bleibt `null`. Route Truth bleibt Foundation D.
 
 ## 4. Parallelitätsregel
 
-Account AP-1, Admin Slice A und Provider Ops S1 dürfen parallel arbeiten, dürfen ihre Dateien aber nicht mischen.
+Admin Slice A und Provider Ops S1 dürfen parallel zu diesem S2-Branch arbeiten, dürfen ihre Dateien aber nicht mischen.
 
 Seriell/zentral bleiben insbesondere:
 
@@ -127,7 +134,8 @@ Wenn sie gestartet wird:
 
 ## 6. Governance
 
-- PR #43, PR #44, PR #45, PR #47 und PR #51 bleiben Draft.
+- PR #44, PR #45, PR #47 und PR #51 bleiben Draft.
+- PR #43 und PR #48 sind gemergt; das ist keine Freigabe für PR #51, S3 oder Production-Migration.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
@@ -135,8 +143,8 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
-2. `Admin platform audit` implementiert ausschließlich Slice A auf PR #44.
-3. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung.
-4. S2-B2 auf Draft-PR #51 hat Functional Head `1b06b284`, lokale Gates und Vercel READY; GitHub Actions auf diesem Head startete nicht. STOPP für Technical-Lead-Re-Review. Production unverändert. Kein Mark Ready, kein Merge, kein S3, keine Production-Migration.
-5. AP-2, Admin Slice B und Provider S3 brauchen jeweils eine neue ausdrückliche Freigabe.
+1. S2 auf Draft-PR #51 zieht `origin/main` @ `2827d1cb` ein, damit der PR wieder mergebar wird und GitHub Actions `ci.yml` starten kann. Das ist kein Merge von PR #51.
+2. Danach Exact-Head-Gates auf dem neuen Integrations-Head und STOPP für unabhängigen Technical-Lead-Re-Review. Production unverändert. Kein Mark Ready, kein Merge, kein S3, keine Production-Migration.
+3. `Admin platform audit` arbeitet weiter ausschließlich Slice A auf PR #44.
+4. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung.
+5. AP-3, Admin Slice B und Provider S3 brauchen jeweils eine neue ausdrückliche Freigabe.

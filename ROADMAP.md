@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
+Status: **Foundation C/D/E, Travel Safety, Travel Timing & Seasonal, Account AP-1 und Account AP-2 auf `main`; Provider Readiness S2-B2 auf Draft-PR #51 nach `main`-Sync**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -160,9 +160,9 @@ Verbindliche Truth-Logik:
 
 ---
 
-## 6. NÄCHSTE PRIORITÄT – Travel Timing & Seasonal Intelligence
+## 6. Travel Timing & Seasonal Intelligence
 
-Status: **Draft PR #38; R17 Technical Closure / PASS auf Runtime `57824019`; wartet auf Product-Owner-Merge-Freigabe; kein Live-Provider**
+Status: **abgeschlossen und auf `main` gemergt (PR #38, Squash `ee988bbe`); kein Live-Provider**
 
 Policy:
 
@@ -214,7 +214,49 @@ Verbindlich:
 19. ✅ ChatGPT-Re-Review R15: Blocker 30 geschlossen, Exact-Head-Gate grün
 20. ✅ ChatGPT-Re-Review R16: Blocker 31 geschlossen, Exact-Head-Gate grün
 21. ✅ ChatGPT-Re-Review R17: Technical Closure / PASS, kein neuer konkreter Defekt
-22. **→ Product-Owner-Merge-Gate** (Draft bleibt; kein Mark Ready / Merge ohne ausdrückliche Freigabe)
+22. ✅ Product-Owner-Merge und Production-Integration
+
+---
+
+## 6a. Account Platform AP-1 – persönliches Zuhause
+
+Status: **auf `main` – Squash-Merge `084f7c87` (PR #43), 24. August 2026**
+
+Ziel: das persönliche Account-Zuhause anlegen, ohne den Trip Workspace zu verdoppeln.
+
+Umgesetzt in AP-1:
+
+- Account-Shell mit kompakter Navigation
+- `/account` aus bestehenden `reisenLaden()`-Daten
+- **Konto**-Link nur bei `sitzung === konto`
+- `/account/security` unter Einstellungen auffindbar
+- UI-Audit 48/48 grün
+
+Nicht in AP-1: Auth/MFA/AAL, RLS, Traveller-Registry, Privacy/Billing, Guest→Account, Homepage.
+
+Auftrag: `docs/ACCOUNT_AP1_MAIN_SYNC_TASK.md`. Entscheidung: ADR-0152, ADR-0153.
+
+---
+
+## 6b. Account Platform AP-2 – Auth-UX-Hygiene
+
+Status: **auf `main` – Squash-Merge `2827d1cb` (PR #48), 24. August 2026**
+
+Ziel: Login, Register, Callback, OAuth-Sichtbarkeit, Gast-/Session-Navigation und MFA-Dialog-Accessibility härten, ohne Auth-/MFA-/AAL-Vertrag oder Provider zu ändern.
+
+Umgesetzt in AP-2:
+
+- OAuth-Schaltflächen nur bei belegtem `config.toml`-Enablement
+- zentrale `next`-Allowlist, fail-closed `/reisen`
+- Login/Register über `getUser()`
+- öffentliche Register-Enumeration inkl. AP2-B1 geschlossen
+- Gast `/reisen`: Fortsetzen nur bei aktivem Entwurf
+- Footer aus `sitzungseintraege()`
+- MFA-Dialog a11y gehärtet
+
+Nicht in AP-2: DB/Migration/RLS, Traveller-Registry, Guest→Account-Vertragsänderung, Provider-Aktivierung, AP-3.
+
+Auftrag: `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md`.
 
 ---
 
@@ -246,7 +288,7 @@ Zu prüfen/vereinheitlichen:
 
 Keine Verträge, Secrets oder laufenden Providerkosten ohne separate Freigabe.
 
-S1 Shared Operational Contract ist Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`. Es zentralisiert nur technische Hüllen. Audit-PR #45 bleibt Draft. S2 inkl. B1/B2 liegt auf Draft-PR #51 / `feat/provider-flight-evidence-s2`, Functional Head `1b06b284`; Development-Migrationen `20260824160000` und `20260824180000` sind angewendet, Production unverändert, STOPP für Technical-Lead-Re-Review. GitHub Actions auf dem neuen Head startete nicht. S1/S2 aktivieren keine Provider. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
+S1 Shared Operational Contract ist Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`. Es zentralisiert nur technische Hüllen. Audit-PR #45 bleibt Draft. S2 inkl. B1/B2 liegt auf Draft-PR #51 / `feat/provider-flight-evidence-s2`; vorheriger Functional Head `1b06b284` ist jetzt auf `origin/main` @ `2827d1cb` synchronisiert, damit GitHub Actions wieder starten kann. Development-Migrationen `20260824160000` und `20260824180000` sind angewendet, Production unverändert. S1/S2 aktivieren keine Provider. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
 
 ---
 
@@ -342,12 +384,14 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. **→ Travel Timing & Seasonal – provider-neutrale Foundation (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
-6. Provider-Readiness-/Adapter-Lücken schließen
-7. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
-8. finaler Workspace Intelligence Audit
-9. echte Providerphase
-10. provider-backed End-to-End-/Truth-Audit
-11. finale Startseiten-Positionierung
+5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation
+6. ✅ Account Platform AP-1 – auf `main` (`084f7c87`, PR #43)
+6a. ✅ Account Platform AP-2 – auf `main` (`2827d1cb`, PR #48)
+7. Provider-Readiness-/Adapter-Lücken schließen – S2-B2 auf Draft-PR #51 nach `main`-Sync, danach Technical-Lead-Re-Review
+8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
+9. finaler Workspace Intelligence Audit
+10. echte Providerphase
+11. provider-backed End-to-End-/Truth-Audit
+12. finale Startseiten-Positionierung
 
 Der nächste Agent darf D/E/Safety **nicht neu bauen** und darf **nicht direkt einen echten Provider integrieren**.

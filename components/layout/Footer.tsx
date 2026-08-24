@@ -1,16 +1,13 @@
 import Link from 'next/link'
 import { ArrowUpRight, Mail } from 'lucide-react'
 
+import FooterSitzung from '@/components/layout/FooterSitzung'
+
 const productLinks = [
   { label: 'Reise planen', href: '/planen' },
   { label: 'Meine Reisen', href: '/reisen' },
   { label: 'Entdecken', href: '/#entdecken' },
   { label: 'Jetnity Pro', href: '/#pro' },
-]
-
-const accountLinks = [
-  { label: 'Anmelden', href: '/login' },
-  { label: 'Registrieren', href: '/register' },
 ]
 
 /**
@@ -70,13 +67,7 @@ export default function Footer() {
           <div>
             <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-white/45">Jetnity</h2>
             <ul className={footerListClass}>
-              {accountLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className={footerLinkClass}>
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+              <FooterSitzung />
             </ul>
           </div>
         </div>

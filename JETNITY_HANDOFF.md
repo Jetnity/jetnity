@@ -1,11 +1,11 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal Foundation ist auf main; dieser Branch ist Provider Readiness S2-B2, Draft-PR #51, STOPP für Technical-Lead-Re-Review**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1 und Account AP-2 liegen auf `main`; dieser Branch ist Provider Readiness S2-B2, Draft-PR #51, nach `main`-Sync für GitHub Actions, danach STOPP für Technical-Lead-Re-Review**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
-Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Provider Readiness S2 (dieser Branch) zusätzlich in `docs/PROVIDER_READINESS_S2_STATUS.md` und `docs/PROVIDER_READINESS_S2_HANDOFF.md`.
+Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Provider Readiness S2 (dieser Branch) zusätzlich in `docs/PROVIDER_READINESS_S2_STATUS.md` und `docs/PROVIDER_READINESS_S2_HANDOFF.md`. Provider Ops S1 zusätzlich in `docs/PROVIDER_OPS_S1_STATUS.md` und `docs/PROVIDER_OPS_S1_HANDOFF.md`.
 
 > **Kein relevanter Fortschritt darf beim Wechsel von Chat, Agent oder Sitzung verloren gehen. Was für die Fortsetzung wichtig ist, gehört ins Repository.**
 
@@ -92,7 +92,7 @@ Production:
 
 - URL: `https://jetnity-app.vercel.app`
 - Supabase Production: `qscbgcdmivbbnzrcyegn` (`eu-central-2`)
-- Supabase Development: `yfvbxvijcorffwxbxahl`
+- Supabase Development: `[REDACTED]`
 
 Echte Travel-Provider bleiben derzeit deaktiviert. Keine Fake-Preise, Fake-Verfügbarkeit, Fake-Zeiten, erfundene Visa-/Safety-/Seasonal-Aussagen oder unfreigegebene Providerkosten.
 
@@ -296,13 +296,15 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. **→ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
-6. Provider-Readiness-/Adapter-Lücken schließen – **S1 Technical Closure / PASS auf Draft-PR #47; S2-B2 auf Draft-PR #51 wartet auf Technical-Lead-Re-Review**
-7. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
-8. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
-9. echte Providerphase
-10. provider-backed End-to-End-/Truth-Audit
-11. finale Startseiten-Positionierung / Kommunikation
+5. ✅ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation
+6. ✅ Account Platform AP-1 – Squash-Merge nach `main` (`084f7c87`, PR #43)
+6a. ✅ Account Platform AP-2 – Squash-Merge nach `main` (`2827d1cb`, PR #48)
+7. Provider-Readiness-/Adapter-Lücken schließen – **S1 Technical Closure / PASS auf Draft-PR #47; S2-B2 auf Draft-PR #51 nach `main`-Sync, danach STOPP für Technical-Lead-Re-Review**
+8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
+9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
+10. echte Providerphase
+11. provider-backed End-to-End-/Truth-Audit
+12. finale Startseiten-Positionierung / Kommunikation
 
 ### Provider-Regel
 
@@ -312,11 +314,11 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-Aktiver Branch: `feat/provider-flight-evidence-s2`  
-Draft PR: `#51`  
-Basis: `origin/main` @ `01761eb9`  
-Functional Exact Head: `1b06b284`  
-Auftrag: `docs/PROVIDER_READINESS_S2_FLUGNACHWEIS_TASK.md`  
+Aktiver Branch: `feat/provider-flight-evidence-s2`
+Draft PR: `#51`
+Basis: `origin/main` @ `2827d1cb`
+Vorheriger Functional Exact Head: `1b06b284`
+Auftrag: `docs/PROVIDER_READINESS_S2_FLUGNACHWEIS_TASK.md`
 B2-Auftrag: `docs/PROVIDER_READINESS_S2_B2_DIRECT_TABLE_TRUST_FIX_TASK.md`
 
 1. S2 hebt die Flug-Kontoübernahme auf dieselbe Trust-Grenze wie Hotels: Browser sendet nur identifiers.
@@ -324,11 +326,14 @@ B2-Auftrag: `docs/PROVIDER_READINESS_S2_B2_DIRECT_TABLE_TRUST_FIX_TASK.md`
 3. Guest persistiert keine kommerzielle Provider-Flugoption. Guest → Account streicht unbewiesene Flug-Handelsfelder.
 4. S2-B1: `reise_anlegen` verwirft unbewiesene Flug-Handelsfelder. S2-B2: direkte `trip_items`-Writes tun dasselbe für `authenticated`/`anon`.
 5. Development-Migrationen `20260824160000` und `20260824180000` sind angewendet. **Production unverändert.**
-6. PR bleibt Draft. GitHub Actions startete auf dem neuen Head nicht; Vercel ist READY. Kein Merge ohne aktuelle Product-Owner-Freigabe.
-7. **Exakter nächster Schritt:** Unabhängiger Technical-Lead-Re-Review gegen Functional Head `1b06b284`.
+6. PR #51 war `CONFLICTING` gegenüber `main` (Account AP-1/AP-2). GitHub Actions `ci.yml` startete deshalb auf den S2-B2-Heads nicht. Dieser Branch zieht `origin/main` ein, ohne den PR zu mergen.
+7. PR bleibt Draft. Kein Mark Ready, kein Merge, kein S3, keine Production-Migration ohne neue Product-Owner-Freigabe.
+8. **Exakter nächster Schritt:** Exact-Head-Gates auf dem neuen Integrations-Head, GitHub Actions nachziehen, danach STOPP für unabhängigen Technical-Lead-Re-Review.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
 Leitsatz:
 
 > **Browserdaten dürfen keine kommerzielle Flugwahrheit persistieren. Nachweis oder fail-closed – keine dritte Wahrheit.**
+>
+> **Account ist das dauerhafte Zuhause. Der Trip Workspace bleibt die Kommandozentrale einer einzelnen Reise.**

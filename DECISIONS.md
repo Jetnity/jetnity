@@ -3742,6 +3742,52 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0152 – Account-Übersicht ist Zuhause, kein zweites Workspace-Dashboard
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #43 / `feat/account-ap1`
+
+**Entscheidung:**
+
+- `/account` ist das persönliche dauerhafte Zuhause eines angemeldeten Kontos.
+- Der Trip Workspace bleibt die operative Kommandozentrale einer einzelnen Reise.
+- Die Übersicht liest ausschliesslich vorhandene `reisenLaden()`-Daten. Empty und Error bleiben getrennt.
+- Die öffentliche Leiste zeigt **Konto** nur bei `sitzung === konto`.
+- `/account/security` wird unter `/account/settings` auffindbar; MFA-/AAL-Verträge ändern sich nicht.
+- AP-1 ändert keine Tabelle, kein RLS, kein Guest→Account und keine Traveller-Registry.
+
+**Kontext:** Account-Audit PR #39. Auftrag `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`.
+
+**Alternativen:** Workspace-Karten auf `/account` spiegeln; Konto-Link auch für Gäste; neue Persistenz für „nächste Reise“.
+
+**Begründung:** Ohne Zuhause bleibt `/account/security` verwaist und `/reisen` wirkt wie der einzige Einstieg. Ein zweites Dashboard würde operative Wahrheit verdoppeln.
+
+**Konsequenzen:** Orientierung und Fortsetzen liegen im Konto. Fachliche Reiseoperationen bleiben im Workspace. AP-2+ erst nach Review/Freigabe. PR #43 bleibt Draft.
+
+---
+
+## ADR-0153 – Account aktiv/kommend braucht einen Geräte-Kalendertag
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #43 nach Technical-Lead REQUEST CHANGES
+
+**Entscheidung:**
+
+- `aktiv` / `kommend` entstehen nur gegen einen belegten Geräte-Kalendertag (`Date#getTimezoneOffset`).
+- Der Server klassifiziert diese Lagen nicht. Unbekannter Kalendertag bleibt `fortsetzen`.
+- Keine IANA-Zone, kein stilles UTC-Kalenderdatum aus `toISOString()`.
+- Ein 503 von `reisenLaden()` beweist keinen Speicherstand. Der Text sagt nur, dass der aktuelle Stand nicht geprüft werden konnte.
+
+**Kontext:** Independent Technical-Lead Review an PR #43 gegen Head `62868d2c`.
+
+**Alternativen:** Server-UTC als „heute“ (Review-Blocker); IANA aus IP/Browser raten; aktiv/kommend ganz entfernen.
+
+**Begründung:** Date-only darf nicht still UTC werden. Ein Ladefehler ist keine Persistenzaussage.
+
+**Konsequenzen:** Kurz nach dem ersten Client-Render kann die Lage von Fortsetzen auf aktiv/kommend wechseln. Das ist ehrlicher als eine Server-UTC-Behauptung. PR #43 bleibt Draft.
+
+---
+
 ## ADR-0154 – Minimaler gemeinsamer Provider-Operationsvertrag
 
 **Datum:** 24. August 2026  
