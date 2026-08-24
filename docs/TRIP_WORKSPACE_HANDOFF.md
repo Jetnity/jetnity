@@ -10,19 +10,36 @@ Draft-PR: **#55**, docs-only, kein TW-1
 
 ## 1. Exact Head
 
-Historischer erster Exact Head vor Current-Main-Sync (nicht mehr Branch-Head):
-
-`0ccd38df1614b615cbdccc48d3a9b05a67d41df6`
-
-Dieser SHA ist **Evidence des ersten Gates-Laufs**, nicht aktueller Head und nicht aktueller `main`.
-
 Aktueller Integrations-`main`:
 
 `e3bad749c8e03512001e7bccd5e08467f10a7134`
 
 `Admin Control Center Slice B – read-only System Health (#46)`
 
-Der Branch `audit/trip-workspace` ist darauf rebased. Der neue Exact Head wird nach Commit/Push dieses Reconciliation-Schnitts erneut gegatet.
+Der Branch `audit/trip-workspace` ist darauf rebased. Kein Force-Replacement des `main`-Inhalts.
+
+Current-Main-Reconciliation-Head, auf dem die lokalen Gates dieses Re-Reviews liefen:
+
+`ae98fb19afd0e5c0c356a0e509269870ea9a092a`
+
+Lokale Exact-Head-Gates auf `ae98fb19`, alle grün:
+
+- `check:setup:ci` (1 Warning: keine `.env` im Cloud-Agent)
+- `typecheck`
+- `lint`
+- `npm test` – **1832/1832 pass, 0 fail**
+- `check:api-schutz` – 11 Admin-Routen
+- `check:schema-bezug`
+- `check:dead` / `check:exports` / `check:deps`
+- `npm run build` – Production-Build 43/43 Seiten, Compiled successfully
+
+Dieser Evidence-Nachzug ist docs-only. Nach Commit/Push ist der Branch-Head der Exact Head für das Re-Review. Lokale Gates werden auf diesem neuen Head erneut ausgeführt, bevor STOPP gilt.
+
+Historischer erster Exact Head vor Current-Main-Sync (nicht mehr Branch-Head):
+
+`0ccd38df1614b615cbdccc48d3a9b05a67d41df6` / später `536ed50ffda0279973058f7a2b78ee98217e7aad`
+
+Dieser SHA ist **Evidence des ersten Gates-Laufs**, nicht aktueller Head und nicht aktueller `main`. Der historische SUCCESS gilt nicht für diesen Re-Review.
 
 Historische Code-Evidence-Basis des Workspace-Audits:
 
@@ -110,8 +127,8 @@ Multi-Citizenship ist als UI-Naht vorbereitet, nicht neu modelliert.
 ## 7. Exakter nächster Schritt
 
 1. Dieser Draft-PR bleibt Draft.
-2. Unabhängiger ChatGPT / Technical-Lead-Review der fünf Dokumente gegen Code und `main`.
+2. Unabhängiger Technical-Lead-Re-Review der fünf Dokumente plus Current-Main-Reconciliation gegen Code und `main` `e3bad749`.
 3. Product Owner entscheidet gemeinsam mit dem Technical Lead, **ob und wann** TW-1 Runtime beginnt.
-4. **Kein** Mark Ready, **kein** Merge, **kein** Workspace-Umbau ohne neuen ausdrücklichen Auftrag.
+4. **Kein** Mark Ready, **kein** Merge, **kein** TW-1, **kein** Workspace-Umbau ohne neuen ausdrücklichen Auftrag.
 
 Empfohlene erste Runtime nach Freigabe: **TW-1 Shell/Geräteparität** und **TW-2 Reiseübersicht**, danach **TW-4 Aufmerksamkeit**. Siehe `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`.
