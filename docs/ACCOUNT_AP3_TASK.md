@@ -2,7 +2,7 @@
 
 Stand: 24. August 2026
 
-Status: **GO ACCOUNT AP-3 – Draft bleibt Draft**
+Status: **DONE – Exact-Head `612d819e` gegatet; Draft bleibt Draft, wartet auf Integrationsreview**
 
 Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`
 

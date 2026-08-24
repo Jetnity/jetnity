@@ -1,7 +1,7 @@
 # Jetnity Account Platform – AP-3 Handoff
 
 Stand: 24. August 2026  
-Status: **AP-3 implementiert auf `feat/account-ap3` – Draft, kein Mark Ready, kein Merge**
+Status: **gegated auf Runtime-Head `612d819e` – Draft, wartet auf Integrationsreview; kein Mark Ready, kein Merge**
 
 | Feld | Wert |
 | --- | --- |
@@ -10,7 +10,10 @@ Status: **AP-3 implementiert auf `feat/account-ap3` – Draft, kein Mark Ready, 
 | Branch | `feat/account-ap3` |
 | Base | `main` @ `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267` |
 | Auftrag | `docs/ACCOUNT_AP3_TASK.md` |
+| Draft-PR | https://github.com/Jetnity/jetnity/pull/53 |
+| Runtime-Head | `612d819ed9691f93cbab97128e301b0b7744721b` |
 | Status | `docs/ACCOUNT_AP3_STATUS.md` |
+| Self-Review | `docs/ACCOUNT_AP3_SELF_REVIEW.md` |
 | Entscheidung | ADR-0158 |
 
 ## Was ein neuer Agent zuerst liest
@@ -29,6 +32,12 @@ Kontoreisen auf `/reisen` liegen in vier ableitenden Gruppen. Die Lage teilt sic
 
 Auth, RLS, `trips.status`, Guest→Account, Traveller, Privacy, Billing, Admin, Provider.
 
+## Runtime-Nachweis
+
+- GitHub Actions **SUCCESS** (`32750420663`)
+- Vercel **success / READY** (`ChAxmb8ygS6NjwT5PrCNmSUo7wi7`)
+- Docs-only danach ist kein neues Runtime-Gate.
+
 ## Offene Risiken
 
 - Bereits gespeichertes `archived` bleibt in der Datumsgruppe sichtbar; Archiv-UX ist AP-4.
@@ -39,3 +48,7 @@ Auth, RLS, `trips.status`, Guest→Account, Traveller, Privacy, Billing, Admin, 
 ## Nächster Account-Block nach Integration
 
 Gemäß Audit: AP-5 UI-/Security-Teile und AP-6a Legal. AP-4 / AP-6b / AP-7 / AP-8 / AP-12 brauchen Shared Gates. AP-3 beendet das Account-Programm nicht.
+
+## Nächster Schritt
+
+Unabhängiger Technical-Lead-Review von Draft-PR #53 auf `612d819e`. Kein AP-4. Kein Ready. Kein Merge.
