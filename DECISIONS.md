@@ -3809,7 +3809,31 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 **Begründung:** Die minimale, freigegebene Lösung härtet genau den browser-erreichbaren JSON-Vertrag. Additive Migration `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis.sql`, nur Development.
 
-**Konsequenzen:** Production bleibt bis zu einer separaten Product-Owner-Freigabe unverändert. Keine Service-Role-, Auth-, MFA-, AAL- oder Capability-Änderung. Kein S3. Kein Mark Ready / Merge.
+**Konsequenzen:** Production bleibt bis zu einer separaten Product-Owner-Freigabe unverändert. Keine Service-Role-, Auth-, MFA-, AAL- oder Capability-Änderung. Kein S3. Kein Mark Ready / Merge. Der direkte Tabellenvertrag braucht ADR-0157.
+
+---
+
+## ADR-0157 – Direkte trip_items-Writes verwerfen untrusted Flug-Handelsfelder
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #51 / S2-B2; nur Supabase Development; Production unverändert
+
+**Entscheidung:** Ein BEFORE-Trigger auf `public.trip_items` verwirft für `kind='flight'` die fünf Handelsfelder, wenn `current_user` `authenticated` oder `anon` ist. INSERT setzt sie auf `null`. UPDATE kann sie nicht ändern und erbt sie nicht bei einem `kind`-Wechsel zu `flight`. Hotel-/Aktivitäts-/Mobilitäts-/Mietwagenfelder bleiben unberührt. User-Intake und Foundation-D-Itinerary bleiben möglich.
+
+Ein späterer vertrauenswürdiger Flugnachweis braucht einen **getrennten SECURITY DEFINER-Schreibvertrag**. Der heutige `authenticated`-Tabellenvertrag, inklusive eines künftigen direkten App-INSERTs als `authenticated`, ist keine Providerquelle. `current_user` ist die Grenze, kein Client-Flag und keine Service Role.
+
+**Kontext:** S2-B1 (ADR-0156) schloss `reise_anlegen`. Der Technical-Lead-Re-Review reproduzierte danach einen direkten `authenticated` UPDATE auf `trip_items`, der Preis, Währung, Provider, External-Ref und Booking-URL persistierte. RLS prüft Eigentum, nicht Provenienz.
+
+**Alternativen:**
+
+1. *Tabellenrechte auf die fünf Spalten entziehen.* Nicht kind-spezifisch; würde Hotel/Activity und `SECURITY INVOKER`-Pfade mitreissen.
+2. *Session-GUC `jetnity.trusted_flight_write`.* Von `authenticated` per `set_config` spoofbar.
+3. *Service Role als Schreibweg.* Ausdrücklich ausgeschlossen.
+4. *Pauschales Nullen unabhängig von `current_user`.* Würde auch einen späteren SECURITY DEFINER-Nachweis treffen.
+
+**Begründung:** Minimaler additiver Guard, der den Browservertrag fail-closed macht und den späteren getrennten trusted Vertrag offenlässt. Migration `20260824180000_trip_items_flug_handelsfelder_guard.sql`, nur Development.
+
+**Konsequenzen:** `flugInReiseUebernehmen` bleibt heute fail-closed. Sobald ein Nachweis existiert, darf er kommerzielle Felder nicht mehr über den `authenticated`-Tabellen-INSERT adeln; dafür ist ein eigener SECURITY DEFINER-Vertrag nötig. Production unverändert. Kein S3. Kein Mark Ready / Merge.
 
 ---
 

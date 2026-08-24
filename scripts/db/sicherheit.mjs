@@ -2116,6 +2116,103 @@ function reisenachweise() {
       grund: 'Beide INSERT-Pfade von reise_anlegen müssen dieselbe Flug-Handelsgrenze erzwingen.',
     },
     {
+      name: 'direkter trip_items-INSERT persistiert keine Flug-Handelsfelder',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (
+              trip_id, kind, title, note, starts_on, starts_at, ends_on, ends_at,
+              booking_status, booking_source, price_amount, price_currency,
+              provider, external_ref, booking_url, metadata
+            ) values (
+              '${REISE}', 'flight', 'S2B2 Insert', 'Fenster', '2026-11-01', '09:15',
+              '2026-11-01', '21:40', 'booked', 'user', 777, 'USD',
+              'browser-direct', 'direct-ref', 'https://browser.example/x',
+              ${META(ROUTE_DIREKT_OBJ)}
+            );
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'S2B2 Insert'
+                and note = 'Fenster'
+                and starts_on = '2026-11-01'
+                and booking_status = 'booked'
+                and booking_source = 'user'
+                and price_amount is null
+                and price_currency is null
+                and provider is null
+                and external_ref is null
+                and booking_url is null
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,airportCode}' = 'ZRH'`,
+      erwartung: 'erlaubt',
+      grund: 'S2-B2: der direkte Tabellen-INSERT ist kein Providervertrag.',
+    },
+    {
+      name: 'direkter trip_items-UPDATE persistiert keine Flug-Handelsfelder',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (trip_id, kind, title, metadata)
+              values ('${REISE}', 'flight', 'S2B2 Update', ${META(ROUTE_DIREKT_OBJ)});
+            update public.trip_items
+               set price_amount = 777,
+                   price_currency = 'USD',
+                   provider = 'browser-direct',
+                   external_ref = 'direct-ref',
+                   booking_url = 'https://browser.example/x'
+             where trip_id = '${REISE}' and title = 'S2B2 Update';
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'S2B2 Update'
+                and price_amount is null
+                and price_currency is null
+                and provider is null
+                and external_ref is null
+                and booking_url is null`,
+      erwartung: 'erlaubt',
+      grund: 'Der live reproduzierte Direct-UPDATE-Bypass darf die fünf Felder nicht setzen.',
+    },
+    {
+      name: 'kind-Wechsel zu flight übernimmt keine Stay-Handelsfelder',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (
+              trip_id, kind, title, price_amount, price_currency, provider,
+              external_ref, booking_url
+            ) values (
+              '${REISE}', 'stay', 'S2B2 Kind', 180, 'CHF', 'booking',
+              'htl-1', 'https://hotel.example/x'
+            );
+            update public.trip_items set kind = 'flight'
+              where trip_id = '${REISE}' and title = 'S2B2 Kind';
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'S2B2 Kind'
+                and kind = 'flight'
+                and price_amount is null
+                and provider is null
+                and external_ref is null
+                and booking_url is null`,
+      erwartung: 'erlaubt',
+      grund: 'Ein kind-Wechsel darf Stay-Preise nicht zu Flugwahrheit adeln.',
+    },
+    {
+      name: 'direkter Stay-INSERT behält Handelsfelder unter S2-B2',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (
+              trip_id, kind, title, price_amount, price_currency, provider,
+              external_ref, booking_url
+            ) values (
+              '${REISE}', 'stay', 'S2B2 Stay', 180, 'CHF', 'booking',
+              'htl-1', 'https://hotel.example/x'
+            );
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'S2B2 Stay'
+                and kind = 'stay'
+                and price_amount = 180
+                and price_currency = 'CHF'
+                and provider = 'booking'
+                and external_ref = 'htl-1'
+                and booking_url = 'https://hotel.example/x'`,
+      erwartung: 'erlaubt',
+      grund: 'S2-B2 darf Hotel-Handelsfelder nicht pauschal nullen.',
+    },
+    {
       name: 'ungültige Surface-Evidence bleibt beim direkten INSERT ohne Evidence',
       rolle: 'authenticated',
       uid: NUTZER,

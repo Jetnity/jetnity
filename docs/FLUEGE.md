@@ -134,4 +134,4 @@ Das In-Memory-Limit gilt je Serverless-Instanz. Das ist für Development/Preview
 3. `JETNITY_FLIGHT_AKTIV=true`
 4. Nicht in Production setzen, kein Live-Token
 
-Guest → Account übernimmt keine unbewiesenen Flugpreise, Provider oder External-Refs. Route-Itinerary bleibt Foundation-D-Intake und wird vor `reise_anlegen` kanonisiert. `public.reise_anlegen(jsonb)` verwirft dieselben Flug-Handelsfelder auch beim direkten authentifizierten RPC (ADR-0156, Development). Production-Migrationen bleiben ein separates Gate.
+Guest → Account übernimmt keine unbewiesenen Flugpreise, Provider oder External-Refs. Route-Itinerary bleibt Foundation-D-Intake und wird vor `reise_anlegen` kanonisiert. `public.reise_anlegen(jsonb)` verwirft dieselben Flug-Handelsfelder auch beim direkten authentifizierten RPC (ADR-0156, Development). Direkte `trip_items`-INSERT/UPDATE als `authenticated` können sie ebenfalls nicht setzen (ADR-0157, Development). Production-Migrationen bleiben ein separates Gate.
