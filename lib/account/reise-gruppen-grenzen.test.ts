@@ -57,7 +57,11 @@ describe('AP-3 Meine Reisen bleibt ableitend', () => {
     const gruppen = readFileSync(join(hier, '../../components/trips/KontoReisenGruppen.tsx'), 'utf8')
     assert.equal(daten.includes('REISEN_LISTE_GRENZE'), true)
     assert.equal(gruppen.includes('REISEN_LISTE_GRENZE'), true)
-    assert.equal(gruppen.includes('zuletzt geänderten Reisen angezeigt'), true)
+    assert.equal(gruppen.includes('Höchstens die'), true)
+    assert.equal(gruppen.includes('geladen und'), true)
+    assert.equal(gruppen.includes('Suche und Gruppen gelten nur für diese geladene Auswahl'), true)
+    assert.equal(gruppen.includes('Weitere Reisen sind gespeichert'), false)
+    assert.equal(gruppen.includes('erscheinen hier aber noch nicht'), false)
   })
 
   test('klassifiziert erst am Geräte-Kalendertag', () => {

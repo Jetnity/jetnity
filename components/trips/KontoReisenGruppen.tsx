@@ -45,8 +45,8 @@ export default function KontoReisenGruppen({ reisen }: { reisen: readonly TripSu
           data-testid="reisen-liste-grenze"
           className="mb-5 rounded-2xl border border-line-200 bg-white px-4 py-3 text-sm leading-6 text-ink-700"
         >
-          Es werden die {REISEN_LISTE_GRENZE} zuletzt geänderten Reisen angezeigt. Weitere Reisen
-          sind gespeichert, erscheinen hier aber noch nicht.
+          Höchstens die {REISEN_LISTE_GRENZE} zuletzt geänderten Reisen werden geladen und
+          angezeigt. Suche und Gruppen gelten nur für diese geladene Auswahl.
         </p>
       ) : null}
 
