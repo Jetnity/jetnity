@@ -1,8 +1,8 @@
 # Jetnity – Provider Ops S1 Status
 
 Stand: 24. August 2026  
-Status: **TECHNICAL CLOSURE / PASS auf Exact Head `b74096a9` / Draft-PR #47 / kein Mark Ready / kein Merge**  
-Branch: `feat/provider-ops-s1`  
+Status: **GEMERGT AUF MAIN** – PR #47, Merge-Commit `01761eb9`; Technical Closure galt für Exact Head `b74096a9`  
+Branch: `main`  
 Auftrag: `docs/PROVIDER_OPS_S1_TASK.md`  
 Closure: `docs/PROVIDER_OPS_S1_TECHNICAL_CLOSURE.md`
 
@@ -10,7 +10,7 @@ Closure: `docs/PROVIDER_OPS_S1_TECHNICAL_CLOSURE.md`
 
 S1 führt einen **minimalen gemeinsamen Operationsvertrag** ein. Fachdomänen, Truth-Modelle und Provideradapter bleiben getrennt.
 
-Kein Mark Ready. Kein Merge. Keine Provideraktivierung. Keine Secrets. Keine kostenpflichtigen Calls. Keine DB-/Production-Migration. Kein Start von S2.
+Product Owner hat PR #47 am 24. August 2026 Ready gemacht und gemergt. Das ist keine Freigabe für S2, Provideraktivierung, Secrets, kostenpflichtige Calls oder DB-/Production-Migration.
 
 ## 2. Runtime-Head
 
@@ -18,9 +18,8 @@ Kein Mark Ready. Kein Merge. Keine Provideraktivierung. Keine Secrets. Keine kos
 - Implementierungs-Commit: `66413cf9d61b972341351a21e94b6f0c56a25648`
 - Review-Fix-Commit: `b74096a9cda1382e4974d95f1a40da0b27ba1b2c`
 - Base: `main` @ `e4f4cca75e55028fab231c1827abf6236ae30eec`
-- Draft-PR: https://github.com/Jetnity/jetnity/pull/47
-
-Ein späterer reiner Status-Commit nach Technical Closure ist kein neuer Runtime-Review-Head.
+- Merge-Commit auf `main`: `01761eb9ba80828e87ca2da201901e0e211e1719`
+- PR: https://github.com/Jetnity/jetnity/pull/47 – **MERGED**
 
 ## 3. Umgesetzt
 
@@ -53,4 +52,4 @@ Ein späterer reiner Status-Commit nach Technical Closure ist kein neuer Runtime
 
 ## 6. Empfehlung
 
-Product Owner entscheidet über Draft-PR #47. Nicht Mark Ready, nicht mergen, nicht S2 starten ohne neuen Auftrag.
+S1 liegt auf `main`. S2, Provideraktivierung und Production-Migration brauchen jeweils einen neuen ausdrücklichen Auftrag. Audit-PR #45 bleibt Draft.

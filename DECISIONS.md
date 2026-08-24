@@ -3745,7 +3745,7 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 ## ADR-0154 – Minimaler gemeinsamer Provider-Operationsvertrag
 
 **Datum:** 24. August 2026  
-**Status:** umgesetzt und Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`; kein Mark Ready / kein Merge
+**Status:** umgesetzt, Technical Closure / PASS, von Product Owner auf `main` gemergt (PR #47 / `01761eb9`); keine S2-Freigabe
 
 **Entscheidung:**
 
