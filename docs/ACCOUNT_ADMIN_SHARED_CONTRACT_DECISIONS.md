@@ -1,7 +1,7 @@
 # Jetnity – Account/Admin Shared Contract Decisions
 
 Stand: 24. August 2026  
-Status: **verbindlicher Technical-Lead-Schnitt nach gemeinsamem Audit-Review; erste konfliktarme UI-/IA-Slices nach PR-#38-R17 technisch entblockt, Shared Runtime-/DB-Verträge weiter seriell**
+Status: **verbindlicher Technical-Lead-Schnitt nach gemeinsamem Audit-Review; PR #38 vollständig integriert; erste konfliktarme UI-/IA-Slices entblockt, Shared Runtime-/DB-Verträge weiter seriell**
 
 Geprüfte Workstreams:
 
@@ -95,7 +95,7 @@ Grundsatz:
 
 ## S0-13 Integrations- und Parallelitätsregel
 
-PR #38 hat am 24. August 2026 im unabhängigen ChatGPT-R17 **Technical Closure / PASS** erreicht. Damit ist die frühere technische Sperre für die ersten konfliktarmen Account-/Admin-UI-/IA-Slices aufgehoben.
+PR #38 hat R17 **Technical Closure / PASS** erreicht, wurde am 24. August 2026 als `ee988bbe46a8dd63d4001c42825fc0159453f811` auf `main` gemergt und inklusive der Route-Surface-Migrationen auf Production verifiziert. Damit ist die frühere technische Sperre für die ersten konfliktarmen Account-/Admin-UI-/IA-Slices vollständig aufgehoben.
 
 Ab jetzt dürfen parallel starten:
 
@@ -117,11 +117,13 @@ Weiterhin **nicht parallel** neu definieren oder verändern:
 
 Diese Shared Contracts bleiben seriell unter Technical-Lead-Ownership.
 
-### PR-#38-Abhängigkeit – geschlossen
+### PR-#38-Abhängigkeit – vollständig geschlossen
 
 R16 hatte Blocker 31 gefunden: untrusted Browser-/LocalStorage-/Guest-`routeItinerary` konnte `surfaceFromAirportCode` syntaktisch selbst behaupten und dadurch die Route-Truth beeinflussen.
 
-Der Fix auf Runtime `5782401943b41ddd1eea1337c93cb37163210362` strippt Client-Surface an den aktuellen untrusted Grenzen. R17 hat Browser/LocalStorage/Guest→Server/DB, DB-Read, Safety/Seasonal und eine read-only Development-DB-Reproduktion unabhängig geprüft und keinen neuen konkreten Defekt gefunden. Review: `docs/PR38_CHATGPT_R17_REVIEW.md` auf PR #38.
+Der Fix auf Runtime `5782401943b41ddd1eea1337c93cb37163210362` strippt Client-Surface an den aktuellen untrusted Grenzen. R17 hat Browser/LocalStorage/Guest→Server/DB, DB-Read, Safety/Seasonal und eine read-only Development-DB-Reproduktion unabhängig geprüft und keinen neuen konkreten Defekt gefunden.
+
+Nach Product-Owner-Freigabe wurde PR #38 gemergt. Production enthält `20260824120000_flug_route_itinerary_surface_evidence` und `20260824140000_flug_route_itinerary_untrusted_surface`; eine Live-Production-Probe verwirft die manipulierte Client-Surface. Production-Funktion: SECURITY INVOKER; anon kein EXECUTE; authenticated EXECUTE.
 
 Der zukünftige Invariant bleibt: Kein neuer Mapper darf rohe Client-JSON direkt als trusted `TripItem.routeItinerary` deklarieren. Echte spätere Provider-/Server-Surface-Evidence braucht einen expliziten serverkontrollierten Provenance-/Write-Contract.
 
@@ -136,7 +138,8 @@ Der zukünftige Invariant bleibt: Kein neuer Mapper darf rohe Client-JSON direkt
 1. Account AP-1 und Admin Slice A dürfen als getrennte konfliktarme UI-/IA-Slices vorbereitet bzw. umgesetzt werden.
 2. Nach jedem Slice unabhängiger Technical-Lead-Review vor dem nächsten Slice.
 3. Shared-Contract-Arbeiten nur seriell und nach erneutem Lesen dieses Dokuments.
-4. PR #38 bleibt Draft; Mark Ready/Merge nur nach ausdrücklicher aktueller Product-Owner-Freigabe.
-5. Production-Migrationen und Provider-/Secret-/Kosten-Aktivierungen bleiben jeweils separate Product-Owner-Gates.
+4. PR #38 ist abgeschlossen; kein weiterer PR-#38-Review ohne konkrete neue Runtime-Änderung oder belegbaren Defekt.
+5. Künftige Production-Migrationen und Provider-/Secret-/Kosten-Aktivierungen bleiben jeweils separate Product-Owner-Gates.
+6. Künftige PRs bleiben ohne ausdrückliche aktuelle Product-Owner-Freigabe nicht Mark Ready und nicht gemergt.
 
 Die gespeicherte Homepage-Produktseiten-Richtung bleibt bis zu einem ausdrücklichen Startsignal separat pausiert.
