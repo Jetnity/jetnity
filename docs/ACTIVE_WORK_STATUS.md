@@ -61,9 +61,9 @@ Seriell/zentral bleiben:
 ## 4. Tests / CI / Preview
 
 - Dieser Block ändert nur Dokumentation. Keine Runtime-Änderung, daher kein neuer Product-Build als Abschlussbehauptung.
-- Bestehende Provider-Contract-Tests wurden zur Verifikation der Befunde gelesen; sie wurden in diesem Block nicht umgeschrieben.
+- Bestehende Provider-Contract-Tests zur Verifikation der Audit-Befunde, unverändert: **86/86 pass** (`lib/flights/zustand.test.ts`, `lib/flights/duffel/adapter.test.ts`, `lib/hotels/nachweis.test.ts`, `lib/hotels/zustand.test.ts`, `lib/activities/nachweis.test.ts`, `lib/readiness/engine.test.ts`, `lib/safety/anfrage.test.ts`, `lib/seasonal/provider-anfrage.test.ts`, `lib/mobility/suche.test.ts`, `lib/rental-cars/zustand.test.ts`).
 - CI von PR #45 vor den Audit-Docs: Typecheck/Lint/Build SUCCESS, Auth-Check SUCCESS, Vercel SUCCESS (Task-Commit `f53bafcf`).
-- Nach diesem Docs-Push muss CI erneut gelesen werden. Grün dieser Datei nicht vorziehen.
+- CI für Head `87dc3b73` nach dem Docs-Push: zum Zeitpunkt dieses Status noch nicht als terminal belegt. Nicht als grün behaupten.
 
 ## 5. DB / RLS / Production-Grenze
 
