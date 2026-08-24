@@ -1,12 +1,16 @@
 // app/api/admin/security/block/route.ts
 import { NextResponse } from 'next/server'
 import { requireAdminApi } from '@/lib/auth/admin-guard'
+import { adminWriteErlaubt, jsonAdminWriteVerweigert } from '@/lib/auth/admin-write-gate'
 import { createRouteHandlerClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/supabase'
 
 export async function POST(req: Request) {
   const gate = await requireAdminApi({ surface: 'api/security/block', capability: 'betrieb-eingreifen' })
   if (!gate.ok) return gate.response
+  if (!adminWriteErlaubt({ grant: gate.grant }).erlaubt) {
+    return jsonAdminWriteVerweigert()
+  }
 
   const body = await req.json().catch(() => null)
   const ip = typeof body?.ip === 'string' ? body.ip.trim() : ''

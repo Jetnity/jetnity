@@ -24,6 +24,7 @@ import {
 import { toast } from 'sonner'
 import { Fehlerflaeche } from '@/components/admin/Ladezustand'
 import { lade, liste, type Fehler } from '@/lib/admin/ladezustand'
+import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 import { cn } from '@/lib/utils'
 
 type SecEvent = {
@@ -107,10 +108,20 @@ export default function SecurityWidget() {
   }
 
   const block = (ip: string, reason = 'admin block') =>
-    schreibe('/api/admin/security/block', { ip, reason }, `IP ${ip} blockiert`, 'Block fehlgeschlagen')
+    schreibe(
+      '/api/admin/security/block',
+      { ip, reason },
+      `${ADMIN_EHRLICHE_TEXTE.ipBlockErfolgPrefix} ${ip}`,
+      'Schreiben in die Blockliste fehlgeschlagen',
+    )
 
   const unblock = (ip: string) =>
-    schreibe('/api/admin/security/unblock', { ip }, `IP ${ip} entfernt`, 'Unblock fehlgeschlagen')
+    schreibe(
+      '/api/admin/security/unblock',
+      { ip },
+      `${ADMIN_EHRLICHE_TEXTE.ipUnblockErfolgPrefix} ${ip}`,
+      'Entfernen aus der Blockliste fehlgeschlagen',
+    )
 
   const events = React.useMemo(() => {
     if (!data) return null
@@ -138,6 +149,9 @@ export default function SecurityWidget() {
 
   return (
     <div className="space-y-6">
+      <p className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-200">
+        {ADMIN_EHRLICHE_TEXTE.ipBlockHinweis}
+      </p>
       {fehler && (
         <Fehlerflaeche
           fehler={fehler}
@@ -195,7 +209,7 @@ export default function SecurityWidget() {
             onClick={() => banIp && block(banIp.trim(), banReason.trim())}
           >
             <Ban className="h-4 w-4 mr-2" />
-            Blockieren
+            {ADMIN_EHRLICHE_TEXTE.ipBlockButton}
           </Button>
 
           <Button variant="outline" onClick={refresh} disabled={loading}>
@@ -216,7 +230,7 @@ export default function SecurityWidget() {
       {/* Blocklist */}
       <section className="rounded-2xl border bg-card">
         <div className="flex items-center justify-between px-4 py-3 border-b">
-          <h2 className="text-sm font-semibold">Blockliste</h2>
+          <h2 className="text-sm font-semibold">Blockliste (nicht enforced)</h2>
           <span className="text-xs text-muted-foreground">
             {blockedCount === null ? '—' : `${blockedCount} Einträge`}
           </span>

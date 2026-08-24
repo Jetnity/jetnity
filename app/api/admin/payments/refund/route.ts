@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@/lib/supabase/server'
 import { requireAdminApi } from '@/lib/auth/admin-guard'
+import { adminWriteErlaubt, jsonAdminWriteVerweigert } from '@/lib/auth/admin-write-gate'
 import type { Database } from '@/types/supabase'
 
 export async function POST(req: Request) {
@@ -11,6 +12,9 @@ export async function POST(req: Request) {
     capability: 'betrieb-eingreifen',
   })
   if (!gate.ok) return gate.response
+  if (!adminWriteErlaubt({ grant: gate.grant }).erlaubt) {
+    return jsonAdminWriteVerweigert()
+  }
 
   const body = await req.json().catch(() => null)
   const zahlung = typeof body?.payment_id === 'string' ? body.payment_id.trim() : ''

@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Fehlerflaeche, Fehlerzeile } from '@/components/admin/Ladezustand'
 import { fortsetzung, lade, liste, type Fehler } from '@/lib/admin/ladezustand'
+import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 import { cn } from '@/lib/utils'
 import { CreditCard, RefreshCw, Search, RotateCcw, Activity, Webhook } from 'lucide-react'
 import {
@@ -29,6 +30,9 @@ export default function PaymentsCenter() {
   const [tab, setTab] = React.useState<'overview'|'transactions'|'refunds'|'webhooks'>('overview')
   return (
     <div className="space-y-6">
+      <p className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-200">
+        {ADMIN_EHRLICHE_TEXTE.zahlungenHinweis}
+      </p>
       <div className="flex flex-wrap items-center gap-2">
         <TabBtn active={tab==='overview'} onClick={()=>setTab('overview')}>Overview</TabBtn>
         <TabBtn active={tab==='transactions'} onClick={()=>setTab('transactions')}>Transaktionen</TabBtn>
@@ -319,8 +323,8 @@ function RefundCard() {
       // Die Route sendet `message`, nicht `error`. Hier stand `data?.error`, und
       // die Begründung der Datenbank – der einzige Hinweis, warum eine
       // Rückerstattung nicht gebucht wurde – kam damit nie an.
-      if (!res.ok || data?.ok === false) throw new Error(data?.message || data?.error || 'Refund fehlgeschlagen.')
-      setMsg('Refund ausgelöst.')
+      if (!res.ok || data?.ok === false) throw new Error(data?.message || data?.error || 'Lokale Refund-Notiz fehlgeschlagen.')
+      setMsg(ADMIN_EHRLICHE_TEXTE.refundErfolg)
     } catch (e: any) {
       setMsg(e?.message ?? 'Unbekannter Fehler')
     } finally { setBusy(false) }
@@ -330,24 +334,23 @@ function RefundCard() {
     <section className="rounded-2xl border bg-card p-4">
       <div className="mb-3 flex items-center gap-2">
         <RotateCcw className="h-4 w-4" />
-        <h3 className="text-sm font-semibold">Refund auslösen</h3>
+        <h3 className="text-sm font-semibold">{ADMIN_EHRLICHE_TEXTE.refundTitel}</h3>
       </div>
+      <p className="mb-3 text-sm text-muted-foreground">{ADMIN_EHRLICHE_TEXTE.refundHinweis}</p>
       <div className="grid gap-3 sm:grid-cols-3">
         <Input placeholder="Payment ID" value={paymentId} onChange={(e)=>setPaymentId(e.target.value)} />
         <Input placeholder="Betrag (CHF)" value={amount} onChange={(e)=>setAmount(e.target.value)} />
         <Input placeholder="Grund (optional)" value={reason} onChange={(e)=>setReason(e.target.value)} />
       </div>
       <div className="mt-3">
-        <Button onClick={submit} disabled={!paymentId || !amount || busy}>Refund senden</Button>
+        <Button onClick={submit} disabled={!paymentId || !amount || busy}>
+          {ADMIN_EHRLICHE_TEXTE.refundButton}
+        </Button>
         {msg && <span className="ml-3 text-sm text-muted-foreground">{msg}</span>}
       </div>
-      {/* Der Satz hier lautete: „Fehlen die Tabellen, antwortet die API
-          freundlich ohne Crash.“ Seit ADR-0037 stimmt das nicht mehr – und es
-          wäre auch die falsche Zusage: Eine Rückerstattung, die niemand bucht,
-          darf nicht als Erfolg zurückkommen. */}
       <p className="mt-2 text-[11px] text-muted-foreground">
-        Die Erstattung wird in <code>refunds</code> gebucht; deckt sie den vollen Betrag,
-        wechselt die Zahlung auf <code>refunded</code>. Scheitert eine der beiden Schritte,
+        Die Notiz landet in <code>refunds</code>. Deckt sie den vollen lokalen Betrag, wechselt die
+        Zahlung auf <code>refunded</code>. Das ist keine Provider-Erstattung. Scheitert ein Schritt,
         meldet die Route den Grund und nichts wird als erledigt angezeigt.
       </p>
     </section>

@@ -249,7 +249,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         )}
       </div>
 
-      {/* ⌘/Ctrl+K – globale Befehlspalette */}
     </AdminShellContext.Provider>
   )
 }
