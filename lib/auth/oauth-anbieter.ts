@@ -11,7 +11,7 @@ export type OauthAnbieter = 'google' | 'apple'
 
 export type OauthFreigabe = Record<OauthAnbieter, boolean>
 
-export const OAUTH_ANBIETER: readonly OauthAnbieter[] = ['google', 'apple']
+const OAUTH_ANBIETER: readonly OauthAnbieter[] = ['google', 'apple']
 
 export function oauthAnbieterAktiv(config: TomlTabelle, anbieter: OauthAnbieter): boolean {
   return tomlWert(config, `auth.external.${anbieter}.enabled`) === true
