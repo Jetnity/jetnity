@@ -1,6 +1,6 @@
 # Jetnity – New Chat Technical Lead Checkpoint
 
-Stand: **24. August 2026, ca. 22:10 Europe/Zurich**  
+Stand: **24. August 2026, ca. 22:20 Europe/Zurich**  
 Status: **aktueller kanonischer Chat-Wechsel-Checkpoint**
 
 Ein neuer Chat übernimmt die Rolle als Hauptentwickler / Technical Lead / Product-, Architecture-, Logic-, Security- und Review-Steuerung.
@@ -18,12 +18,13 @@ Danach GitHub, CI, Vercel und Supabase live verifizieren. Nicht blind auf diesen
 
 ## Verifizierter Übergabestand
 
-- `main`: `78192ab775165d08bb357140c2d04b865b8cc049`
-- letzter Merge: Admin Slice C / PR #49
+- `main`: `8326e72f9557a8b9b200e680b0be24aefa0bdfa8`
+- letzter Merge: Account AP-3 / PR #53
 - #44 Admin A: merged
 - #46 Admin B: merged
 - #49 Admin C: merged
-- Vercel Production `dpl_EkQorDSGW1JyHa4DYqzZRhngYFFa`: READY auf exakt `78192ab...`
+- #53 Account AP-3: merged / closed
+- Vercel auf `8326e72f...`: **success** (`QsCzDYvqigyCV2DaVMStrVvXUmBh`)
 - Supabase Production endet bei `20260824140000`
 - S2-Guards `20260824160000` / `20260824180000`: nur Development, nicht Production-approved
 
@@ -42,20 +43,14 @@ Danach GitHub, CI, Vercel und Supabase live verifizieren. Nicht blind auf diesen
 
 PR #53 / AP-3 / ADR-0160:
 
-- **Ready for Review**, offen, nicht gemergt, mergeable
-- Product Owner hat Mark Ready ausdrücklich freigegeben; Ready wurde am 24. August 2026 ausgeführt
-- Base / Merge-Base: aktueller `main` `78192ab...`
-- Runtime-/Sync-Head: `c5e4a51feff80b94b9bb9b153ee5211d49fa4375`
-- 200er-Truth-Hinweis fail-honest korrigiert
-- Independent Runtime/Re-Review: **PASS**
-- Docs-Follow-up: doppelte AP-3-Roadmap-Sektion entfernt; #54/#55 und wartender Admin-Workstream vollständig erhalten; kein direkter TW-1
-- finale Technical-Lead-Klarstellung: Runtime `c5e4a51f` ist nicht docs-only; nur der nachgelagerte Follow-up ist docs-only
-- aktueller PR-Head: `3222d8bc2624f940f5e904774de62d242fdac5fb`
-- GitHub Actions `32770952175`: **SUCCESS** auf exakt `3222d8bc...`
-- Vercel auf exakt `3222d8bc...`: **success / READY** (`7bh88WLuDRnxQYqHLsbgZFy7Y6wN`)
-- **Technical Integration Closure / PASS erreicht**
-- **nächster Gate: separate ausdrückliche Product-Owner-Freigabe für Merge**
-- kein Merge vorher; kein AP-4 vor Integration und neuem kontrollierten Auftrag
+- **merged / closed**
+- finaler PR-Head `3222d8bc2624f940f5e904774de62d242fdac5fb`
+- Merge-Commit / `main`: `8326e72f9557a8b9b200e680b0be24aefa0bdfa8`
+- Exact-Head GitHub Actions `32770952175`: **SUCCESS**
+- Vercel finaler PR-Head: **success / READY** (`7bh88WLuDRnxQYqHLsbgZFy7Y6wN`)
+- Independent Re-Review: **PASS / Technical Integration Closure**
+- kein AP-4-, Migration-, RLS-, Auth-, Traveller-, Privacy-, Billing- oder Shared-Contract-Scope
+- `Account plattform audit vorbereitung` wartet; **kein AP-4 ohne neuen kontrollierten Auftrag / Shared-Gate**
 
 ### Provider – Agent `Jetnity provider readiness audit`
 
@@ -63,8 +58,8 @@ PR #54 / S3 / ADR-0161:
 
 - Draft, nicht gemergt
 - Independent Review: S3-Code hält die Trust-Grenzen; kein zusätzlicher Runtime-/Security-/Truth-Fix im Scope gefunden
-- **wartet bewusst auf Account-#53-Integration**
-- danach einmaliger finaler Sync auf den dann aktuellen `main`, Re-Gates, Technical-Lead-Re-Review
+- **jetzt nächster aktiver Workstream**
+- einmaliger finaler Sync auf `main` `8326e72f...`, danach Re-Gates und Technical-Lead-Re-Review
 - keine neue S3-Funktionalität, kein S4
 
 ### Trip Workspace – Agent `Trip workspace audit architecture`
@@ -79,8 +74,8 @@ PR #55:
 
 ## Kontrollierte Integrationsreihenfolge
 
-1. Account #53: Ready ausgeführt → **separates PO-Merge-Gate**
-2. nach Account-Integration: Provider #54 finaler Sync / Re-Review / Integration
+1. **Account #53: integriert / erledigt**
+2. Provider #54: finaler Current-Main-Sync → Re-Gates → Re-Review → PO-Ready-Gate → separates PO-Merge-Gate
 3. danach Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration
 4. danach neue kontrollierte Admin-/TW-Aufträge
 
@@ -88,7 +83,7 @@ PR #55:
 
 - ADR-0158 = Admin A
 - ADR-0159 = Admin B
-- ADR-0160 = Account AP-3
+- ADR-0160 = Account AP-3 / `main`
 - ADR-0161 = Provider S3
 - ADR-0162 = Admin C
 
@@ -120,8 +115,8 @@ Nach jedem relevanten Merge oder größeren Statuswechsel PR #52 sowie `JETNITY_
 
 ## Nächster Arbeitsstand
 
-- `Account plattform audit vorbereitung` / #53: **Ready for Review; wartet ausschließlich auf separate Product-Owner-Merge-Entscheidung.**
-- `Jetnity provider readiness audit`: wartet.
-- `Trip workspace audit architecture`: wartet.
+- `Jetnity provider readiness audit` / #54: **jetzt final auf den aktuellen `main` synchronisieren, re-gaten und unabhängig re-reviewen.**
+- `Account plattform audit vorbereitung`: wartet; kein AP-4.
+- `Trip workspace audit architecture`: wartet auf #54-Integration.
 - `Admin platform audit`: wartet.
 - PR #52 bleibt Draft; kein Ready/Merge ohne PO-Freigabe.
