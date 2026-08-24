@@ -35,7 +35,7 @@ function nachUpdate(a: TripSummary, b: TripSummary): number {
   return b.updatedAt.localeCompare(a.updatedAt)
 }
 
-export function istOhneDatum(reise: Pick<TripSummary, 'startDate' | 'endDate'>): boolean {
+function istOhneDatum(reise: Pick<TripSummary, 'startDate' | 'endDate'>): boolean {
   return !reise.startDate && !reise.endDate
 }
 
