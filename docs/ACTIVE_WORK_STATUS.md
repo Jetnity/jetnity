@@ -64,8 +64,9 @@ Seriell/zentral bleiben:
 - Bestehende Provider-Contract-Tests zur Verifikation der Audit-Befunde, unverändert: **86/86 pass** (`lib/flights/zustand.test.ts`, `lib/flights/duffel/adapter.test.ts`, `lib/hotels/nachweis.test.ts`, `lib/hotels/zustand.test.ts`, `lib/activities/nachweis.test.ts`, `lib/readiness/engine.test.ts`, `lib/safety/anfrage.test.ts`, `lib/seasonal/provider-anfrage.test.ts`, `lib/mobility/suche.test.ts`, `lib/rental-cars/zustand.test.ts`).
 - CI von PR #45 vor den Audit-Docs: Typecheck/Lint/Build SUCCESS, Auth-Check SUCCESS, Vercel SUCCESS (Task-Commit `f53bafcf`).
 - Vercel Preview für den Audit-Docs-Stand `87dc3b73`: **Ready** (`79fydgbf6gbB2AGFYsbxEegHtvrd`).
-- Nach dem Test-Evidence-Commit `b9812367` lief CI erneut. Zum Zeitpunkt dieses Status: Auth-Check und Typecheck/Lint/Build noch nicht terminal; neues Vercel-Deployment queued. Nicht als vollständig grün behaupten.
+- CI für Head `8ade16bb`: **SUCCESS**, 4/4 Checks (Typecheck/Lint/Build, Auth-Check, Vercel, Vercel Preview Comments). Vercel Deployment `BygqXADCcyBUj8UVKKS9rfw96ih4`.
 - Rebase-Konfliktmarken in `docs/PROVIDER_READINESS_AUDIT_TASK.md` waren irrtümlich im Audit-Commit und sind in `b1c874b2` entfernt.
+- Grüne CI ersetzt weder Review noch Mark Ready noch Merge.
 
 ## 5. DB / RLS / Production-Grenze
 
