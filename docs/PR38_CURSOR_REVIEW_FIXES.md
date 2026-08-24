@@ -1,7 +1,7 @@
 # PR #38 – Cursor-Fixes zum unabhängigen Review
 
 Stand: 24. August 2026  
-Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11, R6-Blocker 12, R7-Blocker 13, R8-Blocker 14–15, R9-Blocker 16–19, R10-Blocker 20–23, R11-Blocker 24–26, R12-Blocker 27, R13-Blocker 28, R14-Blocker 29 und R15-Blocker 30 geschlossen; R16-Re-Review offen**
+Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11, R6-Blocker 12, R7-Blocker 13, R8-Blocker 14–15, R9-Blocker 16–19, R10-Blocker 20–23, R11-Blocker 24–26, R12-Blocker 27, R13-Blocker 28, R14-Blocker 29, R15-Blocker 30 und R16-Blocker 31 geschlossen; R17-Re-Review offen**
 
 Review R1/R2: `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md`  
 Review R3: `docs/PR38_CHATGPT_R3_REVIEW.md`  
@@ -26,6 +26,7 @@ Runtime-Head R12-Fixes: `1c14e80477b7bea083d722238165c97720442c1d`
 Runtime-Head R13-Fixes: `2ba324495bcbe0acf9c106a68d7d004f69279930`
 Runtime-Head R14-Fixes: `771c63a97f93f442dbc3856dc4218ce458dfecdf`
 Runtime-Head R15-Fixes: `5cc4488e3b30aeb3c8afe1eb2ff7bc9627987e88`
+Runtime-Head R16-Fixes: `5782401943b41ddd1eea1337c93cb37163210362`
 
 ## 1. Gemischte Unsicherheit
 
@@ -173,6 +174,10 @@ Unbewiesene Intra-Leg-Ordnung leert Origin/Destination, erzeugt keine Connection
 
 `itineraryAusFlugOption()` stempelt `surfaceFromAirportCode` nicht mehr aus `previous.destination !== current.origin`. Die Browser-`FlugOption` ist untrusted; Zod prüft nur Form. `LAX→JFK + SFO→NRT` und `CDG⇢ORY` ohne bereits explizite Itinerary-Evidence bleiben unknown. `provider`/`externalRef`/Extra-Felder aus dem Browser sind kein Beweis. Bereits belegte Itinerary-Evidence bleibt erhalten und persistiert.
 
-## 31. Nicht geändert
+## 31. Untrusted routeItinerary adelt keine Client-Surface
+
+`flugRouteItineraryLesen()` und Guest-`reiseLesen()` akzeptieren `surfaceFromAirportCode` nicht. `itineraryKanonisieren()` kopiert das Feld nicht. Die Development-Funktion `public.flug_route_itinerary_metadata` baut Segmente ohne das Feld neu (`20260824140000_flug_route_itinerary_untrusted_surface`). Ungültige Client-Surface löscht die Route nicht. Es gibt keinen trusted Surface-Schreibpfad; Save→Reload und Guest→Account von Client-Claims bleiben unknown. `flugRouteItineraryTrustedLesen()` darf das Feld nur an bereits typisierten Objekten lesen. ADR-0149 gilt nicht mehr für untrusted Intake (ADR-0151).
+
+## 32. Nicht geändert
 
 Kein Seasonal-Provider, keine Seasonal-Tabelle, keine Secrets, keine neuen laufenden Kosten. PR bleibt Draft.

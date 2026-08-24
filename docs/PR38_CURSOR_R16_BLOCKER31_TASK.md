@@ -1,7 +1,7 @@
 # PR #38 – Cursor-Auftrag für R16-Blocker 31
 
 Stand: 24. August 2026  
-Status: **verbindlicher nächster Runtime-Fix – nur Blocker 31 schließen; kein Mark Ready, kein Merge, keine Production-Migration**
+Status: **Runtime-Fix 31 auf `57824019` implementiert und gegated; R17 offen; kein Mark Ready, kein Merge, keine Production-Migration**
 
 Review-Quelle: `docs/PR38_CHATGPT_R16_REVIEW.md`
 

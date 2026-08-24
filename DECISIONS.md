@@ -3690,7 +3690,7 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 **Begründung:** Route Truth, Fingerprint, Connections, Readiness, Safety und Seasonal dürfen sich nicht allein durch Persistieren derselben Reise ändern. Guest→Account und Account-Reload müssen dieselbe Evidence sehen wie der Runtime-Graph.
 
-**Konsequenzen:** Kein Live-Provider, keine Seasonal-Tabelle, keine Secrets, keine neuen laufenden Kosten. Development-Funktion ist aktualisiert. Production-Funktion bleibt die ältere Fassung, bis separat freigegeben. PR #38 bleibt Draft bis R16 und Product-Owner-Merge-Freigabe.
+**Konsequenzen:** Für untrusted Intake durch ADR-0151 ersetzt. Development-Funktion `20260824120000` blieb Zwischenstand; `20260824140000` verwirft Client-Surface. Production bleibt ohne beide Migrationen, bis separat freigegeben.
 
 ---
 
@@ -3713,7 +3713,32 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 **Begründung:** Ohne serverseitig belegte Surface-Quelle würde Persistenz (ADR-0149) erfundene Array-Lücken dauerhaft adeln. Foundation bleibt fail-closed, bis ein echter Trust-Contract existiert.
 
-**Konsequenzen:** Echte Airport-Changes, die nur als Browser-`FlugOption` ankommen, bleiben unknown, bis eine zulässige Evidence-Quelle existiert. Kein Live-Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R16 und Product-Owner-Merge-Freigabe.
+**Konsequenzen:** Echte Airport-Changes, die nur als Browser-`FlugOption` ankommen, bleiben unknown, bis eine zulässige Evidence-Quelle existiert. Kein Live-Provider, keine Migration, keine Secrets. Untrusted `routeItinerary` folgt ADR-0151. PR #38 bleibt Draft bis R17 und Product-Owner-Merge-Freigabe.
+
+---
+
+## ADR-0151 – Untrusted Intake persistiert keine Client-Surface-Evidence
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R16 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Browser-/LocalStorage-/Guest-`routeItinerary` darf `surfaceFromAirportCode` nicht als belegte Surface-Evidence einbringen.
+- `flugRouteItineraryLesen()` und Guest-`reiseLesen()` verwerfen das Feld. Ungültige Werte löschen die Route nicht.
+- `itineraryKanonisieren()` kopiert das Feld nicht.
+- `public.flug_route_itinerary_metadata` baut Segmente ohne das Feld neu. Development-Migration `20260824140000_flug_route_itinerary_untrusted_surface`.
+- Es gibt in dieser Foundation keinen trusted Surface-Schreibpfad. Save→Reload und Guest→Account von Client-Claims bleiben chronology unknown.
+- `flugRouteItineraryTrustedLesen()` darf das Feld nur an bereits typisierten oder später serverseitig belegten Objekten lesen.
+- ADR-0149 gilt nicht mehr für untrusted Intake. Country-/Distanz-Heuristiken und Browser-`provider`/`externalRef` bleiben kein Beweis.
+
+**Kontext:** `docs/PR38_CHATGPT_R16_REVIEW.md` gegen Runtime `5cc4488e`; Fixes auf `57824019`. R15 schloss nur den `FlugOption`-Pfad. Derselbe Defekt blieb über die bereits geformte `routeItinerary` offen.
+
+**Alternativen:** Getrennter persistierter Evidence-Contract; opaque/signed Provider-Snapshot; explizite Nutzerdeklaration als eigene `user`-Evidence-Klasse; ADR-0149 unverändert lassen.
+
+**Begründung:** Ohne Provenance wäre jedes syntaktisch gültige Client-IATA Surface-Truth. In dieser Foundation existiert kein serverseitig belegter Surface-Schreiber. Fail-closed unknown ist konservativer als eine geadelte Lücke.
+
+**Konsequenzen:** Echte Airport-Changes, die nur als Browser-/Guest-JSON ankommen, bleiben unknown, bis ein trusted Contract existiert. Development-Funktion ist aktualisiert. Production bleibt ohne die Migration. Kein Live-Provider, keine Secrets, keine neuen laufenden Kosten. PR #38 bleibt Draft bis R17 und Product-Owner-Merge-Freigabe.
 
 ---
 
