@@ -289,6 +289,17 @@ Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
 
 ---
 
+## 6e. In Arbeit – Account Platform AP-3
+
+Status: **Draft PR #53 auf `feat/account-ap3`. Entscheidung: ADR-0160.**
+
+- Meine Reisen gruppiert ableitend nach Aktiv / Kommend / Vergangen / Ohne Datum
+- kein Archiv-Write, keine Pagination-Architektur, kein AP-4
+
+Auftrag: `docs/ACCOUNT_AP3_TASK.md`. Entscheidung: ADR-0160.
+
+---
+
 ## 7. Provider-Readiness / Adapter-Grenzen
 
 **Echte Provider bleiben bis zur späteren Providerphase deaktiviert.**

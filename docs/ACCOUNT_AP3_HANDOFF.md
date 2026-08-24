@@ -14,7 +14,7 @@ Status: **gegated auf Runtime-Head `612d819e` – Draft, wartet auf Integrations
 | Runtime-Head | `612d819ed9691f93cbab97128e301b0b7744721b` |
 | Status | `docs/ACCOUNT_AP3_STATUS.md` |
 | Self-Review | `docs/ACCOUNT_AP3_SELF_REVIEW.md` |
-| Entscheidung | ADR-0158 |
+| Entscheidung | ADR-0160 |
 
 ## Was ein neuer Agent zuerst liest
 
@@ -22,7 +22,7 @@ Status: **gegated auf Runtime-Head `612d819e` – Draft, wartet auf Integrations
 2. `docs/ACCOUNT_AP3_STATUS.md`
 3. `lib/account/reise-lage.ts`
 4. `app/(public)/reisen/page.tsx`
-5. ADR-0153 und ADR-0158
+5. ADR-0153 und ADR-0160
 
 ## Produktstand
 

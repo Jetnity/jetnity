@@ -7,7 +7,7 @@ Ergebnis: **bereit für unabhängigen Technical-Lead-Review – kein Ready, kein
 
 ## Auftragstreue
 
-Hält `docs/ACCOUNT_AP3_TASK.md`. Kein Archiv-Write, keine Migration/RLS, kein Auth-/Traveller-/Guest→Account-/Billing-Contract, kein Citizenship-Default, kein AP-4.
+Hält `docs/ACCOUNT_AP3_TASK.md` und ADR-0160. ADR-0158 bleibt Admin Slice A. Kein Archiv-Write, keine Migration/RLS, kein Auth-/Traveller-/Guest→Account-/Billing-Contract, kein Citizenship-Default, kein AP-4.
 
 ## Adversarial
 

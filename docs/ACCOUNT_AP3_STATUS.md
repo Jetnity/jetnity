@@ -11,7 +11,7 @@ Status: **lokal und remote gegatet – Draft, kein Ready, kein Merge, kein AP-4*
 | Base | `main` @ `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267` |
 | Auftrag | `docs/ACCOUNT_AP3_TASK.md` |
 | **Runtime-Head** | `612d819ed9691f93cbab97128e301b0b7744721b` |
-| Entscheidung | ADR-0158 |
+| Entscheidung | ADR-0160 (nicht ADR-0158; das bleibt Admin Slice A) |
 | Self-Review | `docs/ACCOUNT_AP3_SELF_REVIEW.md` |
 
 ## Remote-Gates auf dem Runtime-Head

@@ -44,4 +44,6 @@ Optional eine kleine Titelsuche. Limit-200 ehrlich anzeigen, wenn die geladene L
 
 Lokale Tests inkl. Pflichtmatrix, Typecheck, Lint, Hygiene, `auth:pruefen`, Production-Build, danach GitHub Actions und Vercel auf demselben Exact Head.
 
+Entscheidung: ADR-0160. ADR-0158 bleibt Admin Slice A.
+
 Danach STOPP für unabhängigen Technical-Lead-Review.
