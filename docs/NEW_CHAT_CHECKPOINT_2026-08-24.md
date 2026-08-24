@@ -10,74 +10,63 @@ Status: verbindlicher operativer Übergabepunkt für den nächsten Haupt-Chat
 - `docs/CHATGPT_TECHNICAL_LEAD_CONTINUITY.md`
 - `docs/MULTI_AGENT_WORKSTREAMS.md`
 - `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md`
-- `docs/HOMEPAGE_PRODUCT_PAGE_DIRECTION.md`
+- `docs/PR38_PRODUCTION_INTEGRATION.md`
 - Reviews/Handoffs der aktuell offenen PRs
 
-Danach tatsächlichen GitHub-/CI-/Vercel-/Supabase-Stand unabhängig verifizieren. Kein Mark Ready und kein Merge ohne ausdrückliche Product-Owner-Freigabe.
+Danach tatsächlichen GitHub-/CI-/Vercel-/Supabase-Stand unabhängig verifizieren. Kein künftiger Mark Ready / Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 
-## PR #38 – Travel Timing & Seasonal
+## PR #38 – vollständig abgeschlossen
 
-- Branch: `feat/travel-timing-seasonal-intelligence`
-- PR #38: **open, Draft, nicht gemergt**
-- final unabhängig geprüfter Runtime-Head: `5782401943b41ddd1eea1337c93cb37163210362`
-- R16-Blocker 31 ist geschlossen: untrusted Browser-/Guest-/LocalStorage-/Request-`routeItinerary` kann `surfaceFromAirportCode` nicht mehr selbst zu belegter Surface-Truth machen.
-- Unabhängiger ChatGPT-Review **R17: PASS / Technical Closure**.
-- Review-Dokument: `docs/PR38_CHATGPT_R17_REVIEW.md` auf dem PR-Branch.
-- R17 Review-Commit: `bb9eda8212c24a8064939c8addd7fe0311943295`.
-- Active-Status-Update nach R17: `12876274081d96155e8d78ae89333ca2b4523a97`.
-- Runtime-Gate: `npm test` 1703/1703; Typecheck/Lint/Hygiene grün; Build Exit 0; UI Audit 1014/1014; DB Security 216/216; GitHub Actions Run `32677741683` SUCCESS; Vercel `dpl_74A67UxWrCLWviihrsn9hfYqqZDQ` READY.
-- R17 live DB probe: manipuliertes `LAX→JFK`, `SFO→NRT`, `surfaceFromAirportCode='JFK'` wird in Development kanonisiert **ohne** Client-Surface-Claim.
-- Development enthält `20260824120000` und `20260824140000`; Production enthält **keine** der beiden Route-Surface-Migrationen.
-- Der Review-Loop ist nach dem Stop-Kriterium beendet. Ein weiterer Review nur bei konkreter neuer Runtime-Änderung oder neu belegtem Defekt.
-- **Kein Mark Ready, kein Merge, keine Production-Migration** ohne die jeweils erforderliche ausdrückliche Product-Owner-Freigabe.
+- Travel Timing & Seasonal Intelligence – provider-neutrale Foundation
+- R17: **PASS / Technical Closure**
+- final geprüfter Runtime-Head: `5782401943b41ddd1eea1337c93cb37163210362`
+- finaler PR-Head vor Merge: `1a61d21fe853c77faa1109ae0828e39f3629098a`
+- Squash-Merge auf `main`: `ee988bbe46a8dd63d4001c42825fc0159453f811`
+- Main-CI Run `32681199019`: **SUCCESS** auf exakt `ee988bbe...`
+- Vercel Production nach Merge: READY
+- Supabase Production: ACTIVE_HEALTHY
+- Production-Migrationen angewendet und History auf Repository-Versionen ausgerichtet:
+  - `20260824120000_flug_route_itinerary_surface_evidence`
+  - `20260824140000_flug_route_itinerary_untrusted_surface`
+- Live Production-Probe verwirft manipuliertes Client-`surfaceFromAirportCode`.
+- Function: SECURITY INVOKER; anon kein EXECUTE; authenticated EXECUTE.
+- Kein Live-Seasonal-Provider, keine neuen Secrets, keine neuen laufenden Providerkosten.
+
+## Aktueller main
+
+Nach der Integration wurden reine Continuity-Docs auf `main` aktualisiert. `docs/ACTIVE_WORK_STATUS.md` ist die aktuelle operative Wahrheit.
+
+Vercel Production ist READY auf dem aktuellen Main-Docs-Head `f999f21532706d394bbce221eebcc4c6058a57ec`; der Runtime-Inhalt stammt aus dem PR-#38-Squash `ee988bbe...`.
 
 ## Account
 
-- Exakter Cursor-Anzeigename: `Account plattform audit vorbereitung`
-- Audit: Draft-PR #39 / `audit/account-platform`
-- Audit-Urteil: **AUDIT-PASS** als Planungsgrundlage.
-- Die technische Sperre durch PR #38 ist mit R17 Technical Closure aufgehoben.
-- Derselbe Agent bleibt zuständig.
-- Erster konfliktarmer Block: **AP-1 Account-Shell + persönliche Übersicht / Meine Reisen als Account-Hub**.
-- Danach Review → AP-2 → Review → AP-3 usw.
-- Shared Auth/RLS/DB/Privacy/Billing/Traveller-/Route-Verträge nicht parallel neu definieren.
+- Cursor-Anzeigename: `Account plattform audit vorbereitung`
+- Draft-PR #39 / `audit/account-platform`
+- Audit: **AUDIT-PASS**
+- technische Sperre durch PR #38 ist aufgehoben
+- nächster Slice: **AP-1 Account-Shell + persönliche Übersicht / Meine Reisen als Account-Hub**
+- Shared Auth/RLS/DB/Traveller/Billing/Route-Verträge nicht parallel verändern
 
 ## Admin
 
-- Exakter Cursor-Anzeigename: `Admin platform audit`
-- Audit: Draft-PR #40 / `audit/admin-platform`
-- Audit-Urteil: **AUDIT-PASS** als Planungsgrundlage.
-- Die technische Sperre durch PR #38 ist mit R17 Technical Closure aufgehoben.
-- Derselbe Agent bleibt zuständig.
-- Erster konfliktarmer Block: **Slice A – ehrliche Control-Center-/Steuerzentralen-IA**.
-- Danach Review; anschließend read-only System Health für Vercel/Supabase/GitHub/App.
-- Shared Auth/RLS/DB/Privacy/Billing/Support-/Traveller-Verträge bleiben zentral koordiniert.
-
-## Startseite
-
-- Neue Produktseiten-Richtung ist dauerhaft gespeichert in `docs/HOMEPAGE_PRODUCT_PAGE_DIRECTION.md`.
-- Ziel: hochprofessionelle moderne Tech-Produktseite, die Jetnity klar erklärt; große hochwertige Bilder, viel Weißraum, moderne Typografie, hochwertige Animationen und präzise kurze Texte.
-- Starke bestehende Texte selektiv erhalten.
-- Header-/Footer-Funktionalität nicht verändern; keine Account/Admin/Seasonal/Auth/DB-Logik im Homepage-Workstream.
-- Neue Idee zuerst als separate visuelle Preview; bestehende Homepage erst nach ausdrücklicher Product-Owner-Entscheidung ersetzen.
-- **Aktuell pausiert; noch keine Implementierungsfreigabe.**
+- Cursor-Anzeigename: `Admin platform audit`
+- Draft-PR #40 / `audit/admin-platform`
+- Audit: **AUDIT-PASS**
+- technische Sperre durch PR #38 ist aufgehoben
+- nächster Slice: **Admin Slice A – ehrliche professionelle Control-Center-IA**
+- danach separater read-only System-Health-Slice
 
 ## Parallelität
 
-Nach R17 Technical Closure dürfen Account und Admin als getrennte konfliktarme Domänen parallel arbeiten. Innerhalb jedes Workstreams arbeitet derselbe Agent Slice für Slice mit Review dazwischen. Shared Auth/RLS/DB/Privacy/Billing/Support/Traveller-/Route-/Readiness-/Safety-/Seasonal-Verträge bleiben seriell unter Technical-Lead-Ownership.
+Account AP-1 und Admin Slice A dürfen parallel arbeiten. Shared Auth/RLS/DB/Privacy/Billing/Support/Traveller/Route/Readiness/Safety/Seasonal-Contracts bleiben seriell unter Technical-Lead-Ownership.
 
-## Verifizierter Infra-Stand bei R17
+## Homepage
 
-- `main`: `cd220beb44d90ae376feeb8de9db8a3afb808d60`.
-- Vercel Production `jetnity-app.vercel.app`: READY auf diesem `main`-Commit.
-- PR-#38 Runtime-Preview `dpl_74A67UxWrCLWviihrsn9hfYqqZDQ`: READY auf `57824019`.
-- Supabase Production `qscbgcdmivbbnzrcyegn`: ACTIVE_HEALTHY.
-- Supabase Development Branch `yfvbxvijcorffwxbxahl`: ACTIVE_HEALTHY.
-- Production-Migrationsstand endet bei `20260822180000_traveller_context_rereview`.
-- Development enthält zusätzlich `20260824120000_flug_route_itinerary_surface_evidence` und `20260824140000_flug_route_itinerary_untrusted_surface`.
-- Development-RPC: SECURITY INVOKER; anon kein EXECUTE; authenticated EXECUTE.
-- Supabase Security Advisor-WARNs zu GraphQL-Exponierung und mehreren SECURITY-DEFINER-RPCs bleiben separate Security-Evidence und sind nicht automatisch ein bestätigtes Datenleck.
+Die neue Startseiten-Richtung ist in `docs/HOMEPAGE_PRODUCT_PAGE_DIRECTION.md` gespeichert und bleibt pausiert. Zuerst separate visuelle Preview; keine Header-/Footer-Funktionsänderung; keine neue Funktionslogik; bestehende Homepage erst nach Product-Owner-Freigabe ersetzen.
 
-## Danach weiterhin geplant
+## Governance
 
-Account/Admin erste Slices; Homepage-Preview erst nach Product-Owner-Startsignal; Provider-Readiness/Adapter-Grenzen; großer Trip-Workspace-/Übersicht-Umbau mit Function-by-Function-Generalinspektion; finaler Workspace Intelligence Audit; echte Providerphase mit separaten Kosten-/Vertrags-/Secret-Gates; provider-backed End-to-End-/Truth-Audit.
+- kein Mark Ready / Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe
+- Production-Migrationen separate Gates
+- Provider/Secrets/Kosten separate Gates
+- GitHub bleibt dauerhaftes Teamgedächtnis
