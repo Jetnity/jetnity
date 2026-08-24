@@ -30,7 +30,7 @@ export default function AdminNaechsteSchritte() {
                 Öffnen
               </Link>
             ) : (
-              <p className="text-sm mt-2 text-muted-foreground">Kein Ziel in Slice A.</p>
+              <p className="text-sm mt-2 text-muted-foreground">Kein Ziel in diesem Slice.</p>
             )}
           </li>
         ))}

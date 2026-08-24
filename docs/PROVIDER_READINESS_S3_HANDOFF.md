@@ -1,7 +1,7 @@
 # Jetnity – Provider Readiness S3 Handoff
 
 Stand: 24. August 2026
-Status: **S3 auf ADR-0161 umnummeriert; Functional Runtime Head bleibt `e284af55`; Exact-Head-Gates auf dem neuen Tip neu beweisen; Draft-PR #54; kein Mark Ready / kein Merge / kein S4**
+Status: **S3 auf Current Main `e3bad749` synchronisiert; ADR-0161; Functional S3 Runtime Head bleibt `e284af55`; Exact-Head-Gates auf dem Sync-Tip neu beweisen; Draft-PR #54; kein Mark Ready / kein Merge / kein S4**
 
 ## 1. Übernahme
 
@@ -10,20 +10,23 @@ Status: **S3 auf ADR-0161 umnummeriert; Functional Runtime Head bleibt `e284af55
 3. `docs/PROVIDER_READINESS_S3_SELF_REVIEW.md`
 4. ADR-0161
 5. `docs/ACTIVE_WORK_STATUS.md`
-6. aktueller Code unter `lib/mobility/nachweis.ts`, `lib/rental-cars/nachweis.ts`, `components/trips/MobilitaetBereich.tsx`
+6. Admin B auf `main`: `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`, ADR-0159
+7. aktueller Code unter `lib/mobility/nachweis.ts`, `lib/rental-cars/nachweis.ts`, `components/trips/MobilitaetBereich.tsx`
 
 S3 lebt nur auf `feat/provider-mobility-rental-evidence-s3`.
 
 ## 2. Exact Head
 
-- Functional runtime head: `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`
-- Vorheriger docs-only Tip: `b230104b58fd2096b0ff8c2576324cc8655d9bc4`
-- Review-Tip nach ADR-0161: aktueller Branch-HEAD / PR #54
+- Functional S3 runtime head: `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`
+- ADR-0161-Umnummerierung: `2e9a1a7ff0d8ccef6945cbc70aa3833743d076f1`
+- Current-Main-Sync-Tip: aktueller Branch-HEAD / PR #54 nach Merge von `e3bad749`
 - Draft-PR: https://github.com/Jetnity/jetnity/pull/54
-- Basis: `origin/main` @ `1ec93cc9`
+- Basis: `origin/main` @ `e3bad749`
 - PR: Draft
 
-## 3. Gate-Ergebnisse auf Functional Runtime Head `e284af55`
+S3-Runtime unverändert durch den Sync. Konflikte nur in zentraler Doku. UI-Audit nicht erneut.
+
+## 3. Gate-Ergebnisse auf Functional S3 Runtime Head `e284af55`
 
 - `npm test` 1849/1849
 - Typecheck, Lint, Hygiene, API-Schutz, Schema-Bezug, Production-Build Exit 0
@@ -40,6 +43,7 @@ S3 lebt nur auf `feat/provider-mobility-rental-evidence-s3`.
 - Production endet weiterhin bei `20260824140000`
 - Keine Provideraktivierung, Secrets, Verträge oder kostenpflichtigen Calls
 - Kein stilles Ziehen von S4–S8
+- Admin A+B auf `main` nicht zurückschreiben
 
 ## 5. Geschlossene Audit-Funde
 
@@ -58,4 +62,4 @@ S3 lebt nur auf `feat/provider-mobility-rental-evidence-s3`.
 
 ## 7. Nächster Schritt
 
-Exact-Head-Gates auf dem Tip nach ADR-0161 neu beweisen. Danach unabhängiger Technical-Lead-Review. Danach erst S4, und nur mit neuem Auftrag.
+Exact-Head-Gates auf dem Current-Main-Sync-Tip beweisen. Danach unabhängiger Technical-Lead-Re-Review. Danach erst S4, und nur mit neuem Auftrag.

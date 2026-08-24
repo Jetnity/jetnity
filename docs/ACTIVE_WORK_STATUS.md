@@ -1,9 +1,18 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **S1 und S2 liegen auf `main`; aktiver Provider-Slice ist S3 Mobility/Rental-Nachweis auf `feat/provider-mobility-rental-evidence-s3`**
+Status: **Admin Slice B liegt auf `main` `e3bad749`; aktiver Provider-Slice ist S3 Mobility/Rental-Nachweis auf Current-Main-Sync von `feat/provider-mobility-rental-evidence-s3`**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
+
+**Admin Control Center Slice B**
+
+- PR #46: **gemergt und geschlossen**
+- Squash-Merge auf `main`: `e3bad749c8e03512001e7bccd5e08467f10a7134`
+- ADR-0159 bleibt verbindlich
+- Read-only System Health ohne Fake-Green. Parent `App / Deployment` bleibt `unknown`. Parent `Supabase` bleibt `not_configured`.
+
+Davor vollständig abgeschlossen:
 
 **Admin Control Center Slice A**
 
@@ -70,17 +79,22 @@ Keine neuen Secrets und keine neuen laufenden Providerkosten.
 
 Verantwortlicher Cursor-Anzeigename: Provider-Readiness Senior Agent  
 Implementierungsbranch: `feat/provider-mobility-rental-evidence-s3`  
-Basis: `origin/main` @ `1ec93cc9`  
-Auftrag: dieser Chat / `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` PR-S3  
+Basis: `origin/main` @ `e3bad749`  
+Auftrag: `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` PR-S3  
 Status: `docs/PROVIDER_READINESS_S3_STATUS.md`  
 Handoff: `docs/PROVIDER_READINESS_S3_HANDOFF.md`  
 ADR: ADR-0161
 
 Aktiver Slice:
 
-**S3 – Mobility- und Rental-Nachweis auf Hotel-/S2-Trust-Grenze.** Async `nachweisen({ optionId, kontext })`. Testkatalog nur injiziert. Umgebung `null` → fail-closed. Mobility Auto-Search nur nach «Verbindungen prüfen». Keine Migration. Kein echter Provider.
+**S3 – Mobility- und Rental-Nachweis auf Hotel-/S2-Trust-Grenze.** Async `nachweisen({ optionId, kontext })`. Testkatalog nur injiziert. Umgebung `null` → fail-closed. Mobility Auto-Search nur nach «Verbindungen prüfen». Keine Migration. Kein echter Provider. Branch ist auf Current Main `e3bad749` synchronisiert.
 
 Grenze: kein Mark Ready, kein Merge, keine Production-Migration, keine Provideraktivierung, kein S4–S8.
+
+### Admin Platform – abgeschlossene Slices auf `main`
+
+- Slice A: gemergt, PR #44, ADR-0158
+- Slice B: gemergt, PR #46, ADR-0159. Status/Handoff: `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`, `docs/ADMIN_PLATFORM_SLICE_B_HANDOFF.md`. Kein Slice C ohne neuen Auftrag.
 
 ### Provider Readiness – abgeschlossene Slices auf `main`
 
@@ -91,7 +105,20 @@ Danach folgen erst S4–S8, jeweils mit eigenem Auftrag.
 
 ## 4. Parallelitätsregel
 
-S3 darf Account-/Admin-Dateien nicht mischen. Seriell/zentral bleiben insbesondere Auth, RLS, Guest→Account, Traveller, Route/Safety/Seasonal Truth, Billing und Provideraktivierung.
+S3 darf Account-/Admin-Dateien nicht mischen. Admin A+B auf `main` bleiben erhalten.
+
+Seriell/zentral bleiben insbesondere:
+
+- Auth / Identity / Sessions / MFA / AAL
+- `profiles`, Rollen, Capabilities
+- RLS / Ownership / Service Role
+- Guest→Account / Trip Graph
+- Traveller / Credentials / Readiness
+- Route / Safety / Seasonal Truth
+- Privacy Export / Delete
+- Billing / Payment / Refund / Bexio
+- Admin Audit Trail
+- Provider Activation / Secrets / Kosten
 
 ## 5. Homepage
 
@@ -99,6 +126,8 @@ Die neue Homepage-Produktseiten-Idee bleibt **pausiert**. Siehe `docs/HOMEPAGE_P
 
 ## 6. Governance
 
+- PR #43, #44, #45, #46, #47, #48 und #51 sind gemergt. Draft-PR #54 bleibt Draft.
+- ADR-Allokation: Admin A = ADR-0158, Admin B = ADR-0159, Account AP-3 = ADR-0160, Provider S3 = ADR-0161.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
@@ -106,7 +135,7 @@ Die neue Homepage-Produktseiten-Idee bleibt **pausiert**. Siehe `docs/HOMEPAGE_P
 
 ## 7. Exakter nächster Schritt
 
-1. S3 Draft-PR #54 auf ADR-0161 umnummeriert. ADR-0159 bleibt Admin Slice B / PR #46.
-2. Exact-Head-Gates auf dem Tip nach der Umnummerierung neu beweisen (lokal + GitHub Actions SUCCESS + Vercel READY, dieselbe SHA).
-3. STOPP für unabhängigen Technical-Lead-Review.
-4. Nicht Mark Ready, nicht mergen, nicht S4, Production nicht migrieren.
+1. S3 Draft-PR #54 auf Current Main `e3bad749` synchronisieren und Exact-Head-Gates auf dem neuen Tip beweisen.
+2. STOPP für unabhängigen Technical-Lead-Re-Review.
+3. Nicht Mark Ready, nicht mergen, nicht S4, Production nicht migrieren.
+4. Account AP-3 / PR #53 bleibt ADR-0160. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag.

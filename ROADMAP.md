@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety, Travel Timing & Seasonal, Account AP-1/AP-2, Admin Slice A, Provider S1 und S2 auf `main`; aktiver Provider-Slice ist S3 Mobility/Rental-Nachweis**
+Status: **Foundation C/D/E, Travel Safety, Travel Timing & Seasonal, Account AP-1/AP-2, Admin Slice A+B, Provider S1 und S2 auf `main` `e3bad749`; aktiver Provider-Slice ist S3 Mobility/Rental-Nachweis**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -260,6 +260,29 @@ Auftrag: `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md`.
 
 ---
 
+## 6c. Admin Control Center Slice A
+
+Status: **auf `main` gemergt (PR #44, `1ec93cc9`). Entscheidung: ADR-0158.**
+
+- ehrliche Steuerzentralen-IA auf dem vorhandenen gehärteten Backoffice
+- keine neue Datenwahrheit, keine neue Autorität, keine Migration
+
+---
+
+## 6d. Admin Control Center Slice B
+
+Status: **auf `main` gemergt (PR #46, `e3bad749`). Entscheidung: ADR-0159.**
+
+- read-only System Health ohne Fake-Green
+- Parent App/Deployment = `unknown`; Parent Supabase = `not_configured`
+- keine neuen Secrets, Tokens, Verträge oder Kosten
+- keine DB-/RLS-/Capability-Änderung, keine Writes
+- kein Slice C ohne neuen Auftrag
+
+Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
+
+---
+
 ## 7. Provider-Readiness / Adapter-Grenzen
 
 **Echte Provider bleiben bis zur späteren Providerphase deaktiviert.**
@@ -288,7 +311,7 @@ Zu prüfen/vereinheitlichen:
 
 Keine Verträge, Secrets oder laufenden Providerkosten ohne separate Freigabe.
 
-S1 Shared Operational Contract ist auf `main` (PR #47). S2 FlugNachweis ist auf `main` (PR #51). S2 Development-Migrationen `20260824160000` und `20260824180000` sind **nicht** Production-approved; Production endet bei `20260824140000`. S3 Mobility/Rental-Nachweis läuft auf `feat/provider-mobility-rental-evidence-s3` (ADR-0161). Kein echter Provider, keine Secrets, keine Production-Migration. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
+S1 Shared Operational Contract ist auf `main` (PR #47). S2 FlugNachweis ist auf `main` (PR #51). S2 Development-Migrationen `20260824160000` und `20260824180000` sind **nicht** Production-approved; Production endet bei `20260824140000`. S3 Mobility/Rental-Nachweis läuft auf `feat/provider-mobility-rental-evidence-s3` (ADR-0161), synchronisiert auf Current Main `e3bad749`. Kein echter Provider, keine Secrets, keine Production-Migration. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
 
 ---
 
@@ -387,7 +410,9 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation
 6. ✅ Account Platform AP-1 – auf `main` (`084f7c87`, PR #43)
 6a. ✅ Account Platform AP-2 – auf `main` (`2827d1cb`, PR #48)
-7. Provider-Readiness-/Adapter-Lücken schließen – S1/S2 auf `main`; aktiver Slice S3 Mobility/Rental-Nachweis
+6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`, ADR-0158)
+6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`, ADR-0159)
+7. Provider-Readiness-/Adapter-Lücken schließen – S1/S2 auf `main`; aktiver Slice S3 Mobility/Rental-Nachweis (ADR-0161)
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit
 10. echte Providerphase

@@ -3883,20 +3883,40 @@ Ein späterer vertrauenswürdiger Flugnachweis braucht einen **getrennten SECURI
 
 ---
 
-## ADR-0159 – reserviert für Admin Slice B / PR #46
+## ADR-0158 – Admin Slice A bleibt ehrliche Steuerzentralen-IA ohne neue Autorität
 
 **Datum:** 24. August 2026  
-**Status:** Nummer gebunden; Inhalt gehört nicht zu Provider S3
+**Status:** auf `main` gemergt (PR #44, `1ec93cc9`). Authoritative Datei: `docs/ADR_0158_ADMIN_SLICE_A.md`.
 
-**Entscheidung:** ADR-0159 bleibt Admin Slice B / PR #46 vorbehalten. Provider Readiness S3 darf diese Nummer nicht verwenden.
+**Entscheidung:** Siehe `docs/ADR_0158_ADMIN_SLICE_A.md`. Historische Draft-Nummern ADR-0152/0155 für Slice A gelten nicht gegen aktuellen `main`.
 
-**Kontext:** Technical-Lead Cross-Agent Gate zu PR #54 am 24. August 2026. Verbindliche Allokation: Admin A = ADR-0158, Admin B / PR #46 = ADR-0159, Account AP-3 / PR #53 = ADR-0160, Provider S3 / PR #54 = ADR-0161.
+---
 
-**Alternativen:** S3 hätte ADR-0159 behalten. Das würde eine bereits geschlossene Admin-B-Integration überschreiben.
+## ADR-0159 – Admin Slice B bleibt read-only System Health ohne Fake-Green
 
-**Begründung:** ADR-Nummern sind global. Eine zweite ADR-0159 auf dem Provider-Branch ist ein Cross-Workstream-Konflikt.
+**Datum:** 24. August 2026  
+**Status:** auf `main` gemergt (PR #46, `e3bad749`). Nummer von ADR-0153 auf ADR-0159 gehoben, weil `main` ADR-0153 an Account AP-1 und ADR-0155–0157 an Provider S2 vergeben hat. Admin Slice A ist ADR-0158.
 
-**Konsequenzen:** S3-Nachweisentscheidung steht unter ADR-0161. Diese Datei beschreibt Admin B hier nicht nach.
+**Entscheidung:**
+
+- Das Admin Control Center bekommt eine eigene read-only Fläche `/admin/system-health` mit zentralem Health-Modell: `healthy | degraded | unavailable | unknown | not_configured` plus Freshness `fresh | stale | unknown`.
+- Sichtbares Grün gilt nur bei `healthy` **und** `fresh`. Stale, unknown, not_configured und unavailable dürfen nicht grün aussehen.
+- Jede Karte nennt Quelle, Prüfzeit, was die Quelle beweist und was sie nicht beweist.
+- Parent-Status und Sub-Checks bleiben getrennt.
+- Zulässige Live-Evidence in Slice B ohne neues Secret:
+  - **App / Deployment** bleibt `unknown`/non-green. Nur der Sub-Check `App-Prozess` darf bei einer aktuellen Prozessantwort `healthy` sein. `VERCEL_*` sind Metadaten und beweisen keine Deployment-Health.
+  - **Supabase** bleibt `not_configured`/non-green. Ein erfolgreicher Read auf `public.airports` darf nur den Sub-Check `Supabase App-Datenzugriff` auf `healthy` setzen, nicht die Plattform.
+- **Vercel-Plattform, GitHub/CI und Infomaniak** bleiben `not_configured`, solange kein freigegebenes read-only Token existiert. Vorhandene Cloud-Tokens werden im Webpfad nicht benutzt.
+- Der GET-Endpunkt `api/admin/system-health` verlangt `requireAdminApi({ capability: 'betrieb-lesen' })`. `writeActions` bleibt leer. Keine Service-Role, keine Migration, keine Capability-/RLS-Änderung.
+- Server-Cache 30s. Ein manueller Refresh, kein Sekunden-Polling. Ein Teilfehler isoliert die anderen Karten.
+
+**Kontext:** Auftrag `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`. Slice A hat System Health bewusst ausgelassen. Beim Current-Main-Sync nach PR #44 kollidierte die Draft-Nummer ADR-0153 mit Account AP-1.
+
+**Alternativen:** Management-APIs mit vorhandenen Cloud-Tokens heimlich anbinden; ENV-Präsenz als healthy werten; letzten CI-Lauf als aktuelle Plattform-Health zeigen; HTTP-200 einer Jetnity-Seite als Gesamtgrün; Account-/Provider-ADRs auf `main` umnummerieren.
+
+**Begründung:** `unknown` / `not_configured` ist belastbarer als erfundenes Grün. Ein neues Secret, ein Vertrag oder eine Management-Berechtigung braucht ein separates Product-Owner-Gate. Account- und Provider-ADRs auf `main` haben Vorrang vor Draft-Nummern.
+
+**Konsequenzen:** Copilot Pro erklärt Health nicht in diesem Slice. Domain-/Mail-/DNS-Health bleibt später. Account-/Trip-/Traveller-/Route-/Safety-/Seasonal- und Provider-S2-Verträge bleiben unberührt. PR #46 liegt auf `main`. Kein Slice C ohne neuen Auftrag.
 
 ---
 
@@ -3912,7 +3932,7 @@ Ein späterer vertrauenswürdiger Flugnachweis braucht einen **getrennten SECURI
 ## ADR-0161 – Mobility- und Rental-Nachweis folgen Hotel/S2, nicht dem Flugschema
 
 **Datum:** 24. August 2026
-**Status:** umgesetzt auf `feat/provider-mobility-rental-evidence-s3`; kein echter Adapter; keine Production-Migration; Nummer nach Technical-Lead-Allokation, nicht ADR-0159
+**Status:** umgesetzt auf `feat/provider-mobility-rental-evidence-s3`; Current-Main-Sync auf `e3bad749`; kein echter Adapter; keine Production-Migration; Nummer nach Technical-Lead-Allokation, nicht ADR-0159
 
 **Entscheidung:** Mobility und Rental bekommen denselben async Nachweisvertrag wie Hotel und S2 FlugNachweis: `nachweisen({ optionId, kontext })`. Der Browser darf nur `tripId` und `optionId` senden. Kommerzielle Felder kommen aus einem serverseitigen Nachweis plus Suchkontext – oder die Übernahme fällt fail closed. Die fachliche Form bleibt domain-spezifisch (Orte/Modus/Reisende bzw. Stationen/Zeitraum/Klasse/Getriebe). Ein Testkatalog darf nur injiziert werden. `*NachweisAusUmgebung()` bleibt `null`. `booking_url` wird nicht erzeugt. Die Workspace-Mobilitätssuche startet nicht mehr automatisch; nur «Verbindungen prüfen» darf `/api/mobility/search` anfassen.
 
