@@ -34,7 +34,7 @@ describe('ehrliche Admin-Zustände', () => {
     const later = ADMIN_NAECHSTE_SCHRITTE.filter((schritt) => schritt.stand === 'later')
     assert.deepEqual(
       ready.map((schritt) => schritt.href),
-      ['/admin/users', '/admin/payments', '/admin/security', '/admin/system-health'],
+      ['/admin/users', '/admin/payments', '/admin/security', '/admin/system-health', '/admin/provider-ops'],
     )
     assert.equal(later.every((schritt) => schritt.href === null), true)
     assert.equal(

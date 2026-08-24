@@ -3916,7 +3916,31 @@ Ein späterer vertrauenswürdiger Flugnachweis braucht einen **getrennten SECURI
 
 **Begründung:** `unknown` / `not_configured` ist belastbarer als erfundenes Grün. Ein neues Secret, ein Vertrag oder eine Management-Berechtigung braucht ein separates Product-Owner-Gate. Account- und Provider-ADRs auf `main` haben Vorrang vor Draft-Nummern.
 
-**Konsequenzen:** Copilot Pro erklärt Health nicht in diesem Slice. Domain-/Mail-/DNS-Health bleibt später. Account-/Trip-/Traveller-/Route-/Safety-/Seasonal- und Provider-S2-Verträge bleiben unberührt. Draft PR #46 bleibt Draft. Kein Slice C ohne neuen Auftrag.
+**Konsequenzen:** Copilot Pro erklärt Health nicht in diesem Slice. Domain-/Mail-/DNS-Health bleibt später. Account-/Trip-/Traveller-/Route-/Safety-/Seasonal- und Provider-S2-Verträge bleiben unberührt. Slice B liegt auf `main` `e3bad749`. Slice C ist ein eigener Draft-PR.
+
+---
+
+## ADR-0162 – Admin Slice C bleibt read-only Provider- und Kostenboard
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #49 / `feat/admin-provider-cost-board`; Nummer 0162, weil 0160 Account AP-3 und 0161 Provider S3 vorbehalten sind.
+
+**Entscheidung:**
+
+- Das Admin Control Center bekommt `/admin/provider-ops` als read-only Provider- und Kostenboard.
+- Der gemergte S1-Vertrag `lib/provider-ops` auf `main` wird nur gelesen, nicht kopiert oder verändert.
+- Parent Provider-Ops bleibt `foundation_only`. Ein Domain-Zustand `available` gilt nur für die belegte Test-Capability und färbt den Parent nicht grün.
+- Kill-Switch und Cost Guard bleiben Foundation: keine persistente Enforcement, kein globales Budget, kein Toggle.
+- `public.model_usage` darf nur über den bestehenden `darf_betrieb_lesen`-Pfad gelesen werden. Empty, Error und Unknown bleiben getrennt. Keine 0-USD-/CHF-Lüge, keine nachträgliche Preisannahme.
+- GET-only `api/admin/provider-ops` mit `betrieb-lesen`. `writeActions` bleibt leer. Keine Service-Role, keine Migration, keine Capability-/RLS-Änderung.
+
+**Kontext:** Auftrag `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md` nach Merge von Admin Slice B und Provider S1. Cross-Agent-Allokation: 0158=A, 0159=B, 0160=AP-3, 0161=S3, 0162=C.
+
+**Alternativen:** S1-Vertrag in Admin neu implementieren; ENV-Flag als Live-Provider verkaufen; In-Memory-Guard als Budgetschutz; leere Usage als 0 USD darstellen; ADR-0160/0161 erneut belegen.
+
+**Begründung:** Foundation sichtbar machen ohne Fake-Aktivierung oder Fake-Kosten. Shared Contracts bleiben beim Provider-Workstream.
+
+**Konsequenzen:** Kein Slice D, kein Finance-Live, kein Billing-P1 in diesem PR. Draft PR #49 bleibt Draft.
 
 ---
 
