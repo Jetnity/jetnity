@@ -1,7 +1,7 @@
 # Jetnity – Travel Safety & Disruption Intelligence
 
 Stand: 23. August 2026  
-Status: **provider-neutrale Foundation auf Draft-PR #37; kein Live-Provider, keine Production-Migration**
+Status: **provider-neutrale Foundation auf `main`; kein Live-Provider, keine Production-Migration**
 
 Fachdokument zur Safety-Wahrheit. Acceptance: `docs/TRAVEL_SAFETY_DISRUPTION_FOUNDATION_ACCEPTANCE.md`.  
 Policy: `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`.

@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
-Stand: 23. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D, Foundation E und Travel Safety & Disruption Foundation abgeschlossen; nächster neuer Block: Travel Timing & Seasonal Intelligence**
+Stand: 24. August 2026  
+Status: **verbindlicher operativer Übergabepunkt – Foundation D, Foundation E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence – Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -288,13 +288,13 @@ Frühere grüne Tests oder frühere Merges geben keinen Bestandsschutz. Evidence
 
 ## 9. Nächste verbindliche Reihenfolge
 
-Der nächste neue Entwicklungsblock hat **noch nicht begonnen**.
+Der nächste neue Entwicklungsblock ist **gestartet**.
 
 1. ✅ Foundation C – Readiness
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. **→ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
+5. **→ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
 6. Provider-Readiness-/Adapter-Lücken schließen
 7. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 8. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
@@ -310,12 +310,18 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-1. aktuellen `main`-/CI-/Vercel-/Production-Stand erneut prüfen
-2. `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md` vollständig lesen
-3. Ist-Architektur-Audit für Seasonal gegen Safety, Route, Traveller Context, Readiness und Workspace erstellen
-4. vollständigen versionierten Cursor-Auftrag für die provider-neutrale Seasonal Foundation erstellen
-5. neuen Feature-Branch + frühen Draft PR starten
-6. kein echter Seasonal-Provider, kein Secret, keine unfreigegebenen Kosten, kein Merge ohne aktuelle Product-Owner-Freigabe
+Aktiver Branch: `feat/travel-timing-seasonal-intelligence`  
+Draft PR: `#38`  
+Basis: `origin/main` @ `cd220beb`  
+Runtime-Head: `57824019`
+
+1. Ist-Audit ist gegen den tatsächlichen Code verifiziert.
+2. Seasonal-Runtime sowie Review-Blocker 1–31 sind geschlossen. Untrusted Intake persistiert keine Client-Surface; `FlugOption` erfindet keine Evidence aus Segmentnachbarschaft.
+3. Full Gate auf Runtime `57824019` ist lokal und remote grün (1703/1703 Tests, UI-Audit 1014/1014, Build Exit 0, GitHub Actions SUCCESS, Vercel Preview READY).
+4. PR bleibt Draft. Kein echter Seasonal-Provider, kein Secret, keine unfreigegebenen Kosten, keine Production-Migration, kein Merge ohne aktuelle Product-Owner-Freigabe.
+5. **Exakter nächster Schritt:** Product-Owner-Entscheidung zu Mark Ready / Merge. Technical Closure ersetzt diese Freigabe nicht. Production-Migration bleibt ein separates Gate.
+
+Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
 Leitsatz:
 

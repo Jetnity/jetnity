@@ -67,7 +67,7 @@ Länder kommen nur aus expliziten Airport-Referenzen:
 4. Gast: übernimmt die in der Suchantwort mitgelieferte Referenzkarte in die lokale Itinerary; das ist nur lokaler Entwurf, keine Account-Truth
 5. Anzeige: City/Country nur, wenn die Referenz sie trägt
 
-Ohne Treffer in `airports` oder bei Lookup-Fehler bleibt `countryCode` `null`. Es gibt keinen Fallback auf Client-Länder. Die Route darf trotzdem IATA-Segmente zeigen. Die SQL-Helferfunktion `flug_route_itinerary_metadata()` verwirft Client-`countryCode`/`city`/`country` und baut die Punkte aus `public.airports` neu (ADR-0115). Ein BEFORE-Trigger auf `trip_items` wendet dieselbe Grenze auf jeden direkten INSERT/UPDATE an (ADR-0116). Die TypeScript-Kanonisierung bleibt Defense in Depth.
+Ohne Treffer in `airports` oder bei Lookup-Fehler bleibt `countryCode` `null`. Es gibt keinen Fallback auf Client-Länder. Die Route darf trotzdem IATA-Segmente zeigen. Die SQL-Helferfunktion `flug_route_itinerary_metadata()` verwirft Client-`countryCode`/`city`/`country` und baut die Punkte aus `public.airports` neu (ADR-0115). Gültiges `surfaceFromAirportCode` bleibt als IATA erhalten; ungültige Evidence weist die gesamte Route fail-closed ab (ADR-0149, Development). Ein BEFORE-Trigger auf `trip_items` wendet dieselbe Grenze auf jeden direkten INSERT/UPDATE an (ADR-0116). Die TypeScript-Kanonisierung bleibt Defense in Depth.
 
 ---
 
@@ -101,11 +101,13 @@ Guest → Account: die Browser-Itinerary ist Input. Persistiert wird nur die ser
 - Direktflug: Origin/Destination des einen Segments, keine Connection
 - Ein oder mehrere Transits: Zwischenländer in Segmentreihenfolge, ohne das letzte Zielland
 - Connections nur innerhalb einer Itinerary, nicht über Hinflug→Rückflug hinweg
-- Connection Duration nur aus vollständigen, nicht-negativen Zeiten (`umstiegMinuten`)
-- Airport Change nur, wenn beide IATA-Codes vorliegen und verschieden sind
+- Connection Duration nur aus vollständigen, nicht-negativen Zeiten am selben bewiesenen Airport (`umstiegMinuten`)
+- Airport Change nur, wenn beide IATA-Codes vorliegen und verschieden sind; ein bekannter Code bleibt `unknown`
 - Destination Countries für Readiness: Etappen-Codes plus Itinerary-Ziel, wenn es nicht der Origin derselben Itinerary ist
+- Airport-lokale Abflugzeiten sind keine absolute Cross-Airport-Chronologie. Vergleichbar sind lokale Zeiten am selben IATA und Kalenderabstände ≥ 3 Tage. Eine eindeutige Segmentkette innerhalb eines Legs darf rekonstruiert werden; Open-Jaw-Home-Arrival über getrennte Items nicht.
+- Bei bewiesener Chronologie ist `RouteFacts.destination` das letzte Segment der letzten kanonischen Itinerary. Unbewiesene Reihenfolge leert Origin und Destination.
 
-Fingerprint: `route-v1|ZRH:CH>DOH:QA>BKK:TH`. Ohne Route bleiben bestehende Readiness-Fingerprints unverändert.
+Fingerprint: `route-v2|ZRH:CH>DOH:QA>BKK:TH`. Surface-/Airport-Change bleibt als `~` erhalten, z. B. `ZRH:CH>CDG:FR~ORY:FR>BKK:TH` gegenüber kontinuierlich `ZRH:CH>CDG:FR>ORY:FR>BKK:TH`. Readiness-Fingerprints sind `v4|sha256:…` über kanonisches JSON, nicht über ein 800-Zeichen-Präfix.
 
 ---
 

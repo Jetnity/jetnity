@@ -851,8 +851,10 @@ function reisenachweise() {
 
   const punkt = (code) =>
     `{"airportCode":"${code}","countryCode":"US","city":"Clientstadt","country":"Clientland"}`
-  const segment = (von, nach, ab = '09:15', an = '16:40') =>
-    `{"origin":${punkt(von)},"destination":${punkt(nach)},"departureDate":"2026-11-01","departureTime":"${ab}","arrivalDate":"2026-11-01","arrivalTime":"${an}"}`
+  const segment = (von, nach, ab = '09:15', an = '16:40', surfaceFrom = null) => {
+    const basis = `{"origin":${punkt(von)},"destination":${punkt(nach)},"departureDate":"2026-11-01","departureTime":"${ab}","arrivalDate":"2026-11-01","arrivalTime":"${an}"`
+    return surfaceFrom ? `${basis},"surfaceFromAirportCode":"${surfaceFrom}"}` : `${basis}}`
+  }
   const itineraryObj = (segmente) =>
     `{"v":1,"type":"flight_route_itinerary","legs":[{"segments":[${segmente}]}]}`
   const asJsonb = (objekt) => `'${objekt}'::jsonb`
@@ -864,10 +866,26 @@ function reisenachweise() {
     `${segment('ZRH', 'FRA')},${segment('FRA', 'DOH')},${segment('DOH', 'BKK')}`,
   )
   const ROUTE_UNBEKANNT_OBJ = itineraryObj(segment('ZZZ', 'BKK'))
+  const ROUTE_SURFACE_OBJ = itineraryObj(
+    `${segment('ZRH', 'CDG', '07:10', '08:30')},${segment('ORY', 'BKK', '12:40', '06:10', 'CDG')}`,
+  )
+  const ROUTE_US_GAP_OBJ = itineraryObj(
+    `${segment('LAX', 'JFK', '08:00', '16:20')},${segment('SFO', 'NRT', '11:00', '15:40')}`,
+  )
+  const ROUTE_US_GAP_CLAIMED_OBJ = itineraryObj(
+    `${segment('LAX', 'JFK', '08:00', '16:20')},${segment('SFO', 'NRT', '11:00', '15:40', 'JFK')}`,
+  )
+  const ROUTE_SURFACE_INVALID_OBJ = itineraryObj(
+    `${segment('ZRH', 'CDG', '07:10', '08:30')},${segment('ORY', 'BKK', '12:40', '06:10', 'CDGX')}`,
+  )
   const ROUTE_DIREKT_US = asJsonb(ROUTE_DIREKT_OBJ)
   const ROUTE_TRANSIT_US = asJsonb(ROUTE_TRANSIT_OBJ)
   const ROUTE_ZWEI_TRANSITS = asJsonb(ROUTE_ZWEI_OBJ)
   const ROUTE_UNBEKANNT = asJsonb(ROUTE_UNBEKANNT_OBJ)
+  const ROUTE_SURFACE = asJsonb(ROUTE_SURFACE_OBJ)
+  const ROUTE_US_GAP = asJsonb(ROUTE_US_GAP_OBJ)
+  const ROUTE_US_GAP_CLAIMED = asJsonb(ROUTE_US_GAP_CLAIMED_OBJ)
+  const ROUTE_SURFACE_INVALID = asJsonb(ROUTE_SURFACE_INVALID_OBJ)
   const FLUG_PUNKT = (objekt) =>
     `{"kind":"flight","title":"ZRH BKK","position":1,"route_itinerary":${objekt}}`
   const META = (routeObj, extra = '') => `'{"routeItinerary":${routeObj}${extra}}'::jsonb`
@@ -1912,6 +1930,97 @@ function reisenachweise() {
               where trip_id = '${REISE}' and title = 'Guard Kind'
                 and kind = 'flight'
                 and metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' = 'CH'`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'flug_route_itinerary_metadata verwirft Client-surfaceFromAirportCode',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select 1
+            where public.flug_route_itinerary_metadata('flight', ${ROUTE_SURFACE})
+              ? 'routeItinerary'
+              and public.flug_route_itinerary_metadata('flight', ${ROUTE_SURFACE})
+              #>> '{routeItinerary,legs,0,segments,1,surfaceFromAirportCode}' is null
+              and public.flug_route_itinerary_metadata('flight', ${ROUTE_SURFACE})
+              #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' = 'CH'
+              and public.flug_route_itinerary_metadata('flight', ${ROUTE_SURFACE})
+              #>> '{routeItinerary,legs,0,segments,1,origin,countryCode}' = 'FR'
+              and public.flug_route_itinerary_metadata('flight', ${ROUTE_SURFACE})
+              #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' is distinct from 'US'`,
+      erwartung: 'erlaubt',
+      grund: 'Untrusted Client darf Surface-Evidence nicht allein durch IATA-Syntax persistieren.',
+    },
+    {
+      name: 'flug_route_itinerary_metadata erfindet keine Surface-Evidence',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select 1
+            where public.flug_route_itinerary_metadata('flight', ${ROUTE_US_GAP})
+              ? 'routeItinerary'
+              and public.flug_route_itinerary_metadata('flight', ${ROUTE_US_GAP})
+              #>> '{routeItinerary,legs,0,segments,1,surfaceFromAirportCode}' is null
+              and public.flug_route_itinerary_metadata('flight', ${ROUTE_US_GAP_CLAIMED})
+              ? 'routeItinerary'
+              and public.flug_route_itinerary_metadata('flight', ${ROUTE_US_GAP_CLAIMED})
+              #>> '{routeItinerary,legs,0,segments,1,surfaceFromAirportCode}' is null`,
+      erwartung: 'erlaubt',
+      grund: 'LAX→JFK + SFO→NRT bleibt ohne surfaceFromAirportCode, auch mit Client-JFK-Claim.',
+    },
+    {
+      name: 'ungültiges surfaceFromAirportCode wird ignoriert, Route bleibt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select 1
+            where public.flug_route_itinerary_metadata('flight', ${ROUTE_SURFACE_INVALID})
+              ? 'routeItinerary'
+              and public.flug_route_itinerary_metadata('flight', ${ROUTE_SURFACE_INVALID})
+              #>> '{routeItinerary,legs,0,segments,1,surfaceFromAirportCode}' is null
+              and public.flug_route_itinerary_metadata('flight', ${ROUTE_SURFACE_INVALID})
+              #>> '{routeItinerary,legs,0,segments,1,origin,airportCode}' = 'ORY'`,
+      erwartung: 'erlaubt',
+      grund: 'Ein Client-Surface-Feld darf die Route nicht adeln und nicht die ganze Itinerary löschen.',
+    },
+    {
+      name: 'direkter INSERT verwirft CDG-Surface-Evidence und Client-Land',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (trip_id, kind, title, metadata)
+              values ('${REISE}', 'flight', 'Guard Surface', ${META(ROUTE_SURFACE_OBJ, `,"keepMe":true`)});
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'Guard Surface'
+                and metadata ? 'routeItinerary'
+                and metadata #>> '{routeItinerary,legs,0,segments,1,surfaceFromAirportCode}' is null
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' = 'CH'
+                and metadata #>> '{routeItinerary,legs,0,segments,1,origin,countryCode}' = 'FR'
+                and (metadata ->> 'keepMe') = 'true'`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'reise_anlegen persistiert keine Client-Surface-Evidence',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise('route-surface-1', `,"ungeplante":[${FLUG_PUNKT(ROUTE_SURFACE_OBJ)}]`)});
+            select 1 from public.trip_items
+              where user_id = '${NUTZER}'
+                and metadata ? 'routeItinerary'
+                and metadata #>> '{routeItinerary,legs,0,segments,1,surfaceFromAirportCode}' is null
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' = 'CH'
+                and metadata #>> '{routeItinerary,legs,0,segments,0,origin,countryCode}' is distinct from 'US'`,
+      erwartung: 'erlaubt',
+      grund: 'Guest→Account über reise_anlegen darf Client-Surface nicht adeln.',
+    },
+    {
+      name: 'ungültige Surface-Evidence bleibt beim direkten INSERT ohne Evidence',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_items (trip_id, kind, title, metadata)
+              values ('${REISE}', 'flight', 'Guard Surface Invalid',
+                ${META(ROUTE_SURFACE_INVALID_OBJ, `,"keepMe":true`)});
+            select 1 from public.trip_items
+              where trip_id = '${REISE}' and title = 'Guard Surface Invalid'
+                and (metadata ->> 'keepMe') = 'true'
+                and metadata ? 'routeItinerary'
+                and metadata #>> '{routeItinerary,legs,0,segments,1,surfaceFromAirportCode}' is null`,
       erwartung: 'erlaubt',
     },
   ]

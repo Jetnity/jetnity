@@ -23,9 +23,12 @@
 //     destinationCountries
 //
 // Traveller-spezifische Einreise-/Visum-/Dokumentkarten enthalten
-// sortierte Citizenship-/Document-Mengen. Reihenfolge ist irrelevant.
+// sortierte Citizenship-Mengen und die aufgelöste Dokument-Citizenship.
+// Die SHA-256-Identität ist eine kanonische JSON-Struktur, keine
+// delimiterbasierte Konkatenation. Reihenfolge ist irrelevant.
 // Nicht enthalten: Passnummern, Preise, URLs, Notizen.
 
+import { sha256Hex } from '@/lib/readiness/digest'
 import { READINESS_FINGERPRINT_VERSION, READINESS_GRENZEN } from '@/lib/readiness/domain'
 import type { ReadinessKind } from '@/types/trips'
 
@@ -54,93 +57,102 @@ export type ReadinessFingerprintKontext = {
   residenceCountryCode?: string | null
 }
 
-function teil(name: string, wert: string | number | boolean | null | undefined): string {
-  if (wert === null || wert === undefined || wert === '') return `${name}=`
-  if (typeof wert === 'boolean') return `${name}=${wert ? '1' : '0'}`
-  return `${name}=${String(wert)}`
-}
-
-function laender(codes: readonly string[]): string {
-  return [...new Set(codes.filter((code) => /^[A-Z]{2}$/.test(code)))].sort().join(',')
-}
-
-function routeFelderAus(kontext: ReadinessFingerprintKontext): string[] {
-  const origin = kontext.originCountryCode ?? null
-  const transits = (kontext.transitCountryCodes ?? []).filter((code) => /^[A-Z]{2}$/.test(code))
-  const route = kontext.routeFingerprint ?? null
-  if (!origin && transits.length === 0 && !route) return []
-  return [teil('orig', origin), teil('tr', transits.join(',')), teil('route', route)]
-}
-
-function travellerFelderAus(kontext: ReadinessFingerprintKontext): string[] {
-  const traveller = kontext.travellerClientRef ?? null
-  const citizenships = [...new Set((kontext.citizenshipCountryCodes ?? []).filter((code) => /^[A-Z]{2}$/.test(code)))]
-    .sort()
-    .join(',')
-  const documents = [...(kontext.documentFingerprints ?? [])].sort().join(',')
-  const residence = kontext.residenceCountryCode ?? null
-  if (!traveller && !citizenships && !documents && !residence) return []
-  return [teil('t', traveller), teil('cit', citizenships), teil('docs', documents), teil('res', residence)]
+function laender(codes: readonly string[]): string[] {
+  return [...new Set(codes.filter((code) => /^[A-Z]{2}$/.test(code)))].sort()
 }
 
 function titelNorm(wert: string | null): string {
   return (wert ?? '').trim().toLowerCase().replace(/\s+/g, ' ').slice(0, READINESS_GRENZEN.titel)
 }
 
-export function readinessFingerprint(kontext: ReadinessFingerprintKontext): string {
-  const dest = laender(kontext.destinationCountries)
-  const teile = [READINESS_FINGERPRINT_VERSION, `kind=${kontext.kind}`]
-  const routeFelder = routeFelderAus(kontext)
+function dokumentBedeutung(teil: string): unknown {
+  try {
+    return JSON.parse(teil) as unknown
+  } catch {
+    return teil
+  }
+}
 
+function routeStruktur(kontext: ReadinessFingerprintKontext): Record<string, unknown> {
+  const originCountryCode = kontext.originCountryCode ?? null
+  const transitCountryCodes = laender(kontext.transitCountryCodes ?? [])
+  const routeFingerprint = kontext.routeFingerprint ?? null
+  if (!originCountryCode && transitCountryCodes.length === 0 && !routeFingerprint) return {}
+  return { originCountryCode, transitCountryCodes, routeFingerprint }
+}
+
+function travellerStruktur(kontext: ReadinessFingerprintKontext): Record<string, unknown> {
+  const travellerClientRef = kontext.travellerClientRef ?? null
+  const citizenshipCountryCodes = laender(kontext.citizenshipCountryCodes ?? [])
+  const documents = [...(kontext.documentFingerprints ?? [])]
+    .map(dokumentBedeutung)
+    .sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)))
+  const residenceCountryCode = kontext.residenceCountryCode ?? null
+  if (!travellerClientRef && citizenshipCountryCodes.length === 0 && documents.length === 0 && !residenceCountryCode) {
+    return {}
+  }
+  return { travellerClientRef, citizenshipCountryCodes, documents, residenceCountryCode }
+}
+
+function kanonischeFingerprintStruktur(kontext: ReadinessFingerprintKontext): Record<string, unknown> {
+  const destinationCountries = laender(kontext.destinationCountries)
   switch (kontext.kind) {
     case 'entry_check':
     case 'visa_check':
     case 'travel_document_check':
-      teile.push(
-        teil('cc', kontext.countryCode),
-        teil('start', kontext.startDate),
-        teil('end', kontext.endDate),
-        teil('trav', kontext.travellers),
-        teil('dest', dest),
-        ...routeFelder,
-        ...travellerFelderAus(kontext),
-      )
-      break
+      return {
+        v: READINESS_FINGERPRINT_VERSION,
+        kind: kontext.kind,
+        countryCode: kontext.countryCode,
+        startDate: kontext.startDate,
+        endDate: kontext.endDate,
+        travellers: kontext.travellers,
+        destinationCountries,
+        ...routeStruktur(kontext),
+        ...travellerStruktur(kontext),
+      }
     case 'insurance_check':
-      teile.push(
-        teil('start', kontext.startDate),
-        teil('end', kontext.endDate),
-        teil('trav', kontext.travellers),
-        teil('dest', dest),
-        teil('rental', kontext.rentalCarPresent),
-        ...routeFelder,
-      )
-      break
+      return {
+        v: READINESS_FINGERPRINT_VERSION,
+        kind: kontext.kind,
+        startDate: kontext.startDate,
+        endDate: kontext.endDate,
+        travellers: kontext.travellers,
+        destinationCountries,
+        rentalCarPresent: kontext.rentalCarPresent,
+        ...routeStruktur(kontext),
+      }
     case 'ticket_confirmation_check':
     case 'booking_confirmation_check':
-      teile.push(
-        teil('item', kontext.tripItemId),
-        teil('itemKind', kontext.itemKind),
-        teil('booked', kontext.bookingStatus),
-        teil('startsOn', kontext.startsOn),
-        teil('endsOn', kontext.endsOn),
-        teil('origin', kontext.originPlaceId),
-        teil('destPlace', kontext.destinationPlaceId),
-      )
-      break
+      return {
+        v: READINESS_FINGERPRINT_VERSION,
+        kind: kontext.kind,
+        tripItemId: kontext.tripItemId,
+        itemKind: kontext.itemKind,
+        bookingStatus: kontext.bookingStatus,
+        startsOn: kontext.startsOn,
+        endsOn: kontext.endsOn,
+        originPlaceId: kontext.originPlaceId,
+        destinationPlaceId: kontext.destinationPlaceId,
+      }
     case 'preparation':
-      teile.push(
-        teil('title', titelNorm(kontext.title)),
-        teil('start', kontext.startDate),
-        teil('end', kontext.endDate),
-        teil('trav', kontext.travellers),
-        teil('dest', dest),
-        ...routeFelder,
-      )
-      break
+      return {
+        v: READINESS_FINGERPRINT_VERSION,
+        kind: kontext.kind,
+        title: titelNorm(kontext.title),
+        startDate: kontext.startDate,
+        endDate: kontext.endDate,
+        travellers: kontext.travellers,
+        destinationCountries,
+        ...routeStruktur(kontext),
+      }
   }
+}
 
-  return teile.join('|').slice(0, READINESS_GRENZEN.fingerprint)
+export function readinessFingerprint(kontext: ReadinessFingerprintKontext): string {
+  const roh = JSON.stringify(kanonischeFingerprintStruktur(kontext))
+  const digest = `${READINESS_FINGERPRINT_VERSION}|sha256:${sha256Hex(roh)}`
+  return digest.slice(0, READINESS_GRENZEN.fingerprint)
 }
 
 export function fingerprintAktuell(gespeichert: string, aktuell: string): boolean {

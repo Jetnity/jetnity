@@ -132,11 +132,11 @@ Provider-neutrale Requirements-Engine und Provider-Port existieren. Foundation E
 
 ### Travel Safety & Disruption
 
-Produkt- und Wahrheitsregel ist verbindlich. Die technische provider-neutrale Provider-/Evidence-Schicht muss in der entsprechenden Foundation gebaut werden, bevor ein echter Safety-/Event-/Official-Source-Anbieter angeschlossen wird.
+Provider-neutrale Schicht vorhanden: `lib/safety/`, `safetyProviderAus()` bleibt `null`. Echter Safety-/Event-Provider fehlt.
 
 ### Travel Timing & Seasonal Intelligence
 
-Produkt- und Wahrheitsregel ist verbindlich. Die technische provider-neutrale Schicht für Seasonal Pattern / Risk Window / Forecast / Source Evidence muss vor der echten Datenquellenphase gebaut werden.
+Provider-neutrale Schicht auf Draft-PR #38: `lib/seasonal/`, `seasonalProviderAus()` bleibt `null`. Echter Climate-/Seasonal-/Forecast-Provider fehlt.
 
 ### Weitere externe Datenabhängigkeiten
 

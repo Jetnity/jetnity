@@ -7,7 +7,7 @@
 //
 // Frei von Next, Supabase und `process.env`.
 
-export const ROUTE_FACTS_VERSION = 'route-v1' as const
+export const ROUTE_FACTS_VERSION = 'route-v2' as const
 
 const ROUTE_QUELLEN = ['none', 'flight_itinerary'] as const
 export type RouteQuelle = (typeof ROUTE_QUELLEN)[number]
@@ -35,6 +35,8 @@ export type RouteSegment = {
   departureTime: string | null
   arrivalDate: string | null
   arrivalTime: string | null
+  /** Explizite Surface-Evidence: IATA, von dem dieser Segment-Origin per Ground-Transfer kommt. */
+  surfaceFromAirportCode?: string | null
 }
 
 export type RouteVerbindung = {
@@ -44,6 +46,7 @@ export type RouteVerbindung = {
   country: string | null
   durationMinutes: number | null
   airportChange: boolean | null
+  legIndex: number
   fromSegmentIndex: number
   toSegmentIndex: number
 }
@@ -61,16 +64,26 @@ export type RouteItineraryMitQuelle = {
   itinerary: FlugRouteItinerary
 }
 
+export type RouteAirportKontakt = {
+  airportCode: string
+  countryCode: string | null
+  start: string | null
+  end: string | null
+}
+
 export type RouteFacts = {
   quelle: RouteQuelle
   origin: RoutePunkt
   destination: RoutePunkt
   segments: RouteSegment[]
+  legs: { segments: RouteSegment[] }[]
   connections: RouteVerbindung[]
+  airportContacts: RouteAirportKontakt[]
   transitCountryCodes: string[]
   destinationCountryCodes: string[]
   sourceItemIds: string[]
   fingerprint: string | null
+  chronologieBewiesen: boolean
 }
 
 export const LEERER_ROUTE_PUNKT: RoutePunkt = {
@@ -86,10 +99,13 @@ export function leereRouteFacts(): RouteFacts {
     origin: { ...LEERER_ROUTE_PUNKT },
     destination: { ...LEERER_ROUTE_PUNKT },
     segments: [],
+    legs: [],
     connections: [],
+    airportContacts: [],
     transitCountryCodes: [],
     destinationCountryCodes: [],
     sourceItemIds: [],
     fingerprint: null,
+    chronologieBewiesen: true,
   }
 }

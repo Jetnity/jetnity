@@ -14,6 +14,7 @@ import HotelBereich from '@/components/trips/HotelBereich'
 import TripWorkspace from '@/components/trips/TripWorkspace'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
 import type { SafetyEvaluation } from '@/lib/safety/domain'
+import type { SeasonalEvaluation } from '@/lib/seasonal/domain'
 import type { Arbeitsbereich } from '@/lib/trips/arbeitsbereich'
 import type { Trip, TripSource } from '@/types/trips'
 
@@ -28,6 +29,7 @@ type AuditNutzlast = {
   gastHinweis?: boolean
   officialEvaluations?: OfficialEvaluation[]
   safetyEvaluations?: SafetyEvaluation[]
+  seasonalEvaluations?: SeasonalEvaluation[]
 }
 
 export default function TripWorkspaceAuditClient() {
@@ -74,6 +76,7 @@ export default function TripWorkspaceAuditClient() {
       ohneTag={reise.ohneTag}
       officialEvaluations={daten.officialEvaluations}
       safetyEvaluations={daten.safetyEvaluations}
+      seasonalEvaluations={daten.seasonalEvaluations}
       anfangsBereich={daten.anfangsBereich}
       onPunktAnlegen={async () => null}
       onPunktEntfernen={async () => null}

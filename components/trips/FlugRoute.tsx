@@ -1,5 +1,7 @@
 'use client'
 
+import React from 'react'
+
 // components/trips/FlugRoute.tsx
 //
 // Ruhige, progressive Route-Darstellung. Direktflug bleibt bewusst einfach.
@@ -7,6 +9,7 @@
 import type { RouteAnzeige } from '@/lib/route/anzeige'
 import type { RouteFacts, RouteSegment } from '@/lib/route/domain'
 import { punktLesbar, routeAnzeigeAusFacts } from '@/lib/route/anzeige'
+import { verbindungNachSegment } from '@/lib/route/verbindung'
 import { dauerLesbar } from '@/lib/flights/zeit'
 import { cn } from '@/lib/utils'
 
@@ -42,26 +45,29 @@ export default function FlugRoute({
             Verbindung im Detail
           </summary>
           <ol className="mt-2 grid gap-2" aria-label="Flugsegmente">
-            {segmente.map((segment, index) => (
-              <li key={`${segment.origin.airportCode}-${segment.destination.airportCode}-${index}`}>
-                <p className="text-sm font-medium text-brand-800">
-                  Segment {index + 1}: {punktLesbar(segment.origin)} → {punktLesbar(segment.destination)}
-                </p>
-                <p className="text-xs leading-5 text-ink-800">{segmentZeit(segment)}</p>
-                {umstiege[index] ? (
-                  <p className="mt-1 text-xs leading-5 text-ink-800">
-                    Umstieg
-                    {umstiege[index]?.city || umstiege[index]?.airportCode
-                      ? ` in ${umstiege[index]?.city || umstiege[index]?.airportCode}`
-                      : ''}
-                    {umstiege[index]?.durationMinutes !== null
-                      ? ` · ${dauerLesbar(umstiege[index]!.durationMinutes!)}`
-                      : ''}
-                    {umstiege[index]?.airportChange ? ' · Flughafenwechsel' : ''}
+            {segmente.map((segment, index) => {
+              const umstieg = verbindungNachSegment(umstiege, index)
+              return (
+                <li key={`${segment.origin.airportCode}-${segment.destination.airportCode}-${index}`}>
+                  <p className="text-sm font-medium text-brand-800">
+                    Segment {index + 1}: {punktLesbar(segment.origin)} → {punktLesbar(segment.destination)}
                   </p>
-                ) : null}
-              </li>
-            ))}
+                  <p className="text-xs leading-5 text-ink-800">{segmentZeit(segment)}</p>
+                  {umstieg ? (
+                    <p className="mt-1 text-xs leading-5 text-ink-800">
+                      Umstieg
+                      {umstieg.city || umstieg.airportCode
+                        ? ` in ${umstieg.city || umstieg.airportCode}`
+                        : ''}
+                      {umstieg.durationMinutes !== null
+                        ? ` · ${dauerLesbar(umstieg.durationMinutes)}`
+                        : ''}
+                      {umstieg.airportChange ? ' · Flughafenwechsel' : ''}
+                    </p>
+                  ) : null}
+                </li>
+              )
+            })}
           </ol>
         </details>
       ) : null}

@@ -4,6 +4,10 @@
 //
 // Die Aufnahme kann aus dem Browser, dem Local Storage oder metadata kommen.
 // Nur strukturell gültige IATA-/Zeit-/Ländercodes dürfen Route Truth werden.
+// `surfaceFromAirportCode` ist kein untrusted Intake-Feld: Clientbehauptungen
+// werden verworfen. Die Trusted-Lesefunktion darf das Feld nur an bereits
+// typisierten oder serverseitig belegten Objekten lesen. Ohne solche Quelle
+// bleibt die Lücke unknown.
 //
 // Frei von Next, Supabase und `process.env`.
 
@@ -51,29 +55,49 @@ const punktSchema = z.object({
   country: anzeigeText.nullable().default(null),
 })
 
-const segmentSchema = z.object({
+const segmentFelder = {
   origin: punktSchema,
   destination: punktSchema,
   departureDate: datum.nullable().default(null),
   departureTime: uhrzeit.nullable().default(null),
   arrivalDate: datum.nullable().default(null),
   arrivalTime: uhrzeit.nullable().default(null),
+}
+
+const segmentSchema = z.object(segmentFelder)
+
+const trustedSegmentSchema = z.object({
+  ...segmentFelder,
+  surfaceFromAirportCode: iata.nullable().optional(),
 })
 
-export const flugRouteItinerarySchema = z.object({
-  v: z.literal(1),
-  type: z.literal('flight_route_itinerary'),
-  legs: z
-    .array(
-      z.object({
-        segments: z.array(segmentSchema).min(1).max(8),
-      }),
-    )
-    .min(1)
-    .max(6),
-})
+function itinerarySchema(segment: typeof segmentSchema | typeof trustedSegmentSchema) {
+  return z.object({
+    v: z.literal(1),
+    type: z.literal('flight_route_itinerary'),
+    legs: z
+      .array(
+        z.object({
+          segments: z.array(segment).min(1).max(8),
+        }),
+      )
+      .min(1)
+      .max(6),
+  })
+}
+
+export const flugRouteItinerarySchema = itinerarySchema(segmentSchema).transform(
+  (wert): FlugRouteItinerary => wert,
+)
+const flugRouteItineraryTrustedSchema = itinerarySchema(trustedSegmentSchema)
 
 export function flugRouteItineraryLesen(wert: unknown): FlugRouteItinerary | null {
   const ergebnis = flugRouteItinerarySchema.safeParse(wert)
+  return ergebnis.success ? ergebnis.data : null
+}
+
+/** Nur für bereits typisierte oder serverseitig belegte Itineraries. */
+export function flugRouteItineraryTrustedLesen(wert: unknown): FlugRouteItinerary | null {
+  const ergebnis = flugRouteItineraryTrustedSchema.safeParse(wert)
   return ergebnis.success ? ergebnis.data : null
 }

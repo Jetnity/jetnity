@@ -2,6 +2,8 @@
 //
 // FlugOption → persistierbare Route-Itinerary, plus Kanonisierung vorhandener Itineraries.
 // Länder nur aus der übergebenen Flughafenreferenz, nie aus Segment- oder Clienttext.
+// Untrusted Intake (FlugOption, Browser, Local Storage) erzeugt und erhält
+// keine Surface-Evidence. Segmentlücken bleiben unknown.
 //
 // Frei von Next und Providern.
 
@@ -39,25 +41,31 @@ export function segmenteAusItinerary(itinerary: FlugRouteItinerary): RouteSegmen
 
 /**
  * Baut eine Itinerary aus IATA + serverseitiger Referenz neu.
- * Clientwerte für Land, Stadt und Ländername werden verworfen.
+ * Clientwerte für Land, Stadt, Ländername und Surface-Evidence werden verworfen.
  */
 export function itineraryKanonisieren(
   itinerary: FlugRouteItinerary,
   refs: FlughafenReferenzKarte,
 ): FlugRouteItinerary | null {
-  return flugRouteItineraryLesen({
-    v: 1,
-    type: 'flight_route_itinerary',
-    legs: itinerary.legs.map((bein) => ({
-      segments: bein.segments.map((segment) => ({
+  const legs: { segments: RouteSegment[] }[] = []
+  for (const bein of itinerary.legs) {
+    const segments: RouteSegment[] = []
+    for (const segment of bein.segments) {
+      segments.push({
         origin: flughafenPunkt(segment.origin.airportCode, refs),
         destination: flughafenPunkt(segment.destination.airportCode, refs),
         departureDate: segment.departureDate,
         departureTime: segment.departureTime,
         arrivalDate: segment.arrivalDate,
         arrivalTime: segment.arrivalTime,
-      })),
-    })),
+      })
+    }
+    legs.push({ segments })
+  }
+  return flugRouteItineraryLesen({
+    v: 1,
+    type: 'flight_route_itinerary',
+    legs,
   })
 }
 

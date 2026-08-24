@@ -1,7 +1,7 @@
 # Travel Timing & Seasonal Intelligence – Foundation Acceptance
 
 Stand: 23. August 2026  
-Status: **verbindliche Acceptance für die provider-neutrale Foundation**
+Status: **verbindliche Acceptance für die provider-neutrale Foundation – Draft-PR #38, R10-Blocker 20–23 auf Runtime `fdcc5c88` geschlossen, Exact-Head-Gate grün, R11 offen**
 
 Policy: `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`  
 Ist-Audit: `docs/TRAVEL_TIMING_SEASONAL_FOUNDATION_ARCHITECTURE_AUDIT.md`
@@ -32,7 +32,7 @@ Nicht Teil dieses Blocks:
 - keine Umdeutung von `SafetyEvaluation`
 - Safety bleibt für acute/active warnings zuständig
 - Seasonal bleibt für wiederkehrende/historische/offizielle Seasonal Windows und geeignete Forecast-Outlooks zuständig
-- `active_warning` / akute Event-Truth darf Seasonal nicht als Seasonal-Hinweis anzeigen
+- `active_warning` / akute Event-Truth darf Seasonal nicht als Seasonal-Hinweis anzeigen und darf intern/API-sichtbar nicht als `seasonal_pattern` materialisiert werden, auch nicht kombiniert mit `temporarily_unavailable`; die sichtbare Klasse ist `rejected_acute`
 - `seasonal_pattern` darf Safety weiterhin nicht als Safety-Warnung anzeigen
 
 ### B. Source-/Evidence-Klassen
@@ -97,8 +97,9 @@ Keine pauschale Ableitung `schlecht`, `gefährlich`, `ungeeignet`.
 - eigener `SeasonalProvider`-Port
 - Production/Preview Factory bleibt `null`
 - Test-Doubles dürfen injiziert werden
-- Provider Request enthält nur kanonische Trip-/Stage-/Route-/Datums-Facts
-- keine unnötigen Citizenship-/Document-Daten im Foundation-Port
+- Provider Request enthält nur kanonische Trip-/Stage-/Route-/Datums-Facts, inklusive Stage-ID + arrival/departure und getrennter Airport-/Route-Zeitkontakte aus der Foundation-D-Projektion; getrennte Legs/Flight-Items bleiben getrennte Airport-Kontakte
+- flache Country-/Airport-/Place-Mengen und Top-Level-Daten bleiben nur grobe Hülle, nicht die einzige Zeitwahrheit
+- keine unnötigen Citizenship-/Document-/LLM-Daten im Foundation-Port
 - Provider Timeout mit AbortSignal
 - Throw, Timeout, unavailable, malformed, partial malformed und conflict jeweils explizit fail-closed
 - `[]` von einem erfolgreich geprüften Provider ist **nicht** automatisch Provider unavailable
@@ -241,6 +242,82 @@ Vor Review auf **exakt finalem Runtime-Head**:
 - Branch **0 behind** aktuellem `origin/main`
 - GitHub Actions SUCCESS auf exakt finalem Head
 - Vercel Preview READY/SUCCESS auf exakt finalem Head
+
+### Gate-Lock Runtime `f077d4d1` nach R4-Fixes (23. August 2026)
+
+R4-Blocker 8–9 aus `docs/PR38_CHATGPT_R4_REVIEW.md` sind geschlossen. Nachweis: `docs/PR38_CURSOR_REVIEW_FIXES.md`.
+
+| Gate | Ergebnis |
+| --- | --- |
+| `origin/main` | `cd220beb`, Branch **0 behind** |
+| `npm test` | **1559/1559** |
+| Typecheck / Lint / Hygiene | grün |
+| Production-Build | Exit 0 |
+| DB | Rechte 51 OK, RLS Exit 0, Sicherheit **210/210**, Parallelität **7/7** |
+| UI-Audit | **1014/1014**, 0 Fehler, WebKit + Chromium, 8 Viewports |
+| GitHub Actions | SUCCESS https://github.com/Jetnity/jetnity/actions/runs/32645477815 |
+| Vercel Preview | READY https://vercel.com/jetnity-e1b93c82/jetnity-app/zm3hQgmNLkLG6aagbdPePF1Jqyr7 |
+
+### Gate-Lock Runtime `4f9eb1e8` nach R3-Fixes (23. August 2026)
+
+R3-Blocker 5-Residual und 7 aus `docs/PR38_CHATGPT_R3_REVIEW.md` sind geschlossen. Nachweis: `docs/PR38_CURSOR_REVIEW_FIXES.md`.
+
+| Gate | Ergebnis |
+| --- | --- |
+| `origin/main` | `cd220beb`, Branch **0 behind** |
+| `npm test` | **1557/1557** |
+| Typecheck / Lint / Hygiene | grün |
+| Production-Build | Exit 0 |
+| DB | Rechte 51 OK, RLS Exit 0, Sicherheit **210/210**, Parallelität **7/7** |
+| UI-Audit | **1014/1014**, 0 Fehler, WebKit + Chromium, 8 Viewports |
+| GitHub Actions | SUCCESS auf Runtime `4f9eb1e8` https://github.com/Jetnity/jetnity/actions/runs/32643429557; SUCCESS auf Docs-Lock `426f7220` https://github.com/Jetnity/jetnity/actions/runs/32644372675 |
+| Vercel Preview | READY auf Runtime `4f9eb1e8` https://vercel.com/jetnity-e1b93c82/jetnity-app/ERBqeUKG7NWQ2agr4GiR5JpAxxit; READY auf Docs-Lock `426f7220` https://vercel.com/jetnity-e1b93c82/jetnity-app/GtKAPMLaiqxrGwuB5snDkgPZez5d |
+
+### Gate-Lock Runtime `aa6cafa2` nach R2-Fixes (23. August 2026)
+
+R2-Blocker 5–6 aus `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md` sind geschlossen.
+
+| Gate | Ergebnis |
+| --- | --- |
+| `origin/main` | `cd220beb`, Branch **0 behind** |
+| `npm test` | **1553/1553** |
+| Typecheck / Lint / Hygiene | grün |
+| Production-Build | Exit 0 |
+| DB | Rechte 51 OK, RLS Exit 0, Sicherheit **210/210**, Parallelität **7/7** |
+| UI-Audit | **1014/1014**, 0 Fehler |
+| GitHub Actions | SUCCESS https://github.com/Jetnity/jetnity/actions/runs/32640978237 |
+| Vercel Preview | READY https://vercel.com/jetnity-e1b93c82/jetnity-app/vuUyJdg9F5qRiFWL5h7xb5MLfpua |
+
+### Gate-Lock Runtime `89290eff` nach Review-Fixes (23. August 2026)
+
+Die vier Merge-Blocker aus `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md` sind geschlossen. Nachweis: `docs/PR38_CURSOR_REVIEW_FIXES.md`.
+
+| Gate | Ergebnis |
+| --- | --- |
+| `origin/main` | `cd220beb`, Branch **0 behind** |
+| `npm test` | **1550/1550** |
+| Typecheck / Lint / Hygiene | grün |
+| Production-Build | Exit 0 |
+| DB | Rechte 51 OK, RLS Exit 0, Sicherheit **210/210**, Parallelität **7/7** |
+| UI-Audit | **1014/1014**, 0 Fehler |
+| GitHub Actions | SUCCESS https://github.com/Jetnity/jetnity/actions/runs/32639811262 |
+| Vercel Preview | READY https://vercel.com/jetnity-e1b93c82/jetnity-app/8dvvtK3sWaKFQShZVJ7LdpJ3LRyx |
+
+### Vorheriger Gate-Lock Runtime `2dfec9bc` (23. August 2026)
+
+| Gate | Ergebnis |
+| --- | --- |
+| `origin/main` | `cd220beb`, Branch **0 behind**, 5 ahead zum Lock-Zeitpunkt |
+| `npm test` | **1540/1540** (Baseline 1481) |
+| Typecheck / Lint | grün, 0 Warnungen |
+| Hygiene | dead/exports/deps/API-Schutz/schema-bezug grün; CookieConsent bewusst verwaist |
+| Production-Build | Exit 0, `/api/seasonal/evaluate` enthalten |
+| DB | Rechte 51 OK, RLS Exit 0, Sicherheit **210/210**, Parallelität **7/7** |
+| UI-Audit | **1014/1014**, 0 Fehler, WebKit + Chromium, 8 Viewports |
+| GitHub Actions | SUCCESS https://github.com/Jetnity/jetnity/actions/runs/32636986916 |
+| Vercel Preview | READY https://vercel.com/jetnity-e1b93c82/jetnity-app/9PGmTy7EdXDpPXVy1PL8TXnE5hYU |
+
+Keine DB-Migration, kein Secret, keine neuen laufenden Kosten. `seasonalProviderAus()` bleibt `null`.
 
 ---
 

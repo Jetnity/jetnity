@@ -47,6 +47,8 @@ Zusätzlicher read-only Truth-Test auf Production:
 
 Damit ist die zentrale Foundation-D-Truth-Grenze auch auf Production nachgewiesen.
 
+Nachtrag, 24. August 2026: Draft-PR #38 ergänzt auf **Development** die Function-Migration `20260824120000_flug_route_itinerary_surface_evidence`, damit gültiges `surfaceFromAirportCode` die kanonische Persistenz überlebt (ADR-0149). Diese Migration ist **nicht** auf Production angewendet und darf es ohne eigene Product-Owner-Freigabe nicht.
+
 ## Was dadurch NICHT aktiviert wurde
 
 - kein echter Flight-Provider

@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
-Stand: 23. August 2026  
-Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; nächste Priorität: Travel Timing & Seasonal Intelligence**
+Stand: 24. August 2026  
+Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -162,7 +162,7 @@ Verbindliche Truth-Logik:
 
 ## 6. NÄCHSTE PRIORITÄT – Travel Timing & Seasonal Intelligence
 
-Status: **verbindliche Produktentscheidung / noch nicht begonnen**
+Status: **Draft PR #38; R17 Technical Closure / PASS auf Runtime `57824019`; wartet auf Product-Owner-Merge-Freigabe; kein Live-Provider**
 
 Policy:
 
@@ -193,14 +193,28 @@ Verbindlich:
 
 ### Nächster Implementierungsablauf
 
-1. Ist-Audit gegen Safety, Route, Traveller Context, Readiness und Workspace
-2. provider-neutrales Domain-/Evidence-/Seasonality-Modell
-3. klare Trennung zu akutem Safety
-4. Cross-Domain-Impact und Reevaluation
-5. minimale, ruhige Workspace-Naht
-6. Pflicht-Testmatrix + Device-Matrix
-7. unabhängiger ChatGPT-Review
-8. Product-Owner-Merge-Gate
+1. ✅ Ist-Audit gegen Safety, Route, Traveller Context, Readiness und Workspace – gegen aktuellen Code verifiziert
+2. ✅ provider-neutrales Domain-/Evidence-/Seasonality-Modell
+3. ✅ klare Trennung zu akutem Safety
+4. ✅ Cross-Domain-Impact und Reevaluation
+5. ✅ minimale, ruhige Workspace-Naht
+6. ✅ Pflicht-Testmatrix + Device-Matrix (1593/1593 Tests, UI-Audit 1014/1014)
+7. ✅ ChatGPT-Re-Review R3: Residual Blocker 5 und Blocker 7 geschlossen
+8. ✅ ChatGPT-Re-Review R4: Blocker 8 und 9 geschlossen
+9. ✅ ChatGPT-Re-Review R5: Blocker 10 und 11 geschlossen, Exact-Head-Gate grün
+10. ✅ ChatGPT-Re-Review R6: Blocker 12 geschlossen, Exact-Head-Gate grün
+11. ✅ ChatGPT-Re-Review R7: Blocker 13 geschlossen, Exact-Head-Gate grün
+12. ✅ ChatGPT-Re-Review R8: Blocker 14 und 15 geschlossen, Exact-Head-Gate grün
+13. ✅ ChatGPT-Re-Review R9: Blocker 16–19 geschlossen, Exact-Head-Gate grün
+14. ✅ ChatGPT-Re-Review R10: Blocker 20–23 geschlossen, Exact-Head-Gate grün
+15. ✅ ChatGPT-Re-Review R11: Blocker 24–26 geschlossen, Exact-Head-Gate grün
+16. ✅ ChatGPT-Re-Review R12: Blocker 27 geschlossen, Exact-Head-Gate grün
+17. ✅ ChatGPT-Re-Review R13: Blocker 28 geschlossen, Exact-Head-Gate grün
+18. ✅ ChatGPT-Re-Review R14: Blocker 29 geschlossen, Exact-Head-Gate grün
+19. ✅ ChatGPT-Re-Review R15: Blocker 30 geschlossen, Exact-Head-Gate grün
+20. ✅ ChatGPT-Re-Review R16: Blocker 31 geschlossen, Exact-Head-Gate grün
+21. ✅ ChatGPT-Re-Review R17: Technical Closure / PASS, kein neuer konkreter Defekt
+22. **→ Product-Owner-Merge-Gate** (Draft bleibt; kein Mark Ready / Merge ohne ausdrückliche Freigabe)
 
 ---
 
@@ -326,7 +340,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. **→ Travel Timing & Seasonal – provider-neutrale Foundation**
+5. **→ Travel Timing & Seasonal – provider-neutrale Foundation (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
 6. Provider-Readiness-/Adapter-Lücken schließen
 7. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 8. finaler Workspace Intelligence Audit

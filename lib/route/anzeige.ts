@@ -6,9 +6,11 @@
 
 import { dauerLesbar } from '@/lib/flights/zeit'
 import type { FlugOption } from '@/lib/flights/domain'
+import { routeFactsAusItinerary } from '@/lib/route/ableitung'
+import { segmenteOrdnungBewiesen } from '@/lib/route/chronologie'
 import type { FlughafenReferenzKarte, RouteFacts, RoutePunkt, RouteVerbindung } from '@/lib/route/domain'
-import { itineraryAusFlugOption, segmenteAusItinerary } from '@/lib/route/itinerary'
-import { verbindungenAusSegmenten } from '@/lib/route/verbindung'
+import { itineraryAusFlugOption } from '@/lib/route/itinerary'
+import { pfadSchritteAusSegmenten } from '@/lib/route/pfad'
 
 export type RouteAnzeige = {
   kompakt: string
@@ -25,13 +27,11 @@ export function punktLesbar(punkt: RoutePunkt, mitCode = true): string {
 }
 
 export function routeKompakt(facts: RouteFacts): string {
-  const punkte = routenpunkte(facts)
-  return punkte.map((punkt) => punktLesbar(punkt)).filter(Boolean).join(' → ')
+  return routeKompaktAusBeinen(facts, true)
 }
 
 export function routeKompaktOhneCode(facts: RouteFacts): string {
-  const punkte = routenpunkte(facts)
-  return punkte.map((punkt) => punktLesbar(punkt, false) || punkt.airportCode || '').filter(Boolean).join(' → ')
+  return routeKompaktAusBeinen(facts, false)
 }
 
 function umstiegLesbar(verbindung: RouteVerbindung): string {
@@ -73,37 +73,37 @@ export function routeAnzeigeAusOption(
 ): RouteAnzeige | null {
   const itinerary = itineraryAusFlugOption(option, refs)
   if (!itinerary) return null
-  const segments = segmenteAusItinerary(itinerary)
-  const facts: RouteFacts = {
-    quelle: 'flight_itinerary',
-    origin: segments[0]?.origin ?? {
-      airportCode: null,
-      countryCode: null,
-      city: null,
-      country: null,
-    },
-    destination: segments[segments.length - 1]?.destination ?? {
-      airportCode: null,
-      countryCode: null,
-      city: null,
-      country: null,
-    },
-    segments,
-    connections: verbindungenAusSegmenten(segments),
-    transitCountryCodes: [],
-    destinationCountryCodes: [],
-    sourceItemIds: [],
-    fingerprint: null,
-  }
-  return routeAnzeigeAusFacts(facts)
+  return routeAnzeigeAusFacts(routeFactsAusItinerary(itinerary))
 }
 
-function routenpunkte(facts: RouteFacts): RoutePunkt[] {
-  if (facts.segments.length === 0) return [facts.origin, facts.destination]
-  const punkte: RoutePunkt[] = []
-  for (const [index, segment] of facts.segments.entries()) {
-    if (index === 0) punkte.push(segment.origin)
-    punkte.push(segment.destination)
+function beinKompakt(segmente: RouteFacts['segments'], mitCode: boolean): string {
+  const teile: string[] = []
+  for (const schritt of pfadSchritteAusSegmenten(segmente)) {
+    const text = mitCode
+      ? punktLesbar(schritt.punkt)
+      : punktLesbar(schritt.punkt, false) || schritt.punkt.airportCode || ''
+    if (!text) continue
+    if (teile.length === 0) {
+      teile.push(text)
+      continue
+    }
+    teile.push(`${schritt.surfaceChange ? ' ⇢ ' : ' → '}${text}`)
   }
-  return punkte.filter((punkt) => punkt.airportCode || punkt.city)
+  return teile.join('')
+}
+
+function routeKompaktAusBeinen(facts: RouteFacts, mitCode: boolean): string {
+  const beine = facts.legs.length > 0 ? facts.legs : [{ segments: facts.segments }]
+  if (!facts.chronologieBewiesen) {
+    const teile = beine
+      .flatMap((bein) =>
+        segmenteOrdnungBewiesen(bein.segments)
+          ? [beinKompakt(bein.segments, mitCode)]
+          : bein.segments.map((segment) => beinKompakt([segment], mitCode)),
+      )
+      .filter(Boolean)
+    if (teile.length > 1) return `Reihenfolge unbekannt · ${teile.join(' · ')}`
+    return teile[0] ?? ''
+  }
+  return beine.map((bein) => beinKompakt(bein.segments, mitCode)).filter(Boolean).join(' | ')
 }

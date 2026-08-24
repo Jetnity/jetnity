@@ -5,17 +5,19 @@
 //
 // Frei von Next und Providern.
 
-import { landescodeLesen } from '@/lib/readiness/domain'
 import {
   LEERER_ROUTE_PUNKT,
   leereRouteFacts,
   type RouteFacts,
   type RouteItineraryMitQuelle,
 } from '@/lib/route/domain'
-import { pfadAusSegmenten, routeFingerprintAus } from '@/lib/route/fingerprint'
+import { itinerariesWahrheit } from '@/lib/route/chronologie'
+import { routeFingerprintAus } from '@/lib/route/fingerprint'
+import { airportZeitkontakteAusItineraries } from '@/lib/route/kontakte'
+import { laenderrollenAus } from '@/lib/route/laender'
 import { segmenteAusItinerary } from '@/lib/route/itinerary'
-import { flugRouteItineraryLesen } from '@/lib/route/schema'
-import { verbindungenAusSegmenten } from '@/lib/route/verbindung'
+import { flugRouteItineraryTrustedLesen } from '@/lib/route/schema'
+import { verbindungenAusLegs } from '@/lib/route/verbindung'
 import type { Trip, TripItem } from '@/types/trips'
 
 function itinerariesAusReise(reise: Pick<Trip, 'days' | 'ohneTag'>): RouteItineraryMitQuelle[] {
@@ -24,7 +26,7 @@ function itinerariesAusReise(reise: Pick<Trip, 'days' | 'ohneTag'>): RouteItiner
 
   for (const punkt of punkte) {
     if (punkt.kind !== 'flight') continue
-    const itinerary = flugRouteItineraryLesen(punkt.routeItinerary ?? null)
+    const itinerary = flugRouteItineraryTrustedLesen(punkt.routeItinerary ?? null)
     if (!itinerary) continue
     itineraries.push({
       sourceItemId: punkt.id,
@@ -34,36 +36,44 @@ function itinerariesAusReise(reise: Pick<Trip, 'days' | 'ohneTag'>): RouteItiner
     })
   }
 
-  return itineraries.sort(fruehesteZuerst)
+  return itineraries
 }
 
 function routeFactsAusItineraries(itineraries: readonly RouteItineraryMitQuelle[]): RouteFacts {
   if (itineraries.length === 0) return leereRouteFacts()
 
-  const primaer = itineraries[0]
+  const { wahrheit, bewiesen } = itinerariesWahrheit(itineraries)
+  const primaer = wahrheit[0]
   if (!primaer) return leereRouteFacts()
 
-  const segmente = itineraries.flatMap((eintrag) => segmenteAusItinerary(eintrag.itinerary))
+  const segmente = wahrheit.flatMap((eintrag) => segmenteAusItinerary(eintrag.itinerary))
   if (segmente.length === 0) return leereRouteFacts()
 
   const primaerSegmente = segmenteAusItinerary(primaer.itinerary)
-  const origin = primaerSegmente[0]?.origin ?? { ...LEERER_ROUTE_PUNKT }
-  const destination = primaerSegmente[primaerSegmente.length - 1]?.destination ?? { ...LEERER_ROUTE_PUNKT }
+  const letztes = wahrheit[wahrheit.length - 1]
+  const letzteSegmente = letztes ? segmenteAusItinerary(letztes.itinerary) : []
+  const origin = bewiesen ? (primaerSegmente[0]?.origin ?? { ...LEERER_ROUTE_PUNKT }) : { ...LEERER_ROUTE_PUNKT }
+  const destination = bewiesen
+    ? (letzteSegmente[letzteSegmente.length - 1]?.destination ?? { ...LEERER_ROUTE_PUNKT })
+    : { ...LEERER_ROUTE_PUNKT }
+  const laender = laenderrollenAus(wahrheit, bewiesen)
+  const legs = wahrheit.flatMap((eintrag) => eintrag.itinerary.legs)
 
   return {
     quelle: 'flight_itinerary',
     origin,
     destination,
     segments: segmente,
-    connections: itineraries.flatMap((eintrag) =>
-      verbindungenAusSegmenten(segmenteAusItinerary(eintrag.itinerary)),
-    ),
-    transitCountryCodes: transitlaenderAus(itineraries),
-    destinationCountryCodes: ziellaenderAus(itineraries),
-    sourceItemIds: itineraries
+    legs,
+    connections: verbindungenAusLegs(legs),
+    airportContacts: airportZeitkontakteAusItineraries(wahrheit),
+    transitCountryCodes: laender.transitCountryCodes,
+    destinationCountryCodes: laender.destinationCountryCodes,
+    sourceItemIds: wahrheit
       .map((eintrag) => eintrag.sourceItemId)
       .filter((id): id is string => Boolean(id)),
-    fingerprint: routeFingerprintAus(itineraries),
+    fingerprint: routeFingerprintAus(wahrheit),
+    chronologieBewiesen: bewiesen,
   }
 }
 
@@ -82,7 +92,7 @@ export function routeFactsAusItinerary(
 
 export function routeFactsFuerPunkt(punkt: TripItem): RouteFacts {
   if (punkt.kind !== 'flight') return leereRouteFacts()
-  const itinerary = flugRouteItineraryLesen(punkt.routeItinerary ?? null)
+  const itinerary = flugRouteItineraryTrustedLesen(punkt.routeItinerary ?? null)
   if (!itinerary) return leereRouteFacts()
   return routeFactsAusItineraries([
     {
@@ -94,39 +104,3 @@ export function routeFactsFuerPunkt(punkt: TripItem): RouteFacts {
   ])
 }
 
-function transitlaenderAus(itineraries: readonly RouteItineraryMitQuelle[]): string[] {
-  const laender: string[] = []
-  for (const eintrag of itineraries) {
-    const segmente = segmenteAusItinerary(eintrag.itinerary)
-    for (const [index, segment] of segmente.entries()) {
-      if (index === segmente.length - 1) continue
-      merken(laender, segment.destination.countryCode)
-    }
-  }
-  return laender
-}
-
-function ziellaenderAus(itineraries: readonly RouteItineraryMitQuelle[]): string[] {
-  const laender: string[] = []
-  for (const eintrag of itineraries) {
-    const segmente = segmenteAusItinerary(eintrag.itinerary)
-    const start = landescodeLesen(segmente[0]?.origin.countryCode ?? null)
-    const ende = landescodeLesen(segmente[segmente.length - 1]?.destination.countryCode ?? null)
-    if (ende && ende !== start) merken(laender, ende)
-  }
-  return laender
-}
-
-function merken(laender: string[], code: string | null): void {
-  const gelesen = landescodeLesen(code)
-  if (gelesen && !laender.includes(gelesen)) laender.push(gelesen)
-}
-
-function fruehesteZuerst(a: RouteItineraryMitQuelle, b: RouteItineraryMitQuelle): number {
-  const aStart = `${a.startsOn ?? ''}T${a.startsAt ?? ''}`
-  const bStart = `${b.startsOn ?? ''}T${b.startsAt ?? ''}`
-  if (aStart !== bStart) return aStart < bStart ? -1 : 1
-  return pfadAusSegmenten(segmenteAusItinerary(a.itinerary)).localeCompare(
-    pfadAusSegmenten(segmenteAusItinerary(b.itinerary)),
-  )
-}

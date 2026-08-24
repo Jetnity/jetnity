@@ -3320,6 +3320,428 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0133 – Seasonal ist eine eigene Truth-Domäne neben Safety
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38
+
+**Entscheidung:**
+
+- Travel Timing & Seasonal Intelligence lebt in `lib/seasonal/` und besitzt eigene Evaluation-, Presentation- und Status-Typen.
+- `SafetyEvaluation` und Safety-Präsentationsklassen (`critical_warning`, `do_not_travel`) werden nicht umetikettiert.
+- `seasonal_pattern` bleibt in Safety verworfen. `active_warning` / `acute` wird in Seasonal verworfen.
+- `seasonalProviderAus()` bleibt `null`. Tests dürfen einen Port injizieren.
+
+**Kontext:** Policy und Ist-Audit verlangen eine Schwesterarchitektur, keine Vermischung akuter Warnungen mit historischen/saisonalen Mustern.
+
+**Alternativen:** Seasonal in Safety-Nature weiterbauen; Seasonal nur als UI-Copy über Safety-Facts.
+
+**Begründung:** Dieselbe Reise, zwei Wahrheiten. Vermischung erzeugt falsche Warnung oder falsche Entwarnung.
+
+**Konsequenzen:** Zwei geschlossene APIs, zwei optionale Workspace-Nähte, getrennte Fingerprints.
+
+---
+
+## ADR-0134 – Seasonal bleibt compute-on-read ohne DB-Persistenz
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38; Production-Schema unverändert
+
+**Entscheidung:**
+
+- Keine Seasonal-Tabelle und keine Migration in diesem Block.
+- Official Seasonal-Truth wird zur Laufzeit aus kanonischem Trip-Kontext plus Providerfacts berechnet.
+- `Trotzdem so planen` wird nicht improvisiert persistiert.
+
+**Kontext:** Safety hat denselben Weg gewählt. Saisonale Facts sind freshness-sensitiv und providergebunden.
+
+**Alternativen:** eigene Tabelle; Local-Storage-Wahrheit; Account-only Persistenz.
+
+**Begründung:** Ohne Live-Provider entstünde nur Scheinpersistenz. Guest/Account-Parität bleibt über denselben Trip-Graph.
+
+**Konsequenzen:** Workspace zeigt Seasonal nur bei übergebenen Evaluations. Spätere Nutzerentscheidungen brauchen einen eigenen Decision-Flow.
+
+---
+
+## ADR-0135 – Recurring Windows sind inklusiv und jahressensitiv
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38
+
+**Entscheidung:**
+
+- `annual_recurring` ist Month/Day → Month/Day, Grenzen inklusiv.
+- Start > Ende wrappt über den Jahreswechsel (`11-01` → `03-31`, `12-15` → `01-15`).
+- Das Fenster wird auf jedes berührte Reisejahr projiziert. Naive `month in []`-Logik ist keine Wahrheit.
+- `02-29` ist als Definition gültig und trifft nur echte Schalttage. `02-30` und andere ungültige Kalenderwerte fail-closed.
+- `absolute` Fenster bleiben date-only oder Instant, ohne stilles Mischen.
+
+**Begründung:** Monsun, Hurrikansaison und Winterfenster liegen oft über den Jahreswechsel. Leap-Day darf nicht still auf den 28. Februar umgedeutet werden, wenn die Quelle den 29. meint.
+
+**Konsequenzen:** Tests decken Wrap, Leap-Day, Multi-Jahr und repeated destinations getrennt ab.
+
+---
+
+## ADR-0136 – Freshness, Reference Period und Travel Window bleiben getrennte Achsen
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38
+
+**Entscheidung:**
+
+- Travel Window bestimmt zeitliche Relevanz.
+- Reference Period (z. B. Klimanormal 1991–2020) ist nur Metadatum der Datenbasis.
+- Freshness braucht `checkedAt` plus explizites `freshUntil`. Ohne Freshness-Vertrag gibt es kein `current`.
+- Der Safety-Default von 7 Tagen wird nicht auf Seasonal kopiert.
+- `freshUntil` vor `checkedAt` oder zukünftiges `checkedAt` ist fail-closed.
+
+**Begründung:** Eine Klimanormal darf nicht so gelesen werden, als müsse die Reise 1991–2020 liegen. Eine alte Climatology ohne Prüfvertrag darf keine clean/favorable Zusammenfassung erzeugen.
+
+**Konsequenzen:** Stale/recheck bleibt sichtbar. Checked-empty sagt ausdrücklich, dass das keine optimale Reisezeit beweist.
+
+---
+
+## ADR-0137 – Seasonal übernimmt die fail-closed Geo-/Zeitzonenregeln von Safety, ohne deren Domain
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38
+
+**Entscheidung:**
+
+- Date-only bleibt zonenloser Kalendertag. Foundation-D-`HH:mm` bleibt Ortszeit ohne Zone. Kein stilles `Z`.
+- Date/clock ↔ UTC-Instant innerhalb der weltweiten Offset-Hülle (UTC+14 bis UTC−12) bleibt `insufficient_context`.
+- Feinere Geo-Scopes ohne kanonische Membership bleiben `insufficient_context` und werden nicht auf das ganze Land hochgestuft.
+- Title-only Items erzeugen keine Geo-Truth.
+- Route-/Airport-Wahrheit kommt nur aus Foundation D. Wiederholte Routekontakte bleiben getrennte Fenster.
+- Es wurde kein Safety-Refactor extrahiert; Seasonal besitzt eigene Kalender-/Geo-Primitiven mit derselben Fail-closed-Semantik.
+
+**Begründung:** Dieselben Truth-Fallen wie bei Safety, aber andere Aussage. Ein Shared-Modul mit Domain-Leck wäre riskanter als eine kleine, getestete Seasonal-Kopie der Primitiven.
+
+**Konsequenzen:** Safety-Regressionen müssen grün bleiben. Seasonal-Fingerprints enthalten keine Citizenship.
+
+---
+
+## ADR-0138 – Rejected Acute und reverse Date Ranges bleiben fail-closed
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R3 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Abgewiesene Acute-/Safety-Klassen (`active_warning`, `acute`, `acute_event`) tragen intern und in `SeasonalEvaluation` die Klasse `rejected_acute` plus `acuteRejected=true`. Sie dürfen nirgendwo als `seasonal_pattern` erscheinen.
+- Eine Providerantwort, die ausschließlich solche Facts enthält, ist fail-closed `unknown` und nicht `checked_empty` / vollständiges `ok`.
+- Kommt ein gültiger Seasonal-Fact zusammen mit einem Acute-Fact, bleibt der Seasonal-Fact sichtbar; das Acute-Fact bleibt rejected-domain.
+- Untrusted Seasonal-Requests mit `startDate > endDate` oder Stage-`arrivalDate > departureDate` sind Schemafehler (HTTP 400). Grenzen werden nicht still getauscht.
+- Ein unerwartet rückwärts laufendes Kontaktintervall bleibt in Kalender-/Relevanzhelfern `insufficient` und darf nicht zu `before`/`after`/`not_applies` hochgestuft werden.
+
+**Kontext:** `docs/PR38_CHATGPT_R3_REVIEW.md` gegen Runtime `4f9eb1e8`.
+
+**Alternativen:** Acute intern als `seasonal_pattern` plus Flag; reverse Dates still tauschen; Top-Level-`not_applies` vor Stage-Kontakt behalten.
+
+**Begründung:** Eine als falsche Domain erkannte Safety-Klasse darf keine Seasonal-Truth behaupten. Malformed Reisedaten dürfen eine tatsächlich überlappende Stage nicht in eine Negativaussage verwandeln.
+
+**Konsequenzen:** Kein Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R4 und Product-Owner-Merge-Freigabe.
+
+---
+
+## ADR-0139 – Konkrete Seasonal-Refs schlagen grobe Hüllen; Day→Stage gilt für Item-Impact
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R4 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Wenn räumliche Relevanz konkrete Stage-/Airport-/Route-Refs geliefert hat, bestimmen deren eigenen Zeitkontakte die zeitliche Relevanz.
+- Ein grobes Top-Level-`before`/`after` darf diese konkreten Refs nicht vorzeitig zu `not_applies` löschen.
+- Fehlen belastbare konkrete Kontakte bei feststehender räumlicher Betroffenheit, bleibt `insufficient_context`.
+- Für Item-Impact gilt zuerst eine gültige direkte `item.stageId`. Fehlt sie, gilt die belegte Beziehung `item.dayId → day.stageId`. Widersprüchliche Doppelbeziehungen werden nicht still entschieden.
+
+**Kontext:** `docs/PR38_CHATGPT_R4_REVIEW.md` gegen Runtime `f077d4d1`.
+
+**Alternativen:** globale Canonical-Invariante „alle Stage-Zeiten liegen im Tripfenster“; Item-Impact nur bei direkter `stageId`.
+
+**Begründung:** Feinere kanonische Trip-Facts dürfen nicht durch eine gröbere widersprüchliche Hülle falsifiziert werden. Eine vorhandene Day→Stage-Beziehung ist keine Heuristik.
+
+**Konsequenzen:** Kein Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R5 und Product-Owner-Merge-Freigabe.
+
+---
+
+## ADR-0140 – Seasonal-Provider-Request trägt Zeitkontakte; Acute überschreibt Availability nicht
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R5 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Der provider-neutrale Seasonal-Request enthält neben Top-Level-Daten und flachen Mengen kanonische Stage-Targets und getrennte Route-/Airport-Zeitkontakte.
+- Konkrete Stage-/Route-Zeiten bleiben einzeln addressierbar. Wiederholte Places/Airports werden nicht zu Min/Max verschmolzen. Die Reihenfolge identischer Trip-Facts ändert den Request nicht.
+- Citizenship, Dokumente, Labels und LLM-Felder gehören nicht in den Seasonal-Port.
+- Eine explizite Acute-/Safety-Klasse bleibt `rejected_acute` / `acuteRejected=true`, auch kombiniert mit `temporarily_unavailable`. `availability` darf die Domain-Klasse nicht zu `seasonal_pattern` umschreiben.
+- Acute-only + unavailable bleibt honest unknown/unavailable ohne Seasonal-Hinweis. Gültige Seasonal-Facts dürfen sichtbar bleiben; der Gesamtstatus wird dadurch nicht clean/favorable/`ok`.
+
+**Kontext:** `docs/PR38_CHATGPT_R5_REVIEW.md` gegen Runtime `249d4b9b`.
+
+**Alternativen:** Adapter später selbst gegen den Tripgraphen rückrechnen lassen; `temporarily_unavailable` weiter zuerst auswerten und Acute verwerfen.
+
+**Begründung:** R4 hat konkrete Zeitkontakte zur lokalen Source of Truth gemacht. Ein späterer Adapter muss dieselben Kontakte schon im Request sehen. Eine als Safety erkannte Klasse darf durch ein zweites erlaubtes Feld nicht wieder Seasonal-Truth werden.
+
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R6 und Product-Owner-Merge-Freigabe.
+
+---
+
+## ADR-0141 – Airport-Zeitkontakte nur innerhalb eines belegten Legs
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R6 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Foundation D projiziert kanonische `RouteFacts.airportContacts` pro Leg und Flight-Item.
+- Adjacent `destination(code) → origin(code)` in der abgeflachten Segmentliste ist keine Connection-Wahrheit.
+- Getrennte Flight-Items und getrennte Legs erzeugen getrennte Airport-Kontakte. Nur ein belegter Transit im selben Leg darf ein Intervall bilden.
+- Seasonal-Relevanz, Seasonal-Provider-Request und Safety-Relevanz lesen dieselbe Projektion.
+- `connections` werden ebenfalls nur noch innerhalb eines Legs abgeleitet.
+
+**Kontext:** `docs/PR38_CHATGPT_R6_REVIEW.md` gegen Runtime `e790a7d2`.
+
+**Alternativen:** Heuristische Max-Layover-Zeit; Pairing weiter über die flache Segmentliste; fail-closed ohne Layover-Kontakte.
+
+**Begründung:** Ein mehrtägiger Zielaufenthalt zwischen Hin- und Rückflug ist kein belegter Airport-Kontakt. Dieselbe falsche Hülle darf weder lokale Relevanz noch einen späteren Adapter steuern.
+
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R7 und Product-Owner-Merge-Freigabe.
+
+---
+
+## ADR-0142 – Länderrollen nur innerhalb eines belegten Legs
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R7 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Foundation D projiziert `transitCountryCodes` und `destinationCountryCodes` kanonisch pro Leg.
+- Transitländer entstehen nur aus Zwischen-Segmenten desselben Legs. Das letzte Segmentziel eines Legs ist kein Transit.
+- Zielstaaten entstehen aus belegten Leg-Endpunkten. Das globale Origin-/Rückkehrland wird nicht allein durch ein Rück-Leg zum Reiseziel.
+- Multi-City-Ziele bleiben Ziele. Echter Transit im selben Leg bleibt Transit.
+- Readiness, Seasonal und Safety lesen dieselbe Foundation-D-Rollenmenge.
+
+**Kontext:** `docs/PR38_CHATGPT_R7_REVIEW.md` gegen Runtime `ece075e7`.
+
+**Alternativen:** Flatten weiter über die Itinerary; Heuristik nach Aufenthaltsdauer; getrennte Readiness-Wahrheit.
+
+**Begründung:** Ein Hinflugziel zwischen Hin- und Rückflug ist kein Transitland. Falsche Transit-/Destination-Rollen würden spätere Visa-/Entry-/Transit-Provider falsch steuern.
+
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R8 und Product-Owner-Merge-Freigabe.
+
+---
+
+## ADR-0143 – Open-Jaw-Leg-Ursprünge in Country-Truth und Route-Identität
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R8 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Ein Leg-Origin, der nicht das bewiesene Reise-Origin ist, ist ein belegter Besuch und gehört zu `destinationCountryCodes`.
+- Transit bleibt ausschließlich ein Zwischenpunkt innerhalb desselben Legs.
+- Item-Chronologie ohne `startsOn` nutzt Segmentdaten. Fehlt jede beweisbare Chronologie, bleibt das Origin leer.
+- Route-Fingerprint und menschliche Darstellung serialisieren jedes Leg getrennt, inklusive jedes Leg-Origins.
+- Dieselbe Open-Jaw-Route als eine Itinerary oder als getrennte Flight-Items teilt Country-Rollen und Identität.
+
+**Kontext:** `docs/PR38_CHATGPT_R8_REVIEW.md` gegen Runtime `de83d026`.
+
+**Alternativen:** Nur Leg-Endpunkte als Ziele; lexikographische Pfadsortierung als Origin; getrennte Fingerprints für Item- vs. Itinerary-Form.
+
+**Begründung:** Ein strukturierter Rückflug ab Singapur beweist den Aufenthalt dort. Dieselbe Lücke darf Seasonal, Readiness und Safety nicht unterschiedlich treffen, und zwei verschiedene Rückflug-Origins dürfen nicht dieselbe Route-Identität erzeugen.
+
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R9 und Product-Owner-Merge-Freigabe.
+
+---
+
+## ADR-0144 – Segment-Origins, Connection-Ownership, Chronologie-Präzision und Readiness-Digest
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R9 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Ein belegter späterer Segment-Origin gehört zu Pfad, Fingerprint und Kompaktanzeige, wenn er vom vorherigen Segmentziel abweicht. Dieselbe Airport-Change-Grenze gilt für Country-Truth bei einem Cross-Country-Gap.
+- `RouteVerbindung` ist nach Flattening global eindeutig (`legIndex` + globale Segmentindizes). Die UI darf Umstiege nicht über Array-Index gegen die flache Segmentliste legen.
+- Chronologie ist nur bewiesen, wenn Item- und Segmentquellen eine eindeutige Reihenfolge tragen und sich nicht widersprechen. Date-only darf keine Segmentzeit auf `00:00` degradieren. Unbewiesene Chronologie zeigt keine erfundene Reihenfolge.
+- Readiness-Fingerprints hashen den vollständigen kanonischen Kontext als versionierten SHA-256-Digest. Prefix-Truncation ist keine Identität. `READINESS_FINGERPRINT_VERSION` ist `v3`.
+
+**Kontext:** `docs/PR38_CHATGPT_R9_REVIEW.md` gegen Runtime `263c2f84`.
+
+**Alternativen:** Airport-Change nur in Connections belassen; lokale Connection-Indizes plus UI-Heuristik; Item-`startsOn` immer auf Mitternacht; Klartext-Fingerprint mit höherem DB-Limit.
+
+**Begründung:** Eine Reise, eine Wahrheit. Sichtbare Route, Stale-Erkennung und Country-Scope dürfen keine belegte Topologie, keinen Umstiegsort und keine Traveller-Änderung hinter einer Längengrenze verlieren.
+
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R10 und Product-Owner-Merge-Freigabe.
+
+---
+
+## ADR-0145 – Intra-Itinerary-Chronologie, Surface-Route-ID, Connection-Dauer und Credential-v4
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R10 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Eindeutige Segmentzeiten sind die Source of Truth für die Leg-Reihenfolge innerhalb einer Itinerary. Origin, Länderrollen, Fingerprint und Anzeige lesen dieselbe umgeordnete Wahrheit. Ties oder fehlende Zeiten bleiben fail-closed.
+- Route-Fingerprints versionieren Surface-/Airport-Change (`~`) getrennt von kontinuierlichem Segmentkontakt (`>`). `ROUTE_FACTS_VERSION` ist `route-v2`. Fehlende IATA ist unknown, nicht gleich.
+- Connection-`airportChange` ist nur bei zwei bekannten, verschiedenen IATA `true`. Lokale Uhrzeiten erzeugen eine Layover-Dauer nur am selben bewiesenen Airport.
+- Readiness-Fingerprints sind `v4|sha256:…` über eine kanonische JSON-Struktur. Pro Dokument geht die aufgelöste Citizenship-Country-Bedeutung ein, nicht nur die opaque Ref. Persistierte v2/v3-Werte werden stale.
+
+**Kontext:** `docs/PR38_CHATGPT_R10_REVIEW.md` gegen Runtime `263c2f84`; Fixes auf `fdcc5c88`.
+
+**Alternativen:** Nur fail-closed ohne Umsortierung; Surface nur in der Anzeige belassen; Cross-Airport-Dauer mit Zeitzonen raten; Citizenship-Menge ohne Dokument-Bindung hashen.
+
+**Begründung:** Dieselbe semantische Reise darf als Multi-Leg-Itinerary und als zwei datierte Flight-Items nicht verschiedene Country-Truth erzeugen. Sichtbare Topologie, Stale-Erkennung und Credential-Eligibility müssen dieselbe Identität lesen.
+
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. PR #38 bleibt Draft bis R11 und Product-Owner-Merge-Freigabe.
+
+---
+
+## ADR-0146 – Airport-lokale Chronologie, Segmentkanon und kanonisches Route-Ende
+
+**Datum:** 23. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R11 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Airport-lokale Abflugzeiten sind nur am selben bewiesenen IATA oder über Kalenderabstände von mindestens drei Tagen vergleichbar. Cross-Airport-Wanduhren, inklusive Date-Line, erzeugen keine absolute Reihenfolge.
+- Eine eindeutige azyklische Airport-Kette darf die deklarierte Leg-Reihenfolge bestätigen. Sie darf getrennte Flight-Items nicht so umdrehen, dass ein Open-Jaw-Home-Arrival zum Origin wird.
+- Der Chronologie-Beweis wird vor einem Lex-Sort der Fingerprint-Stabilisierung ausgewertet. Lexikalische Pfade bleiben Anzeige-/Fingerprint-Fallback, nicht Business-Truth.
+- Eine eindeutige kontinuierliche Segmentkette innerhalb eines Legs wird rekonstruiert. Surface-Change ohne IATA-Kontinuität bleibt erklärt. Zyklen und fehlende IATA bleiben fail-closed.
+- Bei bewiesener Chronologie ist `RouteFacts.destination` das letzte Segment der letzten kanonischen Itinerary. Unbewiesene Reihenfolge leert Origin und Destination.
+
+**Kontext:** `docs/PR38_CHATGPT_R11_REVIEW.md` gegen Runtime `fdcc5c88`; Fixes auf `ba5bcd76`.
+
+**Alternativen:** Zeitzonen-DB/UTC-Offsets; Cross-Item-Hamiltonian als Origin; Destination weiter aus der ersten Itinerary.
+
+**Begründung:** Dieselbe strukturierte Reise darf durch lokale Uhren, verdrehte Segmentarrays oder das erste Flight-Item keine falsche Origin-/Destination-Wahrheit für Seasonal, Safety und Readiness erzeugen.
+
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. Der IATA-Fallback aus Blocker 25 ist durch ADR-0147 ersetzt. PR #38 bleibt Draft bis R13 und Product-Owner-Merge-Freigabe.
+
+---
+
+## ADR-0147 – Segmentordnung nur bei eindeutiger kontinuierlicher oder same-country Surface-Kette
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R12 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Bekannte IATA-Codes identifizieren Endpunkte. Sie beweisen keine Intra-Leg-Reihenfolge.
+- `segmenteOrdnungBewiesen()` akzeptiert genau einen kontinuierlichen Hamiltonian oder genau einen gemischten Hamiltonian, dessen zusätzliche Kanten nur same-country Surface-Wechsel mit zwei bekannten, verschiedenen IATA sind. Country kommt aus dem strukturierten `countryCode` am Punkt, nicht aus Städtenamen.
+- Null oder mehrere solche Pfade bleiben fail-closed. Cross-Airport-Wanduhren bleiben ausgeschlossen.
+- Unbewiesene Segmentmengen leeren globalen Origin/Destination, erzeugen keine Connections aus Array-Nachbarschaft, erfinden keine Transit-Rolle und bekommen einen permutationsstabilen Fingerprint als sortierte Segment-Multimenge.
+- Echte `CDG ⇢ ORY`-Surface-Changes bleiben unterstützt. Cross-Country-Gaps ohne unique Surface-Kante bleiben unknown, bis eine explizite Surface-Boundary-Evidence existiert.
+
+**Kontext:** `docs/PR38_CHATGPT_R12_REVIEW.md` gegen Runtime `ba5bcd76`; Fixes auf `1c14e804`.
+
+**Alternativen:** Pauschales Fail-closed jedes 0-Pfad-Falls (zerbricht echten CDG⇢ORY); erneuter IATA-Fallback; neues persistiertes Surface-Flag; Cross-Airport-Uhren.
+
+**Begründung:** Untrusted Segmentarrays aus Browser/Local Storage/Metadata dürfen Seasonal, Safety und Readiness keine erfundenen Origin-/Connection-/Country-Wahrheiten liefern. Same-country Topologie unterscheidet den echten Paris-Flughafenwechsel von unverbundenen Hops, ohne eine neue persistierte Spalte zu brauchen.
+
+**Konsequenzen:** Kein Live-Provider, keine Migration, keine Secrets. Die same-country-Heuristik ist durch ADR-0148 ersetzt. PR #38 bleibt Draft bis R14 und Product-Owner-Merge-Freigabe.
+
+---
+
+## ADR-0148 – Surface-Kante nur mit explizitem `surfaceFromAirportCode`
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R13 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Country-Gleichheit beweist keine Ground-/Surface-Verbindung.
+- Eine Surface-Kante existiert nur, wenn das Folgesegment ein gültiges `surfaceFromAirportCode` trägt und dieses dem Destination-IATA des Vorgängers entspricht. Beide IATA müssen bekannt und verschieden sein.
+- Das Feld ist optional im bestehenden Itinerary-JSON (`v: 1`). Fehlendes oder ungültiges Feld bleibt fail-closed. Keine neue Tabelle. Die persistente Function-Grenze folgt ADR-0149.
+- `itineraryKanonisieren()` erhält vorhandene gültige Evidence. `itineraryAusFlugOption()` darf sie nicht aus untrusted Segmentnachbarschaft erfinden (ADR-0150).
+- `CDG ⇢ ORY` bleibt bewiesen, wenn die Evidence gespeichert ist. `LAX→JFK` + `SFO→NRT` ohne Evidence bleibt unknown.
+
+**Kontext:** `docs/PR38_CHATGPT_R13_REVIEW.md` gegen Runtime `1c14e804`; Fixes auf `2ba32449`.
+
+**Alternativen:** Pauschales Fail-closed jeder Surface-Lücke inklusive echter Provider-Airport-Changes; Distanz-/Stadt-Heuristik; neues persistiertes Tabellenfeld.
+
+**Begründung:** Große Länder machen same-country zu einer erfundenen Reisebewegung. Explizite, provider-neutrale Sequence-Evidence trennt den echten Flughafenwechsel von unverbundenen Segmenten, ohne Live-Provider oder Schema-Migration.
+
+**Konsequenzen:** Kein Live-Provider, keine neue Tabelle, keine Secrets. Ältere Itineraries ohne das Feld werden für Surface-Lücken konservativ unknown. Die Persistenzgrenze ist durch ADR-0149 nachgezogen. PR #38 bleibt Draft bis R15 und Product-Owner-Merge-Freigabe.
+
+---
+
+## ADR-0149 – Persistenz erhält gültiges `surfaceFromAirportCode`
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R14 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Die kanonische Funktion `public.flug_route_itinerary_metadata(text,jsonb)` übernimmt gültiges `surfaceFromAirportCode` als IATA.
+- Fehlendes oder JSON-`null` Feld bleibt weggelassen. Vorhandenes, aber ungültiges Feld weist die gesamte Route fail-closed mit `{}` ab.
+- Client-`countryCode`/`city`/`country` bleiben verworfen und werden weiter aus `public.airports` gebaut.
+- Bereits angewandte Migrationen werden nicht umgeschrieben. Die Änderung liegt in der neuen Development-Migration `20260824120000_flug_route_itinerary_surface_evidence`.
+- Production bleibt gesperrt, bis der Product Owner eine eigene Migrationsfreigabe erteilt.
+
+**Kontext:** `docs/PR38_CHATGPT_R14_REVIEW.md` gegen Runtime `2ba32449`; Fixes auf `771c63a9`. ADR-0148 hat die Runtime-Evidence eingeführt, die aktive Development-Funktion hat sie beim Neuaufbau der Segmente verworfen.
+
+**Alternativen:** Evidence nur im TypeScript-Pfad belassen (bricht Save/Reload); neue Tabellenspalte; Production-Migration ohne Freigabe; gleiche-Länder-Heuristik wieder öffnen.
+
+**Begründung:** Route Truth, Fingerprint, Connections, Readiness, Safety und Seasonal dürfen sich nicht allein durch Persistieren derselben Reise ändern. Guest→Account und Account-Reload müssen dieselbe Evidence sehen wie der Runtime-Graph.
+
+**Konsequenzen:** Für untrusted Intake durch ADR-0151 ersetzt. Development-Funktion `20260824120000` blieb Zwischenstand; `20260824140000` verwirft Client-Surface. Production bleibt ohne beide Migrationen, bis separat freigegeben.
+
+---
+
+## ADR-0150 – FlugOption erzeugt keine Surface-Evidence aus Array-Lücken
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R15 REQUEST CHANGES
+
+**Entscheidung:**
+
+- `itineraryAusFlugOption()` schreibt kein `surfaceFromAirportCode` aus Segment-Array-Nachbarschaft.
+- Eine `FlugOption` aus dem Browser bleibt untrusted. Zod prüft Form, nicht belegte Surface-Truth.
+- `provider`, `externalRef` und unbekannte Extra-Felder sind kein Provider-Beweis.
+- Vorhandene explizite Itinerary-Evidence bleibt in typisierten Objekten lesbar; untrusted Persistenz folgt ADR-0151.
+- Diskontinuierliche Segmente ohne diese Evidence bleiben chronology unknown.
+
+**Kontext:** `docs/PR38_CHATGPT_R15_REVIEW.md` gegen Runtime `771c63a9`; Fixes auf `5cc4488e`. ADR-0148 hatte die Evidence beim Flugübernahmepfad noch aus Airport-Wechsel-Nachbarschaft gesetzt.
+
+**Alternativen:** Signed/opaque Provider-Snapshot (noch nicht vorhanden); explizite Nutzerdeklaration als eigene Evidence-Klasse; Country-/Distanz-Heuristik.
+
+**Begründung:** Ohne serverseitig belegte Surface-Quelle würde Persistenz (ADR-0149) erfundene Array-Lücken dauerhaft adeln. Foundation bleibt fail-closed, bis ein echter Trust-Contract existiert.
+
+**Konsequenzen:** Echte Airport-Changes, die nur als Browser-`FlugOption` ankommen, bleiben unknown, bis eine zulässige Evidence-Quelle existiert. Kein Live-Provider, keine Migration, keine Secrets. Untrusted `routeItinerary` folgt ADR-0151. PR #38 bleibt Draft bis zur Product-Owner-Merge-Freigabe.
+
+---
+
+## ADR-0151 – Untrusted Intake persistiert keine Client-Surface-Evidence
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #38 nach R16 REQUEST CHANGES
+
+**Entscheidung:**
+
+- Browser-/LocalStorage-/Guest-`routeItinerary` darf `surfaceFromAirportCode` nicht als belegte Surface-Evidence einbringen.
+- `flugRouteItineraryLesen()` und Guest-`reiseLesen()` verwerfen das Feld. Ungültige Werte löschen die Route nicht.
+- `itineraryKanonisieren()` kopiert das Feld nicht.
+- `public.flug_route_itinerary_metadata` baut Segmente ohne das Feld neu. Development-Migration `20260824140000_flug_route_itinerary_untrusted_surface`.
+- Es gibt in dieser Foundation keinen trusted Surface-Schreibpfad. Save→Reload und Guest→Account von Client-Claims bleiben chronology unknown.
+- `flugRouteItineraryTrustedLesen()` darf das Feld nur an bereits typisierten oder später serverseitig belegten Objekten lesen.
+- ADR-0149 gilt nicht mehr für untrusted Intake. Country-/Distanz-Heuristiken und Browser-`provider`/`externalRef` bleiben kein Beweis.
+
+**Kontext:** `docs/PR38_CHATGPT_R16_REVIEW.md` gegen Runtime `5cc4488e`; Fixes auf `57824019`. R15 schloss nur den `FlugOption`-Pfad. Derselbe Defekt blieb über die bereits geformte `routeItinerary` offen.
+
+**Alternativen:** Getrennter persistierter Evidence-Contract; opaque/signed Provider-Snapshot; explizite Nutzerdeklaration als eigene `user`-Evidence-Klasse; ADR-0149 unverändert lassen.
+
+**Begründung:** Ohne Provenance wäre jedes syntaktisch gültige Client-IATA Surface-Truth. In dieser Foundation existiert kein serverseitig belegter Surface-Schreiber. Fail-closed unknown ist konservativer als eine geadelte Lücke.
+
+**Konsequenzen:** Echte Airport-Changes, die nur als Browser-/Guest-JSON ankommen, bleiben unknown, bis ein trusted Contract existiert. Development-Funktion ist aktualisiert. Production bleibt ohne die Migration. Kein Live-Provider, keine Secrets, keine neuen laufenden Kosten. R17 Technical Closure ist dokumentiert. PR #38 bleibt Draft bis zur Product-Owner-Merge-Freigabe.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

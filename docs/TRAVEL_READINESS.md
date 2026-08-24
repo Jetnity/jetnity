@@ -187,7 +187,7 @@ Ohne echten Provider macht Jetnity keine Behauptung, wer welche Impfung braucht.
 
 User-Readiness liegt in `trip_readiness_items`.
 
-Context Fingerprints sorgen dafür, dass alte Nutzer-Checks nach relevanten Änderungen nicht still weiter als aktuell gelten.
+Context Fingerprints sorgen dafür, dass alte Nutzer-Checks nach relevanten Änderungen nicht still weiter als aktuell gelten. Die aktuelle Identität ist `v4|sha256:…` über eine kanonische JSON-Struktur inklusive aufgelöster Dokument-Citizenship, nicht über delimiterbasierte Konkatenation. Persistierte v2- und v3-Werte werden dadurch stale.
 
 Relevante Änderungen können u. a. sein:
 
