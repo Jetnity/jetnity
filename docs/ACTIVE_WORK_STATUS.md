@@ -1,9 +1,26 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 vollständig integriert; Account AP-1 aktiv auf Draft PR #43; Admin Slice A Technical Closure / PASS auf Draft PR #44; Admin Slice B Implementierung auf Draft PR #46**
+Status: **PR #38, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B auf `main` `e3bad749`; Admin Slice C Current-Main-Re-Sync auf Draft PR #49**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
+
+**Account Platform AP-2 – Auth-UX-Hygiene**
+
+- PR #48: **gemergt und geschlossen**
+- Squash-Merge auf `main`: `2827d1cbb674498f504ba1810c73c8dc5d43ca24`
+- gemergt: 24. August 2026, 13:02 UTC
+
+Davor vollständig abgeschlossen:
+
+**Account Platform AP-1 – Account-Shell + persönliche Übersicht**
+
+- PR #43: **gemergt und geschlossen**
+- Squash-Merge auf `main`: `084f7c87f36f9929f3e4a9deb9d3fedef6e96982`
+- gemergt: 24. August 2026, 11:37 UTC
+- ADR-0152, ADR-0153 bleiben verbindlich
+
+Davor vollständig abgeschlossen:
 
 **Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
 
@@ -36,59 +53,66 @@ Supabase Production `qscbgcdmivbbnzrcyegn`:
 
 Keine Seasonal-Tabelle, kein Live-Seasonal-Provider, keine neuen Secrets und keine neuen laufenden Providerkosten.
 
+Account AP-1 und AP-2 liegen auf `main`. Eine separate Account-Production-Migration war nicht Teil dieser Slices und ist nicht behauptet.
+
+S2-B1/B2-Migrationen `20260824160000` und `20260824180000` liegen nur auf Supabase Development. **Production unverändert.**
+
 ## 3. Aktive Workstreams
-
-### Account Platform – AP-1
-
-Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`  
-Audit-Referenz: Draft-PR #39 / `audit/account-platform` – **AUDIT-PASS**  
-Implementierungsbranch: `feat/account-ap1`  
-Implementierungs-Draft-PR: **#43**  
-Auftrag: `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`
-
-Aktiver Slice:
-
-**AP-1 – Account-Shell + persönliche Übersicht / „Meine Reisen“ als Account-Hub.**
-
-Grenze: UI/IA und bestehende `reisenLaden()`-Truth. Keine neue Auth-/Trip-/Traveller-/Billing-/Route-Truth, keine DB-Migration, keine Homepage-Änderung.
 
 ### Admin Platform – Slice A
 
 Verantwortlicher Cursor-Anzeigename: `Admin platform audit`  
-Audit-Referenz: Draft-PR #40 / `audit/admin-platform` – **AUDIT-PASS**  
-Implementierungsbranch: `feat/admin-control-center-ia`  
-Implementierungs-Draft-PR: **#44**  
-Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`
+Implementierungs-PR: **#44 – gemergt nach `main` `1ec93cc9`**  
+Entscheidung: ADR-0158
 
-Aktiver Slice:
-
-**Admin Slice A – ehrliche professionelle Control-Center-IA / bestehende Legacy-Scheinzustände entfernen.**
-
-Unabhängiger Technical-Lead Final Recheck: **PASS / TECHNICAL CLOSURE** auf Exact Head `5632a3cac1301d2d649fcb1d2b9552d3763c8b9f`.  
-CI `32683942810` SUCCESS. Vercel Preview READY `dpl_czE3XJXw3qx3sXMrh7LTgMV94zBL`. Nachweise: `docs/ADMIN_PLATFORM_SLICE_A_TECHNICAL_CLOSURE.md`.
-
-Grenze: Admin-UI/IA, ehrliche Zustände und vorhandene Security-Gates. Keine neue DB/Migration, keine Capability-/RLS-Neudefinition, kein System Health in diesem Slice, keine Provider-/Secret-/Kosten-Aktivierung.
-
-Technical Closure ist keine Mark-Ready-/Merge-Freigabe. Slice B läuft separat auf Draft PR #46.
+**Slice A ist auf `main`.** Ehrliche Steuerzentralen-IA. System Health war bewusst nicht Teil von Slice A.
 
 ### Admin Platform – Slice B
 
 Verantwortlicher Cursor-Anzeigename: `Admin platform audit`  
-Implementierungsbranch: `feat/admin-system-health`  
-Implementierungs-Draft-PR: **#46** (gestapelt auf PR #44)  
-Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
+Implementierungs-PR: **#46 – gemergt nach `main` `e3bad749`**  
+Entscheidung: ADR-0159
+
+**Slice B ist auf `main`.** Read-only System Health ohne Fake-Green. Parent `App / Deployment` bleibt `unknown`. Parent `Supabase` bleibt `not_configured`.
+
+### Admin Platform – Slice C
+
+Verantwortlicher Cursor-Anzeigename: `Admin platform audit`  
+Implementierungsbranch: `feat/admin-provider-cost-board`  
+Implementierungs-Draft-PR: **#49** (Base: `main`)  
+Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
 
 Aktiver Slice:
 
-**Admin Slice B – read-only System Health ohne Fake-Green.**
+**Admin Slice C Current-Main-Re-Sync nach Slice-B-Merge.** Read-only Provider- und Kostenboard. Entscheidung: ADR-0162. Konsumiert den gemergten S1-Vertrag auf `main` (`01761eb9` / `lib/provider-ops`), ohne ihn zu kopieren oder zu verändern.
 
-Technical-Lead-Blocker **B1** ist umgesetzt und gegatet auf `cc1d06bd` (CI `32709302128`, Preview `3zoy92pYr1RabYcMKztGMCgYhgCH`). Gesamtclaim von App/Deployment und Supabase bleibt non-green; enge Evidenz liegt in Sub-Checks. Erneuter Technical-Lead-Review steht aus.
+Kein Provider-Aktivierungscenter. Keine Secrets, Verträge oder kostenpflichtigen Calls. Keine Fake-Health-/Cost-Wahrheit. Kein Finance-Live. Billing-P1 bleibt separat.
 
-Grenze: vorhandene read-only Evidence, ehrliche `unknown`/`not_configured`-Zustände, bestehende Admin-Gates. Keine neue DB/Migration, keine Capability-/RLS-Neudefinition, keine neuen Secrets/Tokens/Verträge/Kosten, keine Writes.
+### Provider Readiness – S1 Shared Operational Contract
+
+Verantwortlicher Cursor-Anzeigename: `Jetnity provider readiness audit`  
+Implementierungs-PR: **#47 – gemergt nach `main` `01761eb9`**  
+Auftrag: `docs/PROVIDER_OPS_S1_TASK.md`  
+Status: `docs/PROVIDER_OPS_S1_STATUS.md`
+
+**S1 ist auf `main`.** Gemeinsamer technischer Operationsvertrag. Keine Provideraktivierung.
+
+### Provider Readiness – S2 FlugNachweis
+
+Implementierungsbranch: `feat/provider-flight-evidence-s2`  
+Implementierungs-PR: **#51 – gemergt nach `main` `52e665ac`**  
+Auftrag: `docs/PROVIDER_READINESS_S2_FLUGNACHWEIS_TASK.md`  
+Status: `docs/PROVIDER_READINESS_S2_STATUS.md`
+
+Aktiver Slice:
+
+**S2 ist auf `main` (`52e665ac`).** `FlugNachweis` plus S2-B1-RPC- und S2-B2-Tabellengrenze. Development-Migrationen `20260824160000` und `20260824180000` liegen nur auf Development. **Production unverändert.**
+
+Grenze: kein Live-Duffel, keine Provideraktivierung, keine Secrets, keine Production-Migration, kein S3–S6, kein Offer-Booking. `booking_url` bleibt `null`. Route Truth bleibt Foundation D.
 
 ## 4. Parallelitätsregel
 
-Account AP-1 und Admin Slice B dürfen parallel arbeiten. Slice A bleibt abgeschlossene Stack-Basis.
+Admin Slice C darf parallel zu Provider-Workstreams arbeiten, darf deren Shared-Contract-Dateien aber nicht mischen. Slice A+B, Account AP-1/AP-2 und Provider S1/S2 auf `main` bleiben erhalten.
 
 Seriell/zentral bleiben insbesondere:
 
@@ -121,7 +145,7 @@ Wenn sie gestartet wird:
 
 ## 6. Governance
 
-- PR #43, PR #44 und PR #46 bleiben Draft.
+- PR #43, PR #44, PR #45, PR #46, PR #47, PR #48 und PR #51 sind gemergt. PR #49, PR #53 und PR #54 bleiben Draft.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
@@ -129,8 +153,6 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
-2. Admin Slice A bleibt Technical Closure / PASS auf Draft PR #44. Keine Slice-B-Mischung in #44.
-3. Admin Slice B auf Draft PR #46: Blocker B1 ist auf Exact Head `cc1d06bd` gegatet. Erneuter unabhängiger Technical-Lead-Review steht aus.
-4. PR #43, PR #44 und PR #46 bleiben Draft, bis der Product Owner jeweils ausdrücklich freigibt.
-5. Kein Mark Ready, kein Merge, kein Admin Slice C ohne ausdrückliche aktuelle Freigabe.
+1. `Admin platform audit` synchronisiert Slice C / Draft PR #49 auf `main` `e3bad749` und implementiert das read-only Provider- und Kostenboard. Kein Mark Ready, kein Merge, kein Slice D.
+2. ADR-Allokation: 0158=Slice A, 0159=Slice B, 0160=AP-3, 0161=S3, **0162=Admin Slice C**.
+3. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag (`docs/ADMIN_BILLING_LOCAL_REFUND_INTEGRITY_TASK.md`), nicht Slice C.

@@ -10,9 +10,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { erstesFehlerfeld, feldfehlerLoeschen, type Feldfehler } from '@/lib/formular/feldfehler';
 import { feldInSichtNehmen } from '@/lib/formular/sicht';
-import { GoogleIcon, AppleIcon } from '@/components/auth/provider-icons';
+import OauthAnbieter from '@/components/auth/OauthAnbieter';
 import { MFATotpDialog } from '@/components/auth/MFATotpDialog';
 import { getAAL, startTotpChallenge } from '@/lib/auth/mfa';
+import { erlaubtesNaechstesZiel } from '@/lib/auth/naechstes-ziel';
+import type { OauthAnbieter as OauthName, OauthFreigabe } from '@/lib/auth/oauth-anbieter';
 import {
   Mail as MailIcon,
   Lock,
@@ -20,9 +22,6 @@ import {
   ShieldCheck,
   ChevronRight,
 } from 'lucide-react';
-
-/** Nach der Anmeldung landen Reisende bei ihren Reisen. */
-const AFTER_LOGIN_ROUTE = '/reisen';
 
 function normalizeEmail(s: string) {
   return s.trim().toLowerCase();
@@ -45,8 +44,15 @@ function mapAuthError(message?: string) {
   return message || 'Anmeldung fehlgeschlagen. Bitte versuche es erneut.';
 }
 
-export default function LoginForm() {
+export default function LoginForm({
+  next = null,
+  oauth,
+}: {
+  next?: string | null
+  oauth: OauthFreigabe
+}) {
   const router = useRouter();
+  const nachErfolg = erlaubtesNaechstesZiel(next);
 
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -58,7 +64,7 @@ export default function LoginForm() {
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
   const [loading, setLoading] = React.useState(false);
-  const [oauthLoading, setOauthLoading] = React.useState<null | 'google' | 'apple'>(null);
+  const [oauthLoading, setOauthLoading] = React.useState<null | OauthName>(null);
 
   // MFA Dialog State
   const [mfaOpen, setMfaOpen] = React.useState(false);
@@ -113,7 +119,7 @@ export default function LoginForm() {
       }
 
       // 4) Keine MFA nötig → direkt weiter
-      router.replace(AFTER_LOGIN_ROUTE);
+      router.replace(nachErfolg);
     } catch (err: any) {
       setErrorMsg(mapAuthError(err?.message));
     } finally {
@@ -147,7 +153,7 @@ export default function LoginForm() {
     }
   };
 
-  const handleOAuth = async (provider: 'google' | 'apple') => {
+  const handleOAuth = async (provider: OauthName) => {
     setErrorMsg(null);
     setInfoMsg(null);
     setOauthLoading(provider);
@@ -157,7 +163,7 @@ export default function LoginForm() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${origin}/auth/callback`,
+          redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(nachErfolg)}`,
           queryParams: provider === 'google' ? { prompt: 'select_account' } : undefined,
         },
       });
@@ -271,45 +277,11 @@ export default function LoginForm() {
         </div>
       </form>
 
-      {/* Divider */}
-      <div className="my-6 flex items-center gap-4 text-xs text-muted-foreground">
-        <div className="h-px flex-1 bg-border" />
-        <span>oder</span>
-        <div className="h-px flex-1 bg-border" />
-      </div>
-
-      {/* OAuth */}
-      <div className="grid grid-cols-1 gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          disabled={oauthLoading !== null}
-          onClick={() => handleOAuth('google')}
-          className="w-full justify-center"
-          isLoading={oauthLoading === 'google'}
-          loadingText="Weiter mit Google…"
-          leftIcon={<GoogleIcon />}
-        >
-          Weiter mit Google
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
-          disabled={oauthLoading !== null}
-          onClick={() => handleOAuth('apple')}
-          className="w-full justify-center"
-          isLoading={oauthLoading === 'apple'}
-          loadingText="Weiter mit Apple…"
-          leftIcon={<AppleIcon />}
-        >
-          Weiter mit Apple
-        </Button>
-      </div>
+      <OauthAnbieter freigabe={oauth} loading={oauthLoading} onStart={handleOAuth} />
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Noch kein Konto?{' '}
-        <Link href="/register" className="text-primary hover:underline">Konto erstellen</Link>
+        <Link href={`/register?next=${encodeURIComponent(nachErfolg)}`} className="text-primary hover:underline">Konto erstellen</Link>
       </p>
 
       <p className="mt-4 text-xs text-center text-muted-foreground">
@@ -325,7 +297,7 @@ export default function LoginForm() {
         challengeId={challengeId}
         onVerified={() => {
           setMfaOpen(false);
-          router.replace(AFTER_LOGIN_ROUTE);
+          router.replace(nachErfolg);
         }}
       />
     </div>

@@ -1,10 +1,11 @@
 # Jetnity Admin Platform – Slice C: Provider- und Kostenboard
 
 Stand: 24. August 2026  
-Status: **AUFTRAG VORBEREITET – RUNTIME-START NOCH GESPERRT**  
+Status: **IMPLEMENTATION TASK – Current-Main-Re-Sync nach Slice-B-Merge; Start-Gate geöffnet**  
 Verantwortlicher Cursor-Agent: **`Admin platform audit`**  
 Branch: `feat/admin-provider-cost-board`  
-Stack-Basis bei Auftragserstellung: Admin Slice B `feat/admin-system-health` @ `83c66842e94bc4e7645a39269174397cb4b7eb3f`
+Base: aktueller `main` `e3bad749c8e03512001e7bccd5e08467f10a7134` (Admin Slice B / PR #46 gemergt)  
+Historische Stack-Basis: Admin Slice B `feat/admin-system-health` @ `83c66842e94bc4e7645a39269174397cb4b7eb3f`
 
 ## 1. Ziel
 
@@ -32,9 +33,14 @@ Runtime-Implementierung von Slice C startet erst, wenn **alle** folgenden Punkte
 3. Es gibt keine offene Shared-Contract-Kollision mit Account AP-2 oder einem anderen aktiven Workstream.
 4. Keine Provider-/Secret-/Kostenfreigabe wird implizit angenommen.
 
-Bis dahin darf der Agent nur diesen Auftrag lesen, Scope prüfen und bei einem echten Widerspruch stoppen. **Kein Runtime-Code vor dem Start-Gate.**
+**Aktueller Stand 24. August 2026:** Start-Gate ist geöffnet.
 
-Der Admin-Agent darf PR #47 weder selbst mergen noch dessen Shared Contract eigenmächtig kopieren/cherry-picken/reimplementieren.
+1. S1 ist gemergt: `01761eb9ba80828e87ca2da201901e0e211e1719` / PR #47, Technical Closure / PASS.
+2. Freigegebener Integrationsstand: `lib/provider-ops` auf aktuellem `main` `e3bad749`. Slice C importiert nur daraus.
+3. Shared Files in `lib/provider-ops` bleiben unverändert. ADR-0162 ist Slice C; ADR-0160/0161 bleiben AP-3/S3.
+4. Keine Provider-/Secret-/Kostenfreigabe.
+
+Der Admin-Agent darf den S1-Vertrag weder kopieren noch reimplementieren.
 
 ---
 
@@ -221,8 +227,8 @@ Der Agent stoppt und fragt den Technical Lead, wenn:
 
 ## 11. Governance
 
-- Dieser Auftrag ist jetzt **vorbereitet**, aber die Runtime-Implementierung bleibt bis zum Start-Gate gesperrt.
-- Derselbe Cursor-Agent **`Admin platform audit`** führt Slice C später aus.
+- Dieser Auftrag ist nach dem Slice-B-Merge und dem geöffneten S1-Start-Gate **ausführbar**.
+- Derselbe Cursor-Agent **`Admin platform audit`** führt Slice C jetzt aus.
 - Nach der Implementierung folgen Self-Review, lokale Gates, Exact-Head CI/Vercel und unabhängiger ChatGPT/Technical-Lead-Review.
 - **Kein Slice D ohne neuen Auftrag.**
 - **Kein Mark Ready und kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.**

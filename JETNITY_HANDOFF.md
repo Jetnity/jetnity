@@ -1,9 +1,11 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal Foundation auf `main`; Account AP-1 aktiv; Admin Slice A Technical Closure / PASS (Draft PR #44); Admin Slice B Implementierung (Draft PR #46)**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B auf `main` `e3bad749`; Admin Slice C Re-Sync auf Draft PR #49**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
+
+Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Admin Slice C zusätzlich in `docs/ADMIN_PLATFORM_SLICE_C_STATUS.md`. Admin Slice B in `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`. Provider Readiness S2 in `docs/PROVIDER_READINESS_S2_STATUS.md`. Provider Ops S1 in `docs/PROVIDER_OPS_S1_STATUS.md`.
 
 > **Kein relevanter Fortschritt darf beim Wechsel von Chat, Agent oder Sitzung verloren gehen. Was für die Fortsetzung wichtig ist, gehört ins Repository.**
 
@@ -90,7 +92,7 @@ Production:
 
 - URL: `https://jetnity-app.vercel.app`
 - Supabase Production: `qscbgcdmivbbnzrcyegn` (`eu-central-2`)
-- Supabase Development: `yfvbxvijcorffwxbxahl`
+- Supabase Development: `[REDACTED]`
 
 Echte Travel-Provider bleiben derzeit deaktiviert. Keine Fake-Preise, Fake-Verfügbarkeit, Fake-Zeiten, erfundene Visa-/Safety-/Seasonal-Aussagen oder unfreigegebene Providerkosten.
 
@@ -295,8 +297,11 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (PR #38 gemergt)
-6. **→ Account AP-1 (Draft PR #43) aktiv; Admin Slice A Technical Closure / PASS (Draft PR #44); Admin Slice B Implementierung (Draft PR #46)**
-7. Provider-Readiness-/Adapter-Lücken schließen
+6. ✅ Account Platform AP-1 auf `main` (PR #43, `084f7c87`)
+6a. ✅ Account Platform AP-2 auf `main` (PR #48, `2827d1cb`)
+6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`, ADR-0158)
+6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`, ADR-0159)
+7. **→ Admin Slice C** Draft PR #49 / `feat/admin-provider-cost-board` nach Current-Main-Sync. Provider S1/S2 liegen auf `main`.
 8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 10. echte Providerphase
@@ -311,19 +316,23 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-Admin-Implementierungsbranch Slice B: `feat/admin-system-health`  
-Draft PR: `#46` (gestapelt auf `#44`)  
-Agent: `Admin platform audit`
+Admin-Implementierungsbranch Slice C: `feat/admin-provider-cost-board`  
+Draft PR: `#49` (Base: `main`)  
+Agent: `Admin platform audit`  
+Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
 
-1. Seasonal Foundation (PR #38) ist auf `main`.
-2. Admin Slice A bleibt Technical Closure / PASS auf Draft PR #44.
-3. Admin Slice B (read-only System Health) ist auf Draft PR #46 implementiert.
-4. Status/Handoff: `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`, `docs/ADMIN_PLATFORM_SLICE_B_HANDOFF.md`.
-5. PR #44 und PR #46 bleiben Draft. Kein Mark Ready, kein Merge, keine Production-Migration, keine Provider-/Secret-Aktivierung, kein Slice C.
-6. **Exakter nächster Schritt:** Erneuten Technical-Lead-Review von Draft PR #46 auf B1-Head `cc1d06bd` abwarten. Kein Mark Ready, kein Merge, kein Slice C.
+1. Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B sind auf `main` `e3bad749`.
+2. Slice C wird auf diesen `main` synchronisiert. Scope bleibt read-only Provider- und Kostenboard, fail-closed, ADR-0162.
+3. S1-Vertrag wird nur aus `lib/provider-ops` auf `main` gelesen, nicht kopiert oder verändert.
+4. PR #49 bleibt Draft. Kein Mark Ready, kein Merge, kein Slice D, keine Production-Migration, keine Provider-/Secret-Aktivierung.
+5. **Exakter nächster Schritt:** Slice C implementieren, Exact-Head-Gates belegen, dann STOPP für unabhängigen Technical-Lead-Review.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
 Leitsatz:
 
 > **Admin zeigt nur reale Zustände. unknown, nicht enforced oder folgt ist besser als erfundenes Grün.**
+>
+> **Browserdaten dürfen keine kommerzielle Flugwahrheit persistieren. Nachweis oder fail-closed – keine dritte Wahrheit.**
+>
+> **Account ist das dauerhafte Zuhause. Der Trip Workspace bleibt die Kommandozentrale einer einzelnen Reise.**

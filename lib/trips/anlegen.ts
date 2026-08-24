@@ -20,6 +20,7 @@ import 'server-only'
 import { revalidatePath } from 'next/cache'
 
 import { problemAus } from '@/lib/api/datenbank-lesen'
+import { flugNutzlastOhneUnbewieseneWahrheit } from '@/lib/flights/nutzlast'
 import { flughafenReferenzLesen } from '@/lib/route/flughafen-lesen'
 import { iatasAusNutzlast, reiseNutzlastRouteKanonisieren } from '@/lib/route/kanonisieren'
 import {
@@ -82,8 +83,9 @@ export async function reiseAusNutzlastAnlegen(
   const { supabase, benutzerId } = await konto()
   if (!benutzerId) return { ok: false, meldung: NICHT_ANGEMELDET }
 
-  const refs = await flughafenReferenzLesen(iatasAusNutzlast(nutzlast), supabase)
-  const kanonisch = reiseNutzlastRouteKanonisieren(nutzlast, refs)
+  const bereinigt = flugNutzlastOhneUnbewieseneWahrheit(nutzlast)
+  const refs = await flughafenReferenzLesen(iatasAusNutzlast(bereinigt), supabase)
+  const kanonisch = reiseNutzlastRouteKanonisieren(bereinigt, refs)
 
   // Der geprüfte Reisegraph ist strukturell JSON; `ReiseNutzlast` sagt das
   // genauer als `Json`, nur beweist es der Typprüfung nichts.

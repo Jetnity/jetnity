@@ -2,7 +2,13 @@ import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { SUCHANFRAGE } from '@/lib/flights/fixtures/optionen'
-import { ersteFlugmeldung, flugOptionLesen, flugSuchanfrageLesen, flugSuchanfrageSchema } from '@/lib/flights/schema'
+import {
+  ersteFlugmeldung,
+  flugKontoUebernahmeSchema,
+  flugOptionLesen,
+  flugSuchanfrageLesen,
+  flugSuchanfrageSchema,
+} from '@/lib/flights/schema'
 
 describe('Flugsuchanfrage', () => {
   test('eine gültige Anfrage kommt durch', () => {
@@ -103,5 +109,23 @@ describe('Flugoption', () => {
     assert.ok(gelesen)
     assert.equal('travelerPricings' in (gelesen ?? {}), false)
     assert.equal('access_token' in (gelesen ?? {}), false)
+  })
+
+  test('die Konto-Übernahme akzeptiert nur identifiers, keine kommerziellen Felder', () => {
+    const geparst = flugKontoUebernahmeSchema.safeParse({
+      tripId: '11111111-1111-4111-8111-111111111111',
+      dayId: null,
+      optionId: 'direkt',
+      option: { priceAmount: 1, provider: 'evil', externalRef: 'hack' },
+      priceAmount: 1,
+      access_token: 'secret',
+    })
+    assert.equal(geparst.success, true)
+    if (!geparst.success) return
+    assert.deepEqual(Object.keys(geparst.data).sort(), ['dayId', 'optionId', 'tripId'])
+    assert.equal(
+      flugKontoUebernahmeSchema.safeParse({ tripId: 'keine-uuid', optionId: 'x' }).success,
+      false,
+    )
   })
 })

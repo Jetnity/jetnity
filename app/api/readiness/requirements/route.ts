@@ -34,7 +34,7 @@ function antwort(httpStatus: number, koerper: unknown) {
 }
 
 export async function POST(req: Request) {
-  const limit = readinessAnfrageErlaubt(readinessRateKennungAus(req.headers))
+  const limit = await readinessAnfrageErlaubt(readinessRateKennungAus(req.headers))
   if (!limit.ok) {
     return NextResponse.json(
       {

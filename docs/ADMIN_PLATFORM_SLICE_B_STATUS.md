@@ -3,65 +3,64 @@
 Stand: 24. August 2026  
 Verantwortlicher Cursor-Agent: `Admin platform audit`  
 Branch: `feat/admin-system-health`  
-PR: Draft #46, gestapelt auf Slice A / Draft PR #44  
+PR: Draft #46, Base `main`  
 Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
 
 ## Status
 
-**Blocker B1 umgesetzt und auf Exact Head gegatet.** Draft, nicht gemergt. Kein Mark Ready, kein Merge. Kein Technical Closure / PASS.
+**Unabhängiger Technical-Lead-Review: PASS / Technical Integration Closure auf `1715640b`.**
 
-`App / Deployment` bleibt `unknown`/non-green; enge Evidenz ist der Sub-Check `App-Prozess`.  
-`Supabase` bleibt `not_configured`/non-green; enge Evidenz ist der Sub-Check `Supabase App-Datenzugriff`.
+Draft, nicht gemergt. Kein Mark Ready, kein Merge, kein Slice C ohne ausdrückliche aktuelle Product-Owner-Freigabe.  
+Review: `docs/ADMIN_PLATFORM_SLICE_B_TECHNICAL_LEAD_REVIEW.md`.
 
-B1 Exact Head: `cc1d06bd427a9682343a5435e5d5c70509510cc3`
+Admin-Entscheidung: **ADR-0159**. Slice A auf `main` ist ADR-0158.
 
-- GitHub Actions `CI` SUCCESS `32709302128`
-- Vercel Preview READY Inspector `3zoy92pYr1RabYcMKztGMCgYhgCH`
-- GitHub Deployment `6059599135` state `success`
+## Fail-closed Wahrheit
 
-Lokal auf demselben Head: 1729/1729 Tests, Typecheck, Lint, Hygiene, `check:api-schutz` 11/11, Production-Build, UI-Audit 8/8.
+- `App / Deployment` bleibt `unknown` / non-green. Nur Sub-Check `App-Prozess` darf bei aktueller Prozessantwort `healthy` sein. `VERCEL_*` sind Metadaten.
+- `Supabase` bleibt `not_configured` / non-green. Ein erfolgreicher `public.airports`-Read darf nur Sub-Check `Supabase App-Datenzugriff` auf `healthy` setzen.
+- Vercel, GitHub/CI und Infomaniak bleiben ohne Management-Quelle `not_configured` / non-green.
+- Sichtbares Grün nur bei `healthy + fresh` genau dieser Aussage.
 
-## Belegte Gates
+## Exact Runtime Head
 
-Auf `dd1c469c`:
+`1715640bffc36d7ebe1a25de7aeb569632b7811f`
 
-- GitHub Actions `CI` **SUCCESS**: `32686411130`
-- Vercel Preview **READY**: Inspector `2e8Vaovdsh4fjdm11WxDmwRgTJk7`
+Zwei-Eltern-Merge:
 
-Auf Docs-Head `fb193316` (nur Evidence-Text, Runtime unverändert):
+- Parent 1: `83c66842` (bisheriger Slice-B-Docs-Head)
+- Parent 2: `main` `1ec93cc9` (Admin Slice A / PR #44)
+- gegen `main`: 0 behind / 19 ahead
 
-- GitHub Actions `CI` **SUCCESS**: `32686617286`
-- Vercel Preview **READY**: Inspector `EPCWfPDe22jvFKkqmMmkEjmK9vX7`
-- GitHub Deployment `6056037660` state `success`
+### Lokale Gates auf diesem Head
 
-Lokal auf Runtime-Head `285022e2`: 1729/1729 Tests, Typecheck, Lint, Hygiene, `check:api-schutz` 11/11, Production-Build, UI-Audit 8/8.
+- Tests 1832/1832
+- Typecheck, Lint, Hygiene, `check:api-schutz` 11/11, `auth:pruefen` 55/55, Production Build
+- `audit:admin-system-health` 8/8, 0 Fehler
 
-Nicht behauptet: `db:sicherheit`, Production-Migration, eingeloggte Admin-Browserprüfung, Product-Owner-Merge-Freigabe, Technical Closure.
+### Remote Gates auf demselben Head
 
-Ein weiterer Docs-only-Commit nach `fb193316` ändert die Runtime nicht und wird hier nicht als neues Produkt-Gate ausgegeben.
+- GitHub Actions CI `32750112312`: SUCCESS
+- Vercel Preview Inspector `6HzJRdg4NWnGRQb8jpLC1k2jUHms`: READY
 
-## Ziel
+Docs-only Evidence-Head `beea0ac7` (kein Runtime-Change):
 
-Erster professioneller, rein lesender System-Health-Bereich. Ein Dienst erscheint nur dann gesund, wenn eine reale, benannte und hinreichend frische Quelle genau diese Aussage trägt.
+- GitHub Actions CI `32750661517`: SUCCESS
+- Vercel Preview Inspector `4T3towfCx4dWmCP4UvNsoU3QzNwk`: READY
 
-## Systeme
+## Historische Gates (alter Stack)
 
-| System | Quelle jetzt | Statusmodell | Beweist | Beweist nicht | Freshness/TTL | Fehler | Später nötig |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| App / Deployment | Prozess antwortet; optionale `VERCEL_*`-Runtimefelder als Metadaten | `healthy`, wenn der Check läuft | Dieser Next.js-Prozess hat den Check ausgeführt | Vercel-Plattform, DB, CI, Infomaniak | 60s | Prozess tot = Seite/API fällt aus; das ist ehrlich | nichts |
-| Vercel | keine Management-API | `not_configured` | Nur, dass kein Plattform-Token angebunden ist | Projekt-/Plattform-Health, Build-Queue | 120s | n/a | freigegebenes read-only Vercel-Token + Product-Owner-Gate |
-| Supabase | user-scoped `public.airports` `select iata limit 1`, 8s Timeout | `healthy` bei Antwort; `unavailable` bei Timeout/Fehler; `not_configured` ohne URL/Anon-Key | App erreicht ihre Datenquelle | Management, Billing, Auth insgesamt, andere Regionen | 60s | Timeout/Fehler → `unavailable`, übrige Karten bleiben | Management-Health braucht separates Token/Gate |
-| GitHub / CI | keine Actions-API | `not_configured` | Nur, dass kein CI-Status gelesen wurde | Letzter Workflow, Repo-Erreichbarkeit | 300s | n/a | freigegebenes read-only `actions:read` + Gate |
-| Infomaniak | keine Domain-/Mail-/DNS-Quelle | `not_configured` | Nur, dass keine Integration aktiv ist | Domain, Mail, Hosting | 300s | n/a | freigegebenes read-only Infomaniak-Token + Gate |
+- B1 Runtime `cc1d06bd`: CI `32709302128` SUCCESS, Preview `3zoy92pYr1RabYcMKztGMCgYhgCH`
 
-Server-Cache 30s. Manueller Refresh über `GET /api/admin/system-health`. Kein Sekunden-Polling. Sichtbares Grün nur bei `healthy` und `fresh`.
+Dieser historische PASS ersetzt das Current-Main-Integrationsgate nicht.
 
 ## Explizit nicht in Slice B
 
 Keine Migration, keine RLS-/Capability-Neudefinition, keine Service-Role, keine neuen Secrets/Tokens/Verträge/Kosten, keine Writes, kein Copilot-Execute, keine Account-/Trip-/Traveller-/Route-/Readiness-/Safety-/Seasonal-/Homepage-Änderung.
 
-Traveller Context ist für System Health nicht relevant; es werden keine Reise-Credentials erhoben.
+Traveller Context ist nicht relevant.
 
 ## Nächster Schritt
 
-Unabhängiger ChatGPT/Technical-Lead-Review. Maßgeblicher Runtime-Stand bleibt `285022e2` / gegateter Handoff `dd1c469c` bzw. docs-identisches `fb193316`. Kein Slice C. Kein Mark Ready. Kein Merge.
+Ausdrückliche Product-Owner-Entscheidung zu Mark Ready abwarten, danach separate Merge-Freigabe.  
+Kein Slice C vor erfolgreicher Integration von Slice B.

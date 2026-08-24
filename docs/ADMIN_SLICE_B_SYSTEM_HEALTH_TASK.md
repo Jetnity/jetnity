@@ -1,12 +1,13 @@
 # Admin Slice B – Read-only System Health
 
 Stand: 24. August 2026
-Status: **IMPLEMENTATION TASK – stacked on technically closed Admin Slice A**
+Status: **IMPLEMENTATION TASK – Technical-Lead PASS auf `1715640b`; wartet auf Product-Owner-Entscheidung**
 
 Verantwortlicher Cursor-Agent: `Admin platform audit`
 
 Branch: `feat/admin-system-health`
-Stack-Basis: `feat/admin-control-center-ia` / PR #44, Technical Closure/PASS
+Base: aktueller `main` `1ec93cc9` (Admin Slice A / PR #44 gemergt)
+Historische Stack-Basis: `feat/admin-control-center-ia` / PR #44
 
 ## Ziel
 

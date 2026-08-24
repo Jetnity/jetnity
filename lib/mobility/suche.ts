@@ -99,7 +99,7 @@ export async function mobilitySuchen(
     }
   }
 
-  const rate = mobilitySucheErlaubt(ports.kennung)
+  const rate = await mobilitySucheErlaubt(ports.kennung)
   if (!rate.ok) {
     return {
       httpStatus: 429,

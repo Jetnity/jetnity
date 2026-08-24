@@ -19,6 +19,7 @@ import type { Route } from 'next'
 import Link from 'next/link'
 import { Archive, MapPin, Plus } from 'lucide-react'
 
+import { gastReisenPrimaerCta } from '@/lib/trips/gast-reisen-cta'
 import { gastspeicherLaden, type Gastspeicher } from '@/lib/trips/gastspeicher'
 import Reisekarte from '@/components/trips/Reisekarte'
 import type { Trip } from '@/types/trips'
@@ -58,6 +59,8 @@ export default function GastReisen() {
     )
   }
 
+  const primaer = gastReisenPrimaerCta(speicher.aktiv)
+
   if (!speicher.aktiv && speicher.warteschlange.length === 0) {
     return (
       <section className="rounded-[30px] border border-dashed border-line-400 bg-white/65 px-6 py-14 text-center sm:px-10">
@@ -72,11 +75,11 @@ export default function GastReisen() {
           wandert bei einer Anmeldung in dein Konto.
         </p>
         <Link
-          href="/planen"
+          href={primaer.href as Route}
           className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900"
         >
           <Plus className="h-4 w-4" />
-          Reise erstellen
+          {primaer.label}
         </Link>
       </section>
     )
@@ -84,13 +87,38 @@ export default function GastReisen() {
 
   return (
     <div className="space-y-6">
+      {!speicher.aktiv ? (
+        <Link
+          href={primaer.href as Route}
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900"
+        >
+          <Plus className="h-4 w-4" />
+          {primaer.label}
+        </Link>
+      ) : null}
       {speicher.aktiv && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          <Reisekarte
-            reise={alsUebersicht(speicher.aktiv)}
-            href={`/reisen/${speicher.aktiv.id}` as Route}
-            quelle="guest"
-          />
+        <div className="space-y-4">
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Link
+              href={primaer.href as Route}
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-900"
+            >
+              {primaer.label}
+            </Link>
+            <Link
+              href="/planen"
+              className="inline-flex h-11 items-center justify-center rounded-full border border-line-200 bg-white px-5 text-sm font-semibold text-brand-800"
+            >
+              Neue Reise
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <Reisekarte
+              reise={alsUebersicht(speicher.aktiv)}
+              href={`/reisen/${speicher.aktiv.id}` as Route}
+              quelle="guest"
+            />
+          </div>
         </div>
       )}
 

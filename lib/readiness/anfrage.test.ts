@@ -48,11 +48,11 @@ describe('Readiness-API-Hülle', () => {
     assert.equal(gelesen.ok, false)
   })
 
-  test('Rate-Limit blockiert nach zu vielen Anfragen', () => {
+  test('Rate-Limit blockiert nach zu vielen Anfragen', async () => {
     readinessRateLeeren()
     let begrenzt = false
     for (let i = 0; i < 25; i += 1) {
-      const ergebnis = readinessAnfrageErlaubt('test-ip', () => 1_000)
+      const ergebnis = await readinessAnfrageErlaubt('test-ip', () => 1_000)
       if (!ergebnis.ok) {
         begrenzt = true
         assert.ok(ergebnis.retryAfterSec > 0)

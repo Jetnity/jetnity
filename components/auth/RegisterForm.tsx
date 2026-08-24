@@ -11,7 +11,14 @@ import { Label } from '@/components/ui/label';
 import { erstesFehlerfeld, feldfehlerLoeschen, type Feldfehler } from '@/lib/formular/feldfehler';
 import { feldInSichtNehmen } from '@/lib/formular/sicht';
 import { Checkbox } from '@/components/ui/checkbox';
-import { GoogleIcon, AppleIcon } from '@/components/auth/provider-icons';
+import OauthAnbieter from '@/components/auth/OauthAnbieter';
+import { erlaubtesNaechstesZiel } from '@/lib/auth/naechstes-ziel';
+import type { OauthAnbieter as OauthName, OauthFreigabe } from '@/lib/auth/oauth-anbieter';
+import {
+  REGISTER_ERFOLG_ID,
+  REGISTER_NEUTRALE_ANTWORT,
+  registerSignupOeffentlichAuswerten,
+} from '@/lib/auth/register-meldung';
 import {
   PASSWORT_RICHTLINIE,
   RICHTLINIE_PUNKTE,
@@ -36,12 +43,8 @@ function normalizeEmail(s: string) {
   return s.trim().toLowerCase();
 }
 
-/** Nach der Registrierung landen Reisende bei ihren Reisen. */
-const AFTER_REGISTER_ROUTE = '/reisen';
-
 function mapAuthError(message?: string) {
   const msg = (message || '').toLowerCase();
-  if (msg.includes('already registered')) return 'Diese E-Mail ist bereits registriert.';
   if (msg.includes('invalid email')) return 'Bitte gib eine gültige E-Mail-Adresse ein.';
 
   // Die Ablehnungen des Auth-Servers zum Passwort kommen aus einer Quelle, die
@@ -56,8 +59,15 @@ function mapAuthError(message?: string) {
   return message || 'Registrierung fehlgeschlagen.';
 }
 
-export default function RegisterForm() {
+export default function RegisterForm({
+  next = null,
+  oauth,
+}: {
+  next?: string | null
+  oauth: OauthFreigabe
+}) {
   const router = useRouter();
+  const nachErfolg = erlaubtesNaechstesZiel(next);
 
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -72,10 +82,16 @@ export default function RegisterForm() {
   const passwordRef = React.useRef<HTMLInputElement>(null);
   const password2Ref = React.useRef<HTMLInputElement>(null);
   const termsRef = React.useRef<HTMLDivElement>(null);
+  const erfolgRef = React.useRef<HTMLDivElement>(null);
   const [infoMsg, setInfoMsg] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [oauthLoading, setOauthLoading] = React.useState<null | 'google' | 'apple'>(null);
+  const [oauthLoading, setOauthLoading] = React.useState<null | OauthName>(null);
+
+  React.useEffect(() => {
+    if (!success) return
+    feldInSichtNehmen(erfolgRef.current)
+  }, [success])
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,28 +128,33 @@ export default function RegisterForm() {
         email: em,
         password,
         options: {
-          emailRedirectTo: `${origin}/auth/callback`,
+          emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(nachErfolg)}`,
           data: { name: name || em.split('@')[0] }, // user_metadata
         },
       });
 
-      if (error) {
-        setErrorMsg(mapAuthError(error.message));
+      const ergebnis = registerSignupOeffentlichAuswerten({
+        errorMessage: error?.message,
+        sessionVorhanden: Boolean(data?.session),
+      })
+      if (ergebnis.art === 'session') {
+        router.replace(nachErfolg);
+        return;
+      }
+      if (ergebnis.art === 'fehler') {
+        setErrorMsg(mapAuthError(ergebnis.meldung));
         return;
       }
 
-      // Falls E-Mail-Verification deaktiviert wäre, gibt es ggf. schon eine Session
-      if (data?.session) {
-        router.replace(AFTER_REGISTER_ROUTE);
-        return;
-      }
-
-      setSuccess(true);
-      setInfoMsg('Registrierung erfolgreich! Bitte bestätige deine E-Mail, um fortzufahren.');
-      setName('');
-      setEmail('');
-      setPassword('');
-      setPassword2('');
+      const stand = ergebnis.stand
+      setSuccess(stand.success)
+      setInfoMsg(stand.infoMsg)
+      setErrorMsg(stand.errorMsg)
+      setFeldfehler(stand.feldfehler)
+      setName(stand.name)
+      setEmail(stand.email)
+      setPassword(stand.password)
+      setPassword2(stand.password2)
     } catch (err: any) {
       setErrorMsg(mapAuthError(err?.message));
     } finally {
@@ -141,7 +162,7 @@ export default function RegisterForm() {
     }
   };
 
-  const handleOAuth = async (provider: 'google' | 'apple') => {
+  const handleOAuth = async (provider: OauthName) => {
     setErrorMsg(null);
     setInfoMsg(null);
     setOauthLoading(provider);
@@ -152,7 +173,7 @@ export default function RegisterForm() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${origin}/auth/callback`,
+          redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(nachErfolg)}`,
           queryParams: provider === 'google' ? { prompt: 'select_account' } : undefined,
         },
       });
@@ -188,23 +209,26 @@ export default function RegisterForm() {
             <p>{errorMsg ?? 'Bitte prüfe die markierten Angaben.'}</p>
           </div>
         )}
-        {infoMsg && (
+        {success ? (
+          <div
+            id={REGISTER_ERFOLG_ID}
+            ref={erfolgRef}
+            tabIndex={-1}
+            className="flex items-start gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-700"
+            role="status"
+            aria-live="polite"
+          >
+            <CheckCircle2 className="h-4 w-4 mt-0.5" aria-hidden="true" />
+            <p>{REGISTER_NEUTRALE_ANTWORT}</p>
+          </div>
+        ) : infoMsg ? (
           <div
             className="rounded-xl border border-primary/30 bg-primary/10 p-3 text-sm text-primary"
             role="status"
           >
             {infoMsg}
           </div>
-        )}
-        {success && (
-          <div
-            className="flex items-start gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-700"
-            role="status"
-          >
-            <CheckCircle2 className="h-4 w-4 mt-0.5" />
-            <p>Registrierung erfolgreich! Prüfe deinen Posteingang und bestätige deine E-Mail.</p>
-          </div>
-        )}
+        ) : null}
 
         {/* Name (optional) */}
         <div className="space-y-2">
@@ -351,45 +375,11 @@ export default function RegisterForm() {
         </Button>
       </form>
 
-      {/* Divider */}
-      <div className="my-6 flex items-center gap-4 text-xs text-muted-foreground">
-        <div className="h-px flex-1 bg-border" />
-        <span>oder</span>
-        <div className="h-px flex-1 bg-border" />
-      </div>
-
-      {/* OAuth */}
-      <div className="grid grid-cols-1 gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          disabled={oauthLoading !== null}
-          onClick={() => handleOAuth('google')}
-          className="w-full justify-center"
-          isLoading={oauthLoading === 'google'}
-          loadingText="Weiter mit Google…"
-          leftIcon={<GoogleIcon />}
-        >
-          Weiter mit Google
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
-          disabled={oauthLoading !== null}
-          onClick={() => handleOAuth('apple')}
-          className="w-full justify-center"
-          isLoading={oauthLoading === 'apple'}
-          loadingText="Weiter mit Apple…"
-          leftIcon={<AppleIcon />}
-        >
-          Weiter mit Apple
-        </Button>
-      </div>
+      <OauthAnbieter freigabe={oauth} loading={oauthLoading} onStart={handleOAuth} />
 
       <p className="mt-6 text-sm text-center text-muted-foreground">
         Du hast schon ein Konto?{' '}
-        <Link href="/login" className="text-primary hover:underline">Zur Anmeldung</Link>
+        <Link href={`/login?next=${encodeURIComponent(nachErfolg)}`} className="text-primary hover:underline">Zur Anmeldung</Link>
       </p>
 
       <p className="mt-2 text-[11px] text-center text-muted-foreground">

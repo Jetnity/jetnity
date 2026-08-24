@@ -16,15 +16,13 @@ import { CloudOff, MapPin, Trash2 } from 'lucide-react'
 
 import type { ActivityOptionSichtbar } from '@/lib/activities/client-sicht'
 import { alsActivityMomentaufnahme } from '@/lib/activities/uebernahme'
-import type { FlugOptionSichtbar } from '@/lib/flights/client-sicht'
-import { alsFlugMomentaufnahme } from '@/lib/flights/uebernahme'
+import { flugNachweisFehler } from '@/lib/flights/nachweis'
 import type { HotelOptionSichtbar } from '@/lib/hotels/client-sicht'
 import { hotelZeitraumAusEtappe } from '@/lib/hotels/reisegraph'
 import { alsHotelMomentaufnahme } from '@/lib/hotels/uebernahme'
 import {
   gastAktivitaetUebernehmen,
   gastBuchungsstatusSetzen,
-  gastFlugUebernehmen,
   gastHotelUebernehmen,
   gastMietwagenAnlegen,
   gastMobilitaetAnlegen,
@@ -213,18 +211,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
         <FlugSuche
           reise={reise}
           tagId={reise.days[0]?.id ?? null}
-          onUebernehmen={async (tagId, option: FlugOptionSichtbar, refs) => {
-            const aufnahme = alsFlugMomentaufnahme(option, refs)
-            if (!aufnahme) return 'Diese Flugoption ist unvollständig.'
-            try {
-              setReise(gastFlugUebernehmen(reise, aufnahme, tagId))
-              return null
-            } catch (fehler) {
-              return fehler instanceof Error
-                ? fehler.message
-                : 'Der Flug konnte nicht in die Reise übernommen werden.'
-            }
-          }}
+          onUebernehmen={async () => flugNachweisFehler('unavailable').message}
         />
       }
       hotelsuche={

@@ -1,34 +1,37 @@
 # Admin Platform Slice C – Status
 
 Stand: 24. August 2026  
-Status: **PREPARED / WAITING_DEPENDENCY**
+Status: **CURRENT-MAIN-RE-SYNC IN ARBEIT**  
+Verantwortlicher Cursor-Agent: `Admin platform audit`  
+Branch: `feat/admin-provider-cost-board`  
+PR: Draft #49, Base `main`  
+Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
 
-## Auftrag
+## Status
 
-`docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
+**Re-Sync auf aktuellen `main` `e3bad749` (Admin Slice B / PR #46 gemergt).** Draft, nicht gemergt. Kein Mark Ready, kein Merge, kein Slice D.
 
-## Ziel
-
-Read-only Provider- und Kostenboard im bestehenden Admin Control Center. Keine Provideraktivierung, keine Writes, keine erfundenen Health-/Kostenclaims.
+Entscheidung: **ADR-0162**. ADR-0160 bleibt Account AP-3. ADR-0161 bleibt Provider S3.
 
 ## Start-Gate
 
-Runtime-Implementierung ist noch gesperrt. Sie startet erst nach:
+Geöffnet gegen aktuellen `main`:
 
-1. Provider Readiness S1 / PR #47 = unabhängiger Technical-Lead-Review + Technical Closure / PASS.
-2. Technical Lead benennt den exakten freigegebenen S1-Integrationsstand.
-3. Kein Shared-Contract-Konflikt mit anderen aktiven Workstreams.
+1. Provider S1 ist gemergt (`01761eb9`) und hat Technical Closure / PASS.
+2. Freigegebener S1-Integrationsstand: `lib/provider-ops` auf `main` `e3bad749`. Slice C konsumiert diesen Vertrag read-only.
+3. Kein Shared-Contract-Umbau in diesem Slice.
 
-## Stack
+## Fail-closed Wahrheit
 
-- Admin Slice A: Technical Closure / PASS, Draft PR #44.
-- Admin Slice B: Technical Closure / PASS, Draft PR #46.
-- Dieser Branch basiert auf Slice-B-Head `83c66842e94bc4e7645a39269174397cb4b7eb3f`.
+- Parent Provider-Ops bleibt `foundation_only` / non-green. Ein Domain-`available` gilt nur für die belegte Test-Capability, nie als Live/Production-bereit.
+- Kill-Switch-Form ist keine persistente Production-Enforcement.
+- In-Memory Cost Guard ist keine globale Budget-Sicherheit.
+- Fehlende oder unlesbare `model_usage`-Quelle bleibt `not_configured` / Error, keine `0 CHF`-Lüge.
 
-## Governance
+## Explizit nicht in Slice C
 
-- Agent später: `Admin platform audit`.
-- Noch kein Runtime-Code.
-- Kein Slice D.
-- Kein Mark Ready.
-- Kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+Keine Provideraktivierung, keine Secrets/Tokens/Verträge/kostenpflichtigen Calls, keine Migration/RLS/Capability, keine Service-Role, kein Finance-Live, kein Billing-P1, keine Account-/Trip-/Traveller-/Route-/Readiness-/Safety-/Seasonal-Änderung.
+
+## Nächster Schritt
+
+Read-only Board implementieren, lokale und Remote-Gates auf Exact Head belegen, dann STOPP für unabhängigen Technical-Lead-Review.
