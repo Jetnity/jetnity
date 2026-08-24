@@ -12,13 +12,9 @@
 //
 // Frei von Next, Secrets und Anbieter-SDKs.
 
-import {
-  MOBILITY_SUCHE_GRENZEN,
-  type MobilityMode,
-  type MobilityOption,
-} from '@/lib/mobility/domain'
+import { MOBILITY_SUCHE_GRENZEN, type MobilityOption } from '@/lib/mobility/domain'
 import { mobilityOptionLesen } from '@/lib/mobility/schema'
-import type { Trip } from '@/types/trips'
+import type { MobilityMode, Trip } from '@/types/trips'
 
 export type MobilityNachweisFehlerArt =
   | 'unavailable'

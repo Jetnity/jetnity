@@ -8,11 +8,11 @@
 //
 // Frei von Next und Supabase.
 
-import type { MobilityMode, MobilityOption } from '@/lib/mobility/domain'
+import type { MobilityOption } from '@/lib/mobility/domain'
 import type { MobilityNachweis } from '@/lib/mobility/nachweis'
 import { mobilityNachweisFehler, mobilityNachweisKontextAusReise } from '@/lib/mobility/nachweis'
 import { alsMobilityMomentaufnahme, type MobilityMomentaufnahme } from '@/lib/mobility/uebernahme'
-import type { Trip } from '@/types/trips'
+import type { MobilityMode, Trip } from '@/types/trips'
 
 export type MobilityKontoUebernahmeEingabe = {
   tripId: string

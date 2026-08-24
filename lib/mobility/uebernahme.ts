@@ -5,7 +5,7 @@
 //
 // Frei von Next und Providern. Kein Schreibweg.
 
-import type { MobilityMode } from '@/lib/mobility/domain'
+import type { MobilityMode } from '@/types/trips'
 import { mobilityOptionLesen } from '@/lib/mobility/schema'
 
 export type MobilityMomentaufnahme = {
