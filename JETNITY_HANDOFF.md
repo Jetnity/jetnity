@@ -1,6 +1,6 @@
 # Jetnity – Handoff und nächste Schritte
 
-Stand: **24. August 2026, nach Merge von Admin Slice B / PR #46**  
+Stand: **24. August 2026, 20:26 Europe/Zurich**  
 Status: **kanonischer operativer Einstieg für neue Chats/Agenten**
 
 > Vor jeder neuen Aktion GitHub/CI/Vercel/Supabase live verifizieren. Historische Handoffs bleiben Evidence ihres damaligen Zeitpunkts und dürfen neuere zentrale Wahrheit nicht überschreiben.
@@ -25,35 +25,46 @@ Repository: `Jetnity/jetnity`
 - Slice A / PR #44: merged
 - Slice B / PR #46: merged
 - nächster Block: **Slice C / PR #49 – Provider & Cost Board**
-- #49 basiert historisch auf dem alten B-Stack; nicht blind weiterentwickeln
-- zuerst gegen neuen `main` `e3bad749...` neu beurteilen, sauber synchronisieren/retargeten und dann im dokumentierten read-only Scope fortsetzen
+- #49 historisch auf altem Stack; zuerst gegen `main` `e3bad749...` synchronisieren/retargeten und frisch gaten
+- danach Slice C im dokumentierten read-only Scope
 - kein echter Provider, kein Secret, kein Vertrag, kein paid call, keine Fake-Health-/Cost-Wahrheit
 
 ### Account
 
-- AP-1/AP-2: merged
-- AP-3 / PR #53: open Draft, implementiert/gegatet, wartet auf unabhängigen Technical-Lead-Review
-- Runtime Head `612d819ed9691f93cbab97128e301b0b7744721b`
-- aktueller PR Head `5fb879f5556012ab5a34584b4ba8a319ce6754a1`
+PR #53 / AP-3:
+
+- Draft; ursprüngliche Runtime `612d819ed9691f93cbab97128e301b0b7744721b`; zuletzt beobachteter PR/docs Head `5fb879f5556012ab5a34584b4ba8a319ce6754a1`
 - ADR-0160
-- da `main` inzwischen durch #46 weitergelaufen ist, vor späterer Merge-Entscheidung Current-Main-Integration prüfen und falls nötig synchronisieren/re-gaten
+- Independent Technical-Lead Review durchgeführt
+- Grundlogik ist grundsätzlich sauber, aber **keine Current-Main-Closure**
+- Review-Fund: 200er-Hinweis behauptet unbelegt, dass bei exakt 200 geladenen Reisen noch weitere gespeichert seien; Copy muss ehrlich formuliert werden
+- #53 ist gegenüber `main` nach Merge #46 veraltet/divergiert
+- Agent-Auftrag: Current-Main-Sync + nur diese Truth-Korrektur + komplette Exact-Head-Re-Gates
+- bis Re-Review: kein Ready, kein Merge, kein AP-4
 
 ### Provider Readiness
 
-- S1/S2: merged
-- S3 / PR #54: open Draft, implementiert/gegatet, wartet auf unabhängigen Technical-Lead-Review
-- Runtime Head `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`
-- aktueller PR Head `2e9a1a7ff0d8ccef6945cbc70aa3833743d076f1`
+PR #54 / S3:
+
+- Draft; Functional Runtime `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`; zuletzt beobachteter Head `2e9a1a7ff0d8ccef6945cbc70aa3833743d076f1`
 - ADR-0161
-- kein echter Provider/Secret/Vertrag/paid call/Production-Migration
-- vor späterer Merge-Entscheidung Current-Main-Integration prüfen und falls nötig synchronisieren/re-gaten
+- CI `32752931378` SUCCESS; Vercel Preview auf demselben SHA success/READY
+- Independent Technical-Lead Review durchgeführt: **kein zusätzlicher Runtime-/Security-/Truth-Fix im S3-Scope gefunden**
+- Browser nur IDs; serverseitiger Nachweis/Context; Testkatalog test-only; Production ohne Adapter fail-closed; keine erfundene booking_url; Mobility Auto-Search nicht automatisch; keine Migration/Secrets/Provideraktivierung/neuen Kosten
+- dennoch keine Current-Main-Closure: #54 ist 1 Commit hinter/divergiert gegenüber `main` `e3bad749...`
+- Agent-Auftrag: nur Current-Main-Sync + Re-Gates; keine neue S3-Funktion, kein S4
 
 ### Trip Workspace Audit
 
-- PR #55: open Draft, docs-only Audit/Zielarchitektur technisch vorbereitet
-- Head `536ed50ffda0279973058f7a2b78ee98217e7aad`
-- wartet auf unabhängigen Technical-Lead-Review
-- kein Runtime-Umbau
+PR #55:
+
+- Draft / docs-only; zuletzt beobachteter Head `536ed50ffda0279973058f7a2b78ee98217e7aad`
+- CI `32752434172` SUCCESS; Vercel Preview READY
+- Independent Technical-Lead Review durchgeführt: Audit/Zielarchitektur inhaltlich plausibel und scope-treu
+- wichtige Funde für späteren Workspace-Umbau: Safety/Seasonal-Orchestrierung im Produktpfad unsichtbar, Mobile/Desktop unterschiedliche mentale Produktlogik, `Jetzt wichtig` fehlt als Attention-Layer, Domain-lastige IA, Create-Flow/Pace-Default sowie weitere dokumentierte P1/P2-Funde
+- Multi-Citizenship korrekt nur als bestehende Traveller-Abhängigkeit behandelt; keine neue Truth/Registry
+- keine Current-Main-Closure: #55 ist 1 Commit hinter/divergiert und verändert zentrale Statusdocs
+- Agent-Auftrag: nur Current-Main-/Docs-Reconciliation + Re-Gates; kein Runtime-Umbau, kein TW-1
 
 ## Große Reihenfolge
 
@@ -92,8 +103,10 @@ Weltkarte, Matching, Reisebuch, Trends/Hotspots usw. sind Wünsche/Optionen und 
 
 ## Nächste Schritte
 
-- Admin: #49 auf neuen `main` synchronisieren/retargeten und Slice C kontrolliert fortsetzen.
-- Technical Lead: #53, #54 und #55 unabhängig reviewen.
+- Admin: #49 auf aktuellen `main` synchronisieren/retargeten und Slice C kontrolliert fortsetzen.
+- Account #53: Agent-Sync + 200er-Truth-Korrektur + Re-Gates abwarten, dann unabhängiger Re-Review.
+- Provider #54: Current-Main-Sync + Re-Gates abwarten, dann unabhängiger Re-Review.
+- Trip #55: Current-Main-/Docs-Reconciliation + Re-Gates abwarten, dann unabhängiger Re-Review.
 - Nach jedem relevanten Merge oder größeren Statuswechsel PR #52 und die zentralen Handoff-/Checkpoint-/Active-Work-Dokumente zeitnah aktualisieren.
 
 PR #52 bleibt Draft. Kein Ready/Merge von #52 ohne ausdrückliche PO-Freigabe.
