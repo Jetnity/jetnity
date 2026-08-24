@@ -1,24 +1,20 @@
-// app/(admin)/admin/security/page.tsx
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 import SecurityWidget from '@/components/admin/security/SecurityWidget'
+import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 
 export default async function SecurityPage() {
   return (
-    <main className="mx-auto max-w-7xl px-4 md:px-6 py-6 md:py-8 space-y-6">
-      <header className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
-            Jetnity Security Center
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Live-Überwachung, Blocklist & schnelle Gegenmaßnahmen.
-          </p>
-        </div>
+    <section className="mx-auto max-w-7xl space-y-6">
+      <header>
+        <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">
+          {ADMIN_EHRLICHE_TEXTE.securityTitel}
+        </h2>
+        <p className="text-sm text-muted-foreground">{ADMIN_EHRLICHE_TEXTE.securityHinweis}</p>
       </header>
 
       <SecurityWidget />
-    </main>
+    </section>
   )
 }

@@ -18,6 +18,7 @@ import { createServerComponentClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/supabase'
 import { Fehlerflaeche } from '@/components/admin/Ladezustand'
 import { ausProblem, type Fehler } from '@/lib/admin/ladezustand'
+import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 import { problemAus } from '@/lib/api/datenbank-lesen'
 
 function chf(cents: number) {
@@ -88,7 +89,10 @@ export default async function AdminStatsStrip() {
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-semibold">Übersicht (letzte 30 Tage)</h2>
+        <div>
+          <h2 className="text-lg font-semibold">Übersicht (letzte 30 Tage)</h2>
+          <p className="text-xs text-muted-foreground">{ADMIN_EHRLICHE_TEXTE.kennzahlenHinweis}</p>
+        </div>
         {conversion !== null && (
           <p className="text-sm text-muted-foreground">
             Bestellungen je Reise: {conversion.toFixed(1)}%

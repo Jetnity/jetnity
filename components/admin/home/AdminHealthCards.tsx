@@ -1,6 +1,7 @@
 // components/admin/home/AdminHealthCards.tsx
 import { createServerComponentClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/supabase'
+import { ADMIN_EHRLICHE_TEXTE } from '@/lib/admin/ehrliche-zustaende'
 import { cn } from '@/lib/utils'
 
 type Row = Database['public']['Functions']['admin_security_overview']['Returns'][number]
@@ -49,7 +50,8 @@ export default async function AdminHealthCards() {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-3">Security &amp; Health</h2>
+      <h2 className="text-lg font-semibold mb-1">{ADMIN_EHRLICHE_TEXTE.rlsKatalogTitel}</h2>
+      <p className="mb-3 text-sm text-muted-foreground">{ADMIN_EHRLICHE_TEXTE.rlsKatalogHinweis}</p>
       <div className="grid sm:grid-cols-2 gap-4">
         {karten.map((karte) => (
           <div key={karte.label} className="rounded-xl border border-border p-4 bg-background">
