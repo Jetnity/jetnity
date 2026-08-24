@@ -2,14 +2,14 @@
 
 Stand: 24. August 2026
 
-Status: **DONE – Exact-Head `612d819e` gegatet; Draft bleibt Draft, wartet auf Integrationsreview**
+Status: **Current-Main-Sync und fail-closed 200-Hinweis; Draft bleibt Draft, wartet auf Exact-Head-Gates und Technical-Lead-Re-Review**
 
 Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`
 
 ## Ausgangslage
 
 - AP-1 und AP-2 liegen auf `main`.
-- Admin Slice A / PR #44 liegt auf `main` (`1ec93cc9`).
+- Admin Slice A / PR #44 und Admin Slice B / PR #46 liegen auf `main` (`e3bad749`).
 - `Meine Reisen` zeigt Kontoreisen bisher als eine flache Kartenliste.
 - Die Account-Übersicht klassifiziert aktiv/kommend bereits date-only gegen den Geräte-Kalendertag (ADR-0153).
 
@@ -24,7 +24,7 @@ Ableitende Gruppen auf `/reisen` für angemeldete Konten:
 
 Nur aus vorhandenen `startDate`/`endDate`. Dieselbe date-only-Logik wie Übersicht und Reisekarte. Zeitzonen dürfen keinen Tag verschieben: Klassifikation erst am Geräte-Kalendertag, nicht per Server-UTC.
 
-Optional eine kleine Titelsuche. Limit-200 ehrlich anzeigen, wenn die geladene Liste voll ist.
+Optional eine kleine Titelsuche. Limit-200 fail-closed anzeigen, wenn die geladene Liste die Grenze erreicht: höchstens 200 zuletzt geänderte Reisen sind geladen; keine Behauptung, dass weitere existieren.
 
 ## Nicht
 

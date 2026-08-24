@@ -2,12 +2,13 @@
 
 Stand: 24. August 2026  
 Reviewer: implementierender Agent  
-Runtime-Head: `612d819ed9691f93cbab97128e301b0b7744721b`  
-Ergebnis: **bereit für unabhängigen Technical-Lead-Review – kein Ready, kein Merge**
+Ergebnis: **bereit für unabhängigen Technical-Lead-Re-Review nach Current-Main-Sync und fail-closed 200-Hinweis – kein Ready, kein Merge**
 
 ## Auftragstreue
 
-Hält `docs/ACCOUNT_AP3_TASK.md` und ADR-0160. ADR-0158 bleibt Admin Slice A. Kein Archiv-Write, keine Migration/RLS, kein Auth-/Traveller-/Guest→Account-/Billing-Contract, kein Citizenship-Default, kein AP-4.
+Hält `docs/ACCOUNT_AP3_TASK.md` und ADR-0160. ADR-0158 bleibt Admin Slice A. ADR-0159 bleibt Admin Slice B. Kein Archiv-Write, keine Migration/RLS, kein Auth-/Traveller-/Guest→Account-/Billing-Contract, kein Citizenship-Default, kein AP-4.
+
+Branch `feat/account-ap3` ist auf `main` `e3bad749` rebased. Merge-Base ist genau dieser Commit.
 
 ## Adversarial
 
@@ -19,11 +20,12 @@ Hält `docs/ACCOUNT_AP3_TASK.md` und ADR-0160. ADR-0158 bleibt Admin Slice A. Ke
 | Doppelmodell | Eine `TripSummary`-Liste, vier abgeleitete Arrays. Kein gespeicherter Lifecycle. |
 | Stale UI | Client gruppiert nach Geräte-Kalendertag; erster Paint ungruppiert, ohne falsche Lage. |
 | Empty/Error | Empty-Gruppe ist Text. Suche ohne Treffer ist Text. DB-Fehler bleibt `role=alert`. |
+| 200-Grenze | Hinweis nur, wenn die geladene Liste die Grenze erreicht. Wortlaut behauptet keine weiteren gespeicherten Reisen. |
 | Navigation | `ACCOUNT_NAVIGATION` unverändert; `/reisen` bleibt das Ziel. |
 | Mobile/Desktop | Bestehendes Kartenraster, eine Suchzeile, Gruppen als Abschnitte. |
-| Cross-Domain | `uebernahme.test.ts` grün. Gast unverändert. Admin/Provider/Traveller nicht angefasst. |
+| Cross-Domain | Guest-Pfad unverändert. Admin/Provider/Traveller nicht angefasst. Zentraler Handoff behauptet Admin Slice B auf `main`, nicht zurückgespult. |
 | Archiv | Kein Write, kein Filter. Bereits gespeichertes `archived` bleibt in der Datumsgruppe sichtbar. |
 
 ## Empfehlung
 
-Unabhängiger Technical-Lead-Review von Draft-PR #53 auf `612d819e`. Danach erst Product-Owner-Entscheidung. AP-4 nicht starten.
+Unabhängiger Technical-Lead-Re-Review von Draft-PR #53 auf dem neuen current-main-integrierten Runtime-Head. Danach erst Product-Owner-Entscheidung. AP-4 nicht starten.
