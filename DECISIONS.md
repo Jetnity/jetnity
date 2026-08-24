@@ -3895,7 +3895,7 @@ Ein späterer vertrauenswürdiger Flugnachweis braucht einen **getrennten SECURI
 ## ADR-0159 – Admin Slice B bleibt read-only System Health ohne Fake-Green
 
 **Datum:** 24. August 2026  
-**Status:** umgesetzt auf Draft-PR #46 / `feat/admin-system-health`; Nummer von ADR-0153 auf ADR-0159 gehoben, weil `main` ADR-0153 an Account AP-1 und ADR-0155–0157 an Provider S2 vergeben hat. Admin Slice A ist ADR-0158.
+**Status:** auf `main` gemergt (PR #46, `e3bad749`). Authoritative Datei: `docs/ADR_0159_ADMIN_SLICE_B.md`. Historische Draft-Nummer ADR-0153 für Slice B gilt nicht gegen aktuellen `main`.
 
 **Entscheidung:**
 

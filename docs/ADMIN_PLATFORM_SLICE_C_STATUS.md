@@ -1,7 +1,7 @@
 # Admin Platform Slice C – Status
 
 Stand: 24. August 2026  
-Status: **CURRENT-MAIN-RE-SYNC IN ARBEIT**  
+Status: **IMPLEMENTIERT – Exact-Head-Gates auf `bc60120f` belegt; STOPP für unabhängigen Technical-Lead-Review**  
 Verantwortlicher Cursor-Agent: `Admin platform audit`  
 Branch: `feat/admin-provider-cost-board`  
 PR: Draft #49, Base `main`  
@@ -9,9 +9,18 @@ Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
 
 ## Status
 
-**Current-Main-Re-Sync und Implementation auf Draft PR #49.** Draft, nicht gemergt. Kein Mark Ready, kein Merge, kein Slice D.
+Read-only Provider- und Kostenboard auf aktuellem `main` nach Slice-B-Merge. Draft, nicht gemergt. Kein Mark Ready, kein Merge, kein Slice D.
 
 Entscheidung: **ADR-0162**. ADR-0160 bleibt Account AP-3. ADR-0161 bleibt Provider S3.
+
+## Current-Main-Sync
+
+Zwei-Eltern-Merge `57f82cab`:
+
+- Parent 1: historischer Slice-C-Docs-Stand
+- Parent 2: `main` `e3bad749c8e03512001e7bccd5e08467f10a7134` (Admin Slice B / PR #46)
+
+Account AP-1/AP-2, Provider S1/S2 und Admin A+B bleiben erhalten. `lib/provider-ops` ist gegenüber `origin/main` unverändert.
 
 ## Start-Gate
 
@@ -26,22 +35,39 @@ Geöffnet gegen aktuellen `main`:
 - Parent Provider-Ops bleibt `foundation_only` / non-green. Ein Domain-`available` gilt nur für die belegte Test-Capability, nie als Live/Production-bereit.
 - Kill-Switch-Form ist keine persistente Production-Enforcement.
 - In-Memory Cost Guard ist keine globale Budget-Sicherheit.
-- Fehlende oder unlesbare `model_usage`-Quelle bleibt `not_configured` / Error, keine `0 CHF`-Lüge.
+- Fehlende oder unlesbare `model_usage`-Quelle bleibt `empty` / `unavailable` / `unknown`, keine `0 CHF`-Lüge.
+- Empty ≠ Error ≠ Unknown.
 
-## Explizit nicht in Slice C
+## Exact Head
 
-Keine Provideraktivierung, keine Secrets/Tokens/Verträge/kostenpflichtigen Calls, keine Migration/RLS/Capability, keine Service-Role, kein Finance-Live, kein Billing-P1, keine Account-/Trip-/Traveller-/Route-/Readiness-/Safety-/Seasonal-Änderung.
+Letzter Runtime-Commit: `965034d6c5ac412472ceca38be97863bf072e9c0`  
+Belegter Docs-/Gate-Head: `bc60120f953508ede0410c26c9384f20d380738d`
+
+Dieser Evidence-Commit nach `bc60120f` ist docs-only und kein neuer Runtime-Gate.
 
 ## Lokale Gates
 
-Auf dem Implementierungs-Head vor dem Evidence-Commit:
+Auf dem Implementierungs-Head vor dem ersten Evidence-Commit, danach unveränderte Runtime:
 
 - Tests 1846/1846
 - Typecheck, Lint, Hygiene, `check:api-schutz` 12/12, `auth:pruefen` 55/55, Production Build
 - `audit:admin-provider-ops` 8/8
 
-Remote Exact-Head-Gates folgen nach dem Push.
+## Remote Gates auf Exact Head `bc60120f`
+
+- GitHub Actions CI `32760244703`: SUCCESS  
+  https://github.com/Jetnity/jetnity/actions/runs/32760244703
+- Vercel Preview Inspector `46DtSJFvzvJE5p4KZSe2jP9nXJSY`: READY  
+  GitHub-Status `success` / „Deployment has completed“ auf demselben SHA
+
+## Explizit nicht in Slice C
+
+Keine Provideraktivierung, keine Secrets/Tokens/Verträge/kostenpflichtigen Calls, keine Migration/RLS/Capability, keine Service-Role, kein Finance-Live, kein Billing-P1, keine Account-/Trip-/Traveller-/Route-/Readiness-/Safety-/Seasonal-Änderung.
+
+Traveller Context ist für dieses Board nicht relevant.
 
 ## Nächster Schritt
 
-GitHub Actions SUCCESS und Vercel Preview READY auf Exact Head belegen, dann STOPP für unabhängigen Technical-Lead-Review.
+Unabhängigen ChatGPT/Technical-Lead-Review abwarten.  
+Kein Mark Ready und kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.  
+Kein Slice D in diesem PR.

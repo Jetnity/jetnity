@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B auf `main` `e3bad749`; Admin Slice C Current-Main-Re-Sync auf Draft PR #49**
+Status: **PR #38, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B auf `main` `e3bad749`; Admin Slice C implementiert auf Draft PR #49, Exact-Head-Gates belegt, STOPP für Technical-Lead-Review**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -84,9 +84,11 @@ Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
 
 Aktiver Slice:
 
-**Admin Slice C Current-Main-Re-Sync nach Slice-B-Merge.** Read-only Provider- und Kostenboard. Entscheidung: ADR-0162. Konsumiert den gemergten S1-Vertrag auf `main` (`01761eb9` / `lib/provider-ops`), ohne ihn zu kopieren oder zu verändern.
+**Admin Slice C ist implementiert auf Draft PR #49.** Read-only Provider- und Kostenboard. Entscheidung: ADR-0162. Konsumiert den gemergten S1-Vertrag auf `main` (`01761eb9` / `lib/provider-ops`), ohne ihn zu kopieren oder zu verändern.
 
-Kein Provider-Aktivierungscenter. Keine Secrets, Verträge oder kostenpflichtigen Calls. Keine Fake-Health-/Cost-Wahrheit. Kein Finance-Live. Billing-P1 bleibt separat.
+Exact Head mit Remote-Gates: `bc60120f` (CI `32760244703` SUCCESS, Vercel Preview `46DtSJFvzvJE5p4KZSe2jP9nXJSY` READY). Runtime zuletzt `965034d6`.
+
+Kein Provider-Aktivierungscenter. Keine Secrets, Verträge oder kostenpflichtigen Calls. Keine Fake-Health-/Cost-Wahrheit. Kein Finance-Live. Billing-P1 bleibt separat. STOPP für unabhängigen Technical-Lead-Review.
 
 ### Provider Readiness – S1 Shared Operational Contract
 
@@ -153,6 +155,6 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-1. `Admin platform audit` synchronisiert Slice C / Draft PR #49 auf `main` `e3bad749` und implementiert das read-only Provider- und Kostenboard. Kein Mark Ready, kein Merge, kein Slice D.
+1. Unabhängigen ChatGPT/Technical-Lead-Review von Admin Slice C / Draft PR #49 abwarten. Kein Mark Ready, kein Merge, kein Slice D ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 2. ADR-Allokation: 0158=Slice A, 0159=Slice B, 0160=AP-3, 0161=S3, **0162=Admin Slice C**.
 3. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag (`docs/ADMIN_BILLING_LOCAL_REFUND_INTEGRITY_TASK.md`), nicht Slice C.

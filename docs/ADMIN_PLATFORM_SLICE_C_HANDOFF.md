@@ -9,7 +9,10 @@ Entscheidung: ADR-0162
 
 ## Wo die Arbeit steht
 
-Read-only Provider- und Kostenboard auf aktuellem `main` nach Slice-B-Merge. S1-Vertrag wird nur aus `lib/provider-ops` gelesen. Kein Toggle, keine Fake-Kosten, keine Secrets.
+Read-only Provider- und Kostenboard ist implementiert und auf `main` `e3bad749` synchronisiert. S1-Vertrag wird nur aus `lib/provider-ops` gelesen. Kein Toggle, keine Fake-Kosten, keine Secrets.
+
+Exact Head mit belegten Remote-Gates: `bc60120f`.  
+Runtime zuletzt: `965034d6`.
 
 Der PR bleibt Draft. Kein Mark Ready, kein Merge, kein Slice D.
 
@@ -29,7 +32,9 @@ Der PR bleibt Draft. Kein Mark Ready, kein Merge, kein Slice D.
 - In-Memory-Guard nicht als Budgetschutz verkaufen
 - leere Usage nicht als 0 USD darstellen
 - nicht mergen und nicht Mark Ready ohne ausdrückliche aktuelle Product-Owner-Freigabe
+- Slice D–K nicht in diesem PR vorziehen
 
 ## Exakter nächster Schritt
 
-Exact-Head-Gates belegen, dann unabhängigen Technical-Lead-Review abwarten.
+Unabhängigen Technical-Lead-Review auf Draft PR #49 abwarten.  
+Danach nur auf ausdrückliche aktuelle Product-Owner-Freigabe Mark Ready, und erst danach separat mergen.

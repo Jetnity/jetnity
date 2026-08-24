@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety, Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B auf `main` `e3bad749`; Admin Slice C Re-Sync auf Draft PR #49**
+Status: **Foundation C/D/E, Travel Safety, Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B auf `main` `e3bad749`; Admin Slice C implementiert auf Draft PR #49, STOPP für Technical-Lead-Review**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -278,7 +278,7 @@ Status: **auf `main` `e3bad749` (PR #46). Entscheidung: ADR-0159.**
 
 ## 6e. In Arbeit – Admin Control Center Slice C
 
-Status: **Current-Main-Re-Sync auf Draft PR #49 nach `e3bad749`. Entscheidung: ADR-0162.**
+Status: **implementiert auf Draft PR #49, Exact-Head-Gates belegt, STOPP für Technical-Lead-Review. Entscheidung: ADR-0162.**
 
 - read-only Provider- und Kostenboard
 - konsumiert gemergten S1-Vertrag, ohne ihn zu verändern
@@ -418,7 +418,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 6a. ✅ Account Platform AP-2 auf `main` (PR #48)
 6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`)
 6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`)
-7. **→ Admin Slice C** Draft PR #49 nach Current-Main-Sync
+7. **→ Admin Slice C** Draft PR #49 implementiert, STOPP für Technical-Lead-Review
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit
 10. echte Providerphase
