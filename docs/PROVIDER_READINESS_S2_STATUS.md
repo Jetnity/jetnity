@@ -1,7 +1,7 @@
 # Jetnity – Provider Readiness S2 Status
 
 Stand: 24. August 2026  
-Status: **Runtime implementiert / Gates und Technical-Lead-Review ausstehend**  
+Status: **technisch review-bereit / Exact-Head-Gates grün / wartet auf unabhängigen Technical-Lead-Review**  
 Branch: `feat/provider-flight-evidence-s2`  
 Draft-PR: `#51`  
 Auftrag: `docs/PROVIDER_READINESS_S2_FLUGNACHWEIS_TASK.md`
@@ -14,7 +14,13 @@ Kein Mark Ready. Kein Merge. Kein Live-Duffel. Keine Provideraktivierung. Keine 
 
 ## 2. Runtime-Head
 
-Noch nicht gegatet. Der Exact Head wird nach den Pflichtgates in diesem Dokument nachgetragen.
+- Exact Runtime Head: `f61bf7f03d503b1eb62cc324d35a7b659b3e4157`
+- Implementierungs-Commit: `cf63e6c3`
+- Test-Fix-Commit: `f61bf7f0`
+- Base: `main` @ `01761eb9ba80828e87ca2da201901e0e211e1719`
+- Draft-PR: https://github.com/Jetnity/jetnity/pull/51
+
+Ein späterer reiner Docs-Commit nach diesem Head ist kein neues Runtime-Gate.
 
 ## 3. Umgesetzt
 
@@ -26,7 +32,16 @@ Noch nicht gegatet. Der Exact Head wird nach den Pflichtgates in diesem Dokument
 - `booking_url` bleibt `null`
 - Route Truth bleibt Foundation D
 
-## 4. Bewusst nicht geändert
+## 4. Persistenzpfade
+
+| Pfad | S2-Zustand |
+| --- | --- |
+| Konto `flugInReiseUebernehmen` | identifiers + `FlugNachweis`; Umgebung `null` → fail-closed |
+| Guest `gastFlugUebernehmen` | fail-closed |
+| Guest → Account `alsNutzlast` / `reiseAusNutzlastAnlegen` | Flug-Handelsfelder gestrichen; Route-Itinerary bleibt Foundation-D-Intake |
+| Direkter Server-Action-Missbrauch | Zod akzeptiert keine Browser-`FlugOption` mehr |
+
+## 5. Bewusst nicht geändert
 
 - kein Live-Duffel / kein echter Adapter
 - kein persistenter Suchkontext-Speicher (S5)
@@ -35,10 +50,17 @@ Noch nicht gegatet. Der Exact Head wird nach den Pflichtgates in diesem Dokument
 - keine Homepage-/Account-/Admin-Featurearbeit
 - keine DB-/RLS-/Auth-Änderung
 
-## 5. Gates
+## 6. Gates auf Exact Head `f61bf7f0`
 
-Ausstehend. Nach Exact-Head-Lauf werden die Ergebnisse hier eingetragen.
+| Gate | Ergebnis |
+| --- | --- |
+| `npm test` | **1755/1755 pass** |
+| Typecheck / Lint / Hygiene / API-Schutz | **pass** |
+| Production Build | **38/38, Exit 0** |
+| Trip-Workspace-UI-Audit | **1014/1014, 0 Fehler, WebKit + Chromium, 8 Viewports** |
+| GitHub Actions `32716484287` | **SUCCESS** |
+| Vercel Preview `ALxHARi5twKS28guUh7h2d5Riktg` | **READY** |
 
-## 6. Empfehlung
+## 7. Empfehlung
 
-Nach grünen Exact-Head-Gates: STOPP für unabhängigen Technical-Lead-Review. Nicht Mark Ready, nicht mergen, nicht S3 starten.
+STOPP für unabhängigen Technical-Lead-Review. Nicht Mark Ready, nicht mergen, nicht S3 starten.

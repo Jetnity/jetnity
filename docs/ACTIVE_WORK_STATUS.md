@@ -88,7 +88,7 @@ Status: `docs/PROVIDER_READINESS_S2_STATUS.md`
 
 Aktiver Slice:
 
-**S2 – serverseitiger `FlugNachweis` für Flug-Kontoübernahme und kommerzielle Flug-Persistenz.** Browser sendet nur `tripId`, `dayId`, `optionId`. Guest und Guest → Account bleiben fail-closed bzw. stufen unbewiesene Flugoptionen nicht hoch.
+**S2 – serverseitiger `FlugNachweis` für Flug-Kontoübernahme und kommerzielle Flug-Persistenz.** Exact Runtime Head `f61bf7f0`. Browser sendet nur `tripId`, `dayId`, `optionId`. Guest und Guest → Account bleiben fail-closed bzw. stufen unbewiesene Flugoptionen nicht hoch. Lokale und Remote-Gates auf diesem Head sind grün. STOPP für unabhängigen Technical-Lead-Review.
 
 Grenze: kein Live-Duffel, keine Provideraktivierung, keine Secrets, keine DB-/Production-Migration, kein S3–S6, kein Offer-Booking. `booking_url` bleibt `null`. Route Truth bleibt Foundation D.
 
@@ -138,5 +138,5 @@ Wenn sie gestartet wird:
 1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
 2. `Admin platform audit` implementiert ausschließlich Slice A auf PR #44.
 3. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung.
-4. Dieser Branch liefert S2 auf Draft-PR #51 und stoppt danach für den unabhängigen Technical-Lead-Review. Kein Mark Ready, kein Merge, kein S3.
+4. S2 auf Draft-PR #51 hat Exact-Head-Gates auf `f61bf7f0` und wartet auf den unabhängigen Technical-Lead-Review. Kein Mark Ready, kein Merge, kein S3.
 5. AP-2, Admin Slice B und Provider S3 brauchen jeweils eine neue ausdrückliche Freigabe.

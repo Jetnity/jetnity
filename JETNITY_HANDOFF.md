@@ -315,13 +315,14 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 Aktiver Branch: `feat/provider-flight-evidence-s2`  
 Draft PR: `#51`  
 Basis: `origin/main` @ `01761eb9`  
+Exact Runtime Head: `f61bf7f0`  
 Auftrag: `docs/PROVIDER_READINESS_S2_FLUGNACHWEIS_TASK.md`
 
 1. S2 hebt die Flug-Kontoübernahme auf dieselbe Trust-Grenze wie Hotels: Browser sendet nur identifiers.
 2. `flugNachweisAusUmgebung()` ist `null`; ohne serverseitigen Suchkontext bleibt die Übernahme fail-closed.
 3. Guest persistiert keine kommerzielle Provider-Flugoption. Guest → Account streicht unbewiesene Flug-Handelsfelder.
 4. PR bleibt Draft. Kein Live-Duffel, kein Secret, keine unfreigegebenen Kosten, keine Production-Migration, kein Merge ohne aktuelle Product-Owner-Freigabe.
-5. **Exakter nächster Schritt:** Exact-Head-Gates abschließen und für den unabhängigen Technical-Lead-Review stoppen. Technical Closure ersetzt keine Product-Owner-Freigabe.
+5. **Exakter nächster Schritt:** Unabhängiger Technical-Lead-Review gegen Exact Head `f61bf7f0`. Technical Closure ersetzt keine Product-Owner-Freigabe.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
