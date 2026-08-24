@@ -8,7 +8,25 @@ Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
 
 ## Status
 
-**Lokale Pflicht-Gates grün auf Runtime-Head `285022e26ced1ce5561f1324f31461a9f9246ec4`.** Draft, nicht gemergt. Exact-Head GitHub Actions CI und Vercel Preview werden auf dem nach diesem Status-Update gepushten Head belegt. Kein Mark Ready, kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+**Exact-Head-Gates grün. Wartet auf unabhängigen Technical-Lead-Review.** Draft, nicht gemergt. Kein Mark Ready, kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe. Kein Technical Closure / PASS – das entscheidet der unabhängige Review.
+
+Exact Head der Gates: `dd1c469c115931346027e7639e2e22cd16b47345`
+
+## Belegte Gates auf Exact Head `dd1c469c`
+
+- GitHub Actions `CI` **SUCCESS**: `32686411130`  
+  https://github.com/Jetnity/jetnity/actions/runs/32686411130
+- Vercel Preview **READY**: Inspector `2e8Vaovdsh4fjdm11WxDmwRgTJk7`  
+  https://vercel.com/jetnity-e1b93c82/jetnity-app/2e8Vaovdsh4fjdm11WxDmwRgTJk7  
+  Preview: https://jetnity-app-git-feat-admin-system-health-jetnity-e1b93c82.vercel.app  
+  GitHub Deployment `6056004966` state `success`
+- Commit-Status `Vercel` auf demselben SHA: `success` / „Deployment has completed“
+
+Lokal auf Runtime-Head `285022e2` (danach nur Docs-Handoff `dd1c469c`): 1729/1729 Tests, Typecheck, Lint, Hygiene, `check:api-schutz` 11/11, Production-Build, UI-Audit 8/8.
+
+Nicht behauptet: `db:sicherheit`, Production-Migration, eingeloggte Admin-Browserprüfung, Product-Owner-Merge-Freigabe, Technical Closure.
+
+Ein späterer Docs-only-Commit auf diesem Branch ändert die Runtime nicht und ist kein neues Gate-Ergebnis.
 
 ## Ziel
 
@@ -26,18 +44,6 @@ Erster professioneller, rein lesender System-Health-Bereich. Ein Dienst erschein
 
 Server-Cache 30s. Manueller Refresh über `GET /api/admin/system-health`. Kein Sekunden-Polling. Sichtbares Grün nur bei `healthy` und `fresh`.
 
-## Lokal belegte Gates auf `285022e2`
-
-- `npm test`: **1729/1729** pass
-- `npm run typecheck`: grün
-- `npm run lint`: keine Warnungen/Fehler
-- `check:api-schutz`: **11/11** Admin-Routen, alle `requireAdminApi()`
-- `check:dead`, `check:exports`, `check:deps`, `check:schema-bezug`: grün
-- `npm run build`: Production-Build grün; Routen `/admin/system-health` und `/api/admin/system-health` vorhanden
-- `npm run audit:admin-system-health`: 8/8 Kombinationen (WebKit+Chromium × 320/390/768/1280), 0 Fehler
-
-Nicht behauptet: `db:sicherheit`, Production-Migration, eingeloggte Admin-Browserprüfung, GitHub Actions CI auf diesem Docs-Head, Vercel Preview auf diesem Docs-Head, Product-Owner-Merge-Freigabe.
-
 ## Explizit nicht in Slice B
 
 Keine Migration, keine RLS-/Capability-Neudefinition, keine Service-Role, keine neuen Secrets/Tokens/Verträge/Kosten, keine Writes, kein Copilot-Execute, keine Account-/Trip-/Traveller-/Route-/Readiness-/Safety-/Seasonal-/Homepage-Änderung.
@@ -46,4 +52,4 @@ Traveller Context ist für System Health nicht relevant; es werden keine Reise-C
 
 ## Nächster Schritt
 
-Exact-Head GitHub Actions CI und Vercel Preview auf dem gepushten Docs-/Handoff-Head belegen. Danach unabhängiger Technical-Lead-Review. Kein Slice C.
+Unabhängiger ChatGPT/Technical-Lead-Review auf Exact Head `dd1c469c`. Kein Slice C. Kein Mark Ready. Kein Merge.

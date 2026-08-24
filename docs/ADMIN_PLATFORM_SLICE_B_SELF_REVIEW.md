@@ -24,10 +24,15 @@ Branch: `feat/admin-system-health`
 - Der App-Prozess-Check beweist nur diesen Prozess.
 - UI-Audit läuft gegen Fixtures, nicht gegen eine eingeloggte Admin-Session.
 
-## Lokal gelaufene Gates
+## Gates
 
-1729/1729 Tests, Typecheck, Lint, `check:api-schutz` (11/11), Hygiene und Production-Build sind lokal grün. UI-Audit 8/8 (WebKit+Chromium × 320/390/768/1280).
+Lokal: 1729/1729 Tests, Typecheck, Lint, `check:api-schutz` (11/11), Hygiene, Production-Build, UI-Audit 8/8.
 
-`db:sicherheit` und Production wurden nicht behauptet. GitHub Actions CI und Vercel Preview müssen auf dem Exact Head nach dem Docs-Push belegt werden.
+Exact Head `dd1c469c115931346027e7639e2e22cd16b47345`:
+
+- GitHub Actions `CI` SUCCESS `32686411130`
+- Vercel Preview READY Inspector `2e8Vaovdsh4fjdm11WxDmwRgTJk7`
+
+`db:sicherheit` und Production wurden nicht behauptet.
 
 Dieser Self-Review ersetzt keinen unabhängigen Technical-Lead-Review und keine Product-Owner-Freigabe.
