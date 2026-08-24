@@ -192,7 +192,7 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-1. Account AP-3 / Draft PR #53: Runtime PASS auf `c5e4a51f`. Dieser Stand ist docs-only. Nächster Gate: Technical-Lead Docs-Re-Check. Kein AP-4. Kein Mark Ready. Kein Merge.
+1. Account AP-3 / Draft PR #53: Runtime PASS auf `c5e4a51f`. Der nachgelagerte Follow-up ist docs-only. Nächster Gate: Technical-Lead Docs-Re-Check. Kein AP-4. Kein Mark Ready. Kein Merge.
 2. Nach Account-Integration: PR #54 finaler Sync / Re-Review. Danach PR #55 finale Docs-Reconciliation. Danach erst neue kontrollierte Admin-/TW-Aufträge. Kein Slice D. Kein TW-1 ohne neuen Auftrag.
 3. ADR-Allokation: 0158=Slice A, 0159=Slice B, 0160=AP-3, 0161=S3, 0162=Admin Slice C.
 4. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag (`docs/ADMIN_BILLING_LOCAL_REFUND_INTEGRITY_TASK.md`), nicht AP-3.
