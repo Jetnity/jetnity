@@ -1,13 +1,33 @@
 # Jetnity – Provider Readiness S2-B1 / DB Trust Boundary Fix
 
 Stand: 24. August 2026
-Status: **VORBEREITET – wartet auf Product-Owner-Freigabe für DB-Contract-/Development-Migrations-Scope**
+Status: **FREIGEGEBEN FÜR IMPLEMENTIERUNG – neue Migration nur auf Supabase Development; Production bleibt unverändert**
 
 Cursor-Agent: `Provider S2 flugnachweis`
 Draft-PR: `#51`
 Review: `docs/PROVIDER_READINESS_S2_CHATGPT_REVIEW.md`
 
-## Auftrag nach Freigabe
+## Product-Owner-Freigabe
+
+Am 24. August 2026 hat der Product Owner ausdrücklich freigegeben:
+
+> „Freigegeben für S2-B1: neue Migration nur auf Supabase Development. Production bleibt unverändert.“
+
+Diese Freigabe autorisiert ausschließlich den minimalen S2-B1-DB-Contract-Fix und die Anwendung der dafür neu erstellten Migration auf dem bestehenden Supabase-Development-Projekt.
+
+Nicht freigegeben sind insbesondere:
+
+- Production-Migration;
+- Mark Ready;
+- Merge;
+- S3 oder spätere Provider-Readiness-Slices;
+- Provideraktivierung;
+- Secrets/API-Keys;
+- Verträge oder kostenpflichtige Provider-Calls;
+- Auth-/MFA-/AAL-/Capability-Neudefinitionen;
+- Service-Role-Ausweitungen.
+
+## Auftrag
 
 Schließe ausschließlich **S2-B1 – Direct-RPC-Bypass**.
 
@@ -28,7 +48,7 @@ Für `kind='flight'` gilt auch an der Datenbankgrenze:
 ## Implementierungsregeln
 
 1. **Keine bestehende angewandte Migration editieren.** Neue additive Migration verwenden.
-2. Nur Development anwenden, sofern der Product Owner genau diesen Scope freigibt.
+2. Die neue S2-B1-Migration darf **nur auf Supabase Development** angewendet werden.
 3. **Production nicht migrieren.** Production bleibt separates Product-Owner-Gate.
 4. Keine Service Role, keine Auth-/MFA-/AAL-/Capability-Neudefinition.
 5. Keine Provideraktivierung, keine Secrets, keine Verträge, keine kostenpflichtigen Calls.
@@ -69,6 +89,6 @@ Nach Implementierung:
 
 ## Harte Governance
 
-Bis zur ausdrücklichen Product-Owner-Freigabe dieses DB-Scopes: **nicht implementieren**.
+Die S2-B1-Implementierung inklusive **neuer Development-Migration** ist jetzt ausdrücklich freigegeben.
 
-Auch danach: kein Mark Ready, kein Merge, kein S3 und keine Production-Migration ohne separate ausdrückliche aktuelle Product-Owner-Freigabe.
+Weiterhin verbindlich: **kein Mark Ready, kein Merge, kein S3 und keine Production-Migration ohne separate ausdrückliche aktuelle Product-Owner-Freigabe.**
