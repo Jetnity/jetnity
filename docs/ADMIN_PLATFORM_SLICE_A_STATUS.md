@@ -8,26 +8,21 @@ Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`
 
 ## Status
 
-**Implementiert, Draft, nicht merge-bereit.** Unabhängiger Technical-Lead-Review: code/architecture PASS. Integrationsgates auf post-sync Head `62cacdf59457689d159616649c2af823d5320a78` geschlossen. Kein Mark Ready, kein Merge. Kein Technical Closure durch diesen Agent.
+**Technical Closure / PASS.** Draft, nicht gemergt. Kein Mark Ready, kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 
-Sync mit `main` `e4f4cca75e55028fab231c1827abf6236ae30eec` war **docs-only**. Kein Runtime-Change durch den Sync. Lokale Gates wurden deshalb nicht erneut ausgeführt.
+Exact Head des Final Rechecks: `5632a3cac1301d2d649fcb1d2b9552d3763c8b9f`  
+Closure-Nachweis: `docs/ADMIN_PLATFORM_SLICE_A_TECHNICAL_CLOSURE.md`
 
-Lokal verifizierte Gates nach der Slice-A-Implementierung:
+## Belegte Gates auf Exact Head `5632a3ca`
 
-- `npm test`: 1715/1715
-- `npm run typecheck`: Exit 0
-- `npm run lint`: keine Warnungen/Fehler
-- `npm run check:api-schutz`: 10 Admin-Routen, alle `requireAdminApi()`
-- Hygiene: `check:dead`, `check:exports`, `check:deps`, `check:schema-bezug` grün
-- Production-Build: Exit 0, 38/38 Seiten
+- GitHub Actions `CI` **SUCCESS**: `32683942810`
+- Vercel Preview **READY**: `dpl_czE3XJXw3qx3sXMrh7LTgMV94zBL`
+- gegen `main` `e4f4cca7`: 7 ahead / 0 behind
+- Sync mit `main` war docs-only; Runtime unverändert
 
-Post-sync exact head `62cacdf5` (Merge `main` `e4f4cca7`, docs-only):
+Lokal nach der Implementierung (vor Sync, Runtime seither unverändert): 1715/1715 Tests, Typecheck, Lint, Hygiene, Production-Build.
 
-- GitHub Actions `CI` **success**: `32683686686` — Jobs `Typecheck, Lint & Build` und `Auth-Konfiguration gegen config.toml`
-- Vercel Preview **READY/success**: Deployment `JfKJswXaRn6QsHjCnRnypTwW9jDJ`
-- Preview-URL: `https://jetnity-app-git-feat-admin-control-center-ia-jetnity-e1b93c82.vercel.app`
-
-Nicht behauptet: `db:sicherheit`, `db:rls`, Production-Migration, eingeloggte Admin-Browserprüfung, Product-Owner-Merge-Freigabe.
+Nicht behauptet: `db:sicherheit`, Production-Migration, eingeloggte Admin-Browserprüfung, Product-Owner-Merge-Freigabe.
 
 ## Ziel
 
@@ -53,4 +48,4 @@ Traveller Context ist für Slice A nicht relevant; es werden keine Reise-Credent
 
 ## Nächster Schritt
 
-Unabhängiger Technical-Lead-Recheck der Integrationsgates auf Head `62cacdf5`. Slice B erst nach Technical Closure. Kein Mark Ready, kein Merge.
+Product-Owner-Entscheidung zu Mark Ready / Merge von Draft PR #44. Slice B (System Health) ist ein separater Block und gehört nicht in diesen Slice-A-Head.

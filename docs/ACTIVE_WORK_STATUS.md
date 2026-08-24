@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 vollständig integriert; Account AP-1 und Admin Slice A als parallele aktive Implementierungsworkstreams; Slice A Code/Architektur PASS, Integrationsgates offen**
+Status: **PR #38 vollständig integriert; Account AP-1 aktiv auf Draft PR #43; Admin Slice A Technical Closure / PASS auf Draft PR #44**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -64,13 +64,12 @@ Aktiver Slice:
 
 **Admin Slice A – ehrliche professionelle Control-Center-IA / bestehende Legacy-Scheinzustände entfernen.**
 
-Unabhängiger Technical-Lead-Review: **code/architecture PASS.** Integrationsgates auf post-sync Head `62cacdf5` geschlossen.
+Unabhängiger Technical-Lead Final Recheck: **PASS / TECHNICAL CLOSURE** auf Exact Head `5632a3cac1301d2d649fcb1d2b9552d3763c8b9f`.  
+CI `32683942810` SUCCESS. Vercel Preview READY `dpl_czE3XJXw3qx3sXMrh7LTgMV94zBL`. Nachweise: `docs/ADMIN_PLATFORM_SLICE_A_TECHNICAL_CLOSURE.md`.
 
 Grenze: Admin-UI/IA, ehrliche Zustände und vorhandene Security-Gates. Keine neue DB/Migration, keine Capability-/RLS-Neudefinition, kein System Health in diesem Slice, keine Provider-/Secret-/Kosten-Aktivierung.
 
-Sync mit `main` `e4f4cca75e55028fab231c1827abf6236ae30eec` war **docs-only**. Kein Runtime-Change. GitHub Actions `CI` `32683686686` success und Vercel Preview READY `JfKJswXaRn6QsHjCnRnypTwW9jDJ` gelten für Head `62cacdf5`.
-
-Danach als eigener Slice: read-only System Health für Vercel, Supabase, GitHub, App und später Infomaniak. Slice B erst nach geschlossenen Integrationsgates.
+Technical Closure ist keine Mark-Ready-/Merge-Freigabe. Slice B / System Health ist ein separater Block und gehört nicht in den abgeschlossenen Slice-A-Head.
 
 ## 4. Parallelitätsregel
 
@@ -116,7 +115,7 @@ Wenn sie gestartet wird:
 ## 7. Exakter nächster Schritt
 
 1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
-2. Admin Slice A Integrationsgates auf Head `62cacdf5` sind belegt (`CI` `32683686686`, Preview READY). Technical-Lead-Recheck / Technical Closure steht aus.
-3. Kein Slice B und keine neue Feature-Arbeit ohne Technical Closure.
-4. PR #43 und PR #44 bleiben Draft.
-5. Erst danach werden AP-2 bzw. Admin Slice B freigegeben.
+2. Admin Slice A ist Technical Closure / PASS. Draft PR #44 wartet auf ausdrückliche Product-Owner-Freigabe für Mark Ready / Merge.
+3. Slice B / System Health nicht in PR #44 mischen.
+4. PR #43 und PR #44 bleiben Draft, bis der Product Owner jeweils ausdrücklich freigibt.
+5. AP-2 bzw. Admin Slice B erst als eigene Blöcke.

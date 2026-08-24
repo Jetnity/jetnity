@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety und Seasonal Foundation auf `main`; aktive parallele Workstreams: Account AP-1 und Admin Slice A (Draft PR #44)**
+Status: **Foundation C/D/E, Travel Safety und Seasonal Foundation auf `main`; Account AP-1 aktiv; Admin Slice A Technical Closure / PASS (Draft PR #44)**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -220,7 +220,7 @@ Verbindlich:
 
 ## 6a. In Arbeit – Admin Control Center Slice A
 
-Status: **implementiert auf Draft PR #44 / `feat/admin-control-center-ia`; wartet auf unabhängigen Review**
+Status: **Technical Closure / PASS auf Exact Head `5632a3ca`; Draft PR #44 wartet auf Product-Owner-Merge-Freigabe**
 
 - ehrliche Steuerzentralen-IA auf dem vorhandenen gehärteten Backoffice
 - keine neue Datenwahrheit, keine neue Autorität, keine Migration
@@ -354,7 +354,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation (PR #38 gemergt)
-6. **→ parallele konfliktarme Slices: Admin Slice A (Draft PR #44) und Account AP-1; danach Admin Slice B System Health**
+6. **→ Account AP-1 (Draft PR #43) aktiv; Admin Slice A Technical Closure / PASS (Draft PR #44, wartet auf Product-Owner-Freigabe); Slice B separat**
 7. Provider-Readiness-/Adapter-Lücken schließen
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit
