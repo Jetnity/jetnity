@@ -28,17 +28,19 @@ Danach verifiziere live:
 
 Zuletzt dokumentierter Stand:
 
-- `main` = `78192ab775165d08bb357140c2d04b865b8cc049`
+- `main` = `8326e72f9557a8b9b200e680b0be24aefa0bdfa8`
+- letzter Merge = Account AP-3 / PR #53
 - Admin Slice A / PR #44 = merged
 - Admin Slice B / PR #46 = merged
 - Admin Slice C / PR #49 = merged
-- Vercel Production `dpl_EkQorDSGW1JyHa4DYqzZRhngYFFa` = READY auf `78192ab...`
+- Account AP-3 / PR #53 / ADR-0160 = **merged / closed** nach separater PO-Ready- und danach PO-Merge-Freigabe
+- Vercel auf Merge-Commit `8326e72f...` = success (`QsCzDYvqigyCV2DaVMStrVvXUmBh`)
 - Supabase Production endet bei `20260824140000`
 - `20260824160000` und `20260824180000` bleiben Development-only
+- Agent `Account plattform audit vorbereitung` wartet; **kein AP-4 ohne neuen kontrollierten Auftrag / Shared-Gate**
+- Agent `Jetnity provider readiness audit` / PR #54 = Draft; **jetzt nächster aktiver Workstream**: final auf aktuellen `main` synchronisieren, Re-Gates, unabhängiger Technical-Lead-Re-Review; kein S4 vorher
+- Agent `Trip workspace audit architecture` / PR #55 = Draft/docs-only; wartet auf Provider-#54-Integration, danach finale docs-only Reconciliation/Re-Gates; kein TW-1
 - Agent `Admin platform audit` wartet; nächster möglicher Block ist Slice D, aber nur mit neuem kontrollierten Auftrag
-- Agent `Account plattform audit vorbereitung` / PR #53 = Draft; 200er-Truth-Korrektur und vorherige Re-Gates erledigt, aber durch Merge #49 erneut hinter neuem `main`; zuerst Sync/Re-Gates auf `78192ab...`, dann Re-Review
-- Agent `Jetnity provider readiness audit` / PR #54 = Draft; S3 vorher sauber gegatet, aber durch Merge #49 erneut hinter neuem `main`; zuerst Sync/Re-Gates auf `78192ab...`, kein S4 vorher
-- Agent `Trip workspace audit architecture` / PR #55 = Draft/docs-only; Audit vorbereitet und vorher gegatet, aber durch Merge #49 erneut hinter neuem `main`; nur docs-only Reconciliation/Re-Gates, kein TW-1
 
 Verbindliche Governance:
 
@@ -55,7 +57,7 @@ Verbindliche Governance:
 
 Große Produkt-Reihenfolge:
 
-1. Account + Admin sauber aufbauen; Provider Readiness parallel weiterführen.
+1. Account + Admin sauber aufbauen; Provider Readiness vollständig weiterführen.
 2. Danach Trip Workspace / Reiseübersicht.
 3. Danach Homepage.
 
