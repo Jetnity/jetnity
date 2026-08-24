@@ -2,12 +2,21 @@
 
 Stand: 24. August 2026  
 Reviewer: implementierender Agent  
-Runtime-Head: `e9b2f834edc925b12e8b5a667f0e4382642eae8f`  
-Ergebnis: **AP2-B1 behoben – bereit für Re-Review, kein Ready, kein Merge**
+Runtime-Head: `de5ffd8a91576a2281b6d5eda75338504a43b7a7`  
+Ergebnis: **Main-Sync abgeschlossen und gegated – bereit für Integrationsreview, kein Ready, kein Merge**
 
 ## Auftragstreue
 
-Der Slice hält `docs/ACCOUNT_AP2_AUTH_UX_TASK.md` und `docs/ACCOUNT_AP2_B1_FIX_TASK.md`. Keine Scope-Erweiterung in AP-3, keine DB, keine Provider-Aktivierung, keine Legal-Erfindung.
+Dieser Schritt hält `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md`. Keine Scope-Erweiterung in AP-3, keine DB, keine Provider-Aktivierung, keine Legal-Erfindung, kein Mark Ready, kein Merge.
+
+Der Produktvertrag aus `docs/ACCOUNT_AP2_AUTH_UX_TASK.md` und `docs/ACCOUNT_AP2_B1_FIX_TASK.md` bleibt unverändert. Der Rebase hat keine bewusste Produktänderung eingeführt.
+
+## Sync-Treue
+
+- Tatsächlicher `origin/main` vor und nach dem Gate: `084f7c87f36f9929f3e4a9deb9d3fedef6e96982`.
+- Rebase `--onto origin/main` ab dem ersten AP-2-Commit; AP-1 nur einmal aus `main`.
+- PR #48 Base = `main`, Draft, mergeable.
+- `git diff origin/main...HEAD` vor diesem Docs-Commit: 32 AP-2-Dateien, keine zurückgedrehte Main-Wahrheit.
 
 ## Scope A – OAuth Enablement
 
@@ -59,13 +68,12 @@ Der Slice hält `docs/ACCOUNT_AP2_AUTH_UX_TASK.md` und `docs/ACCOUNT_AP2_B1_FIX_
 - Fehler per `role="alert"` und erneuter Fokus; Trefferflächen `min-h-11`.
 - Kein neues MFA-Backend.
 
-## Pflicht-Regressionen
+## Pflicht-Regressionen auf dem neuen Runtime-Head
 
 1–8 `next`: `lib/auth/naechstes-ziel.test.ts`  
 9–10 OAuth: `lib/auth/oauth-anbieter.test.ts`  
 11–12 Gast-CTA: `lib/trips/gast-reisen-cta.test.ts`  
 13 Register-Copy und AP2-B1-Outcome: `lib/auth/register-meldung.test.ts`  
-
 14 Gate: `lib/auth/anmelde-gatter.test.ts`  
 15 MFA a11y: `lib/auth/mfa-dialog-a11y.test.ts` (Quellvertrag, kein Browser-A11y-Lauf)  
 16 AP-1-Navigation: `lib/account/navigation.test.ts` grün  
@@ -82,7 +90,8 @@ Bestehende `/terms`- und `/privacy`-Links bleiben. Keine neuen rechtlichen Texte
 - `next=/account` umgeht den `/reisen`-Übernahmeort, bis die Reisen-Seite geöffnet wird.
 - Footer- und Navbar-Chrome lesen die Sitzung weiter per Client-`getSession()`; Autorität der Login-/Register-Seiten ist `getUser()`.
 - Preview wurde remote als success gemeldet, nicht zusätzlich manuell im Browser abgeklickt.
+- Das Technical-Lead-PASS auf `e9b2f834` ist kein Integrationsreview des rebase-ten Stacks.
 
 ## Empfehlung
 
-Unabhängiger Technical-Lead-Re-Review von PR #48 auf `e9b2f834`. Danach erst Product-Owner-Entscheidung über Ready/Merge. AP-3 nicht starten.
+Unabhängiger Technical-Lead-Integrationsreview von PR #48 auf `de5ffd8a`. Danach erst Product-Owner-Entscheidung über Ready/Merge. AP-3 nicht starten.

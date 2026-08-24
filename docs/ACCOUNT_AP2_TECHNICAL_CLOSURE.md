@@ -4,7 +4,9 @@ Stand: 24. August 2026
 Reviewer: ChatGPT / Technical Lead  
 PR: #48 – `feat/account-ap2`  
 Runtime-Head: `e9b2f834edc925b12e8b5a667f0e4382642eae8f`  
-Verdict: **PASS / TECHNICAL CLOSURE**
+Verdict: **PASS / TECHNICAL CLOSURE** (alter gestapelter Stack)
+
+> Hinweis des Implementierungsagenten, 24. August 2026: Dieses Verdict gilt für den **vor** dem Main-Sync gültigen Runtime-Head `e9b2f834`. Nach Rebase auf `main` `084f7c87` und Retarget von PR #48 ist ein **neuer** unabhängiger Technical-Lead-Integrationsreview auf Runtime-Head `de5ffd8a91576a2281b6d5eda75338504a43b7a7` erforderlich. Dieser Hinweis ist kein neues Technical-Lead-Verdict.
 
 ## Unabhängiger Re-Review
 
@@ -36,4 +38,4 @@ Kein neuer Defekt im freigegebenen AP-2-Scope gefunden. Keine DB-/Migration-/RLS
 
 Technical Closure ist **keine** Product-Owner-Freigabe für Mark Ready oder Merge.
 
-PR #48 bleibt Draft. AP-3 darf nicht starten. Da AP-2 auf AP-1 / PR #43 gestapelt ist, muss die spätere Integrationsreihenfolge separat sauber behandelt werden.
+PR #48 bleibt Draft. AP-3 darf nicht starten. AP-1 / PR #43 ist inzwischen nach `main` gemergt (`084f7c87`); der nachfolgende Main-Sync von AP-2 braucht ein eigenes Integrationsreview und keine automatische Übernahme dieses Verdicts.

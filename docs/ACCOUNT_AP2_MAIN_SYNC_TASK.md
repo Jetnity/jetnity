@@ -2,7 +2,7 @@
 
 Stand: 24. August 2026
 
-Status: **GO ACCOUNT AP-2 MAIN SYNC – Draft bleibt Draft**
+Status: **DONE – mit `main` `084f7c87` synchronisiert, PR #48 retargetet, Exact-Head `de5ffd8a` gegated; Draft bleibt Draft, wartet auf Integrationsreview**
 
 Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`
 
