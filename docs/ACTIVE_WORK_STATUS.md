@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 vollständig integriert; Account AP-1, Admin Slice A und Provider Ops S1 bleiben parallele Draft-Workstreams; dieser Branch implementiert Provider Readiness S2 / FlugNachweis auf Draft-PR #51**
+Status: **PR #38 vollständig integriert; Account AP-1, Admin Slice A und Provider Ops S1 bleiben parallele Draft-Workstreams; dieser Branch hat Provider Readiness S2/S2-B1 auf Draft-PR #51 umgesetzt und wartet auf Technical-Lead-Re-Review**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
