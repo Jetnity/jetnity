@@ -308,7 +308,9 @@ Entfernt wurden 63 Endpunkte: alle KI- und Modell-Endpunkte, die Media- und Vide
 
 Duffel ist der erste Datenadapter, nicht die Produktarchitektur. Search und Booking/Affiliate sind getrennt; `booking_url` bleibt `null`. Ein späterer Skyscanner- oder Aviasales-Adapter implementiert dasselbe `FlightProvider`-Interface. Amadeus Self-Service ist eingestellt und nicht angebunden.
 
-Production bleibt hart aus. Development/Preview brauchen `JETNITY_FLIGHT_AKTIV` und `DUFFEL_ACCESS_TOKEN` (`duffel_test_…`). Fehlende Credentials sind Feature-unavailable, kein Buildfehler. Fachlich: [docs/FLUEGE.md](docs/FLUEGE.md), ADR-0062 bis ADR-0065.
+Production bleibt hart aus. Development/Preview brauchen `JETNITY_FLIGHT_AKTIV` und `DUFFEL_ACCESS_TOKEN` (`duffel_test_…`). Fehlende Credentials sind Feature-unavailable, kein Buildfehler.
+
+Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `FlugNachweis` gegen Legs, Passagiere, Kabine und Währung. Heute sind Nachweis und Suchkontext-Speicher `null` – fail closed. Guest-LocalStorage und Guest → Account stufen unbewiesene Flugoptionen nicht zu belegter kommerzieller Wahrheit hoch. Route Truth bleibt Foundation D. Fachlich: [docs/FLUEGE.md](docs/FLUEGE.md), ADR-0062 bis ADR-0065 und ADR-0155.
 
 ### Flughafenbasis (Phase 3.1)
 

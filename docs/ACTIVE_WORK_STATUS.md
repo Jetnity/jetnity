@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 vollständig integriert; Account AP-1, Admin Slice A und Provider Ops S1 als parallele Draft-Workstreams aktiv**
+Status: **PR #38 vollständig integriert; Account AP-1, Admin Slice A und Provider Ops S1 bleiben parallele Draft-Workstreams; dieser Branch implementiert Provider Readiness S2 / FlugNachweis auf Draft-PR #51**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -77,11 +77,20 @@ Implementierungs-Draft-PR: **#47**
 Auftrag: `docs/PROVIDER_OPS_S1_TASK.md`  
 Status: `docs/PROVIDER_OPS_S1_STATUS.md`
 
-Aktiver Slice:
-
 **S1 – gemeinsamer technischer Operationsvertrag.** Technical Closure / PASS auf Exact Head `b74096a9`. Draft-PR #47 wartet auf Product-Owner-Entscheidung.
 
-Grenze: keine Fachwahrheit, kein `UniversalProvider`, kein `FlugNachweis`, keine persistente Kostenschranke, keine Provideraktivierung, keine Secrets, keine DB-/Production-Migration. S2 nur mit neuem Auftrag.
+### Provider Readiness – S2 FlugNachweis
+
+Implementierungsbranch: `feat/provider-flight-evidence-s2`  
+Implementierungs-Draft-PR: **#51**  
+Auftrag: `docs/PROVIDER_READINESS_S2_FLUGNACHWEIS_TASK.md`  
+Status: `docs/PROVIDER_READINESS_S2_STATUS.md`
+
+Aktiver Slice:
+
+**S2 – serverseitiger `FlugNachweis` für Flug-Kontoübernahme und kommerzielle Flug-Persistenz.** Browser sendet nur `tripId`, `dayId`, `optionId`. Guest und Guest → Account bleiben fail-closed bzw. stufen unbewiesene Flugoptionen nicht hoch.
+
+Grenze: kein Live-Duffel, keine Provideraktivierung, keine Secrets, keine DB-/Production-Migration, kein S3–S6, kein Offer-Booking. `booking_url` bleibt `null`. Route Truth bleibt Foundation D.
 
 ## 4. Parallelitätsregel
 
@@ -118,7 +127,7 @@ Wenn sie gestartet wird:
 
 ## 6. Governance
 
-- PR #43, PR #44, PR #45 und PR #47 bleiben Draft.
+- PR #43, PR #44, PR #45, PR #47 und PR #51 bleiben Draft.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
@@ -128,6 +137,6 @@ Wenn sie gestartet wird:
 
 1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
 2. `Admin platform audit` implementiert ausschließlich Slice A auf PR #44.
-3. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung; kein Mark Ready / kein Merge / kein S2.
-4. ChatGPT/Technical Lead prüft jeden Slice unabhängig.
-5. AP-2, Admin Slice B und Provider S2 brauchen jeweils eine neue ausdrückliche Freigabe.
+3. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung.
+4. Dieser Branch liefert S2 auf Draft-PR #51 und stoppt danach für den unabhängigen Technical-Lead-Review. Kein Mark Ready, kein Merge, kein S3.
+5. AP-2, Admin Slice B und Provider S3 brauchen jeweils eine neue ausdrückliche Freigabe.

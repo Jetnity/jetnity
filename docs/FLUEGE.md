@@ -1,6 +1,6 @@
 # Jetnity – Flüge
 
-**Stand:** 22. August 2026 · Phase 3.1 plus Coverage/Booking Status; Route-Itinerary auf Draft-PR #34  
+**Stand:** 24. August 2026 · Phase 3.1 plus Coverage/Booking Status; Route-Itinerary Foundation D; Provider Readiness S2 / `FlugNachweis` auf Draft-PR #51  
 **Gilt für:** die interne Flugdomäne, den ersten Duffel-Adapter, das Ranking, die Übernahme in die Reise und die persistierte Route Truth.
 
 Diese Datei beschreibt den **tatsächlichen** Flugweg. Produktprinzip: [JETNITY_HANDOFF.md](../JETNITY_HANDOFF.md). Entscheidungen: ADR-0062 bis ADR-0066 in [DECISIONS.md](../DECISIONS.md). Die Flughafenbasis steht in [docs/FLUGHAFEN.md](FLUGHAFEN.md).
@@ -42,11 +42,14 @@ Suchanfrage (Browser)
 Übernahme:
 
 ```
-Nutzer wählt Option
-  → Zod erneut
-    → Momentaufnahme (Route, Termin, Preis, Provider, Ref, Itinerary)
+Browser sendet nur tripId, dayId, optionId
+  → FlugNachweis gegen Legs, Passagiere, Kabine, Währung, Gültigkeit
+    → bei Erfolg: Momentaufnahme aus nachgewiesener Option
       → Länder nur aus public.airports bzw. Such-Referenzkarte
-      → Gast: localStorage  |  Konto: INSERT trip_items inkl. metadata (RLS)
+      → Konto: INSERT trip_items inkl. metadata (RLS), booking_url = null
+      → ohne Nachweis oder Suchkontext: fail closed
+      → Gast: keine kommerzielle Provider-Flugpersistenz
+      → Guest → Account: unbewiesene Flug-Handelsfelder werden gestrichen
 ```
 
 | Schicht | Datei | Aufgabe |
@@ -59,7 +62,9 @@ Nutzer wählt Option
 | Gründe | `lib/flights/gruende.ts` | 2–4 Sätze für „Jetnity empfiehlt“ |
 | Orchestrierung | `lib/flights/suche.ts` | Zustand → Limit → Provider → Ranking |
 | Client-Sicht | `lib/flights/client-sicht.ts` | keine Tokens, kein Score, keine Rohfelder |
-| Übernahme | `lib/flights/uebernahme.ts` | Option → kommerzieller Planpunkt inkl. Itinerary |
+| Übernahme | `lib/flights/uebernahme.ts` | nachgewiesene Option → kommerzieller Planpunkt inkl. Itinerary |
+| Nachweis | `lib/flights/nachweis.ts` | `FlugNachweis` bindet optionId an Suchkontext; Umgebung ist `null` |
+| Konto-Grenze | `lib/flights/konto-uebernahme.ts` | identifiers + Nachweis + Graph, fail closed |
 | Route Truth | `lib/route/` | Segmente, Transit, Fingerprint, Metadata-Hülle |
 | Duffel | `lib/flights/duffel/*` | erster Daten-/Entwicklungsadapter |
 
@@ -129,4 +134,4 @@ Das In-Memory-Limit gilt je Serverless-Instanz. Das ist für Development/Preview
 3. `JETNITY_FLIGHT_AKTIV=true`
 4. Nicht in Production setzen, kein Live-Token
 
-Die Development-Migration `20260820100000_reise_anlegen_handelsfelder.sql` muss auf dem Development-Branch angewendet werden, damit eine Gastreise mit Flug beim Login Preis und Provider behält. Production nicht ohne Freigabe.
+Guest → Account übernimmt keine unbewiesenen Flugpreise, Provider oder External-Refs. Route-Itinerary bleibt Foundation-D-Intake und wird vor `reise_anlegen` kanonisiert. Production-Migrationen bleiben ein separates Gate.

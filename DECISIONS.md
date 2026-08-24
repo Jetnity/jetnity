@@ -3771,6 +3771,27 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0155 – Konto-Flugübernahme nur über serverseitigen FlugNachweis
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #51 / Provider Readiness S2; kein echter Provider, kein Mark Ready / kein Merge
+
+**Entscheidung:** Eine kommerzielle Flugübernahme speichert keine Browseroption. Der Client liefert nur identifiers (`tripId`, `dayId`, `optionId`). Preis, Zeiten, Provider, External-Ref, Kabine und Legs kommen aus einem serverseitigen `FlugNachweis` plus dem per RLS geladenen Reisegraphen und einem serverseitig belegten Suchkontext. Solange Nachweis oder Suchkontext fehlen, fällt die Übernahme fail closed. `booking_url` bleibt `null`. Guest persistiert keine kommerzielle Provider-Flugoption. Guest → Account streicht unbewiesene Flug-Handelsfelder und darf sie nicht zu belegter Wahrheit hochstufen. Route Truth bleibt Foundation D; S2 baut keine zweite Route und keine Route-Heuristik.
+
+**Kontext:** Nach S1 (ADR-0154) war die Flug-Kontoübernahme der offene P0-Trust-Gap: Zod prüfte die volle Browser-`FlugOption` und persistierte Preis, Zeiten und Refs. Hotels und Aktivitäten hatten die Nachweisgrenze bereits.
+
+**Alternativen:**
+
+1. *HMAC-Signatur der Suchergebnisse.* Zweckentfremdet Secrets und schützt nicht vor späteren Preisänderungen.
+2. *Suchkontext aus Origin-/Etappennamen ableiten.* Wäre eine Route-Heuristik und eine zweite Route Truth.
+3. *Guest weiter kommerziell persistieren und nur das Konto sperren.* Guest → Account würde unbewiesene Optionen nachträglich adeln.
+
+**Begründung:** Dieselbe Trust-Grenze wie `HotelNachweis` muss stehen, bevor ein Flugadapter aktiv wird. Tests injizieren einen Fake-Katalog. Ein persistenter Suchkontext-Speicher oder Offer-Provenance wäre S5 und braucht einen eigenen Auftrag.
+
+**Konsequenzen:** `flugNachweisAusUmgebung()` gibt heute `null` zurück. Die Server Action übergibt keinen Client-Suchkontext. Der erste Nachweis-Adapter muss optionId gegen Legs, Passagiere, Kabine, Währung und Gültigkeit binden. Keine DB-Migration, keine Secrets, keine Provideraktivierung.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

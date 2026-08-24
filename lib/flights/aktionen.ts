@@ -1,19 +1,20 @@
 // lib/flights/aktionen.ts
 //
-// Übernimmt eine geprüfte Flugoption in eine Reise im Konto.
-//
-// Die Option kommt aus dem Browser und wird erneut gegen das Jetnity-Schema
-// geprüft. bookingUrl bleibt null. RLS prüft das Eigentum.
+// Übernimmt eine serverseitig nachgewiesene Flugoption in eine Reise im Konto.
+// Der Browser liefert nur identifiers. bookingUrl bleibt null. RLS prüft das Eigentum.
 
 'use server'
 
 import { revalidatePath } from 'next/cache'
 
-import { alsFlugMomentaufnahme } from '@/lib/flights/uebernahme'
+import { flugKontoUebernahmePruefen } from '@/lib/flights/konto-uebernahme'
+import { flugNachweisAusUmgebung } from '@/lib/flights/nachweis'
 import { ersteFlugmeldung, flugKontoUebernahmeSchema } from '@/lib/flights/schema'
+import { alsFlugMomentaufnahme } from '@/lib/flights/uebernahme'
 import { flughafenReferenzLesen, iatasAusOption } from '@/lib/route/flughafen-lesen'
 import { metadataAusItinerary } from '@/lib/route/metadata'
 import { NICHT_ANGEMELDET, konto, meldungAus, type Aktionsergebnis } from '@/lib/trips/anlegen'
+import { reiseLaden } from '@/lib/trips/daten'
 import type { Json } from '@/types/supabase'
 
 export async function flugInReiseUebernehmen(eingabe: unknown): Promise<Aktionsergebnis<null>> {
@@ -23,16 +24,37 @@ export async function flugInReiseUebernehmen(eingabe: unknown): Promise<Aktionse
   const { supabase, benutzerId } = await konto()
   if (!benutzerId) return { ok: false, meldung: NICHT_ANGEMELDET }
 
-  const refs = await flughafenReferenzLesen(iatasAusOption(geprueft.data.option), supabase)
-  const aufnahme = alsFlugMomentaufnahme(geprueft.data.option, refs)
-  if (!aufnahme) return { ok: false, meldung: 'Diese Flugoption ist unvollständig.' }
+  const geladen = await reiseLaden(geprueft.data.tripId)
+  if (geladen.problem) {
+    return {
+      ok: false,
+      meldung:
+        geladen.problem.status === 503
+          ? 'Die Reise konnte gerade nicht geladen werden. Bitte versuche es in einem Moment erneut.'
+          : 'Die Reise konnte nicht geladen werden.',
+    }
+  }
+
+  const reise = geladen.zeilen[0]
+  if (!reise) return { ok: false, meldung: 'Diese Reise wurde nicht gefunden.' }
+
+  const gepruefteUebernahme = await flugKontoUebernahmePruefen(geprueft.data, {
+    nachweis: flugNachweisAusUmgebung(),
+    reise,
+    suche: null,
+  })
+  if (!gepruefteUebernahme.ok) return { ok: false, meldung: gepruefteUebernahme.message }
+
+  const refs = await flughafenReferenzLesen(iatasAusOption(gepruefteUebernahme.option), supabase)
+  const aufnahme =
+    alsFlugMomentaufnahme(gepruefteUebernahme.option, refs) ?? gepruefteUebernahme.aufnahme
 
   let zaehlung = supabase
     .from('trip_items')
     .select('id', { count: 'exact', head: true })
     .eq('trip_id', geprueft.data.tripId)
-  zaehlung = geprueft.data.dayId
-    ? zaehlung.eq('day_id', geprueft.data.dayId)
+  zaehlung = gepruefteUebernahme.dayId
+    ? zaehlung.eq('day_id', gepruefteUebernahme.dayId)
     : zaehlung.is('day_id', null)
 
   const { count, error: zaehlfehler } = await zaehlung
@@ -41,7 +63,7 @@ export async function flugInReiseUebernehmen(eingabe: unknown): Promise<Aktionse
 
   const { error, status } = await supabase.from('trip_items').insert({
     trip_id: geprueft.data.tripId,
-    day_id: geprueft.data.dayId,
+    day_id: gepruefteUebernahme.dayId,
     kind: 'flight',
     title: aufnahme.title,
     note: aufnahme.note,

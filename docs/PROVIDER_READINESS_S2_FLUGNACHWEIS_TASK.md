@@ -1,7 +1,7 @@
 # Jetnity – Provider Readiness S2 / FlugNachweis
 
 Stand: 24. August 2026  
-Status: **beauftragt / noch keine Runtime-Implementierung**  
+Status: **Runtime implementiert / Gates und Technical-Lead-Review ausstehend**  
 Branch: `feat/provider-flight-evidence-s2`  
 Base: `main` @ `01761eb9ba80828e87ca2da201901e0e211e1719`  
 Vorgänger: PR #47 / S1 Shared Operational Contract – **MERGED / Technical Closure**

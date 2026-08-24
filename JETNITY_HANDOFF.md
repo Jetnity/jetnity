@@ -1,11 +1,11 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D, Foundation E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence – Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal Foundation ist auf main; dieser Branch ist Provider Readiness S2 / FlugNachweis, Draft-PR #51**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
-Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Provider Ops S1 (dieser Branch) zusätzlich in `docs/PROVIDER_OPS_S1_STATUS.md` und `docs/PROVIDER_OPS_S1_HANDOFF.md`.
+Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Provider Readiness S2 (dieser Branch) zusätzlich in `docs/PROVIDER_READINESS_S2_STATUS.md` und `docs/PROVIDER_READINESS_S2_HANDOFF.md`.
 
 > **Kein relevanter Fortschritt darf beim Wechsel von Chat, Agent oder Sitzung verloren gehen. Was für die Fortsetzung wichtig ist, gehört ins Repository.**
 
@@ -297,7 +297,7 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. **→ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
-6. Provider-Readiness-/Adapter-Lücken schließen – **S1 Shared Operational Contract Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`; wartet auf Product-Owner-Entscheidung**
+6. Provider-Readiness-/Adapter-Lücken schließen – **S1 Technical Closure / PASS auf Draft-PR #47; S2 FlugNachweis auf Draft-PR #51 in Implementierung**
 7. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 8. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 9. echte Providerphase
@@ -312,19 +312,19 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-Aktiver Branch: `feat/travel-timing-seasonal-intelligence`  
-Draft PR: `#38`  
-Basis: `origin/main` @ `cd220beb`  
-Runtime-Head: `57824019`
+Aktiver Branch: `feat/provider-flight-evidence-s2`  
+Draft PR: `#51`  
+Basis: `origin/main` @ `01761eb9`  
+Auftrag: `docs/PROVIDER_READINESS_S2_FLUGNACHWEIS_TASK.md`
 
-1. Ist-Audit ist gegen den tatsächlichen Code verifiziert.
-2. Seasonal-Runtime sowie Review-Blocker 1–31 sind geschlossen. Untrusted Intake persistiert keine Client-Surface; `FlugOption` erfindet keine Evidence aus Segmentnachbarschaft.
-3. Full Gate auf Runtime `57824019` ist lokal und remote grün (1703/1703 Tests, UI-Audit 1014/1014, Build Exit 0, GitHub Actions SUCCESS, Vercel Preview READY).
-4. PR bleibt Draft. Kein echter Seasonal-Provider, kein Secret, keine unfreigegebenen Kosten, keine Production-Migration, kein Merge ohne aktuelle Product-Owner-Freigabe.
-5. **Exakter nächster Schritt:** Product-Owner-Entscheidung zu Mark Ready / Merge. Technical Closure ersetzt diese Freigabe nicht. Production-Migration bleibt ein separates Gate.
+1. S2 hebt die Flug-Kontoübernahme auf dieselbe Trust-Grenze wie Hotels: Browser sendet nur identifiers.
+2. `flugNachweisAusUmgebung()` ist `null`; ohne serverseitigen Suchkontext bleibt die Übernahme fail-closed.
+3. Guest persistiert keine kommerzielle Provider-Flugoption. Guest → Account streicht unbewiesene Flug-Handelsfelder.
+4. PR bleibt Draft. Kein Live-Duffel, kein Secret, keine unfreigegebenen Kosten, keine Production-Migration, kein Merge ohne aktuelle Product-Owner-Freigabe.
+5. **Exakter nächster Schritt:** Exact-Head-Gates abschließen und für den unabhängigen Technical-Lead-Review stoppen. Technical Closure ersetzt keine Product-Owner-Freigabe.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
 Leitsatz:
 
-> **Safety ist fertig als akute Truth-Domäne. Seasonal wird als getrennte, evidenzbasierte saisonale Wahrheit gebaut – beide verstehen dieselbe Reise, vermischen ihre Aussagen aber nicht.**
+> **Browserdaten dürfen keine kommerzielle Flugwahrheit persistieren. Nachweis oder fail-closed – keine dritte Wahrheit.**
