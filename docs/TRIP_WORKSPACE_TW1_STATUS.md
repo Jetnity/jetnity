@@ -60,15 +60,19 @@ Nicht umgesetzt und bewusst nicht vorgetäuscht:
 
 ## Exact Head
 
-`0484e8d74b7cbbe3d36666da82c521ebe9775788`
+Der verbindliche Review-Head ist der aktuelle Branch-Head von `feat/trip-workspace-tw1-shell-device-parity` nach diesem Status-Nachzug. CI und Vercel müssen genau darauf SUCCESS/READY sein.
 
-ahead 6 / behind 0 gegenüber `origin/main` `1bc1e1f4`.
+Verifizierte Vorgänger, Runtime unverändert seit:
 
-Runtime-Head vor dem Status-Nachzug: `d087b6d38f5bff2b712fbb498dade637d478f1e1`. Dieser Docs-Commit ändert keine Runtime-Dateien.
+- `d087b6d38f5bff2b712fbb498dade637d478f1e1` – Runtime + Tests
+- `0484e8d74b7cbbe3d36666da82c521ebe9775788` – Status-/Handoff-Dokumentation
+- `70f2107bec44a5fed698ef22210e45687bc9815d` – SHA-Lock-Nachzug
+
+ahead/behind gegenüber `origin/main` `1bc1e1f4`: 0 behind.
 
 ## Lokale Gates
 
-Auf Runtime-Head `d087b6d3` und erneut auf diesem Exact Head, soweit unten nicht anders gekennzeichnet:
+Erneut auf `0484e8d7` ausgeführt, alle grün:
 
 - `check:setup:ci` – 1 Warning: keine `.env` im Cloud-Agent
 - `typecheck`
@@ -80,7 +84,7 @@ Auf Runtime-Head `d087b6d3` und erneut auf diesem Exact Head, soweit unten nicht
 - `npm run build` – Production-Build 45/45 Seiten, Compiled successfully
 - `audit:trip-workspace` auf Runtime-Head `d087b6d3` – **1018/1018, 0 Fehler**, WebKit + Chromium, Viewports 280–1280 inkl. Tabwechsel 390/430/768/1280
 
-GitHub Actions und Vercel müssen auf **genau diesem Exact Head** SUCCESS/READY sein. Ältere grüne Runs auf `d087b6d3` gelten nicht als Proof für `0484e8d7`.
+Nach diesem Commit werden die lokalen Gates ohne Runtime-Änderung erneut auf dem neuen Head ausgeführt. Ältere grüne CI-Läufe auf `d087b6d3` gelten nicht als Proof für den Review-Head.
 
 ## Self-Review
 
