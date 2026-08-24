@@ -3742,6 +3742,29 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0152 – Provider-Readiness: minimaler Operationsvertrag, getrennte Fachports
+
+**Datum:** 24. August 2026  
+**Status:** Audit-Entscheidung auf Draft-PR #45 / nicht implementiert
+
+**Entscheidung:**
+
+- Vor der echten Providerphase schliesst Jetnity die **Jetnity-seitigen** Nachweis-, Kosten-, Failure- und Observability-Verträge.
+- Ein **minimaler gemeinsamer Operationsvertrag** ist zulässig und empfohlen (Request-Härtung, Failure-Taxonomie, Kill-Switch-Form, Cost-Guard-Interface, Observability-Event ohne Payload, kommerzielle Nachweis-Form).
+- Eine gemeinsame Provider-Plattform, ein gemeinsames Offer-Modell oder eine gemeinsame Official-/Safety-/Seasonal-Wahrheit ist **unzulässig**.
+- Konkrete Adapter bleiben in der späteren Providerphase und werden nicht auf angenommenen Schemas gebaut.
+- Fehlende Factories/`null` sind kein Foundation-Defekt.
+
+**Kontext:** `docs/PROVIDER_READINESS_AUDIT.md` gegen den Code auf `audit/provider-readiness`. Acht Domain-Rate-Limiter und zwei Nachweis-Stile sind bereits divergiert. Flights persistiert Browser-`FlugOption`en, Hotels nicht.
+
+**Alternativen:** Jede Domäne weiter isoliert härten; sofort echte Adapter bauen; eine Universal-Provider-Schicht einführen.
+
+**Begründung:** Operationsdrift ist der billigste Weg, den ersten bezahlten Adapter unsicher zu machen. Fachliche Wahrheit darf trotzdem nicht in einer Plattform verschwinden. Policy und AGENTS.md Regel 19 bleiben.
+
+**Konsequenzen:** Implementierung nur über die Slices in `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` nach Review und neuem Auftrag. PR #45 bleibt Draft. Keine Secrets, keine Kosten, keine Migration, kein Mark Ready, kein Merge durch diesen ADR.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

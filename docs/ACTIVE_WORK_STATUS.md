@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 vollständig integriert; Account AP-1 und Admin Slice A als parallele aktive Implementierungsworkstreams gestartet**
+Status: **PR #38 integriert; Account AP-1 und Admin Slice A parallel aktiv; Provider-Readiness Audit auf Draft-PR #45 – AUDIT-PASS, wartet auf unabhängigen Review**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -9,110 +9,107 @@ Status: **PR #38 vollständig integriert; Account AP-1 und Admin Slice A als par
 
 - PR #38: **gemergt und geschlossen**
 - unabhängiger ChatGPT-Review R17: **PASS / Technical Closure**
-- final geprüfter Runtime-Head: `5782401943b41ddd1eea1337c93cb37163210362`
-- finaler PR-Head vor Merge: `1a61d21fe853c77faa1109ae0828e39f3629098a`
 - Squash-Merge auf `main`: `ee988bbe46a8dd63d4001c42825fc0159453f811`
 - Production-Integration: `docs/PR38_PRODUCTION_INTEGRATION.md`
-- R17-Review: `docs/PR38_CHATGPT_R17_REVIEW.md`
 
-Der PR-#38-Review-Loop ist beendet. Kein neuer Review-Rundlauf ohne konkrete neue Runtime-Änderung oder neuen belegbaren Defekt.
+Safety und Seasonal nicht erneut als Foundation bauen.
 
-## 2. Production-Status
+## 2. Aktive Workstreams
 
-Vercel:
+### Provider-Readiness Audit
 
-- Production Deployment nach PR-#38-Integration: **READY**
+Verantwortlicher Cursor-Anzeigename: `Jetnity provider readiness audit`  
+Branch: `audit/provider-readiness`  
+Draft-PR: **#45**  
+Auftrag: `docs/PROVIDER_READINESS_AUDIT_TASK.md`  
+Status: **AUDIT-PASS / dokumentiert / keine Implementierungsfreigabe**
 
-Supabase Production `qscbgcdmivbbnzrcyegn`:
+Deliverables auf diesem Branch:
 
-- Status: **ACTIVE_HEALTHY**
-- `20260824120000_flug_route_itinerary_surface_evidence`: angewendet
-- `20260824140000_flug_route_itinerary_untrusted_surface`: angewendet
-- Migration-History ist auf die Repository-Versionen ausgerichtet.
-- `public.flug_route_itinerary_metadata(text,jsonb)` ist SECURITY INVOKER.
-- `anon`: kein EXECUTE.
-- `authenticated`: EXECUTE.
-- manipuliertes Client-`surfaceFromAirportCode` wird live auf Production verworfen.
+- `docs/PROVIDER_READINESS_AUDIT.md`
+- `docs/PROVIDER_READINESS_MATRIX.md`
+- `docs/PROVIDER_READINESS_SHARED_CONTRACT_PROPOSAL.md`
+- `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md`
 
-Keine Seasonal-Tabelle, kein Live-Seasonal-Provider, keine neuen Secrets und keine neuen laufenden Providerkosten.
-
-## 3. Aktive Workstreams
+Harte Grenze: keine Runtime-Implementierung, keine echten Provider, keine Secrets, keine kostenpflichtigen Calls, keine Verträge, keine Production-Migration, kein Mark Ready, kein Merge.
 
 ### Account Platform – AP-1
 
-Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`  
-Audit-Referenz: Draft-PR #39 / `audit/account-platform` – **AUDIT-PASS**  
-Implementierungsbranch: `feat/account-ap1`  
 Implementierungs-Draft-PR: **#43**  
-Auftrag: `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`
-
-Aktiver Slice:
-
-**AP-1 – Account-Shell + persönliche Übersicht / „Meine Reisen“ als Account-Hub.**
-
-Grenze: UI/IA und bestehende `reisenLaden()`-Truth. Keine neue Auth-/Trip-/Traveller-/Billing-/Route-Truth, keine DB-Migration, keine Homepage-Änderung.
+Auftrag: `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`  
+Grenze: UI/IA und bestehende `reisenLaden()`-Truth.
 
 ### Admin Platform – Slice A
 
-Verantwortlicher Cursor-Anzeigename: `Admin platform audit`  
-Audit-Referenz: Draft-PR #40 / `audit/admin-platform` – **AUDIT-PASS**  
-Implementierungsbranch: `feat/admin-control-center-ia`  
 Implementierungs-Draft-PR: **#44**  
-Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`
+Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`  
+Grenze: Admin-UI/IA. Kein System Health in Slice A. Keine Provider-/Secret-/Kosten-Aktivierung.
 
-Aktiver Slice:
+## 3. Parallelitätsregel
 
-**Admin Slice A – ehrliche professionelle Control-Center-IA / bestehende Legacy-Scheinzustände entfernen.**
+Account AP-1, Admin Slice A und dieser **dokumentierende** Audit dürfen parallel laufen.
 
-Grenze: Admin-UI/IA, ehrliche Zustände und vorhandene Security-Gates. Keine neue DB/Migration, keine Capability-/RLS-Neudefinition, kein System Health in diesem Slice, keine Provider-/Secret-/Kosten-Aktivierung.
+Seriell/zentral bleiben:
 
-Danach als eigener Slice: read-only System Health für Vercel, Supabase, GitHub, App und später Infomaniak.
-
-## 4. Parallelitätsregel
-
-Account AP-1 und Admin Slice A dürfen parallel arbeiten.
-
-Seriell/zentral bleiben insbesondere:
-
-- Auth / Identity / Sessions / MFA / AAL
-- `profiles`, Rollen, Capabilities
-- RLS / Ownership / Service Role
-- Guest→Account / Trip Graph
-- Traveller / Credentials / Readiness
-- Route / Safety / Seasonal Truth
-- Privacy Export / Delete
-- Billing / Payment / Refund / Bexio
-- Admin Audit Trail
+- Shared Provider-Ops-Contract (PR-S1), sobald implementiert
+- Auth / RLS / Capabilities
+- Traveller / Route / Safety / Seasonal Truth
+- Billing
 - Provider Activation / Secrets / Kosten
+- persistenter Cost Guard (PR-S6, DB-Gate)
 
-Nach jedem Implementierungsslice: Self-Review + technische Gates + unabhängiger ChatGPT/Technical-Lead-Review, bevor der jeweilige nächste Slice beginnt.
+## 4. Tests / CI / Preview
 
-## 5. Homepage
+- Dieser Block ändert nur Dokumentation. Keine Runtime-Änderung, daher kein neuer Product-Build als Abschlussbehauptung.
+- Bestehende Provider-Contract-Tests wurden zur Verifikation der Befunde gelesen; sie wurden in diesem Block nicht umgeschrieben.
+- CI von PR #45 vor den Audit-Docs: Typecheck/Lint/Build SUCCESS, Auth-Check SUCCESS, Vercel SUCCESS (Task-Commit `f53bafcf`).
+- Nach diesem Docs-Push muss CI erneut gelesen werden. Grün dieser Datei nicht vorziehen.
 
-Die neue Homepage-Produktseiten-Idee ist dauerhaft in `docs/HOMEPAGE_PRODUCT_PAGE_DIRECTION.md` gespeichert und bleibt derzeit **pausiert**.
+## 5. DB / RLS / Production-Grenze
 
-Wenn sie gestartet wird:
+Keine Migration, keine RLS-Änderung, keine Production-Änderung durch diesen Audit.
 
-- eigener konfliktarmer visueller Workstream;
-- zuerst separate visuelle Preview;
-- bestehende starke Texte selektiv behalten;
-- moderne Tech-Produktseite mit großen Bildern, viel Weißraum, hochwertiger Typografie und Animationen;
-- keine neue Funktionslogik;
-- Header-/Footer-Funktionalität nicht verändern;
-- bestehende Homepage erst nach ausdrücklicher Product-Owner-Freigabe ersetzen.
+Production-Flight-Kill-Switch und alle `*ProviderAus() === null` bleiben unverändert.
 
-## 6. Governance
+## 6. Kosten / Provider / Secrets
 
-- PR #43 und PR #44 bleiben Draft.
-- Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
-- Production-Migrationen bleiben separate Gates.
-- Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
-- Fortschritt und Entscheidungen müssen im Repository dokumentiert werden.
+Keine neuen laufenden Kosten. Keine Secrets. Keine Provideraktivierung.
 
-## 7. Exakter nächster Schritt
+Belegte Aktivierungsblocker, falls jemand trotzdem einschalten würde:
 
-1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
-2. `Admin platform audit` implementiert ausschließlich Slice A auf PR #44.
-3. Beide liefern Self-Review, Tests/Gates und Handoff.
-4. ChatGPT/Technical Lead prüft beide unabhängig.
-5. Erst danach werden AP-2 bzw. Admin Slice B freigegeben.
+- P0: Flugübernahme ohne `FlugNachweis`
+- P0: In-Memory-Rate-Limits sind kein globaler Production-Cost-Guard
+
+## 7. Bekannte Risiken / Review-Funde
+
+Siehe Audit-Katalog PR-P0-01 bis PR-P1-09. Wichtigste proaktive Punkte:
+
+- Flights ist der einzige Pfad, der Browser-Preise persistieren kann.
+- Mobility Auto-Search wäre mit Live-Adapter ein Kostenleck.
+- Safety-API setzt `party: []`.
+- Handoff/Roadmap hingen vor diesem Update noch an PR #38.
+
+## 8. Offene Nutzerentscheidungen / Freigaben
+
+- Unabhängiger Review von PR #45
+- Ob PR-S1 als nächster Provider-Readiness-Implementierungsblock beauftragt wird
+- Keine Merge-Freigabe erteilt
+- Provider/Secrets/Verträge/Kosten bleiben eigene Gates
+
+## 9. Exakter nächster Schritt
+
+1. ChatGPT/Technical Lead reviewed PR #45 nach `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md`.
+2. Account AP-1 und Admin Slice A laufen ungestört weiter.
+3. Kein Mark Ready und kein Merge von #45 ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+4. Keine Runtime-Slices aus diesem Audit starten, bevor ein neuer versionierter Auftrag existiert.
+
+## 10. Welche Dateien zuerst gelesen werden müssen
+
+1. `docs/PROVIDER_READINESS_AUDIT_TASK.md`
+2. `docs/PROVIDER_READINESS_AUDIT.md`
+3. `docs/PROVIDER_READINESS_MATRIX.md`
+4. `docs/PROVIDER_READINESS_SHARED_CONTRACT_PROPOSAL.md`
+5. `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md`
+6. `docs/PROVIDER_INTEGRATION_READINESS_POLICY.md`
+7. `docs/ACTIVE_WORK_STATUS.md`
+8. aktueller PR #45 / Branch-Head

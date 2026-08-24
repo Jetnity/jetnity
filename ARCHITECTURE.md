@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
-Stand: 23. August 2026
-Gültig für: Foundation D und E auf `main` und Production; Travel Safety & Disruption Intelligence gemergt auf `main`; Travel Timing & Seasonal Intelligence als provider-neutrale Foundation auf Draft-PR #38, Runtime `263c2f84`. Production-Schema unverändert durch diesen Block.
+Stand: 24. August 2026
+Gültig für: Foundation D und E, Travel Safety & Disruption sowie Travel Timing & Seasonal auf `main`; Provider-Readiness-Ist-Stand inventarisiert auf Draft-PR #45. Production-Schema unverändert durch den Audit-Block.
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -371,7 +371,7 @@ Fachlich: [docs/TRAVEL_SAFETY_DISRUPTION.md](docs/TRAVEL_SAFETY_DISRUPTION.md).
 
 ### Travel Timing & Seasonal Intelligence (provider-neutrale Foundation)
 
-Draft-PR #38 auf `feat/travel-timing-seasonal-intelligence`. `lib/seasonal/` ist eine eigene Truth-Domäne neben Safety. `seasonalProviderAus()` gibt `null` zurück. Tests dürfen einen Port injizieren. Kategorie, Evidence-Klasse, Outcome, Freshness, Reference Period, Travel Window, räumliche Relevanz, Impact und Präsentationsklasse bleiben getrennt (ADR-0133, ADR-0134, ADR-0135, ADR-0136, ADR-0137, ADR-0138, ADR-0139, ADR-0140).
+PR #38 ist auf `main` gemergt. `lib/seasonal/` ist eine eigene Truth-Domäne neben Safety. `seasonalProviderAus()` gibt `null` zurück. Der provider-neutrale Ist-Stand aller Adaptergrenzen liegt in `docs/PROVIDER_READINESS_AUDIT.md`. Tests dürfen einen Port injizieren. Kategorie, Evidence-Klasse, Outcome, Freshness, Reference Period, Travel Window, räumliche Relevanz, Impact und Präsentationsklasse bleiben getrennt (ADR-0133, ADR-0134, ADR-0135, ADR-0136, ADR-0137, ADR-0138, ADR-0139, ADR-0140).
 
 `POST /api/seasonal/evaluate` ist geschlossen: nur `application/json`, höchstens 24 KB UTF-8, Rate-Limit, `Cache-Control: private, no-store`. Browser- oder LLM-Felder setzen keine Evidence. Route Truth kommt nur aus `routeFactsAusGraph`. Seasonal bleibt traveller-neutral. Der provider-neutrale Request trägt neben der groben Top-Level-Hülle kanonische Stage-Targets und getrennte Route-/Airport-Zeitkontakte aus derselben Foundation-D-Projektion; flache Country-/Airport-/Place-Mengen bleiben nur Hülle. Getrennte Airport-Besuche bleiben getrennte Kontakte. Recurring Windows sind inklusiv und jahressensitiv, inklusive Jahreswechsel und Leap-Day. Ohne explizites `freshUntil` gibt es kein `current`. `active_warning` / `acute` / `acute_event` erscheinen nicht als Seasonal-Hinweis und werden als `rejected_acute` materialisiert, niemals als `seasonal_pattern`, auch nicht kombiniert mit `temporarily_unavailable`. `seasonal_pattern` erzeugt weiterhin keine Safety-Warnung. Rückwärts laufende Trip- oder Stage-Datumsbereiche sind an der untrusted Seasonal-API ungültig; ein unerwartet umgekehrtes Intervall wird zeitlich `insufficient`, nicht `not_applies`. Eine widersprüchliche Top-Level-Hülle überstimmt konkrete Stage-/Route-Kontakte nicht. Items ohne eigene `stageId` erben eine belegte `day.stageId`. Date-only und Foundation-D-Ortszeiten bleiben zonenlos. Feinere Geo-Scopes ohne Membership bleiben `insufficient_context`. Teilweise malformed Antworten setzen `summary.complete=false`. Ein erfolgreicher Provider mit `[]` ist geprüftes Leergebnis, nicht unavailable, und keine optimale Reisezeit. Keine Seasonal-Tabelle. Die Übersicht zeigt den Block nur bei übergebenen Evaluations, nicht als permanente leere Karte. Keine automatische Reiseänderung.
 
@@ -455,6 +455,8 @@ Die beiden Produktionsdomains aus [JETNITY_VISION.md](JETNITY_VISION.md) sind da
 ## 10. Observability
 
 Aktuell nur Konsolen-Logging, kein zentrales Error-Tracking und keine strukturierte Log-Konvention. Ein Anbieter würde laufende Kosten verursachen und ist deshalb nicht ohne Freigabe eingeführt. Für die Launch-Reife ist eine kostengünstige Lösung vorgesehen (Backlog in [ROADMAP.md](ROADMAP.md)).
+
+Der Provider-Readiness Audit (Draft PR #45) bestätigt: keine Domain schreibt Provider-Health oder Kostentelemetrie. Ein späterer read-only Health-Hook darf nicht pauschal grün sein. Vorschlag: `docs/PROVIDER_READINESS_SHARED_CONTRACT_PROPOSAL.md` §3.5.
 
 ---
 
