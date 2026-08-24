@@ -3,11 +3,8 @@
 Stand: 24. August 2026
 Status: **Audit ausgeführt / AUDIT-PASS dokumentiert / keine Implementierungsfreigabe**
 Branch: `audit/provider-readiness`
-<<<<<<< HEAD
-Verantwortlicher Cursor-Anzeigename: `Jetnity provider readiness audit`
-=======
 Draft-PR: `#45`
->>>>>>> 57b7fa69 (docs: complete provider readiness audit)
+Verantwortlicher Cursor-Anzeigename: `Jetnity provider readiness audit`
 
 ## Ziel
 
