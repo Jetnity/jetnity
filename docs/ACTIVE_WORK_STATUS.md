@@ -1,15 +1,16 @@
 # Jetnity – Active Work Status
 
-Stand: **24. August 2026, 17:25 Europe/Zurich**  
-Status: **neuer ChatGPT Technical Lead live übernommen; docs-only Handoff-Nachzug in Draft-PR #52; keine neue Runtime-Arbeit gestartet**
+Stand: **24. August 2026, 17:35 Europe/Zurich**  
+Status: **neuer ChatGPT Technical Lead live übernommen; vollständige Account-/Admin-/Provider-Programmfortführung vom Product Owner verbindlich klargestellt; keine neue Runtime-Arbeit gestartet**
 
 Aktuell maßgebliche Übergabequellen:
 
 1. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-08-24.md` – verifizierter Übergabepunkt 16:45
 2. `docs/CHATGPT_TAKEOVER_LIVE_VERIFICATION_2026-08-24.md` – neuere Live-Verifikation 17:25
-3. `docs/CHATGPT_TECHNICAL_LEAD_CONTINUITY.md`
-4. `docs/NEW_CHAT_START_PROMPT_2026-08-24.md`
-5. `JETNITY_HANDOFF.md`
+3. `docs/DOMAIN_PROGRAM_COMPLETION_POLICY.md` – verbindliche vollständige Bereichsfortführung 17:35
+4. `docs/CHATGPT_TECHNICAL_LEAD_CONTINUITY.md`
+5. `docs/NEW_CHAT_START_PROMPT_2026-08-24.md`
+6. `JETNITY_HANDOFF.md`
 
 Wenn dieser Text später älter als GitHub/CI/Vercel/Supabase ist: **live verifizieren, nicht raten.** Historische Slice-Handoffs bleiben Evidence ihres damaligen Stands und dürfen nicht automatisch als heutiger Merge-/Production-Status gelesen werden.
 
@@ -17,7 +18,7 @@ Wenn dieser Text später älter als GitHub/CI/Vercel/Supabase ist: **live verifi
 
 ## 1. Aktueller Arbeitsblock
 
-Arbeitsblock: **ChatGPT Technical Lead Takeover / Repository-Kontinuität**
+Arbeitsblock: **ChatGPT Technical Lead Takeover / Repository-Kontinuität / Bereichs-Governance**
 
 Branch:
 
@@ -32,13 +33,24 @@ Scope:
 - nur Dokumentation
 - tatsächlichen Live-Stand dauerhaft persistieren
 - veraltete globale operative Aussagen korrigieren
+- verbindliche Account-/Admin-/Provider-Programmfortführung persistieren
 - keine Runtime-, DB-, RLS-, Auth-, Provider-, Secret- oder Kostenänderung
 
-Status:
+Kein Cursor-Agent wurde beim Chatwechsel oder für diesen Governance-Nachzug gestartet.
 
-**in docs-only Nachzug / danach Exact-Head-Re-Gate**
+### Neue verbindliche Product-Owner-Direktive 17:35
 
-Kein Cursor-Agent wurde beim Chatwechsel gestartet.
+Account, Admin und Provider sollen **nicht** nur die jeweils unmittelbar nächsten genannten Slices abarbeiten. Jeder Bereich führt seinen vollständigen Audit-/Roadmap-Plan bis zur ehrlichen produktionsreifen Technical Closure weiter.
+
+Damit gilt ausdrücklich:
+
+- Account AP-3 ist ein Zwischenslice, **nicht** das Ende des Account-Programms.
+- Admin Slice C ist ein Zwischenslice, **nicht** das Ende des Admin-/Control-Center-Programms.
+- Provider S3 ist ein Zwischenslice, **nicht** das Ende des Provider-/Provider-Readiness-Programms.
+- Nach jedem Slice folgen Self-Review, Exact-Head-Gates, unabhängiger Technical-Lead-Review und die jeweils nötigen Product-Owner-/Shared-/Production-/Secret-/Kosten-Gates; danach geht derselbe Workstream grundsätzlich mit dem nächsten offenen Planblock weiter.
+- Ein separates Gate pausiert nur den betroffenen Schritt. Es wird **nicht** als Bereichsabschluss interpretiert.
+
+Authoritativ: `docs/DOMAIN_PROGRAM_COMPLETION_POLICY.md`.
 
 ---
 
@@ -70,7 +82,11 @@ GitHub meldet `main` aktuell als:
 - `protected: false`
 - ohne erzwungene `required_status_checks`
 
-Das ändert die verbindliche Product-Owner-Regel nicht. Branch Protection / Ruleset ist ein empfohlener separater Governance-Härtungsschritt und wurde **nicht** ausgeführt.
+Der Product Owner hat am **24. August 2026, 17:35 Europe/Zurich** die technische Härtung über Branch Protection / Ruleset ausdrücklich freigegeben.
+
+Die aktuell verbundene GitHub-Tooloberfläche stellt jedoch **keine Mutation für Branch Protection / Rulesets** bereit. Die Freigabe ist daher gültig und dokumentiert, die technische Einstellung ist aber noch **nicht ausgeführt**. Es darf nicht fälschlich behauptet werden, `main` sei bereits geschützt.
+
+Bis zur technischen Umsetzung bleibt die Repository-Policy unverändert verbindlich: kein Mark Ready und kein Merge ohne aktuelle Product-Owner-Freigabe.
 
 ---
 
@@ -124,11 +140,15 @@ Direkter Schema-Nachweis: Trigger `trip_items_flug_handelsfelder_schuetzen` ist 
 
 ---
 
-## 4. Account
+## 4. Account – vollständiges Programm, nicht nur AP-3
 
 Verantwortlicher bestehender Cursor-Anzeigename:
 
 `Account plattform audit vorbereitung`
+
+Authoritativer Audit-/Implementierungsplan:
+
+`docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` aus `audit/account-platform`.
 
 Abgeschlossen / merged:
 
@@ -152,15 +172,25 @@ Scope bleibt konfliktarm:
 - Empty ≠ Error
 - keine Shared Auth/RLS/DB-/Traveller-Vertragsänderung
 
+### Verbindliche Fortführung nach AP-3
+
+AP-3 ist **nicht** Account-Closure. Der Account-Plan umfasst weiterhin die noch offenen Blöcke AP-4 bis AP-12, darunter kontrolliertes Archivieren, Security, Privacy, Traveller Registry, Profile/Preferences, Favoriten, Booking-Übersicht, Notifications und Entitlement/Subscription-Readiness.
+
+Shared-/DB-/Auth-/Privacy-/Billing-Slices werden seriell und separat gegatet, aber nicht still gestrichen. Ein Block kann nur durch eine ausdrückliche Product-Owner-/ADR-Entscheidung ersetzt, deferred oder entfernt werden.
+
 Historischer Audit-PR #39 bleibt Planungs-/Evidence-Material.
 
 ---
 
-## 5. Admin
+## 5. Admin – vollständiges Programm, nicht nur Slice C
 
 Verantwortlicher bestehender Cursor-Anzeigename:
 
 `Admin platform audit`
+
+Authoritativer Audit-/Implementierungsplan:
+
+`docs/ADMIN_PLATFORM_IMPLEMENTATION_PLAN.md` aus `audit/admin-platform`.
 
 ### PR #44 – Slice A / Control Center IA
 
@@ -195,11 +225,21 @@ Diese Gates beweisen den damaligen Stack, nicht die heutige Integration. Nach sa
 
 Nicht blind starten. Erst A/B sauber integrieren, dann frischen Technical-Lead-Auftrag schneiden.
 
+### Verbindliche Fortführung nach Slice C
+
+Slice C ist **nicht** Admin-Closure. Der vollständige Plan läuft danach über D bis K weiter: Security/Audit, Support Nutzer+Reise read-only, Command Palette, Finance Readiness, Infomaniak read-only, Copilot Pro Analyst, Analytics/SEO und später separat gegatete Live-Blöcke wie Ads/Bexio/Payment-Ingest.
+
+Externe Live-Integrationen, Secrets, kritische Writes und Kosten bleiben eigene Freigaben. Sie werden nicht durch die 17:35-Direktive automatisch aktiviert.
+
 Historischer Admin-Audit-PR #40 bleibt Planungs-/Evidence-Material.
 
 ---
 
-## 6. Provider Readiness
+## 6. Provider – vollständiges Programm, nicht nur S3
+
+Authoritativer Plan:
+
+`docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` plus Provider-Audit/-Matrix/-Shared-Contract-Dokumente.
 
 Abgeschlossen / merged:
 
@@ -226,6 +266,20 @@ Geplanter Rahmen:
 
 Vor Start: aktuelle Code-/Audit-/S1/S2-Evidence erneut prüfen und neuen versionierten Auftrag schneiden.
 
+### Verbindliche Fortführung nach S3
+
+S3 ist **nicht** Provider-Closure. Provider Readiness läuft weiter über:
+
+- S4 Truth-Domain Operationsparität
+- S5 Commercial Provenance
+- S6 Persistenter Cost Guard
+- S7 Observability / ehrliche Health-Hooks
+- S8 Cache-/Lizenz-Hooks
+
+Erst nach ehrlicher Readiness Technical Closure kann – unter jeweils separaten Freigaben – die provider-backed Phase mit konkreten Adaptern, Verträgen, Secrets, Kosten, Lizenzbedingungen und Production-Aktivierung folgen.
+
+Die aktuelle Product-Owner-Direktive ist **keine** pauschale Provideraktivierungs-/Secret-/Kosten-/Production-Freigabe.
+
 ---
 
 ## 7. Offene historische / vorbereitete PRs
@@ -243,24 +297,28 @@ Kein Cleanup/Close/Merge ohne bewusste Einordnung.
 
 ## 8. Exakter nächster Schritt
 
-### Jetzt – bereits freigegebener docs-only Schritt
+### Aktueller docs-only Governance-Nachzug in PR #52
 
-Draft-PR #52:
+1. `docs/DOMAIN_PROGRAM_COMPLETION_POLICY.md` versionieren;
+2. `docs/ACTIVE_WORK_STATUS.md` auf die vollständige Bereichsfortführung aktualisieren;
+3. PR #52 auf neuem Exact Head erneut mit GitHub Actions + Vercel gaten;
+4. PR bleibt Draft. Kein Mark Ready, kein Merge ohne aktuelle Product-Owner-Freigabe.
 
-1. neuen Takeover-Live-Verifikationsnachweis persistieren;
-2. `docs/ACTIVE_WORK_STATUS.md` und `JETNITY_HANDOFF.md` auf die neuere operative Wahrheit bringen;
-3. anschließend neuen PR-#52-Exact-Head feststellen;
-4. GitHub Actions und Vercel Preview auf genau diesem Head prüfen;
-5. PR bleibt Draft. Kein Mark Ready, kein Merge.
+### Branch Protection
 
-### Danach empfohlen
+- Product-Owner-Freigabe liegt vor.
+- Technische Mutation ist mit der aktuell verbundenen GitHub-Tooloberfläche nicht verfügbar.
+- Nicht als erledigt markieren; bei verfügbarem GitHub-Ruleset-/Protection-Write diese freigegebene Härtung als separaten Governance-Schritt ausführen und danach live verifizieren.
 
-1. Product Owner entscheidet separat über GitHub Branch-Protection-/Ruleset-Härtung.
-2. Admin PR #44 Current-Main-Sync → Exact-Head-Gates → unabhängiger Review.
-3. Erst danach Product-Owner-Gate für Ready/Merge von #44.
-4. AP-3 und Provider S3 dürfen konfliktarm separat vorbereitet werden, sofern kein Shared-Contract-Konflikt entsteht.
-5. Nach Slice-A-Integration: Admin #46 neu auf `main` → Re-Gate → Re-Review.
-6. Danach Admin #49 neu beurteilen.
+### Danach Runtime-Reihenfolge
+
+1. Admin PR #44 Current-Main-Sync → Exact-Head-Gates → unabhängiger Review.
+2. Erst danach Product-Owner-Gate für Ready/Merge von #44.
+3. Account AP-3 und Provider S3 dürfen konfliktarm separat vorbereitet werden, sofern kein Shared-Contract-Konflikt entsteht.
+4. Danach laufen **alle drei Workstreams gemäß ihren vollständigen Plänen weiter**, nicht nur bis AP-3/Admin C/S3.
+5. Nach Slice-A-Integration: Admin #46 neu auf `main` → Re-Gate → Re-Review; danach C und anschließend D–K entsprechend Plan/Gates.
+6. Account: nach AP-3 weiter gemäß AP-4–AP-12 und ihren Shared-/Produkt-Gates.
+7. Provider: nach S3 weiter S4–S8; provider-backed Phase nur nach separaten Aktivierungs-/Secret-/Vertrags-/Kosten-/Production-Gates.
 
 Shared Auth/RLS/Identity/Guest→Account/Traveller/Route/Privacy/Billing/Admin-Audit/Provider-Activation-Verträge bleiben seriell unter Technical-Lead-Steuerung.
 
@@ -273,6 +331,7 @@ Shared Auth/RLS/Identity/Guest→Account/Traveller/Route/Privacy/Billing/Admin-A
 - Production-Migrationen separat freigeben.
 - Provideraktivierung / Secrets / Verträge / bezahlte Calls separat freigeben.
 - Kostenrahmen maximal USD 100/Monat; darüber vorher fragen.
-- Kein S3/AP-3/Admin-Folgeslice still erweitern.
+- Der nächste Slice ist der nächste Schritt, **nicht** automatisch das Ende des Bereichs.
+- Kein Folgeslice still über seinen dokumentierten Scope erweitern.
 - Nach jedem Slice Self-Review + vollständige Gates + unabhängiger Technical-Lead-Review.
 - Relevanter Fortschritt, Exact Heads, Gates, Blocker und nächste Schritte dauerhaft im Repository dokumentieren.
