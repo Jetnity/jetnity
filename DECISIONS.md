@@ -3720,7 +3720,7 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 ## ADR-0151 – Untrusted Intake persistiert keine Client-Surface-Evidence
 
 **Datum:** 24. August 2026  
-**Status:** umgesetzt auf Draft-PR #38 nach R16 REQUEST CHANGES
+**Status:** umgesetzt und mit PR #38 auf `main` gemergt; Production-Funktion verwirft Client-Surface
 
 **Entscheidung:**
 
