@@ -2,12 +2,12 @@
 
 Stand: 24. August 2026  
 Reviewer: implementierender Agent  
-Runtime-Head: `7683503ea001b7212e15c0d00a3cfa1a106082ad`  
-Ergebnis: **technisch abgeschlossen für unabhängigen Review – kein Ready, kein Merge**
+Runtime-Head: `e9b2f834edc925b12e8b5a667f0e4382642eae8f`  
+Ergebnis: **AP2-B1 behoben – bereit für Re-Review, kein Ready, kein Merge**
 
 ## Auftragstreue
 
-Der Slice hält `docs/ACCOUNT_AP2_AUTH_UX_TASK.md`. Keine Scope-Erweiterung in AP-3, keine DB, keine Provider-Aktivierung, keine Legal-Erfindung.
+Der Slice hält `docs/ACCOUNT_AP2_AUTH_UX_TASK.md` und `docs/ACCOUNT_AP2_B1_FIX_TASK.md`. Keine Scope-Erweiterung in AP-3, keine DB, keine Provider-Aktivierung, keine Legal-Erfindung.
 
 ## Scope A – OAuth Enablement
 
@@ -31,11 +31,12 @@ Der Slice hält `docs/ACCOUNT_AP2_AUTH_UX_TASK.md`. Keine Scope-Erweiterung in A
 - Ohne User bleibt die Seite stehen.
 - Kein neues Auth-Modell, keine MFA/AAL-Änderung, keine Service-Role.
 
-## Scope D – Enumeration
+## Scope D – Enumeration inkl. AP2-B1
 
-- `registerOeffentlicheFehlercopy()` macht Bestandskonto-Texte öffentlich ununterscheidbar.
-- Erfolg und dieser Fall nutzen `REGISTER_NEUTRALE_ANTWORT` ohne „bereits“, „existiert“ oder „gesendet“.
-- Fachliche Feldfehler bleiben unterscheidbar.
+- `registerSignupOeffentlichAuswerten()` mappt Bestandskonto-Fehler und neuen Signup ohne Session auf **denselben** `registerOeffentlicherErfolg()`.
+- Öffentlich identisch: Success-Copy, geleerte Felder, keine Feldfehler, `loading: false`, Fokus `#register-erfolg`.
+- Das Formular hat keinen zweiten, abweichenden Clear-Pfad mehr.
+- Fachliche Feldfehler bleiben unterscheidbar. Session-Pfad leitet weiter und ist kein öffentlicher Outcome.
 
 ## Scope E – Gast `/reisen`
 
@@ -63,7 +64,8 @@ Der Slice hält `docs/ACCOUNT_AP2_AUTH_UX_TASK.md`. Keine Scope-Erweiterung in A
 1–8 `next`: `lib/auth/naechstes-ziel.test.ts`  
 9–10 OAuth: `lib/auth/oauth-anbieter.test.ts`  
 11–12 Gast-CTA: `lib/trips/gast-reisen-cta.test.ts`  
-13 Register-Copy: `lib/auth/register-meldung.test.ts`  
+13 Register-Copy und AP2-B1-Outcome: `lib/auth/register-meldung.test.ts`  
+
 14 Gate: `lib/auth/anmelde-gatter.test.ts`  
 15 MFA a11y: `lib/auth/mfa-dialog-a11y.test.ts` (Quellvertrag, kein Browser-A11y-Lauf)  
 16 AP-1-Navigation: `lib/account/navigation.test.ts` grün  
@@ -83,4 +85,4 @@ Bestehende `/terms`- und `/privacy`-Links bleiben. Keine neuen rechtlichen Texte
 
 ## Empfehlung
 
-Unabhängiger Technical-Lead-Review von PR #48. Danach erst Product-Owner-Entscheidung über Ready/Merge. AP-3 nicht starten.
+Unabhängiger Technical-Lead-Re-Review von PR #48 auf `e9b2f834`. Danach erst Product-Owner-Entscheidung über Ready/Merge. AP-3 nicht starten.
