@@ -46,7 +46,7 @@ export type MobilityNachweis = {
   }): Promise<MobilityNachweisErgebnis>
 }
 
-export const MOBILITY_NACHWEIS_MELDUNG: Record<MobilityNachweisFehlerArt, string> = {
+const MOBILITY_NACHWEIS_MELDUNG: Record<MobilityNachweisFehlerArt, string> = {
   unavailable: 'Verbindungen können noch nicht verbindlich in die Reise übernommen werden.',
   unbekannt: 'Diese Verbindung ist unbekannt.',
   abgelaufen: 'Diese Verbindung ist nicht mehr gültig.',

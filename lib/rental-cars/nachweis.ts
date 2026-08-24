@@ -49,7 +49,7 @@ export type RentalCarNachweis = {
   }): Promise<RentalCarNachweisErgebnis>
 }
 
-export const RENTAL_NACHWEIS_MELDUNG: Record<RentalCarNachweisFehlerArt, string> = {
+const RENTAL_NACHWEIS_MELDUNG: Record<RentalCarNachweisFehlerArt, string> = {
   unavailable: 'Mietwagen können noch nicht verbindlich in die Reise übernommen werden.',
   unbekannt: 'Diese Mietwagenauswahl ist unbekannt.',
   abgelaufen: 'Diese Mietwagenauswahl ist nicht mehr gültig.',
