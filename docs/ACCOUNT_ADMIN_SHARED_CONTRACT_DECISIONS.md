@@ -1,7 +1,7 @@
 # Jetnity – Account/Admin Shared Contract Decisions
 
 Stand: 24. August 2026  
-Status: **verbindlicher Technical-Lead-Schnitt nach gemeinsamem Audit-Review; noch keine Runtime-/DB-Freigabe**
+Status: **verbindlicher Technical-Lead-Schnitt nach gemeinsamem Audit-Review; erste konfliktarme UI-/IA-Slices nach PR-#38-R17 technisch entblockt, Shared Runtime-/DB-Verträge weiter seriell**
 
 Geprüfte Workstreams:
 
@@ -95,36 +95,48 @@ Grundsatz:
 
 ## S0-13 Integrations- und Parallelitätsregel
 
-Bis zum technischen Closure/PASS von PR #38:
+PR #38 hat am 24. August 2026 im unabhängigen ChatGPT-R17 **Technical Closure / PASS** erreicht. Damit ist die frühere technische Sperre für die ersten konfliktarmen Account-/Admin-UI-/IA-Slices aufgehoben.
 
-- keine Account-/Admin-Kernimplementierung auf Shared Contracts;
-- PR #39 und #40 bleiben Draft;
-- kein Mark Ready / kein Merge ohne Product Owner.
+Ab jetzt dürfen parallel starten:
 
-Nach PR-#38-Closure dürfen konfliktarme UI-Slices parallel starten:
+- Account: zuerst AP-1 Account-Shell + persönliche Übersicht / Meine Reisen als Account-Hub;
+- Admin: zuerst Slice A – ehrliche Control-Center-/Steuerzentralen-IA; danach separat read-only System Health.
 
-- Account: AP-1 / AP-2 / AP-3, jeweils klar geschnitten;
-- Admin: zuerst Slice A (ehrliche IA/Legacy-Lügen entfernen), danach bzw. separat read-only System Health;
-- Shared Auth/RLS/DB/Privacy/Billing/Support/Traveller-Slices bleiben seriell unter Technical-Lead-Ownership.
+Weiterhin **nicht parallel** neu definieren oder verändern:
 
-### Aktuelle PR-#38-Abhängigkeit
+- Auth / Identity / MFA / AAL
+- Rollen / Capabilities
+- RLS / Ownership / Service Role
+- Trip Graph / Guest→Account
+- Traveller / Credentials / Readiness
+- Route / Safety / Seasonal Truth
+- Privacy Export / Delete
+- Billing / Payments / Refund / Bexio
+- Support-Zugriffscontract
+- Admin Audit Trail
 
-R16 hat **Blocker 31** gefunden: Eine untrusted Browser-/LocalStorage-/Guest-`routeItinerary` kann `surfaceFromAirportCode` derzeit syntaktisch gültig selbst behaupten; serverseitige Route-Kanonisierung und die Development-Persistenz erhalten diese Angabe. Dadurch fehlt an dieser Route-Truth-Grenze die Evidence-Provenance.
+Diese Shared Contracts bleiben seriell unter Technical-Lead-Ownership.
 
-Bis dieser Defekt im PR-#38-Workstream geschlossen und unabhängig in R17 geprüft ist, dürfen Account/Admin keinen parallelen Guest→Account-/Route-Evidence-Contract einführen.
+### PR-#38-Abhängigkeit – geschlossen
+
+R16 hatte Blocker 31 gefunden: untrusted Browser-/LocalStorage-/Guest-`routeItinerary` konnte `surfaceFromAirportCode` syntaktisch selbst behaupten und dadurch die Route-Truth beeinflussen.
+
+Der Fix auf Runtime `5782401943b41ddd1eea1337c93cb37163210362` strippt Client-Surface an den aktuellen untrusted Grenzen. R17 hat Browser/LocalStorage/Guest→Server/DB, DB-Read, Safety/Seasonal und eine read-only Development-DB-Reproduktion unabhängig geprüft und keinen neuen konkreten Defekt gefunden. Review: `docs/PR38_CHATGPT_R17_REVIEW.md` auf PR #38.
+
+Der zukünftige Invariant bleibt: Kein neuer Mapper darf rohe Client-JSON direkt als trusted `TripItem.routeItinerary` deklarieren. Echte spätere Provider-/Server-Surface-Evidence braucht einen expliziten serverkontrollierten Provenance-/Write-Contract.
 
 ## Review-Urteil zu den Audits
 
-- `Account plattform audit vorbereitung`: **AUDIT-PASS** als Planungsgrundlage; keine Implementierungsfreigabe aus dem Audit selbst.
+- `Account plattform audit vorbereitung`: **AUDIT-PASS** als Planungsgrundlage; das Audit allein autorisiert keine Shared-Contract-Änderung.
 - `Admin platform audit`: **AUDIT-PASS** als Planungsgrundlage. Bestehendes Admin-Gerüst soll weiterverwendet werden; kein zweites Control Center bauen.
 - Beide Audits sind architektonisch vereinbar, wenn dieser Shared-Contract-Schnitt gilt.
 
 ## Nächster Schritt
 
-1. PR #38 **R16-Blocker 31** kohärent schließen; untrusted Browser-/LocalStorage-/Guest-Input darf Surface-Evidence nicht allein durch syntaktische Plausibilität zur kanonischen Truth machen.
-2. Danach neues Exact-Head-Gate und unabhängigen ChatGPT-Re-Review **R17** durchführen.
-3. Wenn R17 nach strengem Stop-Kriterium keinen neuen konkreten relevanten Defekt findet: technisches Closure/PASS von PR #38 dokumentieren.
-4. Danach Implementierungsfreigabe für die konfliktarmen ersten Account-/Admin-Slices vorbereiten.
-5. Vor jedem Shared-Contract-PR diesen Entscheidungsstand erneut lesen.
+1. Account AP-1 und Admin Slice A dürfen als getrennte konfliktarme UI-/IA-Slices vorbereitet bzw. umgesetzt werden.
+2. Nach jedem Slice unabhängiger Technical-Lead-Review vor dem nächsten Slice.
+3. Shared-Contract-Arbeiten nur seriell und nach erneutem Lesen dieses Dokuments.
+4. PR #38 bleibt Draft; Mark Ready/Merge nur nach ausdrücklicher aktueller Product-Owner-Freigabe.
+5. Production-Migrationen und Provider-/Secret-/Kosten-Aktivierungen bleiben jeweils separate Product-Owner-Gates.
 
-Production-Migrationen, Mark Ready und Merge bleiben jeweils separate Product-Owner-Gates.
+Die gespeicherte Homepage-Produktseiten-Richtung bleibt bis zu einem ausdrücklichen Startsignal separat pausiert.
