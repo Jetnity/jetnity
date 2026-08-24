@@ -1,6 +1,6 @@
 # Jetnity – Current Multi-Agent Team Status
 
-Stand: **24. August 2026, nach Merge von Admin Slice B / PR #46**  
+Stand: **24. August 2026, 20:26 Europe/Zurich**  
 Status: **kanonische operative Team-Wahrheit für Chat-/Agent-Wechsel**
 
 > Diese Datei ist die bevorzugte kompakte Einstiegsquelle für den aktuellen operativen Stand. Sie liegt auf `docs/chatgpt-technical-lead-handoff-2026-08-24` / Draft-PR #52 und ist bis zu einem Merge von #52 nicht automatisch `main`-Inhalt. Vor Eingriffen GitHub/CI/Vercel/Supabase live verifizieren.
@@ -24,73 +24,69 @@ Status: **kanonische operative Team-Wahrheit für Chat-/Agent-Wechsel**
 - ADR-0160 = Account AP-3 / PR #53
 - ADR-0161 = Provider Readiness S3 / PR #54
 
-## 3. Aktive / review-bereite Workstreams
+## 3. Aktive Workstreams
 
-### Admin – nächster Block Slice C / PR #49
+### Admin – Slice C / PR #49
 
 Agent: `Admin platform audit`
 
-Admin Slice B ist integriert. Der Agent darf jetzt weiterarbeiten, aber **nicht auf dem alten #49-Stack blind Runtime entwickeln**.
-
-Nächster kontrollierter Schritt:
-
-1. PR #49 / `feat/admin-provider-cost-board` gegen den neuen `main` `e3bad749...` neu beurteilen.
-2. Branch/Base sauber auf den neuen Main-Integrationspunkt synchronisieren/retargeten.
-3. Historische Slice-C-Dokumentation als Evidence behandeln, keine alte globale Wahrheit zurückbringen.
-4. Erst danach Slice C – Provider & Cost Board im dokumentierten read-only Scope implementieren bzw. fortführen.
-5. Vollständige lokale Gates + GitHub Actions + Vercel auf Exact Head + unabhängiger Technical-Lead-Review.
-6. Kein Ready / kein Merge ohne neue separate PO-Freigaben.
-
-Slice C darf keine echten Provider aktivieren, keine Secrets/Keys/Verträge/paid calls auslösen und keine Fake-Health-/Cost-Wahrheit anzeigen. Der geerbte Billing-/Refund-P1 bleibt separater Pflichtblock vor Finance-/Payment-Live.
+- Slice A / #44: merged
+- Slice B / #46: merged
+- nächster kontrollierter Block: **Slice C / PR #49 – Provider & Cost Board**
+- #49 darf nicht blind auf dem historischen Stack fortgesetzt werden; zuerst auf `main` `e3bad749...` synchronisieren/retargeten und neu gaten.
+- Slice C bleibt read-only Provider-/Cost-Board. Keine echten Provider, Secrets, Verträge, paid calls, Production-Migrationen oder Fake-Health-/Cost-Wahrheit.
+- Geerbter Billing-/Refund-P1 bleibt separater Pflichtblock vor Finance-/Payment-Live.
 
 ### Account – PR #53 / AP-3
 
 Agent: `Account plattform audit vorbereitung`
 
 - Branch: `feat/account-ap3`
-- ursprüngliche Base beim Slice-Start: `main` @ `1ec93cc9...`
-- Status: **open Draft / implementiert und gegatet / wartet auf unabhängigen Technical-Lead-Review**
+- ursprüngliche Base: `1ec93cc9...`
 - Functional Runtime Head: `612d819ed9691f93cbab97128e301b0b7744721b`
-- aktueller docs-only PR Head: `5fb879f5556012ab5a34584b4ba8a319ce6754a1`
+- zuletzt beobachteter PR/docs Head: `5fb879f5556012ab5a34584b4ba8a319ce6754a1`
 - ADR: **ADR-0160**
-- CI `32753032302`: SUCCESS
-- Vercel `dpl_83ReRsDgZoyGga19arfyC8L3WWtb`: READY
-- **Achtung:** `main` ist seit Slice-Start durch #46 weitergelaufen. Vor einer späteren Merge-Entscheidung muss AP-3 gegen den dann aktuellen `main` auf Integrationskonflikte geprüft und falls erforderlich synchronisiert/re-gegatet werden.
-- kein Ready / kein Merge / kein AP-4 vor den vorgesehenen Gates.
+- ursprüngliche Runtime-/Docs-Gates waren grün.
+- **Independent Technical-Lead Review durchgeführt:** AP-3-Grundlogik ist grundsätzlich sauber, aber Current-Main-Closure ist **noch nicht** erreicht.
+- Review-Fund: der 200er-Hinweis behauptet bei exakt 200 geladenen Reisen unbelegt, dass noch weitere Reisen gespeichert seien. Copy muss fail-honest formuliert werden.
+- Zusätzlich ist #53 gegen aktuellen `main` nach Merge #46 veraltet/divergiert. Agent wurde angewiesen: Current-Main-Sync + ausschließlich diese Truth-Korrektur + vollständige Exact-Head-Re-Gates.
+- Bis zum Re-Review: **Draft, kein Ready, kein Merge, kein AP-4**.
 
 ### Provider – PR #54 / S3
 
 Agent: `Jetnity provider readiness audit`
 
 - Branch: `feat/provider-mobility-rental-evidence-s3`
-- ursprüngliche Base beim Slice-Start: `main` @ `1ec93cc9...`
-- Status: **open Draft / implementiert und gegatet / wartet auf unabhängigen Technical-Lead-Review**
+- ursprüngliche Base: `1ec93cc9...`
 - Functional Runtime Head: `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`
-- aktueller docs-only PR Head: `2e9a1a7ff0d8ccef6945cbc70aa3833743d076f1`
+- zuletzt beobachteter PR/docs Head: `2e9a1a7ff0d8ccef6945cbc70aa3833743d076f1`
 - ADR: **ADR-0161**
-- CI `32752931378`: SUCCESS
-- Vercel `dpl_HErGVCe9HAKP1o9ymraV5xDd8i9P`: READY
-- kein echter Provider, kein Secret, kein Vertrag, kein kostenpflichtiger Call, keine Production-Migration
-- **Achtung:** `main` ist seit Slice-Start durch #46 weitergelaufen. Vor einer späteren Merge-Entscheidung S3 gegen aktuellen `main` prüfen/synchronisieren/re-gaten, falls nötig.
-- kein Ready / kein Merge / kein S4 vor den vorgesehenen Gates.
+- CI auf `2e9a1a7f`: `32752931378` SUCCESS; Vercel Preview auf demselben SHA success/READY.
+- **Independent Technical-Lead Review durchgeführt:** S3-Code hält die vorgesehene Trust-Grenze; kein zusätzlicher Runtime-/Security-/Truth-Fix im S3-Scope gefunden.
+- Verifiziert: Browser nur IDs, Nachweis + serverseitiger Kontext, Testkatalog injiziert/test-only, Production ohne Adapter fail-closed, keine erfundene `booking_url`, Auto-Search entfernt bzw. nur auf ausdrückliche Nutzeraktion, keine Migration/Secrets/Provideraktivierung/neuen Kosten.
+- Trotzdem keine Current-Main-Closure: #54 ist gegen `main` `e3bad749...` **1 Commit behind/divergiert**.
+- Agent wurde angewiesen: nur Current-Main-Sync + Dokumentations-Reconciliation + vollständige Exact-Head-Re-Gates; **keine neue S3-Funktionalität, kein S4**.
+- Bis zum Re-Review: **Draft, kein Ready, kein Merge**.
 
 ### Trip Workspace – PR #55 / Audit & Architecture
 
 Agent: `Trip workspace audit architecture`
 
 - Branch: `audit/trip-workspace`
-- ursprüngliche Base: `main` @ `1ec93cc9...`
-- Status: **open Draft / docs-only Audit technisch vorbereitet / wartet auf unabhängigen Technical-Lead-Review**
-- Exact Head: `536ed50ffda0279973058f7a2b78ee98217e7aad`
-- CI `32752434172`: SUCCESS
-- Vercel `dpl_4adqadJzbDwHJMWg4jVs2ZrjDJy9`: READY
-- keine Runtime-, DB-, RLS-, Auth-, Traveller-, Provider-, Homepage- oder Finance-Änderung
-- vor einer späteren Integration gegen den dann aktuellen `main` synchronisieren/re-gaten, falls erforderlich.
+- ursprüngliche Base: `1ec93cc9...`
+- zuletzt beobachteter Head: `536ed50ffda0279973058f7a2b78ee98217e7aad`
+- CI `32752434172`: SUCCESS; Vercel Preview READY.
+- Scope ist weiterhin **docs-only**; kein Runtime-Umbau.
+- **Independent Technical-Lead Review durchgeführt:** Audit/Zielarchitektur inhaltlich plausibel und scope-treu. Besonders relevant: Trennung von Truth-Layer / Attention-Layer / UI; keine neue Multi-Citizenship-Truth; keine Feature-Creep-Wunschliste.
+- Dokumentierte Kernfunde für den späteren Workspace-Block: Safety/Seasonal-Orchestrierung im Produktpfad unsichtbar, Mobile/Desktop unterschiedliche Produktlogik, fehlende `Jetzt wichtig`-Aufmerksamkeitsschicht, Domain-lastige IA, Create-Flow/Pace-Default und weitere P1/P2-Funde.
+- Noch **keine** Current-Main-Closure: #55 ist gegen `main` `e3bad749...` **1 Commit behind/divergiert** und verändert zentrale Handoff-/Active-Work-Dateien.
+- Agent wurde angewiesen: nur Current-Main-/Docs-Reconciliation + Re-Gates; keine Runtime-Änderung, kein TW-1.
+- Bis zum Re-Review: **Draft, kein Ready, kein Merge**.
 
 ## 4. Große Produkt-Reihenfolge
 
 1. Account + Admin sauber aufbauen; Provider Readiness parallel vollständig weiterführen.
-2. Danach Trip Workspace / Reiseübersicht als nächsten großen Produktblock implementieren – gestützt auf PR #55.
+2. Danach Trip Workspace / Reiseübersicht als nächsten großen Produktblock implementieren – gestützt auf den reviewten Audit-Plan.
 3. Danach Homepage weiterentwickeln.
 
 Weltkarte, Reisepartner-Matching, Reisebuch, Trends/Hotspots und ähnliche Ideen bleiben Wünsche/Optionen und sind nicht automatisch der nächste Pflichtblock.
@@ -124,10 +120,10 @@ Nach jedem relevanten Merge oder größeren Statuswechsel müssen PR #52 sowie `
 
 ## 8. Nächster Technical-Lead-Arbeitsstand
 
-- Admin: #49 auf den neuen `main` vorbereiten/synchronisieren und Slice C kontrolliert fortsetzen.
-- #53: unabhängigen AP-3-Review durchführen; danach Current-Main-Integration berücksichtigen.
-- #54: unabhängigen S3-Review durchführen; danach Current-Main-Integration berücksichtigen.
-- #55: unabhängigen Trip-Workspace-Audit-Review durchführen.
+- Admin: #49 auf aktuellen `main` synchronisieren/retargeten und Slice C kontrolliert fortsetzen.
+- Account #53: Agent-Sync + 200er-Truth-Korrektur + Re-Gates abwarten, dann Technical-Lead-Re-Review.
+- Provider #54: Current-Main-Sync + Re-Gates abwarten, dann Technical-Lead-Re-Review.
+- Trip #55: Current-Main-/Docs-Reconciliation + Re-Gates abwarten, dann Technical-Lead-Re-Review.
 - PR #52 bleibt Draft; kein Ready/Merge ohne PO-Freigabe.
 
 Keine Production-Migration, kein Provider-/Secret-/Kosten-Gate ist durch diesen Status autorisiert.
