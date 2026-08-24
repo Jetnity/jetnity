@@ -9,6 +9,8 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/44
 
 Slice A ist implementiert. Der PR bleibt Draft. Kein Mark Ready, kein Merge, keine Production-Migration, keine Provider-/Secret-Aktivierung.
 
+Belegter Remote-Stand: Vercel Preview READY. GitHub Actions `CI` auf dem Implementierungs-Head ist nicht erneut belegt.
+
 ## Pflichtquellen
 
 - `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`

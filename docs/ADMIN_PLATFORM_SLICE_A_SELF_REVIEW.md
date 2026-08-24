@@ -25,6 +25,8 @@ Branch: `feat/admin-control-center-ia`
 
 ## Lokal gelaufene Gates
 
-1715/1715 Tests, Typecheck, Lint, `check:api-schutz`, Hygiene und Production-Build sind lokal grün. `db:sicherheit` / Preview / Production wurden nicht behauptet.
+1715/1715 Tests, Typecheck, Lint, `check:api-schutz`, Hygiene und Production-Build sind lokal grün.
+
+Vercel Preview ist READY für den Implementierungs-Push. Der GitHub-Actions-Workflow `CI` ist auf dem Implementierungs-Head nicht erneut belegt; der letzte Branch-Lauf gilt `9aed6a88`. `db:sicherheit` und Production wurden nicht behauptet.
 
 Dieser Self-Review ersetzt keinen unabhängigen Review und keine Product-Owner-Freigabe.

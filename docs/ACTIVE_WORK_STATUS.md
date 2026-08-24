@@ -61,6 +61,10 @@ Draft-PR: #44
 Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`  
 Status: **Slice A implementiert, Draft, wartet auf unabhängigen Review**
 
+Lokal: 1715/1715 Tests, Typecheck, Lint, Hygiene, Production-Build grün.  
+Vercel Preview: **READY** (`86c69a55` / `GjhxXGcJq67UCNy9rutpuRL9M8vQ`; Head `47753c48` Deployment completed `8jX9oDUT2zCNFXR1HvecwqS6FZxF`).  
+GitHub Actions Workflow `CI` ist auf diesem Branch zuletzt für Task-Commit `9aed6a88` grün; ein neuer `CI`-Lauf auf dem Implementierungs-Head ist nicht belegt.
+
 Slice A macht das vorhandene gehärtete Backoffice zur ehrlichen Steuerzentrale (IA/UI). Keine neue Datenwahrheit, keine neue Autorität.
 
 Danach als eigener Slice: read-only System Health für Vercel, Supabase, GitHub, App und später Infomaniak.
