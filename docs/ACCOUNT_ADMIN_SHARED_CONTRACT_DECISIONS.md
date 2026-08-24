@@ -107,15 +107,24 @@ Nach PR-#38-Closure dürfen konfliktarme UI-Slices parallel starten:
 - Admin: zuerst Slice A (ehrliche IA/Legacy-Lügen entfernen), danach bzw. separat read-only System Health;
 - Shared Auth/RLS/DB/Privacy/Billing/Support/Traveller-Slices bleiben seriell unter Technical-Lead-Ownership.
 
+### Aktuelle PR-#38-Abhängigkeit
+
+R16 hat **Blocker 31** gefunden: Eine untrusted Browser-/LocalStorage-/Guest-`routeItinerary` kann `surfaceFromAirportCode` derzeit syntaktisch gültig selbst behaupten; serverseitige Route-Kanonisierung und die Development-Persistenz erhalten diese Angabe. Dadurch fehlt an dieser Route-Truth-Grenze die Evidence-Provenance.
+
+Bis dieser Defekt im PR-#38-Workstream geschlossen und unabhängig in R17 geprüft ist, dürfen Account/Admin keinen parallelen Guest→Account-/Route-Evidence-Contract einführen.
+
 ## Review-Urteil zu den Audits
 
-- `Account plattform audit vorbereitung`: Audit als Planungsgrundlage akzeptiert; keine Implementierungsfreigabe aus dem Audit selbst.
-- `Admin platform audit`: Audit als Planungsgrundlage akzeptiert. Bestehendes Admin-Gerüst soll weiterverwendet werden; kein zweites Control Center bauen.
+- `Account plattform audit vorbereitung`: **AUDIT-PASS** als Planungsgrundlage; keine Implementierungsfreigabe aus dem Audit selbst.
+- `Admin platform audit`: **AUDIT-PASS** als Planungsgrundlage. Bestehendes Admin-Gerüst soll weiterverwendet werden; kein zweites Control Center bauen.
 - Beide Audits sind architektonisch vereinbar, wenn dieser Shared-Contract-Schnitt gilt.
 
 ## Nächster Schritt
 
-1. PR #38 R15-Blocker 30 schließen und anschließend unabhängig R16 durchführen.
-2. Wenn R16 nach strengem Stop-Kriterium keinen neuen konkreten relevanten Defekt findet: technisches Closure/PASS dokumentieren.
-3. Danach Implementierungsfreigabe für die konfliktarmen ersten Account-/Admin-Slices vorbereiten.
-4. Vor jedem Shared-Contract-PR diesen Entscheidungsstand erneut lesen.
+1. PR #38 **R16-Blocker 31** kohärent schließen; untrusted Browser-/LocalStorage-/Guest-Input darf Surface-Evidence nicht allein durch syntaktische Plausibilität zur kanonischen Truth machen.
+2. Danach neues Exact-Head-Gate und unabhängigen ChatGPT-Re-Review **R17** durchführen.
+3. Wenn R17 nach strengem Stop-Kriterium keinen neuen konkreten relevanten Defekt findet: technisches Closure/PASS von PR #38 dokumentieren.
+4. Danach Implementierungsfreigabe für die konfliktarmen ersten Account-/Admin-Slices vorbereiten.
+5. Vor jedem Shared-Contract-PR diesen Entscheidungsstand erneut lesen.
+
+Production-Migrationen, Mark Ready und Merge bleiben jeweils separate Product-Owner-Gates.
