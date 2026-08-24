@@ -6,6 +6,7 @@
 // Readiness/Safety/Seasonal, keine erfundene IANA-Zone. Trip-Daten sind
 // date-only. aktiv/kommend braucht einen belegten Geräte-Kalendertag.
 
+import { istAktiv, istKommend } from '@/lib/account/reise-lage'
 import type { TripSummary } from '@/types/trips'
 
 export type NaechsteReiseLage = 'aktiv' | 'kommend' | 'fortsetzen'
@@ -36,16 +37,6 @@ export function heutigesDatum(jetzt = new Date()): string {
 
 function istArchiviert(reise: TripSummary): boolean {
   return reise.status === 'archived'
-}
-
-function istAktiv(reise: TripSummary, heute: string): boolean {
-  if (!reise.startDate) return false
-  if (reise.endDate) return reise.startDate <= heute && heute <= reise.endDate
-  return reise.startDate === heute
-}
-
-function istKommend(reise: TripSummary, heute: string): boolean {
-  return Boolean(reise.startDate && reise.startDate > heute)
 }
 
 function nachStartDannUpdate(a: TripSummary, b: TripSummary): number {

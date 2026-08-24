@@ -32,6 +32,7 @@ import {
 import type { ReadinessZeile } from '@/lib/readiness/persistenz'
 import type { TravellerZeile } from '@/lib/readiness/reisende'
 import { TRIP_STATUSES, type Reisegraph, type TripStatus, type TripSummary } from '@/types/trips'
+import { REISEN_LISTE_GRENZE } from '@/lib/trips/liste-grenze'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 
 /**
@@ -115,7 +116,7 @@ export async function reisenLaden(): Promise<Lesung<TripSummary>> {
 
   const ergebnis = await lese<UebersichtZeile>(() =>
     alsAntwort<UebersichtZeile>(
-      supabase.from('trips').select(UEBERSICHT_SPALTEN).order('updated_at', { ascending: false }).limit(200),
+      supabase.from('trips').select(UEBERSICHT_SPALTEN).order('updated_at', { ascending: false }).limit(REISEN_LISTE_GRENZE),
     ),
   )
 
