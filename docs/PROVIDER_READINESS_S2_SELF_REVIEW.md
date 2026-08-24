@@ -3,11 +3,11 @@
 Stand: 24. August 2026  
 Branch: `feat/provider-flight-evidence-s2`  
 Draft-PR: `#51`  
-Exact Runtime Head: `f61bf7f03d503b1eb62cc324d35a7b659b3e4157`
+Exact Runtime Head: `f8af2059181e1f47d686893a1b5538441c6e2554`
 
 ## Auftragstreue
 
-S2 ist auf den Flug-Nachweis begrenzt. Kein Live-Duffel, kein S3–S6, keine DB-Migration, keine Homepage-/Account-/Admin-Arbeit.
+S2 bleibt auf den Flug-Nachweis begrenzt. S2-B1 ist der freigegebene DB-Contract-Fix für den Direct-RPC-Bypass. Kein Live-Duffel, kein S3–S7, keine Production-Migration, keine Homepage-/Account-/Admin-Arbeit, keine Service-Role-/Auth-Änderung.
 
 ## Trust-Grenze
 
@@ -17,14 +17,27 @@ S2 ist auf den Flug-Nachweis begrenzt. Kein Live-Duffel, kein S3–S6, keine DB-
 - Ohne Nachweis oder Suchkontext: fail-closed.
 - Guest persistiert keine kommerzielle Provider-Flugoption.
 - Guest → Account adelt unbewiesene Flugfelder nicht.
+- `public.reise_anlegen(jsonb)` übernimmt für `kind='flight'` keine Handelsfelder aus JSON. `booking_url` bleibt null.
 
 ## Pflichtregressionen
 
-Die 14 geforderten Fälle sind in `lib/flights/nachweis.test.ts`, `lib/flights/konto-uebernahme.test.ts`, `lib/flights/nutzlast.test.ts`, `lib/trips/gastspeicher.test.ts` und `lib/trips/uebernahme.test.ts` belegt. Hotel-Nachweis- und Provider-Ops-Regressionen bleiben im vollen `npm test` grün.
+Die 14 App-Fälle bleiben in `lib/flights/nachweis.test.ts`, `lib/flights/konto-uebernahme.test.ts`, `lib/flights/nutzlast.test.ts`, `lib/trips/gastspeicher.test.ts` und `lib/trips/uebernahme.test.ts` belegt.
+
+S2-B1 ergänzt in `scripts/db/sicherheit.mjs`:
+
+- direkter RPC mit manipuliertem Flugpreis/Provider/Ref/Booking-URL persistiert diese Felder nicht und behält User-Intake plus Foundation-D-Itinerary;
+- derselbe RPC behält Hotel-/Aktivitäts-/Mobilitäts-/Mietwagen-Handelsfelder;
+- der Tagespunkt-INSERT-Pfad nullt dieselben Flug-Handelsfelder.
+
+Hotel-Nachweis- und Provider-Ops-Regressionen bleiben im vollen `npm test` grün. `db:sicherheit` ist 219/219.
 
 ## Foundation-D / Traveller
 
-Keine zweite Route Truth. Keine Route-Heuristik als Nachweisersatz. Traveller-Zusammensetzung kommt aus dem Reisegraphen (`travellers` → adults, children/infants 0), nicht aus Browserfeldern.
+Keine zweite Route Truth. Keine Route-Heuristik als Nachweisersatz. Traveller-Zusammensetzung kommt aus dem Reisegraphen (`travellers` → adults, children/infants 0), nicht aus Browserfeldern. `flug_route_itinerary_metadata` bleibt der einzige Itinerary-Kanonisierer.
+
+## Bewusste Grenze dieses Fixes
+
+Kein `BEFORE`-Trigger auf `trip_items`, der alle Flug-Handelsfelder nullt. Ein späterer nachgewiesener Server-INSERT (`flugInReiseUebernehmen`) soll nicht pauschal blockiert werden. Gehärtet ist nur der browser-erreichbare JSON-RPC.
 
 ## Offene Review-Fragen
 

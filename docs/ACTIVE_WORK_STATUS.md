@@ -88,9 +88,9 @@ Status: `docs/PROVIDER_READINESS_S2_STATUS.md`
 
 Aktiver Slice:
 
-**S2 – serverseitiger `FlugNachweis` für Flug-Kontoübernahme und kommerzielle Flug-Persistenz.** Exact Runtime Head `f61bf7f0`. Browser sendet nur `tripId`, `dayId`, `optionId`. Guest und Guest → Account bleiben fail-closed bzw. stufen unbewiesene Flugoptionen nicht hoch. Lokale und Remote-Gates auf diesem Head sind grün. STOPP für unabhängigen Technical-Lead-Review.
+**S2 – serverseitiger `FlugNachweis` plus S2-B1-DB-Grenze für `reise_anlegen`.** Exact Runtime Head `f8af2059`. Browser sendet nur `tripId`, `dayId`, `optionId`. Guest und Guest → Account bleiben fail-closed bzw. stufen unbewiesene Flugoptionen nicht hoch. Der authentifizierte RPC verwirft unbewiesene Flug-Handelsfelder. Additive Migration `20260824160000` ist auf Supabase Development angewendet. **Production unverändert.** Lokale und Remote-Gates auf diesem Head sind grün. STOPP für unabhängigen Technical-Lead-Re-Review.
 
-Grenze: kein Live-Duffel, keine Provideraktivierung, keine Secrets, keine DB-/Production-Migration, kein S3–S6, kein Offer-Booking. `booking_url` bleibt `null`. Route Truth bleibt Foundation D.
+Grenze: kein Live-Duffel, keine Provideraktivierung, keine Secrets, keine Production-Migration, kein S3–S6, kein Offer-Booking. `booking_url` bleibt `null`. Route Truth bleibt Foundation D.
 
 ## 4. Parallelitätsregel
 
@@ -138,5 +138,5 @@ Wenn sie gestartet wird:
 1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
 2. `Admin platform audit` implementiert ausschließlich Slice A auf PR #44.
 3. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung.
-4. S2 auf Draft-PR #51 hat Exact-Head-Gates auf `f61bf7f0` und wartet auf den unabhängigen Technical-Lead-Review. Kein Mark Ready, kein Merge, kein S3.
+4. S2-B1 auf Draft-PR #51 hat Exact-Head-Gates auf `f8af2059` und wartet auf den unabhängigen Technical-Lead-Re-Review. Production unverändert. Kein Mark Ready, kein Merge, kein S3, keine Production-Migration.
 5. AP-2, Admin Slice B und Provider S3 brauchen jeweils eine neue ausdrückliche Freigabe.

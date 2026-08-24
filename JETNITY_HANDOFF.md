@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal Foundation ist auf main; dieser Branch ist Provider Readiness S2 / FlugNachweis, Draft-PR #51**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal Foundation ist auf main; dieser Branch ist Provider Readiness S2/S2-B1, Draft-PR #51, STOPP für Technical-Lead-Re-Review**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -297,7 +297,7 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. **→ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
-6. Provider-Readiness-/Adapter-Lücken schließen – **S1 Technical Closure / PASS auf Draft-PR #47; S2 FlugNachweis auf Draft-PR #51 in Implementierung**
+6. Provider-Readiness-/Adapter-Lücken schließen – **S1 Technical Closure / PASS auf Draft-PR #47; S2/S2-B1 auf Draft-PR #51 wartet auf Technical-Lead-Re-Review**
 7. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 8. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 9. echte Providerphase
@@ -315,14 +315,16 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 Aktiver Branch: `feat/provider-flight-evidence-s2`  
 Draft PR: `#51`  
 Basis: `origin/main` @ `01761eb9`  
-Exact Runtime Head: `f61bf7f0`  
-Auftrag: `docs/PROVIDER_READINESS_S2_FLUGNACHWEIS_TASK.md`
+Exact Runtime Head: `f8af2059`  
+Auftrag: `docs/PROVIDER_READINESS_S2_FLUGNACHWEIS_TASK.md`  
+B1-Auftrag: `docs/PROVIDER_READINESS_S2_B1_DB_TRUST_FIX_TASK.md`
 
 1. S2 hebt die Flug-Kontoübernahme auf dieselbe Trust-Grenze wie Hotels: Browser sendet nur identifiers.
 2. `flugNachweisAusUmgebung()` ist `null`; ohne serverseitigen Suchkontext bleibt die Übernahme fail-closed.
 3. Guest persistiert keine kommerzielle Provider-Flugoption. Guest → Account streicht unbewiesene Flug-Handelsfelder.
-4. PR bleibt Draft. Kein Live-Duffel, kein Secret, keine unfreigegebenen Kosten, keine Production-Migration, kein Merge ohne aktuelle Product-Owner-Freigabe.
-5. **Exakter nächster Schritt:** Unabhängiger Technical-Lead-Review gegen Exact Head `f61bf7f0`. Technical Closure ersetzt keine Product-Owner-Freigabe.
+4. S2-B1: `public.reise_anlegen(jsonb)` verwirft unbewiesene Flug-Handelsfelder. Migration `20260824160000` nur auf Supabase Development. **Production unverändert.**
+5. PR bleibt Draft. Kein Live-Duffel, kein Secret, keine unfreigegebenen Kosten, keine Production-Migration, kein Merge ohne aktuelle Product-Owner-Freigabe.
+6. **Exakter nächster Schritt:** Unabhängiger Technical-Lead-Re-Review gegen Exact Head `f8af2059`. Technical Closure ersetzt keine Product-Owner-Freigabe.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

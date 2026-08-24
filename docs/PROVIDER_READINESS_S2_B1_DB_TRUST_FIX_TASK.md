@@ -1,7 +1,7 @@
 # Jetnity – Provider Readiness S2-B1 / DB Trust Boundary Fix
 
 Stand: 24. August 2026
-Status: **FREIGEGEBEN FÜR IMPLEMENTIERUNG – neue Migration nur auf Supabase Development; Production bleibt unverändert**
+Status: **IMPLEMENTIERT AUF SUPABASE DEVELOPMENT – Exact-Head-Gates grün; STOPP für Technical-Lead-Re-Review; Production unverändert**
 
 Cursor-Agent: `Provider S2 flugnachweis`
 Draft-PR: `#51`

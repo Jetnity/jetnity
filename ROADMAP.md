@@ -246,7 +246,7 @@ Zu prüfen/vereinheitlichen:
 
 Keine Verträge, Secrets oder laufenden Providerkosten ohne separate Freigabe.
 
-S1 Shared Operational Contract ist Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`. Es zentralisiert nur technische Hüllen. Audit-PR #45 bleibt Draft. S2 `FlugNachweis` ist der nächste Provider-Readiness-Slice auf Draft-PR #51 / `feat/provider-flight-evidence-s2`. S1/S2 aktivieren keine Provider und schließen nicht persistente Kostenschranken oder Admin-Health. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
+S1 Shared Operational Contract ist Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`. Es zentralisiert nur technische Hüllen. Audit-PR #45 bleibt Draft. S2 `FlugNachweis` plus S2-B1-DB-Grenze liegt auf Draft-PR #51 / `feat/provider-flight-evidence-s2`, Exact Head `f8af2059`; Development-Migration `20260824160000` ist angewendet, Production unverändert, STOPP für Technical-Lead-Re-Review. S1/S2 aktivieren keine Provider und schließen nicht persistente Kostenschranken oder Admin-Health. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
 
 ---
 
