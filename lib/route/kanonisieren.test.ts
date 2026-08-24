@@ -216,11 +216,12 @@ describe('reiseNutzlastRouteKanonisieren', () => {
     assert.equal(einmal.client_ref, nutzlast.client_ref)
   })
 
-  test('Surface-Evidence bleibt bei Guest-Kanonisierung erhalten', () => {
+  test('Surface-Evidence wird bei Guest-Kanonisierung entfernt', () => {
     const nutzlast = flugNutzlast(mitClientFacts(itineraryAirportChange('ORY'), 'US'))
     const kanonisch = reiseNutzlastRouteKanonisieren(nutzlast, TEST_FLUGHAFEN_REFS)
     const itinerary = kanonisch.days[0]?.items[0]?.route_itinerary
-    assert.equal(itinerary?.legs[0]?.segments[1]?.surfaceFromAirportCode, 'CDG')
+    assert.equal(itinerary?.legs[0]?.segments[1]?.surfaceFromAirportCode, undefined)
+    assert.equal(itinerary?.legs[0]?.segments[1]?.origin.airportCode, 'ORY')
     assert.equal(itinerary?.legs[0]?.segments[0]?.origin.countryCode, 'CH')
     assert.equal(itinerary?.legs[0]?.segments[1]?.origin.countryCode, 'FR')
     assert.notEqual(itinerary?.legs[0]?.segments[0]?.origin.countryCode, 'US')

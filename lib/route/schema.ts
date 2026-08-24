@@ -4,6 +4,8 @@
 //
 // Die Aufnahme kann aus dem Browser, dem Local Storage oder metadata kommen.
 // Nur strukturell gültige IATA-/Zeit-/Ländercodes dürfen Route Truth werden.
+// `surfaceFromAirportCode` ist kein untrusted Intake-Feld: Clientbehauptungen
+// werden verworfen. Ohne serverseitig belegte Quelle bleibt die Lücke unknown.
 //
 // Frei von Next, Supabase und `process.env`.
 
@@ -58,7 +60,6 @@ const segmentSchema = z.object({
   departureTime: uhrzeit.nullable().default(null),
   arrivalDate: datum.nullable().default(null),
   arrivalTime: uhrzeit.nullable().default(null),
-  surfaceFromAirportCode: iata.nullable().optional(),
 })
 
 export const flugRouteItinerarySchema = z.object({

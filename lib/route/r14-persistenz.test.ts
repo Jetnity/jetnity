@@ -67,8 +67,8 @@ function reiseMit(itinerary: FlugRouteItinerary, extra: Partial<TripItem> = {}):
 }
 
 /**
- * Felder, die public.flug_route_itinerary_metadata nach Blocker 29 behält.
- * Länder entstehen danach neu aus IATA + Referenz, nie aus Clientwerten.
+ * Untrusted Intake-Grenze nach Blocker 31: der Client darf Surface behaupten,
+ * Parser und Kanonisierung entfernen das Feld. Länder entstehen neu aus IATA.
  */
 function itineraryWieDbGrenze(itinerary: FlugRouteItinerary): FlugRouteItinerary | null {
   const roh = {
@@ -166,8 +166,8 @@ function surfaceAmZweiten(itinerary: FlugRouteItinerary): string | undefined {
   return itinerary.legs[0]?.segments[1]?.surfaceFromAirportCode ?? undefined
 }
 
-describe('R14 Blocker 29 – Surface-Evidence überlebt Persistenz', () => {
-  test('1. ZRH→CDG, ORY→BKK mit surfaceFromAirportCode=CDG ist vor Persistenz bewiesen', () => {
+describe('R14 Blocker 29 / R16 Blocker 31 – untrusted Persistenz entfernt Surface-Evidence', () => {
+  test('1. ZRH→CDG, ORY→BKK mit surfaceFromAirportCode=CDG ist als In-Memory-Fixture bewiesen', () => {
     const itinerary = itineraryAirportChange('ORY')
     assert.equal(surfaceAmZweiten(itinerary), 'CDG')
     const facts = routeFactsAusGraph(reiseMit(itinerary))
@@ -178,33 +178,35 @@ describe('R14 Blocker 29 – Surface-Evidence überlebt Persistenz', () => {
     assert.match(routeKompakt(facts), /Paris CDG ⇢ Paris ORY/)
   })
 
-  test('2. Kanonisierung und Metadata-Runde behalten exakt diese Evidence', () => {
+  test('2. Kanonisierung und Metadata-Runde entfernen Client-Surface-Evidence', () => {
     const original = itineraryAirportChange('ORY')
     const kanonisch = itineraryKanonisieren(original, TEST_FLUGHAFEN_REFS)
     const metadata = persistenzRunde(original)
-    assert.equal(surfaceAmZweiten(kanonisch!), 'CDG')
-    assert.equal(surfaceAmZweiten(metadata!), 'CDG')
-    assert.equal(metadata?.legs[0]?.segments[0]?.surfaceFromAirportCode, undefined)
+    assert.equal(surfaceAmZweiten(kanonisch!), undefined)
+    assert.equal(surfaceAmZweiten(metadata!), undefined)
+    assert.equal(metadata?.legs[0]?.segments[1]?.origin.airportCode, 'ORY')
   })
 
-  test('3. nach Persistenzgrenze bleibt CDG⇢ORY bewiesen', () => {
+  test('3. nach untrusted Persistenzgrenze wird CDG⇢ORY unknown', () => {
     const nachher = persistenzRunde(itineraryAirportChange('ORY'))
     assert.ok(nachher)
     const facts = routeFactsAusGraph(reiseMit(nachher))
-    assert.equal(facts.chronologieBewiesen, true)
-    assert.equal(facts.origin.airportCode, 'ZRH')
-    assert.equal(facts.destination.airportCode, 'BKK')
-    assert.equal(facts.connections[0]?.airportChange, true)
+    assert.equal(facts.chronologieBewiesen, false)
+    assert.equal(facts.origin.airportCode, null)
+    assert.equal(facts.connections.length, 0)
+    assert.equal(surfaceAmZweiten(nachher), undefined)
   })
 
-  test('4. Fingerprint vor und nach Persistenz ist identisch', () => {
+  test('4. Fingerprint nach Persistenz entspricht der Evidence-losen Lücke', () => {
     const vorher = routeFactsAusGraph(reiseMit(itineraryAirportChange('ORY')))
     const nachher = routeFactsAusGraph(reiseMit(persistenzRunde(itineraryAirportChange('ORY'))!))
-    assert.equal(vorher.fingerprint, nachher.fingerprint)
+    const ohne = routeFactsAusGraph(reiseMit(persistenzRunde(itineraryAirportChangeOhneEvidence('ORY'))!))
+    assert.notEqual(vorher.fingerprint, nachher.fingerprint)
+    assert.equal(nachher.fingerprint, ohne.fingerprint)
     assert.match(vorher.fingerprint ?? '', /CDG:FR~ORY:FR/)
   })
 
-  test('5. Connection, Airport-Change und UI bleiben vor/nach Persistenz identisch', () => {
+  test('5. Persistenz erzeugt keinen Airport-Change aus Client-Surface', () => {
     const vorher = routeFactsAusGraph(reiseMit(itineraryAirportChange('ORY')))
     const nachher = routeFactsAusGraph(reiseMit(persistenzRunde(itineraryAirportChange('ORY'))!))
     assert.deepEqual(
@@ -215,15 +217,16 @@ describe('R14 Blocker 29 – Surface-Evidence überlebt Persistenz', () => {
       ]),
       [[0, 'CDG', true]],
     )
-    assert.deepEqual(vorher.connections, nachher.connections)
-    assert.equal(routeKompakt(vorher), routeKompakt(nachher))
+    assert.equal(nachher.connections.length, 0)
+    assert.match(routeKompakt(vorher), /Paris CDG ⇢ Paris ORY/)
+    assert.match(routeKompakt(nachher), /Reihenfolge unbekannt/)
     const htmlVorher = renderToStaticMarkup(createElement(FlugRoute, { facts: vorher }))
     const htmlNachher = renderToStaticMarkup(createElement(FlugRoute, { facts: nachher }))
     assert.match(htmlVorher, /Flughafenwechsel/)
-    assert.equal(htmlVorher, htmlNachher)
+    assert.equal(htmlNachher.includes('Flughafenwechsel'), false)
   })
 
-  test('6. Readiness, Safety und Seasonal sehen vor/nach Persistenz dieselbe Route Truth', () => {
+  test('6. Readiness, Safety und Seasonal sehen nach Persistenz die gestrippte Truth', () => {
     const vorherReise = reiseMit(itineraryAirportChange('ORY'))
     const nachherReise = reiseMit(persistenzRunde(itineraryAirportChange('ORY'))!)
     const vorher = routeFactsAusGraph(vorherReise)
@@ -235,28 +238,29 @@ describe('R14 Blocker 29 – Surface-Evidence überlebt Persistenz', () => {
     assert.equal(seasonalReisekontext(vorherReise).route.fingerprint, vorher.fingerprint)
     assert.equal(seasonalReisekontext(nachherReise).route.fingerprint, nachher.fingerprint)
     assert.equal(readinessReisekontext(vorherReise).originCountryCode, 'CH')
-    assert.equal(readinessReisekontext(nachherReise).originCountryCode, 'CH')
-    assert.equal(vorher.fingerprint, nachher.fingerprint)
+    assert.equal(readinessReisekontext(nachherReise).originCountryCode, null)
+    assert.notEqual(vorher.fingerprint, nachher.fingerprint)
   })
 
-  test('7. Guest→Account-Kanonisierung verliert die Evidence nicht', () => {
+  test('7. Guest→Account-Kanonisierung adelt Client-Surface nicht', () => {
     const nutzlast = gastNutzlast(mitClientLaendern(itineraryAirportChange('ORY')))
     const kanonisch = reiseNutzlastRouteKanonisieren(nutzlast, TEST_FLUGHAFEN_REFS)
     const itinerary = kanonisch.ungeplante[0]?.route_itinerary
-    assert.equal(surfaceAmZweiten(itinerary!), 'CDG')
+    assert.equal(surfaceAmZweiten(itinerary!), undefined)
     const persistiert = persistenzRunde(itinerary!)
-    assert.equal(surfaceAmZweiten(persistiert!), 'CDG')
-    const gast = flug({ id: 'gast', routeItinerary: itineraryAirportChange('ORY') })
+    assert.equal(surfaceAmZweiten(persistiert!), undefined)
+    const gast = flug({ id: 'gast', routeItinerary: itinerary! })
     const konto = flug({ id: 'konto', routeItinerary: persistiert! })
     assert.equal(routeFactsFuerPunkt(gast).fingerprint, routeFactsFuerPunkt(konto).fingerprint)
-    assert.equal(
+    assert.equal(routeFactsFuerPunkt(konto).chronologieBewiesen, false)
+    assert.notEqual(
       routeFactsAusItinerary(itineraryAirportChange('ORY')).fingerprint,
       routeFactsFuerPunkt(konto).fingerprint,
     )
     assert.deepEqual(iatasAusNutzlast(kanonisch).sort(), ['BKK', 'CDG', 'ORY', 'ZRH'])
   })
 
-  test('8. ungültiges surfaceFromAirportCode wird fail-closed abgewiesen', () => {
+  test('8. ungültiges surfaceFromAirportCode wird verworfen, Route bleibt', () => {
     const basis = itineraryAirportChange('ORY')
     const zweites = basis.legs[0]?.segments[1]
     assert.ok(zweites)
@@ -271,16 +275,21 @@ describe('R14 Blocker 29 – Surface-Evidence überlebt Persistenz', () => {
         },
       ],
     }
-    assert.equal(flugRouteItineraryLesen(ungueltig), null)
-    assert.equal(itineraryKanonisieren(ungueltig, TEST_FLUGHAFEN_REFS), null)
-    assert.equal(itineraryAusMetadata(metadataAusItinerary(ungueltig as FlugRouteItinerary)), null)
+    const gelesen = flugRouteItineraryLesen(ungueltig)
+    assert.ok(gelesen)
+    assert.equal(surfaceAmZweiten(gelesen), undefined)
+    assert.equal(gelesen.legs[0]?.segments[1]?.origin.airportCode, 'ORY')
+    const kanonisch = itineraryKanonisieren(ungueltig, TEST_FLUGHAFEN_REFS)
+    assert.equal(surfaceAmZweiten(kanonisch!), undefined)
+    const metadata = itineraryAusMetadata(metadataAusItinerary(ungueltig as FlugRouteItinerary))
+    assert.equal(surfaceAmZweiten(metadata!), undefined)
   })
 
-  test('9. Surface-Evidence macht keine Client-Länder zur Truth', () => {
+  test('9. Client-Surface macht keine Client-Länder zur Truth', () => {
     const persistiert = persistenzRunde(mitClientLaendern(itineraryAirportChange('ORY')))
     const origin = persistiert?.legs[0]?.segments[0]?.origin
     const ory = persistiert?.legs[0]?.segments[1]?.origin
-    assert.equal(surfaceAmZweiten(persistiert!), 'CDG')
+    assert.equal(surfaceAmZweiten(persistiert!), undefined)
     assert.equal(origin?.countryCode, 'CH')
     assert.equal(ory?.countryCode, 'FR')
     assert.notEqual(origin?.city, 'Clientstadt')

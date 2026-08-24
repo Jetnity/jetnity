@@ -30,6 +30,7 @@ import {
   itineraryEinTransit,
   itineraryZweiTransits,
 } from '@/lib/route/fixtures'
+import { flugRouteItineraryLesen } from '@/lib/route/schema'
 import { SCHLUESSEL, gastreiseAnlegen, kennungErzeugen } from '@/lib/trips/gastspeicher'
 import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 import { gastreisenUebernehmen, type Uebernahmeantwort } from '@/lib/trips/uebernahme'
@@ -736,16 +737,19 @@ describe('Guest → Account behält die Flugroute', () => {
     assert.equal(server.empfangen[0]?.ungeplante[0]?.route_itinerary?.legs[0]?.segments.length, 2)
   })
 
-  test('Airport-Change-Evidence geht vollständig mit', async () => {
+  test('Airport-Change-Itinerary geht strukturell mit; Client-Surface wird beim Parse verworfen', async () => {
     const entwurf = gastreiseAnlegen(eingabe())
     speicher.setzen(SCHLUESSEL.aktiv, { ...entwurf, ohneTag: [gastflug(itineraryAirportChange('ORY'))] })
     const server = attrappe()
     await gastreisenUebernehmen(server.senden)
-    assert.deepEqual(server.empfangen[0]?.ungeplante[0]?.route_itinerary, itineraryAirportChange('ORY'))
-    assert.equal(
-      server.empfangen[0]?.ungeplante[0]?.route_itinerary?.legs[0]?.segments[1]?.surfaceFromAirportCode,
-      'CDG',
-    )
+    const gesendet = server.empfangen[0]?.ungeplante[0]?.route_itinerary
+    assert.equal(gesendet?.legs[0]?.segments[0]?.origin.airportCode, 'ZRH')
+    assert.equal(gesendet?.legs[0]?.segments[0]?.destination.airportCode, 'CDG')
+    assert.equal(gesendet?.legs[0]?.segments[1]?.origin.airportCode, 'ORY')
+    assert.equal(gesendet?.legs[0]?.segments[1]?.destination.airportCode, 'BKK')
+    const gelesen = flugRouteItineraryLesen(gesendet)
+    assert.ok(gelesen)
+    assert.equal(gelesen.legs[0]?.segments[1]?.surfaceFromAirportCode, undefined)
   })
 
   test('zwei Transits gehen vollständig mit', async () => {

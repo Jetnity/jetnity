@@ -2,14 +2,15 @@
 //
 // FlugOption → persistierbare Route-Itinerary, plus Kanonisierung vorhandener Itineraries.
 // Länder nur aus der übergebenen Flughafenreferenz, nie aus Segment- oder Clienttext.
-// Eine FlugOption ist untrusted Browser-Input: Segmentlücken werden nicht zu Surface-Evidence.
+// Untrusted Intake (FlugOption, Browser, Local Storage) erzeugt und erhält
+// keine Surface-Evidence. Segmentlücken bleiben unknown.
 //
 // Frei von Next und Providern.
 
 import type { FlugOption } from '@/lib/flights/domain'
 import { flugOptionLesen } from '@/lib/flights/schema'
 import type { FlughafenReferenzKarte, FlugRouteItinerary, RouteSegment } from '@/lib/route/domain'
-import { flughafenPunkt, iataLesen } from '@/lib/route/referenz'
+import { flughafenPunkt } from '@/lib/route/referenz'
 import { flugRouteItineraryLesen } from '@/lib/route/schema'
 
 export function itineraryAusFlugOption(
@@ -40,7 +41,7 @@ export function segmenteAusItinerary(itinerary: FlugRouteItinerary): RouteSegmen
 
 /**
  * Baut eine Itinerary aus IATA + serverseitiger Referenz neu.
- * Clientwerte für Land, Stadt und Ländername werden verworfen.
+ * Clientwerte für Land, Stadt, Ländername und Surface-Evidence werden verworfen.
  */
 export function itineraryKanonisieren(
   itinerary: FlugRouteItinerary,
@@ -50,8 +51,6 @@ export function itineraryKanonisieren(
   for (const bein of itinerary.legs) {
     const segments: RouteSegment[] = []
     for (const segment of bein.segments) {
-      const surface = surfaceEvidenceLesen(segment.surfaceFromAirportCode)
-      if (surface === false) return null
       segments.push({
         origin: flughafenPunkt(segment.origin.airportCode, refs),
         destination: flughafenPunkt(segment.destination.airportCode, refs),
@@ -59,7 +58,6 @@ export function itineraryKanonisieren(
         departureTime: segment.departureTime,
         arrivalDate: segment.arrivalDate,
         arrivalTime: segment.arrivalTime,
-        ...(surface ? { surfaceFromAirportCode: surface } : {}),
       })
     }
     legs.push({ segments })
@@ -86,9 +84,4 @@ function segmentAusOption(
     arrivalDate: segment.arrivalDate,
     arrivalTime: segment.arrivalTime,
   }
-}
-
-function surfaceEvidenceLesen(wert: string | null | undefined): string | null | false {
-  if (wert == null || wert === '') return null
-  return iataLesen(wert) ?? false
 }

@@ -200,10 +200,10 @@ describe('R15 Blocker 30 – FlugOption erfindet keine Surface-Evidence', () => 
     assert.equal(routeFactsAusGraph(reiseMit(itinerary!)).chronologieBewiesen, false)
   })
 
-  test('5. Save→Reload bewahrt belegte Evidence und erfindet keine neue', () => {
+  test('5. Save→Reload erfindet keine Surface-Evidence und adelt Client-Claims nicht', () => {
     const belegt = persistenzRunde(itineraryAirportChange('ORY'))
-    assert.equal(belegt?.legs[0]?.segments[1]?.surfaceFromAirportCode, 'CDG')
-    assert.equal(routeFactsAusGraph(reiseMit(belegt!)).chronologieBewiesen, true)
+    assert.equal(belegt?.legs[0]?.segments[1]?.surfaceFromAirportCode, undefined)
+    assert.equal(routeFactsAusGraph(reiseMit(belegt!)).chronologieBewiesen, false)
     const erfunden = persistenzRunde(itineraryAusFlugOption(optionMit(US_GAP), TEST_FLUGHAFEN_REFS)!)
     assert.equal(erfunden?.legs[0]?.segments[1]?.surfaceFromAirportCode, undefined)
     assert.equal(routeFactsAusGraph(reiseMit(erfunden!)).chronologieBewiesen, false)
@@ -254,12 +254,16 @@ describe('R15 Blocker 30 – FlugOption erfindet keine Surface-Evidence', () => 
     const gast = flug({ id: 'gast', routeItinerary: optionItinerary })
     const account = flug({ id: 'konto', routeItinerary: persistenzRunde(konto!)! })
     assert.equal(routeFactsFuerPunkt(gast).fingerprint, routeFactsFuerPunkt(account).fingerprint)
-    const belegtGast = flug({ id: 'gast-e', routeItinerary: itineraryAirportChange('ORY') })
+    const belegtGast = flug({
+      id: 'gast-e',
+      routeItinerary: itineraryKanonisieren(itineraryAirportChange('ORY'), TEST_FLUGHAFEN_REFS)!,
+    })
     const belegtKonto = flug({
       id: 'konto-e',
       routeItinerary: persistenzRunde(itineraryAirportChange('ORY'))!,
     })
     assert.equal(routeFactsFuerPunkt(belegtGast).fingerprint, routeFactsFuerPunkt(belegtKonto).fingerprint)
+    assert.equal(routeFactsFuerPunkt(belegtKonto).chronologieBewiesen, false)
   })
 
   test('8. Readiness, Safety und Seasonal sehen dieselbe korrigierte Truth', () => {
