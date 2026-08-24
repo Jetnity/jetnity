@@ -288,7 +288,7 @@ Frühere grüne Tests oder frühere Merges geben keinen Bestandsschutz. Evidence
 
 ## 9. Nächste verbindliche Reihenfolge
 
-Der nächste neue Entwicklungsblock ist **gestartet**.
+Die nächsten konfliktarmen Workstreams sind **freigegeben**.
 
 1. ✅ Foundation C – Readiness
 2. ✅ Foundation D – Route & Transit
