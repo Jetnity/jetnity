@@ -302,7 +302,7 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`, ADR-0158)
 6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`, ADR-0159)
 6d. ✅ Admin Slice C auf `main` (PR #49, `78192ab`, ADR-0162)
-7. **→ Account AP-3** Draft PR #53 / `feat/account-ap3` nach Sync auf `main` `78192ab`. STOPP für unabhängigen Technical-Lead-Re-Review. Provider S1/S2 liegen auf `main`. Kein AP-4.
+7. **→ Account AP-3** Draft PR #53 / Exact Head `c5e4a51f` nach Sync auf `main` `78192ab`. STOPP für unabhängigen Technical-Lead-Re-Review. Provider S1/S2 liegen auf `main`. Kein AP-4.
 8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 10. echte Providerphase
@@ -326,7 +326,8 @@ Auftrag: `docs/ACCOUNT_AP3_TASK.md`
 2. AP-3 ist auf diesen `main` rebased. Runtime-Scope unverändert: ableitende Gruppen, fail-closed 200-Hinweis. Keine neue AP-3-Funktionalität.
 3. Entscheidung bleibt ADR-0160. ADR-0158 bleibt Admin Slice A. ADR-0159 bleibt Admin Slice B. ADR-0162 bleibt Admin Slice C.
 4. PR #53 bleibt Draft. Kein Mark Ready, kein Merge, kein AP-4, keine Production-Migration, keine Provider-/Secret-Aktivierung.
-5. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review von Draft-PR #53 auf dem neuen current-main-integrierten Head. STOPP.
+5. Exact Head `c5e4a51f`: lokale Gates 1870/1870, GitHub Actions `32766099353` SUCCESS, Vercel `62QioKqqL8rwXBHmxLrnXFqAck7j` READY.
+6. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review von Draft-PR #53 auf `c5e4a51f`. STOPP.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

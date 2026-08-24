@@ -2,7 +2,7 @@
 
 Stand: 24. August 2026
 
-Status: **auf `main` `78192ab` synchronisiert; Runtime unverändert; Draft bleibt Draft, wartet auf Exact-Head-Gates und Technical-Lead-Re-Review**
+Status: **auf `main` `78192ab` synchronisiert; Exact Head `c5e4a51f` gegatet; Draft bleibt Draft, wartet auf Technical-Lead-Re-Review**
 
 Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`
 

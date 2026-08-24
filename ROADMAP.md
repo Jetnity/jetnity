@@ -291,7 +291,7 @@ Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
 
 ## 6f. In Arbeit – Account Platform AP-3
 
-Status: **Draft PR #53 auf `feat/account-ap3`, synchronisiert auf `main` `78192ab`. Entscheidung: ADR-0160.**
+Status: **Draft PR #53, Exact Head `c5e4a51f`, synchronisiert auf `main` `78192ab`. Entscheidung: ADR-0160.**
 
 - Meine Reisen gruppiert ableitend nach Aktiv / Kommend / Vergangen / Ohne Datum
 - 200er-Hinweis fail-closed; Runtime-Scope gegenüber dem letzten AP-3-Stand unverändert
@@ -442,7 +442,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`)
 6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`)
 6d. ✅ Admin Slice C auf `main` (PR #49, `78192ab`)
-7. **→ Account AP-3** Draft PR #53 nach Sync auf `main` `78192ab`; STOPP für Technical-Lead-Re-Review
+7. **→ Account AP-3** Draft PR #53 / Exact Head `c5e4a51f` nach Sync auf `main` `78192ab`; STOPP für Technical-Lead-Re-Review
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit
 10. echte Providerphase

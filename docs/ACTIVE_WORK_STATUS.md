@@ -101,7 +101,7 @@ Status: `docs/ACCOUNT_AP3_STATUS.md`
 
 Aktiver Slice:
 
-**AP-3 ist auf aktuellen `main` `78192ab` synchronisiert.** Ableitende Gruppen Aktiv / Kommend / Vergangen / Ohne Datum. Der 200er-Hinweis bleibt fail-closed. Runtime-Scope unverändert. Entscheidung: ADR-0160. STOPP für unabhängigen Technical-Lead-Re-Review. Kein AP-4.
+**AP-3 ist auf aktuellen `main` `78192ab` synchronisiert.** Ableitende Gruppen Aktiv / Kommend / Vergangen / Ohne Datum. Der 200er-Hinweis bleibt fail-closed. Runtime-Scope unverändert. Entscheidung: ADR-0160. Exact Head `c5e4a51f` lokal und remote gegatet. STOPP für unabhängigen Technical-Lead-Re-Review. Kein AP-4.
 
 ### Provider Readiness – S1 Shared Operational Contract
 
@@ -168,6 +168,6 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-1. Account AP-3 / Draft PR #53 ist auf `main` `78192ab` synchronisiert. Runtime-Scope unverändert. Nächster Gate: unabhängiger Technical-Lead-Re-Review. Kein AP-4. Kein Mark Ready. Kein Merge.
+1. Account AP-3 / Draft PR #53 ist auf `main` `78192ab` synchronisiert. Runtime-Scope unverändert. Exact Head `c5e4a51f` ist lokal und remote gegatet. Nächster Gate: unabhängiger Technical-Lead-Re-Review. Kein AP-4. Kein Mark Ready. Kein Merge.
 2. ADR-Allokation: 0158=Slice A, 0159=Slice B, 0160=AP-3, 0161=S3, 0162=Admin Slice C.
 3. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag (`docs/ADMIN_BILLING_LOCAL_REFUND_INTEGRITY_TASK.md`), nicht AP-3.

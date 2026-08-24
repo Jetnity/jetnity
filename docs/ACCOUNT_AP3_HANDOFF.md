@@ -1,7 +1,7 @@
 # Jetnity Account Platform – AP-3 Handoff
 
 Stand: 24. August 2026  
-Status: **auf `main` `78192ab` synchronisiert; Runtime-Scope unverändert; Draft, wartet auf Exact-Head-Gates und Technical-Lead-Re-Review; kein Mark Ready, kein Merge**
+Status: **auf `main` `78192ab` synchronisiert; Exact Head `c5e4a51f` gegatet; Draft, wartet auf Technical-Lead-Re-Review; kein Mark Ready, kein Merge**
 
 | Feld | Wert |
 | --- | --- |
@@ -12,6 +12,7 @@ Status: **auf `main` `78192ab` synchronisiert; Runtime-Scope unverändert; Draft
 | Draft-PR | https://github.com/Jetnity/jetnity/pull/53 |
 | Status | `docs/ACCOUNT_AP3_STATUS.md` |
 | Self-Review | `docs/ACCOUNT_AP3_SELF_REVIEW.md` |
+| Gegateter Head | `c5e4a51feff80b94b9bb9b153ee5211d49fa4375` |
 | Entscheidung | ADR-0160 |
 
 ## Was ein neuer Agent zuerst liest
@@ -39,6 +40,16 @@ Auth, RLS, `trips.status`, Guest→Account, Traveller, Privacy, Billing, Admin, 
 - 200 ist last-updated, keine vollständige Inventur.
 - Gruppen erscheinen nach dem Geräte-Kalendertag; der erste Paint ist ungruppiert.
 
+## Runtime-Nachweis
+
+Genau `c5e4a51feff80b94b9bb9b153ee5211d49fa4375`:
+
+- GitHub Actions **SUCCESS** (`32766099353`)
+- Vercel **success / READY** (`62QioKqqL8rwXBHmxLrnXFqAck7j`)
+- Preview: https://jetnity-f4zxs1cp6-jetnity-e1b93c82.vercel.app
+
+Ein späterer Docs-only-Commit ist kein neues Runtime-Gate.
+
 ## Nächster Schritt
 
-Exact-Head-Gates auf dem neuen Head, danach unabhängiger Technical-Lead-Re-Review von Draft-PR #53. Kein AP-4. Kein Ready. Kein Merge.
+Unabhängiger Technical-Lead-Re-Review von Draft-PR #53 auf `c5e4a51f`. Kein AP-4. Kein Ready. Kein Merge.
