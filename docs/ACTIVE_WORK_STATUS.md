@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38, Account AP-1/AP-2, Provider S2 und Admin Slice A auf `main` `1ec93cc9`; Admin Slice B Current-Main-Gates auf Draft PR #46 / `1715640b`, STOPP für unabhängigen Review**
+Status: **PR #38, Account AP-1/AP-2, Provider S2 und Admin Slice A auf `main` `1ec93cc9`; Admin Slice B Technical-Lead PASS auf Draft PR #46 / `1715640b`, wartet auf Product-Owner-Entscheidung**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -76,9 +76,9 @@ Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
 
 Aktiver Slice:
 
-**Admin Slice B Current-Main-Re-Sync ist gegatet.** Read-only System Health ohne Fake-Green. Entscheidung: ADR-0159. Exact Runtime Head `1715640b`. CI `32750112312` SUCCESS. Preview `6HzJRdg4NWnGRQb8jpLC1k2jUHms` READY. Docs-only Head `beea0ac7`: CI `32750661517` SUCCESS, Preview `4T3towfCx4dWmCP4UvNsoU3QzNwk` READY.
+**Admin Slice B hat unabhängigen Technical-Lead PASS / Technical Integration Closure.** Read-only System Health ohne Fake-Green. Entscheidung: ADR-0159. Exact Runtime Head `1715640b`. CI `32750112312` SUCCESS. Preview `6HzJRdg4NWnGRQb8jpLC1k2jUHms` READY. Review: `docs/ADMIN_PLATFORM_SLICE_B_TECHNICAL_LEAD_REVIEW.md`.
 
-STOPP für unabhängigen Technical-Lead-Review. Kein Mark Ready, kein Merge, kein Slice C.
+Wartet auf ausdrückliche Product-Owner-Entscheidung zu Mark Ready und danach separat zum Merge. Kein Slice C vor Integration von B.
 
 Parent `App / Deployment` bleibt `unknown`. Parent `Supabase` bleibt `not_configured`. Vercel/GitHub/Infomaniak bleiben ohne Management-Quelle `not_configured`. Historischer B1-PASS auf `cc1d06bd` bleibt historische Evidence.
 
@@ -151,7 +151,7 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-1. `Admin platform audit` hat Slice B / Draft PR #46 auf `main` `1ec93cc9` synchronisiert und Exact-Head-Gates auf `1715640b` belegt. STOPP für unabhängigen Technical-Lead-Review. Kein Mark Ready, kein Merge, kein Slice C.
-2. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung.
-3. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag (`docs/ADMIN_BILLING_LOCAL_REFUND_INTEGRITY_TASK.md`), nicht Slice B.
-4. AP-3, Admin Slice C und Provider S3 brauchen jeweils eine neue ausdrückliche Freigabe.
+1. Admin Slice B / Draft PR #46 hat Technical-Lead PASS auf Runtime-Head `1715640b`. Nächster Gate: ausdrückliche Product-Owner-Entscheidung zu Mark Ready, danach separate Merge-Freigabe. Kein Slice C vor Integration.
+2. Parallele ADR-Kollision vor späteren Merges: AP-3 / PR #53 darf nicht ADR-0158 behalten; Provider S3 / PR #54 darf nicht ADR-0159 behalten. Allokation: 0158=Slice A, 0159=Slice B, 0160=AP-3, 0161=S3.
+3. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung.
+4. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag (`docs/ADMIN_BILLING_LOCAL_REFUND_INTEGRITY_TASK.md`), nicht Slice B.

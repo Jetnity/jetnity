@@ -9,7 +9,7 @@ Exact Runtime Head: `1715640bffc36d7ebe1a25de7aeb569632b7811f`
 
 ## Wo die Arbeit steht
 
-**Current-Main-Re-Sync ist erfolgt. Lokale und Remote-Gates auf dem Exact Runtime Head sind belegt. STOPP für unabhängigen Technical-Lead-Review.**
+**Unabhängiger Technical-Lead-Review: PASS / Technical Integration Closure.** Lokale und Remote-Gates auf Exact Runtime Head `1715640b` sind belegt. Review: `docs/ADMIN_PLATFORM_SLICE_B_TECHNICAL_LEAD_REVIEW.md`.
 
 Read-only System Health bleibt fail-closed. ADR-0159. Slice A auf `main` ist ADR-0158. Provider S2 auf `main` bleibt erhalten.
 
@@ -54,5 +54,5 @@ Historischer B1-PASS auf `cc1d06bd` bleibt historische Evidence.
 
 ## Exakter nächster Schritt
 
-Unabhängigen Technical-Lead-Review auf Exact Head `1715640b` abwarten.  
-Nach erfolgreicher Integration von B und neuer Product-Owner-Freigabe denselben Admin-Plan bei Slice C fortsetzen.
+Ausdrückliche Product-Owner-Entscheidung zu Mark Ready, danach separate Merge-Freigabe.  
+Nach erfolgreicher Integration von B und neuem Auftrag denselben Admin-Plan bei Slice C fortsetzen.

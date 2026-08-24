@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1, Account AP-2, Provider S2 und Admin Slice A auf `main`; Admin Slice B Exact-Head-Gates auf Draft PR #46 / `1715640b`, STOPP für unabhängigen Review**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1, Account AP-2, Provider S2 und Admin Slice A auf `main`; Admin Slice B Technical-Lead PASS auf Draft PR #46 / `1715640b`, wartet auf Product-Owner-Entscheidung**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -300,7 +300,7 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 6. ✅ Account Platform AP-1 auf `main` (PR #43, `084f7c87`)
 6a. ✅ Account Platform AP-2 auf `main` (PR #48, `2827d1cb`)
 6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`, ADR-0158)
-7. **→ Admin Slice B** auf Draft PR #46 / Exact Head `1715640b` wartet auf unabhängigen Technical-Lead-Review. Provider S1 Technical Closure auf Draft-PR #47. Provider S2 liegt auf `main`.
+7. **→ Admin Slice B** Draft PR #46 / Exact Head `1715640b` hat Technical-Lead PASS und wartet auf Product-Owner-Entscheidung. Provider S1 Technical Closure auf Draft-PR #47. Provider S2 liegt auf `main`.
 8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 10. echte Providerphase
@@ -325,7 +325,8 @@ Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
 3. Lokale und Remote-Gates auf diesem Head sind belegt: CI `32750112312` SUCCESS, Preview `6HzJRdg4NWnGRQb8jpLC1k2jUHms` READY.
 4. Der historische B1-PASS auf `cc1d06bd` bleibt historische Evidence.
 5. PR #46 bleibt Draft. Kein Mark Ready, kein Merge, kein Slice C, keine Production-Migration, keine Provider-/Secret-Aktivierung.
-6. **Exakter nächster Schritt:** unabhängigen Technical-Lead-Review auf `1715640b` abwarten.
+6. Unabhängiger Technical-Lead-Review: PASS / Technical Integration Closure. Siehe `docs/ADMIN_PLATFORM_SLICE_B_TECHNICAL_LEAD_REVIEW.md`.
+7. **Exakter nächster Schritt:** ausdrückliche Product-Owner-Entscheidung zu Mark Ready, danach separate Merge-Freigabe. Kein Slice C vor Integration.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

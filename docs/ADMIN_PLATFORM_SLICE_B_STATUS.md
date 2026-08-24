@@ -8,10 +8,10 @@ Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
 
 ## Status
 
-**Current-Main-Re-Sync und Exact-Head-Gates auf `1715640b` belegt. STOPP für unabhängigen Technical-Lead-Review.**
+**Unabhängiger Technical-Lead-Review: PASS / Technical Integration Closure auf `1715640b`.**
 
-Draft, nicht gemergt. Kein Mark Ready, kein Merge, kein Slice C.  
-Kein unabhängiger Technical-Lead-PASS und keine Product-Owner-Freigabe werden behauptet.
+Draft, nicht gemergt. Kein Mark Ready, kein Merge, kein Slice C ohne ausdrückliche aktuelle Product-Owner-Freigabe.  
+Review: `docs/ADMIN_PLATFORM_SLICE_B_TECHNICAL_LEAD_REVIEW.md`.
 
 Admin-Entscheidung: **ADR-0159**. Slice A auf `main` ist ADR-0158.
 
@@ -62,5 +62,5 @@ Traveller Context ist nicht relevant.
 
 ## Nächster Schritt
 
-Unabhängigen ChatGPT/Technical-Lead-Review auf Exact Head `1715640b` abwarten.  
-Kein Mark Ready, kein Merge, kein Slice C ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+Ausdrückliche Product-Owner-Entscheidung zu Mark Ready abwarten, danach separate Merge-Freigabe.  
+Kein Slice C vor erfolgreicher Integration von Slice B.
