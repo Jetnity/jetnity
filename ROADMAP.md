@@ -218,8 +218,8 @@ Verbindlich:
 
 ### Aktive nächste Workstreams
 
-23. **→ Account AP-1** – Account-Shell + persönliche Übersicht / „Meine Reisen“ als Account-Hub (`audit/account-platform`)
-24. **→ Admin Slice A** – ehrliche Control-Center-IA / Legacy-Scheinzustände entfernen (`audit/admin-platform`)
+23. **→ Account AP-1** – Account-Shell + persönliche Übersicht / „Meine Reisen“ als Account-Hub (Draft-PR #43, `feat/account-ap1`)
+24. **→ Admin Slice A** – ehrliche Control-Center-IA / Legacy-Scheinzustände entfernen (Draft-PR #44, `feat/admin-control-center-ia`)
 
 Beide Slices dürfen parallel laufen. Shared Auth/RLS/DB/Traveller-/Route-/Billing-Contracts bleiben seriell.
 

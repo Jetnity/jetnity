@@ -311,14 +311,14 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-`main`: `f999f215`  
+`main`: `e4f4cca7`  
 PR #38 Squash-Merge: `ee988bbe`  
 Production: `docs/PR38_PRODUCTION_INTEGRATION.md`
 
 1. Seasonal-Foundation und Review-Blocker 1–31 sind auf `main` und Production.
 2. Untrusted Intake persistiert keine Client-Surface. `seasonalProviderAus()` bleibt `null`.
-3. Vercel Production `dpl_5wwLu6tbPLhPJgFMLC1PHx3wzcVS` ist READY auf `ee988bbe`. Supabase Production hat beide Route-Surface-Migrationen.
-4. **Exakter nächster Schritt:** Account AP-1 (`Account plattform audit vorbereitung`, `audit/account-platform`) und Admin Slice A (`Admin platform audit`, `audit/admin-platform`) parallel vorbereiten. Shared Auth/RLS/DB/Traveller-/Route-Contracts bleiben seriell.
+3. Vercel Production nach PR-#38-Integration ist READY. Supabase Production hat beide Route-Surface-Migrationen.
+4. **Exakter nächster Schritt:** `Account plattform audit vorbereitung` implementiert AP-1 auf Draft-PR #43 (`feat/account-ap1`). `Admin platform audit` implementiert Slice A auf Draft-PR #44 (`feat/admin-control-center-ia`). Shared Contracts bleiben seriell.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
