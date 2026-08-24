@@ -448,6 +448,8 @@ Die beiden Produktionsdomains aus [JETNITY_VISION.md](JETNITY_VISION.md) sind da
 
 Aktuell nur Konsolen-Logging, kein zentrales Error-Tracking und keine strukturierte Log-Konvention. Ein Anbieter würde laufende Kosten verursachen und ist deshalb nicht ohne Freigabe eingeführt. Für die Launch-Reife ist eine kostengünstige Lösung vorgesehen (Backlog in [ROADMAP.md](ROADMAP.md)).
 
+Der Administrationsbereich ist **kein** System-Health-Monitor. `AdminHealthCards` zeigt RLS-Katalogdaten, nicht Vercel-/Supabase-Live-Health. Eine Steuerzentrale mit Infra-Evidence ist geplant, nicht implementiert; Ist und Ziel stehen in [docs/ADMIN_PLATFORM_AUDIT.md](docs/ADMIN_PLATFORM_AUDIT.md) und [docs/ADMIN_PLATFORM_TARGET_ARCHITECTURE.md](docs/ADMIN_PLATFORM_TARGET_ARCHITECTURE.md).
+
 ---
 
 ## 11. Bekannte technische Schulden
@@ -468,7 +470,8 @@ Aktuell nur Konsolen-Logging, kein zentrales Error-Tracking und keine strukturie
 | Ein Vorschlag überlebt kein Reload | Zustand einer React-Komponente | bewusst: der Vorschlag ist kein Systemzustand, und ein Verlust kostet einen Aufruf, nicht eine Reise (ADR-0050) |
 | ~~`PublicNavbar` kennt die Sitzung nicht~~ | ~~zeigt immer „Anmelden", kein Abmelden im öffentlichen Bereich~~ | im Nachtrag der Phase 1.5 behoben: Die Leiste liest die Sitzung clientseitig, das öffentliche Layout bleibt statisch (ADR-0047) |
 | Zahl der Kindzeilen je Reise ungebremst | Etappen, Tage und Planpunkte nur über `reise_anlegen()` begrenzt | ein direkter `INSERT` kann die eigene Reise beliebig weit füllen. Ein Auslöser je Zeile wäre quadratisch; der Weg ist ein Auslöser je Anweisung. Backlog in [ROADMAP.md](ROADMAP.md), Begründung ADR-0045 |
-| Einsicht in eine fremde Reise für den Support | bewusst nicht vorhanden | braucht eine eigene Entscheidung samt Protokollierung, nicht eine Policy (ADR-0041) |
+| Einsicht in eine fremde Reise für den Support | bewusst nicht vorhanden | braucht eine eigene Entscheidung samt Protokollierung, nicht eine Policy (ADR-0041); Admin-Audit bestätigt das und warnt vor einer weiten Admin-SELECT-Policy |
+| Admin-Steuerzentrale | Home/Users/Payments/Security teilweise echt; restliche Nav-Stubs; tote Copilot-/Notification-UI | Audit auf `audit/admin-platform`; Implementierung erst nach Freigabe |
 | `any`-Verwendung | ca. 309 Vorkommen in `app/`, `lib/`, `components/`, `types/` | überwiegend in Alt-Code; nur V2-relevante Stellen werden bereinigt |
 | ~~Middleware schützt nur einen Pfad~~ | ~~1 von vielen geschützten Bereichen~~ | in Phase 1.3 auf `/admin`, `/api/admin` und `/account` erweitert |
 | ~~`admin_domains` im Schema~~ | ~~unbenutzt, widerspricht ADR-0027~~ | in Phase 1.4 entfernt, zusammen mit `app_admins` und `is_admin` |

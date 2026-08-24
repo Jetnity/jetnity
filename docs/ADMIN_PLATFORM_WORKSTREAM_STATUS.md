@@ -1,0 +1,80 @@
+# Admin Platform Workstream Status
+
+Stand: 24. August 2026  
+Status: **AUDIT-PASS – unabhängiger Review akzeptiert; Implementierung nicht freigegeben**
+
+## Identität
+
+- **Exakter Cursor-Anzeigename:** `Admin platform audit`
+- **Modell:** Cursor Grok 4.6 (`cursor-grok-4.6-high-fast`)
+- **Cloud-Run:** https://cursor.com/agents/bc-01a030e0-e1a9-7f01-9c90-2404e23a6eed
+- **bcId:** `bc-01a030e0-e1a9-7f01-9c90-2404e23a6eed`
+- **Workstream:** Jetnity Admin Platform / Control Center – Audit & Vorbereitung
+
+## Git
+
+- **Branch:** `audit/admin-platform`
+- **Basis:** `origin/main` @ `cd220beb44d90ae376feeb8de9db8a3afb808d60`
+- **Vorbereiteter Prep-Head vor diesem Audit:** `2da365f72331259ccdb546182f99e122381dd62d`
+- **Docs-Head:** `f2262034e12cc8258d23001bbbf87f9a56e8414a`
+- **Unabhängiger Review:** `docs/PR40_CHATGPT_ADMIN_AUDIT_REVIEW.md` – AUDIT-PASS gegen `3585809c`
+- **Review-Commit:** `5236c37fbb16961b563ae496978fef814eff686c` (CI SUCCESS, 4 Checks)
+- **PR:** Draft [#40](https://github.com/Jetnity/jetnity/pull/40)
+- **Shared Contracts:** `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md` auf `chore/account-admin-team-prep` hat Vorrang
+- **Merge:** nicht beantragt, nicht erlaubt
+
+## Phase
+
+Nur Audit und Vorbereitung. Keine Control-Center-Implementierung.
+
+## Gesperrt (eingehalten)
+
+- keine neuen Production-Rollen oder Rechte
+- keine RLS-/DB-Migrationen
+- keine Service-Role-Erweiterung
+- keine Live-Bexio-, Google-Ads-, Payment-, Provider- oder Infomaniak-Aktivierung
+- keine Secrets oder OAuth-Tokens
+- keine Domain-/DNS-/Mailbox-Schreiboperationen
+- keine Änderungen an Route-, Traveller-, Readiness-, Safety- oder Seasonal-Shared-Contracts
+- kein Mark Ready
+- kein Merge
+
+## Pflichtlektüre
+
+Gelesen:
+
+- `docs/ADMIN_PLATFORM_SYSTEM_HEALTH_REQUIREMENTS.md`
+- `JETNITY_HANDOFF.md`
+- `docs/ACTIVE_WORK_STATUS.md`
+- `docs/ADMIN_PLATFORM_PRODUCT_MODEL.md`
+- `docs/CURSOR_ADMIN_PLATFORM_AUDIT_TASK.md`
+- `docs/MULTI_AGENT_WORKSTREAMS.md` (die beauftragte Datei `docs/MULTI_AGENT_DEVELOPMENT_TEAM_POLICY.md` existiert nicht)
+- `docs/PRODUCT_QUALITY_STANDARD.md`
+- `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md`
+
+Zusätzlich gegen tatsächlichen Code geprüft: Admin-Routen, Guards, RLS/Fähigkeiten, Payments/Security-APIs, Dashboard-RPCs, Account-Schnittstellen, Provider-Kill-Switches, Legacy-Entfernung, Infomaniak-/Vercel-/Supabase-/Bexio-Dokumentation.
+
+## Tests in dieser Phase
+
+Keine Product-Code-Änderung. Ist-Nachweis gegen vorhandenen Admin-Code:
+
+- `lib/auth/admin-access.test.ts`
+- `lib/auth/roles.test.ts`
+- `lib/auth/roles-datenbank.test.ts`
+- `lib/auth/faehigkeiten-datenbank.test.ts`
+- `lib/admin/ladezustand.test.ts`
+- `lib/admin/kennzahlen.test.ts`
+
+Ergebnis: **85/85 pass**.
+
+- `node scripts/api-schutz.mjs`: **10 Admin-Routen, alle nutzen `requireAdminApi()`**.
+
+Nicht ausgeführt (nicht nötig für reinen Doku-Audit, Secrets/Dauer): Production-Build, `db:sicherheit` gegen Live-Development.
+
+## Ausführungsmodell
+
+`Admin platform audit` bleibt der verantwortliche Agent für die späteren Slices A → B → C …, jeweils nach Review/Gates. Kein Agentwechsel nur wegen eines neuen Blocks. CI auf Plan-Update `4a7c7492`: SUCCESS.
+
+## Exakter nächster Schritt
+
+PR #38 Closure/PASS abwarten. Danach Slice A durch denselben Agenten, sobald ausdrücklich freigegeben. Shared Contracts aus `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md` nicht lokal überstimmen.
