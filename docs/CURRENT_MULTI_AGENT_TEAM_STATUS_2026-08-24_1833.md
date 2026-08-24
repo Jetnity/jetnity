@@ -1,6 +1,6 @@
 # Jetnity – Current Multi-Agent Team Status
 
-Stand: 24. August 2026, 18:33 Europe/Zurich  
+Stand: 24. August 2026, 18:40 Europe/Zurich  
 Status: **zentrale Kontinuitäts-Evidence / docs-only / kein Ready / kein Merge**
 
 ## Zweck
@@ -25,7 +25,7 @@ Wichtig: Diese Datei liegt auf dem Handoff-Branch `docs/chatgpt-technical-lead-h
 Cursor-Agent: `Jetnity provider readiness audit`
 
 Aktueller Auftrag:
-- Provider Readiness S3
+- Provider Readiness S3 / PR #54
 - Mobility-/Rental-Nachweis auf die bestehende S1/S2-Trust-Grenze heben
 - fail-closed ohne echten Adapter
 - kein echter Provider, kein Secret, kein kostenpflichtiger Call, keine Production-Aktivierung
@@ -38,7 +38,7 @@ Programm endet nicht bei S3. Danach gemäß vollständigem Plan S4–S8; echte P
 Cursor-Agent: `Account plattform audit vorbereitung`
 
 Aktueller Auftrag:
-- AP-3 `Meine Reisen` Lebenszyklus
+- AP-3 `Meine Reisen` Lebenszyklus / PR #53
 - reine Datumsableitung Aktiv/Kommend/Vergangen/Ohne Datum
 - keine neue Tabelle, keine Migration, kein Archiv-Write, keine Traveller-/Auth-/RLS-Neudefinition
 
@@ -48,11 +48,15 @@ Programm endet nicht bei AP-3. Danach vollständiger Account-Plan AP-4 bis AP-12
 
 Cursor-Agent: `Admin platform audit`
 
-Aktueller Auftrag:
+Aktueller Stand:
 - PR #46 / Admin Slice B read-only System Health
-- auf den neuen `main` nach Merge von #44 synchronisieren/retargeten
-- vollständige neue Exact-Head-Gates und unabhängigen Re-Review vorbereiten
-- keine Fake-Green-Health, keine Writes, keine neuen Secrets/Management-Tokens ohne Gate
+- Base aktueller `main` `1ec93cc9...`
+- Exact Runtime Head `1715640bffc36d7ebe1a25de7aeb569632b7811f`
+- Runtime CI `32750112312` SUCCESS
+- Runtime Vercel Preview `dpl_6HzJRdg4NWnGRQb8jpLC1k2jUHms` READY
+- unabhängiger ChatGPT/Technical-Lead-Review am 24.08.2026: **PASS / Technical Integration Closure**
+- Review-Dokument: `docs/ADMIN_PLATFORM_SLICE_B_TECHNICAL_LEAD_REVIEW.md` auf Branch `feat/admin-system-health`
+- PR bleibt Draft; kein Mark Ready / Merge ohne Product Owner
 
 Programm endet nicht bei B/C. Danach vollständiger Admin-Plan bis A–K / ehrliche produktionsreife Technical Closure.
 
@@ -83,6 +87,24 @@ Erwartete Audit-Dokumente:
 - `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`
 - `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`
 - `docs/TRIP_WORKSPACE_HANDOFF.md`
+
+## Neue verbindliche ADR-Allokation für die parallelen PRs
+
+Beim unabhängigen Admin-B-Review wurde eine echte Cross-Agent-Kollision gefunden:
+
+- gemergtes Admin Slice A belegt bereits ADR-0158;
+- Account AP-3 / PR #53 hatte erneut ADR-0158 angelegt;
+- Admin Slice B / PR #46 verwendet ADR-0159;
+- Provider S3 / PR #54 hatte ebenfalls ADR-0159 angelegt.
+
+Technical-Lead-Allokation ab aktuellem `main`:
+
+- **ADR-0158 = Admin Slice A** (bereits auf `main`)
+- **ADR-0159 = Admin Slice B / PR #46**
+- **ADR-0160 = Account AP-3 / PR #53**
+- **ADR-0161 = Provider S3 / PR #54**
+
+PR #53 und #54 wurden per GitHub-Kommentar angewiesen, vor Integration umzunummerieren und danach ihre Exact-Head-Gates erneut zu belegen. Kein paralleler PR darf eine bereits belegte oder reservierte ADR-Nummer verwenden.
 
 ## Verbindliche große Reihenfolge
 
