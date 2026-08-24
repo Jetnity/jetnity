@@ -12,7 +12,7 @@ Ein neuer Agent liest zuerst:
 3. diesen Handoff
 4. `docs/ACTIVE_WORK_STATUS.md`
 5. ADR-0154 in `DECISIONS.md`
-6. Audit-Quellen auf `audit/provider-readiness` (PR #45 bleibt Audit-Draft)
+6. Audit-Quellen jetzt auf `main` (PR #45 gemergt als `f92e0c9e`)
 
 Nicht auf `audit/provider-readiness` implementieren. S1 lebt nur auf `feat/provider-ops-s1`. S2 nicht ohne neuen Auftrag starten.
 
@@ -59,4 +59,4 @@ Keine Migration. Kein Service Role in `lib/provider-ops`. Keine Secrets. Keine n
 1. S1 ist auf `main`. Kein S2 ohne neuen ausdrücklichen Auftrag.
 2. **Nicht** Provider aktivieren, **nicht** Secrets anlegen, **nicht** Production-Migrationen aus S1 ableiten.
 
-PR #45 bleibt Audit-Draft.
+PR #45 ist auf `main` gemergt (`f92e0c9e`). S2 bleibt ein separater Auftrag.

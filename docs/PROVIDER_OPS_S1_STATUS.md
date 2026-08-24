@@ -52,4 +52,4 @@ Product Owner hat PR #47 am 24. August 2026 Ready gemacht und gemergt. Das ist k
 
 ## 6. Empfehlung
 
-S1 liegt auf `main`. S2, Provideraktivierung und Production-Migration brauchen jeweils einen neuen ausdrücklichen Auftrag. Audit-PR #45 bleibt Draft.
+S1 und das Provider-Readiness-Audit liegen auf `main` (PR #47 / `01761eb9`, PR #45 / `f92e0c9e`). S2, Provideraktivierung und Production-Migration brauchen jeweils einen neuen ausdrücklichen Auftrag.
