@@ -7,9 +7,9 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/44
 
 ## Wo die Arbeit steht
 
-Slice A ist implementiert. Der PR bleibt Draft. Kein Mark Ready, kein Merge, keine Production-Migration, keine Provider-/Secret-Aktivierung.
+Slice A ist implementiert. Unabhängiger Technical-Lead-Review: **code/architecture PASS, integration gate still open.** Der PR bleibt Draft. Kein Mark Ready, kein Merge, keine Production-Migration, keine Provider-/Secret-Aktivierung.
 
-Belegter Remote-Stand: Vercel Preview READY. GitHub Actions `CI` auf dem Implementierungs-Head ist nicht erneut belegt.
+Sync mit `main` `e4f4cca7` ist docs-only. Kein Runtime-Change. Offene Gates: GitHub Actions `CI` und Vercel Preview READY auf dem post-sync exact head.
 
 ## Pflichtquellen
 
@@ -30,4 +30,4 @@ Belegter Remote-Stand: Vercel Preview READY. GitHub Actions `CI` auf dem Impleme
 
 ## Exakter nächster Schritt
 
-Unabhängiger ChatGPT/Technical-Lead-Review von Draft PR #44. Danach erst Slice B.
+CI und Preview auf dem post-sync Head belegen, dann Technical Closure. Slice B erst danach.

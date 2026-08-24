@@ -8,7 +8,9 @@ Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`
 
 ## Status
 
-**Implementiert, Draft, nicht merge-bereit.** Unabhängiger Review folgt. Kein Mark Ready, kein Merge.
+**Implementiert, Draft, nicht merge-bereit.** Unabhängiger Technical-Lead-Review: code/architecture PASS, Integrationsgates offen. Kein Mark Ready, kein Merge.
+
+Sync mit `main` `e4f4cca75e55028fab231c1827abf6236ae30eec` ist **docs-only** (`docs/ACTIVE_WORK_STATUS.md` plus diese Status-/Handoff-Aktualisierung). Kein Runtime-Change durch den Sync.
 
 Lokal verifizierte Gates nach der Slice-A-Implementierung:
 
@@ -55,4 +57,4 @@ Traveller Context ist für Slice A nicht relevant; es werden keine Reise-Credent
 
 ## Nächster Schritt
 
-Unabhängiger ChatGPT/Technical-Lead-Review von Draft PR #44. Slice B (System Health, read-only) erst danach.
+GitHub Actions `CI` und Vercel Preview READY auf dem **post-sync exact head**. Slice B erst danach. Kein Mark Ready, kein Merge.
