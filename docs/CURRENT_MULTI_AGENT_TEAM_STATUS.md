@@ -1,6 +1,6 @@
 # Jetnity – Current Multi-Agent Team Status
 
-Stand: **24. August 2026, ca. 23:00 Europe/Zurich**  
+Stand: **25. August 2026, ca. 00:15 Europe/Zurich**  
 Status: **kanonische operative Team-Wahrheit für Chat-/Agent-Wechsel**
 
 > Diese Datei ist die bevorzugte kompakte Einstiegsquelle. Sie liegt auf `docs/chatgpt-technical-lead-handoff-2026-08-24` / Draft-PR #52 und ist bis zu einem Merge von #52 nicht automatisch `main`-Inhalt. Vor Eingriffen GitHub/CI/Vercel/Supabase live verifizieren.
@@ -8,11 +8,11 @@ Status: **kanonische operative Team-Wahrheit für Chat-/Agent-Wechsel**
 ## 1. Aktueller `main` / Production
 
 - Repository: `Jetnity/jetnity`
-- `main`: `b7f027ec448639fe3399512d401a7789b24e52a6`
-- letzter Merge: **Provider Readiness S3 / PR #54 / ADR-0161**
-- PR #54: **merged / closed** nach separater ausdrücklicher Product-Owner-Ready- und danach Merge-Freigabe
-- finaler PR-Head #54: `2bb94ac5e7888b182d32e143e9d75c24b6917303`
-- Merge-Commit #54 / aktueller `main`: `b7f027ec448639fe3399512d401a7789b24e52a6`
+- aktueller `main`: `f8e252880d31fe462537f33be4496044951ae4a9`
+- letzter PR-Merge: **Trip Workspace Audit / PR #55**, Merge-Commit `08fd7748ace072544e189c94880562e050971811`
+- danach nur docs-only Kontinuitätsupdates auf `main`: `c42017f5...` und `f8e25288...`
+- PR #55: **merged / closed** nach separater ausdrücklicher Product-Owner-Ready- und danach Merge-Freigabe
+- #55 war docs-only; **Merge ≠ Annahme der vorgeschlagenen Ziel-IA und ≠ TW-1-Freigabe**
 - Supabase Production `qscbgcdmivbbnzrcyegn`: Migrationen enden bei `20260824140000_flug_route_itinerary_untrusted_surface`
 - Supabase Development enthält zusätzlich `20260824160000` und `20260824180000`; beide bleiben **Development-only / nicht Production-approved**.
 - `main` ist weiterhin technisch **nicht** durch Branch Protection/Required Checks geschützt. PO-Freigabe zur Härtung besteht; aktuelle Connector-Oberfläche bietet keine passende Mutation.
@@ -24,6 +24,7 @@ Status: **kanonische operative Team-Wahrheit für Chat-/Agent-Wechsel**
 - ADR-0160 = Account AP-3 / PR #53 / `main`
 - ADR-0161 = Provider Readiness S3 / PR #54 / `main`
 - ADR-0162 = Admin Slice C / PR #49 / `main`
+- Trip-Workspace-Ziel-IA bleibt **Vorschlag ohne angenommene ADR-Nummer**
 
 Neue ADR-Nummern werden erst durch den Technical Lead für den jeweiligen nächsten Slice reserviert; keine parallele Eigenvergabe.
 
@@ -50,37 +51,33 @@ Neue ADR-Nummern werden erst durch den Technical Lead für den jeweiligen nächs
 
 - PR #54 / S3 / ADR-0161: **merged / closed**
 - Independent Runtime/Security/Truth Review: **PASS / Technical Integration Closure**
-- Runtime-Head vor docs-only Follow-up: `2cb9a830f4fdaced5551022de6ddb1a7a9aa25a6`
-- finaler PR-Head: `2bb94ac5e7888b182d32e143e9d75c24b6917303`
-- finaler GitHub Actions Run `32775510115`: **SUCCESS**
-- finaler Vercel Preview `9bwWMA4YiVAh6rvK6ZojpR5j2ZHS`: **success / READY**
-- Merge-Commit / `main`: `b7f027ec448639fe3399512d401a7789b24e52a6`
+- Merge-Commit: `b7f027ec448639fe3399512d401a7789b24e52a6`
 - Residual bleibt dokumentiert: `reise_anlegen` / direkte `trip_items`-Writes können transfer/rental_car User-Intake-Handelsfelder setzen; keine Production-Migration autorisiert
 - **Agent wartet. Kein S4 ohne neuen kontrollierten Auftrag.**
 
 ### Trip Workspace – Agent `Trip workspace audit architecture`
 
-PR #55 / Audit & Architecture:
-
-- Draft, docs-only, nicht gemergt
-- Audit/Zielarchitektur im Independent Review inhaltlich plausibel und scope-treu
-- Provider #54 ist jetzt integriert
-- **Jetzt nächster aktiver Workstream:** #55 ausschließlich docs-only gegen `main` `b7f027ec...` reconciliieren, zentrale operative Wahrheit aktualisieren, Exact-Head-Gates erneut belegen und danach STOP für unabhängigen Technical-Lead-Re-Review
-- kein Runtime-Umbau, kein TW-1
+- PR #55 / Audit & Architecture: **merged / closed**, docs-only
+- Exact Head vor Merge: `842797b8f7ab20742b51c54669e9f73acb44241e`
+- Merge-Commit: `08fd7748ace072544e189c94880562e050971811`
+- kein Runtime-Umbau, keine Shared-Contract-/DB-/RLS-/Auth-/Secret-Änderung
+- Audit/Zielarchitektur nach Review-Korrektur technisch vorbereitet
+- Ziel-IA bleibt **nicht angenommener Product-Owner-Vorschlag**
+- **Agent wartet. Kein TW-1 ohne neuen kontrollierten Auftrag.**
 
 ## 4. Kontrollierte Integrationsreihenfolge
 
 1. **Account #53: integriert / erledigt**
 2. **Provider #54: integriert / erledigt**
-3. **jetzt Trip-Workspace-Audit #55:** finale Docs-Reconciliation → Re-Gates → Re-Review → danach PO-Ready- und separates PO-Merge-Gate
-4. danach neue kontrollierte Admin-/TW-Aufträge
-
-Diese Reihenfolge vermeidet unnötige wiederholte Sync-/Re-Gate-Schleifen.
+3. **Trip-Workspace-Audit #55: integriert / erledigt, docs-only**
+4. **Jetzt:** Technical Lead bewertet die vorgeschlagene Ziel-IA als Ganzes; Product Owner entscheidet ausdrücklich über Annahme/Änderungen und Start von TW-1
+5. Nur bei Freigabe: neuer kontrollierter Auftrag an Agent `Trip workspace audit architecture` für TW-1
+6. Admin/Account/Provider bleiben bis zu eigenen neuen Aufträgen stehen
 
 ## 5. Große Produkt-Reihenfolge
 
-1. Account + Admin sauber aufbauen; Provider Readiness vollständig weiterführen.
-2. Danach Trip Workspace / Reiseübersicht als nächsten großen Produktblock implementieren – gestützt auf den reviewten Audit-Plan.
+1. Account + Admin sauber weiterführen; Provider Readiness vollständig weiterführen.
+2. Trip Workspace / Reiseübersicht als nächsten großen Runtime-Block nur nach ausdrücklicher IA-/TW-1-Entscheidung.
 3. Danach Homepage weiterentwickeln.
 
 Weltkarte, Reisepartner-Matching, Reisebuch, Trends/Hotspots und ähnliche Ideen bleiben Wünsche/Optionen und sind nicht automatisch der nächste Pflichtblock.
@@ -110,11 +107,13 @@ Siehe `docs/DOMAIN_PROGRAM_COMPLETION_POLICY.md`.
 
 Historische Slice-Handoffs, alte Checkpoints und frühere Exact Heads dürfen bestehen bleiben. Sie sind historische Momentaufnahmen und dürfen einen neueren zentralen Status nicht überschreiben.
 
+Insbesondere sind Aussagen wie „PR #55 ist Draft“, „#54 wartet“ oder ältere `main`-SHAs nur historische Evidence, wenn sie in älteren Slice-Dokumenten stehen.
+
 Nach jedem relevanten Merge oder größeren Statuswechsel müssen PR #52 sowie `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, dieser Status und der New-Chat-Checkpoint zeitnah auf die tatsächliche operative Wahrheit aktualisiert werden.
 
 ## 9. Exakter nächster Technical-Lead-Schritt
 
-- `Trip workspace audit architecture` / PR #55: **jetzt ausschließlich docs-only auf `main` `b7f027ec...` reconciliieren, re-gaten und unabhängig re-reviewen.**
+- `Trip workspace audit architecture`: wartet; **kein TW-1**, bis die vorgeschlagene Ziel-IA als Ganzes bewertet und vom Product Owner ausdrücklich angenommen/geändert wurde.
 - `Jetnity provider readiness audit`: wartet; kein S4.
 - `Account plattform audit vorbereitung`: wartet; kein AP-4.
 - `Admin platform audit`: wartet; kein Slice D.
