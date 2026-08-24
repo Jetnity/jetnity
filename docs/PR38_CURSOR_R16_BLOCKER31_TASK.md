@@ -1,7 +1,7 @@
 # PR #38 – Cursor-Auftrag für R16-Blocker 31
 
 Stand: 24. August 2026  
-Status: **Runtime-Fix 31 auf `57824019` implementiert und gegated; R17 offen; kein Mark Ready, kein Merge, keine Production-Migration**
+Status: **Runtime-Fix 31 auf `57824019` implementiert und gegated; R17 Technical Closure / PASS dokumentiert; kein Mark Ready, kein Merge, keine Production-Migration**
 
 Review-Quelle: `docs/PR38_CHATGPT_R16_REVIEW.md`
 
@@ -97,8 +97,6 @@ Danach Dokumentation/ADRs/Active Status aktualisieren und **nicht** selbst Closu
 
 ## 8. Danach
 
-Unabhängiger ChatGPT-Re-Review **R17**.
-
-Nur wenn R17 keinen neuen konkreten relevanten Truth-/Security-/SoT-/Cross-Domain-/Provider-/Release-Defekt findet, kann der Technical Lead das technische Closure/PASS nach Stop-Kriterium dokumentieren.
+Unabhängiger ChatGPT-Re-Review **R17** ist dokumentiert: `docs/PR38_CHATGPT_R17_REVIEW.md` = PASS / Technical Closure. Kein neuer konkreter relevanter Defekt.
 
 **PR bleibt Draft. Kein Mark Ready. Kein Merge ohne ausdrückliche Product-Owner-Freigabe.**

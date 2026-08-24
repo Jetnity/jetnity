@@ -91,3 +91,4 @@ Mit dem R17 Technical Closure ist die technische Sperre für die konfliktarmen e
 - PR: Draft, nicht gemergt
 - nicht autorisiert: Mark Ready, Merge, Production-Migration, Provider-Live-Aktivierung
 - Account/Admin: erste konfliktarme Slices technisch entblockt; Shared Contracts weiter serialisiert
+- Continuity: `ROADMAP.md` / `JETNITY_HANDOFF.md` auf R17 PASS + Product-Owner-Merge-Gate ausgerichtet

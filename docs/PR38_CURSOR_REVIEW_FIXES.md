@@ -1,7 +1,7 @@
 # PR #38 – Cursor-Fixes zum unabhängigen Review
 
 Stand: 24. August 2026  
-Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11, R6-Blocker 12, R7-Blocker 13, R8-Blocker 14–15, R9-Blocker 16–19, R10-Blocker 20–23, R11-Blocker 24–26, R12-Blocker 27, R13-Blocker 28, R14-Blocker 29, R15-Blocker 30 und R16-Blocker 31 geschlossen; R17-Re-Review offen**
+Status: **Erst-Review-Blocker 1–4, R2-Blocker 5–6, R3-Blocker 5-Residual/7, R4-Blocker 8–9, R5-Blocker 10–11, R6-Blocker 12, R7-Blocker 13, R8-Blocker 14–15, R9-Blocker 16–19, R10-Blocker 20–23, R11-Blocker 24–26, R12-Blocker 27, R13-Blocker 28, R14-Blocker 29, R15-Blocker 30 und R16-Blocker 31 geschlossen; R17 Technical Closure / PASS; kein Mark Ready, kein Merge**
 
 Review R1/R2: `docs/PR38_CHATGPT_INDEPENDENT_REVIEW.md`  
 Review R3: `docs/PR38_CHATGPT_R3_REVIEW.md`  
@@ -11,6 +11,7 @@ Review R6: `docs/PR38_CHATGPT_R6_REVIEW.md`
 Review R7: `docs/PR38_CHATGPT_R7_REVIEW.md`  
 Review R8: `docs/PR38_CHATGPT_R8_REVIEW.md`  
 Review R9: `docs/PR38_CHATGPT_R9_REVIEW.md`  
+Review R17: `docs/PR38_CHATGPT_R17_REVIEW.md`  
 Runtime-Head R1-Fixes: `89290effba61602a71418ab3904b4dc42e76709d`  
 Runtime-Head R2-Fixes: `aa6cafa2f4997c22081dff35fe950a18190e7886`  
 Runtime-Head R3-Fixes: `4f9eb1e8c524494fa8ab300bdfe24ec372e9e109`  
@@ -181,3 +182,7 @@ Unbewiesene Intra-Leg-Ordnung leert Origin/Destination, erzeugt keine Connection
 ## 32. Nicht geändert
 
 Kein Seasonal-Provider, keine Seasonal-Tabelle, keine Secrets, keine neuen laufenden Kosten. PR bleibt Draft.
+
+## 33. R17 Technical Closure
+
+Unabhängiger Review `docs/PR38_CHATGPT_R17_REVIEW.md` findet keinen neuen konkreten relevanten Defekt. Guest→Account strippt Surface über den untrusted Parser plus `itineraryKanonisieren()` (kein separates `itineraryOhneClientSurface()`). Der Trusted Reader bleibt ein zukünftiger Architektur-Invariant, kein aktueller Blocker. Mark Ready / Merge bleiben Product-Owner-Gates.
