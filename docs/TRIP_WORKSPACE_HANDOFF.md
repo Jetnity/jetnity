@@ -28,11 +28,11 @@ Erhaltene gemergte Wahrheit:
 - Account AP-3 / PR #53 / ADR-0160 / `8326e72f`
 - Provider S3 / PR #54 / ADR-0161 / `b7f027ec`
 
-Reconciliation-Head, auf dem die lokalen Gates dieser finalen Sync liefen:
+Review-Korrektur-Head nach Technical-Lead-Review `5012729847`, auf dem die lokalen Gates liefen:
 
-`c96923ad4b16e0582b8f555f88a37f202f1c0459`
+`2525f22c2e0223c0a3b8688f3f5950776aff427c`
 
-Lokale Exact-Head-Gates auf `c96923ad`, alle grün:
+Lokale Exact-Head-Gates auf `2525f22c`, alle grün:
 
 - `check:setup:ci` (1 Warning: keine `.env` im Cloud-Agent)
 - `typecheck`
@@ -45,7 +45,7 @@ Lokale Exact-Head-Gates auf `c96923ad`, alle grün:
 
 Dieser Evidence-Nachzug ist docs-only. Nach Commit/Push ist der Branch-Head der Exact Head für das Re-Review. Lokale Gates werden auf diesem neuen Head erneut ausgeführt, bevor STOPP gilt.
 
-Historische Heads `76ef850f`, `ae98fb19`, `536ed50f` und `0ccd38df` sind nur Evidence früherer Läufe.
+Historische Heads `c27bb2c9`, `c96923ad`, `76ef850f`, `536ed50f` und `0ccd38df` sind nur Evidence früherer Läufe.
 
 Historische Code-Evidence-Basis des Workspace-Audits:
 
