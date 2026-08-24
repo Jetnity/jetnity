@@ -1,6 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 25. August 2026
+Status: **kanonischer erster Einstieg; aktuelle operative Wahrheit steht in diesem Dokument und muss vor älteren/stalen Slice-Handoffs gelesen werden.**
 
 Wenn du als neuer Chat, Technical Lead oder Coding Agent Jetnity übernimmst, lies **vor jeder Aktion** mindestens:
 
@@ -11,11 +12,23 @@ Wenn du als neuer Chat, Technical Lead oder Coding Agent Jetnity übernimmst, li
 5. `docs/ACTIVE_WORK_STATUS.md`
 6. den aktuellen Slice-Task/Status/Handoff
 
-Danach GitHub/CI/Vercel/Supabase live verifizieren. Historische Handoffs und alte PR-Bodies sind Evidence ihres Zeitpunkts und dürfen aktuellere Wahrheit nicht überschreiben.
+Danach GitHub/CI/Vercel/Supabase live verifizieren. Historische Handoffs, alte PR-Bodies und ältere Statuszeilen sind Evidence ihres Zeitpunkts und dürfen diese aktuellere operative Wahrheit nicht überschreiben.
+
+## Aktuelle operative Wahrheit
+
+- `main` nach TW-1-Merge: `02b166e652f046d41f6e5b8d292e980369ca255e`.
+- PR #57 – Technical-Lead-Autonomie + verbindliche Build-Reihenfolge: **merged**.
+- PR #56 – **Trip Workspace TW-1 – Shell & Geräteparität: merged**.
+- TW-1 wurde auf synchronisiertem Exact Head `3a49f78bd4d991ccc1271c93164182feed7f8a32` unabhängig geprüft; GitHub Actions und Vercel waren SUCCESS. Merge-Commit: `02b166e652f046d41f6e5b8d292e980369ca255e`.
+- TW-1 ändert keine DB/RLS/Auth/Traveller/Route/Provider/Secrets/Kosten und keine Production-Migration.
+- Nächster verbindlicher Trip-Workspace-Slice: **TW-2 – Reiseübersicht**. Er muss separat bleiben; kein TW-4/TW-3-Scope hineinziehen.
+- `Trip workspace audit architecture` ist der zuständige bestehende Cursor-Agent für den Trip-Workspace-Block.
+- `Account plattform audit vorbereitung`, `Jetnity provider readiness audit` und `Admin platform audit` bleiben für ihre späteren Build-Order-Blöcke erhalten.
+- `main` Branch Protection ist technisch weiterhin nicht aktiviert; dieses Risiko nicht vergessen.
 
 ## Aktuelle große Build-Reihenfolge
 
-1. Trip Workspace vollständig: `Trip workspace audit architecture` – TW-1 → TW-2 → TW-4 → TW-3 → Details/Gaps → Rest gemäß Plan → finaler Workspace-Audit.
+1. Trip Workspace vollständig: `Trip workspace audit architecture` – **TW-1 ✅ → TW-2 → TW-4 → TW-3 → Details/Gaps → Rest gemäß Plan → finaler Workspace-Audit**.
 2. Traveller-/Pass-/Multi-Citizenship produktweit vervollständigen auf Foundation E.
 3. Account: `Account plattform audit vorbereitung` – AP-4 bis AP-12.
 4. Provider: `Jetnity provider readiness audit` – S4 bis S8, danach echte Provider unter besonderen Gates.
@@ -26,9 +39,11 @@ Danach GitHub/CI/Vercel/Supabase live verifizieren. Historische Handoffs und alt
 
 Details und Abhängigkeiten stehen in `docs/JETNITY_BINDING_BUILD_ORDER.md`.
 
-## Neue Autonomie-Regel
+## Technical-Lead-Autonomie
 
 Seit 25. August 2026 darf ChatGPT/Technical Lead normale, scope-treue Entwicklungsarbeit weitgehend selbstständig steuern. Nach Self-Review, vollständigen Exact-Head-Gates, CI/Vercel-Evidence und unabhängigem Technical-Lead-Review dürfen normale PRs selbst Ready gesetzt und anschließend selbst gemergt werden.
+
+Wenn `main` während eines Slices weiterläuft, muss der Slice vor Merge synchronisiert, erneut gegatet und erneut reviewed werden.
 
 Product-Owner-Freigabe bleibt zwingend für besondere Gates, insbesondere Production-Migrationen/destructive Datenänderungen, echte Provider/Secrets/Verträge/paid calls, Kosten über USD 100/Monat, große Produkt-/Geschäftsmodelländerungen, besonders sensible Identitätsdaten und öffentliche/produktive Aktivierungen.
 
@@ -40,10 +55,9 @@ Vollständige Regel: `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`.
 - Keine Fake-Preise, Fake-Verfügbarkeit, Fake-Provider-Health oder erfundene Visa-/Safety-/Regulatory-Truth.
 - LLM erklärt Hard Truth, erzeugt sie nicht.
 - Multi-Citizenship / mehrere Reisedokumente müssen in allen relevanten Funktionen berücksichtigt werden.
+- Kein impliziter erster/Standard-Pass.
 - Shared Auth/RLS/Identity/Traveller/Route/Privacy/Billing/Admin-Audit/Provider-Activation bleiben Technical-Lead-gesteuert.
 
-## Aktiver Stand
+## Nächster kontrollierter Schritt
 
-Zum Zeitpunkt dieser Datei ist TW-1 der aktive Trip-Workspace-Slice auf Draft-PR #56 / Branch `feat/trip-workspace-tw1-shell-device-parity`, Agent `Trip workspace audit architecture`.
-
-Vor Fortsetzung immer live prüfen, ob dieser Stand noch aktuell ist.
+TW-2 als eigener Branch/Draft-PR mit versioniertem Auftrag vorbereiten. TW-2 darf vorhandene Reise-/Coverage-Daten **nur ableiten und verdichten**; insbesondere darf es **keinen zweiten `trips.status` oder Schatten-Lifecycle** neben Account/AP-3 erzeugen. Safety/Seasonal ohne Evaluation bleibt ungeprüft/unknown und niemals „alles gut“.
