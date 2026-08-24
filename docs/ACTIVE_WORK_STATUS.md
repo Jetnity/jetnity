@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 vollständig integriert; Account und Admin als nächste aktive Workstreams technisch freigegeben**
+Status: **PR #38 vollständig integriert; Account AP-1 und Admin Slice A als parallele aktive Implementierungsworkstreams gestartet**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -21,9 +21,7 @@ Der PR-#38-Review-Loop ist beendet. Kein neuer Review-Rundlauf ohne konkrete neu
 
 Vercel:
 
-- Production Deployment `dpl_5wwLu6tbPLhPJgFMLC1PHx3wzcVS`
-- Status: **READY**
-- Git SHA: `ee988bbe46a8dd63d4001c42825fc0159453f811`
+- Production Deployment nach PR-#38-Integration: **READY**
 
 Supabase Production `qscbgcdmivbbnzrcyegn`:
 
@@ -38,33 +36,45 @@ Supabase Production `qscbgcdmivbbnzrcyegn`:
 
 Keine Seasonal-Tabelle, kein Live-Seasonal-Provider, keine neuen Secrets und keine neuen laufenden Providerkosten.
 
-## 3. Aktive nächste Workstreams
+## 3. Aktive Workstreams
 
 ### Account Platform – AP-1
 
-Cursor-Anzeigename: `Account plattform audit vorbereitung`  
-Audit: PR #39 **AUDIT-PASS**  
-Implementierung: Branch `feat/account-ap1`, Draft-PR #43  
+Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`  
+Audit-Referenz: Draft-PR #39 / `audit/account-platform` – **AUDIT-PASS**  
+Implementierungsbranch: `feat/account-ap1`  
+Implementierungs-Draft-PR: **#43**  
 Auftrag: `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`  
-Handoff: `docs/ACCOUNT_AP1_HANDOFF.md`
+Handoff: `docs/ACCOUNT_AP1_HANDOFF.md`  
+Review: `docs/ACCOUNT_AP1_CHATGPT_REVIEW.md`
 
-AP-1 (Shell + persönliche Übersicht) ist auf diesem Branch umgesetzt. Head `c00e11bc`. Account-UI-Audit **48/48 grün**. Vercel Preview auf diesem Head **SUCCESS**. GitHub Actions `CI` ist auf dem Implementierungs-Head nicht erneut gelaufen (letzter Actions-Lauf: Task-Commit `78285920`). Shared Contracts bleiben unberührt. Kein Mark Ready, kein Merge.
+Aktiver Slice:
 
-### Admin Platform – PR #40
+**AP-1 – Account-Shell + persönliche Übersicht / „Meine Reisen“ als Account-Hub.**
 
-Cursor-Anzeigename: `Admin platform audit`  
-Branch: `audit/admin-platform`  
-Audit: **AUDIT-PASS**
+Technical-Lead REQUEST CHANGES: Geräte-Kalendertag und evidenter 503-Text sind umgesetzt (ADR-0153). Keine Scope-Erweiterung, noch kein AP-2.
 
-Nächster konfliktarmer Implementierungsslice:
+Grenze: UI/IA und bestehende `reisenLaden()`-Truth. Keine neue Auth-/Trip-/Traveller-/Billing-/Route-Truth, keine DB-Migration, keine Homepage-Änderung.
+
+### Admin Platform – Slice A
+
+Verantwortlicher Cursor-Anzeigename: `Admin platform audit`  
+Audit-Referenz: Draft-PR #40 / `audit/admin-platform` – **AUDIT-PASS**  
+Implementierungsbranch: `feat/admin-control-center-ia`  
+Implementierungs-Draft-PR: **#44**  
+Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`
+
+Aktiver Slice:
 
 **Admin Slice A – ehrliche professionelle Control-Center-IA / bestehende Legacy-Scheinzustände entfernen.**
+
+Grenze: Admin-UI/IA, ehrliche Zustände und vorhandene Security-Gates. Keine neue DB/Migration, keine Capability-/RLS-Neudefinition, kein System Health in diesem Slice, keine Provider-/Secret-/Kosten-Aktivierung.
 
 Danach als eigener Slice: read-only System Health für Vercel, Supabase, GitHub, App und später Infomaniak.
 
 ## 4. Parallelitätsregel
 
-Account AP-1 und Admin Slice A dürfen jetzt parallel arbeiten.
+Account AP-1 und Admin Slice A dürfen parallel arbeiten.
 
 Seriell/zentral bleiben insbesondere:
 
@@ -78,6 +88,8 @@ Seriell/zentral bleiben insbesondere:
 - Billing / Payment / Refund / Bexio
 - Admin Audit Trail
 - Provider Activation / Secrets / Kosten
+
+Nach jedem Implementierungsslice: Self-Review + technische Gates + unabhängiger ChatGPT/Technical-Lead-Review, bevor der jeweilige nächste Slice beginnt.
 
 ## 5. Homepage
 
@@ -95,6 +107,7 @@ Wenn sie gestartet wird:
 
 ## 6. Governance
 
+- PR #43 und PR #44 bleiben Draft.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
@@ -102,4 +115,7 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-Account AP-1 ist implementiert und wartet auf unabhängigen Review von Draft-PR #43. Admin Slice A bleibt der parallele Admin-Strang. Kein Ready, kein Merge ohne Product-Owner-Freigabe.
+1. Re-Review von Draft-PR #43 auf dem Exact Head mit GitHub Actions CI und Vercel Preview.
+2. `Admin platform audit` implementiert ausschließlich Slice A auf PR #44.
+3. Beide bleiben Draft. Kein Ready, kein Merge ohne Product-Owner-Freigabe.
+4. Erst danach werden AP-2 bzw. Admin Slice B freigegeben.
