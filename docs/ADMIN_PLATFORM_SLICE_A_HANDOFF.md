@@ -7,9 +7,9 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/44
 
 ## Wo die Arbeit steht
 
-Slice A ist implementiert. Unabhängiger Technical-Lead-Review: **code/architecture PASS, integration gate still open.** Der PR bleibt Draft. Kein Mark Ready, kein Merge, keine Production-Migration, keine Provider-/Secret-Aktivierung.
+Slice A ist implementiert. Unabhängiger Technical-Lead-Review: **code/architecture PASS**. Integrationsgates auf post-sync Head `62cacdf5` geschlossen (`CI` `32683686686` success, Vercel Preview READY `JfKJswXaRn6QsHjCnRnypTwW9jDJ`). Der PR bleibt Draft. Kein Mark Ready, kein Merge, keine Production-Migration, keine Provider-/Secret-Aktivierung.
 
-Sync mit `main` `e4f4cca7` ist docs-only. Kein Runtime-Change. Offene Gates: GitHub Actions `CI` und Vercel Preview READY auf dem post-sync exact head.
+Sync mit `main` `e4f4cca7` war docs-only. Kein Runtime-Change. Ein nachgelagerter Docs-Commit, der diese Evidence festhält, ändert die Runtime nicht.
 
 ## Pflichtquellen
 
@@ -30,4 +30,4 @@ Sync mit `main` `e4f4cca7` ist docs-only. Kein Runtime-Change. Offene Gates: Git
 
 ## Exakter nächster Schritt
 
-CI und Preview auf dem post-sync Head belegen, dann Technical Closure. Slice B erst danach.
+Technical-Lead-Recheck der Integrationsgates auf `62cacdf5`. Slice B erst nach Technical Closure.

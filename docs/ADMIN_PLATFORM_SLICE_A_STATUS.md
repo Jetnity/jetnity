@@ -8,9 +8,9 @@ Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`
 
 ## Status
 
-**Implementiert, Draft, nicht merge-bereit.** Unabhängiger Technical-Lead-Review: code/architecture PASS, Integrationsgates offen. Kein Mark Ready, kein Merge.
+**Implementiert, Draft, nicht merge-bereit.** Unabhängiger Technical-Lead-Review: code/architecture PASS. Integrationsgates auf post-sync Head `62cacdf59457689d159616649c2af823d5320a78` geschlossen. Kein Mark Ready, kein Merge. Kein Technical Closure durch diesen Agent.
 
-Sync mit `main` `e4f4cca75e55028fab231c1827abf6236ae30eec` ist **docs-only** (`docs/ACTIVE_WORK_STATUS.md` plus diese Status-/Handoff-Aktualisierung). Kein Runtime-Change durch den Sync.
+Sync mit `main` `e4f4cca75e55028fab231c1827abf6236ae30eec` war **docs-only**. Kein Runtime-Change durch den Sync. Lokale Gates wurden deshalb nicht erneut ausgeführt.
 
 Lokal verifizierte Gates nach der Slice-A-Implementierung:
 
@@ -21,17 +21,13 @@ Lokal verifizierte Gates nach der Slice-A-Implementierung:
 - Hygiene: `check:dead`, `check:exports`, `check:deps`, `check:schema-bezug` grün
 - Production-Build: Exit 0, 38/38 Seiten
 
-Remote, belegter Preview-Stand:
+Post-sync exact head `62cacdf5` (Merge `main` `e4f4cca7`, docs-only):
 
-- Vercel Preview **READY** für Implementierungs-Push `86c69a55`: Deployment `GjhxXGcJq67UCNy9rutpuRL9M8vQ`
-- Vercel Deployment **completed** auch für aktuellen Head `47753c48`: `8jX9oDUT2zCNFXR1HvecwqS6FZxF`
+- GitHub Actions `CI` **success**: `32683686686` — Jobs `Typecheck, Lint & Build` und `Auth-Konfiguration gegen config.toml`
+- Vercel Preview **READY/success**: Deployment `JfKJswXaRn6QsHjCnRnypTwW9jDJ`
 - Preview-URL: `https://jetnity-app-git-feat-admin-control-center-ia-jetnity-e1b93c82.vercel.app`
-- Die Cursor-CI-Notification „2 checks success“ auf `86c69a55` betrifft Vercel / Vercel Preview Comments, nicht das GitHub-Actions-Workflow `CI`.
 
-Nicht behauptet:
-
-- GitHub Actions Workflow `CI` auf dem Implementierungs-Head. Der letzte `CI`-Lauf dieses Branches ist `32681653861` auf Task-Commit `9aed6a88`.
-- `db:sicherheit`, `db:rls`, Production-Migration, eingeloggte Admin-Browserprüfung.
+Nicht behauptet: `db:sicherheit`, `db:rls`, Production-Migration, eingeloggte Admin-Browserprüfung, Product-Owner-Merge-Freigabe.
 
 ## Ziel
 
@@ -57,4 +53,4 @@ Traveller Context ist für Slice A nicht relevant; es werden keine Reise-Credent
 
 ## Nächster Schritt
 
-GitHub Actions `CI` und Vercel Preview READY auf dem **post-sync exact head**. Slice B erst danach. Kein Mark Ready, kein Merge.
+Unabhängiger Technical-Lead-Recheck der Integrationsgates auf Head `62cacdf5`. Slice B erst nach Technical Closure. Kein Mark Ready, kein Merge.

@@ -64,11 +64,11 @@ Aktiver Slice:
 
 **Admin Slice A – ehrliche professionelle Control-Center-IA / bestehende Legacy-Scheinzustände entfernen.**
 
-Unabhängiger Technical-Lead-Review: **code/architecture PASS, integration gate still open.**
+Unabhängiger Technical-Lead-Review: **code/architecture PASS.** Integrationsgates auf post-sync Head `62cacdf5` geschlossen.
 
 Grenze: Admin-UI/IA, ehrliche Zustände und vorhandene Security-Gates. Keine neue DB/Migration, keine Capability-/RLS-Neudefinition, kein System Health in diesem Slice, keine Provider-/Secret-/Kosten-Aktivierung.
 
-Sync mit `main` `e4f4cca75e55028fab231c1827abf6236ae30eec` ist **docs-only** (`docs/ACTIVE_WORK_STATUS.md`). Kein Runtime-Change durch den Sync.
+Sync mit `main` `e4f4cca75e55028fab231c1827abf6236ae30eec` war **docs-only**. Kein Runtime-Change. GitHub Actions `CI` `32683686686` success und Vercel Preview READY `JfKJswXaRn6QsHjCnRnypTwW9jDJ` gelten für Head `62cacdf5`.
 
 Danach als eigener Slice: read-only System Health für Vercel, Supabase, GitHub, App und später Infomaniak. Slice B erst nach geschlossenen Integrationsgates.
 
@@ -116,7 +116,7 @@ Wenn sie gestartet wird:
 ## 7. Exakter nächster Schritt
 
 1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
-2. `Admin platform audit` schließt auf PR #44 die offenen Integrationsgates: Sync mit `main` `e4f4cca7` (docs-only, erledigt im Merge), GitHub Actions `CI` auf dem **post-sync exact head**, Vercel Preview READY auf demselben Head.
-3. Kein Slice B und keine neue Feature-Arbeit, solange diese Gates offen sind.
-4. ChatGPT/Technical Lead prüft den post-sync Head unabhängig.
+2. Admin Slice A Integrationsgates auf Head `62cacdf5` sind belegt (`CI` `32683686686`, Preview READY). Technical-Lead-Recheck / Technical Closure steht aus.
+3. Kein Slice B und keine neue Feature-Arbeit ohne Technical Closure.
+4. PR #43 und PR #44 bleiben Draft.
 5. Erst danach werden AP-2 bzw. Admin Slice B freigegeben.
