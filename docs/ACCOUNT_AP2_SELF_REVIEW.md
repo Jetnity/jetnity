@@ -3,7 +3,7 @@
 Stand: 24. August 2026  
 Reviewer: implementierender Agent  
 Runtime-Head: `de5ffd8a91576a2281b6d5eda75338504a43b7a7`  
-Ergebnis: **Main-Sync gegated; unabhängiges Integrationsreview PASS – kein Ready, kein Merge**
+Ergebnis: **Main-Sync gegated; unabhängiges Integrationsreview PASS; Ready durch Product Owner – kein Merge**
 
 ## Auftragstreue
 
@@ -90,8 +90,9 @@ Bestehende `/terms`- und `/privacy`-Links bleiben. Keine neuen rechtlichen Texte
 - `next=/account` umgeht den `/reisen`-Übernahmeort, bis die Reisen-Seite geöffnet wird.
 - Footer- und Navbar-Chrome lesen die Sitzung weiter per Client-`getSession()`; Autorität der Login-/Register-Seiten ist `getUser()`.
 - Preview wurde remote als success gemeldet, nicht zusätzlich manuell im Browser abgeklickt.
-- Technical Integration Closure / PASS auf `de5ffd8a` liegt vor und ist keine Ready-/Merge-Freigabe.
+- Technical Integration Closure / PASS auf `de5ffd8a` liegt vor und war keine Ready-/Merge-Freigabe.
+- Ready wurde danach durch `Jetnity` gesetzt; das ist keine Merge-Freigabe.
 
 ## Empfehlung
 
-Product-Owner-Entscheidung über Ready/Merge von Draft-PR #48. AP-3 nicht starten.
+Auf ausdrückliche Product-Owner-Merge-Freigabe warten. AP-3 nicht starten. Nicht mergen.

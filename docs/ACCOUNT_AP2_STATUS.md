@@ -1,7 +1,7 @@
 # Jetnity Account AP-2 – Status
 
 Stand: 24. August 2026  
-Status: **TECHNICAL INTEGRATION CLOSURE / PASS – Draft, kein Ready, kein Merge, kein AP-3**
+Status: **TECHNICAL INTEGRATION CLOSURE / PASS – Ready durch Product Owner, kein Merge, kein AP-3**
 
 | Feld | Wert |
 | --- | --- |
@@ -34,7 +34,7 @@ Genau `de5ffd8a91576a2281b6d5eda75338504a43b7a7`:
 
 Ein nachfolgender Docs-only-Commit ist **kein** neues Runtime-Gate.
 
-PR #48 bleibt Draft. Kein Mark Ready. Kein Merge.
+PR #48 ist seit 24. August 2026, 13:00:59 UTC, durch `Jetnity` **Ready**. Das ist keine Merge-Freigabe.
 
 ## Lokale Gates auf dem Runtime-Head
 
@@ -61,18 +61,18 @@ PR #48 bleibt Draft. Kein Mark Ready. Kein Merge.
 
 ## Nicht enthalten
 
-Keine DB/Migration/RLS, keine Consent-Persistenz, keine Traveller-Registry, keine Guest→Account-Vertragsänderung, keine Provider-Aktivierung, keine Legal-Texte, kein AP-3, kein Homepage-Redesign, kein Mark Ready, kein Merge.
+Keine DB/Migration/RLS, keine Consent-Persistenz, keine Traveller-Registry, keine Guest→Account-Vertragsänderung, keine Provider-Aktivierung, keine Legal-Texte, kein AP-3, kein Homepage-Redesign, kein Merge.
 
 ## Technical-Lead-Verdict
 
 Unabhängiger Integrationsreview nach AP-1-Merge und AP-2-Main-Sync: **PASS / TECHNICAL INTEGRATION CLOSURE**.  
 Quelle: https://github.com/Jetnity/jetnity/pull/48#pullrequestreview-5007976065
 
-Kein neuer konkreter Integrations-, Auth-, Security-, Truth- oder Scope-Defekt. Das Verdict ist **keine** Product-Owner-Freigabe für Mark Ready oder Merge.
+Kein neuer konkreter Integrations-, Auth-, Security-, Truth- oder Scope-Defekt. Das Verdict war keine Ready-/Merge-Freigabe. Ready wurde danach separat durch `Jetnity` gesetzt.
 
 ## Nächster Schritt
 
-Product-Owner-Entscheidung über Mark Ready / Merge von Draft-PR #48.  
-STOPP. Kein AP-3. Kein Mark Ready. Kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+Ausdrückliche Product-Owner-Merge-Freigabe für PR #48. Ready ist keine Merge-Freigabe.  
+STOPP. Kein Merge. Kein AP-3.
 
-Am 24. August 2026, 12:59 UTC, setzte `Jetnity` PR #48 kurz auf Ready; um 13:00 UTC wieder auf Draft. Der aktuelle Stand ist Draft. Das kurze Ready ist keine Merge-Freigabe.
+Timeline: 12:59 UTC Ready, 13:00:18 UTC wieder Draft, 13:00:59 UTC erneut Ready durch `Jetnity`. Der zweite Ready-Stand bleibt.

@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 und Account AP-1 auf `main`; aktive Draft-Workstreams: Account AP-2 (PR #48), Admin Slice A und Provider Ops S1**
+Status: **PR #38 und Account AP-1 auf `main`; Account AP-2 (PR #48) Ready, wartet auf Merge-Freigabe; Admin Slice A und Provider Ops S1 bleiben Draft**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -54,7 +54,7 @@ Account AP-1 liegt auf `main`. Eine separate Account-Production-Migration war ni
 Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`  
 Audit-Referenz: Draft-PR #39 / `audit/account-platform` – **AUDIT-PASS**  
 Implementierungsbranch: `feat/account-ap2`  
-Implementierungs-Draft-PR: **#48** (Base: `main`)  
+Implementierungs-PR: **#48** (Base: `main`, Ready)  
 Auftrag: `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md`  
 Handoff: `docs/ACCOUNT_AP2_HANDOFF.md`  
 Status: `docs/ACCOUNT_AP2_STATUS.md`
@@ -67,7 +67,7 @@ Gegates Runtime-Head: `de5ffd8a91576a2281b6d5eda75338504a43b7a7`
 GitHub Actions CI **SUCCESS** (`32727253862`) und Vercel Preview **success** (`AAYbSDBt4p636mxY1aWuPgq9gUSS`) auf genau diesem Head.  
 Review: https://github.com/Jetnity/jetnity/pull/48#pullrequestreview-5007976065
 
-AP2-B1 bleibt geschlossen. Keine Scope-Erweiterung in diesem Sync. Technical Closure ist keine Ready-/Merge-Freigabe.
+AP2-B1 bleibt geschlossen. Keine Scope-Erweiterung in diesem Sync. Technical Closure war keine Ready-/Merge-Freigabe. Ready wurde danach durch `Jetnity` gesetzt.
 
 Grenze: bestehender AP-2-Auth-UX-Scope. Keine DB/Migration/RLS, keine Traveller-/Guest→Account-Vertragsänderung, keine Provider-Aktivierung, kein AP-3.
 
@@ -137,8 +137,9 @@ Wenn sie gestartet wird:
 
 ## 6. Governance
 
-- PR #48, PR #44, PR #45 und PR #47 bleiben Draft.
-- PR #43 ist gemergt; das ist keine Freigabe für AP-2-Ready oder AP-2-Merge.
+- PR #48 ist Ready durch `Jetnity`; Ready ist keine Merge-Freigabe.
+- PR #44, PR #45 und PR #47 bleiben Draft.
+- PR #43 ist gemergt.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
@@ -146,9 +147,9 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-1. Product-Owner-Entscheidung über Mark Ready / Merge von Draft-PR #48 auf Runtime-Head `de5ffd8a`. Technical Integration Closure / PASS liegt vor und ersetzt diese Freigabe nicht.
+1. Ausdrückliche Product-Owner-Merge-Freigabe für PR #48 auf Runtime-Head `de5ffd8a`. Ready ersetzt diese Freigabe nicht.
 2. `Admin platform audit` arbeitet weiter ausschließlich Slice A auf PR #44.
 3. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung; kein Mark Ready / kein Merge / kein S2.
 4. ChatGPT/Technical Lead prüft jeden Slice unabhängig.
 5. AP-3, Admin Slice B und Provider S2 brauchen jeweils eine neue ausdrückliche Freigabe.
-6. PR #48, #44, #45 und #47 bleiben Draft. Kein Ready, kein Merge ohne Product-Owner-Freigabe.
+6. PR #44, #45 und #47 bleiben Draft. PR #48 nicht mergen ohne ausdrückliche aktuelle Product-Owner-Freigabe.

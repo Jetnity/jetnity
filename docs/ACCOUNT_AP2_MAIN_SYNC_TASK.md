@@ -2,7 +2,7 @@
 
 Stand: 24. August 2026
 
-Status: **DONE – Exact-Head `de5ffd8a` gegated; Technical Integration Closure / PASS; Draft bleibt Draft, wartet auf Product-Owner-Entscheidung**
+Status: **DONE – Exact-Head `de5ffd8a` gegated; Technical Integration Closure / PASS; Ready durch Product Owner, wartet auf Merge-Freigabe**
 
 Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`
 

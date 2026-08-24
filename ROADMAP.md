@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety, Travel Timing & Seasonal und Account AP-1 auf `main`; Account AP-2 Technical Integration Closure / PASS (Draft-PR #48), parallel Admin Slice A**
+Status: **Foundation C/D/E, Travel Safety, Travel Timing & Seasonal und Account AP-1 auf `main`; Account AP-2 Ready (PR #48), wartet auf Merge-Freigabe; parallel Admin Slice A**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -240,7 +240,7 @@ Auftrag: `docs/ACCOUNT_AP1_MAIN_SYNC_TASK.md`. Entscheidung: ADR-0152, ADR-0153.
 
 ## 6b. Account Platform AP-2 – Auth-UX-Hygiene
 
-Status: **Technical Integration Closure / PASS auf Runtime-Head `de5ffd8a`, Draft-PR #48; wartet auf Product-Owner-Entscheidung**
+Status: **Technical Integration Closure / PASS auf Runtime-Head `de5ffd8a`; PR #48 Ready durch Product Owner, wartet auf Merge-Freigabe**
 
 Ziel: Login, Register, Callback, OAuth-Sichtbarkeit, Gast-/Session-Navigation und MFA-Dialog-Accessibility härten, ohne Auth-/MFA-/AAL-Vertrag oder Provider zu ändern.
 
@@ -254,7 +254,7 @@ Umgesetzt in AP-2:
 - Footer aus `sitzungseintraege()`
 - MFA-Dialog a11y gehärtet
 
-Nicht in AP-2: DB/Migration/RLS, Traveller-Registry, Guest→Account-Vertragsänderung, Provider-Aktivierung, AP-3, Mark Ready, Merge.
+Nicht in AP-2: DB/Migration/RLS, Traveller-Registry, Guest→Account-Vertragsänderung, Provider-Aktivierung, AP-3, Merge ohne Product-Owner-Freigabe.
 
 Auftrag: `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md`.
 
@@ -386,7 +386,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation
 6. ✅ Account Platform AP-1 – auf `main` (`084f7c87`, PR #43)
-6a. **→ Account Platform AP-2 (Draft-PR #48) Technical Integration Closure / PASS auf `de5ffd8a`; wartet auf Product-Owner-Entscheidung; parallel Admin Slice A**
+6a. **→ Account Platform AP-2 (PR #48) Technical Integration Closure / PASS auf `de5ffd8a`; Ready, wartet auf Merge-Freigabe; parallel Admin Slice A**
 7. Provider-Readiness-/Adapter-Lücken schließen
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit

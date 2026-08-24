@@ -1,7 +1,7 @@
 # Jetnity Account Platform – AP-2 Handoff
 
 Stand: 24. August 2026  
-Status: **TECHNICAL INTEGRATION CLOSURE / PASS – Draft, wartet auf Product-Owner-Entscheidung; kein Mark Ready, kein Merge, kein AP-3**
+Status: **TECHNICAL INTEGRATION CLOSURE / PASS – Ready durch Product Owner; wartet auf Merge-Freigabe; kein Merge, kein AP-3**
 
 | Feld | Wert |
 | --- | --- |
@@ -71,7 +71,7 @@ DB/Migration/RLS, Consent-Write, Traveller-Registry, Guest→Account-Persistenz,
 
 ## Nächster Schritt
 
-Product-Owner-Entscheidung über Mark Ready / Merge von Draft-PR #48.  
-STOPP. Kein AP-3. Kein Mark Ready. Kein Merge. Keine Production-Migration. Keine Provider-/Secret-/Kosten-Aktivierung.
+Ausdrückliche Product-Owner-Merge-Freigabe für PR #48. Ready ist keine Merge-Freigabe.  
+STOPP. Kein Merge. Kein AP-3. Keine Production-Migration. Keine Provider-/Secret-/Kosten-Aktivierung.
 
-Kurz Ready um 12:59 UTC, 20 Sekunden später wieder Draft durch `Jetnity`. Aktueller Stand: Draft. Keine Merge-Freigabe.
+`Jetnity` setzte PR #48 um 13:00:59 UTC auf Ready (nach einem 20-Sekunden-Flicker 12:59–13:00). Der Ready-Stand bleibt.

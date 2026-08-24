@@ -29,7 +29,7 @@ Kein neuer konkreter Integrations-, Auth-, Security-, Truth- oder Scope-Defekt g
 
 Technical Integration Closure ist **keine** Product-Owner-Freigabe für Mark Ready oder Merge.
 
-PR #48 bleibt Draft. Kein AP-3, bis der Product Owner separat entscheidet.
+PR #48 ist nach diesem Verdict durch `Jetnity` Ready gesetzt worden. Ready ist keine Merge-Freigabe. Kein AP-3, bis der Product Owner separat entscheidet.
 
 ## Historisches Verdict vor dem Main-Sync
 
