@@ -1,21 +1,22 @@
 # Jetnity – Current Multi-Agent Team Status
 
-Stand: **24. August 2026, 20:36 Europe/Zurich**  
+Stand: **24. August 2026, ca. 20:52 Europe/Zurich**  
 Status: **kanonische operative Team-Wahrheit für Chat-/Agent-Wechsel**
 
-> Diese Datei ist die bevorzugte kompakte Einstiegsquelle für den aktuellen operativen Stand. Sie liegt auf `docs/chatgpt-technical-lead-handoff-2026-08-24` / Draft-PR #52 und ist bis zu einem Merge von #52 nicht automatisch `main`-Inhalt. Vor Eingriffen GitHub/CI/Vercel/Supabase live verifizieren.
+> Diese Datei ist die bevorzugte kompakte Einstiegsquelle. Sie liegt auf `docs/chatgpt-technical-lead-handoff-2026-08-24` / Draft-PR #52 und ist bis zu einem Merge von #52 nicht automatisch `main`-Inhalt. Vor Eingriffen GitHub/CI/Vercel/Supabase live verifizieren.
 
 ## 1. Aktueller `main` / Production
 
 - Repository: `Jetnity/jetnity`
-- `main`: `e3bad749c8e03512001e7bccd5e08467f10a7134`
-- letzter Merge: **Admin Control Center Slice B / PR #46**
-- PR #46: **merged / closed** mit separater ausdrücklicher Product-Owner-Merge-Freigabe
-- Vercel Production: `dpl_GpE7FWRcDGvVqhRyrZUvMDQDvG1n` = **READY**, Git SHA `e3bad749...`
+- `main`: `78192ab775165d08bb357140c2d04b865b8cc049`
+- letzter Merge: **Admin Control Center Slice C / PR #49**
+- PR #49: **merged / closed** nach separater ausdrücklicher Product-Owner-Merge-Freigabe
+- Merge-Eltern: `e3bad749c8e03512001e7bccd5e08467f10a7134` + `d2ce7b47d19e0097dda9035d6de7fb90eec9ee2c`
+- Vercel Production: `dpl_EkQorDSGW1JyHa4DYqzZRhngYFFa` = **READY** auf exakt `78192ab...`
 - Supabase Production `qscbgcdmivbbnzrcyegn`: Migrationen enden bei `20260824140000_flug_route_itinerary_untrusted_surface`
-- Supabase Development `yfvbxvijcorffwxbxahl` enthält zusätzlich `20260824160000` und `20260824180000`; beide bleiben **Development-only / nicht Production-approved**.
-- PR #46 führte **keine** Migration, RLS-, Capability-, Provider-, Secret- oder Kostenänderung ein.
-- `main` ist weiterhin technisch **nicht** durch Branch Protection/Required Checks geschützt. Product Owner hat die Härtung freigegeben; die verbundene GitHub-Schnittstelle bietet weiterhin keine passende Mutation. Nicht als umgesetzt behaupten.
+- Supabase Development enthält zusätzlich `20260824160000` und `20260824180000`; beide bleiben **Development-only / nicht Production-approved**.
+- PR #49 führte keine Production-Migration, RLS-/Capability-/Provider-/Secret-/Kosten- oder Finance-Live-Aktivierung ein.
+- `main` ist weiterhin technisch **nicht** durch Branch Protection/Required Checks geschützt. PO-Freigabe zur Härtung besteht; aktuelle Connector-Oberfläche bietet keine passende Mutation.
 
 ## 2. Verbindliche ADR-Allokation
 
@@ -23,73 +24,63 @@ Status: **kanonische operative Team-Wahrheit für Chat-/Agent-Wechsel**
 - ADR-0159 = Admin Slice B / PR #46 / `main`
 - ADR-0160 = Account AP-3 / PR #53
 - ADR-0161 = Provider Readiness S3 / PR #54
-- ADR-0162 = Admin Slice C / PR #49
+- ADR-0162 = Admin Slice C / PR #49 / `main`
 
-## 3. Aktive Workstreams
+Neue ADR-Nummern werden erst durch den Technical Lead für den jeweiligen nächsten Slice reserviert; keine parallele Eigenvergabe.
 
-### Admin – PR #49 / Slice C
+## 3. Workstreams
 
-Agent: `Admin platform audit`
+### Admin – Agent `Admin platform audit`
 
 - Slice A / #44: merged
 - Slice B / #46: merged
-- Slice C / #49: **open Draft, Current-Main synchronisiert, implementiert, Independent Technical-Lead PASS / Technical Integration Closure**
-- Base: `main` `e3bad749c8e03512001e7bccd5e08467f10a7134`
-- funktionaler Runtime-Head: `965034d6c5ac412472ceca38be97863bf072e9c0`
-- Exact Head mit belegten Remote-Gates: `bc60120f953508ede0410c26c9384f20d380738d`
-- docs-only Evidence-Head vor TL-Review: `61b6b376c960b8ac43ccdf3584519e8e01cb03dc`
-- aktueller PR-Head nach TL-Review-Dokument: `82f31bdced347ec5e6488fd81c16562f8653f491`
-- GitHub Actions `32760714279`: SUCCESS auf `61b6b376...`; Vercel Preview `DpzA6Kd2f1DzHc7WsSDNBbrSL6Jh`: READY/success
-- Scope: read-only Provider & Cost Board; GET-only `api/admin/provider-ops` mit `betrieb-lesen`; bestehende S1-/RLS-Grenzen bleiben erhalten
-- keine Provideraktivierung, keine Secrets, Verträge, paid calls, Migration/RLS/Capability-Änderung oder Finance-Live
-- `model_usage` ist auf maximal 200 gelesene Zeilen aus 30 Tagen begrenzt und wird ausdrücklich **nicht** als vollständiger Monatsabschluss ausgegeben
+- Slice C / #49: **merged auf `main` `78192ab...`**
+- Independent Technical-Lead Review für C: **PASS / Technical Integration Closure**
+- C-Scope: read-only Provider & Cost Board; keine echte Provideraktivierung, Secrets, Verträge, paid calls, Migration/RLS/Capability oder Finance-Live
+- `model_usage` bleibt begrenzte read-only Sicht, kein vollständiger Monatsabschluss
 - geerbter Billing-/Refund-P1 bleibt separater Pflichtblock vor Finance-/Payment-Live
-- **Nächster Schritt: Product-Owner-Entscheidung zu Mark Ready. Kein Ready ohne ausdrückliche aktuelle Freigabe; Merge danach separat.**
-- Slice D–K startet erst nach erfolgreicher Integration von C und neuem kontrollierten Auftrag.
+- **Agent `Admin platform audit` wartet jetzt. Kein Slice D ohne neuen kontrollierten Auftrag.**
+- Admin-Programm endet nicht bei C; D–K bleiben laut Plan offen.
 
-### Account – PR #53 / AP-3
+### Account – Agent `Account plattform audit vorbereitung`
 
-Agent: `Account plattform audit vorbereitung`
+PR #53 / AP-3:
 
-- Branch: `feat/account-ap3`
-- ursprüngliche Base: `1ec93cc9...`
-- Functional Runtime Head: `612d819ed9691f93cbab97128e301b0b7744721b`
-- zuletzt zentral beobachteter PR/docs Head: `5fb879f5556012ab5a34584b4ba8a319ce6754a1`
-- ADR: **ADR-0160**
-- ursprüngliche Runtime-/Docs-Gates waren grün.
-- **Independent Technical-Lead Review durchgeführt:** AP-3-Grundlogik ist grundsätzlich sauber, aber Current-Main-Closure ist **noch nicht** erreicht.
-- Review-Fund: der 200er-Hinweis behauptet bei exakt 200 geladenen Reisen unbelegt, dass noch weitere Reisen gespeichert seien. Copy muss fail-honest formuliert werden.
-- Zusätzlich war #53 gegen aktuellen `main` nach Merge #46 veraltet/divergiert. Agent wurde angewiesen: Current-Main-Sync + ausschließlich diese Truth-Korrektur + vollständige Exact-Head-Re-Gates.
-- Bis zum Re-Review: **Draft, kein Ready, kein Merge, kein AP-4**.
+- Draft, nicht gemergt
+- ADR-0160
+- aktueller PR-Head: `3863df7c7fbc0853b0e0a3c618096251fa595e2d`
+- zuvor gegateter Current-Main-/Runtime-Sync-Head: `c1ccfb6e02ffbf3125dced304980d1c801c4c47c`
+- der vom Technical Lead gefundene 200er-Truth-Fehler wurde fail-honest korrigiert
+- Gates gegen damaligen `main` `e3bad749...`: CI `32761572610` SUCCESS, Vercel `dpl_ERFzEa9dMQHncNJ9shajiPQrcMzj` READY; docs-only Head ebenfalls grün
+- **Durch Merge #49 ist `main` jetzt `78192ab...`; #53 ist erneut hinter/divergiert und aktuell nicht mergeable.**
+- Nächster Schritt: nur Current-Main-Sync auf `78192ab...`, zentrale Dokumentationswahrheit erhalten, vollständige Exact-Head-Re-Gates, dann unabhängiger Technical-Lead-Re-Review
+- kein Ready, kein Merge, kein AP-4 vorher
 
-### Provider – PR #54 / S3
+### Provider – Agent `Jetnity provider readiness audit`
 
-Agent: `Jetnity provider readiness audit`
+PR #54 / S3:
 
-- Branch: `feat/provider-mobility-rental-evidence-s3`
-- ursprüngliche Base: `1ec93cc9...`
-- Functional Runtime Head: `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`
-- zuletzt zentral beobachteter Head: `2e9a1a7ff0d8ccef6945cbc70aa3833743d076f1`
-- ADR: **ADR-0161**
-- CI auf `2e9a1a7f`: `32752931378` SUCCESS; Vercel Preview auf demselben SHA success/READY.
-- **Independent Technical-Lead Review durchgeführt:** S3-Code hält die vorgesehene Trust-Grenze; kein zusätzlicher Runtime-/Security-/Truth-Fix im S3-Scope gefunden.
-- Verifiziert: Browser nur IDs, Nachweis + serverseitiger Kontext, Testkatalog injiziert/test-only, Production ohne Adapter fail-closed, keine erfundene `booking_url`, Auto-Search nur auf ausdrückliche Nutzeraktion, keine Migration/Secrets/Provideraktivierung/neuen Kosten.
-- Trotzdem noch keine Current-Main-Closure im zentral zuletzt verifizierten Stand; Agent wurde angewiesen: nur Current-Main-Sync + Dokumentations-Reconciliation + vollständige Exact-Head-Re-Gates; **keine neue S3-Funktionalität, kein S4**.
-- Bis zum Re-Review: **Draft, kein Ready, kein Merge**.
+- Draft, nicht gemergt
+- ADR-0161
+- aktueller Head: `f6b85570049a20146544e4f85503d6ff2c9703b4`
+- S3-Code hielt im Independent Review die Trust-Grenzen; kein zusätzlicher Runtime-/Security-/Truth-Fix im S3-Scope gefunden
+- Gates gegen damaligen `main` `e3bad749...`: CI `32762113958` SUCCESS, Vercel `dpl_EreSw6u5vc1GKnojDNGbWnNtvzG5` READY
+- Browser nur IDs; serverseitiger Kontext/Nachweis; Testkatalog test-only; Production ohne Adapter fail-closed; keine erfundene `booking_url`; keine Migration/Secrets/Provideraktivierung/neuen Kosten
+- **Durch Merge #49 ist #54 erneut hinter/divergiert und aktuell nicht mergeable.**
+- Nächster Schritt: nur Current-Main-Sync auf `78192ab...` + Re-Gates; keine neue S3-Funktionalität, kein S4; danach Technical-Lead-Re-Review
 
-### Trip Workspace – PR #55 / Audit & Architecture
+### Trip Workspace – Agent `Trip workspace audit architecture`
 
-Agent: `Trip workspace audit architecture`
+PR #55 / Audit & Architecture:
 
-- Branch: `audit/trip-workspace`
-- ursprüngliche Base: `1ec93cc9...`
-- zuletzt zentral beobachteter Head: `536ed50ffda0279973058f7a2b78ee98217e7aad`
-- CI `32752434172`: SUCCESS; Vercel Preview READY.
-- Scope ist weiterhin **docs-only**; kein Runtime-Umbau.
-- **Independent Technical-Lead Review durchgeführt:** Audit/Zielarchitektur inhaltlich plausibel und scope-treu. Besonders relevant: Trennung Truth-Layer / Attention-Layer / UI; keine neue Multi-Citizenship-Truth; keine Feature-Creep-Wunschliste.
-- Kernfunde für später: Safety/Seasonal-Orchestrierung im Produktpfad unsichtbar, Mobile/Desktop unterschiedliche Produktlogik, fehlende `Jetzt wichtig`-Aufmerksamkeitsschicht, Domain-lastige IA, Create-Flow/Pace-Default und weitere P1/P2-Funde.
-- Im zentral zuletzt verifizierten Stand noch keine Current-Main-Closure; Agent wurde angewiesen: nur Current-Main-/Docs-Reconciliation + Re-Gates; keine Runtime-Änderung, kein TW-1.
-- Bis zum Re-Review: **Draft, kein Ready, kein Merge**.
+- Draft, docs-only, nicht gemergt
+- aktueller Head: `76ef850fa43fa9a97bafeb6077940b37eec56d9e`
+- Audit/Zielarchitektur im Independent Review inhaltlich plausibel und scope-treu
+- Gates gegen damaligen `main` `e3bad749...`: CI `32763440821` SUCCESS, Vercel `dpl_2vRPwAD8rktAkTCwirP4Lg5Aw38o` READY
+- Kernfunde: Safety/Seasonal-Orchestrierung im Produktpfad unsichtbar, Mobile/Desktop unterschiedliche mentale Produktlogik, fehlende `Jetzt wichtig`-Attention-Schicht, Domain-lastige IA, Create-Flow/Pace-Default u. a.
+- Multi-Citizenship korrekt nur als bestehende Traveller-Abhängigkeit behandelt; keine neue Truth/Registry
+- **Durch Merge #49 ist #55 erneut hinter/divergiert und aktuell nicht mergeable.**
+- Nächster Schritt: docs-only Current-Main-/Docs-Reconciliation auf `78192ab...` + Re-Gates; kein Runtime-Umbau, kein TW-1; danach Technical-Lead-Re-Review
 
 ## 4. Große Produkt-Reihenfolge
 
@@ -102,7 +93,7 @@ Weltkarte, Reisepartner-Matching, Reisebuch, Trends/Hotspots und ähnliche Ideen
 ## 5. Vollständige Bereichsprogramme
 
 - Account endet nicht bei AP-3; vollständiger Plan bis AP-12, Shared-Gates separat.
-- Admin endet nicht bei B/C; vollständiger Plan bis A–K.
+- Admin endet nicht bei C; vollständiger Plan bis A–K.
 - Provider Readiness endet nicht bei S3; vollständiger Plan S1–S8, danach echte Providerphase separat gegatet.
 
 Siehe `docs/DOMAIN_PROGRAM_COMPLETION_POLICY.md`.
@@ -122,16 +113,16 @@ Siehe `docs/DOMAIN_PROGRAM_COMPLETION_POLICY.md`.
 
 ## 7. Historische Evidence und Kontinuität
 
-Historische Slice-Handoffs, alte Checkpoints und frühere Exact Heads dürfen bestehen bleiben. Sie sind ausdrücklich **historische Momentaufnahmen** und dürfen einen neueren zentralen Status nicht überschreiben.
+Historische Slice-Handoffs, alte Checkpoints und frühere Exact Heads dürfen bestehen bleiben. Sie sind historische Momentaufnahmen und dürfen einen neueren zentralen Status nicht überschreiben.
 
-Nach jedem relevanten Merge oder größeren Statuswechsel müssen PR #52 sowie `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, dieser Status und der New-Chat-Checkpoint zeitnah auf die tatsächlich aktuelle operative Wahrheit aktualisiert werden.
+Nach jedem relevanten Merge oder größeren Statuswechsel müssen PR #52 sowie `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, dieser Status und der New-Chat-Checkpoint zeitnah auf die tatsächliche operative Wahrheit aktualisiert werden.
 
 ## 8. Nächster Technical-Lead-Arbeitsstand
 
-- Admin #49 / `Admin platform audit`: Technical-Lead PASS; wartet auf ausdrückliche PO-Entscheidung zu Mark Ready.
-- Account #53 / `Account plattform audit vorbereitung`: Agent-Sync + 200er-Truth-Korrektur + Re-Gates abwarten, dann Technical-Lead-Re-Review.
-- Provider #54 / `Jetnity provider readiness audit`: Current-Main-Sync + Re-Gates abwarten, dann Technical-Lead-Re-Review.
-- Trip #55 / `Trip workspace audit architecture`: Current-Main-/Docs-Reconciliation + Re-Gates abwarten, dann Technical-Lead-Re-Review.
+- `Admin platform audit`: wartet nach Merge von #49 auf neuen kontrollierten Slice-D-Auftrag.
+- `Account plattform audit vorbereitung` / #53: Current-Main-Sync auf `78192ab...` + Re-Gates, dann Re-Review.
+- `Jetnity provider readiness audit` / #54: Current-Main-Sync auf `78192ab...` + Re-Gates, dann Re-Review.
+- `Trip workspace audit architecture` / #55: docs-only Current-Main-Reconciliation auf `78192ab...` + Re-Gates, dann Re-Review.
 - PR #52 bleibt Draft; kein Ready/Merge ohne PO-Freigabe.
 
 Keine Production-Migration, kein Provider-/Secret-/Kosten-Gate ist durch diesen Status autorisiert.
