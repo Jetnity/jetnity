@@ -85,7 +85,8 @@ Nach Implementierung:
 - exakte neue Development-Migration nennen;
 - Development-Anwendung belegen;
 - ausdrücklich dokumentieren: **Production unverändert**;
-- dann STOPP für unabhängigen Technical-Lead-Re-Review.
+- dann **STOPP**; keine weitere S2-/S3-Arbeit;
+- unabhängiger ChatGPT/Technical-Lead-Re-Review auf dem neuen Exact Runtime Head.
 
 ## Harte Governance
 
