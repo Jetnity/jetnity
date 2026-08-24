@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1 und Account AP-2 liegen auf `main`; dieser Branch ist Provider Readiness S2-B2, Draft-PR #51, nach `main`-Sync für GitHub Actions, danach STOPP für Technical-Lead-Re-Review**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1 und Account AP-2 liegen auf `main`; dieser Branch ist Provider Readiness S2-B2, Draft-PR #51, auf `main` synchronisiert, Gates grün, STOPP für Technical-Lead-Re-Review**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -299,7 +299,7 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 5. ✅ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation
 6. ✅ Account Platform AP-1 – Squash-Merge nach `main` (`084f7c87`, PR #43)
 6a. ✅ Account Platform AP-2 – Squash-Merge nach `main` (`2827d1cb`, PR #48)
-7. Provider-Readiness-/Adapter-Lücken schließen – **S1 Technical Closure / PASS auf Draft-PR #47; S2-B2 auf Draft-PR #51 nach `main`-Sync, danach STOPP für Technical-Lead-Re-Review**
+7. Provider-Readiness-/Adapter-Lücken schließen – **S1 Technical Closure / PASS auf Draft-PR #47; S2-B2 auf Draft-PR #51, Integrations-Head `e2fcffde`, STOPP für Technical-Lead-Re-Review**
 8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 10. echte Providerphase
@@ -317,6 +317,7 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 Aktiver Branch: `feat/provider-flight-evidence-s2`
 Draft PR: `#51`
 Basis: `origin/main` @ `2827d1cb`
+Integrations-Exact-Head: `e2fcffde`
 Vorheriger Functional Exact Head: `1b06b284`
 Auftrag: `docs/PROVIDER_READINESS_S2_FLUGNACHWEIS_TASK.md`
 B2-Auftrag: `docs/PROVIDER_READINESS_S2_B2_DIRECT_TABLE_TRUST_FIX_TASK.md`
@@ -326,9 +327,9 @@ B2-Auftrag: `docs/PROVIDER_READINESS_S2_B2_DIRECT_TABLE_TRUST_FIX_TASK.md`
 3. Guest persistiert keine kommerzielle Provider-Flugoption. Guest → Account streicht unbewiesene Flug-Handelsfelder.
 4. S2-B1: `reise_anlegen` verwirft unbewiesene Flug-Handelsfelder. S2-B2: direkte `trip_items`-Writes tun dasselbe für `authenticated`/`anon`.
 5. Development-Migrationen `20260824160000` und `20260824180000` sind angewendet. **Production unverändert.**
-6. PR #51 war `CONFLICTING` gegenüber `main` (Account AP-1/AP-2). GitHub Actions `ci.yml` startete deshalb auf den S2-B2-Heads nicht. Dieser Branch zieht `origin/main` ein, ohne den PR zu mergen.
-7. PR bleibt Draft. Kein Mark Ready, kein Merge, kein S3, keine Production-Migration ohne neue Product-Owner-Freigabe.
-8. **Exakter nächster Schritt:** Exact-Head-Gates auf dem neuen Integrations-Head, GitHub Actions nachziehen, danach STOPP für unabhängigen Technical-Lead-Re-Review.
+6. PR #51 ist auf `origin/main` @ `2827d1cb` synchronisiert, `MERGEABLE` / `CLEAN`, bleibt Draft.
+7. GitHub Actions `32732334063` und Vercel `4uQEc9GNFnBYqjoxSpSkw7sQ6pow` sind auf `e2fcffde` grün.
+8. **Exakter nächster Schritt:** Unabhängiger Technical-Lead-Re-Review gegen `e2fcffde`. Kein Mark Ready, kein Merge, kein S3, keine Production-Migration.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38, Account AP-1 und Account AP-2 liegen auf `main`; dieser Branch hat Provider Readiness S2-B2 auf Draft-PR #51 mit aktuellem `main` synchronisiert, um GitHub Actions wieder zu ermöglichen, und stoppt danach für Technical-Lead-Re-Review**
+Status: **PR #38, Account AP-1 und Account AP-2 liegen auf `main`; Provider Readiness S2-B2 auf Draft-PR #51 ist auf aktuellen `main` synchronisiert, lokal und remote gegatet, und wartet auf Technical-Lead-Re-Review**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -95,7 +95,7 @@ Status: `docs/PROVIDER_READINESS_S2_STATUS.md`
 
 Aktiver Slice:
 
-**S2 – `FlugNachweis` plus S2-B1-RPC- und S2-B2-Tabellengrenze, jetzt auf aktuellen `main` (`2827d1cb`) synchronisiert.** Vorheriger Functional Exact Head `1b06b284`. Browser sendet nur identifiers. Guest und Guest → Account bleiben fail-closed. `reise_anlegen` und direkte `trip_items`-Writes verwerfen unbewiesene Flug-Handelsfelder. Development-Migrationen `20260824160000` und `20260824180000` sind angewendet. **Production unverändert.** Der `main`-Sync ist kein PR-Merge und kein S3. Ziel: GitHub Actions `ci.yml` wieder auf einem mergebaren Head starten, danach STOPP für Technical-Lead-Re-Review.
+**S2 – `FlugNachweis` plus S2-B1-RPC- und S2-B2-Tabellengrenze, auf `origin/main` @ `2827d1cb` synchronisiert.** Integrations-Exact-Head `e2fcffde`. Browser sendet nur identifiers. Guest und Guest → Account bleiben fail-closed. `reise_anlegen` und direkte `trip_items`-Writes verwerfen unbewiesene Flug-Handelsfelder. Development-Migrationen `20260824160000` und `20260824180000` sind angewendet. **Production unverändert.** GitHub Actions `32732334063` und Vercel `4uQEc9GNFnBYqjoxSpSkw7sQ6pow` sind auf diesem Head grün. STOPP für Technical-Lead-Re-Review.
 
 Grenze: kein Live-Duffel, keine Provideraktivierung, keine Secrets, keine Production-Migration, kein S3–S6, kein Offer-Booking. `booking_url` bleibt `null`. Route Truth bleibt Foundation D.
 
@@ -143,8 +143,7 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-1. S2 auf Draft-PR #51 zieht `origin/main` @ `2827d1cb` ein, damit der PR wieder mergebar wird und GitHub Actions `ci.yml` starten kann. Das ist kein Merge von PR #51.
-2. Danach Exact-Head-Gates auf dem neuen Integrations-Head und STOPP für unabhängigen Technical-Lead-Re-Review. Production unverändert. Kein Mark Ready, kein Merge, kein S3, keine Production-Migration.
+1. S2 auf Draft-PR #51 hat Integrations-Head `e2fcffde`, lokale Gates, GitHub Actions SUCCESS und Vercel READY. STOPP für unabhängigen Technical-Lead-Re-Review. Production unverändert. Kein Mark Ready, kein Merge, kein S3, keine Production-Migration.
 3. `Admin platform audit` arbeitet weiter ausschließlich Slice A auf PR #44.
 4. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung.
 5. AP-3, Admin Slice B und Provider S3 brauchen jeweils eine neue ausdrückliche Freigabe.

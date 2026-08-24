@@ -288,7 +288,7 @@ Zu prüfen/vereinheitlichen:
 
 Keine Verträge, Secrets oder laufenden Providerkosten ohne separate Freigabe.
 
-S1 Shared Operational Contract ist Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`. Es zentralisiert nur technische Hüllen. Audit-PR #45 bleibt Draft. S2 inkl. B1/B2 liegt auf Draft-PR #51 / `feat/provider-flight-evidence-s2`; vorheriger Functional Head `1b06b284` ist jetzt auf `origin/main` @ `2827d1cb` synchronisiert, damit GitHub Actions wieder starten kann. Development-Migrationen `20260824160000` und `20260824180000` sind angewendet, Production unverändert. S1/S2 aktivieren keine Provider. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
+S1 Shared Operational Contract ist Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`. Es zentralisiert nur technische Hüllen. Audit-PR #45 bleibt Draft. S2 inkl. B1/B2 liegt auf Draft-PR #51 / `feat/provider-flight-evidence-s2`, Integrations-Head `e2fcffde` (auf `origin/main` @ `2827d1cb` synchronisiert). Development-Migrationen `20260824160000` und `20260824180000` sind angewendet, Production unverändert. GitHub Actions und Vercel auf `e2fcffde` sind grün. STOPP für Technical-Lead-Re-Review. S1/S2 aktivieren keine Provider. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
 
 ---
 
@@ -387,7 +387,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation
 6. ✅ Account Platform AP-1 – auf `main` (`084f7c87`, PR #43)
 6a. ✅ Account Platform AP-2 – auf `main` (`2827d1cb`, PR #48)
-7. Provider-Readiness-/Adapter-Lücken schließen – S2-B2 auf Draft-PR #51 nach `main`-Sync, danach Technical-Lead-Re-Review
+7. Provider-Readiness-/Adapter-Lücken schließen – S2-B2 auf Draft-PR #51, Integrations-Head `e2fcffde`, STOPP für Technical-Lead-Re-Review
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit
 10. echte Providerphase
