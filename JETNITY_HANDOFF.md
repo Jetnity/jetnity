@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D, Foundation E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence – Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe**
+Status: **verbindlicher operativer Übergabepunkt – Foundation D/E, Safety und Seasonal auf `main` und Production; PR #38 integriert; aktive nächste Workstreams: Account AP-1 und Admin Slice A**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -294,13 +294,14 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. **→ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
-6. Provider-Readiness-/Adapter-Lücken schließen
-7. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
-8. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
-9. echte Providerphase
-10. provider-backed End-to-End-/Truth-Audit
-11. finale Startseiten-Positionierung / Kommunikation
+5. ✅ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (PR #38 gemergt, Production verifiziert)
+6. **→ Account AP-1 und Admin Slice A** (parallel, konfliktarm; Shared Contracts seriell)
+7. Provider-Readiness-/Adapter-Lücken schließen
+8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
+9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
+10. echte Providerphase
+11. provider-backed End-to-End-/Truth-Audit
+12. finale Startseiten-Positionierung / Kommunikation
 
 ### Provider-Regel
 
@@ -310,16 +311,14 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-Aktiver Branch: `feat/travel-timing-seasonal-intelligence`  
-Draft PR: `#38`  
-Basis: `origin/main` @ `cd220beb`  
-Runtime-Head: `57824019`
+`main`: `f999f215`  
+PR #38 Squash-Merge: `ee988bbe`  
+Production: `docs/PR38_PRODUCTION_INTEGRATION.md`
 
-1. Ist-Audit ist gegen den tatsächlichen Code verifiziert.
-2. Seasonal-Runtime sowie Review-Blocker 1–31 sind geschlossen. Untrusted Intake persistiert keine Client-Surface; `FlugOption` erfindet keine Evidence aus Segmentnachbarschaft.
-3. Full Gate auf Runtime `57824019` ist lokal und remote grün (1703/1703 Tests, UI-Audit 1014/1014, Build Exit 0, GitHub Actions SUCCESS, Vercel Preview READY).
-4. PR bleibt Draft. Kein echter Seasonal-Provider, kein Secret, keine unfreigegebenen Kosten, keine Production-Migration, kein Merge ohne aktuelle Product-Owner-Freigabe.
-5. **Exakter nächster Schritt:** Product-Owner-Entscheidung zu Mark Ready / Merge. Technical Closure ersetzt diese Freigabe nicht. Production-Migration bleibt ein separates Gate.
+1. Seasonal-Foundation und Review-Blocker 1–31 sind auf `main` und Production.
+2. Untrusted Intake persistiert keine Client-Surface. `seasonalProviderAus()` bleibt `null`.
+3. Vercel Production `dpl_5wwLu6tbPLhPJgFMLC1PHx3wzcVS` ist READY auf `ee988bbe`. Supabase Production hat beide Route-Surface-Migrationen.
+4. **Exakter nächster Schritt:** Account AP-1 (`Account plattform audit vorbereitung`, `audit/account-platform`) und Admin Slice A (`Admin platform audit`, `audit/admin-platform`) parallel vorbereiten. Shared Auth/RLS/DB/Traveller-/Route-Contracts bleiben seriell.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

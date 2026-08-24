@@ -1,7 +1,7 @@
 # Jetnity – Travel Timing & Seasonal Intelligence
 
 Stand: 23. August 2026  
-Status: **provider-neutrale Foundation auf Draft-PR #38; kein Live-Provider, keine Production-Migration**
+Status: **provider-neutrale Foundation auf `main` und Production (PR #38 integriert); kein Live-Provider; Production verwirft Client-Surface**
 
 Fachdokument zur Seasonal-Wahrheit. Acceptance: `docs/TRAVEL_TIMING_SEASONAL_FOUNDATION_ACCEPTANCE.md`.  
 Policy: `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`.
