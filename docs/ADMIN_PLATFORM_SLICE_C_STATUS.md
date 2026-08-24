@@ -1,7 +1,7 @@
 # Admin Platform Slice C – Status
 
 Stand: 24. August 2026  
-Status: **IMPLEMENTIERT – Exact-Head-Gates auf `bc60120f` belegt; STOPP für unabhängigen Technical-Lead-Review**  
+Status: **TECHNICAL CLOSURE / PASS – wartet auf Product-Owner-Entscheidung zu Mark Ready**  
 Verantwortlicher Cursor-Agent: `Admin platform audit`  
 Branch: `feat/admin-provider-cost-board`  
 PR: Draft #49, Base `main`  
@@ -9,7 +9,7 @@ Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
 
 ## Status
 
-Read-only Provider- und Kostenboard auf aktuellem `main` nach Slice-B-Merge. Draft, nicht gemergt. Kein Mark Ready, kein Merge, kein Slice D.
+Read-only Provider- und Kostenboard auf aktuellem `main` nach Slice-B-Merge. Unabhängiger Technical-Lead-Review: **PASS / Technical Integration Closure** (`docs/ADMIN_PLATFORM_SLICE_C_TECHNICAL_LEAD_REVIEW.md`). Draft, nicht gemergt. Technical Closure ist kein Mark Ready und kein Merge.
 
 Entscheidung: **ADR-0162**. ADR-0160 bleibt Account AP-3. ADR-0161 bleibt Provider S3.
 
@@ -41,9 +41,10 @@ Geöffnet gegen aktuellen `main`:
 ## Exact Head
 
 Letzter Runtime-Commit: `965034d6c5ac412472ceca38be97863bf072e9c0`  
-Belegter Docs-/Gate-Head: `bc60120f953508ede0410c26c9384f20d380738d`
+Belegter Docs-/Gate-Head: `bc60120f953508ede0410c26c9384f20d380738d`  
+Review-Head: `82f31bdced347ec5e6488fd81c16562f8653f491` (docs-only Technical-Lead-Review)
 
-Dieser Evidence-Commit nach `bc60120f` ist docs-only und kein neuer Runtime-Gate.
+Weitere Docs-Commits nach `bc60120f` sind kein neuer Runtime-Gate.
 
 ## Lokale Gates
 
@@ -66,8 +67,13 @@ Keine Provideraktivierung, keine Secrets/Tokens/Verträge/kostenpflichtigen Call
 
 Traveller Context ist für dieses Board nicht relevant.
 
+## Remote Gates auf Review-Head `82f31bdc`
+
+- GitHub Actions CI `32763342859`: SUCCESS
+- Vercel Preview Inspector `Bx5KFouMkGshYPrntFMbWKBZL9SJ`: READY
+
 ## Nächster Schritt
 
-Unabhängigen ChatGPT/Technical-Lead-Review abwarten.  
-Kein Mark Ready und kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.  
+Ausdrückliche aktuelle Product-Owner-Entscheidung zu **Ready for Review** abwarten.  
+Ein Merge braucht danach eine **separate** ausdrückliche Product-Owner-Freigabe.  
 Kein Slice D in diesem PR.
