@@ -1,398 +1,143 @@
 # Jetnity – Handoff und nächste Schritte
 
-Stand: **24. August 2026, 17:25 Europe/Zurich**  
-Status: **neuer ChatGPT Technical Lead live übernommen; `main` unverändert auf Provider S2; docs-only Übergabe-Nachzug in Draft-PR #52**
+Stand: **24. August 2026, Live-Abgleich ab 18:50 Europe/Zurich**  
+Status: **kanonischer operativer Einstieg; Admin Slice A auf `main`; vier parallele Workstreams bis zu ihren Review-Gates fortgeschritten**
 
-Dieser Handoff ist der zentrale operative Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung, historische Slice-Handoffs und Live-Systeme widersprechen, gilt:
+> **Vor jeder neuen Arbeit GitHub, CI, Vercel und Supabase live verifizieren. Historische Handoffs sind Evidence ihres damaligen Zeitpunkts, keine automatisch aktuelle operative Wahrheit.**
 
-> **Nicht raten. GitHub, CI, Vercel und Supabase live verifizieren. Der neuere belegte Stand gewinnt und wird danach wieder im Repository persistiert.**
+## 1. Zuerst lesen
 
-Aktuell maßgebliche Übergabequellen:
+Für einen neuen Chat/Agent gilt diese Reihenfolge:
 
-1. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-08-24.md` – Übergabepunkt 16:45
-2. `docs/CHATGPT_TAKEOVER_LIVE_VERIFICATION_2026-08-24.md` – neuere Live-Verifikation 17:25
-3. `docs/ACTIVE_WORK_STATUS.md` – kompakter aktueller Arbeitsstatus
+1. `docs/CURRENT_MULTI_AGENT_TEAM_STATUS.md` – **aktuellste kompakte operative Wahrheit**
+2. `docs/ACTIVE_WORK_STATUS.md`
+3. `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-08-24.md`
 4. `docs/CHATGPT_TECHNICAL_LEAD_CONTINUITY.md`
-5. `docs/NEW_CHAT_START_PROMPT_2026-08-24.md`
+5. `docs/DOMAIN_PROGRAM_COMPLETION_POLICY.md`
+6. `docs/NEW_CHAT_START_PROMPT_2026-08-24.md`
+7. die dort genannten aktuellen Slice-Handoffs / PRs
 
-Historische Account-/Admin-/Provider-Handoffs bleiben Evidence des jeweiligen Slice-Zeitpunkts. Sie dürfen nicht allein als heutiger Merge-/Production-Status gelesen werden.
+Wenn diese Dokumente später hinter den Live-Systemen liegen: **nicht raten; live verifizieren und den neueren belegten Stand wieder zentral persistieren.**
 
----
-
-## 1. Verbindliche Rollen und Governance
-
-Rollen:
-
-- **Product Owner / Nutzer:** verbindliche Produktentscheidungen und finale Gates
-- **ChatGPT:** Hauptentwickler / Technical Lead / Product-, Architecture-, Logic-, Security- und Review-Steuerung
-- **Cursor / Coding Agents:** Implementierung größerer Blöcke ausschließlich nach versioniertem Auftrag
-- **GitHub:** dauerhaftes gemeinsames Gedächtnis / Source of Truth
-
-Harte Regeln:
-
-- **Kein Mark Ready ohne ausdrückliche aktuelle Product-Owner-Freigabe.**
-- **Kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.**
-- Grüne Tests, CI, Vercel, Technical Closure oder Review-PASS ersetzen diese Freigabe nicht.
-- Production-Migrationen sind separate Gates.
-- Provideraktivierung, Secrets/API-Keys, Verträge und kostenpflichtige Calls sind separate Gates.
-- Laufende Infrastruktur-/Providerkosten maximal USD 100/Monat; darüber vorher Product Owner fragen.
-- Keine Fake-Preise, Fake-Verfügbarkeit, Fake-Health, Fake-Provider-Evidence oder erfundene regulatorische/Safety-Wahrheit.
-- Shared Auth/RLS/Identity/Guest→Account/Traveller/Route/Privacy/Billing/Admin-Audit/Provider-Activation-Verträge bleiben seriell unter Technical-Lead-Steuerung.
-- Ein freigegebener Cursor-Scope wird nicht still erweitert. Bei relevantem Shared-/Scope-Fund: stoppen, dokumentieren, neuen Auftrag vorlegen.
-- Nach jedem Implementierungsslice: Self-Review, vollständige Gates, Exact-Head-Nachweis und unabhängiger Technical-Lead-Review.
-- Relevanter Fortschritt, Entscheidungen, Blocker, Freigaben, Heads, CI/Vercel/Supabase-Evidence und exakter nächster Schritt gehören ins Repository.
-
-Verbindliche Policies:
-
-- `docs/CONTINUITY_STANDARD.md`
-- `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md`
-- `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`
-- `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
-- `docs/EXPERT_PROACTIVITY_POLICY.md`
-- `docs/LOGIC_STANDARD.md`
-- `docs/PRODUCT_QUALITY_STANDARD.md`
-
----
-
-## 2. Produkt-Nordstern
-
-Jetnity soll ein zusammenhängendes intelligentes Reiseplanungs- und Reisebegleitungsprodukt werden, kein Bündel getrennter Suchseiten.
-
-Leitsätze:
-
-> **Einfach für den Nutzer. Streng logisch im Inneren. Eine Reise, eine Wahrheit.**
-
-> **Komplexität gehört ins System, nicht in den Kopf des Nutzers.**
-
-> **Jetnity analysiert, erklärt und empfiehlt; wichtige Änderungen werden nicht still vorgenommen.**
-
-Fortgeltend:
-
-- Schweiz zuerst, international skalierbar.
-- Web/PWA zuerst, Native später möglich.
-- Aggregator / Assistent / Planer als Grundmodell, kein direkter Vollbucher als Kern.
-- Trip Workspace ist die zentrale Produktoberfläche einer einzelnen Reise.
-- „Meine Reisen“ bleibt der persönliche Reise-Hub.
-- Account ist das dauerhafte persönliche Zuhause, nicht ein zweites Workspace-Dashboard.
-- Nutzer soll klare Priorität, nächsten Schritt, Risiken und Fortschritt sehen; interne Komplexität bleibt im System.
-- mehrere Staatsbürgerschaften und mehrere Reisedokumente müssen in allen relevanten Entry-/Transit-/Readiness-Funktionen korrekt berücksichtigt werden.
-- Ausstellerland ist nicht automatisch Staatsbürgerschaft.
-- Official/Regulatory/Safety-Truth braucht belastbare Evidence; `unknown` bleibt `unknown`.
-- Marketing bevorzugt „smart/intelligent“ statt unnötig „KI“.
-- keine Demo-/Fake-Funktionalität als fertiges Feature ausgeben.
-
-Vor größeren Produkt-/Architekturentscheidungen zusätzlich lesen:
-
-- `JETNITY_PRODUCT_MANDATE.md`
-- `JETNITY_VISION.md`
-- `ROADMAP.md`
-- `ARCHITECTURE.md`
-- `DECISIONS.md`
-- `DESIGN_SYSTEM.md`
-- relevante Fach-/Audit-/Acceptance-Dokumente unter `docs/`
-
----
-
-## 3. Live verifizierter `main`-Stand
+## 2. Aktueller `main` / Production
 
 Repository: `Jetnity/jetnity`
 
-Aktueller `main`:
-
-`52e665acfed88303300870d50855177284588026`
-
-Commit:
-
-`Provider Readiness S2 – FlugNachweis (#51)`
-
-Bestätigt:
-
-- PR #51 merged / closed
-- Merge am 24. August 2026, 14:29:48 UTC
-- seit dem 16:45-Übergabe-Checkpoint kein neuer Main-Commit
-- Parent: Account AP-2 `2827d1cbb674498f504ba1810c73c8dc5d43ca24`
-
-### Governance-Härtungsfund
-
-GitHub meldet `main` aktuell als `protected: false` und ohne erzwungene Required Status Checks.
-
-Das ändert unsere Product-Owner-Gates nicht, bedeutet aber: GitHub erzwingt sie technisch derzeit nicht zusätzlich. Technical-Lead-Empfehlung ist, Branch Protection / Ruleset vor weiteren produktiven Merges als separaten Governance-Schritt zu prüfen. **Nicht freigegeben und nicht ausgeführt.**
-
----
-
-## 4. Vercel Production
-
-Projekt: `jetnity-app`
-
-Aktuelles Production Deployment:
-
-- `dpl_GmkoSNdse6YkRYqiR6VHsEMAsUv5`
-- State: **READY**
-- Target: `production`
-- Branch: `main`
-- Git SHA: `52e665acfed88303300870d50855177284588026`
-- Alias: `jetnity-app.vercel.app`
-
-Beim Takeover wurde eine deployment-spezifische Error/Fatal-Abfrage für ca. 20 Minuten ohne Treffer durchgeführt. Ein breiter vorheriger 1-Stunden-Abruf lief in ein API-Timeout; deshalb wird kein neuer vollständiger 1-h-PASS behauptet.
-
----
-
-## 5. Supabase Production / Development
-
-### Production
-
-Project ref: `qscbgcdmivbbnzrcyegn`  
-Region: `eu-central-2`  
-Status: **ACTIVE_HEALTHY**
-
-Production endet bei:
-
-- `20260824120000_flug_route_itinerary_surface_evidence`
-- `20260824140000_flug_route_itinerary_untrusted_surface`
-
-Nicht auf Production:
-
-- `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`
-- `20260824180000_trip_items_flug_handelsfelder_guard`
-
-Der Trigger `trip_items_flug_handelsfelder_schuetzen` ist auf Production live **nicht vorhanden**.
-
-### Development
-
-Branch: `develop`  
-Branch ID: `74809331-0243-493a-8c14-20bb78c015f5`  
-Project ref: `yfvbxvijcorffwxbxahl`  
-Preview status: **ACTIVE_HEALTHY**
-
-Development enthält zusätzlich:
-
-- `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`
-- `20260824180000_trip_items_flug_handelsfelder_guard`
-
-Der Trigger `trip_items_flug_handelsfelder_schuetzen` ist dort live vorhanden.
-
-Damit gilt:
-
-> **S2-Code ist auf `main` / Vercel Production. Die zwei S2-B1/B2-DB-Trust-Guards sind weiterhin ausschließlich Supabase Development.**
-
-Eine Production-Migration dieser beiden Guards braucht eine neue ausdrückliche Product-Owner-Freigabe.
-
----
-
-## 6. Abgeschlossene Kern-Fundamente – nicht erneut bauen
-
-Abgeschlossen / gemergt und soweit erforderlich Production-verifiziert:
-
-- Flight Foundation
-- Hotel Foundation
-- Activities Foundation
-- Mobility & Transfers Foundation
-- Rental Car Foundation
-- Travel Requirements & Readiness Foundation C
-- Route & Transit Intelligence Foundation D
-- Traveller Context / Multi-Citizenship / Multi-Document Foundation E
-- Travel Safety & Disruption Intelligence
-- Travel Timing & Seasonal Intelligence
-
-Wesentliche kanonische Regeln:
-
-- gemeinsamer Reisegraph statt Schattenmodelle
-- Route Truth bleibt Foundation D
-- Traveller Context unterstützt mehrere Staatsbürgerschaften und Credentials pro Traveller
-- Browser-/Client-Felder dürfen keine Official-/Provider-Truth adeln
-- bewusst gelöschte/ersetzte Wahrheit darf durch Legacy-Fallbacks nicht wieder auferstehen
-- Date-only ist ein Kalendertag, nicht still UTC
-
----
-
-## 7. Account – aktueller Stand
-
-Abgeschlossen / merged:
-
-- PR #43 – **Account AP-1**
-- PR #48 – **Account AP-2 Auth-UX-Hygiene**
-
-Nicht gestartet:
-
-- **AP-3 – „Meine Reisen“ Lebenszyklus**
-
-AP-3 bleibt ein konfliktarmer, ableitender Slice:
-
-- Gruppen Aktiv / Kommend / Vergangen / Ohne Datum
-- optional kleine Suche/Filter
-- Limit-Hinweis nur bei realer Relevanz
-- kein `status=archived` Write
-- kein zweites Listenmodell
-- Date-only-/Kalendertag-Logik konsistent
-- Reise ohne Datum niemals fälschlich „Vergangen“
-- Empty-Gruppe ist kein Fehler
-- keine Shared Auth/RLS/DB-/Traveller-Vertragsänderung
-
-Historischer Audit-PR #39 bleibt Planungs-/Evidence-Material, kein aktiver Runtime-Branch.
-
----
-
-## 8. Provider Readiness – aktueller Stand
-
-Abgeschlossen / merged:
-
-- PR #45 – Provider Readiness Audit
-- PR #47 – Provider Ops S1 Shared Operational Contract
-- PR #51 – Provider Readiness S2 / FlugNachweis
-
-S2 schließt die Browser-Trust-Grenze für kommerzielle Flight-Wahrheit auf Code-Ebene; die beiden ergänzenden DB-Guards bleiben Development-only bis zu einem separaten Production-Gate.
-
-Nicht gestartet:
-
-### S3 – Mobility- und Rental-Nachweis
-
-Geplanter Rahmen:
-
-- Stub-Nachweise auf async `nachweisen({ optionId, kontext })`-Form
-- Übernahme bleibt fail-closed ohne echten Adapter
-- Katalog-Doubles nur für Tests
-- keine Provideraktivierung
-- Mobility Auto-Search explizit gegen Nutzerinitiierung/Kostenleck prüfen; nötigenfalls abschalten oder hinter klare Nutzeraktion legen
-- kein echter Provideradapter
-- keine Mietwagen-Such-UI
-- kein Graph-Rewrite
-
-S3 braucht vor Start einen neuen versionierten Technical-Lead-Auftrag auf Basis der aktuellen Code-/Audit-Evidence.
-
----
-
-## 9. Admin – aktueller Stand
-
-Verantwortlicher bestehender Cursor-Anzeigename:
-
-`Admin platform audit`
-
-### PR #44 – Admin Slice A / Control Center IA
-
-- State: open Draft
-- Head: `b64cd2af7f99109d8771457e8ac776681b86fed1`
-- GitHub aktuell `mergeable: false`
-- gegen Main `52e665ac...`: **17 ahead / 1 behind**
-- Merge-Base: Account AP-2 `2827d1cb...`
-
-Der Branch fehlt genau den späteren Provider-S2-Main-Commit. Historische Technical-PASS-Nachweise bleiben Evidence, sind aber kein Current-Main-Gate.
-
-**Nächster Admin-Schritt:** #44 auf aktuellen `main` synchronisieren → vollständige Exact-Head-Gates → unabhängiger Technical-Lead-Integrationsreview → erst dann Product-Owner-Entscheidung über Ready/Merge.
-
-### PR #46 – Admin Slice B / read-only System Health
-
-- State: open Draft
-- Head: `83c66842e94bc4e7645a39269174397cb4b7eb3f`
-- Base: gestapelt auf Slice A
-- GitHub aktuell `mergeable: false`
-- CI auf diesem Head SUCCESS `32709635273`
-- Vercel Preview READY `dpl_Aw6uoNRcrEXW8s68JNnoaUjgKH5r`
-- gegenüber aktuellem Slice-A-Head: **10 ahead / 13 behind**
-
-CI/Preview sind gültige historische Stack-Evidence, aber kein heutiges Integrationsgate. Nach sauberer Slice-A-Integration wird B auf `main` gebracht und erneut exakt gegatet/reviewt.
-
-### PR #49 – Admin Slice C / Provider & Cost Board
-
-- State: open Draft
-- Head: `4ca7a09326dc99399570e15e0aa5e5d3cd98c37a`
-- nur vorbereitet/docs-only
-- kein Runtime-Start
-
-Nicht blind starten. Erst A/B sauber integrieren und dann einen neuen Technical-Lead-Auftrag schneiden. Kein Live-Provider, keine Secrets, keine Fake-Health-/Cost-Wahrheit.
-
-Historischer Admin-Audit-PR #40 bleibt Planungs-/Evidence-Material.
-
----
-
-## 10. Aktueller docs-only Übergabeblock
-
-Aktiver Branch für den Chatwechsel:
-
-`docs/chatgpt-technical-lead-handoff-2026-08-24`
-
-Draft-PR:
-
-`#52 – docs: ChatGPT Technical Lead handoff – 2026-08-24`
-
-Zweck:
-
-- professioneller Chat-Wechsel ohne Informationsverlust
-- tatsächlichen Live-Stand persistieren
-- veraltete globale operative Handoff-/Statusangaben korrigieren
-
-Keine Runtime-, DB-, RLS-, Auth-, Provider-, Secret- oder Kostenänderung.
-
-Nach jedem neuen docs-only Head von #52 werden GitHub Actions und Vercel Preview auf genau diesem Head geprüft. PR #52 bleibt Draft. **Kein Mark Ready / kein Merge ohne neue ausdrückliche Product-Owner-Freigabe.**
-
----
-
-## 11. Exakter nächster operativer Schritt
-
-### Jetzt
-
-1. Draft-PR #52 docs-only Nachzug abschließen.
-2. neuen Exact Head feststellen.
-3. GitHub Actions auf genau diesem Head prüfen.
-4. Vercel Preview auf genau diesem Head prüfen.
-5. Ergebnis im Repository/PR festhalten.
-6. STOPP – kein Mark Ready, kein Merge.
-
-### Danach empfohlen
-
-1. Product Owner entscheidet separat über GitHub Branch-Protection-/Ruleset-Härtung.
-2. Admin #44 Current-Main-Sync → Re-Gate → unabhängiger Review.
-3. Erst danach Product-Owner-Gate für Ready/Merge von #44.
-4. AP-3 und Provider S3 dürfen als neue konfliktarme Slices vorbereitet werden, sofern kein Shared-Contract-Konflikt entdeckt wird.
-5. Nach Slice-A-Integration: Admin #46 auf `main` → Re-Gate → Re-Review.
-6. Danach Admin #49 neu beurteilen.
-
-Wenn ein Shared-Contract-Konflikt auftaucht, wird Parallelität reduziert und der konfliktträchtige Teil serialisiert.
-
----
-
-## 12. Weiterhin gesperrt / separate Gates
-
-Ohne neue ausdrückliche aktuelle Product-Owner-Freigabe nicht:
-
-- PR #52, #44, #46, #49 oder zukünftige AP-3/S3-PRs Mark Ready setzen
-- irgendeinen dieser PRs mergen
-- S2-Production-Migrationen `20260824160000` / `20260824180000`
-- echte Provider aktivieren
-- Duffel/Booking/GYG/Timatic o. ä. live schalten
-- neue Secrets/API-Keys setzen
-- Verträge abschließen
-- kostenpflichtige Provider-Calls starten
-- Service Role erweitern
-- Auth/MFA/AAL/RLS/Capabilities still verändern
-- Admin Slice C Runtime starten
-
----
-
-## 13. Historische / vorbereitete offene PRs
-
-Nicht automatisch als aktive Runtime-Arbeit behandeln:
-
-- #39 Account Audit – historisch/Planung
-- #40 Admin Audit – historisch/Planung
-- #50 Provider-S1 docs-only Nachtrag – historisch/stale
-- #28 Collaboration Foundation – nicht Teil der aktuellen nächsten Reihenfolge
-
-Cleanup/Close/Merge ist ein eigener bewusster Governance-Schritt.
-
----
-
-## 14. Pflicht für den nächsten Chat / Agent
-
-Ein neuer Chat oder Agent:
-
-1. liest diesen Handoff, `docs/ACTIVE_WORK_STATUS.md`, den letzten Takeover-/Checkpoint-Nachweis und die relevanten Policies;
-2. liest `JETNITY_VISION.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `DECISIONS.md` sowie die relevanten Fach-/Review-Dokumente;
-3. verifiziert aktuellen `main`, PR-Heads/Basen, GitHub Actions, Vercel und Supabase selbst;
-4. übernimmt historische PASS-/Closure-Dokumente nicht blind;
-5. sucht aktiv nach Truth-, Security-, Datenverlust-, Legacy-, Cross-Domain-, Provider-, DB-/RLS-, Parallelitäts- und Deployment-Problemen;
-6. erweitert einen freigegebenen Scope nicht still;
-7. persistiert relevante neue Wahrheit wieder im Repository.
-
-> **Nicht nur bestätigen, dass es funktioniert. Aktiv prüfen, wo es noch brechen kann.**
-
-> **Einfach für den Nutzer. Streng logisch im Inneren. Eine Reise, eine Wahrheit.**
+- `main`: `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267`
+- letzter Merge: **PR #44 – Admin Control Center Slice A**
+- PR #44: merged / closed
+- Vercel Production: `dpl_83gKPm2vWETL7Jq1osdzcuTp4QP7` = READY auf exakt `1ec93cc9...`
+- Supabase Production endet weiterhin bei `20260824140000_flug_route_itinerary_untrusted_surface`
+- `20260824160000` und `20260824180000` bleiben **nur Development** und sind nicht Production-approved.
+
+GitHub meldet `main` weiterhin `protected: false`. Der Product Owner hat Branch-Protection-/Ruleset-Härtung freigegeben; die verbundene GitHub-Schnittstelle kann sie aktuell nicht mutieren. **Nicht als umgesetzt behaupten.**
+
+## 3. Aktuelle Workstreams
+
+### Admin – PR #46 / Slice B
+
+Agent: `Admin platform audit`
+
+- open / **Ready for Review** / mergeable / unmerged
+- Ready wurde vom Product Owner ausdrücklich freigegeben
+- **Merge nicht freigegeben**
+- Runtime Head `1715640bffc36d7ebe1a25de7aeb569632b7811f`
+- aktueller docs-only Head `2ca916e91dbf53f9c5cad9a980cc141938fbebe6`
+- Independent Technical-Lead Review: **PASS / Technical Integration Closure**
+- aktueller docs-only CI `32752819622` SUCCESS
+- aktueller Vercel `dpl_8brgbYwJ7datm1uURAmuaooki72G` READY
+- ADR-0159
+- kein weiterer bekannter Runtime-Fix vor Merge-Entscheidung
+- PR #49 / Slice C bleibt vorbereitet; nicht starten, bis B integriert und C neu auf aktuellen `main` synchronisiert/gegatet wurde.
+
+### Account – PR #53 / AP-3
+
+Agent: `Account plattform audit vorbereitung`
+
+- open Draft
+- implementiert und gegatet
+- wartet auf unabhängigen Technical-Lead-Review
+- Runtime Head `612d819ed9691f93cbab97128e301b0b7744721b`
+- aktueller docs-only Head `5fb879f5556012ab5a34584b4ba8a319ce6754a1`
+- ADR-0160
+- aktueller CI `32753032302` SUCCESS
+- Vercel `dpl_83ReRsDgZoyGga19arfyC8L3WWtb` READY
+- kein Archiv-Write / keine Migration / kein RLS-/Auth-/Traveller-Contract
+- kein Ready / Merge / AP-4 vor Review und PO-Gates.
+
+### Provider – PR #54 / S3
+
+Agent: `Jetnity provider readiness audit`
+
+- open Draft
+- implementiert und gegatet
+- wartet auf unabhängigen Technical-Lead-Review
+- Runtime Head `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`
+- aktueller docs-only Head `2e9a1a7ff0d8ccef6945cbc70aa3833743d076f1`
+- ADR-0161
+- aktueller CI `32752931378` SUCCESS
+- Vercel `dpl_HErGVCe9HAKP1o9ymraV5xDd8i9P` READY
+- kein echter Provider / kein Secret / keine kostenpflichtigen Calls / keine Production-Migration
+- kein Ready / Merge / S4 vor Review und PO-Gates.
+
+### Trip Workspace – PR #55 / Audit & Architecture
+
+Agent: `Trip workspace audit architecture`
+
+- open Draft
+- docs-only Audit/Zielarchitektur vorbereitet
+- wartet auf unabhängigen Technical-Lead-Review
+- Exact Head `536ed50ffda0279973058f7a2b78ee98217e7aad`
+- CI `32752434172` SUCCESS
+- Vercel `dpl_4adqadJzbDwHJMWg4jVs2ZrjDJy9` READY
+- **kein Runtime-Umbau**
+- Audit ist Vorbereitung des nächsten großen Produktblocks, nicht dessen Fertigstellung.
+
+## 4. ADR-Allokation
+
+- ADR-0158 = Admin Slice A / #44 / `main`
+- ADR-0159 = Admin Slice B / #46
+- ADR-0160 = Account AP-3 / #53
+- ADR-0161 = Provider S3 / #54
+
+Parallel entstandene Kollisionen wurden auf #53/#54 docs-only korrigiert und neu gegatet.
+
+## 5. Große Reihenfolge
+
+1. Account + Admin sauber aufbauen; Provider Readiness parallel weiterführen.
+2. Danach Trip Workspace / Reiseübersicht grundlegend überarbeiten – auf Basis des Audits #55.
+3. Danach Homepage weiterentwickeln.
+
+Weltkarte, Matching, Reisebuch, Trends/Hotspots usw. bleiben Wünsche/Optionen und sind nicht automatisch der nächste Pflichtblock.
+
+## 6. Bereichsprogramme enden nicht am aktuellen Slice
+
+- Account: vollständiger Plan bis AP-12.
+- Admin: vollständiger Plan A–K.
+- Provider Readiness: vollständiger Plan S1–S8; echte Providerphase danach separat gegatet.
+
+Authoritativ: `docs/DOMAIN_PROGRAM_COMPLETION_POLICY.md`.
+
+## 7. Harte Governance
+
+- Kein Mark Ready ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+- Kein Merge ohne danach separate ausdrückliche aktuelle Product-Owner-Freigabe.
+- CI/Vercel/Technical Closure ersetzen keine Freigabe.
+- Production-Migrationen sind separate Gates.
+- Provideraktivierung, Secrets/API-Keys, Verträge und kostenpflichtige Calls sind separate Gates.
+- laufende Infrastruktur-/Providerkosten > USD 100/Monat nur nach PO-Freigabe.
+- Shared Auth/Identity/Sessions/MFA/AAL/RLS/Ownership/Guest→Account/Traveller/Route/Privacy/Billing/Admin-Audit/Provider-Activation seriell unter Technical-Lead-Steuerung.
+- Multi-Citizenship / mehrere Reisedokumente bei relevanten Funktionen berücksichtigen.
+- `unknown` bleibt `unknown`; LLM ist nie Hard-Truth-Quelle für regulatorische, Safety-, Preis-, Verfügbarkeits- oder Providerwahrheit.
+- keine stillen Scope-Erweiterungen.
+
+## 8. Exakter nächster operativer Stand
+
+- #46 wartet nach Ready auf **separate Merge-Entscheidung des Product Owners**.
+- #53 unabhängig reviewen.
+- #54 unabhängig reviewen.
+- #55 unabhängig reviewen.
+- #49 nicht starten, bevor #46 integriert und #49 neu synchronisiert/gegatet ist.
+- nach jedem relevanten Merge oder größeren Statuswechsel PR #52 + zentrale Handoff-/Checkpoint-/Active-Work-Dokumente zeitnah aktualisieren.
+
+Keine Runtime-, Production-, Provider-, Secret- oder Kostenänderung ist durch diesen Handoff autorisiert.
