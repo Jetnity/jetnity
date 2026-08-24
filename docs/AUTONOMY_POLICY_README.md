@@ -1,0 +1,1 @@
+Diese docs-only Änderung persistiert die am 25.08.2026 ausdrücklich freigegebene Technical-Lead-Autonomie. Kanonische Quellen: `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`, `docs/JETNITY_BINDING_BUILD_ORDER.md`, `JETNITY_START_HERE.md`.
