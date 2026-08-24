@@ -1,6 +1,6 @@
 # Jetnity – ChatGPT Technical Lead Continuity
 
-Stand: **24. August 2026, aktualisiert nach Admin-A-Merge und Start der vier Workstreams**  
+Stand: **24. August 2026, aktualisiert nach Admin-C-Merge / PR #49**  
 Status: **verbindlicher Rollen-, Governance- und Kontinuitätsvertrag**
 
 ## 1. Zweck
