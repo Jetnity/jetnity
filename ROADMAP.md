@@ -240,7 +240,7 @@ Auftrag: `docs/ACCOUNT_AP1_MAIN_SYNC_TASK.md`. Entscheidung: ADR-0152, ADR-0153.
 
 ## 6b. In Arbeit – Admin Control Center Slice A
 
-Status: **Main-Sync mit `084f7c87` auf Draft PR #44; bisheriger Technical Closure gilt nur für den alten Head `5632a3ca`**
+Status: **Main-Sync mit `084f7c87` gegatet auf Draft PR #44, Exact Runtime Head `ed839d3e`; STOPP für Technical-Lead-Integrationsreview. Bisheriger Technical Closure gilt nur für den alten Head `5632a3ca`**
 
 - ehrliche Steuerzentralen-IA auf dem vorhandenen gehärteten Backoffice
 - keine neue Datenwahrheit, keine neue Autorität, keine Migration
@@ -377,7 +377,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation (PR #38 gemergt)
 6. ✅ Account Platform AP-1 auf `main` (PR #43)
-7. **→ Admin Slice A Main-Sync (Draft PR #44)**; Provider-Readiness S1 Technical Closure auf Draft PR #47, wartet auf Product-Owner-Entscheidung
+7. **→ Admin Slice A Main-Sync gegatet (Draft PR #44, `ed839d3e`)** – STOPP für Technical-Lead-Integrationsreview; Provider-Readiness S1 Technical Closure auf Draft PR #47, wartet auf Product-Owner-Entscheidung
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit
 10. echte Providerphase

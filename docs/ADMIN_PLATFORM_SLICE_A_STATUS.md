@@ -8,7 +8,10 @@ Auftrag: `docs/ADMIN_SLICE_A_MAIN_SYNC_TASK.md`
 
 ## Status
 
-**Main-Sync mit `main` `084f7c87` in Arbeit.** Draft, nicht gemergt. Kein Mark Ready, kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+**Main-Sync mit `main` `084f7c87` gegatet. STOPP für unabhängigen Technical-Lead-Integrationsreview.** Draft, nicht gemergt. Kein Mark Ready, kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+
+Exact Runtime Head: `ed839d3e6ee2605beef65d66fa1555ddabb52138`  
+Gate-Nachweis: `docs/ADMIN_PLATFORM_SLICE_A_MAIN_SYNC_GATE.md`
 
 Bisheriger Technical Closure / PASS gilt nur für den alten Exact Head `5632a3cac1301d2d649fcb1d2b9552d3763c8b9f`.  
 Closure-Nachweis: `docs/ADMIN_PLATFORM_SLICE_A_TECHNICAL_CLOSURE.md`.  
@@ -16,15 +19,21 @@ Dieser alte Head ersetzt das neue Integrationsgate nicht.
 
 Admin-Entscheidung nach ADR-Kollision mit Account AP-1: **ADR-0155**.
 
-## Belegte Gates auf Exact Head `5632a3ca` (vor Main-Sync)
+## Belegte Gates auf Exact Runtime Head `ed839d3e`
+
+- Lokal: 1764/1764 Tests, Typecheck, Lint, Hygiene, `check:schema-bezug`, `check:api-schutz` (10 Admin-Routen), Production-Build
+- GitHub Actions `CI` **SUCCESS**: `32723815715`
+- Vercel Preview **READY**: Inspector `DgCMj6BFKkAZaUBU4HyQb6fZbm4i`
+- gegen `main` `084f7c87`
+
+Ein Docs-only-Folgecommit ist kein neues Runtime-Gate.
+
+## Belegte Gates auf altem Head `5632a3ca` (vor Main-Sync)
 
 - GitHub Actions `CI` **SUCCESS**: `32683942810`
 - Vercel Preview **READY**: `dpl_czE3XJXw3qx3sXMrh7LTgMV94zBL`
-- gegen damaligen `main` `e4f4cca7`: 7 ahead / 0 behind
 
-Neues Exact-Head-Gate nach Merge mit `084f7c87`: **noch nicht belegt.**
-
-Nicht behauptet: neuer CI-/Preview-Stand, `db:sicherheit`, Production-Migration, eingeloggte Admin-Browserprüfung, Product-Owner-Merge-Freigabe.
+Nicht behauptet: `db:sicherheit`, Production-Migration, eingeloggte Admin-Browserprüfung, Technical-Lead-PASS auf `ed839d3e`, Product-Owner-Merge-Freigabe.
 
 ## Ziel
 
@@ -50,4 +59,4 @@ Traveller Context ist für Slice A nicht relevant; es werden keine Reise-Credent
 
 ## Nächster Schritt
 
-Merge mit `main` `084f7c87` abschließen, lokale Gates und Exact-Head CI/Preview belegen, dann unabhängigen Technical-Lead-Integrationsreview abwarten. Slice B / PR #46 bleibt unangetastet.
+Unabhängigen Technical-Lead-Integrationsreview auf Exact Runtime Head `ed839d3e` abwarten. Slice B / PR #46 bleibt unangetastet. Kein Mark Ready, kein Merge.
