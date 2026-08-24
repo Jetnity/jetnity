@@ -2,7 +2,9 @@
 
 Stand: 24. August 2026  
 Reviewer: implementierender Agent  
-Ergebnis: **bereit für unabhängigen Technical-Lead-Re-Review nach Current-Main-Sync und fail-closed 200-Hinweis – kein Ready, kein Merge**
+Gegateter Head: `c1ccfb6e02ffbf3125dced304980d1c801c4c47c`  
+Runtime-Head (200-Hinweis): `ef370965`  
+Ergebnis: **bereit für unabhängigen Technical-Lead-Re-Review – kein Ready, kein Merge**
 
 ## Auftragstreue
 
@@ -28,4 +30,4 @@ Branch `feat/account-ap3` ist auf `main` `e3bad749` rebased. Merge-Base ist gena
 
 ## Empfehlung
 
-Unabhängiger Technical-Lead-Re-Review von Draft-PR #53 auf dem neuen current-main-integrierten Runtime-Head. Danach erst Product-Owner-Entscheidung. AP-4 nicht starten.
+Unabhängiger Technical-Lead-Re-Review von Draft-PR #53 auf `c1ccfb6e`. Danach erst Product-Owner-Entscheidung. AP-4 nicht starten.

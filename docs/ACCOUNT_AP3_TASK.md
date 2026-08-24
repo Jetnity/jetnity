@@ -2,7 +2,7 @@
 
 Stand: 24. August 2026
 
-Status: **Current-Main-Sync und fail-closed 200-Hinweis; Draft bleibt Draft, wartet auf Exact-Head-Gates und Technical-Lead-Re-Review**
+Status: **Current-Main-Sync und fail-closed 200-Hinweis auf Exact Head `c1ccfb6e` gegatet; Draft bleibt Draft, wartet auf Technical-Lead-Re-Review**
 
 Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`
 
