@@ -1,10 +1,11 @@
 # Jetnity – Trip Workspace / Reiseübersicht Audit
 
 Stand: 24. August 2026  
-Status: **docs-only Audit auf `audit/trip-workspace`; finale Reconciliation auf `b7f027ec`; kein Runtime-Umbau, kein Mark Ready, kein Merge**  
+Status: **docs-only Audit; Review-Korrektur nach Technical-Lead-Review `5012729847`; kein Runtime-Umbau, kein Mark Ready, kein Merge**  
 Code-Evidence-Basis (historisch): `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267` (Admin Slice A)  
 Aktueller Integrations-`main` nach Sync: `b7f027ec448639fe3399512d401a7789b24e52a6` (Provider S3)  
-Verantwortlicher Cursor-Workstream: `audit/trip-workspace`
+Agent: `Trip workspace audit architecture`  
+Branch: `audit/trip-workspace`
 
 `1ec93cc9` und `e3bad749` sind **nicht** aktueller `main`. Der erste Workspace-Code-Audit wurde gegen `1ec93cc9` erhoben. Admin C, Account AP-3 und Provider S3 liegen inzwischen auf `main`. Ein Re-Scan gegen `b7f027ec` bestätigt: die P0-Workspace-Befunde (Safety-/Seasonal-Stille, Desktop ohne Übersicht) bleiben gültig. S3 schließt die Mobility-/Rental-Nachweisnaht, startet aber keinen Live-Provider.
 
@@ -67,7 +68,8 @@ PR #52 (`docs/chatgpt-technical-lead-handoff-2026-08-24`) ist Governance-/Handof
 - Repository: `Jetnity/jetnity`
 - Historische Code-Evidence-Basis: `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267`
 - Aktueller Integrations-`main`: `b7f027ec448639fe3399512d401a7789b24e52a6`
-- Dieser Branch: `audit/trip-workspace`, rebase auf diesen `main`
+- Agent: `Trip workspace audit architecture`
+- Branch: `audit/trip-workspace`, rebase auf diesen `main`
 
 ### 2.2 Parallele Workstreams – nicht überschreiben
 
@@ -433,7 +435,12 @@ Ziel-Desktop: Master/Detail derselben Reise.
 - Safety-Evaluation mit `affected` + kritischer Klasse, **nur wenn Evaluation existiert**
 - Seasonal nur bei erheblichem `timing_check`
 - stale Readiness
-- ehrliches `unavailable` / `unknown`, wenn eine erwartete Prüfung nicht gelaufen ist
+- ehrliches `noch_nicht_geprueft`, wenn eine erwartete Prüfung grundsätzlich möglich, aber noch nicht orchestriert wurde
+- `noch_nicht_pruefbar`, wenn Graph- oder Traveller-Kontext fehlt
+- `pruefung_nicht_verfuegbar` nur bei belegter Unavailability der Quelle/Engine
+- `nichts_dringend_geprueft` nur nach erfolgreich gelaufener relevanter Evaluation
+
+Eine fehlende Safety-/Seasonal-Evaluation darf weder clean/`nichts_dringend_geprueft` noch automatisch `pruefung_nicht_verfuegbar` bedeuten. Kanonische Trennung: `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md` §5.4. Das ist ein Vorschlag, bis der Product Owner die Ziel-IA ausdrücklich annimmt.
 
 Es darf nicht:
 
@@ -456,7 +463,7 @@ UI-Layer        = eine ruhige Liste, keine Domain-Taxonomie
 
 Nicht mehr sichtbare Buttons. Eine Reise-Oberfläche.
 
-Empfohlenes mentales Modell für den späteren Umbau:
+Empfohlenes mentales Modell für den späteren Umbau (Vorschlag, nicht angenommen; Merge von PR #55 gibt das nicht frei):
 
 1. **Diese Reise** – Ziel, Zeit, Personen, Ablage, grober Status
 2. **Jetzt wichtig** – höchstens wenige Aufmerksamkeitspunkte
@@ -486,10 +493,10 @@ Bewusst **nicht** in die Zielarchitektur:
 | Zielarchitektur zu groß? | Nein. Weniger primäre Module, nicht mehr. |
 | Mobile wirklich einfacher? | Nur wenn Tabs nicht mehr die IA sind. Sonst nein. |
 | Funktionen übersehen? | Inventar deckt Einstieg, Hub, Schale, Domains, Traveller, Persistenz, Audit-Harness, ungenutzte Evaluate-APIs, `ZRH`-Default. Collaboration-PR #28 ist fremder Draft und nicht in `main`. |
-| Stubs als Features? | Safety/Seasonal im Produktpfad als unsichtbar dokumentiert, nicht als live. |
+| Stubs als Features? | Safety/Seasonal im Produktpfad als unsichtbar dokumentiert; Lage = `noch_nicht_geprueft`, nicht live und nicht unavailable. |
 | Domains zu UI-Modulen gemacht? | Als Ist-Befund ja; Zielarchitektur kehrt das um. |
 | Multi-Citizenship? | UI ja, Kopf/Zählfeld und Legacy-Feld dokumentiert; keine Neumodellierung. |
-| Unknown/Error/Empty/Stale? | Listen/Load ehrlich; Safety-Abwesenheit ist die kritische Lücke. |
+| Unknown/Error/Empty/Stale? | Listen/Load ehrlich. Attention-Leerstände vierfach getrennt; fehlende Evaluation ≠ clean und ≠ unavailable. |
 | Guest/Account nachvollziehbar? | Ja, gleiche `Trip`-Form, verschiedene Ablage. |
 | Datenverlust/Retry? | Konto `clientRef` / Revision vorhanden; nicht in diesem PR verändert. |
 
@@ -500,3 +507,5 @@ Bewusst **nicht** in die Zielarchitektur:
 Keine Runtime-, Schema-, RLS-, Auth-, Provider-, Secret- oder Homepage-Änderung.
 
 Erlaubt und ausgeführt: Analyse und Dokumentation.
+
+Die Ziel-IA in `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md` bleibt ein nicht angenommener Product-Owner-Vorschlag. Ein späterer Merge von PR #55 gibt diese IA und TW-1 nicht frei.

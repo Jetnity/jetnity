@@ -1,7 +1,7 @@
 # Jetnity – Trip Workspace Dependency Matrix
 
 Stand: 24. August 2026  
-Status: **verbindlich für den Workspace-Workstream; überschreibt keine fremden Pläne**  
+Status: **Planungshilfe für den Workspace-Workstream; überschreibt keine fremden Pläne. Neue Workspace-IA bleibt Vorschlag bis ausdrücklicher Product-Owner-Annahme. Ein Merge von PR #55 gibt die Ziel-IA und TW-1 nicht frei. Bestehende Domain-/Shared-Gates bleiben verbindlich.**  
 Code-Evidence-Basis (historisch): `1ec93cc9`  
 Aktueller Integrations-`main`: `b7f027ec` (S3 #54, AP-3 #53, Admin C #49 auf `main`)
 
@@ -46,9 +46,9 @@ Legende Abhängigkeit:
 | Shell / eine IA Mobile+Desktop | frei | – | – | – | – | – | – | – | – |
 | Reisekopf aus Graph | frei | – | – | `party[]` schon auf main; Registry = AP-7 **warten** für accountweite Profile | Origin/Stages auf main | – | – | – | Budget nur User |
 | Timeline Etappe/Tag/Item | frei | – | – | – | Route-Kompakttext frei | – | etappenbezogen erst mit Evaluation | wie Safety | – |
-| `Jetzt wichtig` aus Graph-Gaps | frei | – | – | Missing Facts frei | unbestimmte Abschnitte frei | stale/open frei | **nur** wenn Evaluation orchestriert; sonst `unavailable`/`unknown` | wie Safety | keine Preise |
-| Safety in Attention | – | – | S4/S7 für ehrliche Health-Hooks **warten** vor Live | – | Relevanz nutzt Route | getrennt halten | Foundation auf main; Produkt-Orchestrierung frei als ehrlicher Zustand | getrennt | – |
-| Seasonal in Attention | – | – | wie Safety | – | Datum/Region aus Graph | – | nicht mischen | Foundation auf main | – |
+| `Jetzt wichtig` aus Graph-Gaps | frei | – | – | Missing Facts frei | unbestimmte Abschnitte frei | stale/open frei | orchestriert: vorhandenes Signal; fehlende Evaluation = `noch_nicht_geprueft`, nicht unavailable/clean | wie Safety | keine Preise |
+| Safety in Attention | – | – | S4/S7 für ehrliche Health-Hooks **warten** vor Live | – | Relevanz nutzt Route | getrennt halten | Foundation auf main; fehlende Orchestrierung = `noch_nicht_geprueft`; `pruefung_nicht_verfuegbar` nur bei belegter Unavailability | getrennt | – |
+| Seasonal in Attention | – | – | wie Safety | – | Datum/Region aus Graph | – | nicht mischen | Foundation auf main; fehlende Orchestrierung = `noch_nicht_geprueft`, nicht unavailable/clean | – |
 | Official/Visa-Texte | Citizenship-Pflichtregel auf main | – | echter Requirements-Adapter **verboten jetzt** | keine Default-Citizenship; AP-7 **warten** | Transitländer aus Route | lokale Engine fail-closed frei | – | – | – |
 | Flugbestand / Abdeckung | – | – | S2 auf main | – | Foundation D | – | – | – | Preis/Freshness = **S5 warten** |
 | Flug suchen / übernehmen | – | – | Guest weiter fail-closed; Live-Adapter **verboten** | – | keine Heuristik | – | – | – | **S5 warten** |

@@ -1,7 +1,7 @@
 # Jetnity – Trip Workspace Implementierungsplan
 
 Stand: 24. August 2026  
-Status: **vorbereitet; Runtime gesperrt bis Review + ausdrücklicher neuer Auftrag**  
+Status: **vorbereitet / Vorschlag; Runtime gesperrt bis ausdrücklicher neuer Auftrag. Ein Merge von PR #55 ist keine Freigabe für TW-1 und keine Annahme der Ziel-IA.**  
 Audit: `docs/TRIP_WORKSPACE_AUDIT.md`  
 Ziel: `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`  
 Abhängigkeiten: `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`
@@ -149,7 +149,8 @@ Gates: Repo-Hygiene, CI auf Exact Head, Vercel Preview falls erzeugt. Grün ≠ 
 **Darf:**
 
 - reinen Attention-Aggregator über bestehende Ableitungen
-- Graph-Gaps, Readiness stale/open, ehrliches „Prüfung nicht verfügbar“ für Safety/Seasonal
+- Graph-Gaps, Readiness stale/open
+- Safety/Seasonal nach dem Vier-Zustände-Vertrag in `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md` §5.4: fehlende Orchestrierung = `noch_nicht_geprueft`, nicht unavailable und nicht clean
 - Höchstzahl sichtbarer Punkte; Rest progressiv
 
 **Nicht:**
@@ -158,9 +159,9 @@ Gates: Repo-Hygiene, CI auf Exact Head, Vercel Preview falls erzeugt. Grün ≠ 
 - Official `required` ohne Provider
 - „keine Warnungen“ aus fehlender Prop
 
-**Tests:** drei Leerstände aus der Zielarchitektur; Multi-Citizenship erzeugt keinen einzelnen Default-Punkt; Safety-ohne-Evaluation ≠ checked_clean.
+**Tests:** vier Leerstände aus der Zielarchitektur (`nichts_dringend_geprueft`, `noch_nicht_geprueft`, `noch_nicht_pruefbar`, `pruefung_nicht_verfuegbar`); Multi-Citizenship erzeugt keinen einzelnen Default-Punkt; Safety-ohne-Evaluation ≠ `nichts_dringend_geprueft` und ≠ `pruefung_nicht_verfuegbar`.
 
-**Abhängigkeit:** frei für Graph/Readiness; Safety/Seasonal nur ehrliche Nicht-Prüfung, bis Orchestrierung bewusst gesetzt wird.
+**Abhängigkeit:** frei für Graph/Readiness; Safety/Seasonal ohne Orchestrierung als `noch_nicht_geprueft`, nicht als `pruefung_nicht_verfuegbar`.
 
 ### TW-5 – Item- und Gap-Details
 

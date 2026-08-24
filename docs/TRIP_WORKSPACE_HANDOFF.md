@@ -1,10 +1,12 @@
 # Jetnity – Trip Workspace Audit Handoff
 
 Stand: 24. August 2026  
-Status: **Audit und Zielarchitektur vorbereitet; finale Reconciliation auf `b7f027ec`; STOPP für unabhängigen ChatGPT/Technical-Lead-Re-Review**  
-Cursor-Workstream: Trip Workspace / Reiseübersicht – Product, UX & Technical Architecture Audit  
+Status: **Audit und Zielarchitektur vorbereitet; Review-Korrektur nach Technical-Lead-Review `5012729847`; STOPP für erneuten unabhängigen Re-Review**  
+Agent: `Trip workspace audit architecture`  
 Branch: `audit/trip-workspace`  
 Draft-PR: **#55**, docs-only, kein TW-1
+
+Die Ziel-IA bleibt ein nicht angenommener Product-Owner-Vorschlag. Ein späterer Merge dieses Audit-PRs gibt weder die IA noch TW-1 frei.
 
 ---
 
@@ -74,7 +76,7 @@ Keine Runtime-Implementation. Keine Migration. Keine Shared-Contract-Änderung.
 
 ## 3. Wichtigste Funde
 
-1. **P0 – Safety/Seasonal-Stille.** Produktpfad übergibt keine Evaluations. Fehlende Karte ≠ „keine Hinweise“. Re-Scan auf `b7f027ec` unverändert.
+1. **P0 – Safety/Seasonal-Stille.** Produktpfad übergibt keine Evaluations. Fehlende Karte ≠ „keine Hinweise“. Ehrlicher Attention-Zustand dafür ist `noch_nicht_geprueft`, nicht clean und nicht `pruefung_nicht_verfuegbar`. Re-Scan auf `b7f027ec` unverändert.
 2. **P0 – zwei Produktlogiken.** Desktop blendet die Übersicht aus; Mobile denkt in Domain-Tabs. Unverändert.
 3. **P1 – keine Aufmerksamkeitsschicht.** `Jetzt wichtig` ist nur Zieltext, nicht Code.
 4. **P1 – Create-Flow widerspricht geltender PO-Regel.** Tempo-/Interessen-Chips und Default `balanced` leben noch.
@@ -122,7 +124,9 @@ Durchgeführt gegen den Auftrag §23 und den Current-Main-Re-Scan auf `b7f027ec`
 
 Kein Slice dieses Plans ist ohne neuen Auftrag gestartet.  
 `Jetzt wichtig` ist als Priorisierung spezifiziert, nicht als Tabelle.  
-Unknown/Error/Empty bleiben getrennt spezifiziert.  
+Attention-Leerstände sind vierfach getrennt: `nichts_dringend_geprueft`, `noch_nicht_geprueft`, `noch_nicht_pruefbar`, `pruefung_nicht_verfuegbar`.  
+Unknown/Error/Empty/Stale bleiben zusätzlich getrennt.  
+Die Ziel-IA bleibt Vorschlag. Merge von PR #55 ≠ IA-Annahme ≠ TW-1.  
 Multi-Citizenship ist als UI-Naht vorbereitet, nicht neu modelliert.  
 S3/AP-3/Admin C bleiben erhalten und werden nicht fachlich ersetzt.
 
@@ -131,8 +135,8 @@ S3/AP-3/Admin C bleiben erhalten und werden nicht fachlich ersetzt.
 ## 7. Exakter nächster Schritt
 
 1. Dieser Draft-PR bleibt Draft.
-2. Unabhängiger ChatGPT / Technical-Lead-Re-Review der fünf Dokumente plus finale Reconciliation gegen Code und `main` `b7f027ec`.
-3. Product Owner entscheidet gemeinsam mit dem Technical Lead, **ob und wann** TW-1 Runtime beginnt.
+2. Erneuter unabhängiger ChatGPT / Technical-Lead-Re-Review der Review-Korrekturen (`5012729847`) gegen Code und `main` `b7f027ec`.
+3. Product Owner entscheidet gemeinsam mit dem Technical Lead, **ob und wann** die Ziel-IA angenommen wird und TW-1 Runtime beginnt. Docs-Merge reicht dafür nicht.
 4. **Kein** Mark Ready, **kein** Merge, **kein** TW-1, **kein** Workspace-Umbau ohne neuen ausdrücklichen Auftrag.
 
 Empfohlene erste Runtime nach Freigabe: **TW-1 Shell/Geräteparität** und **TW-2 Reiseübersicht**, danach **TW-4 Aufmerksamkeit**. Siehe `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`.

@@ -5,7 +5,8 @@ Status: **Vorschlag aus dem Workspace-Audit; nicht Product-Owner-angenommen, nic
 Code-Evidence-Basis (historisch): `docs/TRIP_WORKSPACE_AUDIT.md` gegen `1ec93cc9`  
 Aktueller Integrations-`main`: `b7f027ec` (S3/AP-3/Admin C auf `main`; P0-Workspace-Befunde unverändert)
 
-Diese Datei ist die Ziel-IA für den **späteren** Implementierungsblock.  
+Diese Datei ist die vorgeschlagene Ziel-IA für den **späteren** Implementierungsblock.  
+Ein späterer Merge von Draft-PR #55 ist **keine** implizite Product-Owner-Freigabe dieser IA und **keine** Freigabe für TW-1.  
 Sie ändert keine Shared Contracts und keine Traveller-/Route-/Provider-Truth.
 
 ---
@@ -33,18 +34,28 @@ Leitsatz:
 
 ---
 
-## 2. Verbindliche Prinzipien
+## 2. Regeln
+
+### 2.1 Bereits verbindlich (repo- und domainweit)
+
+Diese Regeln gelten unabhängig von diesem Audit und unabhängig von einem späteren Merge von PR #55:
+
+1. **Unknown bleibt Unknown.** Error ≠ Empty ≠ Stale ≠ Unavailable ≠ `noch_nicht_geprueft` ≠ „alles in Ordnung“.
+2. **Keine implizite einzelne Staatsbürgerschaft.** Ein Traveller kann mehrere Citizenships und Dokumente haben.
+3. **LLM erklärt, erzeugt aber keine Hard Truth.**
+4. **Account ist Zuhause, Workspace ist Kommandozentrale einer Reise.** ADR-0152 bleibt.
+5. **Bestehende Foundations nicht neu bauen.** Route, Traveller, Readiness, Safety, Seasonal, Booking-Status bleiben ihre Domänen.
+
+### 2.2 Vorgeschlagene Workspace-IA (nicht Product-Owner-angenommen)
+
+Diese Punkte bleiben Vorschlag/Planung, bis der Product Owner sie ausdrücklich annimmt. Ein Docs-Merge von PR #55 macht sie nicht verbindlich:
 
 1. **Eine Reise, eine Oberfläche.** Flight, Hotel, Activity, Route, Readiness, Safety, Seasonal sind Systeme, keine gleichrangigen Apps.
 2. **Komplexität bleibt intern.** Die UI spricht Reise, Etappe, Tag, Punkt, Hinweis, nächster Schritt.
 3. **Priorisierung ≠ Wahrheit.** `Jetzt wichtig` sortiert vorhandene Signale. Es speichert keine neuen Fakten.
-4. **Unknown bleibt Unknown.** Error ≠ Empty ≠ Stale ≠ Unavailable ≠ „alles in Ordnung“.
-5. **Keine implizite einzelne Staatsbürgerschaft.** Ein Traveller kann mehrere Citizenships und Dokumente haben.
-6. **LLM erklärt, erzeugt aber keine Hard Truth.**
-7. **Mobile und Desktop dieselbe Logik.** Desktop zeigt mehr Fläche, nicht ein zweites Produkt.
-8. **Account ist Zuhause, Workspace ist Kommandozentrale einer Reise.** ADR-0152 bleibt.
-9. **Keine Feature-Wunschliste.** Nur Funktionen, die den Reisekern tragen.
-10. **Bestehende Foundations nicht neu bauen.** Route, Traveller, Readiness, Safety, Seasonal, Booking-Status bleiben ihre Domänen.
+4. **Mobile und Desktop dieselbe Logik.** Desktop zeigt mehr Fläche, nicht ein zweites Produkt.
+5. **Keine Feature-Wunschliste.** Nur Funktionen, die den Reisekern tragen.
+6. **Vier Attention-Leerstände** nach §5.4, nicht drei.
 
 ---
 
@@ -110,8 +121,10 @@ Nicht: Nutzerziel mit Flight-Transit vermischen. Route bleibt traveller-neutral.
 ```text
 TripWorkspace
   Kopf          = Reise-Ebene, immer
-  Jetzt wichtig = Attention-Layer, immer; darf „nichts Dringendes“ nur sagen,
-                  wenn die relevanten Prüfungen tatsächlich gelaufen sind
+  Jetzt wichtig = Attention-Layer, immer; darf „nichts Dringendes“ nur als
+                  nichts_dringend_geprueft sagen, wenn die relevanten
+                  Prüfungen tatsächlich gelaufen sind. Fehlende Evaluation
+                  ist noch_nicht_geprueft, nicht unavailable und nicht clean.
   Verlauf       = Etappen + Tage als eine Timeline
   Detail        = gewählte Etappe / Tag / Item / Suche
   Werkzeuge     = Ändern, Punkt hinzufügen, Suche – on demand
@@ -206,7 +219,9 @@ Jeder Eintrag braucht:
 - `ebene`: reise | etappe | tag | item | person
 - `signal`: Verweis auf eine bestehende Ableitung
 - `schwere`: blockierend | bald | hinweis
-- `lage`: known_gap | unknown | stale | unavailable | warning
+- `lage`: known_gap | unknown | stale | unavailable | warning  
+  `unavailable` nur, wenn Quelle/Provider/Engine tatsächlich unavailable ist.  
+  Eine nicht übergebene Evaluation ist kein `unavailable`.
 - `aktion`: ein nächster Schritt oder keiner
 - **keine** eigenen Faktenfelder
 
@@ -220,7 +235,7 @@ Nur wenn die zugrunde liegende Domäne das Signal schon ehrlich liefern kann:
 - Seasonal `timing_check` bei erheblicher Wirkung
 - Readiness `stale` oder offene Checks, die der Nutzer selbst gesetzt/abgeleitet hat
 - `insufficient_context` für Official, wenn Citizenship/Document **jetzt** nötig ist
-- Provider `unavailable`, wenn der Nutzer eine Suche erwartet
+- Provider `unavailable`, wenn der Nutzer eine Suche erwartet **und** die Quelle belegt unavailable ist, nicht nur weil keine Evaluation orchestriert wurde
 
 ### 5.3 Was ausdrücklich kein Punkt werden darf
 
@@ -233,15 +248,20 @@ Nur wenn die zugrunde liegende Domäne das Signal schon ehrlich liefern kann:
 
 ### 5.4 Leere Aufmerksamkeit
 
-Drei verschiedene Leerstände:
+Mindestens **vier** getrennte Leerstände. Das ist der Attention-Truth-State-Vertrag dieses Vorschlags, nicht Runtime und nicht Product-Owner-angenommen:
 
-| Lage | Textliche Bedeutung |
-| --- | --- |
-| `nichts_dringend_geprueft` | relevante Prüfungen gelaufen, kein vorrangiger Punkt |
-| `noch_nicht_pruefbar` | Graph oder Traveller-Fakten reichen nicht |
-| `pruefung_nicht_verfuegbar` | Provider/Quelle unavailable |
+| Lage | Bedeutung | Darf heute für Safety/Seasonal gelten? |
+| --- | --- | --- |
+| `nichts_dringend_geprueft` | relevante Evaluation lief erfolgreich, nichts vorrangig | nein, solange keine Evaluation übergeben wurde |
+| `noch_nicht_geprueft` | Kontext reicht grundsätzlich; Evaluation wurde noch nicht ausgeführt oder orchestriert | ja: fehlende Prop im Produktpfad |
+| `noch_nicht_pruefbar` | notwendiger Graph- oder Traveller-Kontext fehlt | nur bei belegtem fehlendem Kontext |
+| `pruefung_nicht_verfuegbar` | Quelle, Provider oder Engine ist tatsächlich unavailable | nur bei belegter Unavailability |
 
-Diese drei dürfen **nie** in derselben UI-Lage landen.
+`unknown`, `stale` und `error` bleiben zusätzlich fachlich getrennt.
+
+Diese vier dürfen **nie** in derselben UI-Lage landen.
+
+**Harte Grenze:** Eine fehlende Safety-/Seasonal-Evaluation bzw. fehlende Prop allein darf weder `nichts_dringend_geprueft` / clean noch automatisch `pruefung_nicht_verfuegbar` / unavailable behaupten. Der ehrliche Zustand ist `noch_nicht_geprueft`.
 
 ---
 
@@ -333,11 +353,11 @@ Keine ADR-Nummer auf `main`. Parallele Workstreams vergeben gerade eigene ADRs; 
 | Attention-Layer ohne Persistenz | neue `trip_attention_items`-Tabelle | würde eine zweite Wahrheit erzeugen |
 | Timeline statt Domain-Tabs | Domain-Tabs behalten und nur restylen | Tabs zementieren Moduldenken |
 | Desktop = dieselbe IA | eigene Desktop-Informationarchitektur | verletzt Geräteparität |
-| Safety-Abwesenheit als `pruefung_nicht_verfuegbar` | Karte weglassen | Stille wirkt wie Entwarnung |
+| Safety-Abwesenheit als `noch_nicht_geprueft` | Karte weglassen oder `pruefung_nicht_verfuegbar` annehmen | Stille wirkt wie Entwarnung; fehlende Orchestrierung ist nicht unavailable |
 | Create-Flow ohne Pace-Default | `balanced` weiter persistieren | widerspricht geltender PO-Regel |
 | Kein Workspace-Assistant als Truth | Assistant darf Visa erklären | verboten durch Logic Standard |
 
-Freigabe: Product Owner gemeinsam mit Technical Lead **nach** Review dieses Audits, bevor TW-1 Runtime startet.
+Freigabe der Ziel-IA und von TW-1: nur durch ausdrückliche Product-Owner-Entscheidung **nach** Review. Ein Merge von PR #55 ist dafür **kein** Ersatz.
 
 ---
 

@@ -3998,13 +3998,14 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 ## Vorschlag – Trip Workspace Ziel-IA (nicht angenommen, keine ADR-Nummer)
 
 **Datum:** 24. August 2026  
-**Status:** vorgeschlagen im docs-only Draft-PR #55; nicht Product-Owner-angenommen; nicht implementiert. **Keine ADR-Nummer**, damit ADR-0160 (Account AP-3), ADR-0161 (Provider S3) und ADR-0162 (Admin Slice C) nicht kollidieren.
+**Status:** vorgeschlagen im docs-only Draft-PR #55; nicht Product-Owner-angenommen; nicht implementiert. **Keine ADR-Nummer**, damit ADR-0160 (Account AP-3), ADR-0161 (Provider S3) und ADR-0162 (Admin Slice C) nicht kollidieren. Ein späterer Merge von PR #55 ist **keine** implizite Product-Owner-Freigabe dieser IA und **keine** Freigabe für TW-1.
 
 **Entscheidung (Vorschlag, nicht Runtime):**
 
 - Die Aufmerksamkeitsschicht priorisiert vorhandene Wahrheiten. Sie ist keine neue Truth-Tabelle und kein Schattenmodell.
 - Dieselbe Informationsarchitektur gilt auf Mobile und Desktop: Reise-Kopf → `Jetzt wichtig` → Timeline → Details on demand.
-- Drei leere Aufmerksamkeitszustände bleiben getrennt: geprüft und nichts dringend / noch nicht prüfbar / Prüfung nicht verfügbar.
+- Attention-Leerstände bleiben mindestens vierfach getrennt: `nichts_dringend_geprueft`, `noch_nicht_geprueft`, `noch_nicht_pruefbar`, `pruefung_nicht_verfuegbar`.
+- Fehlende Safety-/Seasonal-Evaluation darf weder clean/`nichts_dringend_geprueft` noch automatisch `pruefung_nicht_verfuegbar` bedeuten.
 - Safety-/Seasonal-Stille und Desktop ohne Übersicht sind P0-Produktfehler, kein UX-Feinschliff.
 
 **Kontext:** Workspace-Code-Audit gegen historische Evidence-Basis `1ec93cc9`. Integrationsbasis nach Current-Main-Sync ist `b7f027ec` (Provider S3). S3, AP-3 und Admin C ändern die P0-Workspace-Befunde nicht. Vollständige Begründung: `docs/TRIP_WORKSPACE_AUDIT.md` und `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`.
@@ -4013,7 +4014,7 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 **Begründung:** Eine Reise, eine Wahrheit. Komplexität gehört ins System, nicht in den Kopf des Nutzers. Der Workspace orchestriert vorhandene Foundations, statt sie neu zu bauen.
 
-**Konsequenzen:** Runtime erst nach unabhängigen Review und ausdrücklicher Product-Owner-Freigabe als eigener Schnitt TW-1/TW-2. Dieser PR implementiert nichts, ändert keine Shared Contracts und startet kein TW-1.
+**Konsequenzen:** Runtime erst nach unabhängigem Review **und** ausdrücklicher Product-Owner-Freigabe als eigener Schnitt TW-1/TW-2. Dieser PR implementiert nichts, ändert keine Shared Contracts und startet kein TW-1. Docs-Merge ≠ IA-Annahme.
 
 ---
 

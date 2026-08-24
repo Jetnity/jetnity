@@ -15,7 +15,8 @@ Die mit S3 gemergten Statusabschnitte, die #54 noch als Draft oder `8326e72f` al
 
 Nicht gemergte Governance-Evidence: Draft-PR #52. Nicht als `main` ausgeben.
 
-Dieser Branch: `audit/trip-workspace`, rebase auf `b7f027ec`.
+Agent: `Trip workspace audit architecture`  
+Branch: `audit/trip-workspace`, rebase auf `b7f027ec`.
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -149,9 +150,12 @@ Danach folgen erst S4–S8, jeweils mit eigenem Auftrag.
 
 ### Trip Workspace Audit – PR #55
 
-Verantwortlicher Cursor-Workstream: `audit/trip-workspace`  
+Agent: `Trip workspace audit architecture`  
+Branch: `audit/trip-workspace`  
 Draft-PR: **#55**, docs-only  
-Auftrag: Product/UX/Technical Architecture Audit plus finale Current-Main-Reconciliation. Kein Runtime-Umbau, kein TW-1.
+Auftrag: Product/UX/Technical Architecture Audit plus Review-Korrektur. Kein Runtime-Umbau, kein TW-1.
+
+Die Ziel-IA bleibt ein nicht angenommener Product-Owner-Vorschlag. Ein späterer Merge von PR #55 gibt die IA und TW-1 nicht frei.
 
 Dokumente:
 
@@ -207,7 +211,8 @@ Die neue Homepage-Produktseiten-Idee bleibt **pausiert**. Siehe `docs/HOMEPAGE_P
 Dieser Workspace-Audit:
 
 1. Draft-PR #55 auf `main` `b7f027ec` synchronisiert, bleibt Draft.
-2. Unabhängiger ChatGPT/Technical-Lead-Re-Review.
-3. Kein Mark Ready, kein Merge, kein TW-1, keine Runtime, keine Production-Migration, keine Provideraktivierung, kein S4, kein Slice D, kein AP-4.
+2. Review-Korrektur `5012729847` (Vier-Zustände-Vertrag, Proposal-Governance, Agentenname).
+3. Erneuter unabhängiger ChatGPT/Technical-Lead-Re-Review.
+4. Kein Mark Ready, kein Merge, kein TW-1, keine Runtime, keine Production-Migration, keine Provideraktivierung, kein S4, kein Slice D, kein AP-4. Docs-Merge ≠ IA-Annahme.
 
 Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag.

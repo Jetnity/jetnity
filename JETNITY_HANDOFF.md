@@ -325,8 +325,8 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 1. Admin A–C (ADR-0158 / 0159 / 0162), Account AP-1–AP-3 (ADR-0160) und Provider S1–S3 (ADR-0161) liegen auf `main`.
 2. Historischer S3-PASS auf `2cb9a830` bleibt Evidence; der Merge-Commit ist `b7f027ec`.
 3. `mobilityNachweisAusUmgebung()` und `rentalCarNachweisAusUmgebung()` bleiben `null`; Übernahme fail-closed. Das ändert S3 nicht nachträglich.
-4. Dieser Workstream: Draft-PR #55 `audit/trip-workspace`, docs-only, rebase auf aktuellen `main`. Kein TW-1, keine Runtime.
-5. **Exakter nächster Schritt dieses Audits:** unabhängiger ChatGPT/Technical-Lead-Re-Review von #55. Kein Mark Ready, kein Merge.
+4. Dieser Audit: Agent `Trip workspace audit architecture`, Branch `audit/trip-workspace`, Draft-PR #55, docs-only, rebase auf aktuellen `main`. Kein TW-1, keine Runtime. Die Ziel-IA bleibt Vorschlag; Merge von #55 gibt sie nicht frei.
+5. **Exakter nächster Schritt dieses Audits:** erneuter unabhängiger ChatGPT/Technical-Lead-Re-Review von #55 nach Review-Korrektur `5012729847`. Kein Mark Ready, kein Merge.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`. Workspace-Audit: `docs/TRIP_WORKSPACE_HANDOFF.md`.
 
