@@ -1,42 +1,38 @@
-# Jetnity Admin Slice A – Main-Synchronisierung vor Product-Owner-Freigabe
+# Jetnity Admin Slice A – Main-Synchronisierung nach Account AP-1-Merge
 
 Stand: 24. August 2026
 
-Status: **QUEUED Integration Prep – kein Mark Ready, kein Merge**
+Status: **GO ADMIN A SYNC – Draft bleibt Draft**
 
 Verantwortlicher Cursor-Anzeigename: `Admin platform audit`
 
-## Startbedingung
+## Verbindlicher Ausgangsstand
 
-**Noch nicht selbständig starten, solange Account AP-1 / PR #43 seine bereits laufende Main-Synchronisierung nicht abgeschlossen und die anschließende Product-Owner-Entscheidung nicht stattgefunden hat.**
-
-Grund: Account AP-1 und Admin Slice A liegen beide auf einem älteren `main`. Würden beide jetzt parallel synchronisiert und danach einer zuerst gemergt, wäre der andere sofort wieder hinter `main` und müsste ein zweites Mal synchronisiert/gegatet werden. Wir vermeiden diese unnötige Doppelarbeit.
-
-Sobald Account AP-1 sauber integriert ist oder der Technical Lead ausdrücklich `GO ADMIN A SYNC` dokumentiert, gilt der folgende Auftrag gegen den **dann aktuellen `main`**.
-
-## Ausgangslage
-
+- Account AP-1 / PR #43 wurde mit ausdrücklicher Product-Owner-Freigabe nach `main` gemergt.
+- Aktueller `main` zum Zeitpunkt dieses Auftrags: `084f7c87f36f9929f3e4a9deb9d3fedef6e96982`.
 - Draft-PR: `#44`
 - Branch: `feat/admin-control-center-ia`
-- bisher technisch geschlossener Slice-A-Stand: PR #44 / Technical Closure PASS
-- Referenz-`main` bei Auftragserstellung: `f92e0c9e2e6ddbe73b1cc2c59d7ba5521a0115c5`
-- vor einer Product-Owner-Freigabe muss Slice A sauber mit dem dann aktuellen `main` synchronisiert und erneut gegatet werden.
+- Slice A war auf seinem bisherigen Stand technisch geschlossen / PASS, liegt aber auf einem älteren `main`.
+- PR #44 bleibt Draft.
 
-## Auftrag nach GO
+## Auftrag
 
-1. Zuerst `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, die Slice-A Status-/Handoff-/Self-Review-Dateien und PR #44 lesen.
-2. Den zu diesem Zeitpunkt **aktuellen `main`** verifizieren und `feat/admin-control-center-ia` sauber damit synchronisieren. Nicht blind die Referenz-SHA oben verwenden, falls `main` inzwischen weitergelaufen ist.
-3. Konflikte fachlich auflösen. Keine inzwischen in `main` integrierten Provider-/Audit-/Seasonal-/Route-/Safety-/Account-Wahrheiten zurückdrehen oder durch ältere Admin-Dokumentstände überschreiben.
-4. Slice-A-Verhalten unverändert erhalten: ehrliche Control-Center-IA, keine Legacy-Scheinzustände, keine Fake-Notifications/Auto-Execution, korrekte Refund/IP-Block-Copy, Navigation nur UX-Hilfe, bestehende Guards/RLS bleiben Autorität, Break-Glass-Writes bleiben vor persistenter DB-Wirkung gesperrt.
-5. Keine Scope-Erweiterung: kein Slice B/C in diesem Branch, keine neue DB/Migration/RLS/Capability, keine Provider-/Ads-/Bexio-/Infomaniak-Aktivierung, keine Homepage-/Account-/Trip-Truth-Änderung.
-6. Nach Synchronisierung vollständige lokale Gates ausführen, mindestens: `npm test`, Typecheck, Lint, Hygiene, `check:api-schutz`, Production Build und Admin-UI/Audit-Gates.
-7. GitHub Actions CI und Vercel Preview auf **demselben neuen Exact Head** abwarten und belegen.
-8. Status/Handoff/Self-Review wahrheitsgemäß auf den neuen Runtime-Head aktualisieren.
-9. Danach STOPP für unabhängigen ChatGPT/Technical-Lead-Integrationsreview.
+1. Zuerst `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, die Slice-A Status-/Handoff-/Self-Review-Dateien, diesen Auftrag und PR #44 lesen.
+2. Den **tatsächlich aktuellen `main`** erneut verifizieren. Falls er seit `084f7c87...` weitergelaufen ist, den neueren Stand verwenden.
+3. `feat/admin-control-center-ia` sauber mit dem aktuellen `main` synchronisieren.
+4. Konflikte fachlich auflösen. Nichts aus aktuellem `main` zurückdrehen oder durch ältere Admin-Stände überschreiben: insbesondere Account AP-1, Provider Readiness Audit, Provider Ops S1 sowie Seasonal-/Route-/Safety-/Readiness-Truth und aktuelle Governance-Dokumente bleiben erhalten.
+5. Slice-A-Verhalten unverändert erhalten: ehrliche Control-Center-IA, keine Legacy-Scheinzustände, keine Fake-Notifications/Auto-Execution, korrekte Refund/IP-Block-Copy, capability-aware Navigation nur als UX-Hilfe, bestehende Guards/RLS bleiben Autorität, Break-Glass-Writes bleiben vor persistenter DB-Wirkung gesperrt.
+6. Keine Scope-Erweiterung: kein Slice B/C in diesem Branch, keine neue DB/Migration/RLS/Capability, kein System Health, keine Provider-/Ads-/Bexio-/Infomaniak-Aktivierung, keine Homepage-/Account-/Trip-/Traveller-/Route-Truth-Änderung.
+7. Vollständige lokale Gates auf dem neuen Runtime-Head ausführen, mindestens: `npm test`, Typecheck, Lint, Hygiene, `check:api-schutz`, Production-Build und die vorhandenen Admin-UI/Audit-Gates.
+8. GitHub Actions CI und Vercel Preview müssen auf **demselben neuen Exact Runtime Head** SUCCESS/READY sein. Docs-only-Folgecommits sind kein neues Runtime-Gate.
+9. Status/Handoff/Self-Review wahrheitsgemäß auf den neuen Runtime-Head aktualisieren und Runtime-/Docs-only-Head klar unterscheiden.
+10. Danach **STOPP** für unabhängigen ChatGPT/Technical-Lead-Integrationsreview.
 
-## Stack-Regel
+## Parallelitätsregel
 
-PR #46 / Admin Slice B bleibt währenddessen Draft und unangetastet. Nach sauberer Slice-A-Integration wird Slice B auf den dann aktuellen `main` umgestellt/synchronisiert und erneut exakt gegatet, bevor eine Product-Owner-Entscheidung zu Slice B erfolgt.
+Account AP-2 darf parallel seinen eigenen Main-Sync vorbereiten. Keiner der beiden Workstreams darf aus dem anderen Shared Contracts übernehmen oder dessen Scope erweitern. Falls einer zuerst gemergt wird und `main` dadurch weiterläuft, muss der andere vor eigener Product-Owner-Freigabe erneut gegen den dann aktuellen `main` verifiziert werden.
+
+PR #46 / Admin Slice B bleibt währenddessen Draft und unangetastet. Nach sauberer Slice-A-Integration wird Slice B separat auf den dann aktuellen `main` synchronisiert und erneut exakt gegatet.
 
 ## Harte Governance
 
@@ -46,6 +42,6 @@ PR #46 / Admin Slice B bleibt währenddessen Draft und unangetastet. Nach sauber
 - Keine Production-Migration.
 - Keine Provider-/Secret-/Kosten-Aktivierung.
 
-## Abschlusskriterium dieses Auftrags
+## Abschlusskriterium
 
-Neuer synchronisierter Slice-A Exact Head + lokale Gates grün + GitHub Actions SUCCESS + Vercel READY + dokumentierter Handoff. Danach wartet der Workstream auf den unabhängigen Technical-Lead-Review und die Product-Owner-Entscheidung.
+Neuer mit aktuellem `main` synchronisierter Slice-A Exact Runtime Head + vollständige lokale Gates grün + GitHub Actions SUCCESS + Vercel READY + dokumentierter Handoff. Danach wartet der Workstream auf den unabhängigen Technical-Lead-Review und die Product-Owner-Entscheidung.
