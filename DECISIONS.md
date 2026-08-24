@@ -3813,7 +3813,9 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 **Begründung:** Die Audit-Befunde lagen in kopierter Operationshülle, nicht in fehlender Fachwahrheit. Eine schmale gemeinsame Form verhindert weitere Drift, ohne Search-, Truth- oder Adaptergrenzen zu vermischen. Ein synces Interface hätte S6 gezwungen, jede Domain erneut umzubauen. Ein Spread hätte Observability-Zusatzfelder durchgelassen.
 
-**Konsequenzen:** S2+ und S6 können dieselben Hüllen nutzen. Production bleibt fail-closed. Keine neuen Kosten, keine Secrets, keine Migration. Technical Closure ist dokumentiert in `docs/PROVIDER_OPS_S1_TECHNICAL_CLOSURE.md`. Draft-PR #47 wartet auf Product-Owner-Entscheidung. S1 ist keine Freigabe für S2, Mark Ready oder Merge.
+**Konsequenzen:** S2+ und S6 können dieselben Hüllen nutzen. Production bleibt fail-closed. Keine neuen Kosten, keine Secrets, keine Migration. Technical Closure ist dokumentiert in `docs/PROVIDER_OPS_S1_TECHNICAL_CLOSURE.md`. S1 ist keine Freigabe für Live-Provider.
+
+**Nachtrag 24. August 2026:** PR #47 ist auf `main` gemergt (`01761eb9`). „Draft-PR #47 wartet auf Product-Owner-Entscheidung“ ist pre-merge Evidence.
 
 ---
 
@@ -3973,7 +3975,7 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 ## ADR-0161 – Mobility- und Rental-Nachweis folgen Hotel/S2, nicht dem Flugschema
 
 **Datum:** 24. August 2026
-**Status:** umgesetzt auf `feat/provider-mobility-rental-evidence-s3`; Current-Main-Sync auf `8326e72f`; kein echter Adapter; keine Production-Migration; Nummer nach Technical-Lead-Allokation, nicht ADR-0159/0160
+**Status:** auf `main` gemergt (PR #54, `b7f027ec`). Historischer Current-Main-Sync auf `8326e72f` und Exact Head `2cb9a830` bleiben Evidence vor dem Merge. Kein echter Adapter; keine Production-Migration. Nummer nach Technical-Lead-Allokation, nicht ADR-0159/0160.
 
 **Entscheidung:** Mobility und Rental bekommen denselben async Nachweisvertrag wie Hotel und S2 FlugNachweis: `nachweisen({ optionId, kontext })`. Der Browser darf nur `tripId` und `optionId` senden. Kommerzielle Felder kommen aus einem serverseitigen Nachweis plus Suchkontext – oder die Übernahme fällt fail closed. Die fachliche Form bleibt domain-spezifisch (Orte/Modus/Reisende bzw. Stationen/Zeitraum/Klasse/Getriebe). Ein Testkatalog darf nur injiziert werden. `*NachweisAusUmgebung()` bleibt `null`. `booking_url` wird nicht erzeugt. Die Workspace-Mobilitätssuche startet nicht mehr automatisch; nur «Verbindungen prüfen» darf `/api/mobility/search` anfassen.
 
@@ -3988,6 +3990,30 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 **Begründung:** App-Grenze und Kostengrenze zuerst, ohne Provider, Secrets oder Migration. User-Intake bleibt Nutzerangabe. Provider-Übernahme bleibt geschlossen, bis ein Adapter existiert.
 
 **Konsequenzen:** Keine Production-Migration. S2 Development-Guards bleiben unberührt. `reise_anlegen` kann transfer/rental Handelsfelder weiter als User-Intake schreiben; das ist kein Provider-Nachweis. S4–S8 bleiben eigene Slices.
+
+**Nachtrag 24. August 2026:** Der Product-Owner-Merge von PR #54 liegt als `b7f027ec` auf `main`. Die vor dem Merge geschriebenen S3-Statusdateien dürfen diesen Merge-Stand nicht wieder zu „Draft #54 wartet“ zurückdrehen.
+
+---
+
+## Vorschlag – Trip Workspace Ziel-IA (nicht angenommen, keine ADR-Nummer)
+
+**Datum:** 24. August 2026  
+**Status:** vorgeschlagen im docs-only Draft-PR #55; nicht Product-Owner-angenommen; nicht implementiert. **Keine ADR-Nummer**, damit ADR-0160 (Account AP-3), ADR-0161 (Provider S3) und ADR-0162 (Admin Slice C) nicht kollidieren.
+
+**Entscheidung (Vorschlag, nicht Runtime):**
+
+- Die Aufmerksamkeitsschicht priorisiert vorhandene Wahrheiten. Sie ist keine neue Truth-Tabelle und kein Schattenmodell.
+- Dieselbe Informationsarchitektur gilt auf Mobile und Desktop: Reise-Kopf → `Jetzt wichtig` → Timeline → Details on demand.
+- Drei leere Aufmerksamkeitszustände bleiben getrennt: geprüft und nichts dringend / noch nicht prüfbar / Prüfung nicht verfügbar.
+- Safety-/Seasonal-Stille und Desktop ohne Übersicht sind P0-Produktfehler, kein UX-Feinschliff.
+
+**Kontext:** Workspace-Code-Audit gegen historische Evidence-Basis `1ec93cc9`. Integrationsbasis nach Current-Main-Sync ist `b7f027ec` (Provider S3). S3, AP-3 und Admin C ändern die P0-Workspace-Befunde nicht. Vollständige Begründung: `docs/TRIP_WORKSPACE_AUDIT.md` und `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`.
+
+**Alternativen:** Desktop-Übersicht als optionales Panel belassen; Aufmerksamkeit als persistierte Tabelle; Safety unsichtbar lassen, bis ein Live-Provider existiert.
+
+**Begründung:** Eine Reise, eine Wahrheit. Komplexität gehört ins System, nicht in den Kopf des Nutzers. Der Workspace orchestriert vorhandene Foundations, statt sie neu zu bauen.
+
+**Konsequenzen:** Runtime erst nach unabhängigen Review und ausdrücklicher Product-Owner-Freigabe als eigener Schnitt TW-1/TW-2. Dieser PR implementiert nichts, ändert keine Shared Contracts und startet kein TW-1.
 
 ---
 

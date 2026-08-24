@@ -1,12 +1,12 @@
 # Jetnity – Trip Workspace / Reiseübersicht Audit
 
 Stand: 24. August 2026  
-Status: **docs-only Audit auf `audit/trip-workspace`; nach Current-Main-Sync; kein Runtime-Umbau, kein Mark Ready, kein Merge**  
+Status: **docs-only Audit auf `audit/trip-workspace`; finale Reconciliation auf `b7f027ec`; kein Runtime-Umbau, kein Mark Ready, kein Merge**  
 Code-Evidence-Basis (historisch): `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267` (Admin Slice A)  
-Aktueller Integrations-`main` nach Sync: `e3bad749c8e03512001e7bccd5e08467f10a7134` (Admin Slice B)  
+Aktueller Integrations-`main` nach Sync: `b7f027ec448639fe3399512d401a7789b24e52a6` (Provider S3)  
 Verantwortlicher Cursor-Workstream: `audit/trip-workspace`
 
-`1ec93cc9` ist **nicht** mehr aktueller `main`. Der Workspace-Code-Audit wurde gegen diesen SHA erhoben. Admin Slice B auf `e3bad749` ist Admin-Health, keine Workspace-Runtime. Die Workspace-Befunde bleiben gültig, bis ein späterer Code-Re-Scan sie widerlegt.
+`1ec93cc9` und `e3bad749` sind **nicht** aktueller `main`. Der erste Workspace-Code-Audit wurde gegen `1ec93cc9` erhoben. Admin C, Account AP-3 und Provider S3 liegen inzwischen auf `main`. Ein Re-Scan gegen `b7f027ec` bestätigt: die P0-Workspace-Befunde (Safety-/Seasonal-Stille, Desktop ohne Übersicht) bleiben gültig. S3 schließt die Mobility-/Rental-Nachweisnaht, startet aber keinen Live-Provider.
 
 > **Dies ist kein fertiger Trip Workspace.**  
 > Abschluss dieses Auftrags: Audit und Zielarchitektur sind technisch vorbereitet.
@@ -22,7 +22,8 @@ Leitfrage:
 ### 1.1 Was geprüft wurde
 
 - Workspace-Code und Reise-IA gegen `main` @ `1ec93cc9` (historische Evidence-Basis)
-- Current-Main-Reconciliation gegen `e3bad749` (Admin Slice B gemergt; keine Workspace-Runtime-Änderung)
+- Current-Main-Reconciliation gegen `e3bad749` (historisch: Admin Slice B)
+- Finale Reconciliation gegen `b7f027ec` (Provider S3 #54, Account AP-3 #53, Admin Slice C #49 gemergt)
 - Pflichtlektüre auf `main`
 - Governance-Evidence aus **nicht gemergtem** Draft-PR #52, ausdrücklich **nicht** als `main`-Zustand
 - vollständiger heutiger Workspace-Code unter `components/trips/`, `lib/trips/`, `app/(public)/reisen*`, `app/(public)/planen`, zugehörige Domain-Module
@@ -40,14 +41,16 @@ Leitfrage:
 
 | Aussage | Quelle | Tatsächlicher Code / Git auf diesem Audit |
 | --- | --- | --- |
-| `main` = Admin Slice A | ursprünglicher Audit-Start / ältere Statusdateien | historisch `1ec93cc9`; **aktueller** `main` ist `e3bad749` (Slice B #46 gemergt) |
-| Provider S2 noch Draft #51 | ältere Handoff-/Statusdateien | S2 liegt auf `main` (`52e665ac`) |
-| Admin Slice B noch Draft #46 | Statusdateien, die mit Slice B gemergt wurden | #46 ist gemergt als `e3bad749`; Slice-C-Draft #49 bleibt fremd |
+| `main` = Admin Slice A oder B | ursprünglicher Audit-Start / ältere Statusdateien | historisch `1ec93cc9` / `e3bad749`; **aktueller** `main` ist `b7f027ec` (S3 #54 gemergt) |
+| Provider S3 noch Draft #54 | Statusdateien, die mit S3 gemergt wurden | #54 ist gemergt als `b7f027ec`; S4 bleibt eigener Auftrag |
+| Account AP-3 noch Draft #53 | ältere Audit-/Handoff-Texte | #53 ist gemergt als `8326e72f` (ADR-0160) |
+| Admin Slice C noch Draft #49 | ältere Audit-/Handoff-Texte | #49 ist gemergt als `78192ab7` (ADR-0162) |
 | Safety/Seasonal sind im Workspace sichtbar | Foundation-Acceptance-/Handoff-Texte | Production-Pfad übergibt **keine** Evaluations; Karten bleiben unsichtbar |
 | Foundation C Readiness nur Development / PR #32 | `docs/REISEN.md` | Readiness/Traveller liegen auf `main` und Production; `docs/REISEN.md` ist veraltet |
 | Pace-Chips entfernt | Product-Owner-Handoff §8 | `TripPlanner` speichert weiter `pace` und defaultet auf `balanced` |
 | `Jetzt wichtig` existiert | Zielhierarchie im Handoff | **nicht implementiert** |
-| PR #52 = aktueller `main` | PR-#52-Body nennt älteren Main-SHA | #52 ist offener Draft; aktueller `main` ist `e3bad749` |
+| Mobility startet automatisch | älterer Workspace-Ist | S3: `mobilitySucheStartetAutomatisch()` ist `false`; nur «Verbindungen prüfen» |
+| PR #52 = aktueller `main` | PR-#52-Body nennt älteren Main-SHA | #52 ist offener Draft; aktueller `main` ist `b7f027ec` |
 
 Historische Dokumente bleiben Evidence ihrer damaligen Lage. Sie sind keine heutige Runtime-Wahrheit.
 
@@ -63,7 +66,7 @@ PR #52 (`docs/chatgpt-technical-lead-handoff-2026-08-24`) ist Governance-/Handof
 
 - Repository: `Jetnity/jetnity`
 - Historische Code-Evidence-Basis: `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267`
-- Aktueller Integrations-`main`: `e3bad749c8e03512001e7bccd5e08467f10a7134`
+- Aktueller Integrations-`main`: `b7f027ec448639fe3399512d401a7789b24e52a6`
 - Dieser Branch: `audit/trip-workspace`, rebase auf diesen `main`
 
 ### 2.2 Parallele Workstreams – nicht überschreiben
@@ -72,9 +75,9 @@ Beobachtet über GitHub, nicht als Eigentum dieses Audits:
 
 | Workstream | Sichtbarer Cursor-Name | Beobachteter Stand am 24.08.2026 |
 | --- | --- | --- |
-| Account Platform | `Account plattform audit vorbereitung` | Audit-PR #39; AP-1/AP-2 auf `main`; AP-3 Draft-PR #53 |
-| Admin / Control Center | `Admin platform audit` | Slice A+B auf `main` (#44, #46 / `e3bad749`); Slice C Draft-PR #49 |
-| Provider Readiness | `Jetnity provider readiness audit` | S1/S2 auf `main`; S3 Draft-PR #54 |
+| Account Platform | `Account plattform audit vorbereitung` | AP-1–AP-3 auf `main` (#43, #48, #53 / ADR-0160); Agent wartet auf neuen AP-4-Auftrag |
+| Admin / Control Center | `Admin platform audit` | Slice A–C auf `main` (#44, #46, #49 / ADR-0158–0159, 0162); Agent wartet auf neuen Slice-D-Auftrag |
+| Provider Readiness | `Jetnity provider readiness audit` | S1–S3 auf `main` (#47, #51, #54 / ADR-0161); S4–S8 eigener Auftrag |
 | Technical-Lead-Handoff | – | Draft-PR #52, nicht gemergt |
 
 Dieser Audit darf deren Verträge, Slices und Statusdateien nicht fachlich ersetzen.
@@ -201,14 +204,14 @@ Legende Status: **real** = produktiver Pfad vorhanden · **teilweise** = ehrlich
 | Reiseidee / Modellvorschlag | Freitext → Vorschlag | `Reiseidee`, `lib/reisevorschlag/` | LLM-Erklärung + strukturierte Ausgabe; **keine** Visa/Safety/Preis-Truth | teilweise; Kill Switch / Kontingent | nein | behalten als Einstieg; darf keine Hard Truth erzeugen |
 | Planungsfortschritt | Warten erklären | `Planungsfortschritt` | Zeitphasen, keine Providerdaten | real / ehrlich | nein | behalten |
 | Schritt-für-Schritt-Formular | Harte Fakten erfassen | `TripPlanner` | User Input | real, aber PO-Regel verletzt (Chips/`balanced`) | nein, erzeugt Graph | im Workspace-Block vereinfachen; nicht in diesem Audit-PR |
-| Gast-One-Trip | zweite Reise verhindern | `gastspeicher` | LocalStorage-Regel | real | Hub | bleiben; AP-3 darf Lebenszyklus nicht fachlich überschreiben |
+| Gast-One-Trip | zweite Reise verhindern | `gastspeicher` | LocalStorage-Regel | real | Hub | bleiben; AP-3 auf `main` besitzt nur ableitende Lebenslage, kein Archiv-Write |
 | Konto anlegen | persistente Reise | `reiseAnlegen` / RPC | Trip Graph / DB | real | nein | bleiben |
 
 ### 5.2 Hub, Ablage, Übernahme
 
 | Name | Nutzerzweck | Ort | SoT | Stand | Zukunft |
 | --- | --- | --- | --- | --- | --- |
-| Meine Reisen | Reisen finden / fortsetzen | `/reisen` | Account: DB via RLS; Gast: LocalStorage | real; Error≠Empty auf Konto | Hub bleibt; AP-3 besitzt Lebenszyklus |
+| Meine Reisen | Reisen finden / fortsetzen | `/reisen` | Account: DB via RLS; Gast: LocalStorage | real; Error≠Empty auf Konto; AP-3 gruppiert ableitend Aktiv/Kommend/Vergangen/Ohne Datum | Hub bleibt; AP-3-Vertrag nicht überschreiben; Archiv = AP-4 |
 | Reisekarte | Reise erkennen | `Reisekarte` | `TripSummary` bzw. Gast-Abbildung | real; Gast zählt `ohneTag` nicht in `itemCount` | angleichen |
 | Gastreise-Brücke | Entwurf ins Konto | `GastreiseBruecke` | Trip Graph + Readiness + Party-Übernahme | real; Flug-Handelsfelder fail-closed | bleiben; keine zweite Übernahme im Workspace |
 | Account nächste Reise | Zuhause, nicht Kommandozentrale | `/account` | `TripSummary` + Geräte-Kalendertag | real | ADR-0152 unverändert: kein Workspace-Klon |
@@ -243,8 +246,8 @@ Legende Status: **real** = produktiver Pfad vorhanden · **teilweise** = ehrlich
 | Flugsuche | Option finden | `FlugSuche` | Provider Commercial; Production aus | teilweise; Guest-Übernahme **fail-closed**; Herkunft defaultet auf `ZRH`, wenn `iataAus(reise.origin)` leer ist | nein | Default entfernen; Origin nur aus Graph/User |
 | Hotelbestand / Suche | Nächte / Quartier | `UnterkunftBestand`, `HotelBereich` | Graph + `HotelNachweis` auf Konto | teilweise; Factory `null` | Übersicht nutzt `unterkunftAbdeckung` | Etappen-Ebene |
 | Aktivitäten | Tag füllen | `AktivitaetenBereich` | Graph + `ActivityNachweis` | teilweise | Übersicht zählt nur Anzahl | Tages-Ebene |
-| Mobilität | A nach B | `MobilitaetBereich` | User-Evidence; Nachweis-Stub | teilweise; Auto-Suche kostenrelevant | Untertabs Verbindungen/Mietwagen | Kanten der Etappe/Tage |
-| Mietwagen | Fahrzeug erfassen | `MietwagenBereich` | User-Evidence | teilweise | in Mobilität **und** Übersichtstext | Item-Ebene, nicht eigener Haupt-Tab |
+| Mobilität | A nach B | `MobilitaetBereich` | User-Evidence; S3-`MobilityNachweis` auf `main` | teilweise; Umgebung `null` → fail-closed; Suche nur nach «Verbindungen prüfen» | Untertabs Verbindungen/Mietwagen | Kanten der Etappe/Tage; Live-Adapter wartet |
+| Mietwagen | Fahrzeug erfassen | `MietwagenBereich` | User-Evidence; S3-`RentalCarNachweis` auf `main` | teilweise; Umgebung `null` → fail-closed | in Mobilität **und** Übersichtstext | Item-Ebene, nicht eigener Haupt-Tab |
 | Buchungssiegel | geplant vs gebucht | `BuchungsSiegel` | `booking_status` + `booking_source=user` | real; kein Provider-Booking | mehrere Bestände | bleiben; Commercial später |
 | Manueller Planpunkt | Notiz/Aktivität ohne Provider | Planformular | User Input | real | kann Domain-Items doppelt anlegen | behalten, klar als manuell |
 | Coverage/Budget im Kopf | grobes Budget | Kopf | `budgetAmount` oder „Noch offen“ | real; keine Live-Preissumme | Preis an Items separat | keine Fake-Summe |

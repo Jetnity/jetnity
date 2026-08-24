@@ -3,7 +3,7 @@
 Stand: 24. August 2026  
 Status: **Vorschlag aus dem Workspace-Audit; nicht Product-Owner-angenommen, nicht implementiert**  
 Code-Evidence-Basis (historisch): `docs/TRIP_WORKSPACE_AUDIT.md` gegen `1ec93cc9`  
-Aktueller Integrations-`main`: `e3bad749` (Admin Slice B; keine Workspace-Runtime-Änderung)
+Aktueller Integrations-`main`: `b7f027ec` (S3/AP-3/Admin C auf `main`; P0-Workspace-Befunde unverändert)
 
 Diese Datei ist die Ziel-IA für den **späteren** Implementierungsblock.  
 Sie ändert keine Shared Contracts und keine Traveller-/Route-/Provider-Truth.

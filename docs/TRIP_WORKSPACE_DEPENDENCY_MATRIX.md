@@ -3,7 +3,7 @@
 Stand: 24. August 2026  
 Status: **verbindlich für den Workspace-Workstream; überschreibt keine fremden Pläne**  
 Code-Evidence-Basis (historisch): `1ec93cc9`  
-Aktueller Integrations-`main`: `e3bad749` plus beobachtete parallele Draft-PRs
+Aktueller Integrations-`main`: `b7f027ec` (S3 #54, AP-3 #53, Admin C #49 auf `main`)
 
 Zweck: verhindern, dass der Workspace gegen unfertige Contracts implementiert wird.
 
@@ -28,7 +28,7 @@ Provider-Slices laut `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md`:
 
 S1 Ops-Vertrag · S2 FlugNachweis · S3 Mobility/Rental Nachweis · S4 Truth-Domain Ops · S5 Commercial Provenance · S6 persistenter Cost Guard · S7 Observability · S8 Cache/Lizenz
 
-S1/S2 liegen auf diesem `main`. S3–S8 sind fremde, noch offene Arbeit.
+S1–S3 liegen auf diesem `main`. S4–S8 sind fremde, noch offene Arbeit. AP-3 und Admin A–C liegen auf `main`.
 
 ---
 
@@ -54,14 +54,14 @@ Legende Abhängigkeit:
 | Flug suchen / übernehmen | – | – | Guest weiter fail-closed; Live-Adapter **verboten** | – | keine Heuristik | – | – | – | **S5 warten** |
 | Hotelbestand / Suche | – | – | Nachweis auf main, Factory null | – | – | – | Lage nur mit Geo-Evidence | – | **S5 warten** für Freshness |
 | Aktivitäten | – | – | wie Hotel | – | – | – | – | Timing nur Seasonal-Evidence | **S5 warten** |
-| Mobilität manuell | – | – | S3 **warten** für Nachweis-Parität | – | Kanten aus Graph frei | – | – | – | Live-Suche kostenrelevant, **warten** |
-| Mietwagen manuell | – | – | S3 **warten** | – | – | rental-flag in Readiness frei | – | – | wie Mobilität |
+| Mobilität manuell | – | – | S3 Nachweisvertrag auf `main`; Umgebung `null` | – | Kanten aus Graph frei | – | – | – | Live-Adapter / Commercial = **S5 + Activation warten** |
+| Mietwagen manuell | – | – | S3 Nachweisvertrag auf `main`; Umgebung `null` | – | – | rental-flag in Readiness frei | – | – | wie Mobilität |
 | Booking-Siegel User | frei | – | Provider-Booking **warten** / AP-10 für Konto-Übersicht | – | – | ticket/booking-checks hängen an `booked` | – | – | Source bleibt `user` |
-| Guest One-Trip / Fortsetzen | AP-3 besitzt Hub-Lebenszyklus – **nicht überschreiben** | – | – | Party-Übernahme existiert | – | Readiness-Übernahme existiert | – | – | Flugfelder fail-closed |
-| Archiv / mehrere Reisen | AP-3/AP-4 **warten** | – | – | – | – | – | – | – | – |
+| Guest One-Trip / Fortsetzen | AP-3 auf `main` besitzt ableitende Lebenslage – **nicht überschreiben** | – | – | Party-Übernahme existiert | – | Readiness-Übernahme existiert | – | – | Flugfelder fail-closed |
+| Archiv / mehrere Reisen | AP-3 auf `main` (nur Lage); Archiv = AP-4 **warten** | – | – | – | – | – | – | – | – |
 | Privacy Export/Delete von Reisen | AP-6 **warten** | – | – | – | – | – | – | – | – |
 | Account-Buchungsübersicht | AP-10 **warten** | – | – | – | – | – | – | – | nicht im Workspace duplizieren |
-| Admin Health der Provider | – | Slice B/C fremd | S7 | – | – | – | – | – | Workspace zeigt keine Admin-Health |
+| Admin Health der Provider | – | Slice B/C auf `main`, Workspace zeigt sie nicht | S7 | – | – | – | – | – | Workspace zeigt keine Admin-Health |
 | Create-Flow Multi-Destination / keine Chips | frei als späterer Slice; Homepage-Marketing **verboten** | – | – | keine Citizenship-Pflicht beim Start | Stages wiederverwenden | – | – | – | – |
 
 ---
@@ -86,10 +86,10 @@ Nicht „jetzt heimlich mitbauen“. Dieser PR bleibt docs-only.
 | Thema | Wartet auf | Wenn der Workspace zu früh baut |
 | --- | --- | --- |
 | Belegte Provider-Preise / Freshness-Badges | Provider S5 | Fake-frisch oder Client-Truth |
-| Mobility/Rental-Übernahme wie Hotel | Provider S3 | asymmetrisches Trust-Loch |
+| Live Mobility/Rental-Adapter | Provider-Activation + S5 | Nachweis existiert; Umgebung bleibt `null` |
 | Live-Suche irgendwelcher Domains | Provider-Activation-Gate + Kosten | Kosten/Secrets |
 | Accountweite Traveller-Profile | Account AP-7 + Shared-Contract-Gate | zweite Identität |
-| Archiv / Reise-Lebenszyklus-UI im Hub | Account AP-3/AP-4 | Konflikt mit Account-Agent |
+| Archiv / gespeicherter Reise-Lebenszyklus | Account AP-4 | AP-3 auf `main` nur ableitend; kein Archiv-Write |
 | Privacy-Löschpfade | Account AP-6 | unvollständige Löschung |
 | Konto-Buchungsordner | Account AP-10 | Workspace würde Account klonen |
 | Echte Visa-/Transit-Aussagen | Official Provider + Evidence-Vertrag | erfundene Regulatorik |
@@ -104,7 +104,7 @@ Nicht „jetzt heimlich mitbauen“. Dieser PR bleibt docs-only.
 ```text
 Account AP-*  ──┐
 Admin A–K     ──┼── weiter parallel, eigene PRs
-Provider S3–S8──┘
+Provider S4–S8──┘
                  \
                   \ nach Review + PO: Workspace-Implementierung
                    \

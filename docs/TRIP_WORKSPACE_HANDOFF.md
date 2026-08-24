@@ -1,7 +1,7 @@
 # Jetnity – Trip Workspace Audit Handoff
 
 Stand: 24. August 2026  
-Status: **Audit und Zielarchitektur vorbereitet; nach Current-Main-Sync auf `e3bad749`; STOPP für unabhängigen Technical-Lead-Re-Review**  
+Status: **Audit und Zielarchitektur vorbereitet; finale Reconciliation auf `b7f027ec`; STOPP für unabhängigen ChatGPT/Technical-Lead-Re-Review**  
 Cursor-Workstream: Trip Workspace / Reiseübersicht – Product, UX & Technical Architecture Audit  
 Branch: `audit/trip-workspace`  
 Draft-PR: **#55**, docs-only, kein TW-1
@@ -12,42 +12,27 @@ Draft-PR: **#55**, docs-only, kein TW-1
 
 Aktueller Integrations-`main`:
 
-`e3bad749c8e03512001e7bccd5e08467f10a7134`
+`b7f027ec448639fe3399512d401a7789b24e52a6`
 
-`Admin Control Center Slice B – read-only System Health (#46)`
+`Merge pull request #54 from Jetnity/feat/provider-mobility-rental-evidence-s3`
 
 Der Branch `audit/trip-workspace` ist darauf rebased. Kein Force-Replacement des `main`-Inhalts.
 
-Current-Main-Reconciliation-Head, auf dem die lokalen Gates dieses Re-Reviews liefen:
+Erhaltene gemergte Wahrheit:
 
-`ae98fb19afd0e5c0c356a0e509269870ea9a092a`
+- Admin A / PR #44 / ADR-0158 / `1ec93cc9`
+- Admin B / PR #46 / ADR-0159 / `e3bad749`
+- Admin C / PR #49 / ADR-0162 / `78192ab7`
+- Account AP-3 / PR #53 / ADR-0160 / `8326e72f`
+- Provider S3 / PR #54 / ADR-0161 / `b7f027ec`
 
-Lokale Exact-Head-Gates auf `ae98fb19`, alle grün:
-
-- `check:setup:ci` (1 Warning: keine `.env` im Cloud-Agent)
-- `typecheck`
-- `lint`
-- `npm test` – **1832/1832 pass, 0 fail**
-- `check:api-schutz` – 11 Admin-Routen
-- `check:schema-bezug`
-- `check:dead` / `check:exports` / `check:deps`
-- `npm run build` – Production-Build 43/43 Seiten, Compiled successfully
-
-Dieser Evidence-Nachzug ist docs-only. Nach Commit/Push ist der Branch-Head der Exact Head für das Re-Review. Lokale Gates werden auf diesem neuen Head erneut ausgeführt, bevor STOPP gilt.
-
-Historischer erster Exact Head vor Current-Main-Sync (nicht mehr Branch-Head):
-
-`0ccd38df1614b615cbdccc48d3a9b05a67d41df6` / später `536ed50ffda0279973058f7a2b78ee98217e7aad`
-
-Dieser SHA ist **Evidence des ersten Gates-Laufs**, nicht aktueller Head und nicht aktueller `main`. Der historische SUCCESS gilt nicht für diesen Re-Review.
+Der neue Exact Head wird nach Commit/Push dieser Reconciliation erneut gegatet. Historische Heads `76ef850f`, `ae98fb19`, `536ed50f` und `0ccd38df` sind nur Evidence früherer Läufe.
 
 Historische Code-Evidence-Basis des Workspace-Audits:
 
 `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267`
 
-`Admin Control Center Slice A (#44)`
-
-`1ec93cc9` ist **nicht** aktueller `main`. Slice B auf `e3bad749` ändert keine Workspace-Runtime. Die Audit-Befunde bleiben gültig, bis ein späterer Code-Re-Scan sie widerlegt.
+`1ec93cc9` ist **nicht** aktueller `main`. Ein Re-Scan gegen `b7f027ec` bestätigt die P0-Befunde. S3 ändert die Mobility-Nachweisnaht, nicht die Workspace-IA.
 
 Grün ≠ Produktkorrektheit. Docs-only.
 
@@ -72,15 +57,16 @@ Keine Runtime-Implementation. Keine Migration. Keine Shared-Contract-Änderung.
 
 ## 3. Wichtigste Funde
 
-1. **P0 – Safety/Seasonal-Stille.** Produktpfad übergibt keine Evaluations. Fehlende Karte ≠ „keine Hinweise“.
-2. **P0 – zwei Produktlogiken.** Desktop blendet die Übersicht aus; Mobile denkt in Domain-Tabs.
-3. **P1 – keine Aufmerksamkeitsschicht.** `Jetzt wichtig` ist nur Zieltext, nicht Code. Übersicht = gleichgewichtige Modulkarten.
+1. **P0 – Safety/Seasonal-Stille.** Produktpfad übergibt keine Evaluations. Fehlende Karte ≠ „keine Hinweise“. Re-Scan auf `b7f027ec` unverändert.
+2. **P0 – zwei Produktlogiken.** Desktop blendet die Übersicht aus; Mobile denkt in Domain-Tabs. Unverändert.
+3. **P1 – keine Aufmerksamkeitsschicht.** `Jetzt wichtig` ist nur Zieltext, nicht Code.
 4. **P1 – Create-Flow widerspricht geltender PO-Regel.** Tempo-/Interessen-Chips und Default `balanced` leben noch.
 5. **P1 – Kopf kennt Personen nur als Zahl.** Multi-Citizenship-UI existiert in der Vorbereitung, nicht in der Reise-Orientierung.
 6. **Guest/Account-Form ist sauber.** Dieselbe `Trip`-Form; Konto refresh nach Write; Guest-Flug fail-closed; Listenfehler ≠ leer.
-7. **Foundations nicht neu bauen.** Route, Traveller, Readiness, Safety, Seasonal, Booking-Status, FlugNachweis liegen auf `main`. Der Workspace **orchestriert** sie unvollständig.
+7. **Foundations nicht neu bauen.** Route, Traveller, Readiness, Safety, Seasonal, Booking-Status, FlugNachweis und S3 Mobility/Rental-Nachweis liegen auf `main`. Der Workspace **orchestriert** sie unvollständig.
 8. **PR #52 ist nicht `main`.** Governance-Evidence, offener Draft.
-9. **Nachzug aus Code-Re-Scan:** Flugsuche defaultet auf `ZRH`; Evaluate-APIs existieren ohne Workspace-Aufruf; Gast ohne Tab-Sync; Client ohne `ladezustand`.
+9. **S3-Nachzug:** Nachweisvertrag auf `main`, Umgebung `null`, Suche nur nach «Verbindungen prüfen». Kein Live-Adapter.
+10. **AP-3-Nachzug:** Hub gruppiert ableitend. Kein Archiv-Write. Workspace darf das nicht überschreiben.
 
 Vollständige Inventare und P-Listen: `docs/TRIP_WORKSPACE_AUDIT.md`.
 
@@ -90,11 +76,11 @@ Vollständige Inventare und P-Listen: `docs/TRIP_WORKSPACE_AUDIT.md`.
 
 Nicht überschreiben:
 
-- Account `Account plattform audit vorbereitung` – AP-3 Draft-PR #53 und weiterer Plan AP-4–AP-12
-- Admin `Admin platform audit` – Slice A+B auf `main`; Slice C Draft #49 und weiterer Plan
-- Provider `Jetnity provider readiness audit` – S3 #54 und S4–S8
+- Account `Account plattform audit vorbereitung` – AP-1–AP-3 auf `main`; weiterer Plan AP-4–AP-12
+- Admin `Admin platform audit` – Slice A–C auf `main`; weiterer Plan D–K
+- Provider `Jetnity provider readiness audit` – S1–S3 auf `main`; S4–S8 eigener Auftrag
 
-Workspace darf Commercial-Freshness erst nach **S5**, Mobility-Nachweis-Parität erst nach **S3**, accountweite Traveller erst nach **AP-7**, Hub-Lebenszyklus nicht vor/gegen **AP-3**.
+Workspace darf Commercial-Freshness erst nach **S5**, accountweite Traveller erst nach **AP-7**, Archiv nicht vor **AP-4**. Hub-Lebenslage von AP-3 nicht gegen den Account-Vertrag neu bauen.
 
 Details: `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`.
 
@@ -115,19 +101,20 @@ Details: `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`.
 
 ## 6. Self-Review
 
-Durchgeführt gegen den Auftrag §23. Ergebnis im Audit §12.
+Durchgeführt gegen den Auftrag §23 und den Current-Main-Re-Scan auf `b7f027ec`.
 
 Kein Slice dieses Plans ist ohne neuen Auftrag gestartet.  
 `Jetzt wichtig` ist als Priorisierung spezifiziert, nicht als Tabelle.  
 Unknown/Error/Empty bleiben getrennt spezifiziert.  
-Multi-Citizenship ist als UI-Naht vorbereitet, nicht neu modelliert.
+Multi-Citizenship ist als UI-Naht vorbereitet, nicht neu modelliert.  
+S3/AP-3/Admin C bleiben erhalten und werden nicht fachlich ersetzt.
 
 ---
 
 ## 7. Exakter nächster Schritt
 
 1. Dieser Draft-PR bleibt Draft.
-2. Unabhängiger Technical-Lead-Re-Review der fünf Dokumente plus Current-Main-Reconciliation gegen Code und `main` `e3bad749`.
+2. Unabhängiger ChatGPT / Technical-Lead-Re-Review der fünf Dokumente plus finale Reconciliation gegen Code und `main` `b7f027ec`.
 3. Product Owner entscheidet gemeinsam mit dem Technical Lead, **ob und wann** TW-1 Runtime beginnt.
 4. **Kein** Mark Ready, **kein** Merge, **kein** TW-1, **kein** Workspace-Umbau ohne neuen ausdrücklichen Auftrag.
 

@@ -8,7 +8,7 @@ Abhängigkeiten: `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`
 
 Kein Monster-PR. Jeder Slice ist klein, reviewbar und konfliktarm gegenüber Account, Admin und Provider.
 
-Integrationsbasis nach Current-Main-Sync: `e3bad749`. Code-Evidence-Basis des Audits bleibt historisch `1ec93cc9`. Dieser Plan startet trotzdem kein TW-1.
+Integrationsbasis nach Current-Main-Sync: `b7f027ec`. Code-Evidence-Basis des Audits bleibt historisch `1ec93cc9`. S3/AP-3/Admin C liegen auf `main`. Dieser Plan startet trotzdem kein TW-1.
 
 ---
 
@@ -70,8 +70,8 @@ TW-3 Timeline   TW-4 Aufmerksamkeit
       TW-5 Item- und Gap-Details
          │
          ├── TW-6 Create-Entry  (nach PO; nicht Homepage)
-         ├── TW-7 Hub-Anschluss (nach AP-3, nicht vorher überschreiben)
-         ├── TW-8 Commercial-Surfaces (nach Provider S5; S3 für Mobility-Nachweis)
+         ├── TW-7 Hub-Anschluss (AP-3 auf `main` nicht überschreiben; Archiv nach AP-4)
+         ├── TW-8 Commercial-Surfaces (nach Provider S5; S3-Nachweis schon auf `main`)
          ▼
       TW-9 Polish, Evidence, Closure
 ```
@@ -174,7 +174,7 @@ Gates: Repo-Hygiene, CI auf Exact Head, Vercel Preview falls erzeugt. Grün ≠ 
 **Nicht:**
 
 - Live-Provider
-- Mobility-Nachweis vor S3 vortäuschen
+- Live-Mobility-/Rental-Adapter vortäuschen, obwohl S3 nur die fail-closed Nachweisnaht liefert
 - manuelle Flüge als nachgewiesene Angebote zeigen
 - stilles `ZRH` als Suchherkunft (TW-P1-08: nur Graph oder Nutzerangabe)
 
@@ -200,15 +200,15 @@ Gates: Repo-Hygiene, CI auf Exact Head, Vercel Preview falls erzeugt. Grün ≠ 
 
 **Darf:** nur angleichen, was AP-3 **nicht** besitzt: z. B. Karten-`itemCount` inkl. `ohneTag`.
 
-**Nicht:** Lebenszyklus, Archiv, zweite-Reise-Regeln – das ist Account AP-3/AP-4.
+**Nicht:** gespeicherten Lifecycle, Archiv, zweite-Reise-Regeln. AP-3 auf `main` besitzt nur ableitende Lage; Archiv bleibt AP-4.
 
-**Abhängigkeit:** warten bzw. mit Account-Agent koordinieren. Kein paralleler Write auf dieselben Hub-Verträge.
+**Abhängigkeit:** AP-3-Vertrag nicht überschreiben. Archiv erst nach AP-4. Kein paralleler Write auf dieselben Hub-Verträge.
 
 ### TW-8 – Commercial Surfaces
 
 **Ziel:** Preise, Freshness, Übernahme ehrlich an vorhandene Nachweise koppeln.
 
-**Abhängigkeit:** Provider **S5** für Provenance; **S3** bevor Mobility/Rental wie Hotel übernommen werden; keine Activation.
+**Abhängigkeit:** Provider **S5** für Provenance. S3-Nachweisgrenze liegt bereits auf `main` und bleibt fail-closed ohne Adapter. Keine Activation.
 
 **Nicht:** Secrets, Live-Calls, Booking-Provider, `booking_url` erfinden.
 
