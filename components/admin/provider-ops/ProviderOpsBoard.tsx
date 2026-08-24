@@ -13,7 +13,11 @@ import {
 } from '@/lib/admin/provider-ops-board'
 import { cn } from '@/lib/utils'
 
-function statusKlassen(item: Pick<ProviderOpsBoardItem, 'id' | 'status' | 'freshness'>): string {
+function statusKlassen(item: {
+  id: string
+  status: ProviderOpsBoardItem['status']
+  freshness: ProviderOpsBoardItem['freshness']
+}): string {
   if (providerOpsKarteIstGruen(item)) {
     return 'border-emerald-400/30 bg-emerald-400/10 text-emerald-800 dark:text-emerald-200'
   }

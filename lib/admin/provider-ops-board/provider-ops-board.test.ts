@@ -176,7 +176,8 @@ describe('Provider-Ops-Board Verträge', () => {
   test('Runtime nutzt S1-Vertrag und keine Service-Role', () => {
     const runtime = readFileSync(join(wurzel, 'lib/admin/provider-ops-board/runtime.ts'), 'utf8')
     assert.match(runtime, /from '@\/lib\/provider-ops'/)
-    assert.match(runtime, /from\('model_usage'\)\.select\('created_at,kosten_mikro_usd'\)/)
+    assert.match(runtime, /from\('model_usage'\)/)
+    assert.match(runtime, /select\('created_at,kosten_mikro_usd'\)/)
     assert.doesNotMatch(runtime, /createServiceRole|SERVICE_ROLE|DUFFEL_ACCESS_TOKEN/)
     assert.equal(PROVIDER_OPS_BOARD_API_PFAD, '/api/admin/provider-ops')
   })

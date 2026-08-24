@@ -9,7 +9,7 @@ Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
 
 ## Status
 
-**Re-Sync auf aktuellen `main` `e3bad749` (Admin Slice B / PR #46 gemergt).** Draft, nicht gemergt. Kein Mark Ready, kein Merge, kein Slice D.
+**Current-Main-Re-Sync und Implementation auf Draft PR #49.** Draft, nicht gemergt. Kein Mark Ready, kein Merge, kein Slice D.
 
 Entscheidung: **ADR-0162**. ADR-0160 bleibt Account AP-3. ADR-0161 bleibt Provider S3.
 
