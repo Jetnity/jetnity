@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B auf `main` `e3bad749`; Admin Slice C Technical Closure / PASS auf Draft PR #49, wartet auf Product-Owner-Entscheidung zu Mark Ready**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B auf `main` `e3bad749`; Admin Slice C Technical Closure / PASS, PR #49 Ready for Review, wartet auf separate Merge-Freigabe**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -301,7 +301,7 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 6a. ✅ Account Platform AP-2 auf `main` (PR #48, `2827d1cb`)
 6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`, ADR-0158)
 6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`, ADR-0159)
-7. **→ Admin Slice C** Draft PR #49 / `feat/admin-provider-cost-board` Technical Closure / PASS, wartet auf Product-Owner-Entscheidung zu Mark Ready. Provider S1/S2 liegen auf `main`.
+7. **→ Admin Slice C** PR #49 / `feat/admin-provider-cost-board` Technical Closure / PASS, Ready for Review, wartet auf separate Merge-Freigabe. Provider S1/S2 liegen auf `main`.
 8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 10. echte Providerphase
@@ -324,8 +324,8 @@ Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
 1. Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B sind auf `main` `e3bad749`.
 2. Slice C wird auf diesen `main` synchronisiert. Scope bleibt read-only Provider- und Kostenboard, fail-closed, ADR-0162.
 3. S1-Vertrag wird nur aus `lib/provider-ops` auf `main` gelesen, nicht kopiert oder verändert.
-4. PR #49 bleibt Draft. Kein Mark Ready, kein Merge, kein Slice D, keine Production-Migration, keine Provider-/Secret-Aktivierung.
-5. **Exakter nächster Schritt:** Ausdrückliche aktuelle Product-Owner-Entscheidung zu Ready for Review von Draft PR #49 abwarten. Ein Merge braucht danach eine separate ausdrückliche Freigabe.
+4. PR #49 ist Ready for Review. Kein Merge ohne separate ausdrückliche aktuelle Product-Owner-Freigabe. Kein Slice D, keine Production-Migration, keine Provider-/Secret-Aktivierung.
+5. **Exakter nächster Schritt:** Separate ausdrückliche aktuelle Product-Owner-Merge-Freigabe für PR #49 abwarten. Nicht mergen ohne diese Freigabe.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

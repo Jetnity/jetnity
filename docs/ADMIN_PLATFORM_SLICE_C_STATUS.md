@@ -1,15 +1,15 @@
 # Admin Platform Slice C – Status
 
 Stand: 24. August 2026  
-Status: **TECHNICAL CLOSURE / PASS – wartet auf Product-Owner-Entscheidung zu Mark Ready**  
+Status: **TECHNICAL CLOSURE / PASS – Ready for Review; wartet auf separate Merge-Freigabe**  
 Verantwortlicher Cursor-Agent: `Admin platform audit`  
 Branch: `feat/admin-provider-cost-board`  
-PR: Draft #49, Base `main`  
+PR: #49 Ready for Review, Base `main`  
 Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
 
 ## Status
 
-Read-only Provider- und Kostenboard auf aktuellem `main` nach Slice-B-Merge. Unabhängiger Technical-Lead-Review: **PASS / Technical Integration Closure** (`docs/ADMIN_PLATFORM_SLICE_C_TECHNICAL_LEAD_REVIEW.md`). Draft, nicht gemergt. Technical Closure ist kein Mark Ready und kein Merge.
+Read-only Provider- und Kostenboard auf aktuellem `main` nach Slice-B-Merge. Unabhängiger Technical-Lead-Review: **PASS / Technical Integration Closure** (`docs/ADMIN_PLATFORM_SLICE_C_TECHNICAL_LEAD_REVIEW.md`). GitHub-Konto `Jetnity` hat PR #49 am 24. August 2026, 18:43 UTC auf Ready for Review gesetzt. Nicht gemergt. Ready ist keine Merge-Freigabe.
 
 Entscheidung: **ADR-0162**. ADR-0160 bleibt Account AP-3. ADR-0161 bleibt Provider S3.
 
@@ -72,8 +72,12 @@ Traveller Context ist für dieses Board nicht relevant.
 - GitHub Actions CI `32763342859`: SUCCESS
 - Vercel Preview Inspector `Bx5KFouMkGshYPrntFMbWKBZL9SJ`: READY
 
+## Docs-Head `b82ef947`
+
+- GitHub Actions CI `32763757040`: SUCCESS
+- Vercel Preview Inspector `8bKDqxT7fPKo1AG4BBAxCwjRhzoQ`: READY
+
 ## Nächster Schritt
 
-Ausdrückliche aktuelle Product-Owner-Entscheidung zu **Ready for Review** abwarten.  
-Ein Merge braucht danach eine **separate** ausdrückliche Product-Owner-Freigabe.  
-Kein Slice D in diesem PR.
+Separate ausdrückliche aktuelle Product-Owner-**Merge**-Freigabe abwarten.  
+Kein Merge ohne diese Freigabe. Kein Slice D in diesem PR.

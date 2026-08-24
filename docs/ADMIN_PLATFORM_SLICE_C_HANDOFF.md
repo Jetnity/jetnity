@@ -3,7 +3,7 @@
 Stand: 24. August 2026  
 Cursor-Anzeigename: `Admin platform audit`  
 Branch: `feat/admin-provider-cost-board`  
-Draft-PR: https://github.com/Jetnity/jetnity/pull/49  
+PR: https://github.com/Jetnity/jetnity/pull/49 (Ready for Review)  
 Base: `main` `e3bad749`  
 Entscheidung: ADR-0162
 
@@ -15,7 +15,7 @@ Exact Head mit belegten Remote-Gates: `bc60120f`.
 Runtime zuletzt: `965034d6`.  
 Review-Head: `82f31bdc`.
 
-Der PR bleibt Draft. Technical Closure ist kein Mark Ready und kein Merge. Kein Slice D.
+GitHub-Konto `Jetnity` hat den PR auf Ready for Review gesetzt. Ready ist keine Merge-Freigabe. Kein Slice D.
 
 ## Pflichtquellen
 
@@ -38,5 +38,4 @@ Der PR bleibt Draft. Technical Closure ist kein Mark Ready und kein Merge. Kein 
 
 ## Exakter nächster Schritt
 
-Ausdrückliche aktuelle Product-Owner-Entscheidung zu Ready for Review abwarten.  
-Ein Merge braucht danach eine separate ausdrückliche Product-Owner-Freigabe.
+Separate ausdrückliche aktuelle Product-Owner-Merge-Freigabe abwarten. Nicht mergen ohne diese Freigabe.

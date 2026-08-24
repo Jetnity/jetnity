@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety, Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B auf `main` `e3bad749`; Admin Slice C Technical Closure / PASS auf Draft PR #49, wartet auf Product-Owner-Entscheidung zu Mark Ready**
+Status: **Foundation C/D/E, Travel Safety, Seasonal, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B auf `main` `e3bad749`; Admin Slice C Technical Closure / PASS, PR #49 Ready for Review, wartet auf separate Merge-Freigabe**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -278,7 +278,7 @@ Status: **auf `main` `e3bad749` (PR #46). Entscheidung: ADR-0159.**
 
 ## 6e. In Arbeit – Admin Control Center Slice C
 
-Status: **Technical Closure / PASS auf Draft PR #49, wartet auf Product-Owner-Entscheidung zu Mark Ready. Entscheidung: ADR-0162.**
+Status: **Technical Closure / PASS, PR #49 Ready for Review, wartet auf separate Merge-Freigabe. Entscheidung: ADR-0162.**
 
 - read-only Provider- und Kostenboard
 - konsumiert gemergten S1-Vertrag, ohne ihn zu verändern
@@ -418,7 +418,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 6a. ✅ Account Platform AP-2 auf `main` (PR #48)
 6b. ✅ Admin Slice A auf `main` (PR #44, `1ec93cc9`)
 6c. ✅ Admin Slice B auf `main` (PR #46, `e3bad749`)
-7. **→ Admin Slice C** Draft PR #49 Technical Closure / PASS, wartet auf Product-Owner-Entscheidung zu Mark Ready
+7. **→ Admin Slice C** PR #49 Technical Closure / PASS, Ready for Review, wartet auf separate Merge-Freigabe
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit
 10. echte Providerphase

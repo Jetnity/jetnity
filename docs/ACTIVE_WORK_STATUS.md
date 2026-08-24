@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B auf `main` `e3bad749`; Admin Slice C Technical Closure / PASS auf Draft PR #49, wartet auf Product-Owner-Entscheidung zu Mark Ready**
+Status: **PR #38, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B auf `main` `e3bad749`; Admin Slice C Technical Closure / PASS, PR #49 Ready for Review, wartet auf separate Merge-Freigabe**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -79,16 +79,16 @@ Entscheidung: ADR-0159
 
 Verantwortlicher Cursor-Anzeigename: `Admin platform audit`  
 Implementierungsbranch: `feat/admin-provider-cost-board`  
-Implementierungs-Draft-PR: **#49** (Base: `main`)  
+Implementierungs-PR: **#49 Ready for Review** (Base: `main`)  
 Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
 
 Aktiver Slice:
 
-**Admin Slice C ist implementiert auf Draft PR #49.** Read-only Provider- und Kostenboard. Entscheidung: ADR-0162. Konsumiert den gemergten S1-Vertrag auf `main` (`01761eb9` / `lib/provider-ops`), ohne ihn zu kopieren oder zu verändern.
+**Admin Slice C hat Technical Closure / PASS. PR #49 ist Ready for Review.** Read-only Provider- und Kostenboard. Entscheidung: ADR-0162. Konsumiert den gemergten S1-Vertrag auf `main` (`01761eb9` / `lib/provider-ops`), ohne ihn zu kopieren oder zu verändern.
 
-Unabhängiger Technical-Lead-Review: **PASS / Technical Integration Closure** (`docs/ADMIN_PLATFORM_SLICE_C_TECHNICAL_LEAD_REVIEW.md`). Runtime zuletzt `965034d6`. Exact Head `bc60120f`. Review-Head `82f31bdc` (CI `32763342859` SUCCESS, Vercel `Bx5KFouMkGshYPrntFMbWKBZL9SJ` READY).
+Runtime zuletzt `965034d6`. Exact Head `bc60120f`. Review-Head `82f31bdc`. Aktueller Docs-Head `b82ef947` (CI `32763757040` SUCCESS, Vercel `8bKDqxT7fPKo1AG4BBAxCwjRhzoQ` READY). GitHub-Konto `Jetnity` setzte Ready am 24. August 2026, 18:43 UTC.
 
-Kein Provider-Aktivierungscenter. Keine Secrets, Verträge oder kostenpflichtigen Calls. Keine Fake-Health-/Cost-Wahrheit. Kein Finance-Live. Billing-P1 bleibt separat. Technical Closure ist kein Mark Ready und kein Merge.
+Kein Provider-Aktivierungscenter. Keine Secrets, Verträge oder kostenpflichtigen Calls. Keine Fake-Health-/Cost-Wahrheit. Kein Finance-Live. Billing-P1 bleibt separat. Ready ist keine Merge-Freigabe.
 
 ### Provider Readiness – S1 Shared Operational Contract
 
@@ -147,7 +147,7 @@ Wenn sie gestartet wird:
 
 ## 6. Governance
 
-- PR #43, PR #44, PR #45, PR #46, PR #47, PR #48 und PR #51 sind gemergt. PR #49, PR #53 und PR #54 bleiben Draft.
+- PR #43, PR #44, PR #45, PR #46, PR #47, PR #48 und PR #51 sind gemergt. PR #49 ist Ready for Review, aber nicht gemergt. PR #53 und PR #54 bleiben Draft.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
@@ -155,6 +155,6 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-1. Ausdrückliche aktuelle Product-Owner-Entscheidung zu Ready for Review von Admin Slice C / Draft PR #49 abwarten. Ein Merge braucht danach eine separate ausdrückliche Freigabe. Kein Slice D in PR #49.
+1. Separate ausdrückliche aktuelle Product-Owner-Merge-Freigabe für Admin Slice C / PR #49 abwarten. Nicht mergen ohne diese Freigabe. Kein Slice D in PR #49.
 2. ADR-Allokation: 0158=Slice A, 0159=Slice B, 0160=AP-3, 0161=S3, **0162=Admin Slice C**.
 3. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag (`docs/ADMIN_BILLING_LOCAL_REFUND_INTEGRITY_TASK.md`), nicht Slice C.

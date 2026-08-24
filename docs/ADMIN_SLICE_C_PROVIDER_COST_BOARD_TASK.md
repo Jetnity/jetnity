@@ -1,7 +1,7 @@
 # Jetnity Admin Platform – Slice C: Provider- und Kostenboard
 
 Stand: 24. August 2026  
-Status: **IMPLEMENTATION TASK – Technical Closure / PASS auf Draft PR #49; wartet auf Product-Owner-Entscheidung zu Mark Ready**  
+Status: **IMPLEMENTATION TASK – Technical Closure / PASS; PR #49 Ready for Review; wartet auf separate Merge-Freigabe**  
 Verantwortlicher Cursor-Agent: **`Admin platform audit`**  
 Branch: `feat/admin-provider-cost-board`  
 Base: aktueller `main` `e3bad749c8e03512001e7bccd5e08467f10a7134` (Admin Slice B / PR #46 gemergt)  
