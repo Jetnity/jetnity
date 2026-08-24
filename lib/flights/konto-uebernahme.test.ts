@@ -194,7 +194,7 @@ describe('Konto-Flugübernahme', () => {
     assert.equal(ergebnis.ok, true)
     if (!ergebnis.ok) return
     const itinerary = itineraryAusFlugOption(ergebnis.option, {})
-    assert.equal(itinerary?.legs[0]?.segments[0]?.origin, 'ZRH')
+    assert.equal(itinerary?.legs[0]?.segments[0]?.origin.airportCode, 'ZRH')
     assert.equal(
       itinerary?.legs[0]?.segments.some((segment) => segment.surfaceFromAirportCode != null),
       false,
