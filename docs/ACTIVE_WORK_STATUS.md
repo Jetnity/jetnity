@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **Provider-Readiness Audit Draft-PR #45 – unabhängiger Technical-Lead-Review PASS / planning accepted; keine Implementierungsfreigabe**
+Status: **Provider-Readiness Audit Draft-PR #45 – Technical-Lead PASS / planning accepted; S1 als eigener Draft-Workstream PR #47 gestartet**
 
 ## 1. Arbeitsblock / Ziel
 
@@ -17,9 +17,9 @@ Provider-Readiness Audit: Jetnity-seitige Ports, Evidence, Failure, Cost Guard, 
 
 ## 3. Status
 
-**technisch review-akzeptiert (Audit/Planung) / wartet auf Product Owner für den nächsten Implementierungsauftrag**
+**technisch review-akzeptiert (Audit/Planung). S1-Implementierung läuft nicht in diesem PR.**
 
-Kein Mark Ready. Kein Merge. Keine Runtime-Implementierung in diesem PR.
+Kein Mark Ready. Kein Merge. Keine Runtime-Implementierung in PR #45.
 
 ## 4. Bereits umgesetzt
 
@@ -30,8 +30,8 @@ Kein Mark Ready. Kein Merge. Keine Runtime-Implementierung in diesem PR.
 
 ## 5. Gerade offen / noch nicht umgesetzt
 
-- PR-S1 Shared Operational Contract: **nicht autorisiert**
-- PR-S2 `FlugNachweis` und weitere Slices: nicht gestartet
+- PR-S1 Shared Operational Contract: **freigegeben als eigener Draft-Workstream** – PR #47 / `feat/provider-ops-s1` / `docs/PROVIDER_OPS_S1_TASK.md`
+- PR-S2 `FlugNachweis` und weitere Slices: nicht gestartet, kein Auftrag
 - keine Adapter, Secrets, Verträge, Kosten, Migrationen
 
 ## 6. Letzte relevanten Änderungen
@@ -64,15 +64,15 @@ Non-blocking Review-Note: Statusformulierungen müssen bei späterer Sync/Merge 
 
 ## 11. Offene Nutzerentscheidungen / Freigaben
 
-- Ob und wann PR-S1 als eigener Implementierungsblock beauftragt wird
 - Keine Merge-Freigabe für PR #45
+- S2 und spätere Slices ohne neuen Auftrag
 - Provider/Secrets/Verträge/Kosten bleiben eigene Gates
 
 ## 12. Exakter nächster Schritt
 
-1. Product Owner / Technical Lead entscheidet, ob ein **neuer** versionierter Auftrag für PR-S1 erteilt wird.
-2. Dieser Audit-PR bleibt Draft und implementiert nichts.
-3. Account AP-1 (Draft PR #43) und Admin Slice A (Draft PR #44, Technical Closure auf jenem Branch) bleiben eigene Workstreams.
+1. S1 wird ausschließlich auf Draft-PR #47 / `feat/provider-ops-s1` implementiert.
+2. Dieser Audit-PR #45 bleibt Draft und implementiert nichts.
+3. Account AP-1 (Draft PR #43) und Admin Slice A (Draft PR #44) bleiben eigene Workstreams.
 4. Kein Mark Ready und kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 
 ## 13. Welche Dateien zuerst gelesen werden müssen

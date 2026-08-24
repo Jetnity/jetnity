@@ -1,7 +1,7 @@
 # Jetnity – Provider-Readiness Implementation Slices
 
 Stand: 24. August 2026  
-Status: **priorisierter Plan nach Audit / keine Implementierungsfreigabe**  
+Status: **priorisierter Plan nach Audit; S1 als Draft-PR #47 beauftragt / kein Mark Ready / kein Merge**  
 Quelle: `docs/PROVIDER_READINESS_AUDIT.md`, `docs/PROVIDER_READINESS_MATRIX.md`, `docs/PROVIDER_READINESS_SHARED_CONTRACT_PROPOSAL.md`
 
 ## 1. Zweck
@@ -264,7 +264,7 @@ Review-bereit ist nicht Mark Ready und nicht Merge.
 
 ## 7. Empfohlener nächster operativer Schritt
 
-1. Unabhängiger ChatGPT-/Technical-Lead-Review von PR #45.
-2. Product Owner entscheidet, ob S1 als nächster Provider-Readiness-Implementierungsblock beauftragt wird.
-3. Account AP-1 und Admin Slice A laufen ungestört weiter.
-4. Kein Mark Ready, kein Merge, keine Secrets, keine Provideraktivierung aus diesem Audit.
+1. S1 läuft auf Draft-PR #47 / `feat/provider-ops-s1` nach `docs/PROVIDER_OPS_S1_TASK.md`.
+2. PR #45 bleibt Audit-Draft.
+3. S2 startet nicht ohne neuen Auftrag.
+4. Kein Mark Ready, kein Merge, keine Secrets, keine Provideraktivierung aus dem Audit-PR.

@@ -327,7 +327,7 @@ Pflichtlektüre für diesen Block:
 2. Höchste belegte Jetnity-seitige Lücken bleiben: fehlender `FlugNachweis` (P0) und fehlender globaler Cost Guard (P0 vor bezahlter Production-Aktivierung).
 3. Ein minimaler Shared Operationsvertrag ist angenommen; keine Provider-Plattform.
 4. PR #45 bleibt Draft. Review ist keine Implementierungs-, Mark-Ready-, Merge- oder Providerfreigabe.
-5. **Exakter nächster Schritt:** Product Owner entscheidet, ob ein neuer versionierter Auftrag für PR-S1 erteilt wird. Dieser Branch implementiert nichts.
+5. **Exakter nächster Schritt:** S1 nur auf Draft-PR #47 / `feat/provider-ops-s1` implementieren. PR #45 bleibt Audit-Draft und implementiert nichts.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
