@@ -73,3 +73,5 @@ DB/Migration/RLS, Consent-Write, Traveller-Registry, Guest→Account-Persistenz,
 
 Product-Owner-Entscheidung über Mark Ready / Merge von Draft-PR #48.  
 STOPP. Kein AP-3. Kein Mark Ready. Kein Merge. Keine Production-Migration. Keine Provider-/Secret-/Kosten-Aktivierung.
+
+Kurz Ready um 12:59 UTC, 20 Sekunden später wieder Draft durch `Jetnity`. Aktueller Stand: Draft. Keine Merge-Freigabe.

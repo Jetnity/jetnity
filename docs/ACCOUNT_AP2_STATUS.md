@@ -74,3 +74,5 @@ Kein neuer konkreter Integrations-, Auth-, Security-, Truth- oder Scope-Defekt. 
 
 Product-Owner-Entscheidung über Mark Ready / Merge von Draft-PR #48.  
 STOPP. Kein AP-3. Kein Mark Ready. Kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+
+Am 24. August 2026, 12:59 UTC, setzte `Jetnity` PR #48 kurz auf Ready; um 13:00 UTC wieder auf Draft. Der aktuelle Stand ist Draft. Das kurze Ready ist keine Merge-Freigabe.
