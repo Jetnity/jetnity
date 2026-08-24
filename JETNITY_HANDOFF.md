@@ -1,9 +1,11 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal auf `main`; aktive Workstreams: Account Platform AP-1 (Draft-PR #43) und Admin Slice A**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal auf `main`; aktive Draft-Workstreams: Account AP-1 (PR #43), Admin Slice A und Provider Ops S1**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
+
+Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Provider Ops S1 zusätzlich in `docs/PROVIDER_OPS_S1_STATUS.md` und `docs/PROVIDER_OPS_S1_HANDOFF.md`.
 
 > **Kein relevanter Fortschritt darf beim Wechsel von Chat, Agent oder Sitzung verloren gehen. Was für die Fortsetzung wichtig ist, gehört ins Repository.**
 
@@ -295,8 +297,8 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation
-6. **→ Account Platform AP-1 (Draft-PR #43) parallel zu Admin Slice A**
-7. Provider-Readiness-/Adapter-Lücken schließen
+6. **→ Account Platform AP-1 (Draft-PR #43) parallel zu Admin Slice A und Provider Ops S1**
+7. Provider-Readiness-/Adapter-Lücken schließen – S1 Shared Operational Contract Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`; wartet auf Product-Owner-Entscheidung
 8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 10. echte Providerphase

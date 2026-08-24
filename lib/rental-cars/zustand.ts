@@ -12,6 +12,8 @@
 // Eine fehlende Variable ist kein Buildfehler.
 // Frei von Next und Provider-SDKs.
 
+import { providerOpsZustand } from '@/lib/provider-ops'
+
 export type RentalCarZustand =
   | { aktiv: true; umgebung: 'test' }
   | { aktiv: false; grund: 'production' | 'abgeschaltet' | 'ohne-zugang' }
@@ -19,15 +21,6 @@ export type RentalCarZustand =
 export type RentalCarUmgebung = {
   VERCEL_ENV?: string
   JETNITY_RENTAL_CAR_AKTIV?: string
-}
-
-function eingeschaltet(wert: string | undefined): boolean {
-  const normalisiert = wert?.trim().toLowerCase()
-  return normalisiert === 'true' || normalisiert === '1'
-}
-
-function istProduction(umgebung: RentalCarUmgebung): boolean {
-  return umgebung.VERCEL_ENV?.trim() === 'production'
 }
 
 export function rentalCarUmgebungAusProzess(): RentalCarUmgebung {
@@ -39,10 +32,11 @@ export function rentalCarZustand(
   umgebung: RentalCarUmgebung = rentalCarUmgebungAusProzess(),
   providerVorhanden = false,
 ): RentalCarZustand {
-  if (istProduction(umgebung)) return { aktiv: false, grund: 'production' }
-  if (!eingeschaltet(umgebung.JETNITY_RENTAL_CAR_AKTIV)) return { aktiv: false, grund: 'abgeschaltet' }
-  if (!providerVorhanden) return { aktiv: false, grund: 'ohne-zugang' }
-  return { aktiv: true, umgebung: 'test' }
+  return providerOpsZustand({
+    vercelEnv: umgebung.VERCEL_ENV,
+    flag: umgebung.JETNITY_RENTAL_CAR_AKTIV,
+    zugangVorhanden: providerVorhanden,
+  })
 }
 
 export function rentalCarZustandMeldung(zustand: RentalCarZustand): string {

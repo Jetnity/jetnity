@@ -97,7 +97,7 @@ export async function hotelsSuchen(
     }
   }
 
-  const quota = hotelSucheErlaubt(ports.kennung)
+  const quota = await hotelSucheErlaubt(ports.kennung)
   if (!quota.ok) {
     return {
       httpStatus: 429,

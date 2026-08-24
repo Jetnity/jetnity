@@ -44,11 +44,11 @@ describe('Safety-API-Hülle', () => {
     assert.equal(safetyKoerperLesen('{').ok, false)
   })
 
-  test('Rate-Limit blockiert nach zu vielen Anfragen', () => {
+  test('Rate-Limit blockiert nach zu vielen Anfragen', async () => {
     safetyRateLeeren()
     let begrenzt = false
     for (let i = 0; i < 25; i += 1) {
-      const ergebnis = safetyAnfrageErlaubt('safety-ip', () => 1_000)
+      const ergebnis = await safetyAnfrageErlaubt('safety-ip', () => 1_000)
       if (!ergebnis.ok) {
         begrenzt = true
         break

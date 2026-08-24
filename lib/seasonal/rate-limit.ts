@@ -2,6 +2,8 @@
 //
 // In-process Preview/Dev-Schutz. Kein persistentes Production-Kostenlimit.
 
+import { providerOpsRateKennungAus } from '@/lib/provider-ops'
+
 const FENSTER_MS = 10 * 60 * 1000
 const ANFRAGEN_JE_FENSTER = 20
 const TAG_MS = 24 * 60 * 60 * 1000
@@ -17,12 +19,7 @@ type Zaehler = {
 const speicher = new Map<string, Zaehler>()
 
 export function seasonalRateKennungAus(headers: Headers): string {
-  const forwarded = headers.get('x-forwarded-for')
-  if (forwarded) {
-    const erste = forwarded.split(',')[0]?.trim()
-    if (erste) return erste
-  }
-  return headers.get('x-real-ip')?.trim() || 'unbekannt'
+  return providerOpsRateKennungAus(headers, 'plain')
 }
 
 export function seasonalAnfrageErlaubt(
