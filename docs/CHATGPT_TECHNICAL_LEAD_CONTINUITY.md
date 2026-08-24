@@ -1,6 +1,6 @@
 # Jetnity – ChatGPT Technical Lead Continuity
 
-Stand: **24. August 2026, aktualisiert nach Admin-C-Merge / PR #49**  
+Stand: **24. August 2026, aktualisiert nach Account-AP-3-Merge / PR #53**  
 Status: **verbindlicher Rollen-, Governance- und Kontinuitätsvertrag**
 
 ## 1. Zweck
@@ -126,7 +126,7 @@ Regel:
 
 ## 8. Große Entwicklungsreihenfolge
 
-1. Account + Admin sauber aufbauen; Provider Readiness parallel weiterführen.
+1. Account + Admin sauber aufbauen; Provider Readiness vollständig weiterführen. **Nach Integration von Account AP-3 ist Provider S3 / PR #54 der nächste aktive Integrationsblock.**
 2. Danach Trip Workspace / Reiseübersicht grundlegend überarbeiten, gestützt auf den vorbereiteten Audit.
 3. Danach Homepage weiterentwickeln.
 
