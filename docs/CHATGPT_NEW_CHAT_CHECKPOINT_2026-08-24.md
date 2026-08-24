@@ -1,6 +1,6 @@
 # Jetnity – New Chat Technical Lead Checkpoint
 
-Stand: **24. August 2026, nach Merge von Admin Slice B / PR #46**  
+Stand: **24. August 2026, 20:26 Europe/Zurich**  
 Status: **aktueller kanonischer Chat-Wechsel-Checkpoint**
 
 Ein neuer Chat übernimmt die Rolle als Hauptentwickler / Technical Lead / Product-, Architecture-, Logic-, Security- und Review-Steuerung.
@@ -12,7 +12,7 @@ Ein neuer Chat übernimmt die Rolle als Hauptentwickler / Technical Lead / Produ
 3. `docs/ACTIVE_WORK_STATUS.md`
 4. `docs/CHATGPT_TECHNICAL_LEAD_CONTINUITY.md`
 5. `docs/DOMAIN_PROGRAM_COMPLETION_POLICY.md`
-6. relevante aktuelle Account/Admin/Provider/Trip-Workspace-Handoffs
+6. relevante aktuelle Account/Admin/Provider/Trip-Workspace-Handoffs und PR-Kommentare
 
 Danach GitHub, CI, Vercel und Supabase live verifizieren. Nicht blind auf diesen Snapshot vertrauen, falls seitdem Arbeit weitergelaufen ist.
 
@@ -33,19 +33,28 @@ Danach GitHub, CI, Vercel und Supabase live verifizieren. Nicht blind auf diesen
 
 Nächster Block: PR #49 / Slice C – Provider & Cost Board.
 
-#49 ist historisch auf dem alten Slice-B-Stack vorbereitet. Der Agent muss zuerst den neuen Main `e3bad749...` aufnehmen/retargeten/synchronisieren und darf keine alte globale Dokumentationswahrheit zurückbringen. Danach Slice C im dokumentierten read-only Scope, vollständige Gates, unabhängiger Review und neue PO-Gates.
+#49 ist historisch auf dem alten Stack vorbereitet. Der Agent muss zuerst den neuen Main `e3bad749...` aufnehmen/retargeten/synchronisieren. Danach Slice C im dokumentierten read-only Scope, vollständige Gates, unabhängiger Review und neue PO-Gates.
 
 ### Account
 
-PR #53 / AP-3: Draft, implementiert/gegatet, ADR-0160, unabhängiger Technical-Lead-Review pending. Runtime `612d819e...`, aktueller Head `5fb879f5...`. Main ist seit Slice-Start weitergelaufen; Current-Main-Integration vor späterer Merge-Entscheidung prüfen.
+PR #53 / AP-3: Draft. Independent Technical-Lead Review bereits erfolgt. AP-3-Grundlogik ist grundsätzlich sauber, aber zwei Abschlussbedingungen sind offen:
+
+1. Current-Main-Sync auf `e3bad749...` + vollständige Re-Gates.
+2. 200er-Hinweis fail-honest korrigieren; bei exakt 200 geladenen Reisen ist nicht bewiesen, dass weitere Reisen gespeichert sind.
+
+Runtime `612d819e...`, zuletzt beobachteter PR/docs Head `5fb879f5...`, ADR-0160. Kein Ready/Merge/AP-4 vor Re-Review.
 
 ### Provider
 
-PR #54 / S3: Draft, implementiert/gegatet, ADR-0161, unabhängiger Review pending. Runtime `e284af55...`, aktueller Head `2e9a1a7f...`. Kein echter Provider/Secret/Vertrag/paid call/Production-Migration. Current-Main-Integration vor späterer Merge-Entscheidung prüfen.
+PR #54 / S3: Draft. Independent Technical-Lead Review bereits erfolgt. S3-Code hält die vorgesehene Trust-Grenze; kein zusätzlicher Runtime-/Security-/Truth-Fix im Scope gefunden. Runtime `e284af55...`, zuletzt beobachteter Head `2e9a1a7f...`, ADR-0161, CI `32752931378` SUCCESS, Vercel Preview success/READY.
+
+Offen: #54 ist 1 Commit hinter/divergiert gegenüber `main`; nur Current-Main-Sync + Re-Gates, keine neue S3-Funktion, kein S4. Kein echter Provider/Secret/Vertrag/paid call/Production-Migration.
 
 ### Trip Workspace
 
-PR #55: Draft/docs-only, Audit & Zielarchitektur technisch vorbereitet, Head `536ed50f...`, unabhängiger Review pending. Kein Runtime-Umbau.
+PR #55: Draft/docs-only. Independent Technical-Lead Review bereits erfolgt. Audit & Zielarchitektur sind inhaltlich plausibel und scope-treu; kein Runtime-Umbau. Head `536ed50f...`, CI `32752434172` SUCCESS, Vercel Preview READY.
+
+Offen: #55 ist 1 Commit hinter/divergiert und verändert zentrale Statusdocs. Nur Current-Main-/Docs-Reconciliation + Re-Gates; kein TW-1. Kernfunde für späteren Umbau bleiben dokumentiert: Safety/Seasonal-Orchestrierung unsichtbar, Mobile/Desktop unterschiedliche mentale Produktlogik, fehlende `Jetzt wichtig`-Schicht, Domain-lastige IA, Create-Flow/Pace-Default u. a.
 
 ## Verbindliche große Reihenfolge
 
@@ -73,6 +82,8 @@ Nach jedem relevanten Merge oder größeren Statuswechsel PR #52 sowie `JETNITY_
 
 ## Nächster Arbeitsstand
 
-- Admin darf jetzt Slice C vorbereiten/fortsetzen, aber erst nach sauberer Current-Main-Synchronisierung von #49.
-- Technical Lead reviewt #53, #54 und #55 unabhängig.
+- Admin: #49 Current-Main-Sync und Slice C.
+- Account #53: Agent-Fix/Sync/Re-Gates abwarten, dann Re-Review.
+- Provider #54: Agent-Sync/Re-Gates abwarten, dann Re-Review.
+- Trip #55: Agent-Docs-Reconciliation/Re-Gates abwarten, dann Re-Review.
 - PR #52 bleibt Draft; kein Ready/Merge ohne PO-Freigabe.
