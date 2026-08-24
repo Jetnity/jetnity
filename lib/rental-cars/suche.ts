@@ -99,7 +99,7 @@ export async function rentalCarSuchen(
     }
   }
 
-  const rate = rentalCarSucheErlaubt(ports.kennung)
+  const rate = await rentalCarSucheErlaubt(ports.kennung)
   if (!rate.ok) {
     return {
       httpStatus: 429,

@@ -86,7 +86,7 @@ export async function activitiesSuchen(
     }
   }
 
-  const quota = activitySucheErlaubt(ports.kennung)
+  const quota = await activitySucheErlaubt(ports.kennung)
   if (!quota.ok) {
     return {
       httpStatus: 429,

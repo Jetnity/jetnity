@@ -32,7 +32,7 @@ function sucheOhneProvider(zustand: FlugZustand): FlugSucheAntwort {
 export async function fluegeSuchen(
   eingabe: unknown,
   ports: SuchePorts,
-): Promise<{ httpStatus: number; koerper: FlugSucheAntwort }> {
+): Promise<{ httpStatus: number; koerper: FlugSucheAntwort; retryAfterSec?: number }> {
   if (!ports.zustand.aktiv || !ports.provider) {
     return { httpStatus: 200, koerper: sucheOhneProvider(ports.zustand) }
   }
@@ -50,10 +50,11 @@ export async function fluegeSuchen(
     }
   }
 
-  const quota = flugSucheErlaubt(ports.kennung)
+  const quota = await flugSucheErlaubt(ports.kennung)
   if (!quota.ok) {
     return {
       httpStatus: 429,
+      retryAfterSec: quota.retryAfterSec,
       koerper: {
         status: 'rate_limited',
         message: 'Du hast gerade zu oft gesucht. Bitte warte einen Moment.',

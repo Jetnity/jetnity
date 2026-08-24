@@ -11,6 +11,8 @@
 // Eine fehlende Variable ist kein Buildfehler.
 // Frei von Next und Provider-SDKs.
 
+import { providerOpsZustand } from '@/lib/provider-ops'
+
 export type HotelZustand =
   | { aktiv: true; umgebung: 'test' }
   | { aktiv: false; grund: 'production' | 'abgeschaltet' | 'ohne-zugang' }
@@ -18,15 +20,6 @@ export type HotelZustand =
 export type HotelUmgebung = {
   VERCEL_ENV?: string
   JETNITY_HOTEL_AKTIV?: string
-}
-
-function eingeschaltet(wert: string | undefined): boolean {
-  const normalisiert = wert?.trim().toLowerCase()
-  return normalisiert === 'true' || normalisiert === '1'
-}
-
-function istProduction(umgebung: HotelUmgebung): boolean {
-  return umgebung.VERCEL_ENV?.trim() === 'production'
 }
 
 export function hotelUmgebungAusProzess(): HotelUmgebung {
@@ -38,10 +31,11 @@ export function hotelZustand(
   umgebung: HotelUmgebung = hotelUmgebungAusProzess(),
   providerVorhanden = false,
 ): HotelZustand {
-  if (istProduction(umgebung)) return { aktiv: false, grund: 'production' }
-  if (!eingeschaltet(umgebung.JETNITY_HOTEL_AKTIV)) return { aktiv: false, grund: 'abgeschaltet' }
-  if (!providerVorhanden) return { aktiv: false, grund: 'ohne-zugang' }
-  return { aktiv: true, umgebung: 'test' }
+  return providerOpsZustand({
+    vercelEnv: umgebung.VERCEL_ENV,
+    flag: umgebung.JETNITY_HOTEL_AKTIV,
+    zugangVorhanden: providerVorhanden,
+  })
 }
 
 export function hotelZustandMeldung(zustand: HotelZustand): string {
