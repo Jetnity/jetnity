@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
-Stand: **24. August 2026, nach Merge von PR #46**  
-Status: **Admin B integriert; Admin C darf vorbereitet werden; Account AP-3, Provider S3 und Trip-Workspace-Audit warten auf unabhängige Reviews**
+Stand: **24. August 2026, 20:26 Europe/Zurich**  
+Status: **Admin B integriert; Admin C nächster Block; Account #53, Provider #54 und Trip #55 in Current-Main-Nachzug nach unabhängigen Reviews**
 
 ## Main / Production
 
@@ -17,41 +17,48 @@ Status: **Admin B integriert; Admin C darf vorbereitet werden; Account AP-3, Pro
 - Slice A / #44: merged
 - Slice B / #46: merged
 - nächster Block: Slice C / #49 Provider & Cost Board
-- #49 muss zuerst auf den neuen `main` synchronisiert/retargetet und frisch gegatet werden; kein Weiterarbeiten auf historischem Stack
+- #49 zuerst auf aktuellen `main` synchronisieren/retargeten und frisch gaten; kein Weiterarbeiten auf historischem Stack
 - danach unabhängiger Technical-Lead-Review und PO-Gates
 
 ## Account
 
 PR #53 / AP-3:
 
-- open Draft
+- Draft
 - Runtime `612d819ed9691f93cbab97128e301b0b7744721b`
-- aktueller PR Head `5fb879f5556012ab5a34584b4ba8a319ce6754a1`
+- zuletzt beobachteter PR/docs Head `5fb879f5556012ab5a34584b4ba8a319ce6754a1`
 - ADR-0160
-- technisch gegatet, unabhängiger Review pending
-- Main ist inzwischen weitergelaufen; Current-Main-Integration vor späterer Merge-Entscheidung berücksichtigen
+- Independent Technical-Lead Review erfolgt
+- Grundlogik grundsätzlich sauber, aber kein Current-Main-Closure
+- Korrektur nötig: 200er-Hinweis darf nicht behaupten, dass bei exakt 200 geladenen Reisen weitere Reisen existieren
+- zusätzlich Current-Main-Sync auf `e3bad749...` + vollständige Re-Gates nötig
+- kein Ready / kein Merge / kein AP-4 bis Re-Review
 
 ## Provider
 
 PR #54 / S3:
 
-- open Draft
+- Draft
 - Runtime `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`
-- aktueller PR Head `2e9a1a7ff0d8ccef6945cbc70aa3833743d076f1`
+- zuletzt beobachteter Head `2e9a1a7ff0d8ccef6945cbc70aa3833743d076f1`
 - ADR-0161
-- technisch gegatet, unabhängiger Review pending
+- CI `32752931378` SUCCESS; Vercel Preview success/READY
+- Independent Technical-Lead Review erfolgt: kein zusätzlicher Runtime-/Security-/Truth-Fix im S3-Scope gefunden
+- dennoch 1 Commit hinter/divergiert gegenüber aktuellem `main`; Sync + Re-Gates nötig
+- keine neue S3-Funktionalität, kein S4
 - kein echter Provider/Secret/Vertrag/paid call/Production-Migration
-- Current-Main-Integration vor späterer Merge-Entscheidung berücksichtigen
 
 ## Trip Workspace
 
 PR #55:
 
-- open Draft / docs-only
-- Head `536ed50ffda0279973058f7a2b78ee98217e7aad`
-- Audit/Zielarchitektur technisch vorbereitet
-- unabhängiger Review pending
-- kein Runtime-Umbau
+- Draft / docs-only
+- zuletzt beobachteter Head `536ed50ffda0279973058f7a2b78ee98217e7aad`
+- CI `32752434172` SUCCESS; Vercel Preview READY
+- Independent Technical-Lead Review erfolgt: Audit/Zielarchitektur inhaltlich plausibel und scope-treu
+- Kernfunde für späteren Umbau dokumentiert: Safety/Seasonal-Orchestrierung unsichtbar, Mobile/Desktop zwei mentale Produktlogiken, fehlendes `Jetzt wichtig`, Domain-lastige IA, Create-Flow/Pace-Default u. a.
+- 1 Commit hinter/divergiert; zentrale Docs müssen Current-Main-Wahrheit behalten
+- nur Current-Main-/Docs-Reconciliation + Re-Gates; kein Runtime-Umbau, kein TW-1
 
 ## Große Reihenfolge
 
@@ -66,5 +73,7 @@ Kein Ready ohne aktuelle PO-Freigabe. Kein Merge ohne separate aktuelle PO-Freig
 ## Exakter nächster Schritt
 
 - Admin-Agent: PR #49 gegen `main` `e3bad749...` synchronisieren/retargeten und Slice C kontrolliert fortsetzen.
-- Technical Lead: #53, #54, #55 unabhängig reviewen.
+- Account #53: Sync + 200er-Truth-Korrektur + Re-Gates, dann Technical-Lead-Re-Review.
+- Provider #54: Current-Main-Sync + Re-Gates, dann Technical-Lead-Re-Review.
+- Trip #55: Current-Main-/Docs-Reconciliation + Re-Gates, dann Technical-Lead-Re-Review.
 - PR #52 und zentrale Kontinuitätsdokumente nach jedem relevanten Statuswechsel aktuell halten.
