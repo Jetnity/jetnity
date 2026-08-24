@@ -89,4 +89,22 @@ describe('Flugsuche-Orchestrierung', () => {
     assert.equal('score' in koerper.options[0]!, false)
     assert.match(koerper.coverageNote, /nicht alle Airlines/i)
   })
+
+  test('Rate-Limit liefert 429 und Retry-After', async () => {
+    flugRateLeeren()
+    const ports = {
+      zustand: { aktiv: true, umgebung: 'test' } as const,
+      provider: providerMit(),
+      kennung: 'test-rate',
+    }
+    for (let i = 0; i < 8; i += 1) {
+      const erlaubt = await fluegeSuchen(SUCHANFRAGE, ports)
+      assert.equal(erlaubt.httpStatus, 200)
+    }
+    const begrenzt = await fluegeSuchen(SUCHANFRAGE, ports)
+    assert.equal(begrenzt.httpStatus, 429)
+    assert.equal(begrenzt.koerper.status, 'rate_limited')
+    assert.ok((begrenzt.retryAfterSec ?? 0) >= 1)
+    flugRateLeeren()
+  })
 })

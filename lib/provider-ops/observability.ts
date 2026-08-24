@@ -1,0 +1,27 @@
+// lib/provider-ops/observability.ts
+//
+// Observability-Contract ohne Persistenz, ohne Admin-UI, ohne Payload-Leak.
+
+import type { ProviderOpsDomain, ProviderOpsOutcome } from '@/lib/provider-ops/outcome'
+
+export const PROVIDER_OPS_OPERATIONEN = ['search', 'evaluate', 'nachweis'] as const
+export type ProviderOpsOperation = (typeof PROVIDER_OPS_OPERATIONEN)[number]
+
+export type ProviderOpsEvent = {
+  domain: ProviderOpsDomain
+  providerId: string | null
+  operation: ProviderOpsOperation
+  outcome: ProviderOpsOutcome
+  durationMs: number
+  resultCount: number | null
+  droppedCount: number | null
+  rateLimitHit: boolean
+  recordedAt: string
+}
+
+export function providerOpsEvent(teil: Omit<ProviderOpsEvent, 'recordedAt'> & { recordedAt?: string }): ProviderOpsEvent {
+  return {
+    ...teil,
+    recordedAt: teil.recordedAt ?? new Date().toISOString(),
+  }
+}

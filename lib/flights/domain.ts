@@ -21,6 +21,7 @@ export const FLUG_SUCHE_GRENZEN = {
   personenGesamt: { min: 1, max: 9 },
   angebote: 20,
   timeoutMs: 12_000,
+  maxAnfrageBytes: 16_384,
 } as const
 
 /** Eine Teilstrecke der Suche: von–nach an einem Kalendertag. */
