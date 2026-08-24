@@ -72,7 +72,7 @@ function HealthKarte({ item }: { item: SystemHealthItem }) {
         {offen ? 'Details schliessen' : 'Details'}
       </button>
       {offen ? (
-        <div className="mt-3 space-y-2 text-sm text-muted-foreground">
+        <div className="mt-3 space-y-2 text-sm text-muted-foreground" data-health-detail>
           <p>
             <span className="font-medium text-foreground">Beweist: </span>
             {item.proves}

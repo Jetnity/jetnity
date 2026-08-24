@@ -72,7 +72,7 @@ async function kombinierenPruefen(browser, engine, viewport) {
   const page = await kontext.newPage()
   const fehler = []
   try {
-    await page.goto(`${BASIS}${PFAD}`, { waitUntil: 'domcontentloaded' })
+    await page.goto(`${BASIS}${PFAD}`, { waitUntil: 'networkidle' })
     await page.getByRole('heading', { name: 'System Health Audit' }).waitFor({ timeout: 15_000 })
 
     for (const name of NAMEN) {
@@ -101,8 +101,13 @@ async function kombinierenPruefen(browser, engine, viewport) {
       fehler.push('unavailable darf nicht grün sein')
     }
 
-    await page.getByRole('button', { name: 'Details' }).first().click()
-    await page.getByText('Beweist:', { exact: false }).first().waitFor({ timeout: 5_000 })
+    const details = page.locator('[data-health-id="app"]').getByRole('button', { name: 'Details' })
+    await details.scrollIntoViewIfNeeded()
+    await details.click()
+    await page.locator('[data-health-id="app"] [data-health-detail]').waitFor({ timeout: 8_000 })
+    const detailText = await page.locator('[data-health-id="app"] [data-health-detail]').innerText()
+    if (!detailText.includes('Beweist:')) fehler.push('Detailtext ohne Beweist')
+    if (!detailText.includes('Beweist nicht:')) fehler.push('Detailtext ohne Beweist nicht')
 
     const layout = await page.evaluate(layoutPruefen)
     fehler.push(...layout.fehler)
