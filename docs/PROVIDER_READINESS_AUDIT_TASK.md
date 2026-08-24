@@ -3,6 +3,7 @@
 Stand: 24. August 2026
 Status: **Audit freigegeben / keine Implementierungsfreigabe**
 Branch: `audit/provider-readiness`
+Verantwortlicher Cursor-Anzeigename: `Jetnity provider readiness audit`
 
 ## Ziel
 
