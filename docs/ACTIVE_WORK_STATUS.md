@@ -1,9 +1,17 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38, Account AP-1/AP-2, Provider S1/S2, Admin Slice A und Admin Slice B auf `main` `e3bad749`; Admin Slice C Technical Closure / PASS, PR #49 Ready for Review, wartet auf separate Merge-Freigabe**
+Status: **PR #38, Account AP-1/AP-2, Provider S1/S2, Admin Slice A–C auf `main` `78192ab`; Account AP-3 Draft PR #53 Runtime PASS, docs-only Follow-up; PR #54 und PR #55 bleiben Draft; Admin wartet, kein Slice D**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
+
+**Admin Control Center Slice C – read-only Provider- und Kostenboard**
+
+- PR #49: **gemergt und geschlossen**
+- Merge auf `main`: `78192ab775165d08bb357140c2d04b865b8cc049`
+- Entscheidung: ADR-0162
+
+Davor vollständig abgeschlossen:
 
 **Account Platform AP-2 – Auth-UX-Hygiene**
 
@@ -78,17 +86,24 @@ Entscheidung: ADR-0159
 ### Admin Platform – Slice C
 
 Verantwortlicher Cursor-Anzeigename: `Admin platform audit`  
-Implementierungsbranch: `feat/admin-provider-cost-board`  
-Implementierungs-PR: **#49 Ready for Review** (Base: `main`)  
-Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
+Implementierungs-PR: **#49 – gemergt nach `main` `78192ab`**  
+Entscheidung: ADR-0162
+
+**Slice C ist auf `main`.** Read-only Provider- und Kostenboard. Konsumiert den gemergten S1-Vertrag (`lib/provider-ops`), ohne ihn zu kopieren oder zu verändern.
+
+Agent `Admin platform audit` **wartet**. Kein Slice D ohne neuen kontrollierten Auftrag.
+
+### Account Platform – AP-3
+
+Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`  
+Implementierungsbranch: `feat/account-ap3`  
+Implementierungs-Draft-PR: **#53** (Base: `main` `78192ab`)  
+Auftrag: `docs/ACCOUNT_AP3_TASK.md`  
+Status: `docs/ACCOUNT_AP3_STATUS.md`
 
 Aktiver Slice:
 
-**Admin Slice C hat Technical Closure / PASS. PR #49 ist Ready for Review.** Read-only Provider- und Kostenboard. Entscheidung: ADR-0162. Konsumiert den gemergten S1-Vertrag auf `main` (`01761eb9` / `lib/provider-ops`), ohne ihn zu kopieren oder zu verändern.
-
-Runtime zuletzt `965034d6`. Exact Head `bc60120f`. Review-Head `82f31bdc`. Aktueller Docs-Head `b82ef947` (CI `32763757040` SUCCESS, Vercel `8bKDqxT7fPKo1AG4BBAxCwjRhzoQ` READY). GitHub-Konto `Jetnity` setzte Ready am 24. August 2026, 18:43 UTC.
-
-Kein Provider-Aktivierungscenter. Keine Secrets, Verträge oder kostenpflichtigen Calls. Keine Fake-Health-/Cost-Wahrheit. Kein Finance-Live. Billing-P1 bleibt separat. Ready ist keine Merge-Freigabe.
+**AP-3 ist auf aktuellen `main` `78192ab` synchronisiert.** Ableitende Gruppen Aktiv / Kommend / Vergangen / Ohne Datum. Der 200er-Hinweis bleibt fail-closed. Runtime-Scope unverändert. Entscheidung: ADR-0160. Exact Head `c5e4a51f` lokal und remote gegatet. STOPP für unabhängigen Technical-Lead-Re-Review. Kein AP-4.
 
 ### Provider Readiness – S1 Shared Operational Contract
 
@@ -112,9 +127,31 @@ Aktiver Slice:
 
 Grenze: kein Live-Duffel, keine Provideraktivierung, keine Secrets, keine Production-Migration, kein S3–S6, kein Offer-Booking. `booking_url` bleibt `null`. Route Truth bleibt Foundation D.
 
+### Provider Readiness – S3 / PR #54
+
+Verantwortlicher Cursor-Anzeigename: `Jetnity provider readiness audit`  
+Implementierungs-Draft-PR: **#54**  
+Entscheidung vorgesehen: ADR-0161
+
+**PR #54 bleibt Draft.** Wartet auf finalen Sync / Re-Review nach Account-Integration von PR #53. Keine Provideraktivierung, keine Secrets, keine Production-Migration.
+
+### Trip Workspace Audit – PR #55
+
+Verantwortlicher Cursor-Anzeigename: `Trip workspace audit architecture`  
+Implementierungs-Draft-PR: **#55** (docs-only)
+
+**PR #55 bleibt Draft / docs-only.** Wartet auf finale Reconciliation nach Provider-Integration von PR #54. Startet keinen TW-1-Umbau und keine Runtime-Änderung.
+
 ## 4. Parallelitätsregel
 
-Admin Slice C darf parallel zu Provider-Workstreams arbeiten, darf deren Shared-Contract-Dateien aber nicht mischen. Slice A+B, Account AP-1/AP-2 und Provider S1/S2 auf `main` bleiben erhalten.
+Kontrollierte Reihenfolge der offenen Drafts:
+
+1. Account #53 Integration
+2. Provider #54 finaler Sync / Re-Review / Integration
+3. Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration
+4. danach neue kontrollierte Admin-/TW-Aufträge
+
+Admin Slice C darf parallel nicht in Shared-Contract-Dateien der Provider-Workstreams schreiben. Slice A+B+C, Account AP-1/AP-2 und Provider S1/S2 auf `main` bleiben erhalten. Agent `Admin platform audit` wartet; kein Slice D. TW-1 startet nicht direkt nach AP-3.
 
 Seriell/zentral bleiben insbesondere:
 
@@ -147,7 +184,7 @@ Wenn sie gestartet wird:
 
 ## 6. Governance
 
-- PR #43, PR #44, PR #45, PR #46, PR #47, PR #48 und PR #51 sind gemergt. PR #49 ist Ready for Review, aber nicht gemergt. PR #53 und PR #54 bleiben Draft.
+- PR #43, PR #44, PR #45, PR #46, PR #47, PR #48, PR #49 und PR #51 sind gemergt. PR #53, PR #54 und PR #55 bleiben Draft.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
@@ -155,6 +192,7 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-1. Separate ausdrückliche aktuelle Product-Owner-Merge-Freigabe für Admin Slice C / PR #49 abwarten. Nicht mergen ohne diese Freigabe. Kein Slice D in PR #49.
-2. ADR-Allokation: 0158=Slice A, 0159=Slice B, 0160=AP-3, 0161=S3, **0162=Admin Slice C**.
-3. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag (`docs/ADMIN_BILLING_LOCAL_REFUND_INTEGRITY_TASK.md`), nicht Slice C.
+1. Account AP-3 / Draft PR #53: Runtime PASS auf `c5e4a51f`. Der nachgelagerte Follow-up ist docs-only. Nächster Gate: Technical-Lead Docs-Re-Check. Kein AP-4. Kein Mark Ready. Kein Merge.
+2. Nach Account-Integration: PR #54 finaler Sync / Re-Review. Danach PR #55 finale Docs-Reconciliation. Danach erst neue kontrollierte Admin-/TW-Aufträge. Kein Slice D. Kein TW-1 ohne neuen Auftrag.
+3. ADR-Allokation: 0158=Slice A, 0159=Slice B, 0160=AP-3, 0161=S3, 0162=Admin Slice C.
+4. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag (`docs/ADMIN_BILLING_LOCAL_REFUND_INTEGRITY_TASK.md`), nicht AP-3.

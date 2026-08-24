@@ -3890,6 +3890,8 @@ Ein späterer vertrauenswürdiger Flugnachweis braucht einen **getrennten SECURI
 
 **Entscheidung:** Siehe `docs/ADR_0158_ADMIN_SLICE_A.md`. Historische Draft-Nummern ADR-0152/0155 für Slice A gelten nicht gegen aktuellen `main`.
 
+Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = ADR-0158, Admin B = ADR-0159, Account AP-3 = ADR-0160, Provider S3 = ADR-0161, Admin C = ADR-0162.
+
 ---
 
 ## ADR-0159 – Admin Slice B bleibt read-only System Health ohne Fake-Green
@@ -3941,6 +3943,30 @@ Ein späterer vertrauenswürdiger Flugnachweis braucht einen **getrennten SECURI
 **Begründung:** Foundation sichtbar machen ohne Fake-Aktivierung oder Fake-Kosten. Shared Contracts bleiben beim Provider-Workstream.
 
 **Konsequenzen:** Kein Slice D, kein Finance-Live, kein Billing-P1 in diesem PR. Draft PR #49 bleibt Draft.
+
+---
+
+## ADR-0160 – Meine Reisen Lebenslage ist abgeleitet, nicht gespeichert
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf `feat/account-ap3` (AP-3), Draft bis Product-Owner-Freigabe
+
+**Entscheidung:**
+
+- Aktiv / Kommend / Vergangen / Ohne Datum entstehen nur aus vorhandenen `startDate`/`endDate` gegen den Geräte-Kalendertag.
+- Dieselbe date-only-Funktion wie die Account-Übersicht (`istAktiv` / `istKommend` in `lib/account/reise-lage.ts`).
+- Kein gespeicherter Lifecycle, kein `status = archived` Write, keine neue Tabelle.
+- Undatierte Reisen sind niemals Vergangen.
+- Der Server gruppiert nicht. Unbekannter Kalendertag zeigt Karten ohne Gruppenbehauptung.
+- Die 200-Grenze von `reisenLaden()` wird sichtbar, wenn die Liste voll ist. Der Hinweis behauptet nicht, dass weitere Reisen existieren.
+
+**Kontext:** Account-Audit AP-3; bestehende flache `/reisen`-Liste. Die zuerst verwendete Kennung ADR-0158 war bereits durch Admin Slice A auf `main` belegt.
+
+**Alternativen:** Server-UTC als „heute“; gespeichertes `lifecycle`; Archiv-Filter in AP-3.
+
+**Begründung:** Ein zweites Reisenmodell oder ein stiller UTC-Tag würde Übersicht und Liste auseinanderlaufen. Archivieren bleibt AP-4 / Shared Trip-Status.
+
+**Konsequenzen:** Kurz nach dem ersten Client-Render erscheinen die Gruppen. Bereits in der DB gesetztes `archived` bleibt in der Datumsgruppe sichtbar, weil AP-3 nicht filtert und nicht schreibt.
 
 ---
 
