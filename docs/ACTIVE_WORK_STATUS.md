@@ -1,9 +1,18 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 vollständig integriert; Account AP-1, Admin Slice A und Provider Ops S1 als parallele Draft-Workstreams aktiv**
+Status: **PR #38 und Account AP-1 auf `main`; aktive Draft-Workstreams: Account AP-2 (PR #48), Admin Slice A und Provider Ops S1**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
+
+**Account Platform AP-1 – Account-Shell + persönliche Übersicht**
+
+- PR #43: **gemergt und geschlossen**
+- Squash-Merge auf `main`: `084f7c87f36f9929f3e4a9deb9d3fedef6e96982`
+- gemergt: 24. August 2026, 11:37 UTC
+- ADR-0152, ADR-0153 bleiben verbindlich
+
+Davor vollständig abgeschlossen:
 
 **Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
 
@@ -36,29 +45,31 @@ Supabase Production `qscbgcdmivbbnzrcyegn`:
 
 Keine Seasonal-Tabelle, kein Live-Seasonal-Provider, keine neuen Secrets und keine neuen laufenden Providerkosten.
 
+Account AP-1 liegt auf `main`. Eine separate Account-Production-Migration war nicht Teil von AP-1 und ist nicht behauptet.
+
 ## 3. Aktive Workstreams
 
-### Account Platform – AP-1
+### Account Platform – AP-2
 
 Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`  
 Audit-Referenz: Draft-PR #39 / `audit/account-platform` – **AUDIT-PASS**  
-Implementierungsbranch: `feat/account-ap1`  
-Implementierungs-Draft-PR: **#43**  
-Auftrag: `docs/ACCOUNT_AP1_MAIN_SYNC_TASK.md`  
-Handoff: `docs/ACCOUNT_AP1_HANDOFF.md`  
-Status: `docs/ACCOUNT_AP1_STATUS.md`  
-Review: `docs/ACCOUNT_AP1_CHATGPT_REVIEW.md`
+Implementierungsbranch: `feat/account-ap2`  
+Implementierungs-Draft-PR: **#48** (Base: `main`)  
+Auftrag: `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md`  
+Handoff: `docs/ACCOUNT_AP2_HANDOFF.md`  
+Status: `docs/ACCOUNT_AP2_STATUS.md`
 
 Aktiver Slice:
 
-**AP-1 – Account-Shell + persönliche Übersicht; mit `main` `f92e0c9e` synchronisiert.**
+**AP-2 – Auth-UX-Hygiene; auf aktuellen `main` `084f7c87` rebase und retargetet; Technical Integration Closure / PASS.**
 
-Gegates Runtime-Head: `19f939698233cfd99b828f4c0aa14d64ca0f4ac5`  
-GitHub Actions CI **SUCCESS** und Vercel Preview **success** auf genau diesem Head.
+Gegates Runtime-Head: `de5ffd8a91576a2281b6d5eda75338504a43b7a7`  
+GitHub Actions CI **SUCCESS** (`32727253862`) und Vercel Preview **success** (`AAYbSDBt4p636mxY1aWuPgq9gUSS`) auf genau diesem Head.  
+Review: https://github.com/Jetnity/jetnity/pull/48#pullrequestreview-5007976065
 
-Technical-Lead REQUEST CHANGES (Kalendertag + 503) bleiben umgesetzt (ADR-0153). Keine Scope-Erweiterung in diesem Sync.
+AP2-B1 bleibt geschlossen. Keine Scope-Erweiterung in diesem Sync. Technical Closure ist keine Ready-/Merge-Freigabe.
 
-Grenze: UI/IA und bestehende `reisenLaden()`-Truth. Keine neue Auth-/Trip-/Traveller-/Billing-/Route-Truth, keine DB-Migration, keine Homepage-Änderung.
+Grenze: bestehender AP-2-Auth-UX-Scope. Keine DB/Migration/RLS, keine Traveller-/Guest→Account-Vertragsänderung, keine Provider-Aktivierung, kein AP-3.
 
 ### Admin Platform – Slice A
 
@@ -93,7 +104,7 @@ Grenze: keine Fachwahrheit, kein `UniversalProvider`, kein `FlugNachweis`, keine
 
 ## 4. Parallelitätsregel
 
-Account AP-1, Admin Slice A und Provider Ops S1 dürfen parallel arbeiten, dürfen ihre Dateien aber nicht mischen.
+Account AP-2, Admin Slice A und Provider Ops S1 dürfen parallel arbeiten, dürfen ihre Dateien aber nicht mischen.
 
 Seriell/zentral bleiben insbesondere:
 
@@ -126,7 +137,8 @@ Wenn sie gestartet wird:
 
 ## 6. Governance
 
-- PR #43, PR #44, PR #45 und PR #47 bleiben Draft.
+- PR #48, PR #44, PR #45 und PR #47 bleiben Draft.
+- PR #43 ist gemergt; das ist keine Freigabe für AP-2-Ready oder AP-2-Merge.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
@@ -134,9 +146,9 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-1. Unabhängiger Technical-Lead-Integrationsreview von Draft-PR #43 auf Runtime-Head `19f939698233cfd99b828f4c0aa14d64ca0f4ac5`.
-2. `Admin platform audit` implementiert ausschließlich Slice A auf PR #44.
+1. Product-Owner-Entscheidung über Mark Ready / Merge von Draft-PR #48 auf Runtime-Head `de5ffd8a`. Technical Integration Closure / PASS liegt vor und ersetzt diese Freigabe nicht.
+2. `Admin platform audit` arbeitet weiter ausschließlich Slice A auf PR #44.
 3. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung; kein Mark Ready / kein Merge / kein S2.
 4. ChatGPT/Technical Lead prüft jeden Slice unabhängig.
-5. AP-2, Admin Slice B und Provider S2 brauchen jeweils eine neue ausdrückliche Freigabe.
-6. PR #43, #44, #45 und #47 bleiben Draft. Kein Ready, kein Merge ohne Product-Owner-Freigabe.
+5. AP-3, Admin Slice B und Provider S2 brauchen jeweils eine neue ausdrückliche Freigabe.
+6. PR #48, #44, #45 und #47 bleiben Draft. Kein Ready, kein Merge ohne Product-Owner-Freigabe.

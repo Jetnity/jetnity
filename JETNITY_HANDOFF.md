@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal auf `main`; aktive Draft-Workstreams: Account AP-1 (PR #43), Admin Slice A und Provider Ops S1**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal und Account AP-1 auf `main`; aktive Draft-Workstreams: Account AP-2 (PR #48), Admin Slice A und Provider Ops S1**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -297,7 +297,8 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation
-6. **→ Account Platform AP-1 (Draft-PR #43) parallel zu Admin Slice A und Provider Ops S1**
+6. ✅ Account Platform AP-1 – Squash-Merge nach `main` (`084f7c87`, PR #43)
+6a. **→ Account Platform AP-2 (Draft-PR #48) Technical Integration Closure / PASS auf `de5ffd8a`; wartet auf Product-Owner-Entscheidung; parallel Admin Slice A und Provider Ops S1**
 7. Provider-Readiness-/Adapter-Lücken schließen – S1 Shared Operational Contract Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`; wartet auf Product-Owner-Entscheidung
 8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
@@ -313,17 +314,17 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-Aktiver Account-Branch: `feat/account-ap1`  
-Draft PR: `#43`  
-Auftrag: `docs/ACCOUNT_AP1_MAIN_SYNC_TASK.md`  
-Handoff: `docs/ACCOUNT_AP1_HANDOFF.md`  
-Runtime-Head: `19f939698233cfd99b828f4c0aa14d64ca0f4ac5`
+Aktiver Account-Branch: `feat/account-ap2`  
+Draft PR: `#48`  
+Auftrag: `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md`  
+Handoff: `docs/ACCOUNT_AP2_HANDOFF.md`  
+Runtime-Head: `de5ffd8a91576a2281b6d5eda75338504a43b7a7`
 
-1. AP-1 (Account-Shell + persönliche Übersicht) ist implementiert.
-2. Technical-Lead REQUEST CHANGES an PR #43: Geräte-Kalendertag und evidenter 503-Text sind umgesetzt (ADR-0153).
-3. Branch ist mit `main` `f92e0c9e` synchronisiert und auf dem Runtime-Head gegated.
-4. PR bleibt Draft. Kein Mark Ready, kein Merge ohne aktuelle Product-Owner-Freigabe.
-5. **Exakter nächster Schritt:** Unabhängiger Technical-Lead-Integrationsreview von PR #43. AP-2 nicht in diesem Schritt retargeten. Kein AP-3.
+1. AP-1 ist mit ausdrücklicher Product-Owner-Freigabe nach `main` gemergt (`084f7c87`, PR #43).
+2. AP-2 ist auf genau diesen `main` rebase und PR #48 ist auf `main` retargetet.
+3. Exact Runtime-Head `de5ffd8a` ist lokal und remote gegated (Actions `32727253862`, Vercel `AAYbSDBt4p636mxY1aWuPgq9gUSS`).
+4. PR #48 bleibt Draft. Kein Mark Ready, kein Merge ohne aktuelle Product-Owner-Freigabe.
+5. **Exakter nächster Schritt:** Product-Owner-Entscheidung über Mark Ready / Merge von Draft-PR #48. Technical Integration Closure / PASS auf `de5ffd8a` ist keine Ready-/Merge-Freigabe. Kein AP-3.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

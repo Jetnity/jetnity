@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety und Travel Timing & Seasonal auf `main`; aktive Workstreams: Account Platform AP-1 (Draft-PR #43) und Admin Slice A**
+Status: **Foundation C/D/E, Travel Safety, Travel Timing & Seasonal und Account AP-1 auf `main`; Account AP-2 Technical Integration Closure / PASS (Draft-PR #48), parallel Admin Slice A**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -220,7 +220,7 @@ Verbindlich:
 
 ## 6a. Account Platform AP-1 – persönliches Zuhause
 
-Status: **mit `main` `f92e0c9e` synchronisiert auf `feat/account-ap1`, Draft-PR #43; Runtime-Head `19f93969` gegated, wartet auf Integrationsreview**
+Status: **auf `main` – Squash-Merge `084f7c87` (PR #43), 24. August 2026**
 
 Ziel: das persönliche Account-Zuhause anlegen, ohne den Trip Workspace zu verdoppeln.
 
@@ -235,6 +235,28 @@ Umgesetzt in AP-1:
 Nicht in AP-1: Auth/MFA/AAL, RLS, Traveller-Registry, Privacy/Billing, Guest→Account, Homepage.
 
 Auftrag: `docs/ACCOUNT_AP1_MAIN_SYNC_TASK.md`. Entscheidung: ADR-0152, ADR-0153.
+
+---
+
+## 6b. Account Platform AP-2 – Auth-UX-Hygiene
+
+Status: **Technical Integration Closure / PASS auf Runtime-Head `de5ffd8a`, Draft-PR #48; wartet auf Product-Owner-Entscheidung**
+
+Ziel: Login, Register, Callback, OAuth-Sichtbarkeit, Gast-/Session-Navigation und MFA-Dialog-Accessibility härten, ohne Auth-/MFA-/AAL-Vertrag oder Provider zu ändern.
+
+Umgesetzt in AP-2:
+
+- OAuth-Schaltflächen nur bei belegtem `config.toml`-Enablement
+- zentrale `next`-Allowlist, fail-closed `/reisen`
+- Login/Register über `getUser()`
+- öffentliche Register-Enumeration inkl. AP2-B1 geschlossen
+- Gast `/reisen`: Fortsetzen nur bei aktivem Entwurf
+- Footer aus `sitzungseintraege()`
+- MFA-Dialog a11y gehärtet
+
+Nicht in AP-2: DB/Migration/RLS, Traveller-Registry, Guest→Account-Vertragsänderung, Provider-Aktivierung, AP-3, Mark Ready, Merge.
+
+Auftrag: `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md`.
 
 ---
 
@@ -363,7 +385,8 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation
-6. **→ Account Platform AP-1 (Draft-PR #43) parallel zu Admin Slice A**
+6. ✅ Account Platform AP-1 – auf `main` (`084f7c87`, PR #43)
+6a. **→ Account Platform AP-2 (Draft-PR #48) Technical Integration Closure / PASS auf `de5ffd8a`; wartet auf Product-Owner-Entscheidung; parallel Admin Slice A**
 7. Provider-Readiness-/Adapter-Lücken schließen
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit
