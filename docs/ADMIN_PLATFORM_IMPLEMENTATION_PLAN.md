@@ -5,18 +5,18 @@ Status: **Plan aus Audit – Implementierung erst nach Technical-Lead-/Product-O
 Cursor-Anzeigename: `Admin platform audit`  
 Branch-Vorlage später: nicht dieser Audit-Branch
 
-Dieser Plan schneidet kleine, konfliktarme PRs. Er ändert keine Shared Contracts ohne Lead-Schnitt. Er aktiviert keine Provider, Payments, Bexio, Ads oder Infomaniak.
+Dieser Plan schneidet kleine, konfliktarme PRs. Er ändert keine Shared Contracts ohne Lead-Schnitt. Er aktiviert keine Provider, Payments, Bexio, Ads oder Infomaniak. Derselbe Cursor-Agent **`Admin platform audit`** führt den Admin-/Control-Center-Workstream grundsätzlich über die Implementierungs-Slices hinweg weiter; nach jedem Slice folgen Self-Review, Gates und unabhängiger Technical-Lead-Review, bevor derselbe Agent den nächsten Slice erhält. Kein Agentwechsel nur wegen eines neuen Blocks.
 
-Voraussetzung: technisches Closure von PR #38 und gemeinsamer Abgleich mit dem Account-Audit.
+Voraussetzung: technisches Closure von PR #38 und gemeinsamer Abgleich mit dem Account-Audit. Der gemeinsame Account/Admin-Shared-Contract-Schnitt ist bereits zentral dokumentiert; vor Implementierungsstart wird nur der aktuelle Stand erneut verifiziert.
 
 ---
 
 ## 1. Reihenfolge
 
 1. PR #38 Seasonal: Review/Closure (dieser Workstream fasst Seasonal nicht an).
-2. Account-Audit und dieses Admin-Audit gegen Shared Contracts legen.
-3. Technical Lead schneidet `profiles` / Rollen / Privacy / Billing / Support-Audit.
-4. Erst dann Implementierungs-Slices, jeweils eigener Branch + Draft-PR.
+2. Account-Audit und dieses Admin-Audit gegen Shared Contracts legen (erledigt; vor Start aktuellen Stand erneut lesen).
+3. Technical Lead hält `profiles` / Rollen / Privacy / Billing / Support-Audit zentral geschnitten.
+4. Erst dann Implementierungs-Slices, jeweils eigener Branch + Draft-PR, standardmäßig nacheinander durch `Admin platform audit`.
 5. Auth/RLS/DB-Änderungen seriell, nie parallel von zwei Agenten.
 6. Post-Integration Cross-Domain-Review.
 7. Merge nur nach aktueller Product-Owner-Freigabe.
@@ -28,17 +28,19 @@ Voraussetzung: technisches Closure von PR #38 und gemeinsamer Abgleich mit dem A
 **Owner:** Technical Lead + Product Owner  
 **Kein Cursor-Alleingang**
 
-Zu entscheiden, nicht zu bauen:
+Der Grundschnitt ist in `docs/ACCOUNT_ADMIN_SHARED_CONTRACT_DECISIONS.md` dokumentiert. Vor Shared-Write-Slices muss dieser aktuelle Stand gelesen und bei Bedarf durch einen neuen ADR präzisiert werden.
 
-- bleibt `creator` eine Rolle?
-- neue Capabilities oder Wiederverwendung der fünf bestehenden?
-- Support-Reise lesen: minimierte RPC vs. niemals?
-- Billing-SoT: lokale `payments` vs. späteres Abo vs. Bexio
-- Admin-Audit-Tabelle: ja/nein, wer schreibt
-- AAL2 für welche Writes
-- IP-Blocklist durchsetzen oder als unbearbeitetes Werkzeug kennzeichnen
+Noch separat zu entscheiden, wenn der jeweilige Slice tatsächlich ansteht:
 
-Deliverable: kurzer ADR oder Abschnitt in `DECISIONS.md`. Ohne diesen Schnitt keine RLS-Migration.
+- spätere Ablösung der Rolle `creator`, falls überhaupt nötig
+- neue Capabilities nur bei realem Bedarf
+- genaue Form der minimierten Support-Reise-RPC
+- konkreter Billing-/Entitlement-Contract vor Live-Payments
+- konkrete Admin-Audit-Tabelle/Migration
+- exakte AAL2-Matrix je neuem kritischem Write
+- IP-Blocklist-Enforcement nur nach separater Security-Entscheidung
+
+Ohne geklärten Shared-Schnitt keine RLS-/kritische DB-Migration.
 
 ---
 
@@ -177,7 +179,18 @@ Jeweils eigener PR, eigener Vertrag, eigene Kosten, eigene Secrets. Nicht bünde
 
 ---
 
-## 14. Testplan pro Slice
+## 14. Ausführungsmodell
+
+- `Admin platform audit` bleibt der verantwortliche Admin-Agent bis der Admin-/Control-Center-Workstream abgeschlossen ist, sofern kein konkreter Grund für einen Wechsel entsteht.
+- Standard: Slice A → Review/Gates → Slice B → Review/Gates → Slice C usw.
+- Account und Admin dürfen als getrennte Domänen parallel laufen.
+- Shared Auth/RLS/DB/Privacy/Billing/Support-Verträge werden nicht parallel von Account- und Admin-Agent verändert.
+- Ein Slice gilt erst nach Self-Review + technischen Gates + unabhängigem Technical-Lead-Review als technisch abgeschlossen.
+- Kein Mark Ready und kein Merge ohne Product Owner.
+
+---
+
+## 15. Testplan pro Slice
 
 Mindestens:
 
@@ -193,10 +206,10 @@ Kein Mark Ready, kein Merge ohne Product Owner.
 
 ---
 
-## 15. Was dieser Audit-PR nicht tut
+## 16. Was dieser Audit-PR nicht tut
 
 - keine der Slices implementieren
 - keine Preview-Behauptung für ein neues Control Center
 - Seasonal/Account-Code nicht anfassen
 
-Nächster Schritt nach Review: Slice 0 entscheiden, dann Slice A freigeben oder zurückweisen.
+Nächster Schritt nach PR-#38-Closure: Slice A durch `Admin platform audit` freigeben, danach unabhängig prüfen und erst dann den nächsten Slice an denselben Agenten geben.
