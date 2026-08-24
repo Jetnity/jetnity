@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Safety und Seasonal abgeschlossen; Provider-Readiness Audit Draft-PR #45 Technical-Lead PASS / planning accepted; Account AP-1 und Admin Slice A eigene Draft-PRs**
+Status: **Foundation C/D/E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -160,9 +160,9 @@ Verbindliche Truth-Logik:
 
 ---
 
-## 6. Abgeschlossen – Travel Timing & Seasonal Intelligence
+## 6. NÄCHSTE PRIORITÄT – Travel Timing & Seasonal Intelligence
 
-Status: **PR #38 gemergt; R17 Technical Closure / PASS; kein Live-Provider**
+Status: **Draft PR #38; R17 Technical Closure / PASS auf Runtime `57824019`; wartet auf Product-Owner-Merge-Freigabe; kein Live-Provider**
 
 Policy:
 
@@ -214,28 +214,39 @@ Verbindlich:
 19. ✅ ChatGPT-Re-Review R15: Blocker 30 geschlossen, Exact-Head-Gate grün
 20. ✅ ChatGPT-Re-Review R16: Blocker 31 geschlossen, Exact-Head-Gate grün
 21. ✅ ChatGPT-Re-Review R17: Technical Closure / PASS, kein neuer konkreter Defekt
-22. ✅ Product-Owner-Merge und Production-Integration (siehe `docs/PR38_PRODUCTION_INTEGRATION.md`)
+22. **→ Product-Owner-Merge-Gate** (Draft bleibt; kein Mark Ready / Merge ohne ausdrückliche Freigabe)
 
 ---
 
-## 7. IN ARBEIT – Provider-Readiness / Adapter-Grenzen
-
-Status: **Draft PR #45 / unabhängiger Technical-Lead-Review PASS / planning accepted; keine Implementierungsfreigabe**
-
-Audit-Artefakte:
-
-- `docs/PROVIDER_READINESS_AUDIT.md`
-- `docs/PROVIDER_READINESS_MATRIX.md`
-- `docs/PROVIDER_READINESS_SHARED_CONTRACT_PROPOSAL.md`
-- `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md`
+## 7. Provider-Readiness / Adapter-Grenzen
 
 **Echte Provider bleiben bis zur späteren Providerphase deaktiviert.**
 
-Der Audit vom 24.08.2026 hat die acht Kernbereiche und zusätzliche Abhängigkeiten (Routing/POI/Live-Status/Monitoring, Airport-/Places-Dumps) inventarisiert.
+Vorher müssen provider-neutrale Ports/Adapter-Grenzen professionell geschlossen werden, insbesondere bei:
 
-Unabhängiger Review: `docs/PR45_TECHNICAL_LEAD_REVIEW.md`. Bevorzugter nächster Implementierungsblock **nach eigenem Auftrag**: PR-S1 Shared Operational Contract, danach `FlugNachweis`. Höchste P0: `FlugNachweis` und persistenter Cost Guard. Konkrete Adapter bleiben in der späteren Providerphase.
+- Flights
+- Hotels
+- Activities
+- Mobility / Transfers
+- Rental Cars
+- Travel Requirements / Readiness
+- Safety & Disruption
+- Timing & Seasonal
+
+Zu prüfen/vereinheitlichen:
+
+- Request-/Response-Port
+- Evidence / Source / Freshness
+- Provider Health / unavailable / timeout
+- Rate-Limit-/Billing-Schutz
+- Cache-/Lizenzgrenzen
+- Stale-/Invalidation-Verhalten
+- Auditability
+- keine Browser-/LLM-Felder als Provider Truth
 
 Keine Verträge, Secrets oder laufenden Providerkosten ohne separate Freigabe.
+
+S1 Shared Operational Contract ist Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`. Es zentralisiert nur technische Hüllen. Audit-PR #45 bleibt Draft. S1 aktiviert keine Provider und schließt nicht `FlugNachweis`, persistente Kostenschranken oder Admin-Health. Merge nur nach ausdrücklicher Product-Owner-Freigabe.
 
 ---
 
@@ -331,13 +342,12 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation
-6. **→ Provider-Readiness Audit (Draft PR #45, Technical-Lead PASS / planning accepted)**
-7. Jetnity-seitige Provider-Readiness-Slices nach eigenem Auftrag (bevorzugt PR-S1, dann `FlugNachweis`)
-8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
-9. finaler Workspace Intelligence Audit
-10. echte Providerphase
-11. provider-backed End-to-End-/Truth-Audit
-12. finale Startseiten-Positionierung
+5. **→ Travel Timing & Seasonal – provider-neutrale Foundation (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
+6. Provider-Readiness-/Adapter-Lücken schließen
+7. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
+8. finaler Workspace Intelligence Audit
+9. echte Providerphase
+10. provider-backed End-to-End-/Truth-Audit
+11. finale Startseiten-Positionierung
 
-Der nächste Agent darf D/E/Safety/Seasonal **nicht neu bauen** und darf **nicht direkt einen echten Provider integrieren**.
+Der nächste Agent darf D/E/Safety **nicht neu bauen** und darf **nicht direkt einen echten Provider integrieren**.

@@ -1,9 +1,11 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Foundation D/E, Safety und Seasonal abgeschlossen; Provider-Readiness Audit Draft-PR #45 Technical-Lead PASS / planning accepted; Account AP-1 (PR #43) und Admin Slice A (PR #44) eigene Workstreams**
+Status: **verbindlicher operativer Übergabepunkt – Foundation D, Foundation E und Travel Safety & Disruption Foundation abgeschlossen; aktiver Block: Travel Timing & Seasonal Intelligence – Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
+
+Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Provider Ops S1 (dieser Branch) zusätzlich in `docs/PROVIDER_OPS_S1_STATUS.md` und `docs/PROVIDER_OPS_S1_HANDOFF.md`.
 
 > **Kein relevanter Fortschritt darf beim Wechsel von Chat, Agent oder Sitzung verloren gehen. Was für die Fortsetzung wichtig ist, gehört ins Repository.**
 
@@ -294,14 +296,13 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 2. ✅ Foundation D – Route & Transit
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
-5. ✅ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (PR #38 gemergt)
-6. **→ Provider-Readiness Audit (Draft PR #45, unabhängiger Technical-Lead-Review PASS / planning accepted; keine Implementierungsfreigabe)**
-7. Jetnity-seitige Provider-Readiness-Slices (bevorzugt PR-S1, dann `FlugNachweis`) erst nach eigenem Auftrag
-8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
-9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
-10. echte Providerphase
-11. provider-backed End-to-End-/Truth-Audit
-12. finale Startseiten-Positionierung / Kommunikation
+5. **→ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
+6. Provider-Readiness-/Adapter-Lücken schließen – **S1 Shared Operational Contract Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`; wartet auf Product-Owner-Entscheidung**
+7. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
+8. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
+9. echte Providerphase
+10. provider-backed End-to-End-/Truth-Audit
+11. finale Startseiten-Positionierung / Kommunikation
 
 ### Provider-Regel
 
@@ -311,26 +312,19 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-Provider-Readiness-Audit-Branch: `audit/provider-readiness`  
-Draft PR: `#45`  
-Basis: `origin/main` @ `e4f4cca7`
+Aktiver Branch: `feat/travel-timing-seasonal-intelligence`  
+Draft PR: `#38`  
+Basis: `origin/main` @ `cd220beb`  
+Runtime-Head: `57824019`
 
-Pflichtlektüre für diesen Block:
-
-- `docs/PROVIDER_READINESS_AUDIT_TASK.md`
-- `docs/PROVIDER_READINESS_AUDIT.md`
-- `docs/PROVIDER_READINESS_MATRIX.md`
-- `docs/PROVIDER_READINESS_SHARED_CONTRACT_PROPOSAL.md`
-- `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md`
-
-1. Der Audit ist gegen den tatsächlichen Code verifiziert. Unabhängiger Technical-Lead-Review: **PASS / planning accepted** (`docs/PR45_TECHNICAL_LEAD_REVIEW.md`).
-2. Höchste belegte Jetnity-seitige Lücken bleiben: fehlender `FlugNachweis` (P0) und fehlender globaler Cost Guard (P0 vor bezahlter Production-Aktivierung).
-3. Ein minimaler Shared Operationsvertrag ist angenommen; keine Provider-Plattform.
-4. PR #45 bleibt Draft. Review ist keine Implementierungs-, Mark-Ready-, Merge- oder Providerfreigabe.
-5. **Exakter nächster Schritt:** S1 nur auf Draft-PR #47 / `feat/provider-ops-s1` implementieren. PR #45 bleibt Audit-Draft und implementiert nichts.
+1. Ist-Audit ist gegen den tatsächlichen Code verifiziert.
+2. Seasonal-Runtime sowie Review-Blocker 1–31 sind geschlossen. Untrusted Intake persistiert keine Client-Surface; `FlugOption` erfindet keine Evidence aus Segmentnachbarschaft.
+3. Full Gate auf Runtime `57824019` ist lokal und remote grün (1703/1703 Tests, UI-Audit 1014/1014, Build Exit 0, GitHub Actions SUCCESS, Vercel Preview READY).
+4. PR bleibt Draft. Kein echter Seasonal-Provider, kein Secret, keine unfreigegebenen Kosten, keine Production-Migration, kein Merge ohne aktuelle Product-Owner-Freigabe.
+5. **Exakter nächster Schritt:** Product-Owner-Entscheidung zu Mark Ready / Merge. Technical Closure ersetzt diese Freigabe nicht. Production-Migration bleibt ein separates Gate.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
 Leitsatz:
 
-> **Safety und Seasonal sind fertige, getrennte Truth-Domänen. Echte Provider kommen erst, nachdem die Jetnity-seitigen Nachweis-, Kosten- und Observability-Verträge geschlossen sind.**
+> **Safety ist fertig als akute Truth-Domäne. Seasonal wird als getrennte, evidenzbasierte saisonale Wahrheit gebaut – beide verstehen dieselbe Reise, vermischen ihre Aussagen aber nicht.**

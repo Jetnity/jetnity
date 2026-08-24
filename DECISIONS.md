@@ -3742,26 +3742,32 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
-## ADR-0152 – Provider-Readiness: minimaler Operationsvertrag, getrennte Fachports
+## ADR-0154 – Minimaler gemeinsamer Provider-Operationsvertrag
 
 **Datum:** 24. August 2026  
-**Status:** Audit-Entscheidung auf Draft-PR #45; unabhängiger Technical-Lead-Review PASS / planning accepted; nicht implementiert
+**Status:** umgesetzt und Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`; kein Mark Ready / kein Merge
 
 **Entscheidung:**
 
-- Vor der echten Providerphase schliesst Jetnity die **Jetnity-seitigen** Nachweis-, Kosten-, Failure- und Observability-Verträge.
-- Ein **minimaler gemeinsamer Operationsvertrag** ist zulässig und empfohlen (Request-Härtung, Failure-Taxonomie, Kill-Switch-Form, Cost-Guard-Interface, Observability-Event ohne Payload, kommerzielle Nachweis-Form).
-- Eine gemeinsame Provider-Plattform, ein gemeinsames Offer-Modell oder eine gemeinsame Official-/Safety-/Seasonal-Wahrheit ist **unzulässig**.
-- Konkrete Adapter bleiben in der späteren Providerphase und werden nicht auf angenommenen Schemas gebaut.
-- Fehlende Factories/`null` sind kein Foundation-Defekt.
+- Technische Provider-Operations liegen in `lib/provider-ops/*`.
+- Die gemeinsame Taxonomie ist nur `ok | partial | empty | checked_empty | unavailable | timeout | invalid | rate_limited | error`.
+- Fachzustände wie Readiness `recheck_needed` / `insufficient_context` und Seasonal `rejected_acute` gehören nicht in diesen Basistyp.
+- Request-Härtung, Kill-Switch-Form, In-Memory-Cost-Guard und ein Observability-Event-Typ ohne Persistenz sind erlaubt.
+- `providerOpsEvent()` konstruiert das Event nur aus der Allowlist. Input darf nicht per Spread kopiert werden.
+- `ProviderOpsCostGuard.erlaubt()` ist async, damit PR-S6 I/O einhängen kann, ohne Domain-Hüllen erneut umzuschneiden. S1 implementiert nur den In-Memory-Port.
+- Bestehende Domain-Hüllen bleiben dünne Wrapper. Es gibt keinen `UniversalProvider` und kein gemeinsames Offer-Schema.
+- Flights-Search erhält dieselbe Request-Härtung wie Hotels. Mobility-/Rental-Timeout-HTTP 504 bleibt unverändert, weil eine stille 200-Umstellung den Public Contract bricht.
+- Persistenter Cost Guard, Nachweis-Verträge, Offer-Provenance und Admin-Health sind spätere Slices.
 
-**Kontext:** `docs/PROVIDER_READINESS_AUDIT.md` gegen den Code auf `audit/provider-readiness`. Acht Domain-Rate-Limiter und zwei Nachweis-Stile sind bereits divergiert. Flights persistiert Browser-`FlugOption`en, Hotels nicht.
+**Identifier:** `ADR-0154` ist der einzige Identifier dieser Implementierungsentscheidung. Parallel existieren auf anderen Draft-Branches andere `ADR-0152`/`ADR-0153` (Audit-Planung auf PR #45, Account AP-1 auf PR #43). Diese Nummern werden hier nicht wiederverwendet.
 
-**Alternativen:** Jede Domäne weiter isoliert härten; sofort echte Adapter bauen; eine Universal-Provider-Schicht einführen.
+**Kontext:** Product-Owner-/Technical-Lead-Freigabe für S1 als eigenen Draft-Workstream nach dem Provider-Readiness-Audit (PR #45). Review REQUEST CHANGES auf PR #47 (S1-B1, S1-B2, ADR-Kollision). Auftrag: `docs/PROVIDER_OPS_S1_TASK.md`.
 
-**Begründung:** Operationsdrift ist der billigste Weg, den ersten bezahlten Adapter unsicher zu machen. Fachliche Wahrheit darf trotzdem nicht in einer Plattform verschwinden. Policy und AGENTS.md Regel 19 bleiben.
+**Alternativen:** Domains weiter kopieren; eine universelle Provider-Abstraktion; HTTP 504 überall auf 200 ziehen; persistente Kostenschranke sofort bauen; synces Cost-Guard-Interface belassen.
 
-**Konsequenzen:** Implementierung nur über die Slices in `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` nach Review und neuem Auftrag. PR #45 bleibt Draft. Keine Secrets, keine Kosten, keine Migration, kein Mark Ready, kein Merge durch diesen ADR.
+**Begründung:** Die Audit-Befunde lagen in kopierter Operationshülle, nicht in fehlender Fachwahrheit. Eine schmale gemeinsame Form verhindert weitere Drift, ohne Search-, Truth- oder Adaptergrenzen zu vermischen. Ein synces Interface hätte S6 gezwungen, jede Domain erneut umzubauen. Ein Spread hätte Observability-Zusatzfelder durchgelassen.
+
+**Konsequenzen:** S2+ und S6 können dieselben Hüllen nutzen. Production bleibt fail-closed. Keine neuen Kosten, keine Secrets, keine Migration. Technical Closure ist dokumentiert in `docs/PROVIDER_OPS_S1_TECHNICAL_CLOSURE.md`. Draft-PR #47 wartet auf Product-Owner-Entscheidung. S1 ist keine Freigabe für S2, Mark Ready oder Merge.
 
 ---
 

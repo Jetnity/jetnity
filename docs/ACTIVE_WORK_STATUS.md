@@ -1,94 +1,133 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **Provider-Readiness Audit Draft-PR #45 – Technical-Lead PASS / planning accepted; S1 als eigener Draft-Workstream PR #47 gestartet**
+Status: **PR #38 vollständig integriert; Account AP-1, Admin Slice A und Provider Ops S1 als parallele Draft-Workstreams aktiv**
 
-## 1. Arbeitsblock / Ziel
+## 1. Zuletzt vollständig abgeschlossener Block
 
-Provider-Readiness Audit: Jetnity-seitige Ports, Evidence, Failure, Cost Guard, Cache/Lizenz, Security und Observability prüfen – ohne echte Provider, Secrets, Kosten oder Runtime-Fixes.
+**Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
 
-## 2. Branch / PR / Head
+- PR #38: **gemergt und geschlossen**
+- unabhängiger ChatGPT-Review R17: **PASS / Technical Closure**
+- final geprüfter Runtime-Head: `5782401943b41ddd1eea1337c93cb37163210362`
+- finaler PR-Head vor Merge: `1a61d21fe853c77faa1109ae0828e39f3629098a`
+- Squash-Merge auf `main`: `ee988bbe46a8dd63d4001c42825fc0159453f811`
+- Production-Integration: `docs/PR38_PRODUCTION_INTEGRATION.md`
+- R17-Review: `docs/PR38_CHATGPT_R17_REVIEW.md`
 
-- Branch: `audit/provider-readiness`
-- Draft-PR: **#45**
-- Review-Head: `172ff5ebec5969c56217f3d900708ff46970cb36`
-- Review: `docs/PR45_TECHNICAL_LEAD_REVIEW.md`
-- Basis `origin/main`: `e4f4cca7` (PR #38 integriert; Account/Admin-Implementierung nicht auf `main`)
+Der PR-#38-Review-Loop ist beendet. Kein neuer Review-Rundlauf ohne konkrete neue Runtime-Änderung oder neuen belegbaren Defekt.
 
-## 3. Status
+## 2. Production-Status
 
-**technisch review-akzeptiert (Audit/Planung). S1-Implementierung läuft nicht in diesem PR.**
+Vercel:
 
-Kein Mark Ready. Kein Merge. Keine Runtime-Implementierung in PR #45.
+- Production Deployment nach PR-#38-Integration: **READY**
 
-## 4. Bereits umgesetzt
+Supabase Production `qscbgcdmivbbnzrcyegn`:
 
-- Audit-Deliverables: `docs/PROVIDER_READINESS_AUDIT.md`, Matrix, Shared-Contract-Vorschlag, Implementation Slices
-- Unabhängiger Technical-Lead-Review: **AUDIT-PASS / planning accepted**
-- Review bestätigt die zentralen Code-Funde (FlugNachweis-Lücke, prozesslokale Rate-Limits, Readiness-Timeout, Safety `party: []`, Mobility Auto-Search, Duffel-Currency)
-- Richtung angenommen: minimaler Operationsvertrag, keine Provider-Plattform
+- Status: **ACTIVE_HEALTHY**
+- `20260824120000_flug_route_itinerary_surface_evidence`: angewendet
+- `20260824140000_flug_route_itinerary_untrusted_surface`: angewendet
+- Migration-History ist auf die Repository-Versionen ausgerichtet.
+- `public.flug_route_itinerary_metadata(text,jsonb)` ist SECURITY INVOKER.
+- `anon`: kein EXECUTE.
+- `authenticated`: EXECUTE.
+- manipuliertes Client-`surfaceFromAirportCode` wird live auf Production verworfen.
 
-## 5. Gerade offen / noch nicht umgesetzt
+Keine Seasonal-Tabelle, kein Live-Seasonal-Provider, keine neuen Secrets und keine neuen laufenden Providerkosten.
 
-- PR-S1 Shared Operational Contract: **freigegeben als eigener Draft-Workstream** – PR #47 / `feat/provider-ops-s1` / `docs/PROVIDER_OPS_S1_TASK.md`
-- PR-S2 `FlugNachweis` und weitere Slices: nicht gestartet, kein Auftrag
-- keine Adapter, Secrets, Verträge, Kosten, Migrationen
+## 3. Aktive Workstreams
 
-## 6. Letzte relevanten Änderungen
+### Account Platform – AP-1
 
-- Review persistiert
-- Operativer Parallelstand aufgefrischt, damit dieser Docs-PR spätere Account-/Admin-Closures nicht zurückschreibt
+Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`  
+Audit-Referenz: Draft-PR #39 / `audit/account-platform` – **AUDIT-PASS**  
+Implementierungsbranch: `feat/account-ap1`  
+Implementierungs-Draft-PR: **#43**  
+Auftrag: `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`
 
-## 7. Tests / CI / Preview
+Aktiver Slice:
 
-- Lokale Contract-Tests zur Audit-Verifikation: **86/86 pass**
-- Review-Exact-Head `172ff5eb`: GitHub Actions SUCCESS (`32684851005`); Vercel Preview READY (`dpl_DvRWt9Pub3KuMAa5VUBsMsNnZKrN`)
-- Docs-only gegenüber `main`
-- Grüne CI ersetzt weder Implementierungsauftrag noch Mark Ready noch Merge
+**AP-1 – Account-Shell + persönliche Übersicht / „Meine Reisen“ als Account-Hub.**
 
-## 8. DB / RLS / Production-Grenze
+Grenze: UI/IA und bestehende `reisenLaden()`-Truth. Keine neue Auth-/Trip-/Traveller-/Billing-/Route-Truth, keine DB-Migration, keine Homepage-Änderung.
 
-Keine Migration, keine RLS-Änderung, keine Production-Änderung durch diesen Audit.
+### Admin Platform – Slice A
 
-## 9. Kosten / Provider / Secrets
+Verantwortlicher Cursor-Anzeigename: `Admin platform audit`  
+Audit-Referenz: Draft-PR #40 / `audit/admin-platform` – **AUDIT-PASS**  
+Implementierungsbranch: `feat/admin-control-center-ia`  
+Implementierungs-Draft-PR: **#44**  
+Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`
 
-Keine neuen laufenden Kosten. Keine Secrets. Keine Provideraktivierung.
+Aktiver Slice:
 
-P0 bleiben Aktivierungsblocker: fehlender `FlugNachweis`; In-Memory-Rate-Limits sind kein globaler Production-Cost-Guard.
+**Admin Slice A – ehrliche professionelle Control-Center-IA / bestehende Legacy-Scheinzustände entfernen.**
 
-## 10. Bekannte Risiken / Review-Funde
+Grenze: Admin-UI/IA, ehrliche Zustände und vorhandene Security-Gates. Keine neue DB/Migration, keine Capability-/RLS-Neudefinition, kein System Health in diesem Slice, keine Provider-/Secret-/Kosten-Aktivierung.
 
-Siehe `docs/PR45_TECHNICAL_LEAD_REVIEW.md` und Audit-Katalog PR-P0-01 bis PR-P1-09.
+Danach als eigener Slice: read-only System Health für Vercel, Supabase, GitHub, App und später Infomaniak.
 
-Non-blocking Review-Note: Statusformulierungen müssen bei späterer Sync/Merge mit den parallelen Account-/Admin-Ständen aktuell bleiben.
+### Provider Readiness – S1 Shared Operational Contract
 
-## 11. Offene Nutzerentscheidungen / Freigaben
+Verantwortlicher Cursor-Anzeigename: `Jetnity provider readiness audit`  
+Audit-Referenz: Draft-PR #45 / `audit/provider-readiness` – bleibt Audit-Draft  
+Implementierungsbranch: `feat/provider-ops-s1`  
+Implementierungs-Draft-PR: **#47**  
+Auftrag: `docs/PROVIDER_OPS_S1_TASK.md`  
+Status: `docs/PROVIDER_OPS_S1_STATUS.md`
 
-- Keine Merge-Freigabe für PR #45
-- S2 und spätere Slices ohne neuen Auftrag
-- Provider/Secrets/Verträge/Kosten bleiben eigene Gates
+Aktiver Slice:
 
-## 12. Exakter nächster Schritt
+**S1 – gemeinsamer technischer Operationsvertrag.** Technical Closure / PASS auf Exact Head `b74096a9`. Draft-PR #47 wartet auf Product-Owner-Entscheidung.
 
-1. S1 wird ausschließlich auf Draft-PR #47 / `feat/provider-ops-s1` implementiert.
-2. Dieser Audit-PR #45 bleibt Draft und implementiert nichts.
-3. Account AP-1 (Draft PR #43) und Admin Slice A (Draft PR #44) bleiben eigene Workstreams.
-4. Kein Mark Ready und kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+Grenze: keine Fachwahrheit, kein `UniversalProvider`, kein `FlugNachweis`, keine persistente Kostenschranke, keine Provideraktivierung, keine Secrets, keine DB-/Production-Migration. S2 nur mit neuem Auftrag.
 
-## 13. Welche Dateien zuerst gelesen werden müssen
+## 4. Parallelitätsregel
 
-1. `docs/PR45_TECHNICAL_LEAD_REVIEW.md`
-2. `docs/PROVIDER_READINESS_AUDIT.md`
-3. `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md`
-4. `docs/PROVIDER_READINESS_SHARED_CONTRACT_PROPOSAL.md`
-5. `docs/PROVIDER_READINESS_MATRIX.md`
-6. `docs/PROVIDER_READINESS_AUDIT_TASK.md`
-7. `docs/ACTIVE_WORK_STATUS.md`
+Account AP-1, Admin Slice A und Provider Ops S1 dürfen parallel arbeiten, dürfen ihre Dateien aber nicht mischen.
 
-## 14. Verifizierter Parallelstand anderer Workstreams
+Seriell/zentral bleiben insbesondere:
 
-Nicht auf `main`, nicht durch diesen PR gemergt, nur damit der Status nicht zurückschreibt:
+- Auth / Identity / Sessions / MFA / AAL
+- `profiles`, Rollen, Capabilities
+- RLS / Ownership / Service Role
+- Guest→Account / Trip Graph
+- Traveller / Credentials / Readiness
+- Route / Safety / Seasonal Truth
+- Privacy Export / Delete
+- Billing / Payment / Refund / Bexio
+- Admin Audit Trail
+- Provider Activation / Secrets / Kosten
 
-- **Admin Slice A** / Draft PR #44: Technical-Lead Final Recheck **PASS / TECHNICAL CLOSURE** auf `5632a3cac1301d2d649fcb1d2b9552d3763c8b9f`. Nachweis auf jenem Branch: `docs/ADMIN_PLATFORM_SLICE_A_TECHNICAL_CLOSURE.md`. Keine Mark-Ready-/Merge-Freigabe. Slice B / System Health ist ein separater Block.
-- **Account AP-1** / Draft PR #43: Implementierung aktiv. REQUEST CHANGES zu Geräte-Kalendertag und evidentem 503-Text laut jenem Branch umgesetzt (ADR-0153). Noch kein AP-2.
-- **Provider Ops S1** / Draft PR #47 / `feat/provider-ops-s1`: Product-Owner-Implementierungsauftrag `docs/PROVIDER_OPS_S1_TASK.md`. Keine Provideraktivierung, keine Secrets, keine Kosten, keine Migration. S2 nicht enthalten.
+Nach jedem Implementierungsslice: Self-Review + technische Gates + unabhängiger ChatGPT/Technical-Lead-Review, bevor der jeweilige nächste Slice beginnt.
+
+## 5. Homepage
+
+Die neue Homepage-Produktseiten-Idee ist dauerhaft in `docs/HOMEPAGE_PRODUCT_PAGE_DIRECTION.md` gespeichert und bleibt derzeit **pausiert**.
+
+Wenn sie gestartet wird:
+
+- eigener konfliktarmer visueller Workstream;
+- zuerst separate visuelle Preview;
+- bestehende starke Texte selektiv behalten;
+- moderne Tech-Produktseite mit großen Bildern, viel Weißraum, hochwertiger Typografie und Animationen;
+- keine neue Funktionslogik;
+- Header-/Footer-Funktionalität nicht verändern;
+- bestehende Homepage erst nach ausdrücklicher Product-Owner-Freigabe ersetzen.
+
+## 6. Governance
+
+- PR #43, PR #44, PR #45 und PR #47 bleiben Draft.
+- Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
+- Production-Migrationen bleiben separate Gates.
+- Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
+- Fortschritt und Entscheidungen müssen im Repository dokumentiert werden.
+
+## 7. Exakter nächster Schritt
+
+1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
+2. `Admin platform audit` implementiert ausschließlich Slice A auf PR #44.
+3. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung; kein Mark Ready / kein Merge / kein S2.
+4. ChatGPT/Technical Lead prüft jeden Slice unabhängig.
+5. AP-2, Admin Slice B und Provider S2 brauchen jeweils eine neue ausdrückliche Freigabe.

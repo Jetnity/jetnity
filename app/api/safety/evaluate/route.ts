@@ -28,7 +28,7 @@ function antwort(httpStatus: number, koerper: unknown) {
 }
 
 export async function POST(req: Request) {
-  const limit = safetyAnfrageErlaubt(safetyRateKennungAus(req.headers))
+  const limit = await safetyAnfrageErlaubt(safetyRateKennungAus(req.headers))
   if (!limit.ok) {
     return NextResponse.json(
       {
