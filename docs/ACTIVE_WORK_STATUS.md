@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 vollständig integriert; Account AP-1 und Admin Slice A als parallele aktive Implementierungsworkstreams gestartet**
+Status: **PR #38 vollständig integriert; Account AP-1, Admin Slice A und Provider Ops S1 als parallele Draft-Workstreams aktiv**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -68,9 +68,24 @@ Grenze: Admin-UI/IA, ehrliche Zustände und vorhandene Security-Gates. Keine neu
 
 Danach als eigener Slice: read-only System Health für Vercel, Supabase, GitHub, App und später Infomaniak.
 
+### Provider Readiness – S1 Shared Operational Contract
+
+Verantwortlicher Cursor-Anzeigename: `Jetnity provider readiness audit`  
+Audit-Referenz: Draft-PR #45 / `audit/provider-readiness` – bleibt Audit-Draft  
+Implementierungsbranch: `feat/provider-ops-s1`  
+Implementierungs-Draft-PR: **#47**  
+Auftrag: `docs/PROVIDER_OPS_S1_TASK.md`  
+Status: `docs/PROVIDER_OPS_S1_STATUS.md`
+
+Aktiver Slice:
+
+**S1 – gemeinsamer technischer Operationsvertrag** in `lib/provider-ops/*` plus dünne Domain-Wrapper. Flights-Search auf Hotel-Request-Härtung gehoben.
+
+Grenze: keine Fachwahrheit, kein `UniversalProvider`, kein `FlugNachweis`, keine persistente Kostenschranke, keine Provideraktivierung, keine Secrets, keine DB-/Production-Migration.
+
 ## 4. Parallelitätsregel
 
-Account AP-1 und Admin Slice A dürfen parallel arbeiten.
+Account AP-1, Admin Slice A und Provider Ops S1 dürfen parallel arbeiten, dürfen ihre Dateien aber nicht mischen.
 
 Seriell/zentral bleiben insbesondere:
 
@@ -103,7 +118,7 @@ Wenn sie gestartet wird:
 
 ## 6. Governance
 
-- PR #43 und PR #44 bleiben Draft.
+- PR #43, PR #44, PR #45 und PR #47 bleiben Draft.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
@@ -113,6 +128,6 @@ Wenn sie gestartet wird:
 
 1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
 2. `Admin platform audit` implementiert ausschließlich Slice A auf PR #44.
-3. Beide liefern Self-Review, Tests/Gates und Handoff.
-4. ChatGPT/Technical Lead prüft beide unabhängig.
-5. Erst danach werden AP-2 bzw. Admin Slice B freigegeben.
+3. Dieser Workstream liefert S1 auf PR #47 bis zum unabhängigen Technical-Lead-Review; kein Mark Ready / kein Merge / kein S2.
+4. ChatGPT/Technical Lead prüft jeden Slice unabhängig.
+5. AP-2, Admin Slice B und Provider S2 brauchen jeweils eine neue ausdrückliche Freigabe.

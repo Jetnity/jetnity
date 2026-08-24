@@ -5,6 +5,8 @@ Status: **verbindlicher operativer Übergabepunkt – Foundation D, Foundation E
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
+Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Provider Ops S1 (dieser Branch) zusätzlich in `docs/PROVIDER_OPS_S1_STATUS.md` und `docs/PROVIDER_OPS_S1_HANDOFF.md`.
+
 > **Kein relevanter Fortschritt darf beim Wechsel von Chat, Agent oder Sitzung verloren gehen. Was für die Fortsetzung wichtig ist, gehört ins Repository.**
 
 Ein neuer Chat soll mit folgendem Satz übernehmen können:
@@ -295,7 +297,7 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. **→ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (Draft PR #38, R17 Technical Closure / PASS, wartet auf Product-Owner-Merge-Freigabe)**
-6. Provider-Readiness-/Adapter-Lücken schließen
+6. Provider-Readiness-/Adapter-Lücken schließen – **S1 Shared Operational Contract als Draft-PR #47 gestartet**
 7. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 8. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 9. echte Providerphase

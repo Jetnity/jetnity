@@ -32,6 +32,7 @@ Ein Framework-Wechsel ist nicht vorgesehen und benötigt Freigabe.
 app/                Routing, Server Components, Route Handler, Server Actions
 components/         Präsentation und Interaktion
 lib/                Business-Logik, Datenzugriff, Integrationen
+lib/provider-ops/   gemeinsamer technischer Operationsvertrag (Request-Härtung, Kill-Switch-Form, In-Memory-Cost-Guard, Outcome-Taxonomie); keine Fachwahrheit, kein UniversalProvider
 lib/auth/           Rollenmodell und Zugangsentscheidung (siehe Abschnitt 4)
 types/              Datenbank- und Domänentypen; types/supabase.ts wird erzeugt
 supabase/migrations Datenbankschema, vollständig und reproduzierbar (Abschnitt 6)
@@ -303,7 +304,7 @@ Entfernt wurden 63 Endpunkte: alle KI- und Modell-Endpunkte, die Media- und Vide
 
 ### Flugsuche (Phase 3.1)
 
-`POST /api/flights/search` ist geschlossen: nur die Jetnity-Suchanfrage, nur die normalisierte Antwort. Kein Provider-Proxy. UI, Ranking und Reisegraph sprechen `FlugOption`, nicht Duffel.
+`POST /api/flights/search` ist geschlossen: nur `application/json`, höchstens 16 KB UTF-8. `Content-Length` über dem Limit wird vor dem Lesen abgewiesen; der Body wird zusätzlich streamend mit hartem Cap gelesen. Nur die Jetnity-Suchanfrage, nur die normalisierte Antwort. Kein Provider-Proxy. 429 setzt `Retry-After`. UI, Ranking und Reisegraph sprechen `FlugOption`, nicht Duffel. Die HTTP-Hülle teilt `lib/provider-ops` mit den übrigen Provider-Nähten (ADR-0152, Draft-PR #47).
 
 Duffel ist der erste Datenadapter, nicht die Produktarchitektur. Search und Booking/Affiliate sind getrennt; `booking_url` bleibt `null`. Ein späterer Skyscanner- oder Aviasales-Adapter implementiert dasselbe `FlightProvider`-Interface. Amadeus Self-Service ist eingestellt und nicht angebunden.
 

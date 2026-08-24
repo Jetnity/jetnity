@@ -3742,6 +3742,33 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0152 – Minimaler gemeinsamer Provider-Operationsvertrag
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #47 / `feat/provider-ops-s1`; kein Mark Ready / kein Merge
+
+**Entscheidung:**
+
+- Technische Provider-Operations liegen in `lib/provider-ops/*`.
+- Die gemeinsame Taxonomie ist nur `ok | partial | empty | checked_empty | unavailable | timeout | invalid | rate_limited | error`.
+- Fachzustände wie Readiness `recheck_needed` / `insufficient_context` und Seasonal `rejected_acute` gehören nicht in diesen Basistyp.
+- Request-Härtung, Kill-Switch-Form, In-Memory-Cost-Guard und ein Observability-Event-Typ ohne Persistenz sind erlaubt.
+- Bestehende Domain-Hüllen bleiben dünne Wrapper. Es gibt keinen `UniversalProvider` und kein gemeinsames Offer-Schema.
+- Flights-Search erhält dieselbe Request-Härtung wie Hotels. Mobility-/Rental-Timeout-HTTP 504 bleibt unverändert, weil eine stille 200-Umstellung den Public Contract bricht.
+- Persistenter Cost Guard, Nachweis-Verträge, Offer-Provenance und Admin-Health sind spätere Slices.
+
+**Nummerungskollision:** Auf `audit/provider-readiness` existiert bereits ein planendes ADR-0152 für das Audit. Dieses ADR-0152 gilt für die **Implementierung** auf `main`-Basis. Beim späteren Merge der Audit-Dokumentation muss die Nummerierung entflochten werden.
+
+**Kontext:** Product-Owner-/Technical-Lead-Freigabe für S1 als eigenen Draft-Workstream nach dem Provider-Readiness-Audit (PR #45). Auftrag: `docs/PROVIDER_OPS_S1_TASK.md`.
+
+**Alternativen:** Domains weiter kopieren; eine universelle Provider-Abstraktion; HTTP 504 überall auf 200 ziehen; persistente Kostenschranke sofort bauen.
+
+**Begründung:** Die Audit-Befunde lagen in kopierter Operationshülle, nicht in fehlender Fachwahrheit. Eine schmale gemeinsame Form verhindert weitere Drift, ohne Search-, Truth- oder Adaptergrenzen zu vermischen.
+
+**Konsequenzen:** S2+ kann dieselben Hüllen nutzen. Production bleibt fail-closed. Keine neuen Kosten, keine Secrets, keine Migration. Draft-PR #47 wartet auf unabhängigen Technical-Lead-Review. S1 ist keine Freigabe für S2, Mark Ready oder Merge.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

@@ -246,6 +246,8 @@ Zu prüfen/vereinheitlichen:
 
 Keine Verträge, Secrets oder laufenden Providerkosten ohne separate Freigabe.
 
+S1 Shared Operational Contract ist als eigener Draft-Workstream gestartet: PR #47 / `feat/provider-ops-s1`. Es zentralisiert nur technische Hüllen. Audit-PR #45 bleibt Draft. S1 aktiviert keine Provider und schließt nicht `FlugNachweis`, persistente Kostenschranken oder Admin-Health.
+
 ---
 
 ## 8. Großer End-to-End Trip-Workspace-/Übersicht-Umbau
