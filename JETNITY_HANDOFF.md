@@ -315,13 +315,15 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 Aktiver Account-Branch: `feat/account-ap1`  
 Draft PR: `#43`  
-Auftrag: `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`  
-Handoff: `docs/ACCOUNT_AP1_HANDOFF.md`
+Auftrag: `docs/ACCOUNT_AP1_MAIN_SYNC_TASK.md`  
+Handoff: `docs/ACCOUNT_AP1_HANDOFF.md`  
+Runtime-Head: `19f939698233cfd99b828f4c0aa14d64ca0f4ac5`
 
 1. AP-1 (Account-Shell + persönliche Übersicht) ist implementiert.
 2. Technical-Lead REQUEST CHANGES an PR #43: Geräte-Kalendertag und evidenter 503-Text sind umgesetzt (ADR-0153).
-3. PR bleibt Draft. Kein Mark Ready, kein Merge ohne aktuelle Product-Owner-Freigabe.
-4. **Exakter nächster Schritt:** Re-Review von PR #43 auf dem Exact Head mit GitHub Actions CI und Vercel Preview. AP-2 erst nach Freigabe.
+3. Branch ist mit `main` `f92e0c9e` synchronisiert und auf dem Runtime-Head gegated.
+4. PR bleibt Draft. Kein Mark Ready, kein Merge ohne aktuelle Product-Owner-Freigabe.
+5. **Exakter nächster Schritt:** Unabhängiger Technical-Lead-Integrationsreview von PR #43. AP-2 nicht in diesem Schritt retargeten. Kein AP-3.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 
