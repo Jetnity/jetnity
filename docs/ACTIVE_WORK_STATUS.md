@@ -1,14 +1,14 @@
 # Jetnity – Active Work Status
 
-Stand: **25. August 2026, ca. 00:15 Europe/Zurich**  
+Stand: **25. August 2026, ca. 00:20 Europe/Zurich**  
 Status: **Trip Workspace Audit #55 ist gemergt; aktuell ist kein Cursor-Runtime-Slice gestartet. Alle vier bestehenden Agenten warten auf neue kontrollierte Aufträge.**
 
 ## Main / Production
 
-- aktueller `main`: `f8e252880d31fe462537f33be4496044951ae4a9`
+- `main`-Tip an diesem Checkpoint: `1bc1e1f492ea30710840b4a38d96437d56b73d77`
 - letzter PR-Merge: #55 – Trip Workspace Audit / Zielarchitektur, docs-only
 - Merge-Commit #55: `08fd7748ace072544e189c94880562e050971811`
-- danach nur docs-only Kontinuitätsupdates auf `main`: `c42017f5...`, `f8e25288...`
+- danach nur docs-only Kontinuitätsupdates auf `main`: `c42017f5...`, `f8e25288...`, `1bc1e1f4...`
 - Supabase Production endet bei `20260824140000`
 - `20260824160000` und `20260824180000` bleiben Development-only / nicht Production-approved
 - `main` Branch Protection technisch weiterhin nicht umgesetzt
