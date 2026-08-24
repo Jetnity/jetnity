@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 vollständig integriert; Account und Admin als nächste aktive Workstreams technisch freigegeben**
+Status: **PR #38 vollständig integriert; Account AP-1 und Admin Slice A als parallele aktive Implementierungsworkstreams gestartet**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -21,9 +21,7 @@ Der PR-#38-Review-Loop ist beendet. Kein neuer Review-Rundlauf ohne konkrete neu
 
 Vercel:
 
-- Production Deployment `dpl_5wwLu6tbPLhPJgFMLC1PHx3wzcVS`
-- Status: **READY**
-- Git SHA: `ee988bbe46a8dd63d4001c42825fc0159453f811`
+- Production Deployment nach PR-#38-Integration: **READY**
 
 Supabase Production `qscbgcdmivbbnzrcyegn`:
 
@@ -38,35 +36,41 @@ Supabase Production `qscbgcdmivbbnzrcyegn`:
 
 Keine Seasonal-Tabelle, kein Live-Seasonal-Provider, keine neuen Secrets und keine neuen laufenden Providerkosten.
 
-## 3. Aktive nächste Workstreams
+## 3. Aktive Workstreams
 
-### Account Platform – PR #39
+### Account Platform – AP-1
 
-Cursor-Anzeigename: `Account plattform audit vorbereitung`  
-Branch: `audit/account-platform`  
-Audit: **AUDIT-PASS**
+Verantwortlicher Cursor-Anzeigename: `Account plattform audit vorbereitung`  
+Audit-Referenz: Draft-PR #39 / `audit/account-platform` – **AUDIT-PASS**  
+Implementierungsbranch: `feat/account-ap1`  
+Implementierungs-Draft-PR: **#43**  
+Auftrag: `docs/ACCOUNT_AP1_IMPLEMENTATION_TASK.md`
 
-Nächster konfliktarmer Implementierungsslice:
+Aktiver Slice:
 
 **AP-1 – Account-Shell + persönliche Übersicht / „Meine Reisen“ als Account-Hub.**
 
-Der Agent darf keine zweite Auth-/Trip-/Traveller-/Billing-/Route-Truth bauen. Shared Contracts bleiben Technical-Lead-koordiniert.
+Grenze: UI/IA und bestehende `reisenLaden()`-Truth. Keine neue Auth-/Trip-/Traveller-/Billing-/Route-Truth, keine DB-Migration, keine Homepage-Änderung.
 
-### Admin Platform – PR #40
+### Admin Platform – Slice A
 
-Cursor-Anzeigename: `Admin platform audit`  
-Branch: `audit/admin-platform`  
-Audit: **AUDIT-PASS**
+Verantwortlicher Cursor-Anzeigename: `Admin platform audit`  
+Audit-Referenz: Draft-PR #40 / `audit/admin-platform` – **AUDIT-PASS**  
+Implementierungsbranch: `feat/admin-control-center-ia`  
+Implementierungs-Draft-PR: **#44**  
+Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`
 
-Nächster konfliktarmer Implementierungsslice:
+Aktiver Slice:
 
 **Admin Slice A – ehrliche professionelle Control-Center-IA / bestehende Legacy-Scheinzustände entfernen.**
+
+Grenze: Admin-UI/IA, ehrliche Zustände und vorhandene Security-Gates. Keine neue DB/Migration, keine Capability-/RLS-Neudefinition, kein System Health in diesem Slice, keine Provider-/Secret-/Kosten-Aktivierung.
 
 Danach als eigener Slice: read-only System Health für Vercel, Supabase, GitHub, App und später Infomaniak.
 
 ## 4. Parallelitätsregel
 
-Account AP-1 und Admin Slice A dürfen jetzt parallel arbeiten.
+Account AP-1 und Admin Slice A dürfen parallel arbeiten.
 
 Seriell/zentral bleiben insbesondere:
 
@@ -80,6 +84,8 @@ Seriell/zentral bleiben insbesondere:
 - Billing / Payment / Refund / Bexio
 - Admin Audit Trail
 - Provider Activation / Secrets / Kosten
+
+Nach jedem Implementierungsslice: Self-Review + technische Gates + unabhängiger ChatGPT/Technical-Lead-Review, bevor der jeweilige nächste Slice beginnt.
 
 ## 5. Homepage
 
@@ -97,6 +103,7 @@ Wenn sie gestartet wird:
 
 ## 6. Governance
 
+- PR #43 und PR #44 bleiben Draft.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
@@ -104,4 +111,8 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-Die ersten konfliktarmen Implementierungsslices für **Account AP-1** und **Admin Slice A** können vorbereitet und gestartet werden. Nach jedem Slice folgt ein unabhängiger Review, bevor der jeweilige nächste Slice beginnt.
+1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
+2. `Admin platform audit` implementiert ausschließlich Slice A auf PR #44.
+3. Beide liefern Self-Review, Tests/Gates und Handoff.
+4. ChatGPT/Technical Lead prüft beide unabhängig.
+5. Erst danach werden AP-2 bzw. Admin Slice B freigegeben.
