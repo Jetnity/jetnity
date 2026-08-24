@@ -1,68 +1,86 @@
 # Admin Platform – Slice A Status
 
-Stand: 24. August 2026  
-Verantwortlicher Cursor-Agent: `Admin platform audit`  
+Stand: **24. August 2026, ca. 18:00 Europe/Zurich**  
+Verantwortlicher bestehender Cursor-Agent: `Admin platform audit`  
 Branch: `feat/admin-control-center-ia`  
-PR: Draft #44  
-Auftrag: `docs/ADMIN_SLICE_A_MAIN_SYNC_TASK.md`
+PR: **Draft #44**
 
 ## Status
 
-**Re-Sync mit `main` `2827d1cb` (Account AP-2).** Product-Owner-Freigabe für Mark Ready/Merge liegt vor. Der bisherige Integration Closure / PASS auf `ed839d3e` gilt nur gegen `084f7c87` und ist nicht mehr das letzte Integrationsgate.
+**PASS / TECHNICAL INTEGRATION CLOSURE gegen aktuellen `main`.**
 
-Draft, nicht gemergt, bis der neue Exact Runtime Head lokal und remote gegatet ist. Danach Branch einfrieren und STOPP für kurzen Technical-Lead-Re-Check.
+Exact Runtime Head:
 
-`origin/main` wurde erneut geholt und ist unverändert `084f7c87`. Branch ist 0 behind; kein neuer Merge.
+`7b06a947a36ef9d28bfae124b78537ddba88eaed`
 
-Exact Runtime Head: `ed839d3e6ee2605beef65d66fa1555ddabb52138`  
-Gate-Nachweis: `docs/ADMIN_PLATFORM_SLICE_A_MAIN_SYNC_GATE.md`  
-Integrations-Closure: `docs/ADMIN_PLATFORM_SLICE_A_INTEGRATION_CLOSURE.md`
+Aktueller Base-`main`:
 
-Bisheriger Technical Closure / PASS gilt nur für den alten Exact Head `5632a3cac1301d2d649fcb1d2b9552d3763c8b9f`.  
-Closure-Nachweis: `docs/ADMIN_PLATFORM_SLICE_A_TECHNICAL_CLOSURE.md`.
+`52e665acfed88303300870d50855177284588026`
 
-Admin-Entscheidung nach ADR-Kollision mit Account AP-1: **ADR-0155**.
+Der Sync ist ein echter Zwei-Eltern-Merge des vorherigen Admin-Heads `b64cd2af...` mit aktuellem `main` `52e665ac...`. Vergleich gegen `main`: **0 behind**, Merge-Base exakt aktueller `main`.
 
-## Belegte Gates auf Exact Runtime Head `ed839d3e`
+## ADR-Kollision
 
-- Lokal: 1764/1764 Tests, Typecheck, Lint, Hygiene, `check:schema-bezug`, `check:api-schutz` (10 Admin-Routen), Production-Build
-- GitHub Actions `CI` **SUCCESS**: `32723815715`
-- Vercel Preview **READY**: Inspector `DgCMj6BFKkAZaUBU4HyQb6fZbm4i`
-- gegen `main` `084f7c87`
+Historische Admin-Slice-A-Dokumente verwendeten ADR-0155. Aktueller `main` belegt ADR-0155 bis ADR-0157 durch Provider Readiness S2.
 
-Ein Docs-only-Folgecommit ist kein neues Runtime-Gate. Docs-only-Head `02f583b2` hat CI `32724080308` SUCCESS.
+Ab diesem Integrationspunkt gilt deshalb eindeutig:
 
-Lokale Gates wurden nach Re-Verifikation von `main` erneut vollständig ausgeführt: 1764/1764, Typecheck, Lint, Hygiene, `check:api-schutz`, Production-Build grün. Runtime unverändert.
+**Admin Slice A = ADR-0158**
 
-## Belegte Gates auf altem Head `5632a3ca` (vor Main-Sync)
+Authoritative Entscheidung: `docs/ADR_0158_ADMIN_SLICE_A.md`.
 
-- GitHub Actions `CI` **SUCCESS**: `32683942810`
-- Vercel Preview **READY**: `dpl_czE3XJXw3qx3sXMrh7LTgMV94zBL`
+Historische Dokumente bleiben Evidence ihres damaligen Heads und sind keine aktuelle ADR-Nummernquelle.
 
-Nicht behauptet: `db:sicherheit`, Production-Migration, eingeloggte Admin-Browserprüfung, Product-Owner-Merge-Freigabe.
+## Exact-Head-Gates
 
-## Ziel
+Auf `7b06a947...`:
 
-Aus dem vorhandenen gehärteten Admin-Backoffice eine ehrliche Steuerzentrale auf IA-/UI-Ebene machen. Keine neuen Integrationen, keine neue Datenwahrheit, keine neue Autorität.
+- GitHub Actions CI `32747475489`: **SUCCESS**
+- Typecheck / Lint / Tests / API-Schutz / Schema-Bezug / Dead Code / Export-Hygiene / Dependency-Hygiene / Production Build: **SUCCESS**
+- Auth-Konfiguration gegen `config.toml`: **SUCCESS**
+- Vercel Preview `dpl_E9rUnsNePeXzN6r693GVcqb46Q4R`: **READY** auf exakt demselben SHA
+- PR #44: open, Draft, mergeable
+- offene Inline-Review-Threads: keine
 
-## Umgesetzt
+Keine eingeloggte Admin-Browser-Acceptance auf diesem Exact Head behauptet; der Preview ist Vercel-geschützt.
 
-- Home ist operative Lage statt Setup-Guide/Legacy-Scheinzustände.
-- Toter Copilot-Execute-Pfad und Auto-Menü entfernt; sichtbarer Hinweis `Copilot Pro folgt` ohne API-Aufruf.
-- Erfundene Notifications/Badges entfernt.
-- Sidebar folgt der Ziel-IA: fertige Flächen vs. ausdrücklich `folgt`.
-- Capability-aware Navigation nur als UX (`lib/admin/navigation.ts`). Server-Gates bleiben alleinige Autorisierung.
-- Payments/Refunds als lokale/operative Sicht gekennzeichnet.
-- IP-Blockliste als **nicht enforced** gekennzeichnet.
-- Break-Glass-Writes auf Refund/Block/Unblock antworten mit 403 (`lib/auth/admin-write-gate.ts`).
-- Stub-Seiten Analytics/Content/Marketing/Settings/Localization sehen nicht wie fertige Module aus.
+## Independent Technical-Lead Review
 
-## Explizit nicht in Slice A
+Nachweis: `docs/ADMIN_PLATFORM_SLICE_A_CURRENT_MAIN_REREVIEW.md`
 
-Keine Migration, keine Rollen-/Capability-/RLS-Neudefinition, keine Service-Role-Ausweitung, kein Payment-/Refund-Provider, kein Bexio, keine Ads, kein Infomaniak, kein System-Health-Backend, kein Copilot-Pro-Execute, keine Account-/Trip-/Traveller-/Route-/Readiness-/Safety-/Seasonal-/Homepage-Änderung.
+Ergebnis: **PASS**.
 
-Traveller Context ist für Slice A nicht relevant; es werden keine Reise-Credentials erhoben.
+Verifiziert:
 
-## Nächster Schritt
+- ehrliche Control-Center-IA;
+- keine Fake-Notifications/Auto-Execution;
+- lokale Refund-Semantik, keine Provider-Geldbewegung behauptet;
+- IP-Blockliste ausdrücklich nicht enforced;
+- capability-aware Navigation nur UX;
+- `requireAdminPage` / `requireAdminApi` / RLS bleiben Autorität;
+- Break-Glass-Writes auf Refund/Block/Unblock 403 vor DB-Zugriff;
+- Provider S2 und alle fremden Travel-Truth-Domänen bleiben unverändert;
+- keine DB-/RLS-/Capability-/Provider-/Secret-/Kostenänderung in Slice A.
 
-Product-Owner-Entscheidung zu Mark Ready / Merge von Draft PR #44. Slice B / PR #46 bleibt unangetastet. Kein Mark Ready, kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe. Kein Slice B/C ohne separate Freigabe.
+## Neuer geerbter P1-Fund
+
+Der lokale Refund-Pfad ist nicht atomar/idempotent und besitzt in Production aktuell weder fachlichen Idempotency-Constraint noch FK von `refunds.payment_id` zu `payments.id`.
+
+Das ist ein **geerbter Shared/Billing-Defekt**, nicht durch Slice A eingeführt. Er ist verbindlich erfasst in:
+
+`docs/ADMIN_BILLING_LOCAL_REFUND_INTEGRITY_TASK.md`
+
+Er muss vor Finance-/Payment-Live und vor produktionsreifer Billing Technical Closure geschlossen werden. Er ist kein Grund, Shared-Billing-Scope still in Slice A zu ziehen.
+
+## Governance / STOP
+
+- PR #44 bleibt **Draft**.
+- **Keine aktuelle Product-Owner-Freigabe für Mark Ready liegt vor.**
+- **Keine aktuelle Product-Owner-Freigabe für Merge liegt vor.**
+- kein Slice B/C in PR #44;
+- keine Production-Migration;
+- keine Provider-/Secret-/Kosten-Aktivierung.
+
+Nächster Schritt: Product-Owner-Entscheidung über **Mark Ready** von PR #44. Merge ist danach ein separates aktuelles Product-Owner-Gate.
+
+Admin endet nach Slice A nicht. Nach Integration läuft der vollständige Plan gemäß `docs/DOMAIN_PROGRAM_COMPLETION_POLICY.md` und Admin-Audit weiter bis zur produktionsreifen Technical Closure.
