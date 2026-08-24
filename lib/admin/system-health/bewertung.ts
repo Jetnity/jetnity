@@ -110,7 +110,7 @@ export function bewerteSupabaseAppZugriff(input: {
       detail:
         'Das beweist App-Datenquellen-Zugriff, nicht die Supabase-Management-Plattform. Management bleibt nicht konfiguriert.',
       proves: 'PostgREST hat eine lesende Anfrage auf public.airports in dieser Sitzung beantwortet.',
-      doesNotProve: 'Supabase-Dashboard, Billing, Auth-Infrastruktur insgesamt oder andere Regionen.',
+      doesNotProve: 'Supabase-Management, Dashboard, Billing, Auth-Infrastruktur insgesamt oder andere Regionen.',
     })
   }
   if (input.ping.timeout) {

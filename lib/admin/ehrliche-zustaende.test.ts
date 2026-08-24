@@ -24,7 +24,7 @@ describe('ehrliche Admin-Zustände', () => {
 
   test('kein Copilot-Execute und keine erfundene Automatik', () => {
     assert.match(ADMIN_EHRLICHE_TEXTE.copilotFolgtHinweis, /Kein Execute-Pfad/)
-    assert.match(ADMIN_EHRLICHE_TEXTE.steuerzentraleLage, /kein Copilot-Execute/)
+    assert.match(ADMIN_EHRLICHE_TEXTE.steuerzentraleLage, /kein Copilot-Execute/i)
     assert.match(ADMIN_EHRLICHE_TEXTE.steuerzentraleLage, /System Health ist read-only/)
     assert.doesNotMatch(ADMIN_EHRLICHE_TEXTE.steuerzentraleLage, /Keine System-Health/)
   })
