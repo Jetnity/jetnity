@@ -1,7 +1,7 @@
 # Jetnity – Provider Readiness S3 Handoff
 
 Stand: 24. August 2026
-Status: **S3 auf Current Main `8326e72f` synchronisiert; ADR-0161; Functional S3 Runtime Head bleibt `e284af55`; Exact-Head-Gates auf dem Sync-Tip neu beweisen; Draft-PR #54; kein Mark Ready / kein Merge / kein S4**
+Status: **S3 auf Current Main `8326e72f` synchronisiert und gegatet; ADR-0161; Current-Main Exact Head `2cb9a830`; Runtime/Security/Truth PASS; Draft-PR #54; STOPP für Technical-Lead Docs-Re-Check; kein Mark Ready / kein Merge / kein S4**
 
 ## 1. Übernahme
 
@@ -20,12 +20,14 @@ S3 lebt nur auf `feat/provider-mobility-rental-evidence-s3`.
 
 - Functional S3 runtime head: `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`
 - Vorheriger Sync auf Admin B: `f6b85570049a20146544e4f85503d6ff2c9703b4`
-- Current-Main-Sync-Tip: aktueller Branch-HEAD / PR #54 nach Merge von `8326e72f`
+- Current-Main Exact Head: `2cb9a830f4fdaced5551022de6ddb1a7a9aa25a6`
 - Draft-PR: https://github.com/Jetnity/jetnity/pull/54
 - Basis: `origin/main` @ `8326e72f`
 - PR: Draft
 
 S3-Runtime unverändert durch den Sync. Konflikte nur in zentraler Doku. UI-Audit nicht erneut.
+
+Current-Main-Gates auf `2cb9a830` sind belegt: GitHub Actions SUCCESS `32774477376`, Vercel success/READY `6kSJJXyzMjqCJXCTGsobRiyuk2Zi`. Dieser Stand ist ein docs-only Follow-up.
 
 ## 3. Harte Grenzen
 
@@ -55,4 +57,4 @@ S3-Runtime unverändert durch den Sync. Konflikte nur in zentraler Doku. UI-Audi
 
 ## 6. Nächster Schritt
 
-Exact-Head-Gates auf dem Current-Main-Sync-Tip beweisen. Danach unabhängiger Technical-Lead-Re-Review. Danach erst S4, und nur mit neuem Auftrag.
+Unabhängiger Technical-Lead Docs-Re-Check. Danach erst Product-Owner-Ready-Gate. Nicht Mark Ready, nicht mergen, nicht S4. Nach #54-Integration folgt Trip-Workspace-Audit #55. Kein Slice D, kein TW-1.

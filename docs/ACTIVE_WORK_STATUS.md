@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **Account AP-3 liegt auf `main` `8326e72f`; aktiver Provider-Slice ist S3 Mobility/Rental-Nachweis auf Current-Main-Sync von `feat/provider-mobility-rental-evidence-s3`**
+Status: **Account AP-3 liegt auf `main` `8326e72f`; aktiver Provider-Slice ist S3 Mobility/Rental-Nachweis auf Current-Main Exact Head `2cb9a830`; Draft-PR #54; STOPP für Technical-Lead Docs-Re-Check**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -94,7 +94,7 @@ Keine neuen Secrets und keine neuen laufenden Providerkosten.
 
 ### Provider Readiness – S3 Mobility/Rental Nachweis
 
-Verantwortlicher Cursor-Anzeigename: Provider-Readiness Senior Agent  
+Verantwortlicher Cursor-Anzeigename: `Jetnity provider readiness audit`  
 Implementierungsbranch: `feat/provider-mobility-rental-evidence-s3`  
 Basis: `origin/main` @ `8326e72f`  
 Auftrag: `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` PR-S3  
@@ -104,7 +104,7 @@ ADR: ADR-0161
 
 Aktiver Slice:
 
-**S3 – Mobility- und Rental-Nachweis auf Hotel-/S2-Trust-Grenze.** Async `nachweisen({ optionId, kontext })`. Testkatalog nur injiziert. Umgebung `null` → fail-closed. Mobility Auto-Search nur nach «Verbindungen prüfen». Keine Migration. Kein echter Provider. Branch ist auf Current Main `8326e72f` synchronisiert.
+**S3 – Mobility- und Rental-Nachweis auf Hotel-/S2-Trust-Grenze.** Async `nachweisen({ optionId, kontext })`. Testkatalog nur injiziert. Umgebung `null` → fail-closed. Mobility Auto-Search nur nach «Verbindungen prüfen». Keine Migration. Kein echter Provider. Current-Main Exact Head `2cb9a830` ist lokal und remote gegatet. Runtime/Security/Truth PASS. Dieser Stand ist ein docs-only Follow-up.
 
 Grenze: kein Mark Ready, kein Merge, keine Production-Migration, keine Provideraktivierung, kein S4–S8.
 
@@ -117,7 +117,7 @@ Grenze: kein Mark Ready, kein Merge, keine Production-Migration, keine Providera
 ### Account Platform – abgeschlossene Slices auf `main`
 
 - AP-1 / AP-2: gemergt
-- AP-3: gemergt, PR #53, ADR-0160. Status: `docs/ACCOUNT_AP3_STATUS.md`. Kein AP-4 ohne neuen Auftrag.
+- AP-3: gemergt, PR #53, ADR-0160. Status: `docs/ACCOUNT_AP3_STATUS.md`. Agent `Account plattform audit vorbereitung` wartet. Kein AP-4 ohne neuen Auftrag.
 
 ### Provider Readiness – abgeschlossene Slices auf `main`
 
@@ -131,7 +131,7 @@ Danach folgen erst S4–S8, jeweils mit eigenem Auftrag.
 Verantwortlicher Cursor-Anzeigename: `Trip workspace audit architecture`  
 Implementierungs-Draft-PR: **#55** (docs-only)
 
-**PR #55 bleibt Draft / docs-only.** Wartet auf finale Reconciliation nach Provider-Integration von PR #54. Startet keinen TW-1-Umbau und keine Runtime-Änderung.
+**PR #55 bleibt Draft / docs-only.** Folgt nach #54-Integration als finale docs-only Reconciliation. Startet keinen TW-1-Umbau und keine Runtime-Änderung. Agent `Trip workspace audit architecture` wartet bis dahin.
 
 ## 4. Parallelitätsregel
 
@@ -139,11 +139,11 @@ S3 darf Account-/Admin-Dateien nicht mischen. Admin A–C und Account AP-1–AP-
 
 Kontrollierte Reihenfolge der offenen Drafts:
 
-1. Provider #54 finaler Sync / Re-Review / Integration
+1. Provider #54 Docs-Re-Check / danach Product-Owner-Ready-Gate / Integration
 2. Trip-Workspace-Audit #55 finale Docs-Reconciliation / Integration
 3. danach neue kontrollierte Admin-/TW-Aufträge
 
-Kein Slice D. Kein TW-1 ohne neuen Auftrag.
+`Admin platform audit` wartet. `Account plattform audit vorbereitung` wartet. Kein Slice D. Kein TW-1 ohne neuen Auftrag.
 
 Seriell/zentral bleiben insbesondere:
 
@@ -173,7 +173,7 @@ Die neue Homepage-Produktseiten-Idee bleibt **pausiert**. Siehe `docs/HOMEPAGE_P
 
 ## 7. Exakter nächster Schritt
 
-1. S3 Draft-PR #54 auf Current Main `8326e72f` synchronisieren und Exact-Head-Gates auf dem neuen Tip beweisen.
-2. STOPP für unabhängigen Technical-Lead-Re-Review.
-3. Nicht Mark Ready, nicht mergen, nicht S4, Production nicht migrieren.
-4. Danach erst PR #55 Docs-Reconciliation. Kein Slice D. Kein TW-1. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag.
+1. STOPP für unabhängigen Technical-Lead Docs-Re-Check von Draft-PR #54. Current-Main Exact Head `2cb9a830` ist gegatet.
+2. Nicht Mark Ready, nicht mergen, nicht S4, Production nicht migrieren.
+3. Nach #54-Integration: Trip-Workspace-Audit #55 finale Docs-Reconciliation.
+4. Danach erst neue kontrollierte Admin-/TW-Aufträge. `Admin platform audit` wartet. `Account plattform audit vorbereitung` wartet. Kein Slice D. Kein TW-1. Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag.

@@ -1,7 +1,7 @@
 # Jetnity – Provider Readiness S3 Status
 
 Stand: 24. August 2026
-Status: **Current-Main-Sync auf `8326e72f`; Draft-PR #54; Exact-Head-Gates auf dem Sync-Tip neu beweisen; kein Mark Ready / kein Merge**
+Status: **Current-Main-Sync auf `8326e72f` gegatet; Draft-PR #54; Runtime/Security/Truth PASS; STOPP für Technical-Lead Docs-Re-Check; kein Mark Ready / kein Merge**
 Branch: `feat/provider-mobility-rental-evidence-s3`
 Draft-PR: `#54`
 ADR: ADR-0161  
@@ -24,7 +24,7 @@ Kein echter Mobility- oder Rental-Provider. Keine Secrets. Keine kostenpflichtig
 
 - Functional S3 runtime head: `e284af5524e7a95bf47dca2f7b77bc4f5ed171e9`
 - Vorheriger Sync auf Admin B: `f6b85570049a20146544e4f85503d6ff2c9703b4`
-- Current-Main-Sync-Tip: aktueller Branch-HEAD / PR #54 nach Merge von `8326e72f`
+- Current-Main Exact Head: `2cb9a830f4fdaced5551022de6ddb1a7a9aa25a6`
 - Draft-PR: https://github.com/Jetnity/jetnity/pull/54
 - Basis: `origin/main` @ `8326e72f`
 
@@ -50,13 +50,20 @@ S3-Runtime-Dateien (`lib/mobility/*`, `lib/rental-cars/*`, `components/trips/Mob
 - Universal-Offer-Modell
 - S2-artige DB-Guards für transfer/rental_car
 
-## 5. Historische Gates
+## 5. Gates
 
 Functional S3 Runtime Head `e284af55`: lokale Gates pass, UI-Audit 1014/1014, GitHub Actions SUCCESS `32750893324`, Vercel READY `GWiY7wxgazEfqL2PZSP2eWskoVcK`.
 
 Admin-B-Sync `f6b85570`: lokale Gates pass, `npm test` 1863/1863, GitHub Actions SUCCESS `32762113958`, Vercel SUCCESS `EreSw6u5vc1GKnojDNGbWnNtvzG5`.
 
-Current-Main-Sync-Gates auf dem neuen Tip stehen aus.
+Current-Main Exact Head `2cb9a830f4fdaced5551022de6ddb1a7a9aa25a6` gegen `main` `8326e72f`:
+
+- lokale Gates pass, `npm test` 1901/1901
+- GitHub Actions SUCCESS `32774477376`
+- Vercel success/READY `6kSJJXyzMjqCJXCTGsobRiyuk2Zi`
+- Technical-Lead Runtime/Security/Truth: PASS
+
+Dieser Stand ist ein docs-only Follow-up. Runtime bleibt `2cb9a830`.
 
 ## 6. Offener Residual
 
@@ -66,5 +73,4 @@ S2 Development-Migrationen `20260824160000` und `20260824180000` bleiben nicht P
 
 ## 7. Nächster Schritt
 
-1. Exact-Head-Gates auf dem Current-Main-Sync-Tip beweisen.
-2. STOPP für unabhängigen Technical-Lead-Re-Review. Nicht Mark Ready, nicht mergen, nicht S4, Production nicht migrieren.
+STOPP für unabhängigen Technical-Lead Docs-Re-Check. Danach erst Product-Owner-Ready-Gate. Nicht Mark Ready, nicht mergen, nicht S4, Production nicht migrieren. Nach #54-Integration folgt Trip-Workspace-Audit #55. Kein Slice D, kein TW-1.
