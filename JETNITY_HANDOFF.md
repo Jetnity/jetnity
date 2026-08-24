@@ -298,7 +298,7 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation
 6. ✅ Account Platform AP-1 – Squash-Merge nach `main` (`084f7c87`, PR #43)
-6a. **→ Account Platform AP-2 (Draft-PR #48) mit `main` synchronisiert, wartet auf Integrationsreview; parallel Admin Slice A und Provider Ops S1**
+6a. **→ Account Platform AP-2 (Draft-PR #48) Technical Integration Closure / PASS auf `de5ffd8a`; wartet auf Product-Owner-Entscheidung; parallel Admin Slice A und Provider Ops S1**
 7. Provider-Readiness-/Adapter-Lücken schließen – S1 Shared Operational Contract Technical Closure / PASS auf Draft-PR #47, Exact Head `b74096a9`; wartet auf Product-Owner-Entscheidung
 8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
@@ -324,7 +324,7 @@ Runtime-Head: `de5ffd8a91576a2281b6d5eda75338504a43b7a7`
 2. AP-2 ist auf genau diesen `main` rebase und PR #48 ist auf `main` retargetet.
 3. Exact Runtime-Head `de5ffd8a` ist lokal und remote gegated (Actions `32727253862`, Vercel `AAYbSDBt4p636mxY1aWuPgq9gUSS`).
 4. PR #48 bleibt Draft. Kein Mark Ready, kein Merge ohne aktuelle Product-Owner-Freigabe.
-5. **Exakter nächster Schritt:** Unabhängiger ChatGPT/Technical-Lead-Integrationsreview von PR #48 auf `de5ffd8a`. Kein AP-3.
+5. **Exakter nächster Schritt:** Product-Owner-Entscheidung über Mark Ready / Merge von Draft-PR #48. Technical Integration Closure / PASS auf `de5ffd8a` ist keine Ready-/Merge-Freigabe. Kein AP-3.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

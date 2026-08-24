@@ -1,7 +1,7 @@
 # Jetnity Account AP-2 – Status
 
 Stand: 24. August 2026  
-Status: **mit aktuellem `main` synchronisiert und gegated – Draft, kein Ready, kein Merge, kein AP-3**
+Status: **TECHNICAL INTEGRATION CLOSURE / PASS – Draft, kein Ready, kein Merge, kein AP-3**
 
 | Feld | Wert |
 | --- | --- |
@@ -14,7 +14,7 @@ Status: **mit aktuellem `main` synchronisiert und gegated – Draft, kein Ready,
 | **Runtime-Head** | `de5ffd8a91576a2281b6d5eda75338504a43b7a7` |
 | Letzter Code-Commit der neuen Serie | `bec064eb` (`fix(auth): align register success state for existing and new signups`) |
 | Vorheriger gestapelter Runtime-Head | `e9b2f834edc925b12e8b5a667f0e4382642eae8f` (gilt nicht mehr) |
-| Vorheriges TL-Verdict | `docs/ACCOUNT_AP2_TECHNICAL_CLOSURE.md` auf dem alten Stack; **kein** neues Integrationsreview |
+| Technical Closure | `docs/ACCOUNT_AP2_TECHNICAL_CLOSURE.md` – Integrationsreview PASS auf `de5ffd8a` |
 
 ## Main-Sync
 
@@ -63,7 +63,14 @@ PR #48 bleibt Draft. Kein Mark Ready. Kein Merge.
 
 Keine DB/Migration/RLS, keine Consent-Persistenz, keine Traveller-Registry, keine Guest→Account-Vertragsänderung, keine Provider-Aktivierung, keine Legal-Texte, kein AP-3, kein Homepage-Redesign, kein Mark Ready, kein Merge.
 
+## Technical-Lead-Verdict
+
+Unabhängiger Integrationsreview nach AP-1-Merge und AP-2-Main-Sync: **PASS / TECHNICAL INTEGRATION CLOSURE**.  
+Quelle: https://github.com/Jetnity/jetnity/pull/48#pullrequestreview-5007976065
+
+Kein neuer konkreter Integrations-, Auth-, Security-, Truth- oder Scope-Defekt. Das Verdict ist **keine** Product-Owner-Freigabe für Mark Ready oder Merge.
+
 ## Nächster Schritt
 
-Unabhängiger ChatGPT/Technical-Lead-Integrationsreview von Draft-PR #48 auf Runtime-Head `de5ffd8a`.  
-STOPP. Kein AP-3. Kein Mark Ready. Kein Merge.
+Product-Owner-Entscheidung über Mark Ready / Merge von Draft-PR #48.  
+STOPP. Kein AP-3. Kein Mark Ready. Kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.

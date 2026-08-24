@@ -61,12 +61,13 @@ Status: `docs/ACCOUNT_AP2_STATUS.md`
 
 Aktiver Slice:
 
-**AP-2 – Auth-UX-Hygiene; auf aktuellen `main` `084f7c87` rebase und retargetet.**
+**AP-2 – Auth-UX-Hygiene; auf aktuellen `main` `084f7c87` rebase und retargetet; Technical Integration Closure / PASS.**
 
 Gegates Runtime-Head: `de5ffd8a91576a2281b6d5eda75338504a43b7a7`  
-GitHub Actions CI **SUCCESS** (`32727253862`) und Vercel Preview **success** (`AAYbSDBt4p636mxY1aWuPgq9gUSS`) auf genau diesem Head.
+GitHub Actions CI **SUCCESS** (`32727253862`) und Vercel Preview **success** (`AAYbSDBt4p636mxY1aWuPgq9gUSS`) auf genau diesem Head.  
+Review: https://github.com/Jetnity/jetnity/pull/48#pullrequestreview-5007976065
 
-AP2-B1 bleibt geschlossen. Keine Scope-Erweiterung in diesem Sync.
+AP2-B1 bleibt geschlossen. Keine Scope-Erweiterung in diesem Sync. Technical Closure ist keine Ready-/Merge-Freigabe.
 
 Grenze: bestehender AP-2-Auth-UX-Scope. Keine DB/Migration/RLS, keine Traveller-/Guest→Account-Vertragsänderung, keine Provider-Aktivierung, kein AP-3.
 
@@ -145,7 +146,7 @@ Wenn sie gestartet wird:
 
 ## 7. Exakter nächster Schritt
 
-1. Unabhängiger Technical-Lead-Integrationsreview von Draft-PR #48 auf Runtime-Head `de5ffd8a91576a2281b6d5eda75338504a43b7a7`.
+1. Product-Owner-Entscheidung über Mark Ready / Merge von Draft-PR #48 auf Runtime-Head `de5ffd8a`. Technical Integration Closure / PASS liegt vor und ersetzt diese Freigabe nicht.
 2. `Admin platform audit` arbeitet weiter ausschließlich Slice A auf PR #44.
 3. S1 auf PR #47 hat Technical Closure / PASS auf `b74096a9` und wartet auf Product-Owner-Entscheidung; kein Mark Ready / kein Merge / kein S2.
 4. ChatGPT/Technical Lead prüft jeden Slice unabhängig.

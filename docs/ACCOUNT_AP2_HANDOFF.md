@@ -1,7 +1,7 @@
 # Jetnity Account Platform – AP-2 Handoff
 
 Stand: 24. August 2026  
-Status: **mit `main` synchronisiert und gegated – Draft, wartet auf Integrationsreview; kein Mark Ready, kein Merge, kein AP-3**
+Status: **TECHNICAL INTEGRATION CLOSURE / PASS – Draft, wartet auf Product-Owner-Entscheidung; kein Mark Ready, kein Merge, kein AP-3**
 
 | Feld | Wert |
 | --- | --- |
@@ -15,14 +15,14 @@ Status: **mit `main` synchronisiert und gegated – Draft, wartet auf Integratio
 | Produktauftrag | `docs/ACCOUNT_AP2_AUTH_UX_TASK.md` + `docs/ACCOUNT_AP2_B1_FIX_TASK.md` |
 | Runtime-Head | `de5ffd8a91576a2281b6d5eda75338504a43b7a7` |
 | Self-Review | `docs/ACCOUNT_AP2_SELF_REVIEW.md` |
-| Vorheriges TL-Verdict (alter Stack) | `docs/ACCOUNT_AP2_TECHNICAL_CLOSURE.md` auf `e9b2f834` |
+| Technical Closure | `docs/ACCOUNT_AP2_TECHNICAL_CLOSURE.md` – Integrationsreview PASS auf `de5ffd8a` |
 
 ## Was ein neuer Agent zuerst liest
 
 1. `docs/ACCOUNT_AP2_MAIN_SYNC_TASK.md`
 2. `docs/ACCOUNT_AP2_STATUS.md`
 3. `docs/ACCOUNT_AP2_SELF_REVIEW.md`
-4. `docs/ACCOUNT_AP2_TECHNICAL_CLOSURE.md` (historisches Verdict vor dem Rebase)
+4. `docs/ACCOUNT_AP2_TECHNICAL_CLOSURE.md`
 5. `docs/ACCOUNT_AP2_B1_FIX_TASK.md`
 6. `docs/ACCOUNT_AP2_AUTH_UX_TASK.md`
 7. Draft-PR #48 gegen `main`
@@ -67,9 +67,9 @@ DB/Migration/RLS, Consent-Write, Traveller-Registry, Guest→Account-Persistenz,
 - Gastübernahme bleibt auf `/reisen`; das ist der bestehende Vertrag.
 - MFA-Dialog hat keinen separaten Browser-/Screenreader-Lauf; der Quellvertrag und Account-UI-Audit bleiben der vorhandene Nachweis.
 - OAuth-Anbieter bleiben in `config.toml` aus.
-- Das vorherige Technical-Lead-PASS gilt für den alten gestapelten Head. Nach dem Rebase auf `main` ist ein **neuer** unabhängiger Integrationsreview fällig.
+- Technical Integration Closure / PASS liegt vor. Das ist keine Product-Owner-Freigabe für Mark Ready oder Merge.
 
 ## Nächster Schritt
 
-Unabhängiger ChatGPT/Technical-Lead-Integrationsreview von Draft-PR #48 auf `de5ffd8a`.  
+Product-Owner-Entscheidung über Mark Ready / Merge von Draft-PR #48.  
 STOPP. Kein AP-3. Kein Mark Ready. Kein Merge. Keine Production-Migration. Keine Provider-/Secret-/Kosten-Aktivierung.

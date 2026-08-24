@@ -3,39 +3,36 @@
 Stand: 24. August 2026  
 Reviewer: ChatGPT / Technical Lead  
 PR: #48 – `feat/account-ap2`  
-Runtime-Head: `e9b2f834edc925b12e8b5a667f0e4382642eae8f`  
-Verdict: **PASS / TECHNICAL CLOSURE** (alter gestapelter Stack)
+Runtime-Head: `de5ffd8a91576a2281b6d5eda75338504a43b7a7`  
+Verdict: **PASS / TECHNICAL INTEGRATION CLOSURE**
 
-> Hinweis des Implementierungsagenten, 24. August 2026: Dieses Verdict gilt für den **vor** dem Main-Sync gültigen Runtime-Head `e9b2f834`. Nach Rebase auf `main` `084f7c87` und Retarget von PR #48 ist ein **neuer** unabhängiger Technical-Lead-Integrationsreview auf Runtime-Head `de5ffd8a91576a2281b6d5eda75338504a43b7a7` erforderlich. Dieser Hinweis ist kein neues Technical-Lead-Verdict.
+Quelle: https://github.com/Jetnity/jetnity/pull/48#pullrequestreview-5007976065  
+Eingereicht: 24. August 2026, 12:52 UTC
 
-## Unabhängiger Re-Review
+## Unabhängiger Integrationsreview nach Main-Sync
 
-Der vorherige Blocker **AP2-B1** ist geschlossen.
+Unabhängiger Re-Review nach AP-1-Merge und AP-2-Main-Sync auf Exact Runtime Head `de5ffd8a91576a2281b6d5eda75338504a43b7a7`.
 
-Die öffentliche Register-Semantik behandelt nun beide neutralisierten Fälle identisch:
+Verifiziert:
 
-1. bereits bestehendes Konto / `already registered`-Variante,
-2. neuer Signup ohne Session.
+- PR #48 ist offen, Draft, Base `main`, mergeable; aktueller Branch-Head zum Review-Zeitpunkt war nur Docs-Nachzug `27af3ab5`, dessen direkter Parent der gegatete Runtime-Head `de5ffd8a` ist.
+- `main` steht unverändert auf `084f7c87f36f9929f3e4a9deb9d3fedef6e96982` (AP-1).
+- GitHub Actions auf `de5ffd8a`: **SUCCESS**, Run `32727253862`.
+- Vercel Preview auf demselben Runtime-Head: **success / READY**, Deployment `AAYbSDBt4p636mxY1aWuPgq9gUSS`.
+- Rebase/Retarget trägt AP-1 nicht doppelt; der PR-Diff bleibt AP-2-Scope.
+- Die zuvor technisch geschlossenen AP-2-Verträge bleiben erhalten: OAuth fail-closed, `next`-Allowlist, `getUser()`-Gates, Register-Neutralisierung inkl. AP2-B1, Gast-/Footer-Navigation und MFA-A11y.
+- Keine DB-/RLS-/Traveller-/Guest→Account-/Provider-/Secret-/Kostenänderung im Main-Sync.
 
-Beide Pfade laufen durch `registerSignupOeffentlichAuswerten()` auf denselben `registerOeffentlicherErfolg()` und erzeugen damit denselben sichtbaren Post-Submit-Zustand: gleiche neutrale Success-Copy, geleerte Felder, keine Feldfehler und derselbe Fokus auf `#register-erfolg`.
-
-Der Session-Pfad bleibt separat und leitet weiter; fachliche echte Fehler bleiben als Fehler unterscheidbar. Es wird öffentlich weder Kontoexistenz noch ein unbewiesener Mailversand behauptet.
-
-## Verifizierte Nachweise
-
-- `components/auth/RegisterForm.tsx` verwendet nur den zentralen öffentlichen Outcome-Mapper; kein separater Clear-Pfad für Bestandskonto vs. neuen Signup.
-- `lib/auth/register-meldung.ts` mappt Bestandskonto-Fehler und Signup ohne Session auf denselben `neutraler-erfolg`-Stand.
-- `lib/auth/register-meldung.test.ts` prüft Deep-Equality der Outcomes, identischen Feldzustand und identischen Fokus/A11y-Vertrag.
-- GitHub Actions CI auf dem Runtime-Head: **SUCCESS**, Run `32714001669`.
-- Vercel Preview auf demselben Runtime-Head: **SUCCESS / READY**, Deployment `G9JnPhBkhejRetPcTMJm82AXeAZn`.
-- Nachfolgender Docs-Head `da3813ed...` war ebenfalls GitHub-Actions- und Vercel-grün; er ändert den Runtime-Nachweis nicht.
-
-## Scope / Grenzen
-
-Kein neuer Defekt im freigegebenen AP-2-Scope gefunden. Keine DB-/Migration-/RLS-Änderung, keine Traveller-/Guest→Account-Vertragsänderung, keine Provider-Aktivierung, keine neuen Secrets/Kosten und kein AP-3.
+Kein neuer konkreter Integrations-, Auth-, Security-, Truth- oder Scope-Defekt gefunden.
 
 ## Governance
 
-Technical Closure ist **keine** Product-Owner-Freigabe für Mark Ready oder Merge.
+Technical Integration Closure ist **keine** Product-Owner-Freigabe für Mark Ready oder Merge.
 
-PR #48 bleibt Draft. AP-3 darf nicht starten. AP-1 / PR #43 ist inzwischen nach `main` gemergt (`084f7c87`); der nachfolgende Main-Sync von AP-2 braucht ein eigenes Integrationsreview und keine automatische Übernahme dieses Verdicts.
+PR #48 bleibt Draft. Kein AP-3, bis der Product Owner separat entscheidet.
+
+## Historisches Verdict vor dem Main-Sync
+
+Das frühere PASS auf Runtime-Head `e9b2f834edc925b12e8b5a667f0e4382642eae8f` (Review `5006869362`) schloss AP2-B1 auf dem gestapelten Stack. Es gilt nicht mehr als aktuelles Integrationsreview.
+
+AP2-B1 bleibt geschlossen: `registerSignupOeffentlichAuswerten()` mappt Bestandskonto-Fehler und neuen Signup ohne Session auf denselben `registerOeffentlicherErfolg()`.

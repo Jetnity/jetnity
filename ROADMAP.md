@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety, Travel Timing & Seasonal und Account AP-1 auf `main`; aktive Workstreams: Account AP-2 (Draft-PR #48) und Admin Slice A**
+Status: **Foundation C/D/E, Travel Safety, Travel Timing & Seasonal und Account AP-1 auf `main`; Account AP-2 Technical Integration Closure / PASS (Draft-PR #48), parallel Admin Slice A**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -240,7 +240,7 @@ Auftrag: `docs/ACCOUNT_AP1_MAIN_SYNC_TASK.md`. Entscheidung: ADR-0152, ADR-0153.
 
 ## 6b. Account Platform AP-2 – Auth-UX-Hygiene
 
-Status: **mit `main` `084f7c87` synchronisiert auf `feat/account-ap2`, Draft-PR #48; Runtime-Head `de5ffd8a` gegated, wartet auf Integrationsreview**
+Status: **Technical Integration Closure / PASS auf Runtime-Head `de5ffd8a`, Draft-PR #48; wartet auf Product-Owner-Entscheidung**
 
 Ziel: Login, Register, Callback, OAuth-Sichtbarkeit, Gast-/Session-Navigation und MFA-Dialog-Accessibility härten, ohne Auth-/MFA-/AAL-Vertrag oder Provider zu ändern.
 
@@ -386,7 +386,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation
 6. ✅ Account Platform AP-1 – auf `main` (`084f7c87`, PR #43)
-6a. **→ Account Platform AP-2 (Draft-PR #48) mit `main` synchronisiert, wartet auf Integrationsreview; parallel Admin Slice A**
+6a. **→ Account Platform AP-2 (Draft-PR #48) Technical Integration Closure / PASS auf `de5ffd8a`; wartet auf Product-Owner-Entscheidung; parallel Admin Slice A**
 7. Provider-Readiness-/Adapter-Lücken schließen
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit

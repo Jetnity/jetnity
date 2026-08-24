@@ -3,7 +3,7 @@
 Stand: 24. August 2026  
 Reviewer: implementierender Agent  
 Runtime-Head: `de5ffd8a91576a2281b6d5eda75338504a43b7a7`  
-Ergebnis: **Main-Sync abgeschlossen und gegated – bereit für Integrationsreview, kein Ready, kein Merge**
+Ergebnis: **Main-Sync gegated; unabhängiges Integrationsreview PASS – kein Ready, kein Merge**
 
 ## Auftragstreue
 
@@ -90,8 +90,8 @@ Bestehende `/terms`- und `/privacy`-Links bleiben. Keine neuen rechtlichen Texte
 - `next=/account` umgeht den `/reisen`-Übernahmeort, bis die Reisen-Seite geöffnet wird.
 - Footer- und Navbar-Chrome lesen die Sitzung weiter per Client-`getSession()`; Autorität der Login-/Register-Seiten ist `getUser()`.
 - Preview wurde remote als success gemeldet, nicht zusätzlich manuell im Browser abgeklickt.
-- Das Technical-Lead-PASS auf `e9b2f834` ist kein Integrationsreview des rebase-ten Stacks.
+- Technical Integration Closure / PASS auf `de5ffd8a` liegt vor und ist keine Ready-/Merge-Freigabe.
 
 ## Empfehlung
 
-Unabhängiger Technical-Lead-Integrationsreview von PR #48 auf `de5ffd8a`. Danach erst Product-Owner-Entscheidung über Ready/Merge. AP-3 nicht starten.
+Product-Owner-Entscheidung über Ready/Merge von Draft-PR #48. AP-3 nicht starten.
