@@ -43,6 +43,11 @@ Zwei-Eltern-Merge:
 - GitHub Actions CI `32750112312`: SUCCESS
 - Vercel Preview Inspector `6HzJRdg4NWnGRQb8jpLC1k2jUHms`: READY
 
+Docs-only Evidence-Head `beea0ac7` (kein Runtime-Change):
+
+- GitHub Actions CI `32750661517`: SUCCESS
+- Vercel Preview Inspector `4T3towfCx4dWmCP4UvNsoU3QzNwk`: READY
+
 ## Historische Gates (alter Stack)
 
 - B1 Runtime `cc1d06bd`: CI `32709302128` SUCCESS, Preview `3zoy92pYr1RabYcMKztGMCgYhgCH`

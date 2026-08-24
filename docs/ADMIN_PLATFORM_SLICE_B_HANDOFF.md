@@ -35,6 +35,11 @@ Ein späterer docs-only Commit, der genau diese Evidence festhält, ist kein neu
 - GitHub Actions CI `32750112312` SUCCESS
 - Vercel Preview `6HzJRdg4NWnGRQb8jpLC1k2jUHms` READY
 
+Docs-only Evidence-Head `beea0ac7` (Runtime unverändert `1715640b`):
+
+- GitHub Actions CI `32750661517` SUCCESS
+- Vercel Preview `4T3towfCx4dWmCP4UvNsoU3QzNwk` READY
+
 Historischer B1-PASS auf `cc1d06bd` bleibt historische Evidence.
 
 ## Was der nächste Agent nicht tun darf

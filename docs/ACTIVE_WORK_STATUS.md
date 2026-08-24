@@ -76,7 +76,7 @@ Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
 
 Aktiver Slice:
 
-**Admin Slice B Current-Main-Re-Sync ist gegatet.** Read-only System Health ohne Fake-Green. Entscheidung: ADR-0159. Exact Runtime Head `1715640b`. CI `32750112312` SUCCESS. Preview `6HzJRdg4NWnGRQb8jpLC1k2jUHms` READY.
+**Admin Slice B Current-Main-Re-Sync ist gegatet.** Read-only System Health ohne Fake-Green. Entscheidung: ADR-0159. Exact Runtime Head `1715640b`. CI `32750112312` SUCCESS. Preview `6HzJRdg4NWnGRQb8jpLC1k2jUHms` READY. Docs-only Head `beea0ac7`: CI `32750661517` SUCCESS, Preview `4T3towfCx4dWmCP4UvNsoU3QzNwk` READY.
 
 STOPP für unabhängigen Technical-Lead-Review. Kein Mark Ready, kein Merge, kein Slice C.
 

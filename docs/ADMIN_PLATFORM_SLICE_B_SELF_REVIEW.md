@@ -40,6 +40,8 @@ Remote:
 - Actions CI `32750112312` SUCCESS
 - Vercel Preview READY `6HzJRdg4NWnGRQb8jpLC1k2jUHms`
 
+Docs-only Head `beea0ac7`: CI `32750661517` SUCCESS, Preview `4T3towfCx4dWmCP4UvNsoU3QzNwk` READY. Runtime unverändert.
+
 Historischer B1-Head `cc1d06bd` / CI `32709302128` / Preview `3zoy92pYr1RabYcMKztGMCgYhgCH` bleibt historische Evidence.
 
 `db:sicherheit` und Production wurden nicht behauptet. Slice B ändert keine Datenbank.

@@ -78,6 +78,11 @@ Vercel auf exakt `1715640b...`:
 
 Der Preview ist durch Vercel-Schutz gesichert. Ein unauthentifizierter Fetch auf `/admin/system-health` endet am Vercel-SSO-Gate. **Keine eingeloggte Admin-Browser-Acceptance auf diesem Exact Head wird behauptet.**
 
+Der docs-only Evidence-Commit `beea0ac7ee83b5c655e58fc9c07fd7e849da1d10` ändert keine Runtime und hat eigene Gates:
+
+- GitHub Actions CI `32750661517`: **SUCCESS**
+- Vercel Preview Inspector `4T3towfCx4dWmCP4UvNsoU3QzNwk`: **READY**
+
 Historischer B1-PASS auf `cc1d06bd` / CI `32709302128` / Preview `3zoy92pYr1RabYcMKztGMCgYhgCH` bleibt historische Evidence.
 
 ## 4. Adversarial Review – Ergebnis
