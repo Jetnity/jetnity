@@ -2,11 +2,12 @@
 
 Stand: 24. August 2026
 
-Status: **WAITING PRODUCT-OWNER APPROVAL – noch keine Runtime-/DB-Implementierung starten**
+Status: **PRODUCT-OWNER FREIGEGEBEN – Implementierung darf starten; neue additive Migration nur auf Supabase Development; Production unverändert**
 
 Cursor-Agent: `Provider S2 flugnachweis`
 Draft-PR: `#51`
 Re-Review: `docs/PROVIDER_READINESS_S2_B1_REREVIEW.md`
+Product-Owner-Freigabe: `docs/PROVIDER_READINESS_S2_B2_PRODUCT_OWNER_APPROVAL.md`
 
 ## Blocker
 
@@ -49,24 +50,33 @@ Nicht zulässig:
 
 Wenn die saubere Lösung breiter als ein minimaler additiver DB-Guard wird: **STOPP und Architektur-Befund dokumentieren**, nicht still erweitern.
 
-## Product-Owner-Gate
+## Product-Owner-Freigabe
 
-Der frühere Product-Owner-Satz
+Am 24. August 2026 hat der Product Owner unmittelbar auf die angeforderte S2-B2-Freigabe mit
 
-> „Freigegeben für S2-B1: neue Migration nur auf Supabase Development. Production bleibt unverändert.“
+> „Freigabe“
 
-war ausdrücklich auf S2-B1 begrenzt. Er autorisiert **keine weitere S2-B2-Migration**.
+geantwortet.
 
-Daher gilt aktuell:
+Damit ist ausschließlich folgender Scope freigegeben:
 
-- Code-/Architekturprüfung und Dokumentation: erlaubt;
-- **neue DB-Migration implementieren/anwenden: erst nach neuer ausdrücklicher Product-Owner-Freigabe**;
-- Production bleibt unverändert;
-- kein Mark Ready;
-- kein Merge;
-- kein S3.
+- minimaler S2-B2 Direct-Table-Trust-Fix;
+- **eine neue additive Migration**;
+- Anwendung **nur auf Supabase Development**;
+- notwendige Regressionen und vollständige Exact-Head-Gates.
 
-## Pflichtregressionen nach Freigabe
+Production bleibt unverändert.
+
+Weiterhin nicht freigegeben:
+
+- Production-Migration;
+- Mark Ready;
+- Merge;
+- S3;
+- Provideraktivierung, Secrets, Verträge oder kostenpflichtige Calls;
+- Service-Role-/Auth-/MFA-/AAL-/Capability-Ausweitungen außerhalb des minimal erforderlichen S2-B2-Vertrags.
+
+## Pflichtregressionen
 
 1. Direkter `authenticated` UPDATE eines eigenen Flight-Punkts mit manipulierten fünf Handelsfeldern kann diese Werte nicht persistieren.
 2. Direkter `authenticated` INSERT eines Flight-Punkts mit diesen Feldern kann sie nicht persistieren.
@@ -83,6 +93,6 @@ Daher gilt aktuell:
 
 ## Abschluss
 
-Nach einem später freigegebenen Fix: Status/Handoff/Self-Review aktualisieren und STOPP für erneuten unabhängigen Technical-Lead-Re-Review.
+Nach Implementierung Status/Handoff/Self-Review aktualisieren und **STOPP für erneuten unabhängigen Technical-Lead-Re-Review**.
 
-Bis dahin keine weitere Runtime-Arbeit auf S2-B2.
+Kein Mark Ready. Kein Merge. Kein S3. Keine Production-Migration.
