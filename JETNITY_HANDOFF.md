@@ -1,6 +1,6 @@
 # Jetnity – Handoff und nächste Schritte
 
-Stand: **24. August 2026, ca. 23:00 Europe/Zurich**  
+Stand: **25. August 2026, ca. 00:15 Europe/Zurich**  
 Status: **kanonischer operativer Einstieg für neue Chats/Agenten**
 
 > Vor jeder neuen Aktion GitHub/CI/Vercel/Supabase live verifizieren. Historische Handoffs bleiben Evidence ihres damaligen Zeitpunkts und dürfen neuere zentrale Wahrheit nicht überschreiben.
@@ -9,11 +9,11 @@ Status: **kanonischer operativer Einstieg für neue Chats/Agenten**
 
 Repository: `Jetnity/jetnity`
 
-- `main`: `b7f027ec448639fe3399512d401a7789b24e52a6`
-- letzter Merge: **Provider Readiness S3 / PR #54 / ADR-0161**
-- PR #54: **merged / closed** nach separater ausdrücklicher Product-Owner-Ready- und danach Merge-Freigabe
-- finaler PR-Head #54: `2bb94ac5e7888b182d32e143e9d75c24b6917303`
-- Merge-Commit #54 / aktueller `main`: `b7f027ec448639fe3399512d401a7789b24e52a6`
+- aktueller `main`: `f8e252880d31fe462537f33be4496044951ae4a9`
+- letzter PR-Merge: **Trip Workspace Audit / PR #55**, Merge-Commit `08fd7748ace072544e189c94880562e050971811`
+- die danach folgenden `main`-Commits `c42017f5...` und `f8e25288...` sind **docs-only Kontinuitätsupdates**, keine Runtime-Änderungen
+- PR #55: **merged / closed** nach ausdrücklicher PO-Ready- und separater PO-Merge-Freigabe
+- PR #55 war docs-only; **Merge ≠ Annahme der vorgeschlagenen Ziel-IA und ≠ TW-1-Freigabe**
 - Supabase Production endet bei `20260824140000_flug_route_itinerary_untrusted_surface`
 - Supabase Development enthält zusätzlich `20260824160000` und `20260824180000`; beide bleiben Development-only und nicht Production-approved
 - `main` Branch Protection technisch weiterhin nicht umgesetzt; PO-Freigabe zur Härtung besteht, verbundene GitHub-Schnittstelle kann sie derzeit nicht setzen
@@ -41,35 +41,32 @@ Repository: `Jetnity/jetnity`
 
 - S3 / PR #54 / ADR-0161: **merged / closed**
 - Independent Runtime/Security/Truth Review: **PASS / Technical Integration Closure**
-- Runtime-Head vor docs-only Follow-up: `2cb9a830f4fdaced5551022de6ddb1a7a9aa25a6`
-- finaler PR-Head: `2bb94ac5e7888b182d32e143e9d75c24b6917303`
-- finaler GitHub Actions Run: `32775510115` SUCCESS
-- finaler Vercel Preview: `9bwWMA4YiVAh6rvK6ZojpR5j2ZHS` success/READY
-- Merge-Commit / aktueller `main`: `b7f027ec448639fe3399512d401a7789b24e52a6`
+- Merge-Commit: `b7f027ec448639fe3399512d401a7789b24e52a6`
 - Residual bleibt dokumentiert: `reise_anlegen` / direkte `trip_items`-Writes können transfer/rental_car User-Intake-Handelsfelder setzen; keine Production-Migration autorisiert
 - **Agent wartet. Kein S4 ohne neuen kontrollierten Auftrag.**
 
-### Trip Workspace Audit – Agent `Trip workspace audit architecture`
+### Trip Workspace – Agent `Trip workspace audit architecture`
 
-PR #55:
+- PR #55 / Audit & Zielarchitektur: **merged / closed**, docs-only
+- Exact Head vor Merge: `842797b8f7ab20742b51c54669e9f73acb44241e`
+- Merge-Commit: `08fd7748ace072544e189c94880562e050971811`
+- kein Runtime-Umbau, keine DB/RLS/Auth-/Secret-Änderung
+- Ziel-IA bleibt **nicht angenommener Product-Owner-Vorschlag**
+- **Agent wartet. Kein TW-1 ohne neuen kontrollierten Auftrag.**
 
-- Draft / docs-only, nicht gemergt
-- Audit/Zielarchitektur im Independent Review inhaltlich plausibel und scope-treu
-- Provider #54 ist jetzt integriert
-- **Jetzt nächster aktiver Workstream:** #55 ausschließlich docs-only gegen `main` `b7f027ec...` reconciliieren, zentrale operative Wahrheit aktualisieren, Exact-Head-Gates erneut belegen und danach für unabhängigen Technical-Lead-Re-Review stoppen
-- kein Runtime-Umbau und kein TW-1 in diesem Schritt
+## Kontrollierte Reihenfolge
 
-## Kontrollierte Integrationsreihenfolge
-
-1. **Account #53: integriert / erledigt**
-2. **Provider #54: integriert / erledigt**
-3. **jetzt Trip-Workspace-Audit #55:** finale Docs-Reconciliation → Re-Gates → Re-Review → PO-Ready-Gate → separates PO-Merge-Gate
-4. danach neue kontrollierte Admin-/TW-Aufträge
+1. Account #53: integriert / erledigt
+2. Provider #54: integriert / erledigt
+3. Trip-Workspace-Audit #55: integriert / erledigt, docs-only
+4. **Jetzt:** Technical Lead bewertet die vorgeschlagene Ziel-IA als Ganzes; Product Owner entscheidet ausdrücklich über Annahme/Änderungen und Start von TW-1
+5. Nur bei Freigabe: neuer kontrollierter Auftrag an Agent `Trip workspace audit architecture` für TW-1
+6. Admin/Account/Provider bleiben bis zu eigenen neuen Aufträgen stehen
 
 ## Große Produkt-Reihenfolge
 
-1. Account + Admin sauber aufbauen; Provider Readiness vollständig weiterführen.
-2. Danach Trip Workspace / Reiseübersicht grundlegend implementieren.
+1. Account + Admin sauber weiterführen; Provider Readiness vollständig weiterführen.
+2. Trip Workspace / Reiseübersicht als nächsten großen Runtime-Block nur nach ausdrücklicher IA-/TW-1-Entscheidung.
 3. Danach Homepage weiterentwickeln.
 
 Weltkarte, Matching, Reisebuch, Trends/Hotspots usw. sind Wünsche/Optionen und kein automatischer Pflichtblock.
@@ -81,6 +78,7 @@ Weltkarte, Matching, Reisebuch, Trends/Hotspots usw. sind Wünsche/Optionen und 
 - ADR-0160 = Account AP-3 / `main`
 - ADR-0161 = Provider S3 / `main`
 - ADR-0162 = Admin C / `main`
+- Trip-Workspace-Ziel-IA hat **keine angenommene ADR-Nummer**
 
 Neue Nummern erst durch Technical-Lead-Reservierung pro Slice.
 
@@ -106,10 +104,10 @@ Neue Nummern erst durch Technical-Lead-Reservierung pro Slice.
 
 ## Nächste Schritte
 
-- `Trip workspace audit architecture` / #55: docs-only Reconciliation auf `main` `b7f027ec...`, Re-Gates, STOP für Technical-Lead-Re-Review.
+- `Trip workspace audit architecture`: wartet; kein TW-1, bis IA/TW-1 ausdrücklich entschieden wurde.
 - `Jetnity provider readiness audit`: wartet; kein S4.
 - `Account plattform audit vorbereitung`: wartet; kein AP-4.
 - `Admin platform audit`: wartet; kein Slice D.
 - Nach jedem relevanten Merge oder größeren Statuswechsel PR #52 und die zentralen Handoff-/Checkpoint-/Active-Work-Dokumente zeitnah aktualisieren.
 
-PR #52 bleibt Draft. Kein Ready/Merge von #52 ohne ausdrückliche PO-Freigabe.
+PR #52 bleibt Draft und ist historisch hinter `main`; vor einer späteren Integration erst auf dann aktuellen `main` synchronisieren und neu gaten. Kein Ready/Merge von #52 ohne ausdrückliche PO-Freigabe.
