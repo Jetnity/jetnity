@@ -9,7 +9,9 @@ Branch: `audit/trip-workspace`
 
 ## 1. Exact Head
 
-Wird beim Commit dieses Handoffs auf den tatsächlichen Branch-Head gesetzt und nach Push im PR wiederholt.
+Branch-Head nach dem Audit-Commit:
+
+`7be104f4ffe77614070bd08d29f94ec29484b911`
 
 Audit-Basis `origin/main`:
 
