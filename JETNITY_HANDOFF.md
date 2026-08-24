@@ -1,11 +1,11 @@
 # Jetnity – Handoff und nächste Schritte
 
-Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt auf `main` @ `b7f027ec` (Provider S3 #54 gemergt). Account AP-1–AP-3, Admin Slice A–C und Provider S1–S3 liegen auf `main`. Trip-Workspace-Audit ist docs-only Draft-PR #55. Kein TW-1 ohne neuen Auftrag.**
+Stand: 25. August 2026  
+Status: **verbindlicher operativer Übergabepunkt nach dem docs-only Merge von Trip-Workspace-Audit PR #55. Letzter Merge-Commit: `08fd7748ace072544e189c94880562e050971811`. Account AP-1–AP-3, Admin Slice A–C, Provider S1–S3 und der Trip-Workspace-Audit liegen auf `main`. Die vorgeschlagene Trip-Workspace-Ziel-IA ist durch den Docs-Merge ausdrücklich nicht angenommen; kein TW-1 ohne neuen kontrollierten Auftrag.**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
-Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Account AP-3 in `docs/ACCOUNT_AP3_STATUS.md` und `docs/ACCOUNT_AP3_HANDOFF.md`. Admin Slice C in `docs/ADMIN_PLATFORM_SLICE_C_STATUS.md`. Admin Slice B in `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`. Provider Readiness S3 in `docs/PROVIDER_READINESS_S3_STATUS.md` und `docs/PROVIDER_READINESS_S3_HANDOFF.md`. S1/S2-Historie bleibt in den jeweiligen S1/S2-Dateien.
+Aktueller operativer Stand der parallelen Workstreams steht in `docs/ACTIVE_WORK_STATUS.md`. Account AP-3 in `docs/ACCOUNT_AP3_STATUS.md` und `docs/ACCOUNT_AP3_HANDOFF.md`. Admin Slice C in `docs/ADMIN_PLATFORM_SLICE_C_STATUS.md`. Admin Slice B in `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`. Provider Readiness S3 in `docs/PROVIDER_READINESS_S3_STATUS.md` und `docs/PROVIDER_READINESS_S3_HANDOFF.md`. Trip Workspace Audit/Zielarchitektur in `docs/TRIP_WORKSPACE_AUDIT.md`, `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`, `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md` und `docs/TRIP_WORKSPACE_HANDOFF.md`. Historische S1/S2-/Slice-Handoffs bleiben Evidence ihres Zeitpunkts.
 
 > **Kein relevanter Fortschritt darf beim Wechsel von Chat, Agent oder Sitzung verloren gehen. Was für die Fortsetzung wichtig ist, gehört ins Repository.**
 
@@ -290,7 +290,7 @@ Frühere grüne Tests oder frühere Merges geben keinen Bestandsschutz. Evidence
 
 ## 9. Nächste verbindliche Reihenfolge
 
-Der nächste neue Entwicklungsblock ist **gestartet**.
+Der vorbereitende Audit-Block ist abgeschlossen; **noch kein neuer Runtime-Slice ist gestartet**.
 
 1. ✅ Foundation C – Readiness
 2. ✅ Foundation D – Route & Transit
@@ -304,13 +304,14 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 6d. ✅ Admin Slice C auf `main` (PR #49, `78192ab`, ADR-0162)
 6e. ✅ Account AP-3 auf `main` (PR #53, `8326e72f`, ADR-0160)
 7. ✅ Provider-Readiness S1–S3 auf `main` (S3 = PR #54, `b7f027ec`, ADR-0161)
-7a. Trip-Workspace-Audit / Zielarchitektur – docs-only Draft-PR #55, STOPP für Technical-Lead-Re-Review; kein TW-1
-8. danach neue kontrollierte Admin-/TW-/Provider-Aufträge; kein Slice D, kein S4 und kein TW-1 ohne neuen Auftrag
-9. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
-10. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
-11. echte Providerphase
-12. provider-backed End-to-End-/Truth-Audit
-13. finale Startseiten-Positionierung / Kommunikation
+7a. ✅ Trip-Workspace-Audit / Zielarchitektur – docs-only PR #55 gemergt (`08fd7748`); **Docs-Merge ≠ IA-Annahme und ≠ TW-1-Freigabe**
+8. **Jetzt:** Product Owner + Technical Lead entscheiden ausdrücklich, ob die vorgeschlagene Ziel-IA angenommen wird und ob TW-1 als eigener Runtime-Slice beauftragt wird.
+9. Danach – nur nach neuem Auftrag – TW-1 Shell/Geräteparität; anschließend kontrolliert TW-2 Reiseübersicht → TW-4 Aufmerksamkeit → TW-3 Timeline.
+10. Account/Admin/Provider-Programme bleiben offen: kein AP-4, Slice D oder S4 ohne eigenen kontrollierten Auftrag / Shared-Gate.
+11. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
+12. echte Providerphase
+13. provider-backed End-to-End-/Truth-Audit
+14. finale Startseiten-Positionierung / Kommunikation
 
 ### Provider-Regel
 
@@ -320,13 +321,13 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-`main`: `b7f027ec448639fe3399512d401a7789b24e52a6` (Provider S3 #54 gemergt).
+Letzter Merge auf `main`: `08fd7748ace072544e189c94880562e050971811` (Trip-Workspace-Audit #55, docs-only).
 
-1. Admin A–C (ADR-0158 / 0159 / 0162), Account AP-1–AP-3 (ADR-0160) und Provider S1–S3 (ADR-0161) liegen auf `main`.
-2. Historischer S3-PASS auf `2cb9a830` bleibt Evidence; der Merge-Commit ist `b7f027ec`.
-3. `mobilityNachweisAusUmgebung()` und `rentalCarNachweisAusUmgebung()` bleiben `null`; Übernahme fail-closed. Das ändert S3 nicht nachträglich.
-4. Dieser Audit: Agent `Trip workspace audit architecture`, Branch `audit/trip-workspace`, Draft-PR #55, docs-only, rebase auf aktuellen `main`. Kein TW-1, keine Runtime. Die Ziel-IA bleibt Vorschlag; Merge von #55 gibt sie nicht frei.
-5. **Exakter nächster Schritt dieses Audits:** erneuter unabhängiger ChatGPT/Technical-Lead-Re-Review von #55 nach Review-Korrektur `5012729847`. Kein Mark Ready, kein Merge.
+1. Admin A–C (ADR-0158 / 0159 / 0162), Account AP-1–AP-3 (ADR-0160), Provider S1–S3 (ADR-0161) und der Trip-Workspace-Audit #55 liegen auf `main`.
+2. PR #55 ist **merged / closed**. Historische Aussagen wie „Draft #55 wartet“ oder ältere `main`-SHAs in Slice-Handoffs sind **pre-merge Evidence** und dürfen den zentralen aktuellen Status nicht überschreiben.
+3. Die in #55 dokumentierte Trip-Workspace-Ziel-IA bleibt **Vorschlag ohne Product-Owner-Annahme**. Der Merge selbst hat weder IA noch TW-1 freigegeben.
+4. Die Agenten `Admin platform audit`, `Account plattform audit vorbereitung`, `Jetnity provider readiness audit` und `Trip workspace audit architecture` warten bis zum nächsten kontrollierten Auftrag.
+5. **Exakter nächster Schritt:** Technical Lead bewertet die vorgeschlagene Ziel-IA als Ganzes und legt dem Product Owner eine klare Annahme-/Änderungs-Empfehlung vor. Erst nach ausdrücklicher Entscheidung darf `Trip workspace audit architecture` TW-1 beginnen.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`. Workspace-Audit: `docs/TRIP_WORKSPACE_HANDOFF.md`.
 
