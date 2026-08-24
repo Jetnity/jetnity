@@ -58,9 +58,17 @@ Nicht umgesetzt und bewusst nicht vorgetäuscht:
 - keine Safety-/Seasonal-Orchestrierung; fehlende Evaluation bleibt unsichtbar und nicht clean
 - kein Create-Flow / keine DB-/RLS-/Auth-/Provider-/Secret-Änderung
 
-## Lokale Gates auf Runtime-Head `d087b6d38f5bff2b712fbb498dade637d478f1e1`
+## Exact Head
 
-Alle grün:
+`0484e8d74b7cbbe3d36666da82c521ebe9775788`
+
+ahead 6 / behind 0 gegenüber `origin/main` `1bc1e1f4`.
+
+Runtime-Head vor dem Status-Nachzug: `d087b6d38f5bff2b712fbb498dade637d478f1e1`. Dieser Docs-Commit ändert keine Runtime-Dateien.
+
+## Lokale Gates
+
+Auf Runtime-Head `d087b6d3` und erneut auf diesem Exact Head, soweit unten nicht anders gekennzeichnet:
 
 - `check:setup:ci` – 1 Warning: keine `.env` im Cloud-Agent
 - `typecheck`
@@ -70,9 +78,9 @@ Alle grün:
 - `check:api-schutz` – 12 Admin-Routen
 - `check:schema-bezug`
 - `npm run build` – Production-Build 45/45 Seiten, Compiled successfully
-- `audit:trip-workspace` – **1018/1018, 0 Fehler**, WebKit + Chromium, Viewports 280–1280 inkl. Tabwechsel 390/430/768/1280
+- `audit:trip-workspace` auf Runtime-Head `d087b6d3` – **1018/1018, 0 Fehler**, WebKit + Chromium, Viewports 280–1280 inkl. Tabwechsel 390/430/768/1280
 
-GitHub Actions und Vercel auf `d087b6d3` waren SUCCESS/READY. Nach diesem Docs-Commit ist der Branch-Head der Exact Head für das Re-Review; lokale Gates werden darauf erneut ausgeführt.
+GitHub Actions und Vercel müssen auf **genau diesem Exact Head** SUCCESS/READY sein. Ältere grüne Runs auf `d087b6d3` gelten nicht als Proof für `0484e8d7`.
 
 ## Self-Review
 
