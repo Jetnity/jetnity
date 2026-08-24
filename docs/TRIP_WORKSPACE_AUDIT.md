@@ -236,7 +236,7 @@ Legende Status: **real** = produktiver Pfad vorhanden · **teilweise** = ehrlich
 | --- | --- | --- | --- | --- | --- | --- |
 | Flugbestand / Abdeckung | welche Abschnitte fehlen | `FlugBestand`, `flugAbdeckung` | Trip Graph + Route Facts | real / ehrlich unbestimmbar | Übersichtstext leitet dieselbe Abdeckung ab | Item-/Etappen-Detail |
 | Flugroute | Segmente verstehen | `FlugRoute` | Foundation-D Itinerary | real, nur bei geprüfter Itinerary | nein | bleiben |
-| Flugsuche | Option finden | `FlugSuche` | Provider Commercial; Production aus | teilweise; Guest-Übernahme **fail-closed** | nein | nach S5 Provenance |
+| Flugsuche | Option finden | `FlugSuche` | Provider Commercial; Production aus | teilweise; Guest-Übernahme **fail-closed**; Herkunft defaultet auf `ZRH`, wenn `iataAus(reise.origin)` leer ist | nein | Default entfernen; Origin nur aus Graph/User |
 | Hotelbestand / Suche | Nächte / Quartier | `UnterkunftBestand`, `HotelBereich` | Graph + `HotelNachweis` auf Konto | teilweise; Factory `null` | Übersicht nutzt `unterkunftAbdeckung` | Etappen-Ebene |
 | Aktivitäten | Tag füllen | `AktivitaetenBereich` | Graph + `ActivityNachweis` | teilweise | Übersicht zählt nur Anzahl | Tages-Ebene |
 | Mobilität | A nach B | `MobilitaetBereich` | User-Evidence; Nachweis-Stub | teilweise; Auto-Suche kostenrelevant | Untertabs Verbindungen/Mietwagen | Kanten der Etappe/Tage |
@@ -264,6 +264,8 @@ Legende Status: **real** = produktiver Pfad vorhanden · **teilweise** = ehrlich
 | Unknown Official | keine erfundene Visa-Lage | `officialResult: 'unknown'` | fail-closed | real |
 | UI-Audit-Harness | Viewport-Regression | `/ui-audit/trip-workspace` | Fixtures / sessionStorage | **nur Audit**, nicht Produktpfad |
 | Deep-Link Bereich | Bereich teilen / zurück | – | – | fehlt |
+| Safety/Seasonal/Official-APIs | serverseitige Evaluation | `/api/safety/evaluate`, `/api/seasonal/evaluate`, `/api/readiness/requirements` | jeweilige Evidence-Ports | Routen existieren; **kein** Workspace-Loader ruft sie | später orchestrieren, nicht im Client erfinden |
+| Shared `Ladung<T>` | Error≠Empty in Client-Views | `lib/admin/ladezustand.ts` | – | Workspace-Clients nutzen es **nicht**; Server-Listen über `lese()` schon | angleichen, keine zweite Semantik |
 
 ---
 
@@ -297,6 +299,7 @@ Legende Status: **real** = produktiver Pfad vorhanden · **teilweise** = ehrlich
 | TW-P1-05 | Official Evaluations werden lokal fail-closed erzeugt, aber nie serverseitig in den Produkt-Workspace gereicht. | P1 | `readinessAnsicht` Fallback `requirementsLokalFuerReise`; Summary `officialResult: 'unknown'` |
 | TW-P1-06 | Guest-Flugübernahme ist korrekt fail-closed; Hotel/Aktivität dürfen Momentaufnahmen speichern. Asymmetrie ist wahr, aber erklärungsbedürftig. | P1 | `flugNachweisFehler('unavailable')` vs `gastHotelUebernehmen` |
 | TW-P1-07 | Einstieg ist Einziel; `trip_stages` kann Multi-Destination, UI nicht. | P1 | `CreateTripInput.destination` |
+| TW-P1-08 | Flugsuche defaultet Herkunft auf `ZRH`, wenn kein IATA aus `reise.origin` lesbar ist. Das ist ein stiller Ort, keine Graph-Truth. | P1 | `FlugSuche.tsx` `useState(iataAus(reise.origin) \|\| 'ZRH')` |
 | TW-P2-01 | Aktiver Bereich / Tag nicht URL-fähig. | P2 | `useState` in `TripWorkspace` |
 | TW-P2-02 | Gast-`itemCount` ignoriert `ohneTag`. | P2 | `GastReisen.alsUebersicht` |
 | TW-P2-03 | `docs/REISEN.md` und `main`-Handoff/Status sind gegenüber Git veraltet. | P2 | siehe §1.3 |
@@ -304,6 +307,9 @@ Legende Status: **real** = produktiver Pfad vorhanden · **teilweise** = ehrlich
 | TW-P2-05 | Sticky Mobile-Nav + Site-Header + Cards + eingebetteter Plan + drei Intelligence-Karten = hohe Dichte. | P2 | Navigation `sticky top-[calc(72px+...)]` |
 | TW-P2-06 | Legacy `nationalityCountryCode` noch in Readiness-Schemas/Kompatibilität. | P2 | `lib/readiness/*`; Workspace-UI nutzt bereits `citizenships[]` |
 | TW-P2-07 | Manuelle Planpunkte und Domain-Übernahmen können denselben fachlichen Flug/Transfer doppelt abbilden. | P2 | `TripWorkspacePlan` erlaubt `kind=flight` ohne Nachweis |
+| TW-P2-08 | `/api/safety/evaluate`, `/api/seasonal/evaluate`, `/api/readiness/requirements` existieren, werden vom Produkt-Workspace aber nicht aufgerufen. Die Lücke ist Orchestrierung, nicht fehlende Ports. | P2 | keine Treffer in `components/trips/` |
+| TW-P2-09 | Workspace-Client-Views nutzen `lib/admin/ladezustand.ts` nicht. Server-Listen über `lese()` sind ehrlich; Client-Suchen erfinden die Error/Empty-Lage jeweils lokal. | P2 | ADR-0040; `GastArbeitsbereich` / Suchbereiche |
+| TW-P2-10 | Gast-Workspace synchronisiert nicht über Tabs. Ein zweiter Tab kann LocalStorage schreiben, ohne dass der offene Workspace nachzieht. | P2 | `GastArbeitsbereich` lädt nur im Mount-`useEffect` |
 | TW-P3-01 | UI-Audit kann Evaluations injizieren; das ist Fixture, kein Produktbeweis. | P3 | `TripWorkspaceAuditClient` / sessionStorage |
 | TW-P3-02 | Weltkarte, Partner-Matching, Reisebuch, Trends: nicht vorhanden, nicht nötig. | P3 | bewusst kein Scope |
 
@@ -472,7 +478,7 @@ Bewusst **nicht** in die Zielarchitektur:
 | Account-/Provider-Verträge vorweggenommen? | Nein. AP-*/S3–S8 nur als Abhängigkeiten referenziert. |
 | Zielarchitektur zu groß? | Nein. Weniger primäre Module, nicht mehr. |
 | Mobile wirklich einfacher? | Nur wenn Tabs nicht mehr die IA sind. Sonst nein. |
-| Funktionen übersehen? | Inventar deckt Einstieg, Hub, Schale, Domains, Traveller, Persistenz, Audit-Harness. Collaboration-PR #28 ist fremder Draft und nicht in `main`. |
+| Funktionen übersehen? | Inventar deckt Einstieg, Hub, Schale, Domains, Traveller, Persistenz, Audit-Harness, ungenutzte Evaluate-APIs, `ZRH`-Default. Collaboration-PR #28 ist fremder Draft und nicht in `main`. |
 | Stubs als Features? | Safety/Seasonal im Produktpfad als unsichtbar dokumentiert, nicht als live. |
 | Domains zu UI-Modulen gemacht? | Als Ist-Befund ja; Zielarchitektur kehrt das um. |
 | Multi-Citizenship? | UI ja, Kopf/Zählfeld und Legacy-Feld dokumentiert; keine Neumodellierung. |

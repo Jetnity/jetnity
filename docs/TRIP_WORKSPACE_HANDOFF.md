@@ -65,6 +65,7 @@ Keine Runtime-Implementation. Keine Migration. Keine Shared-Contract-Änderung.
 6. **Guest/Account-Form ist sauber.** Dieselbe `Trip`-Form; Konto refresh nach Write; Guest-Flug fail-closed; Listenfehler ≠ leer.
 7. **Foundations nicht neu bauen.** Route, Traveller, Readiness, Safety, Seasonal, Booking-Status, FlugNachweis liegen auf `main`. Der Workspace **orchestriert** sie unvollständig.
 8. **PR #52 ist nicht `main`.** Governance-Evidence, offener Draft.
+9. **Nachzug aus Code-Re-Scan:** Flugsuche defaultet auf `ZRH`; Evaluate-APIs existieren ohne Workspace-Aufruf; Gast ohne Tab-Sync; Client ohne `ladezustand`.
 
 Vollständige Inventare und P-Listen: `docs/TRIP_WORKSPACE_AUDIT.md`.
 

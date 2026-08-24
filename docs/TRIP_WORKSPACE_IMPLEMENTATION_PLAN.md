@@ -174,6 +174,7 @@ Gates: Repo-Hygiene, CI auf Exact Head, Vercel Preview falls erzeugt. Grün ≠ 
 - Live-Provider
 - Mobility-Nachweis vor S3 vortäuschen
 - manuelle Flüge als nachgewiesene Angebote zeigen
+- stilles `ZRH` als Suchherkunft (TW-P1-08: nur Graph oder Nutzerangabe)
 
 ### TW-6 – Create-Entry angleichen
 
