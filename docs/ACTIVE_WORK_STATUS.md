@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 24. August 2026  
-Status: **PR #38 vollständig integriert; Account AP-1 aktiv auf Draft PR #43; Admin Slice A Technical Closure / PASS auf Draft PR #44**
+Status: **PR #38 vollständig integriert; Account AP-1 aktiv auf Draft PR #43; Admin Slice A Technical Closure / PASS auf Draft PR #44; Admin Slice B Implementierung auf Draft PR #46**
 
 ## 1. Zuletzt vollständig abgeschlossener Block
 
@@ -69,11 +69,24 @@ CI `32683942810` SUCCESS. Vercel Preview READY `dpl_czE3XJXw3qx3sXMrh7LTgMV94zBL
 
 Grenze: Admin-UI/IA, ehrliche Zustände und vorhandene Security-Gates. Keine neue DB/Migration, keine Capability-/RLS-Neudefinition, kein System Health in diesem Slice, keine Provider-/Secret-/Kosten-Aktivierung.
 
-Technical Closure ist keine Mark-Ready-/Merge-Freigabe. Slice B / System Health ist ein separater Block und gehört nicht in den abgeschlossenen Slice-A-Head.
+Technical Closure ist keine Mark-Ready-/Merge-Freigabe. Slice B läuft separat auf Draft PR #46.
+
+### Admin Platform – Slice B
+
+Verantwortlicher Cursor-Anzeigename: `Admin platform audit`  
+Implementierungsbranch: `feat/admin-system-health`  
+Implementierungs-Draft-PR: **#46** (gestapelt auf PR #44)  
+Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
+
+Aktiver Slice:
+
+**Admin Slice B – read-only System Health ohne Fake-Green.**
+
+Grenze: vorhandene read-only Evidence, ehrliche `unknown`/`not_configured`-Zustände, bestehende Admin-Gates. Keine neue DB/Migration, keine Capability-/RLS-Neudefinition, keine neuen Secrets/Tokens/Verträge/Kosten, keine Writes.
 
 ## 4. Parallelitätsregel
 
-Account AP-1 und Admin Slice A dürfen parallel arbeiten.
+Account AP-1 und Admin Slice B dürfen parallel arbeiten. Slice A bleibt abgeschlossene Stack-Basis.
 
 Seriell/zentral bleiben insbesondere:
 
@@ -106,7 +119,7 @@ Wenn sie gestartet wird:
 
 ## 6. Governance
 
-- PR #43 und PR #44 bleiben Draft.
+- PR #43, PR #44 und PR #46 bleiben Draft.
 - Kein künftiger PR wird Mark Ready oder gemergt ohne ausdrückliche aktuelle Product-Owner-Freigabe.
 - Production-Migrationen bleiben separate Gates.
 - Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
@@ -115,7 +128,7 @@ Wenn sie gestartet wird:
 ## 7. Exakter nächster Schritt
 
 1. `Account plattform audit vorbereitung` implementiert ausschließlich AP-1 auf PR #43.
-2. Admin Slice A ist Technical Closure / PASS. Draft PR #44 wartet auf ausdrückliche Product-Owner-Freigabe für Mark Ready / Merge.
-3. Slice B / System Health nicht in PR #44 mischen.
-4. PR #43 und PR #44 bleiben Draft, bis der Product Owner jeweils ausdrücklich freigibt.
-5. AP-2 bzw. Admin Slice B erst als eigene Blöcke.
+2. Admin Slice A bleibt Technical Closure / PASS auf Draft PR #44. Keine Slice-B-Mischung in #44.
+3. Admin Slice B ist auf Draft PR #46 implementiert und wartet auf Pflicht-Gates plus unabhängigen Technical-Lead-Review.
+4. PR #43, PR #44 und PR #46 bleiben Draft, bis der Product Owner jeweils ausdrücklich freigibt.
+5. Kein Mark Ready, kein Merge, kein Admin Slice C ohne ausdrückliche aktuelle Freigabe.

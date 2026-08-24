@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 24. August 2026  
-Status: **verbindlicher operativer Übergabepunkt – Seasonal Foundation auf `main`; Account AP-1 aktiv; Admin Slice A Technical Closure / PASS (Draft PR #44)**
+Status: **verbindlicher operativer Übergabepunkt – Seasonal Foundation auf `main`; Account AP-1 aktiv; Admin Slice A Technical Closure / PASS (Draft PR #44); Admin Slice B Implementierung (Draft PR #46)**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -295,7 +295,7 @@ Der nächste neue Entwicklungsblock ist **gestartet**.
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal Intelligence – provider-neutrale Foundation (PR #38 gemergt)
-6. **→ Account AP-1 (Draft PR #43) aktiv; Admin Slice A Technical Closure / PASS (Draft PR #44); Slice B separat**
+6. **→ Account AP-1 (Draft PR #43) aktiv; Admin Slice A Technical Closure / PASS (Draft PR #44); Admin Slice B Implementierung (Draft PR #46)**
 7. Provider-Readiness-/Adapter-Lücken schließen
 8. großer End-to-End Trip-Workspace-/Übersicht-Umbau inkl. Function-by-Function-Generalinspektion
 9. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
@@ -311,15 +311,16 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-Admin-Implementierungsbranch: `feat/admin-control-center-ia`  
-Draft PR: `#44`  
+Admin-Implementierungsbranch Slice B: `feat/admin-system-health`  
+Draft PR: `#46` (gestapelt auf `#44`)  
 Agent: `Admin platform audit`
 
 1. Seasonal Foundation (PR #38) ist auf `main`.
-2. Admin Slice A ist implementiert: ehrliche Steuerzentralen-IA, keine neue Autorität, keine Migration.
-3. Status/Handoff: `docs/ADMIN_PLATFORM_SLICE_A_STATUS.md`, `docs/ADMIN_PLATFORM_SLICE_A_HANDOFF.md`.
-4. PR #44 bleibt Draft. Kein Mark Ready, kein Merge, keine Production-Migration, keine Provider-/Secret-Aktivierung.
-5. **Exakter nächster Schritt:** Product-Owner-Entscheidung zu Mark Ready / Merge von Draft PR #44. Technical Closure ersetzt diese Freigabe nicht. Slice B ist ein separater Block. Account AP-1 darf parallel auf PR #43 bleiben.
+2. Admin Slice A bleibt Technical Closure / PASS auf Draft PR #44.
+3. Admin Slice B (read-only System Health) ist auf Draft PR #46 implementiert.
+4. Status/Handoff: `docs/ADMIN_PLATFORM_SLICE_B_STATUS.md`, `docs/ADMIN_PLATFORM_SLICE_B_HANDOFF.md`.
+5. PR #44 und PR #46 bleiben Draft. Kein Mark Ready, kein Merge, keine Production-Migration, keine Provider-/Secret-Aktivierung, kein Slice C.
+6. **Exakter nächster Schritt:** Pflicht-Gates und Exact-Head-CI/Preview belegen, dann unabhängigen Technical-Lead-Review abwarten. Account AP-1 darf parallel auf PR #43 bleiben.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`.
 

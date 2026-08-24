@@ -3765,6 +3765,33 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 
 ---
 
+## ADR-0153 – Admin Slice B bleibt read-only System Health ohne Fake-Green
+
+**Datum:** 24. August 2026  
+**Status:** umgesetzt auf Draft-PR #46 / `feat/admin-system-health`, gestapelt auf Slice A / PR #44
+
+**Entscheidung:**
+
+- Das Admin Control Center bekommt eine eigene read-only Fläche `/admin/system-health` mit zentralem Health-Modell: `healthy | degraded | unavailable | unknown | not_configured` plus Freshness `fresh | stale | unknown`.
+- Sichtbares Grün gilt nur bei `healthy` **und** `fresh`. Stale, unknown, not_configured und unavailable dürfen nicht grün aussehen.
+- Jede Karte nennt Quelle, Prüfzeit, was die Quelle beweist und was sie nicht beweist.
+- Zulässige Live-Evidence in Slice B ohne neues Secret:
+  - **App / Deployment:** der Prozess hat den Check beantwortet; vorhandene `VERCEL_*`-Runtimefelder sind nur Deployment-Metadaten.
+  - **Supabase App-Datenquelle:** user-scoped `select iata from public.airports limit 1` mit 8s Timeout. Das beweist App-Datenquellen-Zugriff, nicht Management-Health.
+- **Vercel-Plattform, GitHub/CI, Infomaniak und Supabase-Management** bleiben `not_configured`, solange kein freigegebenes read-only Token existiert. Vorhandene Cloud-Tokens werden im Webpfad nicht benutzt.
+- Der GET-Endpunkt `api/admin/system-health` verlangt `requireAdminApi({ capability: 'betrieb-lesen' })`. `writeActions` bleibt leer. Keine Service-Role, keine Migration, keine Capability-/RLS-Änderung.
+- Server-Cache 30s. Ein manueller Refresh, kein Sekunden-Polling. Ein Teilfehler isoliert die anderen Karten.
+
+**Kontext:** Auftrag `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`. Slice A hat System Health bewusst ausgelassen, damit die Steuerzentrale keine erfundene Infrastruktur-Lage zeigt.
+
+**Alternativen:** Management-APIs mit vorhandenen Cloud-Tokens heimlich anbinden; ENV-Präsenz als healthy werten; letzten CI-Lauf als aktuelle Plattform-Health zeigen; HTTP-200 einer Jetnity-Seite als Gesamtgrün.
+
+**Begründung:** `unknown` / `not_configured` ist belastbarer als erfundenes Grün. Ein neues Secret, ein Vertrag oder eine Management-Berechtigung braucht ein separates Product-Owner-Gate. App-Prozess und App-DB-Ping sind bereits vorhandene, konservative Reads.
+
+**Konsequenzen:** Copilot Pro erklärt Health nicht in diesem Slice. Domain-/Mail-/DNS-Health bleibt später. Account-/Trip-/Traveller-/Route-/Safety-/Seasonal-Verträge bleiben unberührt. Draft PR #46 bleibt Draft.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

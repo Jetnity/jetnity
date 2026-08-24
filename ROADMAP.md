@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 24. August 2026  
-Status: **Foundation C/D/E, Travel Safety und Seasonal Foundation auf `main`; Account AP-1 aktiv; Admin Slice A Technical Closure / PASS (Draft PR #44)**
+Status: **Foundation C/D/E, Travel Safety und Seasonal Foundation auf `main`; Account AP-1 aktiv; Admin Slice A Technical Closure / PASS (Draft PR #44); Admin Slice B Implementierung (Draft PR #46)**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -231,6 +231,19 @@ Auftrag: `docs/ADMIN_SLICE_A_IMPLEMENTATION_TASK.md`
 
 ---
 
+## 6b. In Arbeit – Admin Control Center Slice B
+
+Status: **Implementierung auf Draft PR #46 / `feat/admin-system-health`, gestapelt auf PR #44; wartet auf lokale Gates, Exact-Head-CI/Preview und unabhängigen Technical-Lead-Review**
+
+- read-only System Health ohne Fake-Green
+- keine neuen Secrets, Tokens, Verträge oder Kosten
+- keine DB-/RLS-/Capability-Änderung, keine Writes
+- kein Mark Ready / Merge und kein Slice C ohne ausdrückliche Product-Owner-Freigabe
+
+Auftrag: `docs/ADMIN_SLICE_B_SYSTEM_HEALTH_TASK.md`
+
+---
+
 ## 7. Provider-Readiness / Adapter-Grenzen
 
 **Echte Provider bleiben bis zur späteren Providerphase deaktiviert.**
@@ -354,7 +367,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 3. ✅ Foundation E – Traveller Context inkl. Production
 4. ✅ Travel Safety & Disruption – provider-neutrale Foundation
 5. ✅ Travel Timing & Seasonal – provider-neutrale Foundation (PR #38 gemergt)
-6. **→ Account AP-1 (Draft PR #43) aktiv; Admin Slice A Technical Closure / PASS (Draft PR #44, wartet auf Product-Owner-Freigabe); Slice B separat**
+6. **→ Account AP-1 (Draft PR #43) aktiv; Admin Slice A Technical Closure / PASS (Draft PR #44); Admin Slice B Implementierung (Draft PR #46), danach unabhängiger Technical-Lead-Review**
 7. Provider-Readiness-/Adapter-Lücken schließen
 8. großer Trip-Workspace-/Übersicht-Umbau + Function-by-Function-Generalinspektion
 9. finaler Workspace Intelligence Audit

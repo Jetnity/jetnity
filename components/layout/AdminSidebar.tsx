@@ -12,6 +12,7 @@ import {
   Settings,
   Activity,
   Globe,
+  HeartPulse,
   type LucideIcon,
 } from 'lucide-react'
 import { useAdminSession } from '@/components/admin/AdminSessionProvider'
@@ -23,6 +24,7 @@ const NAV_ICONS: Record<string, LucideIcon> = {
   '/admin/users': Users,
   '/admin/payments': CreditCard,
   '/admin/security': ShieldCheck,
+  '/admin/system-health': HeartPulse,
   '/admin/analytics': Activity,
   '/admin/content': FolderKanban,
   '/admin/marketing': Megaphone,

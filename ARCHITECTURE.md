@@ -274,7 +274,7 @@ Seit Phase 1.4b prüft `npm run db:rechte` eine vierte Regel: Keine Funktion nen
 
 ## 7. API-Schicht
 
-Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1, 3.2, 3.3, Foundation A, Foundation B und Draft-Foundation C existieren **18** Route Handler. Zuvor waren es 77.
+Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1, 3.2, 3.3, Foundation A, Foundation B, Draft-Foundation C und Admin Slice B existieren **19** Route Handler. Zuvor waren es 77.
 
 | Endpunkt | Zweck | Status |
 | --- | --- | --- |
@@ -288,8 +288,9 @@ Nach Phase 1.1, 1.1b, 1.3, 1.4, 3.1, 3.2, 3.3, Foundation A, Foundation B und Dr
 | `api/readiness/requirements` | geschlossene Requirement-Naht | Foundation C Draft-PR #32, kein Provider, Production-Schema unverändert |
 | `api/admin/payments/*` (5) | Zahlungen, Refunds, Webhooks | behalten ohne Priorität (ADR-0010) |
 | `api/admin/security/*` (5) | Sicherheitsereignisse, IP-Sperren | für den späteren Admin-Umfang vorgesehen |
+| `api/admin/system-health` | read-only System Health | Slice B, ADR-0153; nur vorhandene Evidence, kein Fake-Green |
 
-Alle zehn Endpunkte unter `api/admin` prüfen die Berechtigung über `requireAdminApi()`; `npm run check:api-schutz` erzwingt das in der CI. Lesende Endpunkte verlangen die Fähigkeit `betrieb-lesen` (ab `moderator`), eingreifende – lokale Refund-Notiz, Sperren, Entsperren – `betrieb-eingreifen` (ab `operator`). Dieselben Fähigkeiten gelten in den Policies, sodass ein Endpunkt, der jemanden durchlässt, ihm auch die Daten zeigen kann. Die drei Schreibrouten lehnen Break-Glass zusätzlich mit 403 ab (`adminWriteErlaubt`), statt einen RLS-Fehler als 500 auszuliefern. Die Oberflächen kennzeichnen Refunds als lokale Notiz und die IP-Blockliste als nicht enforced (ADR-0152).
+Alle elf Endpunkte unter `api/admin` prüfen die Berechtigung über `requireAdminApi()`; `npm run check:api-schutz` erzwingt das in der CI. Lesende Endpunkte verlangen die Fähigkeit `betrieb-lesen` (ab `moderator`), eingreifende – lokale Refund-Notiz, Sperren, Entsperren – `betrieb-eingreifen` (ab `operator`). Dieselben Fähigkeiten gelten in den Policies, sodass ein Endpunkt, der jemanden durchlässt, ihm auch die Daten zeigen kann. Die drei Schreibrouten lehnen Break-Glass zusätzlich mit 403 ab (`adminWriteErlaubt`), statt einen RLS-Fehler als 500 auszuliefern. Die Oberflächen kennzeichnen Refunds als lokale Notiz und die IP-Blockliste als nicht enforced (ADR-0152). System Health ist GET-only und schreibt nicht (ADR-0153).
 
 Was die Datenbank nicht liefert, meldet der Endpunkt, statt es zu verschweigen: Eine Ablehnung wird 500, ein Ausfall 503, jeweils mit `{ message }`; eine erfolgreiche Abfrage ohne Zeilen bleibt eine leere Liste mit 200. Die Unterscheidung steht einmal in `lese()` in `lib/api/datenbank-lesen.ts` und nicht in den Routen ([DECISIONS.md](DECISIONS.md) ADR-0037). Von RLS weggefilterte Zeilen sind bewusst kein Fehler – das ist der Fall einer Notzugangs-Sitzung, den der Hinweisbalken erklärt.
 
