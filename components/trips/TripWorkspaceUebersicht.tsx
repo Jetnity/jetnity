@@ -6,22 +6,28 @@ import { ArrowRightLeft, BedDouble, Plane, Sparkles } from 'lucide-react'
 import {
   ARBEITSBEREICH_BEZEICHNUNG,
   type Arbeitsbereich,
-  type BereichStatus,
 } from '@/lib/trips/arbeitsbereich'
 import { INTERESSE_BEZEICHNUNG, TEMPO_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
+import type { AbdeckungLage, UebersichtAbleitung } from '@/lib/trips/uebersicht'
 import { cn } from '@/lib/utils'
 import type { Trip } from '@/types/trips'
 
-const SYMBOL: Record<BereichStatus['bereich'], ComponentType<{ className?: string }>> = {
+const SYMBOL: Record<UebersichtAbleitung['abdeckungen'][number]['bereich'], ComponentType<{ className?: string }>> = {
   fluege: Plane,
   unterkunft: BedDouble,
   aktivitaeten: Sparkles,
   mobilitaet: ArrowRightLeft,
 }
 
+const LAGE_FARBE: Record<AbdeckungLage, string> = {
+  offen: 'bg-surface-25 text-ink-800',
+  belegt: 'bg-surface-100 text-brand-700',
+  unbestimmt: 'bg-surface-50 text-ink-800',
+}
+
 export default function TripWorkspaceUebersicht({
   reise,
-  status,
+  uebersicht,
   aenderungOffen,
   onBereich,
   onAenderung,
@@ -33,7 +39,7 @@ export default function TripWorkspaceUebersicht({
   reisezeit,
 }: {
   reise: Trip
-  status: readonly BereichStatus[]
+  uebersicht: UebersichtAbleitung
   aenderungOffen: boolean
   onBereich: (bereich: Arbeitsbereich) => void
   onAenderung: () => void
@@ -51,15 +57,13 @@ export default function TripWorkspaceUebersicht({
         <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800">
           Deine Reise auf einen Blick
         </h2>
-        <p className="mt-1 text-sm leading-6 text-ink-800">
-          Was schon festliegt, und wo du als Nächstes weitermachst.
-        </p>
+        <p className="mt-1 text-sm leading-6 text-ink-800">{uebersicht.fortschrittText}</p>
+        <p className="mt-1 text-xs leading-5 text-ink-700">{uebersicht.planText}</p>
       </div>
 
       <ul className="grid gap-2">
-        {status.map((eintrag) => {
+        {uebersicht.abdeckungen.map((eintrag) => {
           const Symbol = SYMBOL[eintrag.bereich]
-          const offen = eintrag.anzahl === 0
           return (
             <li key={eintrag.bereich}>
               <button
@@ -70,7 +74,7 @@ export default function TripWorkspaceUebersicht({
                 <span
                   className={cn(
                     'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl',
-                    offen ? 'bg-surface-25 text-ink-800' : 'bg-surface-100 text-brand-700',
+                    LAGE_FARBE[eintrag.lage],
                   )}
                 >
                   <Symbol className="h-4 w-4" aria-hidden="true" />
@@ -113,16 +117,16 @@ export default function TripWorkspaceUebersicht({
 
       {aenderungFeld}
 
-      <section className="rounded-2xl border border-line-200 bg-white px-4 py-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">Reiseprofil</p>
-        <p className="mt-2 text-sm leading-6 text-ink-800">
+      <section className="rounded-2xl border border-line-100 bg-surface-0 px-4 py-3">
+        <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-ink-600">Tempo & Interessen</p>
+        <p className="mt-1.5 text-xs leading-5 text-ink-700">
           {TEMPO_BEZEICHNUNG[reise.pace].titel}
           {reise.interests.length
             ? ` · ${reise.interests.map((wert) => INTERESSE_BEZEICHNUNG[wert]).join(', ')}`
             : ''}
         </p>
         {reise.travelWish && (
-          <p className="mt-2 text-xs leading-5 text-ink-800">„{reise.travelWish}“</p>
+          <p className="mt-1.5 text-xs leading-5 text-ink-700">„{reise.travelWish}“</p>
         )}
       </section>
     </section>
