@@ -2,14 +2,14 @@
 
 // components/trips/TripWorkspace.tsx
 //
-// Der Reise-Arbeitsbereich. Eine Ansicht für beide Ablagen.
+// Der Reise-Arbeitsbereich. Eine Produktlogik für alle Geräte (ADR-0163 / TW-1).
 //
-// Auf schmalen Viewports gilt zuerst Orientierung, dann Aktion: kompakter Kopf,
-// klebende Bereichsnavigation, nur der aktive Bereich. Die Übersicht enthält
-// den Tagesplan. Desktop behält die bisherige breite Arbeitsansicht. Der aktive
-// Bereich ist Client-State, nicht Teil der URL.
+// Zuerst Orientierung, dann Aktion: Reisekopf, Bereichsnavigation, nur der
+// aktive Bereich. Die Übersicht ist die Reise-Ebene und enthält den Tagesplan.
+// Desktop darf mehr Fläche nutzen, entfernt die Übersicht aber nicht. Der
+// aktive Bereich ist Client-State, nicht Teil der URL.
 //
-// Besuchte Mobile-Bereiche bleiben eingehängt (keine erneute Suche), sind aber
+// Besuchte Bereiche bleiben eingehängt (keine erneute Suche), sind aber
 // visuell `display: none`. `hidden` plus Tailwind `grid` würde den Bereich
 // semantisch verbergen und trotzdem Layout erzeugen.
 
@@ -201,9 +201,7 @@ export default function TripWorkspace({
   const wechseln = (naechster: Arbeitsbereich) => {
     setBereich(naechster)
     setBesucht((bisher) => besuchteBereicheErweitern(bisher, naechster))
-    if (kompakt) {
-      document.querySelector('[aria-label="Reisebereiche"]')?.scrollIntoView({ block: 'start' })
-    }
+    document.querySelector('[aria-label="Reisebereiche"]')?.scrollIntoView({ block: 'start' })
   }
 
   const aenderungOeffnen = () => {
@@ -213,20 +211,19 @@ export default function TripWorkspace({
   }
 
   React.useEffect(() => {
-    if (!aenderungOffen || !kompakt) return
+    if (!aenderungOffen) return
     const feld = aenderungFeldRef.current?.querySelector<HTMLTextAreaElement>('textarea')
     feld?.focus()
-  }, [aenderungOffen, kompakt])
+  }, [aenderungOffen])
 
   const ungeplantePunkte = ohneTag.length > 0 ? ohneTag : reise.ohneTag
-  const aenderungSichtbar = aenderungIstSichtbar(kompakt, aenderungOffen)
+  const aenderungSichtbar = aenderungIstSichtbar(aenderungOffen)
   const status = bereichStatus(reise, ungeplantePunkte)
   const aktivitaeten = sucheMitTag(aktivitaetensuche, aktiverTag, setAktiverTag)
 
-  const bereichBereit = (ziel: Arbeitsbereich) =>
-    bereichSollMounten(ziel, bereich, besucht, kompakt)
+  const bereichBereit = (ziel: Arbeitsbereich) => bereichSollMounten(ziel, bereich, besucht)
 
-  const verbergen = (ziel: Arbeitsbereich) => !bereichSollSichtbar(ziel, bereich, kompakt)
+  const verbergen = (ziel: Arbeitsbereich) => !bereichSollSichtbar(ziel, bereich)
   const uebersichtVerborgen = verbergen('uebersicht')
 
   const sicherheit = <ReiseSicherheit reise={reise} evaluations={safetyEvaluations} />
@@ -249,7 +246,7 @@ export default function TripWorkspace({
       ohneTag={ungeplantePunkte}
       aktiverTag={aktiverTag}
       kompakt={kompakt}
-      eingebettet={kompakt}
+      eingebettet
       onTagWechseln={setAktiverTag}
       onPunktAnlegen={onPunktAnlegen}
       onPunktEntfernen={onPunktEntfernen}
@@ -265,7 +262,7 @@ export default function TripWorkspace({
         setzeInert(el, !aenderungSichtbar)
       }}
       onKeyDown={(ereignis) => {
-        if (ereignis.key !== 'Escape' || !kompakt || !aenderungOffen) return
+        if (ereignis.key !== 'Escape' || !aenderungOffen) return
         ereignis.stopPropagation()
         setAenderungOffen(false)
         aenderungKnopfRef.current?.focus()
@@ -290,15 +287,7 @@ export default function TripWorkspace({
 
         <TripWorkspaceKopf reise={reise} quelle={quelle} kompakt={kompakt} kopfzeile={kopfzeile} />
 
-        {!kompakt && (
-          <div className="mt-6 grid gap-4">
-            {sicherheit}
-            {reisezeit}
-            {vorbereitung}
-          </div>
-        )}
-
-        {kompakt && <TripWorkspaceNavigation aktiv={bereich} onWechsel={wechseln} />}
+        <TripWorkspaceNavigation aktiv={bereich} onWechsel={wechseln} />
 
         {bereichBereit('uebersicht') && (
           <BereichHuelle bereich="uebersicht" verborgen={uebersichtVerborgen}>
@@ -309,16 +298,14 @@ export default function TripWorkspace({
               onBereich={wechseln}
               onAenderung={aenderungOeffnen}
               aenderungKnopfRef={aenderungKnopfRef}
-              plan={kompakt ? plan : null}
-              aenderungFeld={kompakt ? aenderungFeld : null}
-              vorbereitung={kompakt ? vorbereitung : null}
-              sicherheit={kompakt ? sicherheit : null}
-              reisezeit={kompakt ? reisezeit : null}
+              plan={plan}
+              aenderungFeld={aenderungFeld}
+              vorbereitung={vorbereitung}
+              sicherheit={sicherheit}
+              reisezeit={reisezeit}
             />
           </BereichHuelle>
         )}
-
-        {!kompakt && aenderungFeld}
 
         {bereichBereit('fluege') && (
           <BereichHuelle bereich="fluege" verborgen={verbergen('fluege')} sichtbarKlasse="mt-6 grid gap-6">
@@ -349,8 +336,6 @@ export default function TripWorkspace({
             {mobilitaetssuche}
           </BereichHuelle>
         )}
-
-        {!kompakt && plan}
       </div>
     </main>
   )

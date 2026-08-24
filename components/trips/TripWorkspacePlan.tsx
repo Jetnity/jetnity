@@ -327,7 +327,7 @@ export default function TripWorkspacePlan({
     </section>
   )
 
-  if (kompakt) {
+  if (kompakt || eingebettet) {
     return (
       <section
         aria-label="Tagesplan"

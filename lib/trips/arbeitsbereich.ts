@@ -1,15 +1,17 @@
 // lib/trips/arbeitsbereich.ts
 //
-// Mobile Informationsarchitektur des Reise-Arbeitsbereichs.
+// Informationsarchitektur des Reise-Arbeitsbereichs. Dieselbe Produktlogik
+// gilt auf allen Geräten; Desktop darf mehr Fläche nutzen, aber keine zweite
+// IA besitzen (ADR-0163 / TW-1).
 //
 // Die Reise selbst bleibt `Trip`. Hier steht nur, was die Oberfläche aus dem
 // vorhandenen Graphen ableiten darf: welcher Bereich offen ist, welcher Tag
 // gewählt ist, und welche Statuszeilen ehrlich sind. Keine Providerzustände,
 // keine erfundenen Flüge, Hotels oder Aktivitäten.
 //
-// Sichtbare Mobile-Hauptbereiche: Übersicht, Flüge, Unterkunft, Aktivitäten
-// und Mobilität. Der Tagesplan gehört zur Übersicht, nicht zu einem eigenen
-// Tab. Ein historischer Wert `plan` fällt auf die Übersicht.
+// Sichtbare Hauptbereiche: Übersicht, Flüge, Unterkunft, Aktivitäten und
+// Mobilität. Der Tagesplan gehört zur Übersicht, nicht zu einem eigenen Tab.
+// Ein historischer Wert `plan` fällt auf die Übersicht.
 
 import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
 import { mietwagenBestand } from '@/lib/rental-cars/bestand'
@@ -161,23 +163,23 @@ export function gewaehlterTagId(reise: Pick<Trip, 'days'>, bisher: string): stri
   return reise.days.some((tag) => tag.id === bisher) ? bisher : (reise.days[0]?.id ?? '')
 }
 
-export function aenderungIstSichtbar(kompakt: boolean, offen: boolean): boolean {
-  return !kompakt || offen
+export function aenderungIstSichtbar(offen: boolean): boolean {
+  return offen
 }
 
 /**
- * Der Tagesplan liegt auf Mobile in der Übersicht und auf Desktop in der
- * bisherigen breiten Arbeitsansicht. Er ist kein eigener Hauptbereich.
+ * Der Tagesplan liegt in der Übersicht. Er ist kein eigener Hauptbereich
+ * und erscheint nicht parallel zu Domain-Suchen.
  */
-export function tagesplanIstSichtbar(aktiv: Arbeitsbereich, kompakt: boolean): boolean {
-  return !kompakt || aktiv === 'uebersicht'
+export function tagesplanIstSichtbar(aktiv: Arbeitsbereich): boolean {
+  return aktiv === 'uebersicht'
 }
 
 /**
- * Kommerzielle Suchbereiche werden auf Mobile erst beim ersten Besuch
- * eingehängt. So startet die Übersicht keine Hotel- oder Aktivitätsanfrage.
- * Ein einmal besuchter Bereich bleibt eingehängt, damit ein Tabwechsel keine
- * neue Suche auslöst.
+ * Kommerzielle Suchbereiche werden erst beim ersten Besuch eingehängt.
+ * So startet die Übersicht keine Hotel- oder Aktivitätsanfrage – auf keinem
+ * Gerät. Ein einmal besuchter Bereich bleibt eingehängt, damit ein Wechsel
+ * keine neue Suche auslöst.
  *
  * Übersicht und der darin liegende Tagesplan haben keine Suche und dürfen
  * immer da sein.
@@ -186,19 +188,12 @@ export function bereichSollMounten(
   bereich: Arbeitsbereich,
   aktiv: Arbeitsbereich,
   bereitsBesucht: ReadonlySet<Arbeitsbereich>,
-  kompakt: boolean,
 ): boolean {
-  if (!kompakt) return bereich !== 'uebersicht'
   if (bereich === 'uebersicht') return true
   return bereich === aktiv || bereitsBesucht.has(bereich)
 }
 
-export function bereichSollSichtbar(
-  bereich: Arbeitsbereich,
-  aktiv: Arbeitsbereich,
-  kompakt: boolean,
-): boolean {
-  if (!kompakt) return bereich !== 'uebersicht'
+export function bereichSollSichtbar(bereich: Arbeitsbereich, aktiv: Arbeitsbereich): boolean {
   return bereich === aktiv
 }
 
