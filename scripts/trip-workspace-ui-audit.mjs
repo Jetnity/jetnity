@@ -2015,7 +2015,13 @@ async function seiteVorbereiten(page, zustand) {
 
 async function zustandOeffnen(page, zustand, viewport) {
   const defin = ZUSTAENDE[zustand]
-  await page.getByLabel('Reiseübersicht').or(page.getByLabel('Reisedetail')).waitFor({ timeout: 15000 })
+  // Master/Detail hält Übersicht und Detail gleichzeitig im DOM.
+  // `.or()` ohne Visible-Filter verletzt Playwright-Strict-Mode.
+  await page
+    .locator('[aria-label="Reiseübersicht"], [aria-label="Reisedetail"]')
+    .filter({ visible: true })
+    .first()
+    .waitFor({ timeout: 15000 })
   if (viewport.width >= 1024) {
     await page.getByRole('heading', { level: 1 }).waitFor({ timeout: 15000 })
   }

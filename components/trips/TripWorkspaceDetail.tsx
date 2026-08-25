@@ -29,7 +29,7 @@ export default function TripWorkspaceDetail({
   kompakt: boolean
   onSchliessen: () => void
   onSuche: () => void
-  fokusRef: RefObject<HTMLHeadingElement | null>
+  fokusRef: RefObject<HTMLButtonElement | null>
 }) {
   const offen = auswahl.art !== 'keine'
   const sucheOffen = offen && auswahl.sucheOffen
@@ -59,9 +59,10 @@ export default function TripWorkspaceDetail({
       )}
     >
       <button
+        ref={fokusRef}
         type="button"
         onClick={onSchliessen}
-        className="inline-flex min-h-11 items-center gap-2 rounded-full px-2 text-sm font-semibold text-brand-800 transition hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+        className="inline-flex min-h-11 scroll-mt-32 items-center gap-2 rounded-full px-2 text-sm font-semibold text-brand-800 transition hover:bg-surface-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden="true" />
         Zurück zur Reise
@@ -70,11 +71,7 @@ export default function TripWorkspaceDetail({
       <p className="mt-3 text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
         {auswahl.art === 'item' ? 'Punkt' : 'Lücke'}
       </p>
-      <h2
-        ref={fokusRef}
-        tabIndex={-1}
-        className="mt-1 scroll-mt-32 text-xl font-semibold tracking-[-0.03em] text-brand-800 break-words hyphens-auto focus-visible:outline-none"
-      >
+      <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 break-words hyphens-auto">
         {titel}
       </h2>
 

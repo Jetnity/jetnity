@@ -205,7 +205,7 @@ export default function TripWorkspace({
   const aenderungKnopfRef = React.useRef<HTMLButtonElement>(null)
   const aenderungFeldRef = React.useRef<HTMLDivElement>(null)
   const zurueckRef = React.useRef<HTMLButtonElement>(null)
-  const detailFokusRef = React.useRef<HTMLHeadingElement>(null)
+  const detailFokusRef = React.useRef<HTMLButtonElement>(null)
   const letzterAusloeserRef = React.useRef<HTMLElement | null>(null)
   const vorherOffenRef = React.useRef(false)
 
@@ -229,8 +229,8 @@ export default function TripWorkspace({
   React.useEffect(() => {
     if (detailOffen && !vorherOffenRef.current) {
       const ziel = kompakt ? zurueckRef.current : detailFokusRef.current
-      ziel?.focus()
-      detailFokusRef.current?.scrollIntoView({ block: 'nearest' })
+      ziel?.focus({ preventScroll: true })
+      if (!kompakt) ziel?.scrollIntoView({ block: 'start', inline: 'nearest' })
     }
     if (!detailOffen && vorherOffenRef.current) {
       letzterAusloeserRef.current?.focus?.()
