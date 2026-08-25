@@ -1,275 +1,267 @@
 # Jetnity – Trip Workspace Implementierungsplan
 
 Stand: 25. August 2026  
-Status: **Ziel-IA angenommen (ADR-0163). TW-1, TW-2 und TW-4 auf `main` (TW-4 = PR #60 / `c935dd9f`). TW-3 aktiv. Kein TW-5.**  
+Status: **Ziel-IA angenommen (ADR-0163). TW-1, TW-2, TW-4 und TW-3 sind auf `main`. Nächster Slice ist TW-5 – Item- und Gap-Details.**  
 Audit: `docs/TRIP_WORKSPACE_AUDIT.md`  
 Ziel: `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`  
 Abhängigkeiten: `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`
 
-Kein Monster-PR. Jeder Slice ist klein, reviewbar und konfliktarm gegenüber Account, Admin und Provider.
+Kein Monster-PR. Jeder Slice bleibt klein, reviewbar und konfliktarm gegenüber Account, Admin, Provider und Shared Contracts.
 
-Historische Audit-Basis bleibt `1ec93cc9` / Integrationsnachzug `b7f027ec`. TW-1, TW-2 und TW-4 sind auf `main`. Ältere Sätze, die TW-2 oder TW-4 als Draft beschreiben, sind pre-merge Evidence.
+## 1. Grundregeln
 
----
+Ein Runtime-Slice darf nur ändern, was in seinem versionierten Auftrag freigegeben ist.
 
-## 1. Sperre
+Pflicht:
 
-Dieser Plan startete als docs-only Vorbereitung. ADR-0163 hat TW-1 freigegeben; ADR-0164 und der versionierte TW-2-Auftrag geben ausschließlich TW-2 frei. TW-3+ bleiben gesperrt.
+- bestehende kanonische Trip-/Graph-/Traveller-/Readiness-/Safety-/Seasonal-/Provider-Contracts wiederverwenden;
+- keine zweite Produkt-/Timeline-/Status-/Traveller-/Provider-Wahrheit;
+- `error`, `empty`, `unknown`, `stale`, `unavailable`, `insufficient_context` getrennt halten;
+- Guest und Account auf derselben fachlichen Trip-Form halten;
+- Mobile/Tablet/Desktop dieselbe Produktlogik geben;
+- Scope/Non-Scope, Acceptance und STOPP-Punkt versionieren;
+- relevante Unit-/Integration-/UI-/Regressionstests;
+- vollständige Exact-Head-Gates, GitHub Actions, Vercel und unabhängiger Technical-Lead-Review.
 
-Vor TW-1 Runtime brauchte es:
+Ohne separates Gate verboten:
 
-1. unabhängigen ChatGPT / Technical-Lead-Review dieses Audits
-2. Product-Owner-Richtung (mindestens: IA-Modell, `Jetzt wichtig`, Create-Flow-Schnitt)
-3. einen versionierten Cursor-Auftrag
-4. eigenen Feature-Branch, nicht diesen Audit-Branch als Runtime-Träger
+- DB-/Production-Migrationen;
+- RLS/Auth/MFA/AAL-/Identity-Umbau;
+- Traveller-/Citizenship-/Document-Kernmodell-Umbau;
+- Route-/Transit-Shared-Contract-Umbau;
+- Provideraktivierung, Secrets, Verträge oder paid calls;
+- neue Production-/Public-Aktivierung;
+- Scope-Creep in Guardian/Simulator/Marketing/Homepage.
 
-Unverändert verboten ohne separates Gate:
+Normale scope-treue Ready-/Merge-Schritte folgen der aktuellen `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`; ältere pauschale PO-Merge-Pflichten sind für normale PRs superseded.
 
-- DB-Migration / RLS / Auth
-- Traveller-Registry / Citizenship-Neumodellierung
-- Route- oder Provider-Vertragsänderung
-- Secrets, kostenpflichtige Calls, Provideraktivierung
-- Homepage-Marketing
-- Mark Ready / Merge ohne aktuelle Product-Owner-Freigabe
-
----
-
-## 2. Schnittprinzip
-
-Ein Slice darf nur dann Runtime ändern, wenn er:
-
-- keine fremde Shared-Write-Fläche braucht, **oder**
-- bewusst fail-closed auf vorhandenen Contracts bleibt
-- Error / Empty / Unknown / Stale / Unavailable getrennt hält
-- Guest und Account auf derselben `Trip`-Form lässt
-- keine Domain-UI erfindet, die eine neue Truth speichert
-- Mobile und Desktop dieselbe Logik erhält
-- Tests für die geänderte Ableitung/UI mitliefert
-
----
-
-## 3. Slices
-
-Die Namen sind aus dem Audit abgeleitet, nicht aus der Beispiel-Liste des Auftrags.
+## 2. Aktuelle Slice-Reihenfolge
 
 ```text
-TW-0  dieses Audit
+TW-0  Audit / Zielarchitektur
   │
   ▼
-TW-1  Shell & Geräteparität
+TW-1  Shell & Geräteparität ✅
   │
   ▼
-TW-2  Reiseübersicht
+TW-2  Reiseübersicht ✅
   │
   ├──────────────┐
   ▼              ▼
-TW-3 Timeline   TW-4 Aufmerksamkeit
+TW-3 Timeline ✅  TW-4 Aufmerksamkeit ✅
   │              │
   └──────┬───────┘
          ▼
-      TW-5 Item- und Gap-Details
+      TW-5 Item- und Gap-Details ← NÄCHSTER SLICE
          │
-         ├── TW-6 Create-Entry  (nach PO; nicht Homepage)
-         ├── TW-7 Hub-Anschluss (AP-3 auf `main` nicht überschreiben; Archiv nach AP-4)
-         ├── TW-8 Commercial-Surfaces (nach Provider S5; S3-Nachweis schon auf `main`)
+         ├── TW-6 Create-Entry  (nach dokumentiertem PO-Schnitt; nicht Homepage)
+         ├── TW-7 Hub-Anschluss (AP-3 nicht überschreiben; Archiv nach AP-4)
+         ├── TW-8 Commercial-Surfaces (nach Provider S5)
          ▼
       TW-9 Polish, Evidence, Closure
+         │
+         ▼
+ finaler Function-by-Function-/Intelligence-Audit
 ```
+
+## 3. Slice-Definitionen
 
 ### TW-0 – Audit / IA / Plan
 
-**Dieser PR.** Nur Dokumentation.
+**Status:** abgeschlossen und integriert.
 
-Deliverable: die fünf Pflichtdateien plus persistierter Workstream-Status.
+Deliverables: Audit, Zielarchitektur, Dependency Matrix, Implementierungsplan und Handoff.
 
-Gates: Repo-Hygiene, CI auf Exact Head, Vercel Preview falls erzeugt. Grün ≠ Produktkorrektheit.
+### TW-1 – Shell & Geräteparität
 
-### TW-1 – Shell und Geräteparität
+**Status:** ✅ auf `main` (PR #56).
 
-**Status:** auf `main` gemergt (PR #56).
+**Ziel:** Eine Produktlogik auf Mobile und Desktop; Desktop besitzt eine echte Reise-Ebene statt einer separaten modulzentrierten Präsentationswelt.
 
-**Ziel:** Eine Produktlogik auf Mobile und Desktop. Desktop bekommt wieder eine Reise-Ebene.
-
-**Darf:**
-
-- `TripWorkspace` so komponieren, dass `uebersicht` nicht ab 1024 px verschwindet
-- Navigation von Domain-Tabs zu Reise-Orientierung vorbereiten, ohne alle Such-UIs umzuschreiben
-- bestehende Bestände vorerst hinter „Details“ erreichbar lassen
-
-**Nicht:**
-
-- neue Attention-Truth
-- Provider-Orchestrierung
-- Planner-Chips
-- Account-Hub
-
-**Tests:** `lib/trips/arbeitsbereich.test.ts` erweitern: Desktop mountet Reise-Ebene; Mobile versteckt nicht den Graphen. Kein UI-Audit als alleiniger Beweis.
-
-**Abhängigkeit:** frei auf `main`.
+**Nicht:** neue Attention-Truth, Provider-Orchestrierung, Planner-Chips oder Account-Hub.
 
 ### TW-2 – Reiseübersicht
 
-**Status:** auf `main` gemergt (PR #58). Historische Draft-Sätze in älteren Dateien sind pre-merge Evidence.
+**Status:** ✅ auf `main` (PR #58).
 
-**Ziel:** Die ersten Sekunden beantworten „Was ist diese Reise?“ ohne Dashboard.
+**Ziel:** Die ersten Sekunden beantworten „Was ist diese Reise?“ ohne Dashboard-/Feature-Wand.
 
-**Darf:**
+**Kern:** Reiseidentität, Ziele, Zeitraum, Personen-/Party-Kontext und vorhandene Coverage ehrlich verdichten.
 
-- Kopf um ehrlichen Gesamtstatus aus vorhandenen Feldern verdichten
-- Fortschritt der Abdeckungen kompakt zeigen
-- `party[]` als Personen andeuten, ohne Registry
-- Pace/Interessen nach hinten stufen
+**Nicht:** neuen `trips.status` erfinden, Citizenship defaulten oder ungeprüfte Safety als clean darstellen.
 
-**Nicht:**
+### TW-4 – Aufmerksamkeit / `Jetzt wichtig`
 
-- `trips.status` neu erfinden
-- Citizenship defaulten
-- Safety als „geprüft sauber“ ohne Evaluation
+**Status:** ✅ auf `main` (PR #60, Merge `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f`).
 
-**Tests:** Kopf/Übersicht-Ableitungen; Guest vs Account gleicher Text bei gleichem Graph.
+**Ziel:** vorhandene Graph-/Coverage-/Readiness-/Safety-/Seasonal-/Official-Signale deterministisch priorisieren.
+
+**Kern:** keine Fake-Clean-Aussage; Multi-Citizenship/Official-Completeness fail-closed; degradierte Zustände maschinenlesbar getrennt.
+
+**Nicht:** Persistenz, LLM-Score, neuer `trips.status`, neue Provider-Truth.
 
 ### TW-3 – Timeline / Etappe / Tag
 
-**Status:** aktiver Runtime-Slice auf `feat/trip-workspace-tw3-timeline` (ADR-0166).
+**Status:** ✅ auf `main` (PR #64, Merge `16a4c77a53cff9e8638a68f5dd8c77122bf13b48`).
 
-**Ziel:** Verlauf statt Modulwechsel.
+Finaler Exact Head:
 
-**Darf:**
+`f55db2b0682981f293390b44e704b513476703bf`
 
-- Etappen und Tage als eine Timeline aus dem Graphen
-- ungeplante Punkte sichtbar halten
-- Tag-Auswahl teilen, weiterhin eine Quelle (`gewaehlterTagId`)
+Independent Technical-Lead Result: **PASS / Technical Integration Closure**.
 
-**Nicht:**
+**Ziel:** Reiseverlauf statt Modulwechsel.
 
-- zweite Tageswahrheit in der URL erzwingen
-- Multi-Destination-Create (das ist TW-6)
-- Transit als Nutzerziel zeigen
+Umgesetzt:
 
-**Tests:** Multi-Stage-Fixture; Tag bleibt nach Graph-Änderung gültig oder fällt auf ersten Tag.
+- Etappen und Tage als zusammenhängende Timeline aus dem kanonischen Trip-Graphen;
+- `gewaehlterTagId` bleibt die einzige Tag-Auswahlquelle;
+- gültige Auswahl bleibt bei Graph-Mutationen erhalten, sonst deterministischer Fallback;
+- `ohneTag` bleibt ungeplant;
+- Flight-Transitländer werden nicht zu Nutzerzielen/Etappen;
+- Mobile/Tablet/Desktop verwenden dieselbe fachliche Timeline-Ableitung.
 
-### TW-4 – Aufmerksamkeit / „Jetzt wichtig“
+Evidence:
 
-**Status:** auf `main` gemergt (PR #60, Merge-Commit `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f`). Historische Draft-/Re-Review-Sätze in `docs/TRIP_WORKSPACE_TW4_STATUS.md` sind pre-merge Evidence.
-
-**Ziel:** Priorisierung vorhandener Signale.
-
-**Darf:**
-
-- reinen Attention-Aggregator über bestehende Ableitungen
-- Graph-Gaps, Readiness stale/open
-- Safety/Seasonal nach dem Vier-Zustände-Vertrag in `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md` §5.4: fehlende Orchestrierung = `noch_nicht_geprueft`, nicht unavailable und nicht clean
-- Höchstzahl sichtbarer Punkte; Rest progressiv
-
-**Nicht:**
-
-- Tabelle, Persistenz, LLM-Score
-- Official `required` ohne Provider
-- „keine Warnungen“ aus fehlender Prop
-
-**Tests:** vier Leerstände aus der Zielarchitektur (`nichts_dringend_geprueft`, `noch_nicht_geprueft`, `noch_nicht_pruefbar`, `pruefung_nicht_verfuegbar`); Multi-Citizenship erzeugt keinen einzelnen Default-Punkt; Safety-ohne-Evaluation ≠ `nichts_dringend_geprueft` und ≠ `pruefung_nicht_verfuegbar`.
-
-**Abhängigkeit:** frei für Graph/Readiness; Safety/Seasonal ohne Orchestrierung als `noch_nicht_geprueft`, nicht als `pruefung_nicht_verfuegbar`.
+- gezielte TW-3-Tests 10/10;
+- `npm test` 1953/1953;
+- Production Build grün;
+- Workspace Audit 1018/1018, 0 Fehler;
+- GitHub Actions CI `32861784215` SUCCESS;
+- Vercel Exact-Head Preview READY;
+- keine offenen Review-Threads.
 
 ### TW-5 – Item- und Gap-Details
 
-**Ziel:** Flüge, Unterkunft, Aktivitäten, Mobilität als Details einer Lücke oder eines Punkts.
+**Status:** nächster primärer Runtime-Slice; Runtime noch nicht gestartet.
+
+Agent:
+
+`Trip workspace audit architecture`
+
+Vorbereiteter Branch:
+
+`feat/trip-workspace-tw5-item-gap-details`
+
+**Ziel:** Flüge, Unterkunft, Aktivitäten und Mobilität als Details einer konkreten Lücke, Coverage- oder Attention-Situation in der Reiseoberfläche einhängen, statt diese Bereiche erneut als konkurrierende Haupt-IA aufzubauen.
 
 **Darf:**
 
-- bestehende `FlugBestand`, `HotelBereich`, `AktivitaetenBereich`, `MobilitaetBereich` einhängen, statt sie als Haupt-IA zu behalten
-- lazy mount der Suche beibehalten
+- bestehende `FlugBestand`, `HotelBereich`, `AktivitaetenBereich`, `MobilitaetBereich` wiederverwenden;
+- bestehende Detail-/Suchflächen kontextbezogen aus der Reiseoberfläche öffnen;
+- Lazy-Mount der Suche beibehalten;
+- vorhandene maschinenlesbare Coverage-/Attention-/Trip-Ableitungen für Navigation/Presentation nutzen, ohne neue Truth zu speichern;
+- Mobile/Tablet/Desktop dieselbe fachliche Kontrolle geben.
 
 **Nicht:**
 
-- Live-Provider
-- Live-Mobility-/Rental-Adapter vortäuschen, obwohl S3 nur die fail-closed Nachweisnaht liefert
-- manuelle Flüge als nachgewiesene Angebote zeigen
-- stilles `ZRH` als Suchherkunft (TW-P1-08: nur Graph oder Nutzerangabe)
+- Live-Provider oder Provideraktivierung;
+- Fake-Preise/Fake-Verfügbarkeit/Fake-Provider-Health;
+- Live-Mobility-/Rental-Adapter vortäuschen, solange nur fail-closed Nachweisnaht existiert;
+- manuelle Flüge als nachgewiesene Providerangebote darstellen;
+- stilles `ZRH` oder irgendeine andere erfundene Suchherkunft;
+- neue DB/Migration/RLS/Auth/Traveller-/Route-Verträge;
+- neuer `trips.status` oder neue persistierte Gap-/Detail-Truth;
+- Guardian/Simulator/Value-Optimizer-Runtime;
+- Multi-Destination-Create / TW-6;
+- Homepage-/Marketing-/Growth-Runtime;
+- Provider S4+ oder Commercial Slices hineinziehen.
+
+**Vor Implementierung zwingend:**
+
+- eigener versionierter ADR/Entscheidungsrahmen;
+- `docs/TRIP_WORKSPACE_TW5_TASK.md`;
+- `docs/TRIP_WORKSPACE_TW5_STATUS.md`;
+- Draft-PR;
+- Acceptance Criteria für mindestens Flight/Hotel/Activities/Mobility, Guest/Account, mehrere Stages/Tage, ungeplante Items, leere/unknown/unavailable/error Zustände, Geräteparität, Lazy-Mount und keine stillen Defaults;
+- STOPP nach Agent-Self-Review/Exact-Head-Evidence für unabhängigen Technical-Lead-Review.
 
 ### TW-6 – Create-Entry angleichen
 
-**Ziel:** PO-Regel „einfacher Einstieg + progressive weitere Ziele + keine Tempo-/Interessen-Chips + kein implizites `balanced`“.
+**Ziel:** einfacher Einstieg + progressive weitere Ziele + keine Tempo-/Interessen-Chips + kein implizites `balanced`.
 
-**Darf:**
+**Darf:** `/planen` und funktionale Zielübergabe von der Startseite; vorhandene `trip_stages` wiederverwenden.
 
-- `/planen` und die **funktionale** Zielübergabe von der Startseite
-- vorhandene `trip_stages` wiederverwenden
+**Nicht:** Homepage-Positionierung/Hero/Marketing-Copy; Citizenship beim Start global erzwingen.
 
-**Nicht:**
-
-- Homepage-Positionierung, Hero, Marketing-Copy
-- Citizenship beim Start erzwingen
-
-**Abhängigkeit:** Product-Owner-Schnitt; kollidiert nicht mit Account, solange Guest-One-Trip unangetastet bleibt.
+**Abhängigkeit:** dokumentierter Product-Owner-Schnitt und Guest-One-Trip-Vertrag.
 
 ### TW-7 – Hub-Anschluss
 
-**Ziel:** Workspace und „Meine Reisen“ bleiben ein Weg.
+**Ziel:** Workspace und `Meine Reisen` bleiben ein Weg.
 
-**Darf:** nur angleichen, was AP-3 **nicht** besitzt: z. B. Karten-`itemCount` inkl. `ohneTag`.
+**Darf:** nur angleichen, was AP-3 nicht besitzt.
 
-**Nicht:** gespeicherten Lifecycle, Archiv, zweite-Reise-Regeln. AP-3 auf `main` besitzt nur ableitende Lage; Archiv bleibt AP-4.
-
-**Abhängigkeit:** AP-3-Vertrag nicht überschreiben. Archiv erst nach AP-4. Kein paralleler Write auf dieselben Hub-Verträge.
+**Nicht:** gespeicherten Lifecycle, Archiv oder zweite-Reise-Regeln überschreiben. Archiv bleibt AP-4.
 
 ### TW-8 – Commercial Surfaces
 
-**Ziel:** Preise, Freshness, Übernahme ehrlich an vorhandene Nachweise koppeln.
+**Ziel:** Preise, Freshness, Provenance und Übernahme ehrlich an echte Nachweise koppeln.
 
-**Abhängigkeit:** Provider **S5** für Provenance. S3-Nachweisgrenze liegt bereits auf `main` und bleibt fail-closed ohne Adapter. Keine Activation.
+**Abhängigkeit:** Provider S5 / reale Commercial-Provenance-Verträge.
 
-**Nicht:** Secrets, Live-Calls, Booking-Provider, `booking_url` erfinden.
+**Nicht:** Secrets, Live-Calls, Fake-Angebote oder `booking_url` erfinden.
 
 ### TW-9 – Polish, Evidence, Closure
 
-**Ziel:** iPhone-Dichte, a11y, Performance, Function-by-Function-Evidence-Matrix für den **finalen** Intelligence-Audit.
+**Ziel:** mobile Dichte, Accessibility, Performance, Robustheit und vollständige Function-by-Function-Evidence-Matrix.
 
 **Nicht:** neue Produktmodule nachschieben.
 
-Danach gilt weiter:
+Danach zwingend:
 
-`docs/TRIP_WORKSPACE_FINAL_INTELLIGENCE_AUDIT_POLICY.md`  
-`docs/TRIP_WORKSPACE_FUNCTION_BY_FUNCTION_AUDIT_MANDATE.md`
+- `docs/TRIP_WORKSPACE_FINAL_INTELLIGENCE_AUDIT_POLICY.md`
+- `docs/TRIP_WORKSPACE_FUNCTION_BY_FUNCTION_AUDIT_MANDATE.md`
 
 TW-0 bis TW-9 ersetzen diesen Abschlussaudit nicht.
 
----
+## 4. Aktueller Integrationscheckpoint
 
-## 4. Empfohlene erste Runtime nach Freigabe
+Erreicht:
 
-Nicht TW-8. Nicht TW-6, wenn der Product Owner den Create-Flow noch nicht schneiden will.
+**TW-4 ✅ → TW-3 ✅ → Technical-Lead-Integrationscheckpoint**
 
-Empfehlung:
-
-1. **TW-1 + TW-2** als kleines Paar oder zwei PRs
-2. dann **TW-4** (Attention), weil sie die P0-Stille von Safety/Seasonal ehrlich macht, ohne Safety neu zu bauen
-3. dann **TW-3**
-4. TW-5 erst, wenn die Übersicht allein trägt
-
----
+Damit darf konfliktarme Parallelisierung geprüft werden. Sie ist nicht automatisch freigegeben. Der Technical Lead prüft vor jedem parallelen Runtime-Slice Shared Contracts, File-/Surface-Überschneidung, Branch/Draft-PR-Trennung und Merge-Reihenfolge.
 
 ## 5. Tests und Gates je Runtime-Slice
 
-Mindestens:
+Mindestens, soweit relevant:
 
-- TypeScript, Lint, `npm test`
-- betroffene Unit-Tests der Ableitung
-- `audit:trip-workspace` nur zusätzlich, nie als Wahrheitsbeweis
-- GitHub Actions Exact Head SUCCESS
-- Vercel Preview Exact Head READY, falls erzeugt
-- bei DB/Auth: die in `AGENTS.md` genannten DB-/Auth-Checks – dieser Plan sieht dafür **keine** Slices vor
+- `check:setup:ci`
+- TypeScript / Typecheck
+- Lint
+- `npm test`
+- betroffene Domain-/Ableitungs-Unit-Tests
+- `npm run audit:trip-workspace` zusätzlich, nie als alleiniger Wahrheitsbeweis
+- Production Build
+- Hygiene-/API-/Schema-/Dead-/Export-/Dependency-Checks gemäß Repo-Stand
+- GitHub Actions auf Exact Head SUCCESS
+- Vercel Preview auf Exact Head READY, falls erzeugt
+- adversarial Agent-Self-Review
+- unabhängiger ChatGPT/Technical-Lead-Review
 
-Kein Slice ist „Workspace fertig“.
-
----
+Wenn `main` während des Slices weiterläuft: synchronisieren, fachlich Konflikte prüfen, neuen Exact Head vollständig re-gaten und erneut reviewen.
 
 ## 6. Abbruchkriterien
 
-Slice stoppen und Technical Lead informieren, wenn die Lösung nur ginge durch:
+Slice stoppen und Technical Lead informieren, wenn die Lösung nur möglich wäre durch:
 
-- Migration / RLS / Auth-Änderung
-- neue Traveller- oder Route-Truth
-- Provideraktivierung oder Secret
-- Überschreiben von AP-3 / Admin / S3–S8
-- einen universellen Mega-Typ
+- Migration / RLS / Auth / Identity-Änderung;
+- neue Traveller-/Citizenship-/Document-Truth;
+- Route-/Transit-Shared-Contract-Umbau;
+- Provideraktivierung, Secret, Vertrag oder paid call;
+- Überschreiben von Account-/Admin-/Provider-Contracts;
+- neue persistierte Schattenwahrheit;
+- einen universellen Mega-Typ/Mega-PR;
+- Scope-Creep in nachgelagerte Slices;
+- einen besseren angezeigten Zustand als die vorhandene Evidence trägt.
+
+## 7. Continuity
+
+Aktueller operativer Stand steht zusätzlich in:
+
+- `JETNITY_START_HERE.md`
+- `JETNITY_HANDOFF.md`
+- `docs/ACTIVE_WORK_STATUS.md`
+
+Historische Statusdateien bleiben Evidence ihres Zeitpunkts. Live-Systeme müssen vor jeder neuen Arbeit erneut verifiziert werden.
