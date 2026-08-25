@@ -1,9 +1,11 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
-Stand: 25. August 2026
-Status: **kanonischer erster Einstieg; aktuelle operative Wahrheit steht in diesem Dokument und muss vor älteren/stalen Slice-Handoffs gelesen werden.**
+Stand: 25. August 2026  
+Status: **kanonischer erster Einstieg. Operative Wahrheit immer aus Repository + Live-Systemen rekonstruieren; historische Handoffs und PR-Bodies sind nur Evidence ihres Zeitpunkts.**
 
-Wenn du als neuer Chat, Technical Lead oder Coding Agent Jetnity übernimmst, lies **vor jeder Aktion** mindestens:
+## 1. Pflichtlektüre vor jeder Aktion
+
+Jeder neue Chat, Technical Lead oder Coding Agent liest mindestens in dieser Reihenfolge:
 
 1. `JETNITY_START_HERE.md`
 2. `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
@@ -18,157 +20,212 @@ Wenn du als neuer Chat, Technical Lead oder Coding Agent Jetnity übernimmst, li
 11. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
 12. `JETNITY_HANDOFF.md`
 13. `docs/ACTIVE_WORK_STATUS.md`
-14. den aktuellen Slice-Task/Status/Handoff
+14. den aktuell aktiven Slice-Task/Status/Handoff sowie relevante ADRs.
 
-Danach GitHub/CI/Vercel/Supabase live verifizieren. Historische Handoffs, alte PR-Bodies und ältere Statuszeilen sind Evidence ihres Zeitpunkts und dürfen diese aktuellere operative Wahrheit nicht überschreiben.
+Danach zwingend live verifizieren:
 
-## Verbindlicher Qualitätsstandard
+- `main` und Merge-Stand;
+- offene PRs/Draft-PRs und Branches;
+- GitHub Actions;
+- Vercel;
+- Supabase/Migrationen, wenn für den Slice relevant;
+- offene Review-Threads/Blocker;
+- Ahead/Behind/Merge-Base;
+- ob alte PRs nur historische Artefakte sind.
 
-Jetnity muss hervorragend gebaut werden. Das ist eine ausdrückliche Product-Owner-Vorgabe und gilt für jeden relevanten Slice, jede Funktion und jeden Agenten.
+Bei Widerspruch gilt: **Live-Evidence bestimmen, Abweichung dokumentieren und kanonische Continuity korrigieren.**
 
-Verbindlich sind insbesondere: produktionsreifer und wartbarer Code, ehrliche Datenwahrheit, starke Security/Privacy, professionelle UX auf Mobile/Tablet/Desktop, Accessibility, Performance, Multi-Citizenship ohne impliziten Standard-Pass, vollständige relevante Tests/Gates sowie adversarial Self-Review und unabhängiger Technical-Lead-Review. Geschwindigkeit darf diese Qualitätsgrenzen nicht unterlaufen.
+## 2. Verbindliche Qualitäts- und Produktprinzipien
 
-Kanonisch: `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`.
+Jetnity muss hervorragend gebaut werden. Verbindlich sind insbesondere:
 
-## Verbindliche Produktpositionierung
+- produktionsreifer, wartbarer und testbarer Code;
+- keine Demo-/Placeholder-Wahrheit als Endzustand;
+- `unknown`, `stale`, `error`, `unavailable`, `insufficient_context` und bestätigte Zustände fachlich getrennt;
+- keine Fake-Preise, Fake-Verfügbarkeit, Fake-Provider-Health, erfundene Visa-/Einreise-/Safety-/Live-Truth;
+- LLM/Assistant erklärt, strukturiert und priorisiert Hard Truth, erzeugt sie aber nicht;
+- starke Security, Privacy, Ownership/RLS und Least Privilege;
+- professionelle Mobile/Tablet/Desktop-Kohärenz, Accessibility und Performance;
+- adversarial Self-Review plus unabhängiger Technical-Lead-Review;
+- vollständige Exact-Head-Gates, CI und Vercel-Evidence;
+- keine stillen Shared-Contract- oder Scope-Erweiterungen.
 
-Jetnity soll **nicht der Reiseplaner mit den meisten sichtbaren Funktionen** werden, sondern der Reiseplaner, bei dem Nutzer **am wenigsten selbst zusammensuchen, vergleichen, koordinieren und nachdenken müssen**.
+Produktleitsatz:
 
-Leitsatz: **Eine Reise, eine Oberfläche. Komplexität intern, Klarheit für den Nutzer.** Die Fachdomänen und späteren Provider-/Truth-Systeme werden im Hintergrund sauber getrennt, erscheinen für den Nutzer aber als ein zusammenhängendes Reiseprodukt. Mehr Funktionen sind nur dann ein Vorteil, wenn sie echte Nutzerarbeit, Unsicherheit oder Recherche reduzieren.
+> **Eine Reise, eine Oberfläche. Komplexität intern, Klarheit für den Nutzer.**
 
-Kanonisch: `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`.
+Jetnity soll nicht über möglichst viele sichtbare Funktionen gewinnen, sondern dadurch, dass Nutzer möglichst wenig selbst zusammensuchen, vergleichen, koordinieren, prüfen und nachdenken müssen.
 
-## Neue verbindliche Kernfunktionen
+## 3. Traveller-Wahrheit
 
-Durch ausdrückliche Product-Owner-Entscheidung müssen zwei zusätzliche Kernfunktionen vollständig gebaut werden:
+Verbindliches Modell:
 
-1. **Jetnity Guardian / Reise-Autopilot** – reale Änderungen/Probleme cross-domain gegen die gesamte Reise bewerten, Auswirkungen verständlich zusammenführen und belastbare Optionen/Nächste Schritte anbieten.
-2. **Jetnity What-if-Reise-Simulator** – hypothetische Änderungen in einem isolierten Scenario-/Sandbox-State gegen die unveränderte reale Reise simulieren und als Delta vergleichen.
+> **Ein Reisender → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete zulässige Optionen.**
 
-Harte Regeln:
+Keine relevante Funktion darf still genau eine Staatsbürgerschaft oder einen ersten/default Pass annehmen. Wenn ein vorhandenes zulässiges Dokument einen besseren Einreise-/Transitweg ermöglicht, muss die Architektur diese Option berücksichtigen können.
 
-- kein zweiter Reisegraph / keine Schatten-Wahrheit;
-- Guardian darf keine Reise, Buchung, Zahlung oder Provideraktion still verändern;
-- Simulator darf während der Simulation keinerlei kanonische Reisedaten verändern;
-- reales `Übernehmen` nur über den kontrollierten normalen Write-/Command-Pfad mit Ownership/Version/Conflict-Prüfung;
-- Guardian, Simulator und Value Optimizer teilen gemeinsame kanonische Impact-/Evidence-/Value-Bausteine, wo fachlich identisch;
-- Multi-Traveller, Multi-Citizenship und Multi-Document sind Pflicht;
-- `unknown`, `stale`, `error`, `unavailable` und `insufficient_context` dürfen nicht als „alles gut“ oder Null interpretiert werden;
-- LLM erklärt und priorisiert, erzeugt aber keine Hard Truth;
-- keine Fake-Preise, Fake-Verfügbarkeit, erfundene Alternativflüge oder erfundene Live-Ereignisse.
+Foundation E ist bereits produktiv vorhanden und wird nicht neu gebaut. Neue Speicherung von Passscans, MRZ, Biometrie oder ähnlich sensitiven Daten ist ein besonderes Product-Owner-Gate.
 
-Vollständige Spezifikation und Acceptance: `docs/JETNITY_GUARDIAN_AND_WHAT_IF_SIMULATOR_STANDARD.md`.
+## 4. Guardian, What-if und Value
 
-## Verbindliches Marketing & Growth
+Verbindlich spätere Kernprogramme:
 
-Jetnity muss Marketing und Wachstum als **messbares, wahrheitsgetreues, datenschutzkonformes Produktsystem** aufbauen – nicht als nachträgliche Werbeschicht. Der Standard umfasst insbesondere Attribution, versionierte Events, Activation/Retention, CAC/LTV/Payback/Contribution Margin, Lifecycle CRM, Referral/Invite-Loops, Content/Creator/UGC, Paid Acquisition mit Spend Caps/Kill Switch, ASO/Web→App, Reviews/Reputation, internationale Expansion und technische Marketing-Reliability.
+- **Jetnity Guardian / Reise-Autopilot:** reale Änderungen/Probleme cross-domain gegen die gesamte Reise bewerten, ohne still reale Reise-/Booking-/Payment-/Provider-Writes auszuführen.
+- **What-if-Reise-Simulator:** hypothetische Änderungen in isoliertem Scenario-/Sandbox-State; Baseline bleibt unverändert; reale Übernahme nur über den kontrollierten kanonischen Write-/Command-Pfad.
+- **Value Optimizer:** Preis gegen Zeit, Umstiege, Komfort und Gesamtnutzen bewerten, auf gemeinsamer Evidence-/Impact-Architektur soweit fachlich identisch.
 
-Harte Regeln:
+Keine dieser Funktionen darf eine zweite Reise- oder Hard-Truth-Welt erzeugen.
 
-- keine Fake-Reviews, erfundenen Nutzerzahlen, erfundenen Awards oder unbelegten Claims;
-- keine Dark Patterns;
-- kein Pass-/MRZ-/sensitives Identity-Targeting;
-- Paid Growth erst mit belastbarer Conversion-/Revenue-Evidence und kontrollierten Spend-Grenzen;
-- `unknown` bleibt auch in Attribution/Marketing-Truth `unknown`;
-- öffentliche Claims dürfen nur reale, belegte Produktfähigkeit darstellen.
+## 5. Marketing, Growth und Discoverability
 
-Kanonisch: `docs/JETNITY_MARKETING_GROWTH_STANDARD.md`.
+Die kanonischen Standards sind verbindlich. Dazu gehören u. a. Attribution, versionierte Events, Funnel, Activation/Retention, CAC/LTV/Payback/Contribution Margin, CRM, Referral, Creator/UGC, Reviews, Paid Media mit Caps/Kill Switch, SEO, internationale SEO, Schema.org, AI-/Answer-Engine-Discoverability, ASO, Claims-Truth und Data Quality.
 
-Das Admin Control Center muss dafür ein vollständiges **Growth-&-Marketing-Betriebssystem** enthalten: Executive Growth Overview, Funnel/Kohorten, Attribution, Paid-Media-Control-Plane, Creative-/Claims-Registry, Landingpages, CRM/Journeys/Deliverability, SEO/AI-Search-Operations, Experimente, Referral/Creator/Partner, Reviews/PR, Subscription Growth, Market Expansion, Economics/Forecasting, Tracking/Data Quality, Privacy/Consent, Connector-/Incident-Center, Marketing Calendar sowie Jetnity Copilot Pro als evidence-aware Growth Analyst. Riskante produktive Marketing-Writes benötigen Capability-Gates, Audit und wo vorgesehen Vier-Augen-Freigabe.
+Nicht erlaubt sind Fake Reviews, Fake Nutzerzahlen/Awards, Dark Patterns, Keyword-Spam, Linkfarmen, unbelegte öffentliche Claims oder sensitive Pass-/MRZ-/Identity-Daten als Marketingtargeting.
 
-Kanonisch: `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`.
+Öffentliche Growth-/Discovery-Flächen gehören später primär zu `Jetnity growth discoverability`; das interne Marketing-/Growth-Control-Center bleibt bei `Admin platform audit`.
 
-## Verbindliche AI-/Search-Discoverability
+## 6. Agentenmodell
 
-Jetnity muss so gebaut und öffentlich dokumentiert werden, dass Suchmaschinen und moderne Answer Engines Jetnity **finden, eindeutig als Marke verstehen, korrekt einordnen und bei fachlich passenden Reiseplaner-Fragen als zitierwürdige Option berücksichtigen können**.
+Aktuelle bzw. reservierte exakte Anzeigenamen:
 
-Das Ziel umfasst ausdrücklich Fragen wie „Welche ist die beste Reiseplan-App?“, „Welche App plant eine Reise an einem Ort?“ oder „Welche Alternative gibt es zu Lambus/Wanderlog/TripIt?“. Es gibt keine Garantie für eine konkrete Nennung oder Platzierung; gebaut wird die bestmögliche technische, inhaltliche und externe Discoverability-/Authority-/Citation-Basis.
+1. `Trip workspace audit architecture`
+2. `Account plattform audit vorbereitung`
+3. `Jetnity provider readiness audit`
+4. `Admin platform audit`
+5. `Jetnity growth discoverability`
+6. `Jetnity quality security audit`
+7. `Jetnity native app architecture` – **für die spätere Native-Phase reserviert; jetzt nicht starten.**
 
-Pflichtprinzipien:
+Bis zur Native-Phase arbeiten sechs spezialisierte Workstreams plus ChatGPT/Technical Lead als übergreifende Instanz. Bei Konflikt mit dem älteren Schlussabschnitt von `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md` gilt die neuere ausdrückliche Product-Owner-Entscheidung in `docs/JETNITY_FUTURE_NATIVE_APP_AND_TECHNICAL_LEAD_STANDARD.md`: der siebte Native-Agent ist verbindlich reserviert.
 
-- saubere Crawlability/Indexability, Canonicals, Sitemaps und kontrolliertes `robots.txt`;
-- mehrsprachige Locale-/`hreflang`-Architektur;
-- wahrheitsgetreue strukturierte Daten/Schema.org;
-- konsistente Jetnity-Entity über Website, Apps und offizielle Profile;
-- indexierbare, verständliche Seiten für reale Kernfunktionen und Use Cases;
-- semantisches HTML, stabile URLs, klare Definitionen sowie Evidence/Freshness bei zeitkritischen Aussagen;
-- sachliche und belegte Vergleichsseiten statt manipulativer Konkurrenz-Abwertung;
-- hochwertige Reiseinhalte und echte externe Autorität über Reviews, Medien, Creator/Partner und organische Community-Signale;
-- keine Fake-Reviews, erfundenen Nutzerzahlen/Awards, Linkfarmen, Keyword-Spam oder nicht belegte Produktversprechen;
-- private Reisen, Accountdaten, Pass-/Dokumentdaten, Admin-/Support-/Provider-Secrets dürfen niemals zu öffentlichen Discovery-Flächen werden;
-- Discoverability wird vor Launch technisch und inhaltlich auditiert und nach Launch kontinuierlich gemessen und verbessert.
+`Jetnity quality security audit` ist unabhängige QA/Security/Release-Prüfinstanz und kein allgemeiner Feature-Entwickler.
 
-Kanonisch und vollständig: `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`.
+## 7. Shared Contracts
 
-## Verbindliches Agent-/Workstream-Modell
+Technical-Lead-kontrolliert bleiben insbesondere:
 
-Jetnity verwendet sechs spezialisierte Cursor-Agent-Workstreams unter übergreifender ChatGPT/Technical-Lead-Steuerung. Ein siebter Native-Agent ist verbindlich reserviert, aber nicht jetzt zu starten. Exakte Anzeigenamen sind verbindlich:
+- Auth, Identity, Sessions, MFA/AAL;
+- RLS, Ownership, Guest→Account;
+- Traveller-Kernmodell, Multi-Citizenship, Multi-Document;
+- Route/Transit;
+- Privacy/Consent;
+- Billing/Payment;
+- Admin Audit/Capabilities;
+- Provider Activation;
+- Attribution/Revenue/Claims Truth;
+- Guardian-/Simulator-/Value-Impact-Verträge;
+- andere Cross-Domain-Verträge.
 
-- `Trip workspace audit architecture`
-- `Account plattform audit vorbereitung`
-- `Jetnity provider readiness audit`
-- `Admin platform audit`
-- `Jetnity growth discoverability` – reservierter fünfter Agent; noch nicht starten, bis die dokumentierten Aktivierungsbedingungen erfüllt sind.
-- `Jetnity quality security audit` – reservierter sechster Agent; unabhängige QA/Security, kein Feature-Entwickler.
-- `Jetnity native app architecture` – reservierter siebter Agent; erst bei einer eigenständigen Native-Phase.
+Ein Fachagent dokumentiert einen nötigen Shared-Contract-Change und stoppt. Der Technical Lead entscheidet Architektur, Owner und separaten kontrollierten Slice.
 
-Der fünfte Agent verantwortet später die **öffentliche** Homepage-/Landingpage-/SEO-/Answer-Engine-/Content-/ASO-/Acquisition-Oberfläche. Das **interne** Growth-/Marketing-Control-Center bleibt bei `Admin platform audit`.
+## 8. Aktuelle operative Wahrheit nach TW-3
 
-Breitere Parallelisierung erfolgt bevorzugt erst nach **TW-4 ✅ → TW-3 ✅ → Technical-Lead-Integrations-Checkpoint**. Danach können konfliktarme Provider-/Admin-/Workspace-Slices parallel laufen. Account/Traveller wird gemäß Build-Reihenfolge geöffnet. `Jetnity growth discoverability` startet erst, wenn der zentrale Workspace-Kern und öffentliche Produktwahrheit stabil genug sind; docs-only D0/G0-Audit/Vorbereitung kann der Technical Lead an einem stabilen Checkpoint früher erlauben.
+Letzter verifizierter Runtime-Merge auf `main` vor diesem Continuity-Update:
 
-Shared Auth/Identity/Sessions/MFA/AAL/RLS/Ownership/Guest→Account/Traveller/Multi-Citizenship/Route/Privacy/Consent/Billing/Admin-Audit/Provider-Activation/Attribution-/Revenue-/Claims-Truth bleiben Technical-Lead-kontrolliert und dürfen nicht still von einem Agent umgebaut werden.
+`16a4c77a53cff9e8638a68f5dd8c77122bf13b48`
 
-Kanonisch und vollständig: `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`.
+Stand:
 
-## Aktuelle operative Wahrheit
+- TW-1 / PR #56: ✅ integriert
+- TW-2 / PR #58: ✅ integriert
+- Marketing & Growth Standards / PR #59: ✅ integriert
+- TW-4 / PR #60: ✅ integriert, Merge-Commit `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f`
+- TW-3 / PR #64: ✅ integriert, Merge-Commit `16a4c77a53cff9e8638a68f5dd8c77122bf13b48`
+- finaler TW-3 Exact Head: `f55db2b0682981f293390b44e704b513476703bf`
+- unabhängiger Technical-Lead-PASS: abgeschlossen
+- Exact-Head GitHub Actions CI `32861784215`: SUCCESS
+- Vercel Exact-Head Preview: READY
+- Vercel Production auf Merge-Commit `16a4c77...`: READY
+- keine offenen PR-#64-Review-Threads
+- keine TW-3-DB-/RLS-/Auth-/Traveller-/Provider-/Secret-/Kostenänderung.
 
-- TW-1 ist auf `main` integriert; Merge-Commit: `02b166e652f046d41f6e5b8d292e980369ca255e`.
-- TW-2 ist auf `main` integriert; Merge-Commit: `5e27f383c7917eec168d11bceb78f9fafc198d42`.
-- PR #59 – Marketing & Growth Standards: **merged**; Merge-Commit `5341decef6ab128039dea11fa6f2625fbf03d354`.
-- PR #57 – Technical-Lead-Autonomie + verbindliche Build-Reihenfolge: **merged**.
-- PR #56 – Trip Workspace TW-1 – Shell & Geräteparität: **merged**.
-- PR #58 – Trip Workspace TW-2 – Reiseübersicht: **merged** nach unabhängigem Technical-Lead-PASS auf Exact Head `3f2c55357a7a2425ab760aac2a29ddbe15f80fa8`; CI, Vercel und Trip-Workspace-UI-Audit 1018/1018 waren grün.
-- **TW-4 / PR #60 ist auf `main` gemergt.** Merge-Commit: `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f`. Historische Draft-/Re-Review-Texte in älteren Slice-Statusdateien sind pre-merge Evidence.
-- **Aktiver Runtime-Slice: Draft-PR #64 – TW-3 Timeline / Etappe / Tag** auf `feat/trip-workspace-tw3-timeline`. Runtime umgesetzt; STOPP für unabhängigen Technical-Lead-Re-Review. Kein TW-5.
-- `Account plattform audit vorbereitung`, `Jetnity provider readiness audit` und `Admin platform audit` warten auf ihre kontrollierten späteren bzw. parallelisierbaren Blöcke.
-- `Jetnity growth discoverability`, `Jetnity quality security audit` und `Jetnity native app architecture` sind verbindlich reserviert, aber **noch nicht zu starten**.
-- `main` Branch Protection ist technisch weiterhin nicht aktiviert; dieses Risiko nicht vergessen.
+Damit ist der vorgesehene Checkpoint **TW-4 ✅ → TW-3 ✅ → Technical-Lead-Integrationscheckpoint** erreicht.
 
-## Aktuelle große Build-Reihenfolge
+Historischer Draft-PR #52 bleibt Continuity-Evidence, ist aber kein Runtime-Träger und soll nicht als aktueller Slice behandelt werden.
 
-1. Trip Workspace vollständig: `Trip workspace audit architecture` – **TW-1 ✅ → TW-2 ✅ → TW-4 ✅ → TW-3 → Details/Gaps → Rest gemäß Plan → finaler Workspace-Audit**.
-2. Traveller-/Pass-/Multi-Citizenship produktweit vervollständigen auf Foundation E.
-3. Account: `Account plattform audit vorbereitung` – AP-4 bis AP-12.
-4. Provider: `Jetnity provider readiness audit` – S4 bis S8, danach echte Provider unter besonderen Gates.
-5. Admin: `Admin platform audit` – D bis K **plus** die fehlenden Growth-/Marketing-Control-Slices gemäß `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`; Billing-/Refund-P1 vor Finance-/Payment-Live.
-6. Homepage/Public Growth: später primär `Jetnity growth discoverability`, nach stabiler Workspace-/Public-Truth-Basis; Discoverability D1 + Marketing/Growth-G0/G1-Grundlagen soweit konfliktarm und truth-ready.
-7. AI & Search Discoverability / Authority – D0/D1/D2/D3/D4 gemäß kanonischem Standard.
-8. Marketing & Growth – G0–G5 gemäß kanonischem Standard; Querschnittsgrundlagen dürfen entsprechend ihrer Abhängigkeiten früher vorbereitet werden, produktive Aktivierungen bleiben gegated.
-9. Kommerzielle Produktschicht.
-10. Guardian / Reise-Autopilot + What-if-Reise-Simulator vollständig integrieren.
-11. Production-Härtung / Launch Readiness inklusive finalem Discoverability-, Growth-/Tracking- und Marketing-Control-Audit.
+## 9. Nächster Workspace-Slice
 
-Details und Abhängigkeiten stehen in `docs/JETNITY_BINDING_BUILD_ORDER.md` und `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`.
+Nächster primärer Slice gemäß `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`:
 
-## Technical-Lead-Autonomie
+**TW-5 – Item- und Gap-Details**
 
-Seit 25. August 2026 darf ChatGPT/Technical Lead normale, scope-treue Entwicklungsarbeit weitgehend selbstständig steuern. Nach Self-Review, vollständigen Exact-Head-Gates, CI/Vercel-Evidence und unabhängigem Technical-Lead-Review dürfen normale PRs selbst Ready gesetzt und anschließend selbst gemergt werden.
+Primärer Agent:
 
-Wenn `main` während eines Slices weiterläuft, muss der Slice vor Merge synchronisiert, erneut gegatet und erneut reviewed werden.
+`Trip workspace audit architecture`
 
-Product-Owner-Freigabe bleibt zwingend für besondere Gates, insbesondere Production-Migrationen/destructive Datenänderungen, echte Provider/Secrets/Verträge/paid calls, Kosten über USD 100/Monat, große Produkt-/Geschäftsmodelländerungen, besonders sensible Identitätsdaten und öffentliche/produktive Aktivierungen.
+Vorbereiteter Branch:
 
-Vollständige Regel: `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`.
+`feat/trip-workspace-tw5-item-gap-details`
 
-## Unveränderte Truth-Regeln
+Der Branch wurde auf dem Runtime-Baseline-SHA `16a4c77...` vorbereitet. Zum Zeitpunkt dieses Continuity-Updates existieren noch **kein TW-5-Runtime-Commit und kein TW-5-PR**.
 
-- `unknown` bleibt `unknown`.
-- Keine Fake-Preise, Fake-Verfügbarkeit, Fake-Provider-Health oder erfundene Visa-/Safety-/Regulatory-Truth.
-- LLM erklärt Hard Truth, erzeugt sie nicht.
-- Multi-Citizenship / mehrere Reisedokumente müssen in allen relevanten Funktionen berücksichtigt werden.
-- Kein impliziter erster/Standard-Pass.
-- Shared Auth/RLS/Identity/Traveller/Route/Privacy/Billing/Admin-Audit/Provider-Activation bleiben Technical-Lead-gesteuert.
+TW-5 muss vorhandene Flight-/Hotel-/Activities-/Mobility-Flächen als Details einer Reise-/Coverage-/Attention-Lücke einhängen, vorhandene Lazy-Search-Mounts erhalten und darf keine Live-Provider, Fake-Angebote, stillen Herkunftsdefaults oder Shared-Contract-Erweiterungen einschleusen.
 
-## Nächster kontrollierter Schritt
+Vor Runtime-Implementierung: versionierter TW-5-Task, ADR/Status, Scope/Non-Scope, Acceptance, Gates und Draft-PR; danach Cursor-Agent starten; STOPP nach Self-Review/Evidence für unabhängigen Technical-Lead-Review.
 
-Unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #64 (TW-3 Timeline). Kein Ready, kein Merge, kein TW-5.
+## 10. Aktuelle Workstream-Lage
+
+- `Trip workspace audit architecture`: primärer nächster Workstream; TW-5 noch nicht implementiert.
+- `Account plattform audit vorbereitung`: wartet; AP-1 bis AP-3 sind integriert.
+- `Jetnity provider readiness audit`: wartet; S1 bis S3 sind integriert.
+- `Admin platform audit`: wartet; A bis C sind integriert.
+- `Jetnity growth discoverability`: reserviert, noch nicht starten.
+- `Jetnity quality security audit`: reserviert; kann an einem stabilen Integrations-/Multi-Agent-Checkpoint gezielt aktiviert werden.
+- `Jetnity native app architecture`: reserviert für spätere Native-Phase.
+
+Breitere Parallelisierung ist nach dem erreichten TW-4/TW-3-Checkpoint grundsätzlich möglich, aber nur konfliktarm und nach Technical-Lead-Abhängigkeitsprüfung.
+
+## 11. Supabase-/Production-Grenze
+
+Supabase Production:
+
+`qscbgcdmivbbnzrcyegn`
+
+Production enthält bis einschließlich:
+
+- `20260824120000_flug_route_itinerary_surface_evidence`
+- `20260824140000_flug_route_itinerary_untrusted_surface`
+
+Development enthält zusätzlich:
+
+- `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`
+- `20260824180000_trip_items_flug_handelsfelder_guard`
+
+Diese beiden Development-Migrationen sind **nicht Production-approved** und dürfen ohne besonderes Product-Owner-Gate nicht auf Production angewendet werden.
+
+## 12. Technical-Lead-Autonomie und besondere Gates
+
+Normale scope-treue Engineering-Arbeit darf gemäß `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md` selbstständig bis Ready/Merge gesteuert werden, nachdem Self-Review, vollständige Exact-Head-Gates, CI/Vercel und unabhängiger Technical-Lead-Review erfolgreich sind.
+
+Product-Owner-Freigabe bleibt insbesondere zwingend für:
+
+- Production-Migrationen/destructive Production-Datenänderungen;
+- große Production-RLS-/Identity-/Ownership-Risiken;
+- echte Providerverträge, Production-Secrets und paid calls;
+- neue laufende Infrastruktur-/Providerkosten über USD 100/Monat;
+- echte Payment-Aktivierung/Geldbewegung;
+- fundamentale Produkt-/Business-Model- oder Build-Order-Abweichungen;
+- besonders sensitive Pass-/MRZ-/Biometrie-Speicherung;
+- fundamentale Auth/MFA/AAL/Session-Änderungen;
+- neue sensible externe Datenweitergabe;
+- Public Launch / große Production-Aktivierung / reale Provider live.
+
+Ältere Dokumente, die pauschal für **jeden** normalen Merge eine aktuelle Product-Owner-Freigabe verlangen, sind durch die neuere Autonomy Policy ersetzt.
+
+## 13. Offene Governance-Risiken
+
+- `main` Branch Protection ist live weiterhin nicht aktiviert.
+- Ein möglicher späterer Citizenship-only-Credential-Contract ist dokumentierter Shared-Contract-Bedarf, aber kein aktueller TW-5-Blocker.
+- Historische offene PRs dürfen nicht als aktive Runtime-Slices reaktiviert werden, ohne den aktuellen Build-Plan neu zu prüfen.
+
+## 14. Native
+
+`Jetnity native app architecture` wird erst gemäß `docs/JETNITY_FUTURE_NATIVE_APP_AND_TECHNICAL_LEAD_STANDARD.md` aktiviert. Vor großer Native-Runtime-Implementierung kommt ein Audit-/Target-Architecture-Slice. Native folgt:
+
+> **Ein Produkt, eine Wahrheit, mehrere Clients.**
+
+## 15. Continuity-Regel
+
+Kein relevanter Fortschritt darf nur im Chat existieren. Nach wichtigen Reviews, Merges, Integrationsentscheidungen und Statusänderungen werden Tasks, ADRs, Active Work und Handoffs im Repository nachgezogen.
+
+Ein neuer Chat behauptet niemals aus Erinnerung, Screenshot oder altem Handoff, ein PR sei aktuell, grün oder gemergt. **Immer live verifizieren.**
