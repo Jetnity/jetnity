@@ -30,6 +30,31 @@ Vor größeren Produkt-/Architektur-/Implementierungsentscheidungen mindestens l
 - `DECISIONS.md`
 - relevante aktuelle Slice-Tasks, Statusdateien, ADRs, Handoffs und Auditpläne.
 
+Zusätzliche dauerhaft relevante Repo-Standards und Fachmandate müssen bei berührtem Scope ebenfalls gelesen werden, insbesondere:
+
+- `JETNITY_PRODUCT_MANDATE.md`
+- `JETNITY_VISION.md`
+- `DESIGN_SYSTEM.md`
+- `AGENTS.md`
+- `docs/PRODUCT_QUALITY_STANDARD.md`
+- `docs/UX_INFORMATION_ARCHITECTURE_STANDARD.md`
+- `docs/LOGIC_STANDARD.md`
+- `docs/CONTINUITY_STANDARD.md`
+- `docs/INDEPENDENT_REVIEW_DEPTH_STANDARD.md`
+- `docs/CHATGPT_CURSOR_WORKFLOW.md`
+- `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`
+- `docs/EXPERT_PROACTIVITY_POLICY.md`
+- `docs/TRAVELLER_CONTEXT_INTELLIGENCE_POLICY.md`
+- `docs/TRAVELLER_CITIZENSHIP_REQUIREMENT_POLICY.md`
+- `docs/TRIP_WORKSPACE_FINAL_INTELLIGENCE_AUDIT_POLICY.md`
+- `docs/TRIP_WORKSPACE_FUNCTION_BY_FUNCTION_AUDIT_MANDATE.md`
+- `docs/TRAVEL_SAFETY_DISRUPTION_INTELLIGENCE_POLICY.md`
+- `docs/TRAVEL_TIMING_SEASONAL_INTELLIGENCE_POLICY.md`
+- `docs/FINAL_HOMEPAGE_POSITIONING_OPTIMIZATION_POLICY.md`
+- `docs/PROVIDER_INTEGRATION_READINESS_POLICY.md`
+
+Falls `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md` oder ältere Handoffs noch pauschal eine aktuelle Product-Owner-Freigabe für **jeden** normalen Merge verlangen, ist diese Regel durch die neuere verbindliche `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md` ersetzt. Die besonderen Product-Owner-Gates bleiben unverändert.
+
 Danach live prüfen: `main`, offene PRs/Drafts, Branches, Actions, Vercel, relevante Supabase-Stände/Migrationen, Review-Threads und Ahead/Behind.
 
 ## 2. Rolle und Governance
@@ -56,7 +81,19 @@ Leitsätze:
 
 Keine Fake-Preise, Fake-Verfügbarkeit, Fake-Provider-Health, erfundene Visa-/Safety-/Seasonal-/Live-Truth. `unknown` bleibt `unknown`. LLM/Assistant darf Hard Truth erklären, nicht erzeugen.
 
-## 4. Traveller-Kernmodell
+## 4. Technischer Kern
+
+- Next.js App Router / TypeScript / Tailwind
+- Vercel
+- Supabase Postgres/Auth/Storage
+- gemeinsamer kanonischer Reisegraph statt separater Schattenmodelle
+- Web/PWA zuerst, professionelle Native-App-Phase später
+
+Supabase Production: `qscbgcdmivbbnzrcyegn` (`eu-central-2`).
+
+Echte Travel-Provider bleiben deaktiviert, solange ihre jeweiligen Readiness-/Contract-/Secret-/Cost-/Production-Gates nicht erfüllt sind.
+
+## 5. Traveller-Kernmodell
 
 Foundation E ist bereits integriert/produktiv und wird nicht neu gebaut.
 
@@ -68,7 +105,7 @@ Kein impliziter Standard-Pass oder Default-Citizenship. Ausstellerland ist nicht
 
 Keine neue Speicherung von Passnummern, Scans, MRZ oder Biometrie ohne besonderes Product-Owner-/Privacy-/Security-Gate.
 
-## 5. Verbindliche spätere Intelligence-Systeme
+## 6. Verbindliche spätere Intelligence-Systeme
 
 Bereits Product-Owner-verbindlich und nicht zu vergessen:
 
@@ -78,7 +115,7 @@ Bereits Product-Owner-verbindlich und nicht zu vergessen:
 
 Wo fachlich identisch, gemeinsame Impact-/Evidence-Bausteine; keine drei widersprüchlichen Berechnungswelten.
 
-## 6. Marketing, Growth und Discoverability
+## 7. Marketing, Growth und Discoverability
 
 Verbindliche Programme umfassen u. a. Attribution, versionierte Events, Funnel, Activation/Retention, CAC/LTV/Payback/Contribution Margin, CRM, Referral, Creator/UGC, Reviews, Paid Media mit Spend Caps/Kill Switch, SEO, internationale SEO, Schema.org, AI-/Answer-Engine-Discoverability, ASO, Approved Claims, Tracking/Data Quality und Growth Economics.
 
@@ -86,7 +123,7 @@ Keine Fake Reviews/Nutzerzahlen/Awards, Dark Patterns, Keyword-Spam, Linkfarmen,
 
 Öffentliche Growth-/Discoverability-Surfaces gehören später zu `Jetnity growth discoverability`; internes Marketing-/Growth-Control-Center bleibt bei `Admin platform audit`.
 
-## 7. Aktueller Runtime-Stand
+## 8. Aktueller Runtime-Stand
 
 Letzter verifizierter Runtime-Merge auf `main` vor diesem docs-only Continuity-Update:
 
@@ -130,7 +167,7 @@ Damit ist der Checkpoint **TW-4 ✅ → TW-3 ✅ → Technical-Lead-Integrations
 
 PR #52 bleibt historischer docs-only Draft-Handoff und darf nicht als Runtime-Träger behandelt werden.
 
-## 8. Nächster primärer Slice: TW-5
+## 9. Nächster primärer Slice: TW-5
 
 Agent:
 
@@ -167,7 +204,7 @@ Harte Grenzen:
 
 Vor Runtime: TW-5 ADR/Task/Status + Draft-PR + Acceptance/Gates. Danach Cursor-Agent starten. Agent stoppt nach Self-Review/Exact-Head-Evidence für unabhängigen Technical-Lead-Review.
 
-## 9. Agentenstatus
+## 10. Agentenstatus
 
 - `Trip workspace audit architecture`: primärer nächster Workstream; TW-5 noch nicht gestartet.
 - `Account plattform audit vorbereitung`: wartet; AP-1–AP-3 integriert.
@@ -179,7 +216,7 @@ Vor Runtime: TW-5 ADR/Task/Status + Draft-PR + Acceptance/Gates. Danach Cursor-A
 
 Der ältere Schlussabschnitt von `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`, der einen siebten Agenten noch nicht als aktuelle Entscheidung bezeichnete, ist durch die neuere ausdrückliche Product-Owner-Entscheidung in `docs/JETNITY_FUTURE_NATIVE_APP_AND_TECHNICAL_LEAD_STANDARD.md` superseded. Bis zur Native-Phase bleiben sechs aktive/reservierte Fachworkstreams plus Technical Lead; später kommt der exakt benannte Native-Agent hinzu.
 
-## 10. Shared Contracts
+## 11. Shared Contracts
 
 Technical-Lead-kontrolliert:
 
@@ -196,7 +233,7 @@ Technical-Lead-kontrolliert:
 
 Ein möglicher späterer Citizenship-only-Credential-Option-Contract ist dokumentierter Shared-Contract-Bedarf aus TW-4, aber kein TW-5-Blocker.
 
-## 11. Supabase / Production
+## 12. Supabase / Production
 
 Supabase Production:
 
@@ -214,7 +251,7 @@ Development enthält zusätzlich:
 
 Diese Development-Migrationen sind **nicht Production-approved** und dürfen nicht eigenmächtig auf Production angewendet werden.
 
-## 12. Große Build-Reihenfolge
+## 13. Große Build-Reihenfolge
 
 Kanonisch weiter gemäß `docs/JETNITY_BINDING_BUILD_ORDER.md`:
 
@@ -231,18 +268,18 @@ Kanonisch weiter gemäß `docs/JETNITY_BINDING_BUILD_ORDER.md`:
 
 Konfliktarme Vorbereitungs-/Audit-Arbeit darf parallelisiert werden, aber die große Reihenfolge darf ohne Product-Owner-Entscheidung nicht still verändert werden.
 
-## 13. Offene Governance-Risiken
+## 14. Offene Governance-Risiken
 
 - `main` Branch Protection ist live weiterhin nicht aktiviert.
 - Historische offene PRs sind nicht automatisch aktive Runtime-Slices.
 - Alte Status-/Handoff-Zeilen können pre-merge Evidence sein; `JETNITY_START_HERE.md` + `docs/ACTIVE_WORK_STATUS.md` + Live-Systeme bestimmen den aktuellen Stand.
 
-## 14. Was der Product Owner jetzt in Cursor tun muss
+## 15. Was der Product Owner jetzt in Cursor tun muss
 
 Noch nichts, solange der TW-5-Auftrag nicht versioniert und der Draft-PR nicht eröffnet ist.
 
 ChatGPT hat keinen direkten Cursor-Agent-Chat-Connector. Sobald TW-5 ADR/Task/Status/Draft-PR bereit sind, muss `Trip workspace audit architecture` einmal manuell in Cursor mit dem versionierten Auftrag angestoßen werden. Danach arbeitet der Agent bis zum definierten STOPP; ChatGPT/Technical Lead führt anschließend den unabhängigen Review.
 
-## 15. Continuity-Satz für einen neuen Chat
+## 16. Continuity-Satz für einen neuen Chat
 
 > **„Wir machen mit Jetnity weiter. Lies zuerst `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, die dort definierte Pflichtlektüre und verifiziere danach `main`, PRs, CI, Vercel und relevante Supabase-Stände live. Übernimm exakt die bisherige Technical-Lead-Rolle.“**
