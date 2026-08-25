@@ -44,10 +44,21 @@ export const ARBEITSBEREICH_BEZEICHNUNG: Record<Arbeitsbereich, string> = {
 /** Unterhalb dieser Breite gilt die kompakte Mobile-/Tablet-Ansicht. */
 export const ARBEITSBEREICH_DESKTOP_AB_PX = 1024
 
+/**
+ * Maschinenlesbare Presentation-Lage der bestehenden Fachableitungen.
+ *
+ * `belegt` bedeutet bei deterministisch prüfbarer Coverage: keine bekannte
+ * Lücke. Bei Aktivitäten gibt es keine kanonische Soll-Anzahl; dort bedeutet
+ * es nur, dass mindestens eine Aktivität im Reisegraphen vorhanden ist.
+ * `teilweise` bleibt ausdrücklich von `belegt` getrennt.
+ */
+export type BereichLage = 'offen' | 'teilweise' | 'belegt' | 'unbestimmt'
+
 export type BereichStatus = {
   bereich: Exclude<Arbeitsbereich, 'uebersicht'>
   anzahl: number
   text: string
+  lage: BereichLage
 }
 
 export type PlanStatus = {
@@ -82,6 +93,46 @@ function anzahlText(anzahl: number, singular: string, plural: string, leer: stri
   return `${anzahl} ${anzahl === 1 ? singular : plural}`
 }
 
+function flugLage(abdeckung: ReturnType<typeof flugAbdeckung>): BereichLage {
+  if (!abdeckung.bestimmbar || abdeckung.unzugeordnet.length > 0) return 'unbestimmt'
+  if (abdeckung.abschnitte.some((abschnitt) => abschnitt.status === 'unknown')) return 'unbestimmt'
+  if (abdeckung.abschnitte.length === 0) return 'belegt'
+
+  const offen = abdeckung.abschnitte.filter((abschnitt) => abschnitt.status === 'open').length
+  if (offen === abdeckung.abschnitte.length) return 'offen'
+  if (offen > 0) return 'teilweise'
+  return 'belegt'
+}
+
+function unterkunftLage(abdeckung: ReturnType<typeof unterkunftAbdeckung>): BereichLage {
+  if (
+    !abdeckung.bekannt ||
+    abdeckung.naechteGesamt === null ||
+    abdeckung.naechteAbgedeckt === null ||
+    abdeckung.aufenthalte.some((aufenthalt) => aufenthalt.status === 'unknown')
+  ) {
+    return 'unbestimmt'
+  }
+
+  if (abdeckung.naechteGesamt === 0) return 'belegt'
+  if (abdeckung.naechteAbgedeckt === 0) return 'offen'
+  if (abdeckung.naechteAbgedeckt < abdeckung.naechteGesamt) return 'teilweise'
+  return 'belegt'
+}
+
+function mobilitaetLage(abdeckung: ReturnType<typeof mobilitaetsAbdeckung>): BereichLage {
+  if (!abdeckung.bestimmbar || abdeckung.unzugeordnet.length > 0) return 'unbestimmt'
+
+  const boden = abdeckung.kanten.filter((kante) => kante.status !== 'covered_by_flight')
+  if (boden.some((kante) => kante.status === 'unknown')) return 'unbestimmt'
+  if (boden.length === 0) return 'belegt'
+
+  const offen = boden.filter((kante) => kante.status === 'open').length
+  if (offen === boden.length) return 'offen'
+  if (offen > 0) return 'teilweise'
+  return 'belegt'
+}
+
 /**
  * Einleitung des eingebetteten Tagesplans.
  *
@@ -108,6 +159,11 @@ export function planStatus(reise: Trip, ohneTag: readonly TripItem[] = []): Plan
 /**
  * Kompakte Statuszeilen der Übersicht für die übrigen Hauptbereiche.
  *
+ * Text und maschinenlesbare Lage werden aus denselben kanonischen
+ * Fachableitungen erzeugt. Die Lage wird bewusst nicht aus lokalisiertem
+ * Anzeigetext zurückgeparst: eine Textänderung darf keine Reise-Wahrheit
+ * verändern.
+ *
  * Der Planstatus gehört nicht hierher: er leitet den eingebetteten Tagesplan
  * ein und darf keinen Bereichswechsel auslösen.
  */
@@ -120,6 +176,7 @@ export function bereichStatus(reise: Trip, ohneTag: readonly TripItem[] = []): B
   const unterkunft = unterkunftAbdeckung(reise, ohneTag)
   const mobilitaet = mobilitaetsAbdeckung(reise, ohneTag)
   const mietwagen = mietwagenBestand(reise, ohneTag)
+  const aktivitaetenAnzahl = anzahlVon(punkte, 'activity')
   const verbindungsAnzahl = anzahlVon(punkte, 'transfer')
   const mietwagenAnzahl = anzahlVon(punkte, 'rental_car')
   const mobilitaetText = mietwagen.uebersicht
@@ -131,26 +188,30 @@ export function bereichStatus(reise: Trip, ohneTag: readonly TripItem[] = []): B
       bereich: 'fluege',
       anzahl: anzahlVon(punkte, 'flight'),
       text: fluegeText,
+      lage: flugLage(fluege),
     },
     {
       bereich: 'unterkunft',
       anzahl: anzahlVon(punkte, 'stay'),
       text: unterkunft.zusammenfassung,
+      lage: unterkunftLage(unterkunft),
     },
     {
       bereich: 'aktivitaeten',
-      anzahl: anzahlVon(punkte, 'activity'),
+      anzahl: aktivitaetenAnzahl,
       text: anzahlText(
-        anzahlVon(punkte, 'activity'),
+        aktivitaetenAnzahl,
         'Aktivität geplant',
         'Aktivitäten geplant',
         'Noch keine Aktivität geplant',
       ),
+      lage: aktivitaetenAnzahl > 0 ? 'belegt' : 'offen',
     },
     {
       bereich: 'mobilitaet',
       anzahl: verbindungsAnzahl + mietwagenAnzahl,
       text: mobilitaetText,
+      lage: mobilitaetLage(mobilitaet),
     },
   ]
 }
