@@ -6,23 +6,32 @@ Status: **kanonischer erster Einstieg; aktuelle operative Wahrheit steht in dies
 Wenn du als neuer Chat, Technical Lead oder Coding Agent Jetnity übernimmst, lies **vor jeder Aktion** mindestens:
 
 1. `JETNITY_START_HERE.md`
-2. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-3. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
-4. `JETNITY_HANDOFF.md`
-5. `docs/ACTIVE_WORK_STATUS.md`
-6. den aktuellen Slice-Task/Status/Handoff
+2. `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
+3. `docs/JETNITY_BINDING_BUILD_ORDER.md`
+4. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
+5. `JETNITY_HANDOFF.md`
+6. `docs/ACTIVE_WORK_STATUS.md`
+7. den aktuellen Slice-Task/Status/Handoff
 
 Danach GitHub/CI/Vercel/Supabase live verifizieren. Historische Handoffs, alte PR-Bodies und ältere Statuszeilen sind Evidence ihres Zeitpunkts und dürfen diese aktuellere operative Wahrheit nicht überschreiben.
 
+## Verbindlicher Qualitätsstandard
+
+Jetnity muss hervorragend gebaut werden. Das ist eine ausdrückliche Product-Owner-Vorgabe und gilt für jeden relevanten Slice, jede Funktion und jeden Agenten.
+
+Verbindlich sind insbesondere: produktionsreifer und wartbarer Code, ehrliche Datenwahrheit, starke Security/Privacy, professionelle UX auf Mobile/Tablet/Desktop, Accessibility, Performance, Multi-Citizenship ohne impliziten Standard-Pass, vollständige relevante Tests/Gates sowie adversarial Self-Review und unabhängiger Technical-Lead-Review. Geschwindigkeit darf diese Qualitätsgrenzen nicht unterlaufen.
+
+Kanonisch: `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`.
+
 ## Aktuelle operative Wahrheit
 
-- `main` nach TW-1-Merge: `02b166e652f046d41f6e5b8d292e980369ca255e`.
+- TW-1 ist auf `main` integriert; Merge-Commit: `02b166e652f046d41f6e5b8d292e980369ca255e`.
 - PR #57 – Technical-Lead-Autonomie + verbindliche Build-Reihenfolge: **merged**.
 - PR #56 – **Trip Workspace TW-1 – Shell & Geräteparität: merged**.
-- TW-1 wurde auf synchronisiertem Exact Head `3a49f78bd4d991ccc1271c93164182feed7f8a32` unabhängig geprüft; GitHub Actions und Vercel waren SUCCESS. Merge-Commit: `02b166e652f046d41f6e5b8d292e980369ca255e`.
+- TW-1 wurde auf synchronisiertem Exact Head `3a49f78bd4d991ccc1271c93164182feed7f8a32` unabhängig geprüft; GitHub Actions und Vercel waren SUCCESS.
 - TW-1 ändert keine DB/RLS/Auth/Traveller/Route/Provider/Secrets/Kosten und keine Production-Migration.
-- Nächster verbindlicher Trip-Workspace-Slice: **TW-2 – Reiseübersicht**. Er muss separat bleiben; kein TW-4/TW-3-Scope hineinziehen.
-- `Trip workspace audit architecture` ist der zuständige bestehende Cursor-Agent für den Trip-Workspace-Block.
+- **Aktiver nächster Slice: TW-2 – Reiseübersicht, Draft-PR #58, Branch `feat/trip-workspace-tw2-overview`.** Runtime-Implementierung erfolgt durch `Trip workspace audit architecture`.
+- TW-2 muss separat bleiben; kein TW-4/TW-3-Scope hineinziehen.
 - `Account plattform audit vorbereitung`, `Jetnity provider readiness audit` und `Admin platform audit` bleiben für ihre späteren Build-Order-Blöcke erhalten.
 - `main` Branch Protection ist technisch weiterhin nicht aktiviert; dieses Risiko nicht vergessen.
 
@@ -60,4 +69,4 @@ Vollständige Regel: `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`.
 
 ## Nächster kontrollierter Schritt
 
-TW-2 als eigener Branch/Draft-PR mit versioniertem Auftrag vorbereiten. TW-2 darf vorhandene Reise-/Coverage-Daten **nur ableiten und verdichten**; insbesondere darf es **keinen zweiten `trips.status` oder Schatten-Lifecycle** neben Account/AP-3 erzeugen. Safety/Seasonal ohne Evaluation bleibt ungeprüft/unknown und niemals „alles gut“.
+`Trip workspace audit architecture` implementiert TW-2 ausschließlich gemäß `docs/ADR_0164_TRIP_WORKSPACE_TW2_OVERVIEW.md`, `docs/TRIP_WORKSPACE_TW2_TASK.md` und `docs/TRIP_WORKSPACE_TW2_STATUS.md`. TW-2 darf vorhandene Reise-/Coverage-Daten **nur ableiten und verdichten**; insbesondere darf es **keinen zweiten `trips.status` oder Schatten-Lifecycle** neben Account/AP-3 erzeugen. Safety/Seasonal ohne Evaluation bleibt ungeprüft/unknown und niemals „alles gut“.
