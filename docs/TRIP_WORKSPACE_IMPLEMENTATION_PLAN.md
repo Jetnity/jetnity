@@ -1,7 +1,7 @@
 # Jetnity – Trip Workspace Implementierungsplan
 
 Stand: 25. August 2026  
-Status: **Ziel-IA angenommen (ADR-0163). TW-1 auf `main` (PR #56). TW-2 Runtime in Draft-PR #58; STOPP für unabhängigen Technical-Lead-Re-Review. Kein TW-3, kein TW-4.**  
+Status: **Ziel-IA angenommen (ADR-0163). TW-1 und TW-2 auf `main`. TW-4 Runtime in Draft-PR #60; STOPP für unabhängigen Technical-Lead-Re-Review. Kein TW-3, kein TW-5.**  
 Audit: `docs/TRIP_WORKSPACE_AUDIT.md`  
 Ziel: `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`  
 Abhängigkeiten: `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`
@@ -147,6 +147,8 @@ Gates: Repo-Hygiene, CI auf Exact Head, Vercel Preview falls erzeugt. Grün ≠ 
 **Tests:** Multi-Stage-Fixture; Tag bleibt nach Graph-Änderung gültig oder fällt auf ersten Tag.
 
 ### TW-4 – Aufmerksamkeit / „Jetzt wichtig“
+
+**Status:** Runtime umgesetzt in Draft-PR #60; wartet auf unabhängigen Technical-Lead-Re-Review. Nicht gemergt.
 
 **Ziel:** Priorisierung vorhandener Signale.
 

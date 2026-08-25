@@ -8,9 +8,11 @@ import {
   type Arbeitsbereich,
 } from '@/lib/trips/arbeitsbereich'
 import { INTERESSE_BEZEICHNUNG, TEMPO_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
+import type { AttentionAbleitung } from '@/lib/trips/attention'
 import type { AbdeckungLage, UebersichtAbleitung } from '@/lib/trips/uebersicht'
 import { cn } from '@/lib/utils'
 import type { Trip } from '@/types/trips'
+import TripWorkspaceJetztWichtig from '@/components/trips/TripWorkspaceJetztWichtig'
 
 const SYMBOL: Record<UebersichtAbleitung['abdeckungen'][number]['bereich'], ComponentType<{ className?: string }>> = {
   fluege: Plane,
@@ -29,6 +31,7 @@ const LAGE_FARBE: Record<AbdeckungLage, string> = {
 export default function TripWorkspaceUebersicht({
   reise,
   uebersicht,
+  attention,
   aenderungOffen,
   onBereich,
   onAenderung,
@@ -41,6 +44,7 @@ export default function TripWorkspaceUebersicht({
 }: {
   reise: Trip
   uebersicht: UebersichtAbleitung
+  attention: AttentionAbleitung
   aenderungOffen: boolean
   onBereich: (bereich: Arbeitsbereich) => void
   onAenderung: () => void
@@ -52,7 +56,7 @@ export default function TripWorkspaceUebersicht({
   reisezeit?: ReactNode
 }) {
   return (
-    <section aria-label="Reiseübersicht" className="mt-5 grid gap-4">
+    <section aria-label="Reiseübersicht" className="mt-5 grid min-w-0 gap-4">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Übersicht</p>
         <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800">
@@ -61,6 +65,8 @@ export default function TripWorkspaceUebersicht({
         <p className="mt-1 text-sm leading-6 text-ink-800">{uebersicht.fortschrittText}</p>
         <p className="mt-1 text-xs leading-5 text-ink-700">{uebersicht.planText}</p>
       </div>
+
+      <TripWorkspaceJetztWichtig attention={attention} onBereich={onBereich} />
 
       <ul className="grid gap-2">
         {uebersicht.abdeckungen.map((eintrag) => {

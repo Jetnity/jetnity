@@ -13,11 +13,12 @@ Wenn du als neuer Chat, Technical Lead oder Coding Agent Jetnity übernimmst, li
 6. `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`
 7. `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`
 8. `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`
-9. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-10. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
-11. `JETNITY_HANDOFF.md`
-12. `docs/ACTIVE_WORK_STATUS.md`
-13. den aktuellen Slice-Task/Status/Handoff
+9. `docs/JETNITY_FUTURE_NATIVE_APP_AND_TECHNICAL_LEAD_STANDARD.md`
+10. `docs/JETNITY_BINDING_BUILD_ORDER.md`
+11. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
+12. `JETNITY_HANDOFF.md`
+13. `docs/ACTIVE_WORK_STATUS.md`
+14. den aktuellen Slice-Task/Status/Handoff
 
 Danach GitHub/CI/Vercel/Supabase live verifizieren. Historische Handoffs, alte PR-Bodies und ältere Statuszeilen sind Evidence ihres Zeitpunkts und dürfen diese aktuellere operative Wahrheit nicht überschreiben.
 
@@ -101,13 +102,15 @@ Kanonisch und vollständig: `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`
 
 ## Verbindliches Agent-/Workstream-Modell
 
-Jetnity verwendet fünf spezialisierte Cursor-Agent-Workstreams unter übergreifender ChatGPT/Technical-Lead-Steuerung. Exakte Anzeigenamen sind verbindlich:
+Jetnity verwendet sechs spezialisierte Cursor-Agent-Workstreams unter übergreifender ChatGPT/Technical-Lead-Steuerung. Ein siebter Native-Agent ist verbindlich reserviert, aber nicht jetzt zu starten. Exakte Anzeigenamen sind verbindlich:
 
 - `Trip workspace audit architecture`
 - `Account plattform audit vorbereitung`
 - `Jetnity provider readiness audit`
 - `Admin platform audit`
 - `Jetnity growth discoverability` – reservierter fünfter Agent; noch nicht starten, bis die dokumentierten Aktivierungsbedingungen erfüllt sind.
+- `Jetnity quality security audit` – reservierter sechster Agent; unabhängige QA/Security, kein Feature-Entwickler.
+- `Jetnity native app architecture` – reservierter siebter Agent; erst bei einer eigenständigen Native-Phase.
 
 Der fünfte Agent verantwortet später die **öffentliche** Homepage-/Landingpage-/SEO-/Answer-Engine-/Content-/ASO-/Acquisition-Oberfläche. Das **interne** Growth-/Marketing-Control-Center bleibt bei `Admin platform audit`.
 
@@ -125,9 +128,9 @@ Kanonisch und vollständig: `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`.
 - PR #57 – Technical-Lead-Autonomie + verbindliche Build-Reihenfolge: **merged**.
 - PR #56 – Trip Workspace TW-1 – Shell & Geräteparität: **merged**.
 - PR #58 – Trip Workspace TW-2 – Reiseübersicht: **merged** nach unabhängigem Technical-Lead-PASS auf Exact Head `3f2c55357a7a2425ab760aac2a29ddbe15f80fa8`; CI, Vercel und Trip-Workspace-UI-Audit 1018/1018 waren grün.
-- **Aktiver Runtime-Slice: PR #60 – TW-4 Aufmerksamkeit / `Jetzt wichtig`.** Der unabhängige Technical-Lead-Re-Review hat auf Head `8bbafefc61e91d66ebf617bed2868b8b1c0848cd` zwei Truth-/Presentation-Blocker gefunden; PR bleibt Draft/BLOCKED bis Fix + neue Exact-Head-Gates + erneuter Review.
+- **Aktiver Runtime-Slice: PR #60 – TW-4 Aufmerksamkeit / `Jetzt wichtig`.** Reviews `5017458023`, `5018115879` und `5018504776` sind behoben. Review `5018945518` (kanonische Official-Requirement-Keys inkl. Typ und Transit) ist im Branch behoben. Draft bleibt Draft; STOPP für erneuten unabhängigen Technical-Lead-Re-Review.
 - `Account plattform audit vorbereitung`, `Jetnity provider readiness audit` und `Admin platform audit` warten auf ihre kontrollierten späteren bzw. parallelisierbaren Blöcke.
-- `Jetnity growth discoverability` ist verbindlich reserviert, aber **noch nicht zu starten**.
+- `Jetnity growth discoverability`, `Jetnity quality security audit` und `Jetnity native app architecture` sind verbindlich reserviert, aber **noch nicht zu starten**.
 - `main` Branch Protection ist technisch weiterhin nicht aktiviert; dieses Risiko nicht vergessen.
 
 ## Aktuelle große Build-Reihenfolge
@@ -167,4 +170,4 @@ Vollständige Regel: `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`.
 
 ## Nächster kontrollierter Schritt
 
-`Trip workspace audit architecture` behebt ausschließlich die im unabhängigen Technical-Lead-Review dokumentierten TW-4-Truth-/Presentation-Blocker in PR #60. Danach vollständige Exact-Head-Gates, Workspace-UI-Audit, GitHub Actions, Vercel und erneuter unabhängiger Technical-Lead-Re-Review. Kein TW-3/TW-5 und kein weiterer großer Agent-Runtime-Workstream vor dem kontrollierten TW-4-Abschluss. Nach TW-4 und TW-3 folgt der dokumentierte Integrations-Checkpoint für breitere Parallelisierung.
+Unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #60 nach dem Official-Requirement-Key-Fix. Kein Ready, kein Merge, kein TW-3/TW-5, keine Shared-Contract-Erweiterung.
