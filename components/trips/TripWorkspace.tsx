@@ -40,6 +40,7 @@ import {
   itemDetailAbleiten,
   itemInReise,
   leereDetailAuswahl,
+  sucheIstOffen,
   sucheOeffnen,
   sucheSollMounten,
   type DetailDomain,
@@ -357,7 +358,7 @@ export default function TripWorkspace({
   const hotelSucheBereit = sucheSollMounten('unterkunft', bereinigt, sucheBesucht, reise, ungeplantePunkte)
   const aktivitaetenSucheBereit = sucheSollMounten('aktivitaeten', bereinigt, sucheBesucht, reise, ungeplantePunkte)
 
-  const sucheSichtbar = bereinigt.art !== 'keine' && bereinigt.sucheOffen
+  const sucheSichtbar = sucheIstOffen(bereinigt)
 
   return (
     <main className="min-h-screen bg-surface-75 pb-20">

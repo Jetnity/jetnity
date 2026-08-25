@@ -18,7 +18,7 @@ import {
 import type { AttentionAktion } from '@/lib/trips/attention'
 import type { Trip, TripItem, TripItemKind } from '@/types/trips'
 
-export const DETAIL_DOMAINS = ['fluege', 'unterkunft', 'aktivitaeten', 'mobilitaet'] as const
+const DETAIL_DOMAINS = ['fluege', 'unterkunft', 'aktivitaeten', 'mobilitaet'] as const
 export type DetailDomain = (typeof DETAIL_DOMAINS)[number]
 
 export type WorkspaceDetailAuswahl =
@@ -35,7 +35,7 @@ export type WorkspaceDetailAuswahl =
       sucheOffen: boolean
     }
 
-export const LEERE_DETAIL_AUSWAHL: WorkspaceDetailAuswahl = { art: 'keine' }
+const LEERE_DETAIL_AUSWAHL: WorkspaceDetailAuswahl = { art: 'keine' }
 
 export const DETAIL_SUCHE_BEZEICHNUNG: Record<DetailDomain, string> = {
   fluege: 'Flug suchen',
@@ -84,13 +84,6 @@ export type ItemDetailAbleitung = {
   sucheAnbietbar: boolean
 }
 
-const DOMAIN_KIND: Record<DetailDomain, readonly TripItemKind[]> = {
-  fluege: ['flight'],
-  unterkunft: ['stay'],
-  aktivitaeten: ['activity'],
-  mobilitaet: ['transfer', 'rental_car'],
-}
-
 const KIND_DOMAIN: Record<TripItemKind, DetailDomain | null> = {
   flight: 'fluege',
   stay: 'unterkunft',
@@ -108,7 +101,7 @@ const TRUST_TEXT: Record<ItemTrust, string> = {
     'Es liegen gespeicherte Herkunftsfelder vor. Das ist kein geprüfter Live-Nachweis.',
 }
 
-export function istDetailDomain(wert: string): wert is DetailDomain {
+function istDetailDomain(wert: string): wert is DetailDomain {
   return (DETAIL_DOMAINS as readonly string[]).includes(wert)
 }
 
@@ -149,15 +142,6 @@ export function itemInReise(
   itemId: string,
 ): TripItem | null {
   return planpunkteSammeln(reise, ohneTag).find((punkt) => punkt.id === itemId) ?? null
-}
-
-export function itemsFuerDomain(
-  reise: Trip,
-  ohneTag: readonly TripItem[],
-  domain: DetailDomain,
-): TripItem[] {
-  const arten = DOMAIN_KIND[domain]
-  return planpunkteSammeln(reise, ohneTag).filter((punkt) => arten.includes(punkt.kind))
 }
 
 export function detailDomainVon(auswahl: WorkspaceDetailAuswahl, reise?: Trip, ohneTag: readonly TripItem[] = []): DetailDomain | null {
