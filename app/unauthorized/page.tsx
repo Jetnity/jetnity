@@ -1,6 +1,12 @@
 // app/unauthorized/page.tsx
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { signOutAction } from '@/app/auth/sign-out'
+import { NICHT_INDEXIEREN } from '@/lib/seo/index-grenze'
+
+export const metadata: Metadata = {
+  robots: NICHT_INDEXIEREN,
+}
 
 /**
  * Die Seite unterscheidet zwei Fälle, weil sie sich für die Besucherin

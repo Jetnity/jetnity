@@ -10,9 +10,16 @@
 // Die Admin-Loginseite liegt bewusst unter `(public)`, damit sie nicht in
 // diesen Gate läuft.
 
+import type { Metadata } from 'next'
+
 import AdminSessionProvider from '@/components/admin/AdminSessionProvider'
 import NotzugangHinweis from '@/components/admin/NotzugangHinweis'
 import { requireAdminPage } from '@/lib/auth/admin-guard'
+import { NICHT_INDEXIEREN } from '@/lib/seo/index-grenze'
+
+export const metadata: Metadata = {
+  robots: NICHT_INDEXIEREN,
+}
 
 export const dynamic = 'force-dynamic'
 

@@ -20,12 +20,24 @@ import { createServerComponentClient } from '@/lib/supabase/server'
 import Reiseidee from '@/components/trips/Reiseidee'
 import TripPlanner from '@/components/trips/TripPlanner'
 import { ortBestaetigen } from '@/lib/places/aktionen'
+import { planenRobots } from '@/lib/seo/index-grenze'
 import { GRENZEN } from '@/lib/trips/schema'
 import { VORSCHLAG_GRENZEN } from '@/lib/reisevorschlag/schema'
 
-export const metadata: Metadata = {
-  title: 'Reise planen',
-  description: 'Erstelle deine Reise mit Jetnity.',
+type PlanenSeiteProps = {
+  searchParams?: {
+    idee?: string | string[]
+    ziel?: string | string[]
+    zielId?: string | string[]
+  }
+}
+
+export function generateMetadata({ searchParams }: PlanenSeiteProps): Metadata {
+  return {
+    title: 'Reise planen',
+    description: 'Erstelle deine Reise mit Jetnity.',
+    robots: planenRobots(searchParams),
+  }
 }
 
 export const dynamic = 'force-dynamic'
@@ -35,14 +47,6 @@ export const dynamic = 'force-dynamic'
  * dieselbe Zahl steht in `SEITEN_DAUER_S` (`lib/modell/konfiguration.ts`).
  */
 export const maxDuration = 300
-
-type PlanenSeiteProps = {
-  searchParams?: {
-    idee?: string | string[]
-    ziel?: string | string[]
-    zielId?: string | string[]
-  }
-}
 
 function ersterWert(wert?: string | string[]) {
   return Array.isArray(wert) ? wert[0] : wert
