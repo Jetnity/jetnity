@@ -5,7 +5,7 @@
 // Private Reise-Surfaces und sensitive Hilfsflächen dürfen nicht indexierbar
 // sein, unabhängig davon, ob robots.txt gerade deny-all oder Allow-Modus ist.
 // `/planen` bleibt als Basisseite bewusst öffentlich; parametrisierte Varianten
-// mit Nutzer-/Intent-Text sind es nicht.
+// mit vorhandenem idee/ziel/zielId-Key sind es nicht, unabhängig vom Wert.
 //
 // Kein Canonical, kein hreflang, kein JSON-LD, kein Tracking.
 
@@ -17,21 +17,21 @@ export const PLANEN_INDEX_PARAMS = ['idee', 'ziel', 'zielId'] as const
 /** Öffentliche Sitemap-Pfade nach D0-1. Keine Reiseübersicht, keine Trip-URLs. */
 export const SITEMAP_OEFFENTLICHE_PFADE = ['/', '/planen'] as const
 
-function ersterSuchwert(wert?: string | string[] | null): string {
-  const roh = Array.isArray(wert) ? wert[0] : wert
-  return typeof roh === 'string' ? roh.trim() : ''
-}
-
+/**
+ * Relevanz nach Key-Präsenz, nicht nach nicht-leerem Wert.
+ * `/planen?idee=`, `?idee`, whitespace-only und Arrays zählen, sobald der
+ * akzeptierte Key vorhanden ist. Unbekannte Keys allein bleiben Basis.
+ */
 export function planenHatIndexRelevanteParams(
   searchParams?: Record<string, string | string[] | undefined> | null,
 ): boolean {
   if (!searchParams) return false
-  return PLANEN_INDEX_PARAMS.some((name) => ersterSuchwert(searchParams[name]) !== '')
+  return PLANEN_INDEX_PARAMS.some((name) => Object.hasOwn(searchParams, name))
 }
 
 /**
  * `undefined` heisst: kein eigenes robots-Signal, die öffentliche Basis gilt.
- * Nur parametrisierte Varianten setzen noindex.
+ * Sobald ein akzeptierter Key vorhanden ist, unabhängig vom Wert: noindex.
  */
 export function planenRobots(
   searchParams?: Record<string, string | string[] | undefined> | null,

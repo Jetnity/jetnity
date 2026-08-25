@@ -67,23 +67,27 @@ describe('Die öffentliche Sitemap', () => {
 })
 
 describe('/planen bleibt als Basis öffentlich', () => {
-  test('ohne Search-Params gibt es kein eigenes noindex', () => {
+  test('ohne akzeptierten Search-Param-Key gibt es kein eigenes noindex', () => {
     assert.equal(planenHatIndexRelevanteParams(undefined), false)
     assert.equal(planenHatIndexRelevanteParams({}), false)
-    assert.equal(planenHatIndexRelevanteParams({ idee: '' }), false)
-    assert.equal(planenHatIndexRelevanteParams({ idee: '   ' }), false)
+    assert.equal(planenHatIndexRelevanteParams({ utm_source: 'newsletter' }), false)
     assert.equal(planenRobots({}), undefined)
+    assert.equal(planenRobots({ preview: '1' }), undefined)
   })
 
   test('überwacht genau die von der Route akzeptierten Params', () => {
     assert.deepEqual([...PLANEN_INDEX_PARAMS], ['idee', 'ziel', 'zielId'])
   })
 
-  test('mit idee, ziel oder zielId wird noindex', () => {
-    assert.deepEqual(planenRobots({ idee: 'Bali mit Pass CH' }), NICHT_INDEXIEREN)
-    assert.deepEqual(planenRobots({ ziel: 'Lissabon' }), NICHT_INDEXIEREN)
-    assert.deepEqual(planenRobots({ zielId: 'geonames:1650535' }), NICHT_INDEXIEREN)
-    assert.deepEqual(planenRobots({ idee: ['Thailand'] }), NICHT_INDEXIEREN)
+  test('die Präsenz von idee, ziel oder zielId wird noindex, unabhängig vom Wert', () => {
+    assert.deepEqual(planenRobots({ idee: '' }), NICHT_INDEXIEREN)
+    assert.deepEqual(planenRobots({ idee: '   ' }), NICHT_INDEXIEREN)
+    assert.deepEqual(planenRobots({ idee: 'Bali' }), NICHT_INDEXIEREN)
+    assert.deepEqual(planenRobots({ ziel: '' }), NICHT_INDEXIEREN)
+    assert.deepEqual(planenRobots({ zielId: '' }), NICHT_INDEXIEREN)
+    assert.deepEqual(planenRobots({ idee: [''] }), NICHT_INDEXIEREN)
+    assert.deepEqual(planenRobots({ ziel: ['Lissabon'] }), NICHT_INDEXIEREN)
+    assert.deepEqual(planenRobots({ zielId: ['geonames:1650535'] }), NICHT_INDEXIEREN)
   })
 
   test('die Seite übernimmt die Werte weiter und setzt nur robots', () => {
