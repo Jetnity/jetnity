@@ -188,7 +188,9 @@ export function bereichStatus(reise: Trip, ohneTag: readonly TripItem[] = []): B
   const ungeplante = ungeplantePunkteLesen(reise, ohneTag)
   const punkte = planpunkteSammeln(reise, ungeplante)
   const fluege = flugAbdeckung(reise, ungeplante)
-  const route = routeFactsAusGraph({ days: reise.days, ohneTag: ungeplante })
+  // Eine Liste, einmal. Spread nur, weil RouteFacts den Trip-shaped Eingang
+  // `ohneTag: TripItem[]` verlangt – kein Concat, keine ID-Deduplizierung.
+  const route = routeFactsAusGraph({ days: reise.days, ohneTag: [...ungeplante] })
   const routeText = routeKompaktOhneCode(route)
   const fluegeText = routeText ? `${routeText} · ${fluege.zusammenfassung}` : fluege.zusammenfassung
   const unterkunft = unterkunftAbdeckung(reise, ungeplante)

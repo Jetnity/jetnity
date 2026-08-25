@@ -291,7 +291,10 @@ describe('P1-QS1-01 ungeplante Flug-Itinerary genau einmal', () => {
     assert.equal(produkt, aktuell.ohneTag)
     assert.equal(ungeplantePunkteLesen(aktuell, produkt), produkt)
 
-    const facts = routeFactsAusGraph({ days: aktuell.days, ohneTag: ungeplantePunkteLesen(aktuell, produkt) })
+    const facts = routeFactsAusGraph({
+      days: aktuell.days,
+      ohneTag: [...ungeplantePunkteLesen(aktuell, produkt)],
+    })
     const fluege = flugAbdeckung(aktuell, produkt)
     const status = bereichStatus(aktuell, produkt)
     const fluegeText = status.find((eintrag) => eintrag.bereich === 'fluege')?.text ?? ''
@@ -324,7 +327,7 @@ describe('P1-QS1-01 ungeplante Flug-Itinerary genau einmal', () => {
     assert.notEqual(explizit, aktuell.ohneTag[0])
     const facts = routeFactsAusGraph({
       days: aktuell.days,
-      ohneTag: ungeplantePunkteLesen(aktuell, [explizit]),
+      ohneTag: [...ungeplantePunkteLesen(aktuell, [explizit])],
     })
     const status = bereichStatus(aktuell, [explizit])
     assert.deepEqual(facts.sourceItemIds, ['flight-explizit'])
@@ -338,7 +341,10 @@ describe('P1-QS1-01 ungeplante Flug-Itinerary genau einmal', () => {
   test('ohne explizites ohneTag liest reise.ohneTag genau einmal', () => {
     const aktuell = transitReise([ungeplanterTransitFlug()])
     const status = bereichStatus(aktuell)
-    const facts = routeFactsAusGraph({ days: aktuell.days, ohneTag: ungeplantePunkteLesen(aktuell) })
+    const facts = routeFactsAusGraph({
+      days: aktuell.days,
+      ohneTag: [...ungeplantePunkteLesen(aktuell)],
+    })
     assert.deepEqual(facts.sourceItemIds, ['flight-ungeplant'])
     assert.equal(facts.segments.length, 2)
     assert.equal(facts.connections.length, 1)
@@ -349,7 +355,10 @@ describe('P1-QS1-01 ungeplante Flug-Itinerary genau einmal', () => {
     const aktuell = transitReise([])
     assert.deepEqual(ungeplantePunkteLesen(aktuell), [])
     assert.deepEqual(ungeplantePunkteLesen(aktuell, aktuell.ohneTag), [])
-    const facts = routeFactsAusGraph({ days: aktuell.days, ohneTag: ungeplantePunkteLesen(aktuell, aktuell.ohneTag) })
+    const facts = routeFactsAusGraph({
+      days: aktuell.days,
+      ohneTag: [...ungeplantePunkteLesen(aktuell, aktuell.ohneTag)],
+    })
     const status = bereichStatus(aktuell, aktuell.ohneTag)
     assert.deepEqual(facts.sourceItemIds, [])
     assert.equal(facts.segments.length, 0)
