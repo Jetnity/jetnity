@@ -330,7 +330,7 @@ Letzter relevanter Runtime-Merge auf `main`: `c935dd9fbb6f3365ed515c1f8fa3b781f2
 3. Die Ziel-IA ist als ADR-0163 angenommen. TW-4 folgt ADR-0165 und ist gemergt. TW-3 folgt ADR-0166.
 4. `Trip workspace audit architecture` arbeitet TW-3 auf `feat/trip-workspace-tw3-timeline`.
 5. `Admin platform audit`, `Account plattform audit vorbereitung` und `Jetnity provider readiness audit` warten weiter auf eigene Aufträge. Kein Slice D, AP-4 oder S4.
-6. **Exakter nächster Schritt:** TW-3 implementieren, Exact-Head-Gates fahren, STOPP für unabhängigen Technical-Lead-Re-Review. Kein Ready, kein Merge, kein TW-5.
+6. **Exakter nächster Schritt:** unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #64 (TW-3). Kein Ready, kein Merge, kein TW-5.
 
 Live-Status: `docs/ACTIVE_WORK_STATUS.md`. TW-3: `docs/TRIP_WORKSPACE_TW3_STATUS.md`.
 
