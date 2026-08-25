@@ -1,37 +1,104 @@
 # Jetnity – Active Work Status
 
 Stand: 25. August 2026  
-Status: **TW-1, TW-2, TW-4, TW-3 und TW-5 sind auf `main` integriert. TW-5 / PR #66 erhielt unabhängigen Technical-Lead-PASS und wurde gemergt. Vor neuer Runtime ist die nächste Abhängigkeit/PO-Kante zu entscheiden.**
+Status: **Governance-Reparatur #71 aktiv. D0-1 / PR #70 ist technisch PASS, bleibt aber Draft / Integration Hold. Kein Ready. Kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.**
 
 ## 0. Live-verifizierte Baseline
 
-Aktueller `main` nach TW-5-Merge:
+Aktueller `main`:
 
-`6f2beeccae2c1e6bdf9bcb9fdc35a5cd56e50bec`
+`2bb6b8072fa04e8f6db2d989b84ada7b64745fd9`
 
-Merge:
+Dieser Stand enthält TW-5 / PR #66, Post-TW5 Continuity / PR #68 und den docs-only D0/G0 Foundation Audit / PR #69.
 
-- PR #66 – `Trip Workspace TW-5 – Item- und Gap-Details`
-- finaler Runtime-/Evidence-Head `8183782fc08c486949212b0e78b9f4ce938aa0dd`
-- finaler Persist-Head `49aa04d99a5eb33a89fa624f1d096f7c5400698f`
-- Independent TL: **PASS / Technical Integration Closure**
-- Merge-Commit `6f2beeccae2c1e6bdf9bcb9fdc35a5cd56e50bec`
-- Vercel Production auf Merge: **READY**
-- Review-Threads beim Merge: 0
+`main` Branch Protection ist weiterhin nicht aktiviert.
 
-Finale Gates:
+## 1. Aktiver Governance-Slice
 
-- gezielte TW-2/TW-3/TW-4/TW-5/P1-Regressionen 112/112
-- `npm test` 1994/1994
-- Typecheck/Lint/Hygiene grün
-- Production Build grün
-- `npm run audit:trip-workspace` 1018/1018, 0 Fehler
-- GitHub Actions Runtime + Persist SUCCESS
-- Vercel Runtime + Persist READY
+Draft-PR: **#71 – `docs: restore Product Owner merge governance`**
 
-Details: `docs/CHATGPT_TW5_MERGE_CHECKPOINT_2026-08-25.md`.
+Branch:
 
-## 1. Integrierter Trip-Workspace-Stand
+`docs/merge-governance-repair-2026-08-25`
+
+Ziel:
+
+- widersprüchliche Ready-/Merge-Regeln bereinigen;
+- `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md` wieder eindeutig als Merge-Grenze durchsetzen;
+- Technical-Lead-Autonomie bis zur technischen Review-Reife erhalten;
+- formales Ready/Merge an ausdrückliche aktuelle Product-Owner-Freigabe binden;
+- historische Auto-Merge-Texte als historische Evidence erhalten, aber merge-spezifisch global superseden.
+
+Kanonischer Nachtrag:
+
+`docs/MERGE_GOVERNANCE_SUPERSESSION_2026-08-25.md`
+
+Kein Runtime-Code. Keine DB-/RLS-/Auth-/Traveller-/Route-/Provider-/Payment-/Tracking-/Secret-/Kostenänderung.
+
+## 2. D0-1 / PR #70
+
+Agent: `Jetnity growth discoverability`
+
+Branch:
+
+`fix/d0-1-index-boundary-contract`
+
+Draft-PR: **#70 – `D0-1 – Index Boundary Contract`**
+
+Exact Review Head:
+
+`31022a5d0c4090081339e55bd2b7c7b3927e1185`
+
+Independent Technical-Lead Re-Review: **TECHNICAL PASS / review-bereit**.
+
+### Geschlossener TL-Blocker
+
+`P2-D0-1-TL-01` ist geschlossen.
+
+`/planen` entscheidet die Indexgrenze nun nach Präsenz der akzeptierten Keys `idee`, `ziel`, `zielId`, nicht nach einem nicht-leeren Wert. Damit werden auch leere, key-only, whitespace-only und Array-Varianten `noindex`.
+
+### Exact-Head Evidence
+
+- GitHub Actions `32899556724`: SUCCESS
+- Typecheck, Lint, Tests, Admin-API-Schutz, Schema-Bezug, Dead Code, Exports, Dependencies, Production Build: SUCCESS
+- Vercel Preview `dpl_DqDFzNpPuWqMNj7hS1sM4j3SSDZp`: READY
+- Agent-Evidence: D0-1 gezielt 19/19, `npm test` 2013/2013
+- Inline-Review-Threads: 0
+- Supabase Production: `ACTIVE_HEALTHY`, keine D0-1-Migration
+
+### D0-1 fachlicher Scope
+
+- `/reisen` und `/reisen/[tripId]` explizit `noindex, nofollow`
+- `/reisen` aus Sitemap entfernt
+- robots-Allow-Modus für private/sensitive Pfade gehärtet
+- `/planen` ohne akzeptierte Intent-Keys bleibt öffentliche Basis
+- `/planen` mit `idee`, `ziel` oder `zielId` als vorhandenem Key wird `noindex, nofollow`
+- `/admin/login`, `/unauthorized` und Admin-Layout `noindex`
+- kein DB/RLS/Auth/Traveller/Route/Provider/Payment/Tracking-/Kosten-Scope
+
+**Integrationsstatus:** Draft / HOLD. Kein Ready. Kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe für PR #70.
+
+## 3. Merge-Governance – jetzt verbindlich
+
+Für alle PRs gilt:
+
+> **Technisch fertig = review-bereit. Product Owner entscheidet Ready/Merge.**
+
+Technischer PASS, grüne CI, Vercel READY, `mergeable=true`, fehlende Review-Threads oder frühere allgemeine Autonomie sind keine Merge-Freigabe.
+
+Der Product Owner erhält vor jedem Merge ausdrücklich Gelegenheit für Änderungen oder Ergänzungen.
+
+Nach eindeutiger aktueller Freigabe des konkret besprochenen PRs prüft der Technical Lead Exact Head / Integrationsstand erneut und darf dann Ready/Merge ausführen, sofern alle anderen Gates weiterhin erfüllt sind.
+
+Historische Auto-Merge-Formulierungen sind durch `docs/MERGE_GOVERNANCE_SUPERSESSION_2026-08-25.md` hinsichtlich Ready/Merge superseded.
+
+## 4. Historischer Governance-Fehler PR #69
+
+PR #69 wurde docs-only nach Technical-Lead-PASS integriert, jedoch ohne die nach der wiederhergestellten Merge-Governance erforderliche ausdrückliche aktuelle Product-Owner-Merge-Freigabe.
+
+Kein destruktiver Rollback nur aus Governance-Gründen: PR #69 enthält Audit-Evidence und keine Runtime-/DB-/Auth-/Provideränderung. Der Fehler wird transparent versioniert und darf sich ab PR #70/#71 nicht wiederholen.
+
+## 5. Integrierter Trip-Workspace-Stand
 
 - TW-1 / PR #56 – Shell & Geräteparität ✅
 - TW-2 / PR #58 – Reiseübersicht ✅
@@ -39,77 +106,51 @@ Details: `docs/CHATGPT_TW5_MERGE_CHECKPOINT_2026-08-25.md`.
 - TW-3 / PR #64 – Timeline / Etappe / Tag ✅
 - TW-5 / PR #66 – Item- und Gap-Details ✅
 
-TW-5 hat insbesondere die Domain-Tabs als primäre IA entfernt, vorhandene Flight/Stay/Activities/Mobility-Flächen kontextuell an Gap-/Item-Details gehängt, Commercial-Suche explizit lazy gehalten, `0 Aktivitäten` nicht als Pflichtlücke erfunden und Guest/Account sowie Mobile/Desktop auf derselben Presentation-Logik belassen.
+P1-QS1-01 bleibt geschlossen: genau eine ungeplante Liste geht in Coverage/Route/Status; Shared Route/Transit Contract unverändert.
 
-### P1-QS1-01
+## 6. Nächste Trip-Workspace-Kante
 
-Der QS-1-P1 ist geschlossen. `bereichStatus()` führt nicht mehr explizites `ohneTag` und `reise.ohneTag` zusammen. Genau eine ungeplante Liste geht in Coverage/Route/Status. Der Shared Route/Transit Contract wurde nicht verändert.
+- TW-6 – erst nach dokumentiertem Product-Owner-Schnitt + Guest-One-Trip-Vertrag
+- TW-7 – abhängig von Account-/Hub-Vertrag
+- TW-8 – abhängig von Provider S5 / realer Commercial Provenance
+- TW-9 – später Polish / Evidence / Closure
+- danach finaler Function-by-Function-/Intelligence-Audit
 
-Regression: ZRH → DOH → BKK, eine Source-ID, 2 Segmente, 1 Connection, Route einmal, kein künstliches `Reihenfolge unbekannt`.
+Aktuell **kein TW-6-Runtime-Start**.
 
-## 2. Nächste Trip-Workspace-Kante
-
-Gemäß `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`:
-
-- **TW-6 – Create-Entry angleichen**: erst nach dokumentiertem Product-Owner-Schnitt + Guest-One-Trip-Vertrag.
-- **TW-7 – Hub-Anschluss**: darf Account-AP-3 nicht überschreiben; weitere Lifecycle-/Archivlogik hängt an Account AP-4.
-- **TW-8 – Commercial Surfaces**: abhängig von Provider S5 / realer Commercial Provenance.
-- **TW-9 – Polish, Evidence, Closure**: nach den abhängigen Slices.
-- danach finaler Function-by-Function-/Intelligence-Audit.
-
-Daher aktuell **kein automatischer TW-6-Start**. Technical Lead prüft zuerst live, welcher abhängige Slice freigegeben ist und ob ein dokumentierter Product-Owner-Schnitt erforderlich ist.
-
-## 3. Workstream-Status
+## 7. Workstream-Status
 
 ### `Trip workspace audit architecture`
 
-TW-5 abgeschlossen und integriert. Wartet auf nächste freigegebene Trip-Workspace-Aufgabe.
+TW-5 integriert. Wartet.
 
 ### `Account plattform audit vorbereitung`
 
-- AP-1 bis AP-3 integriert.
-- AP-4 bis AP-12 warten gemäß großer Build Order / Traveller-/Account-Abhängigkeiten.
-- Multi-Citizenship/Multi-Document bleibt Pflicht; kein Default-Pass.
+AP-1 bis AP-3 integriert. AP-4 bis AP-12 warten gemäß Build Order / Traveller-/Account-Abhängigkeiten.
 
 ### `Jetnity provider readiness audit`
 
-- S1 bis S3 integriert.
-- S4 bis S8 warten gemäß Build Order.
-- echte Provider, Verträge, Secrets und paid calls bleiben besondere Product-Owner-Gates.
+S1 bis S3 integriert. S4 bis S8 warten gemäß Build Order. Echte Provider/Secrets/paid calls bleiben besondere Product-Owner-Gates.
 
 ### `Admin platform audit`
 
-- A bis C integriert.
-- D bis K und Growth-Control-Slices warten gemäß Build Order.
-- Billing-/Refund-P1 bleibt vor Finance-/Payment-Live zwingend.
+A bis C integriert. D bis K / Growth-Control-Slices warten gemäß Build Order.
 
 ### `Jetnity growth discoverability`
 
-D0/G0 Foundation Audit auf Branch `audit/growth-discoverability-d0-g0-foundation` / Draft-PR #69 **ausgeführt**. Bericht: `docs/GROWTH_DISCOVERABILITY_D0_G0_AUDIT.md`. Docs-only, keine Runtime. **STOPP** für unabhängigen Technical-Lead-Review. Kein Ready, kein Merge, keine D0/G0-Runtime und keine D1/G1+ aus diesem Slice.
+D0/G0 Audit / PR #69 auf `main`. D0-1 / PR #70 technisch PASS, aber **STOPP / Draft / Integration Hold**.
 
 ### `Jetnity quality security audit`
 
-QS-1 abgeschlossen und in PR #67 dokumentiert. Für weitere unabhängige Quality/Security/Resilience-Checkpoints reserviert, nicht allgemeiner Feature-Entwickler.
+QS-1 abgeschlossen. Für weitere unabhängige Quality/Security/Resilience-Checkpoints reserviert.
 
 ### `Jetnity native app architecture`
 
-Für spätere Native-Phase reserviert; kein breiter Native-Runtime-Start vor Native-Audit/Target Architecture.
+Für spätere Native-Phase reserviert.
 
-## 4. Parallelisierung
+**Aktuell kein neuer Cursor-Agentenprompt.** PR #71 ist eine direkte docs-only Governance-Reparatur durch ChatGPT / Technical Lead.
 
-Der Post-TW-3-Checkpoint und nun der TW-5-Merge erlauben konfliktarme Parallelisierung, aber nicht automatisch.
-
-Vor Öffnung eines parallelen Workstreams prüft der Technical Lead:
-
-- Shared-Contract-Kollisionen;
-- File-/Surface-Überschneidung;
-- Abhängigkeiten zur großen Build-Reihenfolge;
-- eigener Branch/Draft-PR/Task/Status/Gates/STOPP;
-- klare Merge-Reihenfolge.
-
-Nicht mehrere Runtime-Agenten nur zur Auslastung starten.
-
-## 5. Shared Contracts
+## 8. Shared Contracts
 
 Technical-Lead-kontrolliert bleiben insbesondere:
 
@@ -124,58 +165,56 @@ Technical-Lead-kontrolliert bleiben insbesondere:
 - Attribution / Revenue / Claims Truth
 - Guardian / Simulator / Value Impact
 
-Ein möglicher Citizenship-only Credential Option Contract bleibt separater Shared-Contract-Bedarf und wurde in TW-5 nicht erfunden.
-
-## 6. Supabase / Production
+## 9. Supabase / Production
 
 Supabase Production:
 
 `qscbgcdmivbbnzrcyegn`
 
-Zuletzt live verifiziert: `ACTIVE_HEALTHY`.
+Live verifiziert: `ACTIVE_HEALTHY`.
 
 Production enthält bis einschließlich:
 
 - `20260824120000_flug_route_itinerary_surface_evidence`
 - `20260824140000_flug_route_itinerary_untrusted_surface`
 
-Development enthält zusätzlich:
+Development enthält zusätzlich, weiterhin **nicht Production-approved**:
 
 - `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`
 - `20260824180000_trip_items_flug_handelsfelder_guard`
 
-Diese beiden Development-Migrationen sind **nicht Production-approved**. TW-5 brachte keine Migration/RLS/Auth/Traveller/Provider/Secret-Änderung.
+D0-1 und Governance #71 haben keine Production-Migration.
 
-## 7. Kosten und Product-Owner-Gates
+## 10. Besondere Product-Owner-Gates
 
-Aktuell wurde durch TW-5 keine neue laufende Kostenposition oder paid call eingeführt.
-
-Product-Owner-Freigabe bleibt zwingend insbesondere für:
+Zusätzlich zum allgemeinen Merge-Gate bleibt ausdrückliche Freigabe zwingend für:
 
 - Production-Migration/destructive Production-Daten;
 - große Production-RLS-/Ownership-/Identity-Änderungen;
 - echte Providerverträge, Production-Secrets, paid calls;
 - neue laufende Kosten über USD 100/Monat;
 - reale Payments/Geldbewegung;
-- fundamentale Produkt-/Business-Model-/Build-Order-Abweichung;
+- fundamentale Produkt-/Business-/Build-Order-Abweichung;
 - neue besonders sensitive Pass-/MRZ-/Biometrie-Speicherung;
 - fundamentale Auth/MFA/AAL/Session-Änderungen;
 - neue sensible externe Datenweitergabe;
 - Public Launch / große Production-Aktivierung / reale Provider live.
 
-Normale scope-treue Engineering-PRs dürfen nach vollständigen Exact-Head-Gates und unabhängigem Technical-Lead-PASS autonom Ready gesetzt und gemergt werden.
+Merge, Production, Kosten und besondere Shared-Contract-Gates sind getrennt.
 
-## 8. Offene Risiken / Follow-ups
+## 11. Offene Follow-ups außerhalb des aktuellen Governance-Slices
 
-- `main` Branch Protection ist live weiterhin nicht aktiviert.
-- QS-1 P2/P3-Findings bleiben dokumentierte Follow-ups; sie wurden bewusst nicht in TW-5 gezogen.
-- TW-6-Abhängigkeit `dokumentierter Product-Owner-Schnitt + Guest-One-Trip-Vertrag` ist vor Start zu klären.
-- Historische offene PRs/Drafts sind nicht automatisch aktive Runtime-Slices.
+- D0-P1-03: `/privacy` und `/terms` 404 – eigener Legal-/PO-Slice; keine Texte erfinden.
+- D0-P2-01/02/04/05 bleiben offen.
+- G0-Findings bleiben offen.
+- QS-1 P2/P3-Findings bleiben dokumentiert.
+- `main` Branch Protection bleibt offen.
 
-## 9. Exakter nächster Schritt
+## 12. Exakter nächster Schritt
 
-1. Post-TW-5-Continuity auf Merge `6f2beecc...` abschließen.
-2. Danach live Abhängigkeiten für TW-6/TW-7/TW-8 und mögliche konfliktarme Audit-/Vorbereitungsarbeit prüfen.
-3. Keine neue Runtime starten, bevor deren versionierter Scope, Abhängigkeiten und Gates klar sind.
-
-Aktuell muss in Cursor **kein neuer Agentenprompt** gesendet werden.
+1. PR #71 docs-only fertig synchronisieren und live prüfen.
+2. Exact-Head GitHub Actions / Vercel / Diff / Scope / offene Threads prüfen.
+3. Unabhängigen Technical-Lead-Abschluss für PR #71 dokumentieren.
+4. **STOPP und dem Product Owner Ergebnis + Änderungen/Risiken zeigen.**
+5. Kein Ready/Merge, bis der Product Owner PR #71 ausdrücklich freigibt.
+6. Erst danach PR #70 gegen den dann aktuellen `main` synchronisieren/re-gaten und separat wieder dem Product Owner zur Merge-Entscheidung vorlegen.
