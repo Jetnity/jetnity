@@ -92,6 +92,7 @@ const SIGNAL_RANG: Record<string, number> = {
   'official.ungeprueft': 6,
   'official.stale': 7,
   'official.unavailable': 17,
+  'official.unknown': 21,
   'seasonal.timing_check': 8,
   'seasonal.timing_notice': 9,
   'seasonal.error': 10,
@@ -199,18 +200,9 @@ function zieleDerReise(reise: Trip): string[] {
 }
 
 function officialOptionRefs(traveller: NonNullable<ReturnType<typeof travellerSlots>[number]['traveller']>): string[] {
-  if (traveller.documents.length > 0) {
-    return credentialOptionsAus(traveller)
-      .map((option) => option.optionRef)
-      .sort((links, rechts) => links.localeCompare(rechts))
-  }
-  const citizenships = [...traveller.citizenships].sort((links, rechts) =>
-    links.clientRef.localeCompare(rechts.clientRef),
-  )
-  if (citizenships.length > 0) {
-    return citizenships.map((eintrag) => eintrag.clientRef)
-  }
-  return [`${traveller.clientRef}:none`]
+  return credentialOptionsAus(traveller)
+    .map((option) => option.optionRef)
+    .sort((links, rechts) => links.localeCompare(rechts))
 }
 
 function officialPflichtslots(reise: Trip): OfficialSlot[] {
@@ -238,29 +230,91 @@ function officialEvaluationDecktSlot(evaluation: OfficialEvaluation, slot: Offic
   return evaluation.credentialOptionRef === slot.credentialOptionRef
 }
 
-function officialSlotsAbgedeckt(
-  reise: Trip,
-  evaluations: readonly OfficialEvaluation[],
-): boolean {
-  const slots = officialPflichtslots(reise)
-  if (slots.length === 0) return false
-  return slots.every((slot) => evaluations.some((evaluation) => officialEvaluationDecktSlot(evaluation, slot)))
+function officialLagenAusEvaluation(evaluation: OfficialEvaluation): AttentionLage[] {
+  const lagen = new Set<AttentionLage>()
+  if (evaluation.status === 'insufficient_context') lagen.add('insufficient_context')
+  if (
+    evaluation.status === 'unavailable' ||
+    evaluation.freshness === 'provider_unavailable' ||
+    evaluation.freshness === 'source_temporarily_unavailable'
+  ) {
+    lagen.add('unavailable')
+  }
+  if (evaluation.freshness === 'stale' || evaluation.freshness === 'recheck_needed') lagen.add('stale')
+  if (evaluation.freshness === 'never_checked') lagen.add('ungeprueft')
+  if (evaluation.status === 'unknown') lagen.add('unknown')
+  return [...lagen]
 }
 
-function officialEvidenceVollstaendig(
-  reise: Trip,
+function officialLagenFuerSlot(
+  slot: OfficialSlot,
   evaluations: readonly OfficialEvaluation[],
-): boolean {
-  const slots = officialPflichtslots(reise)
-  if (slots.length === 0) return false
-  return slots.every((slot) =>
-    evaluations.some(
-      (evaluation) =>
-        officialEvaluationDecktSlot(evaluation, slot) &&
-        evaluation.status === 'current' &&
-        evaluation.freshness === 'current',
-    ),
-  )
+): AttentionLage[] {
+  const passend = evaluations.filter((evaluation) => officialEvaluationDecktSlot(evaluation, slot))
+  if (passend.length === 0) return ['ungeprueft']
+  const lagen = new Set<AttentionLage>()
+  for (const evaluation of passend) {
+    for (const lage of officialLagenAusEvaluation(evaluation)) lagen.add(lage)
+  }
+  return [...lagen].sort((links, rechts) => links.localeCompare(rechts))
+}
+
+function officialPunktFuerSlot(slot: OfficialSlot, lage: AttentionLage): AttentionPunkt {
+  const id = `official:${lage}:${slot.travellerClientRef}:${slot.credentialOptionRef}:${slot.destination}`
+  const aktion: AttentionAktion = { art: 'bereich', bereich: 'uebersicht' }
+  if (lage === 'insufficient_context') {
+    return {
+      id,
+      ebene: 'person',
+      signal: 'official.insufficient_context',
+      schwere: 'hinweis',
+      lage,
+      titel: 'Offizielle Prüfung noch nicht möglich',
+      aktion,
+    }
+  }
+  if (lage === 'unavailable') {
+    return {
+      id,
+      ebene: 'reise',
+      signal: 'official.unavailable',
+      schwere: 'hinweis',
+      lage,
+      titel: 'Offizielle Einreisehinweise sind gerade nicht verfügbar',
+      aktion,
+    }
+  }
+  if (lage === 'stale') {
+    return {
+      id,
+      ebene: 'reise',
+      signal: 'official.stale',
+      schwere: 'bald',
+      lage,
+      titel: 'Offizielle Anforderungen erneut prüfen',
+      aktion,
+    }
+  }
+  if (lage === 'unknown') {
+    return {
+      id,
+      ebene: 'reise',
+      signal: 'official.unknown',
+      schwere: 'hinweis',
+      lage,
+      titel: 'Offizielle Einreisehinweise sind unklar',
+      aktion,
+    }
+  }
+  return {
+    id,
+    ebene: 'reise',
+    signal: 'official.ungeprueft',
+    schwere: 'hinweis',
+    lage: 'ungeprueft',
+    titel: 'Offizielle Einreisehinweise sind nicht vollständig geprüft',
+    aktion,
+  }
 }
 
 function leerstandOhneAktivePunkte(
@@ -595,21 +649,9 @@ export function attentionAbleiten(eingabe: AttentionEingabe): AttentionAbleitung
 
   const fehlendeFakten = fehlendeFaktenFuerReise({ ...reise, stages: reise.stages })
   const officialNichtPruefbar =
-    readiness.summary.officialStatus === 'insufficient_context' ||
     fehlendeFakten.includes('nationality') ||
     fehlendeFakten.includes('destination_country') ||
-    fehlendeFakten.includes('travel_dates') ||
-    readiness.summary.missingFacts.includes('nationality') ||
-    readiness.summary.missingFacts.includes('destination_country') ||
-    readiness.summary.missingFacts.includes('travel_dates')
-
-  const officialListe = readiness.evaluations
-  const officialAbgedeckt = officialSlotsAbgedeckt(reise, officialListe)
-  const officialAktuell = officialEvidenceVollstaendig(reise, officialListe)
-  const officialUnavailable =
-    readiness.summary.officialStatus === 'unavailable' ||
-    readiness.summary.officialFreshness === 'provider_unavailable' ||
-    readiness.summary.officialFreshness === 'source_temporarily_unavailable'
+    fehlendeFakten.includes('travel_dates')
 
   if (officialNichtPruefbar) {
     domainen.push('noch_nicht_pruefbar')
@@ -623,54 +665,21 @@ export function attentionAbleiten(eingabe: AttentionEingabe): AttentionAbleitung
       aktion: { art: 'bereich', bereich: 'uebersicht' },
     })
   } else {
-    if (!officialAbgedeckt) {
+    const slots = officialPflichtslots(reise)
+    if (slots.length === 0) {
       domainen.push('noch_nicht_geprueft')
-      punkte.push({
-        id: 'official:ungeprueft',
-        ebene: 'reise',
-        signal: 'official.ungeprueft',
-        schwere: 'hinweis',
-        lage: 'ungeprueft',
-        titel: 'Offizielle Einreisehinweise sind nicht vollständig geprüft',
-        aktion: { art: 'bereich', bereich: 'uebersicht' },
-      })
-    } else if (
-      readiness.summary.officialFreshness === 'stale' ||
-      readiness.summary.officialFreshness === 'recheck_needed'
-    ) {
-      punkte.push({
-        id: 'official:stale',
-        ebene: 'reise',
-        signal: 'official.stale',
-        schwere: 'bald',
-        lage: 'stale',
-        titel: 'Offizielle Anforderungen erneut prüfen',
-        aktion: { art: 'bereich', bereich: 'uebersicht' },
-      })
-    } else if (!officialUnavailable && (readiness.summary.officialFreshness === 'never_checked' || !officialAktuell)) {
-      domainen.push('noch_nicht_geprueft')
-      punkte.push({
-        id: 'official:ungeprueft',
-        ebene: 'reise',
-        signal: 'official.ungeprueft',
-        schwere: 'hinweis',
-        lage: 'ungeprueft',
-        titel: 'Offizielle Einreisehinweise sind nicht vollständig geprüft',
-        aktion: { art: 'bereich', bereich: 'uebersicht' },
-      })
-    }
-
-    if (officialUnavailable) {
-      domainen.push('pruefung_nicht_verfuegbar')
-      punkte.push({
-        id: 'official:unavailable',
-        ebene: 'reise',
-        signal: 'official.unavailable',
-        schwere: 'hinweis',
-        lage: 'unavailable',
-        titel: 'Offizielle Einreisehinweise sind gerade nicht verfügbar',
-        aktion: { art: 'bereich', bereich: 'uebersicht' },
-      })
+      punkte.push(
+        officialPunktFuerSlot(
+          { travellerClientRef: 'traveller:none', credentialOptionRef: 'none', destination: 'none' },
+          'ungeprueft',
+        ),
+      )
+    } else {
+      for (const slot of slots) {
+        for (const lage of officialLagenFuerSlot(slot, readiness.evaluations)) {
+          punkte.push(officialPunktFuerSlot(slot, lage))
+        }
+      }
     }
   }
 

@@ -11,6 +11,7 @@ import type { SafetyEvaluation } from '@/lib/safety/domain'
 import { leereSafetyEvidence } from '@/lib/safety/evidence'
 import type { SeasonalEvaluation } from '@/lib/seasonal/domain'
 import { leereSeasonalEvidence } from '@/lib/seasonal/evidence'
+import { credentialOptionsAus } from '@/lib/readiness/traveller-kontext'
 import { attentionAbleiten } from '@/lib/trips/attention'
 import type { Trip, TripItem, TripTraveller } from '@/types/trips'
 
@@ -230,15 +231,17 @@ function officialSauberFuer(
 }
 
 function officialSauber(): OfficialEvaluation {
-  return officialSauberFuer('traveller:1', 'cit:1')
+  return officialSauberFuer('traveller:1', 'traveller:1:none')
+}
+
+function officialKanonischeRefs(party: readonly TripTraveller[]): string[] {
+  return party.flatMap((traveller) => credentialOptionsAus(traveller).map((option) => option.optionRef)).sort()
 }
 
 function officialVollstaendig(): OfficialEvaluation[] {
-  return [
-    officialSauberFuer('traveller:1', 'cit:1'),
-    officialSauberFuer('traveller:1', 'cit:2'),
-    officialSauberFuer('traveller:2', 'cit:3'),
-  ]
+  return vollstaendigeParty().flatMap((traveller) =>
+    credentialOptionsAus(traveller).map((option) => officialSauberFuer(option.travellerClientRef, option.optionRef)),
+  )
 }
 
 function officialUnavailableVollstaendig(): OfficialEvaluation[] {
@@ -615,25 +618,148 @@ describe('Citizenship, Guest/Account, Side Effects', () => {
 })
 
 describe('TW-4 Completeness und gemischte Degraded States', () => {
-  test('eine Official-Evaluation bei 2 Travellern und 3 Citizenship-Optionen ist nie clean', () => {
-    const unvollstaendig = attentionAbleiten({
+  test('Multi-Citizenship ohne Documents nutzt kanonische :none-Refs, nicht cit:*', () => {
+    const party = vollstaendigeParty()
+    assert.deepEqual(officialKanonischeRefs(party), ['traveller:1:none', 'traveller:2:none'])
+    assert.equal(party[0]!.citizenships.length, 2)
+    assert.equal(party[1]!.citizenships.length, 1)
+
+    const nurEineNone = attentionAbleiten({
       reise: reiseOhneLuecken(),
       safetyEvaluations: [safetyLeer()],
       seasonalEvaluations: [seasonalLeer()],
-      officialEvaluations: [officialSauber()],
+      officialEvaluations: [officialSauberFuer('traveller:1', 'traveller:1:none')],
     })
-    assert.notEqual(unvollstaendig.leerstand, 'nichts_dringend_geprueft')
-    assert.equal(unvollstaendig.punkte.some((eintrag) => eintrag.signal === 'official.ungeprueft'), true)
-    assert.equal(unvollstaendig.punkte.some((eintrag) => eintrag.lage === 'warning'), false)
+    assert.notEqual(nurEineNone.leerstand, 'nichts_dringend_geprueft')
+    assert.equal(nurEineNone.punkte.some((eintrag) => eintrag.signal === 'official.ungeprueft'), true)
 
-    const vollstaendig = attentionAbleiten({
+    const citStattNone = attentionAbleiten({
+      reise: reiseOhneLuecken(),
+      safetyEvaluations: [safetyLeer()],
+      seasonalEvaluations: [seasonalLeer()],
+      officialEvaluations: [
+        officialSauberFuer('traveller:1', 'cit:1'),
+        officialSauberFuer('traveller:1', 'cit:2'),
+        officialSauberFuer('traveller:2', 'cit:3'),
+      ],
+    })
+    assert.notEqual(citStattNone.leerstand, 'nichts_dringend_geprueft')
+    assert.equal(citStattNone.punkte.some((eintrag) => eintrag.signal === 'official.ungeprueft'), true)
+    assert.equal(JSON.stringify(citStattNone).includes('cit:1'), false)
+
+    const kanonischVoll = attentionAbleiten({
       reise: reiseOhneLuecken(),
       safetyEvaluations: [safetyLeer()],
       seasonalEvaluations: [seasonalLeer()],
       officialEvaluations: officialVollstaendig(),
     })
-    assert.equal(vollstaendig.leerstand, 'nichts_dringend_geprueft')
-    assert.equal(vollstaendig.punkte.length, 0)
+    assert.equal(kanonischVoll.leerstand, 'nichts_dringend_geprueft')
+    assert.equal(kanonischVoll.punkte.length, 0)
+  })
+
+  test('current plus unavailable bleibt in beiden Listenreihenfolgen official.unavailable', () => {
+    const current = officialSauberFuer('traveller:1', 'traveller:1:none')
+    const unavailable = officialSauberFuer('traveller:2', 'traveller:2:none', {
+      status: 'unavailable',
+      freshness: 'provider_unavailable',
+      result: 'unknown',
+    })
+    const eingabe = {
+      reise: reiseOhneLuecken(),
+      safetyEvaluations: [safetyLeer()],
+      seasonalEvaluations: [seasonalLeer()],
+    }
+    const vorwaerts = attentionAbleiten({ ...eingabe, officialEvaluations: [current, unavailable] })
+    const rueckwaerts = attentionAbleiten({ ...eingabe, officialEvaluations: [unavailable, current] })
+    assert.deepEqual(
+      vorwaerts.punkte.map((eintrag) => `${eintrag.signal}:${eintrag.lage}`),
+      rueckwaerts.punkte.map((eintrag) => `${eintrag.signal}:${eintrag.lage}`),
+    )
+    assert.equal(vorwaerts.punkte.some((eintrag) => eintrag.signal === 'official.unavailable'), true)
+    assert.equal(vorwaerts.punkte.some((eintrag) => eintrag.signal === 'official.ungeprueft'), false)
+    assert.equal(vorwaerts.leerstand, 'pruefung_nicht_verfuegbar')
+    assert.notEqual(vorwaerts.leerstand, 'nichts_dringend_geprueft')
+  })
+
+  test('current plus stale bleibt official.stale und nicht ungeprüft', () => {
+    const sicht = attentionAbleiten({
+      reise: reiseOhneLuecken(),
+      safetyEvaluations: [safetyLeer()],
+      seasonalEvaluations: [seasonalLeer()],
+      officialEvaluations: [
+        officialSauberFuer('traveller:1', 'traveller:1:none'),
+        officialSauberFuer('traveller:2', 'traveller:2:none', { freshness: 'stale' }),
+      ],
+    })
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'official.stale' && eintrag.lage === 'stale'), true)
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'official.ungeprueft'), false)
+    assert.equal(sicht.leerstand, null)
+    assert.notEqual(sicht.leerstand, 'nichts_dringend_geprueft')
+  })
+
+  test('current plus insufficient_context bleibt official.insufficient_context', () => {
+    const sicht = attentionAbleiten({
+      reise: reiseOhneLuecken(),
+      safetyEvaluations: [safetyLeer()],
+      seasonalEvaluations: [seasonalLeer()],
+      officialEvaluations: [
+        officialSauberFuer('traveller:1', 'traveller:1:none'),
+        officialSauberFuer('traveller:2', 'traveller:2:none', {
+          status: 'insufficient_context',
+          missingFacts: ['document_type'],
+        }),
+      ],
+    })
+    assert.equal(
+      sicht.punkte.some((eintrag) => eintrag.signal === 'official.insufficient_context' && eintrag.lage === 'insufficient_context'),
+      true,
+    )
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'official.ungeprueft'), false)
+    assert.equal(sicht.leerstand, 'noch_nicht_pruefbar')
+    assert.notEqual(sicht.leerstand, 'nichts_dringend_geprueft')
+  })
+
+  test('vollständige Official-Coverage ist nur clean, wenn Safety/Seasonal/Coverage sauber sind', () => {
+    const warnung = attentionAbleiten({
+      reise: reiseOhneLuecken(),
+      safetyEvaluations: [safetyWarnung('critical_warning', 'safe-clean-block')],
+      seasonalEvaluations: [seasonalLeer()],
+      officialEvaluations: officialVollstaendig(),
+    })
+    assert.equal(warnung.punkte.some((eintrag) => eintrag.signal === 'safety.critical_warning'), true)
+    assert.equal(warnung.leerstand, null)
+    assert.notEqual(warnung.leerstand, 'nichts_dringend_geprueft')
+
+    const luecke = attentionAbleiten({
+      reise: reise({
+        party: vollstaendigeParty(),
+        days: [
+          {
+            id: 'day-1',
+            stageId: 'stage-1',
+            dayIndex: 1,
+            dayDate: '2026-09-12',
+            title: null,
+            items: [punkt({ id: 'stay-1', kind: 'stay', title: 'Nacht 1', startsOn: '2026-09-12', endsOn: '2026-09-13' })],
+          },
+        ],
+      }),
+      safetyEvaluations: [safetyLeer()],
+      seasonalEvaluations: [seasonalLeer()],
+      officialEvaluations: officialVollstaendig(),
+    })
+    assert.equal(luecke.punkte.some((eintrag) => eintrag.signal === 'coverage.unterkunft' || eintrag.signal === 'coverage.fluege'), true)
+    assert.equal(luecke.leerstand, null)
+    assert.notEqual(luecke.leerstand, 'nichts_dringend_geprueft')
+
+    const sauber = attentionAbleiten({
+      reise: reiseOhneLuecken(),
+      safetyEvaluations: [safetyLeer()],
+      seasonalEvaluations: [seasonalLeer()],
+      officialEvaluations: officialVollstaendig(),
+    })
+    assert.equal(sauber.leerstand, 'nichts_dringend_geprueft')
+    assert.equal(sauber.punkte.length, 0)
   })
 
   test('Safety unavailable und Seasonal insufficient_context bleiben beide erkennbar', () => {
