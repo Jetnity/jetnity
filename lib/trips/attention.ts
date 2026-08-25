@@ -4,9 +4,9 @@
 // maschinenlesbare Ableitungen (ADR-0165). Keine Persistenz, kein LLM-Score,
 // kein zweiter Lifecycle.
 //
-// Safety/Seasonal: vorhandene provider-neutrale, side-effect-freie lokale
-// Evaluation wird im Produktpfad wiederverwendet. Fehlende Prop allein ist
-// nicht clean und nicht automatisch unavailable.
+// Die vier Leerstände gelten nur als echte Empty States: nie parallel zu
+// Warning, Gap, stale, error oder unknown. Safety/Seasonal werden pro
+// Evaluation nach Freshness/Evidence/Relevance klassifiziert.
 
 import { fehlendeFaktenFuerReise } from '@/lib/readiness/party'
 import { readinessAnsicht } from '@/lib/readiness/status'
@@ -61,7 +61,7 @@ export type AttentionOrchestrierung = {
 }
 
 export type AttentionAbleitung = {
-  leerstand: AttentionLeerstand
+  leerstand: AttentionLeerstand | null
   orchestrierung: AttentionOrchestrierung
   punkte: AttentionPunkt[]
   sichtbar: AttentionPunkt[]
@@ -88,11 +88,25 @@ const SIGNAL_RANG: Record<string, number> = {
   'seasonal.timing_check': 8,
   'seasonal.timing_notice': 9,
   'seasonal.error': 10,
-  'safety.unavailable': 11,
-  'seasonal.unavailable': 12,
-  'safety.ungeprueft': 13,
-  'seasonal.ungeprueft': 14,
+  'safety.stale': 11,
+  'seasonal.stale': 12,
+  'safety.unknown': 13,
+  'seasonal.unknown': 14,
+  'safety.insufficient_context': 15,
+  'seasonal.insufficient_context': 16,
+  'safety.unavailable': 17,
+  'seasonal.unavailable': 18,
+  'safety.ungeprueft': 19,
+  'seasonal.ungeprueft': 20,
 }
+
+const AKTIVE_LAGEN: ReadonlySet<AttentionLage> = new Set([
+  'warning',
+  'known_gap',
+  'stale',
+  'error',
+  'unknown',
+])
 
 type AttentionEingabe = {
   reise: Trip
@@ -103,6 +117,15 @@ type AttentionEingabe = {
   orchestriereSafety?: boolean
   orchestriereSeasonal?: boolean
   sichtbarLimit?: number
+}
+
+type DomainSignal = {
+  id: string
+  ebene: AttentionEbene
+  signal: string
+  schwere: AttentionSchwere
+  lage: AttentionLage
+  titel: string
 }
 
 function safetyQuelle(
@@ -149,25 +172,254 @@ function punktSortieren(links: AttentionPunkt, rechts: AttentionPunkt): number {
   return links.id.localeCompare(rechts.id)
 }
 
-function domainLeerstand(opts: {
-  ausgefuehrt: boolean
-  checkState?: 'checked_clean' | 'checked_empty' | 'has_warnings' | 'has_timing' | 'unavailable' | 'unknown'
-  nichtPruefbar?: boolean
-  fehler?: boolean
-}): AttentionLeerstand | 'fehler' {
-  if (!opts.ausgefuehrt) return 'noch_nicht_geprueft'
-  if (opts.fehler) return 'fehler'
-  if (opts.nichtPruefbar) return 'noch_nicht_pruefbar'
-  if (opts.checkState === 'unavailable') return 'pruefung_nicht_verfuegbar'
-  if (opts.checkState === 'unknown') return 'noch_nicht_pruefbar'
+function istAktivesSignal(lage: AttentionLage): boolean {
+  return AKTIVE_LAGEN.has(lage)
+}
+
+function leerstandOhneAktivePunkte(
+  punkte: readonly AttentionPunkt[],
+  domainen: readonly AttentionLeerstand[],
+): AttentionLeerstand {
+  if (punkte.some((punkt) => punkt.lage === 'ungeprueft') || domainen.includes('noch_nicht_geprueft')) {
+    return 'noch_nicht_geprueft'
+  }
+  if (
+    punkte.some((punkt) => punkt.lage === 'insufficient_context') ||
+    domainen.includes('noch_nicht_pruefbar')
+  ) {
+    return 'noch_nicht_pruefbar'
+  }
+  if (punkte.some((punkt) => punkt.lage === 'unavailable') || domainen.includes('pruefung_nicht_verfuegbar')) {
+    return 'pruefung_nicht_verfuegbar'
+  }
   return 'nichts_dringend_geprueft'
 }
 
-function gesamtLeerstand(domainen: Array<AttentionLeerstand | 'fehler'>): AttentionLeerstand {
-  if (domainen.includes('noch_nicht_geprueft')) return 'noch_nicht_geprueft'
-  if (domainen.includes('noch_nicht_pruefbar')) return 'noch_nicht_pruefbar'
-  if (domainen.includes('pruefung_nicht_verfuegbar')) return 'pruefung_nicht_verfuegbar'
-  return 'nichts_dringend_geprueft'
+function safetySignale(eintrag: SafetyEvaluation): DomainSignal[] {
+  if (eintrag.seasonalRejected) return []
+  if (
+    eintrag.factKey === 'checked_empty' &&
+    !eintrag.conflict &&
+    eintrag.freshness === 'current' &&
+    eintrag.evidenceStatus === 'current' &&
+    eintrag.relevance === 'not_affected'
+  ) {
+    return []
+  }
+
+  const signale: DomainSignal[] = []
+  const ebene: AttentionEbene = eintrag.affectedRefs[0]?.kind === 'stage' ? 'etappe' : 'reise'
+
+  if (eintrag.conflict || eintrag.factKey === 'partial_invalid') {
+    signale.push({
+      id: `safety:${eintrag.factId}:error`,
+      ebene: 'reise',
+      signal: 'safety.error',
+      schwere: 'bald',
+      lage: 'error',
+      titel: 'Sicherheitsprüfung ist fehlgeschlagen',
+    })
+  }
+
+  if (eintrag.relevance === 'affected' && eintrag.presentationClass === 'critical_warning') {
+    signale.push({
+      id: `safety:${eintrag.factId}:critical`,
+      ebene,
+      signal: 'safety.critical_warning',
+      schwere: 'blockierend',
+      lage: 'warning',
+      titel: 'Sicherheitslage braucht Aufmerksamkeit',
+    })
+  } else if (eintrag.relevance === 'affected' && eintrag.presentationClass === 'important_notice') {
+    signale.push({
+      id: `safety:${eintrag.factId}:notice`,
+      ebene: 'reise',
+      signal: 'safety.important_notice',
+      schwere: 'bald',
+      lage: 'warning',
+      titel: 'Wichtiger Sicherheitshinweis',
+    })
+  }
+
+  if (eintrag.evidenceStatus === 'insufficient_context' || eintrag.relevance === 'insufficient_context') {
+    signale.push({
+      id: `safety:${eintrag.factId}:insufficient`,
+      ebene: 'reise',
+      signal: 'safety.insufficient_context',
+      schwere: 'hinweis',
+      lage: 'insufficient_context',
+      titel: 'Sicherheitsprüfung noch nicht möglich',
+    })
+    return signale
+  }
+
+  if (
+    eintrag.freshness === 'provider_unavailable' ||
+    eintrag.freshness === 'source_temporarily_unavailable' ||
+    eintrag.evidenceStatus === 'unavailable'
+  ) {
+    signale.push({
+      id: `safety:${eintrag.factId}:unavailable`,
+      ebene: 'reise',
+      signal: 'safety.unavailable',
+      schwere: 'hinweis',
+      lage: 'unavailable',
+      titel: 'Sicherheitsprüfung derzeit nicht verfügbar',
+    })
+    return signale
+  }
+
+  if (eintrag.freshness === 'stale' || eintrag.freshness === 'recheck_needed') {
+    signale.push({
+      id: `safety:${eintrag.factId}:stale`,
+      ebene: 'reise',
+      signal: 'safety.stale',
+      schwere: 'bald',
+      lage: 'stale',
+      titel: 'Sicherheitsprüfung ist veraltet',
+    })
+    return signale
+  }
+
+  if (eintrag.freshness === 'never_checked') {
+    signale.push({
+      id: `safety:${eintrag.factId}:ungeprueft`,
+      ebene: 'reise',
+      signal: 'safety.ungeprueft',
+      schwere: 'hinweis',
+      lage: 'ungeprueft',
+      titel: 'Sicherheit noch nicht geprüft',
+    })
+    return signale
+  }
+
+  if (eintrag.evidenceStatus === 'unknown' || eintrag.relevance === 'unknown') {
+    signale.push({
+      id: `safety:${eintrag.factId}:unknown`,
+      ebene: 'reise',
+      signal: 'safety.unknown',
+      schwere: 'hinweis',
+      lage: 'unknown',
+      titel: 'Sicherheitslage ist unklar',
+    })
+  }
+
+  return signale
+}
+
+function seasonalSignale(eintrag: SeasonalEvaluation): DomainSignal[] {
+  if (eintrag.acuteRejected) return []
+  if (
+    eintrag.factKey === 'checked_empty' &&
+    !eintrag.conflict &&
+    eintrag.freshness === 'current' &&
+    eintrag.evidenceStatus === 'current' &&
+    eintrag.relevance === 'not_applies'
+  ) {
+    return []
+  }
+
+  const signale: DomainSignal[] = []
+
+  if (eintrag.conflict || eintrag.factKey === 'partial_invalid') {
+    signale.push({
+      id: `seasonal:${eintrag.factId}:error`,
+      ebene: 'reise',
+      signal: 'seasonal.error',
+      schwere: 'bald',
+      lage: 'error',
+      titel: 'Reisezeitprüfung ist fehlgeschlagen',
+    })
+  }
+
+  if (eintrag.relevance === 'applies' && eintrag.presentationClass === 'timing_check') {
+    signale.push({
+      id: `seasonal:${eintrag.factId}:timing`,
+      ebene: 'reise',
+      signal: 'seasonal.timing_check',
+      schwere: 'bald',
+      lage: 'warning',
+      titel: 'Reisezeit hat eine erhebliche Wirkung',
+    })
+  } else if (eintrag.relevance === 'applies' && eintrag.presentationClass === 'timing_notice') {
+    signale.push({
+      id: `seasonal:${eintrag.factId}:notice`,
+      ebene: 'reise',
+      signal: 'seasonal.timing_notice',
+      schwere: 'hinweis',
+      lage: 'warning',
+      titel: 'Hinweis zur Reisezeit',
+    })
+  }
+
+  if (eintrag.evidenceStatus === 'insufficient_context' || eintrag.relevance === 'insufficient_context') {
+    signale.push({
+      id: `seasonal:${eintrag.factId}:insufficient`,
+      ebene: 'reise',
+      signal: 'seasonal.insufficient_context',
+      schwere: 'hinweis',
+      lage: 'insufficient_context',
+      titel: 'Reisezeitprüfung noch nicht möglich',
+    })
+    return signale
+  }
+
+  if (
+    eintrag.freshness === 'provider_unavailable' ||
+    eintrag.freshness === 'source_temporarily_unavailable' ||
+    eintrag.evidenceStatus === 'unavailable'
+  ) {
+    signale.push({
+      id: `seasonal:${eintrag.factId}:unavailable`,
+      ebene: 'reise',
+      signal: 'seasonal.unavailable',
+      schwere: 'hinweis',
+      lage: 'unavailable',
+      titel: 'Reisezeitprüfung derzeit nicht verfügbar',
+    })
+    return signale
+  }
+
+  if (eintrag.freshness === 'stale' || eintrag.freshness === 'recheck_needed') {
+    signale.push({
+      id: `seasonal:${eintrag.factId}:stale`,
+      ebene: 'reise',
+      signal: 'seasonal.stale',
+      schwere: 'bald',
+      lage: 'stale',
+      titel: 'Reisezeitprüfung ist veraltet',
+    })
+    return signale
+  }
+
+  if (eintrag.freshness === 'never_checked') {
+    signale.push({
+      id: `seasonal:${eintrag.factId}:ungeprueft`,
+      ebene: 'reise',
+      signal: 'seasonal.ungeprueft',
+      schwere: 'hinweis',
+      lage: 'ungeprueft',
+      titel: 'Reisezeit noch nicht geprüft',
+    })
+    return signale
+  }
+
+  if (eintrag.evidenceStatus === 'unknown' || eintrag.relevance === 'unknown') {
+    signale.push({
+      id: `seasonal:${eintrag.factId}:unknown`,
+      ebene: 'reise',
+      signal: 'seasonal.unknown',
+      schwere: 'hinweis',
+      lage: 'unknown',
+      titel: 'Reisezeitlage ist unklar',
+    })
+  }
+
+  return signale
+}
+
+function punktVonSignal(signal: DomainSignal, aktion: AttentionAktion | null = null): AttentionPunkt {
+  return { ...signal, aktion }
 }
 
 export function attentionAbleiten(eingabe: AttentionEingabe): AttentionAbleitung {
@@ -184,7 +436,7 @@ export function attentionAbleiten(eingabe: AttentionEingabe): AttentionAbleitung
   const readiness = readinessAnsicht(reise, eingabe.officialEvaluations)
 
   const punkte: AttentionPunkt[] = []
-  const domainen: Array<AttentionLeerstand | 'fehler'> = []
+  const domainen: AttentionLeerstand[] = []
 
   const abdeckungen = bereichStatus(reise, ohneTag)
   for (const eintrag of abdeckungen) {
@@ -204,158 +456,41 @@ export function attentionAbleiten(eingabe: AttentionEingabe): AttentionAbleitung
 
   if (!safety.ausgefuehrt) {
     domainen.push('noch_nicht_geprueft')
-    punkte.push({
-      id: 'safety:ungeprueft',
-      ebene: 'reise',
-      signal: 'safety.ungeprueft',
-      schwere: 'hinweis',
-      lage: 'ungeprueft',
-      titel: 'Sicherheit noch nicht geprüft',
-      aktion: null,
-    })
-  } else {
-    const safetyFehler = safetySicht.evaluations.some(
-      (eintrag) => eintrag.conflict || eintrag.factKey === 'partial_invalid',
-    )
-    const safetyNichtPruefbar = safetySicht.evaluations.some(
-      (eintrag) =>
-        eintrag.evidenceStatus === 'insufficient_context' || eintrag.relevance === 'insufficient_context',
-    )
-    domainen.push(
-      domainLeerstand({
-        ausgefuehrt: true,
-        checkState: safetySicht.summary.checkState,
-        nichtPruefbar: safetyNichtPruefbar && safetySicht.summary.checkState === 'unknown',
-        fehler: safetyFehler,
+    punkte.push(
+      punktVonSignal({
+        id: 'safety:ungeprueft',
+        ebene: 'reise',
+        signal: 'safety.ungeprueft',
+        schwere: 'hinweis',
+        lage: 'ungeprueft',
+        titel: 'Sicherheit noch nicht geprüft',
       }),
     )
-
+  } else {
     for (const eintrag of safetySicht.evaluations) {
-      if (eintrag.seasonalRejected) continue
-      if (eintrag.relevance !== 'affected') continue
-      if (eintrag.presentationClass === 'critical_warning') {
-        punkte.push({
-          id: `safety:${eintrag.factId}`,
-          ebene: eintrag.affectedRefs[0]?.kind === 'stage' ? 'etappe' : 'reise',
-          signal: 'safety.critical_warning',
-          schwere: 'blockierend',
-          lage: 'warning',
-          titel: 'Sicherheitslage braucht Aufmerksamkeit',
-          aktion: null,
-        })
-      } else if (eintrag.presentationClass === 'important_notice') {
-        punkte.push({
-          id: `safety:${eintrag.factId}`,
-          ebene: 'reise',
-          signal: 'safety.important_notice',
-          schwere: 'bald',
-          lage: 'warning',
-          titel: 'Wichtiger Sicherheitshinweis',
-          aktion: null,
-        })
+      for (const signal of safetySignale(eintrag)) {
+        punkte.push(punktVonSignal(signal))
       }
-    }
-
-    if (safetyFehler) {
-      punkte.push({
-        id: 'safety:error',
-        ebene: 'reise',
-        signal: 'safety.error',
-        schwere: 'bald',
-        lage: 'error',
-        titel: 'Sicherheitsprüfung ist fehlgeschlagen',
-        aktion: null,
-      })
-    } else if (safetySicht.summary.checkState === 'unavailable') {
-      punkte.push({
-        id: 'safety:unavailable',
-        ebene: 'reise',
-        signal: 'safety.unavailable',
-        schwere: 'hinweis',
-        lage: 'unavailable',
-        titel: 'Sicherheitsprüfung derzeit nicht verfügbar',
-        aktion: null,
-      })
     }
   }
 
   if (!seasonal.ausgefuehrt) {
     domainen.push('noch_nicht_geprueft')
-    punkte.push({
-      id: 'seasonal:ungeprueft',
-      ebene: 'reise',
-      signal: 'seasonal.ungeprueft',
-      schwere: 'hinweis',
-      lage: 'ungeprueft',
-      titel: 'Reisezeit noch nicht geprüft',
-      aktion: null,
-    })
-  } else {
-    const seasonalFehler = seasonalSicht.evaluations.some(
-      (eintrag) => eintrag.conflict || eintrag.factKey === 'partial_invalid',
-    )
-    const seasonalNichtPruefbar = seasonalSicht.evaluations.some(
-      (eintrag) =>
-        eintrag.evidenceStatus === 'insufficient_context' || eintrag.relevance === 'insufficient_context',
-    )
-    domainen.push(
-      domainLeerstand({
-        ausgefuehrt: true,
-        checkState:
-          seasonalSicht.summary.checkState === 'checked_empty'
-            ? 'checked_empty'
-            : seasonalSicht.summary.checkState,
-        nichtPruefbar: seasonalNichtPruefbar && seasonalSicht.summary.checkState === 'unknown',
-        fehler: seasonalFehler,
+    punkte.push(
+      punktVonSignal({
+        id: 'seasonal:ungeprueft',
+        ebene: 'reise',
+        signal: 'seasonal.ungeprueft',
+        schwere: 'hinweis',
+        lage: 'ungeprueft',
+        titel: 'Reisezeit noch nicht geprüft',
       }),
     )
-
+  } else {
     for (const eintrag of seasonalSicht.evaluations) {
-      if (eintrag.acuteRejected) continue
-      if (eintrag.relevance !== 'applies') continue
-      if (eintrag.presentationClass === 'timing_check') {
-        punkte.push({
-          id: `seasonal:${eintrag.factId}`,
-          ebene: 'reise',
-          signal: 'seasonal.timing_check',
-          schwere: 'bald',
-          lage: 'warning',
-          titel: 'Reisezeit hat eine erhebliche Wirkung',
-          aktion: null,
-        })
-      } else if (eintrag.presentationClass === 'timing_notice') {
-        punkte.push({
-          id: `seasonal:${eintrag.factId}`,
-          ebene: 'reise',
-          signal: 'seasonal.timing_notice',
-          schwere: 'hinweis',
-          lage: 'warning',
-          titel: 'Hinweis zur Reisezeit',
-          aktion: null,
-        })
+      for (const signal of seasonalSignale(eintrag)) {
+        punkte.push(punktVonSignal(signal))
       }
-    }
-
-    if (seasonalFehler) {
-      punkte.push({
-        id: 'seasonal:error',
-        ebene: 'reise',
-        signal: 'seasonal.error',
-        schwere: 'bald',
-        lage: 'error',
-        titel: 'Reisezeitprüfung ist fehlgeschlagen',
-        aktion: null,
-      })
-    } else if (seasonalSicht.summary.checkState === 'unavailable') {
-      punkte.push({
-        id: 'seasonal:unavailable',
-        ebene: 'reise',
-        signal: 'seasonal.unavailable',
-        schwere: 'hinweis',
-        lage: 'unavailable',
-        titel: 'Reisezeitprüfung derzeit nicht verfügbar',
-        aktion: null,
-      })
     }
   }
 
@@ -393,7 +528,6 @@ export function attentionAbleiten(eingabe: AttentionEingabe): AttentionAbleitung
       aktion: { art: 'bereich', bereich: 'uebersicht' },
     })
   } else if (readiness.summary.officialFreshness === 'stale' || readiness.summary.officialFreshness === 'recheck_needed') {
-    domainen.push('nichts_dringend_geprueft')
     punkte.push({
       id: 'official:stale',
       ebene: 'reise',
@@ -403,23 +537,39 @@ export function attentionAbleiten(eingabe: AttentionEingabe): AttentionAbleitung
       titel: 'Offizielle Anforderungen erneut prüfen',
       aktion: { art: 'bereich', bereich: 'uebersicht' },
     })
-  } else if (readiness.summary.officialFreshness === 'provider_unavailable' || readiness.summary.officialFreshness === 'source_temporarily_unavailable') {
+  } else if (
+    readiness.summary.officialFreshness === 'provider_unavailable' ||
+    readiness.summary.officialFreshness === 'source_temporarily_unavailable'
+  ) {
     domainen.push('pruefung_nicht_verfuegbar')
   } else if (readiness.summary.officialFreshness === 'never_checked') {
     domainen.push('noch_nicht_geprueft')
-  } else {
-    domainen.push('nichts_dringend_geprueft')
   }
 
   const geordnet = [...punkte].sort(punktSortieren)
+  const hatAktive = geordnet.some((punkt) => istAktivesSignal(punkt.lage))
+  if (hatAktive) {
+    return {
+      leerstand: null,
+      orchestrierung: {
+        safety: safety.ausgefuehrt ? 'angebunden' : 'nicht_ausgefuehrt',
+        seasonal: seasonal.ausgefuehrt ? 'angebunden' : 'nicht_ausgefuehrt',
+      },
+      punkte: geordnet,
+      sichtbar: geordnet.slice(0, limit),
+      weitere: geordnet.slice(limit),
+    }
+  }
+
+  const leerstand = leerstandOhneAktivePunkte(geordnet, domainen)
   return {
-    leerstand: gesamtLeerstand(domainen),
+    leerstand,
     orchestrierung: {
       safety: safety.ausgefuehrt ? 'angebunden' : 'nicht_ausgefuehrt',
       seasonal: seasonal.ausgefuehrt ? 'angebunden' : 'nicht_ausgefuehrt',
     },
-    punkte: geordnet,
-    sichtbar: geordnet.slice(0, limit),
-    weitere: geordnet.slice(limit),
+    punkte: [],
+    sichtbar: [],
+    weitere: [],
   }
 }

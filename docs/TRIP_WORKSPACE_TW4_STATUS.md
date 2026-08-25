@@ -1,7 +1,7 @@
 # Trip Workspace TW-4 – Status
 
 Stand: 25. August 2026  
-Status: **Runtime umgesetzt / Draft / STOPP für unabhängigen Technical-Lead-Re-Review**
+Status: **Review-Fix umgesetzt / Draft / STOPP für erneuten unabhängigen Technical-Lead-Re-Review**
 
 ## Identität
 
@@ -9,8 +9,8 @@ Status: **Runtime umgesetzt / Draft / STOPP für unabhängigen Technical-Lead-Re
 - Branch: `feat/trip-workspace-tw4-attention`
 - Draft-PR: #60 – `Trip Workspace TW-4 – Aufmerksamkeit / Jetzt wichtig`
 - Base / Merge-Base: `origin/main` `5341decef6ab128039dea11fa6f2625fbf03d354`
-- Ahead/Behind vs `origin/main` zum Overflow-Fix-Head: **10 ahead / 0 behind**
-- Runtime/UI-Head mit vollständigen lokalen Gates + CI/Vercel: `ab448534b843f17ec7f7192d9b162d57acd873e1`
+- Review-Head mit BLOCKED-Review: `8bbafefc61e91d66ebf617bed2868b8b1c0848cd`
+- Technical-Lead-Review `5017458023`: BLOCKED – zwei Truth-/Presentation-Blocker
 - ADR: `docs/ADR_0165_TRIP_WORKSPACE_TW4_ATTENTION.md`
 - Auftrag: `docs/TRIP_WORKSPACE_TW4_TASK.md`
 
@@ -91,6 +91,22 @@ Remote, derselbe SHA:
 
 Dieser Status-Commit ist docs-only und folgt auf den belegten Runtime-Head. Der Review-Head nach dem Persist ist der neue Branch-Head; CI/Vercel dort erneut prüfen.
 
+## Review-Fix nach BLOCKED
+
+Unabhängiger Technical-Lead-Kommentar `5017458023` auf Exact Head `8bbafefc`:
+
+1. Die vier Leerstände wurden auch bei vorhandenen Punkten als Copy/Data-State ausgegeben. `has_warnings`/`has_timing` fielen auf `nichts_dringend_geprueft`; Official-stale und Coverage-Gaps konnten parallel zu „Im Moment nichts Dringendes“ stehen.
+2. Generisches Safety-/Seasonal-`unknown` wurde zu `noch_nicht_pruefbar`. `has_warnings` maskierte paralleles `insufficient_context`.
+
+Korrektur, nur TW-4:
+
+- `leerstand` ist `null`, sobald ein aktives Signal existiert (`warning`, `known_gap`, `stale`, `error`, `unknown`).
+- Die vier Leerstände gelten und rendern nur als echte Empty States, wenn keine aktiven Punkte vorhanden sind.
+- Safety-/Seasonal-Evaluations werden einzeln nach Freshness/Evidence/Relevance klassifiziert: `stale`, `unknown`, `insufficient_context`, `error`, `unavailable` und Warning bleiben getrennte Punkte/Lagen.
+- Kein `unknown => noch_nicht_pruefbar`. Warning + paralleles `insufficient_context` bleiben beide sichtbar.
+
+Regressionstests in `lib/trips/attention.test.ts`: Critical Warning, Coverage-Gap und Error ohne Clean-Leerstand; Safety/Seasonal stale vs unknown vs insufficient_context; Warning + paralleles insufficient_context.
+
 ## Self-Review
 
 - Fehlende Orchestrierung bleibt `noch_nicht_geprueft`, nicht clean und nicht unavailable.
@@ -111,4 +127,4 @@ Dieser Status-Commit ist docs-only und folgt auf den belegten Runtime-Head. Der 
 
 ## Nächster Schritt
 
-Unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #60. Kein TW-3, kein TW-5, keine besonderen Product-Owner-Gates eigenmächtig öffnen.
+Erneuter unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #60. Kein TW-3, kein TW-5, keine besonderen Product-Owner-Gates eigenmächtig öffnen.

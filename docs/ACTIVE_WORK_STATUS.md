@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 25. August 2026  
-Status: **TW-1 und TW-2 sind auf `main`. Marketing/Growth Governance PR #59 ist gemergt. TW-4 Runtime liegt in Draft-PR #60 und wartet auf unabhängigen Technical-Lead-Re-Review. Kein TW-3, kein TW-5.**
+Status: **TW-1 und TW-2 sind auf `main`. Marketing/Growth Governance PR #59 ist gemergt. TW-4 Draft-PR #60 war BLOCKED; Review-Fix ist umgesetzt und wartet auf erneuten unabhängigen Technical-Lead-Re-Review. Kein TW-3, kein TW-5.**
 
 ## 0. Git-Wahrheit
 
@@ -104,12 +104,7 @@ Fehlende Safety-/Seasonal-Evaluation ist weder clean noch unavailable. Keine Def
 
 TW-4 ist kein TW-3/TW-5-Slice, keine neue Persistenz, keine DB/RLS/Auth-/Traveller-Neumodellierung, kein Guardian/Simulator und keine Provider-/Marketing-Aktivierung.
 
-Runtime/UI-Head mit vollständigen Gates: `ab448534b843f17ec7f7192d9b162d57acd873e1`.
-
-- Safety/Seasonal: vorhandene lokale Evaluation im Produktpfad **angebunden**; ohne Provider ehrlich `unavailable`.
-- 280px-Overflow der Attention-Card auf `b66f6a8a` (288>280) ist auf `ab448534` behoben.
-- Lokales `npm test` 1927/1927; `audit:trip-workspace` 1018/1018, 0 Fehler.
-- GitHub Actions `32829392769` SUCCESS; Vercel Preview `6079854494` SUCCESS.
+Review `5017458023` auf `8bbafefc` war BLOCKED. Der Review-Fix trennt echte Attention-Leerstände von aktiven Punkten und klassifiziert Safety/Seasonal-`stale`/`unknown`/`insufficient_context` getrennt.
 
 ## 4. Wartende Workstreams
 
@@ -170,6 +165,6 @@ Product-Owner-Freigabe bleibt zwingend für Production-Migration/destructive Pro
 
 ## 8. Exakter nächster Schritt
 
-**Nächster Technical-Lead-Schritt:** unabhängiger Re-Review von Draft-PR #60. Kein TW-3, kein TW-5, keine besonderen Product-Owner-Gates eigenmächtig öffnen.
+**Nächster Technical-Lead-Schritt:** erneuter unabhängiger Re-Review von Draft-PR #60 nach dem Truth-/Presentation-Fix. Kein TW-3, kein TW-5, keine besonderen Product-Owner-Gates eigenmächtig öffnen.
 
 Danach gemäß Build Order: TW-3 – Timeline / Etappe / Tag.

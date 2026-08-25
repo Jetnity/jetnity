@@ -4,10 +4,15 @@ import { useState } from 'react'
 import { AlertTriangle, Clock3, Info } from 'lucide-react'
 
 import type { Arbeitsbereich } from '@/lib/trips/arbeitsbereich'
-import type { AttentionAbleitung, AttentionPunkt, AttentionSchwere } from '@/lib/trips/attention'
+import type {
+  AttentionAbleitung,
+  AttentionLeerstand,
+  AttentionPunkt,
+  AttentionSchwere,
+} from '@/lib/trips/attention'
 import { cn } from '@/lib/utils'
 
-const LEERSTAND_TEXT: Record<AttentionAbleitung['leerstand'], string> = {
+const LEERSTAND_TEXT: Record<AttentionLeerstand, string> = {
   nichts_dringend_geprueft: 'Im Moment nichts Dringendes. Die relevanten Prüfungen sind gelaufen.',
   noch_nicht_geprueft: 'Einige Prüfungen wurden noch nicht ausgeführt.',
   noch_nicht_pruefbar: 'Für einzelne Prüfungen fehlt noch notwendiger Kontext.',
@@ -33,7 +38,7 @@ export default function TripWorkspaceJetztWichtig({
   return (
     <section
       aria-label="Jetzt wichtig"
-      data-attention-leerstand={attention.leerstand}
+      data-attention-leerstand={attention.leerstand ?? undefined}
       data-attention-safety={attention.orchestrierung.safety}
       data-attention-seasonal={attention.orchestrierung.seasonal}
       className="min-w-0 max-w-full overflow-x-hidden rounded-2xl border border-line-200 bg-white px-3 py-4 sm:px-4"
@@ -42,9 +47,11 @@ export default function TripWorkspaceJetztWichtig({
       <h3 className="mt-1 text-base font-semibold tracking-[-0.02em] text-brand-800 break-words hyphens-auto">
         Was jetzt Aufmerksamkeit braucht
       </h3>
-      <p className="mt-1 text-sm leading-6 text-ink-800 break-words hyphens-auto">
-        {LEERSTAND_TEXT[attention.leerstand]}
-      </p>
+      {attention.leerstand && attention.punkte.length === 0 ? (
+        <p className="mt-1 text-sm leading-6 text-ink-800 break-words hyphens-auto">
+          {LEERSTAND_TEXT[attention.leerstand]}
+        </p>
+      ) : null}
 
       {sichtbare.length > 0 && (
         <ul className="mt-3 grid gap-2">
