@@ -128,7 +128,7 @@ Kanonisch und vollständig: `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`.
 - PR #57 – Technical-Lead-Autonomie + verbindliche Build-Reihenfolge: **merged**.
 - PR #56 – Trip Workspace TW-1 – Shell & Geräteparität: **merged**.
 - PR #58 – Trip Workspace TW-2 – Reiseübersicht: **merged** nach unabhängigem Technical-Lead-PASS auf Exact Head `3f2c55357a7a2425ab760aac2a29ddbe15f80fa8`; CI, Vercel und Trip-Workspace-UI-Audit 1018/1018 waren grün.
-- **Aktiver Runtime-Slice: PR #60 – TW-4 Aufmerksamkeit / `Jetzt wichtig`.** Review `5017458023` ist behoben. Review `5018115879` auf Head `787d730568c7eba2acb3974aeed4ea39297d2f32` bleibt BLOCKED wegen Official-Completeness und gemischter Degraded States.
+- **Aktiver Runtime-Slice: PR #60 – TW-4 Aufmerksamkeit / `Jetzt wichtig`.** Review `5017458023` ist behoben. Review `5018115879` (Official-Completeness und gemischte Degraded States) ist im Branch behoben und mit `main` `c9cab1f349fd1778c80b38a2c07e41d8e298e595` synchronisiert. Draft bleibt Draft; STOPP für erneuten unabhängigen Technical-Lead-Re-Review.
 - `Account plattform audit vorbereitung`, `Jetnity provider readiness audit` und `Admin platform audit` warten auf ihre kontrollierten späteren bzw. parallelisierbaren Blöcke.
 - `Jetnity growth discoverability`, `Jetnity quality security audit` und `Jetnity native app architecture` sind verbindlich reserviert, aber **noch nicht zu starten**.
 - `main` Branch Protection ist technisch weiterhin nicht aktiviert; dieses Risiko nicht vergessen.
@@ -170,4 +170,4 @@ Vollständige Regel: `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`.
 
 ## Nächster kontrollierter Schritt
 
-`Trip workspace audit architecture` behebt ausschließlich die in Review `5018115879` dokumentierten TW-4-Completeness-/Degraded-State-Blocker in PR #60, nach Sync mit `main` `c9cab1f349fd1778c80b38a2c07e41d8e298e595`. Danach vollständige Exact-Head-Gates, Workspace-UI-Audit, GitHub Actions, Vercel und erneuter unabhängiger Technical-Lead-Re-Review. Kein TW-3/TW-5 und kein weiterer großer Agent-Runtime-Workstream vor dem kontrollierten TW-4-Abschluss.
+Unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #60 auf dem neuen synchronisierten Exact Head. Kein Ready, kein Merge, kein TW-3/TW-5 und kein weiterer großer Agent-Runtime-Workstream vor dem kontrollierten TW-4-Abschluss.

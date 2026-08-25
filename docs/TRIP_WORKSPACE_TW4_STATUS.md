@@ -1,17 +1,18 @@
 # Trip Workspace TW-4 – Status
 
 Stand: 25. August 2026  
-Status: **Review-Fix umgesetzt / Draft / STOPP für erneuten unabhängigen Technical-Lead-Re-Review**
+Status: **Completeness-/Degraded-State-Fix umgesetzt / Draft / STOPP für erneuten unabhängigen Technical-Lead-Re-Review**
 
 ## Identität
 
 - Agent: `Trip workspace audit architecture`
 - Branch: `feat/trip-workspace-tw4-attention`
 - Draft-PR: #60 – `Trip Workspace TW-4 – Aufmerksamkeit / Jetzt wichtig`
-- Base / Merge-Base: `origin/main` `5341decef6ab128039dea11fa6f2625fbf03d354`
-- Review-Head mit BLOCKED-Review: `8bbafefc61e91d66ebf617bed2868b8b1c0848cd`
-- Technical-Lead-Review `5017458023`: BLOCKED – zwei Truth-/Presentation-Blocker
-- Review-Fix-Head mit lokalen Gates + CI/Vercel: `95b36f6d81ef346f084e6b9e6911da591d8c5d2b`
+- Base / Merge-Base: `origin/main` `c9cab1f349fd1778c80b38a2c07e41d8e298e595`
+- Merge-Commit mit aktueller Agent-/Technical-Lead-Governance: `48cf3825d4de9fc2db65241712799e3a29054c7d`
+- Runtime-Head Completeness/Degraded: `5edd6b8a0d26b69149018c14f427aa49471c18f4`
+- Technical-Lead-Review `5017458023`: behoben
+- Technical-Lead-Review `5018115879` auf `787d730568c7eba2acb3974aeed4ea39297d2f32`: BLOCKED – Official-Completeness und gemischte Degraded States; Fix umgesetzt, Re-Review offen
 - ADR: `docs/ADR_0165_TRIP_WORKSPACE_TW4_ATTENTION.md`
 - Auftrag: `docs/TRIP_WORKSPACE_TW4_TASK.md`
 
@@ -140,12 +141,59 @@ Dieser Status-Commit ist docs-only und folgt auf den belegten Review-Fix-Head. D
 - Kein TW-3/TW-5, keine Writes/Side Effects.
 - 280px-Overflow ist behoben; Attention bleibt Presentation-Aggregation.
 
+## Review-Fix nach `5018115879`
+
+Unabhängiger Technical-Lead-Kommentar auf Exact Head `787d7305`:
+
+1. Ein unvollständiger Official-Evidence-Satz (2 Traveller, Traveller 1 mit CH+IT, Traveller 2 mit DE, nur eine Evaluation für `traveller:1` / `cit:1`) konnte `nichts_dringend_geprueft` erzeugen.
+2. Ausschließlich degradierte Lagen (`unavailable`, `insufficient_context`, `ungeprueft`) wurden auf einen Top-Level-Leerstand kollabiert und aus `punkte` entfernt.
+
+Korrektur, nur TW-4:
+
+- Official-Clean ist fail-closed: jede relevante persistierte Traveller-/Citizenship- bzw. Credential-Option und jedes Ziel braucht eine passende aktuelle Official-Evaluation. Kein Default-Pass, keine `[0]`-Auswahl, kein Traveller-Contract-Umbau.
+- Fehlende Official-Coverage erzeugt `official.ungeprueft` und niemals Clean.
+- Belegte Official-Unavailability bleibt als `official.unavailable` im Contract.
+- Die vier Top-Level-Leerstände bleiben; `unavailable`, `insufficient_context` und `ungeprueft` bleiben als Punkte erhalten und progressiv sichtbar.
+- UI zeigt den Leerstandssatz auch neben degradierten Punkten; Clean-Copy erscheint nicht neben Punkten.
+
+Regressionstests: 1 von 3 Citizenship-Optionen niemals Clean, vollständige Coverage darf Clean; Safety unavailable + Seasonal insufficient_context; Safety/Seasonal ungeprüft + Official unavailable.
+
+## Exact-Head-Gates auf `5edd6b8a`
+
+Lokal, alle grün:
+
+- `check:setup:ci` – OK, 1 Warning: keine `.env`
+- `npm run typecheck` – OK
+- `npm run lint` – OK
+- `npm test` – **1935/1935** pass, inkl. 21 TW-4-Attention-Tests
+- `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` – OK
+- `npm run build` – OK
+- `npm run audit:trip-workspace` – 1018 Kombinationen, 0 Fehler. Bericht: `/opt/cursor/artifacts/tw4_audit_5edd6b8a.json`
+
+Remote, derselbe Runtime-SHA:
+
+- GitHub Actions: SUCCESS – https://github.com/Jetnity/jetnity/actions/runs/32841489199
+- Vercel Preview: SUCCESS – Deployment `6081963934`, https://jetnity-oiu7qjy0j-jetnity-e1b93c82.vercel.app
+
+Der nachfolgende Status-Commit ist docs-only. CI/Vercel auf dem Persist-Head erneut prüfen; das UI-Audit gilt für den unveränderten Runtime-Stand `5edd6b8a`.
+
+## Self-Review
+
+- Unvollständige Official-Coverage über mehrere Traveller/Citizenship-Optionen ist nie Clean.
+- Erst vollständige aktuelle Official-Coverage plus leere Safety-/Seasonal-/Coverage-Signale ermöglicht `nichts_dringend_geprueft`.
+- Gemischte Degraded States bleiben maschinenlesbar in `punkte`; der Top-Level-Leerstand bleibt die priorisierte Leerstandsaussage.
+- Kein Default-Pass / keine Citizenship-Tokens in Attention.
+- Guest und Account: dieselbe Ableitung.
+- Kein TW-3/TW-5, keine Writes/Side Effects, keine neue Persistenz/Hard Truth.
+- Branch ist mit `main` `c9cab1f3` synchron; die neue Agent-/Technical-Lead-Governance wurde im Merge übernommen.
+
 ## Offene Risiken
 
 - Ohne Provider bleiben Safety/Seasonal ehrlich unavailable; das ist kein Fake-Clean.
 - Official ohne Citizenships ist `noch_nicht_pruefbar`, ohne implizite Passwahl.
+- Lokale Official-Engine nutzt bei fehlenden Dokumenten weiterhin `:none`; TW-4 prüft fail-closed zusätzlich jede vorhandene Citizenship-Option. Das ist Presentation-Completeness, kein Traveller-Contract-Umbau.
 - Budget, Pace und Domain-Suchen sind unverändert keine Attention-Wahrheit.
 
 ## Nächster Schritt
 
-Erneuter unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #60. Kein TW-3, kein TW-5, keine besonderen Product-Owner-Gates eigenmächtig öffnen.
+Erneuter unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #60. Kein Ready, kein Merge, kein TW-3, kein TW-5, keine besonderen Product-Owner-Gates eigenmächtig öffnen.

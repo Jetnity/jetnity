@@ -1,13 +1,13 @@
 # Jetnity – Active Work Status
 
 Stand: 25. August 2026  
-Status: **TW-1 und TW-2 sind auf `main`. Marketing/Growth Governance PR #59 ist gemergt. TW-4 Draft-PR #60 war BLOCKED; Review-Fix ist umgesetzt und wartet auf erneuten unabhängigen Technical-Lead-Re-Review. Kein TW-3, kein TW-5.**
+Status: **TW-1 und TW-2 sind auf `main`. `main` trägt zusätzlich die neue Agent-/Technical-Lead-Governance. TW-4 Draft-PR #60 ist mit diesem `main` synchronisiert; Completeness-/Degraded-State-Fix ist umgesetzt und wartet auf erneuten unabhängigen Technical-Lead-Re-Review. Kein Ready, kein Merge, kein TW-3, kein TW-5.**
 
 ## 0. Git-Wahrheit
 
-Aktueller verifizierter `main` nach PR #59:
+Aktueller verifizierter `main`:
 
-- `main`: `5341decef6ab128039dea11fa6f2625fbf03d354`
+- `main`: `c9cab1f349fd1778c80b38a2c07e41d8e298e595`
 - PR #56 – TW-1: merged
 - PR #58 – TW-2: merged; Merge-Commit `5e27f383c7917eec168d11bceb78f9fafc198d42`
 - PR #59 – Marketing & Growth Standards: merged; Merge-Commit `5341decef6ab128039dea11fa6f2625fbf03d354`
@@ -104,7 +104,7 @@ Fehlende Safety-/Seasonal-Evaluation ist weder clean noch unavailable. Keine Def
 
 TW-4 ist kein TW-3/TW-5-Slice, keine neue Persistenz, keine DB/RLS/Auth-/Traveller-Neumodellierung, kein Guardian/Simulator und keine Provider-/Marketing-Aktivierung.
 
-Review `5017458023` auf `8bbafefc` war BLOCKED. Der Review-Fix trennt echte Attention-Leerstände von aktiven Punkten und klassifiziert Safety/Seasonal-`stale`/`unknown`/`insufficient_context` getrennt.
+Review `5017458023` auf `8bbafefc` war BLOCKED und ist behoben. Review `5018115879` auf `787d7305` blieb BLOCKED wegen unvollständiger Official-Coverage und verlorener gemischter Degraded States. Der aktuelle Fix ist fail-closed Official-Completeness plus verlustfreie Degraded-Punkte; Branch ist mit `main` `c9cab1f3` synchronisiert.
 
 ## 4. Wartende Workstreams
 
@@ -165,6 +165,6 @@ Product-Owner-Freigabe bleibt zwingend für Production-Migration/destructive Pro
 
 ## 8. Exakter nächster Schritt
 
-**Nächster Technical-Lead-Schritt:** erneuter unabhängiger Re-Review von Draft-PR #60 nach dem Truth-/Presentation-Fix. Kein TW-3, kein TW-5, keine besonderen Product-Owner-Gates eigenmächtig öffnen.
+**Nächster Technical-Lead-Schritt:** erneuter unabhängiger Re-Review von Draft-PR #60 nach Sync mit `main` `c9cab1f3` und dem Official-Completeness-/Degraded-State-Fix. Kein Ready, kein Merge, kein TW-3, kein TW-5, keine besonderen Product-Owner-Gates eigenmächtig öffnen.
 
 Danach gemäß Build Order: TW-3 – Timeline / Etappe / Tag.
