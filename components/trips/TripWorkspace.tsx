@@ -4,6 +4,7 @@
 //
 // Der Reise-Arbeitsbereich. Eine Produktlogik für alle Geräte (ADR-0163 / TW-1).
 // Die Übersicht verdichtet vorhandene Reise-Wahrheit (ADR-0164 / TW-2).
+// Jetzt wichtig priorisiert vorhandene Signale (ADR-0165 / TW-4).
 //
 // Zuerst Orientierung, dann Aktion: Reisekopf, Bereichsnavigation, nur der
 // aktive Bereich. Die Übersicht ist die Reise-Ebene und enthält den Tagesplan.
@@ -31,6 +32,7 @@ import {
   gewaehlterTagId,
 } from '@/lib/trips/arbeitsbereich'
 import { heutigesDatum } from '@/lib/account/naechste-reise'
+import { attentionAbleiten } from '@/lib/trips/attention'
 import { uebersichtAbleiten } from '@/lib/trips/uebersicht'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
 import type { SafetyEvaluation } from '@/lib/safety/domain'
@@ -43,6 +45,7 @@ import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
 import TripWorkspaceNavigation from '@/components/trips/TripWorkspaceNavigation'
 import TripWorkspacePlan from '@/components/trips/TripWorkspacePlan'
 import Reisevorbereitung from '@/components/trips/Reisevorbereitung'
+import TripWorkspaceJetztWichtig from '@/components/trips/TripWorkspaceJetztWichtig'
 import TripWorkspaceUebersicht from '@/components/trips/TripWorkspaceUebersicht'
 import FlugBestand from '@/components/trips/FlugBestand'
 import UnterkunftBestand from '@/components/trips/UnterkunftBestand'
@@ -221,6 +224,13 @@ export default function TripWorkspace({
   const ungeplantePunkte = ohneTag.length > 0 ? ohneTag : reise.ohneTag
   const aenderungSichtbar = aenderungIstSichtbar(aenderungOffen)
   const uebersicht = uebersichtAbleiten(reise, ungeplantePunkte, heutigesDatum())
+  const attention = attentionAbleiten({
+    reise,
+    ohneTag: ungeplantePunkte,
+    safetyEvaluations,
+    seasonalEvaluations,
+    officialEvaluations,
+  })
   const aktivitaeten = sucheMitTag(aktivitaetensuche, aktiverTag, setAktiverTag)
 
   const bereichBereit = (ziel: Arbeitsbereich) => bereichSollMounten(ziel, bereich, besucht)
@@ -302,6 +312,7 @@ export default function TripWorkspace({
             <TripWorkspaceUebersicht
               reise={reise}
               uebersicht={uebersicht}
+              attention={attention}
               aenderungOffen={aenderungOffen}
               onBereich={wechseln}
               onAenderung={aenderungOeffnen}
