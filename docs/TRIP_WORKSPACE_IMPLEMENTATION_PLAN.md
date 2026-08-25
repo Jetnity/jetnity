@@ -1,7 +1,7 @@
 # Jetnity – Trip Workspace Implementierungsplan
 
 Stand: 25. August 2026  
-Status: **Ziel-IA angenommen (ADR-0163). TW-1 bis TW-4 sind auf `main`. TW-5 Runtime liegt auf Draft-PR #66 und wartet auf Technical-Lead-Review. Kein TW-6.**  
+Status: **Ziel-IA angenommen (ADR-0163). TW-1, TW-2, TW-4, TW-3 und TW-5 sind auf `main` integriert. Nächste Runtime nur nach Prüfung der dokumentierten Abhängigkeiten von TW-6/TW-7/TW-8.**  
 Audit: `docs/TRIP_WORKSPACE_AUDIT.md`  
 Ziel: `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`  
 Abhängigkeiten: `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`
@@ -33,12 +33,12 @@ Ohne separates Gate verboten:
 - neue Production-/Public-Aktivierung;
 - Scope-Creep in Guardian/Simulator/Marketing/Homepage.
 
-Normale scope-treue Ready-/Merge-Schritte folgen der aktuellen `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`; ältere pauschale PO-Merge-Pflichten sind für normale PRs superseded.
+Normale scope-treue Ready-/Merge-Schritte folgen `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`.
 
-## 2. Aktuelle Slice-Reihenfolge
+## 2. Slice-Reihenfolge
 
 ```text
-TW-0  Audit / Zielarchitektur
+TW-0  Audit / Zielarchitektur ✅
   │
   ▼
 TW-1  Shell & Geräteparität ✅
@@ -52,129 +52,93 @@ TW-3 Timeline ✅  TW-4 Aufmerksamkeit ✅
   │              │
   └──────┬───────┘
          ▼
-      TW-5 Item- und Gap-Details ← Draft-PR #66, Review-STOPP
+TW-5 Item- und Gap-Details ✅  PR #66 / Merge 6f2beecc
          │
-         ├── TW-6 Create-Entry  (nach dokumentiertem PO-Schnitt; nicht Homepage)
-         ├── TW-7 Hub-Anschluss (AP-3 nicht überschreiben; Archiv nach AP-4)
-         ├── TW-8 Commercial-Surfaces (nach Provider S5)
-         ▼
-      TW-9 Polish, Evidence, Closure
+         ├── TW-6 Create-Entry
+         │      Abhängigkeit: dokumentierter Product-Owner-Schnitt + Guest-One-Trip-Vertrag
+         │
+         ├── TW-7 Hub-Anschluss
+         │      Abhängigkeit: Account-/Hub-Grenzen, AP-3 nicht überschreiben
+         │
+         ├── TW-8 Commercial-Surfaces
+         │      Abhängigkeit: Provider S5 / reale Commercial Provenance
          │
          ▼
- finaler Function-by-Function-/Intelligence-Audit
+TW-9 Polish, Evidence, Closure
+         │
+         ▼
+finaler Function-by-Function-/Intelligence-Audit
 ```
 
-## 3. Slice-Definitionen
+Die Pfeile bedeuten Abhängigkeiten, nicht automatische Startfreigabe. Vor jedem neuen Slice Live-Stand und Gate prüfen.
+
+## 3. Abgeschlossene Slices
 
 ### TW-0 – Audit / IA / Plan
 
-**Status:** abgeschlossen und integriert.
-
-Deliverables: Audit, Zielarchitektur, Dependency Matrix, Implementierungsplan und Handoff.
+✅ abgeschlossen und integriert.
 
 ### TW-1 – Shell & Geräteparität
 
-**Status:** ✅ auf `main` (PR #56).
+✅ PR #56 auf `main`.
 
-**Ziel:** Eine Produktlogik auf Mobile und Desktop; Desktop besitzt eine echte Reise-Ebene statt einer separaten modulzentrierten Präsentationswelt.
-
-**Nicht:** neue Attention-Truth, Provider-Orchestrierung, Planner-Chips oder Account-Hub.
+Eine Produktlogik auf Mobile und Desktop; keine zweite modulzentrierte Präsentationswelt.
 
 ### TW-2 – Reiseübersicht
 
-**Status:** ✅ auf `main` (PR #58).
+✅ PR #58 auf `main`.
 
-**Ziel:** Die ersten Sekunden beantworten „Was ist diese Reise?“ ohne Dashboard-/Feature-Wand.
-
-**Kern:** Reiseidentität, Ziele, Zeitraum, Personen-/Party-Kontext und vorhandene Coverage ehrlich verdichten.
-
-**Nicht:** neuen `trips.status` erfinden, Citizenship defaulten oder ungeprüfte Safety als clean darstellen.
+Reiseidentität, Ziele, Zeitraum, Party-Kontext und Coverage ehrlich verdichtet.
 
 ### TW-4 – Aufmerksamkeit / `Jetzt wichtig`
 
-**Status:** ✅ auf `main` (PR #60, Merge `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f`).
+✅ PR #60, Merge `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f`.
 
-**Ziel:** vorhandene Graph-/Coverage-/Readiness-/Safety-/Seasonal-/Official-Signale deterministisch priorisieren.
-
-**Kern:** keine Fake-Clean-Aussage; Multi-Citizenship/Official-Completeness fail-closed; degradierte Zustände maschinenlesbar getrennt.
-
-**Nicht:** Persistenz, LLM-Score, neuer `trips.status`, neue Provider-Truth.
+Vorhandene Graph-/Coverage-/Readiness-/Safety-/Seasonal-/Official-Signale deterministisch priorisiert; keine Fake-Clean-Aussage.
 
 ### TW-3 – Timeline / Etappe / Tag
 
-**Status:** ✅ auf `main` (PR #64, Merge `16a4c77a53cff9e8638a68f5dd8c77122bf13b48`).
+✅ PR #64, Merge `16a4c77a53cff9e8638a68f5dd8c77122bf13b48`.
 
-Finaler Exact Head:
+Finaler Exact Head `f55db2b0682981f293390b44e704b513476703bf`. Independent TL: **PASS / Technical Integration Closure**.
 
-`f55db2b0682981f293390b44e704b513476703bf`
-
-Independent Technical-Lead Result: **PASS / Technical Integration Closure**.
-
-**Ziel:** Reiseverlauf statt Modulwechsel.
-
-Umgesetzt:
-
-- Etappen und Tage als zusammenhängende Timeline aus dem kanonischen Trip-Graphen;
-- `gewaehlterTagId` bleibt die einzige Tag-Auswahlquelle;
-- gültige Auswahl bleibt bei Graph-Mutationen erhalten, sonst deterministischer Fallback;
-- `ohneTag` bleibt ungeplant;
-- Flight-Transitländer werden nicht zu Nutzerzielen/Etappen;
-- Mobile/Tablet/Desktop verwenden dieselbe fachliche Timeline-Ableitung.
-
-Evidence:
-
-- gezielte TW-3-Tests 10/10;
-- `npm test` 1953/1953;
-- Production Build grün;
-- Workspace Audit 1018/1018, 0 Fehler;
-- GitHub Actions CI `32861784215` SUCCESS;
-- Vercel Exact-Head Preview READY;
-- keine offenen Review-Threads.
+Kern: Etappen/Tage aus kanonischem Trip-Graph, stabile Tag-Auswahl, `ohneTag` ungeplant, Transit nicht als Nutzeretappe, eine Mobile/Desktop-Ableitung.
 
 ### TW-5 – Item- und Gap-Details
 
-**Status:** Draft-PR #66; Runtime implementiert; STOPP für Technical-Lead-Review. Kein Ready, kein Merge, kein TW-6.
+✅ PR #66, Merge `6f2beeccae2c1e6bdf9bcb9fdc35a5cd56e50bec`.
 
-Agent:
+Runtime-Head `8183782fc08c486949212b0e78b9f4ce938aa0dd`. Persist-Head `49aa04d99a5eb33a89fa624f1d096f7c5400698f`. Independent TL: **PASS / Technical Integration Closure**.
 
-`Trip workspace audit architecture`
+Kern:
 
-Vorbereiteter Branch:
+- Domain-Tabs als primäre IA entfernt;
+- Flight/Stay/Activities/Mobility als Gap-/Item-Details;
+- vorhandene Bestands-/Search-Flächen wiederverwendet;
+- Search explizit lazy/on-demand;
+- `0 Aktivitäten` keine Pflichtlücke;
+- alle sechs Item-Kinds inkl. `ohneTag`;
+- tote refs deterministisch;
+- Guest/Account gleich;
+- Mobile/Desktop gleiche State Machine;
+- kein stilles ZRH;
+- kein Shared-Contract-/DB-/Provider-Umbau.
 
-`feat/trip-workspace-tw5-item-gap-details`
+P1-QS1-01 wurde vor Merge geschlossen: genau eine ungeplante Liste geht in Route/Coverage/Status. Regression ZRH→DOH→BKK: eine Source-ID, 2 Segmente, 1 Connection, Route einmal, kein künstliches `Reihenfolge unbekannt`.
 
-**Ziel:** Flüge, Unterkunft, Aktivitäten und Mobilität als Details einer konkreten Lücke, Coverage- oder Attention-Situation in der Reiseoberfläche einhängen, statt diese Bereiche erneut als konkurrierende Haupt-IA aufzubauen.
+Evidence:
 
-**Darf:**
+- gezielte Tests 112/112;
+- `npm test` 1994/1994;
+- Build grün;
+- UI Audit 1018/1018, 0 Fehler;
+- Actions Runtime + Persist SUCCESS;
+- Vercel Runtime + Persist + Production READY;
+- 0 offene Review-Threads beim Merge.
 
-- bestehende `FlugBestand`, `HotelBereich`, `AktivitaetenBereich`, `MobilitaetBereich` wiederverwenden;
-- bestehende Detail-/Suchflächen kontextbezogen aus der Reiseoberfläche öffnen;
-- Lazy-Mount der Suche beibehalten;
-- vorhandene maschinenlesbare Coverage-/Attention-/Trip-Ableitungen für Navigation/Presentation nutzen, ohne neue Truth zu speichern;
-- Mobile/Tablet/Desktop dieselbe fachliche Kontrolle geben.
+Details: `docs/TRIP_WORKSPACE_TW5_STATUS.md` und `docs/CHATGPT_TW5_MERGE_CHECKPOINT_2026-08-25.md`.
 
-**Nicht:**
-
-- Live-Provider oder Provideraktivierung;
-- Fake-Preise/Fake-Verfügbarkeit/Fake-Provider-Health;
-- Live-Mobility-/Rental-Adapter vortäuschen, solange nur fail-closed Nachweisnaht existiert;
-- manuelle Flüge als nachgewiesene Providerangebote darstellen;
-- stilles `ZRH` oder irgendeine andere erfundene Suchherkunft;
-- neue DB/Migration/RLS/Auth/Traveller-/Route-Verträge;
-- neuer `trips.status` oder neue persistierte Gap-/Detail-Truth;
-- Guardian/Simulator/Value-Optimizer-Runtime;
-- Multi-Destination-Create / TW-6;
-- Homepage-/Marketing-/Growth-Runtime;
-- Provider S4+ oder Commercial Slices hineinziehen.
-
-**Vor Implementierung zwingend:**
-
-- eigener versionierter ADR/Entscheidungsrahmen;
-- `docs/TRIP_WORKSPACE_TW5_TASK.md`;
-- `docs/TRIP_WORKSPACE_TW5_STATUS.md`;
-- Draft-PR;
-- Acceptance Criteria für mindestens Flight/Hotel/Activities/Mobility, Guest/Account, mehrere Stages/Tage, ungeplante Items, leere/unknown/unavailable/error Zustände, Geräteparität, Lazy-Mount und keine stillen Defaults;
-- STOPP nach Agent-Self-Review/Exact-Head-Evidence für unabhängigen Technical-Lead-Review.
+## 4. Noch nicht freigegebene abhängige Slices
 
 ### TW-6 – Create-Entry angleichen
 
@@ -184,7 +148,9 @@ Vorbereiteter Branch:
 
 **Nicht:** Homepage-Positionierung/Hero/Marketing-Copy; Citizenship beim Start global erzwingen.
 
-**Abhängigkeit:** dokumentierter Product-Owner-Schnitt und Guest-One-Trip-Vertrag.
+**Abhängigkeit / Start-Gate:** **dokumentierter Product-Owner-Schnitt + Guest-One-Trip-Vertrag.**
+
+Vor Start muss der Technical Lead den exakten benötigten Product-Owner-Schnitt aus den aktuellen Contracts rekonstruieren. Diese Abhängigkeit darf nicht still als erfüllt angenommen werden.
 
 ### TW-7 – Hub-Anschluss
 
@@ -194,11 +160,13 @@ Vorbereiteter Branch:
 
 **Nicht:** gespeicherten Lifecycle, Archiv oder zweite-Reise-Regeln überschreiben. Archiv bleibt AP-4.
 
+**Start-Gate:** Account-/Hub-Verträge und aktueller AP-Stand erneut prüfen.
+
 ### TW-8 – Commercial Surfaces
 
 **Ziel:** Preise, Freshness, Provenance und Übernahme ehrlich an echte Nachweise koppeln.
 
-**Abhängigkeit:** Provider S5 / reale Commercial-Provenance-Verträge.
+**Start-Gate:** Provider S5 / reale Commercial-Provenance-Verträge.
 
 **Nicht:** Secrets, Live-Calls, Fake-Angebote oder `booking_url` erfinden.
 
@@ -206,7 +174,7 @@ Vorbereiteter Branch:
 
 **Ziel:** mobile Dichte, Accessibility, Performance, Robustheit und vollständige Function-by-Function-Evidence-Matrix.
 
-**Nicht:** neue Produktmodule nachschieben.
+Start erst, wenn die für den Workspace tatsächlich erforderlichen abhängigen Runtime-Slices geklärt/integriert sind.
 
 Danach zwingend:
 
@@ -215,15 +183,15 @@ Danach zwingend:
 
 TW-0 bis TW-9 ersetzen diesen Abschlussaudit nicht.
 
-## 4. Aktueller Integrationscheckpoint
+## 5. Aktueller Integrationscheckpoint
 
 Erreicht:
 
-**TW-4 ✅ → TW-3 ✅ → Technical-Lead-Integrationscheckpoint**
+**TW-1 ✅ → TW-2 ✅ → TW-4/TW-3 ✅ → TW-5 ✅ → Post-TW-5 Integrationscheckpoint**
 
-Damit darf konfliktarme Parallelisierung geprüft werden. Sie ist nicht automatisch freigegeben. Der Technical Lead prüft vor jedem parallelen Runtime-Slice Shared Contracts, File-/Surface-Überschneidung, Branch/Draft-PR-Trennung und Merge-Reihenfolge.
+Damit darf konfliktarme Parallelisierung geprüft werden. Sie ist nicht automatisch freigegeben. Der Technical Lead prüft vor jedem parallelen Runtime-/Audit-Slice Shared Contracts, Abhängigkeiten, File-/Surface-Überschneidung, Branch/Draft-PR-Trennung und Merge-Reihenfolge.
 
-## 5. Tests und Gates je Runtime-Slice
+## 6. Tests und Gates je Runtime-Slice
 
 Mindestens, soweit relevant:
 
@@ -240,9 +208,9 @@ Mindestens, soweit relevant:
 - adversarial Agent-Self-Review
 - unabhängiger ChatGPT/Technical-Lead-Review
 
-Wenn `main` während des Slices weiterläuft: synchronisieren, fachlich Konflikte prüfen, neuen Exact Head vollständig re-gaten und erneut reviewen.
+Wenn `main` während eines Slices weiterläuft: synchronisieren, fachliche Konflikte prüfen, neuen Exact Head vollständig re-gaten und erneut reviewen.
 
-## 6. Abbruchkriterien
+## 7. Abbruchkriterien
 
 Slice stoppen und Technical Lead informieren, wenn die Lösung nur möglich wäre durch:
 
@@ -256,12 +224,13 @@ Slice stoppen und Technical Lead informieren, wenn die Lösung nur möglich wär
 - Scope-Creep in nachgelagerte Slices;
 - einen besseren angezeigten Zustand als die vorhandene Evidence trägt.
 
-## 7. Continuity
+## 8. Continuity
 
 Aktueller operativer Stand steht zusätzlich in:
 
 - `JETNITY_START_HERE.md`
 - `JETNITY_HANDOFF.md`
 - `docs/ACTIVE_WORK_STATUS.md`
+- `docs/CHATGPT_TW5_MERGE_CHECKPOINT_2026-08-25.md`
 
-Historische Statusdateien bleiben Evidence ihres Zeitpunkts. Live-Systeme müssen vor jeder neuen Arbeit erneut verifiziert werden.
+Historische Statusdateien/PR-Bodies bleiben Evidence ihres Zeitpunkts. Live-Systeme müssen vor jeder neuen Arbeit erneut verifiziert werden.
