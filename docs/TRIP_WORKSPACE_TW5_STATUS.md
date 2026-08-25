@@ -1,15 +1,17 @@
 # Jetnity – Trip Workspace TW-5 Status
 
 Stand: 25. August 2026  
-Status: **DRAFT-PR #66 OFFEN – CONTROL-DOC STOPP; Runtime-Implementierung noch nicht gestartet**  
+Status: **DRAFT-PR #66 – Runtime implementiert; Exact-Head-Evidence vollständig; STOPP für unabhängigen Technical-Lead-Review. Kein Ready. Kein Merge. Kein TW-6.**  
 Agent: `Trip workspace audit architecture`  
 Branch: `feat/trip-workspace-tw5-item-gap-details`  
 Draft-PR: #66  
-Baseline: `bee9f653d7d83dfbafbf9b9c1da6385433071a4a`
+Runtime-/Evidence-Head: `ce3e99b9a95c6600a87fc90f72f2335b04cb95a5`  
+Baseline vor TW-5: `bee9f653d7d83dfbafbf9b9c1da6385433071a4a`  
+Aktueller `main` nach Sync: `d039e7bf7f7fa9db261b4623c72cc35944aa82c4`
 
 ## 1. Zweck
 
-TW-5 – **Item- und Gap-Details** verbindet vorhandene Workspace-Truth mit kontextuellen Details und on-demand Werkzeugen. Domain-Flächen werden aus Reise-/Coverage-/Attention-/Item-Kontext geöffnet und dürfen nicht länger die primäre gleichrangige Workspace-IA bilden.
+TW-5 – **Item- und Gap-Details** verbindet vorhandene Workspace-Truth mit kontextuellen Details und on-demand Werkzeugen. Domain-Flächen werden aus Reise-/Coverage-/Attention-/Item-Kontext geöffnet und sind nicht länger die primäre gleichrangige Workspace-IA.
 
 Verbindliche Dokumente:
 
@@ -22,116 +24,141 @@ Verbindliche Dokumente:
 - `JETNITY_HANDOFF.md`
 - `docs/ACTIVE_WORK_STATUS.md`
 
-## 2. Baseline / Continuity
+## 2. Live-Verifikation
 
-Vor TW-5 wurde der post-TW-3-Continuity-Drift in PR #65 korrigiert.
+Vor und nach der Runtime geprüft:
 
-Verifizierte Integration:
+| Fakt | Wert |
+| --- | --- |
+| `origin/main` | `d039e7bf` – Merge PR #67 QS-1 docs-only |
+| Merge-Base | `d039e7bf` nach Sync; zuvor `bee9f653` |
+| Branch-Head | `ce3e99b9` |
+| Ahead / Behind | **11 ahead / 0 behind** |
+| Draft-PR #66 | OPEN, Draft, MERGEABLE |
+| URL | https://github.com/Jetnity/jetnity/pull/66 |
 
-- PR #64 / TW-3: merged
-- PR #65 / post-TW-3 Continuity: merged
-- aktueller TW-5-Baseline-`main`: `bee9f653d7d83dfbafbf9b9c1da6385433071a4a`
-- TW-5-Branch wurde auf diesen `main` fast-forward synchronisiert.
-- Draft-PR #66 wurde auf diesem Branch eröffnet.
+`main` ist während TW-5 um docs-only PR #67 (QS-1) weitergelaufen. Der Branch wurde per Merge synchronisiert. Kein Runtime-Overlap.
 
-Control-Doc-Head vor dieser Statusnachführung: `6b0ea2a7c805350f8d96163e3d7c361c535555d7`.
+## 3. Umgesetzt
 
-Keine Runtime-Änderung ist Bestandteil dieses Statuspunktes.
+Workspace-lokale Presentation-Schicht `lib/trips/detail.ts`:
 
-## 3. Ist-Audit vor Agent-Start
+- State nur IDs/Intent: `keine` / `gap` / `item` plus `sucheOffen`;
+- tote Item-Refs fallen auf die Reiseoberfläche;
+- Gap-/Item-Fakten werden bei Renderzeit aus `bereichStatus` und dem Trip-Graphen gelesen;
+- `0 Aktivitäten` ist keine Pflichtlücke;
+- `covered_by_flight` wird nicht erfunden – die aktuelle Mobility-Engine emittiert ihn nicht;
+- `AttentionAktion` bleibt der TW-4-Vertrag; Interpretation nur workspace-lokal.
 
-Auf der Baseline wurde live geprüft:
+UI:
 
-- `TripWorkspace.tsx` hält `bereich` als Client-State und rendert `TripWorkspaceNavigation`.
-- `TripWorkspaceNavigation.tsx` zeigt `Übersicht`, `Flüge`, `Unterkunft`, `Aktivitäten`, `Mobilität` als sticky gleichrangige Buttons.
-- `TripWorkspaceUebersicht.tsx` öffnet bestehende Coverage-Flächen über `onBereich`.
-- `TripWorkspaceJetztWichtig.tsx` hat `AttentionAktion` aktuell als Bereichswechsel.
-- `TripWorkspacePlan.tsx` rendert Etappen/Tage/Planpunkte; Items selbst öffnen noch kein Detail.
-- bestehende Commercial-/Search-Flächen werden bereits lazy per Bereichsbesuch gemountet und sollen diese Eigenschaft behalten.
-- `FlugBestand` und `UnterkunftBestand` existieren und sollen wiederverwendet werden.
+- Domain-Tabs als primäre IA entfernt;
+- Coverage-/Attention-/Timeline-Items öffnen Gap- oder Item-Details;
+- Official/Readiness bleiben auf der Reiseoberfläche;
+- `ohneTag`-Items öffnen ohne erfundenen Tag/Stage;
+- `FlugBestand` / `UnterkunftBestand` / vorhandene Suchflächen wiederverwendet;
+- Commercial-Suche mountet erst nach ausdrücklicher Aktion;
+- Mobile und Desktop teilen dieselbe State Machine; Desktop darf Master/Detail zeigen.
 
-Architekturfolgerung:
+Wahrheit im bestehenden Suchpfad:
 
-TW-5 muss **keinen neuen Datenstack** bauen. Es braucht eine kleine workspace-lokale Detail-/Intent-Schicht und eine UI-Komposition, die vorhandene Wahrheit kontextuell öffnet.
+- `FlugSuche` füllt Herkunft nicht mehr still mit `ZRH`. Placeholder bleibt Beispiel, kein vorausgefüllter Airport.
 
-## 4. Harte Grenzen
+Audit:
 
-Keine:
+- `scripts/trip-workspace-ui-audit.mjs` prüft die trip-zentrische IA;
+- Wait auf sichtbare Übersicht **oder** sichtbares Detail, ohne Playwright-Strict-Mode-Kollision.
 
-- DB/Migration/RLS/Auth/Identity;
-- Traveller-/Citizenship-/Document-Neumodellierung;
-- Route-/Transit-Contract-Änderung;
-- Provider-Activation/Secrets/paid calls;
-- Fake-Preise/Fake-Verfügbarkeit/Fake-Provider-Health;
-- neue Official/Safety/Seasonal Truth;
-- stillen Airports/Herkunftsdefaults;
-- neuen `trips.status`;
-- Guardian/Simulator/Value;
-- TW-6+;
-- Homepage/Marketing/Growth;
-- Production-Aktivierung.
+Nicht angefasst:
 
-## 5. Shared Contracts
+- `lib/trips/attention.ts` Contract;
+- Readiness/Safety/Seasonal/Route-Truth;
+- DB/Migration/RLS/Auth;
+- Provider, Secrets, paid calls.
 
-Kein Shared-Contract-Change ist für den geplanten TW-5-Ansatz erforderlich.
+## 4. Acceptance
 
-Weiterhin Technical-Lead-kontrolliert:
+| AC | Ergebnis |
+| --- | --- |
+| AC-1 Haupt-IA | Domain-Leiste ist keine gleichrangige Navigation mehr. |
+| AC-2 Flight Gap | offen/teilweise/unbestimmt bleiben getrennt; Suche nur explizit. |
+| AC-3 Stay Gap | analog; Nächte nur aus vorhandener Coverage. |
+| AC-4 Activities | `0 Aktivitäten` keine Pflichtlücke. |
+| AC-5 Mobility | offen/unknown getrennt; kein erfundenes `covered_by_flight`; kein Live-Adapter. |
+| AC-6 Item Details | alle sechs `TripItemKind`; `note` ohne Commercial-Fiktion. |
+| AC-7 Unplanned | `ohneTag` ohne Fake-Tag/Stage. |
+| AC-8 Auswahlstabilität | Tag bleibt; tote Item-Refs werden verworfen. |
+| AC-9 Guest/Account | dieselbe Ableitung, kein `quelle` im Helper. |
+| AC-10 Lazy Mount | Initialreise ohne Commercial-Suche; explizites Öffnen behält Mount. |
+| AC-11 Device Parity | eine Ableitung; Desktop nur mehr Fläche. |
+| AC-12 Accessibility | Keyboard/Fokus/hidden/inert/ARIA im UI-Audit. |
+| AC-13 Truth Regression | TW-2/3/4-Tests grün im vollen Suite. |
+| AC-14 No Shared Contract Drift | kein Auth/RLS/Traveller/Route/Provider/Billing-Umbau. |
 
-- Auth/Identity/Sessions/MFA/AAL/RLS/Ownership;
-- Guest→Account;
-- Traveller/Multi-Citizenship/Multi-Document;
-- Route/Transit;
-- Privacy/Consent;
-- Billing/Payment;
-- Admin Audit/Capabilities;
-- Provider Activation;
-- Attribution/Revenue/Claims Truth;
-- Guardian/Simulator/Value Contracts.
+## 5. Adversarial Self-Review
 
-Möglicher Citizenship-only-Credential-Option-Contract bleibt ausdrücklich außerhalb von TW-5.
+- Detail-State kopiert keine Hard Facts.
+- `AttentionAktion` wurde nicht cross-domain erweitert.
+- Timeline-Delete und Tag-Auswahl bleiben eigene Controls; Planpunkt ist `aria-expanded`.
+- Hidden Domain-Flächen liegen nicht mehr in einem verschachtelten `hidden`-Baum.
+- Compact fokussiert den sticky Zurück-Control; Desktop den In-Card-Zurück-Control mit `scroll-mt-32` und `preventScroll`, damit Fokus nicht unter dem öffentlichen Header landet.
+- Playwright `.or(Reiseübersicht, Reisedetail)` war nach Master/Detail strict-mode-gebrochen; das erklärte die 320 `anfangsBereich`-Fehler. Behoben durch Visible-Filter.
+- Zwei sichtbare „Zurück zur Reise“-Controls auf Compact (sticky + In-Card) sind bewusst redundant, keine zweite IA.
+- `ohneTag = []` als Default-Parameter erzeugt pro Render ein neues Array, wenn die Prop fehlt; `detailBereinigen` gibt gültige Auswahlen referenzgleich zurück.
+- Proaktiv im Scope behoben: stilles `ZRH` in `FlugSuche`.
+- Kein Shared-Contract-Problem still übernommen.
 
-## 6. Datenbank / Kosten / Production
+## 6. Exact-Head-Gates auf `ce3e99b9`
 
-- keine TW-5-Migration vorgesehen;
-- keine neuen Secrets vorgesehen;
-- keine neuen laufenden Kosten vorgesehen;
-- keine paid provider calls vorgesehen;
-- kein Production-Gate derzeit offen.
+Lokal, alle grün:
+
+- gezielte TW-5/TW-3/TW-4-Tests – 85/85
+- `npm test` – **1989/1989**
+- `npm run typecheck` – OK
+- `npm run lint` – OK
+- `npm run check:setup:ci` – OK, 1 Warning: keine `.env`
+- `check:dead` – 1 begründeter Orphan (`CookieConsent`)
+- `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` – OK
+- `npm run build` – OK, Next 14.2.32
+- `npm run audit:trip-workspace` – **1018/1018, 0 Fehler**, WebKit + Chromium. Bericht: `/opt/cursor/artifacts/tw5_audit_ce3e99b9.json`
+
+Runtime-identischer Vorläufer `d415e2d8` (vor dem docs-only-`main`-Merge) ebenfalls 1018/1018, 0 Fehler: `/opt/cursor/artifacts/tw5_audit_d415e2d8.json`.
+
+Remote, derselbe SHA `ce3e99b9`:
+
+- GitHub Actions: SUCCESS – https://github.com/Jetnity/jetnity/actions/runs/32878783657
+- Vercel Preview: READY – Deployment `6088666737`, https://jetnity-nslvrmdyc-jetnity-e1b93c82.vercel.app
+
+Dieser Status-Commit ist docs-only und folgt auf den belegten Runtime-/Sync-Head. CI/Vercel auf dem Persist-Head erneut prüfen; das UI-Audit gilt für den unveränderten Runtime-Stand `ce3e99b9`.
+
+## 7. Datenbank / Kosten / Production
+
+- keine TW-5-Migration;
+- keine neuen Secrets;
+- keine neuen laufenden Kosten;
+- keine paid provider calls;
+- kein Production-Gate offen.
 
 Supabase Development-Migrationen `20260824160000` und `20260824180000` bleiben nicht Production-approved und unberührt.
 
-## 7. Aktueller STOPP-Punkt
+## 8. Shared Contracts
 
-Control Docs und Draft-PR #66 sind vorbereitet. **Jetzt ist der manuelle Cursor-Start erforderlich.**
+Kein Shared-Contract-Change.
 
-Nächste Schritte:
+Weiterhin Technical-Lead-kontrolliert: Auth/Identity, RLS/Ownership, Traveller, Route/Transit, Privacy, Billing, Admin Audit, Provider Activation, Attribution, Guardian/Simulator/Value.
 
-1. `Trip workspace audit architecture` in Cursor mit `docs/TRIP_WORKSPACE_TW5_TASK.md` und ADR-0167 starten.
-2. Agent verifiziert zuerst Branch, Draft-PR #66, aktuellen `main` und den Ist-Code.
-3. Agent implementiert ausschließlich den freigegebenen Scope.
-4. Agent führt adversarial Self-Review + vollständige Exact-Head-Gates aus.
-5. Agent aktualisiert diesen Status mit Runtime-Head, Tests, CI/Vercel, Risiken und offenen Punkten.
-6. **STOPP** für unabhängigen ChatGPT/Technical-Lead-Re-Review.
+Citizenship-only Credential Option bleibt außerhalb von TW-5.
 
-Bis zu Schritt 1 gibt es keinen Runtime-Code von TW-5.
+## 9. Offene Risiken
 
-## 8. Review-Risiken, die der Agent gezielt prüfen muss
+- `covered_by_flight` ist im Typ vorhanden, wird von `lib/mobility/kanten.ts` derzeit nicht erzeugt. TW-5 erfindet ihn nicht.
+- Compact zeigt zwei Zurück-Controls; das ist redundant, aber keine Domain-IA.
+- `JETNITY_START_HERE.md` und Roadmap waren vor diesem Persist hinter dem Live-`main`; Continuity wird hier nachgezogen.
+- `main` Branch Protection ist live weiterhin nicht aktiviert.
+- QS-1 liegt als docs-only auf `main` (PR #67) und ist kein TW-5-Runtime-Slice.
 
-- Übergangs-Domain-Navigation darf nicht als zweite primäre IA bestehen bleiben.
-- Entfernen der Domain-Navigation darf die Auffindbarkeit vorhandener Funktionen nicht verschlechtern.
-- Detail-State darf keine Hard Facts kopieren.
-- `AttentionAktion` darf nicht in einen Cross-Domain-Truth-Contract ausufern.
-- Timeline-Item-Interaktion darf Delete/Tag-Auswahl nicht brechen.
-- `ohneTag` darf keinen Fake-Tag erzeugen.
-- Commercial-Suchen dürfen nicht eager mounten.
-- zurück/focus/hidden/inert müssen Mobile/Desktop/a11y sauber sein.
-- lange Texte und 280px dürfen nicht overflowen.
-- Guest/Account dürfen keine zwei Produktlogiken bekommen.
-
-## 9. Ready/Merge
-
-Aktuell ausdrücklich:
+## 10. STOPP
 
 **Kein Ready. Kein Merge. Kein TW-6.**
 
-Ready/Merge erst nach vollständigem Agent-Evidence-Paket und unabhängigem Technical-Lead-PASS auf dem exakten finalen Head.
+Nächster Schritt: unabhängiger ChatGPT / Technical-Lead-Review auf Exact Head `ce3e99b9` plus dem nachfolgenden docs-only Persist-Commit.

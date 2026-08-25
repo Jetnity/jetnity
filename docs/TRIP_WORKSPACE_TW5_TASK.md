@@ -1,7 +1,7 @@
 # Jetnity – Trip Workspace TW-5 Task
 
 Stand: 25. August 2026  
-Status: **verbindlicher Runtime-Auftrag; Implementierung noch nicht gestartet**  
+Status: **verbindlicher Runtime-Auftrag; Runtime auf Draft-PR #66 implementiert; STOPP für Technical-Lead-Review**  
 Agent: `Trip workspace audit architecture`  
 Branch: `feat/trip-workspace-tw5-item-gap-details`  
 Baseline nach Continuity-Closure: `bee9f653d7d83dfbafbf9b9c1da6385433071a4a`  

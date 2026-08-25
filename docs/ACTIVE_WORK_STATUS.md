@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 25. August 2026  
-Status: **TW-1, TW-2, TW-4 und TW-3 sind auf `main` integriert. Post-TW-3 Continuity ist mit PR #65 geschlossen. Aktiver Slice: TW-5 – Item- und Gap-Details, Draft-PR #66; Runtime noch nicht gestartet.**
+Status: **TW-1 bis TW-4 und post-TW-3 Continuity liegen auf `main`. Aktiver Slice: TW-5 – Item- und Gap-Details, Draft-PR #66. Runtime ist implementiert und evidence-vollständig; STOPP für unabhängigen Technical-Lead-Review. Kein Ready, kein Merge, kein TW-6.**
 
 ## 0. Verifizierte Baseline
 
@@ -60,18 +60,18 @@ Verbindliche Control Docs:
 
 Aktueller Zustand:
 
-- Branch vor TW-5-Control-Docs auf `main` `bee9f653...` fast-forward synchronisiert;
-- ADR/Task/Status versioniert;
-- Draft-PR #66 offen;
-- **noch kein TW-5-Runtime-Code**;
-- Cursor-Agent noch nicht mit TW-5 gestartet;
-- Draft bleibt bis nach Agent-Self-Review, Exact-Head-Gates und unabhängigem Technical-Lead-PASS Draft.
+- Runtime auf `feat/trip-workspace-tw5-item-gap-details` implementiert;
+- Evidence-Head `ce3e99b9a95c6600a87fc90f72f2335b04cb95a5`;
+- Branch mit aktuellem `main` `d039e7bf` (QS-1 docs-only PR #67) synchron, **0 behind / 11 ahead** vor diesem Persist;
+- Draft-PR #66 bleibt Draft / MERGEABLE;
+- Exact-Head-Gates, UI-Audit 1018/1018, GitHub Actions und Vercel auf `ce3e99b9` grün;
+- **STOPP** für unabhängigen Technical-Lead-Review.
 
 ### TW-5 fachlicher Kern
 
-Die aktuelle Runtime besitzt noch die Übergangs-Domain-Navigation `Übersicht / Flüge / Unterkunft / Aktivitäten / Mobilität` als gleichrangige Sticky-Navigation. Coverage-/Attention-Aktionen wechseln nur in diese Bereiche; Timeline-Items öffnen noch kein Detail.
+Die Übergangs-Domain-Navigation ist in der TW-5-Runtime entfernt. Coverage-/Attention-/Timeline-Einstiege öffnen workspace-lokale Gap-/Item-Details.
 
-TW-5 führt eine kleine workspace-lokale Detail-/Intent-Schicht ein:
+TW-5 führt eine kleine workspace-lokale Detail-/Intent-Schicht:
 
 - Gap-Details aus vorhandener Coverage/Attention;
 - Item-Details aus vorhandenen Timeline-/`ohneTag`-Items;
@@ -205,18 +205,6 @@ Normale scope-treue PRs dürfen nach vollständigen Exact-Head-Gates und unabhä
 
 ## 9. Exakter nächster Schritt
 
-**Jetzt muss der Product Owner genau einmal manuell in Cursor starten:**
+ChatGPT / Technical Lead führt den unabhängigen Review von Draft-PR #66 auf Exact Head `ce3e99b9` plus docs-only Persist.
 
-`Trip workspace audit architecture`
-
-Der Agent liest zuerst:
-
-1. `JETNITY_START_HERE.md`
-2. `docs/ADR_0167_TRIP_WORKSPACE_TW5_ITEM_GAP_DETAILS.md`
-3. `docs/TRIP_WORKSPACE_TW5_TASK.md`
-4. `docs/TRIP_WORKSPACE_TW5_STATUS.md`
-5. Draft-PR #66 und aktuellen `main` live.
-
-Dann implementiert er TW-5 bis zum dokumentierten STOPP.
-
-Nach Agent-Self-Review/Exact-Head-Evidence: **kein Ready, kein Merge, kein TW-6**; ChatGPT/Technical Lead führt den unabhängigen Re-Review durch.
+**Kein Ready. Kein Merge. Kein TW-6**, bis der Technical Lead ausdrücklich PASS gibt.
