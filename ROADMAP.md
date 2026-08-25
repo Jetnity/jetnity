@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 25. August 2026  
-Status: **Foundation C/D/E, Travel Safety, Travel Timing & Seasonal, Account AP-1–AP-3, Admin Slice A–C, Provider S1–S3 und der docs-only Trip-Workspace-Audit #55 liegen auf `main`. Letzter PR-Merge: #55 (`08fd7748`). Die Ziel-IA ist als ADR-0163 angenommen. TW-1 Runtime liegt in Draft-PR #56 und wartet auf unabhängigen Technical-Lead-Re-Review. Kein Ready, kein Merge, kein TW-2.**
+Status: **Foundation C/D/E, Travel Safety, Travel Timing & Seasonal, Account AP-1–AP-3, Admin Slice A–C, Provider S1–S3, Trip-Workspace-Audit #55 und TW-1 (#56) liegen auf `main`. TW-2 Runtime liegt in Draft-PR #58 und wartet auf unabhängigen Technical-Lead-Re-Review. Kein TW-3, kein TW-4.**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -303,7 +303,7 @@ Status: **auf `main` gemergt (PR #53, `8326e72f`). Entscheidung: ADR-0160.**
 
 Auftrag: `docs/ACCOUNT_AP3_TASK.md`. Entscheidung: ADR-0160.
 
-Nach AP-3 und S3 wurde der Trip-Workspace-Audit #55 docs-only gemergt (`08fd7748`). Die Ziel-IA ist danach als ADR-0163 angenommen. TW-1 Runtime liegt in Draft-PR #56. Kein Slice D, kein AP-4 und kein S4 ohne eigenen neuen Auftrag.
+Nach AP-3 und S3 wurde der Trip-Workspace-Audit #55 docs-only gemergt (`08fd7748`). Die Ziel-IA ist danach als ADR-0163 angenommen. TW-1 ist auf `main` (PR #56). TW-2 Runtime liegt in Draft-PR #58. Kein Slice D, kein AP-4 und kein S4 ohne eigenen neuen Auftrag.
 
 ---
 
@@ -341,7 +341,7 @@ S1 Shared Operational Contract ist auf `main` (PR #47). S2 FlugNachweis ist auf 
 
 ## 8. Großer End-to-End Trip-Workspace-/Übersicht-Umbau
 
-Status: **Audit/IA docs-only als PR #55 gemergt (`08fd7748`). Ziel-IA angenommen (ADR-0163). TW-1 Runtime in Draft-PR #56; STOPP für Technical-Lead-Re-Review. Kein Ready, kein Merge, kein TW-2.**
+Status: **Audit/IA docs-only als PR #55 gemergt (`08fd7748`). Ziel-IA angenommen (ADR-0163). TW-1 auf `main` (PR #56). TW-2 Runtime in Draft-PR #58; STOPP für Technical-Lead-Re-Review. Kein TW-3, kein TW-4.**
 
 Der Workspace ist die wichtigste Produktoberfläche und wird **nicht nur umgebaut**, sondern vollständig funktional generalinspiziert. PR #55 liefert ausschließlich die vorbereitete Audit-/Zielarchitektur-Evidence.
 
@@ -440,12 +440,13 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 6e. ✅ Account AP-3 auf `main` (PR #53, `8326e72f`, ADR-0160)
 7. ✅ Provider-Readiness S1–S3 auf `main` (S3 = PR #54, `b7f027ec`, ADR-0161)
 7a. ✅ Trip-Workspace-Audit / Zielarchitektur – docs-only PR #55 auf `main` (`08fd7748`); Ziel-IA danach als ADR-0163 angenommen
-8. **→ Jetzt:** TW-1 Shell/Geräteparität in Draft-PR #56 – unabhängiger Technical-Lead-Re-Review; kein Ready, kein Merge, kein TW-2
-9. danach nur nach neuen Gates: TW-2 Reiseübersicht → bevorzugt TW-4 Aufmerksamkeit → TW-3 Timeline
-10. Admin/Account/Provider-Programme separat weiterführen; kein Slice D, AP-4 oder S4 ohne eigenen Auftrag
-11. finaler Workspace Intelligence Audit
-12. echte Providerphase
-13. provider-backed End-to-End-/Truth-Audit
-14. finale Startseiten-Positionierung
+8. ✅ TW-1 Shell/Geräteparität auf `main` (PR #56)
+9. **→ Jetzt:** TW-2 Reiseübersicht in Draft-PR #58 – unabhängiger Technical-Lead-Re-Review; kein TW-3, kein TW-4
+10. danach nur nach eigenem Auftrag: bevorzugt TW-4 Aufmerksamkeit → TW-3 Timeline
+11. Admin/Account/Provider-Programme separat weiterführen; kein Slice D, AP-4 oder S4 ohne eigenen Auftrag
+12. finaler Workspace Intelligence Audit
+13. echte Providerphase
+14. provider-backed End-to-End-/Truth-Audit
+15. finale Startseiten-Positionierung
 
-Der nächste Agent darf D/E/Safety **nicht neu bauen**, darf **nicht direkt einen echten Provider integrieren** und darf **TW-2 nicht ohne ausdrücklichen Auftrag starten**. TW-1 bleibt Draft bis zu neuen Product-Owner-Gates.
+Der nächste Agent darf D/E/Safety **nicht neu bauen**, darf **nicht direkt einen echten Provider integrieren** und darf **TW-3/TW-4 nicht ohne ausdrücklichen Auftrag starten**. TW-2 bleibt Draft bis zum unabhängigen Technical-Lead-Re-Review.

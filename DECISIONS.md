@@ -4023,7 +4023,7 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 ## ADR-0163 – Trip Workspace Ziel-IA angenommen; nur TW-1 gestartet
 
 **Datum:** 25. August 2026  
-**Status:** Product-Owner-angenommen. TW-1 Runtime liegt in Draft-PR #56. Kein Ready-/Merge-Gate. Volltext: `docs/ADR_0163_TRIP_WORKSPACE_TARGET_IA.md`.
+**Status:** Product-Owner-angenommen. TW-1 ist auf `main` (PR #56). TW-2 folgt ADR-0164 / Draft-PR #58. Volltext: `docs/ADR_0163_TRIP_WORKSPACE_TARGET_IA.md`.
 
 **Entscheidung:** Dieselbe Workspace-Produktlogik gilt auf Mobile und Desktop. Eine Reise, eine Oberfläche. TW-1 und TW-2 werden nicht in einem Runtime-PR vermischt. Reihenfolge: TW-1 Shell/Geräteparität, danach TW-2, bevorzugt TW-4, dann TW-3.
 
@@ -4034,6 +4034,23 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 **Begründung:** Zwei IAs sind ein Produktfehler, kein Layoutunterschied. Kleine Slices halten Review- und Truth-Risiko begrenzt.
 
 **Konsequenzen:** Keine DB-/RLS-/Auth-/Provider-/Secret-Änderung durch TW-1. Safety-/Seasonal-Stille bleibt ein späterer Slice. Mark Ready und Merge brauchen neue ausdrückliche Product-Owner-Gates.
+
+---
+
+## ADR-0164 – Trip Workspace TW-2 verdichtet vorhandene Übersichtswahrheit
+
+**Datum:** 25. August 2026  
+**Status:** Technical-Lead-Entscheidung in der verbindlichen Build-Reihenfolge. Runtime in Draft-PR #58. Volltext: `docs/ADR_0164_TRIP_WORKSPACE_TW2_OVERVIEW.md`.
+
+**Entscheidung:** Die Reiseübersicht ist eine Presentation-Derivation. Lage kommt aus AP-3-`reiseGruppe`. Coverage-Texte kommen aus `bereichStatus`/`planStatus`. Personen aus `party[]` oder ehrlich nur als Anzahl. Kein neuer `trips.status`, kein Shadow-Lifecycle, keine Citizenship-Annahme.
+
+**Kontext:** TW-1 hat die Shell vereinheitlicht. Die ersten Sekunden beantworteten noch nicht ehrlich, was die Reise ist und was belegt ist.
+
+**Alternativen:** Persistierter Gesamtstatus; eigene Lifecycle-Enum; Attention zuerst (TW-4).
+
+**Begründung:** Eine hübsche Zusammenfassung ohne Source of Truth wäre ein Produktdefekt. AP-3 nicht widersprechen.
+
+**Konsequenzen:** TW-3/TW-4 bleiben eigene Slices. Safety/Seasonal ohne Evaluation bleiben ungeprüft.
 
 ---
 

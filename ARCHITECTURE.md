@@ -171,7 +171,7 @@ Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
 | `/` | Startseite mit Positionierung und Einstieg in die Reiseplanung |
 | `/planen` | Reisebeschreibung in eigenen Worten (`components/trips/Reiseidee.tsx`) und darunter das Formular (`components/trips/TripPlanner.tsx`). Feldfehler sitzen am Feld, nicht nur unter der Absenden-Taste (ADR-0068). |
 | `/reisen` | Übersicht der Reisen – im Konto aus Supabase, als Gast die eine Gastreise |
-| `/reisen/[tripId]` | Trip Workspace: dieselbe Produktlogik auf allen Geräten (ADR-0163 / TW-1). Übersicht ist die Reise-Ebene und enthält den Tagesplan; Navigation erreicht Flüge, Unterkunft, Aktivitäten und Mobilität. Nur der aktive Bereich ist sichtbar. Domain-Suchen werden erst beim ersten Besuch eingehängt. Desktop darf mehr Fläche nutzen, entfernt die Übersicht aber nicht. Flüge, Unterkunft und Mobilität zeigen zuerst Bestand/Abdeckung, erst darunter die bestehende Suche. Production-Suchen bleiben aus. |
+| `/reisen/[tripId]` | Trip Workspace: dieselbe Produktlogik auf allen Geräten (ADR-0163 / TW-1). Übersicht verdichtet vorhandene Reise-Wahrheit (ADR-0164 / TW-2): Identität, date-only Lage, Personenkontext und Coverage. Kein neuer persistierter Status. Navigation erreicht Flüge, Unterkunft, Aktivitäten und Mobilität. Nur der aktive Bereich ist sichtbar. Domain-Suchen werden erst beim ersten Besuch eingehängt. Production-Suchen bleiben aus. |
 
 **Seit Phase 1.5 gibt es zwei Wege, und sie unterscheiden sich nur im Speicher.** Fachliche Beschreibung: [docs/REISEN.md](docs/REISEN.md), Entscheidungen in [DECISIONS.md](DECISIONS.md) ADR-0041 bis ADR-0043.
 
@@ -185,6 +185,7 @@ Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
 | Schreiben im Konto | `lib/trips/aktionen.ts` | Server Actions, Identität über `auth.getUser()`, Rückgabe als Ergebnis statt als Ausnahme |
 | Übernahme | `lib/trips/uebernahme.ts` | Gastreise ins Konto, idempotent, ohne React und damit prüfbar |
 | Workspace-IA | `lib/trips/arbeitsbereich.ts` | sichtbare Hauptbereiche, Planstatus der Übersicht, gemeinsame Tagesauswahl, geräteunabhängige Mount-/Sichtbarkeitsregeln; kein zweiter Reise-State |
+| Reiseübersicht | `lib/trips/uebersicht.ts` | Presentation-Derivation aus Coverage, Planstatus, `party[]` und AP-3-`reiseGruppe`; kein persistierter Gesamtstatus |
 | Buchungsstatus | `lib/trips/buchung.ts` | `unconfirmed` vs. `booked`; Quelle nur `user`; keine Provider-Behauptung aus dem Browser |
 | Flugabdeckung | `lib/trips/flug-abdeckung.ts` | benötigte Abschnitte aus Origin und Etappen; Match nur bei eindeutigem Datum; sonst unbestimmt |
 | Nachtabdeckung | `lib/trips/naechte-abdeckung.ts` | halboffenes `[checkIn, checkOut)`; Überlappungen als Vereinigung; unbekannte Daten nicht als `0/14` |

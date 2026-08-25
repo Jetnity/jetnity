@@ -4,7 +4,7 @@ Stand: 25. August 2026
 Agent: `Trip workspace audit architecture`  
 Branch: `feat/trip-workspace-tw2-overview`  
 ADR: `docs/ADR_0164_TRIP_WORKSPACE_TW2_OVERVIEW.md`  
-Status: **vorbereitet; Runtime-Implementierung noch nicht gestartet**
+Status: **Runtime umgesetzt in Draft-PR #58; STOPP für unabhängigen Technical-Lead-Re-Review**
 
 ## 1. Auftrag
 

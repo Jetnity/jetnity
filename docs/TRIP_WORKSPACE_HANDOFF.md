@@ -1,15 +1,15 @@
 # Jetnity – Trip Workspace Handoff
 
 Stand: 25. August 2026  
-Status: **TW-1 Runtime in Draft-PR #56; STOPP für unabhängigen Technical-Lead-Re-Review. Kein Ready, kein Merge, kein TW-2.**  
+Status: **TW-1 auf `main` (PR #56). TW-2 Runtime in Draft-PR #58; STOPP für unabhängigen Technical-Lead-Re-Review. Kein TW-3, kein TW-4.**  
 Agent: `Trip workspace audit architecture`  
-Aktueller Branch: `feat/trip-workspace-tw1-shell-device-parity`  
-Draft-PR: **#56**
+Aktueller Branch: `feat/trip-workspace-tw2-overview`  
+Draft-PR: **#58**
 
-Die Ziel-IA ist als ADR-0163 angenommen. Der historische Audit-Handoff von PR #55 bleibt unten als Evidence.
+Die Ziel-IA ist als ADR-0163 angenommen. TW-2 folgt ADR-0164. Der historische Audit-Handoff von PR #55 bleibt unten als Evidence.
 
-Aktueller Slice-Status: `docs/TRIP_WORKSPACE_TW1_STATUS.md`  
-Auftrag: `docs/TRIP_WORKSPACE_TW1_TASK.md`
+Aktueller Slice-Status: `docs/TRIP_WORKSPACE_TW2_STATUS.md`  
+Auftrag: `docs/TRIP_WORKSPACE_TW2_TASK.md`
 
 ---
 
@@ -19,7 +19,7 @@ Stand damals: 24. August 2026
 Branch damals: `audit/trip-workspace`  
 Draft-PR damals: **#55**, docs-only
 
-Die folgenden Abschnitte beschreiben den Audit-Stand vor der IA-Annahme. Sie dürfen den aktuellen TW-1-Status nicht überschreiben.
+Die folgenden Abschnitte beschreiben den Audit-Stand vor der IA-Annahme. Sie dürfen den aktuellen TW-2-Status nicht überschreiben.
 
 ---
 
@@ -147,4 +147,4 @@ S3/AP-3/Admin C bleiben erhalten und werden nicht fachlich ersetzt.
 
 ## 7. Historischer nächster Schritt des Audit-Handoffs
 
-Dieser Abschnitt gehört zu PR #55. Der aktuelle nächste Schritt steht oben und in `docs/TRIP_WORKSPACE_TW1_STATUS.md`: unabhängiger Technical-Lead-Re-Review von TW-1 / Draft-PR #56. Kein Ready, kein Merge, kein TW-2.
+Dieser Abschnitt gehört zu PR #55. Der aktuelle nächste Schritt steht oben und in `docs/TRIP_WORKSPACE_TW2_STATUS.md`: unabhängiger Technical-Lead-Re-Review von TW-2 / Draft-PR #58. Kein TW-3, kein TW-4.
