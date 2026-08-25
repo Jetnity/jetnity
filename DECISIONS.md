@@ -4023,7 +4023,7 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 ## ADR-0163 – Trip Workspace Ziel-IA angenommen; nur TW-1 gestartet
 
 **Datum:** 25. August 2026  
-**Status:** Product-Owner-angenommen. TW-1 ist auf `main` (PR #56). TW-2 folgt ADR-0164 / Draft-PR #58. Volltext: `docs/ADR_0163_TRIP_WORKSPACE_TARGET_IA.md`.
+**Status:** Product-Owner-angenommen. TW-1 und TW-2 sind auf `main`. TW-4 folgt ADR-0165 / Draft-PR #60. Volltext: `docs/ADR_0163_TRIP_WORKSPACE_TARGET_IA.md`.
 
 **Entscheidung:** Dieselbe Workspace-Produktlogik gilt auf Mobile und Desktop. Eine Reise, eine Oberfläche. TW-1 und TW-2 werden nicht in einem Runtime-PR vermischt. Reihenfolge: TW-1 Shell/Geräteparität, danach TW-2, bevorzugt TW-4, dann TW-3.
 
@@ -4040,7 +4040,7 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 ## ADR-0164 – Trip Workspace TW-2 verdichtet vorhandene Übersichtswahrheit
 
 **Datum:** 25. August 2026  
-**Status:** Technical-Lead-Entscheidung in der verbindlichen Build-Reihenfolge. Runtime in Draft-PR #58. Volltext: `docs/ADR_0164_TRIP_WORKSPACE_TW2_OVERVIEW.md`.
+**Status:** Technical-Lead-Entscheidung. TW-2 ist auf `main` (PR #58). Volltext: `docs/ADR_0164_TRIP_WORKSPACE_TW2_OVERVIEW.md`.
 
 **Entscheidung:** Die Reiseübersicht ist eine Presentation-Derivation. Lage kommt aus AP-3-`reiseGruppe`. Coverage-Texte kommen aus `bereichStatus`/`planStatus`. Personen aus `party[]` oder ehrlich nur als Anzahl. Kein neuer `trips.status`, kein Shadow-Lifecycle, keine Citizenship-Annahme.
 
@@ -4050,7 +4050,24 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 **Begründung:** Eine hübsche Zusammenfassung ohne Source of Truth wäre ein Produktdefekt. AP-3 nicht widersprechen.
 
-**Konsequenzen:** TW-3/TW-4 bleiben eigene Slices. Safety/Seasonal ohne Evaluation bleiben ungeprüft.
+**Konsequenzen:** TW-3 bleibt ein eigener Slice. TW-4 folgt ADR-0165.
+
+---
+
+## ADR-0165 – Trip Workspace TW-4 priorisiert vorhandene Aufmerksamkeitssignale
+
+**Datum:** 25. August 2026  
+**Status:** Technical-Lead-Entscheidung in der verbindlichen Build-Reihenfolge. Runtime in Draft-PR #60. Volltext: `docs/ADR_0165_TRIP_WORKSPACE_TW4_ATTENTION.md`.
+
+**Entscheidung:** `Jetzt wichtig` ist eine Presentation-Aggregation. Safety/Seasonal nutzen die vorhandene lokale, side-effect-freie Evaluation. Vier Leerstände bleiben getrennt. Kein neuer `trips.status`, kein LLM-Score, keine Default-Citizenship.
+
+**Kontext:** TW-2 verdichtet die Übersicht, priorisiert aber nicht. Der Produktpfad liess Safety/Seasonal stumm, obwohl eine sichere lokale Evaluation existiert.
+
+**Alternativen:** Dauerhafte `noch_nicht_geprueft`-Stille; Attention-Tabelle; Provideraktivierung.
+
+**Begründung:** Künstliche Stille wirkt wie Entwarnung oder wie fehlende Fähigkeit. Die lokale Evaluation sagt ehrlich `provider_unavailable`.
+
+**Konsequenzen:** TW-3/TW-5 bleiben eigene Slices. Echte Warnungen brauchen weiterhin Provider-Gates.
 
 ---
 

@@ -171,7 +171,7 @@ Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
 | `/` | Startseite mit Positionierung und Einstieg in die Reiseplanung |
 | `/planen` | Reisebeschreibung in eigenen Worten (`components/trips/Reiseidee.tsx`) und darunter das Formular (`components/trips/TripPlanner.tsx`). Feldfehler sitzen am Feld, nicht nur unter der Absenden-Taste (ADR-0068). |
 | `/reisen` | Übersicht der Reisen – im Konto aus Supabase, als Gast die eine Gastreise |
-| `/reisen/[tripId]` | Trip Workspace: dieselbe Produktlogik auf allen Geräten (ADR-0163 / TW-1). Übersicht verdichtet vorhandene Reise-Wahrheit (ADR-0164 / TW-2): Identität, date-only Lage, Personenkontext und Coverage. Kein neuer persistierter Status. Navigation erreicht Flüge, Unterkunft, Aktivitäten und Mobilität. Nur der aktive Bereich ist sichtbar. Domain-Suchen werden erst beim ersten Besuch eingehängt. Production-Suchen bleiben aus. |
+| `/reisen/[tripId]` | Trip Workspace: dieselbe Produktlogik auf allen Geräten (ADR-0163 / TW-1). Übersicht verdichtet vorhandene Reise-Wahrheit (ADR-0164 / TW-2). `Jetzt wichtig` priorisiert vorhandene Coverage-/Readiness-/Safety-/Seasonal-Signale (ADR-0165 / TW-4) ohne persistierten Status. Navigation erreicht Flüge, Unterkunft, Aktivitäten und Mobilität. Nur der aktive Bereich ist sichtbar. Domain-Suchen werden erst beim ersten Besuch eingehängt. Production-Suchen bleiben aus. |
 
 **Seit Phase 1.5 gibt es zwei Wege, und sie unterscheiden sich nur im Speicher.** Fachliche Beschreibung: [docs/REISEN.md](docs/REISEN.md), Entscheidungen in [DECISIONS.md](DECISIONS.md) ADR-0041 bis ADR-0043.
 
@@ -186,6 +186,7 @@ Die V2-Produktschicht liegt in der Route-Gruppe `app/(public)`:
 | Übernahme | `lib/trips/uebernahme.ts` | Gastreise ins Konto, idempotent, ohne React und damit prüfbar |
 | Workspace-IA | `lib/trips/arbeitsbereich.ts` | sichtbare Hauptbereiche, Planstatus der Übersicht, gemeinsame Tagesauswahl, geräteunabhängige Mount-/Sichtbarkeitsregeln; kein zweiter Reise-State |
 | Reiseübersicht | `lib/trips/uebersicht.ts` | Presentation-Derivation aus Coverage, Planstatus, `party[]` und AP-3-`reiseGruppe`; kein persistierter Gesamtstatus |
+| Aufmerksamkeit | `lib/trips/attention.ts` | TW-4 `Jetzt wichtig`: deterministische Priorisierung vorhandener Gaps/Readiness/Safety/Seasonal; lokale provider-neutrale Evaluation, keine Persistenz |
 | Buchungsstatus | `lib/trips/buchung.ts` | `unconfirmed` vs. `booked`; Quelle nur `user`; keine Provider-Behauptung aus dem Browser |
 | Flugabdeckung | `lib/trips/flug-abdeckung.ts` | benötigte Abschnitte aus Origin und Etappen; Match nur bei eindeutigem Datum; sonst unbestimmt |
 | Nachtabdeckung | `lib/trips/naechte-abdeckung.ts` | halboffenes `[checkIn, checkOut)`; Überlappungen als Vereinigung; unbekannte Daten nicht als `0/14` |

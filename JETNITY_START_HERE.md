@@ -105,8 +105,8 @@ Kanonisch und vollständig: `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`
 - PR #57 – Technical-Lead-Autonomie + verbindliche Build-Reihenfolge: **merged**.
 - PR #56 – **Trip Workspace TW-1 – Shell & Geräteparität: merged**.
 - PR #58 – **Trip Workspace TW-2 – Reiseübersicht: merged** nach unabhängigem Technical-Lead-PASS auf Exact Head `3f2c55357a7a2425ab760aac2a29ddbe15f80fa8`; CI, Vercel und Trip-Workspace-UI-Audit 1018/1018 waren grün.
-- **Aktive Governance-Integration: PR #59 – Marketing & Growth Standards.** Dieser docs-only PR bindet die Product-Owner-Entscheidung in Startpunkt und Build-Reihenfolge ein; keine Provider-/Campaign-/Secret-/Production-Aktivierung.
-- Nach Abschluss von PR #59 ist der nächste Runtime-Slice gemäß Build Order **TW-4 – Aufmerksamkeit / `Jetzt wichtig`** durch `Trip workspace audit architecture`.
+- PR #59 – Marketing & Growth Standards: **merged**.
+- **Aktiver Slice: TW-4 – Aufmerksamkeit / `Jetzt wichtig`, Draft-PR #60, Branch `feat/trip-workspace-tw4-attention`.** Runtime umgesetzt. STOPP für unabhängigen Technical-Lead-Re-Review.
 - `Account plattform audit vorbereitung`, `Jetnity provider readiness audit` und `Admin platform audit` bleiben für ihre späteren Build-Order-Blöcke erhalten.
 - `main` Branch Protection ist technisch weiterhin nicht aktiviert; dieses Risiko nicht vergessen.
 
@@ -147,4 +147,4 @@ Vollständige Regel: `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`.
 
 ## Nächster kontrollierter Schritt
 
-PR #59 (`docs/marketing-growth-standard`) wird als docs-only Governance-PR vollständig geprüft und integriert. Danach wird **TW-4 – Aufmerksamkeit / `Jetzt wichtig`** als eigener versionierter Runtime-Slice vorbereitet. TW-4 darf nur reale, bestehende Reise-/Readiness-/Coverage-Wahrheit priorisieren; `unknown`, `stale` und nicht evaluierte Bereiche dürfen nicht als clean erscheinen. Guardian/Simulator, Paid Marketing, Provider-Aktivierung und neue Production-Writes bleiben außerhalb dieses Slices.
+Unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #60 (TW-4). Kein TW-3, kein TW-5, keine besonderen Product-Owner-Gates eigenmächtig öffnen. TW-4 priorisiert nur vorhandene Signale; Safety/Seasonal nutzen die lokale provider-neutrale Evaluation und bleiben ohne Provider ehrlich unavailable.

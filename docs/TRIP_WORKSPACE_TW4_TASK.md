@@ -3,7 +3,8 @@
 Stand: 25. August 2026  
 Agent: `Trip workspace audit architecture`  
 Branch: `feat/trip-workspace-tw4-attention`  
-ADR: `docs/ADR_0165_TRIP_WORKSPACE_TW4_ATTENTION.md`
+ADR: `docs/ADR_0165_TRIP_WORKSPACE_TW4_ATTENTION.md`  
+Status: **Runtime umgesetzt in Draft-PR #60; STOPP für unabhängigen Technical-Lead-Re-Review**
 
 ## Ziel
 

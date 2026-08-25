@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 25. August 2026  
-Status: **TW-1 und TW-2 sind auf `main`. Marketing/Growth Governance PR #59 ist gemergt. Aktiver nächster Runtime-Slice ist TW-4 – Aufmerksamkeit / `Jetzt wichtig`, vorbereitet auf `feat/trip-workspace-tw4-attention`.**
+Status: **TW-1 und TW-2 sind auf `main`. Marketing/Growth Governance PR #59 ist gemergt. TW-4 Runtime liegt in Draft-PR #60 und wartet auf unabhängigen Technical-Lead-Re-Review. Kein TW-3, kein TW-5.**
 
 ## 0. Git-Wahrheit
 
@@ -163,6 +163,6 @@ Product-Owner-Freigabe bleibt zwingend für Production-Migration/destructive Pro
 
 ## 8. Exakter nächster Schritt
 
-`Trip workspace audit architecture` liest `docs/TRIP_WORKSPACE_TW4_TASK.md`, verifiziert den tatsächlichen Branch-Code und implementiert ausschließlich TW-4. Nach Self-Review, vollständigen Exact-Head-Gates, GitHub CI, Vercel und `audit:trip-workspace` STOPP für unabhängigen ChatGPT/Technical-Lead-Review.
+**Nächster Technical-Lead-Schritt:** unabhängiger Re-Review von Draft-PR #60. Kein TW-3, kein TW-5, keine besonderen Product-Owner-Gates eigenmächtig öffnen.
 
 Danach gemäß Build Order: TW-3 – Timeline / Etappe / Tag.

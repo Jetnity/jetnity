@@ -1,15 +1,15 @@
 # Jetnity – Trip Workspace Handoff
 
 Stand: 25. August 2026  
-Status: **TW-1 auf `main` (PR #56). TW-2 Runtime in Draft-PR #58; STOPP für unabhängigen Technical-Lead-Re-Review. Kein TW-3, kein TW-4.**  
+Status: **TW-1 und TW-2 auf `main`. TW-4 Runtime in Draft-PR #60; STOPP für unabhängigen Technical-Lead-Re-Review. Kein TW-3, kein TW-5.**  
 Agent: `Trip workspace audit architecture`  
-Aktueller Branch: `feat/trip-workspace-tw2-overview`  
-Draft-PR: **#58**
+Aktueller Branch: `feat/trip-workspace-tw4-attention`  
+Draft-PR: **#60**
 
-Die Ziel-IA ist als ADR-0163 angenommen. TW-2 folgt ADR-0164. Der historische Audit-Handoff von PR #55 bleibt unten als Evidence.
+Die Ziel-IA ist als ADR-0163 angenommen. TW-4 folgt ADR-0165. Der historische Audit-Handoff von PR #55 bleibt unten als Evidence.
 
-Aktueller Slice-Status: `docs/TRIP_WORKSPACE_TW2_STATUS.md`  
-Auftrag: `docs/TRIP_WORKSPACE_TW2_TASK.md`
+Aktueller Slice-Status: `docs/TRIP_WORKSPACE_TW4_STATUS.md`  
+Auftrag: `docs/TRIP_WORKSPACE_TW4_TASK.md`
 
 ---
 
@@ -147,4 +147,4 @@ S3/AP-3/Admin C bleiben erhalten und werden nicht fachlich ersetzt.
 
 ## 7. Historischer nächster Schritt des Audit-Handoffs
 
-Dieser Abschnitt gehört zu PR #55. Der aktuelle nächste Schritt steht oben und in `docs/TRIP_WORKSPACE_TW2_STATUS.md`: unabhängiger Technical-Lead-Re-Review von TW-2 / Draft-PR #58. Kein TW-3, kein TW-4.
+Dieser Abschnitt gehört zu PR #55. Der aktuelle nächste Schritt steht oben und in `docs/TRIP_WORKSPACE_TW4_STATUS.md`: unabhängiger Technical-Lead-Re-Review von TW-4 / Draft-PR #60. Kein TW-3, kein TW-5.
