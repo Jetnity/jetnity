@@ -1,16 +1,53 @@
 # Jetnity – Product-Owner Freigabenachweis Technical-Lead-Autonomie
 
-Stand: 25. August 2026
+Stand: 25. August 2026  
+Status: **teilweise superseded – Ready-/Merge-Autonomie ist nicht mehr gültig**
 
-Der Product Owner hat die in `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md` dokumentierte Lockerung ausdrücklich freigegeben.
+## 1. Historischer Freigabestand
 
-Freigegeben ist insbesondere:
+Der Product Owner hatte am 25. August 2026 eine weitgehende Technical-Lead-Autonomie freigegeben. Dazu gehörte in dieser Datei ursprünglich auch die Aussage, normale scope-treue Entwicklungs-PRs nach Technical Closure ohne erneute Product-Owner-Freigabe Ready zu setzen und selbst nach `main` zu mergen.
 
-- normale, scope-treue Entwicklungs-PRs nach vollständigem Technical Closure ohne erneute PO-Freigabe Ready zu setzen;
-- diese normalen PRs nach erneuter Integrationsprüfung selbst nach `main` zu mergen;
-- den nächsten bereits verbindlich geplanten Slice selbstständig vorzubereiten und zu beauftragen;
-- Branches, Draft-PRs, Tests, Refactorings, Bug-/Security-Fixes, Dokumentation und Development-only Migrationen innerhalb der dokumentierten Grenzen selbstständig zu steuern.
+Diese Ready-/Merge-Erweiterung ist durch eine **spätere ausdrückliche Product-Owner-Entscheidung** wieder eingeschränkt worden.
 
-Besondere Gates bleiben PO-pflichtig gemäß Autonomy Policy: Production-Datenbank/destructive Daten, echte Provider/Secrets/Verträge/paid calls, Kosten über USD 100/Monat, große Produkt-/Geschäftsmodelländerungen, besonders sensible Identitätsdaten und öffentliche/produktive Aktivierungen.
+Die aktuelle verbindliche Regel steht in:
 
-Diese Entscheidung ersetzt für normale Engineering-PRs die frühere pauschale doppelte PO-Ready-/Merge-Pflicht.
+- `docs/MERGE_GOVERNANCE_SUPERSESSION_2026-08-25.md`;
+- `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`;
+- `docs/CHATGPT_CURSOR_WORKFLOW.md`;
+- der entsprechend korrigierten `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`.
+
+## 2. Was weiterhin freigegeben bleibt
+
+ChatGPT / Technical Lead darf weiterhin weitgehend selbstständig:
+
+- Branches und Draft-PRs anlegen;
+- Aufgaben, Status, Reviews, ADRs, Handoffs und Checkpoints versionieren;
+- Cursor-Agenten innerhalb klarer Workstream-/Scope-Grenzen steuern;
+- Tests, Refactorings, Bugfixes, Security-Härtungen und normale Engineering-Arbeit innerhalb des angenommenen Produktplans durchführen lassen;
+- Development-only Migrationen/Arbeit innerhalb der dokumentierten Grenzen steuern;
+- Exact-Head-Gates, CI/Vercel und unabhängige Reviews durchführen;
+- technische `PASS`-/`CHANGES REQUIRED`-/`review-bereit`-Entscheidungen treffen;
+- den nächsten bereits verbindlich geplanten Slice vorbereiten, solange kein ungeprüfter Runtime-Start oder besonderes Gate dadurch ausgelöst wird.
+
+## 3. Was nicht mehr autonom freigegeben ist
+
+Ohne ausdrückliche aktuelle Product-Owner-Freigabe für den konkret besprochenen PR darf ChatGPT / Technical Lead nicht:
+
+- den PR formal `Ready for review` setzen, sofern der Product Owner im konkreten Fall nichts anderes bestimmt;
+- den PR nach `main` mergen.
+
+Technischer PASS, grüne CI, Vercel READY, `mergeable=true`, fehlende Review-Threads oder eine frühere allgemeine Autonomie sind keine Merge-Freigabe.
+
+## 4. Besondere Gates bleiben zusätzlich bestehen
+
+Unverändert Product-Owner-pflichtig bleiben insbesondere Production-Datenbank/destructive Daten, echte Provider/Secrets/Verträge/paid calls, Kosten über USD 100/Monat, große Produkt-/Geschäftsmodell-/Build-Order-Änderungen, besonders sensible Identitätsdaten, fundamentale Auth-/Session-Grenzen sowie öffentliche/produktive Aktivierungen.
+
+Eine Merge-Freigabe ersetzt keine dieser separaten Freigaben.
+
+## 5. Historische Einordnung
+
+Diese Datei bleibt erhalten, damit der frühere Autonomie-Entscheid nachvollziehbar bleibt. **Die frühere Passage zur autonomen Ready-/Merge-Freigabe darf ab diesem Stand nicht mehr als aktuelle Product-Owner-Erlaubnis verwendet werden.**
+
+Merksatz:
+
+> **Autonomie bis zur technischen Review-Reife; Ready/Merge nur nach aktueller Product-Owner-Freigabe.**
