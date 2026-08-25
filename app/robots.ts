@@ -1,22 +1,20 @@
 // app/robots.ts
 import type { MetadataRoute } from 'next'
 
+import {
+  ROBOTS_DISALLOW_ALLOW_MODUS,
+  robotsDarfIndexieren,
+  robotsHostAusUrl,
+} from '@/lib/seo/robots-regeln'
+
 export default function robots(): MetadataRoute.Robots {
-  const raw = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
-  const host = raw.replace(/\/+$/, '')
-  const hostname = (() => { try { return new URL(host).hostname } catch { return 'localhost' } })()
-
-  // Vercel: 'development' | 'preview' | 'production'
-  const vercelEnv = process.env.VERCEL_ENV
-  const isProdEnv = (vercelEnv ?? process.env.NODE_ENV) === 'production'
-
-  // Extra-Schutz: niemals vercel.app / localhost indexieren
-  const isEphemeralHost = /localhost|\.vercel\.app$/i.test(hostname)
-
-  // Optionaler Kill-Switch über Env
-  const allowFlag = process.env.NEXT_PUBLIC_ALLOW_INDEXING !== 'false'
-
-  const allowIndex = isProdEnv && !isEphemeralHost && allowFlag
+  const { host } = robotsHostAusUrl(process.env.NEXT_PUBLIC_APP_URL)
+  const allowIndex = robotsDarfIndexieren({
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    VERCEL_ENV: process.env.VERCEL_ENV,
+    NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_ALLOW_INDEXING: process.env.NEXT_PUBLIC_ALLOW_INDEXING,
+  })
 
   return {
     rules: allowIndex
@@ -24,18 +22,7 @@ export default function robots(): MetadataRoute.Robots {
           {
             userAgent: '*',
             allow: '/',
-            disallow: [
-              '/api/',
-              '/admin/',
-              '/account/',
-              '/login',
-              '/register',
-              '/private/',
-              '/draft/',
-              '/ui-audit',
-              // '/_next/'  // nicht nötig
-              '/*?*preview=*',
-            ],
+            disallow: [...ROBOTS_DISALLOW_ALLOW_MODUS],
           },
         ]
       : [{ userAgent: '*', disallow: '/' }],

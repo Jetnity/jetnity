@@ -17,6 +17,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { AlertCircle } from 'lucide-react'
 
+import { NICHT_INDEXIEREN } from '@/lib/seo/index-grenze'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import { istKontoKennung, reiseLaden } from '@/lib/trips/daten'
 import GastArbeitsbereich from '@/components/trips/GastArbeitsbereich'
@@ -25,6 +26,7 @@ import KontoArbeitsbereich from '@/components/trips/KontoArbeitsbereich'
 export const metadata: Metadata = {
   title: 'Reiseübersicht',
   description: 'Plane deine Reise übersichtlich mit Jetnity.',
+  robots: NICHT_INDEXIEREN,
 }
 
 export const dynamic = 'force-dynamic'

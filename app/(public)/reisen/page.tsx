@@ -18,6 +18,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { AlertCircle, MapPin, Plus } from 'lucide-react'
 
+import { NICHT_INDEXIEREN } from '@/lib/seo/index-grenze'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import { reisenLaden } from '@/lib/trips/daten'
 import GastReisen from '@/components/trips/GastReisen'
@@ -27,6 +28,7 @@ import KontoReisenGruppen from '@/components/trips/KontoReisenGruppen'
 export const metadata: Metadata = {
   title: 'Meine Reisen',
   description: 'Öffne und bearbeite deine Jetnity-Reisen.',
+  robots: NICHT_INDEXIEREN,
 }
 
 export const dynamic = 'force-dynamic'
