@@ -4,17 +4,23 @@
 // kein zweiter trips.status, kein Shadow-Lifecycle (ADR-0164 / TW-2).
 //
 // Zeitliche Lage kommt aus derselben AP-3-Date-only-Funktion. Coverage-Texte
-// kommen aus bereichStatus / planStatus. Personen aus party[] oder ehrlich
-// nur als Anzahl ohne Angaben. Citizenships werden nicht gelesen.
+// und ihre maschinenlesbare Presentation-Lage kommen gemeinsam aus
+// bereichStatus / planStatus. Personen aus party[] oder ehrlich nur als Anzahl.
+// Citizenships werden nicht gelesen.
 
 import { heutigesDatum } from '@/lib/account/naechste-reise'
 import { reiseGruppe, type ReiseGruppe } from '@/lib/account/reise-lage'
-import { bereichStatus, planStatus, type BereichStatus } from '@/lib/trips/arbeitsbereich'
+import {
+  bereichStatus,
+  planStatus,
+  type BereichLage,
+  type BereichStatus,
+} from '@/lib/trips/arbeitsbereich'
 import type { Trip, TripItem } from '@/types/trips'
 
 export type UebersichtLage = ReiseGruppe
 
-export type AbdeckungLage = 'offen' | 'belegt' | 'unbestimmt'
+export type AbdeckungLage = BereichLage
 
 export type UebersichtPerson = {
   anzahl: number
@@ -101,27 +107,24 @@ export function uebersichtPersonen(reise: Pick<Trip, 'travellers' | 'party'>): U
   }
 }
 
-export function abdeckungLageAusText(text: string): AbdeckungLage {
-  if (/nicht vollständig bestimmbar|nicht belastbar/.test(text)) return 'unbestimmt'
-  if (/^Noch kei/.test(text)) return 'offen'
-  return 'belegt'
-}
-
 function fortschrittAus(abdeckungen: readonly UebersichtAbdeckung[]): string {
   const belegt = abdeckungen.filter((eintrag) => eintrag.lage === 'belegt').length
+  const teilweise = abdeckungen.filter((eintrag) => eintrag.lage === 'teilweise').length
   const offen = abdeckungen.filter((eintrag) => eintrag.lage === 'offen').length
   const unbestimmt = abdeckungen.filter((eintrag) => eintrag.lage === 'unbestimmt').length
   const gesamt = abdeckungen.length
 
-  if (unbestimmt > 0 && belegt === 0 && offen === 0) {
-    return 'Abdeckung noch nicht vollständig bestimmbar'
-  }
-  if (unbestimmt > 0) {
-    return `${belegt} von ${gesamt} Bereichen belegt · ${unbestimmt} noch nicht vollständig bestimmbar`
-  }
+  if (unbestimmt === gesamt) return 'Abdeckung noch nicht vollständig bestimmbar'
   if (offen === gesamt) return 'Noch nichts ausgewählt'
-  if (offen === 0) return 'Wesentliche Bereiche sind belegt'
-  return `${belegt} von ${gesamt} Bereichen belegt`
+  if (belegt === gesamt) return 'Wesentliche Bereiche sind belegt'
+
+  const teile: string[] = []
+  if (belegt > 0) teile.push(`${belegt} von ${gesamt} Bereichen belegt`)
+  if (teilweise > 0) teile.push(`${teilweise} teilweise abgedeckt`)
+  if (offen > 0) teile.push(`${offen} offen`)
+  if (unbestimmt > 0) teile.push(`${unbestimmt} noch nicht vollständig bestimmbar`)
+
+  return teile.join(' · ')
 }
 
 export function uebersichtAbleiten(
@@ -133,7 +136,7 @@ export function uebersichtAbleiten(
   const status = bereichStatus(reise, ohneTag)
   const abdeckungen = status.map((eintrag) => ({
     bereich: eintrag.bereich,
-    lage: abdeckungLageAusText(eintrag.text),
+    lage: eintrag.lage,
     text: eintrag.text,
     anzahl: eintrag.anzahl,
   }))
