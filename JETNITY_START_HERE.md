@@ -23,7 +23,8 @@ Jeder neue Chat, Technical Lead oder Coding Agent liest mindestens in dieser Rei
 14. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
 15. `JETNITY_HANDOFF.md`
 16. `docs/ACTIVE_WORK_STATUS.md`
-17. den aktuell aktiven Slice-Task/Status/Handoff sowie relevante ADRs/Checkpoints.
+17. `docs/CHATGPT_D0_1_MERGE_CHECKPOINT_2026-08-25.md`
+18. den aktuell aktiven Slice-Task/Status/Handoff sowie relevante ADRs/Checkpoints.
 
 Danach zwingend live verifizieren:
 
@@ -100,11 +101,13 @@ Exakte Cursor-Anzeigenamen:
 
 `Jetnity quality security audit` ist unabhängige QA/Security/Release-Prüfinstanz, kein allgemeiner Feature-Entwickler. `Jetnity native app architecture` folgt dem Native-Standard und wird erst am dafür vorgesehenen Checkpoint aktiviert.
 
+Kein Agent springt selbstständig zum nächsten Slice. Jeder Auftrag endet mit STOPP und wird danach unabhängig durch ChatGPT / Technical Lead geprüft.
+
 ## 6. Live-verifizierter integrierter Stand
 
 Aktueller `main`:
 
-`2bb6b8072fa04e8f6db2d989b84ada7b64745fd9`
+`083eda22189e1dad8bd70413889d2486755d7fe6`
 
 Dieser Stand enthält insbesondere:
 
@@ -123,64 +126,98 @@ Dieser Stand enthält insbesondere:
 - QS-1 / PR #67 – Audit-Evidence;
 - TW-5 / PR #66 – Item- und Gap-Details;
 - Post-TW5 Continuity / PR #68;
-- D0/G0 Foundation Audit Evidence / PR #69.
+- D0/G0 Foundation Audit Evidence / PR #69;
+- Merge-Governance-Reparatur / PR #71;
+- **D0-1 Index Boundary Contract / PR #70**.
 
-TW-5 bleibt technisch integriert. Der historische TW-5-Merge-Commit ist `6f2beeccae2c1e6bdf9bcb9fdc35a5cd56e50bec`; die spätere docs-only Continuity und der D0/G0-Audit-Merge haben `main` danach weiterbewegt.
+Letzte Merge-Commits:
 
-PR #69 war docs-only Audit-Evidence. Sein Merge ohne die nach der aktuellen Governance erforderliche ausdrückliche Product-Owner-Merge-Freigabe ist als Governance-Fehler dokumentiert; kein destruktiver Rollback wird allein deshalb erzeugt.
+- PR #71 → `63e8900b5c519f0d1d8b25d011ac9bc963d241c6`;
+- PR #70 → `083eda22189e1dad8bd70413889d2486755d7fe6`.
 
-## 7. Aktiver D0-1-Stand
+Vercel Production auf diesem `main`:
 
-Draft-PR #70: `D0-1 – Index Boundary Contract`
+- `dpl_7Qvwxrtc7NHQCWLLzrdmNsfFKfjt`;
+- Status `READY`;
+- Alias `jetnity-app.vercel.app`.
 
-Branch:
+`main` Branch Protection bleibt live deaktiviert und ist ein offenes Governance-/Engineering-Risiko.
 
-`fix/d0-1-index-boundary-contract`
+## 7. D0-1 – abgeschlossen und integriert
 
-Exact Head:
+PR #70 – `D0-1 – Index Boundary Contract` ist nach ausdrücklicher aktueller Product-Owner-Freigabe gemergt.
 
-`31022a5d0c4090081339e55bd2b7c7b3927e1185`
+Finaler PR-Head:
 
-Independent Technical-Lead Re-Review: **TECHNICAL PASS / review-bereit**.
+`549f3de1a44020641d1cad2c13a6a1a08086847d`
 
-Bestätigt sind insbesondere:
+Merge-Commit:
 
-- `/reisen` und `/reisen/[tripId]` explizit `noindex, nofollow`;
+`083eda22189e1dad8bd70413889d2486755d7fe6`
+
+Vor Merge bestätigt:
+
+- GitHub Actions Run `32906411630`: SUCCESS;
+- Vercel Preview `dpl_CNJ2iLyGM9e6AA5UdGX47PCta6zd`: READY;
+- 0 offene Inline-Review-Threads;
+- unabhängiger Technical-Lead Final Re-Review: TECHNICAL PASS;
+- Product-Owner-Freigabe vorhanden.
+
+Integriert:
+
+- `/reisen` und `/reisen/[tripId]` → `noindex, nofollow`;
 - `/reisen` aus Sitemap entfernt;
-- robots-Allow-Modus für private/sensitive Pfade gehärtet;
-- `/planen` bleibt ohne akzeptierte Intent-Keys öffentliche Basis;
-- bei Präsenz von `idee`, `ziel` oder `zielId` wird `/planen` unabhängig von leer/Whitespace/Wert/Array `noindex, nofollow`;
-- `/admin/login`, `/unauthorized` und Admin-Layout explizit `noindex`;
-- keine D0-1-DB-/RLS-/Auth-/Traveller-/Route-/Provider-/Payment-/Tracking-/Kostenänderung;
-- Exact-Head GitHub Actions SUCCESS;
-- Exact-Head Vercel Preview READY;
-- Supabase Production unverändert `ACTIVE_HEALTHY` ohne D0-1-Migration.
+- robots-Allow-Modus für private/sensitive D0-1-Pfade gehärtet;
+- `/planen` ohne akzeptierte Intent-Keys bleibt öffentliche Basis;
+- bei Präsenz von `idee`, `ziel` oder `zielId` → `noindex, nofollow`, auch leer/Whitespace/key-only/Array;
+- `/admin/login`, `/unauthorized` und Admin-Layout `noindex`;
+- keine D0-1-DB-/RLS-/Auth-/Traveller-/Route-/Provider-/Payment-/Tracking-/Kostenänderung.
 
-**PR #70 bleibt Draft / Integration Hold. Kein Ready. Kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.**
+Geschlossene Findings:
 
-## 8. Aktive Governance-Reparatur
+- D0-P1-01;
+- D0-P1-02;
+- D0-P2-03;
+- P2-D0-1-TL-01.
 
-Docs-only Draft-PR #71:
-
-`docs: restore Product Owner merge governance`
+## 8. Aktiver post-D0-1 Continuity-Slice
 
 Branch:
 
-`docs/merge-governance-repair-2026-08-25`
+`docs/post-d0-1-continuity-2026-08-25`
 
-Ziel:
+Ziel: den tatsächlichen Live-Stand nach PR #70 in den kanonischen Handoffs/Statusdateien dauerhaft speichern.
 
-- Ready-/Merge-Widerspruch zwischen PO-Merge-Policy und späteren Autonomie-Texten beseitigen;
-- klare Supersession versionieren;
-- Technical-Lead-Autonomie bis zur technischen Review-Reife erhalten;
-- Ready/Merge wieder eindeutig an die aktuelle ausdrückliche Product-Owner-Freigabe binden;
-- historische Dokumente nicht destruktiv umschreiben, sondern ihre alte Merge-Autonomie global superseden.
+Checkpoint:
 
-PR #71 ist docs-only. Kein Runtime-Code, keine DB-/Security-/Provider-/Kostenänderung.
+`docs/CHATGPT_D0_1_MERGE_CHECKPOINT_2026-08-25.md`
 
-## 9. Nächste Trip-Workspace-Kante
+Dieser Slice ist docs-only. Kein Runtime-/DB-/Security-/Provider-/Payment-/Tracking-/Kosten-Scope.
 
-**TW-6 ist noch nicht automatisch freigegeben.**
+Kein Ready/Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe für den Continuity-PR.
+
+## 9. Offene D0/G0-Kanten
+
+Nach D0-1 bleiben insbesondere offen:
+
+- D0-P1-03 – `/privacy` und `/terms` 404; eigener Legal-/PO-Slice, keine Rechtstexte erfinden;
+- D0-P2-01 – deny-all / Sitemap-/Host-Semantik;
+- D0-P2-02 – Canonical-/Origin-Vertrag und `NEXT_PUBLIC_APP_URL` vs `NEXT_PUBLIC_SITE_URL`;
+- D0-P2-04 – Locale/hreflang;
+- D0-P2-05 – JSON-LD/Entity Foundation;
+- G0-P2-01 / G0-P2-02 / G0-P3-01 / G0-P3-02.
+
+Gemäß `docs/JETNITY_BINDING_BUILD_ORDER.md` dürfen konfliktarme D0-/G0-Grundlagen früh vorbereitet werden, ohne spätere Public-/Tracking-/Provider-Aktivierungen vorzuziehen.
+
+Nach Abschluss der Continuity ist der naheliegende technische Candidate:
+
+**D0-2 – Canonical / Origin / robots-sitemap Consistency.**
+
+D0-2 ist noch nicht gestartet. Vor Runtime werden eigener Task/Status/Branch/Draft-PR erstellt, Scope/Shared Contracts geprüft und erst danach `Jetnity growth discoverability` eng begrenzt aktiviert.
+
+## 10. Nächste Trip-Workspace-Kante
+
+**TW-6 ist weiterhin nicht automatisch freigegeben.**
 
 Gemäß `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`:
 
@@ -192,39 +229,39 @@ Gemäß `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`:
 
 Keine Abhängigkeit still umgehen und keine große Build-Reihenfolge eigenmächtig ändern.
 
-## 10. Workstream-Lage
+## 11. Workstream-Lage
 
 - `Trip workspace audit architecture`: TW-5 abgeschlossen; wartet.
-- `Account plattform audit vorbereitung`: wartet; AP-1–AP-3 integriert.
-- `Jetnity provider readiness audit`: wartet; S1–S3 integriert.
-- `Admin platform audit`: wartet; A–C integriert.
-- `Jetnity growth discoverability`: D0/G0 Audit integriert; D0-1 auf PR #70 technisch PASS, jetzt STOPP / Integration Hold.
+- `Account plattform audit vorbereitung`: AP-1–AP-3 integriert; wartet.
+- `Jetnity provider readiness audit`: S1–S3 integriert; wartet.
+- `Admin platform audit`: A–C integriert; wartet.
+- `Jetnity growth discoverability`: D0/G0 Audit + D0-1 integriert; aktuell STOPP bis Continuity abgeschlossen / D0-2 versioniert.
 - `Jetnity quality security audit`: QS-1 abgeschlossen; für unabhängige Checkpoints reserviert.
 - `Jetnity native app architecture`: für spätere Native-Phase reserviert.
 
-Aktuell wird **kein neuer Cursor-Agent gestartet**. Die Governance-Reparatur #71 wird direkt durch ChatGPT / Technical Lead docs-only geführt.
+Aktuell wird **kein neuer Cursor-Agent gestartet**.
 
-## 11. Supabase / Production
+## 12. Supabase / Production
 
 Supabase Production:
 
 `qscbgcdmivbbnzrcyegn`
 
-Live verifiziert: `ACTIVE_HEALTHY`.
+Zuletzt live verifiziert: `ACTIVE_HEALTHY`.
 
 Production enthält bis einschließlich:
 
-- `20260824120000_flug_route_itinerary_surface_evidence`
-- `20260824140000_flug_route_itinerary_untrusted_surface`
+- `20260824120000_flug_route_itinerary_surface_evidence`;
+- `20260824140000_flug_route_itinerary_untrusted_surface`.
 
 Development enthält zusätzlich die nicht Production-approved Migrationen:
 
-- `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`
-- `20260824180000_trip_items_flug_handelsfelder_guard`
+- `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`;
+- `20260824180000_trip_items_flug_handelsfelder_guard`.
 
-D0-1 und Governance-Reparatur #71 ändern Production nicht.
+PR #70, PR #71 und der Continuity-Slice ändern Production nicht.
 
-## 12. Technical-Lead-Autonomie und Merge-Gate
+## 13. Technical-Lead-Autonomie und Merge-Gate
 
 ChatGPT / Technical Lead steuert normale Engineering-Arbeit innerhalb der dokumentierten Grenzen weitgehend selbstständig bis zur **technischen Review-Reife**.
 
@@ -238,15 +275,17 @@ Nach gültiger Freigabe prüft der Technical Lead Exact Head und Integrationssta
 
 Besondere Production-/Provider-/Kosten-/Payment-/Sensitive-Data-/Auth-/Launch-Gates bleiben zusätzlich und getrennt bestehen.
 
-## 13. Offene Governance-/Engineering-Risiken
+## 14. Offene Governance-/Engineering-Risiken
 
 - `main` Branch Protection ist live weiterhin nicht aktiviert.
-- historische Dokumente enthalten stellenweise alte Auto-Merge-Formulierungen; sie bleiben Evidence ihres Zeitpunkts, sind aber für Ready/Merge durch `docs/MERGE_GOVERNANCE_SUPERSESSION_2026-08-25.md` global superseded.
+- historische Dokumente/alte Draft-PRs können veraltete Statusaussagen enthalten; Live-Evidence und kanonische aktuelle Dateien gewinnen.
+- historische Auto-Merge-Formulierungen sind für Ready/Merge durch `docs/MERGE_GOVERNANCE_SUPERSESSION_2026-08-25.md` superseded.
 - QS-1 P2/P3-Findings bleiben dokumentierte Follow-ups.
 - TW-6-Abhängigkeit ist vor Runtime-Start weiterhin zu klären.
-- D0-1 schließt nicht die übrigen D0/G0-Findings wie Legal-404, Canonical/Origin, hreflang, JSON-LD oder Attribution/Consent.
+- Legal-404 ist weiterhin P1 und darf nicht durch erfundene Texte geschlossen werden.
+- Public-/Custom-Domain-/Indexing-Aktivierung bleibt gesondert gegatet.
 
-## 14. Continuity-Regel
+## 15. Continuity-Regel
 
 Kein relevanter Fortschritt darf nur im Chat existieren. Nach Reviews, Merges, Integrationsentscheidungen, Governance-Entscheidungen und Statusänderungen werden Active Work, Handoffs, Slice-Status und Checkpoints im Repository nachgezogen.
 
