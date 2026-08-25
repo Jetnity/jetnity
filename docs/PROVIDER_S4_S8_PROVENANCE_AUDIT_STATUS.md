@@ -20,13 +20,17 @@ Vollständige Evidence: `docs/PROVIDER_S4_S8_PROVENANCE_AUDIT.md`.
 | --- | --- |
 | `origin/main` | `ba86279e5ee2505bfd13801ae5e05ef50ba87c22` |
 | Merge-Base | `ba86279e` |
+| Ahead / Behind vor Gate-Nachtrag | 3 / 0 |
+| Audit Exact Head | `52162a7b3cb341581f02970f2f95ba3a3c8cad26` |
+| Actions auf Audit-Head | SUCCESS `32911158128` |
+| Vercel auf Audit-Head | SUCCESS / READY `3r4Z9dw7nzDoJ17N7ftJH5s44Vuj` |
 | Init-Head (Task + Status-Stub) | `6b7e12daa97209f6feaeca7a82908a53cd961e63` |
 | Init-Head Actions | SUCCESS `32910187319` |
 | Init-Head Vercel | READY `DYXXbFoQDhftEsEGvD2Kvj4JNmnN` |
 | PR | https://github.com/Jetnity/jetnity/pull/77 – OPEN, Draft, `MERGEABLE` |
 | Review-Threads | keine |
 
-Der Commit, der dieses Audit speichert, ist ein neuer Exact Head und muss erneut gegatet werden.
+Dieser Status-Nachtrag ist docs-only. Der Audit-Inhalt bleibt `52162a7b`. Ein neuer Follow-up-Head muss erneut SUCCESS/READY zeigen, bevor er als gegatet gilt.
 
 ---
 

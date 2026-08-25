@@ -43,23 +43,25 @@ Audit-PASS bedeutet nur: S4–S8 gegen aktuellen Code belegt, S5-Gap-Map präzis
 | Fakt | Wert |
 | --- | --- |
 | `origin/main` | `ba86279e5ee2505bfd13801ae5e05ef50ba87c22` |
-| Branch-Head vor diesem Audit-Dokument | `6b7e12daa97209f6feaeca7a82908a53cd961e63` |
+| Audit Exact Head | `52162a7b3cb341581f02970f2f95ba3a3c8cad26` |
 | Merge-Base | `ba86279e` = `origin/main` |
-| Ahead / Behind | 2 / 0 vor diesem Commit (nur Task + Status-Init) |
+| Ahead / Behind | 3 / 0 auf dem Audit-Head |
 | Draft-PR | https://github.com/Jetnity/jetnity/pull/77 |
 | PR-State | OPEN, **Draft**, `MERGEABLE` |
 | Review-Threads | keine (nur Vercel-Bot-Kommentar) |
 
-### 1.2 Actions / Vercel auf Init-Head `6b7e12da`
+### 1.2 Actions / Vercel
 
-| Gate | Ergebnis |
-| --- | --- |
-| GitHub Actions | SUCCESS `32910187319` |
-| Typecheck, Lint & Build | SUCCESS |
-| Auth-Konfiguration | SUCCESS |
-| Vercel | SUCCESS / READY `DYXXbFoQDhftEsEGvD2Kvj4JNmnN` |
+| Head | Gate | Ergebnis |
+| --- | --- | --- |
+| Audit `52162a7b` | GitHub Actions | SUCCESS `32911158128` |
+| Audit `52162a7b` | Typecheck, Lint & Build | SUCCESS |
+| Audit `52162a7b` | Auth-Konfiguration | SUCCESS |
+| Audit `52162a7b` | Vercel | SUCCESS / READY `3r4Z9dw7nzDoJ17N7ftJH5s44Vuj` |
+| Init `6b7e12da` | GitHub Actions | SUCCESS `32910187319` |
+| Init `6b7e12da` | Vercel | READY `DYXXbFoQDhftEsEGvD2Kvj4JNmnN` |
 
-Diese Gates gelten für den **docs-only Init-Head**, nicht automatisch für den Commit, der dieses Audit speichert. Neuer Exact Head muss erneut gegatet werden.
+Ein docs-only Status-Nachtrag nach `52162a7b` ist ein neuer Head und braucht eigene SUCCESS/READY-Evidence.
 
 ### 1.3 Historische Provider-PRs – nur Evidence
 
