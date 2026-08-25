@@ -1,239 +1,168 @@
 # Jetnity – Active Work Status
 
 Stand: 25. August 2026  
-Status: **aktueller operativer Stand. TW-1 ist auf `main` gemergt (`02b166e6`). TW-2 Runtime liegt in Draft-PR #58 und wartet auf unabhängigen Technical-Lead-Re-Review. Kein TW-3, kein TW-4.**
+Status: **TW-1 und TW-2 sind auf `main`. Marketing/Growth Governance PR #59 ist gemergt. Aktiver nächster Runtime-Slice ist TW-4 – Aufmerksamkeit / `Jetzt wichtig`, vorbereitet auf `feat/trip-workspace-tw4-attention`.**
 
 ## 0. Git-Wahrheit
 
-Verifiziert durch den Merge von PR #55 und anschließenden docs-only Kontinuitätsnachzug:
+Aktueller verifizierter `main` nach PR #59:
 
-- letzter fachlicher/docs-only PR-Merge auf `main`: `08fd7748ace072544e189c94880562e050971811` – PR #55
-- PR #55: **merged / closed**
-- darunter auf `main`: Provider S3 `b7f027ec` (#54, ADR-0161), Account AP-3 `8326e72f` (#53, ADR-0160), Admin Slice C `78192ab7` (#49, ADR-0162), Admin Slice B `e3bad749` (#46, ADR-0159), Admin Slice A `1ec93cc9` (#44, ADR-0158)
-- PR #55 war docs-only; keine Runtime-, DB-, RLS-, Auth-, Secret- oder Provideraktivierung durch den Merge
+- `main`: `5341decef6ab128039dea11fa6f2625fbf03d354`
+- PR #56 – TW-1: merged
+- PR #58 – TW-2: merged; Merge-Commit `5e27f383c7917eec168d11bceb78f9fafc198d42`
+- PR #59 – Marketing & Growth Standards: merged; Merge-Commit `5341decef6ab128039dea11fa6f2625fbf03d354`
+- PR #52 bleibt historischer Draft-Handoff und ist nicht Runtime-Träger.
 
-Historische Statusabschnitte oder Slice-Handoffs, die #55/#54/#53 noch als Draft oder ältere `main`-SHAs als aktuell beschreiben, sind **pre-merge Evidence**. Sie dürfen diesen zentralen Status nicht überschreiben.
+PR #59 bindet jetzt auf `main`:
 
-Nicht gemergte Governance-Evidence: Draft-PR #52. Nicht als `main` ausgeben; PR #52 muss den aktuellen Stand spiegeln, bleibt aber separat Draft.
+- `docs/JETNITY_MARKETING_GROWTH_STANDARD.md`
+- `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`
+- aktualisiertes `JETNITY_START_HERE.md`
+- aktualisierte `docs/JETNITY_BINDING_BUILD_ORDER.md`
 
-## 1. Zuletzt vollständig abgeschlossener Block
+Historische Handoffs oder ältere Statusdateien, die TW-2/PR #58 noch als Draft oder PR #59 als offen beschreiben, sind pre-merge Evidence und dürfen diesen Status nicht überschreiben.
 
-**Trip Workspace TW-1 – Shell & Geräteparität**
+## 1. Zuletzt abgeschlossene Blöcke
 
-- PR #56: **gemergt und geschlossen**
-- Merge auf `main`: `02b166e652f046d41f6e5b8d292e980369ca255e`
-- Agent: `Trip workspace audit architecture`
-- Branch: `feat/trip-workspace-tw1-shell-device-parity`
-- Device-Parity-Shell, Übersicht auf allen Viewports, ein aktiver Bereich
-- keine DB/RLS/Auth/Traveller/Provider/Secret-Änderung
+### Trip Workspace TW-2 – Reiseübersicht
 
-Davor vollständig abgeschlossen:
+- PR #58: merged / closed
+- Review-Head: `3f2c55357a7a2425ab760aac2a29ddbe15f80fa8`
+- Merge auf `main`: `5e27f383c7917eec168d11bceb78f9fafc198d42`
+- unabhängiger Technical-Lead-Review: PASS
+- GitHub CI: SUCCESS
+- Vercel: SUCCESS
+- Trip-Workspace-UI-Audit: 1018/1018, 0 Fehler, WebKit + Chromium
+- keine DB/RLS/Auth/Traveller/Provider/Secret/Kosten-/Production-Änderung
 
-**Trip Workspace Audit & Zielarchitektur – docs-only Vorbereitung**
+### Marketing & Growth Governance
 
-- PR #55: **gemergt und geschlossen**
-- Merge auf `main`: `08fd7748ace072544e189c94880562e050971811`
-- Agent: `Trip workspace audit architecture`
-- Branch: `audit/trip-workspace`
-- Audit/Zielarchitektur technisch vorbereitet; IA-Annahme steht in ADR-0163
-- **keine Runtime-Implementierung** durch #55
+- PR #59: merged / closed
+- Exact Review-Head: `46c0c1b1c5f9542c42d70e9f93ad132ebf25fb34`
+- Merge auf `main`: `5341decef6ab128039dea11fa6f2625fbf03d354`
+- Technical-Lead-Review: PASS
+- GitHub CI Run `32801868525`: SUCCESS
+- Vercel: SUCCESS
+- docs-only; keine Campaign-/Provider-/Secret-/Production-Aktivierung
 
-Davor vollständig abgeschlossen:
+### Davor bereits abgeschlossen
 
-**Provider Readiness S3 – Mobility/Rental Nachweis**
-
-- PR #54: **gemergt und geschlossen**
-- Merge auf `main`: `b7f027ec448639fe3399512d401a7789b24e52a6`
-- ADR-0161 bleibt verbindlich
-- Historischer Current-Main Exact Head `2cb9a830` bleibt Evidence vor dem Merge
-- Umgebung bleibt `null` → Übernahme fail-closed. Kein echter Provider. Keine Production-Migration.
-
-Davor vollständig abgeschlossen:
-
-**Account Platform AP-3 – Meine Reisen Lebenslage**
-
-- PR #53: **gemergt und geschlossen**
-- Merge auf `main`: `8326e72f9557a8b9b200e680b0be24aefa0bdfa8`
-- ADR-0160 bleibt verbindlich
-- Aktiv / Kommend / Vergangen / Ohne Datum nur abgeleitet. Kein Lifecycle-Write. 200er-Hinweis fail-closed.
-
-Davor vollständig abgeschlossen:
-
-**Admin Control Center Slice C – read-only Provider- und Kostenboard**
-
-- PR #49: **gemergt und geschlossen**
-- Merge auf `main`: `78192ab775165d08bb357140c2d04b865b8cc049`
-- ADR-0162 bleibt verbindlich
-
-Davor vollständig abgeschlossen:
-
-**Admin Control Center Slice B**
-
-- PR #46: **gemergt und geschlossen**
-- Squash-Merge auf `main`: `e3bad749c8e03512001e7bccd5e08467f10a7134`
-- ADR-0159 bleibt verbindlich
-- Read-only System Health ohne Fake-Green. Parent `App / Deployment` bleibt `unknown`. Parent `Supabase` bleibt `not_configured`.
-
-Davor vollständig abgeschlossen:
-
-**Admin Control Center Slice A**
-
-- PR #44: **gemergt und geschlossen**
-- Squash-Merge auf `main`: `1ec93cc9f6d70bd57ea054463e4ba8e3822a2267`
-- ADR-0158 bleibt verbindlich
-
-Davor vollständig abgeschlossen:
-
-**Provider Readiness S2 – FlugNachweis**
-
-- PR #51: **gemergt und geschlossen**
-- Squash-Merge auf `main`: `52e665ac`
-- ADR-0155, ADR-0156, ADR-0157 bleiben verbindlich
-- Development-only Migrationen `20260824160000` und `20260824180000` sind **nicht** Production-approved
-- Production endet weiterhin bei `20260824140000`
-
-Davor vollständig abgeschlossen:
-
-**Provider Readiness S1 – Shared Operational Contract**
-
-- PR #47: **gemergt und geschlossen**
-- Squash-Merge auf `main`: `01761eb9`
-- ADR-0154 bleibt verbindlich
-
-Davor vollständig abgeschlossen:
-
-**Provider Readiness Audit**
-
-- PR #45: **gemergt und geschlossen**
-- Squash-Merge auf `main`: `f92e0c9e`
-
-Davor vollständig abgeschlossen:
-
-**Account Platform AP-2 – Auth-UX-Hygiene**
-
-- PR #48: **gemergt und geschlossen**
-- Squash-Merge auf `main`: `2827d1cbb674498f504ba1810c73c8dc5d43ca24`
-
-**Account Platform AP-1 – Account-Shell + persönliche Übersicht**
-
-- PR #43: **gemergt und geschlossen**
-- Squash-Merge auf `main`: `084f7c87f36f9929f3e4a9deb9d3fedef6e96982`
-- ADR-0152, ADR-0153 bleiben verbindlich
-
-**Travel Timing & Seasonal Intelligence – provider-neutrale Foundation**
-
-- PR #38: **gemergt und geschlossen**
-- unabhängiger ChatGPT-Review R17: **PASS / Technical Closure**
+- TW-1 / PR #56 – Shell & Geräteparität
+- Trip Workspace Audit / PR #55
+- Provider S3 / PR #54
+- Account AP-3 / PR #53
+- Admin Slice C / PR #49
+- Admin Slice B / PR #46
+- Admin Slice A / PR #44
+- Provider S2 / PR #51
+- Provider S1 / PR #47
+- Account AP-2 / PR #48
+- Account AP-1 / PR #43
+- Travel Timing & Seasonal Intelligence / PR #38
 
 ## 2. Production-Status
 
-Vercel Production und Supabase Production `qscbgcdmivbbnzrcyegn` bleiben unverändert durch PR #55.
+Keine Production-Migration oder Provider-Aktivierung durch TW-1, TW-2 oder PR #59.
 
-- `20260824120000_flug_route_itinerary_surface_evidence`: angewendet
-- `20260824140000_flug_route_itinerary_untrusted_surface`: angewendet
-- S2 Development-Migrationen `20260824160000` und `20260824180000` **fehlen auf Production** und dürfen nicht eigenmächtig dorthin.
+Bekannte unveränderte Grenze:
 
-Keine neuen Secrets und keine neuen laufenden Providerkosten.
+- Supabase Production: `qscbgcdmivbbnzrcyegn`
+- Production enthält `20260824120000_flug_route_itinerary_surface_evidence`
+- Production enthält `20260824140000_flug_route_itinerary_untrusted_surface`
+- S2 Development-Migrationen `20260824160000` und `20260824180000` sind weiterhin **nicht Production-approved** und dürfen nicht eigenmächtig auf Production angewendet werden.
 
-## 3. Workstreams
+Keine neuen Secrets und keine neuen laufenden Providerkosten durch die aktuellen Slices.
 
-### Trip Workspace – TW-2 Runtime in Draft-PR #58
+## 3. Aktiver Workstream – Trip Workspace TW-4
 
-Verantwortlicher Cursor-Anzeigename: `Trip workspace audit architecture`  
-PR #55: **merged / closed**, docs-only Audit  
-PR #56: **merged / closed**, TW-1 Shell & Geräteparität  
-PR #58: **Draft**, TW-2 Reiseübersicht  
-Dokumente:
+Verantwortlicher Cursor-Anzeigename: `Trip workspace audit architecture`
 
-- `docs/ADR_0164_TRIP_WORKSPACE_TW2_OVERVIEW.md`
-- `docs/TRIP_WORKSPACE_TW2_TASK.md`
-- `docs/TRIP_WORKSPACE_TW2_STATUS.md`
+Branch:
 
-- `docs/ADR_0163_TRIP_WORKSPACE_TARGET_IA.md`
-- `docs/TRIP_WORKSPACE_TW1_TASK.md`
-- `docs/TRIP_WORKSPACE_TW1_STATUS.md`
-- `docs/TRIP_WORKSPACE_AUDIT.md`
-- `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`
-- `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`
+`feat/trip-workspace-tw4-attention`
+
+Versionierte Steuerung:
+
+- `docs/ADR_0165_TRIP_WORKSPACE_TW4_ATTENTION.md`
+- `docs/TRIP_WORKSPACE_TW4_TASK.md`
+- `docs/TRIP_WORKSPACE_TW4_STATUS.md`
+- `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md` §5
 - `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`
-- `docs/TRIP_WORKSPACE_HANDOFF.md`
 
-Die Ziel-IA ist als ADR-0163 angenommen. TW-1 ist auf `main`. TW-2 Runtime liegt in Draft-PR #58. Safety-/Seasonal-Stille und `Jetzt wichtig` bleiben TW-4. Kein TW-3 in diesen Slice.
+Ziel: begrenzter, deterministischer Attention-Layer `Jetzt wichtig` über **vorhandene** Graph-/Coverage-/Readiness-/Safety-/Seasonal-Wahrheit.
 
-### Admin Platform – abgeschlossene Slices auf `main`
+Zwingend getrennte Attention-Leerstände:
 
-- Slice A: gemergt, PR #44, ADR-0158
-- Slice B: gemergt, PR #46, ADR-0159
-- Slice C: gemergt, PR #49, ADR-0162
-- Agent `Admin platform audit` **wartet**. Kein Slice D ohne neuen kontrollierten Auftrag.
-- Billing-/Refund-P1 bleibt separater Pflichtblock vor Finance-/Payment-Live.
+- `nichts_dringend_geprueft`
+- `noch_nicht_geprueft`
+- `noch_nicht_pruefbar`
+- `pruefung_nicht_verfuegbar`
 
-### Account Platform – abgeschlossene Slices auf `main`
+Zusätzlich bleiben `unknown`, `stale` und `error` getrennt.
 
-- AP-1 / AP-2: gemergt
-- AP-3: gemergt, PR #53, ADR-0160
-- Agent `Account plattform audit vorbereitung` **wartet**. Kein AP-4 ohne neuen kontrollierten Auftrag / Shared-Gate.
+Fehlende Safety-/Seasonal-Evaluation ist weder clean noch unavailable. Keine Default-Citizenship / kein Default-Pass.
 
-### Provider Readiness – abgeschlossene Slices auf `main`
+TW-4 ist kein TW-3/TW-5-Slice, keine neue Persistenz, keine DB/RLS/Auth-/Traveller-Neumodellierung, kein Guardian/Simulator und keine Provider-/Marketing-Aktivierung.
 
-- S1 Shared Ops Contract: gemergt, PR #47
-- S2 FlugNachweis: gemergt, PR #51; Development-Guards nicht Production-approved
-- S3 Mobility/Rental Nachweis: gemergt, PR #54, ADR-0161
-- Agent `Jetnity provider readiness audit` **wartet**. Kein S4 ohne neuen kontrollierten Auftrag.
+## 4. Wartende Workstreams
 
-## 4. Parallelitätsregel
+### Account Platform
 
-Aktuell aktiv ist nur TW-2 durch `Trip workspace audit architecture`. Die übrigen Agenten warten:
+Agent: `Account plattform audit vorbereitung`
 
-- `Trip workspace audit architecture` – STOPP für Technical-Lead-Re-Review von #58
+AP-1 bis AP-3 sind auf `main`. AP-4 bis AP-12 warten gemäß verbindlicher Build Order nach Abschluss des Trip-Workspace-Programms und Traveller-/Multi-Citizenship-Vervollständigung.
+
+### Provider Readiness
+
+Agent: `Jetnity provider readiness audit`
+
+S1 bis S3 sind auf `main`. S4 bis S8 warten gemäß Build Order. Echte Provider, Secrets, Verträge und paid calls bleiben besondere Product-Owner-Gates.
+
+### Admin Control Center
+
+Agent: `Admin platform audit`
+
+A bis C sind auf `main`. D bis K plus die fehlenden Marketing-/Growth-Control-Slices aus `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md` warten gemäß Build Order. Billing-/Refund-P1 bleibt vor Finance-/Payment-Live zwingend.
+
+## 5. Marketing / Discoverability
+
+Die neuen Standards sind verbindlich auf `main`, aber **kein Vorwand, den aktiven Workspace-Slice aufzublähen**.
+
+- Discoverability D0 darf konfliktarm vorbereitet werden, wenn passend.
+- Marketing/Growth G0 darf konfliktarm vorbereitet werden, wenn passend.
+- Paid Campaigns, produktive CRM-/Audience-Weitergabe, neue Tracking-/Ads-Provider, Secrets und öffentliche Aktivierung bleiben gegated.
+- Admin Growth/Marketing wird später kontrolliert durch `Admin platform audit` in separaten M0–M6-Slices gebaut.
+
+## 6. Parallelitätsregel
+
+Aktiv ist nur TW-4 durch `Trip workspace audit architecture`.
+
+Wartend:
+
 - `Admin platform audit`
 - `Account plattform audit vorbereitung`
 - `Jetnity provider readiness audit`
 
-Kein Agent startet eigenmächtig TW-3, TW-4, Slice D, AP-4 oder S4.
+Kein wartender Agent startet eigenmächtig Slice D, AP-4, S4 oder andere Runtime-Slices.
 
-Kontrollierte nächste Reihenfolge:
+Seriell/zentral bleiben insbesondere Shared Auth/Identity/RLS/Ownership, Guest→Account, Traveller/Credentials, Route/Safety/Seasonal Truth, Privacy, Billing/Payment/Refund, Admin Audit, Provider Activation/Secrets/Kosten sowie neue sensible Identity-Storage-Verträge.
 
-1. Unabhängiger Technical-Lead-Re-Review von TW-2 / Draft-PR #58.
-2. Kein TW-3 und kein TW-4 in diesen Slice.
-3. Besondere Product-Owner-Gates bleiben geschlossen.
-4. Slice D, AP-4 und S4 nur nach eigenen Aufträgen.
+## 7. Governance
 
-Seriell/zentral bleiben insbesondere:
+Verbindlich lesen:
 
-- Auth / Identity / Sessions / MFA / AAL
-- `profiles`, Rollen, Capabilities
-- RLS / Ownership / Service Role
-- Guest→Account / Trip Graph
-- Traveller / Credentials / Readiness
-- Route / Safety / Seasonal Truth
-- Privacy Export / Delete
-- Billing / Payment / Refund / Bexio
-- Admin Audit Trail
-- Provider Activation / Secrets / Kosten
+- `JETNITY_START_HERE.md`
+- `docs/JETNITY_BINDING_BUILD_ORDER.md`
+- `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
+- `docs/JETNITY_MARKETING_GROWTH_STANDARD.md`
+- `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`
 
-## 5. Homepage
+Normale scope-treue PRs dürfen nach vollständigen Exact-Head-Gates und unabhängigem Technical-Lead-PASS Ready gesetzt und gemergt werden.
 
-Die neue Homepage-Produktseiten-Idee bleibt **pausiert**. Siehe `docs/HOMEPAGE_PRODUCT_PAGE_DIRECTION.md`.
+Product-Owner-Freigabe bleibt zwingend für Production-Migration/destructive Production-Daten, echte Provider/Secrets/Verträge/paid calls, Kosten > USD 100/Monat, große Produkt-/Business-Model-Änderungen, besonders sensible Identity-Storage-Änderungen und öffentliche/produktive Aktivierungen.
 
-## 6. Governance
+## 8. Exakter nächster Schritt
 
-- PR #43, #44, #45, #46, #47, #48, #49, #51, #53, #54, #55, #56 und #57 sind gemergt.
-- PR #52 bleibt Draft und ungemergt.
-- PR #58 bleibt Draft bis zum unabhängigen Technical-Lead-Re-Review.
-- ADR-Allokation: Admin A = ADR-0158, Admin B = ADR-0159, Account AP-3 = ADR-0160, Provider S3 = ADR-0161, Admin C = ADR-0162.
-- Trip-Workspace-Ziel-IA ist ADR-0163; TW-2-Overview-Vertrag ist ADR-0164. TW-1 ist auf `main`. TW-2 liegt in Draft-PR #58.
-- Normale Slices folgen der Technical-Lead-Autonomie. Besondere Gates bleiben Product-Owner-pflichtig.
-- Production-Migrationen bleiben separate Gates.
-- Provider-/Secret-/Kosten-Aktivierungen bleiben separate Gates.
-- S2 Development-Migrationen dürfen nicht eigenmächtig auf Production.
-- Historische Handoffs/Checkpoints bleiben Evidence, müssen aber bei widersprüchlichen alten PR-/SHA-/Next-Step-Aussagen ausdrücklich als historisch behandelt werden.
+`Trip workspace audit architecture` liest `docs/TRIP_WORKSPACE_TW4_TASK.md`, verifiziert den tatsächlichen Branch-Code und implementiert ausschließlich TW-4. Nach Self-Review, vollständigen Exact-Head-Gates, GitHub CI, Vercel und `audit:trip-workspace` STOPP für unabhängigen ChatGPT/Technical-Lead-Review.
 
-## 7. Exakter nächster Schritt
-
-1. PR #55 und PR #56 sind erledigt. TW-1 liegt auf `main`.
-2. ADR-0164 steuert TW-2 als Presentation-Derivation ohne neuen `trips.status`.
-3. **Nächster Technical-Lead-Schritt:** unabhängiger Re-Review von Draft-PR #58. Kein TW-3, kein TW-4, keine besonderen Product-Owner-Gates eigenmächtig öffnen.
-4. `Admin platform audit`, `Account plattform audit vorbereitung` und `Jetnity provider readiness audit` warten bis zu eigenen neuen Aufträgen.
-
-Der lokale Refund-Integritätsblocker bleibt ein späterer Billing-Auftrag.
+Danach gemäß Build Order: TW-3 – Timeline / Etappe / Tag.
