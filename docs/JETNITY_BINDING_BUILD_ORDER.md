@@ -19,7 +19,7 @@ Reihenfolge:
 
 1. TW-1 – Shell & Geräteparität ✅
 2. TW-2 – Reiseübersicht ✅
-3. TW-4 – Aufmerksamkeit / `Jetzt wichtig`
+3. TW-4 – Aufmerksamkeit / `Jetzt wichtig` ✅
 4. TW-3 – Timeline / Etappe / Tag
 5. TW-5 – Item- und Gap-Details
 6. TW-6/TW-7/TW-8 nur nach ihren dokumentierten Abhängigkeiten/Gates

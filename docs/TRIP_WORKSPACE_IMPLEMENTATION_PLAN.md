@@ -1,14 +1,14 @@
 # Jetnity – Trip Workspace Implementierungsplan
 
 Stand: 25. August 2026  
-Status: **Ziel-IA angenommen (ADR-0163). TW-1 und TW-2 auf `main`. TW-4 Runtime in Draft-PR #60; STOPP für unabhängigen Technical-Lead-Re-Review. Kein TW-3, kein TW-5.**  
+Status: **Ziel-IA angenommen (ADR-0163). TW-1, TW-2 und TW-4 auf `main` (TW-4 = PR #60 / `c935dd9f`). TW-3 aktiv. Kein TW-5.**  
 Audit: `docs/TRIP_WORKSPACE_AUDIT.md`  
 Ziel: `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`  
 Abhängigkeiten: `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`
 
 Kein Monster-PR. Jeder Slice ist klein, reviewbar und konfliktarm gegenüber Account, Admin und Provider.
 
-Historische Audit-Basis bleibt `1ec93cc9` / Integrationsnachzug `b7f027ec`. TW-1 ist auf `main` (PR #56). TW-2 läuft nur auf `feat/trip-workspace-tw2-overview` / Draft-PR #58.
+Historische Audit-Basis bleibt `1ec93cc9` / Integrationsnachzug `b7f027ec`. TW-1, TW-2 und TW-4 sind auf `main`. Ältere Sätze, die TW-2 oder TW-4 als Draft beschreiben, sind pre-merge Evidence.
 
 ---
 
@@ -109,7 +109,7 @@ Gates: Repo-Hygiene, CI auf Exact Head, Vercel Preview falls erzeugt. Grün ≠ 
 
 ### TW-2 – Reiseübersicht
 
-**Status:** Runtime umgesetzt in Draft-PR #58; wartet auf unabhängigen Technical-Lead-Re-Review. Nicht gemergt.
+**Status:** auf `main` gemergt (PR #58). Historische Draft-Sätze in älteren Dateien sind pre-merge Evidence.
 
 **Ziel:** Die ersten Sekunden beantworten „Was ist diese Reise?“ ohne Dashboard.
 
@@ -130,6 +130,8 @@ Gates: Repo-Hygiene, CI auf Exact Head, Vercel Preview falls erzeugt. Grün ≠ 
 
 ### TW-3 – Timeline / Etappe / Tag
 
+**Status:** aktiver Runtime-Slice auf `feat/trip-workspace-tw3-timeline` (ADR-0166).
+
 **Ziel:** Verlauf statt Modulwechsel.
 
 **Darf:**
@@ -148,7 +150,7 @@ Gates: Repo-Hygiene, CI auf Exact Head, Vercel Preview falls erzeugt. Grün ≠ 
 
 ### TW-4 – Aufmerksamkeit / „Jetzt wichtig“
 
-**Status:** Runtime umgesetzt in Draft-PR #60; wartet auf unabhängigen Technical-Lead-Re-Review. Nicht gemergt.
+**Status:** auf `main` gemergt (PR #60, Merge-Commit `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f`). Historische Draft-/Re-Review-Sätze in `docs/TRIP_WORKSPACE_TW4_STATUS.md` sind pre-merge Evidence.
 
 **Ziel:** Priorisierung vorhandener Signale.
 

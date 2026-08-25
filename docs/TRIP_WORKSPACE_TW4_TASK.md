@@ -4,7 +4,7 @@ Stand: 25. August 2026
 Agent: `Trip workspace audit architecture`  
 Branch: `feat/trip-workspace-tw4-attention`  
 ADR: `docs/ADR_0165_TRIP_WORKSPACE_TW4_ATTENTION.md`  
-Status: **Runtime umgesetzt in Draft-PR #60; STOPP für unabhängigen Technical-Lead-Re-Review**
+Status: **historisch abgeschlossen. TW-4 / PR #60 ist auf `main` gemergt (`c935dd9f`). Aktiver Slice ist TW-3. Der Auftragstext darunter bleibt pre-merge Evidence.**
 
 ## Ziel
 

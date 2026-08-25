@@ -1,53 +1,35 @@
 # Jetnity – Active Work Status
 
 Stand: 25. August 2026  
-Status: **TW-1 und TW-2 sind auf `main`. TW-4 Draft-PR #60 bleibt Draft. Review `5018945518` (Official-Requirement-Key-Completeness) ist im Branch behoben; STOPP für erneuten unabhängigen Technical-Lead-Re-Review. Kein Ready, kein Merge, kein TW-3, kein TW-5.**
+Status: **TW-1, TW-2 und TW-4 sind auf `main`. TW-3 – Timeline / Etappe / Tag ist der aktive Runtime-Slice. Kein Ready, kein Merge, kein TW-5.**
 
 ## 0. Git-Wahrheit
 
 Aktueller verifizierter `main`:
 
-- `main`: `c9cab1f349fd1778c80b38a2c07e41d8e298e595`
+- `main`: `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f`
 - PR #56 – TW-1: merged
 - PR #58 – TW-2: merged; Merge-Commit `5e27f383c7917eec168d11bceb78f9fafc198d42`
 - PR #59 – Marketing & Growth Standards: merged; Merge-Commit `5341decef6ab128039dea11fa6f2625fbf03d354`
+- PR #60 – TW-4 Aufmerksamkeit: **merged**; Merge-Commit `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f`
 - PR #52 bleibt historischer Draft-Handoff und ist nicht Runtime-Träger.
 
-PR #59 bindet jetzt auf `main`:
-
-- `docs/JETNITY_MARKETING_GROWTH_STANDARD.md`
-- `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`
-- aktualisiertes `JETNITY_START_HERE.md`
-- aktualisierte `docs/JETNITY_BINDING_BUILD_ORDER.md`
-
-Historische Handoffs oder ältere Statusdateien, die TW-2/PR #58 noch als Draft oder PR #59 als offen beschreiben, sind pre-merge Evidence und dürfen diesen Status nicht überschreiben.
+Historische Handoffs oder ältere Statusdateien, die TW-4/PR #60 noch als Draft oder Re-Review-STOPP beschreiben, sind pre-merge Evidence und dürfen diesen Status nicht überschreiben.
 
 ## 1. Zuletzt abgeschlossene Blöcke
 
-### Trip Workspace TW-2 – Reiseübersicht
+### Trip Workspace TW-4 – Aufmerksamkeit / Jetzt wichtig
 
-- PR #58: merged / closed
-- Review-Head: `3f2c55357a7a2425ab760aac2a29ddbe15f80fa8`
-- Merge auf `main`: `5e27f383c7917eec168d11bceb78f9fafc198d42`
-- unabhängiger Technical-Lead-Review: PASS
-- GitHub CI: SUCCESS
-- Vercel: SUCCESS
-- Trip-Workspace-UI-Audit: 1018/1018, 0 Fehler, WebKit + Chromium
+- PR #60: merged / closed
+- Merge auf `main`: `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f`
+- unabhängiger Technical-Lead-Review: PASS / abgenommen
 - keine DB/RLS/Auth/Traveller/Provider/Secret/Kosten-/Production-Änderung
-
-### Marketing & Growth Governance
-
-- PR #59: merged / closed
-- Exact Review-Head: `46c0c1b1c5f9542c42d70e9f93ad132ebf25fb34`
-- Merge auf `main`: `5341decef6ab128039dea11fa6f2625fbf03d354`
-- Technical-Lead-Review: PASS
-- GitHub CI Run `32801868525`: SUCCESS
-- Vercel: SUCCESS
-- docs-only; keine Campaign-/Provider-/Secret-/Production-Aktivierung
 
 ### Davor bereits abgeschlossen
 
+- TW-2 / PR #58 – Reiseübersicht
 - TW-1 / PR #56 – Shell & Geräteparität
+- Marketing & Growth Governance / PR #59
 - Trip Workspace Audit / PR #55
 - Provider S3 / PR #54
 - Account AP-3 / PR #53
@@ -62,7 +44,7 @@ Historische Handoffs oder ältere Statusdateien, die TW-2/PR #58 noch als Draft 
 
 ## 2. Production-Status
 
-Keine Production-Migration oder Provider-Aktivierung durch TW-1, TW-2 oder PR #59.
+Keine Production-Migration oder Provider-Aktivierung durch TW-1, TW-2, TW-4 oder PR #59.
 
 Bekannte unveränderte Grenze:
 
@@ -73,38 +55,25 @@ Bekannte unveränderte Grenze:
 
 Keine neuen Secrets und keine neuen laufenden Providerkosten durch die aktuellen Slices.
 
-## 3. Aktiver Workstream – Trip Workspace TW-4
+## 3. Aktiver Workstream – Trip Workspace TW-3
 
 Verantwortlicher Cursor-Anzeigename: `Trip workspace audit architecture`
 
 Branch:
 
-`feat/trip-workspace-tw4-attention`
+`feat/trip-workspace-tw3-timeline`
 
 Versionierte Steuerung:
 
-- `docs/ADR_0165_TRIP_WORKSPACE_TW4_ATTENTION.md`
-- `docs/TRIP_WORKSPACE_TW4_TASK.md`
-- `docs/TRIP_WORKSPACE_TW4_STATUS.md`
-- `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md` §5
+- `docs/ADR_0166_TRIP_WORKSPACE_TW3_TIMELINE.md`
+- `docs/TRIP_WORKSPACE_TW3_TASK.md`
+- `docs/TRIP_WORKSPACE_TW3_STATUS.md`
+- `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md` §3 und §6
 - `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`
 
-Ziel: begrenzter, deterministischer Attention-Layer `Jetzt wichtig` über **vorhandene** Graph-/Coverage-/Readiness-/Safety-/Seasonal-Wahrheit.
+Ziel: Etappen und Tage als zusammenhängende Reise-Timeline aus dem kanonischen Trip-Graphen. Einzige Auswahlquelle bleibt `gewaehlterTagId`. Transit ist kein Nutzerziel. Keine zweite Tageswahrheit in URL oder Persistenz.
 
-Zwingend getrennte Attention-Leerstände:
-
-- `nichts_dringend_geprueft`
-- `noch_nicht_geprueft`
-- `noch_nicht_pruefbar`
-- `pruefung_nicht_verfuegbar`
-
-Zusätzlich bleiben `unknown`, `stale` und `error` getrennt.
-
-Fehlende Safety-/Seasonal-Evaluation ist weder clean noch unavailable. Keine Default-Citizenship / kein Default-Pass.
-
-TW-4 ist kein TW-3/TW-5-Slice, keine neue Persistenz, keine DB/RLS/Auth-/Traveller-Neumodellierung, kein Guardian/Simulator und keine Provider-/Marketing-Aktivierung.
-
-Reviews `5017458023`, `5018115879` und `5018504776` sind behoben. Review `5018945518` auf `5cf49976` blieb BLOCKED, weil Official-Pflichtslots nur Traveller/Credential/Destination prüften und eine einzelne `visa=current`-Evaluation Clean erzeugen konnte. Der aktuelle Fix verwendet die bestehende Engine-Granularität `travellerClientRef + credentialOptionRef + destinationCountryCode + requirementType + transitCountryCode` über `OFFICIAL_REQUIREMENT_TYPES` und `readinessReisekontext`. Belegter Runtime-Head: `d2314d3c4eb68266743262d0ee7e4f5247b4a6b9`. Separate Citizenship-only Credential-Optionen bleiben ein offener Shared-Contract-Bedarf außerhalb TW-4.
+TW-3 ist kein TW-5-Slice, keine neue Persistenz, keine DB/RLS/Auth-/Traveller-/Route-Neumodellierung, kein Guardian/Simulator und keine Provider-/Marketing-Aktivierung.
 
 ## 4. Wartende Workstreams
 
@@ -128,16 +97,15 @@ A bis C sind auf `main`. D bis K plus die fehlenden Marketing-/Growth-Control-Sl
 
 ## 5. Marketing / Discoverability
 
-Die neuen Standards sind verbindlich auf `main`, aber **kein Vorwand, den aktiven Workspace-Slice aufzublähen**.
+Die Standards sind verbindlich auf `main`, aber **kein Vorwand, den aktiven Workspace-Slice aufzublähen**.
 
 - Discoverability D0 darf konfliktarm vorbereitet werden, wenn passend.
 - Marketing/Growth G0 darf konfliktarm vorbereitet werden, wenn passend.
 - Paid Campaigns, produktive CRM-/Audience-Weitergabe, neue Tracking-/Ads-Provider, Secrets und öffentliche Aktivierung bleiben gegated.
-- Admin Growth/Marketing wird später kontrolliert durch `Admin platform audit` in separaten M0–M6-Slices gebaut.
 
 ## 6. Parallelitätsregel
 
-Aktiv ist nur TW-4 durch `Trip workspace audit architecture`.
+Aktiv ist nur TW-3 durch `Trip workspace audit architecture`.
 
 Wartend:
 
@@ -145,9 +113,7 @@ Wartend:
 - `Account plattform audit vorbereitung`
 - `Jetnity provider readiness audit`
 
-Kein wartender Agent startet eigenmächtig Slice D, AP-4, S4 oder andere Runtime-Slices.
-
-Seriell/zentral bleiben insbesondere Shared Auth/Identity/RLS/Ownership, Guest→Account, Traveller/Credentials, Route/Safety/Seasonal Truth, Privacy, Billing/Payment/Refund, Admin Audit, Provider Activation/Secrets/Kosten sowie neue sensible Identity-Storage-Verträge.
+Kein wartender Agent startet eigenmächtig Slice D, AP-4, S4 oder andere Runtime-Slices. Die bevorzugte Parallelisierungs-Schwelle bleibt TW-4 ✅ + TW-3 ✅ plus Technical-Lead-Integrations-Checkpoint.
 
 ## 7. Governance
 
@@ -156,15 +122,12 @@ Verbindlich lesen:
 - `JETNITY_START_HERE.md`
 - `docs/JETNITY_BINDING_BUILD_ORDER.md`
 - `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
-- `docs/JETNITY_MARKETING_GROWTH_STANDARD.md`
-- `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`
+- `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`
 
-Normale scope-treue PRs dürfen nach vollständigen Exact-Head-Gates und unabhängigem Technical-Lead-PASS Ready gesetzt und gemergt werden.
+Normale scope-treue PRs dürfen nach vollständigen Exact-Head-Gates und unabhängigem Technical-Lead-PASS Ready gesetzt und gemergt werden. Der Coding Agent setzt weder Ready noch Merge.
 
 Product-Owner-Freigabe bleibt zwingend für Production-Migration/destructive Production-Daten, echte Provider/Secrets/Verträge/paid calls, Kosten > USD 100/Monat, große Produkt-/Business-Model-Änderungen, besonders sensible Identity-Storage-Änderungen und öffentliche/produktive Aktivierungen.
 
 ## 8. Exakter nächster Schritt
 
-**Nächster Technical-Lead-Schritt:** erneuter unabhängiger Re-Review von Draft-PR #60 nach dem Official-Requirement-Key-Fix. Kein Ready, kein Merge, kein TW-3, kein TW-5, keine Shared-Contract-Erweiterung, keine besonderen Product-Owner-Gates eigenmächtig öffnen.
-
-Danach gemäß Build Order: TW-3 – Timeline / Etappe / Tag.
+**Nächster Technical-Lead-Schritt:** unabhängiger Re-Review von Draft-PR #64 (TW-3) auf dem persistierten Exact Head. Kein Ready, kein Merge, kein TW-5.
