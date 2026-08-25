@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 25. August 2026  
-Status: **TW-1 und TW-2 sind auf `main`. `main` trägt zusätzlich die neue Agent-/Technical-Lead-Governance. TW-4 Draft-PR #60 ist mit diesem `main` synchronisiert; Completeness-/Degraded-State-Fix ist umgesetzt und wartet auf erneuten unabhängigen Technical-Lead-Re-Review. Kein Ready, kein Merge, kein TW-3, kein TW-5.**
+Status: **TW-1 und TW-2 sind auf `main`. TW-4 Draft-PR #60 ist mit `main` synchronisiert; der Official-Slot-/Contract-Fix nach Review `5018504776` ist umgesetzt und wartet auf erneuten unabhängigen Technical-Lead-Re-Review. Kein Ready, kein Merge, kein TW-3, kein TW-5.**
 
 ## 0. Git-Wahrheit
 
@@ -104,7 +104,7 @@ Fehlende Safety-/Seasonal-Evaluation ist weder clean noch unavailable. Keine Def
 
 TW-4 ist kein TW-3/TW-5-Slice, keine neue Persistenz, keine DB/RLS/Auth-/Traveller-Neumodellierung, kein Guardian/Simulator und keine Provider-/Marketing-Aktivierung.
 
-Review `5017458023` auf `8bbafefc` war BLOCKED und ist behoben. Review `5018115879` auf `787d7305` blieb BLOCKED wegen unvollständiger Official-Coverage und verlorener gemischter Degraded States. Der aktuelle Fix ist fail-closed Official-Completeness plus verlustfreie Degraded-Punkte; Branch ist mit `main` `c9cab1f3` synchronisiert.
+Reviews `5017458023` und `5018115879` sind behoben. Review `5018504776` auf `4087bbed` blieb BLOCKED, weil TW-4 `cit:*` als OptionRefs erfunden und Official-Lagen aus der Legacy-Summary abgeleitet hat. Der aktuelle Fix nutzt ausschließlich `credentialOptionsAus()` und klassifiziert jede kanonische Official-Slot-Lage direkt aus `OfficialEvaluation[]`. Separate Citizenship-only Credential-Optionen sind ein offener Shared-Contract-Bedarf außerhalb TW-4.
 
 ## 4. Wartende Workstreams
 
@@ -165,6 +165,6 @@ Product-Owner-Freigabe bleibt zwingend für Production-Migration/destructive Pro
 
 ## 8. Exakter nächster Schritt
 
-**Nächster Technical-Lead-Schritt:** erneuter unabhängiger Re-Review von Draft-PR #60 nach Sync mit `main` `c9cab1f3` und dem Official-Completeness-/Degraded-State-Fix. Kein Ready, kein Merge, kein TW-3, kein TW-5, keine besonderen Product-Owner-Gates eigenmächtig öffnen.
+**Nächster Technical-Lead-Schritt:** erneuter unabhängiger Re-Review von Draft-PR #60 nach dem kanonischen Official-Slot-Fix. Kein Ready, kein Merge, kein TW-3, kein TW-5, keine Shared-Contract-Erweiterung, keine besonderen Product-Owner-Gates eigenmächtig öffnen.
 
 Danach gemäß Build Order: TW-3 – Timeline / Etappe / Tag.

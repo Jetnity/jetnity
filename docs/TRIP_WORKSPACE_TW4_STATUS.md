@@ -1,7 +1,7 @@
 # Trip Workspace TW-4 – Status
 
 Stand: 25. August 2026  
-Status: **Completeness-/Degraded-State-Fix umgesetzt / Draft / STOPP für erneuten unabhängigen Technical-Lead-Re-Review**
+Status: **Kanonischer Official-Slot-Fix umgesetzt / Draft / STOPP für erneuten unabhängigen Technical-Lead-Re-Review**
 
 ## Identität
 
@@ -10,9 +10,10 @@ Status: **Completeness-/Degraded-State-Fix umgesetzt / Draft / STOPP für erneut
 - Draft-PR: #60 – `Trip Workspace TW-4 – Aufmerksamkeit / Jetzt wichtig`
 - Base / Merge-Base: `origin/main` `c9cab1f349fd1778c80b38a2c07e41d8e298e595`
 - Merge-Commit mit aktueller Agent-/Technical-Lead-Governance: `48cf3825d4de9fc2db65241712799e3a29054c7d`
-- Runtime-Head Completeness/Degraded: `5edd6b8a0d26b69149018c14f427aa49471c18f4`
+- Runtime-Head Official-Slots: `475579d90d88834149b0f52dfe824f649f3ed6f9`
 - Technical-Lead-Review `5017458023`: behoben
-- Technical-Lead-Review `5018115879` auf `787d730568c7eba2acb3974aeed4ea39297d2f32`: BLOCKED – Official-Completeness und gemischte Degraded States; Fix umgesetzt, Re-Review offen
+- Technical-Lead-Review `5018115879`: behoben
+- Technical-Lead-Review `5018504776` auf `4087bbedd3821bf0faa1920f53e8ad071570e5eb`: BLOCKED – nicht-kanonische `cit:*`-OptionRefs und Summary-basierte Official-Klassifikation; Fix umgesetzt, Re-Review offen
 - ADR: `docs/ADR_0165_TRIP_WORKSPACE_TW4_ATTENTION.md`
 - Auftrag: `docs/TRIP_WORKSPACE_TW4_TASK.md`
 
@@ -191,9 +192,45 @@ Der nachfolgende Status-Commit ist docs-only. CI/Vercel auf dem Persist-Head ern
 
 - Ohne Provider bleiben Safety/Seasonal ehrlich unavailable; das ist kein Fake-Clean.
 - Official ohne Citizenships ist `noch_nicht_pruefbar`, ohne implizite Passwahl.
-- Lokale Official-Engine nutzt bei fehlenden Dokumenten weiterhin `:none`; TW-4 prüft fail-closed zusätzlich jede vorhandene Citizenship-Option. Das ist Presentation-Completeness, kein Traveller-Contract-Umbau.
+- Ohne Documents ist die kanonische Official-Option weiterhin `${traveller.clientRef}:none`. Separate Citizenship-only Credential-Optionen wären ein eigener Shared Traveller/Official-Contract-Slice unter Technical-Lead-Steuerung, nicht TW-4.
 - Budget, Pace und Domain-Suchen sind unverändert keine Attention-Wahrheit.
+
+## Review-Fix nach `5018504776`
+
+Unabhängiger Technical-Lead-Kommentar auf Exact Head `4087bbed`:
+
+1. TW-4 erfand bei Travellern ohne Dokumente `cit:*` als `credentialOptionRef`. Der Shared Contract `credentialOptionsAus()` erzeugt in diesem Fall ausschließlich `${traveller.clientRef}:none`.
+2. Official-Degraded-States wurden noch aus `readiness.summary` abgeleitet und konnten bei gemischten Slots Reihenfolge oder `ungeprueft` statt der belegten Lage liefern.
+
+Korrektur, nur TW-4:
+
+- Pflichtslots kommen ausschließlich aus `credentialOptionsAus()`.
+- Jede relevante Traveller-/Credential-Option/Destination wird direkt gegen passende `OfficialEvaluation[]` klassifiziert: `current/current` = abgedeckt; fehlend = `ungeprueft`; provider/source unavailable bzw. Status unavailable = `unavailable`; stale/recheck = `stale`; `insufficient_context` = `insufficient_context`; echtes `unknown` bleibt `unknown`.
+- Die Klassifikation ist listenreihenfolge-unabhängig. Kein Default-Pass, kein Shared-Contract-Umbau.
+
+## Offener Shared-Contract-Bedarf
+
+Falls später getrennte Citizenship-only Credential-Optionen fachlich notwendig werden, ist das ein eigener Shared Traveller/Official-Contract unter Technical-Lead-Steuerung. TW-4 implementiert das nicht.
+
+## Exact-Head-Gates auf `475579d9`
+
+Lokal, alle grün:
+
+- `check:setup:ci` – OK, 1 Warning: keine `.env`
+- `npm run typecheck` – OK
+- `npm run lint` – OK
+- `npm test` – **1939/1939** pass, inkl. 25 TW-4-Attention-Tests
+- `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` – OK
+- `npm run build` – OK
+- `npm run audit:trip-workspace` – 1018 Kombinationen, 0 Fehler. Bericht: `/opt/cursor/artifacts/tw4_audit_475579d9.json`
+
+Remote, derselbe Runtime-SHA:
+
+- GitHub Actions: SUCCESS – https://github.com/Jetnity/jetnity/actions/runs/32845299559
+- Vercel Preview: SUCCESS – Deployment `6082651350`, https://jetnity-e6xx0fqiv-jetnity-e1b93c82.vercel.app
+
+Der nachfolgende Status-Commit ist docs-only. CI/Vercel auf dem Persist-Head erneut prüfen; das UI-Audit gilt für den unveränderten Runtime-Stand `475579d9`.
 
 ## Nächster Schritt
 
-Erneuter unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #60. Kein Ready, kein Merge, kein TW-3, kein TW-5, keine besonderen Product-Owner-Gates eigenmächtig öffnen.
+Erneuter unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #60. Kein Ready, kein Merge, kein TW-3, kein TW-5, keine Shared-Contract-Erweiterung.
