@@ -686,12 +686,15 @@ export function attentionAbleiten(eingabe: AttentionEingabe): AttentionAbleitung
     const slots = officialPflichtslots(reise)
     if (slots.length === 0) {
       domainen.push('noch_nicht_geprueft')
-      punkte.push(
-        officialPunktFuerSlot(
-          { travellerClientRef: 'traveller:none', credentialOptionRef: 'none', destination: 'none' },
-          'ungeprueft',
-        ),
-      )
+      punkte.push({
+        id: 'official:ungeprueft',
+        ebene: 'reise',
+        signal: 'official.ungeprueft',
+        schwere: 'hinweis',
+        lage: 'ungeprueft',
+        titel: 'Offizielle Einreisehinweise sind nicht vollständig geprüft',
+        aktion: { art: 'bereich', bereich: 'uebersicht' },
+      })
     } else {
       for (const slot of slots) {
         for (const lage of officialLagenFuerSlot(slot, readiness.evaluations)) {
