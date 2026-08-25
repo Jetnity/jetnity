@@ -8,11 +8,12 @@ Wenn du als neuer Chat, Technical Lead oder Coding Agent Jetnity übernimmst, li
 1. `JETNITY_START_HERE.md`
 2. `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
 3. `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`
-4. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-5. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
-6. `JETNITY_HANDOFF.md`
-7. `docs/ACTIVE_WORK_STATUS.md`
-8. den aktuellen Slice-Task/Status/Handoff
+4. `docs/JETNITY_GUARDIAN_AND_WHAT_IF_SIMULATOR_STANDARD.md`
+5. `docs/JETNITY_BINDING_BUILD_ORDER.md`
+6. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
+7. `JETNITY_HANDOFF.md`
+8. `docs/ACTIVE_WORK_STATUS.md`
+9. den aktuellen Slice-Task/Status/Handoff
 
 Danach GitHub/CI/Vercel/Supabase live verifizieren. Historische Handoffs, alte PR-Bodies und ältere Statuszeilen sind Evidence ihres Zeitpunkts und dürfen diese aktuellere operative Wahrheit nicht überschreiben.
 
@@ -32,6 +33,27 @@ Leitsatz: **Eine Reise, eine Oberfläche. Komplexität intern, Klarheit für den
 
 Kanonisch: `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`.
 
+## Neue verbindliche Kernfunktionen
+
+Durch ausdrückliche Product-Owner-Entscheidung müssen zwei zusätzliche Kernfunktionen vollständig gebaut werden:
+
+1. **Jetnity Guardian / Reise-Autopilot** – reale Änderungen/Probleme cross-domain gegen die gesamte Reise bewerten, Auswirkungen verständlich zusammenführen und belastbare Optionen/Nächste Schritte anbieten.
+2. **Jetnity What-if-Reise-Simulator** – hypothetische Änderungen in einem isolierten Scenario-/Sandbox-State gegen die unveränderte reale Reise simulieren und als Delta vergleichen.
+
+Harte Regeln:
+
+- kein zweiter Reisegraph / keine Schatten-Wahrheit;
+- Guardian darf keine Reise, Buchung, Zahlung oder Provideraktion still verändern;
+- Simulator darf während der Simulation keinerlei kanonische Reisedaten verändern;
+- reales `Übernehmen` nur über den kontrollierten normalen Write-/Command-Pfad mit Ownership/Version/Conflict-Prüfung;
+- Guardian, Simulator und Value Optimizer teilen gemeinsame kanonische Impact-/Evidence-/Value-Bausteine, wo fachlich identisch;
+- Multi-Traveller, Multi-Citizenship und Multi-Document sind Pflicht;
+- `unknown`, `stale`, `error`, `unavailable` und `insufficient_context` dürfen nicht als „alles gut“ oder Null interpretiert werden;
+- LLM erklärt und priorisiert, erzeugt aber keine Hard Truth;
+- keine Fake-Preise, Fake-Verfügbarkeit, erfundene Alternativflüge oder erfundene Live-Ereignisse.
+
+Vollständige Spezifikation und Acceptance: `docs/JETNITY_GUARDIAN_AND_WHAT_IF_SIMULATOR_STANDARD.md`.
+
 ## Aktuelle operative Wahrheit
 
 - TW-1 ist auf `main` integriert; Merge-Commit: `02b166e652f046d41f6e5b8d292e980369ca255e`.
@@ -40,7 +62,7 @@ Kanonisch: `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`.
 - TW-1 wurde auf synchronisiertem Exact Head `3a49f78bd4d991ccc1271c93164182feed7f8a32` unabhängig geprüft; GitHub Actions und Vercel waren SUCCESS.
 - TW-1 ändert keine DB/RLS/Auth/Traveller/Route/Provider/Secrets/Kosten und keine Production-Migration.
 - **Aktiver nächster Slice: TW-2 – Reiseübersicht, Draft-PR #58, Branch `feat/trip-workspace-tw2-overview`.** Runtime-Implementierung erfolgt durch `Trip workspace audit architecture`.
-- TW-2 muss separat bleiben; kein TW-4/TW-3-Scope hineinziehen.
+- TW-2 muss separat bleiben; kein TW-4/TW-3- oder Guardian/Simulator-Scope hineinziehen.
 - `Account plattform audit vorbereitung`, `Jetnity provider readiness audit` und `Admin platform audit` bleiben für ihre späteren Build-Order-Blöcke erhalten.
 - `main` Branch Protection ist technisch weiterhin nicht aktiviert; dieses Risiko nicht vergessen.
 
@@ -53,7 +75,8 @@ Kanonisch: `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`.
 5. Admin: `Admin platform audit` – D bis K; Billing-/Refund-P1 vor Finance-/Payment-Live.
 6. Homepage nach stabilem Workspace-Kern.
 7. Kommerzielle Produktschicht.
-8. Production-Härtung / Launch Readiness.
+8. **Guardian / Reise-Autopilot + What-if-Reise-Simulator vollständig integrieren.**
+9. Production-Härtung / Launch Readiness.
 
 Details und Abhängigkeiten stehen in `docs/JETNITY_BINDING_BUILD_ORDER.md`.
 
@@ -78,4 +101,4 @@ Vollständige Regel: `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`.
 
 ## Nächster kontrollierter Schritt
 
-`Trip workspace audit architecture` implementiert TW-2 ausschließlich gemäß `docs/ADR_0164_TRIP_WORKSPACE_TW2_OVERVIEW.md`, `docs/TRIP_WORKSPACE_TW2_TASK.md` und `docs/TRIP_WORKSPACE_TW2_STATUS.md`. TW-2 darf vorhandene Reise-/Coverage-Daten **nur ableiten und verdichten**; insbesondere darf es **keinen zweiten `trips.status` oder Schatten-Lifecycle** neben Account/AP-3 erzeugen. Safety/Seasonal ohne Evaluation bleibt ungeprüft/unknown und niemals „alles gut“.
+`Trip workspace audit architecture` implementiert TW-2 ausschließlich gemäß `docs/ADR_0164_TRIP_WORKSPACE_TW2_OVERVIEW.md`, `docs/TRIP_WORKSPACE_TW2_TASK.md` und `docs/TRIP_WORKSPACE_TW2_STATUS.md`. TW-2 darf vorhandene Reise-/Coverage-Daten **nur ableiten und verdichten**; insbesondere darf es **keinen zweiten `trips.status` oder Schatten-Lifecycle** neben Account/AP-3 erzeugen. Safety/Seasonal ohne Evaluation bleibt ungeprüft/unknown und niemals „alles gut“. Guardian/Simulator sind verbindlich, werden aber nicht in TW-2 hineingezogen.
