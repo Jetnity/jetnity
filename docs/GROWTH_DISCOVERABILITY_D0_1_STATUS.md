@@ -79,13 +79,14 @@ Bewusst offen / nicht überzogen:
 - Die Allow-Formel gibt für Production + Apex + nicht-`false` Kill-Switch weiterhin `true` zurück. Das ist die **bestehende** Formel, keine Cutover-Aktivierung. Live-Host bleibt `*.vercel.app` → deny-all.
 - Tests sind Source-/Helper-Contracts plus lokale HTML-Emission. Vercel-Preview ist READY, aber Deployment Protection (SSO) blockiert anonyme HTML-Proben.
 
-Lokaler HTML-Gegenbeweis auf `next start` (Production-Build, `http://127.0.0.1:3010`), **nach** dem Inherit-Fix:
+Lokaler HTML-Gegenbeweis auf `next start` (Production-Build, `http://127.0.0.1:3010`):
 
 | Route | HTTP | robots |
 | --- | --- | --- |
 | `/reisen` | 200 | `noindex, nofollow` |
 | `/reisen/00000000-0000-0000-0000-000000000001` | 200 | `noindex, nofollow` |
-| `/planen` | 200 | kein page-eigenes noindex; Homepage-Vergleich `/` emittiert `index, follow` |
+| `/` | 200 | `index, follow` |
+| `/planen` | 200 | `index, follow` (geerbte öffentliche Basis, nach Inherit-Fix + Rebuild) |
 | `/planen?idee=` | 200 | wie Basis (leer zählt nicht) |
 | `/planen?idee=Bali+mit+Pass+CH` | 200 | `noindex, nofollow`; Nutzertext bleibt sichtbar |
 | `/admin/login` | 200 | `noindex, nofollow` |
@@ -93,7 +94,7 @@ Lokaler HTML-Gegenbeweis auf `next start` (Production-Build, `http://127.0.0.1:3
 | `/robots.txt` | 200 | `Disallow: /` (localhost deny-all) |
 | `/sitemap.xml` | 200 | nur `/` und `/planen`, kein `/reisen` |
 
-Vor dem Inherit-Fix löschte `robots: undefined` auf `/planen` das geerbte `index, follow`. Das ist in `4cdb5612` geschlossen.
+Vor dem Inherit-Fix löschte `robots: undefined` auf `/planen` das geerbte `index, follow`. Geschlossen in `4cdb5612`. Nach Rebuild emittiert die Basisseite wieder `index, follow`.
 
 ## 5. Tests
 
@@ -126,21 +127,38 @@ Ausgeführt vor dem Inherit-Fix, Exit 0:
 | `npm run check:schema-bezug` | 0 |
 | `npm run build` | 0 |
 
-Logs: `/opt/cursor/artifacts/d01_gates/`.
+Logs: `/opt/cursor/artifacts/d01_gates/`. Lokale HTML-Proben: `/opt/cursor/artifacts/d01_local_html/`.
 
-Der Inherit-Fix ist eine Metadata-Merge-Korrektur plus Source-Test. Vollständige Gates und Exact-Head-CI werden auf dem Persist-Head dieses Status erneut geführt bzw. live verifiziert.
+## 6b. Lokale Gates auf Persist-Tree `04329e13` + Inherit-Fix
 
-## 7. Exact-Head Evidence auf Runtime `873735c8`
+Erneut ausgeführt nach Inherit-Fix und Status-Persist, Exit 0:
+
+| Command | Ergebnis |
+| --- | --- |
+| `npm run typecheck` | 0 |
+| `npm run lint` | 0, keine Warnings |
+| `npm test` | 0, **2013/2013** |
+| `npm run check:setup:ci` | 0, 1 bekannte Warning: keine lokale `.env` |
+| `npm run check:dead` | 0 |
+| `npm run check:exports` | 0 |
+| `npm run check:deps` | 0 |
+| `npm run check:api-schutz` | 0; 12/12 |
+| `npm run check:schema-bezug` | 0 |
+| `npm run build` | 0 |
+
+## 7. Exact-Head Evidence
+
+Runtime `873735c8`:
 
 | Gate | Ergebnis |
 | --- | --- |
-| GitHub Actions | Run `32894238716` **SUCCESS** – Auth-Konfiguration + Typecheck/Lint/Build (inkl. Tests, Hygiene, Production build) |
+| GitHub Actions | Run `32894238716` **SUCCESS** |
 | Vercel Preview | **SUCCESS / Ready** – `https://vercel.com/jetnity-e1b93c82/jetnity-app/Ac3GGtHt5iC96npg65ugcwb2h5ri` |
-| Preview-URL | `https://jetnity-app-git-fix-d0-1-index-boundary-205908-jetnity-e1b93c82.vercel.app` – anonym SSO-geschützt, daher keine öffentliche HTML-Probe |
-| Ahead / Behind / Merge-Base | 3 / 0 / `2bb6b807` zum Zeitpunkt dieses Runtime-Heads |
+| Preview-URL | `https://jetnity-app-git-fix-d0-1-index-boundary-205908-jetnity-e1b93c82.vercel.app` – anonym SSO-geschützt |
+| Ahead / Behind / Merge-Base | damals 3 / 0 / `2bb6b807` |
 | Review-Threads | 0 |
 
-Nach diesem Status-Persist ändert sich der Branch-Head. Technical Lead muss den dann aktuellen HEAD erneut live prüfen.
+Persist-Head dieses Dokuments vor dem letzten Evidence-Nachzug: `04329e13`. Inherit-Fix: `4cdb5612`. Technical Lead prüft den dann aktuellen HEAD live (Actions + Vercel). Ahead/Behind nach Status-Persist: 5 / 0, Merge-Base unverändert `2bb6b807`.
 
 ## 8. Geschlossene vs. offene Findings
 

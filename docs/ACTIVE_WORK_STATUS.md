@@ -14,6 +14,7 @@ Status: **D0-1 Index Boundary Contract ist auf Draft-PR #70 implementiert. STOPP
 - **Baseline:** `main @ 2bb6b8072fa04e8f6db2d989b84ada7b64745fd9` (PR #69 D0/G0 Audit gemergt)
 - **Runtime-Head:** `873735c8b55159fb04063e1d2b3a4c3dc743271e`
 - **Inherit-Fix:** `4cdb5612cc15d3fa5e62d96ac2a4af4e133c5f02` (`/planen` löscht geerbtes `index,follow` nicht mehr)
+- **Persist-Head (dieser Stand vor Evidence-Nachzug):** `04329e1371f1e771e0f1daec362872e42fcacc9c`
 - **Status:** implementiert / wartet auf unabhängigen Technical-Lead-Review. Nicht Ready. Nicht mergen.
 
 ### Bereits umgesetzt
@@ -26,7 +27,7 @@ D0-P1-03 `/privacy` `/terms`. D0-P2-01/02/04/05. Alle G0-Findings. TW-6. Kein Ca
 
 ### Tests / CI / Preview
 
-Lokale Gates auf Runtime `873735c8`: typecheck/lint/`npm test` 2013/2013/Hygiene/build Exit 0. GitHub Actions `32894238716` SUCCESS. Vercel Preview READY (`Ac3GGtHt5iC96npg65ugcwb2h5ri`). Preview-HTML ist SSO-geschützt. Lokale `next start`-HTML-Probe bestätigt die robots-Metas. Review-Threads: 0. Ahead/Behind zum Zeitpunkt des Runtime-Heads: 3/0, Merge-Base = Baseline.
+Lokale Gates auf Runtime `873735c8` und erneut auf Persist-Tree: typecheck/lint/`npm test` 2013/2013/Hygiene/build Exit 0. GitHub Actions Runtime `32894238716` SUCCESS. Vercel Preview auf Runtime READY (`Ac3GGtHt5iC96npg65ugcwb2h5ri`). Preview-HTML ist SSO-geschützt. Lokale `next start`-HTML-Probe nach Rebuild: `/planen` = `index, follow`, `/planen?idee=` = `noindex, nofollow`. Review-Threads: 0. Ahead/Behind nach Status-Persist: 5/0, Merge-Base = Baseline.
 
 ### DB / Kosten / Secrets
 
