@@ -7,6 +7,10 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { itineraryEinTransit } from '@/lib/route/fixtures'
+import { routeFactsAusGraph } from '@/lib/route/ableitung'
+import { routeKompaktOhneCode } from '@/lib/route/anzeige'
+import { flugAbdeckung } from '@/lib/trips/flug-abdeckung'
 import {
   ARBEITSBEREICHE,
   STANDARD_ARBEITSBEREICH,
@@ -22,6 +26,7 @@ import {
   planStatus,
   planpunkteSammeln,
   tagesplanIstSichtbar,
+  ungeplantePunkteLesen,
 } from '@/lib/trips/arbeitsbereich'
 import type { Trip, TripItem } from '@/types/trips'
 
@@ -238,6 +243,119 @@ describe('Status der Übersicht', () => {
     assert.equal(texte.includes('unavailable'), false)
     assert.equal(texte.includes('Duffel'), false)
     assert.equal(texte.includes('Booking'), false)
+  })
+})
+
+describe('P1-QS1-01 ungeplante Flug-Itinerary genau einmal', () => {
+  function ungeplanterTransitFlug(id = 'flight-ungeplant'): TripItem {
+    return punkt({
+      id,
+      kind: 'flight',
+      title: 'Zürich → Bangkok',
+      dayId: null,
+      stageId: null,
+      startsOn: '2026-11-01',
+      startsAt: '09:15',
+      endsOn: '2026-11-02',
+      endsAt: '07:10',
+      routeItinerary: itineraryEinTransit('DOH'),
+    })
+  }
+
+  function transitReise(ohneTag: TripItem[]): Trip {
+    return reise({
+      origin: 'Zürich',
+      originPlaceId: 'geonames:2657896',
+      startDate: '2026-11-01',
+      endDate: '2026-11-10',
+      stages: [
+        {
+          id: 'stage-1',
+          position: 1,
+          name: 'Bangkok',
+          countryCode: 'TH',
+          arrivalDate: '2026-11-02',
+          departureDate: '2026-11-10',
+          latitude: null,
+          longitude: null,
+          placeId: 'geonames:1609350',
+        },
+      ],
+      ohneTag,
+    })
+  }
+
+  test('Produktpfad ohneTag === reise.ohneTag verdoppelt die Route nicht', () => {
+    const aktuell = transitReise([ungeplanterTransitFlug()])
+    const produkt = aktuell.ohneTag
+    assert.equal(produkt, aktuell.ohneTag)
+    assert.equal(ungeplantePunkteLesen(aktuell, produkt), produkt)
+
+    const facts = routeFactsAusGraph({ days: aktuell.days, ohneTag: ungeplantePunkteLesen(aktuell, produkt) })
+    const fluege = flugAbdeckung(aktuell, produkt)
+    const status = bereichStatus(aktuell, produkt)
+    const fluegeText = status.find((eintrag) => eintrag.bereich === 'fluege')?.text ?? ''
+
+    assert.deepEqual(facts.sourceItemIds, ['flight-ungeplant'])
+    assert.equal(facts.sourceItemIds.filter((id) => id === 'flight-ungeplant').length, 1)
+    assert.equal(facts.segments.length, 2)
+    assert.equal(facts.connections.length, 1)
+    assert.equal(routeKompaktOhneCode(facts), 'Zürich → Doha → Bangkok')
+    assert.equal(fluegeText.includes('Reihenfolge unbekannt'), false)
+    assert.equal((fluegeText.match(/Zürich → Doha → Bangkok/g) ?? []).length, 1)
+    assert.equal(fluegeText.includes(fluege.zusammenfassung), true)
+    assert.equal(status[0]?.anzahl, 1)
+    assert.equal(fluegeText.startsWith(`${routeKompaktOhneCode(facts)} · `) || fluegeText === fluege.zusammenfassung, true)
+  })
+
+  test('Guest-Fallback und Account-Prop sind dieselbe Presentation', () => {
+    const aktuell = transitReise([ungeplanterTransitFlug()])
+    const gast = bereichStatus(aktuell)
+    const account = bereichStatus(aktuell, aktuell.ohneTag)
+    assert.deepEqual(gast, account)
+    assert.deepEqual(ungeplantePunkteLesen(aktuell), aktuell.ohneTag)
+    assert.deepEqual(ungeplantePunkteLesen(aktuell, aktuell.ohneTag), aktuell.ohneTag)
+  })
+
+  test('explizites ohneTag, das nicht reise.ohneTag ist, geht genau einmal ein', () => {
+    const imGraph = ungeplanterTransitFlug('flight-graph')
+    const explizit = ungeplanterTransitFlug('flight-explizit')
+    const aktuell = transitReise([imGraph])
+    assert.notEqual(explizit, aktuell.ohneTag[0])
+    const facts = routeFactsAusGraph({
+      days: aktuell.days,
+      ohneTag: ungeplantePunkteLesen(aktuell, [explizit]),
+    })
+    const status = bereichStatus(aktuell, [explizit])
+    assert.deepEqual(facts.sourceItemIds, ['flight-explizit'])
+    assert.equal(facts.segments.length, 2)
+    assert.equal(facts.connections.length, 1)
+    assert.equal(status[0]?.anzahl, 1)
+    assert.equal((status[0]?.text.match(/Zürich → Doha → Bangkok/g) ?? []).length, 1)
+    assert.equal(status[0]?.text.includes('Reihenfolge unbekannt'), false)
+  })
+
+  test('ohne explizites ohneTag liest reise.ohneTag genau einmal', () => {
+    const aktuell = transitReise([ungeplanterTransitFlug()])
+    const status = bereichStatus(aktuell)
+    const facts = routeFactsAusGraph({ days: aktuell.days, ohneTag: ungeplantePunkteLesen(aktuell) })
+    assert.deepEqual(facts.sourceItemIds, ['flight-ungeplant'])
+    assert.equal(facts.segments.length, 2)
+    assert.equal(facts.connections.length, 1)
+    assert.equal((status[0]?.text.match(/Zürich → Doha → Bangkok/g) ?? []).length, 1)
+  })
+
+  test('ohne ungeplante Items bleibt leer und verdoppelt nichts', () => {
+    const aktuell = transitReise([])
+    assert.deepEqual(ungeplantePunkteLesen(aktuell), [])
+    assert.deepEqual(ungeplantePunkteLesen(aktuell, aktuell.ohneTag), [])
+    const facts = routeFactsAusGraph({ days: aktuell.days, ohneTag: ungeplantePunkteLesen(aktuell, aktuell.ohneTag) })
+    const status = bereichStatus(aktuell, aktuell.ohneTag)
+    assert.deepEqual(facts.sourceItemIds, [])
+    assert.equal(facts.segments.length, 0)
+    assert.equal(facts.connections.length, 0)
+    assert.equal(status[0]?.text.includes('Reihenfolge unbekannt'), false)
+    assert.equal(status[0]?.text.includes('Zürich → Doha → Bangkok'), false)
   })
 })
 
