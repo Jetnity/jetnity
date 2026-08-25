@@ -12,11 +12,12 @@ Wenn du als neuer Chat, Technical Lead oder Coding Agent Jetnity übernimmst, li
 5. `docs/JETNITY_MARKETING_GROWTH_STANDARD.md`
 6. `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`
 7. `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`
-8. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-9. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
-10. `JETNITY_HANDOFF.md`
-11. `docs/ACTIVE_WORK_STATUS.md`
-12. den aktuellen Slice-Task/Status/Handoff
+8. `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`
+9. `docs/JETNITY_BINDING_BUILD_ORDER.md`
+10. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
+11. `JETNITY_HANDOFF.md`
+12. `docs/ACTIVE_WORK_STATUS.md`
+13. den aktuellen Slice-Task/Status/Handoff
 
 Danach GitHub/CI/Vercel/Supabase live verifizieren. Historische Handoffs, alte PR-Bodies und ältere Statuszeilen sind Evidence ihres Zeitpunkts und dürfen diese aktuellere operative Wahrheit nicht überschreiben.
 
@@ -98,16 +99,35 @@ Pflichtprinzipien:
 
 Kanonisch und vollständig: `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`.
 
+## Verbindliches Agent-/Workstream-Modell
+
+Jetnity verwendet fünf spezialisierte Cursor-Agent-Workstreams unter übergreifender ChatGPT/Technical-Lead-Steuerung. Exakte Anzeigenamen sind verbindlich:
+
+- `Trip workspace audit architecture`
+- `Account plattform audit vorbereitung`
+- `Jetnity provider readiness audit`
+- `Admin platform audit`
+- `Jetnity growth discoverability` – reservierter fünfter Agent; noch nicht starten, bis die dokumentierten Aktivierungsbedingungen erfüllt sind.
+
+Der fünfte Agent verantwortet später die **öffentliche** Homepage-/Landingpage-/SEO-/Answer-Engine-/Content-/ASO-/Acquisition-Oberfläche. Das **interne** Growth-/Marketing-Control-Center bleibt bei `Admin platform audit`.
+
+Breitere Parallelisierung erfolgt bevorzugt erst nach **TW-4 ✅ → TW-3 ✅ → Technical-Lead-Integrations-Checkpoint**. Danach können konfliktarme Provider-/Admin-/Workspace-Slices parallel laufen. Account/Traveller wird gemäß Build-Reihenfolge geöffnet. `Jetnity growth discoverability` startet erst, wenn der zentrale Workspace-Kern und öffentliche Produktwahrheit stabil genug sind; docs-only D0/G0-Audit/Vorbereitung kann der Technical Lead an einem stabilen Checkpoint früher erlauben.
+
+Shared Auth/Identity/Sessions/MFA/AAL/RLS/Ownership/Guest→Account/Traveller/Multi-Citizenship/Route/Privacy/Consent/Billing/Admin-Audit/Provider-Activation/Attribution-/Revenue-/Claims-Truth bleiben Technical-Lead-kontrolliert und dürfen nicht still von einem Agent umgebaut werden.
+
+Kanonisch und vollständig: `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`.
+
 ## Aktuelle operative Wahrheit
 
 - TW-1 ist auf `main` integriert; Merge-Commit: `02b166e652f046d41f6e5b8d292e980369ca255e`.
 - TW-2 ist auf `main` integriert; Merge-Commit: `5e27f383c7917eec168d11bceb78f9fafc198d42`.
+- PR #59 – Marketing & Growth Standards: **merged**; Merge-Commit `5341decef6ab128039dea11fa6f2625fbf03d354`.
 - PR #57 – Technical-Lead-Autonomie + verbindliche Build-Reihenfolge: **merged**.
-- PR #56 – **Trip Workspace TW-1 – Shell & Geräteparität: merged**.
-- PR #58 – **Trip Workspace TW-2 – Reiseübersicht: merged** nach unabhängigem Technical-Lead-PASS auf Exact Head `3f2c55357a7a2425ab760aac2a29ddbe15f80fa8`; CI, Vercel und Trip-Workspace-UI-Audit 1018/1018 waren grün.
-- **Aktive Governance-Integration: PR #59 – Marketing & Growth Standards.** Dieser docs-only PR bindet die Product-Owner-Entscheidung in Startpunkt und Build-Reihenfolge ein; keine Provider-/Campaign-/Secret-/Production-Aktivierung.
-- Nach Abschluss von PR #59 ist der nächste Runtime-Slice gemäß Build Order **TW-4 – Aufmerksamkeit / `Jetzt wichtig`** durch `Trip workspace audit architecture`.
-- `Account plattform audit vorbereitung`, `Jetnity provider readiness audit` und `Admin platform audit` bleiben für ihre späteren Build-Order-Blöcke erhalten.
+- PR #56 – Trip Workspace TW-1 – Shell & Geräteparität: **merged**.
+- PR #58 – Trip Workspace TW-2 – Reiseübersicht: **merged** nach unabhängigem Technical-Lead-PASS auf Exact Head `3f2c55357a7a2425ab760aac2a29ddbe15f80fa8`; CI, Vercel und Trip-Workspace-UI-Audit 1018/1018 waren grün.
+- **Aktiver Runtime-Slice: PR #60 – TW-4 Aufmerksamkeit / `Jetzt wichtig`.** Der unabhängige Technical-Lead-Re-Review hat auf Head `8bbafefc61e91d66ebf617bed2868b8b1c0848cd` zwei Truth-/Presentation-Blocker gefunden; PR bleibt Draft/BLOCKED bis Fix + neue Exact-Head-Gates + erneuter Review.
+- `Account plattform audit vorbereitung`, `Jetnity provider readiness audit` und `Admin platform audit` warten auf ihre kontrollierten späteren bzw. parallelisierbaren Blöcke.
+- `Jetnity growth discoverability` ist verbindlich reserviert, aber **noch nicht zu starten**.
 - `main` Branch Protection ist technisch weiterhin nicht aktiviert; dieses Risiko nicht vergessen.
 
 ## Aktuelle große Build-Reihenfolge
@@ -117,14 +137,14 @@ Kanonisch und vollständig: `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`
 3. Account: `Account plattform audit vorbereitung` – AP-4 bis AP-12.
 4. Provider: `Jetnity provider readiness audit` – S4 bis S8, danach echte Provider unter besonderen Gates.
 5. Admin: `Admin platform audit` – D bis K **plus** die fehlenden Growth-/Marketing-Control-Slices gemäß `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`; Billing-/Refund-P1 vor Finance-/Payment-Live.
-6. Homepage nach stabilem Workspace-Kern + Discoverability D1 + Marketing/Growth-G0/G1-Grundlagen, soweit konfliktarm und truth-ready.
+6. Homepage/Public Growth: später primär `Jetnity growth discoverability`, nach stabiler Workspace-/Public-Truth-Basis; Discoverability D1 + Marketing/Growth-G0/G1-Grundlagen soweit konfliktarm und truth-ready.
 7. AI & Search Discoverability / Authority – D0/D1/D2/D3/D4 gemäß kanonischem Standard.
 8. Marketing & Growth – G0–G5 gemäß kanonischem Standard; Querschnittsgrundlagen dürfen entsprechend ihrer Abhängigkeiten früher vorbereitet werden, produktive Aktivierungen bleiben gegated.
 9. Kommerzielle Produktschicht.
 10. Guardian / Reise-Autopilot + What-if-Reise-Simulator vollständig integrieren.
 11. Production-Härtung / Launch Readiness inklusive finalem Discoverability-, Growth-/Tracking- und Marketing-Control-Audit.
 
-Details und Abhängigkeiten stehen in `docs/JETNITY_BINDING_BUILD_ORDER.md`.
+Details und Abhängigkeiten stehen in `docs/JETNITY_BINDING_BUILD_ORDER.md` und `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`.
 
 ## Technical-Lead-Autonomie
 
@@ -147,4 +167,4 @@ Vollständige Regel: `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`.
 
 ## Nächster kontrollierter Schritt
 
-PR #59 (`docs/marketing-growth-standard`) wird als docs-only Governance-PR vollständig geprüft und integriert. Danach wird **TW-4 – Aufmerksamkeit / `Jetzt wichtig`** als eigener versionierter Runtime-Slice vorbereitet. TW-4 darf nur reale, bestehende Reise-/Readiness-/Coverage-Wahrheit priorisieren; `unknown`, `stale` und nicht evaluierte Bereiche dürfen nicht als clean erscheinen. Guardian/Simulator, Paid Marketing, Provider-Aktivierung und neue Production-Writes bleiben außerhalb dieses Slices.
+`Trip workspace audit architecture` behebt ausschließlich die im unabhängigen Technical-Lead-Review dokumentierten TW-4-Truth-/Presentation-Blocker in PR #60. Danach vollständige Exact-Head-Gates, Workspace-UI-Audit, GitHub Actions, Vercel und erneuter unabhängiger Technical-Lead-Re-Review. Kein TW-3/TW-5 und kein weiterer großer Agent-Runtime-Workstream vor dem kontrollierten TW-4-Abschluss. Nach TW-4 und TW-3 folgt der dokumentierte Integrations-Checkpoint für breitere Parallelisierung.
