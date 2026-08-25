@@ -68,7 +68,41 @@ Homepage erst nach stabilem zentralem Trip-Workspace-Kern, insbesondere nachdem 
 
 Ziel: klare Positionierung und einfacher Einstieg in Jetnity, keine Feature-Wand und keine Versprechen über noch nicht produktive Funktionen.
 
-## 7. Kommerzielle Produktschicht
+Mit der finalen Homepage beginnt verbindlich **Discoverability Phase D1** aus `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`: klare Jetnity-Entity, technische SEO-Basis, indexierbare Kernpositionierung, strukturierte Daten, Canonical-/hreflang-Strategie, zentrale ehrliche Produkt-/Use-Case-Seiten und saubere interne Verlinkung.
+
+Konfliktarme D0-Grundlagen wie semantische Seitenstruktur, Metadata-/Canonical-Verträge, Sitemap-/robots-Grundlage und getestete strukturierte Daten dürfen schon vorher vorbereitet werden, wenn sie den aktiven Integrationspfad nicht aufblähen.
+
+## 7. AI & Search Discoverability / Authority
+
+Dieses Programm ist durch ausdrückliche Product-Owner-Entscheidung **verbindlich**. Ziel ist, Jetnity so zu bauen und öffentlich zu dokumentieren, dass Suchmaschinen und moderne Answer Engines Jetnity eindeutig finden, verstehen, korrekt einordnen und bei fachlich passenden Reiseplaner-Fragen als zitierwürdige Option berücksichtigen können.
+
+Kanonische Spezifikation: `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`.
+
+Pflichtbestandteile:
+
+- Crawlability, Indexierbarkeit, Canonicals, Sitemaps und kontrolliertes `robots.txt`;
+- mehrsprachige Locale-/`hreflang`-Architektur;
+- passende, wahrheitsgetreue Schema.org-/JSON-LD-Strukturen;
+- eindeutige Jetnity-Entity über Website, App Stores und offizielle Profile;
+- indexierbare Seiten für reale Kernfunktionen und echte Use Cases;
+- Answer-Engine-/Citation-Readiness mit semantischem HTML, stabilen URLs, klaren Definitionen und Evidence/Freshness bei zeitkritischen Aussagen;
+- sachliche, belegte Vergleichsseiten statt manipulativer „Jetnity gewinnt immer“-Inhalte;
+- hochwertige Reiseinhalte mit Authority-/Freshness-/Truth-Grenzen;
+- echte externe Autorität über Reviews, Medien, Creator/Partner und organische Community-Präsenz;
+- Search-/Structured-Data-/Performance-/Accessibility-Messung;
+- strikte Privacy-Grenzen: keine privaten Reisen, Pass-/Dokumentdaten, Accountdaten oder Admin-/Provider-Secrets in öffentlichen Discovery-Flächen.
+
+Es gibt **keine Garantie**, dass ChatGPT, Gemini, Perplexity, Google oder andere Systeme Jetnity in einer konkreten Antwort nennen oder auf Platz 1 setzen. Verbindlich ist die bestmögliche technische, inhaltliche und externe Citation-/Authority-Basis — ohne Fake-Reviews, erfundene Nutzerzahlen, Linkfarmen, Keyword-Spam oder nicht belegte Produktversprechen.
+
+Zeitliche Umsetzung:
+
+1. D0 darf konfliktarm früh vorbereitet werden.
+2. D1 wird mit der finalen Homepage umgesetzt.
+3. D2 folgt nach stabiler Produkt-/Commercial-Truth mit tiefen Feature-, Vergleichs- und zitierfähigen Informationsseiten.
+4. D3 wird zum Public Launch mit App-Store-/Review-/Media-/Creator-/Partner-Distribution umgesetzt.
+5. D4 läuft nach Launch kontinuierlich datenbasiert weiter.
+
+## 8. Kommerzielle Produktschicht
 
 Danach die vollständige kommerzielle Schicht:
 
@@ -82,7 +116,9 @@ Danach die vollständige kommerzielle Schicht:
 
 Keine Fake-Commercial-Truth.
 
-## 8. Guardian / Reise-Autopilot & What-if-Reise-Simulator
+Die kommerzielle Wahrheit speist anschließend Discoverability Phase D2. Öffentliche Preis-/Value-/Vergleichsaussagen dürfen erst auf reale, belegte Commercial-Truth zugreifen.
+
+## 9. Guardian / Reise-Autopilot & What-if-Reise-Simulator
 
 Diese beiden Funktionen sind durch ausdrückliche Product-Owner-Entscheidung **verbindliche Kernfunktionen** und müssen vollständig gebaut werden.
 
@@ -106,7 +142,9 @@ Multi-Traveller, Multi-Citizenship, Multi-Document, Evidence/Freshness/Authority
 
 Der aktuell laufende Trip-Workspace-Slice darf dafür **nicht** aufgebläht werden. Technische Hooks dürfen früher entstehen, wenn sie ohnehin für einen aktuellen Slice nötig sind; die vollständige Integration bleibt ein eigener kontrollierter Programmblock.
 
-## 9. Production-Härtung / Launch Readiness
+Nach realer Produktreife erhalten Guardian und Simulator ihre öffentlichen Discoverability-/Feature-Seiten gemäß D2; vorher dürfen sie öffentlich nicht als bereits live dargestellt werden.
+
+## 10. Production-Härtung / Launch Readiness
 
 Vor echtem Launch verpflichtend:
 
@@ -121,7 +159,9 @@ Vor echtem Launch verpflichtend:
 - Release-/Rollback-Plan;
 - Branch Protection / Required Checks;
 - provider-backed Truth-Audit nach echter Provider-Aktivierung;
-- finaler cross-domain Guardian-/Simulator-Audit inklusive No-Silent-Write-, Scenario-Isolation-, Multi-Citizenship- und Evidence/Freshness-Nachweis.
+- finaler cross-domain Guardian-/Simulator-Audit inklusive No-Silent-Write-, Scenario-Isolation-, Multi-Citizenship- und Evidence/Freshness-Nachweis;
+- finaler Discoverability-Audit: Crawlability/Indexability, Canonical/Locale/hreflang, strukturierte Daten, private-data-noindex, zentrale Live-Feature-Seiten, Entity-Konsistenz, Search-/Performance-/Accessibility-Evidence;
+- Discoverability Phase D3 für Public Launch nur nach den jeweils geltenden Launch-/Distribution-Gates.
 
 ## Arbeitsweise
 

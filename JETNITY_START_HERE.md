@@ -9,11 +9,12 @@ Wenn du als neuer Chat, Technical Lead oder Coding Agent Jetnity übernimmst, li
 2. `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
 3. `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`
 4. `docs/JETNITY_GUARDIAN_AND_WHAT_IF_SIMULATOR_STANDARD.md`
-5. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-6. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
-7. `JETNITY_HANDOFF.md`
-8. `docs/ACTIVE_WORK_STATUS.md`
-9. den aktuellen Slice-Task/Status/Handoff
+5. `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`
+6. `docs/JETNITY_BINDING_BUILD_ORDER.md`
+7. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
+8. `JETNITY_HANDOFF.md`
+9. `docs/ACTIVE_WORK_STATUS.md`
+10. den aktuellen Slice-Task/Status/Handoff
 
 Danach GitHub/CI/Vercel/Supabase live verifizieren. Historische Handoffs, alte PR-Bodies und ältere Statuszeilen sind Evidence ihres Zeitpunkts und dürfen diese aktuellere operative Wahrheit nicht überschreiben.
 
@@ -54,6 +55,28 @@ Harte Regeln:
 
 Vollständige Spezifikation und Acceptance: `docs/JETNITY_GUARDIAN_AND_WHAT_IF_SIMULATOR_STANDARD.md`.
 
+## Verbindliche AI-/Search-Discoverability
+
+Jetnity muss so gebaut und öffentlich dokumentiert werden, dass Suchmaschinen und moderne Answer Engines Jetnity **finden, eindeutig als Marke verstehen, korrekt einordnen und bei fachlich passenden Reiseplaner-Fragen als zitierwürdige Option berücksichtigen können**.
+
+Das Ziel umfasst ausdrücklich Fragen wie „Welche ist die beste Reiseplan-App?“, „Welche App plant eine Reise an einem Ort?“ oder „Welche Alternative gibt es zu Lambus/Wanderlog/TripIt?“. Es gibt keine Garantie für eine konkrete Nennung oder Platzierung; gebaut wird die bestmögliche technische, inhaltliche und externe Discoverability-/Authority-/Citation-Basis.
+
+Pflichtprinzipien:
+
+- saubere Crawlability/Indexability, Canonicals, Sitemaps und kontrolliertes `robots.txt`;
+- mehrsprachige Locale-/`hreflang`-Architektur;
+- wahrheitsgetreue strukturierte Daten/Schema.org;
+- konsistente Jetnity-Entity über Website, Apps und offizielle Profile;
+- indexierbare, verständliche Seiten für reale Kernfunktionen und Use Cases;
+- semantisches HTML, stabile URLs, klare Definitionen sowie Evidence/Freshness bei zeitkritischen Aussagen;
+- sachliche und belegte Vergleichsseiten statt manipulativer Konkurrenz-Abwertung;
+- hochwertige Reiseinhalte und echte externe Autorität über Reviews, Medien, Creator/Partner und organische Community-Signale;
+- keine Fake-Reviews, erfundenen Nutzerzahlen/Awards, Linkfarmen, Keyword-Spam oder nicht belegte Produktversprechen;
+- private Reisen, Accountdaten, Pass-/Dokumentdaten, Admin-/Support-/Provider-Secrets dürfen niemals zu öffentlichen Discovery-Flächen werden;
+- Discoverability wird vor Launch technisch und inhaltlich auditiert und nach Launch kontinuierlich gemessen und verbessert.
+
+Kanonisch und vollständig: `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`.
+
 ## Aktuelle operative Wahrheit
 
 - TW-1 ist auf `main` integriert; Merge-Commit: `02b166e652f046d41f6e5b8d292e980369ca255e`.
@@ -61,8 +84,9 @@ Vollständige Spezifikation und Acceptance: `docs/JETNITY_GUARDIAN_AND_WHAT_IF_S
 - PR #56 – **Trip Workspace TW-1 – Shell & Geräteparität: merged**.
 - TW-1 wurde auf synchronisiertem Exact Head `3a49f78bd4d991ccc1271c93164182feed7f8a32` unabhängig geprüft; GitHub Actions und Vercel waren SUCCESS.
 - TW-1 ändert keine DB/RLS/Auth/Traveller/Route/Provider/Secrets/Kosten und keine Production-Migration.
-- **Aktiver Slice: TW-2 – Reiseübersicht, Draft-PR #58, Branch `feat/trip-workspace-tw2-overview`.** Runtime umgesetzt; unabhängiger ChatGPT/Technical-Lead-Re-Review läuft.
-- TW-2 bleibt separat; kein TW-3/TW-4- oder Guardian/Simulator-Scope hineinziehen.
+- **Aktiver nächster Slice: TW-2 – Reiseübersicht, Draft-PR #58, Branch `feat/trip-workspace-tw2-overview`.** Runtime-Implementierung erfolgt durch `Trip workspace audit architecture`.
+- TW-2 muss separat bleiben; kein TW-4/TW-3- oder Guardian/Simulator-Scope hineinziehen.
+- Nach neuen docs-only-Commits auf `main` muss PR #58 vor Ready/Merge erneut gegen das aktuelle `main` synchronisiert und nach den Exact-Head-Regeln verifiziert werden; ältere grüne Evidence darf nicht blind übertragen werden.
 - `Account plattform audit vorbereitung`, `Jetnity provider readiness audit` und `Admin platform audit` bleiben für ihre späteren Build-Order-Blöcke erhalten.
 - `main` Branch Protection ist technisch weiterhin nicht aktiviert; dieses Risiko nicht vergessen.
 
@@ -73,10 +97,11 @@ Vollständige Spezifikation und Acceptance: `docs/JETNITY_GUARDIAN_AND_WHAT_IF_S
 3. Account: `Account plattform audit vorbereitung` – AP-4 bis AP-12.
 4. Provider: `Jetnity provider readiness audit` – S4 bis S8, danach echte Provider unter besonderen Gates.
 5. Admin: `Admin platform audit` – D bis K; Billing-/Refund-P1 vor Finance-/Payment-Live.
-6. Homepage nach stabilem Workspace-Kern.
-7. Kommerzielle Produktschicht.
-8. **Guardian / Reise-Autopilot + What-if-Reise-Simulator vollständig integrieren.**
-9. Production-Härtung / Launch Readiness.
+6. Homepage nach stabilem Workspace-Kern + Discoverability D1.
+7. **AI & Search Discoverability / Authority** – D0/D1/D2/D3/D4 gemäß kanonischem Standard; D0 konfliktarm früh, D1 mit Homepage, D2 nach stabiler Produkt-/Commercial-Truth, D3 zum Public Launch, D4 fortlaufend.
+8. Kommerzielle Produktschicht.
+9. **Guardian / Reise-Autopilot + What-if-Reise-Simulator vollständig integrieren.**
+10. Production-Härtung / Launch Readiness inklusive finalem Discoverability-Audit.
 
 Details und Abhängigkeiten stehen in `docs/JETNITY_BINDING_BUILD_ORDER.md`.
 
@@ -101,4 +126,4 @@ Vollständige Regel: `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`.
 
 ## Nächster kontrollierter Schritt
 
-Unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #58 (TW-2). Kein TW-3, kein TW-4 und kein Guardian/Simulator-Scope vorziehen. TW-2 darf vorhandene Reise-/Coverage-Daten nur ableiten; kein zweiter `trips.status`. Safety/Seasonal ohne Evaluation bleibt ungeprüft.
+`Trip workspace audit architecture` implementiert/reviewt TW-2 ausschließlich gemäß `docs/ADR_0164_TRIP_WORKSPACE_TW2_OVERVIEW.md`, `docs/TRIP_WORKSPACE_TW2_TASK.md` und `docs/TRIP_WORKSPACE_TW2_STATUS.md`. TW-2 darf vorhandene Reise-/Coverage-Daten **nur ableiten und verdichten**; insbesondere darf es **keinen zweiten `trips.status` oder Schatten-Lifecycle** neben Account/AP-3 erzeugen. Safety/Seasonal ohne Evaluation bleibt ungeprüft/unknown und niemals „alles gut“. Guardian/Simulator und der neue Discoverability-Programmblock sind verbindlich, werden aber nicht in TW-2 hineingezogen.
