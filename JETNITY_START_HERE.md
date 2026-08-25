@@ -9,12 +9,14 @@ Wenn du als neuer Chat, Technical Lead oder Coding Agent Jetnity übernimmst, li
 2. `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
 3. `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`
 4. `docs/JETNITY_GUARDIAN_AND_WHAT_IF_SIMULATOR_STANDARD.md`
-5. `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`
-6. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-7. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
-8. `JETNITY_HANDOFF.md`
-9. `docs/ACTIVE_WORK_STATUS.md`
-10. den aktuellen Slice-Task/Status/Handoff
+5. `docs/JETNITY_MARKETING_GROWTH_STANDARD.md`
+6. `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`
+7. `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`
+8. `docs/JETNITY_BINDING_BUILD_ORDER.md`
+9. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
+10. `JETNITY_HANDOFF.md`
+11. `docs/ACTIVE_WORK_STATUS.md`
+12. den aktuellen Slice-Task/Status/Handoff
 
 Danach GitHub/CI/Vercel/Supabase live verifizieren. Historische Handoffs, alte PR-Bodies und ältere Statuszeilen sind Evidence ihres Zeitpunkts und dürfen diese aktuellere operative Wahrheit nicht überschreiben.
 
@@ -55,6 +57,25 @@ Harte Regeln:
 
 Vollständige Spezifikation und Acceptance: `docs/JETNITY_GUARDIAN_AND_WHAT_IF_SIMULATOR_STANDARD.md`.
 
+## Verbindliches Marketing & Growth
+
+Jetnity muss Marketing und Wachstum als **messbares, wahrheitsgetreues, datenschutzkonformes Produktsystem** aufbauen – nicht als nachträgliche Werbeschicht. Der Standard umfasst insbesondere Attribution, versionierte Events, Activation/Retention, CAC/LTV/Payback/Contribution Margin, Lifecycle CRM, Referral/Invite-Loops, Content/Creator/UGC, Paid Acquisition mit Spend Caps/Kill Switch, ASO/Web→App, Reviews/Reputation, internationale Expansion und technische Marketing-Reliability.
+
+Harte Regeln:
+
+- keine Fake-Reviews, erfundenen Nutzerzahlen, erfundenen Awards oder unbelegten Claims;
+- keine Dark Patterns;
+- kein Pass-/MRZ-/sensitives Identity-Targeting;
+- Paid Growth erst mit belastbarer Conversion-/Revenue-Evidence und kontrollierten Spend-Grenzen;
+- `unknown` bleibt auch in Attribution/Marketing-Truth `unknown`;
+- öffentliche Claims dürfen nur reale, belegte Produktfähigkeit darstellen.
+
+Kanonisch: `docs/JETNITY_MARKETING_GROWTH_STANDARD.md`.
+
+Das Admin Control Center muss dafür ein vollständiges **Growth-&-Marketing-Betriebssystem** enthalten: Executive Growth Overview, Funnel/Kohorten, Attribution, Paid-Media-Control-Plane, Creative-/Claims-Registry, Landingpages, CRM/Journeys/Deliverability, SEO/AI-Search-Operations, Experimente, Referral/Creator/Partner, Reviews/PR, Subscription Growth, Market Expansion, Economics/Forecasting, Tracking/Data Quality, Privacy/Consent, Connector-/Incident-Center, Marketing Calendar sowie Jetnity Copilot Pro als evidence-aware Growth Analyst. Riskante produktive Marketing-Writes benötigen Capability-Gates, Audit und wo vorgesehen Vier-Augen-Freigabe.
+
+Kanonisch: `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`.
+
 ## Verbindliche AI-/Search-Discoverability
 
 Jetnity muss so gebaut und öffentlich dokumentiert werden, dass Suchmaschinen und moderne Answer Engines Jetnity **finden, eindeutig als Marke verstehen, korrekt einordnen und bei fachlich passenden Reiseplaner-Fragen als zitierwürdige Option berücksichtigen können**.
@@ -80,28 +101,28 @@ Kanonisch und vollständig: `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`
 ## Aktuelle operative Wahrheit
 
 - TW-1 ist auf `main` integriert; Merge-Commit: `02b166e652f046d41f6e5b8d292e980369ca255e`.
+- TW-2 ist auf `main` integriert; Merge-Commit: `5e27f383c7917eec168d11bceb78f9fafc198d42`.
 - PR #57 – Technical-Lead-Autonomie + verbindliche Build-Reihenfolge: **merged**.
 - PR #56 – **Trip Workspace TW-1 – Shell & Geräteparität: merged**.
-- TW-1 wurde auf synchronisiertem Exact Head `3a49f78bd4d991ccc1271c93164182feed7f8a32` unabhängig geprüft; GitHub Actions und Vercel waren SUCCESS.
-- TW-1 ändert keine DB/RLS/Auth/Traveller/Route/Provider/Secrets/Kosten und keine Production-Migration.
-- **Aktiver nächster Slice: TW-2 – Reiseübersicht, Draft-PR #58, Branch `feat/trip-workspace-tw2-overview`.** Runtime-Implementierung erfolgt durch `Trip workspace audit architecture`.
-- TW-2 muss separat bleiben; kein TW-4/TW-3- oder Guardian/Simulator-Scope hineinziehen.
-- Nach neuen docs-only-Commits auf `main` muss PR #58 vor Ready/Merge erneut gegen das aktuelle `main` synchronisiert und nach den Exact-Head-Regeln verifiziert werden; ältere grüne Evidence darf nicht blind übertragen werden.
+- PR #58 – **Trip Workspace TW-2 – Reiseübersicht: merged** nach unabhängigem Technical-Lead-PASS auf Exact Head `3f2c55357a7a2425ab760aac2a29ddbe15f80fa8`; CI, Vercel und Trip-Workspace-UI-Audit 1018/1018 waren grün.
+- **Aktive Governance-Integration: PR #59 – Marketing & Growth Standards.** Dieser docs-only PR bindet die Product-Owner-Entscheidung in Startpunkt und Build-Reihenfolge ein; keine Provider-/Campaign-/Secret-/Production-Aktivierung.
+- Nach Abschluss von PR #59 ist der nächste Runtime-Slice gemäß Build Order **TW-4 – Aufmerksamkeit / `Jetzt wichtig`** durch `Trip workspace audit architecture`.
 - `Account plattform audit vorbereitung`, `Jetnity provider readiness audit` und `Admin platform audit` bleiben für ihre späteren Build-Order-Blöcke erhalten.
 - `main` Branch Protection ist technisch weiterhin nicht aktiviert; dieses Risiko nicht vergessen.
 
 ## Aktuelle große Build-Reihenfolge
 
-1. Trip Workspace vollständig: `Trip workspace audit architecture` – **TW-1 ✅ → TW-2 → TW-4 → TW-3 → Details/Gaps → Rest gemäß Plan → finaler Workspace-Audit**.
+1. Trip Workspace vollständig: `Trip workspace audit architecture` – **TW-1 ✅ → TW-2 ✅ → TW-4 → TW-3 → Details/Gaps → Rest gemäß Plan → finaler Workspace-Audit**.
 2. Traveller-/Pass-/Multi-Citizenship produktweit vervollständigen auf Foundation E.
 3. Account: `Account plattform audit vorbereitung` – AP-4 bis AP-12.
 4. Provider: `Jetnity provider readiness audit` – S4 bis S8, danach echte Provider unter besonderen Gates.
-5. Admin: `Admin platform audit` – D bis K; Billing-/Refund-P1 vor Finance-/Payment-Live.
-6. Homepage nach stabilem Workspace-Kern + Discoverability D1.
-7. **AI & Search Discoverability / Authority** – D0/D1/D2/D3/D4 gemäß kanonischem Standard; D0 konfliktarm früh, D1 mit Homepage, D2 nach stabiler Produkt-/Commercial-Truth, D3 zum Public Launch, D4 fortlaufend.
-8. Kommerzielle Produktschicht.
-9. **Guardian / Reise-Autopilot + What-if-Reise-Simulator vollständig integrieren.**
-10. Production-Härtung / Launch Readiness inklusive finalem Discoverability-Audit.
+5. Admin: `Admin platform audit` – D bis K **plus** die fehlenden Growth-/Marketing-Control-Slices gemäß `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`; Billing-/Refund-P1 vor Finance-/Payment-Live.
+6. Homepage nach stabilem Workspace-Kern + Discoverability D1 + Marketing/Growth-G0/G1-Grundlagen, soweit konfliktarm und truth-ready.
+7. AI & Search Discoverability / Authority – D0/D1/D2/D3/D4 gemäß kanonischem Standard.
+8. Marketing & Growth – G0–G5 gemäß kanonischem Standard; Querschnittsgrundlagen dürfen entsprechend ihrer Abhängigkeiten früher vorbereitet werden, produktive Aktivierungen bleiben gegated.
+9. Kommerzielle Produktschicht.
+10. Guardian / Reise-Autopilot + What-if-Reise-Simulator vollständig integrieren.
+11. Production-Härtung / Launch Readiness inklusive finalem Discoverability-, Growth-/Tracking- und Marketing-Control-Audit.
 
 Details und Abhängigkeiten stehen in `docs/JETNITY_BINDING_BUILD_ORDER.md`.
 
@@ -126,4 +147,4 @@ Vollständige Regel: `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`.
 
 ## Nächster kontrollierter Schritt
 
-`Trip workspace audit architecture` implementiert/reviewt TW-2 ausschließlich gemäß `docs/ADR_0164_TRIP_WORKSPACE_TW2_OVERVIEW.md`, `docs/TRIP_WORKSPACE_TW2_TASK.md` und `docs/TRIP_WORKSPACE_TW2_STATUS.md`. TW-2 darf vorhandene Reise-/Coverage-Daten **nur ableiten und verdichten**; insbesondere darf es **keinen zweiten `trips.status` oder Schatten-Lifecycle** neben Account/AP-3 erzeugen. Safety/Seasonal ohne Evaluation bleibt ungeprüft/unknown und niemals „alles gut“. Guardian/Simulator und der neue Discoverability-Programmblock sind verbindlich, werden aber nicht in TW-2 hineingezogen.
+PR #59 (`docs/marketing-growth-standard`) wird als docs-only Governance-PR vollständig geprüft und integriert. Danach wird **TW-4 – Aufmerksamkeit / `Jetzt wichtig`** als eigener versionierter Runtime-Slice vorbereitet. TW-4 darf nur reale, bestehende Reise-/Readiness-/Coverage-Wahrheit priorisieren; `unknown`, `stale` und nicht evaluierte Bereiche dürfen nicht als clean erscheinen. Guardian/Simulator, Paid Marketing, Provider-Aktivierung und neue Production-Writes bleiben außerhalb dieses Slices.
