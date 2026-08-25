@@ -21,6 +21,7 @@ const SYMBOL: Record<UebersichtAbleitung['abdeckungen'][number]['bereich'], Comp
 
 const LAGE_FARBE: Record<AbdeckungLage, string> = {
   offen: 'bg-surface-25 text-ink-800',
+  teilweise: 'bg-surface-100 text-ink-800',
   belegt: 'bg-surface-100 text-brand-700',
   unbestimmt: 'bg-surface-50 text-ink-800',
 }
