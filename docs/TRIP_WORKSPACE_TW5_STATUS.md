@@ -1,9 +1,10 @@
 # Jetnity – Trip Workspace TW-5 Status
 
 Stand: 25. August 2026  
-Status: **CONTROL DOCS PREPARED – Runtime-Implementierung noch nicht gestartet**  
+Status: **DRAFT-PR #66 OFFEN – CONTROL-DOC STOPP; Runtime-Implementierung noch nicht gestartet**  
 Agent: `Trip workspace audit architecture`  
 Branch: `feat/trip-workspace-tw5-item-gap-details`  
+Draft-PR: #66  
 Baseline: `bee9f653d7d83dfbafbf9b9c1da6385433071a4a`
 
 ## 1. Zweck
@@ -31,6 +32,9 @@ Verifizierte Integration:
 - PR #65 / post-TW-3 Continuity: merged
 - aktueller TW-5-Baseline-`main`: `bee9f653d7d83dfbafbf9b9c1da6385433071a4a`
 - TW-5-Branch wurde auf diesen `main` fast-forward synchronisiert.
+- Draft-PR #66 wurde auf diesem Branch eröffnet.
+
+Control-Doc-Head vor dieser Statusnachführung: `6b0ea2a7c805350f8d96163e3d7c361c535555d7`.
 
 Keine Runtime-Änderung ist Bestandteil dieses Statuspunktes.
 
@@ -98,16 +102,18 @@ Supabase Development-Migrationen `20260824160000` und `20260824180000` bleiben n
 
 ## 7. Aktueller STOPP-Punkt
 
-Control Docs sind versioniert. Als Nächstes:
+Control Docs und Draft-PR #66 sind vorbereitet. **Jetzt ist der manuelle Cursor-Start erforderlich.**
 
-1. Draft-PR für TW-5 eröffnen.
-2. PR-Nummer/Head in diesen Status nachziehen.
-3. `Trip workspace audit architecture` in Cursor manuell mit dem versionierten Task starten.
-4. Agent implementiert und führt adversarial Self-Review + Exact-Head-Gates aus.
-5. Agent aktualisiert diesen Status mit Runtime-Head/Evidence.
+Nächste Schritte:
+
+1. `Trip workspace audit architecture` in Cursor mit `docs/TRIP_WORKSPACE_TW5_TASK.md` und ADR-0167 starten.
+2. Agent verifiziert zuerst Branch, Draft-PR #66, aktuellen `main` und den Ist-Code.
+3. Agent implementiert ausschließlich den freigegebenen Scope.
+4. Agent führt adversarial Self-Review + vollständige Exact-Head-Gates aus.
+5. Agent aktualisiert diesen Status mit Runtime-Head, Tests, CI/Vercel, Risiken und offenen Punkten.
 6. **STOPP** für unabhängigen ChatGPT/Technical-Lead-Re-Review.
 
-Bis zum Cursor-Start gibt es keinen Runtime-Code von TW-5.
+Bis zu Schritt 1 gibt es keinen Runtime-Code von TW-5.
 
 ## 8. Review-Risiken, die der Agent gezielt prüfen muss
 
