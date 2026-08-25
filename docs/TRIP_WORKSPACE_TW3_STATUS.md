@@ -57,7 +57,7 @@ Wiederverwendet:
 
 Nicht umgesetzt und nicht vorgetäuscht:
 
-- keine Timeline (TW-5 Details)
+- keine Item-/Gap-Details (TW-5)
 - kein Multi-Destination-Create
 - keine URL-Tag-Wahrheit
 - keine Provideraktivierung / Secrets / paid calls
