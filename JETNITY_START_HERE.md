@@ -151,13 +151,15 @@ Parallelität ist erlaubt, wenn konfliktarm:
 
 `Jetnity quality security audit` ist unabhängige QA/Security/Release-Prüfinstanz, kein allgemeiner Feature-Entwickler. `Jetnity native app architecture` bleibt bis zur vorgesehenen Native-Phase reserviert.
 
-## 9. Live integrierter Stand
+## 9. Letzte verifizierte Integrationsbaseline vor diesem Governance-Slice
 
-Aktueller `main` nach Product-Owner-freigegebenem PR #72:
+Die Live-Baseline, von der der aktuelle Merge-Autonomie-Slice gestartet wurde, ist:
 
-`5f9dc4b0e87d8b2adbcaca6962a76463cad32304`
+`main @ 5f9dc4b0e87d8b2adbcaca6962a76463cad32304`
 
-Integriert sind insbesondere:
+Dieser Commit ist **kein dauerhaft behaupteter aktueller `main`**. Nach jedem weiteren Merge muss `main` erneut live verifiziert werden; Live-Evidence gewinnt immer.
+
+Diese Baseline enthält insbesondere:
 
 - Foundation C – Readiness;
 - Foundation D – Route & Transit Intelligence;
@@ -180,9 +182,7 @@ D0-1 geschlossen:
 - D0-P2-03 Admin-/Unauthorized-Indexgrenze;
 - P2-D0-1-TL-01 Search-Param-Presence-Contract.
 
-Vercel-Production-Stand muss bei jeder neuen Arbeit live geprüft werden; der letzte vor dieser Governance-Reparatur verifizierte Runtime-Merge war `083eda22189e1dad8bd70413889d2486755d7fe6` mit READY Production.
-
-`main` Branch Protection ist live weiterhin nicht aktiviert und bleibt ein Governance-/Engineering-Risiko.
+`main` Branch Protection war auf dieser Baseline live weiterhin nicht aktiviert und bleibt ein Governance-/Engineering-Risiko, bis live etwas anderes nachgewiesen ist.
 
 ## 10. Offene D0/G0-Kanten
 
