@@ -1906,7 +1906,6 @@ function layoutPruefen(erwartetBereich) {
     fehler.push('vertikaler Tageslisten-Scroller')
   }
 
-  const plan = document.querySelector('[aria-label="Tagesplan"]')
   if (plan && !plan.closest('[hidden]')) {
     if (plan.getAttribute('data-tagesplan-modul') !== 'ein') {
       fehler.push('Tagesplan ist kein gemeinsames Modul')
