@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 25. August 2026  
-Status: **TW-1 und TW-2 sind auf `main`. TW-4 Draft-PR #60 ist mit `main` synchronisiert; der Official-Slot-/Contract-Fix nach Review `5018504776` ist umgesetzt und wartet auf erneuten unabhängigen Technical-Lead-Re-Review. Kein Ready, kein Merge, kein TW-3, kein TW-5.**
+Status: **TW-1 und TW-2 sind auf `main`. TW-4 Draft-PR #60 bleibt Draft. Review `5018945518` (Official-Requirement-Key-Completeness) ist im Branch behoben; STOPP für erneuten unabhängigen Technical-Lead-Re-Review. Kein Ready, kein Merge, kein TW-3, kein TW-5.**
 
 ## 0. Git-Wahrheit
 
@@ -104,7 +104,7 @@ Fehlende Safety-/Seasonal-Evaluation ist weder clean noch unavailable. Keine Def
 
 TW-4 ist kein TW-3/TW-5-Slice, keine neue Persistenz, keine DB/RLS/Auth-/Traveller-Neumodellierung, kein Guardian/Simulator und keine Provider-/Marketing-Aktivierung.
 
-Reviews `5017458023` und `5018115879` sind behoben. Review `5018504776` auf `4087bbed` blieb BLOCKED, weil TW-4 `cit:*` als OptionRefs erfunden und Official-Lagen aus der Legacy-Summary abgeleitet hat. Der aktuelle Fix nutzt ausschließlich `credentialOptionsAus()` und klassifiziert jede kanonische Official-Slot-Lage direkt aus `OfficialEvaluation[]`. Separate Citizenship-only Credential-Optionen sind ein offener Shared-Contract-Bedarf außerhalb TW-4.
+Reviews `5017458023`, `5018115879` und `5018504776` sind behoben. Review `5018945518` auf `5cf49976` blieb BLOCKED, weil Official-Pflichtslots nur Traveller/Credential/Destination prüften und eine einzelne `visa=current`-Evaluation Clean erzeugen konnte. Der aktuelle Fix verwendet die bestehende Engine-Granularität `travellerClientRef + credentialOptionRef + destinationCountryCode + requirementType + transitCountryCode` über `OFFICIAL_REQUIREMENT_TYPES` und `readinessReisekontext`. Belegter Runtime-Head: `d2314d3c4eb68266743262d0ee7e4f5247b4a6b9`. Separate Citizenship-only Credential-Optionen bleiben ein offener Shared-Contract-Bedarf außerhalb TW-4.
 
 ## 4. Wartende Workstreams
 
@@ -165,6 +165,6 @@ Product-Owner-Freigabe bleibt zwingend für Production-Migration/destructive Pro
 
 ## 8. Exakter nächster Schritt
 
-**Nächster Technical-Lead-Schritt:** erneuter unabhängiger Re-Review von Draft-PR #60 nach dem kanonischen Official-Slot-Fix. Kein Ready, kein Merge, kein TW-3, kein TW-5, keine Shared-Contract-Erweiterung, keine besonderen Product-Owner-Gates eigenmächtig öffnen.
+**Nächster Technical-Lead-Schritt:** erneuter unabhängiger Re-Review von Draft-PR #60 nach dem Official-Requirement-Key-Fix. Kein Ready, kein Merge, kein TW-3, kein TW-5, keine Shared-Contract-Erweiterung, keine besonderen Product-Owner-Gates eigenmächtig öffnen.
 
 Danach gemäß Build Order: TW-3 – Timeline / Etappe / Tag.

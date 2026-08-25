@@ -1,7 +1,7 @@
 # Trip Workspace TW-4 – Status
 
 Stand: 25. August 2026  
-Status: **Kanonischer Official-Slot-Fix umgesetzt / Draft / STOPP für erneuten unabhängigen Technical-Lead-Re-Review**
+Status: **Official-Requirement-Key-Fix nach Review `5018945518` umgesetzt / Draft / STOPP für erneuten unabhängigen Technical-Lead-Re-Review**
 
 ## Identität
 
@@ -10,10 +10,11 @@ Status: **Kanonischer Official-Slot-Fix umgesetzt / Draft / STOPP für erneuten 
 - Draft-PR: #60 – `Trip Workspace TW-4 – Aufmerksamkeit / Jetzt wichtig`
 - Base / Merge-Base: `origin/main` `c9cab1f349fd1778c80b38a2c07e41d8e298e595`
 - Merge-Commit mit aktueller Agent-/Technical-Lead-Governance: `48cf3825d4de9fc2db65241712799e3a29054c7d`
-- Runtime-Head Official-Slots: `475579d90d88834149b0f52dfe824f649f3ed6f9`
+- Runtime-Head Official-Requirement-Keys: `d2314d3c4eb68266743262d0ee7e4f5247b4a6b9`
 - Technical-Lead-Review `5017458023`: behoben
 - Technical-Lead-Review `5018115879`: behoben
-- Technical-Lead-Review `5018504776` auf `4087bbedd3821bf0faa1920f53e8ad071570e5eb`: BLOCKED – nicht-kanonische `cit:*`-OptionRefs und Summary-basierte Official-Klassifikation; Fix umgesetzt, Re-Review offen
+- Technical-Lead-Review `5018504776`: beide Blocker behoben
+- Technical-Lead-Review `5018945518` auf `5cf4997647265c2f00ef61d53afcdd6a1c22fa4a`: BLOCKED – Official-Completeness zu grob; Fix umgesetzt, Re-Review offen
 - ADR: `docs/ADR_0165_TRIP_WORKSPACE_TW4_ATTENTION.md`
 - Auftrag: `docs/TRIP_WORKSPACE_TW4_TASK.md`
 
@@ -231,6 +232,44 @@ Remote, derselbe Runtime-SHA:
 
 Der nachfolgende Status-Commit ist docs-only. CI/Vercel auf dem Persist-Head erneut prüfen; das UI-Audit gilt für den unveränderten Runtime-Stand `475579d9`.
 
+## Review-Fix nach `5018945518`
+
+Unabhängiger Technical-Lead-Kommentar auf Exact Head `5cf49976`:
+
+Official-Pflichtslots prüften nur Traveller / Credential-Option / Destination. Eine einzelne `visa=current`-Evaluation konnte den Slot clean erscheinen lassen, obwohl andere `OFFICIAL_REQUIREMENT_TYPES` und Transit-Keys fehlten.
+
+Korrektur, nur TW-4, ohne Shared-Contract-Umbau:
+
+- Pflichtslots folgen dem bestehenden Engine-Key `travellerClientRef + credentialOptionRef + destinationCountryCode + requirementType + transitCountryCode`.
+- Typen kommen ausschließlich aus `OFFICIAL_REQUIREMENT_TYPES`; Ziele und Transits aus `readinessReisekontext`.
+- Nicht-Transit: `transitCountryCode = null`. Transit: ein Slot pro kanonischem Transitland, sonst ein Slot mit `null`.
+- Fehlender Pflicht-Key = `official.ungeprueft`. `current`, `unavailable`, `stale`, `insufficient_context` und `unknown` bleiben pro Key verlustfrei und listenreihenfolge-unabhängig.
+- Leerer Slot-Fallback erzeugt kein unvollständiges `OfficialSlot` mehr; TypeScript bleibt grün.
+
+Pflicht-Regressionen in `lib/trips/attention.test.ts`: nur `visa=current` nie Clean; vollständiger Requirement-Satz Official-seitig Clean möglich; genau ein fehlender Typ = `ungeprueft`; Transitland ohne Transit-Evaluation nicht Clean; passende aktuelle Transit-Evaluation ohne Official-Punkte; current plus unavailable/stale/insufficient_context/unknown verlustfrei.
+
+`a1f47b88` hatte den Runtime-Fix, fiel aber im Typecheck durch. Der belegte Runtime-Head ist `d2314d3c`.
+
+## Exact-Head-Gates auf `d2314d3c`
+
+Lokal, alle grün:
+
+- `check:setup:ci` – OK, 1 Warning: keine `.env`
+- `npm run typecheck` – OK
+- `npm run lint` – OK
+- gezielte TW-4-Tests – **29/29**
+- `npm test` – **1943/1943**
+- `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` – OK
+- `npm run build` – OK
+- `npm run audit:trip-workspace` – 1018 Kombinationen, 0 Fehler. Bericht: `/opt/cursor/artifacts/tw4_audit_d2314d3c.json`
+
+Remote, derselbe Runtime-SHA:
+
+- GitHub Actions: SUCCESS – https://github.com/Jetnity/jetnity/actions/runs/32850107053
+- Vercel Preview: SUCCESS – Deployment `6083548203`, https://jetnity-ngjqn6g9t-jetnity-e1b93c82.vercel.app
+
+Der nachfolgende Status-Commit ist docs-only. CI/Vercel auf dem Persist-Head erneut prüfen; das UI-Audit gilt für den unveränderten Runtime-Stand `d2314d3c`.
+
 ## Nächster Schritt
 
-Erneuter unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #60. Kein Ready, kein Merge, kein TW-3, kein TW-5, keine Shared-Contract-Erweiterung.
+Erneuter unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #60 auf dem neuen Exact Head. Kein Ready, kein Merge, kein TW-3, kein TW-5, keine Shared-Contract-Erweiterung.

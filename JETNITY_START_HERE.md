@@ -128,7 +128,7 @@ Kanonisch und vollständig: `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`.
 - PR #57 – Technical-Lead-Autonomie + verbindliche Build-Reihenfolge: **merged**.
 - PR #56 – Trip Workspace TW-1 – Shell & Geräteparität: **merged**.
 - PR #58 – Trip Workspace TW-2 – Reiseübersicht: **merged** nach unabhängigem Technical-Lead-PASS auf Exact Head `3f2c55357a7a2425ab760aac2a29ddbe15f80fa8`; CI, Vercel und Trip-Workspace-UI-Audit 1018/1018 waren grün.
-- **Aktiver Runtime-Slice: PR #60 – TW-4 Aufmerksamkeit / `Jetzt wichtig`.** Reviews `5017458023` und `5018115879` sind behoben. Review `5018504776` (kanonische Official-OptionRefs + Slot-Klassifikation) ist im Branch behoben. Draft bleibt Draft; STOPP für erneuten unabhängigen Technical-Lead-Re-Review.
+- **Aktiver Runtime-Slice: PR #60 – TW-4 Aufmerksamkeit / `Jetzt wichtig`.** Reviews `5017458023`, `5018115879` und `5018504776` sind behoben. Review `5018945518` (kanonische Official-Requirement-Keys inkl. Typ und Transit) ist im Branch behoben. Draft bleibt Draft; STOPP für erneuten unabhängigen Technical-Lead-Re-Review.
 - `Account plattform audit vorbereitung`, `Jetnity provider readiness audit` und `Admin platform audit` warten auf ihre kontrollierten späteren bzw. parallelisierbaren Blöcke.
 - `Jetnity growth discoverability`, `Jetnity quality security audit` und `Jetnity native app architecture` sind verbindlich reserviert, aber **noch nicht zu starten**.
 - `main` Branch Protection ist technisch weiterhin nicht aktiviert; dieses Risiko nicht vergessen.
@@ -170,4 +170,4 @@ Vollständige Regel: `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`.
 
 ## Nächster kontrollierter Schritt
 
-Unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #60 nach dem kanonischen Official-Slot-Fix. Kein Ready, kein Merge, kein TW-3/TW-5, keine Shared-Contract-Erweiterung.
+Unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #60 nach dem Official-Requirement-Key-Fix. Kein Ready, kein Merge, kein TW-3/TW-5, keine Shared-Contract-Erweiterung.
