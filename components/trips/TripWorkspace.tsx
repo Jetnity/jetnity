@@ -3,6 +3,7 @@
 // components/trips/TripWorkspace.tsx
 //
 // Der Reise-Arbeitsbereich. Eine Produktlogik für alle Geräte (ADR-0163 / TW-1).
+// Die Übersicht verdichtet vorhandene Reise-Wahrheit (ADR-0164 / TW-2).
 //
 // Zuerst Orientierung, dann Aktion: Reisekopf, Bereichsnavigation, nur der
 // aktive Bereich. Die Übersicht ist die Reise-Ebene und enthält den Tagesplan.
@@ -26,10 +27,11 @@ import {
   bereichDarstellungKlasse,
   bereichSollMounten,
   bereichSollSichtbar,
-  bereichStatus,
   besuchteBereicheErweitern,
   gewaehlterTagId,
 } from '@/lib/trips/arbeitsbereich'
+import { heutigesDatum } from '@/lib/account/naechste-reise'
+import { uebersichtAbleiten } from '@/lib/trips/uebersicht'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
 import type { SafetyEvaluation } from '@/lib/safety/domain'
 import type { SeasonalEvaluation } from '@/lib/seasonal/domain'
@@ -218,7 +220,7 @@ export default function TripWorkspace({
 
   const ungeplantePunkte = ohneTag.length > 0 ? ohneTag : reise.ohneTag
   const aenderungSichtbar = aenderungIstSichtbar(aenderungOffen)
-  const status = bereichStatus(reise, ungeplantePunkte)
+  const uebersicht = uebersichtAbleiten(reise, ungeplantePunkte, heutigesDatum())
   const aktivitaeten = sucheMitTag(aktivitaetensuche, aktiverTag, setAktiverTag)
 
   const bereichBereit = (ziel: Arbeitsbereich) => bereichSollMounten(ziel, bereich, besucht)
@@ -285,7 +287,13 @@ export default function TripWorkspace({
 
         {hinweis}
 
-        <TripWorkspaceKopf reise={reise} quelle={quelle} kompakt={kompakt} kopfzeile={kopfzeile} />
+        <TripWorkspaceKopf
+          reise={reise}
+          quelle={quelle}
+          kompakt={kompakt}
+          uebersicht={uebersicht}
+          kopfzeile={kopfzeile}
+        />
 
         <TripWorkspaceNavigation aktiv={bereich} onWechsel={wechseln} />
 
@@ -293,7 +301,7 @@ export default function TripWorkspace({
           <BereichHuelle bereich="uebersicht" verborgen={uebersichtVerborgen}>
             <TripWorkspaceUebersicht
               reise={reise}
-              status={status}
+              uebersicht={uebersicht}
               aenderungOffen={aenderungOffen}
               onBereich={wechseln}
               onAenderung={aenderungOeffnen}

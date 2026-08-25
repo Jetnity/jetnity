@@ -1,20 +1,20 @@
 # Jetnity – Trip Workspace Implementierungsplan
 
 Stand: 25. August 2026  
-Status: **Ziel-IA angenommen (ADR-0163). TW-1 Runtime in Draft-PR #56; STOPP für unabhängigen Technical-Lead-Re-Review. Kein Ready, kein Merge, kein TW-2.**  
+Status: **Ziel-IA angenommen (ADR-0163). TW-1 auf `main` (PR #56). TW-2 Runtime in Draft-PR #58; STOPP für unabhängigen Technical-Lead-Re-Review. Kein TW-3, kein TW-4.**  
 Audit: `docs/TRIP_WORKSPACE_AUDIT.md`  
 Ziel: `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`  
 Abhängigkeiten: `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`
 
 Kein Monster-PR. Jeder Slice ist klein, reviewbar und konfliktarm gegenüber Account, Admin und Provider.
 
-Historische Audit-Basis bleibt `1ec93cc9` / Integrationsnachzug `b7f027ec`. Aktueller `main` nach #55: `1bc1e1f4`. TW-1 läuft nur auf `feat/trip-workspace-tw1-shell-device-parity`.
+Historische Audit-Basis bleibt `1ec93cc9` / Integrationsnachzug `b7f027ec`. TW-1 ist auf `main` (PR #56). TW-2 läuft nur auf `feat/trip-workspace-tw2-overview` / Draft-PR #58.
 
 ---
 
 ## 1. Sperre
 
-Dieser Plan startete als docs-only Vorbereitung **keine** Implementation. Die Product-Owner-Freigabe vom 25. August 2026 (ADR-0163) hebt die Sperre **nur für TW-1** auf. TW-2+ bleiben gesperrt.
+Dieser Plan startete als docs-only Vorbereitung. ADR-0163 hat TW-1 freigegeben; ADR-0164 und der versionierte TW-2-Auftrag geben ausschließlich TW-2 frei. TW-3+ bleiben gesperrt.
 
 Vor TW-1 Runtime brauchte es:
 
@@ -86,7 +86,7 @@ Gates: Repo-Hygiene, CI auf Exact Head, Vercel Preview falls erzeugt. Grün ≠ 
 
 ### TW-1 – Shell und Geräteparität
 
-**Status:** Runtime umgesetzt in Draft-PR #56; wartet auf unabhängigen Technical-Lead-Re-Review. Nicht gemergt.
+**Status:** auf `main` gemergt (PR #56).
 
 **Ziel:** Eine Produktlogik auf Mobile und Desktop. Desktop bekommt wieder eine Reise-Ebene.
 
@@ -108,6 +108,8 @@ Gates: Repo-Hygiene, CI auf Exact Head, Vercel Preview falls erzeugt. Grün ≠ 
 **Abhängigkeit:** frei auf `main`.
 
 ### TW-2 – Reiseübersicht
+
+**Status:** Runtime umgesetzt in Draft-PR #58; wartet auf unabhängigen Technical-Lead-Re-Review. Nicht gemergt.
 
 **Ziel:** Die ersten Sekunden beantworten „Was ist diese Reise?“ ohne Dashboard.
 
