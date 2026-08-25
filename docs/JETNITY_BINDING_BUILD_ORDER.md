@@ -82,7 +82,31 @@ Danach die vollständige kommerzielle Schicht:
 
 Keine Fake-Commercial-Truth.
 
-## 8. Production-Härtung / Launch Readiness
+## 8. Guardian / Reise-Autopilot & What-if-Reise-Simulator
+
+Diese beiden Funktionen sind durch ausdrückliche Product-Owner-Entscheidung **verbindliche Kernfunktionen** und müssen vollständig gebaut werden.
+
+Kanonische Spezifikation: `docs/JETNITY_GUARDIAN_AND_WHAT_IF_SIMULATOR_STANDARD.md`.
+
+### Guardian / Reise-Autopilot
+
+Guardian muss reale Änderungen und Probleme – soweit belastbare Evidence vorhanden ist – cross-domain gegen die gesamte Reise bewerten. Er soll Auswirkungen auf z. B. Anschluss, Transfer, Unterkunft, Aktivitäten, Route, Readiness, Safety, Seasonal, Traveller-/Document-Kontext, Zeit und kommerzielle Alternativen verständlich zusammenführen.
+
+Guardian erzeugt **keine zweite Reise-Wahrheit** und darf keine kanonische Reise, Buchung, Zahlung oder Provideraktion still verändern. Reale Änderungen benötigen einen kontrollierten, expliziten Apply-/Command-Pfad.
+
+### What-if-Reise-Simulator
+
+Der Simulator muss hypothetische Reiseänderungen in einem isolierten Scenario-/Sandbox-State berechnen und Baseline vs. Scenario als verständliches Delta vergleichen. Die reale Reise bleibt während der Simulation unverändert. Erst ein ausdrückliches `Übernehmen` darf den normalen kontrollierten Write-Pfad aufrufen.
+
+### Gemeinsame Architektur
+
+Guardian, Simulator und Value Optimizer müssen gemeinsame kanonische Intelligence-/Impact-/Evidence-Bausteine wiederverwenden, wo fachlich identisch. Es dürfen keine drei widersprüchlichen Berechnungswelten entstehen.
+
+Multi-Traveller, Multi-Citizenship, Multi-Document, Evidence/Freshness/Authority, `unknown`-/stale-/error-Grenzen und LLM-vs-Hard-Truth-Regeln gelten vollständig.
+
+Der aktuell laufende Trip-Workspace-Slice darf dafür **nicht** aufgebläht werden. Technische Hooks dürfen früher entstehen, wenn sie ohnehin für einen aktuellen Slice nötig sind; die vollständige Integration bleibt ein eigener kontrollierter Programmblock.
+
+## 9. Production-Härtung / Launch Readiness
 
 Vor echtem Launch verpflichtend:
 
@@ -96,7 +120,8 @@ Vor echtem Launch verpflichtend:
 - Mobile/Tablet/Laptop/Desktop-Acceptance;
 - Release-/Rollback-Plan;
 - Branch Protection / Required Checks;
-- provider-backed Truth-Audit nach echter Provider-Aktivierung.
+- provider-backed Truth-Audit nach echter Provider-Aktivierung;
+- finaler cross-domain Guardian-/Simulator-Audit inklusive No-Silent-Write-, Scenario-Isolation-, Multi-Citizenship- und Evidence/Freshness-Nachweis.
 
 ## Arbeitsweise
 
