@@ -5,40 +5,60 @@ Status: **Product-Owner-verbindlich; für neue Chats, Technical Leads und Coding
 
 ## 1. Zweck
 
-Jetnity soll parallel entwickelt werden können, ohne dass mehrere Coding Agents dieselben fachlichen Verträge, dieselbe Produktwahrheit oder dieselben zentralen Dateien unkontrolliert verändern.
+Jetnity soll mit mehreren spezialisierten Cursor-Agenten parallel entwickelt werden können, ohne dass mehrere Agents dieselben fachlichen Verträge, dieselbe Produktwahrheit oder dieselben zentralen Dateien unkontrolliert verändern.
 
 Dieses Dokument definiert deshalb verbindlich:
 
-- welche fünf Cursor-Agent-Workstreams Jetnity verwenden soll;
-- welche Verantwortung jeder Workstream hat;
-- welche Bereiche ausdrücklich nicht zu seinem Scope gehören;
-- wann paralleles Arbeiten erlaubt ist;
-- wann ein Agent warten muss;
-- wie Shared Contracts und Querschnittsthemen kontrolliert werden;
-- wie neue Chats die aktive Agentenlandschaft übernehmen;
-- wann ein sechster Agent überhaupt in Betracht kommt.
+- welche **sechs** Cursor-Agent-Workstreams Jetnity verwendet bzw. reserviert;
+- die exakten Anzeigenamen;
+- Verantwortung und Non-Scope jedes Workstreams;
+- wann ein Agent gestartet, pausiert oder wieder aktiviert wird;
+- wie Shared Contracts geschützt werden;
+- wie ChatGPT / Technical Lead alle sechs Agents steuert;
+- wie Parallelisierung und Merge-Reihenfolge funktionieren;
+- wie unabhängige Qualität, Security und Release Readiness organisiert werden.
 
-Mehr Parallelität ist **kein Selbstzweck**. Geschwindigkeit darf Architektur, Wahrheit, Sicherheit, Merge-Qualität und Wartbarkeit nicht verschlechtern.
+Mehr Parallelität ist **kein Selbstzweck**. Geschwindigkeit darf Architektur, Wahrheit, Security, Privacy, UX, Merge-Qualität und Wartbarkeit niemals verschlechtern.
 
-## 2. Übergeordnete Steuerung
+## 2. Übergeordnete Führung durch ChatGPT / Technical Lead
 
-ChatGPT / Technical Lead bleibt die übergreifende Instanz für:
+ChatGPT / Technical Lead bleibt die übergreifende Steuerungs- und Integrationsinstanz für **alle sechs** Cursor-Agenten.
 
-- Produkt-/Systemarchitektur;
-- Workstream-Reihenfolge und konfliktarme Parallelisierung;
-- Shared Contracts;
+Der Technical Lead verantwortet insbesondere:
+
+- Produkt- und Systemarchitektur;
+- verbindliche Build-Reihenfolge;
+- Auswahl des aktuell aktiven Primär-Workstreams;
+- konfliktarme Parallelisierung;
+- Shared Contracts und deren Ownership;
+- genaue Scope-/Non-Scope-Grenzen pro Slice;
+- Branch-/Draft-PR-Strategie;
 - unabhängige Reviews;
 - Exact-Head-Gates;
 - Ready-/Merge-Entscheidungen im Rahmen der genehmigten Autonomie;
-- Querschnittsthemen zwischen mehreren Agents;
-- technische Eskalationen und Grenzfälle;
-- Wahrheits-, Security-, Privacy- und Integrationskontrolle.
+- Synchronisation gegen aktuelles `main`;
+- Cross-Agent-Abhängigkeiten;
+- Wahrheit, Security, Privacy, Kosten- und Production-Gates;
+- Eskalation an den Product Owner bei besonderen Freigaben.
 
 Kein Cursor-Agent darf sich selbst zum Eigentümer eines Shared Contracts erklären oder still die Zuständigkeit eines anderen Workstreams übernehmen.
 
-## 3. Verbindliche fünf Cursor-Agent-Workstreams
+### Führungsregel für neue Chats
 
-Die ersten vier bestehenden Cursor-Agent-Anzeigenamen bleiben **exakt** erhalten. Der fünfte Agent ist verbindlich als eigener zukünftiger Workstream reserviert und muss bei seiner Erstellung exakt so benannt werden.
+Jeder neue Chat / Technical Lead muss:
+
+1. zuerst `JETNITY_START_HERE.md` lesen;
+2. dieses Dokument vollständig lesen;
+3. GitHub/PR/CI/Vercel/Supabase live verifizieren;
+4. für jeden der sechs Agents bestimmen: **aktiv / wartet / blockiert / später reserviert**;
+5. nur konfliktarme Agents parallel starten;
+6. jedem Agent einen versionierten Auftrag mit Scope, Non-Scope, Gates und STOPP-Punkt geben;
+7. nach Agent-Self-Review immer einen unabhängigen Technical-Lead-Re-Review durchführen;
+8. erst danach Ready/Merge erlauben bzw. im Autonomie-Rahmen selbst ausführen.
+
+## 3. Verbindliche sechs Cursor-Agent-Workstreams
+
+Die exakten Anzeigenamen sind verbindlich. Bestehende Agents dürfen nicht umbenannt werden. Reservierte zukünftige Agents müssen bei Erstellung exakt so benannt werden.
 
 ### 3.1 `Trip workspace audit architecture`
 
@@ -53,7 +73,7 @@ Verantwortet insbesondere:
 - Item- und Gap-Details;
 - Workspace-interne progressive Disclosure;
 - Workspace-UX und Workspace-spezifische Tests/Audits;
-- Integration bereits vorhandener provider-neutraler Truth-/Readiness-/Safety-/Seasonal-Signale in die Reiseoberfläche;
+- Integration vorhandener provider-neutraler Truth-/Readiness-/Safety-/Seasonal-Signale in die Reiseoberfläche;
 - spätere Workspace-Polish-/Closure-Slices gemäß kanonischem Workspace-Plan.
 
 Darf **nicht** eigenmächtig übernehmen:
@@ -75,15 +95,15 @@ Verantwortet insbesondere:
 - Account Home;
 - Account Lifecycle innerhalb des freigegebenen AP-Plans;
 - Account Security-/Privacy-UX;
-- Traveller Registry auf dem bereits vorhandenen Foundation-E-Modell;
-- Dokument-Lifecycle/UX, soweit im Account-/Traveller-Scope;
+- Traveller Registry auf dem bestehenden Foundation-E-Modell;
+- Dokument-Lifecycle/UX im Account-/Traveller-Scope;
 - Reiseprofil;
 - Favoriten;
 - Booking Overview;
 - Account Notifications;
 - Subscription-/Entitlement-Grundlage, soweit im AP-Plan vorgesehen.
 
-Harte Regel für Traveller:
+Harte Traveller-Regel:
 
 > Ein Reisender → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig bewertete zulässige Optionen.
 
@@ -110,15 +130,15 @@ Verantwortet insbesondere:
 - Cost Guard;
 - Observability und ehrliche Provider-Health;
 - Cache-/Lizenz-Hooks;
-- spätere reale Providerintegration **nur nach den besonderen Product-Owner-Gates**.
+- spätere reale Providerintegration **nur nach besonderen Product-Owner-Gates**.
 
 Darf **nicht** eigenmächtig:
 
-- neue Production-Secrets aktivieren;
+- Production-Secrets aktivieren;
 - kostenpflichtige Provider-Calls starten;
 - Verträge abschließen;
 - Provider als `healthy` vortäuschen;
-- echte Preise/Verfügbarkeit ohne Evidence exponieren;
+- Preise/Verfügbarkeit ohne Evidence exponieren;
 - Product-UI oder Account-Contracts still ummodellieren.
 
 ### 3.4 `Admin platform audit`
@@ -130,7 +150,7 @@ Verantwortet insbesondere:
 - Admin D–K gemäß Admin-Plan;
 - Security-/Support-/Finance-/Operations-Bereiche;
 - Billing-/Refund-Integrität vor Finance-/Payment-Live;
-- Bexio-/Payment-/Ads-/Connector-Fähigkeiten nur in den vorgesehenen Gates;
+- Bexio-/Payment-/Ads-/Connector-Fähigkeiten nur in vorgesehenen Gates;
 - vollständiges Marketing-&-Growth-Control-Center gemäß `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`;
 - Growth Executive Overview;
 - Funnel/Kohorten/Attribution;
@@ -154,13 +174,13 @@ Darf **nicht** eigenmächtig:
 
 ### 3.5 `Jetnity growth discoverability`
 
-**Status:** verbindlich reservierter fünfter Cursor-Agent. **Noch nicht starten, bis die Aktivierungsbedingungen in Abschnitt 5 erfüllt sind.**
+**Status:** verbindlich reservierter fünfter Cursor-Agent. Noch nicht starten, bis die Aktivierungsbedingungen erfüllt sind.
 
 **Rolle:** öffentliche Jetnity-Oberflächen für Acquisition, Brand, Search-/Answer-Engine-Discoverability und organisches Wachstum.
 
 Dieser Agent ist ausdrücklich **nicht** das interne Marketing-Control-Center. Das interne Control Center bleibt bei `Admin platform audit`.
 
-Der Agent `Jetnity growth discoverability` verantwortet später insbesondere:
+Verantwortet später insbesondere:
 
 #### Öffentliche Website / Brand Surface
 
@@ -197,9 +217,9 @@ Der Agent `Jetnity growth discoverability` verantwortet später insbesondere:
 
 #### Content-/Programmatic-SEO-Surfaces
 
-- hochwertige öffentliche Reiseinhalte, die echte Nutzerfragen beantworten;
-- strukturierte Destination-/Season-/Route-/Entry-/Use-Case-Flächen nur auf belegbarer Wahrheit;
-- Programmatic SEO nur mit echtem Mehrwert und ausreichender Informationsdichte;
+- hochwertige öffentliche Reiseinhalte mit echtem Nutzwert;
+- Destination-/Season-/Route-/Entry-/Use-Case-Flächen nur auf belegbarer Wahrheit;
+- Programmatic SEO nur mit ausreichender Informationsdichte;
 - keine dünnen Massen-Seiten;
 - keine erfundenen Preise, Visa-Regeln, Safety-Aussagen oder Provider-Truth.
 
@@ -207,10 +227,10 @@ Der Agent `Jetnity growth discoverability` verantwortet später insbesondere:
 
 - öffentliche Landingpage-Komponenten;
 - Web→App-/Deep-Link-Einstiege;
-- Referral-/Invite-Einstiegspunkte auf der öffentlichen Seite, wenn die Product-Contracts vorhanden sind;
+- Referral-/Invite-Einstiegspunkte, wenn Product-Contracts vorhanden sind;
 - Creator-/Campaign-entry surfaces;
 - Conversion-UX ohne Dark Patterns;
-- truth-aware Experiment-Flächen innerhalb der freigegebenen Contracts.
+- truth-aware Experiment-Flächen innerhalb freigegebener Contracts.
 
 #### App-Store-/ASO-Vorbereitung
 
@@ -222,15 +242,142 @@ Der Agent `Jetnity growth discoverability` verantwortet später insbesondere:
 
 #### Messbarkeit
 
-Der Agent baut öffentliche Flächen so, dass die bereits kanonisch definierten Attribution-/Event-/Consent-Verträge korrekt verwendet werden können. Er **erfindet keine zweite Analytics- oder Attribution-Wahrheit**.
+Der Agent verwendet die kanonischen Attribution-/Event-/Consent-Verträge und erfindet **keine zweite Analytics- oder Attribution-Wahrheit**.
 
-### Abgrenzung zu `Admin platform audit`
+### Abgrenzung `Jetnity growth discoverability` vs. `Admin platform audit`
 
-`Jetnity growth discoverability` baut **die öffentliche Seite und ihre Acquisition-/Discovery-Oberflächen**.
+`Jetnity growth discoverability` baut **öffentliche Acquisition-/Discovery-Oberflächen**.
 
 `Admin platform audit` baut **das interne Kontrollzentrum**, das Marketing, Attribution, SEO, CRM, Paid Media, Experimente, Creators, Reviews, Economics und Incidents überwacht und steuert.
 
-Beide müssen dieselben kanonischen Claims-/Attribution-/Consent-/Event-Verträge verwenden. Keine doppelte Wahrheit.
+Beide verwenden dieselben Claims-/Attribution-/Consent-/Event-Verträge. Keine doppelte Wahrheit.
+
+### 3.6 `Jetnity quality security audit`
+
+**Status:** verbindlich reservierter sechster Cursor-Agent. Bei Erstellung exakt so benennen.
+
+**Rolle:** unabhängige Qualität, Security, Resilience und Release Readiness für das gesamte Jetnity-System.
+
+Dieser Agent ist **kein sechster Feature-Entwickler**. Seine Hauptaufgabe ist, Jetnity systematisch zu prüfen, Fehler zu finden, Integrationsrisiken aufzudecken und Releases fachlich/technisch adversarial zu testen.
+
+#### Qualität / Regression / E2E
+
+Verantwortet insbesondere:
+
+- vollständige E2E- und Regressionstests über mehrere Domains;
+- Cross-Domain-Szenarien zwischen Workspace, Account, Traveller, Readiness, Route, Provider, Admin und Commercial;
+- Tests für Guest/Account-Parität;
+- Multi-Traveller-/Multi-Citizenship-/Multi-Document-Regressionen;
+- negative Testfälle, Boundary Cases und Recovery-Flows;
+- Browser-/Viewport-/Geräteparität;
+- später native iOS-/Android-Qualitätsprüfungen, sobald die Native-Phase existiert;
+- Fehlerzustände bei Offline, schlechtem Netzwerk, Timeouts und partiellen Provider-Ausfällen.
+
+#### Security
+
+Prüft adversarial insbesondere:
+
+- Auth-/Session-Grenzen;
+- MFA/AAL-Verhalten;
+- RLS und Ownership;
+- IDOR/BOLA-artige Zugriffsfehler;
+- Guest→Account-Grenzen;
+- Admin-Capabilities und Privilege Escalation;
+- Datenlecks zwischen Accounts/Trips/Travellern;
+- Secret Exposure;
+- unsichere Logs/Telemetry;
+- Input-/Output-Grenzen;
+- sensible Identity-/Document-Daten;
+- Provider-/Webhook-/External-Connector-Grenzen, sobald vorhanden.
+
+Der Agent darf Security-Tests durchführen, aber **keine Production-Sicherheitsgrenze eigenmächtig verändern**, wenn dies einen Shared Contract oder besonderes PO-Gate berührt.
+
+#### Privacy / Consent
+
+Prüft insbesondere:
+
+- Consent-Flows;
+- Zweckbindung;
+- Marketing-vs.-Identity-Datentrennung;
+- Export/Delete-/Privacy-Flows;
+- Logging/Analytics auf unnötige personenbezogene Daten;
+- ob sensible Pass-/MRZ-/Dokumentdaten unzulässig in Marketing, Analytics oder öffentliche Flächen geraten.
+
+#### Performance / Accessibility / UX-Robustheit
+
+Prüft insbesondere:
+
+- Core Web Vitals;
+- langsame Render-/API-Pfade;
+- Bundle-/Asset-Regressions;
+- große Datenmengen;
+- Accessibility;
+- Tastatur-/Screenreader-Grundpfade;
+- 280px-/Small-Viewport-Robustheit;
+- Loading-/Error-/Empty-/Unknown-/Unavailable-State-Konsistenz.
+
+#### Reliability / Operations
+
+Prüft insbesondere:
+
+- Monitoring-/Alert-Blindspots;
+- Provider-Timeout-/Fallback-Verhalten;
+- Rate-/Cost-Guard-Fehler;
+- Retry-/Idempotency-Risiken;
+- Backup-/Restore-Prozesse;
+- Disaster Recovery;
+- Rollback-Verfahren;
+- Release-/Deployment-Sicherheit;
+- Cache-/Stale-/Freshness-Probleme;
+- Incident-Readiness.
+
+#### Release Readiness
+
+Vor größeren Releases oder Production-Aktivierungen erstellt `Jetnity quality security audit` einen unabhängigen **Go/No-Go Quality Report** mit mindestens:
+
+- geprüfter Exact Head / Release Candidate;
+- Testabdeckung und relevante Gates;
+- offene P0/P1/P2-Risiken;
+- Security-/Privacy-Befunde;
+- Performance-/Accessibility-Befunde;
+- Recovery-/Rollback-/Monitoring-Status;
+- Known Limitations;
+- klare Empfehlung `GO`, `GO WITH ACCEPTED RISKS` oder `NO-GO`.
+
+`GO` ersetzt **keine** Product-Owner-Freigabe für besondere Production-/Provider-/Payment-/Sensitive-Data-Gates.
+
+#### Defect Ownership
+
+Wenn `Jetnity quality security audit` einen Fehler findet:
+
+1. Defekt reproduzierbar dokumentieren;
+2. Schweregrad und betroffene Contracts nennen;
+3. zuständigen Fachagenten bestimmen;
+4. Fachagent behebt den Defekt normalerweise im eigenen Workstream;
+5. `Jetnity quality security audit` verifiziert den Fix unabhängig erneut.
+
+Der Quality-Agent darf **selbst** ändern:
+
+- isolierte Test-/Audit-Harnesses;
+- Testfixtures;
+- kontrollierte CI-/Audit-Verbesserungen;
+- klar abgegrenztes Hardening ohne Produkt-/Shared-Contract-Änderung.
+
+Er darf **nicht** zum allgemeinen Feature-Agenten werden oder breite Fachlogik still umschreiben.
+
+### Abgrenzung zum Technical Lead
+
+`Jetnity quality security audit` ist ein unabhängiger Prüf-Workstream, **ersetzt aber nicht ChatGPT / Technical Lead**.
+
+Der Technical Lead:
+
+- entscheidet Architektur;
+- entscheidet Workstream-Ownership;
+- führt den finalen unabhängigen PR-Review;
+- integriert Ergebnisse aller Agents;
+- entscheidet Ready/Merge im Autonomie-Rahmen.
+
+Der Quality-Agent liefert zusätzliche adversariale Evidence, Cross-Domain-Tests und Release-Sicherheitsbewertung.
 
 ## 4. Shared Contracts bleiben Technical-Lead-kontrolliert
 
@@ -252,9 +399,10 @@ Folgende Themen dürfen nie von einem einzelnen Workstream still umgebaut werden
 - Provider Activation;
 - zentrale Attribution-/Revenue-Truth;
 - öffentliche Claims-Truth;
-- Guardian-/Simulator-/Value-Impact-Verträge, wenn sie mehrere Domains verbinden.
+- Guardian-/Simulator-/Value-Impact-Verträge;
+- Release-/Production-Gates, wenn sie mehrere Domains betreffen.
 
-Wenn ein Agent für seinen Slice eine Änderung an einem solchen Contract für nötig hält:
+Wenn ein Agent eine Shared-Contract-Änderung für nötig hält:
 
 1. Problem und gewünschte Änderung explizit dokumentieren.
 2. Nicht still implementieren.
@@ -262,7 +410,7 @@ Wenn ein Agent für seinen Slice eine Änderung an einem solchen Contract für n
 4. Shared Änderung erhält eigenen kontrollierten Task/PR oder explizite Scope-Erweiterung.
 5. Abhängige Agents synchronisieren erst nach bestätigtem Contract.
 
-## 5. Verbindliche Aktivierungsreihenfolge für Parallelisierung
+## 5. Verbindliche Aktivierungsreihenfolge und Parallelisierung
 
 ### Aktuell
 
@@ -272,156 +420,178 @@ Der zentrale Trip-Workspace-Integrationspfad hat Priorität.
 
 ### Stabile Parallelisierungs-Schwelle
 
-Die bevorzugte Schwelle für breitere Parallelisierung ist:
+Die bevorzugte Schwelle für breitere Runtime-Parallelisierung ist:
 
 1. TW-4 vollständig integriert und auf `main` verifiziert;
 2. TW-3 vollständig integriert und auf `main` verifiziert;
 3. kurzer Technical-Lead-Integrations-Checkpoint;
-4. keine offenen Shared-Contract-Blocker zwischen Workspace und den wartenden Workstreams.
-
-Erst danach sollen zusätzliche große Runtime-Workstreams wieder parallel anlaufen.
+4. keine offenen Shared-Contract-Blocker zwischen Workspace und wartenden Workstreams.
 
 ### Nach diesem Checkpoint
 
 Bevorzugtes Modell:
 
-- `Trip workspace audit architecture` arbeitet weiter an den verbleibenden Workspace-Slices;
+- `Trip workspace audit architecture` arbeitet weiter an verbleibenden Workspace-Slices;
 - `Jetnity provider readiness audit` darf mit einem konfliktarmen Provider-Readiness-Slice weiterlaufen;
 - `Admin platform audit` darf mit einem klar abgegrenzten Admin-Slice weiterlaufen;
-- `Account plattform audit vorbereitung` wird gemäß großer Build-Reihenfolge besonders dann aktiviert, wenn der Traveller-/Pass-/Account-Block beginnt; Account-/Traveller-Shared-Contracts bleiben TL-gesteuert;
-- `Jetnity growth discoverability` wird erst aktiviert, wenn der öffentliche/Homepage-/Discoverability-Block fachlich sinnvoll geöffnet werden kann und die unten genannten Voraussetzungen erfüllt sind.
+- `Account plattform audit vorbereitung` wird besonders mit Beginn des Traveller-/Pass-/Account-Blocks aktiviert;
+- `Jetnity growth discoverability` wird erst bei stabilem Public-/Workspace-Truth-Kontext aktiviert;
+- `Jetnity quality security audit` kann ab diesem stabilen Mehr-Agenten-Checkpoint als unabhängiger QA-/Security-Workstream hinzukommen.
 
 ### Aktivierungsbedingungen für `Jetnity growth discoverability`
 
-Der fünfte Agent darf gestartet werden, wenn mindestens folgende Bedingungen erfüllt bzw. bewusst vom Technical Lead als konfliktarm bewertet sind:
+Der fünfte Agent darf gestartet werden, wenn:
 
-- TW-4 und TW-3 sind integriert;
-- zentraler Workspace-Kern ist stabil genug, dass öffentliche Produktversprechen nicht auf beweglicher Kernlogik beruhen;
-- Product Positioning Standard ist unverändert bindend;
-- AI/Search Discoverability Standard ist bindend;
-- Marketing & Growth Standard ist bindend;
-- öffentliche Claims dürfen nur auf bereits realer oder ausdrücklich als „geplant“ gekennzeichneter Produktfähigkeit beruhen;
-- Attribution-/Event-/Consent-Grundverträge sind entweder bereits vorhanden oder werden als klar kontrollierter G0-/D0-Foundation-Slice definiert;
-- es gibt keinen gleichzeitig laufenden Agenten, der dieselben Homepage-/Public-Surface-Dateien ohne abgestimmte Ownership bearbeitet.
+- TW-4 und TW-3 integriert sind;
+- zentraler Workspace-Kern stabil genug für belastbare öffentliche Claims ist;
+- Product Positioning, Discoverability und Marketing/Growth Standards bindend sind;
+- Claims nur reale oder explizit als geplant gekennzeichnete Fähigkeiten darstellen;
+- Attribution-/Event-/Consent-Grundverträge kontrolliert vorhanden oder als G0/D0-Slice definiert sind;
+- kein anderer Agent dieselben Homepage-/Public-Surface-Dateien unkoordiniert bearbeitet.
 
-Der Technical Lead darf den fünften Agenten bei einem stabilen Checkpoint etwas früher für **docs-only Audit, Target Architecture oder konfliktarme D0/G0-Vorbereitung** einsetzen. Public Runtime, Claims und Campaign-Aktivierung bleiben trotzdem an ihre Truth-/Launch-Gates gebunden.
+Docs-only Audit/Target Architecture/D0/G0-Vorbereitung darf der Technical Lead an einem stabilen Checkpoint früher zulassen.
 
-## 6. Parallelisierungsregeln
+### Aktivierungsbedingungen für `Jetnity quality security audit`
 
-### Erlaubt
+Der sechste Agent darf gestartet werden, sobald mindestens eines der folgenden Szenarien sinnvoll ist:
 
-Mehrere Agents dürfen gleichzeitig arbeiten, wenn:
+- mehrere Runtime-Agents arbeiten parallel und Cross-Domain-Regressionen werden relevant;
+- der Workspace-Kern ist stabil genug für systematische E2E-/Security-Tests;
+- ein größerer Integrationscheckpoint steht an;
+- Provider-/Commercial-/Admin-/Account-Systeme beginnen stärker miteinander zu interagieren;
+- eine größere Production-/Launch-Readiness-Phase nähert sich.
 
-- ihre Dateiflächen und Contracts überwiegend getrennt sind;
-- jeder einen eigenen Branch und Draft-PR besitzt;
-- Scope und Non-Scope versioniert sind;
-- Shared Contracts nicht still geändert werden;
-- alle Agents vor Merge gegen aktuelles `main` synchronisieren;
-- jeder Runtime-PR seine eigenen Exact-Head-Gates und unabhängigen TL-Review erhält.
+Der Quality-Agent darf auch früher für einen **klar abgegrenzten Audit** eingesetzt werden, wenn dadurch ein hohes Risiko sinnvoll unabhängig geprüft werden kann. Er soll aber nicht dauerhaft jeden kleinen Slice blockieren.
 
-### Nicht erlaubt
+## 6. Praktisches Führungsmodell für sechs Agents
 
-Nicht einfach alle Agents gleichzeitig starten, wenn:
-
-- ein zentraler Integrationsblock gerade Shared Contracts bewegt;
-- mehrere Agents dieselbe Kernkomponente umbauen würden;
-- einer der PRs eine Production-/Provider-/Billing-/Identity-/Security-Grenze öffnet;
-- der zusätzliche Workstream nur „mehr Geschwindigkeit“ erzeugt, aber keine saubere Ownership besitzt;
-- Rebase-/Merge-/Full-Audit-Kosten den Parallelitätsgewinn übersteigen.
-
-## 7. Merge- und Synchronisationsregel
-
-Jeder aktive Branch muss vor Ready/Merge gegen das **aktuelle** `main` geprüft werden.
-
-Wenn `main` während eines Slices weiterläuft:
-
-- Branch kontrolliert synchronisieren;
-- Konflikte fachlich lösen, nicht blind übernehmen;
-- alle durch die Synchronisation ungültig gewordenen Exact-Head-Nachweise erneut ausführen;
-- unabhängigen Technical-Lead-Review auf dem finalen Head durchführen.
-
-Bei parallelen Agents bestimmt der Technical Lead die Merge-Reihenfolge so, dass Shared-Contract- und Audit-Risiken minimiert werden.
-
-## 8. Pflicht-Handoff jedes Agents
-
-Jeder Agent muss vor seinem STOPP mindestens dokumentieren:
+### 6.1 Jeder Agent erhält immer
 
 - exakten Anzeigenamen;
-- Branch;
-- PR;
-- Exact Head;
-- Base / Merge-Base;
-- ahead/behind;
-- tatsächlich umgesetzten Scope;
-- bewusst nicht umgesetzten Scope;
-- geänderte Runtime-/Contract-Dateien;
-- Tests/Gates;
-- GitHub Actions;
-- Vercel;
-- DB/RLS/Auth/Provider/Secrets/Kosten/Production-Änderungen;
-- offene Risiken;
-- bekannte Shared-Contract-Berührungen;
-- nächsten erlaubten Schritt;
-- klaren STOPP für unabhängigen Technical-Lead-Review.
+- eigenen Branch;
+- eigenen Draft-PR;
+- versionierten Task;
+- expliziten Scope;
+- expliziten Non-Scope;
+- relevante Shared-Contract-Grenzen;
+- verpflichtende Tests/Gates;
+- STOPP-Punkt für unabhängigen Technical-Lead-Review.
 
-Grüne Tests ersetzen den unabhängigen Review nicht.
+### 6.2 Kein Agent merge autonom aus Cursor heraus
 
-## 9. Pflicht für neue Chats
+Coding Agents stoppen nach Self-Review und Evidence. Ready/Merge erfolgt erst nach unabhängigem Technical-Lead-Review gemäß aktueller Autonomie-Governance.
 
-Ein neuer Chat muss vor Agentensteuerung:
+### 6.3 Wenn `main` während eines Slices weiterläuft
 
-1. `JETNITY_START_HERE.md` lesen;
-2. dieses Dokument `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md` lesen;
-3. `docs/JETNITY_BINDING_BUILD_ORDER.md` lesen;
-4. aktuelle Handoffs/Active Work lesen;
-5. GitHub/PR/CI/Vercel live verifizieren;
-6. die exakten Agent-Anzeigenamen verwenden;
-7. keine wartenden Agents nur aus Geschwindigkeitserwägungen starten.
+Vor Merge zwingend:
 
-Wenn ein alter Chat/Handoff einer aktuellen kanonischen Agentenregel widerspricht, gilt die neuere Product-Owner-verbindliche Governance.
+1. mit aktuellem `main` synchronisieren;
+2. Konflikte fachlich prüfen, nicht blind lösen;
+3. neue Exact Head bestimmen;
+4. relevante Gates auf diesem Head erneut ausführen;
+5. CI/Vercel erneut prüfen;
+6. unabhängigen Technical-Lead-Re-Review durchführen.
 
-## 10. Exakte Anzeigenamen – verbindlich
+### 6.4 Cross-Agent-Defects
 
-Bestehend:
+Wenn Agent A einen Defekt im Bereich von Agent B entdeckt:
 
-- `Trip workspace audit architecture`
-- `Account plattform audit vorbereitung`
-- `Jetnity provider readiness audit`
-- `Admin platform audit`
+- nicht still großflächig reparieren;
+- reproduzierbaren Befund dokumentieren;
+- Technical Lead ordnet Ownership zu;
+- Fix möglichst im zuständigen Workstream;
+- unabhängige Re-Verifikation.
 
-Reservierter fünfter Agent:
+### 6.5 Prioritätsregel
 
-- `Jetnity growth discoverability`
+P0/P1 Security-, Data-Truth-, Privacy-, Billing-/Money-, Ownership- oder Production-Risiken schlagen Feature-Tempo.
 
-Neue Chats und Technical Leads sollen **immer die exakten Anzeigenamen** verwenden, damit der Product Owner sofort weiß, welcher Cursor-Agent gemeint ist.
+## 7. Rolle des sechsten Agents im Entwicklungszyklus
 
-## 11. Sechster Agent oder weitere Agents
+`Jetnity quality security audit` arbeitet bevorzugt in drei Modi:
 
-Ein sechster Agent wird **nicht automatisch** eingeführt.
+### Modus A – Integrations-Audit
 
-Er kommt nur in Frage, wenn ein neuer großer Workstream:
+Nach mehreren relevanten Merges:
 
-- fachlich klar isolierbar ist;
-- über längere Zeit genügend eigenständige Arbeit besitzt;
-- nicht besser einem der fünf bestehenden Owners zugeordnet werden kann;
-- Shared Contracts nicht unnötig fragmentiert;
-- realen Parallelitätsgewinn bringt;
-- durch den Technical Lead mit eigenem Scope, Non-Scope, Handoff und Merge-Regeln spezifiziert wurde.
-
-Mehr Agents ohne klare Ownership gelten als Architektur-/Integrationsrisiko.
-
-## 12. Qualitätsregel
-
-Alle fünf Workstreams unterliegen unverändert:
-
-- `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`;
-- `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`;
-- Truth-/Evidence-/Freshness-Regeln;
-- Multi-Citizenship-/Multi-Document-Regeln;
+- Cross-Domain-E2E;
+- Regression;
 - Security/Privacy;
-- Accessibility/Performance;
-- vollständigen relevanten Tests;
-- adversarial Self-Review;
-- unabhängigem Technical-Lead-Review.
+- Performance/Accessibility;
+- offene Integrationsrisiken.
 
-Ziel ist nicht, fünf Agents möglichst viel Code produzieren zu lassen. Ziel ist, dass fünf spezialisierte Workstreams gemeinsam **ein einziges konsistentes, hervorragend gebautes Jetnity** liefern.
+### Modus B – gezieltes Risiko-Audit
+
+Bei besonders riskanten Bereichen:
+
+- Auth/RLS/Ownership;
+- Traveller/Pass;
+- Payment/Billing/Refund;
+- Provider-/Commercial-Truth;
+- Admin-Capabilities;
+- sensitive data;
+- Production migrations.
+
+### Modus C – Release Readiness
+
+Vor größeren Production-Aktivierungen:
+
+- vollständiger Release Candidate Audit;
+- Backup/Restore/DR;
+- Monitoring/Alerts;
+- Rollback;
+- E2E;
+- Security/Privacy;
+- Performance/Accessibility;
+- Go/No-Go Report.
+
+## 8. Aktuelle sechs Agenten auf einen Blick
+
+| Agent | Verantwortungsbereich | Typische Phase |
+| --- | --- | --- |
+| `Trip workspace audit architecture` | Trip Workspace / Reiseoberfläche | aktuell primär |
+| `Account plattform audit vorbereitung` | Account / Traveller Registry / Profil | Traveller-/Account-Block |
+| `Jetnity provider readiness audit` | Provider Readiness / Adapter / Provenance / Cost Guard | nach stabilem Workspace-Checkpoint parallelisierbar |
+| `Admin platform audit` | internes Control Center inkl. Marketing/Growth Control | nach stabilem Workspace-Checkpoint parallelisierbar |
+| `Jetnity growth discoverability` | öffentliche Website / SEO / AI-Discoverability / Acquisition | später bei stabiler Public Truth |
+| `Jetnity quality security audit` | unabhängige QA / Security / Resilience / Release Readiness | ab stabiler Mehr-Agenten-Integration und besonders vor Releases |
+
+## 9. Besondere Product-Owner-Gates bleiben unverändert
+
+Kein Agent und auch der Technical Lead im normalen Autonomie-Flow darf ohne ausdrückliche Product-Owner-Freigabe insbesondere:
+
+- Production DB migrations;
+- destructive/hard-to-reverse Production data changes;
+- große Production RLS/Ownership/Identity-Risiken;
+- neue Providerverträge;
+- neue Production API keys/secrets;
+- paid provider calls;
+- recurring provider/infrastructure cost über USD 100/Monat;
+- Production payment activation / real money movement;
+- große Produkt-/Business-Model-/Monetization-Abweichungen;
+- neue Speicherung besonders sensitiver Pass-/MRZ-/Biometrie-Daten;
+- fundamentale Auth/MFA/AAL/Session-Änderungen mit großem Nutzerimpact;
+- neue externe Weitergabe sensitiver personenbezogener Daten;
+- Public Launch / große Production-Aktivierung;
+- reale Provideraktivierung.
+
+## 10. Definition guter Multi-Agent-Führung
+
+Das sechs-Agenten-Modell gilt nur dann als erfolgreich, wenn:
+
+- jeder Agent einen klaren fachlichen Eigentumsbereich hat;
+- keine zwei Agents dieselbe Truth-Schicht erzeugen;
+- Shared Contracts zentral kontrolliert bleiben;
+- Agents nicht auf Kosten von Review-Qualität parallelisiert werden;
+- alle Runtime-PRs Exact-Head-Evidence haben;
+- unabhängige Reviews echte Defekte finden dürfen;
+- Quality/Security nicht erst kurz vor Launch beginnt;
+- der Quality-Agent unabhängig bleibt;
+- der Product Owner nur für echte Sonder-Gates unterbrochen wird;
+- neue Chats den Zustand der sechs Agents sofort nachvollziehen und korrekt weiterführen können.
+
+## 11. Siebter Agent
+
+Ein siebter Agent ist **nicht automatisch vorgesehen**. Er kommt nur in Frage, wenn später ein neuer großer, klar abgrenzbarer Workstream entsteht, der die bestehenden sechs nicht sinnvoll überlappt. Ein möglicher späterer Kandidat wäre eine echte Native-iOS-/Android-Spezialisierung, aber dies ist **keine aktuelle Entscheidung** und benötigt eine neue ausdrückliche Product-Owner-Festlegung.
+
+Bis dahin gilt verbindlich: **sechs spezialisierte Cursor-Agent-Workstreams + ChatGPT / Technical Lead als übergreifende Führung.**
