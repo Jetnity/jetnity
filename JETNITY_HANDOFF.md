@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 25. August 2026  
-Status: **kanonischer operativer Übergabepunkt. `main` enthält TW-5 und D0/G0-Audit-Evidence. D0-1 / PR #70 ist technisch PASS, aber nicht freigegeben. Governance-Reparatur / PR #71 ist aktiv.**
+Status: **kanonischer operativer Übergabepunkt. PR #71 Governance und PR #70 D0-1 sind Product-Owner-freigegeben integriert. Post-D0-1-Continuity ist der aktive docs-only Slice.**
 
 Der erste Einstieg bleibt `JETNITY_START_HERE.md`.
 
@@ -17,6 +17,7 @@ Vor neuen Entscheidungen mindestens lesen:
 - `docs/CHATGPT_CURSOR_WORKFLOW.md`
 - `JETNITY_HANDOFF.md`
 - `docs/ACTIVE_WORK_STATUS.md`
+- `docs/CHATGPT_D0_1_MERGE_CHECKPOINT_2026-08-25.md`
 - `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
 - `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`
 - `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`
@@ -47,11 +48,9 @@ Danach gilt verbindlich:
 
 Grüne Tests, Technical-Lead-PASS, Vercel READY, `mergeable=true`, fehlende Review-Threads oder eine frühere allgemeine Autonomie sind keine Merge-Freigabe.
 
-Der Product Owner erhält vor dem Merge ausdrücklich Gelegenheit, Änderungen oder Ergänzungen zu verlangen. Nach einer gültigen Freigabe prüft der Technical Lead Exact Head und Integrationsstand erneut und darf dann Ready/Merge technisch ausführen, sofern alle übrigen Gates weiterhin erfüllt sind.
+Nach gültiger Freigabe prüft der Technical Lead Exact Head und Integrationsstand erneut und darf dann Ready/Merge technisch ausführen, sofern alle übrigen Gates weiterhin erfüllt sind.
 
 Besondere Product-Owner-Gates bleiben zusätzlich bestehen für Production-Migrationen/destructive Daten, große RLS/Identity-Risiken, echte Provider/Secrets/paid calls, Kosten über USD 100/Monat, reale Payments, fundamentale Build-Order-/Produktänderungen, sensitive Pass/MRZ/Biometrie-Speicherung, fundamentale Auth/Session-Änderungen, sensible externe Datenweitergabe und Public-/Production-Aktivierungen.
-
-Merge, Production, Kosten und besondere Gates sind getrennt.
 
 Für Ready/Merge superseded `docs/MERGE_GOVERNANCE_SUPERSESSION_2026-08-25.md` alle widersprechenden historischen Auto-Merge-Formulierungen.
 
@@ -71,131 +70,150 @@ Traveller bleibt: ein stabiler Traveller → mehrere Staatsbürgerschaften → m
 
 Live-verifizierter `main`:
 
-`2bb6b8072fa04e8f6db2d989b84ada7b64745fd9`
+`083eda22189e1dad8bd70413889d2486755d7fe6`
 
 Integriert sind unter anderem:
 
-- Foundation C Readiness
-- Foundation D Route & Transit
-- Foundation E Traveller Context
-- Safety/Disruption Foundation
-- Timing/Seasonal Foundation
-- Account AP-1 bis AP-3
-- Provider Readiness S1 bis S3
-- Admin A bis C
-- TW-1 / PR #56
-- TW-2 / PR #58
-- Marketing & Growth Standards / PR #59
-- TW-4 / PR #60
-- TW-3 / PR #64
-- QS-1 / PR #67
-- **TW-5 / PR #66**
-- Post-TW5 Continuity / PR #68
-- D0/G0 Foundation Audit Evidence / PR #69
+- Foundation C Readiness;
+- Foundation D Route & Transit;
+- Foundation E Traveller Context;
+- Safety/Disruption Foundation;
+- Timing/Seasonal Foundation;
+- Account AP-1 bis AP-3;
+- Provider Readiness S1 bis S3;
+- Admin A bis C;
+- TW-1 / PR #56;
+- TW-2 / PR #58;
+- Marketing & Growth Standards / PR #59;
+- TW-4 / PR #60;
+- TW-3 / PR #64;
+- QS-1 / PR #67;
+- TW-5 / PR #66;
+- Post-TW5 Continuity / PR #68;
+- D0/G0 Foundation Audit Evidence / PR #69;
+- Governance-Reparatur / PR #71;
+- **D0-1 Index Boundary Contract / PR #70**.
 
-Historischer TW-5-Merge-Commit:
+Letzte relevante Merge-Commits:
 
-`6f2beeccae2c1e6bdf9bcb9fdc35a5cd56e50bec`
+- PR #71 → `63e8900b5c519f0d1d8b25d011ac9bc963d241c6`;
+- PR #70 → `083eda22189e1dad8bd70413889d2486755d7fe6`.
 
-PR #69 war docs-only Audit-Evidence. Sein Merge ohne die nach aktueller Governance erforderliche ausdrückliche aktuelle Product-Owner-Freigabe wird transparent als Governance-Fehler dokumentiert; kein destruktiver Rollback wird allein deshalb erzeugt.
+Vercel Production für `main @ 083eda22189e1dad8bd70413889d2486755d7fe6`:
 
-## 5. D0-1 / PR #70
+- `dpl_7Qvwxrtc7NHQCWLLzrdmNsfFKfjt`;
+- READY;
+- Alias `jetnity-app.vercel.app`.
+
+`main` Branch Protection bleibt live deaktiviert.
+
+## 5. D0-1 / PR #70 – abgeschlossen
 
 Agent: `Jetnity growth discoverability`
 
+Finaler PR-Head:
+
+`549f3de1a44020641d1cad2c13a6a1a08086847d`
+
+Merge:
+
+`083eda22189e1dad8bd70413889d2486755d7fe6`
+
+Finale Evidence vor Merge:
+
+- GitHub Actions `32906411630`: SUCCESS;
+- Vercel Preview `dpl_CNJ2iLyGM9e6AA5UdGX47PCta6zd`: READY;
+- 0 offene Inline-Review-Threads;
+- unabhängiger Technical-Lead Final Re-Review: TECHNICAL PASS;
+- ausdrückliche aktuelle Product-Owner-Merge-Freigabe.
+
+Integrierter Scope:
+
+- `/reisen` und `/reisen/[tripId]` `noindex, nofollow`;
+- `/reisen` aus Sitemap entfernt;
+- robots-Allow-Modus für sensible D0-1-Pfade gehärtet;
+- `/planen` ohne akzeptierte Intent-Keys bleibt öffentliche Basis;
+- vorhandene `idee`/`ziel`/`zielId`-Keys machen die konkrete `/planen`-Response `noindex, nofollow`, auch leer/Whitespace/key-only/Array;
+- `/admin/login`, `/unauthorized` und Admin-Layout `noindex`;
+- toten Admin-`head.tsx` entfernt;
+- Regressionstests integriert;
+- keine DB/RLS/Auth/Traveller/Route/Provider/Payment/Tracking-/Kostenänderung.
+
+Geschlossene Findings:
+
+- D0-P1-01;
+- D0-P1-02;
+- D0-P2-03;
+- P2-D0-1-TL-01.
+
+## 6. Aktiver Post-D0-1-Continuity-Slice
+
 Branch:
 
-`fix/d0-1-index-boundary-contract`
+`docs/post-d0-1-continuity-2026-08-25`
 
-Exact Review Head:
+Checkpoint:
 
-`31022a5d0c4090081339e55bd2b7c7b3927e1185`
-
-Independent Technical-Lead Re-Review: **TECHNICAL PASS / review-bereit**.
-
-Bestätigte Evidence:
-
-- GitHub Actions `32899556724`: SUCCESS
-- Vercel Preview `dpl_DqDFzNpPuWqMNj7hS1sM4j3SSDZp`: READY
-- gezielte D0-1-Tests 19/19 laut persistierter Agent-Evidence
-- `npm test` 2013/2013 laut persistierter Agent-Evidence
-- Supabase Production `ACTIVE_HEALTHY`, keine D0-1-Migration
-- Inline-Review-Threads 0
-
-Fachlich:
-
-- `/reisen` und `/reisen/[tripId]` `noindex, nofollow`
-- `/reisen` aus Sitemap entfernt
-- robots-Allow-Modus gehärtet
-- `/planen` ohne akzeptierte Intent-Keys bleibt öffentliche Basis
-- vorhandene `idee`/`ziel`/`zielId`-Keys machen die konkrete `/planen`-Response `noindex`, auch leer/Whitespace/Array
-- `/admin/login`, `/unauthorized` und Admin-Layout `noindex`
-- keine DB/RLS/Auth/Traveller/Route/Provider/Payment/Tracking-/Kostenänderung
-
-**PR #70 bleibt Draft / Integration Hold. Kein Ready. Kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe.**
-
-## 6. Governance-Reparatur / PR #71
-
-Docs-only Branch:
-
-`docs/merge-governance-repair-2026-08-25`
-
-Draft-PR:
-
-**#71 – `docs: restore Product Owner merge governance`**
+`docs/CHATGPT_D0_1_MERGE_CHECKPOINT_2026-08-25.md`
 
 Ziel:
 
-- Ready-/Merge-Widerspruch korrigieren;
-- Technical-Lead-Autonomie bis Review-Reife klar erhalten;
-- Product-Owner-Merge-Gate kanonisch verankern;
-- alte Auto-Merge-Aussagen als historische Evidence erhalten, aber hinsichtlich Ready/Merge superseden;
-- aktuellen Handoff / Start Here / Active Work synchronisieren.
+- den realen Merge-/Production-Stand nach PR #70 kanonisch speichern;
+- stale PR-#70/#71-Draft-Aussagen aus Start Here / Handoff / Active Work korrigieren;
+- offenen D0/G0-Reststand und die nächste kontrollierte Kante dokumentieren.
 
-Kein Runtime-Code, keine DB/RLS/Auth/Provider-/Kostenänderung.
+Docs-only. Kein Runtime-Code, keine DB/RLS/Auth/Provider-/Kostenänderung.
 
-## 7. TW-5 Abschluss
+Kein Ready/Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe für den Continuity-PR.
 
-Agent: `Trip workspace audit architecture`
+## 7. Offene D0/G0-Kanten
 
-- Runtime-/Evidence-Head: `8183782fc08c486949212b0e78b9f4ce938aa0dd`
-- Persist-Head: `49aa04d99a5eb33a89fa624f1d096f7c5400698f`
-- Merge: `6f2beeccae2c1e6bdf9bcb9fdc35a5cd56e50bec`
-- Independent TL: **PASS / Technical Integration Closure**
-- targeted 112/112
-- `npm test` 1994/1994
-- UI audit 1018/1018, 0 Fehler
-- Build grün
-- Actions Runtime + Persist SUCCESS
-- Vercel Runtime + Persist + Production READY
-- offene Review-Threads 0
-- keine DB/Migration/RLS/Auth/Traveller/Route-Shared-Contract/Provider/Secret/paid-call-Änderung
+Bewusst offen:
 
-P1-QS1-01 bleibt geschlossen: genau eine ungeplante Liste geht in Coverage/Route/Status; keine doppelte ungeplante Flight-Itinerary und keine Route-Engine-Heuristik.
+- **D0-P1-03** – `/privacy` und `/terms` sind 404; eigener Legal-/PO-Slice, keine Rechtstexte erfinden;
+- **D0-P2-01** – deny-all / Sitemap-/Host-Semantik;
+- **D0-P2-02** – Canonical-/Origin-Vertrag, `NEXT_PUBLIC_APP_URL` vs `NEXT_PUBLIC_SITE_URL`;
+- **D0-P2-04** – Locale / hreflang;
+- **D0-P2-05** – JSON-LD / Entity Foundation;
+- G0-P2-01 / G0-P2-02 / G0-P3-01 / G0-P3-02.
 
-## 8. Nächste Trip-Workspace-Entscheidung
+Nach abgeschlossenem Continuity-Slice ist der fachlich naheliegende konfliktarme technische Candidate:
 
-TW-6 darf nicht automatisch starten.
+**D0-2 – Canonical / Origin / robots-sitemap Consistency.**
 
-- TW-6 Create-Entry: Abhängigkeit **dokumentierter Product-Owner-Schnitt + Guest-One-Trip-Vertrag**
-- TW-7 Hub-Anschluss: Account-/Hub-Grenzen beachten
-- TW-8 Commercial Surfaces: erst nach Provider S5 / realer Commercial Provenance
-- TW-9 Polish/Evidence/Closure danach
-- finaler Function-by-Function-/Intelligence-Audit bleibt zwingend
+Warum D0-2 vor den anderen offenen D0-Themen:
 
-Vor neuer Runtime muss der Technical Lead den nächsten tatsächlich freigegebenen Slice bestimmen und versionieren.
+- D0-1 hat die kritische private Index-Grenze bereits geschlossen;
+- D0-P2-01 und D0-P2-02 bilden eine zusammenhängende technische URL-/Origin-/Canonical-Konsistenzschicht;
+- D0 darf gemäß Build Order konfliktarm früh vorbereitet werden;
+- D0-2 benötigt keine Rechtstexte, Datenbank, Provider oder Tracking-Aktivierung;
+- Locale/hreflang und JSON-LD bleiben bewusst getrennte spätere D0-Slices statt Monster-PR.
+
+D0-2 ist noch nicht gestartet. Vor Runtime werden eigener Task, Status, Branch und Draft-PR erstellt und `Jetnity growth discoverability` erhält danach einen engen Auftrag mit STOPP.
+
+## 8. Trip Workspace – nächster Gate-Punkt
+
+TW-1, TW-2, TW-4, TW-3 und TW-5 sind integriert.
+
+TW-6 darf nicht automatisch starten:
+
+- TW-6 Create-Entry: Abhängigkeit **dokumentierter Product-Owner-Schnitt + Guest-One-Trip-Vertrag**;
+- TW-7 Hub-Anschluss: Account-/Hub-Grenzen beachten;
+- TW-8 Commercial Surfaces: erst nach Provider S5 / realer Commercial Provenance;
+- TW-9 Polish/Evidence/Closure danach;
+- finaler Function-by-Function-/Intelligence-Audit bleibt zwingend.
 
 ## 9. Agentenstatus
 
 - `Trip workspace audit architecture`: TW-5 abgeschlossen; wartet.
-- `Account plattform audit vorbereitung`: wartet; AP-1–AP-3 integriert.
-- `Jetnity provider readiness audit`: wartet; S1–S3 integriert.
-- `Admin platform audit`: wartet; A–C integriert.
-- `Jetnity growth discoverability`: D0-1 technisch PASS; STOPP / Draft / Integration Hold.
+- `Account plattform audit vorbereitung`: AP-1–AP-3 integriert; wartet.
+- `Jetnity provider readiness audit`: S1–S3 integriert; wartet.
+- `Admin platform audit`: A–C integriert; wartet.
+- `Jetnity growth discoverability`: D0/G0 Audit + D0-1 integriert; aktuell STOPP bis Continuity abgeschlossen und D0-2 separat vorbereitet ist.
 - `Jetnity quality security audit`: QS-1 abgeschlossen; reserviert für unabhängige Checkpoints.
 - `Jetnity native app architecture`: reserviert für spätere Native-Phase.
 
-Aktuell muss der Product Owner in Cursor **keinen neuen Agenten starten**. PR #71 wird direkt durch ChatGPT / Technical Lead docs-only geführt.
+Aktuell muss der Product Owner in Cursor **keinen neuen Agenten starten**.
 
 ## 10. Shared Contracts
 
@@ -205,17 +223,19 @@ Technical-Lead-kontrolliert bleiben insbesondere Auth/Identity/Sessions/MFA/AAL,
 
 Supabase Production: `qscbgcdmivbbnzrcyegn`.
 
-Live verifiziert: `ACTIVE_HEALTHY`.
+Zuletzt live verifiziert: `ACTIVE_HEALTHY`.
 
 Production enthält bis einschließlich:
 
-- `20260824120000_flug_route_itinerary_surface_evidence`
-- `20260824140000_flug_route_itinerary_untrusted_surface`
+- `20260824120000_flug_route_itinerary_surface_evidence`;
+- `20260824140000_flug_route_itinerary_untrusted_surface`.
 
 Development enthält zusätzlich, weiterhin **nicht Production-approved**:
 
-- `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`
-- `20260824180000_trip_items_flug_handelsfelder_guard`
+- `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`;
+- `20260824180000_trip_items_flug_handelsfelder_guard`.
+
+PR #70/#71 und der aktuelle Continuity-Slice haben keinen Production-/DB-Scope.
 
 ## 12. Große Build-Reihenfolge
 
@@ -226,23 +246,29 @@ Weiter gemäß `docs/JETNITY_BINDING_BUILD_ORDER.md`:
 3. Account AP-4 bis AP-12.
 4. Provider Readiness S4 bis S8; echte Provider nur unter Gates.
 5. Admin D–K plus Marketing/Growth Control Plane.
-6. Homepage und abhängige Growth/Discovery-Schichten.
-7. Commercial Truth / Guardian / What-if / Value und finaler Launch-Hardening-Audit gemäß Standards.
+6. Homepage finalisieren.
+7. AI/Search Discoverability / Authority phasengerecht.
+8. Marketing/Growth G0–G5 phasengerecht.
+9. Kommerzielle Produktschicht.
+10. Guardian / What-if / Value und finaler Launch-Hardening-Audit gemäß Standards.
 
-Konfliktarme Vorbereitungs-/Audit-Arbeit kann parallel laufen; die große Reihenfolge darf ohne Product-Owner-Entscheidung nicht still verändert werden.
+Konfliktarme D0-/G0-Vorbereitung darf parallel laufen; die große Reihenfolge darf ohne Product-Owner-Entscheidung nicht still verändert werden.
 
 ## 13. Offene Risiken
 
 - `main` Branch Protection ist weiterhin nicht aktiviert.
-- historische Auto-Merge-Formulierungen existieren in alten Tasks/ADRs/Statusdateien; sie sind hinsichtlich Ready/Merge durch die neue Supersession nicht mehr maßgeblich.
+- historische Draft-PRs/Handoffs bleiben nur Evidence ihres damaligen Stands.
+- historische Auto-Merge-Aussagen sind für Ready/Merge superseded.
 - QS-1 P2/P3-Findings bleiben dokumentierte Follow-ups.
 - TW-6-PO-Schnitt/Guest-One-Trip-Vertrag ist vor TW-6 zu klären.
-- D0-1 schließt Legal-404, Canonical/Origin, hreflang, JSON-LD und G0-Findings nicht.
+- D0-P1-03 Legal-404 bleibt offen und darf nicht mit erfundenen Texten geschlossen werden.
+- Public-/Custom-Domain-/Indexing-Aktivierung bleibt ein getrenntes Gate.
 
-## 14. Nächster Schritt
+## 14. Exakter nächster Schritt
 
-1. PR #71 docs-only gegen seinen Exact Head vollständig prüfen.
-2. Technical-Lead-Abschluss dokumentieren.
-3. **STOPP und Product Owner Ergebnis / mögliche Änderungen zeigen.**
-4. PR #71 nicht Ready setzen und nicht mergen ohne ausdrückliche Freigabe.
-5. Nach einem eventuellen PR-#71-Merge PR #70 gegen den neuen `main` synchronisieren/re-gaten/re-reviewen und separat dem Product Owner vorlegen.
+1. Post-D0-1-Continuity-Diff vollständig prüfen.
+2. Exact-Head CI/Vercel/Threads prüfen.
+3. Unabhängigen Technical-Lead-Abschluss dokumentieren.
+4. **STOPP und dem Product Owner den Continuity-PR zur Entscheidung vorlegen.**
+5. Kein Ready/Merge ohne dessen ausdrückliche aktuelle Freigabe.
+6. Nach Integration den separaten D0-2-Slice kontrolliert vorbereiten.
