@@ -1,14 +1,14 @@
 // lib/trips/uebersicht.test.ts
 //
-// TW-2 verdichtet vorhandene Wahrheit. Ein zweiter Lifecycle oder eine
-// Citizenship-Annahme wäre ein Produktdefekt.
+// TW-2 verdichtet vorhandene Wahrheit. Ein zweiter Lifecycle, eine
+// Citizenship-Annahme oder das Hochstufen teilweiser Coverage zu „belegt“
+// wäre ein Produktdefekt.
 
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { reiseGruppe } from '@/lib/account/reise-lage'
 import {
-  abdeckungLageAusText,
   uebersichtAbleiten,
   uebersichtLage,
   uebersichtPersonen,
@@ -249,30 +249,86 @@ describe('Coverage-Verdichtung', () => {
     assert.equal(sicht.abdeckungen.find((eintrag) => eintrag.bereich === 'aktivitaeten')?.lage, 'belegt')
     assert.equal(sicht.abdeckungen.find((eintrag) => eintrag.bereich === 'fluege')?.lage, 'offen')
     assert.match(sicht.fortschrittText, /1 von 4 Bereichen belegt/)
-    assert.equal(sicht.fortschrittText.includes('vollständig'), false)
+    assert.equal(sicht.fortschrittText.includes('Wesentliche Bereiche sind belegt'), false)
+  })
+
+  test('gebuchter Hinflug mit offenem Rückflug bleibt teilweise statt belegt', () => {
+    const flug = punkt({
+      id: 'flug-hin',
+      kind: 'flight',
+      title: 'ZRH → DPS',
+      dayId: null,
+      startsOn: '2026-08-30',
+      bookingStatus: 'booked',
+      bookingSource: 'user',
+      bookingConfirmedAt: JETZT,
+    })
+    const sicht = uebersichtAbleiten(
+      reise({
+        startDate: '2026-08-30',
+        endDate: '2026-09-13',
+        stages: [
+          {
+            id: 'stage-1',
+            position: 1,
+            name: 'Bali',
+            countryCode: 'ID',
+            arrivalDate: '2026-08-30',
+            departureDate: '2026-09-13',
+            latitude: null,
+            longitude: null,
+            placeId: 'geonames:1650535',
+          },
+        ],
+        ohneTag: [flug],
+      }),
+      [flug],
+      HEUTE,
+    )
+
+    const fluege = sicht.abdeckungen.find((eintrag) => eintrag.bereich === 'fluege')
+    assert.equal(fluege?.text, 'Hinflug gebucht · Rückflug offen')
+    assert.equal(fluege?.lage, 'teilweise')
+    assert.match(sicht.fortschrittText, /teilweise abgedeckt/)
+    assert.equal(sicht.fortschrittText.includes('Wesentliche Bereiche sind belegt'), false)
+  })
+
+  test('teilweise Nachtabdeckung bleibt teilweise', () => {
+    const hotel = punkt({
+      id: 'stay-1',
+      kind: 'stay',
+      title: 'Ubud Inn',
+      startsOn: '2026-09-12',
+      endsOn: '2026-09-14',
+    })
+    const sicht = uebersichtAbleiten(
+      reise({
+        days: [{ ...reise().days[0]!, items: [hotel] }],
+      }),
+      [],
+      HEUTE,
+    )
+
+    const unterkunft = sicht.abdeckungen.find((eintrag) => eintrag.bereich === 'unterkunft')
+    assert.equal(unterkunft?.text, '2/4 Nächte abgedeckt')
+    assert.equal(unterkunft?.lage, 'teilweise')
   })
 
   test('unbestimmte Coverage zählt nicht als erledigt', () => {
+    const flug = punkt({ id: 'flug-1', kind: 'flight', title: 'ZRH–DPS', dayId: null })
     const sicht = uebersichtAbleiten(
       reise({
         origin: 'Zürich',
         originPlaceId: 'geonames:2657896',
-        ohneTag: [punkt({ id: 'flug-1', kind: 'flight', title: 'ZRH–DPS', dayId: null })],
+        ohneTag: [flug],
       }),
-      [punkt({ id: 'flug-1', kind: 'flight', title: 'ZRH–DPS', dayId: null })],
+      [flug],
       HEUTE,
     )
     const fluege = sicht.abdeckungen.find((eintrag) => eintrag.bereich === 'fluege')
     assert.equal(fluege?.lage, 'unbestimmt')
     assert.match(sicht.fortschrittText, /noch nicht vollständig bestimmbar/)
     assert.equal(sicht.fortschrittText.includes('Wesentliche Bereiche sind belegt'), false)
-  })
-
-  test('Unknown-Text wird nicht als offen oder belegt gelesen', () => {
-    assert.equal(abdeckungLageAusText('noch nicht vollständig bestimmbar'), 'unbestimmt')
-    assert.equal(abdeckungLageAusText('Abdeckung noch nicht vollständig bestimmbar'), 'unbestimmt')
-    assert.equal(abdeckungLageAusText('Noch kein Flug ausgewählt'), 'offen')
-    assert.equal(abdeckungLageAusText('Hinflug gebucht · Rückflug offen'), 'belegt')
   })
 })
 
