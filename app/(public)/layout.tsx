@@ -5,10 +5,14 @@ import PublicNavbar from '@/components/layout/PublicNavbar'
 import Footer from '@/components/layout/Footer'
 import SkipToContentLink from '@/components/layout/SkipToContentLink'
 import BackToTop from '@/components/layout/BackToTop'
+import { oeffentlicherOrigin } from '@/lib/seo/oeffentlicher-origin'
+
+const { origin: OEFFENTLICHER_ORIGIN } = oeffentlicherOrigin()
 
 export const metadata: Metadata = {
-  // >>> WICHTIG: metadataBase setzen, damit Next absolute OG/Twitter-URLs baut
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'),
+  // metadataBase aus dem D0-2-Origin-Vertrag, damit OG/Twitter und Canonicals
+  // dieselbe technische Origin verwenden.
+  metadataBase: new URL(OEFFENTLICHER_ORIGIN),
   title: {
     template: '%s – Jetnity',
     default: 'Jetnity – Deine ganze Reise',

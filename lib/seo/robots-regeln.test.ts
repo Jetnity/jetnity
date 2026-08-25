@@ -101,10 +101,9 @@ describe('Der Allow-Modus schützt die D0-1-Pfade', () => {
     assert.deepEqual(liste, [...ROBOTS_DISALLOW_ALLOW_MODUS])
   })
 
-  test('wird von robots.ts verwendet', () => {
+  test('wird von robots.ts über robotsDokument verwendet', () => {
     const datei = readFileSync(join(hier, '../../app/robots.ts'), 'utf8')
-    assert.match(datei, /robotsDarfIndexieren/)
-    assert.match(datei, /ROBOTS_DISALLOW_ALLOW_MODUS/)
-    assert.match(datei, /NEXT_PUBLIC_ALLOW_INDEXING/)
+    assert.match(datei, /robotsDokument/)
+    assert.match(datei, /disallow: '\/'/)
   })
 })
