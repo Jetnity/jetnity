@@ -56,7 +56,7 @@ export default function TripWorkspaceUebersicht({
   reisezeit?: ReactNode
 }) {
   return (
-    <section aria-label="Reiseübersicht" className="mt-5 grid gap-4">
+    <section aria-label="Reiseübersicht" className="mt-5 grid min-w-0 gap-4">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Übersicht</p>
         <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800">

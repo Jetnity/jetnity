@@ -36,11 +36,15 @@ export default function TripWorkspaceJetztWichtig({
       data-attention-leerstand={attention.leerstand}
       data-attention-safety={attention.orchestrierung.safety}
       data-attention-seasonal={attention.orchestrierung.seasonal}
-      className="rounded-2xl border border-line-200 bg-white px-4 py-4"
+      className="min-w-0 max-w-full overflow-x-hidden rounded-2xl border border-line-200 bg-white px-3 py-4 sm:px-4"
     >
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">Jetzt wichtig</p>
-      <h3 className="mt-1 text-base font-semibold tracking-[-0.02em] text-brand-800">Was jetzt Aufmerksamkeit braucht</h3>
-      <p className="mt-1 text-sm leading-6 text-ink-800">{LEERSTAND_TEXT[attention.leerstand]}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600 break-words">Jetzt wichtig</p>
+      <h3 className="mt-1 text-base font-semibold tracking-[-0.02em] text-brand-800 break-words hyphens-auto">
+        Was jetzt Aufmerksamkeit braucht
+      </h3>
+      <p className="mt-1 text-sm leading-6 text-ink-800 break-words hyphens-auto">
+        {LEERSTAND_TEXT[attention.leerstand]}
+      </p>
 
       {sichtbare.length > 0 && (
         <ul className="mt-3 grid gap-2">
@@ -55,7 +59,7 @@ export default function TripWorkspaceJetztWichtig({
           type="button"
           aria-expanded={weitereOffen}
           onClick={() => setWeitereOffen((bisher) => !bisher)}
-          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-brand-800 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+          className="mt-3 flex min-h-11 w-full max-w-full flex-wrap items-center whitespace-normal text-left text-sm font-semibold text-brand-800 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
         >
           {weitereOffen
             ? 'Weniger anzeigen'
@@ -85,7 +89,7 @@ function AttentionZeile({
         <Symbol className="h-4 w-4" aria-hidden="true" />
       </span>
       <span className="min-w-0 flex-1">
-        <strong className="block text-sm font-semibold text-brand-800">{punkt.titel}</strong>
+        <strong className="block text-sm font-semibold text-brand-800 break-words hyphens-auto">{punkt.titel}</strong>
         <span className="sr-only">{punkt.lage}</span>
       </span>
     </>
