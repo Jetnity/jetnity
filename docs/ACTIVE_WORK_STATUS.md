@@ -130,4 +130,4 @@ Product-Owner-Freigabe bleibt zwingend für Production-Migration/destructive Pro
 
 ## 8. Exakter nächster Schritt
 
-**Nächster Schritt:** TW-3 auf `feat/trip-workspace-tw3-timeline` implementieren, Exact-Head-Gates fahren und für den unabhängigen ChatGPT/Technical-Lead-Re-Review stoppen. Kein Ready, kein Merge, kein TW-5.
+**Nächster Technical-Lead-Schritt:** unabhängiger Re-Review von Draft-PR #64 (TW-3) auf dem persistierten Exact Head. Kein Ready, kein Merge, kein TW-5.
