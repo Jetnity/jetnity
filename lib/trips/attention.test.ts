@@ -828,6 +828,22 @@ describe('TW-4 Completeness und gemischte Degraded States', () => {
     assert.notEqual(sicht.leerstand, 'nichts_dringend_geprueft')
   })
 
+  test('current plus unknown bleibt official.unknown und nicht ungeprüft', () => {
+    const sicht = attentionAbleiten({
+      reise: reiseOhneLuecken(),
+      safetyEvaluations: [safetyLeer()],
+      seasonalEvaluations: [seasonalLeer()],
+      officialEvaluations: officialMitLage(officialVollstaendig(), { requirementType: 'entry_form' }, {
+        status: 'unknown',
+        result: 'unknown',
+      }),
+    })
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'official.unknown' && eintrag.lage === 'unknown'), true)
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'official.ungeprueft'), false)
+    assert.equal(sicht.leerstand, null)
+    assert.notEqual(sicht.leerstand, 'nichts_dringend_geprueft')
+  })
+
   test('current plus insufficient_context bleibt official.insufficient_context', () => {
     const sicht = attentionAbleiten({
       reise: reiseOhneLuecken(),
