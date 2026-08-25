@@ -1,25 +1,24 @@
 # Jetnity – Active Work Status
 
 Stand: 25. August 2026  
-Status: **D0-1 Index Boundary Contract ist auf Draft-PR #70 implementiert. STOPP für unabhängigen Technical-Lead-Review. Kein Ready. Kein Merge. Kein D0-2/G0-1/D1/G1+.**
+Status: **D0-1 Presence-Contract (P2-D0-1-TL-01) ist korrigiert. STOPP für erneuten unabhängigen Technical-Lead-Review. Kein Ready. Kein Merge. Kein D0-2/G0-1/D1/G1+.**
 
 ## 0. Aktiver Arbeitsblock
 
-- **Ziel:** D0-1 – private/sensitive Surfaces explizit `noindex`; `/reisen` aus Sitemap; robots Allow-Modus härten; parametrisiertes `/planen` noindex; Admin/Unauthorized-Grenze.
+- **Ziel:** D0-1 – private/sensitive Surfaces explizit `noindex`; `/reisen` aus Sitemap; robots Allow-Modus härten; parametrisiertes `/planen` noindex bei **Key-Präsenz**; Admin/Unauthorized-Grenze.
 - **Branch:** `fix/d0-1-index-boundary-contract`
 - **Draft-PR:** #70
 - **Task:** `docs/GROWTH_DISCOVERABILITY_D0_1_TASK.md`
 - **Status-Datei:** `docs/GROWTH_DISCOVERABILITY_D0_1_STATUS.md`
 - **Agent:** `Jetnity growth discoverability`
 - **Baseline:** `main @ 2bb6b8072fa04e8f6db2d989b84ada7b64745fd9` (PR #69 D0/G0 Audit gemergt)
-- **Runtime-Head:** `873735c8b55159fb04063e1d2b3a4c3dc743271e`
-- **Inherit-Fix:** `4cdb5612cc15d3fa5e62d96ac2a4af4e133c5f02` (`/planen` löscht geerbtes `index,follow` nicht mehr)
-- **Persist-Head (dieser Stand vor Evidence-Nachzug):** `04329e1371f1e771e0f1daec362872e42fcacc9c`
-- **Status:** implementiert / wartet auf unabhängigen Technical-Lead-Review. Nicht Ready. Nicht mergen.
+- **TL-geprüfter Head:** `e6b5e58f7ab4976c900e05363a84d347600feb01` – CHANGES REQUIRED (P2-D0-1-TL-01)
+- **Presence-Fix:** `480834e143a8f00cfbb954031cde48e4174e3a20`
+- **Status:** TL-Blocker geschlossen / wartet auf erneuten unabhängigen Technical-Lead-Review. Nicht Ready. Nicht mergen.
 
 ### Bereits umgesetzt
 
-`/reisen`, `/reisen/[tripId]`, `/admin/login`, `/unauthorized` und `(admin)`-Layout sind `noindex, nofollow`. Sitemap enthält `/reisen` nicht. Allow-robots ergänzt `/reisen`, `/reisen/`, `/auth/`, `/unauthorized` ohne den ephemeral-Host-Kill-Switch zu lockern. `/planen` bleibt als Basis öffentlich; `?idee=` / `ziel` / `zielId` sind noindex. Toter `admin/head.tsx` entfernt. Guest/Account/Trip-Logik unverändert.
+`/reisen`, `/reisen/[tripId]`, `/admin/login`, `/unauthorized` und `(admin)`-Layout sind `noindex, nofollow`. Sitemap enthält `/reisen` nicht. Allow-robots ergänzt `/reisen`, `/reisen/`, `/auth/`, `/unauthorized` ohne den ephemeral-Host-Kill-Switch zu lockern. `/planen` bleibt als Basis öffentlich. Sobald `idee`, `ziel` oder `zielId` als Key vorhanden ist – auch leer oder whitespace – ist die Response `noindex`. Toter `admin/head.tsx` entfernt. Guest/Account/Trip-Logik unverändert.
 
 ### Offen / nicht in D0-1
 
@@ -27,7 +26,7 @@ D0-P1-03 `/privacy` `/terms`. D0-P2-01/02/04/05. Alle G0-Findings. TW-6. Kein Ca
 
 ### Tests / CI / Preview
 
-Lokale Gates auf Runtime `873735c8` und erneut auf Persist-Tree: typecheck/lint/`npm test` 2013/2013/Hygiene/build Exit 0. GitHub Actions Runtime `32894238716` SUCCESS. Vercel Preview auf Runtime READY (`Ac3GGtHt5iC96npg65ugcwb2h5ri`). Preview-HTML ist SSO-geschützt. Lokale `next start`-HTML-Probe nach Rebuild: `/planen` = `index, follow`, `/planen?idee=` = `noindex, nofollow`. Review-Threads: 0. Ahead/Behind nach Status-Persist: 5/0, Merge-Base = Baseline.
+Presence-Fix lokal: typecheck/lint/`npm test` 2013/2013/Hygiene/build Exit 0. HTML nach Rebuild: `/planen` = `index, follow`; `/planen?idee=`, `?idee=%20`, `?idee=Bali+mit+Pass+CH` = `noindex, nofollow`. Vorheriger TL-Head `e6b5e58f`: Actions SUCCESS, Vercel READY. Inline-Review-Threads: 0. Ein offener TL-Review-Kommentar (CHANGES REQUIRED) bis zum erneuten Review.
 
 ### DB / Kosten / Secrets
 
@@ -35,7 +34,7 @@ Keine Migration/RLS/Auth/Provider/Secret/paid-call-/Kostenänderung.
 
 ### Exakter nächster Schritt
 
-Unabhängiger ChatGPT-/Technical-Lead-Review von PR #70 von Anfang an. Danach STOPP, bis der Product Owner einen nächsten Slice freigibt.
+Erneuter unabhängiger ChatGPT-/Technical-Lead-Review von PR #70 von Anfang an. Danach STOPP, bis der Product Owner einen nächsten Slice freigibt.
 
 Zuerst lesen: `docs/GROWTH_DISCOVERABILITY_D0_1_STATUS.md`, `docs/GROWTH_DISCOVERABILITY_D0_1_TASK.md`, `docs/GROWTH_DISCOVERABILITY_D0_G0_AUDIT.md`, Draft-PR #70, danach live Git/CI/Vercel.
 
@@ -128,7 +127,7 @@ TW-5 abgeschlossen und integriert. Wartet auf nächste freigegebene Trip-Workspa
 ### `Jetnity growth discoverability`
 
 - D0/G0 Foundation Audit / PR #69 ist auf `main` integriert. Bericht: `docs/GROWTH_DISCOVERABILITY_D0_G0_AUDIT.md`.
-- D0-1 Index Boundary Contract auf `fix/d0-1-index-boundary-contract` / Draft-PR #70 **implementiert**. Status: `docs/GROWTH_DISCOVERABILITY_D0_1_STATUS.md`. **STOPP** für unabhängigen Technical-Lead-Review.
+- D0-1 Index Boundary Contract auf `fix/d0-1-index-boundary-contract` / Draft-PR #70. TL-Review auf `e6b5e58f`: CHANGES REQUIRED (P2-D0-1-TL-01). Presence-Fix `480834e1` umgesetzt. Status: `docs/GROWTH_DISCOVERABILITY_D0_1_STATUS.md`. **STOPP** für erneuten unabhängigen Technical-Lead-Review.
 - Kein Ready. Kein Merge. Kein D0-2/G0-1/D1/G1+ aus diesem Slice.
 
 ### `Jetnity quality security audit`
@@ -219,7 +218,7 @@ Normale scope-treue Engineering-PRs dürfen nach vollständigen Exact-Head-Gates
 
 ## 9. Exakter nächster Schritt
 
-1. Unabhängiger ChatGPT-/Technical-Lead-Review von Draft-PR #70 (D0-1) von Anfang an.
+1. Erneuter unabhängiger ChatGPT-/Technical-Lead-Review von Draft-PR #70 (D0-1) von Anfang an, nach Presence-Fix P2-D0-1-TL-01.
 2. Kein Ready, kein Merge, kein D0-2/G0-1/D1/G1+ und kein TW-6 aus diesem Slice.
 3. Trip-Workspace bleibt auf dem integrierten TW-5-Stand; nächste TW-Kante erst nach dokumentiertem Product-Owner-Schnitt.
 
