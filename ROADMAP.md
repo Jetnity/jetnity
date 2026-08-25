@@ -444,7 +444,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 9. ✅ TW-2 Reiseübersicht auf `main` (PR #58)
 10. ✅ TW-4 Aufmerksamkeit auf `main` (PR #60, `c935dd9f`)
 11. ✅ TW-3 Timeline / Etappe / Tag auf `main` (PR #64)
-12. **→ Jetzt:** TW-5 Item- und Gap-Details – Draft-PR #66, STOPP für Technical-Lead-Review
+12. **→ Jetzt:** TW-5 Item- und Gap-Details – Draft-PR #66, P1-QS1-01 behoben auf `8183782f`, STOPP für erneuten Technical-Lead-Review
 13. Admin/Account/Provider-Programme separat weiterführen; kein Slice D, AP-4 oder S4 ohne eigenen Auftrag
 14. finaler Workspace Intelligence Audit
 15. echte Providerphase

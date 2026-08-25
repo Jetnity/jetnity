@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 25. August 2026  
-Status: **TW-1 bis TW-4 und post-TW-3 Continuity liegen auf `main`. Aktiver Slice: TW-5 – Item- und Gap-Details, Draft-PR #66. Runtime ist implementiert und evidence-vollständig; STOPP für unabhängigen Technical-Lead-Review. Kein Ready, kein Merge, kein TW-6.**
+Status: **TW-1 bis TW-4 und post-TW-3 Continuity liegen auf `main`. Aktiver Slice: TW-5 – Item- und Gap-Details, Draft-PR #66. P1-QS1-01 ist auf Presentation-Ebene behoben und auf Runtime-Head `8183782f` gegatet; STOPP für erneuten unabhängigen Technical-Lead-Review. Kein Ready, kein Merge, kein TW-6.**
 
 ## 0. Verifizierte Baseline
 
@@ -61,11 +61,12 @@ Verbindliche Control Docs:
 Aktueller Zustand:
 
 - Runtime auf `feat/trip-workspace-tw5-item-gap-details` implementiert;
-- Evidence-Head `ce3e99b9a95c6600a87fc90f72f2335b04cb95a5`;
-- Branch mit aktuellem `main` `d039e7bf` (QS-1 docs-only PR #67) synchron, **0 behind / 11 ahead** vor diesem Persist;
+- P1-QS1-01 (doppelte ungeplante Flug-Itinerary in `bereichStatus`) ist auf Presentation-Ebene behoben; Route-Engine unverändert;
+- Evidence-Head `8183782fc08c486949212b0e78b9f4ce938aa0dd`;
+- Branch mit aktuellem `main` `d039e7bf` (QS-1 docs-only PR #67) synchron, **0 behind / 14 ahead** zum Runtime-Head;
 - Draft-PR #66 bleibt Draft / MERGEABLE;
-- Exact-Head-Gates, UI-Audit 1018/1018, GitHub Actions und Vercel auf `ce3e99b9` grün;
-- **STOPP** für unabhängigen Technical-Lead-Review.
+- Exact-Head-Gates, UI-Audit 1018/1018, GitHub Actions und Vercel auf `8183782f` grün;
+- **STOPP** für erneuten unabhängigen Technical-Lead-Review.
 
 ### TW-5 fachlicher Kern
 
@@ -205,6 +206,6 @@ Normale scope-treue PRs dürfen nach vollständigen Exact-Head-Gates und unabhä
 
 ## 9. Exakter nächster Schritt
 
-ChatGPT / Technical Lead führt den unabhängigen Review von Draft-PR #66 auf Exact Head `ce3e99b9` plus docs-only Persist.
+ChatGPT / Technical Lead führt den erneuten unabhängigen Review von Draft-PR #66 auf Exact Head `8183782f` plus docs-only Persist. P1-QS1-01-Closure steht in `docs/TRIP_WORKSPACE_TW5_STATUS.md`.
 
 **Kein Ready. Kein Merge. Kein TW-6**, bis der Technical Lead ausdrücklich PASS gibt.

@@ -135,7 +135,7 @@ Stand:
 - TW-3 / PR #64: ✅ integriert
 - post-TW-3 Continuity / PR #65: ✅ integriert (`bee9f653`)
 - QS-1 docs-only / PR #67: ✅ integriert (`d039e7bf`)
-- TW-5 / Draft-PR #66: Runtime implementiert, Evidence auf `ce3e99b9`; **kein Ready, kein Merge**
+- TW-5 / Draft-PR #66: Runtime implementiert, P1-QS1-01 behoben, Evidence auf `8183782f`; **kein Ready, kein Merge**
 
 Historischer Draft-PR #52 bleibt Continuity-Evidence, ist aber kein Runtime-Träger.
 
@@ -153,13 +153,13 @@ Vorbereiteter Branch:
 
 `feat/trip-workspace-tw5-item-gap-details`
 
-Draft-PR #66 trägt die TW-5-Runtime. Evidence-Head `ce3e99b9` ist mit `main` `d039e7bf` synchron. Nächster Schritt ist der unabhängige Technical-Lead-Review. **Kein Ready, kein Merge, kein TW-6.**
+Draft-PR #66 trägt die TW-5-Runtime. Evidence-Head `8183782f` ist mit `main` `d039e7bf` synchron. P1-QS1-01 ist auf Presentation-Ebene behoben. Nächster Schritt ist der erneute unabhängige Technical-Lead-Review. **Kein Ready, kein Merge, kein TW-6.**
 
 TW-5 hängt vorhandene Flight-/Hotel-/Activities-/Mobility-Flächen als Details einer Reise-/Coverage-/Attention-Lücke ein, erhält Lazy-Search-Mounts und darf keine Live-Provider, Fake-Angebote, stillen Herkunftsdefaults oder Shared-Contract-Erweiterungen einschleusen.
 
 ## 10. Aktuelle Workstream-Lage
 
-- `Trip workspace audit architecture`: primärer Workstream; TW-5 Runtime auf Draft-PR #66, STOPP für Technical-Lead-Review.
+- `Trip workspace audit architecture`: primärer Workstream; TW-5 Runtime auf Draft-PR #66, P1-QS1-01 behoben, STOPP für erneuten Technical-Lead-Review.
 - `Account plattform audit vorbereitung`: wartet; AP-1 bis AP-3 sind integriert.
 - `Jetnity provider readiness audit`: wartet; S1 bis S3 sind integriert.
 - `Admin platform audit`: wartet; A bis C sind integriert.

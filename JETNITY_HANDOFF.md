@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 25. August 2026  
-Status: **kanonischer operativer Übergabepunkt. TW-1 bis TW-4 liegen auf `main`. TW-5 Runtime ist auf Draft-PR #66 evidence-vollständig; STOPP für unabhängigen Technical-Lead-Review.**
+Status: **kanonischer operativer Übergabepunkt. TW-1 bis TW-4 liegen auf `main`. TW-5 Runtime auf Draft-PR #66; P1-QS1-01 behoben und auf `8183782f` gegatet; STOPP für erneuten unabhängigen Technical-Lead-Review.**
 
 Dieses Dokument ist der zentrale operative Handoff für neue Chats und Coding Agents. Der erste Einstieg bleibt `JETNITY_START_HERE.md`.
 
@@ -184,7 +184,8 @@ Nächster Slice:
 Live-Stand:
 
 - Draft-PR #66 offen, Draft, MERGEABLE;
-- Evidence-Head `ce3e99b9`;
+- Evidence-Head `8183782f`;
+- P1-QS1-01 auf Presentation-Ebene behoben;
 - mit `main` `d039e7bf` synchron.
 
 Ziel: vorhandene Flight-/Unterkunft-/Aktivitäten-/Mobilitätsflächen als Details einer Reise-/Coverage-/Attention-Lücke einhängen, statt eine zweite modulzentrierte Haupt-IA aufzubauen. Bestehende Lazy-Search-Mounts bleiben erhalten.
@@ -201,11 +202,11 @@ Harte Grenzen:
 - keine Homepage-/Marketing-Runtime;
 - keine Production-Aktivierung.
 
-Runtime und Exact-Head-Evidence sind vorhanden. STOPP für unabhängigen Technical-Lead-Review. Kein Ready, kein Merge, kein TW-6.
+Runtime und Exact-Head-Evidence inkl. P1-QS1-01-Closure sind vorhanden. STOPP für erneuten unabhängigen Technical-Lead-Review. Kein Ready, kein Merge, kein TW-6.
 
 ## 10. Agentenstatus
 
-- `Trip workspace audit architecture`: primärer Workstream; TW-5 Runtime auf Draft-PR #66, STOPP für Technical-Lead-Review.
+- `Trip workspace audit architecture`: primärer Workstream; TW-5 Runtime auf Draft-PR #66, P1-QS1-01 behoben, STOPP für erneuten Technical-Lead-Review.
 - `Account plattform audit vorbereitung`: wartet; AP-1–AP-3 integriert.
 - `Jetnity provider readiness audit`: wartet; S1–S3 integriert.
 - `Admin platform audit`: wartet; A–C integriert.
@@ -275,9 +276,9 @@ Konfliktarme Vorbereitungs-/Audit-Arbeit darf parallelisiert werden, aber die gr
 
 ## 15. Was jetzt zu tun ist
 
-TW-5 Runtime und Exact-Head-Evidence liegen auf Draft-PR #66. **Kein Ready, kein Merge, kein TW-6.**
+TW-5 Runtime und Exact-Head-Evidence inkl. P1-QS1-01-Closure liegen auf Draft-PR #66. **Kein Ready, kein Merge, kein TW-6.**
 
-ChatGPT / Technical Lead führt den unabhängigen Review auf Exact Head `ce3e99b9` plus docs-only Persist.
+ChatGPT / Technical Lead führt den erneuten unabhängigen Review auf Exact Head `8183782f` plus docs-only Persist.
 
 ## 16. Continuity-Satz für einen neuen Chat
 
