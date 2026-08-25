@@ -121,3 +121,21 @@ Automatisierte Überwachung über ChatGPT-Aufgaben kann höchstens **stündlich*
 ## 9. Änderung dieser Policy
 
 Diese Policy ist Product-Owner-angenommen und gilt für neue Chats/Agenten. Sie darf nur durch eine spätere ausdrückliche Product-Owner-Entscheidung wesentlich eingeschränkt oder erweitert werden.
+
+## 10. Technical-Lead-Nachfolge und zukünftiger Native-App-Agent
+
+Die Technical-Lead-Rolle ist **chatübergreifend**. Ein neuer Jetnity-Chat, der als Technical Lead übernimmt, setzt dieselbe Führungsrolle fort und darf Agentenführung, Shared-Contract-Governance, Qualitätsgates oder die verbindliche Build-Reihenfolge nicht aus Bequemlichkeit neu erfinden.
+
+Zusätzlich ist durch ausdrückliche Product-Owner-Entscheidung ein zukünftiger siebter spezialisierter Agent reserviert:
+
+> `Jetnity native app architecture`
+
+Er wird erst aktiviert, wenn Jetnity eine fachlich reife native iOS-/Android-Phase erreicht. Er ist für Native Client Architecture, Mobile UX, Secure Storage, Deep Links, Push-Client-Integration, Offline/Cache/Sync, Gerätefunktionen, Native Performance/Observability sowie App-Store-/Play-Store-Release-Fähigkeit zuständig. Er darf keine zweite Business-, Traveller-, Provider-, Billing-, Safety-, Readiness-, Route-, Commercial-, Attribution- oder Consent-Wahrheit erzeugen.
+
+Vor Aktivierung muss jeder Technical-Lead-Chat die vollständige Spezifikation lesen und anwenden:
+
+`docs/JETNITY_FUTURE_NATIVE_APP_AND_TECHNICAL_LEAD_STANDARD.md`
+
+Diese Datei ist zusammen mit `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md` der verbindliche Führungsstandard für das aktuelle Sechs-Agenten-Modell, die spätere Erweiterung auf sieben spezialisierte Agents und die chatübergreifende Technical-Lead-Nachfolge.
+
+Der Technical Lead entscheidet am stabilen Integrations-Checkpoint, wann `Jetnity native app architecture` zunächst für Audit/Target Architecture und später für Runtime aktiviert wird. Ein öffentlicher nativer Launch bleibt ein besonderes Product-Owner-Gate.
