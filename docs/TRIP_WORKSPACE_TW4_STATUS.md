@@ -11,6 +11,7 @@ Status: **Review-Fix umgesetzt / Draft / STOPP für erneuten unabhängigen Techn
 - Base / Merge-Base: `origin/main` `5341decef6ab128039dea11fa6f2625fbf03d354`
 - Review-Head mit BLOCKED-Review: `8bbafefc61e91d66ebf617bed2868b8b1c0848cd`
 - Technical-Lead-Review `5017458023`: BLOCKED – zwei Truth-/Presentation-Blocker
+- Review-Fix-Head mit lokalen Gates + CI/Vercel: `95b36f6d81ef346f084e6b9e6911da591d8c5d2b`
 - ADR: `docs/ADR_0165_TRIP_WORKSPACE_TW4_ATTENTION.md`
 - Auftrag: `docs/TRIP_WORKSPACE_TW4_TASK.md`
 
@@ -106,6 +107,25 @@ Korrektur, nur TW-4:
 - Kein `unknown => noch_nicht_pruefbar`. Warning + paralleles `insufficient_context` bleiben beide sichtbar.
 
 Regressionstests in `lib/trips/attention.test.ts`: Critical Warning, Coverage-Gap und Error ohne Clean-Leerstand; Safety/Seasonal stale vs unknown vs insufficient_context; Warning + paralleles insufficient_context.
+
+## Exact-Head-Gates auf `95b36f6d`
+
+Lokal, alle grün:
+
+- `check:setup:ci` – OK, 1 Warning: keine `.env`
+- `npm run typecheck` – OK
+- `npm run lint` – OK
+- `npm test` – **1932/1932** pass, inkl. 18 TW-4-Attention-Tests
+- `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` – OK
+- `npm run build` – OK
+- `npm run audit:trip-workspace` – 1018 Kombinationen, 0 Fehler
+
+Remote, derselbe SHA:
+
+- GitHub Actions: SUCCESS – https://github.com/Jetnity/jetnity/actions/runs/32834832307
+- Vercel Preview: SUCCESS – Deployment `6080781671`, https://jetnity-ifjh18d92-jetnity-e1b93c82.vercel.app
+
+Dieser Status-Commit ist docs-only und folgt auf den belegten Review-Fix-Head. Der Review-Head nach dem Persist ist der neue Branch-Head; CI/Vercel dort erneut prüfen.
 
 ## Self-Review
 
