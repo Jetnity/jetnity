@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import { AlertTriangle, Clock3, Info } from 'lucide-react'
 
-import type { Arbeitsbereich } from '@/lib/trips/arbeitsbereich'
 import type {
   AttentionAbleitung,
+  AttentionAktion,
   AttentionLeerstand,
   AttentionPunkt,
   AttentionSchwere,
@@ -27,10 +27,10 @@ const SCHWERE_SYMBOL: Record<AttentionSchwere, typeof Info> = {
 
 export default function TripWorkspaceJetztWichtig({
   attention,
-  onBereich,
+  onAktion,
 }: {
   attention: AttentionAbleitung
-  onBereich: (bereich: Arbeitsbereich) => void
+  onAktion: (aktion: AttentionAktion) => void
 }) {
   const [weitereOffen, setWeitereOffen] = useState(false)
   const sichtbare = weitereOffen ? attention.punkte : attention.sichtbar
@@ -57,7 +57,7 @@ export default function TripWorkspaceJetztWichtig({
       {sichtbare.length > 0 && (
         <ul className="mt-3 grid gap-2">
           {sichtbare.map((eintrag) => (
-            <AttentionZeile key={eintrag.id} punkt={eintrag} onBereich={onBereich} />
+            <AttentionZeile key={eintrag.id} punkt={eintrag} onAktion={onAktion} />
           ))}
         </ul>
       )}
@@ -80,10 +80,10 @@ export default function TripWorkspaceJetztWichtig({
 
 function AttentionZeile({
   punkt,
-  onBereich,
+  onAktion,
 }: {
   punkt: AttentionPunkt
-  onBereich: (bereich: Arbeitsbereich) => void
+  onAktion: (aktion: AttentionAktion) => void
 }) {
   const Symbol = SCHWERE_SYMBOL[punkt.schwere]
   const inhalt = (
@@ -110,7 +110,7 @@ function AttentionZeile({
           type="button"
           data-attention-punkt={punkt.id}
           data-attention-lage={punkt.lage}
-          onClick={() => onBereich(punkt.aktion!.bereich)}
+          onClick={() => onAktion(punkt.aktion!)}
           className="flex min-h-11 w-full items-center gap-3 rounded-2xl border border-line-200 bg-surface-0 px-3 py-3 text-left transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
         >
           {inhalt}

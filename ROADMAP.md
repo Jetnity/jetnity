@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 25. August 2026  
-Status: **Foundation C/D/E, Travel Safety, Travel Timing & Seasonal, Account AP-1–AP-3, Admin Slice A–C, Provider S1–S3, Trip-Workspace-Audit #55, TW-1 (#56), TW-2 (#58), Marketing/Growth #59 und TW-4 (#60) liegen auf `main`. TW-3 ist der aktive Runtime-Slice. Kein TW-5.**
+Status: **Foundation C/D/E, Travel Safety, Travel Timing & Seasonal, Account AP-1–AP-3, Admin Slice A–C, Provider S1–S3, Trip-Workspace-Audit #55, TW-1 (#56), TW-2 (#58), Marketing/Growth #59, TW-4 (#60) und TW-3 (#64) liegen auf `main`. TW-5 ist der aktive Runtime-Slice auf Draft-PR #66. Kein TW-6.**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -341,7 +341,7 @@ S1 Shared Operational Contract ist auf `main` (PR #47). S2 FlugNachweis ist auf 
 
 ## 8. Großer End-to-End Trip-Workspace-/Übersicht-Umbau
 
-Status: **Audit/IA docs-only als PR #55 gemergt. TW-1, TW-2 und TW-4 auf `main`. TW-3 aktiv. Kein TW-5.**
+Status: **Audit/IA docs-only als PR #55 gemergt. TW-1, TW-2, TW-4 und TW-3 auf `main`. TW-5 aktiv auf Draft-PR #66. Kein TW-6.**
 
 Der Workspace ist die wichtigste Produktoberfläche und wird **nicht nur umgebaut**, sondern vollständig funktional generalinspiziert. PR #55 liefert ausschließlich die vorbereitete Audit-/Zielarchitektur-Evidence.
 
@@ -443,11 +443,12 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 8. ✅ TW-1 Shell/Geräteparität auf `main` (PR #56)
 9. ✅ TW-2 Reiseübersicht auf `main` (PR #58)
 10. ✅ TW-4 Aufmerksamkeit auf `main` (PR #60, `c935dd9f`)
-11. **→ Jetzt:** TW-3 Timeline / Etappe / Tag
-12. Admin/Account/Provider-Programme separat weiterführen; kein Slice D, AP-4 oder S4 ohne eigenen Auftrag
-13. finaler Workspace Intelligence Audit
-14. echte Providerphase
-15. provider-backed End-to-End-/Truth-Audit
-16. finale Startseiten-Positionierung
+11. ✅ TW-3 Timeline / Etappe / Tag auf `main` (PR #64)
+12. **→ Jetzt:** TW-5 Item- und Gap-Details – Draft-PR #66, P1-QS1-01 behoben auf `8183782f`, STOPP für erneuten Technical-Lead-Review
+13. Admin/Account/Provider-Programme separat weiterführen; kein Slice D, AP-4 oder S4 ohne eigenen Auftrag
+14. finaler Workspace Intelligence Audit
+15. echte Providerphase
+16. provider-backed End-to-End-/Truth-Audit
+17. finale Startseiten-Positionierung
 
-Der nächste Agent darf D/E/Safety **nicht neu bauen**, darf **nicht direkt einen echten Provider integrieren** und darf **TW-5 nicht ohne ausdrücklichen Auftrag starten**. TW-3 ist der aktive Slice.
+Der nächste Agent darf D/E/Safety **nicht neu bauen**, darf **nicht direkt einen echten Provider integrieren** und darf **TW-6 nicht ohne ausdrücklichen Auftrag starten**. TW-5 bleibt Draft, bis der Technical Lead PASS gibt.

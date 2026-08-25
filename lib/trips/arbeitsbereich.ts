@@ -9,9 +9,9 @@
 // gewählt ist, und welche Statuszeilen ehrlich sind. Keine Providerzustände,
 // keine erfundenen Flüge, Hotels oder Aktivitäten.
 //
-// Sichtbare Hauptbereiche: Übersicht, Flüge, Unterkunft, Aktivitäten und
-// Mobilität. Der Tagesplan / Verlauf gehört zur Übersicht, nicht zu einem eigenen Tab.
-// Ein historischer Wert `plan` fällt auf die Übersicht.
+// Coverage-Domains bleiben intern: Flüge, Unterkunft, Aktivitäten, Mobilität.
+// Sie sind seit TW-5 keine gleichrangige Hauptnavigation mehr. Der Tagesplan
+// gehört zur Reiseoberfläche. Ein historischer Wert `plan` fällt auf die Übersicht.
 
 import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
 import { mietwagenBestand } from '@/lib/rental-cars/bestand'
@@ -79,9 +79,25 @@ export function arbeitsbereichLesen(wert: string | null | undefined): Arbeitsber
   return wert && istArbeitsbereich(wert) ? wert : STANDARD_ARBEITSBEREICH
 }
 
+/**
+ * Eine ungeplante Item-Liste für Workspace-Presentation.
+ *
+ * Der Produktpfad (Guest und Account) übergibt oft `ohneTag === reise.ohneTag`.
+ * Diese Liste darf nur einmal in Coverage-, Route- und Zählableitungen
+ * eingehen. Eine leere Prop bedeutet „nicht gesetzt“ und fällt auf
+ * `reise.ohneTag`. Es gibt keine ID-Deduplizierung und keine zweite
+ * Route-Wahrheit. P1-QS1-01.
+ */
+export function ungeplantePunkteLesen(
+  reise: Pick<Trip, 'ohneTag'>,
+  ohneTag: readonly TripItem[] = [],
+): readonly TripItem[] {
+  return ohneTag.length > 0 ? ohneTag : reise.ohneTag
+}
+
 /** Alle Planpunkte der Reise, einschließlich noch nicht eingeplanter. */
 export function planpunkteSammeln(reise: Trip, ohneTag: readonly TripItem[] = []): TripItem[] {
-  return [...reise.days.flatMap((tag) => tag.items), ...ohneTag]
+  return [...reise.days.flatMap((tag) => tag.items), ...ungeplantePunkteLesen(reise, ohneTag)]
 }
 
 function anzahlVon(punkte: readonly TripItem[], art: TripItemKind): number {
@@ -139,8 +155,9 @@ function mobilitaetLage(abdeckung: ReturnType<typeof mobilitaetsAbdeckung>): Ber
  * Zählt denselben Graphen wie die Übersicht. Kein Link in einen eigenen Bereich.
  */
 export function planStatus(reise: Trip, ohneTag: readonly TripItem[] = []): PlanStatus {
-  const punkte = planpunkteSammeln(reise, ohneTag)
-  const ungeplant = ohneTag.length
+  const ungeplante = ungeplantePunkteLesen(reise, ohneTag)
+  const punkte = planpunkteSammeln(reise, ungeplante)
+  const ungeplant = ungeplante.length
   const text =
     punkte.length === 0
       ? '0 Punkte geplant'
@@ -168,14 +185,17 @@ export function planStatus(reise: Trip, ohneTag: readonly TripItem[] = []): Plan
  * ein und darf keinen Bereichswechsel auslösen.
  */
 export function bereichStatus(reise: Trip, ohneTag: readonly TripItem[] = []): BereichStatus[] {
-  const punkte = planpunkteSammeln(reise, ohneTag)
-  const fluege = flugAbdeckung(reise, ohneTag)
-  const route = routeFactsAusGraph({ days: reise.days, ohneTag: [...ohneTag, ...reise.ohneTag] })
+  const ungeplante = ungeplantePunkteLesen(reise, ohneTag)
+  const punkte = planpunkteSammeln(reise, ungeplante)
+  const fluege = flugAbdeckung(reise, ungeplante)
+  // Eine Liste, einmal. Spread nur, weil RouteFacts den Trip-shaped Eingang
+  // `ohneTag: TripItem[]` verlangt – kein Concat, keine ID-Deduplizierung.
+  const route = routeFactsAusGraph({ days: reise.days, ohneTag: [...ungeplante] })
   const routeText = routeKompaktOhneCode(route)
   const fluegeText = routeText ? `${routeText} · ${fluege.zusammenfassung}` : fluege.zusammenfassung
-  const unterkunft = unterkunftAbdeckung(reise, ohneTag)
-  const mobilitaet = mobilitaetsAbdeckung(reise, ohneTag)
-  const mietwagen = mietwagenBestand(reise, ohneTag)
+  const unterkunft = unterkunftAbdeckung(reise, ungeplante)
+  const mobilitaet = mobilitaetsAbdeckung(reise, ungeplante)
+  const mietwagen = mietwagenBestand(reise, ungeplante)
   const aktivitaetenAnzahl = anzahlVon(punkte, 'activity')
   const verbindungsAnzahl = anzahlVon(punkte, 'transfer')
   const mietwagenAnzahl = anzahlVon(punkte, 'rental_car')

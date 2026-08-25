@@ -45,7 +45,7 @@ export default function FlugSuche({
   ) => Promise<string | null>
 }) {
   const tag = reise.days.find((eintrag) => eintrag.id === tagId) ?? reise.days[0]
-  const [herkunft, setHerkunft] = React.useState(iataAus(reise.origin) || 'ZRH')
+  const [herkunft, setHerkunft] = React.useState(iataAus(reise.origin))
   const [ziel, setZiel] = React.useState(iataAus(reise.stages[0]?.name) || '')
   const [hin, setHin] = React.useState(tag?.dayDate ?? reise.startDate ?? '')
   const [rueck, setRueck] = React.useState(reise.endDate ?? '')

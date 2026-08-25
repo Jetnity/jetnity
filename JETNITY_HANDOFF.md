@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 25. August 2026  
-Status: **kanonischer operativer Übergabepunkt nach Integration von TW-3. TW-1, TW-2, TW-4 und TW-3 sind auf `main`; nächster primärer Workspace-Slice ist TW-5 – Item- und Gap-Details.**
+Status: **kanonischer operativer Übergabepunkt. TW-1 bis TW-4 liegen auf `main`. TW-5 Runtime auf Draft-PR #66; P1-QS1-01 behoben und auf `8183782f` gegatet; STOPP für erneuten unabhängigen Technical-Lead-Review.**
 
 Dieses Dokument ist der zentrale operative Handoff für neue Chats und Coding Agents. Der erste Einstieg bleibt `JETNITY_START_HERE.md`.
 
@@ -181,12 +181,12 @@ Nächster Slice:
 
 **TW-5 – Item- und Gap-Details**
 
-Live-Stand beim Handoff-Check:
+Live-Stand:
 
-- Branch existiert und stand auf `16a4c77...`;
-- noch kein TW-5-Runtime-Commit;
-- noch kein TW-5-Draft-PR;
-- Cursor-Agent noch nicht für TW-5 neu angestoßen.
+- Draft-PR #66 offen, Draft, MERGEABLE;
+- Evidence-Head `8183782f`;
+- P1-QS1-01 auf Presentation-Ebene behoben;
+- mit `main` `d039e7bf` synchron.
 
 Ziel: vorhandene Flight-/Unterkunft-/Aktivitäten-/Mobilitätsflächen als Details einer Reise-/Coverage-/Attention-Lücke einhängen, statt eine zweite modulzentrierte Haupt-IA aufzubauen. Bestehende Lazy-Search-Mounts bleiben erhalten.
 
@@ -202,11 +202,11 @@ Harte Grenzen:
 - keine Homepage-/Marketing-Runtime;
 - keine Production-Aktivierung.
 
-Vor Runtime: TW-5 ADR/Task/Status + Draft-PR + Acceptance/Gates. Danach Cursor-Agent starten. Agent stoppt nach Self-Review/Exact-Head-Evidence für unabhängigen Technical-Lead-Review.
+Runtime und Exact-Head-Evidence inkl. P1-QS1-01-Closure sind vorhanden. STOPP für erneuten unabhängigen Technical-Lead-Review. Kein Ready, kein Merge, kein TW-6.
 
 ## 10. Agentenstatus
 
-- `Trip workspace audit architecture`: primärer nächster Workstream; TW-5 noch nicht gestartet.
+- `Trip workspace audit architecture`: primärer Workstream; TW-5 Runtime auf Draft-PR #66, P1-QS1-01 behoben, STOPP für erneuten Technical-Lead-Review.
 - `Account plattform audit vorbereitung`: wartet; AP-1–AP-3 integriert.
 - `Jetnity provider readiness audit`: wartet; S1–S3 integriert.
 - `Admin platform audit`: wartet; A–C integriert.
@@ -274,11 +274,11 @@ Konfliktarme Vorbereitungs-/Audit-Arbeit darf parallelisiert werden, aber die gr
 - Historische offene PRs sind nicht automatisch aktive Runtime-Slices.
 - Alte Status-/Handoff-Zeilen können pre-merge Evidence sein; `JETNITY_START_HERE.md` + `docs/ACTIVE_WORK_STATUS.md` + Live-Systeme bestimmen den aktuellen Stand.
 
-## 15. Was der Product Owner jetzt in Cursor tun muss
+## 15. Was jetzt zu tun ist
 
-Noch nichts, solange der TW-5-Auftrag nicht versioniert und der Draft-PR nicht eröffnet ist.
+TW-5 Runtime und Exact-Head-Evidence inkl. P1-QS1-01-Closure liegen auf Draft-PR #66. **Kein Ready, kein Merge, kein TW-6.**
 
-ChatGPT hat keinen direkten Cursor-Agent-Chat-Connector. Sobald TW-5 ADR/Task/Status/Draft-PR bereit sind, muss `Trip workspace audit architecture` einmal manuell in Cursor mit dem versionierten Auftrag angestoßen werden. Danach arbeitet der Agent bis zum definierten STOPP; ChatGPT/Technical Lead führt anschließend den unabhängigen Review.
+ChatGPT / Technical Lead führt den erneuten unabhängigen Review auf Exact Head `8183782f` plus docs-only Persist.
 
 ## 16. Continuity-Satz für einen neuen Chat
 

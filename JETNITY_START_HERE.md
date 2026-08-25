@@ -118,30 +118,26 @@ Technical-Lead-kontrolliert bleiben insbesondere:
 
 Ein Fachagent dokumentiert einen nötigen Shared-Contract-Change und stoppt. Der Technical Lead entscheidet Architektur, Owner und separaten kontrollierten Slice.
 
-## 8. Aktuelle operative Wahrheit nach TW-3
+## 8. Aktuelle operative Wahrheit nach TW-3 / TW-5-Draft
 
-Letzter verifizierter Runtime-Merge auf `main` vor diesem Continuity-Update:
+Letzter verifizierter `main` beim TW-5-Evidence-Stand:
 
-`16a4c77a53cff9e8638a68f5dd8c77122bf13b48`
+`d039e7bf7f7fa9db261b4623c72cc35944aa82c4`
+
+Das ist der Merge von PR #67 (QS-1 docs-only) über die post-TW-3-Continuity `bee9f653`.
 
 Stand:
 
 - TW-1 / PR #56: ✅ integriert
 - TW-2 / PR #58: ✅ integriert
 - Marketing & Growth Standards / PR #59: ✅ integriert
-- TW-4 / PR #60: ✅ integriert, Merge-Commit `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f`
-- TW-3 / PR #64: ✅ integriert, Merge-Commit `16a4c77a53cff9e8638a68f5dd8c77122bf13b48`
-- finaler TW-3 Exact Head: `f55db2b0682981f293390b44e704b513476703bf`
-- unabhängiger Technical-Lead-PASS: abgeschlossen
-- Exact-Head GitHub Actions CI `32861784215`: SUCCESS
-- Vercel Exact-Head Preview: READY
-- Vercel Production auf Merge-Commit `16a4c77...`: READY
-- keine offenen PR-#64-Review-Threads
-- keine TW-3-DB-/RLS-/Auth-/Traveller-/Provider-/Secret-/Kostenänderung.
+- TW-4 / PR #60: ✅ integriert
+- TW-3 / PR #64: ✅ integriert
+- post-TW-3 Continuity / PR #65: ✅ integriert (`bee9f653`)
+- QS-1 docs-only / PR #67: ✅ integriert (`d039e7bf`)
+- TW-5 / Draft-PR #66: Runtime implementiert, P1-QS1-01 behoben, Evidence auf `8183782f`; **kein Ready, kein Merge**
 
-Damit ist der vorgesehene Checkpoint **TW-4 ✅ → TW-3 ✅ → Technical-Lead-Integrationscheckpoint** erreicht.
-
-Historischer Draft-PR #52 bleibt Continuity-Evidence, ist aber kein Runtime-Träger und soll nicht als aktueller Slice behandelt werden.
+Historischer Draft-PR #52 bleibt Continuity-Evidence, ist aber kein Runtime-Träger.
 
 ## 9. Nächster Workspace-Slice
 
@@ -157,15 +153,13 @@ Vorbereiteter Branch:
 
 `feat/trip-workspace-tw5-item-gap-details`
 
-Der Branch wurde auf dem Runtime-Baseline-SHA `16a4c77...` vorbereitet. Zum Zeitpunkt dieses Continuity-Updates existieren noch **kein TW-5-Runtime-Commit und kein TW-5-PR**.
+Draft-PR #66 trägt die TW-5-Runtime. Evidence-Head `8183782f` ist mit `main` `d039e7bf` synchron. P1-QS1-01 ist auf Presentation-Ebene behoben. Nächster Schritt ist der erneute unabhängige Technical-Lead-Review. **Kein Ready, kein Merge, kein TW-6.**
 
-TW-5 muss vorhandene Flight-/Hotel-/Activities-/Mobility-Flächen als Details einer Reise-/Coverage-/Attention-Lücke einhängen, vorhandene Lazy-Search-Mounts erhalten und darf keine Live-Provider, Fake-Angebote, stillen Herkunftsdefaults oder Shared-Contract-Erweiterungen einschleusen.
-
-Vor Runtime-Implementierung: versionierter TW-5-Task, ADR/Status, Scope/Non-Scope, Acceptance, Gates und Draft-PR; danach Cursor-Agent starten; STOPP nach Self-Review/Evidence für unabhängigen Technical-Lead-Review.
+TW-5 hängt vorhandene Flight-/Hotel-/Activities-/Mobility-Flächen als Details einer Reise-/Coverage-/Attention-Lücke ein, erhält Lazy-Search-Mounts und darf keine Live-Provider, Fake-Angebote, stillen Herkunftsdefaults oder Shared-Contract-Erweiterungen einschleusen.
 
 ## 10. Aktuelle Workstream-Lage
 
-- `Trip workspace audit architecture`: primärer nächster Workstream; TW-5 noch nicht implementiert.
+- `Trip workspace audit architecture`: primärer Workstream; TW-5 Runtime auf Draft-PR #66, P1-QS1-01 behoben, STOPP für erneuten Technical-Lead-Review.
 - `Account plattform audit vorbereitung`: wartet; AP-1 bis AP-3 sind integriert.
 - `Jetnity provider readiness audit`: wartet; S1 bis S3 sind integriert.
 - `Admin platform audit`: wartet; A bis C sind integriert.

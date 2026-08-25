@@ -1,7 +1,7 @@
 # Jetnity – Trip Workspace Implementierungsplan
 
 Stand: 25. August 2026  
-Status: **Ziel-IA angenommen (ADR-0163). TW-1, TW-2, TW-4 und TW-3 sind auf `main`. Nächster Slice ist TW-5 – Item- und Gap-Details.**  
+Status: **Ziel-IA angenommen (ADR-0163). TW-1 bis TW-4 sind auf `main`. TW-5 Runtime liegt auf Draft-PR #66 und wartet auf Technical-Lead-Review. Kein TW-6.**  
 Audit: `docs/TRIP_WORKSPACE_AUDIT.md`  
 Ziel: `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`  
 Abhängigkeiten: `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`
@@ -52,7 +52,7 @@ TW-3 Timeline ✅  TW-4 Aufmerksamkeit ✅
   │              │
   └──────┬───────┘
          ▼
-      TW-5 Item- und Gap-Details ← NÄCHSTER SLICE
+      TW-5 Item- und Gap-Details ← Draft-PR #66, Review-STOPP
          │
          ├── TW-6 Create-Entry  (nach dokumentiertem PO-Schnitt; nicht Homepage)
          ├── TW-7 Hub-Anschluss (AP-3 nicht überschreiben; Archiv nach AP-4)
@@ -133,7 +133,7 @@ Evidence:
 
 ### TW-5 – Item- und Gap-Details
 
-**Status:** nächster primärer Runtime-Slice; Runtime noch nicht gestartet.
+**Status:** Draft-PR #66; Runtime implementiert; STOPP für Technical-Lead-Review. Kein Ready, kein Merge, kein TW-6.
 
 Agent:
 

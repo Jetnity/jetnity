@@ -6,15 +6,11 @@
 // Die Übersicht verdichtet vorhandene Reise-Wahrheit (ADR-0164 / TW-2).
 // Jetzt wichtig priorisiert vorhandene Signale (ADR-0165 / TW-4).
 // Der Verlauf zeigt Etappen und Tage als Timeline (ADR-0166 / TW-3).
+// Item- und Gap-Details öffnen vorhandene Flächen kontextuell (ADR-0167 / TW-5).
 //
-// Zuerst Orientierung, dann Aktion: Reisekopf, Bereichsnavigation, nur der
-// aktive Bereich. Die Übersicht ist die Reise-Ebene und enthält den Tagesplan.
-// Desktop darf mehr Fläche nutzen, entfernt die Übersicht aber nicht. Der
-// aktive Bereich ist Client-State, nicht Teil der URL.
-//
-// Besuchte Bereiche bleiben eingehängt (keine erneute Suche), sind aber
-// visuell `display: none`. `hidden` plus Tailwind `grid` würde den Bereich
-// semantisch verbergen und trotzdem Layout erzeugen.
+// Die Reise bleibt die primäre Oberfläche. Domain-Flächen sind Details
+// und Werkzeuge, keine gleichrangige Hauptnavigation. Commercial-Suche
+// wird erst nach ausdrücklicher Nutzeraktion gemountet.
 
 import * as React from 'react'
 import Link from 'next/link'
@@ -22,18 +18,34 @@ import { ArrowLeft } from 'lucide-react'
 
 import {
   ARBEITSBEREICH_DESKTOP_AB_PX,
-  STANDARD_ARBEITSBEREICH,
   type Arbeitsbereich,
   aenderungIstSichtbar,
-  arbeitsbereichLesen,
   bereichDarstellungKlasse,
-  bereichSollMounten,
-  bereichSollSichtbar,
-  besuchteBereicheErweitern,
   gewaehlterTagId,
 } from '@/lib/trips/arbeitsbereich'
 import { heutigesDatum } from '@/lib/account/naechste-reise'
+import type { AttentionAktion } from '@/lib/trips/attention'
 import { attentionAbleiten } from '@/lib/trips/attention'
+import {
+  attentionAktionAlsDetail,
+  bestandSollMounten,
+  besuchteDomainsErweitern,
+  detailAuswahlAusBereich,
+  detailBereinigen,
+  detailDomainFuerKind,
+  detailDomainVon,
+  gapAuswahl,
+  gapDetailAbleiten,
+  itemAuswahl,
+  itemDetailAbleiten,
+  itemInReise,
+  leereDetailAuswahl,
+  sucheIstOffen,
+  sucheOeffnen,
+  sucheSollMounten,
+  type DetailDomain,
+  type WorkspaceDetailAuswahl,
+} from '@/lib/trips/detail'
 import { uebersichtAbleiten } from '@/lib/trips/uebersicht'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
 import type { SafetyEvaluation } from '@/lib/safety/domain'
@@ -46,8 +58,8 @@ import TripWorkspaceKopf from '@/components/trips/TripWorkspaceKopf'
 import TripWorkspaceNavigation from '@/components/trips/TripWorkspaceNavigation'
 import TripWorkspacePlan from '@/components/trips/TripWorkspacePlan'
 import Reisevorbereitung from '@/components/trips/Reisevorbereitung'
-import TripWorkspaceJetztWichtig from '@/components/trips/TripWorkspaceJetztWichtig'
 import TripWorkspaceUebersicht from '@/components/trips/TripWorkspaceUebersicht'
+import TripWorkspaceDetail from '@/components/trips/TripWorkspaceDetail'
 import FlugBestand from '@/components/trips/FlugBestand'
 import UnterkunftBestand from '@/components/trips/UnterkunftBestand'
 import type { Trip, TripItem, TripSource } from '@/types/trips'
@@ -99,16 +111,11 @@ type TripWorkspaceProps = {
     }>
   }) => Promise<string | null>
   onTravellerEntfernen?: (clientRef: string) => Promise<string | null>
-  /**
-   * Optionale serverseitige Official Evaluations.
-   * Ohne Lieferung bleibt der lokale fail-closed Fallback.
-   * Kein Provider-Call und kein Secret im Client.
-   */
   officialEvaluations?: OfficialEvaluation[]
   safetyEvaluations?: SafetyEvaluation[]
   seasonalEvaluations?: SeasonalEvaluation[]
   /**
-   * Nur für interne Audits: startet nicht in der Übersicht.
+   * Nur für interne Audits: startet mit einem Gap, nicht mit der Suche.
    * Der Produktweg lässt den Parameter weg.
    */
   anfangsBereich?: Arbeitsbereich
@@ -132,20 +139,20 @@ function setzeInert(el: HTMLElement | null, verborgen: boolean) {
   else el.removeAttribute('inert')
 }
 
-function BereichHuelle({
-  bereich,
+function FlaecheHuelle({
+  name,
   verborgen,
   sichtbarKlasse,
   children,
 }: {
-  bereich: Arbeitsbereich
+  name: string
   verborgen: boolean
   sichtbarKlasse?: string
   children: React.ReactNode
 }) {
   return (
     <div
-      data-arbeitsbereich={bereich}
+      data-arbeitsbereich={name}
       hidden={verborgen}
       className={bereichDarstellungKlasse(verborgen, sichtbarKlasse)}
       ref={(el) => setzeInert(el, verborgen)}
@@ -184,30 +191,90 @@ export default function TripWorkspace({
     () => true,
   )
 
-  const [bereich, setBereich] = React.useState<Arbeitsbereich>(() =>
-    arbeitsbereichLesen(anfangsBereich),
+  const [auswahl, setAuswahl] = React.useState<WorkspaceDetailAuswahl>(() =>
+    detailAuswahlAusBereich(anfangsBereich),
   )
-  const [besucht, setBesucht] = React.useState<ReadonlySet<Arbeitsbereich>>(
-    () => new Set([STANDARD_ARBEITSBEREICH, arbeitsbereichLesen(anfangsBereich)]),
-  )
+  const [bestandBesucht, setBestandBesucht] = React.useState<ReadonlySet<DetailDomain>>(() => {
+    const start = detailAuswahlAusBereich(anfangsBereich)
+    return start.art === 'gap' ? new Set([start.domain]) : new Set()
+  })
+  const [sucheBesucht, setSucheBesucht] = React.useState<ReadonlySet<DetailDomain>>(new Set())
   const [aktiverTag, setAktiverTag] = React.useState(reise.days[0]?.id ?? '')
   const [aenderungOffen, setAenderungOffen] = React.useState(false)
   const [aenderungBereit, setAenderungBereit] = React.useState(!kompakt)
   const aenderungKnopfRef = React.useRef<HTMLButtonElement>(null)
   const aenderungFeldRef = React.useRef<HTMLDivElement>(null)
+  const zurueckRef = React.useRef<HTMLButtonElement>(null)
+  const detailFokusRef = React.useRef<HTMLButtonElement>(null)
+  const letzterAusloeserRef = React.useRef<HTMLElement | null>(null)
+  const vorherOffenRef = React.useRef(false)
+
+  const ungeplantePunkte = ohneTag.length > 0 ? ohneTag : reise.ohneTag
+  const bereinigt = detailBereinigen(auswahl, reise, ungeplantePunkte)
+  const detailOffen = bereinigt.art !== 'keine'
+  const gewaehlterPunktId = bereinigt.art === 'item' ? bereinigt.itemId : undefined
 
   React.useEffect(() => {
     setAktiverTag((bisher) => gewaehlterTagId(reise, bisher))
   }, [reise])
 
   React.useEffect(() => {
+    setAuswahl((bisher) => detailBereinigen(bisher, reise, ohneTag.length > 0 ? ohneTag : reise.ohneTag))
+  }, [reise, ohneTag])
+
+  React.useEffect(() => {
     if (!kompakt) setAenderungBereit(true)
   }, [kompakt])
 
-  const wechseln = (naechster: Arbeitsbereich) => {
-    setBereich(naechster)
-    setBesucht((bisher) => besuchteBereicheErweitern(bisher, naechster))
-    document.querySelector('[aria-label="Reisebereiche"]')?.scrollIntoView({ block: 'start' })
+  React.useEffect(() => {
+    if (detailOffen && !vorherOffenRef.current) {
+      const ziel = kompakt ? zurueckRef.current : detailFokusRef.current
+      ziel?.focus({ preventScroll: true })
+      if (!kompakt) ziel?.scrollIntoView({ block: 'start', inline: 'nearest' })
+    }
+    if (!detailOffen && vorherOffenRef.current) {
+      letzterAusloeserRef.current?.focus?.()
+    }
+    vorherOffenRef.current = detailOffen
+  }, [detailOffen, kompakt])
+
+  const merkeAusloeser = () => {
+    const aktiv = document.activeElement
+    letzterAusloeserRef.current = aktiv instanceof HTMLElement ? aktiv : null
+  }
+
+  const oeffneGap = (domain: DetailDomain, signalId?: string) => {
+    merkeAusloeser()
+    setAuswahl(gapAuswahl(domain, signalId))
+    setBestandBesucht((bisher) => besuchteDomainsErweitern(bisher, domain))
+  }
+
+  const oeffneItem = (itemId: string) => {
+    merkeAusloeser()
+    const punkt = itemInReise(reise, ungeplantePunkte, itemId)
+    setAuswahl(itemAuswahl(itemId))
+    setBestandBesucht((bisher) => besuchteDomainsErweitern(bisher, punkt ? detailDomainFuerKind(punkt.kind) : null))
+  }
+
+  const schliessen = () => {
+    setAuswahl(leereDetailAuswahl())
+  }
+
+  const sucheAusdruecklich = () => {
+    setAuswahl((bisher) => sucheOeffnen(bisher))
+    setSucheBesucht((bisher) =>
+      besuchteDomainsErweitern(bisher, detailDomainVon(bereinigt, reise, ungeplantePunkte)),
+    )
+  }
+
+  const onAttention = (aktion: AttentionAktion) => {
+    const ziel = attentionAktionAlsDetail(aktion)
+    if (ziel === 'reise') {
+      schliessen()
+      document.getElementById('reisevorbereitung-titel')?.scrollIntoView({ block: 'start' })
+      return
+    }
+    if (ziel && ziel.art === 'gap') oeffneGap(ziel.domain, ziel.signalId)
   }
 
   const aenderungOeffnen = () => {
@@ -222,7 +289,6 @@ export default function TripWorkspace({
     feld?.focus()
   }, [aenderungOffen])
 
-  const ungeplantePunkte = ohneTag.length > 0 ? ohneTag : reise.ohneTag
   const aenderungSichtbar = aenderungIstSichtbar(aenderungOffen)
   const uebersicht = uebersichtAbleiten(reise, ungeplantePunkte, heutigesDatum())
   const attention = attentionAbleiten({
@@ -233,11 +299,11 @@ export default function TripWorkspace({
     officialEvaluations,
   })
   const aktivitaeten = sucheMitTag(aktivitaetensuche, aktiverTag, setAktiverTag)
-
-  const bereichBereit = (ziel: Arbeitsbereich) => bereichSollMounten(ziel, bereich, besucht)
-
-  const verbergen = (ziel: Arbeitsbereich) => !bereichSollSichtbar(ziel, bereich)
-  const uebersichtVerborgen = verbergen('uebersicht')
+  const gap = bereinigt.art === 'gap' ? gapDetailAbleiten(reise, ungeplantePunkte, bereinigt.domain) : null
+  const item = bereinigt.art === 'item' ? itemDetailAbleiten(reise, ungeplantePunkte, bereinigt.itemId) : null
+  const aktiveDomain = detailDomainVon(bereinigt, reise, ungeplantePunkte)
+  const uebersichtVerborgen = kompakt && detailOffen
+  const detailVerborgen = !detailOffen
 
   const sicherheit = <ReiseSicherheit reise={reise} evaluations={safetyEvaluations} />
   const reisezeit = <ReisezeitHinweise reise={reise} evaluations={seasonalEvaluations} />
@@ -263,6 +329,8 @@ export default function TripWorkspace({
       onTagWechseln={setAktiverTag}
       onPunktAnlegen={onPunktAnlegen}
       onPunktEntfernen={onPunktEntfernen}
+      onPunktOeffnen={oeffneItem}
+      gewaehlterPunktId={gewaehlterPunktId}
     />
   )
 
@@ -285,6 +353,15 @@ export default function TripWorkspace({
     </div>
   )
 
+  const flugBestandBereit = bestandSollMounten('fluege', bereinigt, bestandBesucht, reise, ungeplantePunkte)
+  const hotelBestandBereit = bestandSollMounten('unterkunft', bereinigt, bestandBesucht, reise, ungeplantePunkte)
+  const mobilitaetBereit = bestandSollMounten('mobilitaet', bereinigt, bestandBesucht, reise, ungeplantePunkte)
+  const flugSucheBereit = sucheSollMounten('fluege', bereinigt, sucheBesucht, reise, ungeplantePunkte)
+  const hotelSucheBereit = sucheSollMounten('unterkunft', bereinigt, sucheBesucht, reise, ungeplantePunkte)
+  const aktivitaetenSucheBereit = sucheSollMounten('aktivitaeten', bereinigt, sucheBesucht, reise, ungeplantePunkte)
+
+  const sucheSichtbar = sucheIstOffen(bereinigt)
+
   return (
     <main className="min-h-screen bg-surface-75 pb-20">
       <div className="mx-auto max-w-7xl px-3 py-8 sm:px-6 sm:py-10">
@@ -306,16 +383,21 @@ export default function TripWorkspace({
           kopfzeile={kopfzeile}
         />
 
-        <TripWorkspaceNavigation aktiv={bereich} onWechsel={wechseln} />
+        <TripWorkspaceNavigation sichtbar={kompakt && detailOffen} onZurueck={schliessen} zurueckRef={zurueckRef} />
 
-        {bereichBereit('uebersicht') && (
-          <BereichHuelle bereich="uebersicht" verborgen={uebersichtVerborgen}>
+        <div
+          className={
+            !kompakt && detailOffen ? 'lg:grid lg:grid-cols-2 lg:items-start lg:gap-6' : undefined
+          }
+        >
+          <FlaecheHuelle name="uebersicht" verborgen={uebersichtVerborgen}>
             <TripWorkspaceUebersicht
               reise={reise}
               uebersicht={uebersicht}
               attention={attention}
               aenderungOffen={aenderungOffen}
-              onBereich={wechseln}
+              onLuecke={oeffneGap}
+              onAttention={onAttention}
               onAenderung={aenderungOeffnen}
               aenderungKnopfRef={aenderungKnopfRef}
               plan={plan}
@@ -324,37 +406,84 @@ export default function TripWorkspace({
               sicherheit={sicherheit}
               reisezeit={reisezeit}
             />
-          </BereichHuelle>
-        )}
+          </FlaecheHuelle>
 
-        {bereichBereit('fluege') && (
-          <BereichHuelle bereich="fluege" verborgen={verbergen('fluege')} sichtbarKlasse="mt-6 grid gap-6">
+          <FlaecheHuelle name="detail" verborgen={detailVerborgen} sichtbarKlasse="min-w-0">
+            <div
+              onKeyDown={(ereignis) => {
+                if (ereignis.key !== 'Escape' || !detailOffen) return
+                ereignis.stopPropagation()
+                schliessen()
+              }}
+            >
+              {detailOffen ? (
+                <TripWorkspaceDetail
+                  auswahl={bereinigt}
+                  gap={gap}
+                  item={item}
+                  kompakt={kompakt}
+                  onSchliessen={schliessen}
+                  onSuche={sucheAusdruecklich}
+                  fokusRef={detailFokusRef}
+                />
+              ) : null}
+            </div>
+          </FlaecheHuelle>
+        </div>
+
+        {flugBestandBereit && (
+          <FlaecheHuelle
+            name="fluege"
+            verborgen={!detailOffen || aktiveDomain !== 'fluege'}
+            sichtbarKlasse="mt-4 grid gap-6"
+          >
             <FlugBestand reise={reise} ohneTag={ungeplantePunkte} onBuchungsstatus={onBuchungsstatus} />
-            {flugsuche}
-          </BereichHuelle>
+          </FlaecheHuelle>
         )}
-
-        {bereichBereit('unterkunft') && (
-          <BereichHuelle
-            bereich="unterkunft"
-            verborgen={verbergen('unterkunft')}
-            sichtbarKlasse="mt-6 grid gap-6"
+        {hotelBestandBereit && (
+          <FlaecheHuelle
+            name="unterkunft"
+            verborgen={!detailOffen || aktiveDomain !== 'unterkunft'}
+            sichtbarKlasse="mt-4 grid gap-6"
           >
             <UnterkunftBestand reise={reise} ohneTag={ungeplantePunkte} onBuchungsstatus={onBuchungsstatus} />
-            {hotelsuche}
-          </BereichHuelle>
+          </FlaecheHuelle>
         )}
-
-        {bereichBereit('aktivitaeten') && aktivitaeten && (
-          <BereichHuelle bereich="aktivitaeten" verborgen={verbergen('aktivitaeten')} sichtbarKlasse="mt-6">
-            {aktivitaeten}
-          </BereichHuelle>
-        )}
-
-        {bereichBereit('mobilitaet') && mobilitaetssuche && (
-          <BereichHuelle bereich="mobilitaet" verborgen={verbergen('mobilitaet')} sichtbarKlasse="mt-6">
+        {mobilitaetBereit && mobilitaetssuche && (
+          <FlaecheHuelle
+            name="mobilitaet"
+            verborgen={!detailOffen || aktiveDomain !== 'mobilitaet'}
+            sichtbarKlasse="mt-4"
+          >
             {mobilitaetssuche}
-          </BereichHuelle>
+          </FlaecheHuelle>
+        )}
+        {flugSucheBereit && flugsuche && (
+          <FlaecheHuelle
+            name="flugsuche"
+            verborgen={!detailOffen || aktiveDomain !== 'fluege' || !sucheSichtbar}
+            sichtbarKlasse="mt-4"
+          >
+            {flugsuche}
+          </FlaecheHuelle>
+        )}
+        {hotelSucheBereit && hotelsuche && (
+          <FlaecheHuelle
+            name="hotelsuche"
+            verborgen={!detailOffen || aktiveDomain !== 'unterkunft' || !sucheSichtbar}
+            sichtbarKlasse="mt-4"
+          >
+            {hotelsuche}
+          </FlaecheHuelle>
+        )}
+        {aktivitaetenSucheBereit && aktivitaeten && (
+          <FlaecheHuelle
+            name="aktivitaeten"
+            verborgen={!detailOffen || aktiveDomain !== 'aktivitaeten' || !sucheSichtbar}
+            sichtbarKlasse="mt-4"
+          >
+            {aktivitaeten}
+          </FlaecheHuelle>
         )}
       </div>
     </main>

@@ -35,10 +35,16 @@ const TAB_ID = {
 
 const TAB_NACHWEIS = {
   Übersicht: 'Deine Reise auf einen Blick',
-  Flüge: 'Verbindungen für diese Reise',
-  Unterkunft: 'Die Hotelsuche ist in dieser Umgebung nicht verfügbar.',
-  Aktivitäten: 'Passende Aktivitäten werden vorbereitet.',
+  Flüge: 'Deine Flüge',
+  Unterkunft: 'Deine Unterkunft',
+  Aktivitäten: 'Aktivitäten sind optional',
   Mobilität: 'Bahn, Bus, Fähre und Transfer',
+}
+
+const SUCHE_BEZEICHNUNG = {
+  Flüge: 'Flug suchen',
+  Unterkunft: 'Unterkunft suchen',
+  Aktivitäten: 'Aktivitäten suchen',
 }
 
 const TAB_SEQUENZEN = [
@@ -329,18 +335,21 @@ const ZUSTAENDE = {
     kompakt: 'Verbindungen für diese Reise',
     desktop: 'Verbindungen für diese Reise',
     tab: 'Flüge',
+    oeffneSuche: true,
     nutzlast: { reise: reise(), mitSuche: true },
   },
   unterkunft: {
     kompakt: 'Die Hotelsuche ist in dieser Umgebung nicht verfügbar.',
     desktop: 'Die Hotelsuche ist in dieser Umgebung nicht verfügbar.',
     tab: 'Unterkunft',
+    oeffneSuche: true,
     nutzlast: { reise: reise(), mitSuche: true },
   },
   aktivitaeten: {
     kompakt: 'Passende Aktivitäten werden vorbereitet.',
     desktop: 'Passende Aktivitäten werden vorbereitet.',
     tab: 'Aktivitäten',
+    oeffneSuche: true,
     nutzlast: { reise: reise(), mitSuche: true },
   },
   mobilitaet: {
@@ -1832,53 +1841,39 @@ function layoutPruefen(erwartetBereich) {
     }
   }
 
-  const nav = document.querySelector('[aria-label="Reisebereiche"]')
-  if (nav) {
-    const tabs = [...nav.querySelectorAll('button')]
-    const labels = tabs.map((el) => (el.textContent || '').trim())
-    if (labels.includes('Plan')) fehler.push('separater Plan-Tab')
-    if (tabs.length !== 5) fehler.push(`Bereichsnavigation hat ${tabs.length} Ziele`)
-    const aktuell = tabs.filter((el) => el.getAttribute('aria-current') === 'page')
-    if (aktuell.length !== 1) fehler.push(`aktiver Bereich nicht eindeutig: ${aktuell.length}`)
-    const aktiv = aktuell[0]?.textContent?.trim()
-    const plan = document.querySelector('[aria-label="Tagesplan"]')
-    if (aktiv === 'Übersicht' && (!plan || plan.closest('[hidden]'))) {
-      fehler.push('Übersicht ohne sichtbaren Tagesplan')
-    }
-    if (aktiv && aktiv !== 'Übersicht' && plan && !plan.closest('[hidden]')) {
-      fehler.push('Tagesplan ausserhalb der Übersicht sichtbar')
-    }
+  const altNav = document.querySelector('[aria-label="Reisebereiche"]')
+  if (altNav) fehler.push('Domain-Hauptnavigation ist noch vorhanden')
 
-    const bezeichnung = {
-      uebersicht: 'Übersicht',
-      fluege: 'Flüge',
-      unterkunft: 'Unterkunft',
-      aktivitaeten: 'Aktivitäten',
-      mobilitaet: 'Mobilität',
-    }
-    const huellen = [...document.querySelectorAll('[data-arbeitsbereich]')]
-    const sichtbare = []
-    for (const el of huellen) {
-      const id = el.getAttribute('data-arbeitsbereich') || '?'
-      const display = getComputedStyle(el).display
-      const box = el.getBoundingClientRect()
-      if (display === 'none') {
-        if (box.width > 0.5 || box.height > 0.5) {
-          fehler.push(`${id} bleibt im Layout ${Math.round(box.width)}×${Math.round(box.height)}`)
-        }
-        if (!el.hasAttribute('inert')) fehler.push(`${id} ohne inert`)
-      } else {
-        sichtbare.push(id)
+  const plan = document.querySelector('[aria-label="Tagesplan"]')
+  const detail = document.querySelector('[data-workspace-detail]')
+  const uebersicht = document.querySelector('[aria-label="Reiseübersicht"]')
+  const uebersichtHuelle = document.querySelector('[data-arbeitsbereich="uebersicht"]')
+  const uebersichtSichtbar = Boolean(uebersicht && !uebersichtHuelle?.closest('[hidden]') && !uebersicht.closest('[hidden]'))
+
+  if (erwartetBereich === 'uebersicht') {
+    if (!uebersichtSichtbar) fehler.push('Reiseoberfläche ohne sichtbare Übersicht')
+    if (!plan || plan.closest('[hidden]')) fehler.push('Übersicht ohne sichtbaren Tagesplan')
+  }
+
+  const huellen = [...document.querySelectorAll('[data-arbeitsbereich]')]
+  const sichtbare = []
+  for (const el of huellen) {
+    const id = el.getAttribute('data-arbeitsbereich') || '?'
+    const display = getComputedStyle(el).display
+    const box = el.getBoundingClientRect()
+    if (display === 'none') {
+      if (box.width > 0.5 || box.height > 0.5) {
+        fehler.push(`${id} bleibt im Layout ${Math.round(box.width)}×${Math.round(box.height)}`)
       }
+      if (!el.hasAttribute('inert')) fehler.push(`${id} ohne inert`)
+    } else {
+      sichtbare.push(id)
     }
-    if (huellen.length && sichtbare.length !== 1) {
-      fehler.push(`sichtbare Hauptbereiche: ${sichtbare.join(', ') || 'keine'}`)
-    }
-    if (erwartetBereich && sichtbare[0] && sichtbare[0] !== erwartetBereich) {
-      fehler.push(`sichtbar ${sichtbare[0]}, erwartet ${erwartetBereich}`)
-    }
-    if (erwartetBereich && aktiv !== bezeichnung[erwartetBereich]) {
-      fehler.push(`Navigation zeigt ${aktiv || 'nichts'}, erwartet ${bezeichnung[erwartetBereich]}`)
+  }
+  if (erwartetBereich && erwartetBereich !== 'uebersicht') {
+    const detailArt = detail?.getAttribute('data-workspace-detail')
+    if (!detail || detail.closest('[hidden]') || (detailArt !== 'gap' && detailArt !== 'item')) {
+      fehler.push(`erwartetes Detail ${erwartetBereich} fehlt`)
     }
   }
 
@@ -1911,7 +1906,6 @@ function layoutPruefen(erwartetBereich) {
     fehler.push('vertikaler Tageslisten-Scroller')
   }
 
-  const plan = document.querySelector('[aria-label="Tagesplan"]')
   if (plan && !plan.closest('[hidden]')) {
     if (plan.getAttribute('data-tagesplan-modul') !== 'ein') {
       fehler.push('Tagesplan ist kein gemeinsames Modul')
@@ -2021,12 +2015,22 @@ async function seiteVorbereiten(page, zustand) {
 
 async function zustandOeffnen(page, zustand, viewport) {
   const defin = ZUSTAENDE[zustand]
-  await page.getByRole('navigation', { name: 'Reisebereiche' }).waitFor({ timeout: 15000 })
+  // Master/Detail hält Übersicht und Detail gleichzeitig im DOM.
+  // `.or()` ohne Visible-Filter verletzt Playwright-Strict-Mode.
+  await page
+    .locator('[aria-label="Reiseübersicht"], [aria-label="Reisedetail"]')
+    .filter({ visible: true })
+    .first()
+    .waitFor({ timeout: 15000 })
   if (viewport.width >= 1024) {
     await page.getByRole('heading', { level: 1 }).waitFor({ timeout: 15000 })
   }
-  if (defin.tab) {
-    await page.getByRole('navigation', { name: 'Reisebereiche' }).getByRole('button', { name: defin.tab, exact: true }).click()
+  if (defin.tab && !defin.nutzlast?.anfangsBereich) {
+    await page.getByRole('button', { name: defin.tab, exact: true }).click()
+  }
+  if (defin.oeffneSuche) {
+    const suche = SUCHE_BEZEICHNUNG[defin.tab]
+    if (suche) await page.getByRole('button', { name: suche, exact: true }).click()
   }
   if (defin.oeffneAenderung) {
     await page.getByRole('button', { name: 'Reise ändern' }).click()
@@ -2164,13 +2168,19 @@ async function tabwechselPruefen(browser, name, viewport) {
   })
 
   await page.goto(`${BASIS}${PFAD}`, { waitUntil: 'domcontentloaded' })
-  const nav = page.getByRole('navigation', { name: 'Reisebereiche' })
-  await nav.waitFor({ timeout: 15000 })
+  await page.getByLabel('Reiseübersicht').waitFor({ timeout: 15000 })
   const fehler = []
 
   for (const sequenz of TAB_SEQUENZEN) {
     for (const tab of sequenz) {
-      await nav.getByRole('button', { name: tab, exact: true }).click()
+      const zurueck = page.getByRole('button', { name: 'Zurück zur Reise' })
+      if (await zurueck.count()) {
+        const sichtbar = await zurueck.first().isVisible()
+        if (sichtbar) await zurueck.first().click()
+      }
+      if (tab !== 'Übersicht') {
+        await page.getByRole('button', { name: tab, exact: true }).click()
+      }
       try {
         await page
           .getByText(TAB_NACHWEIS[tab], { exact: false })
@@ -2263,8 +2273,8 @@ async function interaktionPruefen(browser, name) {
 
   await page.goto(`${BASIS}${PFAD}`, { waitUntil: 'domcontentloaded' })
   await page.getByText('Noch kein Flug ausgewählt').waitFor({ timeout: 15000 })
-  const nav = page.getByRole('navigation', { name: 'Reisebereiche' })
-  const planTab = await nav.getByRole('button', { name: 'Plan', exact: true }).count()
+  const altNav = await page.getByRole('navigation', { name: 'Reisebereiche' }).count()
+  const planTab = await page.getByRole('button', { name: 'Plan', exact: true }).count()
   const tagesplanInUebersicht = await page.getByLabel('Tagesplan').isVisible()
   const einModul = await page.locator('[data-tagesplan-modul="ein"]').count()
   const hotelNachUebersicht = hotel
@@ -2277,32 +2287,37 @@ async function interaktionPruefen(browser, name) {
   await page.getByRole('button', { name: 'Abbrechen' }).click()
 
   await page.getByRole('button', { name: /Tag 3/ }).click()
-  await nav.getByRole('button', { name: 'Aktivitäten', exact: true }).click()
+  await page.getByRole('button', { name: 'Aktivitäten', exact: true }).click()
+  await page.getByRole('button', { name: 'Aktivitäten suchen', exact: true }).click()
   await page.getByText('Antwort für day-3', { exact: false }).waitFor({ timeout: 15000 })
   const dritter = page.getByRole('radio').nth(2)
   const checked = await dritter.getAttribute('aria-checked')
 
-  await nav.getByRole('button', { name: 'Übersicht', exact: true }).click()
+  await page.getByRole('button', { name: 'Zurück zur Reise' }).first().click()
   await page.getByLabel('Tagesplan').waitFor({ timeout: 15000 })
   const tagDreiZurueck = await page.getByRole('button', { name: /Tag 3/ }).getAttribute('aria-current')
   await page.getByRole('button', { name: /Tag 15/ }).click()
   const tag15 = await page.getByRole('button', { name: /Tag 15/ }).getAttribute('aria-current')
   await page.getByRole('button', { name: /Tag 3/ }).click()
 
-  await nav.getByRole('button', { name: 'Flüge', exact: true }).click()
+  await page.getByRole('button', { name: 'Flüge', exact: true }).click()
+  await page.getByRole('button', { name: 'Flug suchen', exact: true }).click()
   await page.getByText('Verbindungen für diese Reise').waitFor({ timeout: 15000 })
-  await nav.getByRole('button', { name: 'Übersicht', exact: true }).click()
+  await page.getByRole('button', { name: 'Zurück zur Reise' }).first().click()
   const planNachFluege = await page.getByLabel('Tagesplan').isVisible()
 
-  await nav.getByRole('button', { name: 'Unterkunft', exact: true }).click()
+  await page.getByRole('button', { name: 'Unterkunft', exact: true }).click()
+  await page.getByRole('button', { name: 'Unterkunft suchen', exact: true }).click()
   await page.getByText('Die Hotelsuche ist in dieser Umgebung nicht verfügbar.').waitFor({ timeout: 15000 })
   const hotelNachErstbesuch = hotel
-  await nav.getByRole('button', { name: 'Übersicht', exact: true }).click()
-  await nav.getByRole('button', { name: 'Unterkunft', exact: true }).click()
+  await page.getByRole('button', { name: 'Zurück zur Reise' }).first().click()
+  await page.getByRole('button', { name: 'Unterkunft', exact: true }).click()
+  await page.getByRole('button', { name: 'Unterkunft suchen', exact: true }).click()
   await page.waitForTimeout(400)
   const hotelNachZweitemBesuch = hotel
 
-  await nav.getByRole('button', { name: 'Mobilität', exact: true }).click()
+  await page.getByRole('button', { name: 'Zurück zur Reise' }).first().click()
+  await page.getByRole('button', { name: 'Mobilität', exact: true }).click()
   await page.getByText('Bahn, Bus, Fähre und Transfer').waitFor({ timeout: 15000 })
   const mobilityNachErstbesuch = mobility
   await page.getByRole('button', { name: 'Verbindungen prüfen', exact: true }).click()
@@ -2321,27 +2336,29 @@ async function interaktionPruefen(browser, name) {
   await page.getByRole('tab', { name: 'Mietwagen', exact: true }).click()
   await page.waitForTimeout(400)
   const rentalNachZweitemBesuch = rental
-  await nav.getByRole('button', { name: 'Übersicht', exact: true }).click()
-  await nav.getByRole('button', { name: 'Mobilität', exact: true }).click()
+  await page.getByRole('button', { name: 'Zurück zur Reise' }).first().click()
+  await page.getByRole('button', { name: 'Mobilität', exact: true }).click()
   await page.waitForTimeout(400)
   const mobilityNachZweitemBesuch = mobility
 
-  await nav.getByRole('button', { name: 'Übersicht', exact: true }).click()
+  await page.getByRole('button', { name: 'Zurück zur Reise' }).first().click()
   await page.getByRole('button', { name: 'Reise ändern' }).click()
   const fokus = await page.evaluate(() => document.activeElement?.tagName === 'TEXTAREA')
   await page.keyboard.press('Escape')
   const geschlossen = await page.getByRole('button', { name: 'Reise ändern' }).getAttribute('aria-expanded')
 
-  const navScroller = nav.locator('[tabindex="0"]')
-  await navScroller.focus()
+  const fluegeKnopf = page.getByRole('button', { name: 'Flüge', exact: true })
+  await fluegeKnopf.focus()
+  await page.keyboard.press('Shift+Tab')
   await page.keyboard.press('Tab')
   const navFokus = await page.evaluate(() => {
     const el = document.activeElement
-    return Boolean(el && el.closest('[aria-label="Reisebereiche"]') && el.matches(':focus-visible'))
+    return Boolean(el && el.getAttribute('aria-label') === 'Flüge' && (el.matches(':focus-visible') || el.matches(':focus')))
   })
 
   await kontext.close()
   const fehler = []
+  if (altNav !== 0) fehler.push('Domain-Hauptnavigation ist noch vorhanden')
   if (planTab !== 0) fehler.push('Navigation enthält einen separaten Plan-Tab')
   if (!tagesplanInUebersicht) fehler.push('Übersicht enthält keinen Tagesplan')
   if (einModul !== 1) fehler.push(`Tagesplan nicht als ein Modul: ${einModul}`)
@@ -2380,7 +2397,7 @@ async function interaktionPruefen(browser, name) {
   }
   if (!fokus) fehler.push('Fokus lag nach Reise ändern nicht im Feld')
   if (geschlossen !== 'false') fehler.push('Escape schloss Reise ändern nicht')
-  if (!navFokus) fehler.push('Fokusring der Bereichsnavigation nicht sichtbar')
+  if (!navFokus) fehler.push('Fokusring der Coverage-Aktion nicht sichtbar')
   if (activity > 6) fehler.push(`Activity-Request-Schleife verdächtig: ${activity}`)
   return {
     ok: fehler.length === 0,
