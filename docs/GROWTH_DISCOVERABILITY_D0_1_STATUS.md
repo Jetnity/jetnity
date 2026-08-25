@@ -1,35 +1,49 @@
 # Jetnity – D0-1 Index Boundary Contract – Status
 
-Stand: 25. August 2026  
-Status: **P2-D0-1-TL-01 geschlossen / STOPP für erneuten unabhängigen ChatGPT-/Technical-Lead-Review**
+Stand: 26. August 2026  
+Status: **Independent Technical-Lead PASS / technisch review-bereit / DRAFT / INTEGRATION HOLD**
 
 Agent: `Jetnity growth discoverability`  
 Branch: `fix/d0-1-index-boundary-contract`  
 Draft-PR: #70  
 Task: `docs/GROWTH_DISCOVERABILITY_D0_1_TASK.md`
 
-Kein Ready. Kein Merge. Kein D0-2/G0-1/D1/G1+.
+> **Kein Ready und kein Merge ohne ausdrückliche aktuelle Product-Owner-Freigabe für PR #70.**
 
-## 1. Live-Baseline
+Kein D0-2/G0-1/D1/G1+ aus diesem Slice.
 
-`main @ 2bb6b8072fa04e8f6db2d989b84ada7b64745fd9`
+## 1. Aktuelle Integrationsbaseline
 
-Merge-Base gegen `origin/main` = diese Baseline. Behind: 0.
+Nach Product-Owner-Freigabe wurde PR #71 (`docs: restore Product Owner merge governance`) nach `main` gemergt.
 
-Geprüfter TL-Head: `e6b5e58f7ab4976c900e05363a84d347600feb01`  
-Ergebnis: **CHANGES REQUIRED**. Review: `PRR_kwDOPM7Rz88AAAABK3ZUfA`.
+Aktueller synchronisierter Baseline-Stand:
 
-Presence-Fix-Runtime: `480834e143a8f00cfbb954031cde48e4174e3a20`
+`main @ 63e8900b5c519f0d1d8b25d011ac9bc963d241c6`
 
-Parallele offene Drafts, nicht in diesem Slice: #52, #50, #40, #39, #28.
+D0-1 wurde danach kontrolliert mit diesem `main` synchronisiert.
 
-PR bleibt Draft. Inline-Review-Threads: 0. Ein PR-Review-Kommentar (CHANGES REQUIRED) bleibt offen, bis der Technical Lead erneut prüft.
+Sync-Commit:
 
-## 2. Root Cause von P2-D0-1-TL-01
+`04f3620def31a52972df4e713733016a3c1db431`
 
-Der verbindliche Task verlangt `noindex`, sobald ein von `/planen` akzeptierter Nutzer-/Intent-Parameter **vorhanden** ist (`idee`, `ziel`, `zielId`).
+Compare gegen `main` nach Sync:
 
-`planenHatIndexRelevanteParams()` prüfte einen **nicht-leeren, getrimmten Wert**. Deshalb blieben parametrisierte URLs ohne Inhalt indexierbar:
+- Status: `ahead`
+- Ahead: 9
+- Behind: 0
+- Merge-Base: `63e8900b5c519f0d1d8b25d011ac9bc963d241c6`
+- PR-Diff: 15 erwartete D0-1-Dateien
+- `docs/ACTIVE_WORK_STATUS.md` wurde beim Sync **nicht** aus dem alten D0-1-Stand zurückgespielt; die kanonische Governance-/Active-Work-Version von `main` gewinnt.
+
+## 2. Historischer TL-Blocker und Closure
+
+Früherer Review-Blocker:
+
+`P2-D0-1-TL-01`
+
+Root Cause: `planenHatIndexRelevanteParams()` prüfte ursprünglich einen nicht-leeren/getrimmten Wert statt die Präsenz eines von `/planen` akzeptierten Intent-Keys.
+
+Dadurch hätten Varianten wie diese fälschlich indexierbar bleiben können:
 
 - `/planen?idee=`
 - `/planen?idee`
@@ -37,38 +51,46 @@ Der verbindliche Task verlangt `noindex`, sobald ein von `/planen` akzeptierter 
 - `/planen?ziel=`
 - `/planen?zielId=`
 
-Die Tests schrieben dieses abweichende Verhalten fest. Die erste HTML-Evidence meldete `/planen?idee=` fälschlich als Basis.
+Korrektur auf Runtime-Commit:
 
-Kein neuer Shared Contract. Nur die D0-1-Index-Grenze für akzeptierte Keys.
+`480834e143a8f00cfbb954031cde48e4174e3a20`
 
-## 3. Korrektur
+Die Entscheidung erfolgt jetzt über Key-Präsenz (`Object.hasOwn`) für `idee`, `ziel`, `zielId`.
 
-`lib/seo/index-grenze.ts`: Relevanz über `Object.hasOwn(searchParams, name)` auf `PLANEN_INDEX_PARAMS`.
+Damit gilt:
 
-- `{}` / fehlende Keys / unbekannte Params allein → keine eigene robots-Meta, öffentliche Basis
-- vorhandener Key `idee` / `ziel` / `zielId` → `noindex, nofollow`, unabhängig von leer / whitespace / Wert / Array
-- `app/(public)/planen/page.tsx` UI/`ersterWert`/Übernahme unverändert
-- `/reisen`, Sitemap, robots, Admin, Unauthorized unverändert
+- keine akzeptierten Intent-Keys → öffentliche `/planen`-Basis;
+- vorhandener akzeptierter Key → `noindex, nofollow`, unabhängig von leer / whitespace / Wert / Array;
+- unbekannte Params allein bleiben Basis;
+- UI-/Übernahmelogik bleibt unverändert.
 
-## 4. Regressionstests
+`P2-D0-1-TL-01` ist geschlossen.
 
-`lib/seo/index-grenze.test.ts` und `lib/seo/robots-regeln.test.ts` – 19/19:
+## 3. Implementierter D0-1-Scope
 
-- `{}` → Basis
-- `{ idee: '' }` → noindex
-- `{ idee: '   ' }` → noindex
-- `{ idee: 'Bali' }` → noindex
-- `{ ziel: '' }` → noindex
-- `{ zielId: '' }` → noindex
-- Array-Variante eines akzeptierten Keys → noindex
-- unbekannter Param allein → Basis
-- `/reisen` / Sitemap / robots / Admin / Unauthorized bleiben grün
+- `/reisen` → `noindex, nofollow`
+- `/reisen/[tripId]` → `noindex, nofollow`
+- `/reisen` aus Sitemap entfernt
+- robots-Allow-Modus schützt Reise-/Auth-/sensitive D0-1-Pfade
+- localhost / `*.vercel.app` Kill-Switch bleibt deny-all
+- `NEXT_PUBLIC_ALLOW_INDEXING` wird nicht gelockert
+- `/planen` Basis bleibt öffentlich
+- `/planen` mit vorhandenem `idee`/`ziel`/`zielId` → `noindex, nofollow`
+- `/admin/login` → `noindex, nofollow`
+- `/unauthorized` → `noindex, nofollow`
+- `(admin)`-Layout besitzt App-Router-kompatible `noindex`-Grenze
+- toter `app/(admin)/admin/head.tsx` entfernt
+- gezielte Index-/robots-/sitemap-Regressionstests ergänzt
 
-`npm test` vollständig: **2013/2013**.
+Keine Guest-/Account-/Trip-Produktlogik wurde verändert.
 
-## 5. Lokale Production-Build-HTML-Evidence
+## 4. Regressionsevidence
 
-`next start` auf `http://127.0.0.1:3010` nach Rebuild von `480834e1`:
+Gezielte D0-1-Tests laut persistierter Agent-Evidence: **19/19**.
+
+Vollständiger Agent-Testlauf auf Presence-Fix: **2013/2013**.
+
+Lokale Production-HTML-Evidence nach Rebuild:
 
 | Route | robots |
 | --- | --- |
@@ -80,55 +102,87 @@ Kein neuer Shared Contract. Nur die D0-1-Index-Grenze für akzeptierte Keys.
 | `/planen?ziel=` | `noindex, nofollow` |
 | `/reisen` | `noindex, nofollow` |
 
-Artefakt: `/opt/cursor/artifacts/d01_presence_html/`.
+## 5. Re-Gating nach PR #71
 
-## 6. Lokale Gates auf Presence-Fix `480834e1`
+Exact Sync-Head vor diesem Status-Persist:
 
-| Command | Ergebnis |
-| --- | --- |
-| `npm run typecheck` | 0 |
-| `npm run lint` | 0, keine Warnings |
-| `npm test` | 0, **2013/2013** |
-| `npm run check:setup:ci` | 0, 1 bekannte Warning: keine lokale `.env` |
-| `npm run check:dead` | 0 |
-| `npm run check:exports` | 0 |
-| `npm run check:deps` | 0 |
-| `npm run check:api-schutz` | 0; 12/12 |
-| `npm run check:schema-bezug` | 0 |
-| `npm run build` | 0 |
+`04f3620def31a52972df4e713733016a3c1db431`
 
-## 7. Exact-Head vor diesem Persist
+GitHub Actions:
 
-Runtime/Presence-Fix `480834e1` ist gepusht. Dieser Status-Commit ändert den Branch-Head. Technical Lead prüft den dann aktuellen HEAD live (Actions + Vercel).
+- Run `32906184803`
+- Ergebnis: **SUCCESS**
+- vollständiger CI-Workflow inkl. Typecheck, Lint, Tests, Schutz-/Schema-/Hygiene-Gates und Production Build erfolgreich
 
-Vorheriger TL-geprüfter Head `e6b5e58f`: Actions `32895279409` SUCCESS, Vercel `Dz26HiqFhnxg545LZBdp9YpCVywA` READY, Ahead/Behind damals 6/0.
+Vercel Preview:
 
-## 8. Geschlossene vs. offene Findings
+- Deployment `dpl_B53nErDWJDRJERJ4i26ditVNWsSP`
+- Exact Git SHA: `04f3620def31a52972df4e713733016a3c1db431`
+- Ergebnis: **READY**
 
-Durch D0-1 (Index-Boundary) plus TL-Korrektur:
+GitHub:
+
+- PR #70 weiterhin Draft
+- `mergeable=true`
+- Inline-Review-Threads: 0
+- Behind `main`: 0
+
+Dieser Status-Persist ändert erneut den PR-Head. Daher werden GitHub Actions und Vercel auf dem **neuen finalen Persist-Head** nochmals exact-head verifiziert, bevor der Product Owner eine Merge-Entscheidung erhält.
+
+## 6. Independent Technical-Lead Re-Review nach Sync
+
+Ergebnis auf Sync-Head `04f3620d...`: **TECHNICAL PASS**.
+
+Re-Review-Schwerpunkte:
+
+- aktueller PR-Diff gegen `main` enthält nur die erwarteten 15 D0-1-Dateien;
+- keine Governance-Datei aus PR #71 wird durch den D0-1-Sync zurückgesetzt;
+- die D0-1-Runtime-/Test-Blobs entsprechen den bereits fachlich geprüften Implementierungen;
+- der einzige Branch-Overlap (`docs/ACTIVE_WORK_STATUS.md`) wurde bewusst zugunsten des aktuellen `main` aufgelöst;
+- kein neuer Scope beim Sync;
+- keine DB-/Migration-/RLS-/Auth-/Traveller-/Route-/Provider-/Payment-/Tracking-/Secret-/paid-call-/Kostenänderung.
+
+## 7. Geschlossene und offene Findings
+
+Durch D0-1 geschlossen:
 
 - D0-P1-01
 - D0-P1-02
 - D0-P2-03
-- **P2-D0-1-TL-01** (Presence-Contract)
+- P2-D0-1-TL-01
 
-Bewusst offen, nicht in diesem Slice:
+Bewusst offen / nicht Teil dieses PRs:
 
-- **D0-P1-03** – `/privacy` und `/terms` sind 404; keine Texte erfinden
-- D0-P2-01 – deny-all wirbt weiter Sitemap/Host
-- D0-P2-02 – Canonical / `APP_URL` vs `SITE_URL`
+- **D0-P1-03** – `/privacy` und `/terms` sind 404; keine Rechtstexte erfinden
+- D0-P2-01 – deny-all / Sitemap-/Host-Semantik
+- D0-P2-02 – Canonical-/Origin-Contract
 - D0-P2-04 – hreflang / Locale
 - D0-P2-05 – JSON-LD Foundation
 - G0-P2-01 / G0-P2-02 / G0-P3-01 / G0-P3-02
+- D0-2 / G0-1 / D1 / G1+
+- TW-6
 
-## 9. Runtime / DB / Kosten / Security
+## 8. Runtime / DB / Kosten / Security
 
-Keine DB-/Migration-/RLS-/Auth-/Traveller-/Route-/Provider-/Payment-/Secret-/paid-call-Änderung. Kein Tracking. Keine neuen Kosten.
+Keine DB-/Migration-/RLS-/Auth-/Traveller-/Route-/Provider-/Payment-/Secret-/paid-call-Änderung. Kein Tracking. Keine neuen laufenden Kosten.
+
+Production wird durch diesen Draft-PR nicht verändert.
+
+## 9. Governance
+
+Seit PR #71 gilt kanonisch:
+
+> **Technisch fertig = review-bereit. Product Owner entscheidet Ready/Merge.**
+
+Ein Technical-Lead-PASS, grüne CI, Vercel READY, `mergeable=true` oder 0 Review-Threads sind keine Merge-Freigabe.
+
+PR #70 bleibt bis zu einer ausdrücklichen aktuellen Product-Owner-Freigabe Draft / Integration Hold.
 
 ## 10. Nächster Schritt
 
-**STOPP.**
+1. finalen Persist-Head live bestimmen;
+2. Exact-Head GitHub Actions / Vercel / Ahead-Behind / Threads erneut prüfen;
+3. unabhängigen Technical-Lead-Abschluss auf dem finalen Head festhalten;
+4. **STOPP und PR #70 dem Product Owner separat zur Entscheidung vorlegen.**
 
-ChatGPT / Technical Lead führt erneut den vollständigen unabhängigen Review von Anfang an.
-
-Kein Ready. Kein Merge. Kein nächster Slice aus diesem Auftrag.
+Kein Ready. Kein Merge. Kein nächster Slice aus PR #70 ohne neue kontrollierte Entscheidung.
