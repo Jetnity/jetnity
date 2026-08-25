@@ -131,7 +131,8 @@ Dieser Status-Commit ist docs-only und folgt auf den belegten Review-Fix-Head. D
 
 - Fehlende Orchestrierung bleibt `noch_nicht_geprueft`, nicht clean und nicht unavailable.
 - Vorhandene lokale Evaluation wird im Produktpfad ausgeführt.
-- `nichts_dringend_geprueft` nur nach erfolgreichen Safety-/Seasonal-/Official-Checks ohne vorrangiges Signal.
+- `nichts_dringend_geprueft` nur nach erfolgreichen Safety-/Seasonal-/Official-Checks ohne vorrangiges Signal und nur als echter Empty State ohne Punkte.
+- Aktive Warning-/Gap-/Stale-/Error-/Unknown-Punkte setzen `leerstand` auf `null`; die UI zeigt dann keine Clean-Copy.
 - Unavailability, `stale`, `unknown`, `error` und `insufficient_context` bleiben getrennt.
 - Kein Default-Pass / keine Citizenship-Tokens in Attention.
 - Guest und Account: dieselbe Ableitung.
