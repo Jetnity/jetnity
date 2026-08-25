@@ -306,29 +306,27 @@ Landingpages müssen:
 - klare nächste Schritte besitzen;
 - Attribution erhalten;
 - SEO-/Canonical-Regeln respektieren;
-- testbar sein;
-- nach Ende einer Kampagne sauber weiterleiten, archiviert oder kontrolliert noindex gesetzt werden können.
+- nicht versehentlich Duplicate-Content oder Doorway-Page-Spam erzeugen.
 
-## 13. Experimente & Conversion Optimization
+## 13. Experimentation / A-B-Testing
 
-Jetnity darf A/B-Tests und andere Experimente nutzen, wenn diese echten Produkt-/Marketingnutzen untersuchen.
+Jetnity darf Produkt- und Marketingexperimente durchführen, aber nur kontrolliert.
 
-Jedes produktive Experiment braucht:
+Ein Experiment braucht:
 
 - Hypothese;
-- Zielmetrik;
+- primäre Metrik;
 - Guardrail-Metriken;
-- definierte Zielgruppe;
-- Start-/Endzeit;
-- Varianten/Control;
-- Owner;
-- Ergebnis und Entscheidung;
-- Auditierbarkeit.
+- Zielpopulation;
+- Start-/Stop-Regeln;
+- Version/Experiment-ID;
+- Exposure Event;
+- definierten Auswertungszeitraum;
+- dokumentiertes Ergebnis.
 
-Verboten sind insbesondere:
+Nicht erlaubt:
 
 - Dark Patterns;
-- versteckte Kündigungsbarrieren;
 - künstliche Countdown-Timer ohne reale Frist;
 - irreführende Default-Opt-ins;
 - versteckte Preisunterschiede ohne zulässige Grundlage;
@@ -437,8 +435,6 @@ Mindestens vorgesehen:
 
 Jetnity Copilot Pro darf daraus später **Analyse, Ursachenhypothesen und priorisierte Verbesserungsvorschläge** erstellen. Er darf Zahlen nicht erfinden und muss Datenlücken als Datenlücken benennen.
 
-**Der vollständige verbindliche Aufbau des Admin-Marketing-Kontrollzentrums steht in `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`.** Dieser Standard erweitert den bisherigen Admin-Plan ausdrücklich um end-to-end Growth Operations, Funnel/Kohorten, provider-neutrale Attribution, Paid Control Plane, Creative-/Claims-Registry, Landingpage-Management, CRM/Journey-Orchestrierung, SEO-/AI-Discoverability-Ops, Experimente, Referral/Creator/Partner, Reputation/PR, Subscription Growth, Market Expansion, Economics/Forecasting, Tracking Quality, Privacy/Consent, Connector- und Incident-Control sowie Copilot-Pro-Growth-Analyse. Er ist für den späteren Admin-Ausbau verbindlich und darf nicht als optionaler Zusatz behandelt werden.
-
 ## 20. Privacy, Consent & Security
 
 Marketing ist dem Schweizer DSG, DSGVO und den jeweils anwendbaren Kommunikations-/Tracking-Regeln untergeordnet.
@@ -485,7 +481,7 @@ Konfliktarm vorbereitbar, ohne den aktuellen Kernbau aufzublähen:
 - Consent-/Privacy-Grenzen;
 - Funnel-/Metric-Taxonomie;
 - Marketing-Provider-Gates;
-- Growth-Cockpit-Zielmodell gemäß `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`.
+- Growth-Cockpit-Zielmodell.
 
 ### G1 – Homepage / Public Product Foundation
 
@@ -503,94 +499,86 @@ Mit der finalen Homepage und Discoverability D1:
 
 Nach stabilen Kernsystemen:
 
-- Activation-/Retention-Messung;
-- Guest→Account-Attribution innerhalb Privacy-Grenzen;
-- Collaboration-/Invite-/Referral-Messung;
-- CRM-Lifecycle und Notification-Grenzen;
-- Subscription-/Entitlement-Messgrundlage;
-- Experiment Registry;
-- Admin Growth Cockpit read-only Grundausbau.
+- Activation-/Retention-Funnel;
+- Lifecycle CRM;
+- Referral-/Invite-Loops;
+- Experimentation Framework;
+- Subscription-/Upgrade-Attribution;
+- Creator-/UGC-Distribution, soweit Produktreife vorhanden.
 
-### G3 – Commercial / Revenue Growth
+### G3 – Commercial Growth
 
-Mit realer Commercial-/Subscription-Truth:
+Nach echter Commercial-/Provider-/Revenue-Truth:
 
-- Revenue-/Commission-/Refund-Attribution;
-- CAC/LTV/Payback/Contribution Margin;
-- Affiliate-/Partner-Attribution;
-- Paid Conversion Tracking;
-- Budget-/Spend-Controls;
-- Campaign Performance gegen echte Revenue Quality;
-- kein ROAS auf Fake-/unvollständige Revenue-Daten.
+- Affiliate-/Deep-Link-Revenue-Attribution;
+- CAC/LTV/Payback;
+- Revenue-/Refund-Reconciliation;
+- Value-/Commercial-Landingpages auf realen Daten;
+- kontrollierte Paid-Acquisition-Piloten mit Caps/Kill Switch;
+- Admin Growth Cockpit.
 
 ### G4 – Public Launch / Scale
 
-Nach Launch Readiness:
+Nur nach Launch-Readiness:
 
-- Paid Channels kontrolliert aktivieren;
-- ASO/Web→App;
-- Reviews/Reputation;
-- Creator-/Partner-Distribution;
-- PR/Media;
-- Referral Growth;
-- internationale Expansion nach Readiness/Unit Economics;
-- Growth Alerts und Copilot-Pro-Analyse.
+- PR/Media/Creator/Partner Launch;
+- ASO/App-Store-Programme, wenn Apps live sind;
+- Review-/Reputation-Prozess;
+- skalierte Paid Acquisition nur bei tragfähigen Unit Economics;
+- internationale Expansion marktweise;
+- automatisierte Alerts/Optimierungsvorschläge.
 
 ### G5 – kontinuierliche Optimierung
 
-Fortlaufend:
+Nach Launch dauerhaft:
 
-- Kohorten und Unit Economics;
-- Content-/SEO-/AI-Discoverability;
-- CRM/Retention;
-- Experimente;
-- Creative-/Campaign-Performance;
-- Market Expansion;
-- Provider-/Tracking-Änderungen;
-- Kosten-/Margin-Optimierung;
-- niemals Truth, Privacy oder Nutzervertrauen für kurzfristige Conversion opfern.
+- Cohorts und Retention verbessern;
+- CAC/LTV je Kanal/Markt optimieren;
+- Content-/Discoverability-Gaps schließen;
+- Referral/CRM/ASO verbessern;
+- Experimente auswerten;
+- Kampagnen mit schlechter Revenue Quality stoppen;
+- neue Kanäle nur kontrolliert testen.
 
-## 23. Definition of Done
+## 23. Definition of Done vor größerem Marketing-Scale
 
-Marketing-/Growth-Readiness ist nicht abgeschlossen, solange mindestens eines gilt:
+Jetnity darf Marketing nicht als professionell skalierbar betrachten, solange wesentliche Punkte fehlen, z. B.:
 
-- zentrale Acquisition-/Attribution-Daten sind nicht nachvollziehbar;
-- Eventnamen/-semantik sind unversioniert oder widersprüchlich;
-- Funnel endet bei Klick/Signup statt Activation/Retention/Revenue Quality;
-- Marketing kann Revenue/Refund/Cost nicht ausreichend reconciliieren;
-- Paid Spend hat keine Caps/Kill-Switches;
-- Referral Rewards können ohne Anti-Fraud/Audit laufen;
-- CRM ignoriert Consent/Suppression/Frequency;
-- private/sensitive Travel-/Document-/Identity-Daten können unzulässig ins Marketing gelangen;
-- Landingpages oder Ads können nicht-live/falsche Claims publizieren;
-- App/Web Deep Links und Attribution sind ungeprüft;
-- Reviews/Testimonials können ohne Echtheit/Einwilligung genutzt werden;
-- ein neuer Markt wird ohne Produkt-/Legal-/Provider-/Support-Readiness skaliert;
-- Jetnity kann CAC/LTV/Payback/Contribution Margin nicht belastbar beurteilen;
-- Tracking-Ausfall oder Spend-Anomalien bleiben unbemerkt;
-- Admin/Copilot kann Datenlücken als sichere Wahrheit darstellen;
-- der vollständige `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md` ist für den produktiven Growth-Betrieb nicht umgesetzt oder nicht gegen die dann reale Admin-/Provider-/Finance-/Privacy-Architektur geprüft.
+- Acquisition/Conversion kann nicht zuverlässig gemessen werden;
+- Events sind unversioniert oder uneindeutig;
+- Revenue/Refunds sind nicht mit Marketingdaten reconciliert;
+- Consent-/Privacy-Grenzen sind unklar;
+- Deep Links brechen;
+- Paid Spend hat keine Caps/Kill Switches;
+- Referral kann trivial missbraucht werden;
+- CRM ignoriert Consent/Suppression;
+- Kampagnen werben mit nicht-live oder nicht belegten Funktionen;
+- CAC/LTV/Payback können nicht beurteilt werden;
+- App Store / Website / Marke widersprechen sich;
+- private oder sensible Daten könnten in Marketing-/Audience-Systeme gelangen;
+- keine Monitoring-/Audit-Spur für produktive Marketingänderungen existiert.
 
 ## 24. Governance
 
-Marketing-/Growth-Arbeit unterliegt dem Jetnity Engineering Excellence Standard und den aktuellen Product-Owner-Gates.
+Dieser Standard ist durch ausdrückliche Product-Owner-Entscheidung verbindlich.
 
-Insbesondere bleiben Product-Owner-pflichtig, soweit die aktuelle Governance dies vorsieht:
+Er verändert **nicht** die aktuelle Priorität des Trip Workspace und darf nicht als Vorwand verwendet werden, laufende Kern-Slices mit Marketing-Scope aufzublähen.
 
-- neue produktive Tracking-/Ads-/CRM-Provider und Secrets;
-- relevante neue externe Datenweitergabe;
-- größere Privacy-/Consent-Änderungen;
-- bezahlte Kampagnen/Produktionsaktivierung;
-- neue laufende Kosten oberhalb der geltenden Budgetgrenze;
-- große Preis-/Subscription-/Geschäftsmodellentscheidungen;
-- öffentliche Launch-Aktivierung.
+Normale konfliktarme Architektur-/Dokumentationsvorbereitung darf gemäß Technical-Lead-Autonomie erfolgen. Besondere Gates bleiben bestehen, insbesondere für:
+
+- neue produktive Tracking-/Ad-/Marketing-Provider mit relevanter Datenschutzwirkung;
+- neue Secrets/API-Keys;
+- neue bezahlte Kampagnen bzw. reale Budgetaktivierung;
+- wiederkehrende Kosten oberhalb geltender Grenzen;
+- große öffentliche Positionierungs-/Monetarisierungsänderungen;
+- Public Launch / große Production-Aktivierung;
+- neue externe Weitergabe sensibler personenbezogener Daten.
 
 Kanonische Nachbardokumente:
 
 - `JETNITY_START_HERE.md`
+- `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
 - `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`
 - `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`
-- `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`
-- `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
 - `docs/JETNITY_BINDING_BUILD_ORDER.md`
 - `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
