@@ -8,11 +8,12 @@
 // Signalen (Warning, Gap, stale, error, unknown). Degraded Lagen
 // (unavailable, insufficient_context, ungeprueft) bleiben als Punkte
 // erhalten, auch wenn ein Top-Level-Leerstand gesetzt ist.
-// Official-Clean ist fail-closed: jede relevante Traveller-/Credential-
-// Option/Destination braucht eine aktuelle Official-Evaluation.
+// Official-Clean ist fail-closed: jeder kanonische Requirements-Key
+// (Traveller, Credential-Option, Destination, Requirement-Typ, Transit)
+// braucht eine aktuelle Official-Evaluation.
 
-import { landescodeLesen } from '@/lib/readiness/domain'
 import { fehlendeFaktenFuerReise, travellerSlots } from '@/lib/readiness/party'
+import { readinessReisekontext } from '@/lib/readiness/kontext'
 import { readinessAnsicht } from '@/lib/readiness/status'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
 import { credentialOptionsAus } from '@/lib/readiness/traveller-kontext'
@@ -23,7 +24,7 @@ import { seasonalLokalFuerReise } from '@/lib/seasonal/engine'
 import type { SeasonalEvaluation } from '@/lib/seasonal/domain'
 import { seasonalAnsicht } from '@/lib/seasonal/status'
 import { bereichStatus, type Arbeitsbereich, type BereichLage } from '@/lib/trips/arbeitsbereich'
-import type { Trip, TripItem } from '@/types/trips'
+import { OFFICIAL_REQUIREMENT_TYPES, type OfficialRequirementType, type Trip, type TripItem } from '@/types/trips'
 
 export type AttentionLeerstand =
   | 'nichts_dringend_geprueft'
@@ -188,36 +189,50 @@ type OfficialSlot = {
   travellerClientRef: string
   credentialOptionRef: string
   destination: string
-}
-
-function zieleDerReise(reise: Trip): string[] {
-  const ziele = new Set<string>()
-  for (const etappe of reise.stages) {
-    const code = landescodeLesen(etappe.countryCode ?? null)
-    if (code) ziele.add(code)
-  }
-  return [...ziele].sort()
+  requirementType: OfficialRequirementType
+  transitCountryCode: string | null
 }
 
 function officialOptionRefs(traveller: NonNullable<ReturnType<typeof travellerSlots>[number]['traveller']>): string[] {
+  // Kanonische Shared-Contract-Semantik: ohne Documents `${clientRef}:none`,
+  // mit Documents die Document-OptionRefs. Keine Citizenship-only-Optionen in TW-4.
   return credentialOptionsAus(traveller)
     .map((option) => option.optionRef)
     .sort((links, rechts) => links.localeCompare(rechts))
 }
 
 function officialPflichtslots(reise: Trip): OfficialSlot[] {
-  const ziele = zieleDerReise(reise)
+  const kontext = readinessReisekontext(reise)
+  const ziele = kontext.destinationCountries
   if (ziele.length === 0) return []
+  const transits = [...kontext.transitCountryCodes].sort((links, rechts) => links.localeCompare(rechts))
   const slots: OfficialSlot[] = []
   for (const slot of travellerSlots(reise)) {
     if (!slot.applicable || !slot.traveller) continue
     for (const optionRef of officialOptionRefs(slot.traveller)) {
       for (const destination of ziele) {
-        slots.push({
-          travellerClientRef: slot.traveller.clientRef,
-          credentialOptionRef: optionRef,
-          destination,
-        })
+        for (const requirementType of OFFICIAL_REQUIREMENT_TYPES) {
+          if (requirementType === 'transit') {
+            const laender = transits.length > 0 ? transits : [null]
+            for (const transitCountryCode of laender) {
+              slots.push({
+                travellerClientRef: slot.traveller.clientRef,
+                credentialOptionRef: optionRef,
+                destination,
+                requirementType,
+                transitCountryCode,
+              })
+            }
+            continue
+          }
+          slots.push({
+            travellerClientRef: slot.traveller.clientRef,
+            credentialOptionRef: optionRef,
+            destination,
+            requirementType,
+            transitCountryCode: null,
+          })
+        }
       }
     }
   }
@@ -227,7 +242,9 @@ function officialPflichtslots(reise: Trip): OfficialSlot[] {
 function officialEvaluationDecktSlot(evaluation: OfficialEvaluation, slot: OfficialSlot): boolean {
   if (evaluation.travellerClientRef !== slot.travellerClientRef) return false
   if (evaluation.destinationCountryCode !== slot.destination) return false
-  return evaluation.credentialOptionRef === slot.credentialOptionRef
+  if (evaluation.credentialOptionRef !== slot.credentialOptionRef) return false
+  if (evaluation.requirementType !== slot.requirementType) return false
+  return (evaluation.transitCountryCode ?? null) === slot.transitCountryCode
 }
 
 function officialLagenAusEvaluation(evaluation: OfficialEvaluation): AttentionLage[] {
@@ -260,7 +277,8 @@ function officialLagenFuerSlot(
 }
 
 function officialPunktFuerSlot(slot: OfficialSlot, lage: AttentionLage): AttentionPunkt {
-  const id = `official:${lage}:${slot.travellerClientRef}:${slot.credentialOptionRef}:${slot.destination}`
+  const transit = slot.transitCountryCode ?? 'none'
+  const id = `official:${lage}:${slot.travellerClientRef}:${slot.credentialOptionRef}:${slot.destination}:${slot.requirementType}:${transit}`
   const aktion: AttentionAktion = { art: 'bereich', bereich: 'uebersicht' }
   if (lage === 'insufficient_context') {
     return {

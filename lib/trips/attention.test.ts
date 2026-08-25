@@ -11,9 +11,11 @@ import type { SafetyEvaluation } from '@/lib/safety/domain'
 import { leereSafetyEvidence } from '@/lib/safety/evidence'
 import type { SeasonalEvaluation } from '@/lib/seasonal/domain'
 import { leereSeasonalEvidence } from '@/lib/seasonal/evidence'
+import { readinessReisekontext } from '@/lib/readiness/kontext'
 import { credentialOptionsAus } from '@/lib/readiness/traveller-kontext'
+import { itineraryEinTransit } from '@/lib/route/fixtures'
 import { attentionAbleiten } from '@/lib/trips/attention'
-import type { Trip, TripItem, TripTraveller } from '@/types/trips'
+import { OFFICIAL_REQUIREMENT_TYPES, type OfficialRequirementType, type Trip, type TripItem, type TripTraveller } from '@/types/trips'
 
 const JETZT = '2026-08-21T00:00:00.000Z'
 
@@ -207,9 +209,9 @@ function officialSauberFuer(
   return {
     travellerClientRef,
     credentialOptionRef,
-    destinationCountryCode: 'ID',
-    transitCountryCode: null,
-    requirementType: 'visa',
+    destinationCountryCode: teil.destinationCountryCode ?? 'ID',
+    transitCountryCode: teil.transitCountryCode ?? null,
+    requirementType: teil.requirementType ?? 'visa',
     result: 'not_required',
     status: 'current',
     freshness: 'current',
@@ -238,10 +240,52 @@ function officialKanonischeRefs(party: readonly TripTraveller[]): string[] {
   return party.flatMap((traveller) => credentialOptionsAus(traveller).map((option) => option.optionRef)).sort()
 }
 
+function officialVollstaendigFuer(
+  party: readonly TripTraveller[],
+  destinationCountryCode = 'ID',
+  transitCountryCodes: readonly (string | null)[] = [null],
+): OfficialEvaluation[] {
+  const evaluations: OfficialEvaluation[] = []
+  for (const traveller of party) {
+    for (const option of credentialOptionsAus(traveller)) {
+      for (const requirementType of OFFICIAL_REQUIREMENT_TYPES) {
+        const transits = requirementType === 'transit' ? transitCountryCodes : [null]
+        for (const transitCountryCode of transits) {
+          evaluations.push(
+            officialSauberFuer(option.travellerClientRef, option.optionRef, {
+              destinationCountryCode,
+              requirementType,
+              transitCountryCode,
+            }),
+          )
+        }
+      }
+    }
+  }
+  return evaluations
+}
+
 function officialVollstaendig(): OfficialEvaluation[] {
-  return vollstaendigeParty().flatMap((traveller) =>
-    credentialOptionsAus(traveller).map((option) => officialSauberFuer(option.travellerClientRef, option.optionRef)),
-  )
+  return officialVollstaendigFuer(vollstaendigeParty())
+}
+
+function officialMitLage(
+  evaluations: OfficialEvaluation[],
+  such: {
+    travellerClientRef?: string
+    requirementType: OfficialRequirementType
+    transitCountryCode?: string | null
+  },
+  lage: Partial<OfficialEvaluation>,
+): OfficialEvaluation[] {
+  return evaluations.map((eintrag) => {
+    if (such.travellerClientRef && eintrag.travellerClientRef !== such.travellerClientRef) return eintrag
+    if (eintrag.requirementType !== such.requirementType) return eintrag
+    if (such.transitCountryCode !== undefined && (eintrag.transitCountryCode ?? null) !== such.transitCountryCode) {
+      return eintrag
+    }
+    return { ...eintrag, ...lage }
+  })
 }
 
 function officialUnavailableVollstaendig(): OfficialEvaluation[] {
@@ -281,6 +325,42 @@ function vollstaendigeParty(): TripTraveller[] {
       ],
     }),
   ]
+}
+
+function reiseMitKanonischemTransit(party: readonly TripTraveller[]): Trip {
+  const basis = reiseOhneLuecken()
+  return reise({
+    origin: 'Zürich',
+    originPlaceId: 'geonames:2657896',
+    travellers: party.length,
+    party: [...party],
+    stages: [{ ...basis.stages[0]!, name: 'Bangkok', countryCode: 'TH' }],
+    days: [
+      {
+        id: 'day-1',
+        stageId: 'stage-1',
+        dayIndex: 1,
+        dayDate: '2026-09-12',
+        title: null,
+        items: [
+          punkt({
+            id: 'stay-1',
+            kind: 'stay',
+            title: 'Hotel',
+            startsOn: '2026-09-12',
+            endsOn: '2026-09-16',
+          }),
+          punkt({
+            id: 'flight-1',
+            kind: 'flight',
+            title: 'ZRH-BKK',
+            startsOn: '2026-09-12',
+            routeItinerary: itineraryEinTransit('DOH'),
+          }),
+        ],
+      },
+    ],
+  })
 }
 
 function reiseOhneLuecken(): Trip {
@@ -657,9 +737,63 @@ describe('TW-4 Completeness und gemischte Degraded States', () => {
     assert.equal(kanonischVoll.punkte.length, 0)
   })
 
+  test('nur visa=current macht Official niemals clean', () => {
+    const party = [vollstaendigeParty()[0]!]
+    const sicht = attentionAbleiten({
+      reise: reise({
+        ...reiseOhneLuecken(),
+        travellers: 1,
+        party,
+      }),
+      safetyEvaluations: [safetyLeer()],
+      seasonalEvaluations: [seasonalLeer()],
+      officialEvaluations: [officialSauberFuer('traveller:1', 'traveller:1:none')],
+    })
+    assert.notEqual(sicht.leerstand, 'nichts_dringend_geprueft')
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'official.ungeprueft'), true)
+    assert.ok(OFFICIAL_REQUIREMENT_TYPES.length > 1)
+  })
+
+  test('genau ein fehlender Requirement-Typ ist official.ungeprueft', () => {
+    const sicht = attentionAbleiten({
+      reise: reiseOhneLuecken(),
+      safetyEvaluations: [safetyLeer()],
+      seasonalEvaluations: [seasonalLeer()],
+      officialEvaluations: officialVollstaendig().filter((eintrag) => eintrag.requirementType !== 'insurance'),
+    })
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'official.ungeprueft'), true)
+    assert.notEqual(sicht.leerstand, 'nichts_dringend_geprueft')
+  })
+
+  test('fehlende Transit-Evaluation bei vorhandenem Transitland ist nicht clean', () => {
+    const party = [vollstaendigeParty()[0]!]
+    const graph = reiseMitKanonischemTransit(party)
+    assert.deepEqual(readinessReisekontext(graph).transitCountryCodes, ['QA'])
+    assert.equal(readinessReisekontext(graph).destinationCountries.includes('TH'), true)
+
+    const ohneTransit = attentionAbleiten({
+      reise: graph,
+      safetyEvaluations: [safetyLeer()],
+      seasonalEvaluations: [seasonalLeer()],
+      officialEvaluations: officialVollstaendigFuer(party, 'TH', [null]).filter(
+        (eintrag) => eintrag.requirementType !== 'transit',
+      ),
+    })
+    assert.equal(ohneTransit.punkte.some((eintrag) => eintrag.signal === 'official.ungeprueft'), true)
+    assert.notEqual(ohneTransit.leerstand, 'nichts_dringend_geprueft')
+
+    const mitTransit = attentionAbleiten({
+      reise: graph,
+      safetyEvaluations: [safetyLeer()],
+      seasonalEvaluations: [seasonalLeer()],
+      officialEvaluations: officialVollstaendigFuer(party, 'TH', ['QA']),
+    })
+    assert.equal(mitTransit.punkte.some((eintrag) => eintrag.signal.startsWith('official.')), false)
+    assert.equal(mitTransit.punkte.some((eintrag) => eintrag.signal === 'official.ungeprueft'), false)
+  })
+
   test('current plus unavailable bleibt in beiden Listenreihenfolgen official.unavailable', () => {
-    const current = officialSauberFuer('traveller:1', 'traveller:1:none')
-    const unavailable = officialSauberFuer('traveller:2', 'traveller:2:none', {
+    const gemischt = officialMitLage(officialVollstaendig(), { requirementType: 'health' }, {
       status: 'unavailable',
       freshness: 'provider_unavailable',
       result: 'unknown',
@@ -669,8 +803,8 @@ describe('TW-4 Completeness und gemischte Degraded States', () => {
       safetyEvaluations: [safetyLeer()],
       seasonalEvaluations: [seasonalLeer()],
     }
-    const vorwaerts = attentionAbleiten({ ...eingabe, officialEvaluations: [current, unavailable] })
-    const rueckwaerts = attentionAbleiten({ ...eingabe, officialEvaluations: [unavailable, current] })
+    const vorwaerts = attentionAbleiten({ ...eingabe, officialEvaluations: gemischt })
+    const rueckwaerts = attentionAbleiten({ ...eingabe, officialEvaluations: [...gemischt].reverse() })
     assert.deepEqual(
       vorwaerts.punkte.map((eintrag) => `${eintrag.signal}:${eintrag.lage}`),
       rueckwaerts.punkte.map((eintrag) => `${eintrag.signal}:${eintrag.lage}`),
@@ -686,10 +820,7 @@ describe('TW-4 Completeness und gemischte Degraded States', () => {
       reise: reiseOhneLuecken(),
       safetyEvaluations: [safetyLeer()],
       seasonalEvaluations: [seasonalLeer()],
-      officialEvaluations: [
-        officialSauberFuer('traveller:1', 'traveller:1:none'),
-        officialSauberFuer('traveller:2', 'traveller:2:none', { freshness: 'stale' }),
-      ],
+      officialEvaluations: officialMitLage(officialVollstaendig(), { requirementType: 'passport' }, { freshness: 'stale' }),
     })
     assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'official.stale' && eintrag.lage === 'stale'), true)
     assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'official.ungeprueft'), false)
@@ -702,13 +833,10 @@ describe('TW-4 Completeness und gemischte Degraded States', () => {
       reise: reiseOhneLuecken(),
       safetyEvaluations: [safetyLeer()],
       seasonalEvaluations: [seasonalLeer()],
-      officialEvaluations: [
-        officialSauberFuer('traveller:1', 'traveller:1:none'),
-        officialSauberFuer('traveller:2', 'traveller:2:none', {
-          status: 'insufficient_context',
-          missingFacts: ['document_type'],
-        }),
-      ],
+      officialEvaluations: officialMitLage(officialVollstaendig(), { requirementType: 'vaccination' }, {
+        status: 'insufficient_context',
+        missingFacts: ['document_type'],
+      }),
     })
     assert.equal(
       sicht.punkte.some((eintrag) => eintrag.signal === 'official.insufficient_context' && eintrag.lage === 'insufficient_context'),
