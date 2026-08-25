@@ -11,6 +11,12 @@ Status: **VORBEREITET / AUDIT NOCH NICHT GESTARTET**
 
 `audit/quality-security-trip-workspace-checkpoint`
 
+## Draft-PR
+
+#67 – `QS-1 – Trip Workspace Quality/Security Integrationsaudit`
+
+Der PR bleibt bis zum unabhängigen ChatGPT-/Technical-Lead-Review **Draft**.
+
 ## Baseline
 
 `main` @ `bee9f653d7d83dfbafbf9b9c1da6385433071a4a`
