@@ -1,228 +1,139 @@
 # Jetnity – Trip Workspace TW-5 Status
 
 Stand: 25. August 2026  
-Status: **DRAFT-PR #66 – P1-QS1-01 auf Presentation-Ebene behoben; Exact-Head-Gates auf Runtime-Head `8183782f` grün; STOPP für erneuten unabhängigen Technical-Lead-Review. Kein Ready. Kein Merge. Kein TW-6.**  
+Status: **ABGESCHLOSSEN / PR #66 gemergt / Independent Technical-Lead PASS / Technical Integration Closure.**
+
 Agent: `Trip workspace audit architecture`  
 Branch: `feat/trip-workspace-tw5-item-gap-details`  
-Draft-PR: #66  
-Runtime-/Evidence-Head: `8183782fc08c486949212b0e78b9f4ce938aa0dd`  
-Baseline vor TW-5: `bee9f653d7d83dfbafbf9b9c1da6385433071a4a`  
-Aktueller `main`: `d039e7bf7f7fa9db261b4623c72cc35944aa82c4`
+PR: #66 – `Trip Workspace TW-5 – Item- und Gap-Details`
 
-## 1. Zweck
+## 1. Finaler Stand
 
-TW-5 – **Item- und Gap-Details** verbindet vorhandene Workspace-Truth mit kontextuellen Details und on-demand Werkzeugen. Domain-Flächen werden aus Reise-/Coverage-/Attention-/Item-Kontext geöffnet und sind nicht länger die primäre gleichrangige Workspace-IA.
+- Baseline vor finalem Merge: `main` `d039e7bf7f7fa9db261b4623c72cc35944aa82c4`
+- Runtime-/Evidence-Head: `8183782fc08c486949212b0e78b9f4ce938aa0dd`
+- finaler docs-only Persist-Head: `49aa04d99a5eb33a89fa624f1d096f7c5400698f`
+- Independent Technical-Lead Result: **PASS / Technical Integration Closure**
+- Merge-Commit: `6f2beeccae2c1e6bdf9bcb9fdc35a5cd56e50bec`
+- Vercel Production auf Merge: **READY** (`dpl_HWmkViKGgzNgKFVAxmhqw2EVkoCv`)
+- offene Review-Threads beim Merge: 0
 
-Verbindliche Dokumente:
+Dieser Status superseded frühere TW-5-Formulierungen `Draft`, `STOPP`, `kein Ready` oder `kein Merge`.
 
-- `docs/ADR_0167_TRIP_WORKSPACE_TW5_ITEM_GAP_DETAILS.md`
-- `docs/TRIP_WORKSPACE_TW5_TASK.md`
-- `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`
-- `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`
-- `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`
-- `JETNITY_START_HERE.md`
-- `JETNITY_HANDOFF.md`
-- `docs/ACTIVE_WORK_STATUS.md`
+## 2. Umgesetzter Scope
 
-## 2. P1-QS1-01 – Closure
+TW-5 hängt vorhandene Flight-/Stay-/Activities-/Mobility-Flächen als kontextuelle Details einer Reise, Coverage-/Attention-Lücke oder eines Timeline-Items ein.
 
-Technical-Lead-Re-Review von Head `c4c4c1f0` war **NOCH KEIN PASS**, weil `P1-QS1-01` im Runtime-Code noch vorhanden war. Der Finding bleibt der verbindliche Ready-/Merge-Blocker, bis der Technical Lead den Fix unabhängig erneut prüft.
+Umgesetzt:
+
+- reisezentrierte Haupt-IA statt gleichrangiger Domain-Tabs;
+- workspace-lokaler Detail-/Intent-State nur mit IDs und UI-Intent, ohne kopierte Hard Truth;
+- Coverage-/Attention-/Timeline-Einstiege öffnen Gap- bzw. Item-Details;
+- Flight-/Stay-/Mobility-Gaps bleiben `offen`/`teilweise`/`unbestimmt`/`belegt` ehrlich getrennt;
+- `0 Aktivitäten` ist keine erfundene Pflichtlücke;
+- alle sechs `TripItemKind`: `flight`, `stay`, `activity`, `transfer`, `rental_car`, `note`;
+- `ohneTag`-Items öffnen ohne erfundenen Tag/Stage;
+- tote Item-Refs fallen deterministisch auf die Reiseoberfläche zurück;
+- Guest und Account nutzen dieselbe Presentation-Ableitung;
+- Mobile und Desktop nutzen dieselbe Zustandsmaschine; Desktop darf Master/Detail zeigen;
+- Commercial-Suche mountet erst nach ausdrücklicher Aktion;
+- vorhandene `FlugBestand`-/`UnterkunftBestand`-/Search-Flächen werden wiederverwendet;
+- Fokus/Keyboard/hidden/inert/Overflow im Workspace-Audit geprüft;
+- `FlugSuche` verwendet kein stilles `ZRH`-Herkunftsdefault; `ZRH` bleibt nur Placeholder-Beispiel.
+
+Nicht verändert:
+
+- DB/Migration/RLS/Auth/Identity;
+- Traveller-/Citizenship-/Document-Kernmodell;
+- Route-/Transit-Shared-Contract;
+- Provider-Aktivierung/Secrets/paid calls;
+- Guardian/Simulator/Value;
+- TW-6+ Runtime.
+
+## 3. P1-QS1-01 – Closure
+
+QS-1 fand einen realen Product-Truth-P1: ungeplante Flight-Itineraries konnten in `bereichStatus()` doppelt in die sichtbare Route eingehen.
 
 ### Root Cause
 
-In `lib/trips/arbeitsbereich.ts` komponierte `bereichStatus()` Route-Facts so:
-
-```ts
-routeFactsAusGraph({
-  days: reise.days,
-  ohneTag: [...ohneTag, ...reise.ohneTag],
-})
-```
-
-Der reale Produktpfad setzt `ohneTag === reise.ohneTag`:
-
-- Account: `app/(public)/reisen/[tripId]/page.tsx` → `KontoArbeitsbereich` mit `ohneTag={reise.ohneTag}`
-- Guest: `GastArbeitsbereich` mit `ohneTag={reise.ohneTag}`; `TripWorkspace` fällt bei leerer Prop auf `reise.ohneTag` zurück
-
-Dieselbe ungeplante Flug-Itinerary ging zweimal in die Route-Ableitung. Sichtbare Folgen: doppelte `sourceItemIds`, doppelte Segmente/Connections, künstliches „Reihenfolge unbekannt“, Widerspruch zu `flugAbdeckung` (die dieselbe Liste nicht verdoppelt).
-
-Die Route-/Transit-Engine war nicht die Ursache. `flugAbdeckung` und `TripWorkspace` lasen bereits eine Liste.
+Der Presentation-Pfad kombinierte explizites `ohneTag` mit `reise.ohneTag`, obwohl der reale Account-Produktpfad bereits `ohneTag === reise.ohneTag` liefern konnte.
 
 ### Fix
 
-Workspace-/Presentation-Komposition, nicht Shared Contract:
+Workspace-/Presentation-Komposition liest genau eine ungeplante Liste:
 
-- `ungeplantePunkteLesen(reise, ohneTag)` wählt **eine** Liste: nicht-leere explizite Prop gewinnt, sonst `reise.ohneTag`.
-- Kein Concat. Keine ID-Deduplizierung. Keine zweite Route-Wahrheit.
-- `bereichStatus`, `planStatus` und `planpunkteSammeln` lesen dieselbe aufgelöste Liste.
-- `routeFactsAusGraph` bekommt `[...ungeplante]` nur, weil der Engine-Eingang `Trip['ohneTag']` als `TripItem[]` typt. Das ist eine Kopie **einer** Liste, kein Concat.
+- nicht-leeres explizites `ohneTag` gewinnt;
+- sonst `reise.ohneTag`;
+- kein Concat;
+- keine heuristische ID-Deduplizierung;
+- keine Änderung der Route Engine.
 
-Guest-Fallback (`bereichStatus(reise)`) und Account-Prop (`bereichStatus(reise, reise.ohneTag)`) sind dieselbe Presentation.
+### Regressionsevidence
 
-Nicht geändert: `lib/route/ableitung.ts`, Route-/Transit-Verträge, Provider, DB/RLS/Auth/Traveller.
+Realistischer ungeplanter Flug ZRH → DOH → BKK mit Transit DOH:
 
-### Regressionstest
+- eine Source Item ID;
+- `segments === 2`;
+- `connections === 1`;
+- Route genau einmal;
+- kein künstliches `Reihenfolge unbekannt`;
+- `bereichStatus().text` enthält weiterhin die echte `flugAbdeckung`-Zusammenfassung;
+- explizite andere nicht-leere `ohneTag`-Liste wird nicht mit `reise.ohneTag` vermischt;
+- ohne explizites `ohneTag` wird `reise.ohneTag` verwendet;
+- leere ungeplante Liste erzeugt keine Phantom-Items.
 
-`lib/trips/arbeitsbereich.test.ts` → Suite `P1-QS1-01 ungeplante Flug-Itinerary genau einmal`.
+Der Technical Lead hat Root Cause, Fix und Regression unabhängig im finalen PR-Code geprüft und den P1 als geschlossen bewertet.
 
-Realfall: eine Reise, ein ungeplanter Flight, ZRH → DOH → BKK, `itineraryEinTransit('DOH')`, `ohneTag === reise.ohneTag`.
+## 4. Finale Tests und Gates
 
-Der Test beweist:
+Runtime-/Evidence-Head `8183782f`:
 
-- Flight-Item genau einmal (`sourceItemIds === ['flight-ungeplant']`)
-- `segments === 2`
-- `connections === 1`
-- kompakter Route-Text genau einmal `Zürich → Doha → Bangkok`
-- kein künstliches „Reihenfolge unbekannt“
-- sichtbarer `bereichStatus().text` enthält `flugAbdeckung.zusammenfassung` und widerspricht ihr nicht
+- gezielte TW-2/TW-3/TW-4/TW-5/P1-Tests: **112/112**
+- `npm test`: **1994/1994**
+- `npm run typecheck`: OK
+- `npm run lint`: OK
+- `npm run check:setup:ci`: OK mit bekannter Warnung `keine .env`
+- Dead/Exports/Deps/API-Schutz/Schema-Bezug: grün; `CookieConsent` bleibt dokumentierter begründeter Orphan
+- `npm run build`: OK, Next 14.2.32
+- `npm run audit:trip-workspace`: **1018/1018, 0 Fehler**, Chromium + WebKit
+- GitHub Actions Run `32884017732`: SUCCESS
+- Vercel Preview: READY
 
-Zusätzlich:
+Finaler Persist-Head `49aa04d9`:
 
-- explizites `ohneTag`, das nicht `reise.ohneTag` ist, geht genau einmal ein
-- ohne explizites `ohneTag` wird `reise.ohneTag` genau einmal gelesen
-- ohne ungeplante Items bleibt die Ableitung leer
-- Guest-Fallback und Account-Prop sind `deepEqual`
+- GitHub Actions Run `32885780086`: SUCCESS
+- Vercel Preview: READY
+- Branch vor Merge 15 ahead / 0 behind `main`
+- Review-Threads: 0
 
-### Closure-Evidence
+Merge `6f2beecc`:
 
-Lokal auf Runtime-Head `8183782f`:
+- Vercel Production: READY
 
-- gezielter P1-QS1-01-Regressionstest plus TW-5/TW-3/TW-4/TW-2 – **112/112**
-- `npm test` – **1994/1994**
-- `npm run typecheck` – OK
-- `npm run lint` – OK
-- `npm run check:setup:ci` – OK, 1 Warning: keine `.env`
-- `check:dead` – 1 begründeter Orphan (`CookieConsent`)
-- `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` – OK
-- `npm run build` – OK, Next 14.2.32
-- `npm run audit:trip-workspace` – **1018/1018, 0 Fehler**, WebKit + Chromium. Bericht: `/opt/cursor/artifacts/tw5_audit_8183782f.json`
+## 5. Security / Privacy / Kosten
 
-Remote, derselbe SHA `8183782f`:
-
-- GitHub Actions: SUCCESS – https://github.com/Jetnity/jetnity/actions/runs/32884017732
-- Vercel Preview: READY – Deployment `6089536706`, https://jetnity-2999tfrb7-jetnity-e1b93c82.vercel.app
-- Ahead / Behind gegen `origin/main` `d039e7bf`: **14 ahead / 0 behind** zum Runtime-Head
-- Offene Review-Line-Threads: **0**. Ein bestehender Technical-Lead-Review-Kommentar auf `c4c4c1f0` bleibt für den erneuten unabhängigen Re-Review stehen.
-
-`main` ist während dieses Fixes nicht weitergelaufen. Kein Re-Sync nötig.
-
-Dieser Status-Commit ist docs-only und folgt auf den belegten Runtime-Head. CI/Vercel auf dem Persist-Head erneut prüfen; das UI-Audit gilt für den unveränderten Runtime-Stand `8183782f`.
-
-**Exact-Head-Evidence ist erst mit diesem P1-Closure-Abschnitt vollständig.** Der frühere Anspruch auf `ce3e99b9` / `c4c4c1f0` ist durch den bestätigten P1 ungültig.
-
-## 3. Live-Verifikation
-
-| Fakt | Wert |
-| --- | --- |
-| `origin/main` | `d039e7bf` – Merge PR #67 QS-1 docs-only |
-| Merge-Base | `d039e7bf` |
-| Runtime-Head | `8183782f` |
-| Ahead / Behind | **14 ahead / 0 behind** zum Runtime-Head |
-| Draft-PR #66 | OPEN, Draft, MERGEABLE |
-| URL | https://github.com/Jetnity/jetnity/pull/66 |
-
-## 4. Umgesetzt (TW-5 bleibt erhalten)
-
-Workspace-lokale Presentation-Schicht `lib/trips/detail.ts`:
-
-- State nur IDs/Intent: `keine` / `gap` / `item` plus `sucheOffen`;
-- tote Item-Refs fallen auf die Reiseoberfläche;
-- Gap-/Item-Fakten werden bei Renderzeit aus `bereichStatus` und dem Trip-Graphen gelesen;
-- `0 Aktivitäten` ist keine Pflichtlücke;
-- `covered_by_flight` wird nicht erfunden – die aktuelle Mobility-Engine emittiert ihn nicht;
-- `AttentionAktion` bleibt der TW-4-Vertrag; Interpretation nur workspace-lokal.
-
-UI:
-
-- Domain-Tabs als primäre IA entfernt;
-- Coverage-/Attention-/Timeline-Items öffnen Gap- oder Item-Details;
-- Official/Readiness bleiben auf der Reiseoberfläche;
-- `ohneTag`-Items öffnen ohne erfundenen Tag/Stage;
-- `FlugBestand` / `UnterkunftBestand` / vorhandene Suchflächen wiederverwendet;
-- Commercial-Suche mountet erst nach ausdrücklicher Aktion;
-- Mobile und Desktop teilen dieselbe State Machine; Desktop darf Master/Detail zeigen.
-
-Wahrheit im bestehenden Suchpfad:
-
-- `FlugSuche` füllt Herkunft nicht mehr still mit `ZRH`. Placeholder bleibt Beispiel, kein vorausgefüllter Airport.
-
-P1-QS1-01 zusätzlich:
-
-- ungeplante Items gehen genau einmal in Coverage-, Route- und Zählableitungen.
-
-Audit:
-
-- `scripts/trip-workspace-ui-audit.mjs` prüft die trip-zentrische IA;
-- Wait auf sichtbare Übersicht **oder** sichtbares Detail, ohne Playwright-Strict-Mode-Kollision.
-
-Nicht angefasst:
-
-- `lib/trips/attention.ts` Contract;
-- Readiness/Safety/Seasonal/Route-Truth;
-- DB/Migration/RLS/Auth;
-- Provider, Secrets, paid calls;
-- QS-1-P2/P3.
-
-## 5. Acceptance
-
-| AC | Ergebnis |
-| --- | --- |
-| AC-1 Haupt-IA | Domain-Leiste ist keine gleichrangige Navigation mehr. |
-| AC-2 Flight Gap | offen/teilweise/unbestimmt bleiben getrennt; Suche nur explizit. |
-| AC-3 Stay Gap | analog; Nächte nur aus vorhandener Coverage. |
-| AC-4 Activities | `0 Aktivitäten` keine Pflichtlücke. |
-| AC-5 Mobility | offen/unknown getrennt; kein erfundenes `covered_by_flight`; kein Live-Adapter. |
-| AC-6 Item Details | alle sechs `TripItemKind`; `note` ohne Commercial-Fiktion. |
-| AC-7 Unplanned | `ohneTag` ohne Fake-Tag/Stage. |
-| AC-8 Auswahlstabilität | Tag bleibt; tote Item-Refs werden verworfen. |
-| AC-9 Guest/Account | dieselbe Ableitung, kein `quelle` im Helper. |
-| AC-10 Lazy Mount | Initialreise ohne Commercial-Suche; explizites Öffnen behält Mount. |
-| AC-11 Device Parity | eine Ableitung; Desktop nur mehr Fläche. |
-| AC-12 Accessibility | Keyboard/Fokus/hidden/inert/ARIA im UI-Audit. |
-| AC-13 Truth Regression | TW-2/3/4-Tests grün im vollen Suite. |
-| AC-14 No Shared Contract Drift | kein Auth/RLS/Traveller/Route/Provider/Billing-Umbau. |
-| P1-QS1-01 | ungeplante Flug-Itinerary genau einmal; Guest/Account gleiche Presentation. |
-
-## 6. Adversarial Self-Review
-
-- Concat `([...ohneTag, ...reise.ohneTag])` ist aus Runtime-Code entfernt. Einziger verbleibender Beleg ist die historische QS-1-Evidence in `docs/QUALITY_SECURITY_QS1_AUDIT.md`.
-- `[...ungeplante]` an `routeFactsAusGraph` ist Typanpassung, keine zweite Liste und keine Heuristik-Deduplizierung.
-- Guest- und Account-Aufrufpfade teilen `ungeplantePunkteLesen` / `bereichStatus`. `TripWorkspace` löst dieselbe Regel noch einmal auf; eine nicht-leere Liste wird nicht erneut mit `reise.ohneTag` verbunden.
-- `attentionAbleiten` ohne Prop fällt über leeres Default-Array auf `reise.ohneTag` – einmal.
-- Explizites anderes `ohneTag` ersetzt `reise.ohneTag` und verliert keine Items dieser expliziten Liste. Das entspricht dem bestehenden Coverage-Vertrag, nicht einer neuen Wahrheit.
-- TW-5-Funktionen (reisezentrierte IA, Item-/Gap-Details, 0 Aktivitäten, kein erfundenes `covered_by_flight`, lazy Commercial-Suche, kein stilles ZRH, Guest/Account, Mobile/Desktop, Accessibility, tote Item-Refs, `ohneTag` ohne Fake-Tag) wurden nicht zurückgebaut.
-- Kein Shared-Contract-Problem still übernommen. Keine QS-1-P2/P3-Punkte übernommen.
-- Erster Push `ba0dc643` scheiterte an TypeScript `readonly TripItem[]` vs. `TripItem[]`. Behoben auf `8183782f`, bevor dieser Status Exact-Head-Evidence behauptet.
-- Ein versehentlicher `update_pr draft=false`-Aufruf hat den GitHub-Draft-Status nicht geändert (`isDraft=true` live bestätigt).
-
-## 7. Datenbank / Kosten / Production
-
-- keine TW-5-Migration;
-- keine neuen Secrets;
+- kein neuer Endpoint;
+- kein Secret/Service-Role-Change;
+- keine Migration;
+- kein RLS/Auth-Change;
+- kein Provider/paid call;
 - keine neuen laufenden Kosten;
-- keine paid provider calls;
-- kein Production-Gate offen.
+- keine neue sensitive Traveller-/Passdaten-Speicherung.
 
-Supabase Development-Migrationen `20260824160000` und `20260824180000` bleiben nicht Production-approved und unberührt.
+## 6. Offene Follow-ups außerhalb TW-5
 
-## 8. Shared Contracts
+- QS-1 P2/P3 bleiben separat dokumentierte Quality/Polish-Follow-ups.
+- `covered_by_flight` existiert als Mobility-Status, wird von der aktuellen Mobility-Engine nicht erzeugt; TW-5 erfindet ihn nicht.
+- Compact kann redundante Zurück-Controls besitzen; kein zweiter Domain-IA-Pfad.
+- `main` Branch Protection ist weiterhin nicht aktiv.
 
-Kein Shared-Contract-Change.
+## 7. Nächster Schritt
 
-Weiterhin Technical-Lead-kontrolliert: Auth/Identity, RLS/Ownership, Traveller, Route/Transit, Privacy, Billing, Admin Audit, Provider Activation, Attribution, Guardian/Simulator/Value.
+TW-5 ist abgeschlossen. Kein weiterer Fix ist in diesem Slice offen.
 
-Citizenship-only Credential Option bleibt außerhalb von TW-5.
+Die nächste Trip-Workspace-Runtime wird erst nach erneuter Abhängigkeitsprüfung freigegeben. TW-6 hat ausdrücklich die Abhängigkeit **dokumentierter Product-Owner-Schnitt + Guest-One-Trip-Vertrag**; TW-7 und TW-8 haben eigene Account-/Provider-Abhängigkeiten.
 
-## 9. Offene Risiken
+Siehe:
 
-- `covered_by_flight` ist im Typ vorhanden, wird von `lib/mobility/kanten.ts` derzeit nicht erzeugt. TW-5 erfindet ihn nicht.
-- Compact zeigt zwei Zurück-Controls; das ist redundant, aber keine Domain-IA.
-- `main` Branch Protection ist live weiterhin nicht aktiviert.
-- QS-1-P2/P3 bleiben außerhalb dieses Slices.
-- P1-QS1-01 ist implementiert und gegatet, aber **nicht** unabhängig re-reviewed. Ready/Merge bleiben blockiert.
-
-## 10. STOPP
-
-**Kein Ready. Kein Merge. Kein TW-6.**
-
-Nächster Schritt: unabhängiger ChatGPT / Technical-Lead-Re-Review auf Exact Head `8183782f` plus dem nachfolgenden docs-only Persist-Commit.
+- `docs/CHATGPT_TW5_MERGE_CHECKPOINT_2026-08-25.md`
+- `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`
+- `docs/ACTIVE_WORK_STATUS.md`.
