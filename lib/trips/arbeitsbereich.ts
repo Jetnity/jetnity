@@ -9,9 +9,9 @@
 // gewählt ist, und welche Statuszeilen ehrlich sind. Keine Providerzustände,
 // keine erfundenen Flüge, Hotels oder Aktivitäten.
 //
-// Sichtbare Hauptbereiche: Übersicht, Flüge, Unterkunft, Aktivitäten und
-// Mobilität. Der Tagesplan / Verlauf gehört zur Übersicht, nicht zu einem eigenen Tab.
-// Ein historischer Wert `plan` fällt auf die Übersicht.
+// Coverage-Domains bleiben intern: Flüge, Unterkunft, Aktivitäten, Mobilität.
+// Sie sind seit TW-5 keine gleichrangige Hauptnavigation mehr. Der Tagesplan
+// gehört zur Reiseoberfläche. Ein historischer Wert `plan` fällt auf die Übersicht.
 
 import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'
 import { mietwagenBestand } from '@/lib/rental-cars/bestand'

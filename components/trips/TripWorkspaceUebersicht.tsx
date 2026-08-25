@@ -3,12 +3,10 @@
 import type { ComponentType, ReactNode, RefObject } from 'react'
 import { ArrowRightLeft, BedDouble, Plane, Sparkles } from 'lucide-react'
 
-import {
-  ARBEITSBEREICH_BEZEICHNUNG,
-  type Arbeitsbereich,
-} from '@/lib/trips/arbeitsbereich'
+import { ARBEITSBEREICH_BEZEICHNUNG } from '@/lib/trips/arbeitsbereich'
+import type { DetailDomain } from '@/lib/trips/detail'
 import { INTERESSE_BEZEICHNUNG, TEMPO_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
-import type { AttentionAbleitung } from '@/lib/trips/attention'
+import type { AttentionAbleitung, AttentionAktion } from '@/lib/trips/attention'
 import type { AbdeckungLage, UebersichtAbleitung } from '@/lib/trips/uebersicht'
 import { cn } from '@/lib/utils'
 import type { Trip } from '@/types/trips'
@@ -33,7 +31,8 @@ export default function TripWorkspaceUebersicht({
   uebersicht,
   attention,
   aenderungOffen,
-  onBereich,
+  onLuecke,
+  onAttention,
   onAenderung,
   aenderungKnopfRef,
   plan,
@@ -46,7 +45,8 @@ export default function TripWorkspaceUebersicht({
   uebersicht: UebersichtAbleitung
   attention: AttentionAbleitung
   aenderungOffen: boolean
-  onBereich: (bereich: Arbeitsbereich) => void
+  onLuecke: (domain: DetailDomain) => void
+  onAttention: (aktion: AttentionAktion) => void
   onAenderung: () => void
   aenderungKnopfRef: RefObject<HTMLButtonElement | null>
   plan?: ReactNode
@@ -66,7 +66,7 @@ export default function TripWorkspaceUebersicht({
         <p className="mt-1 text-xs leading-5 text-ink-700">{uebersicht.planText}</p>
       </div>
 
-      <TripWorkspaceJetztWichtig attention={attention} onBereich={onBereich} />
+      <TripWorkspaceJetztWichtig attention={attention} onAktion={onAttention} />
 
       <ul className="grid gap-2">
         {uebersicht.abdeckungen.map((eintrag) => {
@@ -75,7 +75,8 @@ export default function TripWorkspaceUebersicht({
             <li key={eintrag.bereich}>
               <button
                 type="button"
-                onClick={() => onBereich(eintrag.bereich)}
+                aria-label={ARBEITSBEREICH_BEZEICHNUNG[eintrag.bereich]}
+                onClick={() => onLuecke(eintrag.bereich)}
                 className="flex min-h-11 w-full items-center gap-3 rounded-2xl border border-line-200 bg-white px-3 py-3 text-left transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
               >
                 <span

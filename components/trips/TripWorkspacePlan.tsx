@@ -58,6 +58,8 @@ export default function TripWorkspacePlan({
   onTagWechseln,
   onPunktAnlegen,
   onPunktEntfernen,
+  onPunktOeffnen,
+  gewaehlterPunktId,
 }: {
   reise: Trip
   ohneTag: TripItem[]
@@ -67,6 +69,8 @@ export default function TripWorkspacePlan({
   onTagWechseln: (tagId: string) => void
   onPunktAnlegen: (tagId: string, eingabe: PlanpunktFormular) => Promise<string | null>
   onPunktEntfernen: (tagId: string, punktId: string) => Promise<string | null>
+  onPunktOeffnen?: (punktId: string) => void
+  gewaehlterPunktId?: string
 }) {
   const [formularOffen, setFormularOffen] = React.useState(false)
   const [art, setArt] = React.useState<TripItemKind>('activity')
@@ -267,6 +271,8 @@ export default function TripWorkspacePlan({
               key={punkt.id}
               punkt={punkt}
               gesperrt={laeuft}
+              gewaehlt={gewaehlterPunktId === punkt.id}
+              onOeffnen={onPunktOeffnen ? () => onPunktOeffnen(punkt.id) : undefined}
               onEntfernen={() => entfernen(tag.id, punkt.id)}
             />
           ))}
@@ -378,6 +384,8 @@ export default function TripWorkspacePlan({
                 key={punkt.id}
                 punkt={punkt}
                 gesperrt={laeuft}
+                gewaehlt={gewaehlterPunktId === punkt.id}
+                onOeffnen={onPunktOeffnen ? () => onPunktOeffnen(punkt.id) : undefined}
                 onEntfernen={() => entfernen('', punkt.id)}
               />
             ))}
@@ -391,16 +399,19 @@ export default function TripWorkspacePlan({
 function Planpunkt({
   punkt,
   gesperrt,
+  gewaehlt,
+  onOeffnen,
   onEntfernen,
 }: {
   punkt: TripItem
   gesperrt: boolean
+  gewaehlt?: boolean
+  onOeffnen?: () => void
   onEntfernen: () => void
 }) {
   const Symbol = punkt.startsAt ? Clock3 : ART_SYMBOL[punkt.kind]
-
-  return (
-    <li className="group flex gap-3 rounded-2xl border border-line-200 p-3 transition hover:border-line-300 sm:gap-4 sm:p-4">
+  const inhalt = (
+    <>
       <span
         className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-surface-50 text-brand-600 sm:h-9 sm:w-9"
         title={ART_BEZEICHNUNG[punkt.kind]}
@@ -427,6 +438,23 @@ function Planpunkt({
           </span>
         )}
       </span>
+    </>
+  )
+
+  return (
+    <li className="group flex gap-3 rounded-2xl border border-line-200 p-3 transition hover:border-line-300 sm:gap-4 sm:p-4">
+      {onOeffnen ? (
+        <button
+          type="button"
+          aria-expanded={gewaehlt || false}
+          onClick={onOeffnen}
+          className="flex min-h-11 min-w-0 flex-1 items-start gap-3 rounded-xl text-left focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+        >
+          {inhalt}
+        </button>
+      ) : (
+        inhalt
+      )}
       <button
         type="button"
         onClick={onEntfernen}

@@ -1,50 +1,33 @@
 'use client'
 
-import {
-  ARBEITSBEREICH_BEZEICHNUNG,
-  ARBEITSBEREICHE,
-  type Arbeitsbereich,
-} from '@/lib/trips/arbeitsbereich'
-import { ScrollRow } from '@/components/ui/scroll-row'
-import { cn } from '@/lib/utils'
+import type { RefObject } from 'react'
+import { ArrowLeft } from 'lucide-react'
 
 export default function TripWorkspaceNavigation({
-  aktiv,
-  onWechsel,
+  sichtbar,
+  onZurueck,
+  zurueckRef,
 }: {
-  aktiv: Arbeitsbereich
-  onWechsel: (bereich: Arbeitsbereich) => void
+  sichtbar: boolean
+  onZurueck: () => void
+  zurueckRef: RefObject<HTMLButtonElement | null>
 }) {
+  if (!sichtbar) return null
+
   return (
     <nav
-      aria-label="Reisebereiche"
+      aria-label="Reise"
       className="sticky top-[calc(72px+env(safe-area-inset-top))] z-40 -mx-3 mt-4 border-y border-line-200 bg-surface-75/95 px-3 py-2 backdrop-blur-xl sm:-mx-6 sm:px-6"
     >
-      <ScrollRow
-        label="Reisebereiche"
-        fadeFromClassName="from-surface-75"
-        viewportClassName="gap-2"
+      <button
+        ref={zurueckRef}
+        type="button"
+        onClick={onZurueck}
+        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line-200 bg-white px-3.5 text-sm font-semibold text-brand-800 transition hover:border-line-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
       >
-        {ARBEITSBEREICHE.map((bereich) => {
-          const gewaehlt = aktiv === bereich
-          return (
-            <button
-              key={bereich}
-              type="button"
-              aria-current={gewaehlt ? 'page' : undefined}
-              onClick={() => onWechsel(bereich)}
-              className={cn(
-                'inline-flex min-h-11 shrink-0 items-center rounded-full border px-3.5 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
-                gewaehlt
-                  ? 'border-brand-800 bg-brand-800 text-white'
-                  : 'border-line-200 bg-white text-ink-900 hover:border-line-500',
-              )}
-            >
-              {ARBEITSBEREICH_BEZEICHNUNG[bereich]}
-            </button>
-          )
-        })}
-      </ScrollRow>
+        <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+        Zurück zur Reise
+      </button>
     </nav>
   )
 }
