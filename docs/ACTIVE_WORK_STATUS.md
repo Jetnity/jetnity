@@ -104,6 +104,13 @@ Fehlende Safety-/Seasonal-Evaluation ist weder clean noch unavailable. Keine Def
 
 TW-4 ist kein TW-3/TW-5-Slice, keine neue Persistenz, keine DB/RLS/Auth-/Traveller-Neumodellierung, kein Guardian/Simulator und keine Provider-/Marketing-Aktivierung.
 
+Runtime/UI-Head mit vollständigen Gates: `ab448534b843f17ec7f7192d9b162d57acd873e1`.
+
+- Safety/Seasonal: vorhandene lokale Evaluation im Produktpfad **angebunden**; ohne Provider ehrlich `unavailable`.
+- 280px-Overflow der Attention-Card auf `b66f6a8a` (288>280) ist auf `ab448534` behoben.
+- Lokales `npm test` 1927/1927; `audit:trip-workspace` 1018/1018, 0 Fehler.
+- GitHub Actions `32829392769` SUCCESS; Vercel Preview `6079854494` SUCCESS.
+
 ## 4. Wartende Workstreams
 
 ### Account Platform

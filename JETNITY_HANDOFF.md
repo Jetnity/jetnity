@@ -328,7 +328,7 @@ Letzter relevanter Runtime-Merge auf `main`: `5e27f383c7917eec168d11bceb78f9fafc
 1. Admin A–C, Account AP-1–AP-3, Provider S1–S3, Trip-Workspace-Audit #55, TW-1 (#56), TW-2 (#58) und Marketing/Growth #59 liegen auf `main`.
 2. PR #58 und PR #59 sind **merged / closed**. Historische Aussagen wie „Draft #58 wartet“ sind **pre-merge Evidence**.
 3. Die Ziel-IA ist als ADR-0163 angenommen. TW-4 folgt ADR-0165.
-4. `Trip workspace audit architecture` hat TW-4 in Draft-PR #60 umgesetzt und stoppt für den unabhängigen Technical-Lead-Re-Review.
+4. `Trip workspace audit architecture` hat TW-4 in Draft-PR #60 umgesetzt, den 280px-Attention-Overflow behoben und stoppt für den unabhängigen Technical-Lead-Re-Review.
 5. `Admin platform audit`, `Account plattform audit vorbereitung` und `Jetnity provider readiness audit` warten weiter auf eigene Aufträge. Kein Slice D, AP-4 oder S4.
 6. **Exakter nächster Schritt:** unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #60. Kein TW-3, kein TW-5, keine besonderen Product-Owner-Gates eigenmächtig öffnen.
 
