@@ -10,7 +10,7 @@
 // keine erfundenen Flüge, Hotels oder Aktivitäten.
 //
 // Sichtbare Hauptbereiche: Übersicht, Flüge, Unterkunft, Aktivitäten und
-// Mobilität. Der Tagesplan gehört zur Übersicht, nicht zu einem eigenen Tab.
+// Mobilität. Der Tagesplan / Verlauf gehört zur Übersicht, nicht zu einem eigenen Tab.
 // Ein historischer Wert `plan` fällt auf die Übersicht.
 
 import { mobilitaetsAbdeckung } from '@/lib/mobility/kanten'

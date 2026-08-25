@@ -5,7 +5,6 @@ import {
   BedDouble,
   CalendarDays,
   Car,
-  ChevronRight,
   Clock3,
   Plane,
   Plus,
@@ -14,15 +13,12 @@ import {
   Trash2,
 } from 'lucide-react'
 
-import { planStatus } from '@/lib/trips/arbeitsbereich'
 import {
   ART_BEZEICHNUNG,
-  INTERESSE_BEZEICHNUNG,
-  TEMPO_BEZEICHNUNG,
   betragLesbar,
 } from '@/lib/trips/bezeichnungen'
 import { GRENZEN, planpunktFormularSchema, type PlanpunktFormular } from '@/lib/trips/schema'
-import { ScrollRow } from '@/components/ui/scroll-row'
+import { ersterTagDerEtappe, timelineAbleiten } from '@/lib/trips/timeline'
 import { cn } from '@/lib/utils'
 import { TRIP_ITEM_KINDS, type Trip, type TripItem, type TripItemKind } from '@/types/trips'
 
@@ -80,8 +76,8 @@ export default function TripWorkspacePlan({
   const [meldung, setMeldung] = React.useState('')
   const [laeuft, setLaeuft] = React.useState(false)
 
-  const tag = reise.days.find((eintrag) => eintrag.id === aktiverTag) ?? reise.days[0]
-  const status = planStatus(reise, ohneTag)
+  const timeline = timelineAbleiten(reise, ohneTag, aktiverTag)
+  const tag = timeline.gewaehlterTag
 
   React.useEffect(() => {
     setFormularOffen(false)
@@ -142,22 +138,16 @@ export default function TripWorkspacePlan({
     <div
       className={cn(
         'flex flex-col justify-between gap-4',
-        kompakt ? '' : 'border-b border-line-200 pb-5 sm:flex-row sm:items-center',
+        kompakt ? '' : 'sm:flex-row sm:items-center',
       )}
     >
       <div className="min-w-0">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600">
           Tag {tag.dayIndex}
         </p>
-        {kompakt ? (
-          <h3 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800">
-            {tag.dayDate ? langesDatum.format(alsDatum(tag.dayDate)) : (tag.title ?? 'Noch ohne Datum')}
-          </h3>
-        ) : (
-          <h2 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 sm:text-2xl">
-            {tag.dayDate ? langesDatum.format(alsDatum(tag.dayDate)) : (tag.title ?? 'Noch ohne Datum')}
-          </h2>
-        )}
+        <h3 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800">
+          {tag.dayDate ? langesDatum.format(alsDatum(tag.dayDate)) : (tag.title ?? 'Noch ohne Datum')}
+        </h3>
       </div>
       <button
         type="button"
@@ -261,7 +251,7 @@ export default function TripWorkspacePlan({
       )}
 
       {tag.items.length === 0 ? (
-        <div className={kompakt ? 'py-8 text-center' : 'py-14 text-center'}>
+        <div className={kompakt ? 'py-8 text-center' : 'py-10 text-center'}>
           <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-surface-100 text-brand-600">
             <CalendarDays className="h-5 w-5" aria-hidden="true" />
           </span>
@@ -285,205 +275,114 @@ export default function TripWorkspacePlan({
     </>
   )
 
-  const tagesInhalt = (
+  return (
     <section
-      aria-label="Gewählter Reisetag"
-      className="min-w-0 rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_18px_60px_rgba(15,46,42,0.06)] sm:p-7"
-    >
-      {tag ? (
-        <>
-          {tagesKopf}
-          {tagesFelder}
-        </>
-      ) : (
-        <div className="py-14 text-center">
-          <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-surface-100 text-brand-600">
-            <CalendarDays className="h-5 w-5" aria-hidden="true" />
-          </span>
-          <p className="mt-4 text-lg font-semibold text-brand-800">Noch keine Reisetage.</p>
-          <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-ink-700">
-            Sobald ein Zeitraum feststeht, entstehen die Tage dieser Reise.
-          </p>
-        </div>
+      aria-label="Tagesplan"
+      data-tagesplan-modul="ein"
+      className={cn(
+        'min-w-0 rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_18px_60px_rgba(15,46,42,0.06)]',
+        eingebettet ? 'mt-1' : 'mt-5',
       )}
-    </section>
-  )
+    >
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">Tagesplan</p>
+        <p className="mt-1 text-sm text-ink-900">{timeline.planText}</p>
+      </div>
 
-  const ungeplant = ohneTag.length > 0 && (
-    <section className="rounded-[24px] border border-black/5 bg-white p-5">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">
-        Noch nicht eingeplant
-      </p>
-      <ol className="mt-4 space-y-3">
-        {ohneTag.map((punkt) => (
-          <Planpunkt
-            key={punkt.id}
-            punkt={punkt}
-            gesperrt={laeuft}
-            onEntfernen={() => entfernen('', punkt.id)}
-          />
-        ))}
-      </ol>
-    </section>
-  )
-
-  if (kompakt || eingebettet) {
-    return (
-      <section
-        aria-label="Tagesplan"
-        data-tagesplan-modul="ein"
-        className={cn(
-          'min-w-0 rounded-[26px] border border-black/5 bg-white p-4 shadow-[0_18px_60px_rgba(15,46,42,0.06)]',
-          eingebettet ? 'mt-1' : 'mt-5',
-        )}
-      >
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">Tagesplan</p>
-          <p className="mt-1 text-sm text-ink-900">{status.text}</p>
-        </div>
-
-        {reise.days.length === 0 ? (
-          <p className="mt-4 text-sm leading-6 text-ink-700">
-            Diese Reise hat noch keine Tage. Sie entstehen, sobald ein Zeitraum feststeht.
-          </p>
-        ) : (
-          <ScrollRow
-            label="Reisetage im Plan"
-            className="mt-4"
-            fadeFromClassName="from-white"
-            viewportClassName="gap-2 pb-1"
-          >
-            {reise.days.map((eintrag) => {
-              const gewaehlt = tag?.id === eintrag.id
-              return (
+      {!timeline.hatTage ? (
+        <p className="mt-4 text-sm leading-6 text-ink-700">
+          Diese Reise hat noch keine Tage. Sie entstehen, sobald ein Zeitraum feststeht.
+        </p>
+      ) : (
+        <ol className="mt-4 grid min-w-0 gap-4">
+          {timeline.etappen.map((etappe) => {
+            const ersterTag = ersterTagDerEtappe(timeline.etappen, etappe.stageId)
+            const etappeAktiv = etappe.tage.some((eintrag) => eintrag.id === timeline.gewaehlterTagId)
+            return (
+              <li
+                key={etappe.stageId ?? 'ohne-etappe'}
+                data-timeline-etappe={etappe.stageId ?? 'ohne'}
+                className="min-w-0"
+              >
                 <button
-                  key={eintrag.id}
                   type="button"
-                  aria-current={gewaehlt ? 'date' : undefined}
-                  onClick={() => onTagWechseln(eintrag.id)}
+                  disabled={!ersterTag}
+                  onClick={() => ersterTag && onTagWechseln(ersterTag)}
                   className={cn(
-                    'inline-flex min-h-11 min-w-[6.5rem] shrink-0 flex-col justify-center rounded-2xl border px-3 py-2 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
-                    gewaehlt
-                      ? 'border-brand-800 bg-brand-800 text-white'
-                      : 'border-line-200 bg-white text-ink-900 hover:border-line-500',
+                    'flex min-h-11 w-full min-w-0 items-center justify-between gap-3 rounded-2xl px-1 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15 disabled:cursor-default',
+                    etappeAktiv ? 'text-brand-800' : 'text-ink-800',
                   )}
                 >
-                  <strong className="block text-sm font-semibold">
-                    {eintrag.title ?? `Tag ${eintrag.dayIndex}`}
-                  </strong>
-                  <span className="mt-0.5 block text-xs opacity-70">
-                    {eintrag.dayDate ? kurzesDatum.format(alsDatum(eintrag.dayDate)) : 'Ohne Datum'}
-                    {eintrag.items.length > 0 ? ` · ${eintrag.items.length}` : ''}
+                  <span className="min-w-0">
+                    <strong className="block hyphens-auto break-words text-sm font-semibold">{etappe.name}</strong>
+                    <span className="mt-0.5 block text-xs text-ink-700">
+                      {etappe.istNutzerziel
+                        ? etappe.arrivalDate || etappe.departureDate
+                          ? [etappe.arrivalDate, etappe.departureDate].filter(Boolean).join(' – ')
+                          : 'Etappe dieser Reise'
+                        : 'Noch keiner Etappe zugeordnet'}
+                    </span>
                   </span>
                 </button>
-              )
-            })}
-          </ScrollRow>
-        )}
-
-        {tag && (
-          <div className="mt-4 border-t border-line-200 pt-4">
-            {tagesKopf}
-            {tagesFelder}
-          </div>
-        )}
-
-        {ohneTag.length > 0 && (
-          <div className="mt-5 border-t border-line-200 pt-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">
-              Noch nicht eingeplant
-            </p>
-            <ol className="mt-4 space-y-3">
-              {ohneTag.map((punkt) => (
-                <Planpunkt
-                  key={punkt.id}
-                  punkt={punkt}
-                  gesperrt={laeuft}
-                  onEntfernen={() => entfernen('', punkt.id)}
-                />
-              ))}
-            </ol>
-          </div>
-        )}
-      </section>
-    )
-  }
-
-  return (
-    <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[280px_minmax(0,1fr)_280px]">
-      <aside className="h-fit rounded-[26px] border border-black/5 bg-white p-3 lg:sticky lg:top-24">
-        <div className="px-3 pb-3 pt-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">Tagesplan</p>
-          <p className="mt-1 text-sm text-ink-900">{status.text}</p>
-        </div>
-        <div className="max-h-[45dvh] space-y-1 overflow-y-auto pr-1 lg:max-h-[520px]">
-          {reise.days.map((eintrag) => {
-            const gewaehlt = tag?.id === eintrag.id
-            return (
-              <button
-                key={eintrag.id}
-                type="button"
-                onClick={() => onTagWechseln(eintrag.id)}
-                className={cn(
-                  'flex w-full items-center justify-between gap-3 rounded-2xl px-3 py-3 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
-                  gewaehlt ? 'bg-surface-100 text-brand-800' : 'text-ink-800 hover:bg-surface-0',
+                {etappe.tage.length > 0 && (
+                  <div className="mt-2 flex min-w-0 flex-wrap gap-2">
+                    {etappe.tage.map((eintrag) => {
+                      const gewaehlt = timeline.gewaehlterTagId === eintrag.id
+                      return (
+                        <button
+                          key={eintrag.id}
+                          type="button"
+                          aria-current={gewaehlt ? 'date' : undefined}
+                          data-timeline-tag={eintrag.id}
+                          onClick={() => onTagWechseln(eintrag.id)}
+                          className={cn(
+                            'inline-flex min-h-11 min-w-[6.5rem] flex-col justify-center rounded-2xl border px-3 py-2 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
+                            gewaehlt
+                              ? 'border-brand-800 bg-brand-800 text-white'
+                              : 'border-line-200 bg-white text-ink-900 hover:border-line-500',
+                          )}
+                        >
+                          <strong className="block text-sm font-semibold">
+                            {eintrag.title ?? `Tag ${eintrag.dayIndex}`}
+                          </strong>
+                          <span className="mt-0.5 block text-xs opacity-70">
+                            {eintrag.dayDate ? kurzesDatum.format(alsDatum(eintrag.dayDate)) : 'Ohne Datum'}
+                            {eintrag.items.length > 0 ? ` · ${eintrag.items.length}` : ''}
+                          </span>
+                        </button>
+                      )
+                    })}
+                  </div>
                 )}
-              >
-                <span className="min-w-0">
-                  <strong className="block text-sm font-semibold">
-                    {eintrag.title ?? `Tag ${eintrag.dayIndex}`}
-                  </strong>
-                  <span className="mt-0.5 block text-xs opacity-70">
-                    {eintrag.dayDate ? kurzesDatum.format(alsDatum(eintrag.dayDate)) : 'Ohne Datum'}
-                  </span>
-                </span>
-                <span className="flex shrink-0 items-center gap-1.5 text-xs">
-                  {eintrag.items.length > 0 && eintrag.items.length}
-                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
-                </span>
-              </button>
+              </li>
             )
           })}
-          {reise.days.length === 0 && (
-            <p className="px-3 py-6 text-sm leading-6 text-ink-700">
-              Diese Reise hat noch keine Tage. Sie entstehen, sobald ein Zeitraum feststeht.
-            </p>
-          )}
-        </div>
-      </aside>
+        </ol>
+      )}
 
-      {tagesInhalt}
-
-      <aside className="h-fit space-y-4 lg:sticky lg:top-24">
-        <Reiseprofil reise={reise} />
-        {ungeplant}
-      </aside>
-    </div>
-  )
-}
-
-function Reiseprofil({ reise }: { reise: Trip }) {
-  return (
-    <section className="rounded-[24px] border border-black/5 bg-white p-5">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">Reiseprofil</p>
-      <dl className="mt-4 space-y-3 text-sm">
-        <div className="flex items-center justify-between gap-3">
-          <dt className="text-ink-700">Tempo</dt>
-          <dd className="font-semibold text-brand-800">{TEMPO_BEZEICHNUNG[reise.pace].titel}</dd>
+      {tag && (
+        <div className="mt-4 min-w-0 border-t border-line-200 pt-4">
+          {tagesKopf}
+          {tagesFelder}
         </div>
-        <div className="flex items-start justify-between gap-3">
-          <dt className="text-ink-700">Interessen</dt>
-          <dd className="min-w-0 break-words text-right font-semibold text-brand-800">
-            {reise.interests.length
-              ? reise.interests.map((wert) => INTERESSE_BEZEICHNUNG[wert]).join(', ')
-              : 'Noch offen'}
-          </dd>
+      )}
+
+      {timeline.ungeplante.length > 0 && (
+        <div className="mt-5 border-t border-line-200 pt-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-700">
+            Noch nicht eingeplant
+          </p>
+          <ol className="mt-4 space-y-3">
+            {timeline.ungeplante.map((punkt) => (
+              <Planpunkt
+                key={punkt.id}
+                punkt={punkt}
+                gesperrt={laeuft}
+                onEntfernen={() => entfernen('', punkt.id)}
+              />
+            ))}
+          </ol>
         </div>
-      </dl>
-      {reise.travelWish && (
-        <p className="mt-4 border-t border-line-100 pt-4 text-xs leading-5 text-ink-800">
-          „{reise.travelWish}“
-        </p>
       )}
     </section>
   )

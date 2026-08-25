@@ -5,6 +5,7 @@
 // Der Reise-Arbeitsbereich. Eine Produktlogik für alle Geräte (ADR-0163 / TW-1).
 // Die Übersicht verdichtet vorhandene Reise-Wahrheit (ADR-0164 / TW-2).
 // Jetzt wichtig priorisiert vorhandene Signale (ADR-0165 / TW-4).
+// Der Verlauf zeigt Etappen und Tage als Timeline (ADR-0166 / TW-3).
 //
 // Zuerst Orientierung, dann Aktion: Reisekopf, Bereichsnavigation, nur der
 // aktive Bereich. Die Übersicht ist die Reise-Ebene und enthält den Tagesplan.
