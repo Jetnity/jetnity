@@ -198,10 +198,14 @@ function seasonalTiming(): SeasonalEvaluation {
   }
 }
 
-function officialSauber(): OfficialEvaluation {
+function officialSauberFuer(
+  travellerClientRef: string,
+  credentialOptionRef: string,
+  teil: Partial<OfficialEvaluation> = {},
+): OfficialEvaluation {
   return {
-    travellerClientRef: 'traveller:1',
-    credentialOptionRef: 'cit:1',
+    travellerClientRef,
+    credentialOptionRef,
     destinationCountryCode: 'ID',
     transitCountryCode: null,
     requirementType: 'visa',
@@ -218,9 +222,41 @@ function officialSauber(): OfficialEvaluation {
       validFrom: null,
       validUntil: null,
       ruleReference: null,
-      contextFingerprint: 'fp-official',
+      contextFingerprint: `fp-official:${travellerClientRef}:${credentialOptionRef}`,
     },
     action: null,
+    ...teil,
+  }
+}
+
+function officialSauber(): OfficialEvaluation {
+  return officialSauberFuer('traveller:1', 'cit:1')
+}
+
+function officialVollstaendig(): OfficialEvaluation[] {
+  return [
+    officialSauberFuer('traveller:1', 'cit:1'),
+    officialSauberFuer('traveller:1', 'cit:2'),
+    officialSauberFuer('traveller:2', 'cit:3'),
+  ]
+}
+
+function officialUnavailableVollstaendig(): OfficialEvaluation[] {
+  return officialVollstaendig().map((eintrag) => ({
+    ...eintrag,
+    status: 'unavailable',
+    freshness: 'provider_unavailable',
+    result: 'unknown',
+  }))
+}
+
+function seasonalInsufficient(): SeasonalEvaluation {
+  return {
+    ...seasonalLeer(),
+    factId: 'seasonal:insufficient',
+    factKey: 'insufficient_context',
+    evidenceStatus: 'insufficient_context',
+    relevance: 'insufficient_context',
   }
 }
 
@@ -274,25 +310,31 @@ describe('Attention-Leerstände', () => {
   test('fehlende Safety-/Seasonal-Orchestrierung ist noch_nicht_geprueft, nicht clean und nicht unavailable', () => {
     const sicht = attentionAbleiten({
       reise: reiseOhneLuecken(),
-      officialEvaluations: [officialSauber()],
+      officialEvaluations: officialVollstaendig(),
       orchestriereSafety: false,
       orchestriereSeasonal: false,
     })
     assert.equal(sicht.leerstand, 'noch_nicht_geprueft')
     assert.equal(sicht.orchestrierung.safety, 'nicht_ausgefuehrt')
     assert.equal(sicht.orchestrierung.seasonal, 'nicht_ausgefuehrt')
-    assert.equal(sicht.punkte.length, 0)
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'safety.ungeprueft'), true)
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'seasonal.ungeprueft'), true)
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.lage === 'warning' || eintrag.lage === 'known_gap'), false)
     assert.notEqual(sicht.leerstand, 'nichts_dringend_geprueft')
     assert.notEqual(sicht.leerstand, 'pruefung_nicht_verfuegbar')
   })
 
   test('lokale Safety-/Seasonal-Evaluation im Produktpfad ist angebunden und unavailable, nicht ungeprüft', () => {
-    const sicht = attentionAbleiten({ reise: reise({ party: vollstaendigeParty() }) })
+    const sicht = attentionAbleiten({
+      reise: reise({ party: vollstaendigeParty() }),
+      officialEvaluations: officialVollstaendig(),
+    })
     assert.equal(sicht.orchestrierung.safety, 'angebunden')
     assert.equal(sicht.orchestrierung.seasonal, 'angebunden')
     assert.equal(sicht.punkte.some((eintrag) => eintrag.lage === 'ungeprueft'), false)
     assert.notEqual(sicht.leerstand, 'noch_nicht_geprueft')
     assert.notEqual(sicht.leerstand, 'nichts_dringend_geprueft')
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'safety.unavailable'), true)
     assert.equal(
       sicht.leerstand === 'pruefung_nicht_verfuegbar' ||
         sicht.punkte.some((eintrag) => eintrag.signal === 'safety.unavailable'),
@@ -305,7 +347,7 @@ describe('Attention-Leerstände', () => {
       reise: reiseOhneLuecken(),
       safetyEvaluations: [safetyLeer()],
       seasonalEvaluations: [seasonalLeer()],
-      officialEvaluations: [officialSauber()],
+      officialEvaluations: officialVollstaendig(),
     })
     assert.equal(sicht.leerstand, 'nichts_dringend_geprueft')
     assert.equal(sicht.punkte.length, 0)
@@ -336,10 +378,11 @@ describe('Attention-Leerstände', () => {
       reise: reiseOhneLuecken(),
       safetyEvaluations: [safetyUnavailable()],
       seasonalEvaluations: [{ ...seasonalLeer(), evidenceStatus: 'unavailable', freshness: 'provider_unavailable' }],
-      officialEvaluations: [officialSauber()],
+      officialEvaluations: officialVollstaendig(),
     })
     assert.equal(sicht.leerstand, 'pruefung_nicht_verfuegbar')
-    assert.equal(sicht.punkte.length, 0)
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'safety.unavailable'), true)
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'seasonal.unavailable'), true)
     assert.notEqual(sicht.leerstand, 'noch_nicht_geprueft')
     assert.notEqual(sicht.leerstand, 'nichts_dringend_geprueft')
   })
@@ -433,7 +476,7 @@ describe('TW-4 Review-Regression', () => {
       reise: reiseOhneLuecken(),
       safetyEvaluations: [safetyWarnung('critical_warning', 'safe-crit')],
       seasonalEvaluations: [seasonalLeer()],
-      officialEvaluations: [officialSauber()],
+      officialEvaluations: officialVollstaendig(),
     })
     assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'safety.critical_warning'), true)
     assert.equal(sicht.leerstand, null)
@@ -457,7 +500,7 @@ describe('TW-4 Review-Regression', () => {
       }),
       safetyEvaluations: [safetyLeer()],
       seasonalEvaluations: [seasonalLeer()],
-      officialEvaluations: [officialSauber()],
+      officialEvaluations: officialVollstaendig(),
     })
     assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'coverage.unterkunft' || eintrag.signal === 'coverage.fluege'), true)
     assert.equal(sicht.leerstand, null)
@@ -469,7 +512,7 @@ describe('TW-4 Review-Regression', () => {
       reise: reiseOhneLuecken(),
       safetyEvaluations: [{ ...safetyLeer(), factId: 'safe-err', conflict: true, factKey: 'partial_invalid' }],
       seasonalEvaluations: [seasonalLeer()],
-      officialEvaluations: [officialSauber()],
+      officialEvaluations: officialVollstaendig(),
     })
     assert.equal(sicht.punkte.some((eintrag) => eintrag.lage === 'error'), true)
     assert.equal(sicht.leerstand, null)
@@ -481,7 +524,7 @@ describe('TW-4 Review-Regression', () => {
       reise: reiseOhneLuecken(),
       safetyEvaluations: [{ ...safetyLeer(), factId: 'safe-stale', freshness: 'stale', evidenceStatus: 'current', relevance: 'not_affected' }],
       seasonalEvaluations: [{ ...seasonalLeer(), factId: 'sea-stale', freshness: 'recheck_needed', evidenceStatus: 'current', relevance: 'not_applies' }],
-      officialEvaluations: [officialSauber()],
+      officialEvaluations: officialVollstaendig(),
     })
     assert.equal(stale.punkte.filter((eintrag) => eintrag.lage === 'stale').length >= 2, true)
     assert.equal(stale.punkte.some((eintrag) => eintrag.lage === 'unknown'), false)
@@ -492,7 +535,7 @@ describe('TW-4 Review-Regression', () => {
       reise: reiseOhneLuecken(),
       safetyEvaluations: [{ ...safetyLeer(), factId: 'safe-unk', evidenceStatus: 'unknown', relevance: 'unknown', freshness: 'current' }],
       seasonalEvaluations: [{ ...seasonalLeer(), factId: 'sea-unk', evidenceStatus: 'unknown', relevance: 'unknown', freshness: 'current' }],
-      officialEvaluations: [officialSauber()],
+      officialEvaluations: officialVollstaendig(),
     })
     assert.equal(unknown.punkte.some((eintrag) => eintrag.signal === 'safety.unknown' && eintrag.lage === 'unknown'), true)
     assert.equal(unknown.punkte.some((eintrag) => eintrag.signal === 'seasonal.unknown' && eintrag.lage === 'unknown'), true)
@@ -505,10 +548,11 @@ describe('TW-4 Review-Regression', () => {
       reise: reiseOhneLuecken(),
       safetyEvaluations: [{ ...safetyLeer(), factId: 'safe-miss', evidenceStatus: 'insufficient_context', relevance: 'insufficient_context' }],
       seasonalEvaluations: [{ ...seasonalLeer(), factId: 'sea-miss', evidenceStatus: 'insufficient_context', relevance: 'insufficient_context' }],
-      officialEvaluations: [officialSauber()],
+      officialEvaluations: officialVollstaendig(),
     })
     assert.equal(unzureichend.leerstand, 'noch_nicht_pruefbar')
-    assert.equal(unzureichend.punkte.length, 0)
+    assert.equal(unzureichend.punkte.some((eintrag) => eintrag.signal === 'safety.insufficient_context'), true)
+    assert.equal(unzureichend.punkte.some((eintrag) => eintrag.signal === 'seasonal.insufficient_context'), true)
     assert.notEqual(unzureichend.leerstand, 'nichts_dringend_geprueft')
   })
 
@@ -527,7 +571,7 @@ describe('TW-4 Review-Regression', () => {
         },
       ],
       seasonalEvaluations: [seasonalLeer()],
-      officialEvaluations: [officialSauber()],
+      officialEvaluations: officialVollstaendig(),
     })
     assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'safety.critical_warning'), true)
     assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'safety.insufficient_context'), true)
@@ -567,5 +611,78 @@ describe('Citizenship, Guest/Account, Side Effects', () => {
   test('0 Aktivitäten werden nicht zum Attention-Punkt', () => {
     const sicht = attentionAbleiten({ reise: reise() })
     assert.equal(sicht.punkte.some((eintrag) => eintrag.signal.includes('aktivitaeten')), false)
+  })
+})
+
+describe('TW-4 Completeness und gemischte Degraded States', () => {
+  test('eine Official-Evaluation bei 2 Travellern und 3 Citizenship-Optionen ist nie clean', () => {
+    const unvollstaendig = attentionAbleiten({
+      reise: reiseOhneLuecken(),
+      safetyEvaluations: [safetyLeer()],
+      seasonalEvaluations: [seasonalLeer()],
+      officialEvaluations: [officialSauber()],
+    })
+    assert.notEqual(unvollstaendig.leerstand, 'nichts_dringend_geprueft')
+    assert.equal(unvollstaendig.punkte.some((eintrag) => eintrag.signal === 'official.ungeprueft'), true)
+    assert.equal(unvollstaendig.punkte.some((eintrag) => eintrag.lage === 'warning'), false)
+
+    const vollstaendig = attentionAbleiten({
+      reise: reiseOhneLuecken(),
+      safetyEvaluations: [safetyLeer()],
+      seasonalEvaluations: [seasonalLeer()],
+      officialEvaluations: officialVollstaendig(),
+    })
+    assert.equal(vollstaendig.leerstand, 'nichts_dringend_geprueft')
+    assert.equal(vollstaendig.punkte.length, 0)
+  })
+
+  test('Safety unavailable und Seasonal insufficient_context bleiben beide erkennbar', () => {
+    const sicht = attentionAbleiten({
+      reise: reiseOhneLuecken(),
+      safetyEvaluations: [safetyUnavailable()],
+      seasonalEvaluations: [seasonalInsufficient()],
+      officialEvaluations: officialVollstaendig(),
+    })
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'safety.unavailable' && eintrag.lage === 'unavailable'), true)
+    assert.equal(
+      sicht.punkte.some((eintrag) => eintrag.signal === 'seasonal.insufficient_context' && eintrag.lage === 'insufficient_context'),
+      true,
+    )
+    assert.equal(
+      sicht.punkte.some((eintrag) =>
+        eintrag.lage === 'warning' ||
+        eintrag.lage === 'known_gap' ||
+        eintrag.lage === 'stale' ||
+        eintrag.lage === 'error' ||
+        eintrag.lage === 'unknown',
+      ),
+      false,
+    )
+    assert.equal(sicht.leerstand, 'noch_nicht_pruefbar')
+    assert.notEqual(sicht.leerstand, 'nichts_dringend_geprueft')
+  })
+
+  test('Safety/Seasonal ungeprüft und Official unavailable bleiben beide erkennbar', () => {
+    const sicht = attentionAbleiten({
+      reise: reiseOhneLuecken(),
+      officialEvaluations: officialUnavailableVollstaendig(),
+      orchestriereSafety: false,
+      orchestriereSeasonal: false,
+    })
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'safety.ungeprueft' && eintrag.lage === 'ungeprueft'), true)
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'seasonal.ungeprueft' && eintrag.lage === 'ungeprueft'), true)
+    assert.equal(sicht.punkte.some((eintrag) => eintrag.signal === 'official.unavailable' && eintrag.lage === 'unavailable'), true)
+    assert.equal(
+      sicht.punkte.some((eintrag) =>
+        eintrag.lage === 'warning' ||
+        eintrag.lage === 'known_gap' ||
+        eintrag.lage === 'stale' ||
+        eintrag.lage === 'error' ||
+        eintrag.lage === 'unknown',
+      ),
+      false,
+    )
+    assert.equal(sicht.leerstand, 'noch_nicht_geprueft')
+    assert.notEqual(sicht.leerstand, 'nichts_dringend_geprueft')
   })
 })

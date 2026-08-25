@@ -47,7 +47,8 @@ export default function TripWorkspaceJetztWichtig({
       <h3 className="mt-1 text-base font-semibold tracking-[-0.02em] text-brand-800 break-words hyphens-auto">
         Was jetzt Aufmerksamkeit braucht
       </h3>
-      {attention.leerstand && attention.punkte.length === 0 ? (
+      {attention.leerstand &&
+      (attention.leerstand !== 'nichts_dringend_geprueft' || attention.punkte.length === 0) ? (
         <p className="mt-1 text-sm leading-6 text-ink-800 break-words hyphens-auto">
           {LEERSTAND_TEXT[attention.leerstand]}
         </p>
