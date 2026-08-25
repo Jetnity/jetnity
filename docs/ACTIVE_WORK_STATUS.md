@@ -85,7 +85,7 @@ TW-5 abgeschlossen und integriert. Wartet auf nächste freigegebene Trip-Workspa
 
 ### `Jetnity growth discoverability`
 
-Reserviert. Aktivierung erst nach erneuter Abhängigkeitsprüfung von Public-/Workspace-Truth und D0/G0-Bedingungen.
+D0/G0 Foundation Audit auf Branch `audit/growth-discoverability-d0-g0-foundation` / Draft-PR #69 **ausgeführt**. Bericht: `docs/GROWTH_DISCOVERABILITY_D0_G0_AUDIT.md`. Docs-only, keine Runtime. **STOPP** für unabhängigen Technical-Lead-Review. Kein Ready, kein Merge, keine D0/G0-Runtime und keine D1/G1+ aus diesem Slice.
 
 ### `Jetnity quality security audit`
 
