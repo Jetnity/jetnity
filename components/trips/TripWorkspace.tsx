@@ -219,8 +219,8 @@ export default function TripWorkspace({
   }, [reise])
 
   React.useEffect(() => {
-    setAuswahl((bisher) => detailBereinigen(bisher, reise, ungeplantePunkte))
-  }, [reise, ungeplantePunkte])
+    setAuswahl((bisher) => detailBereinigen(bisher, reise, ohneTag.length > 0 ? ohneTag : reise.ohneTag))
+  }, [reise, ohneTag])
 
   React.useEffect(() => {
     if (!kompakt) setAenderungBereit(true)
@@ -228,13 +228,15 @@ export default function TripWorkspace({
 
   React.useEffect(() => {
     if (detailOffen && !vorherOffenRef.current) {
-      detailFokusRef.current?.focus()
+      const ziel = kompakt ? zurueckRef.current : detailFokusRef.current
+      ziel?.focus()
+      detailFokusRef.current?.scrollIntoView({ block: 'nearest' })
     }
     if (!detailOffen && vorherOffenRef.current) {
       letzterAusloeserRef.current?.focus?.()
     }
     vorherOffenRef.current = detailOffen
-  }, [detailOffen])
+  }, [detailOffen, kompakt])
 
   const merkeAusloeser = () => {
     const aktiv = document.activeElement
@@ -425,60 +427,64 @@ export default function TripWorkspace({
                   fokusRef={detailFokusRef}
                 />
               ) : null}
-
-              {flugBestandBereit && (
-                <FlaecheHuelle
-                  name="fluege"
-                  verborgen={aktiveDomain !== 'fluege'}
-                  sichtbarKlasse="mt-4 grid gap-6"
-                >
-                  <FlugBestand reise={reise} ohneTag={ungeplantePunkte} onBuchungsstatus={onBuchungsstatus} />
-                </FlaecheHuelle>
-              )}
-              {hotelBestandBereit && (
-                <FlaecheHuelle
-                  name="unterkunft"
-                  verborgen={aktiveDomain !== 'unterkunft'}
-                  sichtbarKlasse="mt-4 grid gap-6"
-                >
-                  <UnterkunftBestand reise={reise} ohneTag={ungeplantePunkte} onBuchungsstatus={onBuchungsstatus} />
-                </FlaecheHuelle>
-              )}
-              {mobilitaetBereit && mobilitaetssuche && (
-                <FlaecheHuelle name="mobilitaet" verborgen={aktiveDomain !== 'mobilitaet'} sichtbarKlasse="mt-4">
-                  {mobilitaetssuche}
-                </FlaecheHuelle>
-              )}
-              {flugSucheBereit && flugsuche && (
-                <FlaecheHuelle
-                  name="flugsuche"
-                  verborgen={aktiveDomain !== 'fluege' || !sucheSichtbar}
-                  sichtbarKlasse="mt-4"
-                >
-                  {flugsuche}
-                </FlaecheHuelle>
-              )}
-              {hotelSucheBereit && hotelsuche && (
-                <FlaecheHuelle
-                  name="hotelsuche"
-                  verborgen={aktiveDomain !== 'unterkunft' || !sucheSichtbar}
-                  sichtbarKlasse="mt-4"
-                >
-                  {hotelsuche}
-                </FlaecheHuelle>
-              )}
-              {aktivitaetenSucheBereit && aktivitaeten && (
-                <FlaecheHuelle
-                  name="aktivitaeten"
-                  verborgen={aktiveDomain !== 'aktivitaeten' || !sucheSichtbar}
-                  sichtbarKlasse="mt-4"
-                >
-                  {aktivitaeten}
-                </FlaecheHuelle>
-              )}
             </div>
           </FlaecheHuelle>
         </div>
+
+        {flugBestandBereit && (
+          <FlaecheHuelle
+            name="fluege"
+            verborgen={!detailOffen || aktiveDomain !== 'fluege'}
+            sichtbarKlasse="mt-4 grid gap-6"
+          >
+            <FlugBestand reise={reise} ohneTag={ungeplantePunkte} onBuchungsstatus={onBuchungsstatus} />
+          </FlaecheHuelle>
+        )}
+        {hotelBestandBereit && (
+          <FlaecheHuelle
+            name="unterkunft"
+            verborgen={!detailOffen || aktiveDomain !== 'unterkunft'}
+            sichtbarKlasse="mt-4 grid gap-6"
+          >
+            <UnterkunftBestand reise={reise} ohneTag={ungeplantePunkte} onBuchungsstatus={onBuchungsstatus} />
+          </FlaecheHuelle>
+        )}
+        {mobilitaetBereit && mobilitaetssuche && (
+          <FlaecheHuelle
+            name="mobilitaet"
+            verborgen={!detailOffen || aktiveDomain !== 'mobilitaet'}
+            sichtbarKlasse="mt-4"
+          >
+            {mobilitaetssuche}
+          </FlaecheHuelle>
+        )}
+        {flugSucheBereit && flugsuche && (
+          <FlaecheHuelle
+            name="flugsuche"
+            verborgen={!detailOffen || aktiveDomain !== 'fluege' || !sucheSichtbar}
+            sichtbarKlasse="mt-4"
+          >
+            {flugsuche}
+          </FlaecheHuelle>
+        )}
+        {hotelSucheBereit && hotelsuche && (
+          <FlaecheHuelle
+            name="hotelsuche"
+            verborgen={!detailOffen || aktiveDomain !== 'unterkunft' || !sucheSichtbar}
+            sichtbarKlasse="mt-4"
+          >
+            {hotelsuche}
+          </FlaecheHuelle>
+        )}
+        {aktivitaetenSucheBereit && aktivitaeten && (
+          <FlaecheHuelle
+            name="aktivitaeten"
+            verborgen={!detailOffen || aktiveDomain !== 'aktivitaeten' || !sucheSichtbar}
+            sichtbarKlasse="mt-4"
+          >
+            {aktivitaeten}
+          </FlaecheHuelle>
+        )}
       </div>
     </main>
   )

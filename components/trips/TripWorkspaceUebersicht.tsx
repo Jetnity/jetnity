@@ -77,7 +77,7 @@ export default function TripWorkspaceUebersicht({
                 type="button"
                 aria-label={ARBEITSBEREICH_BEZEICHNUNG[eintrag.bereich]}
                 onClick={() => onLuecke(eintrag.bereich)}
-                className="flex min-h-11 w-full items-center gap-3 rounded-2xl border border-line-200 bg-white px-3 py-3 text-left transition hover:border-line-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
+                className="flex min-h-11 w-full items-center gap-3 rounded-2xl border border-line-200 bg-white px-3 py-3 text-left transition hover:border-line-400 focus:outline-none focus:ring-4 focus:ring-brand-600/15 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15"
               >
                 <span
                   className={cn(

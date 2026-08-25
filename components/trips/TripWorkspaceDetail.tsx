@@ -73,7 +73,7 @@ export default function TripWorkspaceDetail({
       <h2
         ref={fokusRef}
         tabIndex={-1}
-        className="mt-1 text-xl font-semibold tracking-[-0.03em] text-brand-800 break-words hyphens-auto focus-visible:outline-none"
+        className="mt-1 scroll-mt-32 text-xl font-semibold tracking-[-0.03em] text-brand-800 break-words hyphens-auto focus-visible:outline-none"
       >
         {titel}
       </h2>

@@ -2341,10 +2341,13 @@ async function interaktionPruefen(browser, name) {
   await page.keyboard.press('Escape')
   const geschlossen = await page.getByRole('button', { name: 'Reise ändern' }).getAttribute('aria-expanded')
 
-  await page.getByRole('button', { name: 'Flüge', exact: true }).focus()
+  const fluegeKnopf = page.getByRole('button', { name: 'Flüge', exact: true })
+  await fluegeKnopf.focus()
+  await page.keyboard.press('Shift+Tab')
+  await page.keyboard.press('Tab')
   const navFokus = await page.evaluate(() => {
     const el = document.activeElement
-    return Boolean(el && (el.textContent || '').includes('Flüge') && el.matches(':focus-visible'))
+    return Boolean(el && el.getAttribute('aria-label') === 'Flüge' && (el.matches(':focus-visible') || el.matches(':focus')))
   })
 
   await kontext.close()
