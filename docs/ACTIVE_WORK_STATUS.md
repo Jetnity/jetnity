@@ -1,113 +1,105 @@
 # Jetnity – Active Work Status
 
 Stand: 25. August 2026  
-Status: **TW-1, TW-2, TW-4 und TW-3 sind auf `main` integriert. Der TW-4→TW-3-Integrationscheckpoint ist erreicht. Nächster primärer Workspace-Slice: TW-5 – Item- und Gap-Details.**
+Status: **TW-1, TW-2, TW-4 und TW-3 sind auf `main` integriert. Post-TW-3 Continuity ist mit PR #65 geschlossen. Aktiver Slice: TW-5 – Item- und Gap-Details, Draft-PR #66; Runtime noch nicht gestartet.**
 
-## 0. Verifizierte Runtime-Baseline
+## 0. Verifizierte Baseline
 
-Letzter verifizierter Runtime-Merge auf `main` vor diesem docs-only Continuity-Update:
+Aktueller verifizierter `main` beim Öffnen von TW-5:
 
-`16a4c77a53cff9e8638a68f5dd8c77122bf13b48`
+`bee9f653d7d83dfbafbf9b9c1da6385433071a4a`
+
+Dieser Commit ist der Merge von PR #65 `docs: repair post-TW3 canonical continuity`.
 
 Integriert:
 
-- PR #56 – TW-1 Shell & Geräteparität: merged
-- PR #58 – TW-2 Reiseübersicht: merged
-- PR #59 – Marketing & Growth Standards: merged
-- PR #60 – TW-4 Aufmerksamkeit / Jetzt wichtig: merged; Merge-Commit `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f`
-- PR #64 – TW-3 Timeline / Etappe / Tag: merged; Merge-Commit `16a4c77a53cff9e8638a68f5dd8c77122bf13b48`
+- PR #56 – TW-1 Shell & Geräteparität
+- PR #58 – TW-2 Reiseübersicht
+- PR #59 – Marketing & Growth Standards
+- PR #60 – TW-4 Aufmerksamkeit / Jetzt wichtig; Merge `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f`
+- PR #64 – TW-3 Timeline / Etappe / Tag; Merge `16a4c77a53cff9e8638a68f5dd8c77122bf13b48`
+- PR #65 – post-TW-3 Continuity; Merge `bee9f653d7d83dfbafbf9b9c1da6385433071a4a`
 
 TW-3 finaler PR-Head:
 
 `f55db2b0682981f293390b44e704b513476703bf`
 
-Independent Technical-Lead Result: **PASS / Technical Integration Closure**.
+TW-3 Independent Technical-Lead Result: **PASS / Technical Integration Closure**.
 
-Exact-Head Evidence:
+PR #65 Exact Head:
 
-- gezielte TW-3-Tests: 10/10
-- `npm test`: 1953/1953
-- Production Build: grün
-- `npm run audit:trip-workspace`: 1018/1018, 0 Fehler
-- GitHub Actions CI `32861784215`: SUCCESS
-- Vercel Exact-Head Preview: READY
-- Vercel Production auf Merge-Commit `16a4c77...`: READY
-- offene PR-#64-Review-Threads: 0
+`bc6fedcb0591d79f06dbc0f8aad0415e5e1a2c40`
+
+PR #65 Technical-Lead Result: **PASS / Continuity Closure**; Exact-Head CI SUCCESS, Vercel READY, 0 behind `main`, keine Runtime-/DB-/Shared-Contract-Änderung.
 
 PR #52 bleibt historischer docs-only Continuity-Draft und ist kein Runtime-Träger.
 
-## 1. Aktiver/nächster Workstream – Trip Workspace TW-5
+## 1. Aktiver Workstream – Trip Workspace TW-5
 
 Verantwortlicher Cursor-Anzeigename:
 
 `Trip workspace audit architecture`
 
-Nächster Slice:
+Slice:
 
 **TW-5 – Item- und Gap-Details**
 
-Vorbereiteter Branch:
+Branch:
 
 `feat/trip-workspace-tw5-item-gap-details`
 
-Live-Stand beim Continuity-Check:
+Draft-PR:
 
-- Branch existiert;
-- Branch-Head = Runtime-Baseline `16a4c77...`;
-- noch kein TW-5-Runtime-Commit;
-- noch kein TW-5-PR;
-- Cursor-Agent für TW-5 noch nicht neu angestoßen.
+**#66 – `Trip Workspace TW-5 – Item- und Gap-Details`**
 
-Vor Runtime-Start werden versioniert:
+Verbindliche Control Docs:
 
-- TW-5 ADR/Entscheidungsrahmen;
-- TW-5 Task;
-- TW-5 Status;
-- Scope und Non-Scope;
-- Shared-Contract-Grenzen;
-- Acceptance Criteria;
-- Tests/Gates;
-- Draft-PR;
-- STOPP-Punkt für unabhängigen Technical-Lead-Review.
+- `docs/ADR_0167_TRIP_WORKSPACE_TW5_ITEM_GAP_DETAILS.md`
+- `docs/TRIP_WORKSPACE_TW5_TASK.md`
+- `docs/TRIP_WORKSPACE_TW5_STATUS.md`
+
+Aktueller Zustand:
+
+- Branch vor TW-5-Control-Docs auf `main` `bee9f653...` fast-forward synchronisiert;
+- ADR/Task/Status versioniert;
+- Draft-PR #66 offen;
+- **noch kein TW-5-Runtime-Code**;
+- Cursor-Agent noch nicht mit TW-5 gestartet;
+- Draft bleibt bis nach Agent-Self-Review, Exact-Head-Gates und unabhängigem Technical-Lead-PASS Draft.
 
 ### TW-5 fachlicher Kern
 
-TW-5 hängt vorhandene Flight-/Unterkunft-/Aktivitäten-/Mobilitätsflächen als **Details einer Reise-, Coverage- oder Attention-Lücke** ein, statt wieder eine modulzentrierte Haupt-IA aufzubauen.
+Die aktuelle Runtime besitzt noch die Übergangs-Domain-Navigation `Übersicht / Flüge / Unterkunft / Aktivitäten / Mobilität` als gleichrangige Sticky-Navigation. Coverage-/Attention-Aktionen wechseln nur in diese Bereiche; Timeline-Items öffnen noch kein Detail.
 
-Erlaubt:
+TW-5 führt eine kleine workspace-lokale Detail-/Intent-Schicht ein:
 
-- bestehende `FlugBestand`, `HotelBereich`, `AktivitaetenBereich`, `MobilitaetBereich` wiederverwenden;
-- vorhandene Lazy-Search-Mounts erhalten;
-- Details kontextbezogen aus der Reise-/Gap-Oberfläche öffnen.
+- Gap-Details aus vorhandener Coverage/Attention;
+- Item-Details aus vorhandenen Timeline-/`ohneTag`-Items;
+- bestehende `FlugBestand`-/`UnterkunftBestand`- und Search-Flächen wiederverwenden;
+- Commercial-Suchen nur explizit on-demand/lazy mounten;
+- Domain-Flächen nicht als konkurrierende Haupt-IA führen;
+- keine neue fachliche Wahrheit persistieren.
 
 Nicht erlaubt:
 
-- Live-Provider oder Provideraktivierung;
-- Fake-Preise/Fake-Verfügbarkeit;
-- Live-Mobility-/Rental-Adapter vortäuschen;
+- Live-Provider/Provideraktivierung;
+- Fake-Preise/Fake-Verfügbarkeit/Fake-Provider-Health;
 - manuelle Flüge als nachgewiesene Angebote darstellen;
-- stilles `ZRH` oder andere erfundene Herkunftsdefaults;
+- stilles `ZRH` oder andere erfundene Herkunfts-/Airport-Defaults;
 - DB/Migration/RLS/Auth/Traveller-/Route-Neumodellierung;
+- Citizenship-only Credential Option;
 - neuer `trips.status`;
-- Guardian/Simulator;
-- Homepage-/Marketing-Runtime;
+- Guardian/Simulator/Value;
+- Homepage-/Marketing-/Growth-/Native-Runtime;
 - TW-6+ Scope-Creep.
 
 ## 2. Erreichter Integrationscheckpoint
 
-Der kanonisch gewünschte Checkpoint ist erreicht:
+Der kanonische Checkpoint ist erreicht:
 
 **TW-4 ✅ → TW-3 ✅ → Technical-Lead-Integrationscheckpoint**
 
-Damit darf der Technical Lead breitere konfliktarme Parallelisierung prüfen. Sie wird nicht automatisch geöffnet.
-
-Vor Parallelisierung muss geprüft werden:
-
-- keine Shared-Contract-Kollision;
-- geringe File-/Surface-Überschneidung;
-- getrennte Branches/Draft-PRs;
-- klare Merge-Reihenfolge;
-- jeder Agent eigener Task/Status/Gates/STOPP.
+Breitere konfliktarme Parallelisierung ist grundsätzlich prüfbar, wird aber aktuell **nicht automatisch geöffnet**. TW-5 bleibt der primäre Runtime-Workstream, bis der Technical Lead bewusst weitere konfliktarme Arbeit freigibt.
 
 ## 3. Wartende Workstreams
 
@@ -116,7 +108,7 @@ Vor Parallelisierung muss geprüft werden:
 Agent: `Account plattform audit vorbereitung`
 
 - AP-1 bis AP-3 sind auf `main`.
-- AP-4 bis AP-12 warten gemäß verbindlicher Build Order auf den vorgesehenen Traveller-/Account-Block.
+- AP-4 bis AP-12 warten gemäß verbindlicher Build Order.
 - Multi-Citizenship/Multi-Document bleibt Pflicht; kein impliziter Default-Pass.
 
 ### Provider Readiness
@@ -143,7 +135,7 @@ Reserviert; noch nicht starten, bis Public-/Workspace-Truth und die vorgesehenen
 
 ### `Jetnity quality security audit`
 
-Reserviert als unabhängige QA/Security/Resilience/Release-Prüfinstanz. Der erreichte Integrationscheckpoint erlaubt einen gezielten späteren Audit, wenn mehrere Runtime-Workstreams parallel geöffnet werden oder ein relevanter Cross-Domain-Checkpoint ansteht.
+Reserviert als unabhängige QA/Security/Resilience/Release-Prüfinstanz. Gezielte Aktivierung an einem stabilen Cross-Domain-/Multi-Agent-Checkpoint möglich; nicht als allgemeiner Feature-Entwickler.
 
 ### `Jetnity native app architecture`
 
@@ -164,33 +156,31 @@ Technical-Lead-kontrolliert bleiben insbesondere:
 - Attribution / Revenue / Claims Truth
 - Guardian / Simulator / Value Impact
 
-Ein möglicher späterer **Citizenship-only Credential-Option**-Contract ist aus TW-4 als Shared-Contract-Bedarf dokumentiert. Er ist **kein aktueller TW-5-Blocker** und darf in TW-5 nicht still erfunden werden.
+Ein möglicher späterer **Citizenship-only Credential-Option**-Contract aus TW-4 bleibt außerhalb von TW-5 und ist kein aktueller Blocker.
 
 ## 6. Production / Supabase
 
 Supabase Production:
 
-`qscbgcdmivbbnzrcyegn`
-
-Live verifiziert: ACTIVE_HEALTHY.
+`qscbgcdmivbbnzrcyegn` – live beim Continuity-Check `ACTIVE_HEALTHY`.
 
 Production enthält bis einschließlich:
 
 - `20260824120000_flug_route_itinerary_surface_evidence`
 - `20260824140000_flug_route_itinerary_untrusted_surface`
 
-Supabase Development enthält zusätzlich:
+Development enthält zusätzlich:
 
 - `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`
 - `20260824180000_trip_items_flug_handelsfelder_guard`
 
-Diese beiden Development-Migrationen sind **nicht Production-approved**. Keine eigenmächtige Production-Anwendung.
+Diese beiden Development-Migrationen sind **nicht Production-approved** und gehören nicht zu TW-5.
 
-TW-3 selbst brachte keine DB-/Migration-/RLS-/Auth-/Traveller-/Provider-/Secret-Änderung.
+TW-5 plant keine DB-/Migration-/RLS-/Auth-/Traveller-/Provider-/Secret-Änderung.
 
 ## 7. Kosten und besondere Product-Owner-Gates
 
-Aktuell kein neues TW-5-Kostengate.
+Aktuell kein TW-5-Kostengate und kein besonderes Product-Owner-Gate offen.
 
 Product-Owner-Freigabe bleibt zwingend insbesondere für:
 
@@ -211,15 +201,22 @@ Normale scope-treue PRs dürfen nach vollständigen Exact-Head-Gates und unabhä
 
 - `main` Branch Protection ist live weiterhin **nicht aktiviert**.
 - Historische offene PRs wie #52, #50, #40, #39 oder #28 sind nicht automatisch aktive Runtime-Slices.
-- Ältere Slice-Statusdateien können pre-merge Evidence enthalten und dürfen diesen aktuellen operativen Stand nicht überschreiben.
+- einzelne ältere Detaildokumente können historische/pre-merge Statusformulierungen enthalten; Start Here, Active Work, Handoff und Live-Systeme bestimmen die operative Wahrheit.
 
 ## 9. Exakter nächster Schritt
 
-1. Post-TW-3-Continuity auf den echten Live-Stand korrigieren.
-2. TW-5-ADR/Task/Status auf `feat/trip-workspace-tw5-item-gap-details` versionieren.
-3. TW-5 Draft-PR eröffnen.
-4. Erst danach `Trip workspace audit architecture` in Cursor mit dem versionierten Auftrag anstoßen.
-5. Agent implementiert + adversarial Self-Review + Exact-Head-Evidence.
-6. STOPP für unabhängigen ChatGPT/Technical-Lead-Review.
+**Jetzt muss der Product Owner genau einmal manuell in Cursor starten:**
 
-Bis Schritt 4 muss der Product Owner in Cursor nichts manuell starten.
+`Trip workspace audit architecture`
+
+Der Agent liest zuerst:
+
+1. `JETNITY_START_HERE.md`
+2. `docs/ADR_0167_TRIP_WORKSPACE_TW5_ITEM_GAP_DETAILS.md`
+3. `docs/TRIP_WORKSPACE_TW5_TASK.md`
+4. `docs/TRIP_WORKSPACE_TW5_STATUS.md`
+5. Draft-PR #66 und aktuellen `main` live.
+
+Dann implementiert er TW-5 bis zum dokumentierten STOPP.
+
+Nach Agent-Self-Review/Exact-Head-Evidence: **kein Ready, kein Merge, kein TW-6**; ChatGPT/Technical Lead führt den unabhängigen Re-Review durch.
