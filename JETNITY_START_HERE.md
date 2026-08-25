@@ -7,11 +7,12 @@ Wenn du als neuer Chat, Technical Lead oder Coding Agent Jetnity übernimmst, li
 
 1. `JETNITY_START_HERE.md`
 2. `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
-3. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-4. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
-5. `JETNITY_HANDOFF.md`
-6. `docs/ACTIVE_WORK_STATUS.md`
-7. den aktuellen Slice-Task/Status/Handoff
+3. `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`
+4. `docs/JETNITY_BINDING_BUILD_ORDER.md`
+5. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
+6. `JETNITY_HANDOFF.md`
+7. `docs/ACTIVE_WORK_STATUS.md`
+8. den aktuellen Slice-Task/Status/Handoff
 
 Danach GitHub/CI/Vercel/Supabase live verifizieren. Historische Handoffs, alte PR-Bodies und ältere Statuszeilen sind Evidence ihres Zeitpunkts und dürfen diese aktuellere operative Wahrheit nicht überschreiben.
 
@@ -22,6 +23,14 @@ Jetnity muss hervorragend gebaut werden. Das ist eine ausdrückliche Product-Own
 Verbindlich sind insbesondere: produktionsreifer und wartbarer Code, ehrliche Datenwahrheit, starke Security/Privacy, professionelle UX auf Mobile/Tablet/Desktop, Accessibility, Performance, Multi-Citizenship ohne impliziten Standard-Pass, vollständige relevante Tests/Gates sowie adversarial Self-Review und unabhängiger Technical-Lead-Review. Geschwindigkeit darf diese Qualitätsgrenzen nicht unterlaufen.
 
 Kanonisch: `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`.
+
+## Verbindliche Produktpositionierung
+
+Jetnity soll **nicht der Reiseplaner mit den meisten sichtbaren Funktionen** werden, sondern der Reiseplaner, bei dem Nutzer **am wenigsten selbst zusammensuchen, vergleichen, koordinieren und nachdenken müssen**.
+
+Leitsatz: **Eine Reise, eine Oberfläche. Komplexität intern, Klarheit für den Nutzer.** Die Fachdomänen und späteren Provider-/Truth-Systeme werden im Hintergrund sauber getrennt, erscheinen für den Nutzer aber als ein zusammenhängendes Reiseprodukt. Mehr Funktionen sind nur dann ein Vorteil, wenn sie echte Nutzerarbeit, Unsicherheit oder Recherche reduzieren.
+
+Kanonisch: `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`.
 
 ## Aktuelle operative Wahrheit
 
