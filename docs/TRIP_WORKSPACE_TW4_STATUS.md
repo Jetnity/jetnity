@@ -1,7 +1,9 @@
 # Trip Workspace TW-4 – Status
 
 Stand: 25. August 2026  
-Status: **Official-Requirement-Key-Fix nach Review `5018945518` umgesetzt / Draft / STOPP für erneuten unabhängigen Technical-Lead-Re-Review**
+Status: **historisch abgeschlossen. TW-4 / PR #60 ist auf `main` gemergt (Merge-Commit `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f`). Aktiver Slice ist TW-3.**
+
+Die folgenden Abschnitte bleiben die pre-merge Evidence von Draft-PR #60 und dürfen den gemergten Stand nicht überschreiben.
 
 ## Identität
 

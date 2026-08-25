@@ -128,14 +128,15 @@ Kanonisch und vollständig: `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`.
 - PR #57 – Technical-Lead-Autonomie + verbindliche Build-Reihenfolge: **merged**.
 - PR #56 – Trip Workspace TW-1 – Shell & Geräteparität: **merged**.
 - PR #58 – Trip Workspace TW-2 – Reiseübersicht: **merged** nach unabhängigem Technical-Lead-PASS auf Exact Head `3f2c55357a7a2425ab760aac2a29ddbe15f80fa8`; CI, Vercel und Trip-Workspace-UI-Audit 1018/1018 waren grün.
-- **Aktiver Runtime-Slice: PR #60 – TW-4 Aufmerksamkeit / `Jetzt wichtig`.** Reviews `5017458023`, `5018115879` und `5018504776` sind behoben. Review `5018945518` (kanonische Official-Requirement-Keys inkl. Typ und Transit) ist im Branch behoben. Draft bleibt Draft; STOPP für erneuten unabhängigen Technical-Lead-Re-Review.
+- **TW-4 / PR #60 ist auf `main` gemergt.** Merge-Commit: `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f`. Historische Draft-/Re-Review-Texte in älteren Slice-Statusdateien sind pre-merge Evidence.
+- **Aktiver Runtime-Slice: TW-3 – Timeline / Etappe / Tag** auf `feat/trip-workspace-tw3-timeline`. Kein TW-5.
 - `Account plattform audit vorbereitung`, `Jetnity provider readiness audit` und `Admin platform audit` warten auf ihre kontrollierten späteren bzw. parallelisierbaren Blöcke.
 - `Jetnity growth discoverability`, `Jetnity quality security audit` und `Jetnity native app architecture` sind verbindlich reserviert, aber **noch nicht zu starten**.
 - `main` Branch Protection ist technisch weiterhin nicht aktiviert; dieses Risiko nicht vergessen.
 
 ## Aktuelle große Build-Reihenfolge
 
-1. Trip Workspace vollständig: `Trip workspace audit architecture` – **TW-1 ✅ → TW-2 ✅ → TW-4 → TW-3 → Details/Gaps → Rest gemäß Plan → finaler Workspace-Audit**.
+1. Trip Workspace vollständig: `Trip workspace audit architecture` – **TW-1 ✅ → TW-2 ✅ → TW-4 ✅ → TW-3 → Details/Gaps → Rest gemäß Plan → finaler Workspace-Audit**.
 2. Traveller-/Pass-/Multi-Citizenship produktweit vervollständigen auf Foundation E.
 3. Account: `Account plattform audit vorbereitung` – AP-4 bis AP-12.
 4. Provider: `Jetnity provider readiness audit` – S4 bis S8, danach echte Provider unter besonderen Gates.
@@ -170,4 +171,4 @@ Vollständige Regel: `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`.
 
 ## Nächster kontrollierter Schritt
 
-Unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #60 nach dem Official-Requirement-Key-Fix. Kein Ready, kein Merge, kein TW-3/TW-5, keine Shared-Contract-Erweiterung.
+TW-3 – Timeline / Etappe / Tag auf `feat/trip-workspace-tw3-timeline` umsetzen und nach Exact-Head-Gates für den unabhängigen Technical-Lead-Re-Review stoppen. Kein Ready, kein Merge, kein TW-5.

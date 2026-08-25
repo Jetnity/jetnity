@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 25. August 2026  
-Status: **verbindlicher operativer Übergabepunkt. TW-1 und TW-2 sind auf `main`. TW-4 Runtime liegt in Draft-PR #60 und wartet auf unabhängigen Technical-Lead-Re-Review. Kein TW-3, kein TW-5.**
+Status: **verbindlicher operativer Übergabepunkt. TW-1, TW-2 und TW-4 sind auf `main` (TW-4 = PR #60 / `c935dd9f`). TW-3 ist der aktive Runtime-Slice. Kein TW-5.**
 
 Dieser Handoff ist der zentrale Einstieg für einen neuen Chat oder Coding Agent. Wenn Chat-Erinnerung und Repository widersprechen: **nicht raten – aktuellen Git-/PR-/CI-/Vercel-/Supabase-/Production-Stand selbst verifizieren.**
 
@@ -290,7 +290,7 @@ Frühere grüne Tests oder frühere Merges geben keinen Bestandsschutz. Evidence
 
 ## 9. Nächste verbindliche Reihenfolge
 
-Der vorbereitende Audit-Block, TW-1 und TW-2 sind auf `main`. TW-4 ist der aktive Runtime-Slice und bleibt Draft.
+Der vorbereitende Audit-Block, TW-1, TW-2 und TW-4 sind auf `main`. TW-3 ist der aktive Runtime-Slice.
 
 1. ✅ Foundation C – Readiness
 2. ✅ Foundation D – Route & Transit
@@ -307,8 +307,8 @@ Der vorbereitende Audit-Block, TW-1 und TW-2 sind auf `main`. TW-4 ist der aktiv
 7a. ✅ Trip-Workspace-Audit / Zielarchitektur – docs-only PR #55 gemergt (`08fd7748`); danach IA-Annahme als ADR-0163
 8. ✅ TW-1 Shell/Geräteparität auf `main` (PR #56)
 9. ✅ TW-2 Reiseübersicht auf `main` (PR #58)
-10. **Jetzt:** TW-4 Aufmerksamkeit in Draft-PR #60 – unabhängiger Technical-Lead-Re-Review. Kein TW-3, kein TW-5.
-11. Danach – nur nach eigenem Auftrag – TW-3 Timeline.
+10. ✅ TW-4 Aufmerksamkeit auf `main` (PR #60, Merge-Commit `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f`)
+11. **Jetzt:** TW-3 Timeline / Etappe / Tag auf `feat/trip-workspace-tw3-timeline`. Kein TW-5.
 12. Account/Admin/Provider-Programme bleiben offen: kein AP-4, Slice D oder S4 ohne eigenen kontrollierten Auftrag / Shared-Gate.
 13. verpflichtender finaler Senior Product / Architecture / UX / Logic / Security / Intelligence Audit
 14. echte Providerphase
@@ -323,16 +323,16 @@ Echte Provider kommen bewusst später. Vorher müssen provider-neutrale Ports/Ad
 
 ## 10. Exakter nächster operativer Schritt
 
-Letzter relevanter Runtime-Merge auf `main`: `5e27f383c7917eec168d11bceb78f9fafc198d42` (TW-2 / PR #58). Aktiver Runtime-Slice: Draft-PR #60 / TW-4.
+Letzter relevanter Runtime-Merge auf `main`: `c935dd9fbb6f3365ed515c1f8fa3b781f20cfb9f` (TW-4 / PR #60). Aktiver Runtime-Slice: TW-3.
 
-1. Admin A–C, Account AP-1–AP-3, Provider S1–S3, Trip-Workspace-Audit #55, TW-1 (#56), TW-2 (#58) und Marketing/Growth #59 liegen auf `main`.
-2. PR #58 und PR #59 sind **merged / closed**. Historische Aussagen wie „Draft #58 wartet“ sind **pre-merge Evidence**.
-3. Die Ziel-IA ist als ADR-0163 angenommen. TW-4 folgt ADR-0165.
-4. `Trip workspace audit architecture` hat TW-4 in Draft-PR #60 umgesetzt, den 280px-Attention-Overflow behoben und stoppt für den unabhängigen Technical-Lead-Re-Review.
+1. Admin A–C, Account AP-1–AP-3, Provider S1–S3, Trip-Workspace-Audit #55, TW-1 (#56), TW-2 (#58), Marketing/Growth #59 und TW-4 (#60) liegen auf `main`.
+2. PR #60 ist **merged / closed**. Historische Aussagen wie „Draft #60 wartet auf Re-Review“ sind **pre-merge Evidence**.
+3. Die Ziel-IA ist als ADR-0163 angenommen. TW-4 folgt ADR-0165 und ist gemergt. TW-3 folgt ADR-0166.
+4. `Trip workspace audit architecture` arbeitet TW-3 auf `feat/trip-workspace-tw3-timeline`.
 5. `Admin platform audit`, `Account plattform audit vorbereitung` und `Jetnity provider readiness audit` warten weiter auf eigene Aufträge. Kein Slice D, AP-4 oder S4.
-6. **Exakter nächster Schritt:** unabhängiger ChatGPT/Technical-Lead-Re-Review von Draft-PR #60. Kein TW-3, kein TW-5, keine besonderen Product-Owner-Gates eigenmächtig öffnen.
+6. **Exakter nächster Schritt:** TW-3 implementieren, Exact-Head-Gates fahren, STOPP für unabhängigen Technical-Lead-Re-Review. Kein Ready, kein Merge, kein TW-5.
 
-Live-Status: `docs/ACTIVE_WORK_STATUS.md`. TW-4: `docs/TRIP_WORKSPACE_TW4_STATUS.md`.
+Live-Status: `docs/ACTIVE_WORK_STATUS.md`. TW-3: `docs/TRIP_WORKSPACE_TW3_STATUS.md`.
 
 Leitsatz:
 
