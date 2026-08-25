@@ -181,8 +181,8 @@ Der nachfolgende Status-Commit ist docs-only. CI/Vercel auf dem Persist-Head ern
 
 ## Self-Review
 
-- Unvollständige Official-Coverage über mehrere Traveller/Citizenship-Optionen ist nie Clean.
-- Erst vollständige aktuelle Official-Coverage plus leere Safety-/Seasonal-/Coverage-Signale ermöglicht `nichts_dringend_geprueft`.
+- Unvollständige Official-Coverage über Traveller, Credential-Option, Destination, Requirement-Typ oder Transit ist nie Clean.
+- Erst der vollständige kanonische Requirement-Satz plus leere Safety-/Seasonal-/Coverage-Signale ermöglicht `nichts_dringend_geprueft`.
 - Gemischte Degraded States bleiben maschinenlesbar in `punkte`; der Top-Level-Leerstand bleibt die priorisierte Leerstandsaussage.
 - Kein Default-Pass / keine Citizenship-Tokens in Attention.
 - Guest und Account: dieselbe Ableitung.
