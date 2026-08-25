@@ -33,10 +33,13 @@ type PlanenSeiteProps = {
 }
 
 export function generateMetadata({ searchParams }: PlanenSeiteProps): Metadata {
+  const robots = planenRobots(searchParams)
+  // Nur die parametrisierte Variante setzt ein eigenes Signal. `robots: undefined`
+  // würde in Next die geerbte öffentliche Basis (`index, follow`) löschen.
   return {
     title: 'Reise planen',
     description: 'Erstelle deine Reise mit Jetnity.',
-    robots: planenRobots(searchParams),
+    ...(robots ? { robots } : {}),
   }
 }
 

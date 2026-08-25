@@ -90,6 +90,8 @@ describe('/planen bleibt als Basis öffentlich', () => {
     const datei = quelle('../../app/(public)/planen/page.tsx')
     assert.match(datei, /generateMetadata/)
     assert.match(datei, /planenRobots/)
+    assert.match(datei, /\.\.\.\(robots \? \{ robots \} : \{\}\)/)
+    assert.equal(datei.includes('robots: planenRobots'), false)
     assert.match(datei, /initialIdee/)
     assert.match(datei, /TripPlanner/)
     assert.match(datei, /Reiseidee/)
