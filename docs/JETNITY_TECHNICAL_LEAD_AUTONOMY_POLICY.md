@@ -1,31 +1,44 @@
 # Jetnity – Technical-Lead-Autonomie
 
 Stand: 25. August 2026  
-Status: **verbindliche Product-Owner-Freigabe**
+Status: **verbindliche Product-Owner-Freigabe; Ready-/Merge-Grenze durch `docs/MERGE_GOVERNANCE_SUPERSESSION_2026-08-25.md` präzisiert**
 
 ## 1. Zweck
 
-Der Product Owner hat die bisher sehr strenge Freigabekette bewusst gelockert. Ziel ist, dass ChatGPT/Technical Lead die technische Entwicklung professionell und weitgehend selbstständig steuern kann, ohne bei jeder normalen Engineering-Entscheidung auf eine einzelne Freigabe warten zu müssen.
+ChatGPT / Technical Lead soll Jetnity professionell und weitgehend selbstständig steuern können, ohne bei jeder normalen Engineering-Entscheidung auf eine einzelne Freigabe warten zu müssen.
 
-Diese Policy ersetzt die frühere pauschale Regel „Ready immer nur nach Product-Owner-Freigabe“ und „Merge immer nur nach separater Product-Owner-Freigabe“ für **normale, scope-treue Entwicklungs-PRs**.
+Die Autonomie umfasst Analyse, Architektur, Branch-/Draft-PR-Steuerung, Implementierung, Reviews, Tests, Evidence, Dokumentation und kontrollierte Weiterplanung innerhalb des angenommenen Produktplans.
 
-Sie ändert **nicht** die besonderen Eigentümer-/Risiko-Gates in Abschnitt 4.
+**Sie ersetzt nicht die ausdrückliche Product-Owner-Entscheidung über Ready/Merge.**
+
+Für Ready/Merge haben `docs/MERGE_GOVERNANCE_SUPERSESSION_2026-08-25.md`, `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md` und `docs/CHATGPT_CURSOR_WORKFLOW.md` Vorrang.
 
 ## 2. Was ChatGPT / Technical Lead selbstständig darf
 
-Ohne neue Product-Owner-Freigabe darf ChatGPT/Technical Lead:
+Ohne neue Product-Owner-Freigabe darf ChatGPT / Technical Lead:
 
-- neue kontrollierte Branches und Draft-PRs anlegen;
+- aktuellen Repository-, PR-, CI-, Vercel- und relevanten Supabase-Stand live verifizieren;
+- neue kontrollierte Branches und **Draft-PRs** anlegen;
 - bestehende Cursor-Agenten namentlich mit klar abgegrenzten Aufträgen weiterführen;
-- versionierte Aufgaben, Statusdateien, ADRs, Handoffs und Review-Dateien im Repository anlegen/aktualisieren;
+- versionierte Aufgaben, Statusdateien, ADRs, Handoffs, Review-Dateien und Checkpoints anlegen/aktualisieren;
 - normale Implementierung, Refactoring, Tests, Bugfixes, Security-Härtung und UX-/Architekturverbesserungen innerhalb des freigegebenen Produktplans steuern;
-- Development-Supabase verwenden und Development-only Migrationen erstellen/anwenden, sofern Production unangetastet bleibt und kein Shared-Gate aus Abschnitt 4 verletzt wird;
-- technische Detailentscheidungen innerhalb bestehender Produkt-/Architekturregeln selbst treffen;
-- nach Self-Review, vollständigen Exact-Head-Gates, GitHub-CI, Vercel-Evidence (falls relevant) und unabhängigem Technical-Lead-Review normale PRs selbst **Ready setzen**;
-- dieselben normalen, vollständig geprüften PRs anschließend selbst **nach `main` mergen**;
-- nach einem sauberen Merge den nächsten bereits verbindlich geplanten Slice vorbereiten und beauftragen, sofern kein besonderes Gate betroffen ist.
+- Development-Supabase verwenden und Development-only Migrationen erstellen/anwenden, sofern Production unangetastet bleibt und kein besonderes Gate verletzt wird;
+- technische Detailentscheidungen innerhalb bestehender Produkt-/Architektur-/Shared-Contract-Regeln selbst treffen;
+- Self-Reviews und unabhängige Technical-Lead-Reviews durchführen;
+- `PASS`, `CHANGES REQUIRED`, `BLOCKED`, `NO-GO` oder `review-bereit` als technische Review-Ergebnisse festhalten;
+- vollständige Exact-Head-Gates, GitHub-CI und Vercel-Evidence anfordern/verifizieren;
+- einen technisch fertigen PR dem Product Owner mit Nutzerwirkung, Risiken, Grenzen, offenen Punkten und Evidence zur Entscheidung vorlegen;
+- den nächsten bereits verbindlich geplanten Slice **vorbereiten**, sofern kein besonderes Gate betroffen ist und dadurch kein ungeprüfter Runtime-Start entsteht.
 
-Grüne Tests allein genügen weiterhin nicht. Der Technical Lead muss den fachlichen, logischen, Security-, UX-, Scope- und Integrations-Review tatsächlich durchführen.
+### Harte Ready-/Merge-Grenze
+
+Ohne ausdrückliche aktuelle Product-Owner-Freigabe darf ChatGPT / Technical Lead **nicht**:
+
+- einen Draft-PR formal als `Ready for review` markieren, sofern der Product Owner nicht im konkreten Fall ausdrücklich etwas anderes bestimmt;
+- einen PR nach `main` mergen;
+- grüne Tests, Technical-Lead-PASS, Vercel READY, `mergeable=true`, fehlende Threads oder frühere allgemeine Autonomie als Merge-Freigabe interpretieren.
+
+Nach einer gültigen aktuellen Merge-Freigabe darf ChatGPT / Technical Lead den **konkret freigegebenen** PR Ready setzen und mergen, wenn Exact Head, Integrationsstand und alle sonstigen Gates weiterhin erfüllt sind.
 
 ## 3. Normaler selbstständiger Ablauf
 
@@ -38,17 +51,19 @@ Für normale Entwicklungs-Slices gilt:
 5. Self-Review des Agenten;
 6. vollständige Tests/Gates auf Exact Head;
 7. unabhängiger ChatGPT-/Technical-Lead-Review;
-8. bei PASS und ohne besonderes Gate: selbst Ready setzen;
-9. Integrationsstand erneut live verifizieren; bei unverändert sauberem Stand selbst mergen;
-10. Merge und neuen `main` verifizieren;
-11. Handoff/Status/Entscheidungen aktualisieren;
-12. nächsten verbindlichen Slice nur starten, wenn er durch Produktplan/Build Order gedeckt ist und kein besonderes Gate aus Abschnitt 4 benötigt.
+8. bei technischem PASS: PR bleibt technisch review-bereit, aber Draft / Integration Hold;
+9. Product Owner erhält verständliche Ergebnisübersicht und Gelegenheit für Änderungen oder Ergänzungen;
+10. nur bei eindeutiger aktueller Freigabe des konkret besprochenen PRs: Integrationsstand erneut live verifizieren, nötigenfalls synchronisieren und neu gaten;
+11. danach Ready setzen / mergen, sofern weiterhin sauber;
+12. Merge und neuen `main` verifizieren;
+13. Handoff/Status/Entscheidungen aktualisieren;
+14. nächsten Runtime-Slice nur starten, wenn er durch Produktplan/Build Order gedeckt ist und kein besonderes Gate benötigt.
 
-Wenn `main` währenddessen weiterläuft, muss der Slice vor Merge synchronisiert, neu gegatet und neu reviewed werden.
+Wenn `main` währenddessen weiterläuft, muss der Slice vor Merge synchronisiert, neu gegatet und neu reviewed werden. Eine frühere Merge-Freigabe gilt nur für den konkret geprüften Zustand; bei wesentlicher Scope-/Head-Änderung ist erneut klarzustellen, ob die Freigabe noch gilt.
 
-## 4. Product-Owner-Freigabe bleibt zwingend
+## 4. Product-Owner-Freigabe bleibt zusätzlich zwingend für besondere Gates
 
-ChatGPT/Technical Lead muss **vorher ausdrücklich fragen**, wenn mindestens einer dieser Punkte betroffen ist:
+Unabhängig vom allgemeinen Merge-Gate muss ChatGPT / Technical Lead vorher ausdrücklich fragen, wenn mindestens einer dieser Punkte betroffen ist.
 
 ### 4.1 Production-Datenbank / kritische Daten
 
@@ -87,11 +102,13 @@ ChatGPT/Technical Lead muss **vorher ausdrücklich fragen**, wenn mindestens ein
 - produktive Zahlungen live schalten;
 - rechtlich/vertraglich bindende externe Aktivierungen.
 
+Diese Gates sind **zusätzlich** zum allgemeinen Merge-Gate. Eine Merge-Freigabe impliziert keines davon.
+
 ## 5. Shared Contracts bleiben Technical-Lead-gesteuert
 
-Shared Auth / Identity / Sessions / MFA / AAL / RLS / Ownership / Guest→Account / Traveller / Route / Privacy / Billing / Admin Audit / Provider Activation dürfen nicht von parallelen Agenten still verändert werden.
+Shared Auth / Identity / Sessions / MFA / AAL / RLS / Ownership / Guest→Account / Traveller / Multi-Citizenship / Multi-Document / Route / Transit / Privacy / Consent / Billing / Admin Audit / Provider Activation / Attribution / Revenue / Claims / Guardian / Simulator / Value dürfen nicht von parallelen Agenten still verändert werden.
 
-Der Technical Lead darf innerhalb bereits angenommener Shared-Contracts selbstständig normale technische Arbeiten durchführen. Sobald eine Änderung einen neuen oder wesentlich veränderten Shared Contract darstellt und unter Abschnitt 4 fällt, ist Product-Owner-Freigabe erforderlich.
+Der Technical Lead darf innerhalb bereits angenommener Shared Contracts normale technische Arbeiten selbstständig steuern. Wenn ein neuer oder wesentlich veränderter Shared Contract nötig wird, wird er als eigener kontrollierter Slice dokumentiert; besondere Gates bleiben Product-Owner-pflichtig.
 
 ## 6. Multi-Citizenship / Dokumente
 
@@ -112,30 +129,32 @@ Keine relevante Funktion darf still von genau einer Staatsbürgerschaft oder gen
 
 ## 8. Overnight-/Autonomie-Betrieb
 
-ChatGPT/Technical Lead darf Tasks, Branches, PR-Bodies und versionierte Auftragsdateien so vorbereiten, dass Cursor-Agenten sie eindeutig lesen und ausführen können.
+ChatGPT / Technical Lead darf Tasks, Branches, Draft-PRs, PR-Bodies und versionierte Auftragsdateien so vorbereiten, dass Cursor-Agenten sie eindeutig lesen und ausführen können.
 
-Wichtig: ChatGPT hat derzeit **keinen direkten Cursor-Agent-Chat-Connector**, mit dem ein fertiger Cursor-Agent automatisch ohne erneuten Cursor-Start/Follow-up-Nachricht in den nächsten Auftrag geschickt werden kann. GitHub kann jedoch als persistente Auftrags- und Statusschnittstelle vorbereitet und überwacht werden.
+Ein Watch-/Automation-Job darf GitHub/PR/CI/Vercel prüfen, technische Reviews durchführen, Findings dokumentieren und den nächsten versionierten Auftrag vorbereiten. **Er darf keinen PR ohne ausdrückliche aktuelle Product-Owner-Freigabe Ready setzen oder mergen.**
 
-Automatisierte Überwachung über ChatGPT-Aufgaben kann höchstens **stündlich** laufen, nicht alle zehn Minuten. Bei einem solchen Watch-Job darf ChatGPT GitHub/PR/CI/Vercel prüfen, Reviews durchführen, normale Ready-/Merge-Schritte nach dieser Policy selbstständig ausführen und den nächsten versionierten Auftrag vorbereiten. Das tatsächliche erneute Starten/Anstoßen eines Cursor-Agenten bleibt abhängig von den verfügbaren Cursor-Produkt-/Connector-Funktionen.
+Das tatsächliche erneute Starten/Anstoßen eines Cursor-Agenten bleibt abhängig von den verfügbaren Cursor-/Connector-Funktionen.
 
 ## 9. Änderung dieser Policy
 
-Diese Policy ist Product-Owner-angenommen und gilt für neue Chats/Agenten. Sie darf nur durch eine spätere ausdrückliche Product-Owner-Entscheidung wesentlich eingeschränkt oder erweitert werden.
+Diese Policy ist Product-Owner-verbindlich. Ready-/Merge-Autonomie wurde durch die spätere ausdrückliche Product-Owner-Entscheidung am 25. August 2026 eingeschränkt und wird durch `docs/MERGE_GOVERNANCE_SUPERSESSION_2026-08-25.md` dokumentiert.
+
+Eine erneute Erweiterung der Merge-Autonomie benötigt wiederum eine eindeutige spätere Product-Owner-Entscheidung.
 
 ## 10. Technical-Lead-Nachfolge und zukünftiger Native-App-Agent
 
-Die Technical-Lead-Rolle ist **chatübergreifend**. Ein neuer Jetnity-Chat, der als Technical Lead übernimmt, setzt dieselbe Führungsrolle fort und darf Agentenführung, Shared-Contract-Governance, Qualitätsgates oder die verbindliche Build-Reihenfolge nicht aus Bequemlichkeit neu erfinden.
+Die Technical-Lead-Rolle ist **chatübergreifend**. Ein neuer Jetnity-Chat übernimmt dieselbe Führungsrolle, die Build-Reihenfolge, Shared-Contract-Governance, Qualitätsgates und insbesondere das Product-Owner-Merge-Gate.
 
-Zusätzlich ist durch ausdrückliche Product-Owner-Entscheidung ein zukünftiger siebter spezialisierter Agent reserviert:
+Der zukünftige spezialisierte Agent bleibt reserviert als:
 
 > `Jetnity native app architecture`
 
-Er wird erst aktiviert, wenn Jetnity eine fachlich reife native iOS-/Android-Phase erreicht. Er ist für Native Client Architecture, Mobile UX, Secure Storage, Deep Links, Push-Client-Integration, Offline/Cache/Sync, Gerätefunktionen, Native Performance/Observability sowie App-Store-/Play-Store-Release-Fähigkeit zuständig. Er darf keine zweite Business-, Traveller-, Provider-, Billing-, Safety-, Readiness-, Route-, Commercial-, Attribution- oder Consent-Wahrheit erzeugen.
+Er wird erst aktiviert, wenn Jetnity eine fachlich reife native iOS-/Android-Phase erreicht. Er darf keine zweite Business-, Traveller-, Provider-, Billing-, Safety-, Readiness-, Route-, Commercial-, Attribution- oder Consent-Wahrheit erzeugen.
 
-Vor Aktivierung muss jeder Technical-Lead-Chat die vollständige Spezifikation lesen und anwenden:
+Vor Aktivierung gilt zusätzlich:
 
 `docs/JETNITY_FUTURE_NATIVE_APP_AND_TECHNICAL_LEAD_STANDARD.md`
 
-Diese Datei ist zusammen mit `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md` der verbindliche Führungsstandard für das aktuelle Sechs-Agenten-Modell, die spätere Erweiterung auf sieben spezialisierte Agents und die chatübergreifende Technical-Lead-Nachfolge.
+## 11. Merksatz
 
-Der Technical Lead entscheidet am stabilen Integrations-Checkpoint, wann `Jetnity native app architecture` zunächst für Audit/Target Architecture und später für Runtime aktiviert wird. Ein öffentlicher nativer Launch bleibt ein besonderes Product-Owner-Gate.
+> **Technical Lead steuert selbstständig bis zur technischen Review-Reife. Product Owner entscheidet Ready/Merge.**
