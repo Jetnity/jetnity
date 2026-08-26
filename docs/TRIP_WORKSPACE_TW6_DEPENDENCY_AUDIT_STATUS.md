@@ -43,8 +43,15 @@ Bestätigt:
 - P2: Gast-CTA-Doppelweg; möglicher Modellaufruf vor Guest-Slot-Reject; UI-Chips; zwei Create-UIs.
 - P3: Reisende-Default 2; hartes CHF; ADR-0013-Statuszeile veraltet.
 
-## 4. Integration
+## 4. Exact-Head-Gates
 
-Der Audit-Inhalt ist fachlich PASS. Vor Merge ist nur noch der durch diese Reconciliation erzeugte neue Exact Head auf GitHub Actions/Vercel zu verifizieren. Danach darf der Technical Lead diesen normalen docs-only PR autonom integrieren.
+Finaler Reconciliation-Head: `6fc5b74e408c2dc88ad9b8b9220005a2544cd9dd`.
+
+- GitHub Actions CI `32951901960`: SUCCESS.
+- Vercel Preview `dpl_C3Zs6xj7RzE2DiEmuf2UvvNJMA3w`: READY.
+
+## 5. Integration
+
+Der Audit-Inhalt ist fachlich und technisch PASS. Der normale docs-only PR darf durch den Technical Lead autonom integriert werden.
 
 Kein Folgeslice in diesem PR.
