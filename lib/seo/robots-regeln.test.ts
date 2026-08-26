@@ -19,6 +19,7 @@ describe('Der ephemeral-Host-Kill-Switch', () => {
     assert.equal(robotsIstEphemeralHost('jetnity-app.vercel.app'), true)
     assert.equal(robotsIstEphemeralHost('preview.vercel.app'), true)
     assert.equal(robotsIstEphemeralHost('jetnity.ch'), false)
+    assert.equal(robotsIstEphemeralHost('jetnity.com'), false)
 
     assert.equal(
       robotsDarfIndexieren({
@@ -46,14 +47,14 @@ describe('Der ephemeral-Host-Kill-Switch', () => {
   test('Preview und der Allow-Indexing-Kill-Switch bleiben geschlossen', () => {
     assert.equal(
       robotsDarfIndexieren({
-        NEXT_PUBLIC_APP_URL: 'https://jetnity.ch',
+        NEXT_PUBLIC_APP_URL: 'https://jetnity.com',
         VERCEL_ENV: 'preview',
       }),
       false,
     )
     assert.equal(
       robotsDarfIndexieren({
-        NEXT_PUBLIC_APP_URL: 'https://jetnity.ch',
+        NEXT_PUBLIC_APP_URL: 'https://jetnity.com',
         VERCEL_ENV: 'production',
         NEXT_PUBLIC_ALLOW_INDEXING: 'false',
       }),
@@ -62,10 +63,18 @@ describe('Der ephemeral-Host-Kill-Switch', () => {
   })
 
   test('aktiviert kein Custom-Domain-Indexing still über Defaults hinaus', () => {
-    // P1-D0-2-TL-01: Production + gültige Apex-URL ohne explizites true bleibt deny.
+    // P1-D0-2-TL-01: Production ohne explizites true bleibt deny.
+    // P1-D0-2-TL-02: jetnity.ch bleibt auch mit true deny.
     assert.equal(
       robotsDarfIndexieren({
-        NEXT_PUBLIC_APP_URL: 'https://jetnity.ch',
+        NEXT_PUBLIC_APP_URL: 'https://jetnity.com',
+        VERCEL_ENV: 'production',
+      }),
+      false,
+    )
+    assert.equal(
+      robotsDarfIndexieren({
+        NEXT_PUBLIC_SITE_URL: 'https://jetnity.com',
         VERCEL_ENV: 'production',
       }),
       false,
@@ -74,6 +83,7 @@ describe('Der ephemeral-Host-Kill-Switch', () => {
       robotsDarfIndexieren({
         NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
         VERCEL_ENV: 'production',
+        NEXT_PUBLIC_ALLOW_INDEXING: 'true',
       }),
       false,
     )
@@ -82,7 +92,7 @@ describe('Der ephemeral-Host-Kill-Switch', () => {
 
 describe('Der Allow-Modus schützt die D0-1-Pfade', () => {
   const liste = robotsDisallowListe({
-    NEXT_PUBLIC_APP_URL: 'https://jetnity.ch',
+    NEXT_PUBLIC_APP_URL: 'https://jetnity.com',
     VERCEL_ENV: 'production',
     NEXT_PUBLIC_ALLOW_INDEXING: 'true',
   })

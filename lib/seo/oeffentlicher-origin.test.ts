@@ -5,11 +5,13 @@ import assert from 'node:assert/strict'
 import { fileURLToPath } from 'node:url'
 
 import {
+  KANONISCHE_PUBLIC_ORIGIN,
   LOKALER_ORIGIN_FALLBACK,
   indexingIstExplizitFreigegeben,
   kanonischeUrl,
   oeffentlicherOrigin,
   originIstEphemeral,
+  originIstKanonischPublic,
   sitemapOeffentlicheUrls,
 } from '@/lib/seo/oeffentlicher-origin'
 import { NICHT_INDEXIEREN, sitemapEnthaeltReiseuebersicht, planenRobots } from '@/lib/seo/index-grenze'
@@ -22,7 +24,7 @@ function quelle(relativ: string) {
 }
 
 const synthetischAllow = {
-  NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
+  NEXT_PUBLIC_SITE_URL: KANONISCHE_PUBLIC_ORIGIN,
   VERCEL_ENV: 'production',
   NEXT_PUBLIC_ALLOW_INDEXING: 'true',
 } as const
@@ -30,43 +32,54 @@ const synthetischAllow = {
 describe('Der öffentliche Origin-Vertrag', () => {
   test('normalisiert eine gültige SITE_URL auf Origin ohne Path, Query oder Slash', () => {
     const ergebnis = oeffentlicherOrigin({
-      NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch/',
+      NEXT_PUBLIC_SITE_URL: 'https://jetnity.com/',
       VERCEL_ENV: 'production',
     })
-    assert.equal(ergebnis.origin, 'https://jetnity.ch')
-    assert.equal(ergebnis.hostname, 'jetnity.ch')
+    assert.equal(ergebnis.origin, KANONISCHE_PUBLIC_ORIGIN)
+    assert.equal(ergebnis.hostname, 'jetnity.com')
     assert.equal(ergebnis.quelle, 'site')
+    assert.equal(originIstKanonischPublic(ergebnis.origin), true)
   })
 
-  test('lässt SITE_URL vor der Legacy-APP_URL gewinnen', () => {
-    const ergebnis = oeffentlicherOrigin({
-      NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
+  test('lässt SITE_URL vor der Legacy-APP_URL gewinnen, ohne widersprüchliche Hosts freizugeben', () => {
+    const gleich = oeffentlicherOrigin({
+      NEXT_PUBLIC_SITE_URL: KANONISCHE_PUBLIC_ORIGIN,
+      NEXT_PUBLIC_APP_URL: 'https://jetnity.com/',
+      VERCEL_ENV: 'production',
+      NEXT_PUBLIC_ALLOW_INDEXING: 'true',
+    })
+    assert.equal(gleich.origin, KANONISCHE_PUBLIC_ORIGIN)
+    assert.equal(gleich.quelle, 'site')
+    assert.equal(gleich.darfIndexieren, true)
+
+    const widerspruch = oeffentlicherOrigin({
+      NEXT_PUBLIC_SITE_URL: KANONISCHE_PUBLIC_ORIGIN,
       NEXT_PUBLIC_APP_URL: 'https://alt.example',
       VERCEL_ENV: 'production',
       NEXT_PUBLIC_ALLOW_INDEXING: 'true',
     })
-    assert.equal(ergebnis.origin, 'https://jetnity.ch')
-    assert.equal(ergebnis.quelle, 'site')
-    assert.equal(ergebnis.darfIndexieren, true)
+    assert.equal(widerspruch.origin, KANONISCHE_PUBLIC_ORIGIN)
+    assert.equal(widerspruch.quelle, 'site')
+    assert.equal(widerspruch.darfIndexieren, false)
   })
 
   test('fällt auf APP_URL zurück, ohne Index-Sicherheit zu lockern', () => {
     const fallback = oeffentlicherOrigin({
-      NEXT_PUBLIC_APP_URL: 'https://jetnity.ch',
+      NEXT_PUBLIC_APP_URL: KANONISCHE_PUBLIC_ORIGIN,
       VERCEL_ENV: 'production',
       NEXT_PUBLIC_ALLOW_INDEXING: 'true',
     })
-    assert.equal(fallback.origin, 'https://jetnity.ch')
+    assert.equal(fallback.origin, KANONISCHE_PUBLIC_ORIGIN)
     assert.equal(fallback.quelle, 'app')
     assert.equal(fallback.darfIndexieren, true)
 
     const ephemeralApp = oeffentlicherOrigin({
-      NEXT_PUBLIC_SITE_URL: 'https://jetnity.com',
+      NEXT_PUBLIC_SITE_URL: KANONISCHE_PUBLIC_ORIGIN,
       NEXT_PUBLIC_APP_URL: 'https://jetnity-app.vercel.app',
       VERCEL_ENV: 'production',
       NEXT_PUBLIC_ALLOW_INDEXING: 'true',
     })
-    assert.equal(ephemeralApp.origin, 'https://jetnity.com')
+    assert.equal(ephemeralApp.origin, KANONISCHE_PUBLIC_ORIGIN)
     assert.equal(ephemeralApp.quelle, 'site')
     assert.equal(ephemeralApp.darfIndexieren, false)
   })
@@ -81,14 +94,14 @@ describe('Der öffentliche Origin-Vertrag', () => {
 
     assert.equal(
       oeffentlicherOrigin({
-        NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
+        NEXT_PUBLIC_SITE_URL: KANONISCHE_PUBLIC_ORIGIN,
         VERCEL_ENV: 'production',
       }).darfIndexieren,
       false,
     )
     assert.equal(
       oeffentlicherOrigin({
-        NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
+        NEXT_PUBLIC_SITE_URL: KANONISCHE_PUBLIC_ORIGIN,
         VERCEL_ENV: 'production',
         NEXT_PUBLIC_ALLOW_INDEXING: '',
       }).darfIndexieren,
@@ -96,7 +109,7 @@ describe('Der öffentliche Origin-Vertrag', () => {
     )
     assert.equal(
       oeffentlicherOrigin({
-        NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
+        NEXT_PUBLIC_SITE_URL: KANONISCHE_PUBLIC_ORIGIN,
         VERCEL_ENV: 'production',
         NEXT_PUBLIC_ALLOW_INDEXING: 'false',
       }).darfIndexieren,
@@ -104,7 +117,7 @@ describe('Der öffentliche Origin-Vertrag', () => {
     )
     assert.equal(
       oeffentlicherOrigin({
-        NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
+        NEXT_PUBLIC_SITE_URL: KANONISCHE_PUBLIC_ORIGIN,
         VERCEL_ENV: 'production',
         NEXT_PUBLIC_ALLOW_INDEXING: 'true',
       }).darfIndexieren,
@@ -128,7 +141,7 @@ describe('Der öffentliche Origin-Vertrag', () => {
     )
     assert.equal(
       oeffentlicherOrigin({
-        NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch/pfad',
+        NEXT_PUBLIC_SITE_URL: 'https://jetnity.com/pfad',
         VERCEL_ENV: 'production',
         NEXT_PUBLIC_ALLOW_INDEXING: 'true',
       }).darfIndexieren,
@@ -196,6 +209,65 @@ describe('Der öffentliche Origin-Vertrag', () => {
     )
   })
 
+  test('P1-D0-2-TL-02: Allow-Pfad gilt nur für https://jetnity.com', () => {
+    assert.equal(KANONISCHE_PUBLIC_ORIGIN, 'https://jetnity.com')
+    assert.equal(originIstKanonischPublic('https://jetnity.com'), true)
+    assert.equal(originIstKanonischPublic('https://jetnity.ch'), false)
+    assert.equal(originIstKanonischPublic('http://jetnity.com'), false)
+    assert.equal(originIstKanonischPublic('https://www.jetnity.com'), false)
+
+    assert.equal(
+      oeffentlicherOrigin({
+        NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
+        VERCEL_ENV: 'production',
+        NEXT_PUBLIC_ALLOW_INDEXING: 'true',
+      }).darfIndexieren,
+      false,
+    )
+    assert.equal(
+      oeffentlicherOrigin({
+        NEXT_PUBLIC_SITE_URL: 'https://anderedomain.example',
+        VERCEL_ENV: 'production',
+        NEXT_PUBLIC_ALLOW_INDEXING: 'true',
+      }).darfIndexieren,
+      false,
+    )
+    assert.equal(
+      oeffentlicherOrigin({
+        NEXT_PUBLIC_SITE_URL: 'http://jetnity.com',
+        VERCEL_ENV: 'production',
+        NEXT_PUBLIC_ALLOW_INDEXING: 'true',
+      }).darfIndexieren,
+      false,
+    )
+    assert.equal(
+      oeffentlicherOrigin({
+        NEXT_PUBLIC_SITE_URL: 'https://www.jetnity.com',
+        VERCEL_ENV: 'production',
+        NEXT_PUBLIC_ALLOW_INDEXING: 'true',
+      }).darfIndexieren,
+      false,
+    )
+    assert.equal(
+      oeffentlicherOrigin({
+        NEXT_PUBLIC_SITE_URL: KANONISCHE_PUBLIC_ORIGIN,
+        NEXT_PUBLIC_APP_URL: 'https://jetnity.ch',
+        VERCEL_ENV: 'production',
+        NEXT_PUBLIC_ALLOW_INDEXING: 'true',
+      }).darfIndexieren,
+      false,
+    )
+    assert.equal(
+      oeffentlicherOrigin({
+        NEXT_PUBLIC_SITE_URL: KANONISCHE_PUBLIC_ORIGIN,
+        NEXT_PUBLIC_APP_URL: 'https://anderedomain.example',
+        VERCEL_ENV: 'production',
+        NEXT_PUBLIC_ALLOW_INDEXING: 'true',
+      }).darfIndexieren,
+      false,
+    )
+  })
+
   test('NEXT_PUBLIC_ALLOW_INDEXING=false bleibt ein harter Kill-Switch', () => {
     assert.equal(
       oeffentlicherOrigin({
@@ -220,7 +292,7 @@ describe('robots und Sitemap teilen dieselbe Origin', () => {
     assert.deepEqual(sitemapOeffentlicheUrls(lokal), [])
 
     const productionOhneOptIn = {
-      NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
+      NEXT_PUBLIC_SITE_URL: KANONISCHE_PUBLIC_ORIGIN,
       VERCEL_ENV: 'production',
     }
     const ohneOptIn = robotsDokument(productionOhneOptIn)
@@ -233,19 +305,19 @@ describe('robots und Sitemap teilen dieselbe Origin', () => {
   test('synthetischer Allow-Modus nutzt Host, Sitemap und Canonicals derselben Origin', () => {
     const origin = oeffentlicherOrigin(synthetischAllow)
     assert.equal(origin.darfIndexieren, true)
-    assert.equal(origin.origin, 'https://jetnity.ch')
+    assert.equal(origin.origin, KANONISCHE_PUBLIC_ORIGIN)
 
     const robots = robotsDokument(synthetischAllow)
-    assert.equal(robots.host, 'https://jetnity.ch')
-    assert.equal(robots.sitemap, 'https://jetnity.ch/sitemap.xml')
+    assert.equal(robots.host, KANONISCHE_PUBLIC_ORIGIN)
+    assert.equal(robots.sitemap, `${KANONISCHE_PUBLIC_ORIGIN}/sitemap.xml`)
     assert.ok(robots.disallow.includes('/reisen'))
     assert.ok(robots.disallow.includes('/unauthorized'))
 
     const urls = sitemapOeffentlicheUrls(synthetischAllow)
-    assert.deepEqual(urls, ['https://jetnity.ch/', 'https://jetnity.ch/planen'])
+    assert.deepEqual(urls, [`${KANONISCHE_PUBLIC_ORIGIN}/`, `${KANONISCHE_PUBLIC_ORIGIN}/planen`])
     assert.equal(sitemapEnthaeltReiseuebersicht(urls), false)
-    assert.equal(kanonischeUrl('/', synthetischAllow), 'https://jetnity.ch/')
-    assert.equal(kanonischeUrl('/planen', synthetischAllow), 'https://jetnity.ch/planen')
+    assert.equal(kanonischeUrl('/', synthetischAllow), `${KANONISCHE_PUBLIC_ORIGIN}/`)
+    assert.equal(kanonischeUrl('/planen', synthetischAllow), `${KANONISCHE_PUBLIC_ORIGIN}/planen`)
   })
 
   test('robots.ts und sitemap.ts verwenden den Vertrag', () => {
@@ -272,7 +344,7 @@ describe('Öffentliche Canonicals bleiben ohne Param-Varianten', () => {
     assert.deepEqual(planenRobots({ idee: '' }), NICHT_INDEXIEREN)
     assert.deepEqual(planenRobots({ idee: '   ' }), NICHT_INDEXIEREN)
     assert.deepEqual(planenRobots({ idee: 'Bali' }), NICHT_INDEXIEREN)
-    assert.equal(kanonischeUrl('/planen', synthetischAllow), 'https://jetnity.ch/planen')
+    assert.equal(kanonischeUrl('/planen', synthetischAllow), `${KANONISCHE_PUBLIC_ORIGIN}/planen`)
   })
 
   test('Layouts und JSON-LD teilen dieselbe Origin', () => {
@@ -287,8 +359,10 @@ describe('Öffentliche Canonicals bleiben ohne Param-Varianten', () => {
 
   test('.env.example dokumentiert den sicheren Default und setzt true nicht', () => {
     const env = quelle('../../.env.example')
+    assert.match(env, /NEXT_PUBLIC_SITE_URL=https:\/\/jetnity\.com/)
     assert.match(env, /NEXT_PUBLIC_ALLOW_INDEXING=false/)
     assert.match(env, /Public-Launch-Gate/)
     assert.equal(env.includes('NEXT_PUBLIC_ALLOW_INDEXING=true'), false)
+    assert.equal(env.includes('NEXT_PUBLIC_SITE_URL=https://jetnity.ch'), false)
   })
 })

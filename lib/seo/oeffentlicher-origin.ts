@@ -7,16 +7,20 @@
 // NEXT_PUBLIC_APP_URL ist nur Legacy-Fallback, wenn kein eigener Site-Wert
 // gesetzt ist. Public Indexing ist explizites Opt-in: nur der exakte Wert
 // `true` darf den Allow-Check passieren. Unset, leer, false und jeder
-// andere Wert bleiben deny. Zusätzlich fail-closed: localhost, *.vercel.app,
-// ungültige/mehrdeutige Origins, Path-Drift und ein weiterhin ephemeral
-// gesetzter App-Host.
+// andere Wert bleiben deny. Der Allow-Pfad ist zusätzlich an genau
+// https://jetnity.com gebunden. jetnity.ch, www, http, fremde Hosts,
+// localhost, *.vercel.app, ungültige/mehrdeutige Origins, Path-Drift,
+// ephemeral App-Hosts und widersprüchliche SITE/APP-Origins bleiben deny.
 //
-// Kein Custom-Domain-Cutover, kein produktives Indexing, kein hreflang,
-// kein JSON-LD-Ausbau über die vorhandene URL-Eigenschaft hinaus.
+// Kein Custom-Domain-Cutover, kein Redirect, kein produktives Indexing,
+// kein hreflang, kein JSON-LD-Ausbau über die vorhandene URL-Eigenschaft hinaus.
 
 import { SITEMAP_OEFFENTLICHE_PFADE } from '@/lib/seo/index-grenze'
 
 export const LOKALER_ORIGIN_FALLBACK = 'http://localhost:3000'
+
+/** Einzige kanonische und indexierbare Public-Origin. Kein .ch-Split. */
+export const KANONISCHE_PUBLIC_ORIGIN = 'https://jetnity.com'
 
 export type OriginUmgebung = {
   NEXT_PUBLIC_SITE_URL?: string
@@ -53,6 +57,10 @@ function rohVorhanden(raw?: string): boolean {
 /** Nur der exakte Wert `true` ist eine bewusste Public-Indexing-Freigabe. */
 export function indexingIstExplizitFreigegeben(raw?: string): boolean {
   return raw === 'true'
+}
+
+export function originIstKanonischPublic(origin: string): boolean {
+  return origin === KANONISCHE_PUBLIC_ORIGIN
 }
 
 function parseOrigin(raw?: string): GeparsterOrigin | null {
@@ -118,15 +126,23 @@ export function oeffentlicherOrigin(env?: OriginUmgebung): OeffentlicherOrigin {
   const siteMehrdeutig =
     rohVorhanden(umgebung.NEXT_PUBLIC_SITE_URL) && Boolean(site && (site.ungueltig || site.hatDrift))
   const appEphemeral = Boolean(app && !app.ungueltig && originIstEphemeral(app.hostname))
+  const originsWidersprechen = Boolean(
+    site &&
+      !site.ungueltig &&
+      app &&
+      (app.ungueltig || app.hatDrift || app.origin !== site.origin),
+  )
 
   const darfIndexieren =
     produktion &&
     freigabe &&
+    originIstKanonischPublic(gewaehlt.origin) &&
     !gewaehlt.ungueltig &&
     !gewaehlt.hatDrift &&
     !originIstEphemeral(gewaehlt.hostname) &&
     !siteMehrdeutig &&
-    !appEphemeral
+    !appEphemeral &&
+    !originsWidersprechen
 
   return {
     origin: gewaehlt.origin,
