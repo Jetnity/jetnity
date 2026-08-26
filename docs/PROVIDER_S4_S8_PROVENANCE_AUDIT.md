@@ -59,6 +59,8 @@ Audit-PASS bedeutet nur: S4–S8 gegen aktuellen Code belegt, Severity nach Tech
 
 | Head | Gate | Ergebnis |
 | --- | --- | --- |
+| Severity-Korrektur `ebd41f6e` | GitHub Actions | SUCCESS `32916638566` |
+| Severity-Korrektur `ebd41f6e` | Vercel | SUCCESS / READY `WHkEj6jkjz5oceuhYgbttF79tJ3d` |
 | Audit `52162a7b` | GitHub Actions | SUCCESS `32911158128` |
 | Audit `52162a7b` | Typecheck, Lint & Build | SUCCESS |
 | Audit `52162a7b` | Auth-Konfiguration | SUCCESS |
