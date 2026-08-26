@@ -84,6 +84,9 @@ export type FlugTeilstrecke = {
  *
  * Fare, Gepäck und Stornierbarkeit nur, wenn der Adapter sie zuverlässig
  * gelesen hat. Sonst `null` – nicht raten.
+ *
+ * Kommerzielle Provenance (`retrievedAt`, Freshness, Währungsabgleich) liegt
+ * nicht in diesem Domänenmodell. Siehe `lib/commercial-provenance`.
  */
 export type FlugOption = {
   id: string

@@ -50,6 +50,9 @@ export type RentalCarSuchanfrage = {
 /**
  * Normalisierte Provideroption. Suche und Affiliate bleiben getrennt:
  * keine Booking-URL, keine Provisionsfelder.
+ *
+ * Kommerzielle Provenance (`retrievedAt`, Freshness, Währungsabgleich) liegt
+ * nicht in diesem Domänenmodell. Siehe `lib/commercial-provenance`.
  */
 export type RentalCarOption = {
   id: string

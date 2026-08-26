@@ -4071,6 +4071,27 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 ---
 
+## ADR-0168 – Commercial Provenance ist ein eigener Vertrag, kein UniversalOffer
+
+**Datum:** 26. August 2026  
+**Status:** S5-A Domain-Foundation auf Feature-Branch. Nicht Ready. Nicht gemergt. Keine Persistenz. Volltext: `docs/ADR_0168_COMMERCIAL_PROVENANCE_DOMAIN_CONTRACT.md`.
+
+**Entscheidung:** Kommerzielle Wahrheit (Preis, Providerherkunft, Freshness, Währung) bekommt einen provider-neutralen Domainvertrag in `lib/commercial-provenance`. Die bestehenden Flight-/Hotel-/Activity-/Mobility-/Rental-Modelle bleiben fachlich getrennt. Der Vertrag komponiert Provenance, er ersetzt die Domänenoptionen nicht. Ein persistierter Snapshot ist niemals live. Fehlende Freshness bleibt `unknown`. Requested- und Quoted-Währung dürfen ohne Conversion-Evidence nicht gleichgesetzt werden. External References sind Provenance, nicht Trust. Mehrere belegte Quellen dürfen als Konflikt stehen bleiben. LLM/Assistant darf diesen Vertrag nicht erzeugen oder überschreiben.
+
+**Kontext:** Der S4–S8-Audit (PR #77) hat den S5-Gap präzise belegt und den Shared Contract bewusst nicht implementiert. TW-8 und bezahlte Provider bleiben hinter diesem Vertrag und späteren Gates.
+
+**Alternativen:**
+
+1. *Felder still in jede Option-Zod und `trip_items` schreiben.* Würde Persistenz und Shared Persistence-Contracts ohne Production-Gate ziehen.
+2. *Ein UniversalOffer.* Vermischt Flug-/Hotel-/Transport-Semantik und verletzt AGENTS.md Regel 19.
+3. *S1 Ops zum Offer-Modell ausbauen.* S1 ist Operationsvertrag, keine Commercial-Truth.
+
+**Begründung:** Zuerst der fail-closed Vertrag, dann später S5-B-Persistenz. Ohne Beobachtungszeit, Freshness und Währungsabgleich wäre jeder Preisvergleich erfunden.
+
+**Konsequenzen:** Keine DB-Migration in S5-A. Altbestand ohne `retrievedAt` bleibt unknown. TW-8 startet nicht durch diesen Slice. Factories und Provider bleiben unverändert.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

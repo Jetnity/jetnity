@@ -145,6 +145,8 @@ Account AP-1 (PR #43) und Admin Slice A (PR #44) bleiben parallel und unberührt
 
 ### PR-S5 – Provenance an kommerziellen Optionen
 
+S5 ist in S5-A (Domainvertrag, dieser Slice) und später S5-B (Persistenz, eigenes Gate) getrennt. S5-A implementiert **keinen** Offer-Monolithen und keine `trip_items`-Spalten.
+
 **Ziel:** `retrievedAt`, Währungsabgleich, sichtbares Stale.
 
 **Umfang:**
