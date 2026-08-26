@@ -4,7 +4,7 @@ Stand: 26. August 2026
 Agent: `Trip workspace audit architecture`  
 Branch: `feat/tw6-create-entry-alignment`  
 Auftrag: `docs/TRIP_WORKSPACE_TW6_CREATE_ENTRY_TASK.md`  
-Status: **TW6-A IMPLEMENTIERT / TL-FINDINGS GESCHLOSSEN / AUF AKTUELLES MAIN SYNCHRONISIERT / EXACT-HEAD GATES GRÜN / NICHT READY / NICHT MERGEN**
+Status: **TW6-A IMPLEMENTIERT / UNABHÄNGIGER TECHNICAL-LEAD-PASS AUF CODE-/EVIDENCE-HEAD / STATUS RECONCILED / KEIN GESAMT-TW-6-CLOSURE**
 
 `docs/ACTIVE_WORK_STATUS.md` wurde nicht geändert.
 
@@ -21,18 +21,22 @@ Bewusst offen bleibender TW-6-Rest:
 
 Kein stilles TW-6-Closure. Kein TW-7. Kein TW-8.
 
-## 2. Exact Head / main / Merge-Base
+## 2. Live-Baseline und unabhängig geprüfter Head
 
 | Fakt | Wert |
 | --- | --- |
-| Exact Head | `03dd9a329b0f57018b49692ee28fcdee6eb18bc1` |
-| Live `origin/main` | `2468160ede5cf8cfcc96fb59cc1346ebd6b0fa21` |
-| Merge-Base | `2468160ede5cf8cfcc96fb59cc1346ebd6b0fa21` |
-| Ahead / Behind | **6 ahead / 0 behind** |
-| GitHub mergeable | `MERGEABLE` / `CLEAN` |
-| Draft | ja |
+| Unabhängig geprüfter Code-/Evidence-Head | `06d95c39c922b5a54b6ca721933657f416ae1b43` |
+| Live `origin/main` bei Review | `2468160ede5cf8cfcc96fb59cc1346ebd6b0fa21` |
+| Merge-Base bei Review | `2468160ede5cf8cfcc96fb59cc1346ebd6b0fa21` |
+| Ahead / Behind vor diesem Status-Reconciliation-Commit | **7 / 0** |
+| GitHub mergeable bei Review | `MERGEABLE` / `CLEAN` |
+| Draft bei Review | ja |
 
-## 3. Technical-Lead-Findings
+Dieser Status-Reconciliation-Commit ändert ausschließlich diese Dokumentation. Vor einer Integration wird sein neuer Exact Head erneut über GitHub Actions und Vercel gegatet; die Runtime wurde nach dem geprüften Head `06d95c39` nicht verändert.
+
+## 3. Technical-Lead-Review
+
+Der Technical Lead hat den tatsächlichen GitHub-Diff, die Create-Entry-Logik und die adversarial Tests unabhängig vom Agentenbericht geprüft.
 
 | ID | Finding | Status |
 | --- | --- | --- |
@@ -40,6 +44,16 @@ Kein stilles TW-6-Closure. Kein TW-7. Kein TW-8.
 | TW6-TL-02 | `Reiseidee.uebernehmen` ohne Re-Gate | **geschlossen** – `gastCreateVorNetzschritt` vor `vorschlagOrteAufloesen`; Vorschlag bleibt |
 | TW6-TL-03 | Helper remappt jeden Href | **geschlossen** – nur nacktes `/planen`; `zielHref` bleibt Handoff |
 | TW6-TL-04 | TW-6 still als fertig | **geschlossen** – als TW6-A dokumentiert; Stage-Rest offen |
+
+Zusätzlich unabhängig bestätigt:
+
+- `PlanenCreateGate` überschreibt oder löscht keine Gastreise; der persistente Guest-One-Trip-Vertrag bleibt unverändert.
+- `Reiseidee` fail-fastet vor Modell-/Ortsauflösungs-Schritten und re-gatet vor Übernahme.
+- `TripPlanner` fail-fastet vor Ortsbestätigung/Persistenz; sichtbare Tempo-/Interessen-Wahl ist entfernt, während der bestehende Persistenzvertrag `balanced` kompatibel bleibt und nicht als Nutzerwahl dargestellt wird.
+- `planenVorbelegung` erfindet keinen Origin/ZRH.
+- Generic-CTAs lesen Guest-LocalStorage nur bei bestätigter Gast-Sitzung; Konto und unbekannte Sitzung bleiben Create-fähig.
+- ziel-/ideen-spezifische `/planen`-Handoffs werden nicht in die bestehende Gastreise umgebogen.
+- keine DB-, RLS-, Auth/MFA/AAL-, Provider-, Payment-, Traveller- oder Guest→Account-Änderung.
 
 ## 4. Tatsächlicher GitHub-Diff gegen `main`
 
@@ -71,42 +85,27 @@ Nicht geändert: `gastspeicher.ts`, `uebernahme.ts`, Traveller/Route/Provider/Au
 | — | P0 | keine | — |
 | — | P1 | keine | — |
 | TW6-TL-01…04 | P2 | siehe Abschnitt 3 | geschlossen |
-| TW6-R-P2-01 | P2 | `vorschlagErzeugen` bleibt ohne UI aufrufbar | akzeptiert / Non-Scope Billing |
-| TW6-R-P2-02 | P2 | Inspirationskarten sehen vor dem Klick nach Create aus | akzeptiert; Gate auf `/planen` |
+| TW6-R-P2-01 | P2 | `vorschlagErzeugen` bleibt ohne UI direkt aufrufbar | akzeptiert / separater Billing-/API-Hardening-Punkt, kein TW6-A-Blocker |
+| TW6-R-P2-02 | P2 | Inspirationskarten sehen vor dem Klick weiter nach Create aus | akzeptiert; `/planen`-Gate verhindert zweiten Guest-Create |
 | TW6-R-P3-01 | P3 | Reisende-Default 2; hartes CHF | bewusst nicht in TW6-A |
-| TW6-R-P3-02 | P3 | CTA-Text wechselt nach Session-Lesen | akzeptiert |
+| TW6-R-P3-02 | P3 | CTA-Text kann nach Session-Lesen wechseln | akzeptiert |
 | TW6-REST-01 | Rest | Progressive Ziele / Stage-Create | **offen**, nicht dieser PR |
 
-## 6. Tests / Gates auf Exact Head `03dd9a32`
+## 6. Tests / Exact-Head-Evidence
 
-Lokal:
+Unabhängig geprüfter Code-/Evidence-Head `06d95c39c922b5a54b6ca721933657f416ae1b43`:
 
-| Gate | Ergebnis |
-| --- | --- |
-| `npm run typecheck` | PASS |
-| `npm run lint` | PASS |
-| `npm test` | PASS **2093/2093** |
-| `npm run build` | PASS |
-| `npm run check:setup:ci` | PASS (Warning: keine `.env`) |
-| `npm run check:dead` | PASS (`CookieConsent` justified) |
-| `npm run check:exports` | PASS nach Unexport von `PLANEN_HANDOFF_PARAMS` |
-| `npm run check:deps` | PASS |
-| `npm run check:api-schutz` | PASS |
-| `npm run check:schema-bezug` | PASS |
+- GitHub Actions `32968917007` – **SUCCESS**, exakt auf `06d95c39`; CI enthält Typecheck, Lint, Tests, Build, Hygiene und Auth. Tests: **2093/2093**.
+- Vercel Deployment `dpl_9XmbkrWhcCzDP84wEXJVd12Kupsj` – **READY**, GitHub-Metadaten zeigen exakt `06d95c39` / PR #82.
+- Der vorherige Runtime-Head `03dd9a32` war ebenfalls Actions/Vercel-grün.
+- Lokal dokumentiert: typecheck, lint, test, build, setup:ci, dead, exports, deps, api-schutz, schema-bezug – PASS.
 
-Exact Head:
+Live Desktop/Mobile-Walkthrough der Preview war wegen Vercel-SSO in diesem Lauf nicht unabhängig möglich. Für diesen eng begrenzten Slice wurden Runtime-Wahrheit und Nebenwirkungen deshalb über tatsächlichen Diff, Source-Review und adversarial Tests bewertet; das bleibt als Evidenzgrenze dokumentiert.
 
-- GitHub Actions `32968526336` **SUCCESS** (Typecheck/Lint/Tests/Build + Auth). Tests im CI-Log: **2093/2093**.
-- Vercel **SUCCESS** `89X2V99BX1ZsaUZAGQMqHhgBhmKj`. Preview SSO-geschützt.
+## 7. Technical-Lead-Urteil
 
-Vorheriger Head `4daaf55f` ist in CI an `check:exports` gescheitert; das ist der behobene ungenutzte Export.
+**PASS für TW6-A / Product-Owner-Option-1-Create-Entry-Scope.**
 
-Live Desktop/Mobile-Walkthrough der Preview war in diesem Lauf **nicht möglich** (Vercel SSO; lokal keine Supabase-Env). Die betroffenen Flows sind über Source + adversarial Tests belegt.
+Dieser PASS bedeutet ausdrücklich **nicht**, dass TW-6 insgesamt abgeschlossen ist. `TW6-REST-01` bleibt offen; TW-7 und TW-8 bleiben nach ihren bestehenden Gates gesperrt.
 
-## 7. Review / Merge
-
-Draft-PR: https://github.com/Jetnity/jetnity/pull/82
-
-**Nicht Ready. Nicht mergen. Kein TW-7. Kein TW-8.**
-
-STOPP für erneuten unabhängigen Technical-Lead-Review auf Exact Head `03dd9a32`.
+Der nachfolgende Status-Reconciliation-Commit ist docs-only. Nach dessen Exact-Head-Gates darf der Technical Lead den normalen scope-treuen PR gemäß aktueller Merge-Autonomie Ready setzen und integrieren.
