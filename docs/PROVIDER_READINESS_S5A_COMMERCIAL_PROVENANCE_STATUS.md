@@ -32,10 +32,12 @@ Review direkt in PR #83. HOLD / NICHT READY / NICHT MERGEN.
 | --- | --- |
 | `origin/main` | `2de8008ddb10e9b53fef49daccc779831669e813` |
 | PR-Head | `e222646dd55e150ca5ac0353c6a0994d70067c85` |
-| Ahead/Behind | 2 ahead / 4 behind |
-| Merge-Base | `71230c280b1cd2500d224095fa84f4472101d31f` |
-| Mergeable | CONFLICTING |
-| Tatsächlicher GitHub-Diff | 19 Dateien; `docs/ACTIVE_WORK_STATUS.md` **nicht** im Diff |
+| Ahead/Behind vor Sync | 2 ahead / 4 behind |
+| Merge-Base vor Sync | `71230c280b1cd2500d224095fa84f4472101d31f` |
+| Mergeable vor Sync | CONFLICTING |
+| Tatsächlicher GitHub-Diff vor Sync | 19 Dateien; `docs/ACTIVE_WORK_STATUS.md` **nicht** im Diff |
+| Nach Sync | Merge-Base = `2de8008d`; 4 ahead / 0 behind; **MERGEABLE** |
+| Diff nach Sync | 21 Dateien gegenüber `main` (19 bisher + `bindung.ts` + `trust.ts`); `docs/ACTIVE_WORK_STATUS.md` unverändert gegenüber `main` |
 
 Main enthält inzwischen PR #81 (Guest→Account Commercial-Truth). ADR-0166 in `DECISIONS.md` auf `main` ist diese QS-2-Entscheidung; ADR-0168 bleibt S5-A. Beide bleiben erhalten.
 
@@ -97,7 +99,20 @@ S5-B-Persistenz bleibt dokumentiert und nicht implementiert.
 
 ## 8. Exact Head / Actions / Vercel
 
-Wird nach Sync, Push und Gates nachgetragen. Cursor-Aggregat-Views sind keine Evidence.
+Korrektur-Head nach Sync: `7c3da36750e1b4e43bbfcc3ffb02e4d05dc82d81`
+
+| Gate | Ergebnis |
+| --- | --- |
+| GitHub Actions | SUCCESS [32958395472](https://github.com/Jetnity/jetnity/actions/runs/32958395472) |
+| Vercel Preview | SUCCESS / READY `9CEvTjCVhVGz9o8H91u1cEjemeKS` – Deployment `6101867937` |
+| Preview-URL | https://jetnity-6dkzlv1cz-jetnity-e1b93c82.vercel.app |
+| Merge-Base | `2de8008ddb10e9b53fef49daccc779831669e813` |
+| Ahead/Behind | 4 / 0 |
+| Mergeable | MERGEABLE |
+
+Lokale Gates auf demselben Head: typecheck, lint, `npm test` 2078/2078, build, `check:setup:ci`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` – alle PASS.
+
+Ein späterer docs-only Status-Commit kann den PR-Head verschieben; Technical-Lead-Review gaten den dann aktuellen Head zusätzlich. Cursor-Aggregat-Views sind keine Evidence.
 
 ## 9. STOPP
 
