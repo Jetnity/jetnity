@@ -65,7 +65,7 @@ Audit-PASS bedeutet nur: S4–S8 gegen aktuellen Code belegt, Severity nach Tech
 | Init `6b7e12da` | GitHub Actions | SUCCESS `32910187319` |
 | Init `6b7e12da` | Vercel | READY `DYXXbFoQDhftEsEGvD2Kvj4JNmnN` |
 
-Ein docs-only Status-Nachtrag nach `52162a7b` ist ein neuer Head und braucht eigene SUCCESS/READY-Evidence.
+Historische Heads bleiben Evidence. Der Exact Head dieser Severity-Korrektur muss eigene SUCCESS/READY-Evidence haben; Cursor-Aggregat-Views sind keine GitHub-PR-Diff-Evidence.
 
 ### 1.3 Historische Provider-PRs – nur Evidence
 
