@@ -117,7 +117,8 @@ Native-Strategie: **one product, one truth, multiple clients.** Keine separate m
 - `jetnity.ch` = Schweizer Entry-/Redirect-Domain, keine zweite indexierte Plattform;
 - Public Indexing bleibt explizites Opt-in über exakt `NEXT_PUBLIC_ALLOW_INDEXING=true`;
 - Default bleibt fail-closed / deny-all;
-- **kein Domain-Cutover ist aktiviert.** Live am 26. August 2026: `jetnity.com` ohne öffentliche DNS-Auflösung; Production-Alias `https://jetnity-app.vercel.app`.
+- HTML-`robots` folgt `darfIndexieren` fail-closed (PR #86 / ADR-0170). Canonical / `metadataBase` / OG / JSON-LD verwenden `https://jetnity.com`. `*.vercel.app` ist niemals kanonische Produktdomain. `/planen` emittiert robots explizit;
+- **kein Domain-Cutover ist aktiviert.** Live am 26. August 2026 nach PR #86: `jetnity.com` und `jetnity.ch` ohne öffentliche DNS-Auflösung; Production-Alias `https://jetnity-app.vercel.app` liefert HTTP 200 mit `noindex, nofollow` und Canonical `https://jetnity.com`.
 
 ## 7. Traveller-Wahrheit
 
@@ -161,7 +162,7 @@ Exakte Cursor-Anzeigenamen:
 6. `Jetnity quality security audit`
 7. `Jetnity native app architecture` – für die spätere Native-Phase reserviert.
 
-Nach den Merges #80–#84 hat **kein** dieser Workstreams einen offenen Runtime-Auftrag. Alle Feature-/Audit-Agenten sind **STOPP**, bis ChatGPT / Technical Lead einen neuen, versionierten Auftrag gibt.
+Nach den Merges #80–#84 und **#86** hat **kein** dieser Workstreams einen offenen Runtime-Auftrag. Alle Feature-/Audit-Agenten sind **STOPP**, bis ChatGPT / Technical Lead einen neuen, versionierten Auftrag gibt.
 
 Parallelität ist erlaubt, wenn konfliktarm:
 
@@ -176,9 +177,9 @@ Parallelität ist erlaubt, wenn konfliktarm:
 
 ## 10. Letzte live verifizierte Integrationsbaseline
 
-Aktueller `main`, live geprüft am 26. August 2026:
+Aktueller `main`, live geprüft am 26. August 2026 nach Merge von PR #86:
 
-`d3faa2a08a5a492230d94e03c4d1811b32dd915b`
+`38ec8be79a6ce7758be81fd5d564819d638140d6`
 
 Dieser Commit ist **kein dauerhaft behaupteter aktueller `main`**. Nach jedem weiteren Merge muss `main` erneut live verifiziert werden.
 
@@ -193,6 +194,7 @@ Diese Baseline enthält insbesondere:
 - P1-TA-02 Official Evaluation Option Scope;
 - QS-1, QS-2 Audit;
 - D0/G0 Foundation Audit, D0-1, D0-2;
+- **P1-D0-LIVE-01 fail-closed public metadata boundary (PR #86)** – kein D1/G1;
 - Merge-Autonomie-Governance.
 
 `main` Branch Protection war live weiterhin **nicht aktiviert** (`protected=false`) und bleibt ein Governance-/Engineering-Risiko.
@@ -204,6 +206,10 @@ Geschlossen durch D0-2:
 - D0-P2-01 deny-all / Sitemap-/Host-Semantik;
 - D0-P2-02 Canonical-/Origin-Vertrag.
 
+Geschlossen durch PR #86:
+
+- **P1-D0-LIVE-01** – HTML-robots folgt `darfIndexieren`; öffentliche Canonicals sind `https://jetnity.com`, niemals `*.vercel.app`.
+
 Weiter offen:
 
 - **D0-P1-03** – `/privacy` und `/terms` 404; eigener Legal-/PO-Slice, keine Rechtstexte erfinden;
@@ -211,7 +217,7 @@ Weiter offen:
 - **D0-P2-05** – JSON-LD / Entity Foundation;
 - G0-P2-01 / G0-P2-02 / G0-P3-01 / G0-P3-02.
 
-Kein automatischer D1/G1-Start.
+Kein automatischer D1/G1-Start. PR #86 aktiviert kein Indexing, kein DNS, keinen Redirect und keinen Domain-Cutover.
 
 ## 12. Trip-Workspace-Gates
 

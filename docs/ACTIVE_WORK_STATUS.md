@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 26. August 2026  
-Status: **Kein aktiver Runtime-Slice. Continuity-/Handoff-Bereinigung nach Integration von PR #81, #84, #82, #83 und #80. Nächster Schritt: unabhängiger Technical-Lead-Review, kein neuer Produktslice.**
+Status: **Kein aktiver Runtime-Slice. Continuity-/Handoff-Bereinigung nach Integration von PR #81, #84, #82, #83, #80 und #86. Nächster Schritt: unabhängiger Technical-Lead-Review von Draft-PR #85, danach erst der finale ChatGPT-Superprompt. Kein neuer Produktslice.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -9,15 +9,23 @@ Status: **Kein aktiver Runtime-Slice. Continuity-/Handoff-Bereinigung nach Integ
 
 Aktueller verifizierter `main`:
 
-`d3faa2a08a5a492230d94e03c4d1811b32dd915b`
+`38ec8be79a6ce7758be81fd5d564819d638140d6`
+
+Merge-Message: `Merge PR #86: fail-closed public metadata boundary`.
 
 Production für diesen Merge:
 
-Vercel Deployment `6106016878` / `9JTEdJ88wXhwP2JyhbcFfiCpugkw` → **SUCCESS** auf Exact Head `d3faa2a0`.  
+Vercel Deployment `6108029117` → **SUCCESS** auf Exact Head `38ec8be7`.  
 Öffentlicher Alias: `https://jetnity-app.vercel.app` (HTTP 200).  
-`https://jetnity.com` ist kanonische Produktdomain, live ohne öffentliche DNS-Auflösung. Kein Cutover.
+Live HTML nach PR #86: `robots`/`googlebot` = `noindex, nofollow`; Canonical `https://jetnity.com`; OG-Bild `https://jetnity.com/images/hero-bali.png`.  
+`/planen`: ebenfalls `noindex, nofollow`; Canonical `https://jetnity.com/planen`.  
+`/robots.txt`: deny-all (`User-Agent: *` / `Disallow: /`).  
+`https://jetnity.com` und `jetnity.ch` ohne öffentliche DNS-Auflösung (HTTP 000). Kein Cutover. Kein Redirect. Kein Public Indexing.
 
-GitHub Actions Exact Head: Run `32980880774` **SUCCESS**.
+GitHub Actions:
+
+- PR-#86 Exact Head `0f809857`: Run `32989862339` **SUCCESS**;
+- Post-Merge `main` `38ec8be7`: Run `32991955365` **SUCCESS**.
 
 Zuletzt integriert:
 
@@ -25,11 +33,14 @@ Zuletzt integriert:
 - PR #84 – P1-TA-02 Official Evaluation Option-Scope → `2468160e`;
 - PR #82 – TW6-A Create-Entry Alignment → `c4ea47aa`;
 - PR #83 – Provider S5-A Commercial Provenance Domain Contract → `3b317bc6`;
-- PR #80 – Central Admin AAL2 Guard → `d3faa2a0`.
+- PR #80 – Central Admin AAL2 Guard → `d3faa2a0`;
+- **PR #86 – D0 live metadata boundary / P1-D0-LIVE-01 → `38ec8be7`.** Kein D1/G1.
 
 Bereits zuvor integriert: D0-1, D0-2, TW-1/2/4/3/5, QS-1, QS-2 Audit, Parallel-Audits #75–#78, AP-1–AP-3, S1–S3, Admin A–C, Foundations C/D/E.
 
 `main` Branch Protection ist live **nicht aktiviert** (`protected=false`) und bleibt ein Governance-Risiko. In diesem Docs-only-Auftrag nicht konfiguriert.
+
+PR #82 / #83 / #80 / #86 sind **keine** aktiven Drafts mehr. Sie sind gemergt.
 
 ## 1. Aktive Technical-Lead-Governance
 
@@ -41,18 +52,23 @@ Besondere Product-Owner-Gates bleiben unverändert, insbesondere für Production
 
 ## 2. D0 / Growth
 
-D0-1 und D0-2 sind auf `main`.
+D0-1, D0-2 und **P1-D0-LIVE-01** sind auf `main`.
 
 Domain-Wahrheit:
 
 - `https://jetnity.com` = einzige zukünftige kanonische/indexierte Public-Hauptdomain;
 - `jetnity.ch` = Schweizer Entry-/Redirect-Domain, keine zweite indexierte Plattform;
+- HTML-robots folgt `darfIndexieren` fail-closed;
+- Public Canonical / metadataBase / OG / JSON-LD verwenden `https://jetnity.com`;
+- `*.vercel.app` ist niemals kanonische Jetnity-Produktdomain;
+- `/planen` emittiert robots explizit;
 - Indexing nur bei explizitem `NEXT_PUBLIC_ALLOW_INDEXING=true` und exakter `.com`-Origin;
-- kein Domain-Cutover, kein Public-Launch.
+- Default bleibt deny/false;
+- kein Domain-Cutover, kein Public-Launch, kein Redirect, kein DNS.
 
-Offen: **D0-P1-03** Legal-404; D0-P2-04 hreflang; D0-P2-05 JSON-LD; G0-Reste.
+Offen: **D0-P1-03** Legal-404 (`/privacy`, `/terms` live 404); D0-P2-04 hreflang; D0-P2-05 JSON-LD; G0-Reste.
 
-`Jetnity growth discoverability` bleibt STOPP.
+`Jetnity growth discoverability` bleibt STOPP. Kein D1/G1 aus PR #86 ableiten.
 
 ## 3. Trip Workspace
 
@@ -79,7 +95,7 @@ Geschlossen:
 
 Weiter offen:
 
-- **P2-TA-06** – `documents[0]` in `travellerNormalisieren()`; live weiterhin vorhanden;
+- **P2-TA-06** – `documents[0]` in `travellerNormalisieren()`; live weiterhin vorhanden in `lib/readiness/engine.ts`;
 - **P2-TA-03** – `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` fehlt auf `main` und existiert nur im historischen Account-Audit-PR #39;
 - Mobility/Rental-Such-Snapshots mit kommerziellen Feldern;
 - direkter `reise_anlegen`-RPC-Bypass;
@@ -106,7 +122,7 @@ QS-2-P1s:
 1. `P1-QS2-01` Application-AAL2 → **integriert durch PR #80**;
 2. `P1-QS2-02` Guest→Account Commercial Truth → **integriert durch PR #81**.
 
-Admin-AAL2-Vertrag integriert in der Anwendung. Development-Migration versioniert. **Production-Datenebene nicht angewendet.**
+Admin-AAL2-Vertrag integriert in der Anwendung. Development-Migration versioniert und auf Development angewendet (`admin_aal2_data_plane` als Version `20260826052735`). **Production-Datenebene nicht angewendet und nicht als aktiviert behaupten.**
 
 Kein Admin D–K. Kein QS-3.
 
@@ -131,22 +147,33 @@ Dieser Continuity-Slice darf `docs/ACTIVE_WORK_STATUS.md` aktualisieren, weil er
 
 ## 8. Offene PRs
 
-Nur historische Drafts: #52, #50, #40, #39, #28. Klassifikation im Checkpoint. Nicht wieder als aktuelle Arbeit aufnehmen. Nicht schließen.
+Live geprüft nach PR #86. **#52 / #50 / #40 / #39 / #28 sind weiterhin OPEN / Draft** und nicht geschlossen.
+
+| PR | Klasse |
+| --- | --- |
+| **#85** Final continuity handoff | **AKTIVER docs-only Draft.** Unabhängiger TL-Review. Nicht Ready. Nicht mergen durch den Autoren-Agenten. |
+| #52 ChatGPT TL handoff 2026-08-24 | HISTORICAL / SUPERSEDED |
+| #50 S1 merged-status docs | HISTORICAL / INTEGRATED ELSEWHERE |
+| #40 Admin Platform Audit | HISTORICAL / INTEGRATED ELSEWHERE |
+| #39 Account Platform Audit | HISTORICAL / INTEGRATED ELSEWHERE |
+| #28 Trip Collaboration Foundation | HISTORICAL / SUPERSEDED / DO NOT RESUME |
+
+Nicht schließen. Nicht löschen. Nicht als aktuelle Runtime-Arbeit wieder aufnehmen.
 
 ## 9. Supabase / Production
 
-Production-Projekt `qscbgcdmivbbnzrcyegn`: live `ACTIVE_HEALTHY`.
+Production-Projekt `qscbgcdmivbbnzrcyegn`: zuletzt unabhängig live `ACTIVE_HEALTHY`, letzte angewendete Version `20260824140000` (gleiche Kalendertags-Evidence vor PR #86). PR #86 enthält **keine** Migration.
 
-Production endet bei `20260824140000`.
+In dieser Continuity-Umgebung zeigt `SUPABASE_PROJECT_REF` **nicht** auf Production; Management-API gegen Production-Ref `403`. Deshalb keine neue Production-SQL-Liste in diesem Auftrag behauptet.
 
-Development-only / nicht Production-approved:
+Development (dieses Agent-Secret), live erneut gelesen:
 
-- `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`;
-- `20260824180000_trip_items_flug_handelsfelder_guard`;
-- `20260826090000_admin_aal2_data_plane` (Development-Apply-Version `20260826052735` beobachtet; Production ohne diesen Eintrag).
+- enthält `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`;
+- enthält `20260824180000_trip_items_flug_handelsfelder_guard`;
+- enthält `admin_aal2_data_plane` als angewendete Version `20260826052735`.
 
-Keine Development-only-Migration darf ohne eigenes Production-Gate still produktiv angewendet werden.
+Keine Development-only-Migration darf ohne eigenes Production-Gate still produktiv angewendet werden. Keine Auth/RLS/AAL-/Provider-/Payment-Aktivierung.
 
 ## 10. Nächster Schritt
 
-Unabhängiger ChatGPT-/Technical-Lead-Review des Continuity-Handoffs. Kein Produktslice. Kein Ready/Merge dieses Continuity-PR durch den Autoren-Agenten.
+Unabhängiger ChatGPT-/Technical-Lead-Review von Draft-PR #85. Danach erst der finale ChatGPT-Superprompt. Kein Produktslice. Kein Ready/Merge dieses Continuity-PR durch den Autoren-Agenten. Kein D1/G1. Kein TW6-REST/TW-7/TW-8. Kein S5-B. Kein AP-Folgeslice. Kein Admin D–K.

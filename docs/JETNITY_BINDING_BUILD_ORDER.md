@@ -1,7 +1,7 @@
 # Jetnity – verbindliche Build-Reihenfolge
 
 Stand: 26. August 2026  
-Status: **Product-Owner-verbindlich; Änderung nur durch neue ausdrückliche Product-Owner-Entscheidung. Operativer Integrationsstand: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.**
+Status: **Product-Owner-verbindlich; Änderung nur durch neue ausdrückliche Product-Owner-Entscheidung. Operativer Integrationsstand nach PR #86: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`. D0-1/D0-2 und P1-D0-LIVE-01 sind integriert; das ist kein D1/G1 und kein Domain-Cutover.**
 
 ## Grundsatz
 
@@ -103,7 +103,7 @@ Mit der finalen Homepage beginnt verbindlich **Discoverability Phase D1** aus `d
 
 Parallel werden die passenden **Marketing-&-Growth-G0/G1-Grundlagen** aus `docs/JETNITY_MARKETING_GROWTH_STANDARD.md` eingebaut, soweit deren Abhängigkeiten erfüllt sind: kanonische Acquisition-/Attribution-Parameter, versionierte Events, Landingpage-/Deep-Link-Verträge, Consent-kompatible Messung und messbare Activation-Ziele. Keine Paid-Skalierung ohne Revenue-/Conversion-Evidence.
 
-Konfliktarme D0-/G0-Grundlagen wie semantische Seitenstruktur, Metadata-/Canonical-Verträge, Sitemap-/robots-Grundlage, getestete strukturierte Daten sowie provider-neutrale Event-/Attribution-Contracts dürfen schon vorher vorbereitet werden, wenn sie den aktiven Integrationspfad nicht aufblähen.
+Konfliktarme D0-/G0-Grundlagen wie semantische Seitenstruktur, Metadata-/Canonical-Verträge, Sitemap-/robots-Grundlage, getestete strukturierte Daten sowie provider-neutrale Event-/Attribution-Contracts dürfen schon vorher vorbereitet werden, wenn sie den aktiven Integrationspfad nicht aufblähen. D0-1, D0-2 und die Live-Metadata-Grenze (PR #86 / P1-D0-LIVE-01) sind auf `main`. Das öffnet **nicht** D1, G1, Public Indexing oder Domain-Cutover.
 
 ## 7. AI & Search Discoverability / Authority
 

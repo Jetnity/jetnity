@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 26. August 2026  
-Status: **Foundation C/D/E, Safety, Seasonal, AP-1–AP-3, Admin A–C, Provider S1–S3 + S5-A, TW-1/2/4/3/5, TW6-A, D0-1/D0-2, QS-1/QS-2, P1-QS2-02, P1-TA-02 und Admin-AAL2-Application-Guard liegen auf `main @ d3faa2a0`. TW6-REST-01, S5-B, TW-7/TW-8, AP-4+, Admin D–K und Growth-Folgeslices sind nicht gestartet. Aktueller Handoff: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.**
+Status: **Foundation C/D/E, Safety, Seasonal, AP-1–AP-3, Admin A–C, Provider S1–S3 + S5-A, TW-1/2/4/3/5, TW6-A, D0-1/D0-2, P1-D0-LIVE-01, QS-1/QS-2, P1-QS2-02, P1-TA-02 und Admin-AAL2-Application-Guard liegen auf `main @ 38ec8be7`. TW6-REST-01, S5-B, TW-7/TW-8, AP-4+, Admin D–K, D1/G1 und Growth-Folgeslices sind nicht gestartet. Aktueller Handoff: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -461,7 +461,8 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 12c. ✅ TW6-A Create-Entry Alignment – auf `main` (`c4ea47aa`). **TW6-REST-01 bleibt offen.**
 12d. ✅ Provider S5-A Commercial Provenance – auf `main` (`3b317bc6`, ADR-0168). S5-B nicht gestartet.
 12e. ✅ Admin-AAL2 Application-Guard – auf `main` (`d3faa2a0`, ADR-0169). Production-DB nicht angewendet.
-13. Admin/Account/Provider-Programme separat weiterführen; kein Slice D, AP-4, S5-B oder TW-8 ohne eigenen Auftrag
+12f. ✅ D0 live metadata boundary / P1-D0-LIVE-01 – auf `main` (PR #86, `38ec8be7`, ADR-0170). HTML-robots fail-closed; Canonical ist `https://jetnity.com`, niemals `*.vercel.app`. **Kein D1/G1. Kein Domain-Cutover. Kein Public Indexing.**
+13. Admin/Account/Provider-Programme separat weiterführen; kein Slice D, AP-4, S5-B, TW-8, D1 oder G1 ohne eigenen Auftrag
 14. finaler Workspace Intelligence Audit
 15. echte Providerphase
 16. provider-backed End-to-End-/Truth-Audit

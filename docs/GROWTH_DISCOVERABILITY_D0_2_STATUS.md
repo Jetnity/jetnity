@@ -7,7 +7,7 @@ Draft-PR: #74
 Aktueller `main`: `8ab4e666d4963ac98b32de4b0371dfbd6eefc30f`  
 Status: **INTEGRATED on `main` via PR #74. HISTORICAL REVIEW-EVIDENCE darunter. D0-P2-01 und D0-P2-02 sind geschlossen.**
 
-> Aktueller operativer Stand: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`. Kein D1/G1-Start.
+> Aktueller operativer Stand: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`. P1-D0-LIVE-01 (HTML-robots/Canonical auf dem Vercel-Alias) ist durch PR #86 geschlossen. Das ist kein D1/G1-Start.
 
 Kein Ready. Kein Merge. Kein D0-3/G0-1/D1/G1+.  
 `docs/ACTIVE_WORK_STATUS.md` wurde nicht geändert.

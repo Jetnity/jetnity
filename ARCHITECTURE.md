@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
 Stand: 26. August 2026
-Gültig für: Foundation D/E, Travel Safety, Travel Timing & Seasonal Intelligence, Account AP-1–AP-3, Admin Slice A–C, Provider S1–S3 und S5-A, Trip Workspace TW-1/2/4/3/5 und TW6-A, D0-1/D0-2 sowie den zentralen Admin-AAL2-Application-Guard auf `main` `d3faa2a0`. Account-Slices ändern kein Schema. S2-B1/B2- und Admin-AAL2-Data-Plane-Migrationen liegen nur auf Development und sind nicht Production-approved. Operativer Stand: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
+Gültig für: Foundation D/E, Travel Safety, Travel Timing & Seasonal Intelligence, Account AP-1–AP-3, Admin Slice A–C, Provider S1–S3 und S5-A, Trip Workspace TW-1/2/4/3/5 und TW6-A, D0-1/D0-2, die fail-closed Public-Metadata-Grenze (PR #86 / ADR-0170) sowie den zentralen Admin-AAL2-Application-Guard auf `main` `38ec8be7`. Account-Slices ändern kein Schema. S2-B1/B2- und Admin-AAL2-Data-Plane-Migrationen liegen nur auf Development und sind nicht Production-approved. Operativer Stand: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -34,6 +34,7 @@ components/         Präsentation und Interaktion
 lib/                Business-Logik, Datenzugriff, Integrationen
 lib/provider-ops/   gemeinsamer technischer Operationsvertrag (Request-Härtung, Kill-Switch-Form, In-Memory-Cost-Guard, Outcome-Taxonomie); keine Fachwahrheit, kein UniversalProvider
 lib/commercial-provenance/ S5-A Domainvertrag für Commercial Provenance; keine Persistenz, keine Provideraktivierung (ADR-0168). S5-B nicht gestartet.
+lib/seo/            D0-Indexgrenze und öffentliche Metadata (ADR-0170). HTML-robots folgt `darfIndexieren`; Canonical ist nie ein Vercel-Alias. Kein D1/G1.
 lib/auth/           Rollenmodell und Zugangsentscheidung (siehe Abschnitt 4)
 types/              Datenbank- und Domänentypen; types/supabase.ts wird erzeugt
 supabase/migrations Datenbankschema, vollständig und reproduzierbar (Abschnitt 6)
@@ -470,12 +471,12 @@ Deployment über Vercel (Projekt `jetnity-app`). `main` ist der stabile Integrat
 
 | Adresse | Zustand |
 | --- | --- |
-| `jetnity-app.vercel.app` | öffentlich erreichbar, aktueller Production-Alias |
+| `jetnity-app.vercel.app` | öffentlich erreichbar, aktueller Production-Alias. Nach PR #86: HTML `noindex, nofollow`; Canonical/OG auf `https://jetnity.com`. Niemals kanonische Produktdomain. |
 | Deployment-URLs (`jetnity-<hash>-…vercel.app`) | durch Vercel Deployment Protection geschützt, liefern die Vercel-Login-Seite |
-| `jetnity.com` | **kanonische Produktdomain; live weiterhin keine öffentliche DNS-Auflösung. Kein Cutover.** |
+| `jetnity.com` | **kanonische Produktdomain; live weiterhin keine öffentliche DNS-Auflösung. Kein Cutover. Kein Public Indexing.** |
 | `jetnity.ch` | **Entry-/Redirect-Domain, nicht zweite indexierte Plattform; live keine öffentliche DNS-Auflösung. Kein Cutover.** |
 
-Die beiden Produktionsdomains aus [JETNITY_VISION.md](JETNITY_VISION.md) sind damit noch nicht mit dem Vercel-Projekt verbunden. Für die Entwicklung ist das unkritisch, für den Launch ist es eine Voraussetzung. Automatisierte Prüfungen der Produktion müssen bis dahin den Alias verwenden, nicht die Wunschdomain.
+Die beiden Produktionsdomains aus [JETNITY_VISION.md](JETNITY_VISION.md) sind damit noch nicht mit dem Vercel-Projekt verbunden. Für die Entwicklung ist das unkritisch, für den Launch ist es eine Voraussetzung. Automatisierte Prüfungen der Produktion müssen bis dahin den Alias verwenden, nicht die Wunschdomain. `NEXT_PUBLIC_ALLOW_INDEXING` bleibt deny/default false. `/robots.txt` bleibt deny-all, solange Indexing nicht ausdrücklich aktiviert ist. `/privacy` und `/terms` bleiben 404 (D0-P1-03).
 
 `vercel.json` enthält seit Phase 1.1 **keine** Cron-Jobs mehr. Die vier vorherigen Jobs zeigten ausschließlich auf Alt-Endpunkte und sind entfernt.
 

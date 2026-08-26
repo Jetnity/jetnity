@@ -3,15 +3,14 @@
 Stand: 26. August 2026  
 Agent: `Jetnity growth discoverability`  
 Branch: `fix/d0-live-index-metadata-boundary-2026-08-26`  
-Draft-PR: https://github.com/Jetnity/jetnity/pull/86  
-Implementation-HEAD: `9d808816e05daf4a1e7df6e27b811202ae463b13`  
-Aktueller `main`: `d3faa2a08a5a492230d94e03c4d1811b32dd915b`  
-Merge-Base: `d3faa2a08a5a492230d94e03c4d1811b32dd915b`  
-Ahead/Behind vs `origin/main` vor diesem Status-Commit: **2 / 0**  
-Status: **IMPLEMENTIERT / DRAFT / STOPP für unabhängigen Technical-Lead-Review**
+PR: https://github.com/Jetnity/jetnity/pull/86  
+Exact Head: `0f809857d4651543e97c3644d4aa0d30a625a262`  
+Merge-Commit / `main`: `38ec8be79a6ce7758be81fd5d564819d638140d6`  
+Status: **INTEGRATED on `main` via PR #86. HISTORICAL REVIEW-EVIDENCE darunter. P1-D0-LIVE-01 geschlossen. Kein D1/G1. Kein Domain-Cutover. Kein Public Indexing.**
 
-Kein Ready. Kein Merge. Kein D1/G1. Keine Domainaktivierung.  
-`docs/ACTIVE_WORK_STATUS.md` und Draft-PR #85 wurden nicht geändert.
+> Die folgenden Abschnitte beschreiben den Review-Stand vor und während des Drafts. Sie dürfen den aktuellen Handoff nicht überschreiben. Kanonisch: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
+
+Kein D1/G1. Keine Domainaktivierung. Kein Redirect. `NEXT_PUBLIC_ALLOW_INDEXING` bleibt deny/default false.
 
 ## 1. Finding
 
@@ -106,17 +105,17 @@ Vercel Preview für denselben SHA ist SUCCESS.
 
 | ID | Severity | Status |
 |---|---|---|
-| P1-D0-LIVE-01 | P1 | **geschlossen in diesem Draft-PR**. Production bleibt bis Merge defekt. |
+| P1-D0-LIVE-01 | P1 | **geschlossen durch Merge von PR #86.** Live auf Production-Alias danach: HTML `noindex, nofollow`, Canonical `https://jetnity.com`. |
 | P2-D0-LIVE-CI | P2 | GitHub Actions Exact-Head-Run fehlt bisher. |
 | P2-D0-LIVE-SSO | P2 | Vercel Preview ist SSO-geschützt; HTML-Beweis über Production-Build, nicht über anonymes Preview-HTML. |
 | P3 | – | Keine.
 
 ## 9. Offene Risiken
 
-- Production `jetnity-app.vercel.app` bleibt indexierbar, bis dieser PR gemergt ist.
-- Preview-HTML kann der Technical Lead nach SSO selbst prüfen.
-- Kein Domain-Cutover, kein DNS, kein Redirect, kein Indexing-Launch.
+- Historisch: Production blieb indexierbar, **bis** PR #86 gemergt war. Das gilt nach Merge nicht mehr als Current.
+- Preview-HTML kann SSO-geschützt sein; der öffentliche Alias `https://jetnity-app.vercel.app` ist anonym prüfbar.
+- Kein Domain-Cutover, kein DNS, kein Redirect, kein Indexing-Launch. Kein D1/G1 aus diesem Slice ableiten.
 
 ## 10. STOPP
 
-Nicht Ready. Nicht mergen. Kein D1. Kein G1. Keine Domainaktivierung.
+Slice integriert. Kein D1. Kein G1. Keine Domainaktivierung. Kein Folgeslice durch diesen Status.

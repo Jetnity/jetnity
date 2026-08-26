@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 26. August 2026  
-Status: **kanonischer operativer Übergabepunkt nach PR #80 auf `main @ d3faa2a0`. Kein aktiver Runtime-Slice. Nächster Schritt ist unabhängiger Technical-Lead-Review dieses Continuity-Stands, nicht ein neuer Produktslice.**
+Status: **kanonischer operativer Übergabepunkt nach PR #86 auf `main @ 38ec8be7`. Kein aktiver Runtime-Slice. Nächster Schritt ist unabhängiger Technical-Lead-Review von Draft-PR #85, danach erst der finale ChatGPT-Superprompt. Kein neuer Produktslice.**
 
 Der erste Einstieg bleibt `JETNITY_START_HERE.md`.  
 Aktueller Checkpoint: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
@@ -54,14 +54,15 @@ Besondere Product-Owner-Gates bleiben bestehen für Production-Migrationen/destr
 
 ## 3. Live integrierter Stand
 
-Aktueller `main`, live 26. August 2026:
+Aktueller `main`, live 26. August 2026 nach PR #86:
 
-`d3faa2a08a5a492230d94e03c4d1811b32dd915b`
+`38ec8be79a6ce7758be81fd5d564819d638140d6`
 
-GitHub Actions Exact Head: Run `32980880774` SUCCESS.  
-Vercel Production Exact Head: `9JTEdJ88wXhwP2JyhbcFfiCpugkw` SUCCESS.  
-Öffentlicher Alias: `https://jetnity-app.vercel.app`.  
-`https://jetnity.com` ist die kanonische Produktdomain, aber ohne öffentliche DNS-Auflösung. Kein Cutover.
+GitHub Actions Exact Head: Run `32991955365` SUCCESS auf `38ec8be7`.  
+PR-#86-Exact-Head Actions: Run `32989862339` SUCCESS auf `0f809857`.  
+Vercel Production Exact Head: Deployment `6108029117` SUCCESS auf `38ec8be7`.  
+Öffentlicher Alias: `https://jetnity-app.vercel.app` → HTTP 200, HTML `noindex, nofollow`, Canonical `https://jetnity.com`.  
+`https://jetnity.com` ist die kanonische Produktdomain, aber ohne öffentliche DNS-Auflösung. `jetnity.ch` bleibt Entry-/Redirect-Domain. Kein Cutover. Kein Public Indexing.
 
 Letzte relevante Integrationen:
 
@@ -69,7 +70,8 @@ Letzte relevante Integrationen:
 - PR #84 – P1-TA-02 Official Evaluation Option Scope → `2468160e`;
 - PR #82 – TW6-A Create-Entry → `c4ea47aa`;
 - PR #83 – Provider S5-A Commercial Provenance → `3b317bc6`;
-- PR #80 – Central Admin AAL2 Guard → `d3faa2a0`.
+- PR #80 – Central Admin AAL2 Guard → `d3faa2a0`;
+- **PR #86 – D0 live metadata boundary / P1-D0-LIVE-01 → `38ec8be7`.** Kein D1/G1.
 
 Trip Workspace integriert:
 
@@ -122,16 +124,21 @@ Production-Supabase-Migration **nicht** angewendet. Development-Artefakt ist ver
 
 ## 8. D0/G0-Stand
 
-D0-1 und D0-2 geschlossen.
+D0-1, D0-2 und **P1-D0-LIVE-01** (PR #86) geschlossen.
 
-Weiter offen: D0-P1-03 Legal-404, D0-P2-04 hreflang, D0-P2-05 JSON-LD, G0-P2/P3-Reste.
+HTML-robots folgt `darfIndexieren`. Public Canonical / metadataBase / OG / JSON-LD verwenden `https://jetnity.com`. `*.vercel.app` ist niemals kanonische Produktdomain. `/planen` emittiert robots explizit. `NEXT_PUBLIC_ALLOW_INDEXING` bleibt deny/default false.
+
+Kein DNS, kein Domain-Cutover, kein Redirect, kein Public Indexing.
+
+Weiter offen: **D0-P1-03** Legal-404 (`/privacy`, `/terms` live 404), D0-P2-04 hreflang, D0-P2-05 JSON-LD, G0-P2/P3-Reste. Kein D1/G1.
 
 ## 9. Offene PRs – nicht wieder aufnehmen
 
-Aktuell offen, alle Draft, keine Runtime-Folgeslices:
+Aktuell offen, alle Draft. Live erneut geprüft nach PR #86; keiner der historischen PRs wurde geschlossen:
 
 | PR | Klasse |
 | --- | --- |
+| **#85 Final continuity handoff** | **AKTIVER docs-only Continuity-Draft.** Unabhängiger TL-Review. Nicht Ready. Nicht mergen durch den Autoren-Agenten. |
 | #52 ChatGPT TL handoff 2026-08-24 | HISTORICAL / SUPERSEDED |
 | #50 S1 merged-status docs | HISTORICAL / INTEGRATED ELSEWHERE |
 | #40 Admin Platform Audit | HISTORICAL / INTEGRATED ELSEWHERE |
@@ -162,9 +169,9 @@ Nicht Production: `20260824160000`, `20260824180000`, `20260826090000_admin_aal2
 
 ## 13. Exakter nächster Technical-Lead-Schritt
 
-Unabhängiger Review dieses Continuity-Stands und des zugehörigen docs-only Draft-PR. Danach schreibt ChatGPT / Technical Lead den finalen Superprompt für den neuen Chat.
+Unabhängiger Review von Draft-PR #85. Danach schreibt ChatGPT / Technical Lead den finalen Superprompt für den neuen Chat.
 
-**Nicht** starten: TW6-REST-01, TW-7, TW-8, S5-B, AP-Folgeslice, Admin D–K, Growth-Folgeslice, Production-Migration, Provideraktivierung.
+**Nicht** starten: TW6-REST-01, TW-7, TW-8, S5-B, AP-Folgeslice, Admin D–K, Growth-Folgeslice, D1/G1, Production-Migration, Provideraktivierung, Domain-Cutover.
 
 ## 14. Continuity
 
