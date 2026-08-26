@@ -1,104 +1,70 @@
 # Jetnity – Active Work Status
 
 Stand: 26. August 2026  
-Status: **PR #72 ist integriert. Aktiver docs-only Governance-Slice erweitert Technical-Lead-Merge-Autonomie unter strenger unabhängiger Pflichtprüfung. Nach dessen Closure kontrollierte konfliktarme Parallelisierung.**
+Status: **Parallel-Audit-Batch abgeschlossen und integriert. D0-2 ist integriert. Nächste kontrollierte Runtime-/Foundation-Arbeiten: TW-6 Create-Entry Alignment, QS2 Guest→Account Commercial-Truth-Closure und Provider S5-A Commercial Provenance Domain Contract. Admin-AAL2-PR #80 bleibt vor Integration im unabhängigen Technical-Lead-Review.**
 
-## 0. Live-verifizierte Baseline
+## 0. Live-Integrationsbaseline
 
-Aktueller `main` vor diesem Governance-Slice:
+Integrationsbaseline unmittelbar vor diesem Continuity-Commit:
 
-`5f9dc4b0e87d8b2adbcaca6962a76463cad32304`
+`5ef981ecd7f761294bcbb691d6cf966395f7ce97`
 
-Letzte relevante Integrationen:
+Diese SHA ist nur Evidence dieses Zeitpunkts. Vor jeder neuen Aktion muss `main` live verifiziert werden.
 
-- PR #70 – D0-1 Index Boundary Contract → `083eda22189e1dad8bd70413889d2486755d7fe6`;
-- PR #72 – Post-D0-1 Continuity → `5f9dc4b0e87d8b2adbcaca6962a76463cad32304`.
+Zuletzt integriert:
 
-`main` Branch Protection ist weiterhin **nicht aktiviert**.
+- PR #74 – D0-2 Canonical / Origin / robots-sitemap Consistency → `c73e87773dd6d234f1b76fc82206f03aac35fd2c`;
+- PR #76 – Traveller / Account Next-Phase Dependency Audit → `70196da8ff2e2af3ffb32322dea5555d641c9455`;
+- PR #77 – Provider S4–S8 Dependency / Provenance Gap Audit → `75dfb4308e9aeba2d14353831f016eee84c4fac6`;
+- PR #75 – TW-6 Dependency / Guest-One-Trip Contract Audit → `5ef981ecd7f761294bcbb691d6cf966395f7ce97`.
 
-## 1. Aktiver Governance-Slice
+Bereits zuvor integriert:
 
-Branch:
+- PR #78 – Admin D–K / Marketing-Growth Control Gap Audit;
+- PR #79 – QS-2 Independent Quality / Security / Resilience Audit;
+- D0-1, TW-1/TW-2/TW-4/TW-3/TW-5 und die dazugehörigen Continuity-/Governance-Slices.
 
-`docs/tl-merge-autonomy-2026-08-26`
+`main` Branch Protection ist live weiterhin **nicht aktiviert** und bleibt ein Governance-Risiko.
 
-Ziel:
-
-- aktuelle Product-Owner-Entscheidung dauerhaft speichern;
-- Technical Lead darf normale scope-treue PRs selbst Ready setzen / mergen;
-- vor jedem Ready/Merge ist eine vollständige unabhängige Prüfung zwingend;
-- Agentenberichte und grüne Tests dürfen nie blind übernommen werden;
-- bei Defekten zuerst selbst korrigieren oder Cursor gezielt korrigieren lassen;
-- danach Exact-Head-Gates und unabhängigen Review wiederholen;
-- besondere Production-/Provider-/Kosten-/Payment-/Sensitive-Data-/Auth-/Launch-Gates bleiben Product-Owner-pflichtig.
-
-Kanonische neue Vorrangregel:
-
-`docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`
-
-Dieser Slice ist docs-only. Keine Runtime-, DB-, RLS-, Auth-, Traveller-, Route-, Provider-, Payment-, Tracking-, Secret-, paid-call- oder Kostenänderung.
-
-## 2. Merge-Governance – verbindlich ab 26. August 2026
+## 1. Aktive Technical-Lead-Governance
 
 > **Autonom mergen ist erlaubt – blind mergen ist verboten.**
 
-Vor einem normalen eigenständigen Merge prüft ChatGPT / Technical Lead mindestens:
+Vor Ready/Merge zwingend:
 
-- kanonischen Kontext und aktuellste Nutzerentscheidung;
-- tatsächlichen Diff / geänderte Dateien;
-- Acceptance Criteria / Scope / Non-Scope;
-- fachliche Richtigkeit der Tests und ihrer Erwartungen;
-- Security / Privacy / Truth / Shared Contracts;
-- Exact-Head GitHub Actions;
-- Exact-Head Vercel;
-- relevante Supabase-/Migrationsevidence;
-- Ahead/Behind/Merge-Base und parallele PRs;
-- offene Threads / P0/P1 / sonstige Blocker.
+- aktuelles `main`, Merge-Base, Ahead/Behind und tatsächlichen Diff prüfen;
+- Auftrag, Acceptance Criteria und Non-Scope gegen Runtime-Code prüfen;
+- Tests und deren Annahmen fachlich hinterfragen;
+- Security / Privacy / Truth / Shared Contracts prüfen;
+- Exact-Head GitHub Actions und Vercel prüfen;
+- relevante Supabase-/Migrationsevidence prüfen;
+- offene Review-Threads, P0/P1/P2/P3 und parallele Kollisionen prüfen;
+- bei Fehlern zuerst korrigieren und danach vollständig neu gaten.
 
-Bei einem Problem: kein Merge → Korrektur → neu gaten → neu reviewen.
+Besondere Product-Owner-Gates bleiben unverändert, insbesondere für Production-Migrationen/destruktive Daten, fundamentale Auth/MFA/AAL-/Identity-/RLS-Änderungen, sensitive Dokumentdaten, reale Provider/Secrets/paid calls, reale Payments, > USD 100/Monat neue laufende Kosten und Public Launch/Provider-Live/Store-Aktivierung.
 
-## 3. Besondere Product-Owner-Gates
+## 2. D0-2 – integriert
 
-Ausdrückliche Product-Owner-Entscheidung bleibt vor der betreffenden Aktion erforderlich für insbesondere:
+D0-2 ist abgeschlossen und auf `main`.
 
-- Production-Migration/destruktive Production-Daten;
-- große produktive RLS-/Ownership-/Identity-Änderungen;
-- fundamentale Auth/MFA/AAL/Session-Änderungen;
-- neue besonders sensitive Pass-/MRZ-/Biometrie-/Dokument-Speicherung;
-- neue sensible externe Datenweitergabe;
-- reale Providerverträge, Production-Secrets oder paid calls;
-- reale Payments / Geldbewegung;
-- neue laufende Kosten > USD 100/Monat;
-- fundamentale Produkt-/Business-/Build-Order-Änderungen;
-- Public Launch / Provider-Live / Store-/Production-Großaktivierung.
+Verbindliche Domain-Wahrheit:
 
-## 4. D0-1 / PR #70 – integriert
-
-Finaler freigegebener Head:
-
-`549f3de1a44020641d1cad2c13a6a1a08086847d`
-
-Merge:
-
-`083eda22189e1dad8bd70413889d2486755d7fe6`
-
-Geschlossen:
-
-- D0-P1-01;
-- D0-P1-02;
-- D0-P2-03;
-- P2-D0-1-TL-01.
+- `https://jetnity.com` = einzige zukünftige kanonische/indexierte Public-Hauptdomain;
+- `jetnity.ch` = spätere Schweizer Entry-/Redirect-Domain, keine zweite indexierte Plattform;
+- Public Indexing bleibt explizites Opt-in über exakt `NEXT_PUBLIC_ALLOW_INDEXING=true`;
+- Default bleibt fail-closed / deny-all;
+- kein Domain-Cutover, kein `.ch`-Redirect und kein Public-Launch wurden aktiviert.
 
 Weiter offen:
 
-- D0-P1-03 Legal-404;
-- D0-P2-01 robots/Sitemap/Host;
-- D0-P2-02 Canonical/Origin;
-- D0-P2-04 Locale/hreflang;
-- D0-P2-05 JSON-LD/Entity;
-- G0-P2-01 / G0-P2-02 / G0-P3-01 / G0-P3-02.
+- **D0-P1-03** – `/privacy` und `/terms` 404; kein Rechtstext darf erfunden werden;
+- D0-P2-04 – hreflang / Locale;
+- D0-P2-05 – JSON-LD / Entity Foundation;
+- G0-Findings und spätere Search-/Authority-Slices.
 
-## 5. Trip Workspace
+`Jetnity growth discoverability` bleibt bis zum nächsten phasengerechten Auftrag STOPP.
+
+## 3. Trip Workspace – nächster Runtime-Slice
 
 Integriert:
 
@@ -107,95 +73,123 @@ Integriert:
 - TW-4 ✅
 - TW-3 ✅
 - TW-5 ✅
+- TW-6 Dependency-/Guest-One-Trip-Audit ✅
 
-Noch gegatet:
+Product Owner hat für TW-6 **Option 1** ausdrücklich genehmigt.
 
-- TW-6 Create-Entry: dokumentierter Product-Owner-Schnitt + Guest-One-Trip-Vertrag erforderlich;
-- TW-7 Hub: Account-/Hub-Grenzen;
-- TW-8 Commercial: Provider S5 / reale Commercial Provenance;
-- TW-9 danach;
-- finaler Function-by-Function-/Intelligence-Audit zwingend.
+Nächster Runtime-Slice:
 
-Kein TW-6-Runtime-Start ohne Gate-Closure.
+**TW-6 – Create-Entry Alignment / Option 1**
 
-## 6. Kontrollierte Parallelisierung nach Governance-Closure
+Verbindlich:
 
-Folgende Workstreams sind konfliktarm parallel möglich, wenn jeder seinen eigenen Branch, Draft-PR, Task und Status erhält und die unten genannten Grenzen einhält:
+- minimaler, eindeutiger Create-Entry;
+- Guest-One-Trip und Guest→Account unverändert;
+- keine Citizenship-/Pass-Erhebung im Create;
+- ehrliche Gast-CTA bei bereits vorhandener Gastreise;
+- kein dritter Create-Pfad;
+- `balanced`-Persistenzdefault bleibt in TW-6 unverändert und darf ohne Nutzerauswahl nicht als bewusste Auswahl dargestellt werden;
+- keine neue `/planen`-SEO-/Origin-Arbeit;
+- kein TW-7/TW-8-Vorgriff.
 
-### `Jetnity growth discoverability`
+TW-7 bleibt hinter Account-/Hub-Grenzen. TW-8 bleibt hinter Provider S5 / Commercial Provenance.
 
-**D0-2 – Canonical / Origin / robots-sitemap Consistency**  
-Typ: enger Runtime-Slice.  
-Keine Legal-Texte, kein hreflang, kein JSON-LD-Ausbau, kein Tracking, keine Custom-Domain-/Public-Indexing-Aktivierung.
+## 4. Traveller / Account
 
-### `Trip workspace audit architecture`
+Current Traveller Truth bleibt:
 
-**TW-6 Dependency / Guest-One-Trip Contract Audit**  
-Typ: audit-only.  
-Keine TW-6-Runtime, keine `/planen`-Änderung, keine Guest→Account-/Trip-Shared-Contract-Änderung. Ziel: exakten fehlenden Product-Owner-Schnitt und Contract-Entscheidungsvorlage liefern.
+> **Ein Reisender → mehrere Staatsbürgerschaften → mehrere Dokumente/Credential-Optionen → kontextabhängig bewertete zulässige Optionen.**
 
-### `Account plattform audit vorbereitung`
+Kein Default-Pass. Issuer ist nicht Citizenship.
 
-**Traveller / Account Next-Phase Dependency Audit**  
-Typ: audit-only.  
-Keine AP-4-Runtime, keine DB/RLS/Auth-/Traveller-Shared-Contract-Änderung. Ziel: produktweite Multi-Citizenship/Multi-Document-Lücken und saubersten nächsten Account-/Traveller-Schnitt belegen.
+Offen:
 
-### `Jetnity provider readiness audit`
+- **P1-QS2-02** – Guest→Account kann bei Stay/Activity manipulierte unbewiesene kommerzielle Felder als Account-Truth übernehmen. Nächster enger Account-/Boundary-Closure-Slice.
+- **P1-TA-02** – aktueller Presentation/API-Pfad kollabiert `officialAusEvaluations()` auf `evaluations[0]`; eigener fokussierter Closure-Slice danach.
+- **P2-TA-06** – latenter `documents[0]`-Fallback in `travellerNormalisieren()`; späteres Contract-Hardening.
+- Account-scoped Traveller Registry / AP-7 bleibt Shared-Contract-gegated.
 
-**Provider S4–S8 Dependency / Provenance Gap Audit**  
-Typ: audit-only.  
-Keine Provideraktivierung, keine Secrets, Verträge, paid calls oder Commercial-Truth-Erfindung. Ziel: S4–S8 Abhängigkeiten und S5-Provenance-Gate präzisieren.
+Keine neue Registry oder Identity-Wahrheit still einführen.
 
-### `Admin platform audit`
+## 5. Provider Readiness
 
-**Admin D–K / Marketing-Growth Control Gap Audit**  
-Typ: audit-only.  
-Keine produktiven Ads/CRM/Finance/Payment/Provider-Writes. Ziel: Admin-Plan gegen verbindlichen Growth-Control-Standard abgleichen und conflict-free Slice-Grenzen vorschlagen.
+S1–S3 sind integriert. S4–S8 sind nicht implementiert.
 
-### `Jetnity quality security audit`
+Bestätigte Gates:
 
-**QS-2 – Independent Quality / Security / Resilience Audit**  
-Typ: audit-only.  
-Keine Feature-Runtime. Ziel: aktuellen `main` adversarial prüfen, neue P0/P1/P2/P3 finden, insbesondere nach TW-5 + D0-1 + Governance/Parallelitätsöffnung.
+- **TW8-START-GATE:** Kein TW-8 ohne belastbaren S5 Commercial-Provenance-Vertrag.
+- **PROVIDER-ACTIVATION-GATE:** Persistenter Cost Guard vor bezahlter/Production-Provideraktivierung; heutiger In-Memory-Guard reicht nicht.
+- **P1-before-TW8 Commercial Truth:** persistierte kommerzielle Beträge brauchen belastbaren observed/retrieved timestamp und klare Freshness-/Currency-/Provenance-Wahrheit.
 
-### `Jetnity native app architecture`
+Nächste konfliktarme Foundation:
 
-Weiter **reserviert / nicht starten**.
+**S5-A – Commercial Provenance Domain Contract**
 
-## 7. Harte Parallelitätsregeln
+Provider-neutral, keine echten Provider, keine Secrets/Verträge/paid calls, keine Aktivierung, keine Production-Migration und keine neue Kosten.
 
-- Jeder Agent eigener Branch / Draft-PR / Task / Status.
-- Agenten ändern **nicht** `docs/ACTIVE_WORK_STATUS.md`; zentrale Continuity nur ChatGPT / Technical Lead.
-- Audit-only-Agenten ändern keine Runtime.
-- Keine Shared-Contract-Änderung ohne STOPP.
-- Kein Agent startet selbst den nächsten Slice.
-- Jeder Agent liefert Exact Head, Diff, Tests/Gates und STOPP.
-- ChatGPT / Technical Lead prüft jeden Change unabhängig vom kanonischen Startpunkt aus.
+## 6. QS-2 / Admin AAL2
 
-## 8. Shared Contracts
+QS-2 Audit ist integriert und hat zwei P1 bestätigt:
 
-Technical-Lead-kontrolliert bleiben insbesondere:
+1. `P1-QS2-01` – zentrale Admin-AAL2-Durchsetzung;
+2. `P1-QS2-02` – Guest→Account Commercial-Truth für Stay/Activity.
 
-- Auth / Identity / Sessions / MFA / AAL;
-- RLS / Ownership / Guest→Account;
-- Traveller / Multi-Citizenship / Multi-Document;
-- Route / Transit;
-- Privacy / Consent;
-- Billing / Payment;
-- Admin Audit / Capabilities;
-- Provider Activation;
-- Attribution / Revenue / Claims Truth;
-- Guardian / Simulator / Value Impact.
+Für `P1-QS2-01` existiert PR #80:
 
-## 9. Supabase / Production
+- Branch `fix/qs2-admin-aal2-guard`;
+- Anwendung + Development-Datenebenen-Hardening vorhanden;
+- Development-Migration `20260826090000_admin_aal2_data_plane.sql`;
+- **keine Production-Migration freigegeben oder angewendet**;
+- PR bleibt vor Merge im unabhängigen Technical-Lead-Review.
 
-Supabase Production:
+`Admin platform audit` erhält bis Abschluss dieses Reviews keinen neuen Runtime-Auftrag.
+
+`Jetnity quality security audit` bleibt während der nächsten Runtime-Slices STOPP und wird danach für einen neuen unabhängigen QS-3/Re-Release-Audit eingesetzt.
+
+## 7. Admin / Growth
+
+Admin D–K / Growth-Control-Audit ist als Evidence integriert. Keine D–K-Runtime wurde dadurch freigegeben.
+
+Bekannte spätere Themen bleiben u. a.:
+
+- Refund-Atomicity / Idempotency;
+- dauerhafter Admin Audit Trail;
+- IP-Blocklist-Enforcement;
+- Growth-/Attribution-/Claims-/Consent-Control-Plane.
+
+Build-Order bleibt verbindlich; diese Themen werden nicht vorgezogen, solange Trip/Traveller/Account/Provider-Gates davor offen sind.
+
+## 8. Aktive / nächste Cursor-Workstreams
+
+Jetzt konfliktarm parallel zulässig:
+
+1. `Trip workspace audit architecture` → TW-6 Runtime / Create-Entry Alignment Option 1.
+2. `Account plattform audit vorbereitung` → P1-QS2-02 Guest→Account Commercial-Truth Closure.
+3. `Jetnity provider readiness audit` → S5-A Commercial Provenance Domain Contract.
+
+STOPP:
+
+- `Jetnity growth discoverability` – D0-2 abgeschlossen; Legal benötigt genehmigte Inhalte, kein Erfinden.
+- `Admin platform audit` – kein neuer Slice bis #80-Review und phasengerechter Build-Order.
+- `Jetnity quality security audit` – erst nach den nächsten Runtime-/Foundation-Slices wieder für unabhängigen QS-3-Audit.
+- `Jetnity native app architecture` – weiterhin für spätere Native-Phase reserviert.
+
+## 9. Harte Parallelitätsregeln
+
+- Jeder Agent arbeitet von live verifiziertem aktuellem `main` auf neuem Branch + eigenem Draft-PR + Task/Status.
+- Agenten ändern **nicht** `docs/ACTIVE_WORK_STATUS.md`.
+- Keine stillen Shared-Contract-Erweiterungen.
+- Kein Agent startet selbst einen Folgeslice.
+- Jeder Agent endet mit `STOPP` und liefert Exact Head, tatsächlichen Diff, Tests/Gates und Vercel-Evidence.
+- ChatGPT / Technical Lead prüft jeden Agenten-Change unabhängig vor Ready/Merge.
+
+## 10. Supabase / Production
+
+Production-Projekt:
 
 `qscbgcdmivbbnzrcyegn`
 
-Zuletzt live verifiziert: `ACTIVE_HEALTHY`.
-
-Production bis:
+Zuletzt verifizierter produktiver Migrationsstand bleibt bis einschließlich:
 
 - `20260824120000_flug_route_itinerary_surface_evidence`;
 - `20260824140000_flug_route_itinerary_untrusted_surface`.
@@ -203,27 +197,13 @@ Production bis:
 Development-only / nicht Production-approved:
 
 - `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`;
-- `20260824180000_trip_items_flug_handelsfelder_guard`.
+- `20260824180000_trip_items_flug_handelsfelder_guard`;
+- `20260826090000_admin_aal2_data_plane` aus PR #80.
 
-## 10. Offene globale Risiken
+Keine dieser Development-only-Migrationen darf ohne eigenes Production-Gate still produktiv angewendet werden.
 
-- `main` Branch Protection deaktiviert;
-- D0-P1-03 Legal-404 bleibt P1;
-- QS-1 P2/P3 bleiben Follow-ups;
-- TW-6-Gate offen;
-- echte Provider/Payments/Production-Migrationen gesondert gegatet;
-- historische Dokumente und Draft-PRs können stale sein; Live-Evidence gewinnt.
+## 11. Continuity-Regel
 
-## 11. Exakter nächster Ablauf
+Kein relevanter Fortschritt darf nur im Chat existieren. Reviews, Merges, Agentenstatus, Findings, Gate-Entscheidungen, Supabase-/Vercel-/CI-Evidence und nächste Schritte werden im Repository nachgezogen.
 
-1. Governance-Slice auf Exact Head vollständig gaten/reviewen.
-2. Bei Fehlern zuerst korrigieren und erneut gaten.
-3. Bei unabhängigem PASS darf ChatGPT / Technical Lead diesen normalen docs-only PR selbst Ready setzen / mergen.
-4. Danach neuen `main` / Vercel / Continuity live verifizieren.
-5. Anschließend konfliktarme Parallel-Branches/Tasks/Draft-PRs für die sechs oben freigegebenen Workstreams vorbereiten.
-6. Cursor-Prompts müssen den **exakten Agent-Anzeigenamen** nennen.
-7. Native-Agent bleibt aus.
-
-## 12. Continuity-Regel
-
-Kein relevanter Fortschritt darf nur im Chat existieren. Agentenstatus, Merges, Findings, Gate-Entscheidungen und nächste Schritte werden im Repository nachgezogen.
+Historische PR-Bodies und Dokumente bleiben Evidence ihres damaligen Stands. Bei Widerspruch gelten Live-Evidence + aktuellste ausdrückliche Product-Owner-Entscheidung.
