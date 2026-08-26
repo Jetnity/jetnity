@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Compass, MapPin, Plus } from 'lucide-react'
 
+import GastCreateLink from '@/components/trips/GastCreateLink'
+
 /**
  * Gemeinsame 404-Ansicht für Jetnity V2.
  * Führt bewusst nur zu Zielen, die zum Reiseplanen gehören.
@@ -31,13 +33,14 @@ export default function NotFoundView() {
           </p>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-2">
-            <Link
-              href="/planen"
+            <GastCreateLink
+              createHref="/planen"
+              createLabel="Reise planen"
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-brand-800 px-5 text-sm font-semibold text-white transition hover:bg-brand-900"
             >
               <Plus className="h-4 w-4" aria-hidden="true" />
               Reise planen
-            </Link>
+            </GastCreateLink>
             <Link
               href="/reisen"
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-line-300 bg-white px-5 text-sm font-semibold text-brand-800 transition hover:border-line-500"

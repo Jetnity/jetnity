@@ -20,6 +20,7 @@ import { flugNachweisFehler } from '@/lib/flights/nachweis'
 import type { HotelOptionSichtbar } from '@/lib/hotels/client-sicht'
 import { hotelZeitraumAusEtappe } from '@/lib/hotels/reisegraph'
 import { alsHotelMomentaufnahme } from '@/lib/hotels/uebernahme'
+import GastCreateLink from '@/components/trips/GastCreateLink'
 import {
   gastAktivitaetUebernehmen,
   gastBuchungsstatusSetzen,
@@ -47,7 +48,6 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
   const [reise, setReise] = React.useState<Trip | null>(null)
   const [geladen, setGeladen] = React.useState(false)
   const [speicherfehler, setSpeicherfehler] = React.useState('')
-
   React.useEffect(() => {
     setReise(gastreiseLadenNach(tripId))
     setGeladen(true)
@@ -136,12 +136,11 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
           >
             Meine Reisen
           </Link>
-          <Link
-            href="/planen"
+          <GastCreateLink
+            createHref="/planen"
+            createLabel="Reise erstellen"
             className="inline-flex min-h-11 items-center rounded-full bg-brand-800 px-5 text-sm font-semibold text-white"
-          >
-            Neue Reise
-          </Link>
+          />
         </div>
       </div>
     )

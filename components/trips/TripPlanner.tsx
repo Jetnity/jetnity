@@ -26,7 +26,6 @@ import { useRouter } from 'next/navigation'
 import {
   ArrowRight,
   CalendarDays,
-  Check,
   Cloud,
   MapPin,
   ShieldCheck,
@@ -52,16 +51,20 @@ import { reiseorteBestaetigen } from '@/lib/places/aktionen'
 import { type OrtAuswahl } from '@/lib/places/auswahl'
 import { ORT_MELDUNG } from '@/lib/places/pruefen'
 import { reiseAnlegen } from '@/lib/trips/aktionen'
-import { INTERESSE_BEZEICHNUNG, TEMPO_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
+import {
+  CREATE_PERSISTENZ_INTERESSEN,
+  CREATE_PERSISTENZ_TEMPO,
+  gastCreateGate,
+} from '@/lib/trips/create-entry'
 import {
   GastreiseBestehtFehler,
   SpeicherFehler,
   gastreiseAnlegen,
+  gastspeicherLaden,
   kennungErzeugen,
 } from '@/lib/trips/gastspeicher'
 import { GRENZEN, neueReiseSchema } from '@/lib/trips/schema'
 import { cn } from '@/lib/utils'
-import { TRIP_INTERESTS, TRIP_PACES, type TripInterest, type TripPace } from '@/types/trips'
 
 type TripPlannerProps = {
   /** Kommt aus der Server-Komponente: `auth.getUser()` auf dem Server, nicht geraten. */
@@ -109,8 +112,6 @@ export default function TripPlanner({
   const [endDate, setEndDate] = React.useState('')
   const [travellers, setTravellers] = React.useState<number | ''>(2)
   const [budget, setBudget] = React.useState('')
-  const [pace, setPace] = React.useState<TripPace>('balanced')
-  const [interests, setInterests] = React.useState<TripInterest[]>([])
   const [travelWish, setTravelWish] = React.useState(initialIdea)
   const [meldung, setMeldung] = React.useState('')
   const [feldfehler, setFeldfehler] = React.useState<Feldfehler>({})
@@ -134,17 +135,20 @@ export default function TripPlanner({
     setFeldfehler((bisher) => feldfehlerLoeschen(bisher, feld))
   }
 
-  const interesseUmschalten = (interesse: TripInterest) => {
-    setInterests((bisher) =>
-      bisher.includes(interesse)
-        ? bisher.filter((eintrag) => eintrag !== interesse)
-        : [...bisher, interesse],
-    )
-  }
-
   const absenden = async (ereignis: React.FormEvent<HTMLFormElement>) => {
     ereignis.preventDefault()
     if (laeuft) return
+
+    const gate = gastCreateGate({
+      angemeldet,
+      aktiveReiseId: gastspeicherLaden().aktiv?.id ?? null,
+    })
+    if (!gate.erlaubt) {
+      const fehler = new GastreiseBestehtFehler(gate.bestehendeId)
+      setBestehendeReise(fehler.bestehendeId)
+      setMeldung(fehler.message)
+      return
+    }
 
     setMeldung('')
     setBestehendeReise('')
@@ -180,8 +184,8 @@ export default function TripPlanner({
       travellers: typeof travellers === 'number' ? travellers : 1,
       currency: 'CHF',
       budgetAmount: budget === '' ? null : Number(budget),
-      pace,
-      interests,
+      pace: CREATE_PERSISTENZ_TEMPO,
+      interests: CREATE_PERSISTENZ_INTERESSEN,
       travelWish,
     })
 
@@ -426,62 +430,6 @@ export default function TripPlanner({
             />
           </Feld>
         </div>
-
-        <fieldset className="mt-7">
-          <legend className="text-sm font-medium text-brand-800">Reisetempo</legend>
-          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {TRIP_PACES.map((option) => {
-              const gewaehlt = pace === option
-              return (
-                <button
-                  key={option}
-                  type="button"
-                  aria-pressed={gewaehlt}
-                  onClick={() => setPace(option)}
-                  className={cn(
-                    'min-w-0 rounded-2xl border p-4 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
-                    gewaehlt
-                      ? 'border-brand-600 bg-surface-50'
-                      : 'border-line-200 bg-white hover:border-line-500',
-                  )}
-                >
-                  <span className="flex items-center justify-between gap-2 text-sm font-semibold text-brand-800">
-                    {TEMPO_BEZEICHNUNG[option].titel}
-                    {gewaehlt && <Check className="h-4 w-4 shrink-0 text-brand-600" />}
-                  </span>
-                  <span className="mt-1 block text-xs leading-5 text-ink-700">
-                    {TEMPO_BEZEICHNUNG[option].beschreibung}
-                  </span>
-                </button>
-              )
-            })}
-          </div>
-        </fieldset>
-
-        <fieldset className="mt-7">
-          <legend className="text-sm font-medium text-brand-800">Was interessiert euch?</legend>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {TRIP_INTERESTS.map((interesse) => {
-              const gewaehlt = interests.includes(interesse)
-              return (
-                <button
-                  key={interesse}
-                  type="button"
-                  aria-pressed={gewaehlt}
-                  onClick={() => interesseUmschalten(interesse)}
-                  className={cn(
-                    'inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-600/15',
-                    gewaehlt
-                      ? 'border-brand-800 bg-brand-800 text-white'
-                      : 'border-line-200 bg-white text-ink-900 hover:border-line-500',
-                  )}
-                >
-                  {INTERESSE_BEZEICHNUNG[interesse]}
-                </button>
-              )
-            })}
-          </div>
-        </fieldset>
 
         <label className="mt-7 grid min-w-0 gap-2 text-sm font-medium text-brand-800">
           Was ist dir bei dieser Reise besonders wichtig?
