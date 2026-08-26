@@ -19,6 +19,7 @@ Live geprüft, nicht aus dem Prompt übernommen.
 | Live `origin/main` | `1d558ef56cc275d429f4076c7a8877c3791947a7` |
 | Merge-Base | `1d558ef56cc275d429f4076c7a8877c3791947a7` |
 | Task-Commit / vorheriger PR-Head | `dbfb7be8478f9dd4582eb46495323b498513b55b` |
+| Exact Head (Runtime + Docs vor CI-Nachzug) | `3b0b475e41cc7265f2796c8b4c4543da40bfcd83` |
 | Offene parallele Draft-PRs | #52, #50, #40, #39, #28 |
 | Shared-Contract-Kollision | keine offenen PRs treffen `zuordnung`, `reise_anlegen`, Timeline oder Assignment-Mode |
 
@@ -134,7 +135,10 @@ Development-RPC (echte Function, nicht nachgebaute JS-IFs):
 
 Guest/Account/Guest→Account und Reload sind in den TypeScript-Vertragstests abgedeckt (`day-stage-truth-contract`, `gastspeicher`, `reisevorschlag/abbildung`). Guest-One-Trip, clientRef, Places, RLS/Ownership, Traveller, Route, Commercial und D0 wurden in diesem Slice nicht angefasst; die bestehenden Suite-/RPC-Regressionen sind grün.
 
-Exact-Head GitHub Actions und Exact-Head Vercel werden auf dem Docs-Head nachgezogen. Ein älterer SUCCESS-Run gilt nicht als Evidence für den aktuellen Head.
+Exact-Head GitHub Actions [33016435981](https://github.com/Jetnity/jetnity/actions/runs/33016435981) **SUCCESS** auf `3b0b475e`.  
+Exact-Head Vercel Preview `4nj2DRqn3DsMPxXB8wQASrZ8bRgu` **SUCCESS** auf demselben SHA (`https://jetnity-jvn4fqqwq-jetnity-e1b93c82.vercel.app`).
+
+Der SUCCESS auf Task-Commit `dbfb7be8` und der Typecheck-FAILURE auf Zwischen-Head `8a2b1688` gelten nicht als Evidence für den aktuellen Head.
 
 ## 7. P0 / P1 / P2 / P3
 
