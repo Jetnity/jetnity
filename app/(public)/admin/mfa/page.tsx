@@ -14,11 +14,11 @@ export default async function AdminMfaPage({
   const ziel = erlaubtesAdminZiel(searchParams?.next)
   const decision = await evaluateAdminAccess({ surface: 'admin-mfa' })
 
+  if (decision.allowed) redirect(ziel)
+
   if (!decision.user || decision.denial === 'unauthenticated') {
     redirect('/admin/login')
   }
-
-  if (decision.allowed) redirect(ziel)
 
   if (decision.denial === 'aal2-required' || decision.denial === 'aal-lookup-failed') {
     return (

@@ -2,7 +2,7 @@
 
 Stand: 26. August 2026
 
-Status: **RUNTIME IMPLEMENTIERT / Self-Review und lokale Gates folgen / STOPP für unabhängigen Technical-Lead-Review. Kein Ready. Kein Merge.**
+Status: **RUNTIME IMPLEMENTIERT / lokale Gates grün / Exact-Head CI+Vercel folgen / STOPP für unabhängigen Technical-Lead-Review. Kein Ready. Kein Merge.**
 
 Branch: `fix/qs2-admin-aal2-guard`
 Baseline: `main @ 8ab4e666d4963ac98b32de4b0371dfbd6eefc30f`
@@ -33,12 +33,39 @@ Die Wahrheit sitzt in `evaluateAdminAccess()`. Nicht im Passwortlogin allein.
 
 `/admin/mfa` liegt in `(public)` und nicht hinter `requireAdminPage`. Die Middleware verlangt weiterhin eine Sitzung.
 
+## Adversarial Self-Review
+
+- Magic-Link-Ziel bleibt `${site}/admin`; der Guard fängt AAL1 und leitet auf `/admin/mfa`. Kein Loop, weil Step-up nicht `requireAdminPage` aufruft.
+- Consumer-OAuth/`next` kann `/admin` nicht setzen (`erlaubtesNaechstesZiel`). Eine spätere Navigation auf `/admin` trifft denselben Guard.
+- Bestehende AAL1-Session: Layout-Guard, kein Login-Bypass.
+- Break-Glass ohne AAL2: blockiert, bevor die Oberfläche öffnet.
+- API: weiterhin `NextResponse.json`, nie Redirect.
+- Open Redirect: `erlaubtesAdminZiel` verwirft fremde Hosts, Consumer-Pfade, Login- und Step-up-Ziele.
+- Öffentliche Meldungen enthalten keine Allowlist/Rolle/E-Mail.
+- Grössere Auth-/Session-Architektur war nicht nötig; kein STOPP aus diesem Grund.
+
+Residual: Es gibt keinen Live-Browser-TOTP gegen ein echtes Admin-Konto in dieser Umgebung. Die serverseitige Wahrheit und die Matrix sind unit-/source-getestet; `auth:pruefen` bleibt 55/55 inkl. `mfa_allow_low_aal = false`.
+
+## Lokale Gates (dieser Arbeitsstand)
+
+- `npm test` — 2038/2038 pass
+- `npm run typecheck` — pass
+- `npm run lint` — pass
+- `npm run check:setup:ci` — pass
+- `check:dead` / `check:exports` / `check:deps` / `check:api-schutz` / `check:schema-bezug` — pass
+- `npm run auth:pruefen` — 55/55
+- `npm run build` — pass, Route `/admin/mfa` vorhanden
+
 ## Parallelität
 
-D0-2 (#74) Runtime unberührt. Audit-Korrekturen #75–#77 docs-only, unberührt. PR #75 trägt ein Product-Decision-Update (Create-Entry-Cut / Severity-Korrektur), keinen Auth-Runtime-Konflikt.
+- `main` unverändert `8ab4e666`, Merge-Base identisch, behind 0
+- D0-2 (#74) Runtime unberührt
+- #75–#77 Audit-only unberührt
+- PR #75 Product-Decision-Update: Create-Entry-Cut / Severity-Korrektur, kein Auth-Runtime-Konflikt
+- Review-Threads auf #80: keine menschlichen Reviews
 
 `docs/ACTIVE_WORK_STATUS.md` wurde nicht geändert.
 
 ## Nächster Schritt
 
-Lokale und Exact-Head-Gates, danach **STOPP** für unabhängigen ChatGPT-/Technical-Lead-Review von Anfang an.
+Exact-Head GitHub Actions und Vercel auf dem Push-Head belegen, danach **STOPP** für unabhängigen ChatGPT-/Technical-Lead-Review von Anfang an.

@@ -169,7 +169,8 @@ const loadAdminIdentity = cache(async () => {
 })
 
 /**
- * Liest die aktuell erreichte Assurance. `nextLevel` wird bewusst verworfen.
+ * Liest die aktuell erreichte Assurance. Die nächstmögliche Stufe wird
+ * bewusst verworfen.
  * Ein Ausfall oder ein unlesbarer Wert ist kein AAL1-Default, sondern
  * fail closed.
  */

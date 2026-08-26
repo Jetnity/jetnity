@@ -81,8 +81,9 @@ describe('applyAdminAal – verbindliche Matrix', () => {
   })
 
   test('3. Admin-Rolle + AAL2 bleibt die bestehende Freigabe', () => {
-    assert.deepEqual(applyAdminAal(rolle, aal2), rolle)
-    assert.equal(applyAdminAal(rolle, aal2).allowed && applyAdminAal(rolle, aal2).grant, 'role')
+    const mitAal2 = applyAdminAal(rolle, aal2)
+    assert.deepEqual(mitAal2, rolle)
+    assert.equal(mitAal2.allowed && mitAal2.grant, 'role')
   })
 
   test('4. Break-Glass + AAL1 wird blockiert', () => {
