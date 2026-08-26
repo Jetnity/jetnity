@@ -43,11 +43,11 @@ export function optionMitCommercialProvenance<T extends CommercialOptionIdentita
   }
 
   const provenanceRef = normalisiert(provenance.referenz.externalRef)
-  if (provenanceRef) {
-    if (!optionId.externalRef || optionId.externalRef !== provenanceRef) {
+  if (provenance.quelle.providerBelegt) {
+    if (!provenanceRef || !optionId.externalRef || optionId.externalRef !== provenanceRef) {
       return { ok: false, fehler: [{ code: 'bind_ref_mismatch', path: 'externalRef' }] }
     }
-  } else if (provenance.quelle.providerBelegt && optionId.externalRef) {
+  } else if (provenanceRef && optionId.externalRef && optionId.externalRef !== provenanceRef) {
     return { ok: false, fehler: [{ code: 'bind_ref_mismatch', path: 'externalRef' }] }
   }
 

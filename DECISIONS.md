@@ -4146,6 +4146,8 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 **Nachtrag 26. August 2026 (S5A-TL-05 bis S5A-TL-08):** `commercialTruthUebernehmen` ersetzt keine provider-belegte Hard Truth durch User-/Manual-Wahrheit; Provider-Refresh nur identitätsgebunden. `user_intake`/`manual` lehnen jede `providerId` ab. Fehlende Affiliate-Evidence bleibt `unknown`. Widersprüchliche `amount`/`amountStatus`-Paare werden abgewiesen.
 
+**Nachtrag 26. August 2026 (S5A-TL-09 und S5A-TL-10):** Provider-Refresh braucht identische Domain, identische `providerId` und identische belegte `externalRef`. Gleiche Provider-ID ohne Offer-Ref ist kein Refresh. `providerOfferId` ist in S5-A kein gleichwertiger Identitätsschlüssel. Current-Quote-Display braucht belegte `quotedCurrency`; fehlende Requested-Währung bleibt in der Quote-Währung darstellbar, `requested != quoted` bleibt mismatch ohne Conversion.
+
 ---
 
 ## Offene Widersprüche

@@ -19,3 +19,5 @@ Kurz:
 - Persistenz/`trip_items` bleibt S5-B + Production-Gate.
 - Bestehende provider-belegte Truth darf nicht durch User-/Manual-/LLM-Wahrheit ersetzt werden.
 - Fehlende Affiliate-Evidence bleibt `unknown`. Widersprüchliche `amount`/`amountStatus`-Paare werden abgewiesen.
+- Provider-Refresh braucht identische Domain, identische `providerId` und identische belegte `externalRef`. Fehlende Ref auf einer oder beiden Seiten ist kein stiller Refresh. `providerOfferId` ist in S5-A kein gleichwertiger Refresh-Schlüssel.
+- Current-Quote-Display braucht belegte `quotedCurrency`. `requestedCurrency` darf fehlen; dann gilt die Quote-Währung. `requested != quoted` bleibt mismatch ohne Conversion.

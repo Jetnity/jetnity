@@ -490,6 +490,173 @@ describe('S5A-TL-07 Affiliate Missing bleibt unknown', () => {
   })
 })
 
+describe('S5A-TL-09 Provider-Refresh braucht belegte Offer-Identität', () => {
+  test('beide externalRef fehlen erlaubt keinen stillen Refresh', () => {
+    const bestehend = providerOk({ externalRef: null }).provenance
+    const pruefung = commercialTruthUebernehmen({
+      bestehend,
+      vorschlag: quote({ externalRef: null, amount: 910 }),
+      akteur: 'provider_adapter',
+      nowMs: NOW,
+    })
+    assert.equal(pruefung.ok, false)
+    if (pruefung.ok) return
+    assert.equal(pruefung.fehler[0]?.code, 'refresh_identity_mismatch')
+  })
+
+  test('bestehende Ref vorhanden, neue fehlt, wird abgewiesen', () => {
+    const bestehend = providerOk().provenance
+    const pruefung = commercialTruthUebernehmen({
+      bestehend,
+      vorschlag: quote({ externalRef: null, amount: 910 }),
+      akteur: 'provider_adapter',
+      nowMs: NOW,
+    })
+    assert.equal(pruefung.ok, false)
+    if (pruefung.ok) return
+    assert.equal(pruefung.fehler[0]?.code, 'refresh_identity_mismatch')
+  })
+
+  test('bestehende Ref fehlt, neue vorhanden, wird abgewiesen', () => {
+    const bestehend = providerOk({ externalRef: null }).provenance
+    const pruefung = commercialTruthUebernehmen({
+      bestehend,
+      vorschlag: quote({ externalRef: 'off_1', amount: 910 }),
+      akteur: 'provider_adapter',
+      nowMs: NOW,
+    })
+    assert.equal(pruefung.ok, false)
+    if (pruefung.ok) return
+    assert.equal(pruefung.fehler[0]?.code, 'refresh_identity_mismatch')
+  })
+
+  test('unterschiedliche Refs werden abgewiesen', () => {
+    const bestehend = providerOk({ externalRef: 'off_1' }).provenance
+    const pruefung = commercialTruthUebernehmen({
+      bestehend,
+      vorschlag: quote({ externalRef: 'off_2', amount: 910 }),
+      akteur: 'provider_adapter',
+      nowMs: NOW,
+    })
+    assert.equal(pruefung.ok, false)
+    if (pruefung.ok) return
+    assert.equal(pruefung.fehler[0]?.code, 'refresh_identity_mismatch')
+  })
+
+  test('gleiche belegte Ref bleibt zulässig', () => {
+    const bestehend = providerOk({ externalRef: 'off_1' }).provenance
+    const pruefung = commercialTruthUebernehmen({
+      bestehend,
+      vorschlag: quote({ externalRef: 'off_1', amount: 910 }),
+      akteur: 'provider_adapter',
+      nowMs: NOW,
+    })
+    assert.equal(pruefung.ok, true)
+    if (!pruefung.ok) return
+    assert.equal(pruefung.provenance.preis.amount, 910)
+    assert.equal(pruefung.provenance.referenz.externalRef, 'off_1')
+  })
+
+  test('unterschiedliche Provider werden abgewiesen', () => {
+    const bestehend = providerOk({ providerId: 'duffel', externalRef: 'off_1' }).provenance
+    const pruefung = commercialTruthUebernehmen({
+      bestehend,
+      vorschlag: quote({ providerId: 'amadeus', externalRef: 'off_1' }),
+      akteur: 'provider_adapter',
+      nowMs: NOW,
+    })
+    assert.equal(pruefung.ok, false)
+    if (pruefung.ok) return
+    assert.equal(pruefung.fehler[0]?.code, 'refresh_identity_mismatch')
+  })
+
+  test('unterschiedliche Domain wird abgewiesen', () => {
+    const bestehend = providerOk({ domain: 'flights', externalRef: 'off_1' }).provenance
+    const pruefung = commercialTruthUebernehmen({
+      bestehend,
+      vorschlag: quote({ domain: 'hotels', providerId: 'duffel', externalRef: 'off_1' }),
+      akteur: 'provider_adapter',
+      nowMs: NOW,
+    })
+    assert.equal(pruefung.ok, false)
+    if (pruefung.ok) return
+    assert.equal(pruefung.fehler[0]?.code, 'refresh_identity_mismatch')
+  })
+
+  test('gleiche providerOfferId ohne externalRef ist kein Refresh-Schlüssel', () => {
+    const bestehend = providerOk({ externalRef: null, providerOfferId: 'offer-x' }).provenance
+    const pruefung = commercialTruthUebernehmen({
+      bestehend,
+      vorschlag: quote({ externalRef: null, providerOfferId: 'offer-x', amount: 910 }),
+      akteur: 'provider_adapter',
+      nowMs: NOW,
+    })
+    assert.equal(pruefung.ok, false)
+    if (pruefung.ok) return
+    assert.equal(pruefung.fehler[0]?.code, 'refresh_identity_mismatch')
+  })
+
+  test('providerbelegte Option ohne belegte Ref darf nicht gebunden werden', () => {
+    const provenance = providerOk({ externalRef: null }).provenance
+    const bindung = optionMitCommercialProvenance(
+      { provider: 'duffel', externalRef: null },
+      provenance,
+      'flights',
+    )
+    assert.equal(bindung.ok, false)
+    if (bindung.ok) return
+    assert.equal(bindung.fehler[0]?.code, 'bind_ref_mismatch')
+  })
+})
+
+describe('S5A-TL-10 Current Quote braucht belegte Quote-Währung', () => {
+  test('current + amount + quotedCurrency null ist keine darstellbare Current-Quote', () => {
+    const pruefung = providerOk({ quotedCurrency: null })
+    assert.equal(pruefung.bewertung.freshnessStatus, 'current')
+    assert.equal(pruefung.provenance.preis.amountStatus, 'quoted')
+    assert.equal(pruefung.provenance.waehrung.quotedCurrency, null)
+    assert.equal(pruefung.bewertung.currencyStatus, 'unknown')
+    assert.equal(pruefung.bewertung.darfAlsCurrentQuoteDargestelltWerden, false)
+    assert.equal(darfCommercialAlsCurrentQuoteErscheinen(pruefung), false)
+    assert.equal(pruefung.bewertung.darfRequestedWaehrungAlsVergleichbarGelten, false)
+  })
+
+  test('current + amount + gültige quotedCurrency bleibt zulässig', () => {
+    const pruefung = providerOk({ requestedCurrency: 'CHF', quotedCurrency: 'CHF' })
+    assert.equal(pruefung.bewertung.freshnessStatus, 'current')
+    assert.equal(pruefung.provenance.waehrung.quotedCurrency, 'CHF')
+    assert.equal(pruefung.bewertung.currencyStatus, 'matched')
+    assert.equal(pruefung.bewertung.darfAlsCurrentQuoteDargestelltWerden, true)
+    assert.equal(darfCommercialAlsCurrentQuoteErscheinen(pruefung), true)
+  })
+
+  test('fehlende requestedCurrency mit belegter quotedCurrency bleibt in quotedCurrency darstellbar', () => {
+    const pruefung = providerOk({ requestedCurrency: null, quotedCurrency: 'EUR' })
+    assert.equal(pruefung.provenance.waehrung.requestedCurrency, null)
+    assert.equal(pruefung.provenance.waehrung.quotedCurrency, 'EUR')
+    assert.equal(pruefung.bewertung.currencyStatus, 'unknown')
+    assert.equal(pruefung.bewertung.darfAlsCurrentQuoteDargestelltWerden, true)
+    assert.equal(pruefung.bewertung.darfRequestedWaehrungAlsVergleichbarGelten, false)
+  })
+
+  test('requested != quoted bleibt mismatch ohne Conversion', () => {
+    const pruefung = providerOk({ requestedCurrency: 'CHF', quotedCurrency: 'EUR' })
+    assert.equal(pruefung.bewertung.currencyStatus, 'mismatch')
+    assert.equal(pruefung.bewertung.conversionEvidence, 'absent')
+    assert.equal(pruefung.bewertung.darfRequestedWaehrungAlsVergleichbarGelten, false)
+    assert.equal(pruefung.bewertung.darfAlsCurrentQuoteDargestelltWerden, true)
+  })
+
+  test('stale und unknown Freshness bleiben ohne Current-Quote', () => {
+    const stale = snapshotOk({ freshUntil: '2026-08-26T11:30:00.000Z' })
+    const unknown = providerOk({ freshUntil: null })
+    assert.equal(stale.bewertung.freshnessStatus, 'stale')
+    assert.equal(unknown.bewertung.freshnessStatus, 'unknown')
+    assert.equal(stale.bewertung.darfAlsCurrentQuoteDargestelltWerden, false)
+    assert.equal(unknown.bewertung.darfAlsCurrentQuoteDargestelltWerden, false)
+  })
+})
+
 describe('S5A-TL-08 Amount/Status-Widerspruch', () => {
   test('widersprüchliche amount/amountStatus-Kombinationen werden abgewiesen', () => {
     const missingMitBetrag = commercialProviderQuotePruefen(

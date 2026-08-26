@@ -4,7 +4,7 @@ Stand: 26. August 2026
 Agent: `Jetnity provider readiness audit`  
 Typ: **DOMAIN / APPLICATION FOUNDATION ONLY**  
 Branch: `feat/provider-s5-commercial-provenance-contract`  
-Baseline: `main @ 71230c280b1cd2500d224095fa84f4472101d31f`
+Baseline: `main @ 2468160ede5cf8cfcc96fb59cc1346ebd6b0fa21` (PR #84 / P1-TA-02 integriert)
 
 Status: siehe `docs/PROVIDER_READINESS_S5A_COMMERCIAL_PROVENANCE_STATUS.md`.
 

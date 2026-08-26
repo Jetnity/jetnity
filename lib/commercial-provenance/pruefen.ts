@@ -2,6 +2,8 @@
 //
 // Fail-closed Commercial-Provenance-Prüfung.
 // Kein impliziter system-Default. LLM/Assistant erzeugt keine Hard Truth.
+// Provider-Refresh braucht belegte Offer-Identität (Domain + Provider + externalRef).
+// Current-Quote-Display braucht belegte quotedCurrency.
 
 import {
   type CommercialAkteur,
@@ -82,11 +84,13 @@ function bewertungAus(
     amountStatus: provenance.preis.amountStatus,
     availability: provenance.availabilityStatus,
   })
+  const quotedCurrencyBelegt = Boolean(provenance.waehrung.quotedCurrency)
   const darfAlsCurrentQuoteDargestelltWerden =
     provenance.quelle.providerBelegt &&
     commercialStatus === 'current' &&
     freshness === 'current' &&
-    provenance.preis.amountStatus === 'quoted'
+    provenance.preis.amountStatus === 'quoted' &&
+    quotedCurrencyBelegt
   return {
     freshnessStatus: freshness,
     currencyStatus: currency,
@@ -208,13 +212,20 @@ export function commercialPersistiertenSnapshotPruefen(
   return commercialProvenancePruefen(wert, { nowMs: opts?.nowMs, akteur: 'system' })
 }
 
+function belegteOfferRef(wert: string | null | undefined): string | null {
+  const text = wert?.trim()
+  return text ? text : null
+}
+
 function providerIdentitaetGleich(bestehend: CommercialProvenance, vorschlag: CommercialProvenance): boolean {
   if (bestehend.domain !== vorschlag.domain) return false
-  if (bestehend.quelle.providerId !== vorschlag.quelle.providerId) return false
-  const bestehendeRef = bestehend.referenz.externalRef
-  const vorschlagRef = vorschlag.referenz.externalRef
-  if (bestehendeRef || vorschlagRef) return bestehendeRef === vorschlagRef
-  return true
+  if (!bestehend.quelle.providerId || bestehend.quelle.providerId !== vorschlag.quelle.providerId) {
+    return false
+  }
+  const bestehendeRef = belegteOfferRef(bestehend.referenz.externalRef)
+  const vorschlagRef = belegteOfferRef(vorschlag.referenz.externalRef)
+  if (!bestehendeRef || !vorschlagRef) return false
+  return bestehendeRef === vorschlagRef
 }
 
 export function commercialTruthUebernehmen(opts: {
