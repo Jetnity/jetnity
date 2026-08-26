@@ -2,7 +2,9 @@
 
 Stand: 26. August 2026
 
-Status: **INTEGRATION AUF HEUTIGEN MAIN + REVALIDIERUNG ABGESCHLOSSEN / STOPP für unabhängigen Technical-Lead-Review. Kein Ready. Kein Merge. Keine Production-Migration.**
+Status: **INTEGRATED on `main` via PR #80 / `d3faa2a0`. Application-Guard integriert. Production-Datenebene NICHT angewendet. HISTORICAL REVIEW-EVIDENCE darunter.**
+
+> Aktueller operativer Stand: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`. Die folgenden Abschnitte bleiben Evidence der Revalidierung vor dem Merge.
 
 Branch: `fix/qs2-admin-aal2-guard`
 Finding: `P1-QS2-01`

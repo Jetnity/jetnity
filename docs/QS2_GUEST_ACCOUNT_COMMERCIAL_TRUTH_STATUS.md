@@ -4,7 +4,9 @@ Stand: 26. August 2026
 Agent: `Account plattform audit vorbereitung`  
 Branch: `fix/qs2-guest-account-commercial-truth`  
 Baseline: `main @ 71230c280b1cd2500d224095fa84f4472101d31f`  
-Status: **IMPLEMENTIERT / STOPP für unabhängigen Technical-Lead-Review**
+Status: **INTEGRATED on `main` via PR #81 / `86567f17`. HISTORICAL REVIEW-EVIDENCE darunter.**
+
+> Aktueller operativer Stand: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`. P1-TA-02 ist inzwischen ebenfalls integriert und darf hier nicht als offen gelesen werden.
 
 Auftrag: `docs/QS2_GUEST_ACCOUNT_COMMERCIAL_TRUTH_TASK.md`  
 Self-Review: `docs/QS2_GUEST_ACCOUNT_COMMERCIAL_TRUTH_SELF_REVIEW.md`  

@@ -1,6 +1,10 @@
 # Admin Slice A – Handoff
 
 Stand: **24. August 2026, ca. 18:00 Europe/Zurich**  
+Status: **HISTORICAL HANDOFF. Admin A ist auf `main` integriert (PR #44). Nicht der aktuelle operative Stand.**
+
+> Kanonisch: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
+
 Cursor-Anzeigename: `Admin platform audit`  
 Branch: `feat/admin-control-center-ia`  
 Draft-PR: #44

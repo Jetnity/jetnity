@@ -4074,7 +4074,7 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 ## ADR-0166 – Guest→Account streicht unbewiesene Stay-/Activity-Handelsfelder
 
 **Datum:** 26. August 2026  
-**Status:** umgesetzt auf `fix/qs2-guest-account-commercial-truth`; schließt P1-QS2-02. Keine Schema-/RPC-Änderung.
+**Status:** integriert auf `main` via PR #81 / `86567f17`; schließt P1-QS2-02. Keine Schema-/RPC-Änderung.
 
 **Entscheidung:** Beim Guest→Account-Transfer werden für `stay` und `activity` dieselben unbewiesenen Handelsfelder genullt wie bereits für `flight`: `price_amount`, `price_currency`, `provider`, `external_ref`, `booking_url`. Nicht-kommerzielle Fakten (Titel, Notiz, Datum, Zeit) bleiben. Transfer und `rental_car` bleiben unverändert, weil ihr persistierter Preis S3-User-Intake sein kann.
 
@@ -4100,7 +4100,7 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 ## ADR-0167 – Official-Compatibility aggregiert fail-closed, nicht first-evaluation
 
 **Datum:** 26. August 2026  
-**Status:** umgesetzt auf `fix/p1-ta02-official-evaluation-option-scope`; schließt P1-TA-02. Keine Schema-/Contract-Änderung.
+**Status:** integriert auf `main` via PR #84 / `2468160e`; schließt P1-TA-02. Keine Schema-/Contract-Änderung. P2-TA-06 bleibt offen.
 
 **Entscheidung:** Kanonische Official-Wahrheit bleibt `OfficialEvaluation[]`. Das Legacy-Feld `official` und die Item-/Summary-Presentation dürfen nur Aussagen machen, die für ihren Scope belegt sind. Bei heterogenen Traveller-, Credential-Option-, Destination- oder Transit-Scopes wird keine einzelne Evaluation als repräsentative Wahrheit gewählt. Presentation-Metadaten (Authority, Source URL, `checkedAt`, `validityUntil`) bleiben dann leer. `result` bleibt immer `unknown`. Item-Scope ohne exakten Treffer fällt nicht auf alle Evaluations zurück.
 
@@ -4126,7 +4126,7 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 ## ADR-0168 – Commercial Provenance ist ein eigener Vertrag, kein UniversalOffer
 
 **Datum:** 26. August 2026  
-**Status:** S5-A Domain-Foundation auf Feature-Branch. Nicht Ready. Nicht gemergt. Keine Persistenz. Volltext: `docs/ADR_0168_COMMERCIAL_PROVENANCE_DOMAIN_CONTRACT.md`.
+**Status:** S5-A Domain-Foundation integriert auf `main` via PR #83 / `3b317bc6`. S5-B nicht gestartet. Keine Persistenz. Volltext: `docs/ADR_0168_COMMERCIAL_PROVENANCE_DOMAIN_CONTRACT.md`.
 
 **Entscheidung:** Kommerzielle Wahrheit (Preis, Providerherkunft, Freshness, Währung) bekommt einen provider-neutralen Domainvertrag in `lib/commercial-provenance`. Die bestehenden Flight-/Hotel-/Activity-/Mobility-/Rental-Modelle bleiben fachlich getrennt. Der Vertrag komponiert Provenance, er ersetzt die Domänenoptionen nicht. Ein persistierter Snapshot ist niemals live. Fehlende Freshness bleibt `unknown`. Requested- und Quoted-Währung dürfen ohne Conversion-Evidence nicht gleichgesetzt werden. External References sind Provenance, nicht Trust, und provider-scoped. Mehrere belegte Quellen dürfen als Konflikt stehen bleiben. LLM/Assistant darf diesen Vertrag nicht erzeugen oder überschreiben. Actor und Source sind fail-closed getrennt: User-Intake/Manual sind keine Provider-Truth; Provider-Live-/Snapshot-Herkunft kommt nur aus einem trusted Adapter- oder Snapshot-Pfad. Untrusted Input defaultet nicht auf `system`.
 
@@ -4153,7 +4153,7 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 ## ADR-0169 – Admin-Zugang verlangt zentral aktuelles AAL2
 
 **Datum:** 26. August 2026  
-**Status:** Product-Owner-freigegebene Security-Regel; Runtime in Draft-PR #80. Auf diesem Branch zuerst als ADR-0168 geführt; nach Integration von `main @ 3b317bc` auf **0169** verschoben, weil 0166–0168 dort bereits Guest→Account, Official-Compatibility und Commercial Provenance belegen.
+**Status:** Product-Owner-freigegebene Security-Regel; Application-Guard integriert auf `main` via PR #80 / `d3faa2a0`. Development-Migrationsartefakt versioniert; Production-Datenebene nicht angewendet. Auf dem Feature-Branch zuerst als ADR-0168 geführt; nach Integration von `main @ 3b317bc` auf **0169** verschoben, weil 0166–0168 dort bereits Guest→Account, Official-Compatibility und Commercial Provenance belegen.
 
 **Entscheidung:**
 
@@ -4178,7 +4178,7 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 ## ADR-0170 – HTML-Metadata folgt `darfIndexieren`; Canonical ist nie ein Vercel-Alias
 
 **Datum:** 26. August 2026  
-**Status:** Runtime-Closure für P1-D0-LIVE-01; Draft-PR, nicht Ready, nicht gemergt.
+**Status:** Runtime-Closure für **P1-D0-LIVE-01**; integriert auf `main` via PR #86 / Exact Head `0f809857` / Merge `38ec8be7`. Kein D1/G1. Kein Domain-Cutover. Kein Public Indexing.
 
 **Entscheidung:**
 
@@ -4194,7 +4194,24 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 **Begründung:** robots.txt und HTML-Metadata müssen dieselbe D0-2-Wahrheit tragen. Ein Vercel-Alias darf Jetnity nicht als indexierbare öffentliche Produktdomain behaupten, auch nicht vor dem späteren Domain-Cutover.
 
-**Konsequenzen:** Kein D1/G1, keine Domainaktivierung, keine Env-Änderung, keine Abschwächung privater noindex-Grenzen. Der synthetische Allow-Pfad bleibt nur in Tests prüfbar.
+**Konsequenzen:** Kein D1/G1, keine Domainaktivierung, keine Env-Änderung, keine Abschwächung privater noindex-Grenzen. Der synthetische Allow-Pfad bleibt nur in Tests prüfbar. `/planen` emittiert robots explizit, damit Next.js den Layout-Vertrag nicht mit Default `index, follow` überschreibt.
+
+---
+
+## ADR-0171 – Finaler Continuity-Handoff dokumentiert den verifizierten Integrationsstand nach PR #86
+
+**Datum:** 26. August 2026  
+**Status:** docs-only Continuity-Entscheidung. Keine Runtime-, DB-, Auth- oder Provideränderung durch diesen Handoff. Auf dem Continuity-Branch zuerst als ADR-0170 geführt; nach Integration von PR #86 auf `main` auf **0171** verschoben, weil ADR-0170 dort bereits die HTML-Metadata-/Canonical-Grenze belegt. Historische integrierte ADRs wurden nicht umnummeriert.
+
+**Entscheidung:** Nach unabhängiger Integration von PR #81, #84, #82, #83, #80 und **PR #86** ist der kanonische operative Stand `main @ 38ec8be79a6ce7758be81fd5d564819d638140d6`. Veraltete „current“-Aussagen, die diese PRs noch als Draft oder nächsten Slice führen, sind historical / superseded. TW6-A ist nicht gesamtes TW-6. S5-A ist nicht S5-B. Der Admin-AAL2-Application-Guard ist nicht die Production-DB-Aktivierung. P1-D0-LIVE-01 ist geschlossen; das ist kein D1/G1 und keine Indexing-/Domainaktivierung. Die per-PR-Merge-Pflicht vom 22./25. August bleibt historische Evidence und ist für normale Merges durch `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md` superseded.
+
+**Kontext:** Der erste Continuity-Handoff (Draft-PR #85) dokumentierte `main @ d3faa2a0` nach PR #80. Danach hat der Technical Lead PR #86 unabhängig gemergt. Der Continuity-Branch muss den neuen Live-Stand tragen, ohne ADR-0170 von PR #86 umzunummerieren oder historische Evidence zu löschen.
+
+**Alternativen:** Alte Statusdateien löschen; Runtime nachziehen; Branch Protection in diesem Auftrag setzen; den bereits integrierten ADR-0170 umnummerieren. Abgelehnt, weil Historie/Evidence erhalten bleiben muss, integrierte ADR-Nummern stabil bleiben und dieser Auftrag docs-only ist.
+
+**Begründung:** Continuity darf keine tote Baseline als Current stehen lassen und darf keine Historie oder bereits integrierte ADR-Nummern zerstören.
+
+**Konsequenzen:** Kanonisch sind `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md` und `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`. Historische Checkpoints, Audits und Slice-Status bleiben erhalten und werden als historical / integrated markiert.
 
 ---
 

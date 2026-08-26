@@ -1,7 +1,9 @@
 # Jetnity Account Platform – AP-3 Handoff
 
 Stand: 24. August 2026  
-Status: **auf `main` `78192ab` synchronisiert; Exact Head `c5e4a51f` gegatet; Draft, wartet auf Technical-Lead-Re-Review; kein Mark Ready, kein Merge**
+Status: **HISTORICAL HANDOFF. AP-3 ist auf `main` integriert (PR #53). Nicht der aktuelle operative Stand.**
+
+> Kanonisch: `JETNITY_HANDOFF.md` und `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
 
 | Feld | Wert |
 | --- | --- |

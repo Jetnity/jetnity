@@ -1,7 +1,9 @@
 # Jetnity – Product Owner Merge Approval Policy
 
 Stand: 22. August 2026  
-Status: **dauerhaft verbindlich für ChatGPT, Cursor und alle anderen Coding Agents**
+Status: **HISTORICAL / SUPERSEDED für normale Ready-/Merge-Entscheidungen durch `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md` (26. August 2026). Die besonderen Product-Owner-Gates in Abschnitt 5 bleiben gültig. Nicht löschen.**
+
+> Aktuelle Merge-Regel: ChatGPT / Technical Lead darf normale scope-treue PRs nach strengem unabhängigen Review selbst Ready setzen und mergen. Blind mergen ist verboten. Diese Datei bleibt Evidence der früheren per-PR-Merge-Pflicht.
 
 ## 1. Harte Grundregel
 

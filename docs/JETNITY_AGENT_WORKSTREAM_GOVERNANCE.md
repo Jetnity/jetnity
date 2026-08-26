@@ -414,9 +414,11 @@ Wenn ein Agent eine Shared-Contract-Änderung für nötig hält:
 
 ### Aktuell
 
-Der zentrale Trip-Workspace-Integrationspfad hat Priorität.
+Stand 26. August 2026, nach Integration von TW6-A, S5-A, P1-TA-02, P1-QS2-02 und Admin-AAL2-Application-Guard: **kein spezialisierter Cursor-Agent hat einen offenen Runtime-Auftrag.** Alle sechs Workstreams sind STOPP, bis ChatGPT / Technical Lead einen neuen versionierten Auftrag gibt. `Jetnity native app architecture` bleibt reserviert.
 
-`Trip workspace audit architecture` bleibt primärer aktiver Cursor-Agent, bis der stabile Workspace-Checkpoint erreicht ist.
+Der zentrale Trip-Workspace-Integrationspfad hat weiter Priorität in der Build Order, ist aber kein Freibrief, TW6-REST-01, TW-7 oder TW-8 still zu starten.
+
+`Trip workspace audit architecture` bleibt der fachliche Owner für verbleibende Workspace-Slices, ist aber derzeit nicht aktiv.
 
 ### Stabile Parallelisierungs-Schwelle
 

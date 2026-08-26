@@ -1,6 +1,10 @@
 # Admin Slice B – Handoff
 
 Stand: 24. August 2026  
+Status: **HISTORICAL HANDOFF. Admin B ist auf `main` integriert (PR #46). Nicht der aktuelle operative Stand.**
+
+> Kanonisch: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
+
 Cursor-Anzeigename: `Admin platform audit`  
 Branch: historisch `feat/admin-system-health`  
 PR: **#46 gemergt nach `main` `e3bad749`**  

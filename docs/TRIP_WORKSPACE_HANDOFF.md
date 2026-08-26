@@ -1,10 +1,13 @@
 # Jetnity – Trip Workspace Handoff
 
 Stand: 25. August 2026  
-Status: **TW-1, TW-2 und TW-4 auf `main`. TW-3 Runtime in Draft-PR #64; STOPP für unabhängigen Technical-Lead-Re-Review. Kein TW-5.**  
-Agent: `Trip workspace audit architecture`  
-Aktueller Branch: `feat/trip-workspace-tw3-timeline`  
-Draft-PR: **#64**
+Status: **HISTORICAL HANDOFF. Nicht mehr der aktuelle operative Stand.**
+
+> Aktuell: TW-1/2/4/3/5 und TW6-A sind auf `main`. TW6-REST-01 bleibt offen. Kanonisch: `JETNITY_HANDOFF.md` und `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
+
+Agent damals: `Trip workspace audit architecture`  
+Branch damals: `feat/trip-workspace-tw3-timeline`  
+Draft-PR damals: **#64** (inzwischen integriert)
 
 Die Ziel-IA ist als ADR-0163 angenommen. TW-4 ist gemergt (PR #60 / `c935dd9f`, ADR-0165). TW-3 folgt ADR-0166. Der historische Audit-Handoff von PR #55 bleibt unten als Evidence.
 

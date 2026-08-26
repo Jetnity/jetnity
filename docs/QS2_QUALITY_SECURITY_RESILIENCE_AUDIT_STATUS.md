@@ -4,7 +4,9 @@ Stand: 26. August 2026
 Agent: `Jetnity quality security audit`  
 Branch: `audit/qs2-quality-security-resilience`  
 Baseline: `main @ ba86279e5ee2505bfd13801ae5e05ef50ba87c22`  
-Status: **AUDIT AUSGEFÜHRT / STOPP WEGEN P1**
+Status: **AUDIT INTEGRATED via PR #79. P1-QS2-01 und P1-QS2-02 sind inzwischen durch PR #80 und PR #81 geschlossen. HISTORICAL AUDIT-EVIDENCE darunter.**
+
+> Aktueller operativer Stand: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`. Dieser Text darf die geschlossenen P1s nicht erneut als offen behaupten.
 
 Verbindlicher Auftrag: `docs/QS2_QUALITY_SECURITY_RESILIENCE_AUDIT_TASK.md`  
 Bericht: `docs/QS2_QUALITY_SECURITY_RESILIENCE_AUDIT.md`

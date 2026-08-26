@@ -1,7 +1,9 @@
 # ChatGPT / Technical Lead – D0-1 Merge Checkpoint
 
 Stand: 25. August 2026  
-Status: **D0-1 integriert / Product-Owner-freigegeben / post-merge Continuity läuft**
+Status: **HISTORICAL CHECKPOINT. D0-1 bleibt integriert. Nicht mehr der aktuelle operative Stand.**
+
+> Aktueller Checkpoint: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`. Dieser Text bleibt Evidence des D0-1-Merges.
 
 ## 1. Verbindliche Live-Baseline
 

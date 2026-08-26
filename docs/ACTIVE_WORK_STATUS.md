@@ -1,96 +1,88 @@
 # Jetnity – Active Work Status
 
 Stand: 26. August 2026  
-Status: **Parallel-Audit-Batch integriert. P1-QS2-02 ist geschlossen und auf `main`. Aktive neue Drafts: TW-6 Runtime (#82), Provider S5-A (#83) und Admin-AAL2 (#80, besonderer Auth-Gate-Slice). Nächster Account-/Traveller-Closure-Slice ist P1-TA-02.**
+Status: **Kein aktiver Runtime-Slice. Continuity-/Handoff-Bereinigung nach Integration von PR #81, #84, #82, #83, #80 und #86. Nächster Schritt: unabhängiger Technical-Lead-Review von Draft-PR #85, danach erst der finale ChatGPT-Superprompt. Kein neuer Produktslice.**
+
+> **Do not blindly trust this file — live verify first.**
 
 ## 0. Live-Integrationsbaseline
 
-Aktueller verifizierter `main` nach PR #81:
+Aktueller verifizierter `main`:
 
-`86567f17d97d5c4895658563f4aa2b98f297989d`
+`38ec8be79a6ce7758be81fd5d564819d638140d6`
+
+Merge-Message: `Merge PR #86: fail-closed public metadata boundary`.
 
 Production für diesen Merge:
 
-`dpl_BGJCQwKf9qoiwGrZfBWLnhyz3DQ1` → **READY**.
+Vercel Deployment `6108029117` → **SUCCESS** auf Exact Head `38ec8be7`.  
+Öffentlicher Alias: `https://jetnity-app.vercel.app` (HTTP 200).  
+Live HTML nach PR #86: `robots`/`googlebot` = `noindex, nofollow`; Canonical `https://jetnity.com`; OG-Bild `https://jetnity.com/images/hero-bali.png`.  
+`/planen`: ebenfalls `noindex, nofollow`; Canonical `https://jetnity.com/planen`.  
+`/robots.txt`: deny-all (`User-Agent: *` / `Disallow: /`).  
+`https://jetnity.com` und `jetnity.ch` ohne öffentliche DNS-Auflösung (HTTP 000). Kein Cutover. Kein Redirect. Kein Public Indexing.
+
+GitHub Actions:
+
+- PR-#86 Exact Head `0f809857`: Run `32989862339` **SUCCESS**;
+- Post-Merge `main` `38ec8be7`: Run `32991955365` **SUCCESS**.
 
 Zuletzt integriert:
 
-- PR #74 – D0-2 Canonical / Origin / robots-sitemap Consistency → `c73e87773dd6d234f1b76fc82206f03aac35fd2c`;
-- PR #76 – Traveller / Account Next-Phase Dependency Audit → `70196da8ff2e2af3ffb32322dea5555d641c9455`;
-- PR #77 – Provider S4–S8 Dependency / Provenance Gap Audit → `75dfb4308e9aeba2d14353831f016eee84c4fac6`;
-- PR #75 – TW-6 Dependency / Guest-One-Trip Contract Audit → `5ef981ecd7f761294bcbb691d6cf966395f7ce97`;
-- PR #81 – P1-QS2-02 Guest→Account Stay/Activity Commercial Truth Boundary → `86567f17d97d5c4895658563f4aa2b98f297989d`.
+- PR #81 – P1-QS2-02 Guest→Account Stay/Activity Commercial Truth → `86567f17`;
+- PR #84 – P1-TA-02 Official Evaluation Option-Scope → `2468160e`;
+- PR #82 – TW6-A Create-Entry Alignment → `c4ea47aa`;
+- PR #83 – Provider S5-A Commercial Provenance Domain Contract → `3b317bc6`;
+- PR #80 – Central Admin AAL2 Guard → `d3faa2a0`;
+- **PR #86 – D0 live metadata boundary / P1-D0-LIVE-01 → `38ec8be7`.** Kein D1/G1.
 
-Bereits zuvor integriert:
+Bereits zuvor integriert: D0-1, D0-2, TW-1/2/4/3/5, QS-1, QS-2 Audit, Parallel-Audits #75–#78, AP-1–AP-3, S1–S3, Admin A–C, Foundations C/D/E.
 
-- PR #78 – Admin D–K / Marketing-Growth Control Gap Audit;
-- PR #79 – QS-2 Independent Quality / Security / Resilience Audit;
-- D0-1, TW-1/TW-2/TW-4/TW-3/TW-5 und die dazugehörigen Continuity-/Governance-Slices.
+`main` Branch Protection ist live **nicht aktiviert** (`protected=false`) und bleibt ein Governance-Risiko. In diesem Docs-only-Auftrag nicht konfiguriert.
 
-`main` Branch Protection ist live weiterhin **nicht aktiviert** und bleibt ein Governance-Risiko.
+PR #82 / #83 / #80 / #86 sind **keine** aktiven Drafts mehr. Sie sind gemergt.
 
 ## 1. Aktive Technical-Lead-Governance
 
 > **Autonom mergen ist erlaubt – blind mergen ist verboten.**
 
-Vor Ready/Merge zwingend:
+Vor Ready/Merge zwingend: Live-`main`, Diff, Tests und Testannahmen, Security/Privacy/Truth/Shared Contracts, Exact-Head Actions/Vercel, relevante Supabase-Grenzen, Review-Threads und Parallelität prüfen. Bei Fehlern zuerst korrigieren und neu gaten.
 
-- aktuelles `main`, Merge-Base, Ahead/Behind und tatsächlichen Diff prüfen;
-- Auftrag, Acceptance Criteria und Non-Scope gegen Runtime-Code prüfen;
-- Tests und deren Annahmen fachlich hinterfragen;
-- Security / Privacy / Truth / Shared Contracts prüfen;
-- Exact-Head GitHub Actions und Vercel prüfen;
-- relevante Supabase-/Migrationsevidence prüfen;
-- offene Review-Threads, P0/P1/P2/P3 und parallele Kollisionen prüfen;
-- bei Fehlern zuerst korrigieren und danach vollständig neu gaten.
+Besondere Product-Owner-Gates bleiben unverändert, insbesondere für Production-Migrationen, große Auth/MFA/AAL-/RLS-/Identity-Änderungen, sensitive Dokumentdaten, reale Provider/Secrets/paid calls, Payments, > USD 100/Monat und Public Launch / Provider-Live / Store-Aktivierung.
 
-Besondere Product-Owner-Gates bleiben unverändert, insbesondere für Production-Migrationen/destruktive Daten, fundamentale Auth/MFA/AAL-/Identity-/RLS-Änderungen, sensitive Dokumentdaten, reale Provider/Secrets/paid calls, reale Payments, > USD 100/Monat neue laufende Kosten und Public Launch/Provider-Live/Store-Aktivierung.
+## 2. D0 / Growth
 
-## 2. D0-2 – integriert
+D0-1, D0-2 und **P1-D0-LIVE-01** sind auf `main`.
 
-D0-2 ist abgeschlossen und auf `main`.
-
-Verbindliche Domain-Wahrheit:
+Domain-Wahrheit:
 
 - `https://jetnity.com` = einzige zukünftige kanonische/indexierte Public-Hauptdomain;
-- `jetnity.ch` = spätere Schweizer Entry-/Redirect-Domain, keine zweite indexierte Plattform;
-- Public Indexing bleibt explizites Opt-in über exakt `NEXT_PUBLIC_ALLOW_INDEXING=true`;
-- Default bleibt fail-closed / deny-all;
-- kein Domain-Cutover, kein `.ch`-Redirect und kein Public-Launch wurden aktiviert.
+- `jetnity.ch` = Schweizer Entry-/Redirect-Domain, keine zweite indexierte Plattform;
+- HTML-robots folgt `darfIndexieren` fail-closed;
+- Public Canonical / metadataBase / OG / JSON-LD verwenden `https://jetnity.com`;
+- `*.vercel.app` ist niemals kanonische Jetnity-Produktdomain;
+- `/planen` emittiert robots explizit;
+- Indexing nur bei explizitem `NEXT_PUBLIC_ALLOW_INDEXING=true` und exakter `.com`-Origin;
+- Default bleibt deny/false;
+- kein Domain-Cutover, kein Public-Launch, kein Redirect, kein DNS.
 
-Weiter offen:
+Offen: **D0-P1-03** Legal-404 (`/privacy`, `/terms` live 404); D0-P2-04 hreflang; D0-P2-05 JSON-LD; G0-Reste.
 
-- **D0-P1-03** – `/privacy` und `/terms` 404; kein Rechtstext darf erfunden werden;
-- D0-P2-04 – hreflang / Locale;
-- D0-P2-05 – JSON-LD / Entity Foundation;
-- G0-Findings und spätere Search-/Authority-Slices.
-
-`Jetnity growth discoverability` bleibt bis zum nächsten phasengerechten Auftrag STOPP.
+`Jetnity growth discoverability` bleibt STOPP. Kein D1/G1 aus PR #86 ableiten.
 
 ## 3. Trip Workspace
 
-Integriert:
+Integriert: TW-1, TW-2, TW-4, TW-3, TW-5, TW-6 Dependency-Audit, **TW6-A Create-Entry**.
 
-- TW-1 ✅
-- TW-2 ✅
-- TW-4 ✅
-- TW-3 ✅
-- TW-5 ✅
-- TW-6 Dependency-/Guest-One-Trip-Audit ✅
+**TW6-A ≠ gesamtes TW-6.** Offen: **TW6-REST-01** (progressive weitere Ziele / zusätzliche `trip_stages` im Create).
 
-Product Owner hat für TW-6 **Option 1** ausdrücklich genehmigt.
+TW-7 bleibt hinter Account-/Hub-Grenzen. TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance; S5-A allein ist kein TW-8-Start.
 
-Aktiver Runtime-Draft:
-
-- PR #82 – **TW-6 Runtime / Create-Entry Alignment Option 1**;
-- Agent: `Trip workspace audit architecture`;
-- gestartet von `main @ 71230c28`; nach PR #81 muss vor Integration gegen aktuelles `main` synchronisiert und neu gegatet werden.
-
-TW-7 bleibt hinter Account-/Hub-Grenzen. TW-8 bleibt hinter Provider S5 / Commercial Provenance.
+Kein aktiver TW-Runtime-Draft.
 
 ## 4. Traveller / Account
 
-Current Traveller Truth bleibt:
+Current Traveller Truth:
 
 > **Ein Reisender → mehrere Staatsbürgerschaften → mehrere Dokumente/Credential-Optionen → kontextabhängig bewertete zulässige Optionen.**
 
@@ -98,119 +90,90 @@ Kein Default-Pass. Issuer ist nicht Citizenship.
 
 Geschlossen:
 
-- **P1-QS2-02** – Guest→Account Stay/Activity Commercial-Truth-Leak. PR #81 unabhängig geprüft und integriert. Unbewiesene `price_amount`, `price_currency`, `provider`, `external_ref`, `booking_url` werden für `stay`/`activity` fail-closed entfernt; nicht-kommerzielle Fakten bleiben.
+- P1-QS2-02 durch PR #81;
+- P1-TA-02 durch PR #84.
 
 Weiter offen:
 
-- **P1-TA-02** – aktueller Presentation/API-Pfad kollabiert `officialAusEvaluations()` auf `evaluations[0]`; nächster eigener fokussierter Account-/Traveller-Closure-Slice.
-- **P2-TA-06** – latenter `documents[0]`-Fallback in `travellerNormalisieren()`; späteres Contract-Hardening.
-- **P2 Residual** – Mobility/Rental-Such-Snapshots können kommerzielle Felder tragen; benötigt eigenen S3/S5-Schnitt.
-- **P2 Residual** – direkter `reise_anlegen`-RPC-Bypass bleibt als separater Datenebenen-/Shared-Contract-Punkt offen.
-- Account-scoped Traveller Registry / AP-7 bleibt Shared-Contract-gegated.
+- **P2-TA-06** – `documents[0]` in `travellerNormalisieren()`; live weiterhin vorhanden in `lib/readiness/engine.ts`;
+- **P2-TA-03** – `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` fehlt auf `main` und existiert nur im historischen Account-Audit-PR #39;
+- Mobility/Rental-Such-Snapshots mit kommerziellen Feldern;
+- direkter `reise_anlegen`-RPC-Bypass;
+- Account-Traveller-Registry / AP-4–AP-12 / AP-7.
 
-Keine neue Registry oder Identity-Wahrheit still einführen.
+Kein aktiver Account-Runtime-Draft.
 
 ## 5. Provider Readiness
 
-S1–S3 sind integriert. S4–S8 sind noch nicht vollständig implementiert.
+S1–S3 und **S5-A** sind integriert. S5-B ist **nicht gestartet**.
 
-Aktiver Foundation-Draft:
+Keine echten Provider, keine Secrets/Verträge/paid calls, keine Aktivierung, keine Production-Migration durch S5-A.
 
-- PR #83 – **S5-A Commercial Provenance Domain Contract**;
-- Agent: `Jetnity provider readiness audit`;
-- provider-neutral, keine echten Provider, keine Secrets/Verträge/paid calls, keine Aktivierung, keine Production-Migration und keine neue Kosten;
-- gestartet von `main @ 71230c28`; vor Integration gegen aktuelles `main` synchronisieren und neu gaten.
+Gates:
 
-Bestätigte Gates bleiben:
+- **TW8-START-GATE:** Kein TW-8 ohne belastbaren S5-Vertrag **und** spätere Provenance-/Persistenz-Reife. S5-A allein reicht nicht.
+- **PROVIDER-ACTIVATION-GATE:** persistenter Cost Guard vor bezahlter/Production-Aktivierung.
+- Persistierte kommerzielle Beträge ohne belegten Zeitpunkt bleiben `unknown`/`stale`.
 
-- **TW8-START-GATE:** Kein TW-8 ohne belastbaren S5 Commercial-Provenance-Vertrag.
-- **PROVIDER-ACTIVATION-GATE:** Persistenter Cost Guard vor bezahlter/Production-Provideraktivierung.
-- **P1-before-TW8 Commercial Truth:** persistierte kommerzielle Beträge brauchen belastbaren observed/retrieved timestamp und klare Freshness-/Currency-/Provenance-Wahrheit.
+## 6. QS / Admin AAL2
 
-## 6. QS-2 / Admin AAL2
+QS-2-P1s:
 
-QS-2 hat zwei P1 bestätigt:
+1. `P1-QS2-01` Application-AAL2 → **integriert durch PR #80**;
+2. `P1-QS2-02` Guest→Account Commercial Truth → **integriert durch PR #81**.
 
-1. `P1-QS2-01` – zentrale Admin-AAL2-Durchsetzung → PR #80, unabhängiger TL-Review weiterhin erforderlich;
-2. `P1-QS2-02` – Guest→Account Stay/Activity Commercial Truth → **geschlossen durch PR #81**.
+Admin-AAL2-Vertrag integriert in der Anwendung. Development-Migration versioniert und auf Development angewendet (`admin_aal2_data_plane` als Version `20260826052735`). **Production-Datenebene nicht angewendet und nicht als aktiviert behaupten.**
 
-Für `P1-QS2-01` gilt weiter:
+Kein Admin D–K. Kein QS-3.
 
-- Branch `fix/qs2-admin-aal2-guard`;
-- Anwendung + Development-Datenebenen-Hardening vorhanden;
-- Development-Migration `20260826090000_admin_aal2_data_plane.sql`;
-- **keine Production-Migration freigegeben oder angewendet**;
-- besonderer Auth/MFA/AAL-Product-Owner-Gate wurde für diesen kontrollierten Closure-Slice erteilt;
-- kein Merge vor unabhängigem Technical-Lead-Review.
+## 7. Aktive / nächste Cursor-Workstreams
 
-`Admin platform audit` erhält bis Abschluss dieses Reviews keinen neuen Runtime-Auftrag.
-
-`Jetnity quality security audit` bleibt während der laufenden Runtime-/Foundation-Slices STOPP und wird danach für QS-3 eingesetzt.
-
-## 7. Admin / Growth
-
-Admin D–K / Growth-Control-Audit ist als Evidence integriert. Keine D–K-Runtime wurde dadurch freigegeben.
-
-Bekannte spätere Themen bleiben u. a.:
-
-- Refund-Atomicity / Idempotency;
-- dauerhafter Admin Audit Trail;
-- IP-Blocklist-Enforcement;
-- Growth-/Attribution-/Claims-/Consent-Control-Plane.
-
-Build-Order bleibt verbindlich.
-
-## 8. Aktive / nächste Cursor-Workstreams
-
-Aktiv:
-
-1. `Trip workspace audit architecture` → PR #82 / TW-6 Runtime Create-Entry Alignment.
-2. `Jetnity provider readiness audit` → PR #83 / S5-A Commercial Provenance Domain Contract.
-
-Nächster freier Account-Workstream:
-
-3. `Account plattform audit vorbereitung` → **P1-TA-02 Option-Scope / Official-Evaluation Presentation Truth Closure**, auf neuem Branch von live aktuellem `main`.
+Aktiv: **keiner.**
 
 STOPP:
 
-- `Jetnity growth discoverability` – D0-2 abgeschlossen; Legal benötigt genehmigte Inhalte, kein Erfinden.
-- `Admin platform audit` – kein neuer Slice bis #80-Review und phasengerechter Build-Order.
-- `Jetnity quality security audit` – erst nach den laufenden Runtime-/Foundation-Slices wieder für QS-3.
-- `Jetnity native app architecture` – weiterhin für spätere Native-Phase reserviert.
+- `Trip workspace audit architecture`
+- `Account plattform audit vorbereitung`
+- `Jetnity provider readiness audit`
+- `Admin platform audit`
+- `Jetnity growth discoverability`
+- `Jetnity quality security audit`
 
-## 9. Harte Parallelitätsregeln
+Reserviert:
 
-- Jeder neue Agent-Slice startet von live verifiziertem aktuellem `main` auf neuem Branch + eigenem Draft-PR + Task/Status.
-- Bereits laufende #82/#83 müssen vor Integration wegen PR #81 gegen neues `main` synchronisiert und auf neuem Exact Head erneut gegatet werden.
-- Agenten ändern **nicht** `docs/ACTIVE_WORK_STATUS.md`.
-- Keine stillen Shared-Contract-Erweiterungen.
-- Kein Agent startet selbst einen Folgeslice.
-- Jeder Agent endet mit `STOPP` und liefert Exact Head, tatsächlichen Diff, Tests/Gates und Vercel-Evidence.
-- ChatGPT / Technical Lead prüft jeden Agenten-Change unabhängig vor Ready/Merge.
+- `Jetnity native app architecture`
 
-## 10. Supabase / Production
+Dieser Continuity-Slice darf `docs/ACTIVE_WORK_STATUS.md` aktualisieren, weil er der zentrale Technical-Lead-/Continuity-Auftrag ist. Fachagenten ändern diese Datei weiterhin nicht parallel.
 
-Production-Projekt:
+## 8. Offene PRs
 
-`qscbgcdmivbbnzrcyegn`
+Live geprüft nach PR #86. **#52 / #50 / #40 / #39 / #28 sind weiterhin OPEN / Draft** und nicht geschlossen.
 
-Zuletzt verifizierter produktiver Migrationsstand bleibt bis einschließlich:
+| PR | Klasse |
+| --- | --- |
+| **#85** Final continuity handoff | **AKTIVER docs-only Draft.** Unabhängiger TL-Review. Nicht Ready. Nicht mergen durch den Autoren-Agenten. |
+| #52 ChatGPT TL handoff 2026-08-24 | HISTORICAL / SUPERSEDED |
+| #50 S1 merged-status docs | HISTORICAL / INTEGRATED ELSEWHERE |
+| #40 Admin Platform Audit | HISTORICAL / INTEGRATED ELSEWHERE |
+| #39 Account Platform Audit | HISTORICAL / INTEGRATED ELSEWHERE |
+| #28 Trip Collaboration Foundation | HISTORICAL / SUPERSEDED / DO NOT RESUME |
 
-- `20260824120000_flug_route_itinerary_surface_evidence`;
-- `20260824140000_flug_route_itinerary_untrusted_surface`.
+Nicht schließen. Nicht löschen. Nicht als aktuelle Runtime-Arbeit wieder aufnehmen.
 
-Development-only / nicht Production-approved:
+## 9. Supabase / Production
 
-- `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`;
-- `20260824180000_trip_items_flug_handelsfelder_guard`;
-- `20260826090000_admin_aal2_data_plane` aus PR #80.
+Production-Projekt `qscbgcdmivbbnzrcyegn`: zuletzt unabhängig live `ACTIVE_HEALTHY`, letzte angewendete Version `20260824140000` (gleiche Kalendertags-Evidence vor PR #86). PR #86 enthält **keine** Migration.
 
-PR #81 enthält **keine Migration**.
+In dieser Continuity-Umgebung zeigt `SUPABASE_PROJECT_REF` **nicht** auf Production; Management-API gegen Production-Ref `403`. Deshalb keine neue Production-SQL-Liste in diesem Auftrag behauptet.
 
-Keine Development-only-Migration darf ohne eigenes Production-Gate still produktiv angewendet werden.
+Development (dieses Agent-Secret), live erneut gelesen:
 
-## 11. Continuity-Regel
+- enthält `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`;
+- enthält `20260824180000_trip_items_flug_handelsfelder_guard`;
+- enthält `admin_aal2_data_plane` als angewendete Version `20260826052735`.
 
-Kein relevanter Fortschritt darf nur im Chat existieren. Reviews, Merges, Agentenstatus, Findings, Gate-Entscheidungen, Supabase-/Vercel-/CI-Evidence und nächste Schritte werden im Repository nachgezogen.
+Keine Development-only-Migration darf ohne eigenes Production-Gate still produktiv angewendet werden. Keine Auth/RLS/AAL-/Provider-/Payment-Aktivierung.
 
-Historische PR-Bodies und Dokumente bleiben Evidence ihres damaligen Stands. Bei Widerspruch gelten Live-Evidence + aktuellste ausdrückliche Product-Owner-Entscheidung.
+## 10. Nächster Schritt
+
+Unabhängiger ChatGPT-/Technical-Lead-Review von Draft-PR #85. Danach erst der finale ChatGPT-Superprompt. Kein Produktslice. Kein Ready/Merge dieses Continuity-PR durch den Autoren-Agenten. Kein D1/G1. Kein TW6-REST/TW-7/TW-8. Kein S5-B. Kein AP-Folgeslice. Kein Admin D–K.

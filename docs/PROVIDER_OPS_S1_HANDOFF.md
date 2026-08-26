@@ -1,7 +1,9 @@
 # Jetnity – Provider Ops S1 Handoff
 
 Stand: 24. August 2026  
-Status: **S1 TECHNICAL CLOSURE / PASS; Draft-PR #47 wartet auf Product-Owner-Entscheidung**
+Status: **HISTORICAL HANDOFF. S1 ist auf `main` integriert (PR #47). Nicht der aktuelle operative Stand.**
+
+> Kanonisch: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
 
 ## 1. Übernahme
 
