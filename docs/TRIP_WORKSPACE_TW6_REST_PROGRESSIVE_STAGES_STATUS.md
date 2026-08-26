@@ -134,9 +134,38 @@ Nicht geändert: Auth/MFA/AAL, Traveller, Route/Transit, Provider/Commercial, Pa
 
 ## 8. Tests / Gates / CI / Vercel
 
-Lokale Pflichttests und Repo-Gates sowie Exact-Head Actions/Vercel werden nach dem Runtime-Commit auf dem Exact Head dokumentiert.
+Lokale Gates auf dem Runtime-Stand nach dem Export-Fix:
 
-Account/Development-DB-Evidence gilt nur, wenn die Migration auf dem bestätigten Development-Branch angewendet wurde. Preview gegen Production-Supabase nutzt weiter die alte RPC, bis Production separat freigegeben wird.
+| Gate | Ergebnis |
+| --- | --- |
+| `npm test` | **2243/2243 PASS** |
+| `npm run typecheck` | PASS |
+| `npm run lint` | PASS, 0 warnings |
+| `npm run check:dead` | PASS (1 begründetes CookieConsent) |
+| `npm run check:exports` | PASS nach Entfernen des ungenutzten Exports |
+| `npm run check:deps` | PASS |
+| `npm run check:api-schutz` | PASS, 12 Admin-Routen |
+| `npm run check:schema-bezug` | PASS |
+| `npm run check:setup:ci` | PASS, 1 Warning: keine `.env` |
+| `npm run build` | PASS, Next.js 14.2.32 Production-Build |
+
+Pflichttests: Paris → Rom → Paris 12.–17. September, Single-Destination, Legacy-Fallback, fail-closed `user`/`legacy_fallback`, Timeline, Guest-Load, Guest→Account, Guest-One-Trip und `clientRef` liegen in `lib/trips/day-stage-truth-contract.test.ts` plus bestehender Guest-/Create-Suite.
+
+Development-Migration:
+
+- Ziel bestätigt: `npm run db:anwenden -- --probe` → `Ziel: entwicklung`
+- `db:anwenden` ohne Filter wurde **nicht** ausgeführt, weil `20260826090000_admin_aal2_data_plane.sql` ebenfalls offen war (AAL out of scope)
+- Nur `20260826220000_trip_day_stage_assignment_source.sql` angewendet
+- Spalte existiert: `text not null default 'legacy_fallback'` + CHECK
+- Bestehender Development-Trip: 1 Row, Source `legacy_fallback`
+- `reise_anlegen` auf Development: überspringt Unassigned, CTE nur bei `legacy_fallback`, ignoriert Client-`user`
+- `db:typen` wurde gegen Development ausgeführt; der regenerierte Diff enthielt fremde Traveller-/Foundation-E-Umsortierungen und wurde **nicht** committed
+
+**Production-Migration wurde NICHT angewendet.** Kein `--produktion`, kein Production-SQL, keine Production-RLS-Änderung.
+
+GitHub Actions `33009930044` auf `7b1b6d43` ist **FAIL** (`check:exports` wegen `istDayStageAssignmentSource`). Der Export-Fix geht in den nächsten Exact Head. Auth-Job auf demselben Run war SUCCESS.
+
+Exact-Head Actions und Vercel des finalen Heads folgen nach dem Fix-Push. Preview gegen Production-Supabase nutzt weiter die alte RPC, bis Production separat freigegeben wird.
 
 ## 9. Offene Restpunkte
 

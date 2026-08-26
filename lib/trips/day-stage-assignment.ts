@@ -14,7 +14,7 @@ import {
 
 export { DAY_STAGE_ASSIGNMENT_SOURCES, type DayStageAssignmentSource }
 
-export function istDayStageAssignmentSource(
+function istDayStageAssignmentSource(
   wert: unknown,
 ): wert is DayStageAssignmentSource {
   return (
