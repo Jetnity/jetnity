@@ -43,8 +43,15 @@ Eine fehlende spätere Fähigkeit wird nicht als akuter P0-Incident geführt.
 
 Keine TW-8 Runtime. Keine S4/S5/S6/S7/S8 Runtime durch diesen Audit. Keine Provideraktivierung. Keine Secrets/Verträge/paid calls. Keine Production-Migration. Keine echten Preis-/Verfügbarkeitsabfragen. Keine neuen laufenden Kosten.
 
-## 4. Integration
+## 4. Exact-Head-Gates
 
-Der Audit-Inhalt ist fachlich PASS. Vor Merge ist nur noch der durch diese Reconciliation erzeugte neue Exact Head auf GitHub Actions/Vercel zu verifizieren. Danach darf der Technical Lead diesen normalen docs-only PR autonom integrieren.
+Finaler Reconciliation-Head vor diesem Status: `77172e8ac2c93147fe0f78643df68483af113348`.
+
+- GitHub Actions CI `32951957404`: SUCCESS.
+- Vercel Preview `dpl_7pWn9bgeVMaqRKsZ89y6JEJtQ1cA`: READY.
+
+## 5. Integration
+
+Der Audit-Inhalt ist fachlich und technisch PASS. Der normale docs-only PR darf durch den Technical Lead autonom integriert werden.
 
 Kein Folgeslice in diesem PR.
