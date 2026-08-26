@@ -5,84 +5,83 @@ Agent: `Jetnity growth discoverability`
 Branch: `feat/d0-2-canonical-origin-consistency`  
 Draft-PR: #74  
 Aktueller `main`: `8ab4e666d4963ac98b32de4b0371dfbd6eefc30f`  
-Status: **P1-D0-2-TL-01 KORRIGIERT / STOPP für erneuten unabhängigen Technical-Lead-Review**
+Status: **P1-D0-2-TL-02 KORRIGIERT / STOPP für erneuten unabhängigen Technical-Lead-Review**
 
 Kein Ready. Kein Merge. Kein D0-3/G0-1/D1/G1+.  
 `docs/ACTIVE_WORK_STATUS.md` wurde nicht geändert.
 
 ## 1. Root Cause
 
-Nach D0-1 blieben D0-P2-01 und D0-P2-02 offen: zwei Origin-Variablen, fehlende Canonicals, deny-all robots warb Sitemap/Host.
+D0-2 schloss zuerst Origin-/Canonical-/robots-Sitemap-Konsistenz und danach **P1-D0-2-TL-01** (explizites Opt-in).
 
-Unabhängiger Technical-Lead-Review von PR #74 fand danach den Merge-Blocker:
+Unabhängiger Re-Review fand **P1-D0-2-TL-02**:
 
-**P1-D0-2-TL-01 – Public Indexing war nicht explizit opt-in.**
+Der Allow-Pfad akzeptierte jeden gültigen nicht-ephemeren Host. Synthetische Tests bewiesen `darfIndexieren=true` für `https://jetnity.ch`. Das widerspricht der verbindlichen Product-Owner-/Technical-Lead-Entscheidung vom 26.08.2026:
 
-Die erste D0-2-Formel setzte `freigabe = NEXT_PUBLIC_ALLOW_INDEXING !== 'false'`.  
-Unset galt damit bereits als Freigabe. In Kombination mit gültiger `NEXT_PUBLIC_SITE_URL` und fehlender `NEXT_PUBLIC_APP_URL` hätte Production unbeabsichtigt den Allow-Pfad erreichen können.
+- `jetnity.com` = einzige kanonische und indexierte Hauptdomain
+- `jetnity.ch` = nur Schweizer Entry-/Redirect-Domain, keine zweite indexierte Plattform
 
 ## 2. Architekturentscheidung
 
 Zentraler Vertrag bleibt `lib/seo/oeffentlicher-origin.ts`.
 
-Origin:
+- `KANONISCHE_PUBLIC_ORIGIN = 'https://jetnity.com'`
+- Public Indexing nur wenn alle gelten:
+  - Production
+  - `NEXT_PUBLIC_ALLOW_INDEXING` exakt `true`
+  - gewählte Origin exakt `https://jetnity.com`
+  - keine Drift / kein Userinfo / kein ungültiges Protokoll
+  - kein ephemeral Host
+  - kein ephemeral gesetzter App-Host
+  - keine widersprüchliche gültige SITE_URL/APP_URL
+- `https://jetnity.ch`, `http://jetnity.com`, `https://www.jetnity.com`, fremde Real-Hosts bleiben deny, auch mit Opt-in.
+- SITE=`https://jetnity.com` + APP=`https://jetnity.ch` oder eine andere Real-Origin → deny. Kein stiller `.com`/`.ch`-Split.
 
-- `NEXT_PUBLIC_SITE_URL` gewinnt, wenn gültig (`http`/`https`, kein Userinfo).
-- `NEXT_PUBLIC_APP_URL` ist Legacy-Fallback, wenn kein Site-Wert gesetzt ist.
-- Origin ohne Path, Query, Hash und trailing Slash.
+Kein Redirect, kein DNS-, Domain- oder Indexing-Cutover in diesem Slice.
 
-Indexing, nach P1-D0-2-TL-01:
+`.env.example` bleibt:
 
-- nur der **exakte** Wert `true` darf den weiteren Allow-Check passieren;
-- `undefined`, leer, `false`, `TRUE`, `1` und jeder andere Wert bleiben deny;
-- zusätzlich weiterhin deny bei nicht-production, localhost, `*.vercel.app`, ungültiger URL, Path/Query/Userinfo-Drift und ephemeral gesetztem App-Host.
-
-Deny-all: `Disallow: /`, keine Sitemap-/Host-Werbung, leere Sitemap.  
-Synthetischer Allow nur in Tests/isolierter Konfiguration: Host/Sitemap/Canonicals dieselbe Origin; Sitemap nur `/` und `/planen`; D0-1-Disallows bleiben.
-
-`.env.example` dokumentiert `NEXT_PUBLIC_ALLOW_INDEXING=false` als sicheren Default. `true` ist ein separates Public-Launch-Gate und wird nicht gesetzt.
+- `NEXT_PUBLIC_SITE_URL=https://jetnity.com`
+- `NEXT_PUBLIC_ALLOW_INDEXING=false`
 
 ## 3. Geänderte Dateien dieser Korrektur
 
-- `lib/seo/oeffentlicher-origin.ts` – `indexingIstExplizitFreigegeben()` / `=== 'true'`
-- `lib/seo/oeffentlicher-origin.test.ts` – Opt-in-Semantik
-- `lib/seo/robots-regeln.test.ts` – Unset + gültige Apex-URL bleibt deny
-- `.env.example` – sicherer Default `false`, Launch-Gate dokumentiert
+- `lib/seo/oeffentlicher-origin.ts` – kanonische Allow-Origin + Origin-Widerspruch
+- `lib/seo/oeffentlicher-origin.test.ts` – Allow-Tests auf `.com`, negative `.ch`/http/www/fremd/Konflikt-Tests
+- `lib/seo/robots-regeln.test.ts` – Allow-Liste und Deny-Fälle
+- `.env.example` – Kommentar, Werte unverändert
 - `docs/GROWTH_DISCOVERABILITY_D0_2_STATUS.md` – dieser Stand
 
-Branch wurde kontrolliert mit `main @ 8ab4e666` synchronisiert (Merge, nur integrierte Audit-Docs aus #78/#79). Keine fremden Runtime-Dateien verändert.
-
-Nicht geändert: `docs/ACTIVE_WORK_STATUS.md`, Legal, Auth, DB, Tracking, hreflang, JSON-LD-Typen, Custom Domain.
+Nicht geändert: `docs/ACTIVE_WORK_STATUS.md`, Legal, Auth, DB, Tracking, hreflang, Redirect, Custom Domain.
 
 ## 4. Tests und Testannahmen
 
-Gezielte SEO-Tests **33/33**.
+Gezielte SEO-Tests **34/34**.
 
-P1-D0-2-TL-01 fachlich:
+P1-D0-2-TL-02:
 
-1. production + gültige SITE_URL + ALLOW unset → deny
-2. ALLOW leer → deny
-3. ALLOW=false → deny
-4. ALLOW=true + synthetisch gültiger Launch-Kontext → allow
-5. ALLOW=true + localhost → deny
-6. ALLOW=true + `*.vercel.app` → deny
-7. ALLOW=true + Drift/invalid → deny
-8. D0-1 private noindex-Grenzen bleiben grün
-9. deny-all robots: `sitemap=null`, `host=null`
-10. deny-all Sitemap: `[]`
+1. Allow-Pfad nur für `https://jetnity.com`
+2. `https://jetnity.ch` + ALLOW=true → deny
+3. fremder Real-Host + ALLOW=true → deny
+4. `http://jetnity.com` + ALLOW=true → deny
+5. `https://www.jetnity.com` + ALLOW=true → deny
+6. SITE=`.com` + APP=`.ch` → deny
+7. SITE=`.com` + APP=fremde Domain → deny
+8. synthetischer Allow: Host/Sitemap/Canonicals `https://jetnity.com`
+9. D0-1 private noindex-Grenzen bleiben grün
+10. deny-all robots ohne Host/Sitemap; leere Sitemap
 
-Zusätzlich: `TRUE`/`1` sind nicht `true` und bleiben deny.  
-`.env.example` enthält `NEXT_PUBLIC_ALLOW_INDEXING=false` und nicht `=true`.
+P1-D0-2-TL-01 bleibt geschlossen: unset/leer/false/andere Werte deny.
 
-`npm test` vollständig: **2027/2027**.
+`npm test` vollständig: **2028/2028**.
 
-## 5. Lokale Gates auf Runtime `4653a07d`
+## 5. Lokale Gates auf Runtime `f41fd57f`
 
 | Command | Ergebnis |
 | --- | --- |
 | `npm run typecheck` | 0 |
 | `npm run lint` | 0, keine Warnings |
-| `npm test` | 0, **2027/2027** |
+| `npm test` | 0, **2028/2028** |
 | `npm run check:setup:ci` | 0, 1 bekannte Warning: keine lokale `.env` |
 | `npm run check:dead` | 0 |
 | `npm run check:exports` | 0 |
@@ -91,38 +90,26 @@ Zusätzlich: `TRUE`/`1` sind nicht `true` und bleiben deny.
 | `npm run check:schema-bezug` | 0 |
 | `npm run build` | 0 |
 
-## 6. Lokale HTML / robots / sitemap Evidence
+## 6. Lokale Evidence
 
-`next start` nach Production-Build ohne `.env` (`http://127.0.0.1:3013`):
+Lokaler Production-Start ohne `.env`: `robots.txt` nur `Disallow: /`, Sitemap leer.
 
-| Surface | robots | canonical |
-| --- | --- | --- |
-| `/` | `index, follow` | `http://localhost:3000` |
-| `/planen` | `index, follow` | `http://localhost:3000/planen` |
-| `/planen?idee=` | `noindex, nofollow` | `http://localhost:3000/planen` |
-| `/planen?idee=%20` | `noindex, nofollow` | `http://localhost:3000/planen` |
-| `/planen?idee=Bali+mit+Pass+CH` | `noindex, nofollow` | `http://localhost:3000/planen` |
-| `/reisen` | `noindex, nofollow` | keines |
-| `/login` | `noindex, nofollow` | keines |
-| `/unauthorized` | `noindex, nofollow` | keines |
+Helper-Szenarien: `/opt/cursor/artifacts/d02_tl02_env_szenarien.jsonl`.
 
-`robots.txt`: nur `Disallow: /`. Keine Sitemap- oder Host-Zeile.  
-`sitemap.xml`: leeres `urlset`.
-
-Helper-Szenarien: `/opt/cursor/artifacts/d02_optin_env_szenarien.jsonl`.  
-Production + gültige SITE_URL ohne `true` bleibt deny. Nur synthetisches `ALLOW=true` + gültige nicht-ephemere Origin erlaubt Host/Sitemap.
+- synthetisches `ALLOW=true` + `https://jetnity.com` → allow, Host/Sitemap/Canonicals dieselbe Origin
+- `.ch` / `http` / `www` / fremder Host / widersprüchliche APP_URL → deny
 
 ## 7. Self-Review
 
-Geschlossen: P1-D0-2-TL-01.
+Geschlossen: P1-D0-2-TL-01 und P1-D0-2-TL-02.
 
-Eingehalten: kein Legal-Text, kein `/privacy`/`/terms`, kein hreflang, kein JSON-LD-Ausbau, kein Tracking/Consent/Ads, keine Custom Domain, kein produktives Allow-Indexing, keine DB/Auth/Traveller/Route/Provider/Payment-Änderung, kein TW-6, kein `ACTIVE_WORK_STATUS`.
+Eingehalten: kein Redirect, kein Domain-Cutover, kein produktives Indexing, kein Legal, kein hreflang, kein Tracking, keine DB/Auth/Traveller/Provider/Payment-Änderung, kein `ACTIVE_WORK_STATUS`.
 
-HTML-`index,follow` auf öffentlichen Basisflächen bei deny-all robots bleibt das bisherige D0-1-Verhalten der öffentlichen Basis.
+HTML-`index,follow` auf öffentlichen Basisflächen bei deny-all robots bleibt das bisherige D0-1-Verhalten.
 
 ## 8. Exact-Head
 
-Runtime-Korrektur: `4653a07d`.  
+Runtime-Korrektur: `f41fd57f3e3137a40e859d18fce42377092b499e`.  
 Dieser Persist-Commit ändert den Branch-Head. Technical Lead prüft den dann aktuellen HEAD live.
 
 Merge-Base zum bestätigten `main`: `8ab4e666`.
@@ -131,9 +118,9 @@ Merge-Base zum bestätigten `main`: `8ab4e666`.
 
 - **D0-P1-03** – `/privacy` und `/terms` 404; keine Texte erfinden
 - D0-P2-04 – hreflang / Locale
-- D0-P2-05 – JSON-LD Foundation (`Organization`/`WebSite`)
+- D0-P2-05 – JSON-LD Foundation
 - G0-P2-01 / G0-P2-02 / G0-P3-01 / G0-P3-02
-- Custom Domain / Public Launch / produktives Indexing
+- Custom Domain / `jetnity.ch` Redirect / Public Launch / produktives Indexing
 
 ## 10. Nächster Schritt
 
