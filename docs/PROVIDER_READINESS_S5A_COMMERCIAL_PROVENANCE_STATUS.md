@@ -5,7 +5,7 @@ Agent: `Jetnity provider readiness audit`
 Branch: `feat/provider-s5-commercial-provenance-contract`  
 Baseline: `origin/main @ 71230c280b1cd2500d224095fa84f4472101d31f`  
 PR #77: **MERGED** (`75dfb4308e9aeba2d14353831f016eee84c4fac6`)  
-Status: **IMPLEMENTIERT / NICHT READY / NICHT MERGEN / WARTE AUF TECHNICAL-LEAD-REVIEW**
+Status: **TECHNISCH GEGATET AUF IMPLEMENTATION HEAD / NICHT READY / NICHT MERGEN / WARTE AUF TECHNICAL-LEAD-REVIEW**
 
 Auftrag: `docs/PROVIDER_READINESS_S5A_COMMERCIAL_PROVENANCE_TASK.md`.  
 ADR: `docs/ADR_0168_COMMERCIAL_PROVENANCE_DOMAIN_CONTRACT.md`.
@@ -113,7 +113,17 @@ Bekannte bestehende Wahrheitsschwäche, nicht in diesem Slice „grün gefixt“
 
 ## 9. Exact Head / Actions / Vercel
 
-Wird nach Push und Gates in diesem Dokument nachgetragen. Cursor-Aggregat-Views sind keine Evidence.
+Implementation Exact Head: `8f662ffb334d0839c5f3072f26b9f6330b6a5bb0`
+
+| Gate | Ergebnis |
+| --- | --- |
+| GitHub Actions | SUCCESS [32954257113](https://github.com/Jetnity/jetnity/actions/runs/32954257113) – Typecheck, Lint & Build + Auth-Konfiguration |
+| Vercel Preview | SUCCESS / READY `2fj17tcrpdx6fefK95m2RNHP71N7` – Deployment `6101134836` |
+| Preview-URL | https://jetnity-47yiqdjv0-jetnity-e1b93c82.vercel.app |
+
+Lokale Gates auf demselben Head: typecheck, lint, `npm test` 2051/2051, build, `check:setup:ci`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` – alle PASS.
+
+Ein späterer docs-only Status-Commit kann den PR-Head verschieben. Technical-Lead-Review gaten den dann aktuellen PR-Head zusätzlich. Cursor-Aggregat-Views sind keine Evidence.
 
 ## 10. STOPP
 
