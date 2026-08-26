@@ -22,6 +22,7 @@ import Reiseidee from '@/components/trips/Reiseidee'
 import TripPlanner from '@/components/trips/TripPlanner'
 import { ortBestaetigen } from '@/lib/places/aktionen'
 import { planenRobots } from '@/lib/seo/index-grenze'
+import { htmlRobots } from '@/lib/seo/oeffentliche-metadata'
 import { kanonischeUrl } from '@/lib/seo/oeffentlicher-origin'
 import { planenVorbelegung } from '@/lib/trips/create-entry'
 import { GRENZEN } from '@/lib/trips/schema'
@@ -36,15 +37,15 @@ type PlanenSeiteProps = {
 }
 
 export function generateMetadata({ searchParams }: PlanenSeiteProps): Metadata {
-  const robots = planenRobots(searchParams)
-  // Nur die parametrisierte Variante setzt ein eigenes Signal. `robots: undefined`
-  // würde in Next die geerbte Layout-Basis löschen. Die Basis kommt aus
-  // htmlRobots() und bleibt noindex, solange darfIndexieren falsch ist.
+  const robots = planenRobots(searchParams) ?? htmlRobots()
+  // Next setzt bei generateMetadata ohne robots-Feld wieder index,follow.
+  // Deshalb immer ein explizites Signal: Param-Varianten bleiben noindex,
+  // die Basis folgt htmlRobots() und damit darfIndexieren.
   return {
     title: 'Reise planen',
     description: 'Erstelle deine Reise mit Jetnity.',
     alternates: { canonical: kanonischeUrl('/planen') },
-    ...(robots ? { robots } : {}),
+    robots,
   }
 }
 

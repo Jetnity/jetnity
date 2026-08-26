@@ -209,6 +209,14 @@ describe('P1-D0-LIVE-01: Layouts dürfen index nicht hart setzen', () => {
     assert.match(start, /url: kanonischeUrl\('\/'\)/)
   })
 
+  test('/planen setzt robots immer explizit und erbt kein index,follow', () => {
+    const planen = quelle('../../app/(public)/planen/page.tsx')
+    assert.match(planen, /htmlRobots/)
+    assert.match(planen, /planenRobots\(searchParams\) \?\? htmlRobots\(\)/)
+    assert.match(planen, /robots,/)
+    assert.equal(planen.includes('...(robots ? { robots } : {})'), false)
+  })
+
   test('private noindex-Grenzen bleiben unverändert', () => {
     assert.deepEqual(NICHT_INDEXIEREN, { index: false, follow: false })
     assert.deepEqual(planenRobots({ idee: 'Bali' }), NICHT_INDEXIEREN)

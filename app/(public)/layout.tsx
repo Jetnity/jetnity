@@ -28,7 +28,7 @@ export const metadata: Metadata = {
       'Plane, organisiere und erlebe deine Reise an einem Ort – übersichtlich, persönlich und sicher.',
     images: [
       {
-        url: '/images/hero-bali.png',
+        url: `${OEFFENTLICHE_METADATA_ORIGIN}/images/hero-bali.png`,
         width: 1536,
         height: 1024,
         alt: 'Jetnity – Reiseplanung und Reisebegleitung',
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     title: 'Jetnity – Deine ganze Reise',
     description:
       'Plane, organisiere und erlebe deine Reise an einem Ort – übersichtlich, persönlich und sicher.',
-    images: ['/images/hero-bali.png'],
+    images: [`${OEFFENTLICHE_METADATA_ORIGIN}/images/hero-bali.png`],
   },
 }
 

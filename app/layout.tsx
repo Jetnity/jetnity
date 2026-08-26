@@ -24,13 +24,13 @@ export const metadata: Metadata = {
     siteName: 'Jetnity',
     title: 'Jetnity – Deine ganze Reise',
     description: 'Plane, organisiere und erlebe deine Reise an einem Ort.',
-    images: [{ url: '/images/hero-bali.png', width: 1536, height: 1024, alt: 'Jetnity' }],
+    images: [{ url: `${OEFFENTLICHE_METADATA_ORIGIN}/images/hero-bali.png`, width: 1536, height: 1024, alt: 'Jetnity' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Jetnity – Deine ganze Reise',
     description: 'Plane, organisiere und erlebe deine Reise an einem Ort.',
-    images: ['/images/hero-bali.png'],
+    images: [`${OEFFENTLICHE_METADATA_ORIGIN}/images/hero-bali.png`],
   },
   manifest: '/manifest.webmanifest',
 }
