@@ -7,7 +7,8 @@
 // `/planen` bleibt als Basisseite bewusst öffentlich; parametrisierte Varianten
 // mit vorhandenem idee/ziel/zielId-Key sind es nicht, unabhängig vom Wert.
 //
-// Kein Canonical, kein hreflang, kein JSON-LD, kein Tracking.
+// Canonicals und die gemeinsame Origin liegen in oeffentlicher-origin.ts.
+// Kein hreflang, kein JSON-LD-Ausbau, kein Tracking.
 
 export const NICHT_INDEXIEREN = { index: false, follow: false } as const
 

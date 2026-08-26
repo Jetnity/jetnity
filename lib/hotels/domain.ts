@@ -145,6 +145,9 @@ export type HotelSuchanfrage = {
 /**
  * Kommerzielle Hotelfakten, normalisiert aus einem Suchanbieter.
  * Keine Affiliate-/Booking-URL: Suche und Monetarisierung bleiben getrennt.
+ *
+ * Kommerzielle Provenance (`retrievedAt`, Freshness, Währungsabgleich) liegt
+ * nicht in diesem Domänenmodell. Siehe `lib/commercial-provenance`.
  */
 export type HotelOption = {
   id: string

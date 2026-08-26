@@ -8,7 +8,7 @@ Branch: `fix/qs2-admin-aal2-guard`
 Baseline: `main @ 8ab4e666d4963ac98b32de4b0371dfbd6eefc30f`
 Finding: `P1-QS2-01`
 Task: `docs/QS2_ADMIN_AAL2_CLOSURE_TASK.md`
-ADR: ADR-0168
+ADR: ADR-0169
 
 ## Freigaben
 

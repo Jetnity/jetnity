@@ -4071,10 +4071,89 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 ---
 
-## ADR-0168 – Admin-Zugang verlangt zentral aktuelles AAL2
+## ADR-0166 – Guest→Account streicht unbewiesene Stay-/Activity-Handelsfelder
 
 **Datum:** 26. August 2026  
-**Status:** Product-Owner-freigegebene Security-Regel; Runtime in Draft-PR #80. 0166/0167 bleiben die Trip-Workspace-ADRs.
+**Status:** umgesetzt auf `fix/qs2-guest-account-commercial-truth`; schließt P1-QS2-02. Keine Schema-/RPC-Änderung.
+
+**Entscheidung:** Beim Guest→Account-Transfer werden für `stay` und `activity` dieselben unbewiesenen Handelsfelder genullt wie bereits für `flight`: `price_amount`, `price_currency`, `provider`, `external_ref`, `booking_url`. Nicht-kommerzielle Fakten (Titel, Notiz, Datum, Zeit) bleiben. Transfer und `rental_car` bleiben unverändert, weil ihr persistierter Preis S3-User-Intake sein kann.
+
+**Kontext:** QS-2 P1-QS2-02. Konto-Hotel/Activity verlangen Nachweis. Guest-LocalStorage ist keine Provider-Evidence. Der Flug-Strip existierte; Stay/Activity liefen durch `alsNutzlast` / `reiseAusNutzlastAnlegen`.
+
+**Alternativen:**
+
+1. *RPC `reise_anlegen` härten.* Shared-Contract-/DB-Änderung; Residual für Flug bleibt ohnehin (direkter PostgREST-Aufruf). Nicht in diesem Slice.
+2. *Auch Transfer/Rental strippen.* Würde manuelle Nutzerpreise zerstören, ohne S3/S5-Vertrag.
+3. *Nichts tun.* Account-Graph trägt erfundene Commercial-Truth.
+
+**Begründung:** Lokale Gastdaten dürfen keine angebliche Provider-/Preis-/Booking-Wahrheit erzeugen. Die Feldmenge ist die bereits für Flüge geltende, nicht erfunden.
+
+**Konsequenzen:**
+
+- `nutzlastOhneUnbewieseneHandelsfelder` in `alsNutzlast` und `reiseAusNutzlastAnlegen`
+- Mobility/Rental-Such-Snapshots mit `provider`/`external_ref` bleiben ein dokumentiertes Rest-Risiko bis zu einem eigenen Vertrag
+- S5 Commercial Provenance wird nicht vorgezogen
+- Direkter RPC-Bypass bleibt dasselbe Residual wie beim Flug
+
+---
+
+## ADR-0167 – Official-Compatibility aggregiert fail-closed, nicht first-evaluation
+
+**Datum:** 26. August 2026  
+**Status:** umgesetzt auf `fix/p1-ta02-official-evaluation-option-scope`; schließt P1-TA-02. Keine Schema-/Contract-Änderung.
+
+**Entscheidung:** Kanonische Official-Wahrheit bleibt `OfficialEvaluation[]`. Das Legacy-Feld `official` und die Item-/Summary-Presentation dürfen nur Aussagen machen, die für ihren Scope belegt sind. Bei heterogenen Traveller-, Credential-Option-, Destination- oder Transit-Scopes wird keine einzelne Evaluation als repräsentative Wahrheit gewählt. Presentation-Metadaten (Authority, Source URL, `checkedAt`, `validityUntil`) bleiben dann leer. `result` bleibt immer `unknown`. Item-Scope ohne exakten Treffer fällt nicht auf alle Evaluations zurück.
+
+**Kontext:** Traveller-/Account-Audit P1-TA-02. `officialAusEvaluations` kopierte `evaluations[0]`. `officialFuer` fiel bei leerer Filtermenge auf die Gesamtmenge zurück. Die Reihenfolge der Evaluations bestimmte Authority und Reason. `ARCHITECTURE.md` verbot bereits die First-Hit-Reduktion; der Runtime-Pfad tat sie trotzdem.
+
+**Alternativen:**
+
+1. *`evaluations.at(-1)` oder eine andere feste Auswahl.* Bleibt willkürlich und reihenfolgeabhängig.
+2. *Legacy-`official` entfernen.* Breaking API ohne Bedarf; Consumer existieren.
+3. *Neue regulatorische Winner-Logik.* Würde Visa-/Entry-Wahrheit erfinden. Verboten.
+
+**Begründung:** Ein Reisender kann mehrere Staatsbürgerschaften und Dokumente haben. Mehrere Reisende und Destinationen/Transits dürfen nicht zu einer künstlich eindeutigen Einreiseprüfung kollabieren. Compatibility darf nur ableiten, nicht entscheiden.
+
+**Konsequenzen:**
+
+- `officialAusEvaluations` ist permutationsstabil
+- `officialFuerItem` ist fail-closed pro Item-Scope
+- P2-TA-06 (`documents[0]` in `travellerNormalisieren`) bleibt ein separates latentes Residual
+- Kein neuer Traveller-Shared-Contract
+
+---
+
+## ADR-0168 – Commercial Provenance ist ein eigener Vertrag, kein UniversalOffer
+
+**Datum:** 26. August 2026  
+**Status:** S5-A Domain-Foundation auf Feature-Branch. Nicht Ready. Nicht gemergt. Keine Persistenz. Volltext: `docs/ADR_0168_COMMERCIAL_PROVENANCE_DOMAIN_CONTRACT.md`.
+
+**Entscheidung:** Kommerzielle Wahrheit (Preis, Providerherkunft, Freshness, Währung) bekommt einen provider-neutralen Domainvertrag in `lib/commercial-provenance`. Die bestehenden Flight-/Hotel-/Activity-/Mobility-/Rental-Modelle bleiben fachlich getrennt. Der Vertrag komponiert Provenance, er ersetzt die Domänenoptionen nicht. Ein persistierter Snapshot ist niemals live. Fehlende Freshness bleibt `unknown`. Requested- und Quoted-Währung dürfen ohne Conversion-Evidence nicht gleichgesetzt werden. External References sind Provenance, nicht Trust, und provider-scoped. Mehrere belegte Quellen dürfen als Konflikt stehen bleiben. LLM/Assistant darf diesen Vertrag nicht erzeugen oder überschreiben. Actor und Source sind fail-closed getrennt: User-Intake/Manual sind keine Provider-Truth; Provider-Live-/Snapshot-Herkunft kommt nur aus einem trusted Adapter- oder Snapshot-Pfad. Untrusted Input defaultet nicht auf `system`.
+
+**Kontext:** Der S4–S8-Audit (PR #77) hat den S5-Gap präzise belegt und den Shared Contract bewusst nicht implementiert. TW-8 und bezahlte Provider bleiben hinter diesem Vertrag und späteren Gates.
+
+**Alternativen:**
+
+1. *Felder still in jede Option-Zod und `trip_items` schreiben.* Würde Persistenz und Shared Persistence-Contracts ohne Production-Gate ziehen.
+2. *Ein UniversalOffer.* Vermischt Flug-/Hotel-/Transport-Semantik und verletzt AGENTS.md Regel 19.
+3. *S1 Ops zum Offer-Modell ausbauen.* S1 ist Operationsvertrag, keine Commercial-Truth.
+
+**Begründung:** Zuerst der fail-closed Vertrag, dann später S5-B-Persistenz. Ohne Beobachtungszeit, Freshness und Währungsabgleich wäre jeder Preisvergleich erfunden.
+
+**Konsequenzen:** Keine DB-Migration in S5-A. Altbestand ohne `retrievedAt` bleibt unknown. TW-8 startet nicht durch diesen Slice. Factories und Provider bleiben unverändert.
+
+**Nachtrag 26. August 2026 (Technical-Lead HOLD):** Actor↔Source-Matrix, fail-closed Option-Binding, User-Intake ohne Fake-Provider und provider-scoped Vergleichsidentität. Siehe PR #83.
+
+**Nachtrag 26. August 2026 (S5A-TL-05 bis S5A-TL-08):** `commercialTruthUebernehmen` ersetzt keine provider-belegte Hard Truth durch User-/Manual-Wahrheit; Provider-Refresh nur identitätsgebunden. `user_intake`/`manual` lehnen jede `providerId` ab. Fehlende Affiliate-Evidence bleibt `unknown`. Widersprüchliche `amount`/`amountStatus`-Paare werden abgewiesen.
+
+**Nachtrag 26. August 2026 (S5A-TL-09 und S5A-TL-10):** Provider-Refresh braucht identische Domain, identische `providerId` und identische belegte `externalRef`. Gleiche Provider-ID ohne Offer-Ref ist kein Refresh. `providerOfferId` ist in S5-A kein gleichwertiger Identitätsschlüssel. Current-Quote-Display braucht belegte `quotedCurrency`; fehlende Requested-Währung bleibt in der Quote-Währung darstellbar, `requested != quoted` bleibt mismatch ohne Conversion.
+
+---
+
+## ADR-0169 – Admin-Zugang verlangt zentral aktuelles AAL2
+
+**Datum:** 26. August 2026  
+**Status:** Product-Owner-freigegebene Security-Regel; Runtime in Draft-PR #80. Auf diesem Branch zuerst als ADR-0168 geführt; nach Integration von `main @ 3b317bc` auf **0169** verschoben, weil 0166–0168 dort bereits Guest→Account, Official-Compatibility und Commercial Provenance belegen.
 
 **Entscheidung:**
 
@@ -4084,14 +4163,15 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 - Break-Glass umgeht AAL2 nicht. Es öffnet weiterhin nur die Oberfläche, und das erst nach AAL2.
 - Ein AAL-Lookup-Fehler ist fail closed (`aal-lookup-failed` / 503). AAL1 nach bestehender Berechtigung ist `aal2-required` (Seite: `/admin/mfa`, API: 403 JSON).
 - `/admin/mfa` liegt in `(public)`, damit der Step-up nicht hinter dem AAL2-Guard hängt. Return-Ziele sind auf interne Admin-Pfade begrenzt.
+- Die Development-Migration `20260826090000_admin_aal2_data_plane.sql` zieht dieselben fünf administrativen DB-Fähigkeiten auf Rolle **und** JWT-`aal='aal2'`. Keine Production-Migration in diesem Slice.
 
-**Kontext:** QS-2-Finding P1-QS2-01. Der Consumer-Login kannte bereits TOTP-Step-up; der Admin-Guard prüfte nur Identität und Rolle. Der Product Owner hat die zentrale verpflichtende Admin-AAL2-Regel am 26. August 2026 ausdrücklich genehmigt. Das besondere Auth/MFA/AAL-Gate gilt nur für diesen engen Slice.
+**Kontext:** QS-2-Finding P1-QS2-01. Der Consumer-Login kannte bereits TOTP-Step-up; der Admin-Guard prüfte nur Identität und Rolle. Der Product Owner hat die zentrale verpflichtende Admin-AAL2-Regel am 26. August 2026 ausdrücklich genehmigt und nach dem TL-Finding zusätzlich das enge Admin-RLS-AAL2-Hardening. Das besondere Auth/MFA/AAL-Gate gilt nur für diesen engen Slice.
 
-**Alternativen:** Nur den Passwortlogin patchen; AAL2 aus Faktor-Existenz oder `nextLevel` ableiten; Break-Glass von AAL2 ausnehmen; Step-up hinter `requireAdminPage` legen.
+**Alternativen:** Nur den Passwortlogin patchen; AAL2 aus Faktor-Existenz oder `nextLevel` ableiten; Break-Glass von AAL2 ausnehmen; Step-up hinter `requireAdminPage` legen; AAL2 nur in der App und nicht in den DB-Fähigkeiten.
 
-**Begründung:** Ein gestohlenes Erstfaktor-Passwort eines Admin-Kontos darf privilegierte Flächen nicht öffnen. Eine Login-only-Prüfung würde Magic Link, OAuth und bestehende AAL1-Sitzungen durchlassen.
+**Begründung:** Ein gestohlenes Erstfaktor-Passwort eines Admin-Kontos darf privilegierte Flächen und die administrative Datenebene nicht öffnen. Eine Login-only-Prüfung würde Magic Link, OAuth und bestehende AAL1-Sitzungen durchlassen.
 
-**Konsequenzen:** Kein allgemeiner Auth-/Session-Umbau, kein Passkey-Rollout, keine RLS-/Rollenänderung, kein P1-QS2-02. Admins ohne verifizierten TOTP-Faktor bleiben aus `/admin` ausgesperrt und bekommen den bestehenden Account-Security-Pfad.
+**Konsequenzen:** Kein allgemeiner Auth-/Session-Umbau, kein Passkey-Rollout, kein Rollen-/Ownership-Neudesign, kein P1-QS2-02, keine Production-Aktivierung. Admins ohne verifizierten TOTP-Faktor bleiben aus `/admin` ausgesperrt und bekommen den bestehenden Account-Security-Pfad.
 
 ---
 

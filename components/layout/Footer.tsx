@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ArrowUpRight, Mail } from 'lucide-react'
 
 import FooterSitzung from '@/components/layout/FooterSitzung'
+import GastCreateLink from '@/components/trips/GastCreateLink'
 
 const productLinks = [
   { label: 'Reise planen', href: '/planen' },
@@ -56,9 +57,17 @@ export default function Footer() {
             <ul className={footerListClass}>
               {productLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className={footerLinkClass}>
-                    {link.label}
-                  </Link>
+                  {link.href === '/planen' ? (
+                    <GastCreateLink
+                      createHref={link.href}
+                      createLabel={link.label}
+                      className={footerLinkClass}
+                    />
+                  ) : (
+                    <Link href={link.href} className={footerLinkClass}>
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

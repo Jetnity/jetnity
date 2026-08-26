@@ -16,14 +16,17 @@ import {
 } from 'lucide-react'
 
 import StartzielForm from '@/components/places/StartzielForm'
+import GastCreateLink from '@/components/trips/GastCreateLink'
 import { INSPIRATION_ZIELE } from '@/lib/places/inspiration'
 import { zielHref } from '@/lib/places/auswahl'
 import { ScrollRow } from '@/components/ui/scroll-row'
+import { kanonischeUrl, oeffentlicherOrigin } from '@/lib/seo/oeffentlicher-origin'
 
 export const metadata: Metadata = {
   title: 'Deine ganze Reise. Intelligent begleitet.',
   description:
     'Plane, organisiere und erlebe deine Reise an einem Ort – übersichtlich, persönlich und sicher mit Jetnity.',
+  alternates: { canonical: kanonischeUrl('/') },
 }
 
 const destinations = INSPIRATION_ZIELE
@@ -57,7 +60,7 @@ const cockpitBenefits = [
 ]
 
 export default function HomePage() {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  const { origin } = oeffentlicherOrigin()
 
   return (
     <main className="bg-surface-75 text-brand-800">
@@ -195,13 +198,14 @@ export default function HomePage() {
                   )
                 })}
               </ul>
-              <Link
-                href="/planen"
+              <GastCreateLink
+                createHref="/planen"
+                createLabel="Eigenen Entwurf erstellen"
                 className="-mx-2 mt-6 inline-flex min-h-11 items-center gap-2 px-2 text-sm font-semibold text-brand-800 underline decoration-ink-500 underline-offset-4 transition hover:decoration-brand-800"
               >
                 Eigenen Entwurf erstellen
                 <ArrowRight className="h-4 w-4 shrink-0" />
-              </Link>
+              </GastCreateLink>
             </div>
 
             <div className="min-w-0 rounded-[30px] border border-white/70 bg-surface-0 p-3 shadow-[0_30px_80px_rgba(15,46,42,0.13)] sm:p-4">
@@ -308,13 +312,14 @@ export default function HomePage() {
                 Live-Flughinweise, Offline-Zugriff, Dokumentenerinnerungen und persönliche Unterstützung werden später zu einem einzigen Schutzpaket verbunden.
               </p>
             </div>
-            <Link
-              href="/planen"
+            <GastCreateLink
+              createHref="/planen"
+              createLabel="Kostenlos beginnen"
               className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-citrus-400 px-6 text-sm font-semibold text-brand-800 transition hover:-translate-y-0.5 hover:bg-citrus-300"
             >
               Kostenlos beginnen
               <ArrowRight className="h-4 w-4" />
-            </Link>
+            </GastCreateLink>
           </div>
         </div>
       </section>
@@ -326,7 +331,7 @@ export default function HomePage() {
             '@context': 'https://schema.org',
             '@type': 'WebApplication',
             name: 'Jetnity',
-            url: appUrl,
+            url: origin,
             applicationCategory: 'TravelApplication',
             operatingSystem: 'Web',
             description: 'Eine persönliche Plattform für Reiseplanung und Reisebegleitung.',

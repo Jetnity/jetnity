@@ -32,7 +32,7 @@ import {
   type TripStage,
   type TripStatus,
 } from '@/types/trips'
-import { flugNutzlastOhneUnbewieseneWahrheit } from '@/lib/flights/nutzlast'
+import { nutzlastOhneUnbewieseneHandelsfelder } from '@/lib/trips/handelsfelder-nutzlast'
 import { itineraryAusMetadata } from '@/lib/route/metadata'
 import type { ReiseNutzlast } from '@/lib/trips/schema'
 import { buchungsquelleLesen, buchungsstatusLesen, kannBuchungMarkieren } from '@/lib/trips/buchung'
@@ -337,7 +337,7 @@ export function reiseAus(
  * Zuordnung eines Punkts zu seinem Tag läuft über `day_index`.
  */
 export function alsNutzlast(reise: Trip): ReiseNutzlast {
-  return flugNutzlastOhneUnbewieseneWahrheit({
+  return nutzlastOhneUnbewieseneHandelsfelder({
     client_ref: reise.clientRef ?? reise.id,
     title: reise.title,
     origin: reise.origin,

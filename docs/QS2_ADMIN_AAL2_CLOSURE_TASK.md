@@ -3,7 +3,9 @@
 Stand: 26. August 2026
 Typ: **enger Security-/Auth-/RLS-Closure-Slice**
 Branch: `fix/qs2-admin-aal2-guard`
-Baseline: `main @ 8ab4e666d4963ac98b32de4b0371dfbd6eefc30f`
+Ursprüngliche Baseline: `main @ 8ab4e666d4963ac98b32de4b0371dfbd6eefc30f`
+Aktuelles Sync-Ziel: `main @ 3b317bc677c9d868d1fd8ba75bfa3624ea6b7b73`
+ADR: ADR-0169 (auf dem Branch zuerst als 0168 geführt; nach Integration von #81/#84/#83 umnummeriert)
 Finding: **P1-QS2-01**
 
 ## Product-Owner-/Technical-Lead-Entscheidungen

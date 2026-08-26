@@ -17,10 +17,13 @@
 import type { Metadata } from 'next'
 
 import { createServerComponentClient } from '@/lib/supabase/server'
+import PlanenCreateGate from '@/components/trips/PlanenCreateGate'
 import Reiseidee from '@/components/trips/Reiseidee'
 import TripPlanner from '@/components/trips/TripPlanner'
 import { ortBestaetigen } from '@/lib/places/aktionen'
 import { planenRobots } from '@/lib/seo/index-grenze'
+import { kanonischeUrl } from '@/lib/seo/oeffentlicher-origin'
+import { planenVorbelegung } from '@/lib/trips/create-entry'
 import { GRENZEN } from '@/lib/trips/schema'
 import { VORSCHLAG_GRENZEN } from '@/lib/reisevorschlag/schema'
 
@@ -39,6 +42,7 @@ export function generateMetadata({ searchParams }: PlanenSeiteProps): Metadata {
   return {
     title: 'Reise planen',
     description: 'Erstelle deine Reise mit Jetnity.',
+    alternates: { canonical: kanonischeUrl('/planen') },
     ...(robots ? { robots } : {}),
   }
 }
@@ -66,29 +70,36 @@ export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
   const zielOrt = bestaetigt?.ok ? bestaetigt.wert : null
 
   const angemeldet = Boolean(data.user)
+  const vor = planenVorbelegung({
+    zielId: zielOrt?.id ?? null,
+    zielName: (zielOrt?.name ?? ziel)?.slice(0, GRENZEN.titel) ?? null,
+    idee: idee?.slice(0, GRENZEN.reisewunsch) ?? null,
+  })
 
   return (
     <main className="min-h-screen bg-surface-75 px-4 py-10 sm:px-6 sm:py-14">
       <div className="mx-auto grid w-full max-w-6xl gap-10">
-        <Reiseidee
-          angemeldet={angemeldet}
-          initialIdee={idee?.slice(0, VORSCHLAG_GRENZEN.freitextMaximum) ?? ''}
-        />
+        <PlanenCreateGate angemeldet={angemeldet}>
+          <Reiseidee
+            angemeldet={angemeldet}
+            initialIdee={idee?.slice(0, VORSCHLAG_GRENZEN.freitextMaximum) ?? ''}
+          />
 
-        <div className="flex items-center gap-4">
-          <span className="h-px flex-1 bg-line-200" />
-          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-700">
-            Oder Schritt für Schritt
-          </span>
-          <span className="h-px flex-1 bg-line-200" />
-        </div>
+          <div className="flex items-center gap-4">
+            <span className="h-px flex-1 bg-line-200" />
+            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-700">
+              Oder Schritt für Schritt
+            </span>
+            <span className="h-px flex-1 bg-line-200" />
+          </div>
 
-        <TripPlanner
-          angemeldet={angemeldet}
-          initialDestination={(zielOrt?.name ?? ziel)?.slice(0, GRENZEN.titel) ?? ''}
-          initialDestinationId={zielOrt?.id ?? ''}
-          initialIdea={idee?.slice(0, GRENZEN.reisewunsch) ?? ''}
-        />
+          <TripPlanner
+            angemeldet={angemeldet}
+            initialDestination={vor.destination}
+            initialDestinationId={vor.destinationId}
+            initialIdea={vor.idee}
+          />
+        </PlanenCreateGate>
       </div>
     </main>
   )

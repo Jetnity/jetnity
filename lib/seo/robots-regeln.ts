@@ -1,17 +1,15 @@
 // lib/seo/robots-regeln.ts
 //
-// D0-1: Allow-Index-Disallows und der ephemeral-Host-Kill-Switch.
-//
-// Die Entscheidung, ob überhaupt indexiert werden darf, bleibt ENV-gebunden
-// (Production + nicht-ephemeral Host + Kill-Switch). Dieser Slice aktiviert
-// kein Custom-Domain-Indexing und lockert den Switch nicht.
+// D0-1-Disallows plus D0-2-Konsistenz: Indexing-Entscheidung kommt aus
+// dem öffentlichen Origin-Vertrag. Deny-all bewirbt keine Sitemap.
 
-export type RobotsUmgebung = {
-  NEXT_PUBLIC_APP_URL?: string
-  VERCEL_ENV?: string
-  NODE_ENV?: string
-  NEXT_PUBLIC_ALLOW_INDEXING?: string
-}
+import {
+  oeffentlicherOrigin,
+  originIstEphemeral,
+  type OriginUmgebung,
+} from '@/lib/seo/oeffentlicher-origin'
+
+export type RobotsUmgebung = OriginUmgebung
 
 /**
  * Pfade, die im Allow-Modus ausdrücklich nicht gecrawlt werden sollen.
@@ -34,26 +32,30 @@ export const ROBOTS_DISALLOW_ALLOW_MODUS = [
   '/*?*preview=*',
 ] as const
 
-export function robotsHostAusUrl(raw?: string): { host: string; hostname: string } {
-  const host = (raw ?? 'http://localhost:3000').replace(/\/+$/, '')
-  try {
-    return { host, hostname: new URL(host).hostname }
-  } catch {
-    return { host, hostname: 'localhost' }
-  }
-}
-
-export function robotsIstEphemeralHost(hostname: string): boolean {
-  return /localhost|\.vercel\.app$/i.test(hostname)
-}
+export const robotsIstEphemeralHost = originIstEphemeral
 
 export function robotsDarfIndexieren(umgebung: RobotsUmgebung): boolean {
-  const { hostname } = robotsHostAusUrl(umgebung.NEXT_PUBLIC_APP_URL)
-  const produktion = (umgebung.VERCEL_ENV ?? umgebung.NODE_ENV) === 'production'
-  const freigabe = umgebung.NEXT_PUBLIC_ALLOW_INDEXING !== 'false'
-  return produktion && !robotsIstEphemeralHost(hostname) && freigabe
+  return oeffentlicherOrigin(umgebung).darfIndexieren
 }
 
 export function robotsDisallowListe(umgebung: RobotsUmgebung): readonly string[] {
   return robotsDarfIndexieren(umgebung) ? ROBOTS_DISALLOW_ALLOW_MODUS : ['/']
+}
+
+export type RobotsDokument = {
+  disallow: readonly string[]
+  sitemap: string | null
+  host: string | null
+}
+
+export function robotsDokument(umgebung?: RobotsUmgebung): RobotsDokument {
+  const { origin, darfIndexieren } = oeffentlicherOrigin(umgebung)
+  if (!darfIndexieren) {
+    return { disallow: ['/'], sitemap: null, host: null }
+  }
+  return {
+    disallow: ROBOTS_DISALLOW_ALLOW_MODUS,
+    sitemap: `${origin}/sitemap.xml`,
+    host: origin,
+  }
 }

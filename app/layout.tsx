@@ -3,12 +3,14 @@ import '../styles/globals.css'
 import type { Metadata, Viewport } from 'next'
 import { Toaster } from 'sonner'
 
+import { oeffentlicherOrigin } from '@/lib/seo/oeffentlicher-origin'
+
 export const runtime = 'nodejs' // gesamte App standardmäßig auf Node.js
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+const { origin: OEFFENTLICHER_ORIGIN } = oeffentlicherOrigin()
 
 export const metadata: Metadata = {
-  metadataBase: new URL(APP_URL),
+  metadataBase: new URL(OEFFENTLICHER_ORIGIN),
   applicationName: 'Jetnity',
   title: {
     template: '%s – Jetnity',
@@ -28,7 +30,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    url: APP_URL,
+    url: OEFFENTLICHER_ORIGIN,
     siteName: 'Jetnity',
     title: 'Jetnity – Deine ganze Reise',
     description: 'Plane, organisiere und erlebe deine Reise an einem Ort.',

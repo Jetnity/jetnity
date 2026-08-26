@@ -43,6 +43,7 @@ import { useFormStatus } from 'react-dom'
 import { LogOut, Menu, X } from 'lucide-react'
 
 import { signOutAction } from '@/app/auth/sign-out'
+import GastCreateLink from '@/components/trips/GastCreateLink'
 import {
   HAUPTNAVIGATION,
   sitzungseintraege,
@@ -161,12 +162,11 @@ export default function PublicNavbar() {
           {eintraege.map((eintrag) => (
             <Sitzungseintrag key={eintrag.label} eintrag={eintrag} onNachlesen={sitzungLesen} />
           ))}
-          <Link
-            href="/planen"
+          <GastCreateLink
+            createHref="/planen"
+            createLabel="Reise planen"
             className="inline-flex min-h-11 items-center rounded-full bg-brand-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900 pointer-fine:min-h-0"
-          >
-            Reise planen
-          </Link>
+          />
         </div>
 
         <button
@@ -207,13 +207,12 @@ export default function PublicNavbar() {
                 onNachlesen={sitzungLesen}
               />
             ))}
-            <Link
-              href="/planen"
+            <GastCreateLink
+              createHref="/planen"
+              createLabel="Reise planen"
               onClick={closeMobile}
               className="flex h-11 items-center justify-center rounded-full bg-brand-800 px-3 text-center text-sm font-semibold text-white"
-            >
-              Reise planen
-            </Link>
+            />
           </div>
         </nav>
       )}
