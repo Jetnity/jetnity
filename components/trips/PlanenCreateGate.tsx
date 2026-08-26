@@ -18,9 +18,7 @@ type PlanenCreateGateProps = {
 }
 
 export default function PlanenCreateGate({ angemeldet, children }: PlanenCreateGateProps) {
-  const [aktiv, setAktiv] = React.useState<{ id: string; title: string } | null | undefined>(
-    angemeldet ? null : undefined,
-  )
+  const [aktiv, setAktiv] = React.useState<{ id: string; title: string } | null>(null)
 
   React.useEffect(() => {
     if (angemeldet) {
@@ -35,17 +33,6 @@ export default function PlanenCreateGate({ angemeldet, children }: PlanenCreateG
     angemeldet,
     aktiveReiseId: aktiv?.id ?? null,
   })
-
-  if (angemeldet) return children
-
-  if (aktiv === undefined) {
-    return (
-      <div aria-busy="true" className="grid gap-6">
-        <div className="h-64 animate-pulse rounded-[28px] bg-white/70" />
-        <div className="h-64 animate-pulse rounded-[28px] bg-white/70" />
-      </div>
-    )
-  }
 
   if (!gate.erlaubt) {
     const meldung = new GastreiseBestehtFehler(gate.bestehendeId).message

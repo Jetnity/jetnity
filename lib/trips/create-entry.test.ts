@@ -1,7 +1,8 @@
 import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
+import { fileURLToPath } from 'node:url'
 
 import { neueReiseSchema } from '@/lib/trips/schema'
 import {
@@ -14,7 +15,7 @@ import {
   planenVorbelegung,
 } from '@/lib/trips/create-entry'
 
-const hier = import.meta.dirname
+const hier = dirname(fileURLToPath(import.meta.url))
 
 function quelle(relativ: string) {
   return readFileSync(join(hier, relativ), 'utf8')
@@ -157,18 +158,20 @@ describe('TW-6 Create-Entry – kein dritter Persistenzpfad', () => {
 
   test('Reiseidee prüft den Guest-Slot vor dem Modellaufruf', () => {
     const datei = quelle('../../components/trips/Reiseidee.tsx')
-    const gate = datei.indexOf('gastCreateGate')
-    const modell = datei.indexOf('vorschlagErzeugen')
-    assert.ok(gate >= 0, 'Reiseidee muss gastCreateGate nutzen')
+    const erzeugen = datei.slice(datei.indexOf('const erzeugen'))
+    const gate = erzeugen.indexOf('gastCreateGate')
+    const modell = erzeugen.indexOf('vorschlagErzeugen')
+    assert.ok(gate >= 0, 'Reiseidee muss gastCreateGate im Erzeugen nutzen')
     assert.ok(modell >= 0, 'Reiseidee muss vorschlagErzeugen weiter nutzen')
     assert.ok(gate < modell, 'Fail-fast muss vor dem Modellaufruf stehen')
   })
 
   test('TripPlanner prüft den Guest-Slot vor Ortsbestätigung und Persistenz', () => {
     const datei = quelle('../../components/trips/TripPlanner.tsx')
-    const gate = datei.indexOf('gastCreateGate')
-    const orte = datei.indexOf('reiseorteBestaetigen')
-    const persist = datei.indexOf('gastreiseAnlegen')
+    const absenden = datei.slice(datei.indexOf('const absenden'))
+    const gate = absenden.indexOf('gastCreateGate')
+    const orte = absenden.indexOf('reiseorteBestaetigen')
+    const persist = absenden.indexOf('gastreiseAnlegen')
     assert.ok(gate >= 0 && orte >= 0 && persist >= 0)
     assert.ok(gate < orte && gate < persist)
   })
@@ -198,5 +201,12 @@ describe('TW-6 Create-Entry – kein dritter Persistenzpfad', () => {
     assert.match(datei, /kanonischeUrl\('\/planen'\)/)
     assert.equal(datei.includes('canonical: kanonischeUrl(`/planen?'), false)
     assert.match(datei, /PlanenCreateGate/)
+  })
+
+  test('PlanenCreateGate versteckt die Create-Kinder nicht vor dem ersten Speicherlesen', () => {
+    const datei = quelle('../../components/trips/PlanenCreateGate.tsx')
+    assert.equal(datei.includes('angemeldet ? null : undefined'), false)
+    assert.equal(datei.includes('aria-busy'), false)
+    assert.match(datei, /useState<\{ id: string; title: string \} \| null>\(null\)/)
   })
 })

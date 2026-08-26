@@ -4,7 +4,7 @@ Stand: 26. August 2026
 Agent: `Trip workspace audit architecture`  
 Branch: `feat/tw6-create-entry-alignment`  
 Auftrag: `docs/TRIP_WORKSPACE_TW6_CREATE_ENTRY_TASK.md`  
-Status: **IMPLEMENTIERT / SELF-REVIEW / NOCH KEIN TECHNICAL-LEAD-PASS / NICHT READY / NICHT MERGEN**
+Status: **IMPLEMENTIERT / SELF-REVIEW / LOCAL GATES GRÜN / ERSTER CI-HEAD KORRIGIERT / NOCH KEIN TECHNICAL-LEAD-PASS / NICHT READY / NICHT MERGEN**
 
 `docs/ACTIVE_WORK_STATUS.md` wurde nicht geändert.
 
@@ -33,7 +33,7 @@ Geändert / neu, Create-Entry only:
 - `lib/trips/create-entry.ts` – Gate, Gast-CTA, Persistenzdefault, Vorbelegung ohne Origin-Erfindung;
 - `lib/trips/create-entry.test.ts` – Regression inkl. Testannahmen;
 - `lib/trips/gast-reisen-cta.ts` – delegiert an denselben Einstieg;
-- `components/trips/PlanenCreateGate.tsx` – `/planen` zeigt bei belegtem Gast-Slot die bestehende Reise, nicht ein zweites Formular;
+- `components/trips/PlanenCreateGate.tsx` – `/planen` zeigt bei belegtem Gast-Slot die bestehende Reise, nicht ein zweites Formular. SSR bleibt die Create-Kinder, damit die indexierte Basisseite nicht zur leeren Pulse-Hülle wird;
 - `components/trips/GastCreateLink.tsx` – generische CTAs;
 - `components/trips/GastReisen.tsx` – sekundäres „Neue Reise“ entfernt;
 - `components/trips/GastArbeitsbereich.tsx` – fehlende Reise führt ehrlich zu Fortsetzen oder Erstellen;
@@ -76,6 +76,7 @@ Progressive weitere Ziele: **keine neue UI**. Weitere Etappen bleiben die besteh
 - Server Action `vorschlagErzeugen` bleibt öffentlich erreichbar (bestehendes Gast-Kontingent, ADR-0052). TW-6 blockt den UI-Flow fail-fast; ein direkter Action-POST ist kein neuer Create-Pfad und keine neue Billing-Architektur.
 - Homepage-Inspirationskarten bleiben zielspezifische Handoffs nach `/planen`. Die Gate fängt den zweiten Guest-Create dort ab, statt eine Bali-Karte still auf eine andere Reise umzubiegen.
 - Marketing-Mock „2 Reisende · ausgewogen“ auf der Startseite ist keine Create-Wahl und wurde nicht angefasst.
+- Adversarial: die erste Gate-Variante zeigte Gästen serverseitig eine Pulse-Hülle. Das hätte die indexierte `/planen`-Basis entleert. Korrigiert: SSR rendert die Create-Kinder; die Gate ersetzt sie erst nach dem Gastspeicher-Lesen.
 
 ## 5. P0 / P1 / P2 / P3
 
@@ -85,25 +86,58 @@ Progressive weitere Ziele: **keine neue UI**. Weitere Etappen bleiben die besteh
 | — | P1 | keine im Slice-Scope | — |
 | TW6-R-P2-01 | P2 | `vorschlagErzeugen` bleibt als Server Action ohne UI aufrufbar; nur UI-Fail-fast | akzeptiert / Non-Scope Billing |
 | TW6-R-P2-02 | P2 | Inspirationskarten sehen vor dem Klick weiter nach Create aus; ehrlich wird es auf `/planen` | akzeptiert |
+| TW6-R-P2-03 | P2 | Erste Gate-SSR hätte `/planen` für Crawler geleert | geschlossen (SSR zeigt Create-Kinder) |
 | TW6-R-P3-01 | P3 | Reisende-Default bleibt 2; hartes CHF bleibt | bewusst nicht in Option 1 |
 | TW6-R-P3-02 | P3 | CTA-Text wechselt nach Mount (kein Hydration-Mismatch, kurzer Flash möglich) | akzeptiert |
 
 ## 6. Tests
 
-Neu: `lib/trips/create-entry.test.ts`.  
-Bestehend und unverändert relevant: `gastspeicher.test.ts`, `uebernahme.test.ts`, `gast-reisen-cta.test.ts`, D0-1/D0-2 SEO-Tests.
+Neu: `lib/trips/create-entry.test.ts` (21 Tests).
 
-Gates und Exact-Head-Evidence folgen nach dem ersten Push.
+Annahmen, die hinterfragt wurden:
+
+- Quelltext-Reihenfolge in `erzeugen`/`absenden` ist ein Proxy, kein Runtime-Spy auf `vorschlagErzeugen`. Der fachliche Vertrag liegt in `gastCreateGate`.
+- Guest→Account wurde nicht neu geschrieben; die bestehende `uebernahme.test.ts` blieb grün.
+- `balanced` in der Persistenz ist kompatibel, nicht „gewählt“. Die UI-Assertion prüft fehlende Chips, nicht den SQL-Default.
+- Fehlender Origin: `planenVorbelegung` verwirft auch einen übergebenen Origin; das Formular startet leer. Placeholder „z. B. Zürich“ ist Beispiel, kein Wert.
+
+Bestehend und unverändert relevant: `gastspeicher.test.ts` (kein Überschreiben), `uebernahme.test.ts`, `gast-reisen-cta.test.ts`, D0-1/D0-2 SEO-Tests.
+
+Lokale Gates auf dem Arbeitsstand nach der SSR-Korrektur:
+
+| Gate | Ergebnis |
+| --- | --- |
+| `npm run typecheck` | PASS |
+| `npm run lint` | PASS |
+| `npm test` | PASS **2049/2049** |
+| `npm run build` | PASS |
+| `npm run check:setup:ci` | PASS (bestehende Warning: keine `.env`) |
+| `npm run check:dead` | PASS (`CookieConsent` justified) |
+| `npm run check:exports` | PASS |
+| `npm run check:deps` | PASS |
+| `npm run check:api-schutz` | PASS |
+| `npm run check:schema-bezug` | PASS |
+
+Browser: `/planen` ohne Tempo-Chips, leerer Abreiseort; mit Gastreise Gate statt zweitem Create; `/reisen` „Reise erstellen“ vs. „Reise fortsetzen“. Kein „Neue Reise“ im Gast-Aktiv-Zustand.
 
 ## 7. Exact Head / Actions / Vercel
 
-Noch offen zum ersten Persist. Wird nach Gates nachgetragen.
+Draft-PR: https://github.com/Jetnity/jetnity/pull/82
+
+Erster Push `627b7ea8382d74661ee968790635978add113f2d`:
+
+- GitHub Actions `Typecheck, Lint & Build` **FAILURE** – `import.meta.dirname` in den Slice-Tests war undefined. Kein Produktregress.
+- Auth-Konfiguration SUCCESS.
+- Vercel Preview **READY** – `https://vercel.com/jetnity-e1b93c82/jetnity-app/B84zyYPdfA3959Zx8DjfCFsH3F83`.
+
+Dieser Status-Commit enthält die Testhilfe- und SSR-Korrektur. Exact-Head-CI/Vercel des neuen Heads müssen nach dem Push erneut gelesen werden. Nicht Ready.
 
 ## 8. Offene Risiken
 
 - Direkter POST auf `vorschlagErzeugen` kann weiter ein Modell kontingentieren, auch wenn die UI den zweiten Guest-Create nicht anbietet.
 - Browser ohne `localStorage` bleibt der bestehende Speicherfehler-Pfad.
 - Unabhängiger Technical-Lead-Review steht aus.
+- Exact-Head-CI des Korrektur-Heads war zum Persistieren dieses Dokuments noch nicht terminal.
 
 ## 9. Nächster Schritt
 
