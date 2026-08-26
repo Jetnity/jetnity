@@ -20,7 +20,7 @@ import 'server-only'
 import { revalidatePath } from 'next/cache'
 
 import { problemAus } from '@/lib/api/datenbank-lesen'
-import { flugNutzlastOhneUnbewieseneWahrheit } from '@/lib/flights/nutzlast'
+import { nutzlastOhneUnbewieseneHandelsfelder } from '@/lib/trips/handelsfelder-nutzlast'
 import { flughafenReferenzLesen } from '@/lib/route/flughafen-lesen'
 import { iatasAusNutzlast, reiseNutzlastRouteKanonisieren } from '@/lib/route/kanonisieren'
 import {
@@ -83,7 +83,7 @@ export async function reiseAusNutzlastAnlegen(
   const { supabase, benutzerId } = await konto()
   if (!benutzerId) return { ok: false, meldung: NICHT_ANGEMELDET }
 
-  const bereinigt = flugNutzlastOhneUnbewieseneWahrheit(nutzlast)
+  const bereinigt = nutzlastOhneUnbewieseneHandelsfelder(nutzlast)
   const refs = await flughafenReferenzLesen(iatasAusNutzlast(bereinigt), supabase)
   const kanonisch = reiseNutzlastRouteKanonisieren(bereinigt, refs)
 

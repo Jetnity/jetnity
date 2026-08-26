@@ -4071,6 +4071,32 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 ---
 
+## ADR-0166 – Guest→Account streicht unbewiesene Stay-/Activity-Handelsfelder
+
+**Datum:** 26. August 2026  
+**Status:** umgesetzt auf `fix/qs2-guest-account-commercial-truth`; schließt P1-QS2-02. Keine Schema-/RPC-Änderung.
+
+**Entscheidung:** Beim Guest→Account-Transfer werden für `stay` und `activity` dieselben unbewiesenen Handelsfelder genullt wie bereits für `flight`: `price_amount`, `price_currency`, `provider`, `external_ref`, `booking_url`. Nicht-kommerzielle Fakten (Titel, Notiz, Datum, Zeit) bleiben. Transfer und `rental_car` bleiben unverändert, weil ihr persistierter Preis S3-User-Intake sein kann.
+
+**Kontext:** QS-2 P1-QS2-02. Konto-Hotel/Activity verlangen Nachweis. Guest-LocalStorage ist keine Provider-Evidence. Der Flug-Strip existierte; Stay/Activity liefen durch `alsNutzlast` / `reiseAusNutzlastAnlegen`.
+
+**Alternativen:**
+
+1. *RPC `reise_anlegen` härten.* Shared-Contract-/DB-Änderung; Residual für Flug bleibt ohnehin (direkter PostgREST-Aufruf). Nicht in diesem Slice.
+2. *Auch Transfer/Rental strippen.* Würde manuelle Nutzerpreise zerstören, ohne S3/S5-Vertrag.
+3. *Nichts tun.* Account-Graph trägt erfundene Commercial-Truth.
+
+**Begründung:** Lokale Gastdaten dürfen keine angebliche Provider-/Preis-/Booking-Wahrheit erzeugen. Die Feldmenge ist die bereits für Flüge geltende, nicht erfunden.
+
+**Konsequenzen:**
+
+- `nutzlastOhneUnbewieseneHandelsfelder` in `alsNutzlast` und `reiseAusNutzlastAnlegen`
+- Mobility/Rental-Such-Snapshots mit `provider`/`external_ref` bleiben ein dokumentiertes Rest-Risiko bis zu einem eigenen Vertrag
+- S5 Commercial Provenance wird nicht vorgezogen
+- Direkter RPC-Bypass bleibt dasselbe Residual wie beim Flug
+
+---
+
 ## ADR-0168 – Commercial Provenance ist ein eigener Vertrag, kein UniversalOffer
 
 **Datum:** 26. August 2026  
