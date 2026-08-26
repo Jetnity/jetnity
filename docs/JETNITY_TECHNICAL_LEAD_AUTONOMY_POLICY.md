@@ -137,11 +137,53 @@ Mehrere Agenten dürfen parallel arbeiten, wenn konfliktarm:
 - jeder Agent endet mit STOPP;
 - jeder Change wird unabhängig durch ChatGPT / Technical Lead vom kanonischen Startpunkt aus geprüft.
 
-## 11. Änderungshistorie / Vorrang
+## 11. Verbindliche Cursor-Agent-Session-Rotation und Namensführung
+
+Die detaillierte Product-Owner-verbindliche Regel steht in:
+
+`docs/JETNITY_AGENT_SESSION_ROTATION_STANDARD.md`
+
+Jeder aktuelle und zukünftige ChatGPT-/Technical-Lead-Chat muss diese Regel weiterführen.
+
+Kanonisch gilt:
+
+- **gleicher Slice / gleicher PR / unmittelbare Korrektur / enges Debugging → denselben gespeicherten Agenten weiterverwenden**;
+- **abgeschlossener logischer Slice, Modul-Checkpoint oder neuer klar getrennter Slice → standardmäßig einen frischen Cursor-Agenten starten**;
+- auch mitten im Modul darf der Technical Lead bei Kontextüberladung, wiederholten Fehlannahmen oder für einen bewusst frischen unabhängigen Blick rotieren;
+- der fachliche Workstream bleibt derselbe; eine neue Cursor-Agent-Session erzeugt keine neue Truth-Schicht und keinen neuen fachlichen Owner;
+- jeder Cursor-Prompt muss für den Product Owner eindeutig sagen, ob ein gespeicherter Agent oder ein neuer Agent verwendet wird;
+- bei gespeichertem Agent immer den **exakten Anzeigenamen** nennen;
+- bei neuem Agent immer den **exakten neuen Anzeigenamen** vorgeben.
+
+Neue Sessions werden pro Workstream fortlaufend nummeriert. Beispiele:
+
+- `Trip workspace audit architecture 1`
+- `Trip workspace audit architecture 2`
+- `Trip workspace audit architecture 3`
+
+Dasselbe Schema gilt für alle anderen Workstreams.
+
+Die bereits vorhandenen unnummerierten gespeicherten Agents werden nicht rückwirkend umbenannt. Sie gelten als Generation 1. Der nächste **frische** Agent desselben Workstreams erhält deshalb grundsätzlich die Nummer `2`, danach `3` usw., sofern die Repository-Continuity keine andere bereits belegte Nummer zeigt.
+
+Ein neuer ChatGPT-Chat darf die nächste Nummer niemals aus Erinnerung erraten: zuerst Repository-/Continuity-/Live-Stand prüfen, dann nächste freie Nummer vergeben und die Rotation versionieren.
+
+Verbindliche Formulierung gegenüber dem Product Owner bei jedem Cursor-Auftrag:
+
+- **`Nimm den gespeicherten Agenten: <exakter Name>`**
+
+oder
+
+- **`Nimm einen neuen Agenten und nenne ihn: <exakter nummerierter Name>`**
+
+Keine mehrdeutige Formulierung ohne konkreten Namen.
+
+## 12. Änderungshistorie / Vorrang
 
 Die per-PR-Merge-Pflicht vom 22./25. August 2026 war eine gültige frühere Product-Owner-Entscheidung.
 
 Am 26. August 2026 hat der Product Owner die Merge-Autonomie wieder ausdrücklich erweitert: ChatGPT / Technical Lead darf normale PRs selbst Ready setzen / mergen, **muss aber vor jedem Merge alles unabhängig hinterfragen und bei Problemen zuerst korrigieren**.
+
+Am 26. August 2026 hat der Product Owner zusätzlich die verbindliche Cursor-Agent-Session-Rotation und fortlaufende Namensführung beschlossen. Diese Regel gilt chatübergreifend und wird durch `docs/JETNITY_AGENT_SESSION_ROTATION_STANDARD.md` konkretisiert.
 
 Vorrang hat:
 
@@ -150,9 +192,9 @@ Vorrang hat:
 3. besondere Product-Owner-Gates;
 4. übrige Governance-/Workflow-Dokumente.
 
-## 12. Technical-Lead-Nachfolge / Native
+## 13. Technical-Lead-Nachfolge / Native
 
-Die Technical-Lead-Rolle ist chatübergreifend. Ein neuer Jetnity-Chat übernimmt dieselbe Führungsrolle, Build-Reihenfolge, Shared-Contract-Governance und strenge Merge-Prüfung.
+Die Technical-Lead-Rolle ist chatübergreifend. Ein neuer Jetnity-Chat übernimmt dieselbe Führungsrolle, Build-Reihenfolge, Shared-Contract-Governance, Agent-Session-Rotation/Namensführung und strenge Merge-Prüfung.
 
 Der zukünftige spezialisierte Agent bleibt reserviert:
 
@@ -160,6 +202,6 @@ Der zukünftige spezialisierte Agent bleibt reserviert:
 
 Er wird erst an der vorgesehenen Native-Phase aktiviert und darf keine zweite Business-, Traveller-, Provider-, Billing-, Safety-, Readiness-, Route-, Commercial-, Attribution- oder Consent-Wahrheit erzeugen.
 
-## 13. Merksatz
+## 14. Merksatz
 
-> **Technical Lead darf selbst mergen – aber erst nachdem er den Change unabhängig von Anfang an geprüft, jede Unsauberkeit beseitigt und den finalen Exact Head neu gegatet hat.**
+> **Technical Lead darf selbst mergen – aber erst nachdem er den Change unabhängig von Anfang an geprüft, jede Unsauberkeit beseitigt und den finalen Exact Head neu gegatet hat. Frische Cursor-Sessions werden bewusst rotiert und eindeutig nummeriert, ohne die fachliche Workstream-Ownership zu verändern.**
