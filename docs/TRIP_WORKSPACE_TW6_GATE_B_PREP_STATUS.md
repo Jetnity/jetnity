@@ -24,6 +24,7 @@ Nicht: Multi-Ziel-UI, übriger PR-#87-Runtime-Code, AAL2, Direction A, TW-7/8/9,
 | `origin/main` | `1d558ef56cc275d429f4076c7a8877c3791947a7` |
 | Branch | `cursor/tw6-gate-b-prep-a4c4` |
 | Quelle der drei Dateien | PR #87 Exact Head `0b7d6cfd5b34ffd3e9c0a96779ee51df999bcc67` |
+| Dieser Draft | PR #89, Branch `cursor/tw6-gate-b-prep-a4c4` |
 | Runtime-Code aus PR #87 | **nicht** übernommen |
 
 ## 3. Datei-Hashes
@@ -44,6 +45,17 @@ Implementiert in `lib/rollout/gate-b-tw6-bundle.ts` und `scripts/db/gate-b-tw6-b
 Vertrag: `docs/TRIP_WORKSPACE_TW6_GATE_B_APPLY_PLAYBOOK.md`.
 
 `PRODUCTION_APPLY_FREIGEGEBEN = false`.
+
+Development/Test, kein Production-Write:
+
+- lokale Hash-Probe: PASS
+- `--entwicklung` read-only: History der drei Versionen hash-identisch; Mode-Vertrag PASS; Grants `authenticated` INSERT/EXECUTE true, `anon` false
+- `--apply`: abgelehnt, weil die Versionen bereits existieren; kein Write-Gate gesetzt
+- `--schreiben --produktion --projekt-ref …`: `PRODUCTION EXECUTION BLOCKED`
+- `--write-gate-roundtrip`: Write-Gate committed geschlossen, Grants danach exakt wiederhergestellt
+- `--fail-path`: Write-Gate committed, fehlgeschlagene Transaktion gerollt, Write-Gate blieb geschlossen, History unverändert; Test stellte Grants wieder her
+
+Production unverändert.
 
 ## 5. P0 / P1 / P2 / P3
 

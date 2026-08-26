@@ -88,11 +88,11 @@ function argument(argv: readonly string[], name: string): string | undefined {
   return wert
 }
 
-export function sha256HexDatei(inhalt: string | Buffer): string {
+function sha256HexDatei(inhalt: string | Buffer): string {
   return createHash('sha256').update(inhalt).digest('hex')
 }
 
-export function migrationenVerzeichnis(wurzel = process.cwd()): string {
+function migrationenVerzeichnis(wurzel = process.cwd()): string {
   return join(wurzel, 'supabase/migrations')
 }
 

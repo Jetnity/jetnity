@@ -149,7 +149,7 @@ Live geprüft nach PR #86. **#52 / #50 / #40 / #39 / #28 sind weiterhin OPEN / D
 
 | PR | Klasse |
 | --- | --- |
-| **TW6-B Gate 0 Prep** | **AKTIVER migrations-only Draft** auf `cursor/tw6-gate-b-prep-a4c4`. Unabhängiger TL-Review. Nicht Ready. Nicht mergen. Production unverändert. |
+| **#89** TW6-B Gate 0 Prep | **AKTIVER migrations-only Draft** auf `cursor/tw6-gate-b-prep-a4c4`. Unabhängiger TL-Review. Nicht Ready. Nicht mergen. Production unverändert. |
 | **#87** TW6-B Runtime + Mode Contract | **OFFENER Runtime-Draft.** PLAN PASS / PRODUCTION EXECUTION BLOCKED. Nicht Ready. Nicht mergen. Nicht durch diesen Slice erweitert. |
 | **#85** Final continuity handoff | docs-only; historische Continuity-Evidence nach PR #86. |
 | #52 ChatGPT TL handoff 2026-08-24 | HISTORICAL / SUPERSEDED |
