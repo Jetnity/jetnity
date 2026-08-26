@@ -16,14 +16,21 @@ Live geprüft, nicht aus dem Prompt übernommen.
 
 | Fakt | Wert |
 | --- | --- |
-| Live `origin/main` | `9e1868ea2b78b714e1c2f3ea1e1e2fd8ed5b6ae6` |
-| Merge-Base | `9e1868ea2b78b714e1c2f3ea1e1e2fd8ed5b6ae6` |
+| Live `origin/main` | `1d558ef56cc275d429f4076c7a8877c3791947a7` |
+| Merge-Base mit PR-Head | `9e1868ea2b78b714e1c2f3ea1e1e2fd8ed5b6ae6` |
+| Exact Head | `e3300f75172f775b9da018290aa459ddec7eefea` |
 | Task-Commit (Handoff) | `a2ccb51474613d0f937a5b05da5fd92f31cc3c30` |
-| Ahead / Behind vs `origin/main` vor dieser Runtime | **6 / 0** |
+| Ahead / Behind vs `origin/main` | **9 / 2** |
 | Offene parallele Draft-PRs | #52, #50, #40, #39, #28 |
-| Shared-Contract-Kollision | keine offenen PRs treffen `zuordnung`, `reise_anlegen`, Timeline oder Trip-Schema |
+| Shared-Contract-Kollision | keine offenen PRs treffen `zuordnung`, `reise_anlegen`, Timeline, Day-Stage-Assignment oder Trip-Schema |
 
-`main` ist seit dem Task-Commit nicht weitergelaufen.
+`main` ist nach dem Task-Commit um zwei **reine Dokument-Commits** weitergelaufen:
+
+- `e1aea302` `docs: bind Cursor agent session rotation and naming`
+- `1d558ef5` `docs: make agent rotation standard mandatory for future chats`
+
+Betroffene Dateien: `docs/JETNITY_AGENT_SESSION_ROTATION_STANDARD.md`, `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`.  
+Kein Runtime-, Schema- oder Shared-Contract-Konflikt. Dieser Slice wurde **nicht** auf den neuen `main` rebase't, damit Exact-Head-CI/Vercel auf `e3300f75` erhalten bleiben.
 
 ## 2. Finaler Assignment-Contract
 
@@ -85,13 +92,25 @@ Artefakt: `supabase/migrations/20260826220000_trip_day_stage_assignment_source.s
 Production-RLS/Ownership wurden nicht geändert.  
 Kein Production-SQL, kein `--produktion`.
 
-Development-Anwendung und `db:typen` folgen in diesem Lauf, sofern die Governance-Umgebung den Development-Branch bestätigt. Das Ergebnis steht in Abschnitt 8.
+Development:
+
+- `npm run db:anwenden -- --probe` → `Ziel: entwicklung`
+- `db:anwenden` ohne Filter wurde **nicht** ausgeführt, weil `20260826090000_admin_aal2_data_plane.sql` ebenfalls offen war (AAL out of scope)
+- Nur `20260826220000_trip_day_stage_assignment_source.sql` gezielt auf Development angewendet
+- Spalte existiert: `text not null default 'legacy_fallback'` + CHECK
+- Bestehender Development-Trip: 1 Row, Source `legacy_fallback`
+- `reise_anlegen` auf Development: überspringt Unassigned, CTE nur bei `legacy_fallback`, ignoriert Client-`user`
+- `db:typen` wurde gegen Development ausgeführt; der regenerierte Diff enthielt fremde Traveller-/Foundation-E-Umsortierungen und wurde **nicht** committed
+- `db:rechte` PASS, `db:rls` PASS
+- `db:sicherheit` 192/223 — restliche Failures sind vorbestehende Admin/AAL-Capability-Proofs der älteren, hier nicht angewendeten AAL2-Datei; Trip-Ownership-Proofs sind PASS. Keine TW-6-B-Regression.
 
 Rollback-Risiko: Function-Replace; Spalte ist additiv mit Default. Rückbau wäre ein späteres Artefakt, das die Spalte nicht droppt, solange Runtime sie liest.
 
+Preview gegen Production-Supabase nutzt weiter die alte `reise_anlegen`, bis Production separat freigegeben wird. Der Guest-Pfad ist localStorage und bereits korrekt. Account-Wahrheit auf Development ist die angewendete Function plus TS/SQL-Contract, nicht ein authentifizierter Paris-Create gegen Production.
+
 ## 6. Changed Files
 
-Gegen `origin/main`, zusätzlich zum bisherigen TW6-B-Diff:
+Gegen `origin/main` (`1d558ef5`), Merge-Base `9e1868ea`:
 
 Runtime / Contract
 
@@ -105,7 +124,11 @@ Runtime / Contract
 - `lib/trips/aktionen.ts`
 - `lib/trips/abbildung.ts`, `lib/trips/abbildung.test.ts`
 - `lib/trips/timeline.ts`, `lib/trips/timeline.test.ts`
+- `lib/trips/create-entry.test.ts`
+- `lib/places/aktionen.ts`, `lib/places/reiseziele.ts`, `lib/places/reiseziele.test.ts`
+- `lib/formular/feldfehler.ts`, `lib/formular/feldfehler.test.ts`
 - `types/trips.ts`, `types/supabase.ts`
+- `components/trips/TripPlanner.tsx`
 - `components/trips/TripWorkspacePlan.tsx`
 
 SQL
@@ -115,6 +138,7 @@ SQL
 Dokumentation
 
 - `docs/TRIP_WORKSPACE_TW6_DAY_STAGE_TRUTH_CONTRACT_TASK.md` (Task, unverändert seit TL)
+- `docs/TRIP_WORKSPACE_TW6_REST_PROGRESSIVE_STAGES_TASK.md`
 - `docs/TRIP_WORKSPACE_TW6_REST_PROGRESSIVE_STAGES_STATUS.md`
 - `DECISIONS.md` ADR-0172
 - `ARCHITECTURE.md` (Verweis auf ADR-0172)
@@ -134,7 +158,7 @@ Nicht geändert: Auth/MFA/AAL, Traveller, Route/Transit, Provider/Commercial, Pa
 
 ## 8. Tests / Gates / CI / Vercel
 
-Lokale Gates auf dem Runtime-Stand nach dem Export-Fix:
+Lokale Gates auf Exact Head `e3300f75`:
 
 | Gate | Ergebnis |
 | --- | --- |
@@ -151,29 +175,21 @@ Lokale Gates auf dem Runtime-Stand nach dem Export-Fix:
 
 Pflichttests: Paris → Rom → Paris 12.–17. September, Single-Destination, Legacy-Fallback, fail-closed `user`/`legacy_fallback`, Timeline, Guest-Load, Guest→Account, Guest-One-Trip und `clientRef` liegen in `lib/trips/day-stage-truth-contract.test.ts` plus bestehender Guest-/Create-Suite.
 
-Development-Migration:
+CI-Historie dieses Slices:
 
-- Ziel bestätigt: `npm run db:anwenden -- --probe` → `Ziel: entwicklung`
-- `db:anwenden` ohne Filter wurde **nicht** ausgeführt, weil `20260826090000_admin_aal2_data_plane.sql` ebenfalls offen war (AAL out of scope)
-- Nur `20260826220000_trip_day_stage_assignment_source.sql` angewendet
-- Spalte existiert: `text not null default 'legacy_fallback'` + CHECK
-- Bestehender Development-Trip: 1 Row, Source `legacy_fallback`
-- `reise_anlegen` auf Development: überspringt Unassigned, CTE nur bei `legacy_fallback`, ignoriert Client-`user`
-- `db:typen` wurde gegen Development ausgeführt; der regenerierte Diff enthielt fremde Traveller-/Foundation-E-Umsortierungen und wurde **nicht** committed
+- `7b1b6d43` Actions `33009930044` **FAIL** (`check:exports` wegen ungenutztem Export `istDayStageAssignmentSource`)
+- Follow-up `e3300f75` macht den Helper modul-privat
+- Exact-Head GitHub Actions **[33010327104](https://github.com/Jetnity/jetnity/actions/runs/33010327104)** **SUCCESS** auf `e3300f75` (Typecheck/Lint/Build + Auth)
+- Exact-Head Vercel `8jsrRGp4ZCGwaNAtYR5epABRuiP1` **SUCCESS** / Preview („Deployment has completed“)
 
 **Production-Migration wurde NICHT angewendet.** Kein `--produktion`, kein Production-SQL, keine Production-RLS-Änderung.
-
-GitHub Actions `33009930044` auf `7b1b6d43` ist **FAIL** (`check:exports` wegen `istDayStageAssignmentSource`). Der Export-Fix geht in den nächsten Exact Head. Auth-Job auf demselben Run war SUCCESS.
-
-Exact-Head Actions und Vercel des finalen Heads folgen nach dem Fix-Push. Preview gegen Production-Supabase nutzt weiter die alte RPC, bis Production separat freigegeben wird.
 
 ## 9. Offene Restpunkte
 
 - Unabhängiger Technical-Lead-Finalreview
-- Development-Migrations-Evidence und `db:typen` auf dem Exact Head
-- Exact-Head GitHub Actions
-- Exact-Head Vercel
+- Branch liegt 2 Commits hinter `origin/main` (nur Agent-Rotation-Docs; kein Contract-Konflikt; kein Rebase in diesem Slice)
 - Production-Migration **nicht** in diesem Slice
+- Preview-Account gegen Production-Supabase sieht weiter die alte RPC, bis Production separat freigegeben wird
 - Direction A (explizite Aufenthalte) ist ein eigener späterer Slice
 
 ## 10. STOP
