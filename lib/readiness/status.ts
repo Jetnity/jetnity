@@ -7,7 +7,7 @@
 // Official Evaluations kommen optional von aussen (serverseitig).
 // Ohne Lieferung: lokaler fail-closed Fallback, kein Client-Provider.
 
-import { officialAusEvaluations } from '@/lib/readiness/anforderungen'
+import { officialAusEvaluations, officialFuerItem } from '@/lib/readiness/anforderungen'
 import { readinessChecksAbleiten } from '@/lib/readiness/ableitung'
 import { requirementsLokalFuerReise } from '@/lib/readiness/engine'
 import type { OfficialEvaluation } from '@/lib/readiness/official'
@@ -15,7 +15,6 @@ import { officialPruefungAusLage } from '@/lib/readiness/bezeichnungen'
 import { fehlendeFaktenFuerReise, travellerSlots } from '@/lib/readiness/party'
 import {
   readinessItemsVon,
-  type OfficialRequirementEvidence,
   type ReadinessCurrentness,
   type ReadinessSummary,
   type ReadinessViewItem,
@@ -97,17 +96,15 @@ export function readinessAnsicht(
   const nachRef = new Map(persistiert.map((item) => [item.clientRef, item]))
   const evaluations = [...(evaluationsGeliefert ?? requirementsLokalFuerReise(reise))]
 
-  const officialFuer = (countryCode: string | null, travellerClientRef: string | null): OfficialRequirementEvidence => {
-    const passend = evaluations.filter(
-      (eintrag) =>
-        (!countryCode || eintrag.destinationCountryCode === countryCode) &&
-        (!travellerClientRef || eintrag.travellerClientRef === travellerClientRef),
+  const officialFuer = (countryCode: string | null, travellerClientRef: string | null) =>
+    officialFuerItem(
+      evaluations,
+      { countryCode, travellerClientRef },
+      {
+        destinationCountryCode: countryCode,
+        travellers: kontext.travellers,
+      },
     )
-    return officialAusEvaluations(passend.length > 0 ? passend : evaluations, {
-      destinationCountryCode: countryCode ?? kontext.destinationCountries[0] ?? null,
-      travellers: kontext.travellers,
-    })
-  }
 
   const items: ReadinessViewItem[] = []
   const gesehen = new Set<string>()

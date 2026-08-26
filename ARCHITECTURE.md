@@ -373,7 +373,7 @@ Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browse
 
 ### Travel Readiness (Foundation C)
 
-`POST /api/readiness/requirements` ist geschlossen: nur `application/json`, höchstens 8 KB UTF-8, Rate-Limit, `Cache-Control: private, no-store`. Browser- oder LLM-Felder werden ignoriert. Die kanonische Antwort ist `evaluations[]` (Traveller × Credential-Option × Destination × Transit × Requirement Type). Das Feld `official` ist eine ausdrücklich reduzierte Legacy-Zusammenfassung und darf die Engine nicht auf den ersten Treffer reduzieren.
+`POST /api/readiness/requirements` ist geschlossen: nur `application/json`, höchstens 8 KB UTF-8, Rate-Limit, `Cache-Control: private, no-store`. Browser- oder LLM-Felder werden ignoriert. Die kanonische Antwort ist `evaluations[]` (Traveller × Credential-Option × Destination × Transit × Requirement Type). Das Feld `official` ist eine ausdrücklich reduzierte Legacy-Zusammenfassung: fail-closed und permutationsstabil, niemals `evaluations[0]` (ADR-0167). Item-Presentation (`officialFuerItem`) verwendet nur den exakt passenden Scope; ohne Treffer kein Fallback auf fremde Evaluations.
 
 `requirementsProviderAus()` gibt `null` zurück. Tests dürfen einen Port injizieren. `evaluate` ist async; Throw/Timeout bleibt fail closed (ADR-0109). Official Evidence braucht Provider-Identität, plausibles `checkedAt`, Authority und/oder Rule Reference; eine Source URL ist für das Resultat optional und für die Official Action zwingend (ADR-0107, ADR-0110). Untrusted Evidence darf Freshness nicht `current` lassen (ADR-0111). `evaluations[]` ist die einzige kanonische neue Official-Truth; Legacy-`official` bleibt immer `unknown`.
 

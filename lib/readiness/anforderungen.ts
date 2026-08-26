@@ -5,8 +5,8 @@
 // Keine Fake-Regeln, keine Modellantwort als Quelle.
 //
 // Kanonische neue Wahrheit: OfficialEvaluation[] aus der Engine.
-// `official` / officialRequirementsPruefen ist Legacy-Compatibility
-// und bleibt immer result: 'unknown'.
+// `official` / officialRequirementsPruefen ist Legacy-Compatibility:
+// immer result: 'unknown', niemals evaluations[0], fail-closed bei heterogenem Scope.
 
 import {
   LEERE_OFFICIAL_REQUIRED_FACTS,
@@ -148,28 +148,131 @@ function reasonAusEvaluation(evaluation: OfficialEvaluation): OfficialRequiremen
   return 'no_provider'
 }
 
+function optionScopeSchluessel(evaluation: OfficialEvaluation): string {
+  return [
+    evaluation.travellerClientRef ?? '',
+    evaluation.credentialOptionRef ?? '',
+    evaluation.destinationCountryCode ?? '',
+    evaluation.transitCountryCode ?? '',
+  ].join('\0')
+}
+
+function presentationSchluessel(evaluation: OfficialEvaluation): string {
+  return [
+    evaluation.evidence.authority ?? '',
+    evaluation.evidence.sourceUrl ?? '',
+    evaluation.evidence.checkedAt ?? '',
+    evaluation.evidence.validUntil ?? '',
+  ].join('\0')
+}
+
+function compatibilityStatus(evaluation: OfficialEvaluation): OfficialRequirementEvidence['status'] {
+  if (
+    evaluation.status === 'unavailable' ||
+    evaluation.status === 'insufficient_context' ||
+    evaluation.status === 'unknown'
+  ) {
+    return evaluation.status
+  }
+  return 'unknown'
+}
+
+function alleGleich<T>(werte: readonly T[]): boolean {
+  if (werte.length === 0) return true
+  return werte.every((wert) => wert === werte[0])
+}
+
+function einziges<T>(werte: readonly T[]): T | undefined {
+  return alleGleich(werte) ? werte[0] : undefined
+}
+
 /**
  * Legacy-Compatibility. Immer `result: 'unknown'`.
- * Neue Logik entscheidet aus `evaluations[]`, nicht aus diesem Objekt.
+ * Keine first-evaluation-Wahrheit: nur Aussagen, die für den gesamten Scope belegt sind.
+ * Kanonische Hard Truth bleibt `evaluations[]`.
  */
 export function officialAusEvaluations(
   evaluations: readonly OfficialEvaluation[],
   anfrage: OfficialRequirementAnfrage = {},
 ): OfficialRequirementEvidence {
-  const erste = evaluations[0]
-  if (!erste) return officialRequirementLeer(anfrage, 'no_provider')
+  if (evaluations.length === 0) return officialRequirementLeer(anfrage, 'no_provider')
+
+  const scopes = evaluations.map(optionScopeSchluessel)
+  const travellers = evaluations.map((eintrag) => eintrag.travellerClientRef)
+  const destinations = evaluations.map((eintrag) => eintrag.destinationCountryCode)
+  const statuses = evaluations.map(compatibilityStatus)
+  const reasons = evaluations.map(reasonAusEvaluation)
+  const scopeEinheitlich = alleGleich(scopes)
+  const presentationEinheitlich = alleGleich(evaluations.map(presentationSchluessel))
+  const mehrereTraveller = new Set(travellers.filter((ref): ref is string => Boolean(ref))).size > 1
+  const destinationCountryCode = einziges(destinations) ?? null
+  const status = einziges(statuses) ?? 'insufficient_context'
+  const reason = mehrereTraveller
+    ? 'multiple_travellers_no_individual_evidence'
+    : scopeEinheitlich
+      ? (einziges(reasons) ?? 'insufficient_context')
+      : 'insufficient_context'
+
+  const darstellungErlaubt = scopeEinheitlich && presentationEinheitlich
+  const beispiel = evaluations[0]
+  if (!beispiel) return officialRequirementLeer(anfrage, 'no_provider')
+
   return {
-    destinationCountryCode: erste.destinationCountryCode,
+    destinationCountryCode,
     requiredTravellerFacts: LEERE_OFFICIAL_REQUIRED_FACTS,
     requirementType: 'entry_or_visa',
     result: 'unknown',
-    status: erste.status === 'current' ? 'unknown' : erste.status,
-    authority: erste.evidence.authority,
-    sourceUrl: erste.evidence.sourceUrl,
-    checkedAt: erste.evidence.checkedAt,
-    validityUntil: erste.evidence.validUntil,
-    reason: reasonAusEvaluation(erste),
+    status,
+    authority: darstellungErlaubt ? beispiel.evidence.authority : null,
+    sourceUrl: darstellungErlaubt ? beispiel.evidence.sourceUrl : null,
+    checkedAt: darstellungErlaubt ? beispiel.evidence.checkedAt : null,
+    validityUntil: darstellungErlaubt ? beispiel.evidence.validUntil : null,
+    reason,
   }
+}
+
+function evaluationsFuerItemScope(
+  evaluations: readonly OfficialEvaluation[],
+  scope: { countryCode?: string | null; travellerClientRef?: string | null },
+): OfficialEvaluation[] {
+  const country = landescodeLesen(scope.countryCode ?? null)
+  const traveller = scope.travellerClientRef ?? null
+  return evaluations.filter((eintrag) => {
+    if (country && eintrag.destinationCountryCode !== country) return false
+    if (traveller && eintrag.travellerClientRef !== traveller) return false
+    return true
+  })
+}
+
+/**
+ * Item-Presentation: nur exakt passender Scope.
+ * Kein Fallback auf fremde Traveller, Optionen oder Destinationen.
+ */
+export function officialFuerItem(
+  evaluations: readonly OfficialEvaluation[],
+  scope: { countryCode?: string | null; travellerClientRef?: string | null },
+  anfrage: OfficialRequirementAnfrage = {},
+): OfficialRequirementEvidence {
+  const passend = evaluationsFuerItemScope(evaluations, scope)
+  if (passend.length === 0) {
+    const country = landescodeLesen(scope.countryCode ?? anfrage.destinationCountryCode ?? null)
+    return {
+      destinationCountryCode: country,
+      requiredTravellerFacts: LEERE_OFFICIAL_REQUIRED_FACTS,
+      requirementType: 'entry_or_visa',
+      result: 'unknown',
+      status: 'insufficient_context',
+      authority: null,
+      sourceUrl: null,
+      checkedAt: null,
+      validityUntil: null,
+      reason: country ? 'insufficient_context' : 'unknown_country_code',
+    }
+  }
+  return officialAusEvaluations(passend, {
+    ...anfrage,
+    destinationCountryCode: scope.countryCode ?? anfrage.destinationCountryCode,
+  })
 }
 
 /**

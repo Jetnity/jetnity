@@ -4097,6 +4097,32 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 ---
 
+## ADR-0167 – Official-Compatibility aggregiert fail-closed, nicht first-evaluation
+
+**Datum:** 26. August 2026  
+**Status:** umgesetzt auf `fix/p1-ta02-official-evaluation-option-scope`; schließt P1-TA-02. Keine Schema-/Contract-Änderung.
+
+**Entscheidung:** Kanonische Official-Wahrheit bleibt `OfficialEvaluation[]`. Das Legacy-Feld `official` und die Item-/Summary-Presentation dürfen nur Aussagen machen, die für ihren Scope belegt sind. Bei heterogenen Traveller-, Credential-Option-, Destination- oder Transit-Scopes wird keine einzelne Evaluation als repräsentative Wahrheit gewählt. Presentation-Metadaten (Authority, Source URL, `checkedAt`, `validityUntil`) bleiben dann leer. `result` bleibt immer `unknown`. Item-Scope ohne exakten Treffer fällt nicht auf alle Evaluations zurück.
+
+**Kontext:** Traveller-/Account-Audit P1-TA-02. `officialAusEvaluations` kopierte `evaluations[0]`. `officialFuer` fiel bei leerer Filtermenge auf die Gesamtmenge zurück. Die Reihenfolge der Evaluations bestimmte Authority und Reason. `ARCHITECTURE.md` verbot bereits die First-Hit-Reduktion; der Runtime-Pfad tat sie trotzdem.
+
+**Alternativen:**
+
+1. *`evaluations.at(-1)` oder eine andere feste Auswahl.* Bleibt willkürlich und reihenfolgeabhängig.
+2. *Legacy-`official` entfernen.* Breaking API ohne Bedarf; Consumer existieren.
+3. *Neue regulatorische Winner-Logik.* Würde Visa-/Entry-Wahrheit erfinden. Verboten.
+
+**Begründung:** Ein Reisender kann mehrere Staatsbürgerschaften und Dokumente haben. Mehrere Reisende und Destinationen/Transits dürfen nicht zu einer künstlich eindeutigen Einreiseprüfung kollabieren. Compatibility darf nur ableiten, nicht entscheiden.
+
+**Konsequenzen:**
+
+- `officialAusEvaluations` ist permutationsstabil
+- `officialFuerItem` ist fail-closed pro Item-Scope
+- P2-TA-06 (`documents[0]` in `travellerNormalisieren`) bleibt ein separates latentes Residual
+- Kein neuer Traveller-Shared-Contract
+
+---
+
 ## ADR-0168 – Commercial Provenance ist ein eigener Vertrag, kein UniversalOffer
 
 **Datum:** 26. August 2026  

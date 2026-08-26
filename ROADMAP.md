@@ -445,7 +445,8 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 10. ✅ TW-4 Aufmerksamkeit auf `main` (PR #60, `c935dd9f`)
 11. ✅ TW-3 Timeline / Etappe / Tag auf `main` (PR #64)
 12. **→ Jetzt:** TW-5 Item- und Gap-Details – Draft-PR #66, P1-QS1-01 behoben auf `8183782f`, STOPP für erneuten Technical-Lead-Review
-12a. Draft: P1-QS2-02 Guest→Account Stay/Activity-Handelsfeld-Strip – Branch `fix/qs2-guest-account-commercial-truth`, ADR-0166. Kein AP-4, kein P1-TA-02.
+12a. ✅ P1-QS2-02 Guest→Account Stay/Activity-Handelsfeld-Strip – auf `main` (`86567f17`, ADR-0166)
+12b. Draft: P1-TA-02 Official Evaluation Option-Scope / Presentation Truth – Branch `fix/p1-ta02-official-evaluation-option-scope`, ADR-0167. Kein Ready. Kein Merge. Kein P2-TA-06. Kein AP-4.
 13. Admin/Account/Provider-Programme separat weiterführen; kein Slice D, AP-4 oder S4 ohne eigenen Auftrag
 14. finaler Workspace Intelligence Audit
 15. echte Providerphase
