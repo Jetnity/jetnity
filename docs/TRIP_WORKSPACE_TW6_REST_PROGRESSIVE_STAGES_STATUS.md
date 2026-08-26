@@ -19,8 +19,8 @@ Live geprüft, nicht aus dem Prompt übernommen.
 | Merge-Base | `9e1868ea2b78b714e1c2f3ea1e1e2fd8ed5b6ae6` |
 | Task-Commit des Technical Lead | `f530fadb66222771efb0e23f1ce6a818d5fe188b` |
 | Runtime-Commit | `0927ad70c3354adc39955e571babb8eae96c2b90` |
-| Dieser Status-Commit | siehe aktuellen Branch-Head nach Push |
-| Ahead / Behind vs `origin/main` vor diesem Status-Commit | **2 / 0** |
+| Status-Head mit Exact-Head-Gates | `9534b0b6e6e7e2e9d28cf06a5713d3a47a944e50` |
+| Ahead / Behind vs `origin/main` bei diesen Gates | **3 / 0** |
 | Offene parallele Draft-PRs (nicht dieser Slice) | #52, #50, #40, #39, #28 |
 | TW6-A | integriert auf `main` über PR #82 |
 
@@ -157,14 +157,15 @@ Lokales `/planen` im schon erstellt laufenden `next dev` lieferte nach dem Produ
 
 ## 9. GitHub Actions / Vercel Exact Head
 
-Runtime-Head `0927ad70`:
+Exact Head `9534b0b6e6e7e2e9d28cf06a5713d3a47a944e50` (Runtime `0927ad70` + dieser Status):
 
 | System | Evidence | Stand |
 | --- | --- | --- |
-| GitHub Actions | Run `33002524953` | Auth-Job **SUCCESS**. Typecheck/Lint/Build war zum Statuszeitpunkt **IN_PROGRESS**. Nach diesem Status-Commit muss der neue Exact Head erneut gegatet werden. |
-| Vercel Preview | Deployment `6109970264` / `7KY9oPFk9DnepmEGoNA4dYW1UzgH` | **SUCCESS / READY** auf `0927ad70`. Preview-URL `https://jetnity-kjpkv55yq-jetnity-e1b93c82.vercel.app` |
+| GitHub Actions | Run `33002791587` | **SUCCESS** auf exakt `9534b0b6`. Jobs: Typecheck/Lint/Build **SUCCESS** (2m22s), Auth-Konfiguration **SUCCESS**. |
+| Vercel Preview | `FzMreZvc5VmiskcCtGg9HEjFx5ZG` | **SUCCESS / READY** auf exakt `9534b0b6`. Dashboard: `https://vercel.com/jetnity-e1b93c82/jetnity-app/FzMreZvc5VmiskcCtGg9HEjFx5ZG` |
+| Vorheriger Runtime-Head | `0927ad70` / Vercel `7KY9oPFk9DnepmEGoNA4dYW1UzgH` | ebenfalls Preview-READY |
 
-Ein nachfolgender Status-Commit ändert den Exact Head. Technical Lead gatet den dann aktuellen Head unabhängig.
+Ein nachfolgender reiner Evidence-Commit ändert den Exact Head erneut. Technical Lead gatet den dann aktuellen Head unabhängig. Der Runtime-Diff ändert sich dadurch nicht.
 
 ## 10. Offene Restpunkte
 
