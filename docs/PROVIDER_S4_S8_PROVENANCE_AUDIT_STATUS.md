@@ -17,14 +17,19 @@ Vollständige Evidence: `docs/PROVIDER_S4_S8_PROVENANCE_AUDIT.md`.
 
 ## 1. Live-Stand
 
-Wird nach Exact-Head-Gates dieses Korrekturstands nachgezogen. Merge-Base nach Sync: `8ab4e666`.
-
 | Fakt | Wert |
 | --- | --- |
 | `origin/main` | `8ab4e666d4963ac98b32de4b0371dfbd6eefc30f` |
 | Merge-Base | `8ab4e666` |
-| Draft-PR | https://github.com/Jetnity/jetnity/pull/77 – OPEN, Draft |
-| Review | Technical Lead: CHANGES REQUIRED an Severity-Taxonomie |
+| Ahead / Behind | 7 / 0 auf dem Korrektur-Head |
+| Severity-Korrektur Exact Head | `ebd41f6eddea1796a839a28ef07fa5ef28d5d208` |
+| Actions auf Korrektur-Head | SUCCESS `32916638566` |
+| Vercel auf Korrektur-Head | SUCCESS / READY `WHkEj6jkjz5oceuhYgbttF79tJ3d` |
+| Draft-PR | https://github.com/Jetnity/jetnity/pull/77 – OPEN, Draft, `MERGEABLE` |
+| Review-Threads | keine (0 Review-Comments) |
+| Review | Technical Lead: CHANGES REQUIRED an Severity-Taxonomie; dieser Stand ist die Korrektur |
+
+Ein docs-only Gate-Nachtrag nach `ebd41f6e` ist ein neuer Head und braucht eigene SUCCESS/READY-Evidence.
 
 ---
 

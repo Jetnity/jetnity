@@ -49,6 +49,7 @@ Audit-PASS bedeutet nur: S4–S8 gegen aktuellen Code belegt, Severity nach Tech
 | `origin/main` | `8ab4e666d4963ac98b32de4b0371dfbd6eefc30f` |
 | Vorherige Baseline | `ba86279e5ee2505bfd13801ae5e05ef50ba87c22` |
 | Merge-Base nach Sync | `8ab4e666` = `origin/main` |
+| Severity-Korrektur Exact Head | `ebd41f6eddea1796a839a28ef07fa5ef28d5d208` |
 | Audit-Inhalt (vor Severity-Korrektur) | `52162a7b3cb341581f02970f2f95ba3a3c8cad26` |
 | Draft-PR | https://github.com/Jetnity/jetnity/pull/77 |
 | PR-State | OPEN, **Draft**, `MERGEABLE` |
