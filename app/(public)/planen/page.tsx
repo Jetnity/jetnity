@@ -21,6 +21,7 @@ import Reiseidee from '@/components/trips/Reiseidee'
 import TripPlanner from '@/components/trips/TripPlanner'
 import { ortBestaetigen } from '@/lib/places/aktionen'
 import { planenRobots } from '@/lib/seo/index-grenze'
+import { kanonischeUrl } from '@/lib/seo/oeffentlicher-origin'
 import { GRENZEN } from '@/lib/trips/schema'
 import { VORSCHLAG_GRENZEN } from '@/lib/reisevorschlag/schema'
 
@@ -39,6 +40,7 @@ export function generateMetadata({ searchParams }: PlanenSeiteProps): Metadata {
   return {
     title: 'Reise planen',
     description: 'Erstelle deine Reise mit Jetnity.',
+    alternates: { canonical: kanonischeUrl('/planen') },
     ...(robots ? { robots } : {}),
   }
 }

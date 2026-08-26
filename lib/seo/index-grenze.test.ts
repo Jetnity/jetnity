@@ -61,7 +61,7 @@ describe('Die öffentliche Sitemap', () => {
 
   test('wird von sitemap.ts ohne Reiseübersicht gebaut', () => {
     const datei = quelle('../../app/sitemap.ts')
-    assert.match(datei, /SITEMAP_OEFFENTLICHE_PFADE/)
+    assert.match(datei, /sitemapOeffentlicheUrls/)
     assert.equal(datei.includes('/reisen'), false)
   })
 })
@@ -94,6 +94,7 @@ describe('/planen bleibt als Basis öffentlich', () => {
     const datei = quelle('../../app/(public)/planen/page.tsx')
     assert.match(datei, /generateMetadata/)
     assert.match(datei, /planenRobots/)
+    assert.match(datei, /kanonischeUrl\('\/planen'\)/)
     assert.match(datei, /\.\.\.\(robots \? \{ robots \} : \{\}\)/)
     assert.equal(datei.includes('robots: planenRobots'), false)
     assert.match(datei, /initialIdee/)
@@ -121,6 +122,17 @@ describe('Sensitive Hilfsflächen', () => {
     const datei = quelle('../../app/(admin)/layout.tsx')
     assert.match(datei, /robots:\s*NICHT_INDEXIEREN/)
     assert.match(datei, /requireAdminPage/)
+  })
+
+  test('Login, Register und Auth-Hilfsflächen bleiben noindex', () => {
+    const login = quelle('../../app/(public)/login/page.tsx')
+    const register = quelle('../../app/(public)/register/page.tsx')
+    const callback = quelle('../../app/auth/callback/page.tsx')
+    const passwort = quelle('../../app/auth/update-password/layout.tsx')
+    assert.match(login, /robots:\s*\{\s*index:\s*false,\s*follow:\s*false/)
+    assert.match(register, /robots:\s*\{\s*index:\s*false,\s*follow:\s*false/)
+    assert.match(callback, /robots:\s*\{\s*index:\s*false,\s*follow:\s*false/)
+    assert.match(passwort, /robots:\s*\{\s*index:\s*false,\s*follow:\s*false/)
   })
 
   test('der tote admin/head.tsx ist entfernt', () => {

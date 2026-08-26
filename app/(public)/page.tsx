@@ -19,11 +19,13 @@ import StartzielForm from '@/components/places/StartzielForm'
 import { INSPIRATION_ZIELE } from '@/lib/places/inspiration'
 import { zielHref } from '@/lib/places/auswahl'
 import { ScrollRow } from '@/components/ui/scroll-row'
+import { kanonischeUrl, oeffentlicherOrigin } from '@/lib/seo/oeffentlicher-origin'
 
 export const metadata: Metadata = {
   title: 'Deine ganze Reise. Intelligent begleitet.',
   description:
     'Plane, organisiere und erlebe deine Reise an einem Ort – übersichtlich, persönlich und sicher mit Jetnity.',
+  alternates: { canonical: kanonischeUrl('/') },
 }
 
 const destinations = INSPIRATION_ZIELE
@@ -57,7 +59,7 @@ const cockpitBenefits = [
 ]
 
 export default function HomePage() {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  const { origin } = oeffentlicherOrigin()
 
   return (
     <main className="bg-surface-75 text-brand-800">
@@ -326,7 +328,7 @@ export default function HomePage() {
             '@context': 'https://schema.org',
             '@type': 'WebApplication',
             name: 'Jetnity',
-            url: appUrl,
+            url: origin,
             applicationCategory: 'TravelApplication',
             operatingSystem: 'Web',
             description: 'Eine persönliche Plattform für Reiseplanung und Reisebegleitung.',

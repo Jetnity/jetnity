@@ -19,6 +19,7 @@ describe('Der ephemeral-Host-Kill-Switch', () => {
     assert.equal(robotsIstEphemeralHost('jetnity-app.vercel.app'), true)
     assert.equal(robotsIstEphemeralHost('preview.vercel.app'), true)
     assert.equal(robotsIstEphemeralHost('jetnity.ch'), false)
+    assert.equal(robotsIstEphemeralHost('jetnity.com'), false)
 
     assert.equal(
       robotsDarfIndexieren({
@@ -46,14 +47,14 @@ describe('Der ephemeral-Host-Kill-Switch', () => {
   test('Preview und der Allow-Indexing-Kill-Switch bleiben geschlossen', () => {
     assert.equal(
       robotsDarfIndexieren({
-        NEXT_PUBLIC_APP_URL: 'https://jetnity.ch',
+        NEXT_PUBLIC_APP_URL: 'https://jetnity.com',
         VERCEL_ENV: 'preview',
       }),
       false,
     )
     assert.equal(
       robotsDarfIndexieren({
-        NEXT_PUBLIC_APP_URL: 'https://jetnity.ch',
+        NEXT_PUBLIC_APP_URL: 'https://jetnity.com',
         VERCEL_ENV: 'production',
         NEXT_PUBLIC_ALLOW_INDEXING: 'false',
       }),
@@ -62,22 +63,38 @@ describe('Der ephemeral-Host-Kill-Switch', () => {
   })
 
   test('aktiviert kein Custom-Domain-Indexing still über Defaults hinaus', () => {
-    // Production + Apex wäre der spätere Allow-Modus. D0-1 ändert die Formel
-    // nicht; es härtet nur die Disallow-Liste, falls jemand den Host später setzt.
+    // P1-D0-2-TL-01: Production ohne explizites true bleibt deny.
+    // P1-D0-2-TL-02: jetnity.ch bleibt auch mit true deny.
     assert.equal(
       robotsDarfIndexieren({
-        NEXT_PUBLIC_APP_URL: 'https://jetnity.ch',
+        NEXT_PUBLIC_APP_URL: 'https://jetnity.com',
         VERCEL_ENV: 'production',
       }),
-      true,
+      false,
+    )
+    assert.equal(
+      robotsDarfIndexieren({
+        NEXT_PUBLIC_SITE_URL: 'https://jetnity.com',
+        VERCEL_ENV: 'production',
+      }),
+      false,
+    )
+    assert.equal(
+      robotsDarfIndexieren({
+        NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
+        VERCEL_ENV: 'production',
+        NEXT_PUBLIC_ALLOW_INDEXING: 'true',
+      }),
+      false,
     )
   })
 })
 
 describe('Der Allow-Modus schützt die D0-1-Pfade', () => {
   const liste = robotsDisallowListe({
-    NEXT_PUBLIC_APP_URL: 'https://jetnity.ch',
+    NEXT_PUBLIC_APP_URL: 'https://jetnity.com',
     VERCEL_ENV: 'production',
+    NEXT_PUBLIC_ALLOW_INDEXING: 'true',
   })
 
   test('enthält Reisen, Auth, Unauthorized und die bisherigen Schutzpfade', () => {
@@ -101,10 +118,9 @@ describe('Der Allow-Modus schützt die D0-1-Pfade', () => {
     assert.deepEqual(liste, [...ROBOTS_DISALLOW_ALLOW_MODUS])
   })
 
-  test('wird von robots.ts verwendet', () => {
+  test('wird von robots.ts über robotsDokument verwendet', () => {
     const datei = readFileSync(join(hier, '../../app/robots.ts'), 'utf8')
-    assert.match(datei, /robotsDarfIndexieren/)
-    assert.match(datei, /ROBOTS_DISALLOW_ALLOW_MODUS/)
-    assert.match(datei, /NEXT_PUBLIC_ALLOW_INDEXING/)
+    assert.match(datei, /robotsDokument/)
+    assert.match(datei, /disallow: '\/'/)
   })
 })
