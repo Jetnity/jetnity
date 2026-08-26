@@ -23,7 +23,7 @@ export const CREATE_PERSISTENZ_TEMPO: TripPace = 'balanced'
 export const CREATE_PERSISTENZ_INTERESSEN: TripInterest[] = []
 
 /** Search-Params, die /planen zu einem ziel- oder ideenspezifischen Handoff machen. */
-export const PLANEN_HANDOFF_PARAMS = ['zielId', 'ziel', 'idee'] as const
+const PLANEN_HANDOFF_PARAMS = ['zielId', 'ziel', 'idee'] as const
 
 export type GastCreateGate =
   | { erlaubt: true }
