@@ -4076,7 +4076,7 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 **Datum:** 26. August 2026  
 **Status:** S5-A Domain-Foundation auf Feature-Branch. Nicht Ready. Nicht gemergt. Keine Persistenz. Volltext: `docs/ADR_0168_COMMERCIAL_PROVENANCE_DOMAIN_CONTRACT.md`.
 
-**Entscheidung:** Kommerzielle Wahrheit (Preis, Providerherkunft, Freshness, Währung) bekommt einen provider-neutralen Domainvertrag in `lib/commercial-provenance`. Die bestehenden Flight-/Hotel-/Activity-/Mobility-/Rental-Modelle bleiben fachlich getrennt. Der Vertrag komponiert Provenance, er ersetzt die Domänenoptionen nicht. Ein persistierter Snapshot ist niemals live. Fehlende Freshness bleibt `unknown`. Requested- und Quoted-Währung dürfen ohne Conversion-Evidence nicht gleichgesetzt werden. External References sind Provenance, nicht Trust. Mehrere belegte Quellen dürfen als Konflikt stehen bleiben. LLM/Assistant darf diesen Vertrag nicht erzeugen oder überschreiben.
+**Entscheidung:** Kommerzielle Wahrheit (Preis, Providerherkunft, Freshness, Währung) bekommt einen provider-neutralen Domainvertrag in `lib/commercial-provenance`. Die bestehenden Flight-/Hotel-/Activity-/Mobility-/Rental-Modelle bleiben fachlich getrennt. Der Vertrag komponiert Provenance, er ersetzt die Domänenoptionen nicht. Ein persistierter Snapshot ist niemals live. Fehlende Freshness bleibt `unknown`. Requested- und Quoted-Währung dürfen ohne Conversion-Evidence nicht gleichgesetzt werden. External References sind Provenance, nicht Trust, und provider-scoped. Mehrere belegte Quellen dürfen als Konflikt stehen bleiben. LLM/Assistant darf diesen Vertrag nicht erzeugen oder überschreiben. Actor und Source sind fail-closed getrennt: User-Intake/Manual sind keine Provider-Truth; Provider-Live-/Snapshot-Herkunft kommt nur aus einem trusted Adapter- oder Snapshot-Pfad. Untrusted Input defaultet nicht auf `system`.
 
 **Kontext:** Der S4–S8-Audit (PR #77) hat den S5-Gap präzise belegt und den Shared Contract bewusst nicht implementiert. TW-8 und bezahlte Provider bleiben hinter diesem Vertrag und späteren Gates.
 
@@ -4089,6 +4089,8 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 **Begründung:** Zuerst der fail-closed Vertrag, dann später S5-B-Persistenz. Ohne Beobachtungszeit, Freshness und Währungsabgleich wäre jeder Preisvergleich erfunden.
 
 **Konsequenzen:** Keine DB-Migration in S5-A. Altbestand ohne `retrievedAt` bleibt unknown. TW-8 startet nicht durch diesen Slice. Factories und Provider bleiben unverändert.
+
+**Nachtrag 26. August 2026 (Technical-Lead HOLD):** Actor↔Source-Matrix, fail-closed Option-Binding, User-Intake ohne Fake-Provider und provider-scoped Vergleichsidentität. Siehe PR #83.
 
 ---
 

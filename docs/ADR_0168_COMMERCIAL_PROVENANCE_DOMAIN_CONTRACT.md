@@ -12,4 +12,8 @@ Kurz:
 - Kein `available`-Boolean. Snapshot ist nie live. Fehlende Freshness bleibt `unknown`.
 - Keine automatische Währungsumrechnung. Keine erfundene beste Quelle.
 - LLM/Assistant darf Hard Truth nicht erzeugen oder überschreiben.
+- Actor↔Source ist fail-closed: User darf keine Provider-Live-/Snapshot-Herkunft behaupten. Untrusted Input hat keinen `system`-Default.
+- Optionale Composition prüft Domain, Provider-ID und `externalRef`.
+- User-Intake/Manual brauchen keinen Provider und kein `retrievedAt`; massgeblich ist `observedAt`.
+- `externalRef` ist provider-scoped.
 - Persistenz/`trip_items` bleibt S5-B + Production-Gate.

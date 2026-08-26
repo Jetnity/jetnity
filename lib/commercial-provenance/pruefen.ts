@@ -1,26 +1,28 @@
 // lib/commercial-provenance/pruefen.ts
 //
 // Fail-closed Commercial-Provenance-Prüfung.
-// LLM/Assistant darf den Vertrag nicht erzeugen oder überschreiben.
+// Kein impliziter system-Default. LLM/Assistant erzeugt keine Hard Truth.
 
 import {
   type CommercialAkteur,
   type CommercialAvailability,
   type CommercialBewertung,
-  type CommercialOptionIdentitaet,
   type CommercialPruefung,
   type CommercialProvenance,
   type CommercialProvenanceFehler,
   type CommercialStatus,
-  type MitCommercialProvenance,
 } from '@/lib/commercial-provenance/domain'
 import { commercialAffiliateLesen, commercialQuellePruefen } from '@/lib/commercial-provenance/quelle'
 import { commercialZeitPruefen } from '@/lib/commercial-provenance/frischheit'
-import { commercialAkteurLesen, commercialEingabeLesen, istBekannterAmountStatus } from '@/lib/commercial-provenance/lesen'
+import { commercialEingabeLesen, istBekannterAmountStatus } from '@/lib/commercial-provenance/lesen'
+import { commercialAkteurQuellePruefen } from '@/lib/commercial-provenance/trust'
 import { commercialWaehrungPruefen } from '@/lib/commercial-provenance/waehrung'
 
-function availabilityLesen(wert: string | null | undefined): CommercialAvailability {
-  if (wert === 'unavailable') return 'unavailable'
+function availabilityLesen(
+  wert: string | null | undefined,
+  providerBelegt: boolean,
+): CommercialAvailability {
+  if (providerBelegt && wert === 'unavailable') return 'unavailable'
   return 'unknown'
 }
 
@@ -61,14 +63,21 @@ function commercialStatusAbleiten(opts: {
   return 'current'
 }
 
-function bewertungAus(provenance: CommercialProvenance, freshness: CommercialBewertung['freshnessStatus'], currency: CommercialBewertung['currencyStatus']): CommercialBewertung {
+function bewertungAus(
+  provenance: CommercialProvenance,
+  freshness: CommercialBewertung['freshnessStatus'],
+  currency: CommercialBewertung['currencyStatus'],
+): CommercialBewertung {
   const commercialStatus = commercialStatusAbleiten({
     freshness,
     amountStatus: provenance.preis.amountStatus,
     availability: provenance.availabilityStatus,
   })
   const darfAlsCurrentQuoteDargestelltWerden =
-    commercialStatus === 'current' && freshness === 'current' && provenance.preis.amountStatus === 'quoted'
+    provenance.quelle.providerBelegt &&
+    commercialStatus === 'current' &&
+    freshness === 'current' &&
+    provenance.preis.amountStatus === 'quoted'
   return {
     freshnessStatus: freshness,
     currencyStatus: currency,
@@ -87,11 +96,6 @@ export function commercialProvenancePruefen(
   wert: unknown,
   opts?: { nowMs?: number; akteur?: CommercialAkteur },
 ): CommercialPruefung {
-  const akteur = opts?.akteur ?? 'system'
-  if (akteur === 'assistant' || akteur === 'llm') {
-    return { ok: false, fehler: [{ code: 'assistant_overwrite_forbidden', path: 'akteur' }] }
-  }
-
   const eingabe = commercialEingabeLesen(wert)
   if (!eingabe) {
     return { ok: false, fehler: [{ code: 'missing_source', path: '$' }] }
@@ -104,6 +108,12 @@ export function commercialProvenancePruefen(
     persistenz: eingabe.persistenz,
   })
   if (!quelle.ok) return quelle
+
+  const trust = commercialAkteurQuellePruefen({
+    akteur: opts?.akteur,
+    sourceKind: quelle.sourceKind,
+  })
+  if (!trust.ok) return trust
 
   const zeit = commercialZeitPruefen({
     retrievedAt: eingabe.retrievedAt,
@@ -133,6 +143,7 @@ export function commercialProvenancePruefen(
     domain: eingabe.domain,
     quelle: {
       providerId: quelle.providerId,
+      providerBelegt: quelle.providerBelegt,
       sourceKind: quelle.sourceKind,
       sourceLabel: quelle.sourceLabel,
     },
@@ -156,7 +167,7 @@ export function commercialProvenancePruefen(
     },
     persistenz: quelle.persistenz,
     affiliate: affiliate.affiliate,
-    availabilityStatus: availabilityLesen(eingabe.availability),
+    availabilityStatus: availabilityLesen(eingabe.availability, quelle.providerBelegt),
     vergleichsschluessel: eingabe.vergleichsschluessel ?? null,
   }
 
@@ -167,17 +178,43 @@ export function commercialProvenancePruefen(
   }
 }
 
+export function commercialProviderQuotePruefen(
+  wert: unknown,
+  opts?: { nowMs?: number },
+): CommercialPruefung {
+  return commercialProvenancePruefen(wert, { nowMs: opts?.nowMs, akteur: 'provider_adapter' })
+}
+
+export function commercialNutzerangabePruefen(
+  wert: unknown,
+  opts?: { nowMs?: number },
+): CommercialPruefung {
+  return commercialProvenancePruefen(wert, { nowMs: opts?.nowMs, akteur: 'user' })
+}
+
+export function commercialPersistiertenSnapshotPruefen(
+  wert: unknown,
+  opts?: { nowMs?: number },
+): CommercialPruefung {
+  return commercialProvenancePruefen(wert, { nowMs: opts?.nowMs, akteur: 'system' })
+}
+
 export function commercialTruthUebernehmen(opts: {
   bestehend: CommercialProvenance | null
   vorschlag: unknown
   akteur: unknown
   nowMs?: number
 }): CommercialPruefung {
-  const akteur = commercialAkteurLesen(opts.akteur)
-  if (akteur == null || akteur === 'assistant' || akteur === 'llm') {
+  if (opts.akteur === 'assistant' || opts.akteur === 'llm') {
     return { ok: false, fehler: [{ code: 'assistant_overwrite_forbidden', path: 'akteur' }] }
   }
-  return commercialProvenancePruefen(opts.vorschlag, { nowMs: opts.nowMs, akteur })
+  if (typeof opts.akteur !== 'string') {
+    return { ok: false, fehler: [{ code: 'missing_actor', path: 'akteur' }] }
+  }
+  return commercialProvenancePruefen(opts.vorschlag, {
+    nowMs: opts.nowMs,
+    akteur: opts.akteur as CommercialAkteur,
+  })
 }
 
 export function istCommercialLiveBehauptungErlaubt(_provenance: CommercialProvenance): false {
@@ -186,21 +223,4 @@ export function istCommercialLiveBehauptungErlaubt(_provenance: CommercialProven
 
 export function darfCommercialAlsCurrentQuoteErscheinen(pruefung: CommercialPruefung): boolean {
   return pruefung.ok && pruefung.bewertung.darfAlsCurrentQuoteDargestelltWerden
-}
-
-export function commercialIdentitaetAusOption(option: CommercialOptionIdentitaet): {
-  providerId: string
-  externalRef: string | null
-} {
-  return {
-    providerId: option.provider.trim(),
-    externalRef: option.externalRef?.trim() || null,
-  }
-}
-
-export function optionMitCommercialProvenance<T>(
-  option: T,
-  provenance: CommercialProvenance,
-): MitCommercialProvenance<T> {
-  return { ...option, commercialProvenance: provenance }
 }

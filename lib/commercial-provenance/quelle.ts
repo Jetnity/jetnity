@@ -1,6 +1,7 @@
 // lib/commercial-provenance/quelle.ts
 //
-// Provider-/Source-Identität, Affiliate nur bei Evidence, Assistant fail-closed.
+// Source-Identität und Provider-Identität sind getrennt.
+// Provider-ID nur, wenn die Quelle tatsächlich providergebunden ist.
 
 import {
   type CommercialAffiliate,
@@ -8,12 +9,11 @@ import {
   type CommercialProvenanceFehler,
   type CommercialSourceKind,
 } from '@/lib/commercial-provenance/domain'
-import {
-  istBekanntePersistenz,
-  istBekanntesSourceKind,
-} from '@/lib/commercial-provenance/lesen'
+import { istBekanntePersistenz, istBekanntesSourceKind } from '@/lib/commercial-provenance/lesen'
+import { istCommercialProviderQuelle } from '@/lib/commercial-provenance/trust'
 
 const VERBOTENE_QUELLEN = new Set(['assistant', 'llm', 'ai', 'model'])
+const ERFUNDENE_PROVIDER = new Set(['user', 'manual', 'jetnity', 'assistant', 'llm', 'system', 'unknown'])
 
 export function commercialQuellePruefen(opts: {
   providerId: string | null | undefined
@@ -23,18 +23,14 @@ export function commercialQuellePruefen(opts: {
 }):
   | {
       ok: true
-      providerId: string
+      providerId: string | null
+      providerBelegt: boolean
       sourceKind: CommercialSourceKind
       sourceLabel: string | null
       persistenz: CommercialPersistenz
     }
   | { ok: false; fehler: CommercialProvenanceFehler[] } {
   const fehler: CommercialProvenanceFehler[] = []
-  const providerId = opts.providerId?.trim() ?? ''
-  if (!providerId) {
-    fehler.push({ code: 'missing_source', path: 'providerId' })
-  }
-
   const kindRoh = opts.sourceKind?.trim() ?? ''
   if (!kindRoh) {
     fehler.push({ code: 'missing_source', path: 'sourceKind' })
@@ -53,6 +49,16 @@ export function commercialQuellePruefen(opts: {
     return { ok: false, fehler }
   }
 
+  const providerId = opts.providerId?.trim() || null
+  if (providerId && ERFUNDENE_PROVIDER.has(providerId.toLowerCase())) {
+    return { ok: false, fehler: [{ code: 'erfundene_provider_id', path: 'providerId' }] }
+  }
+
+  const providerGebunden = istCommercialProviderQuelle(kindRoh)
+  if (providerGebunden && !providerId) {
+    return { ok: false, fehler: [{ code: 'missing_provider', path: 'providerId' }] }
+  }
+
   if (kindRoh === 'persisted_snapshot' && persistenzRoh !== 'snapshot') {
     return {
       ok: false,
@@ -63,6 +69,7 @@ export function commercialQuellePruefen(opts: {
   return {
     ok: true,
     providerId,
+    providerBelegt: providerGebunden && providerId != null,
     sourceKind: kindRoh,
     sourceLabel: opts.sourceLabel?.trim() || null,
     persistenz: persistenzRoh,
@@ -116,4 +123,3 @@ export function commercialAffiliateLesen(opts: {
   }
   return { ok: false, fehler: [{ code: 'invalid_affiliate_claim', path: 'affiliate.status' }] }
 }
-

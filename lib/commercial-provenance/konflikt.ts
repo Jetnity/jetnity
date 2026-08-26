@@ -6,8 +6,10 @@
 import type { CommercialKonflikt, CommercialProvenance } from '@/lib/commercial-provenance/domain'
 
 function identitaet(angebot: CommercialProvenance): string | null {
-  if (angebot.vergleichsschluessel) return `${angebot.domain}:${angebot.vergleichsschluessel}`
-  if (angebot.referenz.externalRef) return `${angebot.domain}:ref:${angebot.referenz.externalRef}`
+  if (angebot.vergleichsschluessel) return `${angebot.domain}:vergleich:${angebot.vergleichsschluessel}`
+  if (angebot.quelle.providerBelegt && angebot.quelle.providerId && angebot.referenz.externalRef) {
+    return `${angebot.domain}:provider:${angebot.quelle.providerId}:ref:${angebot.referenz.externalRef}`
+  }
   return null
 }
 

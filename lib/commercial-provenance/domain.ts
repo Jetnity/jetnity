@@ -88,9 +88,16 @@ export const COMMERCIAL_PROVENANCE_FEHLER = [
   'invalid_fresh_until',
   'fresh_until_before_retrieved_at',
   'fresh_until_ohne_quellenbeleg',
+  'retrieved_at_ohne_abruf',
+  'missing_observed_at',
+  'invalid_observed_at',
   'missing_source',
+  'missing_actor',
   'invalid_source_kind',
   'assistant_source_forbidden',
+  'actor_source_forbidden',
+  'missing_provider',
+  'erfundene_provider_id',
   'persistenz_source_widerspruch',
   'invalid_currency',
   'conversion_without_evidence',
@@ -98,6 +105,9 @@ export const COMMERCIAL_PROVENANCE_FEHLER = [
   'observed_at_mismatch',
   'invalid_affiliate_claim',
   'assistant_overwrite_forbidden',
+  'bind_domain_mismatch',
+  'bind_provider_mismatch',
+  'bind_ref_mismatch',
 ] as const
 export type CommercialProvenanceFehlerCode = (typeof COMMERCIAL_PROVENANCE_FEHLER)[number]
 
@@ -107,7 +117,9 @@ export type CommercialProvenanceFehler = {
 }
 
 export type CommercialQuelle = {
-  providerId: string
+  providerId: string | null
+  /** Nur true, wenn die Quelle tatsächlich providergebunden und belegt ist. */
+  providerBelegt: boolean
   sourceKind: CommercialSourceKind
   sourceLabel: string | null
 }
@@ -120,7 +132,9 @@ export type CommercialReferenz = {
 }
 
 export type CommercialZeitpunkt = {
-  retrievedAt: string
+  /** Provider-Abrufzeit. Null bei User-Intake/Manual – das ist kein Abruf. */
+  retrievedAt: string | null
+  /** Beobachtungs- oder Eintragszeit. Für Nutzerangaben die massgebliche Zeit. */
   observedAt: string
   freshUntil: string | null
 }
@@ -200,6 +214,29 @@ export type MitCommercialProvenance<T> = T & {
 }
 
 export type CommercialOptionIdentitaet = {
-  provider: string
+  provider?: string | null
   externalRef?: string | null
+}
+
+export type CommercialBindungOk<T> = {
+  ok: true
+  option: MitCommercialProvenance<T>
+}
+
+export type CommercialBindung<T> = CommercialBindungOk<T> | CommercialPruefungFehler
+
+export const COMMERCIAL_PROVIDER_QUELLEN = [
+  'live_api',
+  'provider_snapshot',
+  'persisted_snapshot',
+] as const
+
+export const COMMERCIAL_NUTZER_QUELLEN = ['user_intake', 'manual'] as const
+
+export const COMMERCIAL_AKTEUR_QUELLEN: Record<CommercialAkteur, readonly CommercialSourceKind[]> = {
+  provider_adapter: ['live_api', 'provider_snapshot'],
+  system: ['persisted_snapshot'],
+  user: ['user_intake', 'manual'],
+  assistant: [],
+  llm: [],
 }
