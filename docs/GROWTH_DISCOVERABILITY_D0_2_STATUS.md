@@ -4,90 +4,85 @@ Stand: 26. August 2026
 Agent: `Jetnity growth discoverability`  
 Branch: `feat/d0-2-canonical-origin-consistency`  
 Draft-PR: #74  
-Baseline: `main @ ba86279e5ee2505bfd13801ae5e05ef50ba87c22`  
-Status: **IMPLEMENTIERT / STOPP für unabhängigen ChatGPT-/Technical-Lead-Review**
+Aktueller `main`: `8ab4e666d4963ac98b32de4b0371dfbd6eefc30f`  
+Status: **P1-D0-2-TL-01 KORRIGIERT / STOPP für erneuten unabhängigen Technical-Lead-Review**
 
 Kein Ready. Kein Merge. Kein D0-3/G0-1/D1/G1+.  
 `docs/ACTIVE_WORK_STATUS.md` wurde nicht geändert.
 
 ## 1. Root Cause
 
-Nach D0-1 (integriert) blieben D0-P2-01 und D0-P2-02 offen:
+Nach D0-1 blieben D0-P2-01 und D0-P2-02 offen: zwei Origin-Variablen, fehlende Canonicals, deny-all robots warb Sitemap/Host.
 
-- `NEXT_PUBLIC_APP_URL` und `NEXT_PUBLIC_SITE_URL` ohne Vertrag;
-- Metadata, robots, Sitemap und Homepage-JSON-LD-URL konnten verschiedene Origins verwenden;
-- keine Canonicals auf `/` und `/planen`;
-- deny-all `robots.txt` warb trotzdem Sitemap und Host.
+Unabhängiger Technical-Lead-Review von PR #74 fand danach den Merge-Blocker:
 
-Ein späterer Custom-Domain-Cutover hätte dadurch eine zweite URL-Wahrheit und widersprüchliche Crawl-Signale erzeugt.
+**P1-D0-2-TL-01 – Public Indexing war nicht explizit opt-in.**
+
+Die erste D0-2-Formel setzte `freigabe = NEXT_PUBLIC_ALLOW_INDEXING !== 'false'`.  
+Unset galt damit bereits als Freigabe. In Kombination mit gültiger `NEXT_PUBLIC_SITE_URL` und fehlender `NEXT_PUBLIC_APP_URL` hätte Production unbeabsichtigt den Allow-Pfad erreichen können.
 
 ## 2. Architekturentscheidung
 
-Kleiner, zentral getesteter Public-Origin-/Indexing-Vertrag in `lib/seo/oeffentlicher-origin.ts`.
+Zentraler Vertrag bleibt `lib/seo/oeffentlicher-origin.ts`.
+
+Origin:
 
 - `NEXT_PUBLIC_SITE_URL` gewinnt, wenn gültig (`http`/`https`, kein Userinfo).
 - `NEXT_PUBLIC_APP_URL` ist Legacy-Fallback, wenn kein Site-Wert gesetzt ist.
-- Origin wird ohne Path, Query, Hash und trailing Slash normalisiert.
-- Ungültiges Protokoll, nicht parsebare URL und Path-Drift: keine Index-Freigabe.
-- Indexing bleibt fail-closed, wenn der gewählte Host ephemeral ist **oder** ein gesetzter App-Host weiterhin `localhost` / `*.vercel.app` ist. Dadurch aktiviert eine Wunsch-`SITE_URL` bei live `*.vercel.app` kein Allow-Indexing.
-- `NEXT_PUBLIC_ALLOW_INDEXING=false` bleibt Kill-Switch.
-- Deny-all: `Disallow: /`, keine Sitemap-/Host-Werbung; Sitemap-Output ist leer.
-- Synthetischer Allow-Modus (nur Tests/isolierte Konfiguration): Host, Sitemap und Canonicals dieselbe Origin; Sitemap nur `/` und `/planen`; D0-1-Disallows bleiben.
+- Origin ohne Path, Query, Hash und trailing Slash.
 
-Kein Shared-Contract außerhalb dieses Public-Origin-/Metadata-Vertrags. Auth-Rücksprungziele (`LoginForm`/`RegisterForm`/`admin/login/actions`) wurden nicht geändert.
+Indexing, nach P1-D0-2-TL-01:
 
-## 3. Geänderte Dateien
+- nur der **exakte** Wert `true` darf den weiteren Allow-Check passieren;
+- `undefined`, leer, `false`, `TRUE`, `1` und jeder andere Wert bleiben deny;
+- zusätzlich weiterhin deny bei nicht-production, localhost, `*.vercel.app`, ungültiger URL, Path/Query/Userinfo-Drift und ephemeral gesetztem App-Host.
 
-Runtime / Vertrag:
+Deny-all: `Disallow: /`, keine Sitemap-/Host-Werbung, leere Sitemap.  
+Synthetischer Allow nur in Tests/isolierter Konfiguration: Host/Sitemap/Canonicals dieselbe Origin; Sitemap nur `/` und `/planen`; D0-1-Disallows bleiben.
 
-- `lib/seo/oeffentlicher-origin.ts` (neu)
-- `lib/seo/oeffentlicher-origin.test.ts` (neu)
-- `lib/seo/robots-regeln.ts` – Index-Entscheidung und `robotsDokument()`
-- `lib/seo/robots-regeln.test.ts`
-- `lib/seo/index-grenze.ts` – Kommentar; `SITEMAP_OEFFENTLICHE_PFADE` bleibt die Allow-Liste
-- `lib/seo/index-grenze.test.ts` – D0-1-Regression plus Auth-noindex
-- `app/robots.ts`
-- `app/sitemap.ts`
-- `app/layout.tsx` – `metadataBase` / OG-URL aus dem Vertrag
-- `app/(public)/layout.tsx` – dasselbe
-- `app/(public)/page.tsx` – Canonical `/`; JSON-LD `url` aus dem Vertrag
-- `app/(public)/planen/page.tsx` – Canonical `/planen` ohne Query
-- `.env.example` – Kommentare zum Vertrag, keine Aktivierung
+`.env.example` dokumentiert `NEXT_PUBLIC_ALLOW_INDEXING=false` als sicheren Default. `true` ist ein separates Public-Launch-Gate und wird nicht gesetzt.
 
-Nicht geändert: `docs/ACTIVE_WORK_STATUS.md`, Legal-Seiten, Auth, DB, Tracking, hreflang, neue JSON-LD-Typen.
+## 3. Geänderte Dateien dieser Korrektur
+
+- `lib/seo/oeffentlicher-origin.ts` – `indexingIstExplizitFreigegeben()` / `=== 'true'`
+- `lib/seo/oeffentlicher-origin.test.ts` – Opt-in-Semantik
+- `lib/seo/robots-regeln.test.ts` – Unset + gültige Apex-URL bleibt deny
+- `.env.example` – sicherer Default `false`, Launch-Gate dokumentiert
+- `docs/GROWTH_DISCOVERABILITY_D0_2_STATUS.md` – dieser Stand
+
+Branch wurde kontrolliert mit `main @ 8ab4e666` synchronisiert (Merge, nur integrierte Audit-Docs aus #78/#79). Keine fremden Runtime-Dateien verändert.
+
+Nicht geändert: `docs/ACTIVE_WORK_STATUS.md`, Legal, Auth, DB, Tracking, hreflang, JSON-LD-Typen, Custom Domain.
 
 ## 4. Tests und Testannahmen
 
-Gezielte SEO-Tests **31/31** (`index-grenze`, `robots-regeln`, `oeffentlicher-origin`).
+Gezielte SEO-Tests **33/33**.
 
-Fachliche Semantik, nicht nur Wiring:
+P1-D0-2-TL-01 fachlich:
 
-1. gültige `SITE_URL` wird auf Origin normalisiert;
-2. Site gewinnt vor App;
-3. App-Fallback erlaubt synthetisches Allow nur, wenn der App-Host selbst nicht ephemeral ist;
-4. ungültige URL / `ftp:` / Path- oder Query-Drift → kein Index;
-5. localhost deny-all;
-6. `*.vercel.app` deny-all, auch wenn `SITE_URL` eine Apex-Wunschdomain ist;
-7. `ALLOW_INDEXING=false` deny-all;
-8. deny-all robots: `sitemap=null`, `host=null`;
-9. deny-all Sitemap: `[]`;
-10. synthetischer Allow: Host/Sitemap/Canonicals `https://jetnity.ch`;
-11. Allow-Sitemap = `/` + `/planen`, nicht `/reisen`;
-12.–13. Source-Contract: `/` und `/planen` setzen `kanonischeUrl`;
-14. `idee` leer / whitespace / Wert → `noindex`; Canonical bleibt `/planen`;
-15. `/reisen` und `/reisen/[tripId]` bleiben `NICHT_INDEXIEREN`;
-16. Login/Register/Auth-Callback/Update-Password/Admin/Unauthorized bleiben noindex;
-17. keine Tracking-/DB-/Auth-Logik in diesem Diff.
+1. production + gültige SITE_URL + ALLOW unset → deny
+2. ALLOW leer → deny
+3. ALLOW=false → deny
+4. ALLOW=true + synthetisch gültiger Launch-Kontext → allow
+5. ALLOW=true + localhost → deny
+6. ALLOW=true + `*.vercel.app` → deny
+7. ALLOW=true + Drift/invalid → deny
+8. D0-1 private noindex-Grenzen bleiben grün
+9. deny-all robots: `sitemap=null`, `host=null`
+10. deny-all Sitemap: `[]`
 
-`npm test` vollständig: **2025/2025**.
+Zusätzlich: `TRUE`/`1` sind nicht `true` und bleiben deny.  
+`.env.example` enthält `NEXT_PUBLIC_ALLOW_INDEXING=false` und nicht `=true`.
 
-## 5. Lokale Gates auf Runtime `f1827666`
+`npm test` vollständig: **2027/2027**.
+
+## 5. Lokale Gates auf Runtime `4653a07d`
 
 | Command | Ergebnis |
 | --- | --- |
 | `npm run typecheck` | 0 |
 | `npm run lint` | 0, keine Warnings |
-| `npm test` | 0, **2025/2025** |
+| `npm test` | 0, **2027/2027** |
 | `npm run check:setup:ci` | 0, 1 bekannte Warning: keine lokale `.env` |
 | `npm run check:dead` | 0 |
 | `npm run check:exports` | 0 |
@@ -98,7 +93,7 @@ Fachliche Semantik, nicht nur Wiring:
 
 ## 6. Lokale HTML / robots / sitemap Evidence
 
-`next start` nach Production-Build ohne `.env` (`http://127.0.0.1:3011`):
+`next start` nach Production-Build ohne `.env` (`http://127.0.0.1:3013`):
 
 | Surface | robots | canonical |
 | --- | --- | --- |
@@ -114,28 +109,29 @@ Fachliche Semantik, nicht nur Wiring:
 `robots.txt`: nur `Disallow: /`. Keine Sitemap- oder Host-Zeile.  
 `sitemap.xml`: leeres `urlset`.
 
-Helper-Szenarien: `/opt/cursor/artifacts/d02_local_html/env_szenarien.jsonl`.
+Helper-Szenarien: `/opt/cursor/artifacts/d02_optin_env_szenarien.jsonl`.  
+Production + gültige SITE_URL ohne `true` bleibt deny. Nur synthetisches `ALLOW=true` + gültige nicht-ephemere Origin erlaubt Host/Sitemap.
 
 ## 7. Self-Review
 
-Eingehalten: kein Legal-Text, kein `/privacy`/`/terms`, kein hreflang, kein JSON-LD-Ausbau ausser vorhandener `url`, kein Tracking/Consent/Ads, keine Custom Domain, kein produktives Allow-Indexing, keine DB/Auth/Traveller/Route/Provider/Payment-Änderung, kein TW-6, kein `ACTIVE_WORK_STATUS`.
+Geschlossen: P1-D0-2-TL-01.
 
-Risiko bewusst akzeptiert und fail-closed gelöst: `.env.example` enthält weiterhin `NEXT_PUBLIC_SITE_URL=https://jetnity.com`. Wäre nur Site-URL für Allow entscheidend, könnte Production bei gesetzter Wunschdomain plötzlich Allow-robots liefern. Der Vertrag verlangt zusätzlich, dass ein gesetzter App-Host nicht ephemeral ist.
+Eingehalten: kein Legal-Text, kein `/privacy`/`/terms`, kein hreflang, kein JSON-LD-Ausbau, kein Tracking/Consent/Ads, keine Custom Domain, kein produktives Allow-Indexing, keine DB/Auth/Traveller/Route/Provider/Payment-Änderung, kein TW-6, kein `ACTIVE_WORK_STATUS`.
 
-HTML-`index,follow` auf öffentlichen Basisflächen bei deny-all robots bleibt das bisherige D0-1-Verhalten der öffentlichen Basis. D0-2 macht robots/sitemap dazu konsistent (keine Sitemap-Werbung). Ein späterer Launch-Slice darf HTML und robots gemeinsam umschalten.
+HTML-`index,follow` auf öffentlichen Basisflächen bei deny-all robots bleibt das bisherige D0-1-Verhalten der öffentlichen Basis.
 
 ## 8. Exact-Head
 
-Runtime-Head dieses Status: `f182766668161e829ae6c9fb5f804e5a2e690da9`.  
+Runtime-Korrektur: `4653a07d`.  
 Dieser Persist-Commit ändert den Branch-Head. Technical Lead prüft den dann aktuellen HEAD live.
 
-Vor Runtime: Branch 2/0 docs-only auf Baseline `ba86279e`. Review-Threads: 0.
+Merge-Base zum bestätigten `main`: `8ab4e666`.
 
 ## 9. Weiterhin offen
 
 - **D0-P1-03** – `/privacy` und `/terms` 404; keine Texte erfinden
 - D0-P2-04 – hreflang / Locale
-- D0-P2-05 – JSON-LD Foundation (`Organization`/`WebSite`); nur die bestehende WebApplication-URL ist origin-konsistent
+- D0-P2-05 – JSON-LD Foundation (`Organization`/`WebSite`)
 - G0-P2-01 / G0-P2-02 / G0-P3-01 / G0-P3-02
 - Custom Domain / Public Launch / produktives Indexing
 
@@ -143,6 +139,6 @@ Vor Runtime: Branch 2/0 docs-only auf Baseline `ba86279e`. Review-Threads: 0.
 
 **STOPP.**
 
-ChatGPT / Technical Lead prüft PR #74 unabhängig von Anfang an und entscheidet über Korrektur oder Integration.
+ChatGPT / Technical Lead prüft PR #74 erneut unabhängig von Anfang an und entscheidet über Korrektur oder Integration.
 
 Kein Ready. Kein Merge. Kein nächster Slice.
