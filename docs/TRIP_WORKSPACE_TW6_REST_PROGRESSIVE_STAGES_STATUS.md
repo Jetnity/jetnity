@@ -4,8 +4,8 @@ Stand: 26. August 2026
 Agent: `Trip workspace audit architecture`  
 Branch: `feat/tw6-rest-progressive-stages`  
 PR: **#87** (Draft gegen `main`)  
-Auftrag: `docs/TRIP_WORKSPACE_TW6_DAY_STAGE_TRUTH_CONTRACT_TASK.md`  
-Status: **IMPLEMENTIERT / AWAITING TECHNICAL-LEAD FINALREVIEW**
+Auftrag: Technical-Lead-Verdict CHANGES REQUIRED nach Head `3681fcbc`  
+Status: **KORRIGIERT / AWAITING TECHNICAL-LEAD FINALREVIEW**
 
 Kein Ready. Kein Merge. Kein TW-7/TW-8/TW-9. Kein Folgeslice.  
 `docs/ACTIVE_WORK_STATUS.md` wurde nicht geändert.
@@ -17,183 +17,124 @@ Live geprüft, nicht aus dem Prompt übernommen.
 | Fakt | Wert |
 | --- | --- |
 | Live `origin/main` | `1d558ef56cc275d429f4076c7a8877c3791947a7` |
-| Merge-Base mit PR-Head | `9e1868ea2b78b714e1c2f3ea1e1e2fd8ed5b6ae6` |
-| Exact Head | `e3300f75172f775b9da018290aa459ddec7eefea` |
-| Task-Commit (Handoff) | `a2ccb51474613d0f937a5b05da5fd92f31cc3c30` |
-| Ahead / Behind vs `origin/main` | **9 / 2** |
+| Merge-Base nach Sync | `1d558ef56cc275d429f4076c7a8877c3791947a7` |
+| Vorheriger TL-Head | `3681fcbc7370259aad3c7ba92b6ece2ff11662ee` |
+| Sync-Commit | `82ef405b40f14437467841ee57331dde7e093ce4` (`merge origin/main`) |
 | Offene parallele Draft-PRs | #52, #50, #40, #39, #28 |
-| Shared-Contract-Kollision | keine offenen PRs treffen `zuordnung`, `reise_anlegen`, Timeline, Day-Stage-Assignment oder Trip-Schema |
+| Shared-Contract-Kollision | keine offenen PRs treffen `zuordnung`, `reise_anlegen`, Timeline oder Assignment-Source |
 
-`main` ist nach dem Task-Commit um zwei **reine Dokument-Commits** weitergelaufen:
+`main` brachte nur die zwei Governance-Docs (Agent-Rotation, Technical-Lead-Autonomy). Keine Runtime-Kollision. Ahead/Behind und Exact Head stehen nach dem Korrektur-Push in Abschnitt 8.
 
-- `e1aea302` `docs: bind Cursor agent session rotation and naming`
-- `1d558ef5` `docs: make agent rotation standard mandatory for future chats`
+## 2. Finale identische TS-/SQL-Ableitung
 
-Betroffene Dateien: `docs/JETNITY_AGENT_SESSION_ROTATION_STANDARD.md`, `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`.  
-Kein Runtime-, Schema- oder Shared-Contract-Konflikt. Dieser Slice wurde **nicht** auf den neuen `main` rebase't, damit Exact-Head-CI/Vercel auf `e3300f75` erhalten bleiben.
+Kanonische Tabelle in `lib/trips/day-stage-assignment.ts` (`dayStageAssignmentSourceAbleiten`) und `public.reise_anlegen()` (`20260826230000`).
 
-## 2. Finaler Assignment-Contract
-
-Spalte: `public.trips.day_stage_assignment_source`  
-Guest-Feld: `Trip.dayStageAssignmentSource`  
-Ableitung: `lib/trips/day-stage-assignment.ts` + dieselbe Semantik in `public.reise_anlegen()`
-
-| Wert | Bedeutung | Fallback | Wer setzt ihn |
+| stages | claimed | positions | result |
 | --- | --- | --- | --- |
-| `legacy_fallback` | historischer Bestand / Legacy-Transfer mit bereits gesetzten Tagespositionen | ja, proportional | Migration-Default für Altbestand; Server nur wenn Positionen schon da sind |
-| `unassigned` | mehrere bestätigte Ziele, keine Nutzerzuordnung | **nein** | Create bei >1 Stage; SQL wenn keine `stage_position` |
-| `single_destination` | genau ein Ziel | Tage dürfen der einen Stage gehören | Create bei 1 Stage; SQL bei `stage_count <= 1` |
-| `user` | reserviert für spätere explizite Bestätigung | nein | **in diesem Slice nicht setzbar** |
+| <= 1 | * | * | `single_destination` |
+| > 1 | `user` | * | `unassigned` |
+| > 1 | `unassigned` | * | `unassigned` |
+| > 1 | `single_destination` | * | `unassigned` |
+| > 1 | unbekannt | * | TS: `unassigned` / SQL: `22023` |
+| > 1 | `legacy_fallback` oder fehlend | ja | `legacy_fallback` |
+| > 1 | `legacy_fallback` oder fehlend | nein | `unassigned` |
 
-Fail-closed:
+`unassigned` übernimmt keine Client-`stage_position` und überspringt Datums-UPDATE plus proportionalen CTE.
 
-- Client-`user` wird ignoriert und nie persistiert.
-- Client-`legacy_fallback` ohne gesetzte Tagespositionen wird zu `unassigned`.
-- Client-`single_destination` bei mehreren Stages wird zu `unassigned`.
-- Unbekannter Source-Wert in der RPC wird abgelehnt.
-- `unassigned` übernimmt keine Client-`stage_position` und überspringt Datums-UPDATE plus proportionalen CTE.
+Der vorherige SQL-Bug (Client-`user` → null → bei Positionen `legacy_fallback`) ist geschlossen. TypeScript und SQL liefern für `user + positions` und `single_destination + multi-stage + positions` dieselbe fail-closed Semantik: `unassigned`.
 
-Keine neue Stage-Tabelle. Keine Schattenpersistenz.
+## 3. Direkte RPC-Trust-Evidence
 
-## 3. Warum Altbestand kompatibel bleibt
+`public.reise_anlegen(jsonb)` bleibt `SECURITY INVOKER` mit `EXECUTE` für `authenticated`. Ein angemeldeter Client kann die RPC direkt aufrufen. Die TypeScript-Server-Action ist **keine** Trust-Grenze. Die Korrektur sitzt in der SQL-Funktion selbst.
 
-Bestehende Rows erhalten per Default `legacy_fallback`.  
-Guest-JSON ohne das Feld liest `legacy_fallback`.  
-`tageEtappenZuordnen()` wendet den proportionalen Fallback **nur** bei `legacy_fallback` (und Single-Destination bei genau einer Stage) an.  
-Ein globales Abschalten des Fallbacks wurde nicht umgesetzt.
+## 4. Caller-Audit `reise_anlegen()`
 
-## 4. Guest / Account-Parität
+Nur ein RPC-Aufruf: `lib/trips/anlegen.ts` → `supabase.rpc('reise_anlegen')`.
 
-| Pfad | Verhalten |
+| Pfad | Einstieg | Nutzlast | Semantik vor #87 | Semantik nach #87 / nach Korrektur | Bewertung |
+| --- | --- | --- | --- | --- | --- |
+| A. `/planen` Account Create | `lib/trips/aktionen.ts` | `createZieleGraph` setzt `unassigned` / `single_destination`; Multi-Ziel ohne `stage_position` | proportionale 2/2/2-Erfindung | `unassigned`, keine Erfindung | korrekt |
+| B. Guest Create | `gastspeicher.ts` | dieselbe Graph-Ableitung | Load-Fallback erfand Zuordnung | `unassigned` bleibt unassigned | korrekt |
+| C. Guest→Account neuer Multi-Ziel-Trip | `alsNutzlast` → `gastreiseUebernehmen` | Source `unassigned`, Positionen null | Erfindung konnte mitwandern | bleibt unassigned | korrekt |
+| D. Guest→Account Altbestand | `alsNutzlast` | fehlendes Feld oder `legacy_fallback` plus vorhandene `stageId` | Positionen + proportionaler SQL-CTE | `legacy_fallback`, Positionen bleiben | Altbestand erhalten; siehe Gate |
+| E. Accepted Reisevorschlag | `lib/reisevorschlag/aktionen.ts` → `vorschlagAlsNutzlast` | **keine** Source, **mit** `stage_position` je Tag, Stage-Daten inkl. An/Abreise | Positionen wurden geschrieben, CTE füllte Rest | SQL leitet `legacy_fallback` ab | **falsche Provenance** – Product-Gate |
+
+## 5. Accepted Reisevorschlag – Analyse
+
+**Vor PR #87:** `vorschlagAlsNutzlast()` schrieb Stage-Daten und `stage_position` je Tag. `reise_anlegen()` persistierte diese Positionen und verteilte Resttage proportional. Es gab keine Provenance-Spalte. Die Zuordnung war faktisch Hard Truth nach „Übernehmen“, ohne als Nutzer-Aufenthalt gekennzeichnet zu sein.
+
+**Durch PR #87:** Dieselbe Nutzlast ohne Source plus vorhandene Positionen wird als `legacy_fallback` klassifiziert. Funktional bleiben die Tageszuordnungen. Die Provenance ist falsch: ein übernommener Vorschlag ist kein historischer Legacy-Bestand.
+
+**Korrekte Provenance:** näher an späterem `user` (explizite Bestätigung) als an `legacy_fallback` oder `unassigned`. `unassigned` würde die bestehenden Tageszuordnungen zerstören. `single_destination` gilt nicht bei mehreren Etappen.
+
+**Genügen die vier genehmigten Werte?** Nein, nicht ohne eine neue Produktentscheidung:
+
+- `user` allgemein zu aktivieren ist in diesem Slice verboten;
+- ein fünfter Wert / Proposal-Provenance wäre eine neue Semantik;
+- Secret/HMAC/Service-Role als Unterscheidung ist verboten.
+
+**Gate:** Product Owner / Technical Lead müssen entscheiden, ob akzeptierte Vorschläge später `user` werden dürfen oder eine eigene, genehmigte Semantik brauchen. Dieser Slice ändert den Vorschlagspfad nicht still.
+
+## 6. Legacy-Provenance-Evidence
+
+Unterscheidung:
+
+| Fall | Verhalten jetzt |
 | --- | --- |
-| Guest-Create | `createZieleGraph` setzt `unassigned` bzw. `single_destination`; Tage bei Multi-Ziel `stageId = null` |
-| Guest-Load | `mitZuordnung` erfindet für `unassigned` keine Zuordnung |
-| Account-Create | dieselbe Ableitung; SQL persistiert Source und überspringt den CTE |
-| Account-Load | `reiseAus` liest die Spalte; fehlende Spalte (Production) gilt als `legacy_fallback` |
-| Guest→Account | `alsNutzlast` sendet Source + `stage_position: null`; SQL leitet erneut fail-closed ab |
+| A. bereits persistierte historische DB-Reise | Default/`legacy_fallback` bleibt. Fixture-Reise in `db:sicherheit` bestätigt das. |
+| B. alte Guest/localStorage-Reise | Lesen ohne Feld → `legacy_fallback`; Load darf proportional zuordnen; Transfer sendet Claim plus Positionen. |
+| C. neuer direkter RPC-Client | Kann `legacy_fallback` + `stage_position` senden **oder** das Feld weglassen und Positionen senden und `legacy_fallback` minten. |
+| D. neuer `/planen` Create | sendet abgeleitete Source; Multi-Ziel ohne Positionen bleibt `unassigned`. |
+| E. accepted Reisevorschlag | mintet `legacy_fallback` über fehlende Source + Positionen. |
 
-Pflichtfall Paris → Rom → Paris, 12.–17. September:
+Die frühere P3-Aussage „localStorage-Tampering ist harmlos; Server lehnt Claim ab“ ist **falsch** für den direkten RPC-Weg. Ohne Secret sind B und C nicht unterscheidbar. Keine HMAC-/Service-Role-Improvisation.
 
-- 3 Stages in Eingabereihenfolge, nicht dedupliziert
-- 6 Tage
-- alle 6 Tage bleiben unassigned
-- Timeline zeigt Ziele ohne Aufenthalt und die 6 Tage unter „Noch keinem Ziel zugeordnet“
-- keine 2/2/2-Erfindung
+## 7. Migration / Production
 
-## 5. Migration / Development-Evidence
+Neue additive Function-Replace: `supabase/migrations/20260826230000_trip_day_stage_assignment_source_fail_closed.sql`
 
-Artefakt: `supabase/migrations/20260826220000_trip_day_stage_assignment_source.sql`
+**Production-Migration wird NICHT angewendet.** Die Spalte existiert dort weiterhin nicht. Kein `--produktion`. Keine Production-RLS-/Ownership-Änderung.
 
-- ADD COLUMN + CHECK, Default `legacy_fallback`
-- `CREATE OR REPLACE public.reise_anlegen(jsonb)`
-- keine neue Tabelle, keine Policy-, Grant-, Auth- oder Trigger-Änderung ausser dem bestehenden Function-Replace
-
-**Production-Migration wurde NICHT angewendet.**  
-Production-RLS/Ownership wurden nicht geändert.  
-Kein Production-SQL, kein `--produktion`.
-
-Development:
-
-- `npm run db:anwenden -- --probe` → `Ziel: entwicklung`
-- `db:anwenden` ohne Filter wurde **nicht** ausgeführt, weil `20260826090000_admin_aal2_data_plane.sql` ebenfalls offen war (AAL out of scope)
-- Nur `20260826220000_trip_day_stage_assignment_source.sql` gezielt auf Development angewendet
-- Spalte existiert: `text not null default 'legacy_fallback'` + CHECK
-- Bestehender Development-Trip: 1 Row, Source `legacy_fallback`
-- `reise_anlegen` auf Development: überspringt Unassigned, CTE nur bei `legacy_fallback`, ignoriert Client-`user`
-- `db:typen` wurde gegen Development ausgeführt; der regenerierte Diff enthielt fremde Traveller-/Foundation-E-Umsortierungen und wurde **nicht** committed
-- `db:rechte` PASS, `db:rls` PASS
-- `db:sicherheit` 192/223 — restliche Failures sind vorbestehende Admin/AAL-Capability-Proofs der älteren, hier nicht angewendeten AAL2-Datei; Trip-Ownership-Proofs sind PASS. Keine TW-6-B-Regression.
-
-Rollback-Risiko: Function-Replace; Spalte ist additiv mit Default. Rückbau wäre ein späteres Artefakt, das die Spalte nicht droppt, solange Runtime sie liest.
-
-Preview gegen Production-Supabase nutzt weiter die alte `reise_anlegen`, bis Production separat freigegeben wird. Der Guest-Pfad ist localStorage und bereits korrekt. Account-Wahrheit auf Development ist die angewendete Function plus TS/SQL-Contract, nicht ein authentifizierter Paris-Create gegen Production.
-
-## 6. Changed Files
-
-Gegen `origin/main` (`1d558ef5`), Merge-Base `9e1868ea`:
-
-Runtime / Contract
-
-- `lib/trips/day-stage-assignment.ts`
-- `lib/trips/day-stage-assignment.test.ts`
-- `lib/trips/day-stage-truth-contract.test.ts`
-- `lib/trips/create-stages.ts`, `lib/trips/create-stages.test.ts`
-- `lib/trips/zuordnung.ts`, `lib/trips/zuordnung.test.ts`
-- `lib/trips/schema.ts`, `lib/trips/schema.test.ts`
-- `lib/trips/gastspeicher.ts`, `lib/trips/gastspeicher.test.ts`
-- `lib/trips/aktionen.ts`
-- `lib/trips/abbildung.ts`, `lib/trips/abbildung.test.ts`
-- `lib/trips/timeline.ts`, `lib/trips/timeline.test.ts`
-- `lib/trips/create-entry.test.ts`
-- `lib/places/aktionen.ts`, `lib/places/reiseziele.ts`, `lib/places/reiseziele.test.ts`
-- `lib/formular/feldfehler.ts`, `lib/formular/feldfehler.test.ts`
-- `types/trips.ts`, `types/supabase.ts`
-- `components/trips/TripPlanner.tsx`
-- `components/trips/TripWorkspacePlan.tsx`
-
-SQL
-
-- `supabase/migrations/20260826220000_trip_day_stage_assignment_source.sql`
-
-Dokumentation
-
-- `docs/TRIP_WORKSPACE_TW6_DAY_STAGE_TRUTH_CONTRACT_TASK.md` (Task, unverändert seit TL)
-- `docs/TRIP_WORKSPACE_TW6_REST_PROGRESSIVE_STAGES_TASK.md`
-- `docs/TRIP_WORKSPACE_TW6_REST_PROGRESSIVE_STAGES_STATUS.md`
-- `DECISIONS.md` ADR-0172
-- `ARCHITECTURE.md` (Verweis auf ADR-0172)
-
-Nicht geändert: Auth/MFA/AAL, Traveller, Route/Transit, Provider/Commercial, Payments, D0/D1/G0/G1, `ACTIVE_WORK_STATUS.md`, Production.
-
-## 7. P0 / P1 / P2 / P3
-
-| ID | Severity | Finding | Status |
-| --- | --- | --- | --- |
-| — | P0 | keine | — |
-| TW6-B-P1-01 | P1 | Automatische 2/2/2-Day→Stage-Erfindung | **Runtime geschlossen, awaiting TL review.** Nicht mergefähig, bis der unabhängige Finalreview PASS sagt. |
-| TW6-B-P2-02 | P2 | Guest-Load schrieb Erfindung in Guest→Account | Folge von P1; mit `unassigned` geschlossen |
-| TW6-B-P3-01 | P3 | Kein Reorder | unverändert out of scope |
-| TW6-B-P3-02 | P3 | `Reiseidee` erzeugt ein Ziel | unverändert out of scope |
-| TW6-B-P3-03 | P3 | localStorage kann `legacy_fallback` nachträglich setzen | Gerät-eigenes Tampering; Server lehnt Claim ohne Positionen ab |
+Development: gezieltes Anwenden nur dieser Datei, falls `20260826090000` AAL2 weiter offen ist.
 
 ## 8. Tests / Gates / CI / Vercel
 
-Lokale Gates auf Exact Head `e3300f75`:
+Nach dem Korrektur-Push auszufüllen. Pflichtfälle:
 
-| Gate | Ergebnis |
-| --- | --- |
-| `npm test` | **2243/2243 PASS** |
-| `npm run typecheck` | PASS |
-| `npm run lint` | PASS, 0 warnings |
-| `npm run check:dead` | PASS (1 begründetes CookieConsent) |
-| `npm run check:exports` | PASS nach Entfernen des ungenutzten Exports |
-| `npm run check:deps` | PASS |
-| `npm run check:api-schutz` | PASS, 12 Admin-Routen |
-| `npm run check:schema-bezug` | PASS |
-| `npm run check:setup:ci` | PASS, 1 Warning: keine `.env` |
-| `npm run build` | PASS, Next.js 14.2.32 Production-Build |
+- A `user` + Positionen → nicht `legacy_fallback` (TS + Development-RPC)
+- B `single_destination` + Multi-Stage + Positionen → `unassigned` in TS und SQL
+- C `unassigned` + manipulierte Positionen → unassigned, keine Übernahme, kein CTE
+- D direkter Client `legacy_fallback` + Positionen → **mintet noch** `legacy_fallback` (dokumentiert, nicht geschlossen)
+- E historische Fixture bleibt `legacy_fallback`
+- F Paris → Rom → Paris 12.–17. September: 3 Stages, 6 Tage, unassigned, keine 2/2/2
+- G Single-Destination regressionsfrei
+- H Guest→Account unassigned bleibt truth-safe
+- I accepted Vorschlag → weiterhin `legacy_fallback`-Provenance (Product-Gate, nicht still „repariert“)
 
-Pflichttests: Paris → Rom → Paris 12.–17. September, Single-Destination, Legacy-Fallback, fail-closed `user`/`legacy_fallback`, Timeline, Guest-Load, Guest→Account, Guest-One-Trip und `clientRef` liegen in `lib/trips/day-stage-truth-contract.test.ts` plus bestehender Guest-/Create-Suite.
+## 9. P0 / P1 / P2 / P3
 
-CI-Historie dieses Slices:
+| ID | Severity | Finding | Status |
+| --- | --- | --- | --- |
+| TW6-B-P1-01 | P1 | Automatische 2/2/2-Erfindung im neuen Multi-Ziel-Create | Runtime geschlossen |
+| TW6-B-P1-04 | P1 | SQL hat `user`+Positionen als `legacy_fallback` persistiert | **geschlossen** (identische Ableitung) |
+| TW6-B-P1-05 | P1 | Direkter Client kann `legacy_fallback` plus Positionen minten | **offen – Product-Gate** |
+| TW6-B-P1-06 | P1 | Accepted Reisevorschlag bekommt falsche `legacy_fallback`-Provenance | **offen – Product-Gate** |
+| TW6-B-P2-02 | P2 | Guest-Load schrieb Erfindung in Guest→Account | geschlossen für neue unassigned Reisen |
+| — | P0 | keine | — |
+| TW6-B-P3-01 / P3-02 | P3 | Reorder / Reiseidee ein Ziel | out of scope |
+| TW6-B-P3-03 | P3 | localStorage-Tamper | **hochgestuft nach P1-05**; direkter RPC ist die ehrliche Grenze |
 
-- `7b1b6d43` Actions `33009930044` **FAIL** (`check:exports` wegen ungenutztem Export `istDayStageAssignmentSource`)
-- Follow-up `e3300f75` macht den Helper modul-privat
-- Exact-Head GitHub Actions **[33010327104](https://github.com/Jetnity/jetnity/actions/runs/33010327104)** **SUCCESS** auf `e3300f75` (Typecheck/Lint/Build + Auth)
-- Exact-Head Vercel `8jsrRGp4ZCGwaNAtYR5epABRuiP1` **SUCCESS** / Preview („Deployment has completed“)
+## 10. Offene Restpunkte / Product-Gate
 
-**Production-Migration wurde NICHT angewendet.** Kein `--produktion`, kein Production-SQL, keine Production-RLS-Änderung.
+Technical Lead / Product Owner müssen entscheiden:
 
-## 9. Offene Restpunkte
+1. Darf ein akzeptierter Reisevorschlag später `user` als Source tragen, oder braucht er eine neu genehmigte Semantik?
+2. Wie soll ein untrusted direkter RPC-Client an `legacy_fallback` gehindert werden, ohne Guest→Account-Altbestand zu zerstören – ohne Secret/HMAC?
 
-- Unabhängiger Technical-Lead-Finalreview
-- Branch liegt 2 Commits hinter `origin/main` (nur Agent-Rotation-Docs; kein Contract-Konflikt; kein Rebase in diesem Slice)
-- Production-Migration **nicht** in diesem Slice
-- Preview-Account gegen Production-Supabase sieht weiter die alte RPC, bis Production separat freigegeben wird
-- Direction A (explizite Aufenthalte) ist ein eigener späterer Slice
+Bis dahin: **STOPP** für diese zwei Fragen. Kein fünfter Wert. Keine Direction-A-UX. Keine Production-Migration.
 
-## 10. STOP
+## 11. STOP
 
-**IMPLEMENTIERT / NICHT READY / NICHT MERGEFÄHIG.**
+**NICHT READY / NICHT MERGEFÄHIG.**
 
 Kein Ready. Kein Merge. Kein Folgeslice. Keine Production-Migration. Keine Aufenthalts-UX.

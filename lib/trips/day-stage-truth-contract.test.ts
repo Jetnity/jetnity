@@ -165,20 +165,12 @@ describe('TW6 Day→Stage Truth Contract – Paris → Rom → Paris / 12.–17.
     assert.equal(zugeordnet.days[3]?.stageId, 's2')
   })
 
-  test('manipulierter user- oder legacy-Claim erzeugt keine Server-Wahrheit', () => {
+  test('manipulierter user-Claim mit Positionen wird unassigned und verwirft Positionen', () => {
     assert.equal(
       dayStageAssignmentSourceAbleiten({
         stageCount: 3,
         claimed: 'user',
-        daysHaveStagePosition: false,
-      }),
-      'unassigned',
-    )
-    assert.equal(
-      dayStageAssignmentSourceAbleiten({
-        stageCount: 3,
-        claimed: 'legacy_fallback',
-        daysHaveStagePosition: false,
+        daysHaveStagePosition: true,
       }),
       'unassigned',
     )
@@ -186,6 +178,43 @@ describe('TW6 Day→Stage Truth Contract – Paris → Rom → Paris / 12.–17.
       reise({
         dayStageAssignmentSource: 'user',
         days: [1, 2, 3, 4, 5, 6].map((nr) => tag(nr, nr <= 2 ? 'stage-1' : null)),
+      }),
+    )
+    assert.equal(gefaelscht.day_stage_assignment_source, 'unassigned')
+    assert.equal(gefaelscht.days.every((eintrag) => eintrag.stage_position == null), true)
+  })
+
+  test('direkter legacy_fallback-Claim plus Positionen mintet noch historische Provenance', () => {
+    assert.equal(
+      dayStageAssignmentSourceAbleiten({
+        stageCount: 3,
+        claimed: 'legacy_fallback',
+        daysHaveStagePosition: true,
+      }),
+      'legacy_fallback',
+    )
+    assert.equal(
+      dayStageAssignmentSourceAbleiten({
+        stageCount: 3,
+        daysHaveStagePosition: true,
+      }),
+      'legacy_fallback',
+    )
+  })
+
+  test('single_destination plus Multi-Stage plus Positionen ist in TS und SQL unassigned', () => {
+    assert.equal(
+      dayStageAssignmentSourceAbleiten({
+        stageCount: 3,
+        claimed: 'single_destination',
+        daysHaveStagePosition: true,
+      }),
+      'unassigned',
+    )
+    const gefaelscht = alsNutzlast(
+      reise({
+        dayStageAssignmentSource: 'single_destination',
+        days: [1, 2, 3, 4, 5, 6].map((nr) => tag(nr, 'stage-1')),
       }),
     )
     assert.equal(gefaelscht.day_stage_assignment_source, 'unassigned')

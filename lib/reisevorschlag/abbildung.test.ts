@@ -14,6 +14,7 @@
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { dayStageAssignmentSourceAbleiten } from '@/lib/trips/day-stage-assignment'
 import {
   reiseende,
   vorschlagAlsNutzlast,
@@ -170,6 +171,21 @@ describe('Der Vorschlag als Nutzlast für public.reise_anlegen()', () => {
     assert.equal(punkt?.booking_status, 'unconfirmed')
     assert.equal(punkt?.booking_confirmed_at, null)
     assert.equal('booking_source' in (punkt ?? {}), false)
+  })
+
+  test('ein übernommener Multi-Ziel-Vorschlag trägt Positionen ohne Assignment-Source', () => {
+    const vorschlag = vorschlagAlsNutzlast(alsVorschlag(VORSCHLAG_THAILAND), 'trip-vorschlag')
+    assert.equal(vorschlag.day_stage_assignment_source, undefined)
+    assert.equal(vorschlag.stages.length, 2)
+    assert.equal(vorschlag.days.every((tag) => tag.stage_position != null), true)
+    assert.equal(
+      dayStageAssignmentSourceAbleiten({
+        stageCount: vorschlag.stages.length,
+        claimed: vorschlag.day_stage_assignment_source,
+        daysHaveStagePosition: vorschlag.days.some((tag) => tag.stage_position != null),
+      }),
+      'legacy_fallback',
+    )
   })
 
   test('das Budgetziel steht an der Reise, nicht an einem Planpunkt', () => {

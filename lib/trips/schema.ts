@@ -532,8 +532,12 @@ export const reiseNutzlastSchema = z.object({
   /**
    * Herkunft der Day→Stage-Zuordnung.
    *
-   * Fehlt beim Altbestand. `public.reise_anlegen()` leitet den Wert neu ab
-   * und übernimmt `user` oder ein erzwungenes `legacy_fallback` nicht vom Client.
+   * Fehlt beim Altbestand. `public.reise_anlegen()` leitet den Wert nach
+   * derselben Tabelle wie `dayStageAssignmentSourceAbleiten()` ab. `user`
+   * und `single_destination` bei mehreren Stages werden unassigned.
+   * Ein fehlender oder expliziter `legacy_fallback`-Claim plus vorhandene
+   * `stage_position` bleibt `legacy_fallback` – das ist das offene
+   * Legacy-Provenance-Gate, kein vertrauenswürdiger Client-Beweis.
    */
   day_stage_assignment_source: z.enum(DAY_STAGE_ASSIGNMENT_SOURCES).nullable().optional(),
   stages: z.array(nutzlastEtappeSchema).max(GRENZEN.etappenJeReise),

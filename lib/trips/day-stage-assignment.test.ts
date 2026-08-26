@@ -70,6 +70,40 @@ describe('TW6 Day→Stage Assignment Source', () => {
     )
   })
 
+  test('user plus vorhandene Positionen wird nicht zu legacy_fallback', () => {
+    assert.equal(dayStageAssignmentSourceIstReserviert('user'), true)
+    assert.equal(
+      dayStageAssignmentSourceAbleiten({
+        stageCount: 3,
+        claimed: 'user',
+        daysHaveStagePosition: true,
+      }),
+      'unassigned',
+    )
+  })
+
+  test('single_destination plus mehrere Stages bleibt unassigned, auch mit Positionen', () => {
+    assert.equal(
+      dayStageAssignmentSourceAbleiten({
+        stageCount: 3,
+        claimed: 'single_destination',
+        daysHaveStagePosition: true,
+      }),
+      'unassigned',
+    )
+  })
+
+  test('unbekannter Claim mintet keine Legacy-Provenance', () => {
+    assert.equal(
+      dayStageAssignmentSourceAbleiten({
+        stageCount: 3,
+        claimed: 'erfunden',
+        daysHaveStagePosition: true,
+      }),
+      'unassigned',
+    )
+  })
+
   test('Legacy-Transfer mit bereits gesetzten Positionen bleibt legacy_fallback', () => {
     assert.equal(
       dayStageAssignmentSourceAbleiten({
@@ -85,18 +119,6 @@ describe('TW6 Day→Stage Assignment Source', () => {
         daysHaveStagePosition: true,
       }),
       'legacy_fallback',
-    )
-  })
-
-  test('Claim user wird nie persistiert', () => {
-    assert.equal(dayStageAssignmentSourceIstReserviert('user'), true)
-    assert.equal(
-      dayStageAssignmentSourceAbleiten({
-        stageCount: 3,
-        claimed: 'user',
-        daysHaveStagePosition: true,
-      }),
-      'unassigned',
     )
   })
 

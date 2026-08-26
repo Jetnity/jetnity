@@ -4240,7 +4240,14 @@ Create-Server und `public.reise_anlegen()` leiten den Wert aus dem fachlichen Gr
 
 **Begründung:** Nur ein persistenter, serverseitig abgeleiteter Source/Mode-Vertrag trennt Altbestand vom neuen ehrlichen Unassigned-Zustand, ohne eine proportionale Erfindung als Nutzerwahrheit zu verkaufen.
 
-**Konsequenzen:** Migration `20260826220000_trip_day_stage_assignment_source.sql` darf nur Development/Test treffen. Production bleibt unangetastet, bis eine eigene Product-Owner-Freigabe vorliegt. Keine Aufenthalts-UX, kein TW-7/TW-8/TW-9, kein automatischer Wechsel `unassigned` → `user`.
+**Konsequenzen:** Migration `20260826220000_trip_day_stage_assignment_source.sql` und der fail-closed Nachtrag `20260826230000_trip_day_stage_assignment_source_fail_closed.sql` dürfen nur Development/Test treffen. Production bleibt unangetastet, bis eine eigene Product-Owner-Freigabe vorliegt. Keine Aufenthalts-UX, kein TW-7/TW-8/TW-9, kein automatischer Wechsel `unassigned` → `user`.
+
+**Nachtrag, 26. August 2026 – identische TS-/SQL-Ableitung und offene Provenance-Gates.** Der unabhängige Technical-Lead-Finalreview hat zwei Blocker gefunden:
+
+1. *Ableitung driftete.* SQL hat Client-`user` auf null gesetzt und bei vorhandener `stage_position` `legacy_fallback` persistiert. TypeScript lieferte `unassigned`. `public.reise_anlegen()` ist `SECURITY INVOKER` mit EXECUTE für `authenticated`; die TypeScript-Server-Action ist keine Trust-Grenze. Die kanonische Tabelle sitzt jetzt in `dayStageAssignmentSourceAbleiten()` und im Function-Replace `20260826230000`. `user`, `unassigned` und `single_destination` bei mehreren Stages werden in beiden Sprachen `unassigned` und übernehmen keine Client-Position.
+2. *`legacy_fallback` ist historische Provenance, kein Client-Claim.* Ein frischer direkter Client kann weiterhin `legacy_fallback` plus `stage_position` senden – oder das Feld weglassen und Positionen mitschicken – und dieselbe Provenance erzeugen. Guest→Account alter localStorage-Reisen braucht genau diesen Weg, weil ohne Secret altes JSON und ein manipulierter Client nicht unterscheidbar sind. Ein übernommener Reisevorschlag (`vorschlagAlsNutzlast`) sendet keine Source, aber `stage_position` je Tag; SQL klassifiziert ihn deshalb als `legacy_fallback`. Das ist fachlich falsch und mit den vier genehmigten Semantiken nicht korrekt lösbar, ohne `user` allgemein zu aktivieren, einen fünften Wert zu erfinden oder die bestehenden Tageszuordnungen des Vorschlags zu zerstören.
+
+Diese zwei Provenance-Punkte sind ein **Product-/Shared-Contract-Gate**. Kein fünfter Source-Wert. Keine Secret-/HMAC-Improvisation. Direction A bleibt ein eigener Slice.
 
 ---
 

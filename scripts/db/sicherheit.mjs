@@ -2226,6 +2226,96 @@ function reisenachweise() {
                 and metadata #>> '{routeItinerary,legs,0,segments,1,surfaceFromAirportCode}' is null`,
       erwartung: 'erlaubt',
     },
+    {
+      name: 'reise_anlegen: user plus Positionen wird nicht legacy_fallback',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        'tw6b-user-pos',
+        `,"day_stage_assignment_source":"user","stages":[{"position":1,"name":"Paris"},{"position":2,"name":"Rom"},{"position":3,"name":"Paris"}],"days":[{"day_index":1,"stage_position":1},{"day_index":2,"stage_position":1},{"day_index":3,"stage_position":2},{"day_index":4,"stage_position":2},{"day_index":5,"stage_position":3},{"day_index":6,"stage_position":3}]`,
+      )});
+            select 1 from public.trips t
+             where t.client_ref = 'tw6b-user-pos'
+               and t.day_stage_assignment_source = 'unassigned'
+               and not exists (
+                 select 1 from public.trip_days d
+                  where d.trip_id = t.id and d.stage_id is not null
+               )`,
+      erwartung: 'erlaubt',
+      grund: 'Reserviertes user darf auch mit stage_position keine Legacy-Provenance minten.',
+    },
+    {
+      name: 'reise_anlegen: single_destination plus Multi-Stage plus Positionen ist unassigned',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        'tw6b-sd-pos',
+        `,"day_stage_assignment_source":"single_destination","stages":[{"position":1,"name":"Paris"},{"position":2,"name":"Rom"},{"position":3,"name":"Paris"}],"days":[{"day_index":1,"stage_position":1},{"day_index":2,"stage_position":2},{"day_index":3,"stage_position":3}]`,
+      )});
+            select 1 from public.trips t
+             where t.client_ref = 'tw6b-sd-pos'
+               and t.day_stage_assignment_source = 'unassigned'
+               and not exists (
+                 select 1 from public.trip_days d
+                  where d.trip_id = t.id and d.stage_id is not null
+               )`,
+      erwartung: 'erlaubt',
+      grund: 'Falscher single_destination-Claim bei mehreren Stages muss in SQL dieselbe Semantik haben wie TypeScript.',
+    },
+    {
+      name: 'reise_anlegen: unassigned übernimmt keine manipulierte stage_position',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        'tw6b-unassigned-pos',
+        `,"day_stage_assignment_source":"unassigned","start_date":"2026-09-12","end_date":"2026-09-17","stages":[{"position":1,"name":"Paris"},{"position":2,"name":"Rom"},{"position":3,"name":"Paris"}],"days":[{"day_index":1,"day_date":"2026-09-12","stage_position":1},{"day_index":2,"day_date":"2026-09-13","stage_position":1},{"day_index":3,"day_date":"2026-09-14","stage_position":2},{"day_index":4,"day_date":"2026-09-15","stage_position":2},{"day_index":5,"day_date":"2026-09-16","stage_position":3},{"day_index":6,"day_date":"2026-09-17","stage_position":3}]`,
+      )});
+            select 1 from public.trips t
+             where t.client_ref = 'tw6b-unassigned-pos'
+               and t.day_stage_assignment_source = 'unassigned'
+               and (select count(*) from public.trip_days d where d.trip_id = t.id) = 6
+               and not exists (
+                 select 1 from public.trip_days d
+                  where d.trip_id = t.id and d.stage_id is not null
+               )`,
+      erwartung: 'erlaubt',
+      grund: 'Paris→Rom→Paris darf keine 2/2/2-Erfindung persistieren.',
+    },
+    {
+      name: 'reise_anlegen lehnt unbekannten Assignment-Source ab',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        'tw6b-unknown',
+        `,"day_stage_assignment_source":"erfunden","stages":[{"position":1,"name":"Paris"},{"position":2,"name":"Rom"}]`,
+      )})`,
+      erwartung: 'abgelehnt',
+      grund: 'Unbekannte Source-Werte sind fail-closed, nicht Legacy.',
+    },
+    {
+      name: 'reise_anlegen: Single-Destination bleibt der einen Stage zugeordnet',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        'tw6b-single',
+        `,"day_stage_assignment_source":"single_destination","start_date":"2026-09-12","end_date":"2026-09-14","stages":[{"position":1,"name":"Paris","arrival_date":"2026-09-12","departure_date":"2026-09-14"}],"days":[{"day_index":1,"day_date":"2026-09-12"},{"day_index":2,"day_date":"2026-09-13"},{"day_index":3,"day_date":"2026-09-14"}]`,
+      )});
+            select 1 from public.trips t
+             where t.client_ref = 'tw6b-single'
+               and t.day_stage_assignment_source = 'single_destination'
+               and (select count(*) from public.trip_days d where d.trip_id = t.id and d.stage_id is not null) = 3`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'bestehende Fixture-Reise behält legacy_fallback',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select 1 from public.trips
+              where id = '${REISE}'
+                and day_stage_assignment_source = 'legacy_fallback'`,
+      erwartung: 'erlaubt',
+      grund: 'Altbestand darf durch die neue Ableitung nicht umgedeutet werden.',
+    },
   ]
 }
 
