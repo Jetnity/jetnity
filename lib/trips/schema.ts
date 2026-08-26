@@ -279,7 +279,8 @@ export const reiseSchema = z
     travelWish: optionalerText(GRENZEN.reisewunsch).nullable().default(null),
     dayStageAssignmentMode: z
       .enum([...DAY_STAGE_ASSIGNMENT_MODES, 'user'])
-      .optional(),
+      .optional()
+      .transform((wert) => (wert === 'user' ? undefined : wert)),
     revision: z.number().int().min(1).max(1_000_000_000).default(1),
     lastMutationId: z.string().min(1).max(64).nullable().default(null),
     stages: z.array(etappeSchema).max(GRENZEN.etappenJeReise).default([]),
@@ -403,22 +404,19 @@ function tageZwischen(von: string, bis: string): number {
  * unbrauchbarer Eintrag darf die Seite nicht abbrechen.
  */
 export function reiseLesen(wert: unknown): Trip | null {
-  const roh =
-    wert && typeof wert === 'object'
-      ? (wert as Record<string, unknown>)
-      : wert
+  const roh = wert && typeof wert === 'object' ? (wert as Record<string, unknown>) : null
   const mitAlias =
-    roh && typeof roh === 'object' && roh.dayStageAssignmentMode == null && 'dayStageAssignmentSource' in roh
+    roh && roh.dayStageAssignmentMode == null && 'dayStageAssignmentSource' in roh
       ? { ...roh, dayStageAssignmentMode: roh.dayStageAssignmentSource }
-      : roh
+      : roh ?? wert
   const ergebnis = reiseSchema.safeParse(mitAlias)
   if (!ergebnis.success) return null
-  const reise = ergebnis.data
+  const { dayStageAssignmentMode: _claimed, ...rest } = ergebnis.data
   return {
-    ...reise,
+    ...rest,
     dayStageAssignmentMode: dayStageAssignmentModeFuerGast({
-      stageCount: reise.stages.length,
-      positions: stagePositionenAusReise(reise),
+      stageCount: rest.stages.length,
+      positions: stagePositionenAusReise(rest),
     }),
   }
 }

@@ -4249,6 +4249,12 @@ Create-Server und `public.reise_anlegen()` leiten den Wert aus dem fachlichen Gr
 
 Diese zwei Provenance-Punkte sind ein **Product-/Shared-Contract-Gate**. Kein fünfter Source-Wert. Keine Secret-/HMAC-Improvisation. Direction A bleibt ein eigener Slice.
 
+**Nachtrag, 26. August 2026 – Product-Owner-Freigabe Assignment Mode.** Der Product Owner hat den Technical-Lead-Vorschlag ausdrücklich freigegeben: der dauerhafte Vertrag ist ein **Assignment Mode**, nicht Herkunft. Die Development-Spalte heisst `day_stage_assignment_mode`. Die vier Modes sind `legacy_fallback` (nur bereits persistierter DB-Bestand), `unassigned`, `single_destination` und `explicit`. `explicit` bedeutet nur: konkrete gültige Day→Stage-Positionen wurden als Bestandteil der bestätigten Nutzlast übernommen. Es bedeutet nicht „manuell vom Nutzer editiert“. `user` ist kein persistierbarer Mode.
+
+`public.reise_anlegen()` leitet den Mode aus der validierten Nutzlast ab und mintet für neue Requests niemals `legacy_fallback`. Claimed `legacy_fallback` oder alter `user` plus gültige Positionen werden `explicit`; ohne Positionen `unassigned`. Unbekannte Claims und out-of-range Positionen sind fail-closed (`22023`). Accepted Reisevorschlag und Guest/localStorage mit Positionen sind `explicit`. Historische Development-Rows bleiben `legacy_fallback`; nur dort darf der proportionale Fallback weiterlaufen.
+
+Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Development. Production bleibt unangetastet. Kein fünfter Mode. Keine separate Provenance-Spalte in diesem Slice. Direction A bleibt eigener Slice. TW6-B-P1-05/P1-06 sind runtime-seitig geschlossen, sobald der unabhängige Technical-Lead-Finalreview PASS erteilt.
+
 ---
 
 ## Offene Widersprüche
