@@ -336,7 +336,7 @@ describe('Öffentliche Canonicals bleiben ohne Param-Varianten', () => {
     const planen = quelle('../../app/(public)/planen/page.tsx')
     assert.match(start, /kanonischeUrl\('\/'\)/)
     assert.match(start, /alternates:\s*\{\s*canonical:/)
-    assert.match(start, /oeffentlicherOrigin/)
+    assert.equal(start.includes('oeffentlicherOrigin'), false)
     assert.match(planen, /kanonischeUrl\('\/planen'\)/)
     assert.match(planen, /alternates:\s*\{\s*canonical:/)
     assert.equal(planen.includes('searchParams'), true)
@@ -347,14 +347,19 @@ describe('Öffentliche Canonicals bleiben ohne Param-Varianten', () => {
     assert.equal(kanonischeUrl('/planen', synthetischAllow), `${KANONISCHE_PUBLIC_ORIGIN}/planen`)
   })
 
-  test('Layouts und JSON-LD teilen dieselbe Origin', () => {
+  test('Layouts und JSON-LD teilen dieselbe öffentliche Produktdomain', () => {
     const root = quelle('../../app/layout.tsx')
     const pub = quelle('../../app/(public)/layout.tsx')
     const start = quelle('../../app/(public)/page.tsx')
-    assert.match(root, /oeffentlicherOrigin/)
-    assert.match(pub, /oeffentlicherOrigin/)
-    assert.match(start, /url: origin/)
+    assert.match(root, /htmlRobots\(\)/)
+    assert.match(root, /oeffentlicheMetadataOrigin/)
+    assert.match(pub, /htmlRobots\(\)/)
+    assert.match(pub, /oeffentlicheMetadataOrigin/)
+    assert.match(start, /url: kanonischeUrl\('\/'\)/)
+    assert.equal(root.includes('index: true'), false)
+    assert.equal(pub.includes('index: true'), false)
     assert.equal(start.includes('NEXT_PUBLIC_APP_URL ??'), false)
+    assert.equal(start.includes('oeffentlicherOrigin'), false)
   })
 
   test('.env.example dokumentiert den sicheren Default und setzt true nicht', () => {

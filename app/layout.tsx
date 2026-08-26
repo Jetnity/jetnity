@@ -3,34 +3,24 @@ import '../styles/globals.css'
 import type { Metadata, Viewport } from 'next'
 import { Toaster } from 'sonner'
 
-import { oeffentlicherOrigin } from '@/lib/seo/oeffentlicher-origin'
+import { htmlRobots, oeffentlicheMetadataOrigin } from '@/lib/seo/oeffentliche-metadata'
 
 export const runtime = 'nodejs' // gesamte App standardmäßig auf Node.js
 
-const { origin: OEFFENTLICHER_ORIGIN } = oeffentlicherOrigin()
+const OEFFENTLICHE_METADATA_ORIGIN = oeffentlicheMetadataOrigin()
 
 export const metadata: Metadata = {
-  metadataBase: new URL(OEFFENTLICHER_ORIGIN),
+  metadataBase: new URL(OEFFENTLICHE_METADATA_ORIGIN),
   applicationName: 'Jetnity',
   title: {
     template: '%s – Jetnity',
     default: 'Jetnity – Deine ganze Reise',
   },
   description: 'Plane, organisiere und erlebe deine Reise an einem Ort.',
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-      'max-video-preview': -1,
-    },
-  },
+  robots: htmlRobots(),
   openGraph: {
     type: 'website',
-    url: OEFFENTLICHER_ORIGIN,
+    url: OEFFENTLICHE_METADATA_ORIGIN,
     siteName: 'Jetnity',
     title: 'Jetnity – Deine ganze Reise',
     description: 'Plane, organisiere und erlebe deine Reise an einem Ort.',
