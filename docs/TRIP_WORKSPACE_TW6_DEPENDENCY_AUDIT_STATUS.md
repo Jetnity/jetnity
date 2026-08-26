@@ -45,10 +45,12 @@ Bestätigt:
 
 ## 4. Exact-Head-Gates
 
-Finaler Reconciliation-Head: `6fc5b74e408c2dc88ad9b8b9220005a2544cd9dd`.
+Finaler Reconciliation-Head vor diesem Status: `6fc5b74e408c2dc88ad9b8b9220005a2544cd9dd`.
 
 - GitHub Actions CI `32951901960`: SUCCESS.
 - Vercel Preview `dpl_C3Zs6xj7RzE2DiEmuf2UvvNJMA3w`: READY.
+
+Dieser Status-Commit `db5c7b704a4d66f4b063f80065e4a7bc40a69676` wurde anschließend ebenfalls Exact-Head gegatet: GitHub Actions CI `32952359530` SUCCESS und Vercel Preview `dpl_NNU6XFfSVtbQrw2PyrrT5jaAz3UR` READY. Diese Zeile ist historische Evidence; sie erzeugt bewusst keinen weiteren Status-Commit nach dem Gate.
 
 ## 5. Integration
 
