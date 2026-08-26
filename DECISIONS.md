@@ -4215,6 +4215,35 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 ---
 
+## ADR-0172 – Day→Stage Assignment Source als unterscheidbarer Trip-Vertrag
+
+**Datum:** 26. August 2026  
+**Status:** umgesetzt auf Draft-PR #87 / TW6-B Direction B; versioniertes Development-Migrationsartefakt. **Production nicht angewendet.** Kein Ready. Kein Merge.
+
+**Entscheidung:** Die Herkunft der Day→Stage-Zuordnung ist ein dauerhafter, unterscheidbarer Vertrag auf `public.trips.day_stage_assignment_source` mit genau vier Semantiken:
+
+- `legacy_fallback` – historischer Bestand; der bestehende proportionale Fallback bleibt erlaubt;
+- `unassigned` – mehrere bestätigte Ziele ohne Nutzerzuordnung; kein Fallback, keine erfundene Aufenthaltslänge;
+- `single_destination` – genau ein Ziel; alle Tage dürfen der einzigen Stage gehören;
+- `user` – reserviert für später explizit bestätigte Nutzerzuordnung. In diesem Slice nicht setzbar.
+
+Create-Server und `public.reise_anlegen()` leiten den Wert aus dem fachlichen Graphen ab. Ein Client darf `user` oder `legacy_fallback` nicht frei setzen, um Serverregeln zu umgehen. Guest und Account teilen dieselbe fachliche Wahrheit. Guest→Account überträgt Source plus leere Day→Stage-Zuordnung verlustfrei. Die Timeline darf unassigned Tage nicht als Aufenthalt unter Paris/Rom gruppieren.
+
+**Kontext:** PR #87 hat mehrere bestätigte Ziele korrekt auf `trip_stages` abgebildet, aber `reise_anlegen()` und `tageEtappenZuordnen()` haben daraus eine sichtbare 2/2/2-Zuordnung gemacht. Product Owner hat Direction B als Fundament freigegeben: Multi-Ziel-Reisen dürfen echte Stages haben, während Tage ehrlich noch keinem Ziel zugeordnet sind. Direction A (explizite Aufenthalte) folgt später.
+
+**Alternativen:**
+
+1. *Globales Abschalten von `tageEtappenZuordnen()`.* Würde Altbestand ohne `stage_id` beschädigen.
+2. *Nur UI-Bedingung oder Browser-Flag.* Würde Account-Persistenz und Guest→Account nicht binden.
+3. *Boolean statt vier Semantiken.* Würde Legacy, unassigned, Single-Destination und spätere Nutzerwahl ununterscheidbar machen.
+4. *Neue Stage-Tabelle oder Schattenpersistenz.* Verboten durch den Slice.
+
+**Begründung:** Nur ein persistenter, serverseitig abgeleiteter Source/Mode-Vertrag trennt Altbestand vom neuen ehrlichen Unassigned-Zustand, ohne eine proportionale Erfindung als Nutzerwahrheit zu verkaufen.
+
+**Konsequenzen:** Migration `20260826220000_trip_day_stage_assignment_source.sql` darf nur Development/Test treffen. Production bleibt unangetastet, bis eine eigene Product-Owner-Freigabe vorliegt. Keine Aufenthalts-UX, kein TW-7/TW-8/TW-9, kein automatischer Wechsel `unassigned` → `user`.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
