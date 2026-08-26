@@ -3,6 +3,11 @@
 import { redirect } from 'next/navigation'
 import { createServerActionClient } from '@/lib/supabase/server'
 import { evaluateAdminAccess } from '@/lib/auth/admin-guard'
+import {
+  ADMIN_STEP_UP_PFAD,
+  adminLoginSollAbmelden,
+  entscheideAdminLoginFortgang,
+} from '@/lib/auth/admin-aal'
 
 export type AuthState = {
   ok?: boolean
@@ -38,20 +43,25 @@ export async function signInWithPasswordAction(
   if (error) return { error: error.message }
 
   const decision = await evaluateAdminAccess({ surface: 'admin-login' })
+  const fortgang = entscheideAdminLoginFortgang(decision)
 
-  if (!decision.allowed) {
-    // Ohne Berechtigung endet die Sitzung sofort wieder, damit dieses
-    // Formular keine angemeldete Sitzung für andere Bereiche hinterlässt.
+  if (fortgang.art === 'freigeben') redirect('/admin')
+  if (fortgang.art === 'step-up') redirect(ADMIN_STEP_UP_PFAD)
+
+  // Ohne Berechtigung endet die Sitzung sofort wieder, damit dieses
+  // Formular keine angemeldete Sitzung für andere Bereiche hinterlässt.
+  // Ein AAL-Ausfall nach bestehender Berechtigung beendet sie nicht:
+  // der Guard bleibt fail closed, der Step-up-Weg bleibt nutzbar.
+  if (adminLoginSollAbmelden(fortgang)) {
     await supabase.auth.signOut()
-    return {
-      error:
-        decision.denial === 'lookup-failed'
-          ? 'Die Berechtigung konnte gerade nicht geprüft werden. Bitte später erneut versuchen.'
-          : 'Dieses Konto hat keinen Zugang zur Administration.',
-    }
   }
 
-  redirect('/admin')
+  return {
+    error:
+      fortgang.denial === 'lookup-failed' || fortgang.denial === 'aal-lookup-failed'
+        ? 'Die Berechtigung konnte gerade nicht geprüft werden. Bitte später erneut versuchen.'
+        : 'Dieses Konto hat keinen Zugang zur Administration.',
+  }
 }
 
 export async function sendMagicLinkAction(

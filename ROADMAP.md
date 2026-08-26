@@ -293,6 +293,16 @@ Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
 
 ---
 
+## 6f. QS-2 P1-QS2-01 – zentraler Admin-AAL2-Guard
+
+Status: **Runtime in Draft-PR #80, nicht gemergt. STOPP für unabhängigen Technical-Lead-Review. Entscheidung: ADR-0168.**
+
+- Admin-Zugang verlangt zentral `currentLevel === 'aal2'`
+- Break-Glass umgeht AAL2 nicht
+- kein allgemeiner Auth-Umbau, kein P1-QS2-02, kein Admin D–K
+
+---
+
 ## 6f. Fertig – Account Platform AP-3
 
 Status: **auf `main` gemergt (PR #53, `8326e72f`). Entscheidung: ADR-0160.**

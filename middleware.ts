@@ -44,6 +44,8 @@ const SCOPES: Scope[] = [
   },
   {
     // `/admin/login` selbst muss offen bleiben, sonst entsteht eine Endlosschleife.
+    // `/admin/mfa` bleibt angemeldet geschützt, liegt aber nicht hinter dem
+    // AAL2-Admin-Guard: sonst könnte ein AAL1-Admin den Step-up nicht erreichen.
     matches: pathname => pathname.startsWith('/admin') && !pathname.startsWith('/admin/login'),
     deny: req => redirectToLogin(req, '/admin/login'),
   },

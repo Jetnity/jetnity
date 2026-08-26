@@ -4071,6 +4071,30 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 ---
 
+## ADR-0168 – Admin-Zugang verlangt zentral aktuelles AAL2
+
+**Datum:** 26. August 2026  
+**Status:** Product-Owner-freigegebene Security-Regel; Runtime in Draft-PR #80. 0166/0167 bleiben die Trip-Workspace-ADRs.
+
+**Entscheidung:**
+
+- Jeder Zugriff auf den Jetnity-Admin-Bereich verlangt verifizierte Identität **und** ausreichende Admin-Rolle/Capability bzw. zulässigen Break-Glass-Pfad **und** `currentLevel === 'aal2'`.
+- Die AAL-Prüfung sitzt zentral in `evaluateAdminAccess()`. Passwortlogin, Magic Link, OAuth, bestehende Sitzungen, Admin-Seiten, Server-Actions und Admin-APIs haben keine eigene schwächere Wahrheit.
+- Entscheidend ist nur die aktuell erreichte Assurance. `nextLevel`, die Existenz eines TOTP-Faktors oder ein früherer Login ersetzen AAL2 nicht.
+- Break-Glass umgeht AAL2 nicht. Es öffnet weiterhin nur die Oberfläche, und das erst nach AAL2.
+- Ein AAL-Lookup-Fehler ist fail closed (`aal-lookup-failed` / 503). AAL1 nach bestehender Berechtigung ist `aal2-required` (Seite: `/admin/mfa`, API: 403 JSON).
+- `/admin/mfa` liegt in `(public)`, damit der Step-up nicht hinter dem AAL2-Guard hängt. Return-Ziele sind auf interne Admin-Pfade begrenzt.
+
+**Kontext:** QS-2-Finding P1-QS2-01. Der Consumer-Login kannte bereits TOTP-Step-up; der Admin-Guard prüfte nur Identität und Rolle. Der Product Owner hat die zentrale verpflichtende Admin-AAL2-Regel am 26. August 2026 ausdrücklich genehmigt. Das besondere Auth/MFA/AAL-Gate gilt nur für diesen engen Slice.
+
+**Alternativen:** Nur den Passwortlogin patchen; AAL2 aus Faktor-Existenz oder `nextLevel` ableiten; Break-Glass von AAL2 ausnehmen; Step-up hinter `requireAdminPage` legen.
+
+**Begründung:** Ein gestohlenes Erstfaktor-Passwort eines Admin-Kontos darf privilegierte Flächen nicht öffnen. Eine Login-only-Prüfung würde Magic Link, OAuth und bestehende AAL1-Sitzungen durchlassen.
+
+**Konsequenzen:** Kein allgemeiner Auth-/Session-Umbau, kein Passkey-Rollout, keine RLS-/Rollenänderung, kein P1-QS2-02. Admins ohne verifizierten TOTP-Faktor bleiben aus `/admin` ausgesperrt und bekommen den bestehenden Account-Security-Pfad.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
