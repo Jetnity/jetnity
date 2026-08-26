@@ -52,10 +52,12 @@ import VorschlagVorschau from '@/components/trips/VorschlagVorschau'
 import { vorschlagErzeugen, vorschlagOrteAufloesen, vorschlagUebernehmen } from '@/lib/reisevorschlag/aktionen'
 import { vorschlagAlsReise } from '@/lib/reisevorschlag/abbildung'
 import { VORSCHLAG_GRENZEN, type Reisevorschlag } from '@/lib/reisevorschlag/schema'
+import { gastCreateGate, gastCreateVorNetzschritt } from '@/lib/trips/create-entry'
 import {
   GastreiseBestehtFehler,
   SpeicherFehler,
   gastreiseAblegen,
+  gastspeicherLaden,
   kennungErzeugen,
 } from '@/lib/trips/gastspeicher'
 
@@ -105,6 +107,19 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
     ereignis.preventDefault()
     if (laeuft) return
 
+    const gate = gastCreateGate({
+      angemeldet,
+      aktiveReiseId: gastspeicherLaden().aktiv?.id ?? null,
+    })
+    if (!gate.erlaubt) {
+      const fehler = new GastreiseBestehtFehler(gate.bestehendeId)
+      setBestehendeReise(fehler.bestehendeId)
+      setMeldung(fehler.message)
+      setVorschlag(null)
+      setWarnungen([])
+      return
+    }
+
     setMeldung('')
     setBestehendeReise('')
     setVorschlag(null)
@@ -129,6 +144,17 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
 
   const uebernehmen = async () => {
     if (!vorschlag || laeuft) return
+
+    const gate = gastCreateVorNetzschritt({
+      angemeldet,
+      aktiveReiseId: gastspeicherLaden().aktiv?.id ?? null,
+    })
+    if (!gate.erlaubt) {
+      const fehler = new GastreiseBestehtFehler(gate.bestehendeId)
+      setBestehendeReise(fehler.bestehendeId)
+      setMeldung(fehler.message)
+      return
+    }
 
     setMeldung('')
     setBestehendeReise('')
