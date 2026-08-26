@@ -5,21 +5,21 @@ import PublicNavbar from '@/components/layout/PublicNavbar'
 import Footer from '@/components/layout/Footer'
 import SkipToContentLink from '@/components/layout/SkipToContentLink'
 import BackToTop from '@/components/layout/BackToTop'
-import { oeffentlicherOrigin } from '@/lib/seo/oeffentlicher-origin'
+import { htmlRobots, oeffentlicheMetadataOrigin } from '@/lib/seo/oeffentliche-metadata'
 
-const { origin: OEFFENTLICHER_ORIGIN } = oeffentlicherOrigin()
+const OEFFENTLICHE_METADATA_ORIGIN = oeffentlicheMetadataOrigin()
 
 export const metadata: Metadata = {
-  // metadataBase aus dem D0-2-Origin-Vertrag, damit OG/Twitter und Canonicals
-  // dieselbe technische Origin verwenden.
-  metadataBase: new URL(OEFFENTLICHER_ORIGIN),
+  // metadataBase und robots teilen die D0-2-Wahrheit: öffentliche URLs immer
+  // https://jetnity.com, Indexing nur wenn darfIndexieren wahr ist.
+  metadataBase: new URL(OEFFENTLICHE_METADATA_ORIGIN),
   title: {
     template: '%s – Jetnity',
     default: 'Jetnity – Deine ganze Reise',
   },
   description:
     'Plane, organisiere und erlebe deine Reise an einem Ort – übersichtlich, persönlich und sicher.',
-  robots: { index: true, follow: true },
+  robots: htmlRobots(),
   openGraph: {
     type: 'website',
     siteName: 'Jetnity',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
       'Plane, organisiere und erlebe deine Reise an einem Ort – übersichtlich, persönlich und sicher.',
     images: [
       {
-        url: '/images/hero-bali.png',
+        url: `${OEFFENTLICHE_METADATA_ORIGIN}/images/hero-bali.png`,
         width: 1536,
         height: 1024,
         alt: 'Jetnity – Reiseplanung und Reisebegleitung',
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     title: 'Jetnity – Deine ganze Reise',
     description:
       'Plane, organisiere und erlebe deine Reise an einem Ort – übersichtlich, persönlich und sicher.',
-    images: ['/images/hero-bali.png'],
+    images: [`${OEFFENTLICHE_METADATA_ORIGIN}/images/hero-bali.png`],
   },
 }
 

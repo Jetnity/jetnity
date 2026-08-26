@@ -4175,6 +4175,29 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 ---
 
+## ADR-0170 – HTML-Metadata folgt `darfIndexieren`; Canonical ist nie ein Vercel-Alias
+
+**Datum:** 26. August 2026  
+**Status:** Runtime-Closure für P1-D0-LIVE-01; Draft-PR, nicht Ready, nicht gemergt.
+
+**Entscheidung:**
+
+- Root- und Public-Layout setzen HTML-`robots` und GoogleBot ausschliesslich über `htmlRobots()`.
+- `darfIndexieren === false` bedeutet `index: false` und `follow: false` für HTML und GoogleBot. Kein Layout darf das hart auf `true` setzen.
+- Öffentliche Canonicals, `metadataBase`, OpenGraph-URL und Homepage-JSON-LD-`url` verwenden immer `https://jetnity.com`.
+- `*.vercel.app`, localhost und andere technische Hosts dürfen niemals als Jetnity-Canonical oder öffentliche Produktdomain erscheinen.
+- `NEXT_PUBLIC_ALLOW_INDEXING` bleibt fail-closed. Dieser Slice aktiviert kein Indexing, kein DNS und keinen Domain-Cutover.
+
+**Kontext:** D0-2 prüfte den Origin-Helper, robots.txt und Sitemap. Die Layouts riefen `oeffentlicherOrigin()` auf, nutzten aber nur `origin` und setzten `robots.index/follow` hart auf `true`. Production `https://jetnity-app.vercel.app` lieferte deshalb HTML `index, follow` bei deny-all `robots.txt` und Canonical auf den Vercel-Alias.
+
+**Alternativen:** Canonical auf deny-Hosts weglassen; technische Origin weiter als `metadataBase` nutzen und nur robots schließen; Indexing auf dem Vercel-Alias erlauben.
+
+**Begründung:** robots.txt und HTML-Metadata müssen dieselbe D0-2-Wahrheit tragen. Ein Vercel-Alias darf Jetnity nicht als indexierbare öffentliche Produktdomain behaupten, auch nicht vor dem späteren Domain-Cutover.
+
+**Konsequenzen:** Kein D1/G1, keine Domainaktivierung, keine Env-Änderung, keine Abschwächung privater noindex-Grenzen. Der synthetische Allow-Pfad bleibt nur in Tests prüfbar.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
