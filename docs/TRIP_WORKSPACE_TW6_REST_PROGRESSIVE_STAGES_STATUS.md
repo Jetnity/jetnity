@@ -6,7 +6,7 @@ Branch: `feat/tw6-rest-progressive-stages`
 PR: **#87** (Draft gegen `main`)  
 Auftrag: `docs/TRIP_WORKSPACE_TW6_DAY_STAGE_MODE_CONTRACT_TASK.md`  
 Folgetask: `docs/TRIP_WORKSPACE_TW6_PRODUCTION_ROLLOUT_PLAN_TASK.md`  
-Status: **MODE CONTRACT AUF DEVELOPMENT AKZEPTIERT / PRODUCTION ROLLOUT PLAN ERSTELLT / NICHT MERGEFÄHIG**
+Status: **MODE CONTRACT AUF DEVELOPMENT AKZEPTIERT / ROLLOUT-PLAN NACH TL-REVIEW KORRIGIERT / NICHT MERGEFÄHIG**
 
 Kein Ready. Kein Merge. Kein TW-7/TW-8/TW-9. Kein Folgeslice.  
 `docs/ACTIVE_WORK_STATUS.md` wurde nicht geändert.
@@ -156,8 +156,8 @@ Der SUCCESS auf Task-Commit `dbfb7be8` und der Typecheck-FAILURE auf Zwischen-He
 
 ## 8. Offene Restpunkte
 
-- Unabhängiger Technical-Lead-Finalreview des Production-Rollout-Plans.
-- Getrennte Product-Owner-Freigaben: erst Commercial-Paar, dann TW6-B-Replay, dann Merge. Siehe Abschnitt 10.
+- Unabhängiger Technical-Lead-Finalreview des korrigierten Production-Rollout-Plans (P1-04/P1-05/P1-06 + Provenance).
+- Getrennte Product-Owner-Freigaben: erst Provenance der TW6-B-Dateien auf `main` oder immutable Tag, dann Commercial-Paar, dann TW6-B-Bundle unter Write-Gate, dann Merge. Siehe Abschnitt 10.
 - Separate Assignment-Provenance, falls später Herkunft von `explicit` unterschieden werden muss.
 - Direction A (Aufenthaltseditor) bleibt eigener Slice.
 - Admin/AAL-`db:sicherheit`-Fälle bleiben vorbestehend offen und sind nicht Teil dieses Slice.
@@ -179,11 +179,13 @@ Auftrag: `docs/TRIP_WORKSPACE_TW6_PRODUCTION_ROLLOUT_PLAN_TASK.md`.
 | --- | --- |
 | `origin/main` | `1d558ef56cc275d429f4076c7a8877c3791947a7` |
 | Merge-Base | `1d558ef56cc275d429f4076c7a8877c3791947a7` |
-| Task-Commit dieses Plans | `c919d1267cb245f11adead2ef41dcf6acc7c3ed3` |
-| Ahead / Behind vor diesem Docs-Nachzug | **18 / 0** |
+| Vorheriger Plan-Head (TL-Review CHANGES REQUIRED) | `e45289764d787c2374efbef47d53f7a419dd292d` |
+| Ahead / Behind vor dieser Korrektur | **19 / 0** |
 | PR #87 | Draft, open, `mergeable` ist keine Merge-Freigabe |
 
-Live-Git erneut geprüft nach dem Task-Commit: `origin/main` unverändert, Merge-Base identisch, Branch 18/0. `create-stages.ts` / `weitereDestinationPlaceIds` existieren **nicht** auf `main`. Die Multi-Ziel-UI liegt nur auf PR #87.
+`create-stages.ts` / `weitereDestinationPlaceIds` existieren **nicht** auf `main`. Die Multi-Ziel-UI liegt nur auf PR #87.
+
+`20260824160000` und `20260824180000` liegen bereits auf `main` (PR #51 / `52e665ac`). Die TW6-B-Dateien `20260826220000` / `20260826230000` / `20260826240000` liegen **nur** auf diesem Draft-Branch.
 
 ### 10.2 Production vs Development – Migrationsmatrix (live SELECT)
 
@@ -256,46 +258,70 @@ Eine einzelne „Production-only“-Function, die Mode einführt und Production-
 
 ### 10.5 Zero-false-truth Deploy-Reihenfolge
 
-Aktuelles `main` hat keine Multi-Ziel-UI. PR #87 würde sie gegen den **alten** proportionalen Production-RPC ausliefern. Das ist verboten.
+Aktuelles `main` hat keine Multi-Ziel-UI. PR #87 würde sie gegen den **alten** proportionalen Production-RPC ausliefern. Das bleibt P0.
 
-1. **Preflight (read-only)**  
-   Production endet bei `20260824140000`. Keine Mode-Spalte. 4 Single-Stage-Trips. AAL2 fehlt. Commercial-Paar fehlt.
-2. **Abort, wenn** irgendetwas davon abweicht oder ein Multi-Stage-Account-Trip existiert.
-3. **Gate A – Commercial, eigene PO-Freigabe, nicht Teil der TW6-B-Merge-Freigabe**  
-   `24160000` dann `24180000`. Verify: RPC nullt Flugfelder; Trigger existiert; bestehende 4 Trips unverändert.
-4. **Abort nach Gate A**, wenn Trigger oder RPC-Nullung fehlt. Nicht mit TW6-B weitermachen.
-5. **Gate B – TW6-B, eigene PO-Freigabe**  
-   `26220000` → `26230000` → `26240000`.  
-   Verify: Spalte heisst `day_stage_assignment_mode`; die 4 bestehenden Trips sind `legacy_fallback`; Single-Destination-Create → `single_destination`; Multi ohne Positionen → `unassigned`, keine 2/2/2; claimed `legacy_fallback` + Positionen → `explicit`; out-of-range → `22023`; proportionaler CTE weg.
-6. **Abort nach Gate B**, wenn Mode-Spalte fehlt, Alt-Trips umgedeutet wurden oder der CTE noch läuft. App nicht mergen.
-7. **Erst danach** Draft-PR #87 durch unabhängigen TL-Finalreview und ausdrückliche Merge-Freigabe.
-8. **App nach DB.** Niemals App-first.
-9. **Post-Merge** Preview/Production-Create: 1 Ziel regressionsfrei; Paris→Rom→Paris ehrlich `unassigned`.
+Live nachgezogen (26. August 2026, nur lesend): Production 0 Flight-`trip_items`; `authenticated` hat `INSERT` auf `public.trips` und `EXECUTE` auf `reise_anlegen(jsonb)`. Development-Default der Mode-Spalte ist `'legacy_fallback'::text`. Jede der Dateien `26220000` / `26230000` / `26240000` endet mit `GRANT EXECUTE … TO authenticated`. Deshalb ist ein per-file-`COMMIT` von `db:anwenden` **kein** sicherer Gate-B-Weg: nach `26220000` oder `26230000` wäre die Source-RPC wieder öffentlich und könnte `legacy_fallback` minten.
 
-DB-first gegen aktuelles `main` ist **sicher**, sobald Gate B steht: `main` erzeugt nur ein Ziel. `legacy_fallback` Default auf den 4 bestehenden Single-Stage-Trips plus Read-Fallback bleibt wahr. Der neue RPC ordnet eine Stage weiterhin deterministisch zu, ohne CTE.
+1. **Gate 0 – Provenance, vor jedem Production-Write der TW6-B-Versionen**  
+   `24160000` / `24180000` sind bereits auf `main`. `26220000` / `26230000` / `26240000` dürfen Production erst erreichen, wenn dieselben Dateiinhalte auf `main` liegen **oder** ein immutable annotated Tag plus Datei-SHA-256 in `DECISIONS.md` steht. Bevorzugt: migrations-only Vorbereitungs-PR ohne Multi-Ziel-UI und ohne AAL2. Ein Production-Stand mit Versionen, die nur auf einem später verworfenen Draft leben, ist verboten.
+
+   SHA-256 der Dateien auf diesem Branch (Evidence, kein Tag, kein Production-Write):
+
+   | Datei | SHA-256 |
+   | --- | --- |
+   | `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis.sql` | `5428df0632f1a69515371872e2e00dd666b21371fe06a7c5b509ce3c917946f9` |
+   | `20260824180000_trip_items_flug_handelsfelder_guard.sql` | `7f8be0f82e8cc8a35e9c754469c8ea1b6ec3651607e2bc2269ba21aeee14df8e` |
+   | `20260826220000_trip_day_stage_assignment_source.sql` | `ab06e875e88f69b009837e1c8873e5322199da812b62f4ac1065a028f73cf883` |
+   | `20260826230000_trip_day_stage_assignment_source_fail_closed.sql` | `7e2e30246f1d9976b868751a6cc79087e537bbd36fb8f0dabf829b98258117a9` |
+   | `20260826240000_trip_day_stage_assignment_mode.sql` | `7a9626d8ac53ea3458bf7d622ea695cce26360962c02430d8d1a0094129a1edb` |
+2. **Preflight (read-only)**  
+   Production endet bei `20260824140000`. Keine Mode-Spalte. 4 Single-Stage-Trips. 0 Flight-Items. AAL2 fehlt. Commercial-Paar fehlt. TW6-B-Dateien sind auf `main` oder per Tag+Hash gebunden.
+3. **Abort, wenn** irgendetwas davon abweicht oder ein Multi-Stage-Account-Trip existiert.
+4. **Gate A – Commercial, eigene PO-Freigabe, nicht Teil der TW6-B-Merge-Freigabe**  
+   `24160000` dann `24180000`. Verify: RPC nullt Flugfelder; Trigger existiert; bestehende 4 Trips unverändert; `schema_migrations` enthält beide Versionen; Function-Text und History stimmen überein.
+5. **Wenn `24180000` scheitert, nachdem `24160000` geschrieben ist:** STOP. `24160000` **angewendet lassen** (Version + Function). Guard erneut versuchen. **Kein** Function-Rewind auf den Stand vor `24160000`. Ein semantischer Rollback braucht eine neue, versionierte Korrektur-Migration. Production hat 0 Flight-Items; `24160000` ist Forward-Hardening.
+6. **Abort nach Gate A**, wenn Trigger oder RPC-Nullung fehlt. Nicht mit Gate B weitermachen.
+7. **Gate B – TW6-B-Bundle, eigene PO-Freigabe, nur unter Write-Gate, eine Transaktion**  
+   Nicht `db:anwenden` dateiweise. Nicht „nacheinander anwenden und später abbrechen“.
+   a. Maintenance-Fenster.  
+   b. Write-Gate **vor** `26220000`: `REVOKE EXECUTE ON FUNCTION public.reise_anlegen(jsonb) FROM authenticated, public, anon;` und `REVOKE INSERT ON TABLE public.trips FROM authenticated;`. Prüfen, dass diese Grants weg sind. `postgres` / Management-API bleiben für den Apply.  
+   c. **Eine** PostgreSQL-Transaktion: Body `26220000` + History-Insert, Body `26230000` + History-Insert, Body `26240000` + History-Insert, danach erneut `REVOKE EXECUTE` / `REVOKE INSERT` (die Dateien selbst grannten `EXECUTE` wieder). Noch nicht `COMMIT`-öffnen für Clients.  
+   d. In derselben Transaktion verifizieren: Spalte heisst `day_stage_assignment_mode`; Default bleibt historisch `legacy_fallback` nur für Altbestand; Function leitet Mode ab; kein CTE; claimed `legacy_fallback` + Positionen → nicht `legacy_fallback`.  
+   e. Nur bei PASS: `GRANT EXECUTE` an `authenticated`, `GRANT INSERT` an `authenticated`, dann `COMMIT`.  
+   f. Bei FAIL: `ROLLBACK` der ganzen Transaktion. Write-Gate bleibt. Kein Source-Zwischenstand wird sichtbar.
+8. **Abort nach Gate B**, wenn Mode-Spalte fehlt, Alt-Trips umgedeutet wurden, der CTE noch läuft oder neue Creates `legacy_fallback` minten würden. App nicht mergen. Rollback siehe 10.6 – **nicht** Gate-A-Function.
+9. **Erst danach** Draft-PR #87 durch unabhängigen TL-Finalreview und ausdrückliche Merge-Freigabe.
+10. **App nach DB.** Niemals App-first.
+11. **Post-Merge** Preview/Production-Create: 1 Ziel → `single_destination`; Paris→Rom→Paris ehrlich `unassigned`; keine neue `legacy_fallback`-Row.
+
+DB-first gegen aktuelles `main` ist **sicher**, sobald Gate B **und** die Mode-aware RPC stehen: `main` erzeugt nur ein Ziel. Die Mode-RPC schreibt `single_destination` explizit. Der Default `legacy_fallback` darf für **neue** Rows nicht greifen.
 
 ### 10.6 Rollback / Abort
 
-| Checkpoint | Rollback |
+| Checkpoint | Verbindliches Verhalten |
 | --- | --- |
 | Vor Gate A | nichts tun |
-| Nach `24160000`, vor `24180000` | **sofort aborten**. Nicht offen lassen. Function auf den Production-Stand vor `24160000` zurücksetzen. |
-| Nach Gate A | Commercial-Function und Trigger entfernen/ersetzen nur mit eigener Commercial-Rollback-Freigabe. TW6-B nicht starten. |
-| Nach `26220000`, vor `26240000` | Spalte `day_stage_assignment_source` darf additiv bleiben. Function auf Gate-A-Stand zurücksetzen. App nicht mergen. |
-| Nach Gate B, vor Merge | Mode-Spalte additiv belassen. Function auf Gate-A-Stand zurücksetzen. PR bleibt Draft. |
-| Nach Merge | App-Revert ist kein Ersatz für RPC-Rollback. Zuerst RPC, dann App. |
+| `24160000` angewendet, `24180000` fehlgeschlagen | **STOP.** Version `24160000` und ihre Function **belassen**. Guard erneut anwenden. **Verboten:** Function-Text auf vor-`24160000` zurücksetzen, während die Version in `schema_migrations` steht. Semantischer Rollback nur als neue, versionierte Korrektur-Migration. |
+| Nach Gate A, vor Gate B | Commercial bleibt. TW6-B nicht starten. Commercial-Rollback nur mit eigener Freigabe **und** versionierter Korrektur, nicht per Rewind. |
+| Gate-B-Transaktion fehlgeschlagen | `ROLLBACK`. Source-Spalte und Source-RPC existieren nicht. Write-Gate bleibt, bis ein neuer Versuch startet. |
+| Nach Gate B, vor Merge – bevorzugter Abort | Mode-Spalte **und** Mode-aware `reise_anlegen` aus `26240000` **behalten**. App bleibt auf `main`. Neue Creates bleiben `single_destination`. PR bleibt Draft. |
+| Nach Gate B, wenn Mode-RPC defekt ist | **Write-Gate**, nicht Function-Rewind: `REVOKE EXECUTE` auf `reise_anlegen(jsonb)` und `REVOKE INSERT` auf `public.trips` für `authenticated`. Kein `GRANT` zurück, bis die Mode-RPC wieder verifiziert ist oder eine versionierte Korrektur-Migration sitzt. **Verboten:** Gate-A-Function bei vorhandener Mode-Spalte. |
+| Nach Merge | App-Revert ist kein RPC-Rollback. Zuerst Mode-aware RPC oder Write-Gate, dann App. |
 
-Kein `DROP COLUMN` ohne eigene Freigabe. Kein Supabase-Branch-Merge nach Production.
+**Verboten nach Gate B:** Gate-A-`reise_anlegen` wiederherstellen, solange `day_stage_assignment_mode NOT NULL DEFAULT legacy_fallback` existiert. Diese Function schreibt die Spalte nicht; jeder Create von aktuellem `main` und jeder direkte `INSERT` ohne Spalte würde eine neue `legacy_fallback`-Row minten.
+
+Kein `DROP COLUMN` ohne eigene Freigabe. Kein Supabase-Branch-Merge nach Production. Kein undokumentiertes Function-Rewind.
 
 ### 10.7 Empfohlener Product-Owner-Text
 
-Drei getrennte Sätze, keine Sammelfreigabe:
+Vier getrennte Sätze, keine Sammelfreigabe:
 
-1. **Commercial Production:** „Ich gebe frei, auf Production nacheinander `20260824160000` und `20260824180000` anzuwenden. Das ist keine Freigabe für TW6-B, AAL2 oder den Merge von PR #87.“
-2. **TW6-B Production:** „Ich gebe frei, auf Production nacheinander `20260826220000`, `20260826230000` und `20260826240000` anzuwenden, nachdem Gate A verifiziert ist. Das ist keine Merge-Freigabe.“
-3. **Merge PR #87:** „Ich gebe frei, Draft-PR #87 nach verifiziertem Gate B zu mergen. Das ist keine Freigabe für AAL2, Direction A oder TW-7/8/9.“
+1. **Provenance:** „Ich gebe frei, die exakten Dateien `20260826220000`, `20260826230000` und `20260826240000` zuerst auf `main` zu bringen (migrations-only, ohne Multi-Ziel-UI, ohne AAL2) oder sie per immutable Tag plus SHA-256 in `DECISIONS.md` zu binden. Das ist keine Production-Write- und keine Merge-Freigabe von PR #87.“
+2. **Commercial Production:** „Ich gebe frei, auf Production nacheinander `20260824160000` und `20260824180000` anzuwenden. Scheitert `24180000`, bleibt `24160000` stehen; kein Function-Rewind. Das ist keine Freigabe für TW6-B, AAL2 oder den Merge von PR #87.“
+3. **TW6-B Production:** „Ich gebe frei, auf Production `20260826220000`, `20260826230000` und `20260826240000` als ein Bundle in einer Transaktion unter Write-Gate anzuwenden, nachdem Gate 0 und Gate A verifiziert sind. Zwischenschritte `26220000`/`26230000` dürfen nicht öffentlich executable bleiben. Das ist keine Merge-Freigabe.“
+4. **Merge PR #87:** „Ich gebe frei, Draft-PR #87 nach verifiziertem Gate B zu mergen. Das ist keine Freigabe für AAL2, Direction A oder TW-7/8/9.“
 
-Ohne Satz 1 darf Satz 2 nicht ausgeführt werden. Ohne Satz 2 darf Satz 3 nicht ausgeführt werden.
+Ohne Satz 1 darf Satz 3 nicht ausgeführt werden. Ohne Satz 2 darf Satz 3 nicht ausgeführt werden. Ohne Satz 3 darf Satz 4 nicht ausgeführt werden.
 
 ### 10.8 P0 / P1 / P2 / P3 für den Rollout
 
@@ -305,8 +331,13 @@ Ohne Satz 1 darf Satz 2 nicht ausgeführt werden. Ohne Satz 2 darf Satz 3 nicht 
 | TW6-B-ROLLOUT-P1-01 | P1 | Bestehende TW6-B-Dateien setzen Commercial-Nullung voraus; ohne `24180000` Teilvertrag | **offen, eigener PO-Satz** |
 | TW6-B-ROLLOUT-P1-02 | P1 | `20260826240000` allein auf Production ist kein gültiger Replay (`rename` einer fehlenden Spalte) | **offen, Replay-Reihenfolge bindend** |
 | TW6-B-ROLLOUT-P1-03 | P1 | Repo-Datei `20260826090000` ≠ angewendete Dev-Version `20260826052735`; blindes Anwenden wäre AAL2 | **ausgeschlossen** |
+| TW6-B-ROLLOUT-P1-04 | P1 | Gate-A-Function nach Gate B würde neue `legacy_fallback`-Rows minten (`NOT NULL DEFAULT`) | **Plan korrigiert:** nach Gate B Mode-RPC behalten oder Write-Gate; kein Gate-A-Rewind |
+| TW6-B-ROLLOUT-P1-05 | P1 | Function-Rewind nach `24160000` ohne History-Korrektur trennt Runtime und `schema_migrations` | **Plan korrigiert:** `24160000` belassen, `24180000` retry; Rollback nur versioniert |
+| TW6-B-ROLLOUT-P1-06 | P1 | `26220000`/`26230000` können per direkter RPC `legacy_fallback` minten; Dateien grannten `EXECUTE` | **Plan korrigiert:** eine Transaktion + Write-Gate; per-file-`db:anwenden` verboten |
+| TW6-B-ROLLOUT-P1-07 | P1 | Production darf TW6-B-Versionen nicht nur aus einem verworfenen Draft tragen | **Plan korrigiert:** Gate 0 = Dateien auf `main` oder immutable Tag+Hash |
 | TW6-B-ROLLOUT-P2-01 | P2 | Phase-3.1-`--bis 20260820130000` kann TW6-B nicht ausspielen | neues bounded Playbook nötig, nicht in diesem Lauf gebaut |
-| — | P0 Daten | Production hat 0 Multi-Stage-Account-Trips; Default `legacy_fallback` ist für die 4 Single-Stage-Trips wahr | live bestätigt |
+| TW6-B-ROLLOUT-P2-02 | P2 | Gate-B-Bundle braucht ein transaktionales Apply-Playbook (Write-Gate, ein `COMMIT`) | nicht in diesem Lauf gebaut |
+| — | P0 Daten | Production: 4 Single-Stage, 0 Multi-Stage, 0 Flight-Items | live bestätigt |
 
 ### 10.9 Was dieser Lauf nicht getan hat
 
@@ -316,4 +347,17 @@ Ohne Satz 1 darf Satz 2 nicht ausgeführt werden. Ohne Satz 2 darf Satz 3 nicht 
 - kein Merge
 - kein AAL2
 - kein Direction-A
-- kein neues Migrationsfile (würde ohne die zwei PO-Sätze nur Scheinsicherheit erzeugen)
+- keine Änderung der akzeptierten Mode-Semantik
+- kein neues Migrationsfile
+- kein transaktionales Apply-Playbook implementiert (P2-02, erst nach Plan-PASS)
+
+### 10.10 Korrektur gegenüber Head `e4528976`
+
+Technical-Lead-Review auf `e4528976` (CHANGES REQUIRED): P1-04, P1-05, P1-06 und Production-Migrations-Provenance. Mode-Vertrag unverändert.
+
+Zurückgezogen aus dem alten Plan:
+
+- Gate-A-Function nach Gate B als Rollback
+- Function-Rewind, wenn `24180000` nach `24160000` scheitert
+- sequenzielles Anwenden von `26220000`→`26230000`→`26240000` mit späterem Abort
+- Production-Write der TW6-B-Versionen, solange sie nur auf Draft #87 leben
