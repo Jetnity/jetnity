@@ -33,16 +33,6 @@ function ev(
     officialClass: 'unknown',
     missingFacts: [],
     credentialOptionRef: `${teil.travellerClientRef ?? 'traveller:1'}:none`,
-    evidence: {
-      provider: 'test',
-      authority: null,
-      sourceUrl: null,
-      checkedAt: null,
-      validFrom: null,
-      validUntil: null,
-      ruleReference: null,
-      contextFingerprint: 'off',
-    },
     action: null,
     ...teil,
     evidence: {

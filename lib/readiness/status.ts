@@ -96,7 +96,7 @@ export function readinessAnsicht(
   const nachRef = new Map(persistiert.map((item) => [item.clientRef, item]))
   const evaluations = [...(evaluationsGeliefert ?? requirementsLokalFuerReise(reise))]
 
-  const officialFuer = (countryCode: string | null, travellerClientRef: string | null): OfficialRequirementEvidence =>
+  const officialFuer = (countryCode: string | null, travellerClientRef: string | null) =>
     officialFuerItem(
       evaluations,
       { countryCode, travellerClientRef },
