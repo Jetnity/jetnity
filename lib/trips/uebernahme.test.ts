@@ -694,6 +694,44 @@ describe('bereits übernommene Reise', () => {
   })
 })
 
+function gastpunkt(teil: {
+  kind: 'stay' | 'activity'
+  title: string
+  note: string | null
+  startsOn: string | null
+  startsAt: string | null
+  endsOn: string | null
+  endsAt: string | null
+  priceAmount: number | null
+  priceCurrency: string | null
+  provider: string | null
+  externalRef: string | null
+  bookingUrl: string | null
+}) {
+  return {
+    id: `item-${teil.kind}`,
+    dayId: null,
+    stageId: null,
+    kind: teil.kind,
+    title: teil.title,
+    note: teil.note,
+    position: 1,
+    startsOn: teil.startsOn,
+    startsAt: teil.startsAt,
+    endsOn: teil.endsOn,
+    endsAt: teil.endsAt,
+    priceAmount: teil.priceAmount,
+    priceCurrency: teil.priceCurrency,
+    provider: teil.provider,
+    externalRef: teil.externalRef,
+    bookingUrl: teil.bookingUrl,
+    bookingStatus: 'unconfirmed' as const,
+    bookingSource: null,
+    bookingConfirmedAt: null,
+    ...leereMobilitaet(),
+  }
+}
+
 function gastflug(itinerary: FlugRouteItinerary) {
   return {
     id: 'item-flug',
@@ -788,6 +826,119 @@ describe('Guest → Account behält die Flugroute', () => {
     assert.equal(server.empfangen.length, 2)
     assert.equal(server.empfangen[0]?.client_ref, server.empfangen[1]?.client_ref)
     assert.deepEqual(server.empfangen[0]?.ungeplante[0]?.route_itinerary, itineraryEinTransit())
+  })
+})
+
+describe('Guest → Account streicht unbewiesene Stay-/Activity-Handelsfelder', () => {
+  test('manipuliertes Stay wird nicht zur Account-Truth', async () => {
+    const entwurf = gastreiseAnlegen(eingabe())
+    speicher.setzen(SCHLUESSEL.aktiv, {
+      ...entwurf,
+      ohneTag: [
+        gastpunkt({
+          kind: 'stay',
+          title: 'Uferhotel',
+          note: 'am Fluss',
+          startsOn: '2026-11-01',
+          startsAt: null,
+          endsOn: '2026-11-08',
+          endsAt: null,
+          priceAmount: 9999,
+          priceCurrency: 'CHF',
+          provider: 'evil-hotel',
+          externalRef: 'hack-stay',
+          bookingUrl: 'https://evil.example/book',
+        }),
+      ],
+    })
+    const server = attrappe()
+    const bericht = await gastreisenUebernehmen(server.senden)
+    const stay = server.empfangen[0]?.ungeplante[0]
+    assert.equal(bericht.art, 'fertig')
+    assert.equal(stay?.kind, 'stay')
+    assert.equal(stay?.title, 'Uferhotel')
+    assert.equal(stay?.note, 'am Fluss')
+    assert.equal(stay?.starts_on, '2026-11-01')
+    assert.equal(stay?.ends_on, '2026-11-08')
+    assert.equal(stay?.price_amount, null)
+    assert.equal(stay?.price_currency, null)
+    assert.equal(stay?.provider, null)
+    assert.equal(stay?.external_ref, null)
+    assert.equal(stay?.booking_url, null)
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), null)
+  })
+
+  test('manipulierte Activity wird nicht zur Account-Truth', async () => {
+    const entwurf = gastreiseAnlegen(eingabe())
+    speicher.setzen(SCHLUESSEL.aktiv, {
+      ...entwurf,
+      ohneTag: [
+        gastpunkt({
+          kind: 'activity',
+          title: 'Bootsfahrt',
+          note: 'früh da sein',
+          startsOn: '2026-11-02',
+          startsAt: '10:00',
+          endsOn: null,
+          endsAt: null,
+          priceAmount: 8888,
+          priceCurrency: 'CHF',
+          provider: 'evil-activity',
+          externalRef: 'hack-act',
+          bookingUrl: 'https://evil.example/act',
+        }),
+      ],
+    })
+    const server = attrappe()
+    await gastreisenUebernehmen(server.senden)
+    const activity = server.empfangen[0]?.ungeplante[0]
+    assert.equal(activity?.kind, 'activity')
+    assert.equal(activity?.title, 'Bootsfahrt')
+    assert.equal(activity?.note, 'früh da sein')
+    assert.equal(activity?.starts_at, '10:00')
+    assert.equal(activity?.price_amount, null)
+    assert.equal(activity?.provider, null)
+    assert.equal(activity?.external_ref, null)
+    assert.equal(activity?.booking_url, null)
+  })
+
+  test('Stay-Retry nach Serverfehler löscht LocalStorage nicht und sendet dieselbe client_ref', async () => {
+    const entwurf = gastreiseAnlegen(eingabe())
+    speicher.setzen(SCHLUESSEL.aktiv, {
+      ...entwurf,
+      ohneTag: [
+        gastpunkt({
+          kind: 'stay',
+          title: 'Uferhotel',
+          note: null,
+          startsOn: '2026-11-01',
+          startsAt: null,
+          endsOn: '2026-11-08',
+          endsAt: null,
+          priceAmount: 9999,
+          priceCurrency: 'CHF',
+          provider: 'evil-hotel',
+          externalRef: 'hack-stay',
+          bookingUrl: 'https://evil.example/book',
+        }),
+      ],
+    })
+    let scheitern = true
+    const server = attrappe(() =>
+      scheitern ? { ok: false, meldung: 'gerade nicht' } : { ok: true, wert: 'uuid-1' },
+    )
+    const erst = await gastreisenUebernehmen(server.senden)
+    assert.equal(erst.art, 'fehler')
+    assert.equal(JSON.parse(speicher.roh(SCHLUESSEL.aktiv) ?? 'null').clientRef, entwurf.clientRef)
+    scheitern = false
+    const retry = await gastreisenUebernehmen(server.senden)
+    assert.equal(retry.art, 'fertig')
+    assert.deepEqual(
+      server.empfangen.map((nutzlast) => nutzlast.client_ref),
+      [entwurf.clientRef, entwurf.clientRef],
+    )
+    assert.equal(server.empfangen[1]?.ungeplante[0]?.price_amount, null)
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), null)
   })
 })
 
