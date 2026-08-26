@@ -4,33 +4,27 @@ Stand: 26. August 2026
 Agent: `Jetnity provider readiness audit`  
 Branch: `audit/provider-s4-s8-provenance`  
 Draft-PR: `#77`  
-Baseline: `main @ ba86279e5ee2505bfd13801ae5e05ef50ba87c22`  
-Status: **AUDIT AUSGEFÜHRT / STOPP FÜR TECHNICAL-LEAD-REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
+Baseline (Audit-Start): `main @ ba86279e5ee2505bfd13801ae5e05ef50ba87c22`  
+Aktueller `main`: `8ab4e666d4963ac98b32de4b0371dfbd6eefc30f`  
+Status: **SEVERITY-KORREKTUR NACH TECHNICAL-LEAD CHANGES REQUIRED / STOPP FÜR RE-REVIEW / KEIN READY / KEIN MERGE / KEIN FOLGESLICE**
 
 Verbindlicher Auftrag: `docs/PROVIDER_S4_S8_PROVENANCE_AUDIT_TASK.md`.  
 Vollständige Evidence: `docs/PROVIDER_S4_S8_PROVENANCE_AUDIT.md`.
 
-`docs/ACTIVE_WORK_STATUS.md` nicht geändert.
+`docs/ACTIVE_WORK_STATUS.md` nicht geändert. Aggregierte Cursor-Changes sind keine GitHub-PR-Diff-Evidence.
 
 ---
 
 ## 1. Live-Stand
 
+Wird nach Exact-Head-Gates dieses Korrekturstands nachgezogen. Merge-Base nach Sync: `8ab4e666`.
+
 | Fakt | Wert |
 | --- | --- |
-| `origin/main` | `ba86279e5ee2505bfd13801ae5e05ef50ba87c22` |
-| Merge-Base | `ba86279e` |
-| Ahead / Behind vor Gate-Nachtrag | 3 / 0 |
-| Audit Exact Head | `52162a7b3cb341581f02970f2f95ba3a3c8cad26` |
-| Actions auf Audit-Head | SUCCESS `32911158128` |
-| Vercel auf Audit-Head | SUCCESS / READY `3r4Z9dw7nzDoJ17N7ftJH5s44Vuj` |
-| Init-Head (Task + Status-Stub) | `6b7e12daa97209f6feaeca7a82908a53cd961e63` |
-| Init-Head Actions | SUCCESS `32910187319` |
-| Init-Head Vercel | READY `DYXXbFoQDhftEsEGvD2Kvj4JNmnN` |
-| PR | https://github.com/Jetnity/jetnity/pull/77 – OPEN, Draft, `MERGEABLE` |
-| Review-Threads | keine |
-
-Dieser Status-Nachtrag ist docs-only. Der Audit-Inhalt bleibt `52162a7b`. Ein neuer Follow-up-Head muss erneut SUCCESS/READY zeigen, bevor er als gegatet gilt.
+| `origin/main` | `8ab4e666d4963ac98b32de4b0371dfbd6eefc30f` |
+| Merge-Base | `8ab4e666` |
+| Draft-PR | https://github.com/Jetnity/jetnity/pull/77 – OPEN, Draft |
+| Review | Technical Lead: CHANGES REQUIRED an Severity-Taxonomie |
 
 ---
 
@@ -38,11 +32,16 @@ Dieser Status-Nachtrag ist docs-only. Der Audit-Inhalt bleibt `52162a7b`. Ein ne
 
 S1–S3 liegen auf `main`. S4–S8 sind nicht implementiert.
 
-Schwerpunkt S5: Commercial Options und `trip_items` haben Provider/Ref/Betrag/Währung, aber **keinen** beobachteten Zeitpunkt, kein `freshUntil`, keinen Währungsabgleich Request vs Quote, kein Commercial-Stale, keine Affiliate-Provenance, keinen Konfliktvertrag für mehrere Provider.
+S5 Commercial Provenance fehlt fachlich weiter: kein `retrievedAt` / `freshUntil` / Request-vs-Quote / Commercial-Stale / Affiliate-Provenance / Multi-Provider-Konflikt.
 
-**TW-8 ist nicht bereit.**  
-**Kein Provider darf aktiviert werden.**  
-**S5 braucht einen Shared Commercial-Provenance-Contract → dokumentiert und STOPP.**
+Das sind **Gates und Commercial-Truth-Gaps**, keine heutigen P0-Incidents.
+
+- **TW8-START-GATE / BLOCKER** (früher S4S8-P0-01): TW-8 nicht starten.
+- **PROVIDER-ACTIVATION-GATE** (früher S4S8-P0-02): persistenter Cost Guard vor bezahltem/Production-Provider. Heute kein solcher Provider aktiv.
+- **Commercial-Truth-Gap / P1-before-TW8** (früher S4S8-P0-03): persistierter Betrag ohne observed/retrieved timestamp.
+
+**Keine offenen P0-Production-Incidents.**  
+Shared Commercial-Provenance-Contract: dokumentiert, **STOPP**, nicht implementiert.
 
 ---
 
@@ -51,7 +50,7 @@ Schwerpunkt S5: Commercial Options und `trip_items` haben Provider/Ref/Betrag/W�
 | Pflicht | Ort |
 | --- | --- |
 | S4–S8 Current-State/Gap-Matrix | Audit §3 |
-| P0/P1/P2/P3 | Audit §4 |
+| Severity: Gates / aktuelle Defekte / Pre-TW8 / Pre-Activation | Audit §4 |
 | S5 Provenance Gap Map | Audit §5 |
 | TW-8 Readiness Checklist | Audit §6 – nicht bereit |
 | Provider Activation Gate Matrix | Audit §7 |
@@ -62,26 +61,26 @@ Schwerpunkt S5: Commercial Options und `trip_items` haben Provider/Ref/Betrag/W�
 
 ---
 
-## 4. P0 (Kurz)
+## 4. Severity-Korrektur (Kurz)
 
-- **S4S8-P0-01** – TW-8 ohne S5-Contract nicht starten.
-- **S4S8-P0-02** – Persistenter Cost Guard fehlt (PR-P0-02).
-- **S4S8-P0-03** – Persistierter Betrag ohne `retrievedAt`; Hotel/Aktivität ohne Snapshot-Label.
+| Frühere ID | Neue Klasse |
+| --- | --- |
+| S4S8-P0-01 | **S4S8-TW8-GATE-01** – TW8-START-GATE / BLOCKER |
+| S4S8-P0-02 | **S4S8-ACT-GATE-01** – PROVIDER-ACTIVATION-GATE |
+| S4S8-P0-03 | **S4S8-P1-TW8-01** – Commercial-Truth-Gap / P1-before-TW8 |
 
-PR-P0-01 (Browser-Flugoption) bleibt durch S2 geschlossen.
+P1-Liste ist getrennt in: aktuelle Produktdefekte · Pre-TW8 Gates · Pre-Provider-Activation Gates.
 
 ---
 
 ## 5. Was dieser Slice nicht getan hat
 
-Keine Runtime, keine Provideraktivierung, keine Secrets, keine Verträge, keine paid calls, keine echten Preis-/Verfügbarkeitsabfragen, keine Fake-Commercial-Truth, keine DB/Migration/RLS, kein Auth/Traveller/Route/Payment, kein TW-8, kein Marketing/Tracking, keine neuen Kosten, kein Folgeslice, kein Ready, kein Merge.
+Keine Runtime, keine Provideraktivierung, keine Secrets, keine Verträge, keine paid calls, keine echten Preis-/Verfügbarkeitsabfragen, keine Fake-Commercial-Truth, keine DB/Migration/RLS, kein Auth/Traveller/Route/Payment, kein TW-8, kein Marketing/Tracking, keine neuen Kosten, kein Folgeslice, kein Ready, kein Merge. Shared Contract nicht implementiert.
 
 ---
 
 ## 6. Nächster Schritt
 
-Unabhängiger Technical-Lead-Review von PR #77 und `docs/PROVIDER_S4_S8_PROVENANCE_AUDIT.md`.
-
-Danach erst Entscheidung: S4-Auftrag **oder** S5-Contract-Slice. Nicht durch diesen Agenten.
+Unabhängiger Technical-Lead-Re-Review der Severity-Korrektur. Nicht Ready, nicht mergen, keinen Folgeslice starten.
 
 **STOPP.**

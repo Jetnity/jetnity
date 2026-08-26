@@ -5,8 +5,10 @@ Agent: `Jetnity provider readiness audit`
 Typ: **AUDIT / EVIDENCE / READINESS PREPARATION ONLY**  
 Branch: `audit/provider-s4-s8-provenance`  
 Draft-PR: `#77`  
-Baseline: `main @ ba86279e5ee2505bfd13801ae5e05ef50ba87c22`  
-Auftrag: `docs/PROVIDER_S4_S8_PROVENANCE_AUDIT_TASK.md`
+Baseline (Audit-Start): `main @ ba86279e5ee2505bfd13801ae5e05ef50ba87c22`  
+Aktueller `main` (Severity-Korrektur): `8ab4e666d4963ac98b32de4b0371dfbd6eefc30f`  
+Auftrag: `docs/PROVIDER_S4_S8_PROVENANCE_AUDIT_TASK.md`  
+Technical-Lead-Review: **CHANGES REQUIRED an Severity-Taxonomie** – dieser Stand korrigiert nur die Klassifikation. Keine Runtime.
 
 Keine Runtime. Keine Provideraktivierung. Keine Secrets. Keine Verträge. Keine paid calls. Keine echten Preise/Verfügbarkeiten. Keine DB/Migration/RLS. Kein Auth/Traveller/Route/Payment. Kein TW-8 Runtime. Kein Marketing-/Tracking. Keine neuen Kosten. `docs/ACTIVE_WORK_STATUS.md` nicht geändert.
 
@@ -26,13 +28,15 @@ Jetnity hat heute:
 - Truth-Freshness für Official / Safety / Seasonal;
 - **keine** Commercial-Offer-Provenance (`retrievedAt`, `freshUntil`, Währungsabgleich, Stale-Preis, Affiliate-Attribution).
 
-Deshalb:
+Deshalb – als **Gates**, nicht als heutige P0-Incidents:
 
-- **TW-8 darf nicht starten.** Der Start-Gate „Provider S5 / reale Commercial Provenance“ ist nicht erfüllt.
-- **Kein Provider darf aktiviert werden.** Der persistente Cost Guard (S6) und die S5-Provenance fehlen.
-- **S5 braucht einen neuen Shared Contract.** Dieser Audit dokumentiert den Bedarf und **stoppt**. Er erfindet keinen Universal-Offer-Typ und schreibt keine Felder in Domain-Schemas.
+- **TW-8-START-GATE / BLOCKER:** TW-8 darf nicht starten. S5 / belastbare Commercial Provenance fehlt.
+- **PROVIDER-ACTIVATION-GATE:** Kein bezahlter oder Production-Provider. In-Memory-Cost-Guard reicht dafür nicht. Heute ist kein solcher Provider aktiv.
+- **S5 Shared Contract:** Bedarf dokumentiert, **STOPP**. Kein Universal-Offer, keine Feld-Implementierung.
 
-Audit-PASS bedeutet nur: S4–S8 gegen aktuellen Code belegt, S5-Gap-Map präzise, Activation-Gates klassifiziert, Shared-Contract-STOPP ausgesprochen. Es bedeutet **nicht** Ready, nicht Merge, nicht Folgeslice.
+Es gibt in diesem Audit **keine aktuellen P0-Production-Incidents**. Eine fehlende spätere Fähigkeit ist kein heutiger Incident.
+
+Audit-PASS bedeutet nur: S4–S8 gegen aktuellen Code belegt, Severity nach Technical-Lead-Korrektur getrennt, S5-Gap-Map präzise, Shared-Contract-STOPP ausgesprochen. Es bedeutet **nicht** Ready, nicht Merge, nicht Folgeslice.
 
 ---
 
@@ -42,10 +46,10 @@ Audit-PASS bedeutet nur: S4–S8 gegen aktuellen Code belegt, S5-Gap-Map präzis
 
 | Fakt | Wert |
 | --- | --- |
-| `origin/main` | `ba86279e5ee2505bfd13801ae5e05ef50ba87c22` |
-| Audit Exact Head | `52162a7b3cb341581f02970f2f95ba3a3c8cad26` |
-| Merge-Base | `ba86279e` = `origin/main` |
-| Ahead / Behind | 3 / 0 auf dem Audit-Head |
+| `origin/main` | `8ab4e666d4963ac98b32de4b0371dfbd6eefc30f` |
+| Vorherige Baseline | `ba86279e5ee2505bfd13801ae5e05ef50ba87c22` |
+| Merge-Base nach Sync | `8ab4e666` = `origin/main` |
+| Audit-Inhalt (vor Severity-Korrektur) | `52162a7b3cb341581f02970f2f95ba3a3c8cad26` |
 | Draft-PR | https://github.com/Jetnity/jetnity/pull/77 |
 | PR-State | OPEN, **Draft**, `MERGEABLE` |
 | Review-Threads | keine (nur Vercel-Bot-Kommentar) |
@@ -134,50 +138,88 @@ Legende: `ready` = Vertrag existiert und ist fail-closed getestet; `partial` = v
 
 ---
 
-## 4. P0 / P1 / P2 / P3
+## 4. Severity-Taxonomie (Technical-Lead-Korrektur)
 
-Schwere gilt für **diesen** Audit-Stand. Historische IDs bleiben referenziert, wenn der Code sie bestätigt.
+Regel: **P0 ist ein akuter Production-Incident**. Ein fehlender späterer Slice, ein Start-Gate oder ein Activation-Gate ist kein P0, solange TW-8 und bezahlte Production-Provider nicht aktiv sind.
 
-### P0 – jetzt truth- oder aktivierungskritisch
+Eine zukünftige fehlende Fähigkeit ist nicht automatisch ein heutiger P1-Incident.
 
-| ID | Finding | Evidence | Folge |
+| Klasse | Bedeutung |
+| --- | --- |
+| **P0** | Akuter Production-Incident: live Fake-Truth, live Datenverlust, live bezahlter Missbrauch **jetzt** |
+| **TW8-START-GATE / BLOCKER** | Muss geschlossen sein, bevor TW-8 Runtime starten darf |
+| **PROVIDER-ACTIVATION-GATE** | Muss geschlossen sein, bevor ein bezahlter oder Production-Provider aktiviert wird |
+| **P1-before-TW8 / Commercial-Truth-Gap** | Heutige Commercial-Lücke, die TW-8 sonst zu erfundener Vergleichswahrheit machen würde |
+| **Aktueller Produktdefekt** | Heute belegtes, user-sichtbares oder shipped-API-Verhalten; kein Zukunfts-Adapter |
+| **P2 / P3** | Residual, Continuity, bewusste Nicht-Arbeit |
+
+### 4.0 Keine aktuellen P0-Incidents
+
+Heute ist kein bezahlter Production-Provider aktiv und TW-8 ist nicht gestartet. Dieser Audit führt **keine offenen P0-Production-Incidents**.
+
+Historische IDs `S4S8-P0-01` / `S4S8-P0-02` / `S4S8-P0-03` bleiben als Alias nachvollziehbar, gelten aber **nicht** mehr als P0.
+
+PR-P0-01 (Browser-`FlugOption` persistieren) bleibt durch S2 **geschlossen**.
+
+### 4.1 Gates (keine Incidents)
+
+| ID | Alias | Klasse | Finding | Evidence | Folge |
+| --- | --- | --- | --- | --- | --- |
+| **S4S8-TW8-GATE-01** | früher S4S8-P0-01 | **TW8-START-GATE / BLOCKER** | TW-8 hat keinen erfüllten S5-Start-Gate | `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`; Binding Build Order; kein Offer-`retrievedAt` | TW-8 Runtime **nicht starten** |
+| **S4S8-ACT-GATE-01** | früher S4S8-P0-02; historisch PR-P0-02 | **PROVIDER-ACTIVATION-GATE** | Persistenter Cost Guard fehlt | Domain-`rate-limit.ts` + `providerOpsInMemoryCostGuard` | Keine bezahlte / Production-Aktivierung. Heute kein solcher Provider aktiv, daher kein Incident |
+| **S4S8-P1-TW8-01** | früher S4S8-P0-03 | **Commercial-Truth-Gap / P1-before-TW8** | Persistierter Betrag ohne observed/retrieved timestamp | `types/trips.ts` / `lib/trips/schema.ts`: `priceAmount` ohne `retrievedAt` | Vor TW-8-Vergleich trennen; kein heutiger P0 |
+
+### 4.2 Aktuelle belegte Produktdefekte
+
+Nur shipped Verhalten, das Nutzer oder eine vorhandene API **heute** treffen können. Keine fehlenden Zukunfts-Adapter.
+
+| ID | Klasse | Finding | Evidence |
 | --- | --- | --- | --- |
-| **S4S8-P0-01** | TW-8 Commercial Surfaces hat keinen erfüllten Start-Gate | `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md` TW-8; Binding Build Order; kein Offer-`retrievedAt` | TW-8 Runtime wäre Fake-Commercial-Truth. **Nicht starten.** |
-| **S4S8-P0-02** | Persistenter Cost Guard fehlt weiter (historisch PR-P0-02) | Domain-`rate-limit.ts` + `providerOpsInMemoryCostGuard`; Vercel-Instanzen | Keine bezahlte oder Production-Aktivierung |
-| **S4S8-P0-03** | Persistierter Betrag hat keinen beobachteten Zeitpunkt | `types/trips.ts` / `lib/trips/schema.ts`: `priceAmount` ohne `retrievedAt`. Hotel/Aktivität in Plan/Detail **ohne** „zum Auswahlzeitpunkt“ | Nutzer kann gespeicherten Betrag als aktuell lesen. S5 muss das trennen, bevor TW-8 vergleicht |
+| **S4S8-P1-06** | aktueller Commercial-Honesty-Defekt; auch Pre-TW8 | Persistierter Hotel-/Aktivitätspreis ohne Snapshot-Label; Flug hat „zum Auswahlzeitpunkt“ | `TripWorkspacePlan.tsx`, `TripWorkspaceDetail.tsx` nur `kind === 'flight'` |
+| **S4S8-P1-TW8-01** | Commercial-Truth-Gap / P1-before-TW8 | Persistierter Betrag ohne `retrievedAt`; Zahl kann ohne Zeitpunkt stehen | `priceAmount` am Item; Suchkarten-Copy ohne gespeicherten Timestamp |
+| **S4S8-P2-06** | aktueller Residual, kein Incident | Safety-API setzt `party: []`; ehrlich unvollständig, keine Fake-Entwarnung. Factory `null` | früher S4S8-P1-04; `lib/safety/auswerten.ts` |
+| **S4S8-P2-07** | aktueller Residual, kein Provider-Lie | `reise_anlegen` / direkte Writes können transfer/rental Handelsfelder als User-Intake setzen | früher S4S8-P1-11; ADR-0161 |
+| **S4S8-P2-08** | aktueller Residual, ohne Adapter unerreicht | Mobility/Rental Timeout HTTP 504 weicht von S1-200 ab | früher S4S8-P1-10; Factories `null` |
 
-PR-P0-01 (Browser-`FlugOption` persistieren) ist durch S2 **geschlossen**. Nicht erneut als offen führen.
+### 4.3 Pre-TW8 Gates
 
-### P1 – vor Providerphase / vor TW-8
+Müssen stehen, bevor TW-8 Preise/Zeit/Komfort als vergleichbare Wahrheit zeigt. **Kein heutiger Incident.**
 
-| ID | Finding | Slice | Evidence |
-| --- | --- | --- | --- |
-| **S4S8-P1-01** | Commercial Options ohne Provenance/Freshness (PR-P1-02) | S5 | `lib/flights/domain.ts`, `lib/hotels/domain.ts`, `lib/activities/domain.ts`, Mobility/Rental-Option-Schemas |
-| **S4S8-P1-02** | Duffel bekommt `currency` nicht; `total_currency` ungeprüft (PR-P1-08) | S5 | `lib/flights/duffel/adapter.ts` `anfrageKoerper`; Mapping `priceCurrency: angebot.total_currency` |
-| **S4S8-P1-03** | Readiness ohne Timeout/`AbortSignal`/Aktiv-Flag (PR-P1-05) | S4 | `lib/readiness/provider.ts`, `lib/readiness/engine.ts` |
-| **S4S8-P1-04** | Safety-API `party: []` (PR-P1-06) | S4 | `lib/safety/auswerten.ts`; Route lädt keinen Trip |
-| **S4S8-P1-05** | Observability-Events werden nicht geschrieben (PR-P1-01 Rest) | S7 | `providerOpsEvent` nur in `lib/provider-ops/observability.ts` + Test |
-| **S4S8-P1-06** | Hotel/Aktivität persistierter Preis ohne Snapshot-Label | S5 / später TW-8 | `TripWorkspacePlan.tsx`, `TripWorkspaceDetail.tsx` nur `kind === 'flight'` |
-| **S4S8-P1-07** | Kein Vertrag für widersprechende Provider | S5 | Ein Port pro Domäne; kein Konflikt-Resolver für Offers |
-| **S4S8-P1-08** | Deep-Link/Affiliate-Provenance fehlt; Search setzt `bookingUrl: null` | S5 | Übernahme-Module; Policy Search ≠ Booking. Ehrlich null, aber kein Attributionsmodell |
-| **S4S8-P1-09** | Öffentliche Search-/Evaluate-Routen + In-Memory-Limit (PR-P1-09) | Activation / S6 | Guest-bewusst; mit paid key Missbrauchsfläche |
-| **S4S8-P1-10** | Mobility/Rental Timeout HTTP 504 (S1-Residual) | S4-adjacent / eigener Fix | `lib/mobility/suche.ts`, `lib/rental-cars/suche.ts` |
-| **S4S8-P1-11** | `reise_anlegen` / direkte Writes: transfer/rental Handelsfelder als User-Intake | S3-Residual, kein S3-Folgeslice hier | ADR-0161; keine S5-Wahrheit |
+| ID | Finding | Evidence |
+| --- | --- | --- |
+| **S4S8-TW8-GATE-01** | TW-8-Start gesperrt bis S5-Contract | Plan + fehlende Offer-Provenance |
+| **S4S8-P1-TW8-01** | observed/retrieved timestamp | Item- und Option-Typen |
+| **S4S8-P1-01** | Offer-Provenance/Freshness fehlt (`retrievedAt`, `freshUntil`, Commercial-Stale) | Domain-Optionen Flug/Hotel/Aktivität/Mobility/Rental |
+| **S4S8-P1-02** | Request- vs Quote-Währung ungeprüft; Duffel sendet `currency` nicht | `lib/flights/duffel/adapter.ts` |
+| **S4S8-P1-07** | kein Multi-Provider-Konfliktvertrag | ein Port je Domäne |
+| **S4S8-P1-08** | Deep-Link/Affiliate-Provenance fehlt; Search-`bookingUrl` ehrlich `null` | Übernahme-Module; Search ≠ Booking |
+| **S4S8-P1-06** | Hotel/Aktivität ohne Snapshot-Label | Plan/Detail-UI |
 
-### P2
+S5-Gap bleibt fachlich: `retrievedAt`, `freshUntil`, requested vs quoted currency, commercial stale, affiliate provenance, multi-provider conflict. Shared Contract nur dokumentieren, nicht implementieren.
+
+### 4.4 Pre-Provider-Activation Gates
+
+Müssen stehen, bevor ein bezahlter oder Production-Provider an ist. **Kein heutiger Incident**, weil Factories `null` bzw. Duffel nur Test-Token und Production hart aus sind.
+
+| ID | Finding | Evidence |
+| --- | --- | --- |
+| **S4S8-ACT-GATE-01** | persistenter Cost Guard | In-Memory je Prozess |
+| **S4S8-P1-03** | Readiness ohne Timeout/`AbortSignal` | `lib/readiness/provider.ts` – erst relevant mit Adapter |
+| **S4S8-P1-05** | Observability-Events werden nicht geschrieben | `providerOpsEvent` nur Typ + Test |
+| **S4S8-P1-09** | öffentliche Search-/Evaluate-Routen + In-Memory-Limit | Guest-bewusst; Missbrauch erst mit paid key |
+| **S4S8-P2-01** | Cache-/Lizenz-Hooks fehlen | `no-store` da, Vertrag fehlt |
+| **S4S8-P2-02** | Readiness/Safety/Seasonal ohne `JETNITY_*_AKTIV` | Factory `null` ist heute die Bremse |
+| **S4S8-P2-06** | Safety-Party nur aus serverseitigem Trip-Load | vor travellerabhängigem Live-Safety |
+
+### 4.5 P2 / P3 (unverändert Residual)
 
 | ID | Finding |
 | --- | --- |
 | **S4S8-P2-01** | Cache-/Lizenz-Hooks fehlen (S8). Default-Verhalten `no-store` ist da, Vertrag fehlt |
 | **S4S8-P2-02** | Readiness/Safety/Seasonal ohne `JETNITY_*_AKTIV`, solange Factory `null` ist |
 | **S4S8-P2-03** | Historische Provider-Docs widersprechen S2/S3-Ist. Continuity-Risiko, keine Runtime |
-| **S4S8-P2-04** | Readiness 8 KB-Cap vs. Multi-Traveller: vorhanden, vor Adapter gegen reale Nutzlast prüfen |
+| **S4S8-P2-04** | Readiness 8 KB-Cap vs. Multi-Traveller: vorhanden, vor Adapter gegen reale Nutzlast prüfen |
 | **S4S8-P2-05** | Admin Provider-Ops-Board ist Foundation/Kill-Switch, nicht Search-Health |
-
-### P3
-
-| ID | Finding |
-| --- | --- |
 | **S4S8-P3-01** | Rental-Such-UI fehlt bewusst bis Anbieterwahl |
 | **S4S8-P3-02** | Konkrete Mapping-Module Hotel/Activity/Mobility/Rental ohne API-Vertrag nicht bauen |
 | **S4S8-P3-03** | Draft #50 und alte Slice-Statusdateien können Agenten täuschen |
@@ -303,7 +345,7 @@ Keine Zeile dieser Matrix ist durch diesen Audit aktiviert.
 Nur Empfehlung. **Dieser Agent startet keinen Slice.**
 
 ```text
-Dieser Audit (#77)  →  STOPP Technical-Lead-Review
+Dieser Audit (#77)  →  Severity-Korrektur  →  STOPP Technical-Lead-Re-Review
         │
         ▼
 S4 Truth-Ops          │  S8 Hook-Defaults (nach S1, parallel zu S4)
@@ -386,6 +428,9 @@ S4-AbortSignal und S4-Flags nutzen die **bestehende** S1-Form; das ist kein neue
 | „TW-8 nur Anzeige, also startbar“ | Vergleichs-Ziel im Plan | Ohne Zeitpunkt/Mismatch/Stale wäre Vergleich erfunden. |
 | „ACTIVE_WORK_STATUS auf ba86279e ziehen“ | Auftrag | Explizit verboten. Drift nur benannt. |
 | „504-Residual in S4 still mitfixen“ | Scope | Dokumentiert, nicht gebaut. |
+| „Drei S4S8-P0 sind akute Production-Incidents“ | Technical-Lead-Review + Excellence: P0 = jetzt live | **Nein.** Umklassifiziert: TW8-START-GATE, PROVIDER-ACTIVATION-GATE, P1-before-TW8. Keine offenen P0. |
+| „Fehlender S7-Event-Write ist heutiger P1-Incident“ | Factory `null`, kein paid Provider | Pre-Activation-Gate, kein Incident. |
+| „Cursor-Changes inkl. ACTIVE_WORK_STATUS sind der PR-Diff“ | `git diff origin/main...HEAD` | Nur Audit-Docs + Merge der fremden Audit-Dateien von `main`. `ACTIVE_WORK_STATUS.md` unverändert. |
 | Jede Commercial-Aussage belegt oder offen? | §5 Tabelle | Ja. Keine Zielzelle als Ist markiert. |
 
 ---
@@ -402,8 +447,8 @@ S4-AbortSignal und S4-Flags nutzen die **bestehende** S1-Form; das ist kein neue
 
 ## 13. Nächster Schritt
 
-1. Unabhängiger Technical-Lead-Review dieses Audits und von PR #77.
-2. Shared Commercial-Provenance-Contract annehmen oder ablehnen.
+1. Unabhängiger Technical-Lead-**Re-Review** der Severity-Korrektur auf PR #77.
+2. Shared Commercial-Provenance-Contract annehmen oder ablehnen – nicht in diesem Audit implementieren.
 3. Erst danach versionierter S4-Auftrag **oder** Contract-Slice für S5 – durch Technical Lead, nicht durch diesen Agenten.
 
-**STOPP.**
+**STOPP.** Kein Ready. Kein Merge. Kein Folgeslice.
