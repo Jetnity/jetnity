@@ -7,11 +7,17 @@
 import { ORT_ROLLEN, istOrtId, type Ort, type OrtRolle } from '@/lib/places/domain'
 import { ORT_SPALTEN, ortAusZeile, type OrtZeile } from '@/lib/places/abbildung'
 import { ORT_MELDUNG, ortAusBestand } from '@/lib/places/pruefen'
+import { reisezielIdsLesen, reisezieleAusBestand } from '@/lib/places/reiseziele'
 import { createServerActionClient } from '@/lib/supabase/server'
+import { GRENZEN } from '@/lib/trips/schema'
 
 export type OrtBestaetigung =
   | { ok: true; wert: Ort }
   | { ok: false; meldung: string }
+
+export type ReiseorteBestaetigung =
+  | { ok: true; ziel: Ort; abreise: Ort; weitereZiele: Ort[] }
+  | { ok: false; meldung: string; feld?: 'destination' | 'origin'; zielIndex?: number }
 
 async function zeileLesen(id: string): Promise<Ort | null> {
   const { data, error } = await createServerActionClient()
@@ -21,6 +27,21 @@ async function zeileLesen(id: string): Promise<Ort | null> {
     .maybeSingle()
   if (error || !data) return null
   return ortAusZeile(data as OrtZeile)
+}
+
+async function zeilenLesen(ids: string[]): Promise<Ort[] | null> {
+  const eindeutig = [...new Set(ids.filter((id) => istOrtId(id)))]
+  if (eindeutig.length === 0) return []
+  if (eindeutig.length > GRENZEN.etappenJeReise + 1) return null
+
+  const { data, error } = await createServerActionClient()
+    .from('places')
+    .select(ORT_SPALTEN)
+    .in('id', eindeutig)
+  if (error || !data) return null
+  return data
+    .map((zeile) => ortAusZeile(zeile as OrtZeile))
+    .filter((ort): ort is Ort => ort !== null)
 }
 
 export async function ortBestaetigen(id: unknown, rolle: unknown): Promise<OrtBestaetigung> {
@@ -40,10 +61,45 @@ export async function ortBestaetigen(id: unknown, rolle: unknown): Promise<OrtBe
 export async function reiseorteBestaetigen(eingabe: {
   zielId: unknown
   abreiseId: unknown
-}): Promise<{ ok: true; ziel: Ort; abreise: Ort } | { ok: false; meldung: string }> {
-  const ziel = await ortBestaetigen(eingabe.zielId, ORT_ROLLEN[0])
-  if (!ziel.ok) return ziel
-  const abreise = await ortBestaetigen(eingabe.abreiseId, ORT_ROLLEN[1])
-  if (!abreise.ok) return abreise
-  return { ok: true, ziel: ziel.wert, abreise: abreise.wert }
+  weitereZielIds?: unknown
+}): Promise<ReiseorteBestaetigung> {
+  const zielIds = reisezielIdsLesen(eingabe.zielId, eingabe.weitereZielIds)
+  if (!zielIds.ok) {
+    return {
+      ok: false,
+      meldung: zielIds.meldung,
+      feld: 'destination',
+      zielIndex: zielIds.zielIndex,
+    }
+  }
+
+  if (typeof eingabe.abreiseId !== 'string' || !istOrtId(eingabe.abreiseId)) {
+    return { ok: false, meldung: ORT_MELDUNG.abreiseUnbekannt, feld: 'origin' }
+  }
+
+  const bestand = await zeilenLesen([eingabe.abreiseId, ...zielIds.ids])
+  if (!bestand) {
+    return { ok: false, meldung: ORT_MELDUNG.idUngueltig }
+  }
+
+  const abreise = ortAusBestand(bestand, eingabe.abreiseId, ORT_ROLLEN[1])
+  if (!abreise) {
+    return { ok: false, meldung: ORT_MELDUNG.abreiseUnbekannt, feld: 'origin' }
+  }
+
+  const ziele = reisezieleAusBestand(bestand, zielIds.ids)
+  if (!ziele.ok) {
+    return {
+      ok: false,
+      meldung: ziele.meldung,
+      feld: 'destination',
+      zielIndex: ziele.zielIndex,
+    }
+  }
+
+  const [ziel, ...weitereZiele] = ziele.ziele
+  if (!ziel) {
+    return { ok: false, meldung: ORT_MELDUNG.zielUnbekannt, feld: 'destination', zielIndex: 0 }
+  }
+  return { ok: true, ziel, abreise, weitereZiele }
 }

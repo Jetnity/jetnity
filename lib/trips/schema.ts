@@ -555,6 +555,19 @@ export const neueReiseSchema = z.object({
     .min(1, 'Bitte wähle ein Reiseziel aus der Liste.')
     .max(80)
     .refine((wert) => /^geonames:\d+$/.test(wert), 'Kein passendes Reiseziel gefunden. Bitte wähle einen Eintrag aus der Liste.'),
+  weitereDestinationPlaceIds: z
+    .array(
+      z
+        .string()
+        .min(1, 'Bitte wähle ein Reiseziel aus der Liste.')
+        .max(80)
+        .refine(
+          (wert) => /^geonames:\d+$/.test(wert),
+          'Kein passendes Reiseziel gefunden. Bitte wähle einen Eintrag aus der Liste.',
+        ),
+    )
+    .max(GRENZEN.etappenJeReise - 1, `Höchstens ${GRENZEN.etappenJeReise} Reiseziele sind möglich.`)
+    .default([]),
   origin: titel,
   originPlaceId: z
     .string()

@@ -345,10 +345,12 @@ describe('TW6-A Create-Entry – kein dritter Persistenzpfad', () => {
     const datei = quelle('../../components/trips/TripPlanner.tsx')
     const absenden = datei.slice(datei.indexOf('const absenden'))
     const gate = absenden.indexOf('gastCreateGate')
+    const vorNetz = absenden.indexOf('gastCreateVorNetzschritt')
     const orte = absenden.indexOf('reiseorteBestaetigen')
     const persist = absenden.indexOf('gastreiseAnlegen')
-    assert.ok(gate >= 0 && orte >= 0 && persist >= 0)
+    assert.ok(gate >= 0 && vorNetz >= 0 && orte >= 0 && persist >= 0)
     assert.ok(gate < orte && gate < persist)
+    assert.ok(vorNetz > gate && vorNetz < orte && vorNetz < persist)
   })
 
   test('GastReisen zeigt bei aktiver Reise keinen zweiten Create', () => {
@@ -368,6 +370,37 @@ describe('TW6-A Create-Entry – kein dritter Persistenzpfad', () => {
     assert.match(start, /zielHref/)
     assert.match(start, /GastCreateLink/)
     assert.equal(start.includes('gastreiseAnlegen'), false)
+  })
+
+  test('TW6-B progressive Ziele bleiben auf bestehender OrtSuche und trip_stages', () => {
+    const planner = quelle('../../components/trips/TripPlanner.tsx')
+    const aktionen = quelle('./aktionen.ts')
+    const gast = quelle('./gastspeicher.ts')
+
+    assert.match(planner, /Weiteres Ziel hinzufügen/)
+    assert.match(planner, /weitereDestinationPlaceIds/)
+    assert.match(planner, /Aufenthalte werden hier nicht festgelegt/)
+    assert.equal(planner.includes('onDrag'), false)
+    assert.equal(planner.includes('draggable'), false)
+    assert.equal(planner.includes('vorschlagErzeugen'), false)
+    assert.equal(planner.includes('Staatsbürgerschaft'), false)
+    assert.equal(planner.includes('Reisepass'), false)
+    assert.match(aktionen, /createZieleGraph/)
+    assert.match(aktionen, /weitereZielIds/)
+    assert.match(gast, /createZieleGraph/)
+    assert.equal(aktionen.includes('ZRH'), false)
+  })
+
+  test('D0-Metadata-/robots-/sitemap-Dateien bleiben Create-fremd', () => {
+    const planen = quelle('../../app/(public)/planen/page.tsx')
+    const robots = quelle('../../app/robots.ts')
+    const sitemap = quelle('../../app/sitemap.ts')
+
+    assert.match(planen, /planenRobots/)
+    assert.match(planen, /kanonischeUrl\('\/planen'\)/)
+    assert.equal(planen.includes('weitereDestinationPlaceIds'), false)
+    assert.equal(robots.includes('weitereDestinationPlaceIds'), false)
+    assert.equal(sitemap.includes('weitereDestinationPlaceIds'), false)
   })
 
   test('/planen-Metadata-Vertrag bleibt unangetastet', () => {

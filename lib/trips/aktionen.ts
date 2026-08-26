@@ -31,7 +31,12 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
-import { ortBestaetigen, reiseorteBestaetigen } from '@/lib/places/aktionen'
+import { ORT_SPALTEN, ortAusZeile, type OrtZeile } from '@/lib/places/abbildung'
+import { reiseorteBestaetigen } from '@/lib/places/aktionen'
+import { istOrtId } from '@/lib/places/domain'
+import { ORT_MELDUNG, ortAusBestand } from '@/lib/places/pruefen'
+import { createServerActionClient } from '@/lib/supabase/server'
+import { createZieleGraph } from '@/lib/trips/create-stages'
 import {
   NICHT_ANGEMELDET,
   konto,
@@ -63,12 +68,18 @@ export async function reiseAnlegen(eingabe: unknown): Promise<Aktionsergebnis<st
   const orte = await reiseorteBestaetigen({
     zielId: reise.destinationPlaceId,
     abreiseId: reise.originPlaceId,
+    weitereZielIds: reise.weitereDestinationPlaceIds,
   })
   if (!orte.ok) return orte
 
+  const graph = createZieleGraph([orte.ziel, ...orte.weitereZiele], {
+    startDate: reise.startDate,
+    endDate: reise.endDate,
+  })
+
   return reiseAusNutzlastAnlegen({
     client_ref: reise.clientRef,
-    title: orte.ziel.name,
+    title: graph.title,
     origin: orte.abreise.name,
     origin_place_id: orte.abreise.id,
     start_date: reise.startDate,
@@ -79,23 +90,21 @@ export async function reiseAnlegen(eingabe: unknown): Promise<Aktionsergebnis<st
     pace: reise.pace,
     interests: reise.interests,
     travel_wish: reise.travelWish,
-    stages: [
-      {
-        position: 1,
-        name: orte.ziel.name,
-        country_code: orte.ziel.countryCode,
-        arrival_date: reise.startDate,
-        departure_date: reise.endDate,
-        latitude: orte.ziel.lat,
-        longitude: orte.ziel.lon,
-        place_id: orte.ziel.id,
-      },
-    ],
+    stages: graph.stages.map((etappe) => ({
+      position: etappe.position,
+      name: etappe.name,
+      country_code: etappe.countryCode,
+      arrival_date: etappe.arrivalDate,
+      departure_date: etappe.departureDate,
+      latitude: etappe.latitude,
+      longitude: etappe.longitude,
+      place_id: etappe.placeId,
+    })),
     days: reisetageBauen(reise.startDate, reise.endDate).map((tag) => ({
       day_index: tag.dayIndex,
       day_date: tag.dayDate,
       title: null,
-      stage_position: 1,
+      stage_position: graph.dayStagePosition,
       items: [],
     })),
     ungeplante: [],
@@ -112,16 +121,31 @@ export async function reiseAnlegen(eingabe: unknown): Promise<Aktionsergebnis<st
  */
 async function nutzlastOrtePruefen(nutzlast: ReiseNutzlast): Promise<Aktionsergebnis<null>> {
   const originId = nutzlast.origin_place_id
-  const zielId = nutzlast.stages[0]?.place_id ?? null
-  if (!originId && !zielId) return { ok: true, wert: null }
+  const zielIds = nutzlast.stages
+    .map((etappe) => etappe.place_id)
+    .filter((id): id is string => Boolean(id))
+  if (!originId && zielIds.length === 0) return { ok: true, wert: null }
 
-  if (originId) {
-    const abreise = await ortBestaetigen(originId, 'abreise')
-    if (!abreise.ok) return abreise
+  const eindeutig = [...new Set([originId, ...zielIds].filter((id): id is string => Boolean(id && istOrtId(id))))]
+  if (eindeutig.length === 0) return { ok: false, meldung: ORT_MELDUNG.idUngueltig }
+
+  const { data, error } = await createServerActionClient()
+    .from('places')
+    .select(ORT_SPALTEN)
+    .in('id', eindeutig)
+  if (error || !data) return { ok: false, meldung: ORT_MELDUNG.idUngueltig }
+
+  const bestand = data
+    .map((zeile) => ortAusZeile(zeile as OrtZeile))
+    .filter((ort): ort is NonNullable<typeof ort> => ort !== null)
+
+  if (originId && !ortAusBestand(bestand, originId, 'abreise')) {
+    return { ok: false, meldung: ORT_MELDUNG.abreiseUnbekannt }
   }
-  if (zielId) {
-    const ziel = await ortBestaetigen(zielId, 'ziel')
-    if (!ziel.ok) return ziel
+  for (const id of zielIds) {
+    if (!ortAusBestand(bestand, id, 'ziel')) {
+      return { ok: false, meldung: ORT_MELDUNG.zielUnbekannt }
+    }
   }
   return { ok: true, wert: null }
 }

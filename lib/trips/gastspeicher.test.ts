@@ -46,6 +46,9 @@ import {
   VeralteteFassungFehler,
   zurUebernahme,
 } from '@/lib/trips/gastspeicher'
+import { alsNutzlast } from '@/lib/trips/abbildung'
+import type { Ort } from '@/lib/places/domain'
+import { GRENZEN } from '@/lib/trips/schema'
 import { gastReadinessEntfernen, gastReadinessSetzen } from '@/lib/readiness/gast'
 import { gastTravellerEntfernen, gastTravellerSetzen } from '@/lib/readiness/reisende-gast'
 import type { CreateTripInput } from '@/types/trips'
@@ -244,6 +247,170 @@ describe('Genau eine aktive Gastreise', () => {
 
     assert.equal(gastspeicherLaden().aktiv, null)
     assert.doesNotThrow(() => gastreiseAnlegen(eingabe()))
+  })
+})
+
+function bestaetigterOrt(teil: Partial<Ort> & Pick<Ort, 'id' | 'name'>): Ort {
+  return {
+    source: 'geonames',
+    sourceId: teil.id.replace(/^geonames:/, ''),
+    typ: 'city',
+    country: teil.country ?? 'France',
+    countryCode: teil.countryCode ?? 'FR',
+    region: null,
+    lat: teil.lat ?? 48.85,
+    lon: teil.lon ?? 2.35,
+    iata: null,
+    keywords: null,
+    ...teil,
+  }
+}
+
+const PARIS = bestaetigterOrt({
+  id: 'geonames:2988507',
+  name: 'Paris',
+  country: 'France',
+  countryCode: 'FR',
+  lat: 48.85341,
+  lon: 2.3488,
+})
+const ROM = bestaetigterOrt({
+  id: 'geonames:3169070',
+  name: 'Rom',
+  country: 'Italy',
+  countryCode: 'IT',
+  lat: 41.89193,
+  lon: 12.51133,
+})
+const ZUERICH = bestaetigterOrt({
+  id: 'geonames:2657896',
+  name: 'Zürich',
+  country: 'Switzerland',
+  countryCode: 'CH',
+  lat: 47.36667,
+  lon: 8.55,
+})
+
+describe('TW6-B progressive Ziele im Gastspeicher', () => {
+  test('ein bestätigtes Ziel bleibt genau eine Stage mit Reisezeitraum', () => {
+    const reise = gastreiseAnlegen(eingabe({ title: 'Paris', destination: 'Paris', destinationPlaceId: PARIS.id }), {
+      ziel: PARIS,
+      abreise: ZUERICH,
+    })
+
+    assert.equal(reise.stages.length, 1)
+    assert.equal(reise.stages[0]?.placeId, PARIS.id)
+    assert.equal(reise.stages[0]?.arrivalDate, reise.startDate)
+    assert.equal(reise.stages[0]?.departureDate, reise.endDate)
+    assert.equal(reise.days.every((tag) => tag.stageId === reise.stages[0]?.id), true)
+    assert.equal(reise.title, 'Paris')
+  })
+
+  test('Paris → Rom → Paris bleibt drei Stages in Eingabereihenfolge', () => {
+    const reise = gastreiseAnlegen(
+      eingabe({
+        destination: 'Paris',
+        destinationPlaceId: PARIS.id,
+        weitereDestinationPlaceIds: [ROM.id, PARIS.id],
+      }),
+      { ziel: PARIS, abreise: ZUERICH, weitereZiele: [ROM, PARIS] },
+    )
+
+    assert.deepEqual(
+      reise.stages.map((etappe) => ({ position: etappe.position, placeId: etappe.placeId, name: etappe.name })),
+      [
+        { position: 1, placeId: PARIS.id, name: 'Paris' },
+        { position: 2, placeId: ROM.id, name: 'Rom' },
+        { position: 3, placeId: PARIS.id, name: 'Paris' },
+      ],
+    )
+    assert.equal(reise.stages.every((etappe) => etappe.arrivalDate === null && etappe.departureDate === null), true)
+    assert.equal(reise.days.every((tag) => tag.stageId === null), true)
+    assert.equal(reise.title, 'Paris')
+
+    const geladen = gastspeicherLaden().aktiv
+    assert.deepEqual(
+      geladen?.stages.map((etappe) => etappe.placeId),
+      [PARIS.id, ROM.id, PARIS.id],
+    )
+    assert.equal(geladen?.stages.length, 3)
+  })
+
+  test('weitere IDs ohne bestätigte Ortsreferenz werden nicht persistiert', () => {
+    assert.throws(
+      () =>
+        gastreiseAnlegen(
+          eingabe({
+            weitereDestinationPlaceIds: [ROM.id],
+          }),
+        ),
+      /bestätigte Ortsreferenz/,
+    )
+    assert.equal(gastspeicherLaden().aktiv, null)
+  })
+
+  test('Guest→Account-Nutzlast behält mehrere Stages verlustfrei', () => {
+    const reise = gastreiseAnlegen(
+      eingabe({
+        destinationPlaceId: PARIS.id,
+        weitereDestinationPlaceIds: [ROM.id, PARIS.id],
+      }),
+      { ziel: PARIS, abreise: ZUERICH, weitereZiele: [ROM, PARIS] },
+    )
+    const nutzlast = alsNutzlast(reise)
+
+    assert.deepEqual(
+      nutzlast.stages.map((etappe) => etappe.place_id),
+      [PARIS.id, ROM.id, PARIS.id],
+    )
+    assert.equal(nutzlast.stages.every((etappe) => etappe.arrival_date === null), true)
+    assert.equal(nutzlast.days.every((tag) => tag.stage_position == null), true)
+  })
+
+  test('clientRef bleibt die Idempotenz-Kennung auch bei mehreren Stages', () => {
+    const reise = gastreiseAnlegen(
+      eingabe({
+        clientRef: 'trip-paris-rom-paris',
+        weitereDestinationPlaceIds: [ROM.id],
+      }),
+      { ziel: PARIS, abreise: ZUERICH, weitereZiele: [ROM] },
+    )
+
+    assert.equal(reise.id, 'trip-paris-rom-paris')
+    assert.equal(reise.clientRef, 'trip-paris-rom-paris')
+    assert.equal(reise.stages.length, 2)
+  })
+
+  test('die bestehende Guest-One-Trip-Grenze gilt weiter', () => {
+    gastreiseAnlegen(eingabe(), { ziel: PARIS, abreise: ZUERICH, weitereZiele: [ROM] })
+    assert.throws(
+      () => gastreiseAnlegen(eingabe({ weitereDestinationPlaceIds: [ROM.id] }), {
+        ziel: ROM,
+        abreise: ZUERICH,
+      }),
+      GastreiseBestehtFehler,
+    )
+  })
+
+  test('Maximum+1 Ziele wird nicht angelegt', () => {
+    const extra = Array.from({ length: GRENZEN.etappenJeReise }, (_, index) =>
+      bestaetigterOrt({
+        id: `geonames:${3000000 + index}`,
+        name: `Ort ${index + 1}`,
+        countryCode: 'CH',
+      }),
+    )
+
+    assert.throws(
+      () =>
+        gastreiseAnlegen(eingabe({ weitereDestinationPlaceIds: extra.map((ziel) => ziel.id) }), {
+          ziel: PARIS,
+          abreise: ZUERICH,
+          weitereZiele: extra,
+        }),
+      /höchstens 50 Reiseziele/i,
+    )
+    assert.equal(gastspeicherLaden().aktiv, null)
   })
 })
 

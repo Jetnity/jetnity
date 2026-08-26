@@ -428,6 +428,8 @@ export type CreateTripInput = {
   title: string
   destination: string
   destinationPlaceId: string
+  /** Bestätigte zusätzliche Ziele in Eingabereihenfolge. Duplikate bleiben. */
+  weitereDestinationPlaceIds?: string[]
   origin: string
   originPlaceId: string
   startDate: string

@@ -717,6 +717,53 @@ describe('Das Formular unter /planen', () => {
       false,
     )
   })
+
+  test('weitere Ziele fehlen standardmässig und Duplikate bleiben erlaubt', () => {
+    const ohne = neueReiseSchema.safeParse(eingabe)
+    assert.equal(ohne.success, true)
+    if (ohne.success) assert.deepEqual(ohne.data.weitereDestinationPlaceIds, [])
+
+    const parisRomParis = neueReiseSchema.safeParse({
+      ...eingabe,
+      weitereDestinationPlaceIds: ['geonames:3169070', 'geonames:2988507'],
+    })
+    assert.equal(parisRomParis.success, true)
+    if (parisRomParis.success) {
+      assert.deepEqual(parisRomParis.data.weitereDestinationPlaceIds, [
+        'geonames:3169070',
+        'geonames:2988507',
+      ])
+    }
+  })
+
+  test('zusätzlicher Freitext ohne geonames-ID scheitert am Feld', () => {
+    assert.equal(
+      neueReiseSchema.safeParse({
+        ...eingabe,
+        weitereDestinationPlaceIds: ['Rom'],
+      }).success,
+      false,
+    )
+    assert.equal(
+      neueReiseSchema.safeParse({
+        ...eingabe,
+        weitereDestinationPlaceIds: [''],
+      }).success,
+      false,
+    )
+  })
+
+  test('Maximum weiterer Ziele wird akzeptiert, Maximum+1 nicht', () => {
+    const maximum = Array.from({ length: 49 }, (_, index) => `geonames:${4000000 + index}`)
+    assert.equal(
+      neueReiseSchema.safeParse({ ...eingabe, weitereDestinationPlaceIds: maximum }).success,
+      true,
+    )
+    assert.equal(
+      neueReiseSchema.safeParse({ ...eingabe, weitereDestinationPlaceIds: [...maximum, 'geonames:1'] }).success,
+      false,
+    )
+  })
 })
 
 describe('Eine alte Reise ohne Place-Metadaten bleibt lesbar', () => {

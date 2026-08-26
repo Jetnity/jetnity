@@ -97,6 +97,29 @@ export function feldfehlerLoeschen<F extends Feldfehler<string>>(
   return naechste
 }
 
+export type ZusaetzlichesZielEingabe = {
+  key: string
+  text: string
+  placeId?: string | null
+}
+
+export function zusaetzlichesZielFeld(key: string): string {
+  return `zusaetzlichesZiel-${key}`
+}
+
+export function zusaetzlicheZielePruefen(ziele: readonly ZusaetzlichesZielEingabe[]): Feldfehler<string> {
+  const fehler: Feldfehler<string> = {}
+  for (const ziel of ziele) {
+    const meldung = auswahlFehlt(
+      ziel.text,
+      ziel.placeId ? { id: ziel.placeId, name: ziel.text } : null,
+      'ziel',
+    )
+    if (meldung) fehler[zusaetzlichesZielFeld(ziel.key)] = meldung
+  }
+  return fehler
+}
+
 export function reiseFormularPruefen(eingabe: ReiseFormularEingabe): {
   fehler: Feldfehler
   erstes: ReiseFormularFeld | null

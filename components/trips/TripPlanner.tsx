@@ -32,6 +32,7 @@ import {
   Sparkles,
   Users,
   WalletCards,
+  X,
 } from 'lucide-react'
 
 import OrtSuche from '@/components/places/OrtSuche'
@@ -43,6 +44,8 @@ import {
   feldFehlerId,
   feldfehlerLoeschen,
   reiseFormularPruefen,
+  zusaetzlicheZielePruefen,
+  zusaetzlichesZielFeld,
   type Feldfehler,
   type ReiseFormularFeld,
 } from '@/lib/formular/feldfehler'
@@ -55,6 +58,7 @@ import {
   CREATE_PERSISTENZ_INTERESSEN,
   CREATE_PERSISTENZ_TEMPO,
   gastCreateGate,
+  gastCreateVorNetzschritt,
 } from '@/lib/trips/create-entry'
 import {
   GastreiseBestehtFehler,
@@ -65,6 +69,12 @@ import {
 } from '@/lib/trips/gastspeicher'
 import { GRENZEN, neueReiseSchema } from '@/lib/trips/schema'
 import { cn } from '@/lib/utils'
+
+type ZusaetzlichesZiel = {
+  key: string
+  ort: OrtAuswahl | null
+  text: string
+}
 
 type TripPlannerProps = {
   /** Kommt aus der Server-Komponente: `auth.getUser()` auf dem Server, nicht geraten. */
@@ -106,6 +116,7 @@ export default function TripPlanner({
       ? { id: initialDestinationId, name: initialDestination }
       : null,
   )
+  const [zusaetzlicheZiele, setZusaetzlicheZiele] = React.useState<ZusaetzlichesZiel[]>([])
   const [origin, setOrigin] = React.useState('')
   const [originOrt, setOriginOrt] = React.useState<OrtAuswahl | null>(null)
   const [startDate, setStartDate] = React.useState('')
@@ -114,11 +125,13 @@ export default function TripPlanner({
   const [budget, setBudget] = React.useState('')
   const [travelWish, setTravelWish] = React.useState(initialIdea)
   const [meldung, setMeldung] = React.useState('')
-  const [feldfehler, setFeldfehler] = React.useState<Feldfehler>({})
+  const [feldfehler, setFeldfehler] = React.useState<Feldfehler<string>>({})
   const [bestehendeReise, setBestehendeReise] = React.useState('')
   const [laeuft, setLaeuft] = React.useState(false)
   const felder = React.useRef<Partial<Record<ReiseFormularFeld, HTMLInputElement | null>>>({})
-  const anvisiert = React.useRef<ReiseFormularFeld | null>(null)
+  const zusaetzlicheFelder = React.useRef<Record<string, HTMLInputElement | null>>({})
+  const anvisiert = React.useRef<string | null>(null)
+  const naechsterExtraKey = React.useRef(1)
 
   // Bleibt über einen erneuten Anlauf hinweg gleich. Das ist der ganze Zweck:
   // dieselbe Kennung, dieselbe Reise.
@@ -128,11 +141,29 @@ export default function TripPlanner({
     if (!anvisiert.current) return
     const feld = anvisiert.current
     anvisiert.current = null
-    feldInSichtNehmen(felder.current[feld])
+    if (feld.startsWith('zusaetzlichesZiel-')) {
+      feldInSichtNehmen(zusaetzlicheFelder.current[feld])
+      return
+    }
+    feldInSichtNehmen(felder.current[feld as ReiseFormularFeld])
   }, [feldfehler])
 
-  const feldKorrigieren = (feld: ReiseFormularFeld) => {
+  const feldKorrigieren = (feld: string) => {
     setFeldfehler((bisher) => feldfehlerLoeschen(bisher, feld))
+  }
+
+  const extraHinzufuegen = () => {
+    if (!destinationOrt) return
+    if (zusaetzlicheZiele.length >= GRENZEN.etappenJeReise - 1) return
+    const key = String(naechsterExtraKey.current)
+    naechsterExtraKey.current += 1
+    setZusaetzlicheZiele((bisher) => [...bisher, { key, ort: null, text: '' }])
+  }
+
+  const extraEntfernen = (key: string) => {
+    setZusaetzlicheZiele((bisher) => bisher.filter((ziel) => ziel.key !== key))
+    setFeldfehler((bisher) => feldfehlerLoeschen(bisher, zusaetzlichesZielFeld(key)))
+    delete zusaetzlicheFelder.current[zusaetzlichesZielFeld(key)]
   }
 
   const absenden = async (ereignis: React.FormEvent<HTMLFormElement>) => {
@@ -165,9 +196,19 @@ export default function TripPlanner({
       travellers,
       budget,
     })
-    if (sichtbar.erstes) {
-      anvisiert.current = sichtbar.erstes
-      setFeldfehler(sichtbar.fehler)
+    const extraFehler = zusaetzlicheZielePruefen(
+      zusaetzlicheZiele.map((ziel) => ({
+        key: ziel.key,
+        text: ziel.text,
+        placeId: ziel.ort?.id,
+      })),
+    )
+    const sichtbarFehler: Feldfehler<string> = { ...sichtbar.fehler, ...extraFehler }
+    const erstesExtra = zusaetzlicheZiele.find((ziel) => extraFehler[zusaetzlichesZielFeld(ziel.key)])
+    const erstes = sichtbar.erstes ?? (erstesExtra ? zusaetzlichesZielFeld(erstesExtra.key) : null)
+    if (erstes) {
+      anvisiert.current = erstes
+      setFeldfehler(sichtbarFehler)
       return
     }
     setFeldfehler({})
@@ -177,6 +218,7 @@ export default function TripPlanner({
       title: destinationOrt?.name ?? destination,
       destination: destinationOrt?.name ?? destination,
       destinationPlaceId: destinationOrt?.id,
+      weitereDestinationPlaceIds: zusaetzlicheZiele.map((ziel) => ziel.ort?.id).filter((id): id is string => Boolean(id)),
       origin: originOrt?.name ?? origin,
       originPlaceId: originOrt?.id,
       startDate,
@@ -190,16 +232,35 @@ export default function TripPlanner({
     })
 
     if (!geprueft.success) {
-      const rest: Feldfehler = {}
+      const rest: Feldfehler<string> = {}
       for (const issue of geprueft.error.issues) {
         const pfad = issue.path[0]
-        if (pfad === 'startDate' || pfad === 'endDate' || pfad === 'travellers') rest[pfad] = issue.message
+        if (pfad === 'startDate' || pfad === 'endDate' || pfad === 'travellers') rest[String(pfad)] = issue.message
         if (pfad === 'budgetAmount') rest.budget = issue.message
         if (pfad === 'destinationPlaceId' || pfad === 'destination') rest.destination = issue.message
         if (pfad === 'originPlaceId' || pfad === 'origin') rest.origin = issue.message
+        if (pfad === 'weitereDestinationPlaceIds') {
+          const index = typeof issue.path[1] === 'number' ? issue.path[1] : 0
+          const extra = zusaetzlicheZiele[index]
+          if (extra) rest[zusaetzlichesZielFeld(extra.key)] = issue.message
+        }
       }
-      anvisiert.current = erstesFehlerfeld(rest, REISE_FORMULAR_FELDER)
+      const extraKey = zusaetzlicheZiele
+        .map((ziel) => zusaetzlichesZielFeld(ziel.key))
+        .find((feld) => rest[feld])
+      anvisiert.current = erstesFehlerfeld(rest, REISE_FORMULAR_FELDER) ?? extraKey ?? null
       setFeldfehler(rest)
+      return
+    }
+
+    const vorNetz = gastCreateVorNetzschritt({
+      angemeldet,
+      aktiveReiseId: gastspeicherLaden().aktiv?.id ?? null,
+    })
+    if (!vorNetz.erlaubt) {
+      const fehler = new GastreiseBestehtFehler(vorNetz.bestehendeId)
+      setBestehendeReise(fehler.bestehendeId)
+      setMeldung(fehler.message)
       return
     }
 
@@ -208,16 +269,28 @@ export default function TripPlanner({
     const orte = await reiseorteBestaetigen({
       zielId: geprueft.data.destinationPlaceId,
       abreiseId: geprueft.data.originPlaceId,
+      weitereZielIds: geprueft.data.weitereDestinationPlaceIds,
     })
     if (!orte.ok) {
-      const amFeld: Feldfehler =
-        orte.meldung === ORT_MELDUNG.abreiseFehlt || orte.meldung === ORT_MELDUNG.abreiseUnbekannt
+      const extra =
+        orte.feld === 'destination' && typeof orte.zielIndex === 'number' && orte.zielIndex > 0
+          ? zusaetzlicheZiele[orte.zielIndex - 1]
+          : null
+      const amFeld: Feldfehler<string> = extra
+        ? { [zusaetzlichesZielFeld(extra.key)]: orte.meldung }
+        : orte.feld === 'origin' ||
+            orte.meldung === ORT_MELDUNG.abreiseFehlt ||
+            orte.meldung === ORT_MELDUNG.abreiseUnbekannt
           ? { origin: orte.meldung }
-          : orte.meldung === ORT_MELDUNG.zielFehlt || orte.meldung === ORT_MELDUNG.zielUnbekannt
+          : orte.feld === 'destination' ||
+              orte.meldung === ORT_MELDUNG.zielFehlt ||
+              orte.meldung === ORT_MELDUNG.zielUnbekannt
             ? { destination: orte.meldung }
             : {}
-      if (amFeld.destination || amFeld.origin) {
-        anvisiert.current = erstesFehlerfeld(amFeld, REISE_FORMULAR_FELDER)
+      if (Object.keys(amFeld).length > 0) {
+        anvisiert.current = extra
+          ? zusaetzlichesZielFeld(extra.key)
+          : erstesFehlerfeld(amFeld, REISE_FORMULAR_FELDER)
         setFeldfehler(amFeld)
       } else {
         setMeldung(orte.meldung)
@@ -232,6 +305,7 @@ export default function TripPlanner({
         title: orte.ziel.name,
         destination: orte.ziel.name,
         destinationPlaceId: orte.ziel.id,
+        weitereDestinationPlaceIds: orte.weitereZiele.map((ziel) => ziel.id),
         origin: orte.abreise.name,
         originPlaceId: orte.abreise.id,
       })
@@ -328,6 +402,76 @@ export default function TripPlanner({
               inputClassName={cn(fieldClass, 'pr-10', feldfehler.origin && FELD_FEHLER_RAHMEN)}
             />
           </Feld>
+
+          <div className="grid gap-4 sm:col-span-2">
+            {zusaetzlicheZiele.map((ziel, index) => {
+              const feld = zusaetzlichesZielFeld(ziel.key)
+              const nummer = index + 1
+              const fehler = feldfehler[feld]
+              return (
+                <div key={ziel.key} className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+                  <Feld
+                    id={`feld-ziel-${ziel.key}`}
+                    label={`Weiteres Ziel ${nummer}`}
+                    optional
+                    fehler={fehler}
+                    icon={<MapPin className={fieldIconClass} aria-hidden="true" />}
+                  >
+                    <OrtSuche
+                      rolle="ziel"
+                      variante="field"
+                      value={ziel.ort}
+                      initialText={ziel.text}
+                      inputId={`feld-ziel-${ziel.key}`}
+                      ungueltig={Boolean(fehler)}
+                      describedBy={fehler ? feldFehlerId(`feld-ziel-${ziel.key}`) : undefined}
+                      inputRef={(el) => {
+                        zusaetzlicheFelder.current[feld] = el
+                      }}
+                      onChange={(wert, roh) => {
+                        setZusaetzlicheZiele((bisher) =>
+                          bisher.map((eintrag) =>
+                            eintrag.key === ziel.key
+                              ? { ...eintrag, ort: wert, text: wert?.name ?? roh }
+                              : eintrag,
+                          ),
+                        )
+                        if (wert) feldKorrigieren(feld)
+                      }}
+                      placeholder="z. B. Rom"
+                      inputClassName={cn(fieldClass, 'pr-10', fehler && FELD_FEHLER_RAHMEN)}
+                    />
+                  </Feld>
+                  <button
+                    type="button"
+                    onClick={() => extraEntfernen(ziel.key)}
+                    aria-label={`Weiteres Ziel ${nummer} entfernen`}
+                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl border border-line-200 bg-surface-0 px-4 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900"
+                  >
+                    <X className="h-4 w-4" aria-hidden="true" />
+                    Entfernen
+                  </button>
+                </div>
+              )
+            })}
+
+            <div className="grid gap-2">
+              <button
+                type="button"
+                onClick={extraHinzufuegen}
+                disabled={!destinationOrt || zusaetzlicheZiele.length >= GRENZEN.etappenJeReise - 1}
+                aria-describedby="weitere-ziele-hinweis"
+                className="inline-flex min-h-11 w-fit items-center justify-center rounded-full border border-line-200 bg-white px-5 text-sm font-semibold text-brand-800 transition hover:border-brand-600 hover:text-brand-900 disabled:pointer-events-none disabled:opacity-50"
+              >
+                Weiteres Ziel hinzufügen
+              </button>
+              <p id="weitere-ziele-hinweis" className="text-xs leading-5 text-ink-700">
+                {destinationOrt
+                  ? 'Optional. Die Reihenfolge bleibt die Eingabereihenfolge. Aufenthalte werden hier nicht festgelegt.'
+                  : 'Zuerst das Reiseziel wählen. Weitere Ziele sind optional.'}
+              </p>
+            </div>
+          </div>
 
           <Feld id="feld-start" label="Abreise" fehler={feldfehler.startDate} icon={<CalendarDays className={fieldIconClass} aria-hidden="true" />}>
             <input

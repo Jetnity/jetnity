@@ -11,6 +11,8 @@ import {
   feldFehlerId,
   feldfehlerLoeschen,
   reiseFormularPruefen,
+  zusaetzlicheZielePruefen,
+  zusaetzlichesZielFeld,
 } from '@/lib/formular/feldfehler'
 
 const gueltig = {
@@ -138,6 +140,13 @@ describe('Reiseformular-Feldfehler', () => {
     })
     assert.deepEqual(danach.fehler, {})
     assert.equal(danach.erstes, null)
+  })
+
+  test('ein zusätzliches Ziel ohne bestätigte ID scheitert am Feld', () => {
+    const fehler = zusaetzlicheZielePruefen([
+      { key: '1', text: 'Rom', placeId: null },
+    ])
+    assert.equal(fehler[zusaetzlichesZielFeld('1')], ORT_MELDUNG.zielFehlt)
   })
 
   test('ein ungültiges Budget wird am Feld genannt', () => {
