@@ -52,7 +52,7 @@ import VorschlagVorschau from '@/components/trips/VorschlagVorschau'
 import { vorschlagErzeugen, vorschlagOrteAufloesen, vorschlagUebernehmen } from '@/lib/reisevorschlag/aktionen'
 import { vorschlagAlsReise } from '@/lib/reisevorschlag/abbildung'
 import { VORSCHLAG_GRENZEN, type Reisevorschlag } from '@/lib/reisevorschlag/schema'
-import { gastCreateGate } from '@/lib/trips/create-entry'
+import { gastCreateGate, gastCreateVorNetzschritt } from '@/lib/trips/create-entry'
 import {
   GastreiseBestehtFehler,
   SpeicherFehler,
@@ -144,6 +144,17 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
 
   const uebernehmen = async () => {
     if (!vorschlag || laeuft) return
+
+    const gate = gastCreateVorNetzschritt({
+      angemeldet,
+      aktiveReiseId: gastspeicherLaden().aktiv?.id ?? null,
+    })
+    if (!gate.erlaubt) {
+      const fehler = new GastreiseBestehtFehler(gate.bestehendeId)
+      setBestehendeReise(fehler.bestehendeId)
+      setMeldung(fehler.message)
+      return
+    }
 
     setMeldung('')
     setBestehendeReise('')

@@ -165,7 +165,6 @@ export default function PublicNavbar() {
           <GastCreateLink
             createHref="/planen"
             createLabel="Reise planen"
-            nurCreate={sitzung === 'konto'}
             className="inline-flex min-h-11 items-center rounded-full bg-brand-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-brand-900 pointer-fine:min-h-0"
           />
         </div>
@@ -211,7 +210,6 @@ export default function PublicNavbar() {
             <GastCreateLink
               createHref="/planen"
               createLabel="Reise planen"
-              nurCreate={sitzung === 'konto'}
               onClick={closeMobile}
               className="flex h-11 items-center justify-center rounded-full bg-brand-800 px-3 text-center text-sm font-semibold text-white"
             />
