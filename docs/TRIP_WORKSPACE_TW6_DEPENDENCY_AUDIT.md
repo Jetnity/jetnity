@@ -5,8 +5,9 @@ Agent: `Trip workspace audit architecture`
 Typ: **AUDIT / EVIDENCE / DECISION-PACKAGE ONLY**  
 Branch: `audit/tw6-guest-one-trip-dependency`  
 Draft-PR: #75  
-Baseline: `main @ ba86279e5ee2505bfd13801ae5e05ef50ba87c22`  
-Audit-Head: nach Status-Persist (docs-only)
+Baseline zum Audit-Start: `main @ ba86279e5ee2505bfd13801ae5e05ef50ba87c22`  
+Aktueller `main` nach Sync: `8ab4e666d4963ac98b32de4b0371dfbd6eefc30f`  
+Korrektur: nur Gate-/Severity-Klassifikation nach Technical-Lead-Review. Keine Runtime.
 
 Keine Runtime geändert. Kein Shared-Contract-Change vorgeschlagen, der in diesem Slice umgesetzt würde. Wenn ein solcher Change nötig wäre: nur dokumentiert, **STOPP**.
 
@@ -16,10 +17,10 @@ Keine Runtime geändert. Kein Shared-Contract-Change vorgeschlagen, der in diese
 
 | Fakt | Wert | Klasse |
 | --- | --- | --- |
-| `origin/main` | `ba86279e` – Merge PR #73 Merge-Autonomie | proven |
-| Merge-Base | `ba86279e` | proven |
-| Branch-Head vor Persist | `27b84b2a` (Task + leerer Status) | proven |
-| Ahead / Behind vor Persist | **2 ahead / 0 behind** | proven |
+| `origin/main` | `8ab4e666` – Merge PR #79 QS-2; enthält auch PR #78 | proven |
+| Merge-Base nach Sync | `8ab4e666` | proven |
+| Vorheriger Audit-Head | `4aeeb586` | proven |
+| Ahead / Behind nach Sync, vor Klassifikations-Persist | **4 ahead / 0 behind** (inkl. Merge) | proven |
 | Draft-PR #75 | OPEN, Draft, MERGEABLE | proven |
 | Review-Line-Threads | 0 | proven |
 | Init-CI `27b84b2a` | SUCCESS – run `32910164551` | proven |
@@ -32,8 +33,8 @@ Parallele Draft-PRs (alle `main`, Draft, MERGEABLE):
 | #74 D0-2 | Canonical/Origin/robots-sitemap | derzeit nur D0-2 Task/Status-Docs; **geplante** Runtime-Kollision auf `/planen`-Metadata/robots/sitemap |
 | #76 Traveller/Account | audit-only docs | keine Runtime-Overlap |
 | #77 Provider S4–S8 | audit-only docs | keine Runtime-Overlap |
-| #78 Admin D–K | audit-only docs | keine Runtime-Overlap |
-| #79 QS-2 | audit-only docs | keine Runtime-Overlap |
+| #78 Admin D–K | **MERGED** auf `main` | docs-only, keine Runtime-Overlap |
+| #79 QS-2 | **MERGED** auf `main` | docs-only, keine Runtime-Overlap |
 
 `docs/ACTIVE_WORK_STATUS.md` wurde **nicht** geändert.
 
@@ -214,18 +215,29 @@ Späterer TW-6-Runtime muss `generateMetadata` / Robots von `/planen` **nicht** 
 
 ## 7. Findings
 
+Klassifikation nach Technical-Lead-Re-Review: ein fehlender Start-Schnitt oder ein bestehender SQL-Default ist **kein aktueller Runtime-P1**, solange keine heutige Daten-/Security-/Truth-Schädigung belegt ist.
+
 ### P0
 
 Keine. Kein nachgewiesener Datenverlust im aktuellen Guest→Account-Pfad, kein stilles Überschreiben der aktiven Gastreise.
 
-### P1
+### P1 – aktuelle Runtime
 
-| ID | Finding | Warum P1 |
+Keine. Kein P1-Security-/Ownership-/Daten-Loch in der bestehenden Übernahme oder im Guest-Speicher.
+
+### TW6-START-GATE / PRODUCT-OWNER-DECISION
+
+| ID | Finding | Klasse |
 | --- | --- | --- |
-| P1-TW6-01 | Der für TW-6 geforderte **Product-Owner-Schnitt** (Create-IA + Bedeutung von „kein implizites balanced“) ist nicht entschieden. | TW-6 Runtime ohne diese Entscheidung würde entweder den Plan verfehlen oder SQL/`reise_anlegen` still mitziehen. |
-| P1-TW6-02 | `public.reise_anlegen()` schreibt `coalesce(nullif(pace, ''), 'balanced')`; Spalte `trips.pace` ist `NOT NULL DEFAULT 'balanced'`. | Wenn TW-6 „kein implizites balanced“ als Persistenz-Wahrheit behauptet, ohne RPC/Default zu ändern, entsteht eine zweite Tempo-Wahrheit. **RPC/Default in TW-6 nicht ändern** – das wäre Trip-Create-/DB-Vertrag. |
+| TW6-START-GATE-01 | Der für TW-6 geforderte **Product-Owner-Schnitt** (Create-IA, Dual-Entry, Chips, progressive Ziele, Gast-CTA) ist nicht entschieden. | **Kein aktueller Runtime-P1.** TW-6 Runtime startet erst nach dokumentierter PO-Entscheidung. Früher fälschlich `P1-TW6-01`. |
 
-Kein P1-Security-/Ownership-Loch in der bestehenden Übernahme gefunden.
+### Contract-Gate / P2 UX-Truth-Risk
+
+| ID | Finding | Klasse |
+| --- | --- | --- |
+| TW6-CONTRACT-GATE-02 | `public.reise_anlegen()` schreibt `coalesce(nullif(pace, ''), 'balanced')`; Spalte `trips.pace` ist `NOT NULL DEFAULT 'balanced'`. UI wählt `balanced` voraus. Heute ist das der **bestehende** Create-Default, keine belegte Daten-/Security-Schädigung. | **Contract-Gate / P2 UX-Truth-Risk**, kein aktueller Runtime-P1. Früher fälschlich `P1-TW6-02`. |
+
+Falls Product Owner „kein implizites `balanced`“ **auch für die Persistenz** meint: das ist ein **eigener Trip-Create-/DB-Contract-Slice**. Nicht in TW-6 verstecken. RPC/Default in TW-6 nicht ändern. **STOPP** für diesen Teil, bis ein separater Slice existiert.
 
 ### P2
 
@@ -233,7 +245,7 @@ Kein P1-Security-/Ownership-Loch in der bestehenden Übernahme gefunden.
 | --- | --- |
 | P2-TW6-01 | Gast-`/reisen` zeigt „Neue Reise“, Persistenz lehnt ab. Doppelweg. |
 | P2-TW6-02 | Reiseidee kann ein kostenpflichtiges Modell rufen und danach am Guest-Slot scheitern. |
-| P2-TW6-03 | Tempo-Chips + vorausgewähltes `balanced` widersprechen dem TW-6-Zielbild (UI). |
+| P2-TW6-03 | Tempo-Chips + vorausgewähltes `balanced` widersprechen dem TW-6-Zielbild (UI). Gehört zur UX-Seite von TW6-CONTRACT-GATE-02. |
 | P2-TW6-04 | Zwei Create-UIs auf `/planen` ohne gemeinsame Progressive-Destination-IA. |
 
 ### P3
@@ -262,9 +274,9 @@ QS-1-P2/P3 und D0-P2 nicht übernommen.
 
 ## 9. Product-Owner-Optionen (maximal 3)
 
-### Option 1 – Minimaler TW-6-Runtime (Empfehlung)
+### Option 1 – Minimaler TW-6-Runtime (Agent-Empfehlung, **nicht genehmigt**)
 
-Nach Gate-Entscheidung, **nicht jetzt**:
+Nach ausdrücklicher Product-Owner-Wahl, **nicht jetzt** und nicht als bereits freigegeben:
 
 - Guest-One-Trip-Speicher und Guest→Account **unberührt**.
 - `/planen`-Formular: Tempo-/Interessen-Chips entfernen; keine Citizenship; vorhandene `trip_stages` für **progressive weitere Ziele**.
@@ -297,11 +309,13 @@ Create-Entry-UX (Chips, Progressive Destinations, CTA-Ehrlichkeit) auf TW-9 oder
 
 ## 10. Technical-Lead-Empfehlung (keine Entscheidung)
 
-Empfohlen: **Option 1**, Start erst nach ausdrücklicher Product-Owner-Wahl und nach Klärung der D0-2-Datei-Grenze.
+Agent-Empfehlung: **Option 1**. Das ist **nicht** eine Product-Owner-Genehmigung und **nicht** ein Ready-/Merge-Signal.
 
-Nicht empfohlen: TW-6 so zu lesen, als fehle der Guest-One-Trip-**Speichervertrag**. Der fehlt nicht. Es fehlt der **Create-Entry-Schnitt**.
+Der Guest-One-Trip-**Speichervertrag ist bereits implementiert** (ADR-0042, `gastspeicher`, Tests). TW-6 braucht keinen neuen Gastspeicher.
 
-Wenn Product Owner „kein implizites balanced“ als **Persistenz** meint: das ist ein DB/`reise_anlegen`-Change. Dokumentieren und **STOPP** – nicht in TW-6 Runtime.
+Was fehlt, ist der dokumentierte **Create-Entry-Product-Owner-Schnitt** (`TW6-START-GATE-01`).
+
+Wenn Product Owner „kein implizites balanced“ als **Persistenz** meint: eigener Trip-Create-/DB-Contract-Slice. Dokumentieren und **STOPP** – nicht in TW-6 Runtime verstecken.
 
 ---
 
@@ -379,7 +393,7 @@ Zusätzlich, sobald Runtime existiert:
 
 - Jede Create-Senke ist an Code gebunden; „viele Reisen ohne Konto“ ist **nicht** der Current Contract.
 - Der Gate-Satz „Guest-One-Trip-Vertrag fehlt“ wäre falsch, wenn er den Speicher meint. Er meint den **Create-Schnitt**.
-- SQL-`balanced` zu verschweigen und gleichzeitig „kein implizites Tempo“ zu liefern wäre ein Truth-Defekt (P1-TW6-02).
+- SQL-`balanced` zu verschweigen und gleichzeitig „kein implizites Tempo“ als bereits gelöst zu verkaufen wäre ein späterer UX-Truth-Fehler (`TW6-CONTRACT-GATE-02` / P2), kein heutiger Runtime-P1.
 - Guest-CTA „Neue Reise“ ist kein zweiter Speicher-Slot, aber ein UX-Doppelweg (P2).
 - Traveller-Create ist sauber leer; kein Default-Pass.
 - Kein Vorschlag, Guest→Account still zu ändern.
@@ -392,4 +406,4 @@ Zusätzlich, sobald Runtime existiert:
 
 Kein Ready. Kein Merge. Kein TW-6-Runtime. Kein Folgeslice.
 
-Nächster Schritt: unabhängiger Technical-Lead-Review dieses Decision Packages; Product Owner wählt Option 1, 2 oder 3.
+Nächster Schritt: erneuter unabhängiger Technical-Lead-Review der Klassifikationskorrektur. Product Owner wählt Option 1, 2 oder 3, bevor irgendein TW-6-Runtime startet. Option 1 bleibt Empfehlung, nicht Genehmigung.
