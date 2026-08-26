@@ -2,7 +2,7 @@
 
 Stand: 26. August 2026
 
-Status: **RUNTIME IMPLEMENTIERT / lokale Gates grün / Exact-Head CI+Vercel folgen / STOPP für unabhängigen Technical-Lead-Review. Kein Ready. Kein Merge.**
+Status: **RUNTIME IMPLEMENTIERT / lokale und Exact-Head-Gates grün auf `d81affe7` / STOPP für unabhängigen Technical-Lead-Review. Kein Ready. Kein Merge.**
 
 Branch: `fix/qs2-admin-aal2-guard`
 Baseline: `main @ 8ab4e666d4963ac98b32de4b0371dfbd6eefc30f`
@@ -56,6 +56,20 @@ Residual: Es gibt keinen Live-Browser-TOTP gegen ein echtes Admin-Konto in diese
 - `npm run auth:pruefen` — 55/55
 - `npm run build` — pass, Route `/admin/mfa` vorhanden
 
+## Exact-Head auf `d81affe7c073e3d406175def6fc01158805c1a0e`
+
+- Merge-Base = `origin/main` `8ab4e666`
+- Ahead / Behind: **4 / 0**
+- GitHub Actions `32918631276` SUCCESS
+  - Typecheck, Lint & Build SUCCESS
+  - Auth-Konfiguration gegen config.toml SUCCESS
+- Vercel Preview READY `J9a6YFSQU21cVbX3C5LtECZ5yo8g` (Deployment `6095201589`, SHA `d81affe7`)
+- Review-Threads: 0
+- Human Reviews: 0
+- PR #80 bleibt Draft, `MERGEABLE`
+
+Der ältere Lauf `32918481010` FAILURE gehörte zum Typecheck-Zwischenstand `56944ac4` und ist nicht der aktuelle Head.
+
 ## Parallelität
 
 - `main` unverändert `8ab4e666`, Merge-Base identisch, behind 0
@@ -68,4 +82,4 @@ Residual: Es gibt keinen Live-Browser-TOTP gegen ein echtes Admin-Konto in diese
 
 ## Nächster Schritt
 
-Exact-Head GitHub Actions und Vercel auf dem Push-Head belegen, danach **STOPP** für unabhängigen ChatGPT-/Technical-Lead-Review von Anfang an.
+**STOPP.** Unabhängiger ChatGPT-/Technical-Lead-Review von Anfang an. Kein Ready. Kein Merge. Kein Folgeslice.
