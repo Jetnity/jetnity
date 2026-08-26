@@ -1,20 +1,40 @@
 ---
-description: Jetnity Product Owner merge approval gate
+description: Jetnity Technical Lead merge autonomy and Product Owner special gates
 alwaysApply: true
 ---
 
 # Jetnity Merge Approval – verbindlich
 
-Für Jetnity gilt dauerhaft:
+Stand: 26. August 2026
 
-- **Keinen Pull Request ohne ausdrückliche aktuelle Freigabe des Product Owners / Nutzers mergen.**
-- Technisch fertig, grüne Tests, grüne CI, READY Preview, positives Review oder `mergeable=true` sind keine Merge-Freigabe.
+Die frühere Regel „Product Owner muss jeden normalen Merge explizit freigeben“ ist **superseded**.
+
+Aktuell gilt:
+
+- **ChatGPT / Technical Lead darf normale scope-treue PRs selbst Ready setzen und mergen, aber nur nach strengem unabhängigen Review.**
+- Blind mergen ist verboten. Grüne Tests, CI, Vercel READY oder Agent-Self-Review sind keine Merge-Begründung.
+- Feature-/Audit-Autoren dürfen ihr eigenes finales Review nicht als unabhängigen Technical-Lead-PASS ersetzen.
 - Während Implementierung und Review bleibt der PR standardmäßig Draft.
-- Nach technischem Abschluss muss der Product Owner Gelegenheit erhalten, Produkt-/UX-Änderungen zu verlangen.
-- Bei Änderungswünschen: nicht mergen, Änderung versionieren, implementieren, erneut testen/reviewen und wieder auf ausdrückliche Freigabe warten.
-- Eine Freigabe gilt nur für den konkret besprochenen PR/Arbeitsblock.
-- Merge-Freigabe ist keine automatische Freigabe für Production-Migration, Provider-Aktivierung, Secrets, Verträge oder neue Kosten.
+- Wenn etwas nicht sauber ist: erst reparieren, neu gaten, neu reviewen, dann entscheiden.
+- Eine Merge-Entscheidung ist keine Freigabe für Production-Migration, Provider-Aktivierung, Secrets, Verträge oder neue Kosten.
 
-Vollständige Policy: `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`.
+Explizite Product-Owner-Gates bleiben insbesondere für:
 
-Merksatz: **Technisch fertig bedeutet review-bereit. Gemergt wird erst nach ausdrücklicher Freigabe des Product Owners.**
+- Production-Migrationen
+- destructive/reversal-hard Production Data Changes
+- große Production-RLS-/Ownership-/Identity-Änderungen
+- fundamentale Auth/Session/MFA/AAL-Änderungen
+- sensible Pass/MRZ/Biometrie-/Dokument-Speicherung
+- sensible externe Datenweitergabe
+- echte Provider-Verträge/Secrets/paid calls
+- echte Payments/Money Movement
+- > USD 100/Monat laufende Kosten
+- fundamentale Product-/Business-/Build-Order-Änderungen
+- Public Launch
+- Provider Live Activation
+- Store Launch / große Production Activation
+
+Aktuelle Regel: `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`  
+Historische per-PR-Pflicht: `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
+
+Merksatz: **Autonom mergen ist erlaubt. Blind mergen ist verboten.**

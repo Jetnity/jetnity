@@ -1,6 +1,6 @@
 # Jetnity – verbindlicher Kontinuitätsstandard
 
-Stand: 24. August 2026
+Stand: 26. August 2026
 
 ## Status
 
@@ -50,8 +50,10 @@ Keine Phase gilt als sauber abgeschlossen, wenn dieser Übergabestand nicht nach
 
 Je nach Änderung müssen insbesondere aktuell gehalten werden:
 
+- `JETNITY_START_HERE.md` – kanonischer erster Einstieg für neue Chats und Agenten
 - `JETNITY_VISION.md` – verbindlicher Produkt-Nordstern; was Jetnity ist, was es nicht ist und welche Nutzerentlastung das Produkt erreichen soll
-- `JETNITY_HANDOFF.md` – kompakter aktueller Übergabestand. Operative Git-/PR-Wahrheit steht hier und in `docs/ACTIVE_WORK_STATUS.md`, nicht in historischen Slice-/Provider-Statusdateien, die mit einem späteren Merge als pre-merge Evidence mitgeliefert wurden.
+- `JETNITY_HANDOFF.md` – kompakter aktueller Übergabestand. Operative Git-/PR-Wahrheit steht hier, in `docs/ACTIVE_WORK_STATUS.md` und im jeweils neuesten `docs/CHATGPT_*_CHECKPOINT_*.md`, nicht in historischen Slice-/Provider-Statusdateien
+- `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md` – aktueller Continuity-Checkpoint am 26. August 2026; ältere Checkpoints bleiben historical evidence
 - `ROADMAP.md` – fertig / in Arbeit / als Nächstes / blockiert / bewusst verschoben
 - `ARCHITECTURE.md` – aktuelle System- und Datenflussarchitektur
 - `DECISIONS.md` – ADRs für wichtige Entscheidungen

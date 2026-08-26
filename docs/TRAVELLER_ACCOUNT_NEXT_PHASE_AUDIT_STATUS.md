@@ -23,7 +23,7 @@ Bestätigt:
 - Kein Default-Pass. Issuer ist nicht Citizenship.
 - Foundation E ist produktiv vorhanden; sie wird nicht neu gebaut.
 - `documents[0]` in `travellerNormalisieren()` ist ein latentes P2-/Contract-Hardening-Risiko, kein aktueller Runtime-P1 im kanonischen App-Pfad.
-- **P1-TA-02** bleibt real offen: `officialAusEvaluations()` kollabiert im aktuellen Presentation/API-Pfad auf `evaluations[0]`; `result` bleibt fail-closed `unknown`.
+- **P1-TA-02** war zum Audit-Zeitpunkt offen und ist **inzwischen durch PR #84 integriert**. Dieser Audit-Text bleibt historische Evidence und darf P1-TA-02 nicht als aktuellen Open-Finding führen. **P2-TA-06 bleibt offen.**
 - Account-scoped Traveller Identity / AP-7 bleibt hinter einem Shared-Contract-Gate. Dieser Audit erfindet keinen Registry-Contract.
 - Dieser PR enthält nur Audit-/Evidence-Dokumentation; keine Runtime-, DB-, RLS-, Auth-, Guest→Account- oder Traveller-Shared-Contract-Änderung.
 - D0-2 wurde inzwischen separat auf `main` integriert und verändert die fachliche Traveller-/Account-Evidence dieses Audits nicht.

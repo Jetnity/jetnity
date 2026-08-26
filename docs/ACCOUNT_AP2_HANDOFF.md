@@ -1,7 +1,9 @@
 # Jetnity Account Platform – AP-2 Handoff
 
 Stand: 24. August 2026  
-Status: **TECHNICAL INTEGRATION CLOSURE / PASS – Draft, wartet auf Product-Owner-Entscheidung; kein Mark Ready, kein Merge, kein AP-3**
+Status: **HISTORICAL HANDOFF. AP-2 ist auf `main` integriert (PR #48). Nicht der aktuelle operative Stand.**
+
+> Kanonisch: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
 
 | Feld | Wert |
 | --- | --- |

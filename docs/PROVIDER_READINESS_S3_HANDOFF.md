@@ -1,7 +1,9 @@
 # Jetnity – Provider Readiness S3 Handoff
 
 Stand: 24. August 2026
-Status: **S3 auf Current Main `8326e72f` synchronisiert und gegatet; ADR-0161; Current-Main Exact Head `2cb9a830`; Runtime/Security/Truth PASS; Draft-PR #54; STOPP für Technical-Lead Docs-Re-Check; kein Mark Ready / kein Merge / kein S4**
+Status: **HISTORICAL HANDOFF. S3 ist auf `main` integriert (PR #54). Nicht der aktuelle operative Stand. S5-A ist inzwischen ebenfalls integriert; S5-B nicht gestartet.**
+
+> Kanonisch: `JETNITY_HANDOFF.md` und `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
 
 ## 1. Übernahme
 

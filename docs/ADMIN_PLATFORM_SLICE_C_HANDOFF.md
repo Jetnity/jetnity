@@ -1,6 +1,10 @@
 # Admin Slice C – Handoff
 
 Stand: 24. August 2026  
+Status: **HISTORICAL HANDOFF. Admin C ist auf `main` integriert (PR #49). Nicht der aktuelle operative Stand. Kein Admin D–K.**
+
+> Kanonisch: `JETNITY_HANDOFF.md` und `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
+
 Cursor-Anzeigename: `Admin platform audit`  
 Branch: `feat/admin-provider-cost-board`  
 PR: https://github.com/Jetnity/jetnity/pull/49 (Ready for Review)  

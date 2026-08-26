@@ -4074,7 +4074,7 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 ## ADR-0166 – Guest→Account streicht unbewiesene Stay-/Activity-Handelsfelder
 
 **Datum:** 26. August 2026  
-**Status:** umgesetzt auf `fix/qs2-guest-account-commercial-truth`; schließt P1-QS2-02. Keine Schema-/RPC-Änderung.
+**Status:** integriert auf `main` via PR #81 / `86567f17`; schließt P1-QS2-02. Keine Schema-/RPC-Änderung.
 
 **Entscheidung:** Beim Guest→Account-Transfer werden für `stay` und `activity` dieselben unbewiesenen Handelsfelder genullt wie bereits für `flight`: `price_amount`, `price_currency`, `provider`, `external_ref`, `booking_url`. Nicht-kommerzielle Fakten (Titel, Notiz, Datum, Zeit) bleiben. Transfer und `rental_car` bleiben unverändert, weil ihr persistierter Preis S3-User-Intake sein kann.
 
@@ -4100,7 +4100,7 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 ## ADR-0167 – Official-Compatibility aggregiert fail-closed, nicht first-evaluation
 
 **Datum:** 26. August 2026  
-**Status:** umgesetzt auf `fix/p1-ta02-official-evaluation-option-scope`; schließt P1-TA-02. Keine Schema-/Contract-Änderung.
+**Status:** integriert auf `main` via PR #84 / `2468160e`; schließt P1-TA-02. Keine Schema-/Contract-Änderung. P2-TA-06 bleibt offen.
 
 **Entscheidung:** Kanonische Official-Wahrheit bleibt `OfficialEvaluation[]`. Das Legacy-Feld `official` und die Item-/Summary-Presentation dürfen nur Aussagen machen, die für ihren Scope belegt sind. Bei heterogenen Traveller-, Credential-Option-, Destination- oder Transit-Scopes wird keine einzelne Evaluation als repräsentative Wahrheit gewählt. Presentation-Metadaten (Authority, Source URL, `checkedAt`, `validityUntil`) bleiben dann leer. `result` bleibt immer `unknown`. Item-Scope ohne exakten Treffer fällt nicht auf alle Evaluations zurück.
 
@@ -4126,7 +4126,7 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 ## ADR-0168 – Commercial Provenance ist ein eigener Vertrag, kein UniversalOffer
 
 **Datum:** 26. August 2026  
-**Status:** S5-A Domain-Foundation auf Feature-Branch. Nicht Ready. Nicht gemergt. Keine Persistenz. Volltext: `docs/ADR_0168_COMMERCIAL_PROVENANCE_DOMAIN_CONTRACT.md`.
+**Status:** S5-A Domain-Foundation integriert auf `main` via PR #83 / `3b317bc6`. S5-B nicht gestartet. Keine Persistenz. Volltext: `docs/ADR_0168_COMMERCIAL_PROVENANCE_DOMAIN_CONTRACT.md`.
 
 **Entscheidung:** Kommerzielle Wahrheit (Preis, Providerherkunft, Freshness, Währung) bekommt einen provider-neutralen Domainvertrag in `lib/commercial-provenance`. Die bestehenden Flight-/Hotel-/Activity-/Mobility-/Rental-Modelle bleiben fachlich getrennt. Der Vertrag komponiert Provenance, er ersetzt die Domänenoptionen nicht. Ein persistierter Snapshot ist niemals live. Fehlende Freshness bleibt `unknown`. Requested- und Quoted-Währung dürfen ohne Conversion-Evidence nicht gleichgesetzt werden. External References sind Provenance, nicht Trust, und provider-scoped. Mehrere belegte Quellen dürfen als Konflikt stehen bleiben. LLM/Assistant darf diesen Vertrag nicht erzeugen oder überschreiben. Actor und Source sind fail-closed getrennt: User-Intake/Manual sind keine Provider-Truth; Provider-Live-/Snapshot-Herkunft kommt nur aus einem trusted Adapter- oder Snapshot-Pfad. Untrusted Input defaultet nicht auf `system`.
 
@@ -4153,7 +4153,7 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 ## ADR-0169 – Admin-Zugang verlangt zentral aktuelles AAL2
 
 **Datum:** 26. August 2026  
-**Status:** Product-Owner-freigegebene Security-Regel; Runtime in Draft-PR #80. Auf diesem Branch zuerst als ADR-0168 geführt; nach Integration von `main @ 3b317bc` auf **0169** verschoben, weil 0166–0168 dort bereits Guest→Account, Official-Compatibility und Commercial Provenance belegen.
+**Status:** Product-Owner-freigegebene Security-Regel; Application-Guard integriert auf `main` via PR #80 / `d3faa2a0`. Development-Migrationsartefakt versioniert; Production-Datenebene nicht angewendet. Auf dem Feature-Branch zuerst als ADR-0168 geführt; nach Integration von `main @ 3b317bc` auf **0169** verschoben, weil 0166–0168 dort bereits Guest→Account, Official-Compatibility und Commercial Provenance belegen.
 
 **Entscheidung:**
 
@@ -4172,6 +4172,23 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 **Begründung:** Ein gestohlenes Erstfaktor-Passwort eines Admin-Kontos darf privilegierte Flächen und die administrative Datenebene nicht öffnen. Eine Login-only-Prüfung würde Magic Link, OAuth und bestehende AAL1-Sitzungen durchlassen.
 
 **Konsequenzen:** Kein allgemeiner Auth-/Session-Umbau, kein Passkey-Rollout, kein Rollen-/Ownership-Neudesign, kein P1-QS2-02, keine Production-Aktivierung. Admins ohne verifizierten TOTP-Faktor bleiben aus `/admin` ausgesperrt und bekommen den bestehenden Account-Security-Pfad.
+
+---
+
+## ADR-0170 – Finaler Continuity-Handoff dokumentiert den verifizierten Integrationsstand
+
+**Datum:** 26. August 2026  
+**Status:** docs-only Continuity-Entscheidung. Keine Runtime-, DB-, Auth- oder Provideränderung.
+
+**Entscheidung:** Nach unabhängiger Integration von PR #81, #84, #82, #83 und #80 ist der kanonische operative Stand `main @ d3faa2a08a5a492230d94e03c4d1811b32dd915b`. Veraltete „current“-Aussagen, die diese PRs noch als Draft oder nächsten Slice führen, sind historical / superseded. TW6-A ist nicht gesamtes TW-6. S5-A ist nicht S5-B. Der Admin-AAL2-Application-Guard ist nicht die Production-DB-Aktivierung. Die per-PR-Merge-Pflicht vom 22./25. August bleibt historische Evidence und ist für normale Merges durch `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md` superseded.
+
+**Kontext:** Vor dem Wechsel in einen neuen ChatGPT-/Technical-Lead-Chat lagen Handoff, Start-Here, Active Work und mehrere Slice-Statusdateien hinter dem live gemergten `main`.
+
+**Alternativen:** Alte Statusdateien löschen; Runtime nachziehen; Branch Protection in diesem Auftrag setzen. Abgelehnt, weil Historie/Evidence erhalten bleiben muss und dieser Auftrag docs-only ist.
+
+**Begründung:** Continuity darf keine tote Baseline als Current stehen lassen und darf keine Historie zerstören.
+
+**Konsequenzen:** Kanonisch sind `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md` und `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`. Historische Checkpoints, Audits und Slice-Status bleiben erhalten und werden als historical / integrated markiert.
 
 ---
 

@@ -1,7 +1,7 @@
 # ADR-0168 – Commercial Provenance ist ein eigener Vertrag, kein UniversalOffer
 
 Stand: 26. August 2026  
-Status: **Slice-Entscheidung für Provider S5-A; nicht gemergt, nicht Ready, keine Persistenz**
+Status: **S5-A integriert auf `main` via PR #83 / `3b317bc6`. S5-B nicht gestartet. Keine Persistenz.**
 
 Vollständige Entscheidung: [DECISIONS.md](../DECISIONS.md) ADR-0168.
 

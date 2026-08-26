@@ -6,7 +6,9 @@ Branch: `feat/provider-s5-commercial-provenance-contract`
 Draft-PR: `#83`  
 Aktueller `main`: `c4ea47aa0b22ac6fd5e04862e7184f5a436210e1`  
 Vorheriger PR-Head: `d5a7a224240dede6d53f9460f7a2f7d3dce7c5b8`  
-Status: **NUR MAIN-SYNC NACH PR #82 / NICHT READY / NICHT MERGEN / WARTE AUF UNABHÄNGIGEN TECHNICAL-LEAD-REVIEW**
+Status: **INTEGRATED on `main` via PR #83 / `3b317bc6`. HISTORICAL REVIEW-EVIDENCE darunter. S5-B nicht gestartet. Keine Provideraktivierung.**
+
+> Die folgenden Abschnitte beschreiben den Review-Stand vor dem Merge. Sie dürfen den aktuellen Handoff nicht überschreiben. Kanonisch: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
 
 Auftrag: `docs/PROVIDER_READINESS_S5A_COMMERCIAL_PROVENANCE_TASK.md`.  
 ADR: `docs/ADR_0168_COMMERCIAL_PROVENANCE_DOMAIN_CONTRACT.md`.

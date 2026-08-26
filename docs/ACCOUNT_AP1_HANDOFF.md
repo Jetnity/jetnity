@@ -1,7 +1,9 @@
 # Jetnity Account Platform – AP-1 Handoff
 
 Stand: 24. August 2026  
-Status: **mit `main` synchronisiert und gegated – Draft, kein Mark Ready, kein Merge**
+Status: **HISTORICAL HANDOFF. AP-1 ist auf `main` integriert (PR #43). Nicht der aktuelle operative Stand.**
+
+> Kanonisch: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
 
 | Feld | Wert |
 | --- | --- |

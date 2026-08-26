@@ -1,7 +1,9 @@
 # Jetnity Account AP-3 – Status
 
 Stand: 24. August 2026  
-Status: **auf `main` `78192ab` synchronisiert und auf Exact Head `c5e4a51f` gegatet – Draft, kein Ready, kein Merge, kein AP-4**
+Status: **HISTORICAL STATUS. AP-3 ist auf `main` integriert (PR #53). Nicht der aktuelle operative Stand. Kein AP-4 gestartet.**
+
+> Kanonisch: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
 
 | Feld | Wert |
 | --- | --- |

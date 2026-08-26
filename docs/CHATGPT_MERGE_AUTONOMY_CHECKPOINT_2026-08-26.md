@@ -1,7 +1,9 @@
 # ChatGPT / Technical Lead – Merge Autonomy Checkpoint
 
 Stand: 26. August 2026  
-Status: **aktuelle Product-Owner-Entscheidung zur Technical-Lead-Merge-Autonomie wird versioniert**
+Status: **HISTORICAL CHECKPOINT / Governance-Slice-Evidence. Nicht mehr der aktuelle operative Integrationsstand.**
+
+> Superseded as current by `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`. Die Merge-Autonomie-Entscheidung selbst bleibt gültig über `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`. Die unten genannte Baseline `5f9dc4b0` ist historische Evidence, nicht aktuelles `main`.
 
 ## 1. Ausgangspunkt
 

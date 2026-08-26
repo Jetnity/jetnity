@@ -1,7 +1,9 @@
 # Jetnity – Provider Readiness S3 Status
 
 Stand: 24. August 2026
-Status: **Current-Main-Sync auf `8326e72f` gegatet; Draft-PR #54; Runtime/Security/Truth PASS; STOPP für Technical-Lead Docs-Re-Check; kein Mark Ready / kein Merge**
+Status: **HISTORICAL STATUS. S3 ist auf `main` integriert (PR #54). Nicht der aktuelle operative Stand.**
+
+> Kanonisch: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
 Branch: `feat/provider-mobility-rental-evidence-s3`
 Draft-PR: `#54`
 ADR: ADR-0161  

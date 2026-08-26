@@ -2,7 +2,9 @@
 
 Stand: 25. August 2026
 
-Status: **TW-5 – Item- und Gap-Details ist nach unabhängigem Technical-Lead-Re-Review abgeschlossen und auf `main` integriert.**
+Status: **HISTORICAL CHECKPOINT. TW-5 bleibt integriert. Nicht mehr der aktuellste operative Checkpoint.**
+
+> Aktueller Checkpoint: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
 
 ## Live-verifizierter Abschluss
 

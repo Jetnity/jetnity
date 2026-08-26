@@ -1,7 +1,9 @@
 # Jetnity – verbindlicher Workflow zwischen Product Owner, ChatGPT, Cursor und Repository
 
 Stand: 22. August 2026  
-Status: **dauerhaft verbindlich für größere Jetnity-Arbeiten**
+Status: **dauerhaft verbindlich für größere Jetnity-Arbeiten, außer wo spätere ausdrückliche Product-Owner-Entscheidungen einzelne Passagen superseded haben.**
+
+> **Merge-Regel aktuell:** Die Sätze in diesem Dokument, die ChatGPT verbieten, ohne ausdrückliche Product-Owner-Freigabe zu mergen, sind für normale scope-treue PRs durch `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md` superseded. Blind mergen bleibt verboten. Besondere Product-Owner-Gates bleiben. Der übrige Continuity-/Review-Workflow bleibt gültig.
 
 Dieser Workflow ergänzt `docs/CONTINUITY_STANDARD.md`, `docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`, `docs/EXPERT_PROACTIVITY_POLICY.md` und `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`. Ziel ist, dass Jetnity bei einem Wechsel von Chat, Cursor-Agent oder Sitzung ohne Wissensverlust exakt weitergeführt wird.
 

@@ -1,7 +1,9 @@
 # Admin Platform Slice C – Status
 
 Stand: 24. August 2026  
-Status: **TECHNICAL CLOSURE / PASS – Ready for Review; wartet auf separate Merge-Freigabe**  
+Status: **HISTORICAL STATUS. Admin C ist auf `main` integriert (PR #49). Nicht der aktuelle operative Stand. Kein Admin D–K.**
+
+> Kanonisch: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.  
 Verantwortlicher Cursor-Agent: `Admin platform audit`  
 Branch: `feat/admin-provider-cost-board`  
 PR: #49 Ready for Review, Base `main`  

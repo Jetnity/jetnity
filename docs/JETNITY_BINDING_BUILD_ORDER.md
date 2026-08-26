@@ -1,7 +1,7 @@
 # Jetnity – verbindliche Build-Reihenfolge
 
-Stand: 25. August 2026  
-Status: **Product-Owner-verbindlich; Änderung nur durch neue ausdrückliche Product-Owner-Entscheidung**
+Stand: 26. August 2026  
+Status: **Product-Owner-verbindlich; Änderung nur durch neue ausdrückliche Product-Owner-Entscheidung. Operativer Integrationsstand: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.**
 
 ## Grundsatz
 
@@ -20,13 +20,15 @@ Reihenfolge:
 1. TW-1 – Shell & Geräteparität ✅
 2. TW-2 – Reiseübersicht ✅
 3. TW-4 – Aufmerksamkeit / `Jetzt wichtig` ✅
-4. TW-3 – Timeline / Etappe / Tag
-5. TW-5 – Item- und Gap-Details
-6. TW-6/TW-7/TW-8 nur nach ihren dokumentierten Abhängigkeiten/Gates
-7. TW-9 – Polish, Evidence, Closure
-8. verpflichtender finaler Function-by-Function-/Intelligence-Audit
+4. TW-3 – Timeline / Etappe / Tag ✅
+5. TW-5 – Item- und Gap-Details ✅
+6. TW6-A – Create-Entry Alignment ✅ – **nicht** gesamtes TW-6
+7. TW6-REST-01 – progressive weitere Ziele / zusätzliche `trip_stages` im Create ❌ offen
+8. TW-7 / TW-8 nur nach ihren dokumentierten Abhängigkeiten/Gates
+9. TW-9 – Polish, Evidence, Closure
+10. verpflichtender finaler Function-by-Function-/Intelligence-Audit
 
-TW-1, TW-2, TW-4 und TW-3 bleiben getrennte Runtime-Slices. Keine Monster-PRs.
+TW-1, TW-2, TW-4, TW-3, TW-5 und TW6-A bleiben getrennte Runtime-Slices. Keine Monster-PRs. TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance; S5-A allein öffnet TW-8 nicht.
 
 ## 2. Traveller / Pass / Multi-Citizenship produktweit vervollständigen
 
@@ -54,7 +56,7 @@ Marketing-/Growth-Abhängigkeit: Account-/Consent-/Notification-/Entitlement-Wah
 
 Agent: `Jetnity provider readiness audit`
 
-S1–S3 sind auf `main`. Weiter mit S4–S8 gemäß Provider-Plan.
+S1–S3 und **S5-A** (Commercial-Provenance-Domainvertrag) sind auf `main`. S5-B ist nicht gestartet. Weiter mit S5-B und S4/S6–S8 gemäß Provider-Plan.
 
 Erst danach echte Provideraktivierung. Verträge, Secrets/API-Keys, kostenpflichtige Calls, Datenschutz/Lizenz und Production-Aktivierung bleiben besondere Product-Owner-Gates.
 
@@ -244,4 +246,4 @@ Vor echtem Launch verpflichtend:
 
 Die technische Ausführung folgt `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`.
 
-Normale vollständig geprüfte PRs dürfen nach der Product-Owner-Freigabe vom 25. August 2026 durch den Technical Lead selbst Ready gesetzt und gemergt werden. Besondere Production-/Kosten-/Provider-/Produkt-/Sensitive-Data-Gates bleiben Product-Owner-pflichtig.
+Normale vollständig geprüfte PRs dürfen nach der Product-Owner-Entscheidung vom 26. August 2026 durch den Technical Lead selbst Ready gesetzt und gemergt werden, jedoch nur nach unabhängigem Review. Blind mergen ist verboten. Kanonisch: `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`. Besondere Production-/Kosten-/Provider-/Produkt-/Sensitive-Data-Gates bleiben Product-Owner-pflichtig.

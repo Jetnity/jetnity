@@ -4,7 +4,9 @@ Stand: 26. August 2026
 Agent: `Trip workspace audit architecture`  
 Branch: `feat/tw6-create-entry-alignment`  
 Auftrag: `docs/TRIP_WORKSPACE_TW6_CREATE_ENTRY_TASK.md`  
-Status: **TW6-A IMPLEMENTIERT / UNABHÄNGIGER TECHNICAL-LEAD-PASS AUF CODE-/EVIDENCE-HEAD / STATUS RECONCILED / KEIN GESAMT-TW-6-CLOSURE**
+Status: **INTEGRATED on `main` via PR #82 / `c4ea47aa`. HISTORICAL REVIEW-EVIDENCE darunter. KEIN GESAMT-TW-6-CLOSURE. TW6-REST-01 bleibt offen.**
+
+> Aktueller operativer Stand: `JETNITY_HANDOFF.md` und `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
 
 `docs/ACTIVE_WORK_STATUS.md` wurde nicht geändert.
 

@@ -1,7 +1,9 @@
 # Jetnity – Provider Readiness S2 Handoff
 
 Stand: 24. August 2026  
-Status: **S2-B2 Development-Migration angewendet; PR #51 auf aktuellen `main` synchronisiert; lokale Gates, GitHub Actions und Vercel auf `e2fcffde` grün; STOPP für Technical-Lead-Re-Review**
+Status: **HISTORICAL HANDOFF. S2 ist auf `main` integriert (PR #51). Nicht der aktuelle operative Stand. Development-Migrationen bleiben nicht Production-approved.**
+
+> Kanonisch: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
 
 ## 1. Übernahme
 

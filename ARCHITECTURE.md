@@ -1,7 +1,7 @@
 # Jetnity – Architektur
 
-Stand: 24. August 2026
-Gültig für: Foundation D/E, Travel Safety, Travel Timing & Seasonal Intelligence sowie Account AP-1–AP-3, Admin Slice A–C, Provider S1 und S2 auf `main` `8326e72f`; Provider Readiness S3 auf `feat/provider-mobility-rental-evidence-s3`. Account-Slices ändern kein Schema. S2-B1/B2-Migrationen liegen nur auf Development und sind nicht Production-approved.
+Stand: 26. August 2026
+Gültig für: Foundation D/E, Travel Safety, Travel Timing & Seasonal Intelligence, Account AP-1–AP-3, Admin Slice A–C, Provider S1–S3 und S5-A, Trip Workspace TW-1/2/4/3/5 und TW6-A, D0-1/D0-2 sowie den zentralen Admin-AAL2-Application-Guard auf `main` `d3faa2a0`. Account-Slices ändern kein Schema. S2-B1/B2- und Admin-AAL2-Data-Plane-Migrationen liegen nur auf Development und sind nicht Production-approved. Operativer Stand: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
 
@@ -33,6 +33,7 @@ app/                Routing, Server Components, Route Handler, Server Actions
 components/         Präsentation und Interaktion
 lib/                Business-Logik, Datenzugriff, Integrationen
 lib/provider-ops/   gemeinsamer technischer Operationsvertrag (Request-Härtung, Kill-Switch-Form, In-Memory-Cost-Guard, Outcome-Taxonomie); keine Fachwahrheit, kein UniversalProvider
+lib/commercial-provenance/ S5-A Domainvertrag für Commercial Provenance; keine Persistenz, keine Provideraktivierung (ADR-0168). S5-B nicht gestartet.
 lib/auth/           Rollenmodell und Zugangsentscheidung (siehe Abschnitt 4)
 types/              Datenbank- und Domänentypen; types/supabase.ts wird erzeugt
 supabase/migrations Datenbankschema, vollständig und reproduzierbar (Abschnitt 6)
@@ -471,8 +472,8 @@ Deployment über Vercel (Projekt `jetnity-app`). `main` ist der stabile Integrat
 | --- | --- |
 | `jetnity-app.vercel.app` | öffentlich erreichbar, aktueller Production-Alias |
 | Deployment-URLs (`jetnity-<hash>-…vercel.app`) | durch Vercel Deployment Protection geschützt, liefern die Vercel-Login-Seite |
-| `jetnity.com` | **keine öffentliche DNS-Auflösung** |
-| `jetnity.ch` | **keine öffentliche DNS-Auflösung** |
+| `jetnity.com` | **kanonische Produktdomain; live weiterhin keine öffentliche DNS-Auflösung. Kein Cutover.** |
+| `jetnity.ch` | **Entry-/Redirect-Domain, nicht zweite indexierte Plattform; live keine öffentliche DNS-Auflösung. Kein Cutover.** |
 
 Die beiden Produktionsdomains aus [JETNITY_VISION.md](JETNITY_VISION.md) sind damit noch nicht mit dem Vercel-Projekt verbunden. Für die Entwicklung ist das unkritisch, für den Launch ist es eine Voraussetzung. Automatisierte Prüfungen der Produktion müssen bis dahin den Alias verwenden, nicht die Wunschdomain.
 

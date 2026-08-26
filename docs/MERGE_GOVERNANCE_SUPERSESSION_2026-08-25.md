@@ -1,7 +1,9 @@
 # Jetnity – Merge-Governance-Supersession
 
 Stand: 25. August 2026  
-Status: **Product-Owner-verbindlich / sofortige Vorrangregel für alle Chats, Technical Leads und Coding Agents**
+Status: **HISTORICAL / SUPERSEDED für normale Ready-/Merge-Entscheidungen durch `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`. Die besonderen Production-/Kosten-/Provider-/Sensitive-Data-Gates bleiben. Nicht löschen.**
+
+> Diese Datei ist Evidence der Product-Owner-Entscheidung vom 25. August 2026. Am 26. August 2026 wurde die Merge-Autonomie wieder erweitert und zugleich durch strenge unabhängige Pflichtprüfung begrenzt.
 
 ## 1. Verbindliche Entscheidung
 
