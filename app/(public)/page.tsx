@@ -20,7 +20,7 @@ import GastCreateLink from '@/components/trips/GastCreateLink'
 import { INSPIRATION_ZIELE } from '@/lib/places/inspiration'
 import { zielHref } from '@/lib/places/auswahl'
 import { ScrollRow } from '@/components/ui/scroll-row'
-import { kanonischeUrl, oeffentlicherOrigin } from '@/lib/seo/oeffentlicher-origin'
+import { kanonischeUrl } from '@/lib/seo/oeffentlicher-origin'
 
 export const metadata: Metadata = {
   title: 'Deine ganze Reise. Intelligent begleitet.',
@@ -60,8 +60,6 @@ const cockpitBenefits = [
 ]
 
 export default function HomePage() {
-  const { origin } = oeffentlicherOrigin()
-
   return (
     <main className="bg-surface-75 text-brand-800">
       <section className="px-3 pb-16 pt-3 sm:px-5 sm:pb-24">
@@ -331,7 +329,7 @@ export default function HomePage() {
             '@context': 'https://schema.org',
             '@type': 'WebApplication',
             name: 'Jetnity',
-            url: origin,
+            url: kanonischeUrl('/'),
             applicationCategory: 'TravelApplication',
             operatingSystem: 'Web',
             description: 'Eine persönliche Plattform für Reiseplanung und Reisebegleitung.',

@@ -1,7 +1,9 @@
 // lib/seo/oeffentlicher-origin.ts
 //
-// D0-2: eine technische URL-/Origin-Wahrheit für Metadata, Canonicals,
-// Sitemap, robots Host/Sitemap und die bestehende Homepage-JSON-LD-URL.
+// D0-2: technische URL-/Origin-Wahrheit für Indexing, Sitemap und robots.
+// Öffentliche Canonicals, OG- und JSON-LD-URLs liegen zusätzlich in
+// oeffentliche-metadata.ts und dürfen niemals den technischen Host
+// (localhost, *.vercel.app) als Jetnity-Produktdomain behaupten.
 //
 // NEXT_PUBLIC_SITE_URL ist die bevorzugte kanonische Public-Site-Origin.
 // NEXT_PUBLIC_APP_URL ist nur Legacy-Fallback, wenn kein eigener Site-Wert
@@ -152,12 +154,16 @@ export function oeffentlicherOrigin(env?: OriginUmgebung): OeffentlicherOrigin {
   }
 }
 
+/**
+ * Öffentliche Canonicals gehören der Produktdomain, nicht dem technischen Host.
+ * `env` bleibt akzeptiert, damit Aufrufer denselben Vertrag weiterreichen
+ * können; die URL selbst darf niemals auf *.vercel.app oder localhost fallen.
+ */
 export function kanonischeUrl(
   pfad: '/' | '/planen',
-  env?: OriginUmgebung,
+  _env?: OriginUmgebung,
 ): string {
-  const { origin } = oeffentlicherOrigin(env)
-  return pfad === '/' ? `${origin}/` : `${origin}${pfad}`
+  return pfad === '/' ? `${KANONISCHE_PUBLIC_ORIGIN}/` : `${KANONISCHE_PUBLIC_ORIGIN}${pfad}`
 }
 
 export function sitemapOeffentlicheUrls(env?: OriginUmgebung): string[] {

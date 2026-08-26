@@ -4175,18 +4175,41 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 ---
 
-## ADR-0170 – Finaler Continuity-Handoff dokumentiert den verifizierten Integrationsstand
+## ADR-0170 – HTML-Metadata folgt `darfIndexieren`; Canonical ist nie ein Vercel-Alias
 
 **Datum:** 26. August 2026  
-**Status:** docs-only Continuity-Entscheidung. Keine Runtime-, DB-, Auth- oder Provideränderung.
+**Status:** Runtime-Closure für **P1-D0-LIVE-01**; integriert auf `main` via PR #86 / Exact Head `0f809857` / Merge `38ec8be7`. Kein D1/G1. Kein Domain-Cutover. Kein Public Indexing.
 
-**Entscheidung:** Nach unabhängiger Integration von PR #81, #84, #82, #83 und #80 ist der kanonische operative Stand `main @ d3faa2a08a5a492230d94e03c4d1811b32dd915b`. Veraltete „current“-Aussagen, die diese PRs noch als Draft oder nächsten Slice führen, sind historical / superseded. TW6-A ist nicht gesamtes TW-6. S5-A ist nicht S5-B. Der Admin-AAL2-Application-Guard ist nicht die Production-DB-Aktivierung. Die per-PR-Merge-Pflicht vom 22./25. August bleibt historische Evidence und ist für normale Merges durch `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md` superseded.
+**Entscheidung:**
 
-**Kontext:** Vor dem Wechsel in einen neuen ChatGPT-/Technical-Lead-Chat lagen Handoff, Start-Here, Active Work und mehrere Slice-Statusdateien hinter dem live gemergten `main`.
+- Root- und Public-Layout setzen HTML-`robots` und GoogleBot ausschliesslich über `htmlRobots()`.
+- `darfIndexieren === false` bedeutet `index: false` und `follow: false` für HTML und GoogleBot. Kein Layout darf das hart auf `true` setzen.
+- Öffentliche Canonicals, `metadataBase`, OpenGraph-URL und Homepage-JSON-LD-`url` verwenden immer `https://jetnity.com`.
+- `*.vercel.app`, localhost und andere technische Hosts dürfen niemals als Jetnity-Canonical oder öffentliche Produktdomain erscheinen.
+- `NEXT_PUBLIC_ALLOW_INDEXING` bleibt fail-closed. Dieser Slice aktiviert kein Indexing, kein DNS und keinen Domain-Cutover.
 
-**Alternativen:** Alte Statusdateien löschen; Runtime nachziehen; Branch Protection in diesem Auftrag setzen. Abgelehnt, weil Historie/Evidence erhalten bleiben muss und dieser Auftrag docs-only ist.
+**Kontext:** D0-2 prüfte den Origin-Helper, robots.txt und Sitemap. Die Layouts riefen `oeffentlicherOrigin()` auf, nutzten aber nur `origin` und setzten `robots.index/follow` hart auf `true`. Production `https://jetnity-app.vercel.app` lieferte deshalb HTML `index, follow` bei deny-all `robots.txt` und Canonical auf den Vercel-Alias.
 
-**Begründung:** Continuity darf keine tote Baseline als Current stehen lassen und darf keine Historie zerstören.
+**Alternativen:** Canonical auf deny-Hosts weglassen; technische Origin weiter als `metadataBase` nutzen und nur robots schließen; Indexing auf dem Vercel-Alias erlauben.
+
+**Begründung:** robots.txt und HTML-Metadata müssen dieselbe D0-2-Wahrheit tragen. Ein Vercel-Alias darf Jetnity nicht als indexierbare öffentliche Produktdomain behaupten, auch nicht vor dem späteren Domain-Cutover.
+
+**Konsequenzen:** Kein D1/G1, keine Domainaktivierung, keine Env-Änderung, keine Abschwächung privater noindex-Grenzen. Der synthetische Allow-Pfad bleibt nur in Tests prüfbar. `/planen` emittiert robots explizit, damit Next.js den Layout-Vertrag nicht mit Default `index, follow` überschreibt.
+
+---
+
+## ADR-0171 – Finaler Continuity-Handoff dokumentiert den verifizierten Integrationsstand nach PR #86
+
+**Datum:** 26. August 2026  
+**Status:** docs-only Continuity-Entscheidung. Keine Runtime-, DB-, Auth- oder Provideränderung durch diesen Handoff. Auf dem Continuity-Branch zuerst als ADR-0170 geführt; nach Integration von PR #86 auf `main` auf **0171** verschoben, weil ADR-0170 dort bereits die HTML-Metadata-/Canonical-Grenze belegt. Historische integrierte ADRs wurden nicht umnummeriert.
+
+**Entscheidung:** Nach unabhängiger Integration von PR #81, #84, #82, #83, #80 und **PR #86** ist der kanonische operative Stand `main @ 38ec8be79a6ce7758be81fd5d564819d638140d6`. Veraltete „current“-Aussagen, die diese PRs noch als Draft oder nächsten Slice führen, sind historical / superseded. TW6-A ist nicht gesamtes TW-6. S5-A ist nicht S5-B. Der Admin-AAL2-Application-Guard ist nicht die Production-DB-Aktivierung. P1-D0-LIVE-01 ist geschlossen; das ist kein D1/G1 und keine Indexing-/Domainaktivierung. Die per-PR-Merge-Pflicht vom 22./25. August bleibt historische Evidence und ist für normale Merges durch `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md` superseded.
+
+**Kontext:** Der erste Continuity-Handoff (Draft-PR #85) dokumentierte `main @ d3faa2a0` nach PR #80. Danach hat der Technical Lead PR #86 unabhängig gemergt. Der Continuity-Branch muss den neuen Live-Stand tragen, ohne ADR-0170 von PR #86 umzunummerieren oder historische Evidence zu löschen.
+
+**Alternativen:** Alte Statusdateien löschen; Runtime nachziehen; Branch Protection in diesem Auftrag setzen; den bereits integrierten ADR-0170 umnummerieren. Abgelehnt, weil Historie/Evidence erhalten bleiben muss, integrierte ADR-Nummern stabil bleiben und dieser Auftrag docs-only ist.
+
+**Begründung:** Continuity darf keine tote Baseline als Current stehen lassen und darf keine Historie oder bereits integrierte ADR-Nummern zerstören.
 
 **Konsequenzen:** Kanonisch sind `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md` und `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`. Historische Checkpoints, Audits und Slice-Status bleiben erhalten und werden als historical / integrated markiert.
 
