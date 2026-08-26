@@ -3,39 +3,39 @@
 Stand: 26. August 2026  
 Agent: `Account plattform audit vorbereitung`  
 Branch: `audit/traveller-account-next-phase`  
-Draft-PR: https://github.com/Jetnity/jetnity/pull/76  
-Ursprüngliche Baseline: `main @ ba86279e5ee2505bfd13801ae5e05ef50ba87c22`  
-Aktueller `main`: `8ab4e666d4963ac98b32de4b0371dfbd6eefc30f`  
-Status: **TL CHANGES REQUIRED umgesetzt / STOPP für Re-Review**
+Draft-PR: #76  
+Audit-Baseline: `main @ ba86279e5ee2505bfd13801ae5e05ef50ba87c22`  
+Letzter Audit-Sync: `main @ 8ab4e666d4963ac98b32de4b0371dfbd6eefc30f`  
+Live-Main beim finalen Technical-Lead-Re-Review: `c73e87773dd6d234f1b76fc82206f03aac35fd2c`  
+Status: **TECHNICAL-LEAD PASS FÜR AUDIT-/EVIDENCE-SCOPE / READY FÜR INTEGRATION. KEINE RUNTIME.**
 
 Verbindlicher Auftrag: `docs/TRAVELLER_ACCOUNT_NEXT_PHASE_AUDIT_TASK.md`.  
 Kanonischer Bericht: `docs/TRAVELLER_ACCOUNT_NEXT_PHASE_AUDIT.md`.  
 Self-Review: `docs/TRAVELLER_ACCOUNT_NEXT_PHASE_AUDIT_SELF_REVIEW.md`.
 
-`docs/ACTIVE_WORK_STATUS.md` nicht geändert.
+`docs/ACTIVE_WORK_STATUS.md` wurde nicht geändert.
 
-## Live (dieses Run)
+## 1. Finaler Technical-Lead-Stand
 
-- Kontrollierter Merge von `origin/main` `8ab4e666` in den Audit-Branch
-- Merge-Base danach: genau `8ab4e666`
-- PR #76: Draft, OPEN
-- Vorheriger Audit-Head `7e0a3c18`: Actions `32911243384` SUCCESS; Vercel `4kqKYkFUeaKWzPR4fp4AYCmkF4vb` success
-- Neuer Exact Head nach dieser Korrektur: CI/Vercel **erst nach Push** belegen
+Bestätigt:
 
-## TL-Korrekturen
+- Current Traveller Truth bleibt trip-scoped: Traveller → mehrere Citizenships → mehrere Documents/Credential-Optionen.
+- Kein Default-Pass. Issuer ist nicht Citizenship.
+- Foundation E ist produktiv vorhanden; sie wird nicht neu gebaut.
+- `documents[0]` in `travellerNormalisieren()` ist ein latentes P2-/Contract-Hardening-Risiko, kein aktueller Runtime-P1 im kanonischen App-Pfad.
+- **P1-TA-02** bleibt real offen: `officialAusEvaluations()` kollabiert im aktuellen Presentation/API-Pfad auf `evaluations[0]`; `result` bleibt fail-closed `unknown`.
+- Account-scoped Traveller Identity / AP-7 bleibt hinter einem Shared-Contract-Gate. Dieser Audit erfindet keinen Registry-Contract.
+- Dieser PR enthält nur Audit-/Evidence-Dokumentation; keine Runtime-, DB-, RLS-, Auth-, Guest→Account- oder Traveller-Shared-Contract-Änderung.
+- D0-2 wurde inzwischen separat auf `main` integriert und verändert die fachliche Traveller-/Account-Evidence dieses Audits nicht.
 
-- **Kein P0.** „P0-STOP Governance“ entfernt.
-- **SHARED-CONTRACT-GATE / STOPP** vor account-scoped Traveller-Identität / AP-7. Kein Registry-Contract erfunden.
-- **P1-TA-01** → **P2-TA-06**: `documents[0]`-Fallback in `travellerNormalisieren` ist latent; `anfrageAus` setzt Options über `credentialOptionsAus`; kein `app/`-Aufruf von `requirementsAuswerten`.
-- **P1-TA-02** bleibt der einzige P1: first-evaluation Presentation/Option-Scope; `result` fail-closed `unknown`; keine erfundene regulatorische Entscheidung.
-- Foundation-E-Child-Tabellen auf Production: TL-live bestätigt (`20260822160000` / `170000` / `180000`); nicht mehr `insufficient evidence`.
+## 2. Offene Punkte nach Integration
 
-## Ergebnis
+- **P1-TA-02**: eigener fokussierter Runtime-Closure-Slice erforderlich.
+- **P2-TA-06**: latentes `documents[0]`-Contract-Hardening später schließen.
+- Account-Traveller-Registry/AP-7 erst nach eigenem Shared-Contract-/Product-Owner-Schnitt.
 
-Current Truth bleibt **trip-scoped**. Kein Default-Pass im aktuellen App-Pfad. Issuer ≠ Citizenship.
+## 3. Integration
 
-Keine Runtime. Kein Ready. Kein Merge. Kein Folgeslice.
+Der Audit-Inhalt ist fachlich PASS. Vor Merge ist nur noch der durch diese Reconciliation erzeugte neue Exact Head auf GitHub Actions/Vercel zu verifizieren. Danach darf der Technical Lead diesen normalen docs-only PR autonom integrieren.
 
-## STOPP
-
-Unabhängiges Technical-Lead-Re-Review von Draft-PR #76.
+Kein Folgeslice in diesem PR.
