@@ -3,6 +3,7 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 const checker = readFileSync(new URL('../../scripts/db/production-pruefen.ts', import.meta.url), 'utf8')
+const gateB = readFileSync(new URL('../../scripts/db/gate-b-tw6-bundle.ts', import.meta.url), 'utf8')
 
 describe('CI und Build beschreiben Production nicht', () => {
   const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')) as {
@@ -16,6 +17,7 @@ describe('CI und Build beschreiben Production nicht', () => {
       assert.equal(kommando.includes('importieren'), false, name)
       assert.equal(kommando.includes('production:pruefen'), false, name)
       assert.equal(kommando.includes('--produktion'), false, name)
+      assert.equal(kommando.includes('gate-b-tw6-bundle'), false, name)
     }
   })
 
@@ -23,6 +25,7 @@ describe('CI und Build beschreiben Production nicht', () => {
     assert.match(pkg.scripts['airports:importieren'] ?? '', /importieren/)
     assert.match(pkg.scripts['places:importieren'] ?? '', /importieren/)
     assert.match(pkg.scripts['production:pruefen'] ?? '', /production-pruefen/)
+    assert.match(pkg.scripts['db:gate-b-tw6-bundle'] ?? '', /gate-b-tw6-bundle/)
   })
 })
 
@@ -45,5 +48,12 @@ describe('Production-Check bleibt read-only', () => {
     assert.match(checker, /role_table_grants/)
     assert.match(checker, /pg_policies/)
     assert.match(checker, /relrowsecurity/)
+  })
+})
+
+describe('Gate-B-Playbook schreibt Production nicht still', () => {
+  test('Production-Apply bleibt im Script hart blockiert', () => {
+    assert.match(gateB, /productionApplyAblehnen/)
+    assert.match(gateB, /produktion-blockiert/)
   })
 })
