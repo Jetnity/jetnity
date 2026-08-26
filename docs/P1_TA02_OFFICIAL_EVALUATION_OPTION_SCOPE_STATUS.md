@@ -88,15 +88,16 @@ UI nutzt bereits `officialPruefungAusEvaluations(evaluations)` für den Banner u
 
 | Größe | Wert |
 | --- | --- |
-| Exact Head | `d3c326debc45169a74efcb9350acf4634fe6a196` |
+| Verifizierter Exact Head | `63f246a23b6bc702c3161a8edac42b64b270de43` |
+| Runtime-Head (letzter Code-Commit) | `d3c326debc45169a74efcb9350acf4634fe6a196` |
 | `origin/main` | `2de8008ddb10e9b53fef49daccc779831669e813` |
 | Merge-Base | `2de8008ddb10e9b53fef49daccc779831669e813` |
-| Ahead / Behind | **4 / 0** |
+| Ahead / Behind gegen `origin/main` | **5 / 0** zum verifizierten Head |
 | Draft-PR | https://github.com/Jetnity/jetnity/pull/84 |
 
 ## Gates
 
-Lokal auf Exact Head `d3c326de`:
+Lokal auf Runtime-Head `d3c326de`:
 
 | Gate | Ergebnis |
 | --- | --- |
@@ -112,13 +113,14 @@ Lokal auf Exact Head `d3c326de`:
 | `npm run check:schema-bezug` | PASS |
 | Readiness-/Traveller-Tests inkl. `official-option-scope.test.ts` | PASS – 20/20 adversarial |
 
-GitHub Actions / Vercel für Exact Head `d3c326de`:
+GitHub Actions / Vercel für Exact Head `63f246a2`:
 
 | Gate | Ergebnis |
 | --- | --- |
 | Auth-Konfiguration | SUCCESS |
-| Typecheck, Lint & Build | IN_PROGRESS – run `32957120609` |
-| Vercel Preview | SUCCESS – deployment `7ZfRtrwxLsRF1xSZ3CRnJV8tzkmQ` / id `6101640543` |
+| Typecheck, Lint & Build | SUCCESS – run `32957318173` |
+| Vercel Preview | SUCCESS – deployment `3Rvau5B2a6uEFEZT7KodRVWTt3Dz` |
+| Vorgänger-Head `d3c326de` CI | SUCCESS – run `32957120609`; Vercel `7ZfRtrwxLsRF1xSZ3CRnJV8tzkmQ` |
 
 Kein Ready. Kein Merge.
 
