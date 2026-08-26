@@ -1,98 +1,145 @@
 // lib/trips/day-stage-assignment.ts
 //
-// Herkunft der Day→Stage-Zuordnung. Guest und Account teilen dieselbe
-// fachliche Wahrheit. public.reise_anlegen() muss dieselbe Tabelle ableiten:
-// ein angemeldeter Client kann die SECURITY-INVOKER-RPC direkt aufrufen.
+// Day→Stage Assignment Mode. Mode != Provenance.
+// public.reise_anlegen() muss dieselbe Tabelle ableiten: ein angemeldeter
+// Client kann die SECURITY-INVOKER-RPC direkt aufrufen.
 //
 // Frei von React, Next und Supabase.
 
 import {
-  DAY_STAGE_ASSIGNMENT_SOURCES,
-  type DayStageAssignmentSource,
+  DAY_STAGE_ASSIGNMENT_MODES,
+  type DayStageAssignmentMode,
 } from '@/types/trips'
 
-export { DAY_STAGE_ASSIGNMENT_SOURCES, type DayStageAssignmentSource }
+export { DAY_STAGE_ASSIGNMENT_MODES, type DayStageAssignmentMode }
 
-function istDayStageAssignmentSource(
+const BEKANNTE_CLAIMS = [...DAY_STAGE_ASSIGNMENT_MODES, 'user'] as const
+
+function istDayStageAssignmentMode(
   wert: unknown,
-): wert is DayStageAssignmentSource {
+): wert is DayStageAssignmentMode {
   return (
     typeof wert === 'string' &&
-    (DAY_STAGE_ASSIGNMENT_SOURCES as readonly string[]).includes(wert)
+    (DAY_STAGE_ASSIGNMENT_MODES as readonly string[]).includes(wert)
   )
 }
 
-/**
- * Liest einen gespeicherten oder fehlenden Source-Wert.
- *
- * Unbekanntes und Fehlendes wird `legacy_fallback`: Altbestand ohne das
- * Feld behält den bisherigen proportionalen Vertrag.
- */
-export function dayStageAssignmentSourceLesen(wert: unknown): DayStageAssignmentSource {
-  return istDayStageAssignmentSource(wert) ? wert : 'legacy_fallback'
+/** Bekannte alte oder neue Claims. Unbekanntes wird fail-closed abgelehnt. */
+function istBekannterClaim(wert: unknown): boolean {
+  return typeof wert === 'string' && (BEKANNTE_CLAIMS as readonly string[]).includes(wert)
 }
 
-export type AssignmentSourceAbleitung = {
+/**
+ * Liest einen bereits persistierten DB-Mode.
+ *
+ * Unbekanntes und Fehlendes wird `legacy_fallback`: Production ohne Spalte
+ * und historischer Bestand behalten den alten Vertrag. Nicht für neue
+ * Client-Requests und nicht für Browser-JSON verwenden.
+ */
+export function dayStageAssignmentModeLesenDb(wert: unknown): DayStageAssignmentMode {
+  return istDayStageAssignmentMode(wert) ? wert : 'legacy_fallback'
+}
+
+export class DayStageAssignmentFehler extends Error {
+  constructor(message = 'Die Tageszuordnung ist ungültig.') {
+    super(message)
+    this.name = 'DayStageAssignmentFehler'
+  }
+}
+
+export type AssignmentModeAbleitung = {
   stageCount: number
-  daysHaveStagePosition?: boolean
+  positions?: readonly unknown[]
   claimed?: unknown
 }
 
 /**
- * Kanonische Ableitung. Identisch zu `public.reise_anlegen()`.
+ * Prüft gelieferte `stage_position`-Werte.
  *
- * | stages | claimed | positions | result |
- * | --- | --- | --- | --- |
- * | <= 1 | * | * | `single_destination` |
- * | > 1 | `user` | * | `unassigned` |
- * | > 1 | `unassigned` | * | `unassigned` |
- * | > 1 | `single_destination` | * | `unassigned` |
- * | > 1 | unbekannt | * | `unassigned` (SQL: 22023) |
- * | > 1 | `legacy_fallback` oder fehlend | ja | `legacy_fallback` |
- * | > 1 | `legacy_fallback` oder fehlend | nein | `unassigned` |
- *
- * `user` ist in diesem Slice nicht persistierbar. Ein falscher
- * `single_destination`-Claim bei mehreren Stages wird nicht zu
- * `legacy_fallback`. Die letzte Zeile mit Positionen bleibt das offene
- * Legacy-Provenance-Gate: ein direkter Client kann historische Provenance
- * noch minten, weil Guest→Account ohne Secret nicht von Tampering
- * unterscheidbar ist.
+ * Fehlend/leer ist erlaubt. Jeder gesetzte Wert muss eine ganze Zahl sein
+ * und zu einer vorhandenen Stage-Position (1..stageCount) gehören.
  */
-export function dayStageAssignmentSourceAbleiten(
-  eingabe: AssignmentSourceAbleitung,
-): DayStageAssignmentSource {
-  if (eingabe.stageCount <= 1) return 'single_destination'
-
-  if (eingabe.claimed != null && eingabe.claimed !== '') {
-    if (!istDayStageAssignmentSource(eingabe.claimed)) return 'unassigned'
-    if (
-      eingabe.claimed === 'user' ||
-      eingabe.claimed === 'unassigned' ||
-      eingabe.claimed === 'single_destination'
-    ) {
-      return 'unassigned'
+export function dayStagePositionenPruefen(
+  stageCount: number,
+  positions: readonly unknown[] = [],
+): number[] {
+  const gültig: number[] = []
+  for (const roh of positions) {
+    if (roh == null || roh === '') continue
+    const zahl = typeof roh === 'number' ? roh : Number.parseInt(String(roh).trim(), 10)
+    if (!Number.isInteger(zahl) || zahl < 1 || zahl > stageCount) {
+      throw new DayStageAssignmentFehler()
     }
+    if (typeof roh === 'string' && !/^[0-9]+$/.test(roh.trim())) {
+      throw new DayStageAssignmentFehler()
+    }
+    gültig.push(zahl)
+  }
+  return gültig
+}
+
+/**
+ * Kanonische Ableitung für neue Create-/Transfer-Requests.
+ * Identisch zu `public.reise_anlegen()`.
+ *
+ * | stages | gültige Positionen | result |
+ * | --- | --- | --- |
+ * | <= 1 | * | `single_destination` |
+ * | > 1 | mindestens eine | `explicit` |
+ * | > 1 | keine | `unassigned` |
+ *
+ * Client-Claims `legacy_fallback` / `user` / `unassigned` / `explicit` werden
+ * nicht als Wahrheit übernommen. Unbekannte Claims werfen.
+ * `legacy_fallback` wird hier niemals erzeugt.
+ */
+export function dayStageAssignmentModeAbleiten(
+  eingabe: AssignmentModeAbleitung,
+): DayStageAssignmentMode {
+  const claimed = eingabe.claimed
+  if (claimed != null && claimed !== '' && !istBekannterClaim(claimed)) {
+    throw new DayStageAssignmentFehler()
   }
 
-  return eingabe.daysHaveStagePosition ? 'legacy_fallback' : 'unassigned'
+  const positionen = dayStagePositionenPruefen(eingabe.stageCount, eingabe.positions)
+  if (eingabe.stageCount <= 1) return 'single_destination'
+  return positionen.length > 0 ? 'explicit' : 'unassigned'
 }
 
-/** `user` ist reserviert und darf in diesem Slice nicht vom Client kommen. */
-export function dayStageAssignmentSourceIstReserviert(wert: unknown): boolean {
-  return wert === 'user'
+/** Guest/Browser: Mode aus Fakten, niemals historische DB-Provenance. */
+export function dayStageAssignmentModeFuerGast(eingabe: {
+  stageCount: number
+  positions?: readonly unknown[]
+}): DayStageAssignmentMode {
+  return dayStageAssignmentModeAbleiten({
+    stageCount: eingabe.stageCount,
+    positions: eingabe.positions,
+  })
 }
 
-/** Unassigned-Reisen dürfen keine Client-`stage_position` als Wahrheit übernehmen. */
-export function darfClientStagePositionUebernehmen(source: DayStageAssignmentSource): boolean {
-  return source !== 'unassigned'
+export function stagePositionenAusReise(reise: {
+  stages: readonly { id: string; position: number }[]
+  days: readonly { stageId: string | null }[]
+}): number[] {
+  const positionen: number[] = []
+  for (const tag of reise.days) {
+    if (!tag.stageId) continue
+    const etappe = reise.stages.find((eintrag) => eintrag.id === tag.stageId)
+    if (etappe && etappe.position >= 1) positionen.push(etappe.position)
+  }
+  return positionen
 }
 
-/** Ob der proportionale Fallback auf dieser Reise noch laufen darf. */
-export function darfProportionalZuordnen(source: DayStageAssignmentSource): boolean {
-  return source === 'legacy_fallback'
+/** Ob der proportionale Fallback auf einer bereits persistierten DB-Reise laufen darf. */
+export function darfProportionalZuordnen(mode: DayStageAssignmentMode): boolean {
+  return mode === 'legacy_fallback'
 }
 
 /** Ob Tage einer einzigen Stage zugeordnet werden dürfen. */
-export function darfEinzelzielZuordnen(source: DayStageAssignmentSource): boolean {
-  return source === 'single_destination' || source === 'legacy_fallback'
+export function darfEinzelzielZuordnen(mode: DayStageAssignmentMode): boolean {
+  return mode === 'single_destination' || mode === 'legacy_fallback'
+}
+
+/** Ob konkrete Client-Positionen in eine neue Nutzlast dürfen. */
+export function darfClientStagePositionUebernehmen(mode: DayStageAssignmentMode): boolean {
+  return mode === 'explicit' || mode === 'single_destination'
 }

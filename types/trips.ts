@@ -37,21 +37,23 @@ export const TRIP_STATUSES = ['draft', 'planned', 'booked', 'archived'] as const
 export type TripStatus = (typeof TRIP_STATUSES)[number]
 
 /**
- * Herkunft der Day→Stage-Zuordnung. Werte wie in
- * `trips.day_stage_assignment_source`.
+ * Day→Stage Assignment Mode. Werte wie in
+ * `trips.day_stage_assignment_mode`.
  *
- * `legacy_fallback` – historischer Bestand; proportionaler Fallback bleibt erlaubt.
- * `unassigned` – mehrere bestätigte Ziele, noch keine Nutzerzuordnung; kein Fallback.
- * `single_destination` – genau ein Ziel; alle Tage dürfen der einen Stage gehören.
- * `user` – reserviert für später explizit bestätigte Nutzerzuordnung.
+ * Mode != Provenance. Der Mode sagt nur, wie Zuordnungen behandelt werden.
+ *
+ * `legacy_fallback` – nur bereits persistierter historischer DB-Bestand.
+ * `unassigned` – mehrere Ziele, keine Day→Stage-Zuordnung; kein Fallback.
+ * `single_destination` – genau ein Ziel; Tage dürfen der einen Stage gehören.
+ * `explicit` – konkrete Positionen aus der bestätigten Nutzlast; Lücken bleiben leer.
  */
-export const DAY_STAGE_ASSIGNMENT_SOURCES = [
+export const DAY_STAGE_ASSIGNMENT_MODES = [
   'legacy_fallback',
   'unassigned',
   'single_destination',
-  'user',
+  'explicit',
 ] as const
-export type DayStageAssignmentSource = (typeof DAY_STAGE_ASSIGNMENT_SOURCES)[number]
+export type DayStageAssignmentMode = (typeof DAY_STAGE_ASSIGNMENT_MODES)[number]
 
 /** Art eines Planpunkts. Werte wie in `trip_items.kind`. */
 export const TRIP_ITEM_KINDS = ['flight', 'stay', 'activity', 'transfer', 'rental_car', 'note'] as const
@@ -371,12 +373,12 @@ export type Trip = {
   interests: TripInterest[]
   travelWish: string | null
   /**
-   * Herkunft der Day→Stage-Zuordnung.
+   * Day→Stage Assignment Mode.
    *
-   * Fehlt beim Altbestand im Browser; dann gilt `legacy_fallback`.
-   * Der Client darf diesen Wert nicht frei setzen, um Serverregeln zu umgehen.
+   * Mode != Provenance. Browser-Altbestand ohne Feld wird aus Stages und
+   * Positionen abgeleitet und niemals zu historischem `legacy_fallback`.
    */
-  dayStageAssignmentSource?: DayStageAssignmentSource
+  dayStageAssignmentMode?: DayStageAssignmentMode
   /**
    * Technische Fassung. Steigt bei jeder übernommenen Änderung.
    *

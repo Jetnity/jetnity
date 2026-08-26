@@ -61,16 +61,33 @@ describe('Eine vollständige Reise kommt durch', () => {
     assert.equal(gelesen?.title, 'Japan im Herbst')
     assert.equal(gelesen?.days.length, 2)
     assert.equal(gelesen?.stages[0].name, 'Tokio')
-    assert.equal(gelesen?.dayStageAssignmentSource, 'legacy_fallback')
+    assert.equal(gelesen?.dayStageAssignmentMode, 'single_destination')
   })
 
-  test('eine gespeicherte unassigned-Quelle bleibt erhalten', () => {
-    const gelesen = reiseLesen(reise({ dayStageAssignmentSource: 'unassigned' }))
-    assert.equal(gelesen?.dayStageAssignmentSource, 'unassigned')
+  test('eine Ein-Ziel-Reise wird aus Fakten single_destination, nicht Legacy', () => {
+    const gelesen = reiseLesen(reise({ dayStageAssignmentMode: 'legacy_fallback' }))
+    assert.equal(gelesen?.dayStageAssignmentMode, 'single_destination')
+  })
+
+  test('ein alter Source-Alias bleibt lesbar und wird zum Mode', () => {
+    const gelesen = reiseLesen(
+      reise({
+        dayStageAssignmentSource: 'unassigned',
+        stages: [
+          { id: 'stage-1', position: 1, name: 'Paris' },
+          { id: 'stage-2', position: 2, name: 'Rom' },
+        ],
+        days: [
+          { id: 'day-1', dayIndex: 1, dayDate: '2026-09-12', items: [] },
+          { id: 'day-2', dayIndex: 2, dayDate: '2026-09-13', items: [] },
+        ],
+      }),
+    )
+    assert.equal(gelesen?.dayStageAssignmentMode, 'unassigned')
   })
 
   test('eine unbekannte Assignment-Quelle wird abgelehnt', () => {
-    assert.equal(reiseLesen(reise({ dayStageAssignmentSource: 'erfunden' })), null)
+    assert.equal(reiseLesen(reise({ dayStageAssignmentMode: 'erfunden' })), null)
   })
 
   test('fehlende optionale Angaben werden zu null, nicht zu undefined', () => {
@@ -555,7 +572,12 @@ describe('Die Nutzlast für public.reise_anlegen() trägt nur, was die Funktion 
     assert.equal(reiseNutzlastSchema.safeParse(nutzlast).success, true)
   })
 
-  test('eine Nutzlast darf die Assignment-Quelle tragen, user bleibt syntaktisch erlaubt', () => {
+  test('eine Nutzlast darf Mode oder alten Source-Claim tragen, user bleibt syntaktisch erlaubt', () => {
+    const mitMode = reiseNutzlastSchema.safeParse({
+      ...nutzlast,
+      day_stage_assignment_mode: 'unassigned',
+    })
+    assert.equal(mitMode.success, true)
     const mitQuelle = reiseNutzlastSchema.safeParse({
       ...nutzlast,
       day_stage_assignment_source: 'unassigned',
@@ -563,14 +585,14 @@ describe('Die Nutzlast für public.reise_anlegen() trägt nur, was die Funktion 
     assert.equal(mitQuelle.success, true)
     const gefaelscht = reiseNutzlastSchema.safeParse({
       ...nutzlast,
-      day_stage_assignment_source: 'user',
+      day_stage_assignment_mode: 'user',
     })
     assert.equal(gefaelscht.success, true)
   })
 
-  test('eine unbekannte Assignment-Quelle in der Nutzlast fällt durch', () => {
+  test('ein unbekannter Assignment-Claim in der Nutzlast fällt durch', () => {
     assert.equal(
-      reiseNutzlastSchema.safeParse({ ...nutzlast, day_stage_assignment_source: 'erfunden' }).success,
+      reiseNutzlastSchema.safeParse({ ...nutzlast, day_stage_assignment_mode: 'erfunden' }).success,
       false,
     )
   })

@@ -240,7 +240,7 @@ describe('TW-3 Timeline-Ableitung', () => {
     const sicht = timelineAbleiten(
       reise({
         title: 'Paris',
-        dayStageAssignmentSource: 'unassigned',
+        dayStageAssignmentMode: 'unassigned',
         stages: [
           etappe({ id: 'stage-1', name: 'Paris', countryCode: 'FR', position: 1 }),
           etappe({ id: 'stage-2', name: 'Rom', countryCode: 'IT', position: 2 }),

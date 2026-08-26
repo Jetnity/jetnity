@@ -14,7 +14,7 @@
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { dayStageAssignmentSourceAbleiten } from '@/lib/trips/day-stage-assignment'
+import { dayStageAssignmentModeAbleiten } from '@/lib/trips/day-stage-assignment'
 import {
   reiseende,
   vorschlagAlsNutzlast,
@@ -173,19 +173,44 @@ describe('Der Vorschlag als Nutzlast für public.reise_anlegen()', () => {
     assert.equal('booking_source' in (punkt ?? {}), false)
   })
 
-  test('ein übernommener Multi-Ziel-Vorschlag trägt Positionen ohne Assignment-Source', () => {
+  test('ein übernommener Multi-Ziel-Vorschlag wird explicit, nicht legacy_fallback', () => {
     const vorschlag = vorschlagAlsNutzlast(alsVorschlag(VORSCHLAG_THAILAND), 'trip-vorschlag')
-    assert.equal(vorschlag.day_stage_assignment_source, undefined)
+    assert.equal(vorschlag.day_stage_assignment_mode, 'explicit')
     assert.equal(vorschlag.stages.length, 2)
     assert.equal(vorschlag.days.every((tag) => tag.stage_position != null), true)
-    assert.equal(
-      dayStageAssignmentSourceAbleiten({
-        stageCount: vorschlag.stages.length,
-        claimed: vorschlag.day_stage_assignment_source,
-        daysHaveStagePosition: vorschlag.days.some((tag) => tag.stage_position != null),
-      }),
-      'legacy_fallback',
+    assert.deepEqual(
+      vorschlag.days.map((tag) => tag.stage_position),
+      [1, 1, 1, 2, 2, 2, 2],
     )
+    assert.equal(
+      dayStageAssignmentModeAbleiten({
+        stageCount: vorschlag.stages.length,
+        claimed: 'legacy_fallback',
+        positions: vorschlag.days.map((tag) => tag.stage_position),
+      }),
+      'explicit',
+    )
+  })
+
+  test('Teilpositionen eines Vorschlags bleiben explicit und füllen keine Lücken', () => {
+    const voll = vorschlagAlsNutzlast(alsVorschlag(VORSCHLAG_THAILAND), 'trip-teil')
+    const teil = {
+      ...voll,
+      days: voll.days.map((tag, stelle) =>
+        stelle === 2 || stelle === 5 ? { ...tag, stage_position: null } : tag,
+      ),
+    }
+    assert.equal(
+      dayStageAssignmentModeAbleiten({
+        stageCount: teil.stages.length,
+        positions: teil.days.map((tag) => tag.stage_position),
+      }),
+      'explicit',
+    )
+    assert.equal(teil.days[0]?.stage_position, 1)
+    assert.equal(teil.days[2]?.stage_position, null)
+    assert.equal(teil.days[5]?.stage_position, null)
+    assert.equal(teil.days[6]?.stage_position, 2)
   })
 
   test('das Budgetziel steht an der Reise, nicht an einem Planpunkt', () => {
@@ -245,7 +270,10 @@ describe('Der Vorschlag als Gastreise', () => {
   )
 
   test('sie kommt durch reiseLesen() – dieselbe Prüfung wie jeder Weg in den Gastspeicher', () => {
-    assert.notEqual(reiseLesen(reise), null)
+    const gelesen = reiseLesen(reise)
+    assert.notEqual(gelesen, null)
+    assert.equal(gelesen?.dayStageAssignmentMode, 'explicit')
+    assert.equal(reise.dayStageAssignmentMode, 'explicit')
   })
 
   test('die Kennung des Vorschlags wird die Kennung der Reise', () => {

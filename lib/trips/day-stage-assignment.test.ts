@@ -2,132 +2,134 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 
 import {
-  DAY_STAGE_ASSIGNMENT_SOURCES,
+  DAY_STAGE_ASSIGNMENT_MODES,
+  DayStageAssignmentFehler,
   darfClientStagePositionUebernehmen,
   darfProportionalZuordnen,
-  dayStageAssignmentSourceAbleiten,
-  dayStageAssignmentSourceIstReserviert,
-  dayStageAssignmentSourceLesen,
+  dayStageAssignmentModeAbleiten,
+  dayStageAssignmentModeFuerGast,
+  dayStageAssignmentModeLesenDb,
+  dayStagePositionenPruefen,
 } from '@/lib/trips/day-stage-assignment'
 
-describe('TW6 Day→Stage Assignment Source', () => {
-  test('die vier Semantiken bleiben unterscheidbar', () => {
-    assert.deepEqual([...DAY_STAGE_ASSIGNMENT_SOURCES], [
+describe('TW6 Day→Stage Assignment Mode', () => {
+  test('die vier Modes bleiben unterscheidbar', () => {
+    assert.deepEqual([...DAY_STAGE_ASSIGNMENT_MODES], [
       'legacy_fallback',
       'unassigned',
       'single_destination',
-      'user',
+      'explicit',
     ])
   })
 
-  test('fehlender oder unbekannter Wert bleibt Legacy-Fallback', () => {
-    assert.equal(dayStageAssignmentSourceLesen(undefined), 'legacy_fallback')
-    assert.equal(dayStageAssignmentSourceLesen(null), 'legacy_fallback')
-    assert.equal(dayStageAssignmentSourceLesen(''), 'legacy_fallback')
-    assert.equal(dayStageAssignmentSourceLesen('erfunden'), 'legacy_fallback')
+  test('persistierter DB-Bestand ohne Feld bleibt legacy_fallback', () => {
+    assert.equal(dayStageAssignmentModeLesenDb(undefined), 'legacy_fallback')
+    assert.equal(dayStageAssignmentModeLesenDb(null), 'legacy_fallback')
+    assert.equal(dayStageAssignmentModeLesenDb(''), 'legacy_fallback')
+    assert.equal(dayStageAssignmentModeLesenDb('erfunden'), 'legacy_fallback')
+    assert.equal(dayStageAssignmentModeLesenDb('explicit'), 'explicit')
   })
 
-  test('ein Ziel wird immer single_destination, auch bei gefälschtem Claim', () => {
-    assert.equal(dayStageAssignmentSourceAbleiten({ stageCount: 1 }), 'single_destination')
+  test('ein Ziel wird immer single_destination', () => {
+    assert.equal(dayStageAssignmentModeAbleiten({ stageCount: 1 }), 'single_destination')
     assert.equal(
-      dayStageAssignmentSourceAbleiten({ stageCount: 1, claimed: 'unassigned' }),
+      dayStageAssignmentModeAbleiten({
+        stageCount: 1,
+        claimed: 'legacy_fallback',
+        positions: [1],
+      }),
       'single_destination',
     )
     assert.equal(
-      dayStageAssignmentSourceAbleiten({ stageCount: 1, claimed: 'user' }),
-      'single_destination',
-    )
-    assert.equal(
-      dayStageAssignmentSourceAbleiten({ stageCount: 1, claimed: 'legacy_fallback' }),
+      dayStageAssignmentModeAbleiten({ stageCount: 1, claimed: 'user' }),
       'single_destination',
     )
   })
 
-  test('neue Multi-Ziel-Reise ohne Positionen bleibt unassigned', () => {
-    assert.equal(dayStageAssignmentSourceAbleiten({ stageCount: 3 }), 'unassigned')
+  test('Multi-Ziel ohne Positionen bleibt unassigned, auch bei legacy-Claim', () => {
+    assert.equal(dayStageAssignmentModeAbleiten({ stageCount: 3 }), 'unassigned')
     assert.equal(
-      dayStageAssignmentSourceAbleiten({
+      dayStageAssignmentModeAbleiten({
         stageCount: 3,
         claimed: 'legacy_fallback',
-        daysHaveStagePosition: false,
       }),
       'unassigned',
     )
     assert.equal(
-      dayStageAssignmentSourceAbleiten({
+      dayStageAssignmentModeAbleiten({
         stageCount: 3,
         claimed: 'user',
-        daysHaveStagePosition: false,
-      }),
-      'unassigned',
-    )
-    assert.equal(
-      dayStageAssignmentSourceAbleiten({
-        stageCount: 3,
-        claimed: 'single_destination',
       }),
       'unassigned',
     )
   })
 
-  test('user plus vorhandene Positionen wird nicht zu legacy_fallback', () => {
-    assert.equal(dayStageAssignmentSourceIstReserviert('user'), true)
+  test('Multi-Ziel mit gültigen Positionen wird explicit, nie legacy_fallback', () => {
     assert.equal(
-      dayStageAssignmentSourceAbleiten({
-        stageCount: 3,
-        claimed: 'user',
-        daysHaveStagePosition: true,
-      }),
-      'unassigned',
-    )
-  })
-
-  test('single_destination plus mehrere Stages bleibt unassigned, auch mit Positionen', () => {
-    assert.equal(
-      dayStageAssignmentSourceAbleiten({
-        stageCount: 3,
-        claimed: 'single_destination',
-        daysHaveStagePosition: true,
-      }),
-      'unassigned',
-    )
-  })
-
-  test('unbekannter Claim mintet keine Legacy-Provenance', () => {
-    assert.equal(
-      dayStageAssignmentSourceAbleiten({
-        stageCount: 3,
-        claimed: 'erfunden',
-        daysHaveStagePosition: true,
-      }),
-      'unassigned',
-    )
-  })
-
-  test('Legacy-Transfer mit bereits gesetzten Positionen bleibt legacy_fallback', () => {
-    assert.equal(
-      dayStageAssignmentSourceAbleiten({
+      dayStageAssignmentModeAbleiten({
         stageCount: 3,
         claimed: 'legacy_fallback',
-        daysHaveStagePosition: true,
+        positions: [1, 2, 3],
       }),
-      'legacy_fallback',
+      'explicit',
     )
     assert.equal(
-      dayStageAssignmentSourceAbleiten({
-        stageCount: 2,
-        daysHaveStagePosition: true,
+      dayStageAssignmentModeAbleiten({
+        stageCount: 3,
+        claimed: 'user',
+        positions: [1, 1, 2],
       }),
-      'legacy_fallback',
+      'explicit',
+    )
+    assert.equal(
+      dayStageAssignmentModeAbleiten({
+        stageCount: 3,
+        positions: [1],
+      }),
+      'explicit',
     )
   })
 
-  test('unassigned übernimmt keine Client-Position', () => {
-    assert.equal(darfClientStagePositionUebernehmen('unassigned'), false)
-    assert.equal(darfClientStagePositionUebernehmen('legacy_fallback'), true)
-    assert.equal(darfClientStagePositionUebernehmen('single_destination'), true)
-    assert.equal(darfProportionalZuordnen('unassigned'), false)
+  test('Teilpositionen bleiben explicit', () => {
+    assert.equal(
+      dayStageAssignmentModeAbleiten({
+        stageCount: 3,
+        positions: [1, null, 3],
+      }),
+      'explicit',
+    )
+    assert.deepEqual(dayStagePositionenPruefen(3, [1, null, 3]), [1, 3])
+  })
+
+  test('unbekannter Claim ist fail-closed und mintet kein legacy_fallback', () => {
+    assert.throws(
+      () => dayStageAssignmentModeAbleiten({ stageCount: 3, claimed: 'erfunden' }),
+      DayStageAssignmentFehler,
+    )
+  })
+
+  test('out-of-range Position wird nicht zu Hard Truth', () => {
+    assert.throws(() => dayStagePositionenPruefen(3, [4]), DayStageAssignmentFehler)
+    assert.throws(() => dayStagePositionenPruefen(3, [0]), DayStageAssignmentFehler)
+    assert.throws(() => dayStagePositionenPruefen(3, ['abc']), DayStageAssignmentFehler)
+    assert.throws(
+      () => dayStageAssignmentModeAbleiten({ stageCount: 2, positions: [3] }),
+      DayStageAssignmentFehler,
+    )
+  })
+
+  test('Guest leitet aus Fakten ab und mintet kein legacy_fallback', () => {
+    assert.equal(dayStageAssignmentModeFuerGast({ stageCount: 3 }), 'unassigned')
+    assert.equal(dayStageAssignmentModeFuerGast({ stageCount: 3, positions: [2] }), 'explicit')
+    assert.equal(dayStageAssignmentModeFuerGast({ stageCount: 1 }), 'single_destination')
+  })
+
+  test('nur legacy_fallback darf proportional zuordnen', () => {
     assert.equal(darfProportionalZuordnen('legacy_fallback'), true)
-    assert.equal(darfProportionalZuordnen('user'), false)
+    assert.equal(darfProportionalZuordnen('unassigned'), false)
+    assert.equal(darfProportionalZuordnen('explicit'), false)
+    assert.equal(darfProportionalZuordnen('single_destination'), false)
+    assert.equal(darfClientStagePositionUebernehmen('explicit'), true)
+    assert.equal(darfClientStagePositionUebernehmen('unassigned'), false)
   })
 })

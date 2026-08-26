@@ -21,13 +21,17 @@
 import { z } from 'zod'
 
 import {
-  DAY_STAGE_ASSIGNMENT_SOURCES,
+  DAY_STAGE_ASSIGNMENT_MODES,
   TRIP_INTERESTS,
   TRIP_ITEM_KINDS,
   TRIP_PACES,
   TRIP_STATUSES,
   type Trip,
 } from '@/types/trips'
+import {
+  dayStageAssignmentModeFuerGast,
+  stagePositionenAusReise,
+} from '@/lib/trips/day-stage-assignment'
 import { interesseLesen, tempoLesen } from '@/lib/trips/bezeichnungen'
 import { buchungsquelleLesen, buchungsstatusLesen, kannBuchungMarkieren } from '@/lib/trips/buchung'
 import { mobilityEvidenceLesen, mobilityModeLesen } from '@/lib/trips/mobilitaet-felder'
@@ -273,7 +277,9 @@ export const reiseSchema = z
     pace: tempo,
     interests: interessen.default([]),
     travelWish: optionalerText(GRENZEN.reisewunsch).nullable().default(null),
-    dayStageAssignmentSource: z.enum(DAY_STAGE_ASSIGNMENT_SOURCES).default('legacy_fallback'),
+    dayStageAssignmentMode: z
+      .enum([...DAY_STAGE_ASSIGNMENT_MODES, 'user'])
+      .optional(),
     revision: z.number().int().min(1).max(1_000_000_000).default(1),
     lastMutationId: z.string().min(1).max(64).nullable().default(null),
     stages: z.array(etappeSchema).max(GRENZEN.etappenJeReise).default([]),
@@ -397,8 +403,24 @@ function tageZwischen(von: string, bis: string): number {
  * unbrauchbarer Eintrag darf die Seite nicht abbrechen.
  */
 export function reiseLesen(wert: unknown): Trip | null {
-  const ergebnis = reiseSchema.safeParse(wert)
-  return ergebnis.success ? ergebnis.data : null
+  const roh =
+    wert && typeof wert === 'object'
+      ? (wert as Record<string, unknown>)
+      : wert
+  const mitAlias =
+    roh && typeof roh === 'object' && roh.dayStageAssignmentMode == null && 'dayStageAssignmentSource' in roh
+      ? { ...roh, dayStageAssignmentMode: roh.dayStageAssignmentSource }
+      : roh
+  const ergebnis = reiseSchema.safeParse(mitAlias)
+  if (!ergebnis.success) return null
+  const reise = ergebnis.data
+  return {
+    ...reise,
+    dayStageAssignmentMode: dayStageAssignmentModeFuerGast({
+      stageCount: reise.stages.length,
+      positions: stagePositionenAusReise(reise),
+    }),
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -530,16 +552,12 @@ export const reiseNutzlastSchema = z.object({
   interests: z.array(z.enum(TRIP_INTERESTS)),
   travel_wish: z.string().max(GRENZEN.reisewunsch).nullable(),
   /**
-   * Herkunft der Day→Stage-Zuordnung.
-   *
-   * Fehlt beim Altbestand. `public.reise_anlegen()` leitet den Wert nach
-   * derselben Tabelle wie `dayStageAssignmentSourceAbleiten()` ab. `user`
-   * und `single_destination` bei mehreren Stages werden unassigned.
-   * Ein fehlender oder expliziter `legacy_fallback`-Claim plus vorhandene
-   * `stage_position` bleibt `legacy_fallback` – das ist das offene
-   * Legacy-Provenance-Gate, kein vertrauenswürdiger Client-Beweis.
+   * Optionaler Client-Claim. `public.reise_anlegen()` leitet den Mode
+   * serverseitig aus Stages und gültigen `stage_position`-Werten ab.
+   * `legacy_fallback` wird für neue Requests niemals persistiert.
    */
-  day_stage_assignment_source: z.enum(DAY_STAGE_ASSIGNMENT_SOURCES).nullable().optional(),
+  day_stage_assignment_mode: z.enum([...DAY_STAGE_ASSIGNMENT_MODES, 'user']).nullable().optional(),
+  day_stage_assignment_source: z.enum([...DAY_STAGE_ASSIGNMENT_MODES, 'user']).nullable().optional(),
   stages: z.array(nutzlastEtappeSchema).max(GRENZEN.etappenJeReise),
   days: z.array(nutzlastTagSchema).max(GRENZEN.reisetageJeReise),
   ungeplante: z.array(nutzlastPunktSchema).max(GRENZEN.punkteJeReise).default([]),

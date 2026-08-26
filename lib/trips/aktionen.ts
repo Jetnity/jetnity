@@ -108,7 +108,7 @@ export async function reiseAnlegen(eingabe: unknown): Promise<Aktionsergebnis<st
       items: [],
     })),
     ungeplante: [],
-    day_stage_assignment_source: graph.assignmentSource,
+    day_stage_assignment_mode: graph.assignmentMode,
   })
 }
 

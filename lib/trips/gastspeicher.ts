@@ -588,7 +588,7 @@ export function gastreiseAnlegen(
     stages,
     days,
     ohneTag: [],
-    dayStageAssignmentSource: graph?.assignmentSource
+    dayStageAssignmentMode: graph?.assignmentMode
       ?? (stages.length <= 1 ? 'single_destination' : 'unassigned'),
     createdAt: jetzt,
     updatedAt: jetzt,
