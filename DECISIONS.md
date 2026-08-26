@@ -4071,6 +4071,58 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 ---
 
+## ADR-0166 – Guest→Account streicht unbewiesene Stay-/Activity-Handelsfelder
+
+**Datum:** 26. August 2026  
+**Status:** umgesetzt auf `fix/qs2-guest-account-commercial-truth`; schließt P1-QS2-02. Keine Schema-/RPC-Änderung.
+
+**Entscheidung:** Beim Guest→Account-Transfer werden für `stay` und `activity` dieselben unbewiesenen Handelsfelder genullt wie bereits für `flight`: `price_amount`, `price_currency`, `provider`, `external_ref`, `booking_url`. Nicht-kommerzielle Fakten (Titel, Notiz, Datum, Zeit) bleiben. Transfer und `rental_car` bleiben unverändert, weil ihr persistierter Preis S3-User-Intake sein kann.
+
+**Kontext:** QS-2 P1-QS2-02. Konto-Hotel/Activity verlangen Nachweis. Guest-LocalStorage ist keine Provider-Evidence. Der Flug-Strip existierte; Stay/Activity liefen durch `alsNutzlast` / `reiseAusNutzlastAnlegen`.
+
+**Alternativen:**
+
+1. *RPC `reise_anlegen` härten.* Shared-Contract-/DB-Änderung; Residual für Flug bleibt ohnehin (direkter PostgREST-Aufruf). Nicht in diesem Slice.
+2. *Auch Transfer/Rental strippen.* Würde manuelle Nutzerpreise zerstören, ohne S3/S5-Vertrag.
+3. *Nichts tun.* Account-Graph trägt erfundene Commercial-Truth.
+
+**Begründung:** Lokale Gastdaten dürfen keine angebliche Provider-/Preis-/Booking-Wahrheit erzeugen. Die Feldmenge ist die bereits für Flüge geltende, nicht erfunden.
+
+**Konsequenzen:**
+
+- `nutzlastOhneUnbewieseneHandelsfelder` in `alsNutzlast` und `reiseAusNutzlastAnlegen`
+- Mobility/Rental-Such-Snapshots mit `provider`/`external_ref` bleiben ein dokumentiertes Rest-Risiko bis zu einem eigenen Vertrag
+- S5 Commercial Provenance wird nicht vorgezogen
+- Direkter RPC-Bypass bleibt dasselbe Residual wie beim Flug
+
+---
+
+## ADR-0167 – Official-Compatibility aggregiert fail-closed, nicht first-evaluation
+
+**Datum:** 26. August 2026  
+**Status:** umgesetzt auf `fix/p1-ta02-official-evaluation-option-scope`; schließt P1-TA-02. Keine Schema-/Contract-Änderung.
+
+**Entscheidung:** Kanonische Official-Wahrheit bleibt `OfficialEvaluation[]`. Das Legacy-Feld `official` und die Item-/Summary-Presentation dürfen nur Aussagen machen, die für ihren Scope belegt sind. Bei heterogenen Traveller-, Credential-Option-, Destination- oder Transit-Scopes wird keine einzelne Evaluation als repräsentative Wahrheit gewählt. Presentation-Metadaten (Authority, Source URL, `checkedAt`, `validityUntil`) bleiben dann leer. `result` bleibt immer `unknown`. Item-Scope ohne exakten Treffer fällt nicht auf alle Evaluations zurück.
+
+**Kontext:** Traveller-/Account-Audit P1-TA-02. `officialAusEvaluations` kopierte `evaluations[0]`. `officialFuer` fiel bei leerer Filtermenge auf die Gesamtmenge zurück. Die Reihenfolge der Evaluations bestimmte Authority und Reason. `ARCHITECTURE.md` verbot bereits die First-Hit-Reduktion; der Runtime-Pfad tat sie trotzdem.
+
+**Alternativen:**
+
+1. *`evaluations.at(-1)` oder eine andere feste Auswahl.* Bleibt willkürlich und reihenfolgeabhängig.
+2. *Legacy-`official` entfernen.* Breaking API ohne Bedarf; Consumer existieren.
+3. *Neue regulatorische Winner-Logik.* Würde Visa-/Entry-Wahrheit erfinden. Verboten.
+
+**Begründung:** Ein Reisender kann mehrere Staatsbürgerschaften und Dokumente haben. Mehrere Reisende und Destinationen/Transits dürfen nicht zu einer künstlich eindeutigen Einreiseprüfung kollabieren. Compatibility darf nur ableiten, nicht entscheiden.
+
+**Konsequenzen:**
+
+- `officialAusEvaluations` ist permutationsstabil
+- `officialFuerItem` ist fail-closed pro Item-Scope
+- P2-TA-06 (`documents[0]` in `travellerNormalisieren`) bleibt ein separates latentes Residual
+- Kein neuer Traveller-Shared-Contract
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

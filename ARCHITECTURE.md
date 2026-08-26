@@ -333,7 +333,7 @@ Duffel ist der erste Datenadapter, nicht die Produktarchitektur. Search und Book
 
 Production bleibt hart aus. Development/Preview brauchen `JETNITY_FLIGHT_AKTIV` und `DUFFEL_ACCESS_TOKEN` (`duffel_test_…`). Fehlende Credentials sind Feature-unavailable, kein Buildfehler.
 
-Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `FlugNachweis` gegen Legs, Passagiere, Kabine und Währung. Heute sind Nachweis und Suchkontext-Speicher `null` – fail closed. Guest-LocalStorage und Guest → Account stufen unbewiesene Flugoptionen nicht zu belegter kommerzieller Wahrheit hoch. Route Truth bleibt Foundation D. Fachlich: [docs/FLUEGE.md](docs/FLUEGE.md), ADR-0062 bis ADR-0065 und ADR-0155.
+Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `FlugNachweis` gegen Legs, Passagiere, Kabine und Währung. Heute sind Nachweis und Suchkontext-Speicher `null` – fail closed. Guest-LocalStorage und Guest → Account stufen unbewiesene Flugoptionen nicht zu belegter kommerzieller Wahrheit hoch. Dieselbe Anwendungsschicht gilt für Stay und Activity (ADR-0166). Route Truth bleibt Foundation D. Fachlich: [docs/FLUEGE.md](docs/FLUEGE.md), ADR-0062 bis ADR-0065 und ADR-0155.
 
 ### Flughafenbasis (Phase 3.1)
 
@@ -345,7 +345,7 @@ Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen 
 
 Phase 3.2c hat bewusst keinen Hoteladapter. `hotelProviderAus()` gibt `null` zurück. Production bleibt hart aus. Development/Preview brauchen `JETNITY_HOTEL_AKTIV` **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Quartiergründe entstehen nur aus vorhandenen Reisedaten. Wegezeiten, ÖV-Zeiten und POIs werden nicht erfunden. Ein Etappenort wird nicht als Viertel verkauft.
 
-Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `HotelNachweis` gegen Ziel, Zeitraum, Belegung und Währung. Heute ist der Nachweis `null` – fail closed. Gast-LocalStorage gilt nicht als serverseitig verifiziert. Fachlich: [docs/HOTELS.md](docs/HOTELS.md), ADR-0070 bis ADR-0077.
+Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `HotelNachweis` gegen Ziel, Zeitraum, Belegung und Währung. Heute ist der Nachweis `null` – fail closed. Gast-LocalStorage gilt nicht als serverseitig verifiziert. Guest → Account nullt unbewiesene Stay-Handelsfelder (`price_amount`, `price_currency`, `provider`, `external_ref`, `booking_url`) analog zum Flug-Strip (ADR-0166). Fachlich: [docs/HOTELS.md](docs/HOTELS.md), ADR-0070 bis ADR-0077.
 
 ### Aktivitätensuche (Phase 3.3)
 
@@ -353,7 +353,7 @@ Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen 
 
 Phase 3.3 hat bewusst keinen Activity-Adapter. `activityProviderAus()` gibt `null` zurück. Production bleibt hart aus. Development/Preview brauchen `JETNITY_ACTIVITY_AKTIV` **und** einen späteren Provider; fehlender Zugang ist Feature-unavailable, kein Buildfehler. Der Tageskontext entsteht nur aus vorhandenen Reisedaten. Öffnungszeiten, Wegezeiten und minutengenaue Lücken werden nicht erfunden. Fehlende Uhrzeiten gelten nicht als konfliktfrei. Die interne Audit-Seite `/ui-audit/activities` ist in Production unabhängig von `JETNITY_UI_AUDIT` fail closed (ADR-0086).
 
-Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `ActivityNachweis` gegen Ziel, Datum, Teilnehmer, Währung und den Timeslot der Option. Heute ist der Nachweis `null` – fail closed. Gast-LocalStorage gilt nicht als serverseitig verifiziert. Fachlich: [docs/ACTIVITIES.md](docs/ACTIVITIES.md), ADR-0078 bis ADR-0085.
+Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen und verlangt einen serverseitigen `ActivityNachweis` gegen Ziel, Datum, Teilnehmer, Währung und den Timeslot der Option. Heute ist der Nachweis `null` – fail closed. Gast-LocalStorage gilt nicht als serverseitig verifiziert. Guest → Account nullt unbewiesene Activity-Handelsfelder (`price_amount`, `price_currency`, `provider`, `external_ref`, `booking_url`) analog zum Flug-Strip (ADR-0166). Fachlich: [docs/ACTIVITIES.md](docs/ACTIVITIES.md), ADR-0078 bis ADR-0085.
 
 ### Mobilitätssuche (Foundation A)
 
@@ -373,7 +373,7 @@ Die Konto-Übernahme aus einem späteren Providerergebnis speichert keine Browse
 
 ### Travel Readiness (Foundation C)
 
-`POST /api/readiness/requirements` ist geschlossen: nur `application/json`, höchstens 8 KB UTF-8, Rate-Limit, `Cache-Control: private, no-store`. Browser- oder LLM-Felder werden ignoriert. Die kanonische Antwort ist `evaluations[]` (Traveller × Credential-Option × Destination × Transit × Requirement Type). Das Feld `official` ist eine ausdrücklich reduzierte Legacy-Zusammenfassung und darf die Engine nicht auf den ersten Treffer reduzieren.
+`POST /api/readiness/requirements` ist geschlossen: nur `application/json`, höchstens 8 KB UTF-8, Rate-Limit, `Cache-Control: private, no-store`. Browser- oder LLM-Felder werden ignoriert. Die kanonische Antwort ist `evaluations[]` (Traveller × Credential-Option × Destination × Transit × Requirement Type). Das Feld `official` ist eine ausdrücklich reduzierte Legacy-Zusammenfassung: fail-closed und permutationsstabil, niemals `evaluations[0]` (ADR-0167). Item-Presentation (`officialFuerItem`) verwendet nur den exakt passenden Scope; ohne Treffer kein Fallback auf fremde Evaluations.
 
 `requirementsProviderAus()` gibt `null` zurück. Tests dürfen einen Port injizieren. `evaluate` ist async; Throw/Timeout bleibt fail closed (ADR-0109). Official Evidence braucht Provider-Identität, plausibles `checkedAt`, Authority und/oder Rule Reference; eine Source URL ist für das Resultat optional und für die Official Action zwingend (ADR-0107, ADR-0110). Untrusted Evidence darf Freshness nicht `current` lassen (ADR-0111). `evaluations[]` ist die einzige kanonische neue Official-Truth; Legacy-`official` bleibt immer `unknown`.
 
