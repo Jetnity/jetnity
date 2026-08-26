@@ -130,14 +130,19 @@ Erster Push `627b7ea8382d74661ee968790635978add113f2d`:
 - Auth-Konfiguration SUCCESS.
 - Vercel Preview **READY** – `https://vercel.com/jetnity-e1b93c82/jetnity-app/B84zyYPdfA3959Zx8DjfCFsH3F83`.
 
-Dieser Status-Commit enthält die Testhilfe- und SSR-Korrektur. Exact-Head-CI/Vercel des neuen Heads müssen nach dem Push erneut gelesen werden. Nicht Ready.
+Korrektur-Head `b0315dd1fb6e1df894d73ee9f100319490569d07`:
+
+- GitHub Actions run `32956948598` **SUCCESS** (Typecheck, Lint & Build + Auth-Konfiguration).
+- Vercel Preview **READY** – `https://vercel.com/jetnity-e1b93c82/jetnity-app/7RX55YUEHserMmBCk8tb4b1sAZjF`.
+
+Nicht Ready. Nicht mergen.
 
 ## 8. Offene Risiken
 
 - Direkter POST auf `vorschlagErzeugen` kann weiter ein Modell kontingentieren, auch wenn die UI den zweiten Guest-Create nicht anbietet.
 - Browser ohne `localStorage` bleibt der bestehende Speicherfehler-Pfad.
 - Unabhängiger Technical-Lead-Review steht aus.
-- Exact-Head-CI des Korrektur-Heads war zum Persistieren dieses Dokuments noch nicht terminal.
+- Exact-Head-CI des Korrektur-Heads ist SUCCESS; der unabhängige Technical-Lead-Review steht trotzdem aus.
 
 ## 9. Nächster Schritt
 
