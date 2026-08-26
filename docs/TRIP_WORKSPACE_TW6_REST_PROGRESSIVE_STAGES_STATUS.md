@@ -23,7 +23,12 @@ Live geprüft, nicht aus dem Prompt übernommen.
 | Offene parallele Draft-PRs | #52, #50, #40, #39, #28 |
 | Shared-Contract-Kollision | keine offenen PRs treffen `zuordnung`, `reise_anlegen`, Timeline oder Assignment-Source |
 
-`main` brachte nur die zwei Governance-Docs (Agent-Rotation, Technical-Lead-Autonomy). Keine Runtime-Kollision. Ahead/Behind und Exact Head stehen nach dem Korrektur-Push in Abschnitt 8.
+`main` brachte nur die zwei Governance-Docs (Agent-Rotation, Technical-Lead-Autonomy). Keine Runtime-Kollision.
+
+| Fakt nach Korrektur | Wert |
+| --- | --- |
+| Exact Head (Runtime) | `2fc03748ded94424654d36fc4a2699277ef34e12` |
+| Ahead / Behind vs `origin/main` | **12 / 0** |
 
 ## 2. Finale identische TS-/SQL-Ableitung
 
@@ -99,7 +104,39 @@ Development: gezieltes Anwenden nur dieser Datei, falls `20260826090000` AAL2 we
 
 ## 8. Tests / Gates / CI / Vercel
 
-Nach dem Korrektur-Push auszufüllen. Pflichtfälle:
+Lokale Gates auf `2fc03748`:
+
+| Gate | Ergebnis |
+| --- | --- |
+| `npm test` | **2248/2248 PASS** |
+| `npm run typecheck` | PASS |
+| `npm run lint` | PASS, 0 warnings |
+| `npm run check:dead` | PASS |
+| `npm run check:exports` | PASS |
+| `npm run check:deps` | PASS |
+| `npm run check:api-schutz` | PASS |
+| `npm run check:schema-bezug` | PASS |
+| `npm run check:setup:ci` | PASS, 1 Warning: keine `.env` |
+| `npm run build` | PASS, Next.js 14.2.32 |
+| `db:rechte` | PASS |
+| `db:rls` | PASS |
+| `db:sicherheit` | 198/229 – neue TW6-B-RPC-Fälle alle **ok**; Rest Admin/AAL wie zuvor |
+
+Development-RPC (echte Function, nicht nachgebaute JS-IFs):
+
+- `user` + Positionen → `unassigned`, keine `stage_id`
+- `single_destination` + Multi-Stage + Positionen → `unassigned`
+- `unassigned` + manipulierte Positionen → 6 Tage, alle ohne `stage_id`
+- unbekannte Source → `22023`
+- Single-Destination → `single_destination`, 3 Tage zugeordnet
+- Fixture-Reise bleibt `legacy_fallback`
+
+Exact-Head GitHub Actions [33013273700](https://github.com/Jetnity/jetnity/actions/runs/33013273700) **SUCCESS** auf `2fc03748`.  
+Exact-Head Vercel `BoYwY8HCTriAoiTTmji5UsMZmpKg` **SUCCESS** / Preview.
+
+**Production-Migration wurde NICHT angewendet.**
+
+Pflichtfälle:
 
 - A `user` + Positionen → nicht `legacy_fallback` (TS + Development-RPC)
 - B `single_destination` + Multi-Stage + Positionen → `unassigned` in TS und SQL
