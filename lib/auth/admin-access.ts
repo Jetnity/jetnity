@@ -37,7 +37,16 @@ export type AdminUser = {
  */
 export type AdminGrant = 'role' | 'break-glass'
 
-export type AdminDenial = 'unauthenticated' | 'forbidden' | 'lookup-failed'
+/**
+ *   · `aal2-required`      – berechtigt, aber `currentLevel !== 'aal2'`
+ *   · `aal-lookup-failed`  – berechtigt, AAL war nicht belastbar lesbar
+ */
+export type AdminDenial =
+  | 'unauthenticated'
+  | 'forbidden'
+  | 'lookup-failed'
+  | 'aal2-required'
+  | 'aal-lookup-failed'
 
 export type AdminDecision =
   | { allowed: true; grant: AdminGrant; role: Role | null }
@@ -152,8 +161,10 @@ export function statusForDenial(denial: AdminDenial): 401 | 403 | 503 {
     case 'unauthenticated':
       return 401
     case 'forbidden':
+    case 'aal2-required':
       return 403
     case 'lookup-failed':
+    case 'aal-lookup-failed':
       return 503
   }
 }
@@ -166,6 +177,9 @@ export function messageForDenial(denial: AdminDenial): string {
     case 'forbidden':
       return 'Keine Berechtigung für diesen Bereich.'
     case 'lookup-failed':
+    case 'aal-lookup-failed':
       return 'Berechtigung konnte derzeit nicht geprüft werden.'
+    case 'aal2-required':
+      return 'Zwei-Faktor-Bestätigung erforderlich.'
   }
 }

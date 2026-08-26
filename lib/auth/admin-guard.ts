@@ -5,7 +5,10 @@
 // Aufteilung nach Oberfläche, weil die richtige Antwort auf eine fehlende
 // Berechtigung davon abhängt: Eine Seite leitet weiter, eine API-Route
 // antwortet mit einem Statuscode. Beide benutzen dieselbe Entscheidung aus
-// `lib/auth/admin-access.ts`, damit es keine zwei Auslegungen gibt.
+// `lib/auth/admin-access.ts` plus die AAL2-Regel aus `lib/auth/admin-aal.ts`,
+// damit es keine zwei Auslegungen gibt. Admin-Zugang verlangt verifizierte
+// Identität, ausreichende Rolle/Capability bzw. zulässigen Break-Glass-Pfad
+// und `currentLevel === 'aal2'`.
 
 import 'server-only'
 
@@ -26,6 +29,12 @@ import {
   type AdminUser,
   type RoleLookup,
 } from '@/lib/auth/admin-access'
+import {
+  ADMIN_STEP_UP_PFAD,
+  applyAdminAal,
+  parseAalLookup,
+  type AalLookup,
+} from '@/lib/auth/admin-aal'
 import {
   ADMIN_AREA_MINIMUM,
   minimumRoleFor,
@@ -160,6 +169,25 @@ const loadAdminIdentity = cache(async () => {
 })
 
 /**
+ * Liest die aktuell erreichte Assurance. Die nächstmögliche Stufe wird
+ * bewusst verworfen.
+ * Ein Ausfall oder ein unlesbarer Wert ist kein AAL1-Default, sondern
+ * fail closed.
+ */
+const loadAdminAal = cache(async (): Promise<AalLookup> => {
+  const supabase = createServerComponentClient()
+  try {
+    const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+    return parseAalLookup(data, error)
+  } catch (error) {
+    return {
+      status: 'failed',
+      reason: error instanceof Error ? error.message : 'unerwarteter Fehler',
+    }
+  }
+})
+
+/**
  * Führt die vollständige Prüfung durch und protokolliert alles, was jemand
  * später nachvollziehen möchte.
  */
@@ -179,14 +207,37 @@ export async function evaluateAdminAccess(options?: {
     return { allowed: false, denial: 'unauthenticated', user: null }
   }
 
-  const decision = decideAdminAccess({
+  const entscheidung = decideAdminAccess({
     user,
     lookup,
     allowlist,
     capability: options?.capability,
   })
 
-  if (decision.allowed && decision.grant === 'break-glass') {
+  if (!entscheidung.allowed) {
+    console.warn(
+      `[admin-zugang] Abgelehnt (${entscheidung.denial}) für Konto ${user.id}, Bereich ${surface}.`,
+    )
+    return { ...entscheidung, user }
+  }
+
+  const aal = await loadAdminAal()
+  const decision = applyAdminAal(entscheidung, aal)
+
+  if (!decision.allowed) {
+    if (decision.denial === 'aal-lookup-failed' && aal.status === 'failed') {
+      console.error(
+        `[admin-zugang] AAL-Abfrage fehlgeschlagen für Konto ${user.id}: ${aal.reason}`,
+      )
+    } else {
+      console.warn(
+        `[admin-zugang] Abgelehnt (${decision.denial}) für Konto ${user.id}, Bereich ${surface}.`,
+      )
+    }
+    return { ...decision, user }
+  }
+
+  if (decision.grant === 'break-glass') {
     const benoetigt = options?.capability ? minimumRoleFor(options.capability) : ADMIN_AREA_MINIMUM
     console.warn(
       `[admin-zugang] BREAK-GLASS: Zugriff über ADMIN_ALLOWED_EMAILS gewährt. ` +
@@ -195,13 +246,7 @@ export async function evaluateAdminAccess(options?: {
         (lookup.status === 'ok' ? ` (${lookup.role})` : '') +
         `. Nötig wäre mindestens die Rolle ${benoetigt}. Dieser Weg öffnet nur die ` +
         'Oberfläche – die Datenbank lehnt die Zugriffe dieser Sitzung ab. Bitte eine ' +
-        'Datenbankrolle hinterlegen.',
-    )
-  }
-
-  if (!decision.allowed) {
-    console.warn(
-      `[admin-zugang] Abgelehnt (${decision.denial}) für Konto ${user.id}, Bereich ${surface}.`,
+        'Datenbankrolle hinterlegen. AAL2 war erfüllt.',
     )
   }
 
@@ -223,7 +268,10 @@ export async function requireAdminPage(options?: {
 
   if (!decision.allowed) {
     if (decision.denial === 'unauthenticated') redirect('/admin/login')
-    redirect(`/unauthorized?grund=${decision.denial}`)
+    if (decision.denial === 'aal2-required') redirect(ADMIN_STEP_UP_PFAD)
+    const grund =
+      decision.denial === 'aal-lookup-failed' ? 'lookup-failed' : decision.denial
+    redirect(`/unauthorized?grund=${grund}`)
   }
 
   return { user: decision.user!, role: decision.role, grant: decision.grant }

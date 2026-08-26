@@ -111,6 +111,8 @@ Eine Sitzung je Konto bleibt aus: Reisen werden auf dem Telefon und am Rechner g
 
 TOTP war in der Vorlage aus, auf dem Branch an – und die Anwendung führt den Weg zu Ende: `components/auth/MFATotpDialog.tsx` fordert den Code an, sobald Supabase AAL2 verlangt. Der Widerspruch lag allein in der Datei.
 
+**Admin-Zugang verlangt zusätzlich aktuelles AAL2.** `lib/auth/admin-guard.ts` prüft nach Identität und Rolle/Break-Glass `currentLevel === 'aal2'`. `nextLevel` oder ein vorhandener TOTP-Faktor reichen nicht. Die Regel gilt für Seiten, Server-Actions und `/api/admin`; Break-Glass ist nicht ausgenommen. AAL1-Admins gehen auf `/admin/mfa` und belegen AAL2 nach der Challenge erneut serverseitig. Ohne verifizierten Faktor bleibt der Adminbereich geschlossen; die Einrichtung bleibt `/account/security`. APIs antworten mit JSON 403 (`aal2-required`) oder 503 (`aal-lookup-failed`), nie mit einem HTML-Redirect. Begründung: [DECISIONS.md](../DECISIONS.md) ADR-0169.
+
 ### Missbrauchsschutz
 
 | Einstellung | Development | Parent | Quelle |
@@ -256,7 +258,7 @@ Geprüft ist stattdessen alles, was die Registrierung ablehnt, und der gesamte W
 
 **Der TOTP-Code selbst.** Die Einrichtung ist geprüft, die Eingabe eines gültigen Codes nicht – dafür bräuchte der Lauf den geteilten Schlüssel und eine Uhr.
 
-**Magic Link.** Die Formulare bieten ihn nicht an; es gibt keinen Weg in der Anwendung, der ihn benutzt. Der Endpunkt ist auf dem Branch erreichbar, aber ohne Oberfläche dahinter. Nichts zu prüfen, solange das so bleibt.
+**Magic Link.** Das öffentliche Login-/Register-Formular bietet ihn nicht an. Die Admin-Anmeldung sendet einen Magic Link auf `/admin`; Zugang entscheidet danach derselbe zentrale Guard, einschliesslich AAL2. Ein Magic Link umgeht AAL2 nicht.
 
 **Der tatsächliche E-Mail-Versand.** Es gibt keinen eigenen SMTP-Server; Supabase versendet selbst und begrenzt hart auf zwei E-Mails je Stunde. Für den Launch reicht das nicht ([ROADMAP.md](../ROADMAP.md)).
 

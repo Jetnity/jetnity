@@ -226,15 +226,24 @@ describe('Antworten für API-Routen', () => {
   test('jede Ablehnung hat einen Statuscode und keine Weiterleitung', () => {
     assert.equal(statusForDenial('unauthenticated'), 401)
     assert.equal(statusForDenial('forbidden'), 403)
+    assert.equal(statusForDenial('aal2-required'), 403)
     // Ein Ausfall der Prüfung ist keine Aussage über die Berechtigung.
     assert.equal(statusForDenial('lookup-failed'), 503)
+    assert.equal(statusForDenial('aal-lookup-failed'), 503)
   })
 
   test('die Meldungen verraten nichts über fremde Konten', () => {
-    for (const denial of ['unauthenticated', 'forbidden', 'lookup-failed'] as const) {
+    for (const denial of [
+      'unauthenticated',
+      'forbidden',
+      'lookup-failed',
+      'aal2-required',
+      'aal-lookup-failed',
+    ] as const) {
       const text = messageForDenial(denial)
       assert.ok(text.length > 0)
       assert.equal(/@/.test(text), false, 'keine Adresse in der Meldung')
+      assert.equal(/allowlist|ADMIN_ALLOWED|break-glass/i.test(text), false)
     }
   })
 })

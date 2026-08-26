@@ -112,6 +112,16 @@ describe('Sensitive Hilfsflächen', () => {
     assert.equal(seite.includes('robots'), false)
   })
 
+  test('/admin/mfa setzt noindex im Layout, nicht in der Client-Step-up-Fläche', () => {
+    const layout = quelle('../../app/(public)/admin/mfa/layout.tsx')
+    const seite = quelle('../../app/(public)/admin/mfa/page.tsx')
+    const stepUp = quelle('../../app/(public)/admin/mfa/AdminMfaStepUp.tsx')
+    assert.match(layout, /robots:\s*NICHT_INDEXIEREN/)
+    assert.equal(seite.includes('robots'), false)
+    assert.match(stepUp, /'use client'/)
+    assert.equal(stepUp.includes('robots'), false)
+  })
+
   test('/unauthorized setzt noindex', () => {
     const datei = quelle('../../app/unauthorized/page.tsx')
     assert.match(datei, /robots:\s*NICHT_INDEXIEREN/)

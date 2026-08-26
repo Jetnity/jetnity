@@ -108,11 +108,11 @@ Sessions laufen über Supabase-Auth-Cookies. Serverseitig wird die Identität im
 | Schicht | Datei | Aufgabe | Antwort bei Ablehnung |
 | --- | --- | --- | --- |
 | Anmeldung | `middleware.ts` | ist ein verifiziertes Konto vorhanden? Gilt für `/admin`, `/api/admin`, `/account` | Seiten: Weiterleitung zur passenden Anmeldung mit Rücksprungziel. API: 401 als JSON |
-| Berechtigung Seiten | `app/(admin)/layout.tsx` | Rollenprüfung für die **gesamte** Routengruppe, auch für künftige Seiten | Weiterleitung auf `/admin/login` oder `/unauthorized?grund=…` |
-| Berechtigung API | `requireAdminApi()` je Route | Rollenprüfung, in der CI durch `check:api-schutz` erzwungen | 401 / 403 / 503 als JSON, **nie** eine Weiterleitung |
+| Berechtigung Seiten | `app/(admin)/layout.tsx` | Rollen-/Capability-Prüfung **und** `currentLevel === 'aal2'` für die gesamte Routengruppe | Weiterleitung auf `/admin/login`, `/admin/mfa` oder `/unauthorized?grund=…` |
+| Berechtigung API | `requireAdminApi()` je Route | dieselbe Entscheidung, in der CI durch `check:api-schutz` erzwungen | 401 / 403 / 503 als JSON, **nie** eine Weiterleitung |
 | Datenzugriff | `lese()` in `lib/api/datenbank-lesen.ts` | trennt eine erfolgreiche leere Abfrage von einem Fehler der Datenbank | 500 bei Ablehnung, 503 bei Ausfall, jeweils als JSON |
 
-`/admin/login` liegt in der Gruppe `(public)` und ist von der Rollenprüfung ausgenommen – andernfalls entstünde eine Endlosschleife.
+`/admin/login` und `/admin/mfa` liegen in der Gruppe `(public)` und sind von `requireAdminPage` ausgenommen – andernfalls entstünde eine Endlosschleife. `/admin/mfa` bleibt über die Middleware an eine verifizierte Sitzung gebunden.
 
 **Das Rollenmodell steht an einer Stelle.** `lib/auth/roles.ts` enthält die sechs Rollen, ihre Rangfolge, den Bereichszugang und die Regeln der Rollenvergabe – ohne Next- und Supabase-Importe, damit die Regeln ohne Laufzeit prüfbar sind. `lib/auth/admin-access.ts` trifft die Zugangsentscheidung als reine Funktion, `lib/auth/admin-guard.ts` führt sie aus und protokolliert sie.
 
@@ -121,6 +121,8 @@ Seit Phase 1.4 gilt dasselbe Modell auch in der Datenbank: `public.rollenrang()`
 **Zwischen Rolle und Zugriff steht eine Fähigkeit.** Eine Route verlangt nicht „mindestens `operator`", sondern die Fähigkeit `betrieb-eingreifen`; eine Policy ruft nicht `hat_rolle_mindestens('operator')` auf, sondern `public.darf_betrieb_eingreifen()`. Die Mindestrolle steht damit an genau einer Stelle: in `CAPABILITY_MINIMUM` in `lib/auth/roles.ts`. Der Umweg ist die Antwort auf einen realen Bruch – der erste Durchgang von Phase 1.4 stellte alle Policies pauschal auf `admin`, während die Anwendung ab `moderator` hereinliess, sodass eine Moderation durch den Gate kam und danach von RLS leer ausging. `lib/auth/faehigkeiten-datenbank.test.ts` vergleicht beide Seiten ohne Datenbank, `npm run db:rechte` lehnt jede Policy ab, die eine Rolle direkt nennt ([DECISIONS.md](DECISIONS.md) ADR-0035).
 
 Die Entscheidung unterscheidet drei Zustände der Rollenabfrage: Rolle vorhanden, keine Rolle hinterlegt, Abfrage fehlgeschlagen. Ein Ausfall führt nie zu einer Freigabe. Reguläre Quelle ist die Datenbankrolle; `ADMIN_ALLOWED_EMAILS` ist ein Notzugang aus exakten Adressen, dessen Nutzung protokolliert wird. Eine Domain erteilt keine Berechtigung ([DECISIONS.md](DECISIONS.md) ADR-0027).
+
+Zusätzlich gilt seit P1-QS2-01: Admin-Zugang verlangt `currentLevel === 'aal2'`. `nextLevel`, ein vorhandener TOTP-Faktor oder Break-Glass ersetzen das nicht. Die Regel sitzt in `lib/auth/admin-aal.ts` und wird zentral in `evaluateAdminAccess()` angewandt – für Passwortlogin, Magic Link, OAuth, bestehende Sitzungen, Seiten, Server-Actions und APIs. Ein AAL-Ausfall ist fail closed. Der Step-up auf `/admin/mfa` belegt AAL2 nach der Challenge erneut serverseitig; Return-Ziele sind auf interne Admin-Pfade begrenzt ([DECISIONS.md](DECISIONS.md) ADR-0169).
 
 Der Notzugang öffnet die Oberfläche, nicht die Datenbank. Die Policies kennen die Liste nicht und sollen sie nicht kennen – sonst stünde neben `creator_profiles.role` wieder eine zweite Autorität. Eine solche Sitzung sieht deshalb einen Hinweis über der gesamten Administrations-Shell, statt leere Übersichten, die sich als Entwarnung lesen liessen. `reachesDatabase()` in `lib/auth/admin-access.ts` hält den Satz als prüfbare Funktion fest ([DECISIONS.md](DECISIONS.md) ADR-0036). Persistente Admin-Writes prüfen denselben Vertrag zusätzlich in `lib/auth/admin-write-gate.ts` und antworten bei Break-Glass mit 403, bevor die Datenbank erreicht wird (ADR-0158).
 
