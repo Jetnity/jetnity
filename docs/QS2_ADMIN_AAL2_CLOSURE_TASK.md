@@ -4,7 +4,8 @@ Stand: 26. August 2026
 Typ: **enger Security-/Auth-/RLS-Closure-Slice**
 Branch: `fix/qs2-admin-aal2-guard`
 Ursprüngliche Baseline: `main @ 8ab4e666d4963ac98b32de4b0371dfbd6eefc30f`
-Aktuelles Sync-Ziel: `main @ 3b317bc677c9d868d1fd8ba75bfa3624ea6b7b73`
+Aktueller `main` / Merge-Base: `3b317bc677c9d868d1fd8ba75bfa3624ea6b7b73`
+Runtime-/Gate-Head der Revalidierung: `05f945d7f2783c8c0f68ade33d61cb240629622d`
 ADR: ADR-0169 (auf dem Branch zuerst als 0168 geführt; nach Integration von #81/#84/#83 umnummeriert)
 Finding: **P1-QS2-01**
 
@@ -168,4 +169,4 @@ Vor erneutem Technical-Lead-Review:
 
 ## STOPP
 
-Der PR bleibt Draft. Kein Ready, kein Merge, keine Production-Migration und kein Folgeslice vor erneutem unabhängigen ChatGPT-/Technical-Lead-Review.
+Der PR bleibt Draft. Integration auf `main @ 3b317bc` und Revalidierung auf Runtime-Head `05f945d7` sind erfolgt. Kein Ready, kein Merge, keine Production-Migration und kein Folgeslice vor erneutem unabhängigen ChatGPT-/Technical-Lead-Review.

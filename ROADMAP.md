@@ -295,10 +295,11 @@ Auftrag: `docs/ADMIN_SLICE_C_PROVIDER_COST_BOARD_TASK.md`
 
 ## 6g. QS-2 P1-QS2-01 – zentraler Admin-AAL2-Guard
 
-Status: **Draft-PR #80, synchronisiert auf `main @ 3b317bc`. Entscheidung: ADR-0169. Kein Ready. Kein Merge.**
+Status: **Draft-PR #80, synchronisiert und revalidiert gegen `main @ 3b317bc`. Entscheidung: ADR-0169. Kein Ready. Kein Merge.**
 
 - Admin-Zugang verlangt zentral `currentLevel === 'aal2'`
 - Break-Glass umgeht AAL2 nicht
+- Development-Migration `20260826090000_admin_aal2_data_plane.sql` ist nicht Production-angewandt
 - kein allgemeiner Auth-Umbau, kein P1-QS2-02, kein Admin D–K
 
 ---
