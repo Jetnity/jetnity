@@ -4,8 +4,9 @@ Stand: 26. August 2026
 Agent: `Jetnity provider readiness audit`  
 Branch: `feat/provider-s5-commercial-provenance-contract`  
 Draft-PR: `#83`  
-Aktueller `main` vor dieser Korrektur: `2de8008ddb10e9b53fef49daccc779831669e813`  
-Vorheriger PR-Head: `e222646dd55e150ca5ac0353c6a0994d70067c85`  
+Aktueller `main`: `2de8008ddb10e9b53fef49daccc779831669e813`  
+Implementierungs-Head TL-05–08: `700065fee8ba0ff87f424dc923fd8959d5da3cc5`  
+Letzter unabhängiger Technical-Lead-Review: `1f12f8f296bd9453fd6e406f8fdaa952a4294df5`  
 Status: **S5A-TL-05 BIS S5A-TL-08 IM CODE BEHOBEN / NICHT READY / NICHT MERGEN / WARTE AUF ERNEUTEN TECHNICAL-LEAD-REVIEW**
 
 Auftrag: `docs/PROVIDER_READINESS_S5A_COMMERCIAL_PROVENANCE_TASK.md`.  
@@ -101,25 +102,30 @@ S5-B-Persistenz bleibt dokumentiert und nicht implementiert.
 
 ## 7. Tests
 
-`lib/commercial-provenance/commercial-provenance.test.ts` enthält die 20 geforderten Adversarial-Fälle plus die bestehenden Truth-Trennungen und Domain-Komposition ohne Schema-Mutation.
+`lib/commercial-provenance/commercial-provenance.test.ts` enthält 46 Contract-Tests, darunter die Adversarial-Fälle zu S5A-TL-01 bis S5A-TL-08. Domain-Komposition mutiert keine bestehenden Option- oder `trip_items`-Schemata.
+
+GitHub Actions auf `700065fe` führt `npm test` aus und ist SUCCESS.
 
 ## 8. Exact Head / Actions / Vercel
 
-Korrektur-Head nach Sync: `7c3da36750e1b4e43bbfcc3ffb02e4d05dc82d81`
+Live verifiziert am 26. August 2026 gegen `origin/main` `2de8008ddb10e9b53fef49daccc779831669e813`.
+
+**Implementierungs-Head TL-05–08:** `700065fee8ba0ff87f424dc923fd8959d5da3cc5`
 
 | Gate | Ergebnis |
 | --- | --- |
-| GitHub Actions | SUCCESS [32958395472](https://github.com/Jetnity/jetnity/actions/runs/32958395472) |
-| Vercel Preview | SUCCESS / READY `9CEvTjCVhVGz9o8H91u1cEjemeKS` – Deployment `6101867937` |
-| Preview-URL | https://jetnity-6dkzlv1cz-jetnity-e1b93c82.vercel.app |
-| Merge-Base | `2de8008ddb10e9b53fef49daccc779831669e813` |
-| Ahead/Behind | 4 / 0 |
-| Mergeable | MERGEABLE |
+| GitHub Actions | SUCCESS [32965020588](https://github.com/Jetnity/jetnity/actions/runs/32965020588) |
+| Vercel Preview | SUCCESS / READY `7dbZCUEtLzRjhBUzZPDkESvTyzPa` – Deployment `6103071068` |
+| Preview-URL | https://jetnity-c6zvt0e3g-jetnity-e1b93c82.vercel.app |
+| Merge-Base | `2de8008ddb10e9b53fef49daccc779831669e813` = aktuelles `origin/main` |
+| Ahead/Behind | 6 / 0 |
+| Mergeable | MERGEABLE, Draft, `mergeStateStatus=CLEAN` |
+| Tatsächlicher GitHub-Diff | 21 Dateien; `docs/ACTIVE_WORK_STATUS.md` **0 Zeilen** gegenüber `main` |
 
-Lokale Gates auf demselben Head: typecheck, lint, `npm test` 2078/2078, build, `check:setup:ci`, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug` – alle PASS.
-
-Ein späterer docs-only Status-Commit kann den PR-Head verschieben; Technical-Lead-Review gaten den dann aktuellen Head zusätzlich. Cursor-Aggregat-Views sind keine Evidence.
+Letzter unabhängiger Technical-Lead-Review bleibt auf `1f12f8f296bd9453fd6e406f8fdaa952a4294df5` (HOLD, S5A-TL-05 bis S5A-TL-08). Dieser Docs-Commit verschiebt den PR-Head; Technical-Lead-Review gaten den dann aktuellen Head. Cursor-Aggregat-Views sind keine Evidence.
 
 ## 9. STOPP
 
 Nicht Ready. Nicht mergen. Kein S5-B. Kein S6/S7/S8. Kein TW-8. Keine Provideraktivierung.
+
+Nächster Schritt: unabhängige Technical-Lead-Review der TL-05–08-Korrektur.
