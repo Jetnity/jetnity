@@ -86,7 +86,41 @@ UI nutzt bereits `officialPruefungAusEvaluations(evaluations)` für den Banner u
 
 ## Exact Head / Ahead-Behind / Merge-Base
 
-Wird nach Push / CI im Status nachgezogen. Baseline-Merge-Base: `2de8008`.
+| Größe | Wert |
+| --- | --- |
+| Exact Head | `d3c326debc45169a74efcb9350acf4634fe6a196` |
+| `origin/main` | `2de8008ddb10e9b53fef49daccc779831669e813` |
+| Merge-Base | `2de8008ddb10e9b53fef49daccc779831669e813` |
+| Ahead / Behind | **4 / 0** |
+| Draft-PR | https://github.com/Jetnity/jetnity/pull/84 |
+
+## Gates
+
+Lokal auf Exact Head `d3c326de`:
+
+| Gate | Ergebnis |
+| --- | --- |
+| `npm run typecheck` | PASS |
+| `npm run lint` | PASS |
+| `npm test` | PASS – 2058/2058 |
+| `npm run build` | PASS |
+| `npm run check:setup:ci` | PASS (Warning: keine `.env` lokal) |
+| `npm run check:dead` | PASS |
+| `npm run check:exports` | PASS |
+| `npm run check:deps` | PASS |
+| `npm run check:api-schutz` | PASS |
+| `npm run check:schema-bezug` | PASS |
+| Readiness-/Traveller-Tests inkl. `official-option-scope.test.ts` | PASS – 20/20 adversarial |
+
+GitHub Actions / Vercel für Exact Head `d3c326de`:
+
+| Gate | Ergebnis |
+| --- | --- |
+| Auth-Konfiguration | SUCCESS |
+| Typecheck, Lint & Build | IN_PROGRESS – run `32957120609` |
+| Vercel Preview | SUCCESS – deployment `7ZfRtrwxLsRF1xSZ3CRnJV8tzkmQ` / id `6101640543` |
+
+Kein Ready. Kein Merge.
 
 ## Offene Residuals
 
