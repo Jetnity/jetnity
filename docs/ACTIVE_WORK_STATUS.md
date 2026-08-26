@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 26. August 2026  
-Status: **Kein aktiver Runtime-Slice. Continuity-/Handoff-Bereinigung nach Integration von PR #81, #84, #82, #83, #80 und #86. Nächster Schritt: unabhängiger Technical-Lead-Review von Draft-PR #85, danach erst der finale ChatGPT-Superprompt. Kein neuer Produktslice.**
+Status: **Aktiver operativer Vorbereitungs-Slice: migrations-only Gate-0-PR für die drei geprüften TW6-B-Migrationen plus bounded Gate-B-Playbook. Kein Runtime-Slice. Kein Production-Apply. Kein Ready/Merge.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -9,9 +9,9 @@ Status: **Kein aktiver Runtime-Slice. Continuity-/Handoff-Bereinigung nach Integ
 
 Aktueller verifizierter `main`:
 
-`38ec8be79a6ce7758be81fd5d564819d638140d6`
+`1d558ef56cc275d429f4076c7a8877c3791947a7`
 
-Merge-Message: `Merge PR #86: fail-closed public metadata boundary`.
+Letzte Continuity-Commits auf `main`: Agent-Rotation-Standard, danach Merge von PR #85. Production-Runtime bleibt der Stand nach PR #86; dieser Slice schreibt Production nicht.
 
 Production für diesen Merge:
 
@@ -128,11 +128,11 @@ Kein Admin D–K. Kein QS-3.
 
 ## 7. Aktive / nächste Cursor-Workstreams
 
-Aktiv: **keiner.**
+Aktiv: **TW6-B Gate 0 / Gate-B-Playbook-Vorbereitung** auf `cursor/tw6-gate-b-prep-a4c4`. Nur die drei geprüften Migrationen plus Playbook. Keine Multi-Ziel-UI.
 
 STOPP:
 
-- `Trip workspace audit architecture`
+- `Trip workspace audit architecture` – PR #87 bleibt Runtime-Draft; dieser Slice ist die vom Technical Lead geforderte operative Vorbereitung, nicht TW-7/8/9
 - `Account plattform audit vorbereitung`
 - `Jetnity provider readiness audit`
 - `Admin platform audit`
@@ -143,15 +143,15 @@ Reserviert:
 
 - `Jetnity native app architecture`
 
-Dieser Continuity-Slice darf `docs/ACTIVE_WORK_STATUS.md` aktualisieren, weil er der zentrale Technical-Lead-/Continuity-Auftrag ist. Fachagenten ändern diese Datei weiterhin nicht parallel.
-
 ## 8. Offene PRs
 
 Live geprüft nach PR #86. **#52 / #50 / #40 / #39 / #28 sind weiterhin OPEN / Draft** und nicht geschlossen.
 
 | PR | Klasse |
 | --- | --- |
-| **#85** Final continuity handoff | **AKTIVER docs-only Draft.** Unabhängiger TL-Review. Nicht Ready. Nicht mergen durch den Autoren-Agenten. |
+| **TW6-B Gate 0 Prep** | **AKTIVER migrations-only Draft** auf `cursor/tw6-gate-b-prep-a4c4`. Unabhängiger TL-Review. Nicht Ready. Nicht mergen. Production unverändert. |
+| **#87** TW6-B Runtime + Mode Contract | **OFFENER Runtime-Draft.** PLAN PASS / PRODUCTION EXECUTION BLOCKED. Nicht Ready. Nicht mergen. Nicht durch diesen Slice erweitert. |
+| **#85** Final continuity handoff | docs-only; historische Continuity-Evidence nach PR #86. |
 | #52 ChatGPT TL handoff 2026-08-24 | HISTORICAL / SUPERSEDED |
 | #50 S1 merged-status docs | HISTORICAL / INTEGRATED ELSEWHERE |
 | #40 Admin Platform Audit | HISTORICAL / INTEGRATED ELSEWHERE |
@@ -176,4 +176,4 @@ Keine Development-only-Migration darf ohne eigenes Production-Gate still produkt
 
 ## 10. Nächster Schritt
 
-Unabhängiger ChatGPT-/Technical-Lead-Review von Draft-PR #85. Danach erst der finale ChatGPT-Superprompt. Kein Produktslice. Kein Ready/Merge dieses Continuity-PR durch den Autoren-Agenten. Kein D1/G1. Kein TW6-REST/TW-7/TW-8. Kein S5-B. Kein AP-Folgeslice. Kein Admin D–K.
+Unabhängiger ChatGPT-/Technical-Lead-Review des migrations-only Gate-0-Drafts und des Gate-B-Playbooks. Kein Ready. Kein Merge. Kein Production-Apply. Kein Folgeslice. PR #87 bleibt Draft.
