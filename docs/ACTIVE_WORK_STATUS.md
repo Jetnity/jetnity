@@ -80,6 +80,7 @@ Geschlossen:
 Weiter offen:
 
 - **P2-TA-06** – `documents[0]` in `travellerNormalisieren()`; live weiterhin vorhanden;
+- **P2-TA-03** – `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` fehlt auf `main` und existiert nur im historischen Account-Audit-PR #39;
 - Mobility/Rental-Such-Snapshots mit kommerziellen Feldern;
 - direkter `reise_anlegen`-RPC-Bypass;
 - Account-Traveller-Registry / AP-4–AP-12 / AP-7.

@@ -106,7 +106,7 @@ Weitere integrierte Foundations:
 
 > Ein Traveller → viele Staatsbürgerschaften → viele Dokumente / Credentials → kontextuell gültige Optionen.
 
-Kein globaler Default-Pass. Issuer Country ≠ Citizenship. P1-TA-02 geschlossen. **P2-TA-06 (`documents[0]` in `travellerNormalisieren`) bleibt offen.**
+Kein globaler Default-Pass. Issuer Country ≠ Citizenship. P1-TA-02 geschlossen. **P2-TA-06 (`documents[0]` in `travellerNormalisieren`) bleibt offen.** `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` fehlt auf `main` (P2-TA-03, nur historisches PR #39) und wurde hier nicht still kopiert.
 
 ## 6. Provider / Commercial Provenance
 

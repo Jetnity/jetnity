@@ -129,7 +129,7 @@ Keine relevante Funktion darf still genau eine Staatsbürgerschaft oder einen De
 
 Keine `first-item` / `documents[0]` / `evaluations[0]`-Semantik als Product Truth.
 
-Foundation E ist vorhanden und wird nicht neu gebaut. **P1-TA-02 ist geschlossen. P2-TA-06 bleibt offen.**
+Foundation E ist vorhanden und wird nicht neu gebaut. **P1-TA-02 ist geschlossen. P2-TA-06 bleibt offen.** `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` fehlt auf `main` (P2-TA-03; nur historisches PR #39) und darf nicht still als Current-Vertrag kopiert werden.
 
 ## 8. Shared Contracts
 

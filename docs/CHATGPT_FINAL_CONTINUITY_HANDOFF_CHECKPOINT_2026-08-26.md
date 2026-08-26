@@ -138,6 +138,7 @@ Die **Production-Aktivierung** der Admin-AAL2-Datenebene ist kein erledigter P1-
 ### P2 – offen / residual
 
 - **P2-TA-06** – `documents[0]`-Fallback in `travellerNormalisieren()` (`lib/readiness/engine.ts`). Live weiterhin vorhanden.
+- **P2-TA-03** – `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` wird von der Build Order zitiert, liegt aber nicht auf `main`; nur auf historischem PR #39 / `audit/account-platform`. In diesem Docs-only-Auftrag nicht still herüberkopiert.
 - D0-P2-04 – hreflang / Locale;
 - D0-P2-05 – JSON-LD / Entity Foundation;
 - G0-P2-01 / G0-P2-02;
@@ -287,3 +288,11 @@ Konfliktarme Audit-Arbeit darf nur mit neuem Technical-Lead-Auftrag parallel lau
 ## 16. Bewusst erhalten
 
 Keine historischen ADRs, Audits, Handoffs, Checkpoints, Review-Findings oder Migrationen wurden gelöscht. Veraltete Current-Aussagen werden als historical / superseded / integrated markiert und auf diesen Checkpoint plus `JETNITY_HANDOFF.md` / `docs/ACTIVE_WORK_STATUS.md` / `JETNITY_START_HERE.md` verwiesen.
+
+---
+
+## 17. Nicht ohne Technical-Lead-/Product-Owner-Entscheidung gelöst
+
+- `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` fehlt auf `main` (P2-TA-03). Die Datei existiert nur auf historischem PR #39. Still herüberkopieren würde einen alten Audit-Vertrag als Current einführen. Nicht in diesem Auftrag gelöst.
+- `main` Branch Protection bleibt `protected=false`. Nicht in diesem Docs-only-Auftrag konfiguriert.
+- Ob `TW6-REST-01` der nächste Runtime-Slice sein soll, entscheidet der Technical Lead nach diesem Handoff-Review. Dieser Auftrag startet ihn nicht.
