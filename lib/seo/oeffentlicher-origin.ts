@@ -5,9 +5,11 @@
 //
 // NEXT_PUBLIC_SITE_URL ist die bevorzugte kanonische Public-Site-Origin.
 // NEXT_PUBLIC_APP_URL ist nur Legacy-Fallback, wenn kein eigener Site-Wert
-// gesetzt ist. Indexing bleibt fail-closed: localhost, *.vercel.app,
+// gesetzt ist. Public Indexing ist explizites Opt-in: nur der exakte Wert
+// `true` darf den Allow-Check passieren. Unset, leer, false und jeder
+// andere Wert bleiben deny. Zusätzlich fail-closed: localhost, *.vercel.app,
 // ungültige/mehrdeutige Origins, Path-Drift und ein weiterhin ephemeral
-// gesetzter App-Host schalten nicht frei.
+// gesetzter App-Host.
 //
 // Kein Custom-Domain-Cutover, kein produktives Indexing, kein hreflang,
 // kein JSON-LD-Ausbau über die vorhandene URL-Eigenschaft hinaus.
@@ -46,6 +48,11 @@ export function originIstEphemeral(hostname: string): boolean {
 
 function rohVorhanden(raw?: string): boolean {
   return typeof raw === 'string' && raw.trim() !== ''
+}
+
+/** Nur der exakte Wert `true` ist eine bewusste Public-Indexing-Freigabe. */
+export function indexingIstExplizitFreigegeben(raw?: string): boolean {
+  return raw === 'true'
 }
 
 function parseOrigin(raw?: string): GeparsterOrigin | null {
@@ -107,7 +114,7 @@ export function oeffentlicherOrigin(env?: OriginUmgebung): OeffentlicherOrigin {
   }
 
   const produktion = (umgebung.VERCEL_ENV ?? umgebung.NODE_ENV) === 'production'
-  const freigabe = umgebung.NEXT_PUBLIC_ALLOW_INDEXING !== 'false'
+  const freigabe = indexingIstExplizitFreigegeben(umgebung.NEXT_PUBLIC_ALLOW_INDEXING)
   const siteMehrdeutig =
     rohVorhanden(umgebung.NEXT_PUBLIC_SITE_URL) && Boolean(site && (site.ungueltig || site.hatDrift))
   const appEphemeral = Boolean(app && !app.ungueltig && originIstEphemeral(app.hostname))

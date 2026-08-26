@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url'
 
 import {
   LOKALER_ORIGIN_FALLBACK,
+  indexingIstExplizitFreigegeben,
   kanonischeUrl,
   oeffentlicherOrigin,
   originIstEphemeral,
@@ -23,6 +24,7 @@ function quelle(relativ: string) {
 const synthetischAllow = {
   NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
   VERCEL_ENV: 'production',
+  NEXT_PUBLIC_ALLOW_INDEXING: 'true',
 } as const
 
 describe('Der öffentliche Origin-Vertrag', () => {
@@ -41,6 +43,7 @@ describe('Der öffentliche Origin-Vertrag', () => {
       NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
       NEXT_PUBLIC_APP_URL: 'https://alt.example',
       VERCEL_ENV: 'production',
+      NEXT_PUBLIC_ALLOW_INDEXING: 'true',
     })
     assert.equal(ergebnis.origin, 'https://jetnity.ch')
     assert.equal(ergebnis.quelle, 'site')
@@ -51,6 +54,7 @@ describe('Der öffentliche Origin-Vertrag', () => {
     const fallback = oeffentlicherOrigin({
       NEXT_PUBLIC_APP_URL: 'https://jetnity.ch',
       VERCEL_ENV: 'production',
+      NEXT_PUBLIC_ALLOW_INDEXING: 'true',
     })
     assert.equal(fallback.origin, 'https://jetnity.ch')
     assert.equal(fallback.quelle, 'app')
@@ -60,10 +64,84 @@ describe('Der öffentliche Origin-Vertrag', () => {
       NEXT_PUBLIC_SITE_URL: 'https://jetnity.com',
       NEXT_PUBLIC_APP_URL: 'https://jetnity-app.vercel.app',
       VERCEL_ENV: 'production',
+      NEXT_PUBLIC_ALLOW_INDEXING: 'true',
     })
     assert.equal(ephemeralApp.origin, 'https://jetnity.com')
     assert.equal(ephemeralApp.quelle, 'site')
     assert.equal(ephemeralApp.darfIndexieren, false)
+  })
+
+  test('P1-D0-2-TL-01: Public Indexing ist nur bei exakt true opt-in', () => {
+    assert.equal(indexingIstExplizitFreigegeben(undefined), false)
+    assert.equal(indexingIstExplizitFreigegeben(''), false)
+    assert.equal(indexingIstExplizitFreigegeben('false'), false)
+    assert.equal(indexingIstExplizitFreigegeben('TRUE'), false)
+    assert.equal(indexingIstExplizitFreigegeben('1'), false)
+    assert.equal(indexingIstExplizitFreigegeben('true'), true)
+
+    assert.equal(
+      oeffentlicherOrigin({
+        NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
+        VERCEL_ENV: 'production',
+      }).darfIndexieren,
+      false,
+    )
+    assert.equal(
+      oeffentlicherOrigin({
+        NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
+        VERCEL_ENV: 'production',
+        NEXT_PUBLIC_ALLOW_INDEXING: '',
+      }).darfIndexieren,
+      false,
+    )
+    assert.equal(
+      oeffentlicherOrigin({
+        NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
+        VERCEL_ENV: 'production',
+        NEXT_PUBLIC_ALLOW_INDEXING: 'false',
+      }).darfIndexieren,
+      false,
+    )
+    assert.equal(
+      oeffentlicherOrigin({
+        NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
+        VERCEL_ENV: 'production',
+        NEXT_PUBLIC_ALLOW_INDEXING: 'true',
+      }).darfIndexieren,
+      true,
+    )
+    assert.equal(
+      oeffentlicherOrigin({
+        NEXT_PUBLIC_APP_URL: 'http://localhost:3000',
+        VERCEL_ENV: 'production',
+        NEXT_PUBLIC_ALLOW_INDEXING: 'true',
+      }).darfIndexieren,
+      false,
+    )
+    assert.equal(
+      oeffentlicherOrigin({
+        NEXT_PUBLIC_SITE_URL: 'https://preview.vercel.app',
+        VERCEL_ENV: 'production',
+        NEXT_PUBLIC_ALLOW_INDEXING: 'true',
+      }).darfIndexieren,
+      false,
+    )
+    assert.equal(
+      oeffentlicherOrigin({
+        NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch/pfad',
+        VERCEL_ENV: 'production',
+        NEXT_PUBLIC_ALLOW_INDEXING: 'true',
+      }).darfIndexieren,
+      false,
+    )
+    assert.equal(
+      oeffentlicherOrigin({
+        NEXT_PUBLIC_SITE_URL: 'not-a-url',
+        VERCEL_ENV: 'production',
+        NEXT_PUBLIC_ALLOW_INDEXING: 'true',
+      }).darfIndexieren,
+      false,
+    )
   })
 
   test('ungültige URL, falsches Protokoll und Path-Drift geben kein Index frei', () => {
@@ -140,6 +218,16 @@ describe('robots und Sitemap teilen dieselbe Origin', () => {
     assert.equal(robots.sitemap, null)
     assert.equal(robots.host, null)
     assert.deepEqual(sitemapOeffentlicheUrls(lokal), [])
+
+    const productionOhneOptIn = {
+      NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
+      VERCEL_ENV: 'production',
+    }
+    const ohneOptIn = robotsDokument(productionOhneOptIn)
+    assert.deepEqual(ohneOptIn.disallow, ['/'])
+    assert.equal(ohneOptIn.sitemap, null)
+    assert.equal(ohneOptIn.host, null)
+    assert.deepEqual(sitemapOeffentlicheUrls(productionOhneOptIn), [])
   })
 
   test('synthetischer Allow-Modus nutzt Host, Sitemap und Canonicals derselben Origin', () => {
@@ -195,5 +283,12 @@ describe('Öffentliche Canonicals bleiben ohne Param-Varianten', () => {
     assert.match(pub, /oeffentlicherOrigin/)
     assert.match(start, /url: origin/)
     assert.equal(start.includes('NEXT_PUBLIC_APP_URL ??'), false)
+  })
+
+  test('.env.example dokumentiert den sicheren Default und setzt true nicht', () => {
+    const env = quelle('../../.env.example')
+    assert.match(env, /NEXT_PUBLIC_ALLOW_INDEXING=false/)
+    assert.match(env, /Public-Launch-Gate/)
+    assert.equal(env.includes('NEXT_PUBLIC_ALLOW_INDEXING=true'), false)
   })
 })

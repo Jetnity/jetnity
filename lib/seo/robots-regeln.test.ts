@@ -62,14 +62,20 @@ describe('Der ephemeral-Host-Kill-Switch', () => {
   })
 
   test('aktiviert kein Custom-Domain-Indexing still über Defaults hinaus', () => {
-    // Production + Apex wäre der spätere Allow-Modus. D0-1 ändert die Formel
-    // nicht; es härtet nur die Disallow-Liste, falls jemand den Host später setzt.
+    // P1-D0-2-TL-01: Production + gültige Apex-URL ohne explizites true bleibt deny.
     assert.equal(
       robotsDarfIndexieren({
         NEXT_PUBLIC_APP_URL: 'https://jetnity.ch',
         VERCEL_ENV: 'production',
       }),
-      true,
+      false,
+    )
+    assert.equal(
+      robotsDarfIndexieren({
+        NEXT_PUBLIC_SITE_URL: 'https://jetnity.ch',
+        VERCEL_ENV: 'production',
+      }),
+      false,
     )
   })
 })
@@ -78,6 +84,7 @@ describe('Der Allow-Modus schützt die D0-1-Pfade', () => {
   const liste = robotsDisallowListe({
     NEXT_PUBLIC_APP_URL: 'https://jetnity.ch',
     VERCEL_ENV: 'production',
+    NEXT_PUBLIC_ALLOW_INDEXING: 'true',
   })
 
   test('enthält Reisen, Auth, Unauthorized und die bisherigen Schutzpfade', () => {
