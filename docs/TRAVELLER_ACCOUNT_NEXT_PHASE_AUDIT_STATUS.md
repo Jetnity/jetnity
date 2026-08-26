@@ -34,8 +34,15 @@ Bestätigt:
 - **P2-TA-06**: latentes `documents[0]`-Contract-Hardening später schließen.
 - Account-Traveller-Registry/AP-7 erst nach eigenem Shared-Contract-/Product-Owner-Schnitt.
 
-## 3. Integration
+## 3. Exact-Head-Gates
 
-Der Audit-Inhalt ist fachlich PASS. Vor Merge ist nur noch der durch diese Reconciliation erzeugte neue Exact Head auf GitHub Actions/Vercel zu verifizieren. Danach darf der Technical Lead diesen normalen docs-only PR autonom integrieren.
+Finaler Reconciliation-Head vor diesem Status: `1b55a29b577585ed28f46e12214e981ae8297e47`.
+
+- GitHub Actions CI `32951925231`: SUCCESS.
+- Vercel Preview `dpl_Dyk13WxtS2ZMBErzV3of4krdJoPA`: READY.
+
+## 4. Integration
+
+Der Audit-Inhalt ist fachlich und technisch PASS. Der normale docs-only PR darf durch den Technical Lead autonom integriert werden.
 
 Kein Folgeslice in diesem PR.
