@@ -105,12 +105,6 @@ export default function GastReisen() {
             >
               {primaer.label}
             </Link>
-            <Link
-              href="/planen"
-              className="inline-flex h-11 items-center justify-center rounded-full border border-line-200 bg-white px-5 text-sm font-semibold text-brand-800"
-            >
-              Neue Reise
-            </Link>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
             <Reisekarte

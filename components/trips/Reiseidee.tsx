@@ -52,10 +52,12 @@ import VorschlagVorschau from '@/components/trips/VorschlagVorschau'
 import { vorschlagErzeugen, vorschlagOrteAufloesen, vorschlagUebernehmen } from '@/lib/reisevorschlag/aktionen'
 import { vorschlagAlsReise } from '@/lib/reisevorschlag/abbildung'
 import { VORSCHLAG_GRENZEN, type Reisevorschlag } from '@/lib/reisevorschlag/schema'
+import { gastCreateGate } from '@/lib/trips/create-entry'
 import {
   GastreiseBestehtFehler,
   SpeicherFehler,
   gastreiseAblegen,
+  gastspeicherLaden,
   kennungErzeugen,
 } from '@/lib/trips/gastspeicher'
 
@@ -104,6 +106,19 @@ export default function Reiseidee({ angemeldet, initialIdee = '' }: ReiseideePro
   const erzeugen = async (ereignis: React.FormEvent<HTMLFormElement>) => {
     ereignis.preventDefault()
     if (laeuft) return
+
+    const gate = gastCreateGate({
+      angemeldet,
+      aktiveReiseId: gastspeicherLaden().aktiv?.id ?? null,
+    })
+    if (!gate.erlaubt) {
+      const fehler = new GastreiseBestehtFehler(gate.bestehendeId)
+      setBestehendeReise(fehler.bestehendeId)
+      setMeldung(fehler.message)
+      setVorschlag(null)
+      setWarnungen([])
+      return
+    }
 
     setMeldung('')
     setBestehendeReise('')

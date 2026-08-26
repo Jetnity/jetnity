@@ -10,6 +10,7 @@
 // Rahmen „Diese Reise gibt es nicht“, bevor er sie gefunden hat.
 
 import * as React from 'react'
+import type { Route } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { CloudOff, MapPin, Trash2 } from 'lucide-react'
@@ -20,6 +21,7 @@ import { flugNachweisFehler } from '@/lib/flights/nachweis'
 import type { HotelOptionSichtbar } from '@/lib/hotels/client-sicht'
 import { hotelZeitraumAusEtappe } from '@/lib/hotels/reisegraph'
 import { alsHotelMomentaufnahme } from '@/lib/hotels/uebernahme'
+import { createEinstiegFuerGast } from '@/lib/trips/create-entry'
 import {
   gastAktivitaetUebernehmen,
   gastBuchungsstatusSetzen,
@@ -30,6 +32,7 @@ import {
   gastPlanpunktEntfernen,
   gastreiseEntfernen,
   gastreiseLadenNach,
+  gastspeicherLaden,
 } from '@/lib/trips/gastspeicher'
 import { gastReadinessEntfernen, gastReadinessSetzen } from '@/lib/readiness/gast'
 import { gastTravellerEntfernen, gastTravellerSetzen } from '@/lib/readiness/reisende-gast'
@@ -47,9 +50,11 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
   const [reise, setReise] = React.useState<Trip | null>(null)
   const [geladen, setGeladen] = React.useState(false)
   const [speicherfehler, setSpeicherfehler] = React.useState('')
+  const [aktivId, setAktivId] = React.useState<string | null>(null)
 
   React.useEffect(() => {
     setReise(gastreiseLadenNach(tripId))
+    setAktivId(gastspeicherLaden().aktiv?.id ?? null)
     setGeladen(true)
   }, [tripId])
 
@@ -117,6 +122,7 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
   }
 
   if (!reise) {
+    const einstieg = createEinstiegFuerGast(aktivId ? { id: aktivId } : null)
     return (
       <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6">
         <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface-100 text-brand-600">
@@ -137,10 +143,10 @@ export default function GastArbeitsbereich({ tripId }: { tripId: string }) {
             Meine Reisen
           </Link>
           <Link
-            href="/planen"
+            href={einstieg.href as Route}
             className="inline-flex min-h-11 items-center rounded-full bg-brand-800 px-5 text-sm font-semibold text-white"
           >
-            Neue Reise
+            {einstieg.label}
           </Link>
         </div>
       </div>
