@@ -1,13 +1,19 @@
 // lib/trips/zuordnung.ts
 //
-// Ordnet Reisetage einer Etappe zu, wenn die Zuordnung fehlt.
+// Ordnet Reisetage einer Etappe zu, wenn die Zuordnung fehlt und der
+// Assignment-Vertrag das noch erlaubt.
 //
-// Neue Reisen setzen `stageId` beim Anlegen. Ältere Gastreisen und Zeilen vor
-// Phase 2.2 können sie noch nicht haben. Dieselbe Rechnung wie die Migration
+// `legacy_fallback` (Altbestand ohne neues Feld) behält die Rechnung aus
 // `20260820010000`: eine Etappe, Datumsüberlappung, sonst Anteil nach Index.
+// `unassigned` und `user` erfinden keine Zuordnung.
 //
 // Frei von React, Next und Supabase.
 
+import {
+  darfEinzelzielZuordnen,
+  darfProportionalZuordnen,
+  dayStageAssignmentSourceLesen,
+} from '@/lib/trips/day-stage-assignment'
 import type { Trip, TripDay, TripStage } from '@/types/trips'
 
 function etappeZumDatum(etappen: TripStage[], datum: string): TripStage | null {
@@ -54,6 +60,11 @@ export function etappeFuerTag(
  */
 export function tageEtappenZuordnen<T extends Trip>(reise: T): T {
   if (reise.stages.length === 0) return reise
+
+  const source = dayStageAssignmentSourceLesen(reise.dayStageAssignmentSource)
+  if (source === 'unassigned' || source === 'user') return reise
+  if (source === 'single_destination' && reise.stages.length !== 1) return reise
+  if (!darfProportionalZuordnen(source) && !darfEinzelzielZuordnen(source)) return reise
 
   const tage = reise.days.map((tag) => {
     const etappe = tag.stageId

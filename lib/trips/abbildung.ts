@@ -32,6 +32,11 @@ import {
   type TripStage,
   type TripStatus,
 } from '@/types/trips'
+import {
+  darfClientStagePositionUebernehmen,
+  dayStageAssignmentSourceAbleiten,
+  dayStageAssignmentSourceLesen,
+} from '@/lib/trips/day-stage-assignment'
 import { nutzlastOhneUnbewieseneHandelsfelder } from '@/lib/trips/handelsfelder-nutzlast'
 import { itineraryAusMetadata } from '@/lib/route/metadata'
 import type { ReiseNutzlast } from '@/lib/trips/schema'
@@ -70,6 +75,7 @@ export type ReiseZeile = {
   travel_wish: string | null
   revision: number | string | null
   last_mutation_id: string | null
+  day_stage_assignment_source?: string | null
   created_at: string
   updated_at: string
 }
@@ -316,6 +322,7 @@ export function reiseAus(
       (TRIP_INTERESTS as readonly string[]).includes(wert),
     ),
     travelWish: reise.travel_wish,
+    dayStageAssignmentSource: dayStageAssignmentSourceLesen(reise.day_stage_assignment_source),
     revision: Math.max(1, Math.trunc(zahl(reise.revision) ?? 1)),
     lastMutationId: reise.last_mutation_id,
     stages: geordneteEtappen,
@@ -337,6 +344,12 @@ export function reiseAus(
  * Zuordnung eines Punkts zu seinem Tag läuft über `day_index`.
  */
 export function alsNutzlast(reise: Trip): ReiseNutzlast {
+  const assignmentSource = dayStageAssignmentSourceAbleiten({
+    stageCount: reise.stages.length,
+    claimed: reise.dayStageAssignmentSource,
+    daysHaveStagePosition: reise.days.some((tag) => Boolean(tag.stageId)),
+  })
+
   return nutzlastOhneUnbewieseneHandelsfelder({
     client_ref: reise.clientRef ?? reise.id,
     title: reise.title,
@@ -350,6 +363,7 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
     pace: reise.pace,
     interests: reise.interests,
     travel_wish: reise.travelWish,
+    day_stage_assignment_source: assignmentSource,
     stages: reise.stages.map((etappe, stelle) => ({
       position: etappe.position || stelle + 1,
       name: etappe.name,
@@ -364,9 +378,9 @@ export function alsNutzlast(reise: Trip): ReiseNutzlast {
       const etappe = tag.stageId
         ? reise.stages.find((eintrag) => eintrag.id === tag.stageId)
         : null
-      const position =
-        etappe?.position ||
-        (reise.stages.length === 1 ? 1 : null)
+      const position = darfClientStagePositionUebernehmen(assignmentSource)
+        ? etappe?.position || (reise.stages.length === 1 ? 1 : null)
+        : null
 
       return {
         day_index: tag.dayIndex || stelle + 1,

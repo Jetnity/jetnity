@@ -36,6 +36,23 @@ export type TripInterest = (typeof TRIP_INTERESTS)[number]
 export const TRIP_STATUSES = ['draft', 'planned', 'booked', 'archived'] as const
 export type TripStatus = (typeof TRIP_STATUSES)[number]
 
+/**
+ * Herkunft der Day→Stage-Zuordnung. Werte wie in
+ * `trips.day_stage_assignment_source`.
+ *
+ * `legacy_fallback` – historischer Bestand; proportionaler Fallback bleibt erlaubt.
+ * `unassigned` – mehrere bestätigte Ziele, noch keine Nutzerzuordnung; kein Fallback.
+ * `single_destination` – genau ein Ziel; alle Tage dürfen der einen Stage gehören.
+ * `user` – reserviert für später explizit bestätigte Nutzerzuordnung.
+ */
+export const DAY_STAGE_ASSIGNMENT_SOURCES = [
+  'legacy_fallback',
+  'unassigned',
+  'single_destination',
+  'user',
+] as const
+export type DayStageAssignmentSource = (typeof DAY_STAGE_ASSIGNMENT_SOURCES)[number]
+
 /** Art eines Planpunkts. Werte wie in `trip_items.kind`. */
 export const TRIP_ITEM_KINDS = ['flight', 'stay', 'activity', 'transfer', 'rental_car', 'note'] as const
 export type TripItemKind = (typeof TRIP_ITEM_KINDS)[number]
@@ -353,6 +370,13 @@ export type Trip = {
   pace: TripPace
   interests: TripInterest[]
   travelWish: string | null
+  /**
+   * Herkunft der Day→Stage-Zuordnung.
+   *
+   * Fehlt beim Altbestand im Browser; dann gilt `legacy_fallback`.
+   * Der Client darf diesen Wert nicht frei setzen, um Serverregeln zu umgehen.
+   */
+  dayStageAssignmentSource?: DayStageAssignmentSource
   /**
    * Technische Fassung. Steigt bei jeder übernommenen Änderung.
    *

@@ -21,6 +21,7 @@
 import { z } from 'zod'
 
 import {
+  DAY_STAGE_ASSIGNMENT_SOURCES,
   TRIP_INTERESTS,
   TRIP_ITEM_KINDS,
   TRIP_PACES,
@@ -272,6 +273,7 @@ export const reiseSchema = z
     pace: tempo,
     interests: interessen.default([]),
     travelWish: optionalerText(GRENZEN.reisewunsch).nullable().default(null),
+    dayStageAssignmentSource: z.enum(DAY_STAGE_ASSIGNMENT_SOURCES).default('legacy_fallback'),
     revision: z.number().int().min(1).max(1_000_000_000).default(1),
     lastMutationId: z.string().min(1).max(64).nullable().default(null),
     stages: z.array(etappeSchema).max(GRENZEN.etappenJeReise).default([]),
@@ -527,6 +529,13 @@ export const reiseNutzlastSchema = z.object({
   pace: z.enum(TRIP_PACES),
   interests: z.array(z.enum(TRIP_INTERESTS)),
   travel_wish: z.string().max(GRENZEN.reisewunsch).nullable(),
+  /**
+   * Herkunft der Day→Stage-Zuordnung.
+   *
+   * Fehlt beim Altbestand. `public.reise_anlegen()` leitet den Wert neu ab
+   * und übernimmt `user` oder ein erzwungenes `legacy_fallback` nicht vom Client.
+   */
+  day_stage_assignment_source: z.enum(DAY_STAGE_ASSIGNMENT_SOURCES).nullable().optional(),
   stages: z.array(nutzlastEtappeSchema).max(GRENZEN.etappenJeReise),
   days: z.array(nutzlastTagSchema).max(GRENZEN.reisetageJeReise),
   ungeplante: z.array(nutzlastPunktSchema).max(GRENZEN.punkteJeReise).default([]),

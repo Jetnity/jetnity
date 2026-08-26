@@ -61,6 +61,16 @@ describe('Eine vollständige Reise kommt durch', () => {
     assert.equal(gelesen?.title, 'Japan im Herbst')
     assert.equal(gelesen?.days.length, 2)
     assert.equal(gelesen?.stages[0].name, 'Tokio')
+    assert.equal(gelesen?.dayStageAssignmentSource, 'legacy_fallback')
+  })
+
+  test('eine gespeicherte unassigned-Quelle bleibt erhalten', () => {
+    const gelesen = reiseLesen(reise({ dayStageAssignmentSource: 'unassigned' }))
+    assert.equal(gelesen?.dayStageAssignmentSource, 'unassigned')
+  })
+
+  test('eine unbekannte Assignment-Quelle wird abgelehnt', () => {
+    assert.equal(reiseLesen(reise({ dayStageAssignmentSource: 'erfunden' })), null)
   })
 
   test('fehlende optionale Angaben werden zu null, nicht zu undefined', () => {
@@ -543,6 +553,26 @@ describe('Die Nutzlast für public.reise_anlegen() trägt nur, was die Funktion 
 
   test('eine gültige Nutzlast kommt durch', () => {
     assert.equal(reiseNutzlastSchema.safeParse(nutzlast).success, true)
+  })
+
+  test('eine Nutzlast darf die Assignment-Quelle tragen, user bleibt syntaktisch erlaubt', () => {
+    const mitQuelle = reiseNutzlastSchema.safeParse({
+      ...nutzlast,
+      day_stage_assignment_source: 'unassigned',
+    })
+    assert.equal(mitQuelle.success, true)
+    const gefaelscht = reiseNutzlastSchema.safeParse({
+      ...nutzlast,
+      day_stage_assignment_source: 'user',
+    })
+    assert.equal(gefaelscht.success, true)
+  })
+
+  test('eine unbekannte Assignment-Quelle in der Nutzlast fällt durch', () => {
+    assert.equal(
+      reiseNutzlastSchema.safeParse({ ...nutzlast, day_stage_assignment_source: 'erfunden' }).success,
+      false,
+    )
   })
 
   test('ohne Kennung ist sie nicht idempotent und wird abgelehnt', () => {

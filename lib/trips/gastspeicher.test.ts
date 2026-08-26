@@ -312,6 +312,7 @@ describe('TW6-B progressive Ziele im Gastspeicher', () => {
         destination: 'Paris',
         destinationPlaceId: PARIS.id,
         weitereDestinationPlaceIds: [ROM.id, PARIS.id],
+        endDate: '2026-09-17',
       }),
       { ziel: PARIS, abreise: ZUERICH, weitereZiele: [ROM, PARIS] },
     )
@@ -334,6 +335,9 @@ describe('TW6-B progressive Ziele im Gastspeicher', () => {
       [PARIS.id, ROM.id, PARIS.id],
     )
     assert.equal(geladen?.stages.length, 3)
+    assert.equal(geladen?.dayStageAssignmentSource, 'unassigned')
+    assert.equal(geladen?.days.length, 6)
+    assert.equal(geladen?.days.every((tag) => tag.stageId === null), true)
   })
 
   test('weitere IDs ohne bestätigte Ortsreferenz werden nicht persistiert', () => {
@@ -354,6 +358,7 @@ describe('TW6-B progressive Ziele im Gastspeicher', () => {
       eingabe({
         destinationPlaceId: PARIS.id,
         weitereDestinationPlaceIds: [ROM.id, PARIS.id],
+        endDate: '2026-09-17',
       }),
       { ziel: PARIS, abreise: ZUERICH, weitereZiele: [ROM, PARIS] },
     )
@@ -365,6 +370,7 @@ describe('TW6-B progressive Ziele im Gastspeicher', () => {
     )
     assert.equal(nutzlast.stages.every((etappe) => etappe.arrival_date === null), true)
     assert.equal(nutzlast.days.every((tag) => tag.stage_position == null), true)
+    assert.equal(nutzlast.day_stage_assignment_source, 'unassigned')
   })
 
   test('clientRef bleibt die Idempotenz-Kennung auch bei mehreren Stages', () => {

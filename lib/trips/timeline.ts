@@ -8,6 +8,7 @@
 // keine Nutzerziele. Die einzige Tag-Auswahl bleibt `gewaehlterTagId`.
 
 import { gewaehlterTagId, planStatus } from '@/lib/trips/arbeitsbereich'
+import { dayStageAssignmentSourceLesen } from '@/lib/trips/day-stage-assignment'
 import type { Trip, TripDay, TripItem, TripStage } from '@/types/trips'
 
 export type TimelineEtappe = {
@@ -74,9 +75,10 @@ export function timelineAbleiten(
   }))
 
   if (ohneEtappe.length > 0) {
+    const source = dayStageAssignmentSourceLesen(reise.dayStageAssignmentSource)
     etappen.push({
       stageId: null,
-      name: 'Ohne Etappe',
+      name: source === 'unassigned' ? 'Noch keinem Ziel zugeordnet' : 'Ohne Etappe',
       countryCode: null,
       arrivalDate: null,
       departureDate: null,

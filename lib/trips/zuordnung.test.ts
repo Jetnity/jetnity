@@ -50,6 +50,28 @@ describe('Tage ohne stageId erhalten eine Etappe', () => {
     assert.equal(zugeordnet.days[1]?.stageId, 's1')
   })
 
+  test('unassigned lässt Tage ohne Zuordnung', () => {
+    const zugeordnet = tageEtappenZuordnen({
+      ...reise(
+        [
+          { id: 's1', position: 1, name: 'Paris', countryCode: 'FR', arrivalDate: null, departureDate: null, latitude: null, longitude: null, placeId: null },
+          { id: 's2', position: 2, name: 'Rom', countryCode: 'IT', arrivalDate: null, departureDate: null, latitude: null, longitude: null, placeId: null },
+        ],
+        [1, 2, 3, 4, 5, 6].map((nr) => ({
+          id: `d${nr}`,
+          stageId: null,
+          dayIndex: nr,
+          dayDate: `2026-09-${11 + nr}`,
+          title: null,
+          items: [],
+        })),
+      ),
+      dayStageAssignmentSource: 'unassigned',
+    })
+
+    assert.equal(zugeordnet.days.every((tag) => tag.stageId === null), true)
+  })
+
   test('ohne Datum werden Tage proportional aufgeteilt', () => {
     const zugeordnet = tageEtappenZuordnen(
       reise(

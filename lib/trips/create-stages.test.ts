@@ -44,6 +44,7 @@ describe('TW6-B Create-Stages – bestehende trip_stages', () => {
     const graph = createZieleGraph([PARIS], ZEITRAUM)
 
     assert.equal(graph.einzelziel, true)
+    assert.equal(graph.assignmentSource, 'single_destination')
     assert.equal(graph.title, 'Paris')
     assert.equal(graph.dayStagePosition, 1)
     assert.equal(graph.stages.length, 1)
@@ -56,6 +57,7 @@ describe('TW6-B Create-Stages – bestehende trip_stages', () => {
     const graph = createZieleGraph([PARIS, ROM, PARIS], ZEITRAUM)
 
     assert.equal(graph.einzelziel, false)
+    assert.equal(graph.assignmentSource, 'unassigned')
     assert.equal(graph.title, 'Paris')
     assert.equal(graph.dayStagePosition, null)
     assert.deepEqual(

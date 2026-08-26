@@ -236,6 +236,43 @@ describe('TW-3 Timeline-Ableitung', () => {
     assert.equal(ziele.some((etappe) => etappe.countryCode === 'QA' || etappe.name.includes('Doha')), false)
   })
 
+  test('unassigned Multi-Ziel behauptet keine 2/2/2-Aufenthalte', () => {
+    const sicht = timelineAbleiten(
+      reise({
+        title: 'Paris',
+        dayStageAssignmentSource: 'unassigned',
+        stages: [
+          etappe({ id: 'stage-1', name: 'Paris', countryCode: 'FR', position: 1 }),
+          etappe({ id: 'stage-2', name: 'Rom', countryCode: 'IT', position: 2 }),
+          etappe({ id: 'stage-3', name: 'Paris', countryCode: 'FR', position: 3 }),
+        ],
+        days: [1, 2, 3, 4, 5, 6].map((nr) =>
+          tag({
+            id: `day-${nr}`,
+            stageId: null,
+            dayIndex: nr,
+            dayDate: `2026-09-${11 + nr}`,
+          }),
+        ),
+      }),
+    )
+
+    assert.deepEqual(
+      sicht.etappen.map((etappe) => ({
+        name: etappe.name,
+        istNutzerziel: etappe.istNutzerziel,
+        tage: etappe.tage.length,
+      })),
+      [
+        { name: 'Paris', istNutzerziel: true, tage: 0 },
+        { name: 'Rom', istNutzerziel: true, tage: 0 },
+        { name: 'Paris', istNutzerziel: true, tage: 0 },
+        { name: 'Noch keinem Ziel zugeordnet', istNutzerziel: false, tage: 6 },
+      ],
+    )
+    assert.equal(sicht.etappen.filter((etappe) => etappe.istNutzerziel).every((etappe) => etappe.tage.length === 0), true)
+  })
+
   test('Tage ohne Etappe bleiben ehrlich ohne Nutzerziel', () => {
     const sicht = timelineAbleiten(
       reise({

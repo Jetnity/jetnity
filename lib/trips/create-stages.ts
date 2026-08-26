@@ -9,6 +9,7 @@
 
 import type { Ort } from '@/lib/places/domain'
 import { GRENZEN } from '@/lib/trips/schema'
+import type { DayStageAssignmentSource } from '@/lib/trips/day-stage-assignment'
 
 export type CreateZielFakt = {
   position: number
@@ -24,6 +25,7 @@ export type CreateZielFakt = {
 export type CreateZieleGraph = {
   title: string
   einzelziel: boolean
+  assignmentSource: DayStageAssignmentSource
   stages: CreateZielFakt[]
   dayStagePosition: number | null
 }
@@ -44,6 +46,7 @@ export function createZieleGraph(
   return {
     title: destinations[0].name,
     einzelziel,
+    assignmentSource: einzelziel ? 'single_destination' : 'unassigned',
     stages: destinations.map((ziel, index) => ({
       position: index + 1,
       name: ziel.name,
