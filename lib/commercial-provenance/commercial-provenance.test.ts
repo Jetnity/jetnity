@@ -126,7 +126,7 @@ describe('S5-A Commercial Provenance Contract', () => {
     assert.equal(pruefung.bewertung.freshnessStatus, 'current')
     assert.equal(pruefung.bewertung.commercialStatus, 'current')
     assert.equal(pruefung.bewertung.currencyStatus, 'matched')
-    assert.equal(pruefung.bewertung.affiliateStatus, 'absent')
+    assert.equal(pruefung.bewertung.affiliateStatus, 'unknown')
     assert.equal(pruefung.bewertung.conversionEvidence, 'absent')
     assert.equal(pruefung.bewertung.snapshotIstNieLive, true)
     assert.equal(pruefung.bewertung.darfAlsLiveDargestelltWerden, false)
@@ -221,11 +221,13 @@ describe('S5-A Commercial Provenance Contract', () => {
     assert.equal(commercialFrischheitBewerten({ retrievedAt: RETRIEVED, freshUntil: null, nowMs: NOW }), 'unknown')
   })
 
-  test('fehlende Affiliate-Provenance bleibt absent oder unknown', () => {
-    const absent = providerOk()
+  test('fehlende Affiliate-Provenance bleibt unknown, absent nur explizit', () => {
+    const fehlend = providerOk()
     const unknown = providerOk({ affiliate: { status: 'unknown' } })
-    assert.equal(absent.bewertung.affiliateStatus, 'absent')
+    const absent = providerOk({ affiliate: { status: 'absent' } })
+    assert.equal(fehlend.bewertung.affiliateStatus, 'unknown')
     assert.equal(unknown.bewertung.affiliateStatus, 'unknown')
+    assert.equal(absent.bewertung.affiliateStatus, 'absent')
     const leerPresent = commercialAffiliateLesen({ status: 'present' })
     assert.equal(leerPresent.ok, false)
   })
@@ -289,6 +291,8 @@ describe('S5-A Commercial Provenance Contract', () => {
     assert.ok(COMMERCIAL_PROVENANCE_DOMAINS.includes('rental_cars'))
     assert.ok(COMMERCIAL_PROVENANCE_FEHLER.includes('actor_source_forbidden'))
     assert.ok(COMMERCIAL_PROVENANCE_FEHLER.includes('bind_domain_mismatch'))
+    assert.ok(COMMERCIAL_PROVENANCE_FEHLER.includes('provider_truth_overwrite_forbidden'))
+    assert.ok(COMMERCIAL_PROVENANCE_FEHLER.includes('amount_status_widerspruch'))
     assert.deepEqual([...COMMERCIAL_AKTEUR_QUELLEN.user], [...COMMERCIAL_NUTZER_QUELLEN])
     assert.ok(COMMERCIAL_PROVIDER_QUELLEN.includes('live_api'))
   })
@@ -404,6 +408,109 @@ describe('S5A-TL-03 User-Intake/Manual ohne Fake-Provider', () => {
     assert.equal(pruefung.ok, false)
     if (pruefung.ok) return
     assert.equal(pruefung.fehler[0]?.code, 'missing_provider')
+  })
+})
+
+describe('S5A-TL-05 Replacement-Contract', () => {
+  test('User-Intake darf bestehende Provider-Hard-Truth nicht ersetzen', () => {
+    const bestehend = providerOk().provenance
+    const pruefung = commercialTruthUebernehmen({
+      bestehend,
+      vorschlag: nutzerangabe(),
+      akteur: 'user',
+      nowMs: NOW,
+    })
+    assert.equal(pruefung.ok, false)
+    if (pruefung.ok) return
+    assert.equal(pruefung.fehler[0]?.code, 'provider_truth_overwrite_forbidden')
+  })
+
+  test('Manual darf bestehende Provider-Hard-Truth nicht ersetzen', () => {
+    const bestehend = providerOk().provenance
+    const pruefung = commercialTruthUebernehmen({
+      bestehend,
+      vorschlag: nutzerangabe({ sourceKind: 'manual' }),
+      akteur: 'user',
+      nowMs: NOW,
+    })
+    assert.equal(pruefung.ok, false)
+    if (pruefung.ok) return
+    assert.equal(pruefung.fehler[0]?.code, 'provider_truth_overwrite_forbidden')
+  })
+
+  test('Provider-Refresh bleibt nur identitätsgebunden zulässig', () => {
+    const bestehend = providerOk().provenance
+    const refresh = commercialTruthUebernehmen({
+      bestehend,
+      vorschlag: quote({ amount: 910 }),
+      akteur: 'provider_adapter',
+      nowMs: NOW,
+    })
+    const fremd = commercialTruthUebernehmen({
+      bestehend,
+      vorschlag: quote({ providerId: 'andere', externalRef: 'off_fremd' }),
+      akteur: 'provider_adapter',
+      nowMs: NOW,
+    })
+    assert.equal(refresh.ok, true)
+    assert.equal(fremd.ok, false)
+    if (fremd.ok) return
+    assert.equal(fremd.fehler[0]?.code, 'refresh_identity_mismatch')
+  })
+})
+
+describe('S5A-TL-06 User-Intake ohne Provider-ID', () => {
+  test('user_intake mit providerId duffel wird abgewiesen', () => {
+    const pruefung = commercialNutzerangabePruefen(nutzerangabe({ providerId: 'duffel' }), { nowMs: NOW })
+    assert.equal(pruefung.ok, false)
+    if (pruefung.ok) return
+    assert.equal(pruefung.fehler[0]?.code, 'provider_id_ohne_providerquelle')
+    const quelle = commercialQuellePruefen({
+      providerId: 'duffel',
+      sourceKind: 'user_intake',
+      sourceLabel: null,
+      persistenz: 'snapshot',
+    })
+    assert.equal(quelle.ok, false)
+  })
+})
+
+describe('S5A-TL-07 Affiliate Missing bleibt unknown', () => {
+  test('fehlende Affiliate-Daten werden nicht zu absent', () => {
+    const leer = commercialAffiliateLesen(undefined)
+    const nullisch = commercialAffiliateLesen(null)
+    const ohneFelder = commercialAffiliateLesen({})
+    assert.equal(leer.ok, true)
+    assert.equal(nullisch.ok, true)
+    assert.equal(ohneFelder.ok, true)
+    if (!leer.ok || !nullisch.ok || !ohneFelder.ok) return
+    assert.equal(leer.affiliate.status, 'unknown')
+    assert.equal(nullisch.affiliate.status, 'unknown')
+    assert.equal(ohneFelder.affiliate.status, 'unknown')
+  })
+})
+
+describe('S5A-TL-08 Amount/Status-Widerspruch', () => {
+  test('widersprüchliche amount/amountStatus-Kombinationen werden abgewiesen', () => {
+    const missingMitBetrag = commercialProviderQuotePruefen(
+      quote({ amount: 120, amountStatus: 'missing' }),
+      { nowMs: NOW },
+    )
+    const quotedOhneBetrag = commercialProviderQuotePruefen(
+      quote({ amount: null, amountStatus: 'quoted' }),
+      { nowMs: NOW },
+    )
+    const errorMitBetrag = commercialProviderQuotePruefen(
+      quote({ amount: 120, amountStatus: 'error' }),
+      { nowMs: NOW },
+    )
+    assert.equal(missingMitBetrag.ok, false)
+    assert.equal(quotedOhneBetrag.ok, false)
+    assert.equal(errorMitBetrag.ok, false)
+    if (missingMitBetrag.ok || quotedOhneBetrag.ok || errorMitBetrag.ok) return
+    assert.equal(missingMitBetrag.fehler[0]?.code, 'amount_status_widerspruch')
+    assert.equal(quotedOhneBetrag.fehler[0]?.code, 'amount_status_widerspruch')
+    assert.equal(errorMitBetrag.fehler[0]?.code, 'amount_status_widerspruch')
   })
 })
 

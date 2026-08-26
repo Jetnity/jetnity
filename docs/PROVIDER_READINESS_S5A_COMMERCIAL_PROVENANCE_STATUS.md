@@ -6,7 +6,7 @@ Branch: `feat/provider-s5-commercial-provenance-contract`
 Draft-PR: `#83`  
 Aktueller `main` vor dieser Korrektur: `2de8008ddb10e9b53fef49daccc779831669e813`  
 Vorheriger PR-Head: `e222646dd55e150ca5ac0353c6a0994d70067c85`  
-Status: **TECHNICAL-LEAD HOLD BEHOBEN IM CODE / NICHT READY / NICHT MERGEN / WARTE AUF ERNEUTEN TECHNICAL-LEAD-REVIEW**
+Status: **S5A-TL-05 BIS S5A-TL-08 IM CODE BEHOBEN / NICHT READY / NICHT MERGEN / WARTE AUF ERNEUTEN TECHNICAL-LEAD-REVIEW**
 
 Auftrag: `docs/PROVIDER_READINESS_S5A_COMMERCIAL_PROVENANCE_TASK.md`.  
 ADR: `docs/ADR_0168_COMMERCIAL_PROVENANCE_DOMAIN_CONTRACT.md`.
@@ -25,6 +25,10 @@ Review direkt in PR #83. HOLD / NICHT READY / NICHT MERGEN.
 | `S5A-TL-02` | P1 | `optionMitCommercialProvenance<T>` band beliebige Provenance an beliebiges T | Fail-closed Binding auf Domain, providerbelegte ID und `externalRef` |
 | `S5A-TL-03` | P2 | `user_intake`/`manual` verlangten immer `providerId` | Source- und Provider-Identität getrennt. Nutzerangaben brauchen `observedAt`, kein `retrievedAt`, kein `freshUntil`, kein Fake-Provider |
 | `S5A-TL-04` | P2 | Konflikt-Fallback nutzte `externalRef` ohne Provider-Scope | Vergleich nur über echten `vergleichsschluessel` oder Provider+Ref |
+| `S5A-TL-05` | P1 | `commercialTruthUebernehmen` ignorierte `bestehend` | Minimaler Replacement-Contract: User/Manual ersetzen keine provider-belegte Truth; Assistant/LLM nie; Provider-Refresh nur identitätsgebunden |
+| `S5A-TL-06` | P1/P2 | `user_intake`/`manual` konnten `providerId: 'duffel'` behalten | Nicht-providergebundene Quellen lehnen jede `providerId` fail-closed ab |
+| `S5A-TL-07` | P2 | Fehlende Affiliate-Daten wurden zu `absent` | Default `unknown`; `absent` nur bei expliziter Abwesenheit ohne IDs |
+| `S5A-TL-08` | P2 | `amount`/`amountStatus` wurden still umgedeutet | Widersprüchliche Kombinationen → `amount_status_widerspruch` |
 
 ## 2. Live-Stand vor der Korrektur
 
@@ -53,10 +57,12 @@ Actor↔Source:
 
 User-Intake/Manual:
 
-- keine Pflicht-`providerId`
+- keine `providerId`, auch nicht `duffel`
 - Fake-IDs `user` / `manual` / `jetnity` werden abgewiesen
 - massgebliche Zeit ist `observedAt`, nicht `retrievedAt`
 - kein `freshUntil`, keine Provider-Live-Evidence, niemals current/live Provider-Truth
+- fehlende Affiliate-Evidence bleibt `unknown`
+- `commercialTruthUebernehmen` darf provider-belegte Truth nicht durch User-/Manual-Wahrheit ersetzen
 
 Binding:
 
@@ -81,8 +87,8 @@ Keine neuen P0-Production-Incidents.
 
 | ID | Klasse |
 | --- | --- |
-| `S5A-TL-01` / `S5A-TL-02` | P1, in diesem Korrekturslice geschlossen |
-| `S5A-TL-03` / `S5A-TL-04` | P2, in diesem Korrekturslice geschlossen |
+| `S5A-TL-01` / `S5A-TL-02` / `S5A-TL-05` | P1, im Contract geschlossen |
+| `S5A-TL-03` / `S5A-TL-04` / `S5A-TL-06` / `S5A-TL-07` / `S5A-TL-08` | P2 bzw. P1/P2, im Contract geschlossen |
 | `S5A-TW8-GATE-01` | TW-8 bleibt gesperrt |
 | `S5A-P1-TW8-01` | persistierte `trip_items` ohne Zeitpunkt bleiben unknown |
 | `S5A-ACT-GATE-01` | keine Provideraktivierung |

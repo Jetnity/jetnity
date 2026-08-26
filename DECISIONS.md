@@ -4118,6 +4118,8 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 **Nachtrag 26. August 2026 (Technical-Lead HOLD):** Actor↔Source-Matrix, fail-closed Option-Binding, User-Intake ohne Fake-Provider und provider-scoped Vergleichsidentität. Siehe PR #83.
 
+**Nachtrag 26. August 2026 (S5A-TL-05 bis S5A-TL-08):** `commercialTruthUebernehmen` ersetzt keine provider-belegte Hard Truth durch User-/Manual-Wahrheit; Provider-Refresh nur identitätsgebunden. `user_intake`/`manual` lehnen jede `providerId` ab. Fehlende Affiliate-Evidence bleibt `unknown`. Widersprüchliche `amount`/`amountStatus`-Paare werden abgewiesen.
+
 ---
 
 ## Offene Widersprüche

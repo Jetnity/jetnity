@@ -17,3 +17,5 @@ Kurz:
 - User-Intake/Manual brauchen keinen Provider und kein `retrievedAt`; massgeblich ist `observedAt`.
 - `externalRef` ist provider-scoped.
 - Persistenz/`trip_items` bleibt S5-B + Production-Gate.
+- Bestehende provider-belegte Truth darf nicht durch User-/Manual-/LLM-Wahrheit ersetzt werden.
+- Fehlende Affiliate-Evidence bleibt `unknown`. Widersprüchliche `amount`/`amountStatus`-Paare werden abgewiesen.

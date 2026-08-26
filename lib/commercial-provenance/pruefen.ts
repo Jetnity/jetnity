@@ -42,7 +42,16 @@ function amountLesen(opts: {
     return { ok: false, fehler: [{ code: 'invalid_amount', path: 'amountStatus' }] }
   }
   if (opts.amountStatus === 'error') {
-    return { ok: true, amount: opts.amount ?? null, amountStatus: 'error' }
+    if (opts.amount != null) {
+      return { ok: false, fehler: [{ code: 'amount_status_widerspruch', path: 'amount' }] }
+    }
+    return { ok: true, amount: null, amountStatus: 'error' }
+  }
+  if (opts.amountStatus === 'missing' && opts.amount != null) {
+    return { ok: false, fehler: [{ code: 'amount_status_widerspruch', path: 'amount' }] }
+  }
+  if (opts.amountStatus === 'quoted' && opts.amount == null) {
+    return { ok: false, fehler: [{ code: 'amount_status_widerspruch', path: 'amountStatus' }] }
   }
   if (opts.amount == null) {
     return { ok: true, amount: null, amountStatus: 'missing' }
@@ -199,6 +208,15 @@ export function commercialPersistiertenSnapshotPruefen(
   return commercialProvenancePruefen(wert, { nowMs: opts?.nowMs, akteur: 'system' })
 }
 
+function providerIdentitaetGleich(bestehend: CommercialProvenance, vorschlag: CommercialProvenance): boolean {
+  if (bestehend.domain !== vorschlag.domain) return false
+  if (bestehend.quelle.providerId !== vorschlag.quelle.providerId) return false
+  const bestehendeRef = bestehend.referenz.externalRef
+  const vorschlagRef = vorschlag.referenz.externalRef
+  if (bestehendeRef || vorschlagRef) return bestehendeRef === vorschlagRef
+  return true
+}
+
 export function commercialTruthUebernehmen(opts: {
   bestehend: CommercialProvenance | null
   vorschlag: unknown
@@ -211,10 +229,21 @@ export function commercialTruthUebernehmen(opts: {
   if (typeof opts.akteur !== 'string') {
     return { ok: false, fehler: [{ code: 'missing_actor', path: 'akteur' }] }
   }
-  return commercialProvenancePruefen(opts.vorschlag, {
+  const vorschlag = commercialProvenancePruefen(opts.vorschlag, {
     nowMs: opts.nowMs,
     akteur: opts.akteur as CommercialAkteur,
   })
+  if (!vorschlag.ok) return vorschlag
+  if (!opts.bestehend) return vorschlag
+  if (opts.bestehend.quelle.providerBelegt && !vorschlag.provenance.quelle.providerBelegt) {
+    return { ok: false, fehler: [{ code: 'provider_truth_overwrite_forbidden', path: 'akteur' }] }
+  }
+  if (opts.bestehend.quelle.providerBelegt && vorschlag.provenance.quelle.providerBelegt) {
+    if (!providerIdentitaetGleich(opts.bestehend, vorschlag.provenance)) {
+      return { ok: false, fehler: [{ code: 'refresh_identity_mismatch', path: 'referenz' }] }
+    }
+  }
+  return vorschlag
 }
 
 export function istCommercialLiveBehauptungErlaubt(_provenance: CommercialProvenance): false {

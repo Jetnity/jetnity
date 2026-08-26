@@ -58,6 +58,9 @@ export function commercialQuellePruefen(opts: {
   if (providerGebunden && !providerId) {
     return { ok: false, fehler: [{ code: 'missing_provider', path: 'providerId' }] }
   }
+  if (!providerGebunden && providerId) {
+    return { ok: false, fehler: [{ code: 'provider_id_ohne_providerquelle', path: 'providerId' }] }
+  }
 
   if (kindRoh === 'persisted_snapshot' && persistenzRoh !== 'snapshot') {
     return {
@@ -87,7 +90,7 @@ export function commercialAffiliateLesen(opts: {
   if (!opts) {
     return {
       ok: true,
-      affiliate: { status: 'absent', partnerId: null, clickId: null, attributionRef: null },
+      affiliate: { status: 'unknown', partnerId: null, clickId: null, attributionRef: null },
     }
   }
 
@@ -95,7 +98,7 @@ export function commercialAffiliateLesen(opts: {
   const clickId = opts.clickId?.trim() || null
   const attributionRef = opts.attributionRef?.trim() || null
   const hatBeleg = Boolean(partnerId || clickId || attributionRef)
-  const statusRoh = opts.status?.trim() || (hatBeleg ? 'present' : 'absent')
+  const statusRoh = opts.status?.trim() || (hatBeleg ? 'present' : 'unknown')
 
   if (statusRoh === 'unknown') {
     return {
