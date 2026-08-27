@@ -1,42 +1,36 @@
 # Jetnity – Active Work Status
 
 Stand: 27. August 2026  
-Status: **Production Gate A ist PASS. PR #89 ist auf `main`. TW6-B Gate B ist weiterhin NICHT freigegeben und NICHT auf Production angewendet. PR #87 bleibt Draft und muss vor jedem weiteren Schritt gegen den aktuellen `main` neu eingeordnet und exakt gegatet werden.**
+Status: **Production Gate A ist PASS. PR #91 / TW6-B Gate 0B ist auf `main`. Production Gate B ist weiterhin NICHT freigegeben und NICHT angewendet. PR #87 bleibt Draft und ist der nächste operative Runtime-Schritt: gegen den neuen `main` synchronisieren, vollständig rekonstruieren und re-gaten.**
 
 > **Do not blindly trust this file — live verify first.**
 
 ## 0. Live-Integrationsbaseline
 
-Aktueller verifizierter `main` zum Continuity-Update:
+PR #91 wurde nach unabhängigem Technical-Lead-PASS auf Exact Head `1da3ae0a01c6d5bb1f2325a2ca528922823c9611` mit Expected Head SHA gemergt.
 
-`3d0ffa2d97df66a4d6006587047bf27b0df9606c`
+Verifizierte PR-#91-Linie:
 
-Wichtige aktuelle Linie:
+- Base / Merge-Base vor Merge: `f683855fa82a6ae5663228b2c9dfa605755fc47d`
+- Ahead / Behind: `2 / 0`
+- PR-#91 Exact Head: `1da3ae0a01c6d5bb1f2325a2ca528922823c9611`
+- Exact-Head GitHub Actions Run `33031870276`: SUCCESS
+- Exact-Head Vercel `dpl_9QJSE9UeQNfehoLjdEa3PPXfyvLs`: READY
+- Merge-Commit auf `main`: `a2e46f38dcfbbea286e37960c7993adbbd06136a`
+- Post-Merge `main` GitHub Actions Run `33053499406`: SUCCESS
+- Post-Merge Vercel Production `dpl_2UjcAyoJ3D4Puuqehu3izDtcXDtj`: READY auf exakt `a2e46f38dcfbbea286e37960c7993adbbd06136a`
 
-- PR #89 – **TW6-B Gate 0: migrations-only + bounded transactional apply playbook** → gemergt; Merge-Commit `5fc4d1b873f1fa7aff8e4064163275bf30f9ce98`.
-- Unabhängiger Technical-Lead-PASS auf PR-#89-Exact-Head `986fa8b7592286731e44ab46d36a8f299531d669`.
-- Exact-Head GitHub Actions Run `33023062522`: SUCCESS.
-- Exact-Head Vercel Preview: SUCCESS/READY.
-- Post-Merge `main` GitHub Actions Run `33023988403` auf `5fc4d1b873f1fa7aff8e4064163275bf30f9ce98`: SUCCESS.
-- Danach docs-only Production-Gate-A-Checkpoint auf `main`; keine Runtime-Datei geändert.
+Vollständiger Post-Merge-Checkpoint:
+
+`docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`
 
 Production Public Runtime bleibt bezüglich D0 unverändert:
 
-- `robots`/`googlebot` = `noindex, nofollow`;
+- `robots` / `googlebot` = `noindex, nofollow`;
 - Canonical `https://jetnity.com`;
 - `/planen` ebenfalls `noindex, nofollow`;
 - `robots.txt` deny-all;
 - kein Domain-Cutover, kein Public Indexing, kein Redirect-Gate.
-
-Zuletzt integriert vor Gate A:
-
-- PR #81 – P1-QS2-02 Guest→Account Stay/Activity Commercial Truth;
-- PR #84 – P1-TA-02 Official Evaluation Option-Scope;
-- PR #82 – TW6-A Create-Entry Alignment;
-- PR #83 – Provider S5-A Commercial Provenance Domain Contract;
-- PR #80 – Central Admin AAL2 Guard;
-- PR #86 – D0 live metadata boundary / P1-D0-LIVE-01;
-- PR #89 – TW6-B Gate 0 migrations-only provenance + transactional playbook.
 
 `main` Branch Protection ist live **nicht aktiviert** (`protected=false`) und bleibt ein Governance-Risiko.
 
@@ -73,15 +67,31 @@ Domain-Wahrheit:
 
 Offen: **D0-P1-03** Legal-404 (`/privacy`, `/terms` live 404); D0-P2-04 hreflang; D0-P2-05 JSON-LD; G0-Reste.
 
-`Jetnity growth discoverability` bleibt STOPP. Kein D1/G1 aus PR #86 ableiten.
+`Jetnity growth discoverability` bleibt STOPP. Kein D1/G1 automatisch starten.
 
 ## 3. Trip Workspace
 
-Integriert: TW-1, TW-2, TW-4, TW-3, TW-5, TW-6 Dependency-Audit, **TW6-A Create-Entry** sowie **TW6-B Gate 0 / Provenance** durch PR #89.
+Integriert:
 
-**Gate 0 ≠ TW6-B Runtime-Merge und ≠ Production Gate B.**
+- TW-1 ✅
+- TW-2 ✅
+- TW-4 ✅
+- TW-3 ✅
+- TW-5 ✅
+- TW-6 Dependency-Audit ✅
+- TW6-A Create-Entry ✅
+- TW6-B Gate 0 / Provenance via PR #89 ✅
+- TW6-B Gate 0B / Zero-Stage Production Rollout Provenance via PR #91 ✅
 
-PR #87 (`feat/tw6-rest-progressive-stages`) bleibt der Runtime-Draft für progressive weitere Ziele / Day→Stage Mode Contract. Er darf nicht aus dem früheren PLAN-PASS direkt weitergezogen werden, weil `main` seitdem fortgeschritten ist. Vor jedem weiteren Schritt: Merge-Base, Diff, Shared Contracts, Exact-Head CI/Vercel und Production-Grenzen erneut live prüfen.
+**Gate 0 / Gate 0B ≠ TW6-B Runtime-Merge und ≠ Production Gate B.**
+
+Durch PR #91 ist der verbindliche spätere Gate-B-Vertrag jetzt:
+
+`20260826220000 → 20260826230000 → 20260826240000 → 20260827010000`
+
+Alle vier Dateien gehören unter denselben bounded Write-Gate-/Transaktionsvertrag. Kein dateiweises Apply. `27010000` schließt den Zero-Stage-Falschmode: 0 Stages fail-closed, `single_destination` nur bei genau einer Stage.
+
+PR #87 (`feat/tw6-rest-progressive-stages`) bleibt der Runtime-Draft für progressive weitere Ziele / Day→Stage Mode Contract. Nach PR #91 muss er gegen den neuen `main` scope-sicher synchronisiert und vollständig neu gegatet werden.
 
 TW-7 bleibt hinter Account-/Hub-Grenzen. TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance; S5-A allein ist kein TW-8-Start.
 
@@ -105,13 +115,11 @@ Weiter offen:
 - Mobility/Rental-Such-Snapshots mit kommerziellen Feldern;
 - Account-Traveller-Registry / AP-4–AP-12 / AP-7.
 
-Der frühere direkte `reise_anlegen`-Commercial-Truth-Bypass ist durch Production Gate A jetzt serverseitig zusätzlich abgesichert; das schließt TW6-B nicht.
-
 ## 5. Provider Readiness
 
 S1–S3 und **S5-A** sind integriert. S5-B ist **nicht gestartet**.
 
-Keine echten Provider, keine Secrets/Verträge/paid calls, keine Aktivierung durch Gate A.
+Keine echten Provider, keine Secrets/Verträge/paid calls, keine Aktivierung durch Gate A/Gate 0B.
 
 Gates:
 
@@ -119,26 +127,32 @@ Gates:
 - **PROVIDER-ACTIVATION-GATE:** persistenter Cost Guard vor bezahlter/Production-Aktivierung.
 - Persistierte kommerzielle Beträge ohne belegten Zeitpunkt bleiben `unknown`/`stale`.
 
-## 6. QS / Admin AAL2
+## 6. QS / Admin AAL2 / Sanitation
 
-QS-2-P1s:
+Admin-AAL2 Application-Guard ist im Code integriert. Development enthält `admin_aal2_data_plane`; **Production-Datenebene ist weiterhin nicht angewendet**.
 
-1. `P1-QS2-01` Application-AAL2 → integriert durch PR #80;
-2. `P1-QS2-02` Guest→Account Commercial Truth → integriert durch PR #81.
+Separate Supabase Security-/Performance-Advisors bleiben eigene QS-Arbeit. Keine dieser separaten Baustellen wurde durch Gate 0B still verändert.
 
-Admin-AAL2-Vertrag ist in der Anwendung integriert. Development enthält `admin_aal2_data_plane`; **Production-Datenebene ist weiterhin nicht angewendet**.
+Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Cleanup/Branch-/Cloud-Delete automatisch ausführen.
 
-Production Gate A hat AAL2 nicht berührt.
+Live Supabase-Inventur zeigt:
 
-Nach Gate A wurden Supabase Security-/Performance-Advisors gelesen. Es bestehen separate Warn-/Info-Funde zu GraphQL-Exposition, älteren Admin-`SECURITY DEFINER`-Funktionen, fehlenden FK-Indizes und ungenutzten Indizes. Kein Fund zeigt auf die beiden Gate-A-Funktionen als Gate-A-spezifische Fehlkonfiguration. Keine dieser separaten Baustellen wurde im Gate-A-Lauf still verändert.
+- Production-Elternprojekt `qscbgcdmivbbnzrcyegn` (`Jetnity's Project`) – ACTIVE_HEALTHY
+- Development-Branch `yfvbxvijcorffwxbxahl`
+- weiteres Top-Level-Projekt `jrixsujkzvlvglvcmtia` (`jetnity-bets`) – Decommission bleibt separate Product-Owner-Entscheidung
 
 ## 7. Aktive / nächste Cursor-Workstreams
 
 Aktiver Runtime-Agent: **keiner**.
 
-STOPP bis Technical-Lead-Neueinordnung:
+Nächster ggf. zu steuernder Agent für PR #87:
 
-- `Trip workspace audit architecture` – PR #87 bleibt Draft; kein Folgeslice, kein Gate B ohne neue Freigabe
+`Cursor-Agent: Trip workspace audit architecture`
+
+Er bekommt nur einen präzisen Synchronisierungs-/Korrekturauftrag, falls der unabhängige Technical Lead nach Live-Rekonstruktion eine Änderung verlangt.
+
+STOPP weiterhin für automatische Folgeslices:
+
 - `Account plattform audit vorbereitung`
 - `Jetnity provider readiness audit`
 - `Admin platform audit`
@@ -149,15 +163,13 @@ Reserviert:
 
 - `Jetnity native app architecture`
 
-Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Cleanup/Branch-/Cloud-Delete automatisch ausführen.
-
 ## 8. Offene PRs
 
 Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#87** TW6-B Runtime + Mode Contract | **OFFENER Runtime-Draft.** Früherer Plan-Review reicht nach verändertem `main` nicht für Merge/Production. Neu synchronisieren und re-gaten. |
+| **#87** TW6-B Runtime + Mode Contract | **OFFENER Runtime-Draft.** Nach PR #91 gegen neuen `main` synchronisieren, echten Diff prüfen und neu gaten. |
 | **#88** Project Sanitation Audit | Non-destructive Audit-Evidence. Kein Cleanup automatisch. |
 | #52 ChatGPT TL handoff 2026-08-24 | HISTORICAL / SUPERSEDED |
 | #50 S1 merged-status docs | HISTORICAL / INTEGRATED ELSEWHERE |
@@ -165,45 +177,42 @@ Operativ relevant:
 | #39 Account Platform Audit | HISTORICAL / INTEGRATED ELSEWHERE |
 | #28 Trip Collaboration Foundation | HISTORICAL / SUPERSEDED / DO NOT RESUME |
 
-PR #89 ist gemergt und kein aktiver Draft mehr.
+PR #89 und PR #91 sind gemergt und keine aktiven Drafts mehr.
 
 Historische Evidence nicht löschen. Nicht als aktuelle Runtime-Arbeit wieder aufnehmen.
 
 ## 9. Supabase / Production
 
-Production ist nach Gate A live `ACTIVE_HEALTHY`.
+Production ist live `ACTIVE_HEALTHY`.
 
-Kanonische Production-Migration-History endet jetzt bei:
+Production Gate A ist PASS. Post-PR-#91 read-only erneut verifiziert:
 
-- `20260824160000` – `reise_anlegen_flug_handelsfelder_ohne_nachweis`
-- `20260824180000` – `trip_items_flug_handelsfelder_guard`
-
-Finale semantische Gate-A-Verifikation: PASS.
-
-- RPC strippt untrusted Flight-Handelsfelder;
-- Route-Itinerary bleibt erhalten;
-- `authenticated` darf `reise_anlegen`, `anon` nicht;
-- Guard-Trigger genau einmal vorhanden und enabled;
-- Trigger-Scope korrekt;
-- direkte Guard-Funktion nicht für authenticated/anon ausführbar;
-- Production hat weiterhin 0 persistierte Flight-Items.
+- Gate-A-Versionen `20260824160000` + `20260824180000`: count = 2
+- TW6-B-Versionen `20260826220000` / `20260826230000` / `20260826240000` / `20260827010000`: count = 0
+- `day_stage_assignment_mode` / `day_stage_assignment_source`: nicht vorhanden
+- Guard-Trigger `trip_items_flug_handelsfelder_schuetzen`: vorhanden/enabled
 
 Explizit **nicht** in Production-History und **nicht** angewendet:
 
 - TW6-B `20260826220000`
 - TW6-B `20260826230000`
 - TW6-B `20260826240000`
+- TW6-B `20260827010000`
 - AAL2 `20260826090000`
 - Development-AAL2-Version `20260826052735`
 
-Auf Production existiert weiterhin weder `day_stage_assignment_source` noch `day_stage_assignment_mode`. Damit ist TW6-B nicht still aktiviert worden.
-
-Vollständige Execution-Evidence: `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`.
+Development enthält dagegen bereits alle vier Gate-B-Versionen und die Zero-Stage-Fail-Closed-Funktion. Dort nicht erneut blind migrieren.
 
 ## 10. Nächster Schritt
 
-**STOP vor Gate B.**
+**STOP vor Production Gate B.**
 
-Technical Lead rekonstruiert PR #87 gegen den aktuellen `main`, klassifiziert eventuelle Konflikte/Drift und entscheidet, ob zuerst eine scope-sichere Synchronisierung/Korrektur nötig ist. Erst wenn PR-/Production-Plan wieder unabhängig PASS ist, kann der Product Owner separat um Freigabe für das TW6-B-Bundle `20260826220000 → 20260826230000 → 20260826240000` unter dem auf `main` liegenden transaktionalen Write-Gate-Playbook gebeten werden.
+Der Gate-0B-Prep ist durch PR #91 integriert. Nächster Technical-Lead-Schritt ist jetzt ausschließlich:
 
-Kein Gate B, kein AAL2, kein Direction A, kein PR-#87-Merge und kein Folgeslice ohne diese erneute Live-Evidence und die jeweils nötige Freigabe.
+**PR #87 gegen den neuen `main` nach PR #91 synchronisieren / rekonstruieren / vollständig unabhängig re-reviewen.**
+
+Zwingend neu prüfen: Merge-Base, Ahead/Behind, realer Diff, Shared Contracts, Multi-Ziel-/Zero-Stage-/Commercial-Truth-Semantik, Security/Ownership, Exact-Head GitHub Actions, Exact-Head Vercel und Production-/Supabase-Grenzen.
+
+Erst nach neuem PASS kann der Product Owner separat um Freigabe für das Production-Vier-Datei-Bundle unter Write-Gate gebeten werden.
+
+Kein Gate B, kein AAL2, kein Direction A, kein PR-#87-Merge ohne neuen PASS und kein TW-7/8/9-Folgeslice.
