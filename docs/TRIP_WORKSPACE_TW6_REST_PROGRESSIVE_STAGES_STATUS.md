@@ -18,6 +18,9 @@ Live geprüft, nicht aus dem Prompt übernommen.
 | --- | --- |
 | Live `origin/main` | `f683855fa82a6ae5663228b2c9dfa605755fc47d` |
 | Merge-Base nach Sync | `f683855fa82a6ae5663228b2c9dfa605755fc47d` |
+| Sync-Merge | `9409d1d9e436fead1f8b6cf927471ea65c455e3c` |
+| Zero-Stage-Fix | `4d5f771039c79f597cba2b5b067ce1ff2e6f88df` |
+| Aktueller Branch-Head vor Evidence-Commit | `023bf1e3482aea1801223c07179ca5a2a4c5732d` |
 | Alter PR-Head vor Sync | `0b7d6cfd5b34ffd3e9c0a96779ee51df999bcc67` |
 | Gate 0 | auf `main` durch PR #89 |
 | Production Gate A | **PASS** (`20260824160000` dann `20260824180000`) |
@@ -111,7 +114,9 @@ Additive Folgemigration **nach** `20260826240000` (27. August 2026):
 
 ## 6. Tests / Gates
 
-Lokale Gates auf dem Mode-Contract-Head:
+Ältere Zahlen in diesem Abschnitt sind historisch. Aktuelle Gates der Zero-Stage-Korrektur stehen in Abschnitt 11.4.
+
+Lokale Gates auf dem früheren Mode-Contract-Head:
 
 | Gate | Ergebnis |
 | --- | --- |
@@ -414,6 +419,44 @@ Folgearbeiten, damit Create/RPC und Guest-Wege denselben Vertrag haben:
 | Production TW6-B / Gate B | nicht angewendet, nicht freigegeben |
 | AAL2 / Direction A | ausgeschlossen |
 
-### 11.4 STOP
+### 11.4 Lokale Gates dieser Korrektur
+
+Development: nur `20260827010000` additiv angewendet. `20260826090000` (AAL2) nicht angewendet. `20260826240000` unverändert. Live-Function enthält `_stage_count < 1`, nicht `<= 1`.
+
+| Gate | Ergebnis |
+| --- | --- |
+| `npm test` | **2274/2274 PASS** |
+| `npm run typecheck` | PASS |
+| `npm run lint` | PASS, 0 warnings |
+| `npm run check:dead` | PASS |
+| `npm run check:exports` | PASS |
+| `npm run check:deps` | PASS |
+| `npm run check:api-schutz` | PASS |
+| `npm run check:schema-bezug` | PASS |
+| `npm run check:setup:ci` | PASS, 1 Warning: keine `.env` |
+| `npm run build` | PASS, Next.js 14.2.32 |
+| `npm run auth:pruefen` | PASS, 55 Werte |
+| `db:rechte` | PASS |
+| `db:rls` | PASS |
+| `db:sicherheit` | 205/236 – alle TW6-B-RPC-Fälle **ok**, einschliesslich 0-Stage `22023` und keine persistierte Reise; Rest Admin/AAL wie zuvor |
+
+Echte Development-RPC (`public.reise_anlegen(jsonb)` nach `20260827010000`):
+
+1. Paris→Rom→Paris ohne Positionen → `unassigned`
+2. Multi-Stage + vollständige Positionen → `explicit`
+3. Multi-Stage + Teilpositionen → `explicit`, Rest `stage_id` null
+4. claimed `legacy_fallback` + Positionen → `explicit`
+5. claimed `legacy_fallback` ohne Positionen → `unassigned`
+6. alter claimed `user` + Positionen → `explicit`
+7. 0 Stages → `22023 Die Tageszuordnung ist ungültig.`
+8. 0 Stages → keine persistierte Reise
+9. unbekannter Claim → `22023`
+10. out-of-range `stage_position` → `22023`
+11. Single-Destination → `single_destination`
+12. Accepted-Vorschlag-Nutzlast mit Positionen → `explicit`
+
+Exact-Head GitHub Actions und Vercel gehören zum Commit nach diesem Dokumentationsstand. Ältere SUCCESS-Checks gelten nicht.
+
+### 11.5 STOP
 
 Kein Ready. Kein Merge. Kein Gate B. Kein Production-Write. Kein TW-7/8/9.
