@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 27. August 2026  
-Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102 und PR #106 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. TW7-A Runtime ist integriert. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal. Live-`main` immer live prüfen.**
+Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106 und PR #108 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. TW7-A Runtime ist integriert. AP-4 Account Archive Lifecycle ist integriert. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
@@ -295,7 +295,7 @@ Weiter gemäß `docs/JETNITY_BINDING_BUILD_ORDER.md`:
 
 1. Trip Workspace vollständig abschließen – nur nach seinen Gates;
 2. Traveller / Pass / Multi-Citizenship produktweit vervollständigen;
-3. Account AP-4 bis AP-12;
+3. Account AP-5 bis AP-12; AP-4 ist integriert (PR #108);
 4. Provider Readiness Rest inkl. S5-B, danach echte Provider unter besonderen Gates;
 5. Admin D–K + Marketing/Growth Control Plane;
 6. Homepage finalisieren;
@@ -312,11 +312,11 @@ Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Repo-/Bran
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-TW7-A Runtime ist integriert (PR #106). Issue #103 nach Live-Post-Merge-Verifikation schliessbar. Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`.
+TW7-A Runtime ist integriert (PR #106). Issue #103 nach Live-Post-Merge-Verifikation schliessbar. Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. AP-4 ist integriert (PR #108). Kein AP-5 automatisch.
 
 Live-`main` immer live prüfen. Die Start-Baseline `963186f4` (PR #102) ist historische Start-Evidence von TW7-A, keine dauerhafte Live-SHA.
 
-Visitor Search UX ist integriert. Production Gate B ist operativ PASS, kein Re-Apply. `TW6-REST-01` ist geschlossen. PR #96/#97/#98/#102/#106 sind integriert. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal; kein zweiter Apply.
+Visitor Search UX ist integriert. Production Gate B ist operativ PASS, kein Re-Apply. `TW6-REST-01` ist geschlossen. PR #96/#97/#98/#102/#106/#108 sind integriert. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal; kein zweiter Apply.
 
 > **Kein automatischer Folgeslice. Kein Direction A. Kein TW-8/9. Kein weiterer Production-Write aus diesem Dokumentensatz.**
 

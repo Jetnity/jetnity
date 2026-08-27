@@ -1,7 +1,7 @@
 # Jetnity – AP-4 Account Archive Lifecycle – Status
 
 Stand: 27. August 2026  
-Status: **TECHNICAL-LEAD CHANGES REQUIRED GESCHLOSSEN / EXACT-HEAD GATES GRÜN AUF `d9e35bb6` / DRAFT / KEIN READY / KEIN MERGE DURCH AUTOR-AGENT**  
+Status: **INTEGRIERT AUF `main` / PR #108 / MERGE `70cac163` / KEIN FOLGESLICE AUTOMATISCH**  
 Workstream: Account / Traveller  
 Cursor-Agent: **`Account plattform audit vorbereitung 3`**  
 Branch: `cursor/ap4-account-archive-lifecycle-67d4`  
@@ -93,10 +93,31 @@ Lokale Gates auf demselben SHA: `npm test` 2367/2367, Typecheck, Lint, `check:de
 
 Ein späterer Continuity-only-Commit muss live neu geprüft werden.
 
+## 3e. Merge auf `main`
+
+Technical-Lead Final Re-Review: **PASS** auf Exact Head `88146dd57146515fe9e78417ecb36a93ca311c36`  
+Review: https://github.com/Jetnity/jetnity/pull/108#pullrequestreview-5045192389
+
+| Feld | Wert |
+| --- | --- |
+| PR | #108 **MERGED** |
+| Exact Head | `88146dd57146515fe9e78417ecb36a93ca311c36` |
+| Exact-Head Actions | `33110989276` SUCCESS |
+| Exact-Head Vercel | Deployment `6130062919` / Inspector `3PTcb1RcStZT12RXiHffXghKa6tf` READY |
+| Merge-Commit | `70cac163a79c3cd4098a72a0df241eb75c47738f` — `Merge PR #108: AP-4 Account Archive Lifecycle` |
+| Post-Merge Actions | Run `33111852882` SUCCESS auf genau dem Merge-SHA |
+| Post-Merge Vercel | Inspector `8bvcVH5kCvSFhauw6QooL4xPvuwW` / Deployment `6130217634` completed auf demselben SHA |
+| Review-Threads | 0 |
+| Besonderes Product-Owner-Gate | keines durch diesen PR |
+
+Ältere Sätze „Draft / nicht auf `main` / kein Ready / kein Merge durch Autor-Agent“ sind **Pre-Merge-Evidence**.
+
+Residual non-blocker laut Review: kein authentifizierter Browser-/Real-Device-Beweis für die Archiv-UI. Das bleibt QA-Evidence-Debt, kein AP-4-Merge-Gate.
+
 ## 4. Shared Contracts
 
 Unverändert: Auth, RLS, Ownership, Guest→Account, Traveller, AAL2, Provider, Admin, Growth, TW-8.
 
 ## 5. Nächster Schritt
 
-Unabhängiger Exact-Head-Finalreview durch ChatGPT / Technical Lead auf dem dann aktuellen PR-Head. Kein Ready. Kein Merge durch den Autor-Agenten.
+AP-4 ist integriert. Kein automatischer Folgeslice. Kein AP-5/AP-7, kein P2-TA-06, kein Guest-Archiv, kein Production-Write aus diesem Slice. Live-`main` immer live prüfen.

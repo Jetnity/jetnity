@@ -4374,7 +4374,7 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 ## ADR-0177 – AP-4 Restore-Provenienz bleibt namespaced Metadata, kein Default-Status
 
 **Datum:** 27. August 2026  
-**Status:** Technical-Lead Slice Decision; Runtime auf Draft-Branch `cursor/ap4-account-archive-lifecycle-67d4`. Nicht auf `main`, bis der unabhängige Exact-Head-Review entscheidet.
+**Status:** auf `main` gemergt (PR #108, `70cac163`). Ältere Sätze „Draft-Branch / nicht auf `main`“ sind Pre-Merge-Evidence.
 
 **Entscheidung:**
 
@@ -4393,9 +4393,11 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 **Begründung:** `trips.status` hat bereits vier Werte. Ohne Provenienz ist Restore nicht verlustfrei. Metadata bleibt ungefiltert; der Filter ist `status`.
 
-**Konsequenzen:** Aktiv/Kommend/Vergangen/Ohne Datum enthalten keine archivierten Reisen. `/reisen` hat einen eigenen Archiv-Abschnitt. TW7-A-Kartenidentität bleibt unverändert. Autor-Agent merged nicht.
+**Konsequenzen:** Aktiv/Kommend/Vergangen/Ohne Datum enthalten keine archivierten Reisen. `/reisen` hat einen eigenen Archiv-Abschnitt. TW7-A-Kartenidentität bleibt unverändert.
 
 **Nachtrag, 27. August 2026 – Exact-Head Review P1/P2.** Ein status-only Guard war nicht fail-closed genug: derselbe Status mit geänderter Metadata hätte den gelesenen Snapshot überschrieben. Der Write matcht deshalb zusätzlich das gelesene `updated_at`. Restore löscht nicht mehr den ganzen `account_archive`-Namespace. Die erfundene 8-KB-Grenze für `trips.metadata` ist entfernt; sie war ein Vertrag von `trip_items.metadata`, nicht von `trips.metadata`.
+
+**Nachtrag, 27. August 2026 – Merge.** Technical-Lead Final Re-Review PASS auf Exact Head `88146dd5`. PR #108 gemergt als `70cac163`. Residual: kein authentifizierter Browser-/Real-Device-Beweis für die Archiv-UI; QA-Evidence-Debt, kein Merge-Gate.
 
 ---
 

@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 27. August 2026  
-Status: **Production Gate A ist PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102 und PR #106 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. TW7-A Runtime ist integriert. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal. Live-`main` immer live prüfen.**
+Status: **Production Gate A ist PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106 und PR #108 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. TW7-A Runtime ist integriert. AP-4 Account Archive Lifecycle ist integriert. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -147,7 +147,7 @@ Weiter offen:
 - **P2-TA-06** – `documents[0]` in `travellerNormalisieren()`;
 - **P2-TA-03** – Account-Implementation-Plan nur in historischem Audit-PR #39;
 - Mobility/Rental-Such-Snapshots mit kommerziellen Feldern;
-- Account-Traveller-Registry / AP-4–AP-12 / AP-7.
+- Account-Traveller-Registry / AP-5–AP-12 / AP-7. AP-4 ist integriert (PR #108).
 
 ## 5. Provider Readiness
 
@@ -248,8 +248,8 @@ Production `20260827170000` ist angewendet und verifiziert, exakt einmal. Kein z
 
 ## 10. Nächster Schritt
 
-TW7-A Runtime ist integriert (PR #106). Issue #103 nach Live-Post-Merge-Verifikation schliessbar.
+TW7-A Runtime ist integriert (PR #106). Issue #103 nach Live-Post-Merge-Verifikation schliessbar. AP-4 ist integriert (PR #108, Merge `70cac163`).
 
-Kein weiterer Production-Write. Keine Direction A. Kein TW-8/9. Kein AP-4. Kein zweiter AAL2-Apply. Live-`main` immer live prüfen.
+Kein weiterer Production-Write. Keine Direction A. Kein TW-8/9. Kein AP-5/AP-7 automatisch. Kein zweiter AAL2-Apply. Live-`main` immer live prüfen.
 
 PR #95 zeichnet einen Product-Owner-Wunsch auf: Homepage-Hero-Design bleibt, die Funktion im bestehenden Kästchen soll später natürliche Mehrziel-/Route-Absicht verstehen. Das bleibt **kein** Startauftrag und ist nicht TW7-A.

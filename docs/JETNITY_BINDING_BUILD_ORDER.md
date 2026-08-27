@@ -46,7 +46,7 @@ Primärer Account-Agent: `Account plattform audit vorbereitung`. Shared Travelle
 
 Agent: `Account plattform audit vorbereitung`
 
-AP-1 bis AP-3 sind auf `main`. Weiter mit AP-4 bis AP-12 gemäß `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` und den jeweiligen Shared Gates.
+AP-1 bis AP-4 sind auf `main`. Weiter mit AP-5 bis AP-12 gemäß `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` und den jeweiligen Shared Gates. AP-4 (PR #108) ist kein Startauftrag mehr.
 
 Dazu gehören u. a. Archiv/Lifecycle, Security, Privacy, Traveller Registry, Reiseprofil, Favoriten, Booking Overview, Notifications und Subscription-/Entitlement-Grundlage.
 
