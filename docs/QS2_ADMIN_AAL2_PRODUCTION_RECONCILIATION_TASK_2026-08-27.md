@@ -146,10 +146,10 @@ Read-only Evidence aus Kommentar `5442474653`:
 Der frühere Konditional „Falls und nur falls der Product Owner später
 ausdrücklich den Production-Apply freigibt“ ist historische Pre-Apply-Evidence.
 
-## 8. STOPP
+## 8. Endzustand nach Landung
 
-Dieser Task ist nach Apply **geschlossen**. Er autorisiert keinen zweiten Apply
-und keinen weiteren Production-Write.
+PR #102 ist bzw. war das Integrationsvehikel. Nach Landung ist diese
+Reconciliation **geschlossen**.
 
-Docs-Closure läuft über Draft-PR #102. ChatGPT macht den docs-only Finalreview
-und den Merge. TW-7 / ADR-0176 aus `main` wird hier nicht umgeschrieben.
+**Kein zweiter Apply.** Kein weiterer Production-Write aus diesem Slice.
+TW-7 / ADR-0176 aus `main` bleibt unverändert.

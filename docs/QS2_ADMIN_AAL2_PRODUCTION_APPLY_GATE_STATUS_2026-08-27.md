@@ -5,14 +5,13 @@ Issue: #101
 Finding: `P1-AAL2-PROD-01`  
 Cursor-Agent: `Jetnity quality security audit`  
 Branch: `cursor/aal2-prod-apply-gate-b13d`  
-Draft-PR: #102  
-Status: **POST-APPLY CONTINUITY / DOCS CLOSURE / KEIN ZWEITER APPLY / KEIN MERGE DURCH DIESEN AGENTEN**  
+PR: #102 – Integrationsvehikel  
+Status: **P1-AAL2-PROD-01 NACH LANDUNG VON PR #102 GESCHLOSSEN / KEIN ZWEITER APPLY**  
 Post-Apply Evidence: Technical-Lead-Kommentar `5442474653`  
 PASS-Review vor Apply: `5043413423`  
 Review-Fix vor Apply: `5043150656` auf Head `e056f1a1a6bb40cd3b2b46f88c8156f1dc4d3aad`  
 Review-Fix Exact Head (historisch): `4ee402dd4a4c77576b43523d058fff2855ba21eb`  
-Docs-Closure Commit: `4f0909be9093359fa53e5d68ab779dd4db608ece`  
-Neuer Exact Head: `4f0909be9093359fa53e5d68ab779dd4db608ece`
+Docs-Closure Commit (historisch): `4f0909be9093359fa53e5d68ab779dd4db608ece`
 
 Task: `docs/QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_TASK_2026-08-27.md`  
 Playbook: `docs/QS2_ADMIN_AAL2_PRODUCTION_ALIGNMENT_PLAYBOOK_2026-08-27.md`
@@ -106,8 +105,10 @@ Dieser Docs-Closure ändert keinen Runtime-, SQL-, Runner-, Migration-, RLS-, Au
 
 ---
 
-## 5. Nächster Schritt
+## 5. Endzustand nach Landung
 
-Docs-only Finalreview durch ChatGPT auf Exact Head `4f0909be9093359fa53e5d68ab779dd4db608ece`. Danach Merge durch ChatGPT.
+`P1-AAL2-PROD-01` ist nach Landung von PR #102 **geschlossen**.
 
-Kein Ready/Merge durch diesen Agenten. **Kein zweiter Apply.** Kein weiterer Production-Write.
+PR #102 ist das Integrationsvehikel, nicht dauerhaft ein Draft. Das Technical-Lead-Gating des jeweiligen PR-Heads liegt außerhalb dieser kanonischen Live-Wahrheit und schreibt keine bewegliche SHA in dieses Dokument.
+
+**Kein zweiter Apply.** Kein weiterer Production-Write aus diesem Slice.
