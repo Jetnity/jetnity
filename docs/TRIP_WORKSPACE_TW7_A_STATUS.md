@@ -45,6 +45,10 @@ Wenn der embedded `trip_stages(name, position)`-Read unter bestehendem RLS zur L
 ## 4. Operativer Stand
 
 - Issue #103: freigegebener Runtime-Slice
-- Implementation auf Draft-PR; Exact Head live am PR lesen
+- Draft-PR: https://github.com/Jetnity/jetnity/pull/106
+- Branch: `cursor/tw7-a-hub-card-identity-a4c4`
+- Exact Head live am PR lesen; er ist keine kanonische Live-`main`-Wahrheit
+- Autoren-Gates lokal: targeted Tests, `npm test` (2343), Typecheck, Lint, Hygiene, Production-Build
 - Unabhängiger vollständiger Finalreview: ChatGPT / Technical Lead
 - Nicht auf `main`, solange dieser Review nicht PASS und Merge ausdrücklich entscheidet
+- Kein Ready/Merge durch den Autoren-Agenten

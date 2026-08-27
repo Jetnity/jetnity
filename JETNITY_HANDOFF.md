@@ -213,7 +213,7 @@ Supabase-Inventur zeigt weiterhin zwei Top-Level-Projekte: das aktive Production
 
 Operativ relevant:
 
-- TW7-A Runtime Issue #103 – **Draft** auf `cursor/tw7-a-hub-card-identity-a4c4`. Nicht auf `main`. Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`.
+- PR #106 – TW7-A Runtime Issue #103 **Draft** auf `cursor/tw7-a-hub-card-identity-a4c4`. Nicht auf `main`. Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`.
 - PR #102 – AAL2 Production-Apply-Gate-Closure **integriert** (`963186f4`). Aktuelle Live-`main`-Baseline.
 - PR #100 – TW-7-Gap / ADR-0176 / TW7-A-Spec **versioniert bzw. nach Landung integriert**. Spec bleibt bindend.
 - PR #98 – AAL2 Alignment **integriert** (`beaef64a`). Historische Linie vor PR #102.

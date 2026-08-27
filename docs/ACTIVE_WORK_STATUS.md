@@ -203,7 +203,7 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **TW7-A Runtime** Issue #103 | **DRAFT**, Branch `cursor/tw7-a-hub-card-identity-a4c4`. Nicht auf `main`. Kein Ready/Merge durch den Autoren-Agenten. Exact Head live am PR lesen. |
+| **#106** TW7-A Runtime Issue #103 | **DRAFT**, Branch `cursor/tw7-a-hub-card-identity-a4c4`. Nicht auf `main`. Kein Ready/Merge durch den Autoren-Agenten. Exact Head live am PR lesen. |
 | **#102** Admin AAL2 production apply gate closure | **GEMERGT.** Merge `963186f4`. Aktuelle Live-`main`-Baseline. |
 | **#100** TW-7-Gap / ADR-0176 / TW7-A-Spec | **VERSIONIERT bzw. nach Landung integriert.** Spec bleibt bindend. Runtime ist der eigene Draft zu Issue #103. |
 | **#98** Admin AAL2 Production Alignment | **GEMERGT.** Merge `beaef64a`. Historische Alignment-Linie vor PR #102. |

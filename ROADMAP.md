@@ -482,7 +482,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 12d. ✅ Provider S5-A Commercial Provenance – auf `main` (`3b317bc6`, ADR-0168). S5-B nicht gestartet.
 12e. ✅ Admin-AAL2 Application-Guard – auf `main` (`d3faa2a0`, ADR-0169). Production-DB nicht angewendet.
 12e1. ✅ P1-AAL2-PROD-01 Production-Data-Plane Alignment auf `main` (PR #98, `beaef64a`, ADR-0175). Historische `20260826090000` unverändert. Neue `20260827170000` liegt auf `main`. **Production-Apply bleibt eigenes Product-Owner-Gate.**
-12e2. ⏳ TW-7 Hub-Anschluss – Start-Gate erfüllt; Rest-Gap und TW7-A-Slice dokumentiert (`docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`, ADR-0176). TW7-A Runtime: Draft zu Issue #103, **nicht auf `main`**. Operativer Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Kein Ready/Merge durch den Autoren-Agenten.
+12e2. ⏳ TW-7 Hub-Anschluss – Start-Gate erfüllt; Rest-Gap und TW7-A-Slice dokumentiert (`docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`, ADR-0176). TW7-A Runtime: Draft-PR #106 zu Issue #103, **nicht auf `main`**. Operativer Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Kein Ready/Merge durch den Autoren-Agenten.
 12f. ✅ D0 live metadata boundary / P1-D0-LIVE-01 – auf `main` (PR #86, `38ec8be7`, ADR-0170). HTML-robots fail-closed; Canonical ist `https://jetnity.com`, niemals `*.vercel.app`. **Kein D1/G1. Kein Domain-Cutover. Kein Public Indexing.**
 13. Admin/Account/Provider-Programme separat weiterführen; kein Slice D, AP-4, S5-B, TW-8, D1 oder G1 ohne eigenen Auftrag
 14. finaler Workspace Intelligence Audit

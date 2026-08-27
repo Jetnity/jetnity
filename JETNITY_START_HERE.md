@@ -310,7 +310,7 @@ Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Repo-/Bran
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-TW7-A Runtime ist Draft zu Issue #103 (`docs/TRIP_WORKSPACE_TW7_A_STATUS.md`). Nicht auf `main`. Unabhängiger Technical-Lead-Finalreview entscheidet Ready/Merge.
+TW7-A Runtime ist Draft-PR #106 zu Issue #103 (`docs/TRIP_WORKSPACE_TW7_A_STATUS.md`). Nicht auf `main`. Unabhängiger Technical-Lead-Finalreview entscheidet Ready/Merge.
 
 Live-`main` bleibt `963186f4` (PR #102), bis ein späterer verifizierter Merge etwas anderes zeigt. Ein Draft-Head ist keine neue Live-Baseline.
 
