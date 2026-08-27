@@ -4401,6 +4401,32 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 ---
 
+## ADR-0178 – Readiness-Normalisierung leitet N Credential-Optionen aus N Dokumenten ab
+
+**Datum:** 27. August 2026  
+**Status:** Technical-Lead Slice Decision; Runtime auf Draft-Branch `cursor/p2-ta-06-credential-normalization-3317`. Nicht auf `main`, bis der unabhängige Exact-Head-Review entscheidet.
+
+**Entscheidung:** `travellerNormalisieren()` darf fehlende oder leere `credentialOptions` nicht mehr auf `documents[0]` / einen Default-Pass reduzieren. Gelieferte nicht-leere Options bleiben autoritativ. Sonst entsteht eine Option je Dokument. Ohne Dokumente bleibt Legacy-Singular eine Kompatibilitätsoption oder die explizite `:none`-Option. Issuer Country wird nicht als Citizenship gelesen.
+
+**Kontext:** P2-TA-06 war ein latentes Legacy-/Direct-Caller-Risiko. Der kanonische App-Pfad setzt Options bereits über `credentialOptionsAus`. Issue #112 schließt den Normalisierungspfad, bevor ein neuer Caller den First-Document-Fallback trifft.
+
+**Alternativen:**
+
+1. *Fail-closed leere Options / Fehler werfen.* Würde Legacy-Caller härter brechen als nötig.
+2. *Shared Traveller-Contract / AP-7 erweitern.* Nicht nötig und ausdrücklich Non-Scope.
+3. *Nur Tests ändern, Runtime lassen.* Lässt den Default-Pass im Contract-Pfad.
+
+**Begründung:** Der bestehende Requirements-Port trägt bereits `documents[]` und `credentialOptions[]`. Die 1:n-Ableitung ist dieselbe Semantik wie `credentialOptionsAus`, ohne neuen Shared Contract.
+
+**Konsequenzen:**
+
+- Mehrere Dokumente bleiben mehrere bewertete Optionen.
+- Official `result` bleibt ohne Provider `unknown`.
+- Keine Migration, keine RLS-/Auth-/AAL-Änderung, kein AP-7.
+- Autor-Agent merged nicht.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

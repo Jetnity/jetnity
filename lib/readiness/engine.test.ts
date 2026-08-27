@@ -14,7 +14,7 @@ import {
 } from '@/lib/readiness/official'
 import { fehlendeFaktenFuerReise, slotMissingFactsErgaenzen, travellerSlots } from '@/lib/readiness/party'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
-import type { RequirementsProvider } from '@/lib/readiness/provider'
+import type { RequirementsAnfrage, RequirementsProvider } from '@/lib/readiness/provider'
 import type { TripTraveller } from '@/types/trips'
 
 const JETZT = '2026-08-22T08:00:00.000Z'
@@ -1844,5 +1844,292 @@ describe('Travel Requirements Engine', () => {
     const vergleich = credentialOptionenVergleichen(identisch)
     assert.equal(vergleich.comparable, true)
     assert.equal(vergleich.winnerOptionRef, 'traveller:1:document:passport:CH')
+  })
+})
+
+describe('P2-TA-06 Readiness credential normalization', () => {
+  const basisAnfrage = {
+    originCountryCode: 'CH' as const,
+    destinationCountryCodes: ['TH'],
+    transitCountryCodes: [] as string[],
+    startDate: '2026-09-12',
+    endDate: '2026-09-16',
+  }
+
+  const passCh = {
+    clientRef: 'document:passport:CH',
+    documentType: 'passport' as const,
+    issuingCountryCode: 'CH',
+    expiresOn: '2030-01-01',
+    citizenshipCountryCode: 'CH',
+  }
+  const passRs = {
+    clientRef: 'document:passport:RS',
+    documentType: 'passport' as const,
+    issuingCountryCode: 'RS',
+    expiresOn: '2029-01-01',
+    citizenshipCountryCode: 'RS',
+  }
+
+  async function normalisierteOptionen(
+    traveller: Record<string, unknown>,
+    provider: RequirementsProvider | null = null,
+  ) {
+    let gesehen: RequirementsAnfrage | null = null
+    const capture: RequirementsProvider = {
+      name: 'p2-ta06-capture',
+      async evaluate(anfrage) {
+        gesehen = anfrage
+        return provider ? provider.evaluate(anfrage) : []
+      },
+    }
+    const evaluations = await requirementsAuswerten(
+      {
+        ...basisAnfrage,
+        travellers: [traveller],
+      },
+      capture,
+    )
+    return {
+      options: gesehen?.travellers[0]?.credentialOptions ?? [],
+      evaluations,
+    }
+  }
+
+  test('zwei Dokumente ohne credentialOptions ergeben zwei getrennte Optionen, nicht documents[0]', async () => {
+    const { options, evaluations } = await normalisierteOptionen({
+      clientRef: 'traveller:1',
+      residenceCountryCode: 'CH',
+      citizenshipCountryCodes: ['CH', 'RS'],
+      documents: [passCh, passRs],
+    })
+    assert.equal(options.length, 2)
+    assert.deepEqual(
+      options.map((option) => option.optionRef).sort(),
+      ['traveller:1:document:passport:CH', 'traveller:1:document:passport:RS'],
+    )
+    assert.notEqual(options[0]?.optionRef, options[1]?.optionRef)
+    const visa = evaluations.filter((eintrag) => eintrag.requirementType === 'visa')
+    assert.equal(visa.length, 2)
+    assert.deepEqual(
+      visa.map((eintrag) => eintrag.credentialOptionRef).sort(),
+      ['traveller:1:document:passport:CH', 'traveller:1:document:passport:RS'],
+    )
+    for (const evaluation of visa) {
+      assert.equal(evaluation.result, 'unknown')
+      assert.notEqual(evaluation.result, 'required')
+      assert.notEqual(evaluation.result, 'not_required')
+    }
+  })
+
+  test('leeres credentialOptions-Array kollabiert nicht auf das erste Dokument', async () => {
+    const { options } = await normalisierteOptionen({
+      clientRef: 'traveller:1',
+      residenceCountryCode: 'CH',
+      citizenshipCountryCodes: ['CH', 'RS'],
+      documents: [passCh, passRs],
+      credentialOptions: [],
+    })
+    assert.equal(options.length, 2)
+    assert.equal(
+      options.some((option) => option.documentClientRef === 'document:passport:RS'),
+      true,
+    )
+    assert.notEqual(options[0]?.documentClientRef, options[1]?.documentClientRef)
+  })
+
+  test('explizit gelieferte credentialOptions bleiben autoritativ', async () => {
+    const { options } = await normalisierteOptionen({
+      clientRef: 'traveller:1',
+      residenceCountryCode: 'CH',
+      citizenshipCountryCodes: ['CH', 'RS'],
+      documents: [passCh, passRs],
+      credentialOptions: [
+        {
+          optionRef: 'traveller:1:explicit-only',
+          documentClientRef: 'document:passport:RS',
+          documentType: 'passport',
+          issuingCountryCode: 'RS',
+          expiresOn: '2029-01-01',
+          relatedCitizenshipCountryCode: 'RS',
+        },
+      ],
+    })
+    assert.equal(options.length, 1)
+    assert.equal(options[0]?.optionRef, 'traveller:1:explicit-only')
+    assert.equal(options[0]?.documentClientRef, 'document:passport:RS')
+    assert.equal(options[0]?.relatedCitizenshipCountryCode, 'RS')
+  })
+
+  test('ohne Dokumente bleibt die explizite :none-Option erhalten', async () => {
+    const { options, evaluations } = await normalisierteOptionen({
+      clientRef: 'traveller:1',
+      residenceCountryCode: 'CH',
+      citizenshipCountryCodes: ['CH'],
+      documents: [],
+    })
+    assert.equal(options.length, 1)
+    assert.equal(options[0]?.optionRef, 'traveller:1:none')
+    assert.equal(options[0]?.documentType, null)
+    assert.equal(options[0]?.documentClientRef, null)
+    const visa = evaluations.find((eintrag) => eintrag.requirementType === 'visa')
+    assert.equal(visa?.credentialOptionRef, 'traveller:1:none')
+    assert.equal(visa?.result, 'unknown')
+  })
+
+  test('Legacy-Singularfelder ohne documents bleiben eine Kompatibilitätsoption', async () => {
+    const { options } = await normalisierteOptionen({
+      clientRef: 'traveller:1',
+      nationalityCountryCode: 'FR',
+      residenceCountryCode: 'FR',
+      documentType: 'passport',
+      documentIssuingCountryCode: 'FR',
+      documentExpiresOn: '2030-01-01',
+    })
+    assert.equal(options.length, 1)
+    assert.equal(options[0]?.optionRef, 'traveller:1:document:passport')
+    assert.equal(options[0]?.documentType, 'passport')
+    assert.equal(options[0]?.issuingCountryCode, 'FR')
+    assert.equal(options[0]?.expiresOn, '2030-01-01')
+    assert.equal(options[0]?.relatedCitizenshipCountryCode, null)
+  })
+
+  test('Ausstellerland wird nicht still als Staatsbürgerschaft behandelt', async () => {
+    const { options } = await normalisierteOptionen({
+      clientRef: 'traveller:1',
+      residenceCountryCode: 'CH',
+      citizenshipCountryCodes: ['CH', 'RS'],
+      documents: [
+        {
+          clientRef: 'document:passport:US',
+          documentType: 'passport',
+          issuingCountryCode: 'US',
+          expiresOn: '2031-01-01',
+          citizenshipCountryCode: null,
+        },
+      ],
+    })
+    assert.equal(options.length, 1)
+    assert.equal(options[0]?.issuingCountryCode, 'US')
+    assert.equal(options[0]?.relatedCitizenshipCountryCode, null)
+    assert.notEqual(options[0]?.relatedCitizenshipCountryCode, 'US')
+  })
+
+  test('Dokument-Citizenship-Relation bleibt optionsspezifisch', async () => {
+    const { options } = await normalisierteOptionen({
+      clientRef: 'traveller:1',
+      residenceCountryCode: 'CH',
+      citizenshipCountryCodes: ['CH', 'RS'],
+      documents: [passCh, passRs],
+    })
+    const ch = options.find((option) => option.documentClientRef === 'document:passport:CH')
+    const rs = options.find((option) => option.documentClientRef === 'document:passport:RS')
+    assert.equal(ch?.relatedCitizenshipCountryCode, 'CH')
+    assert.equal(rs?.relatedCitizenshipCountryCode, 'RS')
+    assert.notEqual(ch?.relatedCitizenshipCountryCode, rs?.relatedCitizenshipCountryCode)
+  })
+
+  test('Reihenfolge der Dokumente erzeugt keinen Default-Pass', async () => {
+    const erste = await normalisierteOptionen({
+      clientRef: 'traveller:1',
+      residenceCountryCode: 'CH',
+      citizenshipCountryCodes: ['CH', 'RS'],
+      documents: [passCh, passRs],
+    })
+    const zweite = await normalisierteOptionen({
+      clientRef: 'traveller:1',
+      residenceCountryCode: 'CH',
+      citizenshipCountryCodes: ['CH', 'RS'],
+      documents: [passRs, passCh],
+    })
+    assert.deepEqual(
+      erste.options.map((option) => option.optionRef).sort(),
+      zweite.options.map((option) => option.optionRef).sort(),
+    )
+    assert.equal(erste.options.length, 2)
+    assert.equal(zweite.options.length, 2)
+    const ersteVisa = erste.evaluations.filter((eintrag) => eintrag.requirementType === 'visa')
+    const zweiteVisa = zweite.evaluations.filter((eintrag) => eintrag.requirementType === 'visa')
+    assert.equal(credentialOptionenVergleichen(ersteVisa).winnerOptionRef, null)
+    assert.equal(credentialOptionenVergleichen(zweiteVisa).winnerOptionRef, null)
+    assert.equal(credentialOptionenVergleichen(ersteVisa).comparable, false)
+  })
+
+  test('kollidierende document.clientRef werden nicht still verworfen', async () => {
+    const { options } = await normalisierteOptionen({
+      clientRef: 'traveller:1',
+      residenceCountryCode: 'CH',
+      citizenshipCountryCodes: ['CH'],
+      documents: [
+        { ...passCh, expiresOn: '2030-01-01' },
+        { ...passCh, expiresOn: '2028-01-01', citizenshipCountryCode: null },
+      ],
+    })
+    assert.equal(options.length, 2)
+    assert.notEqual(options[0]?.optionRef, options[1]?.optionRef)
+    assert.equal(options[0]?.documentClientRef, 'document:passport:CH')
+    assert.equal(options[1]?.documentClientRef, 'document:passport:CH')
+    assert.equal(options[0]?.expiresOn, '2030-01-01')
+    assert.equal(options[1]?.expiresOn, '2028-01-01')
+  })
+
+  test('kanonischer App-Pfad über credentialOptionsAus bleibt 1:n und unverändert', async () => {
+    const reise = beispielreise({
+      travellers: 1,
+      party: [
+        reisende({
+          clientRef: 'traveller:1',
+          residenceCountryCode: 'CH',
+          citizenships: [
+            {
+              id: 'citizenship:CH',
+              clientRef: 'citizenship:CH',
+              countryCode: 'CH',
+              createdAt: JETZT,
+              updatedAt: JETZT,
+            },
+            {
+              id: 'citizenship:RS',
+              clientRef: 'citizenship:RS',
+              countryCode: 'RS',
+              createdAt: JETZT,
+              updatedAt: JETZT,
+            },
+          ],
+          documents: [
+            {
+              id: 'document:passport:CH',
+              clientRef: 'document:passport:CH',
+              documentType: 'passport',
+              issuingCountryCode: 'CH',
+              citizenshipClientRef: 'citizenship:CH',
+              expiresOn: '2030-01-01',
+              createdAt: JETZT,
+              updatedAt: JETZT,
+            },
+            {
+              id: 'document:passport:RS',
+              clientRef: 'document:passport:RS',
+              documentType: 'passport',
+              issuingCountryCode: 'RS',
+              citizenshipClientRef: 'citizenship:RS',
+              expiresOn: '2029-01-01',
+              createdAt: JETZT,
+              updatedAt: JETZT,
+            },
+          ],
+        }),
+      ],
+    })
+    const evaluations = await requirementsFuerReise(reise)
+    const visa = evaluations.filter((eintrag) => eintrag.requirementType === 'visa')
+    assert.equal(visa.length, 2)
+    assert.deepEqual(
+      visa.map((eintrag) => eintrag.credentialOptionRef).sort(),
+      ['traveller:1:document:passport:CH', 'traveller:1:document:passport:RS'],
+    )
+    for (const evaluation of visa) {
+      assert.equal(evaluation.result, 'unknown')
+    }
   })
 })
