@@ -12,6 +12,8 @@ PR #98 `P1: Admin AAL2 Production Data-Plane Alignment` wurde nach unabhängigem
 - Exact-Head GitHub Actions CI: Run `33087039741` — SUCCESS
 - Exact-Head Vercel Preview: `dpl_6BQpigWSJz2hR77wcEXjSao4zdYX` — READY
 - Merge-Commit auf `main`: `beaef64a151adceb8f5bc759f58ae9ad13cecc51`
+- Post-Merge `main` GitHub Actions CI: Run `33087558642` — SUCCESS auf exakt `beaef64a151adceb8f5bc759f58ae9ad13cecc51`
+- Post-Merge Vercel Production: `dpl_oioXA3YJS23Uk1f5pKtwZJYfEnHM` — READY auf exakt `beaef64a151adceb8f5bc759f58ae9ad13cecc51`
 
 Live-Evidence gewinnt weiterhin über diesen Checkpoint. Jeder neue Chat muss `main`, PRs, CI, Vercel, Supabase und Branch Protection erneut live verifizieren.
 
@@ -43,7 +45,7 @@ Der frühere Technical-Lead-Fund zu historischen `creator_profiles_*`-False-Posi
 
 **PR #98 Merge ist KEIN Production-Apply.**
 
-Letzte vor dem Merge/Review live verifizierte Production-Wahrheit:
+Post-Merge live erneut verifizierte Production-Wahrheit:
 
 - Production-Projekt: `qscbgcdmivbbnzrcyegn`
 - Migration-Head: `20260827010000_reise_anlegen_zero_stage_fail_closed`
