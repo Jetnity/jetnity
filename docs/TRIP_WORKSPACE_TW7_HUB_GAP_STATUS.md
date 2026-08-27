@@ -3,7 +3,7 @@
 Stand: 27. August 2026  
 Agent: `Trip workspace audit architecture`  
 Auftrag: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`  
-Status: **TW-7-Gap / ADR-0176 / TW7-A-Spec durch PR #100 versioniert. TW7-A Runtime durch PR #106 integriert. Issue #103 nach Live-Post-Merge-Verifikation schliessbar.**
+Status: **TW-7-Gap / ADR-0176 / TW7-A-Spec durch PR #100 versioniert. TW7-A Runtime durch PR #106 integriert. Issue #103 ist CLOSED / completed.**
 
 > Kanonischer operativer Stand zusätzlich: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Live-Evidence gewinnt. PR #106 ist das Runtime-Integrationsvehikel. Live-`main` immer live prüfen.
 
@@ -55,7 +55,7 @@ Code-Evidence:
 
 **TW-7-Start-Gate: erfüllt.**  
 **TW-7-Rest-Gap: Hub-Kartenidentität (Mehrziel + Gast-`itemCount`).**  
-**TW7-A Runtime: durch PR #106 integriert.** Operativer Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Issue #103 nach Post-Merge-Verifikation schliessbar.
+**TW7-A Runtime: durch PR #106 integriert.** Operativer Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Issue #103 ist CLOSED / completed.
 
 Der kleine Slice heisst TW7-A und steht in der Spec. Ältere Sätze „Runtime nicht gestartet / Draft / nicht auf main“ sind Pre-Merge-Evidence.
 
@@ -99,6 +99,6 @@ AAL2-Migration, Playbook und Production-Apply bleiben unangetastet.
 
 ## 6. Nach Landung
 
-Die Spec bleibt die bindende Slice-Grenze. TW7-A Runtime ist durch PR #106 integriert. Issue #103 nach Live-Post-Merge-Verifikation schliessbar.
+Die Spec bleibt die bindende Slice-Grenze. TW7-A Runtime ist durch PR #106 integriert. Issue #103 ist CLOSED / completed.
 
 Kein AP-4, TW-8 oder Homepage aus dieser Spec. Kein zweiter AAL2-Apply.

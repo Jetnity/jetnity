@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 27. August 2026  
-Status: **Foundation C/D/E, Safety, Seasonal, AP-1–AP-3, Admin A–C, Provider S1–S3 + S5-A, TW-1/2/4/3/5, TW6-A, TW6-B Runtime (PR #87), Visitor Search UX (PR #94), Post-PR-#94-Continuity (PR #96), D0-1/D0-2, P1-D0-LIVE-01, QS-1/QS-2, P1-QS2-02, P1-TA-02, Admin-AAL2-Application-Guard, P1-AAL2-PROD-01 Alignment (PR #98), PR #102 Apply-Gate-Closure und TW7-A Runtime (PR #106) sind integriert. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal. Live-`main` immer live prüfen. AP-4 Account Archive Lifecycle ist als Draft-Runtime gestartet, nicht auf `main`. S5-B, TW-8, AP-5+, Admin D–K, D1/G1 und Growth-Folgeslices sind nicht gestartet. Aktuelle TW-7-Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`.**
+Status: **Foundation C/D/E, Safety, Seasonal, AP-1–AP-4, Admin A–C, Provider S1–S3 + S5-A, TW-1/2/4/3/5, TW6-A, TW6-B Runtime (PR #87), Visitor Search UX (PR #94), Post-PR-#94-Continuity (PR #96), D0-1/D0-2, P1-D0-LIVE-01, QS-1/QS-2, P1-QS2-02, P1-TA-02, Admin-AAL2-Application-Guard, P1-AAL2-PROD-01 Alignment (PR #98), PR #102 Apply-Gate-Closure, TW7-A Runtime (PR #106) und AP-4 Account Archive Lifecycle (PR #108) sind integriert. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal. Live-`main` immer live prüfen. S5-B, TW-8, AP-5+, Admin D–K, D1/G1 und Growth-Folgeslices sind nicht gestartet. Aktuelle TW-7-Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`.**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -482,9 +482,9 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 12d. ✅ Provider S5-A Commercial Provenance – auf `main` (`3b317bc6`, ADR-0168). S5-B nicht gestartet.
 12e. ✅ Admin-AAL2 Application-Guard – auf `main` (`d3faa2a0`, ADR-0169). Production-DB nicht angewendet.
 12e1. ✅ P1-AAL2-PROD-01 Production-Data-Plane Alignment auf `main` (PR #98, ADR-0175) und Apply-Gate-Closure (PR #102). Historische `20260826090000` unverändert unangewendet. Production `20260827170000` ist angewendet und verifiziert, exakt einmal. `aktuelles_admin_aal2()` ist live. Admin-Capabilities verlangen Rolle **UND** aktuelles AAL2. **Kein zweiter Apply.** Ältere Sätze „Production-Apply bleibt eigenes Gate“ sind Pre-Apply-Evidence.
-12e2. ✅ TW7-A Runtime – Hub-Kartenidentität read-only (PR #106, Issue #103, ADR-0176). Integrationsvehikel. Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Issue #103 nach Live-Post-Merge-Verifikation schliessbar. Ältere „Draft / nicht auf main / live main bleibt 963186f4“-Zeilen sind Pre-Merge-Evidence. Kein TW-8.
+12e2. ✅ TW7-A Runtime – Hub-Kartenidentität read-only (PR #106, Issue #103, ADR-0176). Integrationsvehikel. Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Issue #103 ist CLOSED / completed. Ältere „Draft / nicht auf main / live main bleibt 963186f4“-Zeilen sind Pre-Merge-Evidence. Kein TW-8.
 12f. ✅ D0 live metadata boundary / P1-D0-LIVE-01 – auf `main` (PR #86, `38ec8be7`, ADR-0170). HTML-robots fail-closed; Canonical ist `https://jetnity.com`, niemals `*.vercel.app`. **Kein D1/G1. Kein Domain-Cutover. Kein Public Indexing.**
-12g. AP-4 Account Archive Lifecycle – **Draft-Runtime, nicht auf `main`.** Branch `cursor/ap4-account-archive-lifecycle-67d4`. Auftrag: `docs/ACCOUNT_AP4_ARCHIVE_LIFECYCLE_TASK_2026-08-27.md`. Entscheidung: ADR-0177. Technical-Lead CHANGES REQUIRED (P1-AP4-TL-01/02, P2-AP4-TL-03) geschlossen; Exact Head `d9e35bb6` Actions/Vercel grün. Unabhängiger Re-Review ausstehend. Kein Ready/Merge durch den Autor-Agenten.
+12g. ✅ AP-4 Account Archive Lifecycle – auf `main` (PR #108, Merge `70cac163`, ADR-0177). Exact Head `88146dd5`. Auftrag: `docs/ACCOUNT_AP4_ARCHIVE_LIFECYCLE_TASK_2026-08-27.md`. Stand: `docs/ACCOUNT_AP4_ARCHIVE_LIFECYCLE_STATUS_2026-08-27.md`. Ältere „Draft / nicht auf main“-Zeilen sind Pre-Merge-Evidence. Kein AP-5 automatisch.
 13. Admin/Account/Provider-Programme separat weiterführen; kein Slice D, AP-5, S5-B, TW-8, D1 oder G1 ohne eigenen Auftrag
 14. finaler Workspace Intelligence Audit
 15. echte Providerphase

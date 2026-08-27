@@ -3,7 +3,7 @@
 Stand: 27. August 2026  
 Auftrag: GitHub Issue #103  
 Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md` (ADR-0176)  
-Status: **TW7-A Runtime integriert. PR #106 ist das Integrationsvehikel. Issue #103 nach Live-Post-Merge-Verifikation schliessbar.**
+Status: **TW7-A Runtime integriert. PR #106 ist das Integrationsvehikel. Issue #103 ist CLOSED / completed.**
 
 > Live-`main` immer live prüfen. Keine bewegliche Exact-Head-SHA als kanonische Live-Wahrheit.
 
@@ -33,7 +33,7 @@ Nach Landung von PR #106:
 - Gast-`tripAlsUebersicht` liefert dieselben Stages und `itemCount = days.items + ohneTag`.
 - Sichtregel: `Ziel noch offen` / `Name · Name` / `… · ab {origin}`.
 
-Issue #103 ist nach Live-Post-Merge-Verifikation schliessbar. Das ist kein automatischer Folgeslice.
+Issue #103 ist CLOSED / completed. Das ist kein automatischer Folgeslice.
 
 ## 3. Was dieser Slice nicht tut
 

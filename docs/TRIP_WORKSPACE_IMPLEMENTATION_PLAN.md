@@ -164,7 +164,7 @@ Vor Start muss der Technical Lead den exakten benötigten Product-Owner-Schnitt 
 
 **Start-Gate-Ergebnis, 27. August 2026, `main` `beaef64a`:** erfüllt. Hub-Code unverändert seit der Prüfung auf `84f54194`. Der Weg `/account` → `/reisen` → `/reisen/[tripId]` → `TripWorkspace` ist bereits einer. AP-3 besitzt die ableitende Lage; TW-2 besitzt dieselbe Lage im Workspace. Der verbleibende Gap ist die Mehrziel-Kartenidentität plus Gast-`itemCount`, nicht eine zweite Hub-Architektur.
 
-Verbindliche Slice-Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Spec-Status: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_STATUS.md`. Runtime-Status: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert. **TW7-A Runtime ist durch PR #106 integriert.** Issue #103 nach Live-Post-Merge-Verifikation schliessbar. Ältere „Draft / nicht auf main“-Zeilen sind Pre-Merge-Evidence.
+Verbindliche Slice-Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Spec-Status: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_STATUS.md`. Runtime-Status: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert. **TW7-A Runtime ist durch PR #106 integriert.** Issue #103 ist CLOSED / completed. Ältere „Draft / nicht auf main“-Zeilen sind Pre-Merge-Evidence.
 
 ### TW-8 – Commercial Surfaces
 
