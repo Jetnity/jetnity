@@ -3,10 +3,12 @@
 Stand: 27. August 2026  
 Typ: **P1 Security / Migration-History Reconciliation / Production Gate Preparation**  
 Finding: `P1-AAL2-PROD-01`  
-Status: **ALIGNMENT AUF `main` / EINMAL-RUNNER SEPARAT – KEIN PRODUCTION APPLY AUSGEFÜHRT**
+Status: **PRODUCTION AAL2 ANGEWENDET UND VERIFIZIERT / KEIN ZWEITER APPLY**
 
-Historischer Satz „KEIN PRODUCTION APPLY AUTORISIERT“ bleibt Evidence vor Issue #101.
-Der Apply-Pfad selbst steht in `docs/QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_TASK_2026-08-27.md`.
+Die Sätze „KEIN PRODUCTION APPLY AUTORISIERT“, „KEIN PRODUCTION APPLY AUSGEFÜHRT“
+und „VORBEREITUNG“ sind historische Pre-Apply-Evidence vor Kommentar `5442474653`.
+Der Apply-Pfad bleibt in `docs/QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_TASK_2026-08-27.md`.
+**Kein zweiter Apply.**
 
 Bezug:
 
@@ -15,16 +17,19 @@ Bezug:
 - `supabase/migrations/20260826090000_admin_aal2_data_plane.sql`
 - `docs/CHATGPT_TL_LIVE_RECONSTRUCTION_CHECKPOINT_2026-08-27.md`
 
-## 1. Live-Problem
+## 1. Historisches Pre-Apply-Finding
 
-Application-Layer AAL2 ist integriert. Production-Data-Layer AAL2 ist nicht aktiv.
+Dieser Abschnitt beschreibt das Finding **vor** dem Apply. Er ist keine aktuelle
+Production-Aussage.
 
-Production `qscbgcdmivbbnzrcyegn`:
+Application-Layer AAL2 war integriert. Production-Data-Layer AAL2 war nicht aktiv.
 
-- `public.aktuelles_admin_aal2()` fehlt
-- fünf administrative `darf_*()`-Capabilities prüfen nur Mindestrollen
-- sensitive Admin-RLS-Policies hängen an diesen Capabilities
-- administrative SECURITY-DEFINER-RPCs sind für `authenticated` ausführbar und hängen intern an denselben Capabilities
+Production `qscbgcdmivbbnzrcyegn` vor Apply:
+
+- `public.aktuelles_admin_aal2()` fehlte
+- fünf administrative `darf_*()`-Capabilities prüften nur Mindestrollen
+- sensitive Admin-RLS-Policies hingen an diesen Capabilities
+- administrative SECURITY-DEFINER-RPCs waren für `authenticated` ausführbar und hingen intern an denselben Capabilities
 
 Konsequenz:
 
@@ -58,7 +63,8 @@ Repository führt:
 
 - Datei `supabase/migrations/20260826090000_admin_aal2_data_plane.sql`
 
-Production führt keine AAL2-Data-Plane-Version.
+Production führte vor Apply keine AAL2-Data-Plane-Version. Nach Apply führt
+Production `20260827170000_admin_aal2_data_plane_alignment` **exakt einmal**.
 
 Die fachliche Development-Semantik ist live korrekt: Helper vorhanden und alle fünf Capabilities verlangen AAL2.
 
@@ -124,24 +130,26 @@ Technical Lead prüft unabhängig:
 
 Erst danach darf der Product Owner um die **konkrete** Production-Anwendung dieses exakt reviewten Heads gebeten werden.
 
-## 7. Production-Acceptance nach ausdrücklicher Freigabe
+## 7. Production-Acceptance — ausgeführt und verifiziert
 
-Falls und nur falls der Product Owner später ausdrücklich den Production-Apply freigibt:
+Der Technical Lead hat den Apply nach PASS-Review `5043413423` ausgeführt.
+Read-only Evidence aus Kommentar `5442474653`:
 
-- Expected migration/head erneut live prüfen
-- nur die reviewte Alignment-Migration anwenden
-- danach read-only beweisen:
-  - `aktuelles_admin_aal2()` existiert
-  - alle fünf `darf_*()` verlangen Rolle + AAL2
-  - normale Self-Service-Ownership-Policies unverändert
-  - Admin-RPCs liefern mit AAL1 keine privilegierten Daten
-  - AAL2 + korrekte Rolle funktioniert
-- Supabase Security Advisor erneut lesen
-- keine Folgemigration automatisch anwenden
-- Continuity/ADR/Status aktualisieren
+- Production-Head `20260827170000` / `admin_aal2_data_plane_alignment`
+- History-Count **1**
+- `aktuelles_admin_aal2()` existiert
+- alle fünf `darf_*()` verlangen unveränderte Mindestrolle + AAL2
+- `profiles-*`-/Trip-/Traveller-RLS unverändert (35 Policies, MD5 `e128e250656cf8d53c386c0a333d8a0e`)
+- Advisors erhoben; keine neue AAL2-spezifische Warnung
+- keine Folgemigration angewendet
+
+Der frühere Konditional „Falls und nur falls der Product Owner später
+ausdrücklich den Production-Apply freigibt“ ist historische Pre-Apply-Evidence.
 
 ## 8. STOPP
 
-Dieser Task ist eine **Gate-Vorbereitung**. Er ist keine Production-Freigabe.
+Dieser Task ist nach Apply **geschlossen**. Er autorisiert keinen zweiten Apply
+und keinen weiteren Production-Write.
 
-Kein Cursor-Agent wurde durch das Erstellen dieses Tasks gestartet. Der Technical Lead entscheidet nach dem Live-Checkpoint, welchem exakten Cursor-Agenten ein enger Vorbereitungsscope zugewiesen wird. Feature-Arbeit TW-7 bleibt bis zur P1-Entscheidung gestoppt.
+Docs-Closure läuft über Draft-PR #102. ChatGPT macht den docs-only Finalreview
+und den Merge. TW-7 / ADR-0176 aus `main` wird hier nicht umgeschrieben.

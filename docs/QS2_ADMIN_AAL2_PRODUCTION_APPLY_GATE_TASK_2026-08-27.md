@@ -4,13 +4,15 @@ Stand: 27. August 2026
 Issue: #101  
 Finding: `P1-AAL2-PROD-01`  
 Cursor-Agent: `Jetnity quality security audit`  
-Status: **RUNNER VORBEREITET / KEIN PRODUCTION APPLY AUSGEFÜHRT / KEIN READY / KEIN MERGE**
+Status: **PRODUCTION AAL2 ANGEWENDET UND VERIFIZIERT / POST-APPLY DOCS CLOSURE / KEIN ZWEITER APPLY**
 
 Dieser Task gilt nur für den engen fail-closed Einmal-Runner der bereits
 reviewten Datei `supabase/migrations/20260827170000_admin_aal2_data_plane_alignment.sql`.
 
 Er ändert die Migration nicht. Er öffnet `db:anwenden` nicht. Er schreibt
-Production nicht.
+Production nicht. Der Production-Apply ist durch den Technical Lead erfolgt
+(PR-#102-Kommentar `5442474653`). Der frühere Status „KEIN PRODUCTION APPLY
+AUSGEFÜHRT“ ist historische Pre-Apply-Evidence. **Kein zweiter Apply.**
 
 ---
 
@@ -40,9 +42,10 @@ generische Production-Pfad von `db:anwenden` bleibt auf
 | Git-Blob | `4d24d28ff5789a253d0abc6ebd8aa0d6e22a2375` |
 | SHA-256 | `ac4faa87bf994a1fcbad2212384cb2308695820b63a57dc41ee9a763515ad934` |
 | Production | `qscbgcdmivbbnzrcyegn` |
-| Erwarteter Head vor Apply | `20260827010000_reise_anlegen_zero_stage_fail_closed` |
-| Erwarteter Count `20260827170000` vor Apply | 0 |
-| Erwartete Funktion vor Apply | `public.aktuelles_admin_aal2()` fehlt |
+| Historischer Head vor Apply | `20260827010000_reise_anlegen_zero_stage_fail_closed` |
+| Live Head nach Apply | `20260827170000` / `admin_aal2_data_plane_alignment` |
+| Live Count `20260827170000` | **1** |
+| Live Funktion | `public.aktuelles_admin_aal2()` existiert |
 
 Default = lokale Probe, kein Write.
 
@@ -52,7 +55,8 @@ Live-Preflight:
 npm run db:aal2-prod-apply -- --produktion --projekt-ref qscbgcdmivbbnzrcyegn
 ```
 
-Write, nur durch den Technical Lead nach unabhängigem Exact-Head-Review:
+Write-Befehl, historisch nur durch den Technical Lead nach unabhängigem
+Exact-Head-Review. **Nicht erneut ausführen:**
 
 ```bash
 npm run db:aal2-prod-apply -- --schreiben --produktion --projekt-ref qscbgcdmivbbnzrcyegn
@@ -72,5 +76,6 @@ npm run db:aal2-prod-apply -- --schreiben --produktion --projekt-ref qscbgcdmivb
 - keine weiteren Production-Migrationen
 - kein Provider/Payment/TW-7/AP-4/AP-7/TW-8/Homepage
 - keine Lockerung der Phase-3.1-Grenze
-- kein Production-Apply durch diesen Implementierungsauftrag
+- kein zweiter Production-Apply
+- kein Production-Write durch Docs-Closure oder späteren Implementierungsauftrag
 - keine Änderung zentraler TW-7-Continuity-Dateien
