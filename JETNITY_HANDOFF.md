@@ -1,247 +1,223 @@
 # Jetnity – Handoff und nächste Schritte
 
-Stand: 27. August 2026  
-Status: **Production Gate A ist vollständig PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106 und PR #108 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. TW7-A Runtime ist integriert. AP-4 Account Archive Lifecycle ist integriert. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal. Live-`main` immer live prüfen.**
+Stand: 28. August 2026  
+Status: **Kanonischer Post-PR-#113/#114-Übergabestand. P2-TA-06 ist integriert; Issue #112 ist CLOSED / completed. Kein Produkt-Folgeslice ist automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
-Der erste Einstieg bleibt `JETNITY_START_HERE.md`.  
-Aktuelle operative Evidence zusätzlich: `docs/CHATGPT_PR108_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`, `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md` und `docs/ACTIVE_WORK_STATUS.md`.
+> **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
-> **Do not blindly trust this handoff — live verify first.**
+Die ausführliche vorherige Fassung dieses Handoffs bleibt byte-identisch als historische Evidence erhalten unter:
 
-Historische Handoffs, ältere PR-Bodies und Checkpoints bleiben Evidence ihres Zeitpunkts. Sie dürfen Live-Evidence und spätere Product-Owner-Entscheidungen nicht überschreiben.
+- `docs/history/JETNITY_HANDOFF_PRE_PR113_2026-08-27.md`
 
 ## 1. Pflicht vor jeder neuen Arbeit
 
-Lies zuerst mindestens:
+Zuerst vollständig lesen:
 
-- `JETNITY_START_HERE.md`
-- `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`
-- `docs/JETNITY_BINDING_BUILD_ORDER.md`
-- `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
-- `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
-- `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`
-- `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`
-- `JETNITY_HANDOFF.md`
-- `docs/ACTIVE_WORK_STATUS.md`
-- `docs/CHATGPT_PR108_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
-- `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
-- `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
-- `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`
-- `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`
-- `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`
-- relevanten Slice-Task/Status/ADR/Checkpoint.
+1. `JETNITY_START_HERE.md`
+2. `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`
+3. `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
+4. `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`
+5. `docs/JETNITY_GUARDIAN_AND_WHAT_IF_SIMULATOR_STANDARD.md`
+6. `docs/JETNITY_MARKETING_GROWTH_STANDARD.md`
+7. `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`
+8. `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`
+9. `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`
+10. `docs/JETNITY_FUTURE_NATIVE_APP_AND_TECHNICAL_LEAD_STANDARD.md`
+11. `docs/JETNITY_BINDING_BUILD_ORDER.md`
+12. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
+13. `JETNITY_HANDOFF.md`
+14. `docs/ACTIVE_WORK_STATUS.md`
+15. `docs/CHATGPT_PR113_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
+16. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_STATUS_2026-08-27.md`
+17. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
+18. danach alle für den betrachteten Workstream relevanten Slice-Tasks, Statusdateien, Handoffs, ADRs und Checkpoints.
 
-Danach live prüfen: `main`, offene PRs/Drafts, Branches, Ahead/Behind/Merge-Base, tatsächliche Diffs, Actions, Vercel, relevante Supabase-Migrationen/Schema-Zustände, Review-Threads und Blocker.
+Danach live prüfen: `main`, offene PRs/Drafts, Branches, Merge-Base/Ahead/Behind, tatsächliche Diffs, Review-Threads, Actions, Vercel, relevante Supabase-/Production-Grenzen und P0/P1/P2/P3-Risiken.
 
-## 2. Merge- und Product-Owner-Governance
+## 2. Letzter verifizierter Übergabepunkt vor diesem Continuity-PR
 
-> **Autonom mergen ist erlaubt – blind mergen ist verboten.**
+Unmittelbar vor Erstellung dieses docs-only Continuity-Branches wurde live verifiziert:
 
-Technical Lead darf normale scope-treue PRs nach vollständigem unabhängigen PASS Ready setzen und mergen.
+- `main`: `0d8842af99e5645dc3a6c903e19000458122f440`
+- PR #113: **MERGED**
+- PR-#113 reviewed Exact Head: `928215a2c6c4d4ce914f12ba1bd88dbcab8f548b`
+- PR-#113 Merge: `286d26fec2eed87e1227ebb2cf7327f50e8f5f1a`
+- Issue #112: **CLOSED / completed**
+- PR #114: **MERGED**, docs-only Post-Merge-Continuity
+- PR-#114 Merge / damaliger `main`: `0d8842af99e5645dc3a6c903e19000458122f440`
+- Post-Merge GitHub Actions Run `33121881986`: **SUCCESS**
+- Post-Merge Vercel Production Deployment `dpl_5zb67qYv6i5jT23AToSfuEA5sA4c`: **READY** auf exakt `0d8842af99e5645dc3a6c903e19000458122f440`
+- `main` Branch Protection: zuletzt live `protected=false`
 
-Vor Ready/Merge zwingend:
+Diese Werte sind Start-Evidence. Nach diesem Continuity-PR wird `main` naturgemäß einen neueren Merge-SHA erhalten; deshalb immer live verifizieren.
 
-- echten Diff prüfen;
-- Tests und Testannahmen fachlich prüfen;
-- Security/Privacy/Truth/Shared Contracts prüfen;
-- Exact-Head GitHub Actions und Vercel prüfen;
-- relevante Supabase-/Production-Grenzen prüfen;
-- Parallelität/Collision prüfen;
-- bei Fehlern zuerst korrigieren und danach neu gaten.
+## 3. Aktuell integrierte Produktlinie
 
-Besondere Product-Owner-Gates bleiben zwingend für Production-Migrationen/destruktive Daten, große Auth/MFA/AAL/RLS/Identity-Änderungen, sensitive Dokumentdaten, reale Provider/Secrets/paid calls, Payments, Kosten > USD 100/Monat, fundamentale Produkt-/Build-Order-Änderungen und Public-/Provider-/Store-Live-Aktivierungen.
+### Trip Workspace / Search
 
-## 3. Aktuelle Git-/CI-Linie
+Integriert bzw. geschlossen:
 
-Verifizierter Integrationsstand nach PR #98:
+- TW-1
+- TW-2
+- TW-4
+- TW-3
+- TW-5
+- TW6-A
+- TW6-B Runtime / PR #87
+- `TW6-REST-01` geschlossen
+- Visitor Search UX / PR #94
+- TW7-A Runtime / PR #106
+- Issue #103 CLOSED / completed
 
-- Aktuelles `origin/main`: `beaef64a151adceb8f5bc759f58ae9ad13cecc51`
-- GitHub Actions auf exakt diesem SHA: Run `33087558642` SUCCESS
-- GitHub Production-Deployment auf exakt diesem SHA: `6125680097` success
-- PR #98 – AAL2 Production Data-Plane Alignment auf `main`; Production-Apply **nicht** ausgeführt
-- PR #97 – TL-Rekonstruktion + AAL2-Production-Gate-Docs; Merge `4362502b`
-- PR #96 – Post-PR-#94 Continuity; Merge `45be14b1`
-- PR #95 – docs-only New-Chat-Checkpoint
-- PR #94 – `Visitor Search UX: natürliche Orts- und Flughafennamen`
-- PR-#94 Exact Head: `8da869fd2756f3c1514de6d33678c8c7abfad1c4`
-- Technical-Lead PASS review: `5040199350`
-- PR-#94 Exact-Head GitHub Actions Run `33066516282`: SUCCESS
-- PR-#94 Exact-Head Vercel Preview `CBuVobvymHT9m7A4uUKmb2exU4PU`: SUCCESS
-- PR-#94 Merge-Commit auf `main`: `819715b1567417893d894b7b110eff1a2ab6cded`
-- Post-Merge `main` GitHub Actions Run `33067498607`: SUCCESS
-- Post-Merge Vercel `GrD4MaYqtnR9UL619gVnKx9HSUmH`: SUCCESS auf exakt dem Merge-SHA
-- GitHub Production deployment `6121770601`: SUCCESS auf demselben SHA
+TW-8 bleibt hinter Provider-/Commercial-Provenance-Gates. TW-9 wird nicht automatisch gestartet.
 
-PR #87, PR #89 und PR #91 bleiben Teil der Vorgeschichte. Aussagen in älteren Checkpoints, PR #87 bleibe Draft oder Production Gate B sei unangewendet, sind historische Evidence.
+### Traveller / Account
 
-`main` Branch Protection ist weiterhin live deaktiviert (`protected=false`) und bleibt Governance-Risiko.
+Verbindliche Wahrheit:
 
-## 4. Production Gate A – PASS
+> **Ein Traveller → mehrere Staatsbürgerschaften → mehrere Dokumente/Credentials → kontextabhängig bewertete zulässige Optionen.**
 
-Product Owner hat am 27. August 2026 ausschließlich diese Production-Reihenfolge freigegeben:
+- kein Default-Pass
+- Issuer Country ≠ Citizenship
+- kein `documents[0]` oder `evaluations[0]` als Product Truth
+- Foundation E integriert
+- P1-TA-02 geschlossen
+- AP-1, AP-2, AP-3 integriert
+- AP-4 Account Archive Lifecycle / PR #108 integriert
+- AP-4 Continuity / PR #111 integriert
+- P2-TA-06 / PR #113 integriert
+- Issue #112 CLOSED / completed
+- `travellerNormalisieren()` kollabiert mehrere Dokumente nicht mehr auf `documents[0]`
 
-1. `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`
-2. danach `20260824180000_trip_items_flug_handelsfelder_guard`
+AP-5 wird **nicht automatisch** gestartet. AP-7 / Account-Traveller-Registry bleibt separat und gated.
 
-Beide Schritte wurden ausgeführt und unabhängig semantisch verifiziert.
+### Provider / Commercial Provenance
 
-Production-History enthält kanonisch:
+- S1–S3 integriert
+- S5-A integriert
+- S5-B nicht automatisch gestartet
+- keine echten Provider/Secrets/Verträge/paid calls aktiviert
+- TW-8 bleibt gegated
 
-- `20260824160000` → `reise_anlegen_flug_handelsfelder_ohne_nachweis`
-- `20260824180000` → `trip_items_flug_handelsfelder_guard`
+### Admin / AAL2
 
-Finale Verifikation:
+- Admin Foundations A–C integriert
+- zentraler Admin-AAL2 Application Guard integriert
+- Production `20260827170000_admin_aal2_data_plane_alignment` ist **angewendet und verifiziert, exakt einmal**
+- `aktuelles_admin_aal2()` ist live
+- kein zweiter Apply
+- historische Dateien `20260826090000` und Development-`20260826052735` nicht blind anwenden
 
-- `reise_anlegen(jsonb)` strippt bei `flight` untrusted `price_amount`, `price_currency`, `provider`, `external_ref`, `booking_url`;
-- Route-Itinerary-Helper bleibt erhalten;
-- RPC bleibt `SECURITY INVOKER`;
-- `authenticated` EXECUTE=true, `anon`=false;
-- Trigger `trip_items_flug_handelsfelder_schuetzen` genau einmal vorhanden und enabled;
-- Trigger-Scope korrekt;
-- direkte Guard-Funktion für authenticated/anon nicht executable;
-- Production Flight-Items weiterhin 0;
-- Production-Projekt `ACTIVE_HEALTHY`.
+### Production Gates
 
-Vollständige Evidence: `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`.
+- Production Gate A: PASS
+- Production Gate B: operativ PASS
+- Vier-Datei-Vertrag `20260826220000 → 20260826230000 → 20260826240000 → 20260827010000`: bereits angewendet, **kein Re-Apply**
 
-## 5. Production nach Gate B
+## 4. Truth-, Security- und Privacy-Vertrag
 
-Technical-Lead Re-Review vom 27. August 2026: **Production Gate B ist operativ PASS.** Der Vier-Datei-Vertrag `20260826220000 → 20260826230000 → 20260826240000 → 20260827010000` wurde unter Write-Gate angewendet. Der vorherige Post-PR-#91-Stand (TW6-B-Count = 0, keine Mode-Spalte) ist historische Evidence.
+Keine erfundenen Preise, Verfügbarkeit, Provider-Health, Visa-/Einreise-/Safety-/Impf- oder Commercial-Truth.
 
-Weiterhin nicht angewendet:
+Zustände sauber trennen:
 
-- AAL2 Repo-Version `20260826090000`
-- Development-AAL2-Version `20260826052735`
+- `confirmed`
+- `unknown`
+- `stale`
+- `unavailable`
+- `error`
+- `insufficient_context`
+- `empty`
+
+LLM/Assistant darf harte Wahrheit erklären, priorisieren und zusammenfassen, aber nicht erzeugen oder überschreiben.
+
+Keine neue Persistenz von Passnummern, Passscans, MRZ, Biometrie oder anderen besonders sensitiven Identitätsdaten ohne ausdrückliches Product-Owner-Gate.
+
+## 5. Merge- und Product-Owner-Governance
+
+> **AUTONOM MERGEN IST ERLAUBT. BLIND MERGEN IST VERBOTEN.**
+
+Normale scope-treue PRs dürfen nach unabhängigem Exact-Head-Review Ready gesetzt und gemergt werden.
+
+Vor jedem Merge mindestens prüfen:
+
+- Auftrag / Scope / Non-Scope
+- tatsächlichen Diff und Semantik
+- Tests und Testannahmen
+- Truth Contracts
+- Security / Privacy
+- Auth / RLS / Ownership, falls relevant
+- Shared Contracts
+- Exact-Head GitHub Actions
+- Exact-Head Vercel
+- aktuelle Base / Merge-Base / Drift
+- offene Review-Threads
+- Parallelkollisionen
+- P0/P1-Blocker
+- Special Gates
+
+Besondere Product-Owner-Gates bleiben insbesondere für Production-Migrationen/destruktive Daten, große Auth/MFA/AAL/RLS/Identity-Änderungen, sensitive Dokumentdaten, reale Provider/Secrets/paid calls, Payments, Kosten > USD 100/Monat, fundamentale Produkt-/Build-Order-Änderungen, Public Launch, Domain Cutover, Provider-live und Store-Live-Aktivierungen.
+
+## 6. Bekannte Residuals – nicht automatisch priorisieren
+
+Nach Live-Rekonstruktion neu einordnen:
+
+- `main` Branch Protection zuletzt `protected=false`
+- Issue #109: Country-/Alias-/Intent-Relevance der Visitor Search, u. a. Peru / Schweiz / China
+- Issue #110: spätere natürliche Homepage-Mehrziel-Eingabe
+- Visitor Search Real-Device-Browser-Evidence bleibt separat zu prüfen
+- `officialFingerprint` kann außerhalb #112 bei fehlendem `documents[]` Legacy-Singularfelder lesen; separat bewerten, nicht P2-TA-06 erneut öffnen
+- Provider S5-B nicht gestartet
+- TW-8 gated
+- TW-9 nicht automatisch starten
+- AP-5+ nicht automatisch starten
+- AP-7 gated
+- weitere QS-/Supabase-Security-/Performance-Advisories
+- Project-Sanitation PR #88 bleibt non-destructive Evidence; kein Cleanup/Branch-/Cloud-Delete automatisch
+- kein Public Indexing / Domain Cutover ohne Gate
+
+Diese Liste ist keine automatische Prioritätenliste. Binding Build Order + Live-Evidence entscheiden.
+
+## 7. Cursor-Agenten / Rotation
+
+Exakte Basis-Anzeigenamen bleiben verbindlich:
+
+1. `Cursor-Agent: Trip workspace audit architecture`
+2. `Cursor-Agent: Account plattform audit vorbereitung`
+3. `Cursor-Agent: Jetnity provider readiness audit`
+4. `Cursor-Agent: Admin platform audit`
+5. `Cursor-Agent: Jetnity growth discoverability`
+6. `Cursor-Agent: Jetnity quality security audit`
+7. `Cursor-Agent: Jetnity native app architecture`
+
+Zuletzt abgeschlossene Account-/Traveller-Generation:
+
+- `Cursor-Agent: Account plattform audit vorbereitung 4`
+- P2-TA-06 / Issue #112 / PR #113 abgeschlossen
+- nicht automatisch weiterführen
+
+Neue logische Arbeitseinheit → Rotation Standard live prüfen und frische Session verwenden, wenn vorgeschrieben.
+
+## 8. Exakter nächster Technical-Lead-Schritt
+
+**Kein Produkt-Folgeslice ist durch diesen Handoff freigegeben.**
+
+Der nächste Chat / Technical Lead muss zuerst live rekonstruieren und erst danach entscheiden, welcher Slice nach Binding Build Order tatsächlich sinnvoll und zulässig ist.
+
+Nicht automatisch starten:
+
+- AP-5
+- AP-7
+- TW-8
+- TW-9
+- S5-B / Provider-live
+- neue AAL2-Arbeit
 - Direction A
-- andere nicht freigegebene Production-Migrationen
+- Homepage-Mehrziel-Runtime
+- Issue #109 / #110
+- neuer Search-Slice
+- Public Indexing / Domain Cutover
+- Native-App-Implementierung
 
-Dieser Runtime-Slice schreibt Production nicht erneut.
+## 9. Continuity
 
-## 6. TW6-B Vier-Datei-Vertrag — bereits angewendet, kein Re-Apply
-
-Der Vier-Datei-Vertrag ist der **bereits angewendete historische Production-Gate-B-Rollout**. Gate 0B (PR #91) war nur Provenance auf `main`. Der Production-Apply ist laut Technical-Lead Re-Review operativ PASS. **Kein zweiter Apply ist pending.**
-
-Historische Reihenfolge:
-
-`20260826220000 → 20260826230000 → 20260826240000 → 20260827010000`
-
-Sicherheitsregeln bleiben: Development und Production nicht blind erneut mit diesem Bundle migrieren. `db:anwenden` darf die vier Dateien nicht dateiweise ausspielen. Die Zero-Stage-Regel bleibt: 0 Stages fail-closed; `single_destination` nur bei genau einer Stage. Historische Verify-Kriterien des Apply waren:
-
-- 0 Stages → fail-closed (`22023`), kein `single_destination`;
-- `single_destination` nur bei genau einer Stage;
-- kein neuer `legacy_fallback`;
-- Commercial-Gate-A-Nullung bleibt erhalten;
-- Guard-Trigger bleibt enabled;
-- genau vier Gate-B-Versionen in `schema_migrations`.
-
-Development `yfvbxvijcorffwxbxahl` enthält bereits alle vier Versionen. Dort nicht erneut blind anwenden.
-
-## 7. TW6-B / PR #87
-
-PR #87 (`feat/tw6-rest-progressive-stages`) ist gemergt und **schließt `TW6-REST-01`**. Reviewed Head `7ef201fb`. Merge-Commit `80bbde69`. Checkpoint: `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`. Ältere „TW6-REST-01 bleibt offen“-Zeilen sind historische Evidence.
-
-Der Workspace zeigt den Persistenzdefault `balanced` nicht als Nutzerwahl. Kein alter PASS darf als aktuelle Merge- oder Production-Freigabe verwendet werden.
-
-## 8. Trip Workspace
-
-Integriert:
-
-- TW-1 ✅
-- TW-2 ✅
-- TW-4 ✅
-- TW-3 ✅
-- TW-5 ✅
-- TW6-A Create-Entry ✅
-- TW6-B Gate 0 / Provenance ✅
-- TW6-B Gate 0B / Zero-Stage Rollout Provenance ✅
-- TW6-B Runtime / progressive Ziele / Day→Stage Mode Contract via PR #87 ✅ (`TW6-REST-01` geschlossen)
-- Visitor Search UX via PR #94 ✅
-
-Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS und kein offener Apply-Auftrag dieses Continuity-Blocks.
-
-TW-7 bleibt hinter Account-/Hub-Grenzen. TW-8 bleibt hinter Provider S5 und realer Commercial Provenance.
-
-## 9. Traveller / Account
-
-Verbindliche Traveller-Wahrheit:
-
-> Ein Traveller → mehrere Staatsbürgerschaften → mehrere Dokumente/Credentials → kontextabhängig bewertete zulässige Optionen.
-
-Kein Default-Pass. Issuer Country ≠ Citizenship.
-
-Weiter offen u. a.:
-
-- P2-TA-06 `documents[0]` Residual;
-- Account-Traveller-Registry / AP-Folgeslices;
-- historische Account-Plan-Evidence aus PR #39.
-
-## 10. Provider / Commercial Provenance
-
-S1–S3 und S5-A sind integriert. S5-B nicht gestartet.
-
-Keine echten Provider, keine Secrets/Verträge/paid calls, keine Provider-Live-Aktivierung durch Gate A oder Gate 0B.
-
-TW-8 bleibt gegated.
-
-## 11. Admin AAL2
-
-Application-Guard ist im Code integriert. PR #102 ist integriert.
-
-Production `20260827170000_admin_aal2_data_plane_alignment` ist angewendet und verifiziert, exakt einmal. `aktuelles_admin_aal2()` ist live. Admin-Capabilities verlangen Rolle **UND** aktuelles AAL2. Kein zweiter Apply.
-
-Historische Dateien `20260826090000` und Development-`20260826052735` bleiben unangewendet. Ältere Sätze „Production-AAL2-Datenebene bleibt nicht angewendet“ oder „Apply bleibt ein Gate“ sind Pre-Apply-Evidence. Gate A und Gate 0B haben AAL2 nicht verändert.
-
-## 12. D0 / Growth
-
-D0-1, D0-2 und P1-D0-LIVE-01 sind integriert.
-
-- Canonical `https://jetnity.com`
-- `*.vercel.app` niemals kanonisch
-- robots fail-closed
-- Default noindex/nofollow
-- kein Domain-Cutover
-- kein Public Indexing
-
-Offen bleiben u. a. D0-P1-03 Legal-404 und spätere D0/G0-Reste. Kein D1/G1 automatisch starten.
-
-## 13. Quality / Security / Sanitation
-
-Separate Security-/Performance-Funde bleiben eigene QS-Arbeit.
-
-Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Cleanup, Branch-Delete, Supabase-Delete, Vercel-Delete oder Cloud-Decommission automatisch ausführen.
-
-Supabase-Inventur zeigt weiterhin zwei Top-Level-Projekte: das aktive Production-Elternprojekt `qscbgcdmivbbnzrcyegn` (`Jetnity's Project`) und das alte/weitere Projekt `jrixsujkzvlvglvcmtia` (`jetnity-bets`). Eine Decommission-Entscheidung bleibt separat Product-Owner-gated.
-
-## 14. Offene PRs / historische Evidence
-
-Operativ relevant:
-
-- PR #108 – AP-4 Account Archive Lifecycle **integriert**. Merge `70cac163`. Stand: `docs/ACCOUNT_AP4_ARCHIVE_LIFECYCLE_STATUS_2026-08-27.md`. ADR-0177. Ältere „Draft / nicht auf main“-Zeilen sind Pre-Merge-Evidence.
-- PR #106 – TW7-A Runtime Issue #103 **integriert**. Integrationsvehikel. Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Issue #103 ist CLOSED / completed. Ältere „Draft / nicht auf main“-Zeilen sind Pre-Merge-Evidence.
-- PR #102 – AAL2 Production-Apply-Gate-Closure **integriert**. Historische Start-Baseline von TW7-A war `963186f4`. Production-Apply von `20260827170000` ist ausgeführt und verifiziert, exakt einmal.
-- PR #100 – TW-7-Gap / ADR-0176 / TW7-A-Spec **versioniert bzw. nach Landung integriert**. Spec bleibt bindend.
-- PR #98 – AAL2 Alignment **integriert** (`beaef64a`). Historische Linie vor PR #102.
-- PR #97 – gemergt; TL-Rekonstruktion
-- PR #96 – Post-PR-#94 Continuity **integriert/geschlossen**. Merge `45be14b1`.
-- PR #95 – gemergt; New-Chat-Checkpoint `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
-- PR #94 – gemergt; Visitor Search UX integriert
-- PR #88 – Project Sanitation Audit; non-destructive Evidence, kein Cleanup automatisch
-- PR #87 – gemergt; Checkpoint `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`
-
-Historische offene Drafts wie #52, #50, #40, #39, #28 bleiben Evidence und werden nicht blind wieder aufgenommen oder gelöscht.
-
-PR #89 und PR #91 sind gemergt und keine aktiven Drafts mehr.
-
-## 15. Exakter nächster Technical-Lead-Schritt
-
-TW7-A Runtime ist integriert (PR #106). Issue #103 ist CLOSED / completed. AP-4 ist integriert (PR #108). Kein AP-5 automatisch.
-
-Live-`main` immer live prüfen. `963186f4` (PR #102) bleibt ausdrücklich historische Start-Evidence von TW7-A.
-
-Visitor Search UX ist integriert. Production Gate B ist operativ PASS, kein Re-Apply. `TW6-REST-01` ist geschlossen. Production-AAL2 ist angewendet, kein zweiter Apply.
-
-**Kein automatischer Folgeslice. Kein Direction A. Kein TW-8/9. Kein weiterer Production-Write aus diesem Dokumentensatz.**
-
-## 16. Continuity
-
-Kein wesentlicher Fortschritt darf nur im Chat existieren. Neue Chats und Agenten lesen zuerst die kanonischen Dateien und rekonstruieren danach Live-Evidence. Screenshots, ältere SHAs und alte PR-Bodies sind nur historische Evidence.
+Kein wesentlicher Fortschritt darf nur im Chat existieren. Neue Chats und Agenten beginnen mit den kanonischen Dateien, behandeln ältere Checkpoints/PR-Bodies als zeitgebundene Evidence und verifizieren danach den Live-Zustand selbst.
