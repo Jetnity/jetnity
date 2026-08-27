@@ -2,7 +2,7 @@
 
 **Owner:** `Cursor-Agent: Trip workspace audit architecture`
 
-**Status:** Technical-Lead task definition. Separate follow-up after merged PR #87.
+**Status:** Implementation Draft in progress on `cursor/visitor-search-ux-b13d`. Separate follow-up after merged PR #87. Not Ready. Not merged.
 
 ## Goal
 

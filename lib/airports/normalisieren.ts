@@ -52,3 +52,31 @@ export function gleichGefaltet(links: string | null | undefined, rechts: string)
   if (!links) return false
   return falten(links) === falten(rechts) || falten(umlauteExpandieren(links)) === falten(rechts)
 }
+
+/** Rest nach einem gefalteten Präfix. Leer, wenn der Name nicht mit der Suche beginnt. */
+export function restNachPrefixGefaltet(name: string | null | undefined, suche: string): string {
+  const rest = prefixRest(name, suche)
+  return rest ? rest.trim() : ''
+}
+
+export function prefixGrenze(
+  name: string | null | undefined,
+  suche: string,
+): 'none' | 'exact' | 'same-word' | 'next-token' {
+  const rest = prefixRest(name, suche)
+  if (rest === null) return 'none'
+  if (rest.length === 0) return 'exact'
+  if (/^[\s,/_-]/.test(rest)) return 'next-token'
+  return 'same-word'
+}
+
+function prefixRest(name: string | null | undefined, suche: string): string | null {
+  if (!name) return null
+  const nadel = falten(suche)
+  if (!nadel) return null
+  const direkt = falten(name)
+  if (direkt.startsWith(nadel)) return direkt.slice(nadel.length)
+  const erweitert = falten(umlauteExpandieren(name))
+  if (erweitert.startsWith(nadel)) return erweitert.slice(nadel.length)
+  return null
+}

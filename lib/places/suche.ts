@@ -9,9 +9,15 @@ import {
   sucheVarianten,
 } from '@/lib/airports/normalisieren'
 import { ortPasstZurRolle, type Ort, type OrtOption, type OrtRolle } from '@/lib/places/domain'
+import { namensRangMitWortanfang } from '@/lib/suche/relevanz'
 
-const ORT_TREFFER = 12
+export const ORT_TREFFER = 6
+const ORT_TREFFER_MAX = 8
 export const ORT_ABFRAGE = 40
+
+const STARK_RANG = 2_800
+const MIN_RANG_BEI_STARK = 1_500
+const MIN_RANG = 200
 
 export function sucheSicher(wert: string): string {
   return wert.replace(/[%_,.()\\*]/g, '').trim()
@@ -48,30 +54,24 @@ export function ortSchluesselfilter(suche: string): string | null {
   return teile.map((teil) => `keywords.ilike.%${teil}%`).join(',')
 }
 
-function nameAlsWort(name: string | null | undefined, suche: string): boolean {
-  if (!name) return false
-  if (beginntGefaltet(name, suche)) return true
-  return enthaeltGefaltet(name, ` ${suche}`) || enthaeltGefaltet(name, `-${suche}`)
-}
-
 function keywordAlsWort(keywords: string | null | undefined, suche: string): boolean {
   if (!keywords) return false
   return keywords.split(',').some((teil) => {
     const wort = teil.trim()
-    return gleichGefaltet(wort, suche) || nameAlsWort(wort, suche)
+    return gleichGefaltet(wort, suche) || beginntGefaltet(wort, suche)
   })
 }
 
 function typBonus(ort: Ort, rolle: OrtRolle): number {
   if (rolle === 'abreise') {
-    if (ort.typ === 'airport' && ort.iata) return 60
-    if (ort.typ === 'city') return 80
+    if (ort.typ === 'airport' && ort.iata) return 80
+    if (ort.typ === 'city') return 100
     return 0
   }
-  if (ort.typ === 'country') return 70
-  if (ort.typ === 'region') return 60
-  if (ort.typ === 'island') return 55
-  if (ort.typ === 'city') return 40
+  if (ort.typ === 'country') return 220
+  if (ort.typ === 'region') return 90
+  if (ort.typ === 'island') return 80
+  if (ort.typ === 'city') return 50
   return 0
 }
 
@@ -82,28 +82,47 @@ function ortRang(ort: Ort, suche: string, rolle: OrtRolle): number {
   let treffer = 0
 
   if (ort.iata && ort.iata === up) treffer += 10_000
-  if (gleichGefaltet(ort.name, raw)) treffer += 2_000
-  else if (nameAlsWort(ort.name, raw)) treffer += 1_400
+  treffer += namensRangMitWortanfang(ort.name, raw)
 
-  if (gleichGefaltet(ort.region, raw)) treffer += 500
-  if (keywordAlsWort(ort.keywords, raw)) treffer += 400
+  if (gleichGefaltet(ort.region, raw)) treffer += 180
+  if (keywordAlsWort(ort.keywords, raw)) {
+    const genauesKeyword = (ort.keywords ?? '')
+      .split(',')
+      .some((teil) => gleichGefaltet(teil.trim(), raw))
+    treffer += genauesKeyword ? 700 : 220
+  }
   if (treffer === 0) return 0
-  if (enthaeltGefaltet(ort.country, raw)) treffer += 80
+  if (enthaeltGefaltet(ort.country, raw)) treffer += 40
+
+  if (rolle === 'abreise' && ort.typ === 'airport') {
+    if (gleichGefaltet(ort.region, raw) || keywordAlsWort(ort.keywords, raw)) treffer += 1_600
+  }
+
   return treffer + typBonus(ort, rolle)
 }
 
+function ortBeschreibung(ort: Ort): string | undefined {
+  const teile = [ort.typ === 'country' ? null : ort.region, ort.country].filter(
+    (wert, i, alle): wert is string => Boolean(wert) && alle.indexOf(wert) === i,
+  )
+  return teile.length > 0 ? teile.join(', ') : undefined
+}
+
 function ortAlsOption(ort: Ort): OrtOption {
-  const zusatz = [ort.region, ort.country].filter((wert, i, alle) => wert && alle.indexOf(wert) === i)
-  const iata = ort.iata ? `${ort.iata} — ` : ''
   return {
     id: ort.id,
-    label: `${iata}${ort.name}`,
-    description: zusatz.join(', ') || undefined,
+    label: ort.name,
+    description: ortBeschreibung(ort),
     typ: ort.typ,
+    iata: ort.iata ?? undefined,
   }
 }
 
-export function orteOrdnen(orte: Ort[], suche: string, rolle: OrtRolle): OrtOption[] {
+function orteBewerten(
+  orte: Ort[],
+  suche: string,
+  rolle: OrtRolle,
+): Array<{ ort: Ort; rang: number }> {
   return orte
     .filter((ort) => ortPasstZurRolle(ort, rolle))
     .map((ort) => ({ ort, rang: ortRang(ort, suche, rolle) }))
@@ -112,6 +131,23 @@ export function orteOrdnen(orte: Ort[], suche: string, rolle: OrtRolle): OrtOpti
       if (b.rang !== a.rang) return b.rang - a.rang
       return a.ort.name.localeCompare(b.ort.name)
     })
-    .slice(0, ORT_TREFFER)
-    .map(({ ort }) => ortAlsOption(ort))
+}
+
+export function schluesselErgaenzungNoetig(orte: Ort[], suche: string, rolle: OrtRolle): boolean {
+  const starke = orteBewerten(orte, suche, rolle).filter((eintrag) => eintrag.rang >= STARK_RANG)
+  return starke.length < 3
+}
+
+function begrenzen(bewertet: Array<{ ort: Ort; rang: number }>): Array<{ ort: Ort; rang: number }> {
+  const hatStark = bewertet.some((eintrag) => eintrag.rang >= STARK_RANG)
+  const sichtbar = bewertet.filter((eintrag) =>
+    hatStark ? eintrag.rang >= MIN_RANG_BEI_STARK : eintrag.rang >= MIN_RANG,
+  )
+  const nurStark = sichtbar.filter((eintrag) => eintrag.rang >= STARK_RANG)
+  const limit = nurStark.length > ORT_TREFFER && nurStark.length <= ORT_TREFFER_MAX ? ORT_TREFFER_MAX : ORT_TREFFER
+  return sichtbar.slice(0, limit)
+}
+
+export function orteOrdnen(orte: Ort[], suche: string, rolle: OrtRolle): OrtOption[] {
+  return begrenzen(orteBewerten(orte, suche, rolle)).map(({ ort }) => ortAlsOption(ort))
 }

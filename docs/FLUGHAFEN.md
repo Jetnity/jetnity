@@ -60,13 +60,13 @@ Gespeichert werden IATA, ICAO (soweit eindeutig), offizieller Name, Stadt, Regio
 1. genauer IATA-Treffer
 2. genauer ICAO-Treffer
 3. Code-Präfix
-4. Stadt, dann Name (exakt, Anfang, Teil)
-5. Keywords, Region, Land
+4. Stadt und Name (exakt, Wortanfang, qualifizierter Zusatz)
+5. genaue Keyword-Aliase derselben Stadt, nicht lose Teilstrings
 6. Klassenbonus (`large` vor `medium` vor `small`)
 
-Umlaute werden gefaltet (`Zürich` trifft `Zurich`). Städte mit mehreren Flughäfen bleiben mehrere Treffer (London: LHR und LGW; New York: JFK und EWR; Tokio: HND und NRT). Gleichnamige Städte bleiben über Land/Region unterscheidbar.
+Umlaute werden gefaltet (`Zürich` trifft `Zurich`). Städte mit mehreren Flughäfen bleiben mehrere Treffer (London: LHR und LGW; New York: JFK und EWR; Tokio: HND und NRT); Jetnity wählt keinen still. Hat eine Stadt genau einen relevanten Grossflughafen, darf die Stadtzeile denselben bestätigten IATA zeigen. Optionen ohne IATA sind nicht auswählbar. Die UI zeigt `Name · IATA`; der Request an `/api/flights/search` trägt nur den bestätigten Code.
 
-Die Abfrage holt höchstens 80 Zeilen, die Antwort höchstens 12 Optionen. Sonderzeichen, die PostgREST-`.or()` oder `LIKE` zerlegen würden, werden vorher entfernt.
+Die Abfrage holt höchstens 80 Zeilen, die Antwort höchstens 6 relevante Optionen plus optional eine Stadtzeile. Sonderzeichen, die PostgREST-`.or()` oder `LIKE` zerlegen würden, werden vorher entfernt.
 
 ---
 

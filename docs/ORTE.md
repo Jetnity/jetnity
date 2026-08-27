@@ -90,11 +90,13 @@ Der Modellweg löst Abreise und Etappen serverseitig gegen `public.places` auf. 
 
 Umlaute werden gefaltet (`Südtirol` trifft `South Tyrol` über Keywords). Gleichnamige Orte bleiben über Land/Region unterscheidbar (`Paris, France`).
 
-Die Abfrage sucht zuerst im Namen und in der IATA, nicht im Land. Für die Abreise werden passende Flughäfen extra dazugeholt, damit `Zürich` auch `ZRH` trifft. Nur wenn weniger als zwölf Namens­treffer da sind, kommen Keywords dazu (`Südtirol`, `Toskana`). Sonst würden `Thailand` oder `Japan` in den Städten desselben Landes untergehen. Rang zählt nur Wortanfang oder exakten Namen, nicht beliebige Teilstrings.
+Die Abfrage sucht zuerst im Namen und in der IATA, nicht im Land. Für die Abreise werden passende Flughäfen extra dazugeholt, damit `Zürich` auch `ZRH` trifft. Keywords (`Südtirol`, `Toskana`) kommen nur dazu, wenn die Namens­treffer noch keine kleine, starke Menge bilden. Sonst würden `Thailand` oder `Japan` in den Städten desselben Landes untergehen.
+
+Rang: exakter Name vor starkem Präfix vor späterem Wort oder Keyword. Rolle zählt mit: ein Land gewinnt als Reiseziel gegen lose Keyword-Treffer; Abreise hebt die primäre Stadt und den zugehörigen Flughafen über Bezirke und entfernte Gleichnamen. Gleichnamige echte Orte bleiben über Typ, Region und Land unterscheidbar. Die Liste wird nicht aufgefüllt, nur damit sie lang wirkt; sichtbar bleiben etwa 4–6 relevante Treffer, höchstens 8 wenn alle weiterhin stark sind.
 
 Die Eingabe `Test` ist ein Platzhalter und liefert bewusst keine Treffer. Ein realer Ort wie Testaccio bleibt über den vollen Namen erreichbar.
 
-Die Abfrage holt höchstens 80 Zeilen, die Antwort höchstens 12 Optionen. Sonderzeichen, die PostgREST-`.or()` oder `LIKE` zerlegen würden, werden vorher entfernt.
+Die Abfrage holt höchstens 40 Zeilen, die Antwort höchstens 6–8 Optionen. Sonderzeichen, die PostgREST-`.or()` oder `LIKE` zerlegen würden, werden vorher entfernt. Die UI zeigt den verständlichen Namen zuerst; IATA ist Zusatz, nie vorausgesetztes Wissen. Persistiert wird weiterhin nur die kanonische Place-ID.
 
 Startseite und `/planen` nutzen dieselbe Komponente (`OrtSuche`) und dieselbe Fachregel (`lib/places/auswahl.ts`, `lib/places/pruefen.ts`). Nur Text ohne bestätigten Treffer wird nicht als Ort gespeichert.
 

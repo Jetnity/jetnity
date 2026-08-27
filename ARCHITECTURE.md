@@ -341,7 +341,7 @@ Die Konto-Übernahme speichert keine Browseroption. Sie prüft den Reisegraphen 
 
 ### Flughafenbasis (Phase 3.1)
 
-`GET /api/search/airports` liest ausschliesslich `public.airports`. Der Bestand kommt aus OurAirports Open Data (Public Domain), gefiltert und idempotent über `npm run airports:importieren` geschrieben. Weder Build noch CI noch eine Nutzersuche laden den Upstream. Production-Schreiben nur über [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md). Fachlich: [docs/FLUGHAFEN.md](docs/FLUGHAFEN.md), ADR-0066.
+`GET /api/search/airports` liest ausschliesslich `public.airports`. Der Bestand kommt aus OurAirports Open Data (Public Domain), gefiltert und idempotent über `npm run airports:importieren` geschrieben. Weder Build noch CI noch eine Nutzersuche laden den Upstream. Production-Schreiben nur über [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md). Die Workspace-Felder Von/Nach nutzen dieselbe Route als Combobox: natürliche Namen und IATA sind Eingabe, auswählbar ist nur ein verifizierter IATA-Code. Fachlich: [docs/FLUGHAFEN.md](docs/FLUGHAFEN.md), ADR-0066, ADR-0174.
 
 ### Hotelsuche (Phase 3.2 / 3.2c)
 
@@ -409,7 +409,7 @@ Fachlich: [docs/TRAVEL_TIMING_SEASONAL.md](docs/TRAVEL_TIMING_SEASONAL.md).
 
 ### Ortsbasis (Phase 3.1)
 
-`GET /api/search/places` liest ausschliesslich `public.places`. Der Bestand kommt aus dem GeoNames-Dump (CC BY 4.0) plus Flughafen-Zeilen aus `public.airports`. Development enthält nach dem ersten Import 124 811 Orte. Kein Live-Geocoding, keine Google-/Nominatim-Abfrage. Startseite und `/planen` teilen dieselbe Auswahlkomponente und dieselbe Serverprüfung. Der Modellweg löst eindeutige Orte gegen dieselbe Tabelle auf und rät nicht. Schema und Inhalt für Production nur über den kontrollierten Rollout in [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md) (ADR-0069). Fachlich: [docs/ORTE.md](docs/ORTE.md), ADR-0067.
+`GET /api/search/places` liest ausschliesslich `public.places`. Der Bestand kommt aus dem GeoNames-Dump (CC BY 4.0) plus Flughafen-Zeilen aus `public.airports`. Development enthält nach dem ersten Import 124 811 Orte. Kein Live-Geocoding, keine Google-/Nominatim-Abfrage. Startseite und `/planen` teilen dieselbe Auswahlkomponente und dieselbe Serverprüfung. Rang und Combobox-UX stehen in `lib/places/suche.ts` bzw. `OrtSuche`; persistiert wird nur die kanonische Place-ID. Der Modellweg löst eindeutige Orte gegen dieselbe Tabelle auf und rät nicht. Schema und Inhalt für Production nur über den kontrollierten Rollout in [docs/PRODUCTION_ROLLOUT.md](docs/PRODUCTION_ROLLOUT.md) (ADR-0069). Fachlich: [docs/ORTE.md](docs/ORTE.md), ADR-0067, ADR-0174.
 
 ### Kostenkontrolle bei Modellaufrufen
 

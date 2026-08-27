@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 27. August 2026  
-Status: **PR #91 / TW6-B Gate 0B ist integriert. Production Gate A ist vollständig PASS. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87 bleibt Draft; aktueller Korrekturscope ist die Workspace-Tempo-Wahrheit. Frühere Aussagen „Production Gate B nicht angewendet“ sind historische Evidence.**
+Status: **PR #91 / TW6-B Gate 0B ist integriert. Production Gate A ist vollständig PASS. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87 ist gemergt. Aktueller offener Slice: Visitor Search UX. Frühere Aussagen „Production Gate B nicht angewendet“ bzw. „PR #87 bleibt Draft“ sind historische Evidence.**
 
 Der erste Einstieg bleibt `JETNITY_START_HERE.md`.  
 Aktuelle operative Evidence zusätzlich: `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`, `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md` und `docs/ACTIVE_WORK_STATUS.md`.
@@ -200,8 +200,9 @@ Supabase-Inventur zeigt weiterhin zwei Top-Level-Projekte: das aktive Production
 
 Operativ relevant:
 
-- PR #87 – TW6-B Runtime-Draft; Sync erfolgt; aktueller P1 ist Workspace-Tempo-Wahrheit
+- Visitor Search UX – eigener Draft gegen aktuelles `main`; Task `docs/TRIP_WORKSPACE_VISITOR_SEARCH_UX_TASK.md`
 - PR #88 – Project Sanitation Audit; non-destructive Evidence, kein Cleanup automatisch
+- PR #87 – gemergt; Checkpoint `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`
 
 Historische offene Drafts wie #52, #50, #40, #39, #28 bleiben Evidence und werden nicht blind wieder aufgenommen oder gelöscht.
 
@@ -209,7 +210,7 @@ PR #89 und PR #91 sind gemergt und keine aktiven Drafts mehr.
 
 ## 15. Exakter nächster Technical-Lead-Schritt
 
-**Unabhängiger Finalreview von Draft-PR #87 nach der Workspace-Tempo-Korrektur.**
+**Unabhängiger Finalreview des Visitor-Search-UX-Drafts nach Exact-Head-Gates.**
 
 Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. Die frühere Anweisung, zuerst um Gate-B-Freigabe zu bitten, ist historische Evidence.
 

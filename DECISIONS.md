@@ -4292,6 +4292,27 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 ---
 
+## ADR-0174 – Visitor Search zeigt natürliche Namen, persistiert nur kanonische IDs
+
+**Datum:** 27. August 2026  
+**Status:** umgesetzt im Draft-Slice, nicht gemergt
+
+**Entscheidung:** Orts- und Flughafensuche bleiben lokale Read-only-Routen (`/api/search/places`, `/api/search/airports`). Die UI akzeptiert natürliche Namen. Vorschläge sind Auswahlhilfe. Persistierte Wahrheit bleibt die kanonische Place-ID bzw. ein aus der Liste bestätigter IATA-Code. Rang folgt allgemein Exact > starker Prefix > späteres Wort/Keyword und der Rolle (`ziel` / `abreise`). Die Liste wird nicht aufgefüllt, nur damit sie lang wirkt. Ein Stadtname mit mehreren plausiblen Flughäfen zeigt die Auswahl; Jetnity erfindet keinen Code. Trip-Origin/Destination werden nur dann als Flughafen vorausgefüllt, wenn die Place-ID `airport:XXX` ist.
+
+**Kontext:** Nach gemergtem PR #87 war die nächste visitor-facing Korrektur die natürliche Suche. Die alte Rangliste füllte bis 12 Treffer inkl. Keyword-Backfill; Flight-Von/Nach verlangten drei Buchstaben und extrahierten IATA aus Freitext.
+
+**Alternativen:**
+
+1. *Neuer Geocoding-/Airport-Provider.* Abgelehnt: Kosten, Truth-Grenze, Non-Scope.
+2. *Peru-/Zürich-Hardcodes.* Abgelehnt: muss weltweit generalisieren.
+3. *Freitext als IATA, wenn er drei Buchstaben hat.* Abgelehnt: unbestätigter Text ist keine Airport-Wahrheit.
+
+**Begründung:** Ein normaler Reisender darf keine technischen Orts- oder Flughafenkenntnisse brauchen. Komplexität bleibt intern.
+
+**Konsequenzen:** Keine Schema- oder Production-Änderung. Kein neuer laufender Provider. Commercial Flight Truth unverändert. Draft bleibt Draft, bis der Technical Lead unabhängig reviewed.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
