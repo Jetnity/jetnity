@@ -3,16 +3,17 @@
 // components/trips/KontoReisenGruppen.tsx
 //
 // Ableitende Gruppen für Kontoreisen. Klassifikation erst am Geräte-Kalendertag.
-// Kein Archiv-Write, kein zweites Modell, keine Workspace-Karten.
+// Archivfilter ist von der date-only-Lage getrennt. Kein Workspace, keine
+// verschachtelten Aktionen in der Reisekarte.
 
 import { useEffect, useMemo, useState } from 'react'
-import type { Route } from 'next'
 import { Search } from 'lucide-react'
 
 import { heutigesDatum } from '@/lib/account/naechste-reise'
-import { reisePasstZurSuche, reisenGruppenAus, type ReiseGruppen } from '@/lib/account/reise-lage'
+import { archivierteReisenAus, kontoReisenSichten, offeneReisenAus } from '@/lib/account/reise-archiv'
+import { reisePasstZurSuche, type ReiseGruppen } from '@/lib/account/reise-lage'
 import { REISEN_LISTE_GRENZE } from '@/lib/trips/liste-grenze'
-import Reisekarte from '@/components/trips/Reisekarte'
+import KontoReiseEintrag from '@/components/trips/KontoReiseEintrag'
 import type { TripSummary } from '@/types/trips'
 
 const GRUPPEN: { key: keyof ReiseGruppen; titel: string; leer: string }[] = [
@@ -30,12 +31,14 @@ export default function KontoReisenGruppen({ reisen }: { reisen: readonly TripSu
     setHeute(heutigesDatum())
   }, [])
 
+  const sucheAktiv = suche.trim().length > 0
   const sichtbar = useMemo(
     () => reisen.filter((reise) => reisePasstZurSuche(reise, suche)),
     [reisen, suche],
   )
-  const gruppen = heute ? reisenGruppenAus(sichtbar, heute) : null
-  const sucheAktiv = suche.trim().length > 0
+  const offen = useMemo(() => offeneReisenAus(sichtbar), [sichtbar])
+  const archiv = useMemo(() => archivierteReisenAus(sichtbar), [sichtbar])
+  const sicht = useMemo(() => (heute ? kontoReisenSichten(reisen, suche, heute) : null), [reisen, suche, heute])
   const keineSuche = sucheAktiv && sichtbar.length === 0
 
   return (
@@ -46,7 +49,7 @@ export default function KontoReisenGruppen({ reisen }: { reisen: readonly TripSu
           className="mb-5 rounded-2xl border border-line-200 bg-white px-4 py-3 text-sm leading-6 text-ink-700"
         >
           Höchstens die {REISEN_LISTE_GRENZE} zuletzt geänderten Reisen werden geladen und
-          angezeigt. Suche und Gruppen gelten nur für diese geladene Auswahl.
+          angezeigt. Suche, Gruppen und Archiv gelten nur für diese geladene Auswahl.
         </p>
       ) : null}
 
@@ -69,16 +72,21 @@ export default function KontoReisenGruppen({ reisen }: { reisen: readonly TripSu
         <p className="rounded-[26px] border border-dashed border-line-400 bg-white/65 px-6 py-10 text-center text-sm leading-6 text-ink-700">
           Keine Reise passt zur Suche.
         </p>
-      ) : !gruppen ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true">
-          {sichtbar.map((reise) => (
-            <Reisekarte key={reise.id} reise={reise} href={`/reisen/${reise.id}` as Route} quelle="account" />
-          ))}
+      ) : !sicht ? (
+        <div className="space-y-10">
+          {offen.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true">
+              {offen.map((reise) => (
+                <KontoReiseEintrag key={reise.id} reise={reise} />
+              ))}
+            </div>
+          ) : null}
+          <ArchivAbschnitt eintraege={archiv} />
         </div>
       ) : (
         <div className="space-y-10">
           {GRUPPEN.map((gruppe) => {
-            const eintraege = gruppen[gruppe.key]
+            const eintraege = sicht.gruppen[gruppe.key]
             if (sucheAktiv && eintraege.length === 0) return null
             return (
               <section key={gruppe.key} aria-labelledby={`reisen-gruppe-${gruppe.key}`}>
@@ -93,20 +101,36 @@ export default function KontoReisenGruppen({ reisen }: { reisen: readonly TripSu
                 ) : (
                   <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                     {eintraege.map((reise) => (
-                      <Reisekarte
-                        key={reise.id}
-                        reise={reise}
-                        href={`/reisen/${reise.id}` as Route}
-                        quelle="account"
-                      />
+                      <KontoReiseEintrag key={reise.id} reise={reise} />
                     ))}
                   </div>
                 )}
               </section>
             )
           })}
+          <ArchivAbschnitt eintraege={sicht.archiv} />
         </div>
       )}
     </div>
+  )
+}
+
+function ArchivAbschnitt({ eintraege }: { eintraege: readonly TripSummary[] }) {
+  if (eintraege.length === 0) return null
+
+  return (
+    <section aria-labelledby="reisen-gruppe-archiv">
+      <h2
+        id="reisen-gruppe-archiv"
+        className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600"
+      >
+        Archiv
+      </h2>
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {eintraege.map((reise) => (
+          <KontoReiseEintrag key={reise.id} reise={reise} />
+        ))}
+      </div>
+    </section>
   )
 }
