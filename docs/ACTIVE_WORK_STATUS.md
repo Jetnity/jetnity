@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 27. August 2026  
-Status: **Production Gate A ist PASS. PR #91 / TW6-B Gate 0B ist auf `main`. Production Gate B ist weiterhin NICHT freigegeben und NICHT angewendet. PR #87 bleibt Draft und ist der nächste operative Runtime-Schritt: gegen den neuen `main` synchronisieren, vollständig rekonstruieren und re-gaten.**
+Status: **Production Gate A ist PASS. PR #91 / TW6-B Gate 0B ist auf `main`. Production Gate B ist weiterhin NICHT freigegeben und NICHT angewendet. PR #87 ist auf diesem Branch mit `main` `d28e11be` synchronisiert und bleibt Draft; nächster Schritt ist der unabhängige Technical-Lead-Review des neuen Exact Head.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -91,7 +91,7 @@ Durch PR #91 ist der verbindliche spätere Gate-B-Vertrag jetzt:
 
 Alle vier Dateien gehören unter denselben bounded Write-Gate-/Transaktionsvertrag. Kein dateiweises Apply. `27010000` schließt den Zero-Stage-Falschmode: 0 Stages fail-closed, `single_destination` nur bei genau einer Stage.
 
-PR #87 (`feat/tw6-rest-progressive-stages`) bleibt der Runtime-Draft für progressive weitere Ziele / Day→Stage Mode Contract. Nach PR #91 muss er gegen den neuen `main` scope-sicher synchronisiert und vollständig neu gegatet werden.
+PR #87 (`feat/tw6-rest-progressive-stages`) bleibt der Runtime-Draft für progressive weitere Ziele / Day→Stage Mode Contract. Er ist auf diesem Branch mit `origin/main` `d28e11be2778fd0c5f60e436029d4dc04aea5615` synchron (Merge-Base = `main`, behind 0). `20260827010000` bleibt byte-identisch zur `main`-Datei und liegt nicht erneut im PR-Diff. Alte Exact-Head-CI/Vercel von `b93a6fff` sind historisch.
 
 TW-7 bleibt hinter Account-/Hub-Grenzen. TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance; S5-A allein ist kein TW-8-Start.
 
@@ -169,7 +169,7 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#87** TW6-B Runtime + Mode Contract | **OFFENER Runtime-Draft.** Nach PR #91 gegen neuen `main` synchronisieren, echten Diff prüfen und neu gaten. |
+| **#87** TW6-B Runtime + Mode Contract | **OFFENER Runtime-Draft.** Mit `main` `d28e11be` synchronisiert. Neuen Exact Head gaten; nicht Ready, nicht mergen. |
 | **#88** Project Sanitation Audit | Non-destructive Audit-Evidence. Kein Cleanup automatisch. |
 | #52 ChatGPT TL handoff 2026-08-24 | HISTORICAL / SUPERSEDED |
 | #50 S1 merged-status docs | HISTORICAL / INTEGRATED ELSEWHERE |
@@ -207,11 +207,11 @@ Development enthält dagegen bereits alle vier Gate-B-Versionen und die Zero-Sta
 
 **STOP vor Production Gate B.**
 
-Der Gate-0B-Prep ist durch PR #91 integriert. Nächster Technical-Lead-Schritt ist jetzt ausschließlich:
+Der Gate-0B-Prep ist durch PR #91 integriert. Die scope-sichere Synchronisierung von PR #87 gegen `main` `d28e11be` ist auf diesem Branch ausgeführt.
 
-**PR #87 gegen den neuen `main` nach PR #91 synchronisieren / rekonstruieren / vollständig unabhängig re-reviewen.**
+Nächster Technical-Lead-Schritt ist jetzt ausschließlich der **unabhängige Finalreview des neuen PR-#87-Exact-Head**.
 
-Zwingend neu prüfen: Merge-Base, Ahead/Behind, realer Diff, Shared Contracts, Multi-Ziel-/Zero-Stage-/Commercial-Truth-Semantik, Security/Ownership, Exact-Head GitHub Actions, Exact-Head Vercel und Production-/Supabase-Grenzen.
+Zwingend neu prüfen: Merge-Base, Ahead/Behind, realer Diff (keine Migration / kein Playbook), Shared Contracts, Multi-Ziel-/Zero-Stage-/Commercial-Truth-Semantik, Security/Ownership, Exact-Head GitHub Actions, Exact-Head Vercel und Production-/Supabase-Grenzen.
 
 Erst nach neuem PASS kann der Product Owner separat um Freigabe für das Production-Vier-Datei-Bundle unter Write-Gate gebeten werden.
 

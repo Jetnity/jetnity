@@ -4261,6 +4261,8 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 **Nachtrag, 27. August 2026 – 0 Stages sind fail-closed.** `single_destination` bedeutet genau eine Stage, nicht `stageCount <= 1`. Ein neuer Create-/RPC-Request ohne bestätigte Stage wird mit `22023` / `DayStageAssignmentFehler` abgelehnt und persistiert keine Reise. TypeScript und SQL bleiben identisch. `20260826240000` bleibt unverändert (Development angewendet, über PR #89 auf `main`). Der Guard sitzt in der additiven Folgemigration `20260827010000_reise_anlegen_zero_stage_fail_closed.sql`. In-Memory-Entwürfe ohne Stage bleiben lesbar, minten aber kein `single_destination`; Guest-Create und Guest→Account ohne bestätigtes Ziel sind ebenfalls fail-closed. Production, Gate B, AAL2 und Direction A bleiben unangetastet.
 
+**Nachtrag, 27. August 2026 – Gate 0B liegt auf `main`.** PR #91 hat `20260827010000` byte-identisch und den Vier-Datei-Vertrag `26220000 → 26230000 → 26240000 → 27010000` auf `main` gebracht. Dieser Runtime-PR schreibt die Migration nicht erneut, erzeugt keine fünfte Version und ändert das Playbook nicht. Ältere ADR-0172-Sätze mit Drei-Datei-Rollout bleiben historische Evidence; die Continuity-Wahrheit ist ADR-0173 inklusive Gate-0B-Nachtrag.
+
 ## ADR-0173 – TW6-B Gate-B-Dateien kommen migrations-only auf `main`; Apply nur transaktional unter Write-Gate
 
 **Datum:** 26. August 2026  
@@ -4283,6 +4285,8 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 **Konsequenzen:** Dieser Slice ändert Production nicht, merged nichts und startet keine Multi-Ziel-UI. PR #87 bleibt der Runtime-Draft. AAL2 bleibt excluded.
 
 **Nachtrag, 27. August 2026 – Gate 0B Vier-Datei-Vertrag (P1-TW6-B-ROLLOUT-08).** Der Runtime-/Zero-Stage-Fix auf PR #87 Exact Head `b93a6fff213b3bb61a9efde84050f46fc0673cf4` ist auf Development bestätigt. Das Gate-B-Playbook auf `main` darf deshalb nicht bei `26220000 → 26230000 → 26240000` stehen bleiben: `26240000` würde 0 Stages als `single_destination` persistieren. Additive, unveränderte Folgedatei `20260827010000_reise_anlegen_zero_stage_fail_closed.sql` gehört in denselben Write-Gate-Bundle, Hash `b516bfff24e9e6f5dd909a9cfd4e76aa1a54708b067d1a5d3e935b8482c6adf1`, byte-identisch vom geprüften PR-#87-Head. Verbindliche Reihenfolge: `26220000 → 26230000 → 26240000 → 27010000`. `db:anwenden` lehnt alle vier dateiweise ab. Final Verify muss 0-Stage fail-closed, genau vier History-Versionen, kein neues `legacy_fallback` und erhaltene Commercial-Gate-A-Semantik beweisen. Development nicht erneut anwenden. Production bleibt unangetastet. Kein Runtime-/UI-Code aus PR #87. `PRODUCTION_APPLY_FREIGEGEBEN` bleibt `false`.
+
+**Nachtrag, 27. August 2026 – PR #87 nimmt Gate 0B nicht erneut auf.** Nach Integration von PR #91 / Continuity PR #92 bleibt der Vier-Datei-Vertrag die `main`-Wahrheit. Der Runtime-Draft synchronisiert sich mit diesem Stand und darf `27010000` weder umschreiben noch ein zweites Migrationsartefakt anlegen.
 
 ---
 

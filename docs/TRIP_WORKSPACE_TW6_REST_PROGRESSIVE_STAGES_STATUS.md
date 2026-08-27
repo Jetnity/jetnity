@@ -4,11 +4,10 @@ Stand: 27. August 2026
 Agent: `Trip workspace audit architecture`  
 Branch: `feat/tw6-rest-progressive-stages`  
 PR: **#87** (Draft gegen `main`)  
-Auftrag: Technical-Lead correction assignment 2026-08-27  
-Status: **MIT AKTUELLEM MAIN SYNCHRON / ZERO-STAGE FAIL-CLOSED / NICHT MERGEFÄHIG**
+Auftrag: Technical-Lead live reclassification after PR #91 + continuity integration  
+Status: **MIT MAIN `d28e11be` SYNCHRON / GATE-0B-VERTRAG UNVERÄNDERT / ZERO-STAGE FAIL-CLOSED / NICHT MERGEFÄHIG**
 
-Kein Ready. Kein Merge. Kein Gate B. Kein TW-7/TW-8/TW-9. Kein Folgeslice.  
-`docs/ACTIVE_WORK_STATUS.md` wurde in diesem Lauf nicht redaktionell geändert; der Merge von `main` hat den dortigen Gate-A-Stand übernommen.
+Kein Ready. Kein Merge. Kein Gate B. Kein Production-Apply. Kein AAL2. Keine Direction A. Kein TW-7/TW-8/TW-9. Kein Folgeslice.
 
 ## 1. Live-Baseline
 
@@ -16,15 +15,16 @@ Live geprüft, nicht aus dem Prompt übernommen.
 
 | Fakt | Wert |
 | --- | --- |
-| Live `origin/main` | `f683855fa82a6ae5663228b2c9dfa605755fc47d` |
-| Merge-Base nach Sync | `f683855fa82a6ae5663228b2c9dfa605755fc47d` |
-| Sync-Merge | `9409d1d9e436fead1f8b6cf927471ea65c455e3c` |
-| Zero-Stage-Fix | `4d5f771039c79f597cba2b5b067ce1ff2e6f88df` |
-| Aktueller Branch-Head vor Evidence-Commit | `023bf1e3482aea1801223c07179ca5a2a4c5732d` |
-| Alter PR-Head vor Sync | `0b7d6cfd5b34ffd3e9c0a96779ee51df999bcc67` |
+| Live `origin/main` | `d28e11be2778fd0c5f60e436029d4dc04aea5615` |
+| Merge-Base nach Sync | `d28e11be2778fd0c5f60e436029d4dc04aea5615` |
+| Sync-Merge | `0ca6de94` (merge `origin/main` in `feat/tw6-rest-progressive-stages`) |
+| Vorheriger PR-Head | `b93a6fff213b3bb61a9efde84050f46fc0673cf4` |
 | Gate 0 | auf `main` durch PR #89 |
+| Gate 0B Vier-Datei-Vertrag | auf `main` durch PR #91 / Continuity PR #92 |
 | Production Gate A | **PASS** (`20260824160000` dann `20260824180000`) |
 | Production TW6-B / AAL2 / Direction A | **nicht** angewendet |
+
+`20260827010000_reise_anlegen_zero_stage_fail_closed.sql` ist auf `main` und in diesem Branch **byte-identisch** (`b516bfff24e9e6f5dd909a9cfd4e76aa1a54708b067d1a5d3e935b8482c6adf1`). Der PR-Diff gegen `main` enthält **keine** Migrationsdatei und keine Playbook-Änderung.
 
 Ältere Ahead/Behind- und CI-Angaben in diesem Dokument sind historisch und gelten nicht als Evidence für den neuen Exact Head.
 
@@ -108,7 +108,8 @@ Additive Folgemigration **nach** `20260826240000` (27. August 2026):
 - 0 Stages → `22023`, keine persistierte Reise
 - `single_destination` nur bei genau einer Stage
 - `20260826240000` bleibt byte-identisch (`7a9626d8ac53ea3458bf7d622ea695cce26360962c02430d8d1a0094129a1edb`)
-- nicht Teil des Gate-B-Bundles
+- seit PR #91 Teil des Gate-0B-Vier-Datei-Vertrags auf `main`: `26220000 → 26230000 → 26240000 → 27010000`
+- dieser Runtime-PR schreibt die Datei nicht erneut und erzeugt keine fünfte Version
 
 **Production-Migration wurde NICHT angewendet.** Kein `--produktion`. Keine Production-RLS-/Ownership-Änderung. Production hat die Spalte weiterhin nicht; Account-Reads nutzen `select *` und `dayStageAssignmentModeLesenDb(fehlend) → legacy_fallback`.
 
@@ -384,9 +385,9 @@ Zurückgezogen aus dem alten Plan:
 
 Technical-Lead-Auftrag: `Technical-Lead correction assignment — 2026-08-27`.
 
-### 11.1 Sync
+### 11.1 Sync (historisch, vor Gate 0B)
 
-`feat/tw6-rest-progressive-stages` ist mit `origin/main` `f683855fa82a6ae5663228b2c9dfa605755fc47d` synchron. Merge-Base = aktuelles `main`. PR-#89-Migrationen wurden nicht umgeschrieben.
+`feat/tw6-rest-progressive-stages` war mit `origin/main` `f683855fa82a6ae5663228b2c9dfa605755fc47d` synchron. PR-#89-Migrationen wurden nicht umgeschrieben. Dieser Stand ist durch den späteren Gate-0B-Merge auf `main` überholt; aktueller Sync steht in Abschnitt 12.
 
 ### 11.2 P1 Zero-Stage
 
@@ -402,7 +403,7 @@ Fix, fail-closed, TS = SQL:
 
 `20260827010000_reise_anlegen_zero_stage_fail_closed.sql`
 
-Nicht ins Gate-B-Bundle aufgenommen. Kein Production-Apply.
+Diese Datei liegt seit PR #91 unverändert auf `main` und gehört zum Vier-Datei-Gate-B-Playbook. Dieser Runtime-PR nimmt sie nicht ein zweites Mal auf. Kein Production-Apply.
 
 Folgearbeiten, damit Create/RPC und Guest-Wege denselben Vertrag haben:
 
@@ -457,6 +458,26 @@ Echte Development-RPC (`public.reise_anlegen(jsonb)` nach `20260827010000`):
 
 Exact-Head GitHub Actions und Vercel gehören zum Commit nach diesem Dokumentationsstand. Ältere SUCCESS-Checks gelten nicht.
 
-### 11.5 STOP
+### 11.5 STOP (historisch für den Zero-Stage-Slice)
 
 Kein Ready. Kein Merge. Kein Gate B. Kein Production-Write. Kein TW-7/8/9.
+
+## 12. Sync nach PR #91 / Gate 0B (27. August 2026)
+
+Technical-Lead-Kommentar: live reclassification after PR #91 + continuity integration.
+
+Ausgeführt:
+
+1. `origin/main` `d28e11be2778fd0c5f60e436029d4dc04aea5615` in `feat/tw6-rest-progressive-stages` gemergt.
+2. Gate-0B-Vier-Datei-Vertrag und `20260827010000` unverändert übernommen; SHA-256 unverändert; keine fünfte Migration; keine History-Umschreibung.
+3. ADR-0172 (Runtime/Mode) bleibt in diesem PR; ADR-0173 Gate-0B-Nachtrag bleibt die Continuity-Wahrheit von `main`.
+4. Status-/Roadmap-Drift zugunsten von Gate 0B auf `main` korrigiert.
+5. Scope bleibt Runtime/UI progressive Ziele + Day→Stage-Vertrag.
+
+PR-Diff gegen `main` enthält keine Datei unter `supabase/migrations/` und keine Änderung an `lib/rollout/gate-b-tw6-bundle.ts`.
+
+### 12.1 STOP
+
+Kein Ready. Kein Merge. Kein Gate B. Kein Production-Write. Kein AAL2. Keine Direction A. Kein TW-7/8/9. Kein Folgeslice.
+
+Nächster Schritt: unabhängiger Technical-Lead-Finalreview des neuen Exact Head.
