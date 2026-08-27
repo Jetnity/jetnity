@@ -4340,6 +4340,10 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 **Konsequenzen:** Kein Rollenmodell-, Auth-, Consumer-RLS- oder Ownership-Umbau. Keine `types/supabase.ts`-Regenerierung in diesem Slice. Keine Production-Änderung durch Autorenarbeit oder späteren normalen Merge allein.
 
+**Nachtrag, 27. August 2026 – PR #98 gemergt.** Merge-Commit `beaef64a151adceb8f5bc759f58ae9ad13cecc51`. Die Alignment-Datei liegt auf `main`. Ältere ADR-0175-Sätze „Draft-PR #98 / kein Merge“ sind historische Evidence vor diesem Merge. Production-Apply bleibt ein separates Gate.
+
+**Nachtrag, 27. August 2026 – versionstreuer Einmal-Runner (Issue #101).** Der Production-Apply dieser einen Datei läuft nicht über MCP `apply_migration` und nicht über `db:anwenden`. Ein fail-closed Runner (`npm run db:aal2-prod-apply`) pinnt Blob/SHA-256/Version/Name, verlangt `--schreiben --produktion --projekt-ref qscbgcdmivbbnzrcyegn`, prüft Head `20260827010000` plus fehlende Funktion/History und schreibt SQL + History atomar. Die Phase-3.1-Grenze `20260820130000` bleibt unverändert. Dieser Nachtrag autorisiert keinen Apply; er beschreibt nur den Apply-Pfad.
+
 ---
 
 ## Offene Widersprüche

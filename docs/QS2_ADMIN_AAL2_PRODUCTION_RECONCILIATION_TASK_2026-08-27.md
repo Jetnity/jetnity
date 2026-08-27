@@ -3,7 +3,10 @@
 Stand: 27. August 2026  
 Typ: **P1 Security / Migration-History Reconciliation / Production Gate Preparation**  
 Finding: `P1-AAL2-PROD-01`  
-Status: **VORBEREITUNG – KEIN PRODUCTION APPLY AUTORISIERT**
+Status: **ALIGNMENT AUF `main` / EINMAL-RUNNER SEPARAT – KEIN PRODUCTION APPLY AUSGEFÜHRT**
+
+Historischer Satz „KEIN PRODUCTION APPLY AUTORISIERT“ bleibt Evidence vor Issue #101.
+Der Apply-Pfad selbst steht in `docs/QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_TASK_2026-08-27.md`.
 
 Bezug:
 

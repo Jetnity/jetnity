@@ -9,6 +9,7 @@
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 
+import { anwendenDarfAal2AlignmentNichtAufProduction } from '@/lib/rollout/aal2-prod-apply'
 import { produktionsPlan } from '@/lib/rollout/anwenden-grenze'
 import { GATE_B_VERSIONEN } from '@/lib/rollout/gate-b-tw6-bundle'
 import { anwendenAuftragLesen } from '@/lib/rollout/schreibauftrag'
@@ -70,6 +71,7 @@ async function main() {
         'Nutze npm run db:gate-b-tw6-bundle. Abgebrochen.',
     )
   }
+  anwendenDarfAal2AlignmentNichtAufProduction(auftrag.modus, offen)
 
   if (offen.length === 0) {
     console.log(

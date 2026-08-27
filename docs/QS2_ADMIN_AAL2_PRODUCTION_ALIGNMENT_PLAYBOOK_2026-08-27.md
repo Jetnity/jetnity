@@ -3,7 +3,7 @@
 Stand: 27. August 2026  
 Finding: `P1-AAL2-PROD-01`  
 Migration: `supabase/migrations/20260827170000_admin_aal2_data_plane_alignment.sql`  
-Status: **VORBEREITET – KEIN PRODUCTION APPLY AUTORISIERT**
+Status: **ALIGNMENT AUF `main` / EINMAL-RUNNER VORBEREITET – KEIN PRODUCTION APPLY AUSGEFÜHRT**
 
 Dieses Playbook gilt nur für die reviewte Alignment-Migration. Es ist keine
 Production-Freigabe. Der Apply bleibt ein ausdrückliches Product-Owner-Gate.
@@ -98,26 +98,60 @@ semantisch idempotent. Sie fälscht keine Historical Versions.
 
 ---
 
-## 4. Rollout – nur nach Product-Owner-Freigabe
+## 4. Rollout – nur über den Einmal-Runner
 
-Voraussetzungen, die **nicht** durch dieses Playbook erfüllt werden:
+PR #98 ist gemergt. Die Alignment-Datei liegt auf `main`. Der Product Owner hat
+den Production-Apply am 27. August 2026 erlaubt, wenn der Technical Lead ihn
+für sinnvoll hält. **Dieser Slice führt den Apply nicht aus.**
 
-1. Draft-PR #98 ist unabhängig vom Technical Lead PASS und gemergt.
-2. Exact-Head CI und Vercel des gemergten `main` sind grün.
-3. Product Owner gibt **ausdrücklich** den Production-Apply **dieser einen**
-   Datei frei. Keine Sammelfreigabe, keine Folgemigration.
+Nicht zulässig:
 
-Dann, und nur dann, auf Production `qscbgcdmivbbnzrcyegn`:
+- Supabase MCP `apply_migration` (erzeugt einen eigenen Timestamp)
+- `db:anwenden --produktion` (Phase-3.1-Grenze bleibt `20260820130000`)
+- Dateiglob oder Folgemigration
+- Development-Write über diesen Runner
 
-1. Production-Migration-Head erneut live lesen. Erwartet vor Apply:
-   `20260827010000_reise_anlegen_zero_stage_fail_closed`. Bei Drift: STOPP.
-2. Nur `20260827170000_admin_aal2_data_plane_alignment.sql` anwenden.
-3. Keine weitere Migration automatisch nachziehen.
-4. Sofort die Verification in Abschnitt 5 ausführen.
-5. Continuity/Status auf den tatsächlich angewandten Head aktualisieren.
+Datei-Identität, die der Runner hart prüft:
 
-Development darf die Datei als History-Alignment erhalten, ändert die bereits
-korrekte Semantik aber nicht.
+| Feld | Wert |
+| --- | --- |
+| Version / Name | `20260827170000` / `admin_aal2_data_plane_alignment` |
+| Git-Blob | `4d24d28ff5789a253d0abc6ebd8aa0d6e22a2375` |
+| SHA-256 | `ac4faa87bf994a1fcbad2212384cb2308695820b63a57dc41ee9a763515ad934` |
+| Production | `qscbgcdmivbbnzrcyegn` |
+| Head vor Apply | `20260827010000_reise_anlegen_zero_stage_fail_closed` |
+
+Lokale Probe, kein Write:
+
+```bash
+npm run db:aal2-prod-apply
+```
+
+Live-Preflight, kein Write:
+
+```bash
+npm run db:aal2-prod-apply -- --produktion --projekt-ref qscbgcdmivbbnzrcyegn
+```
+
+Write, nur durch den Technical Lead nach unabhängigem Exact-Head-Review und
+unverändert passendem Live-Preflight:
+
+```bash
+npm run db:aal2-prod-apply -- --schreiben --produktion --projekt-ref qscbgcdmivbbnzrcyegn
+```
+
+Der Runner:
+
+1. prüft Blob/SHA-256/Version/Name;
+2. bestätigt das Production-Ziel über `zielFuerAuftrag` / `produktionsZiel`;
+3. bricht ab, wenn der Head nicht exakt `20260827010000` ist, `20260827170000`
+   schon existiert oder `aktuelles_admin_aal2()` unerwartet vorhanden ist;
+4. wendet Datei-SQL und den History-Eintrag in **einer** Transaktion an;
+5. verifiziert den Vertrag read-only und erhebt Advisors read-only;
+6. zieht keine weitere Migration nach.
+
+Development darf die Datei später als History-Alignment erhalten, ändert die
+bereits korrekte Semantik aber nicht. Dieser Runner schreibt Development nicht.
 
 ---
 
@@ -164,8 +198,9 @@ Ohne Apply gibt es nichts zurückzunehmen. Dieser Slice ändert Production nicht
 
 Nicht Teil dieses Playbooks:
 
-- Production-Apply jetzt
+- Production-Apply durch den Implementierungsauftrag des Runners
 - Rollenmodell, Auth/Session/MFA-Umbau, neue Capabilities
 - Consumer-Ownership
 - Service-Role in Consumer-Pfaden
 - TW-7/TW-8, AP-4/AP-7, S5-B, Provider/Payment/Secrets
+- generisches Öffnen von `db:anwenden`
