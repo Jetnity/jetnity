@@ -72,7 +72,8 @@ export function reisePasstZurSuche(reise: Pick<TripSummary, 'title' | 'origin'>,
 
 /**
  * Teilt vorhandene TripSummary in vier Gruppen. Kein zweites Modell, kein
- * Status-Write. Archivierte Reisen bleiben sichtbar, weil AP-3 nicht filtert.
+ * Status-Write. Der Lifecycle-Filter liegt in `reise-archiv.ts`; diese
+ * Funktion bleibt date-only.
  */
 export function reisenGruppenAus(reisen: readonly TripSummary[], heute: string): ReiseGruppen {
   const gruppen: ReiseGruppen = { aktiv: [], kommend: [], vergangen: [], ohneDatum: [] }

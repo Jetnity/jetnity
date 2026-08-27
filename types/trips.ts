@@ -453,6 +453,12 @@ export type TripSummary = {
   stageCount: number
   dayCount: number
   itemCount: number
+  /**
+   * Nur Listenablesung für AP-4. Gültiger `draft`/`planned`/`booked` aus
+   * `trips.metadata.account_archive.previous_status`, sonst `null`.
+   * Keine zweite Lifecycle-Wahrheit: der gespeicherte Status bleibt `status`.
+   */
+  archivePreviousStatus?: 'draft' | 'planned' | 'booked' | null
 }
 
 /**
