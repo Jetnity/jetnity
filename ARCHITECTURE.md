@@ -173,7 +173,7 @@ AP-4 ergänzt den gespeicherten Lifecycle `trips.status = archived` um einen ein
 | Fläche | Datei | Aufgabe |
 | --- | --- | --- |
 | Domain | `lib/account/reise-archiv.ts` | Archivfilter getrennt von AP-3-Datumsgruppen; Restore-Provenienz fail-closed |
-| Schreibweg | `lib/trips/archiv-aktionen.ts` | `reiseArchivLebenszyklus`; `konto()` / `auth.getUser()`; Anon-Key; Owner-RLS; Optimistic Guard |
+| Schreibweg | `lib/trips/archiv-aktionen.ts` | `reiseArchivLebenszyklus`; `konto()` / `auth.getUser()`; Anon-Key; Owner-RLS; Optimistic Guard gegen Status plus gelesenes `updated_at` |
 | `/reisen` | `KontoReisenGruppen` + `KontoReiseEintrag` | Aktiv/Kommend/Vergangen/Ohne Datum ohne archivierte Reisen; eigener Abschnitt **Archiv** |
 | Übersicht | `lib/account/naechste-reise.ts` | archivierte Reise bleibt kein Fortsetzen |
 | Provenienz | `trips.metadata.account_archive.previous_status` | namespaced Begleitinformation; keine Migration |

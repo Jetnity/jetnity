@@ -1,7 +1,7 @@
 # Jetnity – AP-4 Account Archive Lifecycle – Handoff
 
 Stand: 27. August 2026  
-Status: **AUTHOR IMPLEMENTATION HANDOFF / EXACT-HEAD PASS AUF `f19b5711` / DRAFT / STOPP VOR READY/MERGE**  
+Status: **AUTHOR REVIEW-FIX HANDOFF / P1/P2 UMGESETZT / NEUER EXACT HEAD AUSSTEHEND / DRAFT / STOPP VOR READY/MERGE**  
 Cursor-Agent: **`Account plattform audit vorbereitung 3`**  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/108
 
@@ -24,9 +24,17 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/108
 | Listenablesung | `lib/trips/daten.ts` liest `metadata` nur für Restore-Provenienz |
 | Übersicht | `lib/account/naechste-reise.ts` bleibt: archived ist kein Fortsetzen |
 
+## Review-Fixes auf dem vorherigen Head `e34d5829`
+
+Technical Lead: CHANGES REQUIRED. Umgesetzt, ohne Scope-Erweiterung:
+
+- Restore behält Geschwister unter `account_archive`.
+- Write-Guard ist Status plus gelesenes `updated_at`, kein status-only akzeptiertes Risiko.
+- Keine AP-4-eigene `trips.metadata`-Größengrenze.
+
 ## Gegatete Evidence
 
-Aktueller Exact Head `f19b5711e05282617d7c35262ebbfaeef4253e0d`:
+Letzter gegateter Runtime-Head vor Review-Fixes `f19b5711e05282617d7c35262ebbfaeef4253e0d`:
 
 - Actions `33108697812` SUCCESS
 - Vercel Preview `BiQYRdySrHjnea8MmTbxqSomsCMQ` / Deployment `6129645873` READY

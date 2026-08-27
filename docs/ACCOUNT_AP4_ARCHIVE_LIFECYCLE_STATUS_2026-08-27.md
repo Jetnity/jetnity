@@ -1,7 +1,7 @@
 # Jetnity – AP-4 Account Archive Lifecycle – Status
 
 Stand: 27. August 2026  
-Status: **RUNTIME IMPLEMENTIERT / EXACT-HEAD GATES GRÜN AUF `f19b5711` / DRAFT / KEIN READY / KEIN MERGE DURCH AUTOR-AGENT**  
+Status: **TECHNICAL-LEAD CHANGES REQUIRED UMGESETZT / NEUER EXACT HEAD AUSSTEHEND / DRAFT / KEIN READY / KEIN MERGE DURCH AUTOR-AGENT**  
 Workstream: Account / Traveller  
 Cursor-Agent: **`Account plattform audit vorbereitung 3`**  
 Branch: `cursor/ap4-account-archive-lifecycle-67d4`  
@@ -23,8 +23,10 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/108
 - Aktiv/Kommend/Vergangen/Ohne Datum enthalten keine archivierten Reisen.
 - `/reisen` hat einen eigenen Abschnitt **Archiv**.
 - Restore nutzt nur gültiges `metadata.account_archive.previous_status`.
+- Restore entfernt nur `previous_status`; bestehende Geschwister unter `account_archive` bleiben.
 - Historische `archived`-Reise ohne Provenienz: fail-closed.
-- Optimistic Guard `.eq('status', expectedStatus)`.
+- Optimistic Guard `.eq('status', expectedStatus)` **und** `.eq('updated_at', gelesene Version)`.
+- Keine AP-4-eigene 8-KB-Grenze für `trips.metadata`.
 - Kein Service Role, kein `user_id` aus der Nutzlast.
 - Keine Migration, keine RLS-/Auth-/AAL-Änderung.
 - Gast-Reisen ohne Archiv.
@@ -59,6 +61,18 @@ Follow-up inkl. Action-State-Reset und Continuity, genau dieser SHA:
 | Review-Threads | 0 |
 
 Ein späterer Continuity-only-Commit muss live neu geprüft werden.
+
+## 3c. Technical-Lead Review `e34d5829` – CHANGES REQUIRED
+
+Review: https://github.com/Jetnity/jetnity/pull/108#pullrequestreview-5045022530
+
+| Finding | Fix |
+| --- | --- |
+| P1-AP4-TL-01 Restore löschte den ganzen `account_archive`-Namespace | nur `previous_status` entfernen; Geschwister behalten |
+| P1-AP4-TL-02 Status-only Guard konnte fremde Metadata überschreiben | Write zusätzlich gegen gelesenes `updated_at` |
+| P2-AP4-TL-03 erfundene 8-KB-Grenze für `trips.metadata` | entfernt; kein `metadata-zu-gross` |
+
+Der status-only Guard ist **kein** akzeptiertes Restrisiko mehr. Neue Exact-Head-Evidence folgt nach Gates auf dem Review-Fix-Head.
 
 ## 4. Shared Contracts
 

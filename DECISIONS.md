@@ -4382,7 +4382,9 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 - Beim Archivieren wird der gelesene Status `draft`/`planned`/`booked` unter `trips.metadata.account_archive.previous_status` erhalten.
 - Beim Wiederherstellen darf nur dieser gültig belegte Status gesetzt werden.
 - Historische `archived`-Zeilen ohne gültige Provenienz: fail-closed, kein Default.
-- Optimistic Guard gegen den gelesenen Ausgangsstatus; concurrent Change wird nicht überschrieben.
+- Optimistic Guard gegen den gelesenen Ausgangsstatus **und** das gelesene `updated_at` (bestehende Zeilenversion über `trips_aktualisiert_am`). Ein gleichbleibender Status mit geänderter Metadata darf nicht überschrieben werden.
+- Restore entfernt nur `account_archive.previous_status`. Bestehende Geschwister unter `account_archive` bleiben; der Namespace fällt nur weg, wenn er danach leer ist.
+- Keine AP-4-eigene Größengrenze für `trips.metadata`.
 - Keine Migration, keine RLS-/Auth-/AAL-Änderung, kein Service Role, kein Guest-Archiv.
 
 **Kontext:** AP-3 gruppiert date-only und filtert `archived` nicht. `/account` filtert `archived` bereits lesend aus Fortsetzen. Es gab keinen Runtime-Write auf `status = archived`. Eine naive Wiederherstellung auf pauschal `planned` würde den früheren Status erfinden.
@@ -4392,6 +4394,8 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 **Begründung:** `trips.status` hat bereits vier Werte. Ohne Provenienz ist Restore nicht verlustfrei. Metadata bleibt ungefiltert; der Filter ist `status`.
 
 **Konsequenzen:** Aktiv/Kommend/Vergangen/Ohne Datum enthalten keine archivierten Reisen. `/reisen` hat einen eigenen Archiv-Abschnitt. TW7-A-Kartenidentität bleibt unverändert. Autor-Agent merged nicht.
+
+**Nachtrag, 27. August 2026 – Exact-Head Review P1/P2.** Ein status-only Guard war nicht fail-closed genug: derselbe Status mit geänderter Metadata hätte den gelesenen Snapshot überschrieben. Der Write matcht deshalb zusätzlich das gelesene `updated_at`. Restore löscht nicht mehr den ganzen `account_archive`-Namespace. Die erfundene 8-KB-Grenze für `trips.metadata` ist entfernt; sie war ein Vertrag von `trip_items.metadata`, nicht von `trips.metadata`.
 
 ---
 
