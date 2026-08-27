@@ -5,7 +5,7 @@ Issue: #105
 Cursor-Anzeigename: **Account plattform audit vorbereitung 2**  
 Typ: **AUDIT / EVIDENCE / VORBEREITUNG ONLY**  
 Branch: `cursor/account-traveller-reconciliation-3efc`  
-Baseline: `origin/main` `963186f4ec75501efd253a287131f464a5fd0fdb`
+Historische Audit-Baseline: `origin/main` `963186f4ec75501efd253a287131f464a5fd0fdb` — **keine dauerhafte Live-Wahrheit**; vor jeder Fortsetzung neu prüfen.
 
 Rotation gemäß `docs/JETNITY_AGENT_SESSION_ROTATION_STANDARD.md`:
 
@@ -36,4 +36,6 @@ Siehe Issue #105. Live-Evidence gewinnt über historische Audit-Texte.
 
 ## Abschluss
 
-Draft-PR. Gates laut Issue #105. Kein Ready. Kein Merge. STOPP für unabhängigen Technical-Lead-Finalreview.
+Draft-PR. Gates laut Issue #105. Kein Ready. Kein Merge.
+
+Technical-Lead-Finalreview `5044318302` war **BLOCKED** (Continuity: #104/#106). Dieser Follow-up korrigiert nur die Audit-Docs und den PR-Body. Danach erneut STOPP.
