@@ -3,9 +3,9 @@
 Stand: 27. August 2026  
 Agent: `Trip workspace audit architecture`  
 Auftrag: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`  
-Status: **TW-7-Gap / ADR-0176 / TW7-A-Spec durch PR #100 versioniert bzw. nach Landung integriert. TW7-A Runtime nicht gestartet.**
+Status: **TW-7-Gap / ADR-0176 / TW7-A-Spec durch PR #100 versioniert. TW7-A Runtime durch PR #106 integriert. Issue #103 nach Live-Post-Merge-Verifikation schliessbar.**
 
-> Kanonischer operativer Stand zusätzlich: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`. Live-Evidence gewinnt. PR #100 ist das Integrationsvehikel; Live-Merge-SHA prüfen.
+> Kanonischer operativer Stand zusätzlich: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Live-Evidence gewinnt. PR #106 ist das Runtime-Integrationsvehikel. Live-`main` immer live prüfen.
 
 Historische Entstehungsevidence (nicht aktueller operativer PR-Status): Branch `cursor/tw7-hub-gap-slice-b13d`. Aussagen älterer Fassungen („Draft-PR #100“, „kein Ready / kein Merge“) sind Pre-Merge-Evidence.
 
@@ -55,9 +55,9 @@ Code-Evidence:
 
 **TW-7-Start-Gate: erfüllt.**  
 **TW-7-Rest-Gap: Hub-Kartenidentität (Mehrziel + Gast-`itemCount`).**  
-**TW7-A Runtime: nicht gestartet.**
+**TW7-A Runtime: durch PR #106 integriert.** Operativer Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Issue #103 nach Post-Merge-Verifikation schliessbar.
 
-Der kleine Slice heisst TW7-A und steht in der Spec. Dieser Status behauptet keine Implementation.
+Der kleine Slice heisst TW7-A und steht in der Spec. Ältere Sätze „Runtime nicht gestartet / Draft / nicht auf main“ sind Pre-Merge-Evidence.
 
 ## 3a. Historische Pre-Merge Exact-Head-Evidence
 
@@ -91,7 +91,7 @@ AAL2-Migration, Playbook und Production-Apply bleiben unangetastet.
 
 ## 5. Offene Risiken
 
-- Production-AAL2-Apply bleibt ein separates Product-Owner-Gate.
+- Production-AAL2 `20260827170000` ist über PR #102 angewendet und verifiziert, exakt einmal. `aktuelles_admin_aal2()` ist live. Kein zweiter Apply. Ältere Sätze „Apply bleibt ein Gate“ sind Pre-Apply-Evidence.
 - `main` bleibt ungeschützt.
 - Bereits gespeichertes `archived` bleibt in AP-3-Datumsgruppen sichtbar; das ist AP-4, nicht TW7-A.
 - Pfeil- vs. Punkt-Schreibweise der Route ist bewusste Non-Scope-Entscheidung gegen einen dritten Formatfork.
@@ -99,6 +99,6 @@ AAL2-Migration, Playbook und Production-Apply bleiben unangetastet.
 
 ## 6. Nach Landung
 
-TW7-A Runtime nicht starten. Kein automatischer Folgeslice. Kein AP-4, TW-8 oder Homepage aus dieser Spec.
+Die Spec bleibt die bindende Slice-Grenze. TW7-A Runtime ist durch PR #106 integriert. Issue #103 nach Live-Post-Merge-Verifikation schliessbar.
 
-Unabhängiger Review der Spec bleibt Technical Lead; das ist keine Aussage, PR #100 sei dauerhaft unvermerkt.
+Kein AP-4, TW-8 oder Homepage aus dieser Spec. Kein zweiter AAL2-Apply.

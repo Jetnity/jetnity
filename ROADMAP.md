@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 27. August 2026  
-Status: **Foundation C/D/E, Safety, Seasonal, AP-1–AP-3, Admin A–C, Provider S1–S3 + S5-A, TW-1/2/4/3/5, TW6-A, TW6-B Runtime (PR #87), Visitor Search UX (PR #94), Post-PR-#94-Continuity (PR #96), D0-1/D0-2, P1-D0-LIVE-01, QS-1/QS-2, P1-QS2-02, P1-TA-02, Admin-AAL2-Application-Guard und P1-AAL2-PROD-01 Alignment (PR #98, `beaef64a`) sind integriert. Production-AAL2-Apply bleibt eigenes Gate. TW-7-Start-Gate ist dokumentiert; TW-7-Runtime ist nicht gestartet. S5-B, TW-8, AP-4+, Admin D–K, D1/G1 und Growth-Folgeslices sind nicht gestartet. Aktuelle TW-7-Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`.**
+Status: **Foundation C/D/E, Safety, Seasonal, AP-1–AP-3, Admin A–C, Provider S1–S3 + S5-A, TW-1/2/4/3/5, TW6-A, TW6-B Runtime (PR #87), Visitor Search UX (PR #94), Post-PR-#94-Continuity (PR #96), D0-1/D0-2, P1-D0-LIVE-01, QS-1/QS-2, P1-QS2-02, P1-TA-02, Admin-AAL2-Application-Guard, P1-AAL2-PROD-01 Alignment (PR #98), PR #102 Apply-Gate-Closure und TW7-A Runtime (PR #106) sind integriert. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal. Live-`main` immer live prüfen. S5-B, TW-8, AP-4+, Admin D–K, D1/G1 und Growth-Folgeslices sind nicht gestartet. Aktuelle TW-7-Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`.**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -366,7 +366,7 @@ S1 Shared Operational Contract ist auf `main` (PR #47). S2 FlugNachweis ist auf 
 
 ## 8. Großer End-to-End Trip-Workspace-/Übersicht-Umbau
 
-Status: **Audit/IA docs-only als PR #55 gemergt. TW-1, TW-2, TW-4, TW-3, TW-5, TW6-A, TW6-B Runtime (PR #87) und Visitor Search UX (PR #94) auf `main`. Kein offener Visitor-Search-Implementation-Draft. Kein gesamtes TW-6-Closure. TW-7-Start-Gate dokumentiert, TW-7-Runtime nicht gestartet. Kein TW-8.**
+Status: **Audit/IA docs-only als PR #55 gemergt. TW-1, TW-2, TW-4, TW-3, TW-5, TW6-A, TW6-B Runtime (PR #87), Visitor Search UX (PR #94) und TW7-A Runtime (PR #106) auf `main`. Kein offener Visitor-Search-Implementation-Draft. Kein gesamtes TW-6-Closure. TW-7-Start-Gate erfüllt; TW7-A integriert. Kein TW-8.**
 
 Der Workspace ist die wichtigste Produktoberfläche und wird **nicht nur umgebaut**, sondern vollständig funktional generalinspiziert. PR #55 liefert ausschließlich die vorbereitete Audit-/Zielarchitektur-Evidence.
 
@@ -481,8 +481,8 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 12c6. ✅ Post-PR-#94 Continuity PR #96 – kanonische Handoff-Dateien, Gate-B ohne Re-Apply, `TW6-REST-01` geschlossen, bindende New-Chat-Betriebsregeln. Historisch Draft auf `cursor/pr94-continuity-b13d`; nach Landung integriert/geschlossen. Kein ausstehendes Re-Review. Merge-SHA live prüfen.
 12d. ✅ Provider S5-A Commercial Provenance – auf `main` (`3b317bc6`, ADR-0168). S5-B nicht gestartet.
 12e. ✅ Admin-AAL2 Application-Guard – auf `main` (`d3faa2a0`, ADR-0169). Production-DB nicht angewendet.
-12e1. ✅ P1-AAL2-PROD-01 Production-Data-Plane Alignment auf `main` (PR #98, `beaef64a`, ADR-0175). Historische `20260826090000` unverändert. Neue `20260827170000` liegt auf `main`. **Production-Apply bleibt eigenes Product-Owner-Gate.**
-12e2. ⏳ TW-7 Hub-Anschluss – Start-Gate erfüllt; Rest-Gap und TW7-A-Slice dokumentiert (`docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`, ADR-0176). **Kein Runtime in diesem Stand.**
+12e1. ✅ P1-AAL2-PROD-01 Production-Data-Plane Alignment auf `main` (PR #98, ADR-0175) und Apply-Gate-Closure (PR #102). Historische `20260826090000` unverändert unangewendet. Production `20260827170000` ist angewendet und verifiziert, exakt einmal. `aktuelles_admin_aal2()` ist live. Admin-Capabilities verlangen Rolle **UND** aktuelles AAL2. **Kein zweiter Apply.** Ältere Sätze „Production-Apply bleibt eigenes Gate“ sind Pre-Apply-Evidence.
+12e2. ✅ TW7-A Runtime – Hub-Kartenidentität read-only (PR #106, Issue #103, ADR-0176). Integrationsvehikel. Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Issue #103 nach Live-Post-Merge-Verifikation schliessbar. Ältere „Draft / nicht auf main / live main bleibt 963186f4“-Zeilen sind Pre-Merge-Evidence. Kein TW-8.
 12f. ✅ D0 live metadata boundary / P1-D0-LIVE-01 – auf `main` (PR #86, `38ec8be7`, ADR-0170). HTML-robots fail-closed; Canonical ist `https://jetnity.com`, niemals `*.vercel.app`. **Kein D1/G1. Kein Domain-Cutover. Kein Public Indexing.**
 13. Admin/Account/Provider-Programme separat weiterführen; kein Slice D, AP-4, S5-B, TW-8, D1 oder G1 ohne eigenen Auftrag
 14. finaler Workspace Intelligence Audit
@@ -490,4 +490,4 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 16. provider-backed End-to-End-/Truth-Audit
 17. finale Startseiten-Positionierung
 
-Der nächste Agent darf D/E/Safety **nicht neu bauen**, darf **nicht direkt einen echten Provider integrieren** und darf **TW-7 / TW-8 / S5-B / Visitor-Search-Implementation nicht ohne ausdrücklichen neuen Auftrag starten**. Continuity-Wahrheit: `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`.
+Der nächste Agent darf D/E/Safety **nicht neu bauen**, darf **nicht direkt einen echten Provider integrieren** und darf **TW-8 / S5-B / Visitor-Search-Implementation oder einen weiteren TW-7-Folgeslice nicht ohne ausdrücklichen neuen Auftrag starten**. TW7-A ist integriert. Continuity-Wahrheit: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`.
