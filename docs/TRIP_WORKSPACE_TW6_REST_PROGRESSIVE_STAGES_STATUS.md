@@ -1,15 +1,14 @@
 # Jetnity – TW6-B Runtime – Progressive Ziele + Day→Stage Mode Contract – Status
 
-Stand: 26. August 2026  
+Stand: 27. August 2026  
 Agent: `Trip workspace audit architecture`  
 Branch: `feat/tw6-rest-progressive-stages`  
 PR: **#87** (Draft gegen `main`)  
-Auftrag: `docs/TRIP_WORKSPACE_TW6_DAY_STAGE_MODE_CONTRACT_TASK.md`  
-Folgetask: `docs/TRIP_WORKSPACE_TW6_PRODUCTION_ROLLOUT_PLAN_TASK.md`  
-Status: **MODE CONTRACT AUF DEVELOPMENT AKZEPTIERT / ROLLOUT-PLAN NACH TL-REVIEW KORRIGIERT / NICHT MERGEFÄHIG**
+Auftrag: Technical-Lead correction assignment 2026-08-27  
+Status: **MIT AKTUELLEM MAIN SYNCHRON / ZERO-STAGE FAIL-CLOSED / NICHT MERGEFÄHIG**
 
-Kein Ready. Kein Merge. Kein TW-7/TW-8/TW-9. Kein Folgeslice.  
-`docs/ACTIVE_WORK_STATUS.md` wurde nicht geändert.
+Kein Ready. Kein Merge. Kein Gate B. Kein TW-7/TW-8/TW-9. Kein Folgeslice.  
+`docs/ACTIVE_WORK_STATUS.md` wurde in diesem Lauf nicht redaktionell geändert; der Merge von `main` hat den dortigen Gate-A-Stand übernommen.
 
 ## 1. Live-Baseline
 
@@ -17,27 +16,27 @@ Live geprüft, nicht aus dem Prompt übernommen.
 
 | Fakt | Wert |
 | --- | --- |
-| Live `origin/main` | `1d558ef56cc275d429f4076c7a8877c3791947a7` |
-| Merge-Base | `1d558ef56cc275d429f4076c7a8877c3791947a7` |
-| Task-Commit / vorheriger PR-Head | `dbfb7be8478f9dd4582eb46495323b498513b55b` |
-| Exact Head (Runtime + Docs vor CI-Nachzug) | `3b0b475e41cc7265f2796c8b4c4543da40bfcd83` |
-| Offene parallele Draft-PRs | #52, #50, #40, #39, #28 |
-| Shared-Contract-Kollision | keine offenen PRs treffen `zuordnung`, `reise_anlegen`, Timeline oder Assignment-Mode |
+| Live `origin/main` | `f683855fa82a6ae5663228b2c9dfa605755fc47d` |
+| Merge-Base nach Sync | `f683855fa82a6ae5663228b2c9dfa605755fc47d` |
+| Alter PR-Head vor Sync | `0b7d6cfd5b34ffd3e9c0a96779ee51df999bcc67` |
+| Gate 0 | auf `main` durch PR #89 |
+| Production Gate A | **PASS** (`20260824160000` dann `20260824180000`) |
+| Production TW6-B / AAL2 / Direction A | **nicht** angewendet |
 
-`main` hat sich in diesem Slice nicht bewegt.
+Ältere Ahead/Behind- und CI-Angaben in diesem Dokument sind historisch und gelten nicht als Evidence für den neuen Exact Head.
 
 ## 2. Finaler Mode-Contract
 
 **Mode != Provenance.**
 
 Spalte: `public.trips.day_stage_assignment_mode`  
-Kanonische Ableitung: `lib/trips/day-stage-assignment.ts` (`dayStageAssignmentModeAbleiten`) und `public.reise_anlegen()` (`20260826240000`).
+Kanonische Ableitung: `lib/trips/day-stage-assignment.ts` (`dayStageAssignmentModeAbleiten`) und `public.reise_anlegen()` (aktueller Function-Text: `20260827010000`; `20260826240000` bleibt unverändert).
 
 | Mode | Bedeutung | Wer darf ihn erzeugen |
 | --- | --- | --- |
 | `legacy_fallback` | nur bereits persistierter historischer DB-Bestand | nur Migration/Backfill / Default bestehender Rows |
 | `unassigned` | mehrere Ziele, keine Day→Stage-Zuordnung | neue Requests ohne gültige Position |
-| `single_destination` | genau eine Stage | neue Requests mit `stages <= 1` |
+| `single_destination` | genau eine Stage | neue Requests mit genau einer Stage |
 | `explicit` | konkrete gültige Positionen aus der bestätigten Nutzlast | neue Requests mit ≥1 gültiger Position |
 
 `explicit` bedeutet **nicht** „manuell vom Nutzer editiert“. Herkunft bleibt ein späterer, getrennter Provenance-Contract. `user` ist kein persistierbarer Mode.
@@ -46,7 +45,8 @@ Server-Ableitung für **neue** Create-/Transfer-Requests:
 
 | stages | gültige Positionen | unbekannter Claim | Ergebnis |
 | --- | --- | --- | --- |
-| <= 1 | * | bekannt oder fehlend | `single_destination` |
+| < 1 | * | * | `22023` / `DayStageAssignmentFehler`, keine persistierte Reise |
+| = 1 | * | bekannt oder fehlend | `single_destination` |
 | > 1 | mindestens eine | bekannt oder fehlend | `explicit` |
 | > 1 | keine | bekannt oder fehlend | `unassigned` |
 | * | out-of-range / ungültig | * | `22023` / `DayStageAssignmentFehler` |
@@ -96,6 +96,16 @@ Neue Development-Migration **nach** den bereits angewendeten `20260826220000` / 
 Development-Daten **vor** der Transformation: 1 Trip, `legacy_fallback`, 2 Stages, 7 zugeordnete Tage, **keine** `user`-Rows. Nach Rename bleibt derselbe Trip `legacy_fallback`.
 
 `20260826090000_admin_aal2_data_plane.sql` bleibt offen und wurde **nicht** angewendet.
+
+Additive Folgemigration **nach** `20260826240000` (27. August 2026):
+
+`supabase/migrations/20260827010000_reise_anlegen_zero_stage_fail_closed.sql`
+
+- nur `CREATE OR REPLACE` von `public.reise_anlegen(jsonb)`
+- 0 Stages → `22023`, keine persistierte Reise
+- `single_destination` nur bei genau einer Stage
+- `20260826240000` bleibt byte-identisch (`7a9626d8ac53ea3458bf7d622ea695cce26360962c02430d8d1a0094129a1edb`)
+- nicht Teil des Gate-B-Bundles
 
 **Production-Migration wurde NICHT angewendet.** Kein `--produktion`. Keine Production-RLS-/Ownership-Änderung. Production hat die Spalte weiterhin nicht; Account-Reads nutzen `select *` und `dayStageAssignmentModeLesenDb(fehlend) → legacy_fallback`.
 
@@ -149,6 +159,7 @@ Der SUCCESS auf Task-Commit `dbfb7be8` und der Typecheck-FAILURE auf Zwischen-He
 | TW6-B-P1-04 | P1 | SQL hat `user`+Positionen als `legacy_fallback` persistiert | geschlossen |
 | TW6-B-P1-05 | P1 | Direkter Client mintet `legacy_fallback` | **technisch geschlossen** durch Mode-Ableitung; TL-Finalreview ausstehend |
 | TW6-B-P1-06 | P1 | Accepted Reisevorschlag bekam falsche Legacy-Provenance | **technisch geschlossen** (`explicit`); TL-Finalreview ausstehend |
+| TW6-B-P1-07 | P1 | 0 Stages wurden als `single_destination` persistiert (`stageCount <= 1`) | **technisch geschlossen** durch `20260827010000` + identische TS-Ableitung; TL-Finalreview ausstehend |
 | TW6-B-P2-02 | P2 | Guest-Load schrieb Erfindung in Guest→Account | geschlossen für neue unassigned Reisen; alter Browser-JSON ohne Positionen wird `unassigned` |
 | — | P0 | keine | — |
 | TW6-B-P3-01 / P3-02 | P3 | Reorder / Reiseidee ein Ziel | out of scope |
@@ -156,8 +167,8 @@ Der SUCCESS auf Task-Commit `dbfb7be8` und der Typecheck-FAILURE auf Zwischen-He
 
 ## 8. Offene Restpunkte
 
-- Unabhängiger Technical-Lead-Finalreview des korrigierten Production-Rollout-Plans (P1-04/P1-05/P1-06 + Provenance).
-- Getrennte Product-Owner-Freigaben: erst Provenance der TW6-B-Dateien auf `main` oder immutable Tag, dann Commercial-Paar, dann TW6-B-Bundle unter Write-Gate, dann Merge. Siehe Abschnitt 10.
+- Unabhängiger Technical-Lead-Finalreview dieser Zero-Stage-Korrektur auf dem neuen Exact Head.
+- Gate B bleibt nicht freigegeben. Das bestehende Drei-Datei-Bundle auf `main` enthält `20260827010000` nicht; ein späterer Production-Apply müsste diese Folgemigration extra entscheiden.
 - Separate Assignment-Provenance, falls später Herkunft von `explicit` unterschieden werden muss.
 - Direction A (Aufenthaltseditor) bleibt eigener Slice.
 - Admin/AAL-`db:sicherheit`-Fälle bleiben vorbestehend offen und sind nicht Teil dieses Slice.
@@ -169,6 +180,8 @@ Der SUCCESS auf Task-Commit `dbfb7be8` und der Typecheck-FAILURE auf Zwischen-He
 Kein Ready. Kein Merge. Kein Folgeslice. Keine Production-Migration in diesem Agent-Lauf. Keine Aufenthalts-UX. Kein fünfter Mode. Keine Provenance-Spalte.
 
 ## 10. Production-Rollout-Plan (PLAN ONLY, 26. August 2026)
+
+Abschnitt 10 bleibt historische Evidence des Plan-Slices. **Aktuelle Wahrheit 27. August 2026:** Gate 0 ist auf `main` (PR #89). Production Gate A ist PASS. Gate B ist nicht freigegeben und wurde nicht ausgeführt. Siehe Abschnitt 11.
 
 Auftrag: `docs/TRIP_WORKSPACE_TW6_PRODUCTION_ROLLOUT_PLAN_TASK.md`.  
 **In diesem Lauf wurde Production nicht geschrieben.** Kein `--produktion`. Kein Branch-Merge nach Production. Kein AAL2.
@@ -361,3 +374,46 @@ Zurückgezogen aus dem alten Plan:
 - Function-Rewind, wenn `24180000` nach `24160000` scheitert
 - sequenzielles Anwenden von `26220000`→`26230000`→`26240000` mit späterem Abort
 - Production-Write der TW6-B-Versionen, solange sie nur auf Draft #87 leben
+
+## 11. Zero-Stage-Korrektur (27. August 2026)
+
+Technical-Lead-Auftrag: `Technical-Lead correction assignment — 2026-08-27`.
+
+### 11.1 Sync
+
+`feat/tw6-rest-progressive-stages` ist mit `origin/main` `f683855fa82a6ae5663228b2c9dfa605755fc47d` synchron. Merge-Base = aktuelles `main`. PR-#89-Migrationen wurden nicht umgeschrieben.
+
+### 11.2 P1 Zero-Stage
+
+Befund: `stageCount <= 1` machte 0 Stages zu `single_destination`. Direkter `reise_anlegen(jsonb)`-Aufruf persistierte das.
+
+Fix, fail-closed, TS = SQL:
+
+- neue Create-/RPC-Requests brauchen mindestens eine bestätigte Stage
+- 0 Stages → `22023` / `DayStageAssignmentFehler`, keine persistierte Reise
+- `single_destination` nur bei genau einer Stage
+
+`20260826240000_trip_day_stage_assignment_mode.sql` bleibt unverändert. Additive Folgemigration:
+
+`20260827010000_reise_anlegen_zero_stage_fail_closed.sql`
+
+Nicht ins Gate-B-Bundle aufgenommen. Kein Production-Apply.
+
+Folgearbeiten, damit Create/RPC und Guest-Wege denselben Vertrag haben:
+
+- `reiseLesen` wirft nicht; 0-Stage-Entwürfe bleiben lesbar, minten aber kein `single_destination`
+- `gastreiseAnlegen` ohne bestätigtes Ziel legt keine Reise an
+- Guest→Account (`alsNutzlast` / `gastreisenUebernehmen`) schickt 0-Stage-Entwürfe nicht
+
+### 11.3 Aktuelle Gates
+
+| Gate | Stand |
+| --- | --- |
+| Gate 0 | auf `main` durch PR #89 |
+| Production Gate A | PASS |
+| Production TW6-B / Gate B | nicht angewendet, nicht freigegeben |
+| AAL2 / Direction A | ausgeschlossen |
+
+### 11.4 STOP
+
+Kein Ready. Kein Merge. Kein Gate B. Kein Production-Write. Kein TW-7/8/9.

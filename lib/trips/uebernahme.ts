@@ -38,6 +38,7 @@
 import { partyVon } from '@/lib/readiness/party'
 import { readinessAlsUebernahme } from '@/lib/readiness/uebernahme'
 import { alsNutzlast } from '@/lib/trips/abbildung'
+import { DayStageAssignmentFehler } from '@/lib/trips/day-stage-assignment'
 import { uebernommenStreichen, zurUebernahme } from '@/lib/trips/gastspeicher'
 import type { ReiseNutzlast } from '@/lib/trips/schema'
 
@@ -88,7 +89,21 @@ export async function gastreisenUebernehmen(
 
   try {
     for (const entwurf of entwuerfe) {
-      const ergebnis = await senden(alsNutzlast(entwurf))
+      let nutzlast: ReiseNutzlast
+      try {
+        nutzlast = alsNutzlast(entwurf)
+      } catch (fehler) {
+        if (fehler instanceof DayStageAssignmentFehler) {
+          return {
+            art: 'fehler',
+            meldung: fehler.message,
+            uebernommen,
+            offen: entwuerfe.length - uebernommen,
+          }
+        }
+        throw fehler
+      }
+      const ergebnis = await senden(nutzlast)
 
       if (!ergebnis.ok) {
         return {

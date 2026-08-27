@@ -71,6 +71,7 @@ import { mobilityManuellLesen, mobilityManuellZuPunkt, mobilityZugehoerigkeitPru
 import { rentalCarManuellLesen, rentalCarManuellZuPunkt, rentalZugehoerigkeitPruefen } from '@/lib/rental-cars/manuell'
 import { buchungsstatusAnwenden } from '@/lib/trips/buchung'
 import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
+import { dayStageAssignmentModeAbleiten } from '@/lib/trips/day-stage-assignment'
 import { createZieleGraph } from '@/lib/trips/create-stages'
 import { reisetageBauen } from '@/lib/trips/tage'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
@@ -556,6 +557,10 @@ export function gastreiseAnlegen(
         return etappe ? [etappe] : []
       })()
 
+  if (stages.length < 1) {
+    throw new Error('Aus diesen Angaben entsteht keine gültige Reise.')
+  }
+
   const ersteStageId = stages[0]?.id ?? null
   const days = graph
     ? reisetageBauen(eingabe.startDate, eingabe.endDate).map((tag) => ({
@@ -589,7 +594,10 @@ export function gastreiseAnlegen(
     days,
     ohneTag: [],
     dayStageAssignmentMode: graph?.assignmentMode
-      ?? (stages.length <= 1 ? 'single_destination' : 'unassigned'),
+      ?? dayStageAssignmentModeAbleiten({
+        stageCount: stages.length,
+        positions: stages.length === 1 ? [1] : [],
+      }),
     createdAt: jetzt,
     updatedAt: jetzt,
   }

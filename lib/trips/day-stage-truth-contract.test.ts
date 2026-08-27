@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 import { alsNutzlast } from '@/lib/trips/abbildung'
 import { createZieleGraph } from '@/lib/trips/create-stages'
 import {
+  DayStageAssignmentFehler,
   darfEinzelzielZuordnen,
   dayStageAssignmentModeAbleiten,
 } from '@/lib/trips/day-stage-assignment'
@@ -200,6 +201,22 @@ describe('TW6 Day→Stage Mode Contract – Paris → Rom → Paris / 12.–17. 
     assert.equal(zugeordnet.days[1]?.stageId, 's1')
     assert.equal(zugeordnet.days[2]?.stageId, 's2')
     assert.equal(zugeordnet.days[3]?.stageId, 's2')
+  })
+
+  test('0 Stages sind fail-closed und minten kein single_destination', () => {
+    assert.throws(
+      () => dayStageAssignmentModeAbleiten({ stageCount: 0 }),
+      DayStageAssignmentFehler,
+    )
+    assert.throws(
+      () =>
+        dayStageAssignmentModeAbleiten({
+          stageCount: 0,
+          claimed: 'legacy_fallback',
+          positions: [1],
+        }),
+      DayStageAssignmentFehler,
+    )
   })
 
   test('claimed legacy_fallback plus Positionen wird explicit', () => {

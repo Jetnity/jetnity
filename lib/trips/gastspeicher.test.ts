@@ -214,6 +214,18 @@ describe('Genau eine aktive Gastreise', () => {
     assert.equal(reise.clientRef, 'trip-fest')
   })
 
+  test('ohne bestätigtes Ziel entsteht keine Gastreise', () => {
+    assert.throws(
+      () => gastreiseAnlegen(eingabe({ destination: '', destinationPlaceId: '' })),
+      (fehler: unknown) => {
+        assert.ok(fehler instanceof Error)
+        assert.match(fehler.message, /keine gültige Reise/)
+        return true
+      },
+    )
+    assert.equal(speicher.roh(SCHLUESSEL.aktiv), null)
+  })
+
   test('eine zweite Reise wird abgelehnt und nennt die bestehende', () => {
     const erste = gastreiseAnlegen(eingabe())
 

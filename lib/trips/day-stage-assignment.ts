@@ -84,7 +84,8 @@ export function dayStagePositionenPruefen(
  *
  * | stages | gültige Positionen | result |
  * | --- | --- | --- |
- * | <= 1 | * | `single_destination` |
+ * | < 1 | * | `DayStageAssignmentFehler` |
+ * | = 1 | * | `single_destination` |
  * | > 1 | mindestens eine | `explicit` |
  * | > 1 | keine | `unassigned` |
  *
@@ -100,8 +101,12 @@ export function dayStageAssignmentModeAbleiten(
     throw new DayStageAssignmentFehler()
   }
 
+  if (!Number.isInteger(eingabe.stageCount) || eingabe.stageCount < 1) {
+    throw new DayStageAssignmentFehler()
+  }
+
   const positionen = dayStagePositionenPruefen(eingabe.stageCount, eingabe.positions)
-  if (eingabe.stageCount <= 1) return 'single_destination'
+  if (eingabe.stageCount === 1) return 'single_destination'
   return positionen.length > 0 ? 'explicit' : 'unassigned'
 }
 

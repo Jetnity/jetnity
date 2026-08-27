@@ -29,6 +29,7 @@ import {
   type Trip,
 } from '@/types/trips'
 import {
+  DayStageAssignmentFehler,
   dayStageAssignmentModeFuerGast,
   stagePositionenAusReise,
 } from '@/lib/trips/day-stage-assignment'
@@ -412,12 +413,20 @@ export function reiseLesen(wert: unknown): Trip | null {
   const ergebnis = reiseSchema.safeParse(mitAlias)
   if (!ergebnis.success) return null
   const { dayStageAssignmentMode: _claimed, ...rest } = ergebnis.data
-  return {
-    ...rest,
-    dayStageAssignmentMode: dayStageAssignmentModeFuerGast({
-      stageCount: rest.stages.length,
-      positions: stagePositionenAusReise(rest),
-    }),
+  try {
+    return {
+      ...rest,
+      dayStageAssignmentMode: dayStageAssignmentModeFuerGast({
+        stageCount: rest.stages.length,
+        positions: stagePositionenAusReise(rest),
+      }),
+    }
+  } catch (fehler) {
+    if (!(fehler instanceof DayStageAssignmentFehler)) throw fehler
+    // 0-Stage-Entwürfe bleiben lesbar, minten aber kein single_destination.
+    // Ungültige Positionen machen den Eintrag unbrauchbar.
+    if (rest.stages.length < 1) return rest
+    return null
   }
 }
 
@@ -556,7 +565,10 @@ export const reiseNutzlastSchema = z.object({
    */
   day_stage_assignment_mode: z.enum([...DAY_STAGE_ASSIGNMENT_MODES, 'user']).nullable().optional(),
   day_stage_assignment_source: z.enum([...DAY_STAGE_ASSIGNMENT_MODES, 'user']).nullable().optional(),
-  stages: z.array(nutzlastEtappeSchema).max(GRENZEN.etappenJeReise),
+  stages: z
+    .array(nutzlastEtappeSchema)
+    .min(1, 'Die Reise braucht mindestens ein Reiseziel.')
+    .max(GRENZEN.etappenJeReise),
   days: z.array(nutzlastTagSchema).max(GRENZEN.reisetageJeReise),
   ungeplante: z.array(nutzlastPunktSchema).max(GRENZEN.punkteJeReise).default([]),
 })

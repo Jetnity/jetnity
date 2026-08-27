@@ -997,6 +997,40 @@ describe('Manipulationsversuche', () => {
     assert.equal(server.empfangen.length, 0)
   })
 
+  test('ein 0-Stage-Entwurf wird fail-closed nicht ins Konto geschickt', async () => {
+    speicher.setzen(SCHLUESSEL.aktiv, {
+      id: 'trip-1',
+      clientRef: 'trip-1',
+      title: 'Ohne Ziel',
+      origin: null,
+      startDate: '2026-09-12',
+      endDate: '2026-09-16',
+      travellers: 1,
+      currency: 'CHF',
+      budgetAmount: null,
+      status: 'draft',
+      pace: 'balanced',
+      interests: [],
+      travelWish: null,
+      stages: [],
+      days: [{ id: 'day-1', dayIndex: 1, dayDate: '2026-09-12', title: null, items: [] }],
+      createdAt: '2026-08-01T00:00:00.000Z',
+      updatedAt: '2026-08-01T00:00:00.000Z',
+    })
+
+    const server = attrappe()
+    const bericht = await gastreisenUebernehmen(server.senden)
+
+    assert.deepEqual(bericht, {
+      art: 'fehler',
+      meldung: 'Die Tageszuordnung ist ungültig.',
+      uebernommen: 0,
+      offen: 1,
+    })
+    assert.equal(server.empfangen.length, 0)
+    assert.equal(JSON.parse(speicher.roh(SCHLUESSEL.aktiv) ?? 'null')?.id, 'trip-1')
+  })
+
   test('ein Entwurf mit unmöglichen Werten wird verworfen, nicht geschickt', async () => {
     speicher.setzen(SCHLUESSEL.aktiv, {
       id: 'trip-1',

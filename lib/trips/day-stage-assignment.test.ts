@@ -30,7 +30,26 @@ describe('TW6 Day→Stage Assignment Mode', () => {
     assert.equal(dayStageAssignmentModeLesenDb('explicit'), 'explicit')
   })
 
-  test('ein Ziel wird immer single_destination', () => {
+  test('0 Stages sind fail-closed und werden nicht single_destination', () => {
+    assert.throws(
+      () => dayStageAssignmentModeAbleiten({ stageCount: 0 }),
+      DayStageAssignmentFehler,
+    )
+    assert.throws(
+      () => dayStageAssignmentModeAbleiten({ stageCount: 0, claimed: 'single_destination' }),
+      DayStageAssignmentFehler,
+    )
+    assert.throws(
+      () => dayStageAssignmentModeAbleiten({ stageCount: 0, positions: [1] }),
+      DayStageAssignmentFehler,
+    )
+    assert.throws(
+      () => dayStageAssignmentModeFuerGast({ stageCount: 0 }),
+      DayStageAssignmentFehler,
+    )
+  })
+
+  test('genau ein Ziel wird single_destination', () => {
     assert.equal(dayStageAssignmentModeAbleiten({ stageCount: 1 }), 'single_destination')
     assert.equal(
       dayStageAssignmentModeAbleiten({

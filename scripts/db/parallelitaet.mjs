@@ -155,7 +155,7 @@ const FAELLE = [
     bestandVorher: 59,
     kennung: (nr) => `funktion-${nr}`,
     sql: (nr) =>
-      `select public.reise_anlegen('{"client_ref":"funktion-${nr}","title":"Parallel"}'::jsonb);`,
+      `select public.reise_anlegen('{"client_ref":"funktion-${nr}","title":"Parallel","stages":[{"position":1,"name":"Testziel"}]}'::jsonb);`,
     erwartung: {
       bestandNachher: 60,
       erfolge: 1,
@@ -168,7 +168,7 @@ const FAELLE = [
     bestandVorher: 59,
     kennung: () => `bestand-1`,
     sql: () =>
-      `select public.reise_anlegen('{"client_ref":"bestand-1","title":"Parallel"}'::jsonb);`,
+      `select public.reise_anlegen('{"client_ref":"bestand-1","title":"Parallel","stages":[{"position":1,"name":"Testziel"}]}'::jsonb);`,
     erwartung: {
       bestandNachher: 59,
       erfolge: SITZUNGEN,
@@ -183,7 +183,7 @@ const FAELLE = [
     bestandVorher: 59,
     kennung: () => `doppelt`,
     sql: () =>
-      `select public.reise_anlegen('{"client_ref":"doppelt","title":"Parallel"}'::jsonb);`,
+      `select public.reise_anlegen('{"client_ref":"doppelt","title":"Parallel","stages":[{"position":1,"name":"Testziel"}]}'::jsonb);`,
     erwartung: {
       bestandNachher: 60,
       erfolge: SITZUNGEN,
@@ -198,7 +198,7 @@ const FAELLE = [
     bestandVorher: 60,
     kennung: (nr) => `voll-${nr}`,
     sql: (nr) =>
-      `select public.reise_anlegen('{"client_ref":"voll-${nr}","title":"Parallel"}'::jsonb);`,
+      `select public.reise_anlegen('{"client_ref":"voll-${nr}","title":"Parallel","stages":[{"position":1,"name":"Testziel"}]}'::jsonb);`,
     erwartung: {
       bestandNachher: 60,
       erfolge: 0,

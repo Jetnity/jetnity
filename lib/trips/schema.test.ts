@@ -69,6 +69,18 @@ describe('Eine vollständige Reise kommt durch', () => {
     assert.equal(gelesen?.dayStageAssignmentMode, 'single_destination')
   })
 
+  test('0 Stages bleiben lesbar und minten kein single_destination', () => {
+    const gelesen = reiseLesen(
+      reise({
+        stages: [],
+        dayStageAssignmentMode: 'single_destination',
+      }),
+    )
+    assert.notEqual(gelesen, null)
+    assert.equal(gelesen?.stages.length, 0)
+    assert.notEqual(gelesen?.dayStageAssignmentMode, 'single_destination')
+  })
+
   test('ein alter Source-Alias bleibt lesbar und wird zum Mode', () => {
     const gelesen = reiseLesen(
       reise({
@@ -600,6 +612,10 @@ describe('Die Nutzlast für public.reise_anlegen() trägt nur, was die Funktion 
   test('ohne Kennung ist sie nicht idempotent und wird abgelehnt', () => {
     const { client_ref: _, ...ohne } = nutzlast
     assert.equal(reiseNutzlastSchema.safeParse(ohne).success, false)
+  })
+
+  test('0 Stages in der Create-Nutzlast sind fail-closed', () => {
+    assert.equal(reiseNutzlastSchema.safeParse({ ...nutzlast, stages: [] }).success, false)
   })
 
   test('ein mitgeschickter Status wird nicht übernommen', () => {

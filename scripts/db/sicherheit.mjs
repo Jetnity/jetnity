@@ -847,7 +847,7 @@ const FAELLE = [
  */
 function reisenachweise() {
   const reise = (kennung, weiteres = '') =>
-    `'{"client_ref":"${kennung}","title":"Testreise"${weiteres}}'::jsonb`
+    `'{"client_ref":"${kennung}","title":"Testreise","stages":[{"position":1,"name":"Testziel"}]${weiteres}}'::jsonb`
 
   const punkt = (code) =>
     `{"airportCode":"${code}","countryCode":"US","city":"Clientstadt","country":"Clientland"}`
@@ -2337,6 +2337,28 @@ function reisenachweise() {
                      where d.trip_id = t.id) = array[1,1,2,2,3,3]::smallint[]`,
       erwartung: 'erlaubt',
       grund: 'Alter user-Claim ist keine Provenance. Valide Positionen werden explicit.',
+    },
+    {
+      name: 'reise_anlegen lehnt 0 Stages fail-closed ab',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        'tw6b-zero',
+        `,"stages":[],"days":[{"day_index":1},{"day_index":2}]`,
+      )})`,
+      erwartung: 'abgelehnt',
+      grund: 'single_destination bedeutet genau eine Stage. 0 Stages dürfen keine Reise anlegen.',
+    },
+    {
+      name: 'reise_anlegen persistiert bei 0 Stages keine Reise',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select 1 where not exists (
+              select 1 from public.trips
+               where user_id = '${NUTZER}' and client_ref = 'tw6b-zero'
+            )`,
+      erwartung: 'erlaubt',
+      grund: 'Fail-closed heisst: kein persisted trip, kein single_destination-Mode.',
     },
     {
       name: 'reise_anlegen lehnt unbekannten Assignment-Claim ab',
