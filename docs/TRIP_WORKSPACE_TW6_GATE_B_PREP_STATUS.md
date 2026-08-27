@@ -1,35 +1,27 @@
-# TW6-B Gate 0 / Gate-B-Playbook – Vorbereitungsstand
+# TW6-B Gate 0 / Gate-B-Playbook – Status
 
-Stand: 26. August 2026  
-Status: **Draft-Vorbereitung. Nicht Ready. Nicht mergen. Production unverändert.**
+Stand: 27. August 2026  
+Status: **Gate 0 integriert. Production Gate A PASS. Gate B weiterhin BLOCKED / nicht freigegeben. PR #87 bleibt Draft.**
 
 > **Do not blindly trust this file — live verify first.**
 
-## 1. Auftrag
+## 1. Was abgeschlossen ist
 
-Operativer Vorbereitungs-Slice nach Technical-Lead **PLAN PASS / PRODUCTION EXECUTION BLOCKED** auf PR #87 Exact Head `0b7d6cfd5b34ffd3e9c0a96779ee51df999bcc67`.
+PR #89 (`TW6-B Gate 0: migrations-only + transactional apply playbook`) wurde nach unabhängigem Technical-Lead-PASS auf Exact Head `986fa8b7592286731e44ab46d36a8f299531d669` gemergt.
 
-Nur:
+Merge-Commit:
 
-1. migrations-only Provenance der drei geprüften TW6-B-Dateien gegen `main`
-2. bounded transaktionales Gate-B-Playbook
-3. sichere Prüfung gegen Development/Test
+`5fc4d1b873f1fa7aff8e4064163275bf30f9ce98`
 
-Nicht: Multi-Ziel-UI, übriger PR-#87-Runtime-Code, AAL2, Direction A, TW-7/8/9, Ready, Merge, Production-Apply.
+Damit liegen die drei geprüften TW6-B-Migrationen dauerhaft auf `main`, zusammen mit dem bounded transaktionalen Gate-B-Playbook. Kein übriger Runtime-Code aus PR #87 wurde durch Gate 0 integriert.
 
-## 2. Live-Git bei Erstellung
+Exact-Head Evidence PR #89:
 
-| Fakt | Wert |
-| --- | --- |
-| `origin/main` | `1d558ef56cc275d429f4076c7a8877c3791947a7` |
-| Branch | `cursor/tw6-gate-b-prep-a4c4` |
-| Quelle der drei Dateien | PR #87 Exact Head `0b7d6cfd5b34ffd3e9c0a96779ee51df999bcc67` |
-| Dieser Draft | PR #89, Branch `cursor/tw6-gate-b-prep-a4c4` |
-| Runtime-Code aus PR #87 | **nicht** übernommen |
+- GitHub Actions Run `33023062522`: SUCCESS
+- Vercel Preview: SUCCESS/READY
+- Post-Merge `main` CI Run `33023988403`: SUCCESS
 
-## 3. Datei-Hashes
-
-`cmp` gegen PR #87 und SHA-256:
+## 2. Kanonische TW6-B-Dateien auf main
 
 | Datei | SHA-256 |
 | --- | --- |
@@ -37,36 +29,99 @@ Nicht: Multi-Ziel-UI, übriger PR-#87-Runtime-Code, AAL2, Direction A, TW-7/8/9,
 | `20260826230000_trip_day_stage_assignment_source_fail_closed.sql` | `7e2e30246f1d9976b868751a6cc79087e537bbd36fb8f0dabf829b98258117a9` |
 | `20260826240000_trip_day_stage_assignment_mode.sql` | `7a9626d8ac53ea3458bf7d622ea695cce26360962c02430d8d1a0094129a1edb` |
 
-Development-History `statements[1]` für dieselben Versionen trägt dieselben SHA-256-Werte. Production wurde nicht gelesen/geschrieben.
+Runtime-Code aus PR #87 bleibt getrennt.
 
-## 4. Playbook
+## 3. Gate-B-Playbook
 
-Implementiert in `lib/rollout/gate-b-tw6-bundle.ts` und `scripts/db/gate-b-tw6-bundle.ts`.  
-Vertrag: `docs/TRIP_WORKSPACE_TW6_GATE_B_APPLY_PLAYBOOK.md`.
+Implementiert in:
 
-`PRODUCTION_APPLY_FREIGEGEBEN = false`.
+- `lib/rollout/gate-b-tw6-bundle.ts`
+- `scripts/db/gate-b-tw6-bundle.ts`
+- `docs/TRIP_WORKSPACE_TW6_GATE_B_APPLY_PLAYBOOK.md`
 
-Development/Test, kein Production-Write:
+Vertrag:
 
-- lokale Hash-Probe: PASS
-- `--entwicklung` read-only: History der drei Versionen hash-identisch; Mode-Vertrag PASS; Grants `authenticated` INSERT/EXECUTE true, `anon` false
-- `--apply`: abgelehnt, weil die Versionen bereits existieren; kein Write-Gate gesetzt
-- `--schreiben --produktion --projekt-ref …`: `PRODUCTION EXECUTION BLOCKED`
-- `--write-gate-roundtrip`: Write-Gate committed geschlossen, Grants danach exakt wiederhergestellt
-- `--fail-path`: Write-Gate committed, fehlgeschlagene Transaktion gerollt, Write-Gate blieb geschlossen, History unverändert; Test stellte Grants wieder her
+1. Write-Gate committed setzen und verifizieren.
+2. `26220000` + `26230000` + `26240000` plus exakte History in **einer** Transaktion.
+3. Keine öffentlich executable 26220000-/26230000-Zwischenwahrheit.
+4. Finalen Mode-Vertrag vor Grant-Restore prüfen.
+5. Bei Fehler `ROLLBACK`; Write-Gate bleibt geschlossen.
+6. Grants erst nach PASS exakt aus Snapshot wiederherstellen.
 
-Production unverändert.
+`db:anwenden` lehnt das Bundle dateiweise ab.
 
-## 5. P0 / P1 / P2 / P3
+## 4. Production Gate A – PASS
+
+Product Owner hat am 27. August 2026 ausschließlich Gate A freigegeben:
+
+1. `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`
+2. danach `20260824180000_trip_items_flug_handelsfelder_guard`
+
+Beide wurden auf Production angewendet und vollständig verifiziert.
+
+Finale Production-History enthält exakt:
+
+- `20260824160000` → `reise_anlegen_flug_handelsfelder_ohne_nachweis`
+- `20260824180000` → `trip_items_flug_handelsfelder_guard`
+
+Verifikation:
+
+- RPC verwirft untrusted Flight-Handelsfelder: PASS
+- Route-Itinerary bleibt erhalten: PASS
+- `authenticated` RPC EXECUTE = true / `anon` = false: PASS
+- Guard-Trigger count=1 / enabled: PASS
+- Trigger-Scope korrekt: PASS
+- Guard Role-Boundary korrekt: PASS
+- Insert-Strip: PASS
+- Update-Preserve: PASS
+- Guard-Funktion für authenticated/anon nicht direkt executable: PASS
+- Production Flight-Items: 0
+- Production-Projekt danach: `ACTIVE_HEALTHY`
+
+Vollständige Evidence: `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`.
+
+## 5. Explizit NICHT ausgeführt
+
+Production enthält weiterhin **nicht**:
+
+- `20260826220000`
+- `20260826230000`
+- `20260826240000`
+- AAL2 `20260826090000`
+- Development-AAL2-Version `20260826052735`
+
+Auf Production existiert weiterhin weder `day_stage_assignment_source` noch `day_stage_assignment_mode`.
+
+Damit ist TW6-B Gate B nicht still aktiviert worden.
+
+## 6. PR #87
+
+PR #87 (`feat/tw6-rest-progressive-stages`) bleibt Draft.
+
+Der frühere PLAN-PASS / PRODUCTION EXECUTION BLOCKED war auf einem älteren `main`. Seitdem wurden PR #89 und weitere Continuity-Commits integriert. Deshalb gilt vor jeder Fortsetzung zwingend:
+
+- aktuellen `main` verifizieren
+- Merge-Base und Ahead/Behind neu bestimmen
+- echten Diff gegen aktuellen `main` prüfen
+- Konflikte/Drift auflösen
+- Shared Contracts erneut prüfen
+- Exact-Head GitHub Actions und Vercel erneut verlangen
+- Production-Grenzen neu lesen
+
+Kein alter PASS darf als aktuelle Merge- oder Production-Freigabe verwendet werden.
+
+## 7. P0 / P1 / P2 / P3
 
 | ID | Klasse | Lage |
 | --- | --- | --- |
-| P0 | — | keine |
-| TW6-B-PREP-P1-01 | P1 | Production-Apply bleibt blockiert, bis PO-Gates für Commercial und Gate B getrennt vorliegen und der Technical Lead das Playbook unabhängig reviewed |
-| TW6-B-ROLLOUT-P1-04/05/06/07 | P1 | im Plan geschlossen; dieser Slice realisiert Gate 0 + P2-02, führt sie nicht auf Production aus |
-| TW6-B-PREP-P2-01 | P2 | Development hat das Bundle bereits; `--apply` darf dort nicht erneut laufen |
-| TW6-B-PREP-P3-01 | P3 | `db:anwenden` auf frischen Umgebungen stoppt, sobald die drei Dateien offen sind; frühere offene Dateien müssen separat betrachtet werden |
+| P0 | — | keine aktuell aus Gate A bekannten |
+| TW6-B-PREP-P1-01 | P1 | Gate B bleibt ohne separate Product-Owner-Freigabe blockiert |
+| TW6-B-PR87-P1-REBASE | P1 | PR #87 muss gegen aktuellen `main` neu eingeordnet und re-gegatet werden |
+| TW6-B-PREP-P2-01 | P2 | Development enthält das Bundle bereits; dort nicht erneut blind anwenden |
+| TW6-B-PREP-P3-01 | P3 | `db:anwenden` stoppt auf frischen Umgebungen beim Bundle; frühere offene Migrationen separat betrachten |
 
-## 6. STOP
+## 8. STOP
 
-Kein Ready. Kein Merge. Kein Production-Write. Kein Folgeslice.
+**Kein Gate B. Kein AAL2. Kein Direction A. Kein PR-#87-Merge. Kein Folgeslice.**
+
+Nächster Schritt ist ausschließlich der unabhängige Technical-Lead-Re-Review von PR #87 gegen den aktuellen `main`. Erst nach neuem PASS kann eine separate Product-Owner-Freigabe für Gate B überhaupt angefragt werden.
