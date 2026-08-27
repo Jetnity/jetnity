@@ -1,7 +1,7 @@
 # Jetnity – verbindliche Build-Reihenfolge
 
 Stand: 26. August 2026  
-Status: **Product-Owner-verbindlich; Änderung nur durch neue ausdrückliche Product-Owner-Entscheidung. Operativer Integrationsstand nach PR #86: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`. D0-1/D0-2 und P1-D0-LIVE-01 sind integriert; das ist kein D1/G1 und kein Domain-Cutover.**
+Status: **Product-Owner-verbindlich; Änderung der Reihenfolge nur durch neue ausdrückliche Product-Owner-Entscheidung. Operativer Integrationsstand: TW6-REST-01 ist durch PR #87 integriert. Ältere Checkpoints, die `TW6-REST-01` offen lassen, sind historische Evidence. D0-1/D0-2 und P1-D0-LIVE-01 sind integriert; das ist kein D1/G1 und kein Domain-Cutover.**
 
 ## Grundsatz
 
@@ -23,7 +23,7 @@ Reihenfolge:
 4. TW-3 – Timeline / Etappe / Tag ✅
 5. TW-5 – Item- und Gap-Details ✅
 6. TW6-A – Create-Entry Alignment ✅ – **nicht** gesamtes TW-6
-7. TW6-REST-01 – progressive weitere Ziele / zusätzliche `trip_stages` im Create ❌ offen
+7. TW6-REST-01 – progressive weitere Ziele / zusätzliche `trip_stages` im Create ✅ integriert via PR #87 (`80bbde69`). Ältere „offen“-Zeilen sind historische Evidence. Kein zweites `TW6-REST-01`. Kein gesamtes TW-6-Closure.
 8. TW-7 / TW-8 nur nach ihren dokumentierten Abhängigkeiten/Gates
 9. TW-9 – Polish, Evidence, Closure
 10. verpflichtender finaler Function-by-Function-/Intelligence-Audit

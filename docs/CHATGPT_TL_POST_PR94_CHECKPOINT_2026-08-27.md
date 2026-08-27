@@ -6,6 +6,8 @@ This checkpoint records the independently verified state immediately after PR #9
 
 Live git wins over stale continuity files that still described Visitor Search UX as an open draft.
 
+Binding new-chat operating rules live in `JETNITY_START_HERE.md` and `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`. They are mandatory, not optional. The next ChatGPT Technical Lead does not invent a new workflow.
+
 ## Live Git truth at checkpoint
 
 - Repository: `Jetnity/jetnity`
@@ -69,7 +71,7 @@ There is **no open Visitor Search UX implementation draft**.
 
 PR #95 already landed the new-chat checkpoint `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md` on `main`. It did not update `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, ADR-0174 or the Visitor Search task file.
 
-The remaining continuity work is Draft PR #96 (`cursor/pr94-continuity-b13d`). It updates those canonical files so a new agent does not start from stale “PR #94 is an open draft” status lines.
+The remaining continuity work is Draft PR #96 (`cursor/pr94-continuity-b13d`). Review `5040683772` required contradiction-free Gate-B wording, an explicit `TW6-REST-01` close via PR #87, and binding new-chat operating rules. After that correction the draft stays Draft for re-review.
 
 Do **not** automatically start:
 

@@ -111,13 +111,15 @@ Weiterhin nicht angewendet:
 
 Dieser Runtime-Slice schreibt Production nicht erneut.
 
-## 6. TW6-B Gate 0B / Vier-Datei-Vertrag
+## 6. TW6-B Vier-Datei-Vertrag — bereits angewendet, kein Re-Apply
 
-Durch PR #91 liegt jetzt der migrations-/rollout-only Vier-Datei-Vertrag auf `main`:
+Der Vier-Datei-Vertrag ist der **bereits angewendete historische Production-Gate-B-Rollout**. Gate 0B (PR #91) war nur Provenance auf `main`. Der Production-Apply ist laut Technical-Lead Re-Review operativ PASS. **Kein zweiter Apply ist pending.**
+
+Historische Reihenfolge:
 
 `20260826220000 → 20260826230000 → 20260826240000 → 20260827010000`
 
-Alle vier Dateien gehören unter denselben bounded Write-Gate-/Transaktionsvertrag. `db:anwenden` darf sie nicht dateiweise ausspielen. Final Verify verlangt insbesondere:
+Sicherheitsregeln bleiben: Development und Production nicht blind erneut mit diesem Bundle migrieren. `db:anwenden` darf die vier Dateien nicht dateiweise ausspielen. Die Zero-Stage-Regel bleibt: 0 Stages fail-closed; `single_destination` nur bei genau einer Stage. Historische Verify-Kriterien des Apply waren:
 
 - 0 Stages → fail-closed (`22023`), kein `single_destination`;
 - `single_destination` nur bei genau einer Stage;
@@ -130,7 +132,7 @@ Development `yfvbxvijcorffwxbxahl` enthält bereits alle vier Versionen. Dort ni
 
 ## 7. TW6-B / PR #87
 
-PR #87 (`feat/tw6-rest-progressive-stages`) ist gemergt. Reviewed Head `7ef201fb`. Merge-Commit `80bbde69`. Checkpoint: `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`.
+PR #87 (`feat/tw6-rest-progressive-stages`) ist gemergt und **schließt `TW6-REST-01`**. Reviewed Head `7ef201fb`. Merge-Commit `80bbde69`. Checkpoint: `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`. Ältere „TW6-REST-01 bleibt offen“-Zeilen sind historische Evidence.
 
 Der Workspace zeigt den Persistenzdefault `balanced` nicht als Nutzerwahl. Kein alter PASS darf als aktuelle Merge- oder Production-Freigabe verwendet werden.
 
@@ -146,7 +148,7 @@ Integriert:
 - TW6-A Create-Entry ✅
 - TW6-B Gate 0 / Provenance ✅
 - TW6-B Gate 0B / Zero-Stage Rollout Provenance ✅
-- TW6-B Runtime / progressive Ziele / Day→Stage Mode Contract via PR #87 ✅
+- TW6-B Runtime / progressive Ziele / Day→Stage Mode Contract via PR #87 ✅ (`TW6-REST-01` geschlossen)
 - Visitor Search UX via PR #94 ✅
 
 Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS und kein offener Apply-Auftrag dieses Continuity-Blocks.
@@ -218,7 +220,7 @@ PR #89 und PR #91 sind gemergt und keine aktiven Drafts mehr.
 
 ## 15. Exakter nächster Technical-Lead-Schritt
 
-**Unabhängiger Review des Post-PR-#94-Continuity-Drafts (docs-only) nach Exact-Head-Gates.**
+**Erneuter unabhängiger Review von Draft PR #96 nach Korrektur der Continuity-Widersprüche (Gate-B Re-Apply-Wortlaut, `TW6-REST-01`-Status, bindende New-Chat-Betriebsregeln).**
 
 Visitor Search UX ist integriert. Es gibt keinen offenen Implementation-Draft für diese Suche. Der nächste Produktslice braucht eine neue Technical-Lead- oder Product-Owner-Zuweisung.
 

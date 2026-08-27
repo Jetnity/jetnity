@@ -45,6 +45,22 @@ Jeder neue Chat, Technical Lead oder Coding Agent liest mindestens in dieser Rei
 
 Historische Checkpoints und ältere Governance-/PR-Dokumente bleiben Evidence ihres damaligen Stands. Widersprechende alte Aussagen werden nicht gelöscht, aber durch spätere kanonische Entscheidungen und Live-Evidence superseded.
 
+### Verbindliche New-Chat-Betriebsregeln
+
+Ein neuer ChatGPT-Technical-Lead erfindet **keinen** eigenen Workflow. Diese Regeln sind bindend, nicht optional. Die ausführlichen Standards werden referenziert, nicht ersetzt.
+
+1. Rolle: übergeordneter Jetnity **Technical Lead**.
+2. Pflichtlektüre: die Reihenfolge in Abschnitt 1; zuerst `JETNITY_START_HERE.md`, dann `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`.
+3. **Live-Evidence gewinnt** über Docs, Chat, Screenshots und Erinnerung.
+4. Cursor-Aufträge nennen den **exakten Anzeigenamen** aus Abschnitt 9.
+5. Der Feature-/Audit-Autor ist **nicht** der unabhängige Finalreviewer.
+6. Autonomes Ready/Merge nur nach unabhängigem Exact-Head-PASS (Actions + Vercel) gemäß Abschnitt 3. Blind mergen ist verboten.
+7. Besondere Product-Owner-Gates aus Abschnitt 4 bleiben zwingend.
+8. Keine stillen Shared-Contract- oder fundamentalen Produktentscheidungen.
+9. **Kein automatischer Folgeslice** nach einem abgeschlossenen Auftrag.
+10. Jede materielle Aktion wird im Repository persistiert (`docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`, `docs/CONTINUITY_STANDARD.md`).
+11. Produktmaxime: **Eine Reise, eine Oberfläche. Komplexität intern, Klarheit für den Nutzer.**
+
 ## 2. Vor jeder technischen Entscheidung live verifizieren
 
 Zwingend prüfen:
@@ -229,15 +245,19 @@ Explizit weiterhin nicht auf Production angewendet:
 
 **Gate 0 / Gate 0B ≠ Gate B.** PR #94 hat Production nicht erneut geschrieben.
 
-## 12. TW6-B Vier-Datei-Vertrag
+## 12. TW6-B Vier-Datei-Vertrag — bereits angewendet, kein Re-Apply
 
-Gate 0B liegt durch PR #91 auf `main`.
+Der Vier-Datei-Vertrag ist der **bereits angewendete historische Production-Gate-B-Rollout**, nicht ein offener späterer Apply-Auftrag.
 
-Verbindliche Reihenfolge für einen später separat freigegebenen Production-Gate-B-Apply:
+Angewendete Reihenfolge:
 
 `20260826220000 → 20260826230000 → 20260826240000 → 20260827010000`
 
-Alle vier gehören in denselben bounded Write-Gate-/Transaktionsvertrag. Kein dateiweises Apply. `27010000` schließt die Zero-Stage-Lücke: 0 Stages fail-closed; `single_destination` nur bei genau einer Stage.
+Kein zweiter Production-Gate-B-Apply ist pending. Ältere Formulierungen „für einen später separat freigegebenen Production-Gate-B-Apply“ sind historische Evidence vor dem operativen PASS.
+
+Weiterhin gilt nur die Sicherheitsregel: Development und Production **nicht blind erneut** mit diesem Bundle migrieren. `db:anwenden` darf die vier Dateien nicht dateiweise ausspielen. `27010000` bleibt die Zero-Stage-Regel: 0 Stages fail-closed; `single_destination` nur bei genau einer Stage.
+
+**Gate 0 / Gate 0B ≠ Gate B.** Gate 0B war Provenance auf `main`. Gate B ist der bereits ausgeführte Production-Apply.
 
 Development `yfvbxvijcorffwxbxahl` enthält bereits alle vier Versionen. Dort nicht erneut blind migrieren.
 
@@ -254,7 +274,7 @@ Integriert:
 - TW6-B Gate 0 ✅
 - TW6-B Gate 0B ✅
 
-PR #87 (TW6-B Runtime + Day→Stage Mode Contract, inkl. Workspace-Tempo-Wahrheit) ist gemergt. Checkpoint: `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`.
+PR #87 (TW6-B Runtime + Day→Stage Mode Contract, inkl. Workspace-Tempo-Wahrheit) ist gemergt und **schließt `TW6-REST-01`** (progressive weitere Ziele / zusätzliche `trip_stages` im Create). Checkpoint: `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`. Ältere Dateien, die `TW6-REST-01 bleibt offen` schreiben, sind historische Evidence.
 
 PR #94 (Visitor Search UX) ist gemergt. Reviewed Head `8da869fd`. Checkpoint: `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`. P1/P2 aus Review `5040068359` sind geschlossen. Es gibt **keinen offenen Visitor-Search-Implementation-Draft**.
 
@@ -285,7 +305,7 @@ Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Repo-/Bran
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-**Unabhängiger Review von Draft PR #96 (Post-PR-#94 Continuity, docs-only) nach Exact-Head-Gates.**
+**Erneuter unabhängiger Review von Draft PR #96 nach Korrektur der Continuity-Widersprüche (Gate-B Re-Apply-Wortlaut, `TW6-REST-01`-Status, bindende New-Chat-Betriebsregeln).**
 
 Visitor Search UX ist integriert. Der nächste Produktslice ist **kein** automatischer Visitor-Search-Folgeauftrag und braucht eine neue Technical-Lead- oder Product-Owner-Zuweisung.
 

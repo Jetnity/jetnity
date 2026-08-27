@@ -92,18 +92,18 @@ Integriert:
 - TW6-A Create-Entry ✅
 - TW6-B Gate 0 / Provenance via PR #89 ✅
 - TW6-B Gate 0B / Zero-Stage Production Rollout Provenance via PR #91 ✅
-- TW6-B Runtime + Day→Stage Mode Contract via PR #87 ✅
+- TW6-B Runtime + Day→Stage Mode Contract via PR #87 ✅ (`TW6-REST-01` geschlossen)
 - Visitor Search UX via PR #94 ✅
 
 **Gate 0 / Gate 0B ≠ TW6-B Runtime-Merge und ≠ Production Gate B.**
 
-Durch PR #91 ist der verbindliche spätere Gate-B-Vertrag:
+Der Vier-Datei-Vertrag ist der **bereits angewendete historische Production-Gate-B-Rollout**, nicht ein offener späterer Apply:
 
 `20260826220000 → 20260826230000 → 20260826240000 → 20260827010000`
 
-Alle vier Dateien gehören unter denselben bounded Write-Gate-/Transaktionsvertrag. Kein dateiweises Apply. `27010000` schließt den Zero-Stage-Falschmode: 0 Stages fail-closed, `single_destination` nur bei genau einer Stage.
+Kein Re-Apply ist pending. Development und Production nicht blind erneut mit diesem Bundle migrieren. `27010000` bleibt die Zero-Stage-Regel: 0 Stages fail-closed, `single_destination` nur bei genau einer Stage.
 
-PR #87 (`feat/tw6-rest-progressive-stages`) ist gemergt. Reviewed Head `7ef201fb`, Merge-Commit auf `main` `80bbde69`. Checkpoint: `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`.
+PR #87 (`feat/tw6-rest-progressive-stages`) ist gemergt und **schließt `TW6-REST-01`**. Reviewed Head `7ef201fb`, Merge-Commit auf `main` `80bbde69`. Checkpoint: `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`.
 
 PR #94 (`cursor/visitor-search-ux-b13d`) ist gemergt. Reviewed Head `8da869fd`, Merge-Commit auf `main` `819715b1`. P1 Listbox und P2 Abort-Race sind geschlossen. Task bleibt historische Slice-Spec: `docs/TRIP_WORKSPACE_VISITOR_SEARCH_UX_TASK.md`. Keine Schema-/Production-Änderung. Kein neuer Search-Provider.
 
@@ -213,7 +213,7 @@ Weiterhin nicht angewendet:
 
 ## 10. Nächster Schritt
 
-**STOP nach diesem docs-only Continuity-Draft für unabhängigen Technical-Lead-Review.**
+**STOP nach Korrektur der Review-Findings von `5040683772` für erneuten unabhängigen Technical-Lead-Review von Draft PR #96.**
 
 Kein Ready. Kein Merge ohne neuen PASS. Kein weiterer Visitor-Search-Implementation-Slice. Kein weiterer Production-Write. Kein AAL2. Keine Direction A. Kein TW-7/8/9-Folgeslice.
 

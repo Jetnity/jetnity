@@ -3,7 +3,7 @@
 Stand: 25. August 2026  
 Status: **HISTORICAL HANDOFF. Nicht mehr der aktuelle operative Stand.**
 
-> Aktuell: TW-1/2/4/3/5 und TW6-A sind auf `main`. TW6-REST-01 bleibt offen. Kanonisch: `JETNITY_HANDOFF.md` und `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
+> Aktuell: TW-1/2/4/3/5, TW6-A, TW6-REST-01 / PR #87 und Visitor Search UX / PR #94 sind auf `main`. `TW6-REST-01` ist geschlossen. Kanonisch: `JETNITY_START_HERE.md` und `JETNITY_HANDOFF.md`. Ältere Continuity-Checkpoints sind historische Evidence.
 
 Agent damals: `Trip workspace audit architecture`  
 Branch damals: `feat/trip-workspace-tw3-timeline`  

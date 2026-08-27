@@ -458,10 +458,10 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 12. ✅ TW-5 Item- und Gap-Details auf `main` (PR #66)
 12a. ✅ P1-QS2-02 Guest→Account Stay/Activity-Handelsfeld-Strip – auf `main` (`86567f17`, ADR-0166)
 12b. ✅ P1-TA-02 Official Evaluation Option-Scope – auf `main` (`2468160e`, ADR-0167). P2-TA-06 bleibt offen.
-12c. ✅ TW6-A Create-Entry Alignment – auf `main` (`c4ea47aa`). **TW6-REST-01 bleibt offen.**
-12c1. ✅ TW6-B Gate 0 migrations-only – drei geprüfte Dateien plus transaktionales Playbook auf `main` (PR #89). **Kein Production-Apply.**
+12c. ✅ TW6-A Create-Entry Alignment – auf `main` (`c4ea47aa`). **`TW6-REST-01` ist durch 12c3 / PR #87 geschlossen**, nicht mehr offen.
+12c1. ✅ TW6-B Gate 0 migrations-only – drei geprüfte Dateien plus transaktionales Playbook auf `main` (PR #89). Die damalige Grenze „kein Production-Apply“ gilt nur für diesen Provenance-Schritt; der Production-Apply ist später erfolgt und operativ PASS.
 12c2. ✅ TW6-B Gate 0B Zero-Stage Production Rollout Provenance – `20260827010000` byte-identisch plus Vier-Datei-Playbook auf `main` (PR #91, Continuity PR #92). Die damalige Grenze „kein Production-Apply / kein Runtime-Merge von PR #87“ ist historische Evidence dieses Schritts; später superseden 12c3 und der operative Gate-B-PASS diese Constraint.
-12c3. ✅ TW6-B Runtime PR #87 – progressive weitere Ziele + Day→Stage Mode Contract auf `main` (`80bbde69`). Workspace zeigt Persistenzdefault `balanced` nicht als Nutzerwahl. **Kein TW-7/8/9.**
+12c3. ✅ TW6-REST-01 / TW6-B Runtime PR #87 – progressive weitere Ziele / zusätzliche `trip_stages` im Create + Day→Stage Mode Contract auf `main` (`80bbde69`). Task-Ziel aus `docs/TRIP_WORKSPACE_TW6_REST_PROGRESSIVE_STAGES_TASK.md` ist geschlossen. Workspace zeigt Persistenzdefault `balanced` nicht als Nutzerwahl. **Kein TW-6-Gesamtclosure. Kein TW-7/8/9.** Residual nach diesem Ticket: nur spätere TW-7/8/9- und Audit-Blöcke, nicht ein zweites `TW6-REST-01`.
 12c4. ✅ Visitor Search UX PR #94 – natürliche Orts-/Flughafennamen, kanonische Place-ID / listenbestätigtes IATA, P1/P2 geschlossen; auf `main` (`819715b1`, reviewed head `8da869fd`). **Kein neuer Search-Provider. Kein Schema-/Production-Write. Kein TW-7/8/9.**
 12c5. ✅ PR #94 New-Chat-Checkpoint PR #95 – `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md` auf `main` (`943d14c2`). Kanonische Handoff-Statuszeilen bleiben bis Draft PR #96 veraltet.
 12d. ✅ Provider S5-A Commercial Provenance – auf `main` (`3b317bc6`, ADR-0168). S5-B nicht gestartet.

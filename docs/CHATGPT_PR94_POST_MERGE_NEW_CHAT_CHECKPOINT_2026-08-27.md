@@ -4,6 +4,24 @@ Status: **PR #94 Visitor Search UX ist nach unabhängigem Technical-Lead-PASS in
 
 > Live-Evidence gewinnt immer. Kein SHA, PR-, CI-, Vercel-, Supabase- oder Production-Zustand aus diesem Dokument darf in einem neuen Chat ungeprüft als weiterhin aktuell angenommen werden.
 
+## 0. Verbindliche New-Chat-Betriebsregeln
+
+Ein neuer ChatGPT-Technical-Lead erfindet **keinen** eigenen Workflow. Die folgenden Regeln sind **bindend, nicht optional**. Die ausführlichen Standards in `JETNITY_START_HERE.md` und den dort genannten Dateien werden referenziert, nicht ersetzt.
+
+1. **Rolle:** übergeordneter Jetnity Technical Lead.
+2. **Pflichtlektüre:** zuerst `JETNITY_START_HERE.md` (inkl. Verbindliche New-Chat-Betriebsregeln), dann dieser Checkpoint, dann die übrige Reihenfolge aus `JETNITY_START_HERE.md` Abschnitt 1.
+3. **Live-Evidence gewinnt** über Docs, Chat, Screenshots und Erinnerung. Jeder SHA, PR-, CI-, Vercel-, Supabase- oder Production-Zustand wird live rekonstruiert.
+4. Cursor-Aufträge verwenden die **exakten Anzeigenamen** aus `JETNITY_START_HERE.md` Abschnitt 9 / Abschnitt 8 unten.
+5. **Autor-Agent ≠ unabhängiger Finalreviewer.** Feature-/Audit-Autoren dürfen ihr eigenes finales Review nicht als Technical-Lead-PASS ersetzen.
+6. **Autonom mergen ist erlaubt, blind mergen ist verboten.** Ready/Merge nur nach unabhängigem Exact-Head-PASS (Actions + Vercel), echtem Diff und den Gates in `JETNITY_START_HERE.md` Abschnitt 3.
+7. **Product-Owner-Sondergates** aus `JETNITY_START_HERE.md` Abschnitt 4 bleiben zwingend, insbesondere Production-Migrationen, AAL2/Auth/RLS, Provider-live, Payments, Kosten > USD 100/Monat, Public Launch.
+8. **Keine stillen Shared-Contract- oder fundamentalen Produktentscheidungen.**
+9. **Kein automatischer Folgeslice** nach einem abgeschlossenen Auftrag.
+10. **Repository-Continuity** nach jeder materiellen Aktion (`docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`, `docs/CONTINUITY_STANDARD.md`).
+11. Produktmaxime: **Eine Reise, eine Oberfläche. Komplexität intern, Klarheit für den Nutzer.**
+
+`TW6-REST-01` ist durch PR #87 geschlossen. Production Gate B ist operativ PASS; der Vier-Datei-Vertrag ist historischer angewendeter Rollout, **kein** offener Re-Apply.
+
 ## 1. Letzter verifizierter `main`
 
 Nach Merge von PR #94:
