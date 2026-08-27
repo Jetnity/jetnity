@@ -14,7 +14,12 @@ import {
 } from '@/lib/readiness/official'
 import { fehlendeFaktenFuerReise, slotMissingFactsErgaenzen, travellerSlots } from '@/lib/readiness/party'
 import { beispielreise } from '@/lib/reiseaenderung/fixtures/reise'
-import type { RequirementsAnfrage, RequirementsProvider } from '@/lib/readiness/provider'
+import type { OfficialEvaluation } from '@/lib/readiness/official'
+import type {
+  RequirementsAnfrage,
+  RequirementsCredentialInput,
+  RequirementsProvider,
+} from '@/lib/readiness/provider'
 import type { TripTraveller } from '@/types/trips'
 
 const JETZT = '2026-08-22T08:00:00.000Z'
@@ -1874,12 +1879,12 @@ describe('P2-TA-06 Readiness credential normalization', () => {
   async function normalisierteOptionen(
     traveller: Record<string, unknown>,
     provider: RequirementsProvider | null = null,
-  ) {
-    let gesehen: RequirementsAnfrage | null = null
+  ): Promise<{ options: RequirementsCredentialInput[]; evaluations: OfficialEvaluation[] }> {
+    const gesehen: { anfrage: RequirementsAnfrage | null } = { anfrage: null }
     const capture: RequirementsProvider = {
       name: 'p2-ta06-capture',
       async evaluate(anfrage) {
-        gesehen = anfrage
+        gesehen.anfrage = anfrage
         return provider ? provider.evaluate(anfrage) : []
       },
     }
@@ -1891,7 +1896,7 @@ describe('P2-TA-06 Readiness credential normalization', () => {
       capture,
     )
     return {
-      options: gesehen?.travellers[0]?.credentialOptions ?? [],
+      options: gesehen.anfrage?.travellers[0]?.credentialOptions ?? [],
       evaluations,
     }
   }
