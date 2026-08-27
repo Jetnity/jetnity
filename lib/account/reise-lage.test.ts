@@ -20,6 +20,7 @@ function reise(teil: Partial<TripSummary> & Pick<TripSummary, 'id' | 'title'>): 
     budgetAmount: null,
     status: 'draft',
     updatedAt: '2026-08-01T10:00:00.000Z',
+    stages: [],
     stageCount: 1,
     dayCount: 0,
     itemCount: 0,

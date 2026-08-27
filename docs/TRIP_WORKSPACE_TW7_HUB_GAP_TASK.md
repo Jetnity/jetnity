@@ -3,7 +3,7 @@
 Stand: 27. August 2026  
 Typ: **DOCS-ONLY / Gap-Rekonstruktion / Slice-Auftrag**  
 Cursor-Agent: `Trip workspace audit architecture`  
-Status: **TW7-A-Spec versioniert. TW7-A Runtime nicht gestartet.**
+Status: **TW7-A-Spec versioniert. TW7-A Runtime durch PR #106 integriert. Operativer Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Issue #103 nach Live-Post-Merge-Verifikation schliessbar.**
 
 > Historische Entstehungsevidence, nicht aktueller operativer PR-Status: entstanden auf Branch `cursor/tw7-hub-gap-slice-b13d` als PR #100. Ältere Zeilen „Draft-PR #100 / kein Ready / kein Merge“ sind Pre-Merge-Evidence.
 
@@ -15,7 +15,7 @@ Live-Baseline dieses Dokuments: `origin/main` `beaef64a151adceb8f5bc759f58ae9ad1
 
 Aktuellen `main` und die bindenden TW-/AP-3-Verträge live prüfen, den **tatsächlichen verbleibenden TW-7-Gap** bestimmen und den **exakten kleinen Implementierungsslice** inkl. Dateien, Tests und Konfliktmatrix versionieren.
 
-Dieser Spec-Stand implementiert den Slice **nicht**. TW7-A Runtime bleibt ein eigener späterer Auftrag.
+Dieser Spec-Stand bleibt die Slice-Grenze. Die Runtime folgt über das Integrationsvehikel PR #106 / Issue #103.
 
 ## 2. Live-Rekonstruktion – was TW-7 nicht mehr ist
 
@@ -62,7 +62,7 @@ Nicht der Rest-Gap dieses Slices:
 
 Traveller-Kontext ist für diesen Slice **nicht relevant**: es werden vorhandene Etappennamen gelesen, keine Citizenships, Dokumente oder Eligibility.
 
-## 4. Exakter Runtime-Slice – erst nach eigenem Auftrag
+## 4. Exakter Runtime-Slice – Auftrag Issue #103 / PR #106
 
 Name: **TW7-A – Hub-Kartenidentität (read-only)**
 
@@ -159,7 +159,7 @@ Kein Schema-/RLS-/Auth-Gate, weil der Slice keine Migration und keine Policy än
 
 | Parallel / Vertrag | Kollision | Regel |
 | --- | --- | --- |
-| **PR #98** AAL2 Alignment | integriert auf `main` `beaef64a`; ADR-0175; Datei `20260827170000` | Kein offener Parallel-Draft mehr. Production-Apply bleibt eigenes Product-Owner-Gate. Dieser Docs-PR ändert keine AAL2-Migration und startet keinen Apply. |
+| **PR #98 / #102** AAL2 Alignment + Apply | PR #98 Alignment integriert; PR #102 Apply-Gate-Closure integriert; Datei `20260827170000` | Production-Apply ist ausgeführt und verifiziert, exakt einmal. `aktuelles_admin_aal2()` live. Kein zweiter Apply. Ältere „Apply bleibt Gate“-Sätze sind Pre-Apply-Evidence. Dieser Slice ändert keine AAL2-Migration. |
 | AP-3 / ADR-0160 | `reise-lage.ts`, Gruppen-UI | Read-only. Kein zweites Lage-Modell. |
 | TW-2 / ADR-0164 | `uebersicht.ts` Ortstext | Helper heben, sichtbaren Workspace-Text nicht ändern. |
 | ADR-0152 Account-Zuhause | `AccountUebersicht` | Nicht in TW7-A. Fortsetzen-Link bleibt `/reisen/[tripId]`. |
@@ -179,7 +179,7 @@ PR #88, #52, #50, #40, #39, #28 bleiben historische Drafts und werden nicht reba
 
 ADR-0176 in `DECISIONS.md`: TW-7 bleibt ein read-only Hub-Identitätsanschluss. Der Weg ist schon einer. Der Gap ist die Mehrziel-Kartenidentität, nicht AP-3.
 
-Runtime erst nach eigenem Auftrag und unabhängigem Review. Diese Spec ist nicht der Runtime-Auftrag.
+Runtime folgt über Issue #103 / PR #106. Diese Spec bleibt die Slice-Grenze, nicht ein zweiter Runtime-Auftrag.
 
 ## 9. Historische Autoren-STOPP-Evidence
 

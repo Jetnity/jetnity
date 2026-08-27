@@ -420,10 +420,23 @@ export type Trip = {
 export type Reisegraph = Trip
 
 /**
+ * Geordnete Zielidentität einer Listenreise.
+ *
+ * Nur Name und Position aus vorhandenem `trip_stages`. Keine Place-IDs,
+ * Koordinaten, Transit- oder Flight-Ziele.
+ */
+export type TripSummaryStage = {
+  name: string
+  position: number
+}
+
+/**
  * Eine Reise in der Liste „Meine Reisen“.
  *
- * Ohne Etappen, Tage und Planpunkte, aber mit ihrer Anzahl: Die Liste zeigt
+ * Ohne Tage und Planpunkte, aber mit ihrer Anzahl: Die Liste zeigt
  * „12 Tage · 8 Punkte“ und soll dafür nicht den ganzen Reisegraphen laden.
+ * `stages` trägt die geordnete Zielidentität; `stageCount` bleibt daraus
+ * ableitbar.
  */
 export type TripSummary = {
   id: string
@@ -436,6 +449,7 @@ export type TripSummary = {
   budgetAmount: number | null
   status: TripStatus
   updatedAt: string
+  stages: TripSummaryStage[]
   stageCount: number
   dayCount: number
   itemCount: number

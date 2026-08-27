@@ -21,6 +21,7 @@ const REISE: TripSummary = {
   budgetAmount: null,
   status: 'planned',
   updatedAt: '2026-08-20T10:00:00.000Z',
+  stages: [{ name: 'Lissabon', position: 1 }],
   stageCount: 1,
   dayCount: 5,
   itemCount: 0,
