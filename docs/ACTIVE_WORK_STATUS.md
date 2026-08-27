@@ -154,7 +154,7 @@ Live Supabase-Inventur zeigt:
 
 ## 7. Aktive / nächste Cursor-Workstreams
 
-Aktueller Continuity-Block: **Cursor-Agent: Trip workspace audit architecture** auf `cursor/pr94-continuity-b13d` (Post-PR-#94 Continuity, docs-only).
+Aktueller Continuity-Block: **Cursor-Agent: Trip workspace audit architecture** auf `cursor/pr94-continuity-b13d`, Draft PR #96 (Post-PR-#94 Continuity, docs-only).
 
 Kein Ready. Kein Merge dieses Continuity-PRs ohne neuen unabhängigen Technical-Lead-PASS. Kein automatischer Produkt-Folgeslice.
 
@@ -176,7 +176,7 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **dieses Continuity-Update** | **OFFENER Draft, docs-only.** Aktualisiert Continuity nach gemergtem PR #94. Kein Ready/Merge ohne neuen PASS. |
+| **#96** Post-PR-#94 Continuity | **OFFENER Draft, docs-only.** Aktualisiert Continuity nach gemergtem PR #94. Kein Ready/Merge ohne neuen PASS. |
 | **#94** Visitor Search UX | **GEMERGT.** Reviewed Head `8da869fd`. Merge `819715b1`. Checkpoint `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`. |
 | **#87** TW6-B Runtime + Mode Contract | **GEMERGT.** Checkpoint `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`. |
 | **#88** Project Sanitation Audit | Non-destructive Audit-Evidence. Kein Cleanup automatisch. |

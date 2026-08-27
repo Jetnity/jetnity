@@ -66,7 +66,7 @@ These are not reopen-the-slice blockers. They remain explicit so a new agent doe
 
 There is **no open Visitor Search UX implementation draft**.
 
-The immediate continuity work is to land this documentation update so new agents read the merged `main` instead of the pre-merge draft status.
+The immediate continuity work is Draft PR #96 (`cursor/pr94-continuity-b13d`). It only updates documentation so new agents read the merged `main` instead of the pre-merge draft status.
 
 Do **not** automatically start:
 

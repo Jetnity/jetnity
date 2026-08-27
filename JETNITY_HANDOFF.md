@@ -203,7 +203,7 @@ Supabase-Inventur zeigt weiterhin zwei Top-Level-Projekte: das aktive Production
 
 Operativ relevant:
 
-- Post-PR-#94 Continuity – docs-only Draft gegen aktuelles `main`; Checkpoint `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
+- PR #96 – Post-PR-#94 Continuity, docs-only Draft gegen aktuelles `main`; Checkpoint `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
 - PR #94 – gemergt; Visitor Search UX integriert
 - PR #88 – Project Sanitation Audit; non-destructive Evidence, kein Cleanup automatisch
 - PR #87 – gemergt; Checkpoint `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`
