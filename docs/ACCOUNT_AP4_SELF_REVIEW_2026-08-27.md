@@ -3,7 +3,8 @@
 Stand: 27. August 2026  
 Cursor-Agent: **`Account plattform audit vorbereitung 3`**  
 Typ: adversarial Author-Review, **kein** unabhängiger Technical-Lead-PASS  
-Gegateter Review-Head vor Follow-up: `954b0c751e5b662985119e26d0c49acbd9d0b82f`
+Aktueller Exact Head: `f19b5711e05282617d7c35262ebbfaeef4253e0d`  
+Vorheriger PASS vor Follow-up: `954b0c751e5b662985119e26d0c49acbd9d0b82f`
 
 ## Scope-Treue
 
@@ -31,10 +32,11 @@ Gegateter Review-Head vor Follow-up: `954b0c751e5b662985119e26d0c49acbd9d0b82f`
 3. **Historische `archived` ohne Provenienz** – ehrlich nicht wiederherstellbar, kein Default.
 4. **200er-Grenze** – Filter/Gruppen/Archiv gelten nur für die geladene Auswahl.
 
-## Exact-Head Evidence vor Follow-up
+## Exact-Head Evidence
 
-- Actions `33108364497` SUCCESS auf `954b0c75`
-- Vercel `C6s9zyHZV9owevNEXH1Rie2t96rH` READY auf demselben SHA
+- Actions `33108697812` SUCCESS auf `f19b5711`
+- Vercel `BiQYRdySrHjnea8MmTbxqSomsCMQ` READY auf demselben SHA
+- Vorheriger PASS `954b0c75` / Actions `33108364497` / Vercel `C6s9zyHZV9owevNEXH1Rie2t96rH`
 - Review-Threads: 0
 
 ## STOPP

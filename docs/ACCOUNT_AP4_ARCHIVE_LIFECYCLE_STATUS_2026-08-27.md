@@ -1,7 +1,7 @@
 # Jetnity – AP-4 Account Archive Lifecycle – Status
 
 Stand: 27. August 2026  
-Status: **RUNTIME IMPLEMENTIERT / EXACT-HEAD GATES GRÜN AUF `954b0c75` / FOLLOW-UP DANACH / DRAFT / KEIN READY / KEIN MERGE DURCH AUTOR-AGENT**  
+Status: **RUNTIME IMPLEMENTIERT / EXACT-HEAD GATES GRÜN AUF `f19b5711` / DRAFT / KEIN READY / KEIN MERGE DURCH AUTOR-AGENT**  
 Workstream: Account / Traveller  
 Cursor-Agent: **`Account plattform audit vorbereitung 3`**  
 Branch: `cursor/ap4-account-archive-lifecycle-67d4`  
@@ -47,7 +47,18 @@ Genau dieser SHA, vor dem Action-State-Follow-up:
 
 Lokale Gates auf demselben Stand vor dem Follow-up: `npm test` 2364/2364, Typecheck, Lint, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, Production Build – alle grün. Historischer Fail auf `486f44b5` war `check:exports` (`istWiederherstellbarerStatus`) und ist auf `954b0c75` geschlossen.
 
-Das Follow-up ändert den PR-Head. Neues Exact Head nach Push erneut prüfen.
+## 3b. Aktueller Exact Head `f19b5711e05282617d7c35262ebbfaeef4253e0d`
+
+Follow-up inkl. Action-State-Reset und Continuity, genau dieser SHA:
+
+| Gate | Ergebnis |
+| --- | --- |
+| GitHub Actions | Run `33108697812` **SUCCESS** – https://github.com/Jetnity/jetnity/actions/runs/33108697812 |
+| Vercel Preview | Deployment `6129645873` / Inspector `BiQYRdySrHjnea8MmTbxqSomsCMQ` **READY** auf demselben SHA |
+| Preview-URL | https://jetnity-r859131ln-jetnity-e1b93c82.vercel.app |
+| Review-Threads | 0 |
+
+Ein späterer Continuity-only-Commit muss live neu geprüft werden.
 
 ## 4. Shared Contracts
 

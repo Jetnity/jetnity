@@ -1,7 +1,7 @@
 # Jetnity – AP-4 Account Archive Lifecycle – Handoff
 
 Stand: 27. August 2026  
-Status: **AUTHOR IMPLEMENTATION HANDOFF / EXACT-HEAD PASS AUF `954b0c75` / FOLLOW-UP DANACH / DRAFT / STOPP VOR READY/MERGE**  
+Status: **AUTHOR IMPLEMENTATION HANDOFF / EXACT-HEAD PASS AUF `f19b5711` / DRAFT / STOPP VOR READY/MERGE**  
 Cursor-Agent: **`Account plattform audit vorbereitung 3`**  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/108
 
@@ -24,13 +24,15 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/108
 | Listenablesung | `lib/trips/daten.ts` liest `metadata` nur für Restore-Provenienz |
 | Übersicht | `lib/account/naechste-reise.ts` bleibt: archived ist kein Fortsetzen |
 
-## Gegatete Evidence vor Follow-up
+## Gegatete Evidence
 
-Genau `954b0c751e5b662985119e26d0c49acbd9d0b82f`:
+Aktueller Exact Head `f19b5711e05282617d7c35262ebbfaeef4253e0d`:
 
-- Actions `33108364497` SUCCESS
-- Vercel Preview `C6s9zyHZV9owevNEXH1Rie2t96rH` / Deployment `6129580583` READY
+- Actions `33108697812` SUCCESS
+- Vercel Preview `BiQYRdySrHjnea8MmTbxqSomsCMQ` / Deployment `6129645873` READY
 - Review-Threads 0
+
+Vorheriger PASS vor dem Action-State-Follow-up: `954b0c75` / Actions `33108364497` / Vercel `C6s9zyHZV9owevNEXH1Rie2t96rH`.
 
 ## Was bewusst nicht gebaut wurde
 
