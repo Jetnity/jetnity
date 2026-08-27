@@ -19,6 +19,11 @@ Für: neuen Chat / Technical Lead / späteren Account-Agenten
 
 `origin/main` `963186f4ec75501efd253a287131f464a5fd0fdb` (PR #102). Vor jeder Fortsetzung neu prüfen.
 
+Gegateter Evidence-Head dieses Drafts: `c9ef984a7b314992350af0ae18c85585b1011339`
+
+- GitHub Actions `33102128084` SUCCESS
+- Vercel Preview `CWsHGMfomgwJQezm1QGXbAYRu5YX` READY
+
 ## Was wahr ist
 
 - AP-1 / AP-2 / AP-3 sind auf `main`.

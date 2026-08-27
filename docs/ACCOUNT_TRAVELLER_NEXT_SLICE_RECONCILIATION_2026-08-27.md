@@ -359,7 +359,7 @@ Kandidaten-Matrix, **nur falls** der Technical Lead später einen Slice ausdrüc
 - kein erfundener Registry- oder Archiv-Contract
 - kein Default-Pass im aktuellen App-Pfad
 - zentrale Continuity-Dateien sind stale; das ist dokumentiert, nicht still korrigiert
-- Exact-Head-Gates dieses Draft-PRs stehen in der Statusdatei, sobald sie gelaufen sind
+- Exact-Head-Gates des Evidence-Heads `c9ef984a`: Actions `33102128084` SUCCESS; Vercel `CWsHGMfomgwJQezm1QGXbAYRu5YX` READY
 
 ---
 

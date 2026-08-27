@@ -48,7 +48,7 @@ Nicht selbst belegt: Supabase-Produktionstabellen, Browser, Real Device.
 
 ## 4. Residuals dieses Self-Reviews
 
-- Exact-Head Actions/Vercel stehen erst nach Push fest.
+- Exact-Head `c9ef984a` Actions `33102128084` SUCCESS und Vercel `CWsHGMfomgwJQezm1QGXbAYRu5YX` READY sind nachgezogen.
 - Zentrale Continuity bleibt stale; bewusst nicht korrigiert.
 - Kein unabhängiger Review durch denselben Agenten möglich.
 

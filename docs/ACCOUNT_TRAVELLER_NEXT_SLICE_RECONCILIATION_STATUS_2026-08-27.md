@@ -44,9 +44,19 @@ Nicht geändert: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WOR
 
 ## 4. Gates
 
-Lokale Contract-Verifikation und Exact-Head GitHub Actions / Vercel werden nach dem ersten Push in diesem Dokument nachgezogen.
+Gegateter Evidence-Head: `c9ef984a7b314992350af0ae18c85585b1011339`
 
-Kein Ready. Kein Merge.
+| Gate | Ergebnis |
+| --- | --- |
+| Merge-Base gegen `origin/main` `963186f4` | genau dieser SHA; Branch nur Docs |
+| Gezielte Contract-Tests | 65/65 PASS – AP-3 ableitend / kein Archiv-Write / Error≠Empty / 200er-Hinweis; Übersicht filtert `archived` nur lesend; P1-TA-02 option-scope 20/20; Traveller-Kontext Issuer≠Citizenship |
+| GitHub Actions CI | SUCCESS – Run `33102128084` auf exakt `c9ef984a` |
+| Vercel Preview | READY – Deployment `CWsHGMfomgwJQezm1QGXbAYRu5YX` / `6128402574` auf exakt `c9ef984a` |
+| Preview-URL | https://jetnity-app-git-cursor-account-travelle-d8aa59-jetnity-e1b93c82.vercel.app |
+| Review-Threads | 0 |
+| Independent reviews | 0 – Finalreview steht aus |
+
+Kein Ready. Kein Merge. Ein späterer Docs-Stamp nach diesem Gate ist kein Runtime-Change.
 
 ## 5. Nächster Schritt
 
