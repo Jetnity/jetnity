@@ -6,7 +6,7 @@ Cursor-Agent: `Trip workspace audit architecture`
 Branch: `cursor/tw7-hub-gap-slice-b13d`  
 Status: **DOCS DRAFT. Kein Runtime-Code. Kein Ready. Kein Merge. Kein automatischer Runtime-Start.**
 
-Live-Baseline dieses Dokuments: `origin/main` `84f54194cf7461c5f785f4da490dba060c93e999`.
+Live-Baseline dieses Dokuments: `origin/main` `beaef64a151adceb8f5bc759f58ae9ad13cecc51` (Merge PR #98). Hub-/AP-3-Code unverändert gegenüber der ersten Prüfung auf `84f54194`.
 
 > Live-Evidence gewinnt. Vor einem späteren Runtime-PR `origin/main`, offene PRs und diese Dateien erneut prüfen.
 
@@ -18,7 +18,7 @@ Dieser PR implementiert den Slice **nicht**.
 
 ## 2. Live-Rekonstruktion – was TW-7 nicht mehr ist
 
-Auf `84f54194` ist der Hub-/Workspace-**Weg** bereits ein Pfad. Das Start-Gate aus `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md` („Account-/Hub-Verträge und aktuellen AP-Stand erneut prüfen“) ist fachlich erfüllt. Unabhängige Bestätigung: `docs/CHATGPT_TL_LIVE_RECONSTRUCTION_CHECKPOINT_2026-08-27.md` Abschnitt 9.
+Auf `beaef64a` (Hub-Code unverändert seit `84f54194`) ist der Hub-/Workspace-**Weg** bereits ein Pfad. Das Start-Gate aus `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md` („Account-/Hub-Verträge und aktuellen AP-Stand erneut prüfen“) ist fachlich erfüllt. Unabhängige Bestätigung: `docs/CHATGPT_TL_LIVE_RECONSTRUCTION_CHECKPOINT_2026-08-27.md` Abschnitt 9.
 
 Bereits geschlossen und **nicht** neu zu bauen:
 
@@ -120,7 +120,7 @@ Nicht anfassen, ausser ein späterer Review zwingt eine einzeilige Typanpassung:
 - `lib/account/reise-lage.ts`
 - `components/account/AccountUebersicht.tsx`
 - Auth, RLS, Admin, Provider, Search, Homepage
-- `DECISIONS.md` / `ROADMAP.md` in dem Runtime-PR nur, wenn PR #98 bereits integriert ist (siehe Konfliktmatrix)
+- AAL2-Migration `20260827170000` und Production-Apply-Playbook
 
 ## 6. Pflichttests des späteren Runtime-PR
 
@@ -158,7 +158,7 @@ Kein Schema-/RLS-/Auth-Gate, weil der Slice keine Migration und keine Policy än
 
 | Parallel / Vertrag | Kollision | Regel |
 | --- | --- | --- |
-| **PR #98** AAL2 Production Alignment (`fix/admin-aal2-production-alignment-2026-08-27`) | `DECISIONS.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `docs/CONTINUITY_STANDARD.md`, Auth/DB-Docs, neue Migration `20260827170000` | Dieser Docs-PR fasst diese Dateien **nicht** an. ADR-0175 bleibt PR #98. Vorgeschlagenes Entscheidungs-Label hier: **ADR-0176**, erst nach Integration von #98 oder in konfliktfreiem Folgecommit nach `DECISIONS.md`. Runtime-TW-7 darf AAL2-Migrationen nicht berühren. |
+| **PR #98** AAL2 Alignment | integriert auf `main` `beaef64a`; ADR-0175; Datei `20260827170000` | Kein offener Parallel-Draft mehr. Production-Apply bleibt eigenes Product-Owner-Gate. Dieser Docs-PR ändert keine AAL2-Migration und startet keinen Apply. |
 | AP-3 / ADR-0160 | `reise-lage.ts`, Gruppen-UI | Read-only. Kein zweites Lage-Modell. |
 | TW-2 / ADR-0164 | `uebersicht.ts` Ortstext | Helper heben, sichtbaren Workspace-Text nicht ändern. |
 | ADR-0152 Account-Zuhause | `AccountUebersicht` | Nicht in TW7-A. Fortsetzen-Link bleibt `/reisen/[tripId]`. |
@@ -174,13 +174,11 @@ Kein Schema-/RLS-/Auth-Gate, weil der Slice keine Migration und keine Policy än
 
 PR #88, #52, #50, #40, #39, #28 bleiben historische Drafts und werden nicht rebased oder als Basis verwendet.
 
-## 8. Vorgeschlagene Entscheidung (ADR-0176, noch nicht in `DECISIONS.md`)
+## 8. Entscheidung
 
-**TW-7 bleibt ein read-only Hub-Identitätsanschluss. Der Weg ist schon einer. Der Gap ist die Mehrziel-Kartenidentität, nicht AP-3.**
+ADR-0176 in `DECISIONS.md`: TW-7 bleibt ein read-only Hub-Identitätsanschluss. Der Weg ist schon einer. Der Gap ist die Mehrziel-Kartenidentität, nicht AP-3.
 
-Begründung: AP-3 besitzt Lage. TW-2 besitzt Workspace-Lage und Ortstext. Eine zweite Hub-Architektur wäre Scope-Creep. Eine Karte, die nur den Titel zeigt, behauptet implizit Einziel.
-
-Konsequenz: Runtime erst nach eigenem Auftrag und unabhängigem Review. Dieses Docs-PR ist nicht dieser Auftrag.
+Runtime erst nach eigenem Auftrag und unabhängigem Review. Dieses Docs-PR ist nicht dieser Auftrag.
 
 ## 9. STOPP
 

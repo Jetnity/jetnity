@@ -24,7 +24,7 @@ Reihenfolge:
 5. TW-5 – Item- und Gap-Details ✅
 6. TW6-A – Create-Entry Alignment ✅ – **nicht** gesamtes TW-6
 7. TW6-REST-01 – progressive weitere Ziele / zusätzliche `trip_stages` im Create ✅ integriert via PR #87 (`80bbde69`). Ältere „offen“-Zeilen sind historische Evidence. Kein zweites `TW6-REST-01`. Kein gesamtes TW-6-Closure.
-8. TW-7 / TW-8 nur nach ihren dokumentierten Abhängigkeiten/Gates. TW-7-Start-Gate ist gegen `main` `84f54194` erfüllt; Rest-Gap und TW7-A-Slice stehen in `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Das ist **keine** Runtime-Freigabe. TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance.
+8. TW-7 / TW-8 nur nach ihren dokumentierten Abhängigkeiten/Gates. TW-7-Start-Gate ist gegen `main` `beaef64a` erfüllt; Rest-Gap und TW7-A-Slice stehen in `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Das ist **keine** Runtime-Freigabe. TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance.
 9. TW-9 – Polish, Evidence, Closure
 10. verpflichtender finaler Function-by-Function-/Intelligence-Audit
 

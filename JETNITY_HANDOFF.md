@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 27. August 2026  
-Status: **Production Gate A ist vollständig PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96 und PR #97 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. Offener P1-Security-Draft: PR #98 (AAL2). Offener Produktdocs-Draft: TW-7-Hub-Gap — kein Runtime. Frühere Aussagen „nächster Produktslice unzugewiesen“ / „PR #94/#96 bleibt Draft“ sind historische Evidence.**
+Status: **Production Gate A ist vollständig PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97 und PR #98 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. PR #98 Alignment liegt auf `main`; Production-AAL2-Apply bleibt eigenes Gate. Offener Produktdocs-Draft: TW-7-Hub-Gap — kein Runtime. Frühere Aussagen „nächster Produktslice unzugewiesen“ / „PR #94/#96/#98 bleibt Draft“ sind historische Evidence.**
 
 Der erste Einstieg bleibt `JETNITY_START_HERE.md`.  
 Aktuelle operative Evidence zusätzlich: `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`, `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md` und `docs/ACTIVE_WORK_STATUS.md`.
@@ -52,11 +52,12 @@ Besondere Product-Owner-Gates bleiben zwingend für Production-Migrationen/destr
 
 ## 3. Aktuelle Git-/CI-Linie
 
-Verifizierter Integrationsstand nach PR #97:
+Verifizierter Integrationsstand nach PR #98:
 
-- Aktuelles `origin/main`: `84f54194cf7461c5f785f4da490dba060c93e999`
-- GitHub Actions auf exakt diesem SHA: Run `33084270420` SUCCESS
-- GitHub Production-Deployment auf exakt diesem SHA: `6125049314` success
+- Aktuelles `origin/main`: `beaef64a151adceb8f5bc759f58ae9ad13cecc51`
+- GitHub Actions auf exakt diesem SHA: Run `33087558642` SUCCESS
+- GitHub Production-Deployment auf exakt diesem SHA: `6125680097` success
+- PR #98 – AAL2 Production Data-Plane Alignment auf `main`; Production-Apply **nicht** ausgeführt
 - PR #97 – TL-Rekonstruktion + AAL2-Production-Gate-Docs; Merge `4362502b`
 - PR #96 – Post-PR-#94 Continuity; Merge `45be14b1`
 - PR #95 – docs-only New-Chat-Checkpoint
@@ -213,7 +214,7 @@ Supabase-Inventur zeigt weiterhin zwei Top-Level-Projekte: das aktive Production
 Operativ relevant:
 
 - TW-7-Hub-Gap-Docs auf `cursor/tw7-hub-gap-slice-b13d` – **Docs-Draft**. Spec `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Kein Runtime. Kein Ready. Kein Merge.
-- PR #98 – P1 Admin AAL2 Production Alignment; **offener Security-Draft**. Kein Production-Apply. Kein TW-7-Runtime.
+- PR #98 – AAL2 Alignment **integriert** (`beaef64a`). Production-Apply bleibt eigenes Product-Owner-Gate.
 - PR #97 – gemergt; TL-Rekonstruktion
 - PR #96 – Post-PR-#94 Continuity **integriert/geschlossen**. Merge `45be14b1`.
 - PR #95 – gemergt; New-Chat-Checkpoint `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
@@ -229,7 +230,7 @@ PR #89 und PR #91 sind gemergt und keine aktiven Drafts mehr.
 
 TW-7-Hub-Gap ist als Docs-Draft rekonstruiert. Das ist kein Runtime-Start.
 
-PR #98 bleibt der getrennte P1-AAL2-Draft.
+PR #98 ist integriert. Production-AAL2-Apply bleibt ein separates Product-Owner-Gate.
 
 Visitor Search UX ist integriert. Production Gate B ist operativ PASS, kein Re-Apply. `TW6-REST-01` ist geschlossen.
 

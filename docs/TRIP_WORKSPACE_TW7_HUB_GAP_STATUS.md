@@ -14,12 +14,12 @@ Geprüft am 27. August 2026 gegen GitHub, nicht gegen Chat-Erinnerung:
 
 | Fakt | Wert |
 | --- | --- |
-| `origin/main` | `84f54194cf7461c5f785f4da490dba060c93e999` — `chore: remove accidental empty keep file` |
-| Dieser Branch bei Anlage | genau dieser SHA, 0 ahead / 0 behind |
-| GitHub Actions auf exakt `84f54194` | Run `33084270420` **SUCCESS** |
-| GitHub Production-Deployment auf exakt `84f54194` | `6125049314` **success** |
+| `origin/main` | `beaef64a151adceb8f5bc759f58ae9ad13cecc51` — `Merge PR #98: Admin AAL2 production data-plane alignment` |
+| Erste Hub-Codeprüfung | `84f54194`; PR #98 hat keine Trip-/Hub-Dateien geändert |
+| GitHub Actions auf exakt `beaef64a` | Run `33087558642` **SUCCESS** |
+| GitHub Production-Deployment auf exakt `beaef64a` | `6125680097` **success** |
 | `main` Branch Protection | `protected=false` (Governance-Risiko, unverändert) |
-| Offene Drafts | **#98** AAL2 Alignment; #88 Sanitation; historische #52, #50, #40, #39, #28 |
+| Offene Drafts | #88 Sanitation; historische #52, #50, #40, #39, #28. PR #98 ist gemergt. |
 
 Linie nach PR #96:
 
@@ -27,10 +27,11 @@ Linie nach PR #96:
 - PR #97 TL-Rekonstruktion + AAL2-Production-Gate-Docs `4362502b`
 - direkte `main`-Docs `d9517252` / `ac2ac9b2` (Governance-Deviation, nur Docs)
 - noop / keep-file `b96343cf` / `84f54194`
+- Merge PR #98 `beaef64a` — Alignment-Migration auf `main`, Production-Apply **nicht** ausgeführt
 
 ## 2. Vertragsprüfung
 
-Gelesen und gegen Code auf `84f54194` gehalten:
+Gelesen und gegen Code auf `84f54194` gehalten; nach Merge von PR #98 auf `beaef64a` erneut bestätigt, dass keine Hub-/Trip-Dateien geändert wurden:
 
 - TW-7 in `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`
 - AP-3 Task/Status/Handoff + ADR-0160
@@ -60,23 +61,23 @@ Der kleine Slice heisst TW7-A und steht nur im Task. Dieser Status behauptet kei
 
 ## 4. Was dieser Docs-PR ändert
 
-Nur Dokumentation und Continuity, absichtlich **ohne** die Dateien von Draft-PR #98:
+Nur Dokumentation. Kein Runtime. Nach dem Merge von PR #98 dürfen Continuity-Dateien inkl. `DECISIONS.md` / `ROADMAP.md` den neuen Live-Stand nennen:
 
 - `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md` (neu)
 - `docs/TRIP_WORKSPACE_TW7_HUB_GAP_STATUS.md` (neu)
-- `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md` (TW-7 Start-Gate-Ergebnis)
-- `docs/JETNITY_BINDING_BUILD_ORDER.md` (TW-7-Zeile zeigt dokumentiertes Gate, nicht Runtime)
+- `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`
+- `docs/JETNITY_BINDING_BUILD_ORDER.md`
 - `docs/ACTIVE_WORK_STATUS.md`
 - `JETNITY_START_HERE.md`
 - `JETNITY_HANDOFF.md`
+- `DECISIONS.md` (ADR-0176)
+- `ROADMAP.md` (PR #98 integriert; TW-7-Docs, keine Runtime)
 
-Nicht geändert, um PR #98 nicht zu kreuzen: `DECISIONS.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `docs/CONTINUITY_STANDARD.md`, Auth-/DB-Docs, Migrationen.
-
-Vorgeschlagenes ADR-Label **0176** bleibt im Task, bis #98 (ADR-0175) integriert ist oder ein konfliktfreier Folgecommit es nachträgt.
+AAL2-Migration, Playbook und Production-Apply bleiben unangetastet.
 
 ## 5. Offene Risiken
 
-- PR #98 ist der offene P1-Security-Draft. Dieses Dokument ersetzt ihn nicht und blockiert ihn nicht.
+- PR #98 ist integriert. Production-AAL2-Apply bleibt ein separates Product-Owner-Gate und wird hier nicht gestartet.
 - `main` bleibt ungeschützt.
 - Bereits gespeichertes `archived` bleibt in AP-3-Datumsgruppen sichtbar; das ist AP-4, nicht TW7-A.
 - Pfeil- vs. Punkt-Schreibweise der Route ist bewusste Non-Scope-Entscheidung gegen einen dritten Formatfork.
