@@ -1,13 +1,18 @@
 # Jetnity – Active Work Status
 
 Stand: 27. August 2026  
-Status: **Production Gate A ist PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97 und PR #98 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. PR #98 Alignment liegt auf `main`; Production-AAL2-Apply bleibt eigenes Gate. TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert bzw. nach Landung integriert; TW7-A Runtime ist nicht gestartet. Frühere Aussagen „PR #100 bleibt Draft / nicht gemergt“ sind historische Evidence.**
+Status: **Production Gate A ist PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98 und PR #102 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. Live-`main` ist `963186f4` (PR #102). TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert. TW7-A Runtime ist Draft zu Issue #103, nicht auf `main`. Kein Ready/Merge durch den Autoren-Agenten.**
 
 > **Do not blindly trust this file — live verify first.**
 
 ## 0. Live-Integrationsbaseline
 
-Aktueller verifizierter `origin/main` nach PR #98:
+Aktueller verifizierter `origin/main` nach PR #102:
+
+- `963186f4ec75501efd253a287131f464a5fd0fdb` — `Merge PR #102: Admin AAL2 production apply gate closure`
+- Das ist die Integrationsbaseline. Ein späterer Draft-Head von TW7-A ist keine neue Live-`main`-Wahrheit.
+
+Vorherige dokumentierte Baseline (historisch):
 
 - `beaef64a151adceb8f5bc759f58ae9ad13cecc51` — `Merge PR #98: Admin AAL2 production data-plane alignment`
 - GitHub Actions auf exakt diesem SHA: Run `33087558642` SUCCESS
@@ -119,7 +124,7 @@ PR #94 (`cursor/visitor-search-ux-b13d`) ist gemergt. Reviewed Head `8da869fd`, 
 
 Ältere Exact-Head-Evidence (`72ca1700`, `1008632e`, Review `5040068359` CHANGES REQUIRED) bleibt historisch.
 
-TW-7-Start-Gate ist gegen `beaef64a` erneut geprüft und erfüllt. Hub-Code unverändert seit `84f54194`. Der Weg ist bereits einer. Der verbleibende Gap ist die Mehrziel-Kartenidentität plus Gast-`itemCount`, nicht AP-3. Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. **Keine TW-7-Runtime in diesem Stand.** TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance; S5-A allein ist kein TW-8-Start.
+TW-7-Start-Gate ist erfüllt. Der Weg ist bereits einer. Der verbleibende Gap ist die Mehrziel-Kartenidentität plus Gast-`itemCount`, nicht AP-3. Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. **TW7-A Runtime: Draft zu Issue #103, nicht auf `main`.** Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance; S5-A allein ist kein TW-8-Start.
 
 ## 4. Traveller / Account
 
@@ -198,8 +203,10 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#100** TW-7-Gap / ADR-0176 / TW7-A-Spec | **VERSIONIERT bzw. nach Landung integriert.** TW7-A Runtime nicht gestartet. Integrationsvehikel; Live-Merge-SHA prüfen. Frühere „Draft / nicht gemergt“-Zeilen sind historische Pre-Merge-Evidence. |
-| **#98** Admin AAL2 Production Alignment | **GEMERGT.** Merge `beaef64a`. Alignment-Datei auf `main`. Production-Apply bleibt eigenes Product-Owner-Gate. |
+| **TW7-A Runtime** Issue #103 | **DRAFT**, Branch `cursor/tw7-a-hub-card-identity-a4c4`. Nicht auf `main`. Kein Ready/Merge durch den Autoren-Agenten. Exact Head live am PR lesen. |
+| **#102** Admin AAL2 production apply gate closure | **GEMERGT.** Merge `963186f4`. Aktuelle Live-`main`-Baseline. |
+| **#100** TW-7-Gap / ADR-0176 / TW7-A-Spec | **VERSIONIERT bzw. nach Landung integriert.** Spec bleibt bindend. Runtime ist der eigene Draft zu Issue #103. |
+| **#98** Admin AAL2 Production Alignment | **GEMERGT.** Merge `beaef64a`. Historische Alignment-Linie vor PR #102. |
 | **#97** TL live reconstruction + AAL2 production gate | **GEMERGT.** Merge `4362502b`. |
 | **#96** Post-PR-#94 Continuity | **INTEGRIERT / GESCHLOSSEN.** Merge `45be14b1`. |
 | **#95** PR94 new-chat checkpoint | **GEMERGT.** Nur `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`. Merge `943d14c2`. |
@@ -233,10 +240,8 @@ Weiterhin nicht angewendet:
 
 ## 10. Nächster Schritt
 
-TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert. TW7-A Runtime ist nicht gestartet.
+TW7-A Runtime ist der aktive Draft zu Issue #103. Nicht auf `main`. Unabhängiger Technical-Lead-Finalreview entscheidet Ready/Merge.
 
-PR #98 ist integriert. Production-AAL2-Apply bleibt ein separates Product-Owner-Gate.
-
-Kein weiterer Production-Write. Keine Direction A. Kein TW-8/9. Kein AP-4. Kein automatischer TW7-A-Start.
+Kein weiterer Production-Write. Keine Direction A. Kein TW-8/9. Kein AP-4. Kein zweiter AAL2-Apply.
 
 PR #95 zeichnet einen Product-Owner-Wunsch auf: Homepage-Hero-Design bleibt, die Funktion im bestehenden Kästchen soll später natürliche Mehrziel-/Route-Absicht verstehen. Das bleibt **kein** Startauftrag und ist nicht TW7-A.

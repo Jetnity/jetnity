@@ -4353,7 +4353,7 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 ## ADR-0176 – TW-7 Rest-Gap ist Hub-Kartenidentität, nicht AP-3
 
 **Datum:** 27. August 2026  
-**Status:** durch PR #100 versioniert bzw. nach Landung integriert. **TW7-A Runtime nicht gestartet.** Kein Implementationsauftrag in diesem ADR.
+**Status:** durch PR #100 versioniert bzw. nach Landung integriert. **TW7-A Runtime:** eigener Draft zu Issue #103, nicht auf `main`. Kein Ready/Merge in diesem ADR.
 
 **Entscheidung:** Der TW-7-Hub-Anschluss darf AP-3, den bestehenden Weg `/account` → `/reisen` → `/reisen/[tripId]` → `TripWorkspace` und die Guest-One-Trip-Regel nicht neu bauen. Der belegte Rest-Gap ist die Mehrziel-Identität auf `Reisekarte` plus die Gast-`itemCount`-Abbildung. Der spätere kleine Runtime-Slice TW7-A ist read-only und verwendet denselben Ortstext wie die Workspace-Übersicht.
 
@@ -4363,7 +4363,9 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 **Begründung:** Eine Reise, eine Oberfläche. Der Weg ist schon einer. Die Karte darf eine Mehrzielreise nicht als Einzeltitel verkaufen.
 
-**Konsequenzen:** Runtime erst nach eigenem Auftrag. Dieser Docs-Stand implementiert nichts. Production, AAL2-Apply, AP-4, TW-8 und Homepage bleiben unberührt.
+**Konsequenzen:** Runtime nur nach eigenem Auftrag (Issue #103). Production-Write, AAL2-Re-Apply, AP-4, TW-8 und Homepage bleiben unberührt. Der Draft-Head ist keine kanonische Live-`main`-Wahrheit.
+
+**Nachtrag, 27. August 2026 – Runtime-Auftrag Issue #103.** Technical Lead / Product Owner hat den read-only Slice TW7-A als eigenen Runtime-Auftrag freigegeben. Implementation bleibt Draft bis unabhängigem Finalreview. Live-`main` bei Start: `963186f4ec75501efd253a287131f464a5fd0fdb` (PR #102). Alter Branch `cursor/tw7-hub-gap-slice-b13d` ist nicht die Basis.
 
 ---
 

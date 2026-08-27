@@ -3,7 +3,7 @@
 Stand: 27. August 2026  
 Agent: `Trip workspace audit architecture`  
 Auftrag: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`  
-Status: **TW-7-Gap / ADR-0176 / TW7-A-Spec durch PR #100 versioniert bzw. nach Landung integriert. TW7-A Runtime nicht gestartet.**
+Status: **TW-7-Gap / ADR-0176 / TW7-A-Spec durch PR #100 versioniert bzw. nach Landung integriert. TW7-A Runtime läuft als eigener Draft zu Issue #103, nicht auf `main`.**
 
 > Kanonischer operativer Stand zusätzlich: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`. Live-Evidence gewinnt. PR #100 ist das Integrationsvehikel; Live-Merge-SHA prüfen.
 
@@ -55,7 +55,7 @@ Code-Evidence:
 
 **TW-7-Start-Gate: erfüllt.**  
 **TW-7-Rest-Gap: Hub-Kartenidentität (Mehrziel + Gast-`itemCount`).**  
-**TW7-A Runtime: nicht gestartet.**
+**TW7-A Runtime: eigener Draft zu Issue #103. Nicht auf `main`. Operativer Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`.**
 
 Der kleine Slice heisst TW7-A und steht in der Spec. Dieser Status behauptet keine Implementation.
 
@@ -97,8 +97,10 @@ AAL2-Migration, Playbook und Production-Apply bleiben unangetastet.
 - Pfeil- vs. Punkt-Schreibweise der Route ist bewusste Non-Scope-Entscheidung gegen einen dritten Formatfork.
 - Ein späterer Runtime-Select `trip_stages(name, position)` muss RLS-kompatibel bleiben; bei Fehler kein Service-Role-Fallback.
 
-## 6. Nach Landung
+## 6. Nach Landung der Spec
 
-TW7-A Runtime nicht starten. Kein automatischer Folgeslice. Kein AP-4, TW-8 oder Homepage aus dieser Spec.
+Die Spec bleibt die bindende Slice-Grenze. Der Runtime-Auftrag ist Issue #103.
 
-Unabhängiger Review der Spec bleibt Technical Lead; das ist keine Aussage, PR #100 sei dauerhaft unvermerkt.
+Kein AP-4, TW-8 oder Homepage aus dieser Spec. Kein Ready/Merge durch den Runtime-Autoren-Agenten.
+
+Unabhängiger Review der Spec bleibt Technical Lead; Runtime-Finalreview ist ein eigener Schritt.

@@ -3,7 +3,7 @@
 Stand: 27. August 2026  
 Typ: **DOCS-ONLY / Gap-Rekonstruktion / Slice-Auftrag**  
 Cursor-Agent: `Trip workspace audit architecture`  
-Status: **TW7-A-Spec versioniert. TW7-A Runtime nicht gestartet.**
+Status: **TW7-A-Spec versioniert. Operativer Runtime-Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md` (Draft zu Issue #103, nicht auf `main`).**
 
 > Historische Entstehungsevidence, nicht aktueller operativer PR-Status: entstanden auf Branch `cursor/tw7-hub-gap-slice-b13d` als PR #100. Ältere Zeilen „Draft-PR #100 / kein Ready / kein Merge“ sind Pre-Merge-Evidence.
 
