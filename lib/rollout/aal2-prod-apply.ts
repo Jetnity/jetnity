@@ -45,6 +45,20 @@ export type Aal2Auftrag =
   | { modus: 'probe' }
   | { modus: 'preflight'; bestaetigterRef: string }
   | { modus: 'apply'; bestaetigterRef: string }
+  | { modus: 'entwicklung-probe' }
+
+export type RlsSnapshotZeile = {
+  nspname: string
+  relname: string
+  polname: string
+  qual: string | null
+  with_check: string | null
+  cmd: string
+}
+
+export const AAL2_FAIL_PATH_VERSION = '29990101000000'
+export const AAL2_FAIL_PATH_NAME = 'aal2_fail_path_probe'
+export const AAL2_FAIL_PATH_FUNKTION = 'darf_betrieb_lesen'
 
 export type Aal2PreflightStand = {
   head_version: string | null
@@ -108,33 +122,160 @@ export function aal2DateiLesenUndPruefen(wurzel = process.cwd()): Aal2Datei {
   }
 }
 
-export function historyInsertSql(datei: Aal2Datei): string {
-  return `insert into supabase_migrations.schema_migrations (version, name, statements)
-values (${sqlLiteral(datei.version)}, ${sqlLiteral(datei.name)}, array[${sqlLiteral(datei.sql)}])`
+export function sqlStatement(sql: string): string {
+  const getrimmt = sql.trim()
+  if (!getrimmt) {
+    throw new Error('Leeres SQL-Statement.')
+  }
+  return getrimmt.endsWith(';') ? getrimmt : `${getrimmt};`
 }
 
-export function migrationTransactionSql(datei: Aal2Datei): string {
+export function historyInsertSql(datei: Aal2Datei): string {
+  return sqlStatement(`insert into supabase_migrations.schema_migrations (version, name, statements)
+values (${sqlLiteral(datei.version)}, ${sqlLiteral(datei.name)}, array[${sqlLiteral(datei.sql)}])`)
+}
+
+export function migrationTransactionSql(
+  datei: Aal2Datei,
+  snapshot: readonly RlsSnapshotZeile[],
+): string {
   if (datei.version !== AAL2_ALIGN_VERSION || datei.name !== AAL2_ALIGN_NAME) {
     throw new Error('AAL2-Transaktion akzeptiert nur 20260827170000 / admin_aal2_data_plane_alignment.')
   }
   if (datei.datei !== AAL2_ALIGN_DATEI) {
     throw new Error('AAL2-Transaktion liest keine andere Datei.')
   }
-  return ['begin;', datei.sql, historyInsertSql(datei), 'commit;'].join('\n\n')
+  return [
+    'begin;',
+    sqlStatement(datei.sql),
+    historyInsertSql(datei),
+    sqlStatement(verifyFinalContractSql(snapshot)),
+    'commit;',
+  ].join('\n\n')
+}
+
+export function migrationRollbackProbeSql(
+  datei: Aal2Datei,
+  snapshot: readonly RlsSnapshotZeile[],
+): string {
+  const transaktion = migrationTransactionSql(datei, snapshot)
+  if (!transaktion.endsWith('\n\ncommit;')) {
+    throw new Error('Rollback-Probe erwartet terminierte Transaktion mit \\n\\ncommit;')
+  }
+  return `${transaktion.slice(0, -'\n\ncommit;'.length)}\n\nrollback;`
 }
 
 export function failPathSql(): string {
-  return `
-begin;
-insert into supabase_migrations.schema_migrations (version, name, statements)
-values (${sqlLiteral(AAL2_ALIGN_VERSION)}, 'aal2_fail_path_probe', array['should_not_commit']);
-do $aal2_fail$
+  return [
+    'begin;',
+    sqlStatement(`create or replace function public.${AAL2_FAIL_PATH_FUNKTION}()
+returns boolean
+language sql
+stable
+parallel safe
+security invoker
+set search_path = pg_catalog
+as $$
+  select true
+$$`),
+    sqlStatement(`insert into supabase_migrations.schema_migrations (version, name, statements)
+values (${sqlLiteral(AAL2_FAIL_PATH_VERSION)}, ${sqlLiteral(AAL2_FAIL_PATH_NAME)}, array['should_not_commit'])`),
+    sqlStatement(`do $aal2_fail$
 begin
   raise exception 'AAL2 fail-path probe'
     using errcode = 'P0001';
 end
-$aal2_fail$;
-commit;
+$aal2_fail$`),
+    'commit;',
+  ].join('\n\n')
+}
+
+export function rlsSnapshotSql(): string {
+  return `
+select
+  n.nspname,
+  c.relname,
+  p.polname,
+  pg_get_expr(p.polqual, p.polrelid) as qual,
+  pg_get_expr(p.polwithcheck, p.polrelid) as with_check,
+  p.polcmd::text as cmd
+from pg_policy p
+join pg_class c on c.oid = p.polrelid
+join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public'
+  and (
+    (c.relname = 'profiles' and p.polname in ('profiles_lesen', 'profiles_aendern', 'profiles_loeschen'))
+    or c.relname like 'trip%'
+    or c.relname like 'traveller%'
+  )
+order by n.nspname, c.relname, p.polname, p.polcmd
+`.trim()
+}
+
+function rlsText(wert: unknown): string | null {
+  if (wert === null || wert === undefined) return null
+  return String(wert)
+}
+
+export function rlsSnapshotAusZeilen(
+  zeilen: RlsSnapshotZeile[] | RlsSnapshotZeile | null | undefined,
+): RlsSnapshotZeile[] {
+  const liste = Array.isArray(zeilen) ? zeilen : zeilen ? [zeilen] : []
+  return liste
+    .map((zeile) => ({
+      nspname: String(zeile.nspname),
+      relname: String(zeile.relname),
+      polname: String(zeile.polname),
+      qual: rlsText(zeile.qual),
+      with_check: rlsText(zeile.with_check),
+      cmd: String(zeile.cmd),
+    }))
+    .sort((a, b) =>
+      `${a.nspname}.${a.relname}.${a.polname}.${a.cmd}`.localeCompare(
+        `${b.nspname}.${b.relname}.${b.polname}.${b.cmd}`,
+      ),
+    )
+}
+
+export function rlsSnapshotsGleich(
+  vorher: readonly RlsSnapshotZeile[],
+  nachher: readonly RlsSnapshotZeile[],
+): boolean {
+  return JSON.stringify(rlsSnapshotAusZeilen([...vorher])) === JSON.stringify(rlsSnapshotAusZeilen([...nachher]))
+}
+
+function rlsLiteral(wert: string | null): string {
+  return wert === null ? 'null::text' : sqlLiteral(wert)
+}
+
+export function rlsSnapshotValuesSql(snapshot: readonly RlsSnapshotZeile[]): string {
+  const zeilen = rlsSnapshotAusZeilen([...snapshot])
+  if (zeilen.length === 0) {
+    throw new Error('RLS-Snapshot leer. Abgebrochen.')
+  }
+  const values = zeilen
+    .map(
+      (zeile) =>
+        `(${sqlLiteral(zeile.nspname)}, ${sqlLiteral(zeile.relname)}, ${sqlLiteral(zeile.polname)}, ${rlsLiteral(zeile.qual)}, ${rlsLiteral(zeile.with_check)}, ${sqlLiteral(zeile.cmd)})`,
+    )
+    .join(',\n    ')
+  return `select * from (values
+    ${values}
+  ) as t(nspname, relname, polname, qual, with_check, cmd)`
+}
+
+export function capabilityDefinitionSql(name: string): string {
+  return `
+select pg_get_functiondef(format('public.%I()', ${sqlLiteral(name)})::regprocedure) as definition
+`.trim()
+}
+
+export function failPathHistorySql(): string {
+  return `
+select version, name, statements
+  from supabase_migrations.schema_migrations
+ where version = ${sqlLiteral(AAL2_FAIL_PATH_VERSION)}
+    or name = ${sqlLiteral(AAL2_FAIL_PATH_NAME)}
 `.trim()
 }
 
@@ -211,7 +352,7 @@ export function preflightPasst(stand: Aal2PreflightStand): void {
   }
 }
 
-export function verifyFinalContractSql(): string {
+export function verifyFinalContractSql(snapshot: readonly RlsSnapshotZeile[]): string {
   return `
 do $aal2_verify$
 declare
@@ -226,9 +367,7 @@ declare
   _exec_anon boolean;
   _exec_auth boolean;
   _exec_service boolean;
-  _profiles integer;
-  _self_service integer;
-  _trip_admin integer;
+  _rls_diff integer;
   _rolle text;
 begin
   if to_regprocedure('public.aktuelles_admin_aal2()') is null then
@@ -326,56 +465,23 @@ begin
     raise exception 'AAL2-Verify: History-Name ist %', _history_name
       using errcode = 'P0001';
   end if;
-  if _history_stmt is null
-     or _history_stmt not like '%aktuelles_admin_aal2%'
-     or _history_stmt not like '%admin_aal2_data_plane_alignment%' then
-    raise exception 'AAL2-Verify: History-Statement fehlt oder ist fremd'
+  if _history_stmt is null or length(_history_stmt) = 0 then
+    raise exception 'AAL2-Verify: History-Statement fehlt'
       using errcode = 'P0001';
   end if;
 
-  select count(*)::int into _profiles
-    from pg_policy p
-    join pg_class c on c.oid = p.polrelid
-    join pg_namespace n on n.oid = c.relnamespace
-   where n.nspname = 'public'
-     and c.relname = 'profiles'
-     and p.polname in ('profiles_lesen', 'profiles_aendern', 'profiles_loeschen');
-  if _profiles <> 3 then
-    raise exception 'AAL2-Verify: profiles_* Self-Service-Policies fehlen (%)', _profiles
-      using errcode = 'P0001';
-  end if;
-
-  select count(*)::int into _self_service
-    from pg_policy p
-    join pg_class c on c.oid = p.polrelid
-    join pg_namespace n on n.oid = c.relnamespace
-   where n.nspname = 'public'
-     and c.relname = 'profiles'
-     and p.polname in ('profiles_lesen', 'profiles_aendern', 'profiles_loeschen')
-     and coalesce(pg_get_expr(p.polqual, p.polrelid), '') like '%user_id = auth.uid()%'
-     and (
-       coalesce(pg_get_expr(p.polqual, p.polrelid), '') like '%darf_konten_verwalten%'
-       or coalesce(pg_get_expr(p.polwithcheck, p.polrelid), '') like '%darf_konten_verwalten%'
-     );
-  if _self_service <> 3 then
-    raise exception 'AAL2-Verify: profiles_* Self-Service-Vertrag verändert (%)', _self_service
-      using errcode = 'P0001';
-  end if;
-
-  select count(*)::int into _trip_admin
-    from pg_policy p
-    join pg_class c on c.oid = p.polrelid
-    join pg_namespace n on n.oid = c.relnamespace
-   where n.nspname = 'public'
-     and (c.relname like 'trip%' or c.relname like 'traveller%')
-     and (
-       coalesce(pg_get_expr(p.polqual, p.polrelid), '') like '%darf_%'
-       or coalesce(pg_get_expr(p.polwithcheck, p.polrelid), '') like '%darf_%'
-       or coalesce(pg_get_expr(p.polqual, p.polrelid), '') like '%aktuelles_admin_aal2%'
-       or coalesce(pg_get_expr(p.polwithcheck, p.polrelid), '') like '%aktuelles_admin_aal2%'
-     );
-  if _trip_admin <> 0 then
-    raise exception 'AAL2-Verify: Trip/Traveller-RLS hängt an Admin-Capabilities (%)', _trip_admin
+  select count(*)::int into _rls_diff
+    from (
+      (select * from (${rlsSnapshotValuesSql(snapshot)}) e
+       except
+       select * from (${rlsSnapshotSql()}) a)
+      union all
+      (select * from (${rlsSnapshotSql()}) a
+       except
+       select * from (${rlsSnapshotValuesSql(snapshot)}) e)
+    ) d;
+  if _rls_diff <> 0 then
+    raise exception 'AAL2-Verify: profiles_/Trip/Traveller-RLS weicht vom Preflight-Snapshot ab (%)', _rls_diff
       using errcode = 'P0001';
   end if;
 end
@@ -387,9 +493,15 @@ export function aal2AuftragLesen(
   argv: readonly string[],
   umgebung: Umgebung | NodeJS.ProcessEnv = process.env,
 ): Aal2Auftrag {
+  if (hatFlag(argv, 'entwicklung-probe')) {
+    if (hatFlag(argv, 'schreiben') || hatFlag(argv, 'produktion')) {
+      throw new Error('--entwicklung-probe darf nicht mit Production-Write kombiniert werden.')
+    }
+    return { modus: 'entwicklung-probe' }
+  }
   if (hatFlag(argv, 'entwicklung')) {
     throw new Error(
-      'Dieser Einmal-Runner akzeptiert kein --entwicklung. Nur lokale Probe oder Production.',
+      'Dieser Einmal-Runner akzeptiert kein --entwicklung. Nur lokale Probe, --entwicklung-probe oder Production.',
     )
   }
   const schreiben = hatFlag(argv, 'schreiben')

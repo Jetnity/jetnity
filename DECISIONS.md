@@ -4344,6 +4344,8 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 **Nachtrag, 27. August 2026 – versionstreuer Einmal-Runner (Issue #101).** Der Production-Apply dieser einen Datei läuft nicht über MCP `apply_migration` und nicht über `db:anwenden`. Ein fail-closed Runner (`npm run db:aal2-prod-apply`) pinnt Blob/SHA-256/Version/Name, verlangt `--schreiben --produktion --projekt-ref qscbgcdmivbbnzrcyegn`, prüft Head `20260827010000` plus fehlende Funktion/History und schreibt SQL + History + Contract-Verify atomar. Die Phase-3.1-Grenze `20260820130000` bleibt unverändert. Dieser Nachtrag autorisiert keinen Apply; er beschreibt nur den Apply-Pfad.
 
+**Nachtrag, 27. August 2026 – TL-Review `5043150656`.** Die Apply-Transaktion terminiert jedes Statement, verifiziert den Vertrag vor COMMIT, vergleicht `profiles_*`/Trip/Traveller-RLS gegen einen Preflight-Snapshot und prüft History per exakter Version/Name plus JS-Bytevergleich. Der Fail-Path beweist auf Development eine zurückgerollte Capability-Mutation. Kein Production-Apply.
+
 ---
 
 ## ADR-0176 – TW-7 Rest-Gap ist Hub-Kartenidentität, nicht AP-3

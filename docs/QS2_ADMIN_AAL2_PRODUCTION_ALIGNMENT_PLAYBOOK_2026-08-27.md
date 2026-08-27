@@ -146,12 +146,20 @@ Der Runner:
 2. bestätigt das Production-Ziel über `zielFuerAuftrag` / `produktionsZiel`;
 3. bricht ab, wenn der Head nicht exakt `20260827010000` ist, `20260827170000`
    schon existiert oder `aktuelles_admin_aal2()` unerwartet vorhanden ist;
-4. wendet Datei-SQL und den History-Eintrag in **einer** Transaktion an;
-5. verifiziert den Vertrag read-only und erhebt Advisors read-only;
-6. zieht keine weitere Migration nach.
+4. nimmt einen Preflight-Snapshot der aktuellen `profiles_*`- und Trip/Traveller-RLS-Definitionen;
+5. wendet in **einer** Transaktion Datei-SQL → exakten History-Eintrag → harte Contract-Verification an und committet erst danach;
+6. jeder Verify-Fehler rollt Migration und History zurück;
+7. prüft nach COMMIT read-only denselben Vertrag, den RLS-Snapshot und `historyStimmtMitDatei()`;
+8. erhebt Advisors read-only und zieht keine weitere Migration nach.
+
+Rollback-sichere Development-Evidence, kein persistenter Write:
+
+```bash
+npm run db:aal2-prod-apply -- --entwicklung-probe
+```
 
 Development darf die Datei später als History-Alignment erhalten, ändert die
-bereits korrekte Semantik aber nicht. Dieser Runner schreibt Development nicht.
+bereits korrekte Semantik aber nicht. Dieser Runner committet Development nicht.
 
 ---
 

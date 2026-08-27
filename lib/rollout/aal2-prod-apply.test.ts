@@ -21,17 +21,43 @@ import {
   gitBlobSha1,
   historyInsertSql,
   historyStimmtMitDatei,
+  migrationRollbackProbeSql,
   migrationTransactionSql,
   phase31GrenzeUnveraendert,
   preflightPasst,
   preflightSql,
   preflightStandAusZeilen,
+  rlsSnapshotAusZeilen,
+  rlsSnapshotSql,
+  rlsSnapshotValuesSql,
+  rlsSnapshotsGleich,
   sha256Hex,
+  sqlStatement,
   verifyFinalContractSql,
+  type RlsSnapshotZeile,
 } from '@/lib/rollout/aal2-prod-apply'
 import { sqlLiteral } from '@/lib/rollout/sql-literal'
 
 const env = { SUPABASE_PROJECT_REF: AAL2_PROD_PROJEKT_REF }
+
+const probeSnapshot: RlsSnapshotZeile[] = [
+  {
+    nspname: 'public',
+    relname: 'profiles',
+    polname: 'profiles_lesen',
+    qual: '((user_id = ( SELECT auth.uid() AS uid)) OR darf_konten_verwalten())',
+    with_check: null,
+    cmd: 'r',
+  },
+  {
+    nspname: 'public',
+    relname: 'trips',
+    polname: 'trips_lesen',
+    qual: 'user_id = auth.uid()',
+    with_check: null,
+    cmd: 'r',
+  },
+]
 
 describe('AAL2-Alignment-Datei bleibt byte-identisch mit dem reviewten Vertrag', () => {
   test('SHA-256 und Git-Blob treffen den Issue-#101-Stand', () => {
@@ -96,6 +122,14 @@ describe('AAL2-Auftrag ist fail-closed', () => {
     assert.throws(
       () => aal2AuftragLesen(['--schreiben', '--produktion'], env),
       /exakt/,
+    )
+  })
+
+  test('Development-Probe ist ein eigener rollback-safe Modus', () => {
+    assert.deepEqual(aal2AuftragLesen(['--entwicklung-probe']), { modus: 'entwicklung-probe' })
+    assert.throws(
+      () => aal2AuftragLesen(['--entwicklung-probe', '--schreiben', '--produktion', '--projekt-ref', AAL2_PROD_PROJEKT_REF], env),
+      /nicht mit Production-Write/,
     )
   })
 
@@ -179,22 +213,31 @@ describe('AAL2-Preflight ist fail-closed', () => {
 })
 
 describe('AAL2-Transaktion ist atomar', () => {
-  test('eine Transaktion enthält genau Datei-SQL und History vor COMMIT', () => {
+  test('Statements sind terminiert und die COMMIT-Grenze ist exakt', () => {
     const datei = aal2DateiLesenUndPruefen()
-    const sql = migrationTransactionSql(datei)
-    assert.equal(sql.startsWith('begin;'), true)
-    assert.equal(sql.endsWith('commit;'), true)
-    assert.equal(sql.indexOf('begin;'), 0)
-    assert.ok(sql.indexOf(datei.sql) > sql.indexOf('begin;'))
     const insert = historyInsertSql(datei)
-    assert.ok(sql.indexOf(insert) > sql.indexOf(datei.sql))
-    assert.ok(sql.lastIndexOf('commit;') > sql.indexOf(insert))
+    const sql = migrationTransactionSql(datei, probeSnapshot)
+    assert.equal(sqlStatement('select 1'), 'select 1;')
+    assert.equal(sqlStatement('select 1;'), 'select 1;')
+    assert.equal(insert.endsWith(';'), true)
+    assert.equal(insert.includes('\ncommit'), false)
+    assert.equal(sql.startsWith('begin;'), true)
+    assert.equal(sql.endsWith(';\n\ncommit;'), true)
+    assert.equal(sql.includes(`${insert}\n\n`), true)
+    assert.equal(sql.includes(`${insert}commit;`), false)
+    assert.equal(sql.includes(`${insert}\ncommit;`), false)
+    const verify = verifyFinalContractSql(probeSnapshot)
+    assert.ok(sql.indexOf(datei.sql.trim()) > sql.indexOf('begin;'))
+    assert.ok(sql.indexOf(insert) > sql.indexOf(datei.sql.trim()))
+    assert.ok(sql.indexOf(sqlStatement(verify)) > sql.indexOf(insert))
+    assert.ok(sql.lastIndexOf('commit;') > sql.indexOf(sqlStatement(verify)))
     assert.equal((sql.match(/^begin;/gm) ?? []).length, 1)
     assert.equal((sql.match(/^commit;/gm) ?? []).length, 1)
     assert.match(insert, /insert into supabase_migrations\.schema_migrations \(version, name, statements\)/)
     assert.equal(insert.includes(sqlLiteral(datei.sql)), true)
     assert.equal(insert.includes(sqlLiteral(AAL2_ALIGN_VERSION)), true)
     assert.equal(insert.includes(sqlLiteral(AAL2_ALIGN_NAME)), true)
+    assert.equal(migrationRollbackProbeSql(datei, probeSnapshot).endsWith(';\n\nrollback;'), true)
   })
 
   test('History-Vergleich ist byte-identisch und namensgenau', () => {
@@ -225,34 +268,37 @@ describe('AAL2-Transaktion ist atomar', () => {
   test('fremde Version oder Datei ist fail-closed', () => {
     const datei = aal2DateiLesenUndPruefen()
     assert.throws(
-      () => migrationTransactionSql({ ...datei, version: '20260826090000' }),
+      () => migrationTransactionSql({ ...datei, version: '20260826090000' }, probeSnapshot),
       /nur 20260827170000/,
     )
     assert.throws(
-      () => migrationTransactionSql({ ...datei, name: 'admin_aal2_data_plane' }),
+      () => migrationTransactionSql({ ...datei, name: 'admin_aal2_data_plane' }, probeSnapshot),
       /nur 20260827170000/,
     )
     assert.throws(
-      () => migrationTransactionSql({ ...datei, datei: 'andere.sql' }),
+      () => migrationTransactionSql({ ...datei, datei: 'andere.sql' }, probeSnapshot),
       /keine andere Datei/,
     )
   })
 
-  test('Fail-Path würde bei SQL-Fehler keinen History-Eintrag vortäuschen', () => {
+  test('Fail-Path mutiert eine Capability, schreibt History und terminiert vor COMMIT', () => {
     const sql = failPathSql()
     assert.match(sql, /^begin;/)
-    assert.match(sql, /20260827170000/)
+    assert.match(sql, /create or replace function public\.darf_betrieb_lesen\(\)/)
+    assert.match(sql, /29990101000000/)
     assert.match(sql, /aal2_fail_path_probe/)
     assert.match(sql, /should_not_commit/)
     assert.match(sql, /AAL2 fail-path probe/)
+    assert.equal(sql.endsWith(';\n\ncommit;'), true)
+    assert.ok(sql.indexOf('create or replace function') < sql.indexOf('insert into supabase_migrations.schema_migrations'))
     assert.ok(sql.indexOf('insert into supabase_migrations.schema_migrations') < sql.indexOf('raise exception'))
     assert.ok(sql.indexOf('raise exception') < sql.lastIndexOf('commit;'))
   })
 })
 
 describe('AAL2-Verify prüft den engen Vertrag', () => {
-  test('Verify verlangt Helper, Mindestrollen, INVOKER, Grants, History und unveränderte RLS', () => {
-    const sql = verifyFinalContractSql()
+  test('Verify verlangt Helper, Mindestrollen, INVOKER, Grants, History und Snapshot-RLS', () => {
+    const sql = verifyFinalContractSql(probeSnapshot)
     assert.match(sql, /aktuelles_admin_aal2\(\)/)
     assert.match(sql, /auth\.jwt\(\) ->> ''aal''/)
     assert.match(sql, /unerlaubte AAL-Quelle/)
@@ -265,10 +311,24 @@ describe('AAL2-Verify prüft den engen Vertrag', () => {
       assert.match(sql, new RegExp(`'${rolle}'`))
     }
     assert.match(sql, /profiles_lesen/)
-    assert.match(sql, /user_id = auth\.uid\(\)/)
-    assert.match(sql, /Trip\/Traveller-RLS/)
+    assert.match(sql, /Preflight-Snapshot/)
     assert.match(sql, /schema_migrations/)
-    assert.match(sql, /admin_aal2_data_plane_alignment/)
+    assert.match(sql, /History-Name/)
+    assert.equal(sql.includes("like '%user_id = auth.uid()%'"), false)
+    assert.equal(sql.includes("%admin_aal2_data_plane_alignment%"), false)
+    assert.match(sql, new RegExp(sqlLiteral(AAL2_ALIGN_NAME)))
+    assert.match(sql, new RegExp(sqlLiteral(AAL2_ALIGN_VERSION)))
+    assert.match(rlsSnapshotSql(), /profiles_lesen/)
+    assert.match(rlsSnapshotSql(), /trip%/)
+    assert.match(rlsSnapshotValuesSql(probeSnapshot), /profiles_lesen/)
+    assert.equal(
+      rlsSnapshotsGleich(probeSnapshot, rlsSnapshotAusZeilen(probeSnapshot)),
+      true,
+    )
+    assert.equal(
+      rlsSnapshotsGleich(probeSnapshot, [{ ...probeSnapshot[0]!, qual: 'anders' }]),
+      false,
+    )
   })
 })
 
