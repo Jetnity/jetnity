@@ -95,7 +95,12 @@ PR #87 (`feat/tw6-rest-progressive-stages`) ist gemergt. Reviewed Head `7ef201fb
 
 Aktueller Slice: Visitor Search UX, Draft PR #94, Branch `cursor/visitor-search-ux-b13d`, gestartet von live `origin/main` `b76148e533fb0758c0197d0e0252624bb869cdb5`. Task: `docs/TRIP_WORKSPACE_VISITOR_SEARCH_UX_TASK.md`. Keine Schema-/Production-Änderung. Kein neuer Search-Provider.
 
-Lokale Gates auf `72ca1700c23efb520f18be9ec766ad814d2a7242`: Tests 2292 pass, Typecheck/Lint/Hygiene/Production-Build grün. GitHub Actions `pull_request` Run `33065079488` SUCCESS und Vercel Preview `CM7UY1XtA6euWrFVyHD3oHuYA43G` SUCCESS auf genau diesem Head. Ein Continuity-Nachtrag in diesem Dokument erzeugt einen neueren Exact Head; Actions/Vercel gelten dann nur nach erneuter Exact-Head-Prüfung.
+Technical-Lead-Finalreview `5040068359` vom 27. August 2026: **CHANGES REQUIRED**. Offene Korrekturen in diesem Slice:
+
+1. P1 Listbox: `role="option"` ohne nested `<button>`.
+2. P2 Abort-/Stale-Request: Current-Request-Grenze für Loading/Treffer/Fehler.
+
+Ältere Exact-Head-Evidence (`72ca1700`, `1008632e`) bleibt historisch. Nach der Korrektur gilt nur der neue Exact Head plus neuer Actions-/Vercel-Nachweis.
 
 TW-7 bleibt hinter Account-/Hub-Grenzen. TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance; S5-A allein ist kein TW-8-Start.
 
@@ -169,7 +174,7 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#94** Visitor Search UX | **OFFENER Draft.** Branch `cursor/visitor-search-ux-b13d`. Natürliche Orts-/Flughafensuche, kanonische IDs intern. Kein Ready/Merge in diesem Slice. |
+| **#94** Visitor Search UX | **OFFENER Draft, CHANGES REQUIRED.** P1 Listbox-Semantik + P2 Abort-Race. Kein Ready/Merge. |
 | **#87** TW6-B Runtime + Mode Contract | **GEMERGT.** Checkpoint `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`. |
 | **#88** Project Sanitation Audit | Non-destructive Audit-Evidence. Kein Cleanup automatisch. |
 | #52 ChatGPT TL handoff 2026-08-24 | HISTORICAL / SUPERSEDED |
@@ -199,6 +204,6 @@ Weiterhin nicht angewendet:
 
 ## 10. Nächster Schritt
 
-**STOP nach dem Visitor-Search-UX-Draft für unabhängigen Technical-Lead-Finalreview.**
+**STOP nach der P1/P2-Korrektur auf PR #94 für erneuten unabhängigen Technical-Lead-Finalreview.**
 
 Kein Ready. Kein Merge. Kein weiterer Production-Write. Kein AAL2. Keine Direction A. Kein TW-7/8/9-Folgeslice.

@@ -4311,6 +4311,8 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 **Konsequenzen:** Keine Schema- oder Production-Änderung. Kein neuer laufender Provider. Commercial Flight Truth unverändert. Draft bleibt Draft, bis der Technical Lead unabhängig reviewed.
 
+**Nachtrag, 27. August 2026 – Combobox-Option und Current-Request-Grenze.** Technical-Lead-Finalreview CHANGES REQUIRED auf PR #94: `role="option"` darf keinen verschachtelten Button tragen; die Option selbst ist die auswählbare Interaktion. Abgebrochene oder überholte Suchläufe dürfen Loading, Treffer und Fehler der aktuellen Anfrage nicht überschreiben. Ranking, Place-ID- und IATA-Wahrheit bleiben unverändert.
+
 ---
 
 ## Offene Widersprüche

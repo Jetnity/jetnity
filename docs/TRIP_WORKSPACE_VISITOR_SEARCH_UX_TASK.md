@@ -2,7 +2,7 @@
 
 **Owner:** `Cursor-Agent: Trip workspace audit architecture`
 
-**Status:** Implementation Draft in progress on `cursor/visitor-search-ux-b13d`. Separate follow-up after merged PR #87. Not Ready. Not merged.
+**Status:** Implementation Draft on `cursor/visitor-search-ux-b13d`. Technical-Lead-Finalreview CHANGES REQUIRED (P1 listbox option, P2 stale/abort request). Not Ready. Not merged.
 
 ## Goal
 

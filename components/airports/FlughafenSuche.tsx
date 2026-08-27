@@ -11,6 +11,7 @@ import { FLUGHAFEN_MELDUNG } from '@/lib/airports/auswahl'
 import type { FlughafenOption } from '@/lib/airports/suche'
 import { ariaBeschrieben } from '@/lib/formular/feldfehler'
 import { iataLesen } from '@/lib/route/referenz'
+import { sucheAnfrageDarfSchreiben, sucheAnfrageStarten } from '@/lib/suche/anfrage'
 import { sucheLage, sucheListeSichtbar } from '@/lib/suche/lage'
 import { sucheListeIndex, sucheListeSchliesst, sucheListeWaehlt } from '@/lib/suche/tastatur'
 
@@ -44,6 +45,7 @@ export default function FlughafenSuche({
   const [fehlerArt, setFehlerArt] = React.useState<'error' | 'unavailable' | null>(null)
   const [aktiv, setAktiv] = React.useState(-1)
   const wurzel = React.useRef<HTMLDivElement>(null)
+  const anfrage = React.useRef({ aktuell: 0 })
   const listeId = React.useId()
 
   React.useEffect(() => {
@@ -72,14 +74,17 @@ export default function FlughafenSuche({
       return
     }
 
+    const id = sucheAnfrageStarten(anfrage.current)
     const steuer = new AbortController()
     setLaedt(true)
     setFehlerArt(null)
     const timer = window.setTimeout(async () => {
+      const darf = () => sucheAnfrageDarfSchreiben(anfrage.current, id, steuer.signal)
       try {
         const res = await fetch(`/api/search/airports?q=${encodeURIComponent(suche)}`, {
           signal: steuer.signal,
         })
+        if (!darf()) return
         if (res.status === 503) {
           setFehlerArt('unavailable')
           setTreffer([])
@@ -91,6 +96,7 @@ export default function FlughafenSuche({
           return
         }
         const json = (await res.json()) as FlughafenOption[]
+        if (!darf()) return
         if (!Array.isArray(json)) {
           setFehlerArt('error')
           setTreffer([])
@@ -98,11 +104,12 @@ export default function FlughafenSuche({
         }
         setTreffer(json.filter((option) => Boolean(iataLesen(option.value))))
       } catch (err) {
+        if (!darf()) return
         if ((err as { name?: string }).name === 'AbortError') return
         setFehlerArt('error')
         setTreffer([])
       } finally {
-        setLaedt(false)
+        if (darf()) setLaedt(false)
       }
     }, DEBOUNCE_MS)
 
