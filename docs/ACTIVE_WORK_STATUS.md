@@ -1,15 +1,15 @@
 # Jetnity – Active Work Status
 
 Stand: 27. August 2026  
-Status: **Production Gate A ist PASS. PR #89 ist auf `main`. TW6-B Gate B ist weiterhin NICHT freigegeben und NICHT auf Production angewendet. PR #87 bleibt Draft und muss vor jedem weiteren Schritt gegen den aktuellen `main` neu eingeordnet und exakt gegatet werden.**
+Status: **Production Gate A ist PASS. PR #89 (Gate 0) ist auf `main`. Gate 0B (Vier-Datei-Vertrag inkl. `20260827010000`) ist der aktuelle migrations-only Prep. TW6-B Gate B ist weiterhin NICHT freigegeben und NICHT auf Production angewendet. PR #87 bleibt Draft.**
 
 > **Do not blindly trust this file — live verify first.**
 
 ## 0. Live-Integrationsbaseline
 
-Aktueller verifizierter `main` zum Continuity-Update:
+Aktueller verifizierter `main` zum Gate-0B-Prep:
 
-`3d0ffa2d97df66a4d6006587047bf27b0df9606c`
+`f683855fa82a6ae5663228b2c9dfa605755fc47d`
 
 Wichtige aktuelle Linie:
 
@@ -193,6 +193,7 @@ Explizit **nicht** in Production-History und **nicht** angewendet:
 - TW6-B `20260826220000`
 - TW6-B `20260826230000`
 - TW6-B `20260826240000`
+- TW6-B `20260827010000`
 - AAL2 `20260826090000`
 - Development-AAL2-Version `20260826052735`
 
@@ -204,6 +205,8 @@ Vollständige Execution-Evidence: `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2
 
 **STOP vor Gate B.**
 
-Technical Lead rekonstruiert PR #87 gegen den aktuellen `main`, klassifiziert eventuelle Konflikte/Drift und entscheidet, ob zuerst eine scope-sichere Synchronisierung/Korrektur nötig ist. Erst wenn PR-/Production-Plan wieder unabhängig PASS ist, kann der Product Owner separat um Freigabe für das TW6-B-Bundle `20260826220000 → 20260826230000 → 20260826240000` unter dem auf `main` liegenden transaktionalen Write-Gate-Playbook gebeten werden.
+Aktiver Prep: Gate 0B Vier-Datei-Vertrag (`26220000 → 26230000 → 26240000 → 27010000`) migrations-only gegen aktuellen `main`. Kein Production-Apply. Kein Runtime aus PR #87.
+
+Nach Gate-0B-Review/Merge muss PR #87 erneut mit dem dann aktuellen `main` synchronisiert werden. Erst danach kann der Product Owner separat um Freigabe für das Vier-Datei-Bundle unter Write-Gate gebeten werden.
 
 Kein Gate B, kein AAL2, kein Direction A, kein PR-#87-Merge und kein Folgeslice ohne diese erneute Live-Evidence und die jeweils nötige Freigabe.

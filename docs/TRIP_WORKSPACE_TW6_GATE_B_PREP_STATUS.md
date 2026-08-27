@@ -1,7 +1,7 @@
-# TW6-B Gate 0 / Gate-B-Playbook – Status
+# TW6-B Gate 0 / Gate 0B / Gate-B-Playbook – Status
 
 Stand: 27. August 2026  
-Status: **Gate 0 integriert. Production Gate A PASS. Gate B weiterhin BLOCKED / nicht freigegeben. PR #87 bleibt Draft.**
+Status: **Gate 0 auf `main`. Gate 0B Vier-Datei-Vertrag in diesem Prep-PR. Production Gate A PASS. Gate B weiterhin BLOCKED / nicht freigegeben. PR #87 bleibt Draft.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -13,7 +13,7 @@ Merge-Commit:
 
 `5fc4d1b873f1fa7aff8e4064163275bf30f9ce98`
 
-Damit liegen die drei geprüften TW6-B-Migrationen dauerhaft auf `main`, zusammen mit dem bounded transaktionalen Gate-B-Playbook. Kein übriger Runtime-Code aus PR #87 wurde durch Gate 0 integriert.
+Damit lagen die drei geprüften TW6-B-Migrationen dauerhaft auf `main`, zusammen mit dem bounded transaktionalen Gate-B-Playbook. Kein übriger Runtime-Code aus PR #87 wurde durch Gate 0 integriert.
 
 Exact-Head Evidence PR #89:
 
@@ -21,17 +21,22 @@ Exact-Head Evidence PR #89:
 - Vercel Preview: SUCCESS/READY
 - Post-Merge `main` CI Run `33023988403`: SUCCESS
 
-## 2. Kanonische TW6-B-Dateien auf main
+## 2. Gate 0B – Zero-Stage Production Rollout Provenance
 
-| Datei | SHA-256 |
-| --- | --- |
-| `20260826220000_trip_day_stage_assignment_source.sql` | `ab06e875e88f69b009837e1c8873e5322199da812b62f4ac1065a028f73cf883` |
-| `20260826230000_trip_day_stage_assignment_source_fail_closed.sql` | `7e2e30246f1d9976b868751a6cc79087e537bbd36fb8f0dabf829b98258117a9` |
-| `20260826240000_trip_day_stage_assignment_mode.sql` | `7a9626d8ac53ea3458bf7d622ea695cce26360962c02430d8d1a0094129a1edb` |
+Technical-Lead Finalreview auf PR #87 Exact Head `b93a6fff213b3bb61a9efde84050f46fc0673cf4`: Runtime-/Zero-Stage-Fix PASS auf Development. Neuer Blocker **P1-TW6-B-ROLLOUT-08**: das auf `main` versionierte Playbook wendete nur `26220000 → 26230000 → 26240000` an. Ein Production-Gate-B-Apply hätte den behobenen 0-Stage-Fehler erneut geöffnet.
 
-Runtime-Code aus PR #87 bleibt getrennt.
+Dieser Slice ist ein **separater migrations-/rollout-only Prep-PR** gegen aktuellen `main` `f683855fa82a6ae5663228b2c9dfa605755fc47d`. Kein Runtime-/UI-Code aus PR #87.
 
-## 3. Gate-B-Playbook
+| Datei | SHA-256 | Herkunft |
+| --- | --- | --- |
+| `20260826220000_trip_day_stage_assignment_source.sql` | `ab06e875e88f69b009837e1c8873e5322199da812b62f4ac1065a028f73cf883` | unverändert, Gate 0 / PR #89 |
+| `20260826230000_trip_day_stage_assignment_source_fail_closed.sql` | `7e2e30246f1d9976b868751a6cc79087e537bbd36fb8f0dabf829b98258117a9` | unverändert, Gate 0 / PR #89 |
+| `20260826240000_trip_day_stage_assignment_mode.sql` | `7a9626d8ac53ea3458bf7d622ea695cce26360962c02430d8d1a0094129a1edb` | unverändert, Gate 0 / PR #89 |
+| `20260827010000_reise_anlegen_zero_stage_fail_closed.sql` | `b516bfff24e9e6f5dd909a9cfd4e76aa1a54708b067d1a5d3e935b8482c6adf1` | byte-identisch von `b93a6fff` |
+
+`20260827010000` ist bereits auf Development angewendet und wird hier **nicht** erneut angewendet. Production bleibt unangetastet.
+
+## 3. Gate-B-Playbook – Vier-Datei-Vertrag
 
 Implementiert in:
 
@@ -42,13 +47,21 @@ Implementiert in:
 Vertrag:
 
 1. Write-Gate committed setzen und verifizieren.
-2. `26220000` + `26230000` + `26240000` plus exakte History in **einer** Transaktion.
-3. Keine öffentlich executable 26220000-/26230000-Zwischenwahrheit.
-4. Finalen Mode-Vertrag vor Grant-Restore prüfen.
+2. `26220000` → `26230000` → `26240000` → `27010000` plus exakte History in **einer** Transaktion.
+3. Keine öffentlich executable Zwischenwahrheit.
+4. Finalen Mode-Vertrag inkl. 0-Stage fail-closed und Commercial-Gate-A vor Grant-Restore prüfen.
 5. Bei Fehler `ROLLBACK`; Write-Gate bleibt geschlossen.
 6. Grants erst nach PASS exakt aus Snapshot wiederherstellen.
 
-`db:anwenden` lehnt das Bundle dateiweise ab.
+`db:anwenden` lehnt alle vier Versionen dateiweise ab.
+
+Final Verify muss zusätzlich beweisen:
+
+- 0 Stages → fail-closed, kein `single_destination`
+- finaler RPC = `27010000`-Semantik
+- genau vier Gate-B-Versionen in `schema_migrations`
+- neue Requests minten kein `legacy_fallback`
+- Commercial-Gate-A-Nullung und Guard-Trigger bleiben
 
 ## 4. Production Gate A – PASS
 
@@ -59,25 +72,6 @@ Product Owner hat am 27. August 2026 ausschließlich Gate A freigegeben:
 
 Beide wurden auf Production angewendet und vollständig verifiziert.
 
-Finale Production-History enthält exakt:
-
-- `20260824160000` → `reise_anlegen_flug_handelsfelder_ohne_nachweis`
-- `20260824180000` → `trip_items_flug_handelsfelder_guard`
-
-Verifikation:
-
-- RPC verwirft untrusted Flight-Handelsfelder: PASS
-- Route-Itinerary bleibt erhalten: PASS
-- `authenticated` RPC EXECUTE = true / `anon` = false: PASS
-- Guard-Trigger count=1 / enabled: PASS
-- Trigger-Scope korrekt: PASS
-- Guard Role-Boundary korrekt: PASS
-- Insert-Strip: PASS
-- Update-Preserve: PASS
-- Guard-Funktion für authenticated/anon nicht direkt executable: PASS
-- Production Flight-Items: 0
-- Production-Projekt danach: `ACTIVE_HEALTHY`
-
 Vollständige Evidence: `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`.
 
 ## 5. Explizit NICHT ausgeführt
@@ -87,6 +81,7 @@ Production enthält weiterhin **nicht**:
 - `20260826220000`
 - `20260826230000`
 - `20260826240000`
+- `20260827010000`
 - AAL2 `20260826090000`
 - Development-AAL2-Version `20260826052735`
 
@@ -94,34 +89,27 @@ Auf Production existiert weiterhin weder `day_stage_assignment_source` noch `day
 
 Damit ist TW6-B Gate B nicht still aktiviert worden.
 
+Development enthält alle vier Versionen bereits. Dieser Slice wendet sie dort nicht erneut an.
+
 ## 6. PR #87
 
-PR #87 (`feat/tw6-rest-progressive-stages`) bleibt Draft.
+PR #87 (`feat/tw6-rest-progressive-stages`) bleibt Draft und wird in diesem Slice nicht weiter mit Rollout-Code vermischt.
 
-Der frühere PLAN-PASS / PRODUCTION EXECUTION BLOCKED war auf einem älteren `main`. Seitdem wurden PR #89 und weitere Continuity-Commits integriert. Deshalb gilt vor jeder Fortsetzung zwingend:
-
-- aktuellen `main` verifizieren
-- Merge-Base und Ahead/Behind neu bestimmen
-- echten Diff gegen aktuellen `main` prüfen
-- Konflikte/Drift auflösen
-- Shared Contracts erneut prüfen
-- Exact-Head GitHub Actions und Vercel erneut verlangen
-- Production-Grenzen neu lesen
-
-Kein alter PASS darf als aktuelle Merge- oder Production-Freigabe verwendet werden.
+Nach Merge von Gate 0B auf `main` muss PR #87 erneut mit dem dann aktuellen `main` synchronisiert und auf neuem Exact Head gegatet werden. Das ist ein späterer Auftrag.
 
 ## 7. P0 / P1 / P2 / P3
 
 | ID | Klasse | Lage |
 | --- | --- | --- |
 | P0 | — | keine aktuell aus Gate A bekannten |
+| P1-TW6-B-ROLLOUT-08 | P1 | **dieser Slice:** Vier-Datei-Vertrag provenance-sicher auf `main` vorbereiten |
 | TW6-B-PREP-P1-01 | P1 | Gate B bleibt ohne separate Product-Owner-Freigabe blockiert |
-| TW6-B-PR87-P1-REBASE | P1 | PR #87 muss gegen aktuellen `main` neu eingeordnet und re-gegatet werden |
-| TW6-B-PREP-P2-01 | P2 | Development enthält das Bundle bereits; dort nicht erneut blind anwenden |
-| TW6-B-PREP-P3-01 | P3 | `db:anwenden` stoppt auf frischen Umgebungen beim Bundle; frühere offene Migrationen separat betrachten |
+| TW6-B-PR87-P1-REBASE | P1 | PR #87 muss nach Gate-0B-Merge gegen neuen `main` neu eingeordnet werden |
+| TW6-B-PREP-P2-01 | P2 | Development enthält das Vier-Datei-Bundle bereits; dort nicht erneut blind anwenden |
+| TW6-B-PREP-P3-01 | P3 | `db:anwenden` stoppt auf frischen Umgebungen beim Bundle |
 
 ## 8. STOP
 
-**Kein Gate B. Kein AAL2. Kein Direction A. Kein PR-#87-Merge. Kein Folgeslice.**
+**Kein Gate B. Kein Production-Apply. Kein AAL2. Kein Direction A. Kein PR-#87-Merge. Kein Folgeslice.**
 
-Nächster Schritt ist ausschließlich der unabhängige Technical-Lead-Re-Review von PR #87 gegen den aktuellen `main`. Erst nach neuem PASS kann eine separate Product-Owner-Freigabe für Gate B überhaupt angefragt werden.
+Nächster Schritt nach Exact-Head-Evidence dieses Prep-PRs: unabhängiger Technical-Lead-Review des Vier-Datei-Vertrags. Erst danach kann PR #87 re-synchronisiert und eine separate Product-Owner-Freigabe für Gate B angefragt werden.
