@@ -3,10 +3,14 @@
 Stand: 27. August 2026  
 Finding: `P1-AAL2-PROD-01`  
 Migration: `supabase/migrations/20260827170000_admin_aal2_data_plane_alignment.sql`  
-Status: **VORBEREITET – KEIN PRODUCTION APPLY AUTORISIERT**
+Status: **PRODUCTION AAL2 ANGEWENDET UND VERIFIZIERT / KEIN ZWEITER APPLY**
 
-Dieses Playbook gilt nur für die reviewte Alignment-Migration. Es ist keine
-Production-Freigabe. Der Apply bleibt ein ausdrückliches Product-Owner-Gate.
+Dieses Playbook gilt nur für die reviewte Alignment-Migration
+`20260827170000_admin_aal2_data_plane_alignment.sql`.
+Production-AAL2 ist angewendet und live verifiziert (PR-#102-Kommentar `5442474653`).
+Frühere Sätze „KEIN PRODUCTION APPLY AUSGEFÜHRT“, „Der Apply bleibt ein
+ausdrückliches Product-Owner-Gate“ und „Dieser Slice führt den Apply nicht aus“
+sind historische Pre-Apply-Evidence. **Kein zweiter Apply.**
 
 ---
 
@@ -88,40 +92,87 @@ Consumer-Trip-/Traveller-RLS (`trips`, `trip_*`) hängt nicht an `darf_*()`.
 | --- | --- |
 | Repository historisch | `20260826090000_admin_aal2_data_plane.sql` – **nicht ändern** |
 | Development live | `20260826052735_admin_aal2_data_plane` |
-| Production live | **keine** |
-| Neue Alignment-Datei | `20260827170000_admin_aal2_data_plane_alignment.sql` |
+| Production live | `20260827170000_admin_aal2_data_plane_alignment` — **exakt einmal**, verifiziert |
+| Alignment-Datei | `20260827170000_admin_aal2_data_plane_alignment.sql` |
 
-Production-Head vor diesem Slice: `20260827010000_reise_anlegen_zero_stage_fail_closed`.
+Historischer Production-Head **vor** Apply: `20260827010000_reise_anlegen_zero_stage_fail_closed`.
+Aktueller Production-Head: `20260827170000` / `admin_aal2_data_plane_alignment`.
 
 Die Alignment-Migration ist `CREATE OR REPLACE` und damit auf Development
 semantisch idempotent. Sie fälscht keine Historical Versions.
 
 ---
 
-## 4. Rollout – nur nach Product-Owner-Freigabe
+## 4. Rollout – nur über den Einmal-Runner
 
-Voraussetzungen, die **nicht** durch dieses Playbook erfüllt werden:
+PR #98 ist gemergt. Die Alignment-Datei liegt auf `main`. Der Product Owner hat
+den Production-Apply am 27. August 2026 erlaubt, wenn der Technical Lead ihn
+für sinnvoll hält. Der Technical Lead hat ihn nach PASS-Review `5043413423`
+angewendet. Der frühere Satz „Dieser Slice führt den Apply nicht aus“ ist
+historische Pre-Apply-Evidence. **Kein zweiter Apply.** Ein erneuter Write
+müsste am Preflight scheitern: Head ist `20260827170000`, die Funktion existiert,
+History-Count ist 1.
 
-1. Draft-PR #98 ist unabhängig vom Technical Lead PASS und gemergt.
-2. Exact-Head CI und Vercel des gemergten `main` sind grün.
-3. Product Owner gibt **ausdrücklich** den Production-Apply **dieser einen**
-   Datei frei. Keine Sammelfreigabe, keine Folgemigration.
+Nicht zulässig:
 
-Dann, und nur dann, auf Production `qscbgcdmivbbnzrcyegn`:
+- Supabase MCP `apply_migration` (erzeugt einen eigenen Timestamp)
+- `db:anwenden --produktion` (Phase-3.1-Grenze bleibt `20260820130000`)
+- Dateiglob oder Folgemigration
+- Development-Write über diesen Runner
 
-1. Production-Migration-Head erneut live lesen. Erwartet vor Apply:
-   `20260827010000_reise_anlegen_zero_stage_fail_closed`. Bei Drift: STOPP.
-2. Nur `20260827170000_admin_aal2_data_plane_alignment.sql` anwenden.
-3. Keine weitere Migration automatisch nachziehen.
-4. Sofort die Verification in Abschnitt 5 ausführen.
-5. Continuity/Status auf den tatsächlich angewandten Head aktualisieren.
+Datei-Identität, die der Runner hart prüft:
 
-Development darf die Datei als History-Alignment erhalten, ändert die bereits
-korrekte Semantik aber nicht.
+| Feld | Wert |
+| --- | --- |
+| Version / Name | `20260827170000` / `admin_aal2_data_plane_alignment` |
+| Git-Blob | `4d24d28ff5789a253d0abc6ebd8aa0d6e22a2375` |
+| SHA-256 | `ac4faa87bf994a1fcbad2212384cb2308695820b63a57dc41ee9a763515ad934` |
+| Production | `qscbgcdmivbbnzrcyegn` |
+| Head vor Apply | `20260827010000_reise_anlegen_zero_stage_fail_closed` |
+
+Lokale Probe, kein Write:
+
+```bash
+npm run db:aal2-prod-apply
+```
+
+Live-Preflight, kein Write:
+
+```bash
+npm run db:aal2-prod-apply -- --produktion --projekt-ref qscbgcdmivbbnzrcyegn
+```
+
+Write, nur durch den Technical Lead nach unabhängigem Exact-Head-Review und
+unverändert passendem Live-Preflight:
+
+```bash
+npm run db:aal2-prod-apply -- --schreiben --produktion --projekt-ref qscbgcdmivbbnzrcyegn
+```
+
+Der Runner:
+
+1. prüft Blob/SHA-256/Version/Name;
+2. bestätigt das Production-Ziel über `zielFuerAuftrag` / `produktionsZiel`;
+3. bricht ab, wenn der Head nicht exakt `20260827010000` ist, `20260827170000`
+   schon existiert oder `aktuelles_admin_aal2()` unerwartet vorhanden ist;
+4. nimmt einen Preflight-Snapshot der aktuellen `profiles_*`- und Trip/Traveller-RLS-Definitionen;
+5. wendet in **einer** Transaktion Datei-SQL → exakten History-Eintrag → harte Contract-Verification an und committet erst danach;
+6. jeder Verify-Fehler rollt Migration und History zurück;
+7. prüft nach COMMIT read-only denselben Vertrag, den RLS-Snapshot und `historyStimmtMitDatei()`;
+8. erhebt Advisors read-only und zieht keine weitere Migration nach.
+
+Rollback-sichere Development-Evidence, kein persistenter Write:
+
+```bash
+npm run db:aal2-prod-apply -- --entwicklung-probe
+```
+
+Development darf die Datei später als History-Alignment erhalten, ändert die
+bereits korrekte Semantik aber nicht. Dieser Runner committet Development nicht.
 
 ---
 
-## 5. Verification nach einem späteren Apply
+## 5. Verification nach Apply (live bestätigt)
 
 Read-only, fail-closed:
 
@@ -145,7 +196,7 @@ Read-only, fail-closed:
 Die Migration ist `CREATE OR REPLACE` ohne Tabellen-DDL. Ein naives
 „History löschen“ ist verboten.
 
-Falls nach einem späteren Apply ein akuter Produktionsfehler entsteht:
+Falls nach dem Apply ein akuter Produktionsfehler entsteht:
 
 1. **Nicht** die historische `20260826090000` nachträglich auf Production
    anwenden oder umbenennen.
@@ -156,7 +207,9 @@ Falls nach einem späteren Apply ein akuter Produktionsfehler entsteht:
 4. Ein Zurücksetzen auf „nur Rolle, ohne AAL2“ wäre ein erneutes Öffnen von
    P1-AAL2-PROD-01 und braucht eine neue ausdrückliche Product-Owner-Entscheidung.
 
-Ohne Apply gibt es nichts zurückzunehmen. Dieser Slice ändert Production nicht.
+Der Apply ist ausgeführt. Ein naives erneutes Anwenden von `20260827170000` ist
+verboten. Recovery bleibt eine neue forward-only Migration nach Review und
+ausdrücklicher Product-Owner-Freigabe. Dieser Docs-Closure ändert Production nicht.
 
 ---
 
@@ -164,8 +217,10 @@ Ohne Apply gibt es nichts zurückzunehmen. Dieser Slice ändert Production nicht
 
 Nicht Teil dieses Playbooks:
 
-- Production-Apply jetzt
+- zweiter Production-Apply derselben Version
+- Production-Apply durch einen späteren Implementierungsauftrag des Runners
 - Rollenmodell, Auth/Session/MFA-Umbau, neue Capabilities
 - Consumer-Ownership
 - Service-Role in Consumer-Pfaden
 - TW-7/TW-8, AP-4/AP-7, S5-B, Provider/Payment/Secrets
+- generisches Öffnen von `db:anwenden`

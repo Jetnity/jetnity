@@ -4,11 +4,12 @@ import assert from 'node:assert/strict'
 
 const checker = readFileSync(new URL('../../scripts/db/production-pruefen.ts', import.meta.url), 'utf8')
 const gateB = readFileSync(new URL('../../scripts/db/gate-b-tw6-bundle.ts', import.meta.url), 'utf8')
+const aal2 = readFileSync(new URL('../../scripts/db/aal2-prod-apply.ts', import.meta.url), 'utf8')
+const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')) as {
+  scripts: Record<string, string>
+}
 
 describe('CI und Build beschreiben Production nicht', () => {
-  const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')) as {
-    scripts: Record<string, string>
-  }
 
   test('prebuild, build, test und Hygiene rufen keinen Import auf', () => {
     const automatisch = ['prebuild', 'build', 'test', 'check:setup', 'check:setup:ci']
@@ -18,6 +19,7 @@ describe('CI und Build beschreiben Production nicht', () => {
       assert.equal(kommando.includes('production:pruefen'), false, name)
       assert.equal(kommando.includes('--produktion'), false, name)
       assert.equal(kommando.includes('gate-b-tw6-bundle'), false, name)
+      assert.equal(kommando.includes('aal2-prod-apply'), false, name)
     }
   })
 
@@ -26,6 +28,7 @@ describe('CI und Build beschreiben Production nicht', () => {
     assert.match(pkg.scripts['places:importieren'] ?? '', /importieren/)
     assert.match(pkg.scripts['production:pruefen'] ?? '', /production-pruefen/)
     assert.match(pkg.scripts['db:gate-b-tw6-bundle'] ?? '', /gate-b-tw6-bundle/)
+    assert.match(pkg.scripts['db:aal2-prod-apply'] ?? '', /aal2-prod-apply/)
   })
 })
 
@@ -55,5 +58,17 @@ describe('Gate-B-Playbook schreibt Production nicht still', () => {
   test('Production-Apply bleibt im Script hart blockiert', () => {
     assert.match(gateB, /productionApplyAblehnen/)
     assert.match(gateB, /produktion-blockiert/)
+  })
+})
+
+describe('AAL2-Einmal-Runner schreibt Production nicht still', () => {
+  test('Default ist Probe, Write nur explizit, kein Secret-Log', () => {
+    assert.match(aal2, /Lokale Probe fertig/)
+    assert.match(aal2, /Kein Datenbank-Write/)
+    assert.match(aal2, /--schreiben --produktion --projekt-ref/)
+    assert.match(aal2, /keineSecrets/)
+    assert.equal(aal2.includes('SUPABASE_ACCESS_TOKEN'), false)
+    assert.equal(pkg.scripts['prebuild']?.includes('aal2-prod-apply'), false)
+    assert.equal(pkg.scripts['test']?.includes('aal2-prod-apply'), false)
   })
 })
