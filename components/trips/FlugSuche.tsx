@@ -7,10 +7,16 @@
 import * as React from 'react'
 import { AlertCircle, Loader2, Plane, Search } from 'lucide-react'
 
+import FlughafenSuche from '@/components/airports/FlughafenSuche'
 import type { FlugOptionSichtbar, FlugSucheAntwort } from '@/lib/flights/client-sicht'
 import type { FlughafenReferenzKarte } from '@/lib/route/domain'
 import { FLUG_ABDECKUNGSHINWEIS } from '@/lib/flights/domain'
 import type { FlugKabine, FlugStoppPraeferenz } from '@/lib/flights/domain'
+import {
+  flughafenAusReiseort,
+  flugSucheBeine,
+  type FlughafenAuswahl,
+} from '@/lib/airports/auswahl'
 import FlugKarte from '@/components/trips/FlugKarte'
 import { cn } from '@/lib/utils'
 import type { Trip } from '@/types/trips'
@@ -22,13 +28,6 @@ const KABINE_TEXT: Record<FlugKabine, string> = {
   premium_economy: 'Premium Economy',
   business: 'Business',
   first: 'First',
-}
-
-function iataAus(wert: string | null | undefined): string {
-  const roh = wert?.trim().toUpperCase() ?? ''
-  if (/^[A-Z]{3}$/.test(roh)) return roh
-  const inText = roh.match(/\b([A-Z]{3})\b/)
-  return inText?.[1] ?? ''
 }
 
 export default function FlugSuche({
@@ -45,8 +44,17 @@ export default function FlugSuche({
   ) => Promise<string | null>
 }) {
   const tag = reise.days.find((eintrag) => eintrag.id === tagId) ?? reise.days[0]
-  const [herkunft, setHerkunft] = React.useState(iataAus(reise.origin))
-  const [ziel, setZiel] = React.useState(iataAus(reise.stages[0]?.name) || '')
+  const [herkunft, setHerkunft] = React.useState<FlughafenAuswahl | null>(() =>
+    flughafenAusReiseort({ placeId: reise.originPlaceId, name: reise.origin }),
+  )
+  const [herkunftText, setHerkunftText] = React.useState(herkunft?.name ?? '')
+  const [ziel, setZiel] = React.useState<FlughafenAuswahl | null>(() =>
+    flughafenAusReiseort({
+      placeId: reise.stages[0]?.placeId,
+      name: reise.stages[0]?.name,
+    }),
+  )
+  const [zielText, setZielText] = React.useState(ziel?.name ?? '')
   const [hin, setHin] = React.useState(tag?.dayDate ?? reise.startDate ?? '')
   const [rueck, setRueck] = React.useState(reise.endDate ?? '')
   const [mitRueck, setMitRueck] = React.useState(Boolean(reise.endDate))
@@ -61,21 +69,31 @@ export default function FlugSuche({
   const suchen = async (ereignis: React.FormEvent) => {
     ereignis.preventDefault()
     if (laeuft) return
+
+    const beine = flugSucheBeine({
+      herkunft,
+      ziel,
+      herkunftText,
+      zielText,
+      hin,
+      rueck,
+      mitRueck,
+    })
+    if ('fehler' in beine) {
+      setMeldung(beine.fehler.allgemein ?? beine.fehler.herkunft ?? beine.fehler.ziel ?? '')
+      return
+    }
+
     setMeldung('')
     setLaeuft(true)
     setAntwort(null)
-
-    const legs = [
-      { origin: herkunft, destination: ziel, date: hin },
-      ...(mitRueck && rueck ? [{ origin: ziel, destination: herkunft, date: rueck }] : []),
-    ]
 
     try {
       const res = await fetch('/api/flights/search', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          legs,
+          legs: beine.legs,
           passengers: { adults: Math.min(9, Math.max(1, reise.travellers)), children: 0, infants: 0 },
           cabin: kabine,
           stopPreference: stopps,
@@ -139,28 +157,30 @@ export default function FlugSuche({
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
             Von
-            <input
+            <FlughafenSuche
               value={herkunft}
-              onChange={(e) => setHerkunft(e.target.value.toUpperCase())}
-              required
-              maxLength={3}
-              minLength={3}
-              placeholder="ZRH"
-              autoCapitalize="characters"
-              className="h-11 w-full rounded-xl border border-line-200 bg-white px-3 text-base uppercase outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
+              onChange={(wert, roh) => {
+                setHerkunft(wert)
+                setHerkunftText(roh)
+                if (wert) setMeldung('')
+              }}
+              placeholder="Stadt oder Flughafen"
+              ungueltig={Boolean(meldung) && !herkunft}
+              inputClassName="h-11 w-full rounded-xl border border-line-200 bg-white px-3 text-base outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
             />
           </label>
           <label className="grid min-w-0 gap-1.5 text-xs font-medium text-ink-900">
             Nach
-            <input
+            <FlughafenSuche
               value={ziel}
-              onChange={(e) => setZiel(e.target.value.toUpperCase())}
-              required
-              maxLength={3}
-              minLength={3}
-              placeholder="BKK"
-              autoCapitalize="characters"
-              className="h-11 w-full rounded-xl border border-line-200 bg-white px-3 text-base uppercase outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
+              onChange={(wert, roh) => {
+                setZiel(wert)
+                setZielText(roh)
+                if (wert) setMeldung('')
+              }}
+              placeholder="Stadt oder Flughafen"
+              ungueltig={Boolean(meldung) && !ziel}
+              inputClassName="h-11 w-full rounded-xl border border-line-200 bg-white px-3 text-base outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-600/10 pointer-fine:text-sm"
             />
           </label>
         </div>

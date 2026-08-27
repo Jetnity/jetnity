@@ -33,6 +33,8 @@ export type OrtOption = {
   label: string
   description?: string
   typ: OrtTyp
+  /** Nur Anzeige. Persistiert wird weiterhin die Place-ID. */
+  iata?: string
 }
 
 export function ortId(quelle: OrtQuelle, schluessel: string): string {

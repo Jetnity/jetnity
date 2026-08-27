@@ -19,13 +19,15 @@ describe('Lokale Flughafensuche', () => {
   test('ein genauer IATA-Treffer steht vorn', () => {
     const optionen = flughaefenOrdnen(zeilen, 'ZRH')
     assert.equal(optionen[0]?.value, 'ZRH')
-    assert.match(optionen[0]?.label ?? '', /ZRH/)
+    assert.match(optionen[0]?.label ?? '', /Zürich Airport · ZRH|Zurich Airport · ZRH/)
   })
 
   test('Zürich findet Zurich über Unicode-Faltung', () => {
     const optionen = flughaefenOrdnen(zeilen, 'Zürich')
     assert.equal(optionen.some((option) => option.value === 'ZRH'), true)
     assert.equal(sucheFilter('Zürich').includes('zurich'), true)
+    assert.ok(optionen.every((option) => /^[A-Z]{3}$/.test(option.value)))
+    assert.ok(optionen.some((option) => option.label === 'Zürich, Switzerland' || option.label.startsWith('Zurich, ')))
   })
 
   test('London liefert mehrere Flughäfen, Heathrow vor dem reinen Teiltreffer', () => {
@@ -70,8 +72,23 @@ describe('Lokale Flughafensuche', () => {
     const zrh = zeilen.find((zeile) => zeile.iata === 'ZRH')
     assert.ok(zrh)
     const option = flughafenAlsOption(zrh!)
-    assert.equal(option.value, 'ZRH')
-    assert.match(option.description ?? '', /Switzerland/)
-    assert.equal('access_token' in option, false)
+    assert.ok(option)
+    assert.equal(option!.value, 'ZRH')
+    assert.match(option!.label, / · ZRH$/)
+    assert.match(option!.description ?? '', /Switzerland/)
+    assert.equal('access_token' in option!, false)
+  })
+
+  test('ohne IATA entsteht keine auswählbare Option', () => {
+    assert.equal(
+      flughafenAlsOption({
+        iata: null,
+        icao: 'XXXX',
+        name: 'Irgendwo',
+        city: 'Irgendwo',
+        country: 'Nowhere',
+      }),
+      null,
+    )
   })
 })

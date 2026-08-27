@@ -352,7 +352,7 @@ S1 Shared Operational Contract ist auf `main` (PR #47). S2 FlugNachweis ist auf 
 
 ## 8. Großer End-to-End Trip-Workspace-/Übersicht-Umbau
 
-Status: **Audit/IA docs-only als PR #55 gemergt. TW-1, TW-2, TW-4, TW-3, TW-5 und TW6-A auf `main`. TW6-REST-01 bleibt offen. Ein migrations-only Gate-0-Draft für die drei geprüften TW6-B-Dateien plus Playbook ist in Vorbereitung; das ist kein Runtime-Merge und kein Production-Apply. Kein gesamtes TW-6-Closure. Kein TW-7/TW-8.**
+Status: **Audit/IA docs-only als PR #55 gemergt. TW-1, TW-2, TW-4, TW-3, TW-5, TW6-A und TW6-B Runtime (PR #87) auf `main`. Visitor Search UX ist der nächste offene Draft-Slice. Kein gesamtes TW-6-Closure. Kein TW-7/TW-8.**
 
 Der Workspace ist die wichtigste Produktoberfläche und wird **nicht nur umgebaut**, sondern vollständig funktional generalinspiziert. PR #55 liefert ausschließlich die vorbereitete Audit-/Zielarchitektur-Evidence.
 

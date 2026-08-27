@@ -14,6 +14,7 @@ import {
   orteOrdnen,
   ortNamensfilter,
   ortSchluesselfilter,
+  schluesselErgaenzungNoetig,
 } from '@/lib/places/suche'
 import { createRouteHandlerClient } from '@/lib/supabase/server'
 
@@ -71,7 +72,14 @@ export async function GET(req: Request) {
     }
   }
 
-  if (zeilen.length < 12) {
+  const orteAus = (menge: typeof zeilen) =>
+    menge
+      .map((zeile) => ortAusZeile(zeile as OrtZeile))
+      .filter((ort): ort is NonNullable<typeof ort> => Boolean(ort))
+
+  let orte = orteAus(zeilen)
+
+  if (schluesselErgaenzungNoetig(orte, raw, rolle)) {
     const schluessel = ortSchluesselfilter(raw)
     if (schluessel) {
       const extra = await lese(() =>
@@ -85,12 +93,9 @@ export async function GET(req: Request) {
           zeilen.push(zeile)
         }
       }
+      orte = orteAus(zeilen)
     }
   }
-
-  const orte = zeilen
-    .map((zeile) => ortAusZeile(zeile as OrtZeile))
-    .filter((ort): ort is NonNullable<typeof ort> => Boolean(ort))
 
   return NextResponse.json(orteOrdnen(orte, raw, rolle), {
     headers: {

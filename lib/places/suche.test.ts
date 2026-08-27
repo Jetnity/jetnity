@@ -7,7 +7,8 @@ import assert from 'node:assert/strict'
 import { FLUGHAFEN_FIXTURES } from '@/lib/places/fixtures/airports'
 import { geoNamesTsvZeile, laenderAusCountryInfo, ortAusFlughafen, orteAusGeoNames } from '@/lib/places/importieren'
 import { eingabeOhneAuswahl, ortAusBestand, ORT_MELDUNG } from '@/lib/places/pruefen'
-import { orteOrdnen, ortNamensfilter, ortSchluesselfilter } from '@/lib/places/suche'
+import type { Ort } from '@/lib/places/domain'
+import { ORT_TREFFER, orteOrdnen, ortNamensfilter, ortSchluesselfilter } from '@/lib/places/suche'
 
 const hier = dirname(fileURLToPath(import.meta.url))
 
@@ -88,6 +89,89 @@ describe('Ortssuche', () => {
     assert.equal(filter.includes('keywords.'), false)
     assert.equal(filter.includes('name.ilike.Thailand%'), true)
     assert.equal(ortSchluesselfilter('Südtirol')?.includes('keywords.ilike.'), true)
+  })
+
+  test('Peru als Land steht beim Reiseziel vorn', () => {
+    const optionen = orteOrdnen(orte, 'Peru', 'ziel')
+    assert.equal(optionen[0]?.label, 'Peru')
+    assert.equal(optionen[0]?.typ, 'country')
+    assert.ok(optionen.length <= ORT_TREFFER)
+  })
+
+  test('Zürich und Zurich priorisieren Stadt und ZRH, nicht Bezirke oder Illinois', () => {
+    const extra: Ort[] = [
+      {
+        id: 'geonames:4900054',
+        source: 'geonames',
+        sourceId: '4900054',
+        name: 'Lake Zurich',
+        typ: 'city',
+        country: 'United States',
+        countryCode: 'US',
+        region: 'Illinois',
+        lat: 42.2,
+        lon: -88.09,
+        iata: null,
+        keywords: 'Zurich',
+      },
+      {
+        id: 'geonames:2657897',
+        source: 'geonames',
+        sourceId: '2657897',
+        name: 'Zürich Kreis 1',
+        typ: 'city',
+        country: 'Switzerland',
+        countryCode: 'CH',
+        region: 'Zürich',
+        lat: 47.37,
+        lon: 8.54,
+        iata: null,
+        keywords: 'Zurich',
+      },
+    ]
+    for (const suche of ['Zürich', 'Zurich'] as const) {
+      const optionen = orteOrdnen([...orte, ...extra], suche, 'abreise')
+      const ids = optionen.map((option) => option.id)
+      assert.equal(ids[0], 'geonames:2657896')
+      assert.ok(ids.includes('airport:ZRH'))
+      assert.equal(ids.includes('geonames:4900054'), false)
+      assert.equal(ids.includes('geonames:2657897'), false)
+      assert.ok(optionen.length <= ORT_TREFFER)
+      const zrh = optionen.find((option) => option.id === 'airport:ZRH')
+      assert.equal(zrh?.label, 'Zürich Airport')
+      assert.equal(zrh?.iata, 'ZRH')
+    }
+  })
+
+  test('echte gleichnamige Orte bleiben über Region und Land unterscheidbar', () => {
+    const optionen = orteOrdnen(orte, 'Paris', 'ziel')
+    const frankreich = optionen.find((option) => /France/.test(option.description ?? ''))
+    const texas = optionen.find((option) => /United States/.test(option.description ?? ''))
+    assert.ok(frankreich)
+    assert.ok(texas)
+    assert.equal(frankreich?.label, 'Paris')
+    assert.equal(texas?.label, 'Paris')
+  })
+
+  test('die Ergebnisliste bleibt kompakt und füllt sich nicht mit schwachen Treffern', () => {
+    const rauschen: Ort[] = Array.from({ length: 12 }, (_, index) => ({
+      id: `geonames:${8000000 + index}`,
+      source: 'geonames',
+      sourceId: `${8000000 + index}`,
+      name: `Peru District ${index + 1}`,
+      typ: 'city',
+      country: 'United States',
+      countryCode: 'US',
+      region: 'Indiana',
+      lat: 40,
+      lon: -86,
+      iata: null,
+      keywords: 'Peru',
+    }))
+    const optionen = orteOrdnen([...orte, ...rauschen], 'Peru', 'ziel')
+    assert.equal(optionen[0]?.typ, 'country')
+    assert.equal(optionen.some((option) => option.label.includes('District')), false)
+    assert.ok(optionen.length <= ORT_TREFFER)
   })
 
   test('ein Land gewinnt gegen gleichnamige Unterorte im selben Land', () => {

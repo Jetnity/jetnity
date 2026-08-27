@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 27. August 2026  
-Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. PR #91 / TW6-B Gate 0B ist integriert; Production Gate A ist PASS; Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87 bleibt Draft; aktueller offener P1 ist die Workspace-Tempo-Wahrheit. Frühere Aussagen „Production Gate B nicht angewendet“ sind historische Evidence.**
+Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. PR #91 / TW6-B Gate 0B ist integriert; Production Gate A ist PASS; Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87 ist gemergt. Aktueller offener Slice: Visitor Search UX. Frühere Aussagen „Production Gate B nicht angewendet“ bzw. „PR #87 bleibt Draft“ sind historische Evidence.**
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
@@ -254,19 +254,9 @@ Integriert:
 - TW6-B Gate 0 ✅
 - TW6-B Gate 0B ✅
 
-PR #87 bleibt der offene Runtime-Draft für progressive weitere Ziele / Day→Stage Mode Contract.
+PR #87 (TW6-B Runtime + Day→Stage Mode Contract, inkl. Workspace-Tempo-Wahrheit) ist gemergt. Checkpoint: `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`.
 
-Nach PR #91 ist der verbindliche nächste operative Schritt:
-
-1. aktuellen `main` live lesen;
-2. PR-#87-Head live lesen;
-3. PR #87 mit neuem `main` synchronisieren bzw. Drift scope-sicher korrigieren;
-4. Merge-Base/Ahead/Behind neu bestimmen;
-5. aktuellen Diff prüfen;
-6. Shared Contracts / Multi-Ziel / Zero-Stage / Commercial Truth erneut prüfen;
-7. Exact-Head Actions/Vercel neu verlangen;
-8. Production-Zustand erneut prüfen;
-9. erst nach unabhängigem PASS über einen Runtime-Merge entscheiden.
+Aktueller offener Slice: **Visitor Search UX** (`docs/TRIP_WORKSPACE_VISITOR_SEARCH_UX_TASK.md`). Kein Production-Write, keine Schemaänderung, kein neuer Search-Provider.
 
 Kein alter PASS ist eine aktuelle Merge- oder Production-Freigabe.
 
@@ -295,7 +285,7 @@ Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Repo-/Bran
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-**Unabhängiger Finalreview von Draft-PR #87 nach der Workspace-Tempo-Korrektur.**
+**Unabhängiger Finalreview des Visitor-Search-UX-Drafts nach Exact-Head-Gates.**
 
 Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. Die frühere Anweisung, zuerst um Gate-B-Freigabe zu bitten, ist historische Evidence.
 

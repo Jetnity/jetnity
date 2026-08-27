@@ -1,52 +1,25 @@
 'use client'
 
-// Gemeinsame Ortssuche für Startseite und /planen.
-// Speichert niemals den freien Text als kanonischen Ort.
+// Natürliche Flughafensuche. Persistiert nur bestätigte IATA-Codes.
 
 import * as React from 'react'
 import { Loader2 } from 'lucide-react'
 
 import Suchliste from '@/components/suche/Suchliste'
+import type { FlughafenAuswahl } from '@/lib/airports/auswahl'
+import { FLUGHAFEN_MELDUNG } from '@/lib/airports/auswahl'
+import type { FlughafenOption } from '@/lib/airports/suche'
 import { ariaBeschrieben } from '@/lib/formular/feldfehler'
-import type { OrtAuswahl } from '@/lib/places/auswahl'
-import type { OrtOption, OrtRolle } from '@/lib/places/domain'
-import { ORT_MELDUNG } from '@/lib/places/pruefen'
+import { iataLesen } from '@/lib/route/referenz'
 import { sucheAnfrageDarfSchreiben, sucheAnfrageStarten } from '@/lib/suche/anfrage'
 import { sucheLage, sucheListeSichtbar } from '@/lib/suche/lage'
 import { sucheListeIndex, sucheListeSchliesst, sucheListeWaehlt } from '@/lib/suche/tastatur'
-import { cn } from '@/lib/utils'
 
 const DEBOUNCE_MS = 280
 
-type OrtSucheProps = {
-  rolle: OrtRolle
-  variante: 'hero' | 'field'
-  value: OrtAuswahl | null
-  onChange: (wert: OrtAuswahl | null, text: string) => void
-  initialText?: string
-  placeholder?: string
-  inputId?: string
-  inputClassName?: string
-  disabled?: boolean
-  ungueltig?: boolean
-  describedBy?: string
-  inputRef?: React.Ref<HTMLInputElement>
-}
-
-function typText(typ: OrtOption['typ']): string {
-  if (typ === 'country') return 'Land'
-  if (typ === 'region') return 'Region'
-  if (typ === 'island') return 'Insel'
-  if (typ === 'airport') return 'Flughafen'
-  return 'Stadt'
-}
-
-export default function OrtSuche({
-  rolle,
-  variante,
+export default function FlughafenSuche({
   value,
   onChange,
-  initialText = '',
   placeholder,
   inputId,
   inputClassName,
@@ -54,9 +27,19 @@ export default function OrtSuche({
   ungueltig = false,
   describedBy,
   inputRef,
-}: OrtSucheProps) {
-  const [text, setText] = React.useState(value?.name ?? initialText)
-  const [treffer, setTreffer] = React.useState<OrtOption[]>([])
+}: {
+  value: FlughafenAuswahl | null
+  onChange: (wert: FlughafenAuswahl | null, text: string) => void
+  placeholder?: string
+  inputId?: string
+  inputClassName?: string
+  disabled?: boolean
+  ungueltig?: boolean
+  describedBy?: string
+  inputRef?: React.Ref<HTMLInputElement>
+}) {
+  const [text, setText] = React.useState(value?.name ?? '')
+  const [treffer, setTreffer] = React.useState<FlughafenOption[]>([])
   const [offen, setOffen] = React.useState(false)
   const [laedt, setLaedt] = React.useState(false)
   const [fehlerArt, setFehlerArt] = React.useState<'error' | 'unavailable' | null>(null)
@@ -67,7 +50,7 @@ export default function OrtSuche({
 
   React.useEffect(() => {
     if (value?.name) setText(value.name)
-  }, [value?.id, value?.name])
+  }, [value?.iata, value?.name])
 
   React.useEffect(() => {
     const suche = text.trim()
@@ -77,7 +60,14 @@ export default function OrtSuche({
       setFehlerArt(null)
       return
     }
-    if (suche.length < 2) {
+    if (suche.length < 1) {
+      setTreffer([])
+      setLaedt(false)
+      setFehlerArt(null)
+      return
+    }
+    const istIata = /^[a-z]{3}$/i.test(suche)
+    if (!istIata && suche.length < 2) {
       setTreffer([])
       setLaedt(false)
       setFehlerArt(null)
@@ -91,10 +81,9 @@ export default function OrtSuche({
     const timer = window.setTimeout(async () => {
       const darf = () => sucheAnfrageDarfSchreiben(anfrage.current, id, steuer.signal)
       try {
-        const res = await fetch(
-          `/api/search/places?q=${encodeURIComponent(suche)}&rolle=${rolle}`,
-          { signal: steuer.signal },
-        )
+        const res = await fetch(`/api/search/airports?q=${encodeURIComponent(suche)}`, {
+          signal: steuer.signal,
+        })
         if (!darf()) return
         if (res.status === 503) {
           setFehlerArt('unavailable')
@@ -106,14 +95,14 @@ export default function OrtSuche({
           setTreffer([])
           return
         }
-        const json = (await res.json()) as OrtOption[]
+        const json = (await res.json()) as FlughafenOption[]
         if (!darf()) return
         if (!Array.isArray(json)) {
           setFehlerArt('error')
           setTreffer([])
           return
         }
-        setTreffer(json)
+        setTreffer(json.filter((option) => Boolean(iataLesen(option.value))))
       } catch (err) {
         if (!darf()) return
         if ((err as { name?: string }).name === 'AbortError') return
@@ -128,7 +117,7 @@ export default function OrtSuche({
       window.clearTimeout(timer)
       steuer.abort()
     }
-  }, [text, rolle, value])
+  }, [text, value])
 
   React.useEffect(() => {
     const schliessen = (ereignis: MouseEvent) => {
@@ -138,9 +127,12 @@ export default function OrtSuche({
     return () => document.removeEventListener('mousedown', schliessen)
   }, [])
 
-  const waehlen = (option: OrtOption) => {
-    onChange({ id: option.id, name: option.label }, option.label)
-    setText(option.label)
+  const waehlen = (option: FlughafenOption) => {
+    const iata = iataLesen(option.value)
+    if (!iata) return
+    const name = option.label
+    onChange({ iata, name }, name)
+    setText(name)
     setOffen(false)
     setTreffer([])
     setAktiv(-1)
@@ -175,7 +167,7 @@ export default function OrtSuche({
     laedt,
     treffer: treffer.length,
     queryLen: text.trim().length,
-    minQueryLen: 2,
+    minQueryLen: /^[a-z]{3}$/i.test(text.trim()) ? 1 : 2,
     hatAuswahl: Boolean(value),
     fehlerArt,
     ungueltig,
@@ -207,10 +199,7 @@ export default function OrtSuche({
       />
       {laedt && (
         <Loader2
-          className={cn(
-            'pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-ink-700',
-            variante === 'hero' ? 'right-3' : 'right-3.5',
-          )}
+          className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-ink-700"
           aria-hidden="true"
         />
       )}
@@ -218,24 +207,23 @@ export default function OrtSuche({
         <Suchliste
           id={listeId}
           lage={lage}
-          eintraege={treffer.map((option) => ({
-            id: option.id,
-            primaer: option.iata ? `${option.label} · ${option.iata}` : option.label,
-            sekundaer: option.description,
-            extra: typText(option.typ),
+          eintraege={treffer.map((option, index) => ({
+            id: `${option.value}-${index}`,
+            primaer: option.label,
+            sekundaer: option.description && option.description !== 'Stadt' ? option.description : undefined,
+            extra: option.description === 'Stadt' ? 'Stadt' : option.value,
           }))}
           aktiv={aktiv}
           onWaehlen={(index) => {
             const option = treffer[index]
             if (option) waehlen(option)
           }}
-          leerText={rolle === 'ziel' ? ORT_MELDUNG.zielUnbekannt : ORT_MELDUNG.abreiseUnbekannt}
+          leerText={FLUGHAFEN_MELDUNG.unbekannt}
           fehlerText={
             lage === 'unavailable'
-              ? 'Die Ortssuche ist gerade nicht erreichbar.'
-              : 'Die Ortssuche ist fehlgeschlagen.'
+              ? 'Die Flughafensuche ist gerade nicht erreichbar.'
+              : 'Die Flughafensuche ist fehlgeschlagen.'
           }
-          className={variante === 'hero' ? 'left-0 right-0' : undefined}
         />
       )}
     </div>
