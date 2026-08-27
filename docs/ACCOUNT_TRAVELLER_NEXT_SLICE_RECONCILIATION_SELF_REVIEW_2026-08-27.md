@@ -39,6 +39,7 @@ Typ: adversarial Self-Review, **kein** unabhängiger Technical-Lead-PASS
 5. **Wird P2-TA-06 vor AP-4 gezogen?** Nein.
 6. **Wird AP-7 geöffnet?** Nein.
 7. **Ist `963186f4` zukünftige Live-Wahrheit?** Nein.
+8. **Steht `beaef64a` / offener AAL2-Apply noch als aktuelle Continuity-Wahrheit?** Nein. Nach Review `5044513532` als historische Pre-PR-#102-Evidence gekennzeichnet.
 
 ## 4. Verdict
 

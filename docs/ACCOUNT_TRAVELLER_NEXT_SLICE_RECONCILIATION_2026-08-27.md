@@ -78,7 +78,7 @@ Historische Evidence: `docs/TRAVELLER_ACCOUNT_NEXT_PHASE_AUDIT.md` (PR #76) und 
 | Foundation E nicht neu bauen | bestätigt; Child-Tabellen-Vertrag unverändert |
 | `ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` fehlt auf `main` | bestätigt (P2-TA-03); Datei nur auf PR #39 |
 | Nächster Slice: zuerst P1-TA-02, dann P2-TA-06 | P1-TA-02 erledigt; P2-TA-06 bleibt Residual |
-| Continuity-Dateien können hinter `main` liegen | **heute bestätigt und stärker:** zentrale Statusdateien beschreiben noch `beaef64a` / offenen AAL2-Apply |
+| Continuity-Dateien können hinter `main` liegen | Ältere Continuity-Stände **konnten** hinter `main` liegen. Konkrete `beaef64a`- / „AAL2-Apply offen“-Aussagen sind **historische Pre-PR-#102-Evidence**, keine aktuelle Wahrheit. Live-`main` `1c88b7e4` / `JETNITY_START_HERE.md`: PR #102 und #106 integriert; Production-AAL2 `20260827170000` angewendet und verifiziert, exakt einmal. |
 
 Widerspruch in historischer Statusdatei: `docs/TRAVELLER_ACCOUNT_NEXT_PHASE_AUDIT_STATUS.md` Abschnitt 1 sagt P1-TA-02 geschlossen, Abschnitt 2 fordert noch einen Closure-Slice. **Abschnitt 2 ist historische Evidence.** Dieser Bericht führt P1-TA-02 nicht als offenen Finding.
 
@@ -259,7 +259,7 @@ Für Account/Traveller:
 - kein zweiter Apply
 - Trip-/Traveller-RLS laut Apply-Status unverändert
 - kein Anlass, Account-Runtime an AAL2 zu koppeln
-- zentrale Continuity-Dateien, die den Apply noch als offen beschreiben, sind **stale**; dieser Audit überschreibt sie nicht
+- aktuelle Continuity auf `main` nach PR #102/#106 beschreibt den Apply als geschlossen; ältere `beaef64a`- / „Apply offen“-Sätze bleiben historische Evidence. Dieser Audit überschreibt zentrale Continuity nicht.
 
 ---
 
@@ -377,7 +377,7 @@ Kandidaten-Matrix, **nur falls** der Technical Lead später einen Slice ausdrüc
 - keine aktuelle Endentscheidung `NO ACCOUNT RUNTIME because #106`
 - kein erfundener Registry- oder Archiv-Contract
 - kein Default-Pass im aktuellen App-Pfad
-- zentrale Continuity-Dateien sind stale; das ist dokumentiert, nicht still korrigiert
+- ältere Continuity-Stände konnten hinter `main` liegen; `beaef64a` / offener AAL2-Apply sind historische Pre-PR-#102-Evidence, keine aktuelle Wahrheit
 - Exact-Head-Gates des Evidence-Heads `c9ef984a`: Actions `33102128084` SUCCESS; Vercel `CWsHGMfomgwJQezm1QGXbAYRu5YX` READY
 
 ---

@@ -7,7 +7,7 @@ Branch: `cursor/account-traveller-reconciliation-3efc`
 Draft-PR: https://github.com/Jetnity/jetnity/pull/107  
 Historische Audit-Startbaseline: `963186f4ec75501efd253a287131f464a5fd0fdb` — keine dauerhafte Live-Wahrheit  
 Aktueller Sync-`main`: `1c88b7e49453bb60cf9962d1dfa5bb3b652058ca` (Merge PR #106)  
-Status: **TW7-A-PARALLELITÄTSGATE ERFÜLLT / AUDIT-EMPFEHLUNG AP-4 IS NEXT ACCOUNT RUNTIME CANDIDATE / KEINE RUNTIME-FREIGABE / STOPP FÜR TL-RE-REVIEW**
+Status: **TW7-A-PARALLELITÄTSGATE ERFÜLLT / AUDIT-EMPFEHLUNG AP-4 IS NEXT ACCOUNT RUNTIME CANDIDATE / KEINE RUNTIME-FREIGABE / DOCS-FIX NACH REVIEW `5044513532` / STOPP**
 
 Auftrag: `docs/ACCOUNT_TRAVELLER_NEXT_SLICE_RECONCILIATION_TASK_2026-08-27.md`  
 Bericht: `docs/ACCOUNT_TRAVELLER_NEXT_SLICE_RECONCILIATION_2026-08-27.md`  
@@ -56,9 +56,11 @@ Nicht eigenständig umgeschrieben: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`
 
 ## 4. Gates
 
-Historische Heads vor diesem Sync bleiben Evidence: `c9ef984a`, `23f02a56`, `c3276dad`.
+Historische Heads vor diesem Sync bleiben Evidence: `c9ef984a`, `23f02a56`, `c3276dad`, `d1785ec7`.
 
-Gates dieses Sync-/Docs-Heads stehen nach Push auf dem neuen Exact Head.
+Review `5044513532` BLOCKED einen docs-seitigen Restfund: Abschnitt 2 nannte `beaef64a` / offenen AAL2-Apply als aktuelle Wahrheit. Korrigiert: das ist historische Pre-PR-#102-Evidence. Live-`main` nach PR #102/#106 hat Production-AAL2 `20260827170000` angewendet und verifiziert, exakt einmal.
+
+Gates dieses Docs-Fix-Heads stehen nach Push auf dem neuen Exact Head.
 
 Kein Ready. Kein Merge.
 
