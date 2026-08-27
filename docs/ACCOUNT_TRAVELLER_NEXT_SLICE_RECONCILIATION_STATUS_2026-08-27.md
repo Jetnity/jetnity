@@ -5,69 +5,65 @@ Issue: #105
 Cursor-Anzeigename: **Account plattform audit vorbereitung 2**  
 Branch: `cursor/account-traveller-reconciliation-3efc`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/107  
-Historische Audit-Baseline: `origin/main` `963186f4ec75501efd253a287131f464a5fd0fdb` — keine dauerhafte Live-Wahrheit  
-Status: **TL-REVIEW BLOCKED umgesetzt / STOPP FÜR RE-REVIEW / NO ACCOUNT RUNTIME SOLANGE #106 NICHT INTEGRIERT IST**
+Historische Audit-Startbaseline: `963186f4ec75501efd253a287131f464a5fd0fdb` — keine dauerhafte Live-Wahrheit  
+Aktueller Sync-`main`: `1c88b7e49453bb60cf9962d1dfa5bb3b652058ca` (Merge PR #106)  
+Status: **TW7-A-PARALLELITÄTSGATE ERFÜLLT / AUDIT-EMPFEHLUNG AP-4 IS NEXT ACCOUNT RUNTIME CANDIDATE / KEINE RUNTIME-FREIGABE / STOPP FÜR TL-RE-REVIEW**
 
 Auftrag: `docs/ACCOUNT_TRAVELLER_NEXT_SLICE_RECONCILIATION_TASK_2026-08-27.md`  
 Bericht: `docs/ACCOUNT_TRAVELLER_NEXT_SLICE_RECONCILIATION_2026-08-27.md`  
 Handoff: `docs/ACCOUNT_TRAVELLER_NEXT_SLICE_RECONCILIATION_HANDOFF_2026-08-27.md`  
 Self-Review: `docs/ACCOUNT_TRAVELLER_NEXT_SLICE_RECONCILIATION_SELF_REVIEW_2026-08-27.md`
 
-Zentrale Continuity-Dateien wurden nicht geändert.
+Zentrale Continuity-Dateien wurden in diesem Slice nicht umgeschrieben.
 
 ## 1. Entscheidung dieses Audits
 
-**`NO ACCOUNT RUNTIME`, solange PR #106 nicht integriert ist.**
+**Audit-Empfehlung:** `AP-4 IS NEXT ACCOUNT RUNTIME CANDIDATE`
 
-Nach verifizierter TW7-A-Landung von #106: AP-4 als wahrscheinlichen nächsten Account-Lifecycle-Kandidaten unter einem frischen engen TL-Task/Spec neu bewerten. AP-4 ist **nicht** jetzt freigegeben.
+Das ist **keine Runtime-Freigabe**. AP-4 startet erst über einen eigenen neuen Technical-Lead-Task/Spec.
 
 | Kandidat | Entscheidung |
 | --- | --- |
-| AP-4 Archiv-UX | echter Lifecycle-Gap; **nicht startbar, solange #106 nicht auf `main` ist**. Fehlender PR-#39-Plan ist kein dauerhafter Blocker. |
-| P2-TA-06 `documents[0]` | weiterhin **latent**; nicht über AP-4 heben ohne eigene TL-Entscheidung/Spec |
-| AP-7 Registry | **gated** (ADR-Nachfolger + PO + sensible Identity-/RLS-Gates); kein Contract erfunden |
-| anderer Account-Restpunkt | keiner bereits freigegeben und kleiner |
+| AP-4 Archiv-UX | echter Lifecycle-Gap (`trips.status` Archivieren/Wiederherstellen). TW7-A-Parallelitätsgate **erfüllt**. Fehlender PR-#39-Plan ist kein dauerhafter Blocker. |
+| P2-TA-06 `documents[0]` | weiterhin **latent**; nicht automatisch vor AP-4 |
+| AP-7 Registry | **gated** (ADR-Nachfolger + PO + Identity/RLS/Sensitive-Data); kein Contract |
+| anderer Account-Restpunkt | keiner kleiner und bereits freigegeben |
 
-P1-TA-02 bleibt geschlossen (PR #84). Nicht erneut als offen führen.
+P1-TA-02 bleibt geschlossen (PR #84).
+
+Frühere Endentscheidung `NO ACCOUNT RUNTIME while #106 is not integrated` ist **erfüllt/überholt**. Sie bleibt historische Review-Evidence, nicht aktuelle Empfehlung.
 
 ## 2. Parallelität
 
-### Historische Evidence zum Audit-Zeitpunkt
+### Historische Evidence zum ersten Audit-Lauf
 
 Beide TW7-A-Drafts waren offen: #104 und #106. Das ist keine aktuelle Wahrheit.
 
 ### Aktuelle Live-Parallelität
 
-- PR **#104**: **CLOSED / superseded / nicht gemergt** (2026-08-27T18:19:23Z)
-- PR **#106**: einzige aktive TW7-A-Integrationslinie, Draft, in TL-Review, **nicht** auf `main`
+- PR **#104**: CLOSED / superseded / **nicht gemergt**
+- PR **#106**: **auf `main` integriert** (`1c88b7e4`, 2026-08-27T18:34:21Z)
+- Issue **#103**: CLOSED / completed (2026-08-27T18:37:07Z)
+- Post-Merge CI `33104140169` SUCCESS; Vercel Production `dpl_8jCQsqtBiDq99b2Qtyg2BznwtbWd` READY auf `1c88b7e4`
 
-Keine Wahl zwischen #104 und #106 mehr. Dieser Audit hat keine TW7-A-Dateien angefasst.
+Keine Wahl zwischen #104 und #106. Kein TW7-A-Draft mehr als Account-Parallelitätsgate.
 
 ## 3. Diff-Grenze
 
-Nur die fünf versionierten Audit-Dokumente unter `docs/ACCOUNT_TRAVELLER_NEXT_SLICE_RECONCILIATION_*`.
+Nur die fünf versionierten Audit-Dokumente plus Merge von `origin/main`. TW7-A-Runtime kommt unverändert von `main`.
 
-Nicht geändert: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, `DECISIONS.md`, `docs/JETNITY_BINDING_BUILD_ORDER.md`, Account-/Trip-Runtime, Readiness-Engine, Schema, RLS, Auth, AAL.
+Nicht eigenständig umgeschrieben: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, `DECISIONS.md`, Account-/Trip-Runtime, Readiness-Engine, Schema, RLS, Auth, AAL.
 
 ## 4. Gates
 
-Historischer Evidence-Head vor dieser Continuity-Korrektur: `c9ef984a7b314992350af0ae18c85585b1011339`
+Historische Heads vor diesem Sync bleiben Evidence: `c9ef984a`, `23f02a56`, `c3276dad`.
 
-| Gate | Ergebnis auf `c9ef984a` |
-| --- | --- |
-| Merge-Base gegen historische Baseline `963186f4` | genau dieser SHA; Branch nur Docs |
-| Gezielte Contract-Tests | 65/65 PASS |
-| GitHub Actions CI | SUCCESS – Run `33102128084` |
-| Vercel Preview | READY – `CWsHGMfomgwJQezm1QGXbAYRu5YX` |
-| Docs-Stamp `23f02a56` | Actions `33102422462` SUCCESS; Vercel `HBeVBJ2zwCyn3odJwYRQSCpDUeKd` READY |
-| TL-Review `5044318302` | **BLOCKED** – Continuity #104/#106; Kernbefunde bestätigt |
-
-Gates dieser Korrektur stehen auf dem neuen Exact Head nach Push.
+Gates dieses Sync-/Docs-Heads stehen nach Push auf dem neuen Exact Head.
 
 Kein Ready. Kein Merge.
 
 ## 5. Nächster Schritt
 
-Unabhängiger Technical-Lead-Re-Review dieses Continuity-Fixes.
+Unabhängiger Technical-Lead-Re-Review.
 
-Kein automatischer Account-/Traveller-Runtime-Slice. Keine AP-4-Freigabe, solange #106 nicht integriert ist.
+Ein AP-4-Runtime-Slice ist ein **neuer** logischer Slice und bekommt einen frischen nummerierten Account-Agenten plus eigenen TL-Task/Spec. Nicht aus diesem PR starten.

@@ -4,14 +4,15 @@ Stand: 27. August 2026
 Issue: #105  
 Cursor-Anzeigename: **Account plattform audit vorbereitung 2**  
 Typ: **AUDIT / EVIDENCE ONLY**  
-Status: **TL-REVIEW BLOCKED umgesetzt / STOPP für Re-Review**  
+Status: **TW7-A-PARALLELITÄTSGATE ERFÜLLT / AUDIT-EMPFEHLUNG AP-4 IS NEXT ACCOUNT RUNTIME CANDIDATE / KEINE RUNTIME-FREIGABE / STOPP**  
 Branch: `cursor/account-traveller-reconciliation-3efc`  
-Historische Audit-Baseline: `origin/main` `963186f4ec75501efd253a287131f464a5fd0fdb` (PR #102) — **keine dauerhafte Live-Wahrheit**  
-Review: Technical-Lead `5044318302` BLOCKED; dieser Stand korrigiert nur Continuity der Parallelität
+Historische Audit-Startbaseline: `963186f4ec75501efd253a287131f464a5fd0fdb` (PR #102) — **keine dauerhafte Live-Wahrheit**  
+Aktueller Sync-`main`: `1c88b7e49453bb60cf9962d1dfa5bb3b652058ca` (Merge PR #106)  
+Reviews: `5044318302` BLOCKED (historisch, Dual-Draft); `5044426064` weiterer Continuity-Fix nach #106-Landung
 
-Keine Runtime. Kein Shared-Contract-Change. Kein AP-4-Start. Kein AP-7. Kein Archiv-Write. Kein Ready. Kein Merge.
+Keine Runtime. Kein Shared-Contract-Change. Kein AP-4-Start in diesem PR. Kein AP-7. Kein Archiv-Write. Kein Ready. Kein Merge.
 
-Zentrale Continuity-Dateien (`JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, `docs/JETNITY_BINDING_BUILD_ORDER.md`) werden in diesem Slice **nicht** umgeschrieben. Sie können hinter Live-`main` liegen und werden von der aktiven TW7-A-Linie berührt.
+Zentrale Continuity-Dateien werden in diesem Slice **nicht** eigenständig umgeschrieben. Der Branch übernimmt den `main`-Stand von PR #106 unverändert.
 
 ---
 
@@ -21,9 +22,10 @@ Verifiziert in diesem Lauf, nicht aus einem alten Cursor-Chat.
 
 | Prüfung | Stand |
 | --- | --- |
-| Historische Audit-Baseline `origin/main` | `963186f4ec75501efd253a287131f464a5fd0fdb` – *Merge PR #102*. **Keine zukünftige Live-Wahrheit**; vor Fortsetzung neu prüfen. |
-| Audit-Branch | `cursor/account-traveller-reconciliation-3efc`, von dieser Baseline |
-| Merge-Base gegen diese Baseline | genau `963186f4` |
+| Historische Audit-Startbaseline | `963186f4ec75501efd253a287131f464a5fd0fdb` – *Merge PR #102*. **Keine zukünftige Live-Wahrheit.** |
+| Aktueller `origin/main` | `1c88b7e49453bb60cf9962d1dfa5bb3b652058ca` – *Merge PR #106: TW7-A Hub card identity* |
+| Audit-Branch | `cursor/account-traveller-reconciliation-3efc`, mit `1c88b7e4` synchronisiert |
+| Merge-Base gegen aktuellen `main` | `1c88b7e4` nach Sync |
 | Historische Audit-Branches | `audit/account-platform` (PR #39, Draft) und `audit/traveller-account-next-phase` (PR #76, **MERGED**) sind Evidence, **nicht** Basis |
 | Production-AAL2 | angewendet und verifiziert laut `docs/QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_STATUS_2026-08-27.md`; **kein zweiter Apply** |
 | AAL2 vs Traveller-RLS | Apply-Status: `profiles-*`-/Trip-/Traveller-RLS unverändert |
@@ -41,17 +43,24 @@ Zum ersten Audit-Lauf waren beide TW7-A-Drafts offen:
 
 Das ist **ausdrücklich historische Evidence**. Es ist keine aktuelle Parallelitäts-Wahrheit.
 
-### 1.2 Aktuelle Live-Parallelität (nach TL-Entscheidung, 27. August 2026 18:19 UTC)
+### 1.2 Zwischenstand nach erstem TL-Review (historisch, 27. August 2026 18:19–18:34 UTC)
 
-Verifiziert in diesem Korrektur-Lauf:
+#104 wurde CLOSED / superseded / nicht gemergt. #106 blieb vorübergehend die einzige offene TW7-A-Linie. Aussagen `NO ACCOUNT RUNTIME while #106 is not integrated` gehören zu **dieser** historischen Phase.
 
-| PR | Live-Stand |
+### 1.3 Aktuelle Live-Parallelität (nach PR-#106-Landung, 27. August 2026 18:34 UTC)
+
+Verifiziert in diesem Sync-Lauf:
+
+| PR / Issue | Live-Stand |
 | --- | --- |
-| **#104** | **CLOSED / superseded / nicht gemergt** (`closedAt` 2026-08-27T18:19:23Z) |
-| **#106** | **einzige aktive TW7-A-Integrationslinie**, Draft, in Technical-Lead-Review; **nicht** auf `main` |
-| #88 / #52 / #50 / #40 / #39 / #28 | unverändert historische bzw. fremde Drafts; nicht angefasst |
+| **#104** | **CLOSED / superseded / nicht gemergt** |
+| **#106** | **MERGED** auf `main` `1c88b7e4` |
+| **Issue #103** | **CLOSED** / completed |
+| Post-Merge CI | Run `33104140169` SUCCESS auf `1c88b7e4` |
+| Vercel Production | `dpl_8jCQsqtBiDq99b2Qtyg2BznwtbWd` READY auf `1c88b7e4` |
+| #88 / #52 / #50 / #40 / #39 / #28 | historische bzw. fremde Drafts; nicht angefasst |
 
-Issue #105 nannte nur PR #104. Der Technical Lead hat #104 geschlossen. **Aktuelle Wahrheit: nur #106.** #106 ist nicht integriert. AP-4 ist deshalb nicht freigegeben.
+Das frühere TW7-A-Parallelitätsgate ist **erfüllt**. Es blockiert AP-4 nicht mehr. AP-4 ist trotzdem **nicht** durch diesen PR freigegeben.
 
 ---
 
@@ -105,7 +114,7 @@ Ableitung nur aus `startDate`/`endDate` gegen Geräte-Kalendertag (`lib/account/
 | AP-3 Gruppen | date-only Lage | nein |
 | Account-Übersicht Fortsetzen | filtert `archived` lesend | nein |
 | `trips.status` | `draft \| planned \| booked \| archived` | **kein Account-Write auf `main`** |
-| TW7-A Hub-Kartenidentität | Zielnamen / `stageCount` / Gast-`itemCount` | nicht auf `main`; einzige aktive Linie **#106** |
+| TW7-A Hub-Kartenidentität | `TripSummary.stages` + `reiseOrte()` | **auf `main` via PR #106**; kein Archiv-Write |
 | AP-7 Registry | fehlt | gated |
 
 `reisenLaden()` selektiert `status`, filtert aber nicht. AP-3 zeigt gespeichertes `archived` weiter in der Datumsgruppe. Das ist der echte Account-Lifecycle-Gap für AP-4, kein Traveller-Gap.
@@ -195,18 +204,24 @@ Dateien, die ein späterer AP-4-Slice voraussichtlich berühren würde:
 | Status-Write | neuer, einziger Schreibweg auf `trips.status` | Shared Trip-Status |
 | `/reisen` Gruppen | `KontoReisenGruppen.tsx`, `reise-lage.ts` | Filter vs Lage trennen |
 | Übersicht | `naechste-reise.ts` (liest `archived` bereits) | eher klein |
-| Karte | `Reisekarte.tsx` | **TW7-A-Kollision** |
-| Liste | `lib/trips/daten.ts`, `types/trips.ts` | **TW7-A-Kollision** |
-| Gast | `GastReisen.tsx` | **TW7-A-Kollision**; Archiv nicht nötig |
-| Tests | `reise-lage.test.ts`, `naechste-reise.test.ts`, `reise-gruppen-grenzen.test.ts` | aktive Linie #106 ändert dieselben Tests |
+| Karte | `Reisekarte.tsx` | TW7-A bereits auf `main`; AP-4 darf Kartenidentität nicht zurückbauen |
+| Liste | `lib/trips/daten.ts`, `types/trips.ts` | `TripSummary.stages` existiert; AP-4 muss ihn mitführen, nicht neu erfinden |
+| Gast | `GastReisen.tsx` | Archiv nicht nötig; Guest-`itemCount`/`stages` von TW7-A belassen |
+| Tests | `reise-lage.test.ts`, `naechste-reise.test.ts`, `reise-gruppen-grenzen.test.ts` | Fixtures tragen bereits `stages: []` |
 
-AP-4 **jetzt** starten würde mit der noch nicht integrierten TW7-A-Linie #106 um Hub-/Listen-Dateien konkurrieren und Archiv mit Traveller-Identität vermischen, falls nicht hart auf `trips.status` begrenzt.
+Nach Sync von `1c88b7e4` kein neuer Account-/Traveller-Blocker:
 
-TW7-A-Spec (`docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`): Archiv weder schreiben noch aus dem Hub filtern.
+- AP-3 schreibt/filtert weiter kein `archived`
+- Übersicht filtert `archived` nur lesend
+- TW7-A-Status sagt ausdrücklich: kein AP-3-/AP-4-/AP-7-Umbau
+- P2-TA-06 unverändert latent
+- keine Account-Traveller-Registry
 
-Der historische Plan auf PR #39 fehlt weiter auf `main` (P2-TA-03). **Das ist kein dauerhafter Blocker.** Der Technical Lead darf nach verifizierter TW7-A-Landung einen neuen, aktuellen, scope-treuen AP-4-Task versionieren.
+TW7-A-Spec bleibt: Archiv weder schreiben noch aus dem Hub filtern. AP-4 darf Hub-Kartenidentität nicht als Archiv-Filter umdeuten.
 
-**AP-4 ist fachlich der wahrscheinliche nächste Account-Lifecycle-Kandidat. Er ist nicht freigegeben, solange #106 nicht auf `main` ist.**
+Der historische Plan auf PR #39 fehlt weiter auf `main` (P2-TA-03). **Das ist kein dauerhafter Blocker.** Der Technical Lead darf einen neuen, aktuellen, scope-treuen AP-4-Task versionieren.
+
+**Audit-Empfehlung: `AP-4 IS NEXT ACCOUNT RUNTIME CANDIDATE`. Keine Runtime-Freigabe durch diesen PR.**
 
 ---
 
@@ -254,11 +269,11 @@ Für Account/Traveller:
 | --- | --- | --- |
 | **Must** | Kein neuer Shared Contract in diesem Workstream | AP-7, Archiv-UX, Guest→Account, `party_schreiben`, Requirements-Härte nicht still entscheiden |
 | **Must** | P1-TA-02 geschlossen lassen | nicht erneut als offen führen |
-| **Must** | TW7-A-Dateien nicht anfassen | Issue #105; aktive Linie ist #106 |
+| **Must** | TW7-A-Runtime von #106 nicht zurückdrehen | auf `main`; dieser Audit ändert sie nicht |
 | **Must** | Kein zweiter AAL2-Apply | geschlossen |
-| **Must** | Keine Account-Runtime, solange #106 nicht integriert ist | Shared Hub-/Listen-Dateien; #106 nicht auf `main` |
-| **Should** | AP-4 nach verifizierter TW7-A-Landung neu bewerten | echter Lifecycle-Gap; frischer enger TL-Task/Spec; Shared `trips.status` |
-| **Later** | P2-TA-06 härten | latent; nicht über AP-4 heben ohne eigene TL-Entscheidung/Spec |
+| **Must** | Keine AP-4-Runtime in diesem PR | eigener neuer TL-Task/Spec + frischer Account-Agent |
+| **Should** | AP-4 als nächsten Account-Lifecycle-Slice versionieren | Parallelitätsgate erfüllt; Shared `trips.status`; frischer enger Task |
+| **Later** | P2-TA-06 härten | latent; nicht automatisch vor AP-4 |
 | **Later** | P2-TA-01 / P2-TA-02 / P2-TA-05 | Presentation, Fixture-Hygiene, Safety-Schärfe |
 | **Later** | P2-TA-03 Plan auf `main` fördern | optional; kein stiller AP-7-Import; kein dauerhafter AP-4-Blocker |
 | **Later** | AP-5 / AP-6a | eigene Auth-/Legal-Gates; D0-P1-03 für Legal-404 |
@@ -274,8 +289,8 @@ Keine P0. Kein aktueller Account-/Traveller-Runtime-P1 auf `main`.
 
 | Arbeit | Shared Dateien / Verträge | Regel für diesen Audit | Regel für einen späteren Account-Runtime-Slice |
 | --- | --- | --- | --- |
-| TW7-A #104 | historisch dieselben Hub-/Listen-Dateien | nicht anfassen | **CLOSED / superseded / nicht gemergt** – keine Wahl-Entscheidung mehr |
-| TW7-A #106 | `TripSummary`, `daten.ts`, `Reisekarte`, `GastReisen`, `uebersicht.ts`, Account-Tests, Continuity, `TW7_A_STATUS` | nicht anfassen | einzige aktive Integrationslinie; Account-Runtime erst nach verifizierter Landung |
+| TW7-A #104 | historisch dieselben Hub-/Listen-Dateien | nicht anfassen | **CLOSED / superseded / nicht gemergt** |
+| TW7-A #106 | `TripSummary.stages`, `daten.ts`, `Reisekarte`, `GastReisen`, `reise-orte.ts` | nicht zurückdrehen | **auf `main` integriert**; Parallelitätsgate erfüllt |
 | AP-4 Archiv | `trips.status`, ggf. Hub-Filter | nicht starten | eigener Task; kein Hub-Filter in TW7-A |
 | AP-7 Registry | Traveller, RLS, Guest→Account, Readiness | Gate dokumentieren | kein Start ohne ADR+PO |
 | Auth / RLS / AAL | Session, MFA, Admin-AAL2, Trip-RLS | nicht ändern | kein Account-Slice als Vehikel |
@@ -287,42 +302,41 @@ Keine P0. Kein aktueller Account-/Traveller-Runtime-P1 auf `main`.
 
 ## 10. Empfehlung
 
-**`NO ACCOUNT RUNTIME`, solange PR #106 nicht integriert ist.**
+**Audit-Empfehlung:** `AP-4 IS NEXT ACCOUNT RUNTIME CANDIDATE`
 
-Bedingt und nach Landung stabil:
+**Keine Runtime-Freigabe durch diesen PR.** AP-4 startet erst über einen eigenen neuen Technical-Lead-Task/Spec und einen frischen nummerierten Account-Agenten.
 
-| Phase | Empfehlung |
+| Thema | Lage |
 | --- | --- |
-| Jetzt (`#106` nicht auf `main`) | keine Account-/Traveller-Runtime |
-| Nach verifizierter TW7-A-Landung von #106 | AP-4 als wahrscheinlichen nächsten Account-Lifecycle-Kandidaten unter einem **frischen engen TL-Task/Spec** neu bewerten |
-| P2-TA-06 | bleibt latent; **nicht** über AP-4 heben ohne eigene TL-Entscheidung/Spec |
-| AP-7 | gated: ADR-Nachfolger zu ADR-0117 + Product-Owner-Gate + sensible Identity-/RLS-Gates |
+| TW7-A-Parallelitätsgate | **erfüllt** (#106 auf `main`) |
+| AP-4 | nächster Account-Lifecycle-Kandidat; `trips.status` Archivieren/Wiederherstellen |
+| P2-TA-06 | latent; nicht automatisch vor AP-4 |
+| AP-7 | gated: ADR-Nachfolger + Product-Owner + Identity/RLS/Sensitive-Data |
+| PR-#39-Plan | fehlt auf `main`; **kein dauerhafter Blocker** |
 
-AP-4 ist **nicht** jetzt freigegeben. #106 ist nicht auf `main`.
+Die frühere Formel `NO ACCOUNT RUNTIME while #106 is not integrated` ist erfüllt/überholt. `NO RUNTIME` gilt hier **nicht** mehr wegen #106. Ein neuer `NO RUNTIME` bräuchte konkrete neue Live-Evidence. Nach Sync von `1c88b7e4` gibt es keinen solchen Blocker.
 
-Der fehlende historische Plan auf PR #39 ist **kein dauerhafter Blocker**. Ein neuer, aktueller, scope-treuer AP-4-Task darf vom Technical Lead versioniert werden.
+### Warum AP-4 der Kandidat ist
 
-### Warum nicht AP-4 jetzt
+Gespeichertes `archived` bleibt in `/reisen`-Gruppen sichtbar, ist in der Übersicht kein Fortsetzen, und es existiert kein Write-Pfad. TW7-A hat das bewusst nicht gebaut.
 
-Fachlich der wahrscheinliche nächste Account-Lifecycle-Gap, aber die aktive TW7-A-Linie #106 ist nicht integriert und berührt dieselben Hub-/Listen-Dateien. TW7-A-Spec verbietet Archiv-Write und Hub-Filter. Write auf `trips.status` bleibt ein Shared Contract und braucht eine eigene Spec.
+### Warum dieser PR AP-4 nicht startet
 
-### Warum nicht P2-TA-06 jetzt oder vor AP-4
+Shared `trips.status`. Braucht einen aktuellen, engen Vertrag (nicht still den historischen PR-#39-Plan). Hub-Kartenidentität von TW7-A darf nicht zurückgebaut oder als Archiv-Filter umgedeutet werden.
 
-**Heute nur latent.** Der kanonische App-Pfad trifft `documents[0]` nicht. Isoliert, aber kein Nutzerdefekt und kein P1. Ohne eigene TL-Spec nicht über den Account-Lifecycle-Kandidaten AP-4 heben.
+### Warum nicht P2-TA-06 vor AP-4
+
+**Heute nur latent.** Kein Nutzerdefekt, kein P1. Isoliert, aber nicht der Account-Lifecycle-Gap.
 
 ### Warum nicht AP-7
 
-Shared-Contract-/Product-Gate. Current Truth würde sich von trip-scoped auf account-scoped verschieben. ADR-0117 steht dagegen, solange kein Nachfolger existiert.
-
-### Was dieser Audit nicht mehr sagt
-
-Der Technical Lead muss **nicht** zwischen #104 und #106 wählen. #104 ist geschlossen / superseded / nicht gemergt. #106 ist die einzige aktive Linie.
+Shared-Contract-/Product-Gate. Current Truth würde sich von trip-scoped auf account-scoped verschieben.
 
 ---
 
 ## 11. Datei-/Contract-/Test-Matrix für den empfohlenen Stand
 
-Empfohlener Slice **jetzt**: **keiner** (`NO ACCOUNT RUNTIME`, solange #106 nicht integriert ist).
+Empfohlener nächster Runtime-Slice: **AP-4**, aber **nicht in diesem PR**.
 
 | Element | Inhalt |
 | --- | --- |
@@ -341,7 +355,7 @@ Kandidaten-Matrix, **nur falls** der Technical Lead später einen Slice ausdrüc
 | Wahrscheinlich | neuer Status-Schreibweg; `KontoReisenGruppen`; `reise-lage`; Tests |
 | Erst nach TW7-A auf `main` | `Reisekarte`, `daten.ts`, `TripSummary`, `GastReisen` |
 | Vertrag | `trips.status` only; Archiv ≠ Traveller; frischer TL-Task, nicht still der PR-#39-Plan |
-| Nicht | Hub-Filter in TW7-A; Guest-Archiv; Service Role; RLS-Umbau; Freigabe vor #106-Landung |
+| Nicht | Hub-Filter statt Status-Write; Guest-Archiv; Service Role; RLS-Umbau; Start ohne neuen TL-Task |
 
 ### Kandidat B – P2-TA-06 (latent; nicht über AP-4 ohne eigene TL-Spec)
 
@@ -359,7 +373,8 @@ Kandidaten-Matrix, **nur falls** der Technical Lead später einen Slice ausdrüc
 
 - keine selbst durchgeführte Supabase-Query
 - kein Browser-/Real-Device-Beweis
-- keine Freigabe für AP-4, AP-7 oder P2-TA-06
+- keine Runtime-Freigabe für AP-4, AP-7 oder P2-TA-06 durch diesen PR
+- keine aktuelle Endentscheidung `NO ACCOUNT RUNTIME because #106`
 - kein erfundener Registry- oder Archiv-Contract
 - kein Default-Pass im aktuellen App-Pfad
 - zentrale Continuity-Dateien sind stale; das ist dokumentiert, nicht still korrigiert
@@ -369,6 +384,6 @@ Kandidaten-Matrix, **nur falls** der Technical Lead später einen Slice ausdrüc
 
 ## 13. STOPP
 
-Continuity-Korrektur nach TL-BLOCKED umgesetzt. Empfehlung: **`NO ACCOUNT RUNTIME`, solange #106 nicht integriert ist.**
+Branch mit `main` `1c88b7e4` synchronisiert. Empfehlung: **`AP-4 IS NEXT ACCOUNT RUNTIME CANDIDATE`**. Keine Runtime-Freigabe.
 
-Kein Ready. Kein Merge. Kein Folgeslice. Unabhängiger Technical-Lead-Re-Review.
+Kein Ready. Kein Merge. Kein AP-4-Start aus diesem PR. Unabhängiger Technical-Lead-Re-Review.

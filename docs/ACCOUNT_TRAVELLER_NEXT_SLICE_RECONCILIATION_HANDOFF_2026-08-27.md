@@ -5,7 +5,7 @@ Issue: #105
 Cursor-Anzeigename: **Account plattform audit vorbereitung 2**  
 Für: neuen Chat / Technical Lead / späteren Account-Agenten
 
-> Live-Evidence gewinnt. Die historische Audit-Baseline `963186f4` ist keine zukünftige Live-Wahrheit. Zentrale Continuity-Dateien auf `main` können hinter dem Live-Stand liegen.
+> Live-Evidence gewinnt. `963186f4` ist nur die historische Audit-Startbaseline.
 
 ## Zuerst lesen
 
@@ -15,9 +15,14 @@ Für: neuen Chat / Technical Lead / späteren Account-Agenten
 4. `docs/ACCOUNT_TRAVELLER_NEXT_SLICE_RECONCILIATION_STATUS_2026-08-27.md`
 5. danach erst historische Evidence: AP-3-Status, Next-Phase-Audit PR #76, P1-TA-02-Status PR #84, PR #39-Plan
 
-## Historische Audit-Baseline
+## Baselines
 
-`origin/main` `963186f4ec75501efd253a287131f464a5fd0fdb` (PR #102) war die Baseline dieses Audits. Vor jeder Fortsetzung `main` und offene PRs neu prüfen.
+| Art | SHA |
+| --- | --- |
+| Historische Audit-Startbaseline | `963186f4ec75501efd253a287131f464a5fd0fdb` (PR #102) |
+| Aktueller Sync-`main` | `1c88b7e49453bb60cf9962d1dfa5bb3b652058ca` (Merge PR #106) |
+
+Vor jeder Fortsetzung `main` und offene PRs neu prüfen.
 
 ## Was wahr ist
 
@@ -26,38 +31,32 @@ Für: neuen Chat / Technical Lead / späteren Account-Agenten
 - Production-AAL2 ist angewendet; kein zweiter Apply.
 - Traveller Truth bleibt trip-scoped: mehrere Citizenships, mehrere Dokumente, kontextabhängige Optionen.
 - Kein Default-Pass. Issuer ≠ Citizenship.
-- P2-TA-06 (`documents[0]` in `travellerNormalisieren`) ist latent, kein aktueller App-Pfad.
-- AP-4 schreibt noch nicht; gespeichertes `archived` bleibt in `/reisen`-Gruppen sichtbar.
-- AP-7 existiert nicht und bleibt gated (ADR-Nachfolger + PO + sensible Identity-/RLS-Gates).
-- **Zum Audit-Zeitpunkt** waren TW7-A-Drafts #104 und #106 beide offen. Das ist historische Evidence.
-- **Aktuell:** #104 ist CLOSED / superseded / nicht gemergt. **#106 ist die einzige aktive TW7-A-Linie** und nicht auf `main`. Deren Dateien nicht anfassen.
+- P2-TA-06 bleibt latent.
+- AP-4 schreibt noch nicht; gespeichertes `archived` bleibt in `/reisen`-Gruppen sichtbar; Übersicht filtert `archived` nur lesend.
+- AP-7 existiert nicht und bleibt gated.
+- **Zum ersten Audit-Lauf** waren TW7-A-Drafts #104 und #106 beide offen. Historische Evidence.
+- **Aktuell:** #104 CLOSED / superseded / nicht gemergt. **#106 integriert.** Issue #103 closed. Das frühere TW7-A-Parallelitätsgate ist **erfüllt**.
 
-## Was dieser Audit entschieden hat
+## Audit-Empfehlung
 
-**`NO ACCOUNT RUNTIME`, solange #106 nicht integriert ist.**
+**`AP-4 IS NEXT ACCOUNT RUNTIME CANDIDATE`**
 
-Nach verifizierter TW7-A-Landung: AP-4 als wahrscheinlichen nächsten Account-Lifecycle-Kandidaten unter einem frischen engen TL-Task/Spec neu bewerten. AP-4 ist nicht jetzt freigegeben.
+Keine Runtime-Freigabe durch diesen PR. AP-4 startet erst über einen eigenen neuen Technical-Lead-Task/Spec.
 
-P2-TA-06 nicht über AP-4 heben ohne eigene TL-Spec. Kein AP-7-Contract. Kein Ready. Kein Merge.
+P2-TA-06 nicht automatisch vor AP-4. AP-7 erst nach ADR-Nachfolger + Product-Owner-Gate + Identity/RLS/Sensitive-Data-Gates.
+
+Der fehlende historische Plan auf PR #39 ist kein dauerhafter Blocker.
 
 ## Was ein neuer Agent nicht tun darf
 
-- diesen Audit als Runtime- oder AP-4-Freigabe lesen
+- diesen Audit als AP-4-Runtime-Start lesen
 - `audit/account-platform` oder `audit/traveller-account-next-phase` als Basis verwenden
-- TW7-A-Dateien von #106 ändern
-- zwischen #104 und #106 wählen – die Wahl ist entschieden
-- einen Account-Traveller-Registry-Contract erfinden
+- TW7-A-Runtime von #106 zurückdrehen
+- zwischen #104 und #106 wählen
+- einen Registry-Contract erfinden
 - Production / AAL2 / RLS / Auth ändern
-- zentrale Continuity-Dateien nur deshalb umschreiben, weil sie stale sind – das konkurriert mit #106
-- den fehlenden PR-#39-Plan als dauerhaften AP-4-Blocker behandeln
+- `NO ACCOUNT RUNTIME because #106` als aktuelle Endentscheidung wiederherstellen
 
-## Empfohlene nächste menschliche Entscheidung
+## Nächster logischer Slice
 
-Technical Lead nach Re-Review dieses Continuity-Fixes:
-
-1. #106 unabhängig reviewen/landen oder bewusst offen lassen;
-2. nach verifizierter #106-Landung einen frischen engen AP-4-Task versionieren, falls Account-Lifecycle als Nächstes gewollt ist;
-3. P2-TA-06 nur mit eigener Spec und nicht still vor AP-4;
-4. AP-7 erst nach ADR-Nachfolger zu ADR-0117, Product-Owner-Gate und sensiblen Identity-/RLS-Gates.
-
-Kein Folgeslice aus diesem Handoff automatisch starten.
+Falls Technical Lead AP-4 freigibt: **neuer** nummerierter Account-Agent, eigener Branch von dann aktuellem `main`, eigener enger Task/Spec. Nicht dieser Agent, nicht dieser PR.
