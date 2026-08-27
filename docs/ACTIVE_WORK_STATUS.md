@@ -8,12 +8,12 @@ Status: **Aktiver Feature-Branch: P2-TA-06 Readiness Credential Normalization (I
 ## Aktueller Arbeitsblock (dieser Branch)
 
 1. **Arbeitsblock / Ziel:** Issue #112 / P2-TA-06 – First-Document-Fallback in Readiness-Credential-Normalisierung entfernen.
-2. **Branch / PR / Head:** `cursor/p2-ta-06-credential-normalization-3317`; Draft-PR und Exact Head nach erstem Push.
-3. **Status:** in Arbeit / Draft; kein Ready; kein Merge durch Autor-Agent.
+2. **Branch / PR / Head:** `cursor/p2-ta-06-credential-normalization-3317`; Draft-PR #113. Exact Head nach Typecheck-Fix-Push.
+3. **Status:** lokal review-bereit / Draft; kein Ready; kein Merge durch Autor-Agent.
 4. **Bereits umgesetzt:** `travellerNormalisieren` leitet N Optionen aus N Dokumenten ab; explizite Options bleiben autoritativ; Tests und Continuity-Dateien angelegt.
-5. **Gerade offen:** lokale Full-Gates, Exact-Head Actions/Vercel, unabhängiger Technical-Lead-Review.
+5. **Gerade offen:** Exact-Head Actions/Vercel auf dem nächsten SHA, unabhängiger Technical-Lead-Review.
 6. **Letzte relevanten Änderungen:** Runtime nur `lib/readiness/engine.ts` plus `engine.test.ts`.
-7. **Tests / CI / Preview:** folgen in Status/Handoff; nicht aus Erinnerung behaupten.
+7. **Tests / CI / Preview:** lokal 2377/2377, Typecheck/Lint/Hygiene/Production-Build PASS. Exact-Head folgt.
 8. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Production-Write.
 9. **Kosten / Provider / Secrets:** keine.
 10. **Bekannte Risiken:** Legacy-Caller ohne Options sehen jetzt 1:n statt `documents[0]`; das ist der gewollte Contract. `officialFingerprint` Singular-Fallback bleibt Residual außerhalb #112.

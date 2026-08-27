@@ -1,10 +1,11 @@
 # Jetnity – P2-TA-06 Handoff
 
 Stand: 27. August 2026  
-Status: **DRAFT-RUNTIME / AUTOR-AGENT STOPP NACH GATES / KEIN READY / KEIN MERGE**  
+Status: **DRAFT-PR #113 / LOKALE GATES GRÜN / EXACT-HEAD FOLGT / KEIN READY / KEIN MERGE**  
 Cursor-Agent: **`Account plattform audit vorbereitung 4`**  
 Issue: [#112](https://github.com/Jetnity/jetnity/issues/112)  
-Branch: `cursor/p2-ta-06-credential-normalization-3317`
+Branch: `cursor/p2-ta-06-credential-normalization-3317`  
+Draft-PR: https://github.com/Jetnity/jetnity/pull/113
 
 ## Zuerst lesen
 

@@ -1,10 +1,11 @@
 # Jetnity – P2-TA-06 Status
 
 Stand: 27. August 2026  
-Status: **IMPLEMENTIERT AUF DRAFT-BRANCH / LOKALE GATES UND EXACT-HEAD FOLGEN / KEIN READY / KEIN MERGE**  
+Status: **LOKALE GATES GRÜN / DRAFT-PR #113 / EXACT-HEAD FOLGT NACH TYPECHECK-FIX / KEIN READY / KEIN MERGE**  
 Workstream: Account / Traveller  
 Cursor-Agent: **`Account plattform audit vorbereitung 4`**  
 Branch: `cursor/p2-ta-06-credential-normalization-3317`  
+Draft-PR: https://github.com/Jetnity/jetnity/pull/113  
 Issue: [#112](https://github.com/Jetnity/jetnity/issues/112)
 
 > Live-Evidence gewinnt. Assignment-SHAs sind historische Evidence.
@@ -46,7 +47,22 @@ Nicht geändert:
 
 ## 4. Tests / Gates
 
-Siehe Handoff. Dieser Status wird nach den lokalen und Exact-Head-Gates aktualisiert.
+Lokale Gates auf diesem Branch, nach Typecheck-Fix der neuen Tests:
+
+| Gate | Ergebnis |
+| --- | --- |
+| `node --import tsx --test lib/readiness/engine.test.ts` | 45/45 PASS, inkl. 10 P2-TA-06-Fälle |
+| `npm test` | 2377/2377 PASS |
+| `npm run typecheck` | PASS (nach Capture-Typing-Fix) |
+| `npm run lint` | PASS, 0 warnings |
+| `check:dead` | PASS, 1 begründetes CookieConsent-Residual |
+| `check:exports` | PASS, 0 unbegründete Exporte |
+| `check:deps` | PASS |
+| `check:api-schutz` | PASS, 12 Admin-Routen |
+| `check:schema-bezug` | PASS |
+| `npm run build` | PASS; bekannte Supabase-Edge-/Browserslist-Warnungen, keine Slice-Regression |
+
+Exact-Head Actions/Vercel werden nach dem nächsten Push auf dem neuen SHA verifiziert.
 
 ## 5. Shared-Contract-Gate
 
