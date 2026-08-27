@@ -171,7 +171,7 @@ Live Supabase-Inventur zeigt:
 
 Ein operativer Produktdocs-Draft:
 
-- **PR #100** – TW-7-Hub-Gap-Docs auf `cursor/tw7-hub-gap-slice-b13d` – dokumentiert den Rest-Gap und TW7-A. Kein Runtime-Code. Kein Ready. Kein Merge. Kein automatischer Runtime-Start.
+- **PR #100** – TW-7-Hub-Gap-Docs auf `cursor/tw7-hub-gap-slice-b13d` – dokumentiert den Rest-Gap und TW7-A. Gegateter Head `2aa573f1`: Actions `33087982878` SUCCESS, Vercel `DUzQZnDEY2TBdP1rwoZFPs2bzFsA` SUCCESS. Kein Runtime-Code. Kein Ready. Kein Merge. Kein automatischer Runtime-Start.
 
 PR #98 ist integriert. Production-AAL2-Apply bleibt ein getrenntes Product-Owner-Gate, kein Folgeslice dieses Docs-PR.
 

@@ -60,6 +60,21 @@ Code-Evidence:
 
 Der kleine Slice heisst TW7-A und steht nur im Task. Dieser Status behauptet keine Implementation.
 
+## 3a. Exact-Head-Gates von Draft-PR #100
+
+Gegateter Rekonstruktions-Head, nicht dieser Evidence-Stamp:
+
+| Fakt | Wert |
+| --- | --- |
+| Gegateter Head | `2aa573f1b093ddee88b2ffe2820a36396194e397` |
+| GitHub Actions | Run `33087982878` **SUCCESS** |
+| Vercel Preview | `DUzQZnDEY2TBdP1rwoZFPs2bzFsA` **SUCCESS** auf exakt diesem SHA |
+| GitHub Preview-Deployment | `6125759207` **success** |
+| Draft | ja |
+| Ready / Merge | **nein** |
+
+Dieser Abschnitt ist ein docs-only Evidence-Stamp. Er ändert keine Runtime und ist selbst kein neues Produkt-Gate.
+
 ## 4. Was dieser Docs-PR ändert
 
 Nur Dokumentation. Kein Runtime. Nach dem Merge von PR #98 dürfen Continuity-Dateien inkl. `DECISIONS.md` / `ROADMAP.md` den neuen Live-Stand nennen:
