@@ -164,7 +164,7 @@ Vor Start muss der Technical Lead den exakten benötigten Product-Owner-Schnitt 
 
 **Start-Gate-Ergebnis, 27. August 2026, `main` `beaef64a`:** erfüllt. Hub-Code unverändert seit der Prüfung auf `84f54194`. Der Weg `/account` → `/reisen` → `/reisen/[tripId]` → `TripWorkspace` ist bereits einer. AP-3 besitzt die ableitende Lage; TW-2 besitzt dieselbe Lage im Workspace. Der verbleibende Gap ist die Mehrziel-Kartenidentität plus Gast-`itemCount`, nicht eine zweite Hub-Architektur.
 
-Verbindliche Slice-Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Status: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_STATUS.md`. Runtime bleibt ein eigener späterer Auftrag. Dieser Docs-Stand ist kein Ready, kein Merge und kein automatischer TW7-A-Start.
+Verbindliche Slice-Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Status: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_STATUS.md`. TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert. **TW7-A Runtime ist nicht gestartet.**
 
 ### TW-8 – Commercial Surfaces
 

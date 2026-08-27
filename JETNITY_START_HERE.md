@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 27. August 2026  
-Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97 und PR #98 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. PR #98 bringt AAL2-Alignment auf `main`, Production-Apply bleibt eigenes Gate. Offener Produktdocs-Draft: PR #100 TW-7-Hub-Gap auf `cursor/tw7-hub-gap-slice-b13d` — kein Runtime. Frühere Aussagen „nächster Produktslice unzugewiesen“ / „PR #94/#96/#98 bleibt Draft“ sind historische Evidence.**
+Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97 und PR #98 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. PR #98 bringt AAL2-Alignment auf `main`, Production-Apply bleibt eigenes Gate. TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert bzw. nach Landung integriert; TW7-A Runtime ist nicht gestartet. Frühere Aussagen „PR #100 bleibt Draft / nicht gemergt“ oder „nächster Produktslice unzugewiesen“ sind historische Evidence.**
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
@@ -309,13 +309,13 @@ Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Repo-/Bran
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-TW-7-Hub-Gap ist als Docs-Draft rekonstruiert (`docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`). Das ist kein Runtime-Start, kein Ready und kein Merge.
+TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert (`docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`). TW7-A Runtime ist nicht gestartet. PR #100 ist das Integrationsvehikel; Live-Merge-SHA prüfen.
 
-PR #98 ist integriert. Production-AAL2-Apply bleibt ein separates Product-Owner-Gate und wird durch diese Rekonstruktion nicht gestartet.
+PR #98 ist integriert. Production-AAL2-Apply bleibt ein separates Product-Owner-Gate.
 
 Visitor Search UX ist integriert. Production Gate B ist operativ PASS, kein Re-Apply. `TW6-REST-01` ist geschlossen. PR #96/#97 sind integriert.
 
-> **Kein automatischer Folgeslice. Kein TW7-A-Runtime-Start aus diesem Docs-Stand. Kein AAL2-Production-Apply. Kein Direction A. Kein TW-8/9. Kein weiterer Production-Write. Ready/Merge nur nach unabhängigem Exact-Head-PASS des konkret vorliegenden PR.**
+> **Kein automatischer Folgeslice. Kein TW7-A-Runtime-Start. Kein Direction A. Kein TW-8/9. Kein weiterer Production-Write aus diesem Dokumentensatz.**
 
 ## 17. Continuity-Regel
 

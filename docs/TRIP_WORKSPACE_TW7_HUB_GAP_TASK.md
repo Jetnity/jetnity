@@ -3,9 +3,9 @@
 Stand: 27. August 2026  
 Typ: **DOCS-ONLY / Gap-Rekonstruktion / Slice-Auftrag**  
 Cursor-Agent: `Trip workspace audit architecture`  
-Branch: `cursor/tw7-hub-gap-slice-b13d`  
-Draft-PR: https://github.com/Jetnity/jetnity/pull/100  
-Status: **DOCS DRAFT. Kein Runtime-Code. Kein Ready. Kein Merge. Kein automatischer Runtime-Start.**
+Status: **TW7-A-Spec versioniert. TW7-A Runtime nicht gestartet.**
+
+> Historische Entstehungsevidence, nicht aktueller operativer PR-Status: entstanden auf Branch `cursor/tw7-hub-gap-slice-b13d` als PR #100. Ältere Zeilen „Draft-PR #100 / kein Ready / kein Merge“ sind Pre-Merge-Evidence.
 
 Live-Baseline dieses Dokuments: `origin/main` `beaef64a151adceb8f5bc759f58ae9ad13cecc51` (Merge PR #98). Hub-/AP-3-Code unverändert gegenüber der ersten Prüfung auf `84f54194`.
 
@@ -15,7 +15,7 @@ Live-Baseline dieses Dokuments: `origin/main` `beaef64a151adceb8f5bc759f58ae9ad1
 
 Aktuellen `main` und die bindenden TW-/AP-3-Verträge live prüfen, den **tatsächlichen verbleibenden TW-7-Gap** bestimmen und den **exakten kleinen Implementierungsslice** inkl. Dateien, Tests und Konfliktmatrix versionieren.
 
-Dieser PR implementiert den Slice **nicht**.
+Dieser Spec-Stand implementiert den Slice **nicht**. TW7-A Runtime bleibt ein eigener späterer Auftrag.
 
 ## 2. Live-Rekonstruktion – was TW-7 nicht mehr ist
 
@@ -171,7 +171,7 @@ Kein Schema-/RLS-/Auth-Gate, weil der Slice keine Migration und keine Policy än
 | Homepage-Hero | öffentliche Startseite | Nicht anfassen. |
 | Direction A | Aufenthalts-UX | Nicht anfassen. |
 | Production Gate B | Vier-Datei-Vertrag | Kein Re-Apply. |
-| `main` ohne Branch Protection | Accidental Write | Weiterhin Draft; kein direkter `main`-Commit. |
+| `main` ohne Branch Protection | Accidental Write | Kein direkter `main`-Commit. |
 
 PR #88, #52, #50, #40, #39, #28 bleiben historische Drafts und werden nicht rebased oder als Basis verwendet.
 
@@ -179,16 +179,14 @@ PR #88, #52, #50, #40, #39, #28 bleiben historische Drafts und werden nicht reba
 
 ADR-0176 in `DECISIONS.md`: TW-7 bleibt ein read-only Hub-Identitätsanschluss. Der Weg ist schon einer. Der Gap ist die Mehrziel-Kartenidentität, nicht AP-3.
 
-Runtime erst nach eigenem Auftrag und unabhängigem Review. Dieses Docs-PR ist nicht dieser Auftrag.
+Runtime erst nach eigenem Auftrag und unabhängigem Review. Diese Spec ist nicht der Runtime-Auftrag.
 
-## 9. STOPP
+## 9. Historische Autoren-STOPP-Evidence
 
-Nach Review dieses Docs-Standes:
+Die folgende Liste war die Autoren-STOPP-Regel **vor** der Landung von PR #100. Sie ist Entstehungsevidence, kein aktueller operativer Draft-Status:
 
-- **kein** Runtime-Code in diesem PR nachziehen;
-- **kein** Ready;
-- **kein** Merge;
-- **kein** automatischer TW7-A-Start;
-- **kein** AAL2-, AP-4-, TW-8- oder Homepage-Folgeslice.
+- kein Runtime-Code in der Gap-Dokumentation nachziehen;
+- kein automatischer TW7-A-Start;
+- kein AAL2-, AP-4-, TW-8- oder Homepage-Folgeslice aus dieser Spec.
 
-Unabhängiger Review: ChatGPT / Technical Lead.
+Unabhängiger Review der Spec: ChatGPT / Technical Lead.

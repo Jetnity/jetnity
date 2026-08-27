@@ -2,25 +2,24 @@
 
 Stand: 27. August 2026  
 Agent: `Trip workspace audit architecture`  
-Branch: `cursor/tw7-hub-gap-slice-b13d`  
-Draft-PR: https://github.com/Jetnity/jetnity/pull/100  
 Auftrag: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`  
-Status: **DOCS-ONLY REKONSTRUKTION. Kein Runtime. Kein Ready. Kein Merge.**
+Status: **TW-7-Gap / ADR-0176 / TW7-A-Spec durch PR #100 versioniert bzw. nach Landung integriert. TW7-A Runtime nicht gestartet.**
 
-> Kanonischer operativer Stand zusätzlich: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`. Live-Evidence gewinnt.
+> Kanonischer operativer Stand zusätzlich: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`. Live-Evidence gewinnt. PR #100 ist das Integrationsvehikel; Live-Merge-SHA prüfen.
 
-## 1. Live-Baseline
+Historische Entstehungsevidence (nicht aktueller operativer PR-Status): Branch `cursor/tw7-hub-gap-slice-b13d`. Aussagen älterer Fassungen („Draft-PR #100“, „kein Ready / kein Merge“) sind Pre-Merge-Evidence.
+
+## 1. Live-Baseline der Rekonstruktion
 
 Geprüft am 27. August 2026 gegen GitHub, nicht gegen Chat-Erinnerung:
 
 | Fakt | Wert |
 | --- | --- |
-| `origin/main` | `beaef64a151adceb8f5bc759f58ae9ad13cecc51` — `Merge PR #98: Admin AAL2 production data-plane alignment` |
+| `origin/main` bei Rekonstruktion | `beaef64a151adceb8f5bc759f58ae9ad13cecc51` — `Merge PR #98: Admin AAL2 production data-plane alignment` |
 | Erste Hub-Codeprüfung | `84f54194`; PR #98 hat keine Trip-/Hub-Dateien geändert |
 | GitHub Actions auf exakt `beaef64a` | Run `33087558642` **SUCCESS** |
 | GitHub Production-Deployment auf exakt `beaef64a` | `6125680097` **success** |
 | `main` Branch Protection | `protected=false` (Governance-Risiko, unverändert) |
-| Offene Drafts | #88 Sanitation; historische #52, #50, #40, #39, #28. PR #98 ist gemergt. |
 
 Linie nach PR #96:
 
@@ -56,51 +55,50 @@ Code-Evidence:
 
 **TW-7-Start-Gate: erfüllt.**  
 **TW-7-Rest-Gap: Hub-Kartenidentität (Mehrziel + Gast-`itemCount`).**  
-**TW-7-Runtime: nicht gestartet.**
+**TW7-A Runtime: nicht gestartet.**
 
-Der kleine Slice heisst TW7-A und steht nur im Task. Dieser Status behauptet keine Implementation.
+Der kleine Slice heisst TW7-A und steht in der Spec. Dieser Status behauptet keine Implementation.
 
-## 3a. Exact-Head-Gates von Draft-PR #100
+## 3a. Historische Pre-Merge Exact-Head-Evidence
 
-Gegateter Rekonstruktions-Head, nicht dieser Evidence-Stamp:
+Kein aktueller operativer Draft-Status. Nur Entstehungsevidence vor der Landung von PR #100:
 
 | Fakt | Wert |
 | --- | --- |
-| Gegateter Head | `2aa573f1b093ddee88b2ffe2820a36396194e397` |
+| Rekonstruktions-Head | `2aa573f1b093ddee88b2ffe2820a36396194e397` |
 | GitHub Actions | Run `33087982878` **SUCCESS** |
 | Vercel Preview | `DUzQZnDEY2TBdP1rwoZFPs2bzFsA` **SUCCESS** auf exakt diesem SHA |
 | GitHub Preview-Deployment | `6125759207` **success** |
-| Draft | ja |
-| Ready / Merge | **nein** |
+| Stamp-Head | `2abe79b4` / Actions `33088507998` SUCCESS / Vercel `8NJVH46dzhrvUur8raAGukyiyzcL` SUCCESS |
 
-Dieser Abschnitt ist ein docs-only Evidence-Stamp. Er ändert keine Runtime und ist selbst kein neues Produkt-Gate.
+Diese Zeilen ändern keine Runtime und sind selbst kein Produkt-Gate.
 
-## 4. Was dieser Docs-PR ändert
+## 4. Was PR #100 versioniert
 
-Nur Dokumentation. Kein Runtime. Nach dem Merge von PR #98 dürfen Continuity-Dateien inkl. `DECISIONS.md` / `ROADMAP.md` den neuen Live-Stand nennen:
+Nur Dokumentation. Kein Runtime.
 
-- `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md` (neu)
-- `docs/TRIP_WORKSPACE_TW7_HUB_GAP_STATUS.md` (neu)
+- `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`
+- `docs/TRIP_WORKSPACE_TW7_HUB_GAP_STATUS.md`
 - `docs/TRIP_WORKSPACE_IMPLEMENTATION_PLAN.md`
 - `docs/JETNITY_BINDING_BUILD_ORDER.md`
 - `docs/ACTIVE_WORK_STATUS.md`
 - `JETNITY_START_HERE.md`
 - `JETNITY_HANDOFF.md`
 - `DECISIONS.md` (ADR-0176)
-- `ROADMAP.md` (PR #98 integriert; TW-7-Docs, keine Runtime)
+- `ROADMAP.md`
 
 AAL2-Migration, Playbook und Production-Apply bleiben unangetastet.
 
 ## 5. Offene Risiken
 
-- PR #98 ist integriert. Production-AAL2-Apply bleibt ein separates Product-Owner-Gate und wird hier nicht gestartet.
+- Production-AAL2-Apply bleibt ein separates Product-Owner-Gate.
 - `main` bleibt ungeschützt.
 - Bereits gespeichertes `archived` bleibt in AP-3-Datumsgruppen sichtbar; das ist AP-4, nicht TW7-A.
 - Pfeil- vs. Punkt-Schreibweise der Route ist bewusste Non-Scope-Entscheidung gegen einen dritten Formatfork.
 - Ein späterer Runtime-Select `trip_stages(name, position)` muss RLS-kompatibel bleiben; bei Fehler kein Service-Role-Fallback.
 
-## 6. STOPP
+## 6. Nach Landung
 
-Kein Runtime in diesem PR. Kein Ready. Kein Merge. Kein automatischer TW7-A-, AAL2-Apply-, AP-4- oder TW-8-Start.
+TW7-A Runtime nicht starten. Kein automatischer Folgeslice. Kein AP-4, TW-8 oder Homepage aus dieser Spec.
 
-Unabhängiger Review: ChatGPT / Technical Lead.
+Unabhängiger Review der Spec bleibt Technical Lead; das ist keine Aussage, PR #100 sei dauerhaft unvermerkt.

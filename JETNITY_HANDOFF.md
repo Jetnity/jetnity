@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 27. August 2026  
-Status: **Production Gate A ist vollständig PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97 und PR #98 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. PR #98 Alignment liegt auf `main`; Production-AAL2-Apply bleibt eigenes Gate. Offener Produktdocs-Draft: PR #100 TW-7-Hub-Gap — kein Runtime. Frühere Aussagen „nächster Produktslice unzugewiesen“ / „PR #94/#96/#98 bleibt Draft“ sind historische Evidence.**
+Status: **Production Gate A ist vollständig PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97 und PR #98 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. PR #98 Alignment liegt auf `main`; Production-AAL2-Apply bleibt eigenes Gate. TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert bzw. nach Landung integriert; TW7-A Runtime ist nicht gestartet. Frühere Aussagen „PR #100 bleibt Draft / nicht gemergt“ sind historische Evidence.**
 
 Der erste Einstieg bleibt `JETNITY_START_HERE.md`.  
 Aktuelle operative Evidence zusätzlich: `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`, `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md` und `docs/ACTIVE_WORK_STATUS.md`.
@@ -213,7 +213,7 @@ Supabase-Inventur zeigt weiterhin zwei Top-Level-Projekte: das aktive Production
 
 Operativ relevant:
 
-- PR #100 – TW-7-Hub-Gap-Docs auf `cursor/tw7-hub-gap-slice-b13d` – **Docs-Draft**. Spec `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Kein Runtime. Kein Ready. Kein Merge.
+- PR #100 – TW-7-Gap / ADR-0176 / TW7-A-Spec **versioniert bzw. nach Landung integriert**. TW7-A Runtime ist nicht gestartet. Integrationsvehikel; Live-Merge-SHA prüfen. Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`.
 - PR #98 – AAL2 Alignment **integriert** (`beaef64a`). Production-Apply bleibt eigenes Product-Owner-Gate.
 - PR #97 – gemergt; TL-Rekonstruktion
 - PR #96 – Post-PR-#94 Continuity **integriert/geschlossen**. Merge `45be14b1`.
@@ -228,13 +228,13 @@ PR #89 und PR #91 sind gemergt und keine aktiven Drafts mehr.
 
 ## 15. Exakter nächster Technical-Lead-Schritt
 
-TW-7-Hub-Gap ist als Docs-Draft rekonstruiert. Das ist kein Runtime-Start.
+TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert. TW7-A Runtime ist nicht gestartet. PR #100 ist das Integrationsvehikel; Live-Merge-SHA prüfen.
 
 PR #98 ist integriert. Production-AAL2-Apply bleibt ein separates Product-Owner-Gate.
 
 Visitor Search UX ist integriert. Production Gate B ist operativ PASS, kein Re-Apply. `TW6-REST-01` ist geschlossen.
 
-**Kein automatischer Folgeslice. Kein TW7-A-Runtime-Start aus diesem Docs-Stand. Kein AAL2-Production-Apply. Kein Direction A. Kein TW-8/9. Kein weiterer Production-Write.**
+**Kein automatischer Folgeslice. Kein TW7-A-Runtime-Start. Kein Direction A. Kein TW-8/9. Kein weiterer Production-Write aus diesem Dokumentensatz.**
 
 ## 16. Continuity
 

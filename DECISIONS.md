@@ -4347,7 +4347,7 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 ## ADR-0176 – TW-7 Rest-Gap ist Hub-Kartenidentität, nicht AP-3
 
 **Datum:** 27. August 2026  
-**Status:** docs-only rekonstruiert gegen `main` `beaef64a`. **Kein Runtime. Kein Ready. Kein Merge-Auftrag für Implementation.**
+**Status:** durch PR #100 versioniert bzw. nach Landung integriert. **TW7-A Runtime nicht gestartet.** Kein Implementationsauftrag in diesem ADR.
 
 **Entscheidung:** Der TW-7-Hub-Anschluss darf AP-3, den bestehenden Weg `/account` → `/reisen` → `/reisen/[tripId]` → `TripWorkspace` und die Guest-One-Trip-Regel nicht neu bauen. Der belegte Rest-Gap ist die Mehrziel-Identität auf `Reisekarte` plus die Gast-`itemCount`-Abbildung. Der spätere kleine Runtime-Slice TW7-A ist read-only und verwendet denselben Ortstext wie die Workspace-Übersicht.
 
