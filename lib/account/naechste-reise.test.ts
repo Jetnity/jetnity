@@ -111,8 +111,22 @@ describe('Account-Übersicht: Empty, Error-Trennung und nächste Reise', () => {
       startDate: '2026-09-01',
       endDate: '2026-09-05',
       status: 'archived',
+      archivePreviousStatus: 'planned',
     })
     assert.equal(naechsteReiseAus([archiv], HEUTE), null)
+  })
+
+  test('wiederhergestellte Reise geht wieder in die normale Fortsetzen-Ableitung', () => {
+    const restored = reise({
+      id: 'wieder',
+      title: 'Rom',
+      startDate: '2026-09-01',
+      endDate: '2026-09-05',
+      status: 'planned',
+    })
+    const gewählt = naechsteReiseAus([restored], HEUTE)
+    assert.equal(gewählt?.lage, 'kommend')
+    assert.equal(gewählt?.reise.id, 'wieder')
   })
 
   test('ohne Geräte-Kalendertag behauptet sie weder aktiv noch kommend', () => {

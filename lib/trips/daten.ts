@@ -19,6 +19,7 @@
 
 import 'server-only'
 
+import { previousStatusAusMetadata } from '@/lib/account/reise-archiv'
 import { lese, type Leseantwort, type Lesung } from '@/lib/api/datenbank-lesen'
 import { foundationERelationFehlt, TRIP_GRAPH_SELECT_KANONISCH, TRIP_GRAPH_SELECT_LEGACY } from '@/lib/trips/foundation-e-select'
 import { createServerComponentClient } from '@/lib/supabase/server'
@@ -46,7 +47,7 @@ import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
  * definiert. Keine Place-IDs, Koordinaten, Transit- oder Flight-Ziele.
  */
 const UEBERSICHT_SPALTEN =
-  'id, title, origin, start_date, end_date, travellers, currency, budget_amount, status, updated_at, ' +
+  'id, title, origin, start_date, end_date, travellers, currency, budget_amount, status, updated_at, metadata, ' +
   'trip_stages(name, position), trip_days(count), trip_items(count)'
 
 export type { Reisegraph }
@@ -69,6 +70,7 @@ type UebersichtZeile = {
   budget_amount: number | string | null
   status: string
   updated_at: string
+  metadata: unknown
   trip_stages: UebersichtEtappe[] | null
   trip_days: Anzahl[] | null
   trip_items: Anzahl[] | null
@@ -143,6 +145,7 @@ export async function reisenLaden(): Promise<Lesung<TripSummary>> {
         budgetAmount: betrag(zeile.budget_amount),
         status: status(zeile.status),
         updatedAt: zeile.updated_at,
+        archivePreviousStatus: previousStatusAusMetadata(zeile.metadata),
         stages,
         stageCount: stages.length,
         dayCount: anzahl(zeile.trip_days),

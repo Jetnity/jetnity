@@ -166,6 +166,20 @@ AP-1 legt das persönliche Account-Zuhause an, ohne eine zweite Source of Truth 
 
 Die Übersicht ist Orientierung, kein Trip-Workspace. Flug-, Hotel-, Readiness-, Safety- und Seasonal-Karten gehören nicht hierher. Auth-/MFA-/AAL-, RLS- und Traveller-Verträge bleiben unverändert.
 
+## 4b. Account Archive Lifecycle (AP-4)
+
+AP-4 ergänzt den gespeicherten Lifecycle `trips.status = archived` um einen einzigen Server-Action-Schreibweg. Begründung: [DECISIONS.md](DECISIONS.md) ADR-0177.
+
+| Fläche | Datei | Aufgabe |
+| --- | --- | --- |
+| Domain | `lib/account/reise-archiv.ts` | Archivfilter getrennt von AP-3-Datumsgruppen; Restore-Provenienz fail-closed |
+| Schreibweg | `lib/trips/archiv-aktionen.ts` | `reiseArchivLebenszyklus`; `konto()` / `auth.getUser()`; Anon-Key; Owner-RLS; Optimistic Guard gegen Status plus gelesenes `updated_at` |
+| `/reisen` | `KontoReisenGruppen` + `KontoReiseEintrag` | Aktiv/Kommend/Vergangen/Ohne Datum ohne archivierte Reisen; eigener Abschnitt **Archiv** |
+| Übersicht | `lib/account/naechste-reise.ts` | archivierte Reise bleibt kein Fortsetzen |
+| Provenienz | `trips.metadata.account_archive.previous_status` | namespaced Begleitinformation; keine Migration |
+
+Kein Service Role. Kein Guest-Archiv. TW7-A-Kartenidentität bleibt unverändert.
+
 ---
 
 ## 5. Datenfluss der V2-Reiseschicht

@@ -6,6 +6,7 @@
 // Readiness/Safety/Seasonal, keine erfundene IANA-Zone. Trip-Daten sind
 // date-only. aktiv/kommend braucht einen belegten Geräte-Kalendertag.
 
+import { istArchiviert } from '@/lib/account/reise-archiv'
 import { istAktiv, istKommend } from '@/lib/account/reise-lage'
 import type { TripSummary } from '@/types/trips'
 
@@ -33,10 +34,6 @@ export function kalendertagAusInstant(jetzt: Date, zeitzoneVersatzMinuten: numbe
 /** Geräte-Kalendertag des übergebenen Instant. */
 export function heutigesDatum(jetzt = new Date()): string {
   return kalendertagAusInstant(jetzt, jetzt.getTimezoneOffset())
-}
-
-function istArchiviert(reise: TripSummary): boolean {
-  return reise.status === 'archived'
 }
 
 function nachStartDannUpdate(a: TripSummary, b: TripSummary): number {
