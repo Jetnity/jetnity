@@ -4340,9 +4340,26 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 **Konsequenzen:** Kein Rollenmodell-, Auth-, Consumer-RLS- oder Ownership-Umbau. Keine `types/supabase.ts`-Regenerierung in diesem Slice. Keine Production-Änderung durch Autorenarbeit oder späteren normalen Merge allein.
 
-**Nachtrag, 27. August 2026 – PR #98 gemergt.** Merge-Commit `beaef64a151adceb8f5bc759f58ae9ad13cecc51`. Die Alignment-Datei liegt auf `main`. Ältere ADR-0175-Sätze „Draft-PR #98 / kein Merge“ sind historische Evidence vor diesem Merge. Production-Apply bleibt ein separates Gate.
+**Nachtrag, 27. August 2026 – PR #98 gemergt.** Merge-Commit `beaef64a151adceb8f5bc759f58ae9ad13cecc51`. Die Alignment-Datei liegt auf `main`. Production-Apply bleibt ein separates ausdrückliches Product-Owner-Gate. Ältere ADR-0175-Sätze „Draft-PR #98 / kein Merge“ sind historische Evidence vor diesem Merge.
 
-**Nachtrag, 27. August 2026 – versionstreuer Einmal-Runner (Issue #101).** Der Production-Apply dieser einen Datei läuft nicht über MCP `apply_migration` und nicht über `db:anwenden`. Ein fail-closed Runner (`npm run db:aal2-prod-apply`) pinnt Blob/SHA-256/Version/Name, verlangt `--schreiben --produktion --projekt-ref qscbgcdmivbbnzrcyegn`, prüft Head `20260827010000` plus fehlende Funktion/History und schreibt SQL + History atomar. Die Phase-3.1-Grenze `20260820130000` bleibt unverändert. Dieser Nachtrag autorisiert keinen Apply; er beschreibt nur den Apply-Pfad.
+**Nachtrag, 27. August 2026 – versionstreuer Einmal-Runner (Issue #101).** Der Production-Apply dieser einen Datei läuft nicht über MCP `apply_migration` und nicht über `db:anwenden`. Ein fail-closed Runner (`npm run db:aal2-prod-apply`) pinnt Blob/SHA-256/Version/Name, verlangt `--schreiben --produktion --projekt-ref qscbgcdmivbbnzrcyegn`, prüft Head `20260827010000` plus fehlende Funktion/History und schreibt SQL + History + Contract-Verify atomar. Die Phase-3.1-Grenze `20260820130000` bleibt unverändert. Dieser Nachtrag autorisiert keinen Apply; er beschreibt nur den Apply-Pfad.
+
+---
+
+## ADR-0176 – TW-7 Rest-Gap ist Hub-Kartenidentität, nicht AP-3
+
+**Datum:** 27. August 2026  
+**Status:** durch PR #100 versioniert bzw. nach Landung integriert. **TW7-A Runtime nicht gestartet.** Kein Implementationsauftrag in diesem ADR.
+
+**Entscheidung:** Der TW-7-Hub-Anschluss darf AP-3, den bestehenden Weg `/account` → `/reisen` → `/reisen/[tripId]` → `TripWorkspace` und die Guest-One-Trip-Regel nicht neu bauen. Der belegte Rest-Gap ist die Mehrziel-Identität auf `Reisekarte` plus die Gast-`itemCount`-Abbildung. Der spätere kleine Runtime-Slice TW7-A ist read-only und verwendet denselben Ortstext wie die Workspace-Übersicht.
+
+**Kontext:** TW-7-Start-Gate aus dem Implementierungsplan; ADR-0160; ADR-0164; Transformation Scope Policy; Product-Owner PR-34 Mehrziel-Reisekarte; TL-Rekonstruktion Abschnitt 9. `TripSummary` trägt nur `stageCount`. `reisenLaden()` liest `trip_stages(count)`.
+
+**Alternativen:** AP-3-Gruppen im Workspace duplizieren; Attention/Coverage auf Hub-Karten; Account-Übersicht zum zweiten Workspace machen; Archiv in TW-7 filtern. Abgelehnt, weil das fremde Verträge überschreibt.
+
+**Begründung:** Eine Reise, eine Oberfläche. Der Weg ist schon einer. Die Karte darf eine Mehrzielreise nicht als Einzeltitel verkaufen.
+
+**Konsequenzen:** Runtime erst nach eigenem Auftrag. Dieser Docs-Stand implementiert nichts. Production, AAL2-Apply, AP-4, TW-8 und Homepage bleiben unberührt.
 
 ---
 

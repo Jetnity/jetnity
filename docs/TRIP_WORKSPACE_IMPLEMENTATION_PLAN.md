@@ -1,7 +1,7 @@
 # Jetnity – Trip Workspace Implementierungsplan
 
-Stand: 25. August 2026  
-Status: **Ziel-IA angenommen (ADR-0163). TW-1, TW-2, TW-4, TW-3 und TW-5 sind auf `main` integriert. Nächste Runtime nur nach Prüfung der dokumentierten Abhängigkeiten von TW-6/TW-7/TW-8.**  
+Stand: 27. August 2026  
+Status: **Ziel-IA angenommen (ADR-0163). TW-1, TW-2, TW-4, TW-3, TW-5, TW6-A und TW6-B Runtime sind auf `main` integriert. TW-7-Start-Gate ist gegen `main` `beaef64a` erneut geprüft; Rest-Gap und Slice stehen in `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Keine TW-7-Runtime in diesem Stand.**  
 Audit: `docs/TRIP_WORKSPACE_AUDIT.md`  
 Ziel: `docs/TRIP_WORKSPACE_TARGET_ARCHITECTURE.md`  
 Abhängigkeiten: `docs/TRIP_WORKSPACE_DEPENDENCY_MATRIX.md`
@@ -161,6 +161,10 @@ Vor Start muss der Technical Lead den exakten benötigten Product-Owner-Schnitt 
 **Nicht:** gespeicherten Lifecycle, Archiv oder zweite-Reise-Regeln überschreiben. Archiv bleibt AP-4.
 
 **Start-Gate:** Account-/Hub-Verträge und aktueller AP-Stand erneut prüfen.
+
+**Start-Gate-Ergebnis, 27. August 2026, `main` `beaef64a`:** erfüllt. Hub-Code unverändert seit der Prüfung auf `84f54194`. Der Weg `/account` → `/reisen` → `/reisen/[tripId]` → `TripWorkspace` ist bereits einer. AP-3 besitzt die ableitende Lage; TW-2 besitzt dieselbe Lage im Workspace. Der verbleibende Gap ist die Mehrziel-Kartenidentität plus Gast-`itemCount`, nicht eine zweite Hub-Architektur.
+
+Verbindliche Slice-Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Status: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_STATUS.md`. TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert. **TW7-A Runtime ist nicht gestartet.**
 
 ### TW-8 – Commercial Surfaces
 
