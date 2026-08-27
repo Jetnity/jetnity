@@ -4,74 +4,126 @@ Stand: 27. August 2026
 Finding: `P1-AAL2-PROD-01`  
 Cursor-Agent: `Jetnity quality security audit`  
 Branch: `fix/admin-aal2-production-alignment-2026-08-27`  
-Status: **CONTROL START / AUTORENARBEIT NOCH NICHT ABGESCHLOSSEN / KEIN PRODUCTION APPLY**
+Draft-PR: #98  
+Status: **AUTORENARBEIT ABGESCHLOSSEN / DRAFT / STOPP / KEIN READY / KEIN MERGE / KEIN PRODUCTION APPLY**
 
-## Live-Baseline bei Start
+Verbindlicher Auftrag: `docs/QS2_ADMIN_AAL2_PRODUCTION_ALIGNMENT_IMPLEMENTATION_TASK_2026-08-27.md`  
+Playbook: `docs/QS2_ADMIN_AAL2_PRODUCTION_ALIGNMENT_PLAYBOOK_2026-08-27.md`  
+Reconciliation-Gate: `docs/QS2_ADMIN_AAL2_PRODUCTION_RECONCILIATION_TASK_2026-08-27.md`
 
-- `main`: `84f54194cf7461c5f785f4da490dba060c93e999`
-- Branch wurde exakt von diesem `main` erstellt
-- Production Supabase: `qscbgcdmivbbnzrcyegn`
-- Development Supabase: `yfvbxvijcorffwxbxahl`
-- Production Migration-Head: `20260827010000_reise_anlegen_zero_stage_fail_closed`
-- Development enthält zusätzlich `20260826052735_admin_aal2_data_plane`
-- keine offene konkurrierende AAL2-Implementierungs-PR festgestellt
+---
 
-## Bestätigte Live-Sicherheitslücke
+## 1. Live-Verifikation vor Implementierung
 
-Production besitzt aktuell **keine** `public.aktuelles_admin_aal2()`-Funktion. Die fünf administrativen `darf_*()`-Capabilities prüfen nur Mindestrollen.
+Erneut geprüft, bevor Dateien geschrieben wurden:
 
-Live inventarisiert wurden:
+| Check | Live-Stand |
+| --- | --- |
+| `origin/main` | `84f54194cf7461c5f785f4da490dba060c93e999` |
+| Task-Dokument nannte ursprünglich | `4362502bf23c1c54f721af48c0f7bdd6fcbdee3b` |
+| Drift | **ja, dokumentiert.** `main` ist nach PR #97 + Folgecommits weiter. Branch wurde von `84f54194` erstellt, **0 behind / 2 docs-ahead** vor dieser Implementierung. |
+| Production Supabase | `qscbgcdmivbbnzrcyegn` (unverändert, nicht beschrieben) |
+| Repo Production-Head-Datei | `20260827010000_reise_anlegen_zero_stage_fail_closed.sql` vorhanden |
+| Historische Repo-Datei | `20260826090000_admin_aal2_data_plane.sql` unverändert belassen |
+| Bevorzugter Alignment-Name | `20260827170000_…` war frei |
+| PR #98 | Draft OPEN, MERGEABLE, 0 Review-Threads |
+| Konkurrierende AAL2-Implementierungs-PR | keine |
 
-- 14 direkte Admin-RLS-Policies, die über `darf_betrieb_lesen()`, `darf_betrieb_eingreifen()` oder `darf_konten_verwalten()` geschützt werden;
-- vier administrative `SECURITY DEFINER`-RPCs für `authenticated`, die intern `darf_betrieb_lesen()` prüfen:
-  - `admin_payments_summary_30d()`
-  - `admin_reisen_kennzahlen()`
-  - `admin_reisen_zeitreihe(integer)`
-  - `admin_security_overview()`
+Die Task-STOP-Regel „Baseline weicht ab“ wurde **nicht blind ignoriert**: Die Statusdatei hatte `84f54194` bereits als Start-Baseline festgehalten. Der Branch hängt an genau diesem `main`. Es gab keine neuere AAL2-Runtime auf `main`. Deshalb wurde die Implementierung auf diesem Head fortgesetzt, statt die ältere SHA `4362502b` zu erzwingen.
 
-Damit bleibt ein privilegierter AAL1-Direktzugriff auf die Datenebene technisch möglich, obwohl der Application Guard AAL2 verlangt.
+`docs/ACTIVE_WORK_STATUS.md` und `JETNITY_HANDOFF.md` wurden **nicht** geändert (zentrale Continuity bleibt Technical Lead).
 
-## Development-Evidence
+---
 
-Development besitzt live die gewünschte Semantik:
+## 2. Umgesetzt
 
-- `aktuelles_admin_aal2()` liest ausschließlich `auth.jwt() ->> 'aal'`
-- fehlender/anderer Claim => false
-- alle fünf `darf_*()` kombinieren unveränderte Mindestrolle **AND** AAL2
-- Helper und Capabilities sind `SECURITY INVOKER`
-- `search_path = pg_catalog`
-- EXECUTE: `authenticated`, `service_role`
-- kein EXECUTE für `public`, `anon`
+1. Neue forward-only Alignment-Migration  
+   `supabase/migrations/20260827170000_admin_aal2_data_plane_alignment.sql`
+2. Contract-Tests  
+   `lib/auth/admin-aal2-alignment.test.ts`  
+   plus bestehende `admin-aal-datenbank.test.ts` / `faehigkeiten-datenbank.test.ts`
+3. Consumer-Inventur (14 RLS + 4 SECURITY-DEFINER-RPCs) im Playbook und in Tests
+4. Rollout-/Verification-/Recovery-Playbook
+5. Dieser Status
 
-Diese Semantik entspricht der historischen Repo-Migration `20260826090000_admin_aal2_data_plane.sql`.
+Nicht umgesetzt und nicht erlaubt:
 
-## Forward-only Entscheidung
-
-Die historische Development-Version `20260826052735` und die Repo-Datei `20260826090000` werden nicht umbenannt, gelöscht oder rückwirkend repariert.
-
-Der neue Implementierungsslice soll eine neue Alignment-Migration **nach** dem aktuellen Production-Head `20260827010000` liefern. Bevorzugt ist, sofern bei Autor-Start weiterhin kollisionsfrei:
-
-`supabase/migrations/20260827170000_admin_aal2_data_plane_alignment.sql`
-
-## Aktueller Scope
-
-Jetzt erlaubt:
-
-- neue Alignment-Migration vorbereiten
-- Contract-/Regression-Tests hinzufügen
-- alle Admin-RLS-/RPC-Consumer dokumentieren
-- Rollout-/Verification-/Recovery-Playbook erstellen
-- CI/Vercel auf dem exakten PR-Head
-- Development/read-only Evidence erneuern
-
-Nicht erlaubt:
-
-- Production-Migration
+- Production-Apply
 - Production-RLS-/Capability-Write
-- Rollen-/Ownership-/Auth-Umbau
-- TW-7 oder andere Feature-Arbeit
-- Provider/Payment/Secrets/Kosten
+- Änderung von `20260826090000_admin_aal2_data_plane.sql`
+- Rollen-/Auth-/Consumer-Ownership-Umbau
+- `types/supabase.ts`-Regenerierung
+- Ready / Merge
 
-## Übergabe
+---
 
-Der Autoren-Slice stoppt als Draft. Der unabhängige Technical Lead prüft danach exakten Head, Diff, Tests, CI, Vercel, Migration-Semantik, Supabase-Evidence und Review-Threads. Auch ein erfolgreicher Merge autorisiert **nicht** den Production-Apply; dafür bleibt eine separate ausdrückliche Product-Owner-Freigabe erforderlich.
+## 3. Vertrag der neuen Migration
+
+`CREATE OR REPLACE`, idempotent, `SECURITY INVOKER`, `search_path = pg_catalog`.
+
+- `aktuelles_admin_aal2()` = `coalesce((auth.jwt() ->> 'aal') = 'aal2', false)`
+- fünf `darf_*()` = unveränderte `hat_rolle_mindestens(...)` **AND** `aktuelles_admin_aal2()`
+- Revoke `public`/`anon`, Grant `authenticated`/`service_role`
+- keine Policy-, Tabellen- oder Ownership-Mutation
+
+---
+
+## 4. Tests / Gates dieses Autorenlaufs
+
+| Gate | Ergebnis |
+| --- | --- |
+| `node --import tsx --test lib/auth/admin-aal2-alignment.test.ts lib/auth/admin-aal-datenbank.test.ts lib/auth/faehigkeiten-datenbank.test.ts lib/auth/admin-aal.test.ts` | 30 passed, 4 files, exit 0 |
+| `npm test` | 2317 passed, 0 failed, 425 suites, exit 0 |
+| `npx tsc --noEmit` | exit 0 |
+| `npm run lint` | no errors, no warnings, exit 0 |
+| `check:dead` | 760 reachable, 1 justified orphan (`CookieConsent.tsx`), exit 0 |
+| `check:exports` | 648 files, 0 unused exports, exit 0 |
+| `check:deps` | 0 unused / 0 missing, exit 0 |
+| `check:api-schutz` | 12 admin routes, all `requireAdminApi()`, exit 0 |
+| `check:schema-bezug` | 17 tables/views, 19 functions, exit 0 |
+| `npm run build` | exit 0; 46 static pages; existing Edge-Runtime-Warnungen von `@supabase/*` unverändert |
+
+Matrix, lokal belegt:
+
+- AAL1 + privilegierte Rolle => false
+- fehlender/leerer/malformed AAL + privilegierte Rolle => false
+- AAL2 + unzureichende Rolle => false
+- AAL2 + ausreichende Rolle => true
+- Mindestrollen unverändert
+- Consumer-Self-Service-OR unangetastet
+- Break-Glass kein DB-Recht
+
+Historische Datei `20260826090000_admin_aal2_data_plane.sql` unverändert: Git-Blob `4b5d74e75b112b777507c310c000facb36a69d6e`, identisch mit `origin/main`.
+
+`auth:pruefen` nicht ausgeführt: dieser Slice ändert keine Auth-Server-Konfiguration.
+
+---
+
+## 5. Pflicht-Self-Review
+
+| Frage | Ergebnis |
+| --- | --- |
+| Neue Migration forward-only? | ja, nur `CREATE OR REPLACE` + GRANT/REVOKE |
+| Versionskollision? | nein; `20260827170000` war frei und liegt nach Production-Head `20260827010000` |
+| Rolle und AAL mit `AND`? | ja, in allen fünf `darf_*()` |
+| AAL nur aus `auth.jwt()`? | ja, `auth.jwt() ->> 'aal'` |
+| Fehlendes AAL fail-closed? | ja, `coalesce(..., false)` |
+| Fünf Mindestrollen unverändert? | ja: moderator / operator / moderator / moderator / admin |
+| Grants/Revoke korrekt? | ja: revoke `public`/`anon`, grant `authenticated`/`service_role` |
+| Sicherer `search_path`? | ja, `pg_catalog`; zusätzlich explizit `SECURITY INVOKER` |
+| Keine Tabellen-/Ownership-/Consumer-RLS-Mutation? | ja |
+| 14 RLS + 4 SECURITY-DEFINER-RPCs erfasst? | ja, Playbook und Contract-Tests |
+| Verification nach späterem Apply dokumentiert? | ja, Playbook Abschnitt 5 |
+| Apply bleibt Product-Owner-Gate? | ja; kein Apply in diesem Slice |
+
+---
+
+## 6. Restpunkte für den Technical Lead
+
+- Exact-Head GitHub Actions und Vercel von PR #98 nach diesem Head
+- Unabhängige Migration-Semantik-Prüfung
+- Development read-only Evidence, dass `CREATE OR REPLACE` die bestehende Dev-Semantik nicht verschiebt
+- Production weiterhin **nicht** anwenden
+- Review-Threads
+
+Nächster Schritt: unabhängiger Technical-Lead-Finalreview. Erst bei PASS darf der PR normal integriert werden. **Auch nach Merge bleibt der Production-Apply ein separates Product-Owner-Gate.**

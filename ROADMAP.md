@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 27. August 2026  
-Status: **Foundation C/D/E, Safety, Seasonal, AP-1–AP-3, Admin A–C, Provider S1–S3 + S5-A, TW-1/2/4/3/5, TW6-A, TW6-B Runtime (PR #87), Visitor Search UX (PR #94), Post-PR-#94-Continuity (PR #96), D0-1/D0-2, P1-D0-LIVE-01, QS-1/QS-2, P1-QS2-02, P1-TA-02 und Admin-AAL2-Application-Guard sind integriert. S5-B, TW-7/TW-8, AP-4+, Admin D–K, D1/G1 und Growth-Folgeslices sind nicht gestartet. Der nächste Produktslice ist nicht zugewiesen. Aktuelle Checkpoints: `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md` und `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`.**
+Status: **Foundation C/D/E, Safety, Seasonal, AP-1–AP-3, Admin A–C, Provider S1–S3 + S5-A, TW-1/2/4/3/5, TW6-A, TW6-B Runtime (PR #87), Visitor Search UX (PR #94), Post-PR-#94-Continuity (PR #96), D0-1/D0-2, P1-D0-LIVE-01, QS-1/QS-2, P1-QS2-02, P1-TA-02 und Admin-AAL2-Application-Guard sind integriert. P1-AAL2-PROD-01 Alignment-Migration ist Autorenarbeit auf Draft-PR #98, nicht gemergt und nicht Production-applied. S5-B, TW-7/TW-8, AP-4+, Admin D–K, D1/G1 und Growth-Folgeslices sind nicht gestartet. Der nächste Produktslice ist nicht zugewiesen. Aktuelle Checkpoints: `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md` und `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`.**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -304,6 +304,20 @@ Status: **auf `main` gemergt (PR #80, `d3faa2a0`). Entscheidung: ADR-0169. Produ
 
 ---
 
+## 6h. In Arbeit – QS-2 P1-AAL2-PROD-01 Production-Data-Plane Alignment
+
+Status: **Autorenarbeit abgeschlossen auf Draft-PR #98. Kein Ready. Kein Merge. Kein Production-Apply.**
+
+- Neue forward-only Datei `20260827170000_admin_aal2_data_plane_alignment.sql` nach Production-Head `20260827010000`
+- Historische Repo-Datei `20260826090000_admin_aal2_data_plane.sql` unverändert
+- Vertrag unverändert: Mindestrolle **UND** `auth.jwt() ->> 'aal' = 'aal2'`
+- Playbook: `docs/QS2_ADMIN_AAL2_PRODUCTION_ALIGNMENT_PLAYBOOK_2026-08-27.md`
+- Status: `docs/QS2_ADMIN_AAL2_PRODUCTION_ALIGNMENT_STATUS_2026-08-27.md`
+- Entscheidung: ADR-0175
+- Nächster Schritt: unabhängiger Technical-Lead-Finalreview. Auch nach einem späteren Merge bleibt der Production-Apply ein separates Product-Owner-Gate.
+
+---
+
 ## 6f. Fertig – Account Platform AP-3
 
 Status: **auf `main` gemergt (PR #53, `8326e72f`). Entscheidung: ADR-0160.**
@@ -467,6 +481,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 12c6. ✅ Post-PR-#94 Continuity PR #96 – kanonische Handoff-Dateien, Gate-B ohne Re-Apply, `TW6-REST-01` geschlossen, bindende New-Chat-Betriebsregeln. Historisch Draft auf `cursor/pr94-continuity-b13d`; nach Landung integriert/geschlossen. Kein ausstehendes Re-Review. Merge-SHA live prüfen.
 12d. ✅ Provider S5-A Commercial Provenance – auf `main` (`3b317bc6`, ADR-0168). S5-B nicht gestartet.
 12e. ✅ Admin-AAL2 Application-Guard – auf `main` (`d3faa2a0`, ADR-0169). Production-DB nicht angewendet.
+12e1. ⏳ P1-AAL2-PROD-01 Production-Data-Plane Alignment – Autorenarbeit auf Draft-PR #98, ADR-0175. Historische `20260826090000` unverändert. Neue `20260827170000` vorbereitet. **Kein Ready. Kein Merge. Kein Production-Apply.**
 12f. ✅ D0 live metadata boundary / P1-D0-LIVE-01 – auf `main` (PR #86, `38ec8be7`, ADR-0170). HTML-robots fail-closed; Canonical ist `https://jetnity.com`, niemals `*.vercel.app`. **Kein D1/G1. Kein Domain-Cutover. Kein Public Indexing.**
 13. Admin/Account/Provider-Programme separat weiterführen; kein Slice D, AP-4, S5-B, TW-8, D1 oder G1 ohne eigenen Auftrag
 14. finaler Workspace Intelligence Audit
