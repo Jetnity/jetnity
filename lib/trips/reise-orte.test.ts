@@ -209,6 +209,30 @@ describe('Gast- und Konto-Abbildung', () => {
     assert.equal(gast.includes('tag.items.length'), false)
   })
 
+  test('AP-4-Provenienz ändert reiseOrte, stageCount und itemCount nicht', () => {
+    const graph = reise({
+      status: 'archived',
+      stages: [etappe('Ubud', 1), etappe('Canggu', 2)],
+      days: [
+        {
+          id: 'day-1',
+          stageId: 'stage-1',
+          dayIndex: 1,
+          dayDate: '2026-09-12',
+          title: null,
+          items: [punkt('a')],
+        },
+      ],
+      ohneTag: [punkt('b')],
+    })
+    const sicht = tripAlsUebersicht(graph)
+    sicht.archivePreviousStatus = 'planned'
+    assert.equal(sicht.stageCount, 2)
+    assert.equal(sicht.itemCount, 2)
+    assert.equal(reiseOrte(sicht), 'Ubud · Canggu · ab Zürich')
+    assert.equal(sicht.stages[0]?.name, 'Ubud')
+  })
+
   test('stageCount entspricht der gelesenen Etappenmenge, nicht einem zweiten Zähler', () => {
     const graph = reise({
       stages: [etappe('Ubud', 1), etappe('   ', 2)],

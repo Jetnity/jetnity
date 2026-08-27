@@ -32,14 +32,22 @@ describe('AP-3 Meine Reisen bleibt ableitend', () => {
     assert.match(seite, /if \(problem\)/)
   })
 
-  test('schreibt keinen archived-Status', () => {
+  test('date-only-Lage schreibt keinen archived-Status', () => {
     const lage = readFileSync(join(hier, 'reise-lage.ts'), 'utf8')
-    const gruppen = readFileSync(join(hier, '../../components/trips/KontoReisenGruppen.tsx'), 'utf8')
     const seite = readFileSync(join(hier, '../../app/(public)/reisen/page.tsx'), 'utf8')
-    for (const quelle of [lage, gruppen, seite]) {
-      assert.equal(quelle.includes("status = 'archived'"), false)
-      assert.equal(quelle.includes('archived'), false)
-    }
+    assert.equal(lage.includes("status = 'archived'"), false)
+    assert.equal(lage.includes('archived'), false)
+    assert.equal(lage.includes('account_archive'), false)
+    assert.equal(seite.includes("status = 'archived'"), false)
+    assert.equal(seite.includes('reiseArchivLebenszyklus'), false)
+  })
+
+  test('AP-4 filtert archived in den Gruppen, schreibt den Status aber nicht lokal', () => {
+    const gruppen = readFileSync(join(hier, '../../components/trips/KontoReisenGruppen.tsx'), 'utf8')
+    assert.equal(gruppen.includes('kontoReisenSichten'), true)
+    assert.equal(gruppen.includes('reisen-gruppe-archiv'), true)
+    assert.equal(gruppen.includes("status = 'archived'"), false)
+    assert.equal(gruppen.includes('.update('), false)
   })
 
   test('lädt keinen Workspace und setzt kein Citizenship-Default', () => {
@@ -59,7 +67,7 @@ describe('AP-3 Meine Reisen bleibt ableitend', () => {
     assert.equal(gruppen.includes('REISEN_LISTE_GRENZE'), true)
     assert.equal(gruppen.includes('Höchstens die'), true)
     assert.equal(gruppen.includes('geladen und'), true)
-    assert.equal(gruppen.includes('Suche und Gruppen gelten nur für diese geladene Auswahl'), true)
+    assert.equal(gruppen.includes('Suche, Gruppen und Archiv gelten nur für diese geladene Auswahl'), true)
     assert.equal(gruppen.includes('Weitere Reisen sind gespeichert'), false)
     assert.equal(gruppen.includes('erscheinen hier aber noch nicht'), false)
   })
