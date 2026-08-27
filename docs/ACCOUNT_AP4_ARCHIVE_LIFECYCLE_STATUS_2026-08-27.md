@@ -1,12 +1,13 @@
 # Jetnity – AP-4 Account Archive Lifecycle – Status
 
 Stand: 27. August 2026  
-Status: **RUNTIME IMPLEMENTIERT / DRAFT / KEIN READY / KEIN MERGE DURCH AUTOR-AGENT**  
+Status: **RUNTIME IMPLEMENTIERT / EXACT-HEAD GATES GRÜN AUF `954b0c75` / FOLLOW-UP DANACH / DRAFT / KEIN READY / KEIN MERGE DURCH AUTOR-AGENT**  
 Workstream: Account / Traveller  
 Cursor-Agent: **`Account plattform audit vorbereitung 3`**  
-Branch: `cursor/ap4-account-archive-lifecycle-67d4`
+Branch: `cursor/ap4-account-archive-lifecycle-67d4`  
+Draft-PR: https://github.com/Jetnity/jetnity/pull/108
 
-> Live-Evidence gewinnt. Start-SHAs in älteren Assignment-Zeilen sind historische Evidence.
+> Live-Evidence gewinnt. Assignment-SHAs sind historische Evidence.
 
 ## 1. Live-Start
 
@@ -28,10 +29,25 @@ Branch: `cursor/ap4-account-archive-lifecycle-67d4`
 - Keine Migration, keine RLS-/Auth-/AAL-Änderung.
 - Gast-Reisen ohne Archiv.
 - TW7-A `TripSummary.stages` / `reiseOrte()` / `stageCount` / `itemCount` unverändert.
+- Follow-up nach erstem Exact-Head-PASS: Client-Action-State wird nach Erfolg und Statuswechsel zurückgesetzt, damit `router.refresh()` den Knopf nicht disabled stehen lässt.
 
-## 3. Gates
+## 3. Gegateter Head `954b0c751e5b662985119e26d0c49acbd9d0b82f`
 
-Lokale und Exact-Head-Gates werden nach dem Draft-PR auf dem jeweiligen Head dokumentiert. Kein Ready. Kein Merge.
+Genau dieser SHA, vor dem Action-State-Follow-up:
+
+| Gate | Ergebnis |
+| --- | --- |
+| GitHub Actions | Run `33108364497` **SUCCESS** – https://github.com/Jetnity/jetnity/actions/runs/33108364497 |
+| Typecheck, Lint & Build | SUCCESS |
+| Auth-Konfiguration | SUCCESS |
+| Vercel Preview | Deployment `6129580583` / Inspector `C6s9zyHZV9owevNEXH1Rie2t96rH` **READY** auf demselben SHA |
+| Preview-URL | https://jetnity-al2al1tbk-jetnity-e1b93c82.vercel.app |
+| Review-Threads | 0 |
+| Reviews | keine |
+
+Lokale Gates auf demselben Stand vor dem Follow-up: `npm test` 2364/2364, Typecheck, Lint, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, Production Build – alle grün. Historischer Fail auf `486f44b5` war `check:exports` (`istWiederherstellbarerStatus`) und ist auf `954b0c75` geschlossen.
+
+Das Follow-up ändert den PR-Head. Neues Exact Head nach Push erneut prüfen.
 
 ## 4. Shared Contracts
 
@@ -39,4 +55,4 @@ Unverändert: Auth, RLS, Ownership, Guest→Account, Traveller, AAL2, Provider, 
 
 ## 5. Nächster Schritt
 
-Unabhängiger Exact-Head-Finalreview durch ChatGPT / Technical Lead.
+Unabhängiger Exact-Head-Finalreview durch ChatGPT / Technical Lead auf dem dann aktuellen PR-Head. Kein Ready. Kein Merge durch den Autor-Agenten.

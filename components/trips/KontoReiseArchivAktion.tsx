@@ -6,7 +6,7 @@
 // liegen keine verschachtelten interaktiven Elemente.
 
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { previousStatusAusReise } from '@/lib/account/reise-archiv'
 import { reiseArchivLebenszyklus } from '@/lib/trips/archiv-aktionen'
@@ -20,6 +20,11 @@ export default function KontoReiseArchivAktion({ reise }: { reise: TripSummary }
   const archiviert = reise.status === 'archived'
   const previous = previousStatusAusReise(reise)
 
+  useEffect(() => {
+    setLaeuft(false)
+    setMeldung('')
+  }, [reise.status, reise.archivePreviousStatus])
+
   const ausfuehren = async (aktion: 'archivieren' | 'wiederherstellen') => {
     if (laeuft) return
     setMeldung('')
@@ -30,6 +35,7 @@ export default function KontoReiseArchivAktion({ reise }: { reise: TripSummary }
       setMeldung(ergebnis.meldung)
       return
     }
+    setLaeuft(false)
     router.refresh()
   }
 
