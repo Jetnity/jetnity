@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 27. August 2026  
-Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97 und PR #98 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. PR #98 bringt AAL2-Alignment auf `main`, Production-Apply bleibt eigenes Gate. TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert bzw. nach Landung integriert; TW7-A Runtime ist nicht gestartet. Frühere Aussagen „PR #100 bleibt Draft / nicht gemergt“ oder „nächster Produktslice unzugewiesen“ sind historische Evidence.**
+Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #100 und PR #102 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. `P1-AAL2-PROD-01` ist angewendet; kein zweiter AAL2-Apply. TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 integriert. TW7-A Runtime ist durch Issue #103 gestartet und noch nicht gemergt. Frühere Aussagen „TW7-A Runtime nicht gestartet“ oder „Production-AAL2-Apply bleibt offen“ sind historische Evidence.**
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
@@ -284,7 +284,7 @@ PR #94 (Visitor Search UX) ist gemergt. Reviewed Head `8da869fd`. Checkpoint: `d
 
 Kein alter PASS ist eine aktuelle Merge- oder Production-Freigabe.
 
-TW-7-Start-Gate ist gegen `beaef64a` erfüllt. Rest-Gap und TW7-A-Slice: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. **Keine TW-7-Runtime in diesem Stand.** TW-8 bleibt hinter Provider S5 und realer Commercial Provenance. TW-9 danach.
+TW-7-Start-Gate ist erfüllt. Rest-Gap und TW7-A-Slice: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. **TW7-A Runtime ist durch Issue #103 gestartet und noch nicht gemergt.** TW-8 bleibt hinter Provider S5 und realer Commercial Provenance. TW-9 danach.
 
 ## 14. Große Build-Reihenfolge
 
@@ -309,13 +309,13 @@ Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Repo-/Bran
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert (`docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`). TW7-A Runtime ist nicht gestartet. PR #100 ist das Integrationsvehikel; Live-Merge-SHA prüfen.
+TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 integriert. TW7-A Runtime läuft als Issue #103. Der Runtime-PR ist das Integrationsvehikel, nicht ein dauerhafter Draft-Status. Live-Merge auf `main` prüfen. Keine bewegliche PR-Head-SHA ist kanonische Live-Wahrheit.
 
-PR #98 ist integriert. Production-AAL2-Apply bleibt ein separates Product-Owner-Gate.
+PR #102 / `P1-AAL2-PROD-01` ist integriert und angewendet. **Kein zweiter AAL2-Apply.**
 
-Visitor Search UX ist integriert. Production Gate B ist operativ PASS, kein Re-Apply. `TW6-REST-01` ist geschlossen. PR #96/#97 sind integriert.
+Visitor Search UX ist integriert. Production Gate B ist operativ PASS, kein Re-Apply. `TW6-REST-01` ist geschlossen.
 
-> **Kein automatischer Folgeslice. Kein TW7-A-Runtime-Start. Kein Direction A. Kein TW-8/9. Kein weiterer Production-Write aus diesem Dokumentensatz.**
+> **Kein Ready/Merge durch den Runtime-Agenten. Kein Direction A. Kein TW-8/9. Kein AP-4. Kein zweiter AAL2-Apply. Kein Production-Write aus TW7-A.**
 
 ## 17. Continuity-Regel
 

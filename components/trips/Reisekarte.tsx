@@ -11,6 +11,7 @@ import Link from 'next/link'
 import { ArrowRight, CalendarDays, CloudOff, ListChecks, MapPin, Users } from 'lucide-react'
 
 import { STATUS_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
+import { reiseOrte } from '@/lib/trips/reise-orte'
 import type { TripSource, TripSummary } from '@/types/trips'
 
 const datum = new Intl.DateTimeFormat('de-CH', {
@@ -63,9 +64,7 @@ export default function Reisekarte({
       <h2 className="mt-3 hyphens-auto break-words text-xl font-semibold tracking-[-0.03em] text-brand-800">
         {reise.title}
       </h2>
-      {reise.origin && (
-        <p className="mt-1 hyphens-auto break-words text-sm text-ink-700">ab {reise.origin}</p>
-      )}
+      <p className="mt-1 hyphens-auto break-words text-sm text-ink-700">{reiseOrte(reise)}</p>
 
       <div className="mt-5 grid gap-2 border-t border-line-100 pt-4 text-xs text-ink-800">
         <span className="flex min-w-0 items-start gap-2">

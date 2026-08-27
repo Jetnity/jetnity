@@ -425,6 +425,11 @@ export type Reisegraph = Trip
  * Ohne Etappen, Tage und Planpunkte, aber mit ihrer Anzahl: Die Liste zeigt
  * „12 Tage · 8 Punkte“ und soll dafür nicht den ganzen Reisegraphen laden.
  */
+export type TripSummaryStage = {
+  name: string
+  position: number
+}
+
 export type TripSummary = {
   id: string
   title: string
@@ -436,7 +441,9 @@ export type TripSummary = {
   budgetAmount: number | null
   status: TripStatus
   updatedAt: string
+  /** Anzahl der gelesenen Etappen, immer `stages.length`. Kein zweiter Zähler. */
   stageCount: number
+  stages: TripSummaryStage[]
   dayCount: number
   itemCount: number
 }

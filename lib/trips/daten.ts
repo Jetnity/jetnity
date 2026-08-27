@@ -33,20 +33,17 @@ import type { ReadinessZeile } from '@/lib/readiness/persistenz'
 import type { TravellerZeile } from '@/lib/readiness/reisende'
 import { TRIP_STATUSES, type Reisegraph, type TripStatus, type TripSummary } from '@/types/trips'
 import { REISEN_LISTE_GRENZE } from '@/lib/trips/liste-grenze'
+import { etappenOrdnen, REISEN_LISTE_SELECT } from '@/lib/trips/reise-orte'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 
 /**
- * Spalten der Liste „Meine Reisen“ – und die eingebetteten Anzahlen ihrer
- * Kinder.
+ * Spalten der Liste „Meine Reisen“.
  *
- * PostgREST beantwortet `trip_days(count)` mit `[{ count: 12 }]`, also mit
- * einer Aggregation in der Datenbank statt mit drei weiteren Abfragen. Am
- * laufenden Branch geprüft. Ohne diese Form wäre die Liste entweder N+1
- * Abfragen oder eine eigene View, die dieselbe Zahl ein zweites Mal definiert.
+ * `trip_stages(name, position)` liest die vorhandene Zielidentität read-only.
+ * `trip_days(count)` und `trip_items(count)` bleiben Aggregat, damit die Liste
+ * nicht den ganzen Graphen lädt. Kein Service Role.
  */
-const UEBERSICHT_SPALTEN =
-  'id, title, origin, start_date, end_date, travellers, currency, budget_amount, status, updated_at, ' +
-  'trip_stages(count), trip_days(count), trip_items(count)'
+const UEBERSICHT_SPALTEN = REISEN_LISTE_SELECT
 
 export type { Reisegraph }
 
@@ -63,7 +60,7 @@ type UebersichtZeile = {
   budget_amount: number | string | null
   status: string
   updated_at: string
-  trip_stages: Anzahl[] | null
+  trip_stages: { name: string; position: number }[] | null
   trip_days: Anzahl[] | null
   trip_items: Anzahl[] | null
 }
@@ -124,21 +121,25 @@ export async function reisenLaden(): Promise<Lesung<TripSummary>> {
 
   return {
     problem: null,
-    zeilen: ergebnis.zeilen.map((zeile) => ({
-      id: zeile.id,
-      title: zeile.title,
-      origin: zeile.origin,
-      startDate: zeile.start_date,
-      endDate: zeile.end_date,
-      travellers: zeile.travellers,
-      currency: zeile.currency,
-      budgetAmount: betrag(zeile.budget_amount),
-      status: status(zeile.status),
-      updatedAt: zeile.updated_at,
-      stageCount: anzahl(zeile.trip_stages),
-      dayCount: anzahl(zeile.trip_days),
-      itemCount: anzahl(zeile.trip_items),
-    })),
+    zeilen: ergebnis.zeilen.map((zeile) => {
+      const stages = etappenOrdnen(zeile.trip_stages ?? [])
+      return {
+        id: zeile.id,
+        title: zeile.title,
+        origin: zeile.origin,
+        startDate: zeile.start_date,
+        endDate: zeile.end_date,
+        travellers: zeile.travellers,
+        currency: zeile.currency,
+        budgetAmount: betrag(zeile.budget_amount),
+        status: status(zeile.status),
+        updatedAt: zeile.updated_at,
+        stages,
+        stageCount: stages.length,
+        dayCount: anzahl(zeile.trip_days),
+        itemCount: anzahl(zeile.trip_items),
+      }
+    }),
   }
 }
 

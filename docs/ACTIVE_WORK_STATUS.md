@@ -1,17 +1,24 @@
 # Jetnity – Active Work Status
 
 Stand: 27. August 2026  
-Status: **Production Gate A ist PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97 und PR #98 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. PR #98 Alignment liegt auf `main`; Production-AAL2-Apply bleibt eigenes Gate. TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert bzw. nach Landung integriert; TW7-A Runtime ist nicht gestartet. Frühere Aussagen „PR #100 bleibt Draft / nicht gemergt“ sind historische Evidence.**
+Status: **Production Gate A ist PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #100 und PR #102 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. `P1-AAL2-PROD-01` ist angewendet; kein zweiter AAL2-Apply. TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 integriert. TW7-A Runtime ist durch Issue #103 gestartet und noch nicht gemergt. Frühere Aussagen „TW7-A Runtime nicht gestartet“ sind historische Evidence.**
 
 > **Do not blindly trust this file — live verify first.**
 
 ## 0. Live-Integrationsbaseline
 
-Aktueller verifizierter `origin/main` nach PR #98:
+Aktueller verifizierter `origin/main` nach PR #102:
 
+- `963186f4ec75501efd253a287131f464a5fd0fdb` — `Merge PR #102: Admin AAL2 production apply gate closure`
+- GitHub Actions auf exakt diesem SHA: Run `33098535852` SUCCESS
+- Vercel Production auf exakt diesem SHA: READY
+
+Vorherige verifizierte Linie:
+
+- `b20e54cba4932d515977285a46de1c1207d3c4b4` — `Merge PR #100: TW-7 hub gap continuity`
 - `beaef64a151adceb8f5bc759f58ae9ad13cecc51` — `Merge PR #98: Admin AAL2 production data-plane alignment`
-- GitHub Actions auf exakt diesem SHA: Run `33087558642` SUCCESS
-- GitHub Production-Deployment auf exakt diesem SHA: `6125680097` success
+- GitHub Actions auf `beaef64a`: Run `33087558642` SUCCESS
+- GitHub Production-Deployment auf `beaef64a`: `6125680097` success
 
 PR-#97-Docs-Merge bleibt:
 
@@ -169,12 +176,10 @@ Live Supabase-Inventur zeigt:
 
 ## 7. Aktive / nächste Cursor-Workstreams
 
-Kein offener TW-7-Produktdocs-Draft als operative nächste Arbeit.
+Aktive Runtime-Arbeit: Issue #103 TW7-A Hub-Kartenidentität. Der Runtime-PR ist das Integrationsvehikel, nicht ein dauerhafter Draft-Status.
 
-- **PR #100** versioniert TW-7-Gap / ADR-0176 / TW7-A-Spec. Nach Landung integriert. **TW7-A Runtime ist nicht gestartet.** Integrationsvehikel; Live-Merge-SHA prüfen.
-- Historische Pre-Merge-Evidence, kein aktueller Draft-Status: Head `2aa573f1` Actions `33087982878` SUCCESS, Vercel `DUzQZnDEY2TBdP1rwoZFPs2bzFsA` SUCCESS; späterer Stamp-Head `2abe79b4` Actions `33088507998` SUCCESS, Vercel `8NJVH46dzhrvUur8raAGukyiyzcL` SUCCESS.
-
-PR #98 ist integriert. Production-AAL2-Apply bleibt ein getrenntes Product-Owner-Gate.
+- **PR #100** Spec integriert. Historische Pre-Merge-Evidence bleibt Evidence.
+- **PR #102** AAL2 Apply-Gate integriert. Production-AAL2 angewendet. Kein zweiter Apply.
 
 PR #96 bleibt integriert/geschlossen. Historisch Draft auf `cursor/pr94-continuity-b13d`; das ist keine operative nächste Arbeit.
 
@@ -198,8 +203,10 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#100** TW-7-Gap / ADR-0176 / TW7-A-Spec | **VERSIONIERT bzw. nach Landung integriert.** TW7-A Runtime nicht gestartet. Integrationsvehikel; Live-Merge-SHA prüfen. Frühere „Draft / nicht gemergt“-Zeilen sind historische Pre-Merge-Evidence. |
-| **#98** Admin AAL2 Production Alignment | **GEMERGT.** Merge `beaef64a`. Alignment-Datei auf `main`. Production-Apply bleibt eigenes Product-Owner-Gate. |
+| **Issue #103** TW7-A Runtime | **GESTARTET / noch nicht gemergt.** Integrationsvehikel ist der neue Runtime-PR. Keine bewegliche Head-SHA als kanonische Wahrheit. |
+| **#102** AAL2 Apply-Gate Closure | **GEMERGT.** Merge `963186f4`. Production-AAL2 angewendet. Kein zweiter Apply. |
+| **#100** TW-7-Gap / ADR-0176 / TW7-A-Spec | **GEMERGT.** Spec integriert. |
+| **#98** Admin AAL2 Production Alignment | **GEMERGT.** Alignment-Datei auf `main`. |
 | **#97** TL live reconstruction + AAL2 production gate | **GEMERGT.** Merge `4362502b`. |
 | **#96** Post-PR-#94 Continuity | **INTEGRIERT / GESCHLOSSEN.** Merge `45be14b1`. |
 | **#95** PR94 new-chat checkpoint | **GEMERGT.** Nur `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`. Merge `943d14c2`. |
@@ -226,17 +233,17 @@ Frühere Absätze in älteren Checkpoints, die „Production Gate B nicht angewe
 
 PR #94 und dieses Continuity-Update schreiben Production nicht.
 
-Weiterhin nicht angewendet:
+Historische AAL2-Versionen bleiben ausgeschlossen; Production führt die Alignment-Version `20260827170000` genau einmal. **Kein zweiter Apply.**
 
-- AAL2 `20260826090000`
-- Development-AAL2-Version `20260826052735`
+- Historisch: Repo-Datei `20260826090000`
+- Historisch: Development `20260826052735`
 
 ## 10. Nächster Schritt
 
-TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert. TW7-A Runtime ist nicht gestartet.
+TW7-A Runtime läuft als Issue #103. Unabhängiger Technical-Lead-Finalreview entscheidet Ready/Merge.
 
-PR #98 ist integriert. Production-AAL2-Apply bleibt ein separates Product-Owner-Gate.
+`P1-AAL2-PROD-01` ist angewendet. **Kein zweiter AAL2-Apply.**
 
-Kein weiterer Production-Write. Keine Direction A. Kein TW-8/9. Kein AP-4. Kein automatischer TW7-A-Start.
+Kein Production-Write aus TW7-A. Keine Direction A. Kein TW-8/9. Kein AP-4.
 
 PR #95 zeichnet einen Product-Owner-Wunsch auf: Homepage-Hero-Design bleibt, die Funktion im bestehenden Kästchen soll später natürliche Mehrziel-/Route-Absicht verstehen. Das bleibt **kein** Startauftrag und ist nicht TW7-A.

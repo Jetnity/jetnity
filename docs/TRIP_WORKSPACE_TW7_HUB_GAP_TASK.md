@@ -3,7 +3,7 @@
 Stand: 27. August 2026  
 Typ: **DOCS-ONLY / Gap-Rekonstruktion / Slice-Auftrag**  
 Cursor-Agent: `Trip workspace audit architecture`  
-Status: **TW7-A-Spec versioniert. TW7-A Runtime nicht gestartet.**
+Status: **TW7-A-Spec integriert. TW7-A Runtime durch Issue #103 gestartet und noch nicht gemergt.**
 
 > Historische Entstehungsevidence, nicht aktueller operativer PR-Status: entstanden auf Branch `cursor/tw7-hub-gap-slice-b13d` als PR #100. Ältere Zeilen „Draft-PR #100 / kein Ready / kein Merge“ sind Pre-Merge-Evidence.
 
@@ -15,7 +15,7 @@ Live-Baseline dieses Dokuments: `origin/main` `beaef64a151adceb8f5bc759f58ae9ad1
 
 Aktuellen `main` und die bindenden TW-/AP-3-Verträge live prüfen, den **tatsächlichen verbleibenden TW-7-Gap** bestimmen und den **exakten kleinen Implementierungsslice** inkl. Dateien, Tests und Konfliktmatrix versionieren.
 
-Dieser Spec-Stand implementiert den Slice **nicht**. TW7-A Runtime bleibt ein eigener späterer Auftrag.
+Dieser Spec-Stand bleibt die bindende Schnittbeschreibung. Die Runtime läuft als Issue #103 auf einem neuen Branch von aktuellem `main`, nicht auf dem historischen PR-#100-Branch.
 
 ## 2. Live-Rekonstruktion – was TW-7 nicht mehr ist
 

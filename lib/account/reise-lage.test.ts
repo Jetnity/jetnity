@@ -21,6 +21,7 @@ function reise(teil: Partial<TripSummary> & Pick<TripSummary, 'id' | 'title'>): 
     status: 'draft',
     updatedAt: '2026-08-01T10:00:00.000Z',
     stageCount: 1,
+    stages: [{ name: 'Ziel', position: 1 }],
     dayCount: 0,
     itemCount: 0,
     ...teil,

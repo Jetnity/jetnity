@@ -3,7 +3,7 @@
 Stand: 27. August 2026  
 Agent: `Trip workspace audit architecture`  
 Auftrag: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`  
-Status: **TW-7-Gap / ADR-0176 / TW7-A-Spec durch PR #100 versioniert bzw. nach Landung integriert. TW7-A Runtime nicht gestartet.**
+Status: **TW-7-Gap / ADR-0176 / TW7-A-Spec durch PR #100 integriert. TW7-A Runtime durch Issue #103 gestartet und noch nicht gemergt.**
 
 > Kanonischer operativer Stand zusätzlich: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`. Live-Evidence gewinnt. PR #100 ist das Integrationsvehikel; Live-Merge-SHA prüfen.
 
@@ -55,9 +55,9 @@ Code-Evidence:
 
 **TW-7-Start-Gate: erfüllt.**  
 **TW-7-Rest-Gap: Hub-Kartenidentität (Mehrziel + Gast-`itemCount`).**  
-**TW7-A Runtime: nicht gestartet.**
+**TW7-A Runtime: gestartet (Issue #103), noch nicht gemergt.**
 
-Der kleine Slice heisst TW7-A und steht in der Spec. Dieser Status behauptet keine Implementation.
+Der Slice bleibt read-only Hub-Kartenidentität. Kein Schema, kein RLS, kein Production-Write.
 
 ## 3a. Historische Pre-Merge Exact-Head-Evidence
 
@@ -97,8 +97,10 @@ AAL2-Migration, Playbook und Production-Apply bleiben unangetastet.
 - Pfeil- vs. Punkt-Schreibweise der Route ist bewusste Non-Scope-Entscheidung gegen einen dritten Formatfork.
 - Ein späterer Runtime-Select `trip_stages(name, position)` muss RLS-kompatibel bleiben; bei Fehler kein Service-Role-Fallback.
 
-## 6. Nach Landung
+## 6. Nach Spec-Landung / Runtime-Start
 
-TW7-A Runtime nicht starten. Kein automatischer Folgeslice. Kein AP-4, TW-8 oder Homepage aus dieser Spec.
+PR #100 ist integriert. Issue #103 startet TW7-A Runtime. Der Runtime-PR ist das Integrationsvehikel, nicht ein dauerhafter Draft-Status. Keine bewegliche Head-SHA ist kanonische Live-Wahrheit.
 
-Unabhängiger Review der Spec bleibt Technical Lead; das ist keine Aussage, PR #100 sei dauerhaft unvermerkt.
+Kein AP-4, TW-8, Homepage oder zweiter AAL2-Apply aus diesem Slice.
+
+Unabhängiger Finalreview: ChatGPT / Technical Lead. Kein Ready/Merge durch den Runtime-Agenten.

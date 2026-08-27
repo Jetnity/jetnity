@@ -4353,7 +4353,7 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 ## ADR-0176 – TW-7 Rest-Gap ist Hub-Kartenidentität, nicht AP-3
 
 **Datum:** 27. August 2026  
-**Status:** durch PR #100 versioniert bzw. nach Landung integriert. **TW7-A Runtime nicht gestartet.** Kein Implementationsauftrag in diesem ADR.
+**Status:** durch PR #100 integriert. **TW7-A Runtime durch Issue #103 gestartet und noch nicht gemergt.**
 
 **Entscheidung:** Der TW-7-Hub-Anschluss darf AP-3, den bestehenden Weg `/account` → `/reisen` → `/reisen/[tripId]` → `TripWorkspace` und die Guest-One-Trip-Regel nicht neu bauen. Der belegte Rest-Gap ist die Mehrziel-Identität auf `Reisekarte` plus die Gast-`itemCount`-Abbildung. Der spätere kleine Runtime-Slice TW7-A ist read-only und verwendet denselben Ortstext wie die Workspace-Übersicht.
 
@@ -4364,6 +4364,8 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 **Begründung:** Eine Reise, eine Oberfläche. Der Weg ist schon einer. Die Karte darf eine Mehrzielreise nicht als Einzeltitel verkaufen.
 
 **Konsequenzen:** Runtime erst nach eigenem Auftrag. Dieser Docs-Stand implementiert nichts. Production, AAL2-Apply, AP-4, TW-8 und Homepage bleiben unberührt.
+
+**Nachtrag, 27. August 2026 – TW7-A Runtime (Issue #103).** Der Product Owner hat den read-only Runtime-Slice ausdrücklich beauftragt. Hub-`Reisekarte` und Workspace-Übersicht teilen `reiseOrte()`; `reisenLaden()` liest `trip_stages(name, position)`; Gast-`itemCount` zählt `days.items + ohneTag`. Kein Schema, kein RLS, keine Service Role, kein AP-4/TW-8/Homepage, kein zweiter AAL2-Apply. Der Runtime-PR ist Integrationsvehikel, nicht dauerhafter Draft-Status. Ready/Merge bleiben Technical Lead.
 
 ---
 

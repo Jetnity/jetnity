@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 27. August 2026  
-Status: **Production Gate A ist vollständig PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97 und PR #98 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. PR #98 Alignment liegt auf `main`; Production-AAL2-Apply bleibt eigenes Gate. TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert bzw. nach Landung integriert; TW7-A Runtime ist nicht gestartet. Frühere Aussagen „PR #100 bleibt Draft / nicht gemergt“ sind historische Evidence.**
+Status: **Production Gate A ist vollständig PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #100 und PR #102 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. `P1-AAL2-PROD-01` ist angewendet; kein zweiter AAL2-Apply. TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 integriert. TW7-A Runtime ist durch Issue #103 gestartet und noch nicht gemergt. Frühere Aussagen „TW7-A Runtime nicht gestartet“ sind historische Evidence.**
 
 Der erste Einstieg bleibt `JETNITY_START_HERE.md`.  
 Aktuelle operative Evidence zusätzlich: `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`, `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md` und `docs/ACTIVE_WORK_STATUS.md`.
@@ -107,10 +107,10 @@ Vollständige Evidence: `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.
 
 Technical-Lead Re-Review vom 27. August 2026: **Production Gate B ist operativ PASS.** Der Vier-Datei-Vertrag `20260826220000 → 20260826230000 → 20260826240000 → 20260827010000` wurde unter Write-Gate angewendet. Der vorherige Post-PR-#91-Stand (TW6-B-Count = 0, keine Mode-Spalte) ist historische Evidence.
 
+Historische AAL2-Versionen bleiben ausgeschlossen. Production führt `20260827170000` genau einmal. **Kein zweiter Apply.**
+
 Weiterhin nicht angewendet:
 
-- AAL2 Repo-Version `20260826090000`
-- Development-AAL2-Version `20260826052735`
 - Direction A
 - andere nicht freigegebene Production-Migrationen
 
@@ -213,8 +213,10 @@ Supabase-Inventur zeigt weiterhin zwei Top-Level-Projekte: das aktive Production
 
 Operativ relevant:
 
-- PR #100 – TW-7-Gap / ADR-0176 / TW7-A-Spec **versioniert bzw. nach Landung integriert**. TW7-A Runtime ist nicht gestartet. Integrationsvehikel; Live-Merge-SHA prüfen. Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`.
-- PR #98 – AAL2 Alignment **integriert** (`beaef64a`). Production-Apply bleibt eigenes Product-Owner-Gate.
+- Issue #103 / TW7-A Runtime – **gestartet, noch nicht gemergt.** Integrationsvehikel ist der neue Runtime-PR. Keine bewegliche Head-SHA als kanonische Wahrheit.
+- PR #102 – AAL2 Apply-Gate **integriert**. Production-AAL2 angewendet. **Kein zweiter Apply.**
+- PR #100 – TW-7-Gap / ADR-0176 / TW7-A-Spec **integriert**.
+- PR #98 – AAL2 Alignment **integriert**.
 - PR #97 – gemergt; TL-Rekonstruktion
 - PR #96 – Post-PR-#94 Continuity **integriert/geschlossen**. Merge `45be14b1`.
 - PR #95 – gemergt; New-Chat-Checkpoint `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
@@ -228,13 +230,13 @@ PR #89 und PR #91 sind gemergt und keine aktiven Drafts mehr.
 
 ## 15. Exakter nächster Technical-Lead-Schritt
 
-TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert. TW7-A Runtime ist nicht gestartet. PR #100 ist das Integrationsvehikel; Live-Merge-SHA prüfen.
+TW7-A Runtime läuft als Issue #103. Unabhängiger Technical-Lead-Finalreview entscheidet Ready/Merge. Der Runtime-PR ist das Integrationsvehikel, nicht ein dauerhafter Draft-Status.
 
-PR #98 ist integriert. Production-AAL2-Apply bleibt ein separates Product-Owner-Gate.
+`P1-AAL2-PROD-01` ist angewendet. **Kein zweiter AAL2-Apply.**
 
 Visitor Search UX ist integriert. Production Gate B ist operativ PASS, kein Re-Apply. `TW6-REST-01` ist geschlossen.
 
-**Kein automatischer Folgeslice. Kein TW7-A-Runtime-Start. Kein Direction A. Kein TW-8/9. Kein weiterer Production-Write aus diesem Dokumentensatz.**
+**Kein Ready/Merge durch den Runtime-Agenten. Kein Direction A. Kein TW-8/9. Kein AP-4. Kein Production-Write aus TW7-A.**
 
 ## 16. Continuity
 

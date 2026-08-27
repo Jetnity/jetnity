@@ -22,6 +22,7 @@ const REISE: TripSummary = {
   status: 'planned',
   updatedAt: '2026-08-20T10:00:00.000Z',
   stageCount: 1,
+  stages: [{ name: 'Lissabon', position: 1 }],
   dayCount: 5,
   itemCount: 0,
 }

@@ -21,26 +21,13 @@ import { Archive, MapPin, Plus } from 'lucide-react'
 
 import { gastReisenPrimaerCta } from '@/lib/trips/gast-reisen-cta'
 import { gastspeicherLaden, type Gastspeicher } from '@/lib/trips/gastspeicher'
+import { tripZusammenfassungAus } from '@/lib/trips/reise-orte'
 import Reisekarte from '@/components/trips/Reisekarte'
 import type { Trip } from '@/types/trips'
 
 /** Aus einer Gastreise wird dieselbe Karte, die das Konto zeigt. */
 function alsUebersicht(reise: Trip) {
-  return {
-    id: reise.id,
-    title: reise.title,
-    origin: reise.origin,
-    startDate: reise.startDate,
-    endDate: reise.endDate,
-    travellers: reise.travellers,
-    currency: reise.currency,
-    budgetAmount: reise.budgetAmount,
-    status: reise.status,
-    updatedAt: reise.updatedAt,
-    stageCount: reise.stages.length,
-    dayCount: reise.days.length,
-    itemCount: reise.days.reduce((summe, tag) => summe + tag.items.length, 0),
-  }
+  return tripZusammenfassungAus(reise)
 }
 
 export default function GastReisen() {
