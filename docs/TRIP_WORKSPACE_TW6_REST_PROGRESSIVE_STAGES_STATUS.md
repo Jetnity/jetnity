@@ -1,11 +1,13 @@
 # Jetnity – TW6-B Runtime – Progressive Ziele + Day→Stage Mode Contract – Status
 
+**Current status (27. August 2026):** PR #87 is **merged**. `TW6-REST-01` is **closed / integrated**. The body below is historical review evidence from before that merge.
+
 Stand: 27. August 2026  
 Agent: `Trip workspace audit architecture`  
 Branch: `feat/tw6-rest-progressive-stages`  
-PR: **#87** (Draft gegen `main`)  
+PR: **#87** (historisch Draft; jetzt gemergt)  
 Auftrag: Technical-Lead Re-Review nach Production Gate B – Workspace-Tempo-Wahrheit  
-Status: **MIT MAIN `d28e11be` SYNCHRON / GATE B LAUT TL PASS / P1 TEMPO-UI KORRIGIERT / NICHT MERGEFÄHIG**
+Status: **HISTORISCH. PR #87 GEMERGT. TW6-REST-01 GESCHLOSSEN.**
 
 Kein Ready. Kein Merge. Kein weiterer Production-Write. Kein AAL2. Keine Direction A. Kein TW-7/TW-8/TW-9. Kein Folgeslice.
 

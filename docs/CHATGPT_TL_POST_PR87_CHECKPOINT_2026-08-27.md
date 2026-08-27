@@ -44,12 +44,8 @@ The internal `balanced` persistence default is no longer represented in the Work
 
 ## Next bounded product correction
 
-The next visitor-facing correction is the natural-language place/airport search UX captured in:
+At the time of this checkpoint the next visitor-facing correction was the natural-language place/airport search UX captured in:
 
 `docs/TRIP_WORKSPACE_VISITOR_SEARCH_UX_TASK.md`
 
-This is a separate slice. It must not be folded retroactively into PR #87 or used to reopen Production Gate B. It requires no Production migration, provider-live activation, payment work, AAL2, Direction A, or TW-7/8/9 scope.
-
-Cursor owner when assigned:
-
-`Cursor-Agent: Trip workspace audit architecture`
+That slice is now merged via PR #94. Current continuity: `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`. This historical checkpoint must not be used to reopen a Visitor Search implementation draft, Production Gate B, AAL2, Direction A, or TW-7/8/9.

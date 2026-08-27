@@ -1,10 +1,10 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 27. August 2026  
-Status: **PR #91 / TW6-B Gate 0B ist integriert. Production Gate A ist vollständig PASS. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87 ist gemergt. Aktueller offener Slice: Visitor Search UX. Frühere Aussagen „Production Gate B nicht angewendet“ bzw. „PR #87 bleibt Draft“ sind historische Evidence.**
+Status: **PR #91 / TW6-B Gate 0B ist integriert. Production Gate A ist vollständig PASS. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87, PR #94, PR #95 und die Post-PR-#94-Continuity (PR #96) sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. Kein offener Visitor-Search- oder Continuity-Draft. Der nächste Produktslice ist nicht zugewiesen. Frühere Aussagen „PR #94/#96 bleibt Draft“ sind historische Evidence.**
 
 Der erste Einstieg bleibt `JETNITY_START_HERE.md`.  
-Aktuelle operative Evidence zusätzlich: `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`, `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md` und `docs/ACTIVE_WORK_STATUS.md`.
+Aktuelle operative Evidence zusätzlich: `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`, `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md` und `docs/ACTIVE_WORK_STATUS.md`.
 
 > **Do not blindly trust this handoff — live verify first.**
 
@@ -23,6 +23,9 @@ Lies zuerst mindestens:
 - `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`
 - `JETNITY_HANDOFF.md`
 - `docs/ACTIVE_WORK_STATUS.md`
+- `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
+- `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
+- `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`
 - `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`
 - `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`
 - relevanten Slice-Task/Status/ADR/Checkpoint.
@@ -49,17 +52,21 @@ Besondere Product-Owner-Gates bleiben zwingend für Production-Migrationen/destr
 
 ## 3. Aktuelle Git-/CI-Linie
 
-Verifizierter Integrationsstand nach PR #91:
+Verifizierter Integrationsstand nach PR #95 / PR #94:
 
-- PR #91 – `TW6-B Gate 0B: Zero-Stage Production Rollout Provenance`
-- PR-#91 Exact Head: `1da3ae0a01c6d5bb1f2325a2ca528922823c9611`
-- PR-#91 Exact-Head GitHub Actions Run `33031870276`: SUCCESS
-- PR-#91 Exact-Head Vercel `dpl_9QJSE9UeQNfehoLjdEa3PPXfyvLs`: READY
-- Merge-Commit auf `main`: `a2e46f38dcfbbea286e37960c7993adbbd06136a`
-- Post-Merge `main` GitHub Actions Run `33053499406`: SUCCESS
-- Post-Merge Vercel Production `dpl_2UjcAyoJ3D4Puuqehu3izDtcXDtj`: READY auf exakt dem Merge-SHA
+- Aktuelles `origin/main`: `943d14c27a01b4c783340c658c911434fcc62b27` (Merge PR #95)
+- PR #95 – docs-only New-Chat-Checkpoint; ändert keine kanonischen Handoff-Statuszeilen
+- PR #94 – `Visitor Search UX: natürliche Orts- und Flughafennamen`
+- PR-#94 Exact Head: `8da869fd2756f3c1514de6d33678c8c7abfad1c4`
+- Technical-Lead PASS review: `5040199350`
+- PR-#94 Exact-Head GitHub Actions Run `33066516282`: SUCCESS
+- PR-#94 Exact-Head Vercel Preview `CBuVobvymHT9m7A4uUKmb2exU4PU`: SUCCESS
+- PR-#94 Merge-Commit auf `main`: `819715b1567417893d894b7b110eff1a2ab6cded`
+- Post-Merge `main` GitHub Actions Run `33067498607`: SUCCESS
+- Post-Merge Vercel `GrD4MaYqtnR9UL619gVnKx9HSUmH`: SUCCESS auf exakt dem Merge-SHA
+- GitHub Production deployment `6121770601`: SUCCESS auf demselben SHA
 
-PR #89 / Gate 0 bleibt Teil der Vorgeschichte; PR #91 ergänzt den notwendigen vierten Zero-Stage-Schritt.
+PR #87, PR #89 und PR #91 bleiben Teil der Vorgeschichte. Aussagen in älteren Checkpoints, PR #87 bleibe Draft oder Production Gate B sei unangewendet, sind historische Evidence.
 
 `main` Branch Protection ist weiterhin live deaktiviert (`protected=false`) und bleibt Governance-Risiko.
 
@@ -104,13 +111,15 @@ Weiterhin nicht angewendet:
 
 Dieser Runtime-Slice schreibt Production nicht erneut.
 
-## 6. TW6-B Gate 0B / Vier-Datei-Vertrag
+## 6. TW6-B Vier-Datei-Vertrag — bereits angewendet, kein Re-Apply
 
-Durch PR #91 liegt jetzt der migrations-/rollout-only Vier-Datei-Vertrag auf `main`:
+Der Vier-Datei-Vertrag ist der **bereits angewendete historische Production-Gate-B-Rollout**. Gate 0B (PR #91) war nur Provenance auf `main`. Der Production-Apply ist laut Technical-Lead Re-Review operativ PASS. **Kein zweiter Apply ist pending.**
+
+Historische Reihenfolge:
 
 `20260826220000 → 20260826230000 → 20260826240000 → 20260827010000`
 
-Alle vier Dateien gehören unter denselben bounded Write-Gate-/Transaktionsvertrag. `db:anwenden` darf sie nicht dateiweise ausspielen. Final Verify verlangt insbesondere:
+Sicherheitsregeln bleiben: Development und Production nicht blind erneut mit diesem Bundle migrieren. `db:anwenden` darf die vier Dateien nicht dateiweise ausspielen. Die Zero-Stage-Regel bleibt: 0 Stages fail-closed; `single_destination` nur bei genau einer Stage. Historische Verify-Kriterien des Apply waren:
 
 - 0 Stages → fail-closed (`22023`), kein `single_destination`;
 - `single_destination` nur bei genau einer Stage;
@@ -123,9 +132,9 @@ Development `yfvbxvijcorffwxbxahl` enthält bereits alle vier Versionen. Dort ni
 
 ## 7. TW6-B / PR #87
 
-PR #87 (`feat/tw6-rest-progressive-stages`) bleibt Draft. Die Synchronisierung gegen `main` nach Gate 0B ist erfolgt. Aktueller Korrekturscope: Workspace darf den Persistenzdefault `balanced` nicht als Nutzerwahl zeigen.
+PR #87 (`feat/tw6-rest-progressive-stages`) ist gemergt und **schließt `TW6-REST-01`**. Reviewed Head `7ef201fb`. Merge-Commit `80bbde69`. Checkpoint: `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`. Ältere „TW6-REST-01 bleibt offen“-Zeilen sind historische Evidence.
 
-Kein alter PASS darf als aktuelle Merge-Freigabe verwendet werden.
+Der Workspace zeigt den Persistenzdefault `balanced` nicht als Nutzerwahl. Kein alter PASS darf als aktuelle Merge- oder Production-Freigabe verwendet werden.
 
 ## 8. Trip Workspace
 
@@ -139,11 +148,10 @@ Integriert:
 - TW6-A Create-Entry ✅
 - TW6-B Gate 0 / Provenance ✅
 - TW6-B Gate 0B / Zero-Stage Rollout Provenance ✅
+- TW6-B Runtime / progressive Ziele / Day→Stage Mode Contract via PR #87 ✅ (`TW6-REST-01` geschlossen)
+- Visitor Search UX via PR #94 ✅
 
-Offen:
-
-- TW6-B Runtime / progressive Ziele / Day→Stage Mode Contract via PR #87
-- Production Gate B separat
+Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS und kein offener Apply-Auftrag dieses Continuity-Blocks.
 
 TW-7 bleibt hinter Account-/Hub-Grenzen. TW-8 bleibt hinter Provider S5 und realer Commercial Provenance.
 
@@ -200,7 +208,9 @@ Supabase-Inventur zeigt weiterhin zwei Top-Level-Projekte: das aktive Production
 
 Operativ relevant:
 
-- Visitor Search UX – eigener Draft gegen aktuelles `main`; Task `docs/TRIP_WORKSPACE_VISITOR_SEARCH_UX_TASK.md`
+- PR #96 – Post-PR-#94 Continuity **integriert/geschlossen** mit diesem Dokumentensatz. Historisch Draft auf `cursor/pr94-continuity-b13d`; kein ausstehendes Re-Review. Merge-SHA live prüfen.
+- PR #95 – gemergt; New-Chat-Checkpoint `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
+- PR #94 – gemergt; Visitor Search UX integriert
 - PR #88 – Project Sanitation Audit; non-destructive Evidence, kein Cleanup automatisch
 - PR #87 – gemergt; Checkpoint `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`
 
@@ -210,13 +220,13 @@ PR #89 und PR #91 sind gemergt und keine aktiven Drafts mehr.
 
 ## 15. Exakter nächster Technical-Lead-Schritt
 
-**Unabhängiger Finalreview des Visitor-Search-UX-Drafts nach Exact-Head-Gates.**
+**Kein ausstehendes Re-Review von PR #96.** Die Post-PR-#94-Continuity ist integriert/geschlossen.
 
-Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. Die frühere Anweisung, zuerst um Gate-B-Freigabe zu bitten, ist historische Evidence.
+Visitor Search UX ist integriert. Production Gate B ist operativ PASS, kein Re-Apply. `TW6-REST-01` ist geschlossen.
 
-Bis dahin:
+Der nächste Produktslice bleibt **unzugewiesen**, bis eine neue Technical-Lead- oder Product-Owner-Entscheidung ihn vergibt.
 
-**Kein Ready. Kein Merge ohne neuen PASS. Kein AAL2. Kein Direction A. Kein TW-7/8/9-Folgeslice. Kein weiterer Production-Write in diesem Slice.**
+**Kein automatischer Folgeslice. Kein AAL2. Kein Direction A. Kein TW-7/8/9. Kein weiterer Production-Write. Kein automatischer Visitor-Search- oder Homepage-Auftrag.**
 
 ## 16. Continuity
 

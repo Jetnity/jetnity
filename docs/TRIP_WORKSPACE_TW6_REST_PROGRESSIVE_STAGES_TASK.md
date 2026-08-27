@@ -1,5 +1,7 @@
 # Jetnity – TW6-B Runtime – Progressive Ziele / bestehende Trip-Stages
 
+**Current status (27. August 2026):** `TW6-REST-01` is **closed / integrated** via merged PR #87 (`80bbde69`). This file remains the historical slice spec. Do not reopen the same identifier.
+
 Stand: 26. August 2026  
 Agent: **`Trip workspace audit architecture`**  
 Branch: `feat/tw6-rest-progressive-stages`  

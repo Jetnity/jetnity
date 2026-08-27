@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
-Stand: 26. August 2026  
-Status: **Foundation C/D/E, Safety, Seasonal, AP-1–AP-3, Admin A–C, Provider S1–S3 + S5-A, TW-1/2/4/3/5, TW6-A, D0-1/D0-2, P1-D0-LIVE-01, QS-1/QS-2, P1-QS2-02, P1-TA-02 und Admin-AAL2-Application-Guard liegen auf `main @ 38ec8be7`. TW6-REST-01, S5-B, TW-7/TW-8, AP-4+, Admin D–K, D1/G1 und Growth-Folgeslices sind nicht gestartet. Aktueller Handoff: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.**
+Stand: 27. August 2026  
+Status: **Foundation C/D/E, Safety, Seasonal, AP-1–AP-3, Admin A–C, Provider S1–S3 + S5-A, TW-1/2/4/3/5, TW6-A, TW6-B Runtime (PR #87), Visitor Search UX (PR #94), Post-PR-#94-Continuity (PR #96), D0-1/D0-2, P1-D0-LIVE-01, QS-1/QS-2, P1-QS2-02, P1-TA-02 und Admin-AAL2-Application-Guard sind integriert. S5-B, TW-7/TW-8, AP-4+, Admin D–K, D1/G1 und Growth-Folgeslices sind nicht gestartet. Der nächste Produktslice ist nicht zugewiesen. Aktuelle Checkpoints: `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md` und `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`.**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -352,7 +352,7 @@ S1 Shared Operational Contract ist auf `main` (PR #47). S2 FlugNachweis ist auf 
 
 ## 8. Großer End-to-End Trip-Workspace-/Übersicht-Umbau
 
-Status: **Audit/IA docs-only als PR #55 gemergt. TW-1, TW-2, TW-4, TW-3, TW-5, TW6-A und TW6-B Runtime (PR #87) auf `main`. Visitor Search UX ist der nächste offene Draft-Slice. Kein gesamtes TW-6-Closure. Kein TW-7/TW-8.**
+Status: **Audit/IA docs-only als PR #55 gemergt. TW-1, TW-2, TW-4, TW-3, TW-5, TW6-A, TW6-B Runtime (PR #87) und Visitor Search UX (PR #94) auf `main`. Kein offener Visitor-Search-Implementation-Draft. Kein gesamtes TW-6-Closure. Kein TW-7/TW-8.**
 
 Der Workspace ist die wichtigste Produktoberfläche und wird **nicht nur umgebaut**, sondern vollständig funktional generalinspiziert. PR #55 liefert ausschließlich die vorbereitete Audit-/Zielarchitektur-Evidence.
 
@@ -458,10 +458,13 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 12. ✅ TW-5 Item- und Gap-Details auf `main` (PR #66)
 12a. ✅ P1-QS2-02 Guest→Account Stay/Activity-Handelsfeld-Strip – auf `main` (`86567f17`, ADR-0166)
 12b. ✅ P1-TA-02 Official Evaluation Option-Scope – auf `main` (`2468160e`, ADR-0167). P2-TA-06 bleibt offen.
-12c. ✅ TW6-A Create-Entry Alignment – auf `main` (`c4ea47aa`). **TW6-REST-01 bleibt offen.**
-12c1. ✅ TW6-B Gate 0 migrations-only – drei geprüfte Dateien plus transaktionales Playbook auf `main` (PR #89). **Kein Production-Apply.**
-12c2. ✅ TW6-B Gate 0B Zero-Stage Production Rollout Provenance – `20260827010000` byte-identisch plus Vier-Datei-Playbook auf `main` (PR #91, Continuity PR #92). **Kein Production-Apply. Kein Runtime-Merge von PR #87. Kein TW-7/8/9.**
-12c3. ⏳ TW6-B Runtime Draft PR #87 – progressive weitere Ziele + Day→Stage Mode Contract, nach Gate 0B gegen `main` synchronisiert; Workspace darf Persistenzdefault `balanced` nicht als Nutzerwahl zeigen. **Kein Ready. Kein Merge. Kein TW-7/8/9.**
+12c. ✅ TW6-A Create-Entry Alignment – auf `main` (`c4ea47aa`). **`TW6-REST-01` ist durch 12c3 / PR #87 geschlossen**, nicht mehr offen.
+12c1. ✅ TW6-B Gate 0 migrations-only – drei geprüfte Dateien plus transaktionales Playbook auf `main` (PR #89). Die damalige Grenze „kein Production-Apply“ gilt nur für diesen Provenance-Schritt; der Production-Apply ist später erfolgt und operativ PASS.
+12c2. ✅ TW6-B Gate 0B Zero-Stage Production Rollout Provenance – `20260827010000` byte-identisch plus Vier-Datei-Playbook auf `main` (PR #91, Continuity PR #92). Die damalige Grenze „kein Production-Apply / kein Runtime-Merge von PR #87“ ist historische Evidence dieses Schritts; später superseden 12c3 und der operative Gate-B-PASS diese Constraint.
+12c3. ✅ TW6-REST-01 / TW6-B Runtime PR #87 – progressive weitere Ziele / zusätzliche `trip_stages` im Create + Day→Stage Mode Contract auf `main` (`80bbde69`). Task-Ziel aus `docs/TRIP_WORKSPACE_TW6_REST_PROGRESSIVE_STAGES_TASK.md` ist geschlossen. Workspace zeigt Persistenzdefault `balanced` nicht als Nutzerwahl. **Kein TW-6-Gesamtclosure. Kein TW-7/8/9.** Residual nach diesem Ticket: nur spätere TW-7/8/9- und Audit-Blöcke, nicht ein zweites `TW6-REST-01`.
+12c4. ✅ Visitor Search UX PR #94 – natürliche Orts-/Flughafennamen, kanonische Place-ID / listenbestätigtes IATA, P1/P2 geschlossen; auf `main` (`819715b1`, reviewed head `8da869fd`). **Kein neuer Search-Provider. Kein Schema-/Production-Write. Kein TW-7/8/9.**
+12c5. ✅ PR #94 New-Chat-Checkpoint PR #95 – `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md` auf `main` (`943d14c2`).
+12c6. ✅ Post-PR-#94 Continuity PR #96 – kanonische Handoff-Dateien, Gate-B ohne Re-Apply, `TW6-REST-01` geschlossen, bindende New-Chat-Betriebsregeln. Historisch Draft auf `cursor/pr94-continuity-b13d`; nach Landung integriert/geschlossen. Kein ausstehendes Re-Review. Merge-SHA live prüfen.
 12d. ✅ Provider S5-A Commercial Provenance – auf `main` (`3b317bc6`, ADR-0168). S5-B nicht gestartet.
 12e. ✅ Admin-AAL2 Application-Guard – auf `main` (`d3faa2a0`, ADR-0169). Production-DB nicht angewendet.
 12f. ✅ D0 live metadata boundary / P1-D0-LIVE-01 – auf `main` (PR #86, `38ec8be7`, ADR-0170). HTML-robots fail-closed; Canonical ist `https://jetnity.com`, niemals `*.vercel.app`. **Kein D1/G1. Kein Domain-Cutover. Kein Public Indexing.**
@@ -471,4 +474,4 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 16. provider-backed End-to-End-/Truth-Audit
 17. finale Startseiten-Positionierung
 
-Der nächste Agent darf D/E/Safety **nicht neu bauen**, darf **nicht direkt einen echten Provider integrieren** und darf **TW6-REST-01 / TW-7 / TW-8 / S5-B nicht ohne ausdrücklichen neuen Auftrag starten**. Continuity-Wahrheit: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
+Der nächste Agent darf D/E/Safety **nicht neu bauen**, darf **nicht direkt einen echten Provider integrieren** und darf **TW-7 / TW-8 / S5-B / Visitor-Search-Implementation nicht ohne ausdrücklichen neuen Auftrag starten**. Continuity-Wahrheit: `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`.
