@@ -29,7 +29,21 @@ Vorbereitungs-CI auf Head `9d09000f` (historisch vor diesem Authoring):
 - GitHub Actions Run `33126691658` SUCCESS
 - Vercel Preview Inspector `3ewbdr2mJjeotVf23k769dhakmvj` READY
 
-Diese Werte sind **Start-Evidence**. Der finale Agent-Head muss live neu geprüft werden.
+Diese Werte sind **Start-Evidence**.
+
+## 1.1 Finaler Author-Head vor diesem Stamp
+
+| Feld | Wert |
+| --- | --- |
+| Author-Head vor Stamp | `1c996e9d2b2670e65be6f03dcce9e6ebdf4bfe33` |
+| Merge-Base / `origin/main` | `43aef6431aeea619ea896d456e16579b1034b9dd` |
+| Ahead / Behind vor Stamp | **5 ahead / 0 behind** |
+| GitHub Actions | Run `33127372745` **SUCCESS** auf exakt `1c996e9d` |
+| Vercel Preview | Inspector `4VCkALVnZhCjwWgu4FZCof3qMWXN` / Deployment `6132966959` **SUCCESS** auf exakt `1c996e9d` |
+| Review-Threads | 0 |
+| Reviews | keine |
+
+Ein Continuity-Stamp nach diesem Abschnitt erzeugt einen neueren Head und muss live neu geprüft werden.
 
 ## 2. Was dieser Slice geliefert hat
 

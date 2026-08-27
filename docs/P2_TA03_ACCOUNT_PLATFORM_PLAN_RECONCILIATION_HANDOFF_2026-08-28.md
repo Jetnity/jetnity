@@ -47,7 +47,10 @@ Kein neuer Vertrag. ADR-0179 entscheidet nur die Kanonizität des Plans. AP-7-Fr
 - AP-7 bleibt Shared-Contract-Blocker für accountweite Traveller.
 - Historischer PR #39 bleibt offen als Historical Evidence.
 - `main` Branch Protection zuletzt `protected=false`.
-- Finaler Exact-Head dieses Authorings muss live gegen Actions/Vercel geprüft werden.
+- Author-Head vor Continuity-Stamp: `1c996e9d2b2670e65be6f03dcce9e6ebdf4bfe33`
+- Actions `33127372745` SUCCESS; Vercel `4VCkALVnZhCjwWgu4FZCof3qMWXN` SUCCESS auf genau diesem SHA
+- Ein Stamp danach braucht erneute Exact-Head-Gates
+- Review-Threads: 0
 
 ## Nächster Schritt
 
