@@ -3970,6 +3970,8 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 **Konsequenzen:** Kurz nach dem ersten Client-Render erscheinen die Gruppen. Bereits in der DB gesetztes `archived` bleibt in der Datumsgruppe sichtbar, weil AP-3 nicht filtert und nicht schreibt.
 
+**Nachtrag, 27. August 2026 – AP-4 filtert archived aus den Datumsgruppen.** Die date-only-Funktion `reisenGruppenAus` bleibt unverändert und filtert selbst nicht. Der Aufrufer (`kontoReisenSichten` / `KontoReisenGruppen`) trennt archivierte Reisen vor der Gruppierung ab. Restore-Provenienz und der einzige Status-Schreibweg stehen in ADR-0177. Dieser Nachtrag ändert ADR-0160 nicht nachträglich in einen Write-Vertrag.
+
 ---
 
 ## ADR-0161 – Mobility- und Rental-Nachweis folgen Hotel/S2, nicht dem Flugschema
@@ -4366,6 +4368,30 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 **Konsequenzen:** Runtime nur über den eigenen Auftrag Issue #103 / PR #106. Production-Write, AAL2-Re-Apply, AP-4, TW-8 und Homepage bleiben unberührt. Live-`main` immer live prüfen; keine bewegliche Exact-Head-SHA als kanonische Live-Wahrheit.
 
 **Nachtrag, 27. August 2026 – Runtime Issue #103 / PR #106.** Technical Lead / Product Owner hat den read-only Slice TW7-A als eigenen Runtime-Auftrag freigegeben. PR #106 ist das Integrationsvehikel. Nach Landung: TW7-A Runtime integriert; Issue #103 nach Post-Merge-Verifikation schliessbar. Historische Start-Baseline: `963186f4ec75501efd253a287131f464a5fd0fdb` (PR #102). Alter Branch `cursor/tw7-hub-gap-slice-b13d` ist nicht die Basis. Ältere Sätze „Draft / nicht auf main / live main bleibt 963186f4“ sind Pre-Merge-Evidence.
+
+---
+
+## ADR-0177 – AP-4 Restore-Provenienz bleibt namespaced Metadata, kein Default-Status
+
+**Datum:** 27. August 2026  
+**Status:** Technical-Lead Slice Decision; Runtime auf Draft-Branch `cursor/ap4-account-archive-lifecycle-67d4`. Nicht auf `main`, bis der unabhängige Exact-Head-Review entscheidet.
+
+**Entscheidung:**
+
+- Archivieren/Wiederherstellen nur für Konto-Reisen über einen Server-Action-Schreibweg.
+- Beim Archivieren wird der gelesene Status `draft`/`planned`/`booked` unter `trips.metadata.account_archive.previous_status` erhalten.
+- Beim Wiederherstellen darf nur dieser gültig belegte Status gesetzt werden.
+- Historische `archived`-Zeilen ohne gültige Provenienz: fail-closed, kein Default.
+- Optimistic Guard gegen den gelesenen Ausgangsstatus; concurrent Change wird nicht überschrieben.
+- Keine Migration, keine RLS-/Auth-/AAL-Änderung, kein Service Role, kein Guest-Archiv.
+
+**Kontext:** AP-3 gruppiert date-only und filtert `archived` nicht. `/account` filtert `archived` bereits lesend aus Fortsetzen. Es gab keinen Runtime-Write auf `status = archived`. Eine naive Wiederherstellung auf pauschal `planned` würde den früheren Status erfinden.
+
+**Alternativen:** neue DB-Spalte; Default auf `planned`; Guest-Archiv in Local Storage; Service-Role-Write. Abgelehnt, weil der Slice keine Migration/RLS braucht und `trips.metadata` ausdrücklich Begleitinformation ist.
+
+**Begründung:** `trips.status` hat bereits vier Werte. Ohne Provenienz ist Restore nicht verlustfrei. Metadata bleibt ungefiltert; der Filter ist `status`.
+
+**Konsequenzen:** Aktiv/Kommend/Vergangen/Ohne Datum enthalten keine archivierten Reisen. `/reisen` hat einen eigenen Archiv-Abschnitt. TW7-A-Kartenidentität bleibt unverändert. Autor-Agent merged nicht.
 
 ---
 

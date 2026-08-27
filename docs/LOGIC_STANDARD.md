@@ -159,6 +159,7 @@ Beispiele:
 - keine Verfügbarkeit → nicht `available`
 - kein verifizierter Preis → keinen Preis anzeigen
 - fehlende Graphdaten → nicht automatisch `open`, wenn die Lücke selbst nicht sicher bestimmbar ist
+- historische `archived`-Reise ohne gültige Restore-Provenienz → kein erfundenes `draft`/`planned`/`booked`
 
 Bei Security und kommerziellen Fakten gilt dies besonders streng.
 

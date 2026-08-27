@@ -1,15 +1,42 @@
-# Jetnity – AP-4 Account Archive Lifecycle – Assignment Status
+# Jetnity – AP-4 Account Archive Lifecycle – Status
 
 Stand: 27. August 2026  
-Status: **TASK VERSIONIERT / AUTOR-AGENT NOCH NICHT GESTARTET**
+Status: **RUNTIME IMPLEMENTIERT / DRAFT / KEIN READY / KEIN MERGE DURCH AUTOR-AGENT**  
+Workstream: Account / Traveller  
+Cursor-Agent: **`Account plattform audit vorbereitung 3`**  
+Branch: `cursor/ap4-account-archive-lifecycle-67d4`
 
-- Technical-Lead-Task: `docs/ACCOUNT_AP4_ARCHIVE_LIFECYCLE_TASK_2026-08-27.md`
-- vorgesehener neuer Cursor-Agent: **`Account plattform audit vorbereitung 3`**
-- Rotation: Generation 2 (`Account plattform audit vorbereitung 2`) ist mit PR #107 abgeschlossen; AP-4 ist ein neuer logischer Slice und erhält Generation 3.
-- Startbaseline vor Task-Versionierung: `b7eacedae23feb006f85f52445f483c8016dde6b`
-- Task-Versionierungscommit: `806df684a1d152a31f4f7f9d405a3159836681f2`
-- Runtime: noch nicht gestartet
-- Migration/RLS/Auth/AAL: keine Änderung
-- Kosten: keine neuen laufenden Kosten
+> Live-Evidence gewinnt. Start-SHAs in älteren Assignment-Zeilen sind historische Evidence.
 
-Vor Start muss der Agent den dann aktuellen `origin/main` live prüfen. Diese SHAs sind historische Assignment-Evidence und keine bewegliche Live-Wahrheit.
+## 1. Live-Start
+
+| Feld | Wert |
+| --- | --- |
+| Verifizierter `origin/main` vor erstem Edit | `4f630ff41b3529dadc0bfd8984d3afc02b1c4efb` – `docs: record AP-4 start gate` |
+| Branch-Basis | genau dieser Live-`main`, nicht PR #39/#107 |
+| Offene parallele Runtime-PRs | keine AP-4-Kollision; offene Drafts #88/#52/#50/#40/#39/#28 historisch/fremd |
+
+## 2. Runtime
+
+- Archivieren/Wiederherstellen nur für Konto-Reisen über `reiseArchivLebenszyklus`.
+- Aktiv/Kommend/Vergangen/Ohne Datum enthalten keine archivierten Reisen.
+- `/reisen` hat einen eigenen Abschnitt **Archiv**.
+- Restore nutzt nur gültiges `metadata.account_archive.previous_status`.
+- Historische `archived`-Reise ohne Provenienz: fail-closed.
+- Optimistic Guard `.eq('status', expectedStatus)`.
+- Kein Service Role, kein `user_id` aus der Nutzlast.
+- Keine Migration, keine RLS-/Auth-/AAL-Änderung.
+- Gast-Reisen ohne Archiv.
+- TW7-A `TripSummary.stages` / `reiseOrte()` / `stageCount` / `itemCount` unverändert.
+
+## 3. Gates
+
+Lokale und Exact-Head-Gates werden nach dem Draft-PR auf dem jeweiligen Head dokumentiert. Kein Ready. Kein Merge.
+
+## 4. Shared Contracts
+
+Unverändert: Auth, RLS, Ownership, Guest→Account, Traveller, AAL2, Provider, Admin, Growth, TW-8.
+
+## 5. Nächster Schritt
+
+Unabhängiger Exact-Head-Finalreview durch ChatGPT / Technical Lead.
