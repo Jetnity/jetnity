@@ -1,15 +1,25 @@
 # Jetnity – Active Work Status
 
 Stand: 27. August 2026  
-Status: **Production Gate A ist PASS. PR #91 / TW6-B Gate 0B ist auf `main`. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87, PR #94, PR #95 und die Post-PR-#94-Continuity (PR #96) sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. Kein offener Visitor-Search- oder Continuity-Draft. Der nächste Produktslice ist nicht zugewiesen. Alte Aussagen „PR #94/#96 bleibt Draft“ sind historische Evidence.**
+Status: **Production Gate A ist PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96 und PR #97 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. Offener P1-Security-Draft: PR #98 (AAL2, kein Production-Apply). Offener Produktdocs-Draft: TW-7-Hub-Gap auf `cursor/tw7-hub-gap-slice-b13d` — kein Runtime, kein Ready, kein Merge. Alte Aussagen „nächster Produktslice unzugewiesen“ / „PR #94/#96 bleibt Draft“ sind historische Evidence.**
 
 > **Do not blindly trust this file — live verify first.**
 
 ## 0. Live-Integrationsbaseline
 
-Aktueller verifizierter `origin/main` nach PR #95:
+Aktueller verifizierter `origin/main` nach PR #97 und den direkten Docs-Commits auf `main`:
 
-- `943d14c27a01b4c783340c658c911434fcc62b27` — `Merge PR #95: PR94 post-merge new-chat checkpoint`
+- `84f54194cf7461c5f785f4da490dba060c93e999` — `chore: remove accidental empty keep file`
+- GitHub Actions auf exakt diesem SHA: Run `33084270420` SUCCESS
+- GitHub Production-Deployment auf exakt diesem SHA: `6125049314` success
+
+PR-#97-Docs-Merge bleibt:
+
+- `4362502bf23c1c54f721af48c0f7bdd6fcbdee3b` — `Merge PR #97: TL live reconstruction + AAL2 production gate`
+
+PR-#96-Continuity-Merge bleibt:
+
+- `45be14b1077589953d5dbf21f569311c9a4b59f7` — `Merge PR #96: post-PR94 continuity`
 
 PR-#94-Produktmerge bleibt:
 
@@ -109,7 +119,7 @@ PR #94 (`cursor/visitor-search-ux-b13d`) ist gemergt. Reviewed Head `8da869fd`, 
 
 Ältere Exact-Head-Evidence (`72ca1700`, `1008632e`, Review `5040068359` CHANGES REQUIRED) bleibt historisch.
 
-TW-7 bleibt hinter Account-/Hub-Grenzen. TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance; S5-A allein ist kein TW-8-Start.
+TW-7-Start-Gate ist gegen `84f54194` erneut geprüft und erfüllt. Der Weg ist bereits einer. Der verbleibende Gap ist die Mehrziel-Kartenidentität plus Gast-`itemCount`, nicht AP-3. Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. **Keine TW-7-Runtime in diesem Stand.** TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance; S5-A allein ist kein TW-8-Start.
 
 ## 4. Traveller / Account
 
@@ -159,9 +169,14 @@ Live Supabase-Inventur zeigt:
 
 ## 7. Aktive / nächste Cursor-Workstreams
 
-Kein offener Continuity- oder Implementation-Draft. PR #96 (Post-PR-#94 Continuity) ist mit diesem Dokumentensatz integriert/geschlossen. Historisch Draft auf `cursor/pr94-continuity-b13d`; das ist keine operative nächste Arbeit.
+Zwei operative Drafts, getrennt:
 
-Kein automatischer Produkt-Folgeslice. Der nächste Produktslice bleibt unzugewiesen.
+- **PR #98** – P1 Admin AAL2 Production Data-Plane Alignment. Security-Track. Kein Production-Apply in diesem Auftrag. Kein TW-7-Runtime.
+- **TW-7-Hub-Gap-Docs** auf `cursor/tw7-hub-gap-slice-b13d` – dokumentiert den Rest-Gap und TW7-A. Kein Runtime-Code. Kein Ready. Kein Merge. Kein automatischer Runtime-Start.
+
+PR #96 bleibt integriert/geschlossen. Historisch Draft auf `cursor/pr94-continuity-b13d`; das ist keine operative nächste Arbeit.
+
+Kein automatischer Produkt-Folgeslice über diese Docs hinaus.
 
 STOPP weiterhin für automatische Folgeslices:
 
@@ -181,7 +196,10 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#96** Post-PR-#94 Continuity | **INTEGRIERT / GESCHLOSSEN** mit diesem Dokumentensatz. Historisch Draft; kein ausstehendes Re-Review. Merge-SHA live prüfen. |
+| **TW-7-Hub-Gap-Docs** `cursor/tw7-hub-gap-slice-b13d` | **DOCS DRAFT.** Rest-Gap + TW7-A-Slice. Kein Runtime. PR-Nummer nach Anlage nachtragen. Kollidiert absichtlich nicht mit #98. |
+| **#98** Admin AAL2 Production Alignment | **OFFENER P1-SECURITY-DRAFT.** Forward-only Alignment-Vorbereitung. Kein Production-Apply. Kein TW-7. |
+| **#97** TL live reconstruction + AAL2 production gate | **GEMERGT.** Merge `4362502b`. |
+| **#96** Post-PR-#94 Continuity | **INTEGRIERT / GESCHLOSSEN.** Merge `45be14b1`. |
 | **#95** PR94 new-chat checkpoint | **GEMERGT.** Nur `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`. Merge `943d14c2`. |
 | **#94** Visitor Search UX | **GEMERGT.** Reviewed Head `8da869fd`. Merge `819715b1`. |
 | **#87** TW6-B Runtime + Mode Contract | **GEMERGT.** Checkpoint `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`. |
@@ -213,8 +231,10 @@ Weiterhin nicht angewendet:
 
 ## 10. Nächster Schritt
 
-**Kein ausstehendes Re-Review von PR #96.** Continuity nach PR #94 ist integriert/geschlossen. Visitor Search UX ist integriert. Gate B ist operativ PASS, kein Re-Apply. `TW6-REST-01` ist geschlossen.
+TW-7-Hub-Gap ist als Docs-Draft rekonstruiert. Das ist kein Runtime-Start und kein Ready/Merge.
 
-Kein automatischer Produkt-Folgeslice. Kein weiterer Production-Write. Kein AAL2. Keine Direction A. Kein TW-7/8/9.
+PR #98 bleibt der getrennte P1-AAL2-Draft. Dieses Dokument überschreibt ihn nicht.
 
-PR #95 zeichnet einen Product-Owner-Wunsch auf: Homepage-Hero-Design bleibt, die Funktion im bestehenden Kästchen soll später natürliche Mehrziel-/Route-Absicht verstehen. Das ist **kein** Startauftrag. Der nächste Produktauftrag bleibt unzugewiesen, bis eine neue Technical-Lead- oder Product-Owner-Entscheidung ihn vergibt.
+Kein weiterer Production-Write. Keine Direction A. Kein TW-8/9. Kein AP-4. Kein automatischer TW7-A-Start.
+
+PR #95 zeichnet einen Product-Owner-Wunsch auf: Homepage-Hero-Design bleibt, die Funktion im bestehenden Kästchen soll später natürliche Mehrziel-/Route-Absicht verstehen. Das bleibt **kein** Startauftrag und ist nicht TW7-A.
