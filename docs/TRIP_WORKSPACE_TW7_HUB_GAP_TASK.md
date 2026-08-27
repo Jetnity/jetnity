@@ -4,6 +4,7 @@ Stand: 27. August 2026
 Typ: **DOCS-ONLY / Gap-Rekonstruktion / Slice-Auftrag**  
 Cursor-Agent: `Trip workspace audit architecture`  
 Branch: `cursor/tw7-hub-gap-slice-b13d`  
+Draft-PR: https://github.com/Jetnity/jetnity/pull/100  
 Status: **DOCS DRAFT. Kein Runtime-Code. Kein Ready. Kein Merge. Kein automatischer Runtime-Start.**
 
 Live-Baseline dieses Dokuments: `origin/main` `beaef64a151adceb8f5bc759f58ae9ad13cecc51` (Merge PR #98). Hub-/AP-3-Code unverändert gegenüber der ersten Prüfung auf `84f54194`.

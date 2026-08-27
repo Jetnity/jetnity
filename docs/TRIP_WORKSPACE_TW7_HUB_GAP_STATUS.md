@@ -3,6 +3,7 @@
 Stand: 27. August 2026  
 Agent: `Trip workspace audit architecture`  
 Branch: `cursor/tw7-hub-gap-slice-b13d`  
+Draft-PR: https://github.com/Jetnity/jetnity/pull/100  
 Auftrag: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`  
 Status: **DOCS-ONLY REKONSTRUKTION. Kein Runtime. Kein Ready. Kein Merge.**
 

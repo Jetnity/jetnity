@@ -171,7 +171,7 @@ Live Supabase-Inventur zeigt:
 
 Ein operativer Produktdocs-Draft:
 
-- **TW-7-Hub-Gap-Docs** auf `cursor/tw7-hub-gap-slice-b13d` – dokumentiert den Rest-Gap und TW7-A. Kein Runtime-Code. Kein Ready. Kein Merge. Kein automatischer Runtime-Start.
+- **PR #100** – TW-7-Hub-Gap-Docs auf `cursor/tw7-hub-gap-slice-b13d` – dokumentiert den Rest-Gap und TW7-A. Kein Runtime-Code. Kein Ready. Kein Merge. Kein automatischer Runtime-Start.
 
 PR #98 ist integriert. Production-AAL2-Apply bleibt ein getrenntes Product-Owner-Gate, kein Folgeslice dieses Docs-PR.
 
@@ -197,7 +197,7 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **TW-7-Hub-Gap-Docs** `cursor/tw7-hub-gap-slice-b13d` | **DOCS DRAFT.** Rest-Gap + TW7-A-Slice. Kein Runtime. PR-Nummer nach Anlage nachtragen. |
+| **#100** TW-7-Hub-Gap-Docs `cursor/tw7-hub-gap-slice-b13d` | **DOCS DRAFT.** Rest-Gap + TW7-A-Slice. Kein Runtime. Kein Ready. Kein Merge. |
 | **#98** Admin AAL2 Production Alignment | **GEMERGT.** Merge `beaef64a`. Alignment-Datei auf `main`. Production-Apply bleibt eigenes Product-Owner-Gate. |
 | **#97** TL live reconstruction + AAL2 production gate | **GEMERGT.** Merge `4362502b`. |
 | **#96** Post-PR-#94 Continuity | **INTEGRIERT / GESCHLOSSEN.** Merge `45be14b1`. |

@@ -213,7 +213,7 @@ Supabase-Inventur zeigt weiterhin zwei Top-Level-Projekte: das aktive Production
 
 Operativ relevant:
 
-- TW-7-Hub-Gap-Docs auf `cursor/tw7-hub-gap-slice-b13d` – **Docs-Draft**. Spec `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Kein Runtime. Kein Ready. Kein Merge.
+- PR #100 – TW-7-Hub-Gap-Docs auf `cursor/tw7-hub-gap-slice-b13d` – **Docs-Draft**. Spec `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Kein Runtime. Kein Ready. Kein Merge.
 - PR #98 – AAL2 Alignment **integriert** (`beaef64a`). Production-Apply bleibt eigenes Product-Owner-Gate.
 - PR #97 – gemergt; TL-Rekonstruktion
 - PR #96 – Post-PR-#94 Continuity **integriert/geschlossen**. Merge `45be14b1`.
