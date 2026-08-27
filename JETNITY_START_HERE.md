@@ -1,13 +1,17 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
-Stand: 26. August 2026  
-Status: **kanonischer erster Einstieg. Operative Wahrheit immer aus Repository + Live-Systemen rekonstruieren. Technical Lead darf normale PRs nach strenger unabhängiger Prüfung selbst Ready setzen / mergen; blindes Vertrauen ist verboten.**
+Stand: 27. August 2026  
+Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. PR #89 ist integriert; Production Gate A ist PASS; TW6-B Gate B bleibt nicht freigegeben; PR #87 bleibt Draft und muss neu gegen den aktuellen `main` re-konstruiert und re-gegatet werden.**
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
-Aktueller Continuity-Checkpoint:
+Aktuelle operative Evidence:
 
-`docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`
+- `JETNITY_HANDOFF.md`
+- `docs/ACTIVE_WORK_STATUS.md`
+- `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`
+- `docs/TRIP_WORKSPACE_TW6_GATE_B_PREP_STATUS.md`
+- historischer Continuity-Checkpoint: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`
 
 ## 1. Pflichtlektüre vor jeder Aktion
 
@@ -27,67 +31,72 @@ Jeder neue Chat, Technical Lead oder Coding Agent liest mindestens in dieser Rei
 12. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
 13. `JETNITY_HANDOFF.md`
 14. `docs/ACTIVE_WORK_STATUS.md`
-15. `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`
-16. den aktuell aktiven Slice-Task/Status/Handoff sowie relevante ADRs/Checkpoints.
+15. `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`
+16. `docs/TRIP_WORKSPACE_TW6_GATE_B_PREP_STATUS.md`
+17. den aktuell relevanten Slice-Task/Status/Handoff sowie ADRs/Checkpoints.
 
-Historische Checkpoints (`docs/CHATGPT_D0_1_MERGE_CHECKPOINT_2026-08-25.md`, `docs/CHATGPT_TW5_MERGE_CHECKPOINT_2026-08-25.md`, `docs/CHATGPT_MERGE_AUTONOMY_CHECKPOINT_2026-08-26.md`) und Merge-Governance-Dokumente vom 22./25. August bleiben Evidence ihres damaligen Stands. Für normale Ready-/Merge-Entscheidungen werden widersprechende Passagen durch `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md` superseded.
+Historische Checkpoints und ältere Governance-/PR-Dokumente bleiben Evidence ihres damaligen Stands. Widersprechende alte Aussagen werden nicht gelöscht, aber durch spätere kanonische Entscheidungen und Live-Evidence superseded.
 
 ## 2. Vor jeder technischen Entscheidung live verifizieren
 
 Zwingend prüfen:
 
 - aktuellen `main`-SHA und Merge-Stand;
-- offene PRs/Draft-PRs und Branches;
+- offene PRs/Drafts und Branches;
 - Ahead/Behind/Merge-Base;
 - tatsächlichen Diff und alle betroffenen Dateien;
 - GitHub Actions / Exact-Head-CI;
 - Vercel Exact-Head Preview bzw. Production;
-- relevante Supabase-/Migrationsstände, wenn der Slice DB-/Production-Bezug haben könnte;
-- offene Review-Threads, Blocker und P0/P1/P2/P3-Findings;
-- parallele Workstreams und mögliche Datei-/Shared-Contract-Kollisionen;
+- relevante Supabase-/Migrationsstände, wenn DB-/Production-Bezug besteht;
+- offene Review-Threads, Blocker und P0/P1/P2/P3;
+- parallele Workstreams und Datei-/Shared-Contract-Kollisionen;
 - ob historische PR-Bodies/Handoffs nur Evidence ihres Zeitpunkts sind.
 
-Bei Widerspruch gilt: **Live-Evidence + aktuellste ausdrückliche Product-Owner-Entscheidung + aktuellste kanonische Governance gewinnen. Abweichung dokumentieren und Continuity reparieren.**
+Bei Widerspruch gilt:
 
-## 3. Ready-/Merge-Governance – aktuell
+> **Live-Evidence + aktuellste ausdrückliche Product-Owner-Entscheidung + aktuellste kanonische Governance gewinnen.**
 
-Der Product Owner hat am 26. August 2026 ausdrücklich entschieden:
+Abweichung danach im Repository dokumentieren.
 
-> **ChatGPT / Technical Lead darf bei normalen scope-treuen PRs selbst entscheiden, ob Ready/Merge sinnvoll und verantwortbar ist.**
+## 3. Ready-/Merge-Governance
+
+Der Product Owner hat ausdrücklich entschieden:
+
+> **ChatGPT / Technical Lead darf bei normalen scope-treuen PRs selbst Ready/Merge entscheiden.**
 
 Das ist keine Auto-Merge-Freigabe.
 
 Vor Ready/Merge muss der Technical Lead:
 
-- den Auftrag gegen den tatsächlichen Code prüfen;
-- Tests **und die Testannahmen selbst** hinterfragen;
+- Auftrag gegen tatsächlichen Code prüfen;
+- Tests und Testannahmen selbst hinterfragen;
 - Security/Privacy/Truth/Shared Contracts prüfen;
 - Exact-Head-CI und Vercel prüfen;
 - relevante Production-/Supabase-Grenzen prüfen;
-- bei Fehlern zuerst selbst korrigieren oder den zuständigen Cursor-Agenten gezielt korrigieren lassen;
-- nach jeder Korrektur neu gaten und neu reviewen;
-- erst bei echtem unabhängigem PASS mergen.
+- bei Fehlern zuerst korrigieren oder den zuständigen Cursor-Agenten gezielt korrigieren lassen;
+- nach jeder Korrektur neu gaten;
+- erst bei echtem unabhängigen PASS mergen.
 
-**Autonom mergen ist erlaubt. Blind mergen ist verboten.**
+> **Autonom mergen ist erlaubt. Blind mergen ist verboten.**
 
 Feature-/Audit-Autoren dürfen ihr eigenes finales Review nicht als unabhängigen Technical-Lead-PASS ersetzen.
 
-Der Product Owner kann jederzeit einen konkreten Hold setzen oder Änderungen verlangen.
+## 4. Besondere Product-Owner-Gates
 
-## 4. Besondere Product-Owner-Gates bleiben zwingend
-
-Eine ausdrückliche Product-Owner-Entscheidung bleibt vor der betreffenden Aktion erforderlich für insbesondere:
+Ausdrückliche Product-Owner-Freigabe bleibt erforderlich für insbesondere:
 
 - Production-Migrationen oder destruktive / schwer rücknehmbare Production-Datenänderungen;
 - große produktive RLS-/Ownership-/Identity-Vertragsänderungen;
 - fundamentale Auth-/Session-/MFA-/AAL-Änderungen;
 - neue besonders sensitive Pass-/MRZ-/Biometrie-/Dokument-Speicherung;
-- neue sensible externe Datenweitergabe;
+- sensible externe Datenweitergabe;
 - reale Providerverträge, Production-Secrets oder paid calls;
 - reale Payments / Geldbewegung;
 - neue laufende Kosten über USD 100/Monat;
 - fundamentale Produkt-/Business-/Build-Order-Änderungen;
 - Public Launch, Provider-Live, Store-/Production-Großaktivierung.
+
+Die Gate-A-Freigabe vom 27. August 2026 galt ausschließlich für `20260824160000` und anschließend `20260824180000`. Sie ist keine Sammelfreigabe für weitere Production-Schritte.
 
 ## 5. Verbindliche Produkt- und Engineering-Wahrheit
 
@@ -99,8 +108,8 @@ Verbindlich:
 - `unknown`, `stale`, `error`, `unavailable`, `insufficient_context`, `empty` und bestätigte Zustände getrennt halten;
 - keine Fake-Preise, Fake-Verfügbarkeit, Fake-Provider-Health oder erfundene Visa-/Einreise-/Safety-/Live-Truth;
 - LLM/Assistant erklärt und priorisiert Hard Truth, erzeugt sie aber nicht;
-- starke Security, Privacy, Ownership/RLS und Least Privilege;
-- Accessibility und Performance sind Definition-of-Done-Bestandteile;
+- Security, Privacy, Ownership/RLS und Least Privilege sind Kernanforderungen;
+- Accessibility und Performance gehören zur Definition of Done;
 - adversarial Agent-Self-Review plus unabhängiger Technical-Lead-Review;
 - vollständige Exact-Head-Gates;
 - keine stillen Shared-Contract- oder Scope-Erweiterungen.
@@ -109,7 +118,11 @@ Produktleitsatz:
 
 > **Eine Reise, eine Oberfläche. Komplexität intern, Klarheit für den Nutzer.**
 
-Native-Strategie: **one product, one truth, multiple clients.** Keine separate mobile Business-Truth.
+Native-Strategie:
+
+> **one product, one truth, multiple clients.**
+
+Keine separate mobile Business-Truth.
 
 ## 6. Domain-Wahrheit
 
@@ -117,8 +130,11 @@ Native-Strategie: **one product, one truth, multiple clients.** Keine separate m
 - `jetnity.ch` = Schweizer Entry-/Redirect-Domain, keine zweite indexierte Plattform;
 - Public Indexing bleibt explizites Opt-in über exakt `NEXT_PUBLIC_ALLOW_INDEXING=true`;
 - Default bleibt fail-closed / deny-all;
-- HTML-`robots` folgt `darfIndexieren` fail-closed (PR #86 / ADR-0170). Canonical / `metadataBase` / OG / JSON-LD verwenden `https://jetnity.com`. `*.vercel.app` ist niemals kanonische Produktdomain. `/planen` emittiert robots explizit;
-- **kein Domain-Cutover ist aktiviert.** Live am 26. August 2026 nach PR #86: `jetnity.com` und `jetnity.ch` ohne öffentliche DNS-Auflösung; Production-Alias `https://jetnity-app.vercel.app` liefert HTTP 200 mit `noindex, nofollow` und Canonical `https://jetnity.com`.
+- HTML-`robots` folgt `darfIndexieren` fail-closed;
+- Canonical / `metadataBase` / OG / JSON-LD verwenden `https://jetnity.com`;
+- `*.vercel.app` ist niemals kanonische Produktdomain;
+- `/planen` emittiert robots explizit;
+- kein Domain-Cutover, kein Public Indexing, kein automatischer Redirect-Gate.
 
 ## 7. Traveller-Wahrheit
 
@@ -130,7 +146,7 @@ Keine relevante Funktion darf still genau eine Staatsbürgerschaft oder einen De
 
 Keine `first-item` / `documents[0]` / `evaluations[0]`-Semantik als Product Truth.
 
-Foundation E ist vorhanden und wird nicht neu gebaut. **P1-TA-02 ist geschlossen. P2-TA-06 bleibt offen.** `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` fehlt auf `main` (P2-TA-03; nur historisches PR #39) und darf nicht still als Current-Vertrag kopiert werden.
+Foundation E ist vorhanden und wird nicht neu gebaut. P1-TA-02 ist geschlossen. P2-TA-06 bleibt offen.
 
 ## 8. Shared Contracts
 
@@ -150,9 +166,7 @@ Technical-Lead-kontrolliert bleiben insbesondere:
 
 Ein Fachagent dokumentiert einen benötigten neuen oder wesentlich geänderten Shared Contract und stoppt. Keine stille Erweiterung.
 
-## 9. Agentenmodell – aktueller Betriebszustand
-
-Exakte Cursor-Anzeigenamen:
+## 9. Exakte Cursor-Anzeigenamen
 
 1. `Trip workspace audit architecture`
 2. `Account plattform audit vorbereitung`
@@ -160,76 +174,100 @@ Exakte Cursor-Anzeigenamen:
 4. `Admin platform audit`
 5. `Jetnity growth discoverability`
 6. `Jetnity quality security audit`
-7. `Jetnity native app architecture` – für die spätere Native-Phase reserviert.
+7. `Jetnity native app architecture` – spätere Native-Phase.
 
-Nach den Merges #80–#84 und **#86** hat **kein** dieser Workstreams einen offenen Runtime-Auftrag. Alle Feature-/Audit-Agenten sind **STOPP**, bis ChatGPT / Technical Lead einen neuen, versionierten Auftrag gibt.
+Neue Aufträge nennen immer den exakten Anzeigenamen als `Cursor-Agent: <Name>`.
 
-Parallelität ist erlaubt, wenn konfliktarm:
+Aktuell hat kein Fachagent automatisch einen offenen Folgeslice. PR #87 darf nur nach neuer Technical-Lead-Einordnung weiterbearbeitet werden.
 
-- eigener Branch + eigener Draft-PR + eigener Task/Status;
-- Agenten ändern **nicht parallel** die zentrale `docs/ACTIVE_WORK_STATUS.md`;
-- Audit-only und Runtime-Slices klar trennen;
-- keine stillen Shared-Contract-Änderungen;
-- jeder Agent endet mit `STOPP` und startet keinen Folgeslice selbstständig;
-- ChatGPT / Technical Lead prüft jeden Agenten-Change unabhängig vom kanonischen Startpunkt aus.
+## 10. Aktuelle Integrationsbaseline
 
-`Jetnity quality security audit` ist unabhängige QA/Security/Release-Prüfinstanz, kein allgemeiner Feature-Entwickler.
+Verifizierter `main` vor dem aktuellen Continuity-PR:
 
-## 10. Letzte live verifizierte Integrationsbaseline
+`3d0ffa2d97df66a4d6006587047bf27b0df9606c`
 
-Aktueller `main`, live geprüft am 26. August 2026 nach Merge von PR #86:
+Dieser SHA ist **keine dauerhaft behauptete Wahrheit**. Nach jedem Merge oder direkten Commit live neu prüfen.
 
-`38ec8be79a6ce7758be81fd5d564819d638140d6`
+Wichtige aktuelle Integration:
 
-Dieser Commit ist **kein dauerhaft behaupteter aktueller `main`**. Nach jedem weiteren Merge muss `main` erneut live verifiziert werden.
+- PR #89 – TW6-B Gate 0 migrations-only + transactional playbook;
+- Merge-Commit `5fc4d1b873f1fa7aff8e4064163275bf30f9ce98`;
+- PR-#89 Exact Head `986fa8b7592286731e44ab46d36a8f299531d669`;
+- Exact-Head Actions Run `33023062522`: SUCCESS;
+- Exact-Head Vercel: SUCCESS/READY;
+- Post-Merge `main` CI Run `33023988403`: SUCCESS.
 
-Diese Baseline enthält insbesondere:
+`main` Branch Protection ist live weiterhin nicht aktiviert (`protected=false`) und bleibt Governance-/Engineering-Risiko.
 
-- Foundation C–E, Safety/Disruption, Timing/Seasonal;
-- Account AP-1 bis AP-3;
-- Provider Readiness S1–S3 und **S5-A**;
-- Admin A–C und **zentraler Admin-AAL2-Application-Guard**;
-- TW-1, TW-2, TW-4, TW-3, TW-5 und **TW6-A Create-Entry**;
-- P1-QS2-02 Guest→Account Commercial Truth;
-- P1-TA-02 Official Evaluation Option Scope;
-- QS-1, QS-2 Audit;
-- D0/G0 Foundation Audit, D0-1, D0-2;
-- **P1-D0-LIVE-01 fail-closed public metadata boundary (PR #86)** – kein D1/G1;
-- Merge-Autonomie-Governance.
+## 11. Production Gate A – PASS
 
-`main` Branch Protection war live weiterhin **nicht aktiviert** (`protected=false`) und bleibt ein Governance-/Engineering-Risiko.
+Production ist nach Gate A `ACTIVE_HEALTHY`.
 
-## 11. Offene D0/G0-Kanten
+Kanonische Production-Migration-History enthält jetzt zusätzlich:
 
-Geschlossen durch D0-2:
+- `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`
+- `20260824180000_trip_items_flug_handelsfelder_guard`
 
-- D0-P2-01 deny-all / Sitemap-/Host-Semantik;
-- D0-P2-02 Canonical-/Origin-Vertrag.
+Finale Verifikation:
 
-Geschlossen durch PR #86:
+- `reise_anlegen(jsonb)` verwirft bei `kind='flight'` untrusted `price_amount`, `price_currency`, `provider`, `external_ref`, `booking_url`;
+- Route-Itinerary bleibt erhalten;
+- RPC bleibt `SECURITY INVOKER`;
+- `authenticated` RPC EXECUTE=true, `anon`=false;
+- Trigger `trip_items_flug_handelsfelder_schuetzen` genau einmal vorhanden und enabled;
+- Trigger-Scope korrekt;
+- Guard-Funktion für authenticated/anon nicht direkt executable;
+- Production Flight-Items weiterhin 0.
 
-- **P1-D0-LIVE-01** – HTML-robots folgt `darfIndexieren`; öffentliche Canonicals sind `https://jetnity.com`, niemals `*.vercel.app`.
+Vollständige Evidence:
 
-Weiter offen:
+`docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`
 
-- **D0-P1-03** – `/privacy` und `/terms` 404; eigener Legal-/PO-Slice, keine Rechtstexte erfinden;
-- **D0-P2-04** – Locale / hreflang;
-- **D0-P2-05** – JSON-LD / Entity Foundation;
-- G0-P2-01 / G0-P2-02 / G0-P3-01 / G0-P3-02.
+## 12. Explizit nicht auf Production
 
-Kein automatischer D1/G1-Start. PR #86 aktiviert kein Indexing, kein DNS, keinen Redirect und keinen Domain-Cutover.
+Weiterhin nicht freigegeben / nicht angewendet:
 
-## 12. Trip-Workspace-Gates
+- TW6-B `20260826220000`
+- TW6-B `20260826230000`
+- TW6-B `20260826240000`
+- AAL2 `20260826090000`
+- Development-AAL2-Version `20260826052735`
+- Direction A
 
-Integriert: TW-1, TW-2, TW-4, TW-3, TW-5, **TW6-A**.
+Auf Production existiert weiterhin weder `day_stage_assignment_source` noch `day_stage_assignment_mode`.
 
-- **TW6-REST-01** bleibt offen: progressive weitere Ziele / zusätzliche `trip_stages` im Create;
-- TW-7 hängt an Account-/Hub-Grenzen;
-- TW-8 hängt an Provider S5 **und** realer Commercial Provenance; S5-A allein öffnet TW-8 nicht;
-- TW-9 danach;
-- anschließend finaler Function-by-Function-/Intelligence-Audit.
+**Gate 0 ≠ Gate B.**
 
-## 13. Große Build-Reihenfolge
+## 13. Trip-Workspace-Gates
+
+Integriert:
+
+- TW-1 ✅
+- TW-2 ✅
+- TW-4 ✅
+- TW-3 ✅
+- TW-5 ✅
+- TW6-A ✅
+- TW6-B Gate 0 / Provenance ✅
+
+PR #87 bleibt der offene Runtime-Draft für progressive weitere Ziele / Day→Stage Mode Contract.
+
+Der frühere PLAN-PASS auf PR #87 bezog sich auf einen älteren `main`. Vor jeder Fortsetzung zwingend:
+
+1. aktuellen `main` live lesen;
+2. PR-#87-Head live lesen;
+3. Merge-Base/Ahead/Behind neu bestimmen;
+4. aktuellen Diff prüfen;
+5. Drift/Kollisionen mit PR #89 auflösen;
+6. Shared Contracts erneut prüfen;
+7. Exact-Head Actions/Vercel neu verlangen;
+8. Production-Zustand erneut prüfen.
+
+Kein alter PASS ist eine aktuelle Merge- oder Production-Freigabe.
+
+TW-7 bleibt hinter Account-/Hub-Grenzen. TW-8 bleibt hinter Provider S5 und realer Commercial Provenance. TW-9 danach.
+
+## 14. Große Build-Reihenfolge
 
 Weiter gemäß `docs/JETNITY_BINDING_BUILD_ORDER.md`:
 
@@ -244,33 +282,32 @@ Weiter gemäß `docs/JETNITY_BINDING_BUILD_ORDER.md`:
 9. kommerzielle Produktschicht;
 10. Guardian / What-if / Value + finaler Launch-Hardening-Audit.
 
-## 14. Supabase / Production
+## 15. Quality / Security
 
-Supabase Production:
+Nach Production Gate A wurden Supabase Security- und Performance-Advisors erneut gelesen.
 
-`qscbgcdmivbbnzrcyegn`
+Separate vorhandene Warn-/Info-Funde betreffen u. a. GraphQL-Exposition, ältere Admin-`SECURITY DEFINER`-Funktionen, fehlende FK-Indizes und ungenutzte Indizes. Kein Advisor-Fund zeigt auf die beiden Gate-A-Funktionen als neue Gate-A-spezifische Fehlkonfiguration.
 
-Live 26. August 2026: `ACTIVE_HEALTHY`.
+Diese Funde sind eigene QS-/Security-Arbeit und wurden im Gate-A-Lauf nicht still verändert.
 
-Production enthält bis einschließlich:
+## 16. Exakter nächster Technical-Lead-Schritt
 
-- `20260824120000_flug_route_itinerary_surface_evidence`;
-- `20260824140000_flug_route_itinerary_untrusted_surface`.
+**PR #87 gegen den aktuellen `main` vollständig neu rekonstruieren und unabhängig re-reviewen.**
 
-**Nicht** auf Production:
+Wenn nötig, gezielte Korrektur an:
 
-- `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`;
-- `20260824180000_trip_items_flug_handelsfelder_guard`;
-- `20260826090000_admin_aal2_data_plane`.
+`Cursor-Agent: Trip workspace audit architecture`
 
-Die Admin-AAL2-Development-Anwendung ist kein Production-Apply.
+Danach neuer Exact Head → neue CI/Vercel-Evidence → unabhängiger PASS.
 
-## 15. Continuity-Regel
+Erst dann darf der Product Owner separat um Freigabe für Production Gate B gebeten werden.
+
+Bis dahin:
+
+> **Kein Gate B. Kein AAL2. Kein Direction A. Kein PR-#87-Merge. Kein TW-7/8/9-Folgeslice.**
+
+## 17. Continuity-Regel
 
 Kein relevanter Fortschritt darf nur im Chat existieren. Reviews, Merges, Integrationsentscheidungen, Governance-Entscheidungen, Agentenstatus, Blocker und nächste Schritte werden im Repository versioniert.
 
 Ein neuer Chat oder Agent behauptet niemals aus Erinnerung oder Screenshot, ein PR sei aktuell, grün oder gemergt. **Immer live verifizieren.**
-
-Für Merge-Entscheidungen gilt ab 26. August 2026:
-
-> **Technical Lead darf normale PRs selbst integrieren – aber erst nach vollständiger unabhängiger Prüfung, Korrektur aller Blocker und Exact-Head-Re-Gating.**

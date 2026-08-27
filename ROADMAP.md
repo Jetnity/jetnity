@@ -352,7 +352,7 @@ S1 Shared Operational Contract ist auf `main` (PR #47). S2 FlugNachweis ist auf 
 
 ## 8. Großer End-to-End Trip-Workspace-/Übersicht-Umbau
 
-Status: **Audit/IA docs-only als PR #55 gemergt. TW-1, TW-2, TW-4, TW-3, TW-5 und TW6-A auf `main`. TW6-REST-01 bleibt offen. Kein gesamtes TW-6-Closure. Kein TW-7/TW-8.**
+Status: **Audit/IA docs-only als PR #55 gemergt. TW-1, TW-2, TW-4, TW-3, TW-5 und TW6-A auf `main`. TW6-REST-01 bleibt offen. Ein migrations-only Gate-0-Draft für die drei geprüften TW6-B-Dateien plus Playbook ist in Vorbereitung; das ist kein Runtime-Merge und kein Production-Apply. Kein gesamtes TW-6-Closure. Kein TW-7/TW-8.**
 
 Der Workspace ist die wichtigste Produktoberfläche und wird **nicht nur umgebaut**, sondern vollständig funktional generalinspiziert. PR #55 liefert ausschließlich die vorbereitete Audit-/Zielarchitektur-Evidence.
 
@@ -459,6 +459,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 12a. ✅ P1-QS2-02 Guest→Account Stay/Activity-Handelsfeld-Strip – auf `main` (`86567f17`, ADR-0166)
 12b. ✅ P1-TA-02 Official Evaluation Option-Scope – auf `main` (`2468160e`, ADR-0167). P2-TA-06 bleibt offen.
 12c. ✅ TW6-A Create-Entry Alignment – auf `main` (`c4ea47aa`). **TW6-REST-01 bleibt offen.**
+12c1. ⏳ TW6-B Gate 0 migrations-only Vorbereitung – Draft gegen `main` für die drei geprüften Dateien plus transaktionales Playbook. **Kein Production-Apply. Kein Runtime-Merge. Kein TW-7/8/9.**
 12d. ✅ Provider S5-A Commercial Provenance – auf `main` (`3b317bc6`, ADR-0168). S5-B nicht gestartet.
 12e. ✅ Admin-AAL2 Application-Guard – auf `main` (`d3faa2a0`, ADR-0169). Production-DB nicht angewendet.
 12f. ✅ D0 live metadata boundary / P1-D0-LIVE-01 – auf `main` (PR #86, `38ec8be7`, ADR-0170). HTML-robots fail-closed; Canonical ist `https://jetnity.com`, niemals `*.vercel.app`. **Kein D1/G1. Kein Domain-Cutover. Kein Public Indexing.**

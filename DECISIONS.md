@@ -4259,6 +4259,27 @@ Diese zwei Provenance-Punkte sind ein **Product-/Shared-Contract-Gate**. Kein f�
 
 Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Development. Production bleibt unangetastet. Kein fünfter Mode. Keine separate Provenance-Spalte in diesem Slice. Direction A bleibt eigener Slice. TW6-B-P1-05/P1-06 sind runtime-seitig geschlossen, sobald der unabhängige Technical-Lead-Finalreview PASS erteilt.
 
+## ADR-0173 – TW6-B Gate-B-Dateien kommen migrations-only auf `main`; Apply nur transaktional unter Write-Gate
+
+**Datum:** 26. August 2026  
+**Status:** operative Vorbereitung. Dateien und Playbook existieren als Draft gegen `main`. **Kein Production-Apply. Kein Merge-Auftrag. Kein Runtime-Slice.** Nummer 0173, weil PR #87 bereits ADR-0172 für den Day→Stage-Vertrag reserviert.
+
+**Entscheidung:**
+
+- Die drei bereits geprüften Dateien `20260826220000`, `20260826230000` und `20260826240000` dürfen Production-History nur erreichen, wenn derselbe Byte-Stand zuerst auf `main` liegt. Bevorzugter Weg: migrations-only Vorbereitungs-PR ohne Multi-Ziel-UI, ohne AAL2, ohne übrigen PR-#87-Runtime-Code.
+- Hash-Vertrag: `ab06e875e88f69b009837e1c8873e5322199da812b62f4ac1065a028f73cf883` / `7e2e30246f1d9976b868751a6cc79087e537bbd36fb8f0dabf829b98258117a9` / `7a9626d8ac53ea3458bf7d622ea695cce26360962c02430d8d1a0094129a1edb`.
+- Production-Apply dieser drei Dateien läuft nicht über `db:anwenden`. `26220000`/`26230000` dürfen nicht öffentlich executable werden.
+- Verbindlicher Apply-Pfad: Write-Gate committed setzen; drei Bodies plus `schema_migrations`-History in einer Transaktion; Mode-Vertrag vor Grant-Restore prüfen; bei Fehler `ROLLBACK` bei geschlossenem Write-Gate; Grants nur nach PASS exakt aus dem Snapshot wiederherstellen.
+- `PRODUCTION_APPLY_FREIGEGEBEN` bleibt `false`, bis getrennte Product-Owner-Gates für Commercial und Gate B vorliegen und der Technical Lead das Playbook unabhängig reviewed.
+
+**Kontext:** Technical-Lead-Review auf PR #87 Exact Head `0b7d6cfd5b34ffd3e9c0a96779ee51df999bcc67`: PLAN PASS / PRODUCTION EXECUTION BLOCKED. Gate 0 und P2-02 waren die offenen operativen Voraussetzungen.
+
+**Alternativen:** Immutable Tag plus SHA-256 ohne `main`-Dateien; dateiweises `db:anwenden`; Production-Apply aus dem verwerfbaren Draft #87. Abgelehnt, weil History nicht an einen Draft gebunden werden darf und Zwischenzustände `legacy_fallback` minten können.
+
+**Begründung:** Production darf keine Migrationsversion tragen, die nur auf einem später verworfenen Draft lebt. Der Source-Zwischenstand ist fachlich falsch und darf nie öffentlich executable sein.
+
+**Konsequenzen:** Dieser Slice ändert Production nicht, merged nichts und startet keine Multi-Ziel-UI. PR #87 bleibt der Runtime-Draft. AAL2 bleibt excluded.
+
 ---
 
 ## Offene Widersprüche

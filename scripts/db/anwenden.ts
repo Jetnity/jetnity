@@ -10,7 +10,9 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 
 import { produktionsPlan } from '@/lib/rollout/anwenden-grenze'
+import { GATE_B_VERSIONEN } from '@/lib/rollout/gate-b-tw6-bundle'
 import { anwendenAuftragLesen } from '@/lib/rollout/schreibauftrag'
+import { sqlLiteral } from '@/lib/rollout/sql-literal'
 import { zielFuerAuftrag } from '../auth/ziel'
 import { runSql } from './sql.mjs'
 
@@ -31,10 +33,6 @@ async function angewendeteVersionen() {
     version: string
   }[]
   return new Set(rows.map((r) => r.version))
-}
-
-function literal(text: string) {
-  return `'${String(text).split("'").join("''")}'`
 }
 
 async function main() {
@@ -64,6 +62,15 @@ async function main() {
         })()
       : alle.filter((m) => !angewendet.has(m.version))
 
+  const gateBOffen = offen.filter((m) => GATE_B_VERSIONEN.has(m.version))
+  if (gateBOffen.length > 0) {
+    throw new Error(
+      `Gate-B-Bundle (${gateBOffen.map((m) => m.datei).join(', ')}) darf nicht dateiweise über db:anwenden laufen. ` +
+        'Die Dateien 26220000/26230000 dürfen nicht öffentlich executable werden. ' +
+        'Nutze npm run db:gate-b-tw6-bundle. Abgebrochen.',
+    )
+  }
+
   if (offen.length === 0) {
     console.log(
       auftrag.modus === 'produktion'
@@ -79,7 +86,7 @@ async function main() {
   for (const m of offen) {
     const sql = readFileSync(join(MIGRATIONS_DIR, m.datei), 'utf8')
     const eintrag = `insert into supabase_migrations.schema_migrations (version, name, statements)
-                     values (${literal(m.version)}, ${literal(m.name)}, array[${literal(sql)}])`
+                     values (${sqlLiteral(m.version)}, ${sqlLiteral(m.name)}, array[${sqlLiteral(sql)}])`
 
     process.stdout.write(`  ${m.datei} … `)
     try {

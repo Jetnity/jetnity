@@ -1,46 +1,44 @@
 # Jetnity – Active Work Status
 
-Stand: 26. August 2026  
-Status: **Kein aktiver Runtime-Slice. Continuity-/Handoff-Bereinigung nach Integration von PR #81, #84, #82, #83, #80 und #86. Nächster Schritt: unabhängiger Technical-Lead-Review von Draft-PR #85, danach erst der finale ChatGPT-Superprompt. Kein neuer Produktslice.**
+Stand: 27. August 2026  
+Status: **Production Gate A ist PASS. PR #89 ist auf `main`. TW6-B Gate B ist weiterhin NICHT freigegeben und NICHT auf Production angewendet. PR #87 bleibt Draft und muss vor jedem weiteren Schritt gegen den aktuellen `main` neu eingeordnet und exakt gegatet werden.**
 
 > **Do not blindly trust this file — live verify first.**
 
 ## 0. Live-Integrationsbaseline
 
-Aktueller verifizierter `main`:
+Aktueller verifizierter `main` zum Continuity-Update:
 
-`38ec8be79a6ce7758be81fd5d564819d638140d6`
+`3d0ffa2d97df66a4d6006587047bf27b0df9606c`
 
-Merge-Message: `Merge PR #86: fail-closed public metadata boundary`.
+Wichtige aktuelle Linie:
 
-Production für diesen Merge:
+- PR #89 – **TW6-B Gate 0: migrations-only + bounded transactional apply playbook** → gemergt; Merge-Commit `5fc4d1b873f1fa7aff8e4064163275bf30f9ce98`.
+- Unabhängiger Technical-Lead-PASS auf PR-#89-Exact-Head `986fa8b7592286731e44ab46d36a8f299531d669`.
+- Exact-Head GitHub Actions Run `33023062522`: SUCCESS.
+- Exact-Head Vercel Preview: SUCCESS/READY.
+- Post-Merge `main` GitHub Actions Run `33023988403` auf `5fc4d1b873f1fa7aff8e4064163275bf30f9ce98`: SUCCESS.
+- Danach docs-only Production-Gate-A-Checkpoint auf `main`; keine Runtime-Datei geändert.
 
-Vercel Deployment `6108029117` → **SUCCESS** auf Exact Head `38ec8be7`.  
-Öffentlicher Alias: `https://jetnity-app.vercel.app` (HTTP 200).  
-Live HTML nach PR #86: `robots`/`googlebot` = `noindex, nofollow`; Canonical `https://jetnity.com`; OG-Bild `https://jetnity.com/images/hero-bali.png`.  
-`/planen`: ebenfalls `noindex, nofollow`; Canonical `https://jetnity.com/planen`.  
-`/robots.txt`: deny-all (`User-Agent: *` / `Disallow: /`).  
-`https://jetnity.com` und `jetnity.ch` ohne öffentliche DNS-Auflösung (HTTP 000). Kein Cutover. Kein Redirect. Kein Public Indexing.
+Production Public Runtime bleibt bezüglich D0 unverändert:
 
-GitHub Actions:
+- `robots`/`googlebot` = `noindex, nofollow`;
+- Canonical `https://jetnity.com`;
+- `/planen` ebenfalls `noindex, nofollow`;
+- `robots.txt` deny-all;
+- kein Domain-Cutover, kein Public Indexing, kein Redirect-Gate.
 
-- PR-#86 Exact Head `0f809857`: Run `32989862339` **SUCCESS**;
-- Post-Merge `main` `38ec8be7`: Run `32991955365` **SUCCESS**.
+Zuletzt integriert vor Gate A:
 
-Zuletzt integriert:
+- PR #81 – P1-QS2-02 Guest→Account Stay/Activity Commercial Truth;
+- PR #84 – P1-TA-02 Official Evaluation Option-Scope;
+- PR #82 – TW6-A Create-Entry Alignment;
+- PR #83 – Provider S5-A Commercial Provenance Domain Contract;
+- PR #80 – Central Admin AAL2 Guard;
+- PR #86 – D0 live metadata boundary / P1-D0-LIVE-01;
+- PR #89 – TW6-B Gate 0 migrations-only provenance + transactional playbook.
 
-- PR #81 – P1-QS2-02 Guest→Account Stay/Activity Commercial Truth → `86567f17`;
-- PR #84 – P1-TA-02 Official Evaluation Option-Scope → `2468160e`;
-- PR #82 – TW6-A Create-Entry Alignment → `c4ea47aa`;
-- PR #83 – Provider S5-A Commercial Provenance Domain Contract → `3b317bc6`;
-- PR #80 – Central Admin AAL2 Guard → `d3faa2a0`;
-- **PR #86 – D0 live metadata boundary / P1-D0-LIVE-01 → `38ec8be7`.** Kein D1/G1.
-
-Bereits zuvor integriert: D0-1, D0-2, TW-1/2/4/3/5, QS-1, QS-2 Audit, Parallel-Audits #75–#78, AP-1–AP-3, S1–S3, Admin A–C, Foundations C/D/E.
-
-`main` Branch Protection ist live **nicht aktiviert** (`protected=false`) und bleibt ein Governance-Risiko. In diesem Docs-only-Auftrag nicht konfiguriert.
-
-PR #82 / #83 / #80 / #86 sind **keine** aktiven Drafts mehr. Sie sind gemergt.
+`main` Branch Protection ist live **nicht aktiviert** (`protected=false`) und bleibt ein Governance-Risiko.
 
 ## 1. Aktive Technical-Lead-Governance
 
@@ -49,6 +47,13 @@ PR #82 / #83 / #80 / #86 sind **keine** aktiven Drafts mehr. Sie sind gemergt.
 Vor Ready/Merge zwingend: Live-`main`, Diff, Tests und Testannahmen, Security/Privacy/Truth/Shared Contracts, Exact-Head Actions/Vercel, relevante Supabase-Grenzen, Review-Threads und Parallelität prüfen. Bei Fehlern zuerst korrigieren und neu gaten.
 
 Besondere Product-Owner-Gates bleiben unverändert, insbesondere für Production-Migrationen, große Auth/MFA/AAL-/RLS-/Identity-Änderungen, sensitive Dokumentdaten, reale Provider/Secrets/paid calls, Payments, > USD 100/Monat und Public Launch / Provider-Live / Store-Aktivierung.
+
+Die Product-Owner-Freigabe vom 27. August 2026 galt **nur** für Production Gate A:
+
+1. `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`
+2. danach `20260824180000_trip_items_flug_handelsfelder_guard`
+
+Diese Freigabe galt ausdrücklich **nicht** für TW6-B, AAL2, Direction A, PR #87 oder andere Production-Migrationen.
 
 ## 2. D0 / Growth
 
@@ -72,13 +77,13 @@ Offen: **D0-P1-03** Legal-404 (`/privacy`, `/terms` live 404); D0-P2-04 hreflang
 
 ## 3. Trip Workspace
 
-Integriert: TW-1, TW-2, TW-4, TW-3, TW-5, TW-6 Dependency-Audit, **TW6-A Create-Entry**.
+Integriert: TW-1, TW-2, TW-4, TW-3, TW-5, TW-6 Dependency-Audit, **TW6-A Create-Entry** sowie **TW6-B Gate 0 / Provenance** durch PR #89.
 
-**TW6-A ≠ gesamtes TW-6.** Offen: **TW6-REST-01** (progressive weitere Ziele / zusätzliche `trip_stages` im Create).
+**Gate 0 ≠ TW6-B Runtime-Merge und ≠ Production Gate B.**
+
+PR #87 (`feat/tw6-rest-progressive-stages`) bleibt der Runtime-Draft für progressive weitere Ziele / Day→Stage Mode Contract. Er darf nicht aus dem früheren PLAN-PASS direkt weitergezogen werden, weil `main` seitdem fortgeschritten ist. Vor jedem weiteren Schritt: Merge-Base, Diff, Shared Contracts, Exact-Head CI/Vercel und Production-Grenzen erneut live prüfen.
 
 TW-7 bleibt hinter Account-/Hub-Grenzen. TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance; S5-A allein ist kein TW-8-Start.
-
-Kein aktiver TW-Runtime-Draft.
 
 ## 4. Traveller / Account
 
@@ -95,19 +100,18 @@ Geschlossen:
 
 Weiter offen:
 
-- **P2-TA-06** – `documents[0]` in `travellerNormalisieren()`; live weiterhin vorhanden in `lib/readiness/engine.ts`;
-- **P2-TA-03** – `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` fehlt auf `main` und existiert nur im historischen Account-Audit-PR #39;
+- **P2-TA-06** – `documents[0]` in `travellerNormalisieren()`;
+- **P2-TA-03** – Account-Implementation-Plan nur in historischem Audit-PR #39;
 - Mobility/Rental-Such-Snapshots mit kommerziellen Feldern;
-- direkter `reise_anlegen`-RPC-Bypass;
 - Account-Traveller-Registry / AP-4–AP-12 / AP-7.
 
-Kein aktiver Account-Runtime-Draft.
+Der frühere direkte `reise_anlegen`-Commercial-Truth-Bypass ist durch Production Gate A jetzt serverseitig zusätzlich abgesichert; das schließt TW6-B nicht.
 
 ## 5. Provider Readiness
 
 S1–S3 und **S5-A** sind integriert. S5-B ist **nicht gestartet**.
 
-Keine echten Provider, keine Secrets/Verträge/paid calls, keine Aktivierung, keine Production-Migration durch S5-A.
+Keine echten Provider, keine Secrets/Verträge/paid calls, keine Aktivierung durch Gate A.
 
 Gates:
 
@@ -119,20 +123,22 @@ Gates:
 
 QS-2-P1s:
 
-1. `P1-QS2-01` Application-AAL2 → **integriert durch PR #80**;
-2. `P1-QS2-02` Guest→Account Commercial Truth → **integriert durch PR #81**.
+1. `P1-QS2-01` Application-AAL2 → integriert durch PR #80;
+2. `P1-QS2-02` Guest→Account Commercial Truth → integriert durch PR #81.
 
-Admin-AAL2-Vertrag integriert in der Anwendung. Development-Migration versioniert und auf Development angewendet (`admin_aal2_data_plane` als Version `20260826052735`). **Production-Datenebene nicht angewendet und nicht als aktiviert behaupten.**
+Admin-AAL2-Vertrag ist in der Anwendung integriert. Development enthält `admin_aal2_data_plane`; **Production-Datenebene ist weiterhin nicht angewendet**.
 
-Kein Admin D–K. Kein QS-3.
+Production Gate A hat AAL2 nicht berührt.
+
+Nach Gate A wurden Supabase Security-/Performance-Advisors gelesen. Es bestehen separate Warn-/Info-Funde zu GraphQL-Exposition, älteren Admin-`SECURITY DEFINER`-Funktionen, fehlenden FK-Indizes und ungenutzten Indizes. Kein Fund zeigt auf die beiden Gate-A-Funktionen als Gate-A-spezifische Fehlkonfiguration. Keine dieser separaten Baustellen wurde im Gate-A-Lauf still verändert.
 
 ## 7. Aktive / nächste Cursor-Workstreams
 
-Aktiv: **keiner.**
+Aktiver Runtime-Agent: **keiner**.
 
-STOPP:
+STOPP bis Technical-Lead-Neueinordnung:
 
-- `Trip workspace audit architecture`
+- `Trip workspace audit architecture` – PR #87 bleibt Draft; kein Folgeslice, kein Gate B ohne neue Freigabe
 - `Account plattform audit vorbereitung`
 - `Jetnity provider readiness audit`
 - `Admin platform audit`
@@ -143,37 +149,61 @@ Reserviert:
 
 - `Jetnity native app architecture`
 
-Dieser Continuity-Slice darf `docs/ACTIVE_WORK_STATUS.md` aktualisieren, weil er der zentrale Technical-Lead-/Continuity-Auftrag ist. Fachagenten ändern diese Datei weiterhin nicht parallel.
+Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Cleanup/Branch-/Cloud-Delete automatisch ausführen.
 
 ## 8. Offene PRs
 
-Live geprüft nach PR #86. **#52 / #50 / #40 / #39 / #28 sind weiterhin OPEN / Draft** und nicht geschlossen.
+Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#85** Final continuity handoff | **AKTIVER docs-only Draft.** Unabhängiger TL-Review. Nicht Ready. Nicht mergen durch den Autoren-Agenten. |
+| **#87** TW6-B Runtime + Mode Contract | **OFFENER Runtime-Draft.** Früherer Plan-Review reicht nach verändertem `main` nicht für Merge/Production. Neu synchronisieren und re-gaten. |
+| **#88** Project Sanitation Audit | Non-destructive Audit-Evidence. Kein Cleanup automatisch. |
 | #52 ChatGPT TL handoff 2026-08-24 | HISTORICAL / SUPERSEDED |
 | #50 S1 merged-status docs | HISTORICAL / INTEGRATED ELSEWHERE |
 | #40 Admin Platform Audit | HISTORICAL / INTEGRATED ELSEWHERE |
 | #39 Account Platform Audit | HISTORICAL / INTEGRATED ELSEWHERE |
 | #28 Trip Collaboration Foundation | HISTORICAL / SUPERSEDED / DO NOT RESUME |
 
-Nicht schließen. Nicht löschen. Nicht als aktuelle Runtime-Arbeit wieder aufnehmen.
+PR #89 ist gemergt und kein aktiver Draft mehr.
+
+Historische Evidence nicht löschen. Nicht als aktuelle Runtime-Arbeit wieder aufnehmen.
 
 ## 9. Supabase / Production
 
-Production-Projekt `qscbgcdmivbbnzrcyegn`: zuletzt unabhängig live `ACTIVE_HEALTHY`, letzte angewendete Version `20260824140000` (gleiche Kalendertags-Evidence vor PR #86). PR #86 enthält **keine** Migration.
+Production ist nach Gate A live `ACTIVE_HEALTHY`.
 
-In dieser Continuity-Umgebung zeigt `SUPABASE_PROJECT_REF` **nicht** auf Production; Management-API gegen Production-Ref `403`. Deshalb keine neue Production-SQL-Liste in diesem Auftrag behauptet.
+Kanonische Production-Migration-History endet jetzt bei:
 
-Development (dieses Agent-Secret), live erneut gelesen:
+- `20260824160000` – `reise_anlegen_flug_handelsfelder_ohne_nachweis`
+- `20260824180000` – `trip_items_flug_handelsfelder_guard`
 
-- enthält `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`;
-- enthält `20260824180000_trip_items_flug_handelsfelder_guard`;
-- enthält `admin_aal2_data_plane` als angewendete Version `20260826052735`.
+Finale semantische Gate-A-Verifikation: PASS.
 
-Keine Development-only-Migration darf ohne eigenes Production-Gate still produktiv angewendet werden. Keine Auth/RLS/AAL-/Provider-/Payment-Aktivierung.
+- RPC strippt untrusted Flight-Handelsfelder;
+- Route-Itinerary bleibt erhalten;
+- `authenticated` darf `reise_anlegen`, `anon` nicht;
+- Guard-Trigger genau einmal vorhanden und enabled;
+- Trigger-Scope korrekt;
+- direkte Guard-Funktion nicht für authenticated/anon ausführbar;
+- Production hat weiterhin 0 persistierte Flight-Items.
+
+Explizit **nicht** in Production-History und **nicht** angewendet:
+
+- TW6-B `20260826220000`
+- TW6-B `20260826230000`
+- TW6-B `20260826240000`
+- AAL2 `20260826090000`
+- Development-AAL2-Version `20260826052735`
+
+Auf Production existiert weiterhin weder `day_stage_assignment_source` noch `day_stage_assignment_mode`. Damit ist TW6-B nicht still aktiviert worden.
+
+Vollständige Execution-Evidence: `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`.
 
 ## 10. Nächster Schritt
 
-Unabhängiger ChatGPT-/Technical-Lead-Review von Draft-PR #85. Danach erst der finale ChatGPT-Superprompt. Kein Produktslice. Kein Ready/Merge dieses Continuity-PR durch den Autoren-Agenten. Kein D1/G1. Kein TW6-REST/TW-7/TW-8. Kein S5-B. Kein AP-Folgeslice. Kein Admin D–K.
+**STOP vor Gate B.**
+
+Technical Lead rekonstruiert PR #87 gegen den aktuellen `main`, klassifiziert eventuelle Konflikte/Drift und entscheidet, ob zuerst eine scope-sichere Synchronisierung/Korrektur nötig ist. Erst wenn PR-/Production-Plan wieder unabhängig PASS ist, kann der Product Owner separat um Freigabe für das TW6-B-Bundle `20260826220000 → 20260826230000 → 20260826240000` unter dem auf `main` liegenden transaktionalen Write-Gate-Playbook gebeten werden.
+
+Kein Gate B, kein AAL2, kein Direction A, kein PR-#87-Merge und kein Folgeslice ohne diese erneute Live-Evidence und die jeweils nötige Freigabe.
