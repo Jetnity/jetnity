@@ -282,7 +282,7 @@ Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Repo-/Bran
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-**Unabhängiger Review des Post-PR-#94-Continuity-Drafts (docs-only) nach Exact-Head-Gates.**
+**Unabhängiger Review von Draft PR #96 (Post-PR-#94 Continuity, docs-only) nach Exact-Head-Gates.**
 
 Visitor Search UX ist integriert. Der nächste Produktslice ist **kein** automatischer Visitor-Search-Folgeauftrag und braucht eine neue Technical-Lead- oder Product-Owner-Zuweisung.
 
