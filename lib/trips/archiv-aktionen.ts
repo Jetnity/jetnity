@@ -7,8 +7,10 @@
 // Zugehörigkeit kommt nicht aus der Nutzlast. Keine privilegierte Rolle,
 // keine Migration.
 //
-// Der Write trägt einen Optimistic Guard gegen den gelesenen Ausgangsstatus.
-// Eine zwischenzeitliche Änderung wird nicht überschrieben.
+// Der Write trägt einen Optimistic Guard gegen Status plus gelesenes
+// `updated_at` (bestehende Zeilenversion über `trips_aktualisiert_am`).
+// Ein gleichbleibender Status mit geänderter Metadata darf nicht
+// überschrieben werden.
 
 'use server'
 
@@ -16,6 +18,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import {
+  archivSchreibversion,
   archivierenPlan,
   wiederherstellenPlan,
   type ArchivPlan,
@@ -40,7 +43,6 @@ const PLAN_MELDUNG: Record<ArchivPlanFehler, string> = {
   'keine-provenienz':
     'Diese Reise lässt sich nicht automatisch wiederherstellen, weil der frühere Status nicht belegt ist.',
   'metadata-ungueltig': 'Diese Reise kann gerade nicht archiviert werden.',
-  'metadata-zu-gross': 'Diese Reise kann gerade nicht archiviert werden.',
 }
 
 export async function reiseArchivLebenszyklus(eingabe: unknown): Promise<Aktionsergebnis<null>> {
@@ -53,12 +55,15 @@ export async function reiseArchivLebenszyklus(eingabe: unknown): Promise<Aktions
   const { tripId, aktion } = geprueft.data
   const { data, error: lesefehler, status: lesestatus } = await supabase
     .from('trips')
-    .select('status, metadata')
+    .select('status, metadata, updated_at')
     .eq('id', tripId)
     .maybeSingle()
 
   if (lesefehler) return { ok: false, meldung: meldungAus(lesefehler, lesestatus) }
   if (!data) return { ok: false, meldung: UNBEKANNT }
+
+  const version = archivSchreibversion(data.updated_at)
+  if (!version) return { ok: false, meldung: KONFLIKT }
 
   const plan: ArchivPlan = aktion === 'archivieren' ? archivierenPlan(data) : wiederherstellenPlan(data)
   if (!plan.ok) return { ok: false, meldung: PLAN_MELDUNG[plan.grund] }
@@ -71,6 +76,7 @@ export async function reiseArchivLebenszyklus(eingabe: unknown): Promise<Aktions
     })
     .eq('id', tripId)
     .eq('status', plan.expectedStatus)
+    .eq('updated_at', version)
     .select('id')
     .maybeSingle()
 

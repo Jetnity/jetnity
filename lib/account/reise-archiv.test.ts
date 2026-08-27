@@ -3,7 +3,8 @@ import assert from 'node:assert/strict'
 
 import {
   ACCOUNT_ARCHIVE_METADATA_KEY,
-  TRIPS_METADATA_MAX_ZEICHEN,
+  archivSchreibversion,
+  archivStandVeraltet,
   archivierenPlan,
   archivierteReisenAus,
   istArchiviert,
@@ -196,16 +197,50 @@ describe('AP-4 Restore-Provenienz', () => {
     assert.deepEqual(restored, metadata)
   })
 
-  test('ungültiges Metadata-Objekt und Überschreitung der 8-KB-Grenze sind fail-closed', () => {
+  test('bestehende Geschwister unter account_archive überleben Archive und Restore', () => {
+    const metadata = {
+      source: 'import',
+      [ACCOUNT_ARCHIVE_METADATA_KEY]: { extra: 'behalten' },
+    }
+    const archiviert = metadataNachArchivieren(metadata, 'planned')
+    assert.deepEqual(archiviert, {
+      source: 'import',
+      [ACCOUNT_ARCHIVE_METADATA_KEY]: {
+        extra: 'behalten',
+        previous_status: 'planned',
+      },
+    })
+
+    const restored = metadataNachWiederherstellen(archiviert)
+    assert.deepEqual(restored, metadata)
+    assert.equal(previousStatusAusMetadata(restored), null)
+  })
+
+  test('ungültiges Metadata-Objekt ist fail-closed, ohne erfundene Größengrenze', () => {
     assert.deepEqual(archivierenPlan({ status: 'draft', metadata: ['nein'] }), {
       ok: false,
       grund: 'metadata-ungueltig',
     })
-    const zuGross = { ballast: 'x'.repeat(TRIPS_METADATA_MAX_ZEICHEN) }
-    assert.deepEqual(archivierenPlan({ status: 'draft', metadata: zuGross }), {
-      ok: false,
-      grund: 'metadata-zu-gross',
-    })
+  })
+
+  test('gleicher Status mit geändertem updated_at gilt als veraltet', () => {
+    assert.equal(archivSchreibversion('2026-08-27T10:00:00.000Z'), '2026-08-27T10:00:00.000Z')
+    assert.equal(archivSchreibversion(''), null)
+    assert.equal(archivSchreibversion(null), null)
+    assert.equal(
+      archivStandVeraltet(
+        { status: 'draft', updatedAt: '2026-08-27T10:00:00.000Z' },
+        { status: 'draft', updatedAt: '2026-08-27T10:00:01.000Z' },
+      ),
+      true,
+    )
+    assert.equal(
+      archivStandVeraltet(
+        { status: 'draft', updatedAt: '2026-08-27T10:00:00.000Z' },
+        { status: 'draft', updatedAt: '2026-08-27T10:00:00.000Z' },
+      ),
+      false,
+    )
   })
 
   test('null-Stand und nicht-archivierter Restore sind fail-closed', () => {

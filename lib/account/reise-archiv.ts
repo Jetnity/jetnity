@@ -15,7 +15,6 @@ export type WiederherstellbarerStatus = (typeof WIEDERHERSTELLBARE_STATI)[number
 
 export const ACCOUNT_ARCHIVE_METADATA_KEY = 'account_archive' as const
 const ACCOUNT_ARCHIVE_PREVIOUS_STATUS_KEY = 'previous_status' as const
-export const TRIPS_METADATA_MAX_ZEICHEN = 8192
 
 export type ArchivStand = {
   status: string
@@ -29,7 +28,6 @@ export type ArchivPlanFehler =
   | 'nicht-archiviert'
   | 'keine-provenienz'
   | 'metadata-ungueltig'
-  | 'metadata-zu-gross'
 
 export type ArchivPlan =
   | {
@@ -91,8 +89,28 @@ export function metadataNachArchivieren(
 export function metadataNachWiederherstellen(metadata: unknown): Record<string, unknown> | null {
   const aktuell = objektAus(metadata)
   if (!aktuell) return null
-  const { [ACCOUNT_ARCHIVE_METADATA_KEY]: _archiv, ...rest } = aktuell
-  return rest
+  const archiv = objektAus(aktuell[ACCOUNT_ARCHIVE_METADATA_KEY])
+  if (!archiv) return null
+  const { [ACCOUNT_ARCHIVE_PREVIOUS_STATUS_KEY]: _previous, ...restArchiv } = archiv
+  if (Object.keys(restArchiv).length === 0) {
+    const { [ACCOUNT_ARCHIVE_METADATA_KEY]: _archiv, ...rest } = aktuell
+    return rest
+  }
+  return {
+    ...aktuell,
+    [ACCOUNT_ARCHIVE_METADATA_KEY]: restArchiv,
+  }
+}
+
+export function archivSchreibversion(updatedAt: unknown): string | null {
+  return typeof updatedAt === 'string' && updatedAt.length > 0 ? updatedAt : null
+}
+
+export function archivStandVeraltet(
+  gelesen: { status: string; updatedAt: string },
+  aktuell: { status: string; updatedAt: string },
+): boolean {
+  return gelesen.status !== aktuell.status || gelesen.updatedAt !== aktuell.updatedAt
 }
 
 export function archivierenPlan(stand: ArchivStand | null): ArchivPlan {
@@ -102,7 +120,6 @@ export function archivierenPlan(stand: ArchivStand | null): ArchivPlan {
 
   const nextMetadata = metadataNachArchivieren(stand.metadata, stand.status)
   if (!nextMetadata) return { ok: false, grund: 'metadata-ungueltig' }
-  if (!metadataPasstZurGrenze(nextMetadata)) return { ok: false, grund: 'metadata-zu-gross' }
 
   return {
     ok: true,
@@ -121,7 +138,6 @@ export function wiederherstellenPlan(stand: ArchivStand | null): ArchivPlan {
 
   const nextMetadata = metadataNachWiederherstellen(stand.metadata)
   if (!nextMetadata) return { ok: false, grund: 'metadata-ungueltig' }
-  if (!metadataPasstZurGrenze(nextMetadata)) return { ok: false, grund: 'metadata-zu-gross' }
 
   return {
     ok: true,
@@ -147,8 +163,4 @@ function objektAus(wert: unknown): Record<string, unknown> | null {
   if (wert === null || wert === undefined) return {}
   if (typeof wert !== 'object' || Array.isArray(wert)) return null
   return { ...(wert as Record<string, unknown>) }
-}
-
-function metadataPasstZurGrenze(metadata: Record<string, unknown>): boolean {
-  return JSON.stringify(metadata).length <= TRIPS_METADATA_MAX_ZEICHEN
 }

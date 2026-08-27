@@ -39,14 +39,27 @@ describe('AP-4 Archiv-Schreibweg bleibt owner-RLS und fail-closed', () => {
   test('Read läuft über RLS, Write nur auf die eine sichtbare Reise', () => {
     const aktion = quelle('archiv-aktionen.ts')
     assert.match(aktion, /\.from\('trips'\)/)
-    assert.match(aktion, /\.select\('status, metadata'\)/)
+    assert.match(aktion, /\.select\('status, metadata, updated_at'\)/)
     assert.match(aktion, /\.eq\('id', tripId\)/)
     assert.match(aktion, /\.maybeSingle\(\)/)
     assert.match(aktion, /\.update\(\{/)
     assert.match(aktion, /\.eq\('status', plan\.expectedStatus\)/)
+    assert.match(aktion, /\.eq\('updated_at', version\)/)
+    assert.match(aktion, /archivSchreibversion/)
+    assert.match(aktion, /if \(!version\) return \{ ok: false, meldung: KONFLIKT \}/)
     assert.match(aktion, /\.select\('id'\)/)
     assert.match(aktion, /Die Reise hat sich inzwischen geändert/)
     assert.match(aktion, /Diese Reise ist unbekannt/)
+    assert.doesNotMatch(aktion, /metadata-zu-gross/)
+  })
+
+  test('gleicher Status mit geändertem updated_at darf Metadata nicht überschreiben', () => {
+    const aktion = quelle('archiv-aktionen.ts')
+    const updateBlock = aktion.match(/\.update\(\{[\s\S]*?\.maybeSingle\(\)/)?.[0] ?? ''
+    assert.notEqual(updateBlock, '')
+    assert.match(updateBlock, /\.eq\('status', plan\.expectedStatus\)/)
+    assert.match(updateBlock, /\.eq\('updated_at', version\)/)
+    assert.match(aktion, /trips_aktualisiert_am/)
   })
 
   test('ungültige oder unsichtbare UUID und fehlende Anmeldung schreiben nicht', () => {
