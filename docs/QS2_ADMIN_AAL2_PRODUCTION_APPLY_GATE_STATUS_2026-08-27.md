@@ -8,7 +8,7 @@ Branch: `cursor/aal2-prod-apply-gate-b13d`
 Draft-PR: #102  
 Status: **TL CHANGES REQUIRED BEHOBEN / DRAFT / STOPP / KEIN READY / KEIN MERGE / KEIN PRODUCTION APPLY**  
 Review: `5043150656` auf Head `e056f1a1a6bb40cd3b2b46f88c8156f1dc4d3aad`  
-Neuer Exact Head: *folgt nach Commit dieses Review-Fixes*
+Neuer Exact Head: `05ef8f84d82fbde3d8af9ad3804d9d9d12e8f1db`
 
 Task: `docs/QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_TASK_2026-08-27.md`  
 Playbook: `docs/QS2_ADMIN_AAL2_PRODUCTION_ALIGNMENT_PLAYBOOK_2026-08-27.md`
@@ -63,4 +63,4 @@ Production wurde nicht beschrieben und nicht angewendet.
 
 ## 4. Nächster Schritt
 
-Unabhängiger Technical-Lead-Finalreview auf dem neuen Exact Head. Kein Ready. Kein Merge. Kein Production-Apply.
+Unabhängiger Technical-Lead-Finalreview auf Exact Head `05ef8f84d82fbde3d8af9ad3804d9d9d12e8f1db`. Kein Ready. Kein Merge. Kein Production-Apply.
