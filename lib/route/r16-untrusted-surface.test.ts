@@ -116,7 +116,7 @@ function gastNutzlast(itinerary: unknown) {
     pace: 'balanced',
     interests: [],
     travel_wish: null,
-    stages: [],
+    stages: [{ position: 1, name: 'Los Angeles', country_code: null, arrival_date: null, departure_date: null }],
     days: [],
     ungeplante: [
       {

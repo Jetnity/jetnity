@@ -30,7 +30,7 @@ function flugNutzlast(itinerary: FlugRouteItinerary | null, teil: Record<string,
     pace: 'balanced',
     interests: [],
     travel_wish: null,
-    stages: [],
+    stages: [{ position: 1, name: 'Bangkok', country_code: null, arrival_date: null, departure_date: null }],
     days: [],
     ungeplante: [
       {
