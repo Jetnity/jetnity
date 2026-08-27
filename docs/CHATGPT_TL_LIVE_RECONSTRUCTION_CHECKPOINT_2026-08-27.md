@@ -14,11 +14,14 @@ Dieser Checkpoint wurde nach vollständiger kanonischer Lektüre und erneuter Li
 - GitHub Actions auf exakt diesem `main`: Run `33073970923` – **SUCCESS**
 - `main` Branch Protection: **nicht aktiviert** (`protected=false`)
 - Repository Rulesets: **keine**
-- Remote-Branches live: **111**; diese Zahl ist Hygiene-Evidence, keine Löschfreigabe.
+- unmittelbar vor Erstellung dieses Continuity-Branches: **111 Remote-Branches** und **6 offene PRs**, alle Drafts
+- nach Erstellung dieses Continuity-Branches und Draft-PR #97: **112 Remote-Branches** und **7 offene PRs**; der einzige neue Branch/PR ist dieser docs-only Continuity-Stand
+
+Die Pre-Mutation-Zahlen bleiben Evidence der Rekonstruktion; die Post-Mutation-Zahlen verhindern, dass der Checkpoint seine eigene Erstellung als unerklärte Drift behandelt.
 
 ### Offene Pull Requests
 
-Genau sechs offene PRs; alle sind Drafts:
+Historische/offene Drafts vor diesem Checkpoint:
 
 | PR | Head | Einordnung |
 | --- | --- | --- |
@@ -29,7 +32,13 @@ Genau sechs offene PRs; alle sind Drafts:
 | #39 | `audit/account-platform` | historischer Account-Audit; **11 ahead / 429 behind**; enthält u. a. den alten `ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`, aber nicht aktuelle Runtime-Wahrheit |
 | #28 | `feat/trip-collaboration-foundation` | historischer Collaboration-Draft; **1 ahead / 495 behind** |
 
-- Offene Inline-Review-Threads auf diesen sechs Drafts: **0**.
+Neu durch diese Continuity-Aktion:
+
+| PR | Head | Einordnung |
+| --- | --- | --- |
+| #97 | `docs/tl-live-reconstruction-2026-08-27` | **aktueller docs-only Continuity-Draft**, frisch von exakt `45be14b...`; keine Runtime-/Production-Änderung |
+
+- Offene Inline-Review-Threads auf den sechs historischen Drafts: **0** zum Rekonstruktionszeitpunkt.
 - Relevante alte Audit-Branches für Traveller, Provider, Admin, Growth und QS liegen jeweils **0 ahead** von `main`; ihre Arbeit ist integriert/overtaken und nicht operativ aktiv.
 - Keine dieser alten Branches wird blind rebased, gemergt, gelöscht oder als neuer Ausgangspunkt verwendet.
 
@@ -234,7 +243,7 @@ Keine neuen P0 live gefunden.
 
 ### P3 / Hygiene
 
-- 111 Remote-Branches; keine Löschfreigabe.
+- 111 Remote-Branches waren die Pre-Mutation-Baseline; aktuell 112 inklusive dieses Continuity-Branches. Keine Löschfreigabe.
 - PR #88 Inventur ist inzwischen teilweise stale und darf nicht unverändert als Current Hygiene Truth integriert werden.
 - AAL2 Development-Migration-Version driftet gegenüber Repo-Dateiname.
 
