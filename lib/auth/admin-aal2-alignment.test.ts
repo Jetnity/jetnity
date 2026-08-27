@@ -27,9 +27,9 @@ const MINDESTROLLEN = {
 } as const
 
 const ADMIN_RLS_CONSUMER = [
-  { policy: 'creator_profiles_lesen', capability: 'darf_konten_verwalten', selfService: true },
-  { policy: 'creator_profiles_aendern', capability: 'darf_konten_verwalten', selfService: true },
-  { policy: 'creator_profiles_loeschen', capability: 'darf_konten_verwalten', selfService: true },
+  { policy: 'profiles_lesen', capability: 'darf_konten_verwalten', selfService: true },
+  { policy: 'profiles_aendern', capability: 'darf_konten_verwalten', selfService: true },
+  { policy: 'profiles_loeschen', capability: 'darf_konten_verwalten', selfService: true },
   { policy: 'security_events_lesen', capability: 'darf_betrieb_lesen', selfService: false },
   { policy: 'payments_lesen', capability: 'darf_betrieb_lesen', selfService: false },
   { policy: 'refunds_lesen', capability: 'darf_betrieb_lesen', selfService: false },
@@ -42,6 +42,25 @@ const ADMIN_RLS_CONSUMER = [
   { policy: 'payments_eingriff_aendern', capability: 'darf_betrieb_eingreifen', selfService: false },
   { policy: 'model_usage_lesen', capability: 'darf_betrieb_lesen', selfService: false },
 ] as const
+
+const HISTORISCHE_PROFIL_POLICIES = [
+  'creator_profiles_lesen',
+  'creator_profiles_aendern',
+  'creator_profiles_loeschen',
+] as const
+
+const PROFIL_RENAME = '20260817120300_generisches_profil.sql'
+
+type PolicyEreignis =
+  | { art: 'create'; name: string; tabelle: string; koerper: string; index: number }
+  | { art: 'drop'; name: string; index: number }
+  | { art: 'rename'; von: string; nach: string; index: number }
+
+type AktuellePolicy = {
+  name: string
+  tabelle: string
+  koerper: string
+}
 
 const ADMIN_SECURITY_DEFINER_RPCS = [
   'admin_payments_summary_30d',
@@ -80,6 +99,64 @@ function letzteFunktionsdefinition(sql: string, name: string): string {
   const treffer = [...sql.matchAll(muster)]
   assert.ok(treffer.length > 0, `public.${name}() fehlt in den Migrationen`)
   return treffer[treffer.length - 1][0]
+}
+
+function policyEreignisse(sql: string): PolicyEreignis[] {
+  const ereignisse: PolicyEreignis[] = []
+  for (const treffer of sql.matchAll(
+    /create policy\s+([a-z0-9_]+)\s+on\s+(?:public\.)?([a-z0-9_]+)([\s\S]*?);/gi,
+  )) {
+    ereignisse.push({
+      art: 'create',
+      name: treffer[1],
+      tabelle: treffer[2],
+      koerper: treffer[0],
+      index: treffer.index ?? 0,
+    })
+  }
+  for (const treffer of sql.matchAll(
+    /drop policy(?:\s+if exists)?\s+([a-z0-9_]+)\s+on\s+(?:public\.)?[a-z0-9_]+/gi,
+  )) {
+    ereignisse.push({
+      art: 'drop',
+      name: treffer[1],
+      index: treffer.index ?? 0,
+    })
+  }
+  for (const treffer of sql.matchAll(
+    /alter policy\s+([a-z0-9_]+)\s+on\s+(?:public\.)?[a-z0-9_]+\s+rename to\s+([a-z0-9_]+)/gi,
+  )) {
+    ereignisse.push({
+      art: 'rename',
+      von: treffer[1],
+      nach: treffer[2],
+      index: treffer.index ?? 0,
+    })
+  }
+  return ereignisse.sort((links, rechts) => links.index - rechts.index)
+}
+
+function aktuellePolicies(sql: string): Map<string, AktuellePolicy> {
+  const stand = new Map<string, AktuellePolicy>()
+  for (const ereignis of policyEreignisse(sql)) {
+    if (ereignis.art === 'create') {
+      stand.set(ereignis.name, {
+        name: ereignis.name,
+        tabelle: ereignis.tabelle,
+        koerper: ereignis.koerper,
+      })
+      continue
+    }
+    if (ereignis.art === 'drop') {
+      stand.delete(ereignis.name)
+      continue
+    }
+    const bisher = stand.get(ereignis.von)
+    assert.ok(bisher, `ALTER POLICY RENAME ohne aktuellen Stand: ${ereignis.von}`)
+    stand.delete(ereignis.von)
+    stand.set(ereignis.nach, { ...bisher, name: ereignis.nach })
+  }
+  return stand
 }
 
 function aktuellesAdminAal2(aal: string | null | undefined): boolean {
@@ -205,17 +282,40 @@ describe('P1-AAL2-PROD-01 Capability-Matrix', () => {
 describe('P1-AAL2-PROD-01 Consumer-Inventur', () => {
   const sql = alleSql()
   const alignment = lies(ALIGNMENT)
+  const stand = aktuellePolicies(sql)
 
-  test('14 direkte Admin-RLS-Policies bleiben am Capability-Pfad', () => {
+  test('14 direkte Admin-RLS-Policies bleiben am aktuellen Capability-Pfad', () => {
     assert.equal(ADMIN_RLS_CONSUMER.length, 14)
     for (const eintrag of ADMIN_RLS_CONSUMER) {
+      const aktuell = stand.get(eintrag.policy)
+      assert.ok(
+        aktuell,
+        `${eintrag.policy} fehlt im finalen Policy-Stand (CREATE + RENAME + DROP)`,
+      )
       assert.match(
-        sql,
-        new RegExp(`create policy ${eintrag.policy}[\\s\\S]{0,400}${eintrag.capability}\\(\\)`),
+        aktuell.koerper,
+        new RegExp(`${eintrag.capability}\\(\\)`),
         `${eintrag.policy} muss ${eintrag.capability}() nutzen`,
       )
     }
     assert.equal(/create policy|drop policy|alter policy/i.test(alignment), false)
+  })
+
+  test('Profil-Policies heißen aktuell profiles_* nach der Rename-Kette', () => {
+    const rename = lies(PROFIL_RENAME)
+    assert.match(rename, /alter policy creator_profiles_lesen\s+on public\.profiles rename to profiles_lesen/)
+    assert.match(rename, /alter policy creator_profiles_aendern\s+on public\.profiles rename to profiles_aendern/)
+    assert.match(rename, /alter policy creator_profiles_loeschen\s+on public\.profiles rename to profiles_loeschen/)
+    for (const historisch of HISTORISCHE_PROFIL_POLICIES) {
+      assert.equal(
+        stand.has(historisch),
+        false,
+        `${historisch} darf nach der Rename-Kette nicht mehr der aktuelle Name sein`,
+      )
+    }
+    assert.equal(stand.has('profiles_lesen'), true)
+    assert.equal(stand.has('profiles_aendern'), true)
+    assert.equal(stand.has('profiles_loeschen'), true)
   })
 
   test('Consumer-Self-Service-OR-Zweige bleiben in der Alignment-Migration unangetastet', () => {

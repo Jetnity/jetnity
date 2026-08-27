@@ -46,9 +46,9 @@ Consumer den AAL2-Zweig automatisch.
 
 | Policy | Tabelle | Capability | Self-Service bleibt |
 | --- | --- | --- | --- |
-| `creator_profiles_lesen` | `profiles` (ex `creator_profiles`) | `darf_konten_verwalten` | ja, `user_id = auth.uid()` |
-| `creator_profiles_aendern` | `profiles` | `darf_konten_verwalten` | ja |
-| `creator_profiles_loeschen` | `profiles` | `darf_konten_verwalten` | ja |
+| `profiles_lesen` | `profiles` (ex `creator_profiles`; umbenannt in `20260817120300`) | `darf_konten_verwalten` | ja, `user_id = auth.uid()` |
+| `profiles_aendern` | `profiles` | `darf_konten_verwalten` | ja |
+| `profiles_loeschen` | `profiles` | `darf_konten_verwalten` | ja |
 | `security_events_lesen` | `security_events` | `darf_betrieb_lesen` | nein |
 | `payments_lesen` | `payments` | `darf_betrieb_lesen` | nein |
 | `refunds_lesen` | `refunds` | `darf_betrieb_lesen` | nein |

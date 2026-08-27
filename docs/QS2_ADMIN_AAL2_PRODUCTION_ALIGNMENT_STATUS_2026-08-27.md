@@ -5,7 +5,9 @@ Finding: `P1-AAL2-PROD-01`
 Cursor-Agent: `Jetnity quality security audit`  
 Branch: `fix/admin-aal2-production-alignment-2026-08-27`  
 Draft-PR: #98  
-Status: **AUTORENARBEIT ABGESCHLOSSEN / DRAFT / STOPP / KEIN READY / KEIN MERGE / KEIN PRODUCTION APPLY**
+Status: **TL CHANGES REQUIRED BEHOBEN / DRAFT / STOPP / KEIN READY / KEIN MERGE / KEIN PRODUCTION APPLY**  
+Review: `5042410938` auf Head `0db2f7f3e3bcf6141551582c4c0a386675342837`  
+Neuer Exact Head: *folgt nach Commit dieses Review-Fixes*
 
 Verbindlicher Auftrag: `docs/QS2_ADMIN_AAL2_PRODUCTION_ALIGNMENT_IMPLEMENTATION_TASK_2026-08-27.md`  
 Playbook: `docs/QS2_ADMIN_AAL2_PRODUCTION_ALIGNMENT_PLAYBOOK_2026-08-27.md`  
@@ -72,8 +74,8 @@ Nicht umgesetzt und nicht erlaubt:
 
 | Gate | Ergebnis |
 | --- | --- |
-| `node --import tsx --test lib/auth/admin-aal2-alignment.test.ts lib/auth/admin-aal-datenbank.test.ts lib/auth/faehigkeiten-datenbank.test.ts lib/auth/admin-aal.test.ts` | 30 passed, 4 files, exit 0 |
-| `npm test` | 2317 passed, 0 failed, 425 suites, exit 0 |
+| `node --import tsx --test lib/auth/admin-aal2-alignment.test.ts lib/auth/admin-aal-datenbank.test.ts lib/auth/faehigkeiten-datenbank.test.ts lib/auth/admin-aal.test.ts` | 48 passed, 4 files, exit 0 (Review-Fix; +1 Current-State-/Rename-Test) |
+| `npm test` | 2318 passed, 0 failed, 425 suites, exit 0 |
 | `npx tsc --noEmit` | exit 0 |
 | `npm run lint` | no errors, no warnings, exit 0 |
 | `check:dead` | 760 reachable, 1 justified orphan (`CookieConsent.tsx`), exit 0 |
@@ -112,7 +114,7 @@ Historische Datei `20260826090000_admin_aal2_data_plane.sql` unverändert: Git-B
 | Grants/Revoke korrekt? | ja: revoke `public`/`anon`, grant `authenticated`/`service_role` |
 | Sicherer `search_path`? | ja, `pg_catalog`; zusätzlich explizit `SECURITY INVOKER` |
 | Keine Tabellen-/Ownership-/Consumer-RLS-Mutation? | ja |
-| 14 RLS + 4 SECURITY-DEFINER-RPCs erfasst? | ja, Playbook und Contract-Tests |
+| 14 RLS + 4 SECURITY-DEFINER-RPCs erfasst? | ja; aktuelle Namen `profiles_lesen` / `profiles_aendern` / `profiles_loeschen`, Current-State CREATE+RENAME+DROP |
 | Verification nach späterem Apply dokumentiert? | ja, Playbook Abschnitt 5 |
 | Apply bleibt Product-Owner-Gate? | ja; kein Apply in diesem Slice |
 
@@ -126,4 +128,34 @@ Historische Datei `20260826090000_admin_aal2_data_plane.sql` unverändert: Git-B
 - Production weiterhin **nicht** anwenden
 - Review-Threads
 
-Nächster Schritt: unabhängiger Technical-Lead-Finalreview. Erst bei PASS darf der PR normal integriert werden. **Auch nach Merge bleibt der Production-Apply ein separates Product-Owner-Gate.**
+Nächster Schritt: erneuter unabhängiger Technical-Lead-Finalreview auf dem neuen Exact Head. Erst bei PASS darf der PR normal integriert werden. **Auch nach Merge bleibt der Production-Apply ein separates Product-Owner-Gate.**
+
+---
+
+## 7. Review-Fix nach `5042410938` (CHANGES REQUIRED)
+
+Live erneut geprüft vor dem Fix: Branch-Head `0db2f7f3e3bcf6141551582c4c0a386675342837`, identisch mit `origin/fix/admin-aal2-production-alignment-2026-08-27` und PR-Head. `origin/main` unverändert `84f54194`. Draft-PR #98 OPEN. Kein Production-Apply.
+
+Korrigiert, ausschließlich die Review-Funde:
+
+1. Consumer-Inventar in `lib/auth/admin-aal2-alignment.test.ts` auf aktuelle Namen `profiles_lesen`, `profiles_aendern`, `profiles_loeschen`.
+2. Test wertet den finalen Policy-Stand aus CREATE + `ALTER POLICY … RENAME` + DROP aus. Die Rename-Kette `20260817120300_generisches_profil.sql` ist explizit belegt. Historische `creator_profiles_*`-Namen dürfen nicht mehr der aktuelle Stand sein.
+3. Playbook-Inventar auf dieselben `profiles_*`-Namen.
+4. `ARCHITECTURE.md` Eingangssatz: Development-History `20260826052735_admin_aal2_data_plane`; historische Repo-Datei `20260826090000_admin_aal2_data_plane.sql`.
+
+Nicht geändert: Alignment-Migration `20260827170000_admin_aal2_data_plane_alignment.sql`, historische `20260826090000`, `types/supabase.ts`, `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_HANDOFF.md`.
+
+Gates dieses Review-Fixes:
+
+| Gate | Ergebnis |
+| --- | --- |
+| Targeted AAL2/capability | 48 passed, 4 files, exit 0 |
+| `npm test` | 2318 passed, 0 failed, 425 suites, exit 0 |
+| `npx tsc --noEmit` | exit 0 |
+| `npm run lint` | no errors, no warnings, exit 0 |
+| `check:dead` | 760 reachable, 1 justified orphan (`CookieConsent.tsx`), exit 0 |
+| `check:exports` | 648 files, 0 unused exports, exit 0 |
+| `check:deps` | 0 unused / 0 missing, exit 0 |
+| `check:api-schutz` | 12 admin routes, all `requireAdminApi()`, exit 0 |
+| `check:schema-bezug` | 17 tables/views, 19 functions, exit 0 |
+| `npm run build` | exit 0; 46 static pages |
