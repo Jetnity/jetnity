@@ -4355,7 +4355,7 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 ## ADR-0176 – TW-7 Rest-Gap ist Hub-Kartenidentität, nicht AP-3
 
 **Datum:** 27. August 2026  
-**Status:** Spec durch PR #100 versioniert. **TW7-A Runtime durch PR #106 integriert.** Issue #103 nach Live-Post-Merge-Verifikation schliessbar.
+**Status:** Spec durch PR #100 versioniert. **TW7-A Runtime durch PR #106 integriert.** Issue #103 ist CLOSED / completed.
 
 **Entscheidung:** Der TW-7-Hub-Anschluss darf AP-3, den bestehenden Weg `/account` → `/reisen` → `/reisen/[tripId]` → `TripWorkspace` und die Guest-One-Trip-Regel nicht neu bauen. Der belegte Rest-Gap ist die Mehrziel-Identität auf `Reisekarte` plus die Gast-`itemCount`-Abbildung. Der spätere kleine Runtime-Slice TW7-A ist read-only und verwendet denselben Ortstext wie die Workspace-Übersicht.
 
@@ -4367,7 +4367,7 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 **Konsequenzen:** Runtime nur über den eigenen Auftrag Issue #103 / PR #106. Production-Write, AAL2-Re-Apply, AP-4, TW-8 und Homepage bleiben unberührt. Live-`main` immer live prüfen; keine bewegliche Exact-Head-SHA als kanonische Live-Wahrheit.
 
-**Nachtrag, 27. August 2026 – Runtime Issue #103 / PR #106.** Technical Lead / Product Owner hat den read-only Slice TW7-A als eigenen Runtime-Auftrag freigegeben. PR #106 ist das Integrationsvehikel. Nach Landung: TW7-A Runtime integriert; Issue #103 nach Post-Merge-Verifikation schliessbar. Historische Start-Baseline: `963186f4ec75501efd253a287131f464a5fd0fdb` (PR #102). Alter Branch `cursor/tw7-hub-gap-slice-b13d` ist nicht die Basis. Ältere Sätze „Draft / nicht auf main / live main bleibt 963186f4“ sind Pre-Merge-Evidence.
+**Nachtrag, 27. August 2026 – Runtime Issue #103 / PR #106.** Technical Lead / Product Owner hat den read-only Slice TW7-A als eigenen Runtime-Auftrag freigegeben. PR #106 ist das Integrationsvehikel. Nach Landung: TW7-A Runtime integriert; Issue #103 ist CLOSED / completed. Historische Start-Baseline: `963186f4ec75501efd253a287131f464a5fd0fdb` (PR #102). Alter Branch `cursor/tw7-hub-gap-slice-b13d` ist nicht die Basis. Ältere Sätze „Draft / nicht auf main / live main bleibt 963186f4“ sind Pre-Merge-Evidence.
 
 ---
 

@@ -24,7 +24,7 @@ Reihenfolge:
 5. TW-5 – Item- und Gap-Details ✅
 6. TW6-A – Create-Entry Alignment ✅ – **nicht** gesamtes TW-6
 7. TW6-REST-01 – progressive weitere Ziele / zusätzliche `trip_stages` im Create ✅ integriert via PR #87 (`80bbde69`). Ältere „offen“-Zeilen sind historische Evidence. Kein zweites `TW6-REST-01`. Kein gesamtes TW-6-Closure.
-8. TW-7 / TW-8 nur nach ihren dokumentierten Abhängigkeiten/Gates. TW-7-Start-Gate ist erfüllt; TW7-A Runtime ist durch PR #106 integriert (`docs/TRIP_WORKSPACE_TW7_A_STATUS.md`). Issue #103 nach Post-Merge-Verifikation schliessbar. Das ist **kein** TW-8. TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance.
+8. TW-7 / TW-8 nur nach ihren dokumentierten Abhängigkeiten/Gates. TW-7-Start-Gate ist erfüllt; TW7-A Runtime ist durch PR #106 integriert (`docs/TRIP_WORKSPACE_TW7_A_STATUS.md`). Issue #103 ist CLOSED / completed. Das ist **kein** TW-8. TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance.
 9. TW-9 – Polish, Evidence, Closure
 10. verpflichtender finaler Function-by-Function-/Intelligence-Audit
 
@@ -48,7 +48,7 @@ Agent: `Account plattform audit vorbereitung`
 
 AP-1 bis AP-4 sind auf `main`. Weiter mit AP-5 bis AP-12 gemäß `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` und den jeweiligen Shared Gates. AP-4 (PR #108) ist kein Startauftrag mehr.
 
-Dazu gehören u. a. Archiv/Lifecycle, Security, Privacy, Traveller Registry, Reiseprofil, Favoriten, Booking Overview, Notifications und Subscription-/Entitlement-Grundlage.
+AP-4 deckt Archiv/Lifecycle ab und ist abgeschlossen. Unter AP-5–AP-12 bleiben nur die bereits genannten, noch offenen Programmteile: Security, Privacy, Traveller Registry, Reiseprofil, Favoriten, Booking Overview, Notifications und Subscription-/Entitlement-Grundlage. Das ist keine neue AP-5-Spezifikation und kein automatischer Folgeslice.
 
 Marketing-/Growth-Abhängigkeit: Account-/Consent-/Notification-/Entitlement-Wahrheit darf später von CRM, Subscription Growth und Referral verwendet werden, aber Marketing darf keine zweite Account-/Consent-Wahrheit erzeugen. Sensitive Identity-/Document-Daten bleiben vom Marketing-Targeting ausgeschlossen.
 
