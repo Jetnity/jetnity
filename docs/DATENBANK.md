@@ -38,7 +38,7 @@ Alle Skripte liegen in `scripts/db/` und sprechen über die Supabase Management 
 | Befehl | Aufgabe |
 | --- | --- |
 | `npm run db:inventar` | vollständige Inventur eines Schemas als JSON |
-| `npm run db:anwenden` | offene Migrationen anwenden; ohne Flags nur Development-Branch; Production nur mit `-- --produktion --projekt-ref --bis 20260820130000`; `-- --probe` zeigt nur, was offen ist. Das TW6-B-Bundle `20260826220000`/`230000`/`240000` wird hier dateiweise abgelehnt. |
+| `npm run db:anwenden` | offene Migrationen anwenden; ohne Flags nur Development-Branch; Production nur mit `-- --produktion --projekt-ref --bis 20260820130000`; `-- --probe` zeigt nur, was offen ist. Das TW6-B-Bundle `20260826220000`/`230000`/`240000`/`27010000` wird hier dateiweise abgelehnt. |
 | `npm run db:gate-b-tw6-bundle` | bounded transaktionales Gate-B-Playbook; Default lokale Hash-Probe; Development nur mit `--schreiben --entwicklung` plus genau einem Testpfad; Production-Apply in diesem Slice hart blockiert |
 | `npm run production:pruefen` | vollständig read-only (nur SELECT/Metadaten); braucht `-- --entwicklung` oder `-- --produktion --projekt-ref`; `--vorab` prüft nur Constraints und Kill Switches |
 | `npm run db:reproduzierbarkeit` | baut das Schema aus den Migrationen neu auf und vergleicht es mit dem laufenden |

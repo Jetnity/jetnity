@@ -459,7 +459,8 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 12a. ✅ P1-QS2-02 Guest→Account Stay/Activity-Handelsfeld-Strip – auf `main` (`86567f17`, ADR-0166)
 12b. ✅ P1-TA-02 Official Evaluation Option-Scope – auf `main` (`2468160e`, ADR-0167). P2-TA-06 bleibt offen.
 12c. ✅ TW6-A Create-Entry Alignment – auf `main` (`c4ea47aa`). **TW6-REST-01 bleibt offen.**
-12c1. ⏳ TW6-B Gate 0 migrations-only Vorbereitung – Draft gegen `main` für die drei geprüften Dateien plus transaktionales Playbook. **Kein Production-Apply. Kein Runtime-Merge. Kein TW-7/8/9.**
+12c1. ✅ TW6-B Gate 0 migrations-only – drei geprüfte Dateien plus transaktionales Playbook auf `main` (PR #89). **Kein Production-Apply.**
+12c2. ⏳ TW6-B Gate 0B Zero-Stage Production Rollout Provenance – `20260827010000` byte-identisch plus Vier-Datei-Playbook. **Kein Production-Apply. Kein Runtime-Merge von PR #87. Kein TW-7/8/9.**
 12d. ✅ Provider S5-A Commercial Provenance – auf `main` (`3b317bc6`, ADR-0168). S5-B nicht gestartet.
 12e. ✅ Admin-AAL2 Application-Guard – auf `main` (`d3faa2a0`, ADR-0169). Production-DB nicht angewendet.
 12f. ✅ D0 live metadata boundary / P1-D0-LIVE-01 – auf `main` (PR #86, `38ec8be7`, ADR-0170). HTML-robots fail-closed; Canonical ist `https://jetnity.com`, niemals `*.vercel.app`. **Kein D1/G1. Kein Domain-Cutover. Kein Public Indexing.**
