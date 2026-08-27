@@ -1,7 +1,7 @@
 # Jetnity – AP-4 Account Archive Lifecycle – Status
 
 Stand: 27. August 2026  
-Status: **TECHNICAL-LEAD CHANGES REQUIRED UMGESETZT / NEUER EXACT HEAD AUSSTEHEND / DRAFT / KEIN READY / KEIN MERGE DURCH AUTOR-AGENT**  
+Status: **TECHNICAL-LEAD CHANGES REQUIRED GESCHLOSSEN / EXACT-HEAD GATES GRÜN AUF `d9e35bb6` / DRAFT / KEIN READY / KEIN MERGE DURCH AUTOR-AGENT**  
 Workstream: Account / Traveller  
 Cursor-Agent: **`Account plattform audit vorbereitung 3`**  
 Branch: `cursor/ap4-account-archive-lifecycle-67d4`  
@@ -72,7 +72,26 @@ Review: https://github.com/Jetnity/jetnity/pull/108#pullrequestreview-5045022530
 | P1-AP4-TL-02 Status-only Guard konnte fremde Metadata überschreiben | Write zusätzlich gegen gelesenes `updated_at` |
 | P2-AP4-TL-03 erfundene 8-KB-Grenze für `trips.metadata` | entfernt; kein `metadata-zu-gross` |
 
-Der status-only Guard ist **kein** akzeptiertes Restrisiko mehr. Neue Exact-Head-Evidence folgt nach Gates auf dem Review-Fix-Head.
+Der status-only Guard ist **kein** akzeptiertes Restrisiko mehr.
+
+## 3d. Review-Fix Exact Head `d9e35bb66ed51e7861107872c6c96b1edb989106`
+
+Runtime-Fixes plus Continuity, genau dieser SHA:
+
+| Gate | Ergebnis |
+| --- | --- |
+| GitHub Actions | Run `33110692991` **SUCCESS** – https://github.com/Jetnity/jetnity/actions/runs/33110692991 |
+| Typecheck, Lint & Build | SUCCESS |
+| Auth-Konfiguration | SUCCESS |
+| Vercel Preview | Deployment `6130005583` / Inspector `2EtoM6gGvaEpJwWhFRGj25S8X42F` **READY** auf demselben SHA |
+| Preview-URL | https://jetnity-d5woaiy7n-jetnity-e1b93c82.vercel.app |
+| Live `origin/main` | unverändert `4f630ff41b3529dadc0bfd8984d3afc02b1c4efb` |
+| PR | mergeable / CLEAN; nicht hinter der Startbaseline |
+| Review-Threads | 0 |
+
+Lokale Gates auf demselben SHA: `npm test` 2367/2367, Typecheck, Lint, `check:dead`, `check:exports`, `check:deps`, `check:api-schutz`, `check:schema-bezug`, Production Build – alle grün.
+
+Ein späterer Continuity-only-Commit muss live neu geprüft werden.
 
 ## 4. Shared Contracts
 

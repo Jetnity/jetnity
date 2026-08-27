@@ -1,7 +1,7 @@
 # Jetnity – AP-4 Account Archive Lifecycle – Handoff
 
 Stand: 27. August 2026  
-Status: **AUTHOR REVIEW-FIX HANDOFF / P1/P2 UMGESETZT / NEUER EXACT HEAD AUSSTEHEND / DRAFT / STOPP VOR READY/MERGE**  
+Status: **AUTHOR REVIEW-FIX HANDOFF / EXACT-HEAD PASS AUF `d9e35bb6` / DRAFT / STOPP VOR READY/MERGE**  
 Cursor-Agent: **`Account plattform audit vorbereitung 3`**  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/108
 
@@ -34,7 +34,15 @@ Technical Lead: CHANGES REQUIRED. Umgesetzt, ohne Scope-Erweiterung:
 
 ## Gegatete Evidence
 
-Letzter gegateter Runtime-Head vor Review-Fixes `f19b5711e05282617d7c35262ebbfaeef4253e0d`:
+Aktueller Exact Head `d9e35bb66ed51e7861107872c6c96b1edb989106`:
+
+- Actions `33110692991` SUCCESS
+- Vercel Preview `2EtoM6gGvaEpJwWhFRGj25S8X42F` / Deployment `6130005583` READY
+- Preview https://jetnity-d5woaiy7n-jetnity-e1b93c82.vercel.app
+- Review-Threads 0
+- Live `main` unverändert `4f630ff4`
+
+Vorheriger Runtime-Head vor Review-Fixes `f19b5711e05282617d7c35262ebbfaeef4253e0d`:
 
 - Actions `33108697812` SUCCESS
 - Vercel Preview `BiQYRdySrHjnea8MmTbxqSomsCMQ` / Deployment `6129645873` READY
