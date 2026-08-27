@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 27. August 2026  
-Status: **Production Gate A ist PASS. PR #91 / TW6-B Gate 0B ist auf `main`. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87, PR #94 und PR #95 sind gemergt. Visitor Search UX ist integriert. PR #95 hat nur den New-Chat-Checkpoint ergänzt; die kanonischen Handoff-Dateien aktualisiert Draft PR #96. Kein offener Visitor-Search-Implementation-Draft. Alte Aussagen „PR #94 bleibt Draft / CHANGES REQUIRED“ bzw. „PR #87 bleibt Draft“ sind historische Evidence.**
+Status: **Production Gate A ist PASS. PR #91 / TW6-B Gate 0B ist auf `main`. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87, PR #94, PR #95 und die Post-PR-#94-Continuity (PR #96) sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. Kein offener Visitor-Search- oder Continuity-Draft. Der nächste Produktslice ist nicht zugewiesen. Alte Aussagen „PR #94/#96 bleibt Draft“ sind historische Evidence.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -30,7 +30,7 @@ Verifizierte PR-#94-Linie:
 Post-Merge-Checkpoints:
 
 - `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md` (PR #95, bereits auf `main`)
-- `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md` (dieser Continuity-Block, Draft PR #96)
+- `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md` (PR-#94-Continuity, mit PR #96 integriert/geschlossen)
 
 PR #91 bleibt Teil der Vorgeschichte (Merge `a2e46f38dcfbbea286e37960c7993adbbd06136a`). Checkpoint: `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`. Aussagen dort, Production Gate B sei unangewendet oder PR #87 bleibe Draft, sind **historische Evidence** vor den späteren Gate-B- und Runtime-Merges.
 
@@ -159,9 +159,9 @@ Live Supabase-Inventur zeigt:
 
 ## 7. Aktive / nächste Cursor-Workstreams
 
-Aktueller Continuity-Block: **Cursor-Agent: Trip workspace audit architecture** auf `cursor/pr94-continuity-b13d`, Draft PR #96 (Post-PR-#94 Continuity, docs-only).
+Kein offener Continuity- oder Implementation-Draft. PR #96 (Post-PR-#94 Continuity) ist mit diesem Dokumentensatz integriert/geschlossen. Historisch Draft auf `cursor/pr94-continuity-b13d`; das ist keine operative nächste Arbeit.
 
-Kein Ready. Kein Merge dieses Continuity-PRs ohne neuen unabhängigen Technical-Lead-PASS. Kein automatischer Produkt-Folgeslice.
+Kein automatischer Produkt-Folgeslice. Der nächste Produktslice bleibt unzugewiesen.
 
 STOPP weiterhin für automatische Folgeslices:
 
@@ -181,7 +181,7 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#96** Post-PR-#94 Continuity | **OFFENER Draft, docs-only.** Aktualisiert die kanonischen Handoff-Dateien, die PR #95 nicht geändert hat. Kein Ready/Merge ohne neuen PASS. |
+| **#96** Post-PR-#94 Continuity | **INTEGRIERT / GESCHLOSSEN** mit diesem Dokumentensatz. Historisch Draft; kein ausstehendes Re-Review. Merge-SHA live prüfen. |
 | **#95** PR94 new-chat checkpoint | **GEMERGT.** Nur `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`. Merge `943d14c2`. |
 | **#94** Visitor Search UX | **GEMERGT.** Reviewed Head `8da869fd`. Merge `819715b1`. |
 | **#87** TW6-B Runtime + Mode Contract | **GEMERGT.** Checkpoint `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`. |
@@ -213,8 +213,8 @@ Weiterhin nicht angewendet:
 
 ## 10. Nächster Schritt
 
-**STOP nach Korrektur der Review-Findings von `5040683772` für erneuten unabhängigen Technical-Lead-Review von Draft PR #96.**
+**Kein ausstehendes Re-Review von PR #96.** Continuity nach PR #94 ist integriert/geschlossen. Visitor Search UX ist integriert. Gate B ist operativ PASS, kein Re-Apply. `TW6-REST-01` ist geschlossen.
 
-Kein Ready. Kein Merge ohne neuen PASS. Kein weiterer Visitor-Search-Implementation-Slice. Kein weiterer Production-Write. Kein AAL2. Keine Direction A. Kein TW-7/8/9-Folgeslice.
+Kein automatischer Produkt-Folgeslice. Kein weiterer Production-Write. Kein AAL2. Keine Direction A. Kein TW-7/8/9.
 
-PR #95 zeichnet einen Product-Owner-Wunsch auf: Homepage-Hero-Design bleibt, die Funktion im bestehenden Kästchen soll später natürliche Mehrziel-/Route-Absicht verstehen. Das ist **kein** Startauftrag. Der nächste Produktauftrag braucht eine neue Technical-Lead- oder Product-Owner-Zuweisung.
+PR #95 zeichnet einen Product-Owner-Wunsch auf: Homepage-Hero-Design bleibt, die Funktion im bestehenden Kästchen soll später natürliche Mehrziel-/Route-Absicht verstehen. Das ist **kein** Startauftrag. Der nächste Produktauftrag bleibt unzugewiesen, bis eine neue Technical-Lead- oder Product-Owner-Entscheidung ihn vergibt.

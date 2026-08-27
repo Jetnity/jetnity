@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 27. August 2026  
-Status: **PR #91 / TW6-B Gate 0B ist integriert. Production Gate A ist vollständig PASS. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87, PR #94 und PR #95 sind gemergt. Visitor Search UX ist integriert. Draft PR #96 aktualisiert die kanonischen Handoff-Dateien. Kein offener Visitor-Search-Implementation-Draft. Frühere Aussagen „PR #94 bleibt Draft“ bzw. „PR #87 bleibt Draft“ sind historische Evidence.**
+Status: **PR #91 / TW6-B Gate 0B ist integriert. Production Gate A ist vollständig PASS. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87, PR #94, PR #95 und die Post-PR-#94-Continuity (PR #96) sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. Kein offener Visitor-Search- oder Continuity-Draft. Der nächste Produktslice ist nicht zugewiesen. Frühere Aussagen „PR #94/#96 bleibt Draft“ sind historische Evidence.**
 
 Der erste Einstieg bleibt `JETNITY_START_HERE.md`.  
 Aktuelle operative Evidence zusätzlich: `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`, `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md` und `docs/ACTIVE_WORK_STATUS.md`.
@@ -208,7 +208,7 @@ Supabase-Inventur zeigt weiterhin zwei Top-Level-Projekte: das aktive Production
 
 Operativ relevant:
 
-- PR #96 – Post-PR-#94 Continuity, docs-only Draft; aktualisiert kanonische Handoff-Dateien nach PR #94/#95
+- PR #96 – Post-PR-#94 Continuity **integriert/geschlossen** mit diesem Dokumentensatz. Historisch Draft auf `cursor/pr94-continuity-b13d`; kein ausstehendes Re-Review. Merge-SHA live prüfen.
 - PR #95 – gemergt; New-Chat-Checkpoint `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
 - PR #94 – gemergt; Visitor Search UX integriert
 - PR #88 – Project Sanitation Audit; non-destructive Evidence, kein Cleanup automatisch
@@ -220,15 +220,13 @@ PR #89 und PR #91 sind gemergt und keine aktiven Drafts mehr.
 
 ## 15. Exakter nächster Technical-Lead-Schritt
 
-**Erneuter unabhängiger Review von Draft PR #96 nach Korrektur der Continuity-Widersprüche (Gate-B Re-Apply-Wortlaut, `TW6-REST-01`-Status, bindende New-Chat-Betriebsregeln).**
+**Kein ausstehendes Re-Review von PR #96.** Die Post-PR-#94-Continuity ist integriert/geschlossen.
 
-Visitor Search UX ist integriert. Es gibt keinen offenen Implementation-Draft für diese Suche. Der nächste Produktslice braucht eine neue Technical-Lead- oder Product-Owner-Zuweisung.
+Visitor Search UX ist integriert. Production Gate B ist operativ PASS, kein Re-Apply. `TW6-REST-01` ist geschlossen.
 
-Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. Die frühere Anweisung, zuerst um Gate-B-Freigabe zu bitten, ist historische Evidence.
+Der nächste Produktslice bleibt **unzugewiesen**, bis eine neue Technical-Lead- oder Product-Owner-Entscheidung ihn vergibt.
 
-Bis dahin:
-
-**Kein Ready. Kein Merge ohne neuen PASS. Kein AAL2. Kein Direction A. Kein TW-7/8/9-Folgeslice. Kein weiterer Production-Write. Kein automatischer Visitor-Search- oder Produkt-Folgeslice.**
+**Kein automatischer Folgeslice. Kein AAL2. Kein Direction A. Kein TW-7/8/9. Kein weiterer Production-Write. Kein automatischer Visitor-Search- oder Homepage-Auftrag.**
 
 ## 16. Continuity
 

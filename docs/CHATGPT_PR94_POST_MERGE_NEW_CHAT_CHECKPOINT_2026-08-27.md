@@ -191,6 +191,8 @@ Vor neuer Arbeit:
 
 ## 11. Empfohlener nächster Entscheidungs-Checkpoint
 
+PR #96 Continuity ist mit den kanonischen Handoff-Dateien integriert/geschlossen. Es gibt **kein** ausstehendes Re-Review von PR #96 und keinen offenen Visitor-Search-Draft. Der nächste Produktslice bleibt unzugewiesen.
+
 Nach Live-Rekonstruktion soll der Technical Lead eine kurze Priorisierungsentscheidung treffen:
 
 - Was ist gemäß verbindlicher Build Order jetzt wirklich als Nächstes dran?

@@ -67,11 +67,11 @@ These are not reopen-the-slice blockers. They remain explicit so a new agent doe
 
 ## Next step
 
-There is **no open Visitor Search UX implementation draft**.
+There is **no open Visitor Search UX implementation draft** and **no pending re-review of PR #96**.
 
-PR #95 already landed the new-chat checkpoint `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md` on `main`. It did not update `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, ADR-0174 or the Visitor Search task file.
+PR #95 landed the new-chat checkpoint `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`. PR #96 is the docs-only continuity vehicle that updates the canonical handoff files. After this documentation set lands, PR #96 continuity is **integrated/closed**. The earlier Draft status on `cursor/pr94-continuity-b13d` is historical evidence only.
 
-The remaining continuity work is Draft PR #96 (`cursor/pr94-continuity-b13d`). Review `5040683772` required contradiction-free Gate-B wording, an explicit `TW6-REST-01` close via PR #87, and binding new-chat operating rules. After that correction the draft stays Draft for re-review.
+Reviews `5040683772` and `5040838841` required contradiction-free Gate-B wording, an explicit `TW6-REST-01` close via PR #87, binding new-chat operating rules, and post-merge wording that does not leave PR #96 as an open next step.
 
 Do **not** automatically start:
 
