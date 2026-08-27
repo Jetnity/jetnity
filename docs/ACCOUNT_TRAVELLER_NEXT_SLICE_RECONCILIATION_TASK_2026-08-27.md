@@ -38,4 +38,4 @@ Siehe Issue #105. Live-Evidence gewinnt über historische Audit-Texte.
 
 ## Abschluss
 
-Draft-PR. Gates laut Issue #105 und TL-Re-Review `5044426064`. Kein Ready. Kein Merge. STOPP.
+Draft-PR. Gates laut Issue #105. Review `5044513532` BLOCKED einen docs-seitigen Restfund (`beaef64a` / AAL2-Apply-offen als Current Truth). Dieser Follow-up korrigiert nur das. Kein Ready. Kein Merge. STOPP.
