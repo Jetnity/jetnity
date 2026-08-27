@@ -212,7 +212,7 @@ export function preflightPasst(stand: Aal2PreflightStand): void {
 }
 
 export function verifyFinalContractSql(): string {
-  return {
+  return `
 do $aal2_verify$
 declare
   _fn text;

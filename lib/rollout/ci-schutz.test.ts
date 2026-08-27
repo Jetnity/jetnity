@@ -5,11 +5,11 @@ import assert from 'node:assert/strict'
 const checker = readFileSync(new URL('../../scripts/db/production-pruefen.ts', import.meta.url), 'utf8')
 const gateB = readFileSync(new URL('../../scripts/db/gate-b-tw6-bundle.ts', import.meta.url), 'utf8')
 const aal2 = readFileSync(new URL('../../scripts/db/aal2-prod-apply.ts', import.meta.url), 'utf8')
+const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')) as {
+  scripts: Record<string, string>
+}
 
 describe('CI und Build beschreiben Production nicht', () => {
-  const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')) as {
-    scripts: Record<string, string>
-  }
 
   test('prebuild, build, test und Hygiene rufen keinen Import auf', () => {
     const automatisch = ['prebuild', 'build', 'test', 'check:setup', 'check:setup:ci']

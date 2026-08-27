@@ -254,7 +254,7 @@ describe('AAL2-Verify prüft den engen Vertrag', () => {
   test('Verify verlangt Helper, Mindestrollen, INVOKER, Grants, History und unveränderte RLS', () => {
     const sql = verifyFinalContractSql()
     assert.match(sql, /aktuelles_admin_aal2\(\)/)
-    assert.match(sql, /auth\.jwt\(\) ->> 'aal'/)
+    assert.match(sql, /auth\.jwt\(\) ->> ''aal''/)
     assert.match(sql, /unerlaubte AAL-Quelle/)
     assert.match(sql, /SECURITY INVOKER/)
     assert.match(sql, /search_path=pg_catalog/)
