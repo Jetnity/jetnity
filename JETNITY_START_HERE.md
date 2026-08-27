@@ -9,6 +9,7 @@ Aktuelle operative Evidence:
 
 - `JETNITY_HANDOFF.md`
 - `docs/ACTIVE_WORK_STATUS.md`
+- `docs/CHATGPT_PR108_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
 - `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`
 - `docs/TRIP_WORKSPACE_TW7_HUB_GAP_STATUS.md`
 - `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`
@@ -38,13 +39,14 @@ Jeder neue Chat, Technical Lead oder Coding Agent liest mindestens in dieser Rei
 12. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
 13. `JETNITY_HANDOFF.md`
 14. `docs/ACTIVE_WORK_STATUS.md`
-15. `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
-16. `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
-17. `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`
-18. `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`
-19. `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`
-20. `docs/TRIP_WORKSPACE_TW6_GATE_B_PREP_STATUS.md`
-21. den aktuell relevanten Slice-Task/Status/Handoff sowie ADRs/Checkpoints.
+15. `docs/CHATGPT_PR108_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
+16. `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
+17. `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
+18. `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`
+19. `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`
+20. `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`
+21. `docs/TRIP_WORKSPACE_TW6_GATE_B_PREP_STATUS.md`
+22. den aktuell relevanten Slice-Task/Status/Handoff sowie ADRs/Checkpoints.
 
 Historische Checkpoints und ältere Governance-/PR-Dokumente bleiben Evidence ihres damaligen Stands. Widersprechende alte Aussagen werden nicht gelöscht, aber durch spätere kanonische Entscheidungen und Live-Evidence superseded.
 
@@ -287,7 +289,7 @@ PR #94 (Visitor Search UX) ist gemergt. Reviewed Head `8da869fd`. Checkpoint: `d
 
 Kein alter PASS ist eine aktuelle Merge- oder Production-Freigabe.
 
-TW-7-Start-Gate ist erfüllt. TW7-A Runtime ist integriert (PR #106, Issue #103). Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Issue #103 nach Live-Post-Merge-Verifikation schliessbar. TW-8 bleibt hinter Provider S5 und realer Commercial Provenance. TW-9 danach.
+TW-7-Start-Gate ist erfüllt. TW7-A Runtime ist integriert (PR #106, Issue #103). Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Issue #103 ist CLOSED / completed. TW-8 bleibt hinter Provider S5 und realer Commercial Provenance. TW-9 danach.
 
 ## 14. Große Build-Reihenfolge
 
@@ -312,7 +314,7 @@ Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Repo-/Bran
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-TW7-A Runtime ist integriert (PR #106). Issue #103 nach Live-Post-Merge-Verifikation schliessbar. Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. AP-4 ist integriert (PR #108). Kein AP-5 automatisch.
+TW7-A Runtime ist integriert (PR #106). Issue #103 ist CLOSED / completed. Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. AP-4 ist integriert (PR #108). Kein AP-5 automatisch.
 
 Live-`main` immer live prüfen. Die Start-Baseline `963186f4` (PR #102) ist historische Start-Evidence von TW7-A, keine dauerhafte Live-SHA.
 

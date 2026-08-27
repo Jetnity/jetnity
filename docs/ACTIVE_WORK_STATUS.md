@@ -127,7 +127,7 @@ PR #94 (`cursor/visitor-search-ux-b13d`) ist gemergt. Reviewed Head `8da869fd`, 
 
 Ältere Exact-Head-Evidence (`72ca1700`, `1008632e`, Review `5040068359` CHANGES REQUIRED) bleibt historisch.
 
-TW-7-Start-Gate ist erfüllt. Der Weg ist bereits einer. TW7-A Runtime ist integriert (PR #106): Mehrziel-Kartenidentität plus Gast-`itemCount`. Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Issue #103 nach Post-Merge-Verifikation schliessbar. TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance; S5-A allein ist kein TW-8-Start.
+TW-7-Start-Gate ist erfüllt. Der Weg ist bereits einer. TW7-A Runtime ist integriert (PR #106): Mehrziel-Kartenidentität plus Gast-`itemCount`. Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Issue #103 ist CLOSED / completed. TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance; S5-A allein ist kein TW-8-Start.
 
 ## 4. Traveller / Account
 
@@ -179,7 +179,7 @@ Live Supabase-Inventur zeigt:
 
 Kein offener TW-7-Produktdocs-Draft als operative nächste Arbeit.
 
-- **PR #106** integriert TW7-A Runtime (Issue #103). Integrationsvehikel. Issue #103 nach Live-Post-Merge-Verifikation schliessbar.
+- **PR #106** integriert TW7-A Runtime (Issue #103). Integrationsvehikel. Issue #103 ist CLOSED / completed.
 - **PR #100** versioniert TW-7-Gap / ADR-0176 / TW7-A-Spec. Nach Landung integriert.
 - Historische Pre-Merge-Evidence von PR #100: Head `2aa573f1` Actions `33087982878` SUCCESS, Vercel `DUzQZnDEY2TBdP1rwoZFPs2bzFsA` SUCCESS; späterer Stamp-Head `2abe79b4` Actions `33088507998` SUCCESS, Vercel `8NJVH46dzhrvUur8raAGukyiyzcL` SUCCESS.
 
@@ -207,7 +207,7 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#106** TW7-A Runtime Issue #103 | **INTEGRIERT.** Integrationsvehikel. Issue #103 nach Post-Merge-Verifikation schliessbar. Ältere „Draft / nicht auf main“-Zeilen sind Pre-Merge-Evidence. |
+| **#106** TW7-A Runtime Issue #103 | **INTEGRIERT.** Integrationsvehikel. Issue #103 ist CLOSED / completed. Ältere „Draft / nicht auf main“-Zeilen sind Pre-Merge-Evidence. |
 | **#102** Admin AAL2 production apply gate closure | **GEMERGT.** Historische Start-Baseline von TW7-A war `963186f4`. Apply von `20260827170000` ausgeführt und verifiziert, exakt einmal. |
 | **#100** TW-7-Gap / ADR-0176 / TW7-A-Spec | **VERSIONIERT bzw. nach Landung integriert.** Spec bleibt bindend. Runtime folgt über PR #106. |
 | **#98** Admin AAL2 Production Alignment | **GEMERGT.** Merge `beaef64a`. Historische Alignment-Linie vor PR #102. |
@@ -248,7 +248,7 @@ Production `20260827170000` ist angewendet und verifiziert, exakt einmal. Kein z
 
 ## 10. Nächster Schritt
 
-TW7-A Runtime ist integriert (PR #106). Issue #103 nach Live-Post-Merge-Verifikation schliessbar. AP-4 ist integriert (PR #108, Merge `70cac163`).
+TW7-A Runtime ist integriert (PR #106). Issue #103 ist CLOSED / completed. AP-4 ist integriert (PR #108, Merge `70cac163`).
 
 Kein weiterer Production-Write. Keine Direction A. Kein TW-8/9. Kein AP-5/AP-7 automatisch. Kein zweiter AAL2-Apply. Live-`main` immer live prüfen.
 
