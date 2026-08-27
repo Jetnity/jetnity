@@ -11,7 +11,8 @@ Post-Apply Evidence: Technical-Lead-Kommentar `5442474653`
 PASS-Review vor Apply: `5043413423`  
 Review-Fix vor Apply: `5043150656` auf Head `e056f1a1a6bb40cd3b2b46f88c8156f1dc4d3aad`  
 Review-Fix Exact Head (historisch): `4ee402dd4a4c77576b43523d058fff2855ba21eb`  
-Neuer Exact Head: *folgt nach Commit dieses Docs-Closure*
+Docs-Closure Commit: `4f0909be9093359fa53e5d68ab779dd4db608ece`  
+Neuer Exact Head: `4f0909be9093359fa53e5d68ab779dd4db608ece`
 
 Task: `docs/QS2_ADMIN_AAL2_PRODUCTION_APPLY_GATE_TASK_2026-08-27.md`  
 Playbook: `docs/QS2_ADMIN_AAL2_PRODUCTION_ALIGNMENT_PLAYBOOK_2026-08-27.md`
@@ -107,6 +108,6 @@ Dieser Docs-Closure ändert keinen Runtime-, SQL-, Runner-, Migration-, RLS-, Au
 
 ## 5. Nächster Schritt
 
-Docs-only Finalreview durch ChatGPT auf dem neuen Exact Head dieses Docs-Closure. Danach Merge durch ChatGPT.
+Docs-only Finalreview durch ChatGPT auf Exact Head `4f0909be9093359fa53e5d68ab779dd4db608ece`. Danach Merge durch ChatGPT.
 
 Kein Ready/Merge durch diesen Agenten. **Kein zweiter Apply.** Kein weiterer Production-Write.
