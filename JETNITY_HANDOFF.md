@@ -1,10 +1,10 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 27. August 2026  
-Status: **PR #91 / TW6-B Gate 0B ist integriert. Production Gate A ist vollständig PASS. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87 ist gemergt. Aktueller offener Slice: Visitor Search UX. Frühere Aussagen „Production Gate B nicht angewendet“ bzw. „PR #87 bleibt Draft“ sind historische Evidence.**
+Status: **PR #91 / TW6-B Gate 0B ist integriert. Production Gate A ist vollständig PASS. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87 und PR #94 sind gemergt. Visitor Search UX ist integriert. Kein offener Visitor-Search-Implementation-Draft. Frühere Aussagen „PR #94 bleibt Draft“ bzw. „PR #87 bleibt Draft“ sind historische Evidence.**
 
 Der erste Einstieg bleibt `JETNITY_START_HERE.md`.  
-Aktuelle operative Evidence zusätzlich: `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`, `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md` und `docs/ACTIVE_WORK_STATUS.md`.
+Aktuelle operative Evidence zusätzlich: `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`, `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md` und `docs/ACTIVE_WORK_STATUS.md`.
 
 > **Do not blindly trust this handoff — live verify first.**
 
@@ -23,6 +23,8 @@ Lies zuerst mindestens:
 - `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`
 - `JETNITY_HANDOFF.md`
 - `docs/ACTIVE_WORK_STATUS.md`
+- `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
+- `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`
 - `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`
 - `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`
 - relevanten Slice-Task/Status/ADR/Checkpoint.
@@ -49,17 +51,19 @@ Besondere Product-Owner-Gates bleiben zwingend für Production-Migrationen/destr
 
 ## 3. Aktuelle Git-/CI-Linie
 
-Verifizierter Integrationsstand nach PR #91:
+Verifizierter Integrationsstand nach PR #94:
 
-- PR #91 – `TW6-B Gate 0B: Zero-Stage Production Rollout Provenance`
-- PR-#91 Exact Head: `1da3ae0a01c6d5bb1f2325a2ca528922823c9611`
-- PR-#91 Exact-Head GitHub Actions Run `33031870276`: SUCCESS
-- PR-#91 Exact-Head Vercel `dpl_9QJSE9UeQNfehoLjdEa3PPXfyvLs`: READY
-- Merge-Commit auf `main`: `a2e46f38dcfbbea286e37960c7993adbbd06136a`
-- Post-Merge `main` GitHub Actions Run `33053499406`: SUCCESS
-- Post-Merge Vercel Production `dpl_2UjcAyoJ3D4Puuqehu3izDtcXDtj`: READY auf exakt dem Merge-SHA
+- PR #94 – `Visitor Search UX: natürliche Orts- und Flughafennamen`
+- PR-#94 Exact Head: `8da869fd2756f3c1514de6d33678c8c7abfad1c4`
+- Technical-Lead PASS review: `5040199350`
+- PR-#94 Exact-Head GitHub Actions Run `33066516282`: SUCCESS
+- PR-#94 Exact-Head Vercel Preview `CBuVobvymHT9m7A4uUKmb2exU4PU`: SUCCESS
+- Merge-Commit auf `main`: `819715b1567417893d894b7b110eff1a2ab6cded`
+- Post-Merge `main` GitHub Actions Run `33067498607`: SUCCESS
+- Post-Merge Vercel `GrD4MaYqtnR9UL619gVnKx9HSUmH`: SUCCESS auf exakt dem Merge-SHA
+- GitHub Production deployment `6121770601`: SUCCESS auf demselben SHA
 
-PR #89 / Gate 0 bleibt Teil der Vorgeschichte; PR #91 ergänzt den notwendigen vierten Zero-Stage-Schritt.
+PR #87, PR #89 und PR #91 bleiben Teil der Vorgeschichte. Aussagen in älteren Checkpoints, PR #87 bleibe Draft oder Production Gate B sei unangewendet, sind historische Evidence.
 
 `main` Branch Protection ist weiterhin live deaktiviert (`protected=false`) und bleibt Governance-Risiko.
 
@@ -123,9 +127,9 @@ Development `yfvbxvijcorffwxbxahl` enthält bereits alle vier Versionen. Dort ni
 
 ## 7. TW6-B / PR #87
 
-PR #87 (`feat/tw6-rest-progressive-stages`) bleibt Draft. Die Synchronisierung gegen `main` nach Gate 0B ist erfolgt. Aktueller Korrekturscope: Workspace darf den Persistenzdefault `balanced` nicht als Nutzerwahl zeigen.
+PR #87 (`feat/tw6-rest-progressive-stages`) ist gemergt. Reviewed Head `7ef201fb`. Merge-Commit `80bbde69`. Checkpoint: `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`.
 
-Kein alter PASS darf als aktuelle Merge-Freigabe verwendet werden.
+Der Workspace zeigt den Persistenzdefault `balanced` nicht als Nutzerwahl. Kein alter PASS darf als aktuelle Merge- oder Production-Freigabe verwendet werden.
 
 ## 8. Trip Workspace
 
@@ -139,11 +143,10 @@ Integriert:
 - TW6-A Create-Entry ✅
 - TW6-B Gate 0 / Provenance ✅
 - TW6-B Gate 0B / Zero-Stage Rollout Provenance ✅
+- TW6-B Runtime / progressive Ziele / Day→Stage Mode Contract via PR #87 ✅
+- Visitor Search UX via PR #94 ✅
 
-Offen:
-
-- TW6-B Runtime / progressive Ziele / Day→Stage Mode Contract via PR #87
-- Production Gate B separat
+Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS und kein offener Apply-Auftrag dieses Continuity-Blocks.
 
 TW-7 bleibt hinter Account-/Hub-Grenzen. TW-8 bleibt hinter Provider S5 und realer Commercial Provenance.
 
@@ -200,7 +203,8 @@ Supabase-Inventur zeigt weiterhin zwei Top-Level-Projekte: das aktive Production
 
 Operativ relevant:
 
-- Visitor Search UX – eigener Draft gegen aktuelles `main`; Task `docs/TRIP_WORKSPACE_VISITOR_SEARCH_UX_TASK.md`
+- Post-PR-#94 Continuity – docs-only Draft gegen aktuelles `main`; Checkpoint `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
+- PR #94 – gemergt; Visitor Search UX integriert
 - PR #88 – Project Sanitation Audit; non-destructive Evidence, kein Cleanup automatisch
 - PR #87 – gemergt; Checkpoint `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`
 
@@ -210,13 +214,15 @@ PR #89 und PR #91 sind gemergt und keine aktiven Drafts mehr.
 
 ## 15. Exakter nächster Technical-Lead-Schritt
 
-**Unabhängiger Finalreview des Visitor-Search-UX-Drafts nach Exact-Head-Gates.**
+**Unabhängiger Review des Post-PR-#94-Continuity-Drafts (docs-only) nach Exact-Head-Gates.**
+
+Visitor Search UX ist integriert. Es gibt keinen offenen Implementation-Draft für diese Suche. Der nächste Produktslice braucht eine neue Technical-Lead- oder Product-Owner-Zuweisung.
 
 Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. Die frühere Anweisung, zuerst um Gate-B-Freigabe zu bitten, ist historische Evidence.
 
 Bis dahin:
 
-**Kein Ready. Kein Merge ohne neuen PASS. Kein AAL2. Kein Direction A. Kein TW-7/8/9-Folgeslice. Kein weiterer Production-Write in diesem Slice.**
+**Kein Ready. Kein Merge ohne neuen PASS. Kein AAL2. Kein Direction A. Kein TW-7/8/9-Folgeslice. Kein weiterer Production-Write. Kein automatischer Visitor-Search- oder Produkt-Folgeslice.**
 
 ## 16. Continuity
 

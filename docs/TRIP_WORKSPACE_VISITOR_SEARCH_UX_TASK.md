@@ -2,7 +2,7 @@
 
 **Owner:** `Cursor-Agent: Trip workspace audit architecture`
 
-**Status:** Implementation Draft on `cursor/visitor-search-ux-b13d`. Technical-Lead-Finalreview CHANGES REQUIRED (P1 listbox option, P2 stale/abort request). Not Ready. Not merged.
+**Status:** Merged on `main` via PR #94. Reviewed exact head `8da869fd2756f3c1514de6d33678c8c7abfad1c4`. Technical-Lead PASS review `5040199350`. Merge commit `819715b1567417893d894b7b110eff1a2ab6cded`. P1 listbox nested-button and P2 stale/abort request are closed. This file remains the historical slice spec, not an open implementation draft.
 
 ## Goal
 
@@ -119,9 +119,10 @@ At minimum cover:
 
 ## 6. Delivery / agent stop rule
 
-1. Start from current live `main`; re-check the SHA before coding.
-2. Inspect existing place and airport ranking/search code before introducing new abstractions.
-3. Keep changes bounded to this visitor-search slice and necessary tests/docs.
-4. Open a **Draft PR**.
-5. Report exact head, merge-base, ahead/behind, changed files, local tests, GitHub Actions exact-head evidence and Vercel exact-head evidence.
-6. **STOP.** Do not mark Ready, do not merge, do not start a follow-up slice. Technical Lead performs the independent final review.
+Historical delivery rule for the implementation draft. The slice itself is complete and merged.
+
+Post-merge continuity:
+
+1. Do not reopen ranking, IATA confirmation, or combobox implementation unless a new Technical-Lead review requires it.
+2. Continuity must describe PR #94 as merged and must not leave a new agent starting a second Visitor Search draft from stale docs.
+3. **STOP.** Do not mark a continuity PR Ready, do not merge without a new independent PASS, do not start TW-7/8/9, AAL2, Direction A, provider-live, or another search-provider slice.

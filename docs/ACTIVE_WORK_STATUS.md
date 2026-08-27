@@ -1,28 +1,33 @@
 # Jetnity – Active Work Status
 
 Stand: 27. August 2026  
-Status: **Production Gate A ist PASS. PR #91 / TW6-B Gate 0B ist auf `main`. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87 ist gemergt. Aktueller Slice: Visitor Search UX. Alte Aussagen „Production Gate B nicht angewendet“ bzw. „PR #87 bleibt Draft“ sind historische Evidence.**
+Status: **Production Gate A ist PASS. PR #91 / TW6-B Gate 0B ist auf `main`. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87 und PR #94 sind gemergt. Visitor Search UX ist integriert. Kein offener Visitor-Search-Implementation-Draft. Alte Aussagen „PR #94 bleibt Draft / CHANGES REQUIRED“ bzw. „PR #87 bleibt Draft“ sind historische Evidence.**
 
 > **Do not blindly trust this file — live verify first.**
 
 ## 0. Live-Integrationsbaseline
 
-PR #91 wurde nach unabhängigem Technical-Lead-PASS auf Exact Head `1da3ae0a01c6d5bb1f2325a2ca528922823c9611` mit Expected Head SHA gemergt.
+Aktueller verifizierter `origin/main` nach PR #94:
 
-Verifizierte PR-#91-Linie:
+- `819715b1567417893d894b7b110eff1a2ab6cded` — `Merge PR #94: Visitor Search UX`
 
-- Base / Merge-Base vor Merge: `f683855fa82a6ae5663228b2c9dfa605755fc47d`
-- Ahead / Behind: `2 / 0`
-- PR-#91 Exact Head: `1da3ae0a01c6d5bb1f2325a2ca528922823c9611`
-- Exact-Head GitHub Actions Run `33031870276`: SUCCESS
-- Exact-Head Vercel `dpl_9QJSE9UeQNfehoLjdEa3PPXfyvLs`: READY
-- Merge-Commit auf `main`: `a2e46f38dcfbbea286e37960c7993adbbd06136a`
-- Post-Merge `main` GitHub Actions Run `33053499406`: SUCCESS
-- Post-Merge Vercel Production `dpl_2UjcAyoJ3D4Puuqehu3izDtcXDtj`: READY auf exakt `a2e46f38dcfbbea286e37960c7993adbbd06136a`
+Verifizierte PR-#94-Linie:
+
+- Base / Merge-Base vor Merge: `b76148e533fb0758c0197d0e0252624bb869cdb5`
+- PR-#94 Exact Head: `8da869fd2756f3c1514de6d33678c8c7abfad1c4`
+- Independent Technical-Lead PASS review: `5040199350`
+- Exact-Head GitHub Actions Run `33066516282`: SUCCESS
+- Exact-Head Vercel Preview `CBuVobvymHT9m7A4uUKmb2exU4PU`: SUCCESS
+- Merge-Commit auf `main`: `819715b1567417893d894b7b110eff1a2ab6cded`
+- Post-Merge `main` GitHub Actions Run `33067498607`: SUCCESS
+- Post-Merge Vercel `GrD4MaYqtnR9UL619gVnKx9HSUmH`: SUCCESS auf exakt `819715b1567417893d894b7b110eff1a2ab6cded`
+- GitHub Production deployment `6121770601`: SUCCESS auf demselben SHA
 
 Vollständiger Post-Merge-Checkpoint:
 
-`docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`
+`docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
+
+PR #91 bleibt Teil der Vorgeschichte (Merge `a2e46f38dcfbbea286e37960c7993adbbd06136a`). Checkpoint: `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`. Aussagen dort, Production Gate B sei unangewendet oder PR #87 bleibe Draft, sind **historische Evidence** vor den späteren Gate-B- und Runtime-Merges.
 
 Production Public Runtime bleibt bezüglich D0 unverändert:
 
@@ -47,7 +52,7 @@ Die Product-Owner-Freigabe vom 27. August 2026 galt **nur** für Production Gate
 1. `20260824160000_reise_anlegen_flug_handelsfelder_ohne_nachweis`
 2. danach `20260824180000_trip_items_flug_handelsfelder_guard`
 
-Diese Freigabe galt ausdrücklich **nicht** für TW6-B, AAL2, Direction A, PR #87 oder andere Production-Migrationen.
+Diese Freigabe galt ausdrücklich **nicht** für TW6-B, AAL2, Direction A oder andere späteren Production-Migrationen. PR #94 brauchte kein besonderes Product-Owner-Gate.
 
 ## 2. D0 / Growth
 
@@ -82,10 +87,12 @@ Integriert:
 - TW6-A Create-Entry ✅
 - TW6-B Gate 0 / Provenance via PR #89 ✅
 - TW6-B Gate 0B / Zero-Stage Production Rollout Provenance via PR #91 ✅
+- TW6-B Runtime + Day→Stage Mode Contract via PR #87 ✅
+- Visitor Search UX via PR #94 ✅
 
 **Gate 0 / Gate 0B ≠ TW6-B Runtime-Merge und ≠ Production Gate B.**
 
-Durch PR #91 ist der verbindliche spätere Gate-B-Vertrag jetzt:
+Durch PR #91 ist der verbindliche spätere Gate-B-Vertrag:
 
 `20260826220000 → 20260826230000 → 20260826240000 → 20260827010000`
 
@@ -93,14 +100,9 @@ Alle vier Dateien gehören unter denselben bounded Write-Gate-/Transaktionsvertr
 
 PR #87 (`feat/tw6-rest-progressive-stages`) ist gemergt. Reviewed Head `7ef201fb`, Merge-Commit auf `main` `80bbde69`. Checkpoint: `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`.
 
-Aktueller Slice: Visitor Search UX, Draft PR #94, Branch `cursor/visitor-search-ux-b13d`, gestartet von live `origin/main` `b76148e533fb0758c0197d0e0252624bb869cdb5`. Task: `docs/TRIP_WORKSPACE_VISITOR_SEARCH_UX_TASK.md`. Keine Schema-/Production-Änderung. Kein neuer Search-Provider.
+PR #94 (`cursor/visitor-search-ux-b13d`) ist gemergt. Reviewed Head `8da869fd`, Merge-Commit auf `main` `819715b1`. P1 Listbox und P2 Abort-Race sind geschlossen. Task bleibt historische Slice-Spec: `docs/TRIP_WORKSPACE_VISITOR_SEARCH_UX_TASK.md`. Keine Schema-/Production-Änderung. Kein neuer Search-Provider.
 
-Technical-Lead-Finalreview `5040068359` vom 27. August 2026: **CHANGES REQUIRED**. Offene Korrekturen in diesem Slice:
-
-1. P1 Listbox: `role="option"` ohne nested `<button>`.
-2. P2 Abort-/Stale-Request: Current-Request-Grenze für Loading/Treffer/Fehler.
-
-Ältere Exact-Head-Evidence (`72ca1700`, `1008632e`) bleibt historisch. Nach der Korrektur gilt nur der neue Exact Head plus neuer Actions-/Vercel-Nachweis.
+Ältere Exact-Head-Evidence (`72ca1700`, `1008632e`, Review `5040068359` CHANGES REQUIRED) bleibt historisch.
 
 TW-7 bleibt hinter Account-/Hub-Grenzen. TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance; S5-A allein ist kein TW-8-Start.
 
@@ -128,7 +130,7 @@ Weiter offen:
 
 S1–S3 und **S5-A** sind integriert. S5-B ist **nicht gestartet**.
 
-Keine echten Provider, keine Secrets/Verträge/paid calls, keine Aktivierung durch Gate A/Gate 0B.
+Keine echten Provider, keine Secrets/Verträge/paid calls, keine Aktivierung durch Gate A/Gate 0B/PR #94.
 
 Gates:
 
@@ -140,21 +142,21 @@ Gates:
 
 Admin-AAL2 Application-Guard ist im Code integriert. Development enthält `admin_aal2_data_plane`; **Production-Datenebene ist weiterhin nicht angewendet**.
 
-Separate Supabase Security-/Performance-Advisors bleiben eigene QS-Arbeit. Keine dieser separaten Baustellen wurde durch Gate 0B still verändert.
+Separate Supabase Security-/Performance-Advisors bleiben eigene QS-Arbeit. Keine dieser separaten Baustellen wurde durch PR #94 still verändert.
 
 Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Cleanup/Branch-/Cloud-Delete automatisch ausführen.
 
 Live Supabase-Inventur zeigt:
 
 - Production-Elternprojekt `qscbgcdmivbbnzrcyegn` (`Jetnity's Project`) – ACTIVE_HEALTHY
-- Development-Branch `yfvbxvijcorffwxbxahl`
+- Development-Branch `[REDACTED]`
 - weiteres Top-Level-Projekt `jrixsujkzvlvglvcmtia` (`jetnity-bets`) – Decommission bleibt separate Product-Owner-Entscheidung
 
 ## 7. Aktive / nächste Cursor-Workstreams
 
-Aktiver Runtime-Agent: **Cursor-Agent: Trip workspace audit architecture** auf `cursor/visitor-search-ux-b13d` (Visitor Search UX).
+Aktueller Continuity-Block: **Cursor-Agent: Trip workspace audit architecture** auf `cursor/pr94-continuity-b13d` (Post-PR-#94 Continuity, docs-only).
 
-Kein Ready. Kein Merge. Kein Folgeslice, bis der unabhängige Technical Lead den Draft reviewed.
+Kein Ready. Kein Merge dieses Continuity-PRs ohne neuen unabhängigen Technical-Lead-PASS. Kein automatischer Produkt-Folgeslice.
 
 STOPP weiterhin für automatische Folgeslices:
 
@@ -174,7 +176,8 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#94** Visitor Search UX | **OFFENER Draft, CHANGES REQUIRED.** P1 Listbox-Semantik + P2 Abort-Race. Kein Ready/Merge. |
+| **dieses Continuity-Update** | **OFFENER Draft, docs-only.** Aktualisiert Continuity nach gemergtem PR #94. Kein Ready/Merge ohne neuen PASS. |
+| **#94** Visitor Search UX | **GEMERGT.** Reviewed Head `8da869fd`. Merge `819715b1`. Checkpoint `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`. |
 | **#87** TW6-B Runtime + Mode Contract | **GEMERGT.** Checkpoint `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`. |
 | **#88** Project Sanitation Audit | Non-destructive Audit-Evidence. Kein Cleanup automatisch. |
 | #52 ChatGPT TL handoff 2026-08-24 | HISTORICAL / SUPERSEDED |
@@ -193,9 +196,9 @@ Production ist live `ACTIVE_HEALTHY`.
 
 Production Gate A bleibt PASS. Technical-Lead Re-Review vom 27. August 2026 (PR #87, Review `5039338077`): **Production Gate B ist operativ PASS.** Der Vier-Datei-Vertrag `20260826220000 → 20260826230000 → 20260826240000 → 20260827010000` wurde unter Write-Gate transaktional angewendet und post-verifiziert. AAL2-Versionen bleiben ausgeschlossen.
 
-Frühere Absätze in diesem Dokument und in Gate-0B-Checkpoints, die „Production Gate B nicht angewendet“ sagten, sind **historische Evidence** vor diesem Apply.
+Frühere Absätze in älteren Checkpoints, die „Production Gate B nicht angewendet“ sagten, sind **historische Evidence** vor diesem Apply.
 
-Dieser Slice schreibt Production nicht erneut.
+PR #94 und dieses Continuity-Update schreiben Production nicht.
 
 Weiterhin nicht angewendet:
 
@@ -204,6 +207,6 @@ Weiterhin nicht angewendet:
 
 ## 10. Nächster Schritt
 
-**STOP nach der P1/P2-Korrektur auf PR #94 für erneuten unabhängigen Technical-Lead-Finalreview.**
+**STOP nach diesem docs-only Continuity-Draft für unabhängigen Technical-Lead-Review.**
 
-Kein Ready. Kein Merge. Kein weiterer Production-Write. Kein AAL2. Keine Direction A. Kein TW-7/8/9-Folgeslice.
+Kein Ready. Kein Merge ohne neuen PASS. Kein weiterer Visitor-Search-Implementation-Slice. Kein weiterer Production-Write. Kein AAL2. Keine Direction A. Kein TW-7/8/9-Folgeslice. Der nächste Produktauftrag braucht eine neue Technical-Lead- oder Product-Owner-Zuweisung.

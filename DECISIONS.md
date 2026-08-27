@@ -4295,7 +4295,7 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 ## ADR-0174 – Visitor Search zeigt natürliche Namen, persistiert nur kanonische IDs
 
 **Datum:** 27. August 2026  
-**Status:** umgesetzt im Draft-Slice, nicht gemergt
+**Status:** umgesetzt und auf `main` (PR #94)
 
 **Entscheidung:** Orts- und Flughafensuche bleiben lokale Read-only-Routen (`/api/search/places`, `/api/search/airports`). Die UI akzeptiert natürliche Namen. Vorschläge sind Auswahlhilfe. Persistierte Wahrheit bleibt die kanonische Place-ID bzw. ein aus der Liste bestätigter IATA-Code. Rang folgt allgemein Exact > starker Prefix > späteres Wort/Keyword und der Rolle (`ziel` / `abreise`). Die Liste wird nicht aufgefüllt, nur damit sie lang wirkt. Ein Stadtname mit mehreren plausiblen Flughäfen zeigt die Auswahl; Jetnity erfindet keinen Code. Trip-Origin/Destination werden nur dann als Flughafen vorausgefüllt, wenn die Place-ID `airport:XXX` ist.
 
@@ -4309,9 +4309,11 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 **Begründung:** Ein normaler Reisender darf keine technischen Orts- oder Flughafenkenntnisse brauchen. Komplexität bleibt intern.
 
-**Konsequenzen:** Keine Schema- oder Production-Änderung. Kein neuer laufender Provider. Commercial Flight Truth unverändert. Draft bleibt Draft, bis der Technical Lead unabhängig reviewed.
+**Konsequenzen:** Keine Schema- oder Production-Änderung. Kein neuer laufender Provider. Commercial Flight Truth unverändert. Der Implementation-Draft ist durch Technical-Lead PASS `5040199350` auf Exact Head `8da869fd` gemergt.
 
 **Nachtrag, 27. August 2026 – Combobox-Option und Current-Request-Grenze.** Technical-Lead-Finalreview CHANGES REQUIRED auf PR #94: `role="option"` darf keinen verschachtelten Button tragen; die Option selbst ist die auswählbare Interaktion. Abgebrochene oder überholte Suchläufe dürfen Loading, Treffer und Fehler der aktuellen Anfrage nicht überschreiben. Ranking, Place-ID- und IATA-Wahrheit bleiben unverändert.
+
+**Nachtrag, 27. August 2026 – PR #94 gemergt.** Reviewed Exact Head `8da869fd2756f3c1514de6d33678c8c7abfad1c4`. P1 und P2 sind auf diesem Head geschlossen. Merge-Commit `819715b1567417893d894b7b110eff1a2ab6cded`. Post-Merge Actions `33067498607` SUCCESS; Vercel `GrD4MaYqtnR9UL619gVnKx9HSUmH` SUCCESS. Es gibt keinen offenen Visitor-Search-Implementation-Draft.
 
 ---
 
