@@ -3,7 +3,7 @@
 // Combobox-Zustände. Loading, Empty, Error, Unavailable und Invalid
 // bleiben getrennte Aussagen.
 
-export const SUCHE_LAGEN = [
+const SUCHE_LAGEN = [
   'idle',
   'loading',
   'results',

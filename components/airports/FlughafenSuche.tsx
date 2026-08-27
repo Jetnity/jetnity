@@ -146,7 +146,8 @@ export default function FlughafenSuche({
     if (!offen || treffer.length === 0) return
     if (ereignis.key === 'ArrowDown' || ereignis.key === 'ArrowUp') {
       ereignis.preventDefault()
-      setAktiv((bisher) => sucheListeIndex(bisher, treffer.length, ereignis.key))
+      const pfeil = ereignis.key
+      setAktiv((bisher) => sucheListeIndex(bisher, treffer.length, pfeil))
     }
     if (sucheListeWaehlt(ereignis.key, aktiv) && treffer[aktiv]) {
       ereignis.preventDefault()
