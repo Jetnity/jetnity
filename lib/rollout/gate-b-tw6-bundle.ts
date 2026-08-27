@@ -1,10 +1,10 @@
 // Gate-B-Playbook für das TW6-B Day→Stage-Mode-Bundle.
 //
-// Vertrag (Technical-Lead PLAN PASS / PRODUCTION EXECUTION BLOCKED):
+// Vertrag (Gate 0B / P1-TW6-B-ROLLOUT-08):
 // 1. Write-Gate committed setzen und verifizieren, bevor die Migrationstransaktion startet.
-// 2. Drei geprüfte Migrationen + schema_migrations-History in EINER Transaktion.
-// 3. Keine öffentlich sichtbare 26220000-/26230000-Zwischenwahrheit.
-// 4. Finalen Mode-Vertrag prüfen, bevor Grants wieder geöffnet werden.
+// 2. Vier geprüfte Migrationen + schema_migrations-History in EINER Transaktion.
+// 3. Keine öffentlich sichtbare 26220000-/26230000-/26240000-Zwischenwahrheit.
+// 4. Finalen Mode-Vertrag inkl. 0-Stage fail-closed prüfen, bevor Grants wieder geöffnet werden.
 // 5. Bei Fehler ROLLBACK; Write-Gate bleibt geschlossen.
 // 6. History entspricht exakt dem ausgeführten SQL. Kein vortäuschen.
 // 7. Production-Apply bleibt in diesem Slice hart blockiert.
@@ -19,7 +19,15 @@ export const GATE_B_VERSIONEN = new Set([
   '20260826220000',
   '20260826230000',
   '20260826240000',
+  '20260827010000',
 ])
+
+export const GATE_B_REIHENFOLGE = [
+  '20260826220000',
+  '20260826230000',
+  '20260826240000',
+  '20260827010000',
+] as const
 
 export const GATE_B_DATEIEN = [
   {
@@ -39,6 +47,12 @@ export const GATE_B_DATEIEN = [
     version: '20260826240000',
     name: 'trip_day_stage_assignment_mode',
     sha256: '7a9626d8ac53ea3458bf7d622ea695cce26360962c02430d8d1a0094129a1edb',
+  },
+  {
+    datei: '20260827010000_reise_anlegen_zero_stage_fail_closed.sql',
+    version: '20260827010000',
+    name: 'reise_anlegen_zero_stage_fail_closed',
+    sha256: 'b516bfff24e9e6f5dd909a9cfd4e76aa1a54708b067d1a5d3e935b8482c6adf1',
   },
 ] as const
 
@@ -102,7 +116,7 @@ export function gateBDateienLesenUndPruefen(wurzel = process.cwd()): GateBDatei[
     const sha256 = sha256HexDatei(sql)
     if (sha256 !== meta.sha256) {
       throw new Error(
-        `${meta.datei} ist nicht hash-identisch mit dem geprüften PR-#87-Stand. ` +
+        `${meta.datei} ist nicht hash-identisch mit dem geprüften Gate-0B-Stand. ` +
           `erwartet ${meta.sha256}, gefunden ${sha256}. Abgebrochen.`,
       )
     }
@@ -256,12 +270,41 @@ begin
     raise exception 'Gate-B-Verify: Mode-aware Ableitung unvollständig'
       using errcode = 'P0001';
   end if;
+  if _fn not like '%if _stage_count < 1 then%'
+     or _fn not like '%elsif _stage_count = 1 then%' then
+    raise exception 'Gate-B-Verify: 0-Stage fail-closed / single_destination=genau-eine-Stage fehlt'
+      using errcode = 'P0001';
+  end if;
+  if _fn like '%_stage_count <= 1 then%' then
+    raise exception 'Gate-B-Verify: alter <=1-Pfad würde 0 Stages als single_destination minten'
+      using errcode = 'P0001';
+  end if;
+  if _fn not like '%when coalesce(nullif(p.wert ->> ''kind'', ''''), ''note'') = ''flight'' then null%' then
+    raise exception 'Gate-B-Verify: Commercial-Gate-A-Nullung der Flug-Handelsfelder fehlt'
+      using errcode = 'P0001';
+  end if;
+  if not exists (
+    select 1
+      from pg_trigger trg
+      join pg_class rel on rel.oid = trg.tgrelid
+      join pg_namespace nsp on nsp.oid = rel.relnamespace
+     where nsp.nspname = 'public'
+       and rel.relname = 'trip_items'
+       and trg.tgname = 'trip_items_flug_handelsfelder_schuetzen'
+       and not trg.tgisinternal
+       and trg.tgenabled <> 'D'
+  ) then
+    raise exception 'Gate-B-Verify: Commercial-Gate-A-Trigger trip_items_flug_handelsfelder_schuetzen fehlt'
+      using errcode = 'P0001';
+  end if;
 
   select count(*)::int into _history
     from supabase_migrations.schema_migrations
-   where version in ('20260826220000', '20260826230000', '20260826240000');
-  if _history <> 3 then
-    raise exception 'Gate-B-Verify: schema_migrations enthält nicht genau die drei Gate-B-Versionen (%).', _history
+   where version in (
+     '20260826220000', '20260826230000', '20260826240000', '20260827010000'
+   );
+  if _history <> 4 then
+    raise exception 'Gate-B-Verify: schema_migrations enthält nicht genau die vier Gate-B-Versionen (%).', _history
       using errcode = 'P0001';
   end if;
 end
@@ -270,16 +313,17 @@ $gate_b_verify$;
 }
 
 export function migrationTransactionSql(dateien: readonly GateBDatei[]): string {
-  if (dateien.length !== 3) {
-    throw new Error('Gate-B-Transaktion braucht genau die drei geprüften Dateien.')
+  if (dateien.length !== GATE_B_REIHENFOLGE.length) {
+    throw new Error('Gate-B-Transaktion braucht genau die vier geprüften Dateien.')
   }
   const versions = dateien.map((datei) => datei.version)
   if (
-    versions[0] !== '20260826220000' ||
-    versions[1] !== '20260826230000' ||
-    versions[2] !== '20260826240000'
+    versions[0] !== GATE_B_REIHENFOLGE[0] ||
+    versions[1] !== GATE_B_REIHENFOLGE[1] ||
+    versions[2] !== GATE_B_REIHENFOLGE[2] ||
+    versions[3] !== GATE_B_REIHENFOLGE[3]
   ) {
-    throw new Error('Gate-B-Reihenfolge muss 26220000 → 26230000 → 26240000 sein.')
+    throw new Error('Gate-B-Reihenfolge muss 26220000 → 26230000 → 26240000 → 27010000 sein.')
   }
 
   return [
@@ -290,6 +334,8 @@ export function migrationTransactionSql(dateien: readonly GateBDatei[]): string 
     historyInsertSql(dateien[1]!),
     dateien[2]!.sql,
     historyInsertSql(dateien[2]!),
+    dateien[3]!.sql,
+    historyInsertSql(dateien[3]!),
     writeGateSql(),
     verifyFinalContractSql(),
     'commit;',

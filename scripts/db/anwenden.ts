@@ -66,7 +66,7 @@ async function main() {
   if (gateBOffen.length > 0) {
     throw new Error(
       `Gate-B-Bundle (${gateBOffen.map((m) => m.datei).join(', ')}) darf nicht dateiweise über db:anwenden laufen. ` +
-        'Die Dateien 26220000/26230000 dürfen nicht öffentlich executable werden. ' +
+        'Die Dateien 26220000/26230000/26240000/27010000 dürfen nicht dateiweise öffentlich executable werden. ' +
         'Nutze npm run db:gate-b-tw6-bundle. Abgebrochen.',
     )
   }

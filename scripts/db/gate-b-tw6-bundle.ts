@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Bounded Gate-B-Playbook für 20260826220000/230000/240000.
+// Bounded Gate-B-Playbook für 20260826220000/230000/240000/27010000.
 // Default: lokale Hash-/SQL-Probe. Development-Schreiben nur explizit.
 // Production-Apply ist in diesem Slice hart blockiert.
 
@@ -55,7 +55,7 @@ async function probeEntwicklung(): Promise<void> {
   const history = (await runSql(
     `select version, name, statements
        from supabase_migrations.schema_migrations
-      where version in ('20260826220000','20260826230000','20260826240000')
+      where version in ('20260826220000','20260826230000','20260826240000','20260827010000')
       order by version`,
   )) as { version: string; name: string; statements: string[] }[]
 
@@ -79,7 +79,7 @@ async function probeEntwicklung(): Promise<void> {
       `anon INSERT=${grants.anon_trips_insert} EXECUTE=${grants.anon_rpc}`,
   )
   await runSql(verifyFinalContractSql())
-  console.log('Finaler Mode-Vertrag auf Development: PASS')
+  console.log('Finaler Vier-Datei-Mode-Vertrag auf Development: PASS')
 }
 
 async function writeGateRoundtrip(): Promise<void> {
@@ -127,7 +127,7 @@ async function applyEntwicklung(): Promise<void> {
   const dateien = gateBDateienLesenUndPruefen()
   const vorhanden = (await runSql(
     `select version from supabase_migrations.schema_migrations
-      where version in ('20260826220000','20260826230000','20260826240000')`,
+      where version in ('20260826220000','20260826230000','20260826240000','20260827010000')`,
   )) as { version: string }[]
   if (vorhanden.length > 0) {
     throw new Error(
@@ -151,7 +151,7 @@ async function applyEntwicklung(): Promise<void> {
 async function main() {
   const auftrag = gateBAuftragLesen(process.argv)
   const dateien = gateBDateienLesenUndPruefen()
-  console.log('Gate-B-Dateien hash-identisch mit PR #87:')
+  console.log('Gate-B-Dateien hash-identisch mit dem Gate-0B-Vier-Datei-Vertrag:')
   for (const datei of dateien) {
     console.log(`  ${datei.sha256}  ${datei.datei}`)
   }
