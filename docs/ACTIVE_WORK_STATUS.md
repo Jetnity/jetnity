@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 27. August 2026  
-Status: **Production Gate A ist PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97 und PR #98 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. PR #98 Alignment liegt auf `main`; Production-AAL2-Apply bleibt eigenes Gate. Offener Produktdocs-Draft: TW-7-Hub-Gap auf `cursor/tw7-hub-gap-slice-b13d` — kein Runtime, kein Ready, kein Merge. Alte Aussagen „nächster Produktslice unzugewiesen“ / „PR #94/#96/#98 bleibt Draft“ sind historische Evidence.**
+Status: **Production Gate A ist PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97 und PR #98 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. PR #98 Alignment liegt auf `main`; Production-AAL2-Apply bleibt eigenes Gate. Offener Produktdocs-Draft: PR #100 TW-7-Hub-Gap auf `cursor/tw7-hub-gap-slice-b13d` — kein Runtime, kein Ready, kein Merge. Alte Aussagen „nächster Produktslice unzugewiesen“ / „PR #94/#96/#98 bleibt Draft“ sind historische Evidence.**
 
 > **Do not blindly trust this file — live verify first.**
 

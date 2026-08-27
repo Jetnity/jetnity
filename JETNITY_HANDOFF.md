@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 27. August 2026  
-Status: **Production Gate A ist vollständig PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97 und PR #98 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. PR #98 Alignment liegt auf `main`; Production-AAL2-Apply bleibt eigenes Gate. Offener Produktdocs-Draft: TW-7-Hub-Gap — kein Runtime. Frühere Aussagen „nächster Produktslice unzugewiesen“ / „PR #94/#96/#98 bleibt Draft“ sind historische Evidence.**
+Status: **Production Gate A ist vollständig PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97 und PR #98 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. PR #98 Alignment liegt auf `main`; Production-AAL2-Apply bleibt eigenes Gate. Offener Produktdocs-Draft: PR #100 TW-7-Hub-Gap — kein Runtime. Frühere Aussagen „nächster Produktslice unzugewiesen“ / „PR #94/#96/#98 bleibt Draft“ sind historische Evidence.**
 
 Der erste Einstieg bleibt `JETNITY_START_HERE.md`.  
 Aktuelle operative Evidence zusätzlich: `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`, `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md` und `docs/ACTIVE_WORK_STATUS.md`.
