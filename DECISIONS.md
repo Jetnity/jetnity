@@ -4425,6 +4425,43 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 - Keine Migration, keine RLS-/Auth-/AAL-Änderung, kein AP-7.
 - Autor-Agent merged nicht.
 
+**Nachtrag, 27./28. August 2026 – Merge.** Live-Evidence: PR #113 ist gemergt (`286d26fe`); Issue #112 ist CLOSED / completed. Der Satz „Nicht auf `main`, bis der unabhängige Exact-Head-Review entscheidet“ und „Autor-Agent merged nicht“ sind **pre-merge evidence**. Aktueller Status: **auf `main` integriert**. P2-TA-06 nicht erneut öffnen. AP-7 bleibt Non-Scope.
+
+---
+
+## ADR-0179 – Kanonischer Account-Platform-Plan wird gegen aktuellen `main` rekonstruiert
+
+**Datum:** 28. August 2026  
+**Status:** vorgeschlagen auf Draft-PR #117 / P2-TA-03; docs-/architecture-only. Keine Runtime.
+
+**Entscheidung:**
+
+- `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` auf dem aktuellen Integrationspfad ist der **kanonische** Steuerungsvertrag für AP-5–AP-12.
+- Die gleichnamige Datei auf Draft-PR #39 / `audit/account-platform` bleibt **historische Evidence** und wird nicht kopiert, nicht als Current Truth gemergt und nicht gelöscht.
+- AP-1–AP-4 sind integriert und dürfen nicht erneut als zukünftige Arbeit geplant werden.
+- Die Nummerierung AP-5–AP-12 bleibt. Das ist keine stille Änderung der Binding Build Order.
+- Die historische Annahme „derselbe unnummerierte Agent führt alle Account-Slices sequenziell weiter“ ist durch `docs/JETNITY_AGENT_SESSION_ROTATION_STANDARD.md` **superseded**.
+- Die historische per-PR-Product-Owner-Merge-Pflicht ist durch `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md` **superseded**. Besondere Product-Owner-Gates bleiben.
+- AP-7 bleibt hinter Shared-Contract + Product-Owner + ADR-Nachfolger zu ADR-0102/0117. Dieser Slice erfindet keinen Registry-Vertrag.
+- Dieser Slice startet keine AP-5-Runtime.
+
+**Kontext:** Der Binding Build Order verweist auf eine Datei, die auf aktuellem `main` fehlte. Der historische Plan ist 513 Commits hinter `main` und enthält Pre-AP-4- sowie supersedierte Agent-/Merge-Annahmen. Issue #116 / P2-TA-03 schließt die Continuity-Lücke vor jeder weiteren Account-Runtime.
+
+**Alternativen:**
+
+1. *Historische PR-#39-Datei unverändert nach `main` kopieren.* Würde Pre-AP-4- und Agent-Annahmen als Current Truth importieren.
+2. *Nummerierung AP-5–AP-12 still neu schneiden.* Wäre eine fundamentale Build-Order-Änderung ohne Product-Owner-Entscheidung.
+3. *Nur in Chat/Handoff erklären, ohne kanonische Datei.* Würde die Binding-Build-Order-Referenz weiter brechen.
+
+**Begründung:** Live-`main` plus integrierte ADRs/PRs sind die Steuerungswahrheit. Historische Evidence bleibt lesbar, darf aber keinen Folgeslice mehr steuern.
+
+**Konsequenzen:**
+
+- Neue Chats lesen diese Datei, nicht PR #39, als Account-Folgeplan.
+- AP-5/AP-6a/AP-7+ brauchen je einen eigenen Task und frischen Agenten.
+- Keine Runtime, keine Migration, keine Config durch P2-TA-03.
+- D0-P1-03 bleibt als AP-6a-/Legal-PO-Residual sichtbar, nicht als stiller AP-5-Scope.
+
 ---
 
 ## Offene Widersprüche

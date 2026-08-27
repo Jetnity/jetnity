@@ -3,7 +3,7 @@
 Stand: 28. August 2026  
 Issue: #116  
 Typ: **AUDIT / ARCHITECTURE / CONTINUITY ONLY**  
-Status: **TECHNICAL-LEAD PREPARED / NO AP-5 RUNTIME START**  
+Status: **AUTHOR COMPLETE ON DRAFT-PR #117 / NO AP-5 RUNTIME / AWAITING INDEPENDENT TL REVIEW**  
 Vorgesehener Cursor-Agent: `Account plattform audit vorbereitung 5`  
 Vorbereitungsbranch: `docs/p2-ta-03-account-plan-reconciliation`
 

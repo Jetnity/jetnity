@@ -91,6 +91,8 @@ Verbindliche Wahrheit:
 
 AP-5 wird **nicht automatisch** gestartet. AP-7 / Account-Traveller-Registry bleibt separat und gated.
 
+P2-TA-03 rekonstruiert den kanonischen Plan `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` auf Draft-PR #117 / Issue #116. Die historische Datei auf PR #39 ist keine Current Truth. P2-TA-03 ist Audit/Architecture/Continuity only.
+
 ### Provider / Commercial Provenance
 
 - S1–S3 integriert
@@ -195,11 +197,19 @@ Zuletzt abgeschlossene Account-/Traveller-Generation:
 - P2-TA-06 / Issue #112 / PR #113 abgeschlossen
 - nicht automatisch weiterführen
 
+Aktuelle Account-Generation:
+
+- `Cursor-Agent: Account plattform audit vorbereitung 5`
+- P2-TA-03 / Issue #116 / Draft-PR #117
+- Authoring complete; kein Ready, kein Merge, kein AP-5-Start
+
 Neue logische Arbeitseinheit → Rotation Standard live prüfen und frische Session verwenden, wenn vorgeschrieben.
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
 **Kein Produkt-Folgeslice ist durch diesen Handoff freigegeben.**
+
+P2-TA-03 liegt als Docs-Draft auf PR #117 und wartet auf unabhängigen Technical-Lead-Finalreview. Das ist **kein** AP-5-Start.
 
 Der nächste Chat / Technical Lead muss zuerst live rekonstruieren und erst danach entscheiden, welcher Slice nach Binding Build Order tatsächlich sinnvoll und zulässig ist.
 
