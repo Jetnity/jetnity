@@ -471,7 +471,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 11. ✅ TW-3 Timeline / Etappe / Tag auf `main` (PR #64)
 12. ✅ TW-5 Item- und Gap-Details auf `main` (PR #66)
 12a. ✅ P1-QS2-02 Guest→Account Stay/Activity-Handelsfeld-Strip – auf `main` (`86567f17`, ADR-0166)
-12b. ✅ P1-TA-02 Official Evaluation Option-Scope – auf `main` (`2468160e`, ADR-0167). P2-TA-06 bleibt offen.
+12b. ✅ P1-TA-02 Official Evaluation Option-Scope – auf `main` (`2468160e`, ADR-0167). P2-TA-06 ist der aktive Draft-Slice 12h, nicht mehr nur „offen“.
 12c. ✅ TW6-A Create-Entry Alignment – auf `main` (`c4ea47aa`). **`TW6-REST-01` ist durch 12c3 / PR #87 geschlossen**, nicht mehr offen.
 12c1. ✅ TW6-B Gate 0 migrations-only – drei geprüfte Dateien plus transaktionales Playbook auf `main` (PR #89). Die damalige Grenze „kein Production-Apply“ gilt nur für diesen Provenance-Schritt; der Production-Apply ist später erfolgt und operativ PASS.
 12c2. ✅ TW6-B Gate 0B Zero-Stage Production Rollout Provenance – `20260827010000` byte-identisch plus Vier-Datei-Playbook auf `main` (PR #91, Continuity PR #92). Die damalige Grenze „kein Production-Apply / kein Runtime-Merge von PR #87“ ist historische Evidence dieses Schritts; später superseden 12c3 und der operative Gate-B-PASS diese Constraint.
@@ -485,6 +485,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 12e2. ✅ TW7-A Runtime – Hub-Kartenidentität read-only (PR #106, Issue #103, ADR-0176). Integrationsvehikel. Spec: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. Stand: `docs/TRIP_WORKSPACE_TW7_A_STATUS.md`. Issue #103 ist CLOSED / completed. Ältere „Draft / nicht auf main / live main bleibt 963186f4“-Zeilen sind Pre-Merge-Evidence. Kein TW-8.
 12f. ✅ D0 live metadata boundary / P1-D0-LIVE-01 – auf `main` (PR #86, `38ec8be7`, ADR-0170). HTML-robots fail-closed; Canonical ist `https://jetnity.com`, niemals `*.vercel.app`. **Kein D1/G1. Kein Domain-Cutover. Kein Public Indexing.**
 12g. ✅ AP-4 Account Archive Lifecycle – auf `main` (PR #108, Merge `70cac163`, ADR-0177). Exact Head `88146dd5`. Auftrag: `docs/ACCOUNT_AP4_ARCHIVE_LIFECYCLE_TASK_2026-08-27.md`. Stand: `docs/ACCOUNT_AP4_ARCHIVE_LIFECYCLE_STATUS_2026-08-27.md`. Ältere „Draft / nicht auf main“-Zeilen sind Pre-Merge-Evidence. Kein AP-5 automatisch.
+12h. P2-TA-06 Readiness Credential Normalization – **Draft-Runtime, nicht auf `main`.** Issue #112. Branch `cursor/p2-ta-06-credential-normalization-3317`. Auftrag: `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_TASK_2026-08-27.md`. Entscheidung: ADR-0178. Kein AP-5/AP-7. Kein Ready/Merge durch den Autor-Agenten.
 13. Admin/Account/Provider-Programme separat weiterführen; kein Slice D, AP-5, S5-B, TW-8, D1 oder G1 ohne eigenen Auftrag
 14. finaler Workspace Intelligence Audit
 15. echte Providerphase

@@ -1,9 +1,25 @@
 # Jetnity – Active Work Status
 
 Stand: 27. August 2026  
-Status: **Production Gate A ist PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106 und PR #108 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. TW7-A Runtime ist integriert. AP-4 Account Archive Lifecycle ist integriert. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal. Live-`main` immer live prüfen.**
+Status: **Aktiver Feature-Branch: P2-TA-06 Readiness Credential Normalization (Issue #112). Production Gate A ist PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108 und PR #111 sind integriert. AP-4 ist integriert. Live-`main` immer live prüfen. Dieser Branch ist Draft; kein Ready/Merge durch den Autor-Agenten.**
 
 > **Do not blindly trust this file — live verify first.**
+
+## Aktueller Arbeitsblock (dieser Branch)
+
+1. **Arbeitsblock / Ziel:** Issue #112 / P2-TA-06 – First-Document-Fallback in Readiness-Credential-Normalisierung entfernen.
+2. **Branch / PR / Head:** `cursor/p2-ta-06-credential-normalization-3317`; Draft-PR #113. Gegateter Evidence-Head `7124e141`.
+3. **Status:** lokal + Exact-Head grün auf `7124e141` / Draft; kein Ready; kein Merge durch Autor-Agent.
+4. **Bereits umgesetzt:** `travellerNormalisieren` leitet N Optionen aus N Dokumenten ab; explizite Options bleiben autoritativ; Tests und Continuity-Dateien angelegt.
+5. **Gerade offen:** unabhängiger Technical-Lead-Finalreview. Kein Ready/Merge durch den Autor-Agenten.
+6. **Letzte relevanten Änderungen:** Runtime nur `lib/readiness/engine.ts` plus `engine.test.ts`.
+7. **Tests / CI / Preview:** lokal 2377/2377, Typecheck/Lint/Hygiene/Production-Build PASS. Exact Head `7124e141` Actions `33119233558` SUCCESS, Vercel `5ptkLwjEDESTu7BiZ7hQRAj6yLPU` READY.
+8. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Production-Write.
+9. **Kosten / Provider / Secrets:** keine.
+10. **Bekannte Risiken:** Legacy-Caller ohne Options sehen jetzt 1:n statt `documents[0]`; das ist der gewollte Contract. `officialFingerprint` Singular-Fallback bleibt Residual außerhalb #112.
+11. **Offene Nutzerentscheidungen / Freigaben:** Ready/Merge nur durch unabhängigen Technical Lead.
+12. **Exakter nächster Schritt:** STOPP. Unabhängiger Technical-Lead-Finalreview auf Exact Head.
+13. **Zuerst lesen:** Issue #112, `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_TASK_2026-08-27.md`, Status, Handoff, ADR-0178.
 
 ## 0. Live-Integrationsbaseline
 
@@ -142,9 +158,12 @@ Geschlossen:
 - P1-QS2-02 durch PR #81;
 - P1-TA-02 durch PR #84.
 
-Weiter offen:
+Aktiv auf diesem Branch:
 
-- **P2-TA-06** – `documents[0]` in `travellerNormalisieren()`;
+- **P2-TA-06 / Issue #112** – First-Document-Fallback in `travellerNormalisieren()` entfernen. Draft-Runtime. Auftrag: `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_TASK_2026-08-27.md`. Stand: `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_STATUS_2026-08-27.md`. ADR-0178. Kein AP-5/AP-7.
+
+Weiter offen außerhalb dieses Slice:
+
 - **P2-TA-03** – Account-Implementation-Plan nur in historischem Audit-PR #39;
 - Mobility/Rental-Such-Snapshots mit kommerziellen Feldern;
 - Account-Traveller-Registry / AP-5–AP-12 / AP-7. AP-4 ist integriert (PR #108).
@@ -187,11 +206,15 @@ PR #98 und PR #102 sind integriert. Production-AAL2 `20260827170000` ist angewen
 
 PR #96 bleibt integriert/geschlossen. Historisch Draft auf `cursor/pr94-continuity-b13d`; das ist keine operative nächste Arbeit.
 
-Kein automatischer Produkt-Folgeslice über diese Docs hinaus.
+Aktiver Account-Slice auf diesem Branch:
+
+- **Issue #112 / P2-TA-06** – `Account plattform audit vorbereitung 4`. Branch `cursor/p2-ta-06-credential-normalization-3317`. Draft. Kein Ready. Kein Merge durch den Autor-Agenten.
+
+Kein automatischer Produkt-Folgeslice über diesen Slice hinaus.
 
 STOPP weiterhin für automatische Folgeslices:
 
-- `Account plattform audit vorbereitung`
+- `Account plattform audit vorbereitung` (Generationen 1–3 sind historische Evidence)
 - `Jetnity provider readiness audit`
 - `Admin platform audit`
 - `Jetnity growth discoverability`
@@ -248,8 +271,8 @@ Production `20260827170000` ist angewendet und verifiziert, exakt einmal. Kein z
 
 ## 10. Nächster Schritt
 
-TW7-A Runtime ist integriert (PR #106). Issue #103 ist CLOSED / completed. AP-4 ist integriert (PR #108, Merge `70cac163`).
+Dieser Branch arbeitet Issue #112 / P2-TA-06. Nach lokalen + Exact-Head-Gates: STOPP für unabhängigen Technical-Lead-Finalreview.
 
-Kein weiterer Production-Write. Keine Direction A. Kein TW-8/9. Kein AP-5/AP-7 automatisch. Kein zweiter AAL2-Apply. Live-`main` immer live prüfen.
+Kein Ready. Kein Merge durch den Autor-Agenten. Kein weiterer Production-Write. Keine Direction A. Kein TW-8/9. Kein AP-5/AP-7. Kein #109/#110. Kein zweiter AAL2-Apply. Live-`main` immer live prüfen.
 
 PR #95 zeichnet einen Product-Owner-Wunsch auf: Homepage-Hero-Design bleibt, die Funktion im bestehenden Kästchen soll später natürliche Mehrziel-/Route-Absicht verstehen. Das bleibt **kein** Startauftrag und ist nicht TW7-A.

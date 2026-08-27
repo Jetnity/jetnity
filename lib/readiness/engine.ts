@@ -30,6 +30,7 @@ import {
   requirementsProviderAus,
   type RequirementsAnfrage,
   type RequirementsCredentialInput,
+  type RequirementsDocumentInput,
   type RequirementsProvider,
   type RequirementsProviderZeile,
   type RequirementsTravellerInput,
@@ -109,6 +110,96 @@ export function officialFingerprint(anfrage: {
   ].join('|')
 }
 
+function hatLegacyDokument(eintrag: {
+  documentType?: string | null
+  documentIssuingCountryCode?: string | null
+  documentExpiresOn?: string | null
+}): boolean {
+  return Boolean(eintrag.documentType || eintrag.documentIssuingCountryCode || eintrag.documentExpiresOn)
+}
+
+function dokumentOptionRef(
+  travellerClientRef: string,
+  document: {
+    clientRef?: string | null
+    documentType?: string | null
+    issuingCountryCode?: string | null
+    expiresOn?: string | null
+  },
+  index: number,
+  gesehen: Set<string>,
+): string {
+  const documentClientRef = typeof document.clientRef === 'string' ? document.clientRef.trim() : ''
+  const basis = documentClientRef
+    ? `${travellerClientRef}:${documentClientRef}`
+    : `${travellerClientRef}:document:${document.documentType ?? 'unknown'}:${document.issuingCountryCode ?? 'xx'}:${document.expiresOn ?? 'none'}:${index}`
+  if (!gesehen.has(basis)) {
+    gesehen.add(basis)
+    return basis
+  }
+  let lauf = 2
+  let kandidat = `${basis}#${lauf}`
+  while (gesehen.has(kandidat)) {
+    lauf += 1
+    kandidat = `${basis}#${lauf}`
+  }
+  gesehen.add(kandidat)
+  return kandidat
+}
+
+function optionAusDokument(
+  travellerClientRef: string,
+  document: RequirementsDocumentInput | Record<string, unknown>,
+  index: number,
+  gesehen: Set<string>,
+): RequirementsCredentialInput {
+  const clientRef = typeof document.clientRef === 'string' && document.clientRef.trim() ? document.clientRef.trim() : null
+  return {
+    optionRef: dokumentOptionRef(travellerClientRef, document, index, gesehen),
+    documentClientRef: clientRef,
+    documentType: (document.documentType ?? null) as RequirementsCredentialInput['documentType'],
+    issuingCountryCode: typeof document.issuingCountryCode === 'string' ? document.issuingCountryCode : null,
+    expiresOn: typeof document.expiresOn === 'string' ? document.expiresOn : null,
+    relatedCitizenshipCountryCode:
+      typeof document.citizenshipCountryCode === 'string' ? document.citizenshipCountryCode : null,
+  }
+}
+
+function optionsAusDokumenten(
+  travellerClientRef: string,
+  documents: Array<RequirementsDocumentInput | Record<string, unknown>>,
+): RequirementsCredentialInput[] {
+  const gesehen = new Set<string>()
+  return documents.map((document, index) => optionAusDokument(travellerClientRef, document, index, gesehen))
+}
+
+function noneOption(travellerClientRef: string): RequirementsCredentialInput {
+  return {
+    optionRef: `${travellerClientRef}:none`,
+    documentClientRef: null,
+    documentType: null,
+    issuingCountryCode: null,
+    expiresOn: null,
+    relatedCitizenshipCountryCode: null,
+  }
+}
+
+function legacyOption(eintrag: {
+  clientRef: string
+  documentType?: string | null
+  documentIssuingCountryCode?: string | null
+  documentExpiresOn?: string | null
+}): RequirementsCredentialInput {
+  return {
+    optionRef: `${eintrag.clientRef}:${eintrag.documentType ? `document:${eintrag.documentType}` : 'document:unknown'}`,
+    documentClientRef: null,
+    documentType: (eintrag.documentType ?? null) as RequirementsCredentialInput['documentType'],
+    issuingCountryCode: eintrag.documentIssuingCountryCode ?? null,
+    expiresOn: eintrag.documentExpiresOn ?? null,
+    relatedCitizenshipCountryCode: null,
+  }
+}
+
 function travellerNormalisieren(roh: RequirementsTravellerInput | Record<string, unknown>): RequirementsTravellerInput {
   const eintrag = roh as RequirementsTravellerInput & {
     nationalityCountryCode?: string | null
@@ -119,19 +210,15 @@ function travellerNormalisieren(roh: RequirementsTravellerInput | Record<string,
   const citizenships = eintrag.citizenshipCountryCodes?.length
     ? eintrag.citizenshipCountryCodes
     : [landescodeLesen(eintrag.nationalityCountryCode ?? null)].filter((code): code is string => Boolean(code))
-  const documents = eintrag.documents ?? []
-  const options = eintrag.credentialOptions?.length
-    ? eintrag.credentialOptions
-    : [
-        {
-          optionRef: `${eintrag.clientRef}:${documents[0]?.clientRef ?? (eintrag.documentType ? `document:${eintrag.documentType}` : 'none')}`,
-          documentClientRef: documents[0]?.clientRef ?? null,
-          documentType: (documents[0]?.documentType ?? eintrag.documentType ?? null) as RequirementsCredentialInput['documentType'],
-          issuingCountryCode: documents[0]?.issuingCountryCode ?? eintrag.documentIssuingCountryCode ?? null,
-          expiresOn: documents[0]?.expiresOn ?? eintrag.documentExpiresOn ?? null,
-          relatedCitizenshipCountryCode: documents[0]?.citizenshipCountryCode ?? null,
-        },
-      ]
+  const documents = Array.isArray(eintrag.documents) ? eintrag.documents : []
+  const gelieferteOptionen = Array.isArray(eintrag.credentialOptions) ? eintrag.credentialOptions : []
+  const options = gelieferteOptionen.length
+    ? gelieferteOptionen
+    : documents.length > 0
+      ? optionsAusDokumenten(eintrag.clientRef, documents)
+      : hatLegacyDokument(eintrag)
+        ? [legacyOption(eintrag)]
+        : [noneOption(eintrag.clientRef)]
   return {
     clientRef: eintrag.clientRef,
     residenceCountryCode: eintrag.residenceCountryCode ?? null,
