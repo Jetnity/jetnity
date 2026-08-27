@@ -4,10 +4,10 @@ Stand: 27. August 2026
 Agent: `Trip workspace audit architecture`  
 Branch: `feat/tw6-rest-progressive-stages`  
 PR: **#87** (Draft gegen `main`)  
-Auftrag: Technical-Lead live reclassification after PR #91 + continuity integration  
-Status: **MIT MAIN `d28e11be` SYNCHRON / GATE-0B-VERTRAG UNVERÄNDERT / ZERO-STAGE FAIL-CLOSED / NICHT MERGEFÄHIG**
+Auftrag: Technical-Lead Re-Review nach Production Gate B – Workspace-Tempo-Wahrheit  
+Status: **MIT MAIN `d28e11be` SYNCHRON / GATE B LAUT TL PASS / P1 TEMPO-UI KORRIGIERT / NICHT MERGEFÄHIG**
 
-Kein Ready. Kein Merge. Kein Gate B. Kein Production-Apply. Kein AAL2. Keine Direction A. Kein TW-7/TW-8/TW-9. Kein Folgeslice.
+Kein Ready. Kein Merge. Kein weiterer Production-Write. Kein AAL2. Keine Direction A. Kein TW-7/TW-8/TW-9. Kein Folgeslice.
 
 ## 1. Live-Baseline
 
@@ -22,7 +22,8 @@ Live geprüft, nicht aus dem Prompt übernommen.
 | Gate 0 | auf `main` durch PR #89 |
 | Gate 0B Vier-Datei-Vertrag | auf `main` durch PR #91 / Continuity PR #92 |
 | Production Gate A | **PASS** (`20260824160000` dann `20260824180000`) |
-| Production TW6-B / AAL2 / Direction A | **nicht** angewendet |
+| Production Gate B | **PASS** laut Technical-Lead Re-Review 27. August 2026 (Vier-Datei-Vertrag angewendet) |
+| AAL2 / Direction A | **nicht** angewendet |
 
 `20260827010000_reise_anlegen_zero_stage_fail_closed.sql` ist auf `main` und in diesem Branch **byte-identisch** (`b516bfff24e9e6f5dd909a9cfd4e76aa1a54708b067d1a5d3e935b8482c6adf1`). Der PR-Diff gegen `main` enthält **keine** Migrationsdatei und keine Playbook-Änderung.
 
@@ -417,7 +418,7 @@ Folgearbeiten, damit Create/RPC und Guest-Wege denselben Vertrag haben:
 | --- | --- |
 | Gate 0 | auf `main` durch PR #89 |
 | Production Gate A | PASS |
-| Production TW6-B / Gate B | nicht angewendet, nicht freigegeben |
+| Production TW6-B / Gate B | historisch: nicht angewendet zum Zero-Stage-Slice; aktuell laut TL Re-Review PASS |
 | AAL2 / Direction A | ausgeschlossen |
 
 ### 11.4 Lokale Gates dieser Korrektur
@@ -476,8 +477,20 @@ Ausgeführt:
 
 PR-Diff gegen `main` enthält keine Datei unter `supabase/migrations/` und keine Änderung an `lib/rollout/gate-b-tw6-bundle.ts`.
 
-### 12.1 STOP
+### 12.1 Historischer STOP nach Sync
 
-Kein Ready. Kein Merge. Kein Gate B. Kein Production-Write. Kein AAL2. Keine Direction A. Kein TW-7/8/9. Kein Folgeslice.
+Kein Ready. Kein Merge. Kein AAL2. Keine Direction A. Kein TW-7/8/9. Kein Folgeslice.
+
+## 13. Workspace-Tempo-Wahrheit (27. August 2026)
+
+Technical-Lead Re-Review `5039338077` nach Production Gate B: P1 Product-Truth/UI.
+
+`CREATE_PERSISTENZ_TEMPO='balanced'` bleibt interner Kompatibilitätsdefault. Die Workspace-Übersicht darf ihn nicht als `Ausgewogen` oder Karte `Tempo & Interessen` zeigen. Ohne persistierte Interessen und ohne Reisewunsch erscheint keine Präferenzkarte. Ein `travelWish` ist eigener Reisewunsch. Persistierte Interessen bleiben ohne Tempo-Behauptung sichtbar. Änderungs-Copy: `Zeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.`
+
+Keine neue Provenance-/DB-Spalte. Keine Migration. Kein Production-Write.
+
+### 13.1 STOP
+
+Kein Ready. Kein Merge. Kein weiterer Production-Write. Kein AAL2. Keine Direction A. Kein TW-7/8/9. Kein Folgeslice.
 
 Nächster Schritt: unabhängiger Technical-Lead-Finalreview des neuen Exact Head.

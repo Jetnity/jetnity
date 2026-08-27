@@ -4263,6 +4263,8 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 **Nachtrag, 27. August 2026 – Gate 0B liegt auf `main`.** PR #91 hat `20260827010000` byte-identisch und den Vier-Datei-Vertrag `26220000 → 26230000 → 26240000 → 27010000` auf `main` gebracht. Dieser Runtime-PR schreibt die Migration nicht erneut, erzeugt keine fünfte Version und ändert das Playbook nicht. Ältere ADR-0172-Sätze mit Drei-Datei-Rollout bleiben historische Evidence; die Continuity-Wahrheit ist ADR-0173 inklusive Gate-0B-Nachtrag.
 
+**Nachtrag, 27. August 2026 – Persistenzdefault `balanced` ist keine Nutzerwahl.** Technical-Lead Re-Review nach Production Gate B: `CREATE_PERSISTENZ_TEMPO='balanced'` bleibt der interne Kompatibilitätsdefault, wenn der Create kein Tempo anbietet. Die Workspace-Übersicht darf `reise.pace` / `Ausgewogen` nicht als bewusste Auswahl zeigen und keine Karte `Tempo & Interessen` für einen normalen neuen Create ohne persistierte Interessen oder Reisewunsch rendern. Ein vorhandener `travelWish` ist eigener Wunschtext. Persistierte Interessen dürfen ohne Tempo-Behauptung sichtbar bleiben. Änderungs-Copy lautet truth-safe `Zeitraum, Ziele oder Reisewünsche`. Keine neue Provenance- oder DB-Spalte. Keine Migration.
+
 ## ADR-0173 – TW6-B Gate-B-Dateien kommen migrations-only auf `main`; Apply nur transaktional unter Write-Gate
 
 **Datum:** 26. August 2026  

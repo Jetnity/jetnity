@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 27. August 2026  
-Status: **PR #91 / TW6-B Gate 0B ist integriert. Production Gate A ist vollständig PASS. Production Gate B bleibt NICHT freigegeben und NICHT angewendet. PR #87 bleibt Draft und muss gegen den neuen `main` neu synchronisiert, rekonstruiert und re-gegatet werden.**
+Status: **PR #91 / TW6-B Gate 0B ist integriert. Production Gate A ist vollständig PASS. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87 bleibt Draft; aktueller Korrekturscope ist die Workspace-Tempo-Wahrheit. Frühere Aussagen „Production Gate B nicht angewendet“ sind historische Evidence.**
 
 Der erste Einstieg bleibt `JETNITY_START_HERE.md`.  
 Aktuelle operative Evidence zusätzlich: `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`, `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md` und `docs/ACTIVE_WORK_STATUS.md`.
@@ -91,22 +91,18 @@ Finale Verifikation:
 
 Vollständige Evidence: `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`.
 
-## 5. Explizit NICHT auf Production
+## 5. Production nach Gate B
 
-Nicht freigegeben und nicht angewendet:
+Technical-Lead Re-Review vom 27. August 2026: **Production Gate B ist operativ PASS.** Der Vier-Datei-Vertrag `20260826220000 → 20260826230000 → 20260826240000 → 20260827010000` wurde unter Write-Gate angewendet. Der vorherige Post-PR-#91-Stand (TW6-B-Count = 0, keine Mode-Spalte) ist historische Evidence.
 
-- TW6-B `20260826220000`
-- TW6-B `20260826230000`
-- TW6-B `20260826240000`
-- TW6-B `20260827010000`
+Weiterhin nicht angewendet:
+
 - AAL2 Repo-Version `20260826090000`
 - Development-AAL2-Version `20260826052735`
 - Direction A
-- andere Production-Migrationen
+- andere nicht freigegebene Production-Migrationen
 
-Post-PR-#91 read-only erneut verifiziert: Gate-A-Count = 2, TW6-B-Count = 0, weder `day_stage_assignment_source` noch `day_stage_assignment_mode` auf Production, Guard-Trigger vorhanden/enabled.
-
-**Gate 0 / Gate 0B ≠ Production Gate B.**
+Dieser Runtime-Slice schreibt Production nicht erneut.
 
 ## 6. TW6-B Gate 0B / Vier-Datei-Vertrag
 
@@ -127,21 +123,9 @@ Development `yfvbxvijcorffwxbxahl` enthält bereits alle vier Versionen. Dort ni
 
 ## 7. TW6-B / PR #87
 
-PR #87 (`feat/tw6-rest-progressive-stages`) bleibt Draft. Er enthält Runtime-/UI-Arbeit für progressive weitere Ziele / Day→Stage Mode Contract und wurde durch PR #91 bewusst nicht mit Rollout-Code vermischt.
+PR #87 (`feat/tw6-rest-progressive-stages`) bleibt Draft. Die Synchronisierung gegen `main` nach Gate 0B ist erfolgt. Aktueller Korrekturscope: Workspace darf den Persistenzdefault `balanced` nicht als Nutzerwahl zeigen.
 
-Nach dem Gate-0B-Merge gilt zwingend:
-
-1. aktuellen `main` live lesen;
-2. PR-#87-Head live lesen;
-3. PR #87 scope-sicher gegen den neuen `main` synchronisieren bzw. Drift korrigieren;
-4. Merge-Base/Ahead/Behind neu bestimmen;
-5. echten aktuellen Diff prüfen;
-6. Shared Contracts sowie Multi-Ziel-/Zero-Stage-/Commercial-Truth-Semantik erneut prüfen;
-7. Exact-Head GitHub Actions + Vercel neu verlangen;
-8. Production-Zustand erneut verifizieren;
-9. erst bei neuem unabhängigem PASS über Runtime-Merge entscheiden.
-
-Kein alter PASS darf als aktuelle Merge- oder Production-Freigabe verwendet werden.
+Kein alter PASS darf als aktuelle Merge-Freigabe verwendet werden.
 
 ## 8. Trip Workspace
 
@@ -216,7 +200,7 @@ Supabase-Inventur zeigt weiterhin zwei Top-Level-Projekte: das aktive Production
 
 Operativ relevant:
 
-- PR #87 – TW6-B Runtime-Draft; jetzt nach PR #91 neu synchronisieren/re-reviewen
+- PR #87 – TW6-B Runtime-Draft; Sync erfolgt; aktueller P1 ist Workspace-Tempo-Wahrheit
 - PR #88 – Project Sanitation Audit; non-destructive Evidence, kein Cleanup automatisch
 
 Historische offene Drafts wie #52, #50, #40, #39, #28 bleiben Evidence und werden nicht blind wieder aufgenommen oder gelöscht.
@@ -225,15 +209,13 @@ PR #89 und PR #91 sind gemergt und keine aktiven Drafts mehr.
 
 ## 15. Exakter nächster Technical-Lead-Schritt
 
-**PR #87 gegen den neuen `main` nach PR #91 vollständig neu synchronisieren, live rekonstruieren und unabhängig re-reviewen.**
+**Unabhängiger Finalreview von Draft-PR #87 nach der Workspace-Tempo-Korrektur.**
 
-Wenn nötig: scope-sichere Synchronisierung/Korrektur durch `Cursor-Agent: Trip workspace audit architecture`, danach neuer Exact Head, neue CI/Vercel-Evidence und erneuter unabhängiger PASS.
-
-Erst wenn dieser Stand wieder PASS ist, darf der Product Owner separat um Freigabe für Production Gate B gebeten werden.
+Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. Die frühere Anweisung, zuerst um Gate-B-Freigabe zu bitten, ist historische Evidence.
 
 Bis dahin:
 
-**Kein Gate B. Kein AAL2. Kein Direction A. Kein PR-#87-Merge ohne neuen PASS. Kein TW-7/8/9-Folgeslice.**
+**Kein Ready. Kein Merge ohne neuen PASS. Kein AAL2. Kein Direction A. Kein TW-7/8/9-Folgeslice. Kein weiterer Production-Write in diesem Slice.**
 
 ## 16. Continuity
 
