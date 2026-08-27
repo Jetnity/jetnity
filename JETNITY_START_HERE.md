@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 27. August 2026  
-Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. PR #91 / TW6-B Gate 0B ist integriert; Production Gate A ist PASS; Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87, PR #94, PR #95 und die Post-PR-#94-Continuity (PR #96) sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. Kein offener Visitor-Search- oder Continuity-Draft. Der nächste Produktslice ist nicht zugewiesen. Frühere Aussagen „PR #94/#96 bleibt Draft“ sind historische Evidence.**
+Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97 und PR #98 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. PR #98 bringt AAL2-Alignment auf `main`, Production-Apply bleibt eigenes Gate. TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert bzw. nach Landung integriert; TW7-A Runtime ist nicht gestartet. Frühere Aussagen „PR #100 bleibt Draft / nicht gemergt“ oder „nächster Produktslice unzugewiesen“ sind historische Evidence.**
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
@@ -9,6 +9,8 @@ Aktuelle operative Evidence:
 
 - `JETNITY_HANDOFF.md`
 - `docs/ACTIVE_WORK_STATUS.md`
+- `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`
+- `docs/TRIP_WORKSPACE_TW7_HUB_GAP_STATUS.md`
 - `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
 - `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
 - `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`
@@ -204,9 +206,11 @@ Neue Aufträge nennen immer den exakten Anzeigenamen als `Cursor-Agent: <Name>`.
 
 ## 10. Aktuelle Integrationsbaseline
 
-Verifizierter `origin/main` nach PR #95:
+Verifizierter `origin/main` nach PR #98:
 
-`943d14c27a01b4c783340c658c911434fcc62b27`
+`beaef64a151adceb8f5bc759f58ae9ad13cecc51`
+
+GitHub Actions auf exakt diesem SHA: Run `33087558642` SUCCESS. GitHub Production-Deployment `6125680097` success.
 
 Wichtige aktuelle Integration:
 
@@ -280,7 +284,7 @@ PR #94 (Visitor Search UX) ist gemergt. Reviewed Head `8da869fd`. Checkpoint: `d
 
 Kein alter PASS ist eine aktuelle Merge- oder Production-Freigabe.
 
-TW-7 bleibt hinter Account-/Hub-Grenzen. TW-8 bleibt hinter Provider S5 und realer Commercial Provenance. TW-9 danach.
+TW-7-Start-Gate ist gegen `beaef64a` erfüllt. Rest-Gap und TW7-A-Slice: `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`. **Keine TW-7-Runtime in diesem Stand.** TW-8 bleibt hinter Provider S5 und realer Commercial Provenance. TW-9 danach.
 
 ## 14. Große Build-Reihenfolge
 
@@ -305,13 +309,13 @@ Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Repo-/Bran
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-**Kein ausstehendes Re-Review von PR #96.** Die Post-PR-#94-Continuity ist mit diesem Dokumentensatz integriert/geschlossen. Historisch war PR #96 ein Draft auf `cursor/pr94-continuity-b13d`; das ist keine operative nächste Arbeit.
+TW-7-Gap / ADR-0176 / TW7-A-Spec sind durch PR #100 versioniert (`docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`). TW7-A Runtime ist nicht gestartet. PR #100 ist das Integrationsvehikel; Live-Merge-SHA prüfen.
 
-Visitor Search UX ist integriert. Production Gate B ist operativ PASS, kein Re-Apply. `TW6-REST-01` ist geschlossen.
+PR #98 ist integriert. Production-AAL2-Apply bleibt ein separates Product-Owner-Gate.
 
-Der nächste Produktslice bleibt **unzugewiesen**, bis eine neue Technical-Lead- oder Product-Owner-Entscheidung ihn vergibt. Kein automatischer Visitor-Search-, Homepage-, TW-7/8/9-, AAL2-, Direction-A- oder Provider-Live-Auftrag.
+Visitor Search UX ist integriert. Production Gate B ist operativ PASS, kein Re-Apply. `TW6-REST-01` ist geschlossen. PR #96/#97 sind integriert.
 
-> **Kein automatischer Folgeslice. Kein AAL2. Kein Direction A. Kein TW-7/8/9. Kein weiterer Production-Write. Bereitschaft/Merge gilt nur für einen später neu zugewiesenen, unabhängig gegateten PR.**
+> **Kein automatischer Folgeslice. Kein TW7-A-Runtime-Start. Kein Direction A. Kein TW-8/9. Kein weiterer Production-Write aus diesem Dokumentensatz.**
 
 ## 17. Continuity-Regel
 
