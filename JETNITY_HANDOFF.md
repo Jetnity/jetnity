@@ -1,10 +1,10 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 27. August 2026  
-Status: **PR #91 / TW6-B Gate 0B ist integriert. Production Gate A ist vollständig PASS. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87 und PR #94 sind gemergt. Visitor Search UX ist integriert. Kein offener Visitor-Search-Implementation-Draft. Frühere Aussagen „PR #94 bleibt Draft“ bzw. „PR #87 bleibt Draft“ sind historische Evidence.**
+Status: **PR #91 / TW6-B Gate 0B ist integriert. Production Gate A ist vollständig PASS. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87, PR #94 und PR #95 sind gemergt. Visitor Search UX ist integriert. Draft PR #96 aktualisiert die kanonischen Handoff-Dateien. Kein offener Visitor-Search-Implementation-Draft. Frühere Aussagen „PR #94 bleibt Draft“ bzw. „PR #87 bleibt Draft“ sind historische Evidence.**
 
 Der erste Einstieg bleibt `JETNITY_START_HERE.md`.  
-Aktuelle operative Evidence zusätzlich: `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`, `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md` und `docs/ACTIVE_WORK_STATUS.md`.
+Aktuelle operative Evidence zusätzlich: `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`, `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`, `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md` und `docs/ACTIVE_WORK_STATUS.md`.
 
 > **Do not blindly trust this handoff — live verify first.**
 
@@ -23,6 +23,7 @@ Lies zuerst mindestens:
 - `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`
 - `JETNITY_HANDOFF.md`
 - `docs/ACTIVE_WORK_STATUS.md`
+- `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
 - `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
 - `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`
 - `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`
@@ -51,14 +52,16 @@ Besondere Product-Owner-Gates bleiben zwingend für Production-Migrationen/destr
 
 ## 3. Aktuelle Git-/CI-Linie
 
-Verifizierter Integrationsstand nach PR #94:
+Verifizierter Integrationsstand nach PR #95 / PR #94:
 
+- Aktuelles `origin/main`: `943d14c27a01b4c783340c658c911434fcc62b27` (Merge PR #95)
+- PR #95 – docs-only New-Chat-Checkpoint; ändert keine kanonischen Handoff-Statuszeilen
 - PR #94 – `Visitor Search UX: natürliche Orts- und Flughafennamen`
 - PR-#94 Exact Head: `8da869fd2756f3c1514de6d33678c8c7abfad1c4`
 - Technical-Lead PASS review: `5040199350`
 - PR-#94 Exact-Head GitHub Actions Run `33066516282`: SUCCESS
 - PR-#94 Exact-Head Vercel Preview `CBuVobvymHT9m7A4uUKmb2exU4PU`: SUCCESS
-- Merge-Commit auf `main`: `819715b1567417893d894b7b110eff1a2ab6cded`
+- PR-#94 Merge-Commit auf `main`: `819715b1567417893d894b7b110eff1a2ab6cded`
 - Post-Merge `main` GitHub Actions Run `33067498607`: SUCCESS
 - Post-Merge Vercel `GrD4MaYqtnR9UL619gVnKx9HSUmH`: SUCCESS auf exakt dem Merge-SHA
 - GitHub Production deployment `6121770601`: SUCCESS auf demselben SHA
@@ -203,7 +206,8 @@ Supabase-Inventur zeigt weiterhin zwei Top-Level-Projekte: das aktive Production
 
 Operativ relevant:
 
-- PR #96 – Post-PR-#94 Continuity, docs-only Draft gegen aktuelles `main`; Checkpoint `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
+- PR #96 – Post-PR-#94 Continuity, docs-only Draft; aktualisiert kanonische Handoff-Dateien nach PR #94/#95
+- PR #95 – gemergt; New-Chat-Checkpoint `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
 - PR #94 – gemergt; Visitor Search UX integriert
 - PR #88 – Project Sanitation Audit; non-destructive Evidence, kein Cleanup automatisch
 - PR #87 – gemergt; Checkpoint `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`

@@ -1,7 +1,7 @@
 # Jetnity – Roadmap
 
 Stand: 27. August 2026  
-Status: **Foundation C/D/E, Safety, Seasonal, AP-1–AP-3, Admin A–C, Provider S1–S3 + S5-A, TW-1/2/4/3/5, TW6-A, TW6-B Runtime (PR #87), Visitor Search UX (PR #94), D0-1/D0-2, P1-D0-LIVE-01, QS-1/QS-2, P1-QS2-02, P1-TA-02 und Admin-AAL2-Application-Guard liegen auf `main @ 819715b1`. S5-B, TW-7/TW-8, AP-4+, Admin D–K, D1/G1 und Growth-Folgeslices sind nicht gestartet. Aktueller Checkpoint: `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`.**
+Status: **Foundation C/D/E, Safety, Seasonal, AP-1–AP-3, Admin A–C, Provider S1–S3 + S5-A, TW-1/2/4/3/5, TW6-A, TW6-B Runtime (PR #87), Visitor Search UX (PR #94), D0-1/D0-2, P1-D0-LIVE-01, QS-1/QS-2, P1-QS2-02, P1-TA-02 und Admin-AAL2-Application-Guard liegen auf `main @ 943d14c2` (PR #95 docs-checkpoint nach PR #94). S5-B, TW-7/TW-8, AP-4+, Admin D–K, D1/G1 und Growth-Folgeslices sind nicht gestartet. Aktuelle Checkpoints: `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md` und Draft PR #96.**
 
 Für Entscheidungen zusätzlich lesen:
 
@@ -463,6 +463,7 @@ Keine Feature-Wand, kein internes Architekturjargon, keine nicht produktiven Ver
 12c2. ✅ TW6-B Gate 0B Zero-Stage Production Rollout Provenance – `20260827010000` byte-identisch plus Vier-Datei-Playbook auf `main` (PR #91, Continuity PR #92). Die damalige Grenze „kein Production-Apply / kein Runtime-Merge von PR #87“ ist historische Evidence dieses Schritts; später superseden 12c3 und der operative Gate-B-PASS diese Constraint.
 12c3. ✅ TW6-B Runtime PR #87 – progressive weitere Ziele + Day→Stage Mode Contract auf `main` (`80bbde69`). Workspace zeigt Persistenzdefault `balanced` nicht als Nutzerwahl. **Kein TW-7/8/9.**
 12c4. ✅ Visitor Search UX PR #94 – natürliche Orts-/Flughafennamen, kanonische Place-ID / listenbestätigtes IATA, P1/P2 geschlossen; auf `main` (`819715b1`, reviewed head `8da869fd`). **Kein neuer Search-Provider. Kein Schema-/Production-Write. Kein TW-7/8/9.**
+12c5. ✅ PR #94 New-Chat-Checkpoint PR #95 – `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md` auf `main` (`943d14c2`). Kanonische Handoff-Statuszeilen bleiben bis Draft PR #96 veraltet.
 12d. ✅ Provider S5-A Commercial Provenance – auf `main` (`3b317bc6`, ADR-0168). S5-B nicht gestartet.
 12e. ✅ Admin-AAL2 Application-Guard – auf `main` (`d3faa2a0`, ADR-0169). Production-DB nicht angewendet.
 12f. ✅ D0 live metadata boundary / P1-D0-LIVE-01 – auf `main` (PR #86, `38ec8be7`, ADR-0170). HTML-robots fail-closed; Canonical ist `https://jetnity.com`, niemals `*.vercel.app`. **Kein D1/G1. Kein Domain-Cutover. Kein Public Indexing.**

@@ -9,7 +9,8 @@ Live git wins over stale continuity files that still described Visitor Search UX
 ## Live Git truth at checkpoint
 
 - Repository: `Jetnity/jetnity`
-- `origin/main`: `819715b1567417893d894b7b110eff1a2ab6cded` — `Merge PR #94: Visitor Search UX`
+- `origin/main` after later docs PR #95: `943d14c27a01b4c783340c658c911434fcc62b27` — `Merge PR #95: PR94 post-merge new-chat checkpoint`
+- PR #94 product merge on `main`: `819715b1567417893d894b7b110eff1a2ab6cded` — `Merge PR #94: Visitor Search UX`
 - PR #94 `Visitor Search UX: natürliche Orts- und Flughafennamen`: **merged** at `2026-08-27T11:28:07Z`
 - PR #94 reviewed exact head: `8da869fd2756f3c1514de6d33678c8c7abfad1c4`
 - Merge-base before merge: `b76148e533fb0758c0197d0e0252624bb869cdb5`
@@ -66,7 +67,9 @@ These are not reopen-the-slice blockers. They remain explicit so a new agent doe
 
 There is **no open Visitor Search UX implementation draft**.
 
-The immediate continuity work is Draft PR #96 (`cursor/pr94-continuity-b13d`). It only updates documentation so new agents read the merged `main` instead of the pre-merge draft status.
+PR #95 already landed the new-chat checkpoint `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md` on `main`. It did not update `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, ADR-0174 or the Visitor Search task file.
+
+The remaining continuity work is Draft PR #96 (`cursor/pr94-continuity-b13d`). It updates those canonical files so a new agent does not start from stale “PR #94 is an open draft” status lines.
 
 Do **not** automatically start:
 

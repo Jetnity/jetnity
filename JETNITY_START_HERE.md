@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 27. August 2026  
-Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. PR #91 / TW6-B Gate 0B ist integriert; Production Gate A ist PASS; Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87 und PR #94 sind gemergt. Visitor Search UX ist integriert. Kein offener Visitor-Search-Implementation-Draft. Frühere Aussagen „PR #94 bleibt Draft“ bzw. „PR #87 bleibt Draft“ sind historische Evidence.**
+Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. PR #91 / TW6-B Gate 0B ist integriert; Production Gate A ist PASS; Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87, PR #94 und PR #95 sind gemergt. Visitor Search UX ist integriert. Draft PR #96 aktualisiert die kanonischen Handoff-Dateien. Kein offener Visitor-Search-Implementation-Draft. Frühere Aussagen „PR #94 bleibt Draft“ bzw. „PR #87 bleibt Draft“ sind historische Evidence.**
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
@@ -9,6 +9,7 @@ Aktuelle operative Evidence:
 
 - `JETNITY_HANDOFF.md`
 - `docs/ACTIVE_WORK_STATUS.md`
+- `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
 - `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
 - `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`
 - `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`
@@ -34,12 +35,13 @@ Jeder neue Chat, Technical Lead oder Coding Agent liest mindestens in dieser Rei
 12. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
 13. `JETNITY_HANDOFF.md`
 14. `docs/ACTIVE_WORK_STATUS.md`
-15. `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
-16. `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`
-17. `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`
-18. `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`
-19. `docs/TRIP_WORKSPACE_TW6_GATE_B_PREP_STATUS.md`
-20. den aktuell relevanten Slice-Task/Status/Handoff sowie ADRs/Checkpoints.
+15. `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
+16. `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
+17. `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`
+18. `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`
+19. `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`
+20. `docs/TRIP_WORKSPACE_TW6_GATE_B_PREP_STATUS.md`
+21. den aktuell relevanten Slice-Task/Status/Handoff sowie ADRs/Checkpoints.
 
 Historische Checkpoints und ältere Governance-/PR-Dokumente bleiben Evidence ihres damaligen Stands. Widersprechende alte Aussagen werden nicht gelöscht, aber durch spätere kanonische Entscheidungen und Live-Evidence superseded.
 
@@ -186,12 +188,13 @@ Neue Aufträge nennen immer den exakten Anzeigenamen als `Cursor-Agent: <Name>`.
 
 ## 10. Aktuelle Integrationsbaseline
 
-Verifizierter `origin/main` nach PR #94:
+Verifizierter `origin/main` nach PR #95:
 
-`819715b1567417893d894b7b110eff1a2ab6cded`
+`943d14c27a01b4c783340c658c911434fcc62b27`
 
 Wichtige aktuelle Integration:
 
+- PR #95 – docs-only New-Chat-Checkpoint nach PR #94; Merge `943d14c27a01b4c783340c658c911434fcc62b27`;
 - PR #94 – Visitor Search UX; Reviewed Head `8da869fd2756f3c1514de6d33678c8c7abfad1c4`; Technical-Lead PASS `5040199350`;
 - PR-#94 Exact-Head Actions Run `33066516282`: SUCCESS;
 - PR-#94 Exact-Head Vercel Preview `CBuVobvymHT9m7A4uUKmb2exU4PU`: SUCCESS;

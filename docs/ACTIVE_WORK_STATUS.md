@@ -1,13 +1,17 @@
 # Jetnity – Active Work Status
 
 Stand: 27. August 2026  
-Status: **Production Gate A ist PASS. PR #91 / TW6-B Gate 0B ist auf `main`. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87 und PR #94 sind gemergt. Visitor Search UX ist integriert. Kein offener Visitor-Search-Implementation-Draft. Alte Aussagen „PR #94 bleibt Draft / CHANGES REQUIRED“ bzw. „PR #87 bleibt Draft“ sind historische Evidence.**
+Status: **Production Gate A ist PASS. PR #91 / TW6-B Gate 0B ist auf `main`. Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87, PR #94 und PR #95 sind gemergt. Visitor Search UX ist integriert. PR #95 hat nur den New-Chat-Checkpoint ergänzt; die kanonischen Handoff-Dateien aktualisiert Draft PR #96. Kein offener Visitor-Search-Implementation-Draft. Alte Aussagen „PR #94 bleibt Draft / CHANGES REQUIRED“ bzw. „PR #87 bleibt Draft“ sind historische Evidence.**
 
 > **Do not blindly trust this file — live verify first.**
 
 ## 0. Live-Integrationsbaseline
 
-Aktueller verifizierter `origin/main` nach PR #94:
+Aktueller verifizierter `origin/main` nach PR #95:
+
+- `943d14c27a01b4c783340c658c911434fcc62b27` — `Merge PR #95: PR94 post-merge new-chat checkpoint`
+
+PR-#94-Produktmerge bleibt:
 
 - `819715b1567417893d894b7b110eff1a2ab6cded` — `Merge PR #94: Visitor Search UX`
 
@@ -23,9 +27,10 @@ Verifizierte PR-#94-Linie:
 - Post-Merge Vercel `GrD4MaYqtnR9UL619gVnKx9HSUmH`: SUCCESS auf exakt `819715b1567417893d894b7b110eff1a2ab6cded`
 - GitHub Production deployment `6121770601`: SUCCESS auf demselben SHA
 
-Vollständiger Post-Merge-Checkpoint:
+Post-Merge-Checkpoints:
 
-`docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
+- `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md` (PR #95, bereits auf `main`)
+- `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md` (dieser Continuity-Block, Draft PR #96)
 
 PR #91 bleibt Teil der Vorgeschichte (Merge `a2e46f38dcfbbea286e37960c7993adbbd06136a`). Checkpoint: `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`. Aussagen dort, Production Gate B sei unangewendet oder PR #87 bleibe Draft, sind **historische Evidence** vor den späteren Gate-B- und Runtime-Merges.
 
@@ -176,8 +181,9 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#96** Post-PR-#94 Continuity | **OFFENER Draft, docs-only.** Aktualisiert Continuity nach gemergtem PR #94. Kein Ready/Merge ohne neuen PASS. |
-| **#94** Visitor Search UX | **GEMERGT.** Reviewed Head `8da869fd`. Merge `819715b1`. Checkpoint `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`. |
+| **#96** Post-PR-#94 Continuity | **OFFENER Draft, docs-only.** Aktualisiert die kanonischen Handoff-Dateien, die PR #95 nicht geändert hat. Kein Ready/Merge ohne neuen PASS. |
+| **#95** PR94 new-chat checkpoint | **GEMERGT.** Nur `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`. Merge `943d14c2`. |
+| **#94** Visitor Search UX | **GEMERGT.** Reviewed Head `8da869fd`. Merge `819715b1`. |
 | **#87** TW6-B Runtime + Mode Contract | **GEMERGT.** Checkpoint `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`. |
 | **#88** Project Sanitation Audit | Non-destructive Audit-Evidence. Kein Cleanup automatisch. |
 | #52 ChatGPT TL handoff 2026-08-24 | HISTORICAL / SUPERSEDED |
@@ -209,4 +215,6 @@ Weiterhin nicht angewendet:
 
 **STOP nach diesem docs-only Continuity-Draft für unabhängigen Technical-Lead-Review.**
 
-Kein Ready. Kein Merge ohne neuen PASS. Kein weiterer Visitor-Search-Implementation-Slice. Kein weiterer Production-Write. Kein AAL2. Keine Direction A. Kein TW-7/8/9-Folgeslice. Der nächste Produktauftrag braucht eine neue Technical-Lead- oder Product-Owner-Zuweisung.
+Kein Ready. Kein Merge ohne neuen PASS. Kein weiterer Visitor-Search-Implementation-Slice. Kein weiterer Production-Write. Kein AAL2. Keine Direction A. Kein TW-7/8/9-Folgeslice.
+
+PR #95 zeichnet einen Product-Owner-Wunsch auf: Homepage-Hero-Design bleibt, die Funktion im bestehenden Kästchen soll später natürliche Mehrziel-/Route-Absicht verstehen. Das ist **kein** Startauftrag. Der nächste Produktauftrag braucht eine neue Technical-Lead- oder Product-Owner-Zuweisung.
