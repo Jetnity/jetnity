@@ -186,7 +186,7 @@ TW-8 bleibt gegated.
 
 Application-Guard ist im Code integriert.
 
-Production-AAL2-Datenebene bleibt **nicht angewendet**. Gate A und Gate 0B haben AAL2 nicht verändert.
+Production-AAL2-Datenebene `20260827170000` ist angewendet und verifiziert. Gate A und Gate 0B haben AAL2 nicht verändert. **Kein zweiter Apply.** Ältere Sätze „nicht angewendet“ sind historische Pre-Apply-Evidence.
 
 ## 12. D0 / Growth
 
