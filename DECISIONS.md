@@ -4317,6 +4317,31 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 ---
 
+## ADR-0175 – Admin-AAL2-Datenebene wird forward-only nach dem Production-Head aligned
+
+**Datum:** 27. August 2026  
+**Status:** Autorenarbeit auf Draft-PR #98. **Kein Ready. Kein Merge. Kein Production-Apply.** Historische Repo-Datei `20260826090000_admin_aal2_data_plane.sql` bleibt unveränderte Evidence.
+
+**Entscheidung:**
+
+- Production-Data-Plane AAL2 wird nicht durch Umbenennen, Löschen oder Rückdatieren der historischen Development-/Repo-Migration hergestellt.
+- Stattdessen kommt eine neue, nach dem aktuellen Production-Head datierte Alignment-Migration: `20260827170000_admin_aal2_data_plane_alignment.sql`.
+- Der Vertrag bleibt der bereits genehmigte aus ADR-0169: administrative Fähigkeit = unveränderte Mindestrolle **UND** signierter JWT-Claim `auth.jwt() ->> 'aal' = 'aal2'`.
+- `aktuelles_admin_aal2()` und die fünf `darf_*()` werden nur per `CREATE OR REPLACE` gesetzt. Keine Policy-, Tabellen- oder Ownership-Mutation.
+- AAL kommt ausschließlich aus `auth.jwt()`. Fehlender, leerer, `aal1` oder malformed Wert ist fail closed. Faktor-Existenz, `nextLevel`, User-Metadata und Break-Glass ersetzen AAL2 nicht.
+- Grants bleiben `authenticated`/`service_role`; `public`/`anon` bleiben ohne EXECUTE. Helper/Capabilities: `SECURITY INVOKER`, `search_path = pg_catalog`.
+- Der Apply auf Production `qscbgcdmivbbnzrcyegn` bleibt ein separates ausdrückliches Product-Owner-Gate. Dieser Slice bereitet nur vor.
+
+**Kontext:** Finding `P1-AAL2-PROD-01`. Application-Guard ist auf `main` (PR #80). Production-Head ist `20260827010000_reise_anlegen_zero_stage_fail_closed`. Development live führt `20260826052735_admin_aal2_data_plane`; das Repository führt dieselbe Semantik als `20260826090000`. Production hat keine AAL2-Data-Plane-Version, daher kann ein privilegiertes AAL1-JWT direkte PostgREST/RPC-Pfade nutzen.
+
+**Alternativen:** Historische Datei auf Production nachziehen; Development-Version umbenennen, damit die Nummern übereinstimmen; AAL2 nur in der App belassen. Abgelehnt, weil History-Fälschung und unvollständige Datenebene das P1 offen lassen.
+
+**Begründung:** Forward-only Alignment nach dem echten Production-Head hält Development-Semantik und Production-History ehrlich und schließt die direkte JWT-Lücke, sobald der Product Owner den Apply ausdrücklich freigibt.
+
+**Konsequenzen:** Kein Rollenmodell-, Auth-, Consumer-RLS- oder Ownership-Umbau. Keine `types/supabase.ts`-Regenerierung in diesem Slice. Keine Production-Änderung durch Autorenarbeit oder späteren normalen Merge allein.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

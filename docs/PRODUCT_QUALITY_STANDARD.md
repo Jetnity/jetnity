@@ -128,7 +128,7 @@ Leitsatz:
 
 Eine größere Phase ist erst review-bereit, wenn mindestens geprüft wurde:
 
-1. Architektur- und Security-Grenzen
+1. Architektur- und Security-Grenzen. Privilegiierter Admin-Datenzugriff verlangt aktuelle Rolle/Fähigkeit **und** aktuelles AAL2; eine vorbereitete Alignment-Migration ist kein Production-Apply.
 2. Mobile- und Desktop-Verhalten
 3. Loading/Empty/Error/Unavailable-Zustände
 4. Such-/Navigationsfluss und Verständlichkeit

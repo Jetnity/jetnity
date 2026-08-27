@@ -113,6 +113,8 @@ TOTP war in der Vorlage aus, auf dem Branch an – und die Anwendung führt den 
 
 **Admin-Zugang verlangt zusätzlich aktuelles AAL2.** `lib/auth/admin-guard.ts` prüft nach Identität und Rolle/Break-Glass `currentLevel === 'aal2'`. `nextLevel` oder ein vorhandener TOTP-Faktor reichen nicht. Die Regel gilt für Seiten, Server-Actions und `/api/admin`; Break-Glass ist nicht ausgenommen. AAL1-Admins gehen auf `/admin/mfa` und belegen AAL2 nach der Challenge erneut serverseitig. Ohne verifizierten Faktor bleibt der Adminbereich geschlossen; die Einrichtung bleibt `/account/security`. APIs antworten mit JSON 403 (`aal2-required`) oder 503 (`aal-lookup-failed`), nie mit einem HTML-Redirect. Begründung: [DECISIONS.md](../DECISIONS.md) ADR-0169.
 
+Dieselbe Grenze gilt für die administrativen DB-Fähigkeiten. Development hat `aktuelles_admin_aal2()` bereits. Production nicht. Die vorbereitete Alignment-Migration `20260827170000_admin_aal2_data_plane_alignment.sql` zieht `darf_*()` auf Rolle **und** JWT-`aal='aal2'`, ohne Auth-Server, Rollenmodell oder Consumer-Ownership zu ändern. Apply bleibt Product-Owner-Gate (ADR-0175).
+
 ### Missbrauchsschutz
 
 | Einstellung | Development | Parent | Quelle |

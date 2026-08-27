@@ -259,6 +259,8 @@ Seit `20260817100800` sprechen beide Seiten dieselbe Sprache. `CAPABILITY_MINIMU
 
 Die Zuordnung ist aus den bestehenden Gates der Anwendung abgelesen, nicht erfunden.
 
+Seit P1-QS2-01 / ADR-0169 gilt für diese fünf Funktionen zusätzlich: Fähigkeit = unveränderte Mindestrolle **und** aktuelles AAL2 aus `auth.jwt() ->> 'aal'`. Development besitzt `public.aktuelles_admin_aal2()` bereits über die historische Version `20260826052735` / Repo-Datei `20260826090000`. Production besitzt die Funktion live nicht. Die forward-only Alignment-Datei `20260827170000_admin_aal2_data_plane_alignment.sql` setzt denselben Vertrag idempotent und ändert keine Policies. Sie ist vorbereitet, nicht angewendet (ADR-0175). Consumer-Self-Service (`user_id = auth.uid() OR darf_konten_verwalten()`) bleibt unverändert.
+
 Zwei Fähigkeiten haben Fläche verloren. `konfiguration-verwalten` deckte ausschliesslich `admin_email_boxes`, `dns_audit_events` und `copilot_suggestions` ab – alle drei mit Phase 1.4b entfernt. `inhalte-moderieren` deckte `blog_comments`, `session_review_requests` und `creator_sessions` ab; die ersten beiden fielen mit 1.4b, die dritte mit Phase 1.5.
 
 **Reisen sind ausdrücklich nicht der neue Gegenstand von `inhalte-moderieren`.** Eine private Reiseplanung wird nicht veröffentlicht, also gibt es nichts zu moderieren, und keine Policy auf den vier Reisetabellen prüft eine Fähigkeit ([DECISIONS.md](../DECISIONS.md) ADR-0041). Eine Fähigkeit ohne Fläche ist unbequemer als eine mit – und die richtige Antwort darauf ist nicht, ihr die nächstliegende Tabelle zuzuweisen.
