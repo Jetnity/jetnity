@@ -1,7 +1,7 @@
 # Jetnity – P2-TA-06 Status
 
 Stand: 27. August 2026  
-Status: **LOKALE GATES GRÜN / DRAFT-PR #113 / EXACT-HEAD FOLGT NACH TYPECHECK-FIX / KEIN READY / KEIN MERGE**  
+Status: **LOKALE + EXACT-HEAD GATES GRÜN AUF `7124e141` / DRAFT-PR #113 / KEIN READY / KEIN MERGE**  
 Workstream: Account / Traveller  
 Cursor-Agent: **`Account plattform audit vorbereitung 4`**  
 Branch: `cursor/p2-ta-06-credential-normalization-3317`  
@@ -62,7 +62,19 @@ Lokale Gates auf diesem Branch, nach Typecheck-Fix der neuen Tests:
 | `check:schema-bezug` | PASS |
 | `npm run build` | PASS; bekannte Supabase-Edge-/Browserslist-Warnungen, keine Slice-Regression |
 
-Exact-Head Actions/Vercel werden nach dem nächsten Push auf dem neuen SHA verifiziert.
+## 4.1 Exact Head `7124e141c71c0f34573a81249fa028673bc242e4`
+
+| Gate | Ergebnis |
+| --- | --- |
+| GitHub Actions | Run `33119233558` **SUCCESS** – https://github.com/Jetnity/jetnity/actions/runs/33119233558 |
+| Typecheck, Lint & Build | SUCCESS |
+| Auth-Konfiguration | SUCCESS |
+| Vercel Preview | Deployment `6131511601` / Inspector `5ptkLwjEDESTu7BiZ7hQRAj6yLPU` **READY** auf demselben SHA |
+| Preview-URL | https://jetnity-app-git-cursor-p2-ta-06-credent-60ccef-jetnity-e1b93c82.vercel.app |
+| Review-Threads | 0 |
+| Reviews | keine |
+
+Historischer Fail auf `11b7606f` / Run `33119038127` war der Capture-Typing-Typecheck und ist auf `73810094` / `7124e141` geschlossen. Ein späterer Docs-Stamp-Commit ändert die bewegliche Head-SHA; live neu prüfen.
 
 ## 5. Shared-Contract-Gate
 

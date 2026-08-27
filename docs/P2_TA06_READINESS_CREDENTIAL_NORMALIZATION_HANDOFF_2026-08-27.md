@@ -1,7 +1,7 @@
 # Jetnity – P2-TA-06 Handoff
 
 Stand: 27. August 2026  
-Status: **DRAFT-PR #113 / LOKALE GATES GRÜN / EXACT-HEAD FOLGT / KEIN READY / KEIN MERGE**  
+Status: **DRAFT-PR #113 / LOKALE + EXACT-HEAD GATES GRÜN AUF `7124e141` / KEIN READY / KEIN MERGE**  
 Cursor-Agent: **`Account plattform audit vorbereitung 4`**  
 Issue: [#112](https://github.com/Jetnity/jetnity/issues/112)  
 Branch: `cursor/p2-ta-06-credential-normalization-3317`  
@@ -42,6 +42,19 @@ Kein Shared-Contract-Konflikt. Kein neuer Identity-/Registry-/RLS-Vertrag. Kein 
 ## Non-Scope eingehalten
 
 Kein AP-5, kein AP-7, keine Migration, keine RLS-/Auth-/AAL-Änderung, kein Production-Write, kein Provider-/Homepage-/Search-Scope, Issue #109/#110 unberührt.
+
+## Lokale Gates
+
+- `npm test` 2377/2377 PASS
+- Typecheck / Lint / Hygiene / Production Build PASS
+
+Exact Head `7124e141c71c0f34573a81249fa028673bc242e4`:
+
+- GitHub Actions Run `33119233558` SUCCESS
+- Vercel Inspector `5ptkLwjEDESTu7BiZ7hQRAj6yLPU` READY
+- Deployment `6131511601` success auf demselben SHA
+
+Ein Docs-Stamp danach erzeugt eine neue Head-SHA. Live neu prüfen.
 
 ## Nächster Schritt
 
