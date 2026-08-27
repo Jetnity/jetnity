@@ -7,7 +7,7 @@ Branch: `fix/admin-aal2-production-alignment-2026-08-27`
 Draft-PR: #98  
 Status: **TL CHANGES REQUIRED BEHOBEN / DRAFT / STOPP / KEIN READY / KEIN MERGE / KEIN PRODUCTION APPLY**  
 Review: `5042410938` auf Head `0db2f7f3e3bcf6141551582c4c0a386675342837`  
-Neuer Exact Head: *folgt nach Commit dieses Review-Fixes*
+Neuer Exact Head: `d3ce3a95e1b20bcceb120b217958504e2d18ca57`
 
 Verbindlicher Auftrag: `docs/QS2_ADMIN_AAL2_PRODUCTION_ALIGNMENT_IMPLEMENTATION_TASK_2026-08-27.md`  
 Playbook: `docs/QS2_ADMIN_AAL2_PRODUCTION_ALIGNMENT_PLAYBOOK_2026-08-27.md`  
@@ -128,7 +128,7 @@ Historische Datei `20260826090000_admin_aal2_data_plane.sql` unverändert: Git-B
 - Production weiterhin **nicht** anwenden
 - Review-Threads
 
-Nächster Schritt: erneuter unabhängiger Technical-Lead-Finalreview auf dem neuen Exact Head. Erst bei PASS darf der PR normal integriert werden. **Auch nach Merge bleibt der Production-Apply ein separates Product-Owner-Gate.**
+Nächster Schritt: erneuter unabhängiger Technical-Lead-Finalreview auf Exact Head `d3ce3a95e1b20bcceb120b217958504e2d18ca57`. Erst bei PASS darf der PR normal integriert werden. **Auch nach Merge bleibt der Production-Apply ein separates Product-Owner-Gate.**
 
 ---
 
