@@ -71,6 +71,8 @@ import { mobilityManuellLesen, mobilityManuellZuPunkt, mobilityZugehoerigkeitPru
 import { rentalCarManuellLesen, rentalCarManuellZuPunkt, rentalZugehoerigkeitPruefen } from '@/lib/rental-cars/manuell'
 import { buchungsstatusAnwenden } from '@/lib/trips/buchung'
 import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
+import { dayStageAssignmentModeAbleiten } from '@/lib/trips/day-stage-assignment'
+import { createZieleGraph } from '@/lib/trips/create-stages'
 import { reisetageBauen } from '@/lib/trips/tage'
 import { tageEtappenZuordnen } from '@/lib/trips/zuordnung'
 import type { Ort } from '@/lib/places/domain'
@@ -499,7 +501,7 @@ export function gastreiseAendern(eingabe: {
  */
 export function gastreiseAnlegen(
   eingabe: CreateTripInput,
-  bestaetigt?: { ziel: Ort; abreise: Ort },
+  bestaetigt?: { ziel: Ort; abreise: Ort; weitereZiele?: Ort[] },
 ): Trip {
   if (!verfuegbar()) throw new SpeicherFehler()
 
@@ -512,24 +514,69 @@ export function gastreiseAnlegen(
   // die Idempotenz weiter: Wird dieser Entwurf später ins Konto übernommen, ist
   // es dieselbe Kennung, die dort `unique (user_id, client_ref)` prüft.
   const id = eingabe.clientRef
-  const zielName = bestaetigt?.ziel.name ?? eingabe.destination
+  const weitereIds = eingabe.weitereDestinationPlaceIds ?? []
+  if (weitereIds.length > 0 && !bestaetigt) {
+    throw new Error('Weitere Ziele brauchen eine bestätigte Ortsreferenz.')
+  }
+
   const abreiseName = bestaetigt?.abreise.name ?? eingabe.origin
-  const zielId = bestaetigt?.ziel.id ?? eingabe.destinationPlaceId
   const abreiseId = bestaetigt?.abreise.id ?? eingabe.originPlaceId
 
-  const etappe = zielName
-    ? einzelneEtappe(zielName, eingabe.startDate, eingabe.endDate, {
-        countryCode: bestaetigt?.ziel.countryCode ?? null,
-        latitude: bestaetigt?.ziel.lat ?? null,
-        longitude: bestaetigt?.ziel.lon ?? null,
-        placeId: zielId,
+  const destinations = bestaetigt
+    ? [bestaetigt.ziel, ...(bestaetigt.weitereZiele ?? [])]
+    : null
+  const graph = destinations
+    ? createZieleGraph(destinations, {
+        startDate: eingabe.startDate,
+        endDate: eingabe.endDate,
       })
     : null
+
+  const stages = graph
+    ? graph.stages.map((etappe) => ({
+        id: kennungErzeugen('stage'),
+        position: etappe.position,
+        name: etappe.name,
+        countryCode: etappe.countryCode,
+        arrivalDate: etappe.arrivalDate,
+        departureDate: etappe.departureDate,
+        latitude: etappe.latitude,
+        longitude: etappe.longitude,
+        placeId: etappe.placeId,
+      }))
+    : (() => {
+        const zielName = eingabe.destination
+        const etappe = zielName
+          ? einzelneEtappe(zielName, eingabe.startDate, eingabe.endDate, {
+              countryCode: null,
+              latitude: null,
+              longitude: null,
+              placeId: eingabe.destinationPlaceId,
+            })
+          : null
+        return etappe ? [etappe] : []
+      })()
+
+  if (stages.length < 1) {
+    throw new Error('Aus diesen Angaben entsteht keine gültige Reise.')
+  }
+
+  const ersteStageId = stages[0]?.id ?? null
+  const days = graph
+    ? reisetageBauen(eingabe.startDate, eingabe.endDate).map((tag) => ({
+        id: kennungErzeugen('day'),
+        stageId: graph.einzelziel ? ersteStageId : null,
+        dayIndex: tag.dayIndex,
+        dayDate: tag.dayDate,
+        title: null,
+        items: [],
+      }))
+    : tageMitKennung(eingabe.startDate, eingabe.endDate, ersteStageId)
 
   const entwurf = {
     id,
     clientRef: id,
-    title: bestaetigt?.ziel.name ?? eingabe.title,
+    title: graph?.title ?? eingabe.title,
     origin: abreiseName,
     originPlaceId: abreiseId,
     startDate: eingabe.startDate,
@@ -543,9 +590,14 @@ export function gastreiseAnlegen(
     travelWish: eingabe.travelWish,
     revision: 1,
     lastMutationId: null,
-    stages: etappe ? [etappe] : [],
-    days: tageMitKennung(eingabe.startDate, eingabe.endDate, etappe?.id ?? null),
+    stages,
+    days,
     ohneTag: [],
+    dayStageAssignmentMode: graph?.assignmentMode
+      ?? dayStageAssignmentModeAbleiten({
+        stageCount: stages.length,
+        positions: stages.length === 1 ? [1] : [],
+      }),
     createdAt: jetzt,
     updatedAt: jetzt,
   }

@@ -36,6 +36,25 @@ export type TripInterest = (typeof TRIP_INTERESTS)[number]
 export const TRIP_STATUSES = ['draft', 'planned', 'booked', 'archived'] as const
 export type TripStatus = (typeof TRIP_STATUSES)[number]
 
+/**
+ * Day→Stage Assignment Mode. Werte wie in
+ * `trips.day_stage_assignment_mode`.
+ *
+ * Mode != Provenance. Der Mode sagt nur, wie Zuordnungen behandelt werden.
+ *
+ * `legacy_fallback` – nur bereits persistierter historischer DB-Bestand.
+ * `unassigned` – mehrere Ziele, keine Day→Stage-Zuordnung; kein Fallback.
+ * `single_destination` – genau ein Ziel; Tage dürfen der einen Stage gehören.
+ * `explicit` – konkrete Positionen aus der bestätigten Nutzlast; Lücken bleiben leer.
+ */
+export const DAY_STAGE_ASSIGNMENT_MODES = [
+  'legacy_fallback',
+  'unassigned',
+  'single_destination',
+  'explicit',
+] as const
+export type DayStageAssignmentMode = (typeof DAY_STAGE_ASSIGNMENT_MODES)[number]
+
 /** Art eines Planpunkts. Werte wie in `trip_items.kind`. */
 export const TRIP_ITEM_KINDS = ['flight', 'stay', 'activity', 'transfer', 'rental_car', 'note'] as const
 export type TripItemKind = (typeof TRIP_ITEM_KINDS)[number]
@@ -354,6 +373,13 @@ export type Trip = {
   interests: TripInterest[]
   travelWish: string | null
   /**
+   * Day→Stage Assignment Mode.
+   *
+   * Mode != Provenance. Browser-Altbestand ohne Feld wird aus Stages und
+   * Positionen abgeleitet und niemals zu historischem `legacy_fallback`.
+   */
+  dayStageAssignmentMode?: DayStageAssignmentMode
+  /**
    * Technische Fassung. Steigt bei jeder übernommenen Änderung.
    *
    * Ein Änderungsvorschlag nennt die Fassung, auf der er beruht. Eine neuere
@@ -428,6 +454,8 @@ export type CreateTripInput = {
   title: string
   destination: string
   destinationPlaceId: string
+  /** Bestätigte zusätzliche Ziele in Eingabereihenfolge. Duplikate bleiben. */
+  weitereDestinationPlaceIds?: string[]
   origin: string
   originPlaceId: string
   startDate: string

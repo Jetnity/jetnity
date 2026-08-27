@@ -4215,6 +4215,56 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 
 ---
 
+## ADR-0172 – Day→Stage Assignment Source als unterscheidbarer Trip-Vertrag
+
+**Datum:** 26. August 2026  
+**Status:** umgesetzt auf Draft-PR #87 / TW6-B Direction B; versioniertes Development-Migrationsartefakt. **Production nicht angewendet.** Kein Ready. Kein Merge.
+
+**Entscheidung:** Die Herkunft der Day→Stage-Zuordnung ist ein dauerhafter, unterscheidbarer Vertrag auf `public.trips.day_stage_assignment_source` mit genau vier Semantiken:
+
+- `legacy_fallback` – historischer Bestand; der bestehende proportionale Fallback bleibt erlaubt;
+- `unassigned` – mehrere bestätigte Ziele ohne Nutzerzuordnung; kein Fallback, keine erfundene Aufenthaltslänge;
+- `single_destination` – genau ein Ziel; alle Tage dürfen der einzigen Stage gehören;
+- `user` – reserviert für später explizit bestätigte Nutzerzuordnung. In diesem Slice nicht setzbar.
+
+Create-Server und `public.reise_anlegen()` leiten den Wert aus dem fachlichen Graphen ab. Ein Client darf `user` oder `legacy_fallback` nicht frei setzen, um Serverregeln zu umgehen. Guest und Account teilen dieselbe fachliche Wahrheit. Guest→Account überträgt Source plus leere Day→Stage-Zuordnung verlustfrei. Die Timeline darf unassigned Tage nicht als Aufenthalt unter Paris/Rom gruppieren.
+
+**Kontext:** PR #87 hat mehrere bestätigte Ziele korrekt auf `trip_stages` abgebildet, aber `reise_anlegen()` und `tageEtappenZuordnen()` haben daraus eine sichtbare 2/2/2-Zuordnung gemacht. Product Owner hat Direction B als Fundament freigegeben: Multi-Ziel-Reisen dürfen echte Stages haben, während Tage ehrlich noch keinem Ziel zugeordnet sind. Direction A (explizite Aufenthalte) folgt später.
+
+**Alternativen:**
+
+1. *Globales Abschalten von `tageEtappenZuordnen()`.* Würde Altbestand ohne `stage_id` beschädigen.
+2. *Nur UI-Bedingung oder Browser-Flag.* Würde Account-Persistenz und Guest→Account nicht binden.
+3. *Boolean statt vier Semantiken.* Würde Legacy, unassigned, Single-Destination und spätere Nutzerwahl ununterscheidbar machen.
+4. *Neue Stage-Tabelle oder Schattenpersistenz.* Verboten durch den Slice.
+
+**Begründung:** Nur ein persistenter, serverseitig abgeleiteter Source/Mode-Vertrag trennt Altbestand vom neuen ehrlichen Unassigned-Zustand, ohne eine proportionale Erfindung als Nutzerwahrheit zu verkaufen.
+
+**Konsequenzen:** Migration `20260826220000_trip_day_stage_assignment_source.sql` und der fail-closed Nachtrag `20260826230000_trip_day_stage_assignment_source_fail_closed.sql` dürfen nur Development/Test treffen. Production bleibt unangetastet, bis eine eigene Product-Owner-Freigabe vorliegt. Keine Aufenthalts-UX, kein TW-7/TW-8/TW-9, kein automatischer Wechsel `unassigned` → `user`.
+
+**Nachtrag, 26. August 2026 – identische TS-/SQL-Ableitung und offene Provenance-Gates.** Der unabhängige Technical-Lead-Finalreview hat zwei Blocker gefunden:
+
+1. *Ableitung driftete.* SQL hat Client-`user` auf null gesetzt und bei vorhandener `stage_position` `legacy_fallback` persistiert. TypeScript lieferte `unassigned`. `public.reise_anlegen()` ist `SECURITY INVOKER` mit EXECUTE für `authenticated`; die TypeScript-Server-Action ist keine Trust-Grenze. Die kanonische Tabelle sitzt jetzt in `dayStageAssignmentSourceAbleiten()` und im Function-Replace `20260826230000`. `user`, `unassigned` und `single_destination` bei mehreren Stages werden in beiden Sprachen `unassigned` und übernehmen keine Client-Position.
+2. *`legacy_fallback` ist historische Provenance, kein Client-Claim.* Ein frischer direkter Client kann weiterhin `legacy_fallback` plus `stage_position` senden – oder das Feld weglassen und Positionen mitschicken – und dieselbe Provenance erzeugen. Guest→Account alter localStorage-Reisen braucht genau diesen Weg, weil ohne Secret altes JSON und ein manipulierter Client nicht unterscheidbar sind. Ein übernommener Reisevorschlag (`vorschlagAlsNutzlast`) sendet keine Source, aber `stage_position` je Tag; SQL klassifiziert ihn deshalb als `legacy_fallback`. Das ist fachlich falsch und mit den vier genehmigten Semantiken nicht korrekt lösbar, ohne `user` allgemein zu aktivieren, einen fünften Wert zu erfinden oder die bestehenden Tageszuordnungen des Vorschlags zu zerstören.
+
+Diese zwei Provenance-Punkte sind ein **Product-/Shared-Contract-Gate**. Kein fünfter Source-Wert. Keine Secret-/HMAC-Improvisation. Direction A bleibt ein eigener Slice.
+
+**Nachtrag, 26. August 2026 – Production-Rollout ist ein eigenes Gate vor jedem Merge.** PR #87 darf nicht gemergt werden, solange Production den alten proportionalen `reise_anlegen()`-Vertrag hat. Die bestehenden TW6-B-Dateien sind kein isoliertes Mode-Replay: sie ersetzen die RPC vollständig und enthalten die Flug-Handelsfeld-Nullung aus `20260824160000`, während Production weder diese Nullung noch den Guard `20260824180000` hat. History-treuer Production-Weg: zuerst Commercial-Paar, dann `26220000`→`26230000`→`26240000`. AAL2 (`20260826052735` / Repo `20260826090000`) bleibt ausgeschlossen. Drei getrennte Product-Owner-Sätze, keine Sammelfreigabe. Details in `docs/TRIP_WORKSPACE_TW6_REST_PROGRESSIVE_STAGES_STATUS.md` Abschnitt 10.
+
+**Nachtrag, 26. August 2026 – Rollout-Rollback fail-closed (TL P1-04/05/06).** Nach der Mode-Migration darf `reise_anlegen()` nicht auf den Gate-A-Text zurückgesetzt werden, solange `day_stage_assignment_mode` existiert: die Spalte ist `NOT NULL DEFAULT legacy_fallback`, Gate A schreibt sie nicht, und ein Create von aktuellem `main` würde neue `legacy_fallback`-Rows minten. Rollback nach Gate B bleibt Mode-aware oder sperrt Writes (`REVOKE EXECUTE` auf `reise_anlegen` und `REVOKE INSERT` auf `public.trips` für `authenticated`). Wenn `24160000` sitzt und `24180000` scheitert: STOP, Version und Function belassen, Guard erneut versuchen; kein undokumentiertes Function-Rewind. `26220000`/`26230000`/`26240000` sind ein transaktionales Bundle unter Write-Gate, kein nacheinander öffentlich live geschalteter Source-Zwischenstand. Production darf diese drei Versionen erst tragen, wenn die Dateien auf `main` oder in einem immutable Tag+Hash-Vertrag liegen. Mode-Semantik unverändert.
+
+**Nachtrag, 26. August 2026 – Product-Owner-Freigabe Assignment Mode.** Der Product Owner hat den Technical-Lead-Vorschlag ausdrücklich freigegeben: der dauerhafte Vertrag ist ein **Assignment Mode**, nicht Herkunft. Die Development-Spalte heisst `day_stage_assignment_mode`. Die vier Modes sind `legacy_fallback` (nur bereits persistierter DB-Bestand), `unassigned`, `single_destination` und `explicit`. `explicit` bedeutet nur: konkrete gültige Day→Stage-Positionen wurden als Bestandteil der bestätigten Nutzlast übernommen. Es bedeutet nicht „manuell vom Nutzer editiert“. `user` ist kein persistierbarer Mode.
+
+`public.reise_anlegen()` leitet den Mode aus der validierten Nutzlast ab und mintet für neue Requests niemals `legacy_fallback`. Claimed `legacy_fallback` oder alter `user` plus gültige Positionen werden `explicit`; ohne Positionen `unassigned`. Unbekannte Claims und out-of-range Positionen sind fail-closed (`22023`). Accepted Reisevorschlag und Guest/localStorage mit Positionen sind `explicit`. Historische Development-Rows bleiben `legacy_fallback`; nur dort darf der proportionale Fallback weiterlaufen.
+
+Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Development. Production bleibt unangetastet. Kein fünfter Mode. Keine separate Provenance-Spalte in diesem Slice. Direction A bleibt eigener Slice. TW6-B-P1-05/P1-06 sind runtime-seitig geschlossen, sobald der unabhängige Technical-Lead-Finalreview PASS erteilt.
+
+**Nachtrag, 27. August 2026 – 0 Stages sind fail-closed.** `single_destination` bedeutet genau eine Stage, nicht `stageCount <= 1`. Ein neuer Create-/RPC-Request ohne bestätigte Stage wird mit `22023` / `DayStageAssignmentFehler` abgelehnt und persistiert keine Reise. TypeScript und SQL bleiben identisch. `20260826240000` bleibt unverändert (Development angewendet, über PR #89 auf `main`). Der Guard sitzt in der additiven Folgemigration `20260827010000_reise_anlegen_zero_stage_fail_closed.sql`. In-Memory-Entwürfe ohne Stage bleiben lesbar, minten aber kein `single_destination`; Guest-Create und Guest→Account ohne bestätigtes Ziel sind ebenfalls fail-closed. Production, Gate B, AAL2 und Direction A bleiben unangetastet.
+
+**Nachtrag, 27. August 2026 – Gate 0B liegt auf `main`.** PR #91 hat `20260827010000` byte-identisch und den Vier-Datei-Vertrag `26220000 → 26230000 → 26240000 → 27010000` auf `main` gebracht. Dieser Runtime-PR schreibt die Migration nicht erneut, erzeugt keine fünfte Version und ändert das Playbook nicht. Ältere ADR-0172-Sätze mit Drei-Datei-Rollout bleiben historische Evidence; die Continuity-Wahrheit ist ADR-0173 inklusive Gate-0B-Nachtrag.
+
+**Nachtrag, 27. August 2026 – Persistenzdefault `balanced` ist keine Nutzerwahl.** Technical-Lead Re-Review nach Production Gate B: `CREATE_PERSISTENZ_TEMPO='balanced'` bleibt der interne Kompatibilitätsdefault, wenn der Create kein Tempo anbietet. Die Workspace-Übersicht darf `reise.pace` / `Ausgewogen` nicht als bewusste Auswahl zeigen und keine Karte `Tempo & Interessen` für einen normalen neuen Create ohne persistierte Interessen oder Reisewunsch rendern. Ein vorhandener `travelWish` ist eigener Wunschtext. Persistierte Interessen dürfen ohne Tempo-Behauptung sichtbar bleiben. Änderungs-Copy lautet truth-safe `Zeitraum, Ziele oder Reisewünsche`. Keine neue Provenance- oder DB-Spalte. Keine Migration.
+
 ## ADR-0173 – TW6-B Gate-B-Dateien kommen migrations-only auf `main`; Apply nur transaktional unter Write-Gate
 
 **Datum:** 26. August 2026  
@@ -4237,6 +4287,8 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 **Konsequenzen:** Dieser Slice ändert Production nicht, merged nichts und startet keine Multi-Ziel-UI. PR #87 bleibt der Runtime-Draft. AAL2 bleibt excluded.
 
 **Nachtrag, 27. August 2026 – Gate 0B Vier-Datei-Vertrag (P1-TW6-B-ROLLOUT-08).** Der Runtime-/Zero-Stage-Fix auf PR #87 Exact Head `b93a6fff213b3bb61a9efde84050f46fc0673cf4` ist auf Development bestätigt. Das Gate-B-Playbook auf `main` darf deshalb nicht bei `26220000 → 26230000 → 26240000` stehen bleiben: `26240000` würde 0 Stages als `single_destination` persistieren. Additive, unveränderte Folgedatei `20260827010000_reise_anlegen_zero_stage_fail_closed.sql` gehört in denselben Write-Gate-Bundle, Hash `b516bfff24e9e6f5dd909a9cfd4e76aa1a54708b067d1a5d3e935b8482c6adf1`, byte-identisch vom geprüften PR-#87-Head. Verbindliche Reihenfolge: `26220000 → 26230000 → 26240000 → 27010000`. `db:anwenden` lehnt alle vier dateiweise ab. Final Verify muss 0-Stage fail-closed, genau vier History-Versionen, kein neues `legacy_fallback` und erhaltene Commercial-Gate-A-Semantik beweisen. Development nicht erneut anwenden. Production bleibt unangetastet. Kein Runtime-/UI-Code aus PR #87. `PRODUCTION_APPLY_FREIGEGEBEN` bleibt `false`.
+
+**Nachtrag, 27. August 2026 – PR #87 nimmt Gate 0B nicht erneut auf.** Nach Integration von PR #91 / Continuity PR #92 bleibt der Vier-Datei-Vertrag die `main`-Wahrheit. Der Runtime-Draft synchronisiert sich mit diesem Stand und darf `27010000` weder umschreiben noch ein zweites Migrationsartefakt anlegen.
 
 ---
 

@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 27. August 2026  
-Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. PR #91 / TW6-B Gate 0B ist integriert; Production Gate A ist PASS; Production Gate B bleibt NICHT freigegeben und NICHT angewendet; PR #87 bleibt Draft und muss jetzt gegen den neuen `main` neu synchronisiert und vollständig re-gegatet werden.**
+Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. PR #91 / TW6-B Gate 0B ist integriert; Production Gate A ist PASS; Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. PR #87 bleibt Draft; aktueller offener P1 ist die Workspace-Tempo-Wahrheit. Frühere Aussagen „Production Gate B nicht angewendet“ sind historische Evidence.**
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
@@ -295,19 +295,13 @@ Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Repo-/Bran
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-**PR #87 gegen `main` nach PR #91 neu synchronisieren, vollständig live rekonstruieren und unabhängig re-reviewen.**
+**Unabhängiger Finalreview von Draft-PR #87 nach der Workspace-Tempo-Korrektur.**
 
-Wenn eine Korrektur nötig ist:
-
-`Cursor-Agent: Trip workspace audit architecture`
-
-Danach neuer Exact Head → neue CI/Vercel-Evidence → unabhängiger PASS.
-
-Erst dann darf der Product Owner separat um Freigabe für Production Gate B gebeten werden.
+Production Gate B ist laut Technical-Lead Re-Review vom 27. August 2026 operativ PASS. Die frühere Anweisung, zuerst um Gate-B-Freigabe zu bitten, ist historische Evidence.
 
 Bis dahin:
 
-> **Kein Gate B. Kein AAL2. Kein Direction A. Kein PR-#87-Merge ohne neuen PASS. Kein TW-7/8/9-Folgeslice.**
+> **Kein Ready. Kein Merge ohne neuen PASS. Kein AAL2. Kein Direction A. Kein TW-7/8/9-Folgeslice. Kein weiterer Production-Write in diesem Slice.**
 
 ## 17. Continuity-Regel
 

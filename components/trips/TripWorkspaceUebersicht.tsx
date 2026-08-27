@@ -5,8 +5,12 @@ import { ArrowRightLeft, BedDouble, Plane, Sparkles } from 'lucide-react'
 
 import { ARBEITSBEREICH_BEZEICHNUNG } from '@/lib/trips/arbeitsbereich'
 import type { DetailDomain } from '@/lib/trips/detail'
-import { INTERESSE_BEZEICHNUNG, TEMPO_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
+import { INTERESSE_BEZEICHNUNG } from '@/lib/trips/bezeichnungen'
 import type { AttentionAbleitung, AttentionAktion } from '@/lib/trips/attention'
+import {
+  workspacePraeferenzHatInhalt,
+  workspacePraeferenzSicht,
+} from '@/lib/trips/workspace-praeferenzen'
 import type { AbdeckungLage, UebersichtAbleitung } from '@/lib/trips/uebersicht'
 import { cn } from '@/lib/utils'
 import type { Trip } from '@/types/trips'
@@ -55,6 +59,8 @@ export default function TripWorkspaceUebersicht({
   sicherheit?: ReactNode
   reisezeit?: ReactNode
 }) {
+  const praeferenzen = workspacePraeferenzSicht(reise)
+
   return (
     <section aria-label="Reiseübersicht" className="mt-5 grid min-w-0 gap-4">
       <div>
@@ -109,7 +115,7 @@ export default function TripWorkspaceUebersicht({
 
       <div className="flex flex-col gap-3 rounded-2xl border border-line-200 bg-white px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="min-w-0 text-sm leading-6 text-ink-800">
-          Zeitraum, Etappen oder Tempo in eigenen Worten anpassen.
+          Zeitraum, Ziele oder Reisewünsche in eigenen Worten anpassen.
         </p>
         <button
           ref={aenderungKnopfRef}
@@ -125,18 +131,28 @@ export default function TripWorkspaceUebersicht({
 
       {aenderungFeld}
 
-      <section className="rounded-2xl border border-line-100 bg-surface-0 px-4 py-3">
-        <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-ink-600">Tempo & Interessen</p>
-        <p className="mt-1.5 text-xs leading-5 text-ink-700">
-          {TEMPO_BEZEICHNUNG[reise.pace].titel}
-          {reise.interests.length
-            ? ` · ${reise.interests.map((wert) => INTERESSE_BEZEICHNUNG[wert]).join(', ')}`
-            : ''}
-        </p>
-        {reise.travelWish && (
-          <p className="mt-1.5 text-xs leading-5 text-ink-700">„{reise.travelWish}“</p>
-        )}
-      </section>
+      {workspacePraeferenzHatInhalt(praeferenzen) ? (
+        <div className="grid gap-3">
+          {praeferenzen.reisewunsch ? (
+            <section className="rounded-2xl border border-line-100 bg-surface-0 px-4 py-3">
+              <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-ink-600">
+                Reisewunsch
+              </p>
+              <p className="mt-1.5 text-xs leading-5 text-ink-700">„{praeferenzen.reisewunsch}“</p>
+            </section>
+          ) : null}
+          {praeferenzen.interessen.length > 0 ? (
+            <section className="rounded-2xl border border-line-100 bg-surface-0 px-4 py-3">
+              <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-ink-600">
+                Interessen
+              </p>
+              <p className="mt-1.5 text-xs leading-5 text-ink-700">
+                {praeferenzen.interessen.map((wert) => INTERESSE_BEZEICHNUNG[wert]).join(', ')}
+              </p>
+            </section>
+          ) : null}
+        </div>
+      ) : null}
     </section>
   )
 }

@@ -325,8 +325,8 @@ export default function TripWorkspacePlan({
                       {etappe.istNutzerziel
                         ? etappe.arrivalDate || etappe.departureDate
                           ? [etappe.arrivalDate, etappe.departureDate].filter(Boolean).join(' – ')
-                          : 'Etappe dieser Reise'
-                        : 'Noch keiner Etappe zugeordnet'}
+                          : 'Ziel dieser Reise – Aufenthalt noch nicht festgelegt'
+                        : 'Tage ohne festgelegten Aufenthalt'}
                     </span>
                   </span>
                 </button>

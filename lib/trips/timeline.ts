@@ -8,6 +8,7 @@
 // keine Nutzerziele. Die einzige Tag-Auswahl bleibt `gewaehlterTagId`.
 
 import { gewaehlterTagId, planStatus } from '@/lib/trips/arbeitsbereich'
+import { dayStageAssignmentModeLesenDb } from '@/lib/trips/day-stage-assignment'
 import type { Trip, TripDay, TripItem, TripStage } from '@/types/trips'
 
 export type TimelineEtappe = {
@@ -74,9 +75,10 @@ export function timelineAbleiten(
   }))
 
   if (ohneEtappe.length > 0) {
+    const mode = dayStageAssignmentModeLesenDb(reise.dayStageAssignmentMode)
     etappen.push({
       stageId: null,
-      name: 'Ohne Etappe',
+      name: mode === 'legacy_fallback' ? 'Ohne Etappe' : 'Noch keinem Ziel zugeordnet',
       countryCode: null,
       arrivalDate: null,
       departureDate: null,

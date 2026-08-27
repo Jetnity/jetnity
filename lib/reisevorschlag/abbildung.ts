@@ -45,6 +45,7 @@
 import type { KanonischeOrte } from '@/lib/places/kanon'
 import { etappeMitOrt } from '@/lib/places/kanon'
 import type { Reisevorschlag } from '@/lib/reisevorschlag/schema'
+import { dayStageAssignmentModeAbleiten } from '@/lib/trips/day-stage-assignment'
 import type { ReiseNutzlast } from '@/lib/trips/schema'
 import { leereMobilitaet } from '@/lib/trips/mobilitaet-felder'
 import { reisetageBauen } from '@/lib/trips/tage'
@@ -102,12 +103,17 @@ function etappen(vorschlag: Reisevorschlag, orte?: KanonischeOrte): Omit<TripSta
   )
 }
 
-/** Position der Etappe, die den Reisetag `nummer` trägt – 1-basiert. */
-function etappenpositionFuerTag(vorschlag: Reisevorschlag, nummer: number): number {
+/**
+ * Konkrete Position der Etappe, die den Reisetag `nummer` trägt – 1-basiert.
+ *
+ * Ohne passende Etappe bleibt der Tag unassigned. Kein stiller Fallback auf
+ * die erste Stage.
+ */
+function etappenpositionFuerTag(vorschlag: Reisevorschlag, nummer: number): number | null {
   const stelle = vorschlag.etappen.findIndex(
     (etappe) => nummer >= etappe.vonTag && nummer <= etappe.bisTag,
   )
-  return stelle >= 0 ? stelle + 1 : 1
+  return stelle >= 0 ? stelle + 1 : null
 }
 
 /**
@@ -115,6 +121,10 @@ function etappenpositionFuerTag(vorschlag: Reisevorschlag, nummer: number): numb
  *
  * Der Ausschnitt ist der, den die Funktion liest – nicht mehr. Was sie nicht
  * liest, mitzuschicken wäre die Behauptung, es käme an (`lib/trips/schema.ts`).
+ *
+ * `day_stage_assignment_mode` ist ein abgeleiteter Claim, keine Provenance.
+ * Konkrete Stage-Positionen werden `explicit`. Der Server leitet denselben
+ * Mode erneut aus der validierten Nutzlast ab und mintet kein `legacy_fallback`.
  */
 export function vorschlagAlsNutzlast(
   vorschlag: Reisevorschlag,
@@ -122,6 +132,12 @@ export function vorschlagAlsNutzlast(
   orte?: KanonischeOrte,
 ): ReiseNutzlast {
   const geruest = tagesgeruest(vorschlag)
+  const stufen = etappen(vorschlag, orte)
+  const positionen = vorschlag.tage.map((tag) => etappenpositionFuerTag(vorschlag, tag.nummer))
+  const assignmentMode = dayStageAssignmentModeAbleiten({
+    stageCount: stufen.length,
+    positions: positionen,
+  })
 
   return {
     client_ref: clientRef,
@@ -136,7 +152,8 @@ export function vorschlagAlsNutzlast(
     pace: vorschlag.tempo,
     interests: vorschlag.interessen,
     travel_wish: vorschlag.reisewunsch,
-    stages: etappen(vorschlag, orte).map((etappe) => ({
+    day_stage_assignment_mode: assignmentMode,
+    stages: stufen.map((etappe) => ({
       position: etappe.position,
       name: etappe.name,
       country_code: etappe.countryCode,
@@ -203,11 +220,17 @@ export function vorschlagAlsReise(
 ): Trip {
   const geruest = tagesgeruest(vorschlag)
   const stufen = etappen(vorschlag, orte).map((etappe) => ({ ...etappe, id: kennung('stage') }))
+  const positionen = vorschlag.tage.map((tag) => etappenpositionFuerTag(vorschlag, tag.nummer))
+  const assignmentMode = dayStageAssignmentModeAbleiten({
+    stageCount: stufen.length,
+    positions: positionen,
+  })
 
   const tage: TripDay[] = vorschlag.tage.map((tag, stelle) => {
     const tagId = kennung('day')
     const datum = geruest[stelle].dayDate
-    const etappe = stufen[etappenpositionFuerTag(vorschlag, tag.nummer) - 1] ?? stufen[0] ?? null
+    const position = positionen[stelle]
+    const etappe = position != null ? stufen[position - 1] ?? null : null
     const stageId = etappe?.id ?? null
 
     const punkte: TripItem[] = tag.punkte.map((punkt, position) => ({
@@ -258,6 +281,7 @@ export function vorschlagAlsReise(
     pace: vorschlag.tempo,
     interests: vorschlag.interessen,
     travelWish: vorschlag.reisewunsch,
+    dayStageAssignmentMode: assignmentMode,
     revision: 1,
     lastMutationId: null,
     stages: stufen,

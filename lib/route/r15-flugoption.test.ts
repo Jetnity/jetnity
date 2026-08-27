@@ -226,7 +226,7 @@ describe('R15 Blocker 30 – FlugOption erfindet keine Surface-Evidence', () => 
       pace: 'balanced',
       interests: [],
       travel_wish: null,
-      stages: [],
+      stages: [{ position: 1, name: 'Los Angeles', country_code: null, arrival_date: null, departure_date: null }],
       days: [],
       ungeplante: [
         {

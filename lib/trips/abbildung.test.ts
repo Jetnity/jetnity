@@ -91,6 +91,24 @@ describe('Beträge kommen als Zahl an', () => {
     assert.equal(reiseAus(reisezeile({ budget_amount: null }), [], [], []).budgetAmount, null)
   })
 
+  test('fehlender Assignment-Mode einer DB-Zeile bleibt legacy_fallback', () => {
+    assert.equal(reiseAus(reisezeile(), [], [], []).dayStageAssignmentMode, 'legacy_fallback')
+  })
+
+  test('gespeicherter unassigned-Mode bleibt erhalten', () => {
+    assert.equal(
+      reiseAus(reisezeile({ day_stage_assignment_mode: 'unassigned' }), [], [], []).dayStageAssignmentMode,
+      'unassigned',
+    )
+  })
+
+  test('ein alter Source-Spaltenname einer DB-Zeile bleibt lesbar', () => {
+    assert.equal(
+      reiseAus(reisezeile({ day_stage_assignment_source: 'explicit' }), [], [], []).dayStageAssignmentMode,
+      'explicit',
+    )
+  })
+
   test('eine alte Reise ohne origin_place_id bleibt lesbar', () => {
     assert.equal(reiseAus(reisezeile(), [], [], []).originPlaceId, null)
   })
@@ -319,6 +337,40 @@ describe('Aus einer Reise wird die Nutzlast für public.reise_anlegen()', () => 
     [tagzeile(1, 'd1')],
     [punktzeile({ day_id: 'd1', starts_at: '09:30:00', title: 'Markt' })],
   )
+
+  test('eine unassigned Multi-Ziel-Reise sendet keine erfundenen Positionen', () => {
+    const mehrziel = {
+      ...gastreise,
+      dayStageAssignmentMode: 'unassigned' as const,
+      stages: [
+        { ...gastreise.stages[0]!, id: 's1', position: 1, name: 'Paris', arrivalDate: null, departureDate: null },
+        { ...gastreise.stages[0]!, id: 's2', position: 2, name: 'Rom', arrivalDate: null, departureDate: null },
+        { ...gastreise.stages[0]!, id: 's3', position: 3, name: 'Paris', arrivalDate: null, departureDate: null },
+      ],
+      days: [
+        { id: 'd1', stageId: null, dayIndex: 1, dayDate: '2026-09-12', title: null, items: [] },
+        { id: 'd2', stageId: null, dayIndex: 2, dayDate: '2026-09-13', title: null, items: [] },
+      ],
+    }
+    const nutzlast = alsNutzlast(mehrziel)
+    assert.equal(nutzlast.day_stage_assignment_mode, 'unassigned')
+    assert.equal(nutzlast.days.every((tag) => tag.stage_position == null), true)
+  })
+
+  test('konkrete Positionen werden explicit, ein alter user-Claim ist keine Provenance', () => {
+    const gefaelscht = {
+      ...gastreise,
+      dayStageAssignmentMode: 'legacy_fallback' as const,
+      stages: [
+        { ...gastreise.stages[0]!, id: 's1', position: 1, name: 'Paris', arrivalDate: null, departureDate: null },
+        { ...gastreise.stages[0]!, id: 's2', position: 2, name: 'Rom', arrivalDate: null, departureDate: null },
+      ],
+      days: [{ id: 'd1', stageId: 's1', dayIndex: 1, dayDate: '2026-09-12', title: null, items: [] }],
+    }
+    const nutzlast = alsNutzlast(gefaelscht)
+    assert.equal(nutzlast.day_stage_assignment_mode, 'explicit')
+    assert.equal(nutzlast.days[0]?.stage_position, 1)
+  })
 
   test('die Kennung geht mit – sie trägt die Idempotenz', () => {
     assert.equal(alsNutzlast(gastreise).client_ref, 'trip-abc')

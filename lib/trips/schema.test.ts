@@ -61,6 +61,45 @@ describe('Eine vollständige Reise kommt durch', () => {
     assert.equal(gelesen?.title, 'Japan im Herbst')
     assert.equal(gelesen?.days.length, 2)
     assert.equal(gelesen?.stages[0].name, 'Tokio')
+    assert.equal(gelesen?.dayStageAssignmentMode, 'single_destination')
+  })
+
+  test('eine Ein-Ziel-Reise wird aus Fakten single_destination, nicht Legacy', () => {
+    const gelesen = reiseLesen(reise({ dayStageAssignmentMode: 'legacy_fallback' }))
+    assert.equal(gelesen?.dayStageAssignmentMode, 'single_destination')
+  })
+
+  test('0 Stages bleiben lesbar und minten kein single_destination', () => {
+    const gelesen = reiseLesen(
+      reise({
+        stages: [],
+        dayStageAssignmentMode: 'single_destination',
+      }),
+    )
+    assert.notEqual(gelesen, null)
+    assert.equal(gelesen?.stages.length, 0)
+    assert.notEqual(gelesen?.dayStageAssignmentMode, 'single_destination')
+  })
+
+  test('ein alter Source-Alias bleibt lesbar und wird zum Mode', () => {
+    const gelesen = reiseLesen(
+      reise({
+        dayStageAssignmentSource: 'unassigned',
+        stages: [
+          { id: 'stage-1', position: 1, name: 'Paris' },
+          { id: 'stage-2', position: 2, name: 'Rom' },
+        ],
+        days: [
+          { id: 'day-1', dayIndex: 1, dayDate: '2026-09-12', items: [] },
+          { id: 'day-2', dayIndex: 2, dayDate: '2026-09-13', items: [] },
+        ],
+      }),
+    )
+    assert.equal(gelesen?.dayStageAssignmentMode, 'unassigned')
+  })
+
+  test('eine unbekannte Assignment-Quelle wird abgelehnt', () => {
+    assert.equal(reiseLesen(reise({ dayStageAssignmentMode: 'erfunden' })), null)
   })
 
   test('fehlende optionale Angaben werden zu null, nicht zu undefined', () => {
@@ -545,9 +584,38 @@ describe('Die Nutzlast für public.reise_anlegen() trägt nur, was die Funktion 
     assert.equal(reiseNutzlastSchema.safeParse(nutzlast).success, true)
   })
 
+  test('eine Nutzlast darf Mode oder alten Source-Claim tragen, user bleibt syntaktisch erlaubt', () => {
+    const mitMode = reiseNutzlastSchema.safeParse({
+      ...nutzlast,
+      day_stage_assignment_mode: 'unassigned',
+    })
+    assert.equal(mitMode.success, true)
+    const mitQuelle = reiseNutzlastSchema.safeParse({
+      ...nutzlast,
+      day_stage_assignment_source: 'unassigned',
+    })
+    assert.equal(mitQuelle.success, true)
+    const gefaelscht = reiseNutzlastSchema.safeParse({
+      ...nutzlast,
+      day_stage_assignment_mode: 'user',
+    })
+    assert.equal(gefaelscht.success, true)
+  })
+
+  test('ein unbekannter Assignment-Claim in der Nutzlast fällt durch', () => {
+    assert.equal(
+      reiseNutzlastSchema.safeParse({ ...nutzlast, day_stage_assignment_mode: 'erfunden' }).success,
+      false,
+    )
+  })
+
   test('ohne Kennung ist sie nicht idempotent und wird abgelehnt', () => {
     const { client_ref: _, ...ohne } = nutzlast
     assert.equal(reiseNutzlastSchema.safeParse(ohne).success, false)
+  })
+
+  test('0 Stages in der Create-Nutzlast sind fail-closed', () => {
+    assert.equal(reiseNutzlastSchema.safeParse({ ...nutzlast, stages: [] }).success, false)
   })
 
   test('ein mitgeschickter Status wird nicht übernommen', () => {
@@ -714,6 +782,53 @@ describe('Das Formular unter /planen', () => {
     )
     assert.equal(
       neueReiseSchema.safeParse({ ...eingabe, originPlaceId: 'airport:xxx' }).success,
+      false,
+    )
+  })
+
+  test('weitere Ziele fehlen standardmässig und Duplikate bleiben erlaubt', () => {
+    const ohne = neueReiseSchema.safeParse(eingabe)
+    assert.equal(ohne.success, true)
+    if (ohne.success) assert.deepEqual(ohne.data.weitereDestinationPlaceIds, [])
+
+    const parisRomParis = neueReiseSchema.safeParse({
+      ...eingabe,
+      weitereDestinationPlaceIds: ['geonames:3169070', 'geonames:2988507'],
+    })
+    assert.equal(parisRomParis.success, true)
+    if (parisRomParis.success) {
+      assert.deepEqual(parisRomParis.data.weitereDestinationPlaceIds, [
+        'geonames:3169070',
+        'geonames:2988507',
+      ])
+    }
+  })
+
+  test('zusätzlicher Freitext ohne geonames-ID scheitert am Feld', () => {
+    assert.equal(
+      neueReiseSchema.safeParse({
+        ...eingabe,
+        weitereDestinationPlaceIds: ['Rom'],
+      }).success,
+      false,
+    )
+    assert.equal(
+      neueReiseSchema.safeParse({
+        ...eingabe,
+        weitereDestinationPlaceIds: [''],
+      }).success,
+      false,
+    )
+  })
+
+  test('Maximum weiterer Ziele wird akzeptiert, Maximum+1 nicht', () => {
+    const maximum = Array.from({ length: 49 }, (_, index) => `geonames:${4000000 + index}`)
+    assert.equal(
+      neueReiseSchema.safeParse({ ...eingabe, weitereDestinationPlaceIds: maximum }).success,
+      true,
+    )
+    assert.equal(
+      neueReiseSchema.safeParse({ ...eingabe, weitereDestinationPlaceIds: [...maximum, 'geonames:1'] }).success,
       false,
     )
   })

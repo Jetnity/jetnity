@@ -55,7 +55,7 @@ function flugNutzlast(itinerary: FlugRouteItinerary | null): ReiseNutzlast {
     pace: 'balanced',
     interests: [],
     travel_wish: null,
-    stages: [],
+    stages: [{ position: 1, name: 'Bangkok', country_code: null, arrival_date: null, departure_date: null }],
     days: [
       {
         day_index: 1,

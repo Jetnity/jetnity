@@ -847,7 +847,7 @@ const FAELLE = [
  */
 function reisenachweise() {
   const reise = (kennung, weiteres = '') =>
-    `'{"client_ref":"${kennung}","title":"Testreise"${weiteres}}'::jsonb`
+    `'{"client_ref":"${kennung}","title":"Testreise","stages":[{"position":1,"name":"Testziel"}]${weiteres}}'::jsonb`
 
   const punkt = (code) =>
     `{"airportCode":"${code}","countryCode":"US","city":"Clientstadt","country":"Clientland"}`
@@ -2225,6 +2225,201 @@ function reisenachweise() {
                 and metadata ? 'routeItinerary'
                 and metadata #>> '{routeItinerary,legs,0,segments,1,surfaceFromAirportCode}' is null`,
       erwartung: 'erlaubt',
+    },
+    {
+      name: 'reise_anlegen: Paris-Rom-Paris ohne Positionen bleibt unassigned',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        'tw6b-unassigned',
+        `,"start_date":"2026-09-12","end_date":"2026-09-17","stages":[{"position":1,"name":"Paris"},{"position":2,"name":"Rom"},{"position":3,"name":"Paris"}],"days":[{"day_index":1,"day_date":"2026-09-12"},{"day_index":2,"day_date":"2026-09-13"},{"day_index":3,"day_date":"2026-09-14"},{"day_index":4,"day_date":"2026-09-15"},{"day_index":5,"day_date":"2026-09-16"},{"day_index":6,"day_date":"2026-09-17"}]`,
+      )});
+            select 1 from public.trips t
+             where t.client_ref = 'tw6b-unassigned'
+               and t.day_stage_assignment_mode = 'unassigned'
+               and (select count(*) from public.trip_stages s where s.trip_id = t.id) = 3
+               and (select count(*) from public.trip_days d where d.trip_id = t.id) = 6
+               and not exists (
+                 select 1 from public.trip_days d
+                  where d.trip_id = t.id and d.stage_id is not null
+               )`,
+      erwartung: 'erlaubt',
+      grund: 'Paris→Rom→Paris ohne Positionen darf keine 2/2/2-Erfindung persistieren.',
+    },
+    {
+      name: 'reise_anlegen: Multi-Stage plus vollständige Positionen wird explicit',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        'tw6b-explicit-full',
+        `,"stages":[{"position":1,"name":"Paris"},{"position":2,"name":"Rom"},{"position":3,"name":"Paris"}],"days":[{"day_index":1,"stage_position":1},{"day_index":2,"stage_position":1},{"day_index":3,"stage_position":2},{"day_index":4,"stage_position":2},{"day_index":5,"stage_position":3},{"day_index":6,"stage_position":3}]`,
+      )});
+            select 1 from public.trips t
+             where t.client_ref = 'tw6b-explicit-full'
+               and t.day_stage_assignment_mode = 'explicit'
+               and (select array_agg(s.position order by d.day_index)
+                      from public.trip_days d
+                      join public.trip_stages s on s.id = d.stage_id
+                     where d.trip_id = t.id) = array[1,1,2,2,3,3]::smallint[]`,
+      erwartung: 'erlaubt',
+      grund: 'Konkrete gültige Positionen sind explicit, nicht Legacy-Provenance.',
+    },
+    {
+      name: 'reise_anlegen: Teilpositionen bleiben explicit ohne Lückenfüllung',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        'tw6b-explicit-teil',
+        `,"stages":[{"position":1,"name":"Paris"},{"position":2,"name":"Rom"},{"position":3,"name":"Paris"}],"days":[{"day_index":1,"stage_position":1},{"day_index":2},{"day_index":3},{"day_index":4},{"day_index":5},{"day_index":6,"stage_position":3}]`,
+      )});
+            select 1 from public.trips t
+             where t.client_ref = 'tw6b-explicit-teil'
+               and t.day_stage_assignment_mode = 'explicit'
+               and (select count(*) from public.trip_days d
+                     join public.trip_stages s on s.id = d.stage_id
+                    where d.trip_id = t.id and d.day_index = 1 and s.position = 1) = 1
+               and (select count(*) from public.trip_days d
+                     join public.trip_stages s on s.id = d.stage_id
+                    where d.trip_id = t.id and d.day_index = 6 and s.position = 3) = 1
+               and (select count(*) from public.trip_days d
+                    where d.trip_id = t.id and d.stage_id is null) = 4`,
+      erwartung: 'erlaubt',
+      grund: 'Nur gesetzte Tage werden zugeordnet. Kein CTE füllt Lücken.',
+    },
+    {
+      name: 'reise_anlegen: claimed legacy_fallback plus Positionen wird explicit',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        'tw6b-legacy-claim-pos',
+        `,"day_stage_assignment_mode":"legacy_fallback","stages":[{"position":1,"name":"Paris"},{"position":2,"name":"Rom"},{"position":3,"name":"Paris"}],"days":[{"day_index":1,"stage_position":1},{"day_index":2,"stage_position":2},{"day_index":3,"stage_position":3}]`,
+      )});
+            select 1 from public.trips t
+             where t.client_ref = 'tw6b-legacy-claim-pos'
+               and t.day_stage_assignment_mode = 'explicit'
+               and t.day_stage_assignment_mode <> 'legacy_fallback'
+               and (select count(*) from public.trip_days d where d.trip_id = t.id and d.stage_id is not null) = 3`,
+      erwartung: 'erlaubt',
+      grund: 'Neue Requests dürfen legacy_fallback niemals minten.',
+    },
+    {
+      name: 'reise_anlegen: claimed legacy_fallback ohne Positionen wird unassigned',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        'tw6b-legacy-claim-leer',
+        `,"day_stage_assignment_source":"legacy_fallback","stages":[{"position":1,"name":"Paris"},{"position":2,"name":"Rom"},{"position":3,"name":"Paris"}],"days":[{"day_index":1},{"day_index":2},{"day_index":3}]`,
+      )});
+            select 1 from public.trips t
+             where t.client_ref = 'tw6b-legacy-claim-leer'
+               and t.day_stage_assignment_mode = 'unassigned'
+               and not exists (
+                 select 1 from public.trip_days d
+                  where d.trip_id = t.id and d.stage_id is not null
+               )`,
+      erwartung: 'erlaubt',
+      grund: 'Alter Source-Claim ohne Positionen ist unassigned, nicht historische Provenance.',
+    },
+    {
+      name: 'reise_anlegen: alter user-Claim plus Positionen wird explicit',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        'tw6b-user-pos',
+        `,"day_stage_assignment_source":"user","stages":[{"position":1,"name":"Paris"},{"position":2,"name":"Rom"},{"position":3,"name":"Paris"}],"days":[{"day_index":1,"stage_position":1},{"day_index":2,"stage_position":1},{"day_index":3,"stage_position":2},{"day_index":4,"stage_position":2},{"day_index":5,"stage_position":3},{"day_index":6,"stage_position":3}]`,
+      )});
+            select 1 from public.trips t
+             where t.client_ref = 'tw6b-user-pos'
+               and t.day_stage_assignment_mode = 'explicit'
+               and (select array_agg(s.position order by d.day_index)
+                      from public.trip_days d
+                      join public.trip_stages s on s.id = d.stage_id
+                     where d.trip_id = t.id) = array[1,1,2,2,3,3]::smallint[]`,
+      erwartung: 'erlaubt',
+      grund: 'Alter user-Claim ist keine Provenance. Valide Positionen werden explicit.',
+    },
+    {
+      name: 'reise_anlegen lehnt 0 Stages fail-closed ab',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        'tw6b-zero',
+        `,"stages":[],"days":[{"day_index":1},{"day_index":2}]`,
+      )})`,
+      erwartung: 'abgelehnt',
+      grund: 'single_destination bedeutet genau eine Stage. 0 Stages dürfen keine Reise anlegen.',
+    },
+    {
+      name: 'reise_anlegen persistiert bei 0 Stages keine Reise',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select 1 where not exists (
+              select 1 from public.trips
+               where user_id = '${NUTZER}' and client_ref = 'tw6b-zero'
+            )`,
+      erwartung: 'erlaubt',
+      grund: 'Fail-closed heisst: kein persisted trip, kein single_destination-Mode.',
+    },
+    {
+      name: 'reise_anlegen lehnt unbekannten Assignment-Claim ab',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        'tw6b-unknown',
+        `,"day_stage_assignment_mode":"erfunden","stages":[{"position":1,"name":"Paris"},{"position":2,"name":"Rom"}]`,
+      )})`,
+      erwartung: 'abgelehnt',
+      grund: 'Unbekannte Claims sind fail-closed und minten kein legacy_fallback.',
+    },
+    {
+      name: 'reise_anlegen lehnt out-of-range stage_position ab',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        'tw6b-oor',
+        `,"stages":[{"position":1,"name":"Paris"},{"position":2,"name":"Rom"}],"days":[{"day_index":1,"stage_position":3}]`,
+      )})`,
+      erwartung: 'abgelehnt',
+      grund: 'Ungültige Positionen dürfen keine Hard Truth werden.',
+    },
+    {
+      name: 'reise_anlegen: Single-Destination bleibt der einen Stage zugeordnet',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        'tw6b-single',
+        `,"day_stage_assignment_mode":"single_destination","start_date":"2026-09-12","end_date":"2026-09-14","stages":[{"position":1,"name":"Paris","arrival_date":"2026-09-12","departure_date":"2026-09-14"}],"days":[{"day_index":1,"day_date":"2026-09-12"},{"day_index":2,"day_date":"2026-09-13"},{"day_index":3,"day_date":"2026-09-14"}]`,
+      )});
+            select 1 from public.trips t
+             where t.client_ref = 'tw6b-single'
+               and t.day_stage_assignment_mode = 'single_destination'
+               and (select count(*) from public.trip_days d where d.trip_id = t.id and d.stage_id is not null) = 3`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'reise_anlegen: Accepted-Vorschlag-Nutzlast mit Positionen wird explicit',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.reise_anlegen(${reise(
+        'tw6b-vorschlag',
+        `,"stages":[{"position":1,"name":"Bangkok"},{"position":2,"name":"Krabi"}],"days":[{"day_index":1,"stage_position":1},{"day_index":2,"stage_position":1},{"day_index":3,"stage_position":1},{"day_index":4,"stage_position":2},{"day_index":5,"stage_position":2},{"day_index":6,"stage_position":2},{"day_index":7,"stage_position":2}]`,
+      )});
+            select 1 from public.trips t
+             where t.client_ref = 'tw6b-vorschlag'
+               and t.day_stage_assignment_mode = 'explicit'
+               and t.day_stage_assignment_mode <> 'legacy_fallback'`,
+      erwartung: 'erlaubt',
+      grund: 'Ein akzeptierter Reisevorschlag mintet keine Legacy-Provenance.',
+    },
+    {
+      name: 'bestehende Fixture-Reise behält legacy_fallback',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select 1 from public.trips
+              where id = '${REISE}'
+                and day_stage_assignment_mode = 'legacy_fallback'`,
+      erwartung: 'erlaubt',
+      grund: 'Historischer DB-Bestand darf durch die Mode-Ableitung nicht umgedeutet werden.',
     },
   ]
 }

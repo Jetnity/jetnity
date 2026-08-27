@@ -792,6 +792,7 @@ export type Database = {
           client_ref: string
           created_at: string
           currency: string
+          day_stage_assignment_mode: string
           end_date: string | null
           id: string
           interests: string[]
@@ -814,6 +815,7 @@ export type Database = {
           client_ref: string
           created_at?: string
           currency?: string
+          day_stage_assignment_mode?: string
           end_date?: string | null
           id?: string
           interests?: string[]
@@ -836,6 +838,7 @@ export type Database = {
           client_ref?: string
           created_at?: string
           currency?: string
+          day_stage_assignment_mode?: string
           end_date?: string | null
           id?: string
           interests?: string[]

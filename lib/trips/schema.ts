@@ -21,12 +21,18 @@
 import { z } from 'zod'
 
 import {
+  DAY_STAGE_ASSIGNMENT_MODES,
   TRIP_INTERESTS,
   TRIP_ITEM_KINDS,
   TRIP_PACES,
   TRIP_STATUSES,
   type Trip,
 } from '@/types/trips'
+import {
+  DayStageAssignmentFehler,
+  dayStageAssignmentModeFuerGast,
+  stagePositionenAusReise,
+} from '@/lib/trips/day-stage-assignment'
 import { interesseLesen, tempoLesen } from '@/lib/trips/bezeichnungen'
 import { buchungsquelleLesen, buchungsstatusLesen, kannBuchungMarkieren } from '@/lib/trips/buchung'
 import { mobilityEvidenceLesen, mobilityModeLesen } from '@/lib/trips/mobilitaet-felder'
@@ -272,6 +278,10 @@ export const reiseSchema = z
     pace: tempo,
     interests: interessen.default([]),
     travelWish: optionalerText(GRENZEN.reisewunsch).nullable().default(null),
+    dayStageAssignmentMode: z
+      .enum([...DAY_STAGE_ASSIGNMENT_MODES, 'user'])
+      .optional()
+      .transform((wert) => (wert === 'user' ? undefined : wert)),
     revision: z.number().int().min(1).max(1_000_000_000).default(1),
     lastMutationId: z.string().min(1).max(64).nullable().default(null),
     stages: z.array(etappeSchema).max(GRENZEN.etappenJeReise).default([]),
@@ -395,8 +405,29 @@ function tageZwischen(von: string, bis: string): number {
  * unbrauchbarer Eintrag darf die Seite nicht abbrechen.
  */
 export function reiseLesen(wert: unknown): Trip | null {
-  const ergebnis = reiseSchema.safeParse(wert)
-  return ergebnis.success ? ergebnis.data : null
+  const roh = wert && typeof wert === 'object' ? (wert as Record<string, unknown>) : null
+  const mitAlias =
+    roh && roh.dayStageAssignmentMode == null && 'dayStageAssignmentSource' in roh
+      ? { ...roh, dayStageAssignmentMode: roh.dayStageAssignmentSource }
+      : roh ?? wert
+  const ergebnis = reiseSchema.safeParse(mitAlias)
+  if (!ergebnis.success) return null
+  const { dayStageAssignmentMode: _claimed, ...rest } = ergebnis.data
+  try {
+    return {
+      ...rest,
+      dayStageAssignmentMode: dayStageAssignmentModeFuerGast({
+        stageCount: rest.stages.length,
+        positions: stagePositionenAusReise(rest),
+      }),
+    }
+  } catch (fehler) {
+    if (!(fehler instanceof DayStageAssignmentFehler)) throw fehler
+    // 0-Stage-Entwürfe bleiben lesbar, minten aber kein single_destination.
+    // Ungültige Positionen machen den Eintrag unbrauchbar.
+    if (rest.stages.length < 1) return rest
+    return null
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -527,7 +558,17 @@ export const reiseNutzlastSchema = z.object({
   pace: z.enum(TRIP_PACES),
   interests: z.array(z.enum(TRIP_INTERESTS)),
   travel_wish: z.string().max(GRENZEN.reisewunsch).nullable(),
-  stages: z.array(nutzlastEtappeSchema).max(GRENZEN.etappenJeReise),
+  /**
+   * Optionaler Client-Claim. `public.reise_anlegen()` leitet den Mode
+   * serverseitig aus Stages und gültigen `stage_position`-Werten ab.
+   * `legacy_fallback` wird für neue Requests niemals persistiert.
+   */
+  day_stage_assignment_mode: z.enum([...DAY_STAGE_ASSIGNMENT_MODES, 'user']).nullable().optional(),
+  day_stage_assignment_source: z.enum([...DAY_STAGE_ASSIGNMENT_MODES, 'user']).nullable().optional(),
+  stages: z
+    .array(nutzlastEtappeSchema)
+    .min(1, 'Die Reise braucht mindestens ein Reiseziel.')
+    .max(GRENZEN.etappenJeReise),
   days: z.array(nutzlastTagSchema).max(GRENZEN.reisetageJeReise),
   ungeplante: z.array(nutzlastPunktSchema).max(GRENZEN.punkteJeReise).default([]),
 })
@@ -555,6 +596,19 @@ export const neueReiseSchema = z.object({
     .min(1, 'Bitte wähle ein Reiseziel aus der Liste.')
     .max(80)
     .refine((wert) => /^geonames:\d+$/.test(wert), 'Kein passendes Reiseziel gefunden. Bitte wähle einen Eintrag aus der Liste.'),
+  weitereDestinationPlaceIds: z
+    .array(
+      z
+        .string()
+        .min(1, 'Bitte wähle ein Reiseziel aus der Liste.')
+        .max(80)
+        .refine(
+          (wert) => /^geonames:\d+$/.test(wert),
+          'Kein passendes Reiseziel gefunden. Bitte wähle einen Eintrag aus der Liste.',
+        ),
+    )
+    .max(GRENZEN.etappenJeReise - 1, `Höchstens ${GRENZEN.etappenJeReise} Reiseziele sind möglich.`)
+    .default([]),
   origin: titel,
   originPlaceId: z
     .string()
