@@ -40,7 +40,7 @@ export type ArchivPlan =
     }
   | { ok: false; grund: ArchivPlanFehler }
 
-export function istWiederherstellbarerStatus(wert: unknown): wert is WiederherstellbarerStatus {
+function istWiederherstellbarerStatus(wert: unknown): wert is WiederherstellbarerStatus {
   return wert === 'draft' || wert === 'planned' || wert === 'booked'
 }
 
