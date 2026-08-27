@@ -16,6 +16,7 @@ import {
   type BereichLage,
   type BereichStatus,
 } from '@/lib/trips/arbeitsbereich'
+import { reiseOrte } from '@/lib/trips/reise-orte'
 import type { Trip, TripItem } from '@/types/trips'
 
 export type UebersichtLage = ReiseGruppe
@@ -62,11 +63,6 @@ const LAGE_TEXT: Record<UebersichtLage, string> = {
 
 function alsDatum(wert: string) {
   return new Date(`${wert}T00:00:00Z`)
-}
-
-function uebersichtOrte(reise: Pick<Trip, 'origin' | 'stages'>): string {
-  const orte = reise.stages.length > 0 ? reise.stages.map((etappe) => etappe.name).join(' · ') : 'Ziel noch offen'
-  return reise.origin ? `${orte} · ab ${reise.origin}` : orte
 }
 
 function uebersichtZeitraum(reise: Pick<Trip, 'startDate' | 'endDate'>): string {
@@ -143,7 +139,7 @@ export function uebersichtAbleiten(
 
   return {
     titel: reise.title,
-    orte: uebersichtOrte(reise),
+    orte: reiseOrte(reise),
     zeitraum: uebersichtZeitraum(reise),
     lage,
     lageText: uebersichtLageText(lage),
