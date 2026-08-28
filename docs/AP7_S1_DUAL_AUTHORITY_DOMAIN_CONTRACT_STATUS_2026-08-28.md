@@ -25,8 +25,9 @@ This slice does **not** consume the separate Production migration / Identity / R
 | `origin/main` bei Authoring-Re-Fetch | `bb38aef589f0cdcea1aaf8ddd87d043d0a9f0f05` |
 | Branch | `feat/ap7-s1-dual-authority-domain-contract-2026-08-28` |
 | Draft-PR | [#145](https://github.com/Jetnity/jetnity/pull/145) |
-| Exact Head | der Commit dieses Stamps; live am PR #145 prüfen |
-| Ahead / behind `origin/main` | **5 / 0** nach diesem Stamp (4 vorher: PO-Approval, Task, feat, Continuity) |
+| Reviewed Head invalidiert | `c88ac2e3` (CHANGES REQUIRED `5455673104`) und Stamp `ed8f79b4` |
+| Exact Head | der Commit dieses Review-Fix-Stamps; live am PR #145 prüfen |
+| Ahead / behind `origin/main` | nach finalem Stamp live eintragen |
 | Logical Cursor-Agent | `Cursor-Agent: Account plattform audit vorbereitung 12` |
 | Sichtbarer Cursor-Titel | `Dual-authority domain contract` |
 | Cloud-Run | https://cursor.com/agents/bc-6b3a7a55-26fe-41a9-8cf2-b599afe1eda0 |
@@ -42,10 +43,10 @@ Shared Dual-Authority domain contract, reused from live Foundation-E primitives 
 - `TripTraveller` / `TripTravellerCitizenship` / `TripTravellerDocument` remain trip snapshot truth (`types/trips.ts`).
 - `TRAVELLER_CONTEXT_GRENZEN` (8 citizenships / 12 documents) and `landescodeLesen` remain the canonical limits and country check.
 - New home: `lib/traveller/account-registry.ts`.
-- `AccountRegistryTraveller` is account-owned reusable identity/facts with stable `id` (UUID) + account-scoped `clientRef`.
-- First-class `citizenships[]` and `documents[]`; explicit `citizenshipClientRef`; issuer stays separate.
-- `accountRegistryTravellerLesen` fails closed on malformed/ambiguous relational input.
-- `accountRegistryTravellerAlsTripSnapshot` / `accountRegistryTravellerProjektieren` produce an independent `TripTraveller` copy with no live registry authority, no provenance link, and no credential choice.
+- `AccountRegistryTraveller` is nested (`facts`) and therefore not assignable to `TripTraveller`. Compile-time regression in the test file proves direct assignment is rejected without casts.
+- Registry `id` and `clientRef` (person, citizenship, document) are UUID-backed. Fact-derived refs such as `document:passport:CH` or `person:0` are rejected.
+- `authority` must be exactly `account_registry`. Missing/wrong authority and flat `TripTraveller` shapes are rejected.
+- Projection requires explicit `TripSnapshotMaterialisierung`: trip-owned UUIDs plus `jetzt`. Registry identity and registry timestamps are not copied. Document→citizenship refs are remapped. Identical snapshot/registry identity is rejected. No `new Date()` fallback.
 
 Inspected and not duplicated:
 
@@ -91,29 +92,18 @@ Adversarial tests in `lib/traveller/account-registry.test.ts` cover:
 - source and snapshot share no object/array identity;
 - source is not mutated;
 - no chosen/preferred/default credential field is generated or accepted;
-- `traveller:N` and positional child refs are rejected;
+- positional and fact-derived refs (`traveller:N`, `person:0`, `document:passport:CH`) are rejected;
+- two same-type/same-issuer passports remain distinct via UUID refs;
 - Foundation-E limits and country/document validation;
 - duplicate / dangling refs fail closed;
+- missing/wrong `authority` and flat `TripTraveller` input are rejected;
+- snapshot identity ≠ registry identity; child timestamps = `jetzt`;
+- incomplete materialization / missing `jetzt` fail closed;
+- compile-time assignment Registry→Trip is rejected;
 - no citizenship inferred from residence, locale, language, issuer or departure;
 - empty facts stay empty.
 
-Verified on this branch before the final stamp (`HEAD` was `c88ac2e3`; this stamp is the review head):
-
-| Gate | Ergebnis |
-| --- | --- |
-| `node --import tsx --test lib/traveller/account-registry.test.ts` | **12/12 pass** |
-| Related traveller tests (`traveller-kontext`, `traveller-anfrage`, `schema`, `traveller-zuordnung`) | **30/30 pass** |
-| `npm test` | **2453/2453 pass**, 0 fail |
-| `npm run typecheck` | pass |
-| `npx next lint --file lib/traveller/account-registry.ts --file lib/traveller/account-registry.test.ts` | no warnings/errors |
-| `npm run check:dead` | pass (only justified CookieConsent orphan) |
-| `npm run check:exports` | 0 unused exports |
-| `npm run check:deps` | pass |
-| `npm run check:api-schutz` | 12 admin routes, all `requireAdminApi()` |
-| `npm run check:schema-bezug` | pass; no new schema objects |
-| `npm run build` | pass (existing Supabase Edge-runtime warnings only) |
-
-CI/Vercel on the final head must be live-verified by the independent reviewer. This authoring run does not claim GitHub Actions or Vercel for the stamp commit.
+Review-fix local S1 tests before stamp: **15/15 pass**. `tsc --noEmit` pass (includes `@ts-expect-error` boundary). Remaining hygiene/full-suite/`next build` are re-run on this head and stamped afterwards. Prior 12/12 + `c88ac2e3` evidence is invalidated.
 
 ## 5. Scope / non-scope confirmation
 
@@ -146,11 +136,10 @@ Existing `TripTraveller` has no date-of-birth field; none was added.
 
 1. Agent self-review is not an independent Technical-Lead PASS.
 2. `main` Branch Protection remains `protected=false`.
-3. TypeScript structural typing still allows an `AccountRegistryTraveller` object to be assigned to `TripTraveller` if a later caller ignores the projection helper. The helper is the contract boundary; persistence must not treat registry rows as trip rows.
-4. Snapshot currently copies registry `id` / `clientRef` as values so intra-snapshot relations stay intact. Later persistence must assign trip-owned ids and must not turn those copied strings into a live FK.
-5. Guest→Account trip copy remains automatic and trip-scoped. A later agent could still misread that as registry import.
-6. No schema is designed here. AP-7-S2 / persistence remains separately gated.
-7. Production-schema live check against Supabase was not part of this slice.
+3. Persistence must still consume the explicit materialization input and must not invent a provenance/live FK from registry ids.
+4. Guest→Account trip copy remains automatic and trip-scoped. A later agent could still misread that as registry import.
+5. No schema is designed here. AP-7-S2 / persistence remains separately gated.
+6. Production-schema live check against Supabase was not part of this slice.
 
 ## 8. Finished vs unfinished
 

@@ -2,14 +2,13 @@
 
 Stand: 28. August 2026  
 Autor-Agent: **`Cursor-Agent: Account plattform audit vorbereitung 12`**  
-Typ: adversarial Self-Review, **kein** unabhängiger Technical-Lead-PASS
+Typ: adversarial Self-Review nach CHANGES REQUIRED `5455673104`, **kein** unabhängiger Technical-Lead-PASS
 
 ## 1. Auftrag gegen Diff
 
-Auftrag: `docs/AP7_S1_DUAL_AUTHORITY_DOMAIN_CONTRACT_TASK_2026-08-28.md`  
-Freigabe: `docs/AP7_DUAL_AUTHORITY_PRODUCT_OWNER_APPROVAL_2026-08-28.md`
+Auftrag: Review-Fix gegen Exact Head `c88ac2e3dc9dfdc5d9a4a5dcec67a353c60f61c8` (Kommentar `5455673104`). Dieselbe Session / Generation 12 / Draft-PR #145.
 
-Geprüft gegen den tatsächlichen Dateisatz: `lib/traveller/account-registry.ts`, Tests, Status, Handoff, ADR-0187, Continuity.
+Geprüft gegen den tatsächlichen Dateisatz: `lib/traveller/account-registry.ts`, Tests, Status, Handoff, ADR-0187-Nachtrag.
 
 Keine Änderung an `app/`, `components/`, `supabase/migrations`, Grants, RLS, Auth-Config, Branch Protection, UI/CRUD, Provider-Runtime.
 
@@ -17,28 +16,25 @@ Keine Änderung an `app/`, `components/`, `supabase/migrations`, Grants, RLS, Au
 
 | Frage | Ergebnis |
 | --- | --- |
-| Zweites paralleles Traveller-Modell gebaut? | Nein. Semantik und Limits kommen aus Foundation E / `types/trips.ts` / `TRAVELLER_CONTEXT_GRENZEN`. |
-| `travellerLegacyLesen` als Registry-Authority missbraucht? | Nein. Legacy-Singular-Ableitung wird abgelehnt. |
-| Default-Citizenship oder Default-Pass erzeugt? | Nein. Leere Arrays bleiben leer. `documents[0]` ist keine Wahrheit. |
-| Issuer als Citizenship gelesen? | Nein. Nur explizites `citizenshipClientRef`. Fehlt es → `null`. |
-| Dangling/duplicate Refs geraten statt rejected? | Nein. Fail-closed. |
-| Live-Authority im Snapshot behalten? | Nein. Tiefe Kopie, kein `authority`, kein Provenienz-Link, kein `chosenCredentialOptionRef`. |
-| Quelle mutiert? | Nein. Tests prüfen Unverändertheit. |
-| Sensible Payloads eingeführt? | Nein. DoB/MRZ/Scan/Nummer/Biometrie/Health sind Deny-Keys. |
-| Schema/RLS/Auth/UI/Provider angefasst? | Nein. |
-| Ready/Merge empfohlen? | Nein. STOPP für unabhängigen TL-Review. |
-| Folgeslice S2 gestartet? | Nein. |
-| Sichtbarer Titel als umbenannt behauptet? | Nein. Cloud-Run-Titel bleibt `Dual-authority domain contract`. |
+| Ist Registry strukturell als `TripTraveller` zuweisbar? | Nein. Fakten liegen unter `facts`. Compile-Zeit-Regression (`extends` + `@ts-expect-error`) ohne Casts. |
+| Kopiert die Projektion Registry-Identität? | Nein. Explizite trip-owned UUIDs. Gleichheit Quelle↔Snapshot wird abgelehnt. Relation wird remappt. |
+| Kopiert die Projektion Registry-Zeitstempel in Kinder? | Nein. Traveller/Citizenship/Document bekommen `jetzt`. |
+| Wird fehlende Authority still zu `account_registry`? | Nein. Pflichtfeld. Flache Trip-Form wird nicht befördert. |
+| Sind Refs nur „nicht traveller:N“? | Nein. UUID-backed. `person:0` und `document:passport:CH` fail-closed. Zwei gleiche Pass-Fakten bleiben unterscheidbar. |
+| Gibt es `new Date()`-Materialisierung? | Nein. `jetzt` ist Pflicht. |
+| Default-Pass / Issuer=Citizenship / Schema/UI? | Nein. |
+| Ready/Merge/S2? | Nein. STOPP für unabhängigen TL-Re-Review. |
 
 ## 3. Risiken, die bleiben
 
-- Strukturelle TypeScript-Zuweisbarkeit von Registry-Objekten zu `TripTraveller`, wenn ein späterer Caller den Helper umgeht.
-- Kopierte `id`/`clientRef`-Werte dürfen in S2 keine Live-FK werden.
+- Persistenz könnte die Materialisierung später wieder durch kopierte Registry-IDs ersetzen, wenn S2 den Vertrag nicht liest.
+- Guest-Auto-Transfer bleibt trip-scoped und ist kein Registry-Import.
 - `main` `protected=false`.
+- Dieser Review-Fix erzeugt einen neuen Head und invalidiert `c88ac2e3` / `ed8f79b4`.
 - Dieses Self-Review erzeugt keinen PASS.
 
 ## 4. Urteil des Autors
 
-Der Slice hält den genehmigten Dual-Authority-Vertrag und die Hard-Non-Scope-Grenze. Lokale Tests und Hygiene-Gates vor diesem Stamp waren grün (12/12 S1, 2453/2453 `npm test`, typecheck, lint, dead/exports/deps/api-schutz/schema-bezug, `next build`). Exact-Head CI/Vercel bleibt live vom unabhängigen Reviewer zu prüfen.
+Die sechs Findings aus `5455673104` sind im Domain-Contract und in den Tests nachgezogen. Non-Scope gehalten.
 
-**Unabhängiger Technical-Lead-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**
+**Unabhängiger Technical-Lead-Re-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**

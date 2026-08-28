@@ -4724,10 +4724,10 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 1. Dual-Authority ist die verbindliche Architektur (Product-Owner-Freigabe vom 28. August 2026). Account Registry hält wiederverwendbare aktuelle Identität/Fakten. Der Trip-Snapshot bleibt die einzige Current Truth einer konkreten Reise.
 2. Der erste Slice ist ein shared, persistenzfreier Domain-Contract in `lib/traveller/account-registry.ts`. Er erzeugt kein zweites Traveller-Modell: semantische Felder, Länderprüfung und Limits bleiben Foundation E (`TripTraveller*`, `TRAVELLER_CONTEXT_GRENZEN`, `landescodeLesen`).
-3. Registry-Identität ist stabile UUID (`id`) plus account-scoped `clientRef`. `traveller:N` und andere Positionsrefs sind keine Personen- oder Dokumentidentität.
+3. Registry-Identität ist UUID-backed für `id` **und** `clientRef` (Person, Citizenship, Document). Positions- und faktische Refs (`traveller:N`, `person:0`, `document:passport:CH`) sind ungültig.
 4. Citizenships und Documents bleiben first-class Arrays. Die Document↔Citizenship-Relation ist nur das explizite `citizenshipClientRef`. Issuer, Residence, Locale, Sprache oder Abflugland dürfen keine Citizenship erzeugen. Fehlt die Relation, bleibt sie `null`.
 5. Lesen ist fail-closed: doppelte oder baumelnde Refs, Limit-Verletzungen, ungültige Länder-/Dokumentwerte, Legacy-Singularfelder, Default-/Chosen-Credential-Felder und sensible Schlüssel werden abgelehnt statt still korrigiert.
-6. Die Projektion erzeugt eine tiefe, unabhängige `TripTraveller`-Kopie ohne Registry-`authority`, ohne Provenienz-Link und ohne `chosenCredentialOptionRef` / `credentialOptions`. Spätere Mutation der Quelle darf den Snapshot nicht über gemeinsame Objekt-/Array-Referenzen ändern.
+6. Die Projektion erzeugt einen trip-owned Snapshot nur aus expliziter Materialisierung (trip-eigene UUIDs + `jetzt`). Registry-Identität und Registry-Zeitstempel werden nicht kopiert. Kein `new Date()`-Fallback. Document↔Citizenship wird remappt. Spätere Mutation der Quelle darf den Snapshot nicht über gemeinsame Objekt-/Array-Referenzen ändern.
 7. `travellerLegacyLesen` und `credentialOptionsAus` bleiben Guest-/Readiness-Pfade. Sie sind nicht die Account-Registry-Authority.
 8. Dieser ADR autorisiert keine Tabelle, Policy, GRANT/REVOKE, SECURITY-DEFINER-Funktion, Migration, UI/CRUD, Guest→Registry-Import oder AP-7-S2.
 
@@ -4748,6 +4748,17 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 - Persistence bleibt hinter einem späteren ADR + Product-Owner Identity-/RLS-/Migrations-Gate.
 - AP-5-S3/S4/S5, AP-6, C2, TW-8, Native-Runtime und Provider-live bleiben unberührt.
 - Autor-Agent stoppt auf Draft-PR #145 für unabhängigen Technical-Lead-Review. Self-Review ist kein PASS.
+
+**Nachtrag, 28. August 2026 – Review-Fix `5455673104`.** Der Domain-Contract wurde gegen den Exact Head `c88ac2e3` nachgeschärft:
+
+1. `AccountRegistryTraveller` trägt Fakten unter `facts` und ist compile-zeitlich nicht als `TripTraveller` zuweisbar.
+2. Projektion materialisiert trip-eigene UUID-Identitäten aus explizitem Kontext; Registry-`id`/`clientRef` werden nicht kopiert. Document↔Citizenship wird remappt.
+3. Snapshot-Zeitstempel für Traveller/Citizenship/Document sind `jetzt`, nicht Registry-Metadaten.
+4. `authority === 'account_registry'` ist Pflicht. Flache Trip-Form wird nicht zur Registry befördert.
+5. Registry-`id` und `clientRef` sind UUID-backed, nicht positions- oder faktisch abgeleitet.
+6. Kein Wanduhr-Fallback. Materialisierung ohne `jetzt` ist fail-closed.
+
+Kein Schema. Kein Ready/Merge. Neuer Head invalidiert `c88ac2e3` und `ed8f79b4`.
 
 ---
 

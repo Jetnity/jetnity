@@ -12,11 +12,14 @@ Dieser Handoff übergibt den Domain-Contract-Slice. Er startet keinen Folgeslice
 
 ## 1. Was dieser Agent getan hat
 
-1. Live-Primitives inspiziert: `types/trips.ts`, `lib/readiness/traveller-kontext.ts`, `lib/readiness/traveller-anfrage.ts`, `lib/readiness/engine.ts` `travellerNormalisieren`, Foundation-E-Limits, bestehende Multi-Citizenship-/`documents[0]`-Tests.
-2. Kein zweites Traveller-Modell gebaut. Registry nutzt dieselben semantischen Felder und Limits wie Foundation E.
-3. Shared Contract in `lib/traveller/account-registry.ts`: account-owned identity, fail-closed Lesen, unabhängige Trip-Snapshot-Projektion.
-4. Adversarial Tests in `lib/traveller/account-registry.test.ts`.
-5. Continuity/ADR: Status, dieses Handoff, Self-Review, ADR-0187, ADR-0186-Nachtrag, Active Work Status, Account-Plan, Architecture, Roadmap, Handoff, Start Here.
+Review-Fix gegen Technical-Lead CHANGES REQUIRED `5455673104` (reviewed head `c88ac2e3`, zusätzlich Stamp `ed8f79b4` invalidiert):
+
+1. Registry-Typ ist verschachtelt (`facts`) und compile-zeitlich nicht als `TripTraveller` zuweisbar.
+2. Projektion materialisiert trip-eigene UUID-Identitäten; Registry-`id`/`clientRef` werden nicht kopiert. Document↔Citizenship wird remappt.
+3. Snapshot-Kinder bekommen `jetzt`, nicht Registry-Metadaten-Zeitstempel.
+4. `authority` ist Pflicht; fehlend/falsch und flache Trip-Form werden abgelehnt.
+5. Registry-Refs sind UUID-backed; faktische Refs wie `document:passport:CH` sind ungültig. Zwei CH-Pässe bleiben unterscheidbar.
+6. Kein `new Date()`-Fallback; Materialisierung inkl. `jetzt` ist Pflicht.
 
 Kein Schema. Keine Supabase-Mutation. Kein RLS/GRANT/REVOKE/SECURITY DEFINER. Kein Auth/AAL. Keine UI/CRUD. Kein Guest→Registry-Import. Kein Provider/TW-8/TW-9/AP-5/AP-6. Kein Ready. Kein Merge.
 
@@ -47,9 +50,11 @@ Vor der finalen Übergabe erneut `origin/main` holen und hier stempeln.
 | Branch | `feat/ap7-s1-dual-authority-domain-contract-2026-08-28` |
 | Draft-PR | #145 OPEN Draft |
 | Merge-Base | `bb38aef5` |
-| Exact / Review-Head | Commit dieses Stamps; live an PR #145 prüfen |
-| Ahead / behind `origin/main` | **5 / 0** |
-| Local quality before stamp | 12/12 S1 tests; 2453/2453 `npm test`; typecheck; lint; dead/exports/deps/api-schutz/schema-bezug; `next build` |
+| Prior reviewed Head | `c88ac2e3` – invalidiert durch `5455673104` |
+| Prior stamp | `ed8f79b4` – invalidiert |
+| Exact / Review-Head | Commit dieses Review-Fix-Stamps; live an PR #145 prüfen |
+| Ahead / behind `origin/main` | nach finalem Stamp |
+| Local S1 before remaining gates | 15/15 pass; `tsc --noEmit` pass |
 | Branch Protection | unverändert; nicht in diesem Slice geändert |
 | Supabase | nicht live abgefragt, nicht mutiert |
 
@@ -71,7 +76,7 @@ Nur datensparse Foundation-E-Felder. Keine Nummern/Scans/MRZ/Biometrie/DoB/Gesun
 
 ## 6. Unresolved risks
 
-Siehe Status §7. Entscheidend für Review: strukturelle TS-Zuweisbarkeit Registry→Trip, kopierte `id`/`clientRef`-Werte sind keine Live-FK, Guest-Auto-Transfer ≠ Registry-Import, kein Schema in diesem Slice.
+Siehe Status §7. Die sechs Findings aus `5455673104` sind im Domain-Contract adressiert. Persistenz darf die explizite Materialisierung nicht durch kopierte Registry-IDs ersetzen. Guest-Auto-Transfer ≠ Registry-Import. Kein Schema in diesem Slice.
 
 ---
 
