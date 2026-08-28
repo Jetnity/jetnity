@@ -10,7 +10,7 @@ Status: **AP-7 Gate 0 / PR #144 self-expiring. Audit + Architecture only. Kein R
 ## Aktueller Arbeitsblock – AP-7 Gate 0 Account-Traveller-Registry Architecture
 
 1. **Arbeitsblock / Ziel:** Read-only Rekonstruktion und Architektur-Empfehlung für eine mögliche accountweite Traveller Registry. Keine Runtime.
-2. **Authoring-Branch / PR:** `audit/ap7-account-traveller-registry-gate0-2026-08-28`; Draft-PR #144. Authoring `1c9f1d31`; Exact Head ist der Stamp-Commit danach; live am PR prüfen.
+2. **Authoring-Branch / PR:** `audit/ap7-account-traveller-registry-gate0-2026-08-28`; Draft-PR #144. Authoring `1c9f1d31`; Stamp `69d5c79e`; Exact Head nach SHA-Korrektur live am PR prüfen.
 3. **Status:** **REVIEW-FIX FÜR 5455342054 / SELF-EXPIRING / DRAFT.** Solange #144 offen: STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW. Sobald Live-Evidence #144 als gemergt zeigt: Gate 0 integriert; #144 nicht mehr aktiv; kein Runtime; Generation 11 abgeschlossen. Jeder neue Push invalidiert Prior-Gates inkl. `731b0914`, `c434dbd2` und `25beee92`. Kein Ready, kein Merge durch den Autor. Kein AP-7-Implementierungsslice.
 4. **Bereits umgesetzt:** Live-Rekonstruktion Foundation E / Guest→Account / Readiness / Official / Profile / Privacy / Admin / Native-Naht; Optionsvergleich; Empfehlung Dual-Authority; ADR-0186 als Empfehlungsstatus.
 5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 11`. Sichtbarer Cursor-Titel dieser Session: `Account traveller registry architecture` (Cloud-Run `https://cursor.com/agents/bc-400e9cce-e82f-48f1-860a-fb6a3a6f90e3`). Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Keine Generation 12.

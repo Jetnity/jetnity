@@ -55,8 +55,8 @@ Post-PR-#143-Evidence laut Task (nicht in diesem Run neu gegen Actions/Vercel ve
 | Prior self-expire stamp | `c434dbd2f549c433e8dd12ba7254c81000e55bda` – **invalidated** by Re-Review `5455342054` |
 | Prior continuity-tighten | `25beee923ab78e6a2259629d01753b16b0b2f893` – **invalidated** by leftover next-step fix |
 | Authoring-SHA (`5455342054` leftover next-step) | `1c9f1d31b64512310e27d84d5977bcadcf84da59` |
-| Review-Head / Stamp | dieser Stamp-Commit; live an PR #144 lesen |
-| Ahead / Behind nach Authoring, vor Stamp | **13 / 0** |
+| Review-Head / Stamp | `69d5c79ee09ffa49fbd217a31a59f292d768d269` |
+| Ahead / Behind nach Stamp, vor SHA-Korrektur | **14 / 0** |
 | Merge-Base | `1947285c` |
 
 Ein weiterer Continuity-Stamp nach dem Review-Head invalidiert dieses Gate.
