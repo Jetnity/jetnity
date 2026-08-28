@@ -110,17 +110,18 @@ Weiterhin gilt:
 
 P2-TA-03 ist durch PR #117 integriert. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` ist der kanonische Folgeplan für AP-5–AP-12. Historischer PR #39 bleibt Historical Evidence.
 
-P2-TA-04 Gate 0 ist durch PR #120 integriert. C1 ist durch PR #126 integriert: Delete-RPC, DB-Party-Cap 20, Child-Limits auch bei UPDATE. Production C1 live als `20260828015304`. Kein C2. AP-5 Gate 0 ist durch PR #129 integriert. AP-5-S1 ist durch PR #133 integriert. AP-5-S2 ist durch PR #137 integriert.
+P2-TA-04 Gate 0 ist durch PR #120 integriert. C1 ist durch PR #126 integriert: Delete-RPC, DB-Party-Cap 20, Child-Limits auch bei UPDATE. Production C1 live als `20260828015304`. Kein C2. AP-5 Gate 0 ist durch PR #129 integriert. AP-5-S1 ist durch PR #133 integriert. AP-5-S2 ist durch PR #137 integriert. AP-5-S3 ist auf Draft-PR #156 implementiert und wartet auf unabhängigen Technical-Lead Exact-Head-Review.
 
 Nicht automatisch starten:
 
-- AP-5-S3–S5 / AP-5-P1–P5
+- AP-5-S4–S5 / AP-5-P1–P5
 - AP-7 / Account-Traveller-Registry — Architektur Dual-Authority freigegeben; S1 Domain-Contract über PR #145 auf `main @ 4ec83f36` integriert, kein automatisches S2, keine Persistenz
 - Node 22 Runtime Consistency — PR #147 integriert auf `main @ 56aff7ff` (`engines.node: "22.x"` + `@types/node@22.20.1`)
 - Next.js Framework Security Upgrade Gate 0 — PR #148 integriert auf `main @ 2fdf8a18`; Ziel 16.x Active LTS live-resolved (Minimum `16.3.3`) bleibt Empfehlung, nicht angewendet
 - Next 16 Product-Owner-Freigabe — PR #149 integriert; autorisiert das gestufte Compatibility-Programm
 - Next 16 Compatibility Prep S1 — PR #150 integriert auf `main @ d7f02f77`; async Request-API-Prep; kein automatischer Folgeslice aus S1
-- Next 16 S2 Framework Bump — Draft-PR #151 self-expiring: Runtime auf Next.js 16.3.3 + React 19.2.8 + ESLint CLI/Flat Config + `proxy.ts`; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready/Merge durch den Autor; kein S3
+- Next 16 S2 Framework Bump — auf der S3-Baseline über PR #152 / `main @ 3c3079de` integriert; ältere Draft-#151-Zeilen sind Pre-Merge-Evidence
+- AP-5-S3 Account Security Logout Scopes — Draft-PR #156 / Issue #153; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready/Merge durch den Autor; kein S4/S5
 
 ## 3. Trip Workspace / Visitor Search
 
@@ -284,19 +285,19 @@ Abgeschlossen:
 38. ✅ Next.js Framework Security Upgrade Gate 0 / PR #148 – integriert; Ziel 16.x Active LTS live-resolved (Minimum `16.3.3`)
 39. ✅ Next 16 Product-Owner-Freigabe / PR #149 – integriert; autorisiert das gestufte Compatibility-Programm
 40. ✅ Next 16 Compatibility Prep S1 / PR #150 – integriert auf `main @ d7f02f77`; ADR-0190
-41. 🟡 Next 16 S2 Framework Bump / Draft-PR #151 – Runtime Next.js 16.3.3 + React 19.2.8 + ESLint CLI + `proxy.ts`; self-expiring: STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready/Merge durch den Autor; kein S3
+41. ✅ Next 16 S2 Framework Bump / PR #152 – integriert auf `main @ 3c3079de`; ältere Draft-#151-Zeilen sind Pre-Merge-Evidence
+42. 🟡 AP-5-S3 Account Security Logout Scopes / Draft-PR #156 – explizite `local`/`others`/`global` in `/account/security`; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready/Merge durch den Autor; kein S4/S5
 
-Nächster Schritt (self-expiring / dual-state):
+Nächster Schritt:
 
-- **Solange PR #151 offen:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #151. Kein Ready. Kein Merge durch den Autor. Kein S3. Keine Vercel-Setting-Mutation. Kein AP-7-S2.
-- **Sobald PR #151 gemergt:** S2 ist integrierte Runtime-Evidence. Draft-/Review-Klauseln historisch. Exakt nächster Schritt nur ein separat versioniertes, ausdrücklich gegatetes Folgeprogramm. Kein automatisches S3. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Kein erfundener Merge-SHA.
-- AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #151.
-
-AP-5-S3/S4/S5 bleiben normale Technical-Lead-Gates innerhalb Gate 0, nicht automatisch gestartet und nicht Product-Owner-gated. S3–S5 nicht aus dieser Liste automatisch ableiten.
+- Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #156. Kein Ready. Kein Merge durch den Autor. Kein S4/S5. Keine Vercel-Setting-Mutation. Kein AP-7-S2.
+- AP-5-S4/S5 bleiben normale Technical-Lead-Gates innerhalb Gate 0, nicht automatisch gestartet und nicht Product-Owner-gated.
+- AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #156.
 
 ## 10. Noch nicht automatisch gestartet / weiterhin gated
 
-- AP-5-S3–S5 / AP-5-P1–P5
+- AP-5-S4–S5 / AP-5-P1–P5
+- AP-5-S3 bleibt Draft bis unabhängiger Technical-Lead-Review und Merge; nicht als integriert behaupten
 - AP-7
 - Provider S5-B
 - echte Providerphase

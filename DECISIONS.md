@@ -4551,7 +4551,7 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 1. Eingeloggte Passwortänderung bleibt am bestehenden Vertrag `secure_password_change` / `security_update_password_require_reauthentication`: `reauthenticate()` → Nonce → `updateUser({ password, nonce })`. `security_update_password_require_current_password` bleibt **aus**. Ein Current-Password-Submit wird nicht erfunden. Diese Config auf `true` zu drehen bleibt Product-Owner-Sondergate; Recovery-Kompatibilität muss vor einer solchen Änderung separat live/referenzbasiert verifiziert werden. Ein sicherer Bruch des Recovery-Pfads wird ohne diese Evidence nicht behauptet.
 2. Password-Recovery und signed-in Reauthentication sind **zwei Authorities**. Der Recovery-Pfad `resetPasswordForEmail` → Recovery-Session / `type=recovery` → `/auth/update-password` → `updateUser({ password })` ist die heutige Wiederherstellung. `reauthenticate()` + `nonce` ist die vorhandene In-Session-Erneuerung unter `secure_password_change` und heute ungenutzt. Der Recovery-Link ist nicht die Reauthentication.
-3. Heutiges Consumer-Abmelden ist `signOut()` ohne Scope und damit Client-Default **`global`**. `local` und `others` existieren in der API, nicht in der UI.
+3. Heutiges Consumer-Abmelden ist `signOut()` ohne Scope und damit Client-Default **`global`**. `local` und `others` existieren in der API. Die Security-UI für diese Scopes steht in ADR-0192; das allgemeine Abmelden bleibt unscoped.
 4. Eine User-facing Session-/Geräteliste ist im installierten `@supabase/auth-js` 2.71.1 **unsupported**. Die ehrliche UI-Aussage ist `unsupported`, nicht `empty`. Service-Role- oder Schema-Listen sind ein Product-Owner-Sondergate.
 5. TOTP-Enroll/Unenroll im Konto ist client-only. Jetnitys UI macht heute keinen proaktiven Step-up. Die aktuelle Supabase-Referenz für `auth.mfa.unenroll` verlangt `aal2`, um einen **verified** factor zu unenrollen; GoTrue erzwingt das serverseitig. AP-5-S4 darf später einen nutzerfreundlichen `challenge`/`verify`-Step-up davor setzen, ohne Consumer-AAL2 global einzuführen. Admin-AAL2 bleibt getrennt. Consumer-AAL2 bleibt ungebaut und gegated.
 6. AP-5-Folgeslices, die nur vorhandene User-APIs und UI-Ehrlichkeit nutzen, sind normale Technical-Lead-Gates. Auth-Config, Default-Logout-Wechsel, Session-Architektur, Consumer-AAL2, OAuth/Passkey-Live bleiben Product-Owner-Sondergates.
@@ -4574,6 +4574,8 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 - Ein späterer Agent darf `/auth/update-password` nicht still zur einzigen In-Account-UI machen und Recovery nicht mit signed-in Reauthentication gleichsetzen.
 
 **Nachtrag, 28. August 2026 – Review-Fix `5049870788`.** Verified-factor Unenroll ist nicht `unknown`: GoTrue verlangt `aal2`. Recovery-Link ist nicht die Reauthentication. `security_update_password_require_current_password = true` bleibt PO-Gate; Recovery-Kompatibilität muss separat verifiziert werden. Keine Runtime.
+
+**Nachtrag, 29. August 2026 – AP-5-S3.** Die User-API-Scopes bleiben unverändert. `/account/security` darf `local` / `others` / `global` explizit anbieten, ohne das allgemeine `signOutAction` anzufassen. Details: ADR-0192. Sessionlisting bleibt unsupported.
 
 ---
 
@@ -4928,6 +4930,41 @@ Festlegung innerhalb S1, ohne Dependency-Bump:
 - Autor-Agent stoppt für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
 
 **Nachtrag, 28. August 2026 – Review-Fix `5055372760`.** Die öffentliche Support-ID darf ohne Digest keine gemeinsame Konstante (`#unbekannt`) sein. Fallback ist `useId()` über `oeffentlicheFehlerId`: render-rein, je gemounteter Fehlergrenze stabil, ohne unreine Zeit-/Zufallswerte im Render. Vorheriger Review-Head `b73af1c2` wird durch den Review-Fix ungültig.
+
+---
+
+## ADR-0192 – AP-5-S3: explizite Logout-Scopes ohne neue Session-Architektur
+
+**Datum:** 29. August 2026  
+**Status:** Implementation-Slice auf Draft-PR #156 / Issue #153. Keine Auth-Architektur. Kein Auth-Config-Push. Kein Sessionlisting.
+
+**Entscheidung:**
+
+1. `/account/security` bietet die vorhandenen User-API-Scopes explizit an: `local` (dieses Gerät / diese Sitzung), `others` (andere Sitzungen, aktuelle bleibt), `global` (überall).
+2. Das allgemeine Jetnity-Abmelden (`signOutAction` / `signOutToAdminLoginAction`) bleibt `signOut()` ohne Scope und damit Client-Default **`global`**. S3 dreht diesen Default nicht auf `local`.
+3. Erfolg darf nur nach bestätigtem `signOut({ scope })` behauptet werden. Netz-, Server- oder unbestätigte Revoke-Lagen sind `error` / `unavailable` / `unsupported`, nicht Erfolg und nicht stilles Redirect.
+4. `others` muss die aktuelle Sitzung erhalten. Wenn `getUser()` danach keinen User mehr liefert, ist das ein Fehler, kein Erfolg.
+5. Jetnity erfindet keine Sessionliste und keine Sessionzahl. Access Tokens können bis `jwt_expiry` weiter gültig sein; Logout ist kein sofortiges JWT-Kill.
+6. `global` in der Security-UI ist die gefährlichere Aktion und braucht eine ausdrückliche Bestätigung. Das ändert nicht die Semantik des allgemeinen Abmeldens.
+7. S4/S5, Consumer-AAL2, Default-Logout-Wechsel, Service-Role-Sessionlisten und Auth-Config bleiben ausserhalb dieses ADR.
+
+**Kontext:** Gate 0 / ADR-0182 hat die Scopes und den globalen Default rekonstruiert. S1/S2 haben ehrliche Lagen und die signed-in Passwortänderung geliefert. Issue #153 ist der scoped Logout-UI-Slice über dieselbe User-API.
+
+**Alternativen:**
+
+1. *Nur Copy „überall abmelden“ auf das bestehende `signOutAction` legen.* Würde `local`/`others` weiter fehlen und Fehler weiter schlucken.
+2. *Navbar-Default auf `local` drehen.* Session-Semantik, Product-Owner-Sondergate (AP-5-P1).
+3. *Sessionliste über Service Role oder `auth.sessions`.* Privilegien- und Privacy-Schnitt, AP-5-P2 / S5.
+4. *Nur Browser-`signOut` ohne Server Action.* Würde Server-Cookies bei `local`/`global` stehen lassen.
+
+**Begründung:** Die drei Scopes existieren bereits. Der nutzbare Security-Gewinn ist, sie ehrlich und testbar anzubieten, ohne eine Session-Architektur zu erfinden oder den globalen Default still zu ändern.
+
+**Konsequenzen:**
+
+- Evidence: `docs/AP5_S3_ACCOUNT_SECURITY_LOGOUT_SCOPES_STATUS_2026-08-29.md`, `lib/auth/account-logout-scopes.ts`, `components/account/SecurityLogout.tsx`.
+- Keine Migration, kein RLS, kein Auth-Config-Push, keine Service Role.
+- S4/S5 starten nicht aus diesem ADR.
+- Autor-Agent stoppt für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
 
 ---
 
