@@ -1,11 +1,13 @@
 # Jetnity – AP-5-S2 – Handoff
 
 Stand: 28. August 2026  
-Status: **REVIEW-FIX FÜR 5050962955 / DRAFT / STOPP FÜR ERNEUTEN TL-REVIEW / KEIN S3–S5**  
-Cursor-Agent: **`Account plattform audit vorbereitung 10`**  
-Issue: [#136](https://github.com/Jetnity/jetnity/issues/136)  
+Status: **INTEGRIERT über PR #137 / Merge `f11a1753` / KEIN S3–S5**  
+Cursor-Agent: **`Account plattform audit vorbereitung 10`** – Generation für Runtime abgeschlossen  
+Issue: [#136](https://github.com/Jetnity/jetnity/issues/136) – Merge erfolgt; Close stand beim Continuity-Stamp noch aus  
 Branch: `cursor/ap5-s2-password-reauth-82e4`  
-Draft-PR: https://github.com/Jetnity/jetnity/pull/137
+PR: https://github.com/Jetnity/jetnity/pull/137 – **MERGED**
+
+Kanonischer Integrationsstand: `docs/CHATGPT_PR137_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`.
 
 ## Zuerst lesen
 
@@ -50,4 +52,4 @@ Logout-Scopes, MFA-Step-up, Sessionkarte, Consumer-AAL2, Passkey-Live, C2, Auth-
 
 ## Nächster Schritt
 
-Unabhängiger Technical-Lead-Review. Nicht Ready. Nicht mergen. Kein automatischer S3-Start.
+Issue #136 schließen. Continuity-Stamp unabhängig reviewen. Kein automatischer S3-Start. Generation 10 nicht wiederverwenden.
