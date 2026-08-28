@@ -8,7 +8,7 @@ Typ: adversarial Self-Review, **kein** unabhängiger Technical-Lead-PASS
 
 Auftrag: Issue #136 / AP-5-S2 only.
 
-Geprüft: Zustandsmodell, Fehlercopy, Reauth-only-after-click, `updateUser({ password, nonce })`, keine Current-Password-Felder, Recovery unverändert, S1-MFA unverändert, kanonische Passwortregel/HIBP, Tests, Continuity.
+Geprüft: Zustandsmodell, Fehlercopy, Reauth-only-after-click, `updateUser({ password, nonce })`, keine Current-Password-Felder, Recovery unverändert, S1-MFA unverändert, kanonische Passwortregel/HIBP, Tests, Continuity. Review-Fix `5050962955`: `getUser()`-Netz-/5xx-Fehler sind nicht mehr `session_required`.
 
 Keine Migration. Kein `supabase/config.toml`-Write. Kein RLS/Identity. Kein Logout-Scope. Kein Sessionlisting. Kein Consumer-AAL2. Kein ADR nur zur Wiederholung von Gate 0.
 
@@ -16,6 +16,7 @@ Keine Migration. Kein `supabase/config.toml`-Write. Kein RLS/Identity. Kein Logo
 
 | Frage | Ergebnis |
 | --- | --- |
+| Wird ein Netz- oder 5xx-Fehler von `getUser()` als Sitzungsverlust gezeigt? | Nein, nach Review-Fix `5050962955`. Nur 401/session-missing oder fehlender User. |
 | Wird Reauthentication beim Laden der Seite still gestartet? | Nein. `getUser()` prüft nur Sitzung/Fähigkeit. `reauthenticate()` erst nach Button. |
 | Kann Erfolg vor `updateUser` behauptet werden? | Nein. `success` nur aus `updating` + `update_ok`. |
 | Wird ein Current-Password-Feld eingeführt? | Nein. Inventory und Nutzlast-Test verbieten `currentPassword`. |

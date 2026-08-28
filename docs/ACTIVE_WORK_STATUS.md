@@ -9,7 +9,7 @@ Status: **AP-5-S2 ist der aktuelle Account-Runtime-Slice auf Issue #136. Gate 0 
 
 1. **Arbeitsblock / Ziel:** Issue #136 / AP-5-S2 – signed-in Passwortänderung über `reauthenticate()` → Nonce → `updateUser({ password, nonce })`.
 2. **Authoring-Branch / PR:** `cursor/ap5-s2-password-reauth-82e4`; Draft-PR #137.
-3. **Status:** **AUTHOR COMPLETE / DRAFT.** Kein Ready, kein Merge, kein S3–S5.
+3. **Status:** **REVIEW-FIX FÜR 5050962955 / DRAFT.** `getUser()`-Netz-/5xx nicht mehr als Sitzungsverlust. Kein Ready, kein Merge, kein S3–S5.
 4. **Bereits umgesetzt:** Zustandsmodell; Security-Passwortkarte; kanonische Richtlinie/HIBP; getrennte Recovery-Authority; S2-Tests; Inventory-Aktualisierung.
 5. **Cursor-Agent:** `Account plattform audit vorbereitung 10`.
 6. **Live-`main` bei Authoring:** `0256905cee3e6705156ce642839983daf8b0709a` – immer live neu prüfen.
@@ -17,7 +17,7 @@ Status: **AP-5-S2 ist der aktuelle Account-Runtime-Slice auf Issue #136. Gate 0 
 8. **Kosten / Provider / Secrets:** keine.
 9. **Bekannte Residuals:** Recovery-UI bleibt für signed-in Sessions mehrdeutig; Login-MFA abbrechbar; Sessionliste ungebaut; `main` `protected=false`.
 10. **Offene Nutzerentscheidungen / Freigaben:** dieses S2 braucht keines, solange es im bestehenden Reauth-Vertrag bleibt.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Review auf Exact Head `fe734874` (Actions `33168871236` SUCCESS, Vercel `G6m3MbtAFPhUwhS7x3KxH2g9JEJb` READY). Dieser Continuity-Stamp erzeugt einen neueren Head; dessen CI live lesen. **Kein S3–S5 aus diesem Slice.**
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review nach Review-Fix `5050962955`. Exact-Head CI/Vercel live lesen. **Kein S3–S5 aus diesem Slice.**
 12. **Zuerst lesen:** `docs/AP5_S2_PASSWORD_REAUTH_STATUS_2026-08-28.md`, Handoff, Gate-0-Status, ADR-0182.
 
 ## Historischer Arbeitsblock – Project Sanitation Closure

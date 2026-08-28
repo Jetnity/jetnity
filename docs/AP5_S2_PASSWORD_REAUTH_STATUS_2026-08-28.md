@@ -1,7 +1,7 @@
 # Jetnity – AP-5-S2 Passwortänderung über Reauthentication – Status
 
 Stand: 28. August 2026  
-Status: **AUTHOR COMPLETE / DRAFT / KEIN READY / KEIN MERGE / STOPP FÜR UNABHÄNGIGEN TL-REVIEW**  
+Status: **REVIEW-FIX FÜR 5050962955 / DRAFT / KEIN READY / KEIN MERGE / STOPP FÜR ERNEUTEN TL-REVIEW**  
 Workstream: Account / Traveller  
 Cursor-Agent: **`Account plattform audit vorbereitung 10`**  
 Issue: [#136](https://github.com/Jetnity/jetnity/issues/136)  
@@ -57,7 +57,7 @@ Kein ADR. Gate 0 / ADR-0182 bleibt die Authority.
 
 | Lauf | Ergebnis |
 | --- | --- |
-| Focused S2-Unit | **13/13 pass** (`account-password-aenderung.test.ts`) |
+| Focused S2-Unit | **17/17 pass** (`account-password-aenderung.test.ts`) |
 | S2 Vertrag/A11y | **5/5 pass** (`ap5-s2-password-aenderung.test.ts`) |
 | Gate-0-Inventory | **8/8 pass** |
 | S1-Regression + Nav + MFA-A11y + Richtlinie | pass |
@@ -86,4 +86,4 @@ Dieser Stamp erzeugt einen neueren Head. Dessen CI/Vercel müssen live gelesen w
 
 ## 6. Nächster Schritt
 
-STOPP für unabhängigen Technical-Lead-Review des Draft-PR. Nicht Ready. Nicht mergen. S3–S5 nicht automatisch starten.
+STOPP für unabhängigen Technical-Lead-Re-Review nach Review-Fix `5050962955`. Nicht Ready. Nicht mergen. S3–S5 nicht automatisch starten.

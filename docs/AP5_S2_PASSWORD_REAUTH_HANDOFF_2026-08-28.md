@@ -1,7 +1,7 @@
 # Jetnity – AP-5-S2 – Handoff
 
 Stand: 28. August 2026  
-Status: **AUTHOR COMPLETE / DRAFT / STOPP FÜR UNABHÄNGIGEN TL-REVIEW / KEIN S3–S5**  
+Status: **REVIEW-FIX FÜR 5050962955 / DRAFT / STOPP FÜR ERNEUTEN TL-REVIEW / KEIN S3–S5**  
 Cursor-Agent: **`Account plattform audit vorbereitung 10`**  
 Issue: [#136](https://github.com/Jetnity/jetnity/issues/136)  
 Branch: `cursor/ap5-s2-password-reauth-82e4`  
@@ -29,6 +29,7 @@ Harte Wahrheiten:
 4. Erfolg darf erst nach erfolgreichem `updateUser` behauptet werden.
 5. Passwortregel und HIBP bleiben `lib/auth/passwort-richtlinie.ts`.
 6. Generation 9 (S1) ist abgeschlossen und darf nicht wiederverwendet werden.
+7. `getUser()`-Netz- oder Serverfehler sind kein Sitzungsverlust. `session_required` braucht Session-Evidence.
 
 ## Exact-Head vor diesem Stamp
 
