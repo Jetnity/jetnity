@@ -115,7 +115,7 @@ P2-TA-04 Gate 0 ist durch PR #120 integriert. C1 ist durch PR #126 integriert: D
 Nicht automatisch starten:
 
 - AP-5-S3–S5 / AP-5-P1–P5
-- AP-7 / Account-Traveller-Registry
+- AP-7 / Account-Traveller-Registry — Architektur Dual-Authority freigegeben; S1 Domain-Contract self-expiring auf Draft-PR #145 (offen → Review; nach Merge integriert, kein automatisches S2), keine Persistenz
 
 ## 3. Trip Workspace / Visitor Search
 
@@ -273,13 +273,13 @@ Abgeschlossen:
 32. ✅ Provider S5-B Gate 0 / PR #141 – docs/readiness only; S5-B Runtime nicht gestartet
 33. ✅ Technical Lead / Cursor Operating Standard / PR #142 – integriert; Merge `9d4778b8`
 34. ✅ PR #142 Post-Merge Continuity / PR #143 – integriert; Merge `1947285c`
+35. ✅ AP-7 Gate 0 Account-Traveller-Registry Architecture / PR #144 – integriert; Merge `bb38aef5`; Dual-Authority danach product-owner-freigegeben
+36. 🟡 AP-7-S1 Dual-Authority Domain Contract / Draft-PR #145 – shared Contract ohne Schema; self-expiring: offen → TL-Re-Review; nach Merge → integriert, kein automatisches S2
 
-Nächster Schritt:
+Nächster Schritt (self-expiring / dual-state):
 
-**Self-expiring / dual-state. Live-Evidence gewinnt.**
-
-- **Solange PR #144 offen und unmerged ist:** unabhängiger Technical-Lead Exact-Head-Review/Re-Review von Draft-PR #144 (AP-7 Gate 0). Audit + Architecture only. Kein Ready. Kein Merge durch den Autor. Keine AP-7-Runtime.
-- **Sobald PR #144 gemergt ist:** Gate 0 ist integrierte Architecture-Evidence. Keine AP-7-Runtime automatisch autorisiert. Exakt nächster Schritt = Live-Verifikation des Merge-/Post-Merge-Stands, danach Product-Owner-Architekturentscheidung (Dual-Authority-Empfehlung vs genehmigte Alternative) vor jeder Implementation. Keine zukünftige Merge-SHA. Kein Continuity-PR nur für den Merge.
+- **Solange PR #145 offen:** unabhängiger Technical-Lead Exact-Head-Re-Review nach `5455836506`. Kein Ready. Kein Merge durch den Autor. Kein AP-7-S2 / keine Persistenz.
+- **Sobald PR #145 gemergt:** integrierter Domain-Contract. Live-Post-Merge-Verifikation, danach nur ein separat Product-Owner-gegateter AP-7-S2 Persistence/Identity/RLS-Vorschlag. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
 
 AP-5-S3/S4/S5 bleiben normale Technical-Lead-Gates innerhalb Gate 0, nicht automatisch gestartet und nicht Product-Owner-gated. S3–S5 nicht aus dieser Liste automatisch ableiten.
 

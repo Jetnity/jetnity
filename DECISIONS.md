@@ -4711,6 +4711,64 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 **Nachtrag, 28. August 2026 – Review-Fix `5455299179`.** Gate 0 definiert kein trip-weites `chosenCredentialOptionRef`. Punkt 8 präzisiert den kontext-/evaluations-scharfen späteren Entscheidungsvertrag. `ARCHITECTURE.md` führt AP-5-S2 als integriert; das ändert ADR-0186 nicht. Keine Runtime.
 
+**Nachtrag, 28. August 2026 – Product-Owner-Freigabe + AP-7-S1.** Der Product Owner hat Dual-Authority ausdrücklich freigegeben (`docs/AP7_DUAL_AUTHORITY_PRODUCT_OWNER_APPROVAL_2026-08-28.md`). Das supersediert den reinen Empfehlungsstatus von Punkt 2 für die Architekturwahl. Es autorisiert **nicht** Production-Migration, RLS/Identity, sensible Dokumentpayloads oder Live-Links. Der erste Implementierungsslice ist der shared Domain-Contract (ADR-0187 / Draft-PR #145): reine Validierung/Projektion, kein Schema. ADR-0102/0117 bleiben Current Truth für Persistenz, bis ein späterer Persistence-ADR sie ausdrücklich nachfolgt.
+
+---
+
+## ADR-0187 – AP-7-S1 Dual-Authority Domain Contract, keine Persistenz
+
+**Datum:** 28. August 2026  
+**Status:** Implementierungs-ADR für den shared Domain-Contract auf Draft-PR #145. **Keine Production-Migration. Kein Schema. Kein RLS-Write. Kein Ready/Merge durch den Autor.**
+
+**Entscheidung:**
+
+1. Dual-Authority ist die verbindliche Architektur (Product-Owner-Freigabe vom 28. August 2026). Account Registry hält wiederverwendbare aktuelle Identität/Fakten. Der Trip-Snapshot bleibt die einzige Current Truth einer konkreten Reise.
+2. Der erste Slice ist ein shared, persistenzfreier Domain-Contract in `lib/traveller/account-registry.ts`. Er erzeugt kein zweites Traveller-Modell: semantische Felder, Länderprüfung und Limits bleiben Foundation E (`TripTraveller*`, `TRAVELLER_CONTEXT_GRENZEN`, `landescodeLesen`).
+3. Registry-Identität ist UUID-backed für `id` **und** `clientRef` (Person, Citizenship, Document). Positions- und faktische Refs (`traveller:N`, `person:0`, `document:passport:CH`) sind ungültig.
+4. Citizenships und Documents bleiben first-class Arrays. Die Document↔Citizenship-Relation ist nur das explizite `citizenshipClientRef`. Issuer, Residence, Locale, Sprache oder Abflugland dürfen keine Citizenship erzeugen. Fehlt die Relation, bleibt sie `null`.
+5. Lesen ist fail-closed: doppelte oder baumelnde Refs, Limit-Verletzungen, ungültige Länder-/Dokumentwerte, Legacy-Singularfelder, Default-/Chosen-Credential-Felder und sensible Schlüssel werden abgelehnt statt still korrigiert.
+6. Die Projektion erzeugt einen trip-owned Snapshot nur aus expliziter Materialisierung (trip-eigene UUIDs + `jetzt`). Registry-Identität und Registry-Zeitstempel werden nicht kopiert. Snapshot-`id`/`clientRef` müssen zum gesamten Registry-Identitätsuniversum disjunkt sein (Parent + alle Citizenship-/Document-`id`/`clientRef`), nicht nur zur jeweiligen Quellzeile. Kein `new Date()`-Fallback. Document↔Citizenship wird remappt. Spätere Mutation der Quelle darf den Snapshot nicht über gemeinsame Objekt-/Array-Referenzen ändern.
+7. `travellerLegacyLesen` und `credentialOptionsAus` bleiben Guest-/Readiness-Pfade. Sie sind nicht die Account-Registry-Authority.
+8. Dieser ADR autorisiert keine Tabelle, Policy, GRANT/REVOKE, SECURITY-DEFINER-Funktion, Migration, UI/CRUD, Guest→Registry-Import oder AP-7-S2.
+
+**Kontext:** Gate 0 / ADR-0186 empfahl Dual-Authority und verbot Live-Links. Der Product Owner hat die Architektur freigegeben, die Identity-/RLS-/Production-Grenze aber getrennt gehalten. S1 macht den Vertrag im Code festhaltbar, bevor irgendjemand Persistenz raten kann.
+
+**Alternativen:**
+
+1. *Nur Docs, kein Code.* Zu schwach: spätere Web/Native/API-Slices könnten wieder auf `documents[0]` oder Live-Authority fallen.
+2. *Registry-Typen als zweite, abweichende Feldmenge.* Erzeugt ein Schattenmodell und bricht Foundation E.
+3. *`travellerLegacyLesen` wiederverwenden.* Würde Legacy-Singular ableiten, Limits abschneiden und dangling Refs auf `null` setzen — das ist Raten.
+4. *Schema/RLS jetzt.* Verboten: separates Product-Owner-Gate.
+
+**Begründung:** Der Vertrag muss strukturell unabhängig und fail-closed sein, damit späterer Persistenz- oder UI-Code nicht versehentlich Account-Identität zur Trip-Wahrheit macht. Kleinster kohärenter Slice ohne Schema.
+
+**Konsequenzen:**
+
+- Evidence: `docs/AP7_S1_DUAL_AUTHORITY_DOMAIN_CONTRACT_STATUS_2026-08-28.md` und Handoff/Self-Review desselben Datums.
+- Persistence bleibt hinter einem späteren ADR + Product-Owner Identity-/RLS-/Migrations-Gate.
+- AP-5-S3/S4/S5, AP-6, C2, TW-8, Native-Runtime und Provider-live bleiben unberührt.
+- Autor-Agent stoppt auf Draft-PR #145 für unabhängigen Technical-Lead-Review. Self-Review ist kein PASS.
+
+**Nachtrag, 28. August 2026 – Review-Fix `5455673104`.** Der Domain-Contract wurde gegen den Exact Head `c88ac2e3` nachgeschärft:
+
+1. `AccountRegistryTraveller` trägt Fakten unter `facts` und ist compile-zeitlich nicht als `TripTraveller` zuweisbar.
+2. Projektion materialisiert trip-eigene UUID-Identitäten aus explizitem Kontext; Registry-`id`/`clientRef` werden nicht kopiert. Document↔Citizenship wird remappt.
+3. Snapshot-Zeitstempel für Traveller/Citizenship/Document sind `jetzt`, nicht Registry-Metadaten.
+4. `authority === 'account_registry'` ist Pflicht. Flache Trip-Form wird nicht zur Registry befördert.
+5. Registry-`id` und `clientRef` sind UUID-backed, nicht positions- oder faktisch abgeleitet.
+6. Kein Wanduhr-Fallback. Materialisierung ohne `jetzt` ist fail-closed.
+
+Kein Schema. Kein Ready/Merge. Neuer Head invalidiert `c88ac2e3` und `ed8f79b4`.
+
+**Nachtrag, 28. August 2026 – Review-Fix `5455755549`.** Zwei verbliebene Blocker gegen Head `ce5b7e70`:
+
+1. Snapshot-Identität ist zum gesamten Registry-Universum disjunkt. Cross-Entity- und id↔clientRef-Kollisionen sind fail-closed. Snapshot-globale Eindeutigkeit bleibt.
+2. Canonical Continuity (`JETNITY_START_HERE.md`, Handoff, Active Work, Roadmap, Status) ist self-expiring: solange #145 offen → TL-Re-Review/Ready/Merge only; nach Merge → integrierter Domain-Contract, kein automatisches AP-7-S2, Live-Post-Merge-Verifikation, dann nur ein separat Product-Owner-gegateter Persistence/Identity/RLS-Vorschlag. Kein erfundener Merge-SHA. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
+
+Kein Schema. Kein Ready/Merge. Neuer Head invalidiert `ce5b7e70` und `fbb1ec8d`.
+
+**Nachtrag, 28. August 2026 – Review-Fix `5455836506`.** Continuity-only gegen Head `e9f96e79`: residual unconditional `#145 DRAFT/AKTIV` und unguarded `## 10. Nächster Schritt` in `docs/ACTIVE_WORK_STATUS.md` sind jetzt dual-state. Domain-Contract unverändert. Kein erfundener Merge-SHA. Neuer Head invalidiert `e9f96e79`.
+
 ---
 
 ## Offene Widersprüche

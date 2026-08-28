@@ -76,7 +76,7 @@ Was aus PR #39 **weiterhin fachlich gilt** und hier übernommen wird, weil aktue
 - AP-1 ist Zuhause, kein Workspace-Klon;
 - AP-3 leitet Lebenslage ab und schreibt sie nicht;
 - AP-4 war der einzige `trips.status`-Write; das ist erledigt;
-- AP-7 bleibt hinter Shared-Contract + Product-Owner;
+- AP-7 Dual-Authority ist product-owner-freigegeben; Persistenz/RLS/Production bleiben extra gegated;
 - kein Default-Pass / keine erfundene Citizenship;
 - Marketing darf keine zweite Consent-/Account-Wahrheit erzeugen;
 - AP-12 darf `payments` nicht als Consumer-Entitlement wiederverwenden;
@@ -225,7 +225,7 @@ Ausschließlich trip-scoped:
 - `trips.travellers` ist Kopfzahl 1–20, keine Identität
 - P2-TA-04 C1 (Issue #122) härtet den trip-scoped Write-Contract; das ist **kein** AP-5- und **kein** AP-7-Start
 
-Account-Traveller-Registry: **missing / gated (AP-7)**.
+Account-Traveller-Registry: Dual-Authority freigegeben; S1 Domain-Contract self-expiring auf Draft-PR #145; Persistenz/UI weiter gated.
 
 ### 5.4 Guest → Account
 
@@ -322,14 +322,14 @@ Jeder Slice braucht vor Start einen eigenen Technical-Lead-Task, einen frischen 
 
 | Feld | Wert |
 | --- | --- |
-| Produktziel | Accountweite Wiederverwendung von Traveller-/Citizenship-/Document-Kontext **nur wenn** Product Owner und ein neuer ADR das ausdrücklich wollen. |
-| Bereits vorhanden | nur trip-scoped Foundation E. UX darf heute sagen: „gilt nur für diese Reise“. |
-| Fehlt | der gesamte Registry-Contract. Es existiert kein Tabellenentwurf auf `main`. |
+| Produktziel | Accountweite Wiederverwendung von Traveller-/Citizenship-/Document-Kontext unter Dual-Authority: Registry = wiederverwendbare Fakten, Snapshot = einzige Trip-Current-Truth. |
+| Bereits vorhanden | trip-scoped Foundation E; Gate 0 / ADR-0186 integriert (PR #144); Product-Owner Dual-Authority-Freigabe; AP-7-S1 Domain-Contract self-expiring auf Draft-PR #145 (ADR-0187). |
+| Fehlt | Persistenz, RLS/Identity, UI/CRUD, Guest→Registry-Import. Es existiert kein Tabellenentwurf auf `main`. |
 | Shared Contracts | Traveller, Identity, RLS/Ownership, Guest→Account, Readiness-Stale, Participation. **Technical-Lead-kontrolliert.** |
 | Security / Privacy | besonders sensibles Gate, sobald Nummern/Scans/MRZ/Biometrie auch nur diskutiert werden. Default bleibt: nicht speichern. |
 | Auth / AAL | nicht als Vehikel für AAL-Umbau. |
 | Identity / RLS | ja, unvermeidbar, falls der Slice jemals startet. |
-| Traveller | Die eigentliche Entscheidung bleibt: bleibt Current Truth trip-scoped, oder kommt Wiederverwendung? Gate 0 (Draft-PR #144 / ADR-0186) empfiehlt **nicht**, Current Truth still auf account-scoped zu verschieben. Empfohlen wäre Dual-Authority: Registry zur Wiederverwendung, Snapshot als einzige Trip-Truth. Das ist keine PO-Freigabe. |
+| Traveller | Dual-Authority ist freigegeben. Current Truth einer konkreten Reise bleibt der Snapshot. Registry-Edits schreiben bestehende Reisen nicht um. |
 | Guest→Account | Opt-in, kein stilles Profil aus Gastentwurf. |
 | Admin | keine Support-Registry-Nebenwahrheit. |
 | Growth | Citizenship/Dokumente sind kein Werbeprofil. |
@@ -341,15 +341,11 @@ Jeder Slice braucht vor Start einen eigenen Technical-Lead-Task, einen frischen 
 | Tests / Evidence | erst nach ADR: Cross-Trip-Leak-Tests, Guest-Opt-in, Stale-Recheck nur betroffener Domains, Multi-Citizenship-Adversarial. |
 | Reihenfolge | nicht vor AP-5/AP-6a. Nicht automatisch nach AP-6b. Erst nach ausdrücklicher Produktentscheidung. |
 
-Dieser Plan **erfindet keinen Registry-Vertrag**. Offene Fragen bleiben bis zur ausdrücklichen Product-Owner-Entscheidung offen:
+**Gate-0-Nachtrag, 28. August 2026 (PR #144, ADR-0186):** Rekonstruktion und Empfehlung Dual-Authority sind integrierte Architecture-Evidence.
 
-1. Bleibt Current Truth trip-scoped?
-2. Falls Wiederverwendung: Kopie in `party[]` oder Live-Referenz?
-3. Delete/Detach/Archive einer Identität unabhängig vom Trip?
-4. Guest-Opt-in?
-5. Welche Felder sind überhaupt account-fähig ohne sensibles Gate?
+**Product-Owner-Nachtrag, 28. August 2026:** Dual-Authority ist freigegeben. Die fünf Architekturfragen sind entschieden: (1) Trip-Current-Truth bleibt der Snapshot; (2) Kopie/Snapshot, keine Live-Referenz; (3) Delete/Archive der Registry lässt historischen Snapshot stehen; (4) Registry-Import opt-in, getrennt vom heutigen automatischen Guest→Trip-Copy; (5) dieselben datensparsamen Felder wie Foundation E, keine Nummern/Scans/MRZ/Biometrie. Kein trip-weites `chosenCredentialOptionRef`.
 
-**Gate-0-Nachtrag, 28. August 2026 (Draft-PR #144, ADR-0186):** Rekonstruktion und Empfehlung Dual-Authority liegen vor. Das ist **keine** Product-Owner-Freigabe und **kein** Runtime-Start. Gate 0 beantwortet die fünf Fragen nur als Empfehlung: (1) Trip-Current-Truth bleibt der Snapshot; (2) Kopie/Snapshot, keine Live-Referenz; (3) Delete/Archive der Registry lässt historischen Snapshot stehen; (4) Registry-Import opt-in, getrennt vom heutigen automatischen Guest→Trip-Copy; (5) dieselben datensparsamen Felder wie Foundation E, keine Nummern/Scans/MRZ/Biometrie. Review-Fix `5455299179`: kein trip-weites `chosenCredentialOptionRef`; Credential-Optionen bleiben first-class; eine spätere explizite Wahl braucht einen eigenen kontext-/evaluations-scharfen Vertrag oder bleibt unspezifiziert.
+**S1-Nachtrag, 28. August 2026 (Draft-PR #145, ADR-0187, self-expiring):** Der shared Domain-Contract liegt in `lib/traveller/account-registry.ts`. Das ist **kein** Schema, **keine** UI und **kein** Persistence-Start. Solange #145 offen: Transport/Review only. Sobald #145 gemergt: integrierter Domain-Contract; AP-7-S2 / Production-Migration / Identity / RLS bleiben separat gegated und starten nicht automatisch. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
 
 ### AP-8 – Reiseprofil / Präferenzen
 
