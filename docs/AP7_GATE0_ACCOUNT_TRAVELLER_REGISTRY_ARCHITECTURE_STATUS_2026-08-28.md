@@ -50,10 +50,9 @@ Post-PR-#143-Evidence laut Task (nicht in diesem Run neu gegen Actions/Vercel ve
 | Feld | Wert |
 | --- | --- |
 | `origin/main` Re-Fetch | `1947285cc4d7d6fb98c77ec60a04c96f96f3f483` – 0 behind |
-| Remote-Task-Alignment | `8eb272cee7d89f6d6cfc11aafd4495320d22324f` |
-| Authoring-Head | `38af535a5349a2e8cc590826e7c2e77375e66a9b` |
-| Rebase-Stamp | `8024de597e148628ed89795beb5501cac3e62ba0` |
-| Review-Head | der SHA-Korrektur-Commit nach Rebase auf `8eb272ce`; live an PR #144 lesen |
+| Prior reviewed Head | `a0ef801fd7fa39685fab9a1fe69d411f736ea78c` – **invalidated** by this review-fix |
+| Review-Fix Head | `5367f084bf9c9aee7103b0ef0f1b9323c6e9011c` – 8 / 0 vor diesem Stamp |
+| Review-Head | Stamp-Commit nach `5367f084`; live an PR #144 lesen |
 | Merge-Base | `1947285c` |
 
 Ein weiterer Continuity-Stamp nach dem Review-Head invalidiert dieses Gate.
