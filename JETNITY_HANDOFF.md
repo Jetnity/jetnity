@@ -38,7 +38,7 @@ Zuerst vollständig lesen:
 18. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
 19. danach alle für den betrachteten Workstream relevanten Slice-Tasks, Statusdateien, Handoffs, ADRs und Checkpoints.
 
-Hinweis: Ältere Gate-0- und S1-Authoring-Blöcke in Statusdateien sind historische Evidence. AP-5-S1 / Issue #132 / PR #133 ist integriert. Der nächste Account-Schritt ist AP-5-S2 nur nach Product-Owner-Autorisierung.
+Hinweis: Ältere Gate-0- und S1-Authoring-Blöcke in Statusdateien sind historische Evidence. AP-5-S1 / Issue #132 / PR #133 ist integriert. AP-5-S2 ist nach S1 der nächste empfohlene Account-Slice, startet aber nicht automatisch; er unterliegt dem normalen Technical-Lead-Gate gemäß integriertem AP-5 Gate 0. Product-Owner-Sondergates bleiben AP-5-P1–P4 sowie separate P5/C2-Gates.
 
 Danach live prüfen: `main`, offene PRs/Drafts, Branches, Merge-Base/Ahead/Behind, tatsächliche Diffs, Review-Threads, Actions, Vercel, relevante Supabase-/Production-Grenzen und P0/P1/P2/P3-Risiken.
 
