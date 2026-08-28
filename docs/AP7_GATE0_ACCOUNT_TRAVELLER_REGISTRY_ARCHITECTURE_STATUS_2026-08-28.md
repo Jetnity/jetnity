@@ -29,10 +29,12 @@ Dieser Agent behauptet nicht, die sichtbare UI sei umbenannt.
 | --- | --- |
 | Repository | `Jetnity/jetnity` |
 | Task-Baseline `origin/main` | `1947285cc4d7d6fb98c77ec60a04c96f96f3f483` – Merge PR #143 |
-| `origin/main` vor diesem Authoring | erneut geholt; SHA in §1.1 |
+| `origin/main` nach Re-Fetch vor Stamp | `1947285cc4d7d6fb98c77ec60a04c96f96f3f483` |
 | Branch-Start vor Authoring | `a172ed795333e54437395a2630b940cc0ad5410a` – naming-gate supersession |
 | Merge-Base gegen `origin/main` | `1947285c` |
 | Ahead / Behind vor Authoring | **3 / 0** (`eeae127d`, `e6743f3e`, `a172ed79`) |
+| Authoring-Head | `e0a4e1293ab8e8b4912a2fa5b37c8eb072cd2044` |
+| Ahead / Behind nach Authoring, vor Stamp | **4 / 0** |
 | Draft-PR | #144 OPEN / Draft |
 | `main` Branch Protection | zuletzt `protected=false`; dieser Slice ändert das nicht |
 | Supabase in diesem Run | **nicht** abgefragt, **nicht** mutiert |
@@ -45,7 +47,14 @@ Post-PR-#143-Evidence laut Task (nicht in diesem Run neu gegen Actions/Vercel ve
 
 ### 1.1 Exact Head dieses Stamps
 
-Der Authoring-Commit dieses Dokuments erzeugt den zu reviewenden Head. Nach dem Commit stehen SHA, Ahead/Behind und Re-Fetch von `origin/main` im Handoff. Ein späterer Continuity-Stamp invalidiert dieses Gate.
+| Feld | Wert |
+| --- | --- |
+| `origin/main` Re-Fetch | `1947285cc4d7d6fb98c77ec60a04c96f96f3f483` – 0 behind |
+| Authoring-Head | `e0a4e1293ab8e8b4912a2fa5b37c8eb072cd2044` |
+| Review-Head | der unmittelbar folgende Exact-Head-Stamp; live an PR #144 lesen |
+| Merge-Base | `1947285c` |
+
+Ein weiterer Continuity-Stamp nach dem Review-Head invalidiert dieses Gate.
 
 ## 2. Task / Scope / Non-Scope
 

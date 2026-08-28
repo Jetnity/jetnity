@@ -49,12 +49,13 @@ Vor der finalen Übergabe erneut `origin/main` geholt.
 | Fakt | Wert |
 | --- | --- |
 | Task-Baseline `origin/main` | `1947285cc4d7d6fb98c77ec60a04c96f96f3f483` |
-| `origin/main` bei Handoff | nach Re-Fetch im Authoring; SHA nach Stamp im Exact-Head-Abschnitt |
+| `origin/main` Re-Fetch vor Stamp | `1947285cc4d7d6fb98c77ec60a04c96f96f3f483` – **0 behind** |
 | Branch | `audit/ap7-account-traveller-registry-gate0-2026-08-28` |
 | Draft-PR | #144 OPEN Draft |
 | Merge-Base | `1947285c` |
 | Ahead / Behind vor Authoring | 3 / 0 |
-| Exact Head | der Commit dieses Docs-Stamps; nach Push live am PR prüfen |
+| Authoring-Head | `e0a4e1293ab8e8b4912a2fa5b37c8eb072cd2044` – 4 / 0 |
+| Exact / Review-Head | Stamp-Commit unmittelbar nach `e0a4e129`; live an PR #144 prüfen |
 | Branch Protection | unverändert; letzte Evidence `protected=false` |
 | Supabase | nicht live abgefragt, nicht mutiert |
 
