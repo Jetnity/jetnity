@@ -1,9 +1,13 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **Kanonischer Post-PR-#126/#127-Übergabestand plus AP-5 Gate 0 auf Issue #128. C1 ist integriert. C2 ist nicht gestartet. AP-5-Runtime ist nicht gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **Kanonischer Post-PR-#129/#130-Übergabestand. AP-5 Gate 0 ist integriert; Issue #128 ist CLOSED / completed. P2-TA-04 C1 ist integriert. C2 und AP-5-Runtime sind nicht gestartet. Kein automatischer Folgeslice. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
+
+Aktuellster versionierter Post-Merge-Checkpoint für den Account-Workstream:
+
+- `docs/CHATGPT_PR129_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
 
 Die ausführliche vorherige Fassung dieses Handoffs bleibt byte-identisch als historische Evidence erhalten unter:
 
@@ -26,30 +30,37 @@ Zuerst vollständig lesen:
 11. `docs/JETNITY_BINDING_BUILD_ORDER.md`
 12. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
 13. `JETNITY_HANDOFF.md`
-14. `docs/ACTIVE_WORK_STATUS.md`
-15. `docs/CHATGPT_PR113_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
-16. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_STATUS_2026-08-27.md`
-17. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
-18. danach alle für den betrachteten Workstream relevanten Slice-Tasks, Statusdateien, Handoffs, ADRs und Checkpoints.
+14. `docs/CHATGPT_PR129_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+15. `docs/ACTIVE_WORK_STATUS.md`
+16. `docs/CHATGPT_PR113_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
+17. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_STATUS_2026-08-27.md`
+18. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
+19. danach alle für den betrachteten Workstream relevanten Slice-Tasks, Statusdateien, Handoffs, ADRs und Checkpoints.
+
+Hinweis: Der oberste AP-5-Gate-0-Arbeitsblock in `docs/ACTIVE_WORK_STATUS.md` kann noch den Authoring-/Draft-Zustand vor PR #129 enthalten. Für den Abschluss von Gate 0 ist der spätere Post-Merge-Checkpoint oben maßgeblich; anschließend immer live verifizieren.
 
 Danach live prüfen: `main`, offene PRs/Drafts, Branches, Merge-Base/Ahead/Behind, tatsächliche Diffs, Review-Threads, Actions, Vercel, relevante Supabase-/Production-Grenzen und P0/P1/P2/P3-Risiken.
 
-## 2. Letzter verifizierter Übergabepunkt vor diesem Continuity-PR
+## 2. Letzter verifizierter Account-Übergabepunkt
 
-Unmittelbar vor Erstellung dieses docs-only Continuity-Branches wurde live verifiziert:
+AP-5 Gate 0 wurde nach unabhängigem Technical-Lead-Re-Review integriert:
 
-- `main`: `0d8842af99e5645dc3a6c903e19000458122f440`
-- PR #113: **MERGED**
-- PR-#113 reviewed Exact Head: `928215a2c6c4d4ce914f12ba1bd88dbcab8f548b`
-- PR-#113 Merge: `286d26fec2eed87e1227ebb2cf7327f50e8f5f1a`
-- Issue #112: **CLOSED / completed**
-- PR #114: **MERGED**, docs-only Post-Merge-Continuity
-- PR-#114 Merge / damaliger `main`: `0d8842af99e5645dc3a6c903e19000458122f440`
-- Post-Merge GitHub Actions Run `33121881986`: **SUCCESS**
-- Post-Merge Vercel Production Deployment `dpl_5zb67qYv6i5jT23AToSfuEA5sA4c`: **READY** auf exakt `0d8842af99e5645dc3a6c903e19000458122f440`
-- `main` Branch Protection: zuletzt live `protected=false`
+- PR #129: **MERGED**
+- Reviewed Exact Head: `1bf49fe3f870f00a1f228b81a4ee69c66e39307f`
+- Review-Fix-Ausgangspunkt: Technical-Lead Review `5049870788`
+- Exact-Head GitHub Actions Run `33160582183`: **SUCCESS**
+- Exact-Head Vercel Preview `dpl_EG7RA6z95ijkxCSst4KUFHfLdJpY`: **READY**
+- PR-#129 Merge: `a0eec330eac54a78c8743a72c5ef3ddc82a0cb80`
+- Post-Merge GitHub Actions Run `33161197754`: **SUCCESS** auf exakt `a0eec330...`
+- Post-Merge Vercel Production `dpl_Dra789nLcngJEtuQx7iHB9tYxXt9`: **READY** auf exakt `a0eec330...`
+- PR #130: Post-Merge-Continuity **MERGED**
+- PR-#130 Merge / verifizierter `main`: `db56ec83136808b8d2f2d39e8cbe0e2011c8e53d`
+- Post-Merge GitHub Actions Run `33161605958`: **SUCCESS** auf exakt `db56ec83136808b8d2f2d39e8cbe0e2011c8e53d`
+- Post-Merge Vercel Production `dpl_Gyj6iEdYnFFNUSVrA7QfwWpWNjjg`: **READY** auf exakt `db56ec83136808b8d2f2d39e8cbe0e2011c8e53d`
+- Issue #128: **CLOSED / completed**
+- `main` Branch Protection: weiterhin live `protected=false`
 
-Diese Werte sind Start-Evidence. Nach diesem Continuity-PR wird `main` naturgemäß einen neueren Merge-SHA erhalten; deshalb immer live verifizieren.
+Diese Werte sind Übergabe-Evidence. Nach jedem weiteren Merge muss `main` erneut live verifiziert werden.
 
 ## 3. Aktuell integrierte Produktlinie
 
@@ -88,10 +99,14 @@ Verbindliche Wahrheit:
 - P2-TA-06 / PR #113 integriert
 - Issue #112 CLOSED / completed
 - `travellerNormalisieren()` kollabiert mehrere Dokumente nicht mehr auf `documents[0]`
+- P2-TA-03 / PR #117 integriert; `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` ist der kanonische AP-5–AP-12-Plan
+- P2-TA-04 Gate 0 / PR #120 integriert
+- P2-TA-04 C1 / PR #126 integriert; Production C1 ist als `20260828015304` live verifiziert und darf nicht erneut angewendet werden
+- AP-5 Gate 0 / PR #129 integriert; Issue #128 CLOSED / completed
 
-AP-5 wird **nicht automatisch** gestartet. AP-7 / Account-Traveller-Registry bleibt separat und gated.
+AP-5-Runtime wird **nicht automatisch** gestartet. AP-7 / Account-Traveller-Registry bleibt separat und gated.
 
-P2-TA-03 rekonstruiert den kanonischen Plan `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` auf Draft-PR #117 / Issue #116. Die historische Datei auf PR #39 ist keine Current Truth. P2-TA-03 ist Audit/Architecture/Continuity only.
+Der integrierte AP-5-Gate-0-Vertrag trennt insbesondere Password Recovery von signed-in Reauthentication, hält Session-/Gerätelisting ohne unterstützte User-API ehrlich auf `unsupported`, dokumentiert den heutigen globalen `signOut()`-Default und hält verified-factor `mfa.unenroll` an der serverseitigen AAL2-Anforderung. Details: `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, ADR-0182 und der PR-#129-Post-Merge-Checkpoint.
 
 ### Provider / Commercial Provenance
 
@@ -171,7 +186,7 @@ Nach Live-Rekonstruktion neu einordnen:
 - Provider S5-B nicht gestartet
 - TW-8 gated
 - TW-9 nicht automatisch starten
-- AP-5+ nicht automatisch starten
+- AP-5-Runtime nicht automatisch starten
 - AP-7 gated
 - weitere QS-/Supabase-Security-/Performance-Advisories
 - Project-Sanitation PR #88 bleibt non-destructive Evidence; kein Cleanup/Branch-/Cloud-Delete automatisch
@@ -193,34 +208,29 @@ Exakte Basis-Anzeigenamen bleiben verbindlich:
 
 Zuletzt abgeschlossene Account-/Traveller-Generation:
 
-- `Cursor-Agent: Account plattform audit vorbereitung 4`
-- P2-TA-06 / Issue #112 / PR #113 abgeschlossen
-- nicht automatisch weiterführen
-
-Aktuelle Account-Generation:
-
 - `Cursor-Agent: Account plattform audit vorbereitung 8`
-- AP-5 Gate 0 / Issue #128
-- Audit/Architecture only
-- Draft; kein Ready, kein Merge, keine AP-5-Runtime
+- AP-5 Gate 0 / Issue #128 / PR #129 abgeschlossen
+- Audit/Architecture only; keine AP-5-Runtime
+- nicht für eine neue logische Arbeitseinheit wiederverwenden
 
 Generation 7 (P2-TA-04 C1 / PR #126) ist abgeschlossen und nicht wiederzuverwenden.
 Generation 6 (P2-TA-04 Gate 0 / PR #120) ist abgeschlossen und nicht wiederzuverwenden.
 Generation 5 (P2-TA-03 / PR #117) ist abgeschlossen und nicht wiederzuverwenden.
+Generation 4 (P2-TA-06 / PR #113) ist abgeschlossen und nicht wiederzuverwenden.
 
-Neue logische Arbeitseinheit → Rotation Standard live prüfen und frische Session verwenden, wenn vorgeschrieben.
+Es gibt aktuell **keine automatisch gestartete neue Account-Generation**. Falls nach erneuter Live-Rekonstruktion ein neuer Account-Slice tatsächlich freigegeben und sinnvoll ist, Rotation Standard erneut prüfen; die nächste frische Account-Generation wäre voraussichtlich `Cursor-Agent: Account plattform audit vorbereitung 9`. Das ist keine Startfreigabe.
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
 **Kein Produkt-Folgeslice ist durch diesen Handoff freigegeben.**
 
-AP-5 Gate 0 liegt als Audit/Architecture-Slice auf Issue #128. Der Docs-Truth-Fix für Review `5049870788` ist auf Draft-PR #129; STOPP für TL-Re-Review. Das ist **kein** AP-5-Runtime- und **kein** C2-Start. P2-TA-04 C1 ist integriert (PR #126). Production C1 ist als `20260828015304` angewendet und live verifiziert. Nicht erneut anwenden.
+AP-5 Gate 0 ist abgeschlossen und integriert. Issue #128 ist CLOSED / completed. PR #129 und der Post-Merge-Continuity-PR #130 sind integriert. Es wurde **keine AP-5-Runtime** gestartet. P2-TA-04 C1 bleibt integriert; Production C1 `20260828015304` nicht erneut anwenden.
 
-Der nächste Chat / Technical Lead muss zuerst live rekonstruieren und erst danach entscheiden, welcher Slice nach Binding Build Order tatsächlich sinnvoll und zulässig ist.
+Der nächste Chat / Technical Lead muss zuerst live rekonstruieren und danach Binding Build Order, Abhängigkeiten, Parallelität und Special Gates neu bewerten, bevor ein nächster Slice gewählt wird.
 
 Nicht automatisch starten:
 
-- AP-5
+- AP-5 Runtime / AP-5-S1 bis S5
 - AP-7
 - TW-8
 - TW-9
@@ -235,4 +245,4 @@ Nicht automatisch starten:
 
 ## 9. Continuity
 
-Kein wesentlicher Fortschritt darf nur im Chat existieren. Neue Chats und Agenten beginnen mit den kanonischen Dateien, behandeln ältere Checkpoints/PR-Bodies als zeitgebundene Evidence und verifizieren danach den Live-Zustand selbst.
+Kein wesentlicher Fortschritt darf nur im Chat existieren. Neue Chats und Agenten beginnen mit den kanonischen Dateien und dem neuesten Post-Merge-Checkpoint, behandeln ältere Checkpoints/PR-Bodies als zeitgebundene Evidence und verifizieren danach den Live-Zustand selbst.
