@@ -41,6 +41,13 @@ describe('AP-5-S1 Security-UI Semantik', () => {
     assert.equal(dialog.includes('securityFehlerEinordnen'), true)
   })
 
+  test('listFactors-Normalisierung folgt factor_type, nicht type', () => {
+    assert.equal(security.includes('totpFaktorenAusAntwort'), true)
+    assert.equal(security.includes('MfaListFactorsData'), true)
+    assert.equal(security.includes('faktor.type === "totp"'), false)
+    assert.equal(security.includes('factor_type'), false)
+  })
+
   test('TOTP-Authority bleibt ohne Step-up', () => {
     assert.equal(security.includes('unenroll'), true)
     assert.equal(security.includes('enroll'), true)

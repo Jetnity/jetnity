@@ -34,6 +34,11 @@ import {
   type SecurityFehlerVorgang,
 } from "@/lib/auth/account-security-fehler";
 import {
+  totpFaktorenAusAntwort,
+  type MfaListFactorsData,
+  type TotpFaktorAnzeige,
+} from "@/lib/auth/account-security-faktoren";
+import {
   darfPasskeyHinzufuegen,
   darfTotpEinrichten,
   passkeyBrowserHinweis,
@@ -49,13 +54,6 @@ import {
 
 type BrowserSupabase = SbClient<Database>;
 
-type FactorItem = {
-  id: string;
-  friendly_name?: string | null;
-  created_at?: string | null;
-  status?: string | null;
-};
-
 type AuthLikeError = {
   message?: string;
   code?: string;
@@ -64,7 +62,7 @@ type AuthLikeError = {
 
 type MfaClient = {
   listFactors?: () => Promise<{
-    data: { all?: unknown[]; totp?: unknown[]; factors?: unknown[] } | null;
+    data: MfaListFactorsData | null;
     error: AuthLikeError | null;
   }>;
   enroll?: (args: { factorType: "totp" }) => Promise<{
@@ -94,12 +92,6 @@ function mfaClient(auth: { mfa?: MfaClient }): MfaClient | null {
   return auth.mfa ?? null;
 }
 
-function istTotpFaktor(wert: unknown): wert is FactorItem & { type?: string } {
-  if (!wert || typeof wert !== "object") return false;
-  const faktor = wert as { id?: unknown; type?: unknown };
-  return typeof faktor.id === "string" && faktor.type === "totp";
-}
-
 function nutzerFehler(vorgang: SecurityFehlerVorgang, fehler: unknown): string {
   const gelesen = securityFehlerAusUnbekannt(fehler);
   return securityFehlerEinordnen({
@@ -120,7 +112,7 @@ export default function SecurityMFA({
   const [listFactorsVorhanden, setListFactorsVorhanden] = React.useState(true);
   const [listFehler, setListFehler] = React.useState(false);
 
-  const [totpFactors, setTotpFactors] = React.useState<FactorItem[]>([]);
+  const [totpFactors, setTotpFactors] = React.useState<TotpFaktorAnzeige[]>([]);
   const [enrollQr, setEnrollQr] = React.useState<string | null>(null);
   const [factorId, setFactorId] = React.useState<string | null>(null);
   const [code, setCode] = React.useState("");
@@ -161,14 +153,7 @@ export default function SecurityMFA({
       const { data, error } = await mfa.listFactors();
       if (error) throw error;
 
-      const list = (data?.all ?? data?.totp ?? data?.factors ?? []) as unknown[];
-      const totps: FactorItem[] = list.filter(istTotpFaktor).map((faktor) => ({
-        id: faktor.id,
-        friendly_name: faktor.friendly_name ?? null,
-        created_at: faktor.created_at ?? null,
-        status: faktor.status ?? null,
-      }));
-      setTotpFactors(totps);
+      setTotpFactors(totpFaktorenAusAntwort(data));
     } catch (err: unknown) {
       setListFehler(true);
       setTotpFactors([]);
