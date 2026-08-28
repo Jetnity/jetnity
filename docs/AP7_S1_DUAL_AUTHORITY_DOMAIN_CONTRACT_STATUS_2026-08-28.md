@@ -27,7 +27,7 @@ This slice does **not** consume the separate Production migration / Identity / R
 | Draft-PR | [#145](https://github.com/Jetnity/jetnity/pull/145) |
 | Reviewed Head invalidiert | `c88ac2e3` (CHANGES REQUIRED `5455673104`) und Stamp `ed8f79b4` |
 | Exact Head | der Commit dieses Review-Fix-Stamps; live am PR #145 prüfen |
-| Ahead / behind `origin/main` | nach finalem Stamp live eintragen |
+| Ahead / behind `origin/main` | **8 / 0** nach diesem Stamp (7 vorher: PO-Approval, Task, feat, Continuity, first stamp, review-fix, review-fix continuity) |
 | Logical Cursor-Agent | `Cursor-Agent: Account plattform audit vorbereitung 12` |
 | Sichtbarer Cursor-Titel | `Dual-authority domain contract` |
 | Cloud-Run | https://cursor.com/agents/bc-6b3a7a55-26fe-41a9-8cf2-b599afe1eda0 |
@@ -103,7 +103,24 @@ Adversarial tests in `lib/traveller/account-registry.test.ts` cover:
 - no citizenship inferred from residence, locale, language, issuer or departure;
 - empty facts stay empty.
 
-Review-fix local S1 tests before stamp: **15/15 pass**. `tsc --noEmit` pass (includes `@ts-expect-error` boundary). Remaining hygiene/full-suite/`next build` are re-run on this head and stamped afterwards. Prior 12/12 + `c88ac2e3` evidence is invalidated.
+Verified on this branch before the final review-fix stamp (`HEAD` was `ce5b7e70379ded725a5f6492207647de035ae390`; this stamp is the review head). Prior 12/12 + `c88ac2e3` / `ed8f79b4` evidence is invalidated.
+
+| Gate | Ergebnis |
+| --- | --- |
+| `node --import tsx --test lib/traveller/account-registry.test.ts` | **15/15 pass** |
+| Related traveller tests (`traveller-kontext`, `traveller-anfrage`, `schema`, `traveller-zuordnung`) | **30/30 pass** |
+| `npm test` | **2456/2456 pass**, 0 fail |
+| `npx tsc --noEmit --pretty false` | pass (includes `@ts-expect-error` Registry↛Trip boundary) |
+| `npx eslint . --max-warnings=0` | pass |
+| `npm run check:dead` | pass (only justified CookieConsent orphan) |
+| `npm run check:exports` | 0 unused exports |
+| `npm run check:deps` | pass |
+| `npm run check:api-schutz` | 12 admin routes, all `requireAdminApi()` |
+| `npm run check:schema-bezug` | pass; no new schema objects |
+| `npm run build` | pass (`next build`) |
+| `origin/main` re-fetch | `bb38aef589f0cdcea1aaf8ddd87d043d0a9f0f05` — **0 behind** |
+
+CI/Vercel on the final head must be live-verified by the independent reviewer. This authoring run does not claim GitHub Actions or Vercel for the stamp commit.
 
 ## 5. Scope / non-scope confirmation
 
