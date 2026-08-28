@@ -53,9 +53,10 @@ Vor der finalen Übergabe erneut `origin/main` geholt.
 | Branch | `audit/ap7-account-traveller-registry-gate0-2026-08-28` |
 | Draft-PR | #144 OPEN Draft |
 | Merge-Base | `1947285c` |
-| Ahead / Behind vor Authoring | 3 / 0 |
-| Authoring-Head | `e0a4e1293ab8e8b4912a2fa5b37c8eb072cd2044` – 4 / 0 |
-| Exact / Review-Head | Stamp-Commit unmittelbar nach `e0a4e129`; live an PR #144 prüfen |
+| Ahead / Behind vor Authoring | 4 / 0 inkl. `8eb272ce` |
+| Authoring-Head | `38af535a5349a2e8cc590826e7c2e77375e66a9b` |
+| Rebase-Stamp | `8024de597e148628ed89795beb5501cac3e62ba0` |
+| Exact / Review-Head | SHA-Korrektur nach Rebase; live an PR #144 prüfen |
 | Branch Protection | unverändert; letzte Evidence `protected=false` |
 | Supabase | nicht live abgefragt, nicht mutiert |
 

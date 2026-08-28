@@ -32,9 +32,9 @@ Dieser Agent behauptet nicht, die sichtbare UI sei umbenannt.
 | `origin/main` nach Re-Fetch vor Stamp | `1947285cc4d7d6fb98c77ec60a04c96f96f3f483` |
 | Branch-Start vor Authoring | `a172ed795333e54437395a2630b940cc0ad5410a` – naming-gate supersession |
 | Merge-Base gegen `origin/main` | `1947285c` |
-| Ahead / Behind vor Authoring | **3 / 0** (`eeae127d`, `e6743f3e`, `a172ed79`) |
-| Authoring-Head | `e0a4e1293ab8e8b4912a2fa5b37c8eb072cd2044` |
-| Ahead / Behind nach Authoring, vor Stamp | **4 / 0** |
+| Ahead / Behind vor Authoring | **4 / 0** inkl. Remote-Commit `8eb272ce` (Task-Namensgate) |
+| Authoring-Head nach Rebase | `38af535a5349a2e8cc590826e7c2e77375e66a9b` |
+| Ahead / Behind nach Authoring, vor SHA-Korrektur | **6 / 0** |
 | Draft-PR | #144 OPEN / Draft |
 | `main` Branch Protection | zuletzt `protected=false`; dieser Slice ändert das nicht |
 | Supabase in diesem Run | **nicht** abgefragt, **nicht** mutiert |
@@ -50,8 +50,10 @@ Post-PR-#143-Evidence laut Task (nicht in diesem Run neu gegen Actions/Vercel ve
 | Feld | Wert |
 | --- | --- |
 | `origin/main` Re-Fetch | `1947285cc4d7d6fb98c77ec60a04c96f96f3f483` – 0 behind |
-| Authoring-Head | `e0a4e1293ab8e8b4912a2fa5b37c8eb072cd2044` |
-| Review-Head | der unmittelbar folgende Exact-Head-Stamp; live an PR #144 lesen |
+| Remote-Task-Alignment | `8eb272cee7d89f6d6cfc11aafd4495320d22324f` |
+| Authoring-Head | `38af535a5349a2e8cc590826e7c2e77375e66a9b` |
+| Rebase-Stamp | `8024de597e148628ed89795beb5501cac3e62ba0` |
+| Review-Head | der SHA-Korrektur-Commit nach Rebase auf `8eb272ce`; live an PR #144 lesen |
 | Merge-Base | `1947285c` |
 
 Ein weiterer Continuity-Stamp nach dem Review-Head invalidiert dieses Gate.
