@@ -332,7 +332,8 @@ Aktueller Account-Status:
 
 Aktueller Quality-/Security-Status:
 
-- `Cursor-Agent: Jetnity framework compatibility 2` ist der aktuelle S2-Slice für Draft-PR #151. Sichtbarer Run-Titel: `Jetnity framework bump`; nicht als umbenannt behauptet. Generation 2 nicht für S3 wiederverwenden.
+- `Cursor-Agent: Account plattform audit vorbereitung 13` ist der aktuelle AP-5-S3-Slice für Draft-PR #156. Keine programmierbare Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 13 nicht für S4/S5 wiederverwenden.
+- `Cursor-Agent: Jetnity framework compatibility 2` ist mit Next 16 S2 / PR #152 auf der Baseline abgeschlossen. Generation 2 nicht wiederverwenden.
 - `Cursor-Agent: Jetnity framework compatibility 1` ist mit PR #150 / S1 abgeschlossen. Generation 1 nicht wiederverwenden.
 - `Cursor-Agent: Jetnity framework security audit 1` ist mit PR #148 abgeschlossen. Generation 1 nicht für einen Implementierungs-Bump wiederverwenden.
 - `Cursor-Agent: Jetnity quality security audit 4` ist mit PR #143 abgeschlossen
@@ -351,7 +352,7 @@ Abgeschlossen / nicht wiederverwenden:
 - Quality/Security Generation 3: Issue #134 / PR #135
 - Quality/Security Generation 2: PR #88 historical only
 
-Generation 12 ist für AP-7-S1 / PR #145 vergeben. Generation 11 nicht wiederverwenden. AP-7-S2 oder AP-5-S3 brauchen eine frische Generation. Das ist **keine automatische Freigabe**.
+Generation 13 ist für AP-5-S3 / Draft-PR #156 vergeben und nicht für S4/S5 wiederzuverwenden. Generation 12 (AP-7-S1 / PR #145) und Generation 11 nicht wiederverwenden. AP-7-S2 braucht eine frische Generation und bleibt Product-Owner-gegatet. Das ist **keine automatische Freigabe**.
 
 Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logische Arbeitseinheit bekommt eine frische nummerierte Session gemäß Rotation Standard.
 
