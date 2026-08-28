@@ -30,7 +30,7 @@ Rekonstruiert live, nicht aus Erinnerung:
 | Remote-Heads | 135 inkl. `main` |
 | Tags | 3 annotated: `archive/jetnity-v1-main`, `archive/pre-1-1b-alt-ui`, `archive/pre-1-4b-legacy-datenbank` |
 | `main` Branch Protection | `protected=false` |
-| Parallel | Issue #132 / Draft-PR #133 durch `Account plattform audit vorbereitung 9` |
+| Parallel damals | Issue #132 / Draft-PR #133 – **historisch**. Heute MERGED / CLOSED / completed |
 
 ### 2.2 Review-Fix nach PR #133 (aktuell)
 
@@ -100,38 +100,37 @@ PR-Close und Branch-Delete sind **getrennte Operationen**. Ein PR-Close löscht 
 
 | Klasse | Bedeutung |
 | --- | --- |
-| `PR-ACTIVE` | laufender, nicht superseded Workstream-PR |
-| `PR-MERGED` | bereits integriert |
-| `PR-CLOSE-SAFE` | PR darf später geschlossen werden; Unique Files leben auf dem Branch weiter, bis ein eigener Branch-Schritt sie sichert oder der Branch selbst delete-safe ist |
-| `PR-KEEP-FUTURE` | Unique zukünftige Produktarbeit; PR nicht beiläufig schliessen |
-| `PR-NEEDS-TL-DECISION` | Unique Content oder Owner unklar; Technical Lead entscheidet |
+| `OPEN` | laufender, nicht superseded Workstream-PR |
+| `MERGED` | bereits integriert |
+| `CLOSE-SAFE` | PR darf später geschlossen werden; Unique Files leben auf dem Branch weiter, bis ein eigener Branch-Schritt sie sichert oder der Branch selbst `DELETE-SAFE` ist |
+| `KEEP-FUTURE` | Unique zukünftige Produktarbeit; PR nicht beiläufig schliessen |
+| `NEEDS-REVIEW` | Unique Content oder Owner unklar; Technical Lead entscheidet |
 
 Alte PRs werden niemals nur gemergt, um die Liste aufzuräumen.  
-Ein historischer/superseded PR darf `PR-CLOSE-SAFE` sein, während sein Branch `HISTORICAL-EVIDENCE` bleibt.  
+Ein historischer/superseded PR darf `CLOSE-SAFE` sein, während sein Branch `HISTORICAL-EVIDENCE` bleibt.  
 PRs bleiben **nicht** allein deshalb offen, weil fälschlich angenommen würde, Close lösche Unique Branch-Files.
 
-### 6.2 Branch-Klassen
+### 6.2 Branch-/Evidence-Disposition
 
 | Klasse | Bedeutung |
 | --- | --- |
 | `ACTIVE` | `main` oder laufender nicht superseded Workstream |
-| `MERGED-HEAD-LEFTOVER` | Inhalt auf `main`; Branch-Tip ist Ancestor oder Squash-/Status-Rest ohne Unique Files |
+| `DELETE-SAFE` | Unique Files = 0 bzw. Inhalt dauerhaft auf `main`/PR-History; später löschbar nach TL-Liste. Proof-Subtypen: leftover (Ancestor/Squash) und stale/dup |
 | `HISTORICAL-EVIDENCE` | Unique Docs/Commits, die als Evidence behalten werden müssen. Branch-Delete bleibt blockiert, bis Preservation bewiesen ist |
-| `STALE / SUPERSEDED` | Temp-/Duplikat-/geschlossene Continuity-Reste |
-| `FUTURE-WORK` | bewusste spätere Produktarbeit |
-| `UNKNOWN / NEEDS REVIEW` | Unique Content ohne sicheren Owner |
+| `FUTURE` | bewusste spätere Produktarbeit |
+| `NEEDS-REVIEW` | Unique Content ohne sicheren Owner |
 
 ## 7. Eine Regel für PR #88
 
-- **PR-Disposition:** `PR-CLOSE-SAFE`. Close ≠ Delete. Die zwei Unique Inventur-Dateien bleiben auf `audit/project-sanitation-inventory-2026-08-26`, auch wenn der PR geschlossen wird.
+- **PR-Disposition:** `CLOSE-SAFE`. Close ≠ Delete. Die zwei Unique Inventur-Dateien bleiben auf `audit/project-sanitation-inventory-2026-08-26`, auch wenn der PR geschlossen wird.
 - **Branch-Disposition:** `HISTORICAL-EVIDENCE`, bis die Unique Files archiviert oder sonst dauerhaft erreichbar sind.
-- **Branch-Delete:** blockiert, bis Preservation bewiesen ist.
+- **Branch-Delete:** blockiert, bis Preservation bewiesen ist. Der Evidence-Branch ist nicht `DELETE-SAFE`.
 - Dieser Slice schliesst #88 nicht und löscht den Branch nicht.
 - #88 ist Historical Evidence vom 26.08.2026, nicht Current Truth.
 
-Dieselbe Achsentrennung gilt für #52, #40 und #39: PR darf später `PR-CLOSE-SAFE` geschlossen werden; der Branch bleibt `HISTORICAL-EVIDENCE`, bis Unique Content gesichert ist.
+Dieselbe Achsentrennung gilt für #52, #40 und #39: PR darf später `CLOSE-SAFE` geschlossen werden; der Branch bleibt `HISTORICAL-EVIDENCE`, bis Unique Content gesichert ist.
 
-#28 bleibt `PR-KEEP-FUTURE` + Branch `FUTURE-WORK` und wird nicht beiläufig geschlossen.
+#28 bleibt `KEEP-FUTURE` + Branch `FUTURE` und wird nicht beiläufig geschlossen.
 
 ## 8. Deliverables
 

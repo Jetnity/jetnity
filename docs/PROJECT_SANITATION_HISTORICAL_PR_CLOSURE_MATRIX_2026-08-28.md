@@ -18,7 +18,8 @@ Ursprüngliche Authoring-Basis: `eaa03ad71509d281990e0d34ca359e0750eb9591`
 | PR-Disposition | Darf der Pull Request geschlossen werden, ohne Unique Files zu verlieren? | Branch-Delete |
 | Branch-Retention | Darf der Source-Branch gelöscht werden, ohne Unique Evidence zu verlieren? | PR-Close |
 
-Klassen: `PR-ACTIVE`, `PR-MERGED`, `PR-CLOSE-SAFE`, `PR-KEEP-FUTURE`, `PR-NEEDS-TL-DECISION`.
+PR-Klassen: `OPEN`, `MERGED`, `CLOSE-SAFE`, `KEEP-FUTURE`, `NEEDS-REVIEW`.  
+Branch-Klassen: `ACTIVE`, `DELETE-SAFE`, `HISTORICAL-EVIDENCE`, `FUTURE`, `NEEDS-REVIEW`.
 
 ---
 
@@ -28,14 +29,14 @@ Sieben offene PRs plus das integrierte #133. Kein zusätzlicher alter Draft entd
 
 | PR | Titel | Branch | Ahead/Behind vs `51b0c926` | Mergeable | PR-Disposition | Branch-Disposition |
 | --- | --- | --- | --- | --- | --- | --- |
-| #135 | Project Sanitation Closure | `cursor/project-sanitation-closure-2966` | nach Review-Fix-Commit | Draft | **PR-ACTIVE** | `ACTIVE` |
-| #133 | AP-5-S1 Security-UI | `cursor/ap5-s1-security-ui-8b13` | 0 / 1 | MERGED | **PR-MERGED** | `MERGED-HEAD-LEFTOVER` |
-| #88 | Project Sanitation Audit 26.08. | `audit/project-sanitation-inventory-2026-08-26` | 2 / 207 | MERGEABLE | **PR-CLOSE-SAFE** | `HISTORICAL-EVIDENCE` |
-| #52 | ChatGPT TL handoff 24.08. | `docs/chatgpt-technical-lead-handoff-2026-08-24` | 67 / 556 | CONFLICTING / UNKNOWN | **PR-CLOSE-SAFE** | `HISTORICAL-EVIDENCE` |
-| #50 | Provider Ops S1 merged-status | `cursor/s1-merged-status-f23f` | 3 / 559 | CONFLICTING | **PR-CLOSE-SAFE** | leftover / Delete-Kandidat |
-| #40 | Admin Platform Audit | `audit/admin-platform` | 15 / 565 | CONFLICTING | **PR-CLOSE-SAFE** | `HISTORICAL-EVIDENCE` |
-| #39 | Account Platform Audit | `audit/account-platform` | 11 / 565 | CONFLICTING | **PR-CLOSE-SAFE** | `HISTORICAL-EVIDENCE` |
-| #28 | Trip Collaboration Foundation | `feat/trip-collaboration-foundation` | 1 / 631 | MERGEABLE / UNKNOWN | **PR-KEEP-FUTURE** | `FUTURE-WORK` |
+| #135 | Project Sanitation Closure | `cursor/project-sanitation-closure-2966` | nach Review-Fix-Commit | Draft | **OPEN** | `ACTIVE` |
+| #133 | AP-5-S1 Security-UI | `cursor/ap5-s1-security-ui-8b13` | 0 / 1 | MERGED | **MERGED** | `DELETE-SAFE` |
+| #88 | Project Sanitation Audit 26.08. | `audit/project-sanitation-inventory-2026-08-26` | 2 / 207 | MERGEABLE | **CLOSE-SAFE** | `HISTORICAL-EVIDENCE` |
+| #52 | ChatGPT TL handoff 24.08. | `docs/chatgpt-technical-lead-handoff-2026-08-24` | 67 / 556 | CONFLICTING / UNKNOWN | **CLOSE-SAFE** | `HISTORICAL-EVIDENCE` |
+| #50 | Provider Ops S1 merged-status | `cursor/s1-merged-status-f23f` | 3 / 559 | CONFLICTING | **CLOSE-SAFE** | `DELETE-SAFE` |
+| #40 | Admin Platform Audit | `audit/admin-platform` | 15 / 565 | CONFLICTING | **CLOSE-SAFE** | `HISTORICAL-EVIDENCE` |
+| #39 | Account Platform Audit | `audit/account-platform` | 11 / 565 | CONFLICTING | **CLOSE-SAFE** | `HISTORICAL-EVIDENCE` |
+| #28 | Trip Collaboration Foundation | `feat/trip-collaboration-foundation` | 1 / 631 | MERGEABLE / UNKNOWN | **KEEP-FUTURE** | `FUTURE` |
 
 ---
 
@@ -65,7 +66,7 @@ ADR-0183 bleibt die S1-Entscheidung.
 | Evidence-Verlust bei Branch-Delete? | **ja**, solange die zwei Dateien nicht dauerhaft archiviert sind |
 
 **Eine Regel:**  
-PR-Disposition `PR-CLOSE-SAFE`. Branch-Disposition `HISTORICAL-EVIDENCE`.  
+PR-Disposition `CLOSE-SAFE`. Branch-Disposition `HISTORICAL-EVIDENCE`.  
 Nicht mergen: der Branch steht 207 Commits hinter aktuellem `main` und ist historische Inventur, kein aktueller Vertrag.  
 PR darf später geschlossen werden. Branch-Delete bleibt blockiert, bis Preservation bewiesen ist.  
 Dieser Slice führt weder Close noch Delete aus.
@@ -97,7 +98,7 @@ Unique Files, die nur auf diesem Branch liegen:
 
 `docs/JETNITY_BINDING_BUILD_ORDER.md` wurde später kanonisch auf `main` aufgenommen; die PR-#52-Fassung ist diverged/superseded.
 
-**PR-Disposition:** `PR-CLOSE-SAFE`.  
+**PR-Disposition:** `CLOSE-SAFE`.  
 **Branch-Disposition:** `HISTORICAL-EVIDENCE`.  
 Nicht mergen: CONFLICTING, 556 hinter aktuellem `main`, Inhalt als Current Truth durch spätere Start-Here-/Handoff-/Checkpoint-Linie superseded.
 
@@ -115,8 +116,8 @@ Zwei Dateien existieren noch im Branch-Tree, aber nicht mehr auf `main` (`app/(a
 
 S1 ist über PR #47 und spätere Provider-Slices auf `main`. Die Statuszeilen dieses Drafts sind durch spätere Handoffs/Statusdateien ersetzt.
 
-**PR-Disposition:** `PR-CLOSE-SAFE`.  
-**Branch-Disposition:** leftover / Delete-Kandidat.  
+**PR-Disposition:** `CLOSE-SAFE`.  
+**Branch-Disposition:** `DELETE-SAFE`.  
 Schliessen verliert keine Unique Docs. Branch-Delete darf später in derselben Leftover-Charge erfolgen.  
 Nicht mergen: CONFLICTING, reiner historischer Status-Stamp.
 
@@ -155,7 +156,7 @@ Unique, nicht auf `main`:
 
 Später auf `main` integriert wurden Admin-Slices A–C plus Growth-Control-Audit, aber **nicht** dieser ursprüngliche Audit-Korpus. Die gleichnamigen späteren Slice-Dateien (`ADMIN_PLATFORM_SLICE_A_*` usw.) ersetzen den historischen Plan nicht byte-identisch.
 
-**PR-Disposition:** `PR-CLOSE-SAFE`.  
+**PR-Disposition:** `CLOSE-SAFE`.  
 **Branch-Disposition:** `HISTORICAL-EVIDENCE`.  
 Nicht mergen: CONFLICTING, 565 hinter aktuellem `main`, würde historische Pläne als Current Truth einspielen.
 
@@ -186,7 +187,7 @@ Unique, nicht auf `main`:
 
 Der historische Plan auf diesem PR ist durch ADR-0179 / PR #117 **superseded** als Current Truth. Die übrigen Audit-Dateien wurden nicht nach `main` übernommen. P2-TA-03 hat ausdrücklich festgehalten: Datei auf Draft-PR #39 ist historische Evidence, keine Current Truth.
 
-**PR-Disposition:** `PR-CLOSE-SAFE`.  
+**PR-Disposition:** `CLOSE-SAFE`.  
 **Branch-Disposition:** `HISTORICAL-EVIDENCE`.  
 Nicht mergen.
 
@@ -202,8 +203,8 @@ Nicht mergen.
 
 Die einzige Collaboration-Foundation-Spec liegt nur auf diesem Branch/PR. Binding Build Order und aktuelle Continuity behandeln Collaboration als spätere, nicht gestartete Arbeit.
 
-**PR-Disposition:** `PR-KEEP-FUTURE`.  
-**Branch-Disposition:** `FUTURE-WORK`.  
+**PR-Disposition:** `KEEP-FUTURE`.  
+**Branch-Disposition:** `FUTURE`.  
 Nicht beiläufig schliessen. Nicht mergen und nicht als aktuelle Runtime wieder aufnehmen.
 
 ---

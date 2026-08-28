@@ -19,10 +19,11 @@ function lies(rel: string): string {
 }
 
 describe('project sanitation closure invariants', () => {
-  test('PR #88 ist PR-CLOSE-SAFE; Unique Evidence hängt am Branch', () => {
+  test('PR #88 ist CLOSE-SAFE; Unique Evidence hängt am Branch', () => {
     const matrix = lies('docs/PROJECT_SANITATION_HISTORICAL_PR_CLOSURE_MATRIX_2026-08-28.md')
-    assert.match(matrix, /PR-CLOSE-SAFE/)
+    assert.match(matrix, /CLOSE-SAFE/)
     assert.match(matrix, /HISTORICAL-EVIDENCE/)
+    assert.match(matrix, /DELETE-SAFE/)
     assert.match(matrix, /audit\/project-sanitation-inventory-2026-08-26/)
     assert.match(matrix, /Eine Regel/)
     assert.match(matrix, /Close löscht den Branch nicht/)
@@ -32,12 +33,13 @@ describe('project sanitation closure invariants', () => {
   test('PR-Close und Branch-Delete sind getrennte Achsen', () => {
     const task = lies('docs/PROJECT_SANITATION_CLOSURE_TASK_2026-08-28.md')
     assert.match(task, /PR-Disposition ≠ Branch-Retention/)
-    assert.match(task, /PR-KEEP-FUTURE/)
+    assert.match(task, /KEEP-FUTURE/)
     assert.match(task, /ADR-0184/)
     const inventory = lies('docs/PROJECT_SANITATION_LIVE_INVENTORY_STATUS_2026-08-28.md')
-    assert.match(inventory, /PR-MERGED/)
+    assert.match(inventory, /\*\*MERGED\*\*/)
     assert.match(inventory, /Eine Regel für #88/)
-    assert.match(inventory, /#28.*PR-KEEP-FUTURE/s)
+    assert.match(inventory, /#28.*KEEP-FUTURE/s)
+    assert.match(inventory, /DELETE-SAFE/)
   })
 
   test('aktuelle Closure-Deliverables existieren', () => {

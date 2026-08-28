@@ -16,7 +16,7 @@ Generation 2 hat am 26. August 2026 die non-destructive Inventur auf Draft-PR #8
 - Baseline damals: `origin/main` `1d558ef56cc275d429f4076c7a8877c3791947a7`
 - Unabhängiger TL-Review: PASS / INTEGRATION DEFERRED
 - Status: historische Evidence, nicht Current Truth
-- PR-Disposition heute: `PR-CLOSE-SAFE`; Branch bleibt `HISTORICAL-EVIDENCE`
+- PR-Disposition heute: `CLOSE-SAFE`; Branch bleibt `HISTORICAL-EVIDENCE`
 - Generation 2 darf nicht für eine neue logische Arbeitseinheit wiederverwendet werden
 
 Unnummerierte Generation 1 bleibt die frühere QS-1/QS-2-Arbeit auf `main` (`docs/QUALITY_SECURITY_QS1_*`, `docs/QS2_*`).

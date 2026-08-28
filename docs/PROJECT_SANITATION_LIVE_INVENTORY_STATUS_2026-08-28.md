@@ -26,7 +26,7 @@ Rekonstruiert am 28. August 2026 gegen `eaa03ad7`.
 | Main-Message | `Merge PR #131: close AP-5 Gate 0 canonical pointers` |
 | Offene PRs | 7; nach erstem Draft **8** inkl. #135 |
 | Remote-Heads | **135** inkl. `main` |
-| Parallel | **#133** / Issue #132 ACTIVE |
+| Parallel damals | #133 / Issue #132 waren ACTIVE. **Heute MERGED / CLOSED / completed; nicht Current Truth** |
 
 Pre-Rebase Exact-Head-Stamps (`30893fa0`, `4c2e99a5`, Actions `33164083125` / `33164310089`, Vercel `6139730729` / `6139772480`) sind **stale**. Sie gelten nicht als aktueller Gate.
 
@@ -93,14 +93,14 @@ Zwei Achsen. Close löscht den Branch nicht.
 
 | PR | Head | Draft | Mergeable | PR-Disposition | Branch-Disposition |
 | --- | --- | --- | --- | --- | --- |
-| **#135** Project Sanitation Closure | `cursor/project-sanitation-closure-2966` | ja | nach Rebase neu prüfen | **PR-ACTIVE** – dieser Slice | `ACTIVE` |
-| **#133** AP-5-S1 Security-UI | `cursor/ap5-s1-security-ui-8b13` @ `e7500b12` | – | MERGED | **PR-MERGED** | `MERGED-HEAD-LEFTOVER` (Tip ist Ancestor von `main`; Unique Files = 0) |
-| **#88** Project Sanitation Inventur 26.08. | `audit/project-sanitation-inventory-2026-08-26` @ `a5fbaa6d` | ja | MERGEABLE | **PR-CLOSE-SAFE** | `HISTORICAL-EVIDENCE` (2 Unique Files) |
-| **#52** TL-Handoff 24.08. | `docs/chatgpt-technical-lead-handoff-2026-08-24` | ja | CONFLICTING / UNKNOWN | **PR-CLOSE-SAFE** | `HISTORICAL-EVIDENCE` (7 Unique Files) |
-| **#50** S1 merged-status | `cursor/s1-merged-status-f23f` | ja | CONFLICTING | **PR-CLOSE-SAFE** | Delete-Kandidat / leftover (Unique Files vs Merge-Base = 0) |
-| **#40** Admin Platform Audit | `audit/admin-platform` | ja | CONFLICTING | **PR-CLOSE-SAFE** | `HISTORICAL-EVIDENCE` (19 Unique Files) |
-| **#39** Account Platform Audit | `audit/account-platform` | ja | CONFLICTING | **PR-CLOSE-SAFE** | `HISTORICAL-EVIDENCE` (10 Unique Files) |
-| **#28** Trip Collaboration Foundation | `feat/trip-collaboration-foundation` | ja | MERGEABLE / UNKNOWN | **PR-KEEP-FUTURE** | `FUTURE-WORK` |
+| **#135** Project Sanitation Closure | `cursor/project-sanitation-closure-2966` | ja | nach Rebase neu prüfen | **OPEN** – dieser Slice | `ACTIVE` |
+| **#133** AP-5-S1 Security-UI | `cursor/ap5-s1-security-ui-8b13` @ `e7500b12` | – | MERGED | **MERGED** | `DELETE-SAFE` (leftover; Tip ist Ancestor von `main`; Unique Files = 0) |
+| **#88** Project Sanitation Inventur 26.08. | `audit/project-sanitation-inventory-2026-08-26` @ `a5fbaa6d` | ja | MERGEABLE | **CLOSE-SAFE** | `HISTORICAL-EVIDENCE` (2 Unique Files) |
+| **#52** TL-Handoff 24.08. | `docs/chatgpt-technical-lead-handoff-2026-08-24` | ja | CONFLICTING / UNKNOWN | **CLOSE-SAFE** | `HISTORICAL-EVIDENCE` (7 Unique Files) |
+| **#50** S1 merged-status | `cursor/s1-merged-status-f23f` | ja | CONFLICTING | **CLOSE-SAFE** | `DELETE-SAFE` (leftover; Unique Files vs Merge-Base = 0) |
+| **#40** Admin Platform Audit | `audit/admin-platform` | ja | CONFLICTING | **CLOSE-SAFE** | `HISTORICAL-EVIDENCE` (19 Unique Files) |
+| **#39** Account Platform Audit | `audit/account-platform` | ja | CONFLICTING | **CLOSE-SAFE** | `HISTORICAL-EVIDENCE` (10 Unique Files) |
+| **#28** Trip Collaboration Foundation | `feat/trip-collaboration-foundation` | ja | MERGEABLE / UNKNOWN | **KEEP-FUTURE** | `FUTURE` |
 
 Keine weiteren alten offenen Drafts gefunden. Vollständige Begründung: `docs/PROJECT_SANITATION_HISTORICAL_PR_CLOSURE_MATRIX_2026-08-28.md`.
 
@@ -162,7 +162,7 @@ Keine Secrets in diesem Bericht reproduziert.
 | S-03 | `main` Branch Protection aus | **still actionable** | eigenes Governance-Gate |
 | S-04 | V1 Image-Allowlist | **still actionable** | eigener Runtime-Config-Slice |
 | S-05 | CookieConsent / `/privacy` 404 | **still actionable** | Legal-Slice oder Delete; nicht still verdrahten |
-| S-06 | Unique Identity-/Admin-Docs nur auf historischen Branches | **still actionable** | PR darf `PR-CLOSE-SAFE` geschlossen werden; **Branch** behalten, bis Evidence gesichert ist |
+| S-06 | Unique Identity-/Admin-Docs nur auf historischen Branches | **still actionable** | PR darf `CLOSE-SAFE` geschlossen werden; **Branch** behalten, bis Evidence gesichert ist |
 | S-07 | UI-Audit-JWTs | unverändert Platzhalter | kein Secret |
 | S-08 | `.cursor/mcp.json` / `.env.example` | unverändert Platzhalter | sauber |
 | S-09 | `jetnity-bets` nicht im Produktcode | unverändert | Cloud-Decommission bleibt PO-Gate |
@@ -179,11 +179,10 @@ Live Remote-Heads: **136** inkl. `main` und dieses Closure-Branches.
 | Klasse | Anzahl | Bemerkung |
 | --- | --- | --- |
 | ACTIVE | 2 | `main`, dieser Closure-Branch |
-| MERGED-HEAD-LEFTOVER | 114 | 112 ursprüngliche Leftovers + `cursor/ap5-s1-security-ui-8b13` + `cursor/s1-merged-status-f23f` |
+| DELETE-SAFE | 127 | 114 leftover + 13 stale/dup |
 | HISTORICAL-EVIDENCE | 5 | #88/#39/#40/#52-Branches plus `docs/post-pr98-continuity-2026-08-27` |
-| STALE / SUPERSEDED | 13 | Temp-/Duplikat-/geschlossene Continuity-Reste |
-| FUTURE-WORK | 1 | `feat/trip-collaboration-foundation` |
-| UNKNOWN / NEEDS REVIEW | 1 | `chore/account-admin-team-prep` |
+| FUTURE | 1 | `feat/trip-collaboration-foundation` |
+| NEEDS-REVIEW | 1 | `chore/account-admin-team-prep` |
 | **Summe** | **136** | |
 
 Vollständige Tabelle: `docs/PROJECT_SANITATION_REMOTE_BRANCH_DISPOSITION_MATRIX_2026-08-28.md`.
@@ -198,13 +197,13 @@ PR-Close und Branch-Delete sind getrennte Technical-Lead-Freigaben.
 ### PR-Close-Kandidaten nach Technical-Lead-Liste
 
 1. PR #50 – Unique Files vs Merge-Base = 0. Close verliert keine Evidence.
-2. PR #88 – `PR-CLOSE-SAFE`. Close löscht den Branch nicht. Unique Inventur-Dateien bleiben auf `audit/project-sanitation-inventory-2026-08-26`.
-3. PR #52, #40, #39 – ebenfalls `PR-CLOSE-SAFE`. Close allein verliert die Unique Docs nicht.
-4. PR #28 **nicht** beiläufig schliessen. `PR-KEEP-FUTURE`.
+2. PR #88 – `CLOSE-SAFE`. Close löscht den Branch nicht. Unique Inventur-Dateien bleiben auf `audit/project-sanitation-inventory-2026-08-26`.
+3. PR #52, #40, #39 – ebenfalls `CLOSE-SAFE`. Close allein verliert die Unique Docs nicht.
+4. PR #28 **nicht** beiläufig schliessen. `KEEP-FUTURE`.
 
 ### Branch-Delete-Kandidaten nach eigener Freigabe
 
-1. MERGED-HEAD-LEFTOVER-Branches, deren Tip Ancestor von `main` ist oder deren zugehöriger PR `MERGED` ist und Unique Files = 0. Inklusive `cursor/ap5-s1-security-ui-8b13` und `cursor/s1-merged-status-f23f`.
+1. `DELETE-SAFE` leftover-Branches, deren Tip Ancestor von `main` ist oder deren zugehöriger PR `MERGED` ist und Unique Files = 0. Inklusive `cursor/ap5-s1-security-ui-8b13` und `cursor/s1-merged-status-f23f`.
 2. Temp-/Duplikat-SHA-Branches (`do-not-use`/`tmp-noop`, admin-sync-temp*, domain-policy-Duplikate, shadow).
 3. `git rm --cached` für `supabase/.temp/*` und `supabase/.branches/_current_branch` (Runtime-Hygiene, kein Branch-Delete).
 4. `prague.jpg` entfernen (Runtime-Hygiene).
@@ -238,7 +237,7 @@ Nicht starten. Zwei Achsen, zwei Freigaben.
 2. Optional Unique-Content-Sicherung nach `docs/history/` **oder** bewusste Branch-Retention.
 3. Nach Landung dieses PRs: PR-Close von #50, danach #88/#52/#40/#39. Branches von #88/#52/#40/#39 bleiben, bis Preservation bewiesen ist.
 4. Temp-/Duplikat-Branches löschen.
-5. MERGED-HEAD-LEFTOVER in Chargen löschen, inkl. S1-Leftover und #50-Branch.
+5. `DELETE-SAFE` leftover in Chargen löschen, inkl. S1-Leftover und #50-Branch.
 6. Eigenes Hygiene-PR für Untrack von `.temp`/`.branches`.
 7. Eigenes Runtime-Micro-PR für `prague.jpg` / CookieConsent-Entscheidung / V1 Image-Hosts.
 8. Optional `docs/EVIDENCE_INDEX.md` ohne Massenverschiebung.

@@ -36,8 +36,8 @@ Keine Änderung an:
 | Wurde Unique Content von #39/#40/#52/#28 nach `main` als kanonisch kopiert? | Nein. Retention, kein Absorb. |
 | Wurde ein alter PR nur zum Aufräumen zum Mergen empfohlen? | Nein. Explizit verboten. |
 | Wurde PR-Close mit Branch-Delete verwechselt? | Nein, nach Review-Fix. Close und Delete sind getrennte Achsen. |
-| Bleiben stale PRs nur offen, weil Close Dateien löschen würde? | Nein. #88/#52/#40/#39 sind `PR-CLOSE-SAFE`; ihre Branches bleiben `HISTORICAL-EVIDENCE`. |
-| Wurde #28 beiläufig als Close-Kandidat geführt? | Nein. `PR-KEEP-FUTURE`. |
+| Bleiben stale PRs nur offen, weil Close Dateien löschen würde? | Nein. #88/#52/#40/#39 sind `CLOSE-SAFE`; ihre Branches bleiben `HISTORICAL-EVIDENCE`. |
+| Wurde #28 beiläufig als Close-Kandidat geführt? | Nein. `KEEP-FUTURE`. |
 | Wurde Account-/Auth-Runtime von Agent 9 berührt? | Nein. |
 | Wurde integrierte S1-Evidence als abwesend behauptet? | Nein, nach P1-3. Die Task-Datei existiert auf `main` und der Test fordert Existenz, nicht Abwesenheit. |
 | Wurde ADR-0183 überschrieben oder umnummeriert? | Nein. Sanitation ist ADR-0184. |

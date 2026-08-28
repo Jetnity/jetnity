@@ -50,14 +50,14 @@ Authoring-Start dieses Slices war `eaa03ad7` mit offenem #133. Das ist historisc
 
 | PR | PR-Disposition | Branch-Disposition |
 | --- | --- | --- |
-| #135 | PR-ACTIVE | ACTIVE |
-| #133 | PR-MERGED | MERGED-HEAD-LEFTOVER |
-| #88 | PR-CLOSE-SAFE | HISTORICAL-EVIDENCE |
-| #52 | PR-CLOSE-SAFE | HISTORICAL-EVIDENCE |
-| #50 | PR-CLOSE-SAFE | leftover / Delete-Kandidat |
-| #40 | PR-CLOSE-SAFE | HISTORICAL-EVIDENCE |
-| #39 | PR-CLOSE-SAFE | HISTORICAL-EVIDENCE |
-| #28 | PR-KEEP-FUTURE | FUTURE-WORK |
+| #135 | OPEN | ACTIVE |
+| #133 | MERGED | DELETE-SAFE |
+| #88 | CLOSE-SAFE | HISTORICAL-EVIDENCE |
+| #52 | CLOSE-SAFE | HISTORICAL-EVIDENCE |
+| #50 | CLOSE-SAFE | DELETE-SAFE |
+| #40 | CLOSE-SAFE | HISTORICAL-EVIDENCE |
+| #39 | CLOSE-SAFE | HISTORICAL-EVIDENCE |
+| #28 | KEEP-FUTURE | FUTURE |
 
 Eine Regel für #88: PR darf später geschlossen werden; der Branch bleibt HISTORICAL-EVIDENCE, bis die zwei Unique Files archiviert sind. Branch-Delete bleibt blockiert, bis Preservation bewiesen ist.
 
@@ -68,11 +68,10 @@ Keine weiteren alten Drafts.
 | Klasse | Anzahl live |
 | --- | --- |
 | ACTIVE | 2 |
-| MERGED-HEAD-LEFTOVER | 114 |
+| DELETE-SAFE | 127 (114 leftover + 13 stale/dup) |
 | HISTORICAL-EVIDENCE | 5 |
-| STALE / SUPERSEDED | 13 |
-| FUTURE-WORK | 1 |
-| UNKNOWN / NEEDS REVIEW | 1 |
+| FUTURE | 1 |
+| NEEDS-REVIEW | 1 |
 
 Nicht löschen ohne Sicherung: Branches von #39/#40/#52/#88/#28, `chore/account-admin-team-prep`, `docs/post-pr98-continuity-2026-08-27`, Archive-Tags, integrierte S1-Dateien auf `main`.
 

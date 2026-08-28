@@ -4615,7 +4615,7 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 1. Historische offene Draft-PRs werden nicht gemergt, nur um die PR-Liste zu verkürzen.
 2. PR-Close und Branch-Delete sind getrennte Operationen. Ein PR-Close löscht den Source-Branch nicht und verliert dadurch allein keine Unique Files.
-3. Ein historischer/superseded PR darf `PR-CLOSE-SAFE` sein, während sein Branch `HISTORICAL-EVIDENCE` bleibt, bis Unique Content archiviert oder sonst dauerhaft erreichbar ist.
+3. Ein historischer/superseded PR darf `CLOSE-SAFE` sein, während sein Branch `HISTORICAL-EVIDENCE` bleibt, bis Unique Content archiviert oder sonst dauerhaft erreichbar ist. Branch-Delete ist erst `DELETE-SAFE`, wenn Preservation bewiesen ist.
 4. Branch-Delete ist ein späterer, eigener Technical-Lead-Schritt nach Exact-Head-Review und Unique-Content-Beweis. Remote-Reflog ist kein Rollback-Versprechen.
 5. PR #88 vom 26.08.2026 bleibt Historical Evidence und wird nicht als Current Inventory übernommen. Die aktuelle Reconciliation liegt in den versionierten Dateien `docs/PROJECT_SANITATION_*_2026-08-28.md`.
 6. Runtime-Reste (`supabase/.temp`, `prague.jpg`, CookieConsent, V1 Image-Hosts) und Cloud-Decommission (`jetnity-bets`) bleiben eigene Slices bzw. Product-Owner-Gates.

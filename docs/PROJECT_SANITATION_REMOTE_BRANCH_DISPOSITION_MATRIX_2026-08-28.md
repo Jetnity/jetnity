@@ -16,16 +16,15 @@ Remote-Heads live: **136** inkl. `main` und `cursor/project-sanitation-closure-2
 | Klasse | Anzahl | Löschen in einem späteren Slice? |
 | --- | --- | --- |
 | ACTIVE | 2 | nein |
-| MERGED-HEAD-LEFTOVER | 114 | ja, nach TL-Liste; History/PRs bleiben |
+| DELETE-SAFE | 127 | ja, nach TL-Liste; 114 leftover + 13 stale/dup; History/PRs bleiben |
 | HISTORICAL-EVIDENCE | 5 | **nein**, bis Unique Content gesichert ist |
-| STALE / SUPERSEDED | 13 | ja, nach TL-Liste; meist Duplikate |
-| FUTURE-WORK | 1 | **nein** |
-| UNKNOWN / NEEDS REVIEW | 1 | **nein** |
+| FUTURE | 1 | **nein** |
+| NEEDS-REVIEW | 1 | **nein** |
 | **Summe** | **136** | |
 
 Beweisregeln:
 
-- `MERGED-HEAD-LEFTOVER` = Tip ist Ancestor von `main` **oder** Unique Files gegen Merge-Base, die auf heutigem `main` fehlen, = 0 (typischer Squash-/Status-Rest).
+- `DELETE-SAFE` leftover = Tip ist Ancestor von `main` **oder** Unique Files gegen Merge-Base, die auf heutigem `main` fehlen, = 0 (typischer Squash-/Status-Rest).
 - Unique File = Datei, die der Branch gegenüber seiner Merge-Base hinzufügt und die auf heutigem `main` nicht existiert.
 - Alter allein ist kein Löschbeweis.
 - Offener PR-Zustand ändert die Branch-Klasse nicht.
@@ -43,31 +42,31 @@ Beweisregeln:
 
 ---
 
-## 3. FUTURE-WORK – nicht löschen
+## 3. FUTURE – nicht löschen
 
 | Branch | SHA | Ahead/Behind | Unique Files | Begründung |
 | --- | --- | --- | --- | --- |
-| `feat/trip-collaboration-foundation` | `e0132cb576e8` | 1 / 631 | `docs/CURSOR_TRIP_COLLABORATION_FOUNDATION.md` | einzige Collaboration-Spec; Issue #20 offen; zugehöriger PR #28 ist `PR-KEEP-FUTURE` |
+| `feat/trip-collaboration-foundation` | `e0132cb576e8` | 1 / 631 | `docs/CURSOR_TRIP_COLLABORATION_FOUNDATION.md` | einzige Collaboration-Spec; Issue #20 offen; zugehöriger PR #28 ist `KEEP-FUTURE` |
 
 ---
 
 ## 4. HISTORICAL-EVIDENCE – nicht löschen
 
-Diese Branches bleiben, auch wenn der zugehörige PR später `PR-CLOSE-SAFE` geschlossen wird.
+Diese Branches bleiben, auch wenn der zugehörige PR später `CLOSE-SAFE` geschlossen wird.
 
 | Branch | SHA | PR | Ahead/Behind | Unique Files | Begründung |
 | --- | --- | --- | --- | --- | --- |
-| `audit/project-sanitation-inventory-2026-08-26` | `a5fbaa6d` | #88 OPEN, `PR-CLOSE-SAFE` | 2 / 207 | 2 Sanitation-Docs | Unique Inventur-Dateien; Branch behalten, bis bewusst archiviert |
-| `audit/account-platform` | `65b08f47` | #39 OPEN, `PR-CLOSE-SAFE` | 11 / 565 | 10 Account-Audit-Docs | Unique Evidence; Plan auf `main` ist eine andere Dateifassung |
-| `audit/admin-platform` | `a3160157` | #40 OPEN, `PR-CLOSE-SAFE` | 15 / 565 | 19 Admin-Audit-Docs | Unique Plan/Matrix/Infomaniak |
-| `docs/chatgpt-technical-lead-handoff-2026-08-24` | `f1e13db3` | #52 OPEN, `PR-CLOSE-SAFE` | 67 / 556 | 7 Continuity-Snapshots | Unique Aug-24-Evidence |
+| `audit/project-sanitation-inventory-2026-08-26` | `a5fbaa6d` | #88 OPEN, `CLOSE-SAFE` | 2 / 207 | 2 Sanitation-Docs | Unique Inventur-Dateien; Branch behalten, bis bewusst archiviert |
+| `audit/account-platform` | `65b08f47` | #39 OPEN, `CLOSE-SAFE` | 11 / 565 | 10 Account-Audit-Docs | Unique Evidence; Plan auf `main` ist eine andere Dateifassung |
+| `audit/admin-platform` | `a3160157` | #40 OPEN, `CLOSE-SAFE` | 15 / 565 | 19 Admin-Audit-Docs | Unique Plan/Matrix/Infomaniak |
+| `docs/chatgpt-technical-lead-handoff-2026-08-24` | `f1e13db3` | #52 OPEN, `CLOSE-SAFE` | 67 / 556 | 7 Continuity-Snapshots | Unique Aug-24-Evidence |
 | `docs/post-pr98-continuity-2026-08-27` | `fb6aae99` | #99 CLOSED | 2 / 111+ | `docs/CHATGPT_PR98_POST_MERGE_CHECKPOINT_2026-08-27.md` | Unique Checkpoint nicht auf `main`; PR bereits geschlossen |
 
 `cursor/s1-merged-status-f23f` steht **nicht** mehr hier. Unique Files vs Merge-Base = 0; er ist Leftover / Delete-Kandidat.
 
 ---
 
-## 5. UNKNOWN / NEEDS REVIEW – nicht löschen
+## 5. NEEDS-REVIEW – nicht löschen
 
 | Branch | SHA | Ahead/Behind | Unique Files | Risiko |
 | --- | --- | --- | --- | --- |
@@ -77,7 +76,7 @@ TL-Option später: Unique Files nach `docs/history/` kopieren, dann Branch lösc
 
 ---
 
-## 6. STALE / SUPERSEDED – spätere Delete-Kandidaten
+## 6. DELETE-SAFE / stale-dup – spätere Delete-Kandidaten
 
 Beweis: Duplikat-SHA, Closed-PR ohne Unique Files, oder Unique Files sind echte Teilmenge eines HISTORICAL-EVIDENCE-Branches.
 
@@ -97,11 +96,11 @@ Beweis: Duplikat-SHA, Closed-PR ohne Unique Files, oder Unique Files sind echte 
 | `cursor/tw7a-hub-card-identity-b13d` | `1ce6e02b` | PR #104 CLOSED; Unique Files = 0; Runtime über #106 | nein |
 | `cursor/phase-1-4-datenbank-baseline-0c7c` | `79679c35` | PR #12 MERGED; Unique File `scripts/db/anwenden.mjs` ist durch `scripts/db/anwenden.ts` auf `main` superseded | nein |
 
-`docs/post-pr97-canonical-continuity-2026-08-27` hat Unique Files = 0 und keinen offenen PR. Er ist **MERGED-HEAD-LEFTOVER / Squash-Rest**, nicht STALE mit Unique Content.
+`docs/post-pr97-canonical-continuity-2026-08-27` hat Unique Files = 0 und keinen offenen PR. Er ist **DELETE-SAFE leftover / Squash-Rest**, nicht stale mit Unique Content.
 
 ---
 
-## 7. MERGED-HEAD-LEFTOVER – spätere Delete-Kandidaten
+## 7. DELETE-SAFE / leftover – spätere Delete-Kandidaten
 
 ### 7.1 Tip ist Ancestor von `main` (81)
 
@@ -117,7 +116,7 @@ Tip ist nicht Ancestor, aber Unique Files vs Merge-Base, die auf `main` fehlen, 
 
 Ursprüngliche 32 plus PR-#50-Branch:
 
-`audit/provider-readiness` (#45), `cursor/legacy-datenbank-entfernen-f38c` (#13), `cursor/phase-1-3-auth-rollen-cbcd` (#10), `cursor/phase-1-4c-auth-konfiguration-8050` (#14), `cursor/phase-1-5-reiseschema-c9d2` (#15), `cursor/phase-2-1-natuerliche-sprache-zu-reise-e985` (#16), `cursor/phase-22-reise-aendern-e90a` (#18), `cursor/phase-3-flights-foundation-c8a6` (#19), `cursor/s1-merged-status-f23f` (#50 OPEN, `PR-CLOSE-SAFE`; Unique Files vs Merge-Base = 0), `cursor/supabase-mcp-dev-1f02` (#11), `docs-continuity-standard` (#25), `docs-phase-3-3-status-sync` (#26), `docs/jetnity-handoff-after-phase-2-1` (#17), `docs/phase-3-1-final-handoff` (#21), `docs/post-pr97-canonical-continuity-2026-08-27`, `docs/product-quality-standard` (#23), `feat/account-ap1` (#43), `feat/account-ap2` (#48), `feat/admin-control-center-ia` (#44), `feat/admin-system-health` (#46), `feat/mobility-transfers-foundation` (#30), `feat/provider-flight-evidence-s2` (#51), `feat/provider-ops-s1` (#47), `feat/rental-car-foundation` (#31), `feat/route-transit-intelligence` (#34), `feat/travel-readiness-foundation` (#32), `feat/travel-safety-disruption-intelligence` (#37), `feat/travel-timing-seasonal-intelligence` (#38), `feat/traveller-context-intelligence` (#35), `feat/trip-coverage-booking-status` (#29), `phase-3-2-hotel-foundation` (#22), `phase-3-3-activities-foundation` (#24), `ux-trip-workspace-mobile-iteration-1` (#27).
+`audit/provider-readiness` (#45), `cursor/legacy-datenbank-entfernen-f38c` (#13), `cursor/phase-1-3-auth-rollen-cbcd` (#10), `cursor/phase-1-4c-auth-konfiguration-8050` (#14), `cursor/phase-1-5-reiseschema-c9d2` (#15), `cursor/phase-2-1-natuerliche-sprache-zu-reise-e985` (#16), `cursor/phase-22-reise-aendern-e90a` (#18), `cursor/phase-3-flights-foundation-c8a6` (#19), `cursor/s1-merged-status-f23f` (#50 OPEN, `CLOSE-SAFE`; Unique Files vs Merge-Base = 0), `cursor/supabase-mcp-dev-1f02` (#11), `docs-continuity-standard` (#25), `docs-phase-3-3-status-sync` (#26), `docs/jetnity-handoff-after-phase-2-1` (#17), `docs/phase-3-1-final-handoff` (#21), `docs/post-pr97-canonical-continuity-2026-08-27`, `docs/product-quality-standard` (#23), `feat/account-ap1` (#43), `feat/account-ap2` (#48), `feat/admin-control-center-ia` (#44), `feat/admin-system-health` (#46), `feat/mobility-transfers-foundation` (#30), `feat/provider-flight-evidence-s2` (#51), `feat/provider-ops-s1` (#47), `feat/rental-car-foundation` (#31), `feat/route-transit-intelligence` (#34), `feat/travel-readiness-foundation` (#32), `feat/travel-safety-disruption-intelligence` (#37), `feat/travel-timing-seasonal-intelligence` (#38), `feat/traveller-context-intelligence` (#35), `feat/trip-coverage-booking-status` (#29), `phase-3-2-hotel-foundation` (#22), `phase-3-3-activities-foundation` (#24), `ux-trip-workspace-mobile-iteration-1` (#27).
 
 GitHub-PRs und Commit-SHAs bleiben nach Branch-Delete erreichbar. Remote-Reflog ist **kein** Rollback-Versprechen; Evidence hängt an PR-Refs und `main`.
 
@@ -155,7 +154,7 @@ Inklusive `cursor/s1-merged-status-f23f` nach oder unabhängig vom PR-Close von 
 
 ### Nicht in A/B/C
 
-ACTIVE, FUTURE-WORK, HISTORICAL-EVIDENCE, UNKNOWN / NEEDS REVIEW, alle Tags.
+ACTIVE, FUTURE, HISTORICAL-EVIDENCE, NEEDS-REVIEW, alle Tags.
 
 ---
 

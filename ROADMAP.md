@@ -221,7 +221,7 @@ Kein Domain Cutover, Public Indexing, D1/G1 oder Growth-Folgeslice automatisch s
 
 QS-1/QS-2 und relevante P1-Hardening-Slices sind integriert.
 
-Project-Sanitation: Issue #134 ist der aktuelle Closure-/Retention-Slice. PR #88 bleibt historische Evidence vom 26.08.2026, nicht Current Truth (`PR-CLOSE-SAFE` / Branch `HISTORICAL-EVIDENCE`). Aktuelle Matrizen: `docs/PROJECT_SANITATION_LIVE_INVENTORY_STATUS_2026-08-28.md`. ADR-0184.
+Project-Sanitation: Issue #134 ist der aktuelle Closure-/Retention-Slice. PR #88 bleibt historische Evidence vom 26.08.2026, nicht Current Truth (`CLOSE-SAFE` / Branch `HISTORICAL-EVIDENCE`). Aktuelle Matrizen: `docs/PROJECT_SANITATION_LIVE_INVENTORY_STATUS_2026-08-28.md`. ADR-0184.
 
 Kein automatisches:
 
