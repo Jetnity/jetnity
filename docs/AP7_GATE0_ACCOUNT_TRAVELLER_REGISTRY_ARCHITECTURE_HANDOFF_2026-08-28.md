@@ -17,7 +17,7 @@ Docs-only Review-Fix gegen Technical-Lead-Kommentar `5455299179`:
 
 1. `ARCHITECTURE.md`: AP-5-S2 / PR #137 ist integriert. Nur AP-5-S3–S5 bleiben ungebaut und nicht automatisch gestartet. AP-6–AP-12 bleiben ungebaut/gated. AP-7-Gate-0-Wording unverändert Dual-Authority ohne Runtime.
 2. Kein trip-weites `chosenCredentialOptionRef` mehr. Alle Credential-Optionen bleiben first-class im Snapshot. Spätere explizite Auswahl nur als eigener kontext-/evaluations-scharfer Vertrag oder bewusst unspezifiziert; route-weit nur bei expliziter Evidence.
-3. Addendum `5455307709`: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `ROADMAP.md` und `docs/ACTIVE_WORK_STATUS.md` sind self-expiring / dual-state für PR #144. Nach einem späteren Merge wird Gate 0 integrierte Evidence; keine automatische Runtime; nächster Schritt = Product-Owner-Architekturentscheidung nach Live-Verifikation. Keine zukünftige Merge-SHA. Kein Continuity-PR nur für den Merge.
+3. Addendum `5455307709` + Re-Review `5455342054`: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `ROADMAP.md` und `docs/ACTIVE_WORK_STATUS.md` sind self-expiring / dual-state für PR #144, einschließlich der kanonischen Next-Step-Abschnitte (START_HERE §16, ACTIVE_WORK_STATUS §10). Nach einem späteren Merge wird Gate 0 integrierte Evidence; **#144 ist nicht mehr aktiv**; keine automatische Runtime; nächster Schritt = Product-Owner-Architekturentscheidung/Gate vor jeder Implementation (Dual-Authority bleibt unfreigegebene Empfehlung). Generation 11 nach Integration abgeschlossen und nicht für Implementation wiederverwenden. Keine zukünftige Merge-SHA. Kein Continuity-PR nur für den Merge.
 
 Konsistenz: Status, ADR-0186, Account-Plan-Nachtrag, Self-Review.
 
@@ -52,8 +52,9 @@ Vor der finalen Übergabe erneut `origin/main` geholt.
 | Merge-Base | `1947285c` |
 | Prior reviewed Head | `a0ef801fd7fa39685fab9a1fe69d411f736ea78c` – invalidiert |
 | Prior review-fix stamp | `731b0914c5be70641792c6cf620f2d9be185e8d1` – invalidiert durch Addendum |
-| Addendum Head | `dbd19fac721c0ae3e91c84942cc2eed8fefb0f65` – 10 / 0 vor Stamp |
-| Exact / Review-Head | Stamp nach `dbd19fac`; live an PR #144 prüfen |
+| Prior self-expire stamp | `c434dbd2f549c433e8dd12ba7254c81000e55bda` – invalidiert durch Re-Review `5455342054` |
+| Continuity-Tighten Authoring | `25beee923ab78e6a2259629d01753b16b0b2f893` – invalidiert durch leftover next-step fix |
+| Exact / Review-Head | Stamp nach diesem Authoring; live an PR #144 prüfen |
 | Branch Protection | unverändert; letzte Evidence `protected=false` |
 | Supabase | nicht live abgefragt, nicht mutiert |
 

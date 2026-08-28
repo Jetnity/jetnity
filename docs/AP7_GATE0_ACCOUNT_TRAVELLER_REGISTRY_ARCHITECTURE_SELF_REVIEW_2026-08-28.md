@@ -24,7 +24,7 @@ Keine Änderung an `app/`, `components/`, `lib/`-Runtime, `supabase/migrations`,
 | Wurde ein Default-Pass oder Default-Citizenship empfohlen? | Nein. Explizit verboten. |
 | Wurde Ready/Merge empfohlen? | Nein. STOPP für unabhängigen TL-Re-Review. |
 | Wurde Generation 12 erfunden? | Nein. Sichtbarer Titel bleibt `Account traveller registry architecture`, non-blocking. |
-| Würde ein späterer Merge von #144 die Continuity-Dateien sofort falsch machen? | Nein, nach `5455342054`: self-expiring / dual-state. Nach Merge ist #144 nicht mehr aktiv. Dual-Authority bleibt unfreigegebene Empfehlung. Generation 11 nach Integration abgeschlossen. Keine zukünftige Merge-SHA. Kein Continuity-PR #145 nur für den Merge. |
+| Würde ein späterer Merge von #144 die Continuity-Dateien sofort falsch machen? | Nein, nach `5455342054`: self-expiring / dual-state auf Statuszeile **und** kanonischem Next-Step (START_HERE §16, HANDOFF §8, ROADMAP nächster Schritt, ACTIVE_WORK_STATUS §11 und §10). Nach Merge ist #144 nicht mehr aktiv. Dual-Authority bleibt unfreigegebene Empfehlung. Generation 11 nach Integration abgeschlossen. Keine zukünftige Merge-SHA. Kein Continuity-PR #145 nur für den Merge. |
 
 ## 3. Risiken, die bleiben
 
@@ -35,6 +35,6 @@ Keine Änderung an `app/`, `components/`, `lib/`-Runtime, `supabase/migrations`,
 
 ## 4. Urteil des Autors
 
-Die zwei Findings aus `5455299179` sind in den betroffenen Docs nachgezogen. Non-Scope gehalten.
+Die zwei Findings aus `5455299179` bleiben nachgezogen. Der verbleibende Continuity-Fund aus `5455342054` ist nachgezogen: kanonische Current-State-Flächen inkl. START_HERE §16 und ACTIVE_WORK_STATUS §10 sind dual-state für offen-vs-merged #144. Non-Scope gehalten.
 
 **Unabhängiger Technical-Lead-Re-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**

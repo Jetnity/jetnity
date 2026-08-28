@@ -11,7 +11,7 @@ Status: **AP-7 Gate 0 / PR #144 self-expiring. Audit + Architecture only. Kein R
 
 1. **Arbeitsblock / Ziel:** Read-only Rekonstruktion und Architektur-Empfehlung für eine mögliche accountweite Traveller Registry. Keine Runtime.
 2. **Authoring-Branch / PR:** `audit/ap7-account-traveller-registry-gate0-2026-08-28`; Draft-PR #144. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
-3. **Status:** **REVIEW-FIX FÜR 5455342054 / SELF-EXPIRING / DRAFT.** Solange #144 offen: STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW. Sobald Live-Evidence #144 als gemergt zeigt: Gate 0 integriert; #144 nicht mehr aktiv; kein Runtime; Generation 11 abgeschlossen. Jeder neue Push invalidiert Prior-Gates inkl. `731b0914` und `c434dbd2`. Kein Ready, kein Merge durch den Autor. Kein AP-7-Implementierungsslice.
+3. **Status:** **REVIEW-FIX FÜR 5455342054 / SELF-EXPIRING / DRAFT.** Solange #144 offen: STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW. Sobald Live-Evidence #144 als gemergt zeigt: Gate 0 integriert; #144 nicht mehr aktiv; kein Runtime; Generation 11 abgeschlossen. Jeder neue Push invalidiert Prior-Gates inkl. `731b0914`, `c434dbd2` und `25beee92`. Kein Ready, kein Merge durch den Autor. Kein AP-7-Implementierungsslice.
 4. **Bereits umgesetzt:** Live-Rekonstruktion Foundation E / Guest→Account / Readiness / Official / Profile / Privacy / Admin / Native-Naht; Optionsvergleich; Empfehlung Dual-Authority; ADR-0186 als Empfehlungsstatus.
 5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 11`. Sichtbarer Cursor-Titel dieser Session: `Account traveller registry architecture` (Cloud-Run `https://cursor.com/agents/bc-400e9cce-e82f-48f1-860a-fb6a3a6f90e3`). Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Keine Generation 12.
 6. **Live-`main` bei diesem Stamp:** `1947285cc4d7d6fb98c77ec60a04c96f96f3f483` – immer live neu prüfen.
@@ -411,10 +411,10 @@ Production C1 `20260828015304_traveller_write_contract_integrity` ist unter der 
 
 ## 10. Nächster Schritt
 
-**Self-expiring / dual-state. Live-Evidence gewinnt.**
+**Self-expiring / dual-state. Live-Evidence gewinnt.** PR #143 ist MERGED (`1947285c`); die frühere Dual-State-Klausel für #143 ist historisch.
 
-- **Solange PR #143 offen und unmerged ist:** unabhängiger Technical-Lead-Exact-Head-Review von Draft-PR #143. PR #142 ist integriert. Kein Ready. Kein Merge. Kein Folgeslice durch den Autor-Agenten.
-- **Sobald PR #143 gemergt ist:** die Transport-/Review-Klausel ist automatisch historisch. Exakt erster unfertiger Produktschritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl. Kein Produkt-Slice ist dadurch autorisiert.
+- **Solange PR #144 offen und unmerged ist:** unabhängiger Technical-Lead Exact-Head-Review/Re-Review von Draft-PR #144. Autor-Agent setzt kein Ready, kein Merge, keine AP-7-Runtime.
+- **Sobald Live-Evidence zeigt, dass PR #144 gemergt ist:** Gate 0 ist integrierte Architecture-Evidence. **#144 ist nicht mehr aktiv.** Keine AP-7-Runtime autorisiert. Exakt nächste Aktion = Product-Owner-Architekturentscheidung/Gate vor jeder Implementation. Dual-Authority ist die Gate-0/TL-Empfehlung; der Product Owner hat sie nicht freigegeben. Generation 11 abgeschlossen und nicht für Implementation wiederverwenden. Keine zukünftige Merge-SHA. Kein Continuity-PR nur für den Merge.
 
 AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 ist CLOSED / completed. AP-5-S1 bleibt integriert (PR #133); Issue #132 ist CLOSED / completed. AP-5 Gate 0 bleibt integriert (PR #129); Issue #128 ist CLOSED / completed. Project Sanitation bleibt integriert (PR #135). PR #141 Provider S5-B Gate 0 bleibt integriert als docs/readiness only. AP-5-S3/S4/S5 sind normale Technical-Lead-Gates, nicht automatisch gestartet und nicht PO-gated. Kein C2, kein Auth-Config-Push, kein Cleanup aus diesem File.
 
