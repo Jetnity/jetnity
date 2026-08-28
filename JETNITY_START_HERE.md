@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 27. August 2026  
-Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114 und PR #115 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. TW7-A Runtime ist integriert. AP-4 Account Archive Lifecycle ist integriert. P2-TA-06 ist durch PR #113 integriert und Issue #112 CLOSED / completed. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal. P2-TA-03 rekonstruiert den kanonischen Account-Plan auf Draft-PR #117; das ist kein AP-5-Start. Kein automatischer Folgeslice. Live-`main` immer live prüfen.**
+Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114 und PR #115 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. TW7-A Runtime ist integriert. AP-4 Account Archive Lifecycle ist integriert. P2-TA-06 ist durch PR #113 integriert und Issue #112 CLOSED / completed. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal. P2-TA-03 ist durch PR #117 integriert. P2-TA-04 Gate 0 liegt auf Draft-PR #120; das ist kein RLS-/Grant-Change und kein AP-5-Start. Kein automatischer Folgeslice. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
@@ -12,7 +12,8 @@ Aktuelle operative Evidence:
 - `docs/CHATGPT_PR113_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
 - `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_STATUS_2026-08-27.md`
 - `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
-- `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` – kanonischer AP-5–AP-12-Plan nach P2-TA-03; Draft-PR #117 bis unabhängiger Review/Merge
+- `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` – kanonischer AP-5–AP-12-Plan nach P2-TA-03 / PR #117
+- `docs/P2_TA04_TRAVELLER_CHILD_WRITE_PATH_GATE0_STATUS_2026-08-28.md` – aktueller Account-Audit-Slice
 - `docs/P2_TA03_ACCOUNT_PLATFORM_PLAN_RECONCILIATION_STATUS_2026-08-28.md`
 - `docs/CHATGPT_PR108_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
 - `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`
@@ -325,7 +326,7 @@ Weiter gemäß `docs/JETNITY_BINDING_BUILD_ORDER.md`:
 
 1. Trip Workspace vollständig abschließen – nur nach seinen Gates;
 2. Traveller / Pass / Multi-Citizenship produktweit vervollständigen;
-3. Account AP-5 bis AP-12 gemäß `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` (P2-TA-03 rekonstruiert; Draft-PR #117). AP-4 ist integriert (PR #108). Historischer PR-#39-Plan ist keine Current Truth;
+3. Account AP-5 bis AP-12 gemäß `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` (P2-TA-03 / PR #117 integriert). P2-TA-04 Gate 0 ist der aktuelle Account-Audit-Slice (Draft-PR #120). AP-4 ist integriert (PR #108). Historischer PR-#39-Plan ist keine Current Truth;
 4. Provider Readiness Rest inkl. S5-B, danach echte Provider unter besonderen Gates;
 5. Admin D–K + Marketing/Growth Control Plane;
 6. Homepage finalisieren;
@@ -334,7 +335,7 @@ Weiter gemäß `docs/JETNITY_BINDING_BUILD_ORDER.md`:
 9. kommerzielle Produktschicht;
 10. Guardian / What-if / Value + finaler Launch-Hardening-Audit.
 
-P2-TA-06 ist abgeschlossen. P2-TA-03 rekonstruiert den fehlenden Plan, startet AP-5 aber nicht. Diese Liste gibt **nicht automatisch AP-5** frei; vor dem nächsten Slice müssen aktuelle Traveller-/Account-Gates, offene P0/P1/P2, Parallelität und Shared Contracts live neu geprüft werden.
+P2-TA-06 ist abgeschlossen. P2-TA-03 ist integriert. P2-TA-04 Gate 0 klärt den Traveller-Write-Path, startet aber weder C1/C2 noch AP-5. Diese Liste gibt **nicht automatisch AP-5** frei; vor dem nächsten Slice müssen aktuelle Traveller-/Account-Gates, offene P0/P1/P2, Parallelität und Shared Contracts live neu geprüft werden.
 
 ## 15. Quality / Security / Sanitation
 
@@ -344,9 +345,9 @@ Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Repo-/Bran
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-TW7-A Runtime ist integriert (PR #106), Issue #103 CLOSED / completed. AP-4 ist integriert (PR #108/#111). P2-TA-06 ist integriert (PR #113), Issue #112 CLOSED / completed.
+TW7-A Runtime ist integriert (PR #106), Issue #103 CLOSED / completed. AP-4 ist integriert (PR #108/#111). P2-TA-06 ist integriert (PR #113), Issue #112 CLOSED / completed. P2-TA-03 ist integriert (PR #117), Issue #116 CLOSED / completed. P2-TA-04 Gate 0 ist der aktuelle Account-Audit-Slice auf Draft-PR #120.
 
-**Kein automatischer Folgeslice.** Live-`main`, offene PRs/Issues, Binding Build Order, aktuelle Account/Traveller-, Provider-, Admin-, Growth- und QS-Gates sowie mögliche P0/P1 erneut prüfen. Erst danach eine frische, scope-treue Task/Spec und den exakten Cursor-Anzeigenamen vergeben.
+**Kein automatischer Folgeslice.** Unabhängiger Technical-Lead-Review von PR #120. Kein C1/C2, kein AP-5. Live-`main`, offene PRs/Issues, Binding Build Order und Gates erneut prüfen, bevor ein neuer Slice vergeben wird.
 
 Issue #109 (Visitor Search Country/City-Relevance) und Issue #110 (spätere Homepage-Multi-Destination-Absicht) bleiben separate dokumentierte Themen und werden durch PR #113 nicht automatisch gestartet.
 

@@ -552,7 +552,7 @@ Nicht aus diesem Dokument ableiten oder nebenbei bauen:
 | D0-P1-03 | `/privacy` `/terms` 404 | nicht mit erfundenen Texten in AP-5 mischen; gehört zu AP-6a / Legal-PO |
 | P2-TA-01 | Official nicht progressiv pro Option | eigener Traveller-/Readiness-Slice |
 | P2-TA-02 | Test-Fixture-Bias | Hygiene, kein Produktvertrag |
-| P2-TA-04 | `authenticated` darf Child-Tabellen direkt schreiben | eigener RLS-Security-Slice |
+| P2-TA-04 | `authenticated` darf Child-Tabellen direkt schreiben | Gate 0 auf Draft-PR #120; ADR-0180. Kein RLS-/Grant-Change in Gate 0. Implementation erst nach TL-Review + PO-Gate |
 | P2-TA-05 | Safety citizenship-set, nicht dokumentabhängig | Safety-Slice, kein Default-Pass |
 | P3-TA-01 | Legacy-Singular Expand/Contract | eigener Cleanup |
 | `officialFingerprint` | kann ohne `documents[]` Legacy-Singular lesen | nicht P2-TA-06 erneut öffnen |

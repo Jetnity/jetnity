@@ -4462,6 +4462,39 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 - Keine Runtime, keine Migration, keine Config durch P2-TA-03.
 - D0-P1-03 bleibt als AP-6a-/Legal-PO-Residual sichtbar, nicht als stiller AP-5-Scope.
 
+**Nachtrag, 28. August 2026 – Merge.** Live-Evidence: PR #117 ist gemergt (`b912315d`); Issue #116 ist CLOSED / completed. Der Satz „vorgeschlagen auf Draft-PR #117“ ist **pre-merge evidence**. Der Plan auf `main` ist kanonisch. P2-TA-03 nicht erneut öffnen. Kein AP-5-Start.
+
+---
+
+## ADR-0180 – P2-TA-04 Gate 0: Direct Traveller-DML ist kein unterstützter Vertrag und kein P0
+
+**Datum:** 28. August 2026  
+**Status:** vorgeschlagen auf Draft-PR #120 / P2-TA-04 Gate 0; Audit-/Architecture-only. Keine RLS-/Grant-/Runtime-Änderung.
+
+**Entscheidung:**
+
+- Direct authenticated DML auf `trip_travellers`, `trip_traveller_citizenships` und `trip_traveller_documents` ist **kein** unterstützter Produktvertrag.
+- Es gibt **kein** bewiesenes Cross-User-P0. Owner-RLS und Composite-FKs halten die Ownership-Grenze.
+- Der aktuelle App-Delete-Pfad `travellerEntfernen` und das SECURITY-INVOKER-RPC `party_schreiben` **brauchen** heute Tabellen-DML-Rechte. Ein blindes `REVOKE` ist deshalb unsicher/bruchgefährdend.
+- Empfohlene Closure ist der gestufte fail-closed Schnitt (Option C): zuerst kanonische Delete-Semantik plus fehlende DB-Invarianten (C1), danach erst ein Privilegien-Schnitt mit möglichem SECURITY DEFINER (C2).
+- C1/C2 sind **nicht** durch diesen ADR ausgeführt. Jede Grant-/RLS-/DEFINER-/Production-Migrationsänderung braucht ein ausdrückliches Product-Owner-Gate.
+
+**Kontext:** P2-TA-04 aus dem Traveller-Audit. Live Production 28. August 2026 bestätigt CRUD-Grants für `authenticated`, Owner-RLS und INVOKER-`party_schreiben`. Die App schreibt Children nicht direkt, löscht den Parent aber direkt.
+
+**Alternativen:**
+
+1. *Option A – Direct DML als supported Contract.* Würde ADR-0119 aufweichen und alle RPC-only-Invarianten in die DB zwingen, ohne den dualen Pfad zu schliessen.
+2. *Option B – sofort REVOKE oder DEFINER.* Bricht den aktuellen Delete-Pfad und das INVOKER-RPC, oder führt DEFINER beiläufig ein.
+3. *Nichts tun.* Lässt den Write-Contract weiter umgehbar, inkl. Party-Cap und UPDATE-Reparent.
+
+**Begründung:** Ownership-Security und Write-Contract müssen getrennt bleiben. Least Privilege ist das Ziel, aber nur nachdem der kanonische Write-Pfad Delete und Party-Cap tragen kann, ohne INVOKER zu zerbrechen.
+
+**Konsequenzen:**
+
+- Kein REVOKE, kein DEFINER, keine Migration in P2-TA-04 Gate 0.
+- Ein späterer Implementation-Slice braucht eigenen Task, frischen Agenten, unabhängigen Review und das passende Product-Owner-Gate.
+- AP-5/AP-6a/AP-7 bleiben unberührt.
+
 ---
 
 ## Offene Widersprüche

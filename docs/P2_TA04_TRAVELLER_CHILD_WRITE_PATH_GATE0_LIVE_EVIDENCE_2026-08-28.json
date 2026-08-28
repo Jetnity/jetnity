@@ -1,0 +1,874 @@
+{
+  "queried_at": "2026-08-28T00:46:26.338Z",
+  "target": "production_known_ref",
+  "note": "Read-only Management API catalog. No row data. Project refs omitted.",
+  "queries": {
+    "grants": [
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "authenticated",
+        "privilege_type": "DELETE"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "authenticated",
+        "privilege_type": "INSERT"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "authenticated",
+        "privilege_type": "SELECT"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "authenticated",
+        "privilege_type": "UPDATE"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "postgres",
+        "privilege_type": "DELETE"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "postgres",
+        "privilege_type": "INSERT"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "postgres",
+        "privilege_type": "REFERENCES"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "postgres",
+        "privilege_type": "SELECT"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "postgres",
+        "privilege_type": "TRIGGER"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "postgres",
+        "privilege_type": "TRUNCATE"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "postgres",
+        "privilege_type": "UPDATE"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "service_role",
+        "privilege_type": "DELETE"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "service_role",
+        "privilege_type": "INSERT"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "service_role",
+        "privilege_type": "REFERENCES"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "service_role",
+        "privilege_type": "SELECT"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "service_role",
+        "privilege_type": "TRIGGER"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "service_role",
+        "privilege_type": "TRUNCATE"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "service_role",
+        "privilege_type": "UPDATE"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "authenticated",
+        "privilege_type": "DELETE"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "authenticated",
+        "privilege_type": "INSERT"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "authenticated",
+        "privilege_type": "SELECT"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "authenticated",
+        "privilege_type": "UPDATE"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "postgres",
+        "privilege_type": "DELETE"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "postgres",
+        "privilege_type": "INSERT"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "postgres",
+        "privilege_type": "REFERENCES"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "postgres",
+        "privilege_type": "SELECT"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "postgres",
+        "privilege_type": "TRIGGER"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "postgres",
+        "privilege_type": "TRUNCATE"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "postgres",
+        "privilege_type": "UPDATE"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "service_role",
+        "privilege_type": "DELETE"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "service_role",
+        "privilege_type": "INSERT"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "service_role",
+        "privilege_type": "REFERENCES"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "service_role",
+        "privilege_type": "SELECT"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "service_role",
+        "privilege_type": "TRIGGER"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "service_role",
+        "privilege_type": "TRUNCATE"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "service_role",
+        "privilege_type": "UPDATE"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "authenticated",
+        "privilege_type": "DELETE"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "authenticated",
+        "privilege_type": "INSERT"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "authenticated",
+        "privilege_type": "SELECT"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "authenticated",
+        "privilege_type": "UPDATE"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "postgres",
+        "privilege_type": "DELETE"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "postgres",
+        "privilege_type": "INSERT"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "postgres",
+        "privilege_type": "REFERENCES"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "postgres",
+        "privilege_type": "SELECT"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "postgres",
+        "privilege_type": "TRIGGER"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "postgres",
+        "privilege_type": "TRUNCATE"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "postgres",
+        "privilege_type": "UPDATE"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "service_role",
+        "privilege_type": "DELETE"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "service_role",
+        "privilege_type": "INSERT"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "service_role",
+        "privilege_type": "REFERENCES"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "service_role",
+        "privilege_type": "SELECT"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "service_role",
+        "privilege_type": "TRIGGER"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "service_role",
+        "privilege_type": "TRUNCATE"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "service_role",
+        "privilege_type": "UPDATE"
+      }
+    ],
+    "rls": [
+      {
+        "table_name": "trip_traveller_citizenships",
+        "relrowsecurity": true,
+        "relforcerowsecurity": false
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "relrowsecurity": true,
+        "relforcerowsecurity": false
+      },
+      {
+        "table_name": "trip_travellers",
+        "relrowsecurity": true,
+        "relforcerowsecurity": false
+      }
+    ],
+    "policies": [
+      {
+        "tablename": "trip_traveller_citizenships",
+        "policyname": "trip_traveller_citizenships_aendern",
+        "permissive": "PERMISSIVE",
+        "roles": "{authenticated}",
+        "cmd": "UPDATE",
+        "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+        "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+      },
+      {
+        "tablename": "trip_traveller_citizenships",
+        "policyname": "trip_traveller_citizenships_anlegen",
+        "permissive": "PERMISSIVE",
+        "roles": "{authenticated}",
+        "cmd": "INSERT",
+        "qual": null,
+        "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+      },
+      {
+        "tablename": "trip_traveller_citizenships",
+        "policyname": "trip_traveller_citizenships_lesen",
+        "permissive": "PERMISSIVE",
+        "roles": "{authenticated}",
+        "cmd": "SELECT",
+        "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+        "with_check": null
+      },
+      {
+        "tablename": "trip_traveller_citizenships",
+        "policyname": "trip_traveller_citizenships_loeschen",
+        "permissive": "PERMISSIVE",
+        "roles": "{authenticated}",
+        "cmd": "DELETE",
+        "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+        "with_check": null
+      },
+      {
+        "tablename": "trip_traveller_documents",
+        "policyname": "trip_traveller_documents_aendern",
+        "permissive": "PERMISSIVE",
+        "roles": "{authenticated}",
+        "cmd": "UPDATE",
+        "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+        "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+      },
+      {
+        "tablename": "trip_traveller_documents",
+        "policyname": "trip_traveller_documents_anlegen",
+        "permissive": "PERMISSIVE",
+        "roles": "{authenticated}",
+        "cmd": "INSERT",
+        "qual": null,
+        "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+      },
+      {
+        "tablename": "trip_traveller_documents",
+        "policyname": "trip_traveller_documents_lesen",
+        "permissive": "PERMISSIVE",
+        "roles": "{authenticated}",
+        "cmd": "SELECT",
+        "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+        "with_check": null
+      },
+      {
+        "tablename": "trip_traveller_documents",
+        "policyname": "trip_traveller_documents_loeschen",
+        "permissive": "PERMISSIVE",
+        "roles": "{authenticated}",
+        "cmd": "DELETE",
+        "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+        "with_check": null
+      },
+      {
+        "tablename": "trip_travellers",
+        "policyname": "trip_travellers_aendern",
+        "permissive": "PERMISSIVE",
+        "roles": "{authenticated}",
+        "cmd": "UPDATE",
+        "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+        "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+      },
+      {
+        "tablename": "trip_travellers",
+        "policyname": "trip_travellers_anlegen",
+        "permissive": "PERMISSIVE",
+        "roles": "{authenticated}",
+        "cmd": "INSERT",
+        "qual": null,
+        "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+      },
+      {
+        "tablename": "trip_travellers",
+        "policyname": "trip_travellers_lesen",
+        "permissive": "PERMISSIVE",
+        "roles": "{authenticated}",
+        "cmd": "SELECT",
+        "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+        "with_check": null
+      },
+      {
+        "tablename": "trip_travellers",
+        "policyname": "trip_travellers_loeschen",
+        "permissive": "PERMISSIVE",
+        "roles": "{authenticated}",
+        "cmd": "DELETE",
+        "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+        "with_check": null
+      }
+    ],
+    "constraints": [
+      {
+        "schema": "public",
+        "table_name": "trip_traveller_citizenships",
+        "conname": "trip_traveller_citizenships_client_ref_laenge",
+        "contype": "c",
+        "definition": "CHECK (((char_length(btrim(client_ref)) >= 1) AND (char_length(btrim(client_ref)) <= 64)))"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_traveller_citizenships",
+        "conname": "trip_traveller_citizenships_country_format",
+        "contype": "c",
+        "definition": "CHECK ((country_code ~ '^[A-Z]{2}$'::text))"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_traveller_citizenships",
+        "conname": "trip_traveller_citizenships_traveller_fk",
+        "contype": "f",
+        "definition": "FOREIGN KEY (traveller_id, trip_id, user_id) REFERENCES trip_travellers(id, trip_id, user_id) ON DELETE CASCADE"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_traveller_citizenships",
+        "conname": "trip_traveller_citizenships_pkey",
+        "contype": "p",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_traveller_citizenships",
+        "conname": "trip_traveller_citizenships_client_eindeutig",
+        "contype": "u",
+        "definition": "UNIQUE (user_id, trip_id, traveller_id, client_ref)"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_traveller_citizenships",
+        "conname": "trip_traveller_citizenships_land_eindeutig",
+        "contype": "u",
+        "definition": "UNIQUE (traveller_id, country_code)"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_traveller_documents",
+        "conname": "trip_traveller_documents_client_ref_laenge",
+        "contype": "c",
+        "definition": "CHECK (((char_length(btrim(client_ref)) >= 1) AND (char_length(btrim(client_ref)) <= 64)))"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_traveller_documents",
+        "conname": "trip_traveller_documents_issuing_format",
+        "contype": "c",
+        "definition": "CHECK (((issuing_country_code IS NULL) OR (issuing_country_code ~ '^[A-Z]{2}$'::text)))"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_traveller_documents",
+        "conname": "trip_traveller_documents_type_werte",
+        "contype": "c",
+        "definition": "CHECK ((document_type = ANY (ARRAY['passport'::text, 'national_id'::text, 'unknown'::text])))"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_traveller_documents",
+        "conname": "trip_traveller_documents_citizenship_fk",
+        "contype": "f",
+        "definition": "FOREIGN KEY (citizenship_id, traveller_id, trip_id, user_id) REFERENCES trip_traveller_citizenships(id, traveller_id, trip_id, user_id) ON DELETE SET NULL (citizenship_id)"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_traveller_documents",
+        "conname": "trip_traveller_documents_traveller_fk",
+        "contype": "f",
+        "definition": "FOREIGN KEY (traveller_id, trip_id, user_id) REFERENCES trip_travellers(id, trip_id, user_id) ON DELETE CASCADE"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_traveller_documents",
+        "conname": "trip_traveller_documents_pkey",
+        "contype": "p",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_traveller_documents",
+        "conname": "trip_traveller_documents_client_eindeutig",
+        "contype": "u",
+        "definition": "UNIQUE (user_id, trip_id, traveller_id, client_ref)"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_travellers",
+        "conname": "trip_travellers_client_ref_laenge",
+        "contype": "c",
+        "definition": "CHECK (((char_length(btrim(client_ref)) >= 1) AND (char_length(btrim(client_ref)) <= 64)))"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_travellers",
+        "conname": "trip_travellers_document_type_werte",
+        "contype": "c",
+        "definition": "CHECK (((document_type IS NULL) OR (document_type = ANY (ARRAY['passport'::text, 'national_id'::text, 'unknown'::text]))))"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_travellers",
+        "conname": "trip_travellers_issuing_format",
+        "contype": "c",
+        "definition": "CHECK (((document_issuing_country_code IS NULL) OR (document_issuing_country_code ~ '^[A-Z]{2}$'::text)))"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_travellers",
+        "conname": "trip_travellers_keine_ausweisnummern",
+        "contype": "c",
+        "definition": "CHECK (((label IS NULL) OR ((label !~ '[0-9]{6,}'::text) AND (label !~* '(pass(nummer|nr|no|id)?|passport|ausweis|visa|visum|geburt)'::text))))"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_travellers",
+        "conname": "trip_travellers_keine_html",
+        "contype": "c",
+        "definition": "CHECK (((label IS NULL) OR (label !~* '<[[:alpha:]/]'::text)))"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_travellers",
+        "conname": "trip_travellers_label_laenge",
+        "contype": "c",
+        "definition": "CHECK (((label IS NULL) OR ((char_length(btrim(label)) >= 1) AND (char_length(btrim(label)) <= 40))))"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_travellers",
+        "conname": "trip_travellers_nationality_format",
+        "contype": "c",
+        "definition": "CHECK (((nationality_country_code IS NULL) OR (nationality_country_code ~ '^[A-Z]{2}$'::text)))"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_travellers",
+        "conname": "trip_travellers_residence_format",
+        "contype": "c",
+        "definition": "CHECK (((residence_country_code IS NULL) OR (residence_country_code ~ '^[A-Z]{2}$'::text)))"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_travellers",
+        "conname": "trip_travellers_reise_fk",
+        "contype": "f",
+        "definition": "FOREIGN KEY (trip_id, user_id) REFERENCES trips(id, user_id) ON DELETE CASCADE"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_travellers",
+        "conname": "trip_travellers_pkey",
+        "contype": "p",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "schema": "public",
+        "table_name": "trip_travellers",
+        "conname": "trip_travellers_client_eindeutig",
+        "contype": "u",
+        "definition": "UNIQUE (user_id, trip_id, client_ref)"
+      }
+    ],
+    "triggers": [
+      {
+        "table_name": "trip_traveller_citizenships",
+        "trigger_name": "trip_traveller_citizenships_aktualisiert_am",
+        "action_timing": "BEFORE",
+        "event_manipulation": "UPDATE",
+        "action_orientation": "ROW",
+        "action_statement": "EXECUTE FUNCTION setze_aktualisiert_am()"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "trigger_name": "trip_traveller_citizenships_limit",
+        "action_timing": "AFTER",
+        "event_manipulation": "INSERT",
+        "action_orientation": "ROW",
+        "action_statement": "EXECUTE FUNCTION trip_traveller_kinder_limit_pruefen()"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "trigger_name": "trip_traveller_documents_aktualisiert_am",
+        "action_timing": "BEFORE",
+        "event_manipulation": "UPDATE",
+        "action_orientation": "ROW",
+        "action_statement": "EXECUTE FUNCTION setze_aktualisiert_am()"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "trigger_name": "trip_traveller_documents_limit",
+        "action_timing": "AFTER",
+        "event_manipulation": "INSERT",
+        "action_orientation": "ROW",
+        "action_statement": "EXECUTE FUNCTION trip_traveller_kinder_limit_pruefen()"
+      },
+      {
+        "table_name": "trip_travellers",
+        "trigger_name": "trip_travellers_aktualisiert_am",
+        "action_timing": "BEFORE",
+        "event_manipulation": "UPDATE",
+        "action_orientation": "ROW",
+        "action_statement": "EXECUTE FUNCTION setze_aktualisiert_am()"
+      }
+    ],
+    "functions": [
+      {
+        "proname": "party_schreiben",
+        "args": "_payload jsonb",
+        "security_definer": false,
+        "proconfig": [
+          "search_path=public, pg_temp"
+        ],
+        "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}",
+        "lanname": "plpgsql"
+      },
+      {
+        "proname": "trip_traveller_kinder_limit_pruefen",
+        "args": "",
+        "security_definer": false,
+        "proconfig": [
+          "search_path=public, pg_temp"
+        ],
+        "acl": "{=X/postgres,postgres=X/postgres,service_role=X/postgres}",
+        "lanname": "plpgsql"
+      }
+    ],
+    "function_grants": [
+      {
+        "proname": "party_schreiben",
+        "args": "_payload jsonb",
+        "grantee": "anon",
+        "can_execute": false
+      },
+      {
+        "proname": "party_schreiben",
+        "args": "_payload jsonb",
+        "grantee": "authenticated",
+        "can_execute": true
+      },
+      {
+        "proname": "party_schreiben",
+        "args": "_payload jsonb",
+        "grantee": "postgres",
+        "can_execute": true
+      },
+      {
+        "proname": "party_schreiben",
+        "args": "_payload jsonb",
+        "grantee": "service_role",
+        "can_execute": true
+      },
+      {
+        "proname": "trip_traveller_kinder_limit_pruefen",
+        "args": "",
+        "grantee": "anon",
+        "can_execute": true
+      },
+      {
+        "proname": "trip_traveller_kinder_limit_pruefen",
+        "args": "",
+        "grantee": "authenticated",
+        "can_execute": true
+      },
+      {
+        "proname": "trip_traveller_kinder_limit_pruefen",
+        "args": "",
+        "grantee": "postgres",
+        "can_execute": true
+      },
+      {
+        "proname": "trip_traveller_kinder_limit_pruefen",
+        "args": "",
+        "grantee": "service_role",
+        "can_execute": true
+      }
+    ],
+    "function_def_meta": [
+      {
+        "proname": "party_schreiben",
+        "args": "_payload jsonb",
+        "def_says_definer": false,
+        "def_says_invoker": false,
+        "has_no_key_update": false,
+        "has_party_limit": true,
+        "has_foreign_citizenship": true,
+        "inserts_travellers": true,
+        "deletes_documents": true,
+        "deletes_citizenships": true,
+        "deletes_travellers": false
+      },
+      {
+        "proname": "trip_traveller_kinder_limit_pruefen",
+        "args": "",
+        "def_says_definer": false,
+        "def_says_invoker": false,
+        "has_no_key_update": true,
+        "has_party_limit": false,
+        "has_foreign_citizenship": false,
+        "inserts_travellers": false,
+        "deletes_documents": false,
+        "deletes_citizenships": false,
+        "deletes_travellers": false
+      }
+    ],
+    "check_party_count_constraint": [],
+    "migrations": [
+      {
+        "version": "20260822020000",
+        "name": "trip_travellers"
+      },
+      {
+        "version": "20260822160000",
+        "name": "traveller_context_intelligence"
+      },
+      {
+        "version": "20260822170000",
+        "name": "traveller_context_fk_delete"
+      },
+      {
+        "version": "20260822180000",
+        "name": "traveller_context_rereview"
+      }
+    ]
+  },
+  "develop_comparison": {
+    "status": "FUNCTIONS_DEPLOYED",
+    "authenticated_grants": [
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "authenticated",
+        "privilege_type": "DELETE"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "authenticated",
+        "privilege_type": "INSERT"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "authenticated",
+        "privilege_type": "SELECT"
+      },
+      {
+        "table_name": "trip_traveller_citizenships",
+        "grantee": "authenticated",
+        "privilege_type": "UPDATE"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "authenticated",
+        "privilege_type": "DELETE"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "authenticated",
+        "privilege_type": "INSERT"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "authenticated",
+        "privilege_type": "SELECT"
+      },
+      {
+        "table_name": "trip_traveller_documents",
+        "grantee": "authenticated",
+        "privilege_type": "UPDATE"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "authenticated",
+        "privilege_type": "DELETE"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "authenticated",
+        "privilege_type": "INSERT"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "authenticated",
+        "privilege_type": "SELECT"
+      },
+      {
+        "table_name": "trip_travellers",
+        "grantee": "authenticated",
+        "privilege_type": "UPDATE"
+      }
+    ],
+    "functions": [
+      {
+        "proname": "party_schreiben",
+        "security_definer": false,
+        "proconfig": [
+          "search_path=public, pg_temp"
+        ]
+      },
+      {
+        "proname": "trip_traveller_kinder_limit_pruefen",
+        "security_definer": false,
+        "proconfig": [
+          "search_path=public, pg_temp"
+        ]
+      }
+    ]
+  },
+  "readiness_fk": [
+    {
+      "conname": "trip_readiness_items_traveller_fk",
+      "definition": "FOREIGN KEY (traveller_id, trip_id, user_id) REFERENCES trip_travellers(id, trip_id, user_id) ON DELETE CASCADE"
+    }
+  ],
+  "indexes": [
+    {
+      "indexname": "trip_traveller_citizenships_client_eindeutig",
+      "indexdef": "CREATE UNIQUE INDEX trip_traveller_citizenships_client_eindeutig ON public.trip_traveller_citizenships USING btree (user_id, trip_id, traveller_id, client_ref)"
+    },
+    {
+      "indexname": "trip_traveller_citizenships_id_traveller_uidx",
+      "indexdef": "CREATE UNIQUE INDEX trip_traveller_citizenships_id_traveller_uidx ON public.trip_traveller_citizenships USING btree (id, traveller_id, trip_id, user_id)"
+    },
+    {
+      "indexname": "trip_traveller_citizenships_land_eindeutig",
+      "indexdef": "CREATE UNIQUE INDEX trip_traveller_citizenships_land_eindeutig ON public.trip_traveller_citizenships USING btree (traveller_id, country_code)"
+    },
+    {
+      "indexname": "trip_traveller_citizenships_pkey",
+      "indexdef": "CREATE UNIQUE INDEX trip_traveller_citizenships_pkey ON public.trip_traveller_citizenships USING btree (id)"
+    },
+    {
+      "indexname": "trip_traveller_citizenships_reise_idx",
+      "indexdef": "CREATE INDEX trip_traveller_citizenships_reise_idx ON public.trip_traveller_citizenships USING btree (trip_id, user_id, traveller_id)"
+    },
+    {
+      "indexname": "trip_traveller_documents_client_eindeutig",
+      "indexdef": "CREATE UNIQUE INDEX trip_traveller_documents_client_eindeutig ON public.trip_traveller_documents USING btree (user_id, trip_id, traveller_id, client_ref)"
+    },
+    {
+      "indexname": "trip_traveller_documents_pkey",
+      "indexdef": "CREATE UNIQUE INDEX trip_traveller_documents_pkey ON public.trip_traveller_documents USING btree (id)"
+    },
+    {
+      "indexname": "trip_traveller_documents_reise_idx",
+      "indexdef": "CREATE INDEX trip_traveller_documents_reise_idx ON public.trip_traveller_documents USING btree (trip_id, user_id, traveller_id)"
+    },
+    {
+      "indexname": "trip_travellers_client_eindeutig",
+      "indexdef": "CREATE UNIQUE INDEX trip_travellers_client_eindeutig ON public.trip_travellers USING btree (user_id, trip_id, client_ref)"
+    },
+    {
+      "indexname": "trip_travellers_id_reise_uidx",
+      "indexdef": "CREATE UNIQUE INDEX trip_travellers_id_reise_uidx ON public.trip_travellers USING btree (id, trip_id, user_id)"
+    },
+    {
+      "indexname": "trip_travellers_pkey",
+      "indexdef": "CREATE UNIQUE INDEX trip_travellers_pkey ON public.trip_travellers USING btree (id)"
+    },
+    {
+      "indexname": "trip_travellers_reise_idx",
+      "indexdef": "CREATE INDEX trip_travellers_reise_idx ON public.trip_travellers USING btree (trip_id, user_id)"
+    }
+  ]
+}

@@ -5,7 +5,7 @@ Agent: `Account plattform audit vorbereitung`
 Typ: **AUDIT / EVIDENCE ONLY**  
 Status: **TL-REVIEW CHANGES REQUIRED umgesetzt / STOPP für Re-Review**
 
-Current classification / Nachtrag, 28. August 2026 – P2-TA-03: **HISTORICAL EVIDENCE / 26. August 2026.** Finding P2-TA-03 („Plan fehlt auf `main`“) wird durch Draft-PR #117 / `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` geschlossen, sobald der unabhängige Technical Lead reviewed und merget. P2-TA-06 ist durch PR #113 integriert; der damalige „latent“-Satz ist historische Evidence. AP-4 ist durch PR #108 integriert. Dieser Audit bleibt zeitgebundene Evidence und keine Current Truth. Die originale `Status:`-Zeile bleibt unverändert sichtbar.  
+Current classification / Nachtrag, 28. August 2026 – P2-TA-03: **HISTORICAL EVIDENCE / 26. August 2026.** Finding P2-TA-03 („Plan fehlt auf `main`“) ist durch PR #117 / `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` geschlossen. P2-TA-06 ist durch PR #113 integriert; der damalige „latent“-Satz ist historische Evidence. AP-4 ist durch PR #108 integriert. P2-TA-04 Gate 0 liegt auf Draft-PR #120 und ändert RLS/Grants nicht. Dieser Audit bleibt zeitgebundene Evidence und keine Current Truth. Die originale `Status:`-Zeile bleibt unverändert sichtbar.  
 Branch: `audit/traveller-account-next-phase`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/76  
 Ursprüngliche Baseline: `main @ ba86279e5ee2505bfd13801ae5e05ef50ba87c22`  
