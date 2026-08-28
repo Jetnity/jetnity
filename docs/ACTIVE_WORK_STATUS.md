@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 28. August 2026  
-Status: **Next 16 S2 Framework Bump / Draft-PR #151 / SELF-EXPIRING. STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge durch den Autor. Kein S3. PR #148 Gate 0, PR #149 PO-Freigabe und PR #150 / S1 sind auf `main @ d7f02f77` integriert. Kein AP-7-S2. Live-`main` immer live prüfen.**
+Status: **Next 16 S2 Framework Bump Review-Fix / Draft-PR #151 / SELF-EXPIRING. STOP für unabhängigen Technical-Lead Exact-Head-Re-Review nach CHANGES REQUIRED `5055372760`; kein Ready, kein Merge durch den Autor. Kein S3. PR #148 Gate 0, PR #149 PO-Freigabe und PR #150 / S1 sind auf `main @ d7f02f77` integriert. Kein AP-7-S2. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -11,15 +11,15 @@ Status: **Next 16 S2 Framework Bump / Draft-PR #151 / SELF-EXPIRING. STOP für u
 
 1. **Arbeitsblock / Ziel:** Tatsächlicher Framework-Bump auf Next.js 16.3.3 Active LTS plus kompatible React-19.2-/ESLint-/TypeScript-Linie, ESLint CLI/Flat Config und `middleware.ts`→`proxy.ts`. Kein S3.
 2. **Authoring-Branch / PR:** `feat/next16-s2-framework-bump-2026-08-28`; Draft-PR #151. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
-3. **Status:** **DRAFT / SELF-EXPIRING.** STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW. Kein Ready, kein Merge durch den Autor. Kein S3.
-4. **Bereits umgesetzt:** `next@16.3.3`, `react@19.2.8`, `eslint-config-next@16.3.3`, `eslint@9.39.5`, `typescript@5.9.3`; Flat Config; `proxy.ts` mit erhaltener fail-closed Semantik; `typedRoutes` top-level; `useActionState`; `next typegen` vor `tsc`; lokale Gates grün (`npm ci`, typecheck, lint 0 errors / 133 warnings, **2486** tests, hygiene, Next-16.3.3-Turbopack-Production-Build nach clean `.next`).
+3. **Status:** **REVIEW-FIX / DRAFT / SELF-EXPIRING.** STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW nach CHANGES REQUIRED `5055372760`. Vorheriger Review-Head `b73af1c2` und dessen Gates/Preview sind nach dem neuen Push ungültig. Kein Ready, kein Merge durch den Autor. Kein S3.
+4. **Bereits umgesetzt:** `next@16.3.3`, `react@19.2.8`, `eslint-config-next@16.3.3`, `eslint@9.39.5`, `typescript@5.9.3`; Flat Config; `proxy.ts` mit erhaltener fail-closed Semantik; `typedRoutes` top-level; `useActionState`; `next typegen` vor `tsc`; öffentliche `Fehler-ID` Digest-first plus `useId()`-Fallback (Review-Fix `5e98a38e`); lokale Gates auf `5e98a38e` grün (`npm ci`, typecheck, lint 0 errors / 133 warnings, **2491** tests, hygiene, Next-16.3.3-Turbopack-Production-Build).
 5. **Cursor-Agent:** `Cursor-Agent: Jetnity framework compatibility 2`. Preferred visible title: `Jetnity framework compatibility 2`. Observed run title: `Jetnity framework bump` (Cloud-Run `https://cursor.com/agents/bc-ddde1a19-b2c8-420d-916a-db4e31a3aca3`). Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 2 bleibt 2.
 6. **Live-`main` / Baseline bei diesem Stamp:** `d7f02f77c0796b0ec04675191742049a222cfab9` – immer live neu prüfen. Merge-Base exakt, 0 behind. Ahead = Implementierung plus dieser Stamp; live am PR zählen.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation, keine Vercel-Projektmutation.
 8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** Auth-/Cookie-/Proxy- und `/planen`-Metadata bleiben P1 bis unabhängiger Preview-Review. ESLint 9.39.5 npm-deprecated; kein Sprung auf ESLint 10. `main` `protected=false`. Agent-Self-Review ist kein PASS.
+9. **Bekannte Risiken / Review-Funde:** Auth-/Cookie-/Proxy- und `/planen`-Metadata bleiben P1 bis unabhängiger Preview-Review. Der P1-Fund `5055372760` (`#unbekannt`) ist lokal geschlossen. ESLint 9.39.5 npm-deprecated; kein Sprung auf ESLint 10. `main` `protected=false`. Agent-Self-Review ist kein PASS.
 10. **Offene Nutzerentscheidungen / Freigaben:** S2 braucht keine neue PO-Freigabe (PR #149). S3 bleibt extra gegatet. Production-Migration / Identity / RLS / Provider-live / Payments / Public Launch bleiben extra gegated. AP-7-S2 startet nicht aus diesem Slice.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #151. Kein Ready. Kein Merge. Kein S3.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #151 nach CHANGES REQUIRED `5055372760`. Kein Ready. Kein Merge. Kein S3.
 12. **Zuerst lesen:** `docs/NEXT16_S2_FRAMEWORK_BUMP_TASK_2026-08-28.md`, Status, Handoff, Self-Review, ADR-0191, `docs/JETNITY_CURSOR_VISIBLE_AGENT_NAME_GATE.md`.
 
 ## Historischer Arbeitsblock – Next 16 Compatibility Prep S1

@@ -1,12 +1,12 @@
 # Jetnity – Next 16 S2 Framework Bump Handoff
 
 Stand: 28. August 2026  
-Status: **DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW**  
+Status: **REVIEW-FIX / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Logical Cursor-Agent: **`Cursor-Agent: Jetnity framework compatibility 2`**  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/151  
 Branch: `feat/next16-s2-framework-bump-2026-08-28`
 
-Dieser Handoff übergibt Slice 2: den tatsächlichen Next-16.3.3-Framework-Bump. Er startet **kein** S3. Agent-Self-Review ist kein PASS. Jeder neue Head invalidiert Prior-Gates. Unmittelbare Review-Fixes bleiben dieselbe Session.
+Dieser Handoff übergibt Slice 2 inklusive des unmittelbaren Review-Fixes zu CHANGES REQUIRED `5055372760` (öffentliche Fehler-ID ohne Konstanten-Fallback). Er startet **kein** S3. Agent-Self-Review ist kein PASS. Jeder neue Head invalidiert Prior-Gates. Unmittelbare Review-Fixes bleiben dieselbe Session.
 
 ---
 
@@ -15,10 +15,11 @@ Dieser Handoff übergibt Slice 2: den tatsächlichen Next-16.3.3-Framework-Bump.
 1. Registry/Peers vor Install erneut geprüft. `next` und `eslint-config-next` exakt auf `16.3.3`, React/React-DOM auf `19.2.8`, Types 19.2, ESLint `9.39.5`, TypeScript `5.9.3`. Kein Force-/legacy-peer-deps-Hack.
 2. `next lint` durch `eslint .` ersetzt und `.eslintrc.json` auf die offizielle Next-16-Flat-Config migriert, ohne Regeln global auf `off` zu setzen.
 3. `middleware.ts` zu `proxy.ts` umbenannt, Export `proxy`, fail-closed Auth-/Cookie-Semantik erhalten, kein Matcher.
-4. Nur notwendige Next-16-/React-19-Kompatibilität: `typedRoutes` top-level, `useActionState`, typed `cookies().delete`, `data-scroll-behavior`, reine Error-Support-ID, `next typegen` vor `tsc`.
-5. Breaking-Change-Audit gegen das echte Repo und den Turbopack-Production-Build. `new URL(req.url).searchParams` nicht pauschal umgeschrieben.
-6. Gezielte Proxy-/Framework-Vertrags-Tests. Vollständiges lokales Gate-Set ausgeführt.
-7. Status / Self-Review / ADR-0191 / kanonische Continuity self-expiring aktualisiert.
+4. Nur notwendige Next-16-/React-19-Kompatibilität: `typedRoutes` top-level, `useActionState`, typed `cookies().delete`, `data-scroll-behavior`, `next typegen` vor `tsc`.
+5. Review-Fix `5055372760`: öffentliche `Fehler-ID` bleibt Digest-first; ohne Digest `useId()`-Fallback über `oeffentlicheFehlerId`. Kein `#unbekannt`, keine unreinen Zeit-/Zufallswerte.
+6. Breaking-Change-Audit gegen das echte Repo und den Turbopack-Production-Build. `new URL(req.url).searchParams` nicht pauschal umgeschrieben.
+7. Gezielte Proxy-/Framework-/Fehler-ID-Tests. Vollständiges lokales Gate-Set auf `5e98a38e` erneut ausgeführt.
+8. Status / Self-Review / ADR-0191 / kanonische Continuity self-expiring restampt.
 
 Kein Ready. Kein Merge. Kein S3.
 
@@ -43,7 +44,9 @@ Kein Ready. Kein Merge. Kein S3.
 | --- | --- |
 | Task-Baseline / `origin/main` Re-Fetch | `d7f02f77c0796b0ec04675191742049a222cfab9` |
 | Merge-Base | exakt dieselbe SHA – **kein Drift** |
-| Ahead / Behind vor Stamp | **8 / 0** Implementierung inkl. Typegen-Fix; Stamp-Commit kommt hinzu |
+| Ahead / Behind vor Stamp | **10 / 0** inkl. Review-Fix `5e98a38e`; Stamp-Commit kommt hinzu |
+| Ungültiger TL-Review-Head | `b73af1c246bb51566c8613522fa9677e19f815c7` (CHANGES REQUIRED `5055372760`) |
+| Review-Fix-Head | `5e98a38eb7d41c9c64192b7fea97623acf544bef` |
 | Exact / Stamp-Head | Commit dieses Handoffs; live an PR #151 prüfen |
 | Draft-PR | #151 OPEN / Draft |
 | Branch Protection | unverändert; letzte bekannte Evidence `protected=false` |
@@ -88,12 +91,13 @@ Jetnity läuft auf diesem Draft-Branch auf **Next.js 16.3.3 (Turbopack)** mit Re
 8. `typecheck` läuft `next typegen && tsc`, weil CI typecheck vor build ausführt.
 9. Production-Build ist Next 16.3.3 Turbopack, nicht Webpack-Opt-out.
 10. Keine Supabase-/Vercel-Setting-/Branch-Protection-Mutation.
-11. PR bleibt Draft.
+11. Öffentliche `Fehler-ID`: Digest zuerst; ohne Digest `useId()` über `oeffentlicheFehlerId`; kein `#unbekannt`; keine unreinen Zeit-/Zufallsaufrufe.
+12. PR bleibt Draft.
 
 ---
 
 ## 6. Exakter nächster Schritt
 
-**Unabhängiger ChatGPT / Technical-Lead Exact-Head-Review von Draft-PR #151.**
+**Unabhängiger ChatGPT / Technical-Lead Exact-Head-Re-Review von Draft-PR #151.**
 
-Kein Ready. Kein Merge. Kein S3. Bei CHANGES REQUIRED bleibt **dieselbe Session / derselbe logische Agent**.
+Vorheriger Review-Head `b73af1c2` / Kommentar `5055372760` ist nach diesem Push ungültig. Kein Ready. Kein Merge. Kein S3. Bei weiteren CHANGES REQUIRED bleibt **dieselbe Session / derselbe logische Agent**.

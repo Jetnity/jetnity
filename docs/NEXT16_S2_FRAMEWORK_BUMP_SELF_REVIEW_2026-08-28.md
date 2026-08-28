@@ -41,7 +41,8 @@ Geprüft gegen den tatsächlichen Diff zu `origin/main @ d7f02f77`:
 | Wurden S1 Promise-/Async-Verträge zurückgebaut? | Nein. Factories bleiben `async` + `await cookies()`. PageProps bleiben `Promise<T>`. |
 | Wurden normale `URLSearchParams` pauschal umgeschrieben? | Nein. |
 | Wurde `useFormState` belassen? | Nein. Admin-Login nutzt `useActionState` aus `react`. |
-| Wurde eine unreine Error-ID (`Date.now`/`Math.random`) belassen? | Nein. Support-ID ist Digest oder `#unbekannt`. |
+| Wurde eine unreine Error-ID (`Date.now`/`Math.random`) belassen? | Nein. Digest zuerst; ohne Digest `useId()` über `oeffentlicheFehlerId`. |
+| Ist der Fallback eine gemeinsame Konstante wie `#unbekannt`? | Nein nach Review-Fix `5e98a38e`. Tests scheitern, wenn `error.tsx` `#unbekannt` oder unreine Zeit-/Zufallsaufrufe zurückbekommt. |
 | Wurde Service-Role ausgeweitet? | Nein. |
 | Wurde Supabase/Auth/RLS/Schema mutiert? | Nein. |
 | Wurde Ready/Merge ausgeführt oder als PASS empfohlen? | Nein. STOPP für unabhängigen TL-Review. |
@@ -65,6 +66,6 @@ Geprüft gegen den tatsächlichen Diff zu `origin/main @ d7f02f77`:
 
 ## 5. Urteil des Autors
 
-S2 ist scope-treu implementiert: Next 16.3.3 läuft lokal mit Turbopack-Production-Build, Proxy-Semantik und S1-Verträgen. Product-Truth sollte unverändert sein.
+S2 ist scope-treu implementiert. Der P1-Fund aus CHANGES REQUIRED `5055372760` ist lokal behoben: die öffentliche `Fehler-ID` bleibt Digest-first und ohne Digest instanzstabil über `useId()`, nicht konstant `#unbekannt`.
 
-**Unabhängiger Technical-Lead Exact-Head-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**
+**Unabhängiger Technical-Lead Exact-Head-Re-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**

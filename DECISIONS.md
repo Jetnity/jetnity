@@ -4927,6 +4927,8 @@ Festlegung innerhalb S1, ohne Dependency-Bump:
 - Canonical Continuity ist self-expiring: solange #151 offen → TL Exact-Head-Review / kein Ready/Merge durch den Autor; nach Merge → S2 integriert, nächster Schritt nur ein separat versioniertes, ausdrücklich gegatetes Folgeprogramm, kein automatisches S3.
 - Autor-Agent stoppt für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
 
+**Nachtrag, 28. August 2026 – Review-Fix `5055372760`.** Die öffentliche Support-ID darf ohne Digest keine gemeinsame Konstante (`#unbekannt`) sein. Fallback ist `useId()` über `oeffentlicheFehlerId`: render-rein, je gemounteter Fehlergrenze stabil, ohne unreine Zeit-/Zufallswerte im Render. Vorheriger Review-Head `b73af1c2` wird durch den Review-Fix ungültig.
+
 ---
 
 ## Offene Widersprüche

@@ -1,7 +1,7 @@
 # Jetnity – Next 16 S2 Framework Bump Status
 
 Stand: 28. August 2026  
-Status: **DRAFT / SELF-EXPIRING. STOP für unabhängigen Technical-Lead Exact-Head-Review von PR #151. Kein Ready. Kein Merge. Kein S3.**  
+Status: **REVIEW-FIX / DRAFT / SELF-EXPIRING. STOP für unabhängigen Technical-Lead Exact-Head-Re-Review von PR #151 nach CHANGES REQUIRED `5055372760`. Kein Ready. Kein Merge. Kein S3.**  
 Workstream: Ops / Framework Compatibility  
 Cursor-Agent: **`Cursor-Agent: Jetnity framework compatibility 2`**  
 Preferred visible Cursor title: **`Jetnity framework compatibility 2`**  
@@ -32,7 +32,7 @@ Dieser Agent behauptet nicht, die sichtbare UI sei umbenannt. Ein UI-Titel-Misma
 | Repository | `Jetnity/jetnity` |
 | `origin/main` Re-Fetch | `d7f02f77c0796b0ec04675191742049a222cfab9` – Merge PR #150 |
 | Merge-Base | `d7f02f77c0796b0ec04675191742049a222cfab9` – **kein Baseline-Drift** |
-| Ahead / Behind vor diesem Stamp | **8 / 0** nach den Implementierungscommits; Exact Head ist der Commit dieses Stamps |
+| Ahead / Behind vor diesem Stamp | **10 / 0** inkl. Review-Fix `5e98a38e`; Exact Head ist der Commit dieses Stamps |
 | Draft-PR | #151 OPEN / Draft |
 | `main` Branch Protection | bekannt `protected=false`; dieser Slice ändert das nicht |
 | Supabase | **nicht** mutiert; keine Migration, kein RLS-/Auth-Config-/Datenwrite |
@@ -63,9 +63,11 @@ Dieser Agent behauptet nicht, die sichtbare UI sei umbenannt. Ein UI-Titel-Misma
 | `dd30ac44` | Proxy-/Framework-Vertrags-Tests |
 | `d1cc78d2` | Proxy-Assertions auf ausführbare Muster statt Kommentartext |
 | `0bb271bf` | `next typegen` vor `tsc`; Next-16-`next-env.d.ts` / `tsconfig.json` |
-| Stamp-Head | Continuity/ADR dieses Commits; live an PR #151 prüfen |
+| `b73af1c2` | erster Continuity-Stamp; **TL-Review-Head** für CHANGES REQUIRED `5055372760` |
+| `5e98a38e` | Review-Fix: öffentliche Fehler-ID ohne `#unbekannt`; `useId()`-Fallback |
+| Stamp-Head | Continuity dieses Commits; live an PR #151 prüfen |
 
-Exact Head ist der Commit dieses Continuity-Stamps. Live an PR #151 prüfen. Gates unten wurden auf der Implementierung inkl. `0bb271bf` ausgeführt. Frühere Preview-Kommentare auf älteren Heads sind nach diesem Push ungültig.
+Exact Head ist der Commit dieses Continuity-Stamps. Live an PR #151 prüfen. Gates unten wurden auf Review-Fix `5e98a38e` erneut ausgeführt. Vorheriges CI `33213588571` und Preview `8VaZHuL6ATtC2VRZfBwGpYVqzNyB` am Head `b73af1c2` sind nach diesem Push ungültig.
 
 ## 2. Scope / Non-Scope
 
@@ -106,12 +108,12 @@ Live unmittelbar vor Installation gegen Registry/Peers geprüft. Keine Canary/Pr
 5. Notwendige Kompatibilitätsfixes:
    - Admin-Login: `useFormState` → `useActionState` aus `react`; `useFormStatus` bleibt in `react-dom`
    - `app/layout.tsx`: `data-scroll-behavior="smooth"` für den Next-14-SPA-Scroll-Override
-   - `app/(public)/error.tsx`: keine unreinen `Date.now()`/`Math.random()`; Support-ID `#${digest}` oder `#unbekannt`
+   - `app/(public)/error.tsx`: Digest zuerst; ohne Digest `useId()`-Fallback über `oeffentlicheFehlerId` (Review-Fix `5055372760`). Keine unreinen Zeit-/Zufallswerte, kein `#unbekannt`
    - `lib/supabase/server.ts`: `store.delete(name)` ohne `@ts-ignore`
    - `typecheck`: `next typegen && tsc`, weil Next 16 `next-env.d.ts` auf generierte Route-Types zeigt und CI typecheck vor build läuft
    - `tsconfig.json`: `jsx: "react-jsx"` und `.next/dev/types/**/*.ts` (Next-16-Schreibvorgang)
 6. S1 Promise-/Async-Request-API-Verträge bleiben. `new URL(req.url).searchParams` nicht pauschal umgeschrieben.
-7. Gezielte Tests: `lib/auth/proxy-security-contract.test.ts`, `lib/next/framework-bump-contract.test.ts`; Admin-AAL-Wiring und Request-API-Compat lesen `proxy.ts`.
+7. Gezielte Tests: `lib/auth/proxy-security-contract.test.ts`, `lib/next/framework-bump-contract.test.ts`, `lib/next/oeffentliche-fehler-id.test.ts`; Admin-AAL-Wiring und Request-API-Compat lesen `proxy.ts`.
 
 ## 5. Breaking-Change-Audit (Repo + Build, keine abstrakte Checkliste)
 
@@ -143,7 +145,7 @@ Lint-Ergebnis: **0 errors, 133 warnings**.
 
 ## 7. Author-Gates dieses Runs
 
-Lokal auf der Implementierung inkl. Typegen-Fix `0bb271bf` ausgeführt:
+Lokal auf Review-Fix `5e98a38e` erneut ausgeführt:
 
 | Gate | Ergebnis |
 | --- | --- |
@@ -151,21 +153,21 @@ Lokal auf der Implementierung inkl. Typegen-Fix `0bb271bf` ausgeführt:
 | `npm run check:setup:ci` | PASS (1 Warn: keine `.env` in dieser Umgebung) |
 | `npm run typecheck` | PASS nach `next typegen` |
 | `npm run lint` | PASS – 0 errors / 133 warnings |
-| `npm test` | PASS – **2486** tests, 0 fail |
+| `npm test` | PASS – **2491** tests, 0 fail (vorher 2486; + Fehler-ID-Regressionen) |
 | `npm run check:dead` | PASS |
 | `npm run check:exports` | PASS |
 | `npm run check:deps` | PASS |
 | `npm run check:api-schutz` | PASS – 12 admin routes |
 | `npm run check:schema-bezug` | PASS |
-| `npm run build` | PASS – **Next.js 16.3.3 (Turbopack)** nach clean `.next`; 22 static pages; Proxy erkannt |
+| `npm run build` | PASS – **Next.js 16.3.3 (Turbopack)**; 22 static pages; Proxy erkannt |
 
-Gezielt separat nach Typegen-Fix: `lib/next/framework-bump-contract.test.ts`, `lib/auth/proxy-security-contract.test.ts` – PASS.
+Gezielt separat: `lib/next/oeffentliche-fehler-id.test.ts`, `lib/next/framework-bump-contract.test.ts` – PASS.
 
 GitHub Actions / Vercel Preview **dieses Stamp-Heads** sind Platform-Evidence nach dem Push. Der Technical Lead verifiziert sie unabhängig. Frühere Preview-Kommentare auf älteren Heads gelten nicht für diesen Stamp.
 
 ## 8. Unfertige Arbeit
 
-- Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #151.
+- Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #151 nach CHANGES REQUIRED `5055372760`.
 - GitHub Actions / Vercel Preview dieses Stamp-Heads müssen am exakten Head bestätigt werden.
 - S3 / Folgeslice ist **nicht** gestartet und nicht vorgeschlagen als automatischer nächster Schritt.
 
@@ -180,6 +182,7 @@ Kein neu entdeckter P0.
 - Auth-/Cookie-/Proxy-Regression in echter Preview/SSR, trotz Source-Contract-Tests. Der Proxy ist die teuerste Fläche.
 - `/planen` Robots und Promise-PageProps bleiben P1, bis Exact-Head Preview die S1-Verträge auf Next 16 bestätigt.
 - Stale `.next` aus Next 14 bricht den ersten Build; CI muss clean starten. Lokal nach `rm -rf .next` grün.
+- Der P1-Fund aus `5055372760` (konstante `#unbekannt`-Fehler-ID) ist im Review-Fix `5e98a38e` geschlossen. Residual: Preview muss die sichtbare `Fehler-ID` unabhängig bestätigen.
 
 ### P2
 
@@ -202,6 +205,6 @@ Dieser Slice hat **nicht** verändert: Supabase Migration/Schema/Daten/Auth-Conf
 
 ## 12. Exakter nächster Schritt
 
-**Unabhängiger ChatGPT / Technical-Lead Exact-Head-Review von Draft-PR #151.**
+**Unabhängiger ChatGPT / Technical-Lead Exact-Head-Re-Review von Draft-PR #151.**
 
-Kein Ready. Kein Merge. Kein S3. Unmittelbare Review-Fixes bleiben in derselben Session `Jetnity framework compatibility 2`.
+Vorheriger Review-Head `b73af1c2` / Kommentar `5055372760` ist nach diesem Push ungültig. Kein Ready. Kein Merge. Kein S3. Unmittelbare Review-Fixes bleiben in derselben Session `Jetnity framework compatibility 2`.

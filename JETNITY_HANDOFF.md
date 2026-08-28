@@ -1,13 +1,13 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **Next 16 S2 Framework Bump / Draft-PR #151 self-expiring. STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge durch den Autor. Kein S3. PR #148 Gate 0, PR #149 Product-Owner-Freigabe und PR #150 / S1 sind auf `main @ d7f02f77` integriert. PR #147 Node 22 ist integriert. AP-7-S1 ist integriert; kein automatisches AP-7-S2. Dual-Authority ist product-owner-freigegeben. S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **Next 16 S2 Framework Bump Review-Fix / Draft-PR #151 self-expiring. STOP für unabhängigen Technical-Lead Exact-Head-Re-Review nach CHANGES REQUIRED `5055372760`; kein Ready, kein Merge durch den Autor. Kein S3. PR #148 Gate 0, PR #149 Product-Owner-Freigabe und PR #150 / S1 sind auf `main @ d7f02f77` integriert. PR #147 Node 22 ist integriert. AP-7-S1 ist integriert; kein automatisches AP-7-S2. Dual-Authority ist product-owner-freigegeben. S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
 Aktueller Ops-Slice auf diesem Branch (self-expiring für PR #151):
 
-- `docs/NEXT16_S2_FRAMEWORK_BUMP_STATUS_2026-08-28.md` – S2 Framework Bump / Draft-PR #151; STOP für TL Exact-Head-Review; kein Ready, kein Merge, kein S3
+- `docs/NEXT16_S2_FRAMEWORK_BUMP_STATUS_2026-08-28.md` – S2 Framework Bump Review-Fix / Draft-PR #151; STOP für TL Exact-Head-Re-Review nach `5055372760`
 - `docs/NEXT16_S2_FRAMEWORK_BUMP_HANDOFF_2026-08-28.md`
 - `docs/NEXT16_S2_FRAMEWORK_BUMP_SELF_REVIEW_2026-08-28.md`
 
@@ -352,7 +352,7 @@ Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logisc
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-**Self-expiring.** Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #151. Autor-Agent setzt kein Ready, kein Merge, kein S3, keine Vercel-Setting-Mutation und startet kein AP-7-S2. PR #148 / PR #149 / PR #150 sind integriert. PR #147 Node 22 ist bereits integriert (`56aff7ff`).
+**Self-expiring.** Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #151 nach CHANGES REQUIRED `5055372760`. Autor-Agent setzt kein Ready, kein Merge, kein S3, keine Vercel-Setting-Mutation und startet kein AP-7-S2. PR #148 / PR #149 / PR #150 sind integriert. PR #147 Node 22 ist bereits integriert (`56aff7ff`).
 
 PR #144 ist MERGED (`bb38aef5`). Dual-Authority ist product-owner-freigegeben. PR #143 ist MERGED (`1947285c`).
 
