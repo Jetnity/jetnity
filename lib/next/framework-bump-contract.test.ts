@@ -27,6 +27,7 @@ describe('Next-16-S2 Framework-Vertrag', () => {
   })
 
   test('lint nutzt ESLint CLI und Flat Config, nicht next lint', () => {
+    assert.equal(pkg.scripts.typecheck, 'next typegen && tsc -p tsconfig.json --noEmit')
     assert.equal(pkg.scripts.lint, 'eslint .')
     assert.equal(pkg.scripts.lint.includes('next lint'), false)
     assert.equal(existsSync(join(wurzel, '.eslintrc.json')), false)
