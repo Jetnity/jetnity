@@ -17,7 +17,7 @@ Status: **Quality-Draft: Issue #134 Project Sanitation Closure durch `Jetnity qu
 8. **Kosten / Provider / Secrets:** keine.
 9. **Bekannte Residuals:** getrackte `supabase/.temp`; `prague.jpg`; CookieConsent; V1 Image-Hosts; `main` `protected=false`; Unique Docs auf historischen Branches; `chore/account-admin-team-prep`; `jetnity-bets` PO-Gate.
 10. **Offene Nutzerentscheidungen / Freigaben:** dieser Slice braucht keines. Spätere Branch-/Cloud-Deletes bleiben TL- bzw. Product-Owner-Gates.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review. **Kein Cleanup aus diesem Slice.**
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review auf Exact Head `bcf1cb5c` (Actions `33165746670` SUCCESS, Vercel `6140045492` READY). **Kein Cleanup aus diesem Slice.**
 12. **Zuerst lesen:** `docs/PROJECT_SANITATION_LIVE_INVENTORY_STATUS_2026-08-28.md`, Closure-Matrix, Branch-Matrix, ADR-0184.
 
 ## Historischer Arbeitsblock – AP-5-S1 Security-UI Truth

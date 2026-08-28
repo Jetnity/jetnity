@@ -37,7 +37,11 @@ Historische 26.08.-Inventur: Branch `audit/project-sanitation-inventory-2026-08-
 | ADR-0183 | AP-5-S1 integriert |
 | Sanitation-ADR | ADR-0184 |
 | Review | `5050411074` CHANGES REQUIRED auf `4c2e99a5` |
-| Pre-Rebase Exact-Head-Stamps | stale; nicht als aktueller Gate verwenden |
+| Exact Head | `bcf1cb5c1833e6ca565c3cf281b3c900b852e5ef` |
+| Ahead / Behind | **5 / 0** gegen `51b0c926` |
+| GitHub Actions | Run `33165746670` **SUCCESS** auf exakt diesem SHA |
+| Vercel Preview | Deployment `6140045492` / Inspector `2LnmDvHF6XKHintf2u6caa6hQy49` **READY** auf exakt diesem SHA |
+| Review-Threads | 1 historische Review auf dem alten Head; 0 neue Inline-Threads |
 | Draft-PR | [#135](https://github.com/Jetnity/jetnity/pull/135) |
 
 Authoring-Start dieses Slices war `eaa03ad7` mit offenem #133. Das ist historische Start-Evidence.

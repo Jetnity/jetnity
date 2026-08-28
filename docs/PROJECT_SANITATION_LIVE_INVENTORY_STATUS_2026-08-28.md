@@ -42,7 +42,11 @@ Live geprüft am 28. August 2026.
 | Merge-Base dieses Branches | `51b0c926` / **0 behind** gegenüber `origin/main` |
 | Draft-PR | [#135](https://github.com/Jetnity/jetnity/pull/135) |
 | Review-Auslöser | Review `5050411074` CHANGES REQUIRED auf Head `4c2e99a5` |
-| Exact Head dieses Review-Fix | nach Commit/Push live stempeln; nicht vorab behaupten |
+| Exact Head dieses Review-Fix | `bcf1cb5c1833e6ca565c3cf281b3c900b852e5ef` |
+| Merge-Base / Ahead / Behind | `51b0c926` / **5 / 0** |
+| Exact-Head GitHub Actions | Run `33165746670` **SUCCESS** auf exakt `bcf1cb5c` |
+| Exact-Head Vercel Preview | Deployment `6140045492` / Inspector `2LnmDvHF6XKHintf2u6caa6hQy49` **READY** auf exakt `bcf1cb5c` |
+| Review-Threads nach Fix | 1 historische Review `5050411074` auf dem alten Head; 0 neue Inline-Threads |
 | Offene PRs | **7:** #135, #88, #52, #50, #40, #39, #28 |
 | PR #133 | **MERGED** `51b0c926` |
 | Issue #132 | **CLOSED / completed** |
