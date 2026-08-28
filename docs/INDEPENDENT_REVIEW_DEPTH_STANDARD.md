@@ -196,7 +196,7 @@ Ein unabhängiger Reviewer darf Merge oder Production nicht empfehlen, wenn ein 
 
 Grüne Tests dürfen einen solchen bekannten Fehler nicht überstimmen.
 
-Product-Owner-Merge-Freigabe bleibt zusätzlich immer separat erforderlich.
+Product-Owner-Merge-Freigabe bleibt zusätzlich immer separat erforderlich für besondere Gates. Für normale scope-treue PRs gilt seit 26./28. August 2026 die Technical-Lead-Merge-Autonomie: nur ChatGPT / Technical Lead darf Ready/Merge; Cursor-Agenten niemals. Siehe `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`. Der übrige Review-Body bleibt Evidence und wird nicht kosmetisch umgeschrieben.
 
 ---
 

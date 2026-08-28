@@ -61,7 +61,7 @@ P2-TA-03 schließt diese Continuity-Lücke. **P2-TA-03 ist kein AP-5-Start.**
 | --- | --- | --- |
 | Implementierung gesperrt bis PR-#38-Closure | **superseded** | Seasonal / PR #38 ist längst integriert. Die Sperre ist keine aktuelle Runtime-Bremse. |
 | Derselbe unnummerierte Agent führt AP-1–AP-12 sequenziell weiter | **superseded** | `docs/JETNITY_AGENT_SESSION_ROTATION_STANDARD.md`: frische Session je logischer Einheit. Generation 5 ist dieser Audit. |
-| Kein Ready/Merge ohne Product Owner je PR | **superseded** | `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`. Blind mergen bleibt verboten. Besondere Product-Owner-Gates bleiben. |
+| Kein Ready/Merge ohne Product Owner je PR | **superseded** | `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`. Nur ChatGPT / Technical Lead darf Ready/Merge. Cursor-Agenten niemals. Blind mergen bleibt verboten. Besondere Product-Owner-Gates bleiben. |
 | AP-1, AP-2, AP-3, AP-4 sind zukünftige Slices | **superseded / integrated** | Alle vier sind auf `main`. Nicht neu planen. |
 | AP-4 als offener Shared-Schnitt in der späteren Serie | **integrated** | PR #108 / ADR-0177. |
 | Notifications erst nach PR #38 | **superseded als Blocker** | Seasonal ist integriert. AP-11 bleibt trotzdem hinter Notification-/Consent-/Provider-Gates. |

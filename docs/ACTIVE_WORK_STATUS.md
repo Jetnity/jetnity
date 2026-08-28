@@ -1,11 +1,26 @@
 # Jetnity – Active Work Status
 
 Stand: 28. August 2026  
-Status: **AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Gate 0 und S1 bleiben integriert. Generation 10 ist mit S2 plus diesem Continuity-Stamp abgeschlossen. Kein S3–S5. Kein C2. Live-`main` immer live prüfen.**
+Status: **Aktueller Block: Draft-PR #142 docs-only Technical-Lead-/Cursor-Operating-Standard-Integration. Autor-Agent setzt kein Ready und kein Merge. AP-5-S2 bleibt integriert (PR #137 / Merge `f11a1753`). Kein Produkt-Folgeslice. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
-## Aktueller Arbeitsblock – AP-5-S2 Post-Merge Continuity
+## Aktueller Arbeitsblock – Technical Lead / Cursor Operating Standard
+
+1. **Arbeitsblock / Ziel:** Docs-only Governance-Integration des Product-Owner-Operating-Standards vom 28. August 2026, damit jeder neue ChatGPT-Technical-Lead ihn früh liest und keine aktuelle Governance mehr impliziert, ein Cursor-Agent dürfe Ready/Merge.
+2. **Authoring-Branch / PR:** `docs/technical-lead-cursor-operating-standard-2026-08-28`; Draft-PR #142.
+3. **Status:** **DOCS-ONLY / DRAFT / PO-CONTINUITY-AMENDMENT.** Gegen vorherigen Head `d3544a98aba87f86827c00911be093babd0d551f`. Jeder neue Push invalidiert Prior-Gates. Kein Ready, kein Merge durch den Autor. Kein Produkt-Folgeslice.
+4. **Bereits umgesetzt:** Operating-Standard-Integration und Review-Fix `5454244491` bleiben. Agenten-Namensdisziplin, Chat-Kapazitäts-Continuity und universeller Recovery-Prompt bleiben. Neu: verbindliche Current-State-Regel – kein relevanter Fortschritt nur im Chat; persistierte Evidence muss `main`/Baseline, Branch/PR/Head, Agentennamen, Task/Scope, Review-Verdict, Blocker, CI/Vercel/Supabase, Gates, fertig vs. unfertig und den exakt ersten nächsten Schritt tragen. Continuity ist Definition of Done.
+5. **Cursor-Agent:** `Cursor-Agent: Jetnity quality security audit 3` – exakt zugewiesener Name. Keine andere Generation. Cursor exponiert in dieser Session keine programmierbare Rename-/Title-Fähigkeit; der UI-Anzeigename wird deshalb nicht als geändert behauptet.
+6. **Live-`main` bei diesem Stamp:** Task-Baseline `3b119ae34843b40d043ed921070c60e35dd1517a`. Immer live neu prüfen.
+7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation.
+8. **Kosten / Provider / Secrets:** keine.
+9. **Bekannte Risiken / Review-Funde:** `main` Branch Protection bleibt `protected=false`. Dieser Slice ändert das nicht. Ein Agent-Self-Review ist kein PASS. Letztes unabhängiges Review mit CHANGES REQUIRED: Kommentar `5454244491` auf `0bce940c` (jene drei Fixes sind umgesetzt). PO-Amendments nach `0b0e3b54` sind noch nicht unabhängig PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** besondere Product-Owner-Gates unverändert (S5-B Runtime, TW-8, AP-5-S3 geschlossen). Kein Ready/Merge durch den Autor. Unabhängiger Technical-Lead-Review auf dem neuen Exact Head.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review von Draft-PR #142 auf dem neuen Exact Head. Prior-Gates auf `d3544a98` und älteren Heads sind stale. Kein Ready. Kein Merge. Kein Folgeslice.
+12. **Zuerst lesen:** `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` §9, `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_PROMPT.md`, `docs/TECHNICAL_LEAD_CURSOR_OPERATING_STANDARD_INTEGRATION_TASK_2026-08-28.md`, `JETNITY_START_HERE.md`, dieser Status.
+
+## Historischer Arbeitsblock – AP-5-S2 Post-Merge Continuity
 
 1. **Arbeitsblock / Ziel:** Docs-only Continuity nach Merge von PR #137, damit `main` S2 nicht weiter als Draft führt.
 2. **Authoring-Branch / PR:** `cursor/ap5-s2-integrated-82e4`; Draft-PR #138.
@@ -132,7 +147,11 @@ Production Public Runtime bleibt bezüglich D0 unverändert:
 
 > **Autonom mergen ist erlaubt – blind mergen ist verboten.**
 
-Vor Ready/Merge zwingend: Live-`main`, Diff, Tests und Testannahmen, Security/Privacy/Truth/Shared Contracts, Exact-Head Actions/Vercel, relevante Supabase-Grenzen, Review-Threads und Parallelität prüfen. Bei Fehlern zuerst korrigieren und neu gaten.
+> **Nur ChatGPT / Technical Lead darf Ready setzen oder mergen. Cursor-Agenten tun das niemals.**
+
+Current Truth: `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`.
+
+Vor Ready/Merge zwingend: Live-`main`, Diff, Tests und Testannahmen, Security/Privacy/Truth/Shared Contracts, Exact-Head Actions/Vercel, relevante Supabase-Grenzen, Review-Threads und Parallelität prüfen. Bei Fehlern zuerst korrigieren und neu gaten. Der Technical Lead merged nur, wenn er nach unabhängigem Exact-Head-Review absolut überzeugt ist, dass dies die beste verantwortbare Entscheidung ist.
 
 Besondere Product-Owner-Gates bleiben unverändert, insbesondere für Production-Migrationen, große Auth/MFA/AAL-/RLS-/Identity-Änderungen, sensitive Dokumentdaten, reale Provider/Secrets/paid calls, Payments, > USD 100/Monat und Public Launch / Provider-Live / Store-Aktivierung.
 
@@ -293,7 +312,8 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#138** AP-5-S2 Post-Merge Continuity | **DRAFT / DOCS-ONLY.** Branch `cursor/ap5-s2-integrated-82e4`. Kein Ready, kein Merge durch den Autor. Kein S3–S5. |
+| **#142** Technical Lead / Cursor Operating Standard | **DRAFT / DOCS-ONLY GOVERNANCE.** Branch `docs/technical-lead-cursor-operating-standard-2026-08-28`. Kein Ready, kein Merge durch den Autor. Kein Produkt-Folgeslice. |
+| **#138** AP-5-S2 Post-Merge Continuity | **GEMERGT / INTEGRIERT** laut kanonischem Handoff. Ältere „DRAFT“-Zeilen in diesem File sind Pre-#138-Evidence. |
 | **#137** AP-5-S2 Passwortänderung | **GEMERGT / INTEGRIERT.** Merge `f11a1753`. Reviewed Head `e4cb805a`. TL PASS `5051115258`. Issue #136 CLOSED / completed. |
 | **#135** Project Sanitation Closure | **GEMERGT / INTEGRIERT.** Merge `0256905c`. Retention-Plan; kein Cleanup. |
 | **#133** AP-5-S1 Security-UI | **GEMERGT / INTEGRIERT.** Merge `51b0c926`. Issue #132 CLOSED / completed. Agent 9 abgeschlossen. |
@@ -344,6 +364,8 @@ Production `20260827170000` ist angewendet und verifiziert, exakt einmal. Kein z
 Production C1 `20260828015304_traveller_write_contract_integrity` ist unter der bestehenden Product-Owner-C1-Freigabe (Issue #122) vom Technical Lead angewendet und live verifiziert. Kein erneuter Apply. Die historische/develop-only Author-Version `20260828120000` bleibt Develop-Evidence derselben SQL und wird nicht still umgeschrieben.
 
 ## 10. Nächster Schritt
+
+Unabhängiger Technical-Lead-Review von Draft-PR #142 auf dem neuen Exact Head. Kein Ready. Kein Merge. Kein Folgeslice durch den Autor-Agenten.
 
 AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 ist CLOSED / completed. AP-5-S1 bleibt integriert (PR #133); Issue #132 ist CLOSED / completed. AP-5 Gate 0 bleibt integriert (PR #129); Issue #128 ist CLOSED / completed. Project Sanitation bleibt integriert (PR #135). Kein S3–S5, kein C2, kein Auth-Config-Push, kein Cleanup aus diesem File.
 

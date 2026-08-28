@@ -1,7 +1,11 @@
 # Jetnity – Product-Owner Freigabenachweis Technical-Lead-Autonomie
 
-Stand: 25. August 2026  
-Status: **teilweise superseded – Ready-/Merge-Autonomie ist nicht mehr gültig**
+Stand: 25. August 2026; Banner 28. August 2026  
+Status: **HISTORICAL / SUPERSEDED für Ready-/Merge. Der Body bleibt Evidence des 25.-August-Stands und wird nicht kosmetisch umgeschrieben.**
+
+> Current Truth: `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`.  
+> Nur ChatGPT / Technical Lead darf Ready setzen oder mergen. Cursor-Agenten tun das niemals.  
+> Die 25.-August-Aussage „Ready-/Merge-Autonomie ist nicht mehr gültig“ und die per-PR-Product-Owner-Merge-Pflicht sind durch die späteren Entscheidungen vom 26. und 28. August 2026 superseded. Besondere Product-Owner-Gates bleiben.
 
 ## 1. Historischer Freigabestand
 
