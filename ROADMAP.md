@@ -221,7 +221,7 @@ Kein Domain Cutover, Public Indexing, D1/G1 oder Growth-Folgeslice automatisch s
 
 QS-1/QS-2 und relevante P1-Hardening-Slices sind integriert.
 
-Project-Sanitation PR #88 bleibt non-destructive Evidence.
+Project-Sanitation: Issue #134 ist der aktuelle Closure-/Retention-Slice. PR #88 bleibt historische Evidence vom 26.08.2026, nicht Current Truth. Aktuelle Matrizen: `docs/PROJECT_SANITATION_LIVE_INVENTORY_STATUS_2026-08-28.md`.
 
 Kein automatisches:
 
@@ -264,7 +264,8 @@ Abgeschlossen:
 25. ✅ P2-TA-04 Traveller Child Write-Path Gate 0 / PR #120 + Issue #119
 26. ✅ P2-TA-04 C1 Traveller write-contract integrity / PR #126 + Issue #122
 27. ✅ AP-5 Gate 0 Account security capability audit / PR #129 + Issue #128
-28. AP-5-S1 ehrliche Security-UI Zustände – **Issue #132; Draft-PR #133; ADR-0183; kein S2–S5**
+28. ✅ AP-5-S1 ehrliche Security-UI Zustände / PR #133 + Issue #132; ADR-0183
+29. Project Sanitation Closure / Issue #134 – **Draft; Audit only; kein Cleanup; ADR-0184**
 
 Nächster Schritt:
 

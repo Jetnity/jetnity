@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **Kanonischer Post-PR-#131-Übergabestand plus AP-5-S1 auf Issue #132. AP-5 Gate 0 ist integriert; Issue #128 ist CLOSED / completed. S2–S5 und C2 sind nicht gestartet. Kein automatischer Folgeslice. Live-Evidence immer erneut verifizieren.**
+Status: **Kanonischer Post-PR-#133-Übergabestand plus offener Sanitation-Draft. AP-5 Gate 0 und AP-5-S1 sind integriert; Issue #128 und Issue #132 sind CLOSED / completed. Offener Quality-Draft: Issue #134 / PR #135. S2–S5 und C2 sind nicht gestartet. Kein automatischer Folgeslice. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
@@ -191,7 +191,7 @@ Nach Live-Rekonstruktion neu einordnen:
 - AP-5-S2–S5 nicht automatisch starten
 - AP-7 gated
 - weitere QS-/Supabase-Security-/Performance-Advisories
-- Project-Sanitation PR #88 bleibt non-destructive Evidence; kein Cleanup/Branch-/Cloud-Delete automatisch
+- Project-Sanitation: Issue #134 ist der aktuelle Closure-/Retention-Slice (`docs/PROJECT_SANITATION_LIVE_INVENTORY_STATUS_2026-08-28.md`). PR #88 bleibt historische Evidence vom 26.08.2026, nicht Current Truth. Kein Cleanup/Branch-/Cloud-Delete automatisch
 - kein Public Indexing / Domain Cutover ohne Gate
 
 Diese Liste ist keine automatische Prioritätenliste. Binding Build Order + Live-Evidence entscheiden.
@@ -208,12 +208,12 @@ Exakte Basis-Anzeigenamen bleiben verbindlich:
 6. `Cursor-Agent: Jetnity quality security audit`
 7. `Cursor-Agent: Jetnity native app architecture`
 
-Aktuelle Account-Generation:
+Zuletzt abgeschlossene Account-Generation:
 
 - `Cursor-Agent: Account plattform audit vorbereitung 9`
-- AP-5-S1 / Issue #132
-- ehrliche Security-UI-Zustände und Fehlerhygiene
-- Draft; kein Ready, kein Merge, kein S2–S5
+- AP-5-S1 / Issue #132 / PR #133 integriert
+- Issue #132 CLOSED / completed
+- Generation 9 nicht wiederverwenden
 
 Generation 8 (AP-5 Gate 0 / PR #129) ist abgeschlossen und nicht wiederzuverwenden.
 Generation 7 (P2-TA-04 C1 / PR #126) ist abgeschlossen und nicht wiederzuverwenden.
@@ -221,11 +221,16 @@ Generation 6 (P2-TA-04 Gate 0 / PR #120) ist abgeschlossen und nicht wiederzuver
 Generation 5 (P2-TA-03 / PR #117) ist abgeschlossen und nicht wiederzuverwenden.
 Generation 4 (P2-TA-06 / PR #113) ist abgeschlossen und nicht wiederzuverwenden.
 
+Quality/Security-Generation 3 ist aktiv für Issue #134: `Cursor-Agent: Jetnity quality security audit 3`. Generation 2 (PR #88) ist historische Evidence und nicht wiederzuverwenden.
+
+Account-Generation 9 (AP-5-S1 / PR #133 / Issue #132) ist abgeschlossen und nicht wiederzuverwenden. Dieser Sanitation-Handoff besitzt deren Auth-/Security-UI nicht.
+
+
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-**Kein Produkt-Folgeslice ist durch diesen Handoff über S1 hinaus freigegeben.**
+**Kein Produkt-Folgeslice ist durch diesen Handoff über das integrierte S1 hinaus freigegeben.**
 
-AP-5-S1 liegt als Implementation-Slice auf Issue #132 / Draft-PR #133 und wartet auf unabhängigen Technical-Lead-Review. Das ist **kein** S2–S5- und **kein** C2-Start. AP-5 Gate 0 bleibt integriert. P2-TA-04 C1 bleibt integriert; Production C1 `20260828015304` nicht erneut anwenden.
+AP-5-S1 ist integriert (PR #133); Issue #132 ist CLOSED / completed. Offener Quality-Draft ist Issue #134 / PR #135. Das ist **kein** S2–S5- und **kein** C2-Start. AP-5 Gate 0 bleibt integriert. P2-TA-04 C1 bleibt integriert; Production C1 `20260828015304` nicht erneut anwenden.
 
 Nicht automatisch starten:
 
