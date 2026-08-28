@@ -48,7 +48,7 @@ AP-5 Gate 0 / S1 / S2 bleiben integriert. S3–S5, C2 und AP-7 starten nicht aus
 
 ## 4. Aktueller docs-only Governance-Slice
 
-Draft-PR #142 persistiert den Technical-Lead-/Cursor-Operating-Standard. Das ist kein Produkt-Folgeslice. Autor-Agenten setzen kein Ready und kein Merge.
+> Historisch: Zum Zeitpunkt dieses Checkpoints persistierte Draft-PR #142 den Operating Standard. **Current Truth:** PR #142 ist MERGED. Siehe `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`. Das bleibt kein Produkt-Folgeslice. Autor-Agenten setzen kein Ready und kein Merge.
 
 Current Truth für Ready/Merge und Cursor-Workflow:
 

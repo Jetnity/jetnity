@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 28. August 2026  
-Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114, PR #115, PR #117, PR #118, PR #120, PR #121, PR #126, PR #127, PR #129, PR #130, PR #131, PR #133, PR #135 und PR #137 sind integriert. AP-5 Gate 0, AP-5-S1 und AP-5-S2 sind integriert. Kein automatischer Folgeslice über S2 hinaus. Live-`main` immer live prüfen.**
+Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114, PR #115, PR #117, PR #118, PR #120, PR #121, PR #126, PR #127, PR #129, PR #130, PR #131, PR #133, PR #135, PR #137, PR #138, PR #141 und PR #142 sind integriert. AP-5 Gate 0, AP-5-S1 und AP-5-S2 sind integriert. Technical-Lead-/Cursor-Operating-Standard ist integriert. Kein automatischer Produkt-Folgeslice. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
@@ -13,7 +13,8 @@ Current-State-Evidence und Recovery: `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_P
 
 Aktuelle operative Evidence:
 
-- `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – neueste Post-Merge-Evidence nach PR #141
+- `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – neueste Post-Merge-Evidence nach PR #142
+- `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – Post-Merge-Evidence nach PR #141
 - `JETNITY_HANDOFF.md`
 - `docs/ACTIVE_WORK_STATUS.md`
 - `docs/CHATGPT_PR113_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
@@ -68,6 +69,7 @@ Jeder neue Chat, Technical Lead oder Coding Agent liest mindestens in dieser Rei
 13. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
 14. `JETNITY_HANDOFF.md`
 15. `docs/ACTIVE_WORK_STATUS.md`
+15a. `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
 16. `docs/CHATGPT_PR113_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
 17. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_STATUS_2026-08-27.md`
 18. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
@@ -383,11 +385,16 @@ Draft-PR #88 bleibt historische Evidence vom 26.08.2026, nicht Current Truth. Un
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-Aktueller docs-only Governance-Slice, kein Produkt-Folgeslice: Draft-PR #142 integriert den Operating Standard. Autor-Agent setzt **kein Ready** und **kein Merge**. Unabhängiger Technical-Lead-Review auf dem neuen Exact Head.
+PR #142 ist **MERGED / integriert**. Ältere „Draft-PR #142 unabhängig reviewen“-Sätze sind Pre-Merge-Evidence. Current Truth: `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`.
 
-TW7-A Runtime ist integriert (PR #106), Issue #103 CLOSED / completed. AP-4 ist integriert (PR #108/#111). P2-TA-06 ist integriert (PR #113), Issue #112 CLOSED / completed. P2-TA-03 ist integriert (PR #117), Issue #116 CLOSED / completed. P2-TA-04 Gate 0 / C1 sind integriert. AP-5 Gate 0 ist integriert (PR #129), Issue #128 CLOSED / completed. AP-5-S1 ist integriert (PR #133), Issue #132 CLOSED / completed. Project Sanitation ist integriert (PR #135), Issue #134 CLOSED / completed. AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 ist CLOSED / completed. PR #138 Post-Merge-Continuity ist integriert. PR #141 Provider S5-B Gate 0 ist integriert als **docs/readiness only**.
+**Self-expiring / dual-state. Live-Evidence gewinnt.**
 
-**Kein automatischer Folgeslice über S2 hinaus.** PR #138 ist bereits gemergt; ältere „Draft-PR #138 unabhängig reviewen“-Sätze sind historische Evidence. Kein S3–S5, kein C2, kein Auth-Config-Push, kein erneuter Supabase-Write. S5-B Runtime/Persistenz/Schema/Migration ist **nicht** gestartet und nicht autorisiert. TW-8 bleibt geschlossen. Production C1 ist als `20260828015304` angewendet und live verifiziert; historische/develop-only Evidence bleibt `20260828120000`. Live-`main`, offene PRs/Issues, Binding Build Order und Gates erneut prüfen, bevor ein neuer Slice vergeben wird.
+- **Solange PR #143 offen und unmerged ist:** Draft-PR #143 ist nur der docs-only Continuity-Transport nach PR #142. Autor-Agent setzt **kein Ready** und **kein Merge**. Exakt erster unfertiger Schritt = unabhängiger Technical-Lead-Exact-Head-Review von #143.
+- **Sobald PR #143 gemergt ist:** die Transport-/Review-Klausel ist automatisch historisch. Exakt erster unfertiger Produktschritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl. Kein Produkt-Slice ist dadurch autorisiert.
+
+TW7-A Runtime ist integriert (PR #106), Issue #103 CLOSED / completed. AP-4 ist integriert (PR #108/#111). P2-TA-06 ist integriert (PR #113), Issue #112 CLOSED / completed. P2-TA-03 ist integriert (PR #117), Issue #116 CLOSED / completed. P2-TA-04 Gate 0 / C1 sind integriert. AP-5 Gate 0 ist integriert (PR #129), Issue #128 CLOSED / completed. AP-5-S1 ist integriert (PR #133), Issue #132 CLOSED / completed. Project Sanitation ist integriert (PR #135), Issue #134 CLOSED / completed. AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 ist CLOSED / completed. PR #138 Post-Merge-Continuity ist integriert. PR #141 Provider S5-B Gate 0 ist integriert als **docs/readiness only**. PR #142 Operating Standard ist integriert.
+
+**Kein automatischer Folgeslice über S2 hinaus.** PR #138 und PR #142 sind bereits gemergt; ältere Draft-Review-Sätze sind historische Evidence. AP-5-S3/S4/S5 sind normale Technical-Lead-Gates innerhalb Gate 0, nicht automatisch gestartet und nicht Product-Owner-gated. Kein C2, kein Auth-Config-Push, kein erneuter Supabase-Write. S5-B Runtime/Persistenz/Schema/Migration ist **nicht** gestartet und nicht autorisiert. TW-8 bleibt geschlossen. Production C1 ist als `20260828015304` angewendet und live verifiziert; historische/develop-only Evidence bleibt `20260828120000`. Nach Merge von #143 oder sobald kein offener Continuity-Transport mehr existiert: Live-`main`, offene PRs/Issues, Binding Build Order und Gates erneut prüfen, bevor ein neuer Slice vergeben wird.
 
 Issue #109 (Visitor Search Country/City-Relevance) und Issue #110 (spätere Homepage-Multi-Destination-Absicht) bleiben separate dokumentierte Themen und werden durch PR #113 nicht automatisch gestartet.
 

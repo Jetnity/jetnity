@@ -1,7 +1,9 @@
 # Technical Lead / Cursor Operating Standard – Integration Status
 
 Stand: 28. August 2026  
-Status: **DOCS-ONLY / PO-CONTINUITY-AMENDMENT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
+Status: **HISTORISCHE PRE-MERGE-EVIDENCE / PR #142 MERGED**
+
+> Historische Authoring-Evidence von PR #142. Current Truth: `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`. Operative Draft-PR-#142-Sätze unten sind Pre-Merge-Evidence. Die Tabellenzeile „AP-5-S3 geschlossen“ als PO-Gate ist durch den integrierten Gate-0-Vertrag superseded: S3–S5 sind normale Technical-Lead-Gates, nicht automatisch gestartet und nicht Product-Owner-gated.  
 Agent: `Cursor-Agent: Jetnity quality security audit 3`  
 Vorheriger Head: `d3544a98aba87f86827c00911be093babd0d551f`  
 Authority: `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`  

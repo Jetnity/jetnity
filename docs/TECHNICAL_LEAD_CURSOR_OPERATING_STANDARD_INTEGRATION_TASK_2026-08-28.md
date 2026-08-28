@@ -1,7 +1,9 @@
 # Task – Technical Lead / Cursor Operating Standard Integration
 
 Stand: 28. August 2026  
-Status: **AUTHORIZED / DOCS-ONLY GOVERNANCE INTEGRATION / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**
+Status: **HISTORISCHE SLICE-SPEC / PR #142 MERGED**
+
+> Historische Authoring-Task von PR #142. Current Truth: `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`. Der Body unten bleibt Pre-Merge-Evidence.
 
 Agent: `Cursor-Agent: Jetnity quality security audit 3`
 
