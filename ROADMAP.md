@@ -108,11 +108,11 @@ Weiterhin gilt:
 
 P2-TA-03 ist durch PR #117 integriert. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` ist der kanonische Folgeplan für AP-5–AP-12. Historischer PR #39 bleibt Historical Evidence.
 
-P2-TA-04 Gate 0 ist durch PR #120 integriert. C1 ist durch PR #126 integriert: Delete-RPC, DB-Party-Cap 20, Child-Limits auch bei UPDATE. Production C1 live als `20260828015304`. Kein C2. AP-5 Gate 0 ist durch PR #129 integriert. AP-5-S1 ist der aktuelle Runtime-Slice auf Issue #132.
+P2-TA-04 Gate 0 ist durch PR #120 integriert. C1 ist durch PR #126 integriert: Delete-RPC, DB-Party-Cap 20, Child-Limits auch bei UPDATE. Production C1 live als `20260828015304`. Kein C2. AP-5 Gate 0 ist durch PR #129 integriert. AP-5-S1 ist durch PR #133 integriert. AP-5-S2 ist der aktuelle Runtime-Draft auf Issue #136.
 
 Nicht automatisch starten:
 
-- AP-5-S2–S5 / AP-5-P1–P5
+- AP-5-S3–S5 / AP-5-P1–P5
 - AP-7 / Account-Traveller-Registry
 
 ## 3. Trip Workspace / Visitor Search
@@ -265,15 +265,16 @@ Abgeschlossen:
 26. ✅ P2-TA-04 C1 Traveller write-contract integrity / PR #126 + Issue #122
 27. ✅ AP-5 Gate 0 Account security capability audit / PR #129 + Issue #128
 28. ✅ AP-5-S1 ehrliche Security-UI Zustände / PR #133 + Issue #132; ADR-0183
-29. Project Sanitation Closure / Issue #134 – **Draft; Audit only; kein Cleanup; ADR-0184**
+29. ✅ Project Sanitation Closure / PR #135 + Issue #134; ADR-0184; kein Cleanup
+30. AP-5-S2 eingeloggte Passwortänderung / Issue #136 – **Draft; normales Technical-Lead-Gate; kein S3–S5**
 
 Nächster Schritt:
 
-**Nicht aus dieser Liste automatisch ableiten.** Der Technical Lead muss zuerst den aktuellen Live-Zustand, offene Issues/PRs, Binding Build Order, Traveller-/Account-/Provider-/Admin-/Growth-Gates und Parallelität neu rekonstruieren.
+**Unabhängiger Technical-Lead-Review von AP-5-S2.** Nicht Ready. Nicht mergen. S3–S5 nicht aus dieser Liste automatisch ableiten.
 
 ## 10. Noch nicht automatisch gestartet / weiterhin gated
 
-- AP-5-S2–S5 / AP-5-P1–P5
+- AP-5-S3–S5 / AP-5-P1–P5
 - AP-7
 - Provider S5-B
 - echte Providerphase
