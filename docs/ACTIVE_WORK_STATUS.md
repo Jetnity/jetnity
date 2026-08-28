@@ -10,11 +10,11 @@ Status: **AP-7 Gate 0 / PR #144 self-expiring. Audit + Architecture only. Kein R
 ## Aktueller Arbeitsblock – AP-7 Gate 0 Account-Traveller-Registry Architecture
 
 1. **Arbeitsblock / Ziel:** Read-only Rekonstruktion und Architektur-Empfehlung für eine mögliche accountweite Traveller Registry. Keine Runtime.
-2. **Authoring-Branch / PR:** `audit/ap7-account-traveller-registry-gate0-2026-08-28`; Draft-PR #144. Authoring `1c9f1d31`; Stamp `69d5c79e`; Exact Head nach SHA-Korrektur live am PR prüfen.
-3. **Status:** **REVIEW-FIX FÜR 5455342054 / SELF-EXPIRING / DRAFT.** Solange #144 offen: STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW. Sobald Live-Evidence #144 als gemergt zeigt: Gate 0 integriert; #144 nicht mehr aktiv; kein Runtime; Generation 11 abgeschlossen. Jeder neue Push invalidiert Prior-Gates inkl. `731b0914`, `c434dbd2` und `25beee92`. Kein Ready, kein Merge durch den Autor. Kein AP-7-Implementierungsslice.
+2. **Authoring-Branch / PR:** `audit/ap7-account-traveller-registry-gate0-2026-08-28`. PR #144 ist **MERGED** (`bb38aef5`, Head `c434dbd2`). **#144 ist nicht mehr aktiv.** Leftover `5455342054` (START_HERE §16 / ACTIVE §10) liegt rebased auf live `main` (`ada58df7`+); nicht in den Merge aufgenommen. Kein neuer Continuity-PR nur um den Merge zu sagen.
+3. **Status:** **LIVE-EVIDENCE: #144 MERGED / SELF-EXPIRE FIRED / LEFTOVER NEXT-STEP UNINTEGRATED.** Gate 0 auf `main` ist integrierte Architecture-Evidence. Generation 11 abgeschlossen und nicht für Implementation wiederverwenden. Kein Ready, kein Merge, kein AP-7-Runtime durch diesen Agenten.
 4. **Bereits umgesetzt:** Live-Rekonstruktion Foundation E / Guest→Account / Readiness / Official / Profile / Privacy / Admin / Native-Naht; Optionsvergleich; Empfehlung Dual-Authority; ADR-0186 als Empfehlungsstatus.
 5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 11`. Sichtbarer Cursor-Titel dieser Session: `Account traveller registry architecture` (Cloud-Run `https://cursor.com/agents/bc-400e9cce-e82f-48f1-860a-fb6a3a6f90e3`). Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Keine Generation 12.
-6. **Live-`main` bei diesem Stamp:** `1947285cc4d7d6fb98c77ec60a04c96f96f3f483` – immer live neu prüfen.
+6. **Live-`main` bei diesem Stamp:** `bb38aef589f0cdcea1aaf8ddd87d043d0a9f0f05` (Merge PR #144) – immer live neu prüfen. Task-Baseline war `1947285c`.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation.
 8. **Kosten / Provider / Secrets:** keine.
 9. **Bekannte Risiken / Review-Funde:** PO muss Dual-Authority vs Templates-only vs keine Registry wählen. Live-Link ist abgelehnt. Guest-Auto-Transfer ≠ Registry-Opt-in. `main` `protected=false`. Production-Schema in diesem Run nicht live gegen Supabase geprüft. Agent-Self-Review ist kein PASS.

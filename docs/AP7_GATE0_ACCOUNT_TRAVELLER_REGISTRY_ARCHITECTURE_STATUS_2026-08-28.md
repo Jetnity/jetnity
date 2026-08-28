@@ -1,7 +1,7 @@
 # Jetnity – AP-7 Gate 0 Account-Traveller-Registry Architecture Status
 
 Stand: 28. August 2026  
-Status: **REVIEW-FIX FÜR 5455342054 / AUDIT + ARCHITECTURE ONLY / SELF-EXPIRING / DRAFT**  
+Status: **REVIEW-FIX FÜR 5455342054 / PR #144 MERGED / LEFTOVER NEXT-STEP UNINTEGRATED / SELF-EXPIRING**  
 Workstream: Account / Traveller  
 Logical Cursor-Agent: **`Cursor-Agent: Account plattform audit vorbereitung 11`**  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/144  
@@ -35,7 +35,7 @@ Dieser Agent behauptet nicht, die sichtbare UI sei umbenannt.
 | Ahead / Behind vor Authoring | **4 / 0** inkl. Remote-Commit `8eb272ce` (Task-Namensgate) |
 | Authoring-Head nach Rebase | `38af535a5349a2e8cc590826e7c2e77375e66a9b` |
 | Ahead / Behind nach Authoring, vor SHA-Korrektur | **6 / 0** |
-| Draft-PR | #144 OPEN / Draft |
+| Draft-PR (historisch) | #144 war OPEN/Draft; **Live 28.08.2026: MERGED** |
 | `main` Branch Protection | zuletzt `protected=false`; dieser Slice ändert das nicht |
 | Supabase in diesem Run | **nicht** abgefragt, **nicht** mutiert |
 | Browser / Real-Device | **nein** – Docs-only |
@@ -49,15 +49,16 @@ Post-PR-#143-Evidence laut Task (nicht in diesem Run neu gegen Actions/Vercel ve
 
 | Feld | Wert |
 | --- | --- |
-| `origin/main` Re-Fetch | `1947285cc4d7d6fb98c77ec60a04c96f96f3f483` – 0 behind |
+| Live `origin/main` Re-Fetch | `bb38aef589f0cdcea1aaf8ddd87d043d0a9f0f05` – Merge PR #144 |
+| PR #144 | **MERGED** 2026-08-28T17:02:26Z; gemergter Head `c434dbd2f549c433e8dd12ba7254c81000e55bda` |
+| Task-Baseline (historisch) | `1947285cc4d7d6fb98c77ec60a04c96f96f3f483` |
 | Prior reviewed Head | `a0ef801fd7fa39685fab9a1fe69d411f736ea78c` – **invalidated** |
-| Prior review-fix stamp | `731b0914c5be70641792c6cf620f2d9be185e8d1` – **invalidated** by Addendum `5455307709` |
-| Prior self-expire stamp | `c434dbd2f549c433e8dd12ba7254c81000e55bda` – **invalidated** by Re-Review `5455342054` |
-| Prior continuity-tighten | `25beee923ab78e6a2259629d01753b16b0b2f893` – **invalidated** by leftover next-step fix |
-| Authoring-SHA (`5455342054` leftover next-step) | `1c9f1d31b64512310e27d84d5977bcadcf84da59` |
-| Review-Head / Stamp | `69d5c79ee09ffa49fbd217a31a59f292d768d269` |
-| Ahead / Behind nach Stamp, vor SHA-Korrektur | **14 / 0** |
-| Merge-Base | `1947285c` |
+| Prior review-fix stamp | `731b0914c5be70641792c6cf620f2d9be185e8d1` – **invalidated** |
+| Prior self-expire / merged Head | `c434dbd2f549c433e8dd12ba7254c81000e55bda` – integriert in `bb38aef5`; **invalidated** as current leftover head |
+| Rebased leftover authoring | `ada58df7` (`docs: close leftover PR144 next-step dual-state for 5455342054`) |
+| Rebased stamp / SHA-record | `01e4b3b4` / `bcdd433c` – **invalidated** by this live-merge evidence |
+| Merge-Base gegen live `main` | `bb38aef5` |
+| Ahead / Behind vor diesem Evidence-Commit | **4 / 0** |
 
 Ein weiterer Continuity-Stamp nach dem Review-Head invalidiert dieses Gate.
 

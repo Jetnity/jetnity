@@ -37,4 +37,6 @@ Keine Änderung an `app/`, `components/`, `lib/`-Runtime, `supabase/migrations`,
 
 Die zwei Findings aus `5455299179` bleiben nachgezogen. Der verbleibende Continuity-Fund aus `5455342054` ist nachgezogen: kanonische Current-State-Flächen inkl. START_HERE §16 und ACTIVE_WORK_STATUS §10 sind dual-state für offen-vs-merged #144. Non-Scope gehalten.
 
+Live-Evidence nach Re-Fetch: PR #144 ist MERGED (`bb38aef5`). Der verbleibende Next-Step-Fix ist nicht im Merge. Self-Review bleibt kein PASS.
+
 **Unabhängiger Technical-Lead-Re-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**

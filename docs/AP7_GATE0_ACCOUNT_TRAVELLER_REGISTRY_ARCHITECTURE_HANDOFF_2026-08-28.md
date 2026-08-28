@@ -1,11 +1,11 @@
 # Jetnity – AP-7 Gate 0 Account-Traveller-Registry Architecture Handoff
 
 Stand: 28. August 2026  
-Status: **REVIEW-FIX FÜR 5455342054 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
+Status: **REVIEW-FIX FÜR 5455342054 / PR #144 MERGED / LEFTOVER NEXT-STEP UNINTEGRATED / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW OF THIS BRANCH DELTA**  
 Logical Cursor-Agent: **`Cursor-Agent: Account plattform audit vorbereitung 11`**  
-Draft-PR: https://github.com/Jetnity/jetnity/pull/144  
+PR: https://github.com/Jetnity/jetnity/pull/144 – **MERGED** (`bb38aef5`, Head `c434dbd2`)  
 Branch: `audit/ap7-account-traveller-registry-gate0-2026-08-28`  
-Reviewed Head vor diesem Fix: `a0ef801fd7fa39685fab9a1fe69d411f736ea78c`
+Reviewed Head vor dem ersten Fix: `a0ef801fd7fa39685fab9a1fe69d411f736ea78c`
 
 Dieser Handoff übergibt den Review-Fix. Er startet keinen Folgeslice. Agent-Self-Review ist kein PASS. Jeder neue Head invalidiert Prior-Gates.
 
@@ -45,18 +45,17 @@ Vor der finalen Übergabe erneut `origin/main` geholt.
 
 | Fakt | Wert |
 | --- | --- |
-| Task-Baseline `origin/main` | `1947285cc4d7d6fb98c77ec60a04c96f96f3f483` |
-| `origin/main` Re-Fetch vor Stamp | `1947285cc4d7d6fb98c77ec60a04c96f96f3f483` – **0 behind** |
+| Task-Baseline `origin/main` (historisch) | `1947285cc4d7d6fb98c77ec60a04c96f96f3f483` |
+| Live `origin/main` Re-Fetch | `bb38aef589f0cdcea1aaf8ddd87d043d0a9f0f05` – **Merge PR #144** |
 | Branch | `audit/ap7-account-traveller-registry-gate0-2026-08-28` |
-| Draft-PR | #144 OPEN Draft |
-| Merge-Base | `1947285c` |
+| PR #144 | **MERGED** 2026-08-28T17:02:26Z; gemergter Head `c434dbd2f549c433e8dd12ba7254c81000e55bda`. **#144 ist nicht mehr aktiv.** |
+| Merge-Base gegen live `main` | `bb38aef5` |
 | Prior reviewed Head | `a0ef801fd7fa39685fab9a1fe69d411f736ea78c` – invalidiert |
-| Prior review-fix stamp | `731b0914c5be70641792c6cf620f2d9be185e8d1` – invalidiert durch Addendum |
-| Prior self-expire stamp | `c434dbd2f549c433e8dd12ba7254c81000e55bda` – invalidiert durch Re-Review `5455342054` |
-| Prior continuity-tighten | `25beee923ab78e6a2259629d01753b16b0b2f893` – invalidiert durch leftover next-step fix |
-| Authoring-SHA (`5455342054` leftover next-step) | `1c9f1d31b64512310e27d84d5977bcadcf84da59` |
-| Exact / Review-Head | `69d5c79ee09ffa49fbd217a31a59f292d768d269` – SHA-Korrektur folgt; live an PR #144 prüfen |
-| Ahead / Behind nach Stamp, vor SHA-Korrektur | **14 / 0** |
+| Prior review-fix stamp | `731b0914c5be70641792c6cf620f2d9be185e8d1` – invalidiert |
+| Prior self-expire / merged Head | `c434dbd2f549c433e8dd12ba7254c81000e55bda` – integriert; invalidiert als leftover Head |
+| Rebased leftover authoring | `ada58df7` |
+| Rebased stamp / SHA-record | `01e4b3b4` / `bcdd433c` – invalidiert durch dieses Live-Merge-Evidence |
+| Ahead / Behind vor diesem Evidence-Commit | **4 / 0** |
 | Branch Protection | unverändert; letzte Evidence `protected=false` |
 | Supabase | nicht live abgefragt, nicht mutiert |
 
@@ -120,6 +119,8 @@ Unfertig: unabhängiger TL-Review, PO-Entscheidung, jede Implementation.
 
 ## 10. STOPP
 
-Solange PR #144 offen ist: Draft bleibt Draft. Kein Mark Ready. Kein Merge. Kein Folge-Slice. Unabhängiger Technical-Lead-Re-Review auf dem Exact Head ist der einzige nächste Schritt.
+Live-Evidence 28.08.2026: PR #144 ist **MERGED** (`bb38aef5`, Head `c434dbd2`). Die Open-/Draft-Transport-Klausel ist historisch. **#144 ist nicht mehr aktiv.** Gate 0 auf `main` ist integrierte Architecture-Evidence. Keine AP-7-Runtime autorisiert. Generation 11 ist abgeschlossen und nicht für Implementation wiederzuverwenden.
 
-Sobald PR #144 gemergt ist: dieser STOPP ist historisch; Gate 0 ist integrierte Evidence; nächster Schritt ist die Product-Owner-Architekturentscheidung nach Live-Verifikation, nicht ein Continuity-PR.
+Der verbleibende `5455342054`-Next-Step-Fix (START_HERE §16, ACTIVE_WORK_STATUS §10) war nicht im Merge. Er liegt rebased auf diesem Branch. Das ist kein neuer Produkt-Slice und kein Continuity-PR nur um den Merge zu sagen. Kein Ready. Kein Merge durch diesen Agenten. Kein Folge-Implementierungsslice.
+
+Unabhängiger Technical-Lead-Re-Review gilt für dieses Branch-Delta. Exakte nächste Produktaktion bleibt die Product-Owner-Architekturentscheidung/Gate vor jeder Implementation.
