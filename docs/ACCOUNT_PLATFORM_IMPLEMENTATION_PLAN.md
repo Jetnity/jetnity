@@ -257,11 +257,11 @@ Jeder Slice braucht vor Start einen eigenen Technical-Lead-Task, einen frischen 
 | --- | --- |
 | Produktziel | Eingeloggte Sicherheitssteuerung: auffindbare Passwortänderung **innerhalb des bestehenden Auth-Vertrags**, sichtbare Sitzungen, nachvollziehbares Logout-all, MFA-Schritt vor riskanten Änderungen – ohne neue Auth-Architektur. |
 | Bereits vorhanden | `/account/security` TOTP-Enroll/Unenroll; Login-MFA; Recovery-Passwort über Rücksetzlink (`app/auth/update-password/page.tsx`); Admin-AAL2 getrennt. Auth-Vertrag: `auth.email.secure_password_change = true` verlangt kürzlich bestätigte Reauthentication (`security_update_password_require_reauthentication`). `security_update_password_require_current_password` ist **aus**. Belegt: `supabase/config.toml`, `docs/AUTH.md`. |
-| Fehlt | In-Account-Oberfläche für die bereits existierende Passwortänderung, ohne den Reauthentication-Vertrag zu ersetzen; Session-/Geräteliste; Logout-all, falls die vorhandene Supabase-API das **ohne Schema** hergibt; explizites Step-up vor Enroll/Unenroll, falls heutiges `SecurityMFA` das nicht bereits erzwingt. |
+| Fehlt | In-Account-Oberfläche für die signed-in Passwortänderung (`reauthenticate()` → Nonce → `updateUser({ password, nonce })`), ohne Recovery als Reauthentication zu verwenden; ehrliche Session-Karte (`unsupported` für andere Geräte – eine echte Liste gibt der installierte User-Client nicht her); explizite Logout-Scopes `local`/`others` (heutiges Abmelden ist bereits `global`); nutzerfreundlicher UI-Step-up vor Unenroll **verified** Faktoren (GoTrue verlangt dafür bereits serverseitig `aal2`; die UI steppt heute nicht hoch). Gate-0-Evidence: `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, ADR-0182. **Kein Runtime-Start.** |
 | Shared Contracts | Auth / Sessions / MFA / AAL. UI-Auffindbarkeit ist kein neuer Vertrag. Eine Consumer-AAL2-Pflicht, MFA-Grundlogik oder ein Wechsel auf „aktuelles Passwort mitsenden“ **ist** ein Shared Contract und hier nicht entschieden. |
 | Security | Keine Secrets loggen. Recovery-Link und In-Account-Change nicht zu einem zweiten Passwort-Vertrag vermischen. Enumeration vermeiden. |
 | Privacy | Keine Geräte-/Session-Metadaten ins Marketing. |
-| Auth / MFA / AAL | Keine fundamentale Änderung. Bestehenden Reauthentication-Vertrag erhalten. Kein `current-password`-Submit erfinden. Admin-AAL2 nicht anfassen. Kein zweiter Production-AAL2-Apply. |
+| Auth / MFA / AAL | Keine fundamentale Änderung. Signed-in Reauthentication und Recovery-Authority getrennt halten. Kein `current-password`-Submit erfinden; `security_update_password_require_current_password = true` bleibt PO-Gate und braucht vorher separate Recovery-Verifikation. Admin-AAL2 nicht anfassen. Kein zweiter Production-AAL2-Apply. S4-UI-Step-up vor verified Unenroll ist kein globales Consumer-AAL2. |
 | Identity / RLS | keine |
 | Traveller | keine; kein Dokumentbezug |
 | Guest→Account | keine |
@@ -273,7 +273,7 @@ Jeder Slice braucht vor Start einen eigenen Technical-Lead-Task, einen frischen 
 | Parallelität | nicht parallel zu AP-6b/AP-7/AP-8. AP-6a Legal ist dateiarm und darf parallel assigned werden. |
 | Non-Scope | Auth-Config-Push; OAuth/Passkey live schalten; Consumer-AAL2-Pflicht; Admin-AAL2; Identity; RLS; AP-7; neues „aktuelles Passwort mitsenden“, solange kein separat freigegebener Auth-Vertragswechsel das verlangt |
 | Tests / Evidence | Passwortänderung bleibt am bestehenden Reauthentication-Vertrag (`secure_password_change`); kein Test darf Current-Password-Submit als Product Truth verlangen; fremde Session nicht sichtbar; Logout-all fail-closed dokumentieren, wenn API fehlt; Empty ≠ Error; keine Browser-Behauptung ohne Lauf. |
-| Reihenfolge | Default nächster **Account-Programm**-Kandidat nach diesem Reconciliation-PR. **Nicht durch P2-TA-03 gestartet.** |
+| Reihenfolge | Default nächster **Account-Programm**-Kandidat nach P2-TA-03. Gate 0 ist auf Issue #128 rekonstruiert und startet **keine** Runtime. Folgeslices AP-5-S1–S5 vs. AP-5-P1–P5 stehen im Gate-0-Status. |
 
 ### AP-6a – Privacy-Foundation ohne DB
 

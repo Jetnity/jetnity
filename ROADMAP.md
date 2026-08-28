@@ -108,7 +108,7 @@ Weiterhin gilt:
 
 P2-TA-03 ist durch PR #117 integriert. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` ist der kanonische Folgeplan für AP-5–AP-12. Historischer PR #39 bleibt Historical Evidence. **Kein AP-5-Start.**
 
-P2-TA-04 Gate 0 ist durch PR #120 integriert. C1 (Issue #122) ist der ausdrücklich freigegebene Implementation-Slice: Delete-RPC, DB-Party-Cap 20, Child-Limits auch bei UPDATE. Kein C2, kein REVOKE, kein SECURITY DEFINER, kein AP-5.
+P2-TA-04 Gate 0 ist durch PR #120 integriert. C1 ist durch PR #126 integriert: Delete-RPC, DB-Party-Cap 20, Child-Limits auch bei UPDATE. Production C1 live als `20260828015304`. Kein C2. AP-5 Gate 0 ist Audit/Architecture auf Issue #128 und startet keine Runtime.
 
 Nicht automatisch starten:
 
@@ -262,7 +262,8 @@ Abgeschlossen:
 23. ✅ Post-PR-#114 Continuity / PR #115 auf Live-`main` `43aef643` (immer live neu prüfen)
 24. ✅ P2-TA-03 Account-Plan-Reconciliation / PR #117 + Issue #116
 25. ✅ P2-TA-04 Traveller Child Write-Path Gate 0 / PR #120 + Issue #119
-26. P2-TA-04 C1 Traveller write-contract integrity – **Issue #122; Draft; Production live als `20260828015304`; historische/develop-only Evidence `20260828120000`; kein C2; kein REVOKE; kein DEFINER; kein AP-5; kein erneuter Supabase-Write**
+26. ✅ P2-TA-04 C1 Traveller write-contract integrity / PR #126 + Issue #122
+27. AP-5 Gate 0 Account security capability audit – **Issue #128; Draft; Audit only; keine Runtime; ADR-0182**
 
 Nächster Schritt:
 

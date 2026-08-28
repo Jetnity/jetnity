@@ -4540,6 +4540,41 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 ---
 
+## ADR-0182 – AP-5 Gate 0: bestehender Auth-/Session-/MFA-Vertrag, keine neue Architektur
+
+**Datum:** 28. August 2026  
+**Status:** Gate-0-Feststellung auf Draft-PR zu Issue #128. **Keine Runtime.** Kein Auth-Config-Push. Kein Consumer-AAL2.
+
+**Entscheidung:**
+
+1. Eingeloggte Passwortänderung bleibt am bestehenden Vertrag `secure_password_change` / `security_update_password_require_reauthentication`: `reauthenticate()` → Nonce → `updateUser({ password, nonce })`. `security_update_password_require_current_password` bleibt **aus**. Ein Current-Password-Submit wird nicht erfunden. Diese Config auf `true` zu drehen bleibt Product-Owner-Sondergate; Recovery-Kompatibilität muss vor einer solchen Änderung separat live/referenzbasiert verifiziert werden. Ein sicherer Bruch des Recovery-Pfads wird ohne diese Evidence nicht behauptet.
+2. Password-Recovery und signed-in Reauthentication sind **zwei Authorities**. Der Recovery-Pfad `resetPasswordForEmail` → Recovery-Session / `type=recovery` → `/auth/update-password` → `updateUser({ password })` ist die heutige Wiederherstellung. `reauthenticate()` + `nonce` ist die vorhandene In-Session-Erneuerung unter `secure_password_change` und heute ungenutzt. Der Recovery-Link ist nicht die Reauthentication.
+3. Heutiges Consumer-Abmelden ist `signOut()` ohne Scope und damit Client-Default **`global`**. `local` und `others` existieren in der API, nicht in der UI.
+4. Eine User-facing Session-/Geräteliste ist im installierten `@supabase/auth-js` 2.71.1 **unsupported**. Die ehrliche UI-Aussage ist `unsupported`, nicht `empty`. Service-Role- oder Schema-Listen sind ein Product-Owner-Sondergate.
+5. TOTP-Enroll/Unenroll im Konto ist client-only. Jetnitys UI macht heute keinen proaktiven Step-up. Die aktuelle Supabase-Referenz für `auth.mfa.unenroll` verlangt `aal2`, um einen **verified** factor zu unenrollen; GoTrue erzwingt das serverseitig. AP-5-S4 darf später einen nutzerfreundlichen `challenge`/`verify`-Step-up davor setzen, ohne Consumer-AAL2 global einzuführen. Admin-AAL2 bleibt getrennt. Consumer-AAL2 bleibt ungebaut und gegated.
+6. AP-5-Folgeslices, die nur vorhandene User-APIs und UI-Ehrlichkeit nutzen, sind normale Technical-Lead-Gates. Auth-Config, Default-Logout-Wechsel, Session-Architektur, Consumer-AAL2, OAuth/Passkey-Live bleiben Product-Owner-Sondergates.
+
+**Kontext:** Der kanonische Plan (ADR-0179) nennt AP-5 als nächsten Account-Programm-Kandidaten und verlangt, Shared-Contract von UI zu trennen, bevor Runtime startet. Issue #128 ist genau dieses Gate 0.
+
+**Alternativen:**
+
+1. *AP-5-Runtime ohne Gate 0.* Würde Current-Password, Fake-Gerätelisten oder einen zweiten Logout-Vertrag riskieren.
+2. *Sessionliste über Service Role jetzt vorbereiten.* Privilegien- und Privacy-Schnitt, kein Bedarf für den ersten nutzbaren Security-Gewinn.
+3. *Consumer-AAL2 zusammen mit der Security-UI.* Fundamentale AAL-Änderung, eigenes Product-Owner-Gate.
+
+**Begründung:** AP-5 soll Sicherheit vertiefen, ohne eine neue Auth-Architektur zu bauen. Dafür muss der bestehende Vertrag zuerst feststehen. Live `auth:pruefen` bestätigt die Sollwerte am Development-Branch. Der installierte Client, nicht eine Wunsch-API, begrenzt die Sessionliste.
+
+**Konsequenzen:**
+
+- Evidence: `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, Inventory-Test `lib/auth/ap5-gate0-contract-inventory.test.ts`.
+- Keine AP-5-Runtime aus diesem ADR.
+- C2, AP-6a/AP-7, Production-Auth-Config und Consumer-AAL2 bleiben unberührt.
+- Ein späterer Agent darf `/auth/update-password` nicht still zur einzigen In-Account-UI machen und Recovery nicht mit signed-in Reauthentication gleichsetzen.
+
+**Nachtrag, 28. August 2026 – Review-Fix `5049870788`.** Verified-factor Unenroll ist nicht `unknown`: GoTrue verlangt `aal2`. Recovery-Link ist nicht die Reauthentication. `security_update_password_require_current_password = true` bleibt PO-Gate; Recovery-Kompatibilität muss separat verifiziert werden. Keine Runtime.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
