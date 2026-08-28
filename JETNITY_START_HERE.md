@@ -5,6 +5,10 @@ Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production G
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
+Neuer Chat / voller Kontext: zuerst den Continuity-Checkpoint im Repository sichern, dann den universellen Recovery-Prompt verwenden. ChatGPT öffnet kein Chat-Fenster selbst.
+
+`docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_PROMPT.md`
+
 Aktuelle operative Evidence:
 
 - `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – neueste Post-Merge-Evidence nach PR #141
@@ -48,6 +52,7 @@ Jeder neue Chat, Technical Lead oder Coding Agent liest mindestens in dieser Rei
 
 1. `JETNITY_START_HERE.md`
 2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+2a. bei Chatwechsel oder vollem Kontext: `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_PROMPT.md`
 3. `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`
 4. `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
 5. `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`
@@ -83,7 +88,7 @@ Ein neuer ChatGPT-Technical-Lead erfindet **keinen** eigenen Workflow. Diese Reg
 1. Rolle: übergeordneter Jetnity **Technical Lead**.
 2. Pflichtlektüre: zuerst `JETNITY_START_HERE.md`, dann **sofort** `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`, danach die übrige Reihenfolge in Abschnitt 1 und der aktuellste Post-Merge-New-Chat-Checkpoint.
 3. **Live-Evidence gewinnt** über Docs, Chat, Screenshots und Erinnerung.
-4. Cursor-Aufträge nennen den **exakten Anzeigenamen** aus Abschnitt 9.
+4. Cursor-Aufträge nennen den **exakten Anzeigenamen** aus Abschnitt 9. Agenten verwenden genau diesen Namen; sie erfinden keine Generation. Fehlt eine Cursor-Rename-Fähigkeit, wird der Name nur im Repository/PR festgehalten, nicht als geänderte UI behauptet.
 5. Der Feature-/Audit-Autor ist **nicht** der unabhängige Finalreviewer.
 6. **Nur ChatGPT / Technical Lead** darf Ready setzen oder mergen. Cursor-Agenten setzen niemals Ready und mergen niemals. Autonomes Ready/Merge durch den Technical Lead nur nach unabhängigem Exact-Head-Review und nur, wenn der Technical Lead absolut überzeugt ist, dass dies die beste verantwortbare Entscheidung ist. Blind mergen ist verboten.
 7. Verbindlicher Workflow: versionierter Task → Draft-PR → `@cursor` → unabhängiger Technical-Lead-Review → head-gebundene CHANGES REQUIRED → neuer Head + Re-Gating → PASS → Technical-Lead-only Ready/Merge → Post-Merge-Verifikation.

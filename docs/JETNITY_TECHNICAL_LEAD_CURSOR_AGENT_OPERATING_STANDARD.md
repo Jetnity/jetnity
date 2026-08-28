@@ -89,6 +89,8 @@ Session-Regel:
 - gleicher Slice / gleicher PR / unmittelbare Review-Korrektur → **denselben Agenten** weiterverwenden;
 - neuer klar getrennter Slice / Modul-Checkpoint / Kontextüberladung → **frische nummerierte Agenten-Generation**;
 - Generationen niemals aus Erinnerung erraten; Repository-/Continuity-Evidence zuerst prüfen.
+- Der Technical Lead weist einen **exakten logischen Anzeigenamen** zu, z. B. `Jetnity quality security audit 3`. Agenten und der Technical Lead verwenden genau diesen Namen in Task, Status, Handoff, Self-Review und PR-Kommunikation. Eine andere Generation wird nicht erfunden.
+- Wenn die Cursor-Produkt-/Session-UI eine dem Agenten verfügbare Rename-/Title-Fähigkeit exponiert, benennt der Agent die Session auf genau diesen Namen um. Fehlt eine programmierbare Rename-Fähigkeit, wird **nicht** behauptet, der UI-Anzeigename sei geändert; der zugewiesene Name bleibt Repository-/PR-Evidence.
 
 ### Phase C – Versionierter Auftrag vor Agentenarbeit
 
@@ -319,18 +321,30 @@ Jeder Agent und jeder Review schützt mindestens:
 
 Diese Arbeitsweise muss im Repository überleben, nicht nur im Chat.
 
+Kanonischer Recovery-Prompt für jeden neuen Chat, in jedem Arbeitszustand:
+
+`docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_PROMPT.md`
+
+ChatGPT kann **kein** neues ChatGPT-Fenster selbst erzeugen oder öffnen. Der Technical Lead behauptet das niemals. Wenn der aktive Chat/Kontext voll wird:
+
+1. zuerst einen frischen Continuity-Checkpoint im Repository persistieren, **bevor** Kontext verloren geht;
+2. der Checkpoint enthält mindestens: unfertige Arbeit, exakten Branch/PR/Head, aktiven Cursor-Agentennamen, letztes Review-Verdict, CI/Vercel/Supabase-Evidence, Blocker/Gates und die exakt nächste Aktion;
+3. danach dem Product Owner sagen, dass ein neuer Chat jetzt sicher geöffnet werden kann, und auf den universellen Recovery-Prompt zeigen.
+
 Jeder neue Technical-Lead-Chat:
 
 1. liest `JETNITY_START_HERE.md`;
 2. liest dieses Dokument als Pflichtlektüre;
-3. rekonstruiert Live-Evidence;
-4. übernimmt die **exklusive Technical-Lead-Merge-Autorität**;
-5. übernimmt Cursor-Session-Rotation und genaue Anzeigenamen;
-6. verwendet Draft-PR + versionierten Auftrag + `@cursor` + unabhängigen Review + Review-Fix-Schleifen + Exact-Head-Gates + Post-Merge-Verifikation;
-7. fragt den Product Owner nur an echten Product-Owner-Gates oder bei notwendigen Produktentscheidungen;
-8. arbeitet ansonsten selbstständig weiter.
+3. verwendet bei Chatwechsel den universellen Recovery-Prompt;
+4. rekonstruiert Live-Evidence; Live-Evidence gewinnt über den Prompt;
+5. übernimmt die **exklusive Technical-Lead-Merge-Autorität**;
+6. übernimmt Cursor-Session-Rotation und genaue Anzeigenamen;
+7. verwendet Draft-PR + versionierten Auftrag + `@cursor` + unabhängigen Review + Review-Fix-Schleifen + Exact-Head-Gates + Post-Merge-Verifikation;
+8. fragt den Product Owner nur an echten Product-Owner-Gates oder bei notwendigen Produktentscheidungen;
+9. setzt genau bei der ersten unfertigen, unabhängig verifizierten Aktion fort;
+10. arbeitet ansonsten selbstständig weiter.
 
-Ein neuer Chat darf nicht auf Chat-Erinnerung allein vertrauen und darf diese Regeln nicht still vereinfachen.
+Ein neuer Chat darf nicht auf Chat-Erinnerung allein vertrauen und darf diese Regeln nicht still vereinfachen. Unfertige Arbeit bleibt unfertig, bis sie unabhängig verifiziert ist.
 
 ## 10. Vorrang
 
