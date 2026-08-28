@@ -1,7 +1,7 @@
 # Jetnity – Next.js Framework Security Upgrade Gate 0 Status
 
 Stand: 28. August 2026  
-Status: **AUDIT + ARCHITECTURE ONLY / SELF-EXPIRING / DRAFT**  
+Status: **REVIEW-FIX FÜR 5457148091 / AUDIT + ARCHITECTURE ONLY / SELF-EXPIRING / DRAFT**  
 Workstream: Ops / Framework security  
 Logical Cursor-Agent: **`Cursor-Agent: Jetnity framework security audit 1`**  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/148  
@@ -40,24 +40,25 @@ Dieser Agent behauptet nicht, die sichtbare UI sei umbenannt.
 | Browser / Real-Device | **nein** – Docs-only |
 | Mutating codemod | **nicht** ausgeführt |
 
-### 1.1 Post-Merge-Evidence von PR #147 (live in diesem Run)
+### 1.1 Post-Merge-Evidence von PR #147
 
-| Fakt | Wert |
-| --- | --- |
-| PR #147 | **MERGED** 2026-08-28T19:34:02Z |
-| Merge-Commit / live `main` | `56aff7ff89f7113554c45891e024f9c06f6b0d15` |
-| Post-Merge GitHub Actions | Run `33204438255` SUCCESS auf exakt `56aff7ff` |
-| Production deployment | GitHub deployment `6147375507` success auf exakt `56aff7ff` |
-| Node-Vertrag | `engines.node` = `22.x`; `@types/node@22.20.1`; CI `22.x` |
+| Fakt | Wert | Quelle |
+| --- | --- | --- |
+| PR #147 | **MERGED** 2026-08-28T19:34:02Z | dieser Run (`gh pr view 147`) |
+| Merge-Commit / live `main` | `56aff7ff89f7113554c45891e024f9c06f6b0d15` | dieser Run (`git fetch origin/main`) |
+| Post-Merge GitHub Actions | Run `33204438255` SUCCESS auf exakt `56aff7ff` | dieser Run |
+| GitHub Production deployment | `6147375507` success auf exakt `56aff7ff` | dieser Run – **nur GitHub-Evidence, kein Ersatz für die Vercel-ID** |
+| Vercel Production | `dpl_3UZX5HrgwUyyr887ZSKBXMzPKMKM`, target `production`, **READY**, exact `main @ 56aff7ff89f7113554c45891e024f9c06f6b0d15`, `aliasError=null`. Build-Log: `Skipping build cache since Node.js version changed from "24.x" to "22.x"` | **Technical-Lead-verifiziert in Review `5457148091`. Dieser Agent hat diese Vercel-ID nicht selbst geholt.** |
+| Node-Vertrag | `engines.node` = `22.x`; `@types/node@22.20.1`; CI `22.x` | Repository + PR #147 |
 
-Die vom Auftrag genannte Vercel-Production-Security-Warnung für `next@14.2.32` bleibt **Auftragswahrheit**. Dieser Run hat die Warnungszeichenkette nicht erneut aus den Vercel-Build-Logs extrahiert; die Production-Deployment-Statusseite für `56aff7ff` ist `success`. Platform-Schutz ist kein unterstützter Framework-Vertrag.
+Die vom Auftrag genannte Vercel-Production-Security-Warnung für `next@14.2.32` bleibt **Auftragswahrheit**. Dieser Agent hat die Warnungszeichenkette nicht aus Vercel-Build-Logs extrahiert. Platform-Schutz ist kein unterstützter Framework-Vertrag.
 
 ### 1.2 Exact Head dieses Stamps
 
 | Feld | Wert |
 | --- | --- |
-| Prior Head | `8567dcdb6e6fddedab1dd0a4d6244b8a797f308a` – nur Task-Datei |
-| Review-Head | der Commit dieses Stamps; live an PR #148 prüfen |
+| Reviewed Head (invalidiert) | `c4bfc2bb8f0f149bf18fd3dad1032953040dec9d` – CHANGES REQUIRED `5457148091` |
+| Review-Head | der Commit dieses Review-Fix-Stamps; live an PR #148 prüfen |
 | Merge-Base | `56aff7ff` |
 
 Jeder neue Push invalidiert Prior-Gates.
@@ -83,7 +84,8 @@ Aus `package.json` / Lockfile auf Baseline `56aff7ff`, unverändert in diesem Sl
 | `eslint-config-next` | **14.2.12** – hinter `next@14.2.32` |
 | lint script | `next lint` |
 | ESLint config | `.eslintrc.json` extends `next/core-web-vitals` |
-| TypeScript | `^5.0.0` |
+| TypeScript (deklariert) | `^5.0.0` in `package.json` – **unter** Next-16-Minimum `>=5.1.0` |
+| TypeScript (resolved) | **5.9.2** in `package-lock.json` `node_modules/typescript` – erfüllt 5.1+ zur Laufzeit, der **deklarierte** Vertrag tut es nicht |
 | Node | **22.x** (ADR-0188, PR #147 integriert) |
 | `@supabase/ssr` | `^0.6.1` |
 | `@supabase/supabase-js` | `^2.50.2` |
@@ -164,7 +166,7 @@ Route-Handler lesen `new URL(req.url).searchParams` – **nicht** betroffen.
 
 Offizielle Next-16-Docs (28. Aug 2026): `middleware.ts` → `proxy.ts`, Export `middleware` → `proxy`. `proxy` läuft auf **Node.js**, nicht Edge. `middleware.ts` bleibt für Edge deprecated. Config-Flags `skipMiddleware*` → `skipProxy*`. Jetnity hat keine solchen Flags.
 
-Inoffizielle Guides behaupten zusätzlich Pflicht-`matcher` und neue `ProxyRequest`-Typen. Das ist **nicht** die offizielle Upgrade-Seite. Implementierung muss gegen die installierten 16.3.3-Docs prüfen. Ein erzwungenes `matcher` würde Jetnitys dokumentierte Anti-Overflow-Entscheidung berühren.
+Inoffizielle Guides behaupten zusätzlich Pflicht-`matcher` und neue `ProxyRequest`-Typen. Das ist **nicht** die offizielle Upgrade-Seite. Implementierung muss gegen die Docs der **dann installierten** 16.x-Version prüfen. Ein erzwungenes `matcher` würde Jetnitys dokumentierte Anti-Overflow-Entscheidung berühren.
 
 Risiko: Session-Cookie-Refresh in `setAll` muss auf dem Response-Objekt bleiben. Das ist der höchste Auth-Regressionspunkt von 16.
 
@@ -223,9 +225,20 @@ Dritt-Peers (npm, dieser Run) akzeptieren React 19: `lucide-react@0.525.0`, `rec
 
 `@types/react@^19` bei Runtime 18 ist schon heute eine Typ-/Runtime-Divergenz. Ein React-19-Bump **aligniert** das, statt eine neue Divergenz zu öffnen.
 
-Aktuellstes 19.2 auf npm in diesem Run: **19.2.8**. Implementierung pinnt die dann aktuelle 19.2.x-Patchlinie, nicht diese Audit-Zahl als Ewigkeits-Pin.
+Aktuellstes 19.2 auf npm in diesem Audit-Run: **19.2.8**. Das ist eine Audit-Referenz, kein Ewigkeits-Pin. Implementierung live-resolved die dann aktuelle kompatible 19.2.x-Patchlinie.
 
-### 5.7 Tests / CI / Vercel
+### 5.7 TypeScript 5.1+ contract
+
+Offizielle Next-16-Upgrade-Docs verlangen **TypeScript >= 5.1.0**.
+
+| Ebene | Ist (dieses Repo, unverändert) |
+| --- | --- |
+| Deklariert `package.json` | `typescript: ^5.0.0` – erlaubt theoretisch 5.0.x, **unter** dem Next-16-Minimum |
+| Resolved Lockfile | `typescript@5.9.2` – erfüllt 5.1+ faktisch |
+
+Slice 2 muss den **deklarierten** Vertrag auf eine unterstützte Range/Version >= 5.1.0 angleichen und das Lockfile regenerieren. Gate 0 ändert weder `package.json` noch das Lockfile. Die resolved 5.9.2 ist Audit-Ist, kein vorgeschriebener Patch-Pin.
+
+### 5.8 Tests / CI / Vercel
 
 CI bleibt der bestehende Job: `npm ci` → setup → typecheck → lint → `npm test` → api-schutz → schema-bezug → dead/exports/deps → `next build`. Node 22.x. Auth-Config-Job unverändert.
 
@@ -233,7 +246,7 @@ CI bleibt der bestehende Job: `npm ci` → setup → typecheck → lint → `npm
 
 Vercel: keine Project-Setting-Änderung nötig für den Upgrade selbst. Node 22.x ist bereits der Vertrag. Preview muss Auth-Cookies, Admin-Gate, `/planen`-robots und Trip-Workspace nach dem Upgrade beweisen.
 
-### 5.8 Traveller Context
+### 5.9 Traveller Context
 
 Nicht relevant. Dieses Gate 0 sammelt oder ändert keine Citizenship-/Dokument-/Route-Fakten.
 
@@ -246,7 +259,7 @@ Nicht relevant. Dieses Gate 0 sammelt oder ändert keine Citizenship-/Dokument-/
 - `next lint` → ESLint CLI (`next-lint-to-eslint-cli`).
 - `middleware.ts` → `proxy.ts` + Export-Rename (offizieller 16-Upgrade-Codemod).
 - `experimental.typedRoutes` → top-level, falls die Zielversion das verlangt.
-- Dependency-Pins: `next`, `react`, `react-dom`, `eslint-config-next`, `eslint@9` für 16.
+- Dependency-Alignment (live-resolved, nie unter Audit-Minimum): `next` 16.x, passendes `eslint-config-next`, `eslint@9`, React 19.2.x, TypeScript-Deklaration >= 5.1.0.
 
 ### Manual / high-risk (nicht dem Codemod überlassen)
 
@@ -258,10 +271,13 @@ Nicht relevant. Dieses Gate 0 sammelt oder ändert keine Citizenship-/Dokument-/
 6. **ESLint 8 → 9 + Flat Config** – CI-Blocker für 16, unabhängig vom App-Code.
 7. **AVIF** – Security-Patch ändert Optimierungsverhalten; visuell/perf prüfen, nicht still als gleich annehmen.
 8. **Admin-Login** (`useFormState` zweimal) – MFA/AAL-Pfad nicht regressiv ändern.
+9. **TypeScript-Deklaration `^5.0.0`** auf eine Next-16-taugliche Range >= 5.1.0 heben (Lockfile regenerieren). Kein stilles Verlassen auf die zufällig resolved 5.9.2.
 
-## 7. Risk matrix – 15.5.24 vs 16.3.3
+## 7. Risk matrix – audited 15.5.24 vs audited 16.3.3 reference
 
-| Dimension | `15.5.24` Maintenance LTS | `16.3.3` Active LTS |
+Die 16-Spalte ist die **auditierte August-2026-Referenz** der Active-LTS-Linie, kein Ewigkeits-Pin.
+
+| Dimension | `15.5.24` Maintenance LTS (Audit-Referenz) | `16.3.3` Active LTS (Audit-Minimum / Referenz) |
 | --- | --- | --- |
 | August-2026-Patch | ja | ja |
 | Offizieller Support | Maintenance; EOL **21 Oct 2026** (~54 Tage ab diesem Audit) | Active LTS |
@@ -280,13 +296,17 @@ Nicht relevant. Dieses Gate 0 sammelt oder ändert keine Citizenship-/Dokument-/
 
 ## 8. Recommendation
 
-**Langfristiges Ziel: `next@16.3.3` (Active LTS) + React 19.2.x + `eslint-config-next@16.3.3` + ESLint 9.**
+**Langfristiges Ziel: Next.js 16.x Active LTS auf der zum Implementierungszeitpunkt aktuellen unterstützten und security-gepatchten 16.x-Release.**
 
-Nicht weil es neuer ist, sondern weil:
+`16.3.3` ist das **auditierte aktuelle Minimum / die August-2026-Sicherheitsreferenz**, kein ewiger Architektur-Pin. Ist die Implementation verzögert oder existiert eine neuere unterstützte Security-Release auf 16.x, muss live neu aufgelöst werden. **Nie unter `16.3.3` fallen.**
+
+Begleitpakete ebenso live-resolved innerhalb der kompatiblen unterstützten Linie: React 19.2.x, passendes `eslint-config-next` zur gewählten 16.x, ESLint 9, TypeScript-Deklaration >= 5.1.0.
+
+Nicht weil 16.3.3 „das Neueste“ ist, sondern weil:
 
 1. 14.x ist unsupported. `14.2.35` heilt die August-2026-Advisories nicht.
 2. 15.x ist in ~54 Tagen selbst EOL. Production auf 15.5.24 zu landen erzwingt sofort eine zweite Major.
-3. Jetnitys Architektur passt zu 16: nur App Router, kein Pages Router, kein custom webpack, kein Edge-Segment, kein `revalidateTag`, bereits `force-dynamic` auf den Auth-/Trip-Flächen, Node 22 schon Vertrag.
+3. Jetnitys Architektur passt zu 16.x: nur App Router, kein Pages Router, kein custom webpack, kein Edge-Segment, kein `revalidateTag`, bereits `force-dynamic` auf den Auth-/Trip-Flächen, Node 22 schon Vertrag.
 4. Die wirklich teure Jetnity-Arbeit (Cookie-Factories, `/planen`-Metadata, Middleware-Cookies) fällt bei 15 **und** 16 an. Der Shim von 15 spart wenig, wenn 16 in Wochen folgen muss.
 5. Vercel-Plattformschutz für die zwei August-Issues ist **kein** Ersatz für eine unterstützte Linie und zukünftige Advisories.
 
@@ -307,20 +327,20 @@ Kein Slice startet aus diesem Gate 0.
 - Tests für Cookie-Factories, Login-`next`, `/planen`-robots, `[tripId]`.
 - Weiter `next@14.2.32`. Kein React-Bump in diesem Slice, ausser der Product Owner koppelt Slice 1+2.
 
-### Slice 2 – Ziel `16.3.3` + React 19.2.x
+### Slice 2 – Ziel Next 16.x Active LTS (live-resolved, nie unter `16.3.3`)
 
-- Pins: `next@16.3.3`, `react`/`react-dom` 19.2.x (heute 19.2.8), `eslint-config-next@16.3.3`, `eslint@9`.
+- Live-resolved Pins zum Implementierungszeitpunkt: aktuelle unterstützte/security-gepatchte `next@16.x` (>= `16.3.3`), dazu passende `eslint-config-next`, `eslint@9`, React/`react-dom` 19.2.x, TypeScript-Deklaration >= 5.1.0 (heute deklariert `^5.0.0`, resolved `5.9.2`) inkl. Lockfile-Regeneration.
 - `lint`-Script von `next lint` auf ESLint CLI; Flat Config prüfen.
 - `middleware.ts` → `proxy.ts`, Export `proxy`; Cookie-`setAll` und fail-closed Semantik byte-genau erhalten; matcher nur nach Beweis.
 - `useFormState` → `useActionState` auf Admin-Login.
-- `typedRoutes` / `optimizePackageImports` an 16.3.3-Config anpassen.
+- `typedRoutes` / `optimizePackageImports` an die Docs der dann installierten 16.x anpassen.
 - AVIF-Verhalten und Homepage-`next/image` auf Preview prüfen.
 - Volle CI + Preview-Auth: Login, Register, Admin-Login/MFA, Account, Gast-Cookie, Trip Workspace, `/planen` robots.
 - Keine Vercel-Settings, keine Supabase-Mutation, keine Branch Protection.
 
 ### Optionales Slice 1.5 – `15.5.24` Preview-only
 
-Nur wenn Slice 2 in der Preview zu grob ist. Nicht mergen als Production-Ziel. Danach unverzüglich Slice 2, vor 21 Oct 2026.
+Nur wenn Slice 2 in der Preview zu grob ist. Nicht mergen als Production-Ziel. Danach unverzüglich Slice 2 auf live-resolved 16.x (>= `16.3.3`), vor 21 Oct 2026.
 
 ### Explizit nicht in diesen Slices
 
@@ -352,9 +372,9 @@ Vor **jedem** Framework-/Runtime-Dependency-Upgrade (AGENTS.md §5, Haupt-Tech-S
 
 Der Product Owner muss **ausdrücklich** eine der folgenden Optionen wählen:
 
-1. **Empfohlen:** Separat versioniertes Implementierungsprogramm mit Ziel `next@16.3.3` + React 19.2.x, gestuft Slice 1 (Prep auf 14) dann Slice 2 (16.3.3). 15.5.24 ist kein Production-Ziel.
-2. **Abweichung A:** Ein-Hop 14 → 16.3.3 ohne Slice-1-Prep. Höheres Erst-PR-Risiko.
-3. **Abweichung B:** Kurzlebige 15.5.24-Preview-Isolation, danach 16.3.3 vor 21 Oct 2026. Nicht als Production-Ziel.
+1. **Empfohlen:** Separat versioniertes Implementierungsprogramm mit Ziel **Next 16.x Active LTS** (zum Implementierungszeitpunkt live-resolved, security-gepatcht, **nie unter dem auditierten Minimum `16.3.3`**), plus kompatible React-19.2.x- / ESLint-9- / TypeScript->=5.1-Linie. Gestuft Slice 1 (Prep auf 14) dann Slice 2. 15.5.24 ist kein Production-Ziel.
+2. **Abweichung A:** Ein-Hop 14 → live-resolved 16.x (>= `16.3.3`) ohne Slice-1-Prep. Höheres Erst-PR-Risiko.
+3. **Abweichung B:** Kurzlebige 15.5.24-Preview-Isolation, danach live-resolved 16.x (>= `16.3.3`) vor 21 Oct 2026. Nicht als Production-Ziel.
 4. **Ablehnen / später:** Auf 14.2.32 bleiben und das Unsupported-Risiko bewusst tragen. Vercel-Plattformschutz für die zwei August-Issues bleibt dann die einzige unmittelbare Mitigation, nicht der Framework-Vertrag.
 
 Diese Entscheidung gibt **nicht** frei: Production-Migration, Provider-live/Secrets/paid calls, Payments, Public Launch, Branch Protection, AP-7-S2, TW-8/TW-9.
@@ -371,9 +391,10 @@ Ein Technical-Lead-PASS auf diesem Gate-0-PR ist **keine** Upgrade-Freigabe.
 - ESLint 9 / Flat Config kann Regeln anders feuern als `next lint` + eslint 8.
 - Turbopack-Default kann Build-Unterschiede zeigen trotz fehlendem custom webpack.
 - `@types/react@19` vs `react@18` bleibt bis zum React-Bump.
+- Deklariertes `typescript: ^5.0.0` bleibt bis Slice 2 unter dem Next-16-Minimum, obwohl Lockfile 5.9.2 resolved.
 - `main` `protected=false` unverändert.
-- Agent-Self-Review ist kein PASS.
+- Agent-Self-Review ist kein PASS. Review-Fix `5457148091` invalidiert Head `c4bfc2bb`.
 
 ## 14. Exact next step
 
-Unabhängiger ChatGPT / Technical-Lead Exact-Head-Review von Draft-PR #148. Kein Ready. Kein Merge durch den Autor. Kein Implementierungsslice. Nach einem späteren Merge dieses PRs: Gate 0 ist integrierte Evidence; nächster Schritt = Product-Owner-Entscheidung aus Abschnitt 12 nach Live-Verifikation. Keine erfundene Merge-SHA. Kein Continuity-PR nur um den Merge zu sagen.
+Unabhängiger ChatGPT / Technical-Lead Exact-Head-Re-Review von Draft-PR #148 nach `5457148091`. Kein Ready. Kein Merge durch den Autor. Kein Implementierungsslice. Nach einem späteren Merge dieses PRs: Gate 0 ist integrierte Evidence; nächster Schritt = Product-Owner-Entscheidung aus Abschnitt 12 nach Live-Verifikation. Keine erfundene Merge-SHA. Kein Continuity-PR nur um den Merge zu sagen.

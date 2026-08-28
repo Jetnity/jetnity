@@ -1,26 +1,24 @@
 # Jetnity – Next.js Framework Security Upgrade Gate 0 Handoff
 
 Stand: 28. August 2026  
-Status: **DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**  
+Status: **REVIEW-FIX FÜR 5457148091 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
 Logical Cursor-Agent: **`Cursor-Agent: Jetnity framework security audit 1`**  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/148  
 Branch: `audit/framework-security-upgrade-gate0-2026-08-28`
 
-Dieser Handoff übergibt Gate 0. Er startet keinen Implementierungsslice. Agent-Self-Review ist kein PASS. Jeder neue Head invalidiert Prior-Gates.
+Dieser Handoff übergibt den Review-Fix gegen Technical-Lead-Kommentar `5457148091` auf Head `c4bfc2bb`. Er startet keinen Implementierungsslice. Agent-Self-Review ist kein PASS. Jeder neue Head invalidiert Prior-Gates.
 
 ---
 
 ## 1. Was dieser Agent getan hat
 
-Read-only Audit gegen Task `docs/NEXT_FRAMEWORK_SECURITY_UPGRADE_GATE0_TASK_2026-08-28.md` auf Baseline `main @ 56aff7ff`.
+Docs-only Review-Fix gegen Technical-Lead-Kommentar `5457148091` auf reviewed Head `c4bfc2bb`:
 
-1. Live-`origin/main`, PR #148, Branch Protection, PR-#147-Post-Merge-CI/Production und aktuelle Dependency-Pins rekonstruiert.
-2. Offizielle Support Policy, August-2026-Security-Release und Upgrade-Guides 15/16 gelesen.
-3. Jetnity-Call-Sites für `cookies()`, `params`, `searchParams`, middleware, lint, config, Actions, React-Hooks und Dritt-Peers inventarisiert.
-4. `15.5.24` vs `16.3.3` gegen Jetnity-Architektur, EOL und Migrationskosten verglichen.
-5. Empfehlung und gestufte Slices persistiert. Kein Runtime-Code, keine Dependency, keine Vercel-/Supabase-Mutation.
+1. Empfehlungs-Semantik: Ziel ist **16.x Active LTS live-resolved**; `16.3.3` ist auditiertes Minimum/August-2026-Referenz, kein Ewigkeits-Pin. React/ESLint/TypeScript ebenso live-resolved.
+2. PR-#147 Production-Evidence: TL-verifiziertes Vercel `dpl_3UZX5HrgwUyyr887ZSKBXMzPKMKM` (READY, `aliasError=null`, Node 24.x→22.x cache skip) persistiert. GitHub `6147375507` nur als GitHub-Evidence. Dieser Agent holt die Vercel-ID nicht als eigene Live-Abfrage.
+3. TypeScript: deklariert `^5.0.0`, Lockfile resolved `5.9.2`. Slice 2 muss die Deklaration auf >= 5.1.0 angleichen. Kein Dependency-Change in diesem PR.
 
-Kein Ready. Kein Merge.
+Kein Runtime-Code, keine Dependency, keine Vercel-/Supabase-Mutation. Kein Ready. Kein Merge.
 
 ---
 
@@ -48,11 +46,13 @@ UI wurde nicht umbenannt. Keine Rename-Fähigkeit vorhanden.
 | Branch | `audit/framework-security-upgrade-gate0-2026-08-28` |
 | Draft-PR | #148 OPEN Draft |
 | Merge-Base | `56aff7ff` |
-| Prior Head | `8567dcdb` – nur Task |
-| Exact / Review-Head | Stamp nach `8567dcdb`; live an PR #148 prüfen |
+| Reviewed Head (invalidiert) | `c4bfc2bb8f0f149bf18fd3dad1032953040dec9d` |
+| Exact / Review-Head | Stamp nach `c4bfc2bb`; live an PR #148 prüfen |
 | Branch Protection | unverändert; letzte Evidence `protected=false` |
 | Supabase | nicht live abgefragt, nicht mutiert |
-| PR #147 | MERGED; Actions `33204438255` SUCCESS; Production deployment `6147375507` success auf `56aff7ff` |
+| PR #147 GitHub Actions | `33204438255` SUCCESS auf `56aff7ff` (dieser Run) |
+| PR #147 GitHub Production deployment | `6147375507` success – **nur GitHub-Evidence** |
+| PR #147 Vercel Production | `dpl_3UZX5HrgwUyyr887ZSKBXMzPKMKM` READY / `production` / `aliasError=null` / exact `56aff7ff` – **TL-verifiziert in `5457148091`, nicht von diesem Agent geholt** |
 
 Jeder neue Push invalidiert Prior-Gates.
 
@@ -60,16 +60,17 @@ Jeder neue Push invalidiert Prior-Gates.
 
 ## 4. Ist-Zustand in einem Satz
 
-Production und `main` laufen auf **unsupported** `next@14.2.32` / React 18.2.0 / `next lint`, bei bereits erfülltem Node-22-Vertrag. Gate 0 empfiehlt **16.3.3 + React 19.2** als Ziel, führt das Upgrade nicht aus.
+Production und `main` laufen auf **unsupported** `next@14.2.32` / React 18.2.0 / `next lint`, bei bereits erfülltem Node-22-Vertrag. Gate 0 empfiehlt **16.x Active LTS live-resolved** (Minimum `16.3.3`), führt das Upgrade nicht aus.
 
 ---
 
 ## 5. Empfehlung
 
-- **Ziel:** `next@16.3.3` Active LTS + React 19.2.x.
+- **Ziel:** Next 16.x Active LTS, zum Implementierungszeitpunkt live-resolved und security-gepatcht; `16.3.3` = auditiertes Minimum/Referenz; nie darunter.
+- **Begleitlinie:** React 19.2.x, ESLint 9, passendes `eslint-config-next`, TypeScript-Deklaration >= 5.1.0 – ebenfalls live-resolved.
 - **Nicht als Production-Ziel:** `15.5.24` (Maintenance LTS, EOL 21 Oct 2026).
 - **Nicht als Security-Ziel:** `14.2.35` (letzter 14.2-Patch, weiterhin unsupported, ohne August-2026-Fixes).
-- **Stufe:** Slice 1 = async Request-API-Prep auf 14 ohne Dependency-Bump; Slice 2 = 16.3.3 + React 19.2 + ESLint 9 + `proxy` + Lint-CLI.
+- **Stufe:** Slice 1 = async Request-API-Prep auf 14 ohne Dependency-Bump; Slice 2 = live-resolved 16.x (>= `16.3.3`) + Lint-CLI + `proxy` + TS-Deklarationsangleichung.
 - Optional 15.5.24 nur als kurzlebige Preview-Isolation.
 
 Details: `docs/NEXT_FRAMEWORK_SECURITY_UPGRADE_GATE0_STATUS_2026-08-28.md`, ADR-0189.
@@ -100,6 +101,6 @@ Product Owner muss vor jedem tatsächlichen Framework-Bump eine der Optionen in 
 
 ## 9. Exakter nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Review von PR #148. Autor setzt kein Ready und merget nicht.
+Unabhängiger Technical-Lead Exact-Head-Re-Review von PR #148 nach `5457148091`. Autor setzt kein Ready und merget nicht.
 
 Nach einem späteren Merge: Gate 0 ist integrierte Evidence. Nächster Schritt = Product-Owner-Entscheidung. Kein automatischer Implementierungsslice. Keine erfundene Merge-SHA.

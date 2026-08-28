@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 28. August 2026  
-Status: **Next.js Framework Security Upgrade Gate 0 / SELF-EXPIRING. Solange Draft-PR #148 offen: STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge durch den Autor. Sobald #148 gemergt: Gate 0 ist integrierte Evidence; nächster Schritt = Product-Owner-Entscheidung über ein Implementierungsprogramm (empfohlenes Ziel `next@16.3.3`). Kein automatischer Framework-Bump. Kein AP-7-S2. Live-`main` immer live prüfen.**
+Status: **Next.js Framework Security Upgrade Gate 0 / REVIEW-FIX FÜR 5457148091 / SELF-EXPIRING. Solange Draft-PR #148 offen: STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; kein Ready, kein Merge durch den Autor. Sobald #148 gemergt: Gate 0 ist integrierte Evidence; nächster Schritt = Product-Owner-Entscheidung über ein Implementierungsprogramm (Ziel Next 16.x Active LTS, live-resolved, Minimum `16.3.3`). Kein automatischer Framework-Bump. Kein AP-7-S2. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -11,20 +11,20 @@ Status: **Next.js Framework Security Upgrade Gate 0 / SELF-EXPIRING. Solange Dra
 
 1. **Arbeitsblock / Ziel:** Read-only Compatibility-/Architekturanalyse. Vergleich `next@15.5.24` vs `next@16.3.3`. Empfehlung plus Stufenplan. Kein Runtime-Upgrade.
 2. **Authoring-Branch / PR:** `audit/framework-security-upgrade-gate0-2026-08-28`; Draft-PR #148. Exact Head ist der Commit dieses Stamps; live am PR prüfen, solange #148 offen ist.
-3. **Status:** **AUDIT ONLY / SELF-EXPIRING / DUAL-STATE.** Solange #148 offen: DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW. Sobald #148 gemergt: Gate 0 integrierte Evidence; Transportzeilen historisch. Kein Ready, kein Merge durch den Autor. Kein Dependency-Bump.
-4. **Bereits umgesetzt:** Live-Rekonstruktion auf Baseline `56aff7ff`; Inventur der Jetnity-Call-Sites; offizielle Support-/Security-Lage; Empfehlung **16.3.3 + React 19.2** als langfristiges Ziel; 15.5.24 nicht als Production-Ziel; ADR-0189. Keine Runtime-Datei geändert. Task-Head `8567dcdb` hatte Actions `33205109885` SUCCESS und Vercel Preview pass – das gilt nicht für diesen neuen Stamp.
+3. **Status:** **REVIEW-FIX FÜR 5457148091 / AUDIT ONLY / SELF-EXPIRING / DUAL-STATE.** Prior Head `c4bfc2bb` invalidiert. Solange #148 offen: DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW. Sobald #148 gemergt: Gate 0 integrierte Evidence; Transportzeilen historisch. Kein Ready, kein Merge durch den Autor. Kein Dependency-Bump.
+4. **Bereits umgesetzt:** Live-Rekonstruktion auf Baseline `56aff7ff`; Inventur der Jetnity-Call-Sites; Empfehlung **16.x Active LTS live-resolved** (Minimum `16.3.3`); 15.5.24 kein Production-Ziel; TypeScript-Deklaration `^5.0.0` / resolved `5.9.2` inventarisiert; ADR-0189. Review-Fix `5457148091`: keine Ewigkeits-Pins; TL-verifiziertes Vercel Production `dpl_3UZX5HrgwUyyr887ZSKBXMzPKMKM` persistiert; GitHub `6147375507` nur als GitHub-Evidence. Keine Runtime-Datei geändert. Prior Head `c4bfc2bb` Gates gelten nicht für diesen Stamp.
 5. **Cursor-Agent:** `Cursor-Agent: Jetnity framework security audit 1`. Preferred visible title: `Jetnity framework security audit 1`. Observed run title: `Jetnity framework security audit` (Cloud-Run `https://cursor.com/agents/bc-1ec3726f-b33b-45d1-aad2-b1bce3c895b9`). Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet.
 6. **Live-`main` / Baseline bei diesem Stamp:** `56aff7ff89f7113554c45891e024f9c06f6b0d15` – immer live neu prüfen.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation, keine Vercel-Projektmutation.
 8. **Kosten / Provider / Secrets:** keine.
 9. **Bekannte Risiken / Review-Funde:** 14.x bleibt Production-Runtime bis zu einem späteren PO-gegaten Upgrade. Cookie-Factories und Middleware/Proxy sind die teuersten Regressionsflächen. 15.x EOL 21 Oct 2026. `main` `protected=false`. Agent-Self-Review ist kein PASS.
 10. **Offene Nutzerentscheidungen / Freigaben:** Jeder tatsächliche Framework-Bump braucht ausdrückliche Product-Owner-Wahl (Status Abschnitt 12 / ADR-0189). Production-Migration / Identity / RLS / Provider-live / Payments / Public Launch bleiben extra gegated. AP-7-S2 startet nicht aus diesem Slice.
-11. **Exakter nächster Schritt (self-expiring / dual-state):** Solange #148 offen: unabhängiger Technical-Lead Exact-Head-Review. Kein Ready. Kein Merge. Kein Implementierungsslice. Sobald #148 gemergt: Gate 0 integriert; Draft-/Review-Klauseln historisch; nächster Schritt = Product-Owner-Entscheidung über Ziel 16.3.3 und die Stufen. Kein automatischer Bump. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Kein erfundener Merge-SHA.
+11. **Exakter nächster Schritt (self-expiring / dual-state):** Solange #148 offen: unabhängiger Technical-Lead Exact-Head-Re-Review nach `5457148091`. Kein Ready. Kein Merge. Kein Implementierungsslice. Sobald #148 gemergt: Gate 0 integriert; Draft-/Review-Klauseln historisch; nächster Schritt = Product-Owner-Entscheidung über Ziel Next 16.x Active LTS (live-resolved, Minimum `16.3.3`) und die Stufen. Kein automatischer Bump. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Kein erfundener Merge-SHA.
 12. **Zuerst lesen:** `docs/NEXT_FRAMEWORK_SECURITY_UPGRADE_GATE0_TASK_2026-08-28.md`, Status, Handoff, Self-Review, ADR-0189, `docs/JETNITY_CURSOR_VISIBLE_AGENT_NAME_GATE.md`.
 
 ## Historischer Arbeitsblock – Node 22 Runtime Consistency
 
-Current classification / Nachtrag, 28. August 2026: **HISTORICAL / INTEGRIERT.** PR #147 ist auf `main @ 56aff7ff` gemergt. Post-Merge GitHub Actions `33204438255` SUCCESS. Production deployment `6147375507` success. Nicht erneut als Draft öffnen.
+Current classification / Nachtrag, 28. August 2026: **HISTORICAL / INTEGRIERT.** PR #147 ist auf `main @ 56aff7ff` gemergt. Post-Merge GitHub Actions `33204438255` SUCCESS. GitHub Production deployment `6147375507` success (nur GitHub-Evidence). TL-verifizierte Vercel Production: `dpl_3UZX5HrgwUyyr887ZSKBXMzPKMKM` READY, target `production`, exact `56aff7ff`, `aliasError=null`; Build-Log cache skip 24.x→22.x. Nicht erneut als Draft öffnen.
 
 1. **Arbeitsblock / Ziel:** Ein reproduzierbarer Node-Runtime-Vertrag: **Node 22.x** in Repository-Metadaten, `@types/node`, GitHub CI und Vercel. Keine Application-Features.
 2. **Authoring-Branch / PR:** `ops/node22-runtime-consistency-2026-08-28`; PR #147 **MERGED**.
@@ -410,8 +410,8 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#148** Next.js Framework Security Upgrade Gate 0 | **SELF-EXPIRING.** Solange offen: DRAFT, STOP für unabhängigen TL-Review; kein Ready, kein Merge, kein Dependency-Bump. Sobald gemergt: Gate 0 integrierte Evidence; nächster Schritt = Product-Owner-Entscheidung über Ziel 16.3.3. Kein automatischer Implementierungsslice. Kein AP-7-S2. |
-| **#147** Node 22 Runtime Consistency | **GEMERGT / INTEGRIERT.** Merge `56aff7ff`. Post-Merge Actions `33204438255` SUCCESS. Production deployment `6147375507` success. Ältere SELF-EXPIRING/DRAFT-Zeilen sind Pre-Merge-Evidence. |
+| **#148** Next.js Framework Security Upgrade Gate 0 | **SELF-EXPIRING.** Solange offen: DRAFT, STOP für unabhängigen TL-Re-Review nach `5457148091`; kein Ready, kein Merge, kein Dependency-Bump. Sobald gemergt: Gate 0 integrierte Evidence; nächster Schritt = Product-Owner-Entscheidung über Ziel Next 16.x Active LTS (live-resolved, Minimum `16.3.3`). Kein automatischer Implementierungsslice. Kein AP-7-S2. |
+| **#147** Node 22 Runtime Consistency | **GEMERGT / INTEGRIERT.** Merge `56aff7ff`. Post-Merge Actions `33204438255` SUCCESS. GitHub Production deployment `6147375507` (GitHub-only). TL-verifizierte Vercel Production `dpl_3UZX5HrgwUyyr887ZSKBXMzPKMKM` READY. Ältere SELF-EXPIRING/DRAFT-Zeilen sind Pre-Merge-Evidence. |
 | **#145** AP-7-S1 Dual-Authority Domain Contract | **GEMERGT / INTEGRIERT** auf Slice-Baseline `4ec83f36`. Ältere SELF-EXPIRING/DRAFT-Zeilen sind Pre-Merge-Evidence. Kein automatisches AP-7-S2. |
 | **#144** AP-7 Gate 0 Account-Traveller-Registry | **GEMERGT / INTEGRIERT.** Merge `bb38aef5`. Architecture-Evidence; Dual-Authority danach PO-freigegeben. |
 | **#143** PR #142 Post-Merge Continuity | **GEMERGT / INTEGRIERT.** Merge `1947285c`. Ältere SELF-EXPIRING/DRAFT-Zeilen sind Pre-Merge-Evidence. |
@@ -468,7 +468,7 @@ Production C1 `20260828015304_traveller_write_contract_integrity` ist unter der 
 
 ## 10. Nächster Schritt
 
-**Self-expiring / dual-state.** Solange Draft-PR #148 offen: unabhängiger Technical-Lead Exact-Head-Review. Autor-Agent setzt kein Ready, kein Merge, keinen Framework-Bump, keine Vercel-Setting-Mutation und startet kein AP-7-S2. Sobald #148 gemergt: Gate 0 ist integrierte Evidence; Draft-/Review-Klauseln historisch; exakt nächster Schritt = Product-Owner-Entscheidung über ein Implementierungsprogramm mit empfohlenem Ziel `next@16.3.3`. Kein automatischer Bump. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Kein erfundener Merge-SHA.
+**Self-expiring / dual-state.** Solange Draft-PR #148 offen: unabhängiger Technical-Lead Exact-Head-Re-Review nach `5457148091`. Autor-Agent setzt kein Ready, kein Merge, keinen Framework-Bump, keine Vercel-Setting-Mutation und startet kein AP-7-S2. Sobald #148 gemergt: Gate 0 ist integrierte Evidence; Draft-/Review-Klauseln historisch; exakt nächster Schritt = Product-Owner-Entscheidung über ein Implementierungsprogramm mit Ziel Next 16.x Active LTS (live-resolved, Minimum `16.3.3`). Kein automatischer Bump. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Kein erfundener Merge-SHA.
 
 PR #147 Node 22 ist integriert (`56aff7ff`). AP-7-S1 ist integriert (PR #145 / `4ec83f36`). Dual-Authority bleibt freigegeben. AP-7-S2 / Persistenz startet nicht aus #148 und braucht einen separat versionierten, Product-Owner-gegaten Vorschlag.
 

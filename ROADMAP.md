@@ -117,7 +117,7 @@ Nicht automatisch starten:
 - AP-5-S3–S5 / AP-5-P1–P5
 - AP-7 / Account-Traveller-Registry — Architektur Dual-Authority freigegeben; S1 Domain-Contract über PR #145 auf `main @ 4ec83f36` integriert, kein automatisches S2, keine Persistenz
 - Node 22 Runtime Consistency — PR #147 integriert auf `main @ 56aff7ff` (`engines.node: "22.x"` + `@types/node@22.20.1`)
-- Next.js Framework Security Upgrade Gate 0 — PR #148 self-expiring: offen → TL-Review; nach Merge → integrierte Evidence, dann Product-Owner-Entscheidung über Ziel `next@16.3.3`; kein automatischer Bump; kein Ready/Merge durch den Autor
+- Next.js Framework Security Upgrade Gate 0 — PR #148 self-expiring: offen → TL-Re-Review nach `5457148091`; nach Merge → integrierte Evidence, dann Product-Owner-Entscheidung über Ziel Next 16.x Active LTS (live-resolved, Minimum `16.3.3`); kein automatischer Bump; kein Ready/Merge durch den Autor
 
 ## 3. Trip Workspace / Visitor Search
 
@@ -278,12 +278,12 @@ Abgeschlossen:
 35. ✅ AP-7 Gate 0 Account-Traveller-Registry Architecture / PR #144 – integriert; Merge `bb38aef5`; Dual-Authority danach product-owner-freigegeben
 36. ✅ AP-7-S1 Dual-Authority Domain Contract / PR #145 – integriert auf `main @ 4ec83f36`; kein automatisches S2
 37. ✅ Node 22 Runtime Consistency / PR #147 – integriert auf `main @ 56aff7ff`; ADR-0188
-38. 🟡 Next.js Framework Security Upgrade Gate 0 / PR #148 – Audit only; self-expiring: offen → TL-Review; nach Merge → integrierte Evidence, dann PO-Entscheidung; empfohlenes Ziel `next@16.3.3`; kein automatischer Bump
+38. 🟡 Next.js Framework Security Upgrade Gate 0 / PR #148 – Audit only; self-expiring: offen → TL-Re-Review nach `5457148091`; nach Merge → integrierte Evidence, dann PO-Entscheidung; Ziel Next 16.x Active LTS live-resolved (Minimum `16.3.3`); kein automatischer Bump
 
 Nächster Schritt (self-expiring / dual-state):
 
-- **Solange PR #148 offen:** unabhängiger Technical-Lead Exact-Head-Review. Kein Ready. Kein Merge durch den Autor. Kein Framework-Bump. Keine Vercel-Setting-Mutation. Kein AP-7-S2.
-- **Sobald PR #148 gemergt:** Gate 0 ist integrierte Evidence. Draft-/Review-Klauseln historisch. Exakt nächster Schritt = Product-Owner-Entscheidung über ein Implementierungsprogramm mit empfohlenem Ziel `next@16.3.3`. Kein automatischer Bump. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Kein erfundener Merge-SHA.
+- **Solange PR #148 offen:** unabhängiger Technical-Lead Exact-Head-Re-Review nach `5457148091`. Kein Ready. Kein Merge durch den Autor. Kein Framework-Bump. Keine Vercel-Setting-Mutation. Kein AP-7-S2.
+- **Sobald PR #148 gemergt:** Gate 0 ist integrierte Evidence. Draft-/Review-Klauseln historisch. Exakt nächster Schritt = Product-Owner-Entscheidung über ein Implementierungsprogramm mit Ziel Next 16.x Active LTS (live-resolved, Minimum `16.3.3`). Kein automatischer Bump. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Kein erfundener Merge-SHA.
 - AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #148.
 
 AP-5-S3/S4/S5 bleiben normale Technical-Lead-Gates innerhalb Gate 0, nicht automatisch gestartet und nicht Product-Owner-gated. S3–S5 nicht aus dieser Liste automatisch ableiten.

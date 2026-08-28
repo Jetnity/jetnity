@@ -11,7 +11,7 @@ Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Ziel
 
 | Bereich | Technologie |
 | --- | --- |
-| Framework | Next.js 14.2.32, App Router (Ist). Gate 0 / ADR-0189 empfiehlt `next@16.3.3` + React 19.2 als Ziel; **nicht angewendet**. |
+| Framework | Next.js 14.2.32, App Router (Ist). Gate 0 / ADR-0189 empfiehlt Next **16.x Active LTS** live-resolved (auditiertes Minimum `16.3.3`); **nicht angewendet**. |
 | Sprache | TypeScript (strict) |
 | Styling | Tailwind CSS, CSS Custom Properties |
 | UI-Bausteine | Radix UI / shadcn-Muster |

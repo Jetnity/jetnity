@@ -393,7 +393,7 @@ Draft-PR #88 bleibt historische Evidence vom 26.08.2026, nicht Current Truth. Un
 **Self-expiring / dual-state für PR #148. Live-Evidence gewinnt. Kein erfundener Merge-SHA.**
 
 - **Solange PR #148 offen und unmerged ist:** Draft-PR #148 ist der Framework-Security-Gate-0-Transport. Exakt erster unfertiger Schritt = unabhängiger Technical-Lead Exact-Head-Review. Autor-Agent setzt **kein Ready** und **kein Merge**. Kein Framework-Bump. Keine Vercel-Setting-Mutation. Kein AP-7-S2.
-- **Sobald PR #148 gemergt ist:** Gate 0 ist integrierte Evidence. Draft-/Review-/Transport-Klauseln sind automatisch historisch. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Exakt erster nächster Schritt = Product-Owner-Entscheidung über ein Implementierungsprogramm mit empfohlenem Ziel `next@16.3.3`. Kein automatischer Bump. AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht automatisch.
+- **Sobald PR #148 gemergt ist:** Gate 0 ist integrierte Evidence. Draft-/Review-/Transport-Klauseln sind automatisch historisch. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Exakt erster nächster Schritt = Product-Owner-Entscheidung über ein Implementierungsprogramm mit Ziel Next 16.x Active LTS (live-resolved, auditiertes Minimum `16.3.3`). Kein automatischer Bump. AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht automatisch.
 
 PR #147 ist **MERGED / integriert** auf `main @ 56aff7ff`. Ältere „Draft-PR #147 unabhängig reviewen“-Sätze sind Pre-Merge-Evidence.
 

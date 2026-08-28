@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **Next.js Framework Security Upgrade Gate 0 / PR #148 self-expiring. Solange #148 offen: STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge durch den Autor. Sobald #148 gemergt: Gate 0 integrierte Evidence; nächster Schritt = Product-Owner-Entscheidung über Ziel `next@16.3.3`, kein automatischer Bump. PR #147 Node 22 ist auf `main @ 56aff7ff` integriert. AP-7-S1 ist integriert; kein automatisches AP-7-S2. Dual-Authority ist product-owner-freigegeben. PR #144 Gate 0 ist MERGED (`bb38aef5`). PR #143 bleibt MERGED (`1947285c`). S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **Next.js Framework Security Upgrade Gate 0 / PR #148 self-expiring. Solange #148 offen: STOP für unabhängigen Technical-Lead Exact-Head-Re-Review nach `5457148091`; kein Ready, kein Merge durch den Autor. Sobald #148 gemergt: Gate 0 integrierte Evidence; nächster Schritt = Product-Owner-Entscheidung über Ziel Next 16.x Active LTS (live-resolved, Minimum `16.3.3`), kein automatischer Bump. PR #147 Node 22 ist auf `main @ 56aff7ff` integriert. AP-7-S1 ist integriert; kein automatisches AP-7-S2. Dual-Authority ist product-owner-freigegeben. PR #144 Gate 0 ist MERGED (`bb38aef5`). PR #143 bleibt MERGED (`1947285c`). S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
@@ -347,7 +347,7 @@ Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logisc
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-**Self-expiring / dual-state.** Solange Draft-PR #148 offen: unabhängiger Technical-Lead Exact-Head-Review. Autor-Agent setzt kein Ready, kein Merge, keinen Framework-Bump, keine Vercel-Setting-Mutation und startet kein AP-7-S2. Sobald #148 gemergt: Gate 0 ist integrierte Evidence; Draft-/Review-Klauseln historisch; nächster Schritt = Product-Owner-Entscheidung über ein Implementierungsprogramm mit empfohlenem Ziel `next@16.3.3`. Kein automatischer Bump. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Kein erfundener Merge-SHA. AP-7-S2 bleibt separat Product-Owner-gegatet. PR #147 Node 22 ist bereits integriert (`56aff7ff`).
+**Self-expiring / dual-state.** Solange Draft-PR #148 offen: unabhängiger Technical-Lead Exact-Head-Re-Review nach `5457148091`. Autor-Agent setzt kein Ready, kein Merge, keinen Framework-Bump, keine Vercel-Setting-Mutation und startet kein AP-7-S2. Sobald #148 gemergt: Gate 0 ist integrierte Evidence; Draft-/Review-Klauseln historisch; nächster Schritt = Product-Owner-Entscheidung über ein Implementierungsprogramm mit Ziel Next 16.x Active LTS (live-resolved, Minimum `16.3.3`). Kein automatischer Bump. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Kein erfundener Merge-SHA. AP-7-S2 bleibt separat Product-Owner-gegatet. PR #147 Node 22 ist bereits integriert (`56aff7ff`).
 
 PR #144 ist MERGED (`bb38aef5`). Dual-Authority ist product-owner-freigegeben. PR #143 ist MERGED (`1947285c`).
 
