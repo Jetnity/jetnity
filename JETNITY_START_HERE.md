@@ -7,7 +7,9 @@ Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production G
 
 Neuer Chat / voller Kontext: zuerst den Continuity-Checkpoint im Repository sichern, dann den universellen Recovery-Prompt verwenden. ChatGPT öffnet kein Chat-Fenster selbst.
 
-`docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_PROMPT.md`
+> **No relevant Jetnity progress may exist only in chat memory. At every material point the repository must make it possible to know exactly where the project currently stands.**
+
+Current-State-Evidence und Recovery: `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_PROMPT.md` und Operating Standard §9. Continuity ist Definition of Done. Live-Evidence gewinnt; der Repository-Status muss danach korrigiert werden.
 
 Aktuelle operative Evidence:
 
@@ -87,7 +89,8 @@ Ein neuer ChatGPT-Technical-Lead erfindet **keinen** eigenen Workflow. Diese Reg
 
 1. Rolle: übergeordneter Jetnity **Technical Lead**.
 2. Pflichtlektüre: zuerst `JETNITY_START_HERE.md`, dann **sofort** `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`, danach die übrige Reihenfolge in Abschnitt 1 und der aktuellste Post-Merge-New-Chat-Checkpoint.
-3. **Live-Evidence gewinnt** über Docs, Chat, Screenshots und Erinnerung.
+3. **Live-Evidence gewinnt** über Docs, Chat, Screenshots und Erinnerung. Widerspricht sie dem gespeicherten Status, muss der Repository-Status danach korrigiert werden.
+3a. **Kein relevanter Fortschritt darf nur im Chat stehen.** Der persistierte Current-State muss `main`/Baseline, Branch/PR/Exact Head, exakten Cursor-Agentennamen, Task/Scope/Non-Scope, letztes unabhängiges Review-Verdict plus Head, CHANGES REQUIRED/Blocker/Risiken, Exact-Head-CI/Vercel und relevante Supabase-/Production-Evidence, besondere Product-Owner-Gates, fertig vs. unfertig und den **exakt ersten noch nicht abgeschlossenen nächsten Schritt** tragen. Das gilt auch mitten in Implementierung, Agentenlauf, Review, Re-Gating, unmittelbar vor oder nach Merge. Continuity ist Definition of Done.
 4. Cursor-Aufträge nennen den **exakten Anzeigenamen** aus Abschnitt 9. Agenten verwenden genau diesen Namen; sie erfinden keine Generation. Fehlt eine Cursor-Rename-Fähigkeit, wird der Name nur im Repository/PR festgehalten, nicht als geänderte UI behauptet.
 5. Der Feature-/Audit-Autor ist **nicht** der unabhängige Finalreviewer.
 6. **Nur ChatGPT / Technical Lead** darf Ready setzen oder mergen. Cursor-Agenten setzen niemals Ready und mergen niemals. Autonomes Ready/Merge durch den Technical Lead nur nach unabhängigem Exact-Head-Review und nur, wenn der Technical Lead absolut überzeugt ist, dass dies die beste verantwortbare Entscheidung ist. Blind mergen ist verboten.
@@ -394,6 +397,8 @@ Visitor Search UX ist integriert. Production Gate B ist operativ PASS, kein Re-A
 
 ## 17. Continuity-Regel
 
-Kein relevanter Fortschritt darf nur im Chat existieren. Reviews, Merges, Integrationsentscheidungen, Governance-Entscheidungen, Agentenstatus, Blocker und nächste Schritte werden im Repository versioniert.
+> **No relevant Jetnity progress may exist only in chat memory. At every material point the repository must make it possible to know exactly where the project currently stands.**
 
-Ein neuer Chat oder Agent behauptet niemals aus Erinnerung oder Screenshot, ein PR sei aktuell, grün oder gemergt. **Immer live verifizieren.**
+Reviews, Merges, Integrationsentscheidungen, Governance-Entscheidungen, Agentenstatus, Blocker und nächste Schritte werden im Repository versioniert. Continuity ist Teil der Definition of Done, nicht optionale Dokumentation hinterher. Ausführliche Current-State-Liste: Operating Standard §9 und `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_PROMPT.md`.
+
+Ein neuer Chat oder Agent behauptet niemals aus Erinnerung oder Screenshot, ein PR sei aktuell, grün oder gemergt. **Immer live verifizieren.** Wenn Live-Evidence dem gespeicherten Status widerspricht, gewinnt Live-Evidence; der Repository-Status muss danach korrigiert werden.

@@ -9,16 +9,16 @@ Status: **Aktueller Block: Draft-PR #142 docs-only Technical-Lead-/Cursor-Operat
 
 1. **Arbeitsblock / Ziel:** Docs-only Governance-Integration des Product-Owner-Operating-Standards vom 28. August 2026, damit jeder neue ChatGPT-Technical-Lead ihn früh liest und keine aktuelle Governance mehr impliziert, ein Cursor-Agent dürfe Ready/Merge.
 2. **Authoring-Branch / PR:** `docs/technical-lead-cursor-operating-standard-2026-08-28`; Draft-PR #142.
-3. **Status:** **DOCS-ONLY / DRAFT / PO-CONTINUITY-CLARIFICATION.** Gegen reviewed Head `0b0e3b548db6d34c5a59f47b3756222ea296c25e`. Jeder neue Push invalidiert Prior-Gates. Kein Ready, kein Merge durch den Autor. Kein Produkt-Folgeslice.
-4. **Bereits umgesetzt:** Operating-Standard-Integration und Review-Fix `5454244491` bleiben. Neu: exakte Agenten-Namensdisziplin, Chat-Kapazitäts-Continuity ohne autonome Chat-Fenster-Behauptung, universeller Recovery-Prompt.
+3. **Status:** **DOCS-ONLY / DRAFT / PO-CONTINUITY-AMENDMENT.** Gegen vorherigen Head `d3544a98aba87f86827c00911be093babd0d551f`. Jeder neue Push invalidiert Prior-Gates. Kein Ready, kein Merge durch den Autor. Kein Produkt-Folgeslice.
+4. **Bereits umgesetzt:** Operating-Standard-Integration und Review-Fix `5454244491` bleiben. Agenten-Namensdisziplin, Chat-Kapazitäts-Continuity und universeller Recovery-Prompt bleiben. Neu: verbindliche Current-State-Regel – kein relevanter Fortschritt nur im Chat; persistierte Evidence muss `main`/Baseline, Branch/PR/Head, Agentennamen, Task/Scope, Review-Verdict, Blocker, CI/Vercel/Supabase, Gates, fertig vs. unfertig und den exakt ersten nächsten Schritt tragen. Continuity ist Definition of Done.
 5. **Cursor-Agent:** `Cursor-Agent: Jetnity quality security audit 3` – exakt zugewiesener Name. Keine andere Generation. Cursor exponiert in dieser Session keine programmierbare Rename-/Title-Fähigkeit; der UI-Anzeigename wird deshalb nicht als geändert behauptet.
-6. **Live-`main` bei diesem Stamp:** Task-Baseline `3b119ae34843b40d043ed921070c60e35dd1517a`. Integration-Head `778149808515bd48fd80e823a14491cddbd11e7c` – immer live neu prüfen.
+6. **Live-`main` bei diesem Stamp:** Task-Baseline `3b119ae34843b40d043ed921070c60e35dd1517a`. Immer live neu prüfen.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation.
 8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** `main` Branch Protection bleibt `protected=false`. Dieser Slice ändert das nicht. Ein Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** besondere Product-Owner-Gates unverändert. Kein Ready/Merge durch den Autor. Unabhängiger Technical-Lead-Review auf dem neuen Exact Head.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review von Draft-PR #142 auf dem neuen Exact Head. Prior-Gates auf `0b0e3b54` sind stale. Kein Ready. Kein Merge. Kein Folgeslice.
-12. **Zuerst lesen:** `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`, `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_PROMPT.md`, `docs/TECHNICAL_LEAD_CURSOR_OPERATING_STANDARD_INTEGRATION_TASK_2026-08-28.md`, `JETNITY_START_HERE.md`, dieser Status.
+9. **Bekannte Risiken / Review-Funde:** `main` Branch Protection bleibt `protected=false`. Dieser Slice ändert das nicht. Ein Agent-Self-Review ist kein PASS. Letztes unabhängiges Review mit CHANGES REQUIRED: Kommentar `5454244491` auf `0bce940c` (jene drei Fixes sind umgesetzt). PO-Amendments nach `0b0e3b54` sind noch nicht unabhängig PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** besondere Product-Owner-Gates unverändert (S5-B Runtime, TW-8, AP-5-S3 geschlossen). Kein Ready/Merge durch den Autor. Unabhängiger Technical-Lead-Review auf dem neuen Exact Head.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review von Draft-PR #142 auf dem neuen Exact Head. Prior-Gates auf `d3544a98` und älteren Heads sind stale. Kein Ready. Kein Merge. Kein Folgeslice.
+12. **Zuerst lesen:** `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` §9, `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_PROMPT.md`, `docs/TECHNICAL_LEAD_CURSOR_OPERATING_STANDARD_INTEGRATION_TASK_2026-08-28.md`, `JETNITY_START_HERE.md`, dieser Status.
 
 ## Historischer Arbeitsblock – AP-5-S2 Post-Merge Continuity
 

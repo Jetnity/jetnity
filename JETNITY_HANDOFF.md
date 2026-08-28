@@ -317,7 +317,7 @@ Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logisc
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-Aktueller docs-only Governance-Slice, kein Produkt-Folgeslice: Draft-PR #142 unabhängig reviewen. Autor-Agent setzt kein Ready und kein Merge.
+Aktueller docs-only Governance-Slice, kein Produkt-Folgeslice: Draft-PR #142 unabhängig reviewen. Autor-Agent setzt kein Ready und kein Merge. Current-State-Continuity (kein Fortschritt nur im Chat) steht im Operating Standard §9 und im universellen Recovery-Prompt.
 
 **Kein Produkt-Folgeslice ist an diesem Chat-Übergabepunkt automatisch freigegeben.**
 

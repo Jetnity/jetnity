@@ -17,6 +17,8 @@ Leitregeln:
 
 > **Agentenarbeit ist Input. Der unabhängige Technical-Lead-Review ist die Integrationsentscheidung.**
 
+> **No relevant Jetnity progress may exist only in chat memory. At every material point the repository must make it possible to know exactly where the project currently stands.**
+
 Besondere Product-Owner-Gates bleiben vollständig bestehen.
 
 ## 2. Exklusive Merge-Autorität
@@ -321,6 +323,25 @@ Jeder Agent und jeder Review schützt mindestens:
 
 Diese Arbeitsweise muss im Repository überleben, nicht nur im Chat.
 
+> **No relevant Jetnity progress may exist only in chat memory. At every material point the repository must make it possible to know exactly where the project currently stands.**
+
+Kontinuität ist Teil der Definition of Done, nicht optionale Dokumentation hinterher. Das gilt auch, wenn ein Chat mitten in der Implementierung, mitten in einem Agentenlauf, mitten im Review, während Re-Gating, unmittelbar vor Merge oder unmittelbar nach Merge stoppt.
+
+Der persistierte Current-State muss ausreichen, damit ein neuer Technical Lead **ohne** Nachfrage beim Product Owner die Geschichte zu wiederholen rekonstruieren kann:
+
+- aktueller `main` / Baseline;
+- aktiver Branch / PR / Exact Head;
+- aktiver Cursor-Agent: exakter Name/Generation und verfügbare Session-Evidence;
+- aktueller Task / Scope / Non-Scope;
+- letztes unabhängiges Review-Verdict und der Head, auf den es gilt;
+- offene CHANGES REQUIRED / Blocker / Residualrisiken;
+- Exact-Head-CI/Vercel-Evidence und relevante Supabase-/Production-Evidence, soweit anwendbar;
+- besondere Product-Owner-Gates, die noch geschlossen oder offen sind;
+- was fertig vs. unfertig ist;
+- der **exakt erste noch nicht abgeschlossene nächste Schritt**.
+
+Wenn Live-Evidence dem gespeicherten Status widerspricht, gewinnt Live-Evidence; der Repository-Status muss danach korrigiert werden.
+
 Kanonischer Recovery-Prompt für jeden neuen Chat, in jedem Arbeitszustand:
 
 `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_PROMPT.md`
@@ -328,7 +349,7 @@ Kanonischer Recovery-Prompt für jeden neuen Chat, in jedem Arbeitszustand:
 ChatGPT kann **kein** neues ChatGPT-Fenster selbst erzeugen oder öffnen. Der Technical Lead behauptet das niemals. Wenn der aktive Chat/Kontext voll wird:
 
 1. zuerst einen frischen Continuity-Checkpoint im Repository persistieren, **bevor** Kontext verloren geht;
-2. der Checkpoint enthält mindestens: unfertige Arbeit, exakten Branch/PR/Head, aktiven Cursor-Agentennamen, letztes Review-Verdict, CI/Vercel/Supabase-Evidence, Blocker/Gates und die exakt nächste Aktion;
+2. der Checkpoint enthält mindestens die Current-State-Evidence oben, einschließlich unfertiger Arbeit, Exact Branch/PR/Head, aktivem Cursor-Agentennamen, letztem Review-Verdict, CI/Vercel/Supabase-Evidence, Blocker/Gates und der exakt ersten noch nicht abgeschlossenen Aktion;
 3. danach dem Product Owner sagen, dass ein neuer Chat jetzt sicher geöffnet werden kann, und auf den universellen Recovery-Prompt zeigen.
 
 Jeder neue Technical-Lead-Chat:
@@ -344,7 +365,7 @@ Jeder neue Technical-Lead-Chat:
 9. setzt genau bei der ersten unfertigen, unabhängig verifizierten Aktion fort;
 10. arbeitet ansonsten selbstständig weiter.
 
-Ein neuer Chat darf nicht auf Chat-Erinnerung allein vertrauen und darf diese Regeln nicht still vereinfachen. Unfertige Arbeit bleibt unfertig, bis sie unabhängig verifiziert ist.
+Ein neuer Chat darf nicht auf Chat-Erinnerung allein vertrauen und darf diese Regeln nicht still vereinfachen. Unfertige Arbeit bleibt unfertig, bis sie unabhängig verifiziert ist. Relevanter Fortschritt, der nur im Chat steht, gilt als nicht persistiert.
 
 ## 10. Vorrang
 
@@ -363,3 +384,5 @@ Historische Dokumente bleiben Evidence ihres Zeitpunkts.
 ## 11. Merksatz
 
 > **Der Cursor-Agent baut oder auditiert im eng versionierten Auftrag. Der Technical Lead rekonstruiert, steuert, hinterfragt, lässt korrigieren, gatet jeden neuen Exact Head, entscheidet allein über Ready/Merge, verifiziert danach `main` und hält alles repository-basiert für den nächsten Chat fest.**
+
+> **No relevant Jetnity progress may exist only in chat memory. At every material point the repository must make it possible to know exactly where the project currently stands.**
