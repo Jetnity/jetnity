@@ -4850,7 +4850,7 @@ Kein Schema. Kein Ready/Merge. Neuer Head invalidiert `ce5b7e70` und `fbb1ec8d`.
 ## ADR-0190 – Next 16 S1: async Request-API-Kompatibilität ohne Framework-Bump
 
 **Datum:** 28. August 2026  
-**Status:** Slice-1-Implementierungs-ADR auf Draft-PR #150. **Self-expiring. Kein Ready/Merge durch den Autor. Kein Next-/React-/ESLint-/TypeScript-Dependency-Bump. Kein S2.**
+**Status:** integriert über PR #150 auf `main @ d7f02f77`. Ältere SELF-EXPIRING/DRAFT-Zeilen sind Pre-Merge-Evidence. Der Runtime-Wechsel ist ADR-0191 / Draft-PR #151.
 
 **Entscheidung:**
 
@@ -4887,6 +4887,47 @@ Festlegung innerhalb S1, ohne Dependency-Bump:
 2. Optionality (`searchParams?`) bleibt, wo die Route Abwesenheit erlaubt; der vorhandene Wert ist Promise-förmig.
 3. Der interne Helfer `RequestParam<T> = T | Promise<T>` darf Sync weiter unwrappen (Next 14 liefert weiterhin ein Await-fähiges Objekt).
 4. Die Union darf nicht erneut als öffentliche PageProps-Signatur verwendet werden.
+
+**Nachtrag, 28. August 2026 – Integration.** PR #150 ist auf `main @ d7f02f77` gemergt. ADR-0190 ist der integrierte S1-Vertrag. Der tatsächliche Runtime-Wechsel ist ADR-0191 / Draft-PR #151 und nicht Teil von S1.
+
+---
+
+## ADR-0191 – Next 16 S2: Runtime-Wechsel auf Next.js 16.3.3 Active LTS
+
+**Datum:** 28. August 2026  
+**Status:** Slice-2-Implementierungs-ADR auf Draft-PR #151. **Self-expiring. Kein Ready/Merge durch den Autor. Kein S3. Keine Cache-Components-/PPR-/React-Compiler-Aktivierung. Keine Supabase-/Auth-/RLS-/Vercel-Setting-Mutation.**
+
+**Entscheidung:**
+
+1. Jetnitys Application-Runtime auf diesem Draft-Branch ist **Next.js 16.3.3** (Active LTS, aktueller Security-Patch) plus die live-resolved kompatible Linie **React / React-DOM 19.2.8**, **@types/react 19.2.18**, **@types/react-dom 19.2.5**, **eslint-config-next 16.3.3**, **ESLint 9.39.5** und **TypeScript 5.9.3**.
+2. `next lint` ist entfernt. Lint läuft über die ESLint CLI (`eslint .`) und die offizielle Next-16-Flat-Config (`eslint.config.mjs`: core-web-vitals + typescript + Default-Ignores).
+3. Neue React-Compiler-orientierte Hook-Regeln und `@typescript-eslint/no-explicit-any` bleiben sichtbar. Severity ist `warn`, nicht globales `off`. `no-require-imports` ist nur für bestehende CJS-Config-Dateien aus.
+4. Die Netzwerk-/Auth-Grenze heißt `proxy.ts` und exportiert `proxy`. Semantik bleibt fail-closed: `getUser()`, Cookie-Weitergabe, Scope-Reihenfolge `/api/admin` → `/admin/*` außer Login → `/account/*`, `/admin/mfa` login-geschützt ohne Proxy-AAL2, `next = pathname + search`, kein matcher.
+5. `typedRoutes` sitzt top-level. `experimental.optimizePackageImports` bleibt `['lucide-react']`. Cache Components, PPR und React Compiler bleiben aus. Der Production-Build nutzt Next-16-Default-Turbopack, nicht `--webpack`.
+6. CI-`typecheck` läuft `next typegen && tsc`, weil Next 16 `next-env.d.ts` auf generierte Route-Types zeigt und GitHub Actions typecheck vor dem Build ausführt.
+7. S1-Promise-/Async-Request-API-Verträge (ADR-0190) bleiben. `new URL(req.url).searchParams` ist keine Next Request API und wird nicht pauschal umgeschrieben.
+8. Dieser ADR ändert kein Supabase-/Auth-/RLS-/Schema, keine Vercel-Projektsettings und startet keinen Produkt- oder S3-Slice.
+
+**Kontext:** PR #148 / ADR-0189 empfahl 16.x Active LTS. PR #149 autorisierte das gestufte Programm einschließlich S2. PR #150 / ADR-0190 hat Auth-Cookies und PageProps auf Next 14 async-kompatibel gemacht. Next 16 entfernt `next lint`, behandelt `middleware` als `proxy` auf Node.js und schreibt typed-route-Imports in `next-env.d.ts`. ESLint 10 ist mit `eslint-config-next@16.3.3` / `eslint-plugin-react` nicht peer-sauber.
+
+**Alternativen:**
+
+1. *Auf 14.2.32 bleiben.* Lehnt die PO-Freigabe und das Security-Ziel ab.
+2. *ESLint 10 trotz Peer-Bruch mit `--force`.* Würde den No-Force-Vertrag brechen.
+3. *Compiler-Hook-Regeln global `off`.* Würde den Lint-Vertrag still schwächen.
+4. *`--webpack` nur um den ersten Build grün zu machen.* Der erste Fehler war stale Next-14-`.next`, kein Turbopack-Blocker.
+5. *Cache Components/PPR/Compiler mitaktivieren.* Hard Non-Scope.
+
+**Begründung:** S2 ist der autorisierte Runtime-Wechsel, nicht ein Produkt- oder Feature-Slice. Kompatible Linien live auflösen, Semantik der Auth-Grenze erhalten, neue Next-16-Defaults nutzen statt stille Opt-outs.
+
+**Konsequenzen:**
+
+- Evidence: `docs/NEXT16_S2_FRAMEWORK_BUMP_STATUS_2026-08-28.md` und Self-Review desselben Datums.
+- `ARCHITECTURE.md` Ist-Wahrheit auf diesem Draft: Next.js 16.3.3 / App Router / `proxy.ts` auf Node.js. Production/`main` bleibt bis Merge auf Next 14.2.32 + S1.
+- Canonical Continuity ist self-expiring: solange #151 offen → TL Exact-Head-Review / kein Ready/Merge durch den Autor; nach Merge → S2 integriert, nächster Schritt nur ein separat versioniertes, ausdrücklich gegatetes Folgeprogramm, kein automatisches S3.
+- Autor-Agent stoppt für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
+
+**Nachtrag, 28. August 2026 – Review-Fix `5055372760`.** Die öffentliche Support-ID darf ohne Digest keine gemeinsame Konstante (`#unbekannt`) sein. Fallback ist `useId()` über `oeffentlicheFehlerId`: render-rein, je gemounteter Fehlergrenze stabil, ohne unreine Zeit-/Zufallswerte im Render. Vorheriger Review-Head `b73af1c2` wird durch den Review-Fix ungültig.
 
 ---
 

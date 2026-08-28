@@ -44,7 +44,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="de" suppressHydrationWarning>
+    <html lang="de" data-scroll-behavior="smooth" suppressHydrationWarning>
       {/* Die Flaeche des Dokuments liegt auf <html> (siehe globals.css), damit
           sie auch beim Ueberdehnen des Scrollbereichs auf iOS und unterhalb
           kurzer Seiten zur warmen V2-Flaeche passt. */}

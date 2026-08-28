@@ -89,7 +89,7 @@ describe('Supabase Server-Factories sind async-kompatibel', () => {
     const funde: string[] = []
     for (const pfad of dateienSammeln(wurzel)) {
       const relativ = relative(wurzel, pfad).replaceAll('\\', '/')
-      if (relativ === 'lib/supabase/server.ts' || relativ === 'middleware.ts') continue
+      if (relativ === 'lib/supabase/server.ts' || relativ === 'proxy.ts') continue
       const text = readFileSync(pfad, 'utf8')
       if (
         text.includes("from '@/lib/supabase/server'") &&

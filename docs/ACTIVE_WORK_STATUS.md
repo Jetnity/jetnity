@@ -1,26 +1,43 @@
 # Jetnity – Active Work Status
 
 Stand: 28. August 2026  
-Status: **Next 16 Compatibility Prep S1 Review-Fix / Draft-PR #150 / SELF-EXPIRING. STOP für unabhängigen Technical-Lead Exact-Head-Re-Review nach CHANGES REQUIRED `5457641262`; kein Ready, kein Merge durch den Autor. Kein S2. Kein Framework-Bump. PR #148 Gate 0 und PR #149 PO-Freigabe sind auf `main @ 2fdf8a18` integriert. Kein AP-7-S2. Live-`main` immer live prüfen.**
+Status: **Next 16 S2 Framework Bump Review-Fix / Draft-PR #151 / SELF-EXPIRING. STOP für unabhängigen Technical-Lead Exact-Head-Re-Review nach CHANGES REQUIRED `5055372760`; kein Ready, kein Merge durch den Autor. Kein S3. PR #148 Gate 0, PR #149 PO-Freigabe und PR #150 / S1 sind auf `main @ d7f02f77` integriert. Kein AP-7-S2. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
-> Self-expiring für PR #150. Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
+> Self-expiring für PR #151. Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
 
-## Aktueller Arbeitsblock – Next 16 Compatibility Prep S1
+## Aktueller Arbeitsblock – Next 16 S2 Framework Bump
 
-1. **Arbeitsblock / Ziel:** Async Request-API-/Auth-Cookie-Kompatibilität auf der bestehenden Next-14-Runtime. Kein Framework-Bump. Dieser Stamp ist der unmittelbare Review-Fix zu CHANGES REQUIRED `5457641262`.
-2. **Authoring-Branch / PR:** `feat/next16-s1-request-api-compat-prep-2026-08-28`; Draft-PR #150. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
-3. **Status:** **REVIEW-FIX / DRAFT / SELF-EXPIRING.** STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Vorheriger Review-Head `822725a6` und dessen Gates/Preview sind nach dem neuen Push ungültig. Kein Ready, kein Merge durch den Autor. Kein S2.
-4. **Bereits umgesetzt:** async Supabase-Cookie-Factories + alle Caller; async Guest-Quota-Cookie bei exaktem `jetnity_gast`-Vertrag; framework-facing Page/Metadata-Props jetzt **Promise-förmig** (`PageRequestParam<T> = Promise<T>`, nicht `T | Promise<T>`); interner Entpacker darf Sync weiter unwrappen; adversariale Promise-Contract-Tests; lokale Gates auf Review-Fix `7cbb273b` grün (`npm ci`, typecheck, lint, **2478** tests, hygiene, production build). Runtime bleibt `next@14.2.32`.
-5. **Cursor-Agent:** `Cursor-Agent: Jetnity framework compatibility 1`. Preferred visible title: `Jetnity framework compatibility 1`. Observed run title: `Next 16 API compatibility` (Cloud-Run `https://cursor.com/agents/bc-29e60ee0-acc7-4a21-ad50-34cf078cdc37`). Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 1 bleibt 1; dieser Review-Fix ist dieselbe Session.
-6. **Live-`main` / Baseline bei diesem Stamp:** `2fdf8a18ab99d22a3ba75df7bd8451908593714f` – immer live neu prüfen. Merge-Base exakt, 5 ahead / 0 behind vor diesem Stamp (`c2ae8821`, `9833a4bf`, `822725a6`, `dd56e140`, `7cbb273b`).
+1. **Arbeitsblock / Ziel:** Tatsächlicher Framework-Bump auf Next.js 16.3.3 Active LTS plus kompatible React-19.2-/ESLint-/TypeScript-Linie, ESLint CLI/Flat Config und `middleware.ts`→`proxy.ts`. Kein S3.
+2. **Authoring-Branch / PR:** `feat/next16-s2-framework-bump-2026-08-28`; Draft-PR #151. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
+3. **Status:** **REVIEW-FIX / DRAFT / SELF-EXPIRING.** STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW nach CHANGES REQUIRED `5055372760`. Vorheriger Review-Head `b73af1c2` und dessen Gates/Preview sind nach dem neuen Push ungültig. Kein Ready, kein Merge durch den Autor. Kein S3.
+4. **Bereits umgesetzt:** `next@16.3.3`, `react@19.2.8`, `eslint-config-next@16.3.3`, `eslint@9.39.5`, `typescript@5.9.3`; Flat Config; `proxy.ts` mit erhaltener fail-closed Semantik; `typedRoutes` top-level; `useActionState`; `next typegen` vor `tsc`; öffentliche `Fehler-ID` Digest-first plus `useId()`-Fallback (Review-Fix `5e98a38e`); lokale Gates auf `5e98a38e` grün (`npm ci`, typecheck, lint 0 errors / 133 warnings, **2491** tests, hygiene, Next-16.3.3-Turbopack-Production-Build).
+5. **Cursor-Agent:** `Cursor-Agent: Jetnity framework compatibility 2`. Preferred visible title: `Jetnity framework compatibility 2`. Observed run title: `Jetnity framework bump` (Cloud-Run `https://cursor.com/agents/bc-ddde1a19-b2c8-420d-916a-db4e31a3aca3`). Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 2 bleibt 2.
+6. **Live-`main` / Baseline bei diesem Stamp:** `d7f02f77c0796b0ec04675191742049a222cfab9` – immer live neu prüfen. Merge-Base exakt, 0 behind. Ahead = Implementierung plus dieser Stamp; live am PR zählen.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation, keine Vercel-Projektmutation.
 8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** Auth-/Cookie- und `/planen`-Metadata bleiben P1 bis unabhängiger Preview-Review. `main` `protected=false`. Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** S1 braucht keine neue PO-Freigabe (PR #149). S2 / Framework-Bump bleibt extra gegatet. Production-Migration / Identity / RLS / Provider-live / Payments / Public Launch bleiben extra gegated. AP-7-S2 startet nicht aus diesem Slice.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #150 nach CHANGES REQUIRED `5457641262`. Kein Ready. Kein Merge. Kein S2.
-12. **Zuerst lesen:** `docs/NEXT16_S1_REQUEST_API_COMPATIBILITY_PREP_TASK_2026-08-28.md`, Status, Handoff, Self-Review, ADR-0190, `docs/JETNITY_CURSOR_VISIBLE_AGENT_NAME_GATE.md`.
+9. **Bekannte Risiken / Review-Funde:** Auth-/Cookie-/Proxy- und `/planen`-Metadata bleiben P1 bis unabhängiger Preview-Review. Der P1-Fund `5055372760` (`#unbekannt`) ist lokal geschlossen. ESLint 9.39.5 npm-deprecated; kein Sprung auf ESLint 10. `main` `protected=false`. Agent-Self-Review ist kein PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** S2 braucht keine neue PO-Freigabe (PR #149). S3 bleibt extra gegatet. Production-Migration / Identity / RLS / Provider-live / Payments / Public Launch bleiben extra gegated. AP-7-S2 startet nicht aus diesem Slice.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #151 nach CHANGES REQUIRED `5055372760`. Kein Ready. Kein Merge. Kein S3.
+12. **Zuerst lesen:** `docs/NEXT16_S2_FRAMEWORK_BUMP_TASK_2026-08-28.md`, Status, Handoff, Self-Review, ADR-0191, `docs/JETNITY_CURSOR_VISIBLE_AGENT_NAME_GATE.md`.
+
+## Historischer Arbeitsblock – Next 16 Compatibility Prep S1
+
+Current classification / Nachtrag, 28. August 2026: **HISTORICAL / INTEGRIERT.** PR #150 ist auf `main @ d7f02f77` gemergt. Post-Merge GitHub Actions `33211372214` SUCCESS. Ältere „REVIEW-FIX / DRAFT / SELF-EXPIRING“-Zeilen sind Pre-Merge-Evidence. Aktueller Ops-Block ist Draft-PR #151.
+
+1. **Arbeitsblock / Ziel:** Async Request-API-/Auth-Cookie-Kompatibilität auf der damaligen Next-14-Runtime. Kein Framework-Bump.
+2. **Authoring-Branch / PR:** `feat/next16-s1-request-api-compat-prep-2026-08-28`; PR #150 **MERGED**.
+3. **Status:** **INTEGRIERT.**
+4. **Bereits umgesetzt:** async Supabase-Cookie-Factories; Promise-förmige Page/Metadata-Props; ADR-0190.
+5. **Cursor-Agent:** `Cursor-Agent: Jetnity framework compatibility 1`. Generation 1 nicht für S2 wiederverwendet.
+6. **Live-`main` bei Integration:** `d7f02f77c0796b0ec04675191742049a222cfab9`.
+7. **DB / RLS / Production-Grenze:** keine Migration, keine Supabase-Mutation, keine Vercel-Projektmutation.
+8. **Kosten / Provider / Secrets:** keine.
+9. **Bekannte Risiken / Review-Funde:** Auth-/Cookie-Flächen bleiben P1 für den S2-Preview-Review.
+10. **Offene Nutzerentscheidungen / Freigaben:** keine aus diesem Slice. S2 ist der aktuelle Block.
+11. **Exakter nächster Schritt:** nicht erneut öffnen. Aktueller Ops-Block ist Draft-PR #151.
+12. **Zuerst lesen:** ADR-0190, `docs/NEXT16_S1_REQUEST_API_COMPATIBILITY_PREP_STATUS_2026-08-28.md` als historische Evidence.
 
 ## Historischer Arbeitsblock – Next.js Framework Security Upgrade Gate 0
 

@@ -49,9 +49,7 @@ function mutableCookiesAdapter(store: CookieStore) {
     },
     remove(name: string, _options: CookieOptions) {
       try {
-        // Next 14+: delete existiert, ist aber nicht immer typisiert
-        // @ts-ignore
-        store.delete?.(name)
+        store.delete(name)
       } catch {
         store.set({ name, value: '', maxAge: 0, path: '/' })
       }

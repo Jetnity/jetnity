@@ -3,6 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { AlertTriangle, MapPin, RefreshCw } from 'lucide-react'
+import { oeffentlicheFehlerId } from '@/lib/next/oeffentliche-fehler-id'
 
 /**
  * Fehlergrenze für alle Routen unter /app/(public).
@@ -16,14 +17,12 @@ export default function Error({
   reset: () => void
 }) {
   React.useEffect(() => {
-    // eslint-disable-next-line no-console
     console.error('[PublicRouteError]', error)
   }, [error])
 
-  // simple (pseudo-)ID für Supportfälle
-  const id =
-    (error?.digest && `#${error.digest}`) ||
-    `#${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
+  // Digest zuerst. Fallback ist useId(): render-rein, je Mount stabil,
+  // ohne unreine Zeit- oder Zufallswerte und ohne gemeinsame Konstante.
+  const id = oeffentlicheFehlerId(error?.digest, React.useId())
 
   return (
     <main className="min-h-[70dvh] bg-surface-75 px-4 py-14 sm:px-6 sm:py-20">

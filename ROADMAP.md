@@ -119,7 +119,8 @@ Nicht automatisch starten:
 - Node 22 Runtime Consistency — PR #147 integriert auf `main @ 56aff7ff` (`engines.node: "22.x"` + `@types/node@22.20.1`)
 - Next.js Framework Security Upgrade Gate 0 — PR #148 integriert auf `main @ 2fdf8a18`; Ziel 16.x Active LTS live-resolved (Minimum `16.3.3`) bleibt Empfehlung, nicht angewendet
 - Next 16 Product-Owner-Freigabe — PR #149 integriert; autorisiert das gestufte Compatibility-Programm
-- Next 16 Compatibility Prep S1 — Draft-PR #150 self-expiring: Review-Fix für Promise-förmige Page/Metadata-Props nach CHANGES REQUIRED `5457641262`; STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; async Request-API-Prep auf `next@14.2.32`; kein Ready/Merge durch den Autor; kein S2 / Framework-Bump
+- Next 16 Compatibility Prep S1 — PR #150 integriert auf `main @ d7f02f77`; async Request-API-Prep; kein automatischer Folgeslice aus S1
+- Next 16 S2 Framework Bump — Draft-PR #151 self-expiring: Runtime auf Next.js 16.3.3 + React 19.2.8 + ESLint CLI/Flat Config + `proxy.ts`; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready/Merge durch den Autor; kein S3
 
 ## 3. Trip Workspace / Visitor Search
 
@@ -280,13 +281,16 @@ Abgeschlossen:
 35. ✅ AP-7 Gate 0 Account-Traveller-Registry Architecture / PR #144 – integriert; Merge `bb38aef5`; Dual-Authority danach product-owner-freigegeben
 36. ✅ AP-7-S1 Dual-Authority Domain Contract / PR #145 – integriert auf `main @ 4ec83f36`; kein automatisches S2
 37. ✅ Node 22 Runtime Consistency / PR #147 – integriert auf `main @ 56aff7ff`; ADR-0188
-38. 🟡 Next.js Framework Security Upgrade Gate 0 / PR #148 – Audit only; self-expiring: offen → TL-Re-Review nach `5457148091`; nach Merge → integrierte Evidence, dann PO-Entscheidung; Ziel Next 16.x Active LTS live-resolved (Minimum `16.3.3`); kein automatischer Bump
+38. ✅ Next.js Framework Security Upgrade Gate 0 / PR #148 – integriert; Ziel 16.x Active LTS live-resolved (Minimum `16.3.3`)
+39. ✅ Next 16 Product-Owner-Freigabe / PR #149 – integriert; autorisiert das gestufte Compatibility-Programm
+40. ✅ Next 16 Compatibility Prep S1 / PR #150 – integriert auf `main @ d7f02f77`; ADR-0190
+41. 🟡 Next 16 S2 Framework Bump / Draft-PR #151 – Runtime Next.js 16.3.3 + React 19.2.8 + ESLint CLI + `proxy.ts`; self-expiring: STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready/Merge durch den Autor; kein S3
 
 Nächster Schritt (self-expiring / dual-state):
 
-- **Solange PR #148 offen:** unabhängiger Technical-Lead Exact-Head-Re-Review nach `5457148091`. Kein Ready. Kein Merge durch den Autor. Kein Framework-Bump. Keine Vercel-Setting-Mutation. Kein AP-7-S2.
-- **Sobald PR #148 gemergt:** Gate 0 ist integrierte Evidence. Draft-/Review-Klauseln historisch. Exakt nächster Schritt = Product-Owner-Entscheidung über ein Implementierungsprogramm mit Ziel Next 16.x Active LTS (live-resolved, Minimum `16.3.3`). Kein automatischer Bump. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Kein erfundener Merge-SHA.
-- AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #148.
+- **Solange PR #151 offen:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #151. Kein Ready. Kein Merge durch den Autor. Kein S3. Keine Vercel-Setting-Mutation. Kein AP-7-S2.
+- **Sobald PR #151 gemergt:** S2 ist integrierte Runtime-Evidence. Draft-/Review-Klauseln historisch. Exakt nächster Schritt nur ein separat versioniertes, ausdrücklich gegatetes Folgeprogramm. Kein automatisches S3. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Kein erfundener Merge-SHA.
+- AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #151.
 
 AP-5-S3/S4/S5 bleiben normale Technical-Lead-Gates innerhalb Gate 0, nicht automatisch gestartet und nicht Product-Owner-gated. S3–S5 nicht aus dieser Liste automatisch ableiten.
 

@@ -1,6 +1,6 @@
 # Jetnity – Architektur
 
-Stand: 27. August 2026
+Stand: 28. August 2026
 Gültig für: Foundation D/E, Travel Safety, Travel Timing & Seasonal Intelligence, Account AP-1–AP-3, Admin Slice A–C, Provider S1–S3 und S5-A, Trip Workspace TW-1/2/4/3/5 und TW6-A, D0-1/D0-2, die fail-closed Public-Metadata-Grenze (PR #86 / ADR-0170) sowie den zentralen Admin-AAL2-Application-Guard auf `main`. Account-Slices ändern kein Schema. S2-B1/B2-Migrationen liegen nur auf Development. Admin-AAL2-Data-Plane: Development-History `20260826052735_admin_aal2_data_plane`; historische Repo-Datei `20260826090000_admin_aal2_data_plane.sql`. Die forward-only Alignment-Datei `20260827170000_admin_aal2_data_plane_alignment.sql` liegt über PR #98 auf `main` und ist nicht Production-applied (ADR-0175). Operativer Stand: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
 
 Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Zielzustand. Abweichungen zwischen Ist und Ziel sind als solche gekennzeichnet. Zielzustand und Reihenfolge stehen in [ROADMAP.md](ROADMAP.md).
@@ -11,7 +11,7 @@ Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Ziel
 
 | Bereich | Technologie |
 | --- | --- |
-| Framework | Next.js 14.2.32, App Router (Ist). Gate 0 / ADR-0189 empfiehlt Next **16.x Active LTS** live-resolved (auditiertes Minimum `16.3.3`); **nicht angewendet**. S1 / ADR-0190 bereitet async Request APIs auf dieser 14er-Runtime vor; **kein Bump**. |
+| Framework | Next.js 16.3.3, App Router, React 19.2.8 (**Ist auf Draft-PR #151 / ADR-0191**; Production/`main` bleibt bis Merge auf Next 14.2.32 + S1 / ADR-0190). Gate 0 / ADR-0189 bleibt die Zielentscheidung 16.x Active LTS. Cache Components, PPR und React Compiler sind nicht aktiviert. |
 | Sprache | TypeScript (strict) |
 | Styling | Tailwind CSS, CSS Custom Properties |
 | UI-Bausteine | Radix UI / shadcn-Muster |
@@ -38,7 +38,7 @@ lib/seo/            D0-Indexgrenze und öffentliche Metadata (ADR-0170). HTML-ro
 lib/auth/           Rollenmodell und Zugangsentscheidung (siehe Abschnitt 4)
 types/              Datenbank- und Domänentypen; types/supabase.ts wird erzeugt
 supabase/migrations Datenbankschema, vollständig und reproduzierbar (Abschnitt 6)
-middleware.ts       Edge-Middleware
+proxy.ts            Next-16-Proxy (Node.js); ehemals middleware.ts / Edge. Nur Anmeldung, kein Matcher, keine Rolle/AAL.
 scripts/            Prüfungen, die in der CI laufen
 scripts/db/         Inventur, Migrationslauf und Nachweise gegen Development
 scripts/airports/   OurAirports-Import nach Development, nie in der CI
@@ -109,12 +109,12 @@ Sessions laufen über Supabase-Auth-Cookies. Serverseitig wird die Identität im
 
 | Schicht | Datei | Aufgabe | Antwort bei Ablehnung |
 | --- | --- | --- | --- |
-| Anmeldung | `middleware.ts` | ist ein verifiziertes Konto vorhanden? Gilt für `/admin`, `/api/admin`, `/account` | Seiten: Weiterleitung zur passenden Anmeldung mit Rücksprungziel. API: 401 als JSON |
+| Anmeldung | `proxy.ts` | ist ein verifiziertes Konto vorhanden? Gilt für `/admin`, `/api/admin`, `/account` | Seiten: Weiterleitung zur passenden Anmeldung mit Rücksprungziel. API: 401 als JSON |
 | Berechtigung Seiten | `app/(admin)/layout.tsx` | Rollen-/Capability-Prüfung **und** `currentLevel === 'aal2'` für die gesamte Routengruppe | Weiterleitung auf `/admin/login`, `/admin/mfa` oder `/unauthorized?grund=…` |
 | Berechtigung API | `requireAdminApi()` je Route | dieselbe Entscheidung, in der CI durch `check:api-schutz` erzwungen | 401 / 403 / 503 als JSON, **nie** eine Weiterleitung |
 | Datenzugriff | `lese()` in `lib/api/datenbank-lesen.ts` | trennt eine erfolgreiche leere Abfrage von einem Fehler der Datenbank | 500 bei Ablehnung, 503 bei Ausfall, jeweils als JSON |
 
-`/admin/login` und `/admin/mfa` liegen in der Gruppe `(public)` und sind von `requireAdminPage` ausgenommen – andernfalls entstünde eine Endlosschleife. `/admin/mfa` bleibt über die Middleware an eine verifizierte Sitzung gebunden.
+`/admin/login` und `/admin/mfa` liegen in der Gruppe `(public)` und sind von `requireAdminPage` ausgenommen – andernfalls entstünde eine Endlosschleife. `/admin/mfa` bleibt über den Proxy an eine verifizierte Sitzung gebunden.
 
 **Das Rollenmodell steht an einer Stelle.** `lib/auth/roles.ts` enthält die sechs Rollen, ihre Rangfolge, den Bereichszugang und die Regeln der Rollenvergabe – ohne Next- und Supabase-Importe, damit die Regeln ohne Laufzeit prüfbar sind. `lib/auth/admin-access.ts` trifft die Zugangsentscheidung als reine Funktion, `lib/auth/admin-guard.ts` führt sie aus und protokolliert sie.
 
