@@ -3,6 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { AlertTriangle, MapPin, RefreshCw } from 'lucide-react'
+import { oeffentlicheFehlerId } from '@/lib/next/oeffentliche-fehler-id'
 
 /**
  * Fehlergrenze für alle Routen unter /app/(public).
@@ -19,9 +20,9 @@ export default function Error({
     console.error('[PublicRouteError]', error)
   }, [error])
 
-  // Support-ID nur aus dem Framework-Digest. Kein Date.now()/Math.random()
-  // im Render – Next 16 / react-hooks/purity verbietet unreine Render-Werte.
-  const id = error?.digest ? `#${error.digest}` : '#unbekannt'
+  // Digest zuerst. Fallback ist useId(): render-rein, je Mount stabil,
+  // ohne unreine Zeit- oder Zufallswerte und ohne gemeinsame Konstante.
+  const id = oeffentlicheFehlerId(error?.digest, React.useId())
 
   return (
     <main className="min-h-[70dvh] bg-surface-75 px-4 py-14 sm:px-6 sm:py-20">

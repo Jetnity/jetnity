@@ -57,6 +57,15 @@ describe('Next-16-S2 Framework-Vertrag', () => {
     assert.match(config, /optimizePackageImports:\s*\['lucide-react'\]/)
   })
 
+  test('Öffentliche Fehler-ID bleibt digest-first ohne Konstanten-Fallback', () => {
+    const error = lese('app/(public)/error.tsx')
+    assert.match(error, /oeffentlicheFehlerId\(/)
+    assert.match(error, /React\.useId\(/)
+    assert.equal(/Date\.now\s*\(/.test(error), false)
+    assert.equal(/Math\.random\s*\(/.test(error), false)
+    assert.equal(/#unbekannt/.test(error), false)
+  })
+
   test('Admin-Login nutzt React-19 useActionState, nicht useFormState', () => {
     const login = lese('app/(public)/admin/login/page.tsx')
     assert.match(login, /import \{ useActionState \} from 'react'/)
