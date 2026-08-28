@@ -18,6 +18,7 @@ Keine Migration. Kein `supabase/config.toml`-Write. Kein RLS/Identity. Kein `rea
 | --- | --- |
 | Kann Browser-WebAuthn Passkeys als live zeigen, während Config aus ist? | Nein. `passkeyLage` gibt bei `serverAktiviert=false` immer `unsupported`. |
 | Wird eine fehlgeschlagene Faktorenliste als Empty gezeigt? | Nein. `error` bleibt `error`. |
+| Wird `data.all` mit `factor_type: "totp"` als empty gezeigt? | Nein, nach Review-Fix `5050331692`. Current Truth ist `factor_type`; `type` nur Fallback. |
 | Werden Faktor-IDs als Gerät gezeigt? | Nein. Anzeigename ist `friendly_name` oder „Authenticator-App“. |
 | Leakage von GoTrue/otpauth/Token in der UI? | Mapper gibt nur Produktcopy. Tests füttern Rohstrings. |
 | Wurde S2/S3/S4/S5 still gebaut? | Nein. |

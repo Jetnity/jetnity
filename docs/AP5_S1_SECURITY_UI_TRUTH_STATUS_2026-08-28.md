@@ -1,7 +1,7 @@
 # Jetnity – AP-5-S1 Security-UI Truth – Status
 
 Stand: 28. August 2026  
-Status: **AUTHOR COMPLETE ON DRAFT / KEIN READY / KEIN MERGE / STOPP FÜR UNABHÄNGIGEN TL-REVIEW**  
+Status: **REVIEW-FIX FÜR 5050331692 / DRAFT / KEIN READY / KEIN MERGE / STOPP FÜR ERNEUTEN TL-REVIEW**  
 Workstream: Account / Traveller  
 Cursor-Agent: **`Account plattform audit vorbereitung 9`**  
 Issue: [#132](https://github.com/Jetnity/jetnity/issues/132)  
@@ -65,6 +65,12 @@ Sessionlisting bleibt **ungebaut** und damit `unsupported`, nicht `empty`. Keine
 | GitHub Preview-Deployment | `6139587003` success |
 
 Dieser Stamp erzeugt einen neueren Head. Dessen CI/Vercel müssen live gelesen werden. **Kein zweiter Evidence-Stamp**, außer die Stamp-CI fehlschlägt.
+
+### 4.1 Review-Fix `5050331692`
+
+P1: `listFactors()`-Normalisierung prüfte `type === "totp"`. Der installierte Vertrag nutzt `factor_type`. Vorhandene TOTP-Faktoren in `data.all` wurden weggefiltert und fälschlich als `empty` gezeigt.
+
+Behoben: `lib/auth/account-security-faktoren.ts` liest `factor_type` als Current Truth; Legacy-`type` nur, wenn `factor_type` fehlt. `data.totp` bleibt Fallback. Regressionstest mit realistischem `{ id, factor_type: "totp", status: "verified", friendly_name, created_at }`. Kein S2–S5.
 
 ## 5. Residuals – nicht in S1 mischen
 

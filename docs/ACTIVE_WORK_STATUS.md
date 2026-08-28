@@ -9,7 +9,7 @@ Status: **AP-5-S1 ehrliche Security-UI ist der aktuelle Account-Implementation-S
 
 1. **Arbeitsblock / Ziel:** Issue #132 / AP-5-S1 – ehrliche Security-UI-Zustände und Fehlerhygiene ohne Auth-Architektur.
 2. **Authoring-Branch / PR:** `cursor/ap5-s1-security-ui-8b13`; Draft-PR https://github.com/Jetnity/jetnity/pull/133.
-3. **Status:** **AUTHOR COMPLETE / DRAFT / EXACT-HEAD VOR STAMP GRÜN.** Kein Ready, kein Merge, kein S2–S5. Actions `33163350129` SUCCESS und Vercel `BviA8yxrA2h3WjzDBcfMRSZbd2hH` SUCCESS auf `55392fda`. Stamp-Head danach neu gaten.
+3. **Status:** **REVIEW-FIX FÜR 5050331692 / DRAFT.** P1 `factor_type` statt `type` bei `listFactors()`. Kein Ready, kein Merge, kein S2–S5. Stamp-Head `64fceb92` war grün; dieser Fix erzeugt einen neueren Head.
 4. **Bereits umgesetzt:** Lage-Ableitung; Passkey-Server-Truth; sichere Fehlercopy; TOTP-UI ohne Faktor-ID als Gerät; ADR-0183; fokussierte Tests.
 5. **Cursor-Agent:** `Account plattform audit vorbereitung 9`.
 6. **Live-`main` bei Authoring:** `eaa03ad71509d281990e0d34ca359e0750eb9591` – immer live neu prüfen.

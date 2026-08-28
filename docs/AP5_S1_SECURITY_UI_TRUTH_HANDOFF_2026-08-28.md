@@ -1,7 +1,7 @@
 # Jetnity – AP-5-S1 – Handoff
 
 Stand: 28. August 2026  
-Status: **AUTHOR COMPLETE ON DRAFT / STOPP FÜR UNABHÄNGIGEN TL-REVIEW / KEIN S2–S5**  
+Status: **REVIEW-FIX FÜR 5050331692 / DRAFT / STOPP FÜR ERNEUTEN TL-REVIEW / KEIN S2–S5**  
 Cursor-Agent: **`Account plattform audit vorbereitung 9`**  
 Issue: [#132](https://github.com/Jetnity/jetnity/issues/132)  
 Branch: `cursor/ap5-s1-security-ui-8b13`  
@@ -28,6 +28,7 @@ Harte Wahrheiten:
 3. Faktor-IDs sind keine Geräte.
 4. Roh-GoTrue, otpauth-URIs, Tokens und QR-Secrets gehören nicht in die Nutzercopy.
 5. Verified-factor Unenroll kann ehrlich `aal2` verlangen, ohne dass S1 einen Step-up baut.
+6. TOTP-Liste folgt `factor_type`. Legacy-`type` ist nur Fallback. `data.all` mit `factor_type: "totp"` darf nicht `empty` werden.
 
 ## Was bewusst nicht gebaut wurde
 
