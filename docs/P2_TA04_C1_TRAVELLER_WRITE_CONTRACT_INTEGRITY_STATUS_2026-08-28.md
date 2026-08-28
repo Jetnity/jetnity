@@ -1,7 +1,7 @@
 # Jetnity – P2-TA-04 C1 Traveller write-contract integrity – Status
 
 Stand: 28. August 2026  
-Status: **AUTHOR COMPLETE / DRAFT / KEIN READY / KEIN MERGE / KEIN C2 / KEIN PRODUCTION-APPLY**  
+Status: **REVIEW-FIX / DRAFT / KEIN READY / KEIN MERGE / KEIN C2 / PRODUCTION C1 LIVE ALS `20260828015304`**  
 Workstream: Account / Traveller  
 Cursor-Agent: **`Account plattform audit vorbereitung 7`**  
 Issue: [#122](https://github.com/Jetnity/jetnity/issues/122)  
@@ -9,6 +9,14 @@ Branch: `cursor/p2-ta-04-c1-integrity-hardening-6fc0`
 Draft-PR: https://github.com/Jetnity/jetnity/pull/126
 
 > Live-Evidence gewinnt. Ein Continuity-Stamp nach dem geprüften Head erzeugt einen neueren SHA und muss live neu gegatet werden.
+
+## 0. Live-Wahrheit nach Technical-Lead Production-Apply
+
+Production C1 ist vom Technical Lead unter der bestehenden Product-Owner-C1-Freigabe (Issue #122) angewendet und live verifiziert. Die kanonische Production-/Repo-Migrationsversion ist **`20260828015304`**. Die Repo-Datei heisst genau `supabase/migrations/20260828015304_traveller_write_contract_integrity.sql`. Der SQL-Inhalt bleibt funktional identisch mit der bereits reviewed/applied C1-SQL.
+
+Historische Author-Evidence bleibt erhalten: auf Supabase `develop` wurde dieselbe C1-SQL zuvor unter **`20260828120000`** angewendet. Das ist historische/develop-only Evidence und wird nicht still umgeschrieben. Technical Lead besitzt spätere Develop-History-Sanitation.
+
+Dieser Review-Fix verändert Supabase nicht erneut: kein Production-Re-Apply, kein Develop-Rebase/Reset/Re-Apply, kein RLS, kein REVOKE, kein SECURITY DEFINER. C2 bleibt nicht gestartet und weiter Product-Owner-gated. PR #126 bleibt Draft.
 
 ## 1. Live-Rekonstruktion dieses Agenten
 
@@ -26,7 +34,7 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/126
 | Supabase-Ziel für Writable Tests | non-default `develop` `[REDACTED]` / `ACTIVE_HEALTHY` |
 | Production | `qscbgcdmivbbnzrcyegn` – nicht angefasst |
 
-Develop trug vor C1 alle Repo-Versionen durch `20260827170000`. Historische AAL2-Drift bleibt: Develop hat `20260826052735`, das Repo hat `20260826090000`. C1 wurde deshalb **nur** als `20260828120000` angewendet, nicht über ein blindes volles `db:anwenden`.
+Develop trug vor C1 alle Repo-Versionen durch `20260827170000`. Historische AAL2-Drift bleibt: Develop hat `20260826052735`, das Repo hat `20260826090000`. C1 wurde deshalb **nur** als historische/develop-only Version `20260828120000` angewendet, nicht über ein blindes volles `db:anwenden`. Die kanonische Production-/Repo-Version ist später `20260828015304`.
 
 ## 2. Was dieser Slice geliefert hat
 
@@ -38,11 +46,11 @@ Develop trug vor C1 alle Repo-Versionen durch `20260827170000`. Historische AAL2
 6. Unit-/Regression-/DB-Security-/Concurrency-Tests
 7. ADR-0181 plus Continuity/Rotation/Status/Handoff
 
-Keine RLS-Policy geändert. Kein Tabellen-REVOKE. Kein SECURITY DEFINER. Kein Auth/MFA/AAL. Kein AP-5. Kein Production-Apply.
+Keine RLS-Policy geändert. Kein Tabellen-REVOKE. Kein SECURITY DEFINER. Kein Auth/MFA/AAL. Kein AP-5. Kein Production-Apply durch den Author. Production C1 wurde später vom Technical Lead als `20260828015304` angewendet; dieser Review-Fix wendet Supabase nicht erneut an.
 
 ## 3. Develop-Apply
 
-`20260828120000_traveller_write_contract_integrity` ist auf `develop` angewendet und in `supabase_migrations.schema_migrations` eingetragen.
+Historische/develop-only Author-Evidence: `20260828120000_traveller_write_contract_integrity` ist auf `develop` angewendet und in `supabase_migrations.schema_migrations` eingetragen. Diese Develop-Version nicht still umschreiben. Kanonische Production-/Repo-Version ist `20260828015304`.
 
 Live-Katalog nach Apply:
 
@@ -80,6 +88,6 @@ Ein Continuity-Stamp nach diesem Abschnitt erzeugt einen neueren Head und muss l
 
 ## 6. Nächster Schritt
 
-Unabhängiger Technical-Lead-Review von Draft-PR #126.
+Unabhängiger Technical-Lead-Re-Review von Draft-PR #126 nach Rename/Docs-Reconciliation.
 
-Nicht Ready. Nicht mergen. Kein C2. Kein AP-5. Kein Production-Apply durch den Author.
+Nicht Ready. Nicht mergen. Kein C2. Kein AP-5. Supabase in diesem Review-Fix nicht erneut verändern.

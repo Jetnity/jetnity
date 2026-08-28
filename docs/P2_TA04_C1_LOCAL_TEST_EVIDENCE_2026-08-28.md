@@ -19,4 +19,8 @@ Writable DB-Tests liefen ausschliesslich gegen Supabase `develop`. Production wu
 | C1-Fälle `db:sicherheit` | 13/13 pass |
 | `db:sicherheit` gesamt | 217/248; 31 vorbestehende Admin-AAL2-JWT-Lücken |
 
-Develop-Apply: `20260828120000` in `schema_migrations`. `party_loeschen.prosecdef=false`. Party- und Child-Limit-Trigger sind INSERT+UPDATE.
+Historische/develop-only Author-Evidence: `20260828120000` in develop `schema_migrations`. Dieselbe C1-SQL. Diese Develop-Version nicht still umschreiben.
+
+Kanonische Production-/Repo-Version: `20260828015304`. Production C1 ist vom Technical Lead unter der bestehenden Product-Owner-C1-Freigabe angewendet und live verifiziert. Dieser Review-Fix verändert Supabase nicht erneut.
+
+Develop-Katalog nach Author-Apply: `party_loeschen.prosecdef=false`. Party- und Child-Limit-Trigger sind INSERT+UPDATE.

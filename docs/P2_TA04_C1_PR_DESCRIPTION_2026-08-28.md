@@ -1,12 +1,14 @@
 ## Status
 
-**AUTHOR COMPLETE / DRAFT / C1 IMPLEMENTATION ONLY**
+**REVIEW-FIX / DRAFT / C1 IMPLEMENTATION + VERSION RECONCILE**
 
 Tracks Issue #122.
 
 Cursor-Agent: `Account plattform audit vorbereitung 7`
 
-This PR stays Draft. It is **not** Ready and must **not** be merged by the author. Independent Technical-Lead review is the next step. Production apply is a later Product-Owner gate after that review.
+This PR stays Draft. It is **not** Ready and must **not** be merged by the author. Independent Technical-Lead re-review is the next step after this same-slice rename/docs reconciliation.
+
+Production C1 is already **APPLIED and live-verified** by Technical Lead under the existing Product-Owner C1 approval. Canonical Production/repo migration version is `20260828015304`. This review-fix does **not** re-apply Production or mutate Supabase `develop`.
 
 ## What C1 implements
 
@@ -16,6 +18,12 @@ This PR stays Draft. It is **not** Ready and must **not** be merged by the autho
 - Cap serialization via `FOR NO KEY UPDATE` on the target trip, not a naked `count(*)`
 - Child limits 8 citizenships / 12 documents now also on UPDATE/reparenting
 - App-side incremental `partyUebernehmen` cap check plus DB backstop
+
+## Migration version truth
+
+- Canonical Production/repo file: `supabase/migrations/20260828015304_traveller_write_contract_integrity.sql`
+- SQL body is functionally identical to the already reviewed/applied C1 SQL
+- Historical/develop-only author evidence: the same C1 SQL was applied earlier on Supabase `develop` as `20260828120000`. That develop history is not silently rewritten.
 
 ## Strict non-scope
 
@@ -27,7 +35,8 @@ This PR stays Draft. It is **not** Ready and must **not** be merged by the autho
 - No AP-5/AP-6a/AP-7
 - No passport number / scan / MRZ / biometric persistence
 - No Provider / TW-8 / Search / Homepage / Native
-- No Production apply by the author
+- No Production re-apply in this review-fix
+- No develop rebase/reset/re-apply
 - No Production test data
 
 ## Tests
@@ -40,9 +49,10 @@ Writable DB tests ran only against the rebased Supabase `develop` branch.
 - `db:parallelitaet`: 11/11
 - C1 `db:sicherheit` cases: 13/13
 - Overall `db:sicherheit`: 217/248 because of pre-existing Admin-AAL2 JWT fixture gaps; no C1 case failed
-- `20260828120000` applied on `develop` only
+- Historical/develop-only apply: `20260828120000` on `develop`
+- Production live: `20260828015304` applied and verified by Technical Lead
 - Pre-stamp exact head `f46fae17`: Actions `33133248112` SUCCESS, Vercel `D6onnex5Amwn9x1JLp9PPi7L3hXZ` SUCCESS
 
 ## Stop
 
-Independent Technical-Lead review. Not Ready. Do not merge. No C2. No Production apply by the author.
+Independent Technical-Lead re-review. Not Ready. Do not merge. No C2. No AP-5. Do not mutate Supabase again in this fix.

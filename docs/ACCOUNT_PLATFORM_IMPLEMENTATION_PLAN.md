@@ -553,7 +553,7 @@ Nicht aus diesem Dokument ableiten oder nebenbei bauen:
 | D0-P1-03 | `/privacy` `/terms` 404 | nicht mit erfundenen Texten in AP-5 mischen; gehört zu AP-6a / Legal-PO |
 | P2-TA-01 | Official nicht progressiv pro Option | eigener Traveller-/Readiness-Slice |
 | P2-TA-02 | Test-Fixture-Bias | Hygiene, kein Produktvertrag |
-| P2-TA-04 | Direct authenticated Traveller-DML umgeht Write-Contract | Gate 0 integriert (PR #120 / ADR-0180). C1 (Issue #122 / ADR-0181) härtet Delete-RPC + Party-Cap 20 + Child-UPDATE-Limits ohne REVOKE/DEFINER. C2 bleibt PO-gated. Kein AP-5 |
+| P2-TA-04 | Direct authenticated Traveller-DML umgeht Write-Contract | Gate 0 integriert (PR #120 / ADR-0180). C1 (Issue #122 / ADR-0181) härtet Delete-RPC + Party-Cap 20 + Child-UPDATE-Limits ohne REVOKE/DEFINER. Production C1 live als `20260828015304`; historische/develop-only Evidence `20260828120000`. C2 bleibt PO-gated. Kein AP-5 |
 | P2-TA-05 | Safety citizenship-set, nicht dokumentabhängig | Safety-Slice, kein Default-Pass |
 | P3-TA-01 | Legacy-Singular Expand/Contract | eigener Cleanup |
 | `officialFingerprint` | kann ohne `documents[]` Legacy-Singular lesen | nicht P2-TA-06 erneut öffnen |

@@ -262,7 +262,7 @@ Abgeschlossen:
 23. ✅ Post-PR-#114 Continuity / PR #115 auf Live-`main` `43aef643` (immer live neu prüfen)
 24. ✅ P2-TA-03 Account-Plan-Reconciliation / PR #117 + Issue #116
 25. ✅ P2-TA-04 Traveller Child Write-Path Gate 0 / PR #120 + Issue #119
-26. P2-TA-04 C1 Traveller write-contract integrity – **Issue #122; Draft; kein C2; kein REVOKE; kein DEFINER; kein AP-5; Production-Apply erst nach TL-PASS + PO-Gate**
+26. P2-TA-04 C1 Traveller write-contract integrity – **Issue #122; Draft; Production live als `20260828015304`; historische/develop-only Evidence `20260828120000`; kein C2; kein REVOKE; kein DEFINER; kein AP-5; kein erneuter Supabase-Write**
 
 Nächster Schritt:
 

@@ -4506,7 +4506,7 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 ## ADR-0181 – P2-TA-04 C1: Write-Contract-Integrität ohne Privilegien-Schnitt
 
 **Datum:** 28. August 2026  
-**Status:** vorgeschlagen auf Draft-PR / Issue #122; Implementation-Slice C1. Kein C2. Kein Production-Apply durch den Author.
+**Status:** Implementation-Slice C1 auf Draft-PR #126 / Issue #122. Kein C2. Production C1 ist unter der bestehenden Product-Owner-C1-Freigabe vom Technical Lead angewendet und live verifiziert. Kanonische Production-/Repo-Version: `20260828015304`.
 
 **Entscheidung:**
 
@@ -4530,10 +4530,13 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 **Konsequenzen:**
 
-- Neue Migration `20260828120000_traveller_write_contract_integrity.sql` zuerst auf rebased Supabase `develop`.
-- Production-Apply bleibt ein besonderes Product-Owner-Gate nach unabhängigem Technical-Lead-PASS.
+- Kanonische Repo- und Production-Migration: `20260828015304_traveller_write_contract_integrity.sql`.
+- Dieselbe C1-SQL wurde zuvor auf Supabase `develop` unter der historischen/develop-only Version `20260828120000` angewendet. Diese Develop-History nicht still umschreiben; Technical Lead besitzt spätere Develop-History-Sanitation.
+- Production C1 ist angewendet und live verifiziert. Kein erneuter Production-Apply. Kein Develop-Rebase/Reset/Re-Apply aus diesem Slice.
 - C2 (DEFINER + Tabellen-DML-REVOKE) startet nicht aus diesem ADR.
 - AP-5/AP-6a/AP-7, Auth/MFA/AAL, Passportnummern/Scans/MRZ/Biometrie bleiben Non-Scope.
+
+**Nachtrag, 28. August 2026 – Production-C1 live, Repo-Version reconciled.** Technical Lead hat C1 unter der bestehenden Product-Owner-Freigabe (Issue #122) auf Production angewendet und live verifiziert. Supabase registrierte die Migration als `20260828015304_traveller_write_contract_integrity`. Das Repo führt dieselbe funktional identische SQL jetzt unter genau diesem Dateinamen. Die frühere Author-Evidence `20260828120000` auf `develop` bleibt historische/develop-only Evidence derselben SQL. Ältere ADR-Sätze „Kein Production-Apply durch den Author“ und „Production-Apply bleibt ein besonderes Product-Owner-Gate“ bleiben für den Author-Slice wahr und sind Pre-Apply-Evidence vor diesem Nachtrag. C2 bleibt nicht gestartet und weiter Product-Owner-gated. Dieser Review-Fix verändert Supabase nicht erneut.
 
 ---
 

@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 28. August 2026  
-Status: **P2-TA-04 C1 Traveller write-contract integrity ist der aktuelle Account-Implementation-Slice auf Issue #122. Gate 0 / PR #120 ist integriert. Kein C2. Kein authenticated table-DML REVOKE. Keine RLS-/Ownership-Änderung. Kein SECURITY DEFINER. Keine AP-5-Runtime. Production-Apply erst nach unabhängigem Technical-Lead-PASS. Live-`main` immer live prüfen.**
+Status: **P2-TA-04 C1 Traveller write-contract integrity ist der aktuelle Account-Implementation-Slice auf Issue #122. Gate 0 / PR #120 ist integriert. Kein C2. Kein authenticated table-DML REVOKE. Keine RLS-/Ownership-Änderung. Kein SECURITY DEFINER. Keine AP-5-Runtime. Production C1 ist als `20260828015304` angewendet und live verifiziert. Historische/develop-only Evidence: `20260828120000`. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -9,15 +9,15 @@ Status: **P2-TA-04 C1 Traveller write-contract integrity ist der aktuelle Accoun
 
 1. **Arbeitsblock / Ziel:** Issue #122 / P2-TA-04 C1 – kanonischer SECURITY-INVOKER-Delete-RPC, DB-Party-Cap 20, Child-Limits 8/12 auch bei UPDATE/Reparenting.
 2. **Authoring-Branch / PR:** `cursor/p2-ta-04-c1-integrity-hardening-6fc0`; Draft-PR #126.
-3. **Status:** **AUTHOR COMPLETE / DRAFT.** Kein Ready, kein Merge, kein C2, kein Production-Apply durch den Author.
-4. **Bereits umgesetzt:** `party_loeschen`; `travellerEntfernen` ohne Tabellen-DELETE; Party-Cap-Trigger mit Trip-`FOR NO KEY UPDATE`; Child-Limit-Trigger INSERT+UPDATE; Unit-/DB-/Concurrency-Tests.
+3. **Status:** **REVIEW-FIX / DRAFT.** Kein Ready, kein Merge, kein C2. Production C1 live als `20260828015304`. Dieser Review-Fix verändert Supabase nicht erneut.
+4. **Bereits umgesetzt:** `party_loeschen`; `travellerEntfernen` ohne Tabellen-DELETE; Party-Cap-Trigger mit Trip-`FOR NO KEY UPDATE`; Child-Limit-Trigger INSERT+UPDATE; Unit-/DB-/Concurrency-Tests; Repo-Migration auf `20260828015304` reconciled.
 5. **Cursor-Agent:** `Account plattform audit vorbereitung 7`.
 6. **Live-`main` bei Authoring:** `4549846bbbc106cb0a921203e343af6e681ec055` – immer live neu prüfen.
-7. **DB / RLS / Production-Grenze:** Migration nur auf rebased Supabase `develop`. Kein Tabellen-REVOKE, keine RLS-/Ownership-Änderung, kein SECURITY DEFINER, kein Production-Apply, keine Production-Testdaten.
+7. **DB / RLS / Production-Grenze:** Kanonische Production-/Repo-Version `20260828015304` ist live verifiziert. Historische/develop-only Author-Evidence `20260828120000` auf `develop` nicht still umschreiben. Kein Tabellen-REVOKE, keine RLS-/Ownership-Änderung, kein SECURITY DEFINER, kein erneuter Production- oder Develop-Apply, keine Production-Testdaten.
 8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Residuals:** Direct authenticated DML bleibt bis C2 möglich, trägt aber jetzt die Caps; C2 PO-gated; `main` Branch Protection `protected=false`; Develop-History hat historische AAL2-Versionsdrift `20260826052735` vs. Repo `20260826090000`.
-10. **Offene Nutzerentscheidungen / Freigaben:** C1 ist PO-freigegeben. Production-Apply erst nach unabhängigem Technical-Lead exact-head PASS. C2 nicht starten.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Review des C1-Draft-PR. **Kein C2- und kein AP-5-Start aus diesem Slice.**
+9. **Bekannte Residuals:** Direct authenticated DML bleibt bis C2 möglich, trägt aber jetzt die Caps; C2 PO-gated; `main` Branch Protection `protected=false`; Develop-History hat historische AAL2-Versionsdrift `20260826052735` vs. Repo `20260826090000` plus historische C1-Version `20260828120000`.
+10. **Offene Nutzerentscheidungen / Freigaben:** C1 ist PO-freigegeben und auf Production angewendet. C2 nicht starten.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review des C1-Draft-PR nach Rename/Docs-Reconciliation. **Kein C2- und kein AP-5-Start aus diesem Slice.**
 12. **Zuerst lesen:** `docs/P2_TA04_C1_TRAVELLER_WRITE_CONTRACT_INTEGRITY_STATUS_2026-08-28.md`, Handoff, ADR-0181.
 
 Historischer abgeschlossener Block P2-TA-03 bleibt integriert: PR #117 MERGED, Issue #116 CLOSED / completed. Nicht erneut öffnen. P2-TA-06 bleibt integriert: PR #113 MERGED, Issue #112 CLOSED / completed. Nicht erneut öffnen.
@@ -247,7 +247,7 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#126** P2-TA-04 C1 Traveller write-contract integrity | **DRAFT / AUTHOR COMPLETE.** Branch `cursor/p2-ta-04-c1-integrity-hardening-6fc0`. Issue #122. Kein C2, kein REVOKE, kein DEFINER, kein Production-Apply durch den Author. |
+| **#126** P2-TA-04 C1 Traveller write-contract integrity | **DRAFT / REVIEW-FIX.** Branch `cursor/p2-ta-04-c1-integrity-hardening-6fc0`. Issue #122. Production C1 live als `20260828015304`. Historische/develop-only Evidence `20260828120000`. Kein C2, kein REVOKE, kein DEFINER, kein erneuter Supabase-Write. |
 | **#120** P2-TA-04 Traveller Write-Path Gate 0 | **GEMERGT / INTEGRIERT.** Merge `8d8f3d57`. Issue #119 CLOSED / completed. Audit only; Residual C1 jetzt Issue #122. |
 | **#117** P2-TA-03 Account Plan Reconciliation | **GEMERGT / INTEGRIERT.** Merge `b912315d`. Issue #116 CLOSED / completed. Kanonischer AP-5–AP-12-Plan liegt auf `main`. |
 | **#113** P2-TA-06 Readiness Credential Normalization | **GEMERGT / INTEGRIERT.** Reviewed Head `928215a2`; Merge `286d26fe`; Issue #112 CLOSED / completed. |
@@ -290,9 +290,11 @@ Weiterhin nicht angewendet:
 
 Production `20260827170000` ist angewendet und verifiziert, exakt einmal. Kein zweiter Apply.
 
+Production C1 `20260828015304_traveller_write_contract_integrity` ist unter der bestehenden Product-Owner-C1-Freigabe (Issue #122) vom Technical Lead angewendet und live verifiziert. Kein erneuter Apply. Die historische/develop-only Author-Version `20260828120000` bleibt Develop-Evidence derselben SQL und wird nicht still umgeschrieben.
+
 ## 10. Nächster Schritt
 
-P2-TA-04 C1 ist der aktuelle Implementation-Slice (Issue #122). Gate 0 / PR #120 bleibt integriert. Unabhängiger Technical-Lead-Review des C1-Draft-PR steht aus. Kein Ready, kein Merge, kein C2, kein AP-5, kein Production-Apply durch den Author.
+P2-TA-04 C1 ist der aktuelle Implementation-Slice (Issue #122). Gate 0 / PR #120 bleibt integriert. Production C1 ist als `20260828015304` angewendet und live verifiziert. Unabhängiger Technical-Lead-Re-Review des C1-Draft-PR steht aus. Kein Ready, kein Merge, kein C2, kein AP-5, kein erneuter Supabase-Write.
 
 P2-TA-03 bleibt integriert (PR #117); Issue #116 ist CLOSED / completed.
 

@@ -14,7 +14,7 @@ Die drei Gate-0-Integritätslücken schliessen, ohne das authenticated Tabellen-
 2. DB-Party-Cap 20 je `(user_id, trip_id)`, concurrency-safe.
 3. Child-Limits 8/12 auch bei UPDATE/Reparenting.
 
-C1 ist vom Product Owner ausdrücklich freigegeben. Production-Apply bleibt ein späteres Gate nach unabhängigem Technical-Lead-PASS.
+C1 ist vom Product Owner ausdrücklich freigegeben. Production C1 ist vom Technical Lead unter dieser Freigabe angewendet und live verifiziert. Kanonische Production-/Repo-Version: `20260828015304`. Historische/develop-only Author-Evidence: dieselbe SQL zuvor auf `develop` als `20260828120000`. C2 bleibt nicht gestartet. Dieser Review-Fix verändert Supabase nicht erneut.
 
 ## 2. Non-Scope
 

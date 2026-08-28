@@ -213,7 +213,7 @@ Neue logische Arbeitseinheit → Rotation Standard live prüfen und frische Sess
 
 **Kein Produkt-Folgeslice ist durch diesen Handoff freigegeben.**
 
-P2-TA-04 C1 liegt als Implementation-Slice auf Issue #122 und wartet auf unabhängigen Technical-Lead-Review des Draft-PR. Das ist **kein** C2- und **kein** AP-5-Start. Production-Apply erst nach TL-PASS.
+P2-TA-04 C1 liegt als Implementation-Slice auf Issue #122 und wartet auf unabhängigen Technical-Lead-Re-Review des Draft-PR nach Version-Reconcile. Das ist **kein** C2- und **kein** AP-5-Start. Production C1 ist als `20260828015304` angewendet und live verifiziert. Historische/develop-only Evidence: `20260828120000`. Kein erneuter Supabase-Write.
 
 Der nächste Chat / Technical Lead muss zuerst live rekonstruieren und erst danach entscheiden, welcher Slice nach Binding Build Order tatsächlich sinnvoll und zulässig ist.
 

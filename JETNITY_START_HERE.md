@@ -349,7 +349,7 @@ Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Repo-/Bran
 
 TW7-A Runtime ist integriert (PR #106), Issue #103 CLOSED / completed. AP-4 ist integriert (PR #108/#111). P2-TA-06 ist integriert (PR #113), Issue #112 CLOSED / completed. P2-TA-03 ist integriert (PR #117), Issue #116 CLOSED / completed. P2-TA-04 Gate 0 ist integriert (PR #120), Issue #119 CLOSED / completed. P2-TA-04 C1 ist der aktuelle Account-Implementation-Slice auf Issue #122.
 
-**Kein automatischer Folgeslice.** Unabhängiger Technical-Lead-Review von C1. Kein C2, kein AP-5, kein Production-Apply durch den Author. Live-`main`, offene PRs/Issues, Binding Build Order und Gates erneut prüfen, bevor ein neuer Slice vergeben wird.
+**Kein automatischer Folgeslice.** Unabhängiger Technical-Lead-Re-Review von C1. Kein C2, kein AP-5, kein erneuter Supabase-Write. Production C1 ist als `20260828015304` angewendet und live verifiziert; historische/develop-only Evidence bleibt `20260828120000`. Live-`main`, offene PRs/Issues, Binding Build Order und Gates erneut prüfen, bevor ein neuer Slice vergeben wird.
 
 Issue #109 (Visitor Search Country/City-Relevance) und Issue #110 (spätere Homepage-Multi-Destination-Absicht) bleiben separate dokumentierte Themen und werden durch PR #113 nicht automatisch gestartet.
 
