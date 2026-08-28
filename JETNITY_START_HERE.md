@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 28. August 2026  
-Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114, PR #115, PR #117, PR #118, PR #120, PR #121, PR #126, PR #127, PR #129, PR #130, PR #131, PR #133, PR #135, PR #137, PR #138, PR #141 und PR #142 sind integriert. AP-5 Gate 0, AP-5-S1 und AP-5-S2 sind integriert. Technical-Lead-/Cursor-Operating-Standard ist integriert. Kein automatischer Produkt-Folgeslice. Live-`main` immer live prüfen.**
+Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114, PR #115, PR #117, PR #118, PR #120, PR #121, PR #126, PR #127, PR #129, PR #130, PR #131, PR #133, PR #135, PR #137, PR #138, PR #141, PR #142 und PR #143 sind integriert. AP-5 Gate 0, AP-5-S1 und AP-5-S2 sind integriert. Technical-Lead-/Cursor-Operating-Standard ist integriert. Aktiver Docs-Slice: Draft-PR #144 AP-7 Gate 0 (keine Runtime). Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
@@ -13,6 +13,7 @@ Current-State-Evidence und Recovery: `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_P
 
 Aktuelle operative Evidence:
 
+- `docs/AP7_GATE0_ACCOUNT_TRAVELLER_REGISTRY_ARCHITECTURE_STATUS_2026-08-28.md` – aktiver AP-7-Gate-0-Slice (Draft-PR #144)
 - `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – neueste Post-Merge-Evidence nach PR #142
 - `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – Post-Merge-Evidence nach PR #141
 - `JETNITY_HANDOFF.md`

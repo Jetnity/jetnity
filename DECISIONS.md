@@ -4672,6 +4672,44 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 ---
 
+## ADR-0186 – AP-7 Gate 0: Dual-Authority-Empfehlung, keine Implementation
+
+**Datum:** 28. August 2026  
+**Status:** Gate-0-Empfehlung auf Draft-PR #144. **Keine Product-Owner-Freigabe. Keine Runtime. Kein Schema. Kein RLS-Write.**
+
+**Entscheidung (Empfehlungsstatus, nicht Ausführungsauftrag):**
+
+1. Current Traveller Truth bleibt bis zu einer ausdrücklichen Product-Owner-Entscheidung trip-scoped Foundation E (`trip_travellers` + Children / `Trip.party`).
+2. Falls der Product Owner später eine Account-Traveller-Registry will, empfiehlt Gate 0 **Dual-Authority**: account-owned wiederverwendbare Identität + trip-owned Snapshot als einzige Trip-Current-Truth. Ein optionaler Provenienz-Link ist Herkunft, nicht Live-Wahrheit.
+3. Live-Referenzen, die Registry-Edits rückwirkend in bestehende Reisen schreiben, sind abgelehnt.
+4. Der Plansatz „Current Truth würde von trip-scoped auf account-scoped verschoben“ ist **keine** Gate-0-Empfehlung.
+5. Wiederverwendbare Vorlagen allein (Option A) sind sicherer, aber kein ausreichender Endzustand, wenn Binding Build Order §2 eine echte Personenidentität verlangt.
+6. Guest→Account bleibt der heutige automatische **trip-scoped** Copy. Registry-Import wäre ein späteres Opt-in und entsteht nicht still.
+7. Kein Default-Pass, kein Default-Citizenship, Issuer ≠ Citizenship, keine Positionsidentität (`documents[0]`, `evaluations[0]`).
+8. Passnummern, Scans, MRZ, Biometrie, Geburtsdatum und Gesundheitsakte gehören nicht zum Kernmodell. Jede solche Speicherung braucht ein eigenes Product-Owner- + Security/Privacy-Gate.
+9. Dieser ADR autorisiert keine Tabelle, Policy, GRANT/REVOKE, SECURITY-DEFINER-Funktion, Migration oder AP-7-Runtime.
+
+**Kontext:** AP-7 ist im kanonischen Account-Plan und in Binding Build Order §2 als fehlende Produktarbeit genannt, aber hinter Shared-Contract + Product Owner + ADR-Nachfolger zu ADR-0102/0117 gegated. Gate 0 existiert, damit diese Entscheidung präzise und nicht als Live-Link-Fehlkonstruktion getroffen wird.
+
+**Alternativen:**
+
+1. *Nur trip-scoped + Templates.* Geringstes RLS-Risiko; keine erstklassige Personenidentität; hoher manueller Drift.
+2. *Account-Registry als einzige Current Truth / Live-Referenz.* Historische Reisen und Readiness würden mitmutieren.
+3. *Keine Registry.* Zulässig nur nach ausdrücklichem Product-Owner-Nein gegen Wiederverwendung.
+4. *Runtime jetzt bauen.* Verboten: Identity/RLS/Production-Migration ohne PO-Gate.
+
+**Begründung:** Wiederverwendung soll Suchaufwand senken, ohne historische Trip-Wahrheit, Multi-Citizenship-Truth, Guest-Parität oder RLS-Einfachheit zu opfern. Foundation E nicht neu bauen. Zwei benannte Wahrheiten sind ehrlicher als eine vermischte.
+
+**Konsequenzen:**
+
+- Evidence: `docs/AP7_GATE0_ACCOUNT_TRAVELLER_REGISTRY_ARCHITECTURE_STATUS_2026-08-28.md` und Handoff/Self-Review desselben Datums.
+- Product Owner muss vor Implementation zwischen Dual-Authority, Templates-only und keiner Registry wählen.
+- ADR-0102/0117 bleiben Current Truth, bis ein Implementierungs-ADR sie ausdrücklich nachfolgt.
+- AP-5-S3/S4/S5, AP-6, C2, TW-8, Native und Provider-live bleiben unberührt.
+- Autor-Agent stoppt auf Draft-PR #144 für unabhängigen Technical-Lead-Review. Self-Review ist kein PASS.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

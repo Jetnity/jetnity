@@ -11,7 +11,7 @@ Binding naming rule: `docs/JETNITY_CURSOR_VISIBLE_AGENT_NAME_GATE.md`.
 
 Logical agent name:
 
-`Account plattform audit vorbereitung 11`
+`Cursor-Agent: Account plattform audit vorbereitung 11`
 
 Use this exact logical name in Task, Status, Handoff, Self-Review and PR communication. The visible Cursor session title should match when Cursor exposes a supported rename/title capability. If Cursor instead shows another generated UI title and no rename capability exists, document the mismatch if useful and **continue normally**. A visible-title mismatch is not a work, review or merge blocker and does not create a new generation.
 

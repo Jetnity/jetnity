@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **Kanonischer Post-PR-#142-Chat-Übergabestand. PR #142 Technical-Lead-/Cursor-Operating-Standard ist integriert. PR #141 Provider S5-B Gate 0 bleibt integriert als docs/readiness only. Es läuft kein freigegebener neuer Produkt-Slice. PR #143 ist nur Current-State-Continuity und self-expiring: offen → TL-Review von #143; nach Merge → Live-Rekonstruktion + Binding-Build-Order-Auswahl. S5-B Runtime/Persistenz, AP-5-S3–S5, C2, AP-7 und TW-8/TW-9 sind nicht automatisch gestartet. AP-5-S3–S5 sind normale Technical-Lead-Gates, nicht PO-gated. Live-Evidence immer erneut verifizieren.**
+Status: **Aktiver Docs-Slice: AP-7 Gate 0 auf Draft-PR #144 (Audit + Architecture only). PR #143 ist MERGED (`1947285c`). PR #142 Operating Standard und PR #141 Provider S5-B Gate 0 bleiben integriert. Keine AP-7-Runtime. S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. AP-5-S3–S5 sind normale Technical-Lead-Gates, nicht PO-gated. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
@@ -171,7 +171,7 @@ Verbindliche Wahrheit:
 - PR #138 Post-Merge Continuity integriert
 - PR #142 Technical-Lead-/Cursor-Operating-Standard integriert
 
-AP-5-S3–S5 werden **nicht automatisch** gestartet. AP-7 / Account-Traveller-Registry bleibt separat und gated.
+AP-5-S3–S5 werden **nicht automatisch** gestartet. AP-7 / Account-Traveller-Registry bleibt separat und gated. Gate 0 liegt auf Draft-PR #144 / ADR-0186 als Empfehlung Dual-Authority, nicht als Freigabe.
 
 Der integrierte AP-5-Gate-0-Vertrag trennt insbesondere Password Recovery von signed-in Reauthentication, hält Session-/Gerätelisting ohne unterstützte User-API ehrlich auf `unsupported`, dokumentiert den heutigen globalen `signOut()`-Default und hält verified-factor `mfa.unenroll` an der serverseitigen AAL2-Anforderung. Details: `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, ADR-0182 und die aktuellen Account-Checkpoints.
 
@@ -307,17 +307,15 @@ Exakte Basis-Anzeigenamen bleiben verbindlich:
 
 Aktueller Account-Status:
 
-- keine offene Runtime-Generation
+- offene Docs-Generation: `Cursor-Agent: Account plattform audit vorbereitung 11` auf Draft-PR #144 (AP-7 Gate 0)
+- sichtbarer Cursor-Titel dieser Session: `Account traveller registry architecture`; nicht als umbenannt behauptet
 - `Cursor-Agent: Account plattform audit vorbereitung 10` ist mit AP-5-S2 / PR #137 und PR #138 Continuity abgeschlossen
-- Generation 10 nicht wiederverwenden
+- Generation 10 nicht wiederverwenden; Generation 11 nicht für Runtime wiederverwenden
 
 Aktueller Quality-/Security-Status:
 
-- `Cursor-Agent: Jetnity quality security audit 4` ist der exakte Agent für den Continuity-Transport PR #143
-- keine andere Generation erfinden
-- Cursor exponiert in dieser Session keine programmierbare Rename-/Title-Fähigkeit; UI nicht als umbenannt behauptet
-- kein Produkt-/Cleanup-Folgeslice
-- **Self-expiring:** nach Merge von PR #143 ist Generation 4 für diesen Continuity-Stamp abgeschlossen und nicht für einen Produktslice wiederzuverwenden
+- `Cursor-Agent: Jetnity quality security audit 4` ist mit PR #143 abgeschlossen
+- Generation 4 nicht für einen Produktslice wiederverwenden
 
 Abgeschlossen / nicht wiederverwenden:
 
@@ -331,24 +329,19 @@ Abgeschlossen / nicht wiederverwenden:
 - Quality/Security Generation 3: Issue #134 / PR #135
 - Quality/Security Generation 2: PR #88 historical only
 
-Wenn nach Live-Rekonstruktion ein neuer Account-Slice tatsächlich zulässig und sinnvoll gestartet wird, ist die nächste frische Account-Generation voraussichtlich:
-
-`Cursor-Agent: Account plattform audit vorbereitung 11`
-
-Das ist **keine automatische Freigabe für AP-5-S3**.
+Generation 11 ist für AP-7 Gate 0 vergeben. Eine spätere AP-7-Implementation oder AP-5-S3 braucht eine frische Generation. Das ist **keine automatische Freigabe**.
 
 Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logische Arbeitseinheit bekommt eine frische nummerierte Session gemäß Rotation Standard.
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-**Self-expiring / dual-state. Live-Evidence gewinnt.**
+Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #144 (AP-7 Gate 0). Autor-Agent setzt kein Ready und kein Merge. Keine AP-7-Runtime.
 
-- **Solange PR #143 offen und unmerged ist:** unabhängiger Technical-Lead-Exact-Head-Review von Draft-PR #143. PR #142 ist integriert. Autor-Agent setzt kein Ready und kein Merge.
-- **Sobald PR #143 gemergt ist:** die Transport-/Review-Klausel ist automatisch historisch. Exakt erster unfertiger Produktschritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl. Kein Produkt-Slice ist dadurch autorisiert.
+PR #143 ist MERGED (`1947285c`). Die frühere Dual-State-Klausel ist historisch.
 
 Current-State-Continuity (kein Fortschritt nur im Chat) steht im Operating Standard §9 und im universellen Recovery-Prompt.
 
-**Kein Produkt-Folgeslice ist an diesem Chat-Übergabepunkt automatisch freigegeben.**
+**Kein AP-7-Implementierungsslice und kein anderer Produkt-Folgeslice ist dadurch automatisch freigegeben.**
 
 Der nächste Chat muss zuerst den vollständigen Live-Zustand rekonstruieren und anschließend Binding Build Order, Abhängigkeiten, Parallelität und Product-Owner-Gates neu bewerten.
 
