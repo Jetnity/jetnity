@@ -939,6 +939,7 @@ export type Database = {
           eingabe_gecacht: number
         }[]
       }
+      party_loeschen: { Args: { _payload: Json }; Returns: Json }
       party_schreiben: { Args: { _payload: Json }; Returns: Json }
       reise_aendern: { Args: { _aenderung: Json }; Returns: Json }
       reise_anlegen: { Args: { _reise: Json }; Returns: string }

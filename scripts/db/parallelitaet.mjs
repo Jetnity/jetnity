@@ -364,13 +364,163 @@ async function pruefeTravellerKinder() {
   return ergebnisse
 }
 
+const PARTY_QUELLE = 'ffffffff-0000-4000-8000-00000000f021'
+const PARTY_ZIEL = 'ffffffff-0000-4000-8000-00000000f022'
+const PARTY_SITZUNGEN = 4
+
+async function saatParty(zielBestand, extraQuelle = 0) {
+  await aufraeumen()
+  await runSql(`
+insert into auth.users
+  (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, created_at, updated_at)
+  values ('${KONTO}', '${INSTANCE}', 'authenticated', 'authenticated',
+          'parallelitaet@example.invalid', 'x', now(), now(), now());
+insert into public.profiles (user_id, display_name, role, status)
+  values ('${KONTO}', 'parallelitaet', 'user', 'active');
+insert into public.trips (id, user_id, client_ref, title)
+  values
+    ('${PARTY_ZIEL}', '${KONTO}', 'parallel-party-ziel', 'Parallel Party Ziel'),
+    ('${PARTY_QUELLE}', '${KONTO}', 'parallel-party-quelle', 'Parallel Party Quelle');
+insert into public.trip_travellers (trip_id, user_id, client_ref)
+select '${PARTY_ZIEL}', '${KONTO}', 'traveller:' || g
+  from generate_series(1, ${zielBestand}) as g;
+insert into public.trip_travellers (id, trip_id, user_id, client_ref)
+select ('ffffffff-0000-4000-8000-00000000f03' || g)::uuid,
+       '${PARTY_QUELLE}', '${KONTO}', 'traveller:move-' || g
+  from generate_series(1, ${extraQuelle}) as g;
+`)
+}
+
+async function partyBestand(reise) {
+  const rows = await runSql(
+    `select count(*) as anzahl from public.trip_travellers where trip_id = '${reise}'`,
+  )
+  return Number(rows[0].anzahl)
+}
+
+async function gleichzeitigPartyInsert(ziel, sql) {
+  const eine = async (nr) => {
+    try {
+      await runSql(`
+begin;
+${claims}
+${warten(ziel)}
+${sql(nr)}
+select pg_sleep(${HALTEN_S});
+commit;`)
+      return { ok: true, code: null }
+    } catch (fehler) {
+      return { ok: false, code: sqlstate(fehler) }
+    }
+  }
+  return Promise.all(Array.from({ length: PARTY_SITZUNGEN }, (_, i) => eine(i + 1)))
+}
+
+async function pruefePartyLimit() {
+  const faelle = [
+    {
+      name: 'parallele Traveller-Inserts bei 19 – Limit 20',
+      zielBestand: 19,
+      extraQuelle: 0,
+      bestandNachher: 20,
+      erfolge: 1,
+      code: '23514',
+      sql: (nr) =>
+        `insert into public.trip_travellers (trip_id, user_id, client_ref)
+         values ('${PARTY_ZIEL}', '${KONTO}', 'traveller:parallel-${nr}');`,
+    },
+    {
+      name: 'parallele Traveller-Inserts bei erreichtem Limit',
+      zielBestand: 20,
+      extraQuelle: 0,
+      bestandNachher: 20,
+      erfolge: 0,
+      code: '23514',
+      sql: (nr) =>
+        `insert into public.trip_travellers (trip_id, user_id, client_ref)
+         values ('${PARTY_ZIEL}', '${KONTO}', 'traveller:voll-${nr}');`,
+    },
+    {
+      name: 'paralleles inkrementelles party_schreiben bei 19 – Limit 20',
+      zielBestand: 19,
+      extraQuelle: 0,
+      bestandNachher: 20,
+      erfolge: 1,
+      code: '23514',
+      sql: (nr) =>
+        `select public.party_schreiben(jsonb_build_object(
+           'tripId', '${PARTY_ZIEL}',
+           'party', jsonb_build_array(jsonb_build_object(
+             'clientRef', 'traveller:rpc-${nr}',
+             'citizenships', '[]'::jsonb,
+             'documents', '[]'::jsonb
+           ))
+         ));`,
+    },
+    {
+      name: 'paralleles Reparenting in eine Reise bei 19 – Limit 20',
+      zielBestand: 19,
+      extraQuelle: 4,
+      bestandNachher: 20,
+      erfolge: 1,
+      code: '23514',
+      sql: (nr) =>
+        `update public.trip_travellers
+            set trip_id = '${PARTY_ZIEL}'
+          where id = ('ffffffff-0000-4000-8000-00000000f03' || ${nr})::uuid;`,
+    },
+  ]
+  const ergebnisse = []
+  try {
+    for (const fall of faelle) {
+      await saatParty(fall.zielBestand, fall.extraQuelle)
+      const laeufe = await gleichzeitigPartyInsert(await treffpunkt(), fall.sql)
+      const nachher = await partyBestand(PARTY_ZIEL)
+      const erfolge = laeufe.filter((e) => e.ok)
+      const fehler = laeufe.filter((e) => !e.ok)
+      const codes = [...new Set(fehler.map((e) => e.code))]
+      const maengel = []
+      if (nachher !== fall.bestandNachher) {
+        maengel.push(`Bestand ${nachher}, erwartet ${fall.bestandNachher}`)
+      }
+      if (erfolge.length !== fall.erfolge) {
+        maengel.push(`${erfolge.length} Sitzungen erfolgreich, erwartet ${fall.erfolge}`)
+      }
+      if (codes.includes('40P01')) {
+        maengel.push('Deadlock 40P01 – Trip-Lock kollidiert mit FK KEY SHARE')
+      }
+      if (fall.code && codes.some((c) => c !== fall.code)) {
+        maengel.push(`Fehlercodes ${codes.join(', ')}, erwartet nur ${fall.code}`)
+      }
+      if (nachher > 20) {
+        maengel.push(`Limit überschritten: ${nachher}`)
+      }
+      const teile = [`Bestand ${fall.zielBestand} → ${nachher}`, `${erfolge.length}× erfolgreich`]
+      if (fehler.length) teile.push(`${fehler.length}× ${codes.join('/')}`)
+      ergebnisse.push({
+        fall,
+        ok: maengel.length === 0,
+        detail: teile.join(', '),
+        maengel,
+      })
+    }
+  } finally {
+    await aufraeumen()
+  }
+  return ergebnisse
+}
+
 async function main() {
   console.log(
     `${SITZUNGEN} gleichzeitige Sitzungen je Fall, Treffpunkt auf der Uhr des Servers,\n` +
       `Transaktion nach dem Schreiben ${HALTEN_S} s offen gehalten.\n`,
   )
 
-  const ergebnisse = [...(await pruefe()), ...(await pruefeTravellerKinder())]
+  const ergebnisse = [
+    ...(await pruefe()),
+    ...(await pruefeTravellerKinder()),
+    ...(await pruefePartyLimit()),
+  ]
   const fehler = ergebnisse.filter((e) => !e.ok)
 
   for (const e of ergebnisse) {

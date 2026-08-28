@@ -1,13 +1,14 @@
 // lib/readiness/reisende-aktionen.ts
 //
-// Schreibweg für Reisendenkontext im Konto. Atomar über party_schreiben.
-// Kein Service-Role. Keine parallelen Legacy-Credential-Spalten.
+// Schreibweg für Reisendenkontext im Konto.
+// Setzen/Übernahme atomar über party_schreiben. Löschen über party_loeschen.
+// Kein Service-Role. Kein direktes Tabellen-DELETE. Keine Legacy-Credential-Spalten.
 
 'use server'
 
 import { revalidatePath } from 'next/cache'
 
-import { PARTY_GRENZEN, partyVon } from '@/lib/readiness/party'
+import { PARTY_GRENZEN, partyLimitUeberschritten, partyVon } from '@/lib/readiness/party'
 import {
   partyUebernahmeSchema,
   travellerKontoEingabeSchema,
@@ -81,11 +82,9 @@ export async function travellerEntfernen(eingabe: unknown): Promise<Aktionsergeb
   const rahmen = await reiseDesKontos(geprueft.data.tripId)
   if (!rahmen.ok) return rahmen
 
-  const { error, status } = await rahmen.supabase
-    .from('trip_travellers')
-    .delete()
-    .eq('trip_id', geprueft.data.tripId)
-    .eq('client_ref', geprueft.data.clientRef)
+  const { error, status } = await rahmen.supabase.rpc('party_loeschen', {
+    _payload: { tripId: geprueft.data.tripId, clientRef: geprueft.data.clientRef },
+  })
 
   if (error) return { ok: false, meldung: meldungAus(error, status) }
   revalidatePath(`/reisen/${geprueft.data.tripId}`)
@@ -106,6 +105,15 @@ export async function partyUebernehmen(eingabe: unknown): Promise<Aktionsergebni
     .map((gebaut) => travellerAlsPayload(gebaut.item))
 
   if (items.length === 0) return { ok: true, wert: null }
+
+  if (
+    partyLimitUeberschritten(
+      partyVon(rahmen.reise).map((item) => item.clientRef),
+      items.map((item) => item.clientRef),
+    )
+  ) {
+    return { ok: false, meldung: `Eine Reise trägt höchstens ${PARTY_GRENZEN.slots} Reisendenprofile.` }
+  }
 
   const geschrieben = await partySchreiben(rahmen.supabase, geprueft.data.tripId, items)
   if (!geschrieben.ok) return geschrieben

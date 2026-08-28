@@ -1,24 +1,24 @@
 # Jetnity – Active Work Status
 
 Stand: 28. August 2026  
-Status: **P2-TA-04 Traveller Child Write-Path Gate 0 ist der aktuelle Account-Architecture-Slice auf Draft-PR #120. Audit/Security Architecture only. Keine RLS-/Grant-/Production-Änderung. Keine AP-5-Runtime. P2-TA-03 ist integriert: PR #117 MERGED, Issue #116 CLOSED / completed. P2-TA-06 ist integriert. Production Gate A ist PASS. Production Gate B ist operativ PASS. Kein automatischer Produkt-Folgeslice. Live-`main` immer live prüfen.**
+Status: **P2-TA-04 C1 Traveller write-contract integrity ist der aktuelle Account-Implementation-Slice auf Issue #122. Gate 0 / PR #120 ist integriert. Kein C2. Kein authenticated table-DML REVOKE. Keine RLS-/Ownership-Änderung. Kein SECURITY DEFINER. Keine AP-5-Runtime. Production C1 ist als `20260828015304` angewendet und live verifiziert. Historische/develop-only Evidence: `20260828120000`. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
-## Aktueller Arbeitsblock – P2-TA-04 Traveller Child Write-Path Gate 0
+## Aktueller Arbeitsblock – P2-TA-04 C1 Traveller write-contract integrity
 
-1. **Arbeitsblock / Ziel:** Issue #119 / P2-TA-04 – kleinsten sicheren Closure-Schnitt für direkte authenticated Traveller-DML klären, bevor irgendetwas an RLS/Grants/Ownership geändert wird.
-2. **Authoring-Branch / PR:** `docs/p2-ta-04-traveller-write-path-gate0`; Draft-PR #120.
-3. **Status:** **AUTHOR COMPLETE / DRAFT.** Kein Ready, kein Merge, keine Implementation, keine AP-5-Runtime.
-4. **Bereits umgesetzt:** Live-Katalog unabhängig gelesen; Caller-Inventur; Invarianten-Matrix; Option C empfohlen; ADR-0180; Status/Handoff/Self-Review; statischer Inventory-Test.
-5. **Cursor-Agent:** `Account plattform audit vorbereitung 6`.
-6. **Live-`main` bei Authoring:** `918bf3606eaa9ac23e96551c0311edf20514817d` – immer live neu prüfen.
-7. **DB / RLS / Production-Grenze:** keine Migration, kein GRANT/REVOKE, kein RLS-/Auth-/AAL-Write, kein Production-Daten-Write, keine Supabase-Branch-Mutation.
+1. **Arbeitsblock / Ziel:** Issue #122 / P2-TA-04 C1 – kanonischer SECURITY-INVOKER-Delete-RPC, DB-Party-Cap 20, Child-Limits 8/12 auch bei UPDATE/Reparenting.
+2. **Authoring-Branch / PR:** `cursor/p2-ta-04-c1-integrity-hardening-6fc0`; Draft-PR #126.
+3. **Status:** **REVIEW-FIX / DRAFT.** Kein Ready, kein Merge, kein C2. Production C1 live als `20260828015304`. Dieser Review-Fix verändert Supabase nicht erneut.
+4. **Bereits umgesetzt:** `party_loeschen`; `travellerEntfernen` ohne Tabellen-DELETE; Party-Cap-Trigger mit Trip-`FOR NO KEY UPDATE`; Child-Limit-Trigger INSERT+UPDATE; Unit-/DB-/Concurrency-Tests; Repo-Migration auf `20260828015304` reconciled.
+5. **Cursor-Agent:** `Account plattform audit vorbereitung 7`.
+6. **Live-`main` bei Authoring:** `4549846bbbc106cb0a921203e343af6e681ec055` – immer live neu prüfen.
+7. **DB / RLS / Production-Grenze:** Kanonische Production-/Repo-Version `20260828015304` ist live verifiziert. Historische/develop-only Author-Evidence `20260828120000` auf `develop` nicht still umschreiben. Kein Tabellen-REVOKE, keine RLS-/Ownership-Änderung, kein SECURITY DEFINER, kein erneuter Production- oder Develop-Apply, keine Production-Testdaten.
 8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Residuals:** kein Cross-User-P0; P2 Write-Contract bleibt; Party-Cap 20 fehlt in der DB; Child-Limit nur AFTER INSERT; `main` Branch Protection `protected=false`.
-10. **Offene Nutzerentscheidungen / Freigaben:** keine für Gate 0. C1/C2 brauchen später das passende Product-Owner-Gate, sobald Schema/Grants/DEFINER/Production berührt werden.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Finalreview von PR #120. **Kein C1/C2- und kein AP-5-Start aus diesem Slice.**
-12. **Zuerst lesen:** `docs/P2_TA04_TRAVELLER_CHILD_WRITE_PATH_GATE0_STATUS_2026-08-28.md`, Handoff, ADR-0180.
+9. **Bekannte Residuals:** Direct authenticated DML bleibt bis C2 möglich, trägt aber jetzt die Caps; C2 PO-gated; `main` Branch Protection `protected=false`; Develop-History hat historische AAL2-Versionsdrift `20260826052735` vs. Repo `20260826090000` plus historische C1-Version `20260828120000`.
+10. **Offene Nutzerentscheidungen / Freigaben:** C1 ist PO-freigegeben und auf Production angewendet. C2 nicht starten.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review des C1-Draft-PR nach Rename/Docs-Reconciliation. **Kein C2- und kein AP-5-Start aus diesem Slice.**
+12. **Zuerst lesen:** `docs/P2_TA04_C1_TRAVELLER_WRITE_CONTRACT_INTEGRITY_STATUS_2026-08-28.md`, Handoff, ADR-0181.
 
 Historischer abgeschlossener Block P2-TA-03 bleibt integriert: PR #117 MERGED, Issue #116 CLOSED / completed. Nicht erneut öffnen. P2-TA-06 bleibt integriert: PR #113 MERGED, Issue #112 CLOSED / completed. Nicht erneut öffnen.
 
@@ -172,7 +172,7 @@ Geschlossen:
 Weiter offen außerhalb dieses Slice:
 
 - **P2-TA-03** – kanonischer Plan durch PR #117 integriert; historische Datei bleibt auf PR #39. Kein AP-5;
-- **P2-TA-04** – Gate 0 auf Draft-PR #120; kein RLS-/Grant-Change;
+- **P2-TA-04 C1** – Issue #122 Implementation; Gate 0 / PR #120 integriert; kein C2/REVOKE/DEFINER;
 - Mobility/Rental-Such-Snapshots mit kommerziellen Feldern;
 - Account-Traveller-Registry / AP-5–AP-12 / AP-7. AP-4 ist integriert (PR #108). **Kein AP-5/AP-7 automatisch.**
 
@@ -218,12 +218,13 @@ Account/Traveller zuletzt abgeschlossen:
 
 - **Issue #112 / P2-TA-06** – `Account plattform audit vorbereitung 4`. PR #113 integriert. Issue CLOSED / completed. Generation 4 ist historische Authoring-Evidence.
 
-Aktueller Account-Architecture-Slice:
+Aktueller Account-Implementation-Slice:
 
-- **Issue #119 / P2-TA-04** – `Account plattform audit vorbereitung 6`. Draft-PR #120. Audit only. Kein Ready, kein Merge, kein C1/C2, kein AP-5.
+- **Issue #122 / P2-TA-04 C1** – `Account plattform audit vorbereitung 7`. Delete-RPC + Party-Cap + Child-UPDATE-Limits. Draft. Kein Ready, kein Merge, kein C2, kein AP-5.
 
 Historisch abgeschlossen:
 
+- **Issue #119 / P2-TA-04 Gate 0** – `Account plattform audit vorbereitung 6`. PR #120 integriert. Generation 6 nicht wiederverwenden.
 - **Issue #116 / P2-TA-03** – `Account plattform audit vorbereitung 5`. PR #117 integriert. Generation 5 nicht wiederverwenden.
 
 **Kein automatisch freigegebener Produkt-Folgeslice.** AP-5 startet nicht aus P2-TA-04.
@@ -246,7 +247,8 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#120** P2-TA-04 Traveller Write-Path Gate 0 | **DRAFT / AUDIT ONLY.** Branch `docs/p2-ta-04-traveller-write-path-gate0`. Kein Ready, kein Merge, keine RLS-/Grant-Änderung. |
+| **#126** P2-TA-04 C1 Traveller write-contract integrity | **DRAFT / REVIEW-FIX.** Branch `cursor/p2-ta-04-c1-integrity-hardening-6fc0`. Issue #122. Production C1 live als `20260828015304`. Historische/develop-only Evidence `20260828120000`. Kein C2, kein REVOKE, kein DEFINER, kein erneuter Supabase-Write. |
+| **#120** P2-TA-04 Traveller Write-Path Gate 0 | **GEMERGT / INTEGRIERT.** Merge `8d8f3d57`. Issue #119 CLOSED / completed. Audit only; Residual C1 jetzt Issue #122. |
 | **#117** P2-TA-03 Account Plan Reconciliation | **GEMERGT / INTEGRIERT.** Merge `b912315d`. Issue #116 CLOSED / completed. Kanonischer AP-5–AP-12-Plan liegt auf `main`. |
 | **#113** P2-TA-06 Readiness Credential Normalization | **GEMERGT / INTEGRIERT.** Reviewed Head `928215a2`; Merge `286d26fe`; Issue #112 CLOSED / completed. |
 | **#106** TW7-A Runtime Issue #103 | **INTEGRIERT.** Integrationsvehikel. Issue #103 ist CLOSED / completed. Ältere „Draft / nicht auf main“-Zeilen sind Pre-Merge-Evidence. |
@@ -288,9 +290,11 @@ Weiterhin nicht angewendet:
 
 Production `20260827170000` ist angewendet und verifiziert, exakt einmal. Kein zweiter Apply.
 
+Production C1 `20260828015304_traveller_write_contract_integrity` ist unter der bestehenden Product-Owner-C1-Freigabe (Issue #122) vom Technical Lead angewendet und live verifiziert. Kein erneuter Apply. Die historische/develop-only Author-Version `20260828120000` bleibt Develop-Evidence derselben SQL und wird nicht still umgeschrieben.
+
 ## 10. Nächster Schritt
 
-P2-TA-04 Gate 0 ist author-complete auf Draft-PR #120. Unabhängiger Technical-Lead-Finalreview steht aus. Kein Ready, kein Merge, kein C1/C2, kein AP-5.
+P2-TA-04 C1 ist der aktuelle Implementation-Slice (Issue #122). Gate 0 / PR #120 bleibt integriert. Production C1 ist als `20260828015304` angewendet und live verifiziert. Unabhängiger Technical-Lead-Re-Review des C1-Draft-PR steht aus. Kein Ready, kein Merge, kein C2, kein AP-5, kein erneuter Supabase-Write.
 
 P2-TA-03 bleibt integriert (PR #117); Issue #116 ist CLOSED / completed.
 

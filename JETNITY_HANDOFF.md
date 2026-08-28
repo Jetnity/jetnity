@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **Kanonischer Post-PR-#117-Übergabestand plus P2-TA-04 Gate 0 auf Draft-PR #120. P2-TA-03 und P2-TA-06 sind integriert. Kein Produkt-Folgeslice ist automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **Kanonischer Post-PR-#121-Übergabestand plus P2-TA-04 C1 auf Issue #122. Gate 0 / PR #120 ist integriert. P2-TA-03 und P2-TA-06 sind integriert. C1 ist PO-freigegeben; C2 und AP-5 sind nicht gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
@@ -199,10 +199,12 @@ Zuletzt abgeschlossene Account-/Traveller-Generation:
 
 Aktuelle Account-Generation:
 
-- `Cursor-Agent: Account plattform audit vorbereitung 6`
-- P2-TA-04 / Issue #119 / Draft-PR #120
-- Gate 0 author-complete; kein Ready, kein Merge, kein C1/C2, kein AP-5-Start
+- `Cursor-Agent: Account plattform audit vorbereitung 7`
+- P2-TA-04 C1 / Issue #122
+- Implementation: Delete-RPC + Party-Cap 20 + Child-UPDATE-Limits
+- Draft; kein Ready, kein Merge, kein C2, kein AP-5-Start
 
+Generation 6 (P2-TA-04 Gate 0 / PR #120) ist abgeschlossen und nicht wiederzuverwenden.
 Generation 5 (P2-TA-03 / PR #117) ist abgeschlossen und nicht wiederzuverwenden.
 
 Neue logische Arbeitseinheit → Rotation Standard live prüfen und frische Session verwenden, wenn vorgeschrieben.
@@ -211,7 +213,7 @@ Neue logische Arbeitseinheit → Rotation Standard live prüfen und frische Sess
 
 **Kein Produkt-Folgeslice ist durch diesen Handoff freigegeben.**
 
-P2-TA-04 Gate 0 liegt als Audit-Draft auf PR #120 und wartet auf unabhängigen Technical-Lead-Finalreview. Das ist **kein** Implementation-Folgeslice und **kein** AP-5-Start.
+P2-TA-04 C1 liegt als Implementation-Slice auf Issue #122 und wartet auf unabhängigen Technical-Lead-Re-Review des Draft-PR nach Version-Reconcile. Das ist **kein** C2- und **kein** AP-5-Start. Production C1 ist als `20260828015304` angewendet und live verifiziert. Historische/develop-only Evidence: `20260828120000`. Kein erneuter Supabase-Write.
 
 Der nächste Chat / Technical Lead muss zuerst live rekonstruieren und erst danach entscheiden, welcher Slice nach Binding Build Order tatsächlich sinnvoll und zulässig ist.
 

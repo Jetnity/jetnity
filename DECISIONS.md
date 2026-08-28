@@ -2967,6 +2967,8 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 - neue Writes gehen nicht mehr direkt auf die Child-Tabellen aus der App
 - Readiness-Übernahme bleibt ein nachgelagerter Schritt
 
+**Nachtrag, 28. August 2026 – C1.** Parent-Delete ist nicht Teil von `party_schreiben`. Der kanonische Delete-Pfad ist `party_loeschen` (ADR-0181). `party_schreiben` bleibt der atomare Setz-/Replace-Pfad.
+
 ---
 
 ## ADR-0120 – Credential-Optionen ohne erfundene regulatorische Wahrheit
@@ -3016,6 +3018,8 @@ Die Regel ist provider-neutral. Sie ist nicht Timatic-spezifisch.
 3. *Advisory Locks statt Parent-Row-Lock.* Mehr Mechanismus, dieselbe Serialisierung.
 
 **Begründung:** SET NULL nur der optionalen Relation hält das Dokument. CASCADE hält Readiness am Reisenden. Parent-Lock serialisiert Child-Inserts desselben Travellers.
+
+**Nachtrag, 28. August 2026 – C1.** `trip_traveller_kinder_limit_pruefen()` bleibt SECURITY INVOKER und sperrt weiter die Parent-Traveller-Zeile mit `FOR NO KEY UPDATE`. Der Trigger gilt jetzt für INSERT **und** UPDATE, damit Reparenting die Limits 8/12 nicht umgeht. Der Party-Cap 20 liegt in `trip_traveller_party_limit_pruefen()` und sperrt die Reise, nicht den Traveller (ADR-0181).
 
 **Konsequenzen:**
 
@@ -4494,6 +4498,45 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 - Kein REVOKE, kein DEFINER, keine Migration in P2-TA-04 Gate 0.
 - Ein späterer Implementation-Slice braucht eigenen Task, frischen Agenten, unabhängigen Review und das passende Product-Owner-Gate.
 - AP-5/AP-6a/AP-7 bleiben unberührt.
+
+**Nachtrag, 28. August 2026 – C1 Product-Owner-Freigabe.** Der Product Owner hat C1 ausdrücklich freigegeben (Issue #122). Gate-0-Sätze „C1/C2 sind nicht durch diesen ADR ausgeführt“ bleiben für Gate 0 wahr. Die C1-Ausführung steht in ADR-0181. C2 bleibt unberührt und weiter Product-Owner-gated.
+
+---
+
+## ADR-0181 – P2-TA-04 C1: Write-Contract-Integrität ohne Privilegien-Schnitt
+
+**Datum:** 28. August 2026  
+**Status:** Implementation-Slice C1 auf Draft-PR #126 / Issue #122. Kein C2. Production C1 ist unter der bestehenden Product-Owner-C1-Freigabe vom Technical Lead angewendet und live verifiziert. Kanonische Production-/Repo-Version: `20260828015304`.
+
+**Entscheidung:**
+
+- Traveller-Delete läuft kanonisch über `public.party_loeschen(jsonb)` als **SECURITY INVOKER**.
+- `travellerEntfernen` darf nicht mehr `.from('trip_travellers').delete()` aufrufen.
+- Die Datenbank erzwingt höchstens 20 `trip_travellers` je `(user_id, trip_id)` auch für direktes DML, inkrementelles `party_schreiben` und Reparenting.
+- Die Serialisierung nutzt `FOR NO KEY UPDATE` auf der Zielreise, nicht ein nacktes `count(*)`.
+- Child-Limits 8 Citizenships / 12 Documents gelten nach INSERT **und** UPDATE/Reparenting.
+- Authenticated Tabellen-DML bleibt bestehen. Kein REVOKE. Kein SECURITY DEFINER. Keine RLS-/Ownership-Änderung.
+
+**Kontext:** Gate 0 / ADR-0180 hat Direct DML als nicht unterstützten Vertrag klassifiziert, aber keinen P0-Ownership-Bruch bewiesen. C1 vervollständigt die fehlenden Invarianten, damit ein späteres C2 die Privilegien schliessen kann, ohne den aktuellen INVOKER-Pfad zu zerbrechen.
+
+**Alternativen:**
+
+1. *Nur App-Validierung.* Umgehbar per PostgREST/DML und unter Parallelität.
+2. *Advisory Lock statt Trip-Row-Lock.* Funktioniert, braucht aber einen zweiten Sperrnamensraum. Die bestehende Child-Limit-Begründung (ADR-0121) spricht für `FOR NO KEY UPDATE` auf der Parent-Zeile.
+3. *C1+C2 in einem Schnitt.* Würde DEFINER/REVOKE ohne getrennte Evidence einführen.
+4. *Party-Cap nur in `party_schreiben`.* Lässt direkten INSERT und Reparent offen.
+
+**Begründung:** Die Invarianten müssen dort gelten, wo Direct DML und parallele Writes ankommen: in der Datenbank. INVOKER hält Least Privilege auf dem aktuellen Grant-Modell. Die Trip-Sperre schliesst das MVCC-Fenster, das Gate 0 für den Party-Cap beschrieben hat.
+
+**Konsequenzen:**
+
+- Kanonische Repo- und Production-Migration: `20260828015304_traveller_write_contract_integrity.sql`.
+- Dieselbe C1-SQL wurde zuvor auf Supabase `develop` unter der historischen/develop-only Version `20260828120000` angewendet. Diese Develop-History nicht still umschreiben; Technical Lead besitzt spätere Develop-History-Sanitation.
+- Production C1 ist angewendet und live verifiziert. Kein erneuter Production-Apply. Kein Develop-Rebase/Reset/Re-Apply aus diesem Slice.
+- C2 (DEFINER + Tabellen-DML-REVOKE) startet nicht aus diesem ADR.
+- AP-5/AP-6a/AP-7, Auth/MFA/AAL, Passportnummern/Scans/MRZ/Biometrie bleiben Non-Scope.
+
+**Nachtrag, 28. August 2026 – Production-C1 live, Repo-Version reconciled.** Technical Lead hat C1 unter der bestehenden Product-Owner-Freigabe (Issue #122) auf Production angewendet und live verifiziert. Supabase registrierte die Migration als `20260828015304_traveller_write_contract_integrity`. Das Repo führt dieselbe funktional identische SQL jetzt unter genau diesem Dateinamen. Die frühere Author-Evidence `20260828120000` auf `develop` bleibt historische/develop-only Evidence derselben SQL. Ältere ADR-Sätze „Kein Production-Apply durch den Author“ und „Production-Apply bleibt ein besonderes Product-Owner-Gate“ bleiben für den Author-Slice wahr und sind Pre-Apply-Evidence vor diesem Nachtrag. C2 bleibt nicht gestartet und weiter Product-Owner-gated. Dieser Review-Fix verändert Supabase nicht erneut.
 
 ---
 

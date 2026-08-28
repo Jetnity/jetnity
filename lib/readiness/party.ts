@@ -26,6 +26,20 @@ export function partyVon(reise: Pick<Trip, 'party'>): TripTraveller[] {
   return [...(reise.party ?? [])]
 }
 
+/** True, wenn neue client_refs den Bestand über das Party-Limit heben. Bestehende Refs sind Updates. */
+export function partyLimitUeberschritten(
+  bestehendeRefs: Iterable<string>,
+  naechsteRefs: Iterable<string>,
+  limit: number = PARTY_GRENZEN.slots,
+): boolean {
+  const bestehend = new Set(bestehendeRefs)
+  let neu = 0
+  for (const ref of naechsteRefs) {
+    if (!bestehend.has(ref)) neu += 1
+  }
+  return bestehend.size + neu > limit
+}
+
 export function travellerSlots(reise: Pick<Trip, 'travellers' | 'party'>): TravellerSlot[] {
   const gespeichert = partyVon(reise)
   const nachRef = new Map(gespeichert.map((eintrag) => [eintrag.clientRef, eintrag]))
