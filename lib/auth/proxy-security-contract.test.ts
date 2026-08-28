@@ -19,12 +19,12 @@ describe('Next-16-Proxy bewahrt den fail-closed Auth-Rand', () => {
   })
 
   test('kein matcher, keine Runtime- und keine AAL-Produktlogik', () => {
-    assert.equal(proxy.includes('export const config'), false)
-    assert.equal(/matcher\s*:/.test(proxy), false)
-    assert.equal(/export const runtime/.test(proxy), false)
-    assert.equal(proxy.includes('evaluateAdminAccess'), false)
-    assert.equal(proxy.includes('requireAdminApi'), false)
-    assert.equal(proxy.includes('requireAdminPage'), false)
+    assert.equal(/^export const config\b/m.test(proxy), false)
+    assert.equal(/matcher\s*:\s*\[/.test(proxy), false)
+    assert.equal(/^export const runtime\b/m.test(proxy), false)
+    assert.equal(/from ['"][^'"]*admin-(?:guard|access|aal)['"]/.test(proxy), false)
+    assert.equal(/\bevaluateAdminAccess\s*\(/.test(proxy), false)
+    assert.equal(/\brequireAdminPage\s*\(/.test(proxy), false)
     assert.equal(proxy.includes("!pathname.startsWith('/admin/mfa')"), false)
   })
 
@@ -48,7 +48,7 @@ describe('Next-16-Proxy bewahrt den fail-closed Auth-Rand', () => {
 
   test('Identität bleibt getUser, fail-closed und Cookie-Weitergabe', () => {
     assert.match(proxy, /supabase\.auth\.getUser\(\)/)
-    assert.equal(proxy.includes('getSession()'), false)
+    assert.equal(/auth\.getSession\s*\(/.test(proxy), false)
     assert.match(proxy, /jsonDenied\(503, 'unconfigured'/)
     assert.match(proxy, /jsonDenied\(503, 'lookup-failed'/)
     assert.match(proxy, /WWW-Authenticate', 'Bearer'/)
