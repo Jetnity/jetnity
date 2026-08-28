@@ -198,7 +198,7 @@ Diese Abhängigkeiten steuern AP-5–AP-12. Sie werden hier nicht umgebaut.
 | Passkeys | **gated** | UI-Panel existiert; `[auth.passkey] enabled = false` |
 | Consumer-AAL2-Pflicht auf `/account` | **missing** | Middleware prüft Auth, nicht AAL |
 | Admin-AAL2 | **integrated** | `lib/auth/admin-aal.ts`; Production `20260827170000` angewendet, exakt einmal |
-| Passwort ändern, eingeloggt | **missing** | nur Recovery `app/auth/update-password/page.tsx` |
+| Passwort ändern, eingeloggt | **in progress (AP-5-S2 / Issue #136)** | `/account/security` → `SecurityPasswort`; Vertrag `reauthenticate()` → Nonce → `updateUser({ password, nonce })`. Recovery bleibt getrennt. Nicht als integriert behaupten, solange der Draft nicht gemergt ist. |
 | Session-/Geräteliste | **missing** | keine UI, keine API-Route |
 | Fundamentale Auth-/MFA-/AAL-Änderung | **Product-Owner-Gate** | nicht in einem normalen Account-UI-Slice |
 
@@ -257,7 +257,7 @@ Jeder Slice braucht vor Start einen eigenen Technical-Lead-Task, einen frischen 
 | --- | --- |
 | Produktziel | Eingeloggte Sicherheitssteuerung: auffindbare Passwortänderung **innerhalb des bestehenden Auth-Vertrags**, sichtbare Sitzungen, nachvollziehbares Logout-all, MFA-Schritt vor riskanten Änderungen – ohne neue Auth-Architektur. |
 | Bereits vorhanden | `/account/security` TOTP-Enroll/Unenroll; Login-MFA; Recovery-Passwort über Rücksetzlink (`app/auth/update-password/page.tsx`); Admin-AAL2 getrennt. Auth-Vertrag: `auth.email.secure_password_change = true` verlangt kürzlich bestätigte Reauthentication (`security_update_password_require_reauthentication`). `security_update_password_require_current_password` ist **aus**. Belegt: `supabase/config.toml`, `docs/AUTH.md`. |
-| Fehlt | AP-5-S1 (Issue #132) liefert die ehrliche Security-UI; das ist **kein** S2–S5. Weiter fehlt: In-Account-Oberfläche für die signed-in Passwortänderung (`reauthenticate()` → Nonce → `updateUser({ password, nonce })`), ohne Recovery als Reauthentication zu verwenden; ehrliche Session-Karte (`unsupported` für andere Geräte – eine echte Liste gibt der installierte User-Client nicht her); explizite Logout-Scopes `local`/`others` (heutiges Abmelden ist bereits `global`); nutzerfreundlicher UI-Step-up vor Unenroll **verified** Faktoren (GoTrue verlangt dafür bereits serverseitig `aal2`; die UI steppt heute nicht hoch). Gate-0-Evidence: `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, ADR-0182. S1-Evidence: `docs/AP5_S1_SECURITY_UI_TRUTH_STATUS_2026-08-28.md`, ADR-0183. |
+| Fehlt | AP-5-S1 ist integriert. AP-5-S2 (Issue #136) liefert die In-Account-Passwortänderung im bestehenden Reauth-Vertrag; das ist **kein** S3–S5. Weiter fehlt: ehrliche Session-Karte (`unsupported` für andere Geräte – eine echte Liste gibt der installierte User-Client nicht her); explizite Logout-Scopes `local`/`others` (heutiges Abmelden ist bereits `global`); nutzerfreundlicher UI-Step-up vor Unenroll **verified** Faktoren (GoTrue verlangt dafür bereits serverseitig `aal2`; die UI steppt heute nicht hoch). Gate-0-Evidence: `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, ADR-0182. S1-Evidence: `docs/AP5_S1_SECURITY_UI_TRUTH_STATUS_2026-08-28.md`, ADR-0183. S2-Evidence: `docs/AP5_S2_PASSWORD_REAUTH_STATUS_2026-08-28.md`. |
 | Shared Contracts | Auth / Sessions / MFA / AAL. UI-Auffindbarkeit ist kein neuer Vertrag. Eine Consumer-AAL2-Pflicht, MFA-Grundlogik oder ein Wechsel auf „aktuelles Passwort mitsenden“ **ist** ein Shared Contract und hier nicht entschieden. |
 | Security | Keine Secrets loggen. Recovery-Link und In-Account-Change nicht zu einem zweiten Passwort-Vertrag vermischen. Enumeration vermeiden. |
 | Privacy | Keine Geräte-/Session-Metadaten ins Marketing. |
@@ -273,7 +273,7 @@ Jeder Slice braucht vor Start einen eigenen Technical-Lead-Task, einen frischen 
 | Parallelität | nicht parallel zu AP-6b/AP-7/AP-8. AP-6a Legal ist dateiarm und darf parallel assigned werden. |
 | Non-Scope | Auth-Config-Push; OAuth/Passkey live schalten; Consumer-AAL2-Pflicht; Admin-AAL2; Identity; RLS; AP-7; neues „aktuelles Passwort mitsenden“, solange kein separat freigegebener Auth-Vertragswechsel das verlangt |
 | Tests / Evidence | Passwortänderung bleibt am bestehenden Reauthentication-Vertrag (`secure_password_change`); kein Test darf Current-Password-Submit als Product Truth verlangen; fremde Session nicht sichtbar; Logout-all fail-closed dokumentieren, wenn API fehlt; Empty ≠ Error; keine Browser-Behauptung ohne Lauf. |
-| Reihenfolge | Default nächster **Account-Programm**-Kandidat nach P2-TA-03. Gate 0 ist integriert. AP-5-S1 (Issue #132) ist der erste Runtime-Slice und startet **keine** S2–S5. Folgeslices AP-5-S2–S5 vs. AP-5-P1–P5 stehen im Gate-0-Status. |
+| Reihenfolge | Default nächster **Account-Programm**-Kandidat nach P2-TA-03. Gate 0 und S1 sind integriert. AP-5-S2 (Issue #136) ist der aktuelle Runtime-Draft und startet **keine** S3–S5. Folgeslices AP-5-S3–S5 vs. AP-5-P1–P5 stehen im Gate-0-Status. |
 
 ### AP-6a – Privacy-Foundation ohne DB
 

@@ -1,24 +1,30 @@
 # Jetnity – Active Work Status
 
 Stand: 28. August 2026  
-Status: **Quality-Draft: Issue #134 Project Sanitation Closure durch `Jetnity quality security audit 3`. AP-5-S1 / PR #133 ist integriert; Issue #132 CLOSED / completed. Agent 9 ist abgeschlossen. Kein S2–S5. Kein C2. Kein Cleanup. Live-`main` immer live prüfen.**
+Status: **AP-5-S2 ist der aktuelle Account-Runtime-Slice auf Issue #136. Gate 0 und S1 sind integriert. Generation 9 ist abgeschlossen. PR #135 Sanitation ist integriert. Kein S3–S5. Kein C2. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
-## Aktueller Arbeitsblock – Project Sanitation Closure
+## Aktueller Arbeitsblock – AP-5-S2 eingeloggte Passwortänderung
 
-1. **Arbeitsblock / Ziel:** Issue #134 – historische PRs und Remote-Branches live reconciliieren. Retention-Plan, kein Cleanup.
-2. **Authoring-Branch / PR:** `cursor/project-sanitation-closure-2966`; Draft-PR #135. Review-Fix für `5050411074`.
-3. **Status:** **REVIEW-FIX / DRAFT.** Rebase auf aktuelles `main`, ADR-0184, PR- vs. Branch-Disposition getrennt. Kein Ready, kein Merge, kein Branch-Delete, kein PR-Close.
-4. **Bereits umgesetzt:** Live-Inventur; PR-Closure-Matrix; Branch-Disposition; Reklassifikation der PR-#88-Findings; ADR-0184; Generation-3-Rotation-Record.
-5. **Cursor-Agent:** `Jetnity quality security audit 3`.
-6. **Live-`main` bei diesem Review-Fix:** `51b0c926dbb535c6791b69f1b4b1ee7503f0ebe2` – immer live neu prüfen.
-7. **DB / RLS / Production-Grenze:** keine Mutation. Kein Cloud-/Supabase-/Vercel-Write.
+1. **Arbeitsblock / Ziel:** Issue #136 / AP-5-S2 – signed-in Passwortänderung über `reauthenticate()` → Nonce → `updateUser({ password, nonce })`.
+2. **Authoring-Branch / PR:** `cursor/ap5-s2-password-reauth-82e4`; Draft-PR #137.
+3. **Status:** **REVIEW-FIX FÜR 5050962955 / DRAFT.** `getUser()`-Netz-/5xx nicht mehr als Sitzungsverlust. Kein Ready, kein Merge, kein S3–S5.
+4. **Bereits umgesetzt:** Zustandsmodell; Security-Passwortkarte; kanonische Richtlinie/HIBP; getrennte Recovery-Authority; S2-Tests; Inventory-Aktualisierung.
+5. **Cursor-Agent:** `Account plattform audit vorbereitung 10`.
+6. **Live-`main` bei Authoring:** `0256905cee3e6705156ce642839983daf8b0709a` – immer live neu prüfen.
+7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push.
 8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Residuals:** getrackte `supabase/.temp`; `prague.jpg`; CookieConsent; V1 Image-Hosts; `main` `protected=false`; Unique Docs auf historischen Branches; `chore/account-admin-team-prep`; `jetnity-bets` PO-Gate.
-10. **Offene Nutzerentscheidungen / Freigaben:** dieser Slice braucht keines. Spätere Branch-/Cloud-Deletes bleiben TL- bzw. Product-Owner-Gates.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review auf Exact Head `bcf1cb5c` (Actions `33165746670` SUCCESS, Vercel `6140045492` READY). **Kein Cleanup aus diesem Slice.**
-12. **Zuerst lesen:** `docs/PROJECT_SANITATION_LIVE_INVENTORY_STATUS_2026-08-28.md`, Closure-Matrix, Branch-Matrix, ADR-0184.
+9. **Bekannte Residuals:** Recovery-UI bleibt für signed-in Sessions mehrdeutig; Login-MFA abbrechbar; Sessionliste ungebaut; `main` `protected=false`.
+10. **Offene Nutzerentscheidungen / Freigaben:** dieses S2 braucht keines, solange es im bestehenden Reauth-Vertrag bleibt.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review auf Exact Head `69c87f2e` (Actions `33170555726` SUCCESS, Vercel `AoScFs2qYjBG5uQq4fp97ipwvA7d` READY). Dieser Continuity-Stamp erzeugt einen neueren Head; dessen CI live lesen. **Kein S3–S5 aus diesem Slice.**
+12. **Zuerst lesen:** `docs/AP5_S2_PASSWORD_REAUTH_STATUS_2026-08-28.md`, Handoff, Gate-0-Status, ADR-0182.
+
+## Historischer Arbeitsblock – Project Sanitation Closure
+
+Live integriert über PR #135. Issue #134 CLOSED / completed. Retention-Plan, kein Cleanup. Nicht erneut öffnen. ADR-0184 bleibt die Sanitation-Entscheidung.
+
+Ältere „REVIEW-FIX / DRAFT“-Zeilen sind Pre-Merge-Evidence. Live-`main` bei Integration: `0256905c`.
 
 ## Historischer Arbeitsblock – AP-5-S1 Security-UI Truth
 
@@ -34,7 +40,7 @@ Live integriert über PR #133. Issue #132 CLOSED / completed. Agent 9 abgeschlos
 8. **Kosten / Provider / Secrets:** keine.
 9. **Bekannte Residuals:** Sessionliste bleibt ungebaut/`unsupported`; heutiges Abmelden ist bereits `global`; Login-MFA abbrechbar; D0-P1-03 Legal-404; C2 PO-gated; `main` Branch Protection `protected=false`.
 10. **Offene Nutzerentscheidungen / Freigaben:** S1 brauchte keines. AP-5-P1–P5 brauchen Product-Owner, bevor sie gebaut werden.
-11. **Exakter nächster Schritt:** nicht erneut öffnen. Kein automatischer S2-Start.
+11. **Exakter nächster Schritt:** nicht erneut öffnen. S2 läuft separat auf Issue #136.
 12. **Zuerst lesen:** `docs/AP5_S1_SECURITY_UI_TRUTH_STATUS_2026-08-28.md`, Handoff, ADR-0183, Gate-0-Status, ADR-0182.
 
 Historischer abgeschlossener Block AP-5 Gate 0 bleibt integriert: PR #129 MERGED, Issue #128 CLOSED / completed. Nicht erneut öffnen. P2-TA-04 C1 bleibt integriert: PR #126 MERGED, Issue #122 CLOSED / completed. P2-TA-03 bleibt integriert: PR #117 MERGED, Issue #116 CLOSED / completed. P2-TA-06 bleibt integriert: PR #113 MERGED, Issue #112 CLOSED / completed.
@@ -237,7 +243,9 @@ Account/Traveller zuletzt abgeschlossen:
 
 Account-Implementation zuletzt abgeschlossen:
 
-- **Issue #132 / AP-5-S1** – `Account plattform audit vorbereitung 9`. PR #133 integriert. Issue CLOSED / completed. Generation 9 ist historische Authoring-Evidence. Kein automatischer S2–S5-Start.
+- **Issue #136 / AP-5-S2** – `Account plattform audit vorbereitung 10`. Draft. Generation 10. Kein Ready, kein Merge, kein S3–S5.
+
+- **Issue #132 / AP-5-S1** – `Account plattform audit vorbereitung 9`. PR #133 integriert. Issue CLOSED / completed. Generation 9 ist historische Authoring-Evidence.
 
 Historisch abgeschlossen:
 
@@ -248,7 +256,7 @@ Historisch abgeschlossen:
 - **Issue #119 / P2-TA-04 Gate 0** – `Account plattform audit vorbereitung 6`. PR #120 integriert. Generation 6 nicht wiederverwenden.
 - **Issue #116 / P2-TA-03** – `Account plattform audit vorbereitung 5`. PR #117 integriert. Generation 5 nicht wiederverwenden.
 
-**Kein automatisch freigegebener Produkt-Folgeslice über S1 hinaus.** S2–S5 starten nicht aus S1.
+**Kein automatisch freigegebener Produkt-Folgeslice über S2 hinaus.** S3–S5 starten nicht aus S2.
 
 STOPP weiterhin für automatische Folgeslices:
 
@@ -256,7 +264,7 @@ STOPP weiterhin für automatische Folgeslices:
 - `Jetnity provider readiness audit`
 - `Admin platform audit`
 - `Jetnity growth discoverability`
-- `Jetnity quality security audit` – Generation 3 aktiv für Issue #134; kein Cleanup-Folgeslice automatisch
+- `Jetnity quality security audit` – Generation 3 für Issue #134 abgeschlossen; kein Cleanup-Folgeslice automatisch
 
 Reserviert:
 
@@ -268,7 +276,8 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#135** Project Sanitation Closure | **DRAFT / AUDIT ONLY.** Branch `cursor/project-sanitation-closure-2966`. Issue #134. Kein Cleanup. |
+| **#137** AP-5-S2 Passwortänderung | **DRAFT / RUNTIME.** Branch `cursor/ap5-s2-password-reauth-82e4`. Issue #136. Kein Ready, kein Merge, kein S3–S5. |
+| **#135** Project Sanitation Closure | **GEMERGT / INTEGRIERT.** Merge `0256905c`. Retention-Plan; kein Cleanup. |
 | **#133** AP-5-S1 Security-UI | **GEMERGT / INTEGRIERT.** Merge `51b0c926`. Issue #132 CLOSED / completed. Agent 9 abgeschlossen. |
 | **#129** AP-5 Gate 0 Account security capability | **GEMERGT / INTEGRIERT.** Issue #128 CLOSED / completed. Ältere „Draft“-Zeilen sind Pre-Merge-Evidence. |
 | **#126** P2-TA-04 C1 Traveller write-contract integrity | **GEMERGT / INTEGRIERT.** Merge `5ed7edbd`. Issue #122 CLOSED / completed. Production C1 live als `20260828015304`. Historische/develop-only Evidence `20260828120000`. Kein C2. |
@@ -318,7 +327,7 @@ Production C1 `20260828015304_traveller_write_contract_integrity` ist unter der 
 
 ## 10. Nächster Schritt
 
-Issue #134 Project Sanitation Closure ist der aktuelle Quality-Draft (PR #135). AP-5-S1 bleibt integriert (PR #133); Issue #132 ist CLOSED / completed. AP-5 Gate 0 bleibt integriert (PR #129); Issue #128 ist CLOSED / completed. Kein Cleanup, kein S2–S5, kein C2, kein Auth-Config-Push aus diesem File.
+AP-5-S2 ist der aktuelle Account-Runtime-Slice (Issue #136). AP-5-S1 bleibt integriert (PR #133); Issue #132 ist CLOSED / completed. AP-5 Gate 0 bleibt integriert (PR #129); Issue #128 ist CLOSED / completed. Project Sanitation bleibt integriert (PR #135). Kein S3–S5, kein C2, kein Auth-Config-Push, kein Cleanup aus diesem File.
 
 P2-TA-03 bleibt integriert (PR #117); Issue #116 ist CLOSED / completed.
 
@@ -326,6 +335,6 @@ P2-TA-06 bleibt integriert (PR #113); Issue #112 ist CLOSED / completed.
 
 **Kein automatischer Folgeslice.** Vor jeder neuen Runtime-Arbeit: aktuelles `main`, offene PRs/Issues, Binding Build Order, Account/Traveller-, Provider-, Admin-, Growth- und QS-Gates live neu prüfen und erst danach eine frische Task/Spec vergeben.
 
-Kein weiterer Production-Write aus diesem Abschluss. Keine Direction A. Kein TW-8/9. Kein AP-5-S2–S5/AP-7 automatisch. Issue #109/#110 bleiben dokumentierte separate Themen und werden nicht durch diesen Merge automatisch gestartet. Kein zweiter AAL2-Apply. Live-`main` immer live prüfen.
+Kein weiterer Production-Write aus diesem Abschluss. Keine Direction A. Kein TW-8/9. Kein AP-5-S3–S5/AP-7 automatisch. Issue #109/#110 bleiben dokumentierte separate Themen. Kein zweiter AAL2-Apply. Live-`main` immer live prüfen.
 
 PR #95 zeichnet einen Product-Owner-Wunsch auf: Homepage-Hero-Design bleibt, die Funktion im bestehenden Kästchen soll später natürliche Mehrziel-/Route-Absicht verstehen. Das bleibt **kein** Startauftrag und ist nicht TW7-A.

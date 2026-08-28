@@ -1,14 +1,15 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **Kanonischer Post-PR-#133-Übergabestand plus offener Sanitation-Draft. AP-5 Gate 0 und AP-5-S1 sind integriert; Issue #128 und Issue #132 sind CLOSED / completed. Offener Quality-Draft: Issue #134 / PR #135. S2–S5 und C2 sind nicht gestartet. Kein automatischer Folgeslice. Live-Evidence immer erneut verifizieren.**
+Status: **Kanonischer Post-PR-#133/#135-Übergabestand plus offener AP-5-S2-Draft. AP-5 Gate 0 und AP-5-S1 sind integriert; Issue #128 und Issue #132 sind CLOSED / completed. Aktueller Account-Runtime-Slice: Issue #136 / AP-5-S2. S3–S5 und C2 sind nicht gestartet. Kein automatischer Folgeslice. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
 Aktuellster versionierter Post-Merge-Checkpoint für den Account-Workstream:
 
 - `docs/CHATGPT_PR129_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
-- `docs/AP5_S1_SECURITY_UI_TRUTH_STATUS_2026-08-28.md` – aktueller Account-Implementation-Slice
+- `docs/AP5_S1_SECURITY_UI_TRUTH_STATUS_2026-08-28.md` – integrierter S1-Stand
+- `docs/AP5_S2_PASSWORD_REAUTH_STATUS_2026-08-28.md` – aktueller Account-Implementation-Slice
 
 Die ausführliche vorherige Fassung dieses Handoffs bleibt byte-identisch als historische Evidence erhalten unter:
 
@@ -38,7 +39,7 @@ Zuerst vollständig lesen:
 18. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
 19. danach alle für den betrachteten Workstream relevanten Slice-Tasks, Statusdateien, Handoffs, ADRs und Checkpoints.
 
-Hinweis: Ältere Gate-0- und S1-Authoring-Blöcke in Statusdateien sind historische Evidence. AP-5-S1 / Issue #132 / PR #133 ist integriert. AP-5-S2 ist nach S1 der nächste empfohlene Account-Slice, startet aber nicht automatisch; er unterliegt dem normalen Technical-Lead-Gate gemäß integriertem AP-5 Gate 0. Product-Owner-Sondergates bleiben AP-5-P1–P4 sowie separate P5/C2-Gates.
+Hinweis: Ältere Gate-0- und S1-Authoring-Blöcke in Statusdateien sind historische Evidence. AP-5-S1 / Issue #132 / PR #133 ist integriert. AP-5-S2 / Issue #136 ist der aktuelle Account-Runtime-Draft und unterliegt dem normalen Technical-Lead-Gate. S3–S5 starten nicht aus S2. Product-Owner-Sondergates bleiben AP-5-P1–P4 sowie separate P5/C2-Gates.
 
 Danach live prüfen: `main`, offene PRs/Drafts, Branches, Merge-Base/Ahead/Behind, tatsächliche Diffs, Review-Threads, Actions, Vercel, relevante Supabase-/Production-Grenzen und P0/P1/P2/P3-Risiken.
 
@@ -104,9 +105,9 @@ Verbindliche Wahrheit:
 - P2-TA-04 Gate 0 / PR #120 integriert
 - P2-TA-04 C1 / PR #126 integriert; Production C1 ist als `20260828015304` live verifiziert und darf nicht erneut angewendet werden
 - AP-5 Gate 0 / PR #129 integriert; Issue #128 CLOSED / completed
-- AP-5-S1 / Issue #132 ist der aktuelle ehrliche Security-UI-Slice; S2–S5 sind nicht gestartet
+- AP-5-S1 / Issue #132 ist integriert; S2 ist der aktuelle Runtime-Draft auf Issue #136
 
-AP-5-S2–S5 werden **nicht automatisch** gestartet. AP-7 / Account-Traveller-Registry bleibt separat und gated.
+AP-5-S3–S5 werden **nicht automatisch** gestartet. AP-7 / Account-Traveller-Registry bleibt separat und gated.
 
 Der integrierte AP-5-Gate-0-Vertrag trennt insbesondere Password Recovery von signed-in Reauthentication, hält Session-/Gerätelisting ohne unterstützte User-API ehrlich auf `unsupported`, dokumentiert den heutigen globalen `signOut()`-Default und hält verified-factor `mfa.unenroll` an der serverseitigen AAL2-Anforderung. Details: `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, ADR-0182 und der PR-#129-Post-Merge-Checkpoint.
 
@@ -188,7 +189,8 @@ Nach Live-Rekonstruktion neu einordnen:
 - Provider S5-B nicht gestartet
 - TW-8 gated
 - TW-9 nicht automatisch starten
-- AP-5-S2–S5 nicht automatisch starten
+- AP-5-S3–S5 nicht automatisch starten
+- AP-5-S2 bleibt Draft bis unabhängiger Technical-Lead-Review
 - AP-7 gated
 - weitere QS-/Supabase-Security-/Performance-Advisories
 - Project-Sanitation: Issue #134 ist der aktuelle Closure-/Retention-Slice (`docs/PROJECT_SANITATION_LIVE_INVENTORY_STATUS_2026-08-28.md`). PR #88 ist historische Evidence vom 26.08.2026, nicht Current Truth; PR-Disposition `CLOSE-SAFE`, Branch `HISTORICAL-EVIDENCE`. Kein Cleanup/PR-Close/Branch-/Cloud-Delete automatisch
@@ -208,6 +210,12 @@ Exakte Basis-Anzeigenamen bleiben verbindlich:
 6. `Cursor-Agent: Jetnity quality security audit`
 7. `Cursor-Agent: Jetnity native app architecture`
 
+Aktuelle Account-Generation:
+
+- `Cursor-Agent: Account plattform audit vorbereitung 10`
+- AP-5-S2 / Issue #136 / Draft
+- Generation 10 darf S3–S5 nicht starten
+
 Zuletzt abgeschlossene Account-Generation:
 
 - `Cursor-Agent: Account plattform audit vorbereitung 9`
@@ -221,20 +229,20 @@ Generation 6 (P2-TA-04 Gate 0 / PR #120) ist abgeschlossen und nicht wiederzuver
 Generation 5 (P2-TA-03 / PR #117) ist abgeschlossen und nicht wiederzuverwenden.
 Generation 4 (P2-TA-06 / PR #113) ist abgeschlossen und nicht wiederzuverwenden.
 
-Quality/Security-Generation 3 ist aktiv für Issue #134: `Cursor-Agent: Jetnity quality security audit 3`. Generation 2 (PR #88) ist historische Evidence und nicht wiederzuverwenden.
+Quality/Security-Generation 3 für Issue #134 / PR #135 ist integriert. Generation 2 (PR #88) ist historische Evidence und nicht wiederzuverwenden.
 
-Account-Generation 9 (AP-5-S1 / PR #133 / Issue #132) ist abgeschlossen und nicht wiederzuverwenden. Dieser Sanitation-Handoff besitzt deren Auth-/Security-UI nicht.
+Account-Generation 9 (AP-5-S1 / PR #133 / Issue #132) ist abgeschlossen und nicht wiederzuverwenden.
 
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-**Kein Produkt-Folgeslice ist durch diesen Handoff über das integrierte S1 hinaus freigegeben.**
+**Unabhängiger Technical-Lead-Review von AP-5-S2 / Issue #136. Kein Ready, kein Merge, kein S3–S5 durch den Autor.**
 
-AP-5-S1 ist integriert (PR #133); Issue #132 ist CLOSED / completed. Offener Quality-Draft ist Issue #134 / PR #135. Das ist **kein** S2–S5- und **kein** C2-Start. AP-5 Gate 0 bleibt integriert. P2-TA-04 C1 bleibt integriert; Production C1 `20260828015304` nicht erneut anwenden.
+AP-5-S1 ist integriert (PR #133); Issue #132 ist CLOSED / completed. Project Sanitation ist integriert (PR #135). AP-5 Gate 0 bleibt integriert. P2-TA-04 C1 bleibt integriert; Production C1 `20260828015304` nicht erneut anwenden.
 
 Nicht automatisch starten:
 
-- AP-5-S2 bis S5
+- AP-5-S3 bis S5
 - AP-7
 - TW-8
 - TW-9

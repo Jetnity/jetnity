@@ -59,20 +59,37 @@ describe('AP-5 Gate 0 Auth-/Session-/MFA-Vertragsinventar', () => {
     assert.deepEqual(treffer, [])
   })
 
-  test('reauthenticate() wird nirgendwo aufgerufen', () => {
+  test('reauthenticate() bleibt der signed-in Vertrag und liegt nicht im Recovery-Pfad', () => {
     const treffer = inhalte.filter((datei) => REAUTH.test(datei.text)).map((datei) => datei.pfad)
-    assert.deepEqual(treffer, [])
+    assert.deepEqual(treffer.slice().sort(), [
+      'components/account/SecurityPasswort.tsx',
+      'lib/auth/account-password-aenderung.ts',
+    ])
+    const recovery = inhalte.find((datei) => datei.pfad === 'app/auth/update-password/page.tsx')
+    assert.ok(recovery)
+    assert.equal(REAUTH.test(recovery.text), false)
   })
 
-  test('Passwortänderung läuft nur über updateUser({ password }) auf der Recovery-Seite', () => {
+  test('signed-in Change und Recovery bleiben getrennte Passwort-Authorities', () => {
     const treffer = inhalte.filter((datei) => UPDATE_USER_PASSWORD.test(datei.text)).map((datei) => datei.pfad)
-    assert.deepEqual(treffer, ['app/auth/update-password/page.tsx'])
+    assert.deepEqual(treffer.slice().sort(), [
+      'app/auth/update-password/page.tsx',
+      'components/account/SecurityPasswort.tsx',
+      'lib/auth/account-password-aenderung.ts',
+    ])
     const seite = inhalte.find((datei) => datei.pfad === 'app/auth/update-password/page.tsx')
     assert.ok(seite)
     assert.equal(seite.text.includes('currentPassword'), false)
     assert.equal(seite.text.includes('nonce'), false)
     assert.equal(seite.text.includes('getSession()'), true)
     assert.equal(seite.text.includes('getUser()'), false)
+
+    const signedIn = inhalte.find((datei) => datei.pfad === 'lib/auth/account-password-aenderung.ts')
+    assert.ok(signedIn)
+    assert.equal(signedIn.text.includes('nonce'), true)
+    assert.equal(signedIn.text.includes('currentPassword'), false)
+    assert.equal(signedIn.text.includes('getUser'), true)
+    assert.equal(signedIn.text.includes('getSession()'), false)
   })
 
   test('signOutAction ruft signOut ohne Scope auf – Client-Default ist global', () => {
@@ -95,12 +112,12 @@ describe('AP-5 Gate 0 Auth-/Session-/MFA-Vertragsinventar', () => {
   test('keine Session-/Geräte-Route oder -Komponente', () => {
     const securityPage = quelle(join(wurzel, 'app/account/security/page.tsx'))
     assert.equal(securityPage.includes('SecurityMFA'), true)
+    assert.equal(securityPage.includes('SecurityPasswort'), true)
     assert.equal(securityPage.includes('Sitzung'), false)
     assert.equal(securityPage.includes('Gerät'), false)
-    assert.equal(securityPage.includes('Passwort'), false)
     const settings = quelle(join(wurzel, 'app/account/settings/page.tsx'))
     assert.equal(settings.includes('/account/security'), true)
-    assert.equal(settings.includes('Passwort ändern'), false)
+    assert.equal(settings.includes('currentPassword'), false)
   })
 
   test('Auth-Sollwerte bleiben am Reauthentication-Vertrag', () => {
