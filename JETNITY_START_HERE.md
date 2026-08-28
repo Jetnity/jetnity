@@ -37,34 +37,41 @@ Aktuelle operative Evidence:
 
 ## 1. Pflichtlektüre vor jeder Aktion
 
+Jeder neue ChatGPT-Technical-Lead liest **zuerst** dieses Dokument und **unmittelbar danach**, noch bevor er ändert, reviewed, Ready setzt oder merget:
+
+`docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+
+Das ist die verbindliche chatübergreifende Arbeitsweise für Steuerung, unabhängigen Review, exklusive Ready-/Merge-Autorität, Cursor-Session-Rotation und Post-Merge-Verifikation. Ein neuer Chat erfindet keinen vereinfachten Ersatzworkflow.
+
 Jeder neue Chat, Technical Lead oder Coding Agent liest mindestens in dieser Reihenfolge:
 
 1. `JETNITY_START_HERE.md`
-2. `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`
-3. `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
-4. `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`
-5. `docs/JETNITY_GUARDIAN_AND_WHAT_IF_SIMULATOR_STANDARD.md`
-6. `docs/JETNITY_MARKETING_GROWTH_STANDARD.md`
-7. `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`
-8. `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`
-9. `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`
-10. `docs/JETNITY_FUTURE_NATIVE_APP_AND_TECHNICAL_LEAD_STANDARD.md`
-11. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-12. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
-13. `JETNITY_HANDOFF.md`
-14. `docs/ACTIVE_WORK_STATUS.md`
-15. `docs/CHATGPT_PR113_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
-16. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_STATUS_2026-08-27.md`
-17. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
-17a. bei Account-Folgearbeit: `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`, `docs/AP5_S2_PASSWORD_REAUTH_STATUS_2026-08-28.md`, `docs/AP5_S1_SECURITY_UI_TRUTH_STATUS_2026-08-28.md`, `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md` und `docs/CHATGPT_PR129_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
-18. `docs/CHATGPT_PR108_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
-19. `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
-20. `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
-21. `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`
-22. `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`
-23. `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`
-24. `docs/TRIP_WORKSPACE_TW6_GATE_B_PREP_STATUS.md`
-25. den aktuell relevanten Slice-Task/Status/Handoff sowie ADRs/Checkpoints.
+2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+3. `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`
+4. `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
+5. `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`
+6. `docs/JETNITY_GUARDIAN_AND_WHAT_IF_SIMULATOR_STANDARD.md`
+7. `docs/JETNITY_MARKETING_GROWTH_STANDARD.md`
+8. `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`
+9. `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`
+10. `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`
+11. `docs/JETNITY_FUTURE_NATIVE_APP_AND_TECHNICAL_LEAD_STANDARD.md`
+12. `docs/JETNITY_BINDING_BUILD_ORDER.md`
+13. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
+14. `JETNITY_HANDOFF.md`
+15. `docs/ACTIVE_WORK_STATUS.md`
+16. `docs/CHATGPT_PR113_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
+17. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_STATUS_2026-08-27.md`
+18. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
+18a. bei Account-Folgearbeit: `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`, `docs/AP5_S2_PASSWORD_REAUTH_STATUS_2026-08-28.md`, `docs/AP5_S1_SECURITY_UI_TRUTH_STATUS_2026-08-28.md`, `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md` und `docs/CHATGPT_PR129_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+19. `docs/CHATGPT_PR108_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
+20. `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
+21. `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
+22. `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`
+23. `docs/CHATGPT_PR91_GATE0B_POST_MERGE_CHECKPOINT_2026-08-27.md`
+24. `docs/PRODUCTION_GATE_A_EXECUTION_CHECKPOINT_2026-08-27.md`
+25. `docs/TRIP_WORKSPACE_TW6_GATE_B_PREP_STATUS.md`
+26. den aktuell relevanten Slice-Task/Status/Handoff sowie ADRs/Checkpoints.
 
 Historische Checkpoints und ältere Governance-/PR-Dokumente bleiben Evidence ihres damaligen Stands. Widersprechende alte Aussagen werden nicht gelöscht, aber durch spätere kanonische Entscheidungen und Live-Evidence superseded.
 
@@ -73,16 +80,18 @@ Historische Checkpoints und ältere Governance-/PR-Dokumente bleiben Evidence ih
 Ein neuer ChatGPT-Technical-Lead erfindet **keinen** eigenen Workflow. Diese Regeln sind bindend, nicht optional. Die ausführlichen Standards werden referenziert, nicht ersetzt.
 
 1. Rolle: übergeordneter Jetnity **Technical Lead**.
-2. Pflichtlektüre: die Reihenfolge in Abschnitt 1; zuerst `JETNITY_START_HERE.md`, dann der aktuellste Post-Merge-New-Chat-Checkpoint (`docs/CHATGPT_PR113_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`).
+2. Pflichtlektüre: zuerst `JETNITY_START_HERE.md`, dann **sofort** `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`, danach die übrige Reihenfolge in Abschnitt 1 und der aktuellste Post-Merge-New-Chat-Checkpoint.
 3. **Live-Evidence gewinnt** über Docs, Chat, Screenshots und Erinnerung.
 4. Cursor-Aufträge nennen den **exakten Anzeigenamen** aus Abschnitt 9.
 5. Der Feature-/Audit-Autor ist **nicht** der unabhängige Finalreviewer.
-6. Autonomes Ready/Merge nur nach unabhängigem Exact-Head-PASS (Actions + Vercel) gemäß Abschnitt 3. Blind mergen ist verboten.
-7. Besondere Product-Owner-Gates aus Abschnitt 4 bleiben zwingend.
-8. Keine stillen Shared-Contract- oder fundamentalen Produktentscheidungen.
-9. **Kein automatischer Folgeslice** nach einem abgeschlossenen Auftrag.
-10. Jede materielle Aktion wird im Repository persistiert (`docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`, `docs/CONTINUITY_STANDARD.md`).
-11. Produktmaxime: **Eine Reise, eine Oberfläche. Komplexität intern, Klarheit für den Nutzer.**
+6. **Nur ChatGPT / Technical Lead** darf Ready setzen oder mergen. Cursor-Agenten setzen niemals Ready und mergen niemals. Autonomes Ready/Merge durch den Technical Lead nur nach unabhängigem Exact-Head-Review und nur, wenn der Technical Lead absolut überzeugt ist, dass dies die beste verantwortbare Entscheidung ist. Blind mergen ist verboten.
+7. Verbindlicher Workflow: versionierter Task → Draft-PR → `@cursor` → unabhängiger Technical-Lead-Review → head-gebundene CHANGES REQUIRED → neuer Head + Re-Gating → PASS → Technical-Lead-only Ready/Merge → Post-Merge-Verifikation.
+8. Session-Rotation: gleicher Slice / gleicher PR / unmittelbarer Review-Fix = dieselbe Session; neuer logischer Slice = frische nummerierte Generation.
+9. Besondere Product-Owner-Gates aus Abschnitt 4 bleiben zwingend.
+10. Keine stillen Shared-Contract- oder fundamentalen Produktentscheidungen.
+11. **Kein automatischer Folgeslice** nach einem abgeschlossenen Auftrag.
+12. Jede materielle Aktion wird im Repository persistiert (`docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`, `docs/CONTINUITY_STANDARD.md`).
+13. Produktmaxime: **Eine Reise, eine Oberfläche. Komplexität intern, Klarheit für den Nutzer.**
 
 ## 2. Vor jeder technischen Entscheidung live verifizieren
 
@@ -107,11 +116,17 @@ Abweichung danach im Repository dokumentieren.
 
 ## 3. Ready-/Merge-Governance
 
+Current Truth für Workflow und Ready/Merge:
+
+`docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+
 Der Product Owner hat ausdrücklich entschieden:
 
-> **ChatGPT / Technical Lead darf bei normalen scope-treuen PRs selbst Ready/Merge entscheiden.**
+> **Nur der ChatGPT / Technical Lead entscheidet über Ready und Merge und führt Merges aus. Cursor-Agenten dürfen niemals selbst Ready setzen oder mergen.**
 
-Das ist keine Auto-Merge-Freigabe.
+> **ChatGPT / Technical Lead darf bei normalen scope-treuen PRs selbst Ready/Merge entscheiden, aber nur nach vollständigem unabhängigen Exact-Head-Review und nur, wenn er absolut überzeugt ist, dass dies die beste verantwortbare Entscheidung ist.**
+
+Das ist keine Auto-Merge-Freigabe. Cursor-Self-Review, grüne Tests, `mergeable=true` oder Vercel `READY` ersetzen diese Überzeugung niemals.
 
 Vor Ready/Merge muss der Technical Lead:
 
@@ -358,6 +373,8 @@ Sanitation-Closure ist integriert (PR #135 / Issue #134 CLOSED). Live-Inventur u
 Draft-PR #88 bleibt historische Evidence vom 26.08.2026, nicht Current Truth. Unique Inventur-Dateien hängen am Branch `audit/project-sanitation-inventory-2026-08-26` (`HISTORICAL-EVIDENCE`); der PR selbst ist `CLOSE-SAFE`, weil Close den Branch nicht löscht. Kein Repo-/PR-Close/Branch-/Supabase-/Vercel-Delete automatisch ausführen. Historische Evidence nicht löschen.
 
 ## 16. Exakter nächster Technical-Lead-Schritt
+
+Aktueller docs-only Governance-Slice, kein Produkt-Folgeslice: Draft-PR #142 integriert den Operating Standard. Autor-Agent setzt **kein Ready** und **kein Merge**.
 
 TW7-A Runtime ist integriert (PR #106), Issue #103 CLOSED / completed. AP-4 ist integriert (PR #108/#111). P2-TA-06 ist integriert (PR #113), Issue #112 CLOSED / completed. P2-TA-03 ist integriert (PR #117), Issue #116 CLOSED / completed. P2-TA-04 Gate 0 / C1 sind integriert. AP-5 Gate 0 ist integriert (PR #129), Issue #128 CLOSED / completed. AP-5-S1 ist integriert (PR #133), Issue #132 CLOSED / completed. Project Sanitation ist integriert (PR #135), Issue #134 CLOSED / completed. AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 ist CLOSED / completed.
 

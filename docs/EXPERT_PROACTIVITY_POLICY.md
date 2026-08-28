@@ -152,9 +152,11 @@ Wenn sie für spätere Arbeit, Review, Roadmap oder Produktentscheidung relevant
 
 Ein professioneller Vorschlag ist **keine Merge-Freigabe** und auch keine automatische Scope-Freigabe.
 
-`docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md` bleibt unverändert verbindlich:
+`docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md` bleibt historische Evidence der früheren per-PR-Merge-Pflicht. Current Truth:
 
-> **Technisch fertig bedeutet review-bereit. Gemergt wird erst nach ausdrücklicher Freigabe des Product Owners.**
+`docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+
+> **Technisch fertig bedeutet review-bereit. Ready/Merge führt nur ChatGPT / Technical Lead aus. Cursor-Agenten tun das niemals. Besondere Product-Owner-Gates bleiben.**
 
 Der Product Owner erhält dadurch bewusst die Möglichkeit, vor Abschluss noch sinnvolle Vorschläge zu übernehmen.
 

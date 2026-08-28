@@ -1,7 +1,7 @@
 # Jetnity – verbindliches Agent-/Workstream-Modell
 
-Stand: 25. August 2026  
-Status: **Product-Owner-verbindlich; für neue Chats, Technical Leads und Coding Agents verpflichtend**
+Stand: 25. August 2026; Nachtrag 28. August 2026  
+Status: **Product-Owner-verbindlich; für neue Chats, Technical Leads und Coding Agents verpflichtend. Ready-/Merge-Ausführung und Cursor-Workflow seit 28. August 2026 durch `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` präzisiert.**
 
 ## 1. Zweck
 
@@ -35,7 +35,7 @@ Der Technical Lead verantwortet insbesondere:
 - Branch-/Draft-PR-Strategie;
 - unabhängige Reviews;
 - Exact-Head-Gates;
-- Ready-/Merge-Entscheidungen im Rahmen der genehmigten Autonomie;
+- Ready-/Merge-Entscheidungen und Ready-/Merge-Ausführung ausschließlich durch den Technical Lead; Cursor-Agenten niemals;
 - Synchronisation gegen aktuelles `main`;
 - Cross-Agent-Abhängigkeiten;
 - Wahrheit, Security, Privacy, Kosten- und Production-Gates;
@@ -48,13 +48,14 @@ Kein Cursor-Agent darf sich selbst zum Eigentümer eines Shared Contracts erklä
 Jeder neue Chat / Technical Lead muss:
 
 1. zuerst `JETNITY_START_HERE.md` lesen;
-2. dieses Dokument vollständig lesen;
-3. GitHub/PR/CI/Vercel/Supabase live verifizieren;
-4. für jeden der sechs Agents bestimmen: **aktiv / wartet / blockiert / später reserviert**;
-5. nur konfliktarme Agents parallel starten;
-6. jedem Agent einen versionierten Auftrag mit Scope, Non-Scope, Gates und STOPP-Punkt geben;
-7. nach Agent-Self-Review immer einen unabhängigen Technical-Lead-Re-Review durchführen;
-8. erst danach Ready/Merge erlauben bzw. im Autonomie-Rahmen selbst ausführen.
+2. unmittelbar danach `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` lesen;
+3. dieses Dokument vollständig lesen;
+4. GitHub/PR/CI/Vercel/Supabase live verifizieren;
+5. für jeden der sechs Agents bestimmen: **aktiv / wartet / blockiert / später reserviert**;
+6. nur konfliktarme Agents parallel starten;
+7. jedem Agent einen versionierten Auftrag mit Scope, Non-Scope, Gates, `do not mark Ready`, `do not merge` und STOPP-Punkt geben;
+8. nach Agent-Self-Review immer einen unabhängigen Technical-Lead-Re-Review durchführen;
+9. Ready/Merge **nur selbst** ausführen, und nur nach unabhängigem Exact-Head-PASS sowie voller Überzeugung, dass dies die beste verantwortbare Entscheidung ist. Cursor-Agenten dürfen Ready/Merge niemals ausführen.
 
 ## 3. Verbindliche sechs Cursor-Agent-Workstreams
 
@@ -375,7 +376,7 @@ Der Technical Lead:
 - entscheidet Workstream-Ownership;
 - führt den finalen unabhängigen PR-Review;
 - integriert Ergebnisse aller Agents;
-- entscheidet Ready/Merge im Autonomie-Rahmen.
+- entscheidet Ready/Merge im Autonomie-Rahmen und führt Ready/Merge allein aus. Cursor-Agenten tun das niemals.
 
 Der Quality-Agent liefert zusätzliche adversariale Evidence, Cross-Domain-Tests und Release-Sicherheitsbewertung.
 
@@ -479,9 +480,11 @@ Der Quality-Agent darf auch früher für einen **klar abgegrenzten Audit** einge
 - verpflichtende Tests/Gates;
 - STOPP-Punkt für unabhängigen Technical-Lead-Review.
 
-### 6.2 Kein Agent merge autonom aus Cursor heraus
+### 6.2 Kein Agent setzt Ready oder merged
 
-Coding Agents stoppen nach Self-Review und Evidence. Ready/Merge erfolgt erst nach unabhängigem Technical-Lead-Review gemäß aktueller Autonomie-Governance.
+Coding Agents stoppen nach Self-Review und Evidence. Sie setzen **niemals** Ready und mergen **niemals**, auch nicht nach einem Technical-Lead-PASS.
+
+Ready/Merge führt ausschließlich ChatGPT / Technical Lead aus, und nur nach unabhängigem Exact-Head-Review gemäß `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`.
 
 ### 6.3 Wenn `main` während eines Slices weiterläuft
 

@@ -22,29 +22,30 @@ Die ausführliche vorherige Fassung dieses Handoffs bleibt byte-identisch als hi
 Zuerst vollständig lesen:
 
 1. `JETNITY_START_HERE.md`
-2. `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`
-3. `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
-4. `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`
-5. `docs/JETNITY_GUARDIAN_AND_WHAT_IF_SIMULATOR_STANDARD.md`
-6. `docs/JETNITY_MARKETING_GROWTH_STANDARD.md`
-7. `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`
-8. `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`
-9. `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`
-10. `docs/JETNITY_FUTURE_NATIVE_APP_AND_TECHNICAL_LEAD_STANDARD.md`
-11. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-12. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
-13. `JETNITY_HANDOFF.md`
-14. `docs/CHATGPT_PR138_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
-15. `docs/CHATGPT_PR137_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
-16. `docs/ACTIVE_WORK_STATUS.md`
-17. `ROADMAP.md`
-18. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`
-19. `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`
-20. `docs/CHATGPT_PR129_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
-21. `docs/CHATGPT_PR113_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
-22. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_STATUS_2026-08-27.md`
-23. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
-24. danach alle für den betrachteten Workstream relevanten Slice-Tasks, Statusdateien, Handoffs, ADRs, Reviews und Checkpoints.
+2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+3. `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`
+4. `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
+5. `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`
+6. `docs/JETNITY_GUARDIAN_AND_WHAT_IF_SIMULATOR_STANDARD.md`
+7. `docs/JETNITY_MARKETING_GROWTH_STANDARD.md`
+8. `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`
+9. `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`
+10. `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`
+11. `docs/JETNITY_FUTURE_NATIVE_APP_AND_TECHNICAL_LEAD_STANDARD.md`
+12. `docs/JETNITY_BINDING_BUILD_ORDER.md`
+13. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
+14. `JETNITY_HANDOFF.md`
+15. `docs/CHATGPT_PR138_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+16. `docs/CHATGPT_PR137_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+17. `docs/ACTIVE_WORK_STATUS.md`
+18. `ROADMAP.md`
+19. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`
+20. `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`
+21. `docs/CHATGPT_PR129_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+22. `docs/CHATGPT_PR113_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
+23. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_STATUS_2026-08-27.md`
+24. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
+25. danach alle für den betrachteten Workstream relevanten Slice-Tasks, Statusdateien, Handoffs, ADRs, Reviews und Checkpoints.
 
 Hinweis: Ältere Gate-0-, S1-, S2- und PR-#138-Draft-Aussagen sind historische Evidence ihres jeweiligen Zeitpunkts. AP-5-S1 / Issue #132 / PR #133 ist integriert. AP-5-S2 / Issue #136 / PR #137 ist integriert. PR #138 ist ebenfalls integriert. S3–S5 starten nicht aus S2. Product-Owner-Sondergates bleiben AP-5-P1–P4 sowie separate P5/C2-/Identity-/RLS-/Production-Gates.
 
@@ -206,7 +207,11 @@ Keine neue Persistenz von Passnummern, Passscans, MRZ, Biometrie oder anderen be
 
 > **AUTONOM MERGEN IST ERLAUBT. BLIND MERGEN IST VERBOTEN.**
 
-Normale scope-treue PRs dürfen nach unabhängigem Exact-Head-Review Ready gesetzt und gemergt werden.
+> **Nur ChatGPT / Technical Lead darf Ready setzen oder mergen. Cursor-Agenten tun das niemals.**
+
+Current Truth: `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`.
+
+Normale scope-treue PRs darf der Technical Lead nach unabhängigem Exact-Head-Review Ready setzen und mergen, und nur wenn er absolut überzeugt ist, dass dies die beste verantwortbare Entscheidung ist.
 
 Vor jedem Merge mindestens prüfen:
 
@@ -295,6 +300,8 @@ Das ist **keine automatische Freigabe für AP-5-S3**.
 Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logische Arbeitseinheit bekommt eine frische nummerierte Session gemäß Rotation Standard.
 
 ## 8. Exakter nächster Technical-Lead-Schritt
+
+Aktueller docs-only Governance-Slice, kein Produkt-Folgeslice: Draft-PR #142 unabhängig reviewen. Autor-Agent setzt kein Ready und kein Merge.
 
 **Kein Produkt-Folgeslice ist an diesem Chat-Übergabepunkt automatisch freigegeben.**
 
