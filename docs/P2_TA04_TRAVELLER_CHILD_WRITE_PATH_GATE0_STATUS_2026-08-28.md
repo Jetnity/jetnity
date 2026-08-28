@@ -201,9 +201,23 @@ Ausgeführt auf diesem Branch, nicht als Exact-Head-CI behauptet:
 - `node --import tsx --test lib/readiness/p2-ta04-write-path-inventory.test.ts lib/readiness/reisende.test.ts lib/trips/foundation-e-select.test.ts` → **9/9 pass**
 - `npm test` → **2381/2381 pass**
 
-Kein Production-Build in diesem Author-Lauf. Exact-Head GitHub Actions und Vercel werden nach dem finalen Push live gestempelt.
+Kein separater lokaler Production-Build in diesem Author-Lauf. Exact-Head CI enthält Typecheck, Lint & Build.
 
 Die GitHub-PR-Beschreibung ist Technical-Lead-managed und konnte von diesem Agenten nicht überschrieben werden. Kanonischer Zieltext: `docs/P2_TA04_PR120_DESCRIPTION_2026-08-28.md`.
+
+## 10.1 Exact-Head vor diesem Stamp
+
+| Feld | Wert |
+| --- | --- |
+| Author-Head | `fdfdc1b6e195b00ae19b5189f481c470858d364e` |
+| Merge-Base / `origin/main` | `918bf3606eaa9ac23e96551c0311edf20514817d` |
+| Ahead / Behind | **8 ahead / 0 behind** |
+| GitHub Actions | Run `33131204729` **SUCCESS** auf exakt `fdfdc1b6` |
+| Vercel Preview | Inspector `ApFZvEbHa7Hm2t7fJdJF5W3g9Fgw` **SUCCESS** auf exakt `fdfdc1b6` |
+| Review-Threads | 0 |
+| Draft | ja |
+
+Ein Continuity-Stamp nach diesem Abschnitt erzeugt einen neueren Head und muss live neu geprüft werden.
 
 ## 11. Nächster Schritt
 

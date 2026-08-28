@@ -47,7 +47,9 @@ Kein neuer Runtime-Vertrag. ADR-0180 entscheidet nur die Gate-0-Closure-Richtung
 - `main` Branch Protection `protected=false`
 - Historischer PR #39 bleibt Historical Evidence
 - D0-P1-03 Legal-404 bleibt ausserhalb
-- Exact-Head Actions/Vercel müssen auf dem **finalen** Author-Head live gelesen werden
+- Author-Head vor Continuity-Stamp: `fdfdc1b6e195b00ae19b5189f481c470858d364e`
+- Actions `33131204729` SUCCESS; Vercel `ApFZvEbHa7Hm2t7fJdJF5W3g9Fgw` SUCCESS auf genau diesem SHA
+- Ein Stamp danach braucht erneute Exact-Head-Gates
 - GitHub-PR-Body ist TL-managed; Zieltext liegt in `docs/P2_TA04_PR120_DESCRIPTION_2026-08-28.md`
 
 ## Nächster Schritt

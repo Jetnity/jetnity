@@ -29,7 +29,7 @@ Keine Änderung an `app/`-Runtime, `supabase/migrations/`, Grants, RLS, Auth/MFA
 
 ## 3. Risiken, die bleiben
 
-- Exact-Head Actions/Vercel müssen auf dem finalen Author-SHA erneut live gelesen werden.
+- Exact-Head vor Stamp: Actions `33131204729` SUCCESS und Vercel `ApFZvEbHa7Hm2t7fJdJF5W3g9Fgw` SUCCESS auf `fdfdc1b6`. Ein Stamp danach braucht erneute Live-Gates.
 - C1 braucht später eine Funktions-/Trigger-Migration; das ist kein Freibrief aus Gate 0.
 - `ARCHITECTURE.md` enthält ältere Sätze, Foundation E sei nicht auf Production. Das ist historische Drift; dieser Slice schreibt die ganze Architekturdatei nicht um.
 - `JETNITY_START_HERE.md` / `JETNITY_HANDOFF.md` waren vor diesem Slice auf P2-TA-03-Draft-Stand; nur notwendige Zeiger wurden nachgezogen.
