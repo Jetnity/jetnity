@@ -23,7 +23,13 @@ Rekonstruiert am 28. August 2026.
 | `origin/main` | `eaa03ad71509d281990e0d34ca359e0750eb9591` |
 | Main-Message | `Merge PR #131: close AP-5 Gate 0 canonical pointers` |
 | Dieser Authoring-Start | exakt aktuelles `origin/main` |
-| Offene PRs | **7** |
+| Draft-PR | [#135](https://github.com/Jetnity/jetnity/pull/135) |
+| Exact Head | `30893fa0974db186537c34467c9b0eae1a7e1b61` |
+| Merge-Base / Ahead / Behind | `eaa03ad7` / **3 / 0** |
+| Exact-Head GitHub Actions | Run `33164083125` **SUCCESS** |
+| Exact-Head Vercel Preview | Deployment `6139730729` / Inspector `7z49X9yZxfadQBHAhjGEgyvdurt3` **READY** auf demselben SHA |
+| Review-Threads | 0 |
+| Offene PRs bei Start | **7**; nach diesem Draft **8** inkl. #135 |
 | Remote-Heads | **135** inkl. `main` |
 | Annotated Tags | **3** |
 | `main` Branch Protection | `protected=false` |

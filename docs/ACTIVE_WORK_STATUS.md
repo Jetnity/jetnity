@@ -269,11 +269,7 @@ Operativ relevant:
 | PR | Klasse |
 | --- | --- |
 | **#135** Project Sanitation Closure | **DRAFT / AUDIT ONLY.** Branch `cursor/project-sanitation-closure-2966`. Issue #134. Kein Cleanup. |
-<<<<<<< HEAD
 | **#133** AP-5-S1 Security-UI | **GEMERGT / INTEGRIERT.** Merge `51b0c926`. Issue #132 CLOSED / completed. Agent 9 abgeschlossen. |
-=======
-| **#133** AP-5-S1 Security-UI | **DRAFT / PARALLEL.** Branch `cursor/ap5-s1-security-ui-8b13`. Issue #132. Nicht durch den Sanitation-Agenten anfassen. |
->>>>>>> 30893fa0 (docs: stamp sanitation closure draft PR 135)
 | **#129** AP-5 Gate 0 Account security capability | **GEMERGT / INTEGRIERT.** Issue #128 CLOSED / completed. Ältere „Draft“-Zeilen sind Pre-Merge-Evidence. |
 | **#126** P2-TA-04 C1 Traveller write-contract integrity | **GEMERGT / INTEGRIERT.** Merge `5ed7edbd`. Issue #122 CLOSED / completed. Production C1 live als `20260828015304`. Historische/develop-only Evidence `20260828120000`. Kein C2. |
 | **#120** P2-TA-04 Traveller Write-Path Gate 0 | **GEMERGT / INTEGRIERT.** Merge `8d8f3d57`. Issue #119 CLOSED / completed. Audit only; Residual C1 jetzt Issue #122. |

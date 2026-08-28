@@ -31,6 +31,11 @@ Historische 26.08.-Inventur: offenes Draft-PR #88. Nicht nach `docs/history/` ko
 | Offene PRs bei Start | 7 |
 | Remote-Heads bei Start | 135 |
 | Parallel | PR #133 / Issue #132 – nicht angefasst |
+| Draft-PR | [#135](https://github.com/Jetnity/jetnity/pull/135) |
+| Exact Head | `30893fa0974db186537c34467c9b0eae1a7e1b61` |
+| GitHub Actions | Run `33164083125` **SUCCESS** auf exakt diesem SHA |
+| Vercel Preview | Deployment `6139730729` **READY** auf exakt diesem SHA |
+| Review-Threads | 0 |
 
 ## 3. Closure-Urteile
 
