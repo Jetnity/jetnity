@@ -49,8 +49,8 @@ Vor der finalen Übergabe erneut `origin/main` holen und hier stempeln.
 | Prior reviewed Head | `ce5b7e70` – invalidiert durch `5455755549` |
 | Prior stamps | `ed8f79b4`, `fbb1ec8d` – invalidiert |
 | Exact / Review-Head | Commit dieses Review-Fix-Stamps; live an PR #145 prüfen |
-| Ahead / behind `origin/main` | nach finalem Stamp |
-| Local S1 before remaining gates | 16/16 pass |
+| Ahead / behind `origin/main` | **11 / 0** |
+| Local quality before stamp | 16/16 S1 tests; 30/30 related traveller tests; 2457/2457 `npm test`; `tsc --noEmit`; eslint max-warnings=0; dead/exports/deps/api-schutz/schema-bezug; `next build` |
 | Branch Protection | unverändert; nicht in diesem Slice geändert |
 | Supabase | nicht live abgefragt, nicht mutiert |
 

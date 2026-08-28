@@ -27,7 +27,7 @@ This slice does **not** consume the separate Production migration / Identity / R
 | Draft-PR | [#145](https://github.com/Jetnity/jetnity/pull/145) |
 | Reviewed Head invalidiert | `c88ac2e3` (`5455673104`), `ed8f79b4`, `ce5b7e70` (`5455755549`) und Stamp `fbb1ec8d` |
 | Exact Head | der Commit dieses Review-Fix-Stamps; live am PR #145 prüfen |
-| Ahead / behind `origin/main` | nach finalem Stamp live eintragen |
+| Ahead / behind `origin/main` | **11 / 0** nach diesem Stamp |
 | Logical Cursor-Agent | `Cursor-Agent: Account plattform audit vorbereitung 12` |
 | Sichtbarer Cursor-Titel | `Dual-authority domain contract` |
 | Cloud-Run | https://cursor.com/agents/bc-6b3a7a55-26fe-41a9-8cf2-b599afe1eda0 |
@@ -103,7 +103,24 @@ Adversarial tests in `lib/traveller/account-registry.test.ts` cover:
 - no citizenship inferred from residence, locale, language, issuer or departure;
 - empty facts stay empty.
 
-Review-fix #2 local S1 tests before remaining gates: **16/16 pass**. Prior 15/15 + `ce5b7e70` / `fbb1ec8d` evidence is invalidated. Remaining hygiene/full-suite/`next build` are re-run on this head and stamped afterwards.
+Verified on this branch before the final review-fix #2 stamp (`HEAD` was `b99fd18c91bcf648a9b6e2aed2338f2d8ad5deff`; this stamp is the review head). Prior 15/15 + `ce5b7e70` / `fbb1ec8d` evidence is invalidated.
+
+| Gate | Ergebnis |
+| --- | --- |
+| `node --import tsx --test lib/traveller/account-registry.test.ts` | **16/16 pass** |
+| Related traveller tests (`traveller-kontext`, `traveller-anfrage`, `schema`, `traveller-zuordnung`) | **30/30 pass** |
+| `npm test` | **2457/2457 pass**, 0 fail |
+| `npx tsc --noEmit --pretty false` | pass |
+| `npx eslint . --max-warnings=0` | pass |
+| `npm run check:dead` | pass (only justified CookieConsent orphan) |
+| `npm run check:exports` | 0 unused exports |
+| `npm run check:deps` | pass |
+| `npm run check:api-schutz` | 12 admin routes, all `requireAdminApi()` |
+| `npm run check:schema-bezug` | pass; no new schema objects |
+| `npm run build` | pass (`next build`) |
+| `origin/main` re-fetch | `bb38aef589f0cdcea1aaf8ddd87d043d0a9f0f05` — **0 behind** |
+
+CI/Vercel on the final head must be live-verified by the independent reviewer. This authoring run does not claim GitHub Actions or Vercel for the stamp commit.
 
 ## 5. Scope / non-scope confirmation
 

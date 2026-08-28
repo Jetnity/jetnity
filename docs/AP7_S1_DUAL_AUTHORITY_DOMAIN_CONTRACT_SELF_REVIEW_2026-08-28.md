@@ -37,6 +37,6 @@ Keine Änderung an `app/`, `components/`, `supabase/migrations`, Grants, RLS, Au
 
 ## 4. Urteil des Autors
 
-Die zwei Findings aus `5455755549` sind im Domain-Contract, den Tests und der kanonischen Continuity nachgezogen. Non-Scope gehalten. Lokale S1-Tests vor den restlichen Gates: 16/16.
+Die zwei Findings aus `5455755549` sind im Domain-Contract, den Tests und der kanonischen Continuity nachgezogen. Non-Scope gehalten. Lokale Tests und Hygiene-Gates vor diesem Stamp waren grün (16/16 S1, 30/30 related traveller, 2457/2457 `npm test`, typecheck, eslint, dead/exports/deps/api-schutz/schema-bezug, `next build`). Exact-Head CI/Vercel bleibt live vom unabhängigen Reviewer zu prüfen.
 
 **Unabhängiger Technical-Lead-Re-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**
