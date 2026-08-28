@@ -69,15 +69,15 @@ CI workflow inspected, not changed.
 
 ## 4. Validation
 
-Required commands and results are stamped in the self-review after they have actually been run. Do not treat this section as green until that stamp exists.
+Lokal ausgeführt auf Head `3fb2f3c8` vor diesem Stamp. Node `v22.14.0`, npm `10.9.7`.
 
-Required:
-
-- `npm ci`
-- `npm run typecheck`
-- `npm run lint`
-- `npm test`
-- `npm run build`
+| Command | Result |
+| --- | --- |
+| `npm ci` | PASS |
+| `npm run typecheck` | PASS |
+| `npm run lint` | PASS – no warnings or errors |
+| `npm test` | PASS – 2457/2457 |
+| `npm run build` | PASS – `next build` success; only missing-local-env setup warning |
 
 Exact-Head GitHub CI and Vercel Preview remain live evidence for the independent Technical Lead. Local gates do not replace them.
 

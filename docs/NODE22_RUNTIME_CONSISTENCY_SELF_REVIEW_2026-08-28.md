@@ -29,15 +29,17 @@ Keine Änderung an `app/`, `components/`, `lib/`-Produktcode, `supabase/`, Auth-
 
 ## 3. Validierung
 
-Stamped after the commands were actually run on this branch. Exact command output lives in the later exact-head stamp if a follow-up commit is required after gates.
+Lokal ausgeführt auf Head `3fb2f3c8` (vor diesem Stamp). Dieser Stamp ändert keine Runtime-Dateien. Node lokal: `v22.14.0`. npm: `10.9.7`.
 
 | Command | Result |
 | --- | --- |
-| `npm ci` | pending stamp after first validation run |
-| `npm run typecheck` | pending stamp after first validation run |
-| `npm run lint` | pending stamp after first validation run |
-| `npm test` | pending stamp after first validation run |
-| `npm run build` | pending stamp after first validation run |
+| `npm ci` | **PASS** – lockfile-reproducible install, 508 packages audited |
+| `npm run typecheck` | **PASS** – `tsc --noEmit` exit 0 |
+| `npm run lint` | **PASS** – `No ESLint warnings or errors` |
+| `npm test` | **PASS** – 2457/2457, 0 fail, 0 skipped |
+| `npm run build` | **PASS** – `next build` compiled successfully; setup warning only because no `.env/.local` in this environment |
+
+Bekannte, vorbestehende Build-Hinweise: Supabase Edge-Runtime `process.version(s)`-Warnung, veraltete Browserslist-Daten. Keine neuen durch diesen Slice.
 
 Local gates do not replace Exact-Head CI or Vercel Preview.
 

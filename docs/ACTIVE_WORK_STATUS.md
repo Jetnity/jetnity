@@ -12,7 +12,7 @@ Status: **Node 22 Runtime Consistency / Draft-PR #147. STOP für unabhängigen T
 1. **Arbeitsblock / Ziel:** Ein reproduzierbarer Node-Runtime-Vertrag: **Node 22.x** in Repository-Metadaten, `@types/node`, GitHub CI und Vercel. Keine Application-Features.
 2. **Authoring-Branch / PR:** `ops/node22-runtime-consistency-2026-08-28`; Draft-PR #147. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
 3. **Status:** **IMPLEMENTED / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW.** Kein Ready, kein Merge durch den Autor.
-4. **Bereits umgesetzt:** `engines.node` = `22.x`; Lockfile-Root per npm regeneriert; `@types/node` von `24.0.7` auf `22.20.1` (npm zog `undici-types@6.21.0`); CI unverändert `22.x`; Vercel-Settings nicht mutiert; ADR-0188.
+4. **Bereits umgesetzt:** `engines.node` = `22.x`; Lockfile-Root per npm regeneriert; `@types/node` von `24.0.7` auf `22.20.1` (npm zog `undici-types@6.21.0`); CI unverändert `22.x`; Vercel-Settings nicht mutiert; ADR-0188. Lokale Gates auf `3fb2f3c8`: `npm ci`, typecheck, lint, 2457/2457 `npm test`, `npm run build` PASS.
 5. **Cursor-Agent:** `Cursor-Agent: Jetnity runtime consistency 1`. Preferred visible title: `Jetnity runtime consistency 1`. Observed run title: `Jetnity node 22 consistency` (Cloud-Run `https://cursor.com/agents/bc-91130f08-c80a-44a3-92dd-7796b779eab8`). Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet.
 6. **Live-`main` / Baseline bei diesem Stamp:** `4ec83f36426c636443d43692d6875e92e9e3b54a` – immer live neu prüfen.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation, keine Vercel-Projektmutation.
