@@ -16,14 +16,12 @@ export default function Error({
   reset: () => void
 }) {
   React.useEffect(() => {
-    // eslint-disable-next-line no-console
     console.error('[PublicRouteError]', error)
   }, [error])
 
-  // simple (pseudo-)ID für Supportfälle
-  const id =
-    (error?.digest && `#${error.digest}`) ||
-    `#${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
+  // Support-ID nur aus dem Framework-Digest. Kein Date.now()/Math.random()
+  // im Render – Next 16 / react-hooks/purity verbietet unreine Render-Werte.
+  const id = error?.digest ? `#${error.digest}` : '#unbekannt'
 
   return (
     <main className="min-h-[70dvh] bg-surface-75 px-4 py-14 sm:px-6 sm:py-20">

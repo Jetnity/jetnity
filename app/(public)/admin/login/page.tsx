@@ -1,7 +1,8 @@
 'use client'
 
 import * as React from 'react'
-import { useFormState, useFormStatus } from 'react-dom'
+import { useActionState } from 'react'
+import { useFormStatus } from 'react-dom'
 import type { AuthState } from './actions'
 import { signInWithPasswordAction, sendMagicLinkAction } from './actions'
 import { signOutToAdminLoginAction } from '@/app/auth/sign-out'
@@ -22,8 +23,8 @@ function SubmitBtn({ children }: { children: React.ReactNode }) {
 const INITIAL: AuthState = {}
 
 export default function AdminLoginPage() {
-  const [pwState, pwAction]   = useFormState<AuthState, FormData>(signInWithPasswordAction, INITIAL)
-  const [otpState, otpAction] = useFormState<AuthState, FormData>(sendMagicLinkAction, INITIAL)
+  const [pwState, pwAction]   = useActionState<AuthState, FormData>(signInWithPasswordAction, INITIAL)
+  const [otpState, otpAction] = useActionState<AuthState, FormData>(sendMagicLinkAction, INITIAL)
 
   const magicSent = Boolean(otpState?.ok && otpState?.magicSent)
 

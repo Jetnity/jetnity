@@ -10,9 +10,11 @@ try {
 const nextConfig = {
   reactStrictMode: true,
 
+  // Next 16: typedRoutes ist stabil und gehört nicht mehr nach experimental.
+  typedRoutes: true,
+
   experimental: {
     optimizePackageImports: ['lucide-react'],
-    typedRoutes: true,
   },
 
   images: {
