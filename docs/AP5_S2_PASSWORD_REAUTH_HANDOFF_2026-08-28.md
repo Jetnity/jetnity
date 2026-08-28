@@ -4,13 +4,15 @@ Stand: 28. August 2026
 Status: **AUTHOR COMPLETE / DRAFT / STOPP FÜR UNABHÄNGIGEN TL-REVIEW / KEIN S3–S5**  
 Cursor-Agent: **`Account plattform audit vorbereitung 10`**  
 Issue: [#136](https://github.com/Jetnity/jetnity/issues/136)  
-Branch: `cursor/ap5-s2-password-reauth-82e4`
+Branch: `cursor/ap5-s2-password-reauth-82e4`  
+Draft-PR: https://github.com/Jetnity/jetnity/pull/137
 
 ## Zuerst lesen
 
 1. `docs/AP5_S2_PASSWORD_REAUTH_TASK_2026-08-28.md`
 2. `docs/AP5_S2_PASSWORD_REAUTH_STATUS_2026-08-28.md`
-3. Issue #136
+3. `docs/AP5_S2_LOCAL_TEST_EVIDENCE_2026-08-28.md`
+4. Issue #136
 4. `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`
 5. ADR-0182
 6. `docs/AP5_S1_SECURITY_UI_TRUTH_STATUS_2026-08-28.md`

@@ -8,7 +8,7 @@ Status: **AP-5-S2 ist der aktuelle Account-Runtime-Slice auf Issue #136. Gate 0 
 ## Aktueller Arbeitsblock – AP-5-S2 eingeloggte Passwortänderung
 
 1. **Arbeitsblock / Ziel:** Issue #136 / AP-5-S2 – signed-in Passwortänderung über `reauthenticate()` → Nonce → `updateUser({ password, nonce })`.
-2. **Authoring-Branch / PR:** `cursor/ap5-s2-password-reauth-82e4`; Draft-PR folgt.
+2. **Authoring-Branch / PR:** `cursor/ap5-s2-password-reauth-82e4`; Draft-PR #137.
 3. **Status:** **AUTHOR COMPLETE / DRAFT.** Kein Ready, kein Merge, kein S3–S5.
 4. **Bereits umgesetzt:** Zustandsmodell; Security-Passwortkarte; kanonische Richtlinie/HIBP; getrennte Recovery-Authority; S2-Tests; Inventory-Aktualisierung.
 5. **Cursor-Agent:** `Account plattform audit vorbereitung 10`.
@@ -276,7 +276,7 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#136 / dieser Draft** AP-5-S2 Passwortänderung | **DRAFT / RUNTIME.** Branch `cursor/ap5-s2-password-reauth-82e4`. Issue #136. Kein Ready, kein Merge, kein S3–S5. |
+| **#137** AP-5-S2 Passwortänderung | **DRAFT / RUNTIME.** Branch `cursor/ap5-s2-password-reauth-82e4`. Issue #136. Kein Ready, kein Merge, kein S3–S5. |
 | **#135** Project Sanitation Closure | **GEMERGT / INTEGRIERT.** Merge `0256905c`. Retention-Plan; kein Cleanup. |
 | **#133** AP-5-S1 Security-UI | **GEMERGT / INTEGRIERT.** Merge `51b0c926`. Issue #132 CLOSED / completed. Agent 9 abgeschlossen. |
 | **#129** AP-5 Gate 0 Account security capability | **GEMERGT / INTEGRIERT.** Issue #128 CLOSED / completed. Ältere „Draft“-Zeilen sind Pre-Merge-Evidence. |

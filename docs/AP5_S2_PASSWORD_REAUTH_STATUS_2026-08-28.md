@@ -5,7 +5,8 @@ Status: **AUTHOR COMPLETE / DRAFT / KEIN READY / KEIN MERGE / STOPP FÜR UNABHÄ
 Workstream: Account / Traveller  
 Cursor-Agent: **`Account plattform audit vorbereitung 10`**  
 Issue: [#136](https://github.com/Jetnity/jetnity/issues/136)  
-Branch: `cursor/ap5-s2-password-reauth-82e4`
+Branch: `cursor/ap5-s2-password-reauth-82e4`  
+Draft-PR: https://github.com/Jetnity/jetnity/pull/137
 
 > Live-Evidence gewinnt. Vorbereitungs-SHAs sind Start-Evidence.
 
@@ -60,8 +61,12 @@ Kein ADR. Gate 0 / ADR-0182 bleibt die Authority.
 | S2 Vertrag/A11y | **5/5 pass** (`ap5-s2-password-aenderung.test.ts`) |
 | Gate-0-Inventory | **8/8 pass** |
 | S1-Regression + Nav + MFA-A11y + Richtlinie | pass |
+| `npm test` | **2437/2437 pass** |
+| Typecheck / Lint / `check:exports` / `check:dead` | pass |
+| `auth:pruefen` | 55/55, Passwortregel = config.toml |
+| Production-Build | pass |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet |
-| Exact-Head CI/Vercel | nach erstem Push live zu lesen |
+| Exact-Head CI/Vercel | nach diesem Stamp live zu lesen |
 
 ## 5. Residuals – nicht in S2 mischen
 

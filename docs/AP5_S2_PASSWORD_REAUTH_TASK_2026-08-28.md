@@ -6,6 +6,7 @@ Typ: **IMPLEMENTATION / AP-5-S2 ONLY**
 Status: **AUTHOR COMPLETE ON DRAFT / KEIN READY / KEIN MERGE / STOPP FÜR TL-REVIEW**  
 Cursor-Agent: `Account plattform audit vorbereitung 10`  
 Branch: `cursor/ap5-s2-password-reauth-82e4`  
+Draft-PR: https://github.com/Jetnity/jetnity/pull/137  
 Start-Baseline: `main @ 0256905cee3e6705156ce642839983daf8b0709a`
 
 ## 1. Ziel
