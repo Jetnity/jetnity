@@ -17,6 +17,7 @@ Für Entscheidungen zusätzlich lesen:
 - `JETNITY_VISION.md`
 - `JETNITY_HANDOFF.md`
 - `docs/ACTIVE_WORK_STATUS.md`
+- `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
 - `docs/CHATGPT_PR113_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
 - `docs/JETNITY_BINDING_BUILD_ORDER.md`
 - `ARCHITECTURE.md`
@@ -268,11 +269,13 @@ Abgeschlossen:
 28. ✅ AP-5-S1 ehrliche Security-UI Zustände / PR #133 + Issue #132; ADR-0183
 29. ✅ Project Sanitation Closure / PR #135 + Issue #134; ADR-0184; kein Cleanup
 30. ✅ AP-5-S2 eingeloggte Passwortänderung / PR #137 + Issue #136 CLOSED / completed; Merge `f11a1753`
-31. AP-5-S2 Post-Merge Continuity / Draft-PR #138 – **Docs-only; kein S3–S5**
+31. ✅ AP-5-S2 Post-Merge Continuity / PR #138 – integriert; ältere Draft-Sätze sind Pre-Merge-Evidence
+32. ✅ Provider S5-B Gate 0 / PR #141 – docs/readiness only; S5-B Runtime nicht gestartet
+33. ✅ Technical Lead / Cursor Operating Standard / PR #142 – integriert; Merge `9d4778b8`
 
 Nächster Schritt:
 
-**Unabhängiger Technical-Lead-Review dieses Continuity-Stamps. Issue #136 ist CLOSED / completed. S3–S5 nicht aus dieser Liste automatisch ableiten.**
+**Unabhängiger Technical-Lead-Review von Draft-PR #143 (PR-#142-Post-Merge-Current-State). Kein Produkt-Folgeslice. Danach Live-Rekonstruktion + Binding-Build-Order-Auswahl. S3–S5 nicht aus dieser Liste automatisch ableiten.**
 
 ## 10. Noch nicht automatisch gestartet / weiterhin gated
 

@@ -54,7 +54,7 @@ Je nach Änderung müssen insbesondere aktuell gehalten werden:
 - `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` – verbindlicher Technical-Lead-/Cursor-Workflow, exklusive Ready-/Merge-Autorität und Session-Rotation
 - `JETNITY_VISION.md` – verbindlicher Produkt-Nordstern; was Jetnity ist, was es nicht ist und welche Nutzerentlastung das Produkt erreichen soll
 - `JETNITY_HANDOFF.md` – kompakter aktueller Übergabestand. Operative Git-/PR-Wahrheit steht hier, in `docs/ACTIVE_WORK_STATUS.md` und im jeweils neuesten `docs/CHATGPT_*_CHECKPOINT_*.md`, nicht in historischen Slice-/Provider-Statusdateien
-- `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md` – aktueller Continuity-Checkpoint am 26. August 2026; ältere Checkpoints bleiben historical evidence
+- `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – aktueller Post-Merge-Continuity-Checkpoint; `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md` und ältere Checkpoints bleiben historical evidence
 - `ROADMAP.md` – fertig / in Arbeit / als Nächstes / blockiert / bewusst verschoben
 - `ARCHITECTURE.md` – aktuelle System- und Datenflussarchitektur
 - `DECISIONS.md` – ADRs für wichtige Entscheidungen

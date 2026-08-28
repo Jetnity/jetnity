@@ -4641,7 +4641,7 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 ## ADR-0185 – Technical Lead / Cursor Agent Operating Standard
 
 **Datum:** 28. August 2026  
-**Status:** Product-Owner-verbindlich. Docs-only Integration auf Draft-PR #142. **Kein Ready. Kein Merge durch den Autor-Agenten.**
+**Status:** Product-Owner-verbindlich. PR #142 ist integriert (`main` `9d4778b81f34e199466e089fe06fb093895f2df1`). Die Draft-PR-#142-Sätze unten sind Pre-Merge-Evidence.
 
 **Entscheidung:**
 
@@ -4668,7 +4668,7 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 - Primary: `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
 - Integration-Task: `docs/TECHNICAL_LEAD_CURSOR_OPERATING_STANDARD_INTEGRATION_TASK_2026-08-28.md`
 - Keine Runtime-, Schema-, Supabase-, Auth/AAL-, Provider- oder Branch-Protection-Änderung.
-- Autor-Agent stoppt auf Draft-PR #142 für unabhängigen Technical-Lead-Review.
+- Autor-Agent stoppte historisch auf Draft-PR #142 für unabhängigen Technical-Lead-Review. PR #142 ist jetzt integriert; Current Truth: `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`.
 
 ---
 

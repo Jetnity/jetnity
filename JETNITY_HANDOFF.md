@@ -1,13 +1,14 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **Kanonischer Post-PR-#141-Chat-Übergabestand. PR #141 Provider S5-B Gate 0 ist integriert als docs/readiness only. PR #138 Post-Merge-Continuity bleibt integriert. Es läuft kein freigegebener neuer Produkt-Slice. S5-B Runtime/Persistenz, S3–S5, C2, AP-7 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **Kanonischer Post-PR-#142-Chat-Übergabestand. PR #142 Technical-Lead-/Cursor-Operating-Standard ist integriert. PR #141 Provider S5-B Gate 0 bleibt integriert als docs/readiness only. Es läuft kein freigegebener neuer Produkt-Slice. Draft-PR #143 ist nur Current-State-Continuity. S5-B Runtime/Persistenz, S3–S5, C2, AP-7 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
 Aktuellster versionierter finaler Post-Merge-Checkpoint:
 
-- `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – neueste Chat-Übergabe-Evidence nach PR #141
+- `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – neueste Chat-Übergabe-Evidence nach PR #142
+- `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – Post-Merge-Evidence nach PR #141
 - `docs/CHATGPT_PR138_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – Post-Merge-Evidence nach PR #138
 - `docs/CHATGPT_PR137_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – integrierter AP-5-S2-Runtime-Stand vor dem finalen #138-Continuity-Merge
 - `docs/AP5_S2_PASSWORD_REAUTH_STATUS_2026-08-28.md` – S2-Author-Evidence
@@ -24,6 +25,7 @@ Zuerst vollständig lesen:
 
 1. `JETNITY_START_HERE.md`
 2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+2a. `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_PROMPT.md`
 3. `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`
 4. `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
 5. `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`
@@ -36,8 +38,9 @@ Zuerst vollständig lesen:
 12. `docs/JETNITY_BINDING_BUILD_ORDER.md`
 13. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
 14. `JETNITY_HANDOFF.md`
-15. `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
-16. `docs/CHATGPT_PR138_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+15. `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+16. `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+16a. `docs/CHATGPT_PR138_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
 17. `docs/CHATGPT_PR137_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
 18. `docs/ACTIVE_WORK_STATUS.md`
 19. `ROADMAP.md`
@@ -49,13 +52,26 @@ Zuerst vollständig lesen:
 25. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
 26. danach alle für den betrachteten Workstream relevanten Slice-Tasks, Statusdateien, Handoffs, ADRs, Reviews und Checkpoints.
 
-Hinweis: Ältere Gate-0-, S1-, S2- und PR-#138-Draft-Aussagen sind historische Evidence ihres jeweiligen Zeitpunkts. AP-5-S1 / Issue #132 / PR #133 ist integriert. AP-5-S2 / Issue #136 / PR #137 ist integriert. PR #138 ist ebenfalls integriert. PR #141 Provider S5-B Gate 0 ist integriert als docs/readiness only; S5-B Runtime ist nicht gestartet. S3–S5 starten nicht aus S2. Product-Owner-Sondergates bleiben AP-5-P1–P4 sowie separate P5/C2-/Identity-/RLS-/Production-Gates.
+Hinweis: Ältere Gate-0-, S1-, S2-, PR-#138- und Draft-PR-#142-Aussagen sind historische Evidence ihres jeweiligen Zeitpunkts. AP-5-S1 / Issue #132 / PR #133 ist integriert. AP-5-S2 / Issue #136 / PR #137 ist integriert. PR #138 ist ebenfalls integriert. PR #141 Provider S5-B Gate 0 ist integriert als docs/readiness only; S5-B Runtime ist nicht gestartet. PR #142 Operating Standard ist integriert. S3–S5 starten nicht aus S2. Product-Owner-Sondergates bleiben AP-5-P1–P4 sowie separate P5/C2-/Identity-/RLS-/Production-Gates.
 
 Danach live prüfen: `main`, offene PRs/Drafts, Branches, Merge-Base/Ahead/Behind, tatsächliche Diffs, Review-Threads, Actions, Vercel, relevante Supabase-/Production-Grenzen und P0/P1/P2/P3-Risiken.
 
 ## 2. Letzter vollständig verifizierter Chat-Übergabepunkt
 
-Letzter integrierter Post-Merge vor diesem Governance-Slice:
+Letzter integrierter Post-Merge:
+
+- PR #142: **MERGED** – Technical Lead / Cursor Operating Standard
+- Reviewed Exact Head: `507bcb170604b0f680dad7325ab4f32c7c4f2f61`
+- Independent Technical-Lead PASS: Issue-Kommentar `5454570805`
+- Merge / verifizierter `main`: `9d4778b81f34e199466e089fe06fb093895f2df1`
+- Post-Merge GitHub Actions Run `33186501087`: **SUCCESS** auf exakt diesem `main`
+- Post-Merge Vercel Production `dpl_8NN5v8rV27D4MTs9JwDyyLdXqpzo`: **READY** auf exakt diesem `main`
+- GitHub Production-Deployment `6144102069`: **success** auf demselben SHA
+- Branch Protection: unverändert `protected=false`
+- Continuity-Regel und universeller Recovery-Prompt sind Teil dieses integrierten Vertrags
+- Checkpoint: `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+
+Historischer vorheriger Chat-Übergabepunkt (PR #141, bleibt Evidence):
 
 - PR #141: **MERGED** – Provider S5-B Gate 0, docs/readiness only
 - Reviewed Exact Head: `a2f1f0a80e5715b5ab0fef39b671dd887ae0204b`
@@ -154,6 +170,7 @@ Verbindliche Wahrheit:
 - AP-5-S1 / PR #133 integriert; Issue #132 CLOSED / completed
 - AP-5-S2 / PR #137 integriert; Issue #136 CLOSED / completed
 - PR #138 Post-Merge Continuity integriert
+- PR #142 Technical-Lead-/Cursor-Operating-Standard integriert
 
 AP-5-S3–S5 werden **nicht automatisch** gestartet. AP-7 / Account-Traveller-Registry bleibt separat und gated.
 
@@ -295,6 +312,13 @@ Aktueller Account-Status:
 - `Cursor-Agent: Account plattform audit vorbereitung 10` ist mit AP-5-S2 / PR #137 und PR #138 Continuity abgeschlossen
 - Generation 10 nicht wiederverwenden
 
+Aktueller Quality-/Security-Status:
+
+- `Cursor-Agent: Jetnity quality security audit 4` ist der exakte Agent für Draft-PR #143 (PR-#142-Post-Merge-Continuity)
+- keine andere Generation erfinden
+- Cursor exponiert in dieser Session keine programmierbare Rename-/Title-Fähigkeit; UI nicht als umbenannt behauptet
+- kein Produkt-/Cleanup-Folgeslice
+
 Abgeschlossen / nicht wiederverwenden:
 
 - Generation 10: AP-5-S2 / PR #137 + #138
@@ -317,11 +341,11 @@ Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logisc
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-Aktueller docs-only Governance-Slice, kein Produkt-Folgeslice: Draft-PR #142 unabhängig reviewen. Autor-Agent setzt kein Ready und kein Merge. Current-State-Continuity (kein Fortschritt nur im Chat) steht im Operating Standard §9 und im universellen Recovery-Prompt.
+Aktueller docs-only Continuity-Slice, kein Produkt-Folgeslice: Draft-PR #143 unabhängig reviewen. PR #142 ist integriert. Autor-Agent setzt kein Ready und kein Merge. Current-State-Continuity (kein Fortschritt nur im Chat) steht im Operating Standard §9 und im universellen Recovery-Prompt.
 
 **Kein Produkt-Folgeslice ist an diesem Chat-Übergabepunkt automatisch freigegeben.**
 
-Der nächste Chat muss zuerst den vollständigen Live-Zustand rekonstruieren und anschließend Binding Build Order, Abhängigkeiten, Parallelität und Product-Owner-Gates neu bewerten.
+Der erste unfertige Produkt-Schritt nach akzeptierter Continuity ist Live-Rekonstruktion und Binding-Build-Order-Auswahl. Der nächste Chat muss zuerst den vollständigen Live-Zustand rekonstruieren und anschließend Binding Build Order, Abhängigkeiten, Parallelität und Product-Owner-Gates neu bewerten.
 
 AP-5-S3 ist nach dem integrierten Gate-0-Vertrag ein möglicher normaler Account-Folgeslice, aber **nicht automatisch der nächste globale Jetnity-Slice**.
 
@@ -352,6 +376,6 @@ Vor Start eines anderen zulässigen Slices dem Product Owner kurz erklären:
 
 ## 9. Continuity
 
-Kein wesentlicher Fortschritt darf nur im Chat existieren. Neue Chats und Agenten beginnen mit den kanonischen Dateien und dem neuesten Post-Merge-Checkpoint, behandeln ältere Checkpoints/PR-Bodies als zeitgebundene Evidence und verifizieren danach den Live-Zustand selbst.
+Kein wesentlicher Fortschritt darf nur im Chat existieren. Neue Chats und Agenten beginnen mit den kanonischen Dateien, dem Operating Standard und dem neuesten Post-Merge-Checkpoint, behandeln ältere Checkpoints/PR-Bodies als zeitgebundene Evidence und verifizieren danach den Live-Zustand selbst. Kanonischer Recovery-Prompt: `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_PROMPT.md`.
 
-Falls ältere aktuelle Dateien an einzelnen Stellen PR #138 noch als Draft / nächsten Review-Schritt nennen, wird ausschließlich diese operative Aussage durch `docs/CHATGPT_PR138_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` und diesen Handoff superseded. Historische Evidence bleibt erhalten.
+Falls ältere aktuelle Dateien an einzelnen Stellen PR #142 noch als Draft / nächsten Review-Schritt nennen, wird ausschließlich diese operative Aussage durch `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` und diesen Handoff superseded. Historische Evidence bleibt erhalten.
