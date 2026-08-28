@@ -22,7 +22,7 @@ Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead-Review. Jede
 | Current-State reicht für fertig vs. unfertig und exakt ersten nächsten Schritt | ja |
 | `no relevant progress only in chat memory` + universeller Recovery-Prompt erhalten | ja |
 | Historische Evidence nicht kosmetisch umgeschrieben | ja; Draft-#142-Sätze in älteren Dateien bleiben Pre-Merge-Evidence |
-| `origin/main` vor Handoff neu geholt | ja; Live-`main` unverändert `9d4778b81f34e199466e089fe06fb093895f2df1` |
+| `origin/main` vor Handoff neu geholt | ja; Live-`main` unverändert `9d4778b81f34e199466e089fe06fb093895f2df1`; Branch 2 ahead / 0 behind vor Head-Stamp `6e213e19` |
 
 ## 2. Non-Scope gehalten
 

@@ -21,6 +21,9 @@ Kein Ready. Kein Merge. Kein Produkt-Folgeslice. Self-Review ist keine Freigabe.
 | GitHub Production auf demselben SHA | `6144102069` success |
 | Branch Protection | unverändert `protected=false` |
 | Aktiver Branch / PR | `docs/pr142-post-merge-continuity-2026-08-28` / Draft-PR #143 |
+| Content-Head vor Head-Stamp | `6e213e195a605b06ef939a9fc787e19d89f946d1` |
+| Ahead / Behind vs `origin/main` bei Re-Fetch | 2 ahead / 0 behind; Merge-Base exakt `9d4778b81f34e199466e089fe06fb093895f2df1` |
+| Live Exact Head | der Commit, der diesen Stamp trägt; live an PR #143 prüfen |
 | Cursor-Agent | `Cursor-Agent: Jetnity quality security audit 4` – keine andere Generation |
 | Cursor-Rename-Fähigkeit in dieser Session | nicht exponiert; UI-Anzeigename nicht als geändert behauptet |
 | Session-Evidence | Cloud-Run `https://cursor.com/agents/bc-93c2dcb4-c12a-4e80-869e-df21404ea9b0`; Run-Titel bleibt `Pr142 post-merge continuity closure` |

@@ -8,7 +8,7 @@ Status: **Aktueller Block: Draft-PR #143 docs-only Post-Merge-Continuity nach in
 ## Aktueller Arbeitsblock – PR #142 Post-Merge Continuity
 
 1. **Arbeitsblock / Ziel:** Docs-only Current-State nach Merge von PR #142, damit kein aktuelles Continuity-Surface PR #142 noch als Draft führt. Kein Produkt-Folgeslice.
-2. **Authoring-Branch / PR:** `docs/pr142-post-merge-continuity-2026-08-28`; Draft-PR #143.
+2. **Authoring-Branch / PR:** `docs/pr142-post-merge-continuity-2026-08-28`; Draft-PR #143. Content-Head `6e213e195a605b06ef939a9fc787e19d89f946d1`; 2 ahead / 0 behind vs `origin/main` `9d4778b8`. Live Exact Head ist der Commit dieses Stamps; live an PR #143 prüfen.
 3. **Status:** **DOCS-ONLY / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW.** Jeder neue Push invalidiert Prior-Gates. Kein Ready, kein Merge durch den Autor. Kein Produkt-Folgeslice.
 4. **Bereits umgesetzt:** PR #142 ist integriert. Dauerhafter Checkpoint `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`. Handoff / Start Here / dieser Status führen PR #142 als MERGED-Wahrheit samt Post-Merge-Evidence.
 5. **Cursor-Agent:** `Cursor-Agent: Jetnity quality security audit 4` – exakt zugewiesener Name. Keine andere Generation. Cursor exponiert in dieser Session keine programmierbare Rename-/Title-Fähigkeit; der UI-Anzeigename wird deshalb nicht als geändert behauptet. Cloud-Run `https://cursor.com/agents/bc-93c2dcb4-c12a-4e80-869e-df21404ea9b0` (Run-Titel bleibt `Pr142 post-merge continuity closure`).

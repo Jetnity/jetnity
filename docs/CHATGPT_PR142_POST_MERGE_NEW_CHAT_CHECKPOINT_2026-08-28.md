@@ -61,6 +61,8 @@ Solange Draft-PR #143 offen ist:
 | --- | --- |
 | Arbeitsblock | Docs-only Post-Merge-Current-State nach PR #142 |
 | Branch / PR | `docs/pr142-post-merge-continuity-2026-08-28` / Draft-PR #143 |
+| Content-Head vor Head-Stamp | `6e213e195a605b06ef939a9fc787e19d89f946d1` |
+| Ahead / Behind vs `origin/main` | 2 ahead / 0 behind; Merge-Base exakt `9d4778b81f34e199466e089fe06fb093895f2df1` |
 | Baseline / `origin/main` | `9d4778b81f34e199466e089fe06fb093895f2df1` |
 | Cursor-Agent | `Cursor-Agent: Jetnity quality security audit 4` |
 | Session-Rename | nicht exponiert; UI nicht als umbenannt behauptet |
