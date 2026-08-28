@@ -10,8 +10,8 @@ Status: **AP-7-S1 Dual-Authority Domain Contract / Draft-PR #145 / SELF-EXPIRING
 ## Aktueller Arbeitsblock – AP-7-S1 Dual-Authority Domain Contract
 
 1. **Arbeitsblock / Ziel:** Shared Domain-Contract für Dual-Authority: account-owned Registry-Fakten + fail-closed unabhängiger Trip-Snapshot. Keine Persistenz.
-2. **Authoring-Branch / PR:** `feat/ap7-s1-dual-authority-domain-contract-2026-08-28`; Draft-PR #145. Exact Head ist der Commit dieses Stamps; live am PR prüfen. Ahead/behind `origin/main`: **11 / 0**.
-3. **Status:** **REVIEW-FIX FÜR 5455755549 / DRAFT / SELF-EXPIRING / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW.** Prior Heads `c88ac2e3`, `ed8f79b4`, `ce5b7e70` und `fbb1ec8d` invalidiert. Kein Ready, kein Merge durch den Autor. Kein AP-7-S2.
+2. **Authoring-Branch / PR:** `feat/ap7-s1-dual-authority-domain-contract-2026-08-28`; Draft-PR #145. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
+3. **Status:** **REVIEW-FIX FÜR 5455836506 / DRAFT / SELF-EXPIRING / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW.** Prior Head `e9f96e79` invalidiert. Kein Ready, kein Merge durch den Autor. Kein AP-7-S2.
 4. **Bereits umgesetzt:** Nested Registry-Typ; explizite trip-owned Materialisierung; Pflicht-`authority`; UUID-Refs; Snapshot-`jetzt`; Snapshot-Identität disjunkt zum gesamten Registry-Universum; 16 adversarial Tests inkl. Compile-Zeit-Grenze und Cross-Entity-/id↔clientRef-Kollisionen. Canonical Continuity self-expiring. ADR-0187-Nachtrag. Lokale Gates vor Stamp: 2457/2457 `npm test`, typecheck, eslint, hygiene, `next build`.
 5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 12`. Sichtbarer Cursor-Titel dieser Session: `Dual-authority domain contract` (Cloud-Run `https://cursor.com/agents/bc-6b3a7a55-26fe-41a9-8cf2-b599afe1eda0`). Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet.
 6. **Live-`main` bei diesem Stamp:** `bb38aef589f0cdcea1aaf8ddd87d043d0a9f0f05` – immer live neu prüfen.
@@ -19,7 +19,7 @@ Status: **AP-7-S1 Dual-Authority Domain Contract / Draft-PR #145 / SELF-EXPIRING
 8. **Kosten / Provider / Secrets:** keine.
 9. **Bekannte Risiken / Review-Funde:** CHANGES REQUIRED `5455673104` und Re-Review #2 `5455755549` adressiert. Persistenz darf Materialisierung nicht durch kopierte oder kreuzkollidierende Registry-IDs ersetzen. Guest-Auto-Transfer ≠ Registry-Import; `main` `protected=false`; Agent-Self-Review ist kein PASS.
 10. **Offene Nutzerentscheidungen / Freigaben:** Dual-Authority-Architektur ist freigegeben. Production-Migration / Identity / RLS / sensible Dokumentdaten bleiben extra gegated. AP-5-S3/S4/S5 bleiben normale TL-Gates, nicht automatisch gestartet. S5-B Runtime, TW-8, Provider-live, Payments, Public Launch unverändert gegated.
-11. **Exakter nächster Schritt (self-expiring / dual-state):** Solange #145 offen: unabhängiger Technical-Lead Exact-Head-Re-Review nach `5455755549`. Kein Ready. Kein Merge. Kein AP-7-S2. Sobald #145 gemergt: integrierter Domain-Contract; Live-Post-Merge-Verifikation, danach nur separat PO-gegateter AP-7-S2 Persistence/Identity/RLS-Vorschlag. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
+11. **Exakter nächster Schritt (self-expiring / dual-state):** Solange #145 offen: unabhängiger Technical-Lead Exact-Head-Re-Review nach `5455836506`. Kein Ready. Kein Merge. Kein AP-7-S2. Sobald #145 gemergt: integrierter Domain-Contract; Live-Post-Merge-Verifikation, danach nur separat PO-gegateter AP-7-S2 Persistence/Identity/RLS-Vorschlag. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
 12. **Zuerst lesen:** `docs/AP7_S1_DUAL_AUTHORITY_DOMAIN_CONTRACT_TASK_2026-08-28.md`, Status, Handoff, Self-Review, ADR-0187, Product-Owner-Approval, `docs/JETNITY_CURSOR_VISIBLE_AGENT_NAME_GATE.md`.
 
 ## Historischer Arbeitsblock – AP-7 Gate 0 Account-Traveller-Registry Architecture
@@ -36,7 +36,7 @@ Current classification / Nachtrag, 28. August 2026: **HISTORICAL / INTEGRIERT.**
 8. **Kosten / Provider / Secrets:** keine.
 9. **Bekannte Risiken / Review-Funde:** historische Gate-0-Risiken; Architekturwahl ist jetzt PO-freigegeben.
 10. **Offene Nutzerentscheidungen / Freigaben:** Persistence/RLS bleiben extra gegated.
-11. **Exakter nächster Schritt:** nicht erneut öffnen. S1 läuft auf PR #145.
+11. **Exakter nächster Schritt:** nicht erneut öffnen. S1 ist Draft-PR #145 und self-expiring; nach Merge integriert, kein automatisches S2.
 12. **Zuerst lesen:** Gate-0-Status, ADR-0186, Product-Owner-Approval, S1-Task.
 
 ## Historischer Arbeitsblock – PR #142 Post-Merge Continuity
@@ -374,7 +374,7 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#145** AP-7-S1 Dual-Authority Domain Contract | **DRAFT / AKTIV.** Shared Domain-Contract, kein Schema. STOP für unabhängigen Technical-Lead-Review. Kein Ready. Kein Merge. Kein S2. |
+| **#145** AP-7-S1 Dual-Authority Domain Contract | **SELF-EXPIRING.** Solange offen: DRAFT, STOP für unabhängigen TL-Re-Review; kein Ready, kein Merge, kein S2. Sobald gemergt: integrierter Domain-Contract; Live-Post-Merge-Verifikation, dann separat PO-gegateter AP-7-S2-Vorschlag. Kein Follow-up-Continuity-PR. |
 | **#144** AP-7 Gate 0 Account-Traveller-Registry | **GEMERGT / INTEGRIERT.** Merge `bb38aef5`. Architecture-Evidence; Dual-Authority danach PO-freigegeben. |
 | **#143** PR #142 Post-Merge Continuity | **GEMERGT / INTEGRIERT.** Merge `1947285c`. Ältere SELF-EXPIRING/DRAFT-Zeilen sind Pre-Merge-Evidence. |
 | **#142** Technical Lead / Cursor Operating Standard | **GEMERGT / INTEGRIERT.** Merge `9d4778b8`. Reviewed Head `507bcb17`. TL PASS `5454570805`. Ältere „DRAFT“-Zeilen sind Pre-Merge-Evidence. |
@@ -430,7 +430,7 @@ Production C1 `20260828015304_traveller_write_contract_integrity` ist unter der 
 
 ## 10. Nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #145. Dual-Authority ist freigegeben. PR #144 ist integriert (`bb38aef5`). Kein Ready. Kein Merge. Kein AP-7-S2 / keine Persistenz durch den Autor-Agenten.
+**Self-expiring / dual-state.** Solange Draft-PR #145 offen: unabhängiger Technical-Lead Exact-Head-Re-Review. Dual-Authority ist freigegeben. PR #144 ist integriert (`bb38aef5`). Kein Ready. Kein Merge. Kein AP-7-S2 / keine Persistenz durch den Autor-Agenten. Sobald #145 gemergt: AP-7-S1 ist integrierter Domain-Contract; exakt nächster Schritt = Live-Post-Merge-Verifikation, danach nur ein separat Product-Owner-gegateter AP-7-S2 Persistence/Identity/RLS-Vorschlag. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
 
 AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 ist CLOSED / completed. AP-5-S1 bleibt integriert (PR #133); Issue #132 ist CLOSED / completed. AP-5 Gate 0 bleibt integriert (PR #129); Issue #128 ist CLOSED / completed. Project Sanitation bleibt integriert (PR #135). PR #141 Provider S5-B Gate 0 bleibt integriert als docs/readiness only. AP-5-S3/S4/S5 sind normale Technical-Lead-Gates, nicht automatisch gestartet und nicht PO-gated. Kein C2, kein Auth-Config-Push, kein Cleanup aus diesem File.
 

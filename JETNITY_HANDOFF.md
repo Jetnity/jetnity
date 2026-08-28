@@ -335,7 +335,7 @@ Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logisc
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-**Self-expiring / dual-state.** Solange Draft-PR #145 offen: unabhängiger Technical-Lead Exact-Head-Re-Review nach `5455755549` (reviewed head `ce5b7e70` und Stamp `fbb1ec8d` invalidiert). Autor-Agent setzt kein Ready, kein Merge, startet kein AP-7-S2 und keine Persistenz. Sobald #145 gemergt: AP-7-S1 ist integrierter Domain-Contract; nächster Schritt = Live-Post-Merge-Verifikation, dann nur ein separat Product-Owner-gegateter AP-7-S2 Persistence/Identity/RLS-Vorschlag. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
+**Self-expiring / dual-state.** Solange Draft-PR #145 offen: unabhängiger Technical-Lead Exact-Head-Re-Review nach `5455836506` (reviewed head `e9f96e79` invalidiert). Autor-Agent setzt kein Ready, kein Merge, startet kein AP-7-S2 und keine Persistenz. Sobald #145 gemergt: AP-7-S1 ist integrierter Domain-Contract; nächster Schritt = Live-Post-Merge-Verifikation, dann nur ein separat Product-Owner-gegateter AP-7-S2 Persistence/Identity/RLS-Vorschlag. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
 
 PR #144 ist MERGED (`bb38aef5`). Dual-Authority ist product-owner-freigegeben. PR #143 ist MERGED (`1947285c`).
 

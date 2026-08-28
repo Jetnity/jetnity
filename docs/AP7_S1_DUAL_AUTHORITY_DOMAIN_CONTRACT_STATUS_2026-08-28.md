@@ -25,9 +25,9 @@ This slice does **not** consume the separate Production migration / Identity / R
 | `origin/main` bei Authoring-Re-Fetch | `bb38aef589f0cdcea1aaf8ddd87d043d0a9f0f05` |
 | Branch | `feat/ap7-s1-dual-authority-domain-contract-2026-08-28` |
 | Draft-PR | [#145](https://github.com/Jetnity/jetnity/pull/145) |
-| Reviewed Head invalidiert | `c88ac2e3` (`5455673104`), `ed8f79b4`, `ce5b7e70` (`5455755549`) und Stamp `fbb1ec8d` |
-| Exact Head | der Commit dieses Review-Fix-Stamps; live am PR #145 prüfen |
-| Ahead / behind `origin/main` | **11 / 0** nach diesem Stamp |
+| Reviewed Head invalidiert | `e9f96e79` (`5455836506`); früher `c88ac2e3`, `ce5b7e70`, Stamps `ed8f79b4` / `fbb1ec8d` |
+| Exact Head | der Commit dieses Continuity-Stamps; live am PR #145 prüfen |
+| Ahead / behind `origin/main` | nach finalem Stamp live eintragen |
 | Logical Cursor-Agent | `Cursor-Agent: Account plattform audit vorbereitung 12` |
 | Sichtbarer Cursor-Titel | `Dual-authority domain contract` |
 | Cloud-Run | https://cursor.com/agents/bc-6b3a7a55-26fe-41a9-8cf2-b599afe1eda0 |
@@ -103,7 +103,7 @@ Adversarial tests in `lib/traveller/account-registry.test.ts` cover:
 - no citizenship inferred from residence, locale, language, issuer or departure;
 - empty facts stay empty.
 
-Verified on this branch before the final review-fix #2 stamp (`HEAD` was `b99fd18c91bcf648a9b6e2aed2338f2d8ad5deff`; this stamp is the review head). Prior 15/15 + `ce5b7e70` / `fbb1ec8d` evidence is invalidated.
+Review-fix #3 is continuity-only. Domain contract unchanged. Prior `e9f96e79` evidence is invalidated. Remaining gates are re-run on this head and stamped afterwards.
 
 | Gate | Ergebnis |
 | --- | --- |

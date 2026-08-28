@@ -115,7 +115,7 @@ P2-TA-04 Gate 0 ist durch PR #120 integriert. C1 ist durch PR #126 integriert: D
 Nicht automatisch starten:
 
 - AP-5-S3–S5 / AP-5-P1–P5
-- AP-7 / Account-Traveller-Registry — Architektur Dual-Authority freigegeben; S1 Domain-Contract auf Draft-PR #145, keine Persistenz
+- AP-7 / Account-Traveller-Registry — Architektur Dual-Authority freigegeben; S1 Domain-Contract self-expiring auf Draft-PR #145 (offen → Review; nach Merge integriert, kein automatisches S2), keine Persistenz
 
 ## 3. Trip Workspace / Visitor Search
 
@@ -278,7 +278,7 @@ Abgeschlossen:
 
 Nächster Schritt (self-expiring / dual-state):
 
-- **Solange PR #145 offen:** unabhängiger Technical-Lead Exact-Head-Re-Review nach `5455755549`. Kein Ready. Kein Merge durch den Autor. Kein AP-7-S2 / keine Persistenz.
+- **Solange PR #145 offen:** unabhängiger Technical-Lead Exact-Head-Re-Review nach `5455836506`. Kein Ready. Kein Merge durch den Autor. Kein AP-7-S2 / keine Persistenz.
 - **Sobald PR #145 gemergt:** integrierter Domain-Contract. Live-Post-Merge-Verifikation, danach nur ein separat Product-Owner-gegateter AP-7-S2 Persistence/Identity/RLS-Vorschlag. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
 
 AP-5-S3/S4/S5 bleiben normale Technical-Lead-Gates innerhalb Gate 0, nicht automatisch gestartet und nicht Product-Owner-gated. S3–S5 nicht aus dieser Liste automatisch ableiten.

@@ -12,10 +12,7 @@ Dieser Handoff übergibt den Domain-Contract-Slice. Er startet keinen Folgeslice
 
 ## 1. Was dieser Agent getan hat
 
-Review-Fix gegen Technical-Lead Re-Review #2 `5455755549` (reviewed head `ce5b7e70`, zusätzlich Stamp `fbb1ec8d` invalidiert; die sechs Findings aus `5455673104` bleiben geschlossen):
-
-1. Snapshot-`id`/`clientRef` (Traveller, Citizenship, Document) müssen zum gesamten Registry-Identitätsuniversum disjunkt sein, nicht nur zur jeweiligen Quellzeile. Cross-Entity- und id↔clientRef-Kollisionen sind fail-closed. Snapshot-globale Eindeutigkeit bleibt.
-2. Canonical Continuity ist self-expiring: solange #145 offen → TL-Re-Review/Ready/Merge only; nach Merge → integrierter Domain-Contract, kein automatisches AP-7-S2, kein Follow-up-Continuity-PR nur um den Merge zu sagen.
+Review-Fix gegen Technical-Lead Re-Review #3 `5455836506` (reviewed head `e9f96e79`; Continuity-only). Domain-Contract bleibt unverändert. Residual unconditional `#145 DRAFT/AKTIV` und unguarded `## 10. Nächster Schritt` in `docs/ACTIVE_WORK_STATUS.md` sind jetzt dual-state. Scan der übrigen Slice-Dateien: keine weitere unguarded `DRAFT/AKTIV` / `next step = review`-Zeile.
 
 Kein Schema. Keine Supabase-Mutation. Kein RLS/GRANT/REVOKE/SECURITY DEFINER. Kein Auth/AAL. Keine UI/CRUD. Kein Guest→Registry-Import. Kein Provider/TW-8/TW-9/AP-5/AP-6. Kein Ready. Kein Merge.
 
@@ -46,11 +43,11 @@ Vor der finalen Übergabe erneut `origin/main` holen und hier stempeln.
 | Branch | `feat/ap7-s1-dual-authority-domain-contract-2026-08-28` |
 | Draft-PR | #145 OPEN Draft |
 | Merge-Base | `bb38aef5` |
-| Prior reviewed Head | `ce5b7e70` – invalidiert durch `5455755549` |
+| Prior reviewed Head | `e9f96e79` – invalidiert durch `5455836506` |
 | Prior stamps | `ed8f79b4`, `fbb1ec8d` – invalidiert |
-| Exact / Review-Head | Commit dieses Review-Fix-Stamps; live an PR #145 prüfen |
-| Ahead / behind `origin/main` | **11 / 0** |
-| Local quality before stamp | 16/16 S1 tests; 30/30 related traveller tests; 2457/2457 `npm test`; `tsc --noEmit`; eslint max-warnings=0; dead/exports/deps/api-schutz/schema-bezug; `next build` |
+| Exact / Review-Head | Commit dieses Continuity-Stamps; live an PR #145 prüfen |
+| Ahead / behind `origin/main` | nach finalem Stamp |
+| Local quality before remaining gates | Continuity-only; Domain unverändert |
 | Branch Protection | unverändert; nicht in diesem Slice geändert |
 | Supabase | nicht live abgefragt, nicht mutiert |
 

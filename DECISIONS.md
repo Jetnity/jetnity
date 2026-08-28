@@ -4767,6 +4767,8 @@ Kein Schema. Kein Ready/Merge. Neuer Head invalidiert `c88ac2e3` und `ed8f79b4`.
 
 Kein Schema. Kein Ready/Merge. Neuer Head invalidiert `ce5b7e70` und `fbb1ec8d`.
 
+**Nachtrag, 28. August 2026 – Review-Fix `5455836506`.** Continuity-only gegen Head `e9f96e79`: residual unconditional `#145 DRAFT/AKTIV` und unguarded `## 10. Nächster Schritt` in `docs/ACTIVE_WORK_STATUS.md` sind jetzt dual-state. Domain-Contract unverändert. Kein erfundener Merge-SHA. Neuer Head invalidiert `e9f96e79`.
+
 ---
 
 ## Offene Widersprüche

@@ -2,13 +2,13 @@
 
 Stand: 28. August 2026  
 Autor-Agent: **`Cursor-Agent: Account plattform audit vorbereitung 12`**  
-Typ: adversarial Self-Review nach CHANGES REQUIRED `5455755549`, **kein** unabhängiger Technical-Lead-PASS
+Typ: adversarial Self-Review nach CHANGES REQUIRED `5455836506`, **kein** unabhängiger Technical-Lead-PASS
 
 ## 1. Auftrag gegen Diff
 
-Auftrag: Review-Fix #2 gegen Exact Head `ce5b7e70379ded725a5f6492207647de035ae390` (Kommentar `5455755549`). Dieselbe Session / Generation 12 / Draft-PR #145. Stamp `fbb1ec8d` ist ebenfalls invalidiert.
+Auftrag: Review-Fix #3 (Continuity-only) gegen Exact Head `e9f96e792326e2ccf27bfd8041e6ae2ebcff1a45` (Kommentar `5455836506`). Dieselbe Session / Generation 12 / Draft-PR #145. Domain-Contract nicht angefasst.
 
-Geprüft gegen den tatsächlichen Dateisatz: `lib/traveller/account-registry.ts`, Tests, Status, Handoff, ADR-0187-Nachtrag, `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, `ROADMAP.md`.
+Geprüft gegen den tatsächlichen Dateisatz: `docs/ACTIVE_WORK_STATUS.md` (PR-Tabelle und §10), Scan der übrigen Slice-Continuity (`JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `ROADMAP.md`, Status/Handoff).
 
 Keine Änderung an `app/`, `components/`, `supabase/migrations`, Grants, RLS, Auth-Config, Branch Protection, UI/CRUD, Provider-Runtime.
 
@@ -23,7 +23,7 @@ Keine Änderung an `app/`, `components/`, `supabase/migrations`, Grants, RLS, Au
 | Wird fehlende Authority still zu `account_registry`? | Nein. Pflichtfeld. |
 | Sind Refs nur „nicht traveller:N“? | Nein. UUID-backed. |
 | Gibt es `new Date()`-Materialisierung? | Nein. `jetzt` ist Pflicht. |
-| Wird Canonical Continuity nach Merge von #145 falsch? | Nein. Dual-State/self-expiring: offen → TL-Re-Review; nach Merge → integrierter Contract, kein automatisches S2, kein Follow-up-Continuity-PR. Kein erfundener Merge-SHA. |
+| Wird Canonical Continuity nach Merge von #145 falsch? | Nein. Dual-State auch in der PR-Tabelle und in `## 10. Nächster Schritt`. Keine residuale unguarded `DRAFT/AKTIV`- oder `next step = review`-Zeile. Kein erfundener Merge-SHA. |
 | Default-Pass / Issuer=Citizenship / Schema/UI? | Nein. |
 | Ready/Merge/S2? | Nein. STOPP für unabhängigen TL-Re-Review. |
 
@@ -32,11 +32,11 @@ Keine Änderung an `app/`, `components/`, `supabase/migrations`, Grants, RLS, Au
 - Persistenz könnte die Materialisierung später wieder durch kopierte oder kreuzkollidierende Registry-IDs ersetzen, wenn S2 den Vertrag nicht liest.
 - Guest-Auto-Transfer bleibt trip-scoped und ist kein Registry-Import.
 - `main` `protected=false`.
-- Dieser Review-Fix erzeugt einen neuen Head und invalidiert `ce5b7e70` / `fbb1ec8d`.
+- Dieser Review-Fix erzeugt einen neuen Head und invalidiert `e9f96e79`.
 - Dieses Self-Review erzeugt keinen PASS.
 
 ## 4. Urteil des Autors
 
-Die zwei Findings aus `5455755549` sind im Domain-Contract, den Tests und der kanonischen Continuity nachgezogen. Non-Scope gehalten. Lokale Tests und Hygiene-Gates vor diesem Stamp waren grün (16/16 S1, 30/30 related traveller, 2457/2457 `npm test`, typecheck, eslint, dead/exports/deps/api-schutz/schema-bezug, `next build`). Exact-Head CI/Vercel bleibt live vom unabhängigen Reviewer zu prüfen.
+Das Continuity-Finding aus `5455836506` ist geschlossen. Domain-Contract unverändert. Non-Scope gehalten. Exact-Head CI/Vercel bleibt live vom unabhängigen Reviewer zu prüfen.
 
 **Unabhängiger Technical-Lead-Re-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**
