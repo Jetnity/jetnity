@@ -54,6 +54,6 @@ describe('AP-5-S1 Security-UI Semantik', () => {
     assert.equal(security.includes('getAuthenticatorAssuranceLevel'), false)
     assert.equal(security.includes('reauthenticate'), false)
     assert.equal(security.includes('nonce'), false)
-    assert.equal(seite.includes('Passwort'), false)
+    assert.equal(seite.includes('SecurityPasswort'), true)
   })
 })

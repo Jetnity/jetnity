@@ -3,13 +3,14 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
 import SecurityMFA from '@/components/account/SecurityMFA'
+import SecurityPasswort from '@/components/account/SecurityPasswort'
 import { passkeysServerAktiviertLesen } from '@/lib/auth/account-security-passkeys-lesen'
 
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Sicherheit',
-  description: 'Zwei-Faktor-Anmeldung für deinen Jetnity-Account.',
+  description: 'Passwort und Zwei-Faktor-Anmeldung für deinen Jetnity-Account.',
   robots: { index: false, follow: false },
 }
 
@@ -25,11 +26,12 @@ export default function SecurityPage() {
         </h1>
         <p className="mt-3 max-w-xl text-sm leading-6 text-ink-700">
           {passkeysServerAktiviert
-            ? 'Richte eine Authenticator-App ein, um dein Konto besser zu schützen.'
-            : 'Richte eine Authenticator-App ein, um dein Konto besser zu schützen. Passkeys sind in der Anmeldung derzeit nicht unterstützt.'}
+            ? 'Ändere dein Passwort oder richte eine Authenticator-App ein, um dein Konto besser zu schützen.'
+            : 'Ändere dein Passwort oder richte eine Authenticator-App ein, um dein Konto besser zu schützen. Passkeys sind in der Anmeldung derzeit nicht unterstützt.'}
         </p>
 
-        <div className="mt-10">
+        <div className="mt-10 space-y-6">
+          <SecurityPasswort />
           <Suspense
             fallback={
               <div className="rounded-[26px] border border-black/5 bg-white p-6">
