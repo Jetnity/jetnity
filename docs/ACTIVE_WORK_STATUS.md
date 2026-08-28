@@ -1,26 +1,43 @@
 # Jetnity – Active Work Status
 
 Stand: 28. August 2026  
-Status: **AP-7-S1 Dual-Authority Domain Contract / Draft-PR #145 / SELF-EXPIRING. Solange #145 offen: kein Schema, kein Ready, kein Merge, kein AP-7-S2. Nach Merge: integrierter Domain-Contract; nächster Schritt = Live-Post-Merge-Verifikation, dann separat PO-gegateter AP-7-S2-Vorschlag. Live-`main` immer live prüfen.**
+Status: **Node 22 Runtime Consistency / SELF-EXPIRING. Solange Draft-PR #147 offen: STOP für unabhängigen Technical-Lead Exact-Head-Re-Review nach `5456852840`; kein Ready, kein Merge durch den Autor. Sobald #147 gemergt: integrierter Node-22-Vertrag; nächster Schritt = Live-Post-Merge-Verifikation (GitHub CI + Vercel Production auf dem Merge-Head, inkl. Override-Warnung), dann live Binding-Build-Order-Auswahl. Kein AP-7-S2. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
-> Dual-Authority ist product-owner-freigegeben. PR #144 Gate 0 ist MERGED (`bb38aef5`). Continuity-Transport ist Draft-PR #145 und self-expiring: nach Merge kein Follow-up-Continuity-PR. Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
+> Dual-state / self-expiring für PR #147. AP-7-S1 / PR #145 liegt auf der Slice-Baseline `main @ 4ec83f36` und ist hier nicht erneut zu öffnen. Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates. Kein erfundener Merge-SHA.
 
-## Aktueller Arbeitsblock – AP-7-S1 Dual-Authority Domain Contract
+## Aktueller Arbeitsblock – Node 22 Runtime Consistency
+
+1. **Arbeitsblock / Ziel:** Ein reproduzierbarer Node-Runtime-Vertrag: **Node 22.x** in Repository-Metadaten, `@types/node`, GitHub CI und Vercel. Keine Application-Features.
+2. **Authoring-Branch / PR:** `ops/node22-runtime-consistency-2026-08-28`; PR #147. Exact Head ist der Commit dieses Stamps; live am PR prüfen, solange #147 offen ist.
+3. **Status:** **REVIEW-FIX FÜR 5456852840 / SELF-EXPIRING / DUAL-STATE.** Prior Head `2cae6e03` invalidiert. Solange #147 offen: DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW. Sobald #147 gemergt: integrierter Node-22-Vertrag; Transportzeilen historisch. Kein Ready, kein Merge durch den Autor.
+4. **Bereits umgesetzt:** `engines.node` = `22.x`; Lockfile-Root per npm regeneriert; `@types/node` von `24.0.7` auf `22.20.1` (npm zog `undici-types@6.21.0`); CI unverändert `22.x`; Vercel-Settings nicht mutiert; ADR-0188. Lokale Gates auf `3fb2f3c8`: `npm ci`, typecheck, lint, 2457/2457 `npm test`, `npm run build` PASS.
+5. **Cursor-Agent:** `Cursor-Agent: Jetnity runtime consistency 1`. Preferred visible title: `Jetnity runtime consistency 1`. Observed run title: `Jetnity node 22 consistency` (Cloud-Run `https://cursor.com/agents/bc-91130f08-c80a-44a3-92dd-7796b779eab8`). Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet.
+6. **Live-`main` / Baseline bei diesem Stamp:** `4ec83f36426c636443d43692d6875e92e9e3b54a` – immer live neu prüfen.
+7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation, keine Vercel-Projektmutation.
+8. **Kosten / Provider / Secrets:** keine.
+9. **Bekannte Risiken / Review-Funde:** CHANGES REQUIRED `5456852840` auf `2cae6e03` adressiert (canonical current-state war nicht self-expiring). Ob Vercel die `Node.js Version Override`-Warnung verliert, ist nur live beweisbar. `22.x` ist ein Linien-Pin, kein Patch-Pin. `main` `protected=false`. Agent-Self-Review ist kein PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** Dieser Ops-Slice braucht kein Product-Owner-Sondergate. Production-Migration / Identity / RLS / Provider-live / Payments / Public Launch bleiben extra gegated. AP-7-S2 bleibt separat PO-gegatet und startet nicht aus diesem Slice.
+11. **Exakter nächster Schritt (self-expiring / dual-state):** Solange #147 offen: unabhängiger Technical-Lead Exact-Head-Re-Review nach `5456852840`. Kein Ready. Kein Merge. Kein AP-7-S2. Sobald #147 gemergt: integrierter Node-22-Vertrag; Live-Post-Merge-Verifikation von GitHub CI + Vercel Production auf dem tatsächlichen Merge-Head inkl. Override-Warnung; danach live Binding-Build-Order-Auswahl. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Kein erfundener Merge-SHA.
+12. **Zuerst lesen:** `docs/NODE22_RUNTIME_CONSISTENCY_TASK_2026-08-28.md`, Status, Handoff, Self-Review, ADR-0188, `docs/JETNITY_CURSOR_VISIBLE_AGENT_NAME_GATE.md`.
+
+## Historischer Arbeitsblock – AP-7-S1 Dual-Authority Domain Contract
+
+Current classification / Nachtrag, 28. August 2026: **HISTORICAL / INTEGRIERT auf der Slice-Baseline.** PR #145 ist auf `main @ 4ec83f36` gemergt. Nicht erneut als Draft öffnen. AP-7-S2 startet nicht automatisch.
 
 1. **Arbeitsblock / Ziel:** Shared Domain-Contract für Dual-Authority: account-owned Registry-Fakten + fail-closed unabhängiger Trip-Snapshot. Keine Persistenz.
-2. **Authoring-Branch / PR:** `feat/ap7-s1-dual-authority-domain-contract-2026-08-28`; Draft-PR #145. Exact Head ist der Commit dieses Stamps; live am PR prüfen. Ahead/behind `origin/main`: **13 / 0**.
-3. **Status:** **REVIEW-FIX FÜR 5455836506 / DRAFT / SELF-EXPIRING / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW.** Prior Head `e9f96e79` invalidiert. Kein Ready, kein Merge durch den Autor. Kein AP-7-S2.
-4. **Bereits umgesetzt:** Nested Registry-Typ; explizite trip-owned Materialisierung; Pflicht-`authority`; UUID-Refs; Snapshot-`jetzt`; Snapshot-Identität disjunkt zum gesamten Registry-Universum; 16 adversarial Tests inkl. Compile-Zeit-Grenze und Cross-Entity-/id↔clientRef-Kollisionen. Canonical Continuity self-expiring. ADR-0187-Nachtrag. Lokale Gates vor Stamp: 2457/2457 `npm test`, typecheck, eslint, hygiene, `next build`.
-5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 12`. Sichtbarer Cursor-Titel dieser Session: `Dual-authority domain contract` (Cloud-Run `https://cursor.com/agents/bc-6b3a7a55-26fe-41a9-8cf2-b599afe1eda0`). Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet.
-6. **Live-`main` bei diesem Stamp:** `bb38aef589f0cdcea1aaf8ddd87d043d0a9f0f05` – immer live neu prüfen.
+2. **Authoring-Branch / PR:** `feat/ap7-s1-dual-authority-domain-contract-2026-08-28`; PR #145 MERGED auf Slice-Baseline `4ec83f36`.
+3. **Status:** **INTEGRIERT auf dieser Baseline.** Ältere „REVIEW-FIX / DRAFT / SELF-EXPIRING“-Zeilen sind Pre-Merge-Evidence.
+4. **Bereits umgesetzt:** Nested Registry-Typ; explizite trip-owned Materialisierung; Pflicht-`authority`; UUID-Refs; Snapshot-`jetzt`; Snapshot-Identität disjunkt zum gesamten Registry-Universum; 16 adversarial Tests inkl. Compile-Zeit-Grenze und Cross-Entity-/id↔clientRef-Kollisionen. Canonical Continuity self-expiring. ADR-0187.
+5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 12`. Generation 12 für S1 abgeschlossen.
+6. **Live-`main` bei Integration:** `4ec83f36426c636443d43692d6875e92e9e3b54a`. Immer live neu prüfen.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation.
 8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** CHANGES REQUIRED `5455673104` und Re-Review #2 `5455755549` adressiert. Persistenz darf Materialisierung nicht durch kopierte oder kreuzkollidierende Registry-IDs ersetzen. Guest-Auto-Transfer ≠ Registry-Import; `main` `protected=false`; Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** Dual-Authority-Architektur ist freigegeben. Production-Migration / Identity / RLS / sensible Dokumentdaten bleiben extra gegated. AP-5-S3/S4/S5 bleiben normale TL-Gates, nicht automatisch gestartet. S5-B Runtime, TW-8, Provider-live, Payments, Public Launch unverändert gegated.
-11. **Exakter nächster Schritt (self-expiring / dual-state):** Solange #145 offen: unabhängiger Technical-Lead Exact-Head-Re-Review nach `5455836506`. Kein Ready. Kein Merge. Kein AP-7-S2. Sobald #145 gemergt: integrierter Domain-Contract; Live-Post-Merge-Verifikation, danach nur separat PO-gegateter AP-7-S2 Persistence/Identity/RLS-Vorschlag. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
-12. **Zuerst lesen:** `docs/AP7_S1_DUAL_AUTHORITY_DOMAIN_CONTRACT_TASK_2026-08-28.md`, Status, Handoff, Self-Review, ADR-0187, Product-Owner-Approval, `docs/JETNITY_CURSOR_VISIBLE_AGENT_NAME_GATE.md`.
+9. **Bekannte Risiken / Review-Funde:** Persistenz darf Materialisierung nicht durch kopierte oder kreuzkollidierende Registry-IDs ersetzen. Guest-Auto-Transfer ≠ Registry-Import; `main` `protected=false`; Agent-Self-Review ist kein PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** Dual-Authority-Architektur ist freigegeben. Production-Migration / Identity / RLS / sensible Dokumentdaten bleiben extra gegated. AP-7-S2 bleibt separat PO-gegatet.
+11. **Exakter nächster Schritt:** nicht erneut öffnen. Nächster Account-Slice wäre nur ein separat versionierter, PO-gegateter AP-7-S2-Vorschlag – nicht aus PR #147.
+12. **Zuerst lesen:** `docs/AP7_S1_DUAL_AUTHORITY_DOMAIN_CONTRACT_TASK_2026-08-28.md`, Status, Handoff, Self-Review, ADR-0187, Product-Owner-Approval.
 
 ## Historischer Arbeitsblock – AP-7 Gate 0 Account-Traveller-Registry Architecture
 
@@ -354,10 +371,11 @@ Historisch abgeschlossen:
 - **Issue #119 / P2-TA-04 Gate 0** – `Account plattform audit vorbereitung 6`. PR #120 integriert. Generation 6 nicht wiederverwenden.
 - **Issue #116 / P2-TA-03** – `Account plattform audit vorbereitung 5`. PR #117 integriert. Generation 5 nicht wiederverwenden.
 
-Generation 12 ist der aktuelle AP-7-S1-Slice (`Account plattform audit vorbereitung 12` / Draft-PR #145). Generation 11 (Gate 0 / PR #144) ist abgeschlossen und nicht wiederzuverwenden. S3–S5 starten nicht aus S2. AP-7-S2 startet nicht aus S1.
+`Cursor-Agent: Jetnity runtime consistency 1` ist der Ops-Slice für PR #147 (self-expiring: offen → Re-Review; nach Merge integriert). Generation 12 (`Account plattform audit vorbereitung 12` / PR #145) ist auf dieser Baseline abgeschlossen und nicht wiederzuverwenden. Generation 11 (Gate 0 / PR #144) bleibt abgeschlossen. S3–S5 starten nicht aus S2. AP-7-S2 startet nicht aus S1 und nicht aus diesem Ops-Slice.
 
 STOPP weiterhin für automatische Folgeslices:
 
+- `Jetnity runtime consistency` – Generation 1 nur für PR #147; kein Produkt-Folgeslice
 - `Account plattform audit vorbereitung` – Generation 12 nur für PR #145; kein S2 daraus
 - `Jetnity provider readiness audit`
 - `Admin platform audit`
@@ -374,7 +392,8 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#145** AP-7-S1 Dual-Authority Domain Contract | **SELF-EXPIRING.** Solange offen: DRAFT, STOP für unabhängigen TL-Re-Review; kein Ready, kein Merge, kein S2. Sobald gemergt: integrierter Domain-Contract; Live-Post-Merge-Verifikation, dann separat PO-gegateter AP-7-S2-Vorschlag. Kein Follow-up-Continuity-PR. |
+| **#147** Node 22 Runtime Consistency | **SELF-EXPIRING.** Solange offen: DRAFT, STOP für unabhängigen TL-Re-Review nach `5456852840`; kein Ready, kein Merge, keine Vercel-Setting-Mutation. Sobald gemergt: integrierter Node-22-Vertrag; Live-Post-Merge-Verifikation (CI + Vercel Production auf dem Merge-Head, inkl. Override-Warnung), dann live Binding-Build-Order-Auswahl. Kein Follow-up-Continuity-PR. Kein AP-7-S2. |
+| **#145** AP-7-S1 Dual-Authority Domain Contract | **GEMERGT / INTEGRIERT** auf Slice-Baseline `4ec83f36`. Ältere SELF-EXPIRING/DRAFT-Zeilen sind Pre-Merge-Evidence. Kein automatisches AP-7-S2. |
 | **#144** AP-7 Gate 0 Account-Traveller-Registry | **GEMERGT / INTEGRIERT.** Merge `bb38aef5`. Architecture-Evidence; Dual-Authority danach PO-freigegeben. |
 | **#143** PR #142 Post-Merge Continuity | **GEMERGT / INTEGRIERT.** Merge `1947285c`. Ältere SELF-EXPIRING/DRAFT-Zeilen sind Pre-Merge-Evidence. |
 | **#142** Technical Lead / Cursor Operating Standard | **GEMERGT / INTEGRIERT.** Merge `9d4778b8`. Reviewed Head `507bcb17`. TL PASS `5454570805`. Ältere „DRAFT“-Zeilen sind Pre-Merge-Evidence. |
@@ -430,7 +449,9 @@ Production C1 `20260828015304_traveller_write_contract_integrity` ist unter der 
 
 ## 10. Nächster Schritt
 
-**Self-expiring / dual-state.** Solange Draft-PR #145 offen: unabhängiger Technical-Lead Exact-Head-Re-Review. Dual-Authority ist freigegeben. PR #144 ist integriert (`bb38aef5`). Kein Ready. Kein Merge. Kein AP-7-S2 / keine Persistenz durch den Autor-Agenten. Sobald #145 gemergt: AP-7-S1 ist integrierter Domain-Contract; exakt nächster Schritt = Live-Post-Merge-Verifikation, danach nur ein separat Product-Owner-gegateter AP-7-S2 Persistence/Identity/RLS-Vorschlag. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
+**Self-expiring / dual-state.** Solange Draft-PR #147 offen: unabhängiger Technical-Lead Exact-Head-Re-Review nach `5456852840`. Autor-Agent setzt kein Ready, kein Merge, keine Vercel-Setting-Mutation und startet kein AP-7-S2. Sobald #147 gemergt: Node-22-Vertrag ist integriert; Draft-/Review-Klauseln historisch; exakt nächster Schritt = Live-Post-Merge-Verifikation von GitHub CI und Vercel Production auf dem tatsächlichen Merge-Head, einschließlich der Prüfung, dass die `Node.js Version Override`-Warnung weg ist. Nach erfolgreicher Verifikation: Rückkehr zur live Binding-Build-Order-Auswahl. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Kein erfundener Merge-SHA.
+
+AP-7-S1 ist auf der Slice-Baseline integriert (PR #145 / `4ec83f36`). Dual-Authority bleibt freigegeben. AP-7-S2 / Persistenz startet nicht aus #147 und braucht einen separat versionierten, Product-Owner-gegaten Vorschlag.
 
 AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 ist CLOSED / completed. AP-5-S1 bleibt integriert (PR #133); Issue #132 ist CLOSED / completed. AP-5 Gate 0 bleibt integriert (PR #129); Issue #128 ist CLOSED / completed. Project Sanitation bleibt integriert (PR #135). PR #141 Provider S5-B Gate 0 bleibt integriert als docs/readiness only. AP-5-S3/S4/S5 sind normale Technical-Lead-Gates, nicht automatisch gestartet und nicht PO-gated. Kein C2, kein Auth-Config-Push, kein Cleanup aus diesem File.
 

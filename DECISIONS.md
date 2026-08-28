@@ -58,7 +58,7 @@ Eine hier dokumentierte, freigegebene Entscheidung hat Vorrang vor bestehendem C
 ## ADR-0004 – Node-Engine auf `>=20.9` und Lockfile-Synchronisierung
 
 **Datum:** 15. August 2026
-**Status:** umgesetzt
+**Status:** historisch / **superseded durch ADR-0188** (28. August 2026)
 
 **Entscheidung:** `engines.node` lautet `>=20.9`. `package-lock.json` wurde mit `package.json` synchronisiert. `simple-swizzle` ist über `overrides` auf `0.2.2` gepinnt.
 
@@ -69,6 +69,8 @@ Eine hier dokumentierte, freigegebene Entscheidung hat Vorrang vor bestehendem C
 **Begründung:** Die Laufzeitumgebung soll die Realität abbilden statt eine veraltete Einschränkung. Ein `override` macht die Absicht explizit und überlebt Neuinstallationen.
 
 **Konsequenzen:** `npm ci` ist reproduzierbar. Ein reproduzierbares `npm ci` ist Voraussetzung für CI.
+
+**Nachtrag, 28. August 2026:** Der breite Range `>=20.9` ist nicht mehr Current Truth. Vercel interpretierte ihn als Freigabe für Node 24 und zeigte `Node.js Version Override`, obwohl Projekt und CI bereits `22.x` nutzen. Der verbindliche Runtime-Vertrag ist jetzt ADR-0188. `simple-swizzle` via `overrides` bleibt unverändert.
 
 ---
 
@@ -4768,6 +4770,42 @@ Kein Schema. Kein Ready/Merge. Neuer Head invalidiert `c88ac2e3` und `ed8f79b4`.
 Kein Schema. Kein Ready/Merge. Neuer Head invalidiert `ce5b7e70` und `fbb1ec8d`.
 
 **Nachtrag, 28. August 2026 – Review-Fix `5455836506`.** Continuity-only gegen Head `e9f96e79`: residual unconditional `#145 DRAFT/AKTIV` und unguarded `## 10. Nächster Schritt` in `docs/ACTIVE_WORK_STATUS.md` sind jetzt dual-state. Domain-Contract unverändert. Kein erfundener Merge-SHA. Neuer Head invalidiert `e9f96e79`.
+
+---
+
+## ADR-0188 – Node-Runtime-Vertrag auf `22.x`
+
+**Datum:** 28. August 2026  
+**Status:** Implementierungs-ADR auf PR #147. **Self-expiring / dual-state. Kein Ready/Merge durch den Autor. Keine Vercel-Projektmutation. Keine Application-Runtime-Änderung.**
+
+**Entscheidung:**
+
+1. Der verbindliche Node-Runtime-Vertrag von Jetnity ist **Node 22.x**.
+2. `package.json` `engines.node` lautet `22.x`, nicht mehr `>=20.9`.
+3. `package-lock.json` Root-Metadaten folgen dem Package Manager, nicht einer Hand-Edit der Dependency-Records.
+4. `@types/node` folgt der gepflegten Node-22-Typenlinie. Gewählt ist die exakte aktuelle 22.x-Version `22.20.1` inkl. der von npm mitgezogenen `undici-types@6.21.0`. Node-24-Typen (`24.0.7`) sind nicht mehr Current Truth.
+5. GitHub CI bleibt `actions/setup-node@v4` mit `node-version: 22.x` in beiden Jobs. Vercel-Projektsettings bleiben `22.x` und werden in diesem Slice nicht verändert.
+6. Dieser ADR ändert keine Application-Features, kein Supabase/Auth/RLS/Schema, keine Branch Protection und keinen Provider-/Trip-Workspace-Runtime-Slice.
+
+**Kontext:** CI und das Vercel-Projekt `jetnity-app` nutzten bereits Node `22.x`. Der breite Engine-Range `>=20.9` (ADR-0004) erlaubte Vercel, Node 24 zu wählen und `Node.js Version Override` anzuzeigen. `@types/node@24.0.7` beschrieb dieselbe neuere Linie statt den tatsächlich gewollten Runtime.
+
+**Alternativen:**
+
+1. *Range bei `>=20.9` lassen und nur Vercel härter setzen.* Unzureichend: das Repository würde weiter eine breitere Runtime behaupten als CI/Vercel.
+2. *`>=22 <23` statt `22.x`.* Semantisch ähnlich, aber `22.x` ist die bereits verwendete CI-/Vercel-Schreibweise.
+3. *`@types/node` auf 24 lassen.* Würde Typen einer nicht vertraglichen Runtime weiterführen.
+4. *Vercel-Projektsettings ändern.* Nicht nötig und außerhalb des Slices.
+
+**Begründung:** Ein reproduzierbarer Runtime-Vertrag muss in Repository-Metadaten, Typen, CI und Hosting dieselbe Linie ausdrücken. Der kleinste kohärente Fix ist das Pinning auf die bereits gewählte 22.x-Linie.
+
+**Konsequenzen:**
+
+- ADR-0004 ist für den Engine-Range superseded. `simple-swizzle` `overrides` bleibt.
+- Evidence: `docs/NODE22_RUNTIME_CONSISTENCY_STATUS_2026-08-28.md` und Self-Review desselben Datums.
+- Canonical Continuity (`JETNITY_START_HERE.md`, Handoff, Active Work, Roadmap, Status) ist self-expiring: solange #147 offen → TL-Re-Review / kein Ready/Merge durch den Autor; nach Merge → integrierter Node-22-Vertrag, Live-Post-Merge-Verifikation von GitHub CI + Vercel Production auf dem tatsächlichen Merge-Head inkl. Override-Warnung, danach live Binding-Build-Order-Auswahl. Kein erfundener Merge-SHA. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. AP-7-S2 bleibt separat Product-Owner-gegatet.
+- Autor-Agent stoppt, solange #147 offen ist, für unabhängigen Technical-Lead Exact-Head-Review. Nach Merge ist diese Stopp-Klausel historisch. Self-Review ist kein PASS.
+
+**Nachtrag, 28. August 2026 – Review-Fix `5456852840`.** Continuity-only gegen Head `2cae6e03`: residual unconditional `#147 DRAFT/AKTIV` und unguarded `nächster Schritt = Review von #147` in den kanonischen Current-State-Dateien sind jetzt dual-state. Runtime-/Tooling-Dateien unverändert. Kein erfundener Merge-SHA. Neuer Head invalidiert `2cae6e03`.
 
 ---
 
