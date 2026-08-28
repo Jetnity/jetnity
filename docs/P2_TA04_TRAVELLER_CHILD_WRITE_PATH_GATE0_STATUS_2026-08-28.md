@@ -194,7 +194,18 @@ Jeder Folgeslice, der eines der folgenden tut, braucht **ausdrückliche Product-
 
 Ein reiner Docs- oder Test-Lock ohne Schema bleibt normales Technical-Lead-Gate.
 
-## 10. Nächster Schritt
+## 10. Lokale Tests dieses Author-Laufs
+
+Ausgeführt auf diesem Branch, nicht als Exact-Head-CI behauptet:
+
+- `node --import tsx --test lib/readiness/p2-ta04-write-path-inventory.test.ts lib/readiness/reisende.test.ts lib/trips/foundation-e-select.test.ts` → **9/9 pass**
+- `npm test` → **2381/2381 pass**
+
+Kein Production-Build in diesem Author-Lauf. Exact-Head GitHub Actions und Vercel werden nach dem finalen Push live gestempelt.
+
+Die GitHub-PR-Beschreibung ist Technical-Lead-managed und konnte von diesem Agenten nicht überschrieben werden. Kanonischer Zieltext: `docs/P2_TA04_PR120_DESCRIPTION_2026-08-28.md`.
+
+## 11. Nächster Schritt
 
 Unabhängiger Technical-Lead-Review von Draft-PR #120.
 

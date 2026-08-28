@@ -48,6 +48,7 @@ Kein neuer Runtime-Vertrag. ADR-0180 entscheidet nur die Gate-0-Closure-Richtung
 - Historischer PR #39 bleibt Historical Evidence
 - D0-P1-03 Legal-404 bleibt ausserhalb
 - Exact-Head Actions/Vercel müssen auf dem **finalen** Author-Head live gelesen werden
+- GitHub-PR-Body ist TL-managed; Zieltext liegt in `docs/P2_TA04_PR120_DESCRIPTION_2026-08-28.md`
 
 ## Nächster Schritt
 
