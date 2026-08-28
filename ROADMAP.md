@@ -12,7 +12,6 @@ Die ausführliche vorherige Roadmap-Fassung bleibt byte-identisch als historisch
 Für Entscheidungen zusätzlich lesen:
 
 - `JETNITY_START_HERE.md`
-- `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
 - `JETNITY_PRODUCT_MANDATE.md`
 - `JETNITY_VISION.md`
 - `JETNITY_HANDOFF.md`
@@ -298,11 +297,7 @@ Nächster Schritt:
 
 > **AUTONOM MERGEN IST ERLAUBT. BLIND MERGEN IST VERBOTEN.**
 
-> **Nur ChatGPT / Technical Lead darf Ready setzen oder mergen. Cursor-Agenten tun das niemals.**
-
-Current Truth: `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`.
-
-Normale scope-treue PRs darf der Technical Lead nach unabhängigem Exact-Head-Review integrieren, und nur wenn er absolut überzeugt ist, dass dies die beste verantwortbare Entscheidung ist. Product-Owner-Sondergates bleiben insbesondere für Production-Migrationen/destruktive Daten, große RLS/Identity/Auth/MFA/AAL-Änderungen, sensitive Passport-/MRZ-/Biometrie-Persistenz, reale Provider/Secrets/paid calls, Payments, Kosten > USD 100/Monat, fundamentale Produkt-/Build-Order-Änderungen und Public-/Provider-/Store-Live-Aktivierungen.
+Normale scope-treue PRs dürfen nach unabhängigem Exact-Head-Review integriert werden. Product-Owner-Sondergates bleiben insbesondere für Production-Migrationen/destruktive Daten, große RLS/Identity/Auth/MFA/AAL-Änderungen, sensitive Passport-/MRZ-/Biometrie-Persistenz, reale Provider/Secrets/paid calls, Payments, Kosten > USD 100/Monat, fundamentale Produkt-/Build-Order-Änderungen und Public-/Provider-/Store-Live-Aktivierungen.
 
 ## 12. Nächster Chat / Agent
 

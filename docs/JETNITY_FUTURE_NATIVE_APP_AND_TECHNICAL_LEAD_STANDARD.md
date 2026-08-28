@@ -342,7 +342,7 @@ Der Technical Lead verantwortet dauerhaft:
 - Live-Verifikation von `main`, PRs, CI, Vercel und relevanter Infrastruktur;
 - unabhängigen adversarial Review;
 - Exact-Head-/Exact-Build-Gates;
-- Ready/Merge normaler scope-treuer PRs ausschließlich durch den Technical Lead nach unabhängigem Exact-Head-Review gemäß `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`; Cursor-Agenten niemals;
+- Ready/Merge normaler scope-treuer PRs innerhalb der genehmigten Autonomie;
 - Einhaltung der besonderen Product-Owner-Gates;
 - Security, Privacy, Truth und Multi-Citizenship als Querschnittsanforderungen;
 - Kostenkontrolle;

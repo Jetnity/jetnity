@@ -5,29 +5,18 @@ alwaysApply: true
 
 # Jetnity Merge Approval – verbindlich
 
-Stand: 28. August 2026
+Stand: 26. August 2026
 
 Die frühere Regel „Product Owner muss jeden normalen Merge explizit freigeben“ ist **superseded**.
 
-Aktuell gilt `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`:
+Aktuell gilt:
 
-- **Nur ChatGPT / Technical Lead** darf Ready setzen oder mergen.
-- **Cursor-Agenten dürfen niemals selbst Ready setzen oder mergen.**
-- ChatGPT / Technical Lead darf normale scope-treue PRs autonom mergen, aber nur nach unabhängigem Exact-Head-Review und nur, wenn er absolut überzeugt ist, dass dies die beste verantwortbare Entscheidung ist.
+- **ChatGPT / Technical Lead darf normale scope-treue PRs selbst Ready setzen und mergen, aber nur nach strengem unabhängigen Review.**
 - Blind mergen ist verboten. Grüne Tests, CI, Vercel READY oder Agent-Self-Review sind keine Merge-Begründung.
 - Feature-/Audit-Autoren dürfen ihr eigenes finales Review nicht als unabhängigen Technical-Lead-PASS ersetzen.
 - Während Implementierung und Review bleibt der PR standardmäßig Draft.
 - Wenn etwas nicht sauber ist: erst reparieren, neu gaten, neu reviewen, dann entscheiden.
 - Eine Merge-Entscheidung ist keine Freigabe für Production-Migration, Provider-Aktivierung, Secrets, Verträge oder neue Kosten.
-
-Verbindlicher Workflow:
-
-versionierter Task → Draft-PR → `@cursor` → unabhängiger Technical-Lead-Review → head-gebundene CHANGES REQUIRED → neuer Head + Re-Gating → PASS → Technical-Lead-only Ready/Merge → Post-Merge-Verifikation.
-
-Session-Rotation:
-
-- gleicher Slice / gleicher PR / unmittelbarer Review-Fix = dieselbe Session;
-- neuer logischer Slice = frische nummerierte Generation.
 
 Explizite Product-Owner-Gates bleiben insbesondere für:
 
@@ -45,8 +34,7 @@ Explizite Product-Owner-Gates bleiben insbesondere für:
 - Provider Live Activation
 - Store Launch / große Production Activation
 
-Aktuelle Regel: `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`  
-26.-August-Autonomie, soweit nicht präzisiert: `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`  
+Aktuelle Regel: `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`  
 Historische per-PR-Pflicht: `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`
 
-Merksatz: **Autonom mergen ist erlaubt. Blind mergen ist verboten. Cursor-Agenten mergen nie.**
+Merksatz: **Autonom mergen ist erlaubt. Blind mergen ist verboten.**

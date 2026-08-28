@@ -1,7 +1,7 @@
 # Jetnity – Technical-Lead-Autonomie
 
 Stand: 26. August 2026; Nachtrag 28. August 2026  
-Status: **verbindliche Product-Owner-Freigabe; Merge-Autonomie durch `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md` erweitert; Workflow, exklusive Ready-/Merge-Ausführung und Cursor-Grenze seit 28. August 2026 durch `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` präzisiert**
+Status: **verbindliche Product-Owner-Freigabe; Merge-Autonomie durch `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md` erweitert; aktuelle Ready-/Merge- und Cursor-Workflow-Regel seit 28. August 2026: `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`**
 
 ## 1. Zweck
 
@@ -9,13 +9,11 @@ ChatGPT / Technical Lead steuert Jetnity professionell und weitgehend selbststä
 
 Autonomie soll Geschwindigkeit erhöhen, ohne Qualitäts- oder Governance-Kontrolle zu schwächen.
 
-Die aktuellste Ready-/Merge- und Cursor-Workflow-Regel steht in:
+Die aktuellste Ready-/Merge-Regel steht in:
 
 `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
 
-Die 26.-August-Merge-Autonomie bleibt darunter gültig:
-
-`docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`
+Die 26.-August-Merge-Autonomie bleibt darunter gültig: `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`.
 
 **Nur ChatGPT / Technical Lead** darf Ready setzen oder mergen. Cursor-Agenten dürfen das niemals.
 
@@ -32,7 +30,7 @@ Ohne neue Product-Owner-Freigabe darf ChatGPT / Technical Lead innerhalb des ver
 - technische Detailentscheidungen innerhalb bestehender Shared Contracts treffen;
 - unabhängige Technical-Lead-Reviews durchführen;
 - `PASS`, `CHANGES REQUIRED`, `BLOCKED`, `NO-GO` festhalten;
-- bei normalen scope-treuen PRs nach vollständiger unabhängiger Prüfung selbst entscheiden, ob Ready/Merge verantwortbar ist, und Ready/Merge **selbst ausführen**; Cursor-Agenten tun das niemals;
+- bei normalen scope-treuen PRs nach vollständiger unabhängiger Prüfung selbst entscheiden, ob Ready/Merge verantwortbar ist;
 - nach Merges Production-/Continuity-Stand verifizieren und den nächsten planmäßigen Slice vorbereiten.
 
 ## 3. Harte Qualitätsgrenze vor Ready/Merge
@@ -195,7 +193,7 @@ Vorrang hat:
 
 1. aktuellste ausdrückliche Product-Owner-/Nutzerentscheidung;
 2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`;
-3. `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`, soweit nicht durch das Operating Standard präzisiert/superseded;
+3. `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`, soweit nicht durch das Operating Standard präzisiert;
 4. besondere Product-Owner-Gates;
 5. übrige Governance-/Workflow-Dokumente.
 

@@ -4638,40 +4638,6 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 ---
 
-## ADR-0185 – Technical Lead / Cursor Agent Operating Standard
-
-**Datum:** 28. August 2026  
-**Status:** Product-Owner-verbindlich. Docs-only Integration auf Draft-PR #142. **Kein Ready. Kein Merge durch den Autor-Agenten.**
-
-**Entscheidung:**
-
-1. Nur ChatGPT / Technical Lead darf Jetnity-PRs Ready setzen oder mergen.
-2. Cursor-Agenten, Fachagenten, Quality-Agenten und andere Coding Agents dürfen Ready/Merge niemals selbst ausführen oder als eigene Kompetenz behandeln.
-3. Der Technical Lead darf einen normalen scope-treuen PR autonom mergen, aber nur nach vollständigem unabhängigen Exact-Head-Review und nur, wenn er absolut überzeugt ist, dass dies die beste verantwortbare Entscheidung ist.
-4. Besondere Product-Owner-Gates bleiben unverändert, einschließlich Production-Migrationen, großer Auth/MFA/AAL-/RLS-/Identity-Änderungen, sensitiver Dokumentdaten, realer Provider/Secrets/paid calls, Payments, Kosten > USD 100/Monat, fundamentaler Produkt-/Build-Order-Änderungen und Public-/Provider-/Store-Live-Aktivierung.
-5. Session-Rotation bleibt: gleicher Slice / gleicher PR / unmittelbarer Review-Fix = dieselbe Session; neuer logischer Slice = frische nummerierte Generation.
-6. Der kanonische Workflow ist: versionierter Task → Draft-PR → `@cursor` → unabhängiger Technical-Lead-Review → head-gebundene CHANGES REQUIRED → neuer Head + Re-Gating → PASS → Technical-Lead-only Ready/Merge → Post-Merge-Verifikation.
-7. Dieses Dokument und `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` superseded ältere Passagen, die Cursor-Agenten Ready/Merge erlauben oder für jeden normalen PR eine separate Product-Owner-Mergefreigabe verlangen. Historische Dateien bleiben Evidence ihres Zeitpunkts.
-
-**Kontext:** Der Product Owner hat am 28. August 2026 die chatübergreifende Technical-Lead-/Cursor-Arbeitsweise ausdrücklich festgelegt. Die Merge-Autonomie vom 26. August 2026 bleibt in der Sache gültig (Technical Lead darf normale PRs mergen, nicht blind). Ohne frühen Anchor in `JETNITY_START_HERE.md` und ohne Bereinigung aktueller Governance-Mehrdeutigkeiten könnte ein neuer Chat die exklusive Ready-/Merge-Ausführung oder den Review-Workflow vereinfachen.
-
-**Alternativen:**
-
-1. *26.-August-Dateien als höchste Current Truth belassen.* Risiko: neue Chats verpassen exklusive Merge-Ausführung, Cursor-Verbot und den verbindlichen Workflow.
-2. *Alle historischen Merge-Dokumente umschreiben.* Verboten: historische Evidence bleibt Evidence.
-3. *Branch Protection jetzt aktivieren.* Eigenes Product-Owner-Gate; außerhalb dieses Docs-only-Slices.
-
-**Begründung:** Continuity. Jeder neue Technical-Lead-Chat startet bei `JETNITY_START_HERE.md` und muss den Operating Standard lesen, bevor er ändert, reviewed oder merget.
-
-**Konsequenzen:**
-
-- Primary: `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
-- Integration-Task: `docs/TECHNICAL_LEAD_CURSOR_OPERATING_STANDARD_INTEGRATION_TASK_2026-08-28.md`
-- Keine Runtime-, Schema-, Supabase-, Auth/AAL-, Provider- oder Branch-Protection-Änderung.
-- Autor-Agent stoppt auf Draft-PR #142 für unabhängigen Technical-Lead-Review.
-
----
-
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

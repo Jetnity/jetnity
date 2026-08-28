@@ -138,11 +138,9 @@ Wenn Status und Repository widersprechen, wird zuerst der reale Stand geprüft u
 
 Gespeicherter Fortschritt oder ein technisch review-bereiter Status ist **keine Merge-Freigabe**.
 
-Es gilt zusätzlich immer die aktuelle Merge-Governance:
+Es gilt zusätzlich immer `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md`:
 
-> **Technisch fertig bedeutet review-bereit. Ready/Merge führt nur ChatGPT / Technical Lead aus. Cursor-Agenten tun das niemals.**
-
-Current Truth: `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`. Die historische per-PR-Product-Owner-Merge-Pflicht in `docs/PRODUCT_OWNER_MERGE_APPROVAL_POLICY.md` bleibt Evidence und ist für normale PRs superseded. Besondere Product-Owner-Gates bleiben.
+> **Technisch fertig bedeutet review-bereit. Gemergt wird erst nach ausdrücklicher Freigabe des Product Owners.**
 
 ## 9. Definition of Done für Kontinuität
 
