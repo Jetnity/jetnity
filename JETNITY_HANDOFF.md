@@ -358,7 +358,7 @@ Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logisc
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-**Self-expiring.** Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #151 nach CHANGES REQUIRED `5055372760`. Autor-Agent setzt kein Ready, kein Merge, kein S3, keine Vercel-Setting-Mutation und startet kein AP-7-S2. PR #148 / PR #149 / PR #150 sind integriert. PR #147 Node 22 ist bereits integriert (`56aff7ff`).
+Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #156 / AP-5-S3. Autor-Agent setzt kein Ready, kein Merge, kein S4/S5, keine Vercel-Setting-Mutation und startet kein AP-7-S2. Next 16 S2 ist auf der Baseline `3c3079de` integriert. PR #147 Node 22 ist bereits integriert (`56aff7ff`).
 
 PR #144 ist MERGED (`bb38aef5`). Dual-Authority ist product-owner-freigegeben. PR #143 ist MERGED (`1947285c`).
 
@@ -372,7 +372,7 @@ AP-5-S3/S4/S5 sind nach dem integrierten Gate-0-Vertrag mögliche normale Techni
 
 Nicht automatisch starten:
 
-- AP-5-S3 bis S5
+- AP-5-S4 bis S5
 - AP-7
 - P2-TA-04 C2
 - TW-8
