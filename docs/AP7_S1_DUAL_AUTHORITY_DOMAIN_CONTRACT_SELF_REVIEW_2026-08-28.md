@@ -2,13 +2,13 @@
 
 Stand: 28. August 2026  
 Autor-Agent: **`Cursor-Agent: Account plattform audit vorbereitung 12`**  
-Typ: adversarial Self-Review nach CHANGES REQUIRED `5455673104`, **kein** unabhängiger Technical-Lead-PASS
+Typ: adversarial Self-Review nach CHANGES REQUIRED `5455755549`, **kein** unabhängiger Technical-Lead-PASS
 
 ## 1. Auftrag gegen Diff
 
-Auftrag: Review-Fix gegen Exact Head `c88ac2e3dc9dfdc5d9a4a5dcec67a353c60f61c8` (Kommentar `5455673104`). Dieselbe Session / Generation 12 / Draft-PR #145.
+Auftrag: Review-Fix #2 gegen Exact Head `ce5b7e70379ded725a5f6492207647de035ae390` (Kommentar `5455755549`). Dieselbe Session / Generation 12 / Draft-PR #145. Stamp `fbb1ec8d` ist ebenfalls invalidiert.
 
-Geprüft gegen den tatsächlichen Dateisatz: `lib/traveller/account-registry.ts`, Tests, Status, Handoff, ADR-0187-Nachtrag.
+Geprüft gegen den tatsächlichen Dateisatz: `lib/traveller/account-registry.ts`, Tests, Status, Handoff, ADR-0187-Nachtrag, `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, `ROADMAP.md`.
 
 Keine Änderung an `app/`, `components/`, `supabase/migrations`, Grants, RLS, Auth-Config, Branch Protection, UI/CRUD, Provider-Runtime.
 
@@ -16,25 +16,27 @@ Keine Änderung an `app/`, `components/`, `supabase/migrations`, Grants, RLS, Au
 
 | Frage | Ergebnis |
 | --- | --- |
-| Ist Registry strukturell als `TripTraveller` zuweisbar? | Nein. Fakten liegen unter `facts`. Compile-Zeit-Regression (`extends` + `@ts-expect-error`) ohne Casts. |
-| Kopiert die Projektion Registry-Identität? | Nein. Explizite trip-owned UUIDs. Gleichheit Quelle↔Snapshot wird abgelehnt. Relation wird remappt. |
-| Kopiert die Projektion Registry-Zeitstempel in Kinder? | Nein. Traveller/Citizenship/Document bekommen `jetzt`. |
-| Wird fehlende Authority still zu `account_registry`? | Nein. Pflichtfeld. Flache Trip-Form wird nicht befördert. |
-| Sind Refs nur „nicht traveller:N“? | Nein. UUID-backed. `person:0` und `document:passport:CH` fail-closed. Zwei gleiche Pass-Fakten bleiben unterscheidbar. |
+| Ist Registry strukturell als `TripTraveller` zuweisbar? | Nein. Fakten liegen unter `facts`. Compile-Zeit-Regression ohne Casts. |
+| Kopiert die Projektion Registry-Identität? | Nein. Explizite trip-owned UUIDs. |
+| Darf Snapshot-ID einer anderen Registry-Zeile oder einem Registry-`clientRef` gleichen? | Nein. Ein Registry-Universum aus Parent + allen Citizenship-/Document-`id`/`clientRef`. Jede Snapshot-Identität, deren `id` oder `clientRef` darin vorkommt, ist fail-closed. Cross-Entity- und id↔clientRef-Tests vorhanden. Snapshot-globale Eindeutigkeit bleibt. |
+| Kopiert die Projektion Registry-Zeitstempel in Kinder? | Nein. Alle Zeilen bekommen `jetzt`. |
+| Wird fehlende Authority still zu `account_registry`? | Nein. Pflichtfeld. |
+| Sind Refs nur „nicht traveller:N“? | Nein. UUID-backed. |
 | Gibt es `new Date()`-Materialisierung? | Nein. `jetzt` ist Pflicht. |
+| Wird Canonical Continuity nach Merge von #145 falsch? | Nein. Dual-State/self-expiring: offen → TL-Re-Review; nach Merge → integrierter Contract, kein automatisches S2, kein Follow-up-Continuity-PR. Kein erfundener Merge-SHA. |
 | Default-Pass / Issuer=Citizenship / Schema/UI? | Nein. |
 | Ready/Merge/S2? | Nein. STOPP für unabhängigen TL-Re-Review. |
 
 ## 3. Risiken, die bleiben
 
-- Persistenz könnte die Materialisierung später wieder durch kopierte Registry-IDs ersetzen, wenn S2 den Vertrag nicht liest.
+- Persistenz könnte die Materialisierung später wieder durch kopierte oder kreuzkollidierende Registry-IDs ersetzen, wenn S2 den Vertrag nicht liest.
 - Guest-Auto-Transfer bleibt trip-scoped und ist kein Registry-Import.
 - `main` `protected=false`.
-- Dieser Review-Fix erzeugt einen neuen Head und invalidiert `c88ac2e3` / `ed8f79b4`.
+- Dieser Review-Fix erzeugt einen neuen Head und invalidiert `ce5b7e70` / `fbb1ec8d`.
 - Dieses Self-Review erzeugt keinen PASS.
 
 ## 4. Urteil des Autors
 
-Die sechs Findings aus `5455673104` sind im Domain-Contract und in den Tests nachgezogen. Non-Scope gehalten. Lokale Tests und Hygiene-Gates vor diesem Stamp waren grün (15/15 S1, 30/30 related traveller, 2456/2456 `npm test`, typecheck, eslint, dead/exports/deps/api-schutz/schema-bezug, `next build`). Exact-Head CI/Vercel bleibt live vom unabhängigen Reviewer zu prüfen.
+Die zwei Findings aus `5455755549` sind im Domain-Contract, den Tests und der kanonischen Continuity nachgezogen. Non-Scope gehalten. Lokale S1-Tests vor den restlichen Gates: 16/16.
 
 **Unabhängiger Technical-Lead-Re-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**

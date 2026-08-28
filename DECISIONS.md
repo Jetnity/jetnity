@@ -4727,7 +4727,7 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 3. Registry-Identität ist UUID-backed für `id` **und** `clientRef` (Person, Citizenship, Document). Positions- und faktische Refs (`traveller:N`, `person:0`, `document:passport:CH`) sind ungültig.
 4. Citizenships und Documents bleiben first-class Arrays. Die Document↔Citizenship-Relation ist nur das explizite `citizenshipClientRef`. Issuer, Residence, Locale, Sprache oder Abflugland dürfen keine Citizenship erzeugen. Fehlt die Relation, bleibt sie `null`.
 5. Lesen ist fail-closed: doppelte oder baumelnde Refs, Limit-Verletzungen, ungültige Länder-/Dokumentwerte, Legacy-Singularfelder, Default-/Chosen-Credential-Felder und sensible Schlüssel werden abgelehnt statt still korrigiert.
-6. Die Projektion erzeugt einen trip-owned Snapshot nur aus expliziter Materialisierung (trip-eigene UUIDs + `jetzt`). Registry-Identität und Registry-Zeitstempel werden nicht kopiert. Kein `new Date()`-Fallback. Document↔Citizenship wird remappt. Spätere Mutation der Quelle darf den Snapshot nicht über gemeinsame Objekt-/Array-Referenzen ändern.
+6. Die Projektion erzeugt einen trip-owned Snapshot nur aus expliziter Materialisierung (trip-eigene UUIDs + `jetzt`). Registry-Identität und Registry-Zeitstempel werden nicht kopiert. Snapshot-`id`/`clientRef` müssen zum gesamten Registry-Identitätsuniversum disjunkt sein (Parent + alle Citizenship-/Document-`id`/`clientRef`), nicht nur zur jeweiligen Quellzeile. Kein `new Date()`-Fallback. Document↔Citizenship wird remappt. Spätere Mutation der Quelle darf den Snapshot nicht über gemeinsame Objekt-/Array-Referenzen ändern.
 7. `travellerLegacyLesen` und `credentialOptionsAus` bleiben Guest-/Readiness-Pfade. Sie sind nicht die Account-Registry-Authority.
 8. Dieser ADR autorisiert keine Tabelle, Policy, GRANT/REVOKE, SECURITY-DEFINER-Funktion, Migration, UI/CRUD, Guest→Registry-Import oder AP-7-S2.
 
@@ -4759,6 +4759,13 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 6. Kein Wanduhr-Fallback. Materialisierung ohne `jetzt` ist fail-closed.
 
 Kein Schema. Kein Ready/Merge. Neuer Head invalidiert `c88ac2e3` und `ed8f79b4`.
+
+**Nachtrag, 28. August 2026 – Review-Fix `5455755549`.** Zwei verbliebene Blocker gegen Head `ce5b7e70`:
+
+1. Snapshot-Identität ist zum gesamten Registry-Universum disjunkt. Cross-Entity- und id↔clientRef-Kollisionen sind fail-closed. Snapshot-globale Eindeutigkeit bleibt.
+2. Canonical Continuity (`JETNITY_START_HERE.md`, Handoff, Active Work, Roadmap, Status) ist self-expiring: solange #145 offen → TL-Re-Review/Ready/Merge only; nach Merge → integrierter Domain-Contract, kein automatisches AP-7-S2, Live-Post-Merge-Verifikation, dann nur ein separat Product-Owner-gegateter Persistence/Identity/RLS-Vorschlag. Kein erfundener Merge-SHA. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
+
+Kein Schema. Kein Ready/Merge. Neuer Head invalidiert `ce5b7e70` und `fbb1ec8d`.
 
 ---
 

@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **AP-7-S1 Dual-Authority Domain Contract / Draft-PR #145. Dual-Authority ist product-owner-freigegeben. PR #144 Gate 0 ist MERGED (`bb38aef5`). S1 ist shared Domain-Contract ohne Schema/Persistenz/UI. STOP für unabhängigen Technical-Lead-Review. Kein Ready. Kein Merge. Kein AP-7-S2. PR #143 bleibt MERGED (`1947285c`). S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **AP-7-S1 Dual-Authority Domain Contract / self-expiring. Solange Draft-PR #145 offen: STOP für unabhängigen TL-Re-Review; kein Ready, kein Merge, kein AP-7-S2. Sobald #145 gemergt: integrierter Domain-Contract; nächster Schritt = Live-Post-Merge-Verifikation, dann separat PO-gegateter AP-7-S2-Vorschlag. Dual-Authority ist product-owner-freigegeben. PR #144 Gate 0 ist MERGED (`bb38aef5`). PR #143 bleibt MERGED (`1947285c`). S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
@@ -171,7 +171,7 @@ Verbindliche Wahrheit:
 - PR #138 Post-Merge Continuity integriert
 - PR #142 Technical-Lead-/Cursor-Operating-Standard integriert
 
-AP-5-S3–S5 werden **nicht automatisch** gestartet. Dual-Authority ist product-owner-freigegeben. AP-7 Gate 0 / ADR-0186 ist integrierte Architecture-Evidence (PR #144 / `bb38aef5`). AP-7-S1 / ADR-0187 ist der shared Domain-Contract auf Draft-PR #145: keine Persistenz, kein Schema, keine UI. Production-Migration / RLS / Identity bleiben separat gegated. Kein AP-7-S2 aus diesem Handoff.
+AP-5-S3–S5 werden **nicht automatisch** gestartet. Dual-Authority ist product-owner-freigegeben. AP-7 Gate 0 / ADR-0186 ist integrierte Architecture-Evidence (PR #144 / `bb38aef5`). AP-7-S1 / ADR-0187 ist der shared Domain-Contract (Draft-PR #145, self-expiring): keine Persistenz, kein Schema, keine UI. Nach Merge von #145 bleibt das der integrierte Contract; AP-7-S2, Persistenz und Identity/RLS starten nicht automatisch.
 
 Der integrierte AP-5-Gate-0-Vertrag trennt insbesondere Password Recovery von signed-in Reauthentication, hält Session-/Gerätelisting ohne unterstützte User-API ehrlich auf `unsupported`, dokumentiert den heutigen globalen `signOut()`-Default und hält verified-factor `mfa.unenroll` an der serverseitigen AAL2-Anforderung. Details: `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, ADR-0182 und die aktuellen Account-Checkpoints.
 
@@ -282,7 +282,7 @@ Nach Live-Rekonstruktion neu einordnen:
 - TW-8 gated
 - TW-9 nicht automatisch starten
 - AP-5-S3–S5 nicht automatisch starten
-- AP-7 Persistenz/UI/S2 gated; S1 Domain-Contract auf Draft-PR #145
+- AP-7 Persistenz/UI/S2 gated; S1 Domain-Contract self-expiring auf Draft-PR #145, nach Merge integriert ohne automatisches S2
 - P2-TA-04 C2 nicht automatisch starten
 - weitere QS-/Supabase-Security-/Performance-Advisories
 - Project-Sanitation Closure / PR #135 / Issue #134 ist integriert/abgeschlossen; ADR-0184 ist Authority
@@ -335,7 +335,7 @@ Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logisc
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #145 nach CHANGES REQUIRED `5455673104` (reviewed head `c88ac2e3` invalidiert). Autor-Agent setzt kein Ready, kein Merge, startet kein AP-7-S2 und keine Persistenz.
+**Self-expiring / dual-state.** Solange Draft-PR #145 offen: unabhängiger Technical-Lead Exact-Head-Re-Review nach `5455755549` (reviewed head `ce5b7e70` und Stamp `fbb1ec8d` invalidiert). Autor-Agent setzt kein Ready, kein Merge, startet kein AP-7-S2 und keine Persistenz. Sobald #145 gemergt: AP-7-S1 ist integrierter Domain-Contract; nächster Schritt = Live-Post-Merge-Verifikation, dann nur ein separat Product-Owner-gegateter AP-7-S2 Persistence/Identity/RLS-Vorschlag. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
 
 PR #144 ist MERGED (`bb38aef5`). Dual-Authority ist product-owner-freigegeben. PR #143 ist MERGED (`1947285c`).
 

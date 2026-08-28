@@ -1,7 +1,7 @@
 # Jetnity – AP-7-S1 Dual-Authority Domain Contract Handoff
 
 Stand: 28. August 2026  
-Status: **DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**  
+Status: **DRAFT / SELF-EXPIRING / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**  
 Logical Cursor-Agent: **`Cursor-Agent: Account plattform audit vorbereitung 12`**  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/145  
 Branch: `feat/ap7-s1-dual-authority-domain-contract-2026-08-28`
@@ -12,14 +12,10 @@ Dieser Handoff übergibt den Domain-Contract-Slice. Er startet keinen Folgeslice
 
 ## 1. Was dieser Agent getan hat
 
-Review-Fix gegen Technical-Lead CHANGES REQUIRED `5455673104` (reviewed head `c88ac2e3`, zusätzlich Stamp `ed8f79b4` invalidiert):
+Review-Fix gegen Technical-Lead Re-Review #2 `5455755549` (reviewed head `ce5b7e70`, zusätzlich Stamp `fbb1ec8d` invalidiert; die sechs Findings aus `5455673104` bleiben geschlossen):
 
-1. Registry-Typ ist verschachtelt (`facts`) und compile-zeitlich nicht als `TripTraveller` zuweisbar.
-2. Projektion materialisiert trip-eigene UUID-Identitäten; Registry-`id`/`clientRef` werden nicht kopiert. Document↔Citizenship wird remappt.
-3. Snapshot-Kinder bekommen `jetzt`, nicht Registry-Metadaten-Zeitstempel.
-4. `authority` ist Pflicht; fehlend/falsch und flache Trip-Form werden abgelehnt.
-5. Registry-Refs sind UUID-backed; faktische Refs wie `document:passport:CH` sind ungültig. Zwei CH-Pässe bleiben unterscheidbar.
-6. Kein `new Date()`-Fallback; Materialisierung inkl. `jetzt` ist Pflicht.
+1. Snapshot-`id`/`clientRef` (Traveller, Citizenship, Document) müssen zum gesamten Registry-Identitätsuniversum disjunkt sein, nicht nur zur jeweiligen Quellzeile. Cross-Entity- und id↔clientRef-Kollisionen sind fail-closed. Snapshot-globale Eindeutigkeit bleibt.
+2. Canonical Continuity ist self-expiring: solange #145 offen → TL-Re-Review/Ready/Merge only; nach Merge → integrierter Domain-Contract, kein automatisches AP-7-S2, kein Follow-up-Continuity-PR nur um den Merge zu sagen.
 
 Kein Schema. Keine Supabase-Mutation. Kein RLS/GRANT/REVOKE/SECURITY DEFINER. Kein Auth/AAL. Keine UI/CRUD. Kein Guest→Registry-Import. Kein Provider/TW-8/TW-9/AP-5/AP-6. Kein Ready. Kein Merge.
 
@@ -50,11 +46,11 @@ Vor der finalen Übergabe erneut `origin/main` holen und hier stempeln.
 | Branch | `feat/ap7-s1-dual-authority-domain-contract-2026-08-28` |
 | Draft-PR | #145 OPEN Draft |
 | Merge-Base | `bb38aef5` |
-| Prior reviewed Head | `c88ac2e3` – invalidiert durch `5455673104` |
-| Prior stamp | `ed8f79b4` – invalidiert |
+| Prior reviewed Head | `ce5b7e70` – invalidiert durch `5455755549` |
+| Prior stamps | `ed8f79b4`, `fbb1ec8d` – invalidiert |
 | Exact / Review-Head | Commit dieses Review-Fix-Stamps; live an PR #145 prüfen |
-| Ahead / behind `origin/main` | **8 / 0** |
-| Local quality before stamp | 15/15 S1 tests; 30/30 related traveller tests; 2456/2456 `npm test`; `tsc --noEmit`; eslint max-warnings=0; dead/exports/deps/api-schutz/schema-bezug; `next build` |
+| Ahead / behind `origin/main` | nach finalem Stamp |
+| Local S1 before remaining gates | 16/16 pass |
 | Branch Protection | unverändert; nicht in diesem Slice geändert |
 | Supabase | nicht live abgefragt, nicht mutiert |
 
@@ -76,7 +72,7 @@ Nur datensparse Foundation-E-Felder. Keine Nummern/Scans/MRZ/Biometrie/DoB/Gesun
 
 ## 6. Unresolved risks
 
-Siehe Status §7. Die sechs Findings aus `5455673104` sind im Domain-Contract adressiert. Persistenz darf die explizite Materialisierung nicht durch kopierte Registry-IDs ersetzen. Guest-Auto-Transfer ≠ Registry-Import. Kein Schema in diesem Slice.
+Siehe Status §7. Die Findings aus `5455673104` und `5455755549` sind im Domain-Contract adressiert. Persistenz darf die explizite Materialisierung nicht durch kopierte oder kreuzkollidierende Registry-IDs ersetzen. Guest-Auto-Transfer ≠ Registry-Import. Kein Schema in diesem Slice. Canonical Continuity ist self-expiring.
 
 ---
 
@@ -90,7 +86,7 @@ Unfertig: unabhängiger TL-Review, Ready/Merge, jede Persistenz, UI, Import, S2.
 
 ## 8. Exact first unfinished next step
 
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #145. Nicht Ready. Nicht mergen. Kein AP-7-S2.
+**Self-expiring / dual-state.** Solange #145 offen: unabhängiger Technical-Lead Exact-Head-Re-Review. Nicht Ready. Nicht mergen. Kein AP-7-S2. Sobald #145 gemergt: integrierter Domain-Contract; Live-Post-Merge-Verifikation, danach nur separat PO-gegateter AP-7-S2-Vorschlag. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
 
 ---
 
@@ -109,4 +105,4 @@ Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #145. Nicht Ready. N
 
 ## 10. STOPP
 
-Draft bleibt Draft. Kein Mark Ready. Kein Merge. Kein Folge-Slice. Unabhängiger Technical-Lead-Review auf dem Exact Head ist der einzige nächste Schritt.
+Draft bleibt Draft, solange #145 offen ist. Kein Mark Ready. Kein Merge durch den Autor. Kein Folge-Slice. Nach Merge von #145 ist dieser Transport self-expired; kein Continuity-PR nur um den Merge zu sagen.

@@ -225,7 +225,7 @@ Ausschließlich trip-scoped:
 - `trips.travellers` ist Kopfzahl 1–20, keine Identität
 - P2-TA-04 C1 (Issue #122) härtet den trip-scoped Write-Contract; das ist **kein** AP-5- und **kein** AP-7-Start
 
-Account-Traveller-Registry: Dual-Authority freigegeben; S1 Domain-Contract auf Draft-PR #145; Persistenz/UI weiter gated.
+Account-Traveller-Registry: Dual-Authority freigegeben; S1 Domain-Contract self-expiring auf Draft-PR #145; Persistenz/UI weiter gated.
 
 ### 5.4 Guest → Account
 
@@ -323,7 +323,7 @@ Jeder Slice braucht vor Start einen eigenen Technical-Lead-Task, einen frischen 
 | Feld | Wert |
 | --- | --- |
 | Produktziel | Accountweite Wiederverwendung von Traveller-/Citizenship-/Document-Kontext unter Dual-Authority: Registry = wiederverwendbare Fakten, Snapshot = einzige Trip-Current-Truth. |
-| Bereits vorhanden | trip-scoped Foundation E; Gate 0 / ADR-0186 integriert (PR #144); Product-Owner Dual-Authority-Freigabe; AP-7-S1 Domain-Contract auf Draft-PR #145 (ADR-0187). |
+| Bereits vorhanden | trip-scoped Foundation E; Gate 0 / ADR-0186 integriert (PR #144); Product-Owner Dual-Authority-Freigabe; AP-7-S1 Domain-Contract self-expiring auf Draft-PR #145 (ADR-0187). |
 | Fehlt | Persistenz, RLS/Identity, UI/CRUD, Guest→Registry-Import. Es existiert kein Tabellenentwurf auf `main`. |
 | Shared Contracts | Traveller, Identity, RLS/Ownership, Guest→Account, Readiness-Stale, Participation. **Technical-Lead-kontrolliert.** |
 | Security / Privacy | besonders sensibles Gate, sobald Nummern/Scans/MRZ/Biometrie auch nur diskutiert werden. Default bleibt: nicht speichern. |
@@ -345,7 +345,7 @@ Jeder Slice braucht vor Start einen eigenen Technical-Lead-Task, einen frischen 
 
 **Product-Owner-Nachtrag, 28. August 2026:** Dual-Authority ist freigegeben. Die fünf Architekturfragen sind entschieden: (1) Trip-Current-Truth bleibt der Snapshot; (2) Kopie/Snapshot, keine Live-Referenz; (3) Delete/Archive der Registry lässt historischen Snapshot stehen; (4) Registry-Import opt-in, getrennt vom heutigen automatischen Guest→Trip-Copy; (5) dieselben datensparsamen Felder wie Foundation E, keine Nummern/Scans/MRZ/Biometrie. Kein trip-weites `chosenCredentialOptionRef`.
 
-**S1-Nachtrag, 28. August 2026 (Draft-PR #145, ADR-0187):** Der shared Domain-Contract liegt in `lib/traveller/account-registry.ts`. Das ist **kein** Schema, **keine** UI und **kein** Persistence-Start. Production-Migration / Identity / RLS bleiben separat gegated.
+**S1-Nachtrag, 28. August 2026 (Draft-PR #145, ADR-0187, self-expiring):** Der shared Domain-Contract liegt in `lib/traveller/account-registry.ts`. Das ist **kein** Schema, **keine** UI und **kein** Persistence-Start. Solange #145 offen: Transport/Review only. Sobald #145 gemergt: integrierter Domain-Contract; AP-7-S2 / Production-Migration / Identity / RLS bleiben separat gegated und starten nicht automatisch. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
 
 ### AP-8 – Reiseprofil / Präferenzen
 

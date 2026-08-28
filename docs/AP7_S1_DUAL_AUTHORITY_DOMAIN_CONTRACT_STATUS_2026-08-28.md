@@ -1,7 +1,7 @@
 # Jetnity – AP-7-S1 Dual-Authority Domain Contract Status
 
 Stand: 28. August 2026  
-Status: **AUTHORIZED / IMPLEMENTATION SLICE / DRAFT / NO SCHEMA OR PRODUCTION MUTATION / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**  
+Status: **AUTHORIZED / IMPLEMENTATION SLICE / DRAFT / SELF-EXPIRING / NO SCHEMA OR PRODUCTION MUTATION / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**  
 Workstream: Account / Traveller  
 Logical Cursor-Agent: **`Cursor-Agent: Account plattform audit vorbereitung 12`**
 
@@ -25,9 +25,9 @@ This slice does **not** consume the separate Production migration / Identity / R
 | `origin/main` bei Authoring-Re-Fetch | `bb38aef589f0cdcea1aaf8ddd87d043d0a9f0f05` |
 | Branch | `feat/ap7-s1-dual-authority-domain-contract-2026-08-28` |
 | Draft-PR | [#145](https://github.com/Jetnity/jetnity/pull/145) |
-| Reviewed Head invalidiert | `c88ac2e3` (CHANGES REQUIRED `5455673104`) und Stamp `ed8f79b4` |
+| Reviewed Head invalidiert | `c88ac2e3` (`5455673104`), `ed8f79b4`, `ce5b7e70` (`5455755549`) und Stamp `fbb1ec8d` |
 | Exact Head | der Commit dieses Review-Fix-Stamps; live am PR #145 prüfen |
-| Ahead / behind `origin/main` | **8 / 0** nach diesem Stamp (7 vorher: PO-Approval, Task, feat, Continuity, first stamp, review-fix, review-fix continuity) |
+| Ahead / behind `origin/main` | nach finalem Stamp live eintragen |
 | Logical Cursor-Agent | `Cursor-Agent: Account plattform audit vorbereitung 12` |
 | Sichtbarer Cursor-Titel | `Dual-authority domain contract` |
 | Cloud-Run | https://cursor.com/agents/bc-6b3a7a55-26fe-41a9-8cf2-b599afe1eda0 |
@@ -46,7 +46,7 @@ Shared Dual-Authority domain contract, reused from live Foundation-E primitives 
 - `AccountRegistryTraveller` is nested (`facts`) and therefore not assignable to `TripTraveller`. Compile-time regression in the test file proves direct assignment is rejected without casts.
 - Registry `id` and `clientRef` (person, citizenship, document) are UUID-backed. Fact-derived refs such as `document:passport:CH` or `person:0` are rejected.
 - `authority` must be exactly `account_registry`. Missing/wrong authority and flat `TripTraveller` shapes are rejected.
-- Projection requires explicit `TripSnapshotMaterialisierung`: trip-owned UUIDs plus `jetzt`. Registry identity and registry timestamps are not copied. Document→citizenship refs are remapped. Identical snapshot/registry identity is rejected. No `new Date()` fallback.
+- Projection requires explicit `TripSnapshotMaterialisierung`: trip-owned UUIDs plus `jetzt`. Registry identity and registry timestamps are not copied. Document→citizenship refs are remapped. Snapshot traveller/citizenship/document `id`/`clientRef` must be disjoint from the entire Registry identity universe (parent + all child ids/refs), not only the corresponding source row. Snapshot-global uniqueness is kept. No `new Date()` fallback.
 
 Inspected and not duplicated:
 
@@ -97,30 +97,13 @@ Adversarial tests in `lib/traveller/account-registry.test.ts` cover:
 - Foundation-E limits and country/document validation;
 - duplicate / dangling refs fail closed;
 - missing/wrong `authority` and flat `TripTraveller` input are rejected;
-- snapshot identity ≠ registry identity; child timestamps = `jetzt`;
+- snapshot identity ≠ any Registry identity value (cross-entity and id↔clientRef); child timestamps = `jetzt`;
 - incomplete materialization / missing `jetzt` fail closed;
 - compile-time assignment Registry→Trip is rejected;
 - no citizenship inferred from residence, locale, language, issuer or departure;
 - empty facts stay empty.
 
-Verified on this branch before the final review-fix stamp (`HEAD` was `ce5b7e70379ded725a5f6492207647de035ae390`; this stamp is the review head). Prior 12/12 + `c88ac2e3` / `ed8f79b4` evidence is invalidated.
-
-| Gate | Ergebnis |
-| --- | --- |
-| `node --import tsx --test lib/traveller/account-registry.test.ts` | **15/15 pass** |
-| Related traveller tests (`traveller-kontext`, `traveller-anfrage`, `schema`, `traveller-zuordnung`) | **30/30 pass** |
-| `npm test` | **2456/2456 pass**, 0 fail |
-| `npx tsc --noEmit --pretty false` | pass (includes `@ts-expect-error` Registry↛Trip boundary) |
-| `npx eslint . --max-warnings=0` | pass |
-| `npm run check:dead` | pass (only justified CookieConsent orphan) |
-| `npm run check:exports` | 0 unused exports |
-| `npm run check:deps` | pass |
-| `npm run check:api-schutz` | 12 admin routes, all `requireAdminApi()` |
-| `npm run check:schema-bezug` | pass; no new schema objects |
-| `npm run build` | pass (`next build`) |
-| `origin/main` re-fetch | `bb38aef589f0cdcea1aaf8ddd87d043d0a9f0f05` — **0 behind** |
-
-CI/Vercel on the final head must be live-verified by the independent reviewer. This authoring run does not claim GitHub Actions or Vercel for the stamp commit.
+Review-fix #2 local S1 tests before remaining gates: **16/16 pass**. Prior 15/15 + `ce5b7e70` / `fbb1ec8d` evidence is invalidated. Remaining hygiene/full-suite/`next build` are re-run on this head and stamped afterwards.
 
 ## 5. Scope / non-scope confirmation
 
@@ -178,4 +161,7 @@ Existing `TripTraveller` has no date-of-birth field; none was added.
 
 ## 9. Exact first unfinished next step
 
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #145 auf dem finalen Head. Kein Ready. Kein Merge. Kein AP-7-S2. Keine Persistence.
+**Self-expiring / dual-state.**
+
+- **Solange PR #145 offen:** unabhängiger Technical-Lead Exact-Head-Re-Review auf dem finalen Head. Kein Ready. Kein Merge. Kein AP-7-S2. Keine Persistence.
+- **Sobald PR #145 gemergt:** AP-7-S1 ist der integrierte Domain-Contract. Draft-/Review-Klauseln sind historisch. Exakt nächster Schritt = Live-Post-Merge-Verifikation, danach nur ein separat Product-Owner-gegateter AP-7-S2 Persistence/Identity/RLS-Vorschlag. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.

@@ -274,11 +274,12 @@ Abgeschlossen:
 33. ✅ Technical Lead / Cursor Operating Standard / PR #142 – integriert; Merge `9d4778b8`
 34. ✅ PR #142 Post-Merge Continuity / PR #143 – integriert; Merge `1947285c`
 35. ✅ AP-7 Gate 0 Account-Traveller-Registry Architecture / PR #144 – integriert; Merge `bb38aef5`; Dual-Authority danach product-owner-freigegeben
-36. 🟡 AP-7-S1 Dual-Authority Domain Contract / Draft-PR #145 – shared Contract ohne Schema; Review-Fix für `5455673104`; STOP für unabhängigen Technical-Lead-Re-Review
+36. 🟡 AP-7-S1 Dual-Authority Domain Contract / Draft-PR #145 – shared Contract ohne Schema; self-expiring: offen → TL-Re-Review; nach Merge → integriert, kein automatisches S2
 
-Nächster Schritt:
+Nächster Schritt (self-expiring / dual-state):
 
-Unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #145 nach CHANGES REQUIRED `5455673104`. Kein Ready. Kein Merge durch den Autor. Kein AP-7-S2 / keine Persistenz.
+- **Solange PR #145 offen:** unabhängiger Technical-Lead Exact-Head-Re-Review nach `5455755549`. Kein Ready. Kein Merge durch den Autor. Kein AP-7-S2 / keine Persistenz.
+- **Sobald PR #145 gemergt:** integrierter Domain-Contract. Live-Post-Merge-Verifikation, danach nur ein separat Product-Owner-gegateter AP-7-S2 Persistence/Identity/RLS-Vorschlag. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
 
 AP-5-S3/S4/S5 bleiben normale Technical-Lead-Gates innerhalb Gate 0, nicht automatisch gestartet und nicht Product-Owner-gated. S3–S5 nicht aus dieser Liste automatisch ableiten.
 
