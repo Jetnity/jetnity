@@ -72,7 +72,13 @@ Kein ADR. Gate 0 / ADR-0182 bleibt die Authority.
 | Vercel Preview | Inspector `G6m3MbtAFPhUwhS7x3KxH2g9JEJb` **SUCCESS** auf exakt `fe734874` |
 | GitHub Preview-Deployment | `6140668086` success |
 
-Dieser Stamp erzeugt einen neueren Head. Dessen CI/Vercel müssen live gelesen werden. **Kein zweiter Evidence-Stamp**, außer die Stamp-CI fehlschlägt.
+Historische Exact-Head-Evidence vor Review-Fix `5050962955` bleibt auf `fe734874` / `d0eac240`. Der Review-Fix erzeugt einen neueren Head; dessen CI/Vercel live lesen.
+
+### 4.1 Review-Fix `5050962955`
+
+P1: `passwortAenderungSitzungLesen()` zog Netz- und 5xx-Fehler von `getUser()` auf `client_ohne_sitzung` und behauptete damit eine ungültige Sitzung.
+
+Behoben: `session_required` nur bei 401/session-missing oder `data.user === null` ohne Fehler. Netzfehler bleiben `network`. Unbekannte/5xx-Fehler bleiben `unknown`. Regressionstests decken error, throw und echten Sessionverlust. Kein S3–S5.
 
 ## 5. Residuals – nicht in S2 mischen
 
