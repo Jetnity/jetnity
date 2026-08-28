@@ -242,7 +242,7 @@ Account-Generation 9 (AP-5-S1 / PR #133 / Issue #132) ist abgeschlossen und nich
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-**AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 schließen. Diesen Docs-only-Continuity-Stamp unabhängig reviewen. Kein S3–S5 automatisch starten.**
+**AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 schließen. Draft-PR #138 (Docs-only Continuity) unabhängig reviewen. Kein S3–S5 automatisch starten.**
 
 AP-5-S1 ist integriert (PR #133); Issue #132 ist CLOSED / completed. Project Sanitation ist integriert (PR #135). AP-5 Gate 0 bleibt integriert. P2-TA-04 C1 bleibt integriert; Production C1 `20260828015304` nicht erneut anwenden.
 
