@@ -1,6 +1,6 @@
 // components/account/SecurityMFA.tsx
-// MFA (TOTP + Passkeys-Panel)
-// Voraussetzung: createBrowserClient() aus "@/lib/supabase/client"
+// MFA (TOTP) + ehrliches Passkey-Panel. AP-5-S1: empty ≠ unsupported ≠
+// unavailable ≠ error. Browser-WebAuthn überschreibt Server-Truth nicht.
 
 "use client";
 
@@ -28,67 +28,151 @@ import {
   QrCode,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  securityFehlerAusUnbekannt,
+  securityFehlerEinordnen,
+  type SecurityFehlerVorgang,
+} from "@/lib/auth/account-security-fehler";
+import {
+  darfPasskeyHinzufuegen,
+  darfTotpEinrichten,
+  passkeyBrowserHinweis,
+  passkeyLage,
+  PASSKEY_LAGE_TEXTE,
+  totpFaktorAnzeigename,
+  totpFaktorStatusText,
+  totpListeLage,
+  TOTP_LAGE_TEXTE,
+  type PasskeyLage,
+  type TotpListeLage,
+} from "@/lib/auth/account-security-lage";
 
 type BrowserSupabase = SbClient<Database>;
 
 type FactorItem = {
   id: string;
-  type: "totp" | string;
   friendly_name?: string | null;
   created_at?: string | null;
   status?: string | null;
 };
 
-export default function SecurityMFA() {
-  const supabase = React.useMemo<BrowserSupabase>(() => createBrowserClient(), []);
-  const [loading, setLoading] = React.useState(false);
+type AuthLikeError = {
+  message?: string;
+  code?: string;
+  status?: number;
+};
 
-  // TOTP
+type MfaClient = {
+  listFactors?: () => Promise<{
+    data: { all?: unknown[]; totp?: unknown[]; factors?: unknown[] } | null;
+    error: AuthLikeError | null;
+  }>;
+  enroll?: (args: { factorType: "totp" }) => Promise<{
+    data: {
+      id?: string;
+      factorId?: string;
+      factor?: { id?: string };
+      totp?: { id?: string; qr_code?: string; uri?: string };
+      qr_code?: string;
+      uri?: string;
+    } | null;
+    error: AuthLikeError | null;
+  }>;
+  challenge?: (args: { factorId: string }) => Promise<{
+    data: { id?: string; challenge_id?: string } | null;
+    error: AuthLikeError | null;
+  }>;
+  verify?: (args: {
+    factorId: string;
+    challengeId: string;
+    code: string;
+  }) => Promise<{ error: AuthLikeError | null }>;
+  unenroll?: (args: { factorId: string }) => Promise<{ error: AuthLikeError | null }>;
+};
+
+function mfaClient(auth: { mfa?: MfaClient }): MfaClient | null {
+  return auth.mfa ?? null;
+}
+
+function istTotpFaktor(wert: unknown): wert is FactorItem & { type?: string } {
+  if (!wert || typeof wert !== "object") return false;
+  const faktor = wert as { id?: unknown; type?: unknown };
+  return typeof faktor.id === "string" && faktor.type === "totp";
+}
+
+function nutzerFehler(vorgang: SecurityFehlerVorgang, fehler: unknown): string {
+  const gelesen = securityFehlerAusUnbekannt(fehler);
+  return securityFehlerEinordnen({
+    vorgang,
+    meldung: gelesen.meldung,
+    code: gelesen.code,
+    status: gelesen.status,
+  }).text;
+}
+
+export default function SecurityMFA({
+  passkeysServerAktiviert,
+}: {
+  passkeysServerAktiviert: boolean;
+}) {
+  const supabase = React.useMemo<BrowserSupabase>(() => createBrowserClient(), []);
+  const [loading, setLoading] = React.useState(true);
+  const [listFactorsVorhanden, setListFactorsVorhanden] = React.useState(true);
+  const [listFehler, setListFehler] = React.useState(false);
+
   const [totpFactors, setTotpFactors] = React.useState<FactorItem[]>([]);
   const [enrollQr, setEnrollQr] = React.useState<string | null>(null);
-  const [enrollUri, setEnrollUri] = React.useState<string | null>(null);
   const [factorId, setFactorId] = React.useState<string | null>(null);
   const [code, setCode] = React.useState("");
   const [message, setMessage] = React.useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  // Passkeys
-  const [passkeySupported, setPasskeySupported] = React.useState(false);
-  const [passkeyBusy, setPasskeyBusy] = React.useState(false);
-  const [passkeyMsg, setPasskeyMsg] = React.useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [browserWebAuthn, setBrowserWebAuthn] = React.useState<boolean | null>(null);
 
   React.useEffect(() => {
+    setBrowserWebAuthn(typeof window !== "undefined" && "PublicKeyCredential" in window);
     void refreshFactors();
-    const apiPresent = !!(supabase.auth as any)?.webauthn || !!(supabase.auth as any)?.passkeys;
-    const webauthnAvailable = typeof window !== "undefined" && "PublicKeyCredential" in window;
-    setPasskeySupported(apiPresent && webauthnAvailable);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const totpLage: TotpListeLage = totpListeLage({
+    listFactorsVorhanden,
+    laden: loading && totpFactors.length === 0 && !listFehler && !factorId,
+    fehler: listFehler,
+    anzahl: totpFactors.length,
+  });
+
+  const aktuellePasskeyLage: PasskeyLage = passkeyLage({
+    serverAktiviert: passkeysServerAktiviert,
+    browserWebAuthn,
+  });
 
   async function refreshFactors() {
     setLoading(true);
     setMessage(null);
+    setListFehler(false);
     try {
-      const anyAuth = supabase.auth as any;
-      if (!anyAuth?.mfa?.listFactors) {
+      const mfa = mfaClient(supabase.auth);
+      if (!mfa?.listFactors) {
+        setListFactorsVorhanden(false);
         setTotpFactors([]);
         return;
       }
-      const { data, error } = await anyAuth.mfa.listFactors();
+      setListFactorsVorhanden(true);
+      const { data, error } = await mfa.listFactors();
       if (error) throw error;
 
-      const list = (data?.all ?? data?.factors ?? []) as any[];
-      const totps: FactorItem[] = list
-        .filter((f) => f?.type === "totp")
-        .map((f) => ({
-          id: f.id,
-          type: f.type,
-          friendly_name: f.friendly_name ?? null,
-          created_at: f.created_at ?? null,
-          status: f.status ?? null,
-        }));
+      const list = (data?.all ?? data?.totp ?? data?.factors ?? []) as unknown[];
+      const totps: FactorItem[] = list.filter(istTotpFaktor).map((faktor) => ({
+        id: faktor.id,
+        friendly_name: faktor.friendly_name ?? null,
+        created_at: faktor.created_at ?? null,
+        status: faktor.status ?? null,
+      }));
       setTotpFactors(totps);
-    } catch (err: any) {
-      setMessage({ type: "error", text: err?.message ?? "Konnte Faktoren nicht laden." });
+    } catch (err: unknown) {
+      setListFehler(true);
+      setTotpFactors([]);
+      setMessage({ type: "error", text: nutzerFehler("list", err) });
     } finally {
       setLoading(false);
     }
@@ -98,27 +182,36 @@ export default function SecurityMFA() {
     setLoading(true);
     setMessage(null);
     setEnrollQr(null);
-    setEnrollUri(null);
     setFactorId(null);
     try {
-      const anyAuth = supabase.auth as any;
-      if (!anyAuth?.mfa?.enroll) throw new Error("Supabase MFA API nicht verfügbar (enroll).");
-      const { data, error } = await anyAuth.mfa.enroll({ factorType: "totp" });
+      const mfa = mfaClient(supabase.auth);
+      if (!mfa?.enroll) {
+        setMessage({
+          type: "error",
+          text: securityFehlerEinordnen({
+            vorgang: "enroll",
+            meldung: "not available",
+          }).text,
+        });
+        return;
+      }
+      const { data, error } = await mfa.enroll({ factorType: "totp" });
       if (error) throw error;
 
-      const fid: string =
-        data?.id ?? data?.factorId ?? data?.factor?.id ?? data?.totp?.id;
-      const qr: string | null =
-        data?.totp?.qr_code ?? data?.qr_code ?? null;
-      const uri: string | null =
-        data?.totp?.uri ?? data?.uri ?? null;
+      const fid = data?.id ?? data?.factorId ?? data?.factor?.id ?? data?.totp?.id;
+      const qr = data?.totp?.qr_code ?? data?.qr_code ?? null;
 
-      if (!fid) throw new Error("Konnte factorId für TOTP nicht ermitteln.");
+      if (!fid) {
+        setMessage({
+          type: "error",
+          text: securityFehlerEinordnen({ vorgang: "enroll" }).text,
+        });
+        return;
+      }
       setFactorId(fid);
-      if (qr) setEnrollQr(qr);
-      if (uri) setEnrollUri(uri);
-    } catch (err: any) {
-      setMessage({ type: "error", text: err?.message ?? "Einschreibung fehlgeschlagen." });
+      if (qr?.startsWith("data:")) setEnrollQr(qr);
+    } catch (err: unknown) {
+      setMessage({ type: "error", text: nutzerFehler("enroll", err) });
     } finally {
       setLoading(false);
     }
@@ -126,7 +219,10 @@ export default function SecurityMFA() {
 
   async function handleVerify() {
     if (!factorId) {
-      setMessage({ type: "error", text: "Kein TOTP-Faktor in Einrichtung. Starte zuerst die Einrichtung." });
+      setMessage({
+        type: "error",
+        text: "Keine Authenticator-Einrichtung läuft. Starte zuerst die Einrichtung.",
+      });
       return;
     }
     if (!code || code.length !== 6) {
@@ -136,26 +232,38 @@ export default function SecurityMFA() {
     setLoading(true);
     setMessage(null);
     try {
-      const anyAuth = supabase.auth as any;
-      if (!anyAuth?.mfa?.challenge || !anyAuth?.mfa?.verify) {
-        throw new Error("Supabase MFA API nicht verfügbar (challenge/verify).");
+      const mfa = mfaClient(supabase.auth);
+      if (!mfa?.challenge || !mfa.verify) {
+        setMessage({
+          type: "error",
+          text: securityFehlerEinordnen({
+            vorgang: "verify",
+            meldung: "not available",
+          }).text,
+        });
+        return;
       }
-      const { data: ch, error: chErr } = await anyAuth.mfa.challenge({ factorId });
+      const { data: ch, error: chErr } = await mfa.challenge({ factorId });
       if (chErr) throw chErr;
-      const challengeId: string = ch?.id ?? ch?.challenge_id;
-      if (!challengeId) throw new Error("Konnte challengeId nicht ermitteln.");
+      const challengeId = ch?.id ?? ch?.challenge_id;
+      if (!challengeId) {
+        setMessage({
+          type: "error",
+          text: securityFehlerEinordnen({ vorgang: "verify" }).text,
+        });
+        return;
+      }
 
-      const { error: verErr } = await anyAuth.mfa.verify({ factorId, challengeId, code });
+      const { error: verErr } = await mfa.verify({ factorId, challengeId, code });
       if (verErr) throw verErr;
 
-      setMessage({ type: "success", text: "TOTP erfolgreich aktiviert." });
+      setMessage({ type: "success", text: "Authenticator-App erfolgreich aktiviert." });
       setEnrollQr(null);
-      setEnrollUri(null);
       setFactorId(null);
       setCode("");
       await refreshFactors();
-    } catch (err: any) {
-      setMessage({ type: "error", text: err?.message ?? "Verifizierung fehlgeschlagen." });
+    } catch (err: unknown) {
+      setMessage({ type: "error", text: nutzerFehler("verify", err) });
     } finally {
       setLoading(false);
     }
@@ -165,132 +273,134 @@ export default function SecurityMFA() {
     setLoading(true);
     setMessage(null);
     try {
-      const anyAuth = supabase.auth as any;
-      if (!anyAuth?.mfa?.unenroll) throw new Error("Supabase MFA API nicht verfügbar (unenroll).");
-      const { error } = await anyAuth.mfa.unenroll({ factorId: id });
+      const mfa = mfaClient(supabase.auth);
+      if (!mfa?.unenroll) {
+        setMessage({
+          type: "error",
+          text: securityFehlerEinordnen({
+            vorgang: "unenroll",
+            meldung: "not available",
+          }).text,
+        });
+        return;
+      }
+      const { error } = await mfa.unenroll({ factorId: id });
       if (error) throw error;
-      setMessage({ type: "success", text: "TOTP-Faktor entfernt." });
+      if (factorId === id) {
+        setFactorId(null);
+        setEnrollQr(null);
+        setCode("");
+      }
+      setMessage({ type: "success", text: "Authenticator-App entfernt." });
       await refreshFactors();
-    } catch (err: any) {
-      setMessage({ type: "error", text: err?.message ?? "Entfernen fehlgeschlagen." });
+    } catch (err: unknown) {
+      setMessage({ type: "error", text: nutzerFehler("unenroll", err) });
     } finally {
       setLoading(false);
     }
   }
 
-  async function handleRegisterPasskey() {
-    setPasskeyMsg(null);
-    setPasskeyBusy(true);
-    try {
-      const anyAuth = supabase.auth as any;
-      const api =
-        anyAuth?.webauthn?.register ??
-        anyAuth?.passkeys?.register ??
-        anyAuth?.webauthn?.create ??
-        null;
-
-      if (!api) {
-        throw new Error("Passkeys sind noch nicht aktiviert (Auth → Settings).");
-      }
-
-      const { error } = await api();
-      if (error) throw error;
-
-      setPasskeyMsg({ type: "success", text: "Passkey erfolgreich registriert." });
-    } catch (err: any) {
-      setPasskeyMsg({ type: "error", text: err?.message ?? "Passkey-Registrierung fehlgeschlagen." });
-    } finally {
-      setPasskeyBusy(false);
-    }
-  }
+  const browserHinweis = passkeyBrowserHinweis({
+    lage: aktuellePasskeyLage,
+    browserWebAuthn,
+  });
 
   return (
     <div className="space-y-10">
-      {/* TOTP */}
       <Card>
         <CardHeader withDivider>
           <div className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            <CardTitle as="h2">TOTP (Authenticator-App)</CardTitle>
+            <Shield className="h-5 w-5" aria-hidden="true" />
+            <CardTitle as="h2">Authenticator-App (TOTP)</CardTitle>
           </div>
           <CardDescription>
-            Scanne den QR-Code mit einer Authenticator-App (1Password, Google Authenticator, etc.)
-            und gib den 6-stelligen Code ein.
+            Scanne den QR-Code mit einer Authenticator-App und gib den 6-stelligen Code ein.
           </CardDescription>
         </CardHeader>
 
         <CardContent className="pt-4">
-          {totpFactors.length > 0 && (
+          <p
+            data-security-lage={totpLage}
+            className="mb-4 text-sm text-ink-700"
+            role="status"
+          >
+            {TOTP_LAGE_TEXTE[totpLage]}
+          </p>
+
+          {totpLage === "error" && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => void refreshFactors()}
+              disabled={loading}
+              className="mb-4 min-h-11"
+            >
+              Erneut laden
+            </Button>
+          )}
+
+          {totpLage === "ready" && totpFactors.length > 0 && (
             <div className="mb-4 rounded-xl border bg-muted/30 p-3">
-              <div className="text-sm font-medium mb-2">Aktive TOTP-Faktoren</div>
+              <div className="text-sm font-medium mb-2">Eingerichtete Authenticator-Apps</div>
               <ul className="space-y-2">
-                {totpFactors.map((f) => (
-                  <li
-                    key={f.id}
-                    className="flex items-center justify-between rounded-lg bg-background p-2 border"
-                  >
-                    <div className="text-sm">
-                      <div className="font-medium">Faktor {f.id.slice(0, 8)}…</div>
-                      <div className="text-muted-foreground">
-                        Status: {f.status ?? "aktiv"}
-                        {f.created_at ? ` · seit ${new Date(f.created_at).toLocaleString()}` : ""}
-                      </div>
-                    </div>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleRemove(f.id)}
-                      disabled={loading}
+                {totpFactors.map((faktor) => {
+                  const name = totpFaktorAnzeigename(faktor.friendly_name);
+                  const status = totpFaktorStatusText(faktor.status);
+                  return (
+                    <li
+                      key={faktor.id}
+                      className="flex items-center justify-between gap-3 rounded-lg bg-background p-2 border"
                     >
-                      Entfernen
-                    </Button>
-                  </li>
-                ))}
+                      <div className="text-sm">
+                        <div className="font-medium">{name}</div>
+                        <div className="text-muted-foreground">
+                          {[
+                            status,
+                            faktor.created_at
+                              ? `seit ${new Date(faktor.created_at).toLocaleString()}`
+                              : null,
+                          ]
+                            .filter(Boolean)
+                            .join(" · ")}
+                        </div>
+                      </div>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="min-h-11"
+                        onClick={() => void handleRemove(faktor.id)}
+                        disabled={loading}
+                      >
+                        {name} entfernen
+                      </Button>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           )}
 
-          {!factorId ? (
-            <Button onClick={handleEnroll} disabled={loading} className="w-full">
-              {!loading ? "TOTP einrichten" : "Bitte warten…"}
-            </Button>
-          ) : (
+          {factorId ? (
             <div className="mt-4 space-y-4">
               <div className="rounded-xl border p-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <QrCode className="h-5 w-5" />
+                  <QrCode className="h-5 w-5" aria-hidden="true" />
                   <div className="font-medium">Schritt 1: QR-Code scannen</div>
                 </div>
                 {enrollQr?.startsWith("data:") ? (
                   // Der QR-Code kommt als Data-URL aus der Anmeldung bei
-                  // Supabase. next/image kann daran nichts optimieren – es
-                  // gibt keine Quelle zum Abrufen und keine Groessen zum
-                  // Aushandeln –, wuerde aber einen Ladeumweg einbauen.
+                  // Supabase. next/image kann daran nichts optimieren.
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={enrollQr}
                     alt="QR-Code zum Einrichten der Zwei-Faktor-Anmeldung"
                     className="mx-auto h-40 w-40 rounded-lg border bg-white p-2"
                   />
-                ) : enrollUri ? (
-                  <div className="text-sm">
-                    <div className="mb-2 text-muted-foreground">
-                      Direkt-Link für unterstützte Apps:
-                    </div>
-                    <a
-                      href={enrollUri}
-                      className="break-all underline text-primary"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {enrollUri}
-                    </a>
-                  </div>
                 ) : (
                   <div className="flex items-center gap-2 text-sm">
-                    <AlertTriangle className="h-5 w-5 text-amber-500" />
+                    <AlertTriangle className="h-5 w-5 text-amber-500" aria-hidden="true" />
                     <span>
-                      QR-Code konnte nicht geladen werden – versuche es trotzdem mit dem 6-stelligen Code.
+                      Der QR-Code fehlt. Die Geheimnis-URI wird nicht angezeigt. Brich ab und starte die Einrichtung neu.
                     </span>
                   </div>
                 )}
@@ -298,7 +408,7 @@ export default function SecurityMFA() {
 
               <div className="rounded-xl border p-4">
                 <div className="font-medium mb-2">Schritt 2: 6-stelligen Code eingeben</div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                   <Label htmlFor="totp-code" srOnly>
                     6-stelliger Code
                   </Label>
@@ -314,72 +424,85 @@ export default function SecurityMFA() {
                     onChange={(e) =>
                       setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
                     }
-                    className="h-10 max-w-[160px] text-center tracking-widest text-lg"
+                    className="h-11 min-h-11 max-w-[160px] text-center tracking-widest text-lg"
                   />
-                  <Button onClick={handleVerify} disabled={loading || code.length !== 6}>
+                  <Button
+                    onClick={() => void handleVerify()}
+                    disabled={loading || code.length !== 6}
+                    className="min-h-11"
+                  >
                     Bestätigen
                   </Button>
                 </div>
               </div>
+
+              <Button
+                type="button"
+                variant="ghost"
+                className="min-h-11"
+                disabled={loading}
+                onClick={() => void handleRemove(factorId)}
+              >
+                Einrichtung abbrechen
+              </Button>
             </div>
-          )}
+          ) : darfTotpEinrichten(totpLage) ? (
+            <Button onClick={() => void handleEnroll()} disabled={loading} className="w-full min-h-11">
+              {!loading ? "Authenticator-App einrichten" : "Bitte warten…"}
+            </Button>
+          ) : null}
         </CardContent>
       </Card>
 
-      {/* Passkeys */}
       <Card>
         <CardHeader withDivider>
           <div className="flex items-center gap-2">
-            <KeyRound className="h-5 w-5" />
-            <CardTitle as="h2">Passkeys (WebAuthn)</CardTitle>
+            <KeyRound className="h-5 w-5" aria-hidden="true" />
+            <CardTitle as="h2">Passkeys</CardTitle>
           </div>
           <CardDescription>
-            Anmeldung mit FaceID/TouchID oder Sicherheitsschlüssel. Aktiviert sich automatisch,
-            sobald Passkeys in Supabase (Auth → Settings) eingeschaltet sind.
+            Passkeys richten sich nach der Server-Konfiguration, nicht nach dem Browser allein.
           </CardDescription>
         </CardHeader>
 
         <CardContent className="pt-4">
-          <div className="rounded-xl border bg-muted/30 p-3 text-sm">
-            Status:{" "}
-            {passkeySupported ? (
-              <span className="inline-flex items-center gap-1 text-green-700">
-                <CheckCircle2 className="h-4 w-4" /> verfügbar
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 text-amber-700">
-                <AlertTriangle className="h-4 w-4" /> derzeit nicht aktiv
-              </span>
-            )}
-          </div>
-
-          <div className="mt-4 flex gap-2">
-            <Button onClick={handleRegisterPasskey} disabled={!passkeySupported || passkeyBusy}>
-              {!passkeyBusy ? "Passkey hinzufügen" : "Registriere…"}
-            </Button>
-            <Button variant="outline" disabled>
-              Verwalten (bald)
-            </Button>
-          </div>
-
-          {passkeyMsg && (
-            <div
-              className={cn(
-                "mt-3 rounded-lg border p-3 text-sm",
-                passkeyMsg.type === "success"
-                  ? "border-green-200 bg-green-50 text-green-800"
-                  : "border-red-200 bg-red-50 text-red-800"
+          <div
+            data-passkey-lage={aktuellePasskeyLage}
+            className="rounded-xl border bg-muted/30 p-3 text-sm"
+            role="status"
+          >
+            <span className="inline-flex items-start gap-2">
+              {aktuellePasskeyLage === "empty" ? (
+                <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-700" aria-hidden="true" />
+              ) : (
+                <AlertTriangle className="mt-0.5 h-4 w-4 text-amber-700" aria-hidden="true" />
               )}
-            >
-              {passkeyMsg.text}
-            </div>
-          )}
+              <span>
+                <span className="font-medium">
+                  {aktuellePasskeyLage === "unsupported"
+                    ? "Nicht unterstützt"
+                    : aktuellePasskeyLage === "unavailable"
+                      ? "Nicht verfügbar"
+                      : "Noch nicht eingerichtet"}
+                  .{" "}
+                </span>
+                {PASSKEY_LAGE_TEXTE[aktuellePasskeyLage]}
+                {browserHinweis ? ` ${browserHinweis}` : null}
+              </span>
+            </span>
+          </div>
+
+          {darfPasskeyHinzufuegen(aktuellePasskeyLage) ? (
+            <p className="mt-4 text-sm text-ink-700">
+              Das Hinzufügen eines Passkeys ist in dieser Umgebung noch nicht angebunden.
+            </p>
+          ) : null}
         </CardContent>
       </Card>
 
-      {/* globale Meldungen */}
       {message && (
         <div
+          role={message.type === "error" ? "alert" : "status"}
           className={cn(
             "rounded-xl border p-4 flex items-center gap-2",
             message.type === "success"
@@ -388,9 +511,9 @@ export default function SecurityMFA() {
           )}
         >
           {message.type === "success" ? (
-            <CheckCircle2 className="h-5 w-5" />
+            <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
           ) : (
-            <AlertTriangle className="h-5 w-5" />
+            <AlertTriangle className="h-5 w-5" aria-hidden="true" />
           )}
           <span>{message.text}</span>
         </div>

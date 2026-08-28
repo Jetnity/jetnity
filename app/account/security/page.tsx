@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
 import SecurityMFA from '@/components/account/SecurityMFA'
+import { passkeysServerAktiviertLesen } from '@/lib/auth/account-security-passkeys-lesen'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
 }
 
 export default function SecurityPage() {
+  const passkeysServerAktiviert = passkeysServerAktiviertLesen()
+
   return (
     <main className="px-4 py-10 sm:px-6 sm:py-14">
       <div className="mx-auto max-w-3xl">
@@ -21,8 +24,9 @@ export default function SecurityPage() {
           Sicherheit
         </h1>
         <p className="mt-3 max-w-xl text-sm leading-6 text-ink-700">
-          Richte eine Zwei-Faktor-Anmeldung ein, um dein Konto besser zu schützen. Passkeys sind
-          vorbereitet und nur verfügbar, wenn sie in der Anmeldung aktiviert sind.
+          {passkeysServerAktiviert
+            ? 'Richte eine Authenticator-App ein, um dein Konto besser zu schützen.'
+            : 'Richte eine Authenticator-App ein, um dein Konto besser zu schützen. Passkeys sind in der Anmeldung derzeit nicht unterstützt.'}
         </p>
 
         <div className="mt-10">
@@ -38,7 +42,7 @@ export default function SecurityPage() {
               </div>
             }
           >
-            <SecurityMFA />
+            <SecurityMFA passkeysServerAktiviert={passkeysServerAktiviert} />
           </Suspense>
         </div>
       </div>
