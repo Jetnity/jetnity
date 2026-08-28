@@ -8,8 +8,8 @@ Status: **P2-TA-04 C1 Traveller write-contract integrity ist der aktuelle Accoun
 ## Aktueller Arbeitsblock – P2-TA-04 C1 Traveller write-contract integrity
 
 1. **Arbeitsblock / Ziel:** Issue #122 / P2-TA-04 C1 – kanonischer SECURITY-INVOKER-Delete-RPC, DB-Party-Cap 20, Child-Limits 8/12 auch bei UPDATE/Reparenting.
-2. **Authoring-Branch / PR:** `cursor/p2-ta-04-c1-integrity-hardening-6fc0`; Draft-PR folgt.
-3. **Status:** **AUTHORING / DRAFT.** Kein Ready, kein Merge, kein C2, kein Production-Apply durch den Author.
+2. **Authoring-Branch / PR:** `cursor/p2-ta-04-c1-integrity-hardening-6fc0`; Draft-PR #126.
+3. **Status:** **AUTHOR COMPLETE / DRAFT.** Kein Ready, kein Merge, kein C2, kein Production-Apply durch den Author.
 4. **Bereits umgesetzt:** `party_loeschen`; `travellerEntfernen` ohne Tabellen-DELETE; Party-Cap-Trigger mit Trip-`FOR NO KEY UPDATE`; Child-Limit-Trigger INSERT+UPDATE; Unit-/DB-/Concurrency-Tests.
 5. **Cursor-Agent:** `Account plattform audit vorbereitung 7`.
 6. **Live-`main` bei Authoring:** `4549846bbbc106cb0a921203e343af6e681ec055` – immer live neu prüfen.
@@ -247,7 +247,7 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#122 / C1** P2-TA-04 Traveller write-contract integrity | **OFFEN / AUTHORING.** Issue #122. Draft-PR folgt. Kein C2, kein REVOKE, kein DEFINER, kein Production-Apply durch den Author. |
+| **#126** P2-TA-04 C1 Traveller write-contract integrity | **DRAFT / AUTHOR COMPLETE.** Branch `cursor/p2-ta-04-c1-integrity-hardening-6fc0`. Issue #122. Kein C2, kein REVOKE, kein DEFINER, kein Production-Apply durch den Author. |
 | **#120** P2-TA-04 Traveller Write-Path Gate 0 | **GEMERGT / INTEGRIERT.** Merge `8d8f3d57`. Issue #119 CLOSED / completed. Audit only; Residual C1 jetzt Issue #122. |
 | **#117** P2-TA-03 Account Plan Reconciliation | **GEMERGT / INTEGRIERT.** Merge `b912315d`. Issue #116 CLOSED / completed. Kanonischer AP-5–AP-12-Plan liegt auf `main`. |
 | **#113** P2-TA-06 Readiness Credential Normalization | **GEMERGT / INTEGRIERT.** Reviewed Head `928215a2`; Merge `286d26fe`; Issue #112 CLOSED / completed. |

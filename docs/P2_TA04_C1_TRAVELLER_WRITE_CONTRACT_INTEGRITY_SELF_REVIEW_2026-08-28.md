@@ -27,8 +27,15 @@ Keine RLS-Policy geändert. Kein Tabellen-REVOKE. Kein SECURITY DEFINER. Kein Au
 | Wurde Production angewendet? | Nein. |
 | Wurde C2/AP-5 gestartet? | Nein. |
 
-## 3. Urteil des Autors
+## 3. Risiken, die bleiben
 
-**CHANGES REQUIRED durch den Autor:** keine weiteren in diesem Slice, sobald Develop-Apply und Tests gestempelt sind.
+- Exact-Head vor Stamp: Actions `33133248112` SUCCESS und Vercel `D6onnex5Amwn9x1JLp9PPi7L3hXZ` SUCCESS auf `f46fae17`. Ein Stamp danach braucht erneute Live-Gates.
+- `db:sicherheit` 217/248: vorbestehende Admin-AAL2-JWT-Lücken, nicht C1.
+- C2 bleibt ein grosses Privilege-Gate.
+- Production-Apply ist nicht erfolgt.
+
+## 4. Urteil des Autors
+
+**CHANGES REQUIRED durch den Autor:** keine weiteren in diesem Slice.
 
 **Unabhängiger Technical-Lead-Review:** ausstehend. Dieses Self-Review ersetzt ihn nicht.
