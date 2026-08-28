@@ -5,15 +5,15 @@ Status: **AUTHORIZED / AUDIT + ARCHITECTURE ONLY / NO RUNTIME / NO SCHEMA WRITE 
 Workstream: Account / Traveller  
 Cursor-Agent: **`Cursor-Agent: Account plattform audit vorbereitung 11`**
 
-## 0. Visible Cursor name gate
+## 0. Cursor name discipline
 
-Binding first requirement: `docs/JETNITY_CURSOR_VISIBLE_AGENT_NAME_GATE.md`.
+Binding naming rule: `docs/JETNITY_CURSOR_VISIBLE_AGENT_NAME_GATE.md`.
 
-The visible Cursor agent/session title must be exactly:
+Logical agent name:
 
 `Account plattform audit vorbereitung 11`
 
-Do not accept or claim a different visible session name. If the current Cursor session is visibly named differently and no rename/title capability is available, STOP before material work and report the naming blocker. Do not invent a new generation merely because a pure launch attempt was misnamed.
+Use this exact logical name in Task, Status, Handoff, Self-Review and PR communication. The visible Cursor session title should match when Cursor exposes a supported rename/title capability. If Cursor instead shows another generated UI title and no rename capability exists, document the mismatch if useful and **continue normally**. A visible-title mismatch is not a work, review or merge blocker and does not create a new generation.
 
 ## 1. Live baseline
 
@@ -154,7 +154,7 @@ The Status/Handoff must contain:
 
 - exact main/baseline;
 - branch/PR/exact head;
-- exact assigned agent name and visible-name evidence;
+- exact assigned logical agent name and any available visible-name evidence;
 - Task/Scope/Non-Scope;
 - options considered;
 - recommended architecture with reasons;
@@ -208,7 +208,7 @@ When finished:
 
 1. re-fetch `origin/main`;
 2. record exact head and ahead/behind;
-3. verify the visible Cursor name requirement;
+3. record the logical agent name and any available visible-title evidence without blocking on UI title mismatch;
 4. stop for independent Technical-Lead exact-head review;
 5. do not mark Ready;
 6. do not merge;
