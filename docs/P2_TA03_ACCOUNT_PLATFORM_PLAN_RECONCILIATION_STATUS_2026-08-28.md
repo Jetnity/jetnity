@@ -122,6 +122,6 @@ Technical-Lead Review `5046697270` **CHANGES REQUIRED** umgesetzt:
 
 1. AP-5 Tests/Evidence und umgebende Formulierung: bestehender Reauthentication-Vertrag (`secure_password_change`); kein erfundenes Current-Password-Submit.
 2. Historische `Status:`-Zeilen in den beiden Audit-Dateien wiederhergestellt; Nachtrag steht separat darunter.
-3. PR-Body auf den author-complete Docs-Scope aktualisiert.
+3. PR-Body: GitHub-API kann die TL-managed Beschreibung nicht schreiben. Kanonischer Zieltext liegt in `docs/P2_TA03_PR117_DESCRIPTION_2026-08-28.md` zur 1:1-Übernahme.
 
 Kein Folgeslice. Nicht Ready. Nicht mergen. Technical Lead führt den Re-Review unabhängig.
