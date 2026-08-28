@@ -29,7 +29,7 @@ Keine Migration. Kein `supabase/config.toml`-Write. Kein RLS/Identity. Kein Logo
 
 ## 3. Risiken, die bleiben
 
-- Exact-Head CI/Vercel müssen auf dem finalen Head live gelesen werden.
+- Exact-Head vor Stamp: Actions `33168871236` SUCCESS und Vercel `G6m3MbtAFPhUwhS7x3KxH2g9JEJb` SUCCESS auf `fe734874`. Ein Stamp danach braucht erneute Live-Gates; kein zweiter Stamp, außer die Stamp-CI fehlschlägt.
 - Kein authentifizierter Browser-/Real-Device-Beweis.
 - Recovery-UI bleibt für signed-in Sessions mehrdeutig; das ist Residual, kein stiller Rewrite.
 - S3–S5 und AP-5-P1–P5 bleiben offen.

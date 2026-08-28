@@ -17,7 +17,7 @@ Status: **AP-5-S2 ist der aktuelle Account-Runtime-Slice auf Issue #136. Gate 0 
 8. **Kosten / Provider / Secrets:** keine.
 9. **Bekannte Residuals:** Recovery-UI bleibt für signed-in Sessions mehrdeutig; Login-MFA abbrechbar; Sessionliste ungebaut; `main` `protected=false`.
 10. **Offene Nutzerentscheidungen / Freigaben:** dieses S2 braucht keines, solange es im bestehenden Reauth-Vertrag bleibt.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Review des Draft-PR. **Kein S3–S5 aus diesem Slice.**
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Review auf Exact Head `fe734874` (Actions `33168871236` SUCCESS, Vercel `G6m3MbtAFPhUwhS7x3KxH2g9JEJb` READY). Dieser Continuity-Stamp erzeugt einen neueren Head; dessen CI live lesen. **Kein S3–S5 aus diesem Slice.**
 12. **Zuerst lesen:** `docs/AP5_S2_PASSWORD_REAUTH_STATUS_2026-08-28.md`, Handoff, Gate-0-Status, ADR-0182.
 
 ## Historischer Arbeitsblock – Project Sanitation Closure

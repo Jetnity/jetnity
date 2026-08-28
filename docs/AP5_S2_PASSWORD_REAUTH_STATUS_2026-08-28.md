@@ -66,7 +66,13 @@ Kein ADR. Gate 0 / ADR-0182 bleibt die Authority.
 | `auth:pruefen` | 55/55, Passwortregel = config.toml |
 | Production-Build | pass |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet |
-| Exact-Head CI/Vercel | nach diesem Stamp live zu lesen |
+| Exact-Head vor diesem Stamp | `fe734874b0b2f97390a2619940359768b7690f6e` |
+| GitHub Actions | Run `33168871236` **SUCCESS** auf exakt `fe734874` |
+| Jobs | Typecheck/Lint/Build SUCCESS; Auth-Konfiguration gegen config.toml SUCCESS; Vercel Preview Comments SUCCESS |
+| Vercel Preview | Inspector `G6m3MbtAFPhUwhS7x3KxH2g9JEJb` **SUCCESS** auf exakt `fe734874` |
+| GitHub Preview-Deployment | `6140668086` success |
+
+Dieser Stamp erzeugt einen neueren Head. Dessen CI/Vercel müssen live gelesen werden. **Kein zweiter Evidence-Stamp**, außer die Stamp-CI fehlschlägt.
 
 ## 5. Residuals – nicht in S2 mischen
 

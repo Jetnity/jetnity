@@ -30,6 +30,14 @@ Harte Wahrheiten:
 5. Passwortregel und HIBP bleiben `lib/auth/passwort-richtlinie.ts`.
 6. Generation 9 (S1) ist abgeschlossen und darf nicht wiederverwendet werden.
 
+## Exact-Head vor diesem Stamp
+
+- Actions `33168871236` SUCCESS
+- Vercel `G6m3MbtAFPhUwhS7x3KxH2g9JEJb` SUCCESS
+- GitHub Deployment `6140668086` success auf `fe734874`
+
+Dieser Stamp dokumentiert nur diese Re-Gate. Kein weiterer Evidence-Stamp, außer die Stamp-CI fehlschlägt.
+
 ## Residual Recovery
 
 `/auth/update-password` prüft weiter `getSession()` und spricht Nutzer als „angemeldet“ an. Das vermischt Recovery-UI mit einer möglichen signed-in Session, ändert aber nicht die zwei Authorities. S2 hat das bewusst nicht still zur In-Account-UI gemacht.
