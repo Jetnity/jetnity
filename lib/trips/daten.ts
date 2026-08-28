@@ -120,7 +120,7 @@ function status(wert: string): TripStatus {
  * nicht als unbemerkt abgeschnittene Liste.
  */
 export async function reisenLaden(): Promise<Lesung<TripSummary>> {
-  const supabase = createServerComponentClient()
+  const supabase = await createServerComponentClient()
 
   const ergebnis = await lese<UebersichtZeile>(() =>
     alsAntwort<UebersichtZeile>(
@@ -163,7 +163,7 @@ export async function reisenLaden(): Promise<Lesung<TripSummary>> {
  * errät, soll nicht erfahren, dass sie existiert.
  */
 export async function reiseLaden(id: string): Promise<Lesung<Reisegraph>> {
-  const supabase = createServerComponentClient()
+  const supabase = await createServerComponentClient()
 
   const kanonisch = await alsAntwort<GraphZeile>(
     supabase.from('trips').select(TRIP_GRAPH_SELECT_KANONISCH).eq('id', id).limit(1),

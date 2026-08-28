@@ -92,11 +92,12 @@ describe('/planen bleibt als Basis öffentlich', () => {
 
   test('die Seite übernimmt die Werte weiter und setzt nur robots', () => {
     const datei = quelle('../../app/(public)/planen/page.tsx')
-    assert.match(datei, /generateMetadata/)
+    assert.match(datei, /export async function generateMetadata/)
     assert.match(datei, /planenRobots/)
     assert.match(datei, /htmlRobots/)
     assert.match(datei, /kanonischeUrl\('\/planen'\)/)
-    assert.match(datei, /planenRobots\(searchParams\) \?\? htmlRobots\(\)/)
+    assert.match(datei, /planenRobots\([^)]+\) \?\? htmlRobots\(\)/)
+    assert.match(quelle('index-grenze.ts'), /Object\.hasOwn\(searchParams, name\)/)
     assert.equal(datei.includes('...(robots ? { robots } : {})'), false)
     assert.match(datei, /initialIdee/)
     assert.match(datei, /TripPlanner/)

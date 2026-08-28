@@ -6,20 +6,24 @@
 
 import 'server-only'
 
+import type { SupabaseClient } from '@supabase/supabase-js'
+
 import { createServerActionClient } from '@/lib/supabase/server'
 import type { FlughafenReferenzKarte } from '@/lib/route/domain'
 import { iataLesen, referenzKarteAus } from '@/lib/route/referenz'
+import type { Database } from '@/types/supabase'
 
 export { iatasAusOption } from '@/lib/route/referenz'
 
 export async function flughafenReferenzLesen(
   codes: readonly string[],
-  client = createServerActionClient(),
+  client?: SupabaseClient<Database>,
 ): Promise<FlughafenReferenzKarte> {
+  const supabase = client ?? (await createServerActionClient())
   const iatas = [...new Set(codes.map((code) => iataLesen(code)).filter((code): code is string => Boolean(code)))]
   if (iatas.length === 0) return {}
 
-  const { data, error } = await client
+  const { data, error } = await supabase
     .from('airports')
     .select('iata, country_code, city, country, name')
     .in('iata', iatas)

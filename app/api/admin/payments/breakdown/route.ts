@@ -18,7 +18,7 @@ export async function GET() {
   const gate = await requireAdminApi({ surface: 'api/payments/breakdown', capability: 'betrieb-lesen' })
   if (!gate.ok) return gate.response
 
-  const supabase = createRouteHandlerClient<Database>()
+  const supabase = await createRouteHandlerClient<Database>()
   const beginn = new Date(Date.now() - TAGE * 24 * 3600 * 1000)
 
   const zahlungen = await lese(() =>

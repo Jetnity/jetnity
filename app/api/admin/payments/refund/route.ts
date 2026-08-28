@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     )
   }
 
-  const supabase = createRouteHandlerClient<Database>()
+  const supabase = await createRouteHandlerClient<Database>()
 
   // supabase-js wirft nicht, es meldet im `error`-Feld. Das frühere `try/catch`
   // fing deshalb nie etwas ab: Eine von RLS abgelehnte Buchung lief in die

@@ -25,7 +25,7 @@ import { lese } from '@/lib/api/datenbank-lesen'
 const TAGE = 14
 
 export default async function AdminTimeSeries() {
-  const supabase = createServerComponentClient<Database>()
+  const supabase = await createServerComponentClient<Database>()
 
   const ergebnis = await lese<{ tag: string; anzahl: number }>(() =>
     supabase.rpc('admin_reisen_zeitreihe', { _tage: TAGE }),

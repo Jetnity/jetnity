@@ -35,7 +35,9 @@ function standardDeps(modus: 'rsc' | 'route'): SystemHealthAbhaengigkeiten {
     supabaseConfigured: () => supabaseAppIstKonfiguriert(),
     pingSupabase: async () => {
       const client =
-        modus === 'rsc' ? createServerComponentClient<Database>() : createRouteHandlerClient<Database>()
+        modus === 'rsc'
+          ? await createServerComponentClient<Database>()
+          : await createRouteHandlerClient<Database>()
       return pingAirports(client)
     },
   }

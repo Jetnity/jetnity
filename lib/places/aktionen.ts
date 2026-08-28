@@ -20,7 +20,7 @@ export type ReiseorteBestaetigung =
   | { ok: false; meldung: string; feld?: 'destination' | 'origin'; zielIndex?: number }
 
 async function zeileLesen(id: string): Promise<Ort | null> {
-  const { data, error } = await createServerActionClient()
+  const { data, error } = await (await createServerActionClient())
     .from('places')
     .select(ORT_SPALTEN)
     .eq('id', id)
@@ -34,7 +34,7 @@ async function zeilenLesen(ids: string[]): Promise<Ort[] | null> {
   if (eindeutig.length === 0) return []
   if (eindeutig.length > GRENZEN.etappenJeReise + 1) return null
 
-  const { data, error } = await createServerActionClient()
+  const { data, error } = await (await createServerActionClient())
     .from('places')
     .select(ORT_SPALTEN)
     .in('id', eindeutig)

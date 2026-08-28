@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function ReisenSeite() {
-  const supabase = createServerComponentClient()
+  const supabase = await createServerComponentClient()
   const { data } = await supabase.auth.getUser()
   const angemeldet = Boolean(data.user)
 

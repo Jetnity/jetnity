@@ -212,7 +212,7 @@ describe('P1-D0-LIVE-01: Layouts dürfen index nicht hart setzen', () => {
   test('/planen setzt robots immer explizit und erbt kein index,follow', () => {
     const planen = quelle('../../app/(public)/planen/page.tsx')
     assert.match(planen, /htmlRobots/)
-    assert.match(planen, /planenRobots\(searchParams\) \?\? htmlRobots\(\)/)
+    assert.match(planen, /planenRobots\([^)]+\) \?\? htmlRobots\(\)/)
     assert.match(planen, /robots,/)
     assert.equal(planen.includes('...(robots ? { robots } : {})'), false)
   })

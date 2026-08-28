@@ -11,7 +11,7 @@ Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Ziel
 
 | Bereich | Technologie |
 | --- | --- |
-| Framework | Next.js 14.2.32, App Router (Ist). Gate 0 / ADR-0189 empfiehlt Next **16.x Active LTS** live-resolved (auditiertes Minimum `16.3.3`); **nicht angewendet**. |
+| Framework | Next.js 14.2.32, App Router (Ist). Gate 0 / ADR-0189 empfiehlt Next **16.x Active LTS** live-resolved (auditiertes Minimum `16.3.3`); **nicht angewendet**. S1 / ADR-0190 bereitet async Request APIs auf dieser 14er-Runtime vor; **kein Bump**. |
 | Sprache | TypeScript (strict) |
 | Styling | Tailwind CSS, CSS Custom Properties |
 | UI-Bausteine | Radix UI / shadcn-Muster |
@@ -58,9 +58,9 @@ Es existieren getrennte Clients je Ausführungskontext. Die Auswahl ist nicht op
 
 | Funktion in `lib/supabase/` | Kontext | Rechte |
 | --- | --- | --- |
-| `server.ts` → `createServerComponentClient()` | Server Components / RSC | Nutzerrechte, RLS aktiv, Cookies nur lesend |
-| `server.ts` → `createRouteHandlerClient()` | Route Handler | Nutzerrechte, RLS aktiv, darf Cookies schreiben |
-| `server.ts` → `createServerActionClient()` | Server Actions | Nutzerrechte, RLS aktiv, darf Cookies schreiben |
+| `server.ts` → `createServerComponentClient()` **async** | Server Components / RSC | Nutzerrechte, RLS aktiv, Cookies nur lesend (`await cookies()`) |
+| `server.ts` → `createRouteHandlerClient()` **async** | Route Handler | Nutzerrechte, RLS aktiv, darf Cookies schreiben (`await cookies()`) |
+| `server.ts` → `createServerActionClient()` **async** | Server Actions | Nutzerrechte, RLS aktiv, darf Cookies schreiben (`await cookies()`) |
 | `client.ts` → `createBrowserClient()` | Client Components | Anon Key, RLS aktiv |
 
 **Einen allgemeinen Admin-Client gibt es weiterhin nicht.** `lib/supabase/admin.ts` und der frühere `createAdminClient` sind in Phase 1.2b entfernt worden: Letzterer hängte einem Client mit vollen Rechten den mutierbaren Cookie-Adapter der Besucherin an.

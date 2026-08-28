@@ -4,6 +4,7 @@ export const revalidate = 0
 
 import { unstable_noStore as noStore } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { leseOptionalRequestParam, type PageRequestParam } from '@/lib/next/request-api'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import { requireAdminPage } from '@/lib/auth/admin-guard'
 import {
@@ -23,7 +24,11 @@ const PAGE_SIZE = 20
 
 type SearchParams = { q?: string; page?: string }
 
-export default async function UsersPage({ searchParams }: { searchParams?: SearchParams }) {
+export default async function UsersPage({
+  searchParams,
+}: {
+  searchParams?: PageRequestParam<SearchParams>
+}) {
   noStore()
 
   // Der Bereichsschutz sitzt im Layout der Gruppe `(admin)`. Hier geht es um
@@ -34,12 +39,13 @@ export default async function UsersPage({ searchParams }: { searchParams?: Searc
     redirect('/unauthorized?grund=forbidden')
   }
 
-  const q = (searchParams?.q ?? '').trim()
-  const page = Math.max(1, Number(searchParams?.page ?? 1))
+  const params = await leseOptionalRequestParam(searchParams)
+  const q = (params?.q ?? '').trim()
+  const page = Math.max(1, Number(params?.page ?? 1))
   const from = (page - 1) * PAGE_SIZE
   const to = from + PAGE_SIZE - 1
 
-  const supabase = createServerComponentClient() as any
+  const supabase = (await createServerComponentClient()) as any
 
   let query = supabase
     .from('profiles')

@@ -38,7 +38,7 @@ export async function signInWithPasswordAction(
   if (!email) return { error: 'Bitte E-Mail eingeben.' }
   if (!password) return { error: 'Bitte Passwort eingeben.' }
 
-  const supabase = createServerActionClient()
+  const supabase = await createServerActionClient()
   const { error } = await supabase.auth.signInWithPassword({ email, password })
   if (error) return { error: error.message }
 
@@ -71,7 +71,7 @@ export async function sendMagicLinkAction(
   const email = String(formData.get('email') ?? '').trim().toLowerCase()
   if (!email) return { error: 'Bitte E-Mail eingeben.' }
 
-  const supabase = createServerActionClient()
+  const supabase = await createServerActionClient()
   const site = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   const { error } = await supabase.auth.signInWithOtp({
     email,

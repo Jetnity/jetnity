@@ -18,7 +18,7 @@ export async function GET(req: Request) {
   const gate = await requireAdminApi({ surface: 'api/security/events', capability: 'betrieb-lesen' })
   if (!gate.ok) return gate.response
 
-  const supabase = createRouteHandlerClient<Database>()
+  const supabase = await createRouteHandlerClient<Database>()
   const { searchParams } = new URL(req.url)
   const cursor = searchParams.get('cursor')
   const suche = (searchParams.get('q') || '').trim()

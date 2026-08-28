@@ -49,7 +49,7 @@ export async function GET(req: Request) {
   }
 
   const rolle = rolleAus(url.searchParams.get('rolle'))
-  const client = createRouteHandlerClient()
+  const client = await createRouteHandlerClient()
   const namen = await lese(() =>
     client.from('places').select(ORT_SPALTEN).or(namensfilter).limit(ORT_ABFRAGE),
   )

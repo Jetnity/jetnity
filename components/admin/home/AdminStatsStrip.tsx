@@ -27,7 +27,7 @@ function chf(cents: number) {
 }
 
 export default async function AdminStatsStrip() {
-  const supabase = createServerComponentClient<Database>()
+  const supabase = await createServerComponentClient<Database>()
 
   const zahlungen = await supabase.rpc('admin_payments_summary_30d')
   const reisen = await supabase.rpc('admin_reisen_kennzahlen')

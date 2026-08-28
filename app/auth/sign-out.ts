@@ -11,7 +11,7 @@ import { createServerActionClient } from '@/lib/supabase/server'
  * vorgeholt – die Sitzung endet dann, ohne dass jemand geklickt hat.
  */
 export async function signOutAction() {
-  const supabase = createServerActionClient()
+  const supabase = await createServerActionClient()
   await supabase.auth.signOut()
   redirect('/')
 }
@@ -24,7 +24,7 @@ export async function signOutAction() {
  * Anfrage übernommenes Weiterleitungsziel wäre eine offene Weiterleitung.
  */
 export async function signOutToAdminLoginAction() {
-  const supabase = createServerActionClient()
+  const supabase = await createServerActionClient()
   await supabase.auth.signOut()
   redirect('/admin/login')
 }

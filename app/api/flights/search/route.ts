@@ -68,7 +68,8 @@ export async function POST(req: Request) {
   )
   const { httpStatus, koerper, retryAfterSec } = await fluegeSuchen(gelesen.wert, {
     ...ports,
-    flughafenReferenz: (codes) => flughafenReferenzLesen(codes, createRouteHandlerClient()),
+    flughafenReferenz: async (codes) =>
+      flughafenReferenzLesen(codes, await createRouteHandlerClient()),
   })
 
   return antwort(httpStatus, koerper, retryAfterSec)

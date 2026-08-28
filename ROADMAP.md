@@ -117,7 +117,9 @@ Nicht automatisch starten:
 - AP-5-S3–S5 / AP-5-P1–P5
 - AP-7 / Account-Traveller-Registry — Architektur Dual-Authority freigegeben; S1 Domain-Contract über PR #145 auf `main @ 4ec83f36` integriert, kein automatisches S2, keine Persistenz
 - Node 22 Runtime Consistency — PR #147 integriert auf `main @ 56aff7ff` (`engines.node: "22.x"` + `@types/node@22.20.1`)
-- Next.js Framework Security Upgrade Gate 0 — PR #148 self-expiring: offen → TL-Re-Review nach `5457148091`; nach Merge → integrierte Evidence, dann Product-Owner-Entscheidung über Ziel Next 16.x Active LTS (live-resolved, Minimum `16.3.3`); kein automatischer Bump; kein Ready/Merge durch den Autor
+- Next.js Framework Security Upgrade Gate 0 — PR #148 integriert auf `main @ 2fdf8a18`; Ziel 16.x Active LTS live-resolved (Minimum `16.3.3`) bleibt Empfehlung, nicht angewendet
+- Next 16 Product-Owner-Freigabe — PR #149 integriert; autorisiert das gestufte Compatibility-Programm
+- Next 16 Compatibility Prep S1 — Draft-PR #150 self-expiring: Review-Fix für Promise-förmige Page/Metadata-Props nach CHANGES REQUIRED `5457641262`; STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; async Request-API-Prep auf `next@14.2.32`; kein Ready/Merge durch den Autor; kein S2 / Framework-Bump
 
 ## 3. Trip Workspace / Visitor Search
 

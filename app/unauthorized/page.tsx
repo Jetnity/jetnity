@@ -2,6 +2,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { signOutAction } from '@/app/auth/sign-out'
+import { leseOptionalRequestParam, type PageRequestParam } from '@/lib/next/request-api'
 import { NICHT_INDEXIEREN } from '@/lib/seo/index-grenze'
 
 export const metadata: Metadata = {
@@ -16,12 +17,13 @@ export const metadata: Metadata = {
  */
 type SearchParams = { grund?: string }
 
-export default function UnauthorizedPage({
+export default async function UnauthorizedPage({
   searchParams,
 }: {
-  searchParams?: SearchParams
+  searchParams?: PageRequestParam<SearchParams>
 }) {
-  const pruefungFehlgeschlagen = searchParams?.grund === 'lookup-failed'
+  const params = await leseOptionalRequestParam(searchParams)
+  const pruefungFehlgeschlagen = params?.grund === 'lookup-failed'
 
   return (
     <main className="mx-auto max-w-xl p-8 text-center">

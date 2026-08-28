@@ -1,18 +1,20 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **Next.js Framework Security Upgrade Gate 0 / PR #148 self-expiring. Solange #148 offen: STOP für unabhängigen Technical-Lead Exact-Head-Re-Review nach `5457148091`; kein Ready, kein Merge durch den Autor. Sobald #148 gemergt: Gate 0 integrierte Evidence; nächster Schritt = Product-Owner-Entscheidung über Ziel Next 16.x Active LTS (live-resolved, Minimum `16.3.3`), kein automatischer Bump. PR #147 Node 22 ist auf `main @ 56aff7ff` integriert. AP-7-S1 ist integriert; kein automatisches AP-7-S2. Dual-Authority ist product-owner-freigegeben. PR #144 Gate 0 ist MERGED (`bb38aef5`). PR #143 bleibt MERGED (`1947285c`). S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **Next 16 Compatibility Prep S1 Review-Fix / Draft-PR #150 self-expiring. STOP für unabhängigen Technical-Lead Exact-Head-Re-Review nach CHANGES REQUIRED `5457641262`; kein Ready, kein Merge durch den Autor. Kein S2. PR #148 Gate 0 und PR #149 Product-Owner-Freigabe sind auf `main @ 2fdf8a18` integriert. PR #147 Node 22 ist integriert. AP-7-S1 ist integriert; kein automatisches AP-7-S2. Dual-Authority ist product-owner-freigegeben. S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
-Aktueller Ops-Slice auf diesem Branch (self-expiring / dual-state für PR #148):
+Aktueller Ops-Slice auf diesem Branch (self-expiring für PR #150):
 
-- `docs/NEXT_FRAMEWORK_SECURITY_UPGRADE_GATE0_STATUS_2026-08-28.md` – Framework Security Gate 0 / PR #148; offen → TL-Review; nach Merge integrierte Evidence, dann PO-Entscheidung
-- `docs/NEXT_FRAMEWORK_SECURITY_UPGRADE_GATE0_HANDOFF_2026-08-28.md`
-- `docs/NEXT_FRAMEWORK_SECURITY_UPGRADE_GATE0_SELF_REVIEW_2026-08-28.md`
+- `docs/NEXT16_S1_REQUEST_API_COMPATIBILITY_PREP_STATUS_2026-08-28.md` – S1 Request-API-Kompatibilität Review-Fix / Draft-PR #150; STOP für TL Exact-Head-Re-Review nach `5457641262`
+- `docs/NEXT16_S1_REQUEST_API_COMPATIBILITY_PREP_HANDOFF_2026-08-28.md`
+- `docs/NEXT16_S1_REQUEST_API_COMPATIBILITY_PREP_SELF_REVIEW_2026-08-28.md`
 
-Integrierter vorheriger Ops-Slice:
+Integrierte vorherige Ops-Slices:
 
+- `docs/NEXT_FRAMEWORK_SECURITY_UPGRADE_GATE0_STATUS_2026-08-28.md` – Framework Security Gate 0 / PR #148 integriert
+- `docs/NEXT16_PRODUCT_OWNER_APPROVAL_2026-08-28.md` – PO-Freigabe / PR #149 integriert
 - `docs/NODE22_RUNTIME_CONSISTENCY_STATUS_2026-08-28.md` – Node 22 / PR #147 integriert auf `56aff7ff`
 
 Aktuellster versionierter finaler Post-Merge-Checkpoint:
@@ -324,7 +326,8 @@ Aktueller Account-Status:
 
 Aktueller Quality-/Security-Status:
 
-- `Cursor-Agent: Jetnity framework security audit 1` ist der aktuelle Gate-0-Slice für Draft-PR #148. Sichtbarer Run-Titel: `Jetnity framework security audit`; nicht als umbenannt behauptet. Generation 1 nicht für einen Implementierungs-Bump wiederverwenden.
+- `Cursor-Agent: Jetnity framework compatibility 1` ist der aktuelle S1-Slice für Draft-PR #150. Sichtbarer Run-Titel: `Next 16 API compatibility`; nicht als umbenannt behauptet. Generation 1 nicht für S2 wiederverwenden.
+- `Cursor-Agent: Jetnity framework security audit 1` ist mit PR #148 abgeschlossen. Generation 1 nicht für einen Implementierungs-Bump wiederverwenden.
 - `Cursor-Agent: Jetnity quality security audit 4` ist mit PR #143 abgeschlossen
 - Generation 4 nicht für einen Produktslice wiederverwenden
 - `Cursor-Agent: Jetnity runtime consistency 1` ist mit PR #147 abgeschlossen
@@ -347,7 +350,7 @@ Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logisc
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-**Self-expiring / dual-state.** Solange Draft-PR #148 offen: unabhängiger Technical-Lead Exact-Head-Re-Review nach `5457148091`. Autor-Agent setzt kein Ready, kein Merge, keinen Framework-Bump, keine Vercel-Setting-Mutation und startet kein AP-7-S2. Sobald #148 gemergt: Gate 0 ist integrierte Evidence; Draft-/Review-Klauseln historisch; nächster Schritt = Product-Owner-Entscheidung über ein Implementierungsprogramm mit Ziel Next 16.x Active LTS (live-resolved, Minimum `16.3.3`). Kein automatischer Bump. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Kein erfundener Merge-SHA. AP-7-S2 bleibt separat Product-Owner-gegatet. PR #147 Node 22 ist bereits integriert (`56aff7ff`).
+**Self-expiring.** Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #150 nach CHANGES REQUIRED `5457641262`. Autor-Agent setzt kein Ready, kein Merge, keinen Framework-Bump, keine Vercel-Setting-Mutation und startet kein S2 und kein AP-7-S2. PR #148 / PR #149 sind integriert. PR #147 Node 22 ist bereits integriert (`56aff7ff`).
 
 PR #144 ist MERGED (`bb38aef5`). Dual-Authority ist product-owner-freigegeben. PR #143 ist MERGED (`1947285c`).
 
