@@ -103,7 +103,7 @@ const IST_TEST = /\.(test|spec)\.[cm]?[jt]sx?$/
 
 const istStartpunkt = (datei) => {
   const rel = relative(ROOT, datei)
-  if (!rel.includes('/')) return true // Wurzeldateien: middleware.ts, next.config, tailwind.config
+  if (!rel.includes('/')) return true // Wurzeldateien: proxy.ts, next.config, tailwind.config
   if (rel.startsWith('scripts/')) return true
   // Testdateien laedt `npm test` direkt; sie sind Startpunkte, keine Waisen.
   if (IST_TEST.test(rel)) return true

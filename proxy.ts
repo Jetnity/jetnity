@@ -1,4 +1,4 @@
-// middleware.ts
+// proxy.ts
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import type { Database } from './types/supabase' // relative statt "@/"
@@ -7,13 +7,16 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 /**
- * Die Middleware prüft ausschliesslich die Anmeldung, nicht die Rolle.
+ * Der Proxy prüft ausschliesslich die Anmeldung, nicht die Rolle.
  *
  * Rollen liegen in der Datenbank; sie bei jedem Request am Rand abzufragen
  * würde die Autorisierung auf zwei Orte verteilen. Die Rollenprüfung passiert
- * deshalb im Layout der Gruppe `(admin)` und in `requireAdminApi()` – die
- * Middleware sorgt davor dafür, dass anonyme Zugriffe die geschützten Bereiche
+ * deshalb im Layout der Gruppe `(admin)` und in `requireAdminApi()` – der
+ * Proxy sorgt davor dafür, dass anonyme Zugriffe die geschützten Bereiche
  * gar nicht erreichen, und liefert je Oberfläche die passende Antwort.
+ *
+ * Next 16 führt diesen Rand auf Node.js aus. Das ändert die Semantik nicht:
+ * weiter nur Identität, kein Matcher, kein AAL-/Rollenentscheider.
  */
 type Scope = {
   /** Trifft der Pfad diesen Bereich? */
@@ -55,7 +58,7 @@ const SCOPES: Scope[] = [
   },
 ]
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   // Antwortobjekt vorbereiten, Cookies durchreichen (wichtig für Supabase SSR)
   const res = NextResponse.next({ request: { headers: req.headers } })
   res.headers.set('x-middleware-cache', 'no-cache')
@@ -70,14 +73,14 @@ export async function middleware(req: NextRequest) {
   // Konfiguration aufgeht, ist aber genau das Gegenteil von Schutz.
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     console.error(
-      '[middleware] Supabase-ENV fehlt (NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY) – geschützter Bereich wird gesperrt.',
+      '[proxy] Supabase-ENV fehlt (NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY) – geschützter Bereich wird gesperrt.',
     )
     return pathname.startsWith('/api/')
       ? jsonDenied(503, 'unconfigured', 'Anmeldung derzeit nicht prüfbar.')
       : scope.deny(req)
   }
 
-  // Supabase-Client mit Cookie-Adapter (Edge-kompatibel)
+  // Supabase-Client mit Cookie-Adapter (Next-16-Proxy läuft auf Node.js)
   const supabase = createServerClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, {
     cookies: {
       getAll() {
@@ -103,7 +106,7 @@ export async function middleware(req: NextRequest) {
 
     return res
   } catch (err) {
-    console.error('[middleware] Supabase-Fehler:', err)
+    console.error('[proxy] Supabase-Fehler:', err)
     // Nicht prüfbar heisst nicht freigegeben.
     return pathname.startsWith('/api/')
       ? jsonDenied(503, 'lookup-failed', 'Anmeldung derzeit nicht prüfbar.')
@@ -114,6 +117,6 @@ export async function middleware(req: NextRequest) {
 /**
  * Wichtig:
  * KEIN `export const config = { matcher: ... }`.
- * Wir scopen die Middleware per Early-Return oben.
+ * Wir scopen den Proxy per Early-Return oben.
  * So umgehst du den micromatch/picomatch Stack-Overflow.
  */
