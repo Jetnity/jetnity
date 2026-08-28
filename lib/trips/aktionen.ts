@@ -130,7 +130,7 @@ async function nutzlastOrtePruefen(nutzlast: ReiseNutzlast): Promise<Aktionserge
   const eindeutig = [...new Set([originId, ...zielIds].filter((id): id is string => Boolean(id && istOrtId(id))))]
   if (eindeutig.length === 0) return { ok: false, meldung: ORT_MELDUNG.idUngueltig }
 
-  const { data, error } = await createServerActionClient()
+  const { data, error } = await (await createServerActionClient())
     .from('places')
     .select(ORT_SPALTEN)
     .in('id', eindeutig)

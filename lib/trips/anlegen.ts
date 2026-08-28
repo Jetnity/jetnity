@@ -43,7 +43,7 @@ export const NICHT_ANGEMELDET =
  * Weg wäre die Kennung eine Behauptung aus einem Cookie.
  */
 export async function konto() {
-  const supabase = createServerActionClient()
+  const supabase = await createServerActionClient()
   const { data, error } = await supabase.auth.getUser()
 
   if (error || !data.user) return { supabase, benutzerId: null as string | null }

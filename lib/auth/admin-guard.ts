@@ -152,7 +152,7 @@ function loadAllowlist(): ReadonlySet<string> {
  * Seite, die ihre eigene Rolle braucht, eine zweite Runde kosten.
  */
 const loadAdminIdentity = cache(async () => {
-  const supabase = createServerComponentClient()
+  const supabase = await createServerComponentClient()
   const { user, failed } = await loadVerifiedUser(supabase)
 
   if (!user) return { user: null, identityFailed: failed, lookup: null }
@@ -175,7 +175,7 @@ const loadAdminIdentity = cache(async () => {
  * fail closed.
  */
 const loadAdminAal = cache(async (): Promise<AalLookup> => {
-  const supabase = createServerComponentClient()
+  const supabase = await createServerComponentClient()
   try {
     const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
     return parseAalLookup(data, error)

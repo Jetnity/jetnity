@@ -8,6 +8,9 @@ import type { Database } from '@/types/supabase'
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
+/** Next 14: Store. Next 15/16: Promise<Store>. `Awaited` hält beide Linien. */
+type CookieStore = Awaited<ReturnType<typeof cookies>>
+
 function assertEnvAnon() {
   if (!SUPABASE_URL || !SUPABASE_ANON) {
     throw new Error('[supabase] NEXT_PUBLIC_SUPABASE_URL oder NEXT_PUBLIC_SUPABASE_ANON_KEY fehlt')
@@ -15,7 +18,7 @@ function assertEnvAnon() {
 }
 
 /** Read-only Cookies-Adapter (RSC) – erfüllt neues API (get/getAll/set/remove) */
-function rscCookiesAdapter(store: ReturnType<typeof cookies>) {
+function rscCookiesAdapter(store: CookieStore) {
   return {
     get(name: string) {
       return store.get(name)?.value
@@ -33,7 +36,7 @@ function rscCookiesAdapter(store: ReturnType<typeof cookies>) {
 }
 
 /** Mutierbarer Cookies-Adapter (Route Handler / Server Actions) */
-function mutableCookiesAdapter(store: ReturnType<typeof cookies>) {
+function mutableCookiesAdapter(store: CookieStore) {
   return {
     get(name: string) {
       return store.get(name)?.value
@@ -57,8 +60,8 @@ function mutableCookiesAdapter(store: ReturnType<typeof cookies>) {
 }
 
 /** Für Server Components (RSC) – Cookies read-only */
-export function createServerComponentClient<Db = Database>(): SupabaseClient<Db> {
-  const store = cookies()
+export async function createServerComponentClient<Db = Database>(): Promise<SupabaseClient<Db>> {
+  const store = await cookies()
   assertEnvAnon()
   const client = createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
     cookies: rscCookiesAdapter(store),
@@ -67,8 +70,8 @@ export function createServerComponentClient<Db = Database>(): SupabaseClient<Db>
 }
 
 /** Für Route Handlers (/app/api/*) – Cookies mutierbar */
-export function createRouteHandlerClient<Db = Database>(): SupabaseClient<Db> {
-  const store = cookies()
+export async function createRouteHandlerClient<Db = Database>(): Promise<SupabaseClient<Db>> {
+  const store = await cookies()
   assertEnvAnon()
   const client = createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
     cookies: mutableCookiesAdapter(store),
@@ -77,8 +80,8 @@ export function createRouteHandlerClient<Db = Database>(): SupabaseClient<Db> {
 }
 
 /** Für Server Actions – identisch zum Route Handler */
-export function createServerActionClient<Db = Database>(): SupabaseClient<Db> {
-  const store = cookies()
+export async function createServerActionClient<Db = Database>(): Promise<SupabaseClient<Db>> {
+  const store = await cookies()
   assertEnvAnon()
   const client = createServerClient<Db>(SUPABASE_URL!, SUPABASE_ANON!, {
     cookies: mutableCookiesAdapter(store),
@@ -104,7 +107,7 @@ export function createServerActionClient<Db = Database>(): SupabaseClient<Db> {
 
 /* ───────────── Kompatibilitätsschicht ─────────────
    Viele Dateien importieren `createServerClient` direkt.
-   Wir exportieren deshalb einen Alias, der in RSC sicher ist.
+   Der Alias bleibt die async RSC-Factory – keine synchrone Hintertür.
    Für API-Routen nutze in Zukunft bitte `createRouteHandlerClient`.
 */
 export { createServerComponentClient as createServerClient }

@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 type Row = Database['public']['Functions']['admin_security_overview']['Returns'][number]
 
 export default async function AdminHealthCards() {
-  const supabase = createServerComponentClient<Database>()
+  const supabase = await createServerComponentClient<Database>()
   const { data, error } = await supabase.rpc('admin_security_overview')
 
   const rows: Row[] = data ?? []

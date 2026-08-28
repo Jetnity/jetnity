@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, message: 'IP fehlt' }, { status: 400 })
   }
 
-  const supabase = createRouteHandlerClient<Database>()
+  const supabase = await createRouteHandlerClient<Database>()
   const { error } = await supabase.from('blocked_ips').delete().eq('ip', ip)
 
   if (error) {

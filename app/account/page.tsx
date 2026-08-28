@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function AccountSeite() {
-  const supabase = createServerComponentClient()
+  const supabase = await createServerComponentClient()
   const { data } = await supabase.auth.getUser()
   const nutzer = data.user
   const name = begruessungName({

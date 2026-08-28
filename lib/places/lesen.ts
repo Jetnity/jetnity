@@ -18,7 +18,7 @@ function alsOrt(zeile: unknown): Ort | null {
 }
 
 async function zeilenHolen(ids: string[], namen: string[]): Promise<Ort[] | null> {
-  const client = createServerActionClient()
+  const client = await createServerActionClient()
   const nachId = new Map<string, Ort>()
 
   const eindeutigeIds = [...new Set(ids.filter((id) => istOrtId(id)))]

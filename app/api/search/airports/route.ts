@@ -45,8 +45,9 @@ export async function GET(req: Request) {
     })
   }
 
+  const client = await createRouteHandlerClient()
   const gelesen = await lese(() =>
-    createRouteHandlerClient()
+    client
       .from('airports')
       .select('iata, icao, name, city, region, country, keywords, klasse')
       .or(orFilter(teile))

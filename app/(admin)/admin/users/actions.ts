@@ -20,8 +20,8 @@ import {
  */
 
 /** Hilfsfunktion: lockerer Client, um TS-Reibung mit DB-Generics zu vermeiden */
-function sb() {
-  return createServerComponentClient() as any
+async function sb() {
+  return (await createServerComponentClient()) as any
 }
 
 /** Rolle des Zielkontos – Grundlage für die Rangprüfung. */

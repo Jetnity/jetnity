@@ -62,7 +62,9 @@ async function liesModelUsage(
   modus: 'rsc' | 'route',
 ): Promise<ModelUsageSnapshot> {
   const client =
-    modus === 'rsc' ? createServerComponentClient<Database>() : createRouteHandlerClient<Database>()
+    modus === 'rsc'
+      ? await createServerComponentClient<Database>()
+      : await createRouteHandlerClient<Database>()
   const ab = new Date(Date.now() - USAGE_FENSTER_MS).toISOString()
   const lesung = await lese<UsageZeile>(() =>
     client

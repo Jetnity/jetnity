@@ -16,6 +16,7 @@
 
 import type { Metadata } from 'next'
 
+import { leseOptionalRequestParam } from '@/lib/next/request-api'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import PlanenCreateGate from '@/components/trips/PlanenCreateGate'
 import Reiseidee from '@/components/trips/Reiseidee'
@@ -28,16 +29,19 @@ import { planenVorbelegung } from '@/lib/trips/create-entry'
 import { GRENZEN } from '@/lib/trips/schema'
 import { VORSCHLAG_GRENZEN } from '@/lib/reisevorschlag/schema'
 
-type PlanenSeiteProps = {
-  searchParams?: {
-    idee?: string | string[]
-    ziel?: string | string[]
-    zielId?: string | string[]
-  }
+type PlanenSearchParams = {
+  idee?: string | string[]
+  ziel?: string | string[]
+  zielId?: string | string[]
 }
 
-export function generateMetadata({ searchParams }: PlanenSeiteProps): Metadata {
-  const robots = planenRobots(searchParams) ?? htmlRobots()
+type PlanenSeiteProps = {
+  searchParams?: PlanenSearchParams | Promise<PlanenSearchParams>
+}
+
+export async function generateMetadata({ searchParams }: PlanenSeiteProps): Promise<Metadata> {
+  const params = await leseOptionalRequestParam(searchParams)
+  const robots = planenRobots(params) ?? htmlRobots()
   // Next setzt bei generateMetadata ohne robots-Feld wieder index,follow.
   // Deshalb immer ein explizites Signal: Param-Varianten bleiben noindex,
   // die Basis folgt htmlRobots() und damit darfIndexieren.
@@ -62,12 +66,13 @@ function ersterWert(wert?: string | string[]) {
 }
 
 export default async function PlanenSeite({ searchParams }: PlanenSeiteProps) {
-  const supabase = createServerComponentClient()
+  const supabase = await createServerComponentClient()
   const { data } = await supabase.auth.getUser()
+  const params = await leseOptionalRequestParam(searchParams)
 
-  const idee = ersterWert(searchParams?.idee)
-  const ziel = ersterWert(searchParams?.ziel)
-  const zielId = ersterWert(searchParams?.zielId)
+  const idee = ersterWert(params?.idee)
+  const ziel = ersterWert(params?.ziel)
+  const zielId = ersterWert(params?.zielId)
   const bestaetigt = zielId ? await ortBestaetigen(zielId, 'ziel') : null
   const zielOrt = bestaetigt?.ok ? bestaetigt.wert : null
 

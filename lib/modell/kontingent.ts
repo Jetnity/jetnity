@@ -43,6 +43,7 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 
 import { problemAus } from '@/lib/api/datenbank-lesen'
+import { GAST_COOKIE_VERTRAG, istGueltigeGastkennung } from '@/lib/modell/gast-cookie'
 import type { Ergebnisklasse } from '@/lib/modell/konfiguration'
 import type { Modellname, Tokennutzung } from '@/lib/modell/preise'
 import { createServerActionClient } from '@/lib/supabase/server'
@@ -55,9 +56,6 @@ export type Kontingentergebnis =
   | { ok: true; id: string }
   /** `meldung` ist für Reisende geschrieben; die Datenbank formuliert sie. */
   | { ok: false; meldung: string }
-
-const GAST_COOKIE = 'jetnity_gast'
-const GAST_TAGE = 30
 
 const AUSGELASTET =
   'Die intelligente Planung ist gerade nicht erreichbar. Bitte versuche es in einem Moment erneut.'
@@ -89,25 +87,25 @@ function modelldienst(): SupabaseClient<Database> | null {
  * verwirft sie dann, weil `_konto` vorgeht. Die Kennung hier von der
  * Anmeldung abhängig zu machen hiesse, sie zweimal zu bestimmen.
  */
-function gastkennung(): string {
-  const speicher = cookies()
-  const bestehend = speicher.get(GAST_COOKIE)?.value?.trim()
+async function gastkennung(): Promise<string> {
+  const speicher = await cookies()
+  const bestehend = speicher.get(GAST_COOKIE_VERTRAG.name)?.value?.trim()
 
   // Die Datenbank verlangt 16 bis 64 Zeichen. Ein Wert ausserhalb ist entweder
   // von Hand gesetzt oder aus einer früheren Fassung – in beiden Fällen wird er
   // ersetzt, statt in eine Ablehnung zu laufen.
-  if (bestehend && /^[0-9a-f]{32}$/.test(bestehend)) return bestehend
+  if (istGueltigeGastkennung(bestehend)) return bestehend
 
   const neu = crypto.randomUUID().replace(/-/g, '')
 
   speicher.set({
-    name: GAST_COOKIE,
+    name: GAST_COOKIE_VERTRAG.name,
     value: neu,
-    httpOnly: true,
-    sameSite: 'lax',
+    httpOnly: GAST_COOKIE_VERTRAG.httpOnly,
+    sameSite: GAST_COOKIE_VERTRAG.sameSite,
     secure: process.env.NODE_ENV === 'production',
-    path: '/',
-    maxAge: GAST_TAGE * 24 * 60 * 60,
+    path: GAST_COOKIE_VERTRAG.path,
+    maxAge: GAST_COOKIE_VERTRAG.maxAgeTage * 24 * 60 * 60,
   })
 
   return neu
@@ -115,7 +113,8 @@ function gastkennung(): string {
 
 /** Kontokennung aus der geprüften Sitzung, nicht aus dem Cookie. */
 async function kontoId(): Promise<string | null> {
-  const { data, error } = await createServerActionClient().auth.getUser()
+  const supabase = await createServerActionClient()
+  const { data, error } = await supabase.auth.getUser()
   if (error || !data.user?.id) return null
   return data.user.id
 }
@@ -138,7 +137,7 @@ export async function kontingentBeanspruchen(
   const { data, error, status } = await dienst.rpc('modell_kontingent_beanspruchen', {
     _funktion: funktion,
     _modell: modell,
-    _gastkennung: gastkennung(),
+    _gastkennung: await gastkennung(),
     _konto: (await kontoId()) ?? undefined,
   })
 
