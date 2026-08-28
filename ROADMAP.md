@@ -279,7 +279,7 @@ Nächster Schritt:
 **Self-expiring / dual-state. Live-Evidence gewinnt.**
 
 - **Solange PR #144 offen und unmerged ist:** unabhängiger Technical-Lead Exact-Head-Review/Re-Review von Draft-PR #144 (AP-7 Gate 0). Audit + Architecture only. Kein Ready. Kein Merge durch den Autor. Keine AP-7-Runtime.
-- **Sobald PR #144 gemergt ist:** Gate 0 ist integrierte Architecture-Evidence. Keine AP-7-Runtime automatisch autorisiert. Exakt nächster Schritt = Live-Verifikation des Merge-/Post-Merge-Stands, danach Product-Owner-Architekturentscheidung (Dual-Authority-Empfehlung vs genehmigte Alternative) vor jeder Implementation. Keine zukünftige Merge-SHA. Kein Continuity-PR nur für den Merge.
+- **Sobald Live-Evidence zeigt, dass PR #144 gemergt ist:** Gate 0 ist integrierte Architecture-Evidence. **#144 ist nicht mehr aktiv.** Keine AP-7-Runtime autorisiert. Exakt nächste Aktion = Product-Owner-Architekturentscheidung/Gate vor jeder Implementation. Dual-Authority ist die Gate-0/TL-Empfehlung; der Product Owner hat sie nicht freigegeben. Generation 11 abgeschlossen und nicht für Implementation wiederverwenden. Keine zukünftige Merge-SHA. Kein Continuity-PR nur für den Merge.
 
 AP-5-S3/S4/S5 bleiben normale Technical-Lead-Gates innerhalb Gate 0, nicht automatisch gestartet und nicht Product-Owner-gated. S3–S5 nicht aus dieser Liste automatisch ableiten.
 

@@ -1,7 +1,7 @@
 # Jetnity – AP-7 Gate 0 Account-Traveller-Registry Architecture Handoff
 
 Stand: 28. August 2026  
-Status: **REVIEW-FIX FÜR 5455299179 + ADDENDUM 5455307709 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
+Status: **REVIEW-FIX FÜR 5455342054 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
 Logical Cursor-Agent: **`Cursor-Agent: Account plattform audit vorbereitung 11`**  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/144  
 Branch: `audit/ap7-account-traveller-registry-gate0-2026-08-28`  
@@ -99,7 +99,7 @@ Unfertig: unabhängiger TL-Review, PO-Entscheidung, jede Implementation.
 **Self-expiring / dual-state. Live-Evidence gewinnt.**
 
 - **Solange PR #144 offen und unmerged ist:** unabhängiger Technical-Lead Exact-Head-Re-Review. Nicht Ready. Nicht mergen. Keine Runtime.
-- **Sobald PR #144 gemergt ist:** Gate 0 ist integrierte Architecture-Evidence. Keine AP-7-Runtime automatisch autorisiert. Exakt nächster Schritt = Live-Verifikation, danach Product-Owner-Architekturentscheidung (Dual-Authority vs genehmigte Alternative) vor jeder Implementation. Keine zukünftige Merge-SHA. Kein Continuity-PR nur für den Merge.
+- **Sobald Live-Evidence zeigt, dass PR #144 gemergt ist:** Gate 0 ist integrierte Architecture-Evidence. **#144 ist nicht mehr aktiv.** Keine AP-7-Runtime autorisiert. Exakte nächste Aktion = Product-Owner-Architekturentscheidung/Gate vor jeder Implementation. Dual-Authority ist die Gate-0/TL-Empfehlung; der Product Owner hat sie nicht freigegeben. Generation 11 abgeschlossen und nicht für Implementation wiederverwenden. Keine zukünftige Merge-SHA. Kein Continuity-PR nur für den Merge.
 
 ---
 

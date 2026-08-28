@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **AP-7 Gate 0 / PR #144 ist self-expiring: offen → TL-Review/Re-Review von #144; nach Merge → integrierte Gate-0-Architecture-Evidence, keine automatische AP-7-Runtime, nächster Schritt = Product-Owner-Architekturentscheidung (Dual-Authority vs genehmigte Alternative) nach Live-Verifikation. Keine zukünftige Merge-SHA. Kein Continuity-PR nur um den Merge zu sagen. PR #143 ist MERGED (`1947285c`). PR #142 Operating Standard und PR #141 Provider S5-B Gate 0 bleiben integriert. S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **AP-7 Gate 0 / PR #144 ist self-expiring / dual-state. Solange #144 offen: exakte Aktion = unabhängiger TL-Re-Review; kein Agent-Ready/Merge/Runtime. Sobald Live-Evidence #144 als gemergt zeigt: Gate 0 = integrierte Architecture-Evidence; #144 ist nicht mehr aktiv; keine AP-7-Runtime autorisiert; nächste Aktion = Product-Owner-Architekturentscheidung/Gate vor jeder Implementation (Dual-Authority ist Gate-0/TL-Empfehlung, vom Product Owner nicht freigegeben); Generation 11 abgeschlossen und nicht für Implementation wiederverwenden. Keine zukünftige Merge-SHA. Kein Continuity-PR nur um den Merge zu sagen. PR #143 ist MERGED (`1947285c`). PR #142 Operating Standard und PR #141 Provider S5-B Gate 0 bleiben integriert. S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
@@ -307,7 +307,7 @@ Exakte Basis-Anzeigenamen bleiben verbindlich:
 
 Aktueller Account-Status:
 
-- Generation 11: `Cursor-Agent: Account plattform audit vorbereitung 11` für AP-7 Gate 0 / PR #144. Solange #144 offen: Review-Session. Nach Merge: Generation für diesen Docs-Slice abgeschlossen, nicht für Runtime wiederverwenden.
+- Generation 11: `Cursor-Agent: Account plattform audit vorbereitung 11` für AP-7 Gate 0 / PR #144. Solange #144 offen: Review-Session. Sobald Live-Evidence #144 als gemergt zeigt: Generation 11 abgeschlossen und nicht für Implementation wiederverwenden.
 - sichtbarer Cursor-Titel dieser Session: `Account traveller registry architecture`; nicht als umbenannt behauptet
 - `Cursor-Agent: Account plattform audit vorbereitung 10` ist mit AP-5-S2 / PR #137 und PR #138 Continuity abgeschlossen
 - Generation 10 nicht wiederverwenden
@@ -338,7 +338,7 @@ Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logisc
 **Self-expiring / dual-state. Live-Evidence gewinnt.**
 
 - **Solange PR #144 offen und unmerged ist:** unabhängiger Technical-Lead Exact-Head-Review/Re-Review von Draft-PR #144. Autor-Agent setzt kein Ready, kein Merge, keine AP-7-Runtime.
-- **Sobald PR #144 gemergt ist:** diese Transport-/Review-Klausel ist automatisch historisch. Gate 0 ist integrierte Architecture-Evidence (ADR-0186). Keine AP-7-Runtime ist dadurch autorisiert. Exakt nächster Schritt = Live-Verifikation des Merge-/Post-Merge-Stands, danach Product-Owner-Architekturentscheidung (Dual-Authority-Empfehlung vs genehmigte Alternative) vor jeder AP-7-Implementation. Keine zukünftige Merge-SHA hier eintragen. Kein Continuity-PR nur um zu sagen, dass #144 gemergt ist.
+- **Sobald Live-Evidence zeigt, dass PR #144 gemergt ist:** diese Transport-/Review-Klausel ist automatisch historisch. Gate 0 ist integrierte Architecture-Evidence (ADR-0186). **#144 ist nicht mehr aktiv.** Keine AP-7-Runtime ist autorisiert. Exakt nächste Aktion = Product-Owner-Architekturentscheidung/Gate vor jeder Implementation. Dual-Authority ist die Gate-0/TL-Empfehlung; der Product Owner hat sie nicht freigegeben. Generation 11 ist abgeschlossen und nicht für Implementation wiederzuverwenden. Keine zukünftige Merge-SHA. Kein Continuity-PR nur um zu sagen, dass #144 gemergt ist.
 
 PR #143 ist MERGED (`1947285c`). Die frühere Dual-State-Klausel für #143 ist historisch.
 
