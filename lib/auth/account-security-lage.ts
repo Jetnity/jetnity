@@ -5,9 +5,7 @@
 
 import { tomlWert, type TomlTabelle } from '@/lib/supabase/config-toml'
 
-export const SECURITY_LAGEN = ['empty', 'unsupported', 'unavailable', 'error', 'ready', 'loading'] as const
-
-export type SecurityLage = (typeof SECURITY_LAGEN)[number]
+export type SecurityLage = 'empty' | 'unsupported' | 'unavailable' | 'error' | 'ready' | 'loading'
 
 export type TotpListeLage = Exclude<SecurityLage, 'unavailable'>
 

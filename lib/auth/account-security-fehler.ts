@@ -4,26 +4,23 @@
 // Die Einordnung ist prüfbar; die Nutzercopy enthält keine Secrets,
 // Tokens, QR-URIs oder Provider-Rohtexte.
 
-export const SECURITY_FEHLER_CODES = [
-  'totp_list_unsupported',
-  'totp_list_failed',
-  'totp_enroll_unavailable',
-  'totp_enroll_failed',
-  'totp_verify_invalid',
-  'totp_verify_expired',
-  'totp_verify_failed',
-  'totp_unenroll_aal2_required',
-  'totp_unenroll_failed',
-  'totp_session_required',
-  'totp_rate_limited',
-  'passkey_unsupported',
-  'passkey_unavailable',
-  'passkey_register_failed',
-  'network',
-  'unknown',
-] as const
-
-export type SecurityFehlerCode = (typeof SECURITY_FEHLER_CODES)[number]
+export type SecurityFehlerCode =
+  | 'totp_list_unsupported'
+  | 'totp_list_failed'
+  | 'totp_enroll_unavailable'
+  | 'totp_enroll_failed'
+  | 'totp_verify_invalid'
+  | 'totp_verify_expired'
+  | 'totp_verify_failed'
+  | 'totp_unenroll_aal2_required'
+  | 'totp_unenroll_failed'
+  | 'totp_session_required'
+  | 'totp_rate_limited'
+  | 'passkey_unsupported'
+  | 'passkey_unavailable'
+  | 'passkey_register_failed'
+  | 'network'
+  | 'unknown'
 
 export type SecurityFehlerVorgang =
   | 'list'
