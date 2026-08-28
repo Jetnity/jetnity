@@ -51,8 +51,9 @@ Vor der finalen Übergabe erneut `origin/main` geholt.
 | Draft-PR | #144 OPEN Draft |
 | Merge-Base | `1947285c` |
 | Prior reviewed Head | `a0ef801fd7fa39685fab9a1fe69d411f736ea78c` – invalidiert |
-| Review-Fix Head | `5367f084bf9c9aee7103b0ef0f1b9323c6e9011c` – 8 / 0 vor Stamp |
-| Exact / Review-Head | Stamp nach `5367f084`; live an PR #144 prüfen |
+| Prior review-fix stamp | `731b0914c5be70641792c6cf620f2d9be185e8d1` – invalidiert durch Addendum |
+| Addendum Head | `dbd19fac721c0ae3e91c84942cc2eed8fefb0f65` – 10 / 0 vor Stamp |
+| Exact / Review-Head | Stamp nach `dbd19fac`; live an PR #144 prüfen |
 | Branch Protection | unverändert; letzte Evidence `protected=false` |
 | Supabase | nicht live abgefragt, nicht mutiert |
 
