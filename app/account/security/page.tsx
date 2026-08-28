@@ -2,6 +2,7 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
+import SecurityLogout from '@/components/account/SecurityLogout'
 import SecurityMFA from '@/components/account/SecurityMFA'
 import SecurityPasswort from '@/components/account/SecurityPasswort'
 import { passkeysServerAktiviertLesen } from '@/lib/auth/account-security-passkeys-lesen'
@@ -32,6 +33,7 @@ export default function SecurityPage() {
 
         <div className="mt-10 space-y-6">
           <SecurityPasswort />
+          <SecurityLogout />
           <Suspense
             fallback={
               <div className="rounded-[26px] border border-black/5 bg-white p-6">

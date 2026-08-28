@@ -1,15 +1,20 @@
 # Jetnity – Handoff und nächste Schritte
 
-Stand: 28. August 2026  
-Status: **Next 16 S2 Framework Bump Review-Fix / Draft-PR #151 self-expiring. STOP für unabhängigen Technical-Lead Exact-Head-Re-Review nach CHANGES REQUIRED `5055372760`; kein Ready, kein Merge durch den Autor. Kein S3. PR #148 Gate 0, PR #149 Product-Owner-Freigabe und PR #150 / S1 sind auf `main @ d7f02f77` integriert. PR #147 Node 22 ist integriert. AP-7-S1 ist integriert; kein automatisches AP-7-S2. Dual-Authority ist product-owner-freigegeben. S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Stand: 29. August 2026  
+Status: **AP-5-S3 Account Security Logout Scopes / Draft-PR #156. STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge durch den Autor. Kein S4/S5. Baseline `main @ 3c3079de` (PR #152 Next 16 S2 integriert). AP-7-S2, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
-Aktueller Ops-Slice auf diesem Branch (self-expiring für PR #151):
+Aktueller Account-Slice auf diesem Branch (Draft-PR #156):
 
-- `docs/NEXT16_S2_FRAMEWORK_BUMP_STATUS_2026-08-28.md` – S2 Framework Bump Review-Fix / Draft-PR #151; STOP für TL Exact-Head-Re-Review nach `5055372760`
-- `docs/NEXT16_S2_FRAMEWORK_BUMP_HANDOFF_2026-08-28.md`
-- `docs/NEXT16_S2_FRAMEWORK_BUMP_SELF_REVIEW_2026-08-28.md`
+- `docs/AP5_S3_ACCOUNT_SECURITY_LOGOUT_SCOPES_STATUS_2026-08-29.md`
+- `docs/AP5_S3_ACCOUNT_SECURITY_LOGOUT_SCOPES_HANDOFF_2026-08-29.md`
+- `docs/AP5_S3_ACCOUNT_SECURITY_LOGOUT_SCOPES_SELF_REVIEW_2026-08-29.md`
+- ADR-0192
+
+Integrierter Ops-Stand auf der Baseline:
+
+- `docs/NEXT16_S2_FRAMEWORK_BUMP_STATUS_2026-08-28.md` – Next 16 S2 auf `main @ 3c3079de` integriert; ältere Draft-#151-Zeilen sind Pre-Merge-Evidence
 
 Integrierte vorherige Ops-Slices:
 
@@ -184,13 +189,13 @@ Verbindliche Wahrheit:
 - PR #138 Post-Merge Continuity integriert
 - PR #142 Technical-Lead-/Cursor-Operating-Standard integriert
 
-AP-5-S3–S5 werden **nicht automatisch** gestartet. Dual-Authority ist product-owner-freigegeben. AP-7 Gate 0 / ADR-0186 ist integrierte Architecture-Evidence (PR #144 / `bb38aef5`). AP-7-S1 / ADR-0187 ist der shared Domain-Contract (Draft-PR #145, self-expiring): keine Persistenz, kein Schema, keine UI. Nach Merge von #145 bleibt das der integrierte Contract; AP-7-S2, Persistenz und Identity/RLS starten nicht automatisch.
+AP-5-S3 ist der aktive normale Technical-Lead-Slice (Draft-PR #156 / Issue #153). S4/S5 werden **nicht automatisch** gestartet. Dual-Authority ist product-owner-freigegeben. AP-7 Gate 0 / ADR-0186 ist integrierte Architecture-Evidence (PR #144 / `bb38aef5`). AP-7-S1 / ADR-0187 ist der integrierte shared Domain-Contract; AP-7-S2, Persistenz und Identity/RLS starten nicht automatisch.
 
 Der integrierte AP-5-Gate-0-Vertrag trennt insbesondere Password Recovery von signed-in Reauthentication, hält Session-/Gerätelisting ohne unterstützte User-API ehrlich auf `unsupported`, dokumentiert den heutigen globalen `signOut()`-Default und hält verified-factor `mfa.unenroll` an der serverseitigen AAL2-Anforderung. Details: `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, ADR-0182 und die aktuellen Account-Checkpoints.
 
 AP-5 verbleibende normale TL-Slices, jeweils nur nach eigenem Task / Live-Gate:
 
-- **S3:** Logout-UI – heutiges Abmelden bleibt `global`; optional `others`; Fehler nicht schlucken; JWT-Restlaufzeit ehrlich
+- **S3:** Logout-UI – Draft-PR #156; heutiges allgemeines Abmelden bleibt `global`; Security-UI bietet `local`/`others`/`global` explizit; Fehler nicht schlucken; JWT-Restlaufzeit ehrlich. STOP für TL-Review; kein Ready/Merge durch den Autor.
 - **S4:** `challenge`/`verify`-Step-up vor Unenroll verified TOTP; kein globales Consumer-AAL2
 - **S5:** aktuelle Sitzung ehrlich anzeigen; andere Sitzungen `unsupported`; keine Fake-Geräteliste
 
@@ -327,7 +332,8 @@ Aktueller Account-Status:
 
 Aktueller Quality-/Security-Status:
 
-- `Cursor-Agent: Jetnity framework compatibility 2` ist der aktuelle S2-Slice für Draft-PR #151. Sichtbarer Run-Titel: `Jetnity framework bump`; nicht als umbenannt behauptet. Generation 2 nicht für S3 wiederverwenden.
+- `Cursor-Agent: Account plattform audit vorbereitung 13` ist der aktuelle AP-5-S3-Slice für Draft-PR #156. Keine programmierbare Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 13 nicht für S4/S5 wiederverwenden.
+- `Cursor-Agent: Jetnity framework compatibility 2` ist mit Next 16 S2 / PR #152 auf der Baseline abgeschlossen. Generation 2 nicht wiederverwenden.
 - `Cursor-Agent: Jetnity framework compatibility 1` ist mit PR #150 / S1 abgeschlossen. Generation 1 nicht wiederverwenden.
 - `Cursor-Agent: Jetnity framework security audit 1` ist mit PR #148 abgeschlossen. Generation 1 nicht für einen Implementierungs-Bump wiederverwenden.
 - `Cursor-Agent: Jetnity quality security audit 4` ist mit PR #143 abgeschlossen
@@ -346,13 +352,13 @@ Abgeschlossen / nicht wiederverwenden:
 - Quality/Security Generation 3: Issue #134 / PR #135
 - Quality/Security Generation 2: PR #88 historical only
 
-Generation 12 ist für AP-7-S1 / PR #145 vergeben. Generation 11 nicht wiederverwenden. AP-7-S2 oder AP-5-S3 brauchen eine frische Generation. Das ist **keine automatische Freigabe**.
+Generation 13 ist für AP-5-S3 / Draft-PR #156 vergeben und nicht für S4/S5 wiederzuverwenden. Generation 12 (AP-7-S1 / PR #145) und Generation 11 nicht wiederverwenden. AP-7-S2 braucht eine frische Generation und bleibt Product-Owner-gegatet. Das ist **keine automatische Freigabe**.
 
 Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logische Arbeitseinheit bekommt eine frische nummerierte Session gemäß Rotation Standard.
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-**Self-expiring.** Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #151 nach CHANGES REQUIRED `5055372760`. Autor-Agent setzt kein Ready, kein Merge, kein S3, keine Vercel-Setting-Mutation und startet kein AP-7-S2. PR #148 / PR #149 / PR #150 sind integriert. PR #147 Node 22 ist bereits integriert (`56aff7ff`).
+Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #156 / AP-5-S3. Autor-Agent setzt kein Ready, kein Merge, kein S4/S5, keine Vercel-Setting-Mutation und startet kein AP-7-S2. Next 16 S2 ist auf der Baseline `3c3079de` integriert. PR #147 Node 22 ist bereits integriert (`56aff7ff`).
 
 PR #144 ist MERGED (`bb38aef5`). Dual-Authority ist product-owner-freigegeben. PR #143 ist MERGED (`1947285c`).
 
@@ -366,7 +372,7 @@ AP-5-S3/S4/S5 sind nach dem integrierten Gate-0-Vertrag mögliche normale Techni
 
 Nicht automatisch starten:
 
-- AP-5-S3 bis S5
+- AP-5-S4 bis S5
 - AP-7
 - P2-TA-04 C2
 - TW-8

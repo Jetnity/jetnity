@@ -1,13 +1,30 @@
 # Jetnity – Active Work Status
 
-Stand: 28. August 2026  
-Status: **Next 16 S2 Framework Bump Review-Fix / Draft-PR #151 / SELF-EXPIRING. STOP für unabhängigen Technical-Lead Exact-Head-Re-Review nach CHANGES REQUIRED `5055372760`; kein Ready, kein Merge durch den Autor. Kein S3. PR #148 Gate 0, PR #149 PO-Freigabe und PR #150 / S1 sind auf `main @ d7f02f77` integriert. Kein AP-7-S2. Live-`main` immer live prüfen.**
+Stand: 29. August 2026  
+Status: **AP-5-S3 Account Security Logout Scopes / Draft-PR #156. STOP für unabhängigen Technical-Lead Exact-Head-Review. Kein Ready, kein Merge durch den Autor. Kein S4/S5. Baseline `main @ 3c3079de`. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
-> Self-expiring für PR #151. Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
+> Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
 
-## Aktueller Arbeitsblock – Next 16 S2 Framework Bump
+## Aktueller Arbeitsblock – AP-5-S3 Account Security Logout Scopes
+
+1. **Arbeitsblock / Ziel:** Vorhandene Supabase-Logout-Scopes `local` / `others` / `global` in `/account/security` ehrlich nutzbar machen. Keine Sessionliste. Kein JWT-Kill-Claim. Allgemeines Abmelden bleibt global.
+2. **Authoring-Branch / PR:** `feat/ap5-s3-account-security-logout-scopes-2026-08-29`; Draft-PR #156. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
+3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW.** Kein Ready, kein Merge durch den Autor. Kein S4/S5.
+4. **Bereits umgesetzt:** Domain-Vertrag und Reducer; Server Action mit explizitem Scope; Security-Karte mit idle/working/success/error/unavailable/unsupported; `others` bewahrt die aktuelle Sitzung; `global` braucht Bestätigung; Navbar/`signOutAction` unverändert unscoped; ADR-0192; fokussierte Tests.
+5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 13`. Keine programmierbare Rename-Fähigkeit; UI-Anzeigename nicht als geändert behauptet.
+6. **Live-`main` / Baseline bei diesem Stamp:** `3c3079defb4eb5bcea4b8cb0ec8d73eff7806c9a` – immer live neu prüfen.
+7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation, keine Service Role.
+8. **Kosten / Provider / Secrets:** keine.
+9. **Bekannte Risiken / Review-Funde:** User-Client kann bestimmte Logout-HTTP-Fehler schlucken; `signOutAction` bleibt fehlerblind; keine Sessionzahl beweisbar; kein Browser-/Real-Device-Beweis; `main` `protected=false`; Agent-Self-Review ist kein PASS. Exact-Head `e91a71de` Gates: Actions `33217505606` SUCCESS, Vercel `47gfvn6wVzXfbsifqPZrm7RmeXuv` SUCCESS; dieser Stamp invalidiert sie für den neuen Head.
+10. **Offene Nutzerentscheidungen / Freigaben:** S3 braucht kein Product-Owner-Sondergate. S4/S5 und P1–P5 starten nicht aus diesem Slice.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #156. Kein Ready. Kein Merge. Kein S4.
+12. **Zuerst lesen:** `docs/AP5_S3_ACCOUNT_SECURITY_LOGOUT_SCOPES_TASK_2026-08-29.md`, Status, Handoff, Self-Review, ADR-0192, Gate-0-Status, ADR-0182.
+
+## Historischer Arbeitsblock – Next 16 S2 Framework Bump
+
+Current classification / Nachtrag, 29. August 2026: **HISTORICAL / INTEGRIERT auf der S3-Baseline.** PR #152 ist auf `main @ 3c3079de` gemergt. Ältere „REVIEW-FIX / DRAFT / SELF-EXPIRING / Kein S3“-Zeilen sind Pre-S3-Evidence. S3 ist jetzt der aktive Account-Slice, nicht ein automatischer Folgeslice aus Next 16.
 
 1. **Arbeitsblock / Ziel:** Tatsächlicher Framework-Bump auf Next.js 16.3.3 Active LTS plus kompatible React-19.2-/ESLint-/TypeScript-Linie, ESLint CLI/Flat Config und `middleware.ts`→`proxy.ts`. Kein S3.
 2. **Authoring-Branch / PR:** `feat/next16-s2-framework-bump-2026-08-28`; Draft-PR #151. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
@@ -505,18 +522,18 @@ Production C1 `20260828015304_traveller_write_contract_integrity` ist unter der 
 
 ## 10. Nächster Schritt
 
-**Self-expiring.** Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #150. Autor-Agent setzt kein Ready, kein Merge, keinen Framework-Bump, keine Vercel-Setting-Mutation und startet kein S2 und kein AP-7-S2.
+Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #156 / AP-5-S3. Autor-Agent setzt kein Ready, kein Merge, kein S4/S5, keine Vercel-Setting-Mutation und kein AP-7-S2.
 
-PR #147 Node 22 ist integriert (`56aff7ff`). AP-7-S1 ist integriert (PR #145 / `4ec83f36`). Dual-Authority bleibt freigegeben. AP-7-S2 / Persistenz startet nicht aus #148 und braucht einen separat versionierten, Product-Owner-gegaten Vorschlag.
+PR #152 Next 16 S2 ist auf der Baseline `3c3079de` integriert. PR #147 Node 22 ist integriert (`56aff7ff`). AP-7-S1 ist integriert (PR #145 / `4ec83f36`). Dual-Authority bleibt freigegeben. AP-7-S2 / Persistenz startet nicht aus #156.
 
-AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 ist CLOSED / completed. AP-5-S1 bleibt integriert (PR #133); Issue #132 ist CLOSED / completed. AP-5 Gate 0 bleibt integriert (PR #129); Issue #128 ist CLOSED / completed. Project Sanitation bleibt integriert (PR #135). PR #141 Provider S5-B Gate 0 bleibt integriert als docs/readiness only. AP-5-S3/S4/S5 sind normale Technical-Lead-Gates, nicht automatisch gestartet und nicht PO-gated. Kein C2, kein Auth-Config-Push, kein Cleanup aus diesem File.
+AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 ist CLOSED / completed. AP-5-S1 bleibt integriert (PR #133); Issue #132 ist CLOSED / completed. AP-5 Gate 0 bleibt integriert (PR #129); Issue #128 ist CLOSED / completed. AP-5-S3 ist Draft, nicht integriert. S4/S5 sind normale Technical-Lead-Gates und starten nicht aus diesem File. Kein C2, kein Auth-Config-Push, kein Cleanup aus diesem File.
 
 P2-TA-03 bleibt integriert (PR #117); Issue #116 ist CLOSED / completed.
 
 P2-TA-06 bleibt integriert (PR #113); Issue #112 ist CLOSED / completed.
 
-**Kein automatischer Folgeslice.** Vor jeder neuen Runtime-Arbeit: aktuelles `main`, offene PRs/Issues, Binding Build Order, Account/Traveller-, Provider-, Admin-, Growth- und QS-Gates live neu prüfen und erst danach eine frische Task/Spec vergeben.
+**Kein automatischer Folgeslice.** Vor jeder neuen Runtime-Arbeit nach S3: aktuelles `main`, offene PRs/Issues, Binding Build Order, Account/Traveller-, Provider-, Admin-, Growth- und QS-Gates live neu prüfen und erst danach eine frische Task/Spec vergeben.
 
-Kein weiterer Production-Write aus diesem Abschluss. Keine Direction A. Kein TW-8/9. Kein AP-5-S3–S5/AP-7 automatisch starten. S3–S5 ≠ Product-Owner-Gate. Issue #109/#110 bleiben dokumentierte separate Themen. Kein zweiter AAL2-Apply. Live-`main` immer live prüfen.
+Kein weiterer Production-Write aus diesem Abschluss. Keine Direction A. Kein TW-8/9. Kein AP-5-S4–S5/AP-7 automatisch starten. S3–S5 ≠ Product-Owner-Gate. Issue #109/#110 bleiben dokumentierte separate Themen. Kein zweiter AAL2-Apply. Live-`main` immer live prüfen.
 
 PR #95 zeichnet einen Product-Owner-Wunsch auf: Homepage-Hero-Design bleibt, die Funktion im bestehenden Kästchen soll später natürliche Mehrziel-/Route-Absicht verstehen. Das bleibt **kein** Startauftrag und ist nicht TW7-A.
