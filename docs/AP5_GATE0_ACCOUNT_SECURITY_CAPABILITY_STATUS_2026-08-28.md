@@ -30,19 +30,20 @@ Installierte Client-Wahrheit, nicht geraten:
 - `@supabase/supabase-js` **2.57.2**
 - `@supabase/auth-js` **2.71.1**
 
-### 1.1 Exact-Head vor diesem Stamp
+### 1.1 Exact-Head auf Stamp-Head `8ead1a8f`
 
 | Feld | Wert |
 | --- | --- |
-| Author-Head | `5fff38bf9cd4a43cb708f55b2fa1945c6b8cee4b` |
+| Gegateter Stamp-Head | `8ead1a8f7e34c7d1745e358faed9705779ebe1fb` |
 | Merge-Base / `origin/main` | `0bca31b5de06bcee74c5436122b1685b6d2092f6` |
-| GitHub Actions | Run `33136978825` **SUCCESS** auf exakt `5fff38bf` |
+| GitHub Actions | Run `33137160070` **SUCCESS** auf exakt `8ead1a8f` |
 | Jobs | Typecheck/Lint/Build SUCCESS; Auth-Konfiguration gegen config.toml SUCCESS |
-| Vercel Preview | Inspector `DUGxaYrrx1NDjVLt5r1DahTEyacE` **SUCCESS** auf exakt `5fff38bf` |
+| Vercel Preview | Inspector `8h2J9vfjaCWSJVS6W4RcvLEHVowz` **SUCCESS** auf exakt `8ead1a8f` |
+| GitHub Preview-Deployment | `6134729753` success |
 | Review-Threads | 0 |
 | Draft | ja; kein Ready |
 
-Ein Continuity-Stamp nach diesem Abschnitt erzeugt einen neueren Head und muss live neu geprüft werden.
+Historisch: `5fff38bf` war der Head vor dem ersten Evidence-Stamp (Actions `33136978825`, Vercel `DUGxaYrrx1NDjVLt5r1DahTEyacE`). Dieser Abschnitt dokumentiert die erfolgreiche Re-Gate von `8ead1a8f`. Der vorliegende Continuity-Stamp erzeugt einen neueren Head; dessen CI muss live gelesen werden. **Kein dritter Evidence-Stamp**, außer diese Stamp-CI fehlschlägt.
 
 ## 2. Was dieser Slice geliefert hat
 

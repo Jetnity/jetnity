@@ -47,7 +47,7 @@ Kein neuer Auth-Vertrag. ADR-0182 stellt nur fest, welcher Vertrag schon gilt un
 - Production-Redirect-Origin offen
 - Login-MFA abbrechbar (AAL1-Sitzung bleibt)
 - `main` Branch Protection `protected=false`
-- Exact-Head vor Stamp: `5fff38bf`; Actions `33136978825` SUCCESS; Vercel `DUGxaYrrx1NDjVLt5r1DahTEyacE` SUCCESS. Ein Stamp danach braucht erneute Gates.
+- Exact-Head auf Stamp-Head `8ead1a8f`: Actions `33137160070` SUCCESS; Vercel `8h2J9vfjaCWSJVS6W4RcvLEHVowz` SUCCESS; GitHub Deployment `6134729753` success. Dieser Stamp dokumentiert nur diese Re-Gate. Kein weiterer Evidence-Stamp, außer die Stamp-CI fehlschlägt.
 
 ## Nächster Schritt
 

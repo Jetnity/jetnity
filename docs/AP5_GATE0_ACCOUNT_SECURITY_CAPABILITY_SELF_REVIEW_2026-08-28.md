@@ -29,7 +29,7 @@ Keine Änderung an `app/`-Runtime, `components/`, `supabase/config.toml`, Migrat
 
 ## 3. Risiken, die bleiben
 
-- Exact-Head-Gates müssen auf dem finalen Author-SHA erneut live gelesen werden.
+- Exact-Head auf `8ead1a8f` ist live SUCCESS (Actions `33137160070`, Vercel `8h2J9vfjaCWSJVS6W4RcvLEHVowz`). Dieser Docs-Stamp erzeugt einen neueren Head; dessen CI muss gelesen werden. Kein weiterer Evidence-Stamp, außer die Stamp-CI fehlschlägt.
 - `JETNITY_START_HERE.md` / `JETNITY_HANDOFF.md` / `docs/ACTIVE_WORK_STATUS.md` waren vor diesem Slice noch auf C1-Draft-Zeiger; nur notwendige Current-Truth-Zeiger wurden nachgezogen.
 - Ein späterer Agent könnte `/auth/update-password` als In-Account-UI „wiederverwenden“ und dabei Recovery und Reauth vermischen. S2 muss das trennen.
 - Login-MFA-Abbrechen lässt AAL1 stehen. Das ist ein echter Rest, kein AP-5-Runtime-Fix in diesem Slice.

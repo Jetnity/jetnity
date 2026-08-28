@@ -18,13 +18,18 @@ Draft-PR: #129
 - `auth:anwenden` – würde Config pushen
 - Browser / Real-Device
 - Production-Auth-Config-Abgleich (AUTH.md Parent-Spalte bleibt Evidence vom 17. August 2026)
-- volles `npm test` lokal nicht wiederholt; Exact-Head CI Run `33136978825` auf `5fff38bf` **SUCCESS** (Typecheck/Lint/Build + Auth-Konfiguration)
+- volles `npm test` lokal nicht wiederholt; Exact-Head CI Run `33137160070` auf `8ead1a8f` **SUCCESS** (Typecheck/Lint/Build + Auth-Konfiguration)
 
-## Exact-Head vor Stamp
+## Exact-Head auf dem Stamp-Head `8ead1a8f`
 
-- SHA: `5fff38bf9cd4a43cb708f55b2fa1945c6b8cee4b`
-- Actions: https://github.com/Jetnity/jetnity/actions/runs/33136978825 SUCCESS
-- Vercel Preview: `DUGxaYrrx1NDjVLt5r1DahTEyacE` SUCCESS
+- SHA: `8ead1a8f7e34c7d1745e358faed9705779ebe1fb`
+- Actions: https://github.com/Jetnity/jetnity/actions/runs/33137160070 SUCCESS
+- Jobs: Typecheck/Lint/Build SUCCESS; Auth-Konfiguration gegen config.toml SUCCESS
+- Vercel Preview Inspector: `8h2J9vfjaCWSJVS6W4RcvLEHVowz` SUCCESS
+- GitHub Preview-Deployment: `6134729753` success
+- Preview-URL: `https://jetnity-410g8p2hu-jetnity-e1b93c82.vercel.app`
+
+Historischer vorheriger Stamp-Head `5fff38bf` bleibt gültige Vor-Evidence (Actions `33136978825`, Vercel `DUGxaYrrx1NDjVLt5r1DahTEyacE`). Dieser Commit dokumentiert nur die erfolgreiche Re-Gate von `8ead1a8f`. Danach kein weiterer Evidence-Stamp, außer die CI dieses Commits fehlschlägt.
 
 ## Grenze
 
