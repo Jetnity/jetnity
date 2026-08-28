@@ -4606,6 +4606,38 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 ---
 
+## ADR-0184 – Project Sanitation Closure ist Retention-Plan, kein Aufräum-Merge
+
+**Datum:** 28. August 2026  
+**Status:** Draft-PR zu Issue #134. **Keine Löschung. Kein PR-Close. Kein Branch-Delete.**
+
+**Entscheidung:**
+
+1. Historische offene Draft-PRs werden nicht gemergt, nur um die PR-Liste zu verkürzen.
+2. PR-Close und Branch-Delete sind getrennte Operationen. Ein PR-Close löscht den Source-Branch nicht und verliert dadurch allein keine Unique Files.
+3. Ein historischer/superseded PR darf `CLOSE-SAFE` sein, während sein Branch `HISTORICAL-EVIDENCE` bleibt, bis Unique Content archiviert oder sonst dauerhaft erreichbar ist. Branch-Delete ist erst `DELETE-SAFE`, wenn Preservation bewiesen ist.
+4. Branch-Delete ist ein späterer, eigener Technical-Lead-Schritt nach Exact-Head-Review und Unique-Content-Beweis. Remote-Reflog ist kein Rollback-Versprechen.
+5. PR #88 vom 26.08.2026 bleibt Historical Evidence und wird nicht als Current Inventory übernommen. Die aktuelle Reconciliation liegt in den versionierten Dateien `docs/PROJECT_SANITATION_*_2026-08-28.md`.
+6. Runtime-Reste (`supabase/.temp`, `prague.jpg`, CookieConsent, V1 Image-Hosts) und Cloud-Decommission (`jetnity-bets`) bleiben eigene Slices bzw. Product-Owner-Gates.
+
+**Kontext:** Draft-PR #88 inventarisierte am 26.08.2026 Altlasten gegen `main` `1d558ef5`. Live-`main` bei diesem Review-Fix ist `51b0c926` (PR #133 / AP-5-S1 integriert; ADR-0183 bleibt die S1-Entscheidung). Issue #134 verlangt Closure-Klassifikation, nicht Ausführung. Account-/Auth-Runtime bleibt unberührt.
+
+**Alternativen:**
+
+1. *PR #88 rebase/mergen als Current Truth.* Würde eine zwei Tage alte Inventur über den neueren Continuity-Stand legen.
+2. *Alte Drafts blind schliessen und ihre Branches löschen.* Würde Unique Admin-/Account-/Collaboration-Docs verlieren.
+3. *Branches in demselben Slice löschen.* Destruktiv, ohne unabhängigen Review der Unique-Content-Beweise.
+
+**Begründung:** Sanitation schützt Evidence zuerst. Aufräumen kommt erst, wenn der Technical Lead die Matrizen unabhängig geprüft hat. ADR-0183 bleibt die integrierte AP-5-S1-Entscheidung und wird nicht überschrieben.
+
+**Konsequenzen:**
+
+- Evidence: `docs/PROJECT_SANITATION_LIVE_INVENTORY_STATUS_2026-08-28.md` und die zugehörigen Matrizen.
+- Generation 3 des Quality-/Security-Workstreams ist dieser Slice.
+- Kein Cleanup, kein Ready, kein Merge durch den Autor-Agenten.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
