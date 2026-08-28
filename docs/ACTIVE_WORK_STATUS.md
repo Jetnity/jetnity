@@ -17,7 +17,7 @@ Status: **AP-5-S3 Account Security Logout Scopes / Draft-PR #156. STOP für unab
 6. **Live-`main` / Baseline bei diesem Stamp:** `3c3079defb4eb5bcea4b8cb0ec8d73eff7806c9a` – immer live neu prüfen.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation, keine Service Role.
 8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** User-Client kann bestimmte Logout-HTTP-Fehler schlucken; `signOutAction` bleibt fehlerblind; keine Sessionzahl beweisbar; kein Browser-/Real-Device-Beweis; `main` `protected=false`; Agent-Self-Review ist kein PASS.
+9. **Bekannte Risiken / Review-Funde:** User-Client kann bestimmte Logout-HTTP-Fehler schlucken; `signOutAction` bleibt fehlerblind; keine Sessionzahl beweisbar; kein Browser-/Real-Device-Beweis; `main` `protected=false`; Agent-Self-Review ist kein PASS. Exact-Head `e91a71de` Gates: Actions `33217505606` SUCCESS, Vercel `47gfvn6wVzXfbsifqPZrm7RmeXuv` SUCCESS; dieser Stamp invalidiert sie für den neuen Head.
 10. **Offene Nutzerentscheidungen / Freigaben:** S3 braucht kein Product-Owner-Sondergate. S4/S5 und P1–P5 starten nicht aus diesem Slice.
 11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #156. Kein Ready. Kein Merge. Kein S4.
 12. **Zuerst lesen:** `docs/AP5_S3_ACCOUNT_SECURITY_LOGOUT_SCOPES_TASK_2026-08-29.md`, Status, Handoff, Self-Review, ADR-0192, Gate-0-Status, ADR-0182.

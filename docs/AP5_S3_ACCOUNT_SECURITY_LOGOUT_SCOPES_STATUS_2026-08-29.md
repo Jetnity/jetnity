@@ -66,6 +66,7 @@ Siehe `docs/AP5_S3_LOCAL_TEST_EVIDENCE_2026-08-29.md`.
 | Typecheck / Lint / Hygiene / Build | pass; lint 0 errors / 133 warnings |
 | `auth:pruefen` | 55/55, 242 Schlüssel |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet |
+| Exact-Head CI `e91a71de` | Actions Run `33217505606` SUCCESS; Vercel `47gfvn6wVzXfbsifqPZrm7RmeXuv` SUCCESS; GitHub Deployment `6149674148` success |
 
 ## 5. DB / RLS / Production-Grenze
 

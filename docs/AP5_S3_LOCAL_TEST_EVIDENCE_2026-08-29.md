@@ -17,8 +17,8 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/156
 | `npm run auth:pruefen` | **55/55**, 242 Schlüssel, Passwortregel = config.toml |
 | `npm run build` | Production-Build Next.js 16.3.3 Turbopack erfolgreich; `/account/security` dynamisch |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet – `/account/security` ist auth-gated; kein Testkonto in dieser Session |
-| GitHub Actions / Vercel Preview | live am Exact Head prüfen; dieser File erfindet keine IDs |
+| GitHub Actions / Vercel Preview | Exact Head `e91a71de`: Actions Run `33217505606` SUCCESS; Vercel Inspector `47gfvn6wVzXfbsifqPZrm7RmeXuv` SUCCESS; GitHub Preview-Deployment `6149674148` success |
 
 Lokales `npm ci` war nötig, weil das Cloud-Snapshot-`node_modules` noch Next 14.2.32 / ESLint 8.57.1 enthielt. Lockfile wurde nicht verändert.
 
-Dieser Stamp erzeugt einen neueren Head. Kein zweiter Evidence-Stamp, außer dessen lokale Gates oder CI fehlschlagen.
+Exact-Head-Gates oben gelten für `e91a71de`. Dieser Stamp erzeugt einen neueren Head. Kein weiterer Evidence-Stamp, außer dessen CI fehlschlägt.

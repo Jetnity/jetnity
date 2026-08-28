@@ -42,7 +42,7 @@ Kein neuer Auth-Vertrag. ADR-0192 präzisiert nur die UI-Nutzung der bereits in 
 
 - `signOutAction` schluckt weiter Fehler und redirected immer.
 - Kein authentifizierter Browser-/Real-Device-Beweis.
-- Exact Head und CI/Vercel müssen live am PR geprüft werden; dieser Handoff erfindet keine grünen Gates.
+- Exact-Head `e91a71de`: Actions `33217505606` SUCCESS; Vercel `47gfvn6wVzXfbsifqPZrm7RmeXuv` SUCCESS; GitHub Deployment `6149674148` success. Ein Stamp danach braucht erneute Live-Gates; kein weiterer Evidence-Stamp, außer die Stamp-CI fehlschlägt.
 - `main` `protected=false`.
 
 ## Nächster Schritt

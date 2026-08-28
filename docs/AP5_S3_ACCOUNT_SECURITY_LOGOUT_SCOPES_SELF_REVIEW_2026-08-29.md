@@ -33,7 +33,7 @@ Keine Migration. Kein `supabase/config.toml`-Write. Kein RLS/Identity. Kein S4/S
 - Der installierte User-Client kann bestimmte Logout-HTTP-Fehler schlucken. S3 macht daraus keine zweite Wahrheitsebene.
 - Allgemeines `signOutAction` bleibt fehlerblind. Bewusst nicht in S3 umgeschrieben.
 - Kein authentifizierter Browser-/Real-Device-Beweis.
-- Exact-Head CI/Vercel müssen live geprüft werden.
+- Exact-Head `e91a71de`: Actions `33217505606` SUCCESS; Vercel `47gfvn6wVzXfbsifqPZrm7RmeXuv` SUCCESS. Dieser Stamp erzeugt einen neueren Head.
 - S4–S5 und AP-5-P1–P5 bleiben offen.
 
 ## 4. Urteil des Autors
