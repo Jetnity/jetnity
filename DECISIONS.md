@@ -4847,6 +4847,38 @@ Kein Schema. Kein Ready/Merge. Neuer Head invalidiert `ce5b7e70` und `fbb1ec8d`.
 
 ---
 
+## ADR-0190 – Next 16 S1: async Request-API-Kompatibilität ohne Framework-Bump
+
+**Datum:** 28. August 2026  
+**Status:** Slice-1-Implementierungs-ADR auf Draft-PR #150. **Self-expiring. Kein Ready/Merge durch den Autor. Kein Next-/React-/ESLint-/TypeScript-Dependency-Bump. Kein S2.**
+
+**Entscheidung:**
+
+1. Die drei Supabase-Server-Factories in `lib/supabase/server.ts` sind `async` und verwenden `await cookies()`. Der Cookie-Store-Typ ist `Awaited<ReturnType<typeof cookies>>`, damit Next 14 und der spätere Promise-Vertrag ohne `any` oder neue `@ts-ignore` kompilieren.
+2. RSC bleibt read-only; Route Handler und Server Actions bleiben mutierbar. Der Alias `createServerClient` bleibt die async RSC-Factory und keine synchrone Hintertür.
+3. `gastkennung()` ist async; der `jetnity_gast`-Vertrag, der cookie-lose Service-Role-Client und Fail-closed bleiben unverändert.
+4. Page-`params`, Page-`searchParams` und `generateMetadata` auf den Gate-0-Flächen werden über `leseRequestParam` / `leseOptionalRequestParam` Promise-kompatibel. `new URL(req.url).searchParams` bleibt unverändert.
+5. Produkt-Truth (Login/Register/Admin-MFA `next`, `/planen` Key-Präsenz-Robots, `[tripId]` Guest-vs-Account, unauthorized `grund`, Admin-Users-Pagination) wird nicht neu erfunden, sondern mit Tests festgebunden.
+6. Dieser ADR ändert keine Framework-Dependencies, kein `middleware.ts`, keine Vercel-Settings und keine Supabase-/Auth-/RLS-Ebene.
+
+**Kontext:** PR #148 / ADR-0189 empfahl ein gestuftes Upgrade. PR #149 autorisierte Compatibility-Prep vor dem Bump. Next 16 entfernt den Sync-Shim von `cookies()` / `params` / `searchParams`. `await` eines Nicht-Promises ist auf Next 14 gültig, deshalb kann S1 die teure Auth-Fläche vor dem Major-Bump schließen.
+
+**Alternativen:**
+
+1. *Factories synchron lassen bis S2.* Würde Auth-Caller und Request-API-Flächen in denselben Bump-PR zwingen.
+2. *Nur Factories async machen, Pages später.* Würde den dokumentierten S1-Scope und die `/planen`-Metadata-Grenze ungeschützt lassen.
+3. *Sofort Next 16 heben.* Verboten in S1; höheres Erst-PR-Risiko.
+
+**Begründung:** Async-Kompatibilität vorbereiten, Verhalten nicht neu erfinden. Die Signaturänderung ist der kleinste Schritt, der den späteren 16er-Bump von der Auth-Cookie-Arbeit trennt.
+
+**Konsequenzen:**
+
+- Evidence: `docs/NEXT16_S1_REQUEST_API_COMPATIBILITY_PREP_STATUS_2026-08-28.md` und Self-Review desselben Datums.
+- Canonical Continuity ist self-expiring: solange #150 offen → TL Exact-Head-Review / kein Ready/Merge durch den Autor; nach Merge → S1 integriert, nächster Schritt nur ein separat versioniertes S2, kein automatischer Bump.
+- Autor-Agent stoppt für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.
