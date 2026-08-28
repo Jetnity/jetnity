@@ -198,7 +198,7 @@ Diese Abhängigkeiten steuern AP-5–AP-12. Sie werden hier nicht umgebaut.
 | Passkeys | **gated** | UI-Panel existiert; `[auth.passkey] enabled = false` |
 | Consumer-AAL2-Pflicht auf `/account` | **missing** | Middleware prüft Auth, nicht AAL |
 | Admin-AAL2 | **integrated** | `lib/auth/admin-aal.ts`; Production `20260827170000` angewendet, exakt einmal |
-| Passwort ändern, eingeloggt | **integrated (AP-5-S2 / PR #137)** | `/account/security` → `SecurityPasswort`; Vertrag `reauthenticate()` → Nonce → `updateUser({ password, nonce })`. Recovery bleibt getrennt. Issue #136 war beim Continuity-Stamp noch OPEN. |
+| Passwort ändern, eingeloggt | **integrated (AP-5-S2 / PR #137)** | `/account/security` → `SecurityPasswort`; Vertrag `reauthenticate()` → Nonce → `updateUser({ password, nonce })`. Recovery bleibt getrennt. Issue #136 CLOSED / completed. |
 | Session-/Geräteliste | **missing** | keine UI, keine API-Route |
 | Fundamentale Auth-/MFA-/AAL-Änderung | **Product-Owner-Gate** | nicht in einem normalen Account-UI-Slice |
 

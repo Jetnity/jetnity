@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **Kanonischer Post-PR-#137-Übergabestand. AP-5 Gate 0, AP-5-S1 und AP-5-S2 sind integriert. Issue #128 und Issue #132 sind CLOSED / completed. Issue #136 war beim Continuity-Stamp noch OPEN. S3–S5 und C2 sind nicht gestartet. Kein automatischer Folgeslice. Live-Evidence immer erneut verifizieren.**
+Status: **Kanonischer Post-PR-#137-Übergabestand. AP-5 Gate 0, AP-5-S1 und AP-5-S2 sind integriert. Issue #128, Issue #132 und Issue #136 sind CLOSED / completed. S3–S5 und C2 sind nicht gestartet. Kein automatischer Folgeslice. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
@@ -107,7 +107,7 @@ Verbindliche Wahrheit:
 - P2-TA-04 C1 / PR #126 integriert; Production C1 ist als `20260828015304` live verifiziert und darf nicht erneut angewendet werden
 - AP-5 Gate 0 / PR #129 integriert; Issue #128 CLOSED / completed
 - AP-5-S1 / Issue #132 ist integriert
-- AP-5-S2 / Issue #136 / PR #137 ist integriert; Issue #136 war beim Continuity-Stamp noch OPEN
+- AP-5-S2 / Issue #136 / PR #137 ist integriert; Issue #136 ist CLOSED / completed
 
 AP-5-S3–S5 werden **nicht automatisch** gestartet. AP-7 / Account-Traveller-Registry bleibt separat und gated.
 
@@ -221,7 +221,7 @@ Zuletzt abgeschlossene Account-Generation:
 
 - `Cursor-Agent: Account plattform audit vorbereitung 10`
 - AP-5-S2 / Issue #136 / PR #137 integriert
-- Issue #136 war beim Stamp noch OPEN
+- Issue #136 CLOSED / completed
 - Generation 10 nicht wiederverwenden
 
 - `Cursor-Agent: Account plattform audit vorbereitung 9`
@@ -242,7 +242,7 @@ Account-Generation 9 (AP-5-S1 / PR #133 / Issue #132) ist abgeschlossen und nich
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-**AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 schließen. Draft-PR #138 (Docs-only Continuity) unabhängig reviewen. Kein S3–S5 automatisch starten.**
+**AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 ist CLOSED / completed. Draft-PR #138 (Docs-only Continuity) unabhängig reviewen. Kein S3–S5 automatisch starten.**
 
 AP-5-S1 ist integriert (PR #133); Issue #132 ist CLOSED / completed. Project Sanitation ist integriert (PR #135). AP-5 Gate 0 bleibt integriert. P2-TA-04 C1 bleibt integriert; Production C1 `20260828015304` nicht erneut anwenden.
 

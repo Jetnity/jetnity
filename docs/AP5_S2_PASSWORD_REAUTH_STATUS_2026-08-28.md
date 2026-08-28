@@ -4,7 +4,7 @@ Stand: 28. August 2026
 Status: **INTEGRIERT über PR #137 / Merge `f11a1753`. Authoring-Blöcke darunter bleiben Pre-Merge-Evidence.**  
 Workstream: Account / Traveller  
 Cursor-Agent: **`Account plattform audit vorbereitung 10`**  
-Issue: [#136](https://github.com/Jetnity/jetnity/issues/136) – Merge erfolgt; Close stand beim Continuity-Stamp noch aus  
+Issue: [#136](https://github.com/Jetnity/jetnity/issues/136) – **CLOSED / completed**
 Branch: `cursor/ap5-s2-password-reauth-82e4`  
 PR: https://github.com/Jetnity/jetnity/pull/137 – **MERGED**
 
@@ -20,11 +20,11 @@ PR: https://github.com/Jetnity/jetnity/pull/137 – **MERGED**
 | Post-Merge Actions | Run `33171851756` SUCCESS |
 | Post-Merge Vercel Production | `dpl_A7BMLsQoZwx8Y4qEdMRCsdyPmRGg` READY |
 | GitHub Production-Deployment | `6141244223` success |
-| Issue #136 | beim Stamp noch OPEN |
+| Issue #136 | **CLOSED / completed** |
 
 Kein S3–S5 aus diesem File.
 
-## 1. Live-Rekonstruktion dieses Agenten
+## 1. Historische Live-Rekonstruktion dieses Agenten (Authoring-Start, nicht Current Truth)
 
 | Feld | Wert |
 | --- | --- |
@@ -32,7 +32,7 @@ Kein S3–S5 aus diesem File.
 | `origin/main` nach Fetch | `0256905cee3e6705156ce642839983daf8b0709a` – Merge PR #135 |
 | Author-Branch-Start | exakt `0256905c` |
 | `main` Branch Protection | `protected=false` |
-| Issue #136 | OPEN |
+| Issue #136 | historisch OPEN beim Authoring-Start; Current Truth ist CLOSED / completed |
 | Offene PRs beim Start | #88, #52, #50, #40, #39, #28 – historical/fremd; nicht angefasst |
 | AP-5 Gate 0 / PR #129 | **integrated**; Issue #128 CLOSED / completed |
 | AP-5-S1 / PR #133 | **integrated**; Issue #132 CLOSED / completed. Generation 9 nicht wiederverwendet |
@@ -115,4 +115,4 @@ Dieser Stamp erzeugt einen neueren Head. **Kein zweiter Evidence-Stamp**, außer
 
 ## 6. Nächster Schritt
 
-S2-Runtime ist integriert. Issue #136 schließen. Continuity-Stamp unabhängig reviewen. S3–S5 nicht automatisch starten.
+S2-Runtime ist integriert. Issue #136 ist CLOSED / completed. Continuity-Stamp unabhängig reviewen. S3–S5 nicht automatisch starten.

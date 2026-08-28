@@ -2,15 +2,17 @@
 
 Stand: 28. August 2026
 
-Status: **PR #137 / AP-5-S2 ist nach unabhängigem Technical-Lead-Re-Review auf `main` integriert. Issue #136 ist zum Zeitpunkt dieses Stamps noch OPEN und sollte als completed geschlossen werden. Kein automatischer Folgeslice. Kein S3–S5. Live-Evidence gewinnt immer.**
+Status: **PR #137 / AP-5-S2 ist nach unabhängigem Technical-Lead-Re-Review auf `main` integriert. Issue #136 ist CLOSED / completed. Kein automatischer Folgeslice. Kein S3–S5. Live-Evidence gewinnt immer.**
 
 > Dieser Checkpoint superseded für den S2-Integrationsstand die Pre-Merge-/Draft-Aussagen in den S2-Author-Status-/Handoff-Dateien. Diese älteren Dateien bleiben historische Evidence ihres damaligen Zeitpunkts und werden nicht gelöscht.
+
+> Historisch: Die erste Continuity-Fassung von Draft-PR #138 behandelte Issue #136 noch als OPEN und nannte „Issue schließen“ als nächsten Schritt. Das war zum Review `5051188747` bereits falsch. Current Truth: Issue #136 **CLOSED / completed**.
 
 ## 1. Exakter integrierter Stand
 
 - Repository: `Jetnity/jetnity`
 - PR: **#137 – AP-5-S2 – eingeloggte Passwortänderung über Reauthentication**
-- Issue: [#136](https://github.com/Jetnity/jetnity/issues/136) – live noch **OPEN**; Merge ist erfolgt, Close steht aus
+- Issue: [#136](https://github.com/Jetnity/jetnity/issues/136) – **CLOSED / completed** (closed 2026-08-28T12:41:37Z)
 - Author-Agent: `Cursor-Agent: Account plattform audit vorbereitung 10`
 - Vor-Merge `main`: `0256905cee3e6705156ce642839983daf8b0709a` (PR #135)
 - Review-Fix-Ausgangspunkt: Technical-Lead Review `5050962955` (**CHANGES REQUIRED**) auf `d0eac240`
@@ -64,7 +66,6 @@ Unverändert / ausdrücklich Non-Scope:
 - Login-MFA bleibt abbrechbar
 - Sessionliste bleibt ungebaut / `unsupported`
 - Kein authentifizierter Browser-/Real-Device-Nachweis für die In-Account-Passwortänderung
-- Issue #136 nach Merge noch nicht geschlossen
 - `main` Branch Protection `protected=false`
 
 ## 4. Agent-Rotation
@@ -79,8 +80,7 @@ Kein AP-5-S3/S4/S5 wird allein durch den Merge von S2 automatisch gestartet.
 
 Zuerst:
 
-1. Issue #136 als completed schließen, sobald dieser Continuity-Stand akzeptiert ist.
-2. Draft-PR #138 (dieser Docs-only-Stamp) unabhängig reviewen, Ready setzen und mergen, wenn er scope-treu ist.
-3. Live rekonstruieren: aktuelles `main`, offene PRs/Issues, Binding Build Order, Account-/Traveller-/Provider-Gates, Product-Owner-Sondergates, Parallelkollisionen, P0–P3.
+1. Draft-PR #138 (dieser Docs-only-Stamp) unabhängig reviewen, Ready setzen und mergen, wenn er scope-treu ist.
+2. Live rekonstruieren: aktuelles `main`, offene PRs/Issues, Binding Build Order, Account-/Traveller-/Provider-Gates, Product-Owner-Sondergates, Parallelkollisionen, P0–P3.
 
 Erst danach darf entschieden werden, ob AP-5-S3 oder ein anderer Build-Order-Schritt als Nächstes dran ist.

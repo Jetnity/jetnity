@@ -9,20 +9,20 @@ Status: **AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Gate 0 und S1 ble
 
 1. **Arbeitsblock / Ziel:** Docs-only Continuity nach Merge von PR #137, damit `main` S2 nicht weiter als Draft führt.
 2. **Authoring-Branch / PR:** `cursor/ap5-s2-integrated-82e4`; Draft-PR #138.
-3. **Status:** **DOCS-ONLY / DRAFT.** Runtime ist bereits integriert. Kein Ready, kein Merge durch den Autor. Kein S3–S5.
+3. **Status:** **DOCS-ONLY / DRAFT / REVIEW-FIX FÜR 5051188747.** Issue #136 ist CLOSED / completed. Runtime ist bereits integriert. Kein Ready, kein Merge durch den Autor. Kein S3–S5.
 4. **Bereits umgesetzt:** S2-Runtime über PR #137. Dieser Stamp schreibt nur Continuity.
 5. **Cursor-Agent:** `Account plattform audit vorbereitung 10` – schließt S2; nicht für eine neue Runtime-Einheit wiederverwenden.
 6. **Live-`main` bei diesem Stamp:** `f11a17533c56f5746ca9ef56e08c3e4a21a5a3c5` – immer live neu prüfen.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push.
 8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Residuals:** Issue #136 noch OPEN; Recovery-UI bleibt für signed-in Sessions mehrdeutig; Login-MFA abbrechbar; Sessionliste ungebaut; `main` `protected=false`.
-10. **Offene Nutzerentscheidungen / Freigaben:** Issue #136 als completed schließen. S3–S5 nicht automatisch starten.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Review dieses Continuity-Stamps; Issue #136 schließen; **kein S3–S5 aus diesem File.**
+9. **Bekannte Residuals:** Recovery-UI bleibt für signed-in Sessions mehrdeutig; Login-MFA abbrechbar; Sessionliste ungebaut; `main` `protected=false`.
+10. **Offene Nutzerentscheidungen / Freigaben:** S3–S5 nicht automatisch starten. Issue #136 ist CLOSED / completed.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review dieses Continuity-Stamps nach Review `5051188747`; **kein S3–S5 aus diesem File.**
 12. **Zuerst lesen:** `docs/CHATGPT_PR137_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`, S2-Status, Gate-0-Status, ADR-0182.
 
 ## Historischer Arbeitsblock – AP-5-S2 eingeloggte Passwortänderung
 
-Live integriert über PR #137. Merge `f11a1753`. Reviewed Head `e4cb805a`. Technical-Lead PASS `5051115258`. Issue #136 war beim Stamp noch OPEN. Generation 10 für Runtime abgeschlossen. Nicht erneut öffnen. Gate 0 / ADR-0182 bleibt die Authority.
+Live integriert über PR #137. Merge `f11a1753`. Reviewed Head `e4cb805a`. Technical-Lead PASS `5051115258`. Issue #136 CLOSED / completed. Generation 10 für Runtime abgeschlossen. Nicht erneut öffnen. Gate 0 / ADR-0182 bleibt die Authority.
 
 1. **Arbeitsblock / Ziel:** Issue #136 / AP-5-S2 – signed-in Passwortänderung über `reauthenticate()` → Nonce → `updateUser({ password, nonce })`.
 2. **Authoring-Branch / PR:** `cursor/ap5-s2-password-reauth-82e4`; PR #137 MERGED.
@@ -260,7 +260,7 @@ Account/Traveller zuletzt abgeschlossen:
 
 Account-Implementation zuletzt abgeschlossen:
 
-- **Issue #136 / AP-5-S2** – `Account plattform audit vorbereitung 10`. PR #137 integriert. Merge `f11a1753`. Generation 10 für Runtime abgeschlossen. Issue beim Stamp noch OPEN.
+- **Issue #136 / AP-5-S2** – `Account plattform audit vorbereitung 10`. PR #137 integriert. Merge `f11a1753`. Generation 10 für Runtime abgeschlossen. Issue CLOSED / completed.
 
 - **Issue #132 / AP-5-S1** – `Account plattform audit vorbereitung 9`. PR #133 integriert. Issue CLOSED / completed. Generation 9 ist historische Authoring-Evidence.
 
@@ -294,7 +294,7 @@ Operativ relevant:
 | PR | Klasse |
 | --- | --- |
 | **#138** AP-5-S2 Post-Merge Continuity | **DRAFT / DOCS-ONLY.** Branch `cursor/ap5-s2-integrated-82e4`. Kein Ready, kein Merge durch den Autor. Kein S3–S5. |
-| **#137** AP-5-S2 Passwortänderung | **GEMERGT / INTEGRIERT.** Merge `f11a1753`. Reviewed Head `e4cb805a`. TL PASS `5051115258`. Issue #136 beim Stamp noch OPEN. |
+| **#137** AP-5-S2 Passwortänderung | **GEMERGT / INTEGRIERT.** Merge `f11a1753`. Reviewed Head `e4cb805a`. TL PASS `5051115258`. Issue #136 CLOSED / completed. |
 | **#135** Project Sanitation Closure | **GEMERGT / INTEGRIERT.** Merge `0256905c`. Retention-Plan; kein Cleanup. |
 | **#133** AP-5-S1 Security-UI | **GEMERGT / INTEGRIERT.** Merge `51b0c926`. Issue #132 CLOSED / completed. Agent 9 abgeschlossen. |
 | **#129** AP-5 Gate 0 Account security capability | **GEMERGT / INTEGRIERT.** Issue #128 CLOSED / completed. Ältere „Draft“-Zeilen sind Pre-Merge-Evidence. |
@@ -345,7 +345,7 @@ Production C1 `20260828015304_traveller_write_contract_integrity` ist unter der 
 
 ## 10. Nächster Schritt
 
-AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 war beim Continuity-Stamp noch OPEN und sollte geschlossen werden. AP-5-S1 bleibt integriert (PR #133); Issue #132 ist CLOSED / completed. AP-5 Gate 0 bleibt integriert (PR #129); Issue #128 ist CLOSED / completed. Project Sanitation bleibt integriert (PR #135). Kein S3–S5, kein C2, kein Auth-Config-Push, kein Cleanup aus diesem File.
+AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 ist CLOSED / completed. AP-5-S1 bleibt integriert (PR #133); Issue #132 ist CLOSED / completed. AP-5 Gate 0 bleibt integriert (PR #129); Issue #128 ist CLOSED / completed. Project Sanitation bleibt integriert (PR #135). Kein S3–S5, kein C2, kein Auth-Config-Push, kein Cleanup aus diesem File.
 
 P2-TA-03 bleibt integriert (PR #117); Issue #116 ist CLOSED / completed.
 

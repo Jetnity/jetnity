@@ -266,12 +266,12 @@ Abgeschlossen:
 27. ✅ AP-5 Gate 0 Account security capability audit / PR #129 + Issue #128
 28. ✅ AP-5-S1 ehrliche Security-UI Zustände / PR #133 + Issue #132; ADR-0183
 29. ✅ Project Sanitation Closure / PR #135 + Issue #134; ADR-0184; kein Cleanup
-30. ✅ AP-5-S2 eingeloggte Passwortänderung / PR #137 + Issue #136; Merge `f11a1753`; Issue beim Continuity-Stamp noch OPEN
+30. ✅ AP-5-S2 eingeloggte Passwortänderung / PR #137 + Issue #136 CLOSED / completed; Merge `f11a1753`
 31. AP-5-S2 Post-Merge Continuity / Draft-PR #138 – **Docs-only; kein S3–S5**
 
 Nächster Schritt:
 
-**Unabhängiger Technical-Lead-Review dieses Continuity-Stamps. Issue #136 schließen. S3–S5 nicht aus dieser Liste automatisch ableiten.**
+**Unabhängiger Technical-Lead-Review dieses Continuity-Stamps. Issue #136 ist CLOSED / completed. S3–S5 nicht aus dieser Liste automatisch ableiten.**
 
 ## 10. Noch nicht automatisch gestartet / weiterhin gated
 
