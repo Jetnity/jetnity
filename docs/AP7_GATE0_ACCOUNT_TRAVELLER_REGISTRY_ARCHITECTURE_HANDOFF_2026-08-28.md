@@ -1,7 +1,7 @@
 # Jetnity – AP-7 Gate 0 Account-Traveller-Registry Architecture Handoff
 
 Stand: 28. August 2026  
-Status: **REVIEW-FIX FÜR 5455299179 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
+Status: **REVIEW-FIX FÜR 5455299179 + ADDENDUM 5455307709 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
 Logical Cursor-Agent: **`Cursor-Agent: Account plattform audit vorbereitung 11`**  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/144  
 Branch: `audit/ap7-account-traveller-registry-gate0-2026-08-28`  
@@ -17,6 +17,7 @@ Docs-only Review-Fix gegen Technical-Lead-Kommentar `5455299179`:
 
 1. `ARCHITECTURE.md`: AP-5-S2 / PR #137 ist integriert. Nur AP-5-S3–S5 bleiben ungebaut und nicht automatisch gestartet. AP-6–AP-12 bleiben ungebaut/gated. AP-7-Gate-0-Wording unverändert Dual-Authority ohne Runtime.
 2. Kein trip-weites `chosenCredentialOptionRef` mehr. Alle Credential-Optionen bleiben first-class im Snapshot. Spätere explizite Auswahl nur als eigener kontext-/evaluations-scharfer Vertrag oder bewusst unspezifiziert; route-weit nur bei expliziter Evidence.
+3. Addendum `5455307709`: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `ROADMAP.md` und `docs/ACTIVE_WORK_STATUS.md` sind self-expiring / dual-state für PR #144. Nach einem späteren Merge wird Gate 0 integrierte Evidence; keine automatische Runtime; nächster Schritt = Product-Owner-Architekturentscheidung nach Live-Verifikation. Keine zukünftige Merge-SHA. Kein Continuity-PR nur für den Merge.
 
 Konsistenz: Status, ADR-0186, Account-Plan-Nachtrag, Self-Review.
 
@@ -94,9 +95,10 @@ Unfertig: unabhängiger TL-Review, PO-Entscheidung, jede Implementation.
 
 ## 8. Exact first unfinished next step
 
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #144.
+**Self-expiring / dual-state. Live-Evidence gewinnt.**
 
-Nicht Ready. Nicht mergen. Keinen AP-7-Implementierungsslice starten.
+- **Solange PR #144 offen und unmerged ist:** unabhängiger Technical-Lead Exact-Head-Re-Review. Nicht Ready. Nicht mergen. Keine Runtime.
+- **Sobald PR #144 gemergt ist:** Gate 0 ist integrierte Architecture-Evidence. Keine AP-7-Runtime automatisch autorisiert. Exakt nächster Schritt = Live-Verifikation, danach Product-Owner-Architekturentscheidung (Dual-Authority vs genehmigte Alternative) vor jeder Implementation. Keine zukünftige Merge-SHA. Kein Continuity-PR nur für den Merge.
 
 ---
 
@@ -114,9 +116,6 @@ Nicht Ready. Nicht mergen. Keinen AP-7-Implementierungsslice starten.
 
 ## 10. STOPP
 
-Draft PR #144 bleibt Draft.  
-Kein Mark Ready.  
-Kein Merge.  
-Kein Folge-Slice.
+Solange PR #144 offen ist: Draft bleibt Draft. Kein Mark Ready. Kein Merge. Kein Folge-Slice. Unabhängiger Technical-Lead-Re-Review auf dem Exact Head ist der einzige nächste Schritt.
 
-Unabhängiger Technical-Lead-Review auf dem Exact Head ist der einzige nächste Schritt.
+Sobald PR #144 gemergt ist: dieser STOPP ist historisch; Gate 0 ist integrierte Evidence; nächster Schritt ist die Product-Owner-Architekturentscheidung nach Live-Verifikation, nicht ein Continuity-PR.

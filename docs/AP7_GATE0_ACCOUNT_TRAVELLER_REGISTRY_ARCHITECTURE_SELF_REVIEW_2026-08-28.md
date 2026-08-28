@@ -6,7 +6,7 @@ Typ: adversarial Self-Review nach CHANGES REQUIRED `5455299179`, **kein** unabh�
 
 ## 1. Auftrag gegen Diff
 
-Auftrag: nur Review-Fixes gegen Exact Head `a0ef801fd7fa39685fab9a1fe69d411f736ea78c`. Keine Runtime.
+Auftrag: Review-Fixes gegen Exact Head `a0ef801fd7fa39685fab9a1fe69d411f736ea78c` plus Addendum `5455307709` in derselben Runde. Keine Runtime.
 
 Geprüft gegen den tatsächlichen Dateisatz: `ARCHITECTURE.md`, Status, ADR-0186, Handoff, Account-Plan-Nachtrag, dieses Self-Review.
 
@@ -24,6 +24,7 @@ Keine Änderung an `app/`, `components/`, `lib/`-Runtime, `supabase/migrations`,
 | Wurde ein Default-Pass oder Default-Citizenship empfohlen? | Nein. Explizit verboten. |
 | Wurde Ready/Merge empfohlen? | Nein. STOPP für unabhängigen TL-Re-Review. |
 | Wurde Generation 12 erfunden? | Nein. Sichtbarer Titel bleibt `Account traveller registry architecture`, non-blocking. |
+| Würde ein späterer Merge von #144 die Continuity-Dateien sofort falsch machen? | Nein, nach Addendum `5455307709`: self-expiring / dual-state. Keine zukünftige Merge-SHA. Kein Continuity-PR #145 nur für den Merge. |
 
 ## 3. Risiken, die bleiben
 

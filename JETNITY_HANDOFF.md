@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **Aktiver Docs-Slice: AP-7 Gate 0 auf Draft-PR #144 (Audit + Architecture only). PR #143 ist MERGED (`1947285c`). PR #142 Operating Standard und PR #141 Provider S5-B Gate 0 bleiben integriert. Keine AP-7-Runtime. S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. AP-5-S3–S5 sind normale Technical-Lead-Gates, nicht PO-gated. Live-Evidence immer erneut verifizieren.**
+Status: **AP-7 Gate 0 / PR #144 ist self-expiring: offen → TL-Review/Re-Review von #144; nach Merge → integrierte Gate-0-Architecture-Evidence, keine automatische AP-7-Runtime, nächster Schritt = Product-Owner-Architekturentscheidung (Dual-Authority vs genehmigte Alternative) nach Live-Verifikation. Keine zukünftige Merge-SHA. Kein Continuity-PR nur um den Merge zu sagen. PR #143 ist MERGED (`1947285c`). PR #142 Operating Standard und PR #141 Provider S5-B Gate 0 bleiben integriert. S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
@@ -171,7 +171,7 @@ Verbindliche Wahrheit:
 - PR #138 Post-Merge Continuity integriert
 - PR #142 Technical-Lead-/Cursor-Operating-Standard integriert
 
-AP-5-S3–S5 werden **nicht automatisch** gestartet. AP-7 / Account-Traveller-Registry bleibt separat und gated. Gate 0 liegt auf Draft-PR #144 / ADR-0186 als Empfehlung Dual-Authority, nicht als Freigabe.
+AP-5-S3–S5 werden **nicht automatisch** gestartet. AP-7 / Account-Traveller-Registry bleibt separat und gated. Gate 0 / ADR-0186 ist Empfehlung Dual-Authority, nicht Freigabe. Solange PR #144 offen ist, ist das der Review-Transport. Sobald #144 gemergt ist, ist Gate 0 integrierte Architecture-Evidence; kein Runtime-Start und kein Folge-Continuity-PR nur für den Merge.
 
 Der integrierte AP-5-Gate-0-Vertrag trennt insbesondere Password Recovery von signed-in Reauthentication, hält Session-/Gerätelisting ohne unterstützte User-API ehrlich auf `unsupported`, dokumentiert den heutigen globalen `signOut()`-Default und hält verified-factor `mfa.unenroll` an der serverseitigen AAL2-Anforderung. Details: `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, ADR-0182 und die aktuellen Account-Checkpoints.
 
@@ -307,10 +307,10 @@ Exakte Basis-Anzeigenamen bleiben verbindlich:
 
 Aktueller Account-Status:
 
-- offene Docs-Generation: `Cursor-Agent: Account plattform audit vorbereitung 11` auf Draft-PR #144 (AP-7 Gate 0)
+- Generation 11: `Cursor-Agent: Account plattform audit vorbereitung 11` für AP-7 Gate 0 / PR #144. Solange #144 offen: Review-Session. Nach Merge: Generation für diesen Docs-Slice abgeschlossen, nicht für Runtime wiederverwenden.
 - sichtbarer Cursor-Titel dieser Session: `Account traveller registry architecture`; nicht als umbenannt behauptet
 - `Cursor-Agent: Account plattform audit vorbereitung 10` ist mit AP-5-S2 / PR #137 und PR #138 Continuity abgeschlossen
-- Generation 10 nicht wiederverwenden; Generation 11 nicht für Runtime wiederverwenden
+- Generation 10 nicht wiederverwenden
 
 Aktueller Quality-/Security-Status:
 
@@ -335,9 +335,12 @@ Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logisc
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #144 (AP-7 Gate 0). Autor-Agent setzt kein Ready und kein Merge. Keine AP-7-Runtime.
+**Self-expiring / dual-state. Live-Evidence gewinnt.**
 
-PR #143 ist MERGED (`1947285c`). Die frühere Dual-State-Klausel ist historisch.
+- **Solange PR #144 offen und unmerged ist:** unabhängiger Technical-Lead Exact-Head-Review/Re-Review von Draft-PR #144. Autor-Agent setzt kein Ready, kein Merge, keine AP-7-Runtime.
+- **Sobald PR #144 gemergt ist:** diese Transport-/Review-Klausel ist automatisch historisch. Gate 0 ist integrierte Architecture-Evidence (ADR-0186). Keine AP-7-Runtime ist dadurch autorisiert. Exakt nächster Schritt = Live-Verifikation des Merge-/Post-Merge-Stands, danach Product-Owner-Architekturentscheidung (Dual-Authority-Empfehlung vs genehmigte Alternative) vor jeder AP-7-Implementation. Keine zukünftige Merge-SHA hier eintragen. Kein Continuity-PR nur um zu sagen, dass #144 gemergt ist.
+
+PR #143 ist MERGED (`1947285c`). Die frühere Dual-State-Klausel für #143 ist historisch.
 
 Current-State-Continuity (kein Fortschritt nur im Chat) steht im Operating Standard §9 und im universellen Recovery-Prompt.
 
