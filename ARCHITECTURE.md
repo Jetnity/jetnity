@@ -20,7 +20,7 @@ Diese Datei beschreibt den **tatsächlichen** technischen Aufbau, nicht den Ziel
 | Auth | Supabase Auth (Cookie-basiert, SSR) |
 | Storage | Supabase Storage |
 | Modell | OpenAI Responses API, serverseitig; Preview aktivierbar, Production aus (Abschnitt 5a) |
-| Node | >= 20.9 (siehe `package.json` → `engines`) |
+| Node | 22.x (siehe `package.json` → `engines`; ADR-0188) |
 
 Ein Framework-Wechsel ist nicht vorgesehen und benötigt Freigabe.
 

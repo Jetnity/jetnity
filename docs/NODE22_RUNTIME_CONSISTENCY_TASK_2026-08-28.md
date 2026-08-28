@@ -1,7 +1,7 @@
 # Jetnity – Node 22 Runtime Consistency Task
 
 Stand: 28. August 2026
-Status: **ACTIVE / DRAFT-PR-ONLY / NO READY OR MERGE BY AUTHOR**
+Status: **IMPLEMENTED ON DRAFT-PR / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / NO READY OR MERGE BY AUTHOR**
 Branch: `ops/node22-runtime-consistency-2026-08-28`
 Baseline: `main @ 4ec83f36426c636443d43692d6875e92e9e3b54a`
 
@@ -53,3 +53,10 @@ Also verify the resulting diff contains only runtime/tooling consistency changes
 ## Continuity / stop condition
 
 Persist the final exact head, commands/results and residual risks in a concise self-review/status artifact or PR comment, then STOP for independent ChatGPT / Technical-Lead exact-head review. Any new push invalidates previous review evidence.
+
+Author-side artifacts:
+
+- `docs/NODE22_RUNTIME_CONSISTENCY_STATUS_2026-08-28.md`
+- `docs/NODE22_RUNTIME_CONSISTENCY_HANDOFF_2026-08-28.md`
+- `docs/NODE22_RUNTIME_CONSISTENCY_SELF_REVIEW_2026-08-28.md`
+- ADR-0188 in `DECISIONS.md`

@@ -1,9 +1,15 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **AP-7-S1 Dual-Authority Domain Contract / self-expiring. Solange Draft-PR #145 offen: STOP für unabhängigen TL-Re-Review; kein Ready, kein Merge, kein AP-7-S2. Sobald #145 gemergt: integrierter Domain-Contract; nächster Schritt = Live-Post-Merge-Verifikation, dann separat PO-gegateter AP-7-S2-Vorschlag. Dual-Authority ist product-owner-freigegeben. PR #144 Gate 0 ist MERGED (`bb38aef5`). PR #143 bleibt MERGED (`1947285c`). S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **Node 22 Runtime Consistency / Draft-PR #147. STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge durch den Autor. AP-7-S1 ist auf `main @ 4ec83f36` integriert; kein automatisches AP-7-S2. Dual-Authority ist product-owner-freigegeben. PR #144 Gate 0 ist MERGED (`bb38aef5`). PR #143 bleibt MERGED (`1947285c`). S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
+
+Aktueller Ops-Slice auf diesem Branch:
+
+- `docs/NODE22_RUNTIME_CONSISTENCY_STATUS_2026-08-28.md` – Node 22 Runtime Consistency / Draft-PR #147
+- `docs/NODE22_RUNTIME_CONSISTENCY_HANDOFF_2026-08-28.md`
+- `docs/NODE22_RUNTIME_CONSISTENCY_SELF_REVIEW_2026-08-28.md`
 
 Aktuellster versionierter finaler Post-Merge-Checkpoint:
 

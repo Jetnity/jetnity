@@ -29,7 +29,7 @@ Ein Vorschlag enthält keine Preise, keine Anbieter, keine Verfügbarkeiten und 
 
 ## Lokale Entwicklung
 
-Voraussetzungen: Node.js 20+ und npm.
+Voraussetzungen: Node.js 22.x und npm.
 
 ```bash
 npm install

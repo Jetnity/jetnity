@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 28. August 2026  
-Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114, PR #115, PR #117, PR #118, PR #120, PR #121, PR #126, PR #127, PR #129, PR #130, PR #131, PR #133, PR #135, PR #137, PR #138, PR #141, PR #142, PR #143 und PR #144 sind integriert. AP-5 Gate 0, AP-5-S1 und AP-5-S2 sind integriert. Technical-Lead-/Cursor-Operating-Standard ist integriert. Dual-Authority ist product-owner-freigegeben. AP-7-S1 Domain Contract ist self-expiring: solange Draft-PR #145 offen → TL-Re-Review/Ready/Merge only; nach Merge → integrierter Domain-Contract, kein automatisches AP-7-S2. Live-`main` immer live prüfen.**
+Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114, PR #115, PR #117, PR #118, PR #120, PR #121, PR #126, PR #127, PR #129, PR #130, PR #131, PR #133, PR #135, PR #137, PR #138, PR #141, PR #142, PR #143, PR #144 und PR #145 sind integriert. AP-5 Gate 0, AP-5-S1 und AP-5-S2 sind integriert. Technical-Lead-/Cursor-Operating-Standard ist integriert. Dual-Authority ist product-owner-freigegeben. AP-7-S1 Domain Contract ist auf `main @ 4ec83f36` integriert; kein automatisches AP-7-S2. Aktueller Ops-Slice: Node 22 Runtime Consistency / Draft-PR #147. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
@@ -13,7 +13,8 @@ Current-State-Evidence und Recovery: `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_P
 
 Aktuelle operative Evidence:
 
-- `docs/AP7_S1_DUAL_AUTHORITY_DOMAIN_CONTRACT_STATUS_2026-08-28.md` – AP-7-S1 Domain Contract / Draft-PR #145; self-expiring: offen → TL-Re-Review; nach Merge → integriert, kein automatisches S2
+- `docs/NODE22_RUNTIME_CONSISTENCY_STATUS_2026-08-28.md` – aktueller Ops-Slice / Draft-PR #147; STOP für unabhängigen Technical-Lead Exact-Head-Review
+- `docs/AP7_S1_DUAL_AUTHORITY_DOMAIN_CONTRACT_STATUS_2026-08-28.md` – AP-7-S1 Domain Contract / PR #145 integriert auf `main @ 4ec83f36`; kein automatisches S2
 - `docs/AP7_DUAL_AUTHORITY_PRODUCT_OWNER_APPROVAL_2026-08-28.md` – verbindliche Dual-Authority-Freigabe
 - `docs/AP7_GATE0_ACCOUNT_TRAVELLER_REGISTRY_ARCHITECTURE_STATUS_2026-08-28.md` – AP-7 Gate 0 / PR #144 integrierte Architecture-Evidence
 - `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – neueste Post-Merge-Evidence nach PR #142

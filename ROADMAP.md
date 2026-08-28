@@ -115,7 +115,8 @@ P2-TA-04 Gate 0 ist durch PR #120 integriert. C1 ist durch PR #126 integriert: D
 Nicht automatisch starten:
 
 - AP-5-S3–S5 / AP-5-P1–P5
-- AP-7 / Account-Traveller-Registry — Architektur Dual-Authority freigegeben; S1 Domain-Contract self-expiring auf Draft-PR #145 (offen → Review; nach Merge integriert, kein automatisches S2), keine Persistenz
+- AP-7 / Account-Traveller-Registry — Architektur Dual-Authority freigegeben; S1 Domain-Contract über PR #145 auf `main @ 4ec83f36` integriert, kein automatisches S2, keine Persistenz
+- Node 22 Runtime Consistency — Draft-PR #147; Repository-Vertrag `engines.node: "22.x"` + `@types/node@22.20.1`; kein Ready/Merge durch den Autor
 
 ## 3. Trip Workspace / Visitor Search
 
@@ -274,12 +275,13 @@ Abgeschlossen:
 33. ✅ Technical Lead / Cursor Operating Standard / PR #142 – integriert; Merge `9d4778b8`
 34. ✅ PR #142 Post-Merge Continuity / PR #143 – integriert; Merge `1947285c`
 35. ✅ AP-7 Gate 0 Account-Traveller-Registry Architecture / PR #144 – integriert; Merge `bb38aef5`; Dual-Authority danach product-owner-freigegeben
-36. 🟡 AP-7-S1 Dual-Authority Domain Contract / Draft-PR #145 – shared Contract ohne Schema; self-expiring: offen → TL-Re-Review; nach Merge → integriert, kein automatisches S2
+36. ✅ AP-7-S1 Dual-Authority Domain Contract / PR #145 – integriert auf `main @ 4ec83f36`; kein automatisches S2
+37. 🟡 Node 22 Runtime Consistency / Draft-PR #147 – Repository-Vertrag Node `22.x`; STOP für unabhängigen Technical-Lead Exact-Head-Review
 
-Nächster Schritt (self-expiring / dual-state):
+Nächster Schritt:
 
-- **Solange PR #145 offen:** unabhängiger Technical-Lead Exact-Head-Re-Review nach `5455836506`. Kein Ready. Kein Merge durch den Autor. Kein AP-7-S2 / keine Persistenz.
-- **Sobald PR #145 gemergt:** integrierter Domain-Contract. Live-Post-Merge-Verifikation, danach nur ein separat Product-Owner-gegateter AP-7-S2 Persistence/Identity/RLS-Vorschlag. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
+- Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #147. Kein Ready. Kein Merge durch den Autor. Keine Vercel-Setting-Mutation.
+- AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #147.
 
 AP-5-S3/S4/S5 bleiben normale Technical-Lead-Gates innerhalb Gate 0, nicht automatisch gestartet und nicht Product-Owner-gated. S3–S5 nicht aus dieser Liste automatisch ableiten.
 
