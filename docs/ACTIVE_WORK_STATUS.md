@@ -11,7 +11,7 @@ Status: **AP-7 Gate 0 läuft auf Draft-PR #144. Audit + Architecture only. Kein 
 
 1. **Arbeitsblock / Ziel:** Read-only Rekonstruktion und Architektur-Empfehlung für eine mögliche accountweite Traveller Registry. Keine Runtime.
 2. **Authoring-Branch / PR:** `audit/ap7-account-traveller-registry-gate0-2026-08-28`; Draft-PR #144. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
-3. **Status:** **AUDIT + ARCHITECTURE / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW.** Jeder neue Push invalidiert Prior-Gates. Kein Ready, kein Merge durch den Autor. Kein AP-7-Implementierungsslice.
+3. **Status:** **REVIEW-FIX FÜR 5455299179 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW.** Jeder neue Push invalidiert Prior-Gates inkl. `a0ef801f`. Kein Ready, kein Merge durch den Autor. Kein AP-7-Implementierungsslice.
 4. **Bereits umgesetzt:** Live-Rekonstruktion Foundation E / Guest→Account / Readiness / Official / Profile / Privacy / Admin / Native-Naht; Optionsvergleich; Empfehlung Dual-Authority; ADR-0186 als Empfehlungsstatus.
 5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 11`. Sichtbarer Cursor-Titel dieser Session: `Account traveller registry architecture` (Cloud-Run `https://cursor.com/agents/bc-400e9cce-e82f-48f1-860a-fb6a3a6f90e3`). Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Keine Generation 12.
 6. **Live-`main` bei diesem Stamp:** `1947285cc4d7d6fb98c77ec60a04c96f96f3f483` – immer live neu prüfen.
@@ -19,7 +19,7 @@ Status: **AP-7 Gate 0 läuft auf Draft-PR #144. Audit + Architecture only. Kein 
 8. **Kosten / Provider / Secrets:** keine.
 9. **Bekannte Risiken / Review-Funde:** PO muss Dual-Authority vs Templates-only vs keine Registry wählen. Live-Link ist abgelehnt. Guest-Auto-Transfer ≠ Registry-Opt-in. `main` `protected=false`. Production-Schema in diesem Run nicht live gegen Supabase geprüft. Agent-Self-Review ist kein PASS.
 10. **Offene Nutzerentscheidungen / Freigaben:** AP-7-Implementation bleibt Product-Owner-Gate. Sensible Dokumentdaten extra. AP-5-S3/S4/S5 bleiben normale TL-Gates, nicht automatisch gestartet. S5-B Runtime, TW-8, Provider-live, Payments, Public Launch unverändert gegated.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Exact-Head-Review von Draft-PR #144. Kein Ready. Kein Merge. Kein AP-7-Runtime.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Exact-Head-Re-Review von Draft-PR #144 nach Review-Fix `5455299179`. Kein Ready. Kein Merge. Kein AP-7-Runtime.
 12. **Zuerst lesen:** `docs/AP7_GATE0_ACCOUNT_TRAVELLER_REGISTRY_ARCHITECTURE_TASK_2026-08-28.md`, Status, Handoff, Self-Review, ADR-0186, `docs/JETNITY_CURSOR_VISIBLE_AGENT_NAME_GATE.md`.
 
 ## Historischer Arbeitsblock – PR #142 Post-Merge Continuity

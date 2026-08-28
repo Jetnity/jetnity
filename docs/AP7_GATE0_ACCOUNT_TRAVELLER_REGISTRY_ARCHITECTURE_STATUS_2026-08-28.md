@@ -1,7 +1,7 @@
 # Jetnity – AP-7 Gate 0 Account-Traveller-Registry Architecture Status
 
 Stand: 28. August 2026  
-Status: **AUTHORIZED / AUDIT + ARCHITECTURE ONLY / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**  
+Status: **REVIEW-FIX FÜR 5455299179 / AUDIT + ARCHITECTURE ONLY / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
 Workstream: Account / Traveller  
 Logical Cursor-Agent: **`Cursor-Agent: Account plattform audit vorbereitung 11`**  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/144  
@@ -236,10 +236,10 @@ Trade-off: mehr Modell als Templates-only. Der Mehraufwand ist der Preis für ei
 | Keying ohne Positionsidentität? | Überall `client_ref` / UUID. Verboten: `documents[0]`, `evaluations[0]`, `traveller:1` als Personenidentität. `traveller:N` bleibt nur Slot-Default der Kopfzahl. |
 | Trips referenzieren/snapshotten ohne Retro-Write? | Insert = Kopie in `trip_travellers` + Children. Provenienz-Link optional und nicht-autoritativ. |
 | Edit nach Reiseerstellung? | Ändert nur die Registry. Bestehende Snapshots unverändert. Refresh nur durch ausdrückliche Trip-Aktion. |
-| Shared vs trip-spezifisch? | Shared: wiederverwendbare Fakten (label, residence, citizenships, documents type/issuer/expiry, explizite Document↔Citizenship-Refs). Trip-spezifisch: Teilnahme, optionale explizite Credential-Wahl für **diese** Reise, Readiness/Official, historische Snapshot-Werte. |
-| Mehrere Citizenships/Dokumente first-class? | Ja, dieselben Limits 8/12. Kein Default. |
+| Shared vs trip-spezifisch? | Shared: wiederverwendbare Fakten (label, residence, citizenships, documents type/issuer/expiry, explizite Document↔Citizenship-Refs). Trip-spezifisch: Teilnahme, **alle** Credential-Optionen first-class im Snapshot, Readiness/Official, historische Snapshot-Werte. Keine trip-weite Credential-Wahl im Snapshot. |
+| Mehrere Citizenships/Dokumente first-class? | Ja, dieselben Limits 8/12. Kein Default. Alle Optionen bleiben first-class. |
 | Document ↔ Citizenship ohne Issuer=Citizenship? | Explizite `citizenshipClientRef` / `citizenship_id`. Issuer bleibt getrennt. Fehlt die Relation → `null`, nicht raten. |
-| Explizite Trip-Wahl ohne globalen Default-Pass? | Optional `chosenCredentialOptionRef` **am Trip-Participation-Snapshot**. Nie auf der Registry als globale Default-Spalte. |
+| Explizite Trip-Wahl ohne globalen Default-Pass? | **Kein** `chosenCredentialOptionRef` und kein anderes trip-weites Wahlfeld im Traveller-Snapshot oder in der Registry. Eine spätere explizite Credential-Auswahl braucht einen eigenen **trip-scoped, kontext-/evaluations-scharfen** Entscheidungsvertrag (mindestens Traveller + Credential-Option + relevantes Destination-/Route-/Transit-/Segment-/Evaluation-Kontext/Fingerprint) oder bleibt bewusst unspezifiziert, bis Provider-/Readiness-Evidence den Scope festlegt. Muss ein Credential für eine ganze Route einheitlich gelten, folgt das nur aus expliziter regulatorischer/Provider-Evidence als **route-scoped** Entscheidung, nie als globaler Traveller-Default. |
 | Guest→Account ohne Registry? | Heutiger Automatismus bleibt trip-scoped Kopie. Registry entsteht nicht still. Import in die Registry später opt-in, Person für Person, nie Bulk-Merge. |
 | Import / Dedup ohne stilles Mergen zweier Menschen? | Kein automatisches Match über Label/Residence/Citizenship-Set. Höchstens Vorschlag „ähnlich“; Merge nur nach explizitem Confirm. Im Zweifel zwei Personen. |
 | Delete / Detach / Archive / Retention? | Registry-Delete/Archive: keine historischen Snapshots löschen; nur künftige Wiederverwendung beenden. Trip-Delete bleibt CASCADE der Reise. Detach = Provenienz-Link lösen, Snapshot behalten. Konto-Delete (später AP-6b) löscht Registry **und** Owner-Trips; das ist ein eigenes PO-Gate. |

@@ -1,28 +1,24 @@
 # Jetnity – AP-7 Gate 0 Account-Traveller-Registry Architecture Handoff
 
 Stand: 28. August 2026  
-Status: **DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**  
+Status: **REVIEW-FIX FÜR 5455299179 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
 Logical Cursor-Agent: **`Cursor-Agent: Account plattform audit vorbereitung 11`**  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/144  
-Branch: `audit/ap7-account-traveller-registry-gate0-2026-08-28`
+Branch: `audit/ap7-account-traveller-registry-gate0-2026-08-28`  
+Reviewed Head vor diesem Fix: `a0ef801fd7fa39685fab9a1fe69d411f736ea78c`
 
-Dieser Handoff übergibt Gate-0-Architecture. Er startet keinen Folgeslice. Agent-Self-Review ist kein PASS.
+Dieser Handoff übergibt den Review-Fix. Er startet keinen Folgeslice. Agent-Self-Review ist kein PASS. Jeder neue Head invalidiert Prior-Gates.
 
 ---
 
 ## 1. Was dieser Agent getan hat
 
-Read-only Rekonstruktion + Architekturvergleich für eine mögliche accountweite Traveller Registry.
+Docs-only Review-Fix gegen Technical-Lead-Kommentar `5455299179`:
 
-Geliefert:
+1. `ARCHITECTURE.md`: AP-5-S2 / PR #137 ist integriert. Nur AP-5-S3–S5 bleiben ungebaut und nicht automatisch gestartet. AP-6–AP-12 bleiben ungebaut/gated. AP-7-Gate-0-Wording unverändert Dual-Authority ohne Runtime.
+2. Kein trip-weites `chosenCredentialOptionRef` mehr. Alle Credential-Optionen bleiben first-class im Snapshot. Spätere explizite Auswahl nur als eigener kontext-/evaluations-scharfer Vertrag oder bewusst unspezifiziert; route-weit nur bei expliziter Evidence.
 
-1. Status `docs/AP7_GATE0_ACCOUNT_TRAVELLER_REGISTRY_ARCHITECTURE_STATUS_2026-08-28.md`
-2. dieses Handoff
-3. Self-Review
-4. ADR-0186 – **nur** Gate-0-Empfehlungsstatus
-5. minimale Continuity (`docs/ACTIVE_WORK_STATUS.md`, Zeiger in Handoff / Roadmap / Plan / Architecture)
-
-Empfehlung: **Dual-Authority** – Account-Registry für Wiederverwendung, trip-owned Snapshot als einzige Trip-Current-Truth. Live-Referenzen und „Current Truth nach Account verschieben“ sind abgelehnt. Templates-only ist sicherer, aber kein ausreichender Endzustand für Binding Build Order §2.
+Konsistenz: Status, ADR-0186, Account-Plan-Nachtrag, Self-Review.
 
 Kein Runtime. Keine Migration. Keine Supabase-Mutation. Kein RLS/GRANT/REVOKE/SECURITY DEFINER. Kein Auth/AAL. Kein Ready. Kein Merge.
 

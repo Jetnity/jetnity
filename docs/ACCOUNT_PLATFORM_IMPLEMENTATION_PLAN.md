@@ -349,7 +349,7 @@ Dieser Plan **erfindet keinen Registry-Vertrag**. Offene Fragen bleiben bis zur 
 4. Guest-Opt-in?
 5. Welche Felder sind überhaupt account-fähig ohne sensibles Gate?
 
-**Gate-0-Nachtrag, 28. August 2026 (Draft-PR #144, ADR-0186):** Rekonstruktion und Empfehlung Dual-Authority liegen vor. Das ist **keine** Product-Owner-Freigabe und **kein** Runtime-Start. Gate 0 beantwortet die fünf Fragen nur als Empfehlung: (1) Trip-Current-Truth bleibt der Snapshot; (2) Kopie/Snapshot, keine Live-Referenz; (3) Delete/Archive der Registry lässt historischen Snapshot stehen; (4) Registry-Import opt-in, getrennt vom heutigen automatischen Guest→Trip-Copy; (5) dieselben datensparsamen Felder wie Foundation E, keine Nummern/Scans/MRZ/Biometrie.
+**Gate-0-Nachtrag, 28. August 2026 (Draft-PR #144, ADR-0186):** Rekonstruktion und Empfehlung Dual-Authority liegen vor. Das ist **keine** Product-Owner-Freigabe und **kein** Runtime-Start. Gate 0 beantwortet die fünf Fragen nur als Empfehlung: (1) Trip-Current-Truth bleibt der Snapshot; (2) Kopie/Snapshot, keine Live-Referenz; (3) Delete/Archive der Registry lässt historischen Snapshot stehen; (4) Registry-Import opt-in, getrennt vom heutigen automatischen Guest→Trip-Copy; (5) dieselben datensparsamen Felder wie Foundation E, keine Nummern/Scans/MRZ/Biometrie. Review-Fix `5455299179`: kein trip-weites `chosenCredentialOptionRef`; Credential-Optionen bleiben first-class; eine spätere explizite Wahl braucht einen eigenen kontext-/evaluations-scharfen Vertrag oder bleibt unspezifiziert.
 
 ### AP-8 – Reiseprofil / Präferenzen
 

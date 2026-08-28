@@ -4686,8 +4686,9 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 5. Wiederverwendbare Vorlagen allein (Option A) sind sicherer, aber kein ausreichender Endzustand, wenn Binding Build Order §2 eine echte Personenidentität verlangt.
 6. Guest→Account bleibt der heutige automatische **trip-scoped** Copy. Registry-Import wäre ein späteres Opt-in und entsteht nicht still.
 7. Kein Default-Pass, kein Default-Citizenship, Issuer ≠ Citizenship, keine Positionsidentität (`documents[0]`, `evaluations[0]`).
-8. Passnummern, Scans, MRZ, Biometrie, Geburtsdatum und Gesundheitsakte gehören nicht zum Kernmodell. Jede solche Speicherung braucht ein eigenes Product-Owner- + Security/Privacy-Gate.
-9. Dieser ADR autorisiert keine Tabelle, Policy, GRANT/REVOKE, SECURITY-DEFINER-Funktion, Migration oder AP-7-Runtime.
+8. Gate 0 definiert **kein** trip-weites `chosenCredentialOptionRef` und kein gleichwertiges Snapshot-/Registry-Wahlfeld. Alle Credential-Optionen bleiben first-class. Eine spätere explizite Auswahl braucht einen eigenen trip-scoped, kontext-/evaluations-scharfen Entscheidungsvertrag (mindestens Traveller + Credential-Option + Destination/Route/Transit/Segment/Evaluation-Kontext/Fingerprint) oder bleibt bewusst unspezifiziert, bis Provider/Readiness den Scope festlegt. Route-weit einheitliche Nutzung nur bei expliziter regulatorischer/Provider-Evidence, nie als globaler Traveller-Default.
+9. Passnummern, Scans, MRZ, Biometrie, Geburtsdatum und Gesundheitsakte gehören nicht zum Kernmodell. Jede solche Speicherung braucht ein eigenes Product-Owner- + Security/Privacy-Gate.
+10. Dieser ADR autorisiert keine Tabelle, Policy, GRANT/REVOKE, SECURITY-DEFINER-Funktion, Migration oder AP-7-Runtime.
 
 **Kontext:** AP-7 ist im kanonischen Account-Plan und in Binding Build Order §2 als fehlende Produktarbeit genannt, aber hinter Shared-Contract + Product Owner + ADR-Nachfolger zu ADR-0102/0117 gegated. Gate 0 existiert, damit diese Entscheidung präzise und nicht als Live-Link-Fehlkonstruktion getroffen wird.
 
@@ -4707,6 +4708,8 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 - ADR-0102/0117 bleiben Current Truth, bis ein Implementierungs-ADR sie ausdrücklich nachfolgt.
 - AP-5-S3/S4/S5, AP-6, C2, TW-8, Native und Provider-live bleiben unberührt.
 - Autor-Agent stoppt auf Draft-PR #144 für unabhängigen Technical-Lead-Review. Self-Review ist kein PASS.
+
+**Nachtrag, 28. August 2026 – Review-Fix `5455299179`.** Gate 0 definiert kein trip-weites `chosenCredentialOptionRef`. Punkt 8 präzisiert den kontext-/evaluations-scharfen späteren Entscheidungsvertrag. `ARCHITECTURE.md` führt AP-5-S2 als integriert; das ändert ADR-0186 nicht. Keine Runtime.
 
 ---
 
