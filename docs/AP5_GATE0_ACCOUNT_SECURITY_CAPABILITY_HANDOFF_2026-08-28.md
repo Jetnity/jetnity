@@ -47,6 +47,7 @@ Kein neuer Auth-Vertrag. ADR-0182 stellt nur fest, welcher Vertrag schon gilt un
 - Production-Redirect-Origin offen
 - Login-MFA abbrechbar (AAL1-Sitzung bleibt)
 - `main` Branch Protection `protected=false`
+- Exact-Head vor Stamp: `5fff38bf`; Actions `33136978825` SUCCESS; Vercel `DUGxaYrrx1NDjVLt5r1DahTEyacE` SUCCESS. Ein Stamp danach braucht erneute Gates.
 
 ## Nächster Schritt
 

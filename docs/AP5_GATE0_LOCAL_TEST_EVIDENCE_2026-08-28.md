@@ -18,7 +18,13 @@ Draft-PR: #129
 - `auth:anwenden` – würde Config pushen
 - Browser / Real-Device
 - Production-Auth-Config-Abgleich (AUTH.md Parent-Spalte bleibt Evidence vom 17. August 2026)
-- volles `npm test` / Production-Build – Docs-plus-Inventory-Slice; Exact-Head-CI trägt den Rest
+- volles `npm test` lokal nicht wiederholt; Exact-Head CI Run `33136978825` auf `5fff38bf` **SUCCESS** (Typecheck/Lint/Build + Auth-Konfiguration)
+
+## Exact-Head vor Stamp
+
+- SHA: `5fff38bf9cd4a43cb708f55b2fa1945c6b8cee4b`
+- Actions: https://github.com/Jetnity/jetnity/actions/runs/33136978825 SUCCESS
+- Vercel Preview: `DUGxaYrrx1NDjVLt5r1DahTEyacE` SUCCESS
 
 ## Grenze
 

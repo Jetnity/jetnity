@@ -30,6 +30,20 @@ Installierte Client-Wahrheit, nicht geraten:
 - `@supabase/supabase-js` **2.57.2**
 - `@supabase/auth-js` **2.71.1**
 
+### 1.1 Exact-Head vor diesem Stamp
+
+| Feld | Wert |
+| --- | --- |
+| Author-Head | `5fff38bf9cd4a43cb708f55b2fa1945c6b8cee4b` |
+| Merge-Base / `origin/main` | `0bca31b5de06bcee74c5436122b1685b6d2092f6` |
+| GitHub Actions | Run `33136978825` **SUCCESS** auf exakt `5fff38bf` |
+| Jobs | Typecheck/Lint/Build SUCCESS; Auth-Konfiguration gegen config.toml SUCCESS |
+| Vercel Preview | Inspector `DUGxaYrrx1NDjVLt5r1DahTEyacE` **SUCCESS** auf exakt `5fff38bf` |
+| Review-Threads | 0 |
+| Draft | ja; kein Ready |
+
+Ein Continuity-Stamp nach diesem Abschnitt erzeugt einen neueren Head und muss live neu geprüft werden.
+
 ## 2. Was dieser Slice geliefert hat
 
 Nur Audit / Architecture / Evidence:
