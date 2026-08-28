@@ -28,7 +28,7 @@ Keine Migration. Kein `supabase/config.toml`-Write. Kein RLS/Identity. Kein `rea
 
 ## 3. Risiken, die bleiben
 
-- Exact-Head CI/Vercel müssen nach Push live gelesen werden.
+- Exact-Head vor Stamp: Actions `33163350129` SUCCESS und Vercel `BviA8yxrA2h3WjzDBcfMRSZbd2hH` SUCCESS auf `55392fda`. Ein Stamp danach braucht erneute Live-Gates.
 - Kein authentifizierter Browser-/Real-Device-Beweis der Security-UI.
 - Login-MFA bleibt abbrechbar.
 - S2–S5 und AP-5-P1–P5 bleiben offen.

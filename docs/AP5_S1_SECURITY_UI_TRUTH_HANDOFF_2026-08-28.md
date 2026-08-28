@@ -32,6 +32,13 @@ Harte Wahrheiten:
 
 In-Account-Passwort, `reauthenticate()` / Nonce, Logout-Scopes, MFA-Step-up, Sessionkarte, Consumer-AAL2, Passkey-Live, C2.
 
+## Residuals
+
+- Exact-Head vor diesem Stamp: Actions `33163350129` SUCCESS; Vercel `BviA8yxrA2h3WjzDBcfMRSZbd2hH` SUCCESS; GitHub Deployment `6139587003` success auf `55392fda`. Dieser Stamp dokumentiert nur diese Re-Gate. Kein weiterer Evidence-Stamp, außer die Stamp-CI fehlschlägt.
+- Kein authentifizierter Browser-/Real-Device-Beweis
+- Login-MFA bleibt abbrechbar
+- S2–S5 nicht gestartet
+
 ## Nächster Schritt
 
 Unabhängiger Technical-Lead-Review. Nicht Ready. Nicht mergen. Kein automatischer S2-Start.

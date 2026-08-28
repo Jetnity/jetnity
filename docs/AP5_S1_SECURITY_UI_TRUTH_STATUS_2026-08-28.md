@@ -56,8 +56,15 @@ Sessionlisting bleibt **ungebaut** und damit `unsupported`, nicht `empty`. Keine
 | Focused S1-Unit | **14/14 pass** (`account-security-lage`, `account-security-fehler`, `ap5-s1-security-ui`) |
 | Gate-0-Inventory | **8/8 pass** |
 | Account-Nav + MFA-A11y | **6/6 pass** |
+| Lokaler Typecheck / Lint / `check:exports` / `check:dead` | pass |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet |
-| Production-Build / Exact-Head CI / Vercel | nach Push live lesen; nicht vorab behauptet |
+| Exact-Head vor diesem Stamp | `55392fdae602c993f4382a67a0098ae5e62f5c51` |
+| GitHub Actions | Run `33163350129` **SUCCESS** auf exakt `55392fda` |
+| Jobs | Typecheck/Lint/Build SUCCESS; Auth-Konfiguration gegen config.toml SUCCESS; Vercel Preview Comments SUCCESS |
+| Vercel Preview | Inspector `BviA8yxrA2h3WjzDBcfMRSZbd2hH` **SUCCESS** auf exakt `55392fda` |
+| GitHub Preview-Deployment | `6139587003` success |
+
+Dieser Stamp erzeugt einen neueren Head. Dessen CI/Vercel müssen live gelesen werden. **Kein zweiter Evidence-Stamp**, außer die Stamp-CI fehlschlägt.
 
 ## 5. Residuals – nicht in S1 mischen
 
