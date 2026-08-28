@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 28. August 2026  
-Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114, PR #115, PR #117, PR #118, PR #120, PR #121, PR #126, PR #127, PR #129, PR #130, PR #131, PR #133, PR #135, PR #137, PR #138, PR #141, PR #142, PR #143, PR #144 und PR #145 sind integriert. AP-5 Gate 0, AP-5-S1 und AP-5-S2 sind integriert. Technical-Lead-/Cursor-Operating-Standard ist integriert. Dual-Authority ist product-owner-freigegeben. AP-7-S1 Domain Contract ist auf `main @ 4ec83f36` integriert; kein automatisches AP-7-S2. Node 22 Runtime Consistency / PR #147 ist self-expiring: offen → TL-Re-Review; nach Merge → integrierter Node-22-Vertrag, kein Follow-up-Continuity-PR. Live-`main` immer live prüfen.**
+Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114, PR #115, PR #117, PR #118, PR #120, PR #121, PR #126, PR #127, PR #129, PR #130, PR #131, PR #133, PR #135, PR #137, PR #138, PR #141, PR #142, PR #143, PR #144, PR #145 und PR #147 sind integriert. AP-5 Gate 0, AP-5-S1 und AP-5-S2 sind integriert. Technical-Lead-/Cursor-Operating-Standard ist integriert. Dual-Authority ist product-owner-freigegeben. AP-7-S1 Domain Contract ist integriert; kein automatisches AP-7-S2. Node 22 Runtime Consistency / PR #147 ist auf `main @ 56aff7ff` integriert. Next.js Framework Security Upgrade Gate 0 / PR #148 ist self-expiring: offen → TL-Review; nach Merge → integrierte Evidence, dann Product-Owner-Entscheidung, kein automatischer Framework-Bump. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
@@ -13,8 +13,9 @@ Current-State-Evidence und Recovery: `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_P
 
 Aktuelle operative Evidence:
 
-- `docs/NODE22_RUNTIME_CONSISTENCY_STATUS_2026-08-28.md` – Node 22 Runtime Consistency / PR #147; self-expiring: offen → TL-Re-Review; nach Merge → integriert, Live-Post-Merge-Verifikation, kein Follow-up-Continuity-PR
-- `docs/AP7_S1_DUAL_AUTHORITY_DOMAIN_CONTRACT_STATUS_2026-08-28.md` – AP-7-S1 Domain Contract / PR #145 integriert auf `main @ 4ec83f36`; kein automatisches S2
+- `docs/NEXT_FRAMEWORK_SECURITY_UPGRADE_GATE0_STATUS_2026-08-28.md` – Next.js Framework Security Upgrade Gate 0 / PR #148; self-expiring: offen → TL-Review; nach Merge → integrierte Evidence, dann Product-Owner-Entscheidung, kein automatischer Bump
+- `docs/NODE22_RUNTIME_CONSISTENCY_STATUS_2026-08-28.md` – Node 22 Runtime Consistency / PR #147 integriert auf `main @ 56aff7ff`
+- `docs/AP7_S1_DUAL_AUTHORITY_DOMAIN_CONTRACT_STATUS_2026-08-28.md` – AP-7-S1 Domain Contract / PR #145 integriert; kein automatisches S2
 - `docs/AP7_DUAL_AUTHORITY_PRODUCT_OWNER_APPROVAL_2026-08-28.md` – verbindliche Dual-Authority-Freigabe
 - `docs/AP7_GATE0_ACCOUNT_TRAVELLER_REGISTRY_ARCHITECTURE_STATUS_2026-08-28.md` – AP-7 Gate 0 / PR #144 integrierte Architecture-Evidence
 - `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – neueste Post-Merge-Evidence nach PR #142
@@ -389,12 +390,14 @@ Draft-PR #88 bleibt historische Evidence vom 26.08.2026, nicht Current Truth. Un
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-**Self-expiring / dual-state für PR #147. Live-Evidence gewinnt. Kein erfundener Merge-SHA.**
+**Self-expiring / dual-state für PR #148. Live-Evidence gewinnt. Kein erfundener Merge-SHA.**
 
-- **Solange PR #147 offen und unmerged ist:** Draft-PR #147 ist der Node-22-Runtime-Transport. Exakt erster unfertiger Schritt = unabhängiger Technical-Lead Exact-Head-Re-Review nach `5456852840`. Autor-Agent setzt **kein Ready** und **kein Merge**. Keine Vercel-Setting-Mutation. Kein AP-7-S2.
-- **Sobald PR #147 gemergt ist:** der Node-22-Vertrag ist integriert. Draft-/Review-/Transport-Klauseln sind automatisch historisch. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Exakt erster nächster Schritt = Live-Post-Merge-Verifikation von GitHub CI und Vercel Production auf dem tatsächlichen Merge-Head, einschließlich der Prüfung, dass die `Node.js Version Override`-Warnung weg ist. Nach erfolgreicher Verifikation: Rückkehr zur live Binding-Build-Order-Auswahl. AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht automatisch.
+- **Solange PR #148 offen und unmerged ist:** Draft-PR #148 ist der Framework-Security-Gate-0-Transport. Exakt erster unfertiger Schritt = unabhängiger Technical-Lead Exact-Head-Review. Autor-Agent setzt **kein Ready** und **kein Merge**. Kein Framework-Bump. Keine Vercel-Setting-Mutation. Kein AP-7-S2.
+- **Sobald PR #148 gemergt ist:** Gate 0 ist integrierte Evidence. Draft-/Review-/Transport-Klauseln sind automatisch historisch. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Exakt erster nächster Schritt = Product-Owner-Entscheidung über ein Implementierungsprogramm mit empfohlenem Ziel `next@16.3.3`. Kein automatischer Bump. AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht automatisch.
 
-PR #145 ist **MERGED / integriert** auf `main @ 4ec83f36`. Ältere „Draft-PR #145 unabhängig reviewen“-Sätze sind Pre-Merge-Evidence. AP-7-S2 startet nicht aus #145 und nicht aus #147.
+PR #147 ist **MERGED / integriert** auf `main @ 56aff7ff`. Ältere „Draft-PR #147 unabhängig reviewen“-Sätze sind Pre-Merge-Evidence.
+
+PR #145 ist **MERGED / integriert**. Ältere „Draft-PR #145 unabhängig reviewen“-Sätze sind Pre-Merge-Evidence. AP-7-S2 startet nicht aus #145 und nicht aus #148.
 
 PR #142 ist **MERGED / integriert**. Ältere „Draft-PR #142 unabhängig reviewen“-Sätze sind Pre-Merge-Evidence. Current Truth: `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`.
 

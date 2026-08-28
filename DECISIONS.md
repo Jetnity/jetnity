@@ -4807,6 +4807,41 @@ Kein Schema. Kein Ready/Merge. Neuer Head invalidiert `ce5b7e70` und `fbb1ec8d`.
 
 **Nachtrag, 28. August 2026 – Review-Fix `5456852840`.** Continuity-only gegen Head `2cae6e03`: residual unconditional `#147 DRAFT/AKTIV` und unguarded `nächster Schritt = Review von #147` in den kanonischen Current-State-Dateien sind jetzt dual-state. Runtime-/Tooling-Dateien unverändert. Kein erfundener Merge-SHA. Neuer Head invalidiert `2cae6e03`.
 
+**Nachtrag, 28. August 2026 – Integration.** PR #147 ist auf `main @ 56aff7ff` gemergt. ADR-0188 ist der integrierte Node-22-Vertrag. Ältere SELF-EXPIRING/DRAFT-Zeilen sind Pre-Merge-Evidence.
+
+---
+
+## ADR-0189 – Next.js Framework Security Upgrade Gate 0: Ziel 16.3.3, kein Runtime-Wechsel
+
+**Datum:** 28. August 2026  
+**Status:** Gate-0-Empfehlungs-ADR auf Draft-PR #148. **Self-expiring / dual-state. Kein Ready/Merge durch den Autor. Kein Framework-/Runtime-Dependency-Upgrade. Keine Vercel-Projektmutation. Keine Application-Runtime-Änderung.**
+
+**Entscheidung (Empfehlung, keine Freigabe):**
+
+1. Das langfristige unterstützte Framework-Ziel von Jetnity ist **`next@16.3.3` (Active LTS)** zusammen mit **React 19.2.x**, `eslint-config-next@16.3.3` und ESLint 9.
+2. **`next@15.5.24` (Maintenance LTS) ist kein Production-Ziel.** Es bleibt nur eine optionale, kurzlebige Preview-Isolationsstufe. 15.x erreicht EOL am 21. Oktober 2026.
+3. **`next@14.2.32` und auch `14.2.35` sind kein Security-Ziel.** 14.x ist offiziell unsupported. Das letzte 14.2-Release enthält die August-2026-Advisories nicht.
+4. Ein tatsächlicher Dependency-Bump bleibt ein **separates, Product-Owner-gegates Implementierungsprogramm** nach unabhängigem Technical-Lead-Review dieses Gate 0. Empfohlene Stufe: Slice 1 = async Request-API-Prep auf Next 14 ohne Bump; Slice 2 = 16.3.3 + React 19.2 + Lint-CLI + `middleware`→`proxy`.
+5. Dieser ADR ändert keine Runtime-Dependencies, keinen Application-Code, kein Supabase/Auth/RLS/Schema, keine Vercel-Settings, keine Branch Protection und startet keinen Produkt-Slice.
+
+**Kontext:** Production nach PR #147 läuft auf Node 22.x und bleibt auf `next@14.2.32` / React 18.2.0. Vercel hat `14.2.32` als verwundbar/unsupported gemeldet. Die August-2026-Security-Release patcht nur 15.5.24 und 16.3.3. Jetnity nutzt App Router, sync `cookies()` in zentralen Auth-Factories, `next lint`, `middleware.ts` ohne matcher und `images.formats` inkl. AVIF.
+
+**Alternativen:**
+
+1. *Auf 14.2.32 bleiben und Vercel-Plattformschutz als ausreichend behandeln.* Lehnt die Task-Prämisse ab: Unsupported-Linie und zukünftige Advisories bleiben offen.
+2. *Nur auf 14.2.35 gehen.* Letzter 14.2-Patch, weiterhin unsupported, ohne August-2026-Fixes.
+3. *Auf 15.5.24 als Ziel gehen.* Kleinerer erster Hop und Sync-Shim, aber EOL in ~54 Tagen erzwingt sofort 16.
+4. *Ein-Hop 14 → 16.3.3 ohne Prep-Slice.* Zulässige Abweichung, höheres Erst-PR-Risiko auf Auth/Cookies/Proxy/Lint.
+
+**Begründung:** Security und Reproduzierbarkeit verlangen eine unterstützte Linie. 16.x ist Active LTS. 15.x ist zu nah an EOL, um Production-Ziel zu sein. Jetnitys teure Arbeit (Cookie-Factories, `/planen`-Metadata, Middleware-Cookies) fällt bei beiden Majors an; der Shim von 15 spart wenig, wenn 16 in Wochen folgen muss. Jetnity hat kein custom webpack, kein Pages Router, kein `revalidateTag` und bereits Node 22 – die 16-spezifische Fläche ist damit begrenzt, aber Auth bleibt high-risk.
+
+**Konsequenzen:**
+
+- Evidence: `docs/NEXT_FRAMEWORK_SECURITY_UPGRADE_GATE0_STATUS_2026-08-28.md` und Self-Review desselben Datums.
+- `ARCHITECTURE.md` bleibt Ist-Wahrheit „Next.js 14, App Router“, plus Gate-0-Hinweis dass 16.3.3 empfohlen und nicht angewendet ist.
+- Canonical Continuity ist self-expiring: solange #148 offen → TL-Review / kein Ready/Merge durch den Autor; nach Merge → Gate 0 integrierte Evidence, nächster Schritt = Product-Owner-Entscheidung über ein Implementierungsprogramm, kein automatischer Bump, keine erfundene Merge-SHA.
+- Autor-Agent stoppt für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
+
 ---
 
 ## Offene Widersprüche
