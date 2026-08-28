@@ -2,7 +2,7 @@
 
 **DRAFT / AP-5-S1 ONLY / NORMAL TECHNICAL-LEAD GATE / NO PRODUCT-OWNER SPECIAL GATE**
 
-Tracks Issue #132.
+Tracks Issue #132. Draft-PR: https://github.com/Jetnity/jetnity/pull/133
 
 Cursor-Agent: `Account plattform audit vorbereitung 9`
 

@@ -225,7 +225,7 @@ Generation 4 (P2-TA-06 / PR #113) ist abgeschlossen und nicht wiederzuverwenden.
 
 **Kein Produkt-Folgeslice ist durch diesen Handoff über S1 hinaus freigegeben.**
 
-AP-5-S1 liegt als Implementation-Slice auf Issue #132 und wartet auf unabhängigen Technical-Lead-Review des Draft-PR. Das ist **kein** S2–S5- und **kein** C2-Start. AP-5 Gate 0 bleibt integriert. P2-TA-04 C1 bleibt integriert; Production C1 `20260828015304` nicht erneut anwenden.
+AP-5-S1 liegt als Implementation-Slice auf Issue #132 / Draft-PR #133 und wartet auf unabhängigen Technical-Lead-Review. Das ist **kein** S2–S5- und **kein** C2-Start. AP-5 Gate 0 bleibt integriert. P2-TA-04 C1 bleibt integriert; Production C1 `20260828015304` nicht erneut anwenden.
 
 Nicht automatisch starten:
 

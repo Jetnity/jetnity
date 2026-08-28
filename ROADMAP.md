@@ -264,7 +264,7 @@ Abgeschlossen:
 25. ✅ P2-TA-04 Traveller Child Write-Path Gate 0 / PR #120 + Issue #119
 26. ✅ P2-TA-04 C1 Traveller write-contract integrity / PR #126 + Issue #122
 27. ✅ AP-5 Gate 0 Account security capability audit / PR #129 + Issue #128
-28. AP-5-S1 ehrliche Security-UI Zustände – **Issue #132; Draft; ADR-0183; kein S2–S5**
+28. AP-5-S1 ehrliche Security-UI Zustände – **Issue #132; Draft-PR #133; ADR-0183; kein S2–S5**
 
 Nächster Schritt:
 
