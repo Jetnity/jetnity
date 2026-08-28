@@ -27,7 +27,7 @@ This slice does **not** consume the separate Production migration / Identity / R
 | Draft-PR | [#145](https://github.com/Jetnity/jetnity/pull/145) |
 | Reviewed Head invalidiert | `e9f96e79` (`5455836506`); früher `c88ac2e3`, `ce5b7e70`, Stamps `ed8f79b4` / `fbb1ec8d` |
 | Exact Head | der Commit dieses Continuity-Stamps; live am PR #145 prüfen |
-| Ahead / behind `origin/main` | nach finalem Stamp live eintragen |
+| Ahead / behind `origin/main` | **13 / 0** nach diesem Stamp |
 | Logical Cursor-Agent | `Cursor-Agent: Account plattform audit vorbereitung 12` |
 | Sichtbarer Cursor-Titel | `Dual-authority domain contract` |
 | Cloud-Run | https://cursor.com/agents/bc-6b3a7a55-26fe-41a9-8cf2-b599afe1eda0 |
@@ -103,7 +103,7 @@ Adversarial tests in `lib/traveller/account-registry.test.ts` cover:
 - no citizenship inferred from residence, locale, language, issuer or departure;
 - empty facts stay empty.
 
-Review-fix #3 is continuity-only. Domain contract unchanged. Prior `e9f96e79` evidence is invalidated. Remaining gates are re-run on this head and stamped afterwards.
+Verified on this branch before the final continuity stamp (`HEAD` was `c279022a9663781f2011252282c7777a45e0aa28`; this stamp is the review head). Domain contract unchanged. Prior `e9f96e79` evidence is invalidated.
 
 | Gate | Ergebnis |
 | --- | --- |

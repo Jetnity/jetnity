@@ -10,7 +10,7 @@ Status: **AP-7-S1 Dual-Authority Domain Contract / Draft-PR #145 / SELF-EXPIRING
 ## Aktueller Arbeitsblock – AP-7-S1 Dual-Authority Domain Contract
 
 1. **Arbeitsblock / Ziel:** Shared Domain-Contract für Dual-Authority: account-owned Registry-Fakten + fail-closed unabhängiger Trip-Snapshot. Keine Persistenz.
-2. **Authoring-Branch / PR:** `feat/ap7-s1-dual-authority-domain-contract-2026-08-28`; Draft-PR #145. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
+2. **Authoring-Branch / PR:** `feat/ap7-s1-dual-authority-domain-contract-2026-08-28`; Draft-PR #145. Exact Head ist der Commit dieses Stamps; live am PR prüfen. Ahead/behind `origin/main`: **13 / 0**.
 3. **Status:** **REVIEW-FIX FÜR 5455836506 / DRAFT / SELF-EXPIRING / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW.** Prior Head `e9f96e79` invalidiert. Kein Ready, kein Merge durch den Autor. Kein AP-7-S2.
 4. **Bereits umgesetzt:** Nested Registry-Typ; explizite trip-owned Materialisierung; Pflicht-`authority`; UUID-Refs; Snapshot-`jetzt`; Snapshot-Identität disjunkt zum gesamten Registry-Universum; 16 adversarial Tests inkl. Compile-Zeit-Grenze und Cross-Entity-/id↔clientRef-Kollisionen. Canonical Continuity self-expiring. ADR-0187-Nachtrag. Lokale Gates vor Stamp: 2457/2457 `npm test`, typecheck, eslint, hygiene, `next build`.
 5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 12`. Sichtbarer Cursor-Titel dieser Session: `Dual-authority domain contract` (Cloud-Run `https://cursor.com/agents/bc-6b3a7a55-26fe-41a9-8cf2-b599afe1eda0`). Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet.
