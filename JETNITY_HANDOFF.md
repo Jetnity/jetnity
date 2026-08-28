@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **Kanonischer Post-PR-#113/#114-Übergabestand. P2-TA-06 ist integriert; Issue #112 ist CLOSED / completed. Kein Produkt-Folgeslice ist automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **Kanonischer Post-PR-#117-Übergabestand plus P2-TA-04 Gate 0 auf Draft-PR #120. P2-TA-03 und P2-TA-06 sind integriert. Kein Produkt-Folgeslice ist automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
@@ -199,9 +199,11 @@ Zuletzt abgeschlossene Account-/Traveller-Generation:
 
 Aktuelle Account-Generation:
 
-- `Cursor-Agent: Account plattform audit vorbereitung 5`
-- P2-TA-03 / Issue #116 / Draft-PR #117
-- Authoring complete; kein Ready, kein Merge, kein AP-5-Start
+- `Cursor-Agent: Account plattform audit vorbereitung 6`
+- P2-TA-04 / Issue #119 / Draft-PR #120
+- Gate 0 author-complete; kein Ready, kein Merge, kein C1/C2, kein AP-5-Start
+
+Generation 5 (P2-TA-03 / PR #117) ist abgeschlossen und nicht wiederzuverwenden.
 
 Neue logische Arbeitseinheit → Rotation Standard live prüfen und frische Session verwenden, wenn vorgeschrieben.
 
@@ -209,7 +211,7 @@ Neue logische Arbeitseinheit → Rotation Standard live prüfen und frische Sess
 
 **Kein Produkt-Folgeslice ist durch diesen Handoff freigegeben.**
 
-P2-TA-03 liegt als Docs-Draft auf PR #117 und wartet auf unabhängigen Technical-Lead-Finalreview. Das ist **kein** AP-5-Start.
+P2-TA-04 Gate 0 liegt als Audit-Draft auf PR #120 und wartet auf unabhängigen Technical-Lead-Finalreview. Das ist **kein** Implementation-Folgeslice und **kein** AP-5-Start.
 
 Der nächste Chat / Technical Lead muss zuerst live rekonstruieren und erst danach entscheiden, welcher Slice nach Binding Build Order tatsächlich sinnvoll und zulässig ist.
 

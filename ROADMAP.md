@@ -106,7 +106,9 @@ Weiterhin gilt:
 - Issuer Country ≠ Citizenship
 - `documents[0]` / `evaluations[0]` sind keine Product Truth
 
-P2-TA-03 rekonstruiert den kanonischen Folgeplan `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` auf Draft-PR #117. Das schließt die Continuity-Lücke, dass der Binding Build Order eine auf `main` fehlende Datei zitierte. Historischer PR #39 bleibt Historical Evidence. **Kein AP-5-Start.**
+P2-TA-03 ist durch PR #117 integriert. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` ist der kanonische Folgeplan für AP-5–AP-12. Historischer PR #39 bleibt Historical Evidence. **Kein AP-5-Start.**
+
+P2-TA-04 Gate 0 liegt auf Draft-PR #120: Audit/Security Architecture für direkte authenticated Traveller-DML. Keine RLS-/Grant-/Production-Änderung. **Kein Implementation-Folgeslice aus Gate 0.**
 
 Nicht automatisch starten:
 
@@ -258,7 +260,8 @@ Abgeschlossen:
 21. ✅ P2-TA-06 / PR #113 + Issue #112
 22. ✅ Post-PR-#113 Continuity / PR #114
 23. ✅ Post-PR-#114 Continuity / PR #115 auf Live-`main` `43aef643` (immer live neu prüfen)
-24. P2-TA-03 Account-Plan-Reconciliation – **Draft-PR #117 / Issue #116; docs only; kein AP-5**
+24. ✅ P2-TA-03 Account-Plan-Reconciliation / PR #117 + Issue #116
+25. P2-TA-04 Traveller Child Write-Path Gate 0 – **Draft-PR #120 / Issue #119; audit only; kein RLS/Grant-Change; kein AP-5**
 
 Nächster Schritt:
 
