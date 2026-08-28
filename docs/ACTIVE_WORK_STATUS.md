@@ -1,13 +1,30 @@
 # Jetnity – Active Work Status
 
 Stand: 28. August 2026  
-Status: **PR #142 ist MERGED, nicht Draft. Kein Produkt-Folgeslice gestartet. Self-expiring Dual-State für PR #143: offen → TL-Review von #143; nach Merge von #143 → Live-Rekonstruktion + Binding-Build-Order-Auswahl. Live-`main` immer live prüfen.**
+Status: **AP-7 Gate 0 / PR #144 self-expiring. Audit + Architecture only. Kein Ready. Kein Merge. Keine AP-7-Runtime. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
-> **Self-expiring / dual-state.** Live-Evidence gewinnt. Solange PR #143 offen und unmerged ist, ist der Continuity-Transport Draft-PR #143. Sobald PR #143 gemergt ist, ist diese Transport-/Review-Klausel automatisch historisch; der aktuelle Block ist dann: kein offener Produkt-Slice.
+> **Self-expiring / dual-state.** Live-Evidence gewinnt. Solange PR #144 offen und unmerged ist, ist der Continuity-Transport Draft-PR #144. Sobald PR #144 gemergt ist, ist diese Transport-/Review-Klausel automatisch historisch: Gate 0 = integrierte Architecture-Evidence; nächster Schritt = Product-Owner-Architekturentscheidung nach Live-Verifikation; keine automatische AP-7-Runtime; kein Continuity-PR nur für den Merge. Keine zukünftige Merge-SHA. PR #143 bleibt MERGED (`1947285c`).
 
-## Aktueller Arbeitsblock – PR #142 Post-Merge Continuity
+## Aktueller Arbeitsblock – AP-7 Gate 0 Account-Traveller-Registry Architecture
+
+1. **Arbeitsblock / Ziel:** Read-only Rekonstruktion und Architektur-Empfehlung für eine mögliche accountweite Traveller Registry. Keine Runtime.
+2. **Authoring-Branch / PR:** `audit/ap7-account-traveller-registry-gate0-2026-08-28`; Draft-PR #144. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
+3. **Status:** **REVIEW-FIX FÜR 5455299179 + ADDENDUM 5455307709 / SELF-EXPIRING / DRAFT.** Solange #144 offen: STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW. Nach Merge von #144: Gate 0 integriert als Architecture-Evidence; kein Runtime. Jeder neue Push invalidiert Prior-Gates inkl. `a0ef801f` und `731b0914`. Kein Ready, kein Merge durch den Autor. Kein AP-7-Implementierungsslice.
+4. **Bereits umgesetzt:** Live-Rekonstruktion Foundation E / Guest→Account / Readiness / Official / Profile / Privacy / Admin / Native-Naht; Optionsvergleich; Empfehlung Dual-Authority; ADR-0186 als Empfehlungsstatus.
+5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 11`. Sichtbarer Cursor-Titel dieser Session: `Account traveller registry architecture` (Cloud-Run `https://cursor.com/agents/bc-400e9cce-e82f-48f1-860a-fb6a3a6f90e3`). Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Keine Generation 12.
+6. **Live-`main` bei diesem Stamp:** `1947285cc4d7d6fb98c77ec60a04c96f96f3f483` – immer live neu prüfen.
+7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation.
+8. **Kosten / Provider / Secrets:** keine.
+9. **Bekannte Risiken / Review-Funde:** PO muss Dual-Authority vs Templates-only vs keine Registry wählen. Live-Link ist abgelehnt. Guest-Auto-Transfer ≠ Registry-Opt-in. `main` `protected=false`. Production-Schema in diesem Run nicht live gegen Supabase geprüft. Agent-Self-Review ist kein PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** AP-7-Implementation bleibt Product-Owner-Gate. Sensible Dokumentdaten extra. AP-5-S3/S4/S5 bleiben normale TL-Gates, nicht automatisch gestartet. S5-B Runtime, TW-8, Provider-live, Payments, Public Launch unverändert gegated.
+11. **Exakter nächster Schritt:** **Dual-State.** Solange PR #144 offen/unmerged: unabhängiger Technical-Lead-Exact-Head-Re-Review nach `5455299179` + Addendum `5455307709`; kein Ready, kein Merge, keine Runtime. Sobald PR #144 gemergt ist: Transport-/Review-Klausel historisch; Gate 0 = integrierte Architecture-Evidence; exakt nächster Schritt = Live-Verifikation, danach Product-Owner-Architekturentscheidung (Dual-Authority vs genehmigte Alternative) vor jeder AP-7-Implementation. Keine zukünftige Merge-SHA. Kein Continuity-PR nur für den Merge.
+12. **Zuerst lesen:** `docs/AP7_GATE0_ACCOUNT_TRAVELLER_REGISTRY_ARCHITECTURE_TASK_2026-08-28.md`, Status, Handoff, Self-Review, ADR-0186, `docs/JETNITY_CURSOR_VISIBLE_AGENT_NAME_GATE.md`.
+
+## Historischer Arbeitsblock – PR #142 Post-Merge Continuity
+
+Current classification / Nachtrag, 28. August 2026: **HISTORICAL.** PR #143 ist MERGED (`1947285c`). Die Dual-State-Klausel ist erfüllt/überholt. Nicht erneut als Draft öffnen.
 
 1. **Arbeitsblock / Ziel:** Docs-only Current-State nach Merge von PR #142, damit kein aktuelles Continuity-Surface PR #142 noch als Draft führt. Kein Produkt-Folgeslice.
 2. **Authoring-Branch / PR:** `docs/pr142-post-merge-continuity-2026-08-28`; PR #143. Reviewed-Head mit CHANGES REQUIRED `6e668593c36fc6c84f7a77c80e70afa2f7bdf304` (Kommentar `5454696267`). Live Exact Head ist der Commit dieses Stamps; live an PR #143 prüfen. Nach Merge von #143 ist diese Transportzeile historisch.

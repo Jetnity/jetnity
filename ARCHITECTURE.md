@@ -184,7 +184,7 @@ Kein Service Role. Kein Guest-Archiv. TW7-A-Kartenidentität bleibt unverändert
 
 Kanonischer Steuerungsvertrag: [`docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`](docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md) (P2-TA-03 / ADR-0179).
 
-AP-1–AP-4 sind integriert und werden nicht neu geplant. AP-5 Gate 0 rekonstruiert den bestehenden Auth-/Session-/MFA-Vertrag (ADR-0182) und ist integriert. AP-5-S1 macht `/account/security` ehrlich (`empty` ≠ `unsupported` ≠ `unavailable` ≠ `error`; Passkeys folgen Server-Config; keine Roh-GoTrue-Copy; ADR-0183). S2–S5 und AP-6–AP-12 bleiben ungebaut. Current Traveller Truth bleibt trip-scoped. AP-7 bleibt hinter Shared-Contract + Product-Owner + ADR-Nachfolger. Die historische Datei auf Draft-PR #39 ist keine Current Truth.
+AP-1–AP-4 sind integriert und werden nicht neu geplant. AP-5 Gate 0 rekonstruiert den bestehenden Auth-/Session-/MFA-Vertrag (ADR-0182) und ist integriert. AP-5-S1 macht `/account/security` ehrlich (`empty` ≠ `unsupported` ≠ `unavailable` ≠ `error`; Passkeys folgen Server-Config; keine Roh-GoTrue-Copy; ADR-0183). AP-5-S2 ist integriert (PR #137). Nur AP-5-S3–S5 bleiben ungebaut und sind nicht automatisch gestartet. AP-6–AP-12 bleiben ungebaut/gated wie im kanonischen Plan. Current Traveller Truth bleibt trip-scoped. AP-7 Gate 0 (Draft-PR #144 / ADR-0186) empfiehlt Dual-Authority und genehmigt keine Runtime; AP-7 bleibt hinter Shared-Contract + Product-Owner + Implementierungs-ADR-Nachfolger. Die historische Datei auf Draft-PR #39 ist keine Current Truth.
 
 Die Kopfzeile dieser Architekturdatei kann hinter neueren Production-AAL2-/Continuity-Ständen liegen. Live-Evidence und `JETNITY_HANDOFF.md` gewinnen.
 

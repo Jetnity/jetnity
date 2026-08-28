@@ -329,7 +329,7 @@ Jeder Slice braucht vor Start einen eigenen Technical-Lead-Task, einen frischen 
 | Security / Privacy | besonders sensibles Gate, sobald Nummern/Scans/MRZ/Biometrie auch nur diskutiert werden. Default bleibt: nicht speichern. |
 | Auth / AAL | nicht als Vehikel für AAL-Umbau. |
 | Identity / RLS | ja, unvermeidbar, falls der Slice jemals startet. |
-| Traveller | Current Truth würde von trip-scoped auf account-scoped **verschoben**. Das ist die eigentliche Entscheidung. |
+| Traveller | Die eigentliche Entscheidung bleibt: bleibt Current Truth trip-scoped, oder kommt Wiederverwendung? Gate 0 (Draft-PR #144 / ADR-0186) empfiehlt **nicht**, Current Truth still auf account-scoped zu verschieben. Empfohlen wäre Dual-Authority: Registry zur Wiederverwendung, Snapshot als einzige Trip-Truth. Das ist keine PO-Freigabe. |
 | Guest→Account | Opt-in, kein stilles Profil aus Gastentwurf. |
 | Admin | keine Support-Registry-Nebenwahrheit. |
 | Growth | Citizenship/Dokumente sind kein Werbeprofil. |
@@ -341,13 +341,15 @@ Jeder Slice braucht vor Start einen eigenen Technical-Lead-Task, einen frischen 
 | Tests / Evidence | erst nach ADR: Cross-Trip-Leak-Tests, Guest-Opt-in, Stale-Recheck nur betroffener Domains, Multi-Citizenship-Adversarial. |
 | Reihenfolge | nicht vor AP-5/AP-6a. Nicht automatisch nach AP-6b. Erst nach ausdrücklicher Produktentscheidung. |
 
-Dieser Plan **erfindet keinen Registry-Vertrag**. Offene Fragen bleiben offen:
+Dieser Plan **erfindet keinen Registry-Vertrag**. Offene Fragen bleiben bis zur ausdrücklichen Product-Owner-Entscheidung offen:
 
 1. Bleibt Current Truth trip-scoped?
 2. Falls Wiederverwendung: Kopie in `party[]` oder Live-Referenz?
 3. Delete/Detach/Archive einer Identität unabhängig vom Trip?
 4. Guest-Opt-in?
 5. Welche Felder sind überhaupt account-fähig ohne sensibles Gate?
+
+**Gate-0-Nachtrag, 28. August 2026 (Draft-PR #144, ADR-0186):** Rekonstruktion und Empfehlung Dual-Authority liegen vor. Das ist **keine** Product-Owner-Freigabe und **kein** Runtime-Start. Gate 0 beantwortet die fünf Fragen nur als Empfehlung: (1) Trip-Current-Truth bleibt der Snapshot; (2) Kopie/Snapshot, keine Live-Referenz; (3) Delete/Archive der Registry lässt historischen Snapshot stehen; (4) Registry-Import opt-in, getrennt vom heutigen automatischen Guest→Trip-Copy; (5) dieselben datensparsamen Felder wie Foundation E, keine Nummern/Scans/MRZ/Biometrie. Review-Fix `5455299179`: kein trip-weites `chosenCredentialOptionRef`; Credential-Optionen bleiben first-class; eine spätere explizite Wahl braucht einen eigenen kontext-/evaluations-scharfen Vertrag oder bleibt unspezifiziert.
 
 ### AP-8 – Reiseprofil / Präferenzen
 

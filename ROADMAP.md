@@ -272,13 +272,14 @@ Abgeschlossen:
 31. ✅ AP-5-S2 Post-Merge Continuity / PR #138 – integriert; ältere Draft-Sätze sind Pre-Merge-Evidence
 32. ✅ Provider S5-B Gate 0 / PR #141 – docs/readiness only; S5-B Runtime nicht gestartet
 33. ✅ Technical Lead / Cursor Operating Standard / PR #142 – integriert; Merge `9d4778b8`
+34. ✅ PR #142 Post-Merge Continuity / PR #143 – integriert; Merge `1947285c`
 
 Nächster Schritt:
 
 **Self-expiring / dual-state. Live-Evidence gewinnt.**
 
-- **Solange PR #143 offen und unmerged ist:** unabhängiger Technical-Lead-Exact-Head-Review von Draft-PR #143 (PR-#142-Post-Merge-Current-State). Kein Ready. Kein Merge durch den Autor. Kein Produkt-Folgeslice.
-- **Sobald PR #143 gemergt ist:** die Transport-/Review-Klausel ist automatisch historisch. Exakt erster unfertiger Produktschritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl. Kein Produkt-Slice ist dadurch autorisiert.
+- **Solange PR #144 offen und unmerged ist:** unabhängiger Technical-Lead Exact-Head-Review/Re-Review von Draft-PR #144 (AP-7 Gate 0). Audit + Architecture only. Kein Ready. Kein Merge durch den Autor. Keine AP-7-Runtime.
+- **Sobald PR #144 gemergt ist:** Gate 0 ist integrierte Architecture-Evidence. Keine AP-7-Runtime automatisch autorisiert. Exakt nächster Schritt = Live-Verifikation des Merge-/Post-Merge-Stands, danach Product-Owner-Architekturentscheidung (Dual-Authority-Empfehlung vs genehmigte Alternative) vor jeder Implementation. Keine zukünftige Merge-SHA. Kein Continuity-PR nur für den Merge.
 
 AP-5-S3/S4/S5 bleiben normale Technical-Lead-Gates innerhalb Gate 0, nicht automatisch gestartet und nicht Product-Owner-gated. S3–S5 nicht aus dieser Liste automatisch ableiten.
 
