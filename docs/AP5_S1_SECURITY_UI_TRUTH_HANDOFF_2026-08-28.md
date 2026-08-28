@@ -4,7 +4,8 @@ Stand: 28. August 2026
 Status: **AUTHOR COMPLETE ON DRAFT / STOPP FÜR UNABHÄNGIGEN TL-REVIEW / KEIN S2–S5**  
 Cursor-Agent: **`Account plattform audit vorbereitung 9`**  
 Issue: [#132](https://github.com/Jetnity/jetnity/issues/132)  
-Branch: `cursor/ap5-s1-security-ui-8b13`
+Branch: `cursor/ap5-s1-security-ui-8b13`  
+Draft-PR: https://github.com/Jetnity/jetnity/pull/133
 
 ## Zuerst lesen
 
