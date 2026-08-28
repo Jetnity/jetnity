@@ -109,15 +109,20 @@ describe('AP-5 Gate 0 Auth-/Session-/MFA-Vertragsinventar', () => {
     assert.equal(security.includes('mfa.enroll'), true)
   })
 
-  test('keine Session-/Geräte-Route oder -Komponente', () => {
+  test('keine Session-Listing-Route; S3-Logout bleibt ohne Geräteinventar', () => {
     const securityPage = quelle(join(wurzel, 'app/account/security/page.tsx'))
     assert.equal(securityPage.includes('SecurityMFA'), true)
     assert.equal(securityPage.includes('SecurityPasswort'), true)
-    assert.equal(securityPage.includes('Sitzung'), false)
-    assert.equal(securityPage.includes('Gerät'), false)
+    assert.equal(securityPage.includes('SecurityLogout'), true)
+    assert.equal(securityPage.includes('listSessions'), false)
+    assert.equal(securityPage.includes('/account/sessions'), false)
     const settings = quelle(join(wurzel, 'app/account/settings/page.tsx'))
     assert.equal(settings.includes('/account/security'), true)
     assert.equal(settings.includes('currentPassword'), false)
+    assert.equal(settings.includes('/account/sessions'), false)
+    const logout = quelle(join(wurzel, 'lib/auth/account-logout-scopes.ts'))
+    assert.equal(logout.includes('listSessions'), false)
+    assert.equal(logout.includes('auth.sessions'), false)
   })
 
   test('Auth-Sollwerte bleiben am Reauthentication-Vertrag', () => {
