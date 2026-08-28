@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
-Stand: 27. August 2026  
-Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114 und PR #115 sind integriert. Visitor Search UX ist integriert. `TW6-REST-01` ist geschlossen. TW7-A Runtime ist integriert. AP-4 Account Archive Lifecycle ist integriert. P2-TA-06 ist durch PR #113 integriert und Issue #112 CLOSED / completed. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal. P2-TA-03 ist durch PR #117 integriert. P2-TA-04 Gate 0 liegt auf Draft-PR #120; das ist kein RLS-/Grant-Change und kein AP-5-Start. Kein automatischer Folgeslice. Live-`main` immer live prüfen.**
+Stand: 28. August 2026  
+Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114, PR #115, PR #117, PR #118, PR #120 und PR #121 sind integriert. P2-TA-04 Gate 0 ist integriert. P2-TA-04 C1 ist der aktuelle Account-Implementation-Slice auf Issue #122; das ist kein C2, kein REVOKE und kein AP-5-Start. Kein automatischer Folgeslice. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
@@ -13,7 +13,9 @@ Aktuelle operative Evidence:
 - `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_STATUS_2026-08-27.md`
 - `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
 - `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` – kanonischer AP-5–AP-12-Plan nach P2-TA-03 / PR #117
-- `docs/P2_TA04_TRAVELLER_CHILD_WRITE_PATH_GATE0_STATUS_2026-08-28.md` – aktueller Account-Audit-Slice
+- `docs/CHATGPT_PR120_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+- `docs/P2_TA04_C1_TRAVELLER_WRITE_CONTRACT_INTEGRITY_STATUS_2026-08-28.md` – aktueller Account-Implementation-Slice
+- `docs/P2_TA04_TRAVELLER_CHILD_WRITE_PATH_GATE0_STATUS_2026-08-28.md` – historische Gate-0-Evidence
 - `docs/P2_TA03_ACCOUNT_PLATFORM_PLAN_RECONCILIATION_STATUS_2026-08-28.md`
 - `docs/CHATGPT_PR108_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
 - `docs/TRIP_WORKSPACE_TW7_HUB_GAP_TASK.md`
@@ -48,7 +50,7 @@ Jeder neue Chat, Technical Lead oder Coding Agent liest mindestens in dieser Rei
 15. `docs/CHATGPT_PR113_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
 16. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_STATUS_2026-08-27.md`
 17. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
-17a. bei Account-Folgearbeit: `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` und `docs/P2_TA03_ACCOUNT_PLATFORM_PLAN_RECONCILIATION_STATUS_2026-08-28.md`
+17a. bei Account-Folgearbeit: `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`, `docs/P2_TA03_ACCOUNT_PLATFORM_PLAN_RECONCILIATION_STATUS_2026-08-28.md` und der aktuelle P2-TA-04-C1-Status `docs/P2_TA04_C1_TRAVELLER_WRITE_CONTRACT_INTEGRITY_STATUS_2026-08-28.md`
 18. `docs/CHATGPT_PR108_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
 19. `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
 20. `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
@@ -345,9 +347,9 @@ Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Repo-/Bran
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-TW7-A Runtime ist integriert (PR #106), Issue #103 CLOSED / completed. AP-4 ist integriert (PR #108/#111). P2-TA-06 ist integriert (PR #113), Issue #112 CLOSED / completed. P2-TA-03 ist integriert (PR #117), Issue #116 CLOSED / completed. P2-TA-04 Gate 0 ist der aktuelle Account-Audit-Slice auf Draft-PR #120.
+TW7-A Runtime ist integriert (PR #106), Issue #103 CLOSED / completed. AP-4 ist integriert (PR #108/#111). P2-TA-06 ist integriert (PR #113), Issue #112 CLOSED / completed. P2-TA-03 ist integriert (PR #117), Issue #116 CLOSED / completed. P2-TA-04 Gate 0 ist integriert (PR #120), Issue #119 CLOSED / completed. P2-TA-04 C1 ist der aktuelle Account-Implementation-Slice auf Issue #122.
 
-**Kein automatischer Folgeslice.** Unabhängiger Technical-Lead-Review von PR #120. Kein C1/C2, kein AP-5. Live-`main`, offene PRs/Issues, Binding Build Order und Gates erneut prüfen, bevor ein neuer Slice vergeben wird.
+**Kein automatischer Folgeslice.** Unabhängiger Technical-Lead-Review von C1. Kein C2, kein AP-5, kein Production-Apply durch den Author. Live-`main`, offene PRs/Issues, Binding Build Order und Gates erneut prüfen, bevor ein neuer Slice vergeben wird.
 
 Issue #109 (Visitor Search Country/City-Relevance) und Issue #110 (spätere Homepage-Multi-Destination-Absicht) bleiben separate dokumentierte Themen und werden durch PR #113 nicht automatisch gestartet.
 

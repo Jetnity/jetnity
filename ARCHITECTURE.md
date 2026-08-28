@@ -413,7 +413,7 @@ PR #34 ist gemergt und auf Production. `lib/route/` leitet `RouteFacts` nur aus 
 
 ### Traveller Context (Foundation E)
 
-PR #35 ist gemergt und auf Production. `trip_travellers` bleibt der stabile Parent. Kanonische Wahrheit für Credentials liegt in `trip_traveller_citizenships` und `trip_traveller_documents`. Account-Writes gehen über `party_schreiben()` in einer Transaktion. Guest Local Storage trägt dieselbe `TripTraveller`-Form. Die Engine bewertet vorhandene Credential-Optionen getrennt; `requirementsProviderAus()` bleibt `null`. Ausstellerland ist kein Citizenship-Ersatz. Fachlich: [docs/TRAVELLER_CONTEXT.md](docs/TRAVELLER_CONTEXT.md).
+PR #35 ist gemergt und auf Production. `trip_travellers` bleibt der stabile Parent. Kanonische Wahrheit für Credentials liegt in `trip_traveller_citizenships` und `trip_traveller_documents`. Account-Writes gehen über `party_schreiben()` in einer Transaktion. Account-Deletes gehen über `party_loeschen()` (P2-TA-04 C1 / ADR-0181; Draft bis unabhängiger Review/Production-Apply). Die Datenbank begrenzt 20 Reisende je `(user_id, trip_id)` und die Child-Limits 8/12 auch bei UPDATE/Reparenting. Guest Local Storage trägt dieselbe `TripTraveller`-Form. Die Engine bewertet vorhandene Credential-Optionen getrennt; `requirementsProviderAus()` bleibt `null`. Ausstellerland ist kein Citizenship-Ersatz. Fachlich: [docs/TRAVELLER_CONTEXT.md](docs/TRAVELLER_CONTEXT.md).
 
 ### Travel Safety & Disruption (provider-neutrale Foundation)
 

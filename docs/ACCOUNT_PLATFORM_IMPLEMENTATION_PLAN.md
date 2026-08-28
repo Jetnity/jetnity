@@ -219,10 +219,11 @@ Legal-Texte dürfen **nicht erfunden** werden. AP-6a braucht Product-Owner-/Lega
 Ausschließlich trip-scoped:
 
 - `trip_travellers`
-- `trip_traveller_citizenships` (1:n, max 8)
-- `trip_traveller_documents` (1:n, max 12)
+- `trip_traveller_citizenships` (1:n, max 8; C1 erzwingt das Limit auch bei UPDATE/Reparenting)
+- `trip_traveller_documents` (1:n, max 12; C1 erzwingt das Limit auch bei UPDATE/Reparenting)
 - `Trip.party` ausdrücklich keine accountweiten Profile
 - `trips.travellers` ist Kopfzahl 1–20, keine Identität
+- P2-TA-04 C1 (Issue #122) härtet den trip-scoped Write-Contract; das ist **kein** AP-5- und **kein** AP-7-Start
 
 Account-Traveller-Registry: **missing / gated (AP-7)**.
 
@@ -552,7 +553,7 @@ Nicht aus diesem Dokument ableiten oder nebenbei bauen:
 | D0-P1-03 | `/privacy` `/terms` 404 | nicht mit erfundenen Texten in AP-5 mischen; gehört zu AP-6a / Legal-PO |
 | P2-TA-01 | Official nicht progressiv pro Option | eigener Traveller-/Readiness-Slice |
 | P2-TA-02 | Test-Fixture-Bias | Hygiene, kein Produktvertrag |
-| P2-TA-04 | `authenticated` darf Child-Tabellen direkt schreiben | Gate 0 auf Draft-PR #120; ADR-0180. Kein RLS-/Grant-Change in Gate 0. Implementation erst nach TL-Review + PO-Gate |
+| P2-TA-04 | Direct authenticated Traveller-DML umgeht Write-Contract | Gate 0 integriert (PR #120 / ADR-0180). C1 (Issue #122 / ADR-0181) härtet Delete-RPC + Party-Cap 20 + Child-UPDATE-Limits ohne REVOKE/DEFINER. C2 bleibt PO-gated. Kein AP-5 |
 | P2-TA-05 | Safety citizenship-set, nicht dokumentabhängig | Safety-Slice, kein Default-Pass |
 | P3-TA-01 | Legacy-Singular Expand/Contract | eigener Cleanup |
 | `officialFingerprint` | kann ohne `documents[]` Legacy-Singular lesen | nicht P2-TA-06 erneut öffnen |
