@@ -5,7 +5,8 @@ Status: **AUTHOR COMPLETE / DRAFT / KEIN READY / KEIN MERGE / KEINE AP-5-RUNTIME
 Workstream: Account / Traveller  
 Cursor-Agent: **`Account plattform audit vorbereitung 8`**  
 Issue: [#128](https://github.com/Jetnity/jetnity/issues/128)  
-Branch: `cursor/ap5-gate0-auth-session-mfa-79f9`
+Branch: `cursor/ap5-gate0-auth-session-mfa-79f9`  
+Draft-PR: https://github.com/Jetnity/jetnity/pull/129
 
 > Live-Evidence gewinnt. Vorbereitungs-SHAs sind Start-Evidence.
 
@@ -174,7 +175,8 @@ S1 ist der kleinste, konfliktärmste Folgeslice. S2 ist der erste nutzbare Secur
 | Lauf | Ergebnis |
 | --- | --- |
 | `npm run auth:pruefen` | sauber, 55/55, 242 Schlüssel |
-| Inventory-Test | lokal nach Authoring; Exact-Head danach |
+| Inventory-Test | **8/8 pass** `lib/auth/ap5-gate0-contract-inventory.test.ts` |
+| Focused Auth/Account-Unit | **84/84 pass** (Inventory, `auth-erwartung`, Passwort, `next`-Allowlist, Register-Enumeration, MFA-Dialog-A11y, Account-Nav) |
 | `auth:fluesse` | **nicht** in diesem Slice ausgeführt (schreibendes Wegwerfkonto). Historische Evidence 17. August 2026 in `docs/AUTH.md` |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet |
 | Production Auth-Config | nicht gepusht, nicht als byte-identisch zu Development behauptet. `docs/AUTH.md` Abschnitt 3 bleibt Parent-Read vom 17. August 2026 |

@@ -8,7 +8,7 @@ Status: **AP-5 Gate 0 Account-Security-Capability-Audit ist der aktuelle Account
 ## Aktueller Arbeitsblock – AP-5 Gate 0 Account security capability audit
 
 1. **Arbeitsblock / Ziel:** Issue #128 / AP-5 Gate 0 – bestehenden Auth-/Session-/MFA-Vertrag rekonstruieren und AP-5-Folgeslices in TL- vs. Product-Owner-Gates schneiden.
-2. **Authoring-Branch / PR:** `cursor/ap5-gate0-auth-session-mfa-79f9`; Draft nach Authoring.
+2. **Authoring-Branch / PR:** `cursor/ap5-gate0-auth-session-mfa-79f9`; Draft-PR #129.
 3. **Status:** **AUTHOR COMPLETE / DRAFT.** Kein Ready, kein Merge, keine AP-5-Runtime.
 4. **Bereits umgesetzt:** Vertragsrekonstruktion; ADR-0182; Inventory-Test; Status/Handoff/Self-Review; Continuity-Zeiger. Live `auth:pruefen` 55/55.
 5. **Cursor-Agent:** `Account plattform audit vorbereitung 8`.
@@ -249,7 +249,7 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#128 / dieser Branch** AP-5 Gate 0 Account security capability | **DRAFT / AUDIT ONLY.** Branch `cursor/ap5-gate0-auth-session-mfa-79f9`. Issue #128. Keine Runtime. Kein Auth-Config-Push. |
+| **#129** AP-5 Gate 0 Account security capability | **DRAFT / AUDIT ONLY.** Branch `cursor/ap5-gate0-auth-session-mfa-79f9`. Issue #128. Keine Runtime. Kein Auth-Config-Push. |
 | **#126** P2-TA-04 C1 Traveller write-contract integrity | **GEMERGT / INTEGRIERT.** Merge `5ed7edbd`. Issue #122 CLOSED / completed. Production C1 live als `20260828015304`. Historische/develop-only Evidence `20260828120000`. Kein C2. |
 | **#120** P2-TA-04 Traveller Write-Path Gate 0 | **GEMERGT / INTEGRIERT.** Merge `8d8f3d57`. Issue #119 CLOSED / completed. Audit only; Residual C1 jetzt Issue #122. |
 | **#117** P2-TA-03 Account Plan Reconciliation | **GEMERGT / INTEGRIERT.** Merge `b912315d`. Issue #116 CLOSED / completed. Kanonischer AP-5–AP-12-Plan liegt auf `main`. |

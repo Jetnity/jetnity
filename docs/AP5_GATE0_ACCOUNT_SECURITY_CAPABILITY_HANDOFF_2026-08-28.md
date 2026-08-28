@@ -3,13 +3,15 @@
 Stand: 28. August 2026  
 Status: **AUTHOR COMPLETE / DRAFT / STOPP / KEINE AP-5-RUNTIME**  
 Cursor-Agent: **`Account plattform audit vorbereitung 8`**  
-Issue: [#128](https://github.com/Jetnity/jetnity/issues/128)
+Issue: [#128](https://github.com/Jetnity/jetnity/issues/128)  
+PR: https://github.com/Jetnity/jetnity/pull/129
 
 ## Zuerst lesen
 
 1. `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_TASK_2026-08-28.md`
 2. `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`
-3. ADR-0182 in `DECISIONS.md`
+3. `docs/AP5_GATE0_LOCAL_TEST_EVIDENCE_2026-08-28.md`
+4. ADR-0182 in `DECISIONS.md`
 4. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` Abschnitt AP-5
 5. `docs/AUTH.md`
 6. `docs/CHATGPT_PR126_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – C1 ist integriert, nicht neu bauen
