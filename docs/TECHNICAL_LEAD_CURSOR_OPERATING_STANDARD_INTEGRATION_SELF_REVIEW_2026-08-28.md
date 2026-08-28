@@ -3,7 +3,8 @@
 Stand: 28. August 2026  
 Status: **SELF-REVIEW ONLY / KEINE FREIGABE / KEIN PASS**  
 Agent: `Cursor-Agent: Jetnity quality security audit 3`  
-PR: https://github.com/Jetnity/jetnity/pull/142
+PR: https://github.com/Jetnity/jetnity/pull/142  
+Head dieses Self-Reviews: `778149808515bd48fd80e823a14491cddbd11e7c`
 
 Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead-Review.
 

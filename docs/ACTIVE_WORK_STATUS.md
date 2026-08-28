@@ -12,7 +12,7 @@ Status: **Aktueller Block: Draft-PR #142 docs-only Technical-Lead-/Cursor-Operat
 3. **Status:** **DOCS-ONLY / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW.** Kein Ready, kein Merge durch den Autor. Kein Runtime-, Schema-, Supabase-, Auth/AAL-, Provider- oder Branch-Protection-Change. Kein Produkt-Folgeslice.
 4. **Bereits umgesetzt:** Operating Standard und Integration-Task liegen auf dem Branch. Integration verankert den Standard früh in `JETNITY_START_HERE.md`, entfernt aktuelle Ready-/Merge-Mehrdeutigkeit und setzt Supersession-Verweise, ohne historische Evidence kosmetisch umzuschreiben.
 5. **Cursor-Agent:** `Cursor-Agent: Jetnity quality security audit 3` – vom Technical Lead für diesen Slice/PR namentlich zugewiesen; kein Folgeslice, keine neue Generation aus diesem Auftrag.
-6. **Live-`main` bei diesem Stamp:** Task-Baseline `3b119ae34843b40d043ed921070c60e35dd1517a` – immer live neu prüfen.
+6. **Live-`main` bei diesem Stamp:** Task-Baseline `3b119ae34843b40d043ed921070c60e35dd1517a`. Integration-Head `778149808515bd48fd80e823a14491cddbd11e7c` – immer live neu prüfen.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation.
 8. **Kosten / Provider / Secrets:** keine.
 9. **Bekannte Risiken / Review-Funde:** `main` Branch Protection bleibt `protected=false`. Dieser Slice ändert das nicht. Ein Agent-Self-Review ist kein PASS.

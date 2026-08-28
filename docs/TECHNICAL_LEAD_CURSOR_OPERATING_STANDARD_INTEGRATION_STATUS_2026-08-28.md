@@ -20,6 +20,7 @@ Kein Ready. Kein Merge. Kein Folgeslice. Self-Review ist keine Freigabe.
 | `origin/main` nach Re-Fetch vor Edit | `3b119ae34843b40d043ed921070c60e35dd1517a` |
 | Merge-Base | `3b119ae3` = `origin/main` |
 | Ahead / Behind vor Integration | 2 ahead / 0 behind — nur Operating Standard + Task |
+| Integration-Head dieses Stamps | `778149808515bd48fd80e823a14491cddbd11e7c` |
 | Draft-PR | #142 OPEN, Draft |
 | Runtime / Schema / Supabase / Auth / Provider / Branch Protection | unverändert |
 
