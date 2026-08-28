@@ -3,6 +3,7 @@
 Stand: 28. August 2026  
 Cursor-Agent: `Jetnity quality security audit 3`  
 Issue: [#134](https://github.com/Jetnity/jetnity/issues/134)  
+Draft-PR: [#135](https://github.com/Jetnity/jetnity/pull/135)  
 Status: **AUTHOR COMPLETE / DRAFT / KEIN READY / KEIN MERGE / KEIN CLEANUP**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, kein Ersatz für Live-Rekonstruktion.

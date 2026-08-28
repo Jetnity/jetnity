@@ -4,6 +4,7 @@ Stand: 28. August 2026
 Cursor-Agent: `Jetnity quality security audit 3`  
 Issue: [#134](https://github.com/Jetnity/jetnity/issues/134)  
 Branch: `cursor/project-sanitation-closure-2966`  
+Draft-PR: [#135](https://github.com/Jetnity/jetnity/pull/135)  
 Typ: AUDIT / RECONCILIATION / NON-DESTRUCTIVE
 
 ## 1. Zweck
