@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **Kanonischer Post-PR-#142-Chat-Übergabestand. PR #142 Technical-Lead-/Cursor-Operating-Standard ist integriert. PR #141 Provider S5-B Gate 0 bleibt integriert als docs/readiness only. Es läuft kein freigegebener neuer Produkt-Slice. Draft-PR #143 ist nur Current-State-Continuity. S5-B Runtime/Persistenz, S3–S5, C2, AP-7 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **Kanonischer Post-PR-#142-Chat-Übergabestand. PR #142 Technical-Lead-/Cursor-Operating-Standard ist integriert. PR #141 Provider S5-B Gate 0 bleibt integriert als docs/readiness only. Es läuft kein freigegebener neuer Produkt-Slice. PR #143 ist nur Current-State-Continuity und self-expiring: offen → TL-Review von #143; nach Merge → Live-Rekonstruktion + Binding-Build-Order-Auswahl. S5-B Runtime/Persistenz, AP-5-S3–S5, C2, AP-7 und TW-8/TW-9 sind nicht automatisch gestartet. AP-5-S3–S5 sind normale Technical-Lead-Gates, nicht PO-gated. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
@@ -66,7 +66,6 @@ Letzter integrierter Post-Merge:
 - Merge / verifizierter `main`: `9d4778b81f34e199466e089fe06fb093895f2df1`
 - Post-Merge GitHub Actions Run `33186501087`: **SUCCESS** auf exakt diesem `main`
 - Post-Merge Vercel Production `dpl_8NN5v8rV27D4MTs9JwDyyLdXqpzo`: **READY** auf exakt diesem `main`
-- GitHub Production-Deployment `6144102069`: **success** auf demselben SHA
 - Branch Protection: unverändert `protected=false`
 - Continuity-Regel und universeller Recovery-Prompt sind Teil dieses integrierten Vertrags
 - Checkpoint: `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
@@ -314,10 +313,11 @@ Aktueller Account-Status:
 
 Aktueller Quality-/Security-Status:
 
-- `Cursor-Agent: Jetnity quality security audit 4` ist der exakte Agent für Draft-PR #143 (PR-#142-Post-Merge-Continuity)
+- `Cursor-Agent: Jetnity quality security audit 4` ist der exakte Agent für den Continuity-Transport PR #143
 - keine andere Generation erfinden
 - Cursor exponiert in dieser Session keine programmierbare Rename-/Title-Fähigkeit; UI nicht als umbenannt behauptet
 - kein Produkt-/Cleanup-Folgeslice
+- **Self-expiring:** nach Merge von PR #143 ist Generation 4 für diesen Continuity-Stamp abgeschlossen und nicht für einen Produktslice wiederzuverwenden
 
 Abgeschlossen / nicht wiederverwenden:
 
@@ -341,13 +341,18 @@ Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logisc
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-Aktueller docs-only Continuity-Slice, kein Produkt-Folgeslice: Draft-PR #143 unabhängig reviewen. PR #142 ist integriert. Autor-Agent setzt kein Ready und kein Merge. Current-State-Continuity (kein Fortschritt nur im Chat) steht im Operating Standard §9 und im universellen Recovery-Prompt.
+**Self-expiring / dual-state. Live-Evidence gewinnt.**
+
+- **Solange PR #143 offen und unmerged ist:** unabhängiger Technical-Lead-Exact-Head-Review von Draft-PR #143. PR #142 ist integriert. Autor-Agent setzt kein Ready und kein Merge.
+- **Sobald PR #143 gemergt ist:** die Transport-/Review-Klausel ist automatisch historisch. Exakt erster unfertiger Produktschritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl. Kein Produkt-Slice ist dadurch autorisiert.
+
+Current-State-Continuity (kein Fortschritt nur im Chat) steht im Operating Standard §9 und im universellen Recovery-Prompt.
 
 **Kein Produkt-Folgeslice ist an diesem Chat-Übergabepunkt automatisch freigegeben.**
 
-Der erste unfertige Produkt-Schritt nach akzeptierter Continuity ist Live-Rekonstruktion und Binding-Build-Order-Auswahl. Der nächste Chat muss zuerst den vollständigen Live-Zustand rekonstruieren und anschließend Binding Build Order, Abhängigkeiten, Parallelität und Product-Owner-Gates neu bewerten.
+Der nächste Chat muss zuerst den vollständigen Live-Zustand rekonstruieren und anschließend Binding Build Order, Abhängigkeiten, Parallelität und Product-Owner-Gates neu bewerten.
 
-AP-5-S3 ist nach dem integrierten Gate-0-Vertrag ein möglicher normaler Account-Folgeslice, aber **nicht automatisch der nächste globale Jetnity-Slice**.
+AP-5-S3/S4/S5 sind nach dem integrierten Gate-0-Vertrag mögliche normale Technical-Lead-Account-Slices, **nicht Product-Owner-gated** und **nicht automatisch der nächste globale Jetnity-Slice**.
 
 Nicht automatisch starten:
 

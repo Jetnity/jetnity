@@ -275,7 +275,12 @@ Abgeschlossen:
 
 Nächster Schritt:
 
-**Unabhängiger Technical-Lead-Review von Draft-PR #143 (PR-#142-Post-Merge-Current-State). Kein Produkt-Folgeslice. Danach Live-Rekonstruktion + Binding-Build-Order-Auswahl. S3–S5 nicht aus dieser Liste automatisch ableiten.**
+**Self-expiring / dual-state. Live-Evidence gewinnt.**
+
+- **Solange PR #143 offen und unmerged ist:** unabhängiger Technical-Lead-Exact-Head-Review von Draft-PR #143 (PR-#142-Post-Merge-Current-State). Kein Ready. Kein Merge durch den Autor. Kein Produkt-Folgeslice.
+- **Sobald PR #143 gemergt ist:** die Transport-/Review-Klausel ist automatisch historisch. Exakt erster unfertiger Produktschritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl. Kein Produkt-Slice ist dadurch autorisiert.
+
+AP-5-S3/S4/S5 bleiben normale Technical-Lead-Gates innerhalb Gate 0, nicht automatisch gestartet und nicht Product-Owner-gated. S3–S5 nicht aus dieser Liste automatisch ableiten.
 
 ## 10. Noch nicht automatisch gestartet / weiterhin gated
 

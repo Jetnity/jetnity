@@ -1,7 +1,7 @@
 # PR #142 Post-Merge Continuity – Status
 
 Stand: 28. August 2026  
-Status: **DOCS-ONLY / DRAFT-PR #143 / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**  
+Status: **DOCS-ONLY / REVIEW-FIX FÜR `5454696267` / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**  
 Agent: `Cursor-Agent: Jetnity quality security audit 4`  
 Authority: `docs/PR142_POST_MERGE_CONTINUITY_TASK_2026-08-28.md`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/143
@@ -18,7 +18,6 @@ Kein Ready. Kein Merge. Kein Produkt-Folgeslice. Self-Review ist keine Freigabe.
 | PR #142 | **MERGED**; reviewed Head `507bcb170604b0f680dad7325ab4f32c7c4f2f61`; TL PASS `5454570805` |
 | Post-Merge Actions | `33186501087` SUCCESS auf exakt `main` |
 | Post-Merge Vercel Production | `dpl_8NN5v8rV27D4MTs9JwDyyLdXqpzo` READY auf exakt `main` |
-| GitHub Production auf demselben SHA | `6144102069` success |
 | Branch Protection | unverändert `protected=false` |
 | Aktiver Branch / PR | `docs/pr142-post-merge-continuity-2026-08-28` / Draft-PR #143 |
 | Content-Head vor Head-Stamp | `6e213e195a605b06ef939a9fc787e19d89f946d1` |
@@ -28,13 +27,13 @@ Kein Ready. Kein Merge. Kein Produkt-Folgeslice. Self-Review ist keine Freigabe.
 | Cursor-Rename-Fähigkeit in dieser Session | nicht exponiert; UI-Anzeigename nicht als geändert behauptet |
 | Session-Evidence | Cloud-Run `https://cursor.com/agents/bc-93c2dcb4-c12a-4e80-869e-df21404ea9b0`; Run-Titel bleibt `Pr142 post-merge continuity closure` |
 | Task / Scope | Docs-only Current-State nach PR #142; kein Runtime/Produkt-Folgeslice |
-| Letztes unabhängiges Review dieses Slices | keines |
-| Offene CHANGES REQUIRED / Residuals | dieser Stamp noch nicht unabhängig PASS; `main` `protected=false` |
-| Besondere PO-Gates | S5-B Runtime, TW-8, AP-5-S3+, AP-7, Provider-live, Payments, Public Launch geschlossen |
+| Letztes unabhängiges Review dieses Slices | CHANGES REQUIRED `5454696267` auf `6e668593c36fc6c84f7a77c80e70afa2f7bdf304`; dieses Self-Review ist kein PASS |
+| Offene CHANGES REQUIRED / Residuals | Prior-Gates auf `6e668593` stale; `main` `protected=false` |
+| Besondere PO-Gates | S5-B Runtime/Persistenz, TW-8, AP-7, Provider-live/Secrets/paid calls, Payments, Public Launch, AP-5-P1–P5 |
+| AP-5-S3/S4/S5 | normale Technical-Lead-Gates innerhalb Gate 0; **nicht automatisch gestartet**; **nicht PO-gated**; nur nach Live-Build-Order-Auswahl zulässig |
 | Runtime / Schema / Supabase / Auth / Provider / Branch Protection | unverändert |
-| Fertig vs. unfertig | PR #142 integriert und Current-State auf MERGED umgestellt; Draft-PR #143 unreviewed; kein Produkt-Folgeslice gestartet |
-| Exakt erster nächster Schritt | unabhängiger Technical-Lead-Review von Draft-PR #143 auf dem neuen Exact Head |
-| Erster Produkt-Schritt danach | Live-Rekonstruktion + Binding-Build-Order-Auswahl; nicht aus diesem Slice starten |
+| Fertig vs. unfertig | PR #142 integriert und Current-State auf MERGED umgestellt; kein Produkt-Folgeslice gestartet |
+| Exakt erster nächster Schritt | **Dual-State.** Offen/#143 unmerged → unabhängiger TL-Exact-Head-Review von #143. Nach Merge von #143 → Live-Rekonstruktion + Binding-Build-Order-Auswahl. Kein Produkt-Slice dadurch autorisiert. |
 
 ---
 
@@ -48,7 +47,7 @@ Kein Ready. Kein Merge. Kein Produkt-Folgeslice. Self-Review ist keine Freigabe.
 
 ## 2. Gerade offen / nicht umgesetzt
 
-- unabhängiger Technical-Lead-Exact-Head-Review von Draft-PR #143
+- unabhängiger Technical-Lead-Exact-Head-Re-Review auf dem neuen Head; Prior-Gates auf `6e668593` sind stale
 - Ready / Merge – verboten für diesen Autor
 - jeder Produkt-Folgeslice
 
@@ -64,4 +63,4 @@ Kein Ready. Kein Merge. Kein Produkt-Folgeslice. Self-Review ist keine Freigabe.
 
 ## 4. STOP
 
-Unabhängiger Technical-Lead-Review auf dem neuen Exact Head von Draft-PR #143. Kein Ready. Kein Merge. Kein Folgeslice.
+Unabhängiger Technical-Lead-Re-Review auf dem neuen Exact Head. Dieses Statusfile ist Transport-Evidence von PR #143 und nach dessen Merge historisch. Kein Ready. Kein Merge. Kein Folgeslice.

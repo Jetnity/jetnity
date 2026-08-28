@@ -20,7 +20,6 @@ Repository: `Jetnity/jetnity`
 - Merge / aktuelles `main`: `9d4778b81f34e199466e089fe06fb093895f2df1`
 - Post-Merge GitHub Actions: Run `33186501087` **SUCCESS** auf exakt diesem `main`
 - Post-Merge Vercel Production: `dpl_8NN5v8rV27D4MTs9JwDyyLdXqpzo` **READY** auf exakt diesem `main`
-- Unabhängig re-verifizierte GitHub-Production-Deployment-Evidence auf demselben SHA: `6144102069` **success**
 - `main` Branch Protection: unverändert `protected=false`; bekanntes Governance-Risiko, nicht still ändern
 
 Diese Werte sind Übergabe-Evidence. Ein neuer Chat muss sie live erneut verifizieren, bevor er sie als aktuelle Wahrheit verwendet.
@@ -67,11 +66,11 @@ Solange Draft-PR #143 offen ist:
 | Cursor-Agent | `Cursor-Agent: Jetnity quality security audit 4` |
 | Session-Rename | nicht exponiert; UI nicht als umbenannt behauptet |
 | Task | `docs/PR142_POST_MERGE_CONTINUITY_TASK_2026-08-28.md` |
-| Letztes unabhängiges Review dieses Slices | keines; Autor-Self-Review ist **kein PASS** |
-| Offene Residuals | `main` `protected=false`; ROADMAP §9 kann noch historische Draft-PR-#138-Next-Step-Sätze enthalten und ist durch diesen Checkpoint superseded |
-| Besondere PO-Gates | unverändert geschlossen für S5-B Runtime, TW-8, AP-5-S3+, AP-7, Payments, Provider-live, Public Launch |
+| Letztes unabhängiges Review dieses Slices | CHANGES REQUIRED Kommentar `5454696267` auf `6e668593c36fc6c84f7a77c80e70afa2f7bdf304`; Autor-Self-Review ist **kein PASS** |
+| Offene Residuals | `main` `protected=false`; Prior-Gates auf `6e668593` sind stale |
+| Besondere PO-Gates | S5-B Runtime/Persistenz, TW-8, AP-7, Provider-live/Secrets/paid calls, Payments, Public Launch, AP-5-P1–P5. AP-5-S3/S4/S5 sind normale Technical-Lead-Gates, nicht automatisch gestartet und nicht PO-gated |
 | Fertig | PR #142 integriert; Post-Merge-Evidence persistiert; Current-State-Surfaces auf MERGED umgestellt |
-| Unfertig | unabhängiger Technical-Lead-Review von Draft-PR #143; kein Produkt-Folgeslice gestartet |
+| Unfertig | siehe §5 Dual-State; kein Produkt-Folgeslice gestartet |
 
 ## 4. Account / Provider / Workspace – unverändert
 
@@ -89,21 +88,19 @@ AP-5 Gate 0 / S1 / S2 bleiben integriert. S3–S5, C2 und AP-7 starten nicht aus
 
 **Unfertig:**
 
-- Draft-PR #143 (dieser Continuity-Stamp) ist nicht unabhängig reviewed
 - kein Produkt-Folgeslice wurde gestartet
 - Binding Build Order wurde nach PR #142 noch nicht als neuer Produkt-Slice ausgewählt
 
-**Exakt erster noch nicht abgeschlossener nächster Schritt:**
+**Exakt erster noch nicht abgeschlossener nächster Schritt (self-expiring / dual-state):**
 
-Unabhängiger Technical-Lead-Exact-Head-Review von Draft-PR #143. Autor-Agent setzt kein Ready und kein Merge.
+Live-Evidence gewinnt.
 
-**Erster unfertiger Produkt-Schritt danach, nicht aus diesem Slice starten:**
-
-Live-Rekonstruktion + Binding-Build-Order-Auswahl. Kein automatischer Folgeslice.
+- **Solange PR #143 offen und unmerged ist:** unabhängiger Technical-Lead-Exact-Head-Review von Draft-PR #143. Autor-Agent setzt kein Ready und kein Merge.
+- **Sobald PR #143 gemergt ist:** die Transport-/Review-Klausel ist automatisch historisch. Exakt erster unfertiger Produktschritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl. Kein Produkt-Slice ist dadurch autorisiert.
 
 Nicht automatisch starten:
 
-- AP-5-S3/S4/S5
+- AP-5-S3/S4/S5 — normale Technical-Lead-Gates innerhalb Gate 0; nicht PO-gated; nur nach Live-Build-Order-Auswahl zulässig
 - AP-7
 - P2-TA-04 C2
 - TW-8 / TW-9
