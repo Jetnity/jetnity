@@ -31,11 +31,12 @@ Harte Wahrheiten:
 6. Generation 9 (S1) ist abgeschlossen und darf nicht wiederverwendet werden.
 7. `getUser()`-Netz- oder Serverfehler sind kein Sitzungsverlust. `session_required` braucht Session-Evidence.
 
-## Exact-Head vor diesem Stamp
+## Exact-Head Review-Fix `5050962955`
 
-- Actions `33168871236` SUCCESS
-- Vercel `G6m3MbtAFPhUwhS7x3KxH2g9JEJb` SUCCESS
-- GitHub Deployment `6140668086` success auf `fe734874`
+- Head `69c87f2e`
+- Actions `33170555726` SUCCESS
+- Vercel `AoScFs2qYjBG5uQq4fp97ipwvA7d` SUCCESS
+- GitHub Deployment `6140989685` success
 
 Dieser Stamp dokumentiert nur diese Re-Gate. Kein weiterer Evidence-Stamp, außer die Stamp-CI fehlschlägt.
 

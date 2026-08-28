@@ -16,10 +16,10 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/137
 | `npm run build` | Production-Build erfolgreich; `/account/security` dynamisch |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet |
 
-Exact-Head vor diesem Stamp: `fe734874b0b2f97390a2619940359768b7690f6e`.
+Review-Fix-Head vor diesem Stamp: `69c87f2e62495c43150bdef1d442d6454fda13c6`.
 
-- GitHub Actions Run `33168871236` SUCCESS
-- Vercel Inspector `G6m3MbtAFPhUwhS7x3KxH2g9JEJb` SUCCESS
-- GitHub Preview-Deployment `6140668086` success
+- GitHub Actions Run `33170555726` SUCCESS
+- Vercel Inspector `AoScFs2qYjBG5uQq4fp97ipwvA7d` SUCCESS
+- GitHub Preview-Deployment `6140989685` success
 
 Dieser Stamp erzeugt einen neueren Head. Kein zweiter Evidence-Stamp, außer dessen CI fehlschlägt.

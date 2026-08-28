@@ -72,13 +72,22 @@ Kein ADR. Gate 0 / ADR-0182 bleibt die Authority.
 | Vercel Preview | Inspector `G6m3MbtAFPhUwhS7x3KxH2g9JEJb` **SUCCESS** auf exakt `fe734874` |
 | GitHub Preview-Deployment | `6140668086` success |
 
-Historische Exact-Head-Evidence vor Review-Fix `5050962955` bleibt auf `fe734874` / `d0eac240`. Der Review-Fix erzeugt einen neueren Head; dessen CI/Vercel live lesen.
+Historische Exact-Head-Evidence vor Review-Fix `5050962955` bleibt auf `fe734874` / `d0eac240`.
 
 ### 4.1 Review-Fix `5050962955`
 
 P1: `passwortAenderungSitzungLesen()` zog Netz- und 5xx-Fehler von `getUser()` auf `client_ohne_sitzung` und behauptete damit eine ungültige Sitzung.
 
 Behoben: `session_required` nur bei 401/session-missing oder `data.user === null` ohne Fehler. Netzfehler bleiben `network`. Unbekannte/5xx-Fehler bleiben `unknown`. Regressionstests decken error, throw und echten Sessionverlust. Kein S3–S5.
+
+| Feld | Wert |
+| --- | --- |
+| Gegateter Review-Fix-Head | `69c87f2e62495c43150bdef1d442d6454fda13c6` |
+| GitHub Actions | Run `33170555726` **SUCCESS** auf exakt `69c87f2e` |
+| Vercel Preview | Inspector `AoScFs2qYjBG5uQq4fp97ipwvA7d` **SUCCESS** auf exakt `69c87f2e` |
+| GitHub Preview-Deployment | `6140989685` success |
+
+Dieser Stamp erzeugt einen neueren Head. **Kein zweiter Evidence-Stamp**, außer die Stamp-CI fehlschlägt.
 
 ## 5. Residuals – nicht in S2 mischen
 
