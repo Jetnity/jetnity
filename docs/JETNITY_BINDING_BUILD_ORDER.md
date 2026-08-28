@@ -48,7 +48,7 @@ Agent: `Account plattform audit vorbereitung`
 
 AP-1 bis AP-4 sind auf `main`. Weiter mit AP-5 bis AP-12 gemäß `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` und den jeweiligen Shared Gates. AP-4 (PR #108) ist kein Startauftrag mehr.
 
-Der Plan ist durch P2-TA-03 / Issue #116 gegen aktuellen `main` rekonstruiert (ADR-0179). Die gleichnamige Datei auf Draft-PR #39 ist **historische Evidence**, keine Current Truth. P2-TA-03 ist **kein** AP-5-Start.
+Der Plan ist durch P2-TA-03 / Issue #116 gegen aktuellen `main` rekonstruiert (ADR-0179). Die gleichnamige Datei auf Draft-PR #39 ist **historische Evidence**, keine Current Truth. P2-TA-03 ist **kein** AP-5-Start. AP-5 Gate 0 (Issue #128, ADR-0182) rekonstruiert den bestehenden Vertrag und startet **keine** Runtime.
 
 AP-4 deckt Archiv/Lifecycle ab und ist abgeschlossen. Unter AP-5–AP-12 bleiben nur die bereits genannten, noch offenen Programmteile: Security, Privacy, Traveller Registry, Reiseprofil, Favoriten, Booking Overview, Notifications und Subscription-/Entitlement-Grundlage. Das ist keine neue AP-5-Spezifikation und kein automatischer Folgeslice.
 
