@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 28. August 2026  
-Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114, PR #115, PR #117, PR #118, PR #120, PR #121, PR #126 und PR #127 sind integriert. P2-TA-04 C1 ist integriert. AP-5 Gate 0 ist der aktuelle Account-Architecture-Slice auf Issue #128; das ist keine AP-5-Runtime. Kein automatischer Folgeslice. Live-`main` immer live prüfen.**
+Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114, PR #115, PR #117, PR #118, PR #120, PR #121, PR #126, PR #127, PR #129, PR #130 und PR #131 sind integriert. AP-5 Gate 0 ist integriert. AP-5-S1 ist der aktuelle Account-Implementation-Slice auf Issue #132; das ist kein S2–S5. Kein automatischer Folgeslice. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
@@ -15,7 +15,9 @@ Aktuelle operative Evidence:
 - `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` – kanonischer AP-5–AP-12-Plan nach P2-TA-03 / PR #117
 - `docs/CHATGPT_PR120_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
 - `docs/CHATGPT_PR126_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
-- `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md` – aktueller Account-Architecture-Slice
+- `docs/AP5_S1_SECURITY_UI_TRUTH_STATUS_2026-08-28.md` – aktueller Account-Implementation-Slice
+- `docs/CHATGPT_PR129_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+- `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md` – historische Gate-0-Evidence, integriert
 - `docs/P2_TA04_C1_TRAVELLER_WRITE_CONTRACT_INTEGRITY_STATUS_2026-08-28.md` – historische C1-Evidence, integriert
 - `docs/P2_TA04_TRAVELLER_CHILD_WRITE_PATH_GATE0_STATUS_2026-08-28.md` – historische P2-TA-04-Gate-0-Evidence
 - `docs/P2_TA03_ACCOUNT_PLATFORM_PLAN_RECONCILIATION_STATUS_2026-08-28.md`
@@ -52,7 +54,7 @@ Jeder neue Chat, Technical Lead oder Coding Agent liest mindestens in dieser Rei
 15. `docs/CHATGPT_PR113_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
 16. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_STATUS_2026-08-27.md`
 17. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
-17a. bei Account-Folgearbeit: `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`, `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md` und `docs/CHATGPT_PR126_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+17a. bei Account-Folgearbeit: `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`, `docs/AP5_S1_SECURITY_UI_TRUTH_STATUS_2026-08-28.md`, `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md` und `docs/CHATGPT_PR129_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
 18. `docs/CHATGPT_PR108_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
 19. `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
 20. `docs/CHATGPT_TL_POST_PR94_CHECKPOINT_2026-08-27.md`
@@ -330,7 +332,7 @@ Weiter gemäß `docs/JETNITY_BINDING_BUILD_ORDER.md`:
 
 1. Trip Workspace vollständig abschließen – nur nach seinen Gates;
 2. Traveller / Pass / Multi-Citizenship produktweit vervollständigen;
-3. Account AP-5 bis AP-12 gemäß `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` (P2-TA-03 / PR #117 integriert). AP-5 Gate 0 ist der aktuelle Account-Architecture-Slice (Issue #128). AP-4 und P2-TA-04 C1 sind integriert. Historischer PR-#39-Plan ist keine Current Truth;
+3. Account AP-5 bis AP-12 gemäß `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` (P2-TA-03 / PR #117 integriert). AP-5 Gate 0 ist integriert. AP-5-S1 ist der aktuelle Account-Implementation-Slice (Issue #132). AP-4 und P2-TA-04 C1 sind integriert. Historischer PR-#39-Plan ist keine Current Truth;
 4. Provider Readiness Rest inkl. S5-B, danach echte Provider unter besonderen Gates;
 5. Admin D–K + Marketing/Growth Control Plane;
 6. Homepage finalisieren;
@@ -339,7 +341,7 @@ Weiter gemäß `docs/JETNITY_BINDING_BUILD_ORDER.md`:
 9. kommerzielle Produktschicht;
 10. Guardian / What-if / Value + finaler Launch-Hardening-Audit.
 
-P2-TA-06 ist abgeschlossen. P2-TA-03 ist integriert. P2-TA-04 Gate 0 klärt den Traveller-Write-Path, startet aber weder C1/C2 noch AP-5. Diese Liste gibt **nicht automatisch AP-5** frei; vor dem nächsten Slice müssen aktuelle Traveller-/Account-Gates, offene P0/P1/P2, Parallelität und Shared Contracts live neu geprüft werden.
+P2-TA-06 ist abgeschlossen. P2-TA-03 ist integriert. P2-TA-04 C1 ist integriert. AP-5 Gate 0 ist integriert. AP-5-S1 ist der aktuelle freigegebene Account-Runtime-Slice auf Issue #132. Diese Liste gibt **nicht automatisch S2–S5** frei.
 
 ## 15. Quality / Security / Sanitation
 
@@ -349,9 +351,9 @@ Project-Sanitation-Audit PR #88 bleibt non-destructive Evidence. Kein Repo-/Bran
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-TW7-A Runtime ist integriert (PR #106), Issue #103 CLOSED / completed. AP-4 ist integriert (PR #108/#111). P2-TA-06 ist integriert (PR #113), Issue #112 CLOSED / completed. P2-TA-03 ist integriert (PR #117), Issue #116 CLOSED / completed. P2-TA-04 Gate 0 ist integriert (PR #120), Issue #119 CLOSED / completed. P2-TA-04 C1 ist der aktuelle Account-Implementation-Slice auf Issue #122.
+TW7-A Runtime ist integriert (PR #106), Issue #103 CLOSED / completed. AP-4 ist integriert (PR #108/#111). P2-TA-06 ist integriert (PR #113), Issue #112 CLOSED / completed. P2-TA-03 ist integriert (PR #117), Issue #116 CLOSED / completed. P2-TA-04 Gate 0 / C1 sind integriert. AP-5 Gate 0 ist integriert (PR #129), Issue #128 CLOSED / completed. AP-5-S1 ist der aktuelle Account-Implementation-Slice auf Issue #132.
 
-**Kein automatischer Folgeslice.** Unabhängiger Technical-Lead-Re-Review von C1. Kein C2, kein AP-5, kein erneuter Supabase-Write. Production C1 ist als `20260828015304` angewendet und live verifiziert; historische/develop-only Evidence bleibt `20260828120000`. Live-`main`, offene PRs/Issues, Binding Build Order und Gates erneut prüfen, bevor ein neuer Slice vergeben wird.
+**Kein automatischer Folgeslice.** Unabhängiger Technical-Lead-Review von S1. Kein S2–S5, kein C2, kein Auth-Config-Push, kein erneuter Supabase-Write. Production C1 ist als `20260828015304` angewendet und live verifiziert; historische/develop-only Evidence bleibt `20260828120000`. Live-`main`, offene PRs/Issues, Binding Build Order und Gates erneut prüfen, bevor ein neuer Slice vergeben wird.
 
 Issue #109 (Visitor Search Country/City-Relevance) und Issue #110 (spätere Homepage-Multi-Destination-Absicht) bleiben separate dokumentierte Themen und werden durch PR #113 nicht automatisch gestartet.
 

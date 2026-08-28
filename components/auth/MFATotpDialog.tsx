@@ -8,6 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertTriangle, CheckCircle2, QrCode } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  securityFehlerAusUnbekannt,
+  securityFehlerEinordnen,
+} from "@/lib/auth/account-security-fehler";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
 
@@ -75,7 +79,13 @@ export function MFATotpDialog({
     setMsg(null);
     try {
       const anyAuth = supabase.auth as any;
-      if (!anyAuth?.mfa?.verify) throw new Error("Supabase MFA API nicht verfügbar (verify).");
+      if (!anyAuth?.mfa?.verify) {
+        setMsg({
+          type: "error",
+          text: securityFehlerEinordnen({ vorgang: "verify", meldung: "not available" }).text,
+        });
+        return;
+      }
 
       const { error } = await anyAuth.mfa.verify({
         factorId,
@@ -86,8 +96,17 @@ export function MFATotpDialog({
 
       setMsg({ type: "success", text: "MFA erfolgreich bestätigt." });
       onVerified?.();
-    } catch (err: any) {
-      setMsg({ type: "error", text: err?.message ?? "Verifizierung fehlgeschlagen." });
+    } catch (err: unknown) {
+      const gelesen = securityFehlerAusUnbekannt(err);
+      setMsg({
+        type: "error",
+        text: securityFehlerEinordnen({
+          vorgang: "verify",
+          meldung: gelesen.meldung,
+          code: gelesen.code,
+          status: gelesen.status,
+        }).text,
+      });
       codeRef.current?.focus();
     } finally {
       setBusy(false);

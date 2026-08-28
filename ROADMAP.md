@@ -106,13 +106,13 @@ Weiterhin gilt:
 - Issuer Country ≠ Citizenship
 - `documents[0]` / `evaluations[0]` sind keine Product Truth
 
-P2-TA-03 ist durch PR #117 integriert. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` ist der kanonische Folgeplan für AP-5–AP-12. Historischer PR #39 bleibt Historical Evidence. **Kein AP-5-Start.**
+P2-TA-03 ist durch PR #117 integriert. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` ist der kanonische Folgeplan für AP-5–AP-12. Historischer PR #39 bleibt Historical Evidence.
 
-P2-TA-04 Gate 0 ist durch PR #120 integriert. C1 ist durch PR #126 integriert: Delete-RPC, DB-Party-Cap 20, Child-Limits auch bei UPDATE. Production C1 live als `20260828015304`. Kein C2. AP-5 Gate 0 ist Audit/Architecture auf Issue #128 und startet keine Runtime.
+P2-TA-04 Gate 0 ist durch PR #120 integriert. C1 ist durch PR #126 integriert: Delete-RPC, DB-Party-Cap 20, Child-Limits auch bei UPDATE. Production C1 live als `20260828015304`. Kein C2. AP-5 Gate 0 ist durch PR #129 integriert. AP-5-S1 ist der aktuelle Runtime-Slice auf Issue #132.
 
 Nicht automatisch starten:
 
-- AP-5+
+- AP-5-S2–S5 / AP-5-P1–P5
 - AP-7 / Account-Traveller-Registry
 
 ## 3. Trip Workspace / Visitor Search
@@ -263,7 +263,8 @@ Abgeschlossen:
 24. ✅ P2-TA-03 Account-Plan-Reconciliation / PR #117 + Issue #116
 25. ✅ P2-TA-04 Traveller Child Write-Path Gate 0 / PR #120 + Issue #119
 26. ✅ P2-TA-04 C1 Traveller write-contract integrity / PR #126 + Issue #122
-27. AP-5 Gate 0 Account security capability audit – **Issue #128; Draft; Audit only; keine Runtime; ADR-0182**
+27. ✅ AP-5 Gate 0 Account security capability audit / PR #129 + Issue #128
+28. AP-5-S1 ehrliche Security-UI Zustände – **Issue #132; Draft-PR #133; ADR-0183; kein S2–S5**
 
 Nächster Schritt:
 
@@ -271,7 +272,7 @@ Nächster Schritt:
 
 ## 10. Noch nicht automatisch gestartet / weiterhin gated
 
-- AP-5+
+- AP-5-S2–S5 / AP-5-P1–P5
 - AP-7
 - Provider S5-B
 - echte Providerphase
