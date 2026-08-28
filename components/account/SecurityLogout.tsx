@@ -32,7 +32,7 @@ import {
 } from "@/lib/auth/account-logout-scopes";
 
 function lokalenAuthVerlassen() {
-  window.location.assign("/");
+  window.location.assign(new URL("/", window.location.origin).toString());
 }
 
 export default function SecurityLogout() {

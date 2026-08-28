@@ -56,9 +56,16 @@ Nicht geliefert: MFA-Step-up, Session-/Geräteliste, Consumer-AAL2, Auth-Config-
 
 ## 4. Tests / Evidence dieses Slices
 
-Siehe `docs/AP5_S3_LOCAL_TEST_EVIDENCE_2026-08-29.md`. Zahlen dort sind nur gültig, wenn der Lauf tatsächlich stattfand.
+Siehe `docs/AP5_S3_LOCAL_TEST_EVIDENCE_2026-08-29.md`.
 
-Browser / Real-Device: nicht gelaufen, nicht behauptet.
+| Lauf | Ergebnis |
+| --- | --- |
+| Focused S3-Unit + Vertrag | **20/20 pass** |
+| Gate-0-Inventory | **8/8 pass** |
+| `npm test` | **2511/2511 pass** |
+| Typecheck / Lint / Hygiene / Build | pass; lint 0 errors / 133 warnings |
+| `auth:pruefen` | 55/55, 242 Schlüssel |
+| Browser / Real-Device | nicht gelaufen, nicht behauptet |
 
 ## 5. DB / RLS / Production-Grenze
 

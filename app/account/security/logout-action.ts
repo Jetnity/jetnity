@@ -13,12 +13,10 @@ export type AccountLogoutScopeErgebnis = Extract<
 >
 
 function authVomServer(client: { auth: { getUser: LogoutAuth['getUser']; signOut?: LogoutAuth['signOut'] } }): LogoutAuth {
+  const signOut = client.auth.signOut
   return {
     getUser: () => client.auth.getUser(),
-    signOut:
-      typeof client.auth.signOut === 'function'
-        ? (options) => client.auth.signOut({ scope: options.scope })
-        : undefined,
+    signOut: typeof signOut === 'function' ? (options) => signOut({ scope: options.scope }) : undefined,
   }
 }
 

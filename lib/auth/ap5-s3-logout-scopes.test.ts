@@ -20,8 +20,8 @@ describe('AP-5-S3 Vertrag und Accessibility', () => {
     assert.equal(seite.includes('SecurityLogout'), true)
     assert.equal(komponente.includes('data-logout-action={scope}'), true)
     assert.equal(komponente.includes('accountLogoutScopeAction(scope)'), true)
-    assert.equal(aktion.includes("client.auth.signOut({ scope: options.scope })"), true)
-    assert.equal(aktion.includes('signOut()'), false)
+    assert.equal(aktion.includes('signOut({ scope: options.scope })'), true)
+    assert.equal(aktion.includes('await supabase.auth.signOut()'), false)
     assert.equal(logik.includes("['local', 'others', 'global']"), true)
     assert.equal(logik.includes('logoutNutzlast'), true)
     assert.equal(logik.includes('Dieses Gerät abmelden'), true)
@@ -62,7 +62,7 @@ describe('AP-5-S3 Vertrag und Accessibility', () => {
     assert.equal(komponente.includes('variant={aktion.gefaehrlich ? "destructive" : "outline"}'), true)
     assert.equal(komponente.includes('Ja, überall abmelden'), true)
     assert.equal(komponente.includes('aria-describedby={hinweisId}'), true)
-    assert.equal(komponente.includes('window.location.assign("/")'), true)
+    assert.equal(komponente.includes('window.location.assign(new URL("/", window.location.origin).toString())'), true)
   })
 
   test('kein Session-Listing, kein S4/S5 und keine Secret-Logs', () => {
