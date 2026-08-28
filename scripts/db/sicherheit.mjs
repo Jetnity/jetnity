@@ -1606,6 +1606,201 @@ function reisenachweise() {
       code: '23514',
     },
     {
+      name: 'Dreizehntes Dokument am selben Traveller wird abgelehnt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trip_traveller_documents
+              (traveller_id, trip_id, client_ref, document_type)
+            select '${TRAVELLER}', '${REISE}', 'document:extra:' || g, 'unknown'
+              from generate_series(1, 12) as g`,
+      erwartung: 'abgelehnt',
+      code: '23514',
+    },
+    {
+      name: 'Zwanzig Reisende je Reise bleiben zulässig',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trips (id, user_id, client_ref, title)
+              values ('cccccccc-0000-4000-8000-000000000001', '${NUTZER}', 'cap-20', 'Party-Cap');
+            insert into public.trip_travellers (trip_id, user_id, client_ref)
+              select 'cccccccc-0000-4000-8000-000000000001', '${NUTZER}', 'traveller:' || g
+                from generate_series(1, 20) as g;
+            select * from public.trip_travellers
+             where trip_id = 'cccccccc-0000-4000-8000-000000000001'`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'Einundzwanzigster Reisender per direktem DML wird abgelehnt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trips (id, user_id, client_ref, title)
+              values ('cccccccc-0000-4000-8000-000000000002', '${NUTZER}', 'cap-21', 'Party-Cap-21');
+            insert into public.trip_travellers (trip_id, user_id, client_ref)
+              select 'cccccccc-0000-4000-8000-000000000002', '${NUTZER}', 'traveller:' || g
+                from generate_series(1, 20) as g;
+            insert into public.trip_travellers (trip_id, user_id, client_ref)
+              values ('cccccccc-0000-4000-8000-000000000002', '${NUTZER}', 'traveller:21')`,
+      erwartung: 'abgelehnt',
+      code: '23514',
+    },
+    {
+      name: 'Inkrementelles party_schreiben sprengt das Party-Limit nicht',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trips (id, user_id, client_ref, title)
+              values ('cccccccc-0000-4000-8000-000000000003', '${NUTZER}', 'cap-rpc', 'Party-RPC');
+            insert into public.trip_travellers (trip_id, user_id, client_ref)
+              select 'cccccccc-0000-4000-8000-000000000003', '${NUTZER}', 'traveller:' || g
+                from generate_series(1, 19) as g;
+            select public.party_schreiben(jsonb_build_object(
+              'tripId', 'cccccccc-0000-4000-8000-000000000003',
+              'party', jsonb_build_array(
+                jsonb_build_object('clientRef', 'traveller:20', 'citizenships', '[]'::jsonb, 'documents', '[]'::jsonb),
+                jsonb_build_object('clientRef', 'traveller:21', 'citizenships', '[]'::jsonb, 'documents', '[]'::jsonb)
+              )
+            ))`,
+      erwartung: 'abgelehnt',
+      code: '23514',
+    },
+    {
+      name: 'Reparenting in eine volle Reise wird abgelehnt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trips (id, user_id, client_ref, title)
+              values
+                ('cccccccc-0000-4000-8000-000000000004', '${NUTZER}', 'cap-src', 'Quelle'),
+                ('cccccccc-0000-4000-8000-000000000005', '${NUTZER}', 'cap-dst', 'Ziel voll');
+            insert into public.trip_travellers (trip_id, user_id, client_ref)
+              select 'cccccccc-0000-4000-8000-000000000005', '${NUTZER}', 'traveller:' || g
+                from generate_series(1, 20) as g;
+            insert into public.trip_travellers (id, trip_id, user_id, client_ref)
+              values ('cccccccc-0000-4000-8000-000000000014', 'cccccccc-0000-4000-8000-000000000004', '${NUTZER}', 'traveller:move');
+            update public.trip_travellers
+               set trip_id = 'cccccccc-0000-4000-8000-000000000005'
+             where id = 'cccccccc-0000-4000-8000-000000000014'`,
+      erwartung: 'abgelehnt',
+      code: '23514',
+    },
+    {
+      name: 'Citizenship-Reparent auf einen vollen Traveller wird abgelehnt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trips (id, user_id, client_ref, title)
+              values ('cccccccc-0000-4000-8000-000000000006', '${NUTZER}', 'cit-reparent', 'Citizenship-Reparent');
+            insert into public.trip_travellers (id, trip_id, user_id, client_ref)
+              values
+                ('cccccccc-0000-4000-8000-000000000016', 'cccccccc-0000-4000-8000-000000000006', '${NUTZER}', 'traveller:voll'),
+                ('cccccccc-0000-4000-8000-000000000017', 'cccccccc-0000-4000-8000-000000000006', '${NUTZER}', 'traveller:quelle');
+            insert into public.trip_traveller_citizenships
+              (traveller_id, trip_id, user_id, client_ref, country_code)
+            select 'cccccccc-0000-4000-8000-000000000016', 'cccccccc-0000-4000-8000-000000000006', '${NUTZER}',
+                   'citizenship:V' || g, 'A' || chr(64 + g)
+              from generate_series(1, 8) as g;
+            insert into public.trip_traveller_citizenships
+              (id, traveller_id, trip_id, user_id, client_ref, country_code)
+              values ('cccccccc-0000-4000-8000-000000000018', 'cccccccc-0000-4000-8000-000000000017',
+                      'cccccccc-0000-4000-8000-000000000006', '${NUTZER}', 'citizenship:ZZ', 'ZZ');
+            update public.trip_traveller_citizenships
+               set traveller_id = 'cccccccc-0000-4000-8000-000000000016'
+             where id = 'cccccccc-0000-4000-8000-000000000018'`,
+      erwartung: 'abgelehnt',
+      code: '23514',
+    },
+    {
+      name: 'Document-Reparent auf einen vollen Traveller wird abgelehnt',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trips (id, user_id, client_ref, title)
+              values ('cccccccc-0000-4000-8000-000000000007', '${NUTZER}', 'doc-reparent', 'Document-Reparent');
+            insert into public.trip_travellers (id, trip_id, user_id, client_ref)
+              values
+                ('cccccccc-0000-4000-8000-000000000026', 'cccccccc-0000-4000-8000-000000000007', '${NUTZER}', 'traveller:voll'),
+                ('cccccccc-0000-4000-8000-000000000027', 'cccccccc-0000-4000-8000-000000000007', '${NUTZER}', 'traveller:quelle');
+            insert into public.trip_traveller_documents
+              (traveller_id, trip_id, user_id, client_ref, document_type)
+            select 'cccccccc-0000-4000-8000-000000000026', 'cccccccc-0000-4000-8000-000000000007', '${NUTZER}',
+                   'document:V' || g, 'unknown'
+              from generate_series(1, 12) as g;
+            insert into public.trip_traveller_documents
+              (id, traveller_id, trip_id, user_id, client_ref, document_type)
+              values ('cccccccc-0000-4000-8000-000000000028', 'cccccccc-0000-4000-8000-000000000027',
+                      'cccccccc-0000-4000-8000-000000000007', '${NUTZER}', 'document:extra', 'unknown');
+            update public.trip_traveller_documents
+               set traveller_id = 'cccccccc-0000-4000-8000-000000000026'
+             where id = 'cccccccc-0000-4000-8000-000000000028'`,
+      erwartung: 'abgelehnt',
+      code: '23514',
+    },
+    {
+      name: 'party_loeschen entfernt den eigenen Reisenden und die Readiness',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `insert into public.trips (id, user_id, client_ref, title)
+              values ('cccccccc-0000-4000-8000-000000000008', '${NUTZER}', 'del-own', 'Delete');
+            insert into public.trip_travellers (id, trip_id, user_id, client_ref)
+              values ('cccccccc-0000-4000-8000-000000000038', 'cccccccc-0000-4000-8000-000000000008', '${NUTZER}', 'traveller:del');
+            insert into public.trip_traveller_citizenships
+              (traveller_id, trip_id, user_id, client_ref, country_code)
+              values ('cccccccc-0000-4000-8000-000000000038', 'cccccccc-0000-4000-8000-000000000008', '${NUTZER}', 'citizenship:CH', 'CH');
+            insert into public.trip_readiness_items
+              (id, trip_id, user_id, client_ref, kind, user_status, context_fingerprint, traveller_id)
+              values ('cccccccc-0000-4000-8000-000000000039', 'cccccccc-0000-4000-8000-000000000008', '${NUTZER}',
+                      'entry_check:del', 'entry_check', 'open', 'v1|del', 'cccccccc-0000-4000-8000-000000000038');
+            select public.party_loeschen(jsonb_build_object(
+              'tripId', 'cccccccc-0000-4000-8000-000000000008',
+              'clientRef', 'traveller:del'
+            ));
+            select id from public.trip_travellers where id = 'cccccccc-0000-4000-8000-000000000038'
+            union all
+            select id from public.trip_readiness_items where id = 'cccccccc-0000-4000-8000-000000000039'
+            union all
+            select id from public.trip_traveller_citizenships where traveller_id = 'cccccccc-0000-4000-8000-000000000038'`,
+      erwartung: 'leer',
+    },
+    {
+      name: 'party_loeschen ist idempotent bei fehlender Ref',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select public.party_loeschen(jsonb_build_object(
+              'tripId', '${REISE}',
+              'clientRef', 'traveller:fehlt'
+            ))`,
+      erwartung: 'erlaubt',
+    },
+    {
+      name: 'party_loeschen löscht keinen fremden Reisenden',
+      rolle: 'authenticated',
+      uid: ZWEITER,
+      sql: `select public.party_loeschen(jsonb_build_object(
+              'tripId', '${REISE}',
+              'clientRef', 'traveller:1'
+            ))`,
+      erwartung: 'abgelehnt',
+      code: '42501',
+    },
+    {
+      name: 'anon darf party_loeschen nicht ausführen',
+      rolle: 'anon',
+      sql: `select public.party_loeschen(jsonb_build_object(
+              'tripId', '${REISE}',
+              'clientRef', 'traveller:1'
+            ))`,
+      erwartung: 'abgelehnt',
+    },
+    {
+      name: 'party_loeschen bleibt SECURITY INVOKER',
+      rolle: 'authenticated',
+      uid: NUTZER,
+      sql: `select p.proname
+              from pg_proc p
+              join pg_namespace n on n.oid = p.pronamespace
+             where n.nspname = 'public'
+               and p.proname = 'party_loeschen'
+               and p.prosecdef = false`,
+      erwartung: 'erlaubt',
+    },
+
+    {
       name: 'Vorbereitungspunkt lehnt Passnummer-Titel ab',
       rolle: 'authenticated',
       uid: NUTZER,
