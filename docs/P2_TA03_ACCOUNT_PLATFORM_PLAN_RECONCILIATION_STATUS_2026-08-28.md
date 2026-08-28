@@ -77,7 +77,7 @@ Keine Runtime-, Migrations-, Config- oder Schema-Datei.
 
 | Slice | Einordnung | Nächster sinnvoller Schnitt | Gate |
 | --- | --- | --- | --- |
-| AP-5 Sicherheit | **not started** | In-Account-Passwort, Sessions, Logout-all ohne Schema, wenn API reicht | Auth-Shared; PO nur bei MFA/AAL-Grundlogik |
+| AP-5 Sicherheit | **not started** | In-Account-Passwort **im bestehenden Reauthentication-Vertrag** (`secure_password_change`; kein Current-Password-Submit), Sessions, Logout-all ohne Schema, wenn API reicht | Auth-Shared; PO nur bei MFA/AAL-Grundlogik oder Auth-Vertragswechsel |
 | AP-6a Legal | **not started** | echte `/privacy` `/terms` mit PO-/Legal-Text | Legal-/PO-Inhalt; kein Text erfinden |
 | AP-6b Privacy-DB | **gated** | Consent, Export, Delete | PO + Migration + Admin-Overlap |
 | AP-7 Registry | **gated / Shared-Contract-Blocker** | zuerst ADR-Nachfolger + PO | Identity/RLS/Traveller/Guest→Account |
@@ -118,4 +118,10 @@ Offen bis Finalreview: Exact-Head Actions/Vercel auf dem **finalen** Author-Head
 
 ## 7. Nächster Schritt
 
-Kein Folgeslice. Nicht Ready. Nicht mergen. Technical Lead reviewed Draft-PR #117 unabhängig.
+Technical-Lead Review `5046697270` **CHANGES REQUIRED** umgesetzt:
+
+1. AP-5 Tests/Evidence und umgebende Formulierung: bestehender Reauthentication-Vertrag (`secure_password_change`); kein erfundenes Current-Password-Submit.
+2. Historische `Status:`-Zeilen in den beiden Audit-Dateien wiederhergestellt; Nachtrag steht separat darunter.
+3. PR-Body auf den author-complete Docs-Scope aktualisiert.
+
+Kein Folgeslice. Nicht Ready. Nicht mergen. Technical Lead führt den Re-Review unabhängig.

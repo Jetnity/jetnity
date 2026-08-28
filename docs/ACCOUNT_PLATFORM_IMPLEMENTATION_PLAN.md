@@ -254,13 +254,13 @@ Jeder Slice braucht vor Start einen eigenen Technical-Lead-Task, einen frischen 
 
 | Feld | Wert |
 | --- | --- |
-| Produktziel | Eingeloggte Sicherheitssteuerung: Passwort ändern, sichtbare Sitzungen, nachvollziehbares Logout-all, MFA-Schritt vor riskanten Änderungen – ohne neue Auth-Architektur. |
-| Bereits vorhanden | `/account/security` TOTP-Enroll/Unenroll; Login-MFA; Recovery-Passwort; Admin-AAL2 getrennt. |
-| Fehlt | In-Account-Passwortänderung; Session-/Geräteliste; Logout-all, falls die vorhandene Supabase-API das **ohne Schema** hergibt; explizites Step-up vor Enroll/Unenroll, falls heutiges `SecurityMFA` das nicht bereits erzwingt. |
-| Shared Contracts | Auth / Sessions / MFA / AAL. UI-Auffindbarkeit ist kein neuer Vertrag. Eine Consumer-AAL2-Pflicht oder MFA-Grundlogik **ist** ein Shared Contract. |
-| Security | Keine Secrets loggen. Recovery und In-Account-Change nicht vermischen. Enumeration vermeiden. |
+| Produktziel | Eingeloggte Sicherheitssteuerung: auffindbare Passwortänderung **innerhalb des bestehenden Auth-Vertrags**, sichtbare Sitzungen, nachvollziehbares Logout-all, MFA-Schritt vor riskanten Änderungen – ohne neue Auth-Architektur. |
+| Bereits vorhanden | `/account/security` TOTP-Enroll/Unenroll; Login-MFA; Recovery-Passwort über Rücksetzlink (`app/auth/update-password/page.tsx`); Admin-AAL2 getrennt. Auth-Vertrag: `auth.email.secure_password_change = true` verlangt kürzlich bestätigte Reauthentication (`security_update_password_require_reauthentication`). `security_update_password_require_current_password` ist **aus**. Belegt: `supabase/config.toml`, `docs/AUTH.md`. |
+| Fehlt | In-Account-Oberfläche für die bereits existierende Passwortänderung, ohne den Reauthentication-Vertrag zu ersetzen; Session-/Geräteliste; Logout-all, falls die vorhandene Supabase-API das **ohne Schema** hergibt; explizites Step-up vor Enroll/Unenroll, falls heutiges `SecurityMFA` das nicht bereits erzwingt. |
+| Shared Contracts | Auth / Sessions / MFA / AAL. UI-Auffindbarkeit ist kein neuer Vertrag. Eine Consumer-AAL2-Pflicht, MFA-Grundlogik oder ein Wechsel auf „aktuelles Passwort mitsenden“ **ist** ein Shared Contract und hier nicht entschieden. |
+| Security | Keine Secrets loggen. Recovery-Link und In-Account-Change nicht zu einem zweiten Passwort-Vertrag vermischen. Enumeration vermeiden. |
 | Privacy | Keine Geräte-/Session-Metadaten ins Marketing. |
-| Auth / MFA / AAL | Keine fundamentale Änderung. Admin-AAL2 nicht anfassen. Kein zweiter Production-AAL2-Apply. |
+| Auth / MFA / AAL | Keine fundamentale Änderung. Bestehenden Reauthentication-Vertrag erhalten. Kein `current-password`-Submit erfinden. Admin-AAL2 nicht anfassen. Kein zweiter Production-AAL2-Apply. |
 | Identity / RLS | keine |
 | Traveller | keine; kein Dokumentbezug |
 | Guest→Account | keine |
@@ -270,8 +270,8 @@ Jeder Slice braucht vor Start einen eigenen Technical-Lead-Task, einen frischen 
 | Persistenz | **keine Migration**, wenn Supabase-Auth-API reicht. Schema nur nach gesondertem Gate. |
 | Product-Owner-Gate | ja, sobald MFA-/AAL-Grundlogik, Session-Architektur oder Production-Auth-Config geändert wird. Reine UI über vorhandene Auth-API: normales TL-Gate. |
 | Parallelität | nicht parallel zu AP-6b/AP-7/AP-8. AP-6a Legal ist dateiarm und darf parallel assigned werden. |
-| Non-Scope | Auth-Config-Push, OAuth/Passkey live schalten, Consumer-AAL2-Pflicht, Admin-AAL2, Identity, RLS, AP-7 |
-| Tests / Evidence | Passwort-Change nur mit aktuellem Passwort; fremde Session nicht sichtbar; Logout-all fail-closed dokumentieren, wenn API fehlt; Empty ≠ Error; keine Browser-Behauptung ohne Lauf. |
+| Non-Scope | Auth-Config-Push; OAuth/Passkey live schalten; Consumer-AAL2-Pflicht; Admin-AAL2; Identity; RLS; AP-7; neues „aktuelles Passwort mitsenden“, solange kein separat freigegebener Auth-Vertragswechsel das verlangt |
+| Tests / Evidence | Passwortänderung bleibt am bestehenden Reauthentication-Vertrag (`secure_password_change`); kein Test darf Current-Password-Submit als Product Truth verlangen; fremde Session nicht sichtbar; Logout-all fail-closed dokumentieren, wenn API fehlt; Empty ≠ Error; keine Browser-Behauptung ohne Lauf. |
 | Reihenfolge | Default nächster **Account-Programm**-Kandidat nach diesem Reconciliation-PR. **Nicht durch P2-TA-03 gestartet.** |
 
 ### AP-6a – Privacy-Foundation ohne DB

@@ -54,6 +54,6 @@ Kein neuer Vertrag. ADR-0179 entscheidet nur die Kanonizität des Plans. AP-7-Fr
 
 ## Nächster Schritt
 
-Unabhängiger Technical-Lead-Finalreview von PR #117.
+Technical-Lead Finalreview `5046697270` war **CHANGES REQUIRED**. Die drei geforderten Korrekturen (AP-5 Reauthentication-Vertrag, historische Status-Zeilen unverändert lassen, PR-Body auf den finalen Docs-Scope) sind in diesem Korrektur-Lauf umgesetzt. Danach erneut Exact-Head-Gates und STOPP für Re-Review.
 
 Nicht Ready setzen. Nicht mergen. Keinen AP-5- oder AP-6a-Runtime-Slice aus diesem Handoff starten.
