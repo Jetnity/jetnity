@@ -1,7 +1,7 @@
 # Jetnity – verbindliche Cursor-Agent-Session-Rotation und Namensführung
 
-Stand: 26. August 2026  
-Status: **Product-Owner-verbindlich; für alle aktuellen und zukünftigen ChatGPT-/Technical-Lead-Chats sowie alle Cursor-Agenten verpflichtend**
+Stand: 26. August 2026; Nachtrag 28. August 2026  
+Status: **Product-Owner-verbindlich; für alle aktuellen und zukünftigen ChatGPT-/Technical-Lead-Chats sowie alle Cursor-Agenten verpflichtend. Session-Rotation gilt unverändert: gleicher Slice/PR/unmittelbarer Review-Fix = dieselbe Session; neuer logischer Slice = frische nummerierte Generation. Ready/Merge bleibt ausschließlich beim Technical Lead; siehe `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`.**
 
 ## 1. Grundprinzip
 
@@ -82,11 +82,14 @@ Ein frischer Agent bekommt **nicht** einfach den gesamten alten Chat als Wahrhei
 Er startet aus:
 
 1. `JETNITY_START_HERE.md`;
-2. kanonischer Pflichtlektüre;
-3. aktuellem `main` und Live-Evidence;
-4. aktuellem Workstream-Task/Status/Handoff;
-5. relevanten ADRs;
-6. einem neuen versionierten Technical-Lead-Auftrag.
+2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`;
+3. kanonischer Pflichtlektüre;
+4. aktuellem `main` und Live-Evidence;
+5. aktuellem Workstream-Task/Status/Handoff;
+6. relevanten ADRs;
+7. einem neuen versionierten Technical-Lead-Auftrag.
+
+Eine Rotation oder eine neue Generation erzeugt **keine** Ready-/Merge-Autorität. Cursor-Agenten setzen niemals Ready und mergen niemals.
 
 Historische Agenten-Chats bleiben Evidence, aber operative Wahrheit kommt aus Repository + Live-Systemen.
 

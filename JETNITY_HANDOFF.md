@@ -1,13 +1,14 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **Kanonischer finaler Post-PR-#138-Chat-Übergabestand. AP-5 Gate 0, AP-5-S1 und AP-5-S2 sind integriert; Issues #128, #132 und #136 sind CLOSED / completed. PR #138 Post-Merge-Continuity ist integriert. Es läuft kein freigegebener neuer Produkt-Slice. S3–S5, C2, AP-7, TW-8/TW-9 und Provider S5-B sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **Kanonischer Post-PR-#141-Chat-Übergabestand. PR #141 Provider S5-B Gate 0 ist integriert als docs/readiness only. PR #138 Post-Merge-Continuity bleibt integriert. Es läuft kein freigegebener neuer Produkt-Slice. S5-B Runtime/Persistenz, S3–S5, C2, AP-7 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
 Aktuellster versionierter finaler Post-Merge-Checkpoint:
 
-- `docs/CHATGPT_PR138_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – neueste Chat-Übergabe-Evidence nach PR #138
+- `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – neueste Chat-Übergabe-Evidence nach PR #141
+- `docs/CHATGPT_PR138_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – Post-Merge-Evidence nach PR #138
 - `docs/CHATGPT_PR137_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – integrierter AP-5-S2-Runtime-Stand vor dem finalen #138-Continuity-Merge
 - `docs/AP5_S2_PASSWORD_REAUTH_STATUS_2026-08-28.md` – S2-Author-Evidence
 - `docs/AP5_S1_SECURITY_UI_TRUTH_STATUS_2026-08-28.md` – integrierter S1-Stand
@@ -22,37 +23,52 @@ Die ausführliche vorherige Fassung dieses Handoffs bleibt byte-identisch als hi
 Zuerst vollständig lesen:
 
 1. `JETNITY_START_HERE.md`
-2. `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`
-3. `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
-4. `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`
-5. `docs/JETNITY_GUARDIAN_AND_WHAT_IF_SIMULATOR_STANDARD.md`
-6. `docs/JETNITY_MARKETING_GROWTH_STANDARD.md`
-7. `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`
-8. `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`
-9. `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`
-10. `docs/JETNITY_FUTURE_NATIVE_APP_AND_TECHNICAL_LEAD_STANDARD.md`
-11. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-12. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
-13. `JETNITY_HANDOFF.md`
-14. `docs/CHATGPT_PR138_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
-15. `docs/CHATGPT_PR137_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
-16. `docs/ACTIVE_WORK_STATUS.md`
-17. `ROADMAP.md`
-18. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`
-19. `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`
-20. `docs/CHATGPT_PR129_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
-21. `docs/CHATGPT_PR113_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
-22. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_STATUS_2026-08-27.md`
-23. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
-24. danach alle für den betrachteten Workstream relevanten Slice-Tasks, Statusdateien, Handoffs, ADRs, Reviews und Checkpoints.
+2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+3. `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`
+4. `docs/JETNITY_ENGINEERING_EXCELLENCE_STANDARD.md`
+5. `docs/JETNITY_PRODUCT_POSITIONING_STANDARD.md`
+6. `docs/JETNITY_GUARDIAN_AND_WHAT_IF_SIMULATOR_STANDARD.md`
+7. `docs/JETNITY_MARKETING_GROWTH_STANDARD.md`
+8. `docs/ADMIN_MARKETING_GROWTH_CONTROL_CENTER_STANDARD.md`
+9. `docs/JETNITY_AI_SEARCH_DISCOVERABILITY_STANDARD.md`
+10. `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`
+11. `docs/JETNITY_FUTURE_NATIVE_APP_AND_TECHNICAL_LEAD_STANDARD.md`
+12. `docs/JETNITY_BINDING_BUILD_ORDER.md`
+13. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
+14. `JETNITY_HANDOFF.md`
+15. `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+16. `docs/CHATGPT_PR138_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+17. `docs/CHATGPT_PR137_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+18. `docs/ACTIVE_WORK_STATUS.md`
+19. `ROADMAP.md`
+20. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`
+21. `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`
+22. `docs/CHATGPT_PR129_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+23. `docs/CHATGPT_PR113_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
+24. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_STATUS_2026-08-27.md`
+25. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
+26. danach alle für den betrachteten Workstream relevanten Slice-Tasks, Statusdateien, Handoffs, ADRs, Reviews und Checkpoints.
 
-Hinweis: Ältere Gate-0-, S1-, S2- und PR-#138-Draft-Aussagen sind historische Evidence ihres jeweiligen Zeitpunkts. AP-5-S1 / Issue #132 / PR #133 ist integriert. AP-5-S2 / Issue #136 / PR #137 ist integriert. PR #138 ist ebenfalls integriert. S3–S5 starten nicht aus S2. Product-Owner-Sondergates bleiben AP-5-P1–P4 sowie separate P5/C2-/Identity-/RLS-/Production-Gates.
+Hinweis: Ältere Gate-0-, S1-, S2- und PR-#138-Draft-Aussagen sind historische Evidence ihres jeweiligen Zeitpunkts. AP-5-S1 / Issue #132 / PR #133 ist integriert. AP-5-S2 / Issue #136 / PR #137 ist integriert. PR #138 ist ebenfalls integriert. PR #141 Provider S5-B Gate 0 ist integriert als docs/readiness only; S5-B Runtime ist nicht gestartet. S3–S5 starten nicht aus S2. Product-Owner-Sondergates bleiben AP-5-P1–P4 sowie separate P5/C2-/Identity-/RLS-/Production-Gates.
 
 Danach live prüfen: `main`, offene PRs/Drafts, Branches, Merge-Base/Ahead/Behind, tatsächliche Diffs, Review-Threads, Actions, Vercel, relevante Supabase-/Production-Grenzen und P0/P1/P2/P3-Risiken.
 
 ## 2. Letzter vollständig verifizierter Chat-Übergabepunkt
 
-Finaler Stand vor diesem Handoff-Finalisierungs-PR:
+Letzter integrierter Post-Merge vor diesem Governance-Slice:
+
+- PR #141: **MERGED** – Provider S5-B Gate 0, docs/readiness only
+- Reviewed Exact Head: `a2f1f0a80e5715b5ab0fef39b671dd887ae0204b`
+- Pre-Merge GitHub Actions Run `33180483619`: **SUCCESS** auf exakt diesem Head
+- Pre-Merge Vercel Preview `dpl_8tGmMtJvHhUUBrccy7mqyesqYCrd`: **READY** auf exakt diesem Head
+- Merge / verifizierter `main`: `3b119ae34843b40d043ed921070c60e35dd1517a`
+- Post-Merge GitHub Actions Run `33182424045`: **SUCCESS** auf exakt diesem `main`
+- Post-Merge Vercel Production `dpl_BmpsTYQC3ANoMT1z33pjMVYws2nS`: **READY** auf exakt diesem `main`
+- Branch Protection: unverändert `protected=false`
+- S5-B Runtime/Persistenz/Schema/Migration: **nicht** gestartet; TW-8 bleibt geschlossen
+- Checkpoint: `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+
+Historischer vorheriger Chat-Übergabepunkt (PR #138, bleibt Evidence):
 
 - PR #138: **MERGED**
 - Reviewed Exact Head: `54bc9d2fb062341b8ff8b8e4b92f0666af725d79`
@@ -163,9 +179,10 @@ Nach AP-5 bleiben gemäß kanonischem Account-Plan AP-6a/6b, AP-7, AP-8, AP-9, A
 
 - S1–S3 integriert
 - S5-A integriert
-- S5-B nicht automatisch gestartet
+- S5-B Gate 0 integriert (PR #141, docs/readiness only)
+- S5-B Runtime/Persistenz/Schema/Migration **nicht** gestartet und nicht autorisiert
 - keine echten Provider/Secrets/Verträge/paid calls aktiviert
-- TW-8 bleibt gegated
+- TW-8 bleibt geschlossen
 
 ### Admin / AAL2
 
@@ -206,7 +223,11 @@ Keine neue Persistenz von Passnummern, Passscans, MRZ, Biometrie oder anderen be
 
 > **AUTONOM MERGEN IST ERLAUBT. BLIND MERGEN IST VERBOTEN.**
 
-Normale scope-treue PRs dürfen nach unabhängigem Exact-Head-Review Ready gesetzt und gemergt werden.
+> **Nur ChatGPT / Technical Lead darf Ready setzen oder mergen. Cursor-Agenten tun das niemals.**
+
+Current Truth: `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`.
+
+Normale scope-treue PRs darf der Technical Lead nach unabhängigem Exact-Head-Review Ready setzen und mergen, und nur wenn er absolut überzeugt ist, dass dies die beste verantwortbare Entscheidung ist.
 
 Vor jedem Merge mindestens prüfen:
 
@@ -241,7 +262,7 @@ Nach Live-Rekonstruktion neu einordnen:
 - Issue #110: spätere natürliche Homepage-Mehrziel-Eingabe
 - Visitor Search Real-Device-Browser-Evidence bleibt separat zu prüfen
 - `officialFingerprint` kann außerhalb #112 bei fehlendem `documents[]` Legacy-Singularfelder lesen; separat bewerten, nicht P2-TA-06 erneut öffnen
-- Provider S5-B nicht gestartet
+- Provider S5-B Gate 0 integriert (docs/readiness); S5-B Runtime nicht gestartet
 - TW-8 gated
 - TW-9 nicht automatisch starten
 - AP-5-S3–S5 nicht automatisch starten
@@ -296,6 +317,8 @@ Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logisc
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
+Aktueller docs-only Governance-Slice, kein Produkt-Folgeslice: Draft-PR #142 unabhängig reviewen. Autor-Agent setzt kein Ready und kein Merge.
+
 **Kein Produkt-Folgeslice ist an diesem Chat-Übergabepunkt automatisch freigegeben.**
 
 Der nächste Chat muss zuerst den vollständigen Live-Zustand rekonstruieren und anschließend Binding Build Order, Abhängigkeiten, Parallelität und Product-Owner-Gates neu bewerten.
@@ -309,7 +332,7 @@ Nicht automatisch starten:
 - P2-TA-04 C2
 - TW-8
 - TW-9
-- S5-B / Provider-live
+- S5-B Runtime / Provider-live
 - neue globale AAL2-Arbeit
 - Direction A
 - Homepage-Mehrziel-Runtime

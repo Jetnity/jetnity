@@ -1,7 +1,15 @@
 # Jetnity – Technical-Lead Merge Autonomy Supersession
 
-Stand: 26. August 2026  
-Status: **aktuelle ausdrückliche Product-Owner-Entscheidung / höchste Merge-Governance nach der jeweils aktuellen Nutzerentscheidung**
+Stand: 26. August 2026; Nachtrag 28. August 2026  
+Status: **26.-August-Merge-Autonomie bleibt gültig. Workflow, exklusive Ready-/Merge-Ausführung und Cursor-Grenze sind seit 28. August 2026 durch `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md` präzisiert / teilweise superseded. Historischen 26.-August-Text nicht kosmetisch umschreiben.**
+
+Nachtrag, 28. August 2026 – Product-Owner-Entscheidung:
+
+- **Nur ChatGPT / Technical Lead** darf Ready setzen oder mergen.
+- **Cursor-Agenten dürfen niemals Ready setzen oder mergen.**
+- Ein normaler scope-treuer PR darf vom Technical Lead nur nach unabhängigem Exact-Head-Review und nur dann autonom gemergt werden, wenn der Technical Lead absolut überzeugt ist, dass dies die beste verantwortbare Entscheidung ist.
+- Besondere Product-Owner-Gates bleiben unverändert.
+- Verbindlicher Workflow: versionierter Task → Draft-PR → `@cursor` → unabhängiger Technical-Lead-Review → head-gebundene CHANGES REQUIRED → neuer Head + Re-Gating → PASS → Technical-Lead-only Ready/Merge → Post-Merge-Verifikation.
 
 ## 1. Aktuelle verbindliche Entscheidung
 
@@ -85,12 +93,13 @@ Pflicht dabei:
 
 ## 7. Vorrang / Supersession
 
-Für Ready/Merge gilt ab dieser Entscheidung folgende Priorität:
+Für Ready/Merge gilt ab dem 28. August 2026 folgende Priorität:
 
 1. die **aktuellste ausdrückliche Product-Owner-/Nutzerentscheidung**;
-2. `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`;
-3. besondere Production-/Kosten-/Provider-/Payment-/Sensitive-Data-/Auth-/Launch-Gates;
-4. übrige Governance-/Autonomie-/Workflow-Dokumente.
+2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`;
+3. dieses Dokument, soweit nicht durch das Operating Standard präzisiert/superseded;
+4. besondere Production-/Kosten-/Provider-/Payment-/Sensitive-Data-/Auth-/Launch-Gates;
+5. übrige Governance-/Autonomie-/Workflow-Dokumente.
 
 Diese Datei superseded für normale PRs die frühere per-PR-Merge-Pflicht aus:
 

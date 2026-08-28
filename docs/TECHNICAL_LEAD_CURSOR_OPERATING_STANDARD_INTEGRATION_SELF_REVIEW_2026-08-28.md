@@ -1,38 +1,29 @@
 # Technical Lead / Cursor Operating Standard – Agent Self-Review
 
 Stand: 28. August 2026  
-Status: **SELF-REVIEW ONLY / KEINE FREIGABE / KEIN PASS**  
+Status: **SELF-REVIEW ONLY / REVIEW-FIX FÜR 5454244491 / KEINE FREIGABE / KEIN PASS**  
 Agent: `Cursor-Agent: Jetnity quality security audit 3`  
-PR: https://github.com/Jetnity/jetnity/pull/142
+PR: https://github.com/Jetnity/jetnity/pull/142  
+Gegen: Technical-Lead-Kommentar `5454244491` auf Head `0bce940cbbc16d41efe6a0b3b38f7b5c5d1de77b`
 
-Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead-Review.
+Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead-Re-Review. Gates auf `0bce940c` gelten nicht für den neuen Head.
 
 ---
 
-## 1. Geforderter Minimalumfang
+## 1. Die drei Findings
 
-| Forderung | Ergebnis |
-| --- | --- |
-| Operating Standard früh in `JETNITY_START_HERE.md` | ja – Pflichtlektüre-Item 2 und New-Chat-Regel 2 |
-| Nur Technical Lead darf Ready/Merge; Cursor niemals | ja – Start Here Regel 6 + Abschnitt 3; Autonomie-Policy; Workstream §6.2 |
-| Autonomie- und/oder Workstream-Datei mit explizitem Vorrang | ja – beide, minimal |
-| Session-Rotation unverändert, sofern kein Widerspruch | ja – Datei restored auf `origin/main` |
-| Historischen `CHATGPT_CURSOR_WORKFLOW.md` nicht kosmetisch umschreiben | ja – Datei restored auf `origin/main` |
-| Keine allgemeine Governance-Umschreibung | ja – Extra-Dateien restored |
+| # | Forderung | Wo korrigiert |
+| --- | --- | --- |
+| 1 | Stale Draft-PR-#138-Next-Step in START_HERE §16 | `JETNITY_START_HERE.md` §16: PR #138 als integriert/historisch; aktueller Slice bleibt Draft-PR #142 |
+| 2 | PR-#141-Post-Merge-Continuity | neuer Checkpoint; Handoff/START_HERE-Pointer; S5-B Runtime/TW-8 ausdrücklich nicht gestartet |
+| 3 | Autonomie-Approval-Record irreführend aktuell | Top-Banner historical/superseded; historischer Body unangetastet |
 
-## 2. Diff-Selbstprüfung
+## 2. Nicht erweitert
 
-Current-Truth-Änderungen beschränkt auf:
-
-- `JETNITY_START_HERE.md`
-- `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
-- `docs/JETNITY_AGENT_WORKSTREAM_GOVERNANCE.md`
-- `docs/ACTIVE_WORK_STATUS.md` (nur aktueller Arbeitsblock)
-- diese Status-/Self-Review-Dateien
-- bereits vorhandene Operating-Standard- und Task-Dateien
-
-Keine Runtime-, Schema-, Supabase-, Auth- oder Branch-Protection-Datei.
+- `.cursor` Always-Apply-Regel bleibt.
+- Keine Umschreibung alter Slice-Tasks/ADRs/Checkpoints.
+- Keine Runtime, kein Schema, kein Supabase, kein Auth/RLS/AAL, kein Provider-Live, kein TW-8, kein AP-5-S3, keine Branch Protection, kein Ready, kein Merge.
 
 ## 3. STOP
 
-Unabhängiger Technical-Lead-Review auf dem neuen Exact Head. Kein Ready. Kein Merge. Kein Folgeslice.
+Unabhängiger Technical-Lead-Re-Review auf dem neuen Exact Head.

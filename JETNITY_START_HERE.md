@@ -7,6 +7,7 @@ Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production G
 
 Aktuelle operative Evidence:
 
+- `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – neueste Post-Merge-Evidence nach PR #141
 - `JETNITY_HANDOFF.md`
 - `docs/ACTIVE_WORK_STATUS.md`
 - `docs/CHATGPT_PR113_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`
@@ -36,6 +37,12 @@ Aktuelle operative Evidence:
 - historischer Continuity-Checkpoint: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`
 
 ## 1. Pflichtlektüre vor jeder Aktion
+
+Jeder neue ChatGPT-Technical-Lead liest **zuerst** dieses Dokument und **unmittelbar danach**, noch bevor er ändert, reviewed, Ready setzt oder merget:
+
+`docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
+
+Das ist die verbindliche chatübergreifende Arbeitsweise für Steuerung, unabhängigen Review, exklusive Ready-/Merge-Autorität, Cursor-Session-Rotation und Post-Merge-Verifikation. Ein neuer Chat erfindet keinen vereinfachten Ersatzworkflow.
 
 Jeder neue Chat, Technical Lead oder Coding Agent liest mindestens in dieser Reihenfolge:
 
@@ -74,16 +81,18 @@ Historische Checkpoints und ältere Governance-/PR-Dokumente bleiben Evidence ih
 Ein neuer ChatGPT-Technical-Lead erfindet **keinen** eigenen Workflow. Diese Regeln sind bindend, nicht optional. Die ausführlichen Standards werden referenziert, nicht ersetzt.
 
 1. Rolle: übergeordneter Jetnity **Technical Lead**.
-2. Pflichtlektüre: zuerst `JETNITY_START_HERE.md`, dann **sofort** `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`, danach die übrige Reihenfolge in Abschnitt 1.
+2. Pflichtlektüre: zuerst `JETNITY_START_HERE.md`, dann **sofort** `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`, danach die übrige Reihenfolge in Abschnitt 1 und der aktuellste Post-Merge-New-Chat-Checkpoint.
 3. **Live-Evidence gewinnt** über Docs, Chat, Screenshots und Erinnerung.
 4. Cursor-Aufträge nennen den **exakten Anzeigenamen** aus Abschnitt 9.
 5. Der Feature-/Audit-Autor ist **nicht** der unabhängige Finalreviewer.
-6. **Nur ChatGPT / Technical Lead** darf Ready setzen oder mergen. Cursor-Agenten dürfen das niemals. Autonomes Ready/Merge durch den Technical Lead nur nach unabhängigem Exact-Head-PASS (Actions + Vercel) gemäß Abschnitt 3 und nur, wenn der Technical Lead absolut überzeugt ist, dass dies die beste verantwortbare Entscheidung ist. Blind mergen ist verboten.
-7. Besondere Product-Owner-Gates aus Abschnitt 4 bleiben zwingend.
-8. Keine stillen Shared-Contract- oder fundamentalen Produktentscheidungen.
-9. **Kein automatischer Folgeslice** nach einem abgeschlossenen Auftrag.
-10. Jede materielle Aktion wird im Repository persistiert (`docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`, `docs/CONTINUITY_STANDARD.md`).
-11. Produktmaxime: **Eine Reise, eine Oberfläche. Komplexität intern, Klarheit für den Nutzer.**
+6. **Nur ChatGPT / Technical Lead** darf Ready setzen oder mergen. Cursor-Agenten setzen niemals Ready und mergen niemals. Autonomes Ready/Merge durch den Technical Lead nur nach unabhängigem Exact-Head-Review und nur, wenn der Technical Lead absolut überzeugt ist, dass dies die beste verantwortbare Entscheidung ist. Blind mergen ist verboten.
+7. Verbindlicher Workflow: versionierter Task → Draft-PR → `@cursor` → unabhängiger Technical-Lead-Review → head-gebundene CHANGES REQUIRED → neuer Head + Re-Gating → PASS → Technical-Lead-only Ready/Merge → Post-Merge-Verifikation.
+8. Session-Rotation: gleicher Slice / gleicher PR / unmittelbarer Review-Fix = dieselbe Session; neuer logischer Slice = frische nummerierte Generation.
+9. Besondere Product-Owner-Gates aus Abschnitt 4 bleiben zwingend.
+10. Keine stillen Shared-Contract- oder fundamentalen Produktentscheidungen.
+11. **Kein automatischer Folgeslice** nach einem abgeschlossenen Auftrag.
+12. Jede materielle Aktion wird im Repository persistiert (`docs/PROJECT_PROGRESS_PERSISTENCE_POLICY.md`, `docs/CONTINUITY_STANDARD.md`).
+13. Produktmaxime: **Eine Reise, eine Oberfläche. Komplexität intern, Klarheit für den Nutzer.**
 
 ## 2. Vor jeder technischen Entscheidung live verifizieren
 
@@ -108,15 +117,17 @@ Abweichung danach im Repository dokumentieren.
 
 ## 3. Ready-/Merge-Governance
 
-Aktuelle Ready-/Merge-Regel: `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`.
+Current Truth für Workflow und Ready/Merge:
+
+`docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
 
 Der Product Owner hat ausdrücklich entschieden:
 
-> **Nur ChatGPT / Technical Lead darf Ready setzen oder mergen. Cursor-Agenten dürfen das niemals.**
+> **Nur der ChatGPT / Technical Lead entscheidet über Ready und Merge und führt Merges aus. Cursor-Agenten dürfen niemals selbst Ready setzen oder mergen.**
 
-> **ChatGPT / Technical Lead darf bei normalen scope-treuen PRs selbst Ready/Merge entscheiden, aber nur nach unabhängigem Exact-Head-Review und nur, wenn er absolut überzeugt ist, dass dies die beste verantwortbare Entscheidung ist.**
+> **ChatGPT / Technical Lead darf bei normalen scope-treuen PRs selbst Ready/Merge entscheiden, aber nur nach vollständigem unabhängigen Exact-Head-Review und nur, wenn er absolut überzeugt ist, dass dies die beste verantwortbare Entscheidung ist.**
 
-Das ist keine Auto-Merge-Freigabe.
+Das ist keine Auto-Merge-Freigabe. Cursor-Self-Review, grüne Tests, `mergeable=true` oder Vercel `READY` ersetzen diese Überzeugung niemals.
 
 Vor Ready/Merge muss der Technical Lead:
 
@@ -364,9 +375,11 @@ Draft-PR #88 bleibt historische Evidence vom 26.08.2026, nicht Current Truth. Un
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-TW7-A Runtime ist integriert (PR #106), Issue #103 CLOSED / completed. AP-4 ist integriert (PR #108/#111). P2-TA-06 ist integriert (PR #113), Issue #112 CLOSED / completed. P2-TA-03 ist integriert (PR #117), Issue #116 CLOSED / completed. P2-TA-04 Gate 0 / C1 sind integriert. AP-5 Gate 0 ist integriert (PR #129), Issue #128 CLOSED / completed. AP-5-S1 ist integriert (PR #133), Issue #132 CLOSED / completed. Project Sanitation ist integriert (PR #135), Issue #134 CLOSED / completed. AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 ist CLOSED / completed.
+Aktueller docs-only Governance-Slice, kein Produkt-Folgeslice: Draft-PR #142 integriert den Operating Standard. Autor-Agent setzt **kein Ready** und **kein Merge**. Unabhängiger Technical-Lead-Review auf dem neuen Exact Head.
 
-**Kein automatischer Folgeslice über S2 hinaus.** Draft-PR #138 unabhängig reviewen. Kein S3–S5, kein C2, kein Auth-Config-Push, kein erneuter Supabase-Write. Production C1 ist als `20260828015304` angewendet und live verifiziert; historische/develop-only Evidence bleibt `20260828120000`. Live-`main`, offene PRs/Issues, Binding Build Order und Gates erneut prüfen, bevor ein neuer Slice vergeben wird.
+TW7-A Runtime ist integriert (PR #106), Issue #103 CLOSED / completed. AP-4 ist integriert (PR #108/#111). P2-TA-06 ist integriert (PR #113), Issue #112 CLOSED / completed. P2-TA-03 ist integriert (PR #117), Issue #116 CLOSED / completed. P2-TA-04 Gate 0 / C1 sind integriert. AP-5 Gate 0 ist integriert (PR #129), Issue #128 CLOSED / completed. AP-5-S1 ist integriert (PR #133), Issue #132 CLOSED / completed. Project Sanitation ist integriert (PR #135), Issue #134 CLOSED / completed. AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 ist CLOSED / completed. PR #138 Post-Merge-Continuity ist integriert. PR #141 Provider S5-B Gate 0 ist integriert als **docs/readiness only**.
+
+**Kein automatischer Folgeslice über S2 hinaus.** PR #138 ist bereits gemergt; ältere „Draft-PR #138 unabhängig reviewen“-Sätze sind historische Evidence. Kein S3–S5, kein C2, kein Auth-Config-Push, kein erneuter Supabase-Write. S5-B Runtime/Persistenz/Schema/Migration ist **nicht** gestartet und nicht autorisiert. TW-8 bleibt geschlossen. Production C1 ist als `20260828015304` angewendet und live verifiziert; historische/develop-only Evidence bleibt `20260828120000`. Live-`main`, offene PRs/Issues, Binding Build Order und Gates erneut prüfen, bevor ein neuer Slice vergeben wird.
 
 Issue #109 (Visitor Search Country/City-Relevance) und Issue #110 (spätere Homepage-Multi-Destination-Absicht) bleiben separate dokumentierte Themen und werden durch PR #113 nicht automatisch gestartet.
 
