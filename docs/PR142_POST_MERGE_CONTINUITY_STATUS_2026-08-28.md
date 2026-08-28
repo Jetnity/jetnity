@@ -20,8 +20,8 @@ Kein Ready. Kein Merge. Kein Produkt-Folgeslice. Self-Review ist keine Freigabe.
 | Post-Merge Vercel Production | `dpl_8NN5v8rV27D4MTs9JwDyyLdXqpzo` READY auf exakt `main` |
 | Branch Protection | unverändert `protected=false` |
 | Aktiver Branch / PR | `docs/pr142-post-merge-continuity-2026-08-28` / Draft-PR #143 |
-| Content-Head vor Head-Stamp | `6e213e195a605b06ef939a9fc787e19d89f946d1` |
-| Ahead / Behind vs `origin/main` bei Re-Fetch | 2 ahead / 0 behind; Merge-Base exakt `9d4778b81f34e199466e089fe06fb093895f2df1` |
+| Content-Head vor Head-Stamp | `9b8413cf3005220c0ba5e3468be67e8807bd2a0a` |
+| Ahead / Behind vs `origin/main` bei Re-Fetch | 4 ahead / 0 behind; Merge-Base exakt `9d4778b81f34e199466e089fe06fb093895f2df1` |
 | Live Exact Head | der Commit, der diesen Stamp trägt; live an PR #143 prüfen |
 | Cursor-Agent | `Cursor-Agent: Jetnity quality security audit 4` – keine andere Generation |
 | Cursor-Rename-Fähigkeit in dieser Session | nicht exponiert; UI-Anzeigename nicht als geändert behauptet |

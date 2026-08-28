@@ -29,6 +29,7 @@ Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead-Re-Review. G
 | Exakte Post-Merge-Evidence | `main` `9d4778b8…`; Actions `33186501087` SUCCESS; Vercel Production `dpl_8NN5v8rV27D4MTs9JwDyyLdXqpzo` READY; Branch Protection `protected=false` |
 | `no relevant progress only in chat memory` + universeller Recovery-Prompt | ja |
 | Docs-only / kein Ready / kein Merge | ja |
+| `origin/main` vor Handoff neu geholt | ja; unverändert `9d4778b81f34e199466e089fe06fb093895f2df1`; Content-Head `9b8413cf` 4 ahead / 0 behind vor diesem Stamp |
 
 ## 3. Non-Scope gehalten
 
