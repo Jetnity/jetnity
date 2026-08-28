@@ -80,7 +80,7 @@ Kein AP-5-S3/S4/S5 wird allein durch den Merge von S2 automatisch gestartet.
 Zuerst:
 
 1. Issue #136 als completed schließen, sobald dieser Continuity-Stand akzeptiert ist.
-2. Diesen Docs-only-Stamp unabhängig reviewen, Ready setzen und mergen, wenn er scope-treu ist.
+2. Draft-PR #138 (dieser Docs-only-Stamp) unabhängig reviewen, Ready setzen und mergen, wenn er scope-treu ist.
 3. Live rekonstruieren: aktuelles `main`, offene PRs/Issues, Binding Build Order, Account-/Traveller-/Provider-Gates, Product-Owner-Sondergates, Parallelkollisionen, P0–P3.
 
 Erst danach darf entschieden werden, ob AP-5-S3 oder ein anderer Build-Order-Schritt als Nächstes dran ist.

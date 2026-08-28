@@ -8,7 +8,7 @@ Status: **AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Gate 0 und S1 ble
 ## Aktueller Arbeitsblock – AP-5-S2 Post-Merge Continuity
 
 1. **Arbeitsblock / Ziel:** Docs-only Continuity nach Merge von PR #137, damit `main` S2 nicht weiter als Draft führt.
-2. **Authoring-Branch / PR:** `cursor/ap5-s2-integrated-82e4`; dieser Docs-only-Draft.
+2. **Authoring-Branch / PR:** `cursor/ap5-s2-integrated-82e4`; Draft-PR #138.
 3. **Status:** **DOCS-ONLY / DRAFT.** Runtime ist bereits integriert. Kein Ready, kein Merge durch den Autor. Kein S3–S5.
 4. **Bereits umgesetzt:** S2-Runtime über PR #137. Dieser Stamp schreibt nur Continuity.
 5. **Cursor-Agent:** `Account plattform audit vorbereitung 10` – schließt S2; nicht für eine neue Runtime-Einheit wiederverwenden.
@@ -293,6 +293,7 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
+| **#138** AP-5-S2 Post-Merge Continuity | **DRAFT / DOCS-ONLY.** Branch `cursor/ap5-s2-integrated-82e4`. Kein Ready, kein Merge durch den Autor. Kein S3–S5. |
 | **#137** AP-5-S2 Passwortänderung | **GEMERGT / INTEGRIERT.** Merge `f11a1753`. Reviewed Head `e4cb805a`. TL PASS `5051115258`. Issue #136 beim Stamp noch OPEN. |
 | **#135** Project Sanitation Closure | **GEMERGT / INTEGRIERT.** Merge `0256905c`. Retention-Plan; kein Cleanup. |
 | **#133** AP-5-S1 Security-UI | **GEMERGT / INTEGRIERT.** Merge `51b0c926`. Issue #132 CLOSED / completed. Agent 9 abgeschlossen. |

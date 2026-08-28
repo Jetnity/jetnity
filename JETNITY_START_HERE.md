@@ -361,7 +361,7 @@ Draft-PR #88 bleibt historische Evidence vom 26.08.2026, nicht Current Truth. Un
 
 TW7-A Runtime ist integriert (PR #106), Issue #103 CLOSED / completed. AP-4 ist integriert (PR #108/#111). P2-TA-06 ist integriert (PR #113), Issue #112 CLOSED / completed. P2-TA-03 ist integriert (PR #117), Issue #116 CLOSED / completed. P2-TA-04 Gate 0 / C1 sind integriert. AP-5 Gate 0 ist integriert (PR #129), Issue #128 CLOSED / completed. AP-5-S1 ist integriert (PR #133), Issue #132 CLOSED / completed. Project Sanitation ist integriert (PR #135), Issue #134 CLOSED / completed. AP-5-S2 ist integriert (PR #137 / Merge `f11a1753`). Issue #136 war beim Continuity-Stamp noch OPEN.
 
-**Kein automatischer Folgeslice über S2 hinaus.** Issue #136 schließen. Diesen Continuity-Stamp unabhängig reviewen. Kein S3–S5, kein C2, kein Auth-Config-Push, kein erneuter Supabase-Write. Production C1 ist als `20260828015304` angewendet und live verifiziert; historische/develop-only Evidence bleibt `20260828120000`. Live-`main`, offene PRs/Issues, Binding Build Order und Gates erneut prüfen, bevor ein neuer Slice vergeben wird.
+**Kein automatischer Folgeslice über S2 hinaus.** Issue #136 schließen. Draft-PR #138 unabhängig reviewen. Kein S3–S5, kein C2, kein Auth-Config-Push, kein erneuter Supabase-Write. Production C1 ist als `20260828015304` angewendet und live verifiziert; historische/develop-only Evidence bleibt `20260828120000`. Live-`main`, offene PRs/Issues, Binding Build Order und Gates erneut prüfen, bevor ein neuer Slice vergeben wird.
 
 Issue #109 (Visitor Search Country/City-Relevance) und Issue #110 (spätere Homepage-Multi-Destination-Absicht) bleiben separate dokumentierte Themen und werden durch PR #113 nicht automatisch gestartet.
 

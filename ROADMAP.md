@@ -267,7 +267,7 @@ Abgeschlossen:
 28. ✅ AP-5-S1 ehrliche Security-UI Zustände / PR #133 + Issue #132; ADR-0183
 29. ✅ Project Sanitation Closure / PR #135 + Issue #134; ADR-0184; kein Cleanup
 30. ✅ AP-5-S2 eingeloggte Passwortänderung / PR #137 + Issue #136; Merge `f11a1753`; Issue beim Continuity-Stamp noch OPEN
-31. AP-5-S2 Post-Merge Continuity – **Docs-only Draft; kein S3–S5**
+31. AP-5-S2 Post-Merge Continuity / Draft-PR #138 – **Docs-only; kein S3–S5**
 
 Nächster Schritt:
 
