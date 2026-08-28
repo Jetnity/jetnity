@@ -4877,6 +4877,17 @@ Kein Schema. Kein Ready/Merge. Neuer Head invalidiert `ce5b7e70` und `fbb1ec8d`.
 - Canonical Continuity ist self-expiring: solange #150 offen → TL Exact-Head-Review / kein Ready/Merge durch den Autor; nach Merge → S1 integriert, nächster Schritt nur ein separat versioniertes S2, kein automatischer Bump.
 - Autor-Agent stoppt für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
 
+**Nachtrag, 28. August 2026 – öffentliche PageProps sind Promise-förmig:**
+
+Technical-Lead CHANGES REQUIRED `5457641262` am Head `822725a6` stellte fest: ein Union `T | Promise<T>` auf den framework-facing Page-/Metadata-Signaturen reicht für Next-14-Runtime-Unwrap, ist aber nicht der Next-16-`PageProps`-Vertrag. S2 kann an der generierten Promise-Constraint scheitern.
+
+Festlegung innerhalb S1, ohne Dependency-Bump:
+
+1. `PageRequestParam<T> = Promise<T>` ist der öffentliche Vertrag.
+2. Optionality (`searchParams?`) bleibt, wo die Route Abwesenheit erlaubt; der vorhandene Wert ist Promise-förmig.
+3. Der interne Helfer `RequestParam<T> = T | Promise<T>` darf Sync weiter unwrappen (Next 14 liefert weiterhin ein Await-fähiges Objekt).
+4. Die Union darf nicht erneut als öffentliche PageProps-Signatur verwendet werden.
+
 ---
 
 ## Offene Widersprüche

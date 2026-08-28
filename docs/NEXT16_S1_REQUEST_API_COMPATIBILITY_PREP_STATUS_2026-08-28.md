@@ -1,7 +1,7 @@
 # Jetnity – Next 16 Compatibility Prep S1 Status
 
 Stand: 28. August 2026  
-Status: **IMPLEMENTIERT / DRAFT / SELF-EXPIRING. STOP für unabhängigen Technical-Lead Exact-Head-Review von PR #150. Kein Ready. Kein Merge. Kein S2.**  
+Status: **REVIEW-FIX / DRAFT / SELF-EXPIRING. STOP für unabhängigen Technical-Lead Exact-Head-Re-Review von PR #150 nach CHANGES REQUIRED `5457641262`. Kein Ready. Kein Merge. Kein S2.**  
 Workstream: Ops / Framework Compatibility  
 Cursor-Agent: **`Cursor-Agent: Jetnity framework compatibility 1`**  
 Preferred visible Cursor title: **`Jetnity framework compatibility 1`**  
@@ -32,7 +32,7 @@ Dieser Agent behauptet nicht, die sichtbare UI sei umbenannt.
 | Repository | `Jetnity/jetnity` |
 | `origin/main` Re-Fetch | `2fdf8a18ab99d22a3ba75df7bd8451908593714f` – Merge PR #149 |
 | Merge-Base | `2fdf8a18ab99d22a3ba75df7bd8451908593714f` – **kein Baseline-Drift** |
-| Ahead / Behind vor diesem Stamp | **3 / 0** (`c2ae8821`, `9833a4bf`, `822725a6`) |
+| Ahead / Behind vor diesem Stamp | **5 / 0** (`c2ae8821`, `9833a4bf`, `822725a6`, `dd56e140`, `7cbb273b`) |
 | Draft-PR | #150 OPEN / Draft |
 | `main` Branch Protection | bekannt `protected=false`; dieser Slice ändert das nicht |
 | Supabase | **nicht** mutiert; keine Migration, kein RLS-/Auth-Config-/Datenwrite |
@@ -49,13 +49,20 @@ Dieser Agent behauptet nicht, die sichtbare UI sei umbenannt.
 | PR #149 Product-Owner-Freigabe | MERGED | Task |
 | aktuelle Production | Vercel `dpl_6FBEqSPthrixAsruftjYWw2rVZjY`, READY, exact `main @ 2fdf8a18` | **Task / Technical-Lead-Auftragswahrheit. Dieser Agent hat die Vercel-ID nicht selbst geholt.** |
 
-### 1.2 Exact Head
+### 1.2 Review-Fix-Kette
 
-Exact Head ist der Commit dieses Continuity-Stamps. Live an PR #150 prüfen. Implementation-Heads `9833a4bf` und `822725a6` werden durch den Stamp-Commit nachgeschoben.
+| Head | Rolle |
+| --- | --- |
+| `9833a4bf` | erste Implementierung; typecheck auf `await sb().from(...)` fehlgeschlagen |
+| `822725a6` | `sb()` Await-Fix; **TL-Review-Head** für CHANGES REQUIRED `5457641262` |
+| `dd56e140` | erster Continuity-Stamp; beschrieb noch den Union-PageProps-Stand und 2475 Tests |
+| `7cbb273b` | Review-Fix: framework-facing Page/Metadata-Props sind `PageRequestParam<T> = Promise<T>` |
+
+Exact Head ist der Commit dieses Continuity-Stamps. Live an PR #150 prüfen. Gates unten wurden auf `7cbb273b` erneut ausgeführt. Vorheriges CI `33209891508` und Preview am Head `822725a6` sind nach diesem Push ungültig.
 
 ## 2. Scope / Non-Scope
 
-**Scope gehalten:** async Cookie-Factories + alle Caller; Guest-Quota-Cookie async; identifizierte `params` / Page-`searchParams` / `generateMetadata` Promise-kompatibel auf Next 14; gezielte Regressionstests; Continuity.
+**Scope gehalten:** async Cookie-Factories + alle Caller; Guest-Quota-Cookie async; identifizierte `params` / Page-`searchParams` / `generateMetadata` auf den Next-16-Vertrag `Promise<T>` vorbereitet (Review-Fix nach `5457641262`); gezielte Regressionstests inkl. Union-Regression; Continuity.
 
 **Hard Non-Scope gehalten:** kein Next/React/ESLint/TypeScript-Bump; kein `middleware.ts`→`proxy.ts`; kein ESLint-9/Flat-Config; kein Codemod; keine Vercel-Settings; keine Supabase-Mutation; kein Service-Role-Ausbau; kein AP-7-S2; kein Issue #109/#110; kein S2.
 
@@ -64,26 +71,26 @@ Exact Head ist der Commit dieses Continuity-Stamps. Live an PR #150 prüfen. Imp
 1. `createServerComponentClient`, `createRouteHandlerClient`, `createServerActionClient` sind `async` und verwenden `await cookies()`. Cookie-Store-Typ ist `Awaited<ReturnType<typeof cookies>>`. RSC bleibt read-only; Route Handler / Server Actions bleiben mutierbar. Alias `createServerClient` bleibt die async RSC-Factory.
 2. Repository-weite Caller-Inventur; alle direkten Aufrufe werden awaited. Kein Default-Parameter mehr, der eine Factory-Promise als Client weiterreicht (`flughafenReferenzLesen`).
 3. `gastkennung()` ist async; `kontoId()` awaited die Action-Factory. `jetnity_gast`-Vertrag, cookie-loser Service-Role-Client und Fail-closed bleiben erhalten. Vertragsprüfbarkeit liegt in `lib/modell/gast-cookie.ts`.
-4. Request-API-Helfer `leseRequestParam` / `leseOptionalRequestParam` unwrappt Sync und Promise. Angewendet auf Login, Register, Admin-MFA, `/planen` Page + `generateMetadata`, `[tripId]`, `/unauthorized`, Admin Users.
+4. Request-API-Helfer `leseRequestParam` / `leseOptionalRequestParam` unwrappt intern weiter `T | Promise<T>`. Die **öffentlichen** Page-/`generateMetadata`-Signaturen sind der Next-16-Vertrag `PageRequestParam<T> = Promise<T>` (nicht `T | Promise<T>`). Angewendet auf Login, Register, Admin-MFA, `/planen` Page + `generateMetadata`, `[tripId]`, `/unauthorized`, Admin Users. Optionality (`?`) bleibt dort, wo die Route Abwesenheit erlaubt.
 5. `new URL(req.url).searchParams` in Route Handlern unverändert.
 6. Adversariale Tests: `lib/next/request-api.test.ts`, `lib/next/request-api-compat.test.ts`, `lib/modell/kontingent-gastkennung.test.ts`; bestehende Robots-/Login-Source-Tests nachgezogen, ohne Key-Präsenz zu verwässern.
 
 ## 4. Unfertige Arbeit
 
-- Unabhängiger Technical-Lead Exact-Head-Review von PR #150.
-- GitHub Actions / Vercel Preview dieses Stamp-Heads sind Platform-Evidence; der Technical Lead verifiziert sie unabhängig.
+- Unabhängiger Technical-Lead Exact-Head-**Re-Review** von PR #150 nach CHANGES REQUIRED `5457641262`.
+- GitHub Actions / Vercel Preview dieses Stamp-Heads sind Platform-Evidence; der Technical Lead verifiziert sie unabhängig. Vorherige Exact-Head-Gates sind ungültig.
 - S2 (Framework-Bump) ist **nicht** gestartet.
 
 ## 5. Author-Gates dieses Runs
 
-Lokal auf Implementation-Head `822725a6` ausgeführt, unverändert durch den Docs-Stamp:
+Lokal auf Review-Fix-Head `7cbb273b` erneut ausgeführt, unverändert durch den Docs-Stamp:
 
 | Gate | Ergebnis |
 | --- | --- |
 | `npm ci` | PASS; Lockfile unverändert |
 | `npm run typecheck` | PASS |
 | `npm run lint` | PASS – No ESLint warnings or errors |
-| `npm test` | PASS – **2475** tests, 0 fail |
+| `npm test` | PASS – **2478** tests, 0 fail (vorher 2475; +3 Promise-Contract-Regressionen) |
 | `npm run check:dead` | PASS |
 | `npm run check:exports` | PASS |
 | `npm run check:deps` | PASS |
@@ -103,6 +110,7 @@ Kein neu entdeckter P0.
 
 - Auth-/Cookie-Regression trotz grüner Tests, wenn Preview/SSR Cookie-Refresh anders verhält als Unit-Source-Scans.
 - `/planen` Robots bleibt P1, bis Exact-Head Preview die Metadata-Grenze bestätigt.
+- Der P1-Fund aus `5457641262` (öffentliche PageProps als `T | Promise<T>`) ist im Review-Fix `7cbb273b` geschlossen. Residual: erst S2 beweist die generierte Next-16-`PageProps`-Constraint; S1 bereitet den Vertrag vor, kompiliert aber weiter auf Next 14.
 
 ### P2
 
@@ -119,6 +127,6 @@ Für diesen exakt definierten S1-Scope war keine neue PO-Freigabe nötig (PR #14
 
 ## 8. Exakter nächster Schritt
 
-**Unabhängiger ChatGPT / Technical-Lead Exact-Head-Review von Draft-PR #150.**
+**Unabhängiger ChatGPT / Technical-Lead Exact-Head-Re-Review von Draft-PR #150.**
 
-Kein Ready. Kein Merge. Kein S2. Kein Folgeslice.
+Vorheriger Review-Head `822725a6` / Kommentar `5457641262` ist nach diesem Push ungültig. Kein Ready. Kein Merge. Kein S2. Kein Folgeslice.

@@ -29,12 +29,14 @@ Geprüft gegen den tatsächlichen Diff zu `origin/main @ 2fdf8a18`:
 | Kann ein Quota-Fehler fail-open werden? | Nein. Fehlender Dienst / fehlgeschlagene RPC bleibt `{ ok: false }`. |
 | Wurde `jetnity_gast` verändert? | Nein. Name, httpOnly, sameSite=lax, path=/, 30 Tage, Production-`secure`, 32 Hexzeichen. Ungültige Kennungen werden ersetzt. |
 | Wurde `/planen` auf Truthy-Params verwässert? | Nein. `Object.hasOwn` bleibt. Await liefert dasselbe Objekt an `planenRobots`. |
+| Sind framework-facing Page/Metadata-Props der Next-16-Promise-Vertrag? | Ja nach Review-Fix `7cbb273b`. `PageRequestParam<T> = Promise<T>`. Der interne Entpacker darf weiter Sync unwrappen; die Union ist nicht mehr die öffentliche PageProps-Signatur. Tests scheitern, wenn eine bekannte Fläche auf `T \| Promise<T>` zurückfällt. |
+| Wurde der `sb()`-Typecheck-Fix aus `822725a6` rückgängig gemacht? | Nein. Admin-Users bleibt `await (await sb()).from(...)`. |
 | Geht Login/Register `next` noch durch `anmeldeSeiteZiel`? | Ja. Admin-MFA weiter durch `erlaubtesAdminZiel`. |
 | Wurde `[tripId]` Guest-vs-Account verändert? | Nein. Nur `await` vor derselben `istKontoKennung` / `reiseLaden`-Verzweigung. |
 | Wurde `unauthorized` Copy-Pfad verändert? | Nein. `grund === 'lookup-failed'` nach Await. |
 | Wurden Route-Handler-`new URL(req.url).searchParams` umgebaut? | Nein. |
 | Wurde ein Framework-Dependency geändert? | Nein. `npm ci` liess Lockfile unberührt. |
-| Wurde Ready/Merge ausgeführt oder empfohlen als PASS? | Nein. STOPP für unabhängigen TL-Review. |
+| Wurde Ready/Merge ausgeführt oder empfohlen als PASS? | Nein. STOPP für unabhängigen TL-Re-Review. |
 | Wurde S2 gestartet? | Nein. |
 | Wurde Generation 2 wegen UI-Titel erfunden? | Nein. |
 
@@ -52,6 +54,6 @@ Geprüft gegen den tatsächlichen Diff zu `origin/main @ 2fdf8a18`:
 
 ## 5. Urteil des Autors
 
-S1 ist scope-treu implementiert und lokal gegated. Product-Truth sollte unverändert sein.
+S1 ist scope-treu implementiert, der P1-PageProps-Fund aus CHANGES REQUIRED `5457641262` ist lokal behoben und erneut gegated. Product-Truth sollte unverändert sein.
 
-**Unabhängiger Technical-Lead Exact-Head-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**
+**Unabhängiger Technical-Lead Exact-Head-Re-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**

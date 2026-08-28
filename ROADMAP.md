@@ -119,7 +119,7 @@ Nicht automatisch starten:
 - Node 22 Runtime Consistency — PR #147 integriert auf `main @ 56aff7ff` (`engines.node: "22.x"` + `@types/node@22.20.1`)
 - Next.js Framework Security Upgrade Gate 0 — PR #148 integriert auf `main @ 2fdf8a18`; Ziel 16.x Active LTS live-resolved (Minimum `16.3.3`) bleibt Empfehlung, nicht angewendet
 - Next 16 Product-Owner-Freigabe — PR #149 integriert; autorisiert das gestufte Compatibility-Programm
-- Next 16 Compatibility Prep S1 — Draft-PR #150 self-expiring: STOP für unabhängigen Technical-Lead Exact-Head-Review; async Request-API-Prep auf `next@14.2.32`; kein Ready/Merge durch den Autor; kein S2 / Framework-Bump
+- Next 16 Compatibility Prep S1 — Draft-PR #150 self-expiring: Review-Fix für Promise-förmige Page/Metadata-Props nach CHANGES REQUIRED `5457641262`; STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; async Request-API-Prep auf `next@14.2.32`; kein Ready/Merge durch den Autor; kein S2 / Framework-Bump
 
 ## 3. Trip Workspace / Visitor Search
 

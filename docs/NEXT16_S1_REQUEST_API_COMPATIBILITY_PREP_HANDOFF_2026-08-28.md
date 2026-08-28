@@ -1,12 +1,12 @@
 # Jetnity – Next 16 Compatibility Prep S1 Handoff
 
 Stand: 28. August 2026  
-Status: **DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**  
+Status: **DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Logical Cursor-Agent: **`Cursor-Agent: Jetnity framework compatibility 1`**  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/150  
 Branch: `feat/next16-s1-request-api-compat-prep-2026-08-28`
 
-Dieser Handoff übergibt Slice 1 (async Request-API-/Auth-Cookie-Kompatibilität auf Next 14). Er startet **kein** S2 und kein Framework-Bump. Agent-Self-Review ist kein PASS. Jeder neue Head invalidiert Prior-Gates.
+Dieser Handoff übergibt Slice 1 inklusive des unmittelbaren Review-Fixes zu CHANGES REQUIRED `5457641262` (Promise-förmige Page/Metadata-Props). Er startet **kein** S2 und kein Framework-Bump. Agent-Self-Review ist kein PASS. Jeder neue Head invalidiert Prior-Gates. Derselbe logische Agent / dieselbe Session bleibt für diesen Review-Fix.
 
 ---
 
@@ -14,8 +14,8 @@ Dieser Handoff übergibt Slice 1 (async Request-API-/Auth-Cookie-Kompatibilität
 
 1. `cookies()`-basierte Supabase-Server-Factories async gemacht; alle tatsächlichen Caller nachgezogen.
 2. Guest-Quota-Cookie-Pfad async-kompatibel gemacht, Vertrag und Fail-closed erhalten.
-3. Gate-0-identifizierte Page-`params` / `searchParams` / `generateMetadata` Promise-kompatibel gemacht.
-4. Adversariale Regressionstests ergänzt.
+3. Gate-0-identifizierte Page-`params` / `searchParams` / `generateMetadata` zuerst mit internem Sync/Promise-Unwrap vorbereitet; nach TL CHANGES REQUIRED `5457641262` die **öffentlichen** Signaturen auf `PageRequestParam<T> = Promise<T>` umgestellt (kein `T | Promise<T>` als PageProps).
+4. Adversariale Regressionstests ergänzt, inkl. Promise-Contract-Scan gegen Sync-Objekt-Unions.
 5. Alle vom Task geforderten lokalen Gates ausgeführt.
 6. Status / Self-Review / kanonische Continuity self-expiring aktualisiert.
 
@@ -42,8 +42,9 @@ Kein Ready. Kein Merge. Kein S2.
 | --- | --- |
 | Task-Baseline / `origin/main` Re-Fetch | `2fdf8a18ab99d22a3ba75df7bd8451908593714f` |
 | Merge-Base | exakt dieselbe SHA – **kein Drift** |
-| Ahead / Behind vor Stamp | **3 / 0** |
-| Implementation-Heads | `9833a4bf`, `822725a6` |
+| Ahead / Behind vor Stamp | **5 / 0** |
+| Ungültiger TL-Review-Head | `822725a68e1d833c289e85431ce0538eecb54276` (CHANGES REQUIRED `5457641262`) |
+| Review-Fix-Head | `7cbb273b7aa73cba945a9b4b7752d4a758bb513c` |
 | Exact / Stamp-Head | Commit dieses Handoffs; live an PR #150 prüfen |
 | Draft-PR | #150 OPEN / Draft |
 | Branch Protection | unverändert; letzte bekannte Evidence `protected=false` |
@@ -68,7 +69,7 @@ Nach diesem Stamp zusätzlich Continuity/ADR-Dateien. Vollständige Liste live a
 
 ## 4. Ist-Zustand in einem Satz
 
-Jetnity bleibt auf **`next@14.2.32`**, hat aber die Auth-/Request-API-Flächen bereits async-kompatibel vorbereitet. Das Framework-Bump ist S2 und nicht Teil dieses PRs.
+Jetnity bleibt auf **`next@14.2.32`**, hat die Auth-/Request-API-Flächen async-kompatibel vorbereitet und die framework-facing Page/Metadata-Props auf den Next-16-Vertrag `Promise<T>` gestellt. Das Framework-Bump ist S2 und nicht Teil dieses PRs.
 
 ---
 
@@ -83,12 +84,13 @@ Jetnity bleibt auf **`next@14.2.32`**, hat aber die Auth-/Request-API-Flächen b
 7. `/unauthorized?grund=lookup-failed` unverändert.
 8. Admin Users `q`/`page` unverändert.
 9. `package.json` / Lockfile ohne Framework-Drift.
-10. PR bleibt Draft.
+10. Öffentliche Page/Metadata-Signaturen sind `PageRequestParam<T> = Promise<T>`, nicht `T | Promise<T>`.
+11. PR bleibt Draft.
 
 ---
 
 ## 6. Exakter nächster Schritt
 
-**Unabhängiger ChatGPT / Technical-Lead Exact-Head-Review von Draft-PR #150.**
+**Unabhängiger ChatGPT / Technical-Lead Exact-Head-Re-Review von Draft-PR #150.**
 
-Kein Ready. Kein Merge. Kein S2. Bei CHANGES REQUIRED bleibt **dieselbe Session / derselbe logische Agent**.
+Vorheriger Review-Head `822725a6` / Kommentar `5457641262` ist nach diesem Push ungültig. Kein Ready. Kein Merge. Kein S2. Bei weiteren CHANGES REQUIRED bleibt **dieselbe Session / derselbe logische Agent**.
