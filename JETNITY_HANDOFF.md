@@ -1,7 +1,7 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **AP-7 Gate 0 / PR #144 ist self-expiring: offen → TL-Review/Re-Review von #144; nach Merge → integrierte Gate-0-Architecture-Evidence, keine automatische AP-7-Runtime, nächster Schritt = Product-Owner-Architekturentscheidung (Dual-Authority vs genehmigte Alternative) nach Live-Verifikation. Keine zukünftige Merge-SHA. Kein Continuity-PR nur um den Merge zu sagen. PR #143 ist MERGED (`1947285c`). PR #142 Operating Standard und PR #141 Provider S5-B Gate 0 bleiben integriert. S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **AP-7-S1 Dual-Authority Domain Contract / Draft-PR #145. Dual-Authority ist product-owner-freigegeben. PR #144 Gate 0 ist MERGED (`bb38aef5`). S1 ist shared Domain-Contract ohne Schema/Persistenz/UI. STOP für unabhängigen Technical-Lead-Review. Kein Ready. Kein Merge. Kein AP-7-S2. PR #143 bleibt MERGED (`1947285c`). S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
@@ -171,7 +171,7 @@ Verbindliche Wahrheit:
 - PR #138 Post-Merge Continuity integriert
 - PR #142 Technical-Lead-/Cursor-Operating-Standard integriert
 
-AP-5-S3–S5 werden **nicht automatisch** gestartet. AP-7 / Account-Traveller-Registry bleibt separat und gated. Gate 0 / ADR-0186 ist Empfehlung Dual-Authority, nicht Freigabe. Solange PR #144 offen ist, ist das der Review-Transport. Sobald #144 gemergt ist, ist Gate 0 integrierte Architecture-Evidence; kein Runtime-Start und kein Folge-Continuity-PR nur für den Merge.
+AP-5-S3–S5 werden **nicht automatisch** gestartet. Dual-Authority ist product-owner-freigegeben. AP-7 Gate 0 / ADR-0186 ist integrierte Architecture-Evidence (PR #144 / `bb38aef5`). AP-7-S1 / ADR-0187 ist der shared Domain-Contract auf Draft-PR #145: keine Persistenz, kein Schema, keine UI. Production-Migration / RLS / Identity bleiben separat gegated. Kein AP-7-S2 aus diesem Handoff.
 
 Der integrierte AP-5-Gate-0-Vertrag trennt insbesondere Password Recovery von signed-in Reauthentication, hält Session-/Gerätelisting ohne unterstützte User-API ehrlich auf `unsupported`, dokumentiert den heutigen globalen `signOut()`-Default und hält verified-factor `mfa.unenroll` an der serverseitigen AAL2-Anforderung. Details: `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, ADR-0182 und die aktuellen Account-Checkpoints.
 
@@ -282,7 +282,7 @@ Nach Live-Rekonstruktion neu einordnen:
 - TW-8 gated
 - TW-9 nicht automatisch starten
 - AP-5-S3–S5 nicht automatisch starten
-- AP-7 gated
+- AP-7 Persistenz/UI/S2 gated; S1 Domain-Contract auf Draft-PR #145
 - P2-TA-04 C2 nicht automatisch starten
 - weitere QS-/Supabase-Security-/Performance-Advisories
 - Project-Sanitation Closure / PR #135 / Issue #134 ist integriert/abgeschlossen; ADR-0184 ist Authority
@@ -307,8 +307,8 @@ Exakte Basis-Anzeigenamen bleiben verbindlich:
 
 Aktueller Account-Status:
 
-- Generation 11: `Cursor-Agent: Account plattform audit vorbereitung 11` für AP-7 Gate 0 / PR #144. Solange #144 offen: Review-Session. Nach Merge: Generation für diesen Docs-Slice abgeschlossen, nicht für Runtime wiederverwenden.
-- sichtbarer Cursor-Titel dieser Session: `Account traveller registry architecture`; nicht als umbenannt behauptet
+- Generation 12: `Cursor-Agent: Account plattform audit vorbereitung 12` für AP-7-S1 / Draft-PR #145. Sichtbarer Cursor-Titel: `Dual-authority domain contract`; nicht als umbenannt behauptet.
+- Generation 11: `Cursor-Agent: Account plattform audit vorbereitung 11` für AP-7 Gate 0 / PR #144 ist abgeschlossen (Merge `bb38aef5`); nicht wiederverwenden.
 - `Cursor-Agent: Account plattform audit vorbereitung 10` ist mit AP-5-S2 / PR #137 und PR #138 Continuity abgeschlossen
 - Generation 10 nicht wiederverwenden
 
@@ -329,22 +329,19 @@ Abgeschlossen / nicht wiederverwenden:
 - Quality/Security Generation 3: Issue #134 / PR #135
 - Quality/Security Generation 2: PR #88 historical only
 
-Generation 11 ist für AP-7 Gate 0 vergeben. Eine spätere AP-7-Implementation oder AP-5-S3 braucht eine frische Generation. Das ist **keine automatische Freigabe**.
+Generation 12 ist für AP-7-S1 / PR #145 vergeben. Generation 11 nicht wiederverwenden. AP-7-S2 oder AP-5-S3 brauchen eine frische Generation. Das ist **keine automatische Freigabe**.
 
 Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logische Arbeitseinheit bekommt eine frische nummerierte Session gemäß Rotation Standard.
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-**Self-expiring / dual-state. Live-Evidence gewinnt.**
+Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #145 (AP-7-S1 Domain Contract). Autor-Agent setzt kein Ready, kein Merge, startet kein AP-7-S2 und keine Persistenz.
 
-- **Solange PR #144 offen und unmerged ist:** unabhängiger Technical-Lead Exact-Head-Review/Re-Review von Draft-PR #144. Autor-Agent setzt kein Ready, kein Merge, keine AP-7-Runtime.
-- **Sobald PR #144 gemergt ist:** diese Transport-/Review-Klausel ist automatisch historisch. Gate 0 ist integrierte Architecture-Evidence (ADR-0186). Keine AP-7-Runtime ist dadurch autorisiert. Exakt nächster Schritt = Live-Verifikation des Merge-/Post-Merge-Stands, danach Product-Owner-Architekturentscheidung (Dual-Authority-Empfehlung vs genehmigte Alternative) vor jeder AP-7-Implementation. Keine zukünftige Merge-SHA hier eintragen. Kein Continuity-PR nur um zu sagen, dass #144 gemergt ist.
-
-PR #143 ist MERGED (`1947285c`). Die frühere Dual-State-Klausel für #143 ist historisch.
+PR #144 ist MERGED (`bb38aef5`). Dual-Authority ist product-owner-freigegeben. PR #143 ist MERGED (`1947285c`).
 
 Current-State-Continuity (kein Fortschritt nur im Chat) steht im Operating Standard §9 und im universellen Recovery-Prompt.
 
-**Kein AP-7-Implementierungsslice und kein anderer Produkt-Folgeslice ist dadurch automatisch freigegeben.**
+**Kein Persistence-Slice und kein anderer Produkt-Folgeslice ist dadurch automatisch freigegeben.**
 
 Der nächste Chat muss zuerst den vollständigen Live-Zustand rekonstruieren und anschließend Binding Build Order, Abhängigkeiten, Parallelität und Product-Owner-Gates neu bewerten.
 
