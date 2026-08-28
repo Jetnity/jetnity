@@ -39,6 +39,6 @@ Keine Änderung an `app/`, `components/`, `supabase/migrations`, Grants, RLS, Au
 
 ## 4. Urteil des Autors
 
-Der Slice hält den genehmigten Dual-Authority-Vertrag und die Hard-Non-Scope-Grenze. Quality-Gates und Exact Head müssen live gestempelt werden.
+Der Slice hält den genehmigten Dual-Authority-Vertrag und die Hard-Non-Scope-Grenze. Lokale Tests und Hygiene-Gates vor diesem Stamp waren grün (12/12 S1, 2453/2453 `npm test`, typecheck, lint, dead/exports/deps/api-schutz/schema-bezug, `next build`). Exact-Head CI/Vercel bleibt live vom unabhängigen Reviewer zu prüfen.
 
 **Unabhängiger Technical-Lead-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**

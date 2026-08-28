@@ -12,7 +12,7 @@ Status: **AP-7-S1 Dual-Authority Domain Contract / Draft-PR #145. Kein Schema. K
 1. **Arbeitsblock / Ziel:** Shared Domain-Contract für Dual-Authority: account-owned Registry-Fakten + fail-closed unabhängiger Trip-Snapshot. Keine Persistenz.
 2. **Authoring-Branch / PR:** `feat/ap7-s1-dual-authority-domain-contract-2026-08-28`; Draft-PR #145. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
 3. **Status:** **DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW.** Kein Ready, kein Merge durch den Autor. Kein AP-7-S2.
-4. **Bereits umgesetzt:** `lib/traveller/account-registry.ts` + adversarial Tests; ADR-0187; Status/Handoff/Self-Review; Continuity-Zeiger. Foundation-E-Felder/Limits wiederverwendet, kein paralleles Modell.
+4. **Bereits umgesetzt:** `lib/traveller/account-registry.ts` + 12 adversarial Tests; ADR-0187; Status/Handoff/Self-Review; Continuity-Zeiger. Foundation-E-Felder/Limits wiederverwendet, kein paralleles Modell. Lokale Gates vor Stamp: 2453/2453 `npm test`, typecheck, lint, hygiene, `next build`.
 5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 12`. Sichtbarer Cursor-Titel dieser Session: `Dual-authority domain contract` (Cloud-Run `https://cursor.com/agents/bc-6b3a7a55-26fe-41a9-8cf2-b599afe1eda0`). Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet.
 6. **Live-`main` bei diesem Stamp:** `bb38aef589f0cdcea1aaf8ddd87d043d0a9f0f05` – immer live neu prüfen.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation.

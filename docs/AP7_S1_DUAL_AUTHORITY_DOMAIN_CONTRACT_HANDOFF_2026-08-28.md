@@ -47,8 +47,9 @@ Vor der finalen Übergabe erneut `origin/main` holen und hier stempeln.
 | Branch | `feat/ap7-s1-dual-authority-domain-contract-2026-08-28` |
 | Draft-PR | #145 OPEN Draft |
 | Merge-Base | `bb38aef5` |
-| Exact / Review-Head | Stamp nach Quality-Gates; live an PR #145 prüfen |
-| Ahead / behind | nach finalem Stamp |
+| Exact / Review-Head | Commit dieses Stamps; live an PR #145 prüfen |
+| Ahead / behind `origin/main` | **5 / 0** |
+| Local quality before stamp | 12/12 S1 tests; 2453/2453 `npm test`; typecheck; lint; dead/exports/deps/api-schutz/schema-bezug; `next build` |
 | Branch Protection | unverändert; nicht in diesem Slice geändert |
 | Supabase | nicht live abgefragt, nicht mutiert |
 

@@ -25,8 +25,8 @@ This slice does **not** consume the separate Production migration / Identity / R
 | `origin/main` bei Authoring-Re-Fetch | `bb38aef589f0cdcea1aaf8ddd87d043d0a9f0f05` |
 | Branch | `feat/ap7-s1-dual-authority-domain-contract-2026-08-28` |
 | Draft-PR | [#145](https://github.com/Jetnity/jetnity/pull/145) |
-| Exact Head | der Commit dieses Stamps; live am PR prüfen |
-| Ahead / behind `origin/main` | nach finalem Stamp live eintragen |
+| Exact Head | der Commit dieses Stamps; live am PR #145 prüfen |
+| Ahead / behind `origin/main` | **5 / 0** nach diesem Stamp (4 vorher: PO-Approval, Task, feat, Continuity) |
 | Logical Cursor-Agent | `Cursor-Agent: Account plattform audit vorbereitung 12` |
 | Sichtbarer Cursor-Titel | `Dual-authority domain contract` |
 | Cloud-Run | https://cursor.com/agents/bc-6b3a7a55-26fe-41a9-8cf2-b599afe1eda0 |
@@ -97,7 +97,23 @@ Adversarial tests in `lib/traveller/account-registry.test.ts` cover:
 - no citizenship inferred from residence, locale, language, issuer or departure;
 - empty facts stay empty.
 
-Quality-gate results are recorded after the run on the exact head. This file must not claim green tests that did not run.
+Verified on this branch before the final stamp (`HEAD` was `c88ac2e3`; this stamp is the review head):
+
+| Gate | Ergebnis |
+| --- | --- |
+| `node --import tsx --test lib/traveller/account-registry.test.ts` | **12/12 pass** |
+| Related traveller tests (`traveller-kontext`, `traveller-anfrage`, `schema`, `traveller-zuordnung`) | **30/30 pass** |
+| `npm test` | **2453/2453 pass**, 0 fail |
+| `npm run typecheck` | pass |
+| `npx next lint --file lib/traveller/account-registry.ts --file lib/traveller/account-registry.test.ts` | no warnings/errors |
+| `npm run check:dead` | pass (only justified CookieConsent orphan) |
+| `npm run check:exports` | 0 unused exports |
+| `npm run check:deps` | pass |
+| `npm run check:api-schutz` | 12 admin routes, all `requireAdminApi()` |
+| `npm run check:schema-bezug` | pass; no new schema objects |
+| `npm run build` | pass (existing Supabase Edge-runtime warnings only) |
+
+CI/Vercel on the final head must be live-verified by the independent reviewer. This authoring run does not claim GitHub Actions or Vercel for the stamp commit.
 
 ## 5. Scope / non-scope confirmation
 
