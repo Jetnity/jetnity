@@ -1,10 +1,11 @@
 # Provider S5-B Gate 0 – Commercial Provenance Persistence Readiness – Status
 
 Stand: 28. August 2026  
-Status: **REVIEW-FIX FÜR 5453667424 / READ-ONLY ARCHITECTURE & READINESS ONLY / DRAFT / KEIN READY / KEIN MERGE / KEIN S5-B-RUNTIME / KEIN TW-8**  
+Status: **REVIEW-FIX FÜR 5453748651 / READ-ONLY ARCHITECTURE & READINESS ONLY / DRAFT / KEIN READY / KEIN MERGE / KEIN S5-B-RUNTIME / KEIN TW-8**  
 Agent: `Cursor-Agent: Jetnity provider readiness audit 2`  
 Auftrag: `docs/PROVIDER_S5B_GATE0_READINESS_TASK_2026-08-28.md`  
-Review-Fix gegen Exact Head: `9674a658e697dd4dd1743046911cff1a29305b5c`  
+Precision-Fix gegen Exact Head: `623983835b32c233fa6349e8be0c6e5c40f5e6de`  
+Vorheriger Review-Fix: `5453667424` auf `9674a658`  
 Branch: `audit/provider-s5b-gate0-readiness-2026-08-28`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/141
 
@@ -16,7 +17,7 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/141
 
 ## 0. Live-Rekonstruktion dieses Agenten
 
-Rekonstruiert gegen `origin/main` bei Arbeitsbeginn, vor dem ersten Handoff und erneut vor diesem Review-Fix. `origin/main` blieb `b4c295e43021c22d863abb12702ef1ec3d18eb98`. Gates auf `9674a658` gelten nicht für den neuen Head. Siehe Handoff.
+Rekonstruiert gegen `origin/main` bei Arbeitsbeginn und erneut vor diesem Precision-Fix. `origin/main` blieb `b4c295e43021c22d863abb12702ef1ec3d18eb98`. Gates auf `62398383` und `9674a658` gelten nicht für den neuen Head. Siehe Handoff.
 
 | Fakt | Wert |
 | --- | --- |
@@ -137,7 +138,7 @@ RLS: owner-only `user_id = auth.uid()`. Grants: `SELECT, INSERT, UPDATE, DELETE`
 - **Flight:** JSON-Handelsfelder → `null`
 - **Stay / Activity / Transfer / Rental / Note:** JSON-Handelsfelder **akzeptiert**, wenn vorhanden
 - **Booking:** `booked` nur für flight/stay/transfer/rental_car; erzwingt `booking_source='user'`
-- **Hard Truth?** Direkter RPC-Caller kann für **jedes Nicht-Flight-Kind** (`stay`, `activity`, `transfer`, `rental_car`, `note`) die Legacy-Handelsfelder aus JSON persistieren. Flight wird genullt. Transfer/Rental-**Betrag/Währung** als User-Intake bleibt beabsichtigt; `provider` / `external_ref` / `booking_url` sind dort trotzdem untrusted, wenn der Caller sie setzt.
+- **Hard Truth?** Direkter RPC-Caller kann Legacy-Handelsfelder für jedes Nicht-Flight-`trip_items.kind` persistieren, einschliesslich `note`. Flight wird genullt. `note` ist **kein** S5-A-Commercial-Domain; es ist ein nicht-kommerzielles Kind, das die generischen Spalten heute trotzdem annehmen kann. Transfer/Rental-**Betrag/Währung** als User-Intake bleibt beabsichtigt; `provider` / `external_ref` / `booking_url` sind dort trotzdem untrusted.
 
 #### PATH F — Direkte authenticated `trip_items` Writes
 
@@ -149,7 +150,7 @@ RLS: owner-only `user_id = auth.uid()`. Grants: `SELECT, INSERT, UPDATE, DELETE`
 | F4 Hotel/Activity | `lib/hotels/aktionen.ts`, `lib/activities/aktionen.ts` | würde Handelsfelder schreiben | Nachweis-Factories `null` → fail-closed. **Kein DB-Trigger** für Stay/Activity. |
 | F5 Mobility/Rental manual | `lib/mobility/aktionen.ts`, `lib/rental-cars/aktionen.ts` | User-Preis; App setzt `provider=null`; evidence=`user` | beabsichtigtes User-Intake **in der App**. Direct-DML kann trotzdem `provider` / `external_ref` / `booking_url` setzen. |
 | F6 Route-Metadata | `lib/route/schreiben.ts` | nur `metadata.routeItinerary` | keine Commercial Truth |
-| F7 Direct-DML | jeder `authenticated` Owner-Client | INSERT/UPDATE der Legacy-Handelsfelder | Nur Flight hat den DB-Trigger. Stay/Activity/Transfer/Rental/`note` sind nicht gegen Provider-Hard-Truth-Felder geschützt. |
+| F7 Direct-DML | jeder `authenticated` Owner-Client | INSERT/UPDATE der Legacy-Handelsfelder | Nur Flight hat den DB-Trigger. `stay`/`activity`/`transfer`/`rental_car` und das nicht-kommerzielle Kind `note` sind nicht gegen Provider-Hard-Truth-Felder geschützt. `note` ist keine S5-A-Domain. |
 
 Keine Route-Handler schreiben `trip_items`. Kein `SECURITY DEFINER` trusted commercial write gefunden. Technical-Lead-Review `5453667424` bestätigt read-only Production-Katalog: `authenticated` hat owner-scoped INSERT/UPDATE; nur Flight hat den Handelsfeld-Trigger. Dieser Agent hat Production nicht selbst katalogisiert.
 
@@ -212,11 +213,15 @@ Keine Schema-Lösung wird implementiert.
 - `trips.metadata.account_archive` ist Lifecycle, nicht Commercial.
 - Ein `CommercialProvenance`-Objekt hat keinen formalen Metadata-Schlüssel. Ein stiller JSON-Dump wäre ein zweiter Truth-Store und würde das 8192-Zeichen-Limit mit der Itinerary teilen.
 
-### 3.3 Überhaupt nicht
+### 3.3 Überhaupt nicht / nicht als persistierte Wahrheit
 
-`sourceKind`, `sourceLabel`, `providerBelegt`, `providerOfferId`, `retrievedAt`, `observedAt`, `freshUntil`, `requestedCurrency`, `amountStatus`, `persistenz`, Affiliate-Block, `availabilityStatus`, `freshnessStatus`, `commercialStatus`, `vergleichsschluessel`.
+**S5-A-Evidence** (dürfte später persistiert werden, heute nicht vorhanden): `sourceKind`, `sourceLabel`, `providerBelegt`, `providerOfferId`, `retrievedAt`, `observedAt`, `freshUntil`, `requestedCurrency`, `quotedCurrency` als Quote-Währung, `amountStatus`, `persistenz`, Affiliate-Block, `availabilityStatus` als Eingabe, `vergleichsschluessel`.
 
-`CommercialAkteur` ist **kein** persistiertes S5-A-Feld. `CommercialProvenance` enthält keinen Actor. Actor ist Write-Time-Kontext der Prüfer (`commercialProvenancePruefen({ akteur })`). Ein fehlender Actor-Column ist daher kein Schema-Loch im S5-A-Vertrag. Eine spätere Audit-/Write-Actor-Spalte wäre ein zusätzliches Audit-Konzept, nicht Teil von ADR-0168.
+**Abgeleitete `CommercialBewertung`** — **nicht** als autoritative persistierte S5-A-Wahrheit: `freshnessStatus`, `commercialStatus`, `currencyStatus`, `darfAlsCurrentQuoteDargestelltWerden`, `darfAlsLiveDargestelltWerden`, `darfRequestedWaehrungAlsVergleichbarGelten`. Einige hängen von `nowMs` ab. Sie werden beim Lesen neu berechnet. Eine spätere denormalisierte Status-Spalte wäre Cache mit Invalidierung/Neuberechnung, nicht Source of Truth.
+
+`CommercialAkteur` ist **kein** persistiertes S5-A-Feld. `CommercialProvenance` enthält keinen Actor. Actor ist Write-Time-Kontext der Prüfer. Eine spätere Audit-/Write-Actor-Spalte wäre ein zusätzliches Audit-Konzept, nicht Teil von ADR-0168.
+
+S5-A-Domains bleiben `flights` / `hotels` / `activities` / `mobility` / `rental_cars`. `note` gehört **nicht** in diese Enum. Es ist ein nicht-kommerzielles `trip_items.kind`, das Legacy-Handelsfelder heute über generische DB-Pfade tragen kann. Der spätere Vertrag soll diese Felder auf `note` verbieten/leeren, nicht die Domain-Enum erweitern.
 
 ### 3.4 Spalten mit schwächerer Trust-Semantik als der Name
 
@@ -228,12 +233,12 @@ Keine Schema-Lösung wird implementiert.
 2. `note`-Preisprosa vs Spalten (können null oder anders sein).
 3. Ephemere Search-UI vs persistierte `trip_items`.
 4. `trips.currency` / `budget_amount` vs Item-`price_currency` — keine Übereinstimmungspflicht.
-5. Direkter `reise_anlegen`-RPC umgeht den Server-Action-Strip für alle Nicht-Flight-Kinds (Stay/Activity vollständig; Transfer/Rental Provider/Ref/URL; `note` ungehindert).
+5. Direkter `reise_anlegen`-RPC umgeht den Server-Action-Strip: Stay/Activity ganze Legacy-Menge; Transfer/Rental Provider/Ref/URL; `note` (kein S5-A-Domain) ungehindert.
 6. Zukünftiger Nachweis-INSERT vs Flight-Trigger ohne DEFINER-Pfad — Dual-Write-Risiko.
 
-### 3.6 Fehlende Zeitpunkt / Freshness / Source / Actor / Status / Quote-Currency / Affiliate
+### 3.6 Fehlende Evidence / abgeleiteter Status
 
-Überall in der Persistenz, außer User-Booking-Zeit, Row-`created_at`/`updated_at` und Manual-Evidence=`user`. Workspace-Labels kompensieren nur in der UI und persistieren nicht.
+Evidence-Felder (Source, Refs, Zeiten, requested/quoted Currency, Amount+Status, Affiliate, Availability-/Persistenz-Eingaben) fehlen überall in der Persistenz, außer User-Booking-Zeit, Row-`created_at`/`updated_at` und Manual-Evidence=`user`. Workspace-Labels und `CommercialBewertung` sind Ableitungen, keine persistierte Wahrheit.
 
 ---
 
@@ -245,7 +250,7 @@ Mindestens vier Varianten, Bewertung und begründete Empfehlung stehen in:
 
 Keine Variante ist hier entschieden oder implementiert.
 
-Kurz: **Empfehlung = Option C** (eigene provider-neutrale Provenance-Relation, Ownership über `trip_item_id`; Legacy-Handelsfelder bleiben untrusted, bis eine geprüfte `persisted_snapshot`-Zeile existiert). Option A ohne Write-Authority-Fix wiederholt den Flight-Bypass für alle Nicht-Flight-Kinds. Option B (Metadata) erzeugt den gefährlichsten zweiten Store. Option D (nur User-Intake persistieren, Provider-Snapshots ephemer) schließt keinen TW-8-Gate. Domain+Provider+`externalRef` ist Refresh-/Match-Identität **am selben Item**, kein datenbankweites Unique.
+Kurz: **Empfehlung = Option C** (eigene provider-neutrale Provenance-Relation, Ownership über `trip_item_id`; persistierte **Evidence**, Bewertung zur Lesezeit). Option D braucht die Guard-Matrix Stay/Activity vs Transfer/Rental vs `note` — nicht nur Provider/Ref/URL. `note` ist kein S5-A-Domain. Domain+Provider+`externalRef` ist Refresh-/Match-Identität **am selben Item**, kein datenbankweites Unique.
 
 ---
 
@@ -298,27 +303,36 @@ Das ist **keine** datenbankweite Eindeutigkeit. Dieselbe provider-scoped Ref dar
 
 **Legacy ohne Provenance:** `unknown`. Kein stilles Backfill aus `price_amount`/`provider`. Workspace darf weiter `herkunft-vorhanden` zeigen, nie Current Quote / Live.
 
-### 5.6 Bypass-Verhinderung analog Flight
+### 5.6 Bypass-Verhinderung — konzeptionelle Guard-Matrix
 
-Provider-Hard-Truth-Schutz muss **alle** kommerziellen Domänen und `note` abdecken, bevor Legacy-Spalten Hard Truth tragen dürfen. Server-Action-Strip allein reicht nicht: `authenticated` Direct-DML und `reise_anlegen`-JSON schreiben Nicht-Flight-Handelsfelder weiter.
+Server-Action-Strip allein reicht nicht: `authenticated` Direct-DML und `reise_anlegen`-JSON schreiben Legacy-Handelsfelder auf Nicht-Flight-Kinds weiter. Ein späterer trusted Write darf nicht über denselben authenticated INSERT-Grant laufen. Service-Role im Produktpfad bleibt verboten. **Kein Trigger/RPC in Gate 0 entwerfen oder bauen.**
 
-Transfer/Rental-**User-Intake** von Betrag/Währung bleibt erlaubt und muss erhalten bleiben. Untrusted bleiben dort `provider`, `external_ref`, `booking_url`. `note` ist heute nicht gegen diese Legacy-Felder constrained.
+Konzeptionelle Split, falls ein späterer Slice Guards plant:
 
-Ein späterer trusted Write darf nicht über denselben authenticated INSERT-Grant laufen. Service-Role im Produktpfad bleibt verboten.
+| `trip_items.kind` | S5-A-Domain? | Bis ein trusted S5-B-Provider-Write existiert |
+| --- | --- | --- |
+| `flight` | `flights` | Bereits DB-geschützt: Legacy-Handelsfelder von authenticated/anon Direct-Write. |
+| `stay` / `activity` | `hotels` / `activities` | Untrusted Direct-RPC/DML darf **keine** Provider-Hard-Truth in der gesamten Legacy-Handelsfeldmenge minten (`price_amount`, `price_currency`, `provider`, `external_ref`, `booking_url`). Provider-abgeleiteter Betrag/Währung wird nicht vertrauenswürdig, nur weil er in den Flachspalten steht. |
+| `transfer` / `rental_car` | `mobility` / `rental_cars` | User-Intake von `price_amount` / `price_currency` bleibt erlaubt. `provider` / `external_ref` / `booking_url` bleiben untrusted und dürfen keine Provider-Hard-Truth sein, solange sie nicht über den späteren trusted S5-B-Vertrag geschrieben werden. |
+| `note` | **nein** | Alle Legacy-Handelsfelder verbieten/leeren. `note` ist kein Commercial-Provenance-Domain und erweitert die Enum nicht. |
+
+Nur `provider`/`external_ref`/`booking_url` zu schützen und Stay/Activity-Preise offen zu lassen wäre ein unvollständiger Vertrag.
 
 ---
 
 ## 6. E. Freshness- / Statusmodell
 
-S5-A trennt bereits:
+S5-A trennt bereits **abgeleitete** Bewertungen:
 
 - Freshness: `current` / `stale` / `unknown`
 - Commercial Status: `current` / `stale` / `unknown` / `unavailable` / `error` / `partial`
-- Availability: nur `unavailable` | `unknown` — **kein `available: boolean`**
+- Availability-Eingabe: nur `unavailable` | `unknown` — **kein `available: boolean`**
 
-`insufficient_context` ist im Commercial-Vertrag kein eigener Status. Für Commercial-Persistenz reicht S5-A. Traveller-/Readiness-`insufficient_context` nicht hier mischen.
+Diese Werte sind `CommercialBewertung`, nicht persistierte Source of Truth. Persistiert werden die Evidence-Eingaben (`quelle`, Refs, `retrievedAt`/`observedAt`/`freshUntil`, requested/quoted Currency, Amount + `amountStatus`, Affiliate, `availabilityStatus`, `persistenz`). Beim Lesen wird die S5-A-Prüfung mit aktueller Zeit (`nowMs`) erneut ausgeführt. `freshnessStatus`, `commercialStatus`, `currencyStatus` und `darfAlsCurrentQuoteDargestelltWerden` dürfen nicht als autoritative Spalten gelten. Eine spätere Denormalisierung ist Cache mit Invalidierung/Neuberechnung.
 
-Zeitfelder, die später semantisch nötig wären — **nicht jetzt bauen**:
+`insufficient_context` ist im Commercial-Vertrag kein eigener Status. Traveller-/Readiness-`insufficient_context` nicht hier mischen.
+
+Zeit-Evidence, die später semantisch nötig wäre — **nicht jetzt bauen**:
 
 | Feld | Rolle |
 | --- | --- |
@@ -327,7 +341,7 @@ Zeitfelder, die später semantisch nötig wären — **nicht jetzt bauen**:
 | `freshUntil` | nur mit Quellenbeleg; nicht vor `retrievedAt` |
 | Row-`updated_at` | Mutationszeit, **kein** Quote-Zeitpunkt |
 
-Persistierter Snapshot bleibt `snapshotIstNieLive: true`. Current Quote ≠ Live-Verfügbarkeit.
+Persistierter Snapshot bleibt bei der Bewertung `snapshotIstNieLive: true`. Current Quote ≠ Live-Verfügbarkeit.
 
 ---
 
@@ -413,13 +427,13 @@ Falls spätere S5-B-Arbeit Schema / Migration / RLS / REVOKE / privilegierte Wri
 1. Build Order: TW-8 bleibt hinter Provider S5 **und** realer Commercial Provenance. S5-A allein reicht nicht. Gate 0 ist nur Readiness.
 2. Es gibt keine persistierte S5-A-Provenance.
 3. Es gibt keine Real-Commercial-Evidence (keine Provider, keine paid quotes, keine belegte Freshness).
-4. Direct-DML/`reise_anlegen` können für alle Nicht-Flight-Kinds weiterhin unbelegte Provider-/Ref-/URL-Felder speichern.
+4. Direct-DML/`reise_anlegen` können auf `stay`/`activity` die ganze Legacy-Handelsfeldmenge, auf Transfer/Rental Provider/Ref/URL und auf `note` (kein S5-A-Domain) Legacy-Handelsfelder ohne Nachweis schreiben.
 5. Workspace darf vorhandene Herkunftsfelder nicht als geprüften Live-Nachweis zeigen — und tut das heute auch nicht.
 
 **Mindestens später nötig, bevor TW-8 starten darf**
 
 1. Entschiedene S5-B-Architektur (nicht dieser Draft)
-2. Implementierter persistenter S5-A-Vertrag mit Write-Authority analog Flight-Guards, erweitert auf alle kommerziellen Domänen inkl. `note`; Transfer/Rental-User-Intake von Betrag/Währung bleibt erhalten. Persistierte Provider-Truth nur als `persisted_snapshot`, nicht als liegengebliebenes `live_api`.
+2. Implementierter persistenter S5-A-Vertrag mit Write-Authority analog der Guard-Matrix in §5.6 (Stay/Activity: keine Provider-Hard-Truth in der ganzen Legacy-Menge; Transfer/Rental: User-Intake-Preis erhalten, Provider/Ref/URL untrusted; `note`: Legacy-Handelsfelder verbieten/leeren, **keine** Domain-Erweiterung). Persistierte Provider-Truth nur als `persisted_snapshot`-Evidence; Bewertung zur Lesezeit.
 3. Production-Apply nur nach PO-Gate, falls Schema/RLS/DEFINER
 4. Read-Pfad, der Legacy ohne Provenance als `unknown` belässt
 5. **Reale** Commercial-Provenance-Evidence: mindestens ein serverseitig nachgewiesener Snapshot mit `retrievedAt`/`observedAt`, belegter `quotedCurrency`, fail-closed Actor↔Source — nicht nur Schema
@@ -437,7 +451,7 @@ Keine fehlende Zukunftsfähigkeit als heutiger P0.
 
 | ID | Klasse | Aussage |
 | --- | --- | --- |
-| `S5B-G0-P2-01` | **P2 residual trust** | Authenticated Direct-DML und `reise_anlegen`-JSON können für alle Nicht-Flight-Kinds (`stay`, `activity`, `transfer`, `rental_car`, `note`) Legacy-Handelsfelder ohne Nachweis schreiben. Nur Flight hat den DB-Trigger. Transfer/Rental-Betrag/Währung als User-Intake ist beabsichtigt; `provider` / `external_ref` / `booking_url` und `note`-Handelsfelder sind trotzdem untrusted. Owner-scoped, kein Live-Provider, UI disclaimed. Nicht P0. Muss vor Provider-Hard-Truth geschlossen werden. |
+| `S5B-G0-P2-01` | **P2 residual trust** | Authenticated Direct-DML und `reise_anlegen`-JSON können Legacy-Handelsfelder auf `stay`/`activity` (ganze Menge inkl. Betrag/Währung), `transfer`/`rental_car` (Provider/Ref/URL trotz erlaubtem User-Intake-Preis) und `note` (kein S5-A-Domain) ohne Nachweis schreiben. Nur Flight hat den DB-Trigger. Owner-scoped, kein Live-Provider, UI disclaimed. Nicht P0. Muss vor Provider-Hard-Truth gemäss Guard-Matrix geschlossen werden. |
 | `S5B-G0-P2-02` | **P2 dual-display** | Hotel-/Activity-`note` kann Preisprosa tragen, unabhängig von Spalten. |
 | `S5B-G0-P3-01` | **P3 hygiene** | `docs/PROVIDER_READINESS_IMPLEMENTATION_SLICES.md` ist hinter `main` (behauptet S3 nur auf Feature-Branch). Historische Evidence; dieser Slice korrigiert die Datei nicht still. |
 
@@ -488,4 +502,4 @@ Runtime/Schema nur gelesen, nicht geändert:
 
 Draft bleibt Draft. Kein Mark Ready. Kein Merge. Kein Folge-Slice. Kein S5-B Runtime. Kein TW-8.
 
-Nächster Schritt: unabhängiger Technical-Lead-**Re-Review** von Draft-PR #141 auf dem neuen Exact Head. Agent-Self-Review ist keine Freigabe. Alte Gates auf `9674a658` sind ungültig.
+Nächster Schritt: unabhängiger Technical-Lead-**Re-Review** von Draft-PR #141 auf dem neuen Exact Head. Agent-Self-Review ist keine Freigabe. Gates auf `62398383` und `9674a658` sind ungültig.

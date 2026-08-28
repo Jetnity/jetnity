@@ -1,7 +1,7 @@
 # Provider S5-B Gate 0 – Architecture Options
 
 Stand: 28. August 2026  
-Status: **REVIEW-FIX FÜR 5453667424 / PROPOSED / NOT ACCEPTED / NOT IMPLEMENTED**  
+Status: **REVIEW-FIX FÜR 5453748651 / PROPOSED / NOT ACCEPTED / NOT IMPLEMENTED**  
 Agent: `Cursor-Agent: Jetnity provider readiness audit 2`  
 Bezug: `docs/PROVIDER_S5B_GATE0_READINESS_STATUS_2026-08-28.md`  
 ADR-0168 bleibt die kanonische S5-A-Entscheidung. Dieses Dokument deutet sie nicht um.
@@ -55,7 +55,7 @@ Jede spätere S5-B-Variante muss:
 | Multi-Provider-Konflikte | Schlecht — eine Zeile kann Konflikt nicht stehen lassen. |
 | Kosten / Betrieb | Niedrig (keine neue Tabelle), aber Production-Migration. |
 
-**Passt wenn:** nur genau ein aktueller Snapshot pro Item gewollt ist **und** gleichzeitig ein privilegierter Write-Pfad plus Provider-Hard-Truth-Guards für alle Nicht-Flight-Kinds gebaut werden (Transfer/Rental-User-Intake von Betrag/Währung bleibt).
+**Passt wenn:** nur genau ein aktueller Snapshot pro Item gewollt ist **und** gleichzeitig ein privilegierter Write-Pfad plus die Guard-Matrix aus dem Status §5.6 gilt (Stay/Activity: ganze Legacy-Menge untrusted; Transfer/Rental: User-Intake-Preis erhalten; `note`: Handelsfelder leeren, keine Domain).
 
 **Passt nicht wenn:** Write-Authority unverändert bleibt. Dann ist A eine Namenslüge.
 
@@ -94,7 +94,7 @@ Jede spätere S5-B-Variante muss:
 
 ## 3. Option C – Eigene provider-neutrale Provenance-Relation
 
-**Idee:** Neue Relation, z. B. `trip_item_commercial_provenance`, 1:1 (current) oder später 1:n (history). Ownership und Lifecycle hängen an `trip_item_id` (plus folgendem `trip_id`/`user_id`). `trip_items` bleibt der Reisegraph. Domain bleibt `kind`. Die Relation trägt den **persistierten** S5-A-Vertrag: Quelle, Referenz, Zeiten, Währung, Amount-Status, Affiliate, Persistenzklasse, Vergleichsschlüssel. **Kein Actor-Feld** — `CommercialAkteur` bleibt Write-Time-Kontext der Prüfer. Eine optionale spätere Audit-/Write-Actor-Spalte wäre ein zusätzliches Audit-Konzept, nicht ADR-0168.
+**Idee:** Neue Relation, z. B. `trip_item_commercial_provenance`, 1:1 (current) oder später 1:n (history). Ownership und Lifecycle hängen an `trip_item_id` (plus folgendem `trip_id`/`user_id`). `trip_items` bleibt der Reisegraph. Die S5-A-Domain folgt nur den fünf kommerziellen Kinds, nicht `note`. Die Relation trägt **persistierte S5-A-Evidence**: Quelle, Referenz, Zeiten, requested/quoted Currency, Amount + `amountStatus`, Affiliate, `availabilityStatus`, Persistenzklasse, Vergleichsschlüssel. **Kein Actor-Feld.** **Keine** autoritative `CommercialBewertung` (`freshnessStatus`, `commercialStatus`, `currencyStatus`, `darfAlsCurrentQuoteDargestelltWerden`) — die wird zur Lesezeit mit `nowMs` neu berechnet. Eine denormalisierte Status-Spalte wäre Cache, nicht Source of Truth. Domain-Enum bleibt S5-A (`flights`/`hotels`/`activities`/`mobility`/`rental_cars`); `note` wird nicht aufgenommen.
 
 Mint-Regel: nur eine serverseitig validierte Provider-Quote darf die Zeile erzeugen. Persistiert wird `sourceKind='persisted_snapshot'` / `persistenz='snapshot'`, unter Erhalt von Provider, belegter `externalRef` und Abruf-/Beobachtungszeit. Ein gespeichertes ephemeres `live_api` wird dadurch nicht vertrauenswürdig. Client-`sourceKind` nie durch Persistenz allein.
 
@@ -103,7 +103,7 @@ Legacy-Spalten `price_amount` / `provider` / `external_ref` / `booking_url`:
 - bleiben vorerst stehen;
 - gelten **nicht** als Provider-Hard-Truth;
 - dürfen höchstens User-Intake oder untrusted Display sein;
-- Current Quote nur aus geprüfter Provenance-Zeile.
+- Current Quote nur, wenn die **zur Lesezeit** neu berechnete Bewertung das erlaubt, nicht weil eine Status-Spalte `current` speichert.
 
 Writes auf die Provenance-Relation: **kein** `authenticated` INSERT/UPDATE der Rohspalten. Konzept: REVOKE Direct-Write + eine enge privilegierte Funktion **oder** Trigger, der nur einem serverseitig gesetzten Kontext vertraut. Service-Role im Produktpfad bleibt verboten. Das ist ein späteres PO-Gate, kein Gate-0-Bau.
 
@@ -113,7 +113,7 @@ Writes auf die Provenance-Relation: **kein** `authenticated` INSERT/UPDATE der R
 | --- | --- |
 | Truth Integrity | Am stärksten, weil Write-Authority von Owner-DML getrennt werden kann. S5-A-Prüfer bleiben die Gate-Funktion. |
 | Domain Isolation | Gut — keine Flight-Felder in der Relation; Domain nur als Enum analog S5-A. |
-| Queryability | Hoch — eigene Indizes für Freshness, Provider, Ref, Status. |
+| Queryability | Hoch für Evidence (Provider, Ref, Zeiten, Amount-Status). Abgeleiteter Freshness-/Commercial-Status ist keine persistierte Wahrheit und kein Unique-Index-Ziel. |
 | RLS / Ownership | Primärschlüssel/Lifecycle: `trip_item_id`. `trip_id`/`user_id` folgen `trip_items`. SELECT owner-only. WRITE nicht owner-beliebig. |
 | Guest → Account | Keine Guest-Provider-Zeile. Promotion mintet keine Provider-Provenance und kein `persisted_snapshot` aus LocalStorage. User-Intake optional separat. |
 | Update / Refresh | Refresh/Match am selben Item: Domain + `providerId` + belegte `externalRef`. **Kein** Unique-Constraint über diese drei Spalten — dieselbe Ref darf auf mehreren Items stehen. Lookup/Vergleich darf nicht-eindeutig bleiben, bis ein späterer Providervertrag Uniqueness beweist. 1:n später möglich, nicht jetzt nötig. |
@@ -138,7 +138,17 @@ Writes auf die Provenance-Relation: **kein** `authenticated` INSERT/UPDATE der R
 
 ## 4. Option D – Provider-Snapshots ephemer; nur ehrliches User-Intake persistieren
 
-**Idee:** Keine Provider-Quote in der DB, bis Aktivierung + Nachweis existieren. Provider-Hard-Truth-Guards auf Flight-Niveau für alle Nicht-Flight-Kinds heben (Strip + Trigger für `provider` / `external_ref` / `booking_url`; Transfer/Rental-Betrag/Währung als User-Intake erhalten). Persistierte Preise nur als `user_intake`/`manual` mit `observedAt`. Search bleibt ephemer. Ein späteres Mint erzeugt `persisted_snapshot`, nicht liegengebliebenes `live_api`.
+**Idee:** Keine Provider-Quote in der DB, bis Aktivierung + Nachweis existieren. Search bleibt ephemer. Ein späteres Mint erzeugt `persisted_snapshot`-Evidence, nicht liegengebliebenes `live_api`. Bewertung bleibt Lesezeit.
+
+Konzeptionelle Guard-Matrix — **nicht** als „nur Provider/Ref/URL schützen“ implementierbar:
+
+| Kind | Konzept |
+| --- | --- |
+| `stay` / `activity` | Untrusted Direct-RPC/DML mintet **keine** Provider-Hard-Truth in der ganzen Legacy-Menge, einschliesslich `price_amount` / `price_currency`. Ein in die Flachspalten geschriebener Provider-Preis wird dadurch nicht vertrauenswürdig. |
+| `transfer` / `rental_car` | User-Intake `price_amount` / `price_currency` erhalten. `provider` / `external_ref` / `booking_url` bleiben untrusted/verboten als Provider-Hard-Truth, bis ein trusted S5-B-Write existiert. |
+| `note` | Alle Legacy-Handelsfelder verbieten/leeren. Keine S5-A-Domain, keine Enum-Erweiterung. |
+
+Kein Trigger/RPC in Gate 0. Production-Guards wären eigenes PO-Gate.
 
 ### Bewertung
 
@@ -147,13 +157,13 @@ Writes auf die Provenance-Relation: **kein** `authenticated` INSERT/UPDATE der R
 | Truth Integrity | Ehrlicher Ist-Zustand. Schließt `S5B-G0-P2-01`, erzeugt aber keine Provider-Provenance. |
 | Domain Isolation | Unverändert. |
 | Queryability | Unverändert schwach für Commercial. |
-| RLS / Ownership | Provider-Feld-Trigger analog Flight für alle Nicht-Flight-Kinds wäre Production-Migration / PO-Gate. |
+| RLS / Ownership | Eine spätere Guard-Umsetzung nach der Matrix oben wäre Production-Migration / PO-Gate. Nicht in Gate 0. |
 | Guest → Account | Heutiger Strip bleibt; LocalStorage bleibt untrusted. |
 | Update / Refresh | Kein Provider-Refresh. |
 | Retention / Privacy | Weniger Providerdaten. |
 | Migration Complexity | Kann klein sein (nur Guards) oder null, wenn nur Docs/App-Strip. Guards auf Production = PO-Gate. |
 | Rollback | Wie S2-B2: Guard stehen lassen, nicht rewinden. |
-| Backfill / Legacy Unknown | Legacy-Provider/Ref/URL auf Nicht-Flight-Kinds nach Guard: einfrieren oder nullen — eigene Entscheidung, kein stilles Backfill. Transfer/Rental-Betrag nicht automatisch streichen. |
+| Backfill / Legacy Unknown | Stay/Activity-Legacy-Handelsfelder inkl. Preis: nicht zu Provider-Truth backfillen. Transfer/Rental-Betrag nicht automatisch streichen. `note`-Handelsfelder leeren, nicht als Domain behandeln. |
 | Indexing / Performance | unverändert |
 | Native / API-Readiness | Kein persistierter Quote-Contract. |
 | Admin / Observability | Kein Commercial-Snapshot. |
@@ -187,7 +197,7 @@ Writes auf die Provenance-Relation: **kein** `authenticated` INSERT/UPDATE der R
 Gründe:
 
 1. S5-A ist zu reich für die heutigen fünf Handelsfelder. Ohne Source/Zeit/Amount-Status/Affiliate bleibt jeder Preis eine Behauptung. Actor gehört nicht in die persistierte Zeile.
-2. `trip_items` ist bereits ein gemischter Trust-Store. Additive Spalten (A) auf demselben `authenticated`-Grant wiederholen den Flight-P0-Klasse-Bypass für alle Nicht-Flight-Kinds.
+2. `trip_items` ist bereits ein gemischter Trust-Store. Additive Spalten (A) auf demselben `authenticated`-Grant wiederholen den Flight-P0-Klasse-Bypass für Stay/Activity (inkl. Preis) und Transfer/Rental-Providerfelder.
 3. Metadata (B) verletzt den Route-Metadata-Vertrag, teilt das 8192-Limit und erzeugt den klarsten zweiten Store neben `price_amount`.
 4. Eine eigene Relation, keyed auf `trip_item_id`, kann SELECT owner-only und WRITE privileged trennen, ohne Service-Role im Produktpfad und ohne globale Unique auf Provider+Ref.
 5. Legacy-Zeilen ohne Provenance-Row bleiben ehrlich `unknown`. Kein Backfill.
@@ -198,9 +208,9 @@ Gründe:
 
 - `price_amount` / `provider` / `external_ref` dürfen nach S5-B **nicht** unabhängig von der Provenance-Relation Provider-Wahrheit tragen.
 - Entweder schreibt derselbe trusted Pfad eine kontrollierte Display-Projektion, oder die Legacy-Spalten bleiben ausschließlich User-Intake / untrusted.
-- `note`-Preisprosa ist keine Quote.
+- `note` ist kein S5-A-Domain. Legacy-Handelsfelder dort verbieten/leeren; Preisprosa in Hotel-/Activity-`note` ist keine Quote.
 - Domain+Provider+`externalRef` ist Refresh-/Match-Identität am selben Item, kein Unique über Nutzer/Reisen/Items.
-- Persistierte Provider-Truth ist `persisted_snapshot` / `persistenz='snapshot'`, gemintet nur aus serverseitig validierter Quote.
+- Persistierte Provider-Truth ist `persisted_snapshot`-**Evidence**; `CommercialBewertung` wird zur Lesezeit neu berechnet.
 
 **Option D** ist die ehrlichste Zwischenhärtung gegen `S5B-G0-P2-01`, ersetzt S5-B aber nicht und öffnet TW-8 nicht.
 
