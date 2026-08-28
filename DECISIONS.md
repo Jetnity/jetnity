@@ -4575,6 +4575,37 @@ Migration `20260826240000_trip_day_stage_assignment_mode.sql` gilt nur Developme
 
 ---
 
+## ADR-0183 – AP-5-S1: Server-Truth für Security-UI-Lagen und Fehlerhygiene
+
+**Datum:** 28. August 2026  
+**Status:** Implementation auf Draft-PR zu Issue #132. Keine Auth-Architektur. Kein Auth-Config-Push.
+
+**Entscheidung:**
+
+1. `/account/security` trennt `empty`, `unsupported`, `unavailable` und `error` ausdrücklich. Eine fehlgeschlagene oder fehlende Faktorenliste darf nicht als „keine Faktoren“ erscheinen.
+2. Passkey-Lage folgt der Server-/Config-Authority `auth.passkey.enabled`. Browser-WebAuthn darf `unsupported` nicht zu „verfügbar“ oder „nur noch auf den Browser wartend“ machen.
+3. Nutzersichtbare MFA-/Security-Fehler sind stabile Produktcopy. GoTrue-/Supabase-Rohtexte, Tokens, QR-Secrets und otpauth-URIs gehören nicht in die UI.
+4. Faktor-IDs und ID-Präfixe sind keine Geräteidentität. Anzeige ist `friendly_name` oder „Authenticator-App“.
+5. TOTP-Enroll/Verify/Unenroll bleibt die vorhandene Client-Authority. S1 baut keinen Step-up, keine Passwortänderung, kein Logout-Umbau und keine Sessionliste.
+
+**Kontext:** Gate 0 / ADR-0182 hat den Vertrag rekonstruiert und S1 als kleinsten Folgeslice klassifiziert. Die bisherige Security-UI vermischte Lagen, zeigte Faktor-ID-Präfixe und konnte Passkeys als „verfügbar“ zeichnen, sobald der Browser WebAuthn hatte.
+
+**Alternativen:**
+
+1. *Nur Copy auf der Seite ändern, Ableitung in der Komponente lassen.* Würde die Lagen unbelegt und untestbar lassen.
+2. *Passkeys anhand der Browser-API zeigen.* Würde Server-Truth überschreiben und eine deaktivierte Config als live andeuten.
+3. *S2–S5 in denselben PR ziehen.* Würde Auth-nahe Semantik vermischen, bevor die Zustände ehrlich sind.
+
+**Begründung:** Ehrliche Zustände sind Voraussetzung dafür, dass spätere Slices nicht wieder Empty, Error und Unsupported vermengen. Die Config ist die belegte Authority für Passkeys; der Browser ist es nicht.
+
+**Konsequenzen:**
+
+- Evidence: `docs/AP5_S1_SECURITY_UI_TRUTH_STATUS_2026-08-28.md`, `lib/auth/account-security-lage.ts`, `lib/auth/account-security-fehler.ts`.
+- Kein Auth-Config-Push und keine Passkey-Aktivierung.
+- S2–S5 starten nicht aus diesem ADR.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

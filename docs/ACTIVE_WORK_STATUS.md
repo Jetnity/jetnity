@@ -1,26 +1,26 @@
 # Jetnity – Active Work Status
 
 Stand: 28. August 2026  
-Status: **AP-5 Gate 0 Account-Security-Capability-Audit ist der aktuelle Account-Architecture-Slice auf Issue #128. P2-TA-04 C1 / PR #126 ist integriert; Issue #122 CLOSED / completed. Kein C2. Keine AP-5-Runtime. Kein Auth-Config-Push. Live-`main` immer live prüfen.**
+Status: **AP-5-S1 ehrliche Security-UI ist der aktuelle Account-Implementation-Slice auf Issue #132. AP-5 Gate 0 / PR #129 ist integriert; Issue #128 CLOSED / completed. Kein S2–S5. Kein C2. Kein Auth-Config-Push. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
-## Aktueller Arbeitsblock – AP-5 Gate 0 Account security capability audit
+## Aktueller Arbeitsblock – AP-5-S1 Security-UI Truth
 
-1. **Arbeitsblock / Ziel:** Issue #128 / AP-5 Gate 0 – bestehenden Auth-/Session-/MFA-Vertrag rekonstruieren und AP-5-Folgeslices in TL- vs. Product-Owner-Gates schneiden.
-2. **Authoring-Branch / PR:** `cursor/ap5-gate0-auth-session-mfa-79f9`; Draft-PR #129.
-3. **Status:** **REVIEW-FIX FÜR 5049870788 / DRAFT.** Docs-Truth-Korrektur (verified-factor Unenroll `aal2`; Recovery ≠ Reauthentication; Current-Password-Breakage nicht unbelegt). Kein Ready, kein Merge, keine AP-5-Runtime.
-4. **Bereits umgesetzt:** Vertragsrekonstruktion; ADR-0182; Inventory-Test; Status/Handoff/Self-Review; Continuity-Zeiger. Live `auth:pruefen` 55/55.
-5. **Cursor-Agent:** `Account plattform audit vorbereitung 8`.
-6. **Live-`main` bei Authoring:** `0bca31b5de06bcee74c5436122b1685b6d2092f6` – immer live neu prüfen.
+1. **Arbeitsblock / Ziel:** Issue #132 / AP-5-S1 – ehrliche Security-UI-Zustände und Fehlerhygiene ohne Auth-Architektur.
+2. **Authoring-Branch / PR:** `cursor/ap5-s1-security-ui-8b13`; Draft-PR nach erstem Push.
+3. **Status:** **AUTHOR COMPLETE / DRAFT.** Kein Ready, kein Merge, kein S2–S5.
+4. **Bereits umgesetzt:** Lage-Ableitung; Passkey-Server-Truth; sichere Fehlercopy; TOTP-UI ohne Faktor-ID als Gerät; ADR-0183; fokussierte Tests.
+5. **Cursor-Agent:** `Account plattform audit vorbereitung 9`.
+6. **Live-`main` bei Authoring:** `eaa03ad71509d281990e0d34ca359e0750eb9591` – immer live neu prüfen.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Production-Daten-Write, keine Supabase-Branch-Mutation, kein Auth-Config-Push.
 8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Residuals:** Sessionliste unsupported; heutiges Abmelden ist bereits `global`; Login-MFA abbrechbar; D0-P1-03 Legal-404; C2 PO-gated; `main` Branch Protection `protected=false`.
-10. **Offene Nutzerentscheidungen / Freigaben:** dieses Gate 0 braucht keines. AP-5-P1–P5 brauchen Product-Owner, bevor sie gebaut werden.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review nach Review-Fix `5049870788`. **Kein AP-5-Runtime-Start aus diesem Slice.**
-12. **Zuerst lesen:** `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, Handoff, ADR-0182.
+9. **Bekannte Residuals:** Sessionliste bleibt ungebaut/`unsupported`; heutiges Abmelden ist bereits `global`; Login-MFA abbrechbar; D0-P1-03 Legal-404; C2 PO-gated; `main` Branch Protection `protected=false`.
+10. **Offene Nutzerentscheidungen / Freigaben:** dieses S1 braucht keines. AP-5-P1–P5 brauchen Product-Owner, bevor sie gebaut werden.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Review des Draft-PR. **Kein automatischer S2-Start.**
+12. **Zuerst lesen:** `docs/AP5_S1_SECURITY_UI_TRUTH_STATUS_2026-08-28.md`, Handoff, ADR-0183, Gate-0-Status, ADR-0182.
 
-Historischer abgeschlossener Block P2-TA-04 C1 bleibt integriert: PR #126 MERGED, Issue #122 CLOSED / completed. Nicht erneut öffnen. P2-TA-03 bleibt integriert: PR #117 MERGED, Issue #116 CLOSED / completed. P2-TA-06 bleibt integriert: PR #113 MERGED, Issue #112 CLOSED / completed.
+Historischer abgeschlossener Block AP-5 Gate 0 bleibt integriert: PR #129 MERGED, Issue #128 CLOSED / completed. Nicht erneut öffnen. P2-TA-04 C1 bleibt integriert: PR #126 MERGED, Issue #122 CLOSED / completed. P2-TA-03 bleibt integriert: PR #117 MERGED, Issue #116 CLOSED / completed. P2-TA-06 bleibt integriert: PR #113 MERGED, Issue #112 CLOSED / completed.
 
 ## 0. Live-Integrationsbaseline
 
@@ -218,18 +218,20 @@ Account/Traveller zuletzt abgeschlossen:
 
 - **Issue #112 / P2-TA-06** – `Account plattform audit vorbereitung 4`. PR #113 integriert. Issue CLOSED / completed. Generation 4 ist historische Authoring-Evidence.
 
-Aktueller Account-Architecture-Slice:
+Aktueller Account-Implementation-Slice:
 
-- **Issue #128 / AP-5 Gate 0** – `Account plattform audit vorbereitung 8`. Audit only. Draft. Kein Ready, kein Merge, keine AP-5-Runtime.
+- **Issue #132 / AP-5-S1** – `Account plattform audit vorbereitung 9`. Ehrliche Security-UI. Draft. Kein Ready, kein Merge, kein S2–S5.
 
 Historisch abgeschlossen:
+
+- **Issue #128 / AP-5 Gate 0** – `Account plattform audit vorbereitung 8`. PR #129 integriert. Generation 8 nicht wiederverwenden.
 
 - **Issue #122 / P2-TA-04 C1** – `Account plattform audit vorbereitung 7`. PR #126 integriert. Generation 7 nicht wiederverwenden.
 
 - **Issue #119 / P2-TA-04 Gate 0** – `Account plattform audit vorbereitung 6`. PR #120 integriert. Generation 6 nicht wiederverwenden.
 - **Issue #116 / P2-TA-03** – `Account plattform audit vorbereitung 5`. PR #117 integriert. Generation 5 nicht wiederverwenden.
 
-**Kein automatisch freigegebener Produkt-Folgeslice.** AP-5-Runtime startet nicht aus Gate 0.
+**Kein automatisch freigegebener Produkt-Folgeslice über S1 hinaus.** S2–S5 starten nicht aus S1.
 
 STOPP weiterhin für automatische Folgeslices:
 
@@ -297,7 +299,7 @@ Production C1 `20260828015304_traveller_write_contract_integrity` ist unter der 
 
 ## 10. Nächster Schritt
 
-AP-5 Gate 0 ist der aktuelle Account-Architecture-Slice (Issue #128). P2-TA-04 C1 bleibt integriert (PR #126); Issue #122 ist CLOSED / completed. Unabhängiger Technical-Lead-Finalreview des Gate-0-Draft-PR steht aus. Kein Ready, kein Merge, keine AP-5-Runtime, kein C2, kein Auth-Config-Push.
+AP-5-S1 ist der aktuelle Account-Implementation-Slice (Issue #132). AP-5 Gate 0 bleibt integriert (PR #129); Issue #128 ist CLOSED / completed. Unabhängiger Technical-Lead-Review des S1-Draft-PR steht aus. Kein Ready, kein Merge, kein S2–S5, kein C2, kein Auth-Config-Push.
 
 P2-TA-03 bleibt integriert (PR #117); Issue #116 ist CLOSED / completed.
 
@@ -305,6 +307,6 @@ P2-TA-06 bleibt integriert (PR #113); Issue #112 ist CLOSED / completed.
 
 **Kein automatischer Folgeslice.** Vor jeder neuen Runtime-Arbeit: aktuelles `main`, offene PRs/Issues, Binding Build Order, Account/Traveller-, Provider-, Admin-, Growth- und QS-Gates live neu prüfen und erst danach eine frische Task/Spec vergeben.
 
-Kein weiterer Production-Write aus diesem Abschluss. Keine Direction A. Kein TW-8/9. Kein AP-5/AP-7 automatisch. Issue #109/#110 bleiben dokumentierte separate Themen und werden nicht durch diesen Merge automatisch gestartet. Kein zweiter AAL2-Apply. Live-`main` immer live prüfen.
+Kein weiterer Production-Write aus diesem Abschluss. Keine Direction A. Kein TW-8/9. Kein AP-5-S2–S5/AP-7 automatisch. Issue #109/#110 bleiben dokumentierte separate Themen und werden nicht durch diesen Merge automatisch gestartet. Kein zweiter AAL2-Apply. Live-`main` immer live prüfen.
 
 PR #95 zeichnet einen Product-Owner-Wunsch auf: Homepage-Hero-Design bleibt, die Funktion im bestehenden Kästchen soll später natürliche Mehrziel-/Route-Absicht verstehen. Das bleibt **kein** Startauftrag und ist nicht TW7-A.

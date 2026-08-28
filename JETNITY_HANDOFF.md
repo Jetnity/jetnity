@@ -1,13 +1,14 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **Kanonischer Post-PR-#129/#130-Übergabestand. AP-5 Gate 0 ist integriert; Issue #128 ist CLOSED / completed. P2-TA-04 C1 ist integriert. C2 und AP-5-Runtime sind nicht gestartet. Kein automatischer Folgeslice. Live-Evidence immer erneut verifizieren.**
+Status: **Kanonischer Post-PR-#131-Übergabestand plus AP-5-S1 auf Issue #132. AP-5 Gate 0 ist integriert; Issue #128 ist CLOSED / completed. S2–S5 und C2 sind nicht gestartet. Kein automatischer Folgeslice. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
 Aktuellster versionierter Post-Merge-Checkpoint für den Account-Workstream:
 
 - `docs/CHATGPT_PR129_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+- `docs/AP5_S1_SECURITY_UI_TRUTH_STATUS_2026-08-28.md` – aktueller Account-Implementation-Slice
 
 Die ausführliche vorherige Fassung dieses Handoffs bleibt byte-identisch als historische Evidence erhalten unter:
 
@@ -37,7 +38,7 @@ Zuerst vollständig lesen:
 18. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
 19. danach alle für den betrachteten Workstream relevanten Slice-Tasks, Statusdateien, Handoffs, ADRs und Checkpoints.
 
-Hinweis: Der oberste AP-5-Gate-0-Arbeitsblock in `docs/ACTIVE_WORK_STATUS.md` kann noch den Authoring-/Draft-Zustand vor PR #129 enthalten. Für den Abschluss von Gate 0 ist der spätere Post-Merge-Checkpoint oben maßgeblich; anschließend immer live verifizieren.
+Hinweis: Ältere Gate-0-Authoring-Blöcke in Statusdateien sind historische Evidence. Der aktuelle Account-Arbeitsblock ist AP-5-S1 / Issue #132.
 
 Danach live prüfen: `main`, offene PRs/Drafts, Branches, Merge-Base/Ahead/Behind, tatsächliche Diffs, Review-Threads, Actions, Vercel, relevante Supabase-/Production-Grenzen und P0/P1/P2/P3-Risiken.
 
@@ -103,8 +104,9 @@ Verbindliche Wahrheit:
 - P2-TA-04 Gate 0 / PR #120 integriert
 - P2-TA-04 C1 / PR #126 integriert; Production C1 ist als `20260828015304` live verifiziert und darf nicht erneut angewendet werden
 - AP-5 Gate 0 / PR #129 integriert; Issue #128 CLOSED / completed
+- AP-5-S1 / Issue #132 ist der aktuelle ehrliche Security-UI-Slice; S2–S5 sind nicht gestartet
 
-AP-5-Runtime wird **nicht automatisch** gestartet. AP-7 / Account-Traveller-Registry bleibt separat und gated.
+AP-5-S2–S5 werden **nicht automatisch** gestartet. AP-7 / Account-Traveller-Registry bleibt separat und gated.
 
 Der integrierte AP-5-Gate-0-Vertrag trennt insbesondere Password Recovery von signed-in Reauthentication, hält Session-/Gerätelisting ohne unterstützte User-API ehrlich auf `unsupported`, dokumentiert den heutigen globalen `signOut()`-Default und hält verified-factor `mfa.unenroll` an der serverseitigen AAL2-Anforderung. Details: `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, ADR-0182 und der PR-#129-Post-Merge-Checkpoint.
 
@@ -186,7 +188,7 @@ Nach Live-Rekonstruktion neu einordnen:
 - Provider S5-B nicht gestartet
 - TW-8 gated
 - TW-9 nicht automatisch starten
-- AP-5-Runtime nicht automatisch starten
+- AP-5-S2–S5 nicht automatisch starten
 - AP-7 gated
 - weitere QS-/Supabase-Security-/Performance-Advisories
 - Project-Sanitation PR #88 bleibt non-destructive Evidence; kein Cleanup/Branch-/Cloud-Delete automatisch
@@ -206,31 +208,28 @@ Exakte Basis-Anzeigenamen bleiben verbindlich:
 6. `Cursor-Agent: Jetnity quality security audit`
 7. `Cursor-Agent: Jetnity native app architecture`
 
-Zuletzt abgeschlossene Account-/Traveller-Generation:
+Aktuelle Account-Generation:
 
-- `Cursor-Agent: Account plattform audit vorbereitung 8`
-- AP-5 Gate 0 / Issue #128 / PR #129 abgeschlossen
-- Audit/Architecture only; keine AP-5-Runtime
-- nicht für eine neue logische Arbeitseinheit wiederverwenden
+- `Cursor-Agent: Account plattform audit vorbereitung 9`
+- AP-5-S1 / Issue #132
+- ehrliche Security-UI-Zustände und Fehlerhygiene
+- Draft; kein Ready, kein Merge, kein S2–S5
 
+Generation 8 (AP-5 Gate 0 / PR #129) ist abgeschlossen und nicht wiederzuverwenden.
 Generation 7 (P2-TA-04 C1 / PR #126) ist abgeschlossen und nicht wiederzuverwenden.
 Generation 6 (P2-TA-04 Gate 0 / PR #120) ist abgeschlossen und nicht wiederzuverwenden.
 Generation 5 (P2-TA-03 / PR #117) ist abgeschlossen und nicht wiederzuverwenden.
 Generation 4 (P2-TA-06 / PR #113) ist abgeschlossen und nicht wiederzuverwenden.
 
-Es gibt aktuell **keine automatisch gestartete neue Account-Generation**. Falls nach erneuter Live-Rekonstruktion ein neuer Account-Slice tatsächlich freigegeben und sinnvoll ist, Rotation Standard erneut prüfen; die nächste frische Account-Generation wäre voraussichtlich `Cursor-Agent: Account plattform audit vorbereitung 9`. Das ist keine Startfreigabe.
-
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-**Kein Produkt-Folgeslice ist durch diesen Handoff freigegeben.**
+**Kein Produkt-Folgeslice ist durch diesen Handoff über S1 hinaus freigegeben.**
 
-AP-5 Gate 0 ist abgeschlossen und integriert. Issue #128 ist CLOSED / completed. PR #129 und der Post-Merge-Continuity-PR #130 sind integriert. Es wurde **keine AP-5-Runtime** gestartet. P2-TA-04 C1 bleibt integriert; Production C1 `20260828015304` nicht erneut anwenden.
-
-Der nächste Chat / Technical Lead muss zuerst live rekonstruieren und danach Binding Build Order, Abhängigkeiten, Parallelität und Special Gates neu bewerten, bevor ein nächster Slice gewählt wird.
+AP-5-S1 liegt als Implementation-Slice auf Issue #132 und wartet auf unabhängigen Technical-Lead-Review des Draft-PR. Das ist **kein** S2–S5- und **kein** C2-Start. AP-5 Gate 0 bleibt integriert. P2-TA-04 C1 bleibt integriert; Production C1 `20260828015304` nicht erneut anwenden.
 
 Nicht automatisch starten:
 
-- AP-5 Runtime / AP-5-S1 bis S5
+- AP-5-S2 bis S5
 - AP-7
 - TW-8
 - TW-9
