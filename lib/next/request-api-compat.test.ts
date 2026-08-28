@@ -102,6 +102,72 @@ describe('Supabase Server-Factories sind async-kompatibel', () => {
   })
 })
 
+describe('Framework-facing Page/Metadata-Vertrag ist Promise-förmig', () => {
+  const flaechen = [
+    {
+      datei: 'app/(public)/login/page.tsx',
+      vertrag: /searchParams:\s*PageRequestParam<LoginSearchParams>/,
+    },
+    {
+      datei: 'app/(public)/register/page.tsx',
+      vertrag: /searchParams:\s*PageRequestParam<RegisterSearchParams>/,
+    },
+    {
+      datei: 'app/(public)/admin/mfa/page.tsx',
+      vertrag: /searchParams\?:\s*PageRequestParam<AdminMfaSearchParams>/,
+    },
+    {
+      datei: 'app/(public)/planen/page.tsx',
+      vertrag: /searchParams\?:\s*PageRequestParam<PlanenSearchParams>/,
+    },
+    {
+      datei: 'app/(public)/reisen/[tripId]/page.tsx',
+      vertrag: /params:\s*PageRequestParam<\{ tripId: string \}>/,
+    },
+    {
+      datei: 'app/(admin)/admin/users/page.tsx',
+      vertrag: /searchParams\?:\s*PageRequestParam<SearchParams>/,
+    },
+    {
+      datei: 'app/unauthorized/page.tsx',
+      vertrag: /searchParams\?:\s*PageRequestParam<SearchParams>/,
+    },
+  ] as const
+
+  test('PageRequestParam ist Promise<T>, kein Sync-Objekt-Union', () => {
+    const datei = quelle('lib/next/request-api.ts')
+    assert.match(datei, /export type PageRequestParam<T> = Promise<T>/)
+    assert.equal(datei.includes('export type PageRequestParam<T> = T | Promise<T>'), false)
+  })
+
+  test('bekannte Page/Metadata-Signaturen tragen den Promise-Vertrag', () => {
+    for (const flaeche of flaechen) {
+      const datei = quelle(flaeche.datei)
+      assert.match(datei, flaeche.vertrag, flaeche.datei)
+      assert.equal(
+        /\|\s*Promise</.test(datei),
+        false,
+        `${flaeche.datei} darf kein T | Promise<T> als PageProps nutzen`,
+      )
+    }
+    const planen = quelle('app/(public)/planen/page.tsx')
+    assert.match(planen, /export async function generateMetadata\(\{ searchParams \}: PlanenSeiteProps\)/)
+  })
+
+  test('keine App-Page/Metadata-Signatur fällt auf ein Sync-Objekt-Union zurück', () => {
+    const funde: string[] = []
+    const union =
+      /(?:params|searchParams)\??:\s*(?:[A-Za-z_$][\w$]*|\{[^}]+\})\s*\|\s*Promise</
+    for (const pfad of dateienSammeln(join(wurzel, 'app'))) {
+      const relativ = relative(wurzel, pfad).replaceAll('\\', '/')
+      if (!/\/(page|layout|template)\.(ts|tsx)$/.test(relativ)) continue
+      const text = readFileSync(pfad, 'utf8')
+      if (union.test(text)) funde.push(relativ)
+    }
+    assert.deepEqual(funde, [])
+  })
+})
+
 describe('Request-API-Flächen bleiben produktwahr', () => {
   test('Login next wird awaited und weiter durch anmeldeSeiteZiel geführt', () => {
     const datei = quelle('app/(public)/login/page.tsx')

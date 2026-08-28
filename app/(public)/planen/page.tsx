@@ -16,7 +16,7 @@
 
 import type { Metadata } from 'next'
 
-import { leseOptionalRequestParam } from '@/lib/next/request-api'
+import { leseOptionalRequestParam, type PageRequestParam } from '@/lib/next/request-api'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import PlanenCreateGate from '@/components/trips/PlanenCreateGate'
 import Reiseidee from '@/components/trips/Reiseidee'
@@ -36,7 +36,7 @@ type PlanenSearchParams = {
 }
 
 type PlanenSeiteProps = {
-  searchParams?: PlanenSearchParams | Promise<PlanenSearchParams>
+  searchParams?: PageRequestParam<PlanenSearchParams>
 }
 
 export async function generateMetadata({ searchParams }: PlanenSeiteProps): Promise<Metadata> {

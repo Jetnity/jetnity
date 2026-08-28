@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import RegisterForm from '@/components/auth/RegisterForm'
 import { anmeldeSeiteZiel } from '@/lib/auth/naechstes-ziel'
 import { oauthFreigabeLesen } from '@/lib/auth/oauth-anbieter-lesen'
-import { leseRequestParam } from '@/lib/next/request-api'
+import { leseRequestParam, type PageRequestParam } from '@/lib/next/request-api'
 import { createServerComponentClient } from '@/lib/supabase/server'
 
 export const metadata = {
@@ -20,7 +20,7 @@ type RegisterSearchParams = { next?: string }
 export default async function RegisterPage({
   searchParams,
 }: {
-  searchParams: RegisterSearchParams | Promise<RegisterSearchParams>
+  searchParams: PageRequestParam<RegisterSearchParams>
 }) {
   const supabase = await createServerComponentClient()
   const { data } = await supabase.auth.getUser()

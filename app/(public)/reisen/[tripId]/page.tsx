@@ -17,7 +17,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { AlertCircle } from 'lucide-react'
 
-import { leseRequestParam } from '@/lib/next/request-api'
+import { leseRequestParam, type PageRequestParam } from '@/lib/next/request-api'
 import { NICHT_INDEXIEREN } from '@/lib/seo/index-grenze'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import { istKontoKennung, reiseLaden } from '@/lib/trips/daten'
@@ -36,7 +36,7 @@ export const dynamic = 'force-dynamic'
 export const maxDuration = 300
 
 type ReiseSeiteProps = {
-  params: { tripId: string } | Promise<{ tripId: string }>
+  params: PageRequestParam<{ tripId: string }>
 }
 
 export default async function ReiseSeite({ params }: ReiseSeiteProps) {

@@ -8,6 +8,13 @@
 //
 // Request-URL-Nutzung (`new URL(req.url).searchParams`) ist ein anderes API
 // und gehört nicht hierher.
+//
+// Die öffentliche Page-/Metadata-Signatur ist der Next-16-Vertrag: `Promise<T>`.
+// Ein `T | Promise<T>` darf nur der interne Entpacker bleiben, nicht die
+// framework-facing PageProps.
+
+/** Framework-facing Next 16 Page/Metadata-Vertrag. Kein Sync-Objekt-Union. */
+export type PageRequestParam<T> = Promise<T>
 
 export type RequestParam<T> = T | Promise<T>
 

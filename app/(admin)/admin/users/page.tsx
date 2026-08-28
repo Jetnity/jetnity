@@ -4,7 +4,7 @@ export const revalidate = 0
 
 import { unstable_noStore as noStore } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { leseOptionalRequestParam } from '@/lib/next/request-api'
+import { leseOptionalRequestParam, type PageRequestParam } from '@/lib/next/request-api'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import { requireAdminPage } from '@/lib/auth/admin-guard'
 import {
@@ -27,7 +27,7 @@ type SearchParams = { q?: string; page?: string }
 export default async function UsersPage({
   searchParams,
 }: {
-  searchParams?: SearchParams | Promise<SearchParams>
+  searchParams?: PageRequestParam<SearchParams>
 }) {
   noStore()
 

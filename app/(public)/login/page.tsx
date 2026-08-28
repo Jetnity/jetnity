@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import LoginForm from '@/components/auth/LoginForm'
 import { anmeldeSeiteZiel } from '@/lib/auth/naechstes-ziel'
 import { oauthFreigabeLesen } from '@/lib/auth/oauth-anbieter-lesen'
-import { leseRequestParam } from '@/lib/next/request-api'
+import { leseRequestParam, type PageRequestParam } from '@/lib/next/request-api'
 import { createServerComponentClient } from '@/lib/supabase/server'
 
 export const metadata = {
@@ -20,7 +20,7 @@ type LoginSearchParams = { next?: string }
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: LoginSearchParams | Promise<LoginSearchParams>
+  searchParams: PageRequestParam<LoginSearchParams>
 }) {
   const supabase = await createServerComponentClient()
   const { data } = await supabase.auth.getUser()

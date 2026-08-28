@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 
 import { evaluateAdminAccess } from '@/lib/auth/admin-guard'
 import { erlaubtesAdminZiel } from '@/lib/auth/admin-aal'
-import { leseOptionalRequestParam } from '@/lib/next/request-api'
+import { leseOptionalRequestParam, type PageRequestParam } from '@/lib/next/request-api'
 import { AdminMfaStepUp } from './AdminMfaStepUp'
 
 export const dynamic = 'force-dynamic'
@@ -12,7 +12,7 @@ type AdminMfaSearchParams = { next?: string }
 export default async function AdminMfaPage({
   searchParams,
 }: {
-  searchParams?: AdminMfaSearchParams | Promise<AdminMfaSearchParams>
+  searchParams?: PageRequestParam<AdminMfaSearchParams>
 }) {
   const params = await leseOptionalRequestParam(searchParams)
   const ziel = erlaubtesAdminZiel(params?.next)
