@@ -180,6 +180,14 @@ AP-4 ergänzt den gespeicherten Lifecycle `trips.status = archived` um einen ein
 
 Kein Service Role. Kein Guest-Archiv. TW7-A-Kartenidentität bleibt unverändert.
 
+## 4c. Account Platform Folgeplan (AP-5–AP-12)
+
+Kanonischer Steuerungsvertrag: [`docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`](docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md) (P2-TA-03 / ADR-0179).
+
+AP-1–AP-4 sind integriert und werden nicht neu geplant. AP-5–AP-12 bleiben ungebaut. Current Traveller Truth bleibt trip-scoped. AP-7 bleibt hinter Shared-Contract + Product-Owner + ADR-Nachfolger. Die historische Datei auf Draft-PR #39 ist keine Current Truth.
+
+Die Kopfzeile dieser Architekturdatei kann hinter neueren Production-AAL2-/Continuity-Ständen liegen. Live-Evidence und `JETNITY_HANDOFF.md` gewinnen.
+
 ---
 
 ## 5. Datenfluss der V2-Reiseschicht

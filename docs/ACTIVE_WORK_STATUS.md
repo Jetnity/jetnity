@@ -1,25 +1,26 @@
 # Jetnity – Active Work Status
 
-Stand: 27. August 2026  
-Status: **P2-TA-06 ist integriert: PR #113 MERGED, Issue #112 CLOSED / completed. Production Gate A ist PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111 und PR #113 sind integriert. AP-4 ist integriert. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal. Derzeit kein automatisch freigegebener Produkt-Folgeslice; Live-`main` und Binding Build Order vor neuem Auftrag erneut prüfen.**
+Stand: 28. August 2026  
+Status: **P2-TA-03 Account-Plan-Reconciliation ist der aktuelle Account-Architecture-Slice auf Draft-PR #117. Keine AP-5-Runtime. P2-TA-06 ist integriert: PR #113 MERGED, Issue #112 CLOSED / completed. Production Gate A ist PASS. Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114 und PR #115 sind integriert. AP-4 ist integriert. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal. Kein automatischer Produkt-Folgeslice. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
-## Aktueller Arbeitsblock – Post-Merge-Abschluss P2-TA-06
+## Aktueller Arbeitsblock – P2-TA-03 Account Platform Plan Reconciliation
 
-1. **Arbeitsblock / Ziel:** Issue #112 / P2-TA-06 – First-Document-Fallback in Readiness-Credential-Normalisierung entfernen.
-2. **Authoring-Branch / PR:** `cursor/p2-ta-06-credential-normalization-3317`; PR #113.
-3. **Status:** **ABGESCHLOSSEN / INTEGRIERT.** PR #113 wurde nach unabhängigem Technical-Lead-PASS gemergt; Issue #112 ist CLOSED / completed.
-4. **Bereits umgesetzt:** `travellerNormalisieren` leitet bei fehlenden/leeren `credentialOptions` N Optionen aus N Dokumenten ab; explizite Options bleiben autoritativ; Issuer wird nicht als Citizenship erfunden; `:none` und Legacy-Kompatibilität bleiben definiert.
-5. **Finaler reviewed Head:** `928215a2c6c4d4ce914f12ba1bd88dbcab8f548b`.
-6. **Merge / Live-`main` unmittelbar nach Merge:** `286d26fec2eed87e1227ebb2cf7327f50e8f5f1a`.
-7. **Tests / CI / Production:** PR-Head Actions `33119531505` SUCCESS; Post-Merge `main` Actions `33120743073` SUCCESS; Vercel Production `dpl_7V8WetsqrXC8m4CQcUZoQb9hXn1e` READY auf exakt `286d26fe...`.
-8. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Production-Daten-Write durch diesen Slice.
-9. **Kosten / Provider / Secrets:** keine.
-10. **Bekannte Residuals:** `officialFingerprint` kann außerhalb #112 bei fehlendem `documents[]` weiterhin Singularfelder für den Fingerprint lesen; das ist **kein** Default-Pass in `travellerNormalisieren` und war ausdrücklich nicht Scope von #112.
-11. **Offene Nutzerentscheidungen / Freigaben:** keine für den abgeschlossenen Slice.
-12. **Exakter nächster Schritt:** **kein automatischer Folgeslice.** Technical Lead rekonstruiert live den nächsten erlaubten Build-Order-Schritt; AP-5/AP-7, #109/#110, Provider, Homepage, TW-8/9 oder andere Programme werden nicht aus diesem Merge heraus automatisch gestartet.
-13. **Zuerst lesen:** `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_STATUS_2026-08-27.md`, Handoff, ADR-0178 und den Post-Merge-Checkpoint für PR #113.
+1. **Arbeitsblock / Ziel:** Issue #116 / P2-TA-03 – kanonischen Account-Platform-Implementierungsplan für AP-5–AP-12 gegen aktuellen `main` rekonstruieren.
+2. **Authoring-Branch / PR:** `docs/p2-ta-03-account-plan-reconciliation`; Draft-PR #117.
+3. **Status:** **AUTHOR COMPLETE / DRAFT.** Kein Ready, kein Merge, keine AP-5-Runtime.
+4. **Bereits umgesetzt:** `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` rekonstruiert; ADR-0179; Status/Handoff/Self-Review; Continuity-Zeiger. Historischer PR-#39-Plan bleibt Historical Evidence.
+5. **Cursor-Agent:** `Account plattform audit vorbereitung 5`.
+6. **Live-`main` bei Authoring:** `43aef6431aeea619ea896d456e16579b1034b9dd` – immer live neu prüfen.
+7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Production-Daten-Write, keine Supabase-Branch-Mutation.
+8. **Kosten / Provider / Secrets:** keine.
+9. **Bekannte Residuals:** D0-P1-03 Legal-404; AP-7 ohne Contract; `officialFingerprint`-Legacy außerhalb P2-TA-06; `main` Branch Protection `protected=false`.
+10. **Offene Nutzerentscheidungen / Freigaben:** keine für diesen Docs-Slice. Spätere AP-6a-Texte und AP-7 brauchen PO/Legal bzw. Shared-Contract.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Finalreview von PR #117. **Kein AP-5-Start aus diesem Slice.**
+12. **Zuerst lesen:** `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`, `docs/P2_TA03_ACCOUNT_PLATFORM_PLAN_RECONCILIATION_STATUS_2026-08-28.md`, Handoff, ADR-0179.
+
+Historischer abgeschlossener Block P2-TA-06 bleibt integriert: PR #113 MERGED, Issue #112 CLOSED / completed. Reviewed Head `928215a2`; Merge `286d26fe`. Nicht erneut öffnen.
 
 ## 0. Live-Integrationsbaseline
 
@@ -170,7 +171,7 @@ Geschlossen:
 
 Weiter offen außerhalb dieses Slice:
 
-- **P2-TA-03** – Account-Implementation-Plan nur in historischem Audit-PR #39;
+- **P2-TA-03** – kanonischer Plan auf Draft-PR #117 rekonstruiert; historische Datei bleibt auf PR #39. Kein AP-5;
 - Mobility/Rental-Such-Snapshots mit kommerziellen Feldern;
 - Account-Traveller-Registry / AP-5–AP-12 / AP-7. AP-4 ist integriert (PR #108). **Kein AP-5/AP-7 automatisch.**
 
@@ -214,9 +215,13 @@ PR #96 bleibt integriert/geschlossen. Historisch Draft auf `cursor/pr94-continui
 
 Account/Traveller zuletzt abgeschlossen:
 
-- **Issue #112 / P2-TA-06** – `Account plattform audit vorbereitung 4`. PR #113 integriert. Issue CLOSED / completed. Generation 4 ist damit historische Authoring-Evidence, nicht automatisch weiterlaufender Agent.
+- **Issue #112 / P2-TA-06** – `Account plattform audit vorbereitung 4`. PR #113 integriert. Issue CLOSED / completed. Generation 4 ist historische Authoring-Evidence.
 
-**Derzeit kein automatisch freigegebener Produkt-Folgeslice.** Ein neuer Auftrag benötigt Live-Rekonstruktion und eine frische, scope-treue Task/Spec.
+Aktueller Account-Architecture-Slice:
+
+- **Issue #116 / P2-TA-03** – `Account plattform audit vorbereitung 5`. Draft-PR #117. Docs only. Kein Ready, kein Merge, kein AP-5.
+
+**Kein automatisch freigegebener Produkt-Folgeslice.** AP-5 startet nicht aus P2-TA-03.
 
 STOPP weiterhin für automatische Folgeslices:
 
@@ -236,6 +241,7 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
+| **#117** P2-TA-03 Account Plan Reconciliation | **DRAFT / DOCS ONLY.** Branch `docs/p2-ta-03-account-plan-reconciliation`. Kanonischer AP-5–AP-12-Plan. Kein Ready, kein Merge, kein AP-5. |
 | **#113** P2-TA-06 Readiness Credential Normalization | **GEMERGT / INTEGRIERT.** Reviewed Head `928215a2`; Merge `286d26fe`; Issue #112 CLOSED / completed. |
 | **#106** TW7-A Runtime Issue #103 | **INTEGRIERT.** Integrationsvehikel. Issue #103 ist CLOSED / completed. Ältere „Draft / nicht auf main“-Zeilen sind Pre-Merge-Evidence. |
 | **#102** Admin AAL2 production apply gate closure | **GEMERGT.** Historische Start-Baseline von TW7-A war `963186f4`. Apply von `20260827170000` ausgeführt und verifiziert, exakt einmal. |
@@ -250,7 +256,7 @@ Operativ relevant:
 | #52 ChatGPT TL handoff 2026-08-24 | HISTORICAL / SUPERSEDED |
 | #50 S1 merged-status docs | HISTORICAL / INTEGRATED ELSEWHERE |
 | #40 Admin Platform Audit | HISTORICAL / INTEGRATED ELSEWHERE |
-| #39 Account Platform Audit | HISTORICAL / INTEGRATED ELSEWHERE |
+| #39 Account Platform Audit | **HISTORICAL EVIDENCE ONLY.** Enthält die alte `ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`. Nicht als Current Truth mergen. P2-TA-03 ersetzt den Steuerungsvertrag auf #117. |
 | #28 Trip Collaboration Foundation | HISTORICAL / SUPERSEDED / DO NOT RESUME |
 
 PR #89 und PR #91 sind gemergt und keine aktiven Drafts mehr.
@@ -278,7 +284,9 @@ Production `20260827170000` ist angewendet und verifiziert, exakt einmal. Kein z
 
 ## 10. Nächster Schritt
 
-P2-TA-06 ist abgeschlossen und über PR #113 integriert; Issue #112 ist CLOSED / completed.
+P2-TA-03 ist author-complete auf Draft-PR #117. Unabhängiger Technical-Lead-Finalreview steht aus. Kein Ready, kein Merge, kein AP-5.
+
+P2-TA-06 bleibt integriert (PR #113); Issue #112 ist CLOSED / completed.
 
 **Kein automatischer Folgeslice.** Vor jeder neuen Runtime-Arbeit: aktuelles `main`, offene PRs/Issues, Binding Build Order, Account/Traveller-, Provider-, Admin-, Growth- und QS-Gates live neu prüfen und erst danach eine frische Task/Spec vergeben.
 

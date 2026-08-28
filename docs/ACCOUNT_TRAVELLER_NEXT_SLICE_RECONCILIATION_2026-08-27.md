@@ -4,7 +4,9 @@ Stand: 27. August 2026
 Issue: #105  
 Cursor-Anzeigename: **Account plattform audit vorbereitung 2**  
 Typ: **AUDIT / EVIDENCE ONLY**  
-Status: **TW7-A-PARALLELITÄTSGATE ERFÜLLT / AUDIT-EMPFEHLUNG AP-4 IS NEXT ACCOUNT RUNTIME CANDIDATE / KEINE RUNTIME-FREIGABE / STOPP**  
+Status: **TW7-A-PARALLELITÄTSGATE ERFÜLLT / AUDIT-EMPFEHLUNG AP-4 IS NEXT ACCOUNT RUNTIME CANDIDATE / KEINE RUNTIME-FREIGABE / STOPP**
+
+Current classification / Nachtrag, 28. August 2026: **HISTORICAL EVIDENCE / 27. August 2026.** AP-4 ist durch PR #108 integriert; die Empfehlung „AP-4 IS NEXT ACCOUNT RUNTIME CANDIDATE“ ist erfüllt/überholt. P2-TA-06 ist durch PR #113 integriert; der damalige „latent“-Satz ist historische Evidence. P2-TA-03 rekonstruiert den kanonischen Plan auf Draft-PR #117. Dieser Reconciliation-Bericht bleibt zeitgebundene Evidence. Die originale `Status:`-Zeile bleibt unverändert sichtbar.  
 Branch: `cursor/account-traveller-reconciliation-3efc`  
 Historische Audit-Startbaseline: `963186f4ec75501efd253a287131f464a5fd0fdb` (PR #102) — **keine dauerhafte Live-Wahrheit**  
 Aktueller Sync-`main`: `1c88b7e49453bb60cf9962d1dfa5bb3b652058ca` (Merge PR #106)  

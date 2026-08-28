@@ -106,6 +106,8 @@ Weiterhin gilt:
 - Issuer Country ≠ Citizenship
 - `documents[0]` / `evaluations[0]` sind keine Product Truth
 
+P2-TA-03 rekonstruiert den kanonischen Folgeplan `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` auf Draft-PR #117. Das schließt die Continuity-Lücke, dass der Binding Build Order eine auf `main` fehlende Datei zitierte. Historischer PR #39 bleibt Historical Evidence. **Kein AP-5-Start.**
+
 Nicht automatisch starten:
 
 - AP-5+
@@ -255,6 +257,8 @@ Abgeschlossen:
 20. ✅ AP-4 / PR #108 + Continuity #111
 21. ✅ P2-TA-06 / PR #113 + Issue #112
 22. ✅ Post-PR-#113 Continuity / PR #114
+23. ✅ Post-PR-#114 Continuity / PR #115 auf Live-`main` `43aef643` (immer live neu prüfen)
+24. P2-TA-03 Account-Plan-Reconciliation – **Draft-PR #117 / Issue #116; docs only; kein AP-5**
 
 Nächster Schritt:
 
