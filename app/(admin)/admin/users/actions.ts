@@ -26,7 +26,7 @@ async function sb() {
 
 /** Rolle des Zielkontos – Grundlage für die Rangprüfung. */
 async function loadTargetRole(userId: string): Promise<Role | null> {
-  const { data, error } = await sb()
+  const { data, error } = await (await sb())
     .from('profiles')
     .select('role')
     .eq('user_id', userId)
@@ -97,7 +97,7 @@ export async function setUserRole(a: FormData | string, b?: Role): Promise<void>
     )
   }
 
-  const { error } = await sb()
+  const { error } = await (await sb())
     .from('profiles')
     .update({ role: nextRole })
     .eq('user_id', targetId)
@@ -136,7 +136,7 @@ export async function setUserStatus(a: FormData | string, b?: AccountStatus): Pr
     }
   }
 
-  const { error } = await sb()
+  const { error } = await (await sb())
     .from('profiles')
     .update({ status: nextStatus })
     .eq('user_id', targetId)
