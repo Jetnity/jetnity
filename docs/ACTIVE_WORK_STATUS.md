@@ -211,7 +211,7 @@ Admin-AAL2 Application-Guard ist im Code integriert. PR #102 ist integriert. Pro
 
 Separate Supabase Security-/Performance-Advisors bleiben eigene QS-Arbeit. Keine dieser separaten Baustellen wurde durch PR #94 oder PR #113 still verändert.
 
-Project-Sanitation: Issue #134 ist der aktuelle Closure-Slice. PR #88 bleibt historische Evidence. Kein Cleanup/Branch-/Cloud-Delete automatisch ausführen.
+Project-Sanitation: Issue #134 ist der aktuelle Closure-Slice. PR #88 ist `PR-CLOSE-SAFE`; Unique Inventur-Dateien hängen am Branch `audit/project-sanitation-inventory-2026-08-26` (`HISTORICAL-EVIDENCE`). Kein Cleanup/PR-Close/Branch-/Cloud-Delete automatisch ausführen.
 
 Live Supabase-Inventur zeigt:
 
@@ -235,9 +235,9 @@ Account/Traveller zuletzt abgeschlossen:
 
 - **Issue #112 / P2-TA-06** – `Account plattform audit vorbereitung 4`. PR #113 integriert. Issue CLOSED / completed. Generation 4 ist historische Authoring-Evidence.
 
-Aktueller Account-Implementation-Slice:
+Account-Implementation zuletzt abgeschlossen:
 
-- **Issue #132 / AP-5-S1** – `Account plattform audit vorbereitung 9`. Ehrliche Security-UI. Draft. Kein Ready, kein Merge, kein S2–S5.
+- **Issue #132 / AP-5-S1** – `Account plattform audit vorbereitung 9`. PR #133 integriert. Issue CLOSED / completed. Generation 9 ist historische Authoring-Evidence. Kein automatischer S2–S5-Start.
 
 Historisch abgeschlossen:
 
@@ -284,12 +284,12 @@ Operativ relevant:
 | **#95** PR94 new-chat checkpoint | **GEMERGT.** Nur `docs/CHATGPT_PR94_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-27.md`. Merge `943d14c2`. |
 | **#94** Visitor Search UX | **GEMERGT.** Reviewed Head `8da869fd`. Merge `819715b1`. |
 | **#87** TW6-B Runtime + Mode Contract | **GEMERGT.** Checkpoint `docs/CHATGPT_TL_POST_PR87_CHECKPOINT_2026-08-27.md`. |
-| **#88** Project Sanitation Audit | Historische Inventur 26.08.2026. Nicht Current Truth. KEEP-HISTORICAL-OPEN. |
-| #52 ChatGPT TL handoff 2026-08-24 | HISTORICAL / SUPERSEDED |
-| #50 S1 merged-status docs | HISTORICAL / INTEGRATED ELSEWHERE |
-| #40 Admin Platform Audit | HISTORICAL / INTEGRATED ELSEWHERE |
-| #39 Account Platform Audit | **HISTORICAL EVIDENCE ONLY.** Enthält die alte `ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`. Nicht als Current Truth mergen. P2-TA-03 ersetzt den Steuerungsvertrag auf #117. |
-| #28 Trip Collaboration Foundation | HISTORICAL / SUPERSEDED / DO NOT RESUME |
+| **#88** Project Sanitation Audit | Historische Inventur 26.08.2026. Nicht Current Truth. **PR-CLOSE-SAFE**; Branch `HISTORICAL-EVIDENCE`. Close löscht Unique Files nicht. |
+| #52 ChatGPT TL handoff 2026-08-24 | **PR-CLOSE-SAFE**; Branch `HISTORICAL-EVIDENCE`. Nicht als Current Truth mergen. |
+| #50 S1 merged-status docs | **PR-CLOSE-SAFE**; Branch leftover / Delete-Kandidat. Unique Files vs Merge-Base = 0. |
+| #40 Admin Platform Audit | **PR-CLOSE-SAFE**; Branch `HISTORICAL-EVIDENCE`. Nicht als Current Truth mergen. |
+| #39 Account Platform Audit | **PR-CLOSE-SAFE**; Branch `HISTORICAL-EVIDENCE`. Enthält die alte `ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`. Nicht als Current Truth mergen. P2-TA-03 ersetzt den Steuerungsvertrag auf #117. |
+| #28 Trip Collaboration Foundation | **PR-KEEP-FUTURE**; Branch `FUTURE-WORK`. Nicht beiläufig schliessen. Nicht als aktuelle Runtime wieder aufnehmen. |
 
 PR #89 und PR #91 sind gemergt und keine aktiven Drafts mehr.
 

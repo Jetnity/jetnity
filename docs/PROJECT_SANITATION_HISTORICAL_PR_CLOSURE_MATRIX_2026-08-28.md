@@ -3,34 +3,51 @@
 Stand: 28. August 2026  
 Cursor-Agent: `Jetnity quality security audit 3`  
 Issue: [#134](https://github.com/Jetnity/jetnity/issues/134)  
-Vergleichsbasis: `origin/main` @ `eaa03ad71509d281990e0d34ca359e0750eb9591`
+Vergleichsbasis Review-Fix: `origin/main` @ `51b0c926dbb535c6791b69f1b4b1ee7503f0ebe2`  
+Ursprüngliche Authoring-Basis: `eaa03ad71509d281990e0d34ca359e0750eb9591`
 
-> Alte PRs werden nicht gemergt, nur um die Liste aufzuräumen. Schliessen darf der Technical Lead erst nach dieser Matrix.
-
----
-
-## 1. Offene PRs am 28.08.2026
-
-Sieben offene PRs. Kein zusätzlicher alter Draft entdeckt.
-
-| PR | Titel | Branch | Ahead/Behind | Mergeable | Closure-Klasse |
-| --- | --- | --- | --- | --- | --- |
-| #133 | AP-5-S1 Security-UI | `cursor/ap5-s1-security-ui-8b13` | 7 / 0 | MERGEABLE | **ACTIVE** – nicht dieser Slice |
-| #88 | Project Sanitation Audit 26.08. | `audit/project-sanitation-inventory-2026-08-26` | 2 / 197 | MERGEABLE | **KEEP-HISTORICAL-OPEN** |
-| #52 | ChatGPT TL handoff 24.08. | `docs/chatgpt-technical-lead-handoff-2026-08-24` | 67 / 546 | CONFLICTING | **KEEP-HISTORICAL-OPEN** |
-| #50 | Provider Ops S1 merged-status | `cursor/s1-merged-status-f23f` | 3 / 549 | CONFLICTING | **CLOSE-SAFE** |
-| #40 | Admin Platform Audit | `audit/admin-platform` | 15 / 555 | CONFLICTING | **KEEP-HISTORICAL-OPEN** |
-| #39 | Account Platform Audit | `audit/account-platform` | 11 / 555 | CONFLICTING | **KEEP-HISTORICAL-OPEN** |
-| #28 | Trip Collaboration Foundation | `feat/trip-collaboration-foundation` | 1 / 621 | MERGEABLE | **KEEP-FUTURE** |
+> Alte PRs werden nicht gemergt, nur um die Liste aufzuräumen.  
+> **PR-Close und Branch-Delete sind getrennte Operationen.** Close löscht den Source-Branch nicht.
 
 ---
 
-## 2. PR #133 – ACTIVE / Parallel
+## 0. Zwei Achsen
 
-Nicht historisch. Issue #132. Agent: `Account plattform audit vorbereitung 9`.
+| Achse | Frage | Nicht verwechseln mit |
+| --- | --- | --- |
+| PR-Disposition | Darf der Pull Request geschlossen werden, ohne Unique Files zu verlieren? | Branch-Delete |
+| Branch-Retention | Darf der Source-Branch gelöscht werden, ohne Unique Evidence zu verlieren? | PR-Close |
 
-Unique auf dem PR: AP-5-S1-Docs plus `lib/auth/account-security-*` und Security-UI.  
-Dieser Slice fasst diese Dateien nicht an.
+Klassen: `PR-ACTIVE`, `PR-MERGED`, `PR-CLOSE-SAFE`, `PR-KEEP-FUTURE`, `PR-NEEDS-TL-DECISION`.
+
+---
+
+## 1. Offene und soeben gemergte PRs am 28.08.2026 (Review-Fix)
+
+Sieben offene PRs plus das integrierte #133. Kein zusätzlicher alter Draft entdeckt.
+
+| PR | Titel | Branch | Ahead/Behind vs `51b0c926` | Mergeable | PR-Disposition | Branch-Disposition |
+| --- | --- | --- | --- | --- | --- | --- |
+| #135 | Project Sanitation Closure | `cursor/project-sanitation-closure-2966` | nach Review-Fix-Commit | Draft | **PR-ACTIVE** | `ACTIVE` |
+| #133 | AP-5-S1 Security-UI | `cursor/ap5-s1-security-ui-8b13` | 0 / 1 | MERGED | **PR-MERGED** | `MERGED-HEAD-LEFTOVER` |
+| #88 | Project Sanitation Audit 26.08. | `audit/project-sanitation-inventory-2026-08-26` | 2 / 207 | MERGEABLE | **PR-CLOSE-SAFE** | `HISTORICAL-EVIDENCE` |
+| #52 | ChatGPT TL handoff 24.08. | `docs/chatgpt-technical-lead-handoff-2026-08-24` | 67 / 556 | CONFLICTING / UNKNOWN | **PR-CLOSE-SAFE** | `HISTORICAL-EVIDENCE` |
+| #50 | Provider Ops S1 merged-status | `cursor/s1-merged-status-f23f` | 3 / 559 | CONFLICTING | **PR-CLOSE-SAFE** | leftover / Delete-Kandidat |
+| #40 | Admin Platform Audit | `audit/admin-platform` | 15 / 565 | CONFLICTING | **PR-CLOSE-SAFE** | `HISTORICAL-EVIDENCE` |
+| #39 | Account Platform Audit | `audit/account-platform` | 11 / 565 | CONFLICTING | **PR-CLOSE-SAFE** | `HISTORICAL-EVIDENCE` |
+| #28 | Trip Collaboration Foundation | `feat/trip-collaboration-foundation` | 1 / 631 | MERGEABLE / UNKNOWN | **PR-KEEP-FUTURE** | `FUTURE-WORK` |
+
+---
+
+## 2. PR #133 – MERGED / integriert
+
+Issue #132 **CLOSED / completed**. Agent `Account plattform audit vorbereitung 9` **abgeschlossen**.
+
+Merge: `51b0c926dbb535c6791b69f1b4b1ee7503f0ebe2` am 28.08.2026.  
+Branch-Tip `e7500b12` ist Ancestor von `main`. Unique Files gegen `main` = 0.
+
+Dieser Slice fasst Account-/Auth-Runtime und `docs/AP5_S1_*` nicht an.  
+ADR-0183 bleibt die S1-Entscheidung.
 
 ---
 
@@ -44,11 +61,14 @@ Dieser Slice fasst diese Dateien nicht an.
 | Auf `main`? | nein. Bewusst nicht nach `docs/history/` kopiert |
 | Inhalt integriert? | nein als Current Truth; Findings hier neu geprüft |
 | Superseded? | als Current Inventory ja; als Historical Evidence nein |
-| Evidence-Verlust bei Close? | **ja** – die beiden Originaldateien lägen nur auf dem Branch/PR |
+| Evidence-Verlust bei PR-Close? | **nein** – Close löscht den Branch nicht |
+| Evidence-Verlust bei Branch-Delete? | **ja**, solange die zwei Dateien nicht dauerhaft archiviert sind |
 
-**Klasse:** `KEEP-HISTORICAL-OPEN`.  
-Nicht mergen: der Branch steht 197 Commits hinter `main` und ist historische Inventur, kein aktueller Vertrag.  
-Nicht schliessen, solange die Unique Files nicht dauerhaft archiviert sind.
+**Eine Regel:**  
+PR-Disposition `PR-CLOSE-SAFE`. Branch-Disposition `HISTORICAL-EVIDENCE`.  
+Nicht mergen: der Branch steht 207 Commits hinter aktuellem `main` und ist historische Inventur, kein aktueller Vertrag.  
+PR darf später geschlossen werden. Branch-Delete bleibt blockiert, bis Preservation bewiesen ist.  
+Dieser Slice führt weder Close noch Delete aus.
 
 Unabhängiger TL-Review vom 26.08. (PASS / INTEGRATION DEFERRED) bleibt gültig als damalige Evidence.
 
@@ -62,8 +82,10 @@ Unabhängiger TL-Review vom 26.08. (PASS / INTEGRATION DEFERRED) bleibt gültig 
 | Unique Files | 7 Continuity-Snapshots, siehe unten |
 | Divergenz | `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, `docs/JETNITY_BINDING_BUILD_ORDER.md` |
 | Auf `main`? | Unique Files **nein**. Build Order existiert auf `main` in späterer kanonischer Fassung |
+| Evidence-Verlust bei PR-Close? | **nein** |
+| Evidence-Verlust bei Branch-Delete? | **ja**, ohne Archivkopie |
 
-Unique Files, die nur auf diesem PR liegen:
+Unique Files, die nur auf diesem Branch liegen:
 
 - `docs/CHATGPT_NEW_CHAT_CHECKPOINT_2026-08-24.md`
 - `docs/CHATGPT_TAKEOVER_LIVE_VERIFICATION_2026-08-24.md`
@@ -75,9 +97,9 @@ Unique Files, die nur auf diesem PR liegen:
 
 `docs/JETNITY_BINDING_BUILD_ORDER.md` wurde später kanonisch auf `main` aufgenommen; die PR-#52-Fassung ist diverged/superseded.
 
-**Klasse:** `KEEP-HISTORICAL-OPEN`.  
-Schliessen würde die sieben Unique Snapshots verlieren, sofern sie nicht vorher nach `docs/history/` kopiert werden.  
-Nicht mergen: CONFLICTING, 546 hinter `main`, Inhalt als Current Truth durch spätere Start-Here-/Handoff-/Checkpoint-Linie superseded.
+**PR-Disposition:** `PR-CLOSE-SAFE`.  
+**Branch-Disposition:** `HISTORICAL-EVIDENCE`.  
+Nicht mergen: CONFLICTING, 556 hinter aktuellem `main`, Inhalt als Current Truth durch spätere Start-Here-/Handoff-/Checkpoint-Linie superseded.
 
 ---
 
@@ -86,13 +108,16 @@ Nicht mergen: CONFLICTING, 546 hinter `main`, Inhalt als Current Truth durch sp�
 | Feld | Wert |
 | --- | --- |
 | Head | `f5a25c949f8bbfb889f87653ba1a08a02f75f6ea` |
-| Unique Files | **0** |
+| Unique Files vs Merge-Base, nicht auf `main` | **0** |
 | Geänderte Dateien | nur bereits auf `main` vorhandene Continuity-/S1-Dateien, alle **DIVERGED** |
+
+Zwei Dateien existieren noch im Branch-Tree, aber nicht mehr auf `main` (`app/(admin)/admin/head.tsx`, `components/admin/home/AdminSetupGuide.tsx`). Sie wurden von diesem Branch gegenüber seiner Merge-Base **nicht hinzugefügt**; `main` hat sie später entfernt. Das zählt nicht als Unique Content dieses Drafts.
 
 S1 ist über PR #47 und spätere Provider-Slices auf `main`. Die Statuszeilen dieses Drafts sind durch spätere Handoffs/Statusdateien ersetzt.
 
-**Klasse:** `CLOSE-SAFE`.  
-Schliessen verliert keine Unique Docs, keine ADRs, keine zukünftige Produktarbeit.  
+**PR-Disposition:** `PR-CLOSE-SAFE`.  
+**Branch-Disposition:** leftover / Delete-Kandidat.  
+Schliessen verliert keine Unique Docs. Branch-Delete darf später in derselben Leftover-Charge erfolgen.  
 Nicht mergen: CONFLICTING, reiner historischer Status-Stamp.
 
 ---
@@ -103,6 +128,8 @@ Nicht mergen: CONFLICTING, reiner historischer Status-Stamp.
 | --- | --- |
 | Head | `a316015733b86e2adbd050abb2f77258a99da366` |
 | Unique Files | 19 Docs, die auf `main` fehlen |
+| Evidence-Verlust bei PR-Close? | **nein** |
+| Evidence-Verlust bei Branch-Delete? | **ja**, ohne Archivkopie |
 
 Unique, nicht auf `main`:
 
@@ -128,9 +155,9 @@ Unique, nicht auf `main`:
 
 Später auf `main` integriert wurden Admin-Slices A–C plus Growth-Control-Audit, aber **nicht** dieser ursprüngliche Audit-Korpus. Die gleichnamigen späteren Slice-Dateien (`ADMIN_PLATFORM_SLICE_A_*` usw.) ersetzen den historischen Plan nicht byte-identisch.
 
-**Klasse:** `KEEP-HISTORICAL-OPEN`.  
-Schliessen ohne Archivkopie würde Unique Admin-Architektur-/Infomaniak-/Permission-Evidence verlieren.  
-Nicht mergen: CONFLICTING, 555 hinter `main`, würde historische Pläne als Current Truth einspielen.
+**PR-Disposition:** `PR-CLOSE-SAFE`.  
+**Branch-Disposition:** `HISTORICAL-EVIDENCE`.  
+Nicht mergen: CONFLICTING, 565 hinter aktuellem `main`, würde historische Pläne als Current Truth einspielen.
 
 ---
 
@@ -141,6 +168,8 @@ Nicht mergen: CONFLICTING, 555 hinter `main`, würde historische Pläne als Curr
 | Head | `65b08f4718ad74f3157c55a3efb960a4c843408a` |
 | Unique Files | 10 Docs, die auf `main` fehlen |
 | Divergenz | `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` existiert auf `main` in der P2-TA-03-/PR-#117-Fassung |
+| Evidence-Verlust bei PR-Close? | **nein** |
+| Evidence-Verlust bei Branch-Delete? | **ja**, ohne Archivkopie |
 
 Unique, nicht auf `main`:
 
@@ -155,10 +184,10 @@ Unique, nicht auf `main`:
 - `docs/MULTI_AGENT_WORKSTREAMS.md`
 - `docs/PR39_CHATGPT_ACCOUNT_AUDIT_REVIEW.md`
 
-Der historische Plan auf diesem PR ist durch ADR-0179 / PR #117 **superseded** als Current Truth. Die übrigen Audit-Dateien wurden nicht nach `main` übernommen.
+Der historische Plan auf diesem PR ist durch ADR-0179 / PR #117 **superseded** als Current Truth. Die übrigen Audit-Dateien wurden nicht nach `main` übernommen. P2-TA-03 hat ausdrücklich festgehalten: Datei auf Draft-PR #39 ist historische Evidence, keine Current Truth.
 
-**Klasse:** `KEEP-HISTORICAL-OPEN`.  
-P2-TA-03 hat ausdrücklich festgehalten: Datei auf Draft-PR #39 ist historische Evidence, keine Current Truth. Schliessen ohne Archivkopie würde genau diese Evidence verlieren.  
+**PR-Disposition:** `PR-CLOSE-SAFE`.  
+**Branch-Disposition:** `HISTORICAL-EVIDENCE`.  
 Nicht mergen.
 
 ---
@@ -171,11 +200,11 @@ Nicht mergen.
 | Unique Files | `docs/CURSOR_TRIP_COLLABORATION_FOUNDATION.md` |
 | Zugehöriges Issue | [#20](https://github.com/Jetnity/jetnity/issues/20) **OPEN** – Future Collaboration |
 
-Die einzige Collaboration-Foundation-Spec liegt nur auf diesem PR. Binding Build Order und aktuelle Continuity behandeln Collaboration als spätere, nicht gestartete Arbeit.
+Die einzige Collaboration-Foundation-Spec liegt nur auf diesem Branch/PR. Binding Build Order und aktuelle Continuity behandeln Collaboration als spätere, nicht gestartete Arbeit.
 
-**Klasse:** `KEEP-FUTURE`.  
-Schliessen würde die einzige versionierte Foundation-Spec und den Issue-#20-Anker abschneiden.  
-Nicht mergen und nicht als aktuelle Runtime wieder aufnehmen.
+**PR-Disposition:** `PR-KEEP-FUTURE`.  
+**Branch-Disposition:** `FUTURE-WORK`.  
+Nicht beiläufig schliessen. Nicht mergen und nicht als aktuelle Runtime wieder aufnehmen.
 
 ---
 
@@ -186,25 +215,26 @@ Keine neuen alten Drafts. Bereits geschlossen und nicht mergen:
 | PR | Branch | Unique Files vs `main` | Bewertung |
 | --- | --- | --- | --- |
 | #104 | `cursor/tw7a-hub-card-identity-b13d` | 0 | superseded durch gemergtes PR #106 |
-| #99 | `docs/post-pr98-continuity-2026-08-27` | 1: `docs/CHATGPT_PR98_POST_MERGE_CHECKPOINT_2026-08-27.md` | **Branch behalten**, bis der Unique Checkpoint gesichert ist |
+| #99 | `docs/post-pr98-continuity-2026-08-27` | 1: `docs/CHATGPT_PR98_POST_MERGE_CHECKPOINT_2026-08-27.md` | **PR bereits geschlossen.** Branch behalten, bis der Unique Checkpoint gesichert ist |
 | #42 | `cursor/align-handoff-after-pr38-010d` | 0 | superseded Continuity |
 | #41 | `cursor/seasonal-merged-status-010d` | 0 | superseded Continuity |
 | #36 | `cursor/record-foundation-e-merge-be45` | 0 | superseded Continuity |
 | #33 | `cursor/foundation-c-merged-status-f35b` | 0 | superseded Continuity |
 
-PR #99 ist der einzige geschlossene ungemergte PR mit Unique File auf `main`-Diff. Branch-Delete wäre Evidence-Verlust.
+PR #99 ist der Beweis, dass PR-Close und Branch-Retention bereits getrennt existieren: der PR ist geschlossen, der Unique Checkpoint lebt auf dem Branch.
 
 ---
 
 ## 10. Empfohlene TL-Aktionen – nicht ausgeführt
 
-| Reihenfolge | Aktion | Voraussetzung |
-| --- | --- | --- |
-| 1 | Diesen Closure-PR unabhängig reviewen, Draft lassen bis Exact-Head-PASS | – |
-| 2 | PR #50 schliessen | keine |
-| 3 | PR #88 offen lassen oder Unique Files bewusst archivieren | ohne Archivkopie kein Close |
-| 4 | #52/#40/#39 offen lassen oder Unique Files bewusst nach `docs/history/` kopieren | TL-Entscheidung |
-| 5 | #28 offen lassen, bis Issue #20 bewusst archiviert oder ein Collaboration-Slice startet | Product-/TL-Entscheidung |
-| 6 | #133 unberührt lassen | Parallelagent 9 |
+| Reihenfolge | Aktion | Achse | Voraussetzung |
+| --- | --- | --- | --- |
+| 1 | Diesen Closure-PR unabhängig reviewen, Draft lassen bis Exact-Head-PASS | Review | – |
+| 2 | PR #50 schliessen | PR-Close | keine Unique Files |
+| 3 | PR #88/#52/#40/#39 schliessen | PR-Close | Branches bleiben `HISTORICAL-EVIDENCE` |
+| 4 | Unique Files von #88/#52/#40/#39 bewusst archivieren **oder** Branches bewusst behalten | Branch-Retention | TL-Entscheidung |
+| 5 | Erst danach betreffende Branches löschen | Branch-Delete | Preservation bewiesen |
+| 6 | #28 offen lassen, bis Issue #20 bewusst archiviert oder ein Collaboration-Slice startet | PR-Keep | Product-/TL-Entscheidung |
+| 7 | #133 nicht erneut öffnen; S1-Leftover-Branch später in Leftover-Charge | bereits MERGED | – |
 
-Keine dieser Aktionen ist durch diesen Author-Slice freigegeben.
+Keine dieser Aktionen ist durch diesen Author-Slice oder diesen Review-Fix freigegeben.

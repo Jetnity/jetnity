@@ -353,7 +353,7 @@ Aktueller Sanitation-Slice: Issue #134 / `Jetnity quality security audit 3`. Liv
 - `docs/PROJECT_SANITATION_HISTORICAL_PR_CLOSURE_MATRIX_2026-08-28.md`
 - `docs/PROJECT_SANITATION_REMOTE_BRANCH_DISPOSITION_MATRIX_2026-08-28.md`
 
-Draft-PR #88 bleibt historische Evidence vom 26.08.2026, nicht Current Truth. Unique Inventur-Dateien bleiben auf #88. Kein Repo-/Branch-/Supabase-/Vercel-Delete automatisch ausführen. Historische Evidence nicht löschen.
+Draft-PR #88 bleibt historische Evidence vom 26.08.2026, nicht Current Truth. Unique Inventur-Dateien hängen am Branch `audit/project-sanitation-inventory-2026-08-26` (`HISTORICAL-EVIDENCE`); der PR selbst ist `PR-CLOSE-SAFE`, weil Close den Branch nicht löscht. Kein Repo-/PR-Close/Branch-/Supabase-/Vercel-Delete automatisch ausführen. Historische Evidence nicht löschen.
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 

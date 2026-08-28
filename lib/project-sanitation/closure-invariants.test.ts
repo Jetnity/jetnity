@@ -2,7 +2,8 @@
 //
 // Read-only Evidence-Lock für Issue #134. Beweist, dass die noch offenen
 // Sanitation-Funde weiter im Tree liegen und dieser Slice sie nicht gelöscht hat.
-// Kein Runtime-Write. Kein Cloud-Write. Kein Branch-Delete.
+// Dateiexistenz ist kein Beweis für git-diff-Nicht-Änderung.
+// Kein Runtime-Write. Kein Cloud-Write. Kein Branch-Delete. Kein PR-Close.
 
 import { existsSync, readFileSync } from 'node:fs'
 import { describe, test } from 'node:test'
@@ -18,11 +19,25 @@ function lies(rel: string): string {
 }
 
 describe('project sanitation closure invariants', () => {
-  test('PR #88 bleibt als Historical Evidence klassifiziert, nicht als Current Truth', () => {
+  test('PR #88 ist PR-CLOSE-SAFE; Unique Evidence hängt am Branch', () => {
     const matrix = lies('docs/PROJECT_SANITATION_HISTORICAL_PR_CLOSURE_MATRIX_2026-08-28.md')
-    assert.match(matrix, /KEEP-HISTORICAL-OPEN/)
+    assert.match(matrix, /PR-CLOSE-SAFE/)
+    assert.match(matrix, /HISTORICAL-EVIDENCE/)
     assert.match(matrix, /audit\/project-sanitation-inventory-2026-08-26/)
+    assert.match(matrix, /Eine Regel/)
+    assert.match(matrix, /Close löscht den Branch nicht/)
     assert.equal(existsSync(join(wurzel, 'docs/history/PROJECT_SANITATION_AUDIT_STATUS_2026-08-26.md')), false)
+  })
+
+  test('PR-Close und Branch-Delete sind getrennte Achsen', () => {
+    const task = lies('docs/PROJECT_SANITATION_CLOSURE_TASK_2026-08-28.md')
+    assert.match(task, /PR-Disposition ≠ Branch-Retention/)
+    assert.match(task, /PR-KEEP-FUTURE/)
+    assert.match(task, /ADR-0184/)
+    const inventory = lies('docs/PROJECT_SANITATION_LIVE_INVENTORY_STATUS_2026-08-28.md')
+    assert.match(inventory, /PR-MERGED/)
+    assert.match(inventory, /Eine Regel für #88/)
+    assert.match(inventory, /#28.*PR-KEEP-FUTURE/s)
   })
 
   test('aktuelle Closure-Deliverables existieren', () => {
@@ -68,10 +83,17 @@ describe('project sanitation closure invariants', () => {
     assert.equal(/service_role|sb_secret|sk_live/.test(pooler), false)
   })
 
-  test('dieser Slice ändert keine Account-Auth-Runtime von Issue #132', () => {
+  test('integrierte AP-5-S1-Evidence bleibt erhalten und dieser Slice ändert keine Account-Auth-Runtime', () => {
     const status = lies('docs/PROJECT_SANITATION_CLOSURE_TASK_2026-08-28.md')
     assert.match(status, /Account-\/Auth-\/MFA-\/Session-Dateien/)
     assert.match(status, /nicht/)
-    assert.equal(existsSync(join(wurzel, 'docs/AP5_S1_SECURITY_UI_TRUTH_TASK_2026-08-28.md')), false)
+    assert.equal(
+      existsSync(join(wurzel, 'docs/AP5_S1_SECURITY_UI_TRUTH_TASK_2026-08-28.md')),
+      true,
+      'AP-5-S1 task evidence must remain after PR #133 merge',
+    )
+    const decisions = lies('DECISIONS.md')
+    assert.match(decisions, /## ADR-0183 – AP-5-S1/)
+    assert.match(decisions, /## ADR-0184 – Project Sanitation Closure/)
   })
 })

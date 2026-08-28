@@ -38,7 +38,7 @@ Zuerst vollständig lesen:
 18. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
 19. danach alle für den betrachteten Workstream relevanten Slice-Tasks, Statusdateien, Handoffs, ADRs und Checkpoints.
 
-Hinweis: Ältere Gate-0-Authoring-Blöcke in Statusdateien sind historische Evidence. Der aktuelle Account-Arbeitsblock ist AP-5-S1 / Issue #132.
+Hinweis: Ältere Gate-0- und S1-Authoring-Blöcke in Statusdateien sind historische Evidence. AP-5-S1 / Issue #132 / PR #133 ist integriert. Der nächste Account-Schritt ist AP-5-S2 nur nach Product-Owner-Autorisierung.
 
 Danach live prüfen: `main`, offene PRs/Drafts, Branches, Merge-Base/Ahead/Behind, tatsächliche Diffs, Review-Threads, Actions, Vercel, relevante Supabase-/Production-Grenzen und P0/P1/P2/P3-Risiken.
 
@@ -191,7 +191,7 @@ Nach Live-Rekonstruktion neu einordnen:
 - AP-5-S2–S5 nicht automatisch starten
 - AP-7 gated
 - weitere QS-/Supabase-Security-/Performance-Advisories
-- Project-Sanitation: Issue #134 ist der aktuelle Closure-/Retention-Slice (`docs/PROJECT_SANITATION_LIVE_INVENTORY_STATUS_2026-08-28.md`). PR #88 bleibt historische Evidence vom 26.08.2026, nicht Current Truth. Kein Cleanup/Branch-/Cloud-Delete automatisch
+- Project-Sanitation: Issue #134 ist der aktuelle Closure-/Retention-Slice (`docs/PROJECT_SANITATION_LIVE_INVENTORY_STATUS_2026-08-28.md`). PR #88 ist historische Evidence vom 26.08.2026, nicht Current Truth; PR-Disposition `PR-CLOSE-SAFE`, Branch `HISTORICAL-EVIDENCE`. Kein Cleanup/PR-Close/Branch-/Cloud-Delete automatisch
 - kein Public Indexing / Domain Cutover ohne Gate
 
 Diese Liste ist keine automatische Prioritätenliste. Binding Build Order + Live-Evidence entscheiden.
