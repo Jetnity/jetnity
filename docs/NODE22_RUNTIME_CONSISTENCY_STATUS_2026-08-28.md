@@ -1,7 +1,7 @@
 # Jetnity – Node 22 Runtime Consistency Status
 
 Stand: 28. August 2026  
-Status: **IMPLEMENTED / DRAFT-PR #147 / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / NO READY OR MERGE BY AUTHOR**  
+Status: **IMPLEMENTED / SELF-EXPIRING / DUAL-STATE. Solange Draft-PR #147 offen: STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / NO READY OR MERGE BY AUTHOR. Sobald #147 gemergt: integrierter Node-22-Vertrag; Transport-/Draft-Klauseln historisch.**  
 Workstream: Ops / Runtime contract  
 Logical Cursor-Agent: **`Cursor-Agent: Jetnity runtime consistency 1`**
 
@@ -12,8 +12,9 @@ Logical Cursor-Agent: **`Cursor-Agent: Jetnity runtime consistency 1`**
 | Repository | `Jetnity/jetnity` |
 | Task-Baseline `main` | `4ec83f36426c636443d43692d6875e92e9e3b54a` |
 | Branch | `ops/node22-runtime-consistency-2026-08-28` |
-| Draft-PR | [#147](https://github.com/Jetnity/jetnity/pull/147) |
-| Exact Head | der Commit dieses Status-Stamps; live am PR #147 prüfen |
+| Transport | [#147](https://github.com/Jetnity/jetnity/pull/147) — self-expiring / dual-state |
+| Reviewed Head invalidiert | `2cae6e03` (Kommentar `5456852840`) |
+| Exact Head | der Commit dieses Continuity-Stamps; live am PR #147 prüfen, solange #147 offen ist |
 | Logical Cursor-Agent | `Cursor-Agent: Jetnity runtime consistency 1` |
 | Preferred visible title | `Jetnity runtime consistency 1` |
 | Observed Cursor run title | `Jetnity node 22 consistency` |
@@ -69,7 +70,7 @@ CI workflow inspected, not changed.
 
 ## 4. Validation
 
-Lokal ausgeführt auf Head `3fb2f3c8` vor diesem Stamp. Node `v22.14.0`, npm `10.9.7`.
+Runtime-Gates bleiben die von Head `3fb2f3c8` (unveränderte Runtime-Dateien). Dieser Review-Fix ist docs-only. `origin/main` neu geholt: `4ec83f36426c636443d43692d6875e92e9e3b54a`.
 
 | Command | Result |
 | --- | --- |
@@ -102,4 +103,9 @@ Exact-Head GitHub CI and Vercel Preview remain live evidence for the independent
 
 ## 7. Exact next step
 
-Independent ChatGPT / Technical-Lead exact-head review of Draft-PR #147. No Ready. No merge by the author. No product follow-up from this slice.
+**Self-expiring / dual-state. Live-Evidence gewinnt. Kein erfundener Merge-SHA.**
+
+- **Solange PR #147 offen / unmerged:** unabhängiger Technical-Lead Exact-Head-Re-Review nach `5456852840`. Autor-Agent setzt kein Ready und kein Merge. Keine Vercel-Setting-Mutation. Kein AP-7-S2.
+- **Sobald PR #147 gemergt:** der Node-22-Vertrag ist integriert. Draft-/Review-/Transport-Klauseln sind automatisch historisch. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Exakt nächster Schritt = Live-Post-Merge-Verifikation von GitHub CI und Vercel Production auf dem tatsächlichen Merge-Head, einschließlich der Prüfung, dass die `Node.js Version Override`-Warnung weg ist. Nach erfolgreicher Verifikation: Rückkehr zur live Binding-Build-Order-Auswahl. AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht automatisch.
+
+A new chat must not treat an already-merged #147 as an active Draft.

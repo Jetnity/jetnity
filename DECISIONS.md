@@ -4776,7 +4776,7 @@ Kein Schema. Kein Ready/Merge. Neuer Head invalidiert `ce5b7e70` und `fbb1ec8d`.
 ## ADR-0188 – Node-Runtime-Vertrag auf `22.x`
 
 **Datum:** 28. August 2026  
-**Status:** Implementierungs-ADR auf Draft-PR #147. **Kein Ready/Merge durch den Autor. Keine Vercel-Projektmutation. Keine Application-Runtime-Änderung.**
+**Status:** Implementierungs-ADR auf PR #147. **Self-expiring / dual-state. Kein Ready/Merge durch den Autor. Keine Vercel-Projektmutation. Keine Application-Runtime-Änderung.**
 
 **Entscheidung:**
 
@@ -4802,7 +4802,10 @@ Kein Schema. Kein Ready/Merge. Neuer Head invalidiert `ce5b7e70` und `fbb1ec8d`.
 
 - ADR-0004 ist für den Engine-Range superseded. `simple-swizzle` `overrides` bleibt.
 - Evidence: `docs/NODE22_RUNTIME_CONSISTENCY_STATUS_2026-08-28.md` und Self-Review desselben Datums.
-- Autor-Agent stoppt auf Draft-PR #147 für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
+- Canonical Continuity (`JETNITY_START_HERE.md`, Handoff, Active Work, Roadmap, Status) ist self-expiring: solange #147 offen → TL-Re-Review / kein Ready/Merge durch den Autor; nach Merge → integrierter Node-22-Vertrag, Live-Post-Merge-Verifikation von GitHub CI + Vercel Production auf dem tatsächlichen Merge-Head inkl. Override-Warnung, danach live Binding-Build-Order-Auswahl. Kein erfundener Merge-SHA. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. AP-7-S2 bleibt separat Product-Owner-gegatet.
+- Autor-Agent stoppt, solange #147 offen ist, für unabhängigen Technical-Lead Exact-Head-Review. Nach Merge ist diese Stopp-Klausel historisch. Self-Review ist kein PASS.
+
+**Nachtrag, 28. August 2026 – Review-Fix `5456852840`.** Continuity-only gegen Head `2cae6e03`: residual unconditional `#147 DRAFT/AKTIV` und unguarded `nächster Schritt = Review von #147` in den kanonischen Current-State-Dateien sind jetzt dual-state. Runtime-/Tooling-Dateien unverändert. Kein erfundener Merge-SHA. Neuer Head invalidiert `2cae6e03`.
 
 ---
 

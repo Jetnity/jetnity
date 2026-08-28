@@ -116,7 +116,7 @@ Nicht automatisch starten:
 
 - AP-5-S3–S5 / AP-5-P1–P5
 - AP-7 / Account-Traveller-Registry — Architektur Dual-Authority freigegeben; S1 Domain-Contract über PR #145 auf `main @ 4ec83f36` integriert, kein automatisches S2, keine Persistenz
-- Node 22 Runtime Consistency — Draft-PR #147; Repository-Vertrag `engines.node: "22.x"` + `@types/node@22.20.1`; kein Ready/Merge durch den Autor
+- Node 22 Runtime Consistency — PR #147 self-expiring: offen → TL-Re-Review; nach Merge → integrierter Node-22-Vertrag (`engines.node: "22.x"` + `@types/node@22.20.1`), Live-Post-Merge-Verifikation, kein Follow-up-Continuity-PR; kein Ready/Merge durch den Autor
 
 ## 3. Trip Workspace / Visitor Search
 
@@ -276,11 +276,12 @@ Abgeschlossen:
 34. ✅ PR #142 Post-Merge Continuity / PR #143 – integriert; Merge `1947285c`
 35. ✅ AP-7 Gate 0 Account-Traveller-Registry Architecture / PR #144 – integriert; Merge `bb38aef5`; Dual-Authority danach product-owner-freigegeben
 36. ✅ AP-7-S1 Dual-Authority Domain Contract / PR #145 – integriert auf `main @ 4ec83f36`; kein automatisches S2
-37. 🟡 Node 22 Runtime Consistency / Draft-PR #147 – Repository-Vertrag Node `22.x`; STOP für unabhängigen Technical-Lead Exact-Head-Review
+37. 🟡 Node 22 Runtime Consistency / PR #147 – Repository-Vertrag Node `22.x`; self-expiring: offen → TL-Re-Review; nach Merge → integriert, kein Follow-up-Continuity-PR
 
-Nächster Schritt:
+Nächster Schritt (self-expiring / dual-state):
 
-- Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #147. Kein Ready. Kein Merge durch den Autor. Keine Vercel-Setting-Mutation.
+- **Solange PR #147 offen:** unabhängiger Technical-Lead Exact-Head-Re-Review nach `5456852840`. Kein Ready. Kein Merge durch den Autor. Keine Vercel-Setting-Mutation. Kein AP-7-S2.
+- **Sobald PR #147 gemergt:** integrierter Node-22-Vertrag. Live-Post-Merge-Verifikation von GitHub CI und Vercel Production auf dem tatsächlichen Merge-Head, einschließlich der Prüfung, dass die `Node.js Version Override`-Warnung weg ist. Nach erfolgreicher Verifikation: Rückkehr zur live Binding-Build-Order-Auswahl. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Kein erfundener Merge-SHA.
 - AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #147.
 
 AP-5-S3/S4/S5 bleiben normale Technical-Lead-Gates innerhalb Gate 0, nicht automatisch gestartet und nicht Product-Owner-gated. S3–S5 nicht aus dieser Liste automatisch ableiten.

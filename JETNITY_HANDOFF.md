@@ -1,13 +1,13 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 28. August 2026  
-Status: **Node 22 Runtime Consistency / Draft-PR #147. STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge durch den Autor. AP-7-S1 ist auf `main @ 4ec83f36` integriert; kein automatisches AP-7-S2. Dual-Authority ist product-owner-freigegeben. PR #144 Gate 0 ist MERGED (`bb38aef5`). PR #143 bleibt MERGED (`1947285c`). S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **Node 22 Runtime Consistency / PR #147 self-expiring. Solange #147 offen: STOP für unabhängigen Technical-Lead Exact-Head-Re-Review nach `5456852840`; kein Ready, kein Merge durch den Autor. Sobald #147 gemergt: integrierter Node-22-Vertrag; nächster Schritt = Live-Post-Merge-Verifikation (GitHub CI + Vercel Production auf dem Merge-Head, inkl. Override-Warnung), dann live Binding-Build-Order-Auswahl. Kein Follow-up-Continuity-PR. AP-7-S1 ist auf `main @ 4ec83f36` integriert; kein automatisches AP-7-S2. Dual-Authority ist product-owner-freigegeben. PR #144 Gate 0 ist MERGED (`bb38aef5`). PR #143 bleibt MERGED (`1947285c`). S5-B Runtime/Persistenz, AP-5-S3–S5, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
-Aktueller Ops-Slice auf diesem Branch:
+Aktueller Ops-Slice auf diesem Branch (self-expiring / dual-state für PR #147):
 
-- `docs/NODE22_RUNTIME_CONSISTENCY_STATUS_2026-08-28.md` – Node 22 Runtime Consistency / Draft-PR #147
+- `docs/NODE22_RUNTIME_CONSISTENCY_STATUS_2026-08-28.md` – Node 22 Runtime Consistency / PR #147; offen → Re-Review; nach Merge integriert
 - `docs/NODE22_RUNTIME_CONSISTENCY_HANDOFF_2026-08-28.md`
 - `docs/NODE22_RUNTIME_CONSISTENCY_SELF_REVIEW_2026-08-28.md`
 
@@ -341,7 +341,7 @@ Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logisc
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-**Self-expiring / dual-state.** Solange Draft-PR #145 offen: unabhängiger Technical-Lead Exact-Head-Re-Review nach `5455836506` (reviewed head `e9f96e79` invalidiert). Autor-Agent setzt kein Ready, kein Merge, startet kein AP-7-S2 und keine Persistenz. Sobald #145 gemergt: AP-7-S1 ist integrierter Domain-Contract; nächster Schritt = Live-Post-Merge-Verifikation, dann nur ein separat Product-Owner-gegateter AP-7-S2 Persistence/Identity/RLS-Vorschlag. Kein Follow-up-Continuity-PR nur um den Merge zu sagen.
+**Self-expiring / dual-state.** Solange Draft-PR #147 offen: unabhängiger Technical-Lead Exact-Head-Re-Review nach `5456852840` (reviewed head `2cae6e03` invalidiert). Autor-Agent setzt kein Ready, kein Merge, keine Vercel-Setting-Mutation und startet kein AP-7-S2. Sobald #147 gemergt: der Node-22-Vertrag ist integriert; Draft-/Review-Klauseln historisch; nächster Schritt = Live-Post-Merge-Verifikation von GitHub CI und Vercel Production auf dem tatsächlichen Merge-Head, einschließlich der Prüfung, dass die `Node.js Version Override`-Warnung weg ist. Nach erfolgreicher Verifikation: Rückkehr zur live Binding-Build-Order-Auswahl. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. Kein erfundener Merge-SHA. AP-7-S2 bleibt separat Product-Owner-gegatet.
 
 PR #144 ist MERGED (`bb38aef5`). Dual-Authority ist product-owner-freigegeben. PR #143 ist MERGED (`1947285c`).
 

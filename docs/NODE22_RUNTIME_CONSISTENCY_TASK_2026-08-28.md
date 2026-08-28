@@ -1,7 +1,7 @@
 # Jetnity – Node 22 Runtime Consistency Task
 
 Stand: 28. August 2026
-Status: **IMPLEMENTED ON DRAFT-PR / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / NO READY OR MERGE BY AUTHOR**
+Status: **IMPLEMENTED / SELF-EXPIRING / DUAL-STATE. Solange Draft-PR #147 offen: STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW / NO READY OR MERGE BY AUTHOR. Sobald #147 gemergt: integrierter Node-22-Vertrag; kein Follow-up-Continuity-PR.**
 Branch: `ops/node22-runtime-consistency-2026-08-28`
 Baseline: `main @ 4ec83f36426c636443d43692d6875e92e9e3b54a`
 

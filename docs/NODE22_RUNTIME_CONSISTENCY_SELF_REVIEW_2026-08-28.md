@@ -2,56 +2,47 @@
 
 Stand: 28. August 2026  
 Autor-Agent: **`Cursor-Agent: Jetnity runtime consistency 1`**  
-Typ: adversarial Self-Review, **kein** unabhängiger Technical-Lead-PASS
+Typ: adversarial Self-Review nach CHANGES REQUIRED `5456852840`, **kein** unabhängiger Technical-Lead-PASS
 
 ## 1. Auftrag gegen Diff
 
-Auftrag: `docs/NODE22_RUNTIME_CONSISTENCY_TASK_2026-08-28.md` auf Draft-PR #147 / Branch `ops/node22-runtime-consistency-2026-08-28`.
+Auftrag: Review-Fix (Continuity-only) gegen Exact Head `2cae6e03a3fb985ff0434a9f70fa1c47142f9ade` (Kommentar `5456852840`). Dieselbe Session / Generation 1 / Draft-PR #147. Runtime-/Tooling-Dateien nicht angefasst.
 
-Baseline: `main @ 4ec83f36426c636443d43692d6875e92e9e3b54a`.
+Geprüft gegen den tatsächlichen Dateisatz: `JETNITY_START_HERE.md`, `JETNITY_HANDOFF.md`, `ROADMAP.md`, `docs/ACTIVE_WORK_STATUS.md` (Header, Arbeitsblock, PR-Tabelle, §10), Node22 Status/Handoff/Task, ADR-0188.
 
-Geprüft gegen den tatsächlichen Dateisatz: `package.json`, `package-lock.json`, `.github/workflows/ci.yml`, ADR-0188, Status/Handoff, `docs/ACTIVE_WORK_STATUS.md`.
-
-Keine Änderung an `app/`, `components/`, `lib/`-Produktcode, `supabase/`, Auth-Config, Vercel-Projektsettings, Branch Protection, AP-7-S2, Provider- oder Trip-Workspace-Runtime.
+Keine Änderung an `package.json`, `package-lock.json`, `.github/workflows/ci.yml`, `app/`, `components/`, `lib/`, `supabase/`, Vercel-Projektsettings, Branch Protection, AP-7-S2, Provider- oder Trip-Workspace-Runtime.
 
 ## 2. Adversarial Fragen
 
 | Frage | Ergebnis |
 | --- | --- |
-| Bleibt der Engine-Range breit genug für Node 24? | Nein. `engines.node` ist `22.x`. |
-| Wurde das Lockfile per Hand an beliebigen Dependency-Records editiert? | Nein. `npm install --package-lock-only --ignore-scripts`. Diff nur Root-engines, `@types/node` und das von npm gezogene `undici-types`. |
-| Bleiben Node-24-Typen Current Truth? | Nein. `@types/node` ist `22.20.1`. |
-| Wurde CI unnötig angefasst? | Nein. Beide Jobs waren und bleiben `22.x`. |
-| Wurden Vercel-Settings mutiert? | Nein. |
-| Gibt es Application-/Provider-/TW-/AP-7-S2-Drift? | Nein. |
-| Unrelated Dependency-Upgrades? | Nein. |
-| Ready/Merge durch den Autor? | Nein. STOPP für unabhängigen TL-Review. |
+| Bleibt #147 nach einem späteren Merge als aktiver Draft stehen? | Nein. Alle kanonischen Current-State-Flächen sind dual-state / self-expiring. |
+| Wird ein zukünftiger Merge-SHA oder Deployment-ID erfunden? | Nein. |
+| Wäre ein Continuity-only Follow-up-PR nötig, nur um den Merge zu sagen? | Nein. Nach Merge sind Draft-/Transport-Klauseln automatisch historisch. |
+| Ist der nächste Schritt nach Merge spezifiziert? | Ja. Live-Post-Merge-Verifikation von GitHub CI + Vercel Production auf dem tatsächlichen Merge-Head, inkl. `Node.js Version Override`-Warnung; danach live Binding-Build-Order-Auswahl. |
+| Startet AP-7-S2 aus #147? | Nein. Separat Product-Owner-gegatet. |
+| Wurden Runtime-/Tooling-Dateien angefasst? | Nein. |
+| Gibt es residual unconditional `#147 DRAFT/AKTIV` oder unguarded `next step = review #147`? | Nein, nach Scan der kanonischen Flächen. |
+| Ready/Merge durch den Autor? | Nein. STOPP für unabhängigen TL-Re-Review. |
 
 ## 3. Validierung
 
-Lokal ausgeführt auf Head `3fb2f3c8` (vor diesem Stamp). Dieser Stamp ändert keine Runtime-Dateien. Node lokal: `v22.14.0`. npm: `10.9.7`.
+Docs-only Review-Fix. Runtime-Gates von Head `3fb2f3c8` bleiben gültig für die unveränderten Runtime-Dateien (`npm ci`, typecheck, lint, 2457/2457 tests, `npm run build`). Dieser Fix ändert nur Continuity-Texte.
 
-| Command | Result |
-| --- | --- |
-| `npm ci` | **PASS** – lockfile-reproducible install, 508 packages audited |
-| `npm run typecheck` | **PASS** – `tsc --noEmit` exit 0 |
-| `npm run lint` | **PASS** – `No ESLint warnings or errors` |
-| `npm test` | **PASS** – 2457/2457, 0 fail, 0 skipped |
-| `npm run build` | **PASS** – `next build` compiled successfully; setup warning only because no `.env/.local` in this environment |
+`origin/main` neu geholt: `4ec83f36426c636443d43692d6875e92e9e3b54a`. Ahead/behind vor diesem Stamp: **4 / 0**.
 
-Bekannte, vorbestehende Build-Hinweise: Supabase Edge-Runtime `process.version(s)`-Warnung, veraltete Browserslist-Daten. Keine neuen durch diesen Slice.
-
-Local gates do not replace Exact-Head CI or Vercel Preview.
+Local docs-scan ersetzt Exact-Head CI/Vercel nicht. Jeder neue Push invalidiert `2cae6e03`.
 
 ## 4. Risiken, die bleiben
 
-- Ob Vercel die Override-Warnung tatsächlich verliert, ist nur live am Preview/Production-Deployment beweisbar.
-- `22.x` erlaubt Patch-/Minor-Bewegung innerhalb von Node 22.
+- Ob Vercel die Override-Warnung verliert, bleibt nur live beweisbar (Preview jetzt; Production nach Merge).
+- `22.x` ist ein Linien-Pin, kein Patch-Pin.
 - `main` `protected=false`.
-- Dieses Self-Review erzeugt keinen PASS. Jeder neue Push invalidiert Prior-Evidence.
+- Dieser Review-Fix erzeugt einen neuen Head und invalidiert `2cae6e03`.
+- Dieses Self-Review erzeugt keinen PASS.
 
 ## 5. Urteil des Autors
 
-Der Slice hält den Auftrag: ein reproduzierbarer Node-22.x-Vertrag, minimale Lockfile-/Typen-Ausrichtung, keine Produkt- oder Infrastrukturmutation.
+Das Continuity-Finding aus `5456852840` ist geschlossen. Runtime-/Tooling-Vertrag unverändert. Non-Scope gehalten.
 
-**Unabhängiger Technical-Lead Exact-Head-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**
+**Unabhängiger Technical-Lead-Re-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**

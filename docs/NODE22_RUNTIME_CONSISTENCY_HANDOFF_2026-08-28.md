@@ -1,8 +1,9 @@
 # Jetnity – Node 22 Runtime Consistency Handoff
 
 Stand: 28. August 2026  
+Status: **SELF-EXPIRING / DUAL-STATE**  
 Logical Cursor-Agent: **`Cursor-Agent: Jetnity runtime consistency 1`**  
-Transport: Draft-PR #147 / `ops/node22-runtime-consistency-2026-08-28`
+Transport: PR #147 / `ops/node22-runtime-consistency-2026-08-28` — solange offen Draft-Transport; nach Merge historisch
 
 ## Read first
 
@@ -14,7 +15,9 @@ Transport: Draft-PR #147 / `ops/node22-runtime-consistency-2026-08-28`
 
 ## Current truth
 
-Jetnity's repository runtime contract is now **Node 22.x**.
+**Self-expiring / dual-state.** Solange #147 offen: dieser Branch ist der Draft-Transport des Node-22-Vertrags. Sobald #147 gemergt: der Vertrag ist integriert; diese Transportzeile ist historisch. Kein erfundener Merge-SHA.
+
+Jetnity's repository runtime contract on this slice is **Node 22.x**.
 
 - `package.json` `engines.node` = `22.x`
 - `@types/node` = `22.20.1`
@@ -34,5 +37,7 @@ Mismatch is documented and non-blocking.
 
 ## Stop
 
-STOP for independent ChatGPT / Technical-Lead exact-head review.  
-Self-review is not approval. Author/agent must not Ready or merge.
+**Self-expiring / dual-state. Live-Evidence gewinnt.**
+
+- **Solange PR #147 offen:** STOP for independent ChatGPT / Technical-Lead Exact-Head-Re-Review after `5456852840`. Self-review is not approval. Author/agent must not Ready or merge.
+- **Sobald PR #147 gemergt:** Node-22-Vertrag integriert. Draft-/Review-Klauseln historisch. Exakt nächster Schritt = Live-Post-Merge-Verifikation von GitHub CI und Vercel Production auf dem tatsächlichen Merge-Head, einschließlich der `Node.js Version Override`-Warnung. Danach Rückkehr zur live Binding-Build-Order-Auswahl. Kein Follow-up-Continuity-PR nur um den Merge zu sagen. AP-7-S2 bleibt separat PO-gegatet.
