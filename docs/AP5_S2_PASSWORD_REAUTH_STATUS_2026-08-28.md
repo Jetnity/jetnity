@@ -1,16 +1,30 @@
 # Jetnity – AP-5-S2 Passwortänderung über Reauthentication – Status
 
 Stand: 28. August 2026  
-Status: **REVIEW-FIX FÜR 5050962955 / DRAFT / KEIN READY / KEIN MERGE / STOPP FÜR ERNEUTEN TL-REVIEW**  
+Status: **INTEGRIERT über PR #137 / Merge `f11a1753`. Authoring-Blöcke darunter bleiben Pre-Merge-Evidence.**  
 Workstream: Account / Traveller  
 Cursor-Agent: **`Account plattform audit vorbereitung 10`**  
-Issue: [#136](https://github.com/Jetnity/jetnity/issues/136)  
+Issue: [#136](https://github.com/Jetnity/jetnity/issues/136) – **CLOSED / completed**
 Branch: `cursor/ap5-s2-password-reauth-82e4`  
-Draft-PR: https://github.com/Jetnity/jetnity/pull/137
+PR: https://github.com/Jetnity/jetnity/pull/137 – **MERGED**
 
-> Live-Evidence gewinnt. Vorbereitungs-SHAs sind Start-Evidence.
+> Live-Evidence gewinnt. Kanonischer Integrationsstand: `docs/CHATGPT_PR137_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`.
 
-## 1. Live-Rekonstruktion dieses Agenten
+## 0. Integration
+
+| Feld | Wert |
+| --- | --- |
+| Reviewed Head | `e4cb805a2313fd537aeb9f1f65a8de436301d258` |
+| Technical-Lead PASS | Review `5051115258` |
+| Merge-Commit | `f11a17533c56f5746ca9ef56e08c3e4a21a5a3c5` |
+| Post-Merge Actions | Run `33171851756` SUCCESS |
+| Post-Merge Vercel Production | `dpl_A7BMLsQoZwx8Y4qEdMRCsdyPmRGg` READY |
+| GitHub Production-Deployment | `6141244223` success |
+| Issue #136 | **CLOSED / completed** |
+
+Kein S3–S5 aus diesem File.
+
+## 1. Historische Live-Rekonstruktion dieses Agenten (Authoring-Start, nicht Current Truth)
 
 | Feld | Wert |
 | --- | --- |
@@ -18,7 +32,7 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/137
 | `origin/main` nach Fetch | `0256905cee3e6705156ce642839983daf8b0709a` – Merge PR #135 |
 | Author-Branch-Start | exakt `0256905c` |
 | `main` Branch Protection | `protected=false` |
-| Issue #136 | OPEN |
+| Issue #136 | historisch OPEN beim Authoring-Start; Current Truth ist CLOSED / completed |
 | Offene PRs beim Start | #88, #52, #50, #40, #39, #28 – historical/fremd; nicht angefasst |
 | AP-5 Gate 0 / PR #129 | **integrated**; Issue #128 CLOSED / completed |
 | AP-5-S1 / PR #133 | **integrated**; Issue #132 CLOSED / completed. Generation 9 nicht wiederverwendet |
@@ -101,4 +115,4 @@ Dieser Stamp erzeugt einen neueren Head. **Kein zweiter Evidence-Stamp**, außer
 
 ## 6. Nächster Schritt
 
-STOPP für unabhängigen Technical-Lead-Re-Review nach Review-Fix `5050962955`. Nicht Ready. Nicht mergen. S3–S5 nicht automatisch starten.
+S2-Runtime ist integriert. Issue #136 ist CLOSED / completed. Continuity-Stamp unabhängig reviewen. S3–S5 nicht automatisch starten.
