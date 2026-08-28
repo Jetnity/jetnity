@@ -7,8 +7,9 @@
 //
 // The registry type is intentionally not TripTraveller-shaped.
 // Projection materializes trip-owned identities and timestamps from
-// explicit context. It does not copy registry identity, invent a
-// default citizenship/document, or treat issuer as citizenship.
+// explicit context. Snapshot ids/refs must be disjoint from the entire
+// registry identity universe. It does not copy registry identity, invent
+// a default citizenship/document, or treat issuer as citizenship.
 //
 // No persistence, no schema, no UI, no provider runtime.
 
@@ -391,16 +392,30 @@ function identitaetLesen(wert: unknown): TripSnapshotIdentitaet | null {
   return { id, clientRef }
 }
 
-function identitaetUnabhaengig(
+function registryIdentitaetsUniversum(registry: AccountRegistryTraveller): Set<string> {
+  const werte = new Set<string>([registry.id, registry.clientRef])
+  for (const citizenship of registry.facts.citizenships) {
+    werte.add(citizenship.id)
+    werte.add(citizenship.clientRef)
+  }
+  for (const document of registry.facts.documents) {
+    werte.add(document.id)
+    werte.add(document.clientRef)
+  }
+  return werte
+}
+
+function snapshotIdentitaetFremd(
   snapshot: TripSnapshotIdentitaet,
-  quelle: { readonly id: string; readonly clientRef: string },
+  registryUniversum: ReadonlySet<string>,
 ): boolean {
-  return snapshot.id !== quelle.id && snapshot.clientRef !== quelle.clientRef
+  return !registryUniversum.has(snapshot.id) && !registryUniversum.has(snapshot.clientRef)
 }
 
 function identitaetenKarteLesen(
   wert: unknown,
   quelle: ReadonlyArray<{ readonly id: string; readonly clientRef: string }>,
+  registryUniversum: ReadonlySet<string>,
   belegtIds: Set<string>,
   belegtRefs: Set<string>,
 ): ReadonlyMap<string, TripSnapshotIdentitaet> | null {
@@ -413,7 +428,7 @@ function identitaetenKarteLesen(
   const result = new Map<string, TripSnapshotIdentitaet>()
   for (const eintrag of quelle) {
     const identitaet = identitaetLesen(karte[eintrag.clientRef])
-    if (!identitaet || !identitaetUnabhaengig(identitaet, eintrag)) return null
+    if (!identitaet || !snapshotIdentitaetFremd(identitaet, registryUniversum)) return null
     if (belegtIds.has(identitaet.id) || belegtRefs.has(identitaet.clientRef)) return null
     belegtIds.add(identitaet.id)
     belegtRefs.add(identitaet.clientRef)
@@ -436,13 +451,15 @@ function materialisierungLesen(
   if (hatUnerlaubteSchluessel(eintrag, ERLAUBTE_MATERIALISIERUNG_SCHLUESSEL)) return null
   const jetzt = zeitLesen(eintrag.jetzt)
   const traveller = identitaetLesen(eintrag.traveller)
-  if (!jetzt || !traveller || !identitaetUnabhaengig(traveller, registry)) return null
+  const registryUniversum = registryIdentitaetsUniversum(registry)
+  if (!jetzt || !traveller || !snapshotIdentitaetFremd(traveller, registryUniversum)) return null
 
   const belegtIds = new Set<string>([traveller.id])
   const belegtRefs = new Set<string>([traveller.clientRef])
   const citizenships = identitaetenKarteLesen(
     eintrag.citizenships,
     registry.facts.citizenships,
+    registryUniversum,
     belegtIds,
     belegtRefs,
   )
@@ -450,6 +467,7 @@ function materialisierungLesen(
   const documents = identitaetenKarteLesen(
     eintrag.documents,
     registry.facts.documents,
+    registryUniversum,
     belegtIds,
     belegtRefs,
   )

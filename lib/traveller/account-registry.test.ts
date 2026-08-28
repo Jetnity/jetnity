@@ -681,6 +681,75 @@ describe('AP-7 Dual-Authority Account-Registry', () => {
     )
   })
 
+  test('Snapshot-Identität ist zum gesamten Registry-Universum disjunkt, nicht nur zur Quellzeile', () => {
+    const registry = accountRegistryTravellerLesen(registryRoh())
+    assert.ok(registry)
+    const basis = materialisierungFuer(registry)
+
+    assert.equal(
+      accountRegistryTravellerAlsTripSnapshot(registry, {
+        ...basis,
+        traveller: { id: PERSON_REF, clientRef: SNAP_PERSON_REF },
+      }),
+      null,
+    )
+    assert.equal(
+      accountRegistryTravellerAlsTripSnapshot(registry, {
+        ...basis,
+        traveller: { id: SNAP_PERSON_ID, clientRef: PERSON_ID },
+      }),
+      null,
+    )
+    assert.equal(
+      accountRegistryTravellerAlsTripSnapshot(registry, {
+        ...basis,
+        traveller: { id: PASS_CH_ID, clientRef: SNAP_PERSON_REF },
+      }),
+      null,
+    )
+    assert.equal(
+      accountRegistryTravellerAlsTripSnapshot(registry, {
+        ...basis,
+        citizenships: {
+          ...basis.citizenships,
+          [CH_REF]: { id: PASS_RS_ID, clientRef: SNAP_CH_REF },
+        },
+      }),
+      null,
+    )
+    assert.equal(
+      accountRegistryTravellerAlsTripSnapshot(registry, {
+        ...basis,
+        citizenships: {
+          ...basis.citizenships,
+          [RS_REF]: { id: SNAP_RS_ID, clientRef: PASS_CH_REF },
+        },
+      }),
+      null,
+    )
+    assert.equal(
+      accountRegistryTravellerAlsTripSnapshot(registry, {
+        ...basis,
+        documents: {
+          ...basis.documents,
+          [PASS_CH_REF]: { id: CH_ID, clientRef: SNAP_PASS_CH_REF },
+        },
+      }),
+      null,
+    )
+    assert.equal(
+      accountRegistryTravellerAlsTripSnapshot(registry, {
+        ...basis,
+        documents: {
+          ...basis.documents,
+          [PASS_RS_REF]: { id: SNAP_PASS_RS_ID, clientRef: RS_ID },
+        },
+      }),
+      null,
+    )
+    assert.ok(accountRegistryTravellerAlsTripSnapshot(registry, basis))
+  })
+
   test('fehlende oder unvollständige Materialisierung ist fail-closed und nicht wanduhrabhängig', () => {
     const registry = accountRegistryTravellerLesen(registryRoh())
     assert.ok(registry)
