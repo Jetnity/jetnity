@@ -1,7 +1,7 @@
 # Jetnity – AP-5 Gate 0 – Handoff
 
 Stand: 28. August 2026  
-Status: **AUTHOR COMPLETE / DRAFT / STOPP / KEINE AP-5-RUNTIME**  
+Status: **REVIEW-FIX FÜR 5049870788 / DRAFT / STOPP FÜR TL-RE-REVIEW / KEINE AP-5-RUNTIME**  
 Cursor-Agent: **`Account plattform audit vorbereitung 8`**  
 Issue: [#128](https://github.com/Jetnity/jetnity/issues/128)  
 PR: https://github.com/Jetnity/jetnity/pull/129
@@ -20,11 +20,13 @@ PR: https://github.com/Jetnity/jetnity/pull/129
 
 AP-5 Gate 0 rekonstruiert den **bestehenden** Vertrag. Es startet keine Runtime.
 
-Drei harte Wahrheiten:
+Harte Wahrheiten:
 
-1. Passwortänderung = Reauthentication + `updateUser({ password })`. Kein Current-Password-Submit.
-2. Heutiges „Abmelden“ ist bereits `signOut()`-Default **`global`**.
-3. Eine Session-/Geräteliste ist mit dem installierten User-Client **unsupported**.
+1. Password-Recovery und signed-in Reauthentication sind zwei Authorities. Recovery = Recovery-Session → `updateUser({ password })`. Eingeloggte Änderung unter `secure_password_change` = `reauthenticate()` → Nonce → `updateUser({ password, nonce })`. Der Recovery-Link ist nicht die Reauthentication. Kein Current-Password-Submit.
+2. `security_update_password_require_current_password = true` bleibt Product-Owner-Sondergate. Recovery-Kompatibilität muss vor einer solchen Config-Änderung separat live/referenzbasiert verifiziert werden.
+3. Heutiges „Abmelden“ ist bereits `signOut()`-Default **`global`**.
+4. Eine Session-/Geräteliste ist mit dem installierten User-Client **unsupported**.
+5. Verified-factor Unenroll braucht laut aktueller Supabase-Referenz `aal2`. Jetnitys UI steppt heute nicht hoch; GoTrue erzwingt die Anforderung serverseitig. AP-5-S4 darf später einen UI-Step-up davor setzen, ohne Consumer-AAL2 global einzuführen.
 
 C1 / PR #126 / Issue #122 ist abgeschlossen. C2 ist nicht gestartet.
 
@@ -51,4 +53,4 @@ Kein neuer Auth-Vertrag. ADR-0182 stellt nur fest, welcher Vertrag schon gilt un
 
 ## Nächster Schritt
 
-Unabhängiger Technical-Lead-Finalreview. Nicht Ready. Nicht mergen. Kein automatischer AP-5-S1-Start.
+Unabhängiger Technical-Lead-Re-Review nach Review-Fix `5049870788`. Nicht Ready. Nicht mergen. Kein automatischer AP-5-S1/S2-Start.

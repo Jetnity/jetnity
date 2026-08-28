@@ -1,7 +1,7 @@
 # Jetnity – AP-5 Gate 0 Account Security Capability Audit – Status
 
 Stand: 28. August 2026  
-Status: **AUTHOR COMPLETE / DRAFT / KEIN READY / KEIN MERGE / KEINE AP-5-RUNTIME**  
+Status: **REVIEW-FIX FÜR 5049870788 / DRAFT / KEIN READY / KEIN MERGE / KEINE AP-5-RUNTIME**  
 Workstream: Account / Traveller  
 Cursor-Agent: **`Account plattform audit vorbereitung 8`**  
 Issue: [#128](https://github.com/Jetnity/jetnity/issues/128)  
@@ -65,12 +65,12 @@ Keine Runtime-, Migrations-, Config-, Schema-, Grant- oder RLS-Datei. `supabase/
 | Recovery-Pfad existiert | **current** | `LoginForm.resetPasswordForEmail` → `/auth/update-password`. `CallbackClient` leitet `type=recovery` dorthin. Seite ruft `updateUser({ password })`. |
 | In-Account-Oberfläche fehlt | **current / missing** | `/account/security` zeigt nur TOTP/Passkeys. Settings-Karte erwähnt nur 2FA. |
 | `reauthenticate()` ist im Client vorhanden, ungenutzt | **current** | `GoTrueClient.reauthenticate()` → `GET /reauthenticate`. Sendet OTP an die E-Mail der **bereits angemeldeten** Sitzung. `updateUser` akzeptiert `nonce`. App ruft beides nicht auf. |
-| Recovery-Link **ist** die Reauthentication | **current** | `auth:fluesse` setzt das neue Passwort mit dem Recovery-Access-Token. Das ist kein Current-Password-Submit. |
-| `/auth/update-password` akzeptiert jede Browser-Session | **current / residual** | Seite prüft `getSession()`, nicht `getUser()`, nicht `type=recovery`. Ein bereits eingeloggter Nutzer, der die URL kennt, sieht dieselbe Maske. |
-| Altes Passwort gilt nach Änderung nicht mehr | **current** | `auth:fluesse`: Login mit altem Passwort → HTTP 400. Das ist **kein** Beweis, dass fremde Refresh-Token-Ketten sofort tot sind. |
-| Current-Password-Submit wäre ein neuer Vertrag | **gated** | Würde `security_update_password_require_current_password` auf true drehen. Product-Owner-Sondergate. Recovery-Pfad würde brechen. |
+| Password-Recovery und signed-in Reauthentication sind **zwei Authorities** | **current** | Recovery-Flow (`resetPasswordForEmail` → Recovery-Session / `type=recovery` → `/auth/update-password` → `updateUser({ password })`) autorisiert eine Passwortwiederherstellung. Signed-in Change unter `secure_password_change` braucht `reauthenticate()` → Nonce → `updateUser({ password, nonce })`. Der Recovery-Link ist **nicht** die Reauthentication. |
+| `/auth/update-password` akzeptiert jede Browser-Session | **current / residual** | Seite prüft `getSession()`, nicht `getUser()`, nicht `type=recovery`. Ein bereits eingeloggter Nutzer, der die URL kennt, sieht dieselbe Maske. Das vermischt Recovery-UI und eingeloggte Session, ändert aber nicht die zwei Authorities. |
+| Altes Passwort gilt nach Änderung nicht mehr | **current** | Historische `auth:fluesse`-Evidence: Login mit altem Passwort → HTTP 400. Das ist **kein** Beweis, dass fremde Refresh-Token-Ketten sofort tot sind. |
+| `security_update_password_require_current_password = true` | **gated** | Ändert den Auth-Vertrag und bleibt Product-Owner-Sondergate. Recovery-Kompatibilität muss vor einer solchen Config-Änderung separat live/referenzbasiert verifiziert werden. Ohne diese Evidence wird kein sicherer Bruch des Recovery-Pfads behauptet. |
 
-**Folgerung:** AP-5 darf eine In-Account-Passwortänderung bauen, wenn sie denselben Vertrag benutzt: angemeldete Sitzung + `reauthenticate()` / Recovery-Session + `updateUser({ password, nonce? })`. Kein Feld „aktuelles Passwort“.
+**Folgerung:** AP-5-S2 darf eine In-Account-Passwortänderung nur über den signed-in Vertrag bauen: angemeldete Sitzung + `reauthenticate()` → Nonce → `updateUser({ password, nonce })`. Der Recovery-Pfad bleibt eine eigene Recovery-Authority und wird nicht als Reauthentication wiederverwendet. Kein Feld „aktuelles Passwort“.
 
 ## 4. Vertrag – Session-/Geräte-Sichtbarkeit
 
@@ -118,9 +118,9 @@ Weitere gemessene Semantik aus dem installierten Client:
 | `mfa_allow_low_aal` | **false** | Konto mit Faktor darf nicht dauerhaft auf AAL1 bleiben. Das ersetzt kein App-Step-up vor Unenroll. |
 | Passkeys | **gated / disabled** | `[auth.passkey] enabled = false`; WebAuthn-MFA aus. UI kann „verfügbar“ zeigen, wenn Browser-API existiert – das ist keine Server-Freigabe. |
 | Erstes Enroll | **AAL1 ist der vorgesehene Weg** | Ohne Faktor gibt es kein AAL2. `auth:fluesse` legt einen Faktor an und löscht ihn wieder **ohne** Verify; das ist unverified-factor, nicht Step-up. |
-| Unenroll verifizierter Faktoren | **App erzwingt kein Step-up** | `handleRemove` ruft `unenroll` direkt. Ob GoTrue AAL2 verlangt, ist **unknown** ohne Live-Unenroll eines verifizierten Faktors. Nicht als vorhanden behaupten. |
+| Unenroll verifizierter Faktoren | **GoTrue verlangt aal2; UI steppt nicht hoch** | Aktuelle Supabase-Referenz für `auth.mfa.unenroll`: ein Nutzer muss `aal2` haben, um einen **verified** factor zu unenrollen. Jetnitys UI macht heute keinen proaktiven Step-up (`handleRemove` ruft `unenroll` direkt). GoTrue erzwingt die AAL2-Anforderung serverseitig. Unverified-factor-Unenroll (z. B. Enroll abbrechen) bleibt ohne AAL2 vorgesehen. |
 
-**Folgerung:** Ein UI-Step-up vor Unenroll eines **verifizierten** Faktors über vorhandenes `challenge`/`verify` ist normales TL-Gate. Consumer-AAL2 für alle Account-Routen, MFA-Config oder Passkey-Live sind Product-Owner-Sondergates.
+**Folgerung:** AP-5-S4 darf später einen nutzerfreundlichen `challenge`/`verify`-Step-up vor Unenroll eines **verifizierten** Faktors setzen, damit die bereits serverseitige AAL2-Anforderung erfüllbar ist. Das führt kein Consumer-AAL2 global ein. Consumer-AAL2 für alle Account-Routen, MFA-Config oder Passkey-Live bleiben Product-Owner-Sondergates.
 
 ## 7. Client-/Server-Authority, Redirects, Enumeration, Leakage
 
@@ -173,14 +173,14 @@ Kein Slice startet aus diesem Dokument. Reihenfolge ist Empfehlung, keine Build-
 | ID | Inhalt | Gate |
 | --- | --- | --- |
 | **AP-5-S1** | Security-Seite ehrlich: empty ≠ unsupported ≠ unavailable ≠ error. Rohfehler raus. Passkey-Panel sagt „aus“, nicht „bald live“. Faktor-ID nicht als Geräteidentität. | **normales Technical-Lead-Gate** |
-| **AP-5-S2** | In-Account-Passwortänderung auf `/account/security` über bestehenden Vertrag: `reauthenticate()` + `updateUser({ password, nonce })`. Recovery-Seite bleibt Recovery. Kein Current-Password-Feld. HIBP/Richtlinie unverändert. | **normales Technical-Lead-Gate** |
+| **AP-5-S2** | In-Account-Passwortänderung auf `/account/security` nur über den signed-in Vertrag: `reauthenticate()` → Nonce → `updateUser({ password, nonce })`. Recovery-Seite bleibt Recovery-Authority und wird nicht als Reauthentication wiederverwendet. Kein Current-Password-Feld. HIBP/Richtlinie unverändert. | **normales Technical-Lead-Gate** |
 | **AP-5-S3** | Logout-UI: heutiges Abmelden als „überall“ belassen; optional „andere Sitzungen“ über `scope: 'others'`. Fehler nicht schlucken. JWT-Restlaufzeit nicht als sofort tot behaupten. | **normales Technical-Lead-Gate** |
-| **AP-5-S4** | Step-up vor Unenroll eines **verifizierten** TOTP-Faktors über vorhandenes `challenge`/`verify`. Erstes Enroll bleibt AAL1. Login-Dialog-Abbrechen nicht still als AAL2 behandeln. | **normales Technical-Lead-Gate**, solange kein Consumer-AAL2-Middleware |
+| **AP-5-S4** | Nutzerfreundlicher `challenge`/`verify`-Step-up vor Unenroll eines **verifizierten** TOTP-Faktors, weil GoTrue dafür bereits serverseitig `aal2` verlangt. Jetnitys UI steppt heute nicht hoch. Erstes Enroll und unverified Unenroll bleiben AAL1. Login-Dialog-Abbrechen nicht still als AAL2 behandeln. Kein globales Consumer-AAL2. | **normales Technical-Lead-Gate**, solange kein Consumer-AAL2-Middleware |
 | **AP-5-S5** | Session-Karte: aktuelle Sitzung ja; andere Sitzungen `unsupported`. Keine Fake-Geräteliste. | **normales Technical-Lead-Gate** |
 | **AP-5-P1** | Default-Logout von `global` auf `local` ändern | **Product-Owner-Sondergate** – Session-Semantik |
 | **AP-5-P2** | Session-/Geräteliste über Service Role, `auth.sessions` oder neues Schema | **Product-Owner-Sondergate** – Session-Architektur + Privilegien |
 | **AP-5-P3** | Consumer-AAL2-Pflicht auf `/account` oder Login-Hard-Gate | **Product-Owner-Sondergate** – MFA/AAL-Grundlogik |
-| **AP-5-P4** | Auth-Config-Push, `current_password` an, Passkey/OAuth live, `sessions_single_per_user` an | **Product-Owner-Sondergate** – Production-Auth-Config / Secrets |
+| **AP-5-P4** | Auth-Config-Push, `current_password` an (Recovery-Kompatibilität vorher separat live/referenzbasiert verifizieren; kein unbelegter Bruch), Passkey/OAuth live, `sessions_single_per_user` an | **Product-Owner-Sondergate** – Production-Auth-Config / Secrets |
 | **AP-5-P5** | C2, REVOKE, SECURITY DEFINER, RLS/Identity | **kein AP-5**; bleibt hinter eigenen Gates |
 
 S1 ist der kleinste, konfliktärmste Folgeslice. S2 ist der erste nutzbare Security-Gewinn. S3/S4/S5 nur nach S1, damit Zustände nicht wieder vermischt werden.
@@ -207,6 +207,6 @@ S1 ist der kleinste, konfliktärmste Folgeslice. S2 ist der erste nutzbare Secur
 
 ## 13. Nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Review dieses Draft-PR.
+Review-Fix für Technical-Lead-Review `5049870788` (verified-factor unenroll `aal2`, Recovery ≠ Reauthentication, Current-Password-Breakage nicht unbelegt behaupten). Danach STOPP für erneuten Technical-Lead-Re-Review.
 
 Nicht Ready. Nicht mergen. Keinen AP-5-Runtime-Slice aus diesem Status starten.

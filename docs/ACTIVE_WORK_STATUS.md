@@ -9,7 +9,7 @@ Status: **AP-5 Gate 0 Account-Security-Capability-Audit ist der aktuelle Account
 
 1. **Arbeitsblock / Ziel:** Issue #128 / AP-5 Gate 0 – bestehenden Auth-/Session-/MFA-Vertrag rekonstruieren und AP-5-Folgeslices in TL- vs. Product-Owner-Gates schneiden.
 2. **Authoring-Branch / PR:** `cursor/ap5-gate0-auth-session-mfa-79f9`; Draft-PR #129.
-3. **Status:** **AUTHOR COMPLETE / DRAFT.** Stamp-Head `8ead1a8f` Exact-Head Actions `33137160070` + Vercel `8h2J9vfjaCWSJVS6W4RcvLEHVowz` SUCCESS. Dieser Continuity-Stamp ist docs-only. Kein Ready, kein Merge, keine AP-5-Runtime.
+3. **Status:** **REVIEW-FIX FÜR 5049870788 / DRAFT.** Docs-Truth-Korrektur (verified-factor Unenroll `aal2`; Recovery ≠ Reauthentication; Current-Password-Breakage nicht unbelegt). Kein Ready, kein Merge, keine AP-5-Runtime.
 4. **Bereits umgesetzt:** Vertragsrekonstruktion; ADR-0182; Inventory-Test; Status/Handoff/Self-Review; Continuity-Zeiger. Live `auth:pruefen` 55/55.
 5. **Cursor-Agent:** `Account plattform audit vorbereitung 8`.
 6. **Live-`main` bei Authoring:** `0bca31b5de06bcee74c5436122b1685b6d2092f6` – immer live neu prüfen.
@@ -17,7 +17,7 @@ Status: **AP-5 Gate 0 Account-Security-Capability-Audit ist der aktuelle Account
 8. **Kosten / Provider / Secrets:** keine.
 9. **Bekannte Residuals:** Sessionliste unsupported; heutiges Abmelden ist bereits `global`; Login-MFA abbrechbar; D0-P1-03 Legal-404; C2 PO-gated; `main` Branch Protection `protected=false`.
 10. **Offene Nutzerentscheidungen / Freigaben:** dieses Gate 0 braucht keines. AP-5-P1–P5 brauchen Product-Owner, bevor sie gebaut werden.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Finalreview. **Kein AP-5-Runtime-Start aus diesem Slice.**
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead-Re-Review nach Review-Fix `5049870788`. **Kein AP-5-Runtime-Start aus diesem Slice.**
 12. **Zuerst lesen:** `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, Handoff, ADR-0182.
 
 Historischer abgeschlossener Block P2-TA-04 C1 bleibt integriert: PR #126 MERGED, Issue #122 CLOSED / completed. Nicht erneut öffnen. P2-TA-03 bleibt integriert: PR #117 MERGED, Issue #116 CLOSED / completed. P2-TA-06 bleibt integriert: PR #113 MERGED, Issue #112 CLOSED / completed.

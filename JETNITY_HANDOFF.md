@@ -214,7 +214,7 @@ Neue logische Arbeitseinheit → Rotation Standard live prüfen und frische Sess
 
 **Kein Produkt-Folgeslice ist durch diesen Handoff freigegeben.**
 
-AP-5 Gate 0 liegt als Audit/Architecture-Slice auf Issue #128 und wartet auf unabhängigen Technical-Lead-Finalreview. Das ist **kein** AP-5-Runtime- und **kein** C2-Start. P2-TA-04 C1 ist integriert (PR #126). Production C1 ist als `20260828015304` angewendet und live verifiziert. Nicht erneut anwenden.
+AP-5 Gate 0 liegt als Audit/Architecture-Slice auf Issue #128. Der Docs-Truth-Fix für Review `5049870788` ist auf Draft-PR #129; STOPP für TL-Re-Review. Das ist **kein** AP-5-Runtime- und **kein** C2-Start. P2-TA-04 C1 ist integriert (PR #126). Production C1 ist als `20260828015304` angewendet und live verifiziert. Nicht erneut anwenden.
 
 Der nächste Chat / Technical Lead muss zuerst live rekonstruieren und erst danach entscheiden, welcher Slice nach Binding Build Order tatsächlich sinnvoll und zulässig ist.
 
