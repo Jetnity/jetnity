@@ -53,8 +53,10 @@ Vor der finalen Übergabe erneut `origin/main` geholt.
 | Prior reviewed Head | `a0ef801fd7fa39685fab9a1fe69d411f736ea78c` – invalidiert |
 | Prior review-fix stamp | `731b0914c5be70641792c6cf620f2d9be185e8d1` – invalidiert durch Addendum |
 | Prior self-expire stamp | `c434dbd2f549c433e8dd12ba7254c81000e55bda` – invalidiert durch Re-Review `5455342054` |
-| Continuity-Tighten Authoring | `25beee923ab78e6a2259629d01753b16b0b2f893` – invalidiert durch leftover next-step fix |
-| Exact / Review-Head | Stamp nach diesem Authoring; live an PR #144 prüfen |
+| Prior continuity-tighten | `25beee923ab78e6a2259629d01753b16b0b2f893` – invalidiert durch leftover next-step fix |
+| Authoring-SHA (`5455342054` leftover next-step) | `1c9f1d31b64512310e27d84d5977bcadcf84da59` |
+| Exact / Review-Head | dieser Stamp-Commit; live an PR #144 prüfen |
+| Ahead / Behind nach Authoring, vor Stamp | **13 / 0** |
 | Branch Protection | unverändert; letzte Evidence `protected=false` |
 | Supabase | nicht live abgefragt, nicht mutiert |
 
