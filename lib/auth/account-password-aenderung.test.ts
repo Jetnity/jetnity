@@ -215,6 +215,32 @@ describe('AP-5-S2 Fehlerabbildung', () => {
     assert.doesNotMatch(gleich.text, /aktuelles Passwort|currentPassword/i)
   })
 
+  test('Sitzungslesen trennt network, unknown und session_required', () => {
+    const netz = passwortAenderungFehlerEinordnen({
+      vorgang: 'sitzung',
+      meldung: 'Failed to fetch',
+      status: 0,
+    })
+    assert.equal(netz.code, 'network')
+
+    const server = passwortAenderungFehlerEinordnen({
+      vorgang: 'sitzung',
+      meldung: 'unexpected_failure',
+      code: 'unexpected_failure',
+      status: 500,
+    })
+    assert.equal(server.code, 'unknown')
+    assert.notEqual(server.code, 'session_required')
+
+    const sitzung = passwortAenderungFehlerEinordnen({
+      vorgang: 'sitzung',
+      meldung: 'Auth session missing!',
+      code: 'session_not_found',
+      status: 401,
+    })
+    assert.equal(sitzung.code, 'session_required')
+  })
+
   test('lässt keine Rohtexte, Tokens oder Nonces in die Nutzercopy', () => {
     for (const roh of ROH) {
       for (const vorgang of ['reauth', 'update', 'sitzung'] as const) {
@@ -240,6 +266,81 @@ describe('AP-5-S2 Auth-Aufrufe', () => {
     )
     assert.equal(ereignis.typ, 'client_bereit')
     assert.equal(reauth, 0)
+  })
+
+  test('behauptet bei getUser()-Netzfehlern keinen Sitzungsverlust', async () => {
+    const antwort = await passwortAenderungSitzungLesen(
+      authAttrappe({
+        getUser: async () => ({
+          data: { user: null },
+          error: { message: 'TypeError: Failed to fetch', status: 0 },
+        }),
+        reauthenticate: async () => ({ error: null }),
+      }),
+    )
+    assert.equal(antwort.typ, 'sitzung_fehler')
+    if (antwort.typ !== 'sitzung_fehler') return
+    assert.equal(antwort.fehler.code, 'network')
+    const lage = passwortAenderungWeiter(PASSWORT_AENDERUNG_ANFANG, antwort)
+    assert.equal(lage.fehler?.code, 'network')
+    assert.notEqual(lage.fehler?.code, 'session_required')
+    assert.match(passwortAenderungStatusText(lage), /Verbindung/i)
+    assert.doesNotMatch(passwortAenderungStatusText(lage), /Sitzung ist nicht mehr gültig/i)
+
+    const geworfen = await passwortAenderungSitzungLesen(
+      authAttrappe({
+        getUser: async () => {
+          throw new Error('Failed to fetch')
+        },
+        reauthenticate: async () => ({ error: null }),
+      }),
+    )
+    assert.equal(geworfen.typ, 'sitzung_fehler')
+    if (geworfen.typ !== 'sitzung_fehler') return
+    assert.equal(geworfen.fehler.code, 'network')
+  })
+
+  test('behauptet bei unbekanntem oder 5xx-getUser()-Fehler keinen Sitzungsverlust', async () => {
+    const ereignis = await passwortAenderungSitzungLesen(
+      authAttrappe({
+        getUser: async () => ({
+          data: { user: null },
+          error: { message: 'unexpected GoTrue failure', code: 'unexpected_failure', status: 500 },
+        }),
+        reauthenticate: async () => ({ error: null }),
+      }),
+    )
+    assert.equal(ereignis.typ, 'sitzung_fehler')
+    if (ereignis.typ !== 'sitzung_fehler') return
+    assert.equal(ereignis.fehler.code, 'unknown')
+    const lage = passwortAenderungWeiter(PASSWORT_AENDERUNG_ANFANG, ereignis)
+    assert.equal(lage.fehler?.code, 'unknown')
+    assert.notEqual(lage.fehler?.code, 'session_required')
+    assert.doesNotMatch(passwortAenderungStatusText(lage), /Sitzung ist nicht mehr gültig/i)
+    assert.equal(passwortAenderungFehlerIstDicht(lage.fehler?.text ?? '', 'unexpected GoTrue failure'), true)
+  })
+
+  test('behält session_required nur bei belegter Session-Evidence', async () => {
+    const fehlt = await passwortAenderungSitzungLesen(
+      authAttrappe({
+        getUser: async () => ({
+          data: { user: null },
+          error: { message: 'Auth session missing!', code: 'session_not_found', status: 401 },
+        }),
+        reauthenticate: async () => ({ error: null }),
+      }),
+    )
+    assert.equal(fehlt.typ, 'client_ohne_sitzung')
+    const fehltLage = passwortAenderungWeiter(PASSWORT_AENDERUNG_ANFANG, fehlt)
+    assert.equal(fehltLage.fehler?.code, 'session_required')
+
+    const ohneUser = await passwortAenderungSitzungLesen(
+      authAttrappe({
+        getUser: async () => ({ data: { user: null }, error: null }),
+        reauthenticate: async () => ({ error: null }),
+      }),
+    )
+    assert.equal(ohneUser.typ, 'client_ohne_sitzung')
   })
 
   test('erkennt fehlende reauthenticate()-API als unsupported', async () => {

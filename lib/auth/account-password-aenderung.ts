@@ -60,6 +60,7 @@ export type PasswortAenderungEreignis =
   | { typ: 'client_ohne_sitzung' }
   | { typ: 'client_ohne_email' }
   | { typ: 'client_bereit' }
+  | { typ: 'sitzung_fehler'; fehler: PasswortAenderungFehler }
   | { typ: 'starte_reauth' }
   | { typ: 'reauth_ok' }
   | { typ: 'reauth_fehler'; fehler: PasswortAenderungFehler }
@@ -179,7 +180,7 @@ export function passwortAenderungFehlerEinordnen(eingabe: {
   if (eingabe.vorgang === 'sitzung') {
     if (istNichtUnterstuetzt(meldung, apiCode)) return passwortAenderungFehler('reauth_unsupported')
     if (istNichtVerfuegbar(meldung, apiCode)) return passwortAenderungFehler('reauth_unavailable')
-    return passwortAenderungFehler('session_required')
+    return passwortAenderungFehler('unknown')
   }
 
   if (eingabe.vorgang === 'reauth') {
@@ -242,6 +243,8 @@ export function passwortAenderungWeiter(
       return { schritt: 'error', fehler: passwortAenderungFehler('session_required') }
     case 'client_ohne_email':
       return { schritt: 'unavailable', fehler: passwortAenderungFehler('reauth_unavailable') }
+    case 'sitzung_fehler':
+      return lageFuerFehler(ereignis.fehler)
     case 'client_bereit':
       if (zustand.schritt === 'unsupported' || zustand.schritt === 'unavailable') {
         return PASSWORT_AENDERUNG_ANFANG
@@ -333,37 +336,32 @@ export function passwortAenderungErfolgBehaupten(zustand: PasswortAenderungZusta
   return zustand.schritt === 'success'
 }
 
+function sitzungLesenEreignisAusFehler(fehler: unknown): PasswortAenderungEreignis {
+  const gelesen = securityFehlerAusUnbekannt(fehler)
+  const eingeordnet = passwortAenderungFehlerEinordnen({
+    vorgang: 'sitzung',
+    meldung: gelesen.meldung,
+    code: gelesen.code,
+    status: gelesen.status,
+  })
+  if (eingeordnet.code === 'reauth_unsupported') return { typ: 'client_unbekannt' }
+  if (eingeordnet.code === 'reauth_unavailable') return { typ: 'client_ohne_email' }
+  if (eingeordnet.code === 'session_required') return { typ: 'client_ohne_sitzung' }
+  return { typ: 'sitzung_fehler', fehler: eingeordnet }
+}
+
 export async function passwortAenderungSitzungLesen(
   auth: PasswortAenderungAuth,
 ): Promise<PasswortAenderungEreignis> {
   if (typeof auth.reauthenticate !== 'function') return { typ: 'client_unbekannt' }
   try {
     const { data, error } = await auth.getUser()
-    if (error) {
-      const gelesen = securityFehlerAusUnbekannt(error)
-      const fehler = passwortAenderungFehlerEinordnen({
-        vorgang: 'sitzung',
-        meldung: gelesen.meldung,
-        code: gelesen.code,
-        status: gelesen.status,
-      })
-      if (fehler.code === 'reauth_unsupported') return { typ: 'client_unbekannt' }
-      if (fehler.code === 'reauth_unavailable') return { typ: 'client_ohne_email' }
-      return { typ: 'client_ohne_sitzung' }
-    }
+    if (error) return sitzungLesenEreignisAusFehler(error)
     if (!data.user) return { typ: 'client_ohne_sitzung' }
     if (!data.user.email?.trim()) return { typ: 'client_ohne_email' }
     return { typ: 'client_bereit' }
   } catch (fehler) {
-    const gelesen = securityFehlerAusUnbekannt(fehler)
-    const eingeordnet = passwortAenderungFehlerEinordnen({
-      vorgang: 'sitzung',
-      meldung: gelesen.meldung,
-      code: gelesen.code,
-      status: gelesen.status,
-    })
-    if (eingeordnet.code === 'network') return { typ: 'client_ohne_sitzung' }
-    return { typ: 'client_ohne_sitzung' }
+    return sitzungLesenEreignisAusFehler(fehler)
   }
 }
 
