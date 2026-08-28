@@ -40,8 +40,8 @@ The existing Auth / Session / MFA contract, with evidence:
 - `npm run auth:pruefen`: 55/55 expected values, 242 keys classified (Development branch, read-only)
 - Inventory test: 8/8
 - Focused Auth/Account unit: 84/84
-- Exact-Head CI on `8ead1a8f`: Actions `33137160070` SUCCESS; Vercel `8h2J9vfjaCWSJVS6W4RcvLEHVowz` SUCCESS
-- `auth:fluesse` was **not** re-run in this slice (it creates a throwaway account)
+- Prior Exact-Head on `41d0863d` was SUCCESS; this review-fix head must be live-read after push
+- `auth:fluesse` was **not** re-run for this docs-truth fix
 - No browser / Real-Device claim
 
 ## Stop
