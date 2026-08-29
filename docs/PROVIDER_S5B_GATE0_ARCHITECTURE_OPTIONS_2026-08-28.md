@@ -1,12 +1,12 @@
 # Provider S5-B Gate 0 – Architecture Options
 
 Stand: 28. August 2026  
-Status: **REVIEW-FIX FÜR 5453748651 / PROPOSED / NOT ACCEPTED / NOT IMPLEMENTED**  
+Status: **HISTORICAL GATE-0 RECOMMENDATION / OPTION C LATER ACCEPTED AS TARGET ARCHITECTURE BY ADR-0197 / STILL NOT IMPLEMENTED**  
 Agent: `Cursor-Agent: Jetnity provider readiness audit 2`  
 Bezug: `docs/PROVIDER_S5B_GATE0_READINESS_STATUS_2026-08-28.md`  
 ADR-0168 bleibt die kanonische S5-A-Entscheidung. Dieses Dokument deutet sie nicht um.
 
-> Keine Production-Entscheidung. Keine Schemaänderung. Keine Runtime.
+> Nachtrag 29. August 2026: Der Technical Lead hat Option C als Zielarchitektur angenommen (`docs/ADR_0197_PROVIDER_S5B_OPTION_C_TARGET_ARCHITECTURE.md`, Draft-PR #180). Die Abschnitte darunter bleiben Gate-0-Empfehlungs-Evidence. **Keine Implementation. Keine Production-Entscheidung. Keine Schemaänderung. Keine Runtime.**
 
 ---
 
@@ -216,4 +216,4 @@ Gründe:
 
 **Option A** nur akzeptabel, wenn sie C in der Write-Authority und in der Quote→Snapshot-Übergang nachbildet (REVOKE/Trigger/DEFINER, kein Fake-`live_api` in der Zeile) und Legacy nicht backfillt. Dann ist A eine komprimierte C-Variante, keine billige Abkürzung.
 
-Keine dieser Optionen darf in Gate 0 implementiert werden. Keine neue ADR-Nummer; bei späterer Annahme einen eigenen `PROPOSED`-ADR-Slice, ohne ADR-0168 umzudeuten.
+Keine dieser Optionen durfte in Gate 0 implementiert werden. Die spätere Annahme ist ADR-0197 / Draft-PR #180: Option C als Zielarchitektur, weiterhin **nicht implementiert**, ohne ADR-0168 umzudeuten.

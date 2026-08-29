@@ -58,7 +58,7 @@ Marketing-/Growth-Abhängigkeit: Account-/Consent-/Notification-/Entitlement-Wah
 
 Agent: `Jetnity provider readiness audit`
 
-S1–S3 und **S5-A** (Commercial-Provenance-Domainvertrag) sind auf `main`. S5-B ist nicht gestartet. Weiter mit S5-B und S4/S6–S8 gemäß Provider-Plan.
+S1–S3 und **S5-A** (Commercial-Provenance-Domainvertrag) sind auf `main`. S5-B Zielarchitektur ist Option C (ADR-0197). S5-B Runtime/Persistenz ist nicht gestartet. Weiter mit dem separat gegateten S5-B-Persistenzslice und S4/S6–S8 gemäß Provider-Plan.
 
 Erst danach echte Provideraktivierung. Verträge, Secrets/API-Keys, kostenpflichtige Calls, Datenschutz/Lizenz und Production-Aktivierung bleiben besondere Product-Owner-Gates.
 

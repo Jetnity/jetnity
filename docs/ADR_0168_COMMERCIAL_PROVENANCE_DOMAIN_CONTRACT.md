@@ -1,7 +1,7 @@
 # ADR-0168 – Commercial Provenance ist ein eigener Vertrag, kein UniversalOffer
 
 Stand: 26. August 2026  
-Status: **S5-A integriert auf `main` via PR #83 / `3b317bc6`. S5-B nicht gestartet. Keine Persistenz.**
+Status: **S5-A integriert auf `main` via PR #83 / `3b317bc6`. S5-B Zielarchitektur Option C angenommen (ADR-0197 / Draft-PR #180). S5-B Runtime/Persistenz nicht gestartet. Keine Persistenz.**
 
 Vollständige Entscheidung: [DECISIONS.md](../DECISIONS.md) ADR-0168.
 
@@ -16,7 +16,7 @@ Kurz:
 - Optionale Composition prüft Domain, Provider-ID und `externalRef`.
 - User-Intake/Manual brauchen keinen Provider und kein `retrievedAt`; massgeblich ist `observedAt`.
 - `externalRef` ist provider-scoped.
-- Persistenz/`trip_items` bleibt S5-B + Production-Gate.
+- Persistenz bleibt S5-B + Production-Gate. Zielarchitektur dafür ist Option C (ADR-0197): eigene Relation an `trip_item_id`, noch nicht implementiert. Dieser ADR wird dadurch nicht umgedeutet.
 - Bestehende provider-belegte Truth darf nicht durch User-/Manual-/LLM-Wahrheit ersetzt werden.
 - Fehlende Affiliate-Evidence bleibt `unknown`. Widersprüchliche `amount`/`amountStatus`-Paare werden abgewiesen.
 - Provider-Refresh braucht identische Domain, identische `providerId` und identische belegte `externalRef`. Fehlende Ref auf einer oder beiden Seiten ist kein stiller Refresh. `providerOfferId` ist in S5-A kein gleichwertiger Refresh-Schlüssel.

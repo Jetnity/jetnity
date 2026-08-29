@@ -145,7 +145,7 @@ Account AP-1 (PR #43) und Admin Slice A (PR #44) bleiben parallel und unberührt
 
 ### PR-S5 – Provenance an kommerziellen Optionen
 
-S5 ist in S5-A (Domainvertrag, auf `main` via PR #83) und später S5-B (Persistenz, eigenes Gate) getrennt. S5-A implementiert **keinen** Offer-Monolithen und keine `trip_items`-Spalten. Provider-Refresh nur mit belegter `externalRef`; Current-Quote-Display nur mit belegter `quotedCurrency`. S5-B nicht gestartet. Keine Provideraktivierung.
+S5 ist in S5-A (Domainvertrag, auf `main` via PR #83) und später S5-B (Persistenz, eigenes Gate) getrennt. S5-A implementiert **keinen** Offer-Monolithen und keine `trip_items`-Spalten. Provider-Refresh nur mit belegter `externalRef`; Current-Quote-Display nur mit belegter `quotedCurrency`. S5-B Zielarchitektur ist Option C (ADR-0197 / Draft-PR #180): eigene Relation an `trip_item_id`, 1:1 current snapshot. S5-B Runtime/Persistenz nicht gestartet. Keine Provideraktivierung.
 
 **Ziel:** `retrievedAt`, Währungsabgleich, sichtbares Stale.
 

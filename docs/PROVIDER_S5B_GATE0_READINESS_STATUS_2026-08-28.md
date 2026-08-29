@@ -1,7 +1,7 @@
 # Provider S5-B Gate 0 – Commercial Provenance Persistence Readiness – Status
 
 Stand: 28. August 2026  
-Status: **REVIEW-FIX FÜR 5453748651 / READ-ONLY ARCHITECTURE & READINESS ONLY / DRAFT / KEIN READY / KEIN MERGE / KEIN S5-B-RUNTIME / KEIN TW-8**  
+Status: **HISTORICAL GATE-0 EVIDENCE / INTEGRIERT ÜBER PR #141 / S5-B ZIELARCHITEKTUR SPÄTER ADR-0197 / S5-B RUNTIME NICHT GESTARTET / KEIN TW-8**  
 Agent: `Cursor-Agent: Jetnity provider readiness audit 2`  
 Auftrag: `docs/PROVIDER_S5B_GATE0_READINESS_TASK_2026-08-28.md`  
 Precision-Fix gegen Exact Head: `623983835b32c233fa6349e8be0c6e5c40f5e6de`  
@@ -10,6 +10,8 @@ Branch: `audit/provider-s5b-gate0-readiness-2026-08-28`
 Draft-PR: https://github.com/Jetnity/jetnity/pull/141
 
 > Gate 0 entsperrt TW-8 nicht. Dieses Dokument ist Architektur-/Readiness-Evidence. Es implementiert nichts.
+
+> Nachtrag 29. August 2026: Option C ist als Zielarchitektur angenommen (ADR-0197 / Draft-PR #180). Die Gate-0-Abschnitte darunter bleiben Empfehlungs-Evidence. S5-B Runtime/Persistenz bleibt ungestartet. `S5B-G0-ARCH-01` ist als Architekturwahl geschlossen, nicht als Implementation.
 
 `docs/ACTIVE_WORK_STATUS.md` wurde **nicht** geändert. Die Datei führt weiter den integrierten AP-5-S2-/PR-#138-Continuity-Stand. Eine Überschreibung dieser Current Truth wäre falsch.
 
@@ -41,7 +43,7 @@ Historische Dokumente, ältere PR-Bodies und S4–S8-Audit-SHAs sind Evidence ih
 
 ## 1. Verbindliche Product Truth – unverändert
 
-S5-A ist integriert (`lib/commercial-provenance`, ADR-0168, PR #83 / `3b317bc6`). S5-B ist nicht gestartet. S5-A hat ausdrücklich **keine Persistenz und keine `trip_items`-Felder** eingeführt.
+S5-A ist integriert (`lib/commercial-provenance`, ADR-0168, PR #83 / `3b317bc6`). S5-B Runtime/Persistenz ist nicht gestartet. Die Zielarchitektur dafür ist später Option C (ADR-0197). S5-A hat ausdrücklich **keine Persistenz und keine `trip_items`-Felder** eingeführt.
 
 Kanonisch bleibt:
 
@@ -248,7 +250,7 @@ Mindestens vier Varianten, Bewertung und begründete Empfehlung stehen in:
 
 `docs/PROVIDER_S5B_GATE0_ARCHITECTURE_OPTIONS_2026-08-28.md`
 
-Keine Variante ist hier entschieden oder implementiert.
+Zum Gate-0-Zeitpunkt war keine Variante entschieden oder implementiert. Die spätere Annahme ist ADR-0197 (Option C als Zielarchitektur, nicht implementiert).
 
 Kurz: **Empfehlung = Option C** (eigene provider-neutrale Provenance-Relation, Ownership über `trip_item_id`; persistierte **Evidence**, Bewertung zur Lesezeit). Option D braucht die Guard-Matrix Stay/Activity vs Transfer/Rental vs `note` — nicht nur Provider/Ref/URL. `note` ist kein S5-A-Domain. Domain+Provider+`externalRef` ist Refresh-/Match-Identität **am selben Item**, kein datenbankweites Unique.
 
@@ -475,7 +477,7 @@ Kein neues Production-P0. Kein neues Production-P1-Incident. Fehlende Snapshot-Z
 
 | ID | Klasse |
 | --- | --- |
-| `S5B-G0-ARCH-01` | Wahl zwischen Optionen A–D. Nicht in Gate 0 entscheiden/implementieren. |
+| `S5B-G0-ARCH-01` | Gate 0: Wahl zwischen Optionen A–D nicht entscheiden. **Nachtrag 29.08.2026:** als Architekturwahl durch ADR-0197 / Option C geschlossen. Implementation bleibt offen. |
 | `S5B-G0-PO-MIG-01` | Jede spätere Schema-/RLS-/REVOKE-/DEFINER-Arbeit braucht ausdrückliches PO-Gate. |
 
 ### 12.5 Hygiene / Future Hardening

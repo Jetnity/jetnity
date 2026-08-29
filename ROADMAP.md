@@ -164,7 +164,7 @@ Production Gate A hat die dafür freigegebenen Production-Schritte bereits ausge
 
 Weiter offen/gated:
 
-- S5-B nicht gestartet
+- S5-B Zielarchitektur Option C angenommen (ADR-0197 / Draft-PR #180); Runtime/Persistenz nicht gestartet
 - keine realen Provider
 - keine Production Secrets
 - keine Verträge
@@ -278,7 +278,7 @@ Abgeschlossen:
 29. ✅ Project Sanitation Closure / PR #135 + Issue #134; ADR-0184; kein Cleanup
 30. ✅ AP-5-S2 eingeloggte Passwortänderung / PR #137 + Issue #136 CLOSED / completed; Merge `f11a1753`
 31. ✅ AP-5-S2 Post-Merge Continuity / PR #138 – integriert; ältere Draft-Sätze sind Pre-Merge-Evidence
-32. ✅ Provider S5-B Gate 0 / PR #141 – docs/readiness only; S5-B Runtime nicht gestartet
+32. ✅ Provider S5-B Gate 0 / PR #141 – docs/readiness only; Zielarchitektur später ADR-0197; S5-B Runtime nicht gestartet
 33. ✅ Technical Lead / Cursor Operating Standard / PR #142 – integriert; Merge `9d4778b8`
 34. ✅ PR #142 Post-Merge Continuity / PR #143 – integriert; Merge `1947285c`
 35. ✅ AP-7 Gate 0 Account-Traveller-Registry Architecture / PR #144 – integriert; Merge `bb38aef5`; Dual-Authority danach product-owner-freigegeben
@@ -292,19 +292,21 @@ Abgeschlossen:
 43. ✅ AP-5-S4 Account Security MFA Step-up / PR #160 – integriert auf `main @ 934d43da`
 44. ✅ AP-5-S5 Honest Current Session / Device View / PR #164 – integriert auf `main @ 765fc547`
 45. 🟡 AP-6a Gate 0 Legal Foundation / Trust Boundary / Draft-PR #166 – Docs/Contract/Evidence; keine Rechtstexte; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready/Merge durch den Autor; kein AP-6a-Runtime / AP-6b / AP-7
+46. 🟡 Provider S5-B Option C Architecture Acceptance / Draft-PR #180 – Zielarchitektur angenommen (ADR-0197); keine Runtime, keine Migration; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready/Merge durch den Autor; kein Persistenz-Folgeslice
 
 Nächster Schritt:
 
-- Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #166. Kein Ready. Kein Merge durch den Autor. Kein AP-6a-Runtime. Kein AP-6b. Kein AP-7. Keine Vercel-Setting-Mutation.
+- Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #180 (S5-B Option C Zielarchitektur). Kein Ready. Kein Merge durch den Autor. Kein S5-B-Runtime-/Persistenz-Folgeslice. Kein TW-8.
+- Draft-PR #166 / AP-6a Gate 0 bleibt ein separates Legal-PO-Gate und ist Non-Scope von #180.
 - AP-6a-Runtime bleibt hinter dem PO-/Legal-Content-Gate.
-- AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #166.
+- AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #166 oder #180.
 
 ## 10. Noch nicht automatisch gestartet / weiterhin gated
 
 - AP-6a-Runtime / AP-6b / AP-7 / AP-5-P1–P5
 - AP-6a Gate 0 bleibt Draft bis unabhängiger Technical-Lead-Review und Merge; Runtime-Legal-Seiten nicht als gebaut behaupten
 - AP-7
-- Provider S5-B
+- Provider S5-B Runtime/Persistenz (Zielarchitektur Option C angenommen, nicht implementiert)
 - echte Providerphase
 - TW-8
 - TW-9
