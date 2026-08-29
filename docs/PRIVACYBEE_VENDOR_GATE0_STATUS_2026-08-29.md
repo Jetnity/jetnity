@@ -245,7 +245,7 @@ Keine Runtime. Keine Shared Continuity. Kein Search-Runtime (#168/#173).
 
 ## 9. Tests / Gates
 
-Post-merge green on exact `6c5e8c16`: Actions push run `33248216109` SUCCESS; Vercel Production `dpl_3gm9LNpyoqRRU43rrDnWNaY9jnwT` READY (GitHub Production deployment `6154845099`). Reviewed content head `278138ad` is on `main` via #175. Branch-stamp `b9495fa7` was not in that merge. Closeout Exact-Head-Gates nach diesem Push.
+Post-merge green on exact `6c5e8c16`: Actions push run `33248216109` SUCCESS; Vercel Production `dpl_3gm9LNpyoqRRU43rrDnWNaY9jnwT` READY (GitHub Production deployment `6154845099`). Reviewed content head `278138ad` is on `main` via #175. Branch-stamp `b9495fa7` was not in that merge. Closeout authoring head `51f38db9`: Actions `33248525684` SUCCESS; Vercel Preview `4se6SDNPJTzwS4oRQNQuX2PCU1G4`; Preview deployment `6154903316`. Dieser Stamp-Commit ist ein neuerer SHA.
 
 ## 10. Exakter nächster Schritt
 

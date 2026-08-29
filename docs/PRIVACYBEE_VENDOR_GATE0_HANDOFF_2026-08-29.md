@@ -138,7 +138,7 @@ Post-merge evidence (live, this closeout):
 - GitHub Actions push run `33248216109` **SUCCESS** on exakt `6c5e8c16`.
 - Vercel Production `dpl_3gm9LNpyoqRRU43rrDnWNaY9jnwT` READY; GitHub Production deployment `6154845099`.
 - Branch-stamp `b9495fa7` was **not** in the original merge.
-- Closeout Exact-Head-CI/Vercel after this push. Kein TL-PASS für das Closeout behauptet.
+- Closeout authoring head `51f38db9`: Actions `33248525684` SUCCESS; Vercel Preview `4se6SDNPJTzwS4oRQNQuX2PCU1G4`; GitHub Preview deployment `6154903316`. Dieser Stamp ist ein neuerer SHA. Kein TL-PASS für das Closeout behauptet.
 
 Preview-HTML bleibt SSO-geschützt und ist kein Inhaltsbeweis.
 
