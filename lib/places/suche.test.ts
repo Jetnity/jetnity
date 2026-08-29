@@ -12,6 +12,8 @@ import {
   ORT_TREFFER,
   landAliasNachzugNoetig,
   orteOrdnen,
+  ortAnzeigeKontext,
+  ortAnzeigeLabel,
   ortLandAliasfilter,
   ortNamensfilter,
   ortSchluesselfilter,
@@ -307,7 +309,9 @@ describe('Ortssuche', () => {
     })
     const optionen = orteOrdnen([praefixStadt, land], 'Schweiz', 'ziel')
     assert.equal(optionen[0]?.id, land.id)
-    assert.equal(optionen[0]?.label, 'Switzerland')
+    assert.equal(optionen[0]?.label, 'Schweiz')
+    assert.equal(optionen[0]?.description, 'Land')
+    assert.equal(optionen[0]?.ariaLabel, 'Schweiz, Land')
     assert.equal(optionen[0]?.typ, 'country')
     assert.ok(optionen.some((option) => option.id === praefixStadt.id))
   })
@@ -332,8 +336,64 @@ describe('Ortssuche', () => {
     })
     const optionen = orteOrdnen([stadt, land], 'Ruritanien', 'ziel')
     assert.equal(optionen[0]?.id, land.id)
+    assert.equal(optionen[0]?.label, 'Ruritanien')
+    assert.equal(optionen[0]?.description, 'Land')
+    assert.equal(optionen[0]?.landAliasMatch, true)
     assert.equal(optionen[0]?.typ, 'country')
     assert.ok(optionen.some((option) => option.id === stadt.id))
+    assert.match(optionen.find((option) => option.id === stadt.id)?.description ?? '', /^Stadt · /)
+  })
+
+  test('die Zeilenform folgt dem Typ, nicht einzelnen Ländernamen', () => {
+    const land = ortFixture({
+      id: 'geonames:9000001',
+      name: 'Republic of Ruritania',
+      typ: 'country',
+      country: 'Ruritania',
+      countryCode: 'RR',
+      keywords: 'Ruritanien, Ruritania',
+    })
+    const stadt = ortFixture({
+      id: 'geonames:9000002',
+      name: 'Ruritanien',
+      typ: 'city',
+      country: 'United States',
+      countryCode: 'US',
+      region: 'Ohio',
+      keywords: 'Ruritanien, Ruritanien, Ohio',
+    })
+    const region = ortFixture({
+      id: 'geonames:9000003',
+      name: 'South Ruritania',
+      typ: 'region',
+      country: 'Ruritania',
+      countryCode: 'RR',
+    })
+    const insel = ortFixture({
+      id: 'geonames:9000004',
+      name: 'Ruritania Key',
+      typ: 'island',
+      country: 'Ruritania',
+      countryCode: 'RR',
+    })
+    const flughafen = ortFixture({
+      id: 'airport:RRR',
+      source: 'ourairports',
+      sourceId: 'RRR',
+      name: 'Ruritania Airport',
+      typ: 'airport',
+      country: 'Ruritania',
+      countryCode: 'RR',
+      region: 'Capital',
+      iata: 'RRR',
+      keywords: 'Ruritanien, RRR',
+    })
+    assert.equal(ortAnzeigeLabel(land, 'Ruritanien'), 'Ruritanien')
+    assert.equal(ortAnzeigeKontext(land), 'Land')
+    assert.equal(ortAnzeigeKontext(stadt), 'Stadt · Ohio, United States')
+    assert.equal(ortAnzeigeKontext(region), 'Region · Ruritania')
+    assert.equal(ortAnzeigeKontext(insel), 'Insel · Ruritania')
+    assert.equal(ortAnzeigeKontext(flughafen), 'Flughafen · RRR · Capital, Ruritania')
   })
 
   test('nur ein exaktes Länder-Alias wird angehoben, kein Keyword-Präfix', () => {
@@ -422,6 +482,13 @@ describe('Ortssuche', () => {
     const optionen = orteOrdnen([stadt, republik], 'Peru', 'ziel')
     assert.equal(optionen[0]?.id, republik.id)
     assert.equal(optionen[1]?.id, stadt.id)
+  })
+
+  test('die Runtime enthält keine Länder-Allowlist', () => {
+    const datei = readFileSync(join(hier, 'suche.ts'), 'utf8')
+    for (const name of ['Peru', 'China', 'Schweiz', 'Ruritanien'] as const) {
+      assert.equal(datei.includes(name), false, name)
+    }
   })
 
   test('der Länder-Alias-Nachzug läuft, wenn Namens-Städte das Land verdecken', () => {

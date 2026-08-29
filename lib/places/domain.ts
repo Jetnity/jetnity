@@ -35,6 +35,10 @@ export type OrtOption = {
   typ: OrtTyp
   /** Nur Anzeige. Persistiert wird weiterhin die Place-ID. */
   iata?: string
+  /** Screenreader: Typ plus Ortskontext, nicht nur der Name. */
+  ariaLabel?: string
+  /** Exaktes Länder-Alias für Rolle ziel; steuert die primäre Zeilenbetonung. */
+  landAliasMatch?: boolean
 }
 
 export function ortId(quelle: OrtQuelle, schluessel: string): string {

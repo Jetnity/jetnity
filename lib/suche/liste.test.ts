@@ -15,6 +15,10 @@ describe('Suchliste-Semantik', () => {
     assert.match(datei, /tabIndex=\{-1\}/)
     assert.equal(datei.includes('<button'), false)
     assert.equal(datei.includes('</button>'), false)
+    assert.match(datei, /aria-label=\{eintrag\.ariaLabel\}/)
+    assert.match(datei, /eintrag\.betont/)
+    assert.match(datei, /rounded-full/)
+    assert.equal(datei.includes('text-[11px] font-medium uppercase'), false)
   })
 
   test('OrtSuche und FlughafenSuche sichern Abort-Races mit der Anfragegrenze', () => {

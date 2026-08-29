@@ -234,7 +234,8 @@ describe('Ortssuche-Lauf / Production-Zeilenform', () => {
     })
     const schweizErgebnis = await placesSuchen('Schweiz', 'ziel', schweiz.lesen)
     assert.equal(schweizErgebnis.optionen?.[0]?.id, schweizLand.id)
-    assert.equal(schweizErgebnis.optionen?.[0]?.label, 'Switzerland')
+    assert.equal(schweizErgebnis.optionen?.[0]?.label, 'Schweiz')
+    assert.equal(schweizErgebnis.optionen?.[0]?.description, 'Land')
     assert.ok(schweiz.aufrufe.includes('land'))
   })
 

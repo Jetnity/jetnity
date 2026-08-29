@@ -136,20 +136,40 @@ function ortRang(ort: Ort, suche: string, rolle: OrtRolle): number {
   return treffer + typBonus(ort, rolle)
 }
 
-function ortBeschreibung(ort: Ort): string | undefined {
-  const teile = [ort.typ === 'country' ? null : ort.region, ort.country].filter(
+function lageText(ort: Ort): string {
+  return [ort.region, ort.country].filter(
     (wert, i, alle): wert is string => Boolean(wert) && alle.indexOf(wert) === i,
-  )
-  return teile.length > 0 ? teile.join(', ') : undefined
+  ).join(', ')
 }
 
-function ortAlsOption(ort: Ort): OrtOption {
+export function ortAnzeigeKontext(ort: Ort): string {
+  if (ort.typ === 'country') return 'Land'
+  if (ort.typ === 'region') return ['Region', ort.country].filter(Boolean).join(' · ')
+  if (ort.typ === 'island') return ['Insel', ort.country].filter(Boolean).join(' · ')
+  if (ort.typ === 'airport') {
+    return ['Flughafen', ort.iata, lageText(ort)].filter(Boolean).join(' · ')
+  }
+  return ['Stadt', lageText(ort)].filter(Boolean).join(' · ')
+}
+
+export function ortAnzeigeLabel(ort: Ort, suche: string): string {
+  if (!istExaktesLandAlias(ort, suche)) return ort.name
+  const raw = suche.trim()
+  if (gleichGefaltet(ort.name, raw)) return ort.name
+  return schluesselwoerter(ort.keywords).find((teil) => gleichGefaltet(teil, raw)) ?? raw
+}
+
+function ortAlsOption(ort: Ort, suche: string): OrtOption {
+  const label = ortAnzeigeLabel(ort, suche)
+  const description = ortAnzeigeKontext(ort)
   return {
     id: ort.id,
-    label: ort.name,
-    description: ortBeschreibung(ort),
+    label,
+    description,
     typ: ort.typ,
     iata: ort.iata ?? undefined,
+    ariaLabel: `${label}, ${description}`,
+    landAliasMatch: istExaktesLandAlias(ort, suche),
   }
 }
 
@@ -197,5 +217,5 @@ function begrenzen(bewertet: Array<{ ort: Ort; rang: number }>): Array<{ ort: Or
 }
 
 export function orteOrdnen(orte: Ort[], suche: string, rolle: OrtRolle): OrtOption[] {
-  return begrenzen(orteBewerten(orte, suche, rolle)).map(({ ort }) => ortAlsOption(ort))
+  return begrenzen(orteBewerten(orte, suche, rolle)).map(({ ort }) => ortAlsOption(ort, suche))
 }
