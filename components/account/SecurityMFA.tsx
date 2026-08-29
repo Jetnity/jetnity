@@ -1,6 +1,7 @@
 // components/account/SecurityMFA.tsx
 // MFA (TOTP) + ehrliches Passkey-Panel. AP-5-S1: empty ≠ unsupported ≠
-// unavailable ≠ error. Browser-WebAuthn überschreibt Server-Truth nicht.
+// unavailable ≠ error. AP-5-S4: verified Unenroll steppt über challenge/verify
+// hoch, ohne globales Consumer-AAL2. Browser-WebAuthn überschreibt Server-Truth nicht.
 
 "use client";
 
@@ -51,6 +52,26 @@ import {
   type PasskeyLage,
   type TotpListeLage,
 } from "@/lib/auth/account-security-lage";
+import { accountLogoutScopeAction } from "@/app/account/security/logout-action";
+import {
+  MFA_STEP_UP_ANFANG,
+  MFA_STEP_UP_ERFOLG_TEXT,
+  darfMfaStepUpStarten,
+  mfaStepUpFehler,
+  mfaStepUpDialogOffen,
+  mfaStepUpErfolgBehaupten,
+  mfaStepUpIstBeschaeftigt,
+  mfaStepUpSollLokalenAuthVerlassen,
+  mfaStepUpStatusText,
+  mfaStepUpUndUnenroll,
+  mfaStepUpWeiter,
+  mfaUnenrollDirekt,
+  mfaUnenrollVorbereiten,
+  type MfaStepUpAuth,
+  type MfaStepUpEreignis,
+  type MfaStepUpZustand,
+} from "@/lib/auth/account-mfa-step-up";
+import SecurityMfaStepUp from "@/components/account/SecurityMfaStepUp";
 
 type BrowserSupabase = SbClient<Database>;
 
@@ -86,6 +107,10 @@ type MfaClient = {
     code: string;
   }) => Promise<{ error: AuthLikeError | null }>;
   unenroll?: (args: { factorId: string }) => Promise<{ error: AuthLikeError | null }>;
+  getAuthenticatorAssuranceLevel?: () => Promise<{
+    data: { currentLevel?: string | null; nextLevel?: string | null } | null;
+    error: AuthLikeError | null;
+  }>;
 };
 
 function mfaClient(auth: { mfa?: MfaClient }): MfaClient | null {
@@ -117,14 +142,24 @@ export default function SecurityMFA({
   const [factorId, setFactorId] = React.useState<string | null>(null);
   const [code, setCode] = React.useState("");
   const [message, setMessage] = React.useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [stepUp, setStepUp] = React.useState<MfaStepUpZustand>(MFA_STEP_UP_ANFANG);
+  const unenrollLaufend = React.useRef(false);
 
   const [browserWebAuthn, setBrowserWebAuthn] = React.useState<boolean | null>(null);
+  const stepUpBeschaeftigt = mfaStepUpIstBeschaeftigt(stepUp);
+  const aktionenGesperrt = loading || stepUpBeschaeftigt || mfaStepUpDialogOffen(stepUp) || unenrollLaufend.current;
 
   React.useEffect(() => {
     setBrowserWebAuthn(typeof window !== "undefined" && "PublicKeyCredential" in window);
     void refreshFactors();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  React.useEffect(() => {
+    if (mfaStepUpSollLokalenAuthVerlassen(stepUp)) {
+      lokalenAuthVerlassen();
+    }
+  }, [stepUp]);
 
   const totpLage: TotpListeLage = totpListeLage({
     listFactorsVorhanden,
@@ -254,34 +289,100 @@ export default function SecurityMFA({
     }
   }
 
-  async function handleRemove(id: string) {
-    setLoading(true);
+  function stepUpAuth(): MfaStepUpAuth {
+    return {
+      getUser: () => supabase.auth.getUser(),
+      refreshSession: () => supabase.auth.refreshSession(),
+      signOut: (options) => supabase.auth.signOut({ scope: options.scope }),
+      mfa: supabase.auth.mfa,
+    };
+  }
+
+  function lokalenAuthVerlassen() {
+    window.location.assign(new URL("/", window.location.origin).toString());
+  }
+
+  async function nachUnenrollErgebnis(
+    fertig: Extract<
+      MfaStepUpEreignis,
+      { typ: "ausfuehren_ok" | "ausfuehren_fehler" | "client_unbekannt" | "client_ohne_sitzung" | "unenroll_ok_sitzung_unbestaetigt" }
+    >,
+    id: string,
+  ) {
+    setStepUp((aktuell) => mfaStepUpWeiter(aktuell, fertig));
+    if (fertig.typ === "ausfuehren_ok") {
+      enrollZustandNachUnenroll(id);
+      await refreshFactors();
+      setMessage({ type: "success", text: MFA_STEP_UP_ERFOLG_TEXT });
+      setStepUp((aktuell) => mfaStepUpWeiter(aktuell, { typ: "zuruecksetzen" }));
+      return;
+    }
+    if (fertig.typ !== "unenroll_ok_sitzung_unbestaetigt") return;
+
+    enrollZustandNachUnenroll(id);
+    await refreshFactors();
+    setMessage({
+      type: "error",
+      text: mfaStepUpFehler(
+        fertig.lokalBeendet
+          ? "sitzung_unbestaetigt_nach_unenroll"
+          : "sitzung_unbestaetigt_abmelden_fehlgeschlagen",
+      ).text,
+    });
+    const lokal = await accountLogoutScopeAction("local");
+    if (
+      fertig.lokalBeendet ||
+      lokal.typ === "ausfuehren_ok" ||
+      lokal.typ === "client_ohne_sitzung"
+    ) {
+      lokalenAuthVerlassen();
+    }
+  }
+
+  function enrollZustandNachUnenroll(id: string) {
+    if (factorId === id) {
+      setFactorId(null);
+      setEnrollQr(null);
+      setCode("");
+    }
+  }
+
+  async function handleRemove(id: string, status: string | null) {
+    if (unenrollLaufend.current || !darfMfaStepUpStarten(stepUp)) return;
+    unenrollLaufend.current = true;
     setMessage(null);
+    setStepUp((aktuell) => mfaStepUpWeiter(aktuell, { typ: "starte", faktorId: id }));
     try {
-      const mfa = mfaClient(supabase.auth);
-      if (!mfa?.unenroll) {
-        setMessage({
-          type: "error",
-          text: securityFehlerEinordnen({
-            vorgang: "unenroll",
-            meldung: "not available",
-          }).text,
-        });
+      const vorbereitung = await mfaUnenrollVorbereiten(stepUpAuth(), id, status);
+      setStepUp((aktuell) => mfaStepUpWeiter(aktuell, vorbereitung));
+      if (vorbereitung.typ !== "plan_direkt") return;
+
+      const fertig = await mfaUnenrollDirekt(stepUpAuth(), id);
+      await nachUnenrollErgebnis(fertig, id);
+    } finally {
+      unenrollLaufend.current = false;
+    }
+  }
+
+  async function handleStepUpBestaetigen(otp: string) {
+    if (unenrollLaufend.current) return;
+    unenrollLaufend.current = true;
+    try {
+      const faktorId = stepUp.zielFaktorId;
+      if (!faktorId) {
+        setStepUp((aktuell) =>
+          mfaStepUpWeiter(aktuell, {
+            typ: "ausfuehren_fehler",
+            fehler: mfaStepUpFehler("faktor_stale"),
+          }),
+        );
         return;
       }
-      const { error } = await mfa.unenroll({ factorId: id });
-      if (error) throw error;
-      if (factorId === id) {
-        setFactorId(null);
-        setEnrollQr(null);
-        setCode("");
-      }
-      setMessage({ type: "success", text: "Authenticator-App entfernt." });
-      await refreshFactors();
-    } catch (err: unknown) {
-      setMessage({ type: "error", text: nutzerFehler("unenroll", err) });
+      setStepUp((aktuell) => mfaStepUpWeiter(aktuell, { typ: "code_bereit" }));
+      const fertig = await mfaStepUpUndUnenroll(stepUpAuth(), { faktorId, code: otp });
+      await nachUnenrollErgebnis(fertig, faktorId);
     } finally {
-      setLoading(false);
+      unenrollLaufend.current = false;
     }
   }
 
@@ -317,7 +418,7 @@ export default function SecurityMFA({
               type="button"
               variant="outline"
               onClick={() => void refreshFactors()}
-              disabled={loading}
+              disabled={aktionenGesperrt}
               className="mb-4 min-h-11"
             >
               Erneut laden
@@ -353,8 +454,8 @@ export default function SecurityMFA({
                         variant="destructive"
                         size="sm"
                         className="min-h-11"
-                        onClick={() => void handleRemove(faktor.id)}
-                        disabled={loading}
+                        onClick={() => void handleRemove(faktor.id, faktor.status)}
+                        disabled={aktionenGesperrt}
                       >
                         {name} entfernen
                       </Button>
@@ -413,7 +514,7 @@ export default function SecurityMFA({
                   />
                   <Button
                     onClick={() => void handleVerify()}
-                    disabled={loading || code.length !== 6}
+                    disabled={aktionenGesperrt || code.length !== 6}
                     className="min-h-11"
                   >
                     Bestätigen
@@ -425,15 +526,15 @@ export default function SecurityMFA({
                 type="button"
                 variant="ghost"
                 className="min-h-11"
-                disabled={loading}
-                onClick={() => void handleRemove(factorId)}
+                disabled={aktionenGesperrt}
+                onClick={() => void handleRemove(factorId, "unverified")}
               >
                 Einrichtung abbrechen
               </Button>
             </div>
           ) : darfTotpEinrichten(totpLage) ? (
-            <Button onClick={() => void handleEnroll()} disabled={loading} className="w-full min-h-11">
-              {!loading ? "Authenticator-App einrichten" : "Bitte warten…"}
+            <Button onClick={() => void handleEnroll()} disabled={aktionenGesperrt} className="w-full min-h-11">
+              {!loading && !stepUpBeschaeftigt ? "Authenticator-App einrichten" : "Bitte warten…"}
             </Button>
           ) : null}
         </CardContent>
@@ -485,22 +586,44 @@ export default function SecurityMFA({
         </CardContent>
       </Card>
 
-      {message && (
+      {mfaStepUpDialogOffen(stepUp) ? (
+        <SecurityMfaStepUp
+          zustand={stepUp}
+          onBestaetigen={(otp) => void handleStepUpBestaetigen(otp)}
+          onAbbrechen={() => setStepUp((aktuell) => mfaStepUpWeiter(aktuell, { typ: "abbrechen" }))}
+        />
+      ) : null}
+
+      {(message ||
+        (!mfaStepUpDialogOffen(stepUp) &&
+          (stepUp.lage === "error" || stepUp.lage === "unavailable" || stepUp.lage === "unsupported"))) && (
         <div
-          role={message.type === "error" ? "alert" : "status"}
+          role={
+            message?.type === "error" ||
+            stepUp.lage === "error" ||
+            stepUp.lage === "unavailable"
+              ? "alert"
+              : "status"
+          }
+          aria-live={
+            message?.type === "error" || stepUp.lage === "error" || stepUp.lage === "unavailable"
+              ? "assertive"
+              : "polite"
+          }
+          data-mfa-step-up-lage={stepUp.lage}
           className={cn(
             "rounded-xl border p-4 flex items-center gap-2",
-            message.type === "success"
+            (message?.type === "success" || mfaStepUpErfolgBehaupten(stepUp))
               ? "border-green-200 bg-green-50 text-green-800"
               : "border-red-200 bg-red-50 text-red-800"
           )}
         >
-          {message.type === "success" ? (
+          {message?.type === "success" || mfaStepUpErfolgBehaupten(stepUp) ? (
             <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
           ) : (
             <AlertTriangle className="h-5 w-5" aria-hidden="true" />
           )}
-          <span>{message.text}</span>
+          <span>{message?.text ?? mfaStepUpStatusText(stepUp)}</span>
         </div>
       )}
     </div>
