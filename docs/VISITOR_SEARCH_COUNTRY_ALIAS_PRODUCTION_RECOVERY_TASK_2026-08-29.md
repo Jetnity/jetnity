@@ -4,6 +4,8 @@ Stand: 29. August 2026
 Issue: #109
 Status: AUTHORIZED / IMMEDIATE POST-MERGE P1 RECOVERY / SAME LOGICAL CURSOR SESSION / DRAFT PR ONLY
 
+**Product-Owner-Klarstellung 29. August 2026:** Peru, China und Schweiz sind nur Beispiele. Die Abnahme ist generisch für jedes vorhandene Länder-Alias. Keine Allowlist. Die Suchzeile muss Typ und Ortskontext sofort lesbar machen; ein exaktes Alias darf den offiziellen Langnamen als Anzeige ersetzen, Place-ID unverändert.
+
 ## Baseline
 
 - Repository: `Jetnity/jetnity`

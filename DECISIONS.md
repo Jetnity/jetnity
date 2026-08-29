@@ -5123,6 +5123,8 @@ Live Production auf `main @ 2241e349` zeigte weiterhin `Peru`/`China` mit Gleich
 
 Tests verpassten das, weil sie `orteOrdnen()` mit Städten ohne Import-Keywords fütterten und den PostgREST→`ortAusZeile`→Retrieval-Lauf nicht übten. Der Recovery-Fix macht das exakte Länder-Alias für `ziel` zur ordinalen Erstplatzierung und deckt die Production-Zeilenform plus den Retrieval-Lauf ab. Kein hartcodierter Länderkatalog, keine Bestandsmutation.
 
+**Product-Owner-Klarstellung 29. August 2026:** Peru/China/Schweiz sind nur Beispiele. Dieselbe Invariante gilt für jedes vorhandene Länder-Alias. Zusätzlich muss die Zeile den Typ sofort lesbar machen (`Land` / `Stadt · …` / `Region · …` / `Insel · …` / `Flughafen · IATA · …`). Ein exaktes Alias darf den offiziellen Langnamen als Anzeige ersetzen, ohne die Place-ID zu ändern. Keine Allowlist, keine Übersetzungstabelle.
+
 ---
 
 ## Offene Widersprüche

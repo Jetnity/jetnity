@@ -18,10 +18,11 @@ Production-Ranking verlor, weil Import-Keywords den Städtenamen verdoppeln; Tes
 
 ## Was gebaut wurde
 
-- `lib/places/suche.ts`: exaktes Länder-Alias für `ziel` steht ordinal vor allen anderen Treffern.
+- `lib/places/suche.ts`: exaktes Länder-Alias für `ziel` steht ordinal vor allen anderen Treffern; Anzeige-Label und Typ-Kontext sind generisch.
 - `lib/places/suche-lauf.ts` + `app/api/search/places/route.ts`: Retrieval, Abbildung und Ranking sind derselbe Lauf.
 - `lib/places/abbildung.ts`: Keyword-Normalisierung aus der PostgREST-Zeile.
-- Tests: Production-Zeilenform und Route-Lauf für Peru / China / Schweiz / generisches Alias.
+- `OrtSuche` / `Suchliste`: Typ-Pille, Alias-Anzeige, `aria-label`, Betonung des exakten Landes.
+- Tests: Invariante (Ruritanien) plus Production-Zeilenform und Route-Lauf. Keine Allowlist.
 
 ## Was bewusst nicht gebaut wurde
 

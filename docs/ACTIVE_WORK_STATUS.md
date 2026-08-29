@@ -12,7 +12,7 @@ Status: **Visitor Search Country Alias Production Recovery / Draft-PR #173 / Iss
 1. **Arbeitsblock / Ziel:** Immediate Post-Merge-P1-Recovery desselben #109-Slices. Production Peru/China bleiben nach PR #172 falsch, obwohl exakte Alias-Tokens in der DB stehen. Echte Runtime/Test-Lücke schliessen.
 2. **Authoring-Branch / PR:** `fix/visitor-search-country-alias-production-recovery-2026-08-29`; Draft-PR #173. Task-only Start `e0ef0e69`. Lokale Gates auf dem Recovery-Head: 2581 Tests, typecheck, lint 0/135, hygiene, Production-Build. Dieser Stamp erzeugt einen neueren Head; CI/Preview live am PR prüfen.
 3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-RE-REVIEW**. Kein Ready, kein Merge durch den Autor. Kein Issue #110.
-4. **Bereits umgesetzt:** Root Cause = Import-Keyword-Stapel auf Gleichnam-Städten, nicht fehlende Daten. Ordinale Länder-Alias-Erstplatzierung für `ziel`; `placesSuchen()` Route-Lauf; Production-Zeilenform-Regressionen; ADR-0196-Nachtrag.
+4. **Bereits umgesetzt:** Root Cause = Import-Keyword-Stapel. Ordinale Erstplatzierung; Alias-Anzeige; Typ-Kontext; Route-Lauf; generische plus Production-Regressionen; PO-Klarstellung in Task/ADR.
 5. **Cursor-Agent:** `Visitor search correctness 1`. Exact Run-ID `bc-7713da02-0c28-4ee9-b09e-1f114dcc0d3a`. Dieselbe logische Session wie PR #168/#172. Generation 1 bleibt 1.
 6. **Live-`main` / Baseline bei diesem Stamp:** `2241e349f8b3b400963cf1de11e5a8617bdc8e44` – immer live neu prüfen.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, keine Supabase-Mutation, keine Service Role. `public.places` nur gelesen.

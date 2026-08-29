@@ -18,7 +18,9 @@ Geprüft: echte Runtime/Test-Lücke statt Datenbeschuldigung; generischer Fix; k
 | Waren die Production-Alias-Tokens wirklich vorhanden? | Ja. Der Fehler war Score-Ordinalität, nicht fehlende Daten. |
 | Warum wirkte Schweiz? | Keine Stadt heisst exakt `Schweiz`; Prefix verliert gegen Alias-5000. |
 | Warum wirkten die alten Tests? | Städte ohne Import-Keywords; kein `ortAusZeile`-/Route-Lauf. |
-| Gibt es eine Länder-Ausnahmetabelle? | Nein. Nur `typ === 'country'` + exaktes Keyword/Name, dann ordinale Erstplatzierung. |
+| Gibt es eine Länder-Ausnahmetabelle? | Nein. Runtime enthält die Beispielnamen nicht. Nur `typ === 'country'` + exaktes Keyword/Name. |
+| Ist die Zeile ohne Typ-Rätsel lesbar? | Ja. Kontextzeile plus Pille; Screenreader bekommt `aria-label`. |
+| Wird der Langname bei Alias-Suche erzwungen? | Nein. Das getroffene Keyword wird Anzeige, Place-ID bleibt. |
 | Wird ein Keyword-Präfix wie ein Alias behandelt? | Nein. `Swiss` / `Swiss Confederation` bleibt ungeboostet. |
 | Werden Gleichnamen gelöscht? | Nein. Peru-/China-Städte bleiben unter dem Land. |
 | Läuft Länder-Vorrang in `abreise`? | Nein. Nachzug und Alias-Sort nur für `ziel`. |

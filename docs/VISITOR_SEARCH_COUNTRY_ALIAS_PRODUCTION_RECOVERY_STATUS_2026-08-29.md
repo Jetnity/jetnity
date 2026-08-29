@@ -30,11 +30,13 @@ Die Daten waren nicht falsch. Die reinen `orteOrdnen()`-Fixtures waren es: Städ
 
 ## 3. Was dieser Recovery geliefert hat
 
-1. Für `ziel` ist ein exaktes Länder-Alias eine **ordinale** Erstplatzierung, kein Score-Rennen gegen gestapelte Stadt-Keywords.
-2. `placesSuchen()` übt denselben Retrieval+Ranking-Lauf wie die Route.
-3. `ortAusZeile` normalisiert Keyword-Strings defensiv, inklusive unbeabsichtigter Arrays.
-4. Regressionen mit Production-Zeilenform für Peru, China, Schweiz und ein generisches Alias, inklusive Nachzug und bereits enthaltenem Land.
-5. Abreise/IATA/Compact-Relevance unverändert.
+1. Für `ziel` ist ein exaktes Länder-Alias eine **ordinale** Erstplatzierung, kein Score-Rennen gegen gestapelte Stadt-Keywords. Peru/China/Schweiz sind nur Beispiele.
+2. Die Anzeige nutzt das getroffene Alias statt eines verwirrenden Langnamens; Place-ID bleibt kanonisch.
+3. Jede Zeile trägt Typ-Kontext (`Land`, `Stadt · …`, `Region · …`, `Insel · …`, `Flughafen · IATA · …`) plus lesbare Pille und `aria-label`.
+4. `placesSuchen()` übt denselben Retrieval+Ranking-Lauf wie die Route.
+5. `ortAusZeile` normalisiert Keyword-Strings defensiv.
+6. Regressionen beweisen die Invariante (generisches Ruritanien) plus Production-Zeilenform.
+7. Abreise/IATA/Compact-Relevance unverändert.
 
 Nicht geliefert: UI-Redesign, Geocoder, Import-/Bestandsmutation, hartcodierte Ländernamen, Issue #110, AP-6 Runtime, AP-7, Preview-SSO-Umgehung.
 
