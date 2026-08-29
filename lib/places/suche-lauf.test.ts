@@ -415,6 +415,47 @@ describe('Ortssuche-Lauf / Production-Zeilenform', () => {
     assert.equal(ergebnis.optionen?.some((option) => option.typ === 'country'), false)
   })
 
+  test('ein exaktes End-Alias mit trailing Whitespace bleibt auffindbar', async () => {
+    const land = zeile({
+      id: 'geonames:9500001',
+      name: 'Northern Aurum Isles',
+      typ: 'country',
+      country: 'Northern Aurum Isles',
+      country_code: 'QA',
+      keywords: 'Isles, Aurum ',
+    })
+    const stadt = zeile({
+      id: 'geonames:9500002',
+      name: 'Aurum City',
+      typ: 'city',
+      country: 'United States',
+      country_code: 'US',
+      region: 'Iowa',
+      keywords: 'Aurum City, Aurum',
+    })
+    let landFilter = 'unset'
+    const lesen: PlacesZeilenLesen = async (art, filter, limit) => {
+      if (art === 'name') return { zeilen: [stadt], problem: null }
+      if (art === 'land') {
+        landFilter = filter
+        const kenntWhitespace =
+          filter.includes('imatch') ||
+          filter.includes('[[:space:]]') ||
+          filter.includes('Aurum ')
+        const pool = kenntWhitespace ? [land] : []
+        return { zeilen: pool.slice(0, limit), problem: null }
+      }
+      return { zeilen: [], problem: null }
+    }
+    const ergebnis = await placesSuchen('Aurum', 'ziel', lesen)
+    assert.equal(ergebnis.problem, null)
+    assert.notEqual(landFilter, '')
+    assert.equal(landFilter.includes('keywords.ilike.%'), false)
+    assert.equal(ergebnis.optionen?.[0]?.id, land.id)
+    assert.equal(ergebnis.optionen?.[0]?.label, 'Aurum')
+    assert.ok(ergebnis.optionen?.some((option) => option.id === stadt.id))
+  })
+
   test('Abreise holt Flughäfen, aber kein Länder-Alias', async () => {
     const { lesen, aufrufe } = leser({
       name: [

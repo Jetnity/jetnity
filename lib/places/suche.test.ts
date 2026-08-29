@@ -16,6 +16,7 @@ import {
   orteOrdnen,
   ortAnzeigeKontext,
   ortAnzeigeLabel,
+  ortIstExaktesLandAlias,
   ortLandAliasExaktfilter,
   ortNamensfilter,
   ortSchluesselfilter,
@@ -565,7 +566,7 @@ describe('Ortssuche', () => {
 
   test('die Runtime enthält keine Länder-Allowlist', () => {
     const datei = readFileSync(join(hier, 'suche.ts'), 'utf8')
-    for (const name of ['Peru', 'China', 'Schweiz', 'Ruritanien', 'Congo', 'Sylvani', 'Zaxony', 'Zxyland', 'Paris'] as const) {
+    for (const name of ['Peru', 'China', 'Schweiz', 'Ruritanien', 'Congo', 'Sylvani', 'Zaxony', 'Zxyland', 'Paris', 'Aurum', 'Kokos'] as const) {
       assert.equal(datei.includes(name), false, name)
     }
   })
@@ -600,6 +601,17 @@ describe('Ortssuche', () => {
     assert.equal(filter.includes('keywords.ilike.%Paris%'), false)
     assert.match(filter, /keywords\.ilike\.Paris/)
     assert.match(filter, /keywords\.ilike\."Paris,%"/)
+    assert.match(filter, /keywords\.ilike\."%, Paris "/)
+    assert.match(filter, /keywords\.imatch\."\(\^\|,\)\[\[:space:\]\]\*/)
+    const getrimmt = ortFixture({
+      id: 'geonames:9500001',
+      name: 'Northern Aurum Isles',
+      typ: 'country',
+      country: 'Northern Aurum Isles',
+      countryCode: 'QA',
+      keywords: 'Isles, Aurum ',
+    })
+    assert.equal(ortIstExaktesLandAlias(getrimmt, 'Aurum'), true)
     const lauf = readFileSync(join(hier, 'suche-lauf.ts'), 'utf8')
     assert.match(lauf, /ortLandAliasExaktfilter/)
     assert.equal(lauf.includes('ORT_LAND_UNIVERSUM_FILTER'), false)

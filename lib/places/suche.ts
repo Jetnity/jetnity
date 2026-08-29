@@ -66,27 +66,47 @@ function postgrestIlike(feld: string, muster: string): string {
   return /[,%() ]/.test(muster) ? `${feld}.ilike."${muster}"` : `${feld}.ilike.${muster}`
 }
 
+function regexSicher(teil: string): string {
+  return teil.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function postgrestImatch(feld: string, muster: string): string {
+  return `${feld}.imatch."${muster}"`
+}
+
 /**
  * Selektiver Länder-Nachzug: nur exakter Name oder exaktes Komma-Token.
- * Kein Substring-`ilike %token%` und kein unfilteriertes Universum.
+ * Dieselbe Trim-Semantik wie `schluesselwoerter`: umgebendes Whitespace
+ * am Token zählt nicht. Kein Substring-`ilike %token%`, kein Universum.
  */
 export function ortLandAliasExaktfilter(suche: string): string | null {
   if (sucheIstPlatzhalter(suche)) return null
   const teile = sucheFilter(suche)
   if (teile.length === 0) return null
   return teile
-    .flatMap((teil) => [
-      postgrestIlike('name', teil),
-      postgrestIlike('keywords', teil),
-      postgrestIlike('keywords', `${teil},%`),
-      postgrestIlike('keywords', `${teil}, %`),
-      postgrestIlike('keywords', `%, ${teil}`),
-      postgrestIlike('keywords', `%,${teil}`),
-      postgrestIlike('keywords', `%, ${teil},%`),
-      postgrestIlike('keywords', `%,${teil},%`),
-      postgrestIlike('keywords', `%, ${teil}, %`),
-      postgrestIlike('keywords', `%,${teil}, %`),
-    ])
+    .flatMap((teil) => {
+      const sicher = regexSicher(teil)
+      return [
+        postgrestIlike('name', teil),
+        postgrestIlike('name', `${teil} `),
+        postgrestIlike('keywords', teil),
+        postgrestIlike('keywords', `${teil} `),
+        postgrestIlike('keywords', `${teil},%`),
+        postgrestIlike('keywords', `${teil}, %`),
+        postgrestIlike('keywords', `${teil} ,%`),
+        postgrestIlike('keywords', `${teil} , %`),
+        postgrestIlike('keywords', `%, ${teil}`),
+        postgrestIlike('keywords', `%,${teil}`),
+        postgrestIlike('keywords', `%, ${teil} `),
+        postgrestIlike('keywords', `%,${teil} `),
+        postgrestIlike('keywords', `%, ${teil},%`),
+        postgrestIlike('keywords', `%,${teil},%`),
+        postgrestIlike('keywords', `%, ${teil}, %`),
+        postgrestIlike('keywords', `%,${teil}, %`),
+        postgrestImatch('name', `^[[:space:]]*${sicher}[[:space:]]*$`),
+        postgrestImatch('keywords', `(^|,)[[:space:]]*${sicher}[[:space:]]*(,|$)`),
+      ]
+    })
     .join(',')
 }
 
