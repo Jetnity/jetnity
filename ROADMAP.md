@@ -164,7 +164,7 @@ Production Gate A hat die dafür freigegebenen Production-Schritte bereits ausge
 
 Weiter offen/gated:
 
-- S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180); Runtime/Persistenz nicht gestartet
+- S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180); Persistenz im Repository Draft-PR #182 / ADR-0198, nicht auf Production; TW-8 geschlossen
 - keine realen Provider
 - keine Production Secrets
 - keine Verträge
@@ -292,11 +292,12 @@ Abgeschlossen:
 43. ✅ AP-5-S4 Account Security MFA Step-up / PR #160 – integriert auf `main @ 934d43da`
 44. ✅ AP-5-S5 Honest Current Session / Device View / PR #164 – integriert auf `main @ 765fc547`
 45. ✅ AP-6a Gate 0 Legal Foundation / Trust Boundary / PR #166 – integriert (ADR-0195 / Merge `6083ee63`); historische Architecture-Evidence. `/privacy`/`terms` Runtime ungebaut und Legal-/PO-Content-gegatet.
-46. 🟡 Provider S5-B Option C Architecture Acceptance / PR #180 – Zielarchitektur angenommen (ADR-0197); keine Runtime, keine Migration. Self-expiring: solange #180 offen → STOP für unabhängigen Technical-Lead Exact-Head-Review; nach Merge → integrierte Zielarchitektur, Runtime/Persistenz nicht gestartet. Autor setzt kein Ready/Merge.
+46. ✅ Provider S5-B Option C Architecture Acceptance / PR #180 – Zielarchitektur angenommen (ADR-0197)
+47. 🟡 Provider S5-B Persistence / PR #182 – Schema + RLS + Write-Authority im Repository (ADR-0198). TL-182-01/02/03 im Repository geschlossen. Keine Production-Anwendung. Production-Write-Pfad nicht allokiert. Self-expiring: solange #182 offen → STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; nach Merge → Repository integriert, Production-Apply extra TL-kontrolliert, TW-8 geschlossen. Autor setzt kein Ready/Merge.
 
 Nächster Schritt:
 
-- **Dual-State für PR #180.** Solange PR #180 offen/unmerged: unabhängiger Technical-Lead Exact-Head-Review der S5-B Option-C-Zielarchitektur. Autor setzt kein Ready, kein Merge, kein Persistenz-Folgeslice, kein TW-8. Sobald PR #180 gemergt ist: die Review-/Draft-Klausel ist historisch; ADR-0197 ist integriert; Runtime/Persistenz bleibt ungestartet und extra gegatet.
+- **Draft-PR #182.** Unabhängiger Technical-Lead Exact-Head-Re-Review der S5-B-Persistenz nach TL-182-01/02/03. Autor setzt kein Ready, kein Merge, kein Production-Apply, kein TW-8. PR #180 ist integrierte Zielarchitektur-Evidence.
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence und Non-Scope von #180. `/privacy` und `/terms` Runtime bleiben ungebaut und Legal-/PO-Content-gegatet.
 - AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #166 oder #180.
 
@@ -305,7 +306,7 @@ Nächster Schritt:
 - AP-6a-Runtime / AP-6b / AP-7 / AP-5-P1–P5
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integriert; Runtime-Legal-Seiten nicht als gebaut behaupten
 - AP-7
-- Provider S5-B Runtime/Persistenz (Zielarchitektur Option C angenommen, nicht implementiert)
+- Provider S5-B Production-Apply und realer Snapshot (Repository-Persistenz ist Draft-PR #182; TW-8 bleibt geschlossen)
 - echte Providerphase
 - TW-8
 - TW-9

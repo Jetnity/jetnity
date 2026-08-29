@@ -6,7 +6,7 @@ Branch: `feat/provider-s5-commercial-provenance-contract`
 Draft-PR: `#83`  
 Aktueller `main`: `c4ea47aa0b22ac6fd5e04862e7184f5a436210e1`  
 Vorheriger PR-Head: `d5a7a224240dede6d53f9460f7a2f7d3dce7c5b8`  
-Status: **INTEGRATED on `main` via PR #83 / `3b317bc6`. HISTORICAL REVIEW-EVIDENCE darunter. S5-B Zielarchitektur Option C angenommen (ADR-0197). S5-B Runtime/Persistenz nicht gestartet. Keine Provideraktivierung.**
+Status: **INTEGRATED on `main` via PR #83 / `3b317bc6`. HISTORICAL REVIEW-EVIDENCE darunter. S5-B Zielarchitektur Option C angenommen (ADR-0197). Persistenzübersetzung ADR-0198 / Draft-PR #182 im Repository, nicht Production. Keine Provideraktivierung.**
 
 > Die folgenden Abschnitte beschreiben den Review-Stand vor dem Merge. Sie dürfen den aktuellen Handoff nicht überschreiben. Kanonisch: `docs/CHATGPT_FINAL_CONTINUITY_HANDOFF_CHECKPOINT_2026-08-26.md`.
 
