@@ -1,19 +1,23 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 29. August 2026  
-Status: **AP-5-S5 Honest Current Session / Device View / Draft-PR #162. STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge durch den Autor. Kein AP-6/AP-7. Baseline `main @ 934d43da` (PR #160 AP-5-S4 integriert). AP-7-S2, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **AP-6a Gate 0 Legal Foundation / Trust Boundary / Draft-PR #166. STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge durch den Autor. Kein AP-6a-Runtime, kein AP-6b, kein AP-7. Baseline `main @ 765fc547` (PR #164 AP-5-S5 integriert). AP-7-S2, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
-Aktueller Account-Slice auf diesem Branch (Draft-PR #162):
+Aktueller Account-Slice auf diesem Branch (Draft-PR #166):
 
-- `docs/AP5_S5_HONEST_CURRENT_SESSION_VIEW_STATUS_2026-08-29.md`
-- `docs/AP5_S5_HONEST_CURRENT_SESSION_VIEW_HANDOFF_2026-08-29.md`
-- `docs/AP5_S5_HONEST_CURRENT_SESSION_VIEW_SELF_REVIEW_2026-08-29.md`
-- ADR-0194
+- `docs/AP6A_GATE0_LEGAL_FOUNDATION_STATUS_2026-08-29.md`
+- `docs/AP6A_GATE0_LEGAL_FOUNDATION_HANDOFF_2026-08-29.md`
+- `docs/AP6A_GATE0_LEGAL_FOUNDATION_SELF_REVIEW_2026-08-29.md`
+- `docs/AP6A_GATE0_LEGAL_CONTENT_INPUT_CONTRACT_2026-08-29.md`
+- `docs/AP6A_GATE0_LEGAL_RUNTIME_CONTRACT_2026-08-29.md`
+- ADR-0195
 
 Integrierter vorheriger Account-Slice auf der Baseline:
 
+- `docs/AP5_S5_HONEST_CURRENT_SESSION_VIEW_STATUS_2026-08-29.md` – AP-5-S5 auf `main @ 765fc547` integriert; ältere Draft-#162-Zeilen sind Pre-AP-6a-Evidence
+- ADR-0194
 - `docs/AP5_S4_ACCOUNT_SECURITY_MFA_STEP_UP_STATUS_2026-08-29.md` – AP-5-S4 auf `main @ 934d43da` integriert; ältere Draft-#159-Zeilen sind Pre-S5-Evidence
 - ADR-0193
 - `docs/AP5_S3_ACCOUNT_SECURITY_LOGOUT_SCOPES_STATUS_2026-08-29.md` – AP-5-S3 auf `main @ 5920860e` integriert; ältere Draft-#156-Zeilen sind Pre-S4-Evidence
@@ -196,7 +200,7 @@ Verbindliche Wahrheit:
 - PR #138 Post-Merge Continuity integriert
 - PR #142 Technical-Lead-/Cursor-Operating-Standard integriert
 
-AP-5-S5 ist der aktive normale Technical-Lead-Slice (Draft-PR #162 / Issue #161). AP-6/AP-7 werden **nicht automatisch** gestartet. Dual-Authority ist product-owner-freigegeben. AP-7 Gate 0 / ADR-0186 ist integrierte Architecture-Evidence (PR #144 / `bb38aef5`). AP-7-S1 / ADR-0187 ist der integrierte shared Domain-Contract; AP-7-S2, Persistenz und Identity/RLS starten nicht automatisch.
+AP-6a Gate 0 ist der aktive normale Technical-Lead-Slice (Draft-PR #166 / Issue #165). AP-6a-Runtime, AP-6b und AP-7 werden **nicht automatisch** gestartet. Dual-Authority ist product-owner-freigegeben. AP-7 Gate 0 / ADR-0186 ist integrierte Architecture-Evidence (PR #144 / `bb38aef5`). AP-7-S1 / ADR-0187 ist der integrierte shared Domain-Contract; AP-7-S2, Persistenz und Identity/RLS starten nicht automatisch.
 
 Der integrierte AP-5-Gate-0-Vertrag trennt insbesondere Password Recovery von signed-in Reauthentication, hält Session-/Gerätelisting ohne unterstützte User-API ehrlich auf `unsupported`, dokumentiert den heutigen globalen `signOut()`-Default und hält verified-factor `mfa.unenroll` an der serverseitigen AAL2-Anforderung. Details: `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, ADR-0182 und die aktuellen Account-Checkpoints.
 
@@ -204,7 +208,7 @@ AP-5 verbleibende normale TL-Slices, jeweils nur nach eigenem Task / Live-Gate:
 
 - **S3:** Logout-UI – integriert über PR #157; heutiges allgemeines Abmelden bleibt `global`; Security-UI bietet `local`/`others`/`global` explizit.
 - **S4:** `challenge`/`verify`-Step-up vor Unenroll verified TOTP; kein globales Consumer-AAL2 – integriert über PR #160.
-- **S5:** aktuelle Sitzung ehrlich anzeigen; andere Sitzungen `unsupported`; keine Fake-Geräteliste – Draft-PR #162; STOP für TL-Review; kein Ready/Merge durch den Autor; kein AP-6/AP-7.
+- **S5:** aktuelle Sitzung ehrlich anzeigen; andere Sitzungen `unsupported`; keine Fake-Geräteliste – integriert über PR #164.
 
 Product-Owner-Sondergates:
 
@@ -306,7 +310,7 @@ Nach Live-Rekonstruktion neu einordnen:
 - Provider S5-B Gate 0 integriert (docs/readiness); S5-B Runtime nicht gestartet
 - TW-8 gated
 - TW-9 nicht automatisch starten
-- AP-5-S5 ist der aktuelle Draft; nach S5 kein automatisches AP-6/AP-7
+- AP-6a Gate 0 ist der aktuelle Draft; kein automatisches AP-6a-Runtime / AP-6b / AP-7
 - AP-7 Persistenz/UI/S2 gated; S1 Domain-Contract self-expiring auf Draft-PR #145, nach Merge integriert ohne automatisches S2
 - P2-TA-04 C2 nicht automatisch starten
 - weitere QS-/Supabase-Security-/Performance-Advisories
@@ -339,7 +343,8 @@ Aktueller Account-Status:
 
 Aktueller Quality-/Security-Status:
 
-- `Cursor-Agent: Account plattform audit vorbereitung 15` ist der aktuelle AP-5-S5-Slice für Draft-PR #162. Exact Run-ID `bc-cccd6820-5dfa-4801-8af9-0659f2e26cf2`. Beobachteter Titel `Ehrliche aktuelle sitzungsansicht`. Keine programmierbare Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 15 nicht für AP-6/AP-7 wiederverwenden.
+- `Cursor-Agent: Account plattform audit vorbereitung 16` ist der aktuelle AP-6a-Gate-0-Slice für Draft-PR #166. Exact Run-ID `bc-216be067-b75a-4a2f-a186-8e38c67fb822`. Beobachteter Titel `Account plattform audit vorbereitung`. Keine programmierbare Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 16 nicht für AP-6a-Runtime/AP-6b/AP-7 wiederverwenden.
+- `Cursor-Agent: Account plattform audit vorbereitung 15` ist mit AP-5-S5 / PR #164 abgeschlossen. Generation 15 nicht wiederverwenden.
 - `Cursor-Agent: Account plattform audit vorbereitung 14` ist mit AP-5-S4 / PR #160 abgeschlossen. Generation 14 nicht wiederverwenden.
 - `Cursor-Agent: Account plattform audit vorbereitung 13` ist mit AP-5-S3 / PR #157 abgeschlossen. Generation 13 nicht wiederverwenden.
 - `Cursor-Agent: Jetnity framework compatibility 2` ist mit Next 16 S2 / PR #152 auf der Baseline abgeschlossen. Generation 2 nicht wiederverwenden.
@@ -361,13 +366,13 @@ Abgeschlossen / nicht wiederverwenden:
 - Quality/Security Generation 3: Issue #134 / PR #135
 - Quality/Security Generation 2: PR #88 historical only
 
-Generation 15 ist für AP-5-S5 / Draft-PR #162 vergeben und nicht für AP-6/AP-7 wiederzuverwenden. Generation 14 (AP-5-S4 / PR #160), Generation 13 (AP-5-S3 / PR #157), Generation 12 (AP-7-S1 / PR #145) und Generation 11 nicht wiederverwenden. AP-7-S2 braucht eine frische Generation und bleibt Product-Owner-gegatet. Das ist **keine automatische Freigabe**.
+Generation 16 ist für AP-6a Gate 0 / Draft-PR #166 vergeben und nicht für AP-6a-Runtime/AP-6b/AP-7 wiederzuverwenden. Generation 15 (AP-5-S5 / PR #164), Generation 14 (AP-5-S4 / PR #160), Generation 13 (AP-5-S3 / PR #157), Generation 12 (AP-7-S1 / PR #145) und Generation 11 nicht wiederverwenden. AP-7-S2 braucht eine frische Generation und bleibt Product-Owner-gegatet. Das ist **keine automatische Freigabe**.
 
 Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logische Arbeitseinheit bekommt eine frische nummerierte Session gemäß Rotation Standard.
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #162 / AP-5-S5. Autor-Agent setzt kein Ready, kein Merge, kein AP-6/AP-7, keine Vercel-Setting-Mutation. AP-5-S4 ist auf der Baseline `934d43da` integriert. AP-5-S3, Next 16 S2 und PR #147 Node 22 sind bereits integriert.
+Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #166 / AP-6a Gate 0. Autor-Agent setzt kein Ready, kein Merge, kein AP-6a-Runtime, kein AP-6b, kein AP-7, keine Vercel-Setting-Mutation. AP-5-S5 ist auf der Baseline `765fc547` integriert. AP-5-S4, AP-5-S3, Next 16 S2 und PR #147 Node 22 sind bereits integriert.
 
 PR #144 ist MERGED (`bb38aef5`). Dual-Authority ist product-owner-freigegeben. PR #143 ist MERGED (`1947285c`).
 
@@ -377,11 +382,11 @@ Current-State-Continuity (kein Fortschritt nur im Chat) steht im Operating Stand
 
 Der nächste Chat muss zuerst den vollständigen Live-Zustand rekonstruieren und anschließend Binding Build Order, Abhängigkeiten, Parallelität und Product-Owner-Gates neu bewerten.
 
-AP-5-S5 ist der letzte autorisierte Slice des AP-5-S3–S5-Programms. AP-6/AP-7 bleiben **nicht automatisch** der nächste globale Jetnity-Slice. S3 und S4 sind integriert. S5 wartet auf unabhängigen Review.
+AP-5-S3–S5 sind integriert. AP-6a Gate 0 ist der aktuelle Account-Slice. AP-6a-Runtime bleibt hinter dem PO-/Legal-Content-Gate. AP-6b/AP-7 bleiben **nicht automatisch** der nächste globale Jetnity-Slice.
 
 Nicht automatisch starten:
 
-- AP-6 / AP-7 nach S5
+- AP-6a-Runtime / AP-6b / AP-7 aus Gate 0
 - AP-7
 - P2-TA-04 C2
 - TW-8

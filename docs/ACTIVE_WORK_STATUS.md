@@ -1,26 +1,43 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **AP-5-S5 Honest Current Session / Device View / Draft-PR #162. IMPLEMENTIERT. STOP für unabhängigen Technical-Lead Exact-Head-Review. Kein Ready, kein Merge durch den Autor. Kein AP-6/AP-7. Baseline `main @ 934d43da`. Live-Evidence immer live prüfen.**
+Status: **AP-6a Gate 0 Legal Foundation / Trust Boundary / Draft-PR #166. IMPLEMENTIERT / DOCS-CONTRACT-EVIDENCE. STOP für unabhängigen Technical-Lead Exact-Head-Review. Kein Ready, kein Merge durch den Autor. Kein AP-6a-Runtime, kein AP-6b, kein AP-7. Baseline `main @ 765fc547`. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
 > Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
 
-## Aktueller Arbeitsblock – AP-5-S5 Honest Current Session / Device View
+## Aktueller Arbeitsblock – AP-6a Gate 0 Legal Foundation / Trust Boundary
 
-1. **Arbeitsblock / Ziel:** Ehrliche aktuelle Sessionansicht in `/account/security`. Andere Sitzungen bleiben `unsupported`. Keine Fake-Liste, keine Zahl, kein „0 Geräte“.
-2. **Authoring-Branch / PR:** `feat/ap5-s5-honest-current-session-view-2026-08-29`; Draft-PR #162. Gates auf `7a8caea3`: Actions `33226274988` SUCCESS, Vercel `ExFa2X5dNSFgvFJRSYVVsW4nSiqP` READY. Dieser Stamp erzeugt einen neueren Head; live am PR prüfen.
-3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**. Kein Ready, kein Merge durch den Autor. Kein AP-6/AP-7.
-4. **Bereits umgesetzt:** Domain-Vertrag; `getUser()` als Existenz-Authority; optional Zugangscode-Zeit und AAL; lokaler Browser-/Plattformhinweis; andere Sitzungen fest unsupported; Link zur S3-Aktion `others`; ADR-0194; fokussierte adversariale Tests.
-5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 15`. Exact Run-ID `bc-cccd6820-5dfa-4801-8af9-0659f2e26cf2`. Beobachteter Titel `Ehrliche aktuelle sitzungsansicht`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet.
-6. **Live-`main` / Baseline bei diesem Stamp:** `934d43dae65235486f1a06a50b592468e3546b1c` – immer live neu prüfen.
+1. **Arbeitsblock / Ziel:** Rekonstruktion und Vertrag für die fehlende Legal Foundation. Production `/privacy` und `/terms` sind 404, obwohl die Registrierung dorthin verlinkt. Keine Rechtstexte.
+2. **Authoring-Branch / PR:** `audit/ap6a-gate0-legal-foundation-2026-08-29`; Draft-PR #166. Exact Head vor diesem Stamp: `18516a06`. Actions `33243096002` SUCCESS; GitHub Preview `6153897069` success; Vercel-Check `jFScFBDbxgkwCRv6h5GqpkDzzchb` SUCCESS. Preview-HTML SSO-geschützt. Dieser Stamp erzeugt einen neueren Head; live am PR prüfen.
+3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**. Kein Ready, kein Merge durch den Autor. Kein AP-6a-Runtime, kein AP-6b, kein AP-7.
+4. **Bereits umgesetzt:** Live-404-Evidence; Call-Site-Inventar; Legal-Input-Matrix; Runtime-Vertrag; Inventory-Test; ADR-0195; Continuity nach vollständigem AP-5.
+5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 16`. Exact Run-ID `bc-216be067-b75a-4a2f-a186-8e38c67fb822`. Beobachteter Titel `Account plattform audit vorbereitung`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 16 bleibt 16.
+6. **Live-`main` / Baseline bei diesem Stamp:** `765fc547c2d2ffd8460e05fec4234906103fe73c` – immer live neu prüfen.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation, keine Service Role.
 8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** `expires_at` ist Zugangscode-Zeit, nicht Sitzungsende; andere Sitzungen können unsichtbar existieren; kein Browser-/Real-Device-Beweis; vollständige Liste bleibt AP-5-P2; `main` `protected=false`; Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** S5 braucht kein Product-Owner-Sondergate. Vollständige Sessionliste = AP-5-P2. AP-6/AP-7 und P1–P5 starten nicht aus diesem Slice.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #162. Kein Ready. Kein Merge. Kein AP-6/AP-7.
-12. **Zuerst lesen:** `docs/AP5_S5_HONEST_CURRENT_SESSION_VIEW_TASK_2026-08-29.md`, Status, Handoff, Self-Review, ADR-0194, Gate-0-Status, ADR-0182.
+9. **Bekannte Risiken / Review-Funde:** 404 bleibt bis Content-Gate; unbelegte „DSGVO & CH-DSG konform“-Zeile; OAuth-Pfad ohne Checkbox (Enablement aus); CookieConsent-Orphan mit V1-Text; kein Browser-Klick-Beweis; `main` `protected=false`; Agent-Self-Review ist kein PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** Product Owner / Legal müssen die Input-Matrix schließen, bevor Runtime-Seiten gebaut werden. Siehe `docs/AP6A_GATE0_LEGAL_CONTENT_INPUT_CONTRACT_2026-08-29.md`.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #166. Kein Ready. Kein Merge. Kein AP-6a-Runtime.
+12. **Zuerst lesen:** `docs/AP6A_GATE0_LEGAL_FOUNDATION_TASK_2026-08-29.md`, Status, Handoff, Self-Review, Input-Vertrag, Runtime-Vertrag, ADR-0195.
+
+## Historischer Arbeitsblock – AP-5-S5 Honest Current Session / Device View
+
+Current classification / Nachtrag, 29. August 2026: **HISTORICAL / INTEGRIERT auf der AP-6a-Baseline.** PR #164 ist auf `main @ 765fc547` gemergt. Ältere „IMPLEMENTIERT / DRAFT / Kein AP-6“-Zeilen sind Pre-AP-6a-Evidence. AP-6a Gate 0 ist jetzt der aktive Account-Slice.
+
+1. **Arbeitsblock / Ziel:** Ehrliche aktuelle Sessionansicht in `/account/security`. Andere Sitzungen bleiben `unsupported`.
+2. **Authoring-Branch / PR:** `feat/ap5-s5-honest-current-session-view-2026-08-29`; integriert über PR #164.
+3. **Status:** **INTEGRIERT auf dieser Baseline.**
+4. **Bereits umgesetzt:** Domain-Vertrag; `getUser()` als Existenz-Authority; andere Sitzungen `unsupported`; ADR-0194.
+5. **Cursor-Agent:** `Cursor-Agent: Account plattform audit vorbereitung 15`. Generation 15 nicht für AP-6a wiederverwendet.
+6. **Live-`main` bei Integration:** `765fc547c2d2ffd8460e05fec4234906103fe73c`.
+7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, keine Service Role.
+8. **Kosten / Provider / Secrets:** keine.
+9. **Bekannte Risiken / Review-Funde:** `expires_at` ist Zugangscode-Zeit; vollständige Liste bleibt AP-5-P2.
+10. **Offene Nutzerentscheidungen / Freigaben:** keine aus diesem Slice. AP-6a Gate 0 ist der aktuelle Slice.
+11. **Exakter nächster Schritt:** nicht erneut öffnen. Aktueller Account-Slice ist Draft-PR #166.
+12. **Zuerst lesen:** ADR-0194, `docs/AP5_S5_HONEST_CURRENT_SESSION_VIEW_STATUS_2026-08-29.md` als historische Evidence.
 
 ## Historischer Arbeitsblock – AP-5-S4 Account Security MFA Step-up
 

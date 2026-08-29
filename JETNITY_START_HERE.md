@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 29. August 2026  
-Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114, PR #115, PR #117, PR #118, PR #120, PR #121, PR #126, PR #127, PR #129, PR #130, PR #131, PR #133, PR #135, PR #137, PR #138, PR #141, PR #142, PR #143, PR #144, PR #145, PR #147, PR #148, PR #149, PR #150, PR #152 und PR #157 sind integriert. AP-5 Gate 0, AP-5-S1, AP-5-S2 und AP-5-S3 sind integriert. Technical-Lead-/Cursor-Operating-Standard ist integriert. Dual-Authority ist product-owner-freigegeben. AP-7-S1 Domain Contract ist integriert; kein automatisches AP-7-S2. Node 22 Runtime Consistency / PR #147 ist integriert. Next.js Framework Security Upgrade Gate 0 / PR #148, die Next-16-PO-Freigabe / PR #149, Next 16 Compatibility Prep S1 / PR #150 und Next 16 S2 / PR #152 sind integriert. Aktueller Account-Slice auf diesem Branch: AP-5-S5 Honest Current Session / Draft-PR #162; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge, kein AP-6/AP-7. Baseline `main @ 934d43da`. Live-`main` immer live prüfen.**
+Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114, PR #115, PR #117, PR #118, PR #120, PR #121, PR #126, PR #127, PR #129, PR #130, PR #131, PR #133, PR #135, PR #137, PR #138, PR #141, PR #142, PR #143, PR #144, PR #145, PR #147, PR #148, PR #149, PR #150, PR #152, PR #157, PR #160 und PR #164 sind integriert. AP-5 Gate 0 und AP-5-S1–S5 sind integriert. Technical-Lead-/Cursor-Operating-Standard ist integriert. Dual-Authority ist product-owner-freigegeben. AP-7-S1 Domain Contract ist integriert; kein automatisches AP-7-S2. Node 22 Runtime Consistency / PR #147 ist integriert. Next.js Framework Security Upgrade Gate 0 / PR #148, die Next-16-PO-Freigabe / PR #149, Next 16 Compatibility Prep S1 / PR #150 und Next 16 S2 / PR #152 sind integriert. Aktueller Account-Slice auf diesem Branch: AP-6a Gate 0 Legal Foundation / Draft-PR #166; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge, kein AP-6a-Runtime, kein AP-6b, kein AP-7. Baseline `main @ 765fc547`. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
@@ -13,7 +13,8 @@ Current-State-Evidence und Recovery: `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_P
 
 Aktuelle operative Evidence:
 
-- `docs/AP5_S5_HONEST_CURRENT_SESSION_VIEW_STATUS_2026-08-29.md` – AP-5-S5 Honest Current Session / Draft-PR #162; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge, kein AP-6/AP-7
+- `docs/AP6A_GATE0_LEGAL_FOUNDATION_STATUS_2026-08-29.md` – AP-6a Gate 0 Legal Foundation / Draft-PR #166; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge, kein AP-6a-Runtime
+- `docs/AP5_S5_HONEST_CURRENT_SESSION_VIEW_STATUS_2026-08-29.md` – AP-5-S5 auf `main @ 765fc547` integriert; ältere Draft-#162-Zeilen sind Pre-AP-6a-Evidence
 - `docs/AP5_S4_ACCOUNT_SECURITY_MFA_STEP_UP_STATUS_2026-08-29.md` – AP-5-S4 auf `main @ 934d43da` integriert; ältere Draft-#159-Zeilen sind Pre-S5-Evidence
 - `docs/AP5_S3_ACCOUNT_SECURITY_LOGOUT_SCOPES_STATUS_2026-08-29.md` – AP-5-S3 Logout Scopes auf `main @ 5920860e` integriert; ältere Draft-#156-Zeilen sind Pre-S4-Evidence
 - `docs/NEXT16_S2_FRAMEWORK_BUMP_STATUS_2026-08-28.md` – Next 16 S2 auf der S3-Baseline `3c3079de` integriert; ältere Draft-#151-Zeilen sind Pre-Merge-Evidence
@@ -396,10 +397,10 @@ Draft-PR #88 bleibt historische Evidence vom 26.08.2026, nicht Current Truth. Un
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-**Aktuell: Draft-PR #162 / AP-5-S5. Live-Evidence gewinnt.**
+**Aktuell: Draft-PR #166 / AP-6a Gate 0. Live-Evidence gewinnt.**
 
-- Draft-PR #162 ist der AP-5-S5-Transport (ehrliche aktuelle Sitzung; andere Sitzungen `unsupported`). Exakt erster unfertiger Schritt = unabhängiger Technical-Lead Exact-Head-Review. Autor-Agent setzt **kein Ready** und **kein Merge**. Kein AP-6/AP-7. Keine Vercel-Setting-Mutation.
-- PR #160 / AP-5-S4, PR #157 / AP-5-S3 und PR #152 / Next 16 S2 sind auf der Baseline `934d43da` integriert. Ältere „Draft-PR #159 unabhängig reviewen“-Sätze sind Pre-S5-Evidence.
+- Draft-PR #166 ist der AP-6a-Gate-0-Transport (Legal-Foundation-Vertrag; keine Rechtstexte; `/privacy` `/terms` bleiben 404). Exakt erster unfertiger Schritt = unabhängiger Technical-Lead Exact-Head-Review. Autor-Agent setzt **kein Ready** und **kein Merge**. Kein AP-6a-Runtime, kein AP-6b, kein AP-7. Keine Vercel-Setting-Mutation.
+- PR #164 / AP-5-S5, PR #160 / AP-5-S4, PR #157 / AP-5-S3 und PR #152 / Next 16 S2 sind auf der Baseline `765fc547` integriert. Ältere „Draft-PR #162 unabhängig reviewen“-Sätze sind Pre-AP-6a-Evidence.
 
 **Historisch / self-expiring für PR #151. Live-Evidence gewinnt.**
 
