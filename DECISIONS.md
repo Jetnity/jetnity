@@ -5086,6 +5086,39 @@ Festlegung innerhalb S1, ohne Dependency-Bump:
 
 ---
 
+## ADR-0196 – Visitor Search: exaktes Länder-Alias ist Ziel-Namenswahrheit
+
+**Datum:** 29. August 2026  
+**Status:** Runtime-Korrektur auf Draft-PR #168 / Issue #109. Kein neuer Search-Provider. Keine Migration.
+
+**Entscheidung:**
+
+1. Für Rolle `ziel` gilt ein **exaktes** Länder-Alias oder Keyword aus dem bestehenden `public.places`-Bestand als Namenswahrheit, nicht als schwacher Keyword-Rest.
+2. Das Alias bekommt dieselbe Namensstärke wie ein exakter Ländername und steht vor gleichnamigen oder präfixgleichen Städten. Echte Gleichnamen bleiben darunter mit Land/Region unterscheidbar.
+3. Nur exakte Alias-Wörter zählen. Keyword-Präfixe werden nicht angehoben.
+4. Fehlt in der bereits geholten Namensmenge noch kein exaktes Land, holt die Suche gezielt weitere `typ = country`-Zeilen über Name und Keywords nach. Die bestehende 40er-Keyword-Ergänzung bleibt nur für zu dünne Namensmengen.
+5. Rolle `abreise` bleibt stadt- und IATA-geführt. Länder-Alias-Vorrang gilt dort nicht.
+6. Kein hartcodierter Peru-/China-/Schweiz-Katalog, kein Geocoder, kein zweiter Suchpfad, keine Place-ID-Erfindung, kein Free-Text-als-Truth.
+
+**Kontext:** Production speichert offizielle Langnamen (`Republic of Peru`, `People’s Republic of China`, `Switzerland`), während Nutzer geläufige Aliase tippen. Nach einem starken Stadt-Namenspräfix fiel das exakte Länder-Alias unter `MIN_RANG_BEI_STARK` oder wurde gar nicht nachgezogen. Issue #109 / Task `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_TASK_2026-08-29.md`.
+
+**Alternativen:**
+
+1. *Hartcodierte Ländernamen.* Würde weltweit weitere offizielle Langnamen erneut brechen.
+2. *Schwelle `MIN_RANG_BEI_STARK` senken.* Würde schwache Prefix-Treffer wieder in die kompakte Liste spülen.
+3. *Anzeigenamen in Production umschreiben.* Import-/Bestandsmutation, kein Search-Slice, kein Alias für `Schweiz` → `Switzerland`.
+
+**Begründung:** Die Alias-Wahrheit liegt bereits in `keywords`. Ranking und Nachzug müssen sie generisch konsumieren, ohne eine zweite Ortswahrheit zu bauen.
+
+**Konsequenzen:**
+
+- Runtime: `lib/places/suche.ts`, `app/api/search/places/route.ts`.
+- Vertrag: `docs/ORTE.md`, dieser ADR.
+- Keine Migration, kein RLS, kein Provider, keine Kosten.
+- Autor-Agent stoppt für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
+
+---
+
 ## Offene Widersprüche
 
 Diese Punkte sind nach [AGENTS.md](AGENTS.md) Regel 29 offen und dürfen nicht eigenmächtig aufgelöst werden.

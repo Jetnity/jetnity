@@ -19,6 +19,9 @@ const NAMENS_RANG = {
   admin: 500,
 } as const
 
+/** Exakter Name und exaktes Länder-Alias teilen dieselbe Namensstärke. */
+export const EXAKTER_NAMENS_RANG = NAMENS_RANG.exact
+
 const VERWALTUNG = new Set([
   'arrondissement',
   'bezirk',
