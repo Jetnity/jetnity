@@ -19,7 +19,9 @@ Die Skyscanner-Fixture-Foundation bleibt unverändert fixture-only.
 
 ## Gates
 
-Lokal ausgeführt auf Review-Fix-Head `ab2ea861c2af6ac4d5842b7d5cbe7d8b0c82c5e2`: typecheck PASS; lint 0 errors / 135 warnings; **2654** tests PASS; hygiene PASS (2 begründete Orphans: CookieConsent, server-only `index.ts`); Next 16.3.3 Production-Build PASS. Dieser Stamp ist docs-only. Exact-Head CI/Vercel nach dem finalen Push live prüfen. Evidence auf `98edd7b8` ist ungültig. Agent-Self-Review ist kein PASS.
+Lokal ausgeführt auf Review-Fix-Head `ab2ea861c2af6ac4d5842b7d5cbe7d8b0c82c5e2`: typecheck PASS; lint 0 errors / 135 warnings; **2654** tests PASS; hygiene PASS (2 begründete Orphans: CookieConsent, server-only `index.ts`); Next 16.3.3 Production-Build PASS.
+
+Live auf Exact Head `6e2db52c7956971c8ab23e9a8bf4c79123b60903`: GitHub Actions `33261310638` SUCCESS (Auth-Konfiguration; Typecheck, Lint & Build). Vercel `c1NB9K5JkHPcnB98mQMiMywx56AW` PASS. Der zwischenzeitliche Run `33261228126` auf `ab2ea861` wurde durch diesen Stamp cancelled. Evidence auf `98edd7b8` ist ungültig. Dieser Nachtrag ist docs-only. Agent-Self-Review ist kein PASS.
 
 ## Grenzen
 

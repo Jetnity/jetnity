@@ -132,7 +132,16 @@ Gezielte Regressionen: `lib/server/providers/core/*.test.ts` — **43** PASS, in
 | `npm run check:schema-bezug` | PASS |
 | `npm run build` | PASS, Next.js 16.3.3 Turbopack Production |
 
-Keine echten Netz-Calls in den neuen Tests. Exact-Head GitHub Actions / Vercel sind nach diesem Push neu zu lesen. Prior-Gates und CI/Vercel auf `98edd7b8` gelten nicht für den neuen Head.
+Keine echten Netz-Calls in den neuen Tests.
+
+Live Exact-Head Evidence auf `6e2db52c7956971c8ab23e9a8bf4c79123b60903`:
+
+| Gate | Ergebnis |
+| --- | --- |
+| GitHub Actions `33261310638` | SUCCESS — Auth-Konfiguration; Typecheck, Lint & Build |
+| Vercel `c1NB9K5JkHPcnB98mQMiMywx56AW` | PASS |
+
+Der zwischenzeitliche Run `33261228126` auf `ab2ea861` wurde cancelled, als dieser Docs-Stamp gepusht wurde. Prior-Gates und CI/Vercel auf `98edd7b8` gelten nicht. Dieser Nachtrag ist docs-only; neuer Exact Head ist der Commit dieses Stamps und muss live am PR gelesen werden.
 
 ## 8. origin/main Drift
 
