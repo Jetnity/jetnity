@@ -203,3 +203,11 @@ Wenn der Scope bereits integriert ist: **kein Agent**. Stattdessen exakten Resid
 Dieser Checkpoint ist die Reconciliation-Evidence nach den Duplicate-PRs #191/#192 und ist post-landing-stabil formuliert. Historische Dateien dürfen ältere Zustände enthalten. Bei Widerspruch gilt: **Live-Evidence zuerst**; danach diese Reconciliation für ihren Scope; danach spätere versionierte Evidence; historische Evidence zuletzt.
 
 Kein relevanter Fortschritt darf nur im Chat existieren.
+
+## Nachtrag – Draft-PR #187 Continuity (29. August 2026)
+
+Abschnitt 8 bleibt die historische Review-Evidence von Head `80129085`. Derselbe Agent schloss danach die funktionalen P1-Fixes und die Continuity-Reconciliation aus Kommentar `5463705604`, ohne S5-B Production-Wahrheit oder diesen Checkpoint zurückzuschreiben. Exact Head von #187 live am PR lesen. `main` bleibt bewegliche Evidence.
+
+## Nachtrag – PR #196 Governance (29. August 2026)
+
+Binding Slice Precheck / Continuity Gate liegt auf live `main` und darf durch #187 nicht verloren gehen. Dieser Checkpoint bleibt die Reconciliation-Evidence von PR #194/#195; er wird nicht als dauerhafte Current-Head-SHA eingefroren. #187-Current-State-Flächen sind self-expiring: nach Merge zuerst Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner.
