@@ -1,7 +1,7 @@
 # Provider 12Go Mobility Contract Audit – Handoff
 
 Stand: 29. August 2026  
-Status: **REVIEW-FIX `5463645369` / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
+Status: **REVIEW-FIX `5463645369` + `5463718113` / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Cursor-Agent: `Jetnity provider 12go audit 1`  
 Observed run title: `12Go mobility adapter audit`  
 Cloud-Run: https://cursor.com/agents/bc-0266753e-bd4f-4c88-9330-5ebe1fb87b88  
@@ -56,7 +56,7 @@ Neu (Docs only):
 - `docs/PROVIDER_12GO_MOBILITY_CONTRACT_AUDIT_SELF_REVIEW_2026-08-29.md`
 - `docs/ADR_0199_PROVIDER_12GO_MOBILITY_ADAPTER_CONTRACT.md` (**proposed / not accepted**)
 
-Aktualisiert: `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_HANDOFF.md`, `ROADMAP.md`, `DECISIONS.md`, `ARCHITECTURE.md` (Ist bleibt: kein 12Go-Adapter).
+Nicht geändert / isolation `5463718113`: `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, `ARCHITECTURE.md`, `ROADMAP.md`, `DECISIONS.md`. Dieser Audit ist nicht der globale Current-State-Owner. Parallel bleiben #187/#188/#189.
 
 Unverändert: `lib/**`, `app/**`, `supabase/**`, Shared-Core, Commercial-Provenance-Runtime.
 
@@ -72,13 +72,13 @@ Siehe Status §5 (12GO-R1–R15). Die wichtigsten: unbekanntes API-Schema, ToS-V
 
 0 neue Kosten. Keine Secrets. Keine Production-Mutation. Kein Commercial-Provenance-Mint.
 
-Lokale Exact-Head-Gates auf Review-Fix-Head `17cf1ff5`: `npm ci`, typecheck, lint, test 2611/2611, Production-build, Hygiene (`check:dead`/`exports`/`deps`/`api-schutz`/`schema-bezug`) **PASS**. Ein nachfolgender Evidence-Stamp ändert nur diese Gate-Zeilen, kein Runtime. GitHub CI/Vercel des finalen Heads nicht als grün behauptet.
+Lokale Gates auf `17cf1ff5` sind **stale** für den Isolation-Head nach `5463718113`. Neue Exact-Head-Gates folgen nach diesem Stamp. GitHub CI/Vercel nicht als grün behauptet.
 
 ---
 
 ## 6. Offene Gates
 
-1. Unabhängiger TL Exact-Head-**Re-Review** #190 nach CHANGES REQUIRED `5463645369`.
+1. Unabhängiger TL Exact-Head-**Re-Review** #190 nach `5463645369` + Isolation `5463718113`.
 2. ADR-0199 bleibt proposed, bis der Technical Lead ihn annimmt oder verwirft.
 3. Implementation-Proposal nicht starten.
 4. Strategisches Mobility-Ziel ist gesetzt (12Go first). PO-Gates für Enrollment/API/vertrauliche Terms/Credentials/paid calls/Production-Aktivierung bleiben geschlossen und werden durch diesen Slice nicht ausgelöst.

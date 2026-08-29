@@ -6,7 +6,7 @@ Cursor-Agent: `Jetnity provider 12go audit 1`
 Draft-PR: https://github.com/Jetnity/jetnity/pull/190  
 Vollvertrag: `docs/PROVIDER_12GO_MOBILITY_ADAPTER_CONTRACT_2026-08-29.md`
 
-Dieser ADR ist **kein** Architecture-Accept und **keine** Aktivierung. Die strategische Zielentscheidung ist bereits getroffen: **12Go bleibt Jetnitys erstes Mobility-Spezialziel.** Affiliate-Enrollment, API-Antrag, vertrauliche Terms, Credentials, paid calls und Production-Aktivierung bleiben Product-Owner-Gates und werden durch diesen ADR nicht ausgelöst. Der ADR hält den Audit-Vertrag fest, damit ein späterer Technical-Lead-Review ihn annehmen, ändern oder verwerfen kann.
+Dieser ADR ist **kein** Architecture-Accept und **keine** Aktivierung. Er lebt nur in dieser Datei; Draft-PR #190 trägt keinen `DECISIONS.md`-Eintrag und ändert keine globale Current-State-Datei. Die strategische Zielentscheidung ist bereits getroffen: **12Go bleibt Jetnitys erstes Mobility-Spezialziel.** Affiliate-Enrollment, API-Antrag, vertrauliche Terms, Credentials, paid calls und Production-Aktivierung bleiben Product-Owner-Gates und werden durch diesen ADR nicht ausgelöst. Der ADR hält den Audit-Vertrag fest, damit ein späterer Technical-Lead-Review ihn annehmen, ändern oder verwerfen kann.
 
 ## Entscheidung (vorgeschlagen, nicht angenommen)
 

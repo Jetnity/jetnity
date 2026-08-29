@@ -1,7 +1,7 @@
 # Provider 12Go Mobility Contract Audit – Agent Self-Review
 
 Stand: 29. August 2026  
-Status: **SELF-REVIEW ONLY / REVIEW-FIX `5463645369` / KEIN PASS / KEIN READY / KEIN MERGE**  
+Status: **SELF-REVIEW ONLY / REVIEW-FIX `5463645369` + `5463718113` / KEIN PASS / KEIN READY / KEIN MERGE**  
 Cursor-Agent: `Jetnity provider 12go audit 1`  
 PR: https://github.com/Jetnity/jetnity/pull/190  
 Task: `docs/PROVIDER_12GO_MOBILITY_CONTRACT_AUDIT_TASK_2026-08-29.md`
@@ -112,7 +112,7 @@ Nein. Status `PROPOSED / NOT ACCEPTED`.
 
 ## 6. Review-Fix `5463645369`
 
-P1: S5-B Production-Apply war fälschlich als zukünftiges Gate geführt. Korrigiert in Status, Vertrag, Handoff, ADR-0199, DECISIONS-Eintrag, Active Work Status, Handoff-Kopf, Roadmap-12Go-Nachbarzeilen und Implementation-Proposal.
+P1: S5-B Production-Apply war fälschlich als zukünftiges Gate geführt. Korrigiert **nur** in den dedizierten 12Go-Dateien (Status, Vertrag, Handoff, ADR-Datei, Implementation-Proposal). Globale Current-State-Dateien wurden nach `5463718113` nicht mehr dafür benutzt.
 
 Aktueller Vertrag:
 
@@ -125,9 +125,18 @@ Aktueller Vertrag:
 
 Nicht erfunden: Auth, Endpunkte, Sandbox, Quotas, Rate Limits, Error-Bodies, Tracking-Parameternamen, Payload-Felder.
 
-## 7. Verdict
+## 7. Isolation `5463718113`
 
-Der Task ist als Audit/Contract-Prep erfüllt. Der Review-Fix korrigiert nur den S5-B-/Current-State-Wortlaut. Scope blieb docs-only. Unbekannte API-Teile bleiben UNKNOWN.
+P1 Parallel-Workstream: #190 darf nicht um globale Current-State-Ownership konkurrieren.
+
+- `JETNITY_HANDOFF.md` und `docs/ACTIVE_WORK_STATUS.md` auf Merge-Base zurückgesetzt.
+- `ARCHITECTURE.md` und `ROADMAP.md` zurückgesetzt (kein S5-B-Reword, kein Ersatz des globalen Next-Step).
+- `DECISIONS.md` zurückgesetzt. 12Go-ADR bleibt die dedizierte Datei; kein shared ADR-0199-Eintrag (Draft-PR #187 nutzt ADR-0199 parallel).
+- S5-B Production-Truth, 12Go-first und UNKNOWN-API bleiben in den dedizierten 12Go-Docs.
+
+## 8. Verdict
+
+Der Task ist als Audit/Contract-Prep erfüllt. Review-Fixes korrigieren S5-B-Current-State und Parallel-Isolation. Scope blieb docs-only. Unbekannte API-Teile bleiben UNKNOWN.
 
 **Kein PASS. Kein Ready. Kein Merge.**
 

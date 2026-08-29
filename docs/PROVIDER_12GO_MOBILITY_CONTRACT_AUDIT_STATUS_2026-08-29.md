@@ -1,7 +1,7 @@
 # Provider 12Go Mobility Contract Audit – Status
 
 Stand: 29. August 2026  
-Status: **REVIEW-FIX `5463645369` / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
+Status: **REVIEW-FIX `5463645369` + `5463718113` / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Cursor-Agent: `Jetnity provider 12go audit 1`  
 Preferred visible title: `Jetnity provider 12go audit 1`  
 Observed Cursor run title: `12Go mobility adapter audit`  
@@ -49,9 +49,11 @@ Vor Handoff erneut `git fetch origin main`.
 
 Task-Head-Gates auf `1b4b2f0d` (CI `33261061154` SUCCESS, Vercel Preview READY) gelten **nicht** für den neuen Audit-Head.
 
+Isolation `5463718113`: dieser Slice ändert **nicht** `JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, `ARCHITECTURE.md`, `ROADMAP.md` oder `DECISIONS.md`. S5-B-/12Go-Current-Truth steht nur in den dedizierten 12Go-Dateien.
+
 ---
 
-## 2. Jetnity Current Truth (unverändert)
+## 2. Jetnity Current Truth (12Go-Audit-Sicht; nicht globaler Owner)
 
 - Mobility-Foundation A integriert: `kind=transfer`, `mobility_mode` `rail|bus|ferry|transfer`, Production-Suche aus, Factory `null`.
 - `MobilityProvider` bucht nicht und erzeugt keine Deeplinks.
@@ -180,6 +182,8 @@ Shared-Core bleibt unverändert. 12Go-spezifisch wären später `lib/providers/t
 | 12GO-R13 | S5-B Runtime-Write-Pfad / TW-8-Verwechslung als offenes Production-Apply | **process** |
 | 12GO-R14 | `main` `protected=false` | **medium** |
 | 12GO-R15 | Agent-Self-Review ≠ PASS | **process** |
+| 12GO-R16 | Draft-PR #187 nutzt parallel `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`. Diese Datei bleibt der 12Go-ADR; #190 trägt keinen `DECISIONS.md`-Eintrag und beansprucht keine globale ADR-Nummer. Nummer-Konflikt nur der Technical Lead bei Accept. | **process** |
+| 12GO-R17 | Globale Current-State-Dateien (`JETNITY_HANDOFF.md`, `docs/ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, `ARCHITECTURE.md`, `DECISIONS.md`) gehören nicht diesem Audit; Parallel-PRs #187/#188/#189 bleiben isoliert. | **process** |
 
 ---
 
@@ -196,9 +200,9 @@ Shared-Core bleibt unverändert. 12Go-spezifisch wären später `lib/providers/t
 ## 7. Tests / CI / Preview
 
 - Keine Runtime-Änderung; keine neuen Unit Tests.
-- Review-Fix-Head `17cf1ff584ecf75b35151d30f6538492295067f0` lokale Exact-Head-Gates **PASS**: `npm ci`; `typecheck`; `lint`; `test` 2611/2611; Production-`build` compiled in 9.2s; `check:dead` (1 begründete Waise `CookieConsent.tsx`); `check:exports` 0; `check:deps` 0; `check:api-schutz` 12/12; `check:schema-bezug` 18 Tabellen/Views + 20 Funktionen.
-- Task-Head `1b4b2f0d` / Audit-Head `752f6990` CI/Vercel sind **stale** für diesen Head.
-- GitHub Actions / Vercel Preview dieses Heads: **nicht** als grün behauptet; live am PR prüfen.
+- Review-Fix-Head `17cf1ff5` lokale Gates waren PASS; sie gelten **nicht** für den Isolation-Head nach `5463718113`.
+- Isolation-Head: nach Push neu gaten. Dieser Status behauptet kein Exact-Head-Grün für den neuen SHA.
+- GitHub Actions / Vercel Preview: **nicht** als grün behauptet; live am PR prüfen.
 
 ---
 
@@ -210,7 +214,7 @@ Keine Migration, kein RLS, kein Supabase, kein Vercel-Projektmut, kein Commercia
 
 ## 9. Offene Entscheidungen
 
-1. Technical Lead: Exact-Head-**Re-Review** #190 nach CHANGES REQUIRED `5463645369`. Accept/ändern/verwerfen des vorgeschlagenen Adaptervertrags (ADR-0199).
+1. Technical Lead: Exact-Head-**Re-Review** #190 nach CHANGES REQUIRED `5463645369` und Parallel-Isolation `5463718113`. Accept/ändern/verwerfen des vorgeschlagenen Adaptervertrags (`docs/ADR_0199_PROVIDER_12GO_MOBILITY_ADAPTER_CONTRACT.md`). Dieser Slice beansprucht weder `DECISIONS.md` noch globale Current-State-Dateien.
 2. Strategisches Ziel ist gesetzt: 12Go bleibt Jetnitys erstes spezialisiertes Mobility-Ziel. Dieser Slice aktiviert das nicht.
 3. Product Owner (später, nicht aus diesem Slice): Affiliate-Enrollment, API-Antrag, vertrauliche Terms, Credentials, paid calls, Production-Aktivierung. Deeplink-only vs. genehmigter API-Suchpfad bleibt ein Integrationsschnitt, keine Zielwahl.
 4. Product Owner: sensible Dokumentweitergabe, falls 12Go Zug/Flug-Checkout sie verlangt.
@@ -220,7 +224,7 @@ Keine Migration, kein RLS, kein Supabase, kein Vercel-Projektmut, kein Commercia
 
 ## 10. Exakter nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #190 nach CHANGES REQUIRED `5463645369` auf Head `17cf1ff5`. Prior-Gates auf `752f6990` gelten nicht für diesen Head. Lokale Exact-Head-Gates auf `17cf1ff5` sind PASS; CI/Vercel live am PR prüfen.
+Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #190 nach `5463645369` + `5463718113`. Prior-Gates gelten nicht für den neuen Head. GitHub CI/Vercel live am PR prüfen.
 
 **Kein Ready. Kein Merge. Kein Folgeslice. Kein Signup. Kein API-Antrag.**
 
