@@ -40,7 +40,12 @@ Nicht angefasst: Migrationen, Schema, RLS, Grants, Auth/MFA/AAL, Service Role, P
 - Hygiene dead/exports/deps/api-schutz/schema-bezug pass
 - `npm run build` pass
 
-Exact-Head CI/Vercel müssen am finalen Push-Head live geprüft werden.
+Exact-Head auf Implementation Head `12f2ad08`:
+
+- CI #1298 / Run `33280831211` = SUCCESS
+- Vercel Preview `6cEEj5siu7r8hUrrsjptjPRSv2i6` = SUCCESS
+
+Der unabhängige Reviewer prüft den live exact Head, falls ein Continuity-Stamp danach liegt.
 
 ## Offen / nicht behauptet
 

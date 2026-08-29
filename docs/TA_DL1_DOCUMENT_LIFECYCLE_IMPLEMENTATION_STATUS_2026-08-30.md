@@ -36,4 +36,9 @@ Auf dem Type-Fix-Stand dieser Generation:
 - Hygiene: dead/exports/deps/api-schutz/schema-bezug pass
 - Production build pass
 
-Exact-Head CI/Vercel werden nach dem finalen Push live nachgetragen. Dieser Status behauptet sie nicht für einen älteren Head.
+Exact-Head auf Implementation Head `12f2ad080e98a893980707e6194af2285fce550e`:
+
+- CI #1298 / Run `33280831211` = SUCCESS
+- Vercel Preview `6cEEj5siu7r8hUrrsjptjPRSv2i6` = SUCCESS
+
+Ein späterer Continuity-Stamp ändert den live Head. Der Reviewer prüft GitHub Actions und Vercel am dann aktuellen exact Head.

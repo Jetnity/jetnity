@@ -23,11 +23,12 @@ Status: **TA-DL1 LOKAL GATED / DRAFT-PR #227 / STOP FÜR TECHNICAL-LEAD-REVIEW**
 - Account- und Reisevorbereitung-Darstellung je Dokument
 - focused Tests, ADR-0202, Handoff, Self-Review
 - lokale Gates: 2738/2738 Tests, Typecheck, Lint 0, Hygiene, Production-Build
+- CI #1298 / Run `33280831211` SUCCESS auf Implementation Head `12f2ad08`
+- Vercel Preview `6cEEj5siu7r8hUrrsjptjPRSv2i6` SUCCESS auf `12f2ad08`
 
 ## 3. Gerade offen
 
-- Exact-Head CI/Vercel-Evidence am finalen Push-Head
-- unabhängiger Technical-Lead-Review
+- unabhängiger Technical-Lead-Review auf dem live exact Head
 - kein Folgeslice, kein Ready, kein Merge
 
 ## 4. Hard non-scope bleibt
