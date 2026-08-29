@@ -204,9 +204,10 @@ Jeder neue Chat / Technical Lead liest vor einem neuen Slice mindestens:
 13. `docs/JETNITY_FUTURE_NATIVE_APP_AND_TECHNICAL_LEAD_STANDARD.md`
 14. `docs/JETNITY_BINDING_BUILD_ORDER.md`
 15. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
-16. `docs/ACTIVE_WORK_STATUS.md`
-17. `docs/CHATGPT_TL_PROVIDER_TRAVELLER_RECONCILIATION_CHECKPOINT_2026-08-29.md`
-18. den relevanten Slice-Task/Status/Handoff/ADR und live GitHub/Supabase/Vercel-Evidence.
+16. `JETNITY_HANDOFF.md`
+17. `docs/ACTIVE_WORK_STATUS.md`
+18. `docs/CHATGPT_TL_PROVIDER_TRAVELLER_RECONCILIATION_CHECKPOINT_2026-08-29.md`
+19. den relevanten Slice-Task/Status/Handoff/ADR und live GitHub/Supabase/Vercel-Evidence.
 
 Historische Checkpoints bleiben Evidence ihres damaligen Zustands. Sie sind nicht Current Truth, wenn spätere Live-Evidence oder dieser aktuelle Checkpoint sie superseden.
 
