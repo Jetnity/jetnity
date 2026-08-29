@@ -20,7 +20,7 @@ Kommentar `5463847278` gegen Review-Head `8df3e9c2`:
 
 ## Gates
 
-Lokal nach den Runtime-Fixes und dem Main-Sync. Exact Head live am PR prüfen. Evidence auf `8df3e9c2` ist ungültig. Agent-Self-Review ist kein PASS.
+Lokal auf `ec7eff42`: typecheck PASS; lint 0 errors / 135 warnings; **2662** tests PASS; hygiene PASS; Next 16.3.3 Production-Build PASS. Dieser Stamp ist docs-only. Exact-Head CI/Vercel nach dem Push live prüfen. Evidence auf `8df3e9c2` ist ungültig. Agent-Self-Review ist kein PASS.
 
 ## Grenzen
 

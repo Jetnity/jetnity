@@ -52,7 +52,18 @@ Kein Ready. Kein Merge. Kein Folgeslice. Keine echten Provider-Calls, Secrets, P
 
 ## 6. Tests / Gates
 
-Lokal nach Runtime-Fixes (51 Core-Tests PASS). Vollständige Repo-Gates folgen in diesem Arbeitsstand und werden nach dem Lauf hier nachgezogen.
+Lokal auf Runtime inkl. Continuity `ec7eff42`; dieser Stamp ist docs-only danach:
+
+| Gate | Ergebnis |
+| --- | --- |
+| provider-core tests | PASS, **51/51** |
+| `npm run typecheck` | PASS |
+| `npm run lint` | PASS, 0 errors / 135 warnings |
+| `npm test` | PASS, **2662** tests, 0 fail |
+| hygiene | PASS (`check:dead` 1 begründetes CookieConsent-Orphan; exports/deps/api-schutz/schema-bezug PASS) |
+| `npm run build` | PASS, Next.js 16.3.3 |
+
+Exact-Head CI/Vercel nach diesem Push live lesen. `8df3e9c2` gilt nicht für den neuen Head.
 
 ## 7. origin/main Drift
 
