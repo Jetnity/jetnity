@@ -206,7 +206,7 @@ Diese Abhängigkeiten steuern AP-5–AP-12. Sie werden hier nicht umgebaut.
 
 | Fähigkeit | Stand | Evidence |
 | --- | --- | --- |
-| `/privacy`, `/terms` | **missing / 404** | D0-P1-03; keine `app/**/privacy` oder `terms` Page |
+| `/privacy`, `/terms` | **missing / 404** | D0-P1-03 live auf Production-Alias; Gate-0-Vertrag `docs/AP6A_GATE0_LEGAL_RUNTIME_CONTRACT_2026-08-29.md`; keine Pages |
 | Register verlangt Zustimmung | **integrated, broken link** | `RegisterForm.tsx` |
 | Cookie-Banner | **orphan** | `components/layout/CookieConsent.tsx` nicht gemountet; `check:dead`-Ausnahme |
 | Consent-Tabelle | **missing** | keine Migration |
@@ -257,7 +257,7 @@ Jeder Slice braucht vor Start einen eigenen Technical-Lead-Task, einen frischen 
 | --- | --- |
 | Produktziel | Eingeloggte Sicherheitssteuerung: auffindbare Passwortänderung **innerhalb des bestehenden Auth-Vertrags**, sichtbare Sitzungen, nachvollziehbares Logout-all, MFA-Schritt vor riskanten Änderungen – ohne neue Auth-Architektur. |
 | Bereits vorhanden | `/account/security` TOTP-Enroll/Unenroll; Login-MFA; Recovery-Passwort über Rücksetzlink (`app/auth/update-password/page.tsx`); Admin-AAL2 getrennt. Auth-Vertrag: `auth.email.secure_password_change = true` verlangt kürzlich bestätigte Reauthentication (`security_update_password_require_reauthentication`). `security_update_password_require_current_password` ist **aus**. Belegt: `supabase/config.toml`, `docs/AUTH.md`. |
-| Fehlt | AP-5-S1, AP-5-S2 und AP-5-S3 sind integriert. AP-5-S4 ist auf Draft-PR #159 implementiert, aber nicht integriert: `challenge`/`verify`-Step-up vor Unenroll **verified** Faktoren (GoTrue verlangt dafür bereits serverseitig `aal2`). Weiter fehlt nach S4: ehrliche Session-Karte (`unsupported` für andere Geräte – eine echte Liste gibt der installierte User-Client nicht her). Gate-0-Evidence: `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, ADR-0182. S1-Evidence: `docs/AP5_S1_SECURITY_UI_TRUTH_STATUS_2026-08-28.md`, ADR-0183. S2-Evidence: `docs/CHATGPT_PR137_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`, `docs/AP5_S2_PASSWORD_REAUTH_STATUS_2026-08-28.md`. S3-Evidence: `docs/AP5_S3_ACCOUNT_SECURITY_LOGOUT_SCOPES_STATUS_2026-08-29.md`, ADR-0192. S4-Evidence: `docs/AP5_S4_ACCOUNT_SECURITY_MFA_STEP_UP_STATUS_2026-08-29.md`, ADR-0193. |
+| Fehlt | AP-5-S1 bis AP-5-S5 sind integriert (S5 / PR #164 auf `main @ 765fc547`). Extra gegated bleiben AP-5-P1–P5 (Default-Logout `local`, Sessionliste über Service Role/Schema, Consumer-AAL2, Auth-Config-Push, C2). Gate-0-Evidence: `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, ADR-0182. S5-Evidence: `docs/AP5_S5_HONEST_CURRENT_SESSION_VIEW_STATUS_2026-08-29.md`, ADR-0194. |
 | Shared Contracts | Auth / Sessions / MFA / AAL. UI-Auffindbarkeit ist kein neuer Vertrag. Eine Consumer-AAL2-Pflicht, MFA-Grundlogik oder ein Wechsel auf „aktuelles Passwort mitsenden“ **ist** ein Shared Contract und hier nicht entschieden. |
 | Security | Keine Secrets loggen. Recovery-Link und In-Account-Change nicht zu einem zweiten Passwort-Vertrag vermischen. Enumeration vermeiden. |
 | Privacy | Keine Geräte-/Session-Metadaten ins Marketing. |
@@ -273,7 +273,7 @@ Jeder Slice braucht vor Start einen eigenen Technical-Lead-Task, einen frischen 
 | Parallelität | nicht parallel zu AP-6b/AP-7/AP-8. AP-6a Legal ist dateiarm und darf parallel assigned werden. |
 | Non-Scope | Auth-Config-Push; OAuth/Passkey live schalten; Consumer-AAL2-Pflicht; Admin-AAL2; Identity; RLS; AP-7; neues „aktuelles Passwort mitsenden“, solange kein separat freigegebener Auth-Vertragswechsel das verlangt |
 | Tests / Evidence | Passwortänderung bleibt am bestehenden Reauthentication-Vertrag (`secure_password_change`); kein Test darf Current-Password-Submit als Product Truth verlangen; fremde Session nicht sichtbar; Logout-all fail-closed dokumentieren, wenn API fehlt; Empty ≠ Error; keine Browser-Behauptung ohne Lauf. |
-| Reihenfolge | Default nächster **Account-Programm**-Kandidat nach P2-TA-03. Gate 0, S1, S2, S3 und S4 sind integriert. AP-5-S5 ist Draft-PR #162 und startet **kein** AP-6/AP-7. AP-5-P1–P5 bleiben extra gegated. |
+| Reihenfolge | Default nächster **Account-Programm**-Kandidat nach P2-TA-03. Gate 0 und S1–S5 sind integriert. AP-5-P1–P5 bleiben extra gegated. Der aktuelle Account-Slice ist AP-6a Gate 0 / Draft-PR #166 und startet **kein** Runtime. |
 
 ### AP-6a – Privacy-Foundation ohne DB
 
@@ -281,7 +281,7 @@ Jeder Slice braucht vor Start einen eigenen Technical-Lead-Task, einen frischen 
 | --- | --- |
 | Produktziel | Ehrliche, erreichbare `/privacy` und `/terms`. Register-Zustimmung darf nicht auf 404 zeigen. |
 | Bereits vorhanden | Links in `RegisterForm`; Cookie-Komponente existiert, ist aber nicht gemountet. |
-| Fehlt | Seiten, vom Product Owner / Legal **gelieferte** Texte, Footer-Links, ehrlicher Cookie-Text oder bewusst weiter unverbunden. |
+| Fehlt | Gate 0 (Draft-PR #166) liefert Vertrag + Input-Matrix, **keine** Seiten. Runtime braucht vom Product Owner / Legal **gelieferte** Texte, Footer-Links, Entscheidung zur Konformitätszeile und ehrlichen Cookie-Text oder bewusst weiter unverbundenen Banner. |
 | Shared Contracts | keine DB. Öffentliche Legal-Fläche ist Discoverability-nah (D0-P1-03), aber kein D1/Indexing. |
 | Security / Privacy | Keine erfundenen Rechtstexte. Keine Consent-Persistenz in 6a. |
 | Auth / Identity / RLS | keine |
@@ -548,7 +548,7 @@ Nicht aus diesem Dokument ableiten oder nebenbei bauen:
 
 | ID | Lage | Nicht tun |
 | --- | --- | --- |
-| D0-P1-03 | `/privacy` `/terms` 404 | nicht mit erfundenen Texten in AP-5 mischen; gehört zu AP-6a / Legal-PO |
+| D0-P1-03 | `/privacy` `/terms` 404 | Gate 0 auf Draft-PR #166; nicht mit erfundenen Texten lösen; Runtime erst nach PO-/Legal-Content-Gate |
 | P2-TA-01 | Official nicht progressiv pro Option | eigener Traveller-/Readiness-Slice |
 | P2-TA-02 | Test-Fixture-Bias | Hygiene, kein Produktvertrag |
 | P2-TA-04 | Direct authenticated Traveller-DML umgeht Write-Contract | Gate 0 integriert (PR #120 / ADR-0180). C1 (Issue #122 / ADR-0181) härtet Delete-RPC + Party-Cap 20 + Child-UPDATE-Limits ohne REVOKE/DEFINER. Production C1 live als `20260828015304`; historische/develop-only Evidence `20260828120000`. C2 bleibt PO-gated. Kein AP-5 |

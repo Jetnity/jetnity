@@ -5047,6 +5047,43 @@ Festlegung innerhalb S1, ohne Dependency-Bump:
 - AP-6/AP-7 starten nicht aus diesem ADR.
 - Autor-Agent stoppt für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
 
+**Nachtrag, 29. August 2026 – Integration.** PR #164 ist auf `main @ 765fc547` gemergt. ADR-0194 ist der integrierte S5-Vertrag. AP-6a Gate 0 ist ADR-0195 / Draft-PR #166 und nicht Teil von S5.
+
+---
+
+## ADR-0195 – AP-6a Gate 0: Legal Foundation / Trust Boundary ohne Rechtstext
+
+**Datum:** 29. August 2026  
+**Status:** Gate-0-Vertragsfeststellung auf Draft-PR #166 / Issue #165. Keine Legal-Runtime. Keine Consent-Persistenz. Keine behauptete Rechtskonformität.
+
+**Entscheidung:**
+
+1. Production `/privacy` und `/terms` sind ein aktueller Trust-Boundary-Defekt (D0-P1-03): die Registrierung verlangt Zustimmung und verlinkt beide Routen, die Seiten existieren nicht.
+2. AP-6a Gate 0 darf nur Docs, Contracts, Evidence und Continuity liefern. Rechtstexte, Firmenidentität, Gerichtsstand, Rechtsgrundlagen und Konformitätsbehauptungen werden nicht erfunden.
+3. Legal-Inputs werden nur als `belegt`, `fehlend`, `unknown` oder `PO-Legal-approval-required` klassifiziert. `info@jetnity.ch` ist eine belegte Footer-Anzeige, keine bewiesene verantwortliche Stelle.
+4. Der kleinste Runtime-Vertrag für spätere Seiten: `app/(public)/privacy` und `app/(public)/terms`, bestehendes Public-Layout, eine `h1`, Deutsch bis Legal mehr Sprachen liefert, Canonical `https://jetnity.com`, `noindex` und keine Sitemap-Aufnahme bis zum bestehenden Public-Indexing-Gate, Register-Links bleiben, Footer soll beide Routen bekommen, keine Consent-Tabelle.
+5. Die UI-Zeile „DSGVO & CH-DSG konform“ ist eine unbelegte Behauptung. Runtime darf sie nur nach ausdrücklicher Legal-Freigabe behalten.
+6. `CookieConsent` bleibt Orphan, bis Product Owner ehrlichen Text oder Löschung entscheidet. Der V1-Text „Views/Likes“ ist keine V2-Wahrheit.
+7. AP-6b (Consent-Persistenz, Export, Kontolöschung, Migration/RLS) bleibt serial nach AP-6a und startet nicht aus diesem ADR.
+8. Ohne PO-/Legal-Content-Gate werden keine Legal-Seiten gebaut. Eine Schein-Privacy ist schlechter als der ehrliche 404.
+
+**Kontext:** AP-5-S1–S5 sind auf `main @ 765fc547` integriert. Issue #165 ist der nächste Account-Slice. Live-Evidence: Production-Alias HTTP 404 auf `/privacy` und `/terms` bei Deployment `dpl_3PWuyGopCnjcdh44twcUUpCWXzmi`.
+
+**Alternativen:**
+
+1. *Runtime-Seiten mit Platzhaltertext.* Würde Konformität andeuten, die nicht existiert.
+2. *Register-Links entfernen, bis Texte da sind.* Produktentscheidung; nicht still in Gate 0. Würde den 404-Defekt in einen stillen Consent-ohne-Dokument-Defekt verwandeln.
+3. *Impressum/`/datenschutz` mitbauen.* Extra-Input; nicht AP-6a-Default.
+
+**Begründung:** Der Trust-Defekt ist real, aber Legal-Wahrheit darf nicht aus Vermutung entstehen. Gate 0 macht die Lücke entscheidbar.
+
+**Konsequenzen:**
+
+- Evidence: `docs/AP6A_GATE0_LEGAL_FOUNDATION_STATUS_2026-08-29.md`, `docs/AP6A_GATE0_LEGAL_CONTENT_INPUT_CONTRACT_2026-08-29.md`, `lib/legal/ap6a-gate0-vertrag.ts`.
+- Keine Migration, kein RLS, kein Auth-Config-Push, keine Service Role.
+- AP-6a-Runtime, AP-6b und AP-7 starten nicht aus diesem ADR.
+- Autor-Agent stoppt für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
+
 ---
 
 ## Offene Widersprüche
