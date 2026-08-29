@@ -156,7 +156,11 @@ Keine Datei unter `app/(public)/privacy` oder `terms`. Keine Migration. Keine Au
 
 ## 7. Tests / Gates
 
-Siehe `docs/AP6A_GATE0_LOCAL_TEST_EVIDENCE_2026-08-29.md` nach dem Stamp. Vorherige PR-#166-Checks gelten nur für Task-Head `668c2f17` und sind nach diesem Authoring ungültig.
+Lokale Gates auf Authoring-Head `dce9ee8c`, persistiert in `docs/AP6A_GATE0_LOCAL_TEST_EVIDENCE_2026-08-29.md`:
+
+- Inventory 9/9; `npm test` 2564/2564; typecheck pass; lint 0 errors / 135 warnings; hygiene pass; Production-Build Next 16.3.3 ohne `/privacy`/`/terms`-Routen.
+- `auth:pruefen` nicht gelaufen (kein Auth-Slice, kein Secret).
+- Dieser Stamp erzeugt einen neueren Head. Prior Task-Checks auf `668c2f17` und lokale Gates auf `dce9ee8c` gelten nicht mehr für den Review-Head. Live am PR prüfen.
 
 ## 8. Risiken / Review-Funde des Autors
 
