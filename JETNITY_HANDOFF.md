@@ -3,6 +3,8 @@
 Stand: 29. August 2026  
 Status: **Search #109 CLOSED / COMPLETED und PrivacyBee #169 CLOSED / COMPLETED auf `main @ ade03511`. Kein aktiver Runtime-Agent. Issue #110 nicht gestartet. AP-7-S2 gated. AP-6a Legal-Runtime geparkt. Kosten 0. Live-Evidence gewinnt.**
 
+> **Self-expiring auf diesem Branch:** Draft-PR #192 (`audit/traveller-account-multicitizenship-gap-2026-08-29`) ist der aktuelle Docs-only Traveller/Account/Multi-Citizenship-Gap-Audit. Baseline `main @ 69ef27b1`. STOPP für unabhängigen Technical-Lead Exact-Head-Review. Kein Ready, kein Merge, kein AP-7-S2 durch den Autor. Nach Merge: diese Klausel historisch; nächster Schritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl. Evidence: `docs/TRAVELLER_ACCOUNT_MULTICITIZENSHIP_GAP_STATUS_2026-08-29.md`.
+
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
 Aktueller New-Chat-Checkpoint (PR #178 ist nur der Continuity-Träger; Live-Zustand von #178 prüfen. Liegt dieser Checkpoint auf `main`, ist die Pre-Merge-#178-Klausel historisch; nächster Schritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl, kein automatischer Produkt-Slice):
