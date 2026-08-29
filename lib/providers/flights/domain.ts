@@ -1,6 +1,3 @@
-export const FLIGHT_PROVIDER_EXECUTION_MODES = ['fixture', 'live_transport'] as const
-export type FlightProviderExecutionMode = (typeof FLIGHT_PROVIDER_EXECUTION_MODES)[number]
-
 export type FlightProviderSearchRequest = {
   originIata: string
   destinationIata: string
@@ -35,37 +32,13 @@ export type FlightProviderOffer = {
   legs: FlightProviderLeg[]
 }
 
-export type FlightProviderSearchResult = {
+/**
+ * Offline provider fixtures are test evidence only. This result intentionally
+ * has no sourceKind/persistenz/actor field and therefore cannot be passed as a
+ * Commercial-Provenance quote without a future server-side live transport.
+ */
+export type FlightProviderFixtureSearchResult = {
   providerId: string
-  executionMode: FlightProviderExecutionMode
+  evidenceMode: 'fixture'
   offers: FlightProviderOffer[]
 }
-
-export type FlightProviderCommercialQuote = {
-  domain: 'flights'
-  providerId: string
-  sourceKind: 'live_api'
-  sourceLabel: string
-  externalRef: string
-  providerOfferId: string | null
-  retrievedAt: string
-  observedAt: string
-  freshUntil: null
-  requestedCurrency: string
-  quotedCurrency: string
-  amount: number
-  amountStatus: 'quoted'
-  persistenz: 'ephemeral'
-  availability: 'unknown'
-  affiliate: {
-    status: 'present' | 'absent'
-    partnerId: string | null
-    clickId: null
-    attributionRef: string | null
-  }
-  vergleichsschluessel: string
-}
-
-export type FlightProviderQuotePromotion =
-  | { ok: true; quote: FlightProviderCommercialQuote }
-  | { ok: false; reason: 'fixture_not_trusted' | 'invalid_offer' | 'currency_mismatch' }
