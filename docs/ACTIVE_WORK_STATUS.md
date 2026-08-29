@@ -12,9 +12,9 @@ Status: **Provider Adapter Core Foundation Draft-PR #187 / IMPLEMENTIERT / STOP 
 1. **Arbeitsblock / Ziel:** Provider-neutraler Server-Transport-Kern: Timeout/Retry/Rate-Limit, secret-sichere Header, redacted Observability, vollständig offline testbar (ADR-0199).
 2. **Authoring-Branch / PR:** `feat/provider-adapter-core-foundation-2026-08-29` / Draft-PR #187.
 3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW**. Kein Ready, kein Merge, kein Folgeslice durch den Autor.
-4. **Bereits umgesetzt:** `lib/server/providers/core/*` plus deterministische Offline-Tests; Skyscanner-Fixture-Foundation unverändert; keine Secrets, keine echten Provider-Calls.
+4. **Bereits umgesetzt:** `lib/server/providers/core/*` plus deterministische Offline-Tests; ADR-0199; Skyscanner-Fixture-Foundation unverändert; keine Secrets, keine echten Provider-Calls. Lokale Gates: typecheck, lint 0/135, 2640 tests, hygiene, Production-Build.
 5. **Cursor-Agent:** `Cursor-Agent: Jetnity provider adapter core 1`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 1 bleibt 1.
-6. **Live-`main` / Baseline bei diesem Stamp:** `69ef27b169780e41ba506a69acb15caafa645517`. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
+6. **Live-`main` / Baseline bei diesem Stamp:** `69ef27b169780e41ba506a69acb15caafa645517`. `behind_by=0`. Exact Head ist der Commit dieses Stamps; live am PR prüfen. Prior Head `70cd41ba` Gates gelten nicht für den neuen Head.
 7. **DB / RLS / Production-Grenze:** keine Migration, keine Supabase-Mutation, keine Vercel-Projektmutation.
 8. **Kosten / Provider / Secrets:** 0. Keine Provideraktivierung, keine paid calls, keine Credentials im Repository.
 9. **Bekannte Risiken / Review-Funde:** Duffel nutzt den Kern noch nicht. Create/Poll bleibt Adapter-Arbeit. Agent-Self-Review ist kein PASS.

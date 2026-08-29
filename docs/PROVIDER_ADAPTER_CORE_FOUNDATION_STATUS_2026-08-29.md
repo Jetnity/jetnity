@@ -21,7 +21,7 @@ Die Skyscanner-Fixture-Foundation bleibt unverändert fixture-only.
 
 ## Gates
 
-Lokale Kern-Unit-Tests sind grün. Vollständige Repository-Gates und Exact-Head-CI/Vercel werden im Self-Review festgehalten. Ein Agent-Self-Review ist kein PASS.
+Lokal ausgeführt: typecheck PASS; lint 0 errors / 135 warnings; **2640** tests PASS; hygiene PASS; Next 16.3.3 Production-Build PASS. Exact-Head CI/Vercel nach dem finalen Push live prüfen. Agent-Self-Review ist kein PASS.
 
 ## Grenzen
 
