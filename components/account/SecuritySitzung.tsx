@@ -49,7 +49,6 @@ export default function SecuritySitzung() {
 
   React.useEffect(() => {
     let aktiv = true;
-    setZustand((aktuell) => sitzungWeiter(aktuell, { typ: "starte_lesen" }));
 
     void (async () => {
       const supabase = createBrowserClient();

@@ -132,7 +132,7 @@ const PLATTFORM_ERLAUBT = new Set(['Windows', 'macOS', 'iOS', 'Android', 'Linux'
 const LEAK_MUSTER =
   /session_id|access_token|refresh_token|authorization:|bearer\s|cookie|set-cookie|user-agent|eyj[a-z0-9_-]+\.|gotrue|supabase|sbp_|factor_id|challenge_id/i
 
-export function sitzungFehler(code: SitzungFehlerCode): SitzungFehler {
+function sitzungFehler(code: SitzungFehlerCode): SitzungFehler {
   return { code, text: FEHLER_TEXTE[code] }
 }
 
@@ -170,7 +170,7 @@ export function zugangscodeZeitLesen(
   return expires
 }
 
-export function zugangscodeZeitText(unix: number): string {
+function zugangscodeZeitText(unix: number): string {
   return new Intl.DateTimeFormat('de-CH', {
     day: '2-digit',
     month: 'short',
@@ -184,7 +184,7 @@ export function sitzungAalLesen(wert: unknown): SitzungAal | null {
   return wert === 'aal1' || wert === 'aal2' ? wert : null
 }
 
-export function sitzungExpiresAtLesen(session: unknown): unknown {
+function sitzungExpiresAtLesen(session: unknown): unknown {
   if (!session || typeof session !== 'object') return null
   return (session as { expires_at?: unknown }).expires_at ?? null
 }
