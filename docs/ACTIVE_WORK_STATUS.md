@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **Provider Adapter Core Foundation Draft-PR #187 / REVIEW-FIX IMPLEMENTIERT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Slice-Baseline `69ef27b1`. Live `origin/main` `f80a7f0b` behind_by=4. Review `5463627429`. Keine Provideraktivierung. Kein Commercial-Provenance-Mint. Kein Ready/Merge.**
+Status: **Provider Adapter Core Foundation Draft-PR #187 / REVIEW-FIX + CONTINUITY-RECONCILIATION / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Authoritative current-state: PR #194/#195 checkpoint V2; `main` live prüfen. Review `5463705604`. S5-B Production-Migration angewendet/verifiziert. Keine Provideraktivierung. Kein Commercial-Provenance-Mint. Kein Ready/Merge.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -12,32 +12,32 @@ Status: **Provider Adapter Core Foundation Draft-PR #187 / REVIEW-FIX IMPLEMENTI
 1. **Arbeitsblock / Ziel:** Provider-neutraler Server-Transport-Kern: Timeout/Retry/Rate-Limit, secret-sichere Header, redacted Observability, vollständig offline testbar (ADR-0199).
 2. **Authoring-Branch / PR:** `feat/provider-adapter-core-foundation-2026-08-29` / Draft-PR #187.
 3. **Status:** **REVIEW-FIX IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**. Kein Ready, kein Merge, kein Folgeslice durch den Autor.
-4. **Bereits umgesetzt:** Zwei P1-Fixes aus `5463627429`: aktuelle Terminal-Fehler behalten ihre Kind nach einem früheren anderen Retry; jedes Runtime-Modul trägt `import 'server-only'`, Alternativimporte scheitern ohne Test-Stub. Lokale Gates auf `f82fe28e`: typecheck, lint 0/135, 2657 tests, hygiene, Production-Build.
+4. **Bereits umgesetzt:** Funktionale P1-Fixes (Retry-Klassifikation, mechanisches `server-only` auf jedem Runtime-Modul) bleiben erhalten. Lint-Ursache von CI #1207 war `scripts/server-only-empty.cjs` gegen ESLint-9/react-hooks-Plugin-Auflösung, behoben durch lint-sicheren `.js`-Stub. Continuity gegen live `main` / Checkpoint V2 reconciled: S5-B Production-Migration angewendet/verifiziert, kein Rollback von PR #194/#195.
 5. **Cursor-Agent:** `Cursor-Agent: Jetnity provider adapter core 1`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 1 bleibt 1 (gleicher Slice / Review-Fix).
-6. **Live-`main` / Baseline bei diesem Stamp:** Slice-merge-base `69ef27b169780e41ba506a69acb15caafa645517`. Live `origin/main` `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3` (`behind_by=4`, nicht rebased). Exact Head ist der Commit dieses Docs-Stamps; live am PR prüfen. Prior Head `80129085` und dessen CI/Vercel gelten nicht.
+6. **Live-`main`:** immer live prüfen. Reconstruction-Baseline der Checkpoint-V2 war `69ef27b1`; das ist keine dauerhafte Current-Head-Wahrheit. Exact Head ist der Commit dieses Stamps; live am PR prüfen. Prior Heads `80129085` / `6f9a8b76` und deren CI gelten nicht.
 7. **DB / RLS / Production-Grenze:** keine Migration, keine Supabase-Mutation, keine Vercel-Projektmutation.
 8. **Kosten / Provider / Secrets:** 0. Keine Provideraktivierung, keine paid calls, keine Credentials im Repository.
 9. **Bekannte Risiken / Review-Funde:** Duffel nutzt den Kern noch nicht. Create/Poll bleibt Adapter-Arbeit. Jedes Runtime-Modul trägt `import 'server-only'`; node:test nutzt nur den lokalen Stub. Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** keine aus diesem Slice. Skyscanner-Server-Transport und S5-B Production-Apply bleiben extra gegatet.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #187 nach Kommentar `5463627429`. Kein Ready. Kein Merge. Kein Folgeslice.
+10. **Offene Nutzerentscheidungen / Freigaben:** keine aus diesem Slice. Skyscanner-Server-Transport bleibt extra gegatet. S5-B Production-Migration ist angewendet; Runtime-Write/Snapshot und TW-8 bleiben gegatet.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #187 nach Kommentar `5463705604`. Kein Ready. Kein Merge. Kein Folgeslice.
 12. **Zuerst lesen:** `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_TASK_2026-08-29.md`, Status, Handoff, Self-Review, ADR-0199.
 
-## Historischer / paralleler Arbeitsblock – Provider S5-B Commercial Provenance Persistence
+## Historischer Arbeitsblock – Provider S5-B Commercial Provenance Persistence
 
-Current classification / Nachtrag, 29. August 2026: **PARALLELER DRAFT auf anderem Branch.** Nicht der Authoring-Block von PR #187. Live am PR #182 prüfen.
+Current classification / Nachtrag, 29. August 2026: **HISTORICAL / INTEGRIERT / PRODUCTION-MIGRATION ANGEWENDET UND VERIFIZIERT.** Nicht der Authoring-Block von PR #187. Ältere „paralleler Draft / Production-Apply pending“-Zeilen sind Pre-Apply-Evidence.
 
 1. **Arbeitsblock / Ziel:** ADR-0197 / Option C Persistenzgrundlage: Schema + RLS + Grants + privilegierte Write-Authority + Legacy-Bypass-Härtung + Tests + Threat Model.
-2. **Authoring-Branch / PR:** `feat/provider-s5b-commercial-provenance-persistence-2026-08-29` / Draft-PR #182.
-3. **Status:** **TL-182 CHANGES REQUIRED CLOSED IN REPO / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**. Kein Ready, kein Merge, kein Production-Apply durch den Autor.
-4. **Bereits umgesetzt:** Persistenzgrundlage plus TL-Fixes: fail-closed Principal, kanonische `v1`-Nutzlast, Runtime-Gate geschlossen, isolierte lokale 19/19-Evidence.
-5. **Cursor-Agent:** `Cursor-Agent: Jetnity provider readiness audit 4`.
-6. **Live-`main` / Baseline bei diesem Stamp:** `f638b4417140816bf7dfc26034cdb3da1538fd37`. Prior Head `8e597487`. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
-7. **DB / RLS / Production-Grenze:** Migration nur im Repository. Production nicht mutiert. Isolierte lokale Evidence über `db:s5b-persistenz-lokal`. Apply bleibt TL-kontrolliert unter PO-Gate `S5B-G0-PO-MIG-01`.
+2. **Authoring-Branch / PR:** `feat/provider-s5b-commercial-provenance-persistence-2026-08-29` / Draft-PR #182; Recovery #183; Merge `3b684f64`.
+3. **Status:** **INTEGRIERT.** Production-Migration `20260829140000_trip_item_commercial_provenance` angewendet und verifiziert. Runtime-Write-Pfad/Principal nicht allokiert. Kein realer Snapshot. TW-8 geschlossen.
+4. **Bereits umgesetzt:** Persistenzgrundlage plus TL-Fixes; Production-Apply verifiziert (`docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md`).
+5. **Cursor-Agent:** `Cursor-Agent: Jetnity provider readiness audit 4` (historisch).
+6. **Live-`main`:** immer live prüfen. Nicht die historische Baseline `f638b441` als Current-Head behandeln.
+7. **DB / RLS / Production-Grenze:** Schema auf Production angewendet. Write-Pfad bleibt geschlossen/unallokiert.
 8. **Kosten / Provider / Secrets:** 0. Keine Provideraktivierung, keine paid calls.
-9. **Bekannte Risiken / Review-Funde:** Production ≠ Repository bis Apply. Production-Write-Pfad nicht allokiert. Kein realer Snapshot. TW-8 geschlossen. Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** Production-Apply nach TL PASS. Runtime-Principal-Zuweisung extra gegatet. TW-8 extra gegatet.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #182. Kein Ready. Kein Merge. Kein Production-Apply durch Cursor. Kein Folgeslice.
-12. **Zuerst lesen:** `docs/PROVIDER_S5B_PERSISTENCE_IMPLEMENTATION_TASK_2026-08-29.md`, Status, Handoff, Self-Review, Threat Model, ADR-0197, ADR-0198.
+9. **Bekannte Risiken / Review-Funde:** Kein realer Snapshot. TW-8 geschlossen. Agent-Self-Review ist kein PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** Runtime-Principal-Zuweisung extra gegatet. TW-8 extra gegatet.
+11. **Exakter nächster Schritt:** nicht erneut als offenen Apply-Slice öffnen. Aktueller Authoring-Block ist Draft-PR #187.
+12. **Zuerst lesen:** `docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md`, ADR-0198, Checkpoint V2.
 
 ## Historischer Arbeitsblock – Search/Privacy Post-Merge Continuity (`5057974629`)
 
