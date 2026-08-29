@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 
 import type { OrtZeile } from '@/lib/places/abbildung'
 import { ortAusZeile } from '@/lib/places/abbildung'
-import { ORT_LAND_UNIVERSUM, orteOrdnen } from '@/lib/places/suche'
+import { ORT_LAND_UNIVERSUM, ortIstExaktesLandAlias, orteOrdnen } from '@/lib/places/suche'
 import { placesSuchen, type PlacesSuchart, type PlacesZeilenLesen } from '@/lib/places/suche-lauf'
 
 function zeile(teil: Partial<OrtZeile> & Pick<OrtZeile, 'id' | 'name' | 'typ'>): OrtZeile {
@@ -202,7 +202,7 @@ describe('Ortssuche-Lauf / Production-Zeilenform', () => {
     assert.deepEqual(aufrufe, ['name', 'land'])
   })
 
-  test('ist das Land schon in der Namensmenge, bleibt das Universum vollständig und das Land steht vorn', async () => {
+  test('ist das Land schon in der Namensmenge, bleibt der selektive Nachzug vollständig und das Land steht vorn', async () => {
     const { lesen, aufrufe, limits } = leser({
       name: [...peruStaedte, peruLand],
       land: [peruLand],
@@ -329,19 +329,27 @@ describe('Ortssuche-Lauf / Production-Zeilenform', () => {
         landLimit = limit
         landFilter = filter
         const pool = [...laerm, norden, sueden]
-        const token = 'ZX'
-        const substring = pool.filter((zeile) => {
-          const text = `${zeile.name} ${zeile.keywords ?? ''}`
-          return text.toLowerCase().includes(token.toLowerCase())
+        const substring = pool.filter((eintrag) => {
+          const text = `${eintrag.name} ${eintrag.keywords ?? ''}`
+          return text.toLowerCase().includes('zx')
         })
-        const quelle = filter.includes('keywords.ilike.%') ? substring : pool
+        const exakt = pool.filter((eintrag) => {
+          const ort = ortAusZeile(eintrag)
+          return Boolean(ort && ortIstExaktesLandAlias(ort, 'ZX'))
+        })
+        const quelle = filter === ''
+          ? pool
+          : filter.includes('keywords.ilike.%')
+            ? substring
+            : exakt
         return { zeilen: quelle.slice(0, limit), problem: null }
       }
       return { zeilen: [], problem: null }
     }
     const ergebnis = await placesSuchen('ZX', 'ziel', lesen)
     assert.equal(ergebnis.problem, null)
-    assert.equal(landFilter, '')
+    assert.notEqual(landFilter, '')
+    assert.equal(landFilter.includes('keywords.ilike.%'), false)
     assert.ok(landLimit > 12)
     assert.equal(landLimit, ORT_LAND_UNIVERSUM)
     const laender = ergebnis.optionen?.filter((option) => option.typ === 'country') ?? []
@@ -358,6 +366,53 @@ describe('Ortssuche-Lauf / Production-Zeilenform', () => {
       ergebnis.optionen?.findIndex((option) => option.id === sueden.id) ?? -1,
     )
     assert.ok(stadtIndex > letzterExakt)
+  })
+
+  test('eine normale Stadt-Query überträgt nicht das ganze Länder-Universum', async () => {
+    const stadt = zeile({
+      id: 'geonames:2988507',
+      name: 'Paris',
+      typ: 'city',
+      country: 'France',
+      country_code: 'FR',
+      region: 'Île-de-France',
+      keywords: 'Paris, Ville de Paris',
+    })
+    const universum = Array.from({ length: 240 }, (_, index) =>
+      zeile({
+        id: `geonames:${9400000 + index}`,
+        name: `Country ${index + 1}`,
+        typ: 'country',
+        country: `Country ${index + 1}`,
+        country_code: 'ZZ',
+        keywords: `Country ${index + 1}, Nation ${index + 1}`,
+      }),
+    )
+    let landFilter = 'unset'
+    let uebertragen = -1
+    const lesen: PlacesZeilenLesen = async (art, filter, limit) => {
+      if (art === 'name') return { zeilen: [stadt], problem: null }
+      if (art === 'land') {
+        landFilter = filter
+        const quelle = filter === ''
+          ? universum
+          : universum.filter((eintrag) => {
+              const ort = ortAusZeile(eintrag)
+              return Boolean(ort && ortIstExaktesLandAlias(ort, 'Paris'))
+            })
+        const zeilen = quelle.slice(0, limit)
+        uebertragen = zeilen.length
+        return { zeilen, problem: null }
+      }
+      return { zeilen: [], problem: null }
+    }
+    const ergebnis = await placesSuchen('Paris', 'ziel', lesen)
+    assert.equal(ergebnis.problem, null)
+    assert.notEqual(landFilter, '')
+    assert.equal(landFilter.includes('keywords.ilike.%'), false)
+    assert.equal(uebertragen, 0)
+    assert.equal(ergebnis.optionen?.[0]?.id, stadt.id)
+    assert.equal(ergebnis.optionen?.some((option) => option.typ === 'country'), false)
   })
 
   test('Abreise holt Flughäfen, aber kein Länder-Alias', async () => {

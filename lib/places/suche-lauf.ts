@@ -9,9 +9,9 @@ import type { Ort, OrtOption, OrtRolle } from '@/lib/places/domain'
 import {
   ORT_ABFRAGE,
   ORT_LAND_UNIVERSUM,
-  ORT_LAND_UNIVERSUM_FILTER,
   landAliasNachzugNoetig,
   orteOrdnen,
+  ortLandAliasExaktfilter,
   ortNamensfilter,
   ortSchluesselfilter,
   schluesselErgaenzungNoetig,
@@ -69,14 +69,13 @@ export async function placesSuchen(
   let orte = orteAus(zeilen)
 
   if (landAliasNachzugNoetig(orte, raw, rolle)) {
-    // Kein Substring-Keyword-Filter mit kleinem Limit: kurze Exact-Aliase
-    // gehen sonst in der Teilstring-Menge verloren. Das typ-begrenzte
-    // Länder-Universum ist endlich; Exact-Aliase können darin nicht
-    // still abgeschnitten werden, solange ORT_LAND_UNIVERSUM ≥ Länderzahl.
-    const laender = await lesen('land', ORT_LAND_UNIVERSUM_FILTER, ORT_LAND_UNIVERSUM)
-    if (laender.problem) return { optionen: null, problem: laender.problem }
-    zeilen = zeilenMergen(zeilen, laender.zeilen)
-    orte = orteAus(zeilen)
+    const landFilter = ortLandAliasExaktfilter(raw)
+    if (landFilter) {
+      const laender = await lesen('land', landFilter, ORT_LAND_UNIVERSUM)
+      if (laender.problem) return { optionen: null, problem: laender.problem }
+      zeilen = zeilenMergen(zeilen, laender.zeilen)
+      orte = orteAus(zeilen)
+    }
   }
 
   if (schluesselErgaenzungNoetig(orte, raw, rolle)) {

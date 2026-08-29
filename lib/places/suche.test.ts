@@ -16,6 +16,7 @@ import {
   orteOrdnen,
   ortAnzeigeKontext,
   ortAnzeigeLabel,
+  ortLandAliasExaktfilter,
   ortNamensfilter,
   ortSchluesselfilter,
   schluesselErgaenzungNoetig,
@@ -564,7 +565,7 @@ describe('Ortssuche', () => {
 
   test('die Runtime enthält keine Länder-Allowlist', () => {
     const datei = readFileSync(join(hier, 'suche.ts'), 'utf8')
-    for (const name of ['Peru', 'China', 'Schweiz', 'Ruritanien', 'Congo', 'Sylvani', 'Zaxony', 'Zxyland'] as const) {
+    for (const name of ['Peru', 'China', 'Schweiz', 'Ruritanien', 'Congo', 'Sylvani', 'Zaxony', 'Zxyland', 'Paris'] as const) {
       assert.equal(datei.includes(name), false, name)
     }
   })
@@ -594,10 +595,15 @@ describe('Ortssuche', () => {
     assert.equal(landAliasNachzugNoetig(orte, 'Thailand', 'ziel'), true)
     assert.ok(ORT_LAND_UNIVERSUM > 12)
     assert.ok(ORT_LAND_UNIVERSUM >= 250)
+    const filter = ortLandAliasExaktfilter('Paris')
+    assert.ok(filter)
+    assert.equal(filter.includes('keywords.ilike.%Paris%'), false)
+    assert.match(filter, /keywords\.ilike\.Paris/)
+    assert.match(filter, /keywords\.ilike\."Paris,%"/)
     const lauf = readFileSync(join(hier, 'suche-lauf.ts'), 'utf8')
-    assert.match(lauf, /ORT_LAND_UNIVERSUM/)
+    assert.match(lauf, /ortLandAliasExaktfilter/)
+    assert.equal(lauf.includes('ORT_LAND_UNIVERSUM_FILTER'), false)
     assert.equal(lauf.includes('keywords.ilike.%'), false)
-    assert.equal(lauf.includes('ortLandAliasfilter'), false)
     const route = readFileSync(join(hier, '../../app/api/search/places/route.ts'), 'utf8')
     assert.match(route, /eq\('typ', 'country'\)/)
     assert.match(route, /filter \? anfrage\.or\(filter\) : anfrage/)

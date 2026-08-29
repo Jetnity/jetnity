@@ -16,15 +16,12 @@ const ORT_TREFFER_MAX = 8
 export const ORT_ABFRAGE = 40
 
 /**
- * Hartes Leselimit für den Länder-Alias-Nachzug.
- * Muss ≥ der Anzahl `typ = country` in `public.places` bleiben.
- * Ein kleineres Limit (früher 12) kann exakte Kurz-Aliase hinter
- * Substring-Treffern still abschneiden.
+ * Sicherheitslimit für den selektiven Exact-Alias-Nachzug.
+ * Muss ≥ der Anzahl Länder bleiben, die dasselbe Exact-Token teilen
+ * können, und ≥ der aktuellen Länderzahl als harte Kappe.
+ * Es ist kein Freibrief, das ganze Universum zu übertragen.
  */
 export const ORT_LAND_UNIVERSUM = 500
-
-/** Leerer Filter: der Nachzug liest das typ-begrenzte Länder-Universum. */
-export const ORT_LAND_UNIVERSUM_FILTER = ''
 
 const STARK_RANG = 2_800
 const MIN_RANG_BEI_STARK = 1_500
@@ -65,6 +62,34 @@ export function ortSchluesselfilter(suche: string): string | null {
   return teile.map((teil) => `keywords.ilike.%${teil}%`).join(',')
 }
 
+function postgrestIlike(feld: string, muster: string): string {
+  return /[,%() ]/.test(muster) ? `${feld}.ilike."${muster}"` : `${feld}.ilike.${muster}`
+}
+
+/**
+ * Selektiver Länder-Nachzug: nur exakter Name oder exaktes Komma-Token.
+ * Kein Substring-`ilike %token%` und kein unfilteriertes Universum.
+ */
+export function ortLandAliasExaktfilter(suche: string): string | null {
+  if (sucheIstPlatzhalter(suche)) return null
+  const teile = sucheFilter(suche)
+  if (teile.length === 0) return null
+  return teile
+    .flatMap((teil) => [
+      postgrestIlike('name', teil),
+      postgrestIlike('keywords', teil),
+      postgrestIlike('keywords', `${teil},%`),
+      postgrestIlike('keywords', `${teil}, %`),
+      postgrestIlike('keywords', `%, ${teil}`),
+      postgrestIlike('keywords', `%,${teil}`),
+      postgrestIlike('keywords', `%, ${teil},%`),
+      postgrestIlike('keywords', `%,${teil},%`),
+      postgrestIlike('keywords', `%, ${teil}, %`),
+      postgrestIlike('keywords', `%,${teil}, %`),
+    ])
+    .join(',')
+}
+
 function schluesselwoerter(keywords: string | readonly string[] | null | undefined): string[] {
   if (typeof keywords === 'string') {
     return keywords
@@ -92,6 +117,10 @@ function istExaktesLandAlias(ort: Ort, suche: string): boolean {
   if (ort.typ !== 'country') return false
   const raw = suche.trim()
   return gleichGefaltet(ort.name, raw) || schluesselwortGenau(ort.keywords, raw)
+}
+
+export function ortIstExaktesLandAlias(ort: Ort, suche: string): boolean {
+  return istExaktesLandAlias(ort, suche)
 }
 
 function typBonus(ort: Ort, rolle: OrtRolle): number {
@@ -224,10 +253,10 @@ export function schluesselErgaenzungNoetig(orte: Ort[], suche: string, rolle: Or
 }
 
 /**
- * Reiseziel: das begrenzte Länder-Universum nachziehen.
- * Ein Substring-Nachzug mit kleinem Limit kann kurze Exact-Tokens verlieren;
- * ein einzelner Treffer in der Namensmenge reicht nicht, wenn dasselbe Alias
- * mehreren Ländern gehört.
+ * Reiseziel: selektiven Exact-Alias-Nachzug anstossen.
+ * Immer für `ziel`, damit geteilte Aliase vollständig bleiben, auch wenn
+ * schon ein Land in der Namensmenge steht. Der Lauf selbst überträgt
+ * nicht das ganze Universum.
  */
 export function landAliasNachzugNoetig(_orte: Ort[], suche: string, rolle: OrtRolle): boolean {
   if (rolle !== 'ziel') return false
