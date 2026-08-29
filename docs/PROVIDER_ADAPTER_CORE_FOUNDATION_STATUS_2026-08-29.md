@@ -13,7 +13,7 @@ Kommentar `5463705604` gegen den damaligen Review-Head `6f9a8b76`:
 
 - Funktionale P1-Fixes bleiben: aktuelle Terminal-Fehler behalten ihre Kind; jedes Runtime-Modul trägt `import 'server-only'`.
 - Lint von CI #1207 / Run `33264416824` war kein main-Merge-Konflikt. Ursache: `scripts/server-only-empty.cjs` traf ESLint 9 Flat-Config (`react-hooks/set-state-in-effect` ohne Plugin in diesem Objekt). Behoben durch lint-sicheren `.js`-Stub. Keine Regel abgeschwächt.
-- Continuity: S5-B Production-Migration `20260829140000_trip_item_commercial_provenance` angewendet/verifiziert. Runtime-Write unallokiert. Kein realer Snapshot. TW-8 geschlossen. Checkpoint V2 nicht zurückgeschrieben.
+- Continuity: S5-B Production-Migration `20260829140000_trip_item_commercial_provenance` angewendet/verifiziert. Runtime-Write unallokiert. Kein realer Snapshot. TW-8 geschlossen. Checkpoint V2 nicht zurückgeschrieben. HANDOFF §8 / START_HERE current-work no longer name #173/#180 as open current slices.
 
 ## Gates
 

@@ -34,6 +34,7 @@ Exact Head ist der Commit dieses Stamps; live am PR prüfen. `main` live prüfen
 | Kein realer Snapshot; TW-8 geschlossen | ja |
 | `main` nicht als eingefrorene SHA festgeschrieben | ja |
 | `origin/main` gemerged, `behind_by=0` zum Gate-Zeitpunkt | ja |
+| HANDOFF §8 / START_HERE no longer treat #173/#180 as current open work | ja |
 | Historische Pre-Apply-Sätze als historisch markiert, nicht gelöscht | ja |
 
 ## 3. Erhaltene funktionale P1-Fixes
