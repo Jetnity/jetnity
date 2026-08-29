@@ -397,7 +397,7 @@ Draft-PR #88 bleibt historische Evidence vom 26.08.2026, nicht Current Truth. Un
 
 **Aktuell: Draft-PR #159 / AP-5-S4. Live-Evidence gewinnt.**
 
-- Draft-PR #159 ist der AP-5-S4-Transport (MFA-Step-up vor verified-factor Unenroll über `challenge` / `verify`). Exakt erster unfertiger Schritt = unabhängiger Technical-Lead Exact-Head-Review. Autor-Agent setzt **kein Ready** und **kein Merge**. Kein S5. Keine Vercel-Setting-Mutation. Kein AP-7-S2.
+- Draft-PR #159 ist der AP-5-S4-Transport (MFA-Step-up vor verified-factor Unenroll über `challenge` / `verify`, inkl. Session/AAL-Reconcile nach Review `5056084065`). Exakt erster unfertiger Schritt = unabhängiger Technical-Lead Exact-Head-**Re-Review**. Autor-Agent setzt **kein Ready** und **kein Merge**. Kein S5. Keine Vercel-Setting-Mutation. Kein AP-7-S2.
 - PR #157 / AP-5-S3 und PR #152 / Next 16 S2 sind auf der Baseline `5920860e` integriert. Ältere „Draft-PR #156 unabhängig reviewen“-Sätze sind Pre-S4-Evidence.
 
 **Historisch / self-expiring für PR #151. Live-Evidence gewinnt.**

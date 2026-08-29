@@ -4981,10 +4981,15 @@ Festlegung innerhalb S1, ohne Dependency-Bump:
 2. Nur `currentLevel === 'aal2'` ist ausreichender Step-up. `nextLevel === 'aal2'` allein berechtigt keinen Unenroll.
 3. Unverified-factor Unenroll (Enroll-Abbruch) bleibt AAL1 und braucht keinen Dialog.
 4. Bereits ausreichendes AAL2 erzwingt keinen Challenge-Dialog.
-5. Erfolg darf nur nach bestätigtem `unenroll` behauptet werden. Verify allein, UI-Flags oder ein fehlgeschlagenes Unenroll nach Step-up sind kein Gesamterfolg.
-6. Factor-/Challenge-/Session-IDs, Tokens und OTP gehören nicht in Nutzertexte, URLs, Logs oder Analytics. Roh-GoTrue wird auf dichte Produktcopy abgebildet.
-7. Das gilt nur für diesen Vorgang. Login-MFA bleibt skippable. Admin-AAL2, Recovery, signed-in Reauthentication und S3-Logout bleiben getrennte Authorities.
-8. S5, Consumer-AAL2, Auth-Config, Passkeys/OAuth und Service-Role-Sessionlisten bleiben ausserhalb dieses ADR.
+5. Erfolg darf nur nach bestätigtem `unenroll` **und** bestätigtem Sitzungs-/AAL-Abgleich (`refreshSession` plus Re-read) behauptet werden. Verify allein, UI-Flags oder ein fehlgeschlagenes Unenroll nach Step-up sind kein Gesamterfolg.
+6. Schlägt Refresh/AAL-Abgleich nach bereits erfolgreichem verified Unenroll fehl, ist das kein clean success: der Faktor ist weg, die lokale Sitzung wird fail-closed beendet (`signOut({ scope: 'local' })`). Das erfindet keine neue Session-Architektur.
+7. Factor-/Challenge-/Session-IDs, Tokens und OTP gehören nicht in Nutzertexte, URLs, Logs oder Analytics. Roh-GoTrue wird auf dichte Produktcopy abgebildet.
+8. Jetnity fordert den Step-up nur für diesen Vorgang an. Die aktuelle Sitzung kann dabei technisch auf AAL2 angehoben werden. Das aktiviert keine globale Consumer-MFA-Pflicht.
+9. Existieren mehrere verified TOTP-Faktoren, wird ein anderer als der zu entfernende für die Challenge bevorzugt.
+10. Login-MFA bleibt skippable. Admin-AAL2, Recovery, signed-in Reauthentication und S3-Logout bleiben getrennte Authorities.
+11. S5, Consumer-AAL2, Auth-Config, Passkeys/OAuth und Service-Role-Sessionlisten bleiben ausserhalb dieses ADR.
+
+**Nachtrag, 29. August 2026 – Review `5056084065`.** P1 Session/AAL-Reconcile nach verified Unenroll und P2 Challenge-Faktor-Auswahl sind Implementation-Pflicht dieses ADR, kein neues Product-Owner-Gate.
 
 **Kontext:** Gate 0 / ADR-0182 hat festgestellt, dass GoTrue für verified-factor Unenroll `aal2` verlangt und die UI nicht hochsteppt. S1–S3 haben ehrliche Lagen, signed-in Passwortänderung und Logout-Scopes geliefert. Issue #158 ist der Step-up-UI-Slice über dieselbe User-API.
 

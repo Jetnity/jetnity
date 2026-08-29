@@ -1,7 +1,7 @@
 # Jetnity – AP-5-S4 Account Security MFA Step-up – Status
 
 Stand: 29. August 2026  
-Status: **IMPLEMENTIERT / DRAFT / STOPP FÜR UNABHÄNGIGEN TECHNICAL-LEAD EXACT-HEAD-REVIEW / KEIN READY / KEIN MERGE / KEIN S5**  
+Status: **REVIEW-FIX / DRAFT / STOPP FÜR UNABHÄNGIGEN TECHNICAL-LEAD EXACT-HEAD RE-REVIEW / KEIN READY / KEIN MERGE / KEIN S5**  
 Workstream: Account / Security  
 Cursor-Agent: **`Account plattform audit vorbereitung 14`**  
 Cursor-Session/Run-ID: `bc-d8fd980a-b4e5-43e1-8a38-a1480fd65132`  
@@ -39,10 +39,12 @@ Runtime nur auf `/account/security` für das Entfernen eines TOTP-Faktors:
 4. Nach Verify erneuter AAL-Check; Unenroll nur wenn `currentLevel === 'aal2'`
 5. Abbruch, falscher Code, Challenge-/Verify-Fehler oder AAL nicht bestätigt → kein Unenroll
 6. Unenroll-Fehler nach erfolgreichem Step-up → `unenroll_failed_nach_step_up`, kein Gesamterfolg
-7. Challenge-ID nur in der Async-Funktion; OTP nicht persistiert; keine IDs in der UI
-8. Copy sagt ausdrücklich: Bestätigung gilt nur für diesen Vorgang, nicht für alle Kontobereiche
-9. Fokusfalle, Escape bricht ab ohne Unenroll, `autocomplete="one-time-code"`, `aria-live` / `aria-busy`
-10. Login-MFA, Recovery, signed-in Reauth, S3-Logout und Admin-AAL2 bleiben getrennte Authorities
+7. Nach **verified** Unenroll: `refreshSession()` plus erneutes AAL-/Faktorenlesen. Clean success nur wenn der Sitzungsstand bestätigt ist. Refresh-/AAL-Fehler danach → Faktor ist weg, lokale Sitzung fail-closed (`signOut({ scope: 'local' })` + S3-local Action), kein clean success
+8. Challenge-ID nur in der Async-Funktion; OTP nicht persistiert; keine IDs in der UI
+9. Copy: Jetnity fordert den Step-up nur für diesen Vorgang an; die Sitzung kann technisch auf AAL2 angehoben werden; keine globale Consumer-MFA-Pflicht
+10. Bei mehreren verified TOTP-Faktoren wird ein **anderer** Faktor für die Challenge bevorzugt
+11. Fokusfalle, Escape bricht ab ohne Unenroll, `autocomplete="one-time-code"`, `aria-live` / `aria-busy`
+12. Login-MFA, Recovery, signed-in Reauth, S3-Logout und Admin-AAL2 bleiben getrennte Authorities. Unverified Enroll-Abbruch bleibt ohne Refresh.
 
 Nicht geliefert: globales Consumer-AAL2, Auth-/MFA-Config, Sessionliste, Passkeys/WebAuthn, Service Role, Migration/RLS/Identity, AP-5-S5.
 
@@ -53,7 +55,9 @@ Nicht geliefert: globales Consumer-AAL2, Auth-/MFA-Config, Sessionliste, Passkey
 | Nur `currentLevel === 'aal2'` reicht für verified Unenroll | **current** | `aalIstAusreichendFuerVerifiedUnenroll` |
 | AAL1 + verified TOTP braucht `challenge` / `verify` | **current** | `mfaUnenrollPlanen` → `step_up` |
 | Unverified Unenroll bleibt AAL1 | **current** | Plan `direkt_unenroll` / `unverified` |
-| Erfolg erst nach bestätigtem Unenroll | **current** | Reducer akzeptiert `ausfuehren_ok` nur aus `working` + `bestaetigen`/`entfernen` |
+| Erfolg erst nach bestätigtem Unenroll **und** Sitzungs-/AAL-Abgleich | **current** | `refreshSession` + Re-read; `ausfuehren_ok` nur wenn `mfaSitzungNachUnenrollIstSauber` |
+| Refresh-Fehler nach Unenroll ist kein clean success | **current** | `unenroll_ok_sitzung_unbestaetigt` + lokales `signOut({ scope: 'local' })` |
+| Challenge bevorzugt anderen verified Faktor | **current** | `nutzbarerChallengeFaktor` |
 | Abbruch/Fehler unenrollen nicht | **current** | `abbrechen` setzt Idle; Fehler ohne `unenroll` |
 | Kein globales Consumer-AAL2 | **current** | Dialogcopy; `proxy.ts` unverändert; `supabase/config.toml` unverändert |
 | Keine IDs / OTP / Raw-Auth in Nutzertext | **current** | `mfaStepUpFehlerIstDicht` plus UI-Vertrag |
@@ -65,14 +69,13 @@ Siehe `docs/AP5_S4_LOCAL_TEST_EVIDENCE_2026-08-29.md`.
 
 | Lauf | Ergebnis |
 | --- | --- |
-| Focused S4-Unit | **22/22 pass** (`lib/auth/account-mfa-step-up.test.ts`) |
+| Focused S4-Unit | **27/27 pass** (`lib/auth/account-mfa-step-up.test.ts`) |
 | S4 Vertrag/A11y | **5/5 pass** (`lib/auth/ap5-s4-mfa-step-up.test.ts`) |
-| Focused inkl. Gate-0/S1/S3/Fehler-Regression | **49/49 pass** |
-| `npm test` | **2538/2538 pass** |
+| `npm test` | **2543/2543 pass** |
 | Typecheck / Lint / Hygiene / Build | pass; lint 0 errors / 133 warnings |
 | `auth:pruefen` | 55/55, 242 Schlüssel |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet |
-| GitHub Actions / Vercel Preview | Exact Head `97a8f7b9`: Actions `33223840410` SUCCESS; Vercel `8R8iDdugyWM5HjL3Z1C81gtZFCBB` SUCCESS; GitHub Deployment `6150698033` success |
+| GitHub Actions / Vercel Preview | Prior-Head `6f46a299` / `97a8f7b9` Gates sind durch Review-Fix `5056084065` ungültig. Neuer Head live prüfen. |
 
 ## 5. DB / RLS / Production-Grenze
 
@@ -90,7 +93,8 @@ Keine neuen laufenden Kosten. Keine Provider. Keine Secrets.
 - Kein authentifizierter Browser-/Real-Device-Beweis (`/account/security` ist auth-gated; kein Testkonto).
 - `main` Branch Protection bleibt `protected=false`.
 - Agent-Self-Review ist kein PASS.
-- Exact-Head `97a8f7b9` Gates: Actions `33223840410` SUCCESS, Vercel `8R8iDdugyWM5HjL3Z1C81gtZFCBB` SUCCESS; dieser Stamp invalidiert sie für den neuen Head.
+- Review `5056084065` P1 ist lokal geschlossen: Session/AAL nach verified Unenroll wird reconciled; Refresh-Fehler ist fail-closed lokal. P2 Challenge-Faktor-Auswahl ist umgesetzt.
+- Prior-Gates auf `6f46a299` / `97a8f7b9` gelten nicht für diesen Head.
 
 ## 8. Offene Freigaben
 
@@ -98,7 +102,7 @@ S4 braucht kein Product-Owner-Sondergate. Es wurde keine fundamentale Auth/MFA/A
 
 ## 9. Exakter nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #159. Kein Ready. Kein Merge. Kein AP-5-S5 durch den Autor-Agenten. Jeder neue Push invalidiert Prior-Gates.
+Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #159 nach CHANGES REQUIRED `5056084065`. Kein Ready. Kein Merge. Kein AP-5-S5 durch den Autor-Agenten. Jeder neue Push invalidiert Prior-Gates.
 
 ## 10. Zuerst lesen
 
