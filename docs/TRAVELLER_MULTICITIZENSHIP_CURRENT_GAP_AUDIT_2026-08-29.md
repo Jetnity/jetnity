@@ -39,10 +39,12 @@ Verifiziert in diesem Authoring-Lauf, 29. August 2026.
 
 | Prüfung | Live-Stand |
 | --- | --- |
-| Task-Baseline / `origin/main` Re-Fetch vor Handoff | `085c95b22130232c5b5819ef8a4bcc302cc0f52b` – `Persist provider core post-merge checkpoint` |
+| Task-Baseline | `085c95b22130232c5b5819ef8a4bcc302cc0f52b` – `Persist provider core post-merge checkpoint` |
+| `origin/main` Re-Fetch vor Handoff | `897f8e0b1975eddf96f88e6f2746a11e93eb8fe4` – `Integrate HBX Hotels contract audit` |
+| Drift vs Task-Baseline | live `main` ist **9 Commits voraus**; alle 9 sind HBX-Hotels-Audit-Docs. **Keine** Traveller-/Readiness-/Trip-/Safety-/Schema-/UI-Datei geändert |
 | Audit-Branch | `audit/traveller-multicitizenship-current-gap-2026-08-29` |
-| Merge-Base gegen `origin/main` | exakt `085c95b2` |
-| Ahead / Behind nach Re-Fetch | **1 / 0** vor diesem Audit-Stamp (nur Task-Commit `dced988b`); dieser Stamp erzeugt einen neueren Head |
+| Merge-Base gegen Task-Baseline | exakt `085c95b2` |
+| Ahead / Behind gegen live `origin/main` | **2 / 9** vor dem Test-Evidence-Stamp; dieser Stamp erzeugt einen neueren Head. **Kein Rebase** — Traveller-Flächen identisch zur Baseline |
 | Draft-PR | [#198](https://github.com/Jetnity/jetnity/pull/198) OPEN / Draft / MERGEABLE |
 | Prior Task-Head Gates | Actions Run `33268269030` SUCCESS; Vercel Preview `3PNsiWMEYDjmSnUDQeYQogkj2P69` SUCCESS — gelten **nicht** für den Stamp-Head |
 | `main` Branch Protection | diese Session: API `403` / nicht frisch lesbar; letzte dokumentierte Live-Evidence `protected=false` |

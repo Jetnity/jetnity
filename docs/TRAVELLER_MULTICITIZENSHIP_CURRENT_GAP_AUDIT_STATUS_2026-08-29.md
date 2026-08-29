@@ -33,10 +33,11 @@ Dieser Agent behauptet nicht, die sichtbare UI sei umbenannt.
 | --- | --- |
 | Repository | `Jetnity/jetnity` |
 | Task-Baseline | `main @ 085c95b22130232c5b5819ef8a4bcc302cc0f52b` |
-| `origin/main` Re-Fetch vor diesem Stamp | `085c95b22130232c5b5819ef8a4bcc302cc0f52b` – 0 behind |
+| `origin/main` Re-Fetch vor diesem Stamp | `897f8e0b1975eddf96f88e6f2746a11e93eb8fe4` – HBX Hotels contract audit integriert |
+| Drift | **9 behind / 2 ahead** gegen live `main`. Diff `085c95b2..897f8e0b` = nur `docs/PROVIDER_HBX_*`. Traveller-Surfaces unverändert. Kein Rebase |
 | Branch | `audit/traveller-multicitizenship-current-gap-2026-08-29` |
-| Merge-Base | `085c95b2` |
-| Ahead / Behind vor Stamp | **1 / 0** (Task-Commit `dced988b`) |
+| Merge-Base gegen Task-Baseline | `085c95b2` |
+| Ahead / Behind vor erstem Audit-Stamp | **1 / 0** gegen damaliges `origin/main` (Task-Commit `dced988b`) |
 | Exact Head | der Commit dieses Continuity-Stamps; live an PR #198 prüfen |
 | Draft-PR | #198 OPEN / Draft / MERGEABLE |
 | `main` Branch Protection | in dieser Session nicht frisch lesbar (`403`); letzte dokumentierte Evidence `protected=false` |
@@ -85,11 +86,12 @@ Lokale Gates auf dem Authoring-Stand vor/mit diesem Stamp. CI/Vercel des Stamp-H
 
 | Gate | Ergebnis |
 | --- | --- |
-| Fokussierte Traveller/Readiness-Tests | werden in diesem Lauf ausgeführt und im Handoff/Self-Review mit echtem Ergebnis nachgetragen |
-| `origin/main` Re-Fetch | `085c95b2` — **0 behind** |
+| `node --import tsx --test` Traveller/Readiness-Fokus | **114/114 pass, 0 fail** (`account-registry`, `official-option-scope`, `traveller-kontext`, `traveller-anfrage`, `engine`, `p2-ta04-write-path-inventory`, `vergleich`) |
+| Volle `npm test` / typecheck / lint / Production-Build | **nicht** gelaufen; Docs-only, kein Runtime-Diff |
+| Hygiene (`check:dead` / exports / deps / api-schutz / schema-bezug) | **nicht** gelaufen |
+| `origin/main` Re-Fetch | `897f8e0b` — **9 behind / Traveller-Diff leer**; kein Rebase |
 | Supabase / Production-Katalog | **nicht** gelaufen |
-| Production-Build dieses Stamps | **nicht** als Fertigbehauptung; Docs-only |
-| GitHub Actions / Vercel dieses Heads | nach Push live prüfen; Prior-Head ungültig |
+| GitHub Actions / Vercel dieses Heads | nach diesem Stamp live prüfen; Prior-Heads `dced988b` und `c12c5c19` ungültig |
 
 ## 6. Security / privacy / truth
 

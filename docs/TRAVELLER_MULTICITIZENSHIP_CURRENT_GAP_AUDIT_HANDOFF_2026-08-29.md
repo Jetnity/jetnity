@@ -21,9 +21,10 @@ Kein Redesign. Keine Implementierung. Kein Ready. Kein Merge.
 | Feld | Wert |
 | --- | --- |
 | Branch | `audit/traveller-multicitizenship-current-gap-2026-08-29` |
-| Baseline `origin/main` | `085c95b22130232c5b5819ef8a4bcc302cc0f52b` |
-| Re-Fetch vor Handoff | dieselbe SHA, **0 behind** |
-| Merge-Base | `085c95b2` |
+| Task-Baseline | `085c95b22130232c5b5819ef8a4bcc302cc0f52b` |
+| Re-Fetch vor Handoff | `897f8e0b1975eddf96f88e6f2746a11e93eb8fe4` |
+| Drift | **9 behind / 2 ahead**. Nur HBX-Hotels-Audit-Docs auf `main`. Traveller-Surfaces byte-gleich zur Baseline. Kein Rebase |
+| Merge-Base gegen Task-Baseline | `085c95b2` |
 | Exact Head | Stamp-Commit dieses Handoffs; live an PR #198 lesen |
 | Ahead nach Stamp | Implementierung/Docs dieses Audits plus Task-Commit |
 | Cloud-Run | https://cursor.com/agents/bc-060f0713-5f92-46b8-9631-72366bc8fb32 |
@@ -63,12 +64,16 @@ Production-Katalog: Repository-Acceptance vorhanden; dieser Agent hat Supabase n
 
 ## 5. Tests / CI / Preview
 
-Authoring-Gates (fokussierte Tests) werden vor Handoff lokal ausgeführt. Ergebnis im Self-Review.
+Lokale Authoring-Gates, tatsächlich gelaufen:
+
+- `node --import tsx --test` auf `lib/traveller/account-registry.test.ts`, `lib/readiness/official-option-scope.test.ts`, `lib/readiness/traveller-kontext.test.ts`, `lib/readiness/traveller-anfrage.test.ts`, `lib/readiness/engine.test.ts`, `lib/readiness/p2-ta04-write-path-inventory.test.ts`, `lib/readiness/vergleich.test.ts`
+- Ergebnis: **114/114 pass, 0 fail**
+- Nicht gelaufen: volle `npm test`, typecheck, lint, Production-Build, Hygiene, Supabase
 
 CI/Vercel:
 
 - Prior Task-Head `dced988b`: Actions `33268269030` SUCCESS; Vercel Preview `3PNsiWMEYDjmSnUDQeYQogkj2P69` SUCCESS.
-- Dieser Stamp erzeugt einen neueren Head. Alte Gates sind ungültig. Reviewer muss Exact-Head-Gates neu lesen.
+- Docs-Stamp `c12c5c19` und dieser Test-Evidence-Stamp erzeugen neuere Heads. Alte Gates sind ungültig. Reviewer muss Exact-Head-Gates neu lesen.
 
 ## 6. DB / RLS / Production-Grenze
 

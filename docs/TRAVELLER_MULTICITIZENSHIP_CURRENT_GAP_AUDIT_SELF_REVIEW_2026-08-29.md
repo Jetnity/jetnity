@@ -17,7 +17,7 @@ Exact Head: Stamp-Commit dieses Reviews; live an PR #198 prüfen
 | Keine globalen Current-State-Dateien | ja | `ACTIVE_WORK_STATUS.md`, `JETNITY_HANDOFF.md`, `ROADMAP.md`, `DECISIONS.md`, `JETNITY_START_HERE.md` unberührt |
 | Kein Ready / Merge / Folgeslice | ja | Handoff STOP |
 | Current Truth neu rekonstruiert, 26-Aug nicht kopiert | ja | Delta-Tabelle im Audit; P1-TA-02 / P2-TA-06 gegen aktuellen Code neu gelesen |
-| `origin/main` vor Handoff neu geholt | ja | `085c95b2`, 0 behind |
+| `origin/main` vor Handoff neu geholt | ja | jetzt `897f8e0b`; **9 behind**, nur HBX-Docs; Traveller-Diff leer; kein Rebase |
 
 Bewusste Policy-Spannung: Progress-Persistence verlangt sonst ein Update von `docs/ACTIVE_WORK_STATUS.md`. Der **versionierte Task** verbietet genau das. Continuity dieses Blocks liegt in Status/Handoff/Self-Review.
 
@@ -60,14 +60,30 @@ Nicht behauptet:
 
 ## 5. Tests tatsächlich gelaufen
 
-Siehe nachgetragenes Ergebnis unten nach dem lokalen Lauf. Nicht gelaufene Gates werden nicht als grün behauptet.
+Lokal, Docs-only-Verifikation der Audit-Claims:
+
+```
+node --import tsx --test \
+  lib/traveller/account-registry.test.ts \
+  lib/readiness/official-option-scope.test.ts \
+  lib/readiness/traveller-kontext.test.ts \
+  lib/readiness/traveller-anfrage.test.ts \
+  lib/readiness/engine.test.ts \
+  lib/readiness/p2-ta04-write-path-inventory.test.ts \
+  lib/readiness/vergleich.test.ts
+```
+
+Ergebnis: **8 Suites, 114 tests, 114 pass, 0 fail.**
+
+Nicht gelaufen und daher nicht als grün behauptet: volle `npm test`, `tsc`, ESLint, `next build`, Hygiene-Checks, `db:*`, Browser, Supabase.
 
 ## 6. Residual / Reviewer-Hinweise
 
 1. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` sagt noch „S1 Draft-PR #145“. Das ist Current-State-Drift auf `main`, außerhalb dieses Diffs.
 2. Checkpoint V2 sagt, der kanonische Vertrag dürfe nicht erneut inventarisiert werden. Dieser Audit inventarisiert **Restlücken**, erfindet den Vertrag nicht neu. Falls der Reviewer das als Duplicate-Audit wertet: der Task hat die Rekonstruktion ausdrücklich verlangt.
 3. `officialFuerItem` bleibt traveller+land-scharf. Das ist nach P1-TA-02 fail-closed, nicht der alte `[0]`-Kollaps.
-4. Jeder neue Push invalidiert Prior-Gates von `dced988b`.
+4. Jeder neue Push invalidiert Prior-Gates von `dced988b` und `c12c5c19`.
+5. Live `main` wanderte während des Laufs um 9 HBX-Docs-Commits. Das ändert die Traveller-Claims nicht; ein Rebase wurde bewusst unterlassen.
 
 ## 7. Verdict des Autors
 
