@@ -5089,7 +5089,7 @@ Festlegung innerhalb S1, ohne Dependency-Bump:
 ## ADR-0196 – Visitor Search: exaktes Länder-Alias ist Ziel-Namenswahrheit
 
 **Datum:** 29. August 2026  
-**Status:** Runtime-Korrektur auf Draft-PR #168 / Issue #109. Kein neuer Search-Provider. Keine Migration.
+**Status:** Runtime-Korrektur integriert über PR #172 und Recovery-PR #173 auf `main @ ade03511`. Live Production API smoke 29. August 2026 PASS. Issue #109 CLOSED / COMPLETED. Kein neuer Search-Provider. Keine Migration.
 
 **Entscheidung:**
 
@@ -5136,6 +5136,10 @@ Live Production hat Country-`keywords`, die auf Whitespace enden. Ranking trimmt
 **Nachtrag 29. August 2026 – kein Universum-Transfer auf dem Hot Path (TL `5057811180`):**
 
 Den gesamten `typ = country`-Bestand bei jeder Zielsuche zu lesen (240 Zeilen, allein Keywords ~207 KB) belastet normale Queries wie `Paris`. Der Nachzug bleibt für `ziel` aktiv, damit geteilte Aliase vollständig sind, überträgt aber nur Exact-Name- oder Exact-Komma-Token-Treffer. Limit 500 ist Sicherheitskappe, kein Universum-Scan. Truncation wäre nur möglich, wenn mehr Länder dasselbe Exact-Token teilen als 500. Kein Provider, keine Migration, keine Allowlist. `abreise`, Alias-Anzeige und Shared-Alias-Disambiguierung unverändert.
+
+**Nachtrag 29. August 2026 – Post-Merge Production Smoke nach PR #173:**
+
+Technical-Lead PASS `5057950183` auf Exact Head `d44d9a7f`; Merge `ade03511`. Live `GET https://jetnity-app.vercel.app/api/search/places` erfüllt Country-first für Peru/China/Schweiz, disambiguiert Congo CD/CG, liefert kurze Aliase LI/AS/SI vollständig, trifft Trim-End-Tokens `Kokos`/`Illes`/`Feroeer`, lässt `Paris` ohne Country-Zeile und hält `abreise` stadt-/IATA-geführt. Evidence: `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_POST_MERGE_SMOKE_2026-08-29.md`. Technical Lead hat Issue #109 anschliessend CLOSED / COMPLETED. Residual P2: Mobile Safari Real-Device.
 
 **Nachtrag 29. August 2026 – mehrdeutige exakte Länder-Aliase (TL `5057687985`):**
 

@@ -147,7 +147,8 @@ TW-8 bleibt hinter Provider S5-B / belastbarer realer Commercial Provenance gega
 
 Separate Search-/Homepage-Themen:
 
-- Issue #109 – Country-Alias-Ranking: PR #172 ist auf `main` integriert, Live-Production hat die Abnahme invalidiert. **Recovery in Arbeit** auf Draft-PR #173 / `Visitor search correctness 1` / Session `bc-020d3296-0cd7-4e36-8373-47578af701ce`. Unmittelbarer TL-Fund `5057889604` (Trim-Semantik im selektiven Retrieval) wird im selben Slice behoben. Nicht gemergt. Kein Ready durch den Autor.
+- Issue #109 – Country-Alias-Ranking: PR #172 plus Recovery-PR #173 auf `main @ ade03511` integriert. Live Production API smoke PASS. Technical Lead hat #109 **CLOSED / COMPLETED**. Residual P2: Mobile Safari Real-Device. PR #178 ist nur Docs/Continuity-Träger; Live-Zustand prüfen. Auf `main` ist die Pre-Merge-#178-Klausel historisch.
+- Issue #169 – PrivacyBee Schweiz Gate 0: über #175/#176 auf `main` integriert, **CLOSED / COMPLETED**. Keine Vendor-Aktivierung. Keine neuen Kosten.
 - Issue #110 – natürliche Homepage-Mehrziel-Eingabe: dokumentiert, **nicht gestartet**.
 
 ## 4. Provider / Commercial Provenance
@@ -310,7 +311,7 @@ Nächster Schritt:
 - Direction A
 - Admin D–K
 - D1 / G1
-- Issue #109
+- Issue #109 CLOSED / COMPLETED — Residual P2 Mobile Safari für den nächsten Search-/Homepage-UX-Slice; kein automatischer Folgeslice
 - Issue #110
 - Homepage-Mehrziel-Runtime
 - neue AAL2-Arbeit

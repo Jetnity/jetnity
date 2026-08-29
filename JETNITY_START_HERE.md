@@ -1,7 +1,7 @@
 # Jetnity – Startpunkt für neue Chats und Agenten
 
 Stand: 29. August 2026  
-Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114, PR #115, PR #117, PR #118, PR #120, PR #121, PR #126, PR #127, PR #129, PR #130, PR #131, PR #133, PR #135, PR #137, PR #138, PR #141, PR #142, PR #143, PR #144, PR #145, PR #147, PR #148, PR #149, PR #150, PR #152, PR #157, PR #160 und PR #164 sind integriert. AP-5 Gate 0 und AP-5-S1–S5 sind integriert. Technical-Lead-/Cursor-Operating-Standard ist integriert. Dual-Authority ist product-owner-freigegeben. AP-7-S1 Domain Contract ist integriert; kein automatisches AP-7-S2. Node 22 Runtime Consistency / PR #147 ist integriert. Next.js Framework Security Upgrade Gate 0 / PR #148, die Next-16-PO-Freigabe / PR #149, Next 16 Compatibility Prep S1 / PR #150 und Next 16 S2 / PR #152 sind integriert. Aktueller Search-Slice auf diesem Branch: Visitor Search Country Alias Ranking / Draft-PR #168 / Issue #109; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge, kein Issue #110. AP-6a Gate 0 ist auf der Baseline `main @ 6083ee63` integriert. Live-`main` immer live prüfen.**
+Status: **kanonischer erster Einstieg. Live-Evidence gewinnt immer. Production Gate A ist PASS; Production Gate B ist operativ PASS. PR #87, PR #94, PR #95, PR #96, PR #97, PR #98, PR #102, PR #106, PR #108, PR #111, PR #113, PR #114, PR #115, PR #117, PR #118, PR #120, PR #121, PR #126, PR #127, PR #129, PR #130, PR #131, PR #133, PR #135, PR #137, PR #138, PR #141, PR #142, PR #143, PR #144, PR #145, PR #147, PR #148, PR #149, PR #150, PR #152, PR #157, PR #160 und PR #164 sind integriert. AP-5 Gate 0 und AP-5-S1–S5 sind integriert. Technical-Lead-/Cursor-Operating-Standard ist integriert. Dual-Authority ist product-owner-freigegeben. AP-7-S1 Domain Contract ist integriert; kein automatisches AP-7-S2. Node 22 Runtime Consistency / PR #147 ist integriert. Next.js Framework Security Upgrade Gate 0 / PR #148, die Next-16-PO-Freigabe / PR #149, Next 16 Compatibility Prep S1 / PR #150 und Next 16 S2 / PR #152 sind integriert. Search #109 CLOSED / COMPLETED und PrivacyBee #169 CLOSED / COMPLETED auf `main @ ade03511`; PR #178 ist Continuity-Träger (Live-Zustand prüfen; auf `main` ist die Pre-Merge-Klausel historisch); kein aktiver Runtime-Agent; Issue #110 nicht gestartet. AP-6a Gate 0 ist auf der Baseline `main @ 6083ee63` integriert. Live-`main` immer live prüfen.**
 
 > **Do not blindly trust this file — live verify `origin/main`, PRs, CI, Vercel, Supabase and Branch Protection first.**
 
@@ -13,7 +13,8 @@ Current-State-Evidence und Recovery: `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_P
 
 Aktuelle operative Evidence:
 
-- `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_STATUS_2026-08-29.md` – Issue #109 / Draft-PR #168; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge, kein Issue #110
+- `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md` – aktueller New-Chat-Checkpoint; Search #109 + PrivacyBee #169 CLOSED/completed; #178-Träger-Klausel self-expiring auf `main`
+- `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_POST_MERGE_SMOKE_2026-08-29.md` – PR #173 gemergt; Live Production API smoke PASS; Issue #109 CLOSED / COMPLETED; kein Issue #110
 - `docs/AP6A_GATE0_LEGAL_FOUNDATION_STATUS_2026-08-29.md` – AP-6a Gate 0 auf `main @ 6083ee63` integriert; ältere Draft-#166-Zeilen sind Pre-#168-Evidence
 - `docs/AP5_S5_HONEST_CURRENT_SESSION_VIEW_STATUS_2026-08-29.md` – AP-5-S5 auf `main @ 765fc547` integriert; ältere Draft-#162-Zeilen sind Pre-AP-6a-Evidence
 - `docs/AP5_S4_ACCOUNT_SECURITY_MFA_STEP_UP_STATUS_2026-08-29.md` – AP-5-S4 auf `main @ 934d43da` integriert; ältere Draft-#159-Zeilen sind Pre-S5-Evidence
@@ -398,9 +399,11 @@ Draft-PR #88 bleibt historische Evidence vom 26.08.2026, nicht Current Truth. Un
 
 ## 16. Exakter nächster Technical-Lead-Schritt
 
-**Aktuell: Draft-PR #168 / Issue #109. Live-Evidence gewinnt.**
+**Aktuell: `main @ ade03511` / Search #109 CLOSED / PrivacyBee #169 CLOSED. Live-Evidence gewinnt.**
 
-- Draft-PR #168 ist der Visitor-Search-Country-Alias-Ranking-Transport. Exakt erster unfertiger Schritt = unabhängiger Technical-Lead Exact-Head-Review. Autor-Agent setzt **kein Ready** und **kein Merge**. Kein Issue #110. Keine Vercel-Setting-Mutation.
+- Search-Runtime ist über PR #173/#177 auf `main @ ade03511` integriert. Exact reviewed head `d44d9a7f`. TL PASS `5057950183`. Live Production API smoke PASS. Issue #109 CLOSED / COMPLETED (`5462109797`).
+- PrivacyBee Gate 0 ist über #175/#176 integriert. Issues #169 CLOSED / COMPLETED. Keine Vendor-Aktivierung. Bestehendes PO-Konto ohne Secrets.
+- PR #178 ist nur Continuity-Träger für `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md`. Live-Zustand von #178 prüfen. **Wenn dieser Checkpoint auf `main` liegt, ist die Pre-Merge-#178-Klausel historisch.** Exakt erster unfertiger Schritt dann = Live-Rekonstruktion + Binding-Build-Order-Auswahl. Kein Produkt-Slice ist automatisch autorisiert. Nur solange der Checkpoint noch nicht auf `main` liegt und #178 live offen ist: unabhängiger TL Exact-Head-Review; Autor setzt kein Ready/Merge. Kein Issue #110. AP-7-S2 bleibt PO-Gate. AP-6a Legal-Runtime bleibt geparkt. Keine Vercel-Setting-Mutation.
 - PR #167 / AP-6a Gate 0, PR #164 / AP-5-S5, PR #160 / AP-5-S4, PR #157 / AP-5-S3 und PR #152 / Next 16 S2 sind auf der Baseline `6083ee63` integriert. Ältere „Draft-PR #166 unabhängig reviewen“-Sätze sind Pre-#168-Evidence.
 
 **Historisch / self-expiring für PR #151. Live-Evidence gewinnt.**
@@ -423,7 +426,7 @@ TW7-A Runtime ist integriert (PR #106), Issue #103 CLOSED / completed. AP-4 ist 
 
 **Kein automatischer Folgeslice über S5 hinaus.** PR #138, PR #142, PR #152, PR #157 und PR #160 sind bereits gemergt; ältere Draft-Review-Sätze sind historische Evidence. AP-6/AP-7 bleiben nicht automatisch gestartet. Kein C2, kein Auth-Config-Push, kein erneuter Supabase-Write. S5-B Runtime/Persistenz/Schema/Migration ist **nicht** gestartet und nicht autorisiert. TW-8 bleibt geschlossen. Production C1 ist als `20260828015304` angewendet und live verifiziert; historische/develop-only Evidence bleibt `20260828120000`. Nach Merge von #162 oder sobald kein offener Continuity-Transport mehr existiert: Live-`main`, offene PRs/Issues, Binding Build Order und Gates erneut prüfen, bevor ein neuer Slice vergeben wird.
 
-Issue #109 ist der aktuelle Draft-PR #168. Issue #110 (spätere Homepage-Multi-Destination-Absicht) bleibt ungestartet.
+Issue #109 ist CLOSED / COMPLETED. Residual P2: Mobile Safari Real-Device für den nächsten Search-/Homepage-UX-Slice. Issue #110 bleibt ungestartet.
 
 Visitor Search UX ist integriert. Production Gate B ist operativ PASS, kein Re-Apply. `TW6-REST-01` ist geschlossen. PR #96/#97/#98/#102/#106/#108/#111/#113 sind integriert. Production-AAL2 `20260827170000` ist angewendet und verifiziert, exakt einmal; kein zweiter Apply.
 

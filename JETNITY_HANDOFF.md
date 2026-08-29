@@ -1,11 +1,15 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 29. August 2026  
-Status: **Visitor Search Country Alias Production Recovery / Draft-PR #173 / Issue #109 / TL-Fund `5057889604`. STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; kein Ready, kein Merge durch den Autor. Kein Issue #110. Baseline `main @ 2241e349` (PR #172 integriert, Live-Production invalidiert den vorherigen TL-PASS). Session `bc-020d3296-0cd7-4e36-8373-47578af701ce`. AP-6a-Runtime, AP-6b, AP-7-S2, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **Search #109 CLOSED / COMPLETED und PrivacyBee #169 CLOSED / COMPLETED auf `main @ ade03511`. Kein aktiver Runtime-Agent. Issue #110 nicht gestartet. AP-7-S2 gated. AP-6a Legal-Runtime geparkt. Kosten 0. Live-Evidence gewinnt.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
-Aktueller Search-Recovery-Slice auf diesem Branch (Draft-PR #173):
+Aktueller New-Chat-Checkpoint (PR #178 ist nur der Continuity-Träger; Live-Zustand von #178 prüfen. Liegt dieser Checkpoint auf `main`, ist die Pre-Merge-#178-Klausel historisch; nächster Schritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl, kein automatischer Produkt-Slice):
+
+- `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md`
+
+Aktueller Search-Stand (PR #173 gemergt, Issue #109 CLOSED / COMPLETED):
 
 - `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_TASK_2026-08-29.md`
 - `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_STATUS_2026-08-29.md`
@@ -51,7 +55,8 @@ Integrierte vorherige Ops-Slices:
 
 Aktuellster versionierter finaler Post-Merge-Checkpoint:
 
-- `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – neueste Chat-Übergabe-Evidence nach PR #142
+- `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md` – neueste Chat-Übergabe-Evidence nach Search #109 + PrivacyBee #169
+- `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – historische Chat-Übergabe-Evidence nach PR #142
 - `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – Post-Merge-Evidence nach PR #141
 - `docs/CHATGPT_PR138_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – Post-Merge-Evidence nach PR #138
 - `docs/CHATGPT_PR137_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md` – integrierter AP-5-S2-Runtime-Stand vor dem finalen #138-Continuity-Merge
@@ -82,7 +87,8 @@ Zuerst vollständig lesen:
 12. `docs/JETNITY_BINDING_BUILD_ORDER.md`
 13. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
 14. `JETNITY_HANDOFF.md`
-15. `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
+15. `docs/CHATGPT_SEARCH_PRIVACY_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-29.md`
+15a. `docs/CHATGPT_PR142_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
 16. `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
 16a. `docs/CHATGPT_PR138_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
 17. `docs/CHATGPT_PR137_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
