@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **Provider Adapter Core Foundation Draft-PR #187 / REVIEW-FIX + CONTINUITY-RECONCILIATION / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Authoritative current-state: PR #194/#195 checkpoint V2; `main` live prüfen. Review `5463705604`. S5-B Production-Migration angewendet/verifiziert. Keine Provideraktivierung. Kein Commercial-Provenance-Mint. Kein Ready/Merge.**
+Status: **Self-expiring PR #187 / ADR-0199. Solange offen: Draft / STOP für unabhängigen Technical-Lead Exact-Head-Re-Review von `5463847278`. Sobald gemergt: Core integriert; nächster Schritt zuerst Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner. Authoritative current-state: Checkpoint V2 (PR #194/#195) plus Binding Slice Precheck (PR #196). `main` live prüfen. S5-B Production-Migration angewendet/verifiziert. Keine Provideraktivierung. Kein Commercial-Provenance-Mint. Kein Ready/Merge durch den Autor.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -11,15 +11,15 @@ Status: **Provider Adapter Core Foundation Draft-PR #187 / REVIEW-FIX + CONTINUI
 
 1. **Arbeitsblock / Ziel:** Provider-neutraler Server-Transport-Kern: Timeout/Retry/Rate-Limit, secret-sichere Header, redacted Observability, vollständig offline testbar (ADR-0199).
 2. **Authoring-Branch / PR:** `feat/provider-adapter-core-foundation-2026-08-29` / Draft-PR #187.
-3. **Status:** **REVIEW-FIX IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**. Kein Ready, kein Merge, kein Folgeslice durch den Autor.
-4. **Bereits umgesetzt:** Funktionale P1-Fixes bleiben erhalten. Lint-Ursache von CI #1207 war `scripts/server-only-empty.cjs` gegen ESLint-9/react-hooks-Plugin-Auflösung, behoben durch lint-sicheren `.js`-Stub. Continuity gegen live `main` / Checkpoint V2 reconciled, including HANDOFF §8 / START_HERE current-work. Lokale Gates auf `92fff45c`: typecheck, lint 0/135, 2657 tests, hygiene, Production-Build. Docs-only follow-up after that stamp.
+3. **Status:** **SELF-EXPIRING.** Solange #187 offen: REVIEW-FIX IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Sobald gemergt: Kern integriert; erster nächster Schritt Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner. Kein Ready, kein Merge, kein Folgeslice durch den Autor.
+4. **Bereits umgesetzt:** Frühere akzeptierte P1-Fixes bleiben. Neu aus `5463847278`: `requestIdHeaderName` lehnt bekannte sensitive Header als `invalid_configuration` ab; Rate-Limit-Retry-Felder nur auf `ProviderRetryPolicy`; ungültiges Preflight-`retryAfterMs` fail-closed; `origin/main` inkl. PR #196 Governance gemerged.
 5. **Cursor-Agent:** `Cursor-Agent: Jetnity provider adapter core 1`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 1 bleibt 1 (gleicher Slice / Review-Fix).
-6. **Live-`main`:** immer live prüfen. Reconstruction-Baseline der Checkpoint-V2 war `69ef27b1`; das ist keine dauerhafte Current-Head-Wahrheit. Exact Head ist der Commit dieses Stamps; live am PR prüfen. Prior Heads `80129085` / `6f9a8b76` und deren CI gelten nicht.
+6. **Live-`main`:** immer live prüfen. Reconstruction-Baseline der Checkpoint-V2 war `69ef27b1`; das ist keine dauerhafte Current-Head-Wahrheit. Exact Head live am PR prüfen. Prior Heads `8df3e9c2` / `6f9a8b76` und deren CI gelten nicht.
 7. **DB / RLS / Production-Grenze:** keine Migration, keine Supabase-Mutation, keine Vercel-Projektmutation.
 8. **Kosten / Provider / Secrets:** 0. Keine Provideraktivierung, keine paid calls, keine Credentials im Repository.
 9. **Bekannte Risiken / Review-Funde:** Duffel nutzt den Kern noch nicht. Create/Poll bleibt Adapter-Arbeit. Jedes Runtime-Modul trägt `import 'server-only'`; node:test nutzt nur den lokalen Stub. Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** keine aus diesem Slice. Skyscanner-Server-Transport bleibt extra gegatet. S5-B Production-Migration ist angewendet; Runtime-Write/Snapshot und TW-8 bleiben gegatet.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #187 nach Kommentar `5463705604`. Kein Ready. Kein Merge. Kein Folgeslice.
+10. **Offene Nutzerentscheidungen / Freigaben:** keine aus diesem Slice. Skyscanner-Server-Transport bleibt extra gegatet und startet nicht aus einem #187-Merge. S5-B Production-Migration ist angewendet; Runtime-Write/Snapshot und TW-8 bleiben gegatet.
+11. **Exakter nächster Schritt:** solange #187 offen → unabhängiger Technical-Lead Exact-Head-Re-Review von `5463847278`. Nach Merge → Post-Merge-Verifikation + TL-Continuity, kein automatischer Folgeslice. Kein Ready. Kein Merge durch den Autor.
 12. **Zuerst lesen:** `docs/PROVIDER_ADAPTER_CORE_FOUNDATION_TASK_2026-08-29.md`, Status, Handoff, Self-Review, ADR-0199.
 
 ## Historischer Arbeitsblock – Provider S5-B Commercial Provenance Persistence

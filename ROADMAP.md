@@ -294,11 +294,11 @@ Abgeschlossen:
 45. ✅ AP-6a Gate 0 Legal Foundation / Trust Boundary / PR #166 – integriert (ADR-0195 / Merge `6083ee63`); historische Architecture-Evidence. `/privacy`/`terms` Runtime ungebaut und Legal-/PO-Content-gegatet.
 46. ✅ Provider S5-B Option C Architecture Acceptance / PR #180 – Zielarchitektur angenommen (ADR-0197)
 47. ✅ Provider S5-B Persistence / PR #182 + Recovery #183 – Schema + RLS + Write-Authority integriert (ADR-0198). Production-Migration `20260829140000_trip_item_commercial_provenance` angewendet und verifiziert. Runtime-Write-Pfad/Principal nicht allokiert. Kein realer Snapshot. TW-8 geschlossen. Ältere „#182 offen / Production-Apply pending“-Sätze sind Pre-Apply-Evidence.
-48. 🟡 Provider Adapter Core Foundation / Draft-PR #187 – provider-neutraler Server-Transport-Kern (ADR-0199). Funktionale P1-Fixes und Continuity-Reconciliation aus `5463705604` im Repository. STOP für Exact-Head-Re-Review. Keine echten Provider-Calls, keine Credentials, kein Commercial-Provenance-Mint. Self-expiring: solange #187 offen → STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; nach Merge → Kern integriert, Skyscanner-Server-Transport extra gegatet. Autor setzt kein Ready/Merge.
+48. 🟡 Provider Adapter Core Foundation / Draft-PR #187 – provider-neutraler Server-Transport-Kern (ADR-0199). Review-Fixes aus `5463847278` im Repository. Keine echten Provider-Calls, keine Credentials, kein Commercial-Provenance-Mint. Self-expiring: solange #187 offen → STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; nach Merge → Kern integriert, nächster Schritt zuerst Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner-Server-Transport. Autor setzt kein Ready/Merge.
 
 Nächster Schritt:
 
-- **Auf diesem Branch:** Draft-PR #187. Unabhängiger Technical-Lead Exact-Head-Re-Review der Fixes aus `5463705604`. Autor setzt kein Ready, kein Merge, keinen Skyscanner-Transport-Folgeslice.
+- **Self-expiring #187:** solange offen → unabhängiger Technical-Lead Exact-Head-Re-Review von `5463847278`. Nach Merge → Post-Merge-Verifikation + TL-Continuity gemäß Binding Slice Precheck (PR #196). Autor setzt kein Ready, kein Merge, keinen Skyscanner-Transport-Folgeslice.
 - S5-B Persistenz und Production-Migration sind integriert/verifiziert. Offener Residual: Runtime-Write-Pfad/Principal und realer Snapshot; TW-8 bleibt geschlossen. PR #180/#182/#183 sind historische Integrations-Evidence, kein offener Apply-Auftrag.
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence und Non-Scope von #180. `/privacy` und `/terms` Runtime bleiben ungebaut und Legal-/PO-Content-gegatet.
 - AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #166 oder #180.

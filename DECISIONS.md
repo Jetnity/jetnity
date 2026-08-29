@@ -5210,7 +5210,7 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 ## ADR-0199 – Provider Adapter Core Foundation
 
 **Datum:** 29. August 2026  
-**Status:** Implementiert im Repository auf Draft-PR #187. **Kein Ready. Kein Merge. Keine Provideraktivierung.** Volltext: `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`.
+**Status:** Self-expiring. Solange Draft-PR #187 offen: implementiert im Repository, kein Ready, kein Merge, keine Provideraktivierung. Sobald gemergt: Kern integriert; nächster Schritt zuerst Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner-Server-Transport. Volltext: `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`.
 
 **Entscheidung:**
 
@@ -5229,6 +5229,8 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 **Konsequenzen:** Nächster zulässiger Folgeslice erst nach Merge und neuem versionierten Auftrag. Autor setzt kein Ready/Merge.
 
 **Nachtrag, 29. August 2026 – Review 5058500841 / 5463627429:** Body-Limit wird während des Stream-Reads erzwungen; `Content-Length` ist nur Early-Reject. `retry_exhausted` nur, wenn der aktuelle Fehler retrybar ist und ein Retry wirklich benutzt wurde; ein späteres `401` oder disabled-429 bleibt die eigene Kind. Observer-Throws werden geschluckt. Ungültiges/werfendes Preflight ist fail-closed `rate_limited` ohne HTTP und ohne Exception-Leak. Jedes Runtime-Modul trägt `import 'server-only'`; node:test nutzt einen lokalen Stub, ohne Stub scheitert der Alternativimport. Volltext: `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`.
+
+**Nachtrag, 29. August 2026 – Review 5463847278:** `requestIdHeaderName` muss ein gültiger, nicht-sensitiver HTTP-Header-Name sein; bekannte Secret-Header sind `invalid_configuration` vor jedem HTTP-Call. Retry-/Retry-After-Semantik gehört nur zu `ProviderRetryPolicy`; Duplikate auf `ProviderRateLimitPolicy` werden abgelehnt. Preflight-`retryAfterMs` nur `null` oder endlich/nichtnegativ/bounded, sonst fail-closed ohne Raw-Leak. PR #196 Governance bleibt erhalten; globale Current-State-Flächen sind self-expiring. Volltext: `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md`.
 
 ---
 

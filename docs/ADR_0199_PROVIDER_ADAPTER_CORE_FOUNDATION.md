@@ -1,7 +1,7 @@
 # ADR-0199 – Provider Adapter Core Foundation
 
 **Datum:** 29. August 2026  
-**Status:** Implementiert im Repository auf Draft-PR #187. **Kein Ready. Kein Merge. Kein Follow-up-Slice. Keine Provideraktivierung.**  
+**Status:** Self-expiring. Solange Draft-PR #187 offen: implementiert im Repository, **kein Ready, kein Merge, kein Follow-up-Slice, keine Provideraktivierung.** Sobald #187 gemergt: Kern integriert; nächster Schritt zuerst Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner-Server-Transport.  
 **Cursor-Agent:** `Jetnity provider adapter core 1`
 
 ## Entscheidung
@@ -33,7 +33,7 @@ Dieser Slice implementiert nur die gemeinsame Grenze. Create/Poll, Provider-Keys
 
 - Zukünftige Server-Adapter, zuerst Skyscanner Flights Live Prices, sollen diesen Kern nutzen.
 - Duffel behält vorerst seinen eigenen HTTP-Pfad. Eine Migration ist ein späterer, extra gegateter Slice.
-- Kein Ready/Merge durch den Autor. Independent Technical-Lead Exact-Head-Review ist der nächste Schritt.
+- Self-expiring: solange #187 offen ist der nächste Schritt der unabhängige Technical-Lead Exact-Head-Review. Nach Merge zuerst Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner-Server-Transport. Autor setzt kein Ready/Merge.
 
 ## Nachtrag – Technical-Lead Review 5058500841 (29. August 2026)
 
@@ -59,3 +59,21 @@ Die bestehende Repo-Konvention ist `import 'server-only'` (Next-Compile-Time-Gre
 ### `retry_exhausted` nach einem früheren, anderen Retry
 
 `lastFailure` beweist nur, dass irgendwann retried wurde. `retry_exhausted` gilt nur, wenn der **aktuelle** Fehler selbst retrybar ist und ein Retry-Pfad wirklich benutzt wurde. Ein späteres `401` bleibt `authentication`. Ein späteres `429` mit `retryOn429=false` oder ein späteres disabled Preflight bleibt `rate_limited`.
+
+## Nachtrag – Technical-Lead Review 5463847278 (29. August 2026)
+
+Dieser Nachtrag präzisiert Secret- und Rate-Limit-Verträge. Er erweitert den Slice nicht.
+
+### Request-ID Secret Boundary
+
+`requestIdHeaderName` muss ein gültiger HTTP-Header-Name sein. Bekannte sensitive Namen (`authorization`, `set-cookie`, `x-api-key` und die übrige Default-Liste) sind `invalid_configuration`, bevor irgendein HTTP-Call möglich ist. Normale provider-spezifische Request-ID-Header bleiben zulässig. Der gelesene Wert bleibt über `readSafeRequestId` bounded.
+
+### Eine Rate-Limit-Wahrheit
+
+Retry / Retry-After (`retryOn429`, `honorRetryAfter`, `maxRetryAfterMs`) gehören ausschließlich zu `ProviderRetryPolicy`. `ProviderRateLimitPolicy` trägt nur den optionalen `preflight`-Hook. Deklarierte Duplikatfelder auf der Rate-Limit-Policy werden als `invalid_configuration` abgelehnt, nicht still ignoriert.
+
+Ein Preflight-Outcome `rate_limited.retryAfterMs` darf nur `null` oder endlich, nichtnegativ und bounded sein. `NaN`, `Infinity`, negative oder überhöhte Werte fail-closen als `rate_limited` ohne HTTP und ohne Raw-Leak.
+
+### Continuity / PR #196
+
+`origin/main` inkl. Binding Slice Precheck / Continuity Gate bleibt erhalten. Globale Current-State-Flächen, die dieser Slice berührt, sind self-expiring: nach einem Merge von #187 ist der Kern integriert; der nächste Schritt ist zuerst Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner-Server-Transport. Keine erfundene Merge-SHA.

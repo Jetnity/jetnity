@@ -1,23 +1,26 @@
 # Provider Adapter Core Foundation — Status
 
 Stand: 29. August 2026  
-Status: **REVIEW-FIX + CONTINUITY-RECONCILIATION / DRAFT-PR #187 / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
+Status: **SELF-EXPIRING / DRAFT-PR #187 / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Cursor-Agent: `Jetnity provider adapter core 1`  
 Branch: `feat/provider-adapter-core-foundation-2026-08-29`
 
-Authoritative current-state: `docs/CHATGPT_TL_LIVE_RECONSTRUCTION_CHECKPOINT_2026-08-29_V2.md` (PR #194/#195). `main` live prüfen; keine eingefrorene SHA als dauerhafte Current-Wahrheit.
+Self-expiring: solange #187 offen → Review von `5463847278`. Sobald gemergt → Kern integriert; nächster Schritt zuerst Post-Merge-Verifikation + TL-Continuity, nicht automatisch Skyscanner. Autor setzt kein Ready/Merge.
+
+Authoritative current-state: Checkpoint V2 (PR #194/#195) plus Binding Slice Precheck (PR #196). `main` live prüfen; keine eingefrorene SHA.
 
 ## Was gebaut ist
 
-Kommentar `5463705604` gegen den damaligen Review-Head `6f9a8b76`:
+Kommentar `5463847278` gegen Review-Head `8df3e9c2`:
 
-- Funktionale P1-Fixes bleiben: aktuelle Terminal-Fehler behalten ihre Kind; jedes Runtime-Modul trägt `import 'server-only'`.
-- Lint von CI #1207 / Run `33264416824` war kein main-Merge-Konflikt. Ursache: `scripts/server-only-empty.cjs` traf ESLint 9 Flat-Config (`react-hooks/set-state-in-effect` ohne Plugin in diesem Objekt). Behoben durch lint-sicheren `.js`-Stub. Keine Regel abgeschwächt.
-- Continuity: S5-B Production-Migration `20260829140000_trip_item_commercial_provenance` angewendet/verifiziert. Runtime-Write unallokiert. Kein realer Snapshot. TW-8 geschlossen. Checkpoint V2 nicht zurückgeschrieben. HANDOFF §8 / START_HERE current-work no longer name #173/#180 as open current slices.
+- `requestIdHeaderName` muss ein gültiger HTTP-Header-Name sein. `authorization`, `set-cookie`, `x-api-key` und die Default-Secret-Liste sind `invalid_configuration` vor jedem HTTP-Call. `x-request-id` und provider-spezifische Request-ID-Header bleiben zulässig und bounded.
+- Rate-Limit-Retry-Felder gehören nur zu `ProviderRetryPolicy`. Duplikate auf `ProviderRateLimitPolicy` werden abgelehnt. Preflight-`retryAfterMs` nur `null` oder endlich/nichtnegativ/bounded; sonst fail-closed ohne Raw-Leak.
+- `origin/main` inkl. PR #196 Governance gemerged. Globale Current-State-Flächen sind self-expiring.
+- Frühere akzeptierte Fixes bleiben: bounded stream-read, Retry-Klassifikation, Observer/Preflight-Isolation, per-module `server-only`.
 
 ## Gates
 
-Lokal auf Runtime inkl. Continuity-Reconcile `92fff45c`: typecheck PASS; lint 0 errors / 135 warnings; **2657** tests PASS; hygiene PASS; Next 16.3.3 Production-Build PASS. Dieser Stamp ist docs-only. Exact-Head CI/Vercel nach dem Push live prüfen. Evidence auf `6f9a8b76` / `80129085` ist ungültig. Agent-Self-Review ist kein PASS.
+Lokal nach den Runtime-Fixes und dem Main-Sync. Exact Head live am PR prüfen. Evidence auf `8df3e9c2` ist ungültig. Agent-Self-Review ist kein PASS.
 
 ## Grenzen
 
@@ -25,4 +28,4 @@ Kein Ready. Kein Merge. Kein Folgeslice. Keine echten Provider-Calls. Keine Cred
 
 ## Nächster Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Re-Review. Kein Ready. Kein Merge.
+Unabhängiger Technical-Lead Exact-Head-Re-Review. Nach einem späteren Merge zuerst Post-Merge-Verifikation + TL-Continuity. Kein Ready. Kein Merge durch den Autor.
