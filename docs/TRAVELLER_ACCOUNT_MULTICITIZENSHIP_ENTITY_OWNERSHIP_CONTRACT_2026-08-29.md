@@ -1,7 +1,7 @@
 # Traveller / Account / Multi-Citizenship – kanonischer Entity-/Ownership-Vertrag
 
 Stand: 29. August 2026  
-Status: **VORGESCHLAGENER VERTRAG / AUDIT-EVIDENCE / KEINE PERSISTENZ / KEIN ADR-ERSATZ**  
+Status: **VORGESCHLAGENER VERTRAG AUF CLOSED-AS-DUPLICATE-BRANCH / NICHT KANONISCH / KEINE PERSISTENZ / KEIN ADR-ERSATZ**  
 Branch: `audit/traveller-account-multicitizenship-gap-2026-08-29`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/192  
 Task: `docs/TRAVELLER_ACCOUNT_MULTICITIZENSHIP_GAP_AUDIT_TASK_2026-08-29.md`  

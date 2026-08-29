@@ -1,7 +1,7 @@
 # Traveller / Account / Multi-Citizenship – priorisierter Implementierungs-Backlog
 
 Stand: 29. August 2026  
-Status: **VORGESCHLAGENER BACKLOG / KEIN STARTAUFTRAG / KEIN FOLGESLICE**  
+Status: **VORGESCHLAGENER BACKLOG AUF CLOSED-AS-DUPLICATE-BRANCH / NICHT KANONISCH / KEIN STARTAUFTRAG / KEIN FOLGESLICE**  
 Branch: `audit/traveller-account-multicitizenship-gap-2026-08-29`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/192  
 Vertrag: `docs/TRAVELLER_ACCOUNT_MULTICITIZENSHIP_ENTITY_OWNERSHIP_CONTRACT_2026-08-29.md`  

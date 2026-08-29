@@ -1,12 +1,14 @@
 # Jetnity – Traveller / Account / Multi-Citizenship Gap Audit Handoff
 
 Stand: 29. August 2026  
-Status: **DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**  
+Status: **CLOSED AS DUPLICATE / NON-CANONICAL / DO NOT MERGE / DO NOT CONTINUE**  
 Logical Cursor-Agent: **`Cursor-Agent: Jetnity traveller account audit 1`**  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/192  
 Branch: `audit/traveller-account-multicitizenship-gap-2026-08-29`
 
-Dieser Handoff übergibt den Audit. Er startet keinen Folgeslice. Agent-Self-Review ist kein PASS. Jeder neue Head invalidiert Prior-Gates.
+**Live-Entscheidung:** Draft-PR #192 wurde vom Technical Lead am 29. August 2026 `16:25:55Z` als **DUPLICATE / NON-CANONICAL** geschlossen. „Do not continue this agent task. Do not use this branch/task as canonical evidence. Do not merge.“
+
+Dieser Handoff dokumentiert den Abschluss plus die Close-Wahrheit. Er startet keinen Ersatz-PR und keinen Folgeslice. Agent-Self-Review ist kein PASS.
 
 ---
 
@@ -44,7 +46,7 @@ UI wurde nicht umbenannt. Keine Rename-Fähigkeit vorhanden.
 | Task-Baseline `origin/main` | `69ef27b169780e41ba506a69acb15caafa645517` |
 | `origin/main` Re-Fetch | `69ef27b169780e41ba506a69acb15caafa645517` — **0 behind** |
 | Branch | `audit/traveller-account-multicitizenship-gap-2026-08-29` |
-| Draft-PR | #192 OPEN Draft |
+| Draft-PR | #192 **CLOSED** as DUPLICATE / NON-CANONICAL |
 | Merge-Base | `69ef27b1` |
 | Prior Head | `587e58b1` Task only — invalidiert durch diesen Stamp |
 | Exact / Review-Head | Stamp-Commit; live an PR #192 prüfen |
@@ -101,6 +103,4 @@ Backlog: `docs/TRAVELLER_ACCOUNT_MULTICITIZENSHIP_IMPLEMENTATION_BACKLOG_2026-08
 
 ## 8. Exakter nächster Schritt
 
-Unabhängiger ChatGPT Technical-Lead Exact-Head-Review von Draft-PR #192.
-
-**STOPP.** Kein Ready. Kein Merge. Kein AP-7-S2. Kein Follow-up-Implementation-Slice durch `Jetnity traveller account audit 1`.
+**STOPP.** Kein Re-Open von #192. Kein Ersatz-PR. Kein Ready. Kein Merge. Kein AP-7-S2 aus diesem Agenten. Künftige Arbeit nur aus den exakten verbleibenden AP-7-/Account-Platform-Slices nach Technical-Lead Duplicate/History-Gate.

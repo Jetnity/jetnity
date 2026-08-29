@@ -65,4 +65,6 @@ Geprüft gegen den tatsächlichen Dateisatz:
 
 Scope gehalten. Evidence-basiert. Non-Scope leer. Kanonischer Grundsatz (getrennte Entitäten, Mehrfach-Citizenship/Dokument, Empfehlung überschreibt Identität nicht) ist im Vertrag und Audit festgehalten.
 
-**Unabhängiger Technical-Lead Exact-Head-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**
+**Nachtrag, Close `2026-08-29T16:25:55Z`:** Der Technical Lead hat PR #192 als DUPLICATE / NON-CANONICAL geschlossen, bevor dieser Stamp als Review-Head dienen konnte. Dieser Agent öffnet keinen Ersatz-PR und behandelt den Audit nicht als kanonische Evidence.
+
+**Unabhängiger Technical-Lead Exact-Head-Review dieses Audits: nicht mehr angefordert. Dieses Self-Review ist kein PASS.**

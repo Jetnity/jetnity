@@ -1,19 +1,19 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **Traveller / Account / Multi-Citizenship Gap Audit Draft-PR #192 / AUDIT + ARCHITECTURE ONLY / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW. Baseline `main @ 69ef27b1`. Keine Runtime. Kein AP-7-S2. Live-Evidence immer live prüfen.**
+Status: **PR #192 CLOSED AS DUPLICATE / NON-CANONICAL. Diesen Branch/Task nicht als kanonische Evidence verwenden. Kein Merge. Kein Ersatz-PR. Kein AP-7-S2 aus diesem Agenten. Baseline `main @ 69ef27b1`. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
 > Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
 
-> **Self-expiring / dual-state:** Solange Draft-PR #192 offen ist, ist dieser Audit der aktuelle Block **dieses Branches**. Nach Merge durch den Technical Lead: integrierte Audit-Evidence; nächster Schritt = Live-Rekonstruktion + Binding-Build-Order-Auswahl; **kein** automatisches AP-7-S2.
+> **PR #192 CLOSED `2026-08-29T16:25:55Z`:** Technical Lead: DUPLICATE / NON-CANONICAL. Nicht fortsetzen. Nicht mergen. Künftige Traveller-Arbeit nur aus verbleibenden AP-7-/Account-Slices nach Duplicate/History-Gate.
 
 ## Aktueller Arbeitsblock – Traveller / Account / Multi-Citizenship Gap Audit
 
 1. **Arbeitsblock / Ziel:** Repository-first Gap-Audit plus kanonischer Entity-/Ownership-Vertrag plus priorisierter Backlog. Traveller, Citizenship und Travel Document bleiben getrennte Entitäten; Empfehlung darf Identität nicht überschreiben.
 2. **Authoring-Branch / PR:** `audit/traveller-account-multicitizenship-gap-2026-08-29` / Draft-PR #192.
-3. **Status:** **AUDIT ONLY / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**. Kein Ready, kein Merge, kein Folgeslice durch den Autor.
+3. **Status:** **CLOSED AS DUPLICATE / NON-CANONICAL**. Authoring-Docs liegen auf dem Branch, sind aber **keine** kanonische Evidence. Kein Ready, kein Merge, kein Ersatz-PR, kein Folgeslice.
 4. **Bereits umgesetzt:** Audit, Vertrag, Backlog, Status, Handoff, Self-Review. Keine Runtime.
 5. **Cursor-Agent:** `Cursor-Agent: Jetnity traveller account audit 1`. Cloud-Run `https://cursor.com/agents/bc-00783a15-f108-4497-aafe-5665028c5279`. Sichtbarer Titel `Traveller account multi-citizenship gap`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 1 bleibt 1.
 6. **Live-`main` / Baseline bei diesem Stamp:** `69ef27b169780e41ba506a69acb15caafa645517`. Re-Fetch **0 behind**. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
@@ -21,7 +21,7 @@ Status: **Traveller / Account / Multi-Citizenship Gap Audit Draft-PR #192 / AUDI
 8. **Kosten / Provider / Secrets:** 0. Keine Visa-/Provider-Calls, keine Dokument-Uploads.
 9. **Bekannte Risiken / Review-Funde:** AP-7-S2 ungebaut/gegatet; Recommendation ohne Provider fail-closed; Plan-Zeile S1/#145 stale auf `main`; C2 Residual; parallele Adapter-PRs #187–#190; `main` Protection in diesem Run nicht live bestätigt; Agent-Self-Review ist kein PASS.
 10. **Offene Nutzerentscheidungen / Freigaben:** Persistence-ADR + PO Identity/RLS/Migration vor AP-7-S2. Sensible Dokumentpayloads extra. Ready/Merge nur Technical Lead.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #192. Kein Ready. Kein Merge. Kein AP-7-S2. Kein Recommendation-UI-Slice.
+11. **Exakter nächster Schritt:** **STOPP.** #192 nicht re-openen. Kein Ersatz-PR. Nächste Traveller-Arbeit nur nach Technical-Lead Duplicate/History-Gate als genauer verbleibender AP-7-/Account-Slice.
 12. **Zuerst lesen:** `docs/TRAVELLER_ACCOUNT_MULTICITIZENSHIP_GAP_AUDIT_TASK_2026-08-29.md`, Audit, Vertrag, Backlog, Status, Handoff, Self-Review, `docs/AP7_DUAL_AUTHORITY_PRODUCT_OWNER_APPROVAL_2026-08-28.md`.
 
 ## Historischer / anderer-Branch-Arbeitsblock – Provider S5-B Commercial Provenance Persistence

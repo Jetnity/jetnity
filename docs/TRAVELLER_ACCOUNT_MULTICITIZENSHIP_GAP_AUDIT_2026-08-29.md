@@ -1,7 +1,7 @@
 # Traveller / Account / Multi-Citizenship Gap Audit — 2026-08-29
 
 Stand: 29. August 2026  
-Status: **AUDIT + ARCHITECTURE ONLY / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**  
+Status: **AUTHORING COMPLETE / PR #192 CLOSED AS DUPLICATE / NON-CANONICAL / DO NOT MERGE**  
 Logical Cursor-Agent: **`Cursor-Agent: Jetnity traveller account audit 1`**  
 Task: `docs/TRAVELLER_ACCOUNT_MULTICITIZENSHIP_GAP_AUDIT_TASK_2026-08-29.md`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/192  

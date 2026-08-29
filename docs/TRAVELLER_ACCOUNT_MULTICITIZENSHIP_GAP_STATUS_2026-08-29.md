@@ -1,14 +1,16 @@
 # Jetnity – Traveller / Account / Multi-Citizenship Gap Audit Status
 
 Stand: 29. August 2026  
-Status: **AUDIT + ARCHITECTURE ONLY / SELF-EXPIRING / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**  
+Status: **CLOSED AS DUPLICATE / NON-CANONICAL / DO NOT MERGE / DO NOT CONTINUE**  
 Workstream: Account / Traveller  
 Logical Cursor-Agent: **`Cursor-Agent: Jetnity traveller account audit 1`**  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/192  
 Branch: `audit/traveller-account-multicitizenship-gap-2026-08-29`  
 Task: `docs/TRAVELLER_ACCOUNT_MULTICITIZENSHIP_GAP_AUDIT_TASK_2026-08-29.md`
 
-> Live-Evidence gewinnt. Dieses Statusfile ist kein PASS. Kein Ready. Kein Merge. Kein Follow-up-Implementation-Slice. Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
+> **Live Technical-Lead-Entscheidung, 29. August 2026, PR #192 CLOSED.** Der Technical Lead hat diesen Draft nach Launch als **DUPLICATE / NON-CANONICAL** geschlossen. Dieser Branch/Task ist **keine** kanonische Evidence. Nicht mergen. Nicht fortsetzen. Künftige Arbeit nur aus den verbleibenden AP-7-/Account-Platform-Implementierungsslices und verifizierten Residuals, nicht als erneuter Cross-Cutting-Architecture-Audit.
+
+> Live-Evidence gewinnt. Agent-Self-Review ist kein PASS. Dieser Agent startet keinen Ersatz-PR.
 
 ## 0. Naming evidence
 
@@ -32,7 +34,7 @@ Dieser Agent behauptet nicht, die sichtbare UI sei umbenannt.
 | `origin/main` Re-Fetch vor Stamp | `69ef27b169780e41ba506a69acb15caafa645517` |
 | Merge-Base | `69ef27b1` |
 | Ahead / Behind vor Stamp | **1 / 0** (Task-Commit `587e58b1`) |
-| Draft-PR | #192 OPEN / Draft / `MERGEABLE` |
+| Draft-PR | #192 **CLOSED** `2026-08-29T16:25:55Z` als DUPLICATE / NON-CANONICAL. Head zum Close-Zeitpunkt: Task-Commit `587e58b1`. Authoring-Head danach: `263d572e` — **nicht** als Review-Head verwenden. |
 | `main` Branch Protection | Protection-API in diesem Run `403`; letzte Continuity-Evidence `protected=false`. Unverändert. |
 | Supabase in diesem Run | **nicht** abgefragt, **nicht** mutiert |
 | Browser / Real-Device | **nein** — Docs-only |
@@ -114,7 +116,7 @@ Keine Migration. Kein RLS-/GRANT-/REVOKE-/DEFINER-Write. Kein Auth/AAL. Keine Se
 
 ## 10. Exakter nächster Schritt
 
-Unabhängiger ChatGPT Technical-Lead Exact-Head-Review von Draft-PR #192. Kein Ready. Kein Merge. Kein AP-7-S2. Kein Recommendation-UI-Slice. Kein Follow-up durch diesen Agenten.
+**STOPP.** PR #192 nicht wieder öffnen, nicht mergen, nicht als kanonische Evidence verwenden. Kein Ersatz-PR. Kein AP-7-S2 aus diesem Branch. Nächste Traveller-Arbeit nur nach Technical-Lead Duplicate/History-Gate und nur als genauer verbleibender AP-7-/Account-Slice.
 
 ## 11. Zuerst lesen
 
