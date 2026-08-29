@@ -51,7 +51,7 @@ S5-A bleibt der Speichervertrag ohne Persistenz. S5-B hat jetzt eine angenommene
 
 ## 4. Continuity-Hinweis für den Technical Lead
 
-`docs/ACTIVE_WORK_STATUS.md` beschreibt weiter Search #109 / PrivacyBee #169 / PR #178. Eine kontrollierte Ergänzung, dass Draft-PR #180 der aktive Provider-Architecture-Slice ist, gehört in den Technical-Lead-Continuity-Träger und nicht in eine zweite Current Truth durch diesen Autor.
+`docs/ACTIVE_WORK_STATUS.md` beschreibt weiter Search #109 / PrivacyBee #169 / PR #178. Eine kontrollierte Ergänzung für PR #180 / ADR-0197 gehört in den Technical-Lead-Continuity-Träger und nicht in eine zweite Current Truth durch diesen Autor.
 
 ---
 
@@ -64,21 +64,25 @@ S5-A bleibt der Speichervertrag ohne Persistenz. S5-B hat jetzt eine angenommene
 
 ---
 
-## 6. Empfehlung an den Technical Lead
+## 6. Review-Fix für `5462459017`
 
-Unabhängigen Exact-Head-Review von Draft-PR #180. Prüfen: Drift `f7527899`, Docs-only Diff, die zwölf Regeln, Guard-Matrix, ADR-0168-Treue, TW-8 weiter geschlossen, keine Production-Behauptung.
+Kanonische Continuity ist jetzt self-expiring/merge-stabil (`PR #180` als Provenienz, Dual-State). ROADMAP führt PR #166 nicht mehr als aktuellen Draft. Dieser Handoff behält die Draft-Authoring-Evidence.
+
+## 7. Empfehlung an den Technical Lead
+
+Unabhängigen Exact-Head-**Re-Review** von PR #180. Prüfen: Drift `f7527899`, Docs-only Diff, `TL-180-01` / `TL-180-02`, die zwölf Regeln, Guard-Matrix, ADR-0168-Treue, TW-8 weiter geschlossen, keine Production-Behauptung.
 
 Nicht Ready. Nicht mergen. Kein Folgeslice. Kein TW-8.
 
 ---
 
-## 7. Was der nächste Agent nicht tun darf
+## 8. Was der nächste Agent nicht tun darf
 
 Keine Runtime, keine Migration, keine Supabase-Mutation, kein Ready/Merge, kein TW-8, keine Domain-Enum-Erweiterung um `note`, keine Unique auf Provider+Ref, kein persistierter Actor, keine persistierte `CommercialBewertung` als SoT, keine Guard-Implementierung aus diesem Handoff.
 
 ---
 
-## 8. Zuerst lesen
+## 9. Zuerst lesen
 
 1. `docs/PROVIDER_S5B_OPTION_C_ARCHITECTURE_ACCEPTANCE_TASK_2026-08-29.md`
 2. `docs/PROVIDER_S5B_OPTION_C_TARGET_ARCHITECTURE_2026-08-29.md`
@@ -88,11 +92,12 @@ Keine Runtime, keine Migration, keine Supabase-Mutation, kein Ready/Merge, kein 
 
 ---
 
-## 9. STOPP
+## 10. STOPP
 
-Draft PR #180 bleibt Draft.  
+Dieser Handoff ist Slice-Authoring-Evidence: der Autor stoppte auf Draft-PR #180. Kanonische Dateien behaupten das nicht als Dauerzustand.
+
 Kein Mark Ready.  
 Kein Merge.  
 Kein Folge-Slice.
 
-Unabhängiger Technical-Lead Exact-Head-Review auf dem neuen Head ist der einzige nächste Schritt.
+Unabhängiger Technical-Lead Exact-Head-Re-Review auf dem neuen Head ist der einzige nächste Schritt.

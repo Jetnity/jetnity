@@ -11,7 +11,7 @@ Draft-PR: https://github.com/Jetnity/jetnity/pull/141
 
 > Gate 0 entsperrt TW-8 nicht. Dieses Dokument ist Architektur-/Readiness-Evidence. Es implementiert nichts.
 
-> Nachtrag 29. August 2026: Option C ist als Zielarchitektur angenommen (ADR-0197 / Draft-PR #180). Die Gate-0-Abschnitte darunter bleiben Empfehlungs-Evidence. S5-B Runtime/Persistenz bleibt ungestartet. `S5B-G0-ARCH-01` ist als Architekturwahl geschlossen, nicht als Implementation.
+> Nachtrag 29. August 2026: Option C ist als Zielarchitektur angenommen (ADR-0197 / PR #180). Die Gate-0-Abschnitte darunter bleiben Empfehlungs-Evidence. S5-B Runtime/Persistenz bleibt ungestartet. `S5B-G0-ARCH-01` ist als Architekturwahl geschlossen, nicht als Implementation.
 
 `docs/ACTIVE_WORK_STATUS.md` wurde **nicht** geändert. Die Datei führt weiter den integrierten AP-5-S2-/PR-#138-Continuity-Stand. Eine Überschreibung dieser Current Truth wäre falsch.
 
@@ -477,7 +477,7 @@ Kein neues Production-P0. Kein neues Production-P1-Incident. Fehlende Snapshot-Z
 
 | ID | Klasse |
 | --- | --- |
-| `S5B-G0-ARCH-01` | Gate 0: Wahl zwischen Optionen A–D nicht entscheiden. **Nachtrag 29.08.2026:** als Architekturwahl durch ADR-0197 / Option C geschlossen. Implementation bleibt offen. |
+| `S5B-G0-ARCH-01` | Gate 0: Wahl zwischen Optionen A–D nicht entscheiden. **Nachtrag 29.08.2026:** als Architekturwahl durch ADR-0197 / Option C / PR #180 geschlossen. Implementation bleibt offen. |
 | `S5B-G0-PO-MIG-01` | Jede spätere Schema-/RLS-/REVOKE-/DEFINER-Arbeit braucht ausdrückliches PO-Gate. |
 
 ### 12.5 Hygiene / Future Hardening

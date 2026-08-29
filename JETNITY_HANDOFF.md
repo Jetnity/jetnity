@@ -24,7 +24,7 @@ Historischer vorheriger Search-Slice (PR #168 / #172, Production-Acceptance nich
 - `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_HANDOFF_2026-08-29.md`
 - `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_SELF_REVIEW_2026-08-29.md`
 
-Integrierter vorheriger Account-Slice auf der Baseline (Draft-PR #166 / PR #167):
+Integrierter vorheriger Account-Slice auf der Baseline (PR #166 / PR #167):
 
 - `docs/AP6A_GATE0_LEGAL_FOUNDATION_STATUS_2026-08-29.md`
 - `docs/AP6A_GATE0_LEGAL_FOUNDATION_HANDOFF_2026-08-29.md`
@@ -102,7 +102,7 @@ Zuerst vollständig lesen:
 25. `docs/P2_TA06_READINESS_CREDENTIAL_NORMALIZATION_HANDOFF_2026-08-27.md`
 26. danach alle für den betrachteten Workstream relevanten Slice-Tasks, Statusdateien, Handoffs, ADRs, Reviews und Checkpoints.
 
-Hinweis: Ältere Gate-0-, S1-, S2-, PR-#138- und Draft-PR-#142-Aussagen sind historische Evidence ihres jeweiligen Zeitpunkts. AP-5-S1 / Issue #132 / PR #133 ist integriert. AP-5-S2 / Issue #136 / PR #137 ist integriert. PR #138 ist ebenfalls integriert. PR #141 Provider S5-B Gate 0 ist integriert als docs/readiness only. S5-B Zielarchitektur Option C ist auf Draft-PR #180 angenommen (ADR-0197); S5-B Runtime bleibt nicht gestartet. PR #142 Operating Standard ist integriert. S3–S5 starten nicht aus S2. Product-Owner-Sondergates bleiben AP-5-P1–P4 sowie separate P5/C2-/Identity-/RLS-/Production-Gates.
+Hinweis: Ältere Gate-0-, S1-, S2-, PR-#138- und Draft-PR-#142-Aussagen sind historische Evidence ihres jeweiligen Zeitpunkts. AP-5-S1 / Issue #132 / PR #133 ist integriert. AP-5-S2 / Issue #136 / PR #137 ist integriert. PR #138 ist ebenfalls integriert. PR #141 Provider S5-B Gate 0 ist integriert als docs/readiness only. S5-B Zielarchitektur Option C ist über PR #180 angenommen (ADR-0197). Solange #180 offen: Review-Träger. Nach Merge: integrierte Zielarchitektur; S5-B Runtime bleibt nicht gestartet. PR #142 Operating Standard ist integriert. S3–S5 starten nicht aus S2. Product-Owner-Sondergates bleiben AP-5-P1–P4 sowie separate P5/C2-/Identity-/RLS-/Production-Gates.
 
 Danach live prüfen: `main`, offene PRs/Drafts, Branches, Merge-Base/Ahead/Behind, tatsächliche Diffs, Review-Threads, Actions, Vercel, relevante Supabase-/Production-Grenzen und P0/P1/P2/P3-Risiken.
 
@@ -130,7 +130,7 @@ Historischer vorheriger Chat-Übergabepunkt (PR #141, bleibt Evidence):
 - Post-Merge GitHub Actions Run `33182424045`: **SUCCESS** auf exakt diesem `main`
 - Post-Merge Vercel Production `dpl_BmpsTYQC3ANoMT1z33pjMVYws2nS`: **READY** auf exakt diesem `main`
 - Branch Protection: unverändert `protected=false`
-- S5-B Runtime/Persistenz/Schema/Migration: **nicht** gestartet; Zielarchitektur später ADR-0197 / Draft-PR #180; TW-8 bleibt geschlossen
+- S5-B Runtime/Persistenz/Schema/Migration: **nicht** gestartet; Zielarchitektur ADR-0197 / PR #180; TW-8 bleibt geschlossen
 - Checkpoint: `docs/CHATGPT_PR141_POST_MERGE_NEW_CHAT_CHECKPOINT_2026-08-28.md`
 
 Historischer vorheriger Chat-Übergabepunkt (PR #138, bleibt Evidence):
@@ -221,7 +221,7 @@ Verbindliche Wahrheit:
 - PR #138 Post-Merge Continuity integriert
 - PR #142 Technical-Lead-/Cursor-Operating-Standard integriert
 
-AP-6a Gate 0 ist der aktive normale Technical-Lead-Slice (Draft-PR #166 / Issue #165). AP-6a-Runtime, AP-6b und AP-7 werden **nicht automatisch** gestartet. Dual-Authority ist product-owner-freigegeben. AP-7 Gate 0 / ADR-0186 ist integrierte Architecture-Evidence (PR #144 / `bb38aef5`). AP-7-S1 / ADR-0187 ist der integrierte shared Domain-Contract; AP-7-S2, Persistenz und Identity/RLS starten nicht automatisch.
+AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence. `/privacy` und `/terms` Runtime bleiben ungebaut und Legal-/PO-Content-gegatet. AP-6a-Runtime, AP-6b und AP-7 werden **nicht automatisch** gestartet. Dual-Authority ist product-owner-freigegeben. AP-7 Gate 0 / ADR-0186 ist integrierte Architecture-Evidence (PR #144 / `bb38aef5`). AP-7-S1 / ADR-0187 ist der integrierte shared Domain-Contract; AP-7-S2, Persistenz und Identity/RLS starten nicht automatisch.
 
 Der integrierte AP-5-Gate-0-Vertrag trennt insbesondere Password Recovery von signed-in Reauthentication, hält Session-/Gerätelisting ohne unterstützte User-API ehrlich auf `unsupported`, dokumentiert den heutigen globalen `signOut()`-Default und hält verified-factor `mfa.unenroll` an der serverseitigen AAL2-Anforderung. Details: `docs/AP5_GATE0_ACCOUNT_SECURITY_CAPABILITY_STATUS_2026-08-28.md`, ADR-0182 und die aktuellen Account-Checkpoints.
 
@@ -246,7 +246,7 @@ Nach AP-5 bleiben gemäß kanonischem Account-Plan AP-6a/6b, AP-7, AP-8, AP-9, A
 - S1–S3 integriert
 - S5-A integriert
 - S5-B Gate 0 integriert (PR #141, docs/readiness only)
-- S5-B Zielarchitektur Option C angenommen (ADR-0197 / Draft-PR #180); **nicht implementiert**
+- S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180); **nicht implementiert**
 - S5-B Runtime/Persistenz/Schema/Migration **nicht** gestartet und nicht autorisiert
 - keine echten Provider/Secrets/Verträge/paid calls aktiviert
 - TW-8 bleibt geschlossen
@@ -329,7 +329,7 @@ Nach Live-Rekonstruktion neu einordnen:
 - Issue #110: spätere natürliche Homepage-Mehrziel-Eingabe, nicht gestartet
 - Visitor Search Real-Device-Browser-Evidence bleibt separat zu prüfen
 - `officialFingerprint` kann außerhalb #112 bei fehlendem `documents[]` Legacy-Singularfelder lesen; separat bewerten, nicht P2-TA-06 erneut öffnen
-- Provider S5-B Gate 0 integriert (docs/readiness); Zielarchitektur Option C angenommen (ADR-0197 / Draft-PR #180); S5-B Runtime nicht gestartet
+- Provider S5-B Gate 0 integriert (docs/readiness); Zielarchitektur Option C angenommen (ADR-0197 / PR #180); S5-B Runtime nicht gestartet
 - TW-8 gated
 - TW-9 nicht automatisch starten
 - AP-6a Gate 0 ist auf der Baseline integriert; kein automatisches AP-6a-Runtime / AP-6b / AP-7
@@ -365,7 +365,7 @@ Aktueller Account-Status:
 
 Aktueller Quality-/Security-Status:
 
-- `Cursor-Agent: Account plattform audit vorbereitung 16` ist der aktuelle AP-6a-Gate-0-Slice für Draft-PR #166. Exact Run-ID `bc-216be067-b75a-4a2f-a186-8e38c67fb822`. Beobachteter Titel `Account plattform audit vorbereitung`. Keine programmierbare Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 16 nicht für AP-6a-Runtime/AP-6b/AP-7 wiederverwenden.
+- `Cursor-Agent: Account plattform audit vorbereitung 16` war der AP-6a-Gate-0-Slice für PR #166 und ist mit der Integration abgeschlossen. Exact Run-ID `bc-216be067-b75a-4a2f-a186-8e38c67fb822`. Beobachteter Titel `Account plattform audit vorbereitung`. Keine programmierbare Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 16 nicht für AP-6a-Runtime/AP-6b/AP-7 wiederverwenden.
 - `Cursor-Agent: Account plattform audit vorbereitung 15` ist mit AP-5-S5 / PR #164 abgeschlossen. Generation 15 nicht wiederverwenden.
 - `Cursor-Agent: Account plattform audit vorbereitung 14` ist mit AP-5-S4 / PR #160 abgeschlossen. Generation 14 nicht wiederverwenden.
 - `Cursor-Agent: Account plattform audit vorbereitung 13` ist mit AP-5-S3 / PR #157 abgeschlossen. Generation 13 nicht wiederverwenden.
@@ -388,13 +388,13 @@ Abgeschlossen / nicht wiederverwenden:
 - Quality/Security Generation 3: Issue #134 / PR #135
 - Quality/Security Generation 2: PR #88 historical only
 
-Generation 16 ist für AP-6a Gate 0 / Draft-PR #166 vergeben und nicht für AP-6a-Runtime/AP-6b/AP-7 wiederzuverwenden. Generation 15 (AP-5-S5 / PR #164), Generation 14 (AP-5-S4 / PR #160), Generation 13 (AP-5-S3 / PR #157), Generation 12 (AP-7-S1 / PR #145) und Generation 11 nicht wiederverwenden. AP-7-S2 braucht eine frische Generation und bleibt Product-Owner-gegatet. Das ist **keine automatische Freigabe**.
+Generation 16 ist für AP-6a Gate 0 / PR #166 abgeschlossen und nicht für AP-6a-Runtime/AP-6b/AP-7 wiederzuverwenden. Generation 15 (AP-5-S5 / PR #164), Generation 14 (AP-5-S4 / PR #160), Generation 13 (AP-5-S3 / PR #157), Generation 12 (AP-7-S1 / PR #145) und Generation 11 nicht wiederverwenden. AP-7-S2 braucht eine frische Generation und bleibt Product-Owner-gegatet. Das ist **keine automatische Freigabe**.
 
 Regel: derselbe Agent bleibt bei demselben Slice/PR/Review-Fix. Eine neue logische Arbeitseinheit bekommt eine frische nummerierte Session gemäß Rotation Standard.
 
 ## 8. Exakter nächster Technical-Lead-Schritt
 
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #166 / AP-6a Gate 0. Autor-Agent setzt kein Ready, kein Merge, kein AP-6a-Runtime, kein AP-6b, kein AP-7, keine Vercel-Setting-Mutation. AP-5-S5 ist auf der Baseline `765fc547` integriert. AP-5-S4, AP-5-S3, Next 16 S2 und PR #147 Node 22 sind bereits integriert.
+Live-Rekonstruktion + Binding-Build-Order-Auswahl. Kein automatischer Produkt-Slice. Solange PR #180 offen/unmerged: unabhängiger Technical-Lead Exact-Head-Review der Option-C-Zielarchitektur; nach Merge ist diese Review-Klausel historisch. Autor-Agent setzt kein Ready, kein Merge, kein S5-B-Runtime, kein AP-6a-Runtime, kein AP-6b, kein AP-7, keine Vercel-Setting-Mutation. AP-6a Gate 0 / PR #166 ist integriert; `/privacy`/`terms` Runtime bleiben Legal-/PO-Content-gegatet.
 
 PR #144 ist MERGED (`bb38aef5`). Dual-Authority ist product-owner-freigegeben. PR #143 ist MERGED (`1947285c`).
 

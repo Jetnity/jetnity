@@ -122,8 +122,19 @@ Kein neues Production-P0/P1. P2-Residuals und Gates: Vertrag §9.
 
 ---
 
-## 5. STOPP
+## 5. Review-Fix für `5462459017`
 
-Draft bleibt Draft. Kein Mark Ready. Kein Merge. Kein S5-B-Runtime-/Migration-Folgeslice. Keine Production-/Supabase-Mutation.
+Gegen reviewed Head `4448b2c0`. Dieser Fix erzeugt einen neueren Head; Gates auf `4448b2c0` und `f775cc82` gelten nicht dafür.
 
-Nächster Schritt: unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #180. Agent-Self-Review ist keine Freigabe.
+| ID | Korrektur |
+| --- | --- |
+| `TL-180-01` | Kanonische Current-Truth-Dateien nutzen `PR #180` als Provenienz plus Dual-State / self-expiring. `Draft-PR #180` bleibt nur in diesem Slice-STATUS/HANDOFF/SELF-REVIEW als Authoring-Evidence. Kein Merge behauptet. |
+| `TL-180-02` | `ROADMAP.md` führt AP-6a Gate 0 / ADR-0195 / PR #166 als integrierte historische Architecture-Evidence. `/privacy`/`terms` Runtime bleibt ungebaut und Legal-/PO-Content-gegatet. Kein Legal-Runtime in diesem Slice. |
+
+## 6. STOPP
+
+Dieser Slice-STATUS bleibt Authoring-Evidence: der Autor stoppte auf Draft-PR #180. Das ist kein kanonischer Dauerzustand.
+
+Kein Mark Ready. Kein Merge. Kein S5-B-Runtime-/Migration-Folgeslice. Keine Production-/Supabase-Mutation.
+
+Nächster Schritt: unabhängiger Technical-Lead Exact-Head-**Re-Review** von PR #180. Agent-Self-Review ist keine Freigabe.

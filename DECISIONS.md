@@ -4134,7 +4134,7 @@ Account AP-3 verwendet diese Kennung nicht. Verbindliche Allokation: Admin A = A
 ## ADR-0168 – Commercial Provenance ist ein eigener Vertrag, kein UniversalOffer
 
 **Datum:** 26. August 2026  
-**Status:** S5-A Domain-Foundation integriert auf `main` via PR #83 / `3b317bc6`. S5-B Zielarchitektur Option C angenommen (ADR-0197 / Draft-PR #180). S5-B Runtime/Persistenz nicht gestartet. Keine Persistenz. Volltext: `docs/ADR_0168_COMMERCIAL_PROVENANCE_DOMAIN_CONTRACT.md`.
+**Status:** S5-A Domain-Foundation integriert auf `main` via PR #83 / `3b317bc6`. S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180). S5-B Runtime/Persistenz nicht gestartet. Keine Persistenz. Volltext: `docs/ADR_0168_COMMERCIAL_PROVENANCE_DOMAIN_CONTRACT.md`.
 
 **Entscheidung:** Kommerzielle Wahrheit (Preis, Providerherkunft, Freshness, Währung) bekommt einen provider-neutralen Domainvertrag in `lib/commercial-provenance`. Die bestehenden Flight-/Hotel-/Activity-/Mobility-/Rental-Modelle bleiben fachlich getrennt. Der Vertrag komponiert Provenance, er ersetzt die Domänenoptionen nicht. Ein persistierter Snapshot ist niemals live. Fehlende Freshness bleibt `unknown`. Requested- und Quoted-Währung dürfen ohne Conversion-Evidence nicht gleichgesetzt werden. External References sind Provenance, nicht Trust, und provider-scoped. Mehrere belegte Quellen dürfen als Konflikt stehen bleiben. LLM/Assistant darf diesen Vertrag nicht erzeugen oder überschreiben. Actor und Source sind fail-closed getrennt: User-Intake/Manual sind keine Provider-Truth; Provider-Live-/Snapshot-Herkunft kommt nur aus einem trusted Adapter- oder Snapshot-Pfad. Untrusted Input defaultet nicht auf `system`.
 
@@ -5152,7 +5152,7 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 ## ADR-0197 – Provider S5-B nimmt Option C als Zielarchitektur an
 
 **Datum:** 29. August 2026  
-**Status:** Zielarchitektur angenommen auf Draft-PR #180. **Nicht implementiert. Keine Production-Migration. Kein Schema. Kein RLS-Write. Kein Ready/Merge durch den Autor.** Volltext: `docs/ADR_0197_PROVIDER_S5B_OPTION_C_TARGET_ARCHITECTURE.md`. Vertrag: `docs/PROVIDER_S5B_OPTION_C_TARGET_ARCHITECTURE_2026-08-29.md`.
+**Status:** Zielarchitektur angenommen über PR #180. **Nicht implementiert. Keine Production-Migration. Kein Schema. Kein RLS-Write. Kein Ready/Merge durch den Autor.** Canonical Continuity ist self-expiring: solange #180 offen → TL Exact-Head-Review; nach Merge → ADR-0197 integriert, Runtime/Persistenz nicht gestartet, kein automatischer Persistenzslice. Volltext: `docs/ADR_0197_PROVIDER_S5B_OPTION_C_TARGET_ARCHITECTURE.md`. Vertrag: `docs/PROVIDER_S5B_OPTION_C_TARGET_ARCHITECTURE_2026-08-29.md`.
 
 **Entscheidung:**
 
@@ -5175,7 +5175,7 @@ Ein exaktes Alias-Token kann mehreren Ländern gehören. Live Production enthäl
 
 **Begründung:** Eine eigene Relation kann SELECT owner-only und WRITE privileged trennen, ohne Service-Role, ohne globale Unique auf Provider+Ref und ohne einen UniversalOffer.
 
-**Konsequenzen:** Zielarchitektur angenommen. Runtime/Persistenz nicht gestartet. Production-Migration/RLS/privilegierte Writes bleiben Product-Owner-Gates. Autor-Agent stoppt auf Draft-PR #180. Self-Review ist kein PASS.
+**Konsequenzen:** Zielarchitektur angenommen. Runtime/Persistenz nicht gestartet. Production-Migration/RLS/privilegierte Writes bleiben Product-Owner-Gates. Autor-Agent stoppt, solange #180 offen ist, für unabhängigen Technical-Lead Exact-Head-Review. Nach Merge ist diese Stopp-Klausel historisch. Self-Review ist kein PASS.
 
 ---
 

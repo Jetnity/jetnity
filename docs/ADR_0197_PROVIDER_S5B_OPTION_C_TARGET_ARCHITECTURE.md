@@ -40,4 +40,4 @@ S5-A ist zu reich für die fünf Legacy-Handelsfelder. `trip_items` ist bereits 
 - Zielarchitektur ist angenommen. Implementation ist **nicht** gestartet.
 - Production-Migration / RLS / privilegierte Writes bleiben besondere Product-Owner-Gates.
 - TW-8 bleibt geschlossen.
-- Autor-Agent stoppt auf Draft-PR #180 für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
+- Autor-Agent stoppt, solange PR #180 offen ist, für unabhängigen Technical-Lead Exact-Head-Review. Nach Merge ist diese Stopp-Klausel historisch. Self-Review ist kein PASS.

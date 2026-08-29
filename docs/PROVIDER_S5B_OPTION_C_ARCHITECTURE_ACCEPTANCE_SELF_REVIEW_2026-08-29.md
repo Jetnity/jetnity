@@ -87,10 +87,19 @@ Aktuelle Provider-Readiness- und Continuity-Zeilen in ROADMAP, ARCHITECTURE, Bin
 
 ---
 
-## 5. Verdict
+## 5. Review-Fix `5462459017`
 
-Der Slice hält den versionierten Auftrag. Option C ist Zielarchitektur, nicht Implementation.
+| ID | Gehalten? |
+| --- | --- |
+| `TL-180-01` | Kanonische Dateien: `PR #180` + Dual-State/self-expiring. `Draft-PR #180` nur noch in Slice-STATUS/HANDOFF/SELF-REVIEW. |
+| `TL-180-02` | ROADMAP: PR #166 integriert; Runtime-Legal weiter gegatet. Kein Legal-Runtime. |
+| Kein Merge behauptet | ja |
+| Keine Runtime/Migration | ja |
+
+## 6. Verdict
+
+Die zwei CHANGES-REQUIRED-Funde sind in den kanonischen Dateien korrigiert. Scope bleibt Docs-only. Option C bleibt Zielarchitektur, nicht Implementation.
 
 **Kein PASS. Kein Ready. Kein Merge.**
 
-Unabhängiger Technical-Lead Exact-Head-Review auf dem neuen Exact Head ist erforderlich.
+Unabhängiger Technical-Lead Exact-Head-**Re-Review** auf dem neuen Exact Head ist erforderlich.

@@ -110,7 +110,7 @@ Weiterhin gilt:
 
 P2-TA-03 ist durch PR #117 integriert. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` ist der kanonische Folgeplan für AP-5–AP-12. Historischer PR #39 bleibt Historical Evidence.
 
-P2-TA-04 Gate 0 ist durch PR #120 integriert. C1 ist durch PR #126 integriert: Delete-RPC, DB-Party-Cap 20, Child-Limits auch bei UPDATE. Production C1 live als `20260828015304`. Kein C2. AP-5 Gate 0 ist durch PR #129 integriert. AP-5-S1 ist durch PR #133 integriert. AP-5-S2 ist durch PR #137 integriert. AP-5-S3 ist durch PR #157 integriert. AP-5-S4 ist durch PR #160 integriert. AP-5-S5 ist durch PR #164 integriert. AP-6a Gate 0 ist auf Draft-PR #166 implementiert und wartet auf unabhängigen Technical-Lead Exact-Head-Review.
+P2-TA-04 Gate 0 ist durch PR #120 integriert. C1 ist durch PR #126 integriert: Delete-RPC, DB-Party-Cap 20, Child-Limits auch bei UPDATE. Production C1 live als `20260828015304`. Kein C2. AP-5 Gate 0 ist durch PR #129 integriert. AP-5-S1 ist durch PR #133 integriert. AP-5-S2 ist durch PR #137 integriert. AP-5-S3 ist durch PR #157 integriert. AP-5-S4 ist durch PR #160 integriert. AP-5-S5 ist durch PR #164 integriert. AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence. `/privacy` und `/terms` Runtime bleiben ungebaut und Legal-/PO-Content-gegatet.
 
 Nicht automatisch starten:
 
@@ -124,7 +124,7 @@ Nicht automatisch starten:
 - AP-5-S3 Account Security Logout Scopes — PR #157 integriert auf `main @ 5920860e`
 - AP-5-S4 Account Security MFA Step-up — PR #160 integriert auf `main @ 934d43da`
 - AP-5-S5 Honest Current Session / Device View — PR #164 integriert auf `main @ 765fc547`
-- AP-6a Gate 0 Legal Foundation / Trust Boundary — Draft-PR #166 / Issue #165; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready/Merge durch den Autor; kein AP-6a-Runtime / AP-6b / AP-7
+- AP-6a Gate 0 Legal Foundation / Trust Boundary — PR #166 / ADR-0195 integriert; `/privacy`/`terms` Runtime ungebaut und Legal-/PO-Content-gegatet; kein AP-6a-Runtime / AP-6b / AP-7 automatisch
 
 ## 3. Trip Workspace / Visitor Search
 
@@ -164,7 +164,7 @@ Production Gate A hat die dafür freigegebenen Production-Schritte bereits ausge
 
 Weiter offen/gated:
 
-- S5-B Zielarchitektur Option C angenommen (ADR-0197 / Draft-PR #180); Runtime/Persistenz nicht gestartet
+- S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180); Runtime/Persistenz nicht gestartet
 - keine realen Provider
 - keine Production Secrets
 - keine Verträge
@@ -291,20 +291,19 @@ Abgeschlossen:
 42. ✅ AP-5-S3 Account Security Logout Scopes / PR #157 – integriert auf `main @ 5920860e`; explizite `local`/`others`/`global` in `/account/security`
 43. ✅ AP-5-S4 Account Security MFA Step-up / PR #160 – integriert auf `main @ 934d43da`
 44. ✅ AP-5-S5 Honest Current Session / Device View / PR #164 – integriert auf `main @ 765fc547`
-45. 🟡 AP-6a Gate 0 Legal Foundation / Trust Boundary / Draft-PR #166 – Docs/Contract/Evidence; keine Rechtstexte; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready/Merge durch den Autor; kein AP-6a-Runtime / AP-6b / AP-7
-46. 🟡 Provider S5-B Option C Architecture Acceptance / Draft-PR #180 – Zielarchitektur angenommen (ADR-0197); keine Runtime, keine Migration; STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready/Merge durch den Autor; kein Persistenz-Folgeslice
+45. ✅ AP-6a Gate 0 Legal Foundation / Trust Boundary / PR #166 – integriert (ADR-0195 / Merge `6083ee63`); historische Architecture-Evidence. `/privacy`/`terms` Runtime ungebaut und Legal-/PO-Content-gegatet.
+46. 🟡 Provider S5-B Option C Architecture Acceptance / PR #180 – Zielarchitektur angenommen (ADR-0197); keine Runtime, keine Migration. Self-expiring: solange #180 offen → STOP für unabhängigen Technical-Lead Exact-Head-Review; nach Merge → integrierte Zielarchitektur, Runtime/Persistenz nicht gestartet. Autor setzt kein Ready/Merge.
 
 Nächster Schritt:
 
-- Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #180 (S5-B Option C Zielarchitektur). Kein Ready. Kein Merge durch den Autor. Kein S5-B-Runtime-/Persistenz-Folgeslice. Kein TW-8.
-- Draft-PR #166 / AP-6a Gate 0 bleibt ein separates Legal-PO-Gate und ist Non-Scope von #180.
-- AP-6a-Runtime bleibt hinter dem PO-/Legal-Content-Gate.
+- **Dual-State für PR #180.** Solange PR #180 offen/unmerged: unabhängiger Technical-Lead Exact-Head-Review der S5-B Option-C-Zielarchitektur. Autor setzt kein Ready, kein Merge, kein Persistenz-Folgeslice, kein TW-8. Sobald PR #180 gemergt ist: die Review-/Draft-Klausel ist historisch; ADR-0197 ist integriert; Runtime/Persistenz bleibt ungestartet und extra gegatet.
+- AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence und Non-Scope von #180. `/privacy` und `/terms` Runtime bleiben ungebaut und Legal-/PO-Content-gegatet.
 - AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #166 oder #180.
 
 ## 10. Noch nicht automatisch gestartet / weiterhin gated
 
 - AP-6a-Runtime / AP-6b / AP-7 / AP-5-P1–P5
-- AP-6a Gate 0 bleibt Draft bis unabhängiger Technical-Lead-Review und Merge; Runtime-Legal-Seiten nicht als gebaut behaupten
+- AP-6a Gate 0 / ADR-0195 / PR #166 ist integriert; Runtime-Legal-Seiten nicht als gebaut behaupten
 - AP-7
 - Provider S5-B Runtime/Persistenz (Zielarchitektur Option C angenommen, nicht implementiert)
 - echte Providerphase
