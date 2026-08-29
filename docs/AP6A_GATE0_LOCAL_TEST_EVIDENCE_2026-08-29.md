@@ -18,7 +18,7 @@ Gegateter Authoring-Head vor diesem Stamp: `dce9ee8c`
 | `npm run build` | Production-Build Next.js 16.3.3 Turbopack erfolgreich. Routenliste enthält **kein** `/privacy` und **kein** `/terms`. `check:setup` 1 Warning: keine `.env`/`.env.local` in dieser Cloud-Session. |
 | `npm run auth:pruefen` | **nicht gelaufen**. Kein Auth-/DB-Slice; kein Secret in dieser Session. Nicht als gelaufen behauptet. |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet. Production-404 über `curl` auf dem Alias. |
-| GitHub Actions / Vercel Preview | gelten **nicht** für diesen Stamp. Prior Head `dce9ee8c` Gates werden durch diesen Stamp invalidiert. Live am PR prüfen. |
+| GitHub Actions / Vercel Preview | **Exact Head `18516a06`:** Actions Run [`33243096002`](https://github.com/Jetnity/jetnity/actions/runs/33243096002) SUCCESS (Typecheck/Lint/Build + Auth-Konfiguration). GitHub Preview-Deployment `6153897069` success; PR-Check Vercel SUCCESS `jFScFBDbxgkwCRv6h5GqpkDzzchb`. Unauthentifizierter Preview-HTML-Abruf ist SSO-302 (Deployment Protection) — **kein** unabhängiger 404-Beweis auf Preview. Der ältere Inspector `5N3xV4vG4gZy2hbqHPPm6C7R56J5` gehört zu Prior-Head `dce9ee8c` und ist invalidiert. |
 
 Lokales `npm ci` war **nicht** nötig. Lockfile unverändert.
 

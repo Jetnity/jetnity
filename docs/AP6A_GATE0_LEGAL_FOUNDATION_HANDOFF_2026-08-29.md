@@ -49,9 +49,13 @@ UI wurde nicht umbenannt.
 | Branch Protection | unverändert `protected=false` |
 | Production 404 | `/privacy` `/terms` HTTP 404; `data-dpl-id=dpl_3PWuyGopCnjcdh44twcUUpCWXzmi` |
 | Actions auf Baseline | `33242227312` SUCCESS |
+| Actions auf Exact Head `18516a06` | `33243096002` SUCCESS |
+| GitHub Preview auf `18516a06` | Deployment `6153897069` success; Vercel-Check `jFScFBDbxgkwCRv6h5GqpkDzzchb` SUCCESS |
+| Preview-HTML | SSO-302 / Deployment Protection; kein unabhängiger 404-Abruf |
+| Prior Preview-Inspector `5N3xV4vG4gZy2hbqHPPm6C7R56J5` | Head `dce9ee8c` — **invalidiert** |
 | Supabase | nicht live abgefragt, nicht mutiert |
 
-Jeder neue Push invalidiert Prior-Gates inkl. der Task-only-Checks auf `668c2f17`.
+Jeder neue Push invalidiert Prior-Gates inkl. `18516a06`. Dieser Stamp ist Continuity, kein neuer Slice.
 
 ---
 

@@ -160,7 +160,8 @@ Lokale Gates auf Authoring-Head `dce9ee8c`, persistiert in `docs/AP6A_GATE0_LOCA
 
 - Inventory 9/9; `npm test` 2564/2564; typecheck pass; lint 0 errors / 135 warnings; hygiene pass; Production-Build Next 16.3.3 ohne `/privacy`/`/terms`-Routen.
 - `auth:pruefen` nicht gelaufen (kein Auth-Slice, kein Secret).
-- Dieser Stamp erzeugt einen neueren Head. Prior Task-Checks auf `668c2f17` und lokale Gates auf `dce9ee8c` gelten nicht mehr für den Review-Head. Live am PR prüfen.
+- Exact-Head-CI auf `18516a06`: Actions `33243096002` SUCCESS. GitHub Preview `6153897069` success; Vercel-Check `jFScFBDbxgkwCRv6h5GqpkDzzchb` SUCCESS. Preview-HTML SSO-geschützt, nicht als 404-Beweis verwendet. Inspector `5N3xV4vG4gZy2hbqHPPm6C7R56J5` = Prior `dce9ee8c`, invalidiert.
+- Dieser Continuity-Stamp erzeugt einen neueren Head. Die oben genannten Exact-Head-Gates gelten für `18516a06`, nicht für den Stamp selbst. Live am PR prüfen.
 
 ## 8. Risiken / Review-Funde des Autors
 
