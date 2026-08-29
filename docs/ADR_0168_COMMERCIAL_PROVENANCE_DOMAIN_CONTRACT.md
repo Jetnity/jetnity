@@ -1,7 +1,7 @@
 # ADR-0168 – Commercial Provenance ist ein eigener Vertrag, kein UniversalOffer
 
 Stand: 26. August 2026  
-Status: **S5-A integriert auf `main` via PR #83 / `3b317bc6`. S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180). Persistenzübersetzung ADR-0198 / Draft-PR #182 im Repository, nicht auf Production.**
+Status: **S5-A integriert auf `main` via PR #83 / `3b317bc6`. S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180). Persistenz-Foundation ADR-0198 Production-verifiziert (`20260829140000`). Runtime-Write-Pfad geschlossen. Kein realer Snapshot. TW-8 geschlossen.**
 
 Vollständige Entscheidung: [DECISIONS.md](../DECISIONS.md) ADR-0168.
 

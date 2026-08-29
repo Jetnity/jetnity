@@ -1,30 +1,35 @@
 # Provider HBX Hotels Contract Audit — Handoff
 
 Stand: 29. August 2026  
-Status: **DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW**  
+Status: **REVIEW-FIX FÜR 5463638059 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Cursor-Agent: `Jetnity provider hbx audit 1`  
 PR: https://github.com/Jetnity/jetnity/pull/188  
 Branch: `audit/provider-hbx-hotels-contract-2026-08-29`
 
-Dieser Handoff übergibt Audit-Evidence. Er startet keinen Folgeslice. Agent-Self-Review ist kein PASS.
+Dieser Handoff übergibt den Review-Fix gegen Technical-Lead-Kommentar `5463638059`. Er startet keinen Folgeslice. Agent-Self-Review ist kein PASS. Prior-Head `68e98f7c` und dessen Gates gelten nicht für den neuen Head.
 
 ---
 
 ## 1. Was dieser Agent getan hat
 
-Exakt `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_TASK_2026-08-29.md` ausgeführt.
+Review-Fix gegen `5463638059` auf Head `68e98f7c`:
 
-Geliefert:
+1. S5-B Current-State: Persistenz-Foundation ist auf Baseline `69ef27b1` Production-verifiziert (`20260829140000`). Offen bleiben Runtime-Write-Pfad, realer Snapshot, TW-8 — nicht ein generisches „S5-B nicht Production“.
+2. Portfolio-Evidence: drei first-party Zahlen 173k / 250k / 300k als Drift, keine kanonische Wahl.
+3. Booking.com Search/Look/Redirect bleibt, jetzt mit first-party Demand-API-Zitat B1.
+
+Geliefert / nachgeführt:
 
 - `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_2026-08-29.md`
 - `docs/PROVIDER_HBX_HOTELS_ADAPTER_CONTRACT_2026-08-29.md`
 - `docs/PROVIDER_HBX_HOTELS_ADAPTER_FOUNDATION_TASK_PROPOSAL_2026-08-29.md`
 - dieser Handoff, Status, Self-Review
-- Continuity: `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_HANDOFF.md`, `ROADMAP.md`
+- Continuity-Current-State: `docs/ACTIVE_WORK_STATUS.md`, `JETNITY_HANDOFF.md`, `JETNITY_START_HERE.md`, `ROADMAP.md`, `docs/JETNITY_BINDING_BUILD_ORDER.md`, `docs/HOTEL_PROVIDER_STRATEGY.md`
+- S5-B Current-State-Header (unterscheidet Foundation-Apply vs Runtime-Write): ADR-0197, ADR-0198, ADR-0168-Statuszeile, `docs/PROVIDER_S5B_OPTION_C_TARGET_ARCHITECTURE_2026-08-29.md`, `DECISIONS.md` ADR-0197/0198 Status
 
 Nicht getan: Runtime, Shared-Core, Signup, Keys, Secrets, HTTP, Mint, Production, Ready, Merge.
 
-`origin/main` vor Handoff neu geholt: `69ef27b169780e41ba506a69acb15caafa645517`. Behind = 0. Exact Head = Commit dieses Stamps; live am PR prüfen.
+`origin/main` vor Handoff neu geholt: `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3`. Merge-Base bleibt Task-Baseline `69ef27b1`. **Behind = 4** (Checkpoint-only, kein Datei-Overlap). Kein Rebase. Exact Head = Commit dieses Stamps; live am PR prüfen.
 
 ---
 
@@ -41,6 +46,7 @@ HBX Hotels ist öffentlich ein signatur-authenifizierter, umgebungsgetrennter B2
 | HBX-R1 | Booking-API ≠ Affiliate-Redirect | high / Produkt |
 | U1 | Destination/Geo-Availability unbewiesen | medium / Search-Design |
 | U2 | Request-Währung unbewiesen | medium / Preis |
+| U7 | Portfolio 173k / 250k / 300k first-party Drift | medium / Evidence |
 | U5/S16 | Hotels-Error-Seite 404; Swagger unlesbar | medium / Contract completeness |
 | HBX-R2 | TEST/Fixture darf nie `live_api` werden | high / Truth |
 
@@ -48,7 +54,7 @@ HBX Hotels ist öffentlich ein signatur-authenifizierter, umgebungsgetrennter B2
 
 ## 4. Empfehlung an den Technical Lead
 
-Exact-Head-Review der Docs. Nicht Ready. Nicht mergen. Foundation-Proposal nicht als autorisiert behandeln.
+Exact-Head-**Re-Review** der Docs nach `5463638059`. Nicht Ready. Nicht mergen. Foundation-Proposal nicht als autorisiert behandeln.
 
 Wenn der TL die Evidence für unzureichend hält, weil S16 Cookie-Wall: das ist dokumentiert, nicht versteckt. Ein Follow-up darf S16 nur mit first-party Zugang nachlesen, ohne Signup-Keys in Git.
 
@@ -69,6 +75,7 @@ Keine Runtime, keine Shared-Core-Edits, kein Signup, keine Keys, keine realen Ca
 5. `lib/hotels/provider.ts`, `lib/hotels/domain.ts`
 6. `lib/providers/skyscanner/flights/*` als Foundation-Vorbild
 7. ADR-0070, ADR-0075, ADR-0168
+8. `docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md` — S5-B Current-State auf dieser Baseline
 
 ---
 

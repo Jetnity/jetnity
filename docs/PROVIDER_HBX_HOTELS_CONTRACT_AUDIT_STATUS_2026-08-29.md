@@ -1,7 +1,7 @@
 # Provider HBX Hotels Contract Audit — Status
 
 Stand: 29. August 2026  
-Status: **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD REVIEW**  
+Status: **REVIEW-FIX FÜR 5463638059 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Cursor-Agent: `Jetnity provider hbx audit 1`  
 Preferred visible title: `Jetnity provider hbx audit 1`  
 Observed run title: `Provider hbx audit`  
@@ -12,7 +12,7 @@ Auftrag: `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_TASK_2026-08-29.md`
 Branch: `audit/provider-hbx-hotels-contract-2026-08-29`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/188
 
-> Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
+> Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates. Head `68e98f7c` und dessen Gates gelten **nicht** für den neuen Head.
 
 ---
 
@@ -30,18 +30,17 @@ Erneut `git fetch origin main` am 29. August 2026.
 
 | Fakt | Wert |
 | --- | --- |
-| Task-Baseline / `origin/main` | `69ef27b169780e41ba506a69acb15caafa645517` — `Integrate Skyscanner Flights offline adapter foundation` |
-| Lokales `main` | identisch zu `origin/main` |
-| Merge-Base | `69ef27b1` = `origin/main` |
-| Ahead / Behind bei diesem Stamp | Ahead = Task + Audit-Docs; **Behind = 0**. Exact Head = Commit dieses Stamps; live am PR prüfen. |
+| Task-Baseline | `69ef27b169780e41ba506a69acb15caafa645517` — `Integrate Skyscanner Flights offline adapter foundation` |
+| Live `origin/main` bei diesem Stamp | `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3` — `Stabilize authoritative Jetnity current-state checkpoint` |
+| Merge-Base | `69ef27b1` = Task-Baseline |
+| Ahead / Behind bei diesem Stamp | Ahead = Task + Audit-Docs + Review-Fix; **Behind = 4** (nur `docs/CHATGPT_TL_LIVE_RECONSTRUCTION_CHECKPOINT_2026-08-29_V2.md`). Kein Rebase in diesem Review-Fix. Exact Head = Commit dieses Stamps; live am PR prüfen. |
 | Draft-PR | #188 OPEN Draft |
-| Task-Head CI | Actions Run `33261049464` SUCCESS auf Task-Commit `f6cef132`. **Gilt nicht für den neuen Head.** |
-| Task-Head Vercel | READY `8YCfoYedhJw6vTmy4BgTPZQfnnA1` auf `f6cef132`. **Gilt nicht für den neuen Head.** |
+| Prior-Head CI/Vercel | `68e98f7c` und `f6cef132` Gates gelten **nicht** für den neuen Head. |
 | Branch Protection | nicht unabhängig live verifiziert in diesem Environment |
 | Supabase / Production | nicht mutiert; nicht live verifiziert |
 | Provider / Secrets / paid calls | 0. Kein Signup, kein Call |
 
-Drift: **kein** `origin/main`-Drift gegenüber der Task-Baseline.
+Drift: `origin/main` ist nach der Task-Baseline um den Current-State-Checkpoint V2 weitergezogen (`cbf7cfc8`…`f80a7f0b`). Kein Datei-Overlap mit diesem Review-Fix. Der Checkpoint bestätigt dieselbe S5-B-Current-Truth (Foundation Production-verifiziert; Runtime-Write geschlossen) und nennt #188 CHANGES REQUIRED genau für `5463638059`.
 
 ---
 
@@ -53,7 +52,7 @@ Drift: **kein** `origin/main`-Drift gegenüber der Task-Baseline.
 - Fixture-Shape + fail-closed + Commercial-Truth-Sperre.
 - Zukünftige Factory/Transport/Parser/Observability/Error-Mapping/Gates.
 - Future Foundation-Task als **Proposal only**.
-- Unknowns ehrlich: Destination/Geo-Suche, Request-Währung, Hotels-Error-Seite 404, Swagger Cookie-Wall, Portfolio 173k vs 250k, mTLS vs Evaluation-Host, Live-QPS, TTL.
+- Unknowns ehrlich: Destination/Geo-Suche, Request-Währung, Hotels-Error-Seite 404, Swagger Cookie-Wall, Portfolio-Drift 173k/250k/300k, mTLS vs Evaluation-Host, Live-QPS, TTL.
 
 Keine Runtime-Datei. `next-env.d.ts` nicht committed.
 
@@ -96,7 +95,7 @@ Production-Build: nicht als Abschluss dieses Docs-Slice behauptet; kein Runtime-
 3. Foundation-Task nicht starten.
 4. Kein HBX-Signup.
 5. Booking.com-Zugang bleibt unbestätigt.
-6. S5-B Production-Apply und TW-8 bleiben fremde Gates.
+6. S5-B Persistenz-Foundation ist auf dieser Baseline Production-verifiziert. Offen bleiben Runtime-Write-Pfad-Allokation, realer Provider-Snapshot und TW-8 — fremde Gates, nicht dieser Audit.
 
 ---
 

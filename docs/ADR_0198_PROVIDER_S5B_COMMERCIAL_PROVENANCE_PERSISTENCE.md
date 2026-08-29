@@ -1,8 +1,8 @@
 # ADR-0198 – Provider S5-B persistiert Option C mit privilegierter Write-Authority
 
 Stand: 29. August 2026  
-Status: **IMPLEMENTIERT IM REPOSITORY / DRAFT-PR #182 / KEINE PRODUCTION-ANWENDUNG / KEIN TW-8**  
-Volltext-Kurzform auch in [DECISIONS.md](../DECISIONS.md) ADR-0198.
+Status: **PERSISTENZ-FOUNDATION IMPLEMENTIERT UND PRODUCTION-VERIFIZIERT (`20260829140000`) / RUNTIME-WRITE-PFAD GESCHLOSSEN / KEIN REALER SNAPSHOT / KEIN TW-8**  
+Volltext-Kurzform auch in [DECISIONS.md](../DECISIONS.md) ADR-0198. Current-Apply-Evidence: `docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md`.
 
 S5-A bleibt unverändert ADR-0168. ADR-0197 bleibt die Zielarchitektur. Dieser ADR übersetzt sie in Schema + RLS + Write-Authority.
 
@@ -23,7 +23,7 @@ S5-A bleibt unverändert ADR-0168. ADR-0197 bleibt die Zielarchitektur. Dieser A
 
 ## Kontext
 
-PO-Gate `S5B-G0-PO-MIG-01` wurde am 29. August 2026 freigegeben. Production-Apply bleibt TL-kontrolliert nach unabhängigem Exact-Head-PASS. Cursor wendet Production nicht an.
+PO-Gate `S5B-G0-PO-MIG-01` wurde am 29. August 2026 freigegeben. Die Persistenz-Foundation ist danach TL-kontrolliert auf Production angewendet und verifiziert. **Offen bleibt** die Runtime-Principal-/Write-Pfad-Allokation (`production_write_path_allocated=false`), nicht ein erneutes Foundation-Apply. Cursor allokiert den Write-Pfad nicht und mintet nichts.
 
 ## Alternativen
 
@@ -34,7 +34,7 @@ PO-Gate `S5B-G0-PO-MIG-01` wurde am 29. August 2026 freigegeben. Production-Appl
 
 ## Konsequenzen
 
-- Repository enthält Schema + Tests. Production ist unverändert, bis der Technical Lead unter der bestehenden PO-Freigabe anwendet.
+- Persistenz-Foundation existiert im Repository und ist Production-verifiziert. Runtime-Write-Pfad bleibt geschlossen, bis ein späteres Gate eine Login-Rolle zuweist.
 - TW-8 bleibt geschlossen, bis mindestens ein serverseitig nachgewiesener realer Snapshot existiert.
 - Self-Review ist kein PASS. Cursor setzt kein Ready und merget nicht.
 

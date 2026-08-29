@@ -30,7 +30,7 @@ Getrennte Nähte, die dieser Adapter **nicht** verschmilzt:
 | --- | --- | --- |
 | `HotelProvider.suchen()` | existiert, Factory `null` | späterer Search-Port |
 | `HotelNachweis` | Umgebung `null` | eigene Bestätigung; nicht in `suchen()` |
-| Commercial Provenance | S5-A Vertrag; S5-B nicht Production | nur zukünftiger Live-Transport darf `live_api`-Kandidat erzeugen |
+| Commercial Provenance | S5-A Vertrag; S5-B Persistenz-Foundation Production-verifiziert; Runtime-Write-Pfad geschlossen | nur zukünftiger Live-Transport darf `live_api`-Kandidat erzeugen; `persisted_snapshot` braucht allokierten Runtime-Write plus echte Provider-Antwort |
 | Affiliate / Booking | `booking_url` immer `null` | HBX Booking/Voucher bleibt extra gegatet |
 | Quartier / Ranking / UI | Jetnity-owned | kein HBX-Leak |
 
@@ -201,8 +201,8 @@ Ungültige Fixture-`schema` → leeres Fixture-Result, kein Throw in den Commerc
 | Evaluation-Key, 50/Tag, TEST-Host | nein | nein |
 | Certification-Umgebung | nein | nein |
 | Authentifizierte LIVE-Availability ohne CheckRate bei `RECHECK` | nein | nein |
-| Authentifizierte LIVE-Availability `BOOKABLE` | nur als **Kandidat** nach S5-A, nicht automatisch persistieren | nur über S5-B Write-Authority nach eigenem Gate |
-| CheckRate 200 auf LIVE | Kandidat, Freshness weiter `unknown` ohne TTL | dasselbe Gate |
+| Authentifizierte LIVE-Availability `BOOKABLE` | nur als **Kandidat** nach S5-A, nicht automatisch persistieren | Persistenz-Tabelle existiert; Write nur nach allokiertem Runtime-Principal/`production_write_path_allocated=true` plus echter Provider-Antwort |
+| CheckRate 200 auf LIVE | Kandidat, Freshness weiter `unknown` ohne TTL | dasselbe Runtime-Write-Gate |
 | Booking-Bestätigung | eigenes Booking-Produkt, nicht Search-Truth | eigenes Gate |
 
 Mechanische Sperre analog Skyscanner:
@@ -297,10 +297,10 @@ Keine implizite Kette. Jedes Gate ist ein eigener Auftrag.
 | G6 | Product Owner: HBX nur Search-Backup vs. Booking-Produkt | PO |
 | G7 | Certification, Voucher, Live-Keys, mTLS, Commercial Agreement | PO + Vendor |
 | G8 | S5-A Live-Quote-Kandidat | nur LIVE + echter Transport |
-| G9 | S5-B Persistenz-Write | bestehendes S5-B Production-Gate |
+| G9 | S5-B Runtime-Write | Persistenz-Foundation ist bereits Production-verifiziert (`20260829140000`). Offen: Runtime-Principal, `production_write_path_allocated=true`, realer Provider-Snapshot. |
 | G10 | Production-Hotelsuche / `JETNITY_HOTEL_AKTIV` | bestehendes Hotel-Production-Gate |
 
-TW-8 bleibt hinter S5 **und** realer Commercial Provenance. Dieser Contract öffnet TW-8 nicht.
+TW-8 bleibt hinter S5 **und** realer Commercial Provenance (echter Provider-Snapshot, nicht nur angewendete Persistenz-DDL). Dieser Contract öffnet TW-8 nicht. S5-B Production-Apply der Foundation ist **kein** offenes Gate mehr.
 
 ---
 

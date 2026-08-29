@@ -1,7 +1,7 @@
 # Provider HBX Hotels Contract Audit — Agent Self-Review
 
 Stand: 29. August 2026  
-Status: **SELF-REVIEW ONLY / KEINE FREIGABE / KEIN PASS**  
+Status: **SELF-REVIEW ONLY / REVIEW-FIX FÜR 5463638059 / KEINE FREIGABE / KEIN PASS**  
 Cursor-Agent: `Jetnity provider hbx audit 1`  
 PR: https://github.com/Jetnity/jetnity/pull/188
 
@@ -21,7 +21,7 @@ Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead-Review.
 | Nicht Ready / nicht mergen / kein Folgeslice | ja |
 | First-party Docs als Primärquelle | ja |
 | Unknowns ehrlich | ja |
-| `origin/main` vor Handoff neu | ja, `69ef27b1`, behind 0 |
+| `origin/main` vor Handoff neu | ja, live `f80a7f0b`; Task-Baseline `69ef27b1`; **behind 4** (Checkpoint-only). Kein Rebase. |
 
 Task-Datei unverändert.
 
@@ -57,6 +57,14 @@ Nein. Strategie-Reihenfolge unverändert. HBX bleibt Backup. Booking-Produkt-Piv
 
 `sourceMarket` ≠ Citizenship. Kinderalter nur wenn Kinder > 0. Keine Pass-/MRZ-Sammlung für Search.
 
+### 2.8 Habe ich S5-B weiter als „nicht Production“ geführt?
+
+Nein. Persistenz-Foundation ist Production-verifiziert. Runtime-Write-Pfad, realer Snapshot und TW-8 bleiben geschlossen. G9 ist kein Apply-Gate mehr.
+
+### 2.9 Habe ich eine Portfolio-Zahl kanonisch gewählt?
+
+Nein. 173k / 250k / 300k stehen als first-party Drift. U7 bleibt `unknown`.
+
 ---
 
 ## 3. Evidenzlücken, die der TL sehen muss
@@ -64,7 +72,7 @@ Nein. Strategie-Reihenfolge unverändert. HBX bleibt Backup. Booking-Produkt-Piv
 - S16 Swagger/API-Reference nicht lesbar.
 - S17 Hotels-Errors 404.
 - Request-Währung und Destination-Suche unbewiesen.
-- Portfolio-Zahlen widersprechen sich.
+- Portfolio-Zahlen 173k / 250k / 300k widersprechen sich; keine gewählt.
 - mTLS-Pflicht vs. Evaluation-Host nicht aufgelöst.
 
 Das ist unvollständig gegenüber einem vollständigen Vendor-SDK-Dump. Es ist vollständig gegenüber öffentlich lesbarer first-party Evidence **ohne** Signup.

@@ -17,7 +17,7 @@ Booking.com ist die erste Wahl, **sofern Jetnity als Managed Affiliate Partner Z
 
 Warum es besonders gut zum Jetnity-Modell passt:
 
-- Search/Look/Redirect passt zum Aggregator-Modell: Jetnity sucht und bewertet, die Buchung erfolgt beim Partner.
+- Search/Look/Redirect passt zum Aggregator-Modell: Jetnity sucht und bewertet, die Buchung erfolgt beim Partner. First-party Demand-API-Beleg (B1, 2026-08-29): https://developers.booking.com/demand/docs/development-guide/application-flows — Search → Look/availability → Redirect zur Booking.com-URL.
 - Echte Verfügbarkeiten und kommerzielle Preise können in die Jetnity-Hotelpipeline fliessen.
 - Jetnity behält die eigene Oberfläche, Quartierlogik und Rangfolge.
 - Affiliate-/Redirect-Logik kann getrennt von der Search-Domäne bleiben.
@@ -73,4 +73,4 @@ Phase 3.2c bleibt provider-unabhängig. Die Nachweis-Naht ist an Ziel, Zeitraum,
 
 **Verbindliche Reihenfolge:** Booking.com zuerst versuchen → HBX/Hotelbeds als Backup für reale Integration → Expedia Rapid später prüfen → langfristig mehrere Quellen provisionsneutral vergleichen.
 
-Contract-Evidence (29. August 2026, Draft-PR #188, nicht akzeptiert): first-party HBX Hotels API ist ein B2B-Booking-/Inventory-Stack (Availability → optional CheckRate → Booking) plus Batch-Content-API, kein belegtes Search/Look/Redirect. Details: `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_2026-08-29.md`. Keine Aktivierung, keine Keys, keine Änderung dieser Reihenfolge.
+Contract-Evidence (29. August 2026, Draft-PR #188, nicht akzeptiert): first-party HBX Hotels API ist ein B2B-Booking-/Inventory-Stack (Availability → optional CheckRate → Booking) plus Batch-Content-API, kein belegtes Search/Look/Redirect. Booking.com-Fit bleibt über separates Demand-API-Zitat B1. HBX-Portfolio-Zahlen 173k / 250k / 300k sind first-party Dokumentations-Drift; keine ist kanonisch. Details: `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_2026-08-29.md`. Keine Aktivierung, keine Keys, keine Änderung dieser Reihenfolge.

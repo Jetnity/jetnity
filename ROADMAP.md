@@ -164,7 +164,7 @@ Production Gate A hat die dafür freigegebenen Production-Schritte bereits ausge
 
 Weiter offen/gated:
 
-- S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180); Persistenz im Repository Draft-PR #182 / ADR-0198, nicht auf Production; TW-8 geschlossen
+- S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180); Persistenz-Foundation integriert und Production-verifiziert (`20260829140000_trip_item_commercial_provenance`, ADR-0198 / PR #182/#183); Runtime-Write-Pfad nicht allokiert; kein realer Provider-Snapshot; TW-8 geschlossen
 - keine realen Provider
 - keine Production Secrets
 - keine Verträge
@@ -293,13 +293,13 @@ Abgeschlossen:
 44. ✅ AP-5-S5 Honest Current Session / Device View / PR #164 – integriert auf `main @ 765fc547`
 45. ✅ AP-6a Gate 0 Legal Foundation / Trust Boundary / PR #166 – integriert (ADR-0195 / Merge `6083ee63`); historische Architecture-Evidence. `/privacy`/`terms` Runtime ungebaut und Legal-/PO-Content-gegatet.
 46. ✅ Provider S5-B Option C Architecture Acceptance / PR #180 – Zielarchitektur angenommen (ADR-0197)
-47. 🟡 Provider S5-B Persistence / PR #182 – Schema + RLS + Write-Authority im Repository (ADR-0198). TL-182-01/02/03 im Repository geschlossen. Keine Production-Anwendung. Production-Write-Pfad nicht allokiert. Self-expiring: solange #182 offen → STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; nach Merge → Repository integriert, Production-Apply extra TL-kontrolliert, TW-8 geschlossen. Autor setzt kein Ready/Merge.
-48. 🟡 Provider HBX Hotels Contract Audit / Draft-PR #188 – docs/evidence/adapter-contract only auf Baseline `69ef27b1`. Keine Runtime, keine Keys, keine Calls, kein Mint. Self-expiring: solange #188 offen → STOP für unabhängigen Technical-Lead Exact-Head-Review; nach Merge → Evidence integriert, Foundation-Task extra gegatet. Autor setzt kein Ready/Merge.
+47. ✅ Provider S5-B Persistence / PR #182 / #183 – Schema + RLS + Write-Authority integriert (ADR-0198). Production-Migration `20260829140000_trip_item_commercial_provenance` angewendet und verifiziert. Runtime-Write-Pfad nicht allokiert. Kein realer Provider-Snapshot. TW-8 geschlossen.
+48. 🟡 Provider HBX Hotels Contract Audit / Draft-PR #188 – docs/evidence/adapter-contract only auf Baseline `69ef27b1`. Review-Fix `5463638059`: S5-B Current-State und Portfolio-Drift 173k/250k/300k. Keine Runtime, keine Keys, keine Calls, kein Mint. Self-expiring: solange #188 offen → STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; nach Merge → Evidence integriert, Foundation-Task extra gegatet. Autor setzt kein Ready/Merge.
 
 Nächster Schritt:
 
-- **Draft-PR #188.** Unabhängiger Technical-Lead Exact-Head-Review des HBX-Hotels-Contract-Audits. Autor setzt kein Ready, kein Merge, keinen Foundation-Folgeslice, kein Signup.
-- **Draft-PR #182** bleibt ein paralleler Persistenz-Block. Kein Production-Apply, kein TW-8 aus #188.
+- **Draft-PR #188.** Unabhängiger Technical-Lead Exact-Head-Re-Review des HBX-Hotels-Contract-Audits nach `5463638059`. Autor setzt kein Ready, kein Merge, keinen Foundation-Folgeslice, kein Signup.
+- S5-B Persistenz-Foundation ist auf dieser Baseline Production-verifiziert. Offen bleiben Runtime-Write-Pfad-Allokation, realer Provider-Snapshot und TW-8. #188 allokiert das nicht und mintet nichts.
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence und Non-Scope von #180. `/privacy` und `/terms` Runtime bleiben ungebaut und Legal-/PO-Content-gegatet.
 - AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #166 oder #180.
 

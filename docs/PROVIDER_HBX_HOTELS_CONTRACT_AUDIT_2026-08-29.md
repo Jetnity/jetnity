@@ -47,6 +47,8 @@ Unbekanntes bleibt `unknown`. Nichts wird erfunden.
 | S15 | Transfers Booking API Overview | https://developer.hotelbeds.com/documentation/transfers/booking-api/overview/ | 2026-08-29 | first-party / sibling suite hostname |
 | S16 | Hotel Booking API Reference | https://developer.hotelbeds.com/documentation/hotels/booking-api/api-reference/ | 2026-08-29 | first-party, **nicht lesbar** (Cookie-Wall / „Loading …“) |
 | S17 | Hotels knowledge-base errors | https://developer.hotelbeds.com/documentation/hotels/knowledge-base/errors/ | 2026-08-29 | **404** |
+| S18 | API Suite homepage | https://developer.hotelbeds.com/ | 2026-08-29 | first-party / suite homepage |
+| B1 | Demand API integration types | https://developers.booking.com/demand/docs/development-guide/application-flows | 2026-08-29 | first-party / Booking.com Demand API; **nicht** HBX |
 
 ---
 
@@ -59,7 +61,15 @@ HBX Group liefert die **Hotels API Suite** (APITUDE). Die Suite umfasst laut S2:
 - Hotel Cache API — Preise/Verfügbarkeit als Dateien
 - CDS API — Change Discovery
 
-S2 nennt „instant access to **250,000** hotels“. S9 nennt „approximately **173000** hotels“ für den initialen Content-Load. Das ist ein **dokumentierter Widerspruch**. Portfolio-Größe bleibt `unknown` bis Vendor-Bestätigung.
+Drei **gleichzeitig öffentliche** first-party Portfolio-Zahlen widersprechen sich. Keine wird als kanonische Portfolio-Wahrheit gewählt:
+
+| Quelle | Belegter Wortlaut | Datum |
+| --- | --- | --- |
+| S18 API Suite homepage | **300,000** „Hotels worldwide“ | 2026-08-29 |
+| S2 Hotels API Suite overview | „instant access to **250,000** hotels“ | 2026-08-29 |
+| S9 How to use Content API | „approximately **173000** hotels“ für den initialen Content-Load | 2026-08-29 |
+
+Das ist first-party **Dokumentations-Drift**, kein gemessener Katalog. Portfolio-Größe bleibt `unknown` / `vendor-confirmation-required`.
 
 Es gibt **kein Shopping-Cart** in der aktuellen API; der Client verwaltet den Funnel selbst (S2).
 
@@ -333,9 +343,9 @@ Belegt ist ein **Wholesale-/Agentur-Modell**:
 - Live-Testbuchung kann echte Stornokosten erzeugen
 - Transfers-Certification (nicht Hotels) erwähnt Commercial Agreement; für **Hotels** ist ein Vertrag in S6 nicht wörtlich als Voraussetzung genannt, aber Live-Keys, Voucher und echte Bookings implizieren eine kommerzielle Beziehung. Status: `unknown / vendor-confirmation-required`
 
-**Nicht belegt:** Affiliate-Deeplink, Redirect-Look-to-Book, öffentliche Consumer-Attribution, Impact-Links, Booking.com-ähnliches Search/Look/Redirect.
+**Nicht belegt in HBX-Hotels-Docs:** Affiliate-Deeplink, Redirect-Look-to-Book, öffentliche Consumer-Attribution, Impact-Links.
 
-Das ist die zentrale Produktgrenze zu `docs/HOTEL_PROVIDER_STRATEGY.md`: Booking.com Demand API ist bevorzugt, weil Search/Look/Redirect zum Aggregator-Modell passt. HBX Booking API ist ein **Buchungs- und Inventory-API**. Ein HBX-Adapter für Jetnity-Suche darf Availability/Content nutzen; er darf **nicht** still eine Jetnity-eigene Hotelbuchung oder einen erfundenen Deeplink einführen.
+Das ist die zentrale Produktgrenze zu `docs/HOTEL_PROVIDER_STRATEGY.md`. Booking.com Demand API belegt separat (B1, 2026-08-29) den Flow **Search, look and redirect**: Search → Availability/Look → Redirect zur Booking.com-URL. HBX Hotel Booking API ist dagegen ein **Buchungs- und Inventory-API** (Availability → optional CheckRate → Booking/Voucher). Ein HBX-Adapter für Jetnity-Suche darf Availability/Content nutzen; er darf **nicht** still eine Jetnity-eigene Hotelbuchung oder einen erfundenen Deeplink einführen.
 
 ---
 
@@ -361,7 +371,7 @@ Bereits auf `main`:
 - Port `HotelProvider.suchen()` — bucht nicht, erzeugt keine Deeplinks
 - `HotelNachweis` an Ziel/Zeitraum/Belegung/Währung; Umgebung `null`
 - Factory `hotelProviderAus()` = `null`
-- Commercial Provenance S5-A; S5-B Persistenz nur Repository, kein Production-Write-Pfad
+- Commercial Provenance S5-A; S5-B Persistenz-Foundation auf dieser Baseline Production-verifiziert (`20260829140000_trip_item_commercial_provenance`, owner-readable RLS, privilegierte Write-Authority). Runtime-Provider-Write-Pfad bleibt geschlossen (`production_write_path_allocated=false`). Kein realer Provider-Snapshot. TW-8 geschlossen.
 - Skyscanner-Flights-Foundation als Vorbild: fixture-only, kein `live_api`-Mint
 
 HBX darf **nicht** in `HotelOption`, UI oder `lib/commercial-provenance` leaken.
@@ -392,7 +402,7 @@ Nicht relevant für Availability-Suche: Visa, Dokumente, MRZ, Biometrie. Keine E
 | U4 | Evaluation vs mTLS-Pflicht | S1 und S7 spannungsvoll |
 | U5 | Hotels-spezifische Error-Codes | S17 404 |
 | U6 | Certification/Live QPS | nicht öffentlich beziffert |
-| U7 | Portfolio 173k vs 250k | Dokumentwiderspruch |
+| U7 | Portfolio 173k vs 250k vs 300k | drei widersprüchliche first-party Zahlen; keine kanonisch |
 | U8 | Official Availability-TTL | nicht gefunden |
 | U9 | Ob und wann `net` consumer-sichtbar sein darf | Commercial/Legal |
 | U10 | Ob Jetnity ein HBX-Konto/Vertrag hat | nicht geprüft, nicht eröffnet |
@@ -424,7 +434,7 @@ Nicht relevant für Availability-Suche: Visa, Dokumente, MRZ, Biometrie. Keine E
 ## 21. Empfehlung
 
 1. Diesen Audit als **Gate-0-Evidence** reviewen. Nicht implementieren.
-2. Booking.com Demand API bleibt der bevorzugte **erste kommerzielle** Hotelweg, sofern Zugang kommt.
+2. Booking.com Demand API bleibt der bevorzugte **erste kommerzielle** Hotelweg, sofern Zugang kommt. Produkt-Fit stützt sich auf B1 (Search/Look/Redirect), nicht auf eine HBX-Redirect-Annahme.
 3. HBX bleibt technischer Backup **nur** für Availability + gecachtes Content, nicht für Jetnity-eigene Buchung, solange Product Owner nichts anderes entscheidet.
 4. Nächster erlaubter Slice, falls TL/PO ihn separat vergibt: **offline fixture foundation**, analog Skyscanner. Kein Key, kein Netz, kein Booking, kein Content-Batch, kein mTLS, kein Mint.
 5. CheckRate, Booking, Voucher, Certification, Live-Keys, Commercial Agreement und Production bleiben **eigene Gates**.
