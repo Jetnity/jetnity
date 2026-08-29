@@ -30,7 +30,12 @@ import type { MobilityManuellEingabe } from '@/lib/mobility/schema'
 import { rentalCarManuellInReiseAnlegen } from '@/lib/rental-cars/aktionen'
 import type { RentalCarManuellEingabe } from '@/lib/rental-cars/schema'
 import { readinessEntfernen, readinessSetzen } from '@/lib/readiness/aktionen'
-import { travellerEntfernen, travellerSetzen } from '@/lib/readiness/reisende-aktionen'
+import { PARTY_GRENZEN, partyVon } from '@/lib/readiness/party'
+import { registryTravellerInReiseUebernehmen, travellerEntfernen, travellerSetzen } from '@/lib/readiness/reisende-aktionen'
+import type { Problem } from '@/lib/api/datenbank-lesen'
+import type { RegistryTripAnzeige } from '@/lib/traveller/account-registry-trip'
+import { registryTripLimitErreicht } from '@/lib/traveller/account-registry-trip'
+import RegistryReiseUebernahme from '@/components/trips/RegistryReiseUebernahme'
 import { planpunktAnlegen, planpunktBuchungsstatusSetzen, planpunktEntfernen, reiseLoeschen } from '@/lib/trips/aktionen'
 import type { PlanpunktFormular } from '@/lib/trips/schema'
 import AktivitaetenBereich from '@/components/trips/AktivitaetenBereich'
@@ -44,9 +49,14 @@ import type { Trip, TripItem } from '@/types/trips'
 export default function KontoArbeitsbereich({
   reise,
   ohneTag,
+  registry,
 }: {
   reise: Trip
   ohneTag: TripItem[]
+  registry?: {
+    problem: Problem | null
+    travellers: RegistryTripAnzeige[] | null
+  }
 }) {
   const router = useRouter()
   const [loeschmeldung, setLoeschmeldung] = React.useState('')
@@ -113,6 +123,24 @@ export default function KontoArbeitsbereich({
         router.refresh()
         return null
       }}
+      registryUebernahme={
+        registry ? (
+          <RegistryReiseUebernahme
+            problem={registry.problem}
+            travellers={registry.travellers}
+            voll={registryTripLimitErreicht(partyVon(reise).length, PARTY_GRENZEN.slots)}
+            onUebernehmen={async (registryTravellerId) => {
+              const ergebnis = await registryTravellerInReiseUebernehmen({
+                tripId: reise.id,
+                registryTravellerId,
+              })
+              if (!ergebnis.ok) return ergebnis.meldung
+              router.refresh()
+              return null
+            }}
+          />
+        ) : null
+      }
       onReadinessEntfernen={async (clientRef) => {
         const ergebnis = await readinessEntfernen({ tripId: reise.id, clientRef })
         if (!ergebnis.ok) return ergebnis.meldung

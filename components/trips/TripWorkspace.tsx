@@ -111,6 +111,7 @@ type TripWorkspaceProps = {
     }>
   }) => Promise<string | null>
   onTravellerEntfernen?: (clientRef: string) => Promise<string | null>
+  registryUebernahme?: React.ReactNode
   officialEvaluations?: OfficialEvaluation[]
   safetyEvaluations?: SafetyEvaluation[]
   seasonalEvaluations?: SeasonalEvaluation[]
@@ -180,6 +181,7 @@ export default function TripWorkspace({
   onReadinessEntfernen,
   onTravellerSetzen,
   onTravellerEntfernen,
+  registryUebernahme,
   officialEvaluations,
   safetyEvaluations,
   seasonalEvaluations,
@@ -316,6 +318,7 @@ export default function TripWorkspace({
       onEntfernen={onReadinessEntfernen}
       onTravellerSetzen={onTravellerSetzen}
       onTravellerEntfernen={onTravellerEntfernen}
+      registryUebernahme={registryUebernahme}
     />
   )
 

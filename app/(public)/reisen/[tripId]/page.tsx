@@ -21,6 +21,8 @@ import { leseRequestParam, type PageRequestParam } from '@/lib/next/request-api'
 import { NICHT_INDEXIEREN } from '@/lib/seo/index-grenze'
 import { createServerComponentClient } from '@/lib/supabase/server'
 import { istKontoKennung, reiseLaden } from '@/lib/trips/daten'
+import { registryLaden } from '@/lib/traveller/account-registry-daten'
+import { registryTripAnzeigenAus } from '@/lib/traveller/account-registry-trip'
 import GastArbeitsbereich from '@/components/trips/GastArbeitsbereich'
 import KontoArbeitsbereich from '@/components/trips/KontoArbeitsbereich'
 
@@ -75,5 +77,16 @@ export default async function ReiseSeite({ params }: ReiseSeiteProps) {
   const reise = zeilen[0]
   if (!reise) notFound()
 
-  return <KontoArbeitsbereich reise={reise} ohneTag={reise.ohneTag} />
+  const registry = await registryLaden()
+
+  return (
+    <KontoArbeitsbereich
+      reise={reise}
+      ohneTag={reise.ohneTag}
+      registry={{
+        problem: registry.problem,
+        travellers: registry.zeilen ? registryTripAnzeigenAus(registry.zeilen) : null,
+      }}
+    />
+  )
 }

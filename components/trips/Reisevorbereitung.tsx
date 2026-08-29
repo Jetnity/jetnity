@@ -53,9 +53,11 @@ export default function Reisevorbereitung({
   onEntfernen,
   onTravellerSetzen,
   onTravellerEntfernen,
+  registryUebernahme,
 }: {
   reise: Trip
   officialEvaluations?: OfficialEvaluation[]
+  registryUebernahme?: React.ReactNode
   onSetzen?: (eingabe: {
     clientRef: string
     kind: ReadinessKind
@@ -165,6 +167,7 @@ export default function Reisevorbereitung({
             Mehrere Staatsbürgerschaften und Reisedokumente sind möglich. Jetnity fragt nur notwendige Angaben.
             Keine Passnummern, keine Gesundheitsdaten.
           </p>
+          {registryUebernahme}
           {unterschiede.mehrereTraveller && (unterschiede.unterschiedlicheCitizenships || unterschiede.unterschiedlicheDokumente) ? (
             <p className="text-xs leading-5 text-ink-800">
               Diese Reisenden haben unterschiedliche Staatsbürgerschaften oder Dokumente. Jede Person wird einzeln

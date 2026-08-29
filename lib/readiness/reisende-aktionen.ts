@@ -2,6 +2,7 @@
 //
 // Schreibweg für Reisendenkontext im Konto.
 // Setzen/Übernahme atomar über party_schreiben. Löschen über party_loeschen.
+// Registry→Trip nutzt S1-Projektion und denselben atomaren Write-Pfad.
 // Kein Service-Role. Kein direktes Tabellen-DELETE. Keine Legacy-Credential-Spalten.
 
 'use server'
@@ -17,6 +18,14 @@ import {
 import { travellerAlsPayload, travellerBauen } from '@/lib/readiness/reisende'
 import { NICHT_ANGEMELDET, konto, meldungAus, type Aktionsergebnis } from '@/lib/trips/anlegen'
 import { reiseLaden } from '@/lib/trips/daten'
+import { registryMitClientLaden } from '@/lib/traveller/account-registry-daten'
+import { REGISTRY_TRIP_COPY } from '@/lib/traveller/account-registry-trip-copy'
+import {
+  registryTravellerAlsFrischenTripSnapshot,
+  registryTripEintragSuchen,
+  registryTripLimitErreicht,
+  registryTripUebernahmeEingabeLesen,
+} from '@/lib/traveller/account-registry-trip'
 
 function ersteMeldung(fehler: { issues: { message: string }[] }): string {
   return fehler.issues[0]?.message ?? 'Diese Reisendenangabe ist ungültig.'
@@ -118,5 +127,42 @@ export async function partyUebernehmen(eingabe: unknown): Promise<Aktionsergebni
   const geschrieben = await partySchreiben(rahmen.supabase, geprueft.data.tripId, items)
   if (!geschrieben.ok) return geschrieben
   revalidatePath(`/reisen/${geprueft.data.tripId}`)
+  return { ok: true, wert: null }
+}
+
+export async function registryTravellerInReiseUebernehmen(eingabe: unknown): Promise<Aktionsergebnis<null>> {
+  const geprueft = registryTripUebernahmeEingabeLesen(eingabe)
+  if (!geprueft) return { ok: false, meldung: REGISTRY_TRIP_COPY.eingabeUngueltig }
+
+  const rahmen = await reiseDesKontos(geprueft.tripId)
+  if (!rahmen.ok) return rahmen
+
+  if (registryTripLimitErreicht(partyVon(rahmen.reise).length)) {
+    return { ok: false, meldung: REGISTRY_TRIP_COPY.limit }
+  }
+
+  const registry = await registryMitClientLaden(rahmen.supabase, { id: geprueft.registryTravellerId })
+  if (registry.problem) {
+    return {
+      ok: false,
+      meldung: registry.problem.status === 503 ? REGISTRY_TRIP_COPY.lesefehler503 : REGISTRY_TRIP_COPY.lesefehler500,
+    }
+  }
+
+  const eintrag = registryTripEintragSuchen(registry.zeilen, geprueft.registryTravellerId)
+  if (!eintrag) return { ok: false, meldung: REGISTRY_TRIP_COPY.nichtGefunden }
+
+  const snapshot = registryTravellerAlsFrischenTripSnapshot(eintrag, {
+    jetzt: new Date().toISOString(),
+  })
+  if (!snapshot) return { ok: false, meldung: REGISTRY_TRIP_COPY.projektion }
+
+  if (partyVon(rahmen.reise).some((item) => item.clientRef === snapshot.clientRef)) {
+    return { ok: false, meldung: REGISTRY_TRIP_COPY.projektion }
+  }
+
+  const geschrieben = await partySchreiben(rahmen.supabase, geprueft.tripId, [travellerAlsPayload(snapshot)])
+  if (!geschrieben.ok) return geschrieben
+  revalidatePath(`/reisen/${geprueft.tripId}`)
   return { ok: true, wert: null }
 }
