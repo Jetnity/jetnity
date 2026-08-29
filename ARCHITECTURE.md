@@ -33,7 +33,9 @@ app/                Routing, Server Components, Route Handler, Server Actions
 components/         Präsentation und Interaktion
 lib/                Business-Logik, Datenzugriff, Integrationen
 lib/provider-ops/   gemeinsamer technischer Operationsvertrag (Request-Härtung, Kill-Switch-Form, In-Memory-Cost-Guard, Outcome-Taxonomie); keine Fachwahrheit, kein UniversalProvider
-lib/commercial-provenance/ S5-A Domainvertrag für Commercial Provenance (ADR-0168). S5-B Zielarchitektur Option C (ADR-0197); Persistenz im Repository über ADR-0198 / `trip_item_commercial_provenance`, **nicht** auf Production angewendet. SQL-Write nur über validierte `jetnity.commercial_persistence.v1`-Nutzlast; NULL-Principal fail-closed; Production-Write-Pfad nicht allokiert. Keine Provideraktivierung.
+lib/server/providers/core/ provider-neutraler Outbound-HTTP-Transport (Timeout/Retry/Rate-Limit, secret-sichere Header, redacted Observability). Kein UniversalProvider, kein Commercial-Provenance-Mint, keine Provideraktivierung (ADR-0199 / Draft-PR #187).
+lib/providers/      provider-nahe Domain-/Fixture-Verträge. Skyscanner Flights Foundation bleibt fixture-only und nicht promotable.
+lib/commercial-provenance/ S5-A Domainvertrag für Commercial Provenance (ADR-0168). S5-B Zielarchitektur Option C (ADR-0197); Persistenz ADR-0198 / `trip_item_commercial_provenance`. Production-Migration `20260829140000_trip_item_commercial_provenance` ist angewendet und verifiziert. SQL-Write nur über validierte `jetnity.commercial_persistence.v1`-Nutzlast; NULL-Principal fail-closed; Production-Write-Pfad / Runtime-Principal nicht allokiert. Kein realer Provider-Snapshot. Keine Provideraktivierung. TW-8 bleibt geschlossen.
 lib/seo/            D0-Indexgrenze und öffentliche Metadata (ADR-0170). HTML-robots folgt `darfIndexieren`; Canonical ist nie ein Vercel-Alias. Kein D1/G1.
 lib/auth/           Rollenmodell und Zugangsentscheidung (siehe Abschnitt 4)
 types/              Datenbank- und Domänentypen; types/supabase.ts wird erzeugt
@@ -49,6 +51,8 @@ tailwind.config.js  Token-Mapping
 Tests liegen als `*.test.ts` neben dem Code, den sie prüfen, und laufen über `npm test` ([DECISIONS.md](DECISIONS.md) ADR-0029).
 
 **Regel:** Business-Logik gehört nach `lib/`, nicht in UI-Komponenten. Sensible Logik läuft ausschließlich serverseitig.
+
+`lib/server/providers/core` ist der provider-neutrale Outbound-HTTP-Kern (ADR-0199). Er akzeptiert nur einen injizierten HTTP-Client, bricht per AbortSignal ab, begrenzt Retries und redaktiert Secrets. Response-Bodies werden bounded gestreamt; `retry_exhausted` entsteht nur nach einem wirklich benutzten Retry. Observer- und Preflight-Fehler verlassen die Grenze nicht als Raw-Throw. Jedes Runtime-Modul trägt `import 'server-only'`; node:test lädt nur über einen lokalen Stub. `retry_exhausted` gilt nur für den aktuellen retrybaren Fehler nach einem wirklich benutzten Retry. Er erzeugt keine Commercial Provenance und kein Live-Trust. `lib/provider-ops` bleibt die Inbound-Hülle. Der bestehende Duffel-Pfad und die Skyscanner-Fixture-Foundation sind unverändert; ein späterer Skyscanner-Server-Adapter soll diesen Kern nutzen, ist aber nicht Teil dieses Slice.
 
 ---
 
