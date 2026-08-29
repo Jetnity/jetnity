@@ -1,7 +1,7 @@
 # Provider Viator Activities Contract Audit — Status
 
 Stand: 29. August 2026  
-Status: **REVIEW-FIX FÜR 5463644138 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
+Status: **REVIEW-FIX FÜR 5463714237 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Cursor-Agent: `Jetnity provider viator audit 1`  
 Auftrag: `docs/PROVIDER_VIATOR_ACTIVITIES_CONTRACT_AUDIT_TASK_2026-08-29.md`  
 Branch: `audit/provider-viator-activities-contract-2026-08-29`  
@@ -18,14 +18,14 @@ Erneut `origin/main` gefetcht vor diesem Stamp.
 | Fakt | Wert |
 | --- | --- |
 | Task-Baseline | `69ef27b169780e41ba506a69acb15caafa645517` — `Integrate Skyscanner Flights offline adapter foundation` |
-| Reviewed Head vor diesem Fix | `51eac51824aaf2aa27d795a818b8fd00bf6f80de` |
-| TL CHANGES REQUIRED | Kommentar `5463644138` auf Exact Head `51eac518` |
+| Reviewed Head vor diesem Fix | `dbfe76cecc60c8d7b14d3fa72455923b59fea2fe` |
+| TL CHANGES REQUIRED | Kommentar `5463714237` auf Exact Head `dbfe76ce` (Continuity Isolation). Vorher `5463644138` auf `51eac518` bleibt geschlossen. |
 | `origin/main` nach Re-Fetch | `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3` — Checkpoint V2 + post-landing stabilize; **nicht** in diesen Branch gemergt |
 | Merge-Base | `69ef27b1` = Task-Baseline |
 | Drift vs Task-Baseline | `origin/main` **ahead 4** (docs-only current-state). Dieser Fix rebased/merged nicht. |
 | Draft-PR | #189 OPEN, Draft |
-| Prior Exact-Head CI | Actions Run `33261701854` SUCCESS auf `51eac518` — **gilt nicht für den neuen Head** |
-| Prior Exact-Head Vercel | Preview `AyDf4yYbNUJvcfoiePDD21WSqJvX` SUCCESS auf `51eac518` — **gilt nicht für den neuen Head** |
+| Prior Exact-Head CI | Actions Run `33264512282` SUCCESS auf `dbfe76ce` — **gilt nicht für den neuen Head** |
+| Prior Exact-Head Vercel | Preview `CQ5N2KEV1bQKKppj7yg5PGVV44h7` SUCCESS auf `dbfe76ce` — **gilt nicht für den neuen Head** |
 | Provider / Secrets / paid calls | nicht vorhanden; nicht aufgerufen |
 | Signup / API-Key | nicht ausgeführt |
 | Commercial-Provenance-Mint | nicht ausgeführt |
@@ -49,8 +49,8 @@ Rekonstruktion des offiziellen Viator Partner API v2-Vertrags für **affiliate-s
 - Proposed Adapter Contract inkl. Evidence-Klassen, Fail-closed Fixtures, Transport-/Activation-Gates
 - Future Foundation-Task als **Proposal**, nicht autorisiert
 - Handoff + Self-Review
-- Review-Fix `5463644138`: grobe Viator-first-Zielwahl nicht erneut öffnen; S5-B-Persistenz-Apply als erledigt führen
-- `docs/ACTIVE_WORK_STATUS.md` und knapper ROADMAP-Hinweis
+- Review-Fix `5463644138`: grobe Viator-first-Zielwahl nicht erneut öffnen; S5-B-Persistenz-Apply im **Adapter-Vertrag/Audit** als erledigt führen
+- Review-Fix `5463714237`: `#189` nimmt globale Current-State-Pointer nicht; `docs/ACTIVE_WORK_STATUS.md` auf Task-Baseline zurückgesetzt; ROADMAP nur ein nicht-autoritativer Parallel-Hinweis. Checkpoint V2 bleibt Authority und wird hier nicht umgeschrieben.
 
 Keine Runtime-Datei. Keine Shared-Core-Datei. `next-env.d.ts` Working-Tree-Noise nicht committed.
 
@@ -116,7 +116,7 @@ Siehe Audit §19–§20. Höchste fachliche Kanten:
 
 ## 9. Offene Freigaben
 
-- Unabhängiger Technical-Lead Exact-Head-**Re-Review** dieses Drafts nach `5463644138`
+- Unabhängiger Technical-Lead Exact-Head-**Re-Review** dieses Drafts nach `5463714237`
 - Kein erneutes PO-Gate „darf Viator first sein?“
 - Getrennte PO-Gates bleiben: Signup/Zugang/Vertrag, Credentials/paid calls, Production-Aktivierung, Full+Booking/Merchant
 - Foundation-/Key-/Preview-Slices extra; nicht aus #189 starten

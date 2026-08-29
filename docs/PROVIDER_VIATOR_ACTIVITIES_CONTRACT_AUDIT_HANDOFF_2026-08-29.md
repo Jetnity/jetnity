@@ -1,12 +1,12 @@
 # Provider Viator Activities Contract Audit — Handoff
 
 Stand: 29. August 2026  
-Status: **REVIEW-FIX FÜR 5463644138 / DRAFT / STOPP FÜR UNABHÄNGIGEN TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
+Status: **REVIEW-FIX FÜR 5463714237 / DRAFT / STOPP FÜR UNABHÄNGIGEN TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Cursor-Agent: `Jetnity provider viator audit 1`  
 PR: https://github.com/Jetnity/jetnity/pull/189  
 Branch: `audit/provider-viator-activities-contract-2026-08-29`
 
-Dieser Handoff übergibt den Review-Fix gegen TL-Kommentar `5463644138` auf Head `51eac518`. Er startet keinen Folgeslice. Gates auf `51eac518` gelten **nicht** für den neuen Head.
+Dieser Handoff übergibt den Continuity-Isolation-Fix gegen TL-Kommentar `5463714237` auf Head `dbfe76ce`. Er startet keinen Folgeslice. Gates auf `dbfe76ce` gelten **nicht** für den neuen Head.
 
 ---
 
@@ -24,7 +24,9 @@ First-party Viator-Dokumentation am 29. August 2026 gelesen (keine API-Calls):
 
 Jetnity-Ist gegen `lib/activities/*`, Commercial Provenance, Skyscanner-Foundation, ADR-0078 und TL-Checkpoint V2 auf `origin/main` gelesen. **Keine Runtime- oder Shared-Core-Datei geändert.**
 
-Review-Fix `5463644138` nur: grobe Viator-first-Zielwahl nicht erneut öffnen; S5-B-Persistenz-Apply als erledigt führen.
+Review-Fix `5463644138` bleibt: grobe Viator-first-Zielwahl nicht erneut öffnen; S5-B-Persistenz-Apply im Adapter-Vertrag als erledigt führen.
+
+Review-Fix `5463714237`: `#189` ist nicht globaler Current-Owner. `docs/ACTIVE_WORK_STATUS.md` auf Task-Baseline `69ef27b1` zurückgesetzt (kein Viator-„aktueller Arbeitsblock“). ROADMAP enthält keinen `#189`-Nächster-Schritt und keine zweite, widersprüchliche S5-B-Apply-Zeile; nur ein nicht-autoritativer Parallel-Hinweis. Checkpoint V2 auf `origin/main` bleibt Authority und wird hier nicht angefasst.
 
 `origin/main` erneut gefetcht: `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3` (4 docs-commits ahead der Task-Baseline `69ef27b1`). Dieser Fix rebased/merged nicht.
 
@@ -36,10 +38,10 @@ Review-Fix `5463644138` nur: grobe Viator-first-Zielwahl nicht erneut öffnen; S
 | --- | --- |
 | `origin/main` | `f80a7f0b` — 4 docs-commits ahead der Task-Baseline `69ef27b1` |
 | Merge-Base | `69ef27b1` |
-| Reviewed Head | `51eac518` |
+| Reviewed Head | `dbfe76ce` |
 | Draft-PR | #189 OPEN Draft |
-| Prior CI | `33261701854` SUCCESS auf `51eac518` — invalid nach diesem Push |
-| Prior Vercel | `AyDf4yYbNUJvcfoiePDD21WSqJvX` SUCCESS auf `51eac518` — invalid nach diesem Push |
+| Prior CI | `33264512282` SUCCESS auf `dbfe76ce` — invalid nach diesem Push |
+| Prior Vercel | `CQ5N2KEV1bQKKppj7yg5PGVV44h7` SUCCESS auf `dbfe76ce` — invalid nach diesem Push |
 | Branch Protection | in diesem Environment nicht neu verifiziert; letzte kanonische Evidence `protected=false` |
 | Supabase | nicht angefasst, nicht live geprüft |
 
@@ -67,13 +69,13 @@ Review-relevante Residuals:
 
 ## 5. Empfehlung an den Technical Lead
 
-Exact-Head-**Re-Review** der Docs gegen `5463644138`. Prüfen insbesondere:
+Exact-Head-**Re-Review** der Docs gegen `5463714237`. Prüfen insbesondere:
 
-1. Kein erneutes PO-Gate „darf Viator first sein?“
-2. S5-B-Persistenz-Apply nicht als pending geführt
-3. Offenes Commercial-Gate = Runtime-Write-Path/Principal + echte Provider-Antwort + trusted Write
-4. TW-8 weiter geschlossen
-5. v2 vs v1, Full+Booking/Merchant, Fixture-Mint-Grenze unverändert
+1. `#189` seizes nicht `ACTIVE_WORK_STATUS` / globalen ROADMAP-Current-Pointer
+2. Keine same-file-Widerspruchszeile „S5-B Apply pending“ neben „S5-B Apply done“ in ROADMAP
+3. Viator-first + S5-B-Apply-Truth im Adapter-Vertrag/Audit unverändert korrekt
+4. Checkpoint V2 nicht aus diesem Audit umgeschrieben
+5. Kein erneutes PO-Gate „darf Viator first sein?“
 6. keine Runtime-/Core-Diffs; Foundation bleibt Proposal
 
 Nicht Ready. Nicht mergen. Keine Foundation aus diesem Handoff starten.
@@ -92,6 +94,8 @@ Nicht Ready. Nicht mergen. Keine Foundation aus diesem Handoff starten.
 - S5-B-Persistenz erneut anwenden
 - Booking-/Payment-Endpoints vorbereiten
 - `ACTIVITIES.md` / ADR-0078 still in eine Vendor-Architektur umschreiben
+- `docs/ACTIVE_WORK_STATUS.md` oder ROADMAP-„Nächster Schritt“ als #189-Current-Owner überschreiben
+- `docs/CHATGPT_TL_LIVE_RECONSTRUCTION_CHECKPOINT_2026-08-29_V2.md` aus diesem Audit umschreiben
 
 ---
 
@@ -103,7 +107,7 @@ Nicht Ready. Nicht mergen. Keine Foundation aus diesem Handoff starten.
 4. Self-Review
 5. Foundation-Task-Proposal
 6. Dieser Handoff
-7. `docs/ACTIVE_WORK_STATUS.md` (aktueller Block)
+7. Dieser Slice-Status; globaler Current-Pointer ist Checkpoint V2 auf `origin/main`, nicht `ACTIVE_WORK_STATUS` in diesem PR
 
 ---
 

@@ -1,12 +1,12 @@
 # Provider Viator Activities Contract Audit — Agent Self-Review
 
 Stand: 29. August 2026  
-Status: **SELF-REVIEW ONLY / REVIEW-FIX 5463644138 / KEINE FREIGABE / KEIN PASS**  
+Status: **SELF-REVIEW ONLY / REVIEW-FIX 5463714237 / KEINE FREIGABE / KEIN PASS**  
 Cursor-Agent: `Jetnity provider viator audit 1`  
 PR: https://github.com/Jetnity/jetnity/pull/189  
-TL-Fix: Comment `5463644138` auf Head `51eac518`
+TL-Fix: Comment `5463714237` auf Head `dbfe76ce` (Continuity Isolation)
 
-Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead-Review. Gates auf `39d083ba` und `51eac518` gelten nicht für den neuen Head.
+Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead-Review. Gates auf `39d083ba`, `51eac518` und `dbfe76ce` gelten nicht für den neuen Head.
 
 ---
 
@@ -44,7 +44,11 @@ Nein. Viator bleibt das akzeptierte erste Activities-Target; GetYourGuide späte
 
 ### 2.3b Habe ich S5-B Persistence Apply als noch ausstehend geführt?
 
-Nein. Auf der PR-Baseline `69ef27b1` ist Production-Migration `20260829140000_trip_item_commercial_provenance` angewendet und verifiziert (`docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md`). Offenes Commercial-Gate = Runtime-Write-Path/Principal + echte Provider-Antwort + trusted Write. `production_write_path_allocated` bleibt `false`. TW-8 bleibt geschlossen, weil keine echte Provider Commercial Provenance existiert.
+Nein. Im Adapter-Vertrag/Audit: Production-Migration `20260829140000_trip_item_commercial_provenance` ist angewendet und verifiziert. Offenes Commercial-Gate = Runtime-Write-Path/Principal + echte Provider-Antwort + trusted Write. `production_write_path_allocated` bleibt `false`. TW-8 bleibt geschlossen. Diese Slice-Wahrheit steht in den Viator-Docs, nicht als globaler `ACTIVE_WORK`/`ROADMAP`-Current-Rewrite.
+
+### 2.3c Habe ich globale Current-State-Pointer an mich genommen?
+
+Nein. `docs/ACTIVE_WORK_STATUS.md` ist auf Task-Baseline `69ef27b1` zurückgesetzt — kein Viator-„aktueller Arbeitsblock“. ROADMAP hat keinen `#189`-Nächster-Schritt und keine zweite S5-B-Apply-Zeile neben der Baseline-Zeile. Nur ein nicht-autoritativer Parallel-Hinweis. Checkpoint V2 auf `origin/main` bleibt Authority und ist in diesem PR nicht vorhanden/nicht umgeschrieben.
 
 ### 2.4 Könnte ein späterer Agent Fixture als `live_api` lesen?
 
@@ -72,17 +76,17 @@ Nein. Nur Header-Name dokumentiert. P9-Beispiel-`pid`-Werte nicht als Jetnity-At
 
 Erwarteter Diff dieses Stamps:
 
-- neue Docs unter `docs/PROVIDER_VIATOR_*`
-- `docs/ACTIVE_WORK_STATUS.md` aktueller Block
-- knapper ROADMAP-Hinweis
+- `docs/PROVIDER_VIATOR_*` Status/Handoff/Self-Review
+- `docs/ACTIVE_WORK_STATUS.md` **zurück** auf `69ef27b1` (kein #189-Current-Owner)
+- ROADMAP: ein nicht-autoritativer Parallel-Hinweis; keine S5-B-Widerspruchszeile; kein `#189`-Nächster-Schritt
 
-Nicht erwartet: TypeScript, Migrationen, Provider-Runtime, `next-env.d.ts`.
+Nicht erwartet: TypeScript, Migrationen, Provider-Runtime, `next-env.d.ts`, Checkpoint-V2-Rewrite.
 
 ---
 
 ## 4. Nicht geprüft
 
-- Exact-Head CI/Vercel dieses Review-Fix-Stamps — müssen neu gaten; Prior-Gates auf `51eac518` gelten nicht
+- Exact-Head CI/Vercel dieses Continuity-Isolation-Stamps — müssen neu gaten; Prior-Gates auf `dbfe76ce` gelten nicht
 - Live-Supabase (S5-B Apply-Evidence kommt aus dem verifizierten Verification-Doc, nicht aus einem neuen Live-Check dieses Slice)
 - Branch Protection (403-Risiko; nicht als verifiziert behauptet)
 - Inhalt hinter Login im Viator Partner Dashboard
@@ -92,7 +96,7 @@ Nicht erwartet: TypeScript, Migrationen, Provider-Runtime, `next-env.d.ts`.
 
 ## 5. Verdict
 
-Der Review-Fix adressiert `5463644138` nach Author-Lesart: keine Wiederöffnung der Viator-first-Zielwahl; S5-B-Persistenz-Apply nicht mehr als pending. Das ist **kein PASS**.
+Der Review-Fix adressiert `5463714237` nach Author-Lesart: Viator-first/S5-B-Contract bleibt; globale Current-Pointer nicht von #189 gehalten. Das ist **kein PASS**.
 
 **Kein Ready. Kein Merge. Kein Folgeslice.**
 

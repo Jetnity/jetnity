@@ -1,42 +1,25 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **Viator Activities contract audit Draft-PR #189 / REVIEW-FIX 5463644138 / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Task-Baseline `main @ 69ef27b1`. Live `origin/main` ahead (docs current-state). Docs/Evidence only. Keine Runtime. Kein Ready. Kein Merge. Kein Folgeslice. Live-Evidence immer live prüfen.**
+Status: **Provider S5-B Persistence Draft-PR #182 / TL-182 CHANGES REQUIRED CLOSED IN REPO / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Baseline `main @ f638b441`. Keine Production-Anwendung. Kein TW-8. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
 > Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
 
-## Aktueller Arbeitsblock – Provider Viator Activities Contract Audit
-
-1. **Arbeitsblock / Ziel:** Offiziellen Viator Partner API v2-Vertrag für affiliate-style Tours/Activities rekonstruieren und den kleinsten zukünftigen Jetnity-`activities`-Adaptervertrag vorbereiten. Review-Fix `5463644138`: grobe Zielwahl nicht erneut öffnen; S5-B-Persistenz-Apply als erledigt führen. Keine Runtime. Keine Shared-Core-Edits.
-2. **Authoring-Branch / PR:** `audit/provider-viator-activities-contract-2026-08-29` / Draft-PR #189.
-3. **Status:** **REVIEW-FIX / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**. Kein Ready, kein Merge, keine Foundation. Viator bleibt akzeptiertes erstes Activities-Target; GetYourGuide später.
-4. **Bereits umgesetzt:** First-party Evidence-Audit; Affiliate vs Merchant vs Full+Booking getrennt; proposed adapter contract; Foundation-Task nur als Proposal; Handoff; Self-Review; Current-State-Korrektur für Viator-first und S5-B Apply.
-5. **Cursor-Agent:** `Jetnity provider viator audit 1`.
-6. **Live-`main` / Baseline bei diesem Stamp:** Task-Baseline `69ef27b169780e41ba506a69acb15caafa645517`. Live `origin/main` `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3` (4 docs-commits ahead; nicht gemergt). Exact Head ist der Commit dieses Stamps; live am PR prüfen. Prior-Gates auf `51eac518` ungültig.
-7. **DB / RLS / Production-Grenze:** dieser Slice ändert keine Migration und mutiert Production nicht. S5-B Persistence `20260829140000_trip_item_commercial_provenance` ist auf Production bereits angewendet und verifiziert. `production_write_path_allocated` bleibt `false`. Kein Re-Apply.
-8. **Kosten / Provider / Secrets:** 0. Kein Signup, kein API-Key, keine realen Calls, kein Commercial-Provenance-Mint.
-9. **Bekannte Risiken / Review-Funde:** P2↔P9 Test-Host; Sprachen zh/ko; fehlendes `placeId`→`destinationId`; `/availability/check` Usage vs Redirect; Währung nach Klick kann abweichen. Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** TL Exact-Head-Re-Review. Kein erneutes PO-Gate „darf Viator first sein?“. Getrennte PO-Gates bleiben: Signup/Zugang/Vertrag, Credentials/paid calls, Production-Aktivierung, Full+Booking/Merchant. Foundation nicht aus #189 starten.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #189. Kein Ready. Kein Merge. Kein Folgeslice.
-12. **Zuerst lesen:** Task, Audit, Adapter Contract, Status, Handoff, Self-Review, Foundation-Proposal, `docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md`, Checkpoint V2 §9 auf `origin/main`.
-
-## Historischer / paralleler Arbeitsblock – Provider S5-B Commercial Provenance Persistence
-
-Current classification / Nachtrag, 29. August 2026: **NICHT der Authoring-Block dieses Agenten.** Review-Fix `5463644138`: S5-B Persistence Apply ist auf der #189-Baseline bereits Production-angewendet und verifiziert (`docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md`). Die folgenden #182-Zeilen sind Pre-Apply-Authoring-Evidence, keine offene Apply-Arbeit. Offenes Commercial-Gate = Runtime-Write-Path/Principal + echte Provider-Antwort + trusted Write. TW-8 bleibt geschlossen, weil keine echte Provider Commercial Provenance existiert. Dieser Viator-Audit mutiert Production nicht und startet kein TW-8.
+## Aktueller Arbeitsblock – Provider S5-B Commercial Provenance Persistence
 
 1. **Arbeitsblock / Ziel:** ADR-0197 / Option C Persistenzgrundlage: Schema + RLS + Grants + privilegierte Write-Authority + Legacy-Bypass-Härtung + Tests + Threat Model.
 2. **Authoring-Branch / PR:** `feat/provider-s5b-commercial-provenance-persistence-2026-08-29` / Draft-PR #182.
-3. **Status:** **TL-182 CHANGES REQUIRED CLOSED IN REPO / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**. Kein Ready, kein Merge, kein Production-Apply durch den Autor. Live am PR prüfen — diese Zeilen sind Pre-#189-Evidence des anderen Blocks.
+3. **Status:** **TL-182 CHANGES REQUIRED CLOSED IN REPO / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**. Kein Ready, kein Merge, kein Production-Apply durch den Autor.
 4. **Bereits umgesetzt:** Persistenzgrundlage plus TL-Fixes: fail-closed Principal, kanonische `v1`-Nutzlast, Runtime-Gate geschlossen, isolierte lokale 19/19-Evidence.
 5. **Cursor-Agent:** `Cursor-Agent: Jetnity provider readiness audit 4`.
-6. **Live-`main` / Baseline bei diesem Stamp:** historisch `f638b4417140816bf7dfc26034cdb3da1538fd37`. Aktuelles `origin/main` für #189 ist `69ef27b1`. Live prüfen.
+6. **Live-`main` / Baseline bei diesem Stamp:** `f638b4417140816bf7dfc26034cdb3da1538fd37`. Prior Head `8e597487`. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
 7. **DB / RLS / Production-Grenze:** Migration nur im Repository. Production nicht mutiert. Isolierte lokale Evidence über `db:s5b-persistenz-lokal`. Apply bleibt TL-kontrolliert unter PO-Gate `S5B-G0-PO-MIG-01`.
 8. **Kosten / Provider / Secrets:** 0. Keine Provideraktivierung, keine paid calls.
 9. **Bekannte Risiken / Review-Funde:** Production ≠ Repository bis Apply. Production-Write-Pfad nicht allokiert. Kein realer Snapshot. TW-8 geschlossen. Agent-Self-Review ist kein PASS.
 10. **Offene Nutzerentscheidungen / Freigaben:** Production-Apply nach TL PASS. Runtime-Principal-Zuweisung extra gegatet. TW-8 extra gegatet.
-11. **Exakter nächster Schritt für #182:** unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #182. Nicht aus #189 ableiten.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #182. Kein Ready. Kein Merge. Kein Production-Apply durch Cursor. Kein Folgeslice.
 12. **Zuerst lesen:** `docs/PROVIDER_S5B_PERSISTENCE_IMPLEMENTATION_TASK_2026-08-29.md`, Status, Handoff, Self-Review, Threat Model, ADR-0197, ADR-0198.
 
 ## Historischer Arbeitsblock – Search/Privacy Post-Merge Continuity (`5057974629`)
@@ -579,9 +562,7 @@ Operativ relevant:
 
 | PR | Klasse |
 | --- | --- |
-| **#189** Viator Activities Contract Audit | **DRAFT.** Docs/Evidence only. STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge, keine Foundation. |
-| **#182** Provider S5-B Persistence | **DRAFT / paralleler Block.** STOP für TL Exact-Head-Re-Review. Kein TW-8. Nicht aus #189 ableiten. Live prüfen. |
-| **#162** AP-5-S5 Honest Current Session | Historische Draft-Zeile; AP-5-S5 später integriert. Live prüfen. |
+| **#162** AP-5-S5 Honest Current Session | **DRAFT.** STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge, kein AP-6/AP-7. |
 | **#160** AP-5-S4 MFA Step-up | **GEMERGT / INTEGRIERT** auf `main @ 934d43da`. Ältere Draft-#159-Zeilen sind Pre-S5-Evidence. |
 | **#157** AP-5-S3 Logout Scopes | **GEMERGT / INTEGRIERT** auf `main @ 5920860e`. |
 | **#150** Next 16 Compatibility Prep S1 | **SELF-EXPIRING.** DRAFT, STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge, kein S2, kein Framework-Bump. |
@@ -644,11 +625,7 @@ Production C1 `20260828015304_traveller_write_contract_integrity` ist unter der 
 
 ## 10. Nächster Schritt
 
-Aktueller Authoring-Block dieses Files: unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #189 (Viator Activities Contract Audit). Autor-Agent setzt kein Ready, kein Merge, keine Foundation, keine Keys/Calls, keine Commercial-Aktivierung.
-
-Ältere „nächster Schritt Draft-PR #168 / Issue #109“-Sätze darunter sind historische Pre-#189-Evidence. Search #109 ist auf späterer `main`-Linie geschlossen — live prüfen.
-
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #182 bleibt ein paralleler S5-B-Block und startet nicht aus #189.
+Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #168 / Issue #109. Autor-Agent setzt kein Ready, kein Merge, kein Issue #110, keine Vercel-Setting-Mutation.
 
 PR #152 Next 16 S2 ist auf der Baseline `3c3079de` integriert. PR #147 Node 22 ist integriert (`56aff7ff`). AP-7-S1 ist integriert (PR #145 / `4ec83f36`). Dual-Authority bleibt freigegeben. AP-7-S2 / Persistenz startet nicht aus #156.
 

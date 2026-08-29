@@ -164,8 +164,8 @@ Production Gate A hat die dafür freigegebenen Production-Schritte bereits ausge
 
 Weiter offen/gated:
 
-- S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180); Persistence Production-Apply `20260829140000` angewendet und verifiziert; `production_write_path_allocated=false`; offenes Commercial-Gate = Runtime-Write-Path/Principal + echte Provider-Antwort + trusted Write; TW-8 geschlossen
-- Draft-PR #189 Viator Activities Contract Audit: Evidence + Adapter-Contract-Prep only; kein Adapter. Viator bleibt akzeptiertes erstes Activities-Target (GetYourGuide später). ADR-0078 bleibt Domain-Architektur, kein zweites Wahl-Gate.
+- S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180); Persistenz im Repository Draft-PR #182 / ADR-0198, nicht auf Production; TW-8 geschlossen
+- Parallel, nicht-autoritativ, kein globaler Current-Owner: Draft-PR #189 Viator Activities contract evidence — nur `docs/PROVIDER_VIATOR_ACTIVITIES_CONTRACT_AUDIT_*` / Adapter-Contract. Autoritative Current-State bleibt `docs/CHATGPT_TL_LIVE_RECONSTRUCTION_CHECKPOINT_2026-08-29_V2.md` auf `origin/main`, nicht dieser PR.
 - keine realen Provider
 - keine Production Secrets
 - keine Verträge
@@ -295,12 +295,10 @@ Abgeschlossen:
 45. ✅ AP-6a Gate 0 Legal Foundation / Trust Boundary / PR #166 – integriert (ADR-0195 / Merge `6083ee63`); historische Architecture-Evidence. `/privacy`/`terms` Runtime ungebaut und Legal-/PO-Content-gegatet.
 46. ✅ Provider S5-B Option C Architecture Acceptance / PR #180 – Zielarchitektur angenommen (ADR-0197)
 47. 🟡 Provider S5-B Persistence / PR #182 – Schema + RLS + Write-Authority im Repository (ADR-0198). TL-182-01/02/03 im Repository geschlossen. Keine Production-Anwendung. Production-Write-Pfad nicht allokiert. Self-expiring: solange #182 offen → STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; nach Merge → Repository integriert, Production-Apply extra TL-kontrolliert, TW-8 geschlossen. Autor setzt kein Ready/Merge.
-48. 🟡 Provider Viator Activities Contract Audit / Draft-PR #189 – first-party v2 Affiliate-Vertrag + kleinster Adapter-Contract. Docs only. Keine Runtime. Keine Foundation. Self-expiring: solange #189 offen → STOP für unabhängigen Technical-Lead Exact-Head-Review; nach Merge → Evidence integriert, Implementation extra gegatet. Autor setzt kein Ready/Merge.
 
 Nächster Schritt:
 
-- **Draft-PR #189.** Unabhängiger Technical-Lead Exact-Head-Review des Viator Activities Contract Audits. Autor setzt kein Ready, kein Merge, keine Foundation, keine Keys/Calls.
-- **Draft-PR #182** bleibt paralleler STOP für S5-B-Persistenz. Nicht aus #189 ableiten. Kein TW-8.
+- **Draft-PR #182.** Unabhängiger Technical-Lead Exact-Head-Re-Review der S5-B-Persistenz nach TL-182-01/02/03. Autor setzt kein Ready, kein Merge, kein Production-Apply, kein TW-8. PR #180 ist integrierte Zielarchitektur-Evidence.
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integrierte historische Architecture-Evidence und Non-Scope von #180. `/privacy` und `/terms` Runtime bleiben ungebaut und Legal-/PO-Content-gegatet.
 - AP-7-S2 bleibt separat Product-Owner-gegatet und startet nicht aus #166 oder #180.
 
@@ -309,8 +307,7 @@ Nächster Schritt:
 - AP-6a-Runtime / AP-6b / AP-7 / AP-5-P1–P5
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integriert; Runtime-Legal-Seiten nicht als gebaut behaupten
 - AP-7
-- Provider S5-B Runtime-Write-Path/Principal + echte Provider-Antwort + trusted Write (Persistence Apply ist erfolgt; TW-8 bleibt geschlossen, weil keine echte Provider Commercial Provenance existiert)
-- Viator-Activities-Adapter (akzeptiertes erstes Target; Draft-PR #189 ist nur Contract-Evidence; GetYourGuide später; keine Implementation aus #189)
+- Provider S5-B Production-Apply und realer Snapshot (Repository-Persistenz ist Draft-PR #182; TW-8 bleibt geschlossen)
 - echte Providerphase
 - TW-8
 - TW-9
