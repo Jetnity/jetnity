@@ -120,6 +120,7 @@ describe('AP-5 Gate 0 Auth-/Session-/MFA-Vertragsinventar', () => {
     assert.equal(securityPage.includes('SecurityMFA'), true)
     assert.equal(securityPage.includes('SecurityPasswort'), true)
     assert.equal(securityPage.includes('SecurityLogout'), true)
+    assert.equal(securityPage.includes('SecuritySitzung'), true)
     assert.equal(securityPage.includes('listSessions'), false)
     assert.equal(securityPage.includes('/account/sessions'), false)
     const settings = quelle(join(wurzel, 'app/account/settings/page.tsx'))

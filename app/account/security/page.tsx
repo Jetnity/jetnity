@@ -5,6 +5,7 @@ import { Suspense } from 'react'
 import SecurityLogout from '@/components/account/SecurityLogout'
 import SecurityMFA from '@/components/account/SecurityMFA'
 import SecurityPasswort from '@/components/account/SecurityPasswort'
+import SecuritySitzung from '@/components/account/SecuritySitzung'
 import { passkeysServerAktiviertLesen } from '@/lib/auth/account-security-passkeys-lesen'
 
 export const dynamic = 'force-dynamic'
@@ -27,12 +28,13 @@ export default function SecurityPage() {
         </h1>
         <p className="mt-3 max-w-xl text-sm leading-6 text-ink-700">
           {passkeysServerAktiviert
-            ? 'Ändere dein Passwort oder richte eine Authenticator-App ein, um dein Konto besser zu schützen.'
-            : 'Ändere dein Passwort oder richte eine Authenticator-App ein, um dein Konto besser zu schützen. Passkeys sind in der Anmeldung derzeit nicht unterstützt.'}
+            ? 'Ändere dein Passwort, prüfe diese Sitzung oder richte eine Authenticator-App ein, um dein Konto besser zu schützen.'
+            : 'Ändere dein Passwort, prüfe diese Sitzung oder richte eine Authenticator-App ein, um dein Konto besser zu schützen. Passkeys sind in der Anmeldung derzeit nicht unterstützt.'}
         </p>
 
         <div className="mt-10 space-y-6">
           <SecurityPasswort />
+          <SecuritySitzung />
           <SecurityLogout />
           <Suspense
             fallback={

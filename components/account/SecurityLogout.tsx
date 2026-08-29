@@ -67,7 +67,7 @@ export default function SecurityLogout() {
   }
 
   return (
-    <Card data-logout-lage={zustand.lage} data-logout-scope={zustand.scope ?? ""}>
+    <Card id="account-abmelden" data-logout-lage={zustand.lage} data-logout-scope={zustand.scope ?? ""}>
       <CardHeader withDivider>
         <div className="flex items-center gap-2">
           <LogOut className="h-5 w-5" aria-hidden="true" />
