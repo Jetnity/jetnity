@@ -72,7 +72,7 @@ Siehe Status §5 (12GO-R1–R15). Die wichtigsten: unbekanntes API-Schema, ToS-V
 
 0 neue Kosten. Keine Secrets. Keine Production-Mutation. Kein Commercial-Provenance-Mint.
 
-Lokale Gates auf `17cf1ff5` sind **stale** für den Isolation-Head nach `5463718113`. Neue Exact-Head-Gates folgen nach diesem Stamp. GitHub CI/Vercel nicht als grün behauptet.
+Lokale Exact-Head-Gates auf Isolation-Head `22ffe925`: `npm ci`, typecheck, lint, test, Production-build, Hygiene **PASS**. Ein Evidence-Stamp danach ändert nur diese Zeilen. GitHub CI/Vercel des finalen Heads nicht als grün behauptet.
 
 ---
 

@@ -100,7 +100,7 @@ Nein. Status `PROPOSED / NOT ACCEPTED`.
 
 ## 5. Nicht geprüft / nicht behauptet
 
-- GitHub Actions / Vercel Preview **dieses** Review-Fix-Heads (lokal PASS auf `17cf1ff5`; remote live prüfen)
+- GitHub Actions / Vercel Preview **dieses** Isolation-Heads (lokal PASS auf `22ffe925`; remote live prüfen)
 - Production-Build remote/Vercel dieses Heads
 - Live-Supabase
 - Branch-Protection-API

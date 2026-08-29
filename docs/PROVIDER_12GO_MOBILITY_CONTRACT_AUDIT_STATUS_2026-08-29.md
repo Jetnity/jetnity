@@ -200,9 +200,9 @@ Shared-Core bleibt unverändert. 12Go-spezifisch wären später `lib/providers/t
 ## 7. Tests / CI / Preview
 
 - Keine Runtime-Änderung; keine neuen Unit Tests.
-- Review-Fix-Head `17cf1ff5` lokale Gates waren PASS; sie gelten **nicht** für den Isolation-Head nach `5463718113`.
-- Isolation-Head: nach Push neu gaten. Dieser Status behauptet kein Exact-Head-Grün für den neuen SHA.
-- GitHub Actions / Vercel Preview: **nicht** als grün behauptet; live am PR prüfen.
+- Isolation-Head `22ffe925` lokale Exact-Head-Gates **PASS**: `npm ci`; `typecheck`; `lint`; `test` 2611/2611; Production-`build`; `check:dead`; `check:exports`; `check:deps`; `check:api-schutz`; `check:schema-bezug`.
+- Ältere Gates auf `17cf1ff5` / `752f6990` / `1b4b2f0d` sind **stale**.
+- GitHub Actions / Vercel Preview dieses Heads: **nicht** als grün behauptet; live am PR prüfen.
 
 ---
 
