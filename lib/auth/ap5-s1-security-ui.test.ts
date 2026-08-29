@@ -48,10 +48,11 @@ describe('AP-5-S1 Security-UI Semantik', () => {
     assert.equal(security.includes('factor_type'), false)
   })
 
-  test('TOTP-Authority bleibt ohne Step-up', () => {
+  test('Enroll bleibt ohne AAL-Step-up; verified Unenroll nutzt S4', () => {
     assert.equal(security.includes('unenroll'), true)
     assert.equal(security.includes('enroll'), true)
-    assert.equal(security.includes('getAuthenticatorAssuranceLevel'), false)
+    assert.equal(security.includes('mfaUnenrollVorbereiten'), true)
+    assert.equal(security.includes('startTotpChallenge'), false)
     assert.equal(security.includes('reauthenticate'), false)
     assert.equal(security.includes('nonce'), false)
     assert.equal(seite.includes('SecurityPasswort'), true)

@@ -77,7 +77,7 @@ describe('AP-5-S1 Security-Fehlerhygiene', () => {
     assert.doesNotMatch(mapped.text, /sbp_|GoTrue|token=/i)
   })
 
-  test('AAL2-Unenroll bleibt ehrlich und ist kein Step-up', () => {
+  test('AAL2-Unenroll-Rohfehler bleibt ehrlich gemappt', () => {
     const ergebnis = securityFehlerEinordnen({
       vorgang: 'unenroll',
       code: 'insufficient_aal',

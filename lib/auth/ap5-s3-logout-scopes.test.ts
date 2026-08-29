@@ -74,7 +74,7 @@ describe('AP-5-S3 Vertrag und Accessibility', () => {
     assert.equal(aktion.includes('createAdminClient'), false)
     assert.equal(mfa.includes('accountLogoutScopeAction'), false)
     assert.equal(passwort.includes('accountLogoutScopeAction'), false)
-    assert.equal(mfa.includes('getAuthenticatorAssuranceLevel'), false)
     assert.equal(komponente.includes('getAuthenticatorAssuranceLevel'), false)
+    assert.equal(logik.includes('getAuthenticatorAssuranceLevel'), false)
   })
 })

@@ -100,13 +100,19 @@ describe('AP-5 Gate 0 Auth-/Session-/MFA-Vertragsinventar', () => {
     assert.equal(signOut.includes("scope: 'others'"), false)
   })
 
-  test('SecurityMFA hat kein AAL-Step-up vor Enroll/Unenroll', () => {
+  test('SecurityMFA steppt nur vor verified Unenroll hoch, nicht vor Enroll', () => {
     const security = quelle(join(wurzel, 'components/account/SecurityMFA.tsx'))
-    assert.equal(security.includes('getAuthenticatorAssuranceLevel'), false)
-    assert.equal(security.includes('getAAL'), false)
+    const stepUp = quelle(join(wurzel, 'lib/auth/account-mfa-step-up.ts'))
+    assert.equal(security.includes('mfaUnenrollVorbereiten'), true)
     assert.equal(security.includes('startTotpChallenge'), false)
-    assert.equal(security.includes('mfa.unenroll'), true)
+    assert.equal(security.includes('getAAL'), false)
     assert.equal(security.includes('mfa.enroll'), true)
+    assert.equal(stepUp.includes('getAuthenticatorAssuranceLevel'), true)
+    assert.equal(stepUp.includes('startTotpChallenge'), false)
+    assert.equal(stepUp.includes('challengeAndVerify'), false)
+    const enrollFn = security.slice(security.indexOf('async function handleEnroll'), security.indexOf('async function handleVerify'))
+    assert.equal(enrollFn.includes('getAuthenticatorAssuranceLevel'), false)
+    assert.equal(enrollFn.includes('mfaUnenrollVorbereiten'), false)
   })
 
   test('keine Session-Listing-Route; S3-Logout bleibt ohne Geräteinventar', () => {
