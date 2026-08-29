@@ -1,0 +1,77 @@
+// lib/traveller/account-registry-persistence.test.ts
+//
+// Repo-Vertrag für AP-7-S2. Live-RLS/FK/Limit-Verhalten wird zusätzlich auf
+// dem Supabase-Development-Branch adversariell geprüft.
+
+import { describe, test } from 'node:test'
+import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
+
+const DATEI = '20260829201500_account_traveller_registry_persistence.sql'
+const sql = readFileSync(join('supabase/migrations', DATEI), 'utf8')
+
+describe('AP-7-S2 Account Traveller Registry Persistenzvertrag', () => {
+  test('legt genau die additive Dual-Authority-Registry ohne Trip-Live-Link an', () => {
+    assert.match(sql, /create table public\.account_travellers/)
+    assert.match(sql, /create table public\.account_traveller_citizenships/)
+    assert.match(sql, /create table public\.account_traveller_documents/)
+    assert.doesNotMatch(sql, /alter table public\.trip_traveller/)
+    assert.doesNotMatch(sql, /trip_id\s+uuid/)
+    assert.doesNotMatch(sql, /account_traveller_id[^\n]*references public\.account_travellers/)
+    assert.doesNotMatch(sql, /backfill|insert into public\.account_travellers\s+select/i)
+  })
+
+  test('bindet Parent und Children an denselben Owner und dieselbe Traveller-Identität', () => {
+    assert.match(sql, /foreign key \(user_id\)\s+references auth\.users \(id\)\s+on delete cascade/s)
+    assert.match(sql, /unique \(id, user_id\)/)
+    assert.match(
+      sql,
+      /foreign key \(traveller_id, user_id\)\s+references public\.account_travellers \(id, user_id\)/s,
+    )
+    assert.match(sql, /unique \(id, traveller_id, user_id\)/)
+    assert.match(
+      sql,
+      /foreign key \(citizenship_id, traveller_id, user_id\)\s+references public\.account_traveller_citizenships \(id, traveller_id, user_id\)\s+on delete set null \(citizenship_id\)/s,
+    )
+  })
+
+  test('erzwingt 8 Citizenships und 12 Documents auch bei UPDATE/Reparenting', () => {
+    assert.match(sql, /function public\.account_traveller_kinder_limit_pruefen\(\)/)
+    assert.match(sql, /security invoker/)
+    assert.match(sql, /for no key update/)
+    assert.match(sql, /\) > 8 then/)
+    assert.match(sql, /\) > 12 then/)
+    assert.match(sql, /after insert or update on public\.account_traveller_citizenships/)
+    assert.match(sql, /after insert or update on public\.account_traveller_documents/)
+    assert.doesNotMatch(sql, /höchstens 20|> 20/)
+  })
+
+  test('RLS ist owner-only; anon bleibt ohne Rechte', () => {
+    for (const table of [
+      'account_travellers',
+      'account_traveller_citizenships',
+      'account_traveller_documents',
+    ]) {
+      assert.match(sql, new RegExp(`alter table public\\.${table} enable row level security`))
+      assert.match(sql, new RegExp(`revoke all on table public\\.${table} from anon`))
+      assert.match(
+        sql,
+        new RegExp(`grant select, insert, update, delete on table public\\.${table} to authenticated`),
+      )
+    }
+    assert.match(sql, /user_id = \(select auth\.uid\(\)\)/)
+    assert.doesNotMatch(sql, /darf_konten_verwalten|service_role|security definer/i)
+  })
+
+  test('Registry speichert nur datensparsame Dokument-Metadaten ohne Default Credential', () => {
+    assert.match(sql, /document_type text not null/)
+    assert.match(sql, /issuing_country_code text/)
+    assert.match(sql, /citizenship_id uuid/)
+    assert.match(sql, /expires_on date/)
+    assert.doesNotMatch(
+      sql,
+      /passport_number|passnummer|document_number|serial_number|mrz|scan_url|biometric|date_of_birth|birth_date|health_data|primary_citizenship|default_passport|preferred_document/i,
+    )
+  })
+})
