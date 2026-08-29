@@ -902,7 +902,7 @@ function ereignisAusPlan(
   }
 }
 
-export async function mfaSitzungNachVerifiedUnenroll(
+async function mfaSitzungNachVerifiedUnenroll(
   auth: MfaStepUpAuth,
   faktorId: string,
 ): Promise<
