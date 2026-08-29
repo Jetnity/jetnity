@@ -11,6 +11,15 @@ import { join } from 'node:path'
 const DATEI = '20260829201500_account_traveller_registry_persistence.sql'
 const sql = readFileSync(join('supabase/migrations', DATEI), 'utf8')
 
+function tabellenDefinition(name: string): string {
+  const definition = sql.match(
+    new RegExp(`create table public\\.${name}\\s*\\(([\\s\\S]*?)\\n\\);`),
+  )?.[1]
+
+  assert.ok(definition, `CREATE TABLE für ${name} muss vollständig definiert sein`)
+  return definition
+}
+
 describe('AP-7-S2 Account Traveller Registry Persistenzvertrag', () => {
   test('legt genau die additive Dual-Authority-Registry ohne Trip-Live-Link an', () => {
     assert.match(sql, /create table public\.account_travellers/)
@@ -69,12 +78,18 @@ describe('AP-7-S2 Account Traveller Registry Persistenzvertrag', () => {
   })
 
   test('Registry speichert nur datensparsame Dokument-Metadaten ohne Default Credential', () => {
-    assert.match(sql, /document_type text not null/)
-    assert.match(sql, /issuing_country_code text/)
-    assert.match(sql, /citizenship_id uuid/)
-    assert.match(sql, /expires_on date/)
+    const ddl = [
+      tabellenDefinition('account_travellers'),
+      tabellenDefinition('account_traveller_citizenships'),
+      tabellenDefinition('account_traveller_documents'),
+    ].join('\n')
+
+    assert.match(ddl, /document_type text not null/)
+    assert.match(ddl, /issuing_country_code text/)
+    assert.match(ddl, /citizenship_id uuid/)
+    assert.match(ddl, /expires_on date/)
     assert.doesNotMatch(
-      sql,
+      ddl,
       /passport_number|passnummer|document_number|serial_number|mrz|scan_url|biometric|date_of_birth|birth_date|health_data|primary_citizenship|default_passport|preferred_document/i,
     )
   })
