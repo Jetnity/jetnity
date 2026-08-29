@@ -1,7 +1,7 @@
 # Jetnity – AP-7-S4 Registry → Trip Snapshot Materialization Handoff
 
 Stand: 30. August 2026  
-Status: **AUTHORING COMPLETE / LOCAL GATES GREEN / STOP FOR INDEPENDENT TECHNICAL-LEAD REVIEW**
+Status: **REVIEW-FIX COMPLETE / LOCAL GATES GREEN / STOP FOR INDEPENDENT TECHNICAL-LEAD RE-REVIEW**
 
 ## What is finished
 
@@ -24,10 +24,11 @@ Binding bleibt:
 | Behind `origin/main` | **0** |
 | Cursor-Agent | `Account plattform audit vorbereitung 18` |
 | Cloud-Run | https://cursor.com/agents/bc-fb93e3d3-c546-4077-a600-cf1e1e7dd54c |
-| Implementation head | `02fccb13e0d0d13799bcff53079423aefc538422` |
+| Reviewed-then-fixed Head | `40204e2218db097e50a4016c1a66569ca4275eed` |
+| Review-fix implementation | `390cc0d0e70cb31a67baf527fe9b33b5122b8227` |
 | Exact Head | der Commit dieses Continuity-Stamps; live am PR #223 prüfen |
 | Rename | keine unterstützte Rename-Fähigkeit; UI nicht als umbenannt behauptet |
-| Generation | 18. S3-Generation 17 nicht wiederverwendet. |
+| Generation | 18. Dieselbe Session; kein neuer logischer Agent. |
 
 ## Scope proof
 
@@ -38,6 +39,7 @@ Vorhanden:
 - atomarer `party_schreiben`-Write
 - kleinste Account-only UI im Reisendenkontext
 - focused Tests für Projektion, Disjunktheit, Multi-Citizenship/Document, nullable Relation, Limit, Empty≠Error, no auto-materialize, write-path inventory
+- Review-Fix-Orchestrierungstests für Task §8 Write-/Auth-Fälle (missing/unauthorized Registry und Trip, Limit ohne Write, ehrlicher Write-Fehler, inkrementelles Add, Action-Auth)
 
 Abwesend / nicht angefasst:
 
@@ -54,15 +56,15 @@ Abwesend / nicht angefasst:
 
 ## Tests / Build
 
-Lokal verifiziert auf Implementation-Head `02fccb13e0d0d13799bcff53079423aefc538422`:
+Lokal verifiziert auf Review-Fix-Implementation-Head `390cc0d0e70cb31a67baf527fe9b33b5122b8227`:
 
-- `npm test` **2704/2704**
+- `npm test` **2715/2715**
 - Typecheck pass
 - Lint 0 errors
 - Hygiene: dead/exports/deps/api-schutz/schema-bezug pass
 - Production build pass
 
-CI/Vercel auf dem finalen Head müssen live vom unabhängigen Reviewer geprüft werden. Dieser Authoring-Lauf behauptet sie nicht für den Stamp-Commit.
+Prior CI #1289 / Vercel auf `40204e22` sind durch den Review-Fix-Push ungültig. CI/Vercel auf dem finalen Stamp-Head müssen live vom unabhängigen Reviewer geprüft werden. Dieser Authoring-Lauf behauptet sie nicht für den Stamp-Commit.
 
 Nicht verifiziert in dieser Umgebung:
 
@@ -87,4 +89,4 @@ Jeder neue Code-Commit invalidiert frühere exact-head gates. Immediate CHANGES-
 
 ## Exact first unfinished next step
 
-Unabhängiger Technical-Lead Exact-Head-Review auf dem finalen Head von PR #223. Kein Ready. Kein Merge. Kein AP-7-S5. Keine Production-/Supabase-Mutation.
+Unabhängiger Technical-Lead Exact-Head **Re-Review** auf dem finalen Stamp-Head von Draft-PR #223. Kein Ready. Kein Merge. Kein AP-7-S5. Keine Production-/Supabase-Mutation.

@@ -17,11 +17,14 @@ Diff-Scope gegen `origin/main`:
 - Task + Status/Self-Review/Handoff
 - S4 helpers/tests/copy
 - `registryMitClientLaden`
-- `registryTravellerInReiseUebernehmen`
+- `registryTripUebernahmeOrchestrieren` + `registryTravellerInReiseUebernehmen`
 - Trip-page/Konto/Reisendenkontext UI
 - write-path inventory lock
+- Review-Fix: `account-registry-trip-orchestrierung.test.ts`
 
 Keine Datei unter `supabase/migrations`.
+
+Technical-Lead CHANGES REQUIRED auf `40204e22` (Kommentar `5465241982`) sind in derselben Session behoben: kleine injizierbare Orchestrierungsnaht, keine Schema-/RPC-/RLS-/Auth-Änderung.
 
 ## 2. Acceptance gegen Code
 
@@ -34,7 +37,12 @@ Keine Datei unter `supabase/migrations`.
 | Issuer ≠ Citizenship | `national_id` mit Issuer `DE` bleibt unabhängig. |
 | Nullable Relation remapped | Passport-Refs zeigen auf neue Citizenship-clientRefs; unlinked Document bleibt `null`. |
 | Bestehende Trip-Reisende unberührt | Write sendet nur den neuen Snapshot an `party_schreiben` (Upsert per frischer clientRef). |
-| Limit fail-closed | `registryTripLimitErreicht` vor Write; UI zeigt Limit-Text und deaktiviert Aktionen. |
+| Limit fail-closed | `registryTripLimitErreicht` **vor Registry-Read und Write**; Orchestrierungstest beweist 0 Registry-/Write-Calls. UI zeigt Limit-Text und deaktiviert Aktionen. |
+| Registry missing/invalid/unauthorized | Orchestrierung: leere RLS-Menge, 500-Abbildungsfehler, fremde ID → `ok: false`, `partySchreiben === 0`. |
+| Trip missing/unauthorized | Orchestrierung: fehlende/RLS-leere Reise → 0 Registry-Read, 0 Write. |
+| Write failure ehrlich | Orchestrierung reicht die `party_schreiben`-Meldung durch; kein Success-Copy. |
+| Bestehende Reisende bleiben | Success-Payload enthält nur den neuen Snapshot; `traveller:1` und Registry-`clientRef` fehlen. |
+| Action-Auth explizit | Action übergibt `konto().benutzerId`; `benutzerId: null` stoppt vor jedem Read/Write. |
 | Empty ≠ Error | UI-Copy und getrennte `role="status"` / `role="alert"`. |
 | Kein Guest-Pfad | `GastArbeitsbereich` enthält die Action/Komponente nicht. Registry-Load erst nach Konto-Reise. |
 
@@ -52,7 +60,8 @@ Keine Datei unter `supabase/migrations`.
 | 8 | Kein First-Item-/Default-Credential | Ja. Runtime-Quellen enthalten kein `documents[0]` / `citizenships[0]` / default/preferred/chosen. UI hat keine Radio-/Vorauswahl. |
 | 9 | Issuer ≠ Citizenship bleibt erhalten | Ja. Getrennte Felder, Test mit DE-Issuer neben CH/RS-Citizenships. |
 | 10 | Nullable Document→Citizenship korrekt remapped | Ja. Linked Refs werden über die neue Citizenship-Karte gesetzt; unlinked bleibt null. |
-| 11 | Fehler führen nicht zu stiller Teilwahrheit | Ja. Projektion/Limit/Read/Write-Fehler returnen `{ ok: false }` vor oder statt Write. Kein partielles Child-Write aus Client-Code. |
+| 11 | Fehler führen nicht zu stiller Teilwahrheit | Ja. Projektion/Limit/Read/Write-Fehler returnen `{ ok: false }` vor oder statt Success. Write-Fehler-Test beweist die Provider-Meldung, nicht `erfolg`. Kein partielles Child-Write aus Client-Code. |
+| 12 | S4-Action-Auth ist orchestriert, nicht nur Regex | Ja. Naht erhält `benutzerId` von `konto()`; unauthenticated Lauf ruft Trip/Registry/`party_schreiben` nicht auf. |
 
 ## 4. Adversarial Fragen
 
@@ -76,6 +85,6 @@ Keine Datei unter `supabase/migrations`.
 
 ## 6. Urteil des Autors
 
-Der Slice bleibt im autorisierten Runtime-Rahmen: S1-Projektion, bestehender atomarer Trip-Write, keine Schema-/RLS-/Auth-Änderung. Dual-Authority ist in Copy und Code gehalten. Lokale Gates auf dem Implementation-Head sind grün.
+Der Slice bleibt im autorisierten Runtime-Rahmen: S1-Projektion, bestehender atomarer Trip-Write, keine Schema-/RLS-/Auth-Änderung. Dual-Authority ist in Copy und Code gehalten. Die sechs TL-Write-/Auth-Forderungen sind jetzt als Orchestrierungsverhalten getestet (2715/2715 lokal auf `390cc0d0`).
 
-**Unabhängiger Technical-Lead-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**
+**Unabhängiger Technical-Lead Exact-Head Re-Review: ausstehend. Dieses Self-Review ersetzt ihn nicht und ist kein PASS.**
