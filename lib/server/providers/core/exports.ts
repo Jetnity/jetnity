@@ -49,7 +49,9 @@ export {
   buildProviderRequestHeaders,
   headerNamesAreSecretSafe,
   isSensitiveHeaderName,
+  isValidHttpHeaderName,
   redactHeaderName,
+  resolveRequestIdHeaderName,
 } from '@/lib/server/providers/core/headers'
 export {
   applyJitter,
@@ -60,6 +62,7 @@ export {
   isRetryableHttpStatus,
   parseRetryAfterHeaderMs,
   sleepWithAbort,
+  validateProviderRetryAfterMs,
   validateProviderRetryPolicy,
   validateProviderTimeoutPolicy,
 } from '@/lib/server/providers/core/retry'

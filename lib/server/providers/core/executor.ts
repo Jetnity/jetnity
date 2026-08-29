@@ -30,7 +30,7 @@ import {
   type ProviderTransportUrl,
   type ProviderValidatedRetryPolicy,
 } from '@/lib/server/providers/core/domain'
-import { buildProviderRequestHeaders } from '@/lib/server/providers/core/headers'
+import { buildProviderRequestHeaders, resolveRequestIdHeaderName } from '@/lib/server/providers/core/headers'
 import { createFetchProviderHttpClient } from '@/lib/server/providers/core/http'
 import { isoFromClock, providerTransportEvent } from '@/lib/server/providers/core/observability'
 import {
@@ -46,6 +46,7 @@ import {
   isRetryableHttpStatus,
   parseRetryAfterHeaderMs,
   sleepWithAbort,
+  validateProviderRetryAfterMs,
   validateProviderRetryPolicy,
   validateProviderTimeoutPolicy,
 } from '@/lib/server/providers/core/retry'
@@ -109,6 +110,24 @@ type AttemptContext = {
   externalSignal: AbortSignal | undefined
 }
 
+function validateRateLimitPolicy(
+  policy: ProviderRateLimitPolicy | undefined,
+): { ok: true } | { ok: false; message: string } {
+  if (policy == null) return { ok: true }
+  for (const key of Object.keys(policy)) {
+    if (key !== 'preflight') {
+      return {
+        ok: false,
+        message: 'Rate-limit retry fields belong on ProviderRetryPolicy, not ProviderRateLimitPolicy.',
+      }
+    }
+  }
+  if (policy.preflight != null && typeof policy.preflight !== 'function') {
+    return { ok: false, message: 'Rate-limit preflight must be a function.' }
+  }
+  return { ok: true }
+}
+
 function configError(message: string): ProviderTransportError {
   return createProviderTransportError({
     kind: 'invalid_configuration',
@@ -152,8 +171,13 @@ export function createProviderTransportExecutor(
   if (typeof config.http !== 'function') {
     return { ok: false, error: configError('An injected HTTP client is required.') }
   }
-  if (config.requestIdHeaderName && config.requestIdHeaderName.trim().length > PROVIDER_TRANSPORT_BOUNDS.maxHeaderNameLength) {
+  const requestIdHeader = resolveRequestIdHeaderName(config.requestIdHeaderName)
+  if (!requestIdHeader.ok) {
     return { ok: false, error: configError('requestIdHeaderName is invalid.') }
+  }
+  const rateLimitPolicy = validateRateLimitPolicy(config.rateLimit)
+  if (!rateLimitPolicy.ok) {
+    return { ok: false, error: configError(rateLimitPolicy.message) }
   }
 
   const clock = config.clock ?? Date.now
@@ -161,7 +185,7 @@ export function createProviderTransportExecutor(
   const random = config.random ?? Math.random
   const scheduleTimeout = config.scheduleTimeout ?? defaultScheduleTimeout
   const observer = config.observer
-  const requestIdHeaderName = (config.requestIdHeaderName ?? 'x-request-id').trim().toLowerCase() || 'x-request-id'
+  const requestIdHeaderName = requestIdHeader.name
 
   const executor: ProviderTransportExecutor = {
     async execute<T>(request: ProviderTransportRequest): Promise<ProviderTransportResult<T>> {
@@ -366,8 +390,18 @@ async function runPreflight(
       operationId: ctx.operationId,
       attempt,
     })
-    if (outcome?.kind === 'allowed' || outcome?.kind === 'rate_limited') {
+    if (outcome?.kind === 'allowed') {
       return { ok: true, outcome }
+    }
+    if (outcome?.kind === 'rate_limited') {
+      const retryAfter = validateProviderRetryAfterMs(outcome.retryAfterMs, ctx.retry.maxRetryAfterMs)
+      if (!retryAfter.ok) {
+        return {
+          ok: false,
+          error: fail(ctx, attempt, 'rate_limited', 'Provider rate-limit guard failed.', null, 0),
+        }
+      }
+      return { ok: true, outcome: { kind: 'rate_limited', retryAfterMs: retryAfter.retryAfterMs } }
     }
   } catch {
     /* fail closed below; never leak the thrown value */

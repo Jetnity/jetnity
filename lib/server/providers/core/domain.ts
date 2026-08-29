@@ -125,10 +125,9 @@ export type ProviderRateLimitOutcome =
   | { kind: 'allowed' }
   | { kind: 'rate_limited'; retryAfterMs: number | null }
 
+// Retry / Retry-After belong only on ProviderRetryPolicy.
+// This policy is the preflight hook. Duplicate retry knobs are rejected.
 export type ProviderRateLimitPolicy = {
-  retryOn429?: boolean
-  honorRetryAfter?: boolean
-  maxRetryAfterMs?: number
   preflight?: (input: {
     providerId: string
     operationId: string

@@ -10,6 +10,7 @@ import {
   isRetryableHttpStatus,
   parseRetryAfterHeaderMs,
   sleepWithAbort,
+  validateProviderRetryAfterMs,
   validateProviderRetryPolicy,
   validateProviderTimeoutPolicy,
 } from '@/lib/server/providers/core'
@@ -24,6 +25,13 @@ describe('provider transport retry policy', () => {
     assert.equal(validateProviderRetryPolicy({ maxAttempts: 2, baseDelayMs: 10, maxDelayMs: 20, maxRetryAfterMs: 120_000 }).ok, false)
     assert.equal(validateProviderTimeoutPolicy({ timeoutMs: 0 }).ok, false)
     assert.equal(validateProviderTimeoutPolicy({ timeoutMs: 200_000 }).ok, false)
+    assert.equal(validateProviderRetryAfterMs(null).ok, true)
+    assert.equal(validateProviderRetryAfterMs(0).ok, true)
+    assert.equal(validateProviderRetryAfterMs(4_000).ok, true)
+    assert.equal(validateProviderRetryAfterMs(Number.NaN).ok, false)
+    assert.equal(validateProviderRetryAfterMs(Number.POSITIVE_INFINITY).ok, false)
+    assert.equal(validateProviderRetryAfterMs(-1).ok, false)
+    assert.equal(validateProviderRetryAfterMs(120_000).ok, false)
   })
 
   test('accepts a bounded explicit policy', () => {

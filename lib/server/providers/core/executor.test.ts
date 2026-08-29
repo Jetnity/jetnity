@@ -144,6 +144,7 @@ function executorFor(
     retry?: { maxAttempts?: number; retryOn429?: boolean; retry5xx?: boolean; retryNetworkErrors?: boolean }
     rateLimit?: { preflight?: () => Promise<{ kind: 'allowed' } | { kind: 'rate_limited'; retryAfterMs: number | null }> }
     maxBodyBytes?: number
+    requestIdHeaderName?: string
   } = {},
 ) {
   return createProviderTransportExecutor({
@@ -165,6 +166,7 @@ function executorFor(
     random: () => 0,
     scheduleTimeout: extras.scheduleTimeout ?? neverTimeout(),
     maxBodyBytes: extras.maxBodyBytes,
+    requestIdHeaderName: extras.requestIdHeaderName,
   })
 }
 
@@ -721,6 +723,164 @@ describe('provider transport helpers', () => {
     assert.equal(invalidResult.error.kind, 'rate_limited')
     assert.equal(invalidResult.error.message, 'Provider rate-limit guard failed.')
     assert.equal(invalidHttp.calls.length, 0)
+  })
+
+  test('sensitive request-id header names are invalid_configuration before any HTTP', async () => {
+    for (const name of ['authorization', 'set-cookie', 'x-api-key']) {
+      const http = fakeHttp([{ type: 'response', status: 200, body: '{"ok":true}', headers: { [name]: 'secret-should-not-be-read' } }])
+      const created = executorFor(http.client, { requestIdHeaderName: name })
+      assert.equal(created.ok, false)
+      if (created.ok) return
+      assert.equal(created.error.kind, 'invalid_configuration')
+      assert.equal(created.error.message.includes('secret-should-not-be-read'), false)
+      assert.equal(http.calls.length, 0)
+    }
+
+    const invalidName = fakeHttp([])
+    const createdInvalid = executorFor(invalidName.client, { requestIdHeaderName: 'Bad Header' })
+    assert.equal(createdInvalid.ok, false)
+    if (createdInvalid.ok) return
+    assert.equal(createdInvalid.error.kind, 'invalid_configuration')
+    assert.equal(invalidName.calls.length, 0)
+  })
+
+  test('a normal request-id header is read, bounded, and never leaks secrets', async () => {
+    const http = fakeHttp([
+      {
+        type: 'response',
+        status: 200,
+        body: '{"ok":true}',
+        headers: { 'x-request-id': 'req-safe-1', authorization: 'Bearer leaked-token' },
+      },
+    ])
+    const created = executorFor(http.client)
+    assert.equal(created.ok, true)
+    if (!created.ok) return
+    const result = await created.executor.execute({
+      ...request(),
+      correlationId: null,
+    })
+    assert.equal(result.ok, true)
+    if (!result.ok) return
+    assert.equal(result.metadata.correlationId, 'req-safe-1')
+    assertNoSecret(result)
+    assert.equal(JSON.stringify(result).includes('Bearer leaked-token'), false)
+
+    const custom = fakeHttp([
+      {
+        type: 'response',
+        status: 200,
+        body: '{"ok":true}',
+        headers: { 'x-partner-request-id': 'partner-req-99' },
+      },
+    ])
+    const createdCustom = executorFor(custom.client, { requestIdHeaderName: 'X-Partner-Request-Id' })
+    assert.equal(createdCustom.ok, true)
+    if (!createdCustom.ok) return
+    const customResult = await createdCustom.executor.execute({
+      ...request(),
+      correlationId: null,
+    })
+    assert.equal(customResult.ok, true)
+    if (!customResult.ok) return
+    assert.equal(customResult.metadata.correlationId, 'partner-req-99')
+    assertNoSecret(customResult)
+
+    const oversized = fakeHttp([
+      {
+        type: 'response',
+        status: 200,
+        body: '{"ok":true}',
+        headers: { 'x-request-id': 'x'.repeat(200) },
+      },
+    ])
+    const createdBounded = executorFor(oversized.client)
+    assert.equal(createdBounded.ok, true)
+    if (!createdBounded.ok) return
+    const boundedResult = await createdBounded.executor.execute({
+      ...request(),
+      correlationId: null,
+    })
+    assert.equal(boundedResult.ok, true)
+    if (!boundedResult.ok) return
+    assert.equal(boundedResult.metadata.correlationId, null)
+  })
+
+  test('rate-limit retry knobs belong only on retry policy and unused duplicates are rejected', async () => {
+    const http = fakeHttp([])
+    const leftover = createProviderTransportExecutor({
+      http: http.client,
+      timeout: { timeoutMs: 50 },
+      retry: { maxAttempts: 1, baseDelayMs: 10, maxDelayMs: 20, retryOn429: false },
+      rateLimit: {
+        retryOn429: true,
+        honorRetryAfter: true,
+        maxRetryAfterMs: 9_000,
+        preflight: async () => ({ kind: 'allowed' as const }),
+      } as never,
+    })
+    assert.equal(leftover.ok, false)
+    if (leftover.ok) return
+    assert.equal(leftover.error.kind, 'invalid_configuration')
+    assert.equal(leftover.error.message.includes('ProviderRetryPolicy'), true)
+    assert.equal(http.calls.length, 0)
+
+    const allowedHttp = fakeHttp([{ type: 'response', status: 200, body: '{"ok":true}' }])
+    const created = executorFor(allowedHttp.client, {
+      retry: { maxAttempts: 2, retryOn429: true },
+      rateLimit: {
+        preflight: async () => ({ kind: 'allowed' }),
+      },
+    })
+    assert.equal(created.ok, true)
+    if (!created.ok) return
+    const result = await created.executor.execute(request())
+    assert.equal(result.ok, true)
+    assert.equal(allowedHttp.calls.length, 1)
+  })
+
+  test('invalid preflight retryAfterMs fails closed without HTTP or raw leak', async () => {
+    const observer = recordingObserver()
+    for (const retryAfterMs of [Number.NaN, Number.POSITIVE_INFINITY, -5, 120_000]) {
+      const http = fakeHttp([])
+      const created = executorFor(http.client, {
+        observer: observer.observer,
+        retry: { maxAttempts: 3, retryOn429: true },
+        rateLimit: {
+          preflight: async () => ({ kind: 'rate_limited', retryAfterMs }),
+        },
+      })
+      assert.equal(created.ok, true)
+      if (!created.ok) return
+      const result = await created.executor.execute(request())
+      assert.equal(result.ok, false)
+      if (result.ok) return
+      assert.equal(result.error.kind, 'rate_limited')
+      assert.equal(result.error.message, 'Provider rate-limit guard failed.')
+      assert.equal(http.calls.length, 0)
+      assert.equal(JSON.stringify(result).includes('Infinity'), false)
+      assert.equal(JSON.stringify(result).includes('NaN'), false)
+      assert.equal(JSON.stringify(result).includes('120000'), false)
+      assertNoSecret(result)
+    }
+
+    const validHttp = fakeHttp([])
+    const sleeper = recordingSleep()
+    const createdValid = executorFor(validHttp.client, {
+      sleep: sleeper.sleep,
+      retry: { maxAttempts: 2, retryOn429: true },
+      rateLimit: {
+        preflight: async () => ({ kind: 'rate_limited', retryAfterMs: 25 }),
+      },
+    })
+    assert.equal(createdValid.ok, true)
+    if (!createdValid.ok) return
+    const validResult = await createdValid.executor.execute(request())
+    assert.equal(validResult.ok, false)
+    if (validResult.ok) return
+    assert.equal(validResult.error.kind, 'retry_exhausted')
+    assert.equal(validHttp.calls.length, 0)
+    assert.ok(sleeper.delays.includes(25))
   })
 })
 

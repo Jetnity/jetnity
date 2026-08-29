@@ -52,11 +52,23 @@ export function redactHeaderName(name: string): string {
   return normalized.length > 0 ? normalized : 'unknown-header'
 }
 
-function validHeaderName(name: string): boolean {
+export function isValidHttpHeaderName(name: string): boolean {
   const trimmed = name.trim()
   if (!trimmed) return false
   if (trimmed.length > PROVIDER_TRANSPORT_BOUNDS.maxHeaderNameLength) return false
   return /^[A-Za-z0-9!#$%&'*+.^_`|~-]+$/.test(trimmed)
+}
+
+export function resolveRequestIdHeaderName(
+  raw: string | undefined,
+): { ok: true; name: string } | { ok: false } {
+  if (raw == null || raw.trim() === '') {
+    return { ok: true, name: 'x-request-id' }
+  }
+  if (!isValidHttpHeaderName(raw)) return { ok: false }
+  const name = raw.trim().toLowerCase()
+  if (isSensitiveHeaderName(name)) return { ok: false }
+  return { ok: true, name }
 }
 
 export function buildProviderRequestHeaders(
@@ -69,7 +81,7 @@ export function buildProviderRequestHeaders(
   const apply = (source: Record<string, string> | undefined) => {
     if (!source) return true
     for (const [rawName, value] of Object.entries(source)) {
-      if (!validHeaderName(rawName) || typeof value !== 'string') return false
+      if (!isValidHttpHeaderName(rawName) || typeof value !== 'string') return false
       const name = redactHeaderName(rawName)
       outbound[name] = value
       if (!names.includes(name)) names.push(name)
@@ -81,7 +93,7 @@ export function buildProviderRequestHeaders(
   if (!apply(input.secretHeaders)) return { ok: false, reason: 'invalid_request' }
 
   for (const extra of additional) {
-    if (typeof extra !== 'string' || !validHeaderName(extra)) {
+    if (typeof extra !== 'string' || !isValidHttpHeaderName(extra)) {
       return { ok: false, reason: 'invalid_request' }
     }
   }

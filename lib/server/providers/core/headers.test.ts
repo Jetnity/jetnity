@@ -6,7 +6,9 @@ import {
   buildProviderRequestHeaders,
   headerNamesAreSecretSafe,
   isSensitiveHeaderName,
+  isValidHttpHeaderName,
   redactHeaderName,
+  resolveRequestIdHeaderName,
 } from '@/lib/server/providers/core'
 
 describe('provider transport header redaction', () => {
@@ -41,5 +43,19 @@ describe('provider transport header redaction', () => {
       publicHeaders: { 'Bad Header': 'x' },
     })
     assert.equal(built.ok, false)
+  })
+
+  test('request-id header names must be valid and non-sensitive', () => {
+    assert.equal(isValidHttpHeaderName('x-request-id'), true)
+    assert.equal(isValidHttpHeaderName('Bad Header'), false)
+    assert.equal(resolveRequestIdHeaderName(undefined).ok, true)
+    if (resolveRequestIdHeaderName(undefined).ok) {
+      assert.equal(resolveRequestIdHeaderName(undefined).name, 'x-request-id')
+    }
+    assert.equal(resolveRequestIdHeaderName('X-Request-Id').ok, true)
+    assert.equal(resolveRequestIdHeaderName('authorization').ok, false)
+    assert.equal(resolveRequestIdHeaderName('Set-Cookie').ok, false)
+    assert.equal(resolveRequestIdHeaderName('x-api-key').ok, false)
+    assert.equal(resolveRequestIdHeaderName('x-partner-request-id').ok, true)
   })
 })

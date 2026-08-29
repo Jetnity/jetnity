@@ -131,6 +131,22 @@ export function computeProviderRetryDelayMs(input: {
   return Math.min(input.policy.maxDelayMs, Math.max(0, delay))
 }
 
+export function validateProviderRetryAfterMs(
+  value: unknown,
+  maxRetryAfterMs: number = PROVIDER_TRANSPORT_BOUNDS.maxRetryAfterMs,
+): { ok: true; retryAfterMs: number | null } | { ok: false } {
+  if (value == null) return { ok: true, retryAfterMs: null }
+  if (
+    typeof value !== 'number' ||
+    !Number.isFinite(value) ||
+    value < 0 ||
+    value > maxRetryAfterMs
+  ) {
+    return { ok: false }
+  }
+  return { ok: true, retryAfterMs: Math.floor(value) }
+}
+
 export function parseRetryAfterHeaderMs(
   raw: string | null,
   nowMs: number,
