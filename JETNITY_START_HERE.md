@@ -9,47 +9,45 @@ Verbindliches Start-/Continuity-Gate:
 
 `docs/JETNITY_BINDING_SLICE_PRECHECK_AND_CONTINUITY_GATE_2026-08-29.md`
 
-Aktuellster Technical-Lead Production-Closure-Checkpoint:
+Aktuellster Technical-Lead Checkpoint:
 
-`docs/CHATGPT_TL_AP7_S2_PRODUCTION_CLOSURE_2026-08-29.md`
+`docs/CHATGPT_TL_AP7_S3_AND_INFRA_AUDIT_POST_MERGE_CHECKPOINT_2026-08-29.md`
 
 Dieser Einstieg ersetzt keine Live-Prüfung. Vor Änderung, Review, Ready oder Merge immer `main`, relevante PRs/Heads, CI, Vercel, Supabase/Production-Evidence und parallele Workstreams live verifizieren.
 
 ---
 
-## 1. Aktueller Baseline-Stand
+## 1. Aktueller vollständig verifizierter Baseline-Stand
 
-Letzter vollständig post-merge und Production-verifizierter Account-/Traveller-Stand:
+- `main @ bb0fb2050e09e8fa5bf670e4290523c037790954`
+- AP-7-S3 Account Traveller Registry CRUD/UI ist integriert und Production-verifiziert.
+- Supabase Migration-History Replay Gate-0 Audit ist als reine Evidence integriert.
+- Post-Merge CI auf aktuellem `main`: #1284 / Run `33277102071` = **SUCCESS**.
+- Vercel Production auf aktuellem `main`: `dpl_BFHHnDoekhxq6CvsLQXiSHrTkmpT` = **READY**.
+- `main protected=false` bleibt Governance-Risiko.
 
-- `main @ b8ea3354c14407793b6e9d19f80ab06a20c29244`
-- AP-7-S2 Integration über Recovery-PR #211
-- Post-Merge CI: Run `33274497121` / #1270 = **SUCCESS**
-- Vercel Production: `dpl_5qJzPjxhfZh6ZtCXgvFEzSPAv3wY` = **READY** auf exakt diesem `main`
-- Supabase Production `qscbgcdmivbbnzrcyegn`: Migration `20260829210052_account_traveller_registry_persistence` angewendet und read-only verifiziert
-- Issue #209: **CLOSED / completed**
-- Branch Protection: `protected=false` bleibt Governance-Risiko.
-
-AP-7-S2 ist abgeschlossen. Es gibt **keinen automatisch gestarteten Folgeslice**.
+Es gibt **keinen automatisch gestarteten Folgeslice**.
 
 ---
 
-## 2. Traveller / Multi-Citizenship – Current Truth
+## 2. Traveller / Account – Current Truth
 
 Kanonisches Modell:
 
 > **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig zulässige Optionen.**
 
-Integriert:
+Integriert sind u. a.:
 
 - trip-scoped Foundation E;
 - 1:n Citizenships / 1:n Documents;
 - Issuer Country ≠ Citizenship;
 - explizite Document↔Citizenship-Relation;
-- kein Default-Pass / keine Default-Citizenship;
-- historische First-Item-Kollapse geschlossen/fail-closed;
+- kein Default-/Primary-/Chosen-Pass und keine Default-Citizenship;
 - Guest→Account Trip-Copy erhält Arrays/Relation;
-- AP-7 Gate 0 + Dual-Authority-Freigabe + AP-7-S1 Domain Contract;
-- **AP-7-S2 Account Registry Persistence / Identity / RLS auf Production**.
+- AP-7 Gate 0 + Dual-Authority-Freigabe;
+- AP-7-S1 Domain Contract;
+- AP-7-S2 Account Registry Persistence / Identity / owner-only RLS auf Production;
+- **AP-7-S3 reale `/account/travellers` CRUD/UI auf Production**.
 
 Production Registry Tabellen:
 
@@ -57,48 +55,48 @@ Production Registry Tabellen:
 - `account_traveller_citizenships`;
 - `account_traveller_documents`.
 
-Owner-only RLS ist aktiv. `anon` hat keine Tabellenrechte. `authenticated` CRUD bleibt owner-begrenzt. Direkt nach Apply waren alle drei Tabellen leer.
+AP-7-S3 liefert Owner CRUD, mehrere Citizenships (max. 8), mehrere Document-Metadaten (max. 12), getrenntes Issuing Country, optionale Citizenship-Relation und `expires_on`. Keine Pass-/Dokumentnummern, Scans, MRZ, Biometrie, DOB oder Health-Daten.
 
-Weiter offen sind insbesondere Registry CRUD/Lifecycle/UX, Registry→Trip Runtime-Materialisierung und weitere gemäß aktuellem Account-Plan gegatete Traveller-/Account-Arbeit. Keine Passnummern, Scans, MRZ, Biometrie oder Health-Daten im Kernmodell.
-
----
-
-## 3. Provider – Current Truth
-
-Provider-Arbeit ist **nicht abgeschlossen**.
-
-Integriert sind u. a. Shared Provider Adapter Core, Offline-/Contract-Foundations und Commercial Provenance Foundation. Echte Provideraktivierung, Secrets/paid calls und weitere Provider Runtime Slices bleiben hinter ihren Gates.
-
-Vor Auswahl eines Provider-Slices muss die aktuelle Binding Build Order erneut live mit Account-/Traveller-Restarbeit abgeglichen werden. Historische Provider-Drafts sind keine automatische Startfreigabe.
-
-Während AP-7-S2 wurde außerdem eine separate historische Supabase S5-B Migration-History-/Replay-Störung auf Development entdeckt. Production wurde dafür nicht manipuliert. Vor einem migrationsnahen Provider-Slice ist diese Evidence erneut live zu prüfen.
+Weiter offen ist insbesondere die bewusst getrennte Registry→Trip Runtime-Materialisierung sowie weitere Account-/Traveller-Arbeit gemäß aktuellem Account-Plan. Sie ist **nicht automatisch autorisiert**.
 
 ---
 
-## 4. Cursor-Agent / Arbeitsverteilung
+## 3. Supabase Migration-History Replay – Current Truth
 
-Verbindlicher Ablauf:
+Gate-0 Audit ist abgeschlossen und dokumentiert.
 
-- Technical Lead rekonstruiert Live-Stand, wählt Slice und definiert versionierten Scope;
-- neue logische Implementierungseinheit → frische Cursor-Agent-Session gemäß Rotation Standard;
-- Cursor-Agent implementiert und self-reviewt;
-- Technical Lead prüft unabhängig Diff, Architektur, Security, Tests, CI, Vercel und ggf. Supabase;
-- `CHANGES REQUIRED` geht an denselben Agenten/dieselbe Session;
-- nur Technical Lead setzt PASS / Ready / Merge;
-- neuer Head invalidiert vorherige Exact-Head-Gates.
+Production `qscbgcdmivbbnzrcyegn` besitzt Version `20260829140000_trip_item_commercial_provenance`, deren gespeicherte einzige Statement-Body jedoch ein **nicht replaybarer 234-Zeichen-Prosa-Marker** ist. Der Production S5-B Catalog existiert trotzdem und der Production Write Path bleibt geschlossen.
 
-AP-7-S2 ist abgeschlossen; für den nächsten Implementierungsslice ist noch kein neuer Agentenauftrag durch diesen Closure-Checkpoint freigegeben. Zuerst frischer Binding Slice Precheck.
+Current Development `yfvbxvijcorffwxbxahl` besitzt weder diese Migration-Version noch die S5-B Provenance-/Runtime-Gate-Objekte/Rollen.
+
+**Keine Reparatur wurde ausgeführt.** Vor einem künftigen Rebase/Reset/Replay-/migrationsnahen Slice ist dies P1 Infrastructure Debt. Eine History-Reparatur ist ein separater Product-Owner-Gate mit Backup/PITR-/Before-Image- und Replay-Nachweis.
+
+Kanonische Audit-Evidence:
+
+- `docs/SUPABASE_MIGRATION_HISTORY_REPLAY_DEFECT_GATE0_LIVE_EVIDENCE_2026-08-29.md`
+- `docs/SUPABASE_MIGRATION_HISTORY_REPLAY_DEFECT_GATE0_RECOMMENDATION_2026-08-29.md`
+- `docs/SUPABASE_MIGRATION_HISTORY_REPLAY_DEFECT_GATE0_HANDOFF_2026-08-29.md`
+
+---
+
+## 4. Aktive Agenten / Provider
+
+Die zuletzt eingesetzten Agenten sind gestoppt und ihre Slices abgeschlossen:
+
+- `Account plattform audit vorbereitung 17` – AP-7-S3;
+- `Jetnity infrastructure migration audit 1` – Supabase Replay Gate-0 Audit.
+
+Provider-Arbeit ist weiterhin nicht abgeschlossen. Echte Provideraktivierung, Secrets/paid calls und weitere Runtime-Slices bleiben hinter Binding Build Order und besonderen Gates. TW-8 bleibt geschlossen.
 
 ---
 
 ## 5. Risiken und besondere Product-Owner-Gates
 
-- P0: keine aus AP-7-S2 bekannten.
+- P0: keine aus den aktuellen Closures bekannten.
+- P1 Infrastructure Debt: malformed Production Migration-History-Body `20260829140000` vor migrationsnahem Replay/Rebase/Reset.
 - P2 Governance: `main protected=false`.
-- Separate Infrastructure Debt: historische Supabase S5-B Migration-History-/Replay-Störung auf Development.
-- Supabase Advisor: generische authenticated-GraphQL-Warnungen für owner-RLS-geschützte Registry-Tabellen sowie ältere, AP-7-S2-fremde Warnungen.
 
-Ausdrückliche Product-Owner-Entscheidung bleibt erforderlich insbesondere vor neuen Production-Migrationen/destruktiven Production-Datenänderungen, materiellen produktiven RLS-/Identity-/Ownership-Vertragsänderungen, fundamentalen Auth/MFA/AAL-Änderungen, sensitiver Dokument-/MRZ-/Biometrie-Speicherung, sensibler externer Datenweitergabe, realen Providerverträgen/Production-Secrets/paid calls/Live-Aktivierung, Öffnung geschlossener Provider-Write-Pfade, Payments/Geldbewegungen, Kosten > USD 100/Monat und fundamentalen Product/Business/Build-Order/Launch-Entscheidungen.
+Ausdrückliche Product-Owner-Entscheidung bleibt erforderlich insbesondere vor neuen Production-Migrationen/destruktiven Production-Datenänderungen, materiellen produktiven RLS-/Identity-/Ownership-Vertragsänderungen, fundamentalen Auth/MFA/AAL-Änderungen, sensitiver Dokument-/MRZ-/Biometrie-Speicherung, sensibler externer Datenweitergabe, realen Providerverträgen/Production-Secrets/paid calls/Live-Aktivierung, Öffnung geschlossener Commercial-Write-Pfade, Payments/Geldbewegungen, Kosten > USD 100/Monat und fundamentalen Product/Business/Build-Order/Launch-Entscheidungen.
 
 Routine-Technik, unabhängige Reviews und normale scope-treue Merges bleiben Technical-Lead-autonom.
 
@@ -112,13 +110,12 @@ Mindestens:
 2. `docs/JETNITY_TECHNICAL_LEAD_CURSOR_AGENT_OPERATING_STANDARD.md`
 3. `docs/JETNITY_BINDING_SLICE_PRECHECK_AND_CONTINUITY_GATE_2026-08-29.md`
 4. `docs/JETNITY_BINDING_BUILD_ORDER.md`
-5. `docs/TECHNICAL_LEAD_MERGE_AUTONOMY_SUPERSESSION_2026-08-26.md`
-6. `docs/JETNITY_TECHNICAL_LEAD_AUTONOMY_POLICY.md`
-7. `JETNITY_HANDOFF.md`
-8. `docs/ACTIVE_WORK_STATUS.md`
-9. `docs/CHATGPT_TL_AP7_S2_PRODUCTION_CLOSURE_2026-08-29.md`
-10. konkret relevante Task-/Status-/Handoff-/ADR-Dateien;
-11. danach Live-GitHub/CI/Vercel/Supabase-Evidence.
+5. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md`
+6. `JETNITY_HANDOFF.md`
+7. `docs/ACTIVE_WORK_STATUS.md`
+8. `docs/CHATGPT_TL_AP7_S3_AND_INFRA_AUDIT_POST_MERGE_CHECKPOINT_2026-08-29.md`
+9. konkret relevante Task-/Status-/Handoff-/ADR-Dateien;
+10. danach Live-GitHub/CI/Vercel/Supabase-Evidence.
 
 Bei Chatwechsel zusätzlich `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_PROMPT.md`.
 
@@ -126,10 +123,10 @@ Bei Chatwechsel zusätzlich `docs/JETNITY_UNIVERSAL_NEW_CHAT_RECOVERY_PROMPT.md`
 
 ## 7. Exakter nächster Schritt
 
-1. AP-7-S2 Closure-/Continuity-Dokumentation integrieren und post-merge verifizieren.
-2. Danach frischen Binding Slice Precheck ausführen.
-3. Binding Build Order gegen aktuelle Account-/Traveller-Restarbeit, Provider-Restarbeit, offene PRs/Issues/Branches, Production Truth und Risiken abgleichen.
-4. Erst dann den nächsten bounded Implementierungsslice bestimmen.
-5. Für diesen neuen logischen Slice einen frischen Cursor-Agenten gemäß Operating Standard anstoßen.
+1. Frischen Binding Slice Precheck ausführen.
+2. Aktuellen `main`, offene PRs/Issues/Branches und CI/Vercel/Supabase live prüfen.
+3. Account-/Traveller-Restarbeit gegen Binding Build Order und Provider-Restarbeit abgleichen.
+4. Bei jedem migrationsnahen Kandidaten den Supabase Replay-Defekt als P1-Abhängigkeit behandeln.
+5. Erst danach den nächsten bounded Slice bestimmen und dafür eine frische Cursor-Agent-Generation anstoßen.
 
-Kein historischer Draft-PR und kein alter Agentenauftrag darf ohne diesen Precheck als Current Truth fortgesetzt werden.
+Registry→Trip Runtime-Materialisierung ist ein naheliegender AP-7-Kandidat, aber **nicht durch diesen Checkpoint freigegeben**.
