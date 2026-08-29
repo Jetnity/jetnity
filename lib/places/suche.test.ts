@@ -235,6 +235,7 @@ describe('Ortssuche', () => {
       country: 'United States',
       countryCode: 'US',
       region: 'Illinois',
+      keywords: 'Peru, Peru, Illinois',
     })
     const stadtIndiana = ortFixture({
       id: 'geonames:4924733',
@@ -243,6 +244,7 @@ describe('Ortssuche', () => {
       country: 'United States',
       countryCode: 'US',
       region: 'Indiana',
+      keywords: 'Peru, Peru, Indiana',
     })
     const optionen = orteOrdnen([stadtIllinois, stadtIndiana, republik], 'Peru', 'ziel')
     assert.equal(optionen[0]?.id, republik.id)
@@ -268,6 +270,7 @@ describe('Ortssuche', () => {
       country: 'Japan',
       countryCode: 'JP',
       region: 'Kagoshima',
+      keywords: 'China, China, Kagoshima',
     })
     const stadtMexiko = ortFixture({
       id: 'geonames:4014336',
@@ -276,6 +279,7 @@ describe('Ortssuche', () => {
       country: 'Mexico',
       countryCode: 'MX',
       region: 'Nuevo León',
+      keywords: 'China, China, Nuevo Leon',
     })
     const optionen = orteOrdnen([stadtJapan, stadtMexiko, republik], 'China', 'ziel')
     assert.equal(optionen[0]?.id, republik.id)
@@ -299,6 +303,7 @@ describe('Ortssuche', () => {
       country: 'South Africa',
       countryCode: 'ZA',
       region: 'North West',
+      keywords: 'Schweizer-Reneke, Schweizer Reneke',
     })
     const optionen = orteOrdnen([praefixStadt, land], 'Schweiz', 'ziel')
     assert.equal(optionen[0]?.id, land.id)
@@ -323,6 +328,7 @@ describe('Ortssuche', () => {
       country: 'United States',
       countryCode: 'US',
       region: 'Ohio',
+      keywords: 'Ruritanien Heights, Ruritanien',
     })
     const optionen = orteOrdnen([stadt, land], 'Ruritanien', 'ziel')
     assert.equal(optionen[0]?.id, land.id)
@@ -393,6 +399,29 @@ describe('Ortssuche', () => {
     assert.equal(optionen[0]?.id, land.id)
     assert.equal(optionen.some((option) => option.label.includes('Township')), false)
     assert.ok(optionen.length <= ORT_TREFFER)
+  })
+
+  test('Import-Keywords der Gleichnam-Stadt dürfen das Länder-Alias nicht überholen', () => {
+    const republik = ortFixture({
+      id: 'geonames:3932488',
+      name: 'Republic of Peru',
+      typ: 'country',
+      country: 'Peru',
+      countryCode: 'PE',
+      keywords: 'Peru, Peru, Republic of Peru, Perú',
+    })
+    const stadt = ortFixture({
+      id: 'geonames:4901424',
+      name: 'Peru',
+      typ: 'city',
+      country: 'United States',
+      countryCode: 'US',
+      region: 'Illinois',
+      keywords: 'Peru, Peru, Illinois',
+    })
+    const optionen = orteOrdnen([stadt, republik], 'Peru', 'ziel')
+    assert.equal(optionen[0]?.id, republik.id)
+    assert.equal(optionen[1]?.id, stadt.id)
   })
 
   test('der Länder-Alias-Nachzug läuft, wenn Namens-Städte das Land verdecken', () => {

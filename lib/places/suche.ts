@@ -64,17 +64,25 @@ export function ortLandAliasfilter(suche: string): string | null {
   return `${name},${schluessel}`
 }
 
-function schluesselwortGenau(keywords: string | null | undefined, suche: string): boolean {
-  if (!keywords) return false
-  return keywords.split(',').some((teil) => gleichGefaltet(teil.trim(), suche))
+function schluesselwoerter(keywords: string | readonly string[] | null | undefined): string[] {
+  if (!keywords) return []
+  if (Array.isArray(keywords)) {
+    return keywords.flatMap((teil) => schluesselwoerter(teil))
+  }
+  return keywords
+    .split(',')
+    .map((teil) => teil.trim())
+    .filter((teil) => teil.length > 0)
 }
 
-function keywordAlsWort(keywords: string | null | undefined, suche: string): boolean {
-  if (!keywords) return false
-  return keywords.split(',').some((teil) => {
-    const wort = teil.trim()
-    return gleichGefaltet(wort, suche) || beginntGefaltet(wort, suche)
-  })
+function schluesselwortGenau(keywords: string | readonly string[] | null | undefined, suche: string): boolean {
+  return schluesselwoerter(keywords).some((teil) => gleichGefaltet(teil, suche))
+}
+
+function keywordAlsWort(keywords: string | readonly string[] | null | undefined, suche: string): boolean {
+  return schluesselwoerter(keywords).some(
+    (wort) => gleichGefaltet(wort, suche) || beginntGefaltet(wort, suche),
+  )
 }
 
 function istExaktesLandAlias(ort: Ort, suche: string): boolean {
@@ -153,6 +161,13 @@ function orteBewerten(
     .map((ort) => ({ ort, rang: ortRang(ort, suche, rolle) }))
     .filter((eintrag) => eintrag.rang > 0)
     .sort((a, b) => {
+      // Import legt asciiName in keywords. Gleichnam-Städte würden sonst
+      // Name+Keyword stapeln und ein exaktes Länder-Alias im Score verlieren.
+      if (rolle === 'ziel') {
+        const aLand = istExaktesLandAlias(a.ort, suche)
+        const bLand = istExaktesLandAlias(b.ort, suche)
+        if (aLand !== bLand) return aLand ? -1 : 1
+      }
       if (b.rang !== a.rang) return b.rang - a.rang
       return a.ort.name.localeCompare(b.ort.name)
     })
