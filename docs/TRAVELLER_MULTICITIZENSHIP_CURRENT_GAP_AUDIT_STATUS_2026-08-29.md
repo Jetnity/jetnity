@@ -1,7 +1,7 @@
 # Traveller / Multi-Citizenship Current Gap Audit — Status
 
 Stand: 29. August 2026  
-Status: **IMPLEMENTIERT / AUDIT + EVIDENCE ONLY / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**  
+Status: **REVIEW-FIX FÜR 5464233618 / AUDIT + EVIDENCE ONLY / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Workstream: Traveller / Multi-Citizenship  
 Logical Cursor-Agent: **`Cursor-Agent: Jetnity traveller multicitizenship audit 1`**  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/198  
@@ -33,8 +33,9 @@ Dieser Agent behauptet nicht, die sichtbare UI sei umbenannt.
 | --- | --- |
 | Repository | `Jetnity/jetnity` |
 | Task-Baseline | `main @ 085c95b22130232c5b5819ef8a4bcc302cc0f52b` |
-| `origin/main` Re-Fetch vor diesem Stamp | `897f8e0b1975eddf96f88e6f2746a11e93eb8fe4` – HBX Hotels contract audit integriert |
-| Drift | **9 behind / 2 ahead** gegen live `main`. Diff `085c95b2..897f8e0b` = nur `docs/PROVIDER_HBX_*`. Traveller-Surfaces unverändert. Kein Rebase |
+| Reviewed Head invalidiert | `2aa37b5dd27e52ab2e7a60878a6bb0069ba41ada` — TL CHANGES REQUIRED `5464233618` |
+| `origin/main` Re-Fetch vor diesem Stamp | `d31e6966fdcb66d0e327a5960194a035676251c1` – 12Go Mobility contract audit integriert |
+| Drift | **27 behind / 3 ahead** gegen live `main` vor diesem Stamp. Diff `085c95b2..d31e6966` = nur Provider-Audit-Docs (`PROVIDER_HBX_*`, `PROVIDER_VIATOR_*`, `PROVIDER_12GO_*`, ADR-0200). **Keine** Traveller-/Runtime-/Schema-Überlappung. Kein Rebase |
 | Branch | `audit/traveller-multicitizenship-current-gap-2026-08-29` |
 | Merge-Base gegen Task-Baseline | `085c95b2` |
 | Ahead / Behind vor erstem Audit-Stamp | **1 / 0** gegen damaliges `origin/main` (Task-Commit `dced988b`) |
@@ -45,7 +46,7 @@ Dieser Agent behauptet nicht, die sichtbare UI sei umbenannt.
 | Browser / Real-Device | **nein** – Docs-only |
 | Mutating Runtime | **keine** |
 
-Prior Task-Head `dced988b` Gates (Actions `33268269030` SUCCESS, Vercel `3PNsiWMEYDjmSnUDQeYQogkj2P69` SUCCESS) gelten **nicht** für diesen Stamp.
+Prior reviewed Head `2aa37b5d` Gates (Actions `33268702115` SUCCESS, Vercel `8r2i6RHGL7Rd44H6RhgvjSqvLmhR` SUCCESS) gelten **nicht** für diesen Stamp. Review-Fix adressiert TL `5464233618`.
 
 ## 2. Task / Scope / Non-Scope
 
@@ -89,9 +90,9 @@ Lokale Gates auf dem Authoring-Stand vor/mit diesem Stamp. CI/Vercel des Stamp-H
 | `node --import tsx --test` Traveller/Readiness-Fokus | **114/114 pass, 0 fail** (`account-registry`, `official-option-scope`, `traveller-kontext`, `traveller-anfrage`, `engine`, `p2-ta04-write-path-inventory`, `vergleich`) |
 | Volle `npm test` / typecheck / lint / Production-Build | **nicht** gelaufen; Docs-only, kein Runtime-Diff |
 | Hygiene (`check:dead` / exports / deps / api-schutz / schema-bezug) | **nicht** gelaufen |
-| `origin/main` Re-Fetch | `897f8e0b` — **9 behind / Traveller-Diff leer**; kein Rebase |
+| `origin/main` Re-Fetch | `d31e6966` — **27 behind / Traveller-Diff leer**; Provider-Docs only; kein Rebase |
 | Supabase / Production-Katalog | **nicht** gelaufen |
-| GitHub Actions / Vercel dieses Heads | nach diesem Stamp live prüfen; Prior-Heads `dced988b` und `c12c5c19` ungültig |
+| GitHub Actions / Vercel dieses Heads | nach diesem Stamp live prüfen; Prior-Head `2aa37b5d` (Actions `33268702115` SUCCESS; Vercel `8r2i6RHGL7Rd44H6RhgvjSqvLmhR` SUCCESS) ist ungültig |
 
 ## 6. Security / privacy / truth
 
@@ -112,22 +113,24 @@ Lokale Gates auf dem Authoring-Stand vor/mit diesem Stamp. CI/Vercel des Stamp-H
 
 ## 8. Finished vs unfinished
 
-**Finished (authoring):**
+**Finished (authoring + Review-Fix `5464233618`):**
 
 - Current-State-Rekonstruktion gegen das Binding-Modell
 - Matrix + nicht-correct Findings mit Severity/Blocker/Slice-Grenze
-- Delta zum 26-August-Audit, ohne dessen Status zu kopieren
+- F9: Duplicate-Country als stiller Drop **oder** `FOREIGN_CITIZENSHIP`, nicht bedingungsloser stiller Verlust
+- §4.1: `party_schreiben` als trip-scoped Party-Write, nicht Account-Registry-Write
+- Audit-lokale Continuity gegen live `main @ d31e6966`
 - Status / Handoff / Self-Review / optionales Proposal
 
 **Unfinished / not authorized:**
 
-- unabhängiger Technical-Lead Exact-Head-Review
+- unabhängiger Technical-Lead Exact-Head-**Re-Review**
 - Ready / Merge
 - AP-7-S2 oder irgendeine Implementierung
 - Korrektur globaler Current-State-Dateien
 
 ## 9. Exact first unfinished next step
 
-Unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #198 auf dem Head dieses Stamps.
+Unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #198 auf dem Head dieses Stamps nach CHANGES REQUIRED `5464233618`.
 
 Kein Ready. Kein Merge. Kein Folgeslice.

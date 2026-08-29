@@ -17,7 +17,8 @@ Exact Head: Stamp-Commit dieses Reviews; live an PR #198 prüfen
 | Keine globalen Current-State-Dateien | ja | `ACTIVE_WORK_STATUS.md`, `JETNITY_HANDOFF.md`, `ROADMAP.md`, `DECISIONS.md`, `JETNITY_START_HERE.md` unberührt |
 | Kein Ready / Merge / Folgeslice | ja | Handoff STOP |
 | Current Truth neu rekonstruiert, 26-Aug nicht kopiert | ja | Delta-Tabelle im Audit; P1-TA-02 / P2-TA-06 gegen aktuellen Code neu gelesen |
-| `origin/main` vor Handoff neu geholt | ja | jetzt `897f8e0b`; **9 behind**, nur HBX-Docs; Traveller-Diff leer; kein Rebase |
+| `origin/main` vor Handoff neu geholt | ja | jetzt `d31e6966`; **27 behind**, nur Provider-Audit-Docs (HBX/Viator/12Go); Traveller-/Runtime-/Schema-Diff leer; kein Rebase |
+| TL CHANGES REQUIRED `5464233618` auf `2aa37b5d` | ja | F9 Zwei-Pfad-Semantik; `party_schreiben` trip-scoped; Continuity-Refresh |
 
 Bewusste Policy-Spannung: Progress-Persistence verlangt sonst ein Update von `docs/ACTIVE_WORK_STATUS.md`. Der **versionierte Task** verbietet genau das. Continuity dieses Blocks liegt in Status/Handoff/Self-Review.
 
@@ -33,7 +34,7 @@ Jeder nicht-`correct` Befund wurde gegen aktuellen Code gelegt, nicht gegen den 
 | AP-7 S1 latent | `accountRegistry*` nur `lib/traveller/*` |
 | Guest→Account erhält Relation | `GastreiseBruecke.tsx` mappt `citizenshipClientRef` |
 | Safety set-scharf | `travellerRelevant` nutzt `citizenshipCodesAus` |
-| `party_schreiben` `DO NOTHING` | Migration `20260822160000` L371, nach Delete-All-Children |
+| `party_schreiben` Duplicate-Country | `DO NOTHING` L371 nur ohne Document-Ref auf die verworfene `clientRef`; sonst `FOREIGN_CITIZENSHIP` L399–401. Trip-scoped, kein Registry-Write |
 | Requirements-Provider null | `requirementsProviderAus()` `return null` |
 | Provider-Suche nur Kopfzahl | `flugPassagiereAusReise` liest `reise.travellers` |
 
@@ -82,8 +83,9 @@ Nicht gelaufen und daher nicht als grün behauptet: volle `npm test`, `tsc`, ESL
 1. `docs/ACCOUNT_PLATFORM_IMPLEMENTATION_PLAN.md` sagt noch „S1 Draft-PR #145“. Das ist Current-State-Drift auf `main`, außerhalb dieses Diffs.
 2. Checkpoint V2 sagt, der kanonische Vertrag dürfe nicht erneut inventarisiert werden. Dieser Audit inventarisiert **Restlücken**, erfindet den Vertrag nicht neu. Falls der Reviewer das als Duplicate-Audit wertet: der Task hat die Rekonstruktion ausdrücklich verlangt.
 3. `officialFuerItem` bleibt traveller+land-scharf. Das ist nach P1-TA-02 fail-closed, nicht der alte `[0]`-Kollaps.
-4. Jeder neue Push invalidiert Prior-Gates von `dced988b` und `c12c5c19`.
-5. Live `main` wanderte während des Laufs um 9 HBX-Docs-Commits. Das ändert die Traveller-Claims nicht; ein Rebase wurde bewusst unterlassen.
+4. Jeder neue Push invalidiert Prior-Gates von `2aa37b5d` (Actions `33268702115`, Vercel `8r2i6RHGL7Rd44H6RhgvjSqvLmhR`).
+5. Live `main` ist `d31e6966` (27 Provider-Audit-Docs seit Baseline). Keine Traveller-/Runtime-/Schema-Überlappung; kein Rebase.
+6. F9 behauptet keinen bedingungslosen stillen Verlust mehr. `party_schreiben` wird nicht als Account-Registry-Write bezeichnet.
 
 ## 7. Verdict des Autors
 

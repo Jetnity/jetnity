@@ -2,7 +2,7 @@
 
 Stand: 29. August 2026  
 Typ: **CURRENT-STATE AUDIT / DOCS-EVIDENCE ONLY / NO RUNTIME MUTATION**  
-Status: **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**  
+Status: **REVIEW-FIX FÜR 5464233618 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Logical Cursor-Agent: **`Cursor-Agent: Jetnity traveller multicitizenship audit 1`**  
 Branch: `audit/traveller-multicitizenship-current-gap-2026-08-29`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/198  
@@ -40,13 +40,13 @@ Verifiziert in diesem Authoring-Lauf, 29. August 2026.
 | Prüfung | Live-Stand |
 | --- | --- |
 | Task-Baseline | `085c95b22130232c5b5819ef8a4bcc302cc0f52b` – `Persist provider core post-merge checkpoint` |
-| `origin/main` Re-Fetch vor Handoff | `897f8e0b1975eddf96f88e6f2746a11e93eb8fe4` – `Integrate HBX Hotels contract audit` |
-| Drift vs Task-Baseline | live `main` ist **9 Commits voraus**; alle 9 sind HBX-Hotels-Audit-Docs. **Keine** Traveller-/Readiness-/Trip-/Safety-/Schema-/UI-Datei geändert |
+| `origin/main` Re-Fetch vor diesem Review-Fix | `d31e6966fdcb66d0e327a5960194a035676251c1` – `Integrate 12Go Mobility contract audit` |
+| Drift vs Task-Baseline | live `main` ist **27 Commits voraus**. Alle sind Provider-Audit-Docs (HBX Hotels, Viator Activities, 12Go Mobility). **Keine** Traveller-/Readiness-/Trip-/Safety-/Schema-/UI-/Runtime-Datei geändert |
 | Audit-Branch | `audit/traveller-multicitizenship-current-gap-2026-08-29` |
 | Merge-Base gegen Task-Baseline | exakt `085c95b2` |
-| Ahead / Behind gegen live `origin/main` | **2 / 9** vor dem Test-Evidence-Stamp; dieser Stamp erzeugt einen neueren Head. **Kein Rebase** — Traveller-Flächen identisch zur Baseline |
+| Ahead / Behind gegen live `origin/main` | **3 / 27** vor diesem Review-Fix (`2aa37b5d`). Dieser Stamp erzeugt einen neueren Head. **Kein Rebase** — Traveller-Flächen identisch zur Baseline und zu live `main` |
 | Draft-PR | [#198](https://github.com/Jetnity/jetnity/pull/198) OPEN / Draft / MERGEABLE |
-| Prior Task-Head Gates | Actions Run `33268269030` SUCCESS; Vercel Preview `3PNsiWMEYDjmSnUDQeYQogkj2P69` SUCCESS — gelten **nicht** für den Stamp-Head |
+| Prior reviewed Head `2aa37b5d` Gates | Actions `33268702115` SUCCESS; Vercel `8r2i6RHGL7Rd44H6RhgvjSqvLmhR` SUCCESS — **ungültig** nach diesem Review-Fix |
 | `main` Branch Protection | diese Session: API `403` / nicht frisch lesbar; letzte dokumentierte Live-Evidence `protected=false` |
 | Supabase in diesem Run | **nicht** abgefragt, **nicht** mutiert |
 | Browser / Real-Device | **nein** – Docs-only |
@@ -54,7 +54,7 @@ Verifiziert in diesem Authoring-Lauf, 29. August 2026.
 
 Parallele Workstreams (nicht verändert):
 
-- Provider-Adapter-Core und Provider-Audits bleiben fremde Drafts.
+- Provider-Adapter-Core und die auf `main` gelandeten HBX-/Viator-/12Go-Audit-Docs bleiben fremde Workstreams.
 - Dieser Audit ändert keine Provider-, Runtime-, Migrations- oder globalen Current-State-Dateien.
 
 Authoritative current-state außerhalb dieses Blocks bleibt Checkpoint V2 plus Binding Slice Precheck. Dieser Audit supersediert **nicht** diese Dateien; er liefert nur audit-spezifische Traveller-Gap-Evidence.
@@ -116,7 +116,7 @@ Offen geblieben und **aktuell bestätigt**:
 | Legacy-Spalten | `nationality_country_code`, `document_*` auf Parent, **DEPRECATED compatibility-only** | Migration-Kommentare; `reisende.ts` unterdrückt sie, wenn Children geladen sind |
 | Kopfzahl | `trips.travellers` ist 1–20, keine Identität | `types/trips.ts`; `party.ts` |
 
-Account-Writes gehen über `party_schreiben`. Die Funktion löscht Children je Traveller und schreibt sie neu. Legacy-Singularspalten werden dabei **nicht** geschrieben.
+Authentifizierte **trip-scoped** Traveller-/Party-Writes gehen über `party_schreiben`. Die Funktion löscht Children je Traveller und schreibt sie neu. Legacy-Singularspalten werden dabei **nicht** geschrieben. Das ist **kein** Account-Registry-Write. AP-7 Registry-Persistenz existiert nicht.
 
 ### 4.2 AP-7 Dual-Authority — contract only
 
@@ -176,7 +176,7 @@ Legende: `correct` / `partial` / `missing` / `conflicting` / `insufficient evide
 | Provider Flights/Hotels/Activities/Mobility/Rental Search | **correct** für aktuelle Suche / **missing** für spätere Booking-/APIS-Wahl | nur Kopfzahl; kein Shadow-Traveller |
 | Requirements-Provider | **correct** (nicht aktiv) | Factory `null`; Vertrag trägt `credentialOptions[]` |
 | Legacy-Singularspalten | **partial** | Expand/Contract; Children gewinnen, wenn geladen |
-| `party_schreiben` Duplicate-Country | **partial** | `ON CONFLICT (traveller_id, country_code) DO NOTHING` |
+| `party_schreiben` Duplicate-Country | **partial** | `ON CONFLICT DO NOTHING` nur wenn kein Dokument die verworfene Ref nutzt; sonst `FOREIGN_CITIZENSHIP` fail-closed |
 | `travellerSlots` Extra-Refs | **partial** | nur `traveller:1..N` applicable |
 | Account-Plan Current-State-Zeilen zu AP-7-S1 | **conflicting** | Datei auf `main` nennt S1 noch „Draft-PR #145 / self-expiring“, Code ist integriert |
 | Production-Katalog dieses Runs | **insufficient evidence** | Acceptance-Docs ja; dieser Agent hat Supabase nicht live gelesen |
@@ -271,16 +271,21 @@ Für jedes nicht-`correct` Ergebnis: Fläche, Call-Pfad, Impact, Severity, Block
 **Blockt:** nicht Traveller-Completion.  
 **Kleinster späterer Slice:** Legacy-Quarantäne erst nach Nachweis, dass Production den Legacy-Select nicht mehr braucht.
 
-### F9 — `party_schreiben` schluckt doppelte Country-Codes still
+### F9 — `party_schreiben` Duplicate-Country: stiller Drop **oder** fail-closed
 
 **Bewertung:** `partial`  
-**Fläche:** `supabase/migrations/20260822160000_traveller_context_intelligence.sql` L366–371  
-`on conflict (traveller_id, country_code) do nothing`.  
-**Call-Pfad:** erreichbar über Account-Writes. Children werden zuvor gelöscht; Konflikt entsteht nur **innerhalb derselben Payload**, wenn dasselbe Land zweimal kommt. Domain/UI deduplizieren Länder bereits.  
-**Impact:** stiller Verlust eines zweiten `clientRef` für dasselbe Land, nicht einer zweiten Staatsbürgerschaft. Kein Default-Pass.  
-**Severity:** **P3**.  
+**Fläche:** `supabase/migrations/20260822160000_traveller_context_intelligence.sql`  
+Citizenship-Insert L366–371 `on conflict (traveller_id, country_code) do nothing`; Document-Lookup L391–401 wirft `FOREIGN_CITIZENSHIP` (`42501`), wenn `citizenshipClientRef` in der gerade geschriebenen Child-Menge nicht auflösbar ist.  
+**Call-Pfad:** erreichbar über authentifizierte **trip-scoped** Party-Writes (`reisende-aktionen` → `party_schreiben`). Kein Account-Registry-Pfad. Children werden zuvor gelöscht; ein Country-Konflikt entsteht nur **innerhalb derselben Payload**, wenn dasselbe Land zweimal mit unterschiedlichen `clientRef`s kommt. Domain/UI deduplizieren Länder bereits.  
+**Impact — zwei Pfade, nicht bedingungsloser stiller Verlust:**
+
+1. **Kein Dokument** referenziert die zweite, durch `DO NOTHING` verworfene Citizenship-`clientRef`: die zweite Zeile wird still nicht persistiert. Es geht ein unbenutzter Duplicate-Ref verloren, nicht eine zweite Staatsbürgerschaft (Unique bleibt das Land).
+2. **Ein Dokument** referenziert genau diese verworfene zweite `clientRef`: der anschließende Lookup findet keine Child-Zeile und die **gesamte Write-Transaktion** scheitert mit `FOREIGN_CITIZENSHIP`. Es entsteht **keine** persistierte hängende Document↔Citizenship-Relation.
+
+Kein Default-Pass. Kein stilles Detach in den Persistenzbestand.  
+**Severity:** **P3** — Hygiene/Payload-Uneindeutigkeit; der dokumentbezogene Pfad ist bereits fail-closed.  
 **Blockt:** nicht Traveller-Completion.  
-**Kleinster späterer Slice:** Write-Contract-Hygiene (fail-closed statt `DO NOTHING`) in einem eigenen, kleinen DB-Slice. PO-Gate, weil Production-Funktion.
+**Kleinster späterer Slice:** Write-Contract-Hygiene, die Duplicate-Country in der Citizenship-Schleife ebenfalls fail-closed macht (statt `DO NOTHING`), in einem eigenen kleinen DB-Slice. PO-Gate, weil Production-Funktion. Nicht als „unconditional silent loss“ beschreiben.
 
 ### F10 — `travellerSlots` macht Nicht-`traveller:N`-Refs nicht applicable
 

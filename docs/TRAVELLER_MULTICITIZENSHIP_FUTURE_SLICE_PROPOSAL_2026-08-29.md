@@ -57,7 +57,7 @@ Nicht aus PR #198 ableiten:
 
 ### Slice G — Legacy-Quarantäne / `party_schreiben` Hygiene
 
-Nur nach Nachweis, dass Production den Legacy-Select nicht mehr braucht. `ON CONFLICT DO NOTHING` fail-closed machen ist ein eigener kleiner DB-Slice mit Production-Gate.
+Nur nach Nachweis, dass Production den Legacy-Select nicht mehr braucht. Duplicate-Country in der Citizenship-Schleife von `party_schreiben` fail-closed machen (heute: `DO NOTHING` nur wenn keine Document-Ref die verworfene `clientRef` trifft; sonst bereits `FOREIGN_CITIZENSHIP`) ist ein eigener kleiner DB-Slice mit Production-Gate. Nicht als bedingungslosen stillen Verlust behandeln.
 
 ---
 

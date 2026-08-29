@@ -1,7 +1,7 @@
 # Traveller / Multi-Citizenship Current Gap Audit — Handoff
 
 Stand: 29. August 2026  
-Status: **DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**  
+Status: **REVIEW-FIX FÜR 5464233618 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Logical Cursor-Agent: **`Cursor-Agent: Jetnity traveller multicitizenship audit 1`**  
 Generation: **1**  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/198
@@ -22,8 +22,9 @@ Kein Redesign. Keine Implementierung. Kein Ready. Kein Merge.
 | --- | --- |
 | Branch | `audit/traveller-multicitizenship-current-gap-2026-08-29` |
 | Task-Baseline | `085c95b22130232c5b5819ef8a4bcc302cc0f52b` |
-| Re-Fetch vor Handoff | `897f8e0b1975eddf96f88e6f2746a11e93eb8fe4` |
-| Drift | **9 behind / 2 ahead**. Nur HBX-Hotels-Audit-Docs auf `main`. Traveller-Surfaces byte-gleich zur Baseline. Kein Rebase |
+| Re-Fetch vor diesem Review-Fix | `d31e6966fdcb66d0e327a5960194a035676251c1` |
+| Drift | **27 behind / 3 ahead** vor diesem Stamp. Nur Provider-Audit-Docs auf `main` (HBX, Viator, 12Go, ADR-0200). **Keine** Traveller-/Runtime-/Schema-Überlappung. Kein Rebase |
+| Invalidated reviewed Head | `2aa37b5d` — CHANGES REQUIRED `5464233618` |
 | Merge-Base gegen Task-Baseline | `085c95b2` |
 | Exact Head | Stamp-Commit dieses Handoffs; live an PR #198 lesen |
 | Ahead nach Stamp | Implementierung/Docs dieses Audits plus Task-Commit |
@@ -57,8 +58,9 @@ Offen und aktuell:
 
 - AP-7-S2 Persistenz / Identity / RLS / Ownership — **P2, blockt Traveller-Completion und AP-7+**
 - Account CRUD/UX / Document-Lifecycle — **P2 nach S2**
-- Safety set-scharf, Official-Item nicht option-scharf, Legacy-Spalten, Provider-Suche nur Kopfzahl — **P3 / später**
+- Safety set-scharf, Official-Item nicht option-scharf, Legacy-Spalten, Provider-Suche nur Kopfzahl, `party_schreiben` Duplicate-Country (stiller Drop **oder** `FOREIGN_CITIZENSHIP`) — **P3 / später**
 - Globale Current-State-Dateien driftig — **P3, in diesem Task nicht korrigierbar**
+- `party_schreiben` ist nur der trip-scoped Party-Write; AP-7 Registry-Writes existieren nicht
 
 Production-Katalog: Repository-Acceptance vorhanden; dieser Agent hat Supabase nicht live gelesen.
 
@@ -73,7 +75,8 @@ Lokale Authoring-Gates, tatsächlich gelaufen:
 CI/Vercel:
 
 - Prior Task-Head `dced988b`: Actions `33268269030` SUCCESS; Vercel Preview `3PNsiWMEYDjmSnUDQeYQogkj2P69` SUCCESS.
-- Docs-Stamp `c12c5c19` und dieser Test-Evidence-Stamp erzeugen neuere Heads. Alte Gates sind ungültig. Reviewer muss Exact-Head-Gates neu lesen.
+- Prior reviewed Head `2aa37b5d`: Actions `33268702115` SUCCESS; Vercel Preview `8r2i6RHGL7Rd44H6RhgvjSqvLmhR` SUCCESS. **Ungültig** nach diesem Review-Fix-Push.
+- Dieser Stamp erzeugt einen neueren Head. Reviewer muss Exact-Head-Gates neu lesen.
 
 ## 6. DB / RLS / Production-Grenze
 
@@ -85,7 +88,7 @@ Keine Migration. Keine Supabase-Mutation. Keine RLS/Grant-Änderung. Keine Verce
 
 ## 8. Parallelität
 
-Provider-Drafts (#187 und verwandte Audits) nicht angefasst. Globale Current-State-Dateien nicht angefasst, damit jene Reviews keinen Docs-Konflikt durch diesen Audit bekommen.
+Provider-Adapter-Core und die inzwischen auf `main` integrierten HBX-/Viator-/12Go-Audits nicht angefasst. Globale Current-State-Dateien nicht angefasst.
 
 ## 9. Offene Freigaben
 
@@ -93,8 +96,8 @@ Keine aus diesem Slice. AP-7-S2 bleibt separat Product-Owner-gegatet und startet
 
 ## 10. Exakter nächster Schritt
 
-Unabhängiger ChatGPT / Technical-Lead Exact-Head-Review von Draft-PR #198.
+Unabhängiger ChatGPT / Technical-Lead Exact-Head-**Re-Review** von Draft-PR #198 nach CHANGES REQUIRED `5464233618`.
 
 Verdict-Möglichkeiten: `PASS` / `CHANGES REQUIRED` / `BLOCKED` / `NO-GO`.
 
-Cursor-Agent setzt kein Ready und merged nicht. Nach einem CHANGES-REQUIRED bleibt Generation 1 dieselbe Session.
+Cursor-Agent setzt kein Ready und merged nicht. Generation 1 bleibt dieselbe Session.
