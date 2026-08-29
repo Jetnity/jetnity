@@ -1,67 +1,63 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **CURRENT / POST-MERGE CONTINUITY / LIVE-EVIDENCE GEWINNT**
+Status: **CURRENT / NO AUTOMATIC FOLLOW-UP / LIVE-EVIDENCE GEWINNT**
 
 > Diese Datei ist ein Current-State-Pointer, kein historisches Archiv. Vor jedem neuen Slice gilt `docs/JETNITY_BINDING_SLICE_PRECHECK_AND_CONTINUITY_GATE_2026-08-29.md`.
 
 ## 1. Aktueller Arbeitsblock
 
-**Provider / Traveller Post-Merge Continuity**
+**Kein Produkt-/Runtime-Slice automatisch aktiv.**
 
-- letzter post-merge verifizierter `main`: `c698abd3c7785500fe6586f068f1cd843ade19ac`
-- Post-Merge CI: Run `33271023725` / #1255 = **SUCCESS**
-- Post-Merge Vercel Production: `dpl_Gd5YthM5FVWpqoQ8kZRJXwx1Zhtv` = **READY** auf exact `main`
-- Branch: `docs/provider-traveller-post-merge-continuity-2026-08-29`
-- Draft-PR: **#205**
-- Technical-Lead-owned; kein Cursor-Coding-Agent.
-- Scope: ausschließlich Current-State-/Continuity-Evidence.
-- Non-Scope: Runtime, UI, Provider Calls/Credentials/Activation, Supabase-Mutation, Migration, RLS/Grant, AP-7-S2, TW-8, Build-Order-Änderung.
+Letzter vollständig post-merge verifizierter `main`:
 
-Aktueller Checkpoint:
+- `bb0fb2050e09e8fa5bf670e4290523c037790954`
+- Post-Merge CI: #1284 / Run `33277102071` = **SUCCESS**
+- Vercel Production: `dpl_BFHHnDoekhxq6CvsLQXiSHrTkmpT` = **READY** auf exact `main`
+- Branch Protection: `protected=false`
 
-`docs/CHATGPT_TL_PROVIDER_TRAVELLER_POST_MERGE_CHECKPOINT_2026-08-29.md`
+Aktuellster Checkpoint:
 
-**Self-expiring:** Nach Integration und Post-Merge-Verifikation von #205 ist dieser Authoring-Block abgeschlossen. Dann zuerst frischer Slice-Precheck, kein automatischer Produkt-Slice.
+`docs/CHATGPT_TL_AP7_S3_AND_INFRA_AUDIT_POST_MERGE_CHECKPOINT_2026-08-29.md`
 
-## 2. Unmittelbar zuvor abgeschlossen
+## 2. Unmittelbar abgeschlossen – AP-7-S3
 
-### Provider / Traveller Reconciliation
+Issue #214: **CLOSED / completed**.
 
-- Draft-PR #203 unabhängig geprüft auf exact head `9e6a2009315995d70565756e389b2e4d639baf40`.
-- TL PASS: #203 Kommentar `5464393081`.
-- Bekannter Draft→Ready-Connectorfehler `Repository.fullDatabaseId` trat erneut auf.
-- Recovery-PR #204 transportierte exakt denselben Head ohne Inhaltsänderung.
-- Recovery CI #1254 / `33270915085`: **SUCCESS**.
-- Recovery Vercel `dpl_8ijxQNzRQH3YRxUBGPjQ5mJQbNnS`: **READY**.
-- Merge / `main`: `c698abd3c7785500fe6586f068f1cd843ade19ac`.
-- Post-Merge CI #1255: **SUCCESS**.
-- Post-Merge Vercel Production: **READY**.
+- Cursor-Agent: `Account plattform audit vorbereitung 17`
+- Source Draft PR #215 finaler reviewed Head: `ca548fc84fd097457f26edc64653befc28e01437`
+- Independent TL PASS auf Source PR.
+- Wegen bekanntem Draft→Ready-Connectorfehler Integration über Recovery PR #219.
+- Recovery CI #1281 / Run `33276779999`: **SUCCESS**.
+- Recovery Vercel `dpl_99uUonTGNg9kUa5rTZJJvh9uA7J6`: **READY**.
+- Merge/Main danach: `d58f6a80ddfe9795445abc84610a2895bae19338`.
+- Post-Merge CI #1282 / Run `33276919765`: **SUCCESS**.
+- Vercel Production `dpl_Dsra2GnomnE3je1dueRALiKxLX32`: **READY**.
 
-Keine Runtime-/Provider-/Supabase-/Production-Mutation durch diesen Docs-Slice.
+Geliefert ist die reale authentifizierte `/account/travellers` Registry CRUD/UI auf bestehender AP-7-S2 Production-Persistenz/RLS. Keine Migration, kein Auth-/MFA-/AAL-Change und keine Registry→Trip Runtime in S3.
 
-## 3. Provider – aktueller Reifegrad
+## 3. Unmittelbar abgeschlossen – Supabase Replay Gate 0
 
-Integriert:
+Issue #216: **CLOSED / completed**.
 
-- Commercial Provenance S5-A/S5-B Contract + Production Persistence Foundation;
-- Shared Provider Adapter Core / ADR-0199;
-- Skyscanner Flights Offline Adapter Foundation;
-- HBX Hotels Contract/Audit;
-- Viator Activities Contract/Audit;
-- 12Go Mobility Contract/Audit / ADR-0200.
+- Cursor-Agent: `Jetnity infrastructure migration audit 1`
+- Source Draft PR #218 finaler reviewed Head: `85135a8ad35860644e9ff344000188b5c24e40af`
+- docs-only / read-only Audit; Independent TL PASS.
+- Integration nach AP-7-S3 über Recovery PR #220 gegen den neuen `main`.
+- Recovery CI #1283 / Run `33276955797`: **SUCCESS**.
+- Recovery Vercel `dpl_5GKQYJEb6ojSg8ubYQAknFRTCgNP`: **READY**.
+- aktueller `main`: `bb0fb2050e09e8fa5bf670e4290523c037790954`.
+- Post-Merge CI #1284 / Run `33277102071`: **SUCCESS**.
+- aktuelle Vercel Production `dpl_BFHHnDoekhxq6CvsLQXiSHrTkmpT`: **READY**.
 
-Nicht aktiviert/gebaut:
+Verifiziertes P1 Infrastructure Debt vor migrationsnahem Replay/Rebase/Reset:
 
-- keine echten Provider Secrets/API-Keys;
-- keine echten Provider-Calls;
-- kein Production Provider Runtime Principal;
-- kein realer `live_api`-Snapshot;
-- kein realer Provider-`persisted_snapshot`;
-- kein Provider Orchestrator;
-- TW-8 geschlossen.
+- Production History-Version `20260829140000_trip_item_commercial_provenance` enthält als einzige gespeicherte Statement-Body einen nicht replaybaren 234-Zeichen-Prosa-Marker;
+- der Production S5-B Catalog existiert trotzdem;
+- Current Development enthält weder diese Version noch die S5-B Objekte/Rollen;
+- **keine Production-/Development-Reparatur wurde ausgeführt**.
 
-Supabase Production `qscbgcdmivbbnzrcyegn` wurde beim #203 TL Review read-only erneut bestätigt: Migration `20260829140000` registriert, Provenance-Tabelle vorhanden, 0 Rows, Writer/Runtime NOLOGIN, kein Writer-EXECUTE oder Tabellen-Write für `authenticated`/`anon`. Runtime-Write bleibt geschlossen.
+Eine spätere History-Reparatur bleibt eigener Product-Owner-gated Slice mit Backup/PITR-/Before-Image- und Replay-Nachweis.
 
 ## 4. Traveller / Account – aktueller Reifegrad
 
@@ -74,59 +70,55 @@ Integriert:
 - Trip-scoped 1:n Citizenships/Documents;
 - Issuer ≠ Citizenship;
 - explizite Document↔Citizenship-Relation;
-- kein Default-Pass / keine Default-Citizenship;
-- historische `documents[0]`-/First-Evaluation-Kollapse geschlossen/fail-closed;
+- kein Default-/Primary-/Chosen-Pass und keine Default-Citizenship;
 - Guest→Account Trip-Copy erhält Arrays/Relation;
-- AP-7 Gate 0;
-- Product-Owner Dual-Authority-Freigabe;
-- AP-7-S1 Domain Contract.
+- AP-7 Gate 0 + Dual-Authority;
+- AP-7-S1 Domain Contract;
+- AP-7-S2 Account Registry Persistence / Identity / owner-only RLS auf Production;
+- **AP-7-S3 Registry CRUD/UI auf Production**.
 
-Offen:
+Offen bleiben u. a.:
 
-- **AP-7-S2 Account-Registry Persistence / Identity / RLS**;
-- Registry CRUD/Lifecycle/UX;
 - Registry→Trip Runtime-Materialisierung;
+- weitere Account-/Traveller-Slices gemäß kanonischem Account-Plan;
 - Requirements Provider;
-- spätere option-scharfe Official-/Safety-/Booking-Dokumentdarstellung mit echter Evidence;
-- P3 Duplicate-Country/`clientRef` Write-Hygiene.
+- spätere option-scharfe Official-/Safety-/Booking-Dokumentdarstellung mit echter Evidence.
 
-Keine Passnummern, Scans, MRZ, Biometrie oder Health-Daten im Kernmodell.
+Keine Passnummern, Scans, MRZ, Biometrie, DOB oder Health-Daten im Kernmodell.
 
-## 5. Letzter Cursor-Agent
+## 5. Agentenstatus
 
-Aktueller Continuity-Slice: kein Cursor-Agent.
+Gestoppt / abgeschlossen:
 
-Letzter eingesetzter Cursor-Agent:
+- `Account plattform audit vorbereitung 17` – AP-7-S3;
+- `Jetnity infrastructure migration audit 1` – Supabase Replay Gate-0 Audit.
 
-- `Jetnity traveller multicitizenship audit 1`
-- Generation 1
-- Session `bc-060f0713-5f92-46b8-9631-72366bc8fb32`
-- finaler gegateter Head `7bdd7da81e56808d9ff1b004999314935b3a5812`
-- kein aktiver Folgeauftrag.
+Aktiver Cursor-Agent: **keiner durch diesen Status autorisiert**.
 
-## 6. Risiken / Gates
+Neue logische Einheit → frische Agenten-Generation erst nach Binding Slice Precheck.
 
-- P0: keine bekannten.
-- Blocking P1 im aktuellen Docs-Slice: keine bekannten.
+## 6. Provider – aktueller Reifegrad
+
+Provider-Arbeit ist nicht abgeschlossen.
+
+Integriert sind Provider Adapter Core, Offline-/Contract-Foundations und Commercial Provenance Foundation. Echte Provider-Secrets/API-Keys, echte Calls, Production Runtime Principal, realer `live_api`-/`persisted_snapshot`-Pfad, Orchestrator und TW-8 bleiben nicht aktiviert bzw. offen.
+
+Vor jedem migrationsnahen Provider-Slice muss der dokumentierte Supabase Replay-Defekt als P1-Abhängigkeit behandelt werden.
+
+## 7. Risiken / Gates
+
+- P0: keine aus den aktuellen Closures bekannten.
+- P1 Infrastructure Debt: malformed Production Migration-History-Body `20260829140000` vor Rebase/Reset/Replay-/migrationsnaher Arbeit.
 - P2 Governance: `main protected=false`.
-- P2 Delivery/Gate: AP-7-S2 fehlt und kann wegen Identity/RLS/Production-Grenzen eine PO-Freigabe erfordern.
-- P3: Traveller Duplicate-Country/`clientRef` Write-Hygiene; referenzierte verworfene Refs scheitern fail-closed.
 
-Besondere PO-Gates bleiben vor Production-Migrationen/destruktiven Production-Datenänderungen, großen produktiven RLS-/Identity-/Ownership-Änderungen, fundamentalen Auth/MFA/AAL-Änderungen, sensitiver Dokument-/MRZ-/Biometrie-Speicherung, sensibler externer Datenweitergabe, realen Providerverträgen/Production-Secrets/paid calls/Live-Aktivierung, Provider Runtime/S5-B Write-Öffnung, Payments/Geldbewegungen, Kosten > USD 100/Monat und fundamentalen Product/Business/Build-Order/Launch-Entscheidungen.
+Besondere PO-Gates bleiben vor Production-Migrationen/destruktiven Production-Datenänderungen, materiellen RLS-/Identity-/Ownership-Änderungen, fundamentalen Auth/MFA/AAL-Änderungen, sensitiver Dokument-/MRZ-/Biometrie-Speicherung, sensibler externer Datenweitergabe, realen Providerverträgen/Production-Secrets/paid calls/Live-Aktivierung, Commercial Runtime Write-Öffnung, Payments/Geldbewegungen, Kosten > USD 100/Monat und fundamentalen Product/Business/Build-Order/Launch-Entscheidungen.
 
-## 7. Exakter nächster Schritt
+## 8. Exakter nächster Schritt
 
-### Solange #205 offen ist
+1. Frischen Binding Slice Precheck ausführen.
+2. `main`, offene PRs/Issues/Branches, CI/Vercel/Supabase live rekonstruieren.
+3. Binding Build Order und Account Platform Plan gegen verbleibende Account-/Traveller- sowie Provider-Arbeit abgleichen.
+4. Bei migrationsnaher Arbeit zuerst die Replay-Defekt-Abhängigkeit behandeln.
+5. Erst danach einen bounded nächsten Slice und eine frische Cursor-Agent-Generation bestimmen.
 
-1. Exact Head / Diff / Merge-Base prüfen.
-2. Independent TL Review.
-3. Exact-Head CI + Vercel terminal grün.
-4. TL PASS.
-5. TL-only Ready/Merge; bei bekanntem Connectorfehler Recovery-Transport desselben SHA.
-6. Post-Merge `main`, CI und Vercel verifizieren.
-
-### Danach
-
-Frischen Binding Slice Precheck ausführen. Binding Build Order, AP-7-S2 Gate-/Approval-Status, Account-/Traveller-Restarbeit, Provider S4/S6-S8, offene PRs/Issues/Branches, Production-Wahrheit und Risiken müssen neu abgeglichen werden.
-
-**Skyscanner Flights Server Create/Poll Transport Foundation** bleibt nur ein Provider-Kandidat und darf nicht aus diesem Status automatisch gestartet werden. Wird er nach Precheck gewählt, bleibt der erste Slice server-only, dependency-injected/mock/offline und ohne echte Credentials/Calls, `live_api`, S5-B Runtime-Write/Persistenz oder TW-8.
+**Registry→Trip Runtime-Materialisierung ist ein naheliegender Kandidat, aber nicht automatisch freigegeben.**
