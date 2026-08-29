@@ -93,7 +93,7 @@ Keine dieser Entscheidungen ist getroffen.
 | Baseline `origin/main` | `6083ee63a5da62870ab7ac4f5f91f69230718e44` |
 | Merge-Base | dieselbe SHA |
 | Task + Vendor-Korrektur | `61014e39` Correct PrivacyBee Gate 0 to Swiss privacybee.io target |
-| Authoring-Head (account-evidence) | `902efc96ded3e1ef5086e6dfff3ea91fd3fc88e3` |
+| Authoring-Head (TL-Fix `5057555199`) | `fa39323280bffcd1147860178f695f567fa23f9e` |
 | Draft-PR | #171 OPEN Draft |
 | Issue | #169 OPEN |
 | PR #168 | OPEN Draft, nicht mutiert |
@@ -128,11 +128,14 @@ Keine dieser Entscheidungen ist getroffen.
 
 ### 6.4 Lokale Checks / CI / Vercel / Threads
 
-Vorheriger Stamp-Head `f97cb97a` und Authoring-Head `902efc96` sind durch diesen TL-Review-Fix invalidiert. Neue Exact-Head-Gates nach dem Review-Fix-Push nachstempeln.
+Evidence-Head `fa39323280bffcd1147860178f695f567fa23f9e` (TL-Fix `5057555199`: VVZ-Inventar + AVV-Source-Integrity):
 
-- Lokal (dieser Run): `lib/legal/ap6a-gate0-legal-foundation-inventory.test.ts` **9/9 pass** (vor Push wiederholt).
-- Review `5057555199` CHANGES REQUIRED auf `f97cb97a`: VVZ-Misclassification + AVV-Source-Integrity. Dieser Slice korrigiert nur das.
-- Reviews nach Fix: live an PR #171. Kein TL-PASS behauptet.
+- Lokal: `lib/legal/ap6a-gate0-legal-foundation-inventory.test.ts` **9/9 pass**.
+- GitHub Actions Run `33246529227` **SUCCESS** auf exakt `fa393232` (Typecheck/Lint/Build + Auth-Check).
+- Vercel StatusContext **SUCCESS**; Deployment `29fzPGLcsAFdnS6X136YFcENqesL`; GitHub Preview deployment `6154529113`.
+- Review `5057555199` CHANGES REQUIRED galt für `f97cb97a` und ist damit invalidiert. Neuer unabhängiger TL-Review ausstehend. Kein TL-PASS.
+
+Dieser Stamp erzeugt einen neueren Head. Die genannten Gates gelten für `fa393232`, nicht automatisch für den Stamp-Commit. Live an PR #171 prüfen.
 
 Preview-HTML bleibt SSO-geschützt und ist kein Inhaltsbeweis.
 

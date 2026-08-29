@@ -242,7 +242,7 @@ Keine Runtime. Keine Shared Continuity. Kein Search-#168.
 
 ## 9. Tests / Gates
 
-TL-Review-Fix `5057555199` invalidiert `f97cb97a` / `902efc96`. Neue Exact-Head-Gates nach diesem Push. Lokal vor Push: `ap6a-gate0-legal-foundation-inventory.test.ts` 9/9.
+Evidence-Head `fa393232`: lokal 9/9; Actions `33246529227` SUCCESS; Vercel `29fzPGLcsAFdnS6X136YFcENqesL` SUCCESS; Preview `6154529113`. Dieser Stamp-Commit ist ein neuerer SHA. Review `5057555199` galt für `f97cb97a`. Neuer TL-Review ausstehend.
 
 ## 10. Exakter nächster Schritt
 
