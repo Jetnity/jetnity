@@ -1,12 +1,12 @@
 # Provider Viator Activities — Contract Audit Evidence
 
 Stand: 29. August 2026  
-Status: **AUDIT EVIDENCE ONLY / KEINE IMPLEMENTIERUNG / KEINE PROVIDERWAHL**  
+Status: **AUDIT EVIDENCE ONLY / KEINE IMPLEMENTIERUNG / KEINE PRODUCTION-AKTIVIERUNG**  
 Cursor-Agent: `Jetnity provider viator audit 1`  
 Auftrag: `docs/PROVIDER_VIATOR_ACTIVITIES_CONTRACT_AUDIT_TASK_2026-08-29.md`  
 Evidence-Abruf: 29. August 2026, first-party HTML, keine API-Calls, kein Signup, keine Keys
 
-> Dieses Dokument rekonstruiert den **aktuellen offiziellen Viator-Partner-API-Vertrag** für affiliate-artige Tours/Activities. Es wählt Viator nicht als Production-Provider. ADR-0078 bleibt unangetastet: GetYourGuide bleibt ein möglicher späterer Kandidat, keine festgelegte Architektur.
+> Dieses Dokument rekonstruiert den **aktuellen offiziellen Viator-Partner-API-Vertrag** für affiliate-artige Tours/Activities. Die grobe Zielwahl ist bereits gesetzt: **Viator first, GetYourGuide später**. Das ist keine Production-Aktivierung, kein Signup und kein Credential-Gate. ADR-0078 bleibt die Domain-Architektur (`ActivityProvider`, Search ≠ Booking), nicht ein offenes PO-Wahl-Gate.
 
 > Agent-Self-Review ist kein PASS. Kein Ready. Kein Merge. Kein Folgeslice.
 
@@ -98,7 +98,7 @@ P5 Merchant API, wörtlich:
 
 P2 Full-access Affiliate: Zugang zu **allen nicht-transaktionalen** Endpoints; **keine** Booking-, Hold- oder Cancellation-Endpoints. P2 Full-access + Booking: zusätzlich Cart-Booking. P2 Merchant: alle Endpoints. P7: Full+Booking-Partner dürfen `/bookings/hold` und `/bookings/book` **nicht** nutzen; sie müssen `/bookings/cart/hold` vor `/bookings/cart/book` implementieren.
 
-**Empfohlene zukünftige Jetnity-Zielklasse, nicht freigegeben:** Full-access Affiliate auf v2, **ohne** Full+Booking und **ohne** Merchant. Begründung in `docs/PROVIDER_VIATOR_ACTIVITIES_ADAPTER_CONTRACT_2026-08-29.md`. Das ist keine Product-Owner-Wahl von Viator als Provider.
+**Empfohlene Zugangsklasse auf dem bereits akzeptierten Target Viator:** Full-access Affiliate auf v2, **ohne** Full+Booking und **ohne** Merchant. Begründung in `docs/PROVIDER_VIATOR_ACTIVITIES_ADAPTER_CONTRACT_2026-08-29.md`. Signup, Zugang, Vertrag, Credentials, paid calls, Production-Aktivierung und jedes Full+Booking-/Merchant-Modell bleiben getrennte PO-Gates. Die grobe Wahl „Viator first“ wird nicht erneut geöffnet.
 
 ---
 
@@ -456,7 +456,7 @@ Shared-Core-Edits sind in diesem Slice **verboten** und wurden nicht vorgenommen
 6. **Anzeige-Währung ≠ Viator-Checkout-Währung** ohne ehrlichen Hinweis.
 7. **Full-Catalog-Ingest** ohne Zertifizierungs-/Rate-Plan.
 8. **Fixture → `live_api`/`persisted_snapshot`** analog zum Skyscanner-Trust-Boundary.
-9. Stille Providerwahl gegen ADR-0078.
+9. Erneutes PO-Wahl-Gate Viator-vs-GetYourGuide trotz gesetzter Zielwahl. ADR-0078 bleibt Domain-Architektur, kein Vendor-Lock.
 
 ---
 
@@ -476,5 +476,5 @@ Shared-Core-Edits sind in diesem Slice **verboten** und wurden nicht vorgenommen
 - keine Runtime, keine Shared-Core-Änderung
 - keine Credentials, keine Calls, kein Commercial-Provenance-Mint
 - keine Production-/Supabase-/Vercel-Mutation
-- keine Wahl von Viator als einzigen Activities-Provider
+- keine Production-Aktivierung und kein Credential-/Signup-Schritt; Viator bleibt first target, nicht exklusiver Endzustand
 - kein TW-8, keine Provider-Aktivierung

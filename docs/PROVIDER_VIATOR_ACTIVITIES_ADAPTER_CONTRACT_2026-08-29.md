@@ -6,7 +6,7 @@ Cursor-Agent: `Jetnity provider viator audit 1`
 Evidence: `docs/PROVIDER_VIATOR_ACTIVITIES_CONTRACT_AUDIT_2026-08-29.md`  
 Muster: Skyscanner Flights offline foundation auf `main @ 69ef27b1`
 
-> Vorschlag für den kleinsten zukünftigen `activities`-Adapter, der **nach** Annahme in den bestehenden provider-neutralen Kern einhängt. Keine Runtime in diesem Slice. Keine Shared-Core-Edits. Keine Providerwahl.
+> Vorschlag für den kleinsten zukünftigen `activities`-Adapter, der in den bestehenden provider-neutralen Kern einhängt. Keine Runtime in diesem Slice. Keine Shared-Core-Edits. Grobe Zielwahl ist bereits gesetzt: **Viator first, GetYourGuide später.** Das ist keine Production-Aktivierung.
 
 ---
 
@@ -20,7 +20,7 @@ Muster: Skyscanner Flights offline foundation auf `main @ 69ef27b1`
 | Full-access + Booking Affiliate | PCI, Zahlungsdaten, Cart-Hold/Book. Product-Owner-Sondergate. Kein Affiliate-Redirect-Modell. |
 | Merchant | Jetnity wäre Merchant of Record: Invoice, Support, Markup, volle Booking-API. Eigenes Geschäftsmodell. |
 
-Das ist eine **Adapter-Zielklasse**, keine Freigabe, Viator statt GetYourGuide (ADR-0078) zu wählen.
+Das ist die **Zugangsklasse** auf dem bereits akzeptierten ersten Activities-Target Viator. ADR-0078 bleibt die Domain-Architektur (`ActivityProvider`, Search ≠ Booking, kein Vendor-Lock). GetYourGuide bleibt späterer Kandidat, kein offenes PO-Wahl-Gate. Signup, Zugang, Vertrag, Credentials, paid calls, Production-Aktivierung und jedes Full+Booking-/Merchant-Modell bleiben getrennte PO-Gates.
 
 Verkauf bleibt Redirect auf die unveränderte `productUrl`. Viator bleibt Merchant of Record.
 
@@ -220,17 +220,26 @@ Keine echten Partner-PIDs aus P8/P9-Beispielen als Jetnity-Attribution kopieren.
 
 ## 9. Activation Gates (Reihenfolge)
 
-1. Dieser Audit — Draft, TL-Review
-2. Product-Owner: darf Viator als **erster Activities-Kandidat** verfolgt werden? (ADR-0078 unberührt bis dahin)
-3. Offline Adapter Foundation (eigener Task, Vorschlag separat)
-4. Shared-core nur, wenn die Foundation eine nachweislich fehlende Naht braucht — eigener Slice
-5. Sandbox-Key + Partner Qualification — PO; keine Calls vorher
+Bereits gesetzt — **nicht erneut fragen**:
+
+- Grobe Zielwahl: **Viator ist das akzeptierte erste spezialisierte Activities-Target**; GetYourGuide später. Current-State: `docs/CHATGPT_TL_LIVE_RECONSTRUCTION_CHECKPOINT_2026-08-29_V2.md` §9 auf `origin/main`. ADR-0078 bleibt Domain-Architektur, kein zweites PO-Wahl-Gate Viator-vs-GYG.
+- S5-B-Persistenz: Production-Migration `20260829140000_trip_item_commercial_provenance` ist **angewendet und verifiziert**. Kein Re-Apply. `production_write_path_allocated` bleibt `false`.
+
+Noch offen:
+
+1. Dieser Audit — TL Exact-Head-Re-Review
+2. Offline Adapter Foundation (eigener Task, Proposal separat; startet nicht aus #189)
+3. Shared-core nur, wenn die Foundation eine nachweislich fehlende Naht braucht — eigener Slice
+4. Partner Qualification / Signup / Sandbox-Zugang / Vertrag — PO
+5. Credentials / paid calls — PO
 6. Preview live search behind flags — Cost Guard
 7. `/availability/check` + Nachweis — extra Gate nach `VIA-UNK-07`
 8. Attribution-URL in UI / optional `booking_url` — extra Gate
-9. Production — bestehendes PROVIDER-ACTIVATION-GATE; S5-B Apply und TW-8 bleiben getrennt
+9. Production-Aktivierung — bestehendes PROVIDER-ACTIVATION-GATE
+10. Provider-Runtime-Write-Path / Principal-Allokation + echte Provider-Antwort + trusted S5-B-Write — extra Gate
+11. Full+Booking oder Merchant — extra PO-Gate; nicht Teil dieses Affiliate-Vertrags
 
-Kein Gate überspringen. Foundation allein öffnet TW-8 nicht.
+TW-8 bleibt geschlossen, solange keine echte Provider Commercial Provenance existiert. Foundation, Fixtures und das bereits angewendete S5-B-Schema öffnen TW-8 nicht.
 
 ---
 
@@ -257,6 +266,7 @@ Leere Trefferliste ≠ Transportfehler.
 - Review-Volltexte / `viatorUniqueContent`
 - Währungsumrechnung
 - Widgets/Banners
-- GetYourGuide-Vergleichsimplementation
+- GetYourGuide-Adapter oder erneute grobe Providerwahl
 - Shared-Core-Umbau
 - Commercial-Provenance-Mint
+- S5-B-Persistenz erneut anwenden

@@ -11,7 +11,7 @@ Voraussetzung: unabhängiger Technical-Lead-PASS von Draft-PR #189 **und** ein s
 
 ## Objective
 
-Kleinste offline Viator-Activities-Adapter-Foundation, analog zur akzeptierten Skyscanner-Flights-Foundation auf `main @ 69ef27b1`. Production-orientiert, strikt offline: kein API-Key, kein Secret, kein Netzwerk, kein Partnervertrag, kein paid call, kein S5-B-Runtime-Gate, kein TW-8.
+Kleinste offline Viator-Activities-Adapter-Foundation, analog zur akzeptierten Skyscanner-Flights-Foundation auf `main @ 69ef27b1`. Production-orientiert, strikt offline: kein API-Key, kein Secret, kein Netzwerk, kein Partnervertrag, kein paid call, kein Runtime-Write-Path/Principal, kein trusted S5-B-Write, kein TW-8. S5-B Persistence Apply (`20260829140000`) ist bereits erfolgt und nicht Teil dieses Proposal. Viator bleibt das akzeptierte erste Activities-Target; GetYourGuide später — diese grobe Zielwahl nicht erneut öffnen.
 
 ---
 
@@ -57,9 +57,10 @@ Optional, nur wenn ohne Shared-Core-Änderung unmöglich: dünner provider-neutr
 - Production-Provider-Login
 - `production_write_path_allocated=true`
 - Writes nach `trip_item_commercial_provenance`
+- S5-B Persistence erneut anwenden (bereits Production-angewendet)
 - TW-8 / TW-9
-- Änderung von ADR-0078 ohne Product Owner
-- GetYourGuide-Adapter
+- Erneutes PO-Wahl-Gate „darf Viator first sein?“; ADR-0078 bleibt Domain-Architektur
+- GetYourGuide-Adapter (späterer Target, nicht dieser Slice)
 
 ---
 
@@ -77,7 +78,7 @@ Optional, nur wenn ohne Shared-Core-Änderung unmöglich: dünner provider-neutr
 
 ## Suggested later slice after that foundation
 
-Erst nach Foundation-Acceptance **und** PO-Gates: server-only Transport (`/products/search`, `/products/{product-code}`, Timeout/429, Secret-Injection, Response-Validation) hinter Sandbox. Nur dieser Transport darf jemals einen `live_api`-Kandidaten erzeugen. `/availability/check` und Attribution-UI bleiben extra Gates. Production-Persistenz und S5-B-Runtime bleiben getrennt.
+Erst nach Foundation-Acceptance **und** PO-Gates: server-only Transport (`/products/search`, `/products/{product-code}`, Timeout/429, Secret-Injection, Response-Validation) hinter Sandbox. Nur dieser Transport darf jemals einen `live_api`-Kandidaten erzeugen. `/availability/check` und Attribution-UI bleiben extra Gates. S5-B Persistence Apply ist bereits erfolgt; verbleibendes Commercial-Gate ist Runtime-Write-Path/Principal + echte Provider-Antwort + trusted Write. TW-8 bleibt geschlossen, solange keine echte Provider Commercial Provenance existiert.
 
 ---
 

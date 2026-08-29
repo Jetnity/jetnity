@@ -1,7 +1,7 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **Viator Activities contract audit Draft-PR #189 / IMPLEMENTIERT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW. Baseline `main @ 69ef27b1`. Docs/Evidence only. Keine Runtime. Kein Ready. Kein Merge. Kein Folgeslice. Live-Evidence immer live prüfen.**
+Status: **Viator Activities contract audit Draft-PR #189 / REVIEW-FIX 5463644138 / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW. Task-Baseline `main @ 69ef27b1`. Live `origin/main` ahead (docs current-state). Docs/Evidence only. Keine Runtime. Kein Ready. Kein Merge. Kein Folgeslice. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
@@ -9,22 +9,22 @@ Status: **Viator Activities contract audit Draft-PR #189 / IMPLEMENTIERT / STOP 
 
 ## Aktueller Arbeitsblock – Provider Viator Activities Contract Audit
 
-1. **Arbeitsblock / Ziel:** Offiziellen Viator Partner API v2-Vertrag für affiliate-style Tours/Activities rekonstruieren und den kleinsten zukünftigen Jetnity-`activities`-Adaptervertrag vorbereiten. Keine Runtime. Keine Shared-Core-Edits.
+1. **Arbeitsblock / Ziel:** Offiziellen Viator Partner API v2-Vertrag für affiliate-style Tours/Activities rekonstruieren und den kleinsten zukünftigen Jetnity-`activities`-Adaptervertrag vorbereiten. Review-Fix `5463644138`: grobe Zielwahl nicht erneut öffnen; S5-B-Persistenz-Apply als erledigt führen. Keine Runtime. Keine Shared-Core-Edits.
 2. **Authoring-Branch / PR:** `audit/provider-viator-activities-contract-2026-08-29` / Draft-PR #189.
-3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**. Kein Ready, kein Merge, keine Foundation, keine Providerwahl.
-4. **Bereits umgesetzt:** First-party Evidence-Audit; Affiliate vs Merchant vs Full+Booking getrennt; proposed adapter contract; Foundation-Task nur als Proposal; Handoff; Self-Review.
+3. **Status:** **REVIEW-FIX / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**. Kein Ready, kein Merge, keine Foundation. Viator bleibt akzeptiertes erstes Activities-Target; GetYourGuide später.
+4. **Bereits umgesetzt:** First-party Evidence-Audit; Affiliate vs Merchant vs Full+Booking getrennt; proposed adapter contract; Foundation-Task nur als Proposal; Handoff; Self-Review; Current-State-Korrektur für Viator-first und S5-B Apply.
 5. **Cursor-Agent:** `Jetnity provider viator audit 1`.
-6. **Live-`main` / Baseline bei diesem Stamp:** `69ef27b169780e41ba506a69acb15caafa645517`. `origin/main` Re-Fetch: Drift 0. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
-7. **DB / RLS / Production-Grenze:** keine Migration, keine Supabase-Mutation, keine Production-Anwendung.
+6. **Live-`main` / Baseline bei diesem Stamp:** Task-Baseline `69ef27b169780e41ba506a69acb15caafa645517`. Live `origin/main` `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3` (4 docs-commits ahead; nicht gemergt). Exact Head ist der Commit dieses Stamps; live am PR prüfen. Prior-Gates auf `51eac518` ungültig.
+7. **DB / RLS / Production-Grenze:** dieser Slice ändert keine Migration und mutiert Production nicht. S5-B Persistence `20260829140000_trip_item_commercial_provenance` ist auf Production bereits angewendet und verifiziert. `production_write_path_allocated` bleibt `false`. Kein Re-Apply.
 8. **Kosten / Provider / Secrets:** 0. Kein Signup, kein API-Key, keine realen Calls, kein Commercial-Provenance-Mint.
 9. **Bekannte Risiken / Review-Funde:** P2↔P9 Test-Host; Sprachen zh/ko; fehlendes `placeId`→`destinationId`; `/availability/check` Usage vs Redirect; Währung nach Klick kann abweichen. Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** TL Exact-Head-Review. Product-Owner muss Viator als ersten Activities-Kandidaten extra wählen (ADR-0078 unberührt). Foundation nicht aus #189 starten.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #189. Kein Ready. Kein Merge. Kein Folgeslice.
-12. **Zuerst lesen:** `docs/PROVIDER_VIATOR_ACTIVITIES_CONTRACT_AUDIT_TASK_2026-08-29.md`, Audit, Adapter Contract, Status, Handoff, Self-Review, Foundation-Proposal.
+10. **Offene Nutzerentscheidungen / Freigaben:** TL Exact-Head-Re-Review. Kein erneutes PO-Gate „darf Viator first sein?“. Getrennte PO-Gates bleiben: Signup/Zugang/Vertrag, Credentials/paid calls, Production-Aktivierung, Full+Booking/Merchant. Foundation nicht aus #189 starten.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-**Re-Review** von Draft-PR #189. Kein Ready. Kein Merge. Kein Folgeslice.
+12. **Zuerst lesen:** Task, Audit, Adapter Contract, Status, Handoff, Self-Review, Foundation-Proposal, `docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md`, Checkpoint V2 §9 auf `origin/main`.
 
 ## Historischer / paralleler Arbeitsblock – Provider S5-B Commercial Provenance Persistence
 
-Current classification / Nachtrag, 29. August 2026: **NICHT der Authoring-Block dieses Agenten.** Draft-PR #182 bleibt ein paralleler STOP-für-TL-Block auf anderem Branch. Dieser Viator-Audit ändert #182 nicht und startet kein TW-8.
+Current classification / Nachtrag, 29. August 2026: **NICHT der Authoring-Block dieses Agenten.** Review-Fix `5463644138`: S5-B Persistence Apply ist auf der #189-Baseline bereits Production-angewendet und verifiziert (`docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md`). Die folgenden #182-Zeilen sind Pre-Apply-Authoring-Evidence, keine offene Apply-Arbeit. Offenes Commercial-Gate = Runtime-Write-Path/Principal + echte Provider-Antwort + trusted Write. TW-8 bleibt geschlossen, weil keine echte Provider Commercial Provenance existiert. Dieser Viator-Audit mutiert Production nicht und startet kein TW-8.
 
 1. **Arbeitsblock / Ziel:** ADR-0197 / Option C Persistenzgrundlage: Schema + RLS + Grants + privilegierte Write-Authority + Legacy-Bypass-Härtung + Tests + Threat Model.
 2. **Authoring-Branch / PR:** `feat/provider-s5b-commercial-provenance-persistence-2026-08-29` / Draft-PR #182.

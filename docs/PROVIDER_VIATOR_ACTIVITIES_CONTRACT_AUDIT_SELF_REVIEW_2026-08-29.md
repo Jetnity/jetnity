@@ -1,11 +1,12 @@
 # Provider Viator Activities Contract Audit — Agent Self-Review
 
 Stand: 29. August 2026  
-Status: **SELF-REVIEW ONLY / KEINE FREIGABE / KEIN PASS**  
+Status: **SELF-REVIEW ONLY / REVIEW-FIX 5463644138 / KEINE FREIGABE / KEIN PASS**  
 Cursor-Agent: `Jetnity provider viator audit 1`  
-PR: https://github.com/Jetnity/jetnity/pull/189
+PR: https://github.com/Jetnity/jetnity/pull/189  
+TL-Fix: Comment `5463644138` auf Head `51eac518`
 
-Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead-Review. Gates auf `39d083ba` gelten nicht für den neuen Head.
+Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead-Review. Gates auf `39d083ba` und `51eac518` gelten nicht für den neuen Head.
 
 ---
 
@@ -37,9 +38,13 @@ Nein. Audit §2 trennt Partner API v2 (Current) von Affiliate 1.0 (historisch). 
 
 Nein. Contract-Zielklasse ist Full-access Affiliate. Full+Booking und Merchant sind explizit ausgeschlossen. Booking-Endpoints stehen auf der Nicht-Implementieren-Liste.
 
-### 2.3 Habe ich Viator als gewählten Provider eingesetzt?
+### 2.3 Habe ich die gesetzte grobe Zielwahl erneut geöffnet?
 
-Nein. ADR-0078 / `ACTIVITIES.md` nicht umgeschrieben. Status und Contract sagen „Kandidat / nicht freigegeben“.
+Nein. Viator bleibt das akzeptierte erste Activities-Target; GetYourGuide später. ADR-0078 / `ACTIVITIES.md` nicht umgeschrieben — sie bleiben Domain-Architektur (`ActivityProvider`, Search ≠ Booking, kein Vendor-Lock), kein zweites PO-Wahl-Gate. Getrennte PO-Gates bleiben Signup/Zugang/Vertrag, Credentials/paid calls, Production-Aktivierung und Full+Booking/Merchant.
+
+### 2.3b Habe ich S5-B Persistence Apply als noch ausstehend geführt?
+
+Nein. Auf der PR-Baseline `69ef27b1` ist Production-Migration `20260829140000_trip_item_commercial_provenance` angewendet und verifiziert (`docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md`). Offenes Commercial-Gate = Runtime-Write-Path/Principal + echte Provider-Antwort + trusted Write. `production_write_path_allocated` bleibt `false`. TW-8 bleibt geschlossen, weil keine echte Provider Commercial Provenance existiert.
 
 ### 2.4 Könnte ein späterer Agent Fixture als `live_api` lesen?
 
@@ -77,8 +82,8 @@ Nicht erwartet: TypeScript, Migrationen, Provider-Runtime, `next-env.d.ts`.
 
 ## 4. Nicht geprüft
 
-- Exact-Head CI/Vercel dieses Stamps — müssen neu gaten
-- Live-Supabase
+- Exact-Head CI/Vercel dieses Review-Fix-Stamps — müssen neu gaten; Prior-Gates auf `51eac518` gelten nicht
+- Live-Supabase (S5-B Apply-Evidence kommt aus dem verifizierten Verification-Doc, nicht aus einem neuen Live-Check dieses Slice)
 - Branch Protection (403-Risiko; nicht als verifiziert behauptet)
 - Inhalt hinter Login im Viator Partner Dashboard
 - reale Sandbox-Responses
@@ -87,8 +92,8 @@ Nicht erwartet: TypeScript, Migrationen, Provider-Runtime, `next-env.d.ts`.
 
 ## 5. Verdict
 
-Der Slice erfüllt den versionierten Audit-Auftrag nach Author-Lesart. Das ist **kein PASS**.
+Der Review-Fix adressiert `5463644138` nach Author-Lesart: keine Wiederöffnung der Viator-first-Zielwahl; S5-B-Persistenz-Apply nicht mehr als pending. Das ist **kein PASS**.
 
 **Kein Ready. Kein Merge. Kein Folgeslice.**
 
-Unabhängiger Technical-Lead Exact-Head-Review ist erforderlich.
+Unabhängiger Technical-Lead Exact-Head-**Re-Review** ist erforderlich.

@@ -164,8 +164,8 @@ Production Gate A hat die dafür freigegebenen Production-Schritte bereits ausge
 
 Weiter offen/gated:
 
-- S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180); Persistenz im Repository Draft-PR #182 / ADR-0198, nicht auf Production; TW-8 geschlossen
-- Draft-PR #189 Viator Activities Contract Audit: Evidence + Adapter-Contract-Prep only; kein Adapter, keine Providerwahl, ADR-0078 unberührt
+- S5-B Zielarchitektur Option C angenommen (ADR-0197 / PR #180); Persistence Production-Apply `20260829140000` angewendet und verifiziert; `production_write_path_allocated=false`; offenes Commercial-Gate = Runtime-Write-Path/Principal + echte Provider-Antwort + trusted Write; TW-8 geschlossen
+- Draft-PR #189 Viator Activities Contract Audit: Evidence + Adapter-Contract-Prep only; kein Adapter. Viator bleibt akzeptiertes erstes Activities-Target (GetYourGuide später). ADR-0078 bleibt Domain-Architektur, kein zweites Wahl-Gate.
 - keine realen Provider
 - keine Production Secrets
 - keine Verträge
@@ -309,8 +309,8 @@ Nächster Schritt:
 - AP-6a-Runtime / AP-6b / AP-7 / AP-5-P1–P5
 - AP-6a Gate 0 / ADR-0195 / PR #166 ist integriert; Runtime-Legal-Seiten nicht als gebaut behaupten
 - AP-7
-- Provider S5-B Production-Apply und realer Snapshot (Repository-Persistenz ist Draft-PR #182; TW-8 bleibt geschlossen)
-- Viator/GetYourGuide oder anderer erster Activities-Adapter (Draft-PR #189 ist nur Contract-Evidence; keine Implementation)
+- Provider S5-B Runtime-Write-Path/Principal + echte Provider-Antwort + trusted Write (Persistence Apply ist erfolgt; TW-8 bleibt geschlossen, weil keine echte Provider Commercial Provenance existiert)
+- Viator-Activities-Adapter (akzeptiertes erstes Target; Draft-PR #189 ist nur Contract-Evidence; GetYourGuide später; keine Implementation aus #189)
 - echte Providerphase
 - TW-8
 - TW-9

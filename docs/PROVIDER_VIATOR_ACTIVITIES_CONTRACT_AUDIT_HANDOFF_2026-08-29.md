@@ -1,12 +1,12 @@
 # Provider Viator Activities Contract Audit — Handoff
 
 Stand: 29. August 2026  
-Status: **DRAFT / STOPP FÜR UNABHÄNGIGEN TECHNICAL-LEAD EXACT-HEAD-REVIEW**  
+Status: **REVIEW-FIX FÜR 5463644138 / DRAFT / STOPP FÜR UNABHÄNGIGEN TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Cursor-Agent: `Jetnity provider viator audit 1`  
 PR: https://github.com/Jetnity/jetnity/pull/189  
 Branch: `audit/provider-viator-activities-contract-2026-08-29`
 
-Dieser Handoff übergibt Evidence + Adapter-Contract-Prep. Er startet keinen Folgeslice. Gates auf `39d083ba` gelten **nicht** für den neuen Head.
+Dieser Handoff übergibt den Review-Fix gegen TL-Kommentar `5463644138` auf Head `51eac518`. Er startet keinen Folgeslice. Gates auf `51eac518` gelten **nicht** für den neuen Head.
 
 ---
 
@@ -22,9 +22,11 @@ First-party Viator-Dokumentation am 29. August 2026 gelesen (keine API-Calls):
 - https://docs.viator.com/partner-api/merchant/technical/
 - Partner Resource Center: commerce home, technical guide, certification (15 Jul 2025), attribution, golden path
 
-Jetnity-Ist gegen `lib/activities/*`, Commercial Provenance, Skyscanner-Foundation, ADR-0078 gelesen. **Keine Runtime- oder Shared-Core-Datei geändert.**
+Jetnity-Ist gegen `lib/activities/*`, Commercial Provenance, Skyscanner-Foundation, ADR-0078 und TL-Checkpoint V2 auf `origin/main` gelesen. **Keine Runtime- oder Shared-Core-Datei geändert.**
 
-`origin/main` erneut gefetcht: unverändert `69ef27b169780e41ba506a69acb15caafa645517`. Drift **0**.
+Review-Fix `5463644138` nur: grobe Viator-first-Zielwahl nicht erneut öffnen; S5-B-Persistenz-Apply als erledigt führen.
+
+`origin/main` erneut gefetcht: `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3` (4 docs-commits ahead der Task-Baseline `69ef27b1`). Dieser Fix rebased/merged nicht.
 
 ---
 
@@ -32,12 +34,12 @@ Jetnity-Ist gegen `lib/activities/*`, Commercial Provenance, Skyscanner-Foundati
 
 | Fakt | Wert |
 | --- | --- |
-| `origin/main` | `69ef27b1` = Task-Baseline |
+| `origin/main` | `f80a7f0b` — 4 docs-commits ahead der Task-Baseline `69ef27b1` |
 | Merge-Base | `69ef27b1` |
-| Ahead / Behind bei Handoff-Vorbereitung | 1 / 0 plus dieser Docs-Stamp |
-| Draft-PR | #189 OPEN Draft `MERGEABLE` |
-| Prior CI | `33261056210` SUCCESS auf `39d083ba` — invalid nach Push |
-| Prior Vercel | `HZkmN5HmEb6xzhiaNbGizWEp9SpX` READY auf `39d083ba` — invalid nach Push |
+| Reviewed Head | `51eac518` |
+| Draft-PR | #189 OPEN Draft |
+| Prior CI | `33261701854` SUCCESS auf `51eac518` — invalid nach diesem Push |
+| Prior Vercel | `AyDf4yYbNUJvcfoiePDD21WSqJvX` SUCCESS auf `51eac518` — invalid nach diesem Push |
 | Branch Protection | in diesem Environment nicht neu verifiziert; letzte kanonische Evidence `protected=false` |
 | Supabase | nicht angefasst, nicht live geprüft |
 
@@ -45,7 +47,7 @@ Jetnity-Ist gegen `lib/activities/*`, Commercial Provenance, Skyscanner-Foundati
 
 ## 3. Ist-Zustand in einem Satz
 
-Viator Partner API **v2 Full-access Affiliate** ist der rekonstruierte Vertrag für Content + optionales Real-time-Check + unveränderte `productUrl`; Merchant/Full+Booking bleiben ausgeschlossen. Jetnity hat weiter **keinen** Activities-Adapter. Preview-Preis ist keine Live-Quote. Fixture darf keine Commercial-Provenance minten. ADR-0078 ist nicht still ersetzt.
+Viator Partner API **v2 Full-access Affiliate** ist der rekonstruierte Vertrag. **Viator ist das akzeptierte erste Activities-Target**; GetYourGuide später. Merchant/Full+Booking bleiben ausgeschlossen und extra gegatet. Kein Activities-Adapter. Preview-Preis ist keine Live-Quote. Fixture darf keine Commercial-Provenance minten. S5-B-Persistenz ist Production-angewendet; Runtime-Write-Path unallocated. TW-8 bleibt geschlossen.
 
 ---
 
@@ -65,14 +67,14 @@ Review-relevante Residuals:
 
 ## 5. Empfehlung an den Technical Lead
 
-Exact-Head-Review der Docs. Prüfen insbesondere:
+Exact-Head-**Re-Review** der Docs gegen `5463644138`. Prüfen insbesondere:
 
-1. v2 vs v1 nicht vermischt
-2. Full+Booking/Merchant nicht als Affiliate-scope lesbar
-3. keine Runtime-/Core-Diffs
-4. Contract mintet kein `live_api` aus Fixtures
-5. keine implizite Providerwahl gegen ADR-0078
-6. Foundation-Task bleibt Proposal
+1. Kein erneutes PO-Gate „darf Viator first sein?“
+2. S5-B-Persistenz-Apply nicht als pending geführt
+3. Offenes Commercial-Gate = Runtime-Write-Path/Principal + echte Provider-Antwort + trusted Write
+4. TW-8 weiter geschlossen
+5. v2 vs v1, Full+Booking/Merchant, Fixture-Mint-Grenze unverändert
+6. keine Runtime-/Core-Diffs; Foundation bleibt Proposal
 
 Nicht Ready. Nicht mergen. Keine Foundation aus diesem Handoff starten.
 
@@ -86,8 +88,10 @@ Nicht Ready. Nicht mergen. Keine Foundation aus diesem Handoff starten.
 - Production/Supabase/Vercel mutieren
 - Ready/Merge
 - Folgeslice implementieren
-- Viator als gewählten Provider in `ACTIVITIES.md` / ADR-0078 umdeuten
+- Die gesetzte Viator-first-Zielwahl erneut als offenes PO-Gate stellen
+- S5-B-Persistenz erneut anwenden
 - Booking-/Payment-Endpoints vorbereiten
+- `ACTIVITIES.md` / ADR-0078 still in eine Vendor-Architektur umschreiben
 
 ---
 
@@ -105,4 +109,4 @@ Nicht Ready. Nicht mergen. Keine Foundation aus diesem Handoff starten.
 
 ## 8. STOPP
 
-Unabhängiger Technical-Lead Exact-Head-Review. Cursor-Agenten setzen kein Ready und mergen nicht.
+Unabhängiger Technical-Lead Exact-Head-**Re-Review**. Cursor-Agenten setzen kein Ready und mergen nicht.
