@@ -10,7 +10,7 @@ Cursor-Agent: `Jetnity provider hbx audit 1`
 
 ## Objective
 
-Build the first HBX/Hotelbeds accommodations adapter foundation without connecting Jetnity to HBX. Production-oriented, strictly offline. Mirror the accepted Skyscanner flights foundation pattern.
+Build the first concrete HBX/Hotelbeds hotels adapter foundation without connecting Jetnity to HBX. Production-oriented, strictly offline. Mirror the accepted Skyscanner flights foundation pattern. HBX is the already selected first hotels adapter target; Booking.com Demand and Expedia Rapid stay later. No Booking/Voucher/Merchant pivot.
 
 ## Binding architecture
 
@@ -18,23 +18,23 @@ Build the first HBX/Hotelbeds accommodations adapter foundation without connecti
 2. Fixtures are test evidence only. They must never mint `live_api`, `provider_snapshot` or `persisted_snapshot`.
 3. No trusted live constructor, no HTTP, no `process.env`, no signature factory in this slice.
 4. Fail closed for missing hotel code, rateKey, currency, consumer price, coordinates and timestamps.
-5. Do not invent freshness, availability, attribution, conversion, stars, address or breakfast.
+5. Do not invent freshness, availability, attribution, conversion, stars, address or breakfast. Unmapped board codes leave `fruehstueckEnthalten=null`.
 6. `rateKey` is opaque. Do not parse it.
-7. `net` is not a consumer price. Without `sellingRate`, drop the offer.
+7. Pricing model is explicit server-side commercial evidence (`net` | `commissionable` | `unknown`), never inferred from response shape, locale or citizenship. `net` is not a consumer price. Until the model is known, display eligibility stays unknown; fixtures may exercise shapes without minting a consumer price.
 8. `packaging=true` drops.
 9. Credentials remain server-only when introduced later.
 
 ## Scope
 
 - Jetnity-owned normalized HBX Availability fixture schema `jetnity.hbx.hotels.availability.normalized.v1`.
-- Offline fixture → `HotelOption` or shared accommodations offer, then existing `HotelProviderTreffer`.
-- Tests: malformed amounts, currency, identifiers, coordinates, timestamps, packaging, missing sellingRate, schema mismatch.
+- Offline fixture → existing `HotelOption` / `HotelProviderTreffer`. No new shared accommodations core. No `lib/server/providers/core` edit.
+- Tests: malformed amounts, currency, identifiers, coordinates, timestamps, packaging, schema mismatch, unknown pricing model (no display mint), unmapped board → `fruehstueckEnthalten=null`.
 - Tests: fixture output exposes no `sourceKind`, `persistenz`, `freshUntil`, `availability` or `affiliate` truth fields.
 
 ## Explicit non-scope
 
 - Signup, API key, secret, X-Signature, mTLS.
-- Real HTTP to `api.test.hotelbeds.com` or any live host.
+- Real HTTP to `api.test.hotelbeds.com`, `api-mtls.*` or any live host.
 - Content API batch or catalog database.
 - CheckRate, Booking, Voucher, Reconfirmation.
 - Cache API, CDS.
@@ -44,8 +44,8 @@ Build the first HBX/Hotelbeds accommodations adapter foundation without connecti
 - `production_write_path_allocated=true`.
 - Writes to `trip_item_commercial_provenance`.
 - TW-8 / TW-9.
-- Booking.com adapter.
-- Shared-core edits beyond a new `lib/providers/hotelbeds/hotels/*` or equivalent isolated folder, and only if the shared accommodations core is already accepted. If the core is not accepted, keep types inside the HBX folder and map directly to existing `HotelOption` without changing `lib/hotels/domain.ts` unless a typed hole is proven.
+- Booking.com or Expedia adapter.
+- Edits to `lib/server/providers/core/*`, `lib/hotels/*` or `lib/commercial-provenance/*`. Keep types inside `lib/providers/hotelbeds/hotels/*` and map to existing `HotelOption` unless a typed hole is proven in a later separate slice.
 
 ## Acceptance
 
@@ -57,11 +57,11 @@ Build the first HBX/Hotelbeds accommodations adapter foundation without connecti
 
 ## Next slice after that acceptance
 
-Only after a **new** versioned task: server-only TEST transport (signature factory, availability POST, timeout/error mapping). That slice still must not mint `live_api`. Content-Batch, CheckRate/Nachweis, Certification and Live remain later gates.
+Only after a **new** versioned task: server-only TEST transport via ADR-0199 (signature factory, fail-closed mTLS, `retry5xx=false`, availability POST). That slice still must not mint `live_api`. Content-Batch/Boards-Katalog, CheckRate/Nachweis, Certification and Live remain later gates.
 
 ## Dependencies / decisions still required before authorization
 
 1. Independent TL PASS of this audit (PR #188).
-2. Product Owner confirms HBX remains backup Search — not a booking-product pivot.
-3. Explicit choice: shared accommodations core first, or HBX foundation against today’s `HotelProvider`.
-4. Booking.com access status remains honest; this slice does not replace that attempt.
+2. No Product-Owner re-choice of first hotels adapter. HBX remains the first concrete foundation/evaluation target. Confirm only: no Booking/Voucher/Merchant pivot; consumer Production activation stays a later Commercial/Product gate.
+3. No new shared accommodations core. Foundation uses today’s `HotelProvider`/`HotelOption`. Future HTTP consumes integrated `lib/server/providers/core/*`.
+4. Booking.com Demand and Expedia Rapid remain later adapters. Their access status stays honest; this slice does not create a new PO choice.

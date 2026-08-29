@@ -1,7 +1,7 @@
 # Provider HBX Hotels Contract Audit — Agent Self-Review
 
 Stand: 29. August 2026  
-Status: **SELF-REVIEW ONLY / REVIEW-FIX FÜR 5463638059 + 5463717117 / KEINE FREIGABE / KEIN PASS**  
+Status: **SELF-REVIEW ONLY / REVIEW-FIX FÜR 5464070835 / KEINE FREIGABE / KEIN PASS**  
 Cursor-Agent: `Jetnity provider hbx audit 1`  
 PR: https://github.com/Jetnity/jetnity/pull/188
 
@@ -14,15 +14,13 @@ Ein Agenten-Self-Review ersetzt keinen unabhängigen Technical-Lead-Review.
 | Verbot | Eingehalten? |
 | --- | --- |
 | Keine Runtime-Dateien | ja |
-| Keine Shared-Core-Edits | ja |
-| Kein Signup / Key / Secret / Call | ja |
+| Keine Shared-Core-Edits | ja; ADR-0199 nur gelesen/referenziert |
+| Kein Signup / Key / Secret / Zertifikat / Call | ja |
 | Kein Commercial-Provenance-Mint | ja |
 | Keine Production-Mutation | ja |
 | Nicht Ready / nicht mergen / kein Folgeslice | ja |
-| First-party Docs als Primärquelle | ja |
-| Unknowns ehrlich | ja |
-| Kein Ownership globaler Current-State-/S5-/Build-Order-Dateien | ja, nach `5463717117` auf `origin/main` zurückgesetzt |
-| `origin/main` vor Handoff neu | ja, live `f80a7f0b`; Task-Baseline `69ef27b1`; **behind 4** (Checkpoint-only). Kein Rebase. |
+| Isolation globaler Current-State-Dateien | ja |
+| `origin/main` gemergt, nicht rebased | ja, `085c95b2` |
 
 Task-Datei unverändert.
 
@@ -30,57 +28,42 @@ Task-Datei unverändert.
 
 ## 2. Adversarial Prüfung
 
-### 2.1 Habe ich Destination/Geo-Suche erfunden?
+### 2.1 Habe ich Booking.com zum ersten Hotelweg gemacht?
 
-Nein. Nur Hotel-Code-Availability ist first-party belegt. U1 bleibt `unknown`.
+Nein. §21 und Foundation-Deps 2/4: HBX bleibt erstes konkretes Adapter-Ziel. B1 ist späterer-Adapter-Evidence.
 
-### 2.2 Habe ich `api.hotelbeds.com` als hotels-kanonisch behauptet?
+### 2.2 Habe ich einen zweiten Transport-Core vorgeschlagen?
 
-Nein. Live-Host ohne mTLS ist aus Transfers-Overview zitiert und als Sibling markiert. Hotels-Getting-Started nennt nur `api.test.hotelbeds.com`.
+Nein. Offline-Foundation gegen `HotelProvider`. HTTP später nur über `lib/server/providers/core/*`.
 
-### 2.3 Habe ich Activities-Errors als Hotels-Errors verkauft?
+### 2.3 Kann Availability still non-mTLS nutzen?
 
-Nein. S14 ist als APITUDE-shared markiert. Hotels-Error-Seite 404 ist inventarisiert.
+Vertraglich nein, sobald mTLS erforderlich ist. Evaluation ohne Auflösung bleibt `unknown` und fail-closed.
 
-### 2.4 Habe ich Booking in den ersten Adapter geschmuggelt?
+### 2.4 Erbt HBX-500 Shared-Core-Retry?
 
-Nein. Contract und Foundation-Proposal schließen CheckRate/Booking/Voucher aus. CheckRate ist nur Nachweis-Grenze.
+Vertraglich nein: `retry5xx=false` für Booking-API-Ops. Booking selbst bleibt außerhalb der Foundation.
 
-### 2.5 Kann eine Fixture `live_api` minten?
+### 2.5 Wird der Display-Preis aus Feldpräsenz gemintet?
 
-Vertraglich nein: kein `sourceKind`, kein Live-Constructor. Mechanische Tests existieren erst im späteren Foundation-Slice.
+Nein. Modell `unknown` bis kommerzielle Evidence. `net` ohne erlaubte Regel kein Consumer-Preis.
 
-### 2.6 Habe ich Booking.com still ersetzt?
+### 2.6 Wird Breakfast aus BB/HB/FB/AI geraten?
 
-Nein. Strategie-Reihenfolge unverändert. HBX bleibt Backup. Booking-Produkt-Pivot explizit PO-gegatet. `docs/HOTEL_PROVIDER_STRATEGY.md` wird von diesem PR nicht mehr geändert.
+Nein. Boards-Katalog oder first-party-verifizierte Mapping-Evidence; sonst `null`.
 
-### 2.7 Traveller Context
+### 2.7 Isolation / Traveller
 
-`sourceMarket` ≠ Citizenship. Kinderalter nur wenn Kinder > 0. Keine Pass-/MRZ-Sammlung für Search.
-
-### 2.8 Habe ich S5-B weiter als „nicht Production“ geführt?
-
-Nein, **in den dedizierten HBX-Docs**. Persistenz-Foundation ist Production-verifiziert. Runtime-Write-Pfad, realer Snapshot und TW-8 bleiben geschlossen. G9 ist kein Apply-Gate mehr. Kanonische S5-ADRs/Architecture werden von diesem PR nicht mehr geschrieben.
-
-### 2.9 Habe ich eine Portfolio-Zahl kanonisch gewählt?
-
-Nein. 173k / 250k / 300k stehen als first-party Drift. U7 bleibt `unknown`.
-
-### 2.10 Habe ich parallele Workstreams über globale Truth-Dateien gekreuzt?
-
-Nach `5463717117` nein. `JETNITY_HANDOFF.md`, `JETNITY_START_HERE.md`, `docs/ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, Binding Build Order, Hotel-Strategie und S5-A/S5-B-ADR-/Architecture-Dateien sind auf `origin/main` zurückgesetzt.
+`HOTEL_PROVIDER_STRATEGY.md` unverändert. `sourceMarket` ≠ Citizenship. Pricing-Modell nicht aus Traveller-Fakten.
 
 ---
 
-## 3. Evidenzlücken, die der TL sehen muss
+## 3. Evidenzlücken
 
-- S16 Swagger/API-Reference nicht lesbar.
-- S17 Hotels-Errors 404.
-- Request-Währung und Destination-Suche unbewiesen.
-- Portfolio-Zahlen 173k / 250k / 300k widersprechen sich; keine gewählt.
-- mTLS-Pflicht vs. Evaluation-Host nicht aufgelöst.
-
-Das ist unvollständig gegenüber einem vollständigen Vendor-SDK-Dump. Es ist vollständig gegenüber öffentlich lesbarer first-party Evidence **ohne** Signup.
+- S16 Swagger unlesbar; S17 404.
+- U4 Evaluation vs mTLS.
+- U13 Pricing-Modell unbelegt.
+- Destination-Suche und Request-Währung unbewiesen.
 
 ---
 
@@ -89,13 +72,12 @@ Das ist unvollständig gegenüber einem vollständigen Vendor-SDK-Dump. Es ist v
 - Exact-Head GitHub Actions / Vercel dieses Heads — nach Push live lesen
 - Live-Supabase
 - Branch Protection
-- ob Product Owner bereits ein HBX-Konto hat
-- Booking.com-Zugangsstatus
+- ob Product Owner ein HBX-Konto hat
 
 ---
 
 ## 5. Verdict
 
-Scope-treu, docs-only, Isolated auf `PROVIDER_HBX_*`, Unknowns markiert, Commercial-Truth-Sperre geschrieben.
+Docs-only, isolated, `main` gemergt, `5464070835` in den HBX-Docs adressiert.
 
 **Kein PASS. Kein Ready. Kein Merge.**

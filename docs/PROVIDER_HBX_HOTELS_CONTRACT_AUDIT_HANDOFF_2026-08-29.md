@@ -1,39 +1,34 @@
 # Provider HBX Hotels Contract Audit — Handoff
 
 Stand: 29. August 2026  
-Status: **REVIEW-FIX FÜR 5463638059 + 5463717117 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
+Status: **REVIEW-FIX FÜR 5464070835 / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD RE-REVIEW**  
 Cursor-Agent: `Jetnity provider hbx audit 1`  
 PR: https://github.com/Jetnity/jetnity/pull/188  
 Branch: `audit/provider-hbx-hotels-contract-2026-08-29`
 
-Dieser Handoff übergibt den kombinierten Review-Fix gegen `5463638059` (Evidence/Current-State **in HBX-Docs**) und `5463717117` (Parallel-Workstream-Isolation). Er startet keinen Folgeslice. Agent-Self-Review ist kein PASS. Prior-Heads `68e98f7c`, `dfe63a32` und `16d7b006` gelten nicht für den neuen Head.
+Dieser Handoff übergibt den Review-Fix gegen `5464070835` auf Review-Head `c89446b2` nach Merge von `origin/main @ 085c95b2`. Agent-Self-Review ist kein PASS. Prior-Head `c89446b2` gilt nicht für den neuen Head.
 
 ---
 
 ## 1. Was dieser Agent getan hat
 
-1. S5-B-Unterscheidung **nur** in den dedizierten HBX-Docs: Persistenz-Foundation auf der Task-Baseline Production-verifiziert (`20260829140000`); offen bleiben Runtime-Write-Pfad, realer Snapshot, TW-8.
-2. Portfolio-Evidence **nur** in den dedizierten HBX-Docs: 173k / 250k / 300k first-party Drift, keine kanonische Wahl.
-3. Booking.com Search/Look/Redirect bleibt, mit first-party Demand-API-Zitat B1 in den HBX-Docs.
-4. Isolation `5463717117`: alle #188-Edits an globalen Current-State-Pointern, ROADMAP, Hotel-Strategie, Binding Build Order und kanonischen S5-A/S5-B-ADR-/Architecture-Dateien auf `origin/main` zurückgesetzt.
+1. `origin/main` (`085c95b2`) in denselben Branch gemergt. ADR-0199 / Provider Adapter Core ist integriert. Checkpoint: `docs/CHATGPT_PROVIDER_ADAPTER_CORE_POST_MERGE_CHECKPOINT_2026-08-29.md`. `main` nicht umgeschrieben.
+2. Provider-Order in Audit §21, Contract und Foundation-Proposal: HBX erstes konkretes Hotels-Adapter-Ziel; Booking.com Demand / Expedia Rapid später; kein Backup-Swap; kein Booking-Pivot.
+3. Drei Nähte: `lib/hotels/*`, `lib/server/providers/core/*`, zukünftiger HBX-Adapter. Kein zweiter Transport-/accommodations-core.
+4. mTLS fail-closed für Availability/CheckRate/Booking; Evaluation/non-mTLS `unknown`.
+5. HBX-500: kein Shared-Core-`retry5xx`-Default.
+6. S19-Pricing-Modell explizit; Display gegatet bis kommerzielle Evidence.
+7. Boards-Katalog statt `BB/HB/FB/AI`-Hardcode.
 
-Dieser PR besitzt danach nur:
+Isolation bleibt: nur `PROVIDER_HBX_*`. `HOTEL_PROVIDER_STRATEGY.md` und globale Current-State-Dateien nicht angefasst.
 
-- `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_TASK_2026-08-29.md`
-- `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_2026-08-29.md`
-- `docs/PROVIDER_HBX_HOTELS_ADAPTER_CONTRACT_2026-08-29.md`
-- `docs/PROVIDER_HBX_HOTELS_ADAPTER_FOUNDATION_TASK_PROPOSAL_2026-08-29.md`
-- dieser Handoff, Status, Self-Review
-
-Nicht getan: Runtime, Shared-Core, Signup, Keys, Secrets, HTTP, Mint, Production, Ready, Merge. Kein erneutes Ownership von `JETNITY_HANDOFF.md`, `JETNITY_START_HERE.md`, `docs/ACTIVE_WORK_STATUS.md`, `ROADMAP.md`, `docs/JETNITY_BINDING_BUILD_ORDER.md`, `docs/HOTEL_PROVIDER_STRATEGY.md`, `DECISIONS.md` oder S5-ADRs.
-
-`origin/main` vor Handoff: `f80a7f0b9e517e60c893ed80ff80b3c1b4cd9eb3`. Merge-Base bleibt Task-Baseline `69ef27b1`. **Behind = 4** (Checkpoint-only). Kein Rebase. Exact Head = Commit dieses Stamps; live am PR prüfen.
+Nicht getan: Runtime, Shared-Core-Edits, Signup, Keys, Zertifikate, HTTP, Mint, Production, Ready, Merge des PRs.
 
 ---
 
 ## 2. Ergebnis in einem Satz
 
-HBX Hotels ist öffentlich ein signatur-authenifizierter, umgebungsgetrennter B2B-Booking-Stack (Availability → optional CheckRate → Booking) plus getrennter Batch-Content-API. Für Jetnity ist der kleinste spätere Adapter eine **offline Availability-Foundation** gegen `HotelOption`/`HotelProvider`, ohne Booking, ohne Deeplink, ohne Commercial-Truth-Mint.
+HBX ist das erste konkrete Hotels-Adapter-Ziel: offline Foundation gegen `HotelProvider`, später HTTP nur über ADR-0199 mit fail-closed mTLS und ohne 500-Retry; kein Booking-Pivot; Booking.com/Expedia später.
 
 ---
 
@@ -41,26 +36,24 @@ HBX Hotels ist öffentlich ein signatur-authenifizierter, umgebungsgetrennter B2
 
 | ID | Residual | Schwere |
 | --- | --- | --- |
-| HBX-R1 | Booking-API ≠ Affiliate-Redirect | high / Produkt |
-| U1 | Destination/Geo-Availability unbewiesen | medium / Search-Design |
-| U2 | Request-Währung unbewiesen | medium / Preis |
-| U7 | Portfolio 173k / 250k / 300k first-party Drift | medium / Evidence |
-| U5/S16 | Hotels-Error-Seite 404; Swagger unlesbar | medium / Contract completeness |
-| HBX-R2 | TEST/Fixture darf nie `live_api` werden | high / Truth |
+| HBX-R1 | Booking-API ≠ Affiliate-Redirect; Production-Aktivierung extra | high / Produkt |
+| U4 | Evaluation vs mTLS-Pflicht | high / Transport |
+| U13 | Net vs Commissionable unbelegt | high / Commercial |
+| U1/U2 | Destination-Suche / Request-Währung | medium |
+| U7 | Portfolio 173k / 250k / 300k Drift | medium |
+| HBX-R2 | Fixture darf nie `live_api` werden | high / Truth |
 
 ---
 
 ## 4. Empfehlung an den Technical Lead
 
-Exact-Head-**Re-Review** der dedizierten HBX-Docs nach `5463638059` + `5463717117`. Nicht Ready. Nicht mergen. Foundation-Proposal nicht als autorisiert behandeln. Globale Current-State-Wahrheit bleibt auf `main` / Checkpoint V2.
-
-Wenn der TL die Evidence für unzureichend hält, weil S16 Cookie-Wall: das ist dokumentiert, nicht versteckt. Ein Follow-up darf S16 nur mit first-party Zugang nachlesen, ohne Signup-Keys in Git.
+Exact-Head-**Re-Review** nach `5464070835`. Nicht Ready. Nicht mergen. Foundation-Proposal nicht starten.
 
 ---
 
 ## 5. Was der nächste Agent nicht tun darf
 
-Keine Runtime, keine Shared-Core-Edits, kein Signup, keine Keys, keine realen Calls, kein Mint, kein Ready/Merge, kein TW-8, kein Hotel-Production-Flag, kein Content-Batch, kein Booking.com- oder HBX-Implementation-Slice aus diesem Handoff. Keine erneuten Edits an globalen Current-State-/S5-/Build-Order-Dateien aus diesem Audit.
+Keine Runtime, keine Shared-Core-Edits, kein Signup, keine Keys/Zertifikate, keine Calls, kein Mint, kein Ready/Merge, kein Folgeslice, keine globalen Current-State-Edits.
 
 ---
 
@@ -69,11 +62,9 @@ Keine Runtime, keine Shared-Core-Edits, kein Signup, keine Keys, keine realen Ca
 1. `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_TASK_2026-08-29.md`
 2. `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_2026-08-29.md`
 3. `docs/PROVIDER_HBX_HOTELS_ADAPTER_CONTRACT_2026-08-29.md`
-4. `docs/HOTEL_PROVIDER_STRATEGY.md` (read-only Kontext auf `main`; dieser PR ändert sie nicht)
-5. `lib/hotels/provider.ts`, `lib/hotels/domain.ts`
-6. `lib/providers/skyscanner/flights/*` als Foundation-Vorbild
-7. ADR-0070, ADR-0075, ADR-0168 (read-only; dieser PR ändert sie nicht)
-8. `docs/PROVIDER_S5B_PRODUCTION_APPLY_VERIFICATION_2026-08-29.md` — S5-B Current-State auf der Task-Baseline (read-only)
+4. `docs/ADR_0199_PROVIDER_ADAPTER_CORE_FOUNDATION.md` (read-only)
+5. `docs/CHATGPT_PROVIDER_ADAPTER_CORE_POST_MERGE_CHECKPOINT_2026-08-29.md` (read-only)
+6. `lib/hotels/provider.ts`, `lib/hotels/domain.ts`, `lib/server/providers/core/*` (read-only)
 
 ---
 

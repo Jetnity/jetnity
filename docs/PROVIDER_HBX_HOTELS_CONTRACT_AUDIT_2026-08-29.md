@@ -5,7 +5,8 @@ Status: **AUDIT EVIDENCE / DRAFT / NOT ACCEPTED / STOP FOR INDEPENDENT TECHNICAL
 Cursor-Agent: `Jetnity provider hbx audit 1`  
 Observed Cloud-Run-Titel: `Provider hbx audit`  
 Cloud-Run: https://cursor.com/agents/bc-19d3e8fb-5b5a-4723-aa08-f0dab9abd983  
-Baseline `origin/main`: `69ef27b169780e41ba506a69acb15caafa645517`  
+Task-Baseline: `69ef27b169780e41ba506a69acb15caafa645517`  
+Merged `origin/main` für diesen Review-Fix: `085c95b22130232c5b5819ef8a4bcc302cc0f52b` (ADR-0199 / Provider Adapter Core integriert)  
 Branch: `audit/provider-hbx-hotels-contract-2026-08-29`  
 Draft-PR: https://github.com/Jetnity/jetnity/pull/188  
 Auftrag: `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_TASK_2026-08-29.md`
@@ -48,7 +49,8 @@ Unbekanntes bleibt `unknown`. Nichts wird erfunden.
 | S16 | Hotel Booking API Reference | https://developer.hotelbeds.com/documentation/hotels/booking-api/api-reference/ | 2026-08-29 | first-party, **nicht lesbar** (Cookie-Wall / „Loading …“) |
 | S17 | Hotels knowledge-base errors | https://developer.hotelbeds.com/documentation/hotels/knowledge-base/errors/ | 2026-08-29 | **404** |
 | S18 | API Suite homepage | https://developer.hotelbeds.com/ | 2026-08-29 | first-party / suite homepage |
-| B1 | Demand API integration types | https://developers.booking.com/demand/docs/development-guide/application-flows | 2026-08-29 | first-party / Booking.com Demand API; **nicht** HBX |
+| S19 | Pricing models | https://developer.hotelbeds.com/documentation/hotels/knowledge-base/pricing-models/ | 2026-08-29 | first-party / hotels |
+| B1 | Demand API integration types | https://developers.booking.com/demand/docs/development-guide/application-flows | 2026-08-29 | first-party / Booking.com Demand API; **nicht** HBX; späterer Adapter, kein Erstziel |
 
 ---
 
@@ -126,7 +128,11 @@ Api-key + X-Signature bleiben zusätzlich nötig. Private Keys darf HBX nie anfo
 
 Payment-Endpunkte: S7 sagt, mTLS gilt **nicht** für Payment; weiter `api-secure.hotelbeds.com`.
 
-Ob Evaluation ohne Zertifikat weiter non-mTLS `api.test.hotelbeds.com` nutzen darf: **nicht abschließend belegt**. S1 zeigt noch den non-mTLS-Test-Host. S7 klingt verpflichtend für Booking-Operationen. Status: `unknown / vendor-confirmation-required` für den Evaluation-Pfad.
+S7 gilt für **alle** Booking-API-Integrationen, ausdrücklich inklusive Hotel Availability und CheckRate, nicht nur Confirmation.
+
+**Fail-closed Host-Regel:** Availability / CheckRate / Booking dürfen **nicht** still einen Non-mTLS-Host nutzen, wenn mTLS erforderlich ist. Dokumentierte mTLS-Hosts: Test `api-mtls.test.hotelbeds.com`, Production `api-mtls.hotelbeds.com`. Zusätzlich bleiben `Api-key` + `X-Signature` Pflicht.
+
+Ob Evaluation **ohne** Zertifikat weiter non-mTLS `api.test.hotelbeds.com` nutzen darf: **nicht abschließend belegt**. S1 zeigt den non-mTLS-Test-Host; S7 verlangt mTLS für dieselben Operationen. Status: `unknown / vendor-confirmation-required`. Zukünftiger TEST-Transport muss fail-closed bleiben, bis Zertifikat/Umgebung tatsächlich aufgelöst sind. Dieses Audit erzeugt keine Zertifikate und keine Private Keys.
 
 ---
 
@@ -197,6 +203,8 @@ S9 nennt Production-Plan **4 QPS** für den initialen Content-Load. Sprachen sin
 
 Content ist für Certification **empfohlen, nicht zwingend** (S6 §5). Für Availability über Hotel-Codes ist ein Hotel-Code-Katalog praktisch notwendig (S4, S9).
 
+S8 Complementary Operations liefern **Board Types** als Masterdaten zum `boardCode` der Booking API. Breakfast-/Verpflegungswahrheit kommt aus diesem gecachten Katalog (oder einer ausdrücklich first-party-verifizierten Mapping-Evidence), nicht aus einer geratenen Code-Liste. Kein realtime Content-Lookup.
+
 Hotel-Detail darf für neu entstandene Hotels nach dem letzten Batch genutzt werden (S6).
 
 ---
@@ -251,7 +259,10 @@ Das ist ein **B2B-Booking-/Agentur-Modell**, kein Search/Look/Redirect.
 Belegt:
 
 - `net` ist der Netto-B2B-Preis als String-Decimal (S4).
-- `sellingRate` ist empfohlen/erzwingbar über `hotelMandatory` (S4, S6).
+- S19 unterscheidet zwei **Pricing-Modelle**, die der Sales Manager zuordnet — nicht die Response-Shape:
+  - **Net:** Preise sind netto. `sellingRate` erscheint nur wenn `hotelMandatory=true` und muss dann respektiert werden; sonst darf der Integrator eigenen Markup auf `net` setzen.
+  - **Commissionable:** Commission steckt in `sellingRate`; Preise sind final; `sellingRate` ist unabhängig von `hotelMandatory` zu nutzen. `commission` / `dailyNet` vs `dailySellingRate` hängen vom Modell ab.
+- Das Jetnity-seitige Modell darf **nicht** aus Feldpräsenz, Locale oder Citizenship geraten werden. Bis die kommerzielle Beziehung das Modell belegt, bleibt Display-Preisrolle `unknown`.
 - Hotel-`currency` (S4 Beispiel `USD`).
 - Steuern können `included=true` sein; `type=TAXESANDFEES`; `allIncluded` (S4).
 - S3: Booking-API-Preise sind final inkl. Supplements/Discounts.
@@ -345,7 +356,11 @@ Belegt ist ein **Wholesale-/Agentur-Modell**:
 
 **Nicht belegt in HBX-Hotels-Docs:** Affiliate-Deeplink, Redirect-Look-to-Book, öffentliche Consumer-Attribution, Impact-Links.
 
-Das ist die zentrale Produktgrenze zu `docs/HOTEL_PROVIDER_STRATEGY.md`. Booking.com Demand API belegt separat (B1, 2026-08-29) den Flow **Search, look and redirect**: Search → Availability/Look → Redirect zur Booking.com-URL. HBX Hotel Booking API ist dagegen ein **Buchungs- und Inventory-API** (Availability → optional CheckRate → Booking/Voucher). Ein HBX-Adapter für Jetnity-Suche darf Availability/Content nutzen; er darf **nicht** still eine Jetnity-eigene Hotelbuchung oder einen erfundenen Deeplink einführen.
+Akzeptiertes Erstziel dieses Workstreams: **HBX/Hotelbeds ist der erste konkrete Hotels-Adapter** (Foundation/Evaluation). Booking.com Demand und Expedia Rapid bleiben **spätere** Adapter. Dieser Audit schreibt `docs/HOTEL_PROVIDER_STRATEGY.md` nicht um (Isolation).
+
+B1 belegt separat, dass Booking.com Demand **Search → Look → Redirect** dokumentiert. Das ist Vergleichs-Evidence für das Jetnity-Aggregator-/Redirect-Modell, **keine** neue Product-Owner-Wahl und keine Demotion von HBX zum Backup.
+
+HBX Hotel Booking API ist ein **Buchungs- und Inventory-API** (Availability → optional CheckRate → Booking/Voucher). Jetnity bleibt aggregator-/redirect-first: ein HBX-Adapter darf Availability/Content nutzen; er darf **nicht** still Booking/Voucher/Merchant oder einen erfundenen Deeplink einführen. Ob HBX jemals consumer-facing Production in diesem Modell aktiviert wird, bleibt ein separates Commercial-/Product-Gate.
 
 ---
 
@@ -373,6 +388,15 @@ Bereits auf `main`:
 - Factory `hotelProviderAus()` = `null`
 - Commercial Provenance S5-A; S5-B Persistenz-Foundation auf dieser Baseline Production-verifiziert (`20260829140000_trip_item_commercial_provenance`, owner-readable RLS, privilegierte Write-Authority). Runtime-Provider-Write-Pfad bleibt geschlossen (`production_write_path_allocated=false`). Kein realer Provider-Snapshot. TW-8 geschlossen.
 - Skyscanner-Flights-Foundation als Vorbild: fixture-only, kein `live_api`-Mint
+- **ADR-0199** Provider Adapter Core integriert auf `main` (`lib/server/providers/core/*`, Checkpoint `docs/CHATGPT_PROVIDER_ADAPTER_CORE_POST_MERGE_CHECKPOINT_2026-08-29.md`). Das ist der akzeptierte provider-neutrale **Transport**-Kern, kein UniversalProvider und keine Hotel-Fachwahrheit.
+
+Drei getrennte Nähte:
+
+1. Hotel-Domain/Port: `lib/hotels/*` (`HotelSuchanfrage`, `HotelOption`, `HotelProvider`)
+2. Shared Server-Transport: `lib/server/providers/core/*` — nur für späteren HTTP
+3. HBX-Adapter: isolierter zukünftiger Ordner, z. B. `lib/providers/hotelbeds/hotels/*`
+
+Die Offline-Foundation braucht **keine** Shared-Core-Edits. Späterer HTTP-Transport **muss** den integrierten Server-Kern konsumieren und HBX-500-Semantik (S5) explizit übersteuern (`retry5xx=false`). Ein zweiter generischer Transport-/„shared accommodations core“ ist **kein** Prerequisite.
 
 HBX darf **nicht** in `HotelOption`, UI oder `lib/commercial-provenance` leaken.
 
@@ -404,10 +428,11 @@ Nicht relevant für Availability-Suche: Visa, Dokumente, MRZ, Biometrie. Keine E
 | U6 | Certification/Live QPS | nicht öffentlich beziffert |
 | U7 | Portfolio 173k vs 250k vs 300k | drei widersprüchliche first-party Zahlen; keine kanonisch |
 | U8 | Official Availability-TTL | nicht gefunden |
-| U9 | Ob und wann `net` consumer-sichtbar sein darf | Commercial/Legal |
+| U9 | Ob und wann `net` consumer-sichtbar sein darf | Commercial/Legal; hängt am S19-Modell |
 | U10 | Ob Jetnity ein HBX-Konto/Vertrag hat | nicht geprüft, nicht eröffnet |
 | U11 | Cache/CDS-Notwendigkeit für ersten Search-Adapter | bewusst später |
 | U12 | Booking-API-`language` | nicht in gelesenen Beispielen |
+| U13 | Welches S19-Pricing-Modell (Net vs Commissionable) Jetnity zugeordnet bekommt | vendor/commercial confirmation |
 
 ---
 
@@ -427,14 +452,16 @@ Nicht relevant für Availability-Suche: Visa, Dokumente, MRZ, Biometrie. Keine E
 | HBX-R10 | Opaque/`packaging` Rates isoliert anzeigen. | **medium** / Certification |
 | HBX-R11 | Storno-Zeiten in Kunden-Lokalzeit interpretieren. | **medium** / Truth |
 | HBX-R12 | Shared-Core oder `HotelProvider` HBX-spezifisch aufblasen. | **medium** / Architektur |
-| HBX-R13 | Booking.com-Priorität still durch HBX-Booking ersetzen. | **high** / Produkt |
+| HBX-R13 | HBX still zum Booking-/Voucher-/Merchant-Produkt machen oder Booking.com/Expedia als neues Erstziel wählen. | **high** / Produkt |
+| HBX-R14 | Shared-Core-Default `retry5xx` auf HBX-500 anwenden (S5: nicht unverändert wiederholen). | **high** / Integration |
+| HBX-R15 | Breakfast aus geratenen `BB/HB/FB/AI`-Listen statt Boards-Katalog. | **medium** / Truth |
 
 ---
 
 ## 21. Empfehlung
 
 1. Diesen Audit als **Gate-0-Evidence** reviewen. Nicht implementieren.
-2. Booking.com Demand API bleibt der bevorzugte **erste kommerzielle** Hotelweg, sofern Zugang kommt. Produkt-Fit stützt sich auf B1 (Search/Look/Redirect), nicht auf eine HBX-Redirect-Annahme.
-3. HBX bleibt technischer Backup **nur** für Availability + gecachtes Content, nicht für Jetnity-eigene Buchung, solange Product Owner nichts anderes entscheidet.
-4. Nächster erlaubter Slice, falls TL/PO ihn separat vergibt: **offline fixture foundation**, analog Skyscanner. Kein Key, kein Netz, kein Booking, kein Content-Batch, kein mTLS, kein Mint.
-5. CheckRate, Booking, Voucher, Certification, Live-Keys, Commercial Agreement und Production bleiben **eigene Gates**.
+2. **HBX/Hotelbeds bleibt das bereits gewählte erste konkrete Hotels-Adapter-Ziel** (offline Foundation, danach Evaluation). Booking.com Demand und Expedia Rapid bleiben spätere Adapter. B1 ist nur Redirect-Modell-Evidence, keine neue PO-Auswahl und keine Demotion von HBX.
+3. Jetnity bleibt aggregator-/redirect-first. Kein HBX-Booking-/Voucher-/Merchant-Pivot ist autorisiert. Ob HBX consumer-facing Production in diesem Modell je aktiviert wird, ist ein **separates** Commercial-/Product-Gate.
+4. Nächster erlaubter Slice, falls TL ihn separat vergibt: **offline fixture foundation** gegen `HotelProvider`/`HotelOption`. Kein Key, kein Netz, kein Booking, kein Content-Batch, kein mTLS, kein Mint, keine Shared-Core-Edits.
+5. Späterer HTTP-Transport konsumiert ADR-0199, mit fail-closed mTLS und `retry5xx=false` für Booking-API-500. CheckRate, Booking, Voucher, Certification, Live-Keys, Commercial Agreement und Production bleiben **eigene Gates**.

@@ -7,22 +7,22 @@ Gilt nur zusammen mit `docs/PROVIDER_HBX_HOTELS_CONTRACT_AUDIT_2026-08-29.md`
 
 > Kein Runtime-Code. Kein Shared-Core-Edit. Kein Commercial-Provenance-Mint. Keine Produktentscheidung.
 
-Dieses Dokument definiert den **kleinsten späteren** HBX-`accommodations`-Adapter, der an den bestehenden Jetnity-Hotelport und — sobald akzeptiert — an einen provider-neutralen Adapter-Core andocken kann. Es aktiviert nichts.
+Dieses Dokument definiert den **kleinsten späteren** HBX-Hotels-Adapter gegen den bestehenden Hotel-Port und den **bereits integrierten** Server-Transport-Kern (ADR-0199). Es aktiviert nichts. HBX ist das erste konkrete Hotels-Adapter-Ziel; Booking.com Demand und Expedia Rapid bleiben später. Kein Booking-/Voucher-/Merchant-Pivot.
 
 ---
 
 ## 1. Zielnaht
 
 ```
-Jetnity HotelSuchanfrage
-  → shared accommodations request (future core, not yet accepted)
-    → HBX adapter
-      → Content catalog lookup (batch, never realtime)
-      → Availability transport (future server-only)
-      → fail-closed parser / normalizer
-    → shared accommodations offer (future core)
+HotelSuchanfrage / HotelProvider          (lib/hotels/*)
+  → HBX adapter                           (future lib/providers/hotelbeds/hotels/*)
+      → offline foundation: fixtures only; no shared-core edit
+      → future HTTP: lib/server/providers/core/* (ADR-0199)
+      → HBX host/signature/mTLS/retry override / parser
   → HotelOption + HotelProviderTreffer
 ```
+
+Ein neuer „shared accommodations core“ ist **kein** Prerequisite. Nur wenn ein späterer Slice ein konkretes typed Domain-Loch in `lib/hotels` beweist, darf das separat gegatet werden.
 
 Getrennte Nähte, die dieser Adapter **nicht** verschmilzt:
 
@@ -38,28 +38,26 @@ Provider-ID, falls später gewählt: `hotelbeds` (bereits in Commercial-Provenan
 
 ---
 
-## 2. Shared Core vs HBX Adapter
+## 2. Hotel-Domain vs Shared Transport Core vs HBX Adapter
 
-### 2.1 Gehört in den späteren shared accommodations core
+### 2.1 Bereits vorhanden — nicht neu erfinden
 
-Nur das, was Skyscanner-Flights bereits für Flüge zeigt und was `docs/PROVIDER_READINESS_SHARED_CONTRACT_PROPOSAL.md` als Operationsvertrag vorschlägt. **Nicht in diesem Slice bauen.**
-
-- provider-neutrales Accommodations-Request/Offer
-- `evidenceMode: 'fixture' | 'live_transport'` — Live-Transport existiert erst mit echtem Serverpfad
-- Fixture-Result **ohne** `sourceKind`, `persistenz`, `akteur`, `freshUntil`, `availability`, `affiliate`
-- fail-closed Pflichtfelder: property id, offer id, currency, amount, retrievedAt
-- Failure-Taxonomie kompatibel zu `HotelProviderFehler`: `timeout | unavailable | invalid | error` plus Mapping auf `rate_limited`
-- kein UniversalOffer, keine HBX-Typen im Core
+- Hotel-Domain/Port: `lib/hotels/domain.ts`, `lib/hotels/provider.ts`
+- Shared Server-Transport: `lib/server/providers/core/*` (ADR-0199, integriert). Timeout/Retry/Redaction/HTTP. **Kein** zweiter generischer Transport-Core.
+- Offline-Foundation mappt Fixtures direkt auf `HotelOption`. Keine Shared-Core-Edits.
 
 ### 2.2 Gehört nur in den HBX-Adapter
 
 - `Api-key` + `X-Signature` Factory
-- Environment-Host-Wahl (`api.test` / mTLS-test / später live)
+- Fail-closed Host: Booking-API-Operationen (Availability/CheckRate/Booking) nur auf dokumentierten mTLS-Hosts, sobald mTLS erforderlich ist. Kein stiller Fallback auf `api.test.hotelbeds.com`. Evaluation/non-mTLS bleibt `unknown` (Audit U4) und blockiert TEST-Transport bis Auflösung.
+- Explizite Retry-Policy: `retry5xx=false` für Availability/CheckRate/Booking. 400/500 nicht unverändert wiederholen (S5). Shared-Core-Default `retry5xx !== false` darf nicht erben.
+- Explizites serverseitiges Pricing-Modell aus der kommerziellen Beziehung (`net` | `commissionable` | `unknown`)
 - Hotel-Code-Auflösung aus Jetnity-Ort → gecachtem Content-Katalog
 - Availability-Request-Builder (`stay`, `occupancies`, `hotels.hotel[]`, optional Filter)
 - opaque `rateKey`-Transport
 - `rateType` RECHECK/BOOKABLE
-- `net` / `sellingRate` / `hotelMandatory` / taxes / cancellation
+- `net` / `sellingRate` / `hotelMandatory` / taxes / cancellation nur nach Modellregel
+- gecachter Boards-Katalog für `fruehstueckEnthalten`
 - `sourceMarket` nur wenn der Markt des Endkunden belegt ist
 - Content-Batch-Client (eigene spätere Slice)
 - CheckRate/Booking/Voucher (eigene Gates, nicht Search-Foundation)
@@ -98,7 +96,7 @@ Zieltyp bleibt `HotelOption`. Fehlende Evidence bleibt `null` / `unknown`, nie e
 | `steuernEnthalten` | `taxes.allIncluded` wenn vorhanden | sonst `null` |
 | `stornierbar` | `cancellationPolicies` | leere Liste → `null`, nicht `true` |
 | `stornierungBis` | frühestes `from` | Destination-Offset behalten; nicht in Kundenzeit umrechnen |
-| `fruehstueckEnthalten` | `boardCode` in `{BB, HB, FB, AI}` → true; `RO` → false; sonst `null` | nicht aus Board-Namen raten |
+| `fruehstueckEnthalten` | gecachter HBX Boards-Katalog (S8) oder ausdrücklich first-party-verifizierte Mapping-Evidence | unbekannter/ungemappter `boardCode` → `null`. Nicht `BB/HB/FB/AI` hardcoden. Kein realtime Content. |
 | `zimmerName` | `room.name` | sonst `room.code` oder `null` |
 
 `HotelSuchanfrage.destinationPlaceId` ist Jetnity-Ort, kein HBX-Destination-Code. Übersetzung nur über gecachten Katalog. Ohne Mapping: `unavailable` / `empty`, keine Fake-Hotels.
@@ -111,14 +109,18 @@ Occupancy: Jetnity `rooms/adults/children` 1:1. Wenn `children > 0` und Alter fe
 
 ## 4. Preisregel
 
-Reihenfolge, fail-closed:
+Das serverseitige HBX-Pricing-Modell kommt aus der **kommerziellen Beziehung** (S19), nie aus Client-Input, Citizenship, Locale oder Response-Shape.
 
-1. Wenn `sellingRate` belegt und parseable ≥ 0: das ist der Anzeige-/Vergleichspreis.
-2. Sonst wenn `net` belegt und parseable ≥ 0: `net` darf **nur** als interner B2B-Netto-Kandidat normalisiert werden, nicht automatisch als Consumer-Preis. Ohne spätere Commercial-Regel bleibt die Option für Jetnity-UI **unzulässig** (`drop` oder eigener Status `unknown` — erste Foundation: **drop**).
-3. `hotelMandatory=true` ohne respektierte `sellingRate`: drop.
-4. `packaging=true`: drop, solange Jetnity keine Paketbuchung hat.
-5. Keine stillen FX. `requestedCurrency != hotel.currency` → Currency-Mismatch, keine Conversion.
-6. Request-Währung ist `unknown` (Audit U2). Adapter darf keine Währung „an HBX senden“, die nicht first-party belegt ist.
+Zulässige Modellwerte: `net` | `commissionable` | `unknown`.
+
+1. Modell `unknown`: kein Consumer-Display-Preis. Fixtures dürfen `net`/`sellingRate`/`commission`-Shapes parsen; Display-Eligibility bleibt `unknown`/gegatet. Erste Foundation mintet keinen Anzeigepreis.
+2. Modell `commissionable`: Anzeige-/Vergleichspreis ist `sellingRate` (final, unabhängig von `hotelMandatory`). Fehlt `sellingRate` → drop. `net` ist nicht der Consumer-Preis.
+3. Modell `net`: `net` ist B2B-Netto, kein Consumer-Preis ohne erlaubte Markup-Regel. `sellingRate` ist Display nur wenn `hotelMandatory=true` (muss respektiert werden). Consumer-Preis aus `net` ohne diese Regel: verboten.
+4. Modell nicht aus Feldpräsenz schließen (`sellingRate` oder `commission` vorhanden ≠ Commissionable).
+5. `hotelMandatory=true` ohne respektierte `sellingRate`: drop.
+6. `packaging=true`: drop, solange Jetnity keine Paketbuchung hat.
+7. Keine stillen FX. `requestedCurrency != hotel.currency` → Currency-Mismatch, keine Conversion.
+8. Request-Währung ist `unknown` (Audit U2). Adapter darf keine Währung „an HBX senden“, die nicht first-party belegt ist.
 
 Taxes: `included`/`allIncluded` nur durchreichen, nie nachrechnen.
 
@@ -167,7 +169,7 @@ Normalizer-Ausgang, erste Foundation:
 type AccommodationsFixtureSearchResult = {
   providerId: 'hotelbeds'
   evidenceMode: 'fixture'
-  options: HotelOption[] // oder shared offer, dann Mapping
+  options: HotelOption[]
 }
 ```
 
@@ -184,7 +186,7 @@ Pflicht pro Offer:
 - `hotelCode`, `hotelName`, `rateKey`
 - gültige Koordinaten in der ersten Foundation
 - gültige ISO-Währung
-- gültiger Consumer-Preis nach §4
+- gültiger Preis nach §4 (bei Modell `unknown`: kein Display-Preis; Shape-Tests ohne Consumer-Mint erlaubt)
 - `retrievedAt` gültiges ISO-Timestamp
 - `packaging !== true`
 - `rateKey` wird nicht zerlegt; nur Länge/Non-empty
@@ -229,7 +231,9 @@ Eingabe: `apiKey`, `secret`, `nowSeconds`.
 Ausgang: Header `Api-key`, `X-Signature = hex(sha256(apiKey + secret + nowSeconds))`.  
 Kein Secret in Logs. Timestamp-Drift > wenige Minuten → 401; Factory selbst rechnet nicht „nach“.
 
-mTLS-Zertifikat/Private Key: eigenes Secret-Bundle, eigener Host. Association-Cutover 14 Tage ist ein Ops-Gate, kein Search-Default.
+mTLS-Zertifikat/Private Key: eigenes Secret-Bundle. Dieses Audit erzeugt keines.
+
+Availability / CheckRate / Booking: nur `api-mtls.test.hotelbeds.com` bzw. `api-mtls.hotelbeds.com`, sobald mTLS erforderlich ist (S7). **Kein** stiller Non-mTLS-Host. Evaluation ohne aufgelöstes Zertifikat/Umgebung: Transport bleibt fail-closed (`unknown`, Audit U4). Association-Cutover 14 Tage ist ein Ops-Gate.
 
 ### 8.2 Transport
 
@@ -245,7 +249,7 @@ Pflicht-Header: `Accept: application/json`, `Accept-Encoding: gzip`, bei POST `C
 
 Timeouts: Search bleibt in Jetnity-Hotelgrenze (heute 12 s). Booking-Confirmation später ≥ 60 s — irrelevanter Search-Slice.
 
-Kein Retry auf 400. 500 Availability/CheckRate → Funnel neu, nicht dieselbe Rate. 401 → `invalid`/`unavailable`. 403 Quota/Key → `rate_limited` oder `unavailable`. 429 → `rate_limited` + `Retry-After` wenn vorhanden. 5xx/timeout → `error`/`timeout`.
+HTTP läuft über ADR-0199. HBX **muss** die Shared-Core-Defaults überschreiben: `retry5xx=false` für Availability/CheckRate/Booking. S5: 400 oder 500 nicht unverändert erneut senden; 500 = Produkt weg, Funnel von Availability neu. Dieselbe Rate/`rateKey` nicht retryen. 401 → `invalid`/`unavailable`. 403 Quota/Key → `rate_limited` oder `unavailable`. 429 → `rate_limited` + `Retry-After` wenn vorhanden (kein automatisches 500-Retry). Timeout → `timeout`. Booking bleibt außerhalb der Foundation.
 
 Availability: eine Call-Serie, möglichst alle gemappten Hotel-Codes, max 2000. Nicht nach CheckRate/Booking wiederholen.
 
@@ -289,13 +293,13 @@ Keine implizite Kette. Jedes Gate ist ein eigener Auftrag.
 | Gate | Inhalt | Wer |
 | --- | --- | --- |
 | G0 | Dieser Audit / Contract | TL Review, Draft |
-| G1 | Shared accommodations core akzeptiert **oder** bewusste Entscheidung, bestehenden `HotelProvider` als einzige Naht zu nutzen | TL / ggf. PO bei Produktänderung |
-| G2 | Offline fixture foundation | normaler TL-Slice, analog Skyscanner |
-| G3 | Evaluation-Konto / Keys — **nicht** durch Agenten | PO |
-| G4 | Server-Transport TEST, kein Mint, Production hart aus | TL + Cost-Guard-Review |
-| G5 | Content-Batch + Katalog-Persistenz | eigener Slice; keine Production-DB ohne PO |
-| G6 | Product Owner: HBX nur Search-Backup vs. Booking-Produkt | PO |
-| G7 | Certification, Voucher, Live-Keys, mTLS, Commercial Agreement | PO + Vendor |
+| G1 | Offline fixture foundation gegen bestehenden `HotelProvider` — Shared-Core-Edits nicht nötig | TL |
+| G2 | TEST-Transport über ADR-0199: fail-closed mTLS, `retry5xx=false`, kein Mint | TL + Cost-Guard |
+| G3 | Evaluation-Konto / Keys / Zertifikat — **nicht** durch Agenten | PO + Vendor |
+| G4 | Content-Batch + Boards-/Hotel-Katalog | eigener Slice; keine Production-DB ohne PO |
+| G5 | Explizites S19-Pricing-Modell aus der kommerziellen Beziehung | PO + Vendor |
+| G6 | Consumer-facing Production-Aktivierung von HBX im Aggregator-/Redirect-Modell | PO / Commercial — **nicht** Booking-Pivot |
+| G7 | Certification, Voucher, Live-Keys, Commercial Agreement — nur falls Booking-Produkt später extra autorisiert | PO + Vendor |
 | G8 | S5-A Live-Quote-Kandidat | nur LIVE + echter Transport |
 | G9 | S5-B Runtime-Write | Persistenz-Foundation ist bereits Production-verifiziert (`20260829140000`). Offen: Runtime-Principal, `production_write_path_allocated=true`, realer Provider-Snapshot. |
 | G10 | Production-Hotelsuche / `JETNITY_HOTEL_AKTIV` | bestehendes Hotel-Production-Gate |
@@ -312,5 +316,5 @@ TW-8 bleibt hinter S5 **und** realer Commercial Provenance (echter Provider-Snap
 - Cache API, CDS
 - `sourceKind` / Persistenz
 - UI
-- Booking.com-Adapter
-- Änderung von `lib/hotels/*` oder `lib/commercial-provenance/*` außer später explizit gegateten Mapping-Dateien
+- Booking.com- oder Expedia-Adapter
+- Änderung von `lib/hotels/*`, `lib/server/providers/core/*` oder `lib/commercial-provenance/*`
