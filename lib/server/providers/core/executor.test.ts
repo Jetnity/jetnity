@@ -68,6 +68,7 @@ function fakeHttp(steps: FakeStep[]): { client: ProviderHttpClient; calls: Provi
           }
           request.signal.addEventListener('abort', fail, { once: true })
         })
+        throw new Error('hang resolved unexpectedly')
       }
       if (request.signal.aborted) {
         const error = new Error('aborted')
