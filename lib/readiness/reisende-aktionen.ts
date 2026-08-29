@@ -2,6 +2,7 @@
 //
 // Schreibweg für Reisendenkontext im Konto.
 // Setzen/Übernahme atomar über party_schreiben. Löschen über party_loeschen.
+// Registry→Trip nutzt S1-Projektion und denselben atomaren Write-Pfad.
 // Kein Service-Role. Kein direktes Tabellen-DELETE. Keine Legacy-Credential-Spalten.
 
 'use server'
@@ -17,6 +18,8 @@ import {
 import { travellerAlsPayload, travellerBauen } from '@/lib/readiness/reisende'
 import { NICHT_ANGEMELDET, konto, meldungAus, type Aktionsergebnis } from '@/lib/trips/anlegen'
 import { reiseLaden } from '@/lib/trips/daten'
+import { registryMitClientLaden } from '@/lib/traveller/account-registry-daten'
+import { registryTripUebernahmeOrchestrieren } from '@/lib/traveller/account-registry-trip'
 
 function ersteMeldung(fehler: { issues: { message: string }[] }): string {
   return fehler.issues[0]?.message ?? 'Diese Reisendenangabe ist ungültig.'
@@ -118,5 +121,26 @@ export async function partyUebernehmen(eingabe: unknown): Promise<Aktionsergebni
   const geschrieben = await partySchreiben(rahmen.supabase, geprueft.data.tripId, items)
   if (!geschrieben.ok) return geschrieben
   revalidatePath(`/reisen/${geprueft.data.tripId}`)
+  return { ok: true, wert: null }
+}
+
+export async function registryTravellerInReiseUebernehmen(eingabe: unknown): Promise<Aktionsergebnis<null>> {
+  const { supabase, benutzerId } = await konto()
+  const ergebnis = await registryTripUebernahmeOrchestrieren({
+    eingabe,
+    benutzerId,
+    reiseLesen: async (tripId) => {
+      const geladen = await reiseLaden(tripId)
+      if (geladen.problem) return { problem: geladen.problem, reise: null }
+      const reise = geladen.zeilen[0] ?? null
+      return { problem: null, reise: reise ? { party: partyVon(reise) } : null }
+    },
+    registryLesen: (id) => registryMitClientLaden(supabase, { id }),
+    partySchreiben: (tripId, party) => partySchreiben(supabase, tripId, [...party]),
+    jetzt: new Date().toISOString(),
+  })
+  if (!ergebnis.ok) return { ok: false, meldung: ergebnis.meldung ?? 'Die Übernahme ist fehlgeschlagen.' }
+  if (!ergebnis.tripId) return { ok: false, meldung: 'Die Übernahme ist fehlgeschlagen.' }
+  revalidatePath(`/reisen/${ergebnis.tripId}`)
   return { ok: true, wert: null }
 }
