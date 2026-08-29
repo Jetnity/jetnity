@@ -27,9 +27,17 @@ Nicht starten: Issue #110, AP-6 Runtime, AP-7, Provider/Payments, Places-Import,
 - keine Abreise-/IATA-Semantikänderung
 - keine Search-UI-Änderung
 
+## Exact-Head Evidence auf `e3a9f011`
+
+- Lokal: 2573/2573 Tests, Typecheck, Lint 0/135, Hygiene, Production-Build
+- Actions `33245325521` SUCCESS
+- Vercel Preview `4xKBDbRdT1PbT5g7Lxtxh1qkj2Ba` SUCCESS
+- Review-Threads: 0
+- Dieser Stamp erzeugt einen neueren Head; live neu gaten
+
 ## Residual
 
-Mobile-Safari-Evidence aus Issue #109 wurde in dieser Umgebung nicht wiederholt. Preview nach Exact-Head-Push live prüfen.
+Mobile-Safari-Evidence aus Issue #109 wurde in dieser Umgebung nicht wiederholt. Preview ist SSO-geschützt.
 
 ## Stop
 

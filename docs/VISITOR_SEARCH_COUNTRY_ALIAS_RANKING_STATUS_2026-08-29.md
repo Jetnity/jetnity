@@ -49,12 +49,15 @@ Nicht geliefert: UI-Redesign, Geocoder, Import-/Bestandsmutation, hartcodierte L
 
 ## 4. Tests / Evidence
 
+Siehe `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_LOCAL_TEST_EVIDENCE_2026-08-29.md`.
+
 | Lauf | Ergebnis |
 | --- | --- |
-| Gezielte Ortssuche + Relevanz | **27/27 pass** lokal vor dem Docs-/Gate-Stamp |
-| Volle Repository-Gates | nach Push live am Exact Head prüfen |
+| Gezielte Ortssuche + Relevanz | **27/27 pass** |
+| `npm test` auf `e3a9f011` | **2573/2573 pass** |
+| Typecheck / Lint / Hygiene / Build | pass; lint 0 errors / 135 warnings |
 | Browser / Real-Device / Mobile Safari | **nicht gelaufen**, nicht behauptet |
-| Exact-Head CI / Vercel | nach finalem Push live prüfen; Prior-Head `d2622e5c` gilt nicht für die Runtime |
+| Exact-Head CI `e3a9f011` | Actions Run `33245325521` SUCCESS; Vercel `4xKBDbRdT1PbT5g7Lxtxh1qkj2Ba` SUCCESS. Dieser Stamp erzeugt einen neueren Head; dessen Gates live prüfen. |
 
 ## 5. DB / RLS / Production-Grenze
 

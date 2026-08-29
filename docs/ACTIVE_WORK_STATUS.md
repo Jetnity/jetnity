@@ -10,7 +10,7 @@ Status: **Visitor Search Country Alias Ranking / Draft-PR #168 / Issue #109. IMP
 ## Aktueller Arbeitsblock – Visitor Search Country Alias Ranking
 
 1. **Arbeitsblock / Ziel:** Generischer Ranking-/Retrieval-Fix: exaktes Länder-Alias darf für `ziel` nicht von gleichnamigen/präfixgleichen Städten verdeckt werden.
-2. **Authoring-Branch / PR:** `fix/visitor-search-country-alias-ranking-2026-08-29`; Draft-PR #168. Task-only Start `d2622e5c`. Exact Head ist der Commit dieses Stamps; live am PR prüfen.
+2. **Authoring-Branch / PR:** `fix/visitor-search-country-alias-ranking-2026-08-29`; Draft-PR #168. Task-only Start `d2622e5c`. Implementation-Head mit Gates: `e3a9f011`. Dieser Stamp erzeugt einen neueren Head; live am PR prüfen.
 3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**. Kein Ready, kein Merge durch den Autor. Kein Issue #110.
 4. **Bereits umgesetzt:** Alias-als-Namenswahrheit für `ziel`; gezielter `typ=country`-Nachzug; ADR-0196; Regressionen Peru/China/Schweiz plus generisches Drittland; Abreise/IATA/Compact-Relevance erhalten.
 5. **Cursor-Agent:** `Visitor search correctness 1`. Exact Run-ID `bc-7713da02-0c28-4ee9-b09e-1f114dcc0d3a`. Beobachteter Titel `Besuchersuche Länder-Alias-Ranking Korrektur`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 1 bleibt 1.
