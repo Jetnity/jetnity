@@ -1,6 +1,6 @@
 # Jetnity – Active Work Status
 
-Stand: 29. August 2026  
+Stand: 30. August 2026  
 Status: **CURRENT / NO AUTOMATIC FOLLOW-UP / LIVE-EVIDENCE GEWINNT**
 
 > Diese Datei ist ein Current-State-Pointer, kein historisches Archiv. Vor jedem neuen Slice gilt `docs/JETNITY_BINDING_SLICE_PRECHECK_AND_CONTINUITY_GATE_2026-08-29.md`.
@@ -9,61 +9,49 @@ Status: **CURRENT / NO AUTOMATIC FOLLOW-UP / LIVE-EVIDENCE GEWINNT**
 
 **Kein Produkt-/Runtime-Slice automatisch aktiv.**
 
-Letzter vollständig post-merge verifizierter `main`:
+Letzter vollständig post-merge verifizierter Runtime-`main`:
 
-- `bb0fb2050e09e8fa5bf670e4290523c037790954`
-- Post-Merge CI: #1284 / Run `33277102071` = **SUCCESS**
-- Vercel Production: `dpl_BFHHnDoekhxq6CvsLQXiSHrTkmpT` = **READY** auf exact `main`
+- `e33341b30019fb1a57c2cc6f2cd8c0b0a3a85f40`
+- Post-Merge CI: #1293 / Run `33279680487` = **SUCCESS**
+- Vercel Production: `dpl_6GZsxWbYwuY4LxFG8D8GoqK5Cxm8` = **READY** auf exact `e33341b3…`
 - Branch Protection: `protected=false`
 
 Aktuellster Checkpoint:
 
-`docs/CHATGPT_TL_AP7_S3_AND_INFRA_AUDIT_POST_MERGE_CHECKPOINT_2026-08-29.md`
+`docs/CHATGPT_TL_AP7_S4_POST_MERGE_CHECKPOINT_2026-08-30.md`
 
-## 2. Unmittelbar abgeschlossen – AP-7-S3
+## 2. Unmittelbar abgeschlossen – AP-7-S4
 
-Issue #214: **CLOSED / completed**.
+Issue #222: **CLOSED / completed**.
 
-- Cursor-Agent: `Account plattform audit vorbereitung 17`
-- Source Draft PR #215 finaler reviewed Head: `ca548fc84fd097457f26edc64653befc28e01437`
-- Independent TL PASS auf Source PR.
-- Wegen bekanntem Draft→Ready-Connectorfehler Integration über Recovery PR #219.
-- Recovery CI #1281 / Run `33276779999`: **SUCCESS**.
-- Recovery Vercel `dpl_99uUonTGNg9kUa5rTZJJvh9uA7J6`: **READY**.
-- Merge/Main danach: `d58f6a80ddfe9795445abc84610a2895bae19338`.
-- Post-Merge CI #1282 / Run `33276919765`: **SUCCESS**.
-- Vercel Production `dpl_Dsra2GnomnE3je1dueRALiKxLX32`: **READY**.
+- Cursor-Agent: `Account plattform audit vorbereitung 18`
+- Source Draft PR #223 finaler reviewed Head: `f366ea839dfd3560b4ca2f0b4ec054f0ed8c463a`
+- erster TL-Review: CHANGES REQUIRED wegen unvollständiger Write-/Authorization-Testtiefe;
+- derselbe Agent ergänzte testbare S4-Orchestrierung und 2715/2715 Gesamttests;
+- finaler unabhängiger TL PASS auf `f366ea83…`;
+- Source CI #1291 / Run `33279176614`: **SUCCESS**;
+- Source Vercel `dpl_AsQGw7AmakovtqzhsTZ93AACrvjt`: **READY**;
+- Draft→Ready scheiterte am bekannten GitHub-Connectorfehler `Repository.fullDatabaseId`;
+- Integration daher über Recovery PR #224, gleicher Exact Head;
+- Recovery CI #1292 / Run `33279576332`: **SUCCESS**;
+- Recovery Vercel `dpl_BK8hR1Ufw6vqhwNyc5ddfzYcdbbR`: **READY**;
+- Merge/Main: `e33341b30019fb1a57c2cc6f2cd8c0b0a3a85f40`;
+- Post-Merge CI #1293 / Run `33279680487`: **SUCCESS**;
+- Vercel Production `dpl_6GZsxWbYwuY4LxFG8D8GoqK5Cxm8`: **READY** exact `e33341b3…`.
 
-Geliefert ist die reale authentifizierte `/account/travellers` Registry CRUD/UI auf bestehender AP-7-S2 Production-Persistenz/RLS. Keine Migration, kein Auth-/MFA-/AAL-Change und keine Registry→Trip Runtime in S3.
+Geliefert: explizite owner-getriebene Account Registry → unabhängige trip-owned Traveller Snapshot Materialisierung über AP-7-S1 + bestehenden `party_schreiben`-Pfad.
 
-## 3. Unmittelbar abgeschlossen – Supabase Replay Gate 0
+S4 hat **keine** Migration, Schema-, RLS-, Grant-, Auth-, MFA-/AAL- oder Supabase-Mutation eingeführt.
 
-Issue #216: **CLOSED / completed**.
-
-- Cursor-Agent: `Jetnity infrastructure migration audit 1`
-- Source Draft PR #218 finaler reviewed Head: `85135a8ad35860644e9ff344000188b5c24e40af`
-- docs-only / read-only Audit; Independent TL PASS.
-- Integration nach AP-7-S3 über Recovery PR #220 gegen den neuen `main`.
-- Recovery CI #1283 / Run `33276955797`: **SUCCESS**.
-- Recovery Vercel `dpl_5GKQYJEb6ojSg8ubYQAknFRTCgNP`: **READY**.
-- aktueller `main`: `bb0fb2050e09e8fa5bf670e4290523c037790954`.
-- Post-Merge CI #1284 / Run `33277102071`: **SUCCESS**.
-- aktuelle Vercel Production `dpl_BFHHnDoekhxq6CvsLQXiSHrTkmpT`: **READY**.
-
-Verifiziertes P1 Infrastructure Debt vor migrationsnahem Replay/Rebase/Reset:
-
-- Production History-Version `20260829140000_trip_item_commercial_provenance` enthält als einzige gespeicherte Statement-Body einen nicht replaybaren 234-Zeichen-Prosa-Marker;
-- der Production S5-B Catalog existiert trotzdem;
-- Current Development enthält weder diese Version noch die S5-B Objekte/Rollen;
-- **keine Production-/Development-Reparatur wurde ausgeführt**.
-
-Eine spätere History-Reparatur bleibt eigener Product-Owner-gated Slice mit Backup/PITR-/Before-Image- und Replay-Nachweis.
-
-## 4. Traveller / Account – aktueller Reifegrad
+## 3. Traveller / Account – aktueller Reifegrad
 
 Kanonischer Vertrag:
 
-> 1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig zulässige Optionen.
+> **1 Traveller → mehrere Staatsbürgerschaften → mehrere Reisedokumente/Credentials → kontextabhängig zulässige Optionen.**
+
+Verbindliche Dual-Authority:
+
+> **Account Registry = wiederverwendbare aktuelle Traveller-Fakten. Trip Snapshot = einzige Current Truth für eine konkrete Reise.**
 
 Integriert:
 
@@ -75,21 +63,36 @@ Integriert:
 - AP-7 Gate 0 + Dual-Authority;
 - AP-7-S1 Domain Contract;
 - AP-7-S2 Account Registry Persistence / Identity / owner-only RLS auf Production;
-- **AP-7-S3 Registry CRUD/UI auf Production**.
+- AP-7-S3 Registry CRUD/UI auf Production;
+- **AP-7-S4 Registry → Trip Snapshot Runtime-Materialisierung**.
 
-Offen bleiben u. a.:
+S4 erzeugt frische trip-eigene Traveller-/Citizenship-/Document-IDs und `clientRef`s. Registry edit/delete mutiert bestehende Trip Snapshots nicht. Keine Live-FK und keine automatische Credential-Auswahl.
 
-- Registry→Trip Runtime-Materialisierung;
-- weitere Account-/Traveller-Slices gemäß kanonischem Account-Plan;
-- Requirements Provider;
-- spätere option-scharfe Official-/Safety-/Booking-Dokumentdarstellung mit echter Evidence.
+**S1–S4 nicht erneut bauen.**
+
+Offen bleiben nach frischem Precheck zu priorisieren:
+
+- weiterer Document-Lifecycle / UX;
+- kontextabhängige zulässige Credential-Optionen in relevanten Reise-/Entry-/Transit-Flächen;
+- weitere Account-/Traveller-Slices gemäß kanonischem Plan;
+- option-scharfe Official-/Safety-/Booking-Dokumentdarstellung nur mit echter Evidence;
+- keine automatische „bester Pass“-Entscheidung ohne eigenen Vertrag/Gate.
 
 Keine Passnummern, Scans, MRZ, Biometrie, DOB oder Health-Daten im Kernmodell.
+
+## 4. Supabase Replay Gate 0 / P1 Infrastructure Debt
+
+Der Audit bleibt abgeschlossen; **keine Reparatur wurde ausgeführt**.
+
+Production History-Version `20260829140000_trip_item_commercial_provenance` enthält eine nicht replaybare Prosa-Statement-Body, obwohl der Production S5-B Catalog existiert. Current Development besitzt weder diese Version noch die S5-B Objekte/Rollen.
+
+Vor migrationsnahem Replay/Rebase/Reset muss diese Abhängigkeit separat behandelt werden. History-Repair bleibt Product-Owner-gated mit Backup/PITR/Before-Image und Replay-Proof.
 
 ## 5. Agentenstatus
 
 Gestoppt / abgeschlossen:
 
+- `Account plattform audit vorbereitung 18` – AP-7-S4;
 - `Account plattform audit vorbereitung 17` – AP-7-S3;
 - `Jetnity infrastructure migration audit 1` – Supabase Replay Gate-0 Audit.
 
@@ -117,8 +120,9 @@ Besondere PO-Gates bleiben vor Production-Migrationen/destruktiven Production-Da
 
 1. Frischen Binding Slice Precheck ausführen.
 2. `main`, offene PRs/Issues/Branches, CI/Vercel/Supabase live rekonstruieren.
-3. Binding Build Order und Account Platform Plan gegen verbleibende Account-/Traveller- sowie Provider-Arbeit abgleichen.
-4. Bei migrationsnaher Arbeit zuerst die Replay-Defekt-Abhängigkeit behandeln.
-5. Erst danach einen bounded nächsten Slice und eine frische Cursor-Agent-Generation bestimmen.
+3. Binding Build Order + Account Platform Plan gegen **integriertes AP-7-S1–S4** reconciliieren.
+4. verbleibende Traveller-/Document-Lifecycle-/Multi-Citizenship-Produktlücken priorisieren.
+5. bei migrationsnaher Arbeit zuerst Replay-P1-Abhängigkeit behandeln.
+6. erst danach einen bounded nächsten Slice und eine frische Cursor-Agent-Generation bestimmen.
 
-**Registry→Trip Runtime-Materialisierung ist ein naheliegender Kandidat, aber nicht automatisch freigegeben.**
+**Kein Folgeslice ist automatisch freigegeben.**
