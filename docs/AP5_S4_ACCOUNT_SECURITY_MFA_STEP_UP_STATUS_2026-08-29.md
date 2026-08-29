@@ -72,7 +72,7 @@ Siehe `docs/AP5_S4_LOCAL_TEST_EVIDENCE_2026-08-29.md`.
 | Typecheck / Lint / Hygiene / Build | pass; lint 0 errors / 133 warnings |
 | `auth:pruefen` | 55/55, 242 Schlüssel |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet |
-| GitHub Actions / Vercel Preview | auf dem finalen Stamp-Head **noch nicht live verifiziert** – nicht als grün behaupten |
+| GitHub Actions / Vercel Preview | Exact Head `97a8f7b9`: Actions `33223840410` SUCCESS; Vercel `8R8iDdugyWM5HjL3Z1C81gtZFCBB` SUCCESS; GitHub Deployment `6150698033` success |
 
 ## 5. DB / RLS / Production-Grenze
 
@@ -90,7 +90,7 @@ Keine neuen laufenden Kosten. Keine Provider. Keine Secrets.
 - Kein authentifizierter Browser-/Real-Device-Beweis (`/account/security` ist auth-gated; kein Testkonto).
 - `main` Branch Protection bleibt `protected=false`.
 - Agent-Self-Review ist kein PASS.
-- GitHub CI / Vercel Preview dieses Stamp-Heads sind zum Authoring-Zeitpunkt nicht verifiziert.
+- Exact-Head `97a8f7b9` Gates: Actions `33223840410` SUCCESS, Vercel `8R8iDdugyWM5HjL3Z1C81gtZFCBB` SUCCESS; dieser Stamp invalidiert sie für den neuen Head.
 
 ## 8. Offene Freigaben
 

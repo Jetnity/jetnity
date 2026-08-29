@@ -18,8 +18,8 @@ Cursor-Session/Run-ID: `bc-d8fd980a-b4e5-43e1-8a38-a1480fd65132`
 | `npm run auth:pruefen` | **55/55**, 242 Schlüssel, Passwortregel = config.toml |
 | `npm run build` | Production-Build Next.js 16.3.3 Turbopack erfolgreich; `/account/security` dynamisch. `check:setup` 1 Warning: keine `.env`/`.env.local` in dieser Cloud-Session. |
 | Browser / Real-Device | nicht gelaufen, nicht behauptet – `/account/security` ist auth-gated; kein Testkonto in dieser Session |
-| GitHub Actions / Vercel Preview | auf dem finalen Stamp-Head **noch nicht live verifiziert**. Frühere Heads (`3499f165`, `6e8c99bc`) sind durch spätere Pushes supersediert. |
+| GitHub Actions / Vercel Preview | Exact Head `97a8f7b9`: Actions Run `33223840410` SUCCESS; Vercel Inspector `8R8iDdugyWM5HjL3Z1C81gtZFCBB` SUCCESS; GitHub Preview-Deployment `6150698033` success. Frühere Heads `3499f165` / `6e8c99bc` sind supersediert (`check:exports` auf `aalStufeLesen`; danach unexportiert). |
 
 Lokales `npm ci` war **nicht** nötig. Das Cloud-`node_modules` war bereits Next 16.3.3 / ESLint 9.39.5. Lockfile wurde nicht verändert.
 
-Dieser Stamp erzeugt den Exact Head, auf dem GitHub CI / Vercel Preview erneut live zu prüfen sind. Keine CI-/Preview-Aussage ohne Live-Beweis.
+Exact-Head-Gates oben gelten für `97a8f7b9`. Dieser Stamp erzeugt einen neueren Head. Kein weiterer Evidence-Stamp, außer dessen CI fehlschlägt.

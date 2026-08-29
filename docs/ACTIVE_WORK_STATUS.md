@@ -17,7 +17,7 @@ Status: **AP-5-S4 Account Security MFA Step-up / Draft-PR #159. STOP für unabh�
 6. **Live-`main` / Baseline bei diesem Stamp:** `5920860e164784040118667091ebcaca79f9b33d` – immer live neu prüfen.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, kein Auth-Config-Push, keine Supabase-Mutation, keine Service Role.
 8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** `mfa.verify` kann andere Sitzungen beenden; Unenroll-Fehler nach Step-up lässt die Sitzung ggf. auf AAL2; Login-MFA bleibt skippable; kein Browser-/Real-Device-Beweis; GitHub CI / Vercel Preview des Stamp-Heads zum Authoring nicht verifiziert; `main` `protected=false`; Agent-Self-Review ist kein PASS.
+9. **Bekannte Risiken / Review-Funde:** `mfa.verify` kann andere Sitzungen beenden; Unenroll-Fehler nach Step-up lässt die Sitzung ggf. auf AAL2; Login-MFA bleibt skippable; kein Browser-/Real-Device-Beweis; `main` `protected=false`; Agent-Self-Review ist kein PASS. Exact-Head `97a8f7b9` Gates: Actions `33223840410` SUCCESS, Vercel `8R8iDdugyWM5HjL3Z1C81gtZFCBB` SUCCESS; dieser Stamp invalidiert sie für den neuen Head.
 10. **Offene Nutzerentscheidungen / Freigaben:** S4 braucht kein Product-Owner-Sondergate. S5 und P1–P5 starten nicht aus diesem Slice.
 11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #159. Kein Ready. Kein Merge. Kein S5.
 12. **Zuerst lesen:** `docs/AP5_S4_ACCOUNT_SECURITY_MFA_STEP_UP_TASK_2026-08-29.md`, Status, Handoff, Self-Review, ADR-0193, Gate-0-Status, ADR-0182.

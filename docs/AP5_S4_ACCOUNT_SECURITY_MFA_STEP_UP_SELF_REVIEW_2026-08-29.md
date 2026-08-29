@@ -34,7 +34,7 @@ Keine Migration. Kein `supabase/config.toml`-Write. Kein RLS/Identity. Kein S5. 
 
 - GoTrue kann nach `mfa.verify` andere Sitzungen beenden. Das ist installiertes Auth-Verhalten, keine zweite Session-Authority.
 - Kein authentifizierter Browser-/Real-Device-Beweis.
-- GitHub CI / Vercel Preview des Stamp-Heads zum Authoring nicht live verifiziert.
+- Exact-Head `97a8f7b9`: Actions `33223840410` SUCCESS; Vercel `8R8iDdugyWM5HjL3Z1C81gtZFCBB` SUCCESS. Dieser Stamp erzeugt einen neueren Head.
 - S5 und AP-5-P1–P5 bleiben offen.
 
 ## 4. Urteil des Autors

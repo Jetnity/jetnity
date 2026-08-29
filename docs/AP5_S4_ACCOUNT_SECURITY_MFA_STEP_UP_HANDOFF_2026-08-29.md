@@ -45,7 +45,7 @@ Kein neuer Auth-Vertrag. ADR-0193 präzisiert nur die UI-Nutzung der bereits in 
 - Kein authentifizierter Browser-/Real-Device-Beweis.
 - `mfa.verify` kann andere Sitzungen beenden; keine Sessionliste behauptet.
 - Nach Unenroll-Fehler nach Step-up kann die Sitzung bereits AAL2 sein.
-- GitHub CI / Vercel Preview des Stamp-Heads zum Authoring nicht live verifiziert.
+- Exact-Head `97a8f7b9`: Actions `33223840410` SUCCESS; Vercel `8R8iDdugyWM5HjL3Z1C81gtZFCBB` SUCCESS; GitHub Deployment `6150698033` success. Ein Stamp danach braucht erneute Live-Gates; kein weiterer Evidence-Stamp, außer die Stamp-CI fehlschlägt.
 - `main` `protected=false`.
 
 ## Nächster Schritt
