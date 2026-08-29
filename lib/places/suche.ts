@@ -65,14 +65,16 @@ export function ortLandAliasfilter(suche: string): string | null {
 }
 
 function schluesselwoerter(keywords: string | readonly string[] | null | undefined): string[] {
-  if (!keywords) return []
+  if (typeof keywords === 'string') {
+    return keywords
+      .split(',')
+      .map((teil) => teil.trim())
+      .filter((teil) => teil.length > 0)
+  }
   if (Array.isArray(keywords)) {
     return keywords.flatMap((teil) => schluesselwoerter(teil))
   }
-  return keywords
-    .split(',')
-    .map((teil) => teil.trim())
-    .filter((teil) => teil.length > 0)
+  return []
 }
 
 function schluesselwortGenau(keywords: string | readonly string[] | null | undefined, suche: string): boolean {

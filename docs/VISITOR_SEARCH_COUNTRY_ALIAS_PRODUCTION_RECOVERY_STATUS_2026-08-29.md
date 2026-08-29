@@ -40,9 +40,16 @@ Nicht geliefert: UI-Redesign, Geocoder, Import-/Bestandsmutation, hartcodierte L
 
 ## 4. Tests / Evidence
 
-Siehe `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_LOCAL_TEST_EVIDENCE_2026-08-29.md` nach dem Gate-Lauf.
+Siehe `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_LOCAL_TEST_EVIDENCE_2026-08-29.md`.
 
-Browser / Real-Device / Mobile Safari: **nicht gelaufen**, nicht behauptet. Preview-Endpoint-Beweis: nach Exact-Head-Preview live prüfen; SSO kann den direkten Public-GET verhindern.
+| Lauf | Ergebnis |
+| --- | --- |
+| Live Production `2241e349` Peru/China | weiterhin Städte vor Land; Schweiz korrekt |
+| Gezielte Ortssuche + Route-Lauf | **33/33 pass** |
+| `npm test` | **2581/2581 pass** |
+| Typecheck / Lint / Hygiene / Build | pass; lint 0 errors / 135 warnings |
+| Browser / Real-Device / Mobile Safari | **nicht gelaufen**, nicht behauptet |
+| Exact-Head CI / Preview | dieser Stamp erzeugt einen neueren Head; live am PR prüfen |
 
 ## 5. DB / RLS / Production-Grenze
 
