@@ -147,7 +147,7 @@ TW-8 bleibt hinter Provider S5-B / belastbarer realer Commercial Provenance gega
 
 Separate Search-/Homepage-Themen:
 
-- Issue #109 – Country-Alias-Ranking: **in Arbeit** auf Draft-PR #168 / `Visitor search correctness 1`. Nicht gemergt. Kein Ready durch den Autor.
+- Issue #109 – Country-Alias-Ranking: PR #172 ist auf `main` integriert, Live-Production hat die Abnahme invalidiert. **Recovery in Arbeit** auf Draft-PR #173 / `Visitor search correctness 1`. Nicht gemergt. Kein Ready durch den Autor.
 - Issue #110 – natürliche Homepage-Mehrziel-Eingabe: dokumentiert, **nicht gestartet**.
 
 ## 4. Provider / Commercial Provenance

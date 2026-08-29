@@ -5112,10 +5112,16 @@ Festlegung innerhalb S1, ohne Dependency-Bump:
 
 **Konsequenzen:**
 
-- Runtime: `lib/places/suche.ts`, `app/api/search/places/route.ts`.
+- Runtime: `lib/places/suche.ts`, `lib/places/suche-lauf.ts`, `app/api/search/places/route.ts`.
 - Vertrag: `docs/ORTE.md`, dieser ADR.
 - Keine Migration, kein RLS, kein Provider, keine Kosten.
 - Autor-Agent stoppt für unabhängigen Technical-Lead Exact-Head-Review. Self-Review ist kein PASS.
+
+**Nachtrag 29. August 2026 – Production-Recovery nach PR #172:**
+
+Live Production auf `main @ 2241e349` zeigte weiterhin `Peru`/`China` mit Gleichnam-Städten vor dem Land, während `Schweiz` korrekt blieb. Production-`keywords` enthielten die exakten Tokens. Die vorherige Diagnose (Land fehlt in der Menge oder fällt unter `MIN_RANG_BEI_STARK`) war unvollständig: das Land wurde geholt und als Alias auf 5000+220 bewertet, verlor aber gegen Städte, die denselben Token aus dem Import (`asciiName` plus Alternativnamen) zusätzlich als Exact-Keyword (+700) stapelten. `Schweiz` gewann, weil keine Stadt exakt `Schweiz` heisst.
+
+Tests verpassten das, weil sie `orteOrdnen()` mit Städten ohne Import-Keywords fütterten und den PostgREST→`ortAusZeile`→Retrieval-Lauf nicht übten. Der Recovery-Fix macht das exakte Länder-Alias für `ziel` zur ordinalen Erstplatzierung und deckt die Production-Zeilenform plus den Retrieval-Lauf ab. Kein hartcodierter Länderkatalog, keine Bestandsmutation.
 
 ---
 

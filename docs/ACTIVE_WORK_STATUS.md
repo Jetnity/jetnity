@@ -1,30 +1,47 @@
 # Jetnity – Active Work Status
 
 Stand: 29. August 2026  
-Status: **Visitor Search Country Alias Ranking / Draft-PR #168 / Issue #109. IMPLEMENTIERT / STOP für unabhängigen Technical-Lead Exact-Head-Review. Kein Ready, kein Merge durch den Autor. Kein Issue #110. Baseline `main @ 6083ee63`. Live-Evidence immer live prüfen.**
+Status: **Visitor Search Country Alias Production Recovery / Draft-PR #173 / Issue #109. IMPLEMENTIERT / STOP für unabhängigen Technical-Lead Exact-Head-Re-Review. Kein Ready, kein Merge durch den Autor. Kein Issue #110. Baseline `main @ 2241e349`. Live-Evidence immer live prüfen.**
 
 > **Do not blindly trust this file — live verify first.**
 
 > Agent-Self-Review ist kein PASS. Jeder neue Push invalidiert Prior-Gates.
 
-## Aktueller Arbeitsblock – Visitor Search Country Alias Ranking
+## Aktueller Arbeitsblock – Visitor Search Country Alias Production Recovery
 
-1. **Arbeitsblock / Ziel:** Generischer Ranking-/Retrieval-Fix: exaktes Länder-Alias darf für `ziel` nicht von gleichnamigen/präfixgleichen Städten verdeckt werden.
-2. **Authoring-Branch / PR:** `fix/visitor-search-country-alias-ranking-2026-08-29`; Draft-PR #168. Task-only Start `d2622e5c`. Implementation-Head mit Gates: `e3a9f011`. Dieser Stamp erzeugt einen neueren Head; live am PR prüfen.
-3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-REVIEW**. Kein Ready, kein Merge durch den Autor. Kein Issue #110.
-4. **Bereits umgesetzt:** Alias-als-Namenswahrheit für `ziel`; gezielter `typ=country`-Nachzug; ADR-0196; Regressionen Peru/China/Schweiz plus generisches Drittland; Abreise/IATA/Compact-Relevance erhalten.
-5. **Cursor-Agent:** `Visitor search correctness 1`. Exact Run-ID `bc-7713da02-0c28-4ee9-b09e-1f114dcc0d3a`. Beobachteter Titel `Besuchersuche Länder-Alias-Ranking Korrektur`. Keine Rename-Fähigkeit; UI nicht als umbenannt behauptet. Generation 1 bleibt 1.
-6. **Live-`main` / Baseline bei diesem Stamp:** `6083ee63a5da62870ab7ac4f5f91f69230718e44` – immer live neu prüfen.
+1. **Arbeitsblock / Ziel:** Immediate Post-Merge-P1-Recovery desselben #109-Slices. Production Peru/China bleiben nach PR #172 falsch, obwohl exakte Alias-Tokens in der DB stehen. Echte Runtime/Test-Lücke schliessen.
+2. **Authoring-Branch / PR:** `fix/visitor-search-country-alias-production-recovery-2026-08-29`; Draft-PR #173. Task-only Start `e0ef0e69`. Dieser Stamp erzeugt einen neueren Head; live am PR prüfen.
+3. **Status:** **IMPLEMENTIERT / DRAFT / STOP FOR INDEPENDENT TECHNICAL-LEAD EXACT-HEAD-RE-REVIEW**. Kein Ready, kein Merge durch den Autor. Kein Issue #110.
+4. **Bereits umgesetzt:** Root Cause = Import-Keyword-Stapel auf Gleichnam-Städten, nicht fehlende Daten. Ordinale Länder-Alias-Erstplatzierung für `ziel`; `placesSuchen()` Route-Lauf; Production-Zeilenform-Regressionen; ADR-0196-Nachtrag.
+5. **Cursor-Agent:** `Visitor search correctness 1`. Exact Run-ID `bc-7713da02-0c28-4ee9-b09e-1f114dcc0d3a`. Dieselbe logische Session wie PR #168/#172. Generation 1 bleibt 1.
+6. **Live-`main` / Baseline bei diesem Stamp:** `2241e349f8b3b400963cf1de11e5a8617bdc8e44` – immer live neu prüfen.
 7. **DB / RLS / Production-Grenze:** keine Migration, kein RLS-/Auth-/AAL-Write, keine Supabase-Mutation, keine Service Role. `public.places` nur gelesen.
 8. **Kosten / Provider / Secrets:** keine.
-9. **Bekannte Risiken / Review-Funde:** kein Mobile-Safari-/Real-Device-Beweis in dieser Umgebung; Länder-Nachzug limit 12; Import-Langnamen unverändert; `main` `protected=false`; Agent-Self-Review ist kein PASS.
-10. **Offene Nutzerentscheidungen / Freigaben:** keine Product-Owner-Sondergates. Ready/Merge nur Technical Lead.
-11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Review von Draft-PR #168. Kein Ready. Kein Merge. Kein Issue #110.
-12. **Zuerst lesen:** `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_TASK_2026-08-29.md`, Status, Handoff, Self-Review, ADR-0196, `docs/ORTE.md`, Issue #109.
+9. **Bekannte Risiken / Review-Funde:** vorheriger TL-PASS ist invalidiert; kein Mobile-Safari-/Preview-GET-Beweis in dieser Umgebung; Länder-Nachzug limit 12; `main` `protected=false`; Agent-Self-Review ist kein PASS.
+10. **Offene Nutzerentscheidungen / Freigaben:** keine Product-Owner-Sondergates. Ready/Merge nur Technical Lead. Nach Merge Production Peru+China+Schweiz explizit rauchen.
+11. **Exakter nächster Schritt:** unabhängiger Technical-Lead Exact-Head-Re-Review von Draft-PR #173. Kein Ready. Kein Merge. Kein Issue #110.
+12. **Zuerst lesen:** `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_TASK_2026-08-29.md`, Status, Handoff, Self-Review, ADR-0196 Nachtrag, `docs/ORTE.md`, Issue #109.
+
+## Historischer Arbeitsblock – Visitor Search Country Alias Ranking
+
+Current classification / Nachtrag, 29. August 2026: **HISTORICAL / INTEGRIERT und danach durch Live-Production invalidiert.** PR #172 ist auf `main @ 2241e349` gemergt. Der vorherige TL-PASS gilt nicht mehr. Der aktive Slice ist Draft-PR #173.
+
+1. **Arbeitsblock / Ziel:** Generischer Ranking-/Retrieval-Fix: exaktes Länder-Alias darf für `ziel` nicht von gleichnamigen/präfixgleichen Städten verdeckt werden.
+2. **Authoring-Branch / PR:** `fix/visitor-search-country-alias-ranking-2026-08-29`; integriert über PR #172, danach Recovery über #173.
+3. **Status:** **INTEGRIERT, aber Production-Acceptance NICHT erfüllt.**
+4. **Bereits umgesetzt:** Alias-als-Namensstärke; Länder-Nachzug; ADR-0196. Die Score-only-Regel reichte gegen Import-Keyword-Stapel nicht.
+5. **Cursor-Agent:** `Visitor search correctness 1`.
+6. **Live-`main` bei Integration:** `2241e349f8b3b400963cf1de11e5a8617bdc8e44`.
+7. **DB / RLS / Production-Grenze:** keine Migration.
+8. **Kosten / Provider / Secrets:** keine.
+9. **Bekannte Risiken / Review-Funde:** Live Peru/China falsch; Tests ohne Import-Keywords.
+10. **Offene Nutzerentscheidungen / Freigaben:** geschlossen durch Recovery-Slice #173, nicht durch diesen historischen Block.
+11. **Exakter nächster Schritt:** nicht erneut öffnen. Aktueller Slice ist Draft-PR #173.
+12. **Zuerst lesen:** ADR-0196 Nachtrag, Recovery-Task.
 
 ## Historischer Arbeitsblock – AP-6a Gate 0 Legal Foundation / Trust Boundary
 
-Current classification / Nachtrag, 29. August 2026: **HISTORICAL / INTEGRIERT auf der Search-Baseline.** PR #167 ist auf `main @ 6083ee63` gemergt. Ältere „IMPLEMENTIERT / DRAFT / STOP / Kein AP-6a-Runtime“-Zeilen sind Pre-#168-Evidence. Visitor Search Country Alias Ranking ist jetzt der aktive Slice dieses Branches.
+Current classification / Nachtrag, 29. August 2026: **HISTORICAL / INTEGRIERT auf der Search-Baseline.** PR #167 ist auf `main @ 6083ee63` gemergt. Ältere „IMPLEMENTIERT / DRAFT / STOP / Kein AP-6a-Runtime“-Zeilen sind Pre-Search-Evidence. Der aktive Slice ist Draft-PR #173.
 
 1. **Arbeitsblock / Ziel:** Rekonstruktion und Vertrag für die fehlende Legal Foundation. Production `/privacy` und `/terms` sind 404, obwohl die Registrierung dorthin verlinkt. Keine Rechtstexte.
 2. **Authoring-Branch / PR:** `audit/ap6a-gate0-legal-foundation-2026-08-29`; Draft-PR #166. Exact Head vor diesem Stamp: `18516a06`. Actions `33243096002` SUCCESS; GitHub Preview `6153897069` success; Vercel-Check `jFScFBDbxgkwCRv6h5GqpkDzzchb` SUCCESS. Preview-HTML SSO-geschützt. Dieser Stamp erzeugt einen neueren Head; live am PR prüfen.

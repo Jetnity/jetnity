@@ -1,17 +1,24 @@
 # Jetnity – Handoff und nächste Schritte
 
 Stand: 29. August 2026  
-Status: **Visitor Search Country Alias Ranking / Draft-PR #168 / Issue #109. STOP für unabhängigen Technical-Lead Exact-Head-Review; kein Ready, kein Merge durch den Autor. Kein Issue #110. Baseline `main @ 6083ee63` (PR #167 AP-6a Gate 0 integriert). AP-6a-Runtime, AP-6b, AP-7-S2, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
+Status: **Visitor Search Country Alias Production Recovery / Draft-PR #173 / Issue #109. STOP für unabhängigen Technical-Lead Exact-Head-Re-Review; kein Ready, kein Merge durch den Autor. Kein Issue #110. Baseline `main @ 2241e349` (PR #172 integriert, Live-Production invalidiert den vorherigen TL-PASS). AP-6a-Runtime, AP-6b, AP-7-S2, C2 und TW-8/TW-9 sind nicht automatisch gestartet. Live-Evidence immer erneut verifizieren.**
 
 > **Live-Evidence gewinnt immer.** Dieser Handoff ist Übergabe-Evidence, niemals Ersatz für Live-Rekonstruktion.
 
-Aktueller Search-Slice auf diesem Branch (Draft-PR #168):
+Aktueller Search-Recovery-Slice auf diesem Branch (Draft-PR #173):
+
+- `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_TASK_2026-08-29.md`
+- `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_STATUS_2026-08-29.md`
+- `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_HANDOFF_2026-08-29.md`
+- `docs/VISITOR_SEARCH_COUNTRY_ALIAS_PRODUCTION_RECOVERY_SELF_REVIEW_2026-08-29.md`
+- ADR-0196 Nachtrag
+
+Historischer vorheriger Search-Slice (PR #168 / #172, Production-Acceptance nicht erfüllt):
 
 - `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_TASK_2026-08-29.md`
 - `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_STATUS_2026-08-29.md`
 - `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_HANDOFF_2026-08-29.md`
 - `docs/VISITOR_SEARCH_COUNTRY_ALIAS_RANKING_SELF_REVIEW_2026-08-29.md`
-- ADR-0196
 
 Integrierter vorheriger Account-Slice auf der Baseline (Draft-PR #166 / PR #167):
 
